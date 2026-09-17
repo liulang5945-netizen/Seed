@@ -82,7 +82,9 @@ def _load_checkpoint(report: dict[str, Any], report_path: Path) -> tuple[Path, d
     checkpoint_path = _resolve_repo_path(checkpoint_value)
     _require(checkpoint_path.is_file(), f"missing checkpoint: {checkpoint_path}")
     payload = torch.load(checkpoint_path, map_location="cpu", weights_only=False)
-    _require(isinstance(payload, dict), f"checkpoint must be a JSON-like mapping: {checkpoint_path}")
+    _require(
+        isinstance(payload, dict), f"checkpoint must be a JSON-like mapping: {checkpoint_path}"
+    )
     _require(
         isinstance(payload.get("checkpoint_digest"), str),
         f"checkpoint digest is missing: {checkpoint_path}",
@@ -126,7 +128,10 @@ def _validate_common_run(
         capacity.get("target_active_parameters") == EXPECTED_PARAMETER_BUDGET,
         f"parameter budget mismatch: {report_path}",
     )
-    _require(capacity.get("effective_active_parameters") == 276610, f"effective budget mismatch: {report_path}")
+    _require(
+        capacity.get("effective_active_parameters") == 276610,
+        f"effective budget mismatch: {report_path}",
+    )
     _require(capacity.get("within_target") is True, f"run exceeded parameter budget: {report_path}")
 
     preflight = report.get("preflight")
@@ -135,23 +140,33 @@ def _validate_common_run(
         _require(preflight.get(key) is True, f"preflight {key} failed: {report_path}")
     _require(preflight.get("status") == "passed", f"preflight did not pass: {report_path}")
     update = preflight.get("one_response_update")
-    _require(isinstance(update, dict) and update.get("status") == "completed", f"child update preflight failed: {report_path}")
+    _require(
+        isinstance(update, dict) and update.get("status") == "completed",
+        f"child update preflight failed: {report_path}",
+    )
 
     training = report.get("training")
     _require(isinstance(training, dict), f"training record missing: {report_path}")
     _require(training.get("status") == "completed", f"training did not complete: {report_path}")
     _require(training.get("epochs") == EXPECTED_EPOCHS, f"epoch count mismatch: {report_path}")
-    _require(training.get("episodes") == EXPECTED_EPISODES, f"episode count mismatch: {report_path}")
+    _require(
+        training.get("episodes") == EXPECTED_EPISODES, f"episode count mismatch: {report_path}"
+    )
     _require(training.get("global_step") == 5370, f"update count mismatch: {report_path}")
 
     dev = report.get("dev")
     _require(isinstance(dev, dict), f"dev record missing: {report_path}")
-    _require(dev.get("checkpoint_read_only") is True, f"dev checkpoint was not read-only: {report_path}")
+    _require(
+        dev.get("checkpoint_read_only") is True, f"dev checkpoint was not read-only: {report_path}"
+    )
     _require(dev.get("native_mode_only") is True, f"dev was not native-only: {report_path}")
     paired = report.get("paired_diagnostic")
     _require(isinstance(paired, dict), f"paired diagnostic missing: {report_path}")
     _require(paired.get("status") == "completed", f"paired diagnostic failed: {report_path}")
-    _require(paired.get("native_mode_only") is True, f"paired diagnostic was not native-only: {report_path}")
+    _require(
+        paired.get("native_mode_only") is True,
+        f"paired diagnostic was not native-only: {report_path}",
+    )
     _require(paired.get("external_provider") is False, f"external provider was used: {report_path}")
 
     checkpoint_path, checkpoint = _load_checkpoint(report, report_path)
@@ -170,14 +185,32 @@ def _validate_common_run(
         f"target lineage geometry mismatch: {report_path}",
     )
     if arm == "control":
-        _require(report_geometry.get("encoder_digest") is None, f"control carries an encoder: {report_path}")
+        _require(
+            report_geometry.get("encoder_digest") is None,
+            f"control carries an encoder: {report_path}",
+        )
     else:
-        _require(isinstance(report_geometry.get("encoder_digest"), str), f"treatment encoder missing: {report_path}")
-        _require(isinstance(report_geometry.get("encoder_parent_checkpoint_digest"), str), f"treatment encoder parent missing: {report_path}")
-        _require(report_geometry.get("encoder_corpus_digest") == EXPECTED_DATASET_DIGEST, f"treatment encoder corpus mismatch: {report_path}")
-        _require(isinstance(report_geometry.get("train_target_map_digest"), str), f"treatment target map missing: {report_path}")
+        _require(
+            isinstance(report_geometry.get("encoder_digest"), str),
+            f"treatment encoder missing: {report_path}",
+        )
+        _require(
+            isinstance(report_geometry.get("encoder_parent_checkpoint_digest"), str),
+            f"treatment encoder parent missing: {report_path}",
+        )
+        _require(
+            report_geometry.get("encoder_corpus_digest") == EXPECTED_DATASET_DIGEST,
+            f"treatment encoder corpus mismatch: {report_path}",
+        )
+        _require(
+            isinstance(report_geometry.get("train_target_map_digest"), str),
+            f"treatment target map missing: {report_path}",
+        )
         target_payload = checkpoint.get("response_plan_target_encoder")
-        _require(isinstance(target_payload, dict), f"checkpoint target encoder missing: {checkpoint_path}")
+        _require(
+            isinstance(target_payload, dict),
+            f"checkpoint target encoder missing: {checkpoint_path}",
+        )
         _require(
             content_digest(target_payload) == report_geometry.get("encoder_digest"),
             f"target encoder digest mismatch: {report_path}",
@@ -193,7 +226,9 @@ def _validate_common_run(
         code_revision = checkpoint.get("code_revision")
         metadata_source = "checkpoint_and_report_filename"
     _require(int(model_seed) == seed, f"model seed metadata mismatch: {report_path}")
-    _require(isinstance(code_revision, str) and code_revision, f"code revision missing: {report_path}")
+    _require(
+        isinstance(code_revision, str) and code_revision, f"code revision missing: {report_path}"
+    )
 
     summary = {
         "seed": seed,
@@ -263,19 +298,45 @@ def _validate_ablation(
     treatment_checkpoint: dict[str, Any],
 ) -> dict[str, Any]:
     _require(report.get("status") == "completed", f"ablation did not complete: {report_path}")
-    _require(report.get("format") == "taiji-r2-h3-6b-response-plan-ablation-v1", f"wrong ablation format: {report_path}")
-    _require(report.get("pre_registration") == EXPECTED_PREREGISTRATION, f"wrong ablation preregistration: {report_path}")
+    _require(
+        report.get("format") == "taiji-r2-h3-6b-response-plan-ablation-v1",
+        f"wrong ablation format: {report_path}",
+    )
+    _require(
+        report.get("pre_registration") == EXPECTED_PREREGISTRATION,
+        f"wrong ablation preregistration: {report_path}",
+    )
     _require(report.get("split") == "dev", f"ablation split is not dev: {report_path}")
-    _require(report.get("dataset_digest") == EXPECTED_DATASET_DIGEST, f"ablation dataset mismatch: {report_path}")
-    _require(report.get("checkpoint_read_only") is True, f"ablation was not read-only: {report_path}")
-    _require(report.get("checkpoint_digest") == treatment_checkpoint.get("checkpoint_digest"), f"ablation source digest mismatch: {report_path}")
-    _require(report.get("target_lineage") == treatment["target_geometry"], f"ablation target lineage mismatch: {report_path}")
-    _require(report.get("target_available_count") == 0, f"H3.6 dev ablation read a dev target: {report_path}")
+    _require(
+        report.get("dataset_digest") == EXPECTED_DATASET_DIGEST,
+        f"ablation dataset mismatch: {report_path}",
+    )
+    _require(
+        report.get("checkpoint_read_only") is True, f"ablation was not read-only: {report_path}"
+    )
+    _require(
+        report.get("checkpoint_digest") == treatment_checkpoint.get("checkpoint_digest"),
+        f"ablation source digest mismatch: {report_path}",
+    )
+    _require(
+        report.get("target_lineage") == treatment["target_geometry"],
+        f"ablation target lineage mismatch: {report_path}",
+    )
+    _require(
+        report.get("target_available_count") == 0,
+        f"H3.6 dev ablation read a dev target: {report_path}",
+    )
     for name in ("normal", "plan_bridge_ablated"):
         arm = report.get(name)
         _require(isinstance(arm, dict), f"ablation arm missing: {report_path}")
-        _require(arm.get("checkpoint_read_only") is True, f"ablation {name} was not read-only: {report_path}")
-        _require(arm.get("native_mode_only") is True, f"ablation {name} was not native-only: {report_path}")
+        _require(
+            arm.get("checkpoint_read_only") is True,
+            f"ablation {name} was not read-only: {report_path}",
+        )
+        _require(
+            arm.get("native_mode_only") is True,
+            f"ablation {name} was not native-only: {report_path}",
+        )
     _require(report.get("episodes") == 8, f"ablation episode count mismatch: {report_path}")
     return {
         "seed": expected_seed,
@@ -285,11 +346,21 @@ def _validate_ablation(
         "checkpoint_read_only": True,
         "normal": {
             key: report["normal"][key]
-            for key in ("sequence_criterion_pass_rate", "exact_response_rate", "required_term_coverage", "generated_text_collision_rate")
+            for key in (
+                "sequence_criterion_pass_rate",
+                "exact_response_rate",
+                "required_term_coverage",
+                "generated_text_collision_rate",
+            )
         },
         "ablated": {
             key: report["plan_bridge_ablated"][key]
-            for key in ("sequence_criterion_pass_rate", "exact_response_rate", "required_term_coverage", "generated_text_collision_rate")
+            for key in (
+                "sequence_criterion_pass_rate",
+                "exact_response_rate",
+                "required_term_coverage",
+                "generated_text_collision_rate",
+            )
         },
     }
 
@@ -349,10 +420,21 @@ def main() -> int:
         control = control_by_seed[seed]
         treatment = treatment_by_seed[seed]
         ablation = ablation_by_seed[seed]
-        _require(control["code_revision"] == treatment["code_revision"], f"code revision mismatch at seed {seed}")
-        _require(control["dataset_digest"] == treatment["dataset_digest"] == EXPECTED_DATASET_DIGEST, f"dataset mismatch at seed {seed}")
-        _require(control["training"]["global_step"] == treatment["training"]["global_step"], f"update mismatch at seed {seed}")
-        rows.append({"seed": seed, "control": control, "treatment": treatment, "ablation": ablation})
+        _require(
+            control["code_revision"] == treatment["code_revision"],
+            f"code revision mismatch at seed {seed}",
+        )
+        _require(
+            control["dataset_digest"] == treatment["dataset_digest"] == EXPECTED_DATASET_DIGEST,
+            f"dataset mismatch at seed {seed}",
+        )
+        _require(
+            control["training"]["global_step"] == treatment["training"]["global_step"],
+            f"update mismatch at seed {seed}",
+        )
+        rows.append(
+            {"seed": seed, "control": control, "treatment": treatment, "ablation": ablation}
+        )
 
     control_sequence = _metric(rows, "control", "sequence_criterion_pass_rate")
     treatment_sequence = _metric(rows, "treatment", "sequence_criterion_pass_rate")
@@ -366,15 +448,31 @@ def main() -> int:
     treatment_collision = _metric(rows, "treatment", "generated_text_collision_rate")
     control_sensitivity = _paired_metric(rows, "control", "child_prompt_sensitivity_rate")
     treatment_sensitivity = _paired_metric(rows, "treatment", "child_prompt_sensitivity_rate")
-    ablated_sequence = [float(row["ablation"]["ablated"]["sequence_criterion_pass_rate"]) for row in rows]
-    ablated_collision = [float(row["ablation"]["ablated"]["generated_text_collision_rate"]) for row in rows]
-    normal_ablation_sequence = [float(row["ablation"]["normal"]["sequence_criterion_pass_rate"]) for row in rows]
+    ablated_sequence = [
+        float(row["ablation"]["ablated"]["sequence_criterion_pass_rate"]) for row in rows
+    ]
+    ablated_collision = [
+        float(row["ablation"]["ablated"]["generated_text_collision_rate"]) for row in rows
+    ]
+    normal_ablation_sequence = [
+        float(row["ablation"]["normal"]["sequence_criterion_pass_rate"]) for row in rows
+    ]
 
-    sequence_deltas = [treatment - control for treatment, control in zip(treatment_sequence, control_sequence)]
-    exact_deltas = [treatment - control for treatment, control in zip(treatment_exact, control_exact)]
-    term_deltas = [treatment - control for treatment, control in zip(treatment_terms, control_terms)]
-    surprise_deltas = [treatment - control for treatment, control in zip(treatment_surprise, control_surprise)]
-    ablation_sequence_deltas = [ablated - normal for ablated, normal in zip(ablated_sequence, normal_ablation_sequence)]
+    sequence_deltas = [
+        treatment - control for treatment, control in zip(treatment_sequence, control_sequence)
+    ]
+    exact_deltas = [
+        treatment - control for treatment, control in zip(treatment_exact, control_exact)
+    ]
+    term_deltas = [
+        treatment - control for treatment, control in zip(treatment_terms, control_terms)
+    ]
+    surprise_deltas = [
+        treatment - control for treatment, control in zip(treatment_surprise, control_surprise)
+    ]
+    ablation_sequence_deltas = [
+        ablated - normal for ablated, normal in zip(ablated_sequence, normal_ablation_sequence)
+    ]
     ablation_collision_deltas = [
         float(row["ablation"]["ablated"]["generated_text_collision_rate"])
         - float(row["ablation"]["normal"]["generated_text_collision_rate"])
@@ -383,20 +481,28 @@ def main() -> int:
 
     machine_gates = {
         "all_runs_completed": True,
-        "all_runs_within_budget": all(row[arm]["capacity"]["within_target"] for row in rows for arm in ("control", "treatment")),
+        "all_runs_within_budget": all(
+            row[arm]["capacity"]["within_target"]
+            for row in rows
+            for arm in ("control", "treatment")
+        ),
         "all_preflights_passed": all(
             row[arm]["dev"]["checkpoint_read_only"] and row[arm]["dev"]["native_mode_only"]
             for row in rows
             for arm in ("control", "treatment")
         ),
         "all_final_reads_deferred": True,
-        "all_bridge_ablations_read_only": all(row["ablation"]["checkpoint_read_only"] for row in rows),
+        "all_bridge_ablations_read_only": all(
+            row["ablation"]["checkpoint_read_only"] for row in rows
+        ),
         "runtime_oracle_detected": False,
         "protected_parent_failures": False,
         "target_lineage_failures": False,
     }
     analytical_gates = {
-        "three_seed_dev_sequence_direction_consistent": all(delta >= 0.0 for delta in sequence_deltas)
+        "three_seed_dev_sequence_direction_consistent": all(
+            delta >= 0.0 for delta in sequence_deltas
+        )
         and any(delta > 0.0 for delta in sequence_deltas),
         "non_proxy_sequence_improvement": _mean(treatment_sequence) > _mean(control_sequence),
         "non_proxy_exact_improvement": _mean(treatment_exact) > _mean(control_exact),
@@ -406,17 +512,12 @@ def main() -> int:
             for treatment, control in zip(treatment_sensitivity, control_sensitivity)
         ),
         "bridge_effect_present": any(
-            delta != 0.0
-            for delta in ablation_sequence_deltas + ablation_collision_deltas
+            delta != 0.0 for delta in ablation_sequence_deltas + ablation_collision_deltas
         ),
         "bridge_ablation_removes_core_treatment_gain": all(
-            ablated <= normal
-            for ablated, normal in zip(ablated_sequence, treatment_sequence)
+            ablated <= normal for ablated, normal in zip(ablated_sequence, treatment_sequence)
         )
-        and any(
-            ablated < normal
-            for ablated, normal in zip(ablated_sequence, treatment_sequence)
-        ),
+        and any(ablated < normal for ablated, normal in zip(ablated_sequence, treatment_sequence)),
     }
     required_gates = {
         **machine_gates,
@@ -471,8 +572,12 @@ def main() -> int:
             for seed in EXPECTED_SEEDS
         ],
         "aggregate": {
-            "control_effective_parameters": control_by_seed[EXPECTED_SEEDS[0]]["capacity"]["effective_active_parameters"],
-            "treatment_effective_parameters": treatment_by_seed[EXPECTED_SEEDS[0]]["capacity"]["effective_active_parameters"],
+            "control_effective_parameters": control_by_seed[EXPECTED_SEEDS[0]]["capacity"][
+                "effective_active_parameters"
+            ],
+            "treatment_effective_parameters": treatment_by_seed[EXPECTED_SEEDS[0]]["capacity"][
+                "effective_active_parameters"
+            ],
             "control_dev_sequence_rate_by_seed": control_sequence,
             "treatment_dev_sequence_rate_by_seed": treatment_sequence,
             "treatment_minus_control_dev_sequence_rate_by_seed": sequence_deltas,
@@ -517,14 +622,20 @@ def main() -> int:
         },
     }
     args.output.parent.mkdir(parents=True, exist_ok=True)
-    args.output.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    args.output.write_text(
+        json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print(
         json.dumps(
             {
                 "status": report["status"],
                 "development_gate_passed": development_gate_passed,
-                "mean_control_dev_sequence_rate": report["aggregate"]["mean_control_dev_sequence_rate"],
-                "mean_treatment_dev_sequence_rate": report["aggregate"]["mean_treatment_dev_sequence_rate"],
+                "mean_control_dev_sequence_rate": report["aggregate"][
+                    "mean_control_dev_sequence_rate"
+                ],
+                "mean_treatment_dev_sequence_rate": report["aggregate"][
+                    "mean_treatment_dev_sequence_rate"
+                ],
                 "treatment_minus_control_dev_sequence_rate_by_seed": sequence_deltas,
                 "bridge_ablated_minus_normal_sequence_rate_by_seed": ablation_sequence_deltas,
                 "final_access_allowed": report["decision"]["final_access_allowed"],

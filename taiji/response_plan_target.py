@@ -384,9 +384,7 @@ def _count_sketch_chunk(chunk: bytes, *, slot: int, width: int) -> torch.Tensor:
     for size, weight in ((1, 1.0), (2, 1.5), (3, 2.0)):
         count = max(1, len(value) - size + 1)
         for index in range(count):
-            token = bytes((int(slot) & 0xFF, int(size) & 0xFF)) + value[
-                index : index + size
-            ]
+            token = bytes((int(slot) & 0xFF, int(size) & 0xFF)) + value[index : index + size]
             digest = hashlib.sha256(FACTOR_RESPONSE_PLAN_TARGET_SALT + token).digest()
             bucket = int.from_bytes(digest[:4], "little") % int(width)
             sign = 1.0 if digest[4] & 1 else -1.0
@@ -459,9 +457,7 @@ class FactorizedResponsePlanTargetEncoder:
         )
         if self.slots <= 0 or self.slot_width <= 0 or self.phase_stride <= 0:
             raise ValueError("factorized target dimensions and stride must be positive")
-        if isinstance(fit_episode_ids, (str, bytes)) or not isinstance(
-            fit_episode_ids, Sequence
-        ):
+        if isinstance(fit_episode_ids, (str, bytes)) or not isinstance(fit_episode_ids, Sequence):
             raise TypeError("fit_episode_ids must be a sequence of episode ids")
         self.fit_episode_ids = tuple(str(item) for item in fit_episode_ids)
         if not self.fit_episode_ids or any(not item for item in self.fit_episode_ids):
@@ -471,9 +467,7 @@ class FactorizedResponsePlanTargetEncoder:
         self.slot_scale = slot_scale.detach().cpu().to(dtype=torch.float32).contiguous()
         if self.slot_scale.shape != (self.slots,):
             raise ValueError("factorized target slot_scale shape is invalid")
-        if not bool(torch.isfinite(self.slot_scale).all()) or bool(
-            (self.slot_scale <= 0).any()
-        ):
+        if not bool(torch.isfinite(self.slot_scale).all()) or bool((self.slot_scale <= 0).any()):
             raise ValueError("factorized target slot_scale must be finite and positive")
 
     @classmethod
@@ -506,9 +500,7 @@ class FactorizedResponsePlanTargetEncoder:
             raw.append(
                 torch.stack(
                     [
-                        _count_sketch_chunk(
-                            chunk, slot=index, width=int(slot_width)
-                        )
+                        _count_sketch_chunk(chunk, slot=index, width=int(slot_width))
                         for index, chunk in enumerate(chunks)
                     ]
                 )
@@ -549,9 +541,7 @@ class FactorizedResponsePlanTargetEncoder:
             raise ValueError("factorized response target parent checkpoint is incompatible")
 
     def encode_response(self, response: str) -> torch.Tensor:
-        chunks = self.chunks(
-            response, slots=self.slots, phase_stride=self.phase_stride
-        )
+        chunks = self.chunks(response, slots=self.slots, phase_stride=self.phase_stride)
         slots: list[torch.Tensor] = []
         for index, chunk in enumerate(chunks):
             value = _count_sketch_chunk(chunk, slot=index, width=self.slot_width)
@@ -654,9 +644,11 @@ class ByteAlignedResponsePlanTargetEncoder(FactorizedResponsePlanTargetEncoder):
             raise ValueError("byte-aligned target slots and stride must be positive")
         raw = response.encode("utf-8")
         return tuple(
-            raw[index * phase_stride:]
-            if index == slots - 1
-            else raw[index * phase_stride:(index + 1) * phase_stride]
+            (
+                raw[index * phase_stride :]
+                if index == slots - 1
+                else raw[index * phase_stride : (index + 1) * phase_stride]
+            )
             for index in range(slots)
         )
 

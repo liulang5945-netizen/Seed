@@ -17,7 +17,6 @@ import torch
 
 from taiji import LanguageEpisode, LanguageEpisodeCorpus, Taiji, TaijiConfig
 
-
 WIDTH = 32
 SALT = b"r2-h3-6-plan-geometry-v1\x00"
 
@@ -187,9 +186,9 @@ def main() -> int:
     model = Taiji(config, episode_id="h3.6-geometry-audit")
     generator = torch.Generator(device="cpu")
     generator.manual_seed(args.seed + 6103)
-    projection = torch.randn(
-        WIDTH, config.motor_context_dim, generator=generator
-    ) / math.sqrt(config.motor_context_dim)
+    projection = torch.randn(WIDTH, config.motor_context_dim, generator=generator) / math.sqrt(
+        config.motor_context_dim
+    )
 
     geometries: dict[str, dict[str, torch.Tensor]] = defaultdict(dict)
     raw_native: dict[str, torch.Tensor] = {}

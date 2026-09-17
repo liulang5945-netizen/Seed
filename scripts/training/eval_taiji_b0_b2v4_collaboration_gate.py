@@ -306,8 +306,7 @@ def run_gate() -> dict[str, Any]:
                 - float(
                     dictionary.all_singleton_oracle(
                         singletons=[
-                            table.singleton(context_id, member)
-                            for member in table.singletons
+                            table.singleton(context_id, member) for member in table.singletons
                         ]
                     )
                 )

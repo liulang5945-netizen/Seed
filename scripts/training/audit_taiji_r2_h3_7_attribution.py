@@ -118,12 +118,8 @@ def _phase_probe(
         "target_norm": float(torch.linalg.vector_norm(target)),
         "plan_target_cosine": _cosine(plan, target),
         "plan_target_l2": float(torch.linalg.vector_norm(plan - target)),
-        "slot_plan_norms": [
-            float(torch.linalg.vector_norm(slot)) for slot in plan_slots
-        ],
-        "slot_target_norms": [
-            float(torch.linalg.vector_norm(slot)) for slot in target_slots
-        ],
+        "slot_plan_norms": [float(torch.linalg.vector_norm(slot)) for slot in plan_slots],
+        "slot_target_norms": [float(torch.linalg.vector_norm(slot)) for slot in target_slots],
         "slot_target_cosines": [
             _cosine(plan_slot, target_slot)
             for plan_slot, target_slot in zip(plan_slots, target_slots, strict=True)
@@ -138,19 +134,33 @@ def _audit_treatment(report_path: Path, corpus: LanguageEpisodeCorpus) -> dict[s
     report = _load_json(report_path)
     _require(report.get("status") == "completed", f"treatment run is not complete: {report_path}")
     _require(report.get("final_deferred") is True, f"final was not deferred: {report_path}")
-    _require(report.get("dataset", {}).get("digest") == EXPECTED_DATASET_DIGEST, f"dataset mismatch: {report_path}")
+    _require(
+        report.get("dataset", {}).get("digest") == EXPECTED_DATASET_DIGEST,
+        f"dataset mismatch: {report_path}",
+    )
     config = report.get("config", {})
-    _require(config.get("response_plan_variant") == EXPECTED_VARIANT, f"variant mismatch: {report_path}")
+    _require(
+        config.get("response_plan_variant") == EXPECTED_VARIANT, f"variant mismatch: {report_path}"
+    )
     _require(config.get("response_plan_slots") == EXPECTED_SLOTS, f"slot mismatch: {report_path}")
-    _require(config.get("response_plan_phase_stride") == EXPECTED_PHASE_STRIDE, f"stride mismatch: {report_path}")
+    _require(
+        config.get("response_plan_phase_stride") == EXPECTED_PHASE_STRIDE,
+        f"stride mismatch: {report_path}",
+    )
     checkpoint_value = report.get("checkpoint")
     _require(isinstance(checkpoint_value, str), f"checkpoint missing: {report_path}")
     checkpoint_path = _resolve_repo_path(checkpoint_value)
     _require(checkpoint_path.is_file(), f"checkpoint missing: {checkpoint_path}")
     payload = torch.load(checkpoint_path, map_location="cpu", weights_only=False)
     trainer = LanguageAlignmentTrainer.from_checkpoint(payload, corpus)
-    _require(trainer.config.response_plan_target_geometry == EXPECTED_GEOMETRY, f"geometry mismatch: {report_path}")
-    _require(trainer.config.response_plan_variant == EXPECTED_VARIANT, f"restored variant mismatch: {report_path}")
+    _require(
+        trainer.config.response_plan_target_geometry == EXPECTED_GEOMETRY,
+        f"geometry mismatch: {report_path}",
+    )
+    _require(
+        trainer.config.response_plan_variant == EXPECTED_VARIANT,
+        f"restored variant mismatch: {report_path}",
+    )
     before_digest = str(trainer.checkpoint()["checkpoint_digest"])
     bridge_norm = float(torch.linalg.matrix_norm(trainer.model.response_plan_readout.plan_bridge))
     records = [_phase_probe(trainer, episode) for episode in corpus.for_split("dev")]
@@ -184,12 +194,16 @@ def main() -> int:
     corpus = LanguageEpisodeCorpus.from_jsonl([args.dataset])
     _require(corpus.digest == EXPECTED_DATASET_DIGEST, "dataset digest does not match H3.7")
     aggregate = _load_json(args.aggregate_report)
-    _require(aggregate.get("status") == "stopped_before_final", "aggregate is not the stopped H3.7 result")
-    _require(aggregate.get("decision", {}).get("final_access_allowed") is False, "aggregate permits final access")
+    _require(
+        aggregate.get("status") == "stopped_before_final",
+        "aggregate is not the stopped H3.7 result",
+    )
+    _require(
+        aggregate.get("decision", {}).get("final_access_allowed") is False,
+        "aggregate permits final access",
+    )
 
-    treatments = [
-        _audit_treatment(path.resolve(), corpus) for path in args.treatment_reports
-    ]
+    treatments = [_audit_treatment(path.resolve(), corpus) for path in args.treatment_reports]
     all_records = [record for treatment in treatments for record in treatment["records"]]
     phase_js = [
         _mean([float(record["phase_js_vs_phase_zero"][phase]) for record in all_records])
@@ -256,11 +270,15 @@ def main() -> int:
         },
         "renderer_readout": {
             "dev_sequence_by_seed": aggregate["aggregate"]["treatment_dev_sequence_rate_by_seed"],
-            "dev_required_term_coverage_by_seed": aggregate["aggregate"]["treatment_dev_required_term_coverage_by_seed"],
+            "dev_required_term_coverage_by_seed": aggregate["aggregate"][
+                "treatment_dev_required_term_coverage_by_seed"
+            ],
             "dev_exact_by_seed": aggregate["aggregate"]["treatment_dev_exact_rate_by_seed"],
         },
         "native_prefix_representation": {
-            "paired_child_prompt_sensitivity_by_seed": aggregate["aggregate"]["treatment_paired_sensitivity_by_seed"],
+            "paired_child_prompt_sensitivity_by_seed": aggregate["aggregate"][
+                "treatment_paired_sensitivity_by_seed"
+            ],
             "paired_sensitivity_gate": aggregate["gates"]["paired_sensitivity_not_degraded"],
             "content_direction_gate": aggregate["gates"]["non_proxy_content_direction_consistent"],
         },
@@ -275,15 +293,23 @@ def main() -> int:
         "checkpoint_read_only": True,
     }
     args.output.parent.mkdir(parents=True, exist_ok=True)
-    args.output.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    args.output.write_text(
+        json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print(
         json.dumps(
             {
                 "status": report["status"],
                 "mean_plan_target_cosine": report["target_sketch"]["mean_plan_target_cosine"],
-                "mean_phase_js_vs_zero": report["slot_phase_schedule"]["mean_probability_js_vs_phase_zero_by_phase"],
-                "argmax_change_rate_by_phase": report["slot_phase_schedule"]["argmax_change_rate_vs_phase_zero_by_phase"],
-                "content_direction_gate": report["native_prefix_representation"]["content_direction_gate"],
+                "mean_phase_js_vs_zero": report["slot_phase_schedule"][
+                    "mean_probability_js_vs_phase_zero_by_phase"
+                ],
+                "argmax_change_rate_by_phase": report["slot_phase_schedule"][
+                    "argmax_change_rate_vs_phase_zero_by_phase"
+                ],
+                "content_direction_gate": report["native_prefix_representation"][
+                    "content_direction_gate"
+                ],
                 "checkpoint_read_only": True,
             },
             ensure_ascii=False,

@@ -324,7 +324,11 @@ class Taiji:
     ) -> dict[str, Any]:
         if any(
             owner is not None
-            for owner in (self._response_start_readout, self._response_phase_readout, self._response_plan_readout)
+            for owner in (
+                self._response_start_readout,
+                self._response_phase_readout,
+                self._response_plan_readout,
+            )
         ):
             raise RuntimeError("response candidate readouts are mutually exclusive")
         if self._active_predictive_readout is not None:
@@ -425,9 +429,7 @@ class Taiji:
         if self._response_start_readout is not None:
             raise RuntimeError("response-start readout is already enabled")
         if self._response_phase_readout is not None:
-            raise RuntimeError(
-                "response-start and response-phase readouts are mutually exclusive"
-            )
+            raise RuntimeError("response-start and response-phase readouts are mutually exclusive")
         if self._active_predictive_readout is not None:
             raise RuntimeError(
                 "response-start readout cannot change the protected substrate while an active branch is mounted"
@@ -489,9 +491,7 @@ class Taiji:
         if self._response_phase_readout is not None:
             raise RuntimeError("response-phase readout is already enabled")
         if self._response_start_readout is not None:
-            raise RuntimeError(
-                "response-phase and response-start readouts are mutually exclusive"
-            )
+            raise RuntimeError("response-phase and response-start readouts are mutually exclusive")
         if self._active_predictive_readout is not None:
             raise RuntimeError(
                 "response-phase readout cannot change the protected substrate while an active branch is mounted"
@@ -532,9 +532,7 @@ class Taiji:
         if self._response_phase_readout is None:
             raise RuntimeError("response-phase readout is not enabled")
         if self._response_start_readout is not None:
-            raise RuntimeError(
-                "response-phase and response-start readouts are mutually exclusive"
-            )
+            raise RuntimeError("response-phase and response-start readouts are mutually exclusive")
         if self._active_predictive_readout is not None:
             raise RuntimeError(
                 "response-phase readout cannot be mixed with an active predictive branch"
@@ -1304,9 +1302,7 @@ class Taiji:
                     "scope": "candidate",
                     "owner": "predictive_readout.response_start",
                     "mutable": True,
-                    "readout_digest": content_digest(
-                        self._response_start_readout.to_payload()
-                    ),
+                    "readout_digest": content_digest(self._response_start_readout.to_payload()),
                 }
             ),
             "response_phase": (
@@ -1316,9 +1312,7 @@ class Taiji:
                     "scope": "candidate",
                     "owner": "predictive_readout.response_phase",
                     "mutable": True,
-                    "readout_digest": content_digest(
-                        self._response_phase_readout.to_payload()
-                    ),
+                    "readout_digest": content_digest(self._response_phase_readout.to_payload()),
                 }
             ),
             "response_plan": (
@@ -1334,9 +1328,7 @@ class Taiji:
                     "plan_slot_width": self._response_plan_readout.plan_slot_width,
                     "phase_stride": self._response_plan_readout.phase_stride,
                     "active_parameters": self._response_plan_readout.active_parameter_count,
-                    "readout_digest": content_digest(
-                        self._response_plan_readout.to_payload()
-                    ),
+                    "readout_digest": content_digest(self._response_plan_readout.to_payload()),
                 }
             ),
         }
@@ -2878,13 +2870,9 @@ class Taiji:
             )
             generation_scope = select_readout_generation(resolved_boundary, authorization)
             if response_start and generation_scope == "active":
-                raise RuntimeError(
-                    "response-start readout is not mounted on active generation"
-                )
+                raise RuntimeError("response-start readout is not mounted on active generation")
             if response_phase and generation_scope == "active":
-                raise RuntimeError(
-                    "response-phase readout is not mounted on active generation"
-                )
+                raise RuntimeError("response-phase readout is not mounted on active generation")
             predictive_readout = self._predictive_readout_for_scope(
                 generation_scope,
                 boundary_digest=resolved_boundary.token_digest,
@@ -2904,13 +2892,9 @@ class Taiji:
         if response_phase and self._response_phase_readout is None:
             raise RuntimeError("response-phase readout is not enabled")
         if response_start and self._response_phase_readout is not None:
-            raise RuntimeError(
-                "response-start and response-phase readouts are mutually exclusive"
-            )
+            raise RuntimeError("response-start and response-phase readouts are mutually exclusive")
         if response_phase and self._response_start_readout is not None:
-            raise RuntimeError(
-                "response-phase and response-start readouts are mutually exclusive"
-            )
+            raise RuntimeError("response-phase and response-start readouts are mutually exclusive")
         if reset:
             self.reset_dynamics(episode_id="generation")
         step = self.observe(
@@ -2948,9 +2932,7 @@ class Taiji:
             )
             if sample:
                 next_symbol = int(
-                    torch.multinomial(
-                        probabilities.detach().cpu(), 1, generator=self._rng
-                    ).item()
+                    torch.multinomial(probabilities.detach().cpu(), 1, generator=self._rng).item()
                 )
             else:
                 next_symbol = int(probabilities.argmax().item())
@@ -2967,9 +2949,7 @@ class Taiji:
                 use_memory=use_memory,
                 use_identity=False,
                 _predictive_readout=(
-                    response_phase_readout
-                    if response_phase
-                    else predictive_readout
+                    response_phase_readout if response_phase else predictive_readout
                 ),
             )
         return bytes(generated)
@@ -3214,10 +3194,14 @@ class Taiji:
         response_start_payload = checkpoint.get(self.RESPONSE_START_READOUT_KEY)
         response_phase_payload = checkpoint.get(self.RESPONSE_PHASE_READOUT_KEY)
         response_plan_payload = checkpoint.get(self.RESPONSE_PLAN_READOUT_KEY)
-        if sum(item is not None for item in (response_start_payload, response_phase_payload, response_plan_payload)) > 1:
-            raise ValueError(
-                "checkpoint cannot contain multiple response candidate readouts"
+        if (
+            sum(
+                item is not None
+                for item in (response_start_payload, response_phase_payload, response_plan_payload)
             )
+            > 1
+        ):
+            raise ValueError("checkpoint cannot contain multiple response candidate readouts")
         self._response_start_readout = None
         if response_start_payload is not None:
             if is_legacy_checkpoint:
@@ -3241,9 +3225,7 @@ class Taiji:
             if is_legacy_checkpoint or not isinstance(response_plan_payload, Mapping):
                 raise ValueError("response-plan readout checkpoint payload is invalid")
             plan_width = int(response_plan_payload.get("plan_width", -1))
-            variant = str(
-                response_plan_payload.get("variant", ResponsePlanReadout.VARIANT_SINGLE)
-            )
+            variant = str(response_plan_payload.get("variant", ResponsePlanReadout.VARIANT_SINGLE))
             response_plan = self._new_response_plan_readout(
                 plan_width=plan_width,
                 variant=variant,
@@ -3252,9 +3234,7 @@ class Taiji:
                 bridge_learning_rate_scale=float(
                     response_plan_payload.get("bridge_learning_rate_scale", 1.0)
                 ),
-                slot_credit_scale=float(
-                    response_plan_payload.get("slot_credit_scale", 0.25)
-                ),
+                slot_credit_scale=float(response_plan_payload.get("slot_credit_scale", 0.25)),
             )
             response_plan.load_payload(response_plan_payload)
             self._response_plan_readout = response_plan

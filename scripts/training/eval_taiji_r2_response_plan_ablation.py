@@ -18,7 +18,9 @@ from taiji.internalization import content_digest
 H36_TARGET_GEOMETRY = "h3_6_whitened_native_compositional"
 H36_PRE_REGISTRATION = "plans/reference/M5_R2_H3_6B_MATCHED_RUN_PREREGISTRATION_20260916.md"
 H37_TARGET_GEOMETRY = "h3_7_factorized_response_chunks"
-H37_PRE_REGISTRATION = "plans/reference/M5_R2_H3_7_FACTORIZED_RESPONSE_WORKSPACE_CONTRACT_20260917.md"
+H37_PRE_REGISTRATION = (
+    "plans/reference/M5_R2_H3_7_FACTORIZED_RESPONSE_WORKSPACE_CONTRACT_20260917.md"
+)
 
 
 def _target_for_diagnostic(
@@ -152,18 +154,14 @@ def main() -> int:
             "taiji-r2-h3-7-response-plan-ablation-v1"
             if is_h37
             else (
-            "taiji-r2-h3-6b-response-plan-ablation-v1"
-            if is_h36
-            else "taiji-r2-h3-5a-response-plan-ablation-v1"
+                "taiji-r2-h3-6b-response-plan-ablation-v1"
+                if is_h36
+                else "taiji-r2-h3-5a-response-plan-ablation-v1"
             )
         ),
         "status": "completed",
         "pre_registration": (
-            H37_PRE_REGISTRATION
-            if is_h37
-            else H36_PRE_REGISTRATION
-            if is_h36
-            else None
+            H37_PRE_REGISTRATION if is_h37 else H36_PRE_REGISTRATION if is_h36 else None
         ),
         "split": args.split,
         "dataset_digest": corpus.digest,

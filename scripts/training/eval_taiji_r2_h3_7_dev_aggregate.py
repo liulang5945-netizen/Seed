@@ -101,10 +101,7 @@ def _load_checkpoint(report: dict[str, Any], report_path: Path) -> tuple[Path, d
 
 def _target_map_digest(payload: dict[str, Any]) -> str:
     return content_digest(
-        {
-            str(key): value.detach().cpu().clone()
-            for key, value in sorted(payload.items())
-        }
+        {str(key): value.detach().cpu().clone() for key, value in sorted(payload.items())}
     )
 
 
@@ -137,16 +134,43 @@ def _validate_common_run(
         f"target geometry mismatch: {report_path}",
     )
     if arm == "control":
-        _require(config.get("response_phase_readout") is True, f"control phase readout missing: {report_path}")
-        _require(config.get("response_plan_readout") is False, f"control owns a plan readout: {report_path}")
-        _require(config.get("response_plan_variant") == "single", f"control variant mismatch: {report_path}")
+        _require(
+            config.get("response_phase_readout") is True,
+            f"control phase readout missing: {report_path}",
+        )
+        _require(
+            config.get("response_plan_readout") is False,
+            f"control owns a plan readout: {report_path}",
+        )
+        _require(
+            config.get("response_plan_variant") == "single",
+            f"control variant mismatch: {report_path}",
+        )
     else:
-        _require(config.get("response_phase_readout") is False, f"treatment owns phase readout: {report_path}")
-        _require(config.get("response_plan_readout") is True, f"treatment plan readout missing: {report_path}")
-        _require(config.get("response_plan_variant") == "factorized_v1", f"treatment variant mismatch: {report_path}")
-        _require(config.get("response_plan_width") == EXPECTED_PLAN_WIDTH, f"plan width mismatch: {report_path}")
-        _require(config.get("response_plan_slots") == EXPECTED_PLAN_SLOTS, f"plan slot mismatch: {report_path}")
-        _require(config.get("response_plan_phase_stride") == EXPECTED_PHASE_STRIDE, f"phase stride mismatch: {report_path}")
+        _require(
+            config.get("response_phase_readout") is False,
+            f"treatment owns phase readout: {report_path}",
+        )
+        _require(
+            config.get("response_plan_readout") is True,
+            f"treatment plan readout missing: {report_path}",
+        )
+        _require(
+            config.get("response_plan_variant") == "factorized_v1",
+            f"treatment variant mismatch: {report_path}",
+        )
+        _require(
+            config.get("response_plan_width") == EXPECTED_PLAN_WIDTH,
+            f"plan width mismatch: {report_path}",
+        )
+        _require(
+            config.get("response_plan_slots") == EXPECTED_PLAN_SLOTS,
+            f"plan slot mismatch: {report_path}",
+        )
+        _require(
+            config.get("response_plan_phase_stride") == EXPECTED_PHASE_STRIDE,
+            f"phase stride mismatch: {report_path}",
+        )
 
     capacity = report.get("capacity")
     _require(isinstance(capacity, dict), f"capacity record missing: {report_path}")
@@ -189,33 +213,65 @@ def _validate_common_run(
     _require(isinstance(training, dict), f"training record missing: {report_path}")
     _require(training.get("status") == "completed", f"training did not complete: {report_path}")
     _require(training.get("epochs") == EXPECTED_EPOCHS, f"epoch count mismatch: {report_path}")
-    _require(training.get("episodes") == EXPECTED_EPISODES, f"episode count mismatch: {report_path}")
-    _require(training.get("global_step") == EXPECTED_GLOBAL_STEP, f"update count mismatch: {report_path}")
+    _require(
+        training.get("episodes") == EXPECTED_EPISODES, f"episode count mismatch: {report_path}"
+    )
+    _require(
+        training.get("global_step") == EXPECTED_GLOBAL_STEP, f"update count mismatch: {report_path}"
+    )
 
     dev = report.get("dev")
     _require(isinstance(dev, dict), f"dev record missing: {report_path}")
-    _require(dev.get("checkpoint_read_only") is True, f"dev checkpoint was not read-only: {report_path}")
+    _require(
+        dev.get("checkpoint_read_only") is True, f"dev checkpoint was not read-only: {report_path}"
+    )
     _require(dev.get("native_mode_only") is True, f"dev was not native-only: {report_path}")
     paired = report.get("paired_diagnostic")
     _require(isinstance(paired, dict), f"paired diagnostic missing: {report_path}")
     _require(paired.get("status") == "completed", f"paired diagnostic failed: {report_path}")
-    _require(paired.get("native_mode_only") is True, f"paired diagnostic was not native-only: {report_path}")
+    _require(
+        paired.get("native_mode_only") is True,
+        f"paired diagnostic was not native-only: {report_path}",
+    )
     _require(paired.get("external_provider") is False, f"external provider was used: {report_path}")
 
     checkpoint_path, checkpoint = _load_checkpoint(report, report_path)
-    _require(checkpoint.get("global_step") == training.get("global_step"), f"checkpoint global step mismatch: {checkpoint_path}")
-    _require(checkpoint.get("episode_count") == training.get("episodes"), f"checkpoint episode count mismatch: {checkpoint_path}")
+    _require(
+        checkpoint.get("global_step") == training.get("global_step"),
+        f"checkpoint global step mismatch: {checkpoint_path}",
+    )
+    _require(
+        checkpoint.get("episode_count") == training.get("episodes"),
+        f"checkpoint episode count mismatch: {checkpoint_path}",
+    )
     model_payload = checkpoint.get("model")
     _require(isinstance(model_payload, dict), f"model payload missing: {checkpoint_path}")
     if arm == "control":
-        _require(isinstance(model_payload.get("response_phase_readout"), dict), f"control phase payload missing: {checkpoint_path}")
-        _require("response_plan_readout" not in model_payload, f"control checkpoint contains a plan: {checkpoint_path}")
+        _require(
+            isinstance(model_payload.get("response_phase_readout"), dict),
+            f"control phase payload missing: {checkpoint_path}",
+        )
+        _require(
+            "response_plan_readout" not in model_payload,
+            f"control checkpoint contains a plan: {checkpoint_path}",
+        )
     else:
         plan_payload = model_payload.get("response_plan_readout")
-        _require(isinstance(plan_payload, dict), f"treatment plan payload missing: {checkpoint_path}")
-        _require(plan_payload.get("variant") == "factorized_v1", f"checkpoint plan variant mismatch: {checkpoint_path}")
-        _require(plan_payload.get("plan_slots") == EXPECTED_PLAN_SLOTS, f"checkpoint plan slot mismatch: {checkpoint_path}")
-        _require(plan_payload.get("phase_stride") == EXPECTED_PHASE_STRIDE, f"checkpoint phase stride mismatch: {checkpoint_path}")
+        _require(
+            isinstance(plan_payload, dict), f"treatment plan payload missing: {checkpoint_path}"
+        )
+        _require(
+            plan_payload.get("variant") == "factorized_v1",
+            f"checkpoint plan variant mismatch: {checkpoint_path}",
+        )
+        _require(
+            plan_payload.get("plan_slots") == EXPECTED_PLAN_SLOTS,
+            f"checkpoint plan slot mismatch: {checkpoint_path}",
+        )
+        _require(
+            plan_payload.get("phase_stride") == EXPECTED_PHASE_STRIDE,
+            f"checkpoint phase stride mismatch: {checkpoint_path}",
+        )
 
     target_lineage = report.get("response_plan_target")
     _require(isinstance(target_lineage, dict), f"target lineage missing: {report_path}")
@@ -224,23 +280,48 @@ def _validate_common_run(
         f"target lineage geometry mismatch: {report_path}",
     )
     if arm == "control":
-        _require(target_lineage.get("encoder_digest") is None, f"control carries an encoder: {report_path}")
+        _require(
+            target_lineage.get("encoder_digest") is None,
+            f"control carries an encoder: {report_path}",
+        )
     else:
         _require(target_lineage.get("encoder_digest"), f"treatment encoder missing: {report_path}")
-        _require(target_lineage.get("encoder_parent_checkpoint_digest"), f"treatment encoder parent missing: {report_path}")
-        _require(target_lineage.get("encoder_corpus_digest") == EXPECTED_DATASET_DIGEST, f"treatment encoder corpus mismatch: {report_path}")
-        _require(target_lineage.get("train_target_map_digest"), f"treatment target map missing: {report_path}")
+        _require(
+            target_lineage.get("encoder_parent_checkpoint_digest"),
+            f"treatment encoder parent missing: {report_path}",
+        )
+        _require(
+            target_lineage.get("encoder_corpus_digest") == EXPECTED_DATASET_DIGEST,
+            f"treatment encoder corpus mismatch: {report_path}",
+        )
+        _require(
+            target_lineage.get("train_target_map_digest"),
+            f"treatment target map missing: {report_path}",
+        )
         target_payload = checkpoint.get("response_plan_target_encoder")
         target_map = checkpoint.get("response_plan_targets")
-        _require(isinstance(target_payload, dict), f"checkpoint target encoder missing: {checkpoint_path}")
-        _require(isinstance(target_map, dict), f"checkpoint train targets missing: {checkpoint_path}")
-        _require(content_digest(target_payload) == target_lineage["encoder_digest"], f"target encoder digest mismatch: {report_path}")
-        _require(_target_map_digest(target_map) == target_lineage["train_target_map_digest"], f"target map digest mismatch: {report_path}")
+        _require(
+            isinstance(target_payload, dict),
+            f"checkpoint target encoder missing: {checkpoint_path}",
+        )
+        _require(
+            isinstance(target_map, dict), f"checkpoint train targets missing: {checkpoint_path}"
+        )
+        _require(
+            content_digest(target_payload) == target_lineage["encoder_digest"],
+            f"target encoder digest mismatch: {report_path}",
+        )
+        _require(
+            _target_map_digest(target_map) == target_lineage["train_target_map_digest"],
+            f"target map digest mismatch: {report_path}",
+        )
 
     model_seed = report.get("model_seed")
     code_revision = report.get("code_revision")
     _require(int(model_seed) == seed, f"model seed metadata mismatch: {report_path}")
-    _require(isinstance(code_revision, str) and code_revision, f"code revision missing: {report_path}")
+    _require(
+        isinstance(code_revision, str) and code_revision, f"code revision missing: {report_path}"
+    )
 
     summary = {
         "seed": seed,
@@ -257,7 +338,13 @@ def _validate_common_run(
         "capacity": capacity,
         "training": {
             key: training[key]
-            for key in ("epochs", "episodes", "global_step", "response_accuracy", "response_mean_surprise")
+            for key in (
+                "epochs",
+                "episodes",
+                "global_step",
+                "response_accuracy",
+                "response_mean_surprise",
+            )
         },
         "dev": {
             key: dev[key]
@@ -306,16 +393,32 @@ def _validate_ablation(
     treatment_checkpoint: dict[str, Any],
 ) -> dict[str, Any]:
     _require(report.get("status") == "completed", f"ablation did not complete: {report_path}")
-    _require(report.get("format") == "taiji-r2-h3-7-response-plan-ablation-v1", f"wrong ablation format: {report_path}")
-    _require(report.get("pre_registration") == EXPECTED_PREREGISTRATION, f"wrong ablation preregistration: {report_path}")
+    _require(
+        report.get("format") == "taiji-r2-h3-7-response-plan-ablation-v1",
+        f"wrong ablation format: {report_path}",
+    )
+    _require(
+        report.get("pre_registration") == EXPECTED_PREREGISTRATION,
+        f"wrong ablation preregistration: {report_path}",
+    )
     _require(report.get("split") == "dev", f"ablation split is not dev: {report_path}")
-    _require(report.get("dataset_digest") == EXPECTED_DATASET_DIGEST, f"ablation dataset mismatch: {report_path}")
-    _require(report.get("checkpoint_read_only") is True, f"ablation was not read-only: {report_path}")
-    _require(report.get("checkpoint_digest") == treatment_checkpoint.get("checkpoint_digest"), f"ablation source digest mismatch: {report_path}")
+    _require(
+        report.get("dataset_digest") == EXPECTED_DATASET_DIGEST,
+        f"ablation dataset mismatch: {report_path}",
+    )
+    _require(
+        report.get("checkpoint_read_only") is True, f"ablation was not read-only: {report_path}"
+    )
+    _require(
+        report.get("checkpoint_digest") == treatment_checkpoint.get("checkpoint_digest"),
+        f"ablation source digest mismatch: {report_path}",
+    )
     target_lineage = report.get("target_lineage")
     treatment_lineage = treatment["target_geometry"]
     _require(isinstance(target_lineage, dict), f"ablation target lineage missing: {report_path}")
-    _require(isinstance(treatment_lineage, dict), f"treatment target lineage missing: {report_path}")
+    _require(
+        isinstance(treatment_lineage, dict), f"treatment target lineage missing: {report_path}"
+    )
     # The ablation report may carry the H3.7 architecture annotations
     # (variant/slots/stride) in addition to the runner's canonical target
     # lineage.  Compare the bound target identity field-by-field and validate
@@ -333,17 +436,38 @@ def _validate_ablation(
             target_lineage.get(key) == treatment_lineage.get(key),
             f"ablation target lineage {key} mismatch: {report_path}",
         )
-    _require(target_lineage.get("geometry") == EXPECTED_GEOMETRIES["treatment"], f"ablation target geometry mismatch: {report_path}")
-    _require(target_lineage.get("variant") == "factorized_v1", f"ablation target variant mismatch: {report_path}")
-    _require(target_lineage.get("plan_slots") == EXPECTED_PLAN_SLOTS, f"ablation target slot mismatch: {report_path}")
-    _require(target_lineage.get("phase_stride") == EXPECTED_PHASE_STRIDE, f"ablation target stride mismatch: {report_path}")
-    _require(report.get("target_available_count") == 0, f"H3.7 dev ablation read a dev target: {report_path}")
+    _require(
+        target_lineage.get("geometry") == EXPECTED_GEOMETRIES["treatment"],
+        f"ablation target geometry mismatch: {report_path}",
+    )
+    _require(
+        target_lineage.get("variant") == "factorized_v1",
+        f"ablation target variant mismatch: {report_path}",
+    )
+    _require(
+        target_lineage.get("plan_slots") == EXPECTED_PLAN_SLOTS,
+        f"ablation target slot mismatch: {report_path}",
+    )
+    _require(
+        target_lineage.get("phase_stride") == EXPECTED_PHASE_STRIDE,
+        f"ablation target stride mismatch: {report_path}",
+    )
+    _require(
+        report.get("target_available_count") == 0,
+        f"H3.7 dev ablation read a dev target: {report_path}",
+    )
     _require(report.get("episodes") == 8, f"ablation episode count mismatch: {report_path}")
     for name in ("normal", "plan_bridge_ablated", "slot_credit_ablated"):
         arm = report.get(name)
         _require(isinstance(arm, dict), f"ablation arm missing: {report_path}")
-        _require(arm.get("checkpoint_read_only") is True, f"ablation {name} was not read-only: {report_path}")
-        _require(arm.get("native_mode_only") is True, f"ablation {name} was not native-only: {report_path}")
+        _require(
+            arm.get("checkpoint_read_only") is True,
+            f"ablation {name} was not read-only: {report_path}",
+        )
+        _require(
+            arm.get("native_mode_only") is True,
+            f"ablation {name} was not native-only: {report_path}",
+        )
     normal = report["normal"]
     treatment_dev = treatment["dev"]
     for key in ("sequence_criterion_pass_rate", "required_term_coverage", "exact_response_rate"):
@@ -359,15 +483,30 @@ def _validate_ablation(
         "checkpoint_read_only": True,
         "normal": {
             key: report["normal"][key]
-            for key in ("sequence_criterion_pass_rate", "exact_response_rate", "required_term_coverage", "generated_text_collision_rate")
+            for key in (
+                "sequence_criterion_pass_rate",
+                "exact_response_rate",
+                "required_term_coverage",
+                "generated_text_collision_rate",
+            )
         },
         "bridge_ablated": {
             key: report["plan_bridge_ablated"][key]
-            for key in ("sequence_criterion_pass_rate", "exact_response_rate", "required_term_coverage", "generated_text_collision_rate")
+            for key in (
+                "sequence_criterion_pass_rate",
+                "exact_response_rate",
+                "required_term_coverage",
+                "generated_text_collision_rate",
+            )
         },
         "slot_credit_ablated": {
             key: report["slot_credit_ablated"][key]
-            for key in ("sequence_criterion_pass_rate", "exact_response_rate", "required_term_coverage", "generated_text_collision_rate")
+            for key in (
+                "sequence_criterion_pass_rate",
+                "exact_response_rate",
+                "required_term_coverage",
+                "generated_text_collision_rate",
+            )
         },
     }
 
@@ -455,10 +594,26 @@ def main() -> int:
     for seed in EXPECTED_SEEDS:
         control = control_by_seed[seed]
         treatment = treatment_by_seed[seed]
-        _require(control["code_revision"] == treatment["code_revision"], f"code revision mismatch at seed {seed}")
-        _require(control["dataset_digest"] == treatment["dataset_digest"] == EXPECTED_DATASET_DIGEST, f"dataset mismatch at seed {seed}")
-        _require(control["training"]["global_step"] == treatment["training"]["global_step"], f"update mismatch at seed {seed}")
-        rows.append({"seed": seed, "control": control, "treatment": treatment, "ablation": ablation_by_seed[seed]})
+        _require(
+            control["code_revision"] == treatment["code_revision"],
+            f"code revision mismatch at seed {seed}",
+        )
+        _require(
+            control["dataset_digest"] == treatment["dataset_digest"] == EXPECTED_DATASET_DIGEST,
+            f"dataset mismatch at seed {seed}",
+        )
+        _require(
+            control["training"]["global_step"] == treatment["training"]["global_step"],
+            f"update mismatch at seed {seed}",
+        )
+        rows.append(
+            {
+                "seed": seed,
+                "control": control,
+                "treatment": treatment,
+                "ablation": ablation_by_seed[seed],
+            }
+        )
 
     control_sequence = _metric(rows, "control", "sequence_criterion_pass_rate")
     treatment_sequence = _metric(rows, "treatment", "sequence_criterion_pass_rate")
@@ -472,9 +627,18 @@ def main() -> int:
     treatment_boundary = _metric(rows, "treatment", "response_boundary_rate")
     control_sensitivity = _paired_metric(rows, "control", "child_prompt_sensitivity_rate")
     treatment_sensitivity = _paired_metric(rows, "treatment", "child_prompt_sensitivity_rate")
-    sequence_deltas = [treatment - control for treatment, control in zip(treatment_sequence, control_sequence, strict=True)]
-    term_deltas = [treatment - control for treatment, control in zip(treatment_terms, control_terms, strict=True)]
-    exact_deltas = [treatment - control for treatment, control in zip(treatment_exact, control_exact, strict=True)]
+    sequence_deltas = [
+        treatment - control
+        for treatment, control in zip(treatment_sequence, control_sequence, strict=True)
+    ]
+    term_deltas = [
+        treatment - control
+        for treatment, control in zip(treatment_terms, control_terms, strict=True)
+    ]
+    exact_deltas = [
+        treatment - control
+        for treatment, control in zip(treatment_exact, control_exact, strict=True)
+    ]
 
     machine_gates = {
         "all_runs_completed": True,
@@ -513,7 +677,9 @@ def main() -> int:
             for treatment, control in zip(treatment_sensitivity, control_sensitivity, strict=True)
         ),
         "bridge_ablation_removes_core_gain": _ablation_removes_core_gain(rows, "bridge_ablated"),
-        "slot_credit_ablation_removes_core_gain": _ablation_removes_core_gain(rows, "slot_credit_ablated"),
+        "slot_credit_ablation_removes_core_gain": _ablation_removes_core_gain(
+            rows, "slot_credit_ablated"
+        ),
     }
     required_keys = (
         "all_runs_completed",
@@ -589,12 +755,25 @@ def main() -> int:
             "treatment_dev_boundary_rate_by_seed": treatment_boundary,
             "control_paired_sensitivity_by_seed": control_sensitivity,
             "treatment_paired_sensitivity_by_seed": treatment_sensitivity,
-            "bridge_normal_sequence_rate_by_seed": [row["ablation"]["normal"]["sequence_criterion_pass_rate"] for row in rows],
-            "bridge_ablated_sequence_rate_by_seed": [row["ablation"]["bridge_ablated"]["sequence_criterion_pass_rate"] for row in rows],
-            "slot_credit_ablated_sequence_rate_by_seed": [row["ablation"]["slot_credit_ablated"]["sequence_criterion_pass_rate"] for row in rows],
-            "bridge_normal_required_term_coverage_by_seed": [row["ablation"]["normal"]["required_term_coverage"] for row in rows],
-            "bridge_ablated_required_term_coverage_by_seed": [row["ablation"]["bridge_ablated"]["required_term_coverage"] for row in rows],
-            "slot_credit_ablated_required_term_coverage_by_seed": [row["ablation"]["slot_credit_ablated"]["required_term_coverage"] for row in rows],
+            "bridge_normal_sequence_rate_by_seed": [
+                row["ablation"]["normal"]["sequence_criterion_pass_rate"] for row in rows
+            ],
+            "bridge_ablated_sequence_rate_by_seed": [
+                row["ablation"]["bridge_ablated"]["sequence_criterion_pass_rate"] for row in rows
+            ],
+            "slot_credit_ablated_sequence_rate_by_seed": [
+                row["ablation"]["slot_credit_ablated"]["sequence_criterion_pass_rate"]
+                for row in rows
+            ],
+            "bridge_normal_required_term_coverage_by_seed": [
+                row["ablation"]["normal"]["required_term_coverage"] for row in rows
+            ],
+            "bridge_ablated_required_term_coverage_by_seed": [
+                row["ablation"]["bridge_ablated"]["required_term_coverage"] for row in rows
+            ],
+            "slot_credit_ablated_required_term_coverage_by_seed": [
+                row["ablation"]["slot_credit_ablated"]["required_term_coverage"] for row in rows
+            ],
             "mean_control_dev_sequence_rate": _mean(control_sequence),
             "mean_treatment_dev_sequence_rate": _mean(treatment_sequence),
             "mean_treatment_minus_control_dev_sequence_rate": _mean(sequence_deltas),
@@ -615,17 +794,27 @@ def main() -> int:
         },
     }
     args.output.parent.mkdir(parents=True, exist_ok=True)
-    args.output.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    args.output.write_text(
+        json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print(
         json.dumps(
             {
                 "status": report["status"],
                 "development_gate_passed": development_gate_passed,
-                "mean_control_dev_sequence_rate": report["aggregate"]["mean_control_dev_sequence_rate"],
-                "mean_treatment_dev_sequence_rate": report["aggregate"]["mean_treatment_dev_sequence_rate"],
+                "mean_control_dev_sequence_rate": report["aggregate"][
+                    "mean_control_dev_sequence_rate"
+                ],
+                "mean_treatment_dev_sequence_rate": report["aggregate"][
+                    "mean_treatment_dev_sequence_rate"
+                ],
                 "treatment_minus_control_dev_sequence_rate_by_seed": sequence_deltas,
-                "bridge_ablation_removes_core_gain": analytical_gates["bridge_ablation_removes_core_gain"],
-                "slot_credit_ablation_removes_core_gain": analytical_gates["slot_credit_ablation_removes_core_gain"],
+                "bridge_ablation_removes_core_gain": analytical_gates[
+                    "bridge_ablation_removes_core_gain"
+                ],
+                "slot_credit_ablation_removes_core_gain": analytical_gates[
+                    "slot_credit_ablation_removes_core_gain"
+                ],
                 "final_access_allowed": report["decision"]["final_access_allowed"],
             },
             ensure_ascii=False,

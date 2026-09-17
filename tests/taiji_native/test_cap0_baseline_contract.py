@@ -129,7 +129,10 @@ def test_prompt_echo_cannot_produce_a_correct_score() -> None:
                 continue
             checked += 1
             prompts = [str(prompt) for prompt in item["turns"]]
-            echo = "".join(f"我已收到你的问题：{prompt}。当前原生语言表层正在形成稳定表达。" for prompt in prompts)
+            echo = "".join(
+                f"我已收到你的问题：{prompt}。当前原生语言表层正在形成稳定表达。"
+                for prompt in prompts
+            )
             cleaned, stripped = evaluator._strip_prompt_echo(echo, prompts)
             assert stripped is True, (key, item["id"])
             assert evaluator._score_closed(item, cleaned).get("score") != 1, (key, item["id"])

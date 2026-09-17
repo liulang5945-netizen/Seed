@@ -61,13 +61,8 @@ def main() -> int:
             raise SystemExit(f"checkpoint does not exist: {checkpoint_path}")
         payload = torch.load(checkpoint_path, map_location="cpu", weights_only=False)
         trainer = LanguageAlignmentTrainer.from_checkpoint(payload, corpus, device="cpu")
-        if not (
-            trainer.config.response_start_readout
-            or trainer.config.response_phase_readout
-        ):
-            raise SystemExit(
-                f"checkpoint has no isolated response candidate: {checkpoint_path}"
-            )
+        if not (trainer.config.response_start_readout or trainer.config.response_phase_readout):
+            raise SystemExit(f"checkpoint has no isolated response candidate: {checkpoint_path}")
         diagnostic = trainer.conditional_credit_diagnostic(
             max_generation_bytes=args.max_generation_bytes
         )
@@ -106,22 +101,13 @@ def main() -> int:
         "max_generation_bytes": int(args.max_generation_bytes),
         "comparison": comparison,
         "checkpoints": runs,
-        "checkpoint_read_only": all(
-            run["diagnostic"]["checkpoint_read_only"] for run in runs
-        ),
-        "recovery_repeatable": all(
-            run["diagnostic"]["recovery_repeatable"] for run in runs
-        ),
+        "checkpoint_read_only": all(run["diagnostic"]["checkpoint_read_only"] for run in runs),
+        "recovery_repeatable": all(run["diagnostic"]["recovery_repeatable"] for run in runs),
         "native_mode_only": all(run["diagnostic"]["native_mode_only"] for run in runs),
-        "external_provider": any(
-            run["diagnostic"]["external_provider"] for run in runs
-        ),
-        "result_credit_applied": any(
-            run["diagnostic"]["result_credit_applied"] for run in runs
-        ),
+        "external_provider": any(run["diagnostic"]["external_provider"] for run in runs),
+        "result_credit_applied": any(run["diagnostic"]["result_credit_applied"] for run in runs),
         "task_family_and_unknown_policy_forwarded": any(
-            run["diagnostic"]["task_family_and_unknown_policy_forwarded"]
-            for run in runs
+            run["diagnostic"]["task_family_and_unknown_policy_forwarded"] for run in runs
         ),
     }
     _write_json(args.report, report)

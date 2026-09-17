@@ -39,7 +39,9 @@ PROTECTED_NAMES = {
 PRE_REGISTRATION = "plans/reference/M5_R2_G1_CONDITIONAL_RESPONSE_PREREGISTRATION_20260916.md"
 H36_PRE_REGISTRATION = "plans/reference/M5_R2_H3_6B_MATCHED_RUN_PREREGISTRATION_20260916.md"
 H36_TARGET_GEOMETRY = "h3_6_whitened_native_compositional"
-H37_PRE_REGISTRATION = "plans/reference/M5_R2_H3_7_FACTORIZED_RESPONSE_WORKSPACE_CONTRACT_20260917.md"
+H37_PRE_REGISTRATION = (
+    "plans/reference/M5_R2_H3_7_FACTORIZED_RESPONSE_WORKSPACE_CONTRACT_20260917.md"
+)
 H37_CONTROL_PREREGISTRATION = "h3_7_control"
 H37_TARGET_GEOMETRY = "h3_7_factorized_response_chunks"
 H37_VARIANT = "factorized_v1"
@@ -322,10 +324,10 @@ def main() -> int:
         if args.preregistration in {H37_CONTROL_PREREGISTRATION, "h3_7"}
         or trainer.config.response_plan_target_geometry == H37_TARGET_GEOMETRY
         else (
-        H36_PRE_REGISTRATION
-        if args.preregistration == "h3_6b"
-        or trainer.config.response_plan_target_geometry == H36_TARGET_GEOMETRY
-        else PRE_REGISTRATION
+            H36_PRE_REGISTRATION
+            if args.preregistration == "h3_6b"
+            or trainer.config.response_plan_target_geometry == H36_TARGET_GEOMETRY
+            else PRE_REGISTRATION
         )
     )
     if args.preflight_only:

@@ -668,9 +668,7 @@ class TaijiConfig:
         if plan_width < 0:
             raise ValueError("response_plan_width must be non-negative")
         if plan_width > 0 and optional_readouts < 1:
-            raise ValueError(
-                "response_plan_width requires one reserved predictive readout"
-            )
+            raise ValueError("response_plan_width requires one reserved predictive readout")
         base = cls(seed=cls.seed if seed is None else int(seed)) if template is None else template
         if policy is None:
             capacity = CapacityPolicy.from_config(
@@ -763,12 +761,9 @@ class TaijiConfig:
             # over the motor context, plus one bias per output byte.  This is
             # exactly the active scalar contribution of each optional owner.
             optional_parameters = optional_readouts * (
-                profile.alphabet_size * profile.motor_context_dim
-                + profile.alphabet_size
+                profile.alphabet_size * profile.motor_context_dim + profile.alphabet_size
             )
-            optional_parameters += plan_width * (
-                2 * profile.motor_context_dim + 1
-            )
+            optional_parameters += plan_width * (2 * profile.motor_context_dim + 1)
             return int(profile.planned_active_parameter_count + optional_parameters)
 
         smallest = candidate(1)

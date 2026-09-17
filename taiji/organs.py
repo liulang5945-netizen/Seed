@@ -799,19 +799,25 @@ class ResponsePlanReadout(BytePredictiveReadout):
             raise ValueError("slot_credit_scale must be finite and non-negative")
         self.plan_slot_width = self.plan_width // self.plan_slots
         scale = float(config.weight_init_scale)
-        self.planner_weight = torch.randn(
-            self.plan_width,
-            config.motor_context_dim,
-            generator=generator,
-            device=self.device,
-        ) * scale
+        self.planner_weight = (
+            torch.randn(
+                self.plan_width,
+                config.motor_context_dim,
+                generator=generator,
+                device=self.device,
+            )
+            * scale
+        )
         self.planner_bias = torch.zeros(self.plan_width, device=self.device)
-        self.plan_bridge = torch.randn(
-            config.motor_context_dim,
-            self.plan_width,
-            generator=generator,
-            device=self.device,
-        ) * scale
+        self.plan_bridge = (
+            torch.randn(
+                config.motor_context_dim,
+                self.plan_width,
+                generator=generator,
+                device=self.device,
+            )
+            * scale
+        )
         self._plan_state: torch.Tensor | None = None
         self._plan_source: torch.Tensor | None = None
         self._plan_step = 0
@@ -900,11 +906,11 @@ class ResponsePlanReadout(BytePredictiveReadout):
         start = self.plan_phase * self.plan_slot_width
         stop = start + self.plan_slot_width
         if self.plan_phase == 0:
-            result[:self.plan_slot_width] = feedback[:self.plan_slot_width]
+            result[: self.plan_slot_width] = feedback[: self.plan_slot_width]
         else:
             if self._ablation_mode != "slot_credit":
                 result[start:stop] = 0.75 * feedback[start:stop]
-            result[:self.plan_slot_width] = 0.25 * feedback[start:stop]
+            result[: self.plan_slot_width] = 0.25 * feedback[start:stop]
         return result
 
     def _conditioned_context(self, context: torch.Tensor) -> torch.Tensor:
@@ -959,9 +965,7 @@ class ResponsePlanReadout(BytePredictiveReadout):
             state = self._plan_state
             slot_delta = slot_feedback * (1.0 - state.square())
             planner_rate = bridge_rate * self.slot_credit_scale
-            self.planner_weight.add_(
-                planner_rate * torch.outer(slot_delta, self._plan_source)
-            )
+            self.planner_weight.add_(planner_rate * torch.outer(slot_delta, self._plan_source))
             self.planner_bias.add_(
                 float(self.config.bias_learning_rate)
                 * learning_rate_scale
@@ -976,9 +980,7 @@ class ResponsePlanReadout(BytePredictiveReadout):
             self._plan_state = torch.tanh(
                 self.planner_weight @ self._plan_source + self.planner_bias
             )
-        return super().learn(
-            conditioned, predicted, observed_symbol, **kwargs
-        )
+        return super().learn(conditioned, predicted, observed_symbol, **kwargs)
 
     @torch.no_grad()
     def learn_plan_target(self, target: torch.Tensor) -> torch.Tensor:
@@ -996,9 +998,7 @@ class ResponsePlanReadout(BytePredictiveReadout):
         limit = float(self.config.max_weight_norm)
         self.planner_weight.clamp_(-limit, limit)
         self.planner_bias.clamp_(-limit, limit)
-        self._plan_state = torch.tanh(
-            self.planner_weight @ self._plan_source + self.planner_bias
-        )
+        self._plan_state = torch.tanh(self.planner_weight @ self._plan_source + self.planner_bias)
         return error.detach().clone()
 
     @property
@@ -1018,12 +1018,12 @@ class ResponsePlanReadout(BytePredictiveReadout):
             "planner_weight": self.planner_weight.detach().cpu().clone(),
             "planner_bias": self.planner_bias.detach().cpu().clone(),
             "plan_bridge": self.plan_bridge.detach().cpu().clone(),
-            "plan_state": None
-            if self._plan_state is None
-            else self._plan_state.detach().cpu().clone(),
-            "plan_source": None
-            if self._plan_source is None
-            else self._plan_source.detach().cpu().clone(),
+            "plan_state": (
+                None if self._plan_state is None else self._plan_state.detach().cpu().clone()
+            ),
+            "plan_source": (
+                None if self._plan_source is None else self._plan_source.detach().cpu().clone()
+            ),
         }
         if self.variant == self.VARIANT_SINGLE:
             return {"format": self.PAYLOAD_FORMAT, **common}

@@ -433,9 +433,8 @@ class LanguageAlignmentConfig:
         ):
             raise ValueError("H3.6 target geometry requires the single response plan variant")
         if (
-            self.response_plan_target_geometry in {
-                LANGUAGE_RESPONSE_PLAN_TARGET_H37, LANGUAGE_RESPONSE_PLAN_TARGET_H37B
-            }
+            self.response_plan_target_geometry
+            in {LANGUAGE_RESPONSE_PLAN_TARGET_H37, LANGUAGE_RESPONSE_PLAN_TARGET_H37B}
             and self.response_plan_variant != "factorized_v1"
         ):
             raise ValueError("H3.7 target geometry requires the factorized response plan variant")
@@ -572,7 +571,9 @@ class LanguageAlignmentTrainer:
         if self.response_plan_target_encoder.width != self.config.response_plan_width:
             raise ValueError("target encoder width does not match response-plan width")
         if geometry in {LANGUAGE_RESPONSE_PLAN_TARGET_H37, LANGUAGE_RESPONSE_PLAN_TARGET_H37B}:
-            if not isinstance(self.response_plan_target_encoder, FactorizedResponsePlanTargetEncoder):
+            if not isinstance(
+                self.response_plan_target_encoder, FactorizedResponsePlanTargetEncoder
+            ):
                 raise ValueError("H3.7 target geometry requires its factorized encoder")
             expected_format = (
                 ByteAlignedResponsePlanTargetEncoder.FORMAT
@@ -2390,7 +2391,8 @@ class LanguageAlignmentTrainer:
                 for key, value in target_targets_payload.items()
             }
         elif config.response_plan_target_geometry in {
-            LANGUAGE_RESPONSE_PLAN_TARGET_H37, LANGUAGE_RESPONSE_PLAN_TARGET_H37B
+            LANGUAGE_RESPONSE_PLAN_TARGET_H37,
+            LANGUAGE_RESPONSE_PLAN_TARGET_H37B,
         }:
             if not isinstance(target_payload, Mapping):
                 raise ValueError("H3.7 checkpoint is missing its target encoder")
@@ -2638,18 +2640,14 @@ def factorized_response_plan_preflight(
         if before_target_digest == after_target_digest:
             raise RuntimeError("H3.7 plan target update did not change the candidate")
         before_bridge_digest = content_digest(readout.plan_bridge.detach().cpu().tolist())
-        before_planner_digest = content_digest(
-            readout.planner_weight.detach().cpu().tolist()
-        )
+        before_planner_digest = content_digest(readout.planner_weight.detach().cpu().tolist())
         trainer._observe(
             selected.target_bytes[0],
             learn=True,
             predictive_readout=readout,
         )
         after_bridge_digest = content_digest(readout.plan_bridge.detach().cpu().tolist())
-        after_planner_digest = content_digest(
-            readout.planner_weight.detach().cpu().tolist()
-        )
+        after_planner_digest = content_digest(readout.planner_weight.detach().cpu().tolist())
         bridge_changed = before_bridge_digest != after_bridge_digest
         planner_changed = before_planner_digest != after_planner_digest
         if not bridge_changed and not planner_changed:

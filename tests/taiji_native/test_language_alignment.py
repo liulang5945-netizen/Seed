@@ -267,14 +267,8 @@ def test_response_start_readout_isolated_and_checkpointable() -> None:
 
     assert before["response_start"] is not None
     assert after["response_start"] is not None
-    assert (
-        after["response_start"]["readout_digest"]
-        != before["response_start"]["readout_digest"]
-    )
-    assert (
-        after["protected"]["readout_digest"]
-        == before["protected"]["readout_digest"]
-    )
+    assert after["response_start"]["readout_digest"] != before["response_start"]["readout_digest"]
+    assert after["protected"]["readout_digest"] == before["protected"]["readout_digest"]
     assert trainer.checkpoint()["model"][Taiji.RESPONSE_START_READOUT_KEY]
     margin = trainer.response_start_margin_diagnostic("train")
     assert margin["readout_owner"] == "predictive_readout.response_start"
@@ -312,10 +306,7 @@ def test_response_phase_readout_isolated_and_checkpointable() -> None:
 
     assert before["response_phase"] is not None
     assert after["response_phase"] is not None
-    assert (
-        after["response_phase"]["readout_digest"]
-        != before["response_phase"]["readout_digest"]
-    )
+    assert after["response_phase"]["readout_digest"] != before["response_phase"]["readout_digest"]
     assert after["protected"]["readout_digest"] == before["protected"]["readout_digest"]
     assert trainer.checkpoint()["model"][Taiji.RESPONSE_PHASE_READOUT_KEY]
     margin = trainer.response_phase_margin_diagnostic("train")
@@ -375,8 +366,7 @@ def test_response_plan_candidate_isolated_checkpointable_and_ablated() -> None:
     trainer.train(epochs=1, max_episodes=1)
 
     assert (
-        trainer.model.readout_registry_status()["protected"]["readout_digest"]
-        == protected_before
+        trainer.model.readout_registry_status()["protected"]["readout_digest"] == protected_before
     )
     assert trainer.model.response_plan_readout_digest != candidate_before
     assert trainer.model.response_plan_readout.plan_state is not None
@@ -427,9 +417,7 @@ def test_h3_5a_v3_fixture_is_family_and_response_disjoint() -> None:
     responses = [episode.response for episode in corpus.episodes]
     assert len(responses) == len(set(responses))
     assert any(episode.history for episode in corpus.episodes)
-    assert any(
-        episode.task_family == "context_permutation" for episode in corpus.episodes
-    )
+    assert any(episode.task_family == "context_permutation" for episode in corpus.episodes)
 
 
 def test_generalization_diagnostic_is_read_only_and_reports_transfer_surface() -> None:
