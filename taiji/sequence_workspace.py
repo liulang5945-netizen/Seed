@@ -426,6 +426,9 @@ class SequenceWorkspacePrototype:
         *,
         generation_state_ratio: float = 0.0,
         generator: torch.Generator | None = None,
+        contrastive_prefix: bytes | None = None,
+        contrastive_margin: float = 1.0,
+        contrastive_weight: float = 0.0,
     ) -> tuple[torch.Tensor, dict[str, Any]]:
         """Real next-byte cross-entropy over the response plus the end marker.
 
@@ -433,11 +436,20 @@ class SequenceWorkspacePrototype:
         changes the prefix the model conditions on (scheduled sampling).  ``0.0``
         reproduces the teacher-forced path exactly, which is what the frozen H3.8
         records rely on.
+
+        ``contrastive_weight > 0`` adds the H-OBJ context-contrastive term: the same
+        response scored under the true prefix must beat its score under a shuffled
+        prefix by ``contrastive_margin`` nats, where the score is the **sequence**
+        log-likelihood (``-sum`` cross-entropy, not the mean).  ``0.0`` disables it
+        and reproduces the previous behaviour bit-for-bit.
         """
 
         ratio = float(generation_state_ratio)
         if not 0.0 <= ratio <= 1.0:
             raise ValueError("generation_state_ratio must be in [0, 1]")
+        weight = float(contrastive_weight)
+        if weight < 0.0:
+            raise ValueError("contrastive_weight cannot be negative")
         logits = self._response_logits(
             prefix, response, generation_state_ratio=ratio, generator=generator
         )
@@ -446,6 +458,22 @@ class SequenceWorkspacePrototype:
             dtype=torch.long,
         )
         loss = torch.nn.functional.cross_entropy(logits, targets, reduction="mean")
+        margin_gap = 0.0
+        if weight > 0.0:
+            if contrastive_prefix is None:
+                raise ValueError("contrastive_weight requires a contrastive_prefix")
+            shuffled_logits = self._response_logits(
+                contrastive_prefix, response, generation_state_ratio=0.0
+            )
+            # Sequence log-likelihood difference: the *sum* form, because the
+            # criterion is about the whole answer, not per-position accuracy.
+            correct_nll = torch.nn.functional.cross_entropy(logits, targets, reduction="sum")
+            shuffled_nll = torch.nn.functional.cross_entropy(
+                shuffled_logits, targets, reduction="sum"
+            )
+            margin_gap = shuffled_nll - correct_nll
+            margin = torch.as_tensor(float(contrastive_margin), dtype=logits.dtype)
+            loss = loss + weight * torch.relu(margin - margin_gap)
         with torch.no_grad():
             predictions = logits.argmax(dim=1)
             correct = int((predictions == targets).sum())
@@ -454,6 +482,7 @@ class SequenceWorkspacePrototype:
                 "correct": correct,
                 "accuracy": correct / max(1, int(targets.numel())),
                 "mean_surprise": float(loss.detach()),
+                "contrastive_margin_gap": float(margin_gap),
             }
         return loss, metrics
 
@@ -553,6 +582,22 @@ class SequenceWorkspaceTrainer:
         self.generation_state_ratio_max = 0.0
         self.generation_state_total_steps = 0
         self.sampling_generator: torch.Generator | None = None
+        # H-OBJ context-contrastive term.  ``weight == 0`` (the default) keeps the
+        # previous objective bit-for-bit; like the φ schedule it is a training-time
+        # setting and is deliberately not part of the checkpoint.
+        self.contrastive_weight = 0.0
+        self.contrastive_margin = 1.0
+
+    def enable_context_contrastive(self, *, weight: float, margin: float = 1.0) -> None:
+        """Turn on the H-OBJ term: the true prefix must beat a shuffled one by margin."""
+
+        value = float(weight)
+        if value < 0.0:
+            raise ValueError("contrastive weight cannot be negative")
+        if not math.isfinite(float(margin)):
+            raise ValueError("contrastive margin must be finite")
+        self.contrastive_weight = value
+        self.contrastive_margin = float(margin)
 
     def enable_scheduled_sampling(
         self,
@@ -589,26 +634,45 @@ class SequenceWorkspaceTrainer:
         self.data_order = order
         self.cursor = 0
 
-    def train_step(self, batch: Sequence[tuple[bytes, bytes]]) -> dict[str, Any]:
-        """One optimizer step over an explicit batch.  Deterministic."""
+    def train_step(
+        self,
+        batch: Sequence[tuple[bytes, bytes]],
+        *,
+        contrastive_prefixes: Sequence[bytes] | None = None,
+    ) -> dict[str, Any]:
+        """One optimizer step over an explicit batch.  Deterministic.
+
+        ``contrastive_prefixes`` supplies, per batch item, the **shuffled** prefix used
+        by the H-OBJ term (deterministically taken from the next episode in the frozen
+        data order by :meth:`train_epoch`).  ``None`` leaves the objective unchanged.
+        """
 
         if not batch:
             raise ValueError("sequence workspace batch cannot be empty")
+        if contrastive_prefixes is not None and len(contrastive_prefixes) != len(batch):
+            raise ValueError("contrastive_prefixes must align with the batch")
         self.optimizer.zero_grad(set_to_none=True)
         losses: list[torch.Tensor] = []
         positions = 0
         correct = 0
+        margin_gaps: list[float] = []
         ratio = self.current_generation_state_ratio()
-        for prefix, response in batch:
+        for position, (prefix, response) in enumerate(batch):
             loss, metrics = self.prototype.sequence_loss(
                 prefix,
                 response,
                 generation_state_ratio=ratio,
                 generator=self.sampling_generator,
+                contrastive_prefix=(
+                    None if contrastive_prefixes is None else contrastive_prefixes[position]
+                ),
+                contrastive_margin=self.contrastive_margin,
+                contrastive_weight=self.contrastive_weight,
             )
             losses.append(loss)
             positions += int(metrics["positions"])
             correct += int(metrics["correct"])
+            margin_gaps.append(float(metrics["contrastive_margin_gap"]))
         total = torch.stack(losses).mean()
         total.backward()
         self.optimizer.step()
@@ -619,6 +683,7 @@ class SequenceWorkspaceTrainer:
             "accuracy": correct / max(1, positions),
             "global_step": self.global_step,
             "generation_state_ratio": ratio,
+            "contrastive_margin_gap": sum(margin_gaps) / max(1, len(margin_gaps)),
         }
 
     def train_epoch(self, *, max_episodes: int | None = None) -> dict[str, Any]:
@@ -630,8 +695,15 @@ class SequenceWorkspaceTrainer:
         records: list[dict[str, Any]] = []
         for _ in range(limit):
             index = self.data_order[self.cursor % len(self.data_order)]
-            record = self.train_step([self.episodes[index]])
+            # Deterministic shuffle source for the H-OBJ term: the **next** episode in
+            # the frozen data order (no extra random source, fully reproducible).
+            next_index = self.data_order[(self.cursor + 1) % len(self.data_order)]
+            record = self.train_step(
+                [self.episodes[index]],
+                contrastive_prefixes=[self.episodes[next_index][0]],
+            )
             record["episode_index"] = index
+            record["contrastive_prefix_index"] = next_index
             records.append(record)
             self.cursor = (self.cursor + 1) % len(self.data_order)
         return {
@@ -639,6 +711,8 @@ class SequenceWorkspaceTrainer:
             "episodes": len(records),
             "cursor": self.cursor,
             "mean_loss": sum(item["loss"] for item in records) / max(1, len(records)),
+            "mean_contrastive_margin_gap": sum(item["contrastive_margin_gap"] for item in records)
+            / max(1, len(records)),
             "records": records,
         }
 
