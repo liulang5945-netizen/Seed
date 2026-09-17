@@ -22,7 +22,7 @@ import re
 import subprocess
 import tempfile
 from collections import defaultdict
-from collections.abc import Iterable, Mapping, Sequence
+from collections.abc import Callable, Iterable, Mapping, Sequence
 from dataclasses import asdict, dataclass, replace
 from pathlib import Path
 from typing import Any
@@ -2062,7 +2062,16 @@ class LanguageAlignmentTrainer:
         *,
         epochs: int = 1,
         max_episodes: int | None = None,
+        progress: Callable[[dict[str, Any]], None] | None = None,
     ) -> dict[str, Any]:
+        """Run the alignment loop.
+
+        ``progress`` is an **optional** per-episode callback: when supplied it is
+        invoked with a copy of each finished episode record, so a long run can be
+        observed while it is still running.  The default (``None``) leaves the
+        loop byte-for-byte identical to before, which is what the frozen
+        contracts rely on.
+        """
         if int(epochs) <= 0:
             raise ValueError("language alignment epochs must be positive")
         if max_episodes is not None and int(max_episodes) <= 0:
@@ -2096,6 +2105,8 @@ class LanguageAlignmentTrainer:
                 }
                 self.history.append(record)
                 records.append(record)
+                if progress is not None:
+                    progress(dict(record))
             self._finish_developmental_epoch(epoch)
         return {
             "status": "completed",

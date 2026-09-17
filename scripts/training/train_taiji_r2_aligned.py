@@ -105,6 +105,11 @@ def _parse_args() -> argparse.Namespace:
     parser.add_argument("--sequence-max-bytes", type=int, default=64)
     parser.add_argument("--resume", type=Path)
     parser.add_argument(
+        "--progress-file",
+        type=Path,
+        help="append one JSON line per finished episode so a long run stays observable",
+    )
+    parser.add_argument(
         "--defer-final",
         action="store_true",
         help="do not read final capability outputs during development runs",
@@ -382,7 +387,32 @@ def main() -> int:
         _write_json(report_path, report)
         print(json.dumps(report, ensure_ascii=False, indent=2))
         return 0
-    training = trainer.train(epochs=args.epochs, max_episodes=args.max_episodes)
+    progress_handle = None
+    if args.progress_file is not None:
+        progress_target = (
+            args.progress_file
+            if args.progress_file.is_absolute()
+            else PROJECT_ROOT / args.progress_file
+        )
+        progress_target.parent.mkdir(parents=True, exist_ok=True)
+        progress_handle = progress_target.open("w", encoding="utf-8")
+
+    def _report_progress(record: dict) -> None:
+        line = json.dumps(record, ensure_ascii=False)
+        print(f"[progress] {line}", flush=True)
+        if progress_handle is not None:
+            progress_handle.write(line + "\n")
+            progress_handle.flush()
+
+    try:
+        training = trainer.train(
+            epochs=args.epochs,
+            max_episodes=args.max_episodes,
+            progress=_report_progress,
+        )
+    finally:
+        if progress_handle is not None:
+            progress_handle.close()
     checkpoint_path = trainer.save(args.checkpoint)
     paired = paired_checkpoint_diagnostic(trainer, baseline_payload, splits=transfer_splits)
     report = {
