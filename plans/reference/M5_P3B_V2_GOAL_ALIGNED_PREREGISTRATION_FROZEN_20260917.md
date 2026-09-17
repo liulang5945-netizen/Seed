@@ -78,3 +78,33 @@ P3b 草案假设缺口来自**数据分布**（对话密度低）。H3.3→H3.8 
 
 > **冻结含义**：§2/§3/§4 的内容在 pilot 启动后**不得修改**。
 > 任何调整都必须写**新预注册**（本文件只追加后续章节）。
+
+## §7 执行进展（**只追加**）
+
+### §7.1 数据侧完成（2026-09-17）
+
+生成器：`scripts/training/build_taiji_r2_p3b_v2_corpus.py`（沿用 H3.8 数据合同的分离规则）；
+产物：`tests/fixtures/r2_p3b_v2_goal_aligned_episodes_v1.jsonl`；
+报告：`reports/r2_p3b_v2_corpus_20260917.json`。
+
+| 项 | 值 |
+|---|---|
+| 规模 | **80 行** = train 40 / dev 20 / final 20（**3.3 ×** H3.5a 的 24 行，满足"放大规模"） |
+| 五对抗形状 | 每个 split 都齐备：fact replacement / negation / unknown / combination / same-opening |
+| `corpus_digest` | `4d19974783cbd093a968a8e9fb1a4e945e060843a8c34f3bc1c571fce0311f2b` |
+| 生成器自检 | **7 项全过**：五形状齐备 · 实体池互斥 · 提问 split 内唯一 · 提问跨 split 互斥 · 组合跨 split 互斥 · `required_terms` 均在 response 内 · train 无 holdout 泄漏 |
+| 加载实测 | `LanguageEpisodeCorpus.from_jsonl` 成功（manifest `format=taiji-native-language-alignment-v2`、`serialization=r2-conditional-response-v2`、`digest=5fcebf34…`） |
+
+**生成期修掉的三处自检问题**（记录以备复核）：
+1. `unknown` 形状原先带 `required_terms=[value]`，但它的 response 是"没有信息" ⇒
+   `required_terms` 改为空（诚实弃答不应被要求命中实体）；
+2. 实体池原用 **笛卡尔积**，导致同一实体多值 ⇒ 同 split 内提问重复 ⇒ 改为**一一配对**；
+3. dev/final 的 `combination` 模板 `user_input` 漏了 `{item}` ⇒ 4 个实体产生相同提问 ⇒ 补上。
+
+**注**：`episode_id` / `family_id` 必须是 ASCII 稳定标识符（`LanguageEpisode` 强制），
+故用 `<split>-<shape>-<index>`，中文实体只出现在文本槽里。
+
+### §7.2 剩余阻塞项
+
+- **放大档预算**（§6 第 3 项）：待 pilot 实测吞吐外推。
+- pilot 可立即启动（§2 的入口与起点已确认）。

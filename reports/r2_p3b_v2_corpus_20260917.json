@@ -1,0 +1,82 @@
+{
+  "format": "taiji-r2-p3b-v2-goal-aligned-corpus-v1",
+  "generation_seed": 20260917,
+  "fixture": "tests\\fixtures\\r2_p3b_v2_goal_aligned_episodes_v1.jsonl",
+  "row_count": 80,
+  "rows_per_split": {
+    "train": 40,
+    "dev": 20,
+    "final": 20
+  },
+  "shapes": [
+    "fact",
+    "negation",
+    "unknown",
+    "combination",
+    "same_opening"
+  ],
+  "entity_pools": {
+    "train": {
+      "items": [
+        "样本甲",
+        "样本乙",
+        "样本丙",
+        "样本庚",
+        "样本辛",
+        "样本壬",
+        "样本癸",
+        "样本子"
+      ],
+      "values": [
+        "红色",
+        "蓝色",
+        "绿色",
+        "紫色",
+        "青色",
+        "粉色",
+        "灰色",
+        "棕色"
+      ]
+    },
+    "dev": {
+      "items": [
+        "样本丁",
+        "样本戊",
+        "样本寅",
+        "样本卯"
+      ],
+      "values": [
+        "白色",
+        "黄色",
+        "银色",
+        "金色"
+      ]
+    },
+    "final": {
+      "items": [
+        "样本己",
+        "样本丑",
+        "样本辰",
+        "样本巳"
+      ],
+      "values": [
+        "黑色",
+        "橙色",
+        "藏青",
+        "墨绿"
+      ]
+    }
+  },
+  "separation_checks": {
+    "every_split_has_all_five_shapes": true,
+    "entity_pools_disjoint": true,
+    "user_inputs_unique_within_split": true,
+    "user_inputs_disjoint_across_splits": true,
+    "combinations_disjoint_across_splits": true,
+    "required_terms_present_in_response": true,
+    "no_holdout_leak_in_train": true
+  },
+  "all_checks_passed": true,
+  "corpus_digest": "4d19974783cbd093a968a8e9fb1a4e945e060843a8c34f3bc1c571fce0311f2b",
+  "note": "deterministic generation; separation rules are never exposed to any model. Required terms are drawn from the split-local entity pool so they cannot leak holdout content into train."
+}
