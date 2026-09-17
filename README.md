@@ -228,7 +228,7 @@ current R2 language mainline and does not imply a default-runtime promotion.
   but no S2/L2 conversational capability has been established. `promotion_gate=false`,
   `can_promote=false`, and `growth_admitted=false` remain the honest K-axis boundary; no
   default-runtime owner or product rollout is implied.
-- Next planned action: hold the architecture design review for the frozen attribution result, focusing on how workspace state becomes transferable response content. H3.6-B and H3.7 finals remain unread; no extra epochs, default adoption, or Mini acceptance follow this negative result.
+- Next decision: approve the isolated joint sequence-credit prototype described in [H3.8 review](plans/reference/M5_R2_H3_8_SEQUENCE_CREDIT_REVIEW_20260917.md). Two synthetic tests reproduce H3.7 target/phase misalignment and scalar-normalization cancellation; the negative result does not reject all learnable-workspace architectures. No final evaluation, extra H3.7 epochs, default adoption, or Mini acceptance is authorized by this review.
 - Honest boundary: this is a learning-mechanism research prototype, **not** a completed
   cognitive architecture, not yet a general-purpose language model, and not a claim about AGI.
   The current R2 work explicitly treats unreadable or non-transferring responses as failures to

@@ -1,5 +1,7 @@
 # Seed / Taiji 当前详细推进方案
 
+> 当前裁决（2026-09-17，优先于下方历史执行记录）：H3.7补充几何审计完成，两个合成测试通过；目标分段与运行phase错位、拟合scalar被归一化抵消，故旧归因不能排除实现/监督混杂。下一步唯一建议是确认[H3.8联合序列信用原型](../../reference/M5_R2_H3_8_SEQUENCE_CREDIT_REVIEW_20260917.md)，随后冻结隔离实现合同并实现梯度/因果/恢复门。此刻处于发展训练计算图的设计决策点，不是训练权限不足。现有训练授权保留，不追加H3.7 epoch、不读final、不改变默认核心、不提前Mini验收。下面seed续跑指令均为已完成阶段的历史，不再执行。本轮仅2项定向测试通过，未验证当前提交全量/远端CI。
+
 > 更新：2026-09-17；R0证据与门禁审计已完成。本次决定将R2整模型语言能力设为当前主线；结构化R2入口、checkpoint前置、P1 developmental 对照、P2序列级只读评价、G1条件接口、H2/H3内部表示/读出审计、H3.1序列路径对照、H3.2 response-start候选读出、H3.3泛化控制与response-phase候选、H3.4逐位置条件信用审计、H3.5目标合同、H3.6-A target encoder plumbing及H3.6-B matched dev/bridge ablation均已完成；H3.6-B按预注册在final前负结果结项；本轮H3.7分解式回答工作空间与因果信用合同的隔离实现、preflight、三seed dev、消融与aggregate也已完成并在final前停止，训练权限不再扩展到同质补训或final读取，当前按固定归因顺序复审。
 > 本文是唯一执行顺序来源；[01](01_SCOPE_AND_PHASES.md)管总阶段，[02](02_GATES_AND_CI.md)管晋级，[07](07_MINI_MODEL_DELIVERY.md)管整模型验收。
 > 旧逐轮台账完整保留于Git的56a4c3e4:plans/active/roadmap/03_CURRENT_EXECUTION.md及各冻结报告。本次不改历史结果、不修改默认入口、不授权产品采用或架构切换；R2隔离smoke只用于验证新入口。

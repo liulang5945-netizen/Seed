@@ -149,7 +149,7 @@ B 为独立 episode 批数，D 为宽度，K 为槽数，R 为头数。以下形
 
 原型优先短回答的相关性、正确性、上下文和不知道时拒答，而不是长篇流畅度。知识未知、理解失败、检索错误、推理错误和表达错误分开统计。算术使用计算工具时明确标注辅助，不计为无工具内生算术。
 
-### 7.4 H3.7 分解式回答工作空间候选
+### 7.3 H3.7 分解式回答工作空间候选
 
 R2-H3.5/H3.6 已证明“一个静态 plan 向量＋逐 byte 局部更新”没有形成稳定的未见回答迁移。当前进入隔离候选的高上限方向是 factorized response workspace：prefix native state 在 assistant boundary 产生 4 个有序 plan slots，renderer 按已生成 byte 的固定 phase 消费当前 slot，同时保留少量 slot0 的全局回答结构信号。每个 byte 的 predictive error 通过 renderer 的 backprojection 和 conditioned tanh 的局部导数更新 `plan_bridge`，再以固定较小比例更新当前槽的 planner rows。
 
@@ -157,7 +157,13 @@ R2-H3.5/H3.6 已证明“一个静态 plan 向量＋逐 byte 局部更新”没�
 
 H3.7 已按冻结合同完成三 seed matched dev、三组 treatment 消融、aggregate和有界只读归因审计，但判定为 `stopped_before_final`：control/treatment 的 dev sequence 均为 `0.25/0.25/0.25`，exact 与 required-term coverage 均为0，seed `20260918` 的 treatment boundary 相对 control 从1.0降为0.875；审计显示target有弱且不均匀的dev对齐，phase概率面确实变化，但workspace没有转化为可迁移内容，bridge/slot-credit也没有撤销真实treatment收益。该候选保留为已实现的失败证据，不进入默认 Taiji 架构、不读取 final、不追加同质训练；后续设计必须先按 H3.7 固定归因顺序拆分 target、phase、credit、renderer、prefix representation 与 capacity/data，新的方案需要独立合同与复审。
 
-### 7.3 否决信号
+### 7.4 H3.8 联合序列信用候选（待决策）
+
+2026-09-17 补充复审：合成测试复现 H3.7 字符安全 target chunk 与固定 byte phase 错位，以及拟合 scalar 被逐槽归一化抵消。旧 cosine/phase 审计只支持接口相关性，不足以证明目标可学、阶段对齐或完整梯度正确；负结果不应泛化为工作空间架构无效。
+
+唯一推荐：可训练 prefix 因果编码器产生内容工作空间，循环 byte renderer 根据状态寻址，真实下一 byte 序列损失联合训练三者。移除哈希内容监督与固定 phase 依赖，区分发展训练更新和运行时隐状态更新。首轮不加入持续参数适应、不替换默认核心。计算图、选择代价、实现门及数据/预算冻结要求见 [H3.8执行复审](M5_R2_H3_8_SEQUENCE_CREDIT_REVIEW_20260917.md)；该文是执行提案，不是第二份 VISION。
+
+### 7.5 否决信号
 
 固定字符串也能达到同分、改问法即失效、上下文被忽略、缺权重仍有相同回答、外部 provider 禁用后失语，都必须改变能力声明或记录为失败；不能仅靠 UI 效果通过。
 
