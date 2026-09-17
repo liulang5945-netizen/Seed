@@ -76,12 +76,12 @@ import torch
 from .internalization import content_digest
 
 SEQUENCE_WORKSPACE_FORMAT = "taiji-sequence-workspace-v1"
-#: Version 3 (R2-D2, 2026-09-18): per-position evidence rows via
-#: ``evidence_source``.  Version 2 (single-channel workspace) remains
-#: restorable; version-1 payloads are refused, never silently reinterpreted.
-SEQUENCE_WORKSPACE_VERSION = 3
+#: Version 4 (R2-D2 H-A2, 2026-09-18): copy-mixture evidence readout via
+#: ``copy_mixture``.  Versions 2 (single-channel workspace) and 3 (per-position
+#: evidence) remain restorable; version-1 payloads are refused.
+SEQUENCE_WORKSPACE_VERSION = 4
 #: Checkpoint payload versions this build is allowed to restore.
-SEQUENCE_WORKSPACE_SUPPORTED_VERSIONS = frozenset({2, 3})
+SEQUENCE_WORKSPACE_SUPPORTED_VERSIONS = frozenset({2, 3, 4})
 SEQUENCE_WORKSPACE_TRAINER_FORMAT = "taiji-sequence-workspace-trainer-v1"
 SEQUENCE_WORKSPACE_ALPHABET = 257
 SEQUENCE_WORKSPACE_BOUNDARY = 256
@@ -114,6 +114,8 @@ _CANONICAL_PARAMETER_ORDER: tuple[str, ...] = (
     "workspace_value",
     "evidence_key",
     "evidence_value",
+    "copy_gate_weight",
+    "copy_gate_bias",
     "decoder",
     "decoder_bias",
 )
@@ -126,7 +128,14 @@ _CANONICAL_PARAMETER_ORDER: tuple[str, ...] = (
 SEQUENCE_WORKSPACE_PARAMETERS: tuple[str, ...] = tuple(
     name
     for name in _CANONICAL_PARAMETER_ORDER
-    if name not in {"renderer_start", "evidence_key", "evidence_value"}
+    if name
+    not in {
+        "renderer_start",
+        "evidence_key",
+        "evidence_value",
+        "copy_gate_weight",
+        "copy_gate_bias",
+    }
 )
 
 #: Declared inventory of the graph-v3 evidence arm (R2-D2): the per-position
@@ -134,6 +143,21 @@ SEQUENCE_WORKSPACE_PARAMETERS: tuple[str, ...] = tuple(
 #: ``workspace_key/workspace_value`` matrices; every other shared tensor keeps
 #: its name and initialization.  A and C1 share this exact inventory.
 SEQUENCE_WORKSPACE_EVIDENCE_PARAMETERS: tuple[str, ...] = tuple(
+    name
+    for name in _CANONICAL_PARAMETER_ORDER
+    if name
+    not in {
+        "renderer_start",
+        "workspace_key",
+        "workspace_value",
+        "copy_gate_weight",
+        "copy_gate_bias",
+    }
+)
+
+#: Graph-v4 copy-mixture arm (R2-D2 H-A2): v3 evidence inventory plus the
+#: per-byte generate/copy gate (``64 + 1 = 65`` parameters; 82,658 total).
+SEQUENCE_WORKSPACE_COPY_PARAMETERS: tuple[str, ...] = tuple(
     name
     for name in _CANONICAL_PARAMETER_ORDER
     if name not in {"renderer_start", "workspace_key", "workspace_value"}
@@ -154,6 +178,8 @@ SEQUENCE_WORKSPACE_BASELINE_PARAMETERS: tuple[str, ...] = tuple(
         "workspace_value",
         "evidence_key",
         "evidence_value",
+        "copy_gate_weight",
+        "copy_gate_bias",
     }
 )
 
@@ -186,6 +212,10 @@ class SequenceWorkspaceConfig:
     #: graph exactly; the other two select the per-position evidence arm and
     #: its parameter-matched broadcast control.
     evidence_source: str = EVIDENCE_FINAL_STATE_SLOTS
+    #: R2-D2 H-A2 graph v4: mix the native vocabulary distribution with a
+    #: copy distribution over visible prefix byte positions.  Only valid for
+    #: the position-aligned evidence arms (per_position / broadcast_final).
+    copy_mixture: bool = False
 
     def __post_init__(self) -> None:
         for name in ("prefix_width", "slots", "slot_width", "renderer_width"):
@@ -207,6 +237,13 @@ class SequenceWorkspaceConfig:
             raise ValueError(
                 "evidence_source variants require the workspace arm " "(workspace_enabled=True)"
             )
+        if self.copy_mixture and not self.workspace_enabled:
+            raise ValueError("copy mixture requires the workspace arm")
+        if self.copy_mixture and self.evidence_source == EVIDENCE_FINAL_STATE_SLOTS:
+            raise ValueError(
+                "copy mixture needs position-aligned evidence rows "
+                "(per_position or broadcast_final), not the v2 slots"
+            )
 
     def to_payload(self) -> dict[str, Any]:
         return {
@@ -220,6 +257,7 @@ class SequenceWorkspaceConfig:
             "boundary_symbol": int(self.boundary_symbol),
             "workspace_enabled": bool(self.workspace_enabled),
             "evidence_source": str(self.evidence_source),
+            "copy_mixture": bool(self.copy_mixture),
         }
 
 
@@ -235,6 +273,7 @@ class WorkspaceState:
     workspace_key: torch.Tensor | None  # (entries, slot_width) -- v2 slots or v3 positions
     workspace_value: torch.Tensor | None  # (entries, slot_width) -- frozen after begin
     renderer_state: torch.Tensor  # (renderer_width,)
+    entry_bytes: tuple[int, ...] | None = None  # prefix byte per evidence row (v3/v4)
 
 
 @dataclass(frozen=True)
@@ -285,6 +324,7 @@ class SequenceWorkspacePrototype:
             # the prefix enters the answer stream only through the workspace
             # rows generated here.  v3 (R2-D2) swaps the two row matrices for
             # shared per-position projections; the renderer side is identical.
+            # v4 (H-A2) adds the per-byte generate/copy gate.
             make("start_vector", (rw,), 0.5)
             make("address_query", (rw, sw), 1.0 / math.sqrt(rw))
             if self.config.evidence_source == EVIDENCE_FINAL_STATE_SLOTS:
@@ -293,6 +333,9 @@ class SequenceWorkspacePrototype:
             else:
                 make("evidence_key", (rw, sw), 1.0 / math.sqrt(rw))
                 make("evidence_value", (rw, sw), 1.0 / math.sqrt(rw))
+            if self.config.copy_mixture:
+                make("copy_gate_weight", (rw,), 1.0 / math.sqrt(rw))
+                make("copy_gate_bias", (1,), 0.0)
         else:
             # baseline arm keeps the v1 vanilla encoder: the prefix scan state
             # initializes the renderer directly.
@@ -315,6 +358,8 @@ class SequenceWorkspacePrototype:
             return SEQUENCE_WORKSPACE_BASELINE_PARAMETERS
         if self.config.evidence_source == EVIDENCE_FINAL_STATE_SLOTS:
             return SEQUENCE_WORKSPACE_PARAMETERS
+        if self.config.copy_mixture:
+            return SEQUENCE_WORKSPACE_COPY_PARAMETERS
         return SEQUENCE_WORKSPACE_EVIDENCE_PARAMETERS
 
     def named_parameters(self) -> tuple[tuple[str, torch.nn.Parameter], ...]:
@@ -364,12 +409,21 @@ class SequenceWorkspacePrototype:
 
         return self._scan_prefix(prefix)[0]
 
-    def begin_episode(self, prefix: bytes, *, value_rotation: int = 0) -> WorkspaceState:
+    def begin_episode(
+        self,
+        prefix: bytes,
+        *,
+        value_rotation: int = 0,
+        entry_rotation: int = 0,
+    ) -> WorkspaceState:
         """Build the per-episode workspace and start state.  Nothing carries over.
 
         ``value_rotation`` is the evaluation-only R2-D2 misbind lesion: value
         rows are cyclically shifted against their keys while every row's
-        content is preserved.  It must stay zero on every training path.
+        content is preserved.  ``entry_rotation`` (graph v4) cyclically shifts
+        the prefix byte aligned to each evidence row, so the copy pathway
+        copies from misaligned positions; keys and generative values stay put.
+        Both must stay zero on every training path.
         """
 
         prefix = _validate_bytes(prefix, "prefix")
@@ -378,9 +432,13 @@ class SequenceWorkspacePrototype:
         rotation = int(value_rotation)
         if rotation < 0:
             raise ValueError("value_rotation must be non-negative")
+        byte_rotation = int(entry_rotation)
+        if byte_rotation < 0:
+            raise ValueError("entry_rotation must be non-negative")
         h0, states = self._scan_prefix(prefix)
         slots = int(self.config.slots)
         sw = int(self.config.slot_width)
+        entry_bytes: tuple[int, ...] | None = None
         if self.config.workspace_enabled:
             # v2 single prefix channel: h0 only produces the workspace rows;
             # the renderer starts from a learned constant (contract section 7).
@@ -408,18 +466,26 @@ class SequenceWorkspacePrototype:
                     workspace_value = (h0 @ self._parameters["evidence_value"]).expand(
                         len(states), -1
                     )
+                entry_bytes = tuple(int(symbol) for symbol in prefix)
             if rotation:
                 workspace_value = torch.roll(
                     workspace_value, shifts=rotation % workspace_value.shape[0], dims=0
                 )
+            if byte_rotation and entry_bytes is not None:
+                shift = byte_rotation % len(entry_bytes)
+                entry_bytes = tuple(
+                    entry_bytes[(i - shift) % len(entry_bytes)] for i in range(len(entry_bytes))
+                )
             renderer_state: torch.Tensor = self._parameters["start_vector"]
         else:
-            if rotation:
+            if rotation or byte_rotation:
                 raise ValueError("the baseline arm has no evidence rows to rotate")
             workspace_key = None
             workspace_value = None
             renderer_state = torch.tanh(h0 @ self._parameters["renderer_start"])
-        return WorkspaceState(workspace_key, workspace_value, renderer_state)
+        return WorkspaceState(
+            workspace_key, workspace_value, renderer_state, entry_bytes=entry_bytes
+        )
 
     def step(
         self,
@@ -457,7 +523,12 @@ class SequenceWorkspacePrototype:
         else:
             logits = renderer_state @ self._parameters["decoder"] + self._parameters["decoder_bias"]
         return (
-            WorkspaceState(state.workspace_key, state.workspace_value, renderer_state),
+            WorkspaceState(
+                state.workspace_key,
+                state.workspace_value,
+                renderer_state,
+                entry_bytes=state.entry_bytes,
+            ),
             logits,
         )
 
@@ -484,6 +555,65 @@ class SequenceWorkspacePrototype:
         query = state.renderer_state @ self._parameters["address_query"]
         scores = (key @ query) / math.sqrt(float(self.config.slot_width))
         return torch.softmax(scores, dim=0)
+
+    def _copy_distribution(self, state: WorkspaceState, weights: torch.Tensor) -> torch.Tensor:
+        """p_copy[b] = sum of addressing weights on rows whose byte equals b.
+
+        Normalized over visible prefix positions only; the boundary symbol
+        (256) gets exactly zero mass, so stopping always goes through the
+        generative vocabulary branch.
+        """
+
+        if state.entry_bytes is None:
+            raise ValueError("copy distribution requires position-aligned evidence rows")
+        distribution = torch.zeros(int(self.config.alphabet_size), dtype=weights.dtype)
+        index = torch.tensor(state.entry_bytes, dtype=torch.long)
+        return distribution.index_add(0, index, weights)
+
+    def step_distribution(
+        self, state: WorkspaceState, previous_symbol: int, *, zero_read: bool = False
+    ) -> tuple[WorkspaceState, torch.Tensor]:
+        """One renderer step returning the graph-v4 mixture distribution.
+
+        ``p = pi * p_vocab + (1 - pi) * p_copy``; under ``zero_read`` the
+        evidence vector is zeroed and the copy term removed (``p = p_vocab``).
+        """
+
+        if not self.config.copy_mixture:
+            raise ValueError("step_distribution requires copy_mixture=True")
+        new_state, vocab_logits = self.step(state, previous_symbol, zero_read=zero_read)
+        p_vocab = torch.softmax(vocab_logits, dim=0)
+        if zero_read or new_state.entry_bytes is None:
+            return new_state, p_vocab
+        weights = self.addressing_weights(new_state, detach=False)
+        p_copy = self._copy_distribution(new_state, weights)
+        renderer_state = new_state.renderer_state
+        gate = torch.sigmoid(
+            renderer_state @ self._parameters["copy_gate_weight"]
+            + self._parameters["copy_gate_bias"]
+        )
+        return new_state, gate * p_vocab + (1.0 - gate) * p_copy
+
+    def teacher_forced_distributions(self, prefix: bytes, response: bytes) -> torch.Tensor:
+        """Mixture distributions at positions 0..len(response) (teacher-forced)."""
+
+        prefix = _validate_bytes(prefix, "prefix")
+        response = _validate_bytes(response, "response")
+        total = len(prefix) + len(response) + 1
+        if total > int(self.config.max_sequence_bytes):
+            raise ValueError(
+                "sequence exceeds max_sequence_bytes; truncation needs its own contract"
+            )
+        state = self.begin_episode(prefix)
+        distributions: list[torch.Tensor] = []
+        previous = self.config.boundary_symbol
+        for symbol in response:
+            state, probability = self.step_distribution(state, previous)
+            distributions.append(probability)
+            previous = int(symbol)
+        state, probability = self.step_distribution(state, previous)
+        distributions.append(probability)
+        return torch.stack(distributions, dim=0)
 
     def teacher_forced_logits(self, prefix: bytes, response: bytes) -> torch.Tensor:
         """Logits for positions 0..len(response); last position predicts the end marker."""
@@ -586,14 +716,25 @@ class SequenceWorkspacePrototype:
         first_weight = float(first_byte_weight)
         if first_weight <= 0.0:
             raise ValueError("first_byte_weight must be positive")
-        logits = self._response_logits(
-            prefix, response, generation_state_ratio=ratio, generator=generator
-        )
         targets = torch.tensor(
             [int(symbol) for symbol in response] + [int(self.config.boundary_symbol)],
             dtype=torch.long,
         )
-        per_position = torch.nn.functional.cross_entropy(logits, targets, reduction="none")
+        if self.config.copy_mixture:
+            if ratio > 0.0 or weight > 0.0:
+                raise ValueError(
+                    "scheduled sampling and contrastive terms are not defined "
+                    "on the copy-mixture distribution (R2-D2 H-A2)"
+                )
+            distributions = self.teacher_forced_distributions(prefix, response)
+            target_probs = distributions.gather(1, targets.unsqueeze(1)).squeeze(1)
+            per_position = -target_probs.clamp_min(1e-12).log()
+            logits = distributions
+        else:
+            logits = self._response_logits(
+                prefix, response, generation_state_ratio=ratio, generator=generator
+            )
+            per_position = torch.nn.functional.cross_entropy(logits, targets, reduction="none")
         position_weights = torch.ones_like(per_position)
         position_weights[0] = first_weight
         loss = (per_position * position_weights).sum() / position_weights.sum()
@@ -633,23 +774,32 @@ class SequenceWorkspacePrototype:
         *,
         max_bytes: int | None = None,
         value_rotation: int = 0,
+        entry_rotation: int = 0,
         zero_read: bool = False,
     ) -> GenerationResult:
         """Greedy native generation for later inference checks (no parameter update).
 
-        ``value_rotation`` / ``zero_read`` are the R2-D2 evaluation-only
-        misbind and read-ablation lesions; both default to the intact graph.
+        ``value_rotation`` / ``entry_rotation`` / ``zero_read`` are the R2-D2
+        evaluation-only generative-misbind, copy-misbind and read-ablation
+        lesions; all default to the intact graph.  With copy mixture enabled
+        the greedy symbol is the argmax of the mixture distribution.
         """
 
         limit = int(max_bytes if max_bytes is not None else self.config.max_sequence_bytes)
-        state = self.begin_episode(prefix, value_rotation=value_rotation)
+        state = self.begin_episode(
+            prefix, value_rotation=value_rotation, entry_rotation=entry_rotation
+        )
         previous = int(self.config.boundary_symbol)
         produced = bytearray()
         stopped = False
         steps = 0
         while steps < limit:
-            state, logits = self.step(state, previous, zero_read=zero_read)
-            symbol = int(logits.argmax(dim=0))
+            if self.config.copy_mixture:
+                state, distribution = self.step_distribution(state, previous, zero_read=zero_read)
+                symbol = int(distribution.argmax(dim=0))
+            else:
+                state, logits = self.step(state, previous, zero_read=zero_read)
+                symbol = int(logits.argmax(dim=0))
             steps += 1
             if symbol == int(self.config.boundary_symbol):
                 stopped = True
