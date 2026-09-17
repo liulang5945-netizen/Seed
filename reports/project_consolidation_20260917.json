@@ -1,0 +1,51 @@
+{
+  "format": "seed-project-consolidation-v1",
+  "date": "2026-09-17",
+  "timezone": "Asia/Shanghai",
+  "source_revision": "6d12d7a4c0725cc71681251bec38ded26b9b6788",
+  "reason": "user_requested_project_consolidation",
+  "project_phase": "M5",
+  "status": "paused_after_consolidation",
+  "new_training_allowed_by_this_record": false,
+  "capability_promotion": false,
+  "automatic_continuation_created": false,
+  "stopped_process": {
+    "pid": 25624,
+    "identity_checked_before_stop": true,
+    "script": "scripts/training/train_taiji_r2_aligned.py",
+    "dataset": "tests/fixtures/r2_p3b_v2_goal_aligned_episodes_v1.jsonl",
+    "started_at_local": "2026-09-17T15:25:16+08:00",
+    "progress_file_present_at_inspection": false,
+    "final_report_present_at_inspection": false,
+    "result": "interrupted_unadjudicated"
+  },
+  "preserved_checkpoint": {
+    "path": "reports/p3b_v2_pilot_20260917/checkpoint.pt",
+    "bytes": 16520045,
+    "mtime_local": "2026-09-17T15:21:19+08:00",
+    "predates_stopped_process": true,
+    "file_sha256": "b14ae9b0048172b56b6ed20893457607f036ee3a2fca1e393797907ee44242c9",
+    "unchanged_after_stop": true,
+    "payload_code_revision": "d74fd9fb9b62e58c9b10af561cb312d9a230bc8d",
+    "payload_digest_field": "81aca12f84663918177edb27130e68abfebd8f00c2dc955b7dffcfd02a6e68c6",
+    "digest_recomputed_by_this_record": false,
+    "global_step": 1080,
+    "episode_count": 24,
+    "target_geometry": "h3_7_factorized_response_chunks",
+    "target_contract_deviation_requires_review": true,
+    "fresh_restore_performed_during_consolidation": false
+  },
+  "dataset": {
+    "file_sha256": "5ceaad40532de5a10178f23abcee68970744d0efefd19bd341f1d0660a54f9e2",
+    "loaded_corpus_digest": "f7a5841860f3059147557564cc99cca05b3f71f71155c95e1db26a129c4446a1",
+    "matches_checkpoint_corpus_digest": true,
+    "split_counts": {"train": 40, "dev": 20, "final": 20, "retention": 0}
+  },
+  "verification": {
+    "historical_repair_targeted_tests_passed": 18,
+    "current_head_full_ci_verified": false,
+    "broader_local_suite": "failed_with_temp_directory_permission_and_cleanup_error",
+    "capability_evaluation_during_consolidation": false
+  },
+  "next_step": "user_resumed_read_only_checkpoint_identity_contract_and_entrypoint_audit"
+}

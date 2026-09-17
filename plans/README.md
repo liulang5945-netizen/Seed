@@ -4,7 +4,7 @@
 
 ## 项目位置
 
-当前为M5知识与身体。H3.5-A已在final前按负结果停止；H3.6三种子无训练geometry审计进一步选定`train-whitened native response state + compositional char n-gram`，其跨split匹配三seed均为0.583且最小距离≥0.212，优于signed-hash的稳定0.5。当前唯一下一步是实现版本化H3.6-A target encoder与reconstruction smoke，不运行能力训练、不读final。Mini继续后置。
+当前仍为M5知识与身体。2026-09-17按用户要求[阶段收束并暂停](reference/PROJECT_CONSOLIDATION_20260917.md)：H3.7B已结项，H3.8 v1/v2停止投入，P3b-v2中断未判定；没有阶段晋级或Mini交付。不执行下方历史文档的旧“下一步”，唯一执行状态以[03当前裁决](active/roadmap/03_CURRENT_EXECUTION.md)为准。
 
 P3b两臂已停止，数据分布效应只有一个共同检查点，阶段结论应按“不可判”封存；64预算在线复测是未提交候选，不能继续仅写“等训练结束”或“放宽预算即可通过”。
 

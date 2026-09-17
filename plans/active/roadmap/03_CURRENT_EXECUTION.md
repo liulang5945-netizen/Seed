@@ -1,6 +1,12 @@
 # Seed / Taiji 当前详细推进方案
 
-> 当前裁决（2026-09-17，覆盖下方历史指令）：用户要求持续推进主线，H3.8/VISION退回非阻塞候选，不等待架构讨论。当前执行[H3.7B一致性修复](../../reference/M5_R2_H3_7B_CONSISTENCY_REPAIR_20260917.md)：修复首byte过时prior、0.75/0.25混合信用、使用版本隔离的byte对齐target；17项定向测试通过。唯一下一步为两臂各1epoch的train-only工程验证，训练前后执行新进程checkpoint恢复和一步续训一致性检查。沿用训练授权，不补跑旧H3.7、不读final、不切默认入口、不推进Mini；全量/远端CI未验证。
+> 当前裁决（2026-09-17，用户要求项目收束）：停止扩展及新训练，不自动接续。H3.7B已结项，H3.8 v1/v2按预承诺停止投入；最新P3b-v2进程已停止，现有checkpoint保留但缺完整结果报告，状态为“中断、未判定”，不是训练或能力通过。完整身份、证据和缺口见[项目收束记录](../../reference/PROJECT_CONSOLIDATION_20260917.md)。M5/R2未晋级，Mini后置，VISION不作为前置。
+
+## 当前唯一下一步：现有P3b-v2产物只读核验（暂停，待用户重新启动）
+
+先核验身份、恢复和目标格式是否符合冻结合同，再决定是否能按既定入口评分。不得追加训练、改阈值或用旧checkpoint冒充中断run的结果。本次仅收束，不自动执行此步骤。
+
+## 历史工作包台账（以下旧“下一步”不再生效）
 
 > 完成（2026-09-17，a24f8763）：两臂工程验证均 `passed_engineering_only`（[A legacy_target](../../../reports/r2_h3_7b_validation/legacy_target/report.json)、[B byte_aligned](../../../reports/r2_h3_7b_validation/byte_aligned/report.json)）——corpus digest 与冻结 fixture 一致、有效参数 277,970 ≤ 300k、checkpoint 往返与 factorized preflight 通过、零步与训练后 checkpoint 均新进程复核且一步续训 digest 与进程内探针一致、每臂 12 episodes/537 byte 更新无非法值；final/dev 按设计未评分，checkpoint .pt 留本地（digest 已入报告）。
 >
@@ -24,7 +30,7 @@
 > 本文是唯一执行顺序来源；[01](01_SCOPE_AND_PHASES.md)管总阶段，[02](02_GATES_AND_CI.md)管晋级，[07](07_MINI_MODEL_DELIVERY.md)管整模型验收。
 > 旧逐轮台账完整保留于Git的56a4c3e4:plans/active/roadmap/03_CURRENT_EXECUTION.md及各冻结报告。本次不改历史结果、不修改默认入口、不授权产品采用或架构切换；R2隔离smoke只用于验证新入口。
 
-## 当前唯一下一步：**R2 候选重审议（user-gated）**
+## 历史决策点：R2 候选重审议（后续已有P3b-v2工作，非当前执行指令）
 
 > **2026-09-17 收敛**：H3.8（joint-sequence credit / workspace 机制）**已按预承诺结项，该架构族停止投入**
 > —— v1 与 v2（单一前缀通道）两次 matched dev 均落 `workspace_unused`，lesion 非全正 ⇒

@@ -228,7 +228,7 @@ current R2 language mainline and does not imply a default-runtime promotion.
   but no S2/L2 conversational capability has been established. `promotion_gate=false`,
   `can_promote=false`, and `growth_admitted=false` remain the honest K-axis boundary; no
   default-runtime owner or product rollout is implied.
-- Current mainline: [H3.7B consistency repair and bounded validation](plans/reference/M5_R2_H3_7B_CONSISTENCY_REPAIR_20260917.md). Refresh stale first-byte priors, correct mixed-slot credit, and version byte-aligned targets; run checkpoint preflights before the bounded train-only validation. H3.8/VISION is not a prerequisite. No final evaluation, old-run continuation, default adoption, or Mini acceptance.
+- Current status (2026-09-17): [consolidated and paused](plans/reference/PROJECT_CONSOLIDATION_20260917.md). H3.7B is closed; H3.8 v1/v2 stopped at their gates. The latest P3b-v2 process was stopped for consolidation; its older on-disk checkpoint is preserved, but no complete pilot report establishes a capability result. No new training, default adoption, or Mini acceptance. The only proposed next step is read-only artifact verification after the user resumes work.
 - Honest boundary: this is a learning-mechanism research prototype, **not** a completed
   cognitive architecture, not yet a general-purpose language model, and not a claim about AGI.
   The current R2 work explicitly treats unreadable or non-transferring responses as failures to

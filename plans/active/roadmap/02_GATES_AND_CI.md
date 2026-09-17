@@ -1,6 +1,6 @@
 # Seed / Taiji 晋级、阶段退出与发布门禁
 
-> 2026-09-17补充：当前门禁按[H3.7B修复合同](../../reference/M5_R2_H3_7B_CONSISTENCY_REPAIR_20260917.md)执行。首byte概率一致、混合信用数值差分、byte分段对齐及旧target兼容定向测试通过；正式验证先过checkpoint新进程恢复/续训门。工程通过不等于内容能力或全量CI通过；H3.8/VISION不阻塞主线，不改旧报告或final门。
+> 2026-09-17收束：工程修复通过不等于能力通过；P3b-v2缺完整报告且目标格式存在合同偏差，J1–J6均不补发裁决。当前HEAD全量CI未核验，较大范围测试遇临时目录权限异常，不记绿灯。停止新增训练，保留冻结阈值及final边界；见[收束记录](../../reference/PROJECT_CONSOLIDATION_20260917.md)。
 
 > 更新：2026-09-16。配合 [总阶段地图](01_SCOPE_AND_PHASES.md)；执行顺序只由 [03](03_CURRENT_EXECUTION.md) 决定。本文不修改历史冻结实验阈值。
 
