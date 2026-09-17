@@ -1,0 +1,187 @@
+{
+  "format": "taiji-r2-h3-8-train-learnability-v1",
+  "version": 1,
+  "graph_version": 2,
+  "corpus_digest": "5518ff500bbcb3551bc60cc13783442cd9fce870e8d17ee9dd4a7e165a17f6a8",
+  "split_read": "train",
+  "dev_read": false,
+  "final_read": false,
+  "seed": 20260917,
+  "epochs": 30,
+  "frozen_learning_rate": 0.01,
+  "train_episodes": 25,
+  "optimizer_steps_per_arm": 750,
+  "arms": {
+    "workspace": {
+      "arm": "workspace",
+      "workspace_enabled": true,
+      "learning_rate": 0.01,
+      "epochs": 30,
+      "episodes_trained": 750,
+      "parameter_count": 101025,
+      "initial": {
+        "mean_loss": 5.508017864227295,
+        "mean_surprise_bits": 7.9463900578485385,
+        "accuracy": 0.03614457831325301,
+        "positions": 166.0
+      },
+      "final": {
+        "mean_loss": 0.32038582384586334,
+        "mean_surprise_bits": 0.46221903923355206,
+        "accuracy": 0.8554216867469879,
+        "positions": 166.0
+      },
+      "trajectory": [
+        {
+          "epoch": 1,
+          "mean_loss": 1.3457247352600097,
+          "mean_surprise_bits": 1.9414704019612292,
+          "accuracy": 0.7289156626506024,
+          "positions": 166.0
+        },
+        {
+          "epoch": 5,
+          "mean_loss": 0.32648136019706725,
+          "mean_surprise_bits": 0.47101303929899235,
+          "accuracy": 0.8433734939759037,
+          "positions": 166.0
+        },
+        {
+          "epoch": 10,
+          "mean_loss": 0.30916884064674377,
+          "mean_surprise_bits": 0.4460363531984474,
+          "accuracy": 0.8433734939759037,
+          "positions": 166.0
+        },
+        {
+          "epoch": 15,
+          "mean_loss": 0.30661299228668215,
+          "mean_surprise_bits": 0.44234904344412235,
+          "accuracy": 0.8433734939759037,
+          "positions": 166.0
+        },
+        {
+          "epoch": 20,
+          "mean_loss": 0.3050056409835815,
+          "mean_surprise_bits": 0.44003012569017264,
+          "accuracy": 0.8433734939759037,
+          "positions": 166.0
+        },
+        {
+          "epoch": 25,
+          "mean_loss": 0.3070344507694244,
+          "mean_surprise_bits": 0.4429570795071152,
+          "accuracy": 0.8373493975903614,
+          "positions": 166.0
+        },
+        {
+          "epoch": 30,
+          "mean_loss": 0.32038582384586334,
+          "mean_surprise_bits": 0.46221903923355206,
+          "accuracy": 0.8554216867469879,
+          "positions": 166.0
+        }
+      ],
+      "loss_delta": -5.187632040381431,
+      "train_learnable": true,
+      "checkpoint_digest": "95e5bef7bedb5d74cde64c08dc79e4c3ae08bc2f2f2812f0ed065412b21c7d6f"
+    },
+    "baseline": {
+      "arm": "baseline",
+      "workspace_enabled": false,
+      "learning_rate": 0.01,
+      "epochs": 30,
+      "episodes_trained": 750,
+      "parameter_count": 103601,
+      "initial": {
+        "mean_loss": 5.5593709373474125,
+        "mean_surprise_bits": 8.020476881773341,
+        "accuracy": 0.0,
+        "positions": 166.0
+      },
+      "final": {
+        "mean_loss": 0.301932273209095,
+        "mean_surprise_bits": 0.435596193243093,
+        "accuracy": 0.8493975903614458,
+        "positions": 166.0
+      },
+      "trajectory": [
+        {
+          "epoch": 1,
+          "mean_loss": 1.0823326432704925,
+          "mean_surprise_bits": 1.5614759370385831,
+          "accuracy": 0.7771084337349398,
+          "positions": 166.0
+        },
+        {
+          "epoch": 5,
+          "mean_loss": 0.30776293456554416,
+          "mean_surprise_bits": 0.4440080594671451,
+          "accuracy": 0.8554216867469879,
+          "positions": 166.0
+        },
+        {
+          "epoch": 10,
+          "mean_loss": 0.2883760118484497,
+          "mean_surprise_bits": 0.41603864220509534,
+          "accuracy": 0.8554216867469879,
+          "positions": 166.0
+        },
+        {
+          "epoch": 15,
+          "mean_loss": 0.28072485864162444,
+          "mean_surprise_bits": 0.40500036141652684,
+          "accuracy": 0.8554216867469879,
+          "positions": 166.0
+        },
+        {
+          "epoch": 20,
+          "mean_loss": 0.2567607647180557,
+          "mean_surprise_bits": 0.37042748195359687,
+          "accuracy": 0.8614457831325302,
+          "positions": 166.0
+        },
+        {
+          "epoch": 25,
+          "mean_loss": 0.22767545342445372,
+          "mean_surprise_bits": 0.32846624758760556,
+          "accuracy": 0.8975903614457831,
+          "positions": 166.0
+        },
+        {
+          "epoch": 30,
+          "mean_loss": 0.301932273209095,
+          "mean_surprise_bits": 0.435596193243093,
+          "accuracy": 0.8493975903614458,
+          "positions": 166.0
+        }
+      ],
+      "loss_delta": -5.257438664138317,
+      "train_learnable": true,
+      "checkpoint_digest": "1e653318f45a94002a6600ebfed63aba8b5fa54c7aee093569f62718dd5daa1e"
+    }
+  },
+  "stability_finding": {
+    "probe_learning_rate": 0.05,
+    "probe_epochs": 30,
+    "arm": "workspace_high_lr_stability_probe",
+    "initial": {
+      "mean_loss": 5.508017864227295,
+      "mean_surprise_bits": 7.9463900578485385,
+      "accuracy": 0.03614457831325301,
+      "positions": 166.0
+    },
+    "final": {
+      "mean_loss": 0.6998430016636848,
+      "mean_surprise_bits": 1.0096600279010448,
+      "accuracy": 0.8313253012048193,
+      "positions": 166.0
+    },
+    "diverged": false,
+    "reading": "the workspace arm is lr-sensitive over the full budget: at 0.05 its loss rises above the initial value while the baseline tolerates that rate, so the shared frozen learning rate is 0.01 (stable for both arms).  This is an optimizer-stability finding, not a data finding; per contract section 4 the response is to return to the computation graph rather than add epochs or data"
+  },
+  "outcome": "passed",
+  "reading": "train-only learnability probe; numbers inform the matched-dev budget freeze and are not capability claims",
+  "growth_admitted": false,
+  "can_promote": false
+}

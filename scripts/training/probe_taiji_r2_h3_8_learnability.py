@@ -25,6 +25,8 @@ import torch  # noqa: E402
 
 from taiji.internalization import content_digest  # noqa: E402
 from taiji.sequence_workspace import (  # noqa: E402
+    SEQUENCE_WORKSPACE_BASELINE_RENDERER_WIDTH,
+    SEQUENCE_WORKSPACE_VERSION,
     SequenceWorkspaceConfig,
     SequenceWorkspacePrototype,
     SequenceWorkspaceTrainer,
@@ -32,7 +34,7 @@ from taiji.sequence_workspace import (  # noqa: E402
 
 FIXTURE = Path("tests/fixtures/r2_h3_8_joint_sequence_v1.jsonl")
 CORPUS_DIGEST = "5518ff500bbcb3551bc60cc13783442cd9fce870e8d17ee9dd4a7e165a17f6a8"
-DEFAULT_REPORT = Path("reports/r2_h3_8_train_learnability_20260917.json")
+DEFAULT_REPORT = Path("reports/r2_h3_8_train_learnability_v2_20260917.json")
 FORMAT = "taiji-r2-h3-8-train-learnability-v1"
 EPOCHS = 30
 SEED = 20260917
@@ -85,7 +87,13 @@ def _run_arm(
 ) -> dict[str, Any]:
     torch.manual_seed(SEED)
     prototype = SequenceWorkspacePrototype(
-        SequenceWorkspaceConfig(seed=SEED, workspace_enabled=workspace_enabled)
+        SequenceWorkspaceConfig(
+            seed=SEED,
+            workspace_enabled=workspace_enabled,
+            renderer_width=(
+                64 if workspace_enabled else SEQUENCE_WORKSPACE_BASELINE_RENDERER_WIDTH
+            ),
+        )
     )
     trainer = SequenceWorkspaceTrainer(
         prototype, learning_rate=learning_rate, code_revision="h38-learnability"
@@ -156,6 +164,7 @@ def main() -> int:
     payload = {
         "format": FORMAT,
         "version": 1,
+        "graph_version": SEQUENCE_WORKSPACE_VERSION,
         "corpus_digest": digest,
         "split_read": "train",
         "dev_read": False,
