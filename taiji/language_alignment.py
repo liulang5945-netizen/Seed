@@ -25,7 +25,7 @@ from collections import defaultdict
 from collections.abc import Callable, Iterable, Mapping, Sequence
 from dataclasses import asdict, dataclass, replace
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 import torch
 
@@ -39,6 +39,11 @@ from .response_plan_target import (
     FactorizedResponsePlanTargetEncoder,
     ResponsePlanTargetEncoder,
 )
+
+#: The trainer accepts either encoder lineage: the H3.6 base encoder and the
+#: H3.7/H3.7B factorized family are parallel classes sharing the consumed
+#: interface (width/FORMAT/assert_compatible/encode_episode/target_digest).
+ResponsePlanTargetEncoderType = ResponsePlanTargetEncoder | FactorizedResponsePlanTargetEncoder
 
 LANGUAGE_ALIGNMENT_FORMAT = "taiji-native-language-alignment-v2"
 LANGUAGE_ALIGNMENT_VERSION = 2
@@ -490,7 +495,7 @@ class LanguageAlignmentTrainer:
         *,
         config: LanguageAlignmentConfig | None = None,
         code_revision: str | None = None,
-        response_plan_target_encoder: ResponsePlanTargetEncoder | None = None,
+        response_plan_target_encoder: ResponsePlanTargetEncoderType | None = None,
         response_plan_targets: Mapping[str, torch.Tensor] | None = None,
     ) -> None:
         if not isinstance(model, Taiji):
@@ -657,7 +662,7 @@ class LanguageAlignmentTrainer:
         norm = torch.linalg.vector_norm(target)
         if float(norm) == 0.0:
             raise RuntimeError("response plan target unexpectedly has zero norm")
-        return target / norm
+        return cast(torch.Tensor, target / norm)
 
     def _configure_developmental_mode(self) -> None:
         mode = self.config.developmental_mode
@@ -1957,8 +1962,8 @@ class LanguageAlignmentTrainer:
                     )
                     for index in indices
                 }
-                generated = [record["free_generation"] for record in records]
-                unique_generated = len({str(item["generated_text"]) for item in generated})
+                generated_items = [record["free_generation"] for record in records]
+                unique_generated = len({str(item["generated_text"]) for item in generated_items})
                 profiles[split] = {
                     "split": split,
                     "episodes": len(records),
@@ -1977,27 +1982,27 @@ class LanguageAlignmentTrainer:
                     "free_generation": {
                         "unique_generated_texts": unique_generated,
                         "generated_text_collision_rate": 1.0
-                        - (unique_generated / max(1, len(generated))),
-                        "utf8_valid_rate": sum(bool(item["utf8_valid"]) for item in generated)
-                        / max(1, len(generated)),
+                        - (unique_generated / max(1, len(generated_items))),
+                        "utf8_valid_rate": sum(bool(item["utf8_valid"]) for item in generated_items)
+                        / max(1, len(generated_items)),
                         "no_replacement_rate": sum(
-                            bool(item["no_replacement"]) for item in generated
+                            bool(item["no_replacement"]) for item in generated_items
                         )
-                        / max(1, len(generated)),
+                        / max(1, len(generated_items)),
                         "response_boundary_rate": sum(
-                            bool(item["response_boundary_present"]) for item in generated
+                            bool(item["response_boundary_present"]) for item in generated_items
                         )
-                        / max(1, len(generated)),
+                        / max(1, len(generated_items)),
                         "sequence_criterion_pass_rate": sum(
-                            bool(item["sequence_criterion_pass"]) for item in generated
+                            bool(item["sequence_criterion_pass"]) for item in generated_items
                         )
-                        / max(1, len(generated)),
+                        / max(1, len(generated_items)),
                         "exact_response_rate": sum(
-                            bool(item["exact_response"]) for item in generated
+                            bool(item["exact_response"]) for item in generated_items
                         )
-                        / max(1, len(generated)),
+                        / max(1, len(generated_items)),
                         "stop_reasons": sorted(
-                            {str(item["generation_stop_reason"]) for item in generated}
+                            {str(item["generation_stop_reason"]) for item in generated_items}
                         ),
                     },
                 }
@@ -2385,7 +2390,7 @@ class LanguageAlignmentTrainer:
         if not isinstance(config_payload, Mapping):
             raise ValueError("language alignment checkpoint is missing config")
         config = LanguageAlignmentConfig(**dict(config_payload))
-        target_encoder = None
+        target_encoder: ResponsePlanTargetEncoderType | None = None
         target_payload = payload.get("response_plan_target_encoder")
         target_targets_payload = payload.get("response_plan_targets")
         if config.response_plan_target_geometry == LANGUAGE_RESPONSE_PLAN_TARGET_H36:

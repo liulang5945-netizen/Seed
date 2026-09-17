@@ -16,7 +16,7 @@ from __future__ import annotations
 import hashlib
 from collections.abc import Iterator, Mapping, Sequence
 from contextlib import contextmanager
-from typing import Any
+from typing import Any, cast
 
 import torch
 
@@ -45,7 +45,7 @@ def _normalize(vector: torch.Tensor, *, name: str) -> torch.Tensor:
     norm = torch.linalg.vector_norm(value)
     if not bool(torch.isfinite(norm)) or float(norm) <= 1e-12:
         raise ValueError(f"{name} produced a zero or non-finite vector")
-    return value / norm
+    return cast(torch.Tensor, value / norm)
 
 
 def _required_digest(value: Any, name: str) -> str:
