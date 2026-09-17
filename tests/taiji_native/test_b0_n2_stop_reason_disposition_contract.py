@@ -33,15 +33,17 @@ def report():
 
 def test_current_review_surface_is_complete(audit, report):
     expected = {row["path"] for row in audit.EXPECTED_CONSUMERS}
-    assert len(expected) == 17
+    # 2026-09-17: 9/17 新增两个真消费者（B2v4 gate 统计 stop reasons、H3.7 attribution
+    # 断言 aggregate reason），另有 5 个同名/字段名误报改记入 SCAN_EXCLUSIONS。
+    assert len(expected) == 19
     assert audit.live_consumers() == expected
     current = audit.disposition()
     assert current["review_checks_passed"] is True
     assert current["drift"]["added"] == current["drift"]["removed"] == []
     assert current == report
     assert report["classification_counts"] == {
-        "record_only_files": 8,
-        "judgement_or_mixed_files": 9,
+        "record_only_files": 9,
+        "judgement_or_mixed_files": 10,
     }
 
 
@@ -59,8 +61,8 @@ def test_historical_inventory_is_not_rewritten(report):
         (REPO / "reports/taiji_b0_m4_hardening_20260913.json").read_text(encoding="utf-8")
     )
     assert historic["stop_reason_consumers"]["file_count"] == 11
-    assert report["consumer_count_now"] == 17
-    assert len(report["added_since_hardening_report"]) == 6
+    assert report["consumer_count_now"] == 19
+    assert len(report["added_since_hardening_report"]) == 8
 
 
 def test_all_reviewed_sites_have_markers(audit, report):

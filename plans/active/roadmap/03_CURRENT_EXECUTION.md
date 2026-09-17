@@ -24,6 +24,21 @@
 > 本文是唯一执行顺序来源；[01](01_SCOPE_AND_PHASES.md)管总阶段，[02](02_GATES_AND_CI.md)管晋级，[07](07_MINI_MODEL_DELIVERY.md)管整模型验收。
 > 旧逐轮台账完整保留于Git的56a4c3e4:plans/active/roadmap/03_CURRENT_EXECUTION.md及各冻结报告。本次不改历史结果、不修改默认入口、不授权产品采用或架构切换；R2隔离smoke只用于验证新入口。
 
+## 当前唯一下一步：**R2 候选重审议（user-gated）**
+
+> **2026-09-17 收敛**：H3.8（joint-sequence credit / workspace 机制）**已按预承诺结项，该架构族停止投入**
+> —— v1 与 v2（单一前缀通道）两次 matched dev 均落 `workspace_unused`，lesion 非全正 ⇒
+> 在单通道图里不能用 bypass 解释 ⇒ 归因升级到 **W-generation 路径本身**（见
+> [H3.9 归因总账](../../reference/M5_R2_H3_9_ATTRIBUTION_LEDGER_20260917.md)）。
+> **R2 主线因此停在「候选重审议」点**：下一步需要用户对候选方向做选择，而不是继续追加同质训练。
+>
+> 同日的 CAP-0 身份重锚（`2dec6145`）已把 git head / checkpoint sha256 / eval-set sha256 绑进报告
+> 的 identity block ⇒「无法复用旧身份」的缺口闭合；但**语言缺陷在当前身份上依旧完全存在**
+> （C 0/14、D 0/16、E 0/20，B/G 待人工复核，A/F/H not_executed）。
+>
+> 本文件仍是**唯一执行顺序来源**；[01](01_SCOPE_AND_PHASES.md) 管总阶段，
+> [02](02_GATES_AND_CI.md) 管晋级，[07](07_MINI_MODEL_DELIVERY.md) 管整模型验收。
+
 ## 1. 项目位置与推进目标
 
 当前仍在M5知识与身体研究。M0–M3限定资产和K轴批准继续继承；M4.V2结构成长未完成；M8为条件支线，不能阻塞CPU能力验证。

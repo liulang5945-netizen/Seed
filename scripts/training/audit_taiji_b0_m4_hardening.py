@@ -83,6 +83,26 @@ SCAN_EXCLUSIONS: dict[str, str] = {
         "only emits the payload field name 'terminal_stop_reason_marker'; "
         "it never reads or compares a stop reason"
     ),
+    "scripts/training/eval_taiji_p5_2d_online_writeback_gate.py": (
+        "emits a 'stop_reasons' summary key that carries an episode count; "
+        "it never reads an episode stop reason"
+    ),
+    "scripts/training/eval_taiji_r2_h3_6b_dev_aggregate.py": (
+        "builds its own aggregate 'stop_reasons' list of R2 stopping decisions; "
+        "it produces reasons, it does not consume B0 episode stop reasons"
+    ),
+    "scripts/training/eval_taiji_r2_h3_7_dev_aggregate.py": (
+        "same as the H3.6-B aggregate: produces R2 stop decisions, "
+        "does not consume B0 episode stop reasons"
+    ),
+    "taiji/language_alignment.py": (
+        "uses 'stop_reason' for generation termination (end_marker) -- a different "
+        "concept from the B0 episode stop reason"
+    ),
+    "tests/taiji_native/test_language_alignment.py": (
+        "pins the language-alignment generation stop reason (end_marker); "
+        "unrelated to the B0 episode stop reason"
+    ),
 }
 
 CANDIDATES_FOR_REVIEW: dict[str, float] = {

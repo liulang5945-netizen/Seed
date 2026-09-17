@@ -168,6 +168,20 @@ EXPECTED_CONSUMERS: tuple[dict[str, str], ...] = (
         "why": "see J10 below: compares stop_reasons between the sealed and the landed reports",
         "added_after_hardening_report": "yes",
     },
+    {
+        "path": "scripts/training/eval_taiji_b0_b2v4_collaboration_gate.py",
+        "class": "record_only",
+        "why": "aggregates per-face episode stop-reason counts via _stop_reason_counts; it "
+        "records frequencies and makes no safety or capability judgement",
+        "added_after_hardening_report": "yes",
+    },
+    {
+        "path": "scripts/training/audit_taiji_r2_h3_7_attribution.py",
+        "class": "judgement (assertion on aggregate stop reasons)",
+        "why": "asserts the frozen aggregate reason appears in the R2 decision; "
+        "see the H3.7 attribution ledger",
+        "added_after_hardening_report": "yes",
+    },
 )
 
 #: Every place a stop reason participates in a *decision*.  Each marker must still

@@ -11,9 +11,9 @@
     "scripts/training/audit_taiji_b0_n2_stop_reason_disposition.py",
     "tests/taiji_native/test_b0_n2_stop_reason_disposition_contract.py"
   ],
-  "consumer_count": 17,
+  "consumer_count": 19,
   "consumer_count_in_hardening_report": 11,
-  "consumer_count_now": 17,
+  "consumer_count_now": 19,
   "count_was_stale": true,
   "added_since_hardening_report": [
     "scripts/training/probe_taiji_b0_structure_space.py",
@@ -21,7 +21,9 @@
     "tests/taiji_native/test_b0_structure_space_contract.py",
     "tests/taiji_native/test_b0_n2_stop_reason_semantics_contract.py",
     "tests/taiji_native/test_b0_rule_revision_seal_contract.py",
-    "tests/taiji_native/test_b0_m1_counterfactual_contract.py"
+    "tests/taiji_native/test_b0_m1_counterfactual_contract.py",
+    "scripts/training/eval_taiji_b0_b2v4_collaboration_gate.py",
+    "scripts/training/audit_taiji_r2_h3_7_attribution.py"
   ],
   "drift": {
     "added": [],
@@ -195,11 +197,23 @@
       "class": "judgement (test assertion)",
       "why": "see J10 below: compares stop_reasons between the sealed and the landed reports",
       "added_after_hardening_report": "yes"
+    },
+    {
+      "path": "scripts/training/eval_taiji_b0_b2v4_collaboration_gate.py",
+      "class": "record_only",
+      "why": "aggregates per-face episode stop-reason counts via _stop_reason_counts; it records frequencies and makes no safety or capability judgement",
+      "added_after_hardening_report": "yes"
+    },
+    {
+      "path": "scripts/training/audit_taiji_r2_h3_7_attribution.py",
+      "class": "judgement (assertion on aggregate stop reasons)",
+      "why": "asserts the frozen aggregate reason appears in the R2 decision; see the H3.7 attribution ledger",
+      "added_after_hardening_report": "yes"
     }
   ],
   "classification_counts": {
-    "record_only_files": 8,
-    "judgement_or_mixed_files": 9
+    "record_only_files": 9,
+    "judgement_or_mixed_files": 10
   },
   "scope_limit": "text scan and source markers only; not an exhaustive data-flow proof. Marker presence cannot establish an unchanged predicate or deterministic replicas",
   "terminal_semantics": {
