@@ -634,6 +634,7 @@ class LanguageAlignmentTrainer:
         if self.config.response_plan_target_geometry in {
             LANGUAGE_RESPONSE_PLAN_TARGET_H36,
             LANGUAGE_RESPONSE_PLAN_TARGET_H37,
+            LANGUAGE_RESPONSE_PLAN_TARGET_H37B,
         }:
             try:
                 return self.response_plan_targets[episode.episode_id].clone()
@@ -2330,6 +2331,7 @@ class LanguageAlignmentTrainer:
         if self.config.response_plan_target_geometry in {
             LANGUAGE_RESPONSE_PLAN_TARGET_H36,
             LANGUAGE_RESPONSE_PLAN_TARGET_H37,
+            LANGUAGE_RESPONSE_PLAN_TARGET_H37B,
         }:
             if self.response_plan_target_encoder is None:
                 raise RuntimeError("response-plan target encoder is not configured")

@@ -258,7 +258,8 @@ def test_factorized_response_target_is_train_bound_and_slot_normalized() -> None
         )
 
 
-def test_h37_factorized_plan_preflight_and_checkpoint_round_trip() -> None:
+@pytest.mark.parametrize("aligned", [False, True])
+def test_h37_factorized_plan_preflight_and_checkpoint_round_trip(aligned) -> None:
     corpus = _corpus()
     model = Taiji(
         TaijiConfig.capacity_profile(
@@ -275,7 +276,10 @@ def test_h37_factorized_plan_preflight_and_checkpoint_round_trip() -> None:
         plan_slots=4,
         phase_stride=16,
     )
-    encoder = FactorizedResponsePlanTargetEncoder.fit(model, corpus)
+    encoder_type = (
+        ByteAlignedResponsePlanTargetEncoder if aligned else FactorizedResponsePlanTargetEncoder
+    )
+    encoder = encoder_type.fit(model, corpus)
     trainer = LanguageAlignmentTrainer(
         model,
         corpus,
@@ -285,13 +289,19 @@ def test_h37_factorized_plan_preflight_and_checkpoint_round_trip() -> None:
             response_plan_variant="factorized_v1",
             response_plan_slots=4,
             response_plan_phase_stride=16,
-            response_plan_target_geometry="h3_7_factorized_response_chunks",
+            response_plan_target_geometry=(
+                "h3_7b_byte_aligned_chunks" if aligned else "h3_7_factorized_response_chunks"
+            ),
             learn_fabric=False,
             learn_predictive_context=False,
         ),
         response_plan_target_encoder=encoder,
     )
 
+    episode = corpus.for_split("train")[0]
+    torch.testing.assert_close(
+        trainer._response_plan_target(episode), encoder.encode_response(episode.response)
+    )
     root = Path(__file__).parents[2] / f"test-artifacts-h37-{uuid.uuid4().hex}"
     root.mkdir(parents=True)
     try:
