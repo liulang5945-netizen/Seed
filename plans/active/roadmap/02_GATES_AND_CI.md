@@ -1,6 +1,6 @@
 # Seed / Taiji 晋级、阶段退出与发布门禁
 
-> 2026-09-17补充：H3.8目前仅为[设计复审提案](../../reference/M5_R2_H3_8_SEQUENCE_CREDIT_REVIEW_20260917.md)。先明确隔离计算图与现行原生合同边界，再过因果、梯度、新进程checkpoint恢复门，冻结新数据/预算/指标后才训练。H3.7几何审计2项定向测试通过不等于全量CI通过；不改旧报告或final门。
+> 2026-09-17补充：当前门禁按[H3.7B修复合同](../../reference/M5_R2_H3_7B_CONSISTENCY_REPAIR_20260917.md)执行。首byte概率一致、混合信用数值差分、byte分段对齐及旧target兼容定向测试通过；正式验证先过checkpoint新进程恢复/续训门。工程通过不等于内容能力或全量CI通过；H3.8/VISION不阻塞主线，不改旧报告或final门。
 
 > 更新：2026-09-16。配合 [总阶段地图](01_SCOPE_AND_PHASES.md)；执行顺序只由 [03](03_CURRENT_EXECUTION.md) 决定。本文不修改历史冻结实验阈值。
 

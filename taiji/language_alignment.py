@@ -35,6 +35,7 @@ from .organs import BytePredictiveReadout
 from .response_plan_target import (
     FACTOR_RESPONSE_PLAN_TARGET_PHASE_STRIDE,
     FACTOR_RESPONSE_PLAN_TARGET_SLOTS,
+    ByteAlignedResponsePlanTargetEncoder,
     FactorizedResponsePlanTargetEncoder,
     ResponsePlanTargetEncoder,
 )
@@ -62,10 +63,12 @@ LANGUAGE_RESPONSE_PLAN_TARGET_GEOMETRIES = frozenset(
         "signed_hash_span",
         "h3_6_whitened_native_compositional",
         "h3_7_factorized_response_chunks",
+        "h3_7b_byte_aligned_chunks",
     }
 )
 LANGUAGE_RESPONSE_PLAN_TARGET_H36 = "h3_6_whitened_native_compositional"
 LANGUAGE_RESPONSE_PLAN_TARGET_H37 = "h3_7_factorized_response_chunks"
+LANGUAGE_RESPONSE_PLAN_TARGET_H37B = "h3_7b_byte_aligned_chunks"
 
 
 def _text(value: Any, name: str, *, allow_empty: bool = False) -> str:
@@ -430,7 +433,9 @@ class LanguageAlignmentConfig:
         ):
             raise ValueError("H3.6 target geometry requires the single response plan variant")
         if (
-            self.response_plan_target_geometry == LANGUAGE_RESPONSE_PLAN_TARGET_H37
+            self.response_plan_target_geometry in {
+                LANGUAGE_RESPONSE_PLAN_TARGET_H37, LANGUAGE_RESPONSE_PLAN_TARGET_H37B
+            }
             and self.response_plan_variant != "factorized_v1"
         ):
             raise ValueError("H3.7 target geometry requires the factorized response plan variant")
@@ -557,6 +562,7 @@ class LanguageAlignmentTrainer:
         if geometry not in {
             LANGUAGE_RESPONSE_PLAN_TARGET_H36,
             LANGUAGE_RESPONSE_PLAN_TARGET_H37,
+            LANGUAGE_RESPONSE_PLAN_TARGET_H37B,
         }:
             raise ValueError("unsupported response-plan target geometry")
         if self.response_plan_target_encoder is None:
@@ -565,9 +571,16 @@ class LanguageAlignmentTrainer:
             raise ValueError("non-legacy response-plan geometry requires the plan readout")
         if self.response_plan_target_encoder.width != self.config.response_plan_width:
             raise ValueError("target encoder width does not match response-plan width")
-        if geometry == LANGUAGE_RESPONSE_PLAN_TARGET_H37:
+        if geometry in {LANGUAGE_RESPONSE_PLAN_TARGET_H37, LANGUAGE_RESPONSE_PLAN_TARGET_H37B}:
             if not isinstance(self.response_plan_target_encoder, FactorizedResponsePlanTargetEncoder):
                 raise ValueError("H3.7 target geometry requires its factorized encoder")
+            expected_format = (
+                ByteAlignedResponsePlanTargetEncoder.FORMAT
+                if geometry == LANGUAGE_RESPONSE_PLAN_TARGET_H37B
+                else FactorizedResponsePlanTargetEncoder.FORMAT
+            )
+            if self.response_plan_target_encoder.FORMAT != expected_format:
+                raise ValueError("response-plan target encoder format does not match geometry")
             if (
                 self.response_plan_target_encoder.slots != self.config.response_plan_slots
                 or self.response_plan_target_encoder.phase_stride
@@ -592,7 +605,7 @@ class LanguageAlignmentTrainer:
             target = targets[episode_id].detach().cpu().to(dtype=torch.float32).clone()
             if target.shape != (self.config.response_plan_width,):
                 raise ValueError("response-plan target dimension mismatch")
-            if geometry == LANGUAGE_RESPONSE_PLAN_TARGET_H37:
+            if geometry in {LANGUAGE_RESPONSE_PLAN_TARGET_H37, LANGUAGE_RESPONSE_PLAN_TARGET_H37B}:
                 slot_width = self.config.response_plan_width // self.config.response_plan_slots
                 slot_norms = torch.linalg.vector_norm(
                     target.reshape(self.config.response_plan_slots, slot_width), dim=1
@@ -740,7 +753,7 @@ class LanguageAlignmentTrainer:
             self.model.begin_response_plan()
             response_phase_readout = self.model.response_plan_readout
             if learn:
-                response_phase_readout.learn_plan_target(self._response_plan_target(episode))
+                self.model.learn_response_plan_target(self._response_plan_target(episode))
         observations = 0
         correct = 0
         surprise_sum = 0.0
@@ -2374,10 +2387,17 @@ class LanguageAlignmentTrainer:
                 str(key): value.detach().cpu().to(dtype=torch.float32).clone()
                 for key, value in target_targets_payload.items()
             }
-        elif config.response_plan_target_geometry == LANGUAGE_RESPONSE_PLAN_TARGET_H37:
+        elif config.response_plan_target_geometry in {
+            LANGUAGE_RESPONSE_PLAN_TARGET_H37, LANGUAGE_RESPONSE_PLAN_TARGET_H37B
+        }:
             if not isinstance(target_payload, Mapping):
                 raise ValueError("H3.7 checkpoint is missing its target encoder")
-            target_encoder = FactorizedResponsePlanTargetEncoder.from_payload(
+            encoder_type = (
+                ByteAlignedResponsePlanTargetEncoder
+                if config.response_plan_target_geometry == LANGUAGE_RESPONSE_PLAN_TARGET_H37B
+                else FactorizedResponsePlanTargetEncoder
+            )
+            target_encoder = encoder_type.from_payload(
                 target_payload,
                 expected_corpus_digest=corpus.digest,
             )
@@ -2611,7 +2631,7 @@ def factorized_response_plan_preflight(
         if readout.plan_step != 0 or readout.plan_phase != 0:
             raise RuntimeError("factorized plan did not begin at phase zero")
         before_target_digest = content_digest(readout.to_payload())
-        readout.learn_plan_target(trainer._response_plan_target(selected))
+        trainer.model.learn_response_plan_target(trainer._response_plan_target(selected))
         after_target_digest = content_digest(readout.to_payload())
         if before_target_digest == after_target_digest:
             raise RuntimeError("H3.7 plan target update did not change the candidate")

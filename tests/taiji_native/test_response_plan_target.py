@@ -22,6 +22,7 @@ from taiji import (
     content_digest,
     factorized_response_plan_preflight,
 )
+from taiji.response_plan_target import ByteAlignedResponsePlanTargetEncoder
 
 FIXTURE = Path(__file__).parents[1] / "fixtures" / "r2_h3_5a_response_plan_v3.jsonl"
 
@@ -35,6 +36,106 @@ def _model() -> Taiji:
         TaijiConfig.capacity_profile(300_000, seed=20260916),
         episode_id="h3.6-target-test",
     )
+
+
+def test_target_update_refreshes_prior_without_advancing_phase() -> None:
+    model = _model()
+    model.enable_response_plan_readout(plan_width=48, variant="factorized_v1")
+    model.observe(65, learn=False, readout="predictive")
+    model.begin_response_plan()
+    protected = content_digest(model.predictive_readout.to_payload())
+    before = model.snapshot().motor_probabilities.clone()
+    model.learn_response_plan_target(torch.ones(48))
+    readout = model.response_plan_readout
+    assert readout.plan_step == 0
+    assert not torch.equal(before, model.snapshot().motor_probabilities)
+    torch.testing.assert_close(
+        model.snapshot().motor_probabilities,
+        model.response_plan_probabilities(),
+        rtol=0,
+        atol=0,
+    )
+    assert content_digest(model.predictive_readout.to_payload()) == protected
+
+
+def test_training_first_byte_uses_post_target_update_prior(monkeypatch) -> None:
+    corpus = _corpus()
+    model = _model()
+    model.enable_response_plan_readout(plan_width=48, variant="factorized_v1")
+    trainer = LanguageAlignmentTrainer(
+        model,
+        corpus,
+        config=LanguageAlignmentConfig(
+            response_plan_readout=True,
+            response_plan_width=48,
+            response_plan_variant="factorized_v1",
+            response_plan_target_geometry="h3_7_factorized_response_chunks",
+            learn_fabric=False,
+            learn_predictive_context=False,
+        ),
+        response_plan_target_encoder=FactorizedResponsePlanTargetEncoder.fit(model, corpus),
+    )
+    readout = model.response_plan_readout
+    original = readout.learn
+    calls = []
+
+    def checked(context, predicted, symbol, **kwargs):
+        torch.testing.assert_close(predicted, readout.probabilities(context), rtol=0, atol=0)
+        calls.append(symbol)
+        return original(context, predicted, symbol, **kwargs)
+
+    monkeypatch.setattr(readout, "learn", checked)
+    trainer._target_pass(corpus.for_split("train")[0], learn=True)
+    assert calls
+
+
+@pytest.mark.parametrize("phase", [0, 1, 2, 3])
+def test_active_plan_credit_matches_finite_difference(phase) -> None:
+    model = _model()
+    model.enable_response_plan_readout(plan_width=48, variant="factorized_v1")
+    model.begin_response_plan()
+    readout = model.response_plan_readout
+    readout._plan_state = torch.linspace(-0.4, 0.4, 48, dtype=torch.float64)
+    readout._plan_step = phase * 16
+    upstream = torch.linspace(-0.7, 0.8, 48, dtype=torch.float64)
+    analytical = readout._plan_state_feedback(upstream)
+    numerical = torch.zeros_like(upstream)
+    epsilon = 1e-6
+    for index in range(48):
+        original = readout._plan_state[index].item()
+        readout._plan_state[index] = original + epsilon
+        plus = float(readout._active_plan_vector() @ upstream)
+        readout._plan_state[index] = original - epsilon
+        minus = float(readout._active_plan_vector() @ upstream)
+        readout._plan_state[index] = original
+        numerical[index] = (plus - minus) / (2 * epsilon)
+    torch.testing.assert_close(analytical, numerical, rtol=1e-7, atol=1e-8)
+
+
+@pytest.mark.parametrize("response", ["中" * 24, "ab中😀" * 12, "a"])
+def test_repaired_target_windows_follow_renderer_byte_phase(response) -> None:
+    chunks = ByteAlignedResponsePlanTargetEncoder.chunks(response, slots=4, phase_stride=16)
+    raw = response.encode("utf-8")
+    assert b"".join(chunks) == raw
+    for index, chunk in enumerate(chunks):
+        for offset, symbol in enumerate(chunk):
+            absolute = sum(map(len, chunks[:index])) + offset
+            assert min(absolute // 16, 3) == index
+            assert raw[absolute] == symbol
+
+
+def test_repaired_target_rejects_legacy_geometry_and_roundtrips() -> None:
+    model, corpus = _model(), _corpus()
+    encoder = ByteAlignedResponsePlanTargetEncoder.fit(model, corpus)
+    assert torch.equal(encoder.slot_scale, torch.ones(4))
+    restored = ByteAlignedResponsePlanTargetEncoder.from_payload(encoder.to_payload())
+    assert restored.target_digest == encoder.target_digest
+    with pytest.raises(ValueError, match="format"):
+        FactorizedResponsePlanTargetEncoder.from_payload(encoder.to_payload())
+    with pytest.raises(ValueError, match="format"):
+        ByteAlignedResponsePlanTargetEncoder.from_payload(
+            FactorizedResponsePlanTargetEncoder.fit(model, corpus).to_payload()
+        )
 
 
 def test_response_plan_target_fit_is_train_only_and_restores_teacher() -> None:
@@ -132,9 +233,7 @@ def test_factorized_response_target_is_train_bound_and_slot_normalized() -> None
     assert encoder.slot_width == FACTOR_RESPONSE_PLAN_TARGET_SLOT_WIDTH
     assert encoder.phase_stride == FACTOR_RESPONSE_PLAN_TARGET_PHASE_STRIDE
     assert encoder.width == 48
-    assert encoder.fit_episode_ids == tuple(
-        item.episode_id for item in corpus.for_split("train")
-    )
+    assert encoder.fit_episode_ids == tuple(item.episode_id for item in corpus.for_split("train"))
     targets = encoder.encode_corpus(model, corpus)
     assert set(targets) == {item.episode_id for item in corpus.episodes}
     for target in targets.values():
@@ -206,9 +305,10 @@ def test_h37_factorized_plan_preflight_and_checkpoint_round_trip() -> None:
     assert checkpoint_preflight["status"] == "passed"
     factorized_preflight = factorized_response_plan_preflight(trainer)
     assert factorized_preflight["status"] == "passed"
-    assert factorized_preflight["bridge_changed_after_byte_update"] or factorized_preflight[
-        "slot_planner_changed_after_byte_update"
-    ]
+    assert (
+        factorized_preflight["bridge_changed_after_byte_update"]
+        or factorized_preflight["slot_planner_changed_after_byte_update"]
+    )
     assert trainer.model.parameter_count() <= 300_000
 
     trainer._prime(corpus.for_split("train")[0])

@@ -361,6 +361,19 @@ class Taiji:
         return plan
 
     @torch.no_grad()
+    def learn_response_plan_target(self, target: torch.Tensor) -> torch.Tensor:
+        """Update the plan and its cached prior as one model operation.
+
+        The first response byte must be credited against the same plan that
+        produced its prediction. This does not advance or restart the phase.
+        """
+        error = self.response_plan_readout.learn_plan_target(target)
+        state = self._state.clone()
+        state.motor_probabilities = self.response_plan_probabilities().detach().clone()
+        self._state = state
+        return error
+
+    @torch.no_grad()
     def advance_response_plan_phase(self) -> int:
         """Advance a factorized plan and refresh the current byte prior."""
 

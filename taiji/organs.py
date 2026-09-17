@@ -892,6 +892,21 @@ class ResponsePlanReadout(BytePredictiveReadout):
         vector[start : start + self.plan_slot_width] = active
         return vector
 
+    def _plan_state_feedback(self, feedback: torch.Tensor) -> torch.Tensor:
+        """Transpose-Jacobian of the slot mixture, before planner tanh."""
+        if self.variant != self.VARIANT_FACTORIZED:
+            return feedback
+        result = torch.zeros_like(feedback)
+        start = self.plan_phase * self.plan_slot_width
+        stop = start + self.plan_slot_width
+        if self.plan_phase == 0:
+            result[:self.plan_slot_width] = feedback[:self.plan_slot_width]
+        else:
+            if self._ablation_mode != "slot_credit":
+                result[start:stop] = 0.75 * feedback[start:stop]
+            result[:self.plan_slot_width] = 0.25 * feedback[start:stop]
+        return result
+
     def _conditioned_context(self, context: torch.Tensor) -> torch.Tensor:
         vector = self._active_plan_vector()
         context = context.to(self.device)
@@ -940,17 +955,14 @@ class ResponsePlanReadout(BytePredictiveReadout):
                 * self.bridge_learning_rate_scale
             )
             self.plan_bridge.add_(bridge_rate * torch.outer(conditioned_delta, active_vector))
-            active_phase = self.plan_phase
-            start = active_phase * self.plan_slot_width
-            stop = start + self.plan_slot_width
-            slot_feedback = plan_feedback[start:stop]
-            state = self._plan_state[start:stop]
+            slot_feedback = self._plan_state_feedback(plan_feedback)
+            state = self._plan_state
             slot_delta = slot_feedback * (1.0 - state.square())
             planner_rate = bridge_rate * self.slot_credit_scale
-            self.planner_weight[start:stop].add_(
+            self.planner_weight.add_(
                 planner_rate * torch.outer(slot_delta, self._plan_source)
             )
-            self.planner_bias[start:stop].add_(
+            self.planner_bias.add_(
                 float(self.config.bias_learning_rate)
                 * learning_rate_scale
                 * self.bridge_learning_rate_scale
@@ -959,8 +971,8 @@ class ResponsePlanReadout(BytePredictiveReadout):
             )
             limit = float(self.config.max_weight_norm)
             self.plan_bridge.clamp_(-limit, limit)
-            self.planner_weight[start:stop].clamp_(-limit, limit)
-            self.planner_bias[start:stop].clamp_(-limit, limit)
+            self.planner_weight.clamp_(-limit, limit)
+            self.planner_bias.clamp_(-limit, limit)
             self._plan_state = torch.tanh(
                 self.planner_weight @ self._plan_source + self.planner_bias
             )

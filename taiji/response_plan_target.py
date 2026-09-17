@@ -432,6 +432,12 @@ def _response_chunks(
 class FactorizedResponsePlanTargetEncoder:
     """Train-bound ordered response-chunk target geometry for H3.7."""
 
+    FORMAT = FACTOR_RESPONSE_PLAN_TARGET_FORMAT
+    VERSION = FACTOR_RESPONSE_PLAN_TARGET_VERSION
+    PROJECTION = FACTOR_RESPONSE_PLAN_TARGET_PROJECTION
+    FIT_SCALE = True
+    chunks = staticmethod(_response_chunks)
+
     def __init__(
         self,
         *,
@@ -494,7 +500,7 @@ class FactorizedResponsePlanTargetEncoder:
                 )
         raw: list[torch.Tensor] = []
         for episode in train:
-            chunks = _response_chunks(
+            chunks = cls.chunks(
                 str(episode.response), slots=int(slots), phase_stride=int(phase_stride)
             )
             raw.append(
@@ -509,6 +515,8 @@ class FactorizedResponsePlanTargetEncoder:
             )
         matrix = torch.stack(raw)
         scale = torch.sqrt(matrix.square().mean(dim=(0, 2)).clamp_min(1e-6))
+        if not cls.FIT_SCALE:
+            scale = torch.ones(int(slots), dtype=torch.float32)
         encoder = cls(
             slots=int(slots),
             slot_width=int(slot_width),
@@ -541,7 +549,7 @@ class FactorizedResponsePlanTargetEncoder:
             raise ValueError("factorized response target parent checkpoint is incompatible")
 
     def encode_response(self, response: str) -> torch.Tensor:
-        chunks = _response_chunks(
+        chunks = self.chunks(
             response, slots=self.slots, phase_stride=self.phase_stride
         )
         slots: list[torch.Tensor] = []
@@ -569,8 +577,8 @@ class FactorizedResponsePlanTargetEncoder:
 
     def to_payload(self) -> dict[str, Any]:
         return {
-            "format": FACTOR_RESPONSE_PLAN_TARGET_FORMAT,
-            "version": FACTOR_RESPONSE_PLAN_TARGET_VERSION,
+            "format": self.FORMAT,
+            "version": self.VERSION,
             "slots": self.slots,
             "slot_width": self.slot_width,
             "width": self.width,
@@ -579,7 +587,7 @@ class FactorizedResponsePlanTargetEncoder:
             "parent_checkpoint_digest": self.parent_checkpoint_digest,
             "fitted_split": RESPONSE_PLAN_TARGET_FIT_SPLIT,
             "fit_episode_ids": list(self.fit_episode_ids),
-            "projection": FACTOR_RESPONSE_PLAN_TARGET_PROJECTION,
+            "projection": self.PROJECTION,
             "normalization": FACTOR_RESPONSE_PLAN_TARGET_NORMALIZATION,
             "salt": FACTOR_RESPONSE_PLAN_TARGET_SALT,
             "slot_scale": self.slot_scale.detach().cpu().clone(),
@@ -595,13 +603,13 @@ class FactorizedResponsePlanTargetEncoder:
     ) -> FactorizedResponsePlanTargetEncoder:
         if not isinstance(payload, Mapping):
             raise TypeError("factorized response target payload must be a mapping")
-        if payload.get("format") != FACTOR_RESPONSE_PLAN_TARGET_FORMAT:
+        if payload.get("format") != cls.FORMAT:
             raise ValueError("unsupported factorized response target format")
-        if int(payload.get("version", -1)) != FACTOR_RESPONSE_PLAN_TARGET_VERSION:
+        if int(payload.get("version", -1)) != cls.VERSION:
             raise ValueError("unsupported factorized response target version")
         if payload.get("fitted_split") != RESPONSE_PLAN_TARGET_FIT_SPLIT:
             raise ValueError("factorized response target must be fitted on train")
-        if payload.get("projection") != FACTOR_RESPONSE_PLAN_TARGET_PROJECTION:
+        if payload.get("projection") != cls.PROJECTION:
             raise ValueError("factorized response target projection is incompatible")
         if payload.get("normalization") != FACTOR_RESPONSE_PLAN_TARGET_NORMALIZATION:
             raise ValueError("factorized response target normalization is incompatible")
@@ -625,7 +633,36 @@ class FactorizedResponsePlanTargetEncoder:
         return encoder
 
 
+class ByteAlignedResponsePlanTargetEncoder(FactorizedResponsePlanTargetEncoder):
+    """H3.7 repair target: exact renderer-byte windows, no fitted geometry claim.
+
+    Windows may contain partial UTF-8 codepoints: the sketch consumes bytes,
+    not decoded text. Runtime UTF-8 legality remains the renderer's contract.
+    Legacy payloads retain their old chunking and are never silently migrated.
+    """
+
+    FORMAT = "taiji-r2-h3-7b-byte-aligned-response-target-v1"
+    VERSION = 1
+    PROJECTION = "fixed_byte_window_count_sketch_signed_ngram"
+    FIT_SCALE = False
+
+    @staticmethod
+    def chunks(response: str, *, slots: int, phase_stride: int) -> tuple[bytes, ...]:
+        if not isinstance(response, str) or not response:
+            raise ValueError("byte-aligned target requires a non-empty response")
+        if slots <= 0 or phase_stride <= 0:
+            raise ValueError("byte-aligned target slots and stride must be positive")
+        raw = response.encode("utf-8")
+        return tuple(
+            raw[index * phase_stride:]
+            if index == slots - 1
+            else raw[index * phase_stride:(index + 1) * phase_stride]
+            for index in range(slots)
+        )
+
+
 __all__ = [
+    "ByteAlignedResponsePlanTargetEncoder",
     "RESPONSE_PLAN_TARGET_COMPOSITION",
     "RESPONSE_PLAN_TARGET_FIT_SPLIT",
     "RESPONSE_PLAN_TARGET_FORMAT",
