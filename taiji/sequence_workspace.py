@@ -429,6 +429,7 @@ class SequenceWorkspacePrototype:
         contrastive_prefix: bytes | None = None,
         contrastive_margin: float = 1.0,
         contrastive_weight: float = 0.0,
+        first_byte_weight: float = 1.0,
     ) -> tuple[torch.Tensor, dict[str, Any]]:
         """Real next-byte cross-entropy over the response plus the end marker.
 
@@ -436,6 +437,10 @@ class SequenceWorkspacePrototype:
         changes the prefix the model conditions on (scheduled sampling).  ``0.0``
         reproduces the teacher-forced path exactly, which is what the frozen H3.8
         records rely on.
+
+        ``first_byte_weight`` scales the per-position loss of the **first response
+        byte** (the readout-diagnosis failure point: 16/16 dev episodes err there).
+        ``1.0`` keeps the plain mean — the legacy behaviour, byte-for-byte.
 
         ``contrastive_weight > 0`` adds the H-OBJ context-contrastive term: the same
         response scored under the true prefix must beat its score under a shuffled
@@ -450,6 +455,9 @@ class SequenceWorkspacePrototype:
         weight = float(contrastive_weight)
         if weight < 0.0:
             raise ValueError("contrastive_weight cannot be negative")
+        first_weight = float(first_byte_weight)
+        if first_weight <= 0.0:
+            raise ValueError("first_byte_weight must be positive")
         logits = self._response_logits(
             prefix, response, generation_state_ratio=ratio, generator=generator
         )
@@ -457,7 +465,10 @@ class SequenceWorkspacePrototype:
             [int(symbol) for symbol in response] + [int(self.config.boundary_symbol)],
             dtype=torch.long,
         )
-        loss = torch.nn.functional.cross_entropy(logits, targets, reduction="mean")
+        per_position = torch.nn.functional.cross_entropy(logits, targets, reduction="none")
+        position_weights = torch.ones_like(per_position)
+        position_weights[0] = first_weight
+        loss = (per_position * position_weights).sum() / position_weights.sum()
         margin_gap = 0.0
         if weight > 0.0:
             if contrastive_prefix is None:
@@ -483,6 +494,7 @@ class SequenceWorkspacePrototype:
                 "accuracy": correct / max(1, int(targets.numel())),
                 "mean_surprise": float(loss.detach()),
                 "contrastive_margin_gap": float(margin_gap),
+                "first_byte_hit": int(predictions[0].item() == targets[0].item()),
             }
         return loss, metrics
 
@@ -587,6 +599,15 @@ class SequenceWorkspaceTrainer:
         # setting and is deliberately not part of the checkpoint.
         self.contrastive_weight = 0.0
         self.contrastive_margin = 1.0
+        # Readout-diagnosis countermeasure: up-weight the loss on the **first**
+        # response byte (16/16 dev episodes err there).  1.0 = legacy behaviour.
+        self.first_byte_weight = 1.0
+
+    def enable_first_byte_weight(self, weight: float) -> None:
+        value = float(weight)
+        if value <= 0.0:
+            raise ValueError("first_byte_weight must be positive")
+        self.first_byte_weight = value
 
     def enable_context_contrastive(self, *, weight: float, margin: float = 1.0) -> None:
         """Turn on the H-OBJ term: the true prefix must beat a shuffled one by margin."""
@@ -668,6 +689,7 @@ class SequenceWorkspaceTrainer:
                 ),
                 contrastive_margin=self.contrastive_margin,
                 contrastive_weight=self.contrastive_weight,
+                first_byte_weight=self.first_byte_weight,
             )
             losses.append(loss)
             positions += int(metrics["positions"])

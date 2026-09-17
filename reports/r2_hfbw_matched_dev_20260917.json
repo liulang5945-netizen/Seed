@@ -1,0 +1,1424 @@
+{
+  "format": "taiji-r2-hfbw-matched-dev-v1",
+  "candidate_spec": "plans/reference/M5_R2_NEXT_CANDIDATE_GENERATION_STATE_TRAINING_20260917.md",
+  "implementability": "plans/reference/M5_R2_CANDIDATE_HGEN_IMPLEMENTABILITY_20260917.md",
+  "code_revision": "e2f69ffef80cc9abfe2c3af32d6d1ada2a11ebc8",
+  "fixture": "tests\\fixtures\\r2_h3_8_joint_sequence_v1.jsonl",
+  "corpus_sha256": "6571ee23501814f700365a7856df715e9d0953ec9c6c740f7d76862eccbec3c4",
+  "frozen": {
+    "seeds": [
+      20260917,
+      20260918,
+      20260919
+    ],
+    "epochs": 30,
+    "max_episodes": 25,
+    "first_byte_weight_control": 1.0,
+    "first_byte_weight_treatment": 5.0,
+    "wall_cap_seconds": 1800.0
+  },
+  "arms": [
+    {
+      "arm": "control",
+      "seed": 20260917,
+      "first_byte_weight": 1.0,
+      "epochs": 30,
+      "max_episodes": 25,
+      "train_episodes_available": 25,
+      "zero_step_checkpoint_digest": "6428abf9b421c7f95a4758c56310d93ba08bf73927a67b2cdf346681a5cef00e",
+      "checkpoint_digest": "b6d87b85b72a9bc150c11bbb5cd747dca2a77bf2b2117b6b93567715e2e6ac43",
+      "restore_matches": true,
+      "elapsed_seconds": 4.172000000020489,
+      "epoch_records": [
+        {
+          "epoch": 0,
+          "mean_loss": 2.809764955043793,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 1,
+          "mean_loss": 1.5292801278829575,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 2,
+          "mean_loss": 0.6501006692647934,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 3,
+          "mean_loss": 0.5027059000730515,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 4,
+          "mean_loss": 0.5055797301232815,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 5,
+          "mean_loss": 0.47096269398927687,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 6,
+          "mean_loss": 0.36845373660326003,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 7,
+          "mean_loss": 0.3609325036406517,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 8,
+          "mean_loss": 0.3221956947445869,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 9,
+          "mean_loss": 0.44637715980410575,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 10,
+          "mean_loss": 0.3442253029346466,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 11,
+          "mean_loss": 0.32866019491106274,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 12,
+          "mean_loss": 0.34049997925758363,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 13,
+          "mean_loss": 0.31139405235648154,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 14,
+          "mean_loss": 0.3119530735909939,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 15,
+          "mean_loss": 0.3115788508951664,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 16,
+          "mean_loss": 0.311687253639102,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 17,
+          "mean_loss": 0.31989668659865855,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 18,
+          "mean_loss": 0.330979746542871,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 19,
+          "mean_loss": 0.359445574991405,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 20,
+          "mean_loss": 0.3840472691506147,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 21,
+          "mean_loss": 0.41801252962090074,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 22,
+          "mean_loss": 0.5171783150359989,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 23,
+          "mean_loss": 0.7837006255984307,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 24,
+          "mean_loss": 0.7877164403349162,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 25,
+          "mean_loss": 0.48878877103328705,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 26,
+          "mean_loss": 0.7594467896223068,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 27,
+          "mean_loss": 0.7749339539557696,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 28,
+          "mean_loss": 0.6351646120846272,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 29,
+          "mean_loss": 0.670858972966671,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        }
+      ],
+      "train": {
+        "accuracy": 0.8674698795180723,
+        "positions": 166,
+        "mean_loss": 0.472129388153553
+      },
+      "dev": {
+        "accuracy": 0.6132075471698113,
+        "positions": 106,
+        "mean_loss": 4.477809377014637
+      },
+      "dev_generation": {
+        "episodes": 16,
+        "exact": 4,
+        "exact_rate": 0.25,
+        "boundary_stop_rate": 1.0,
+        "samples": [
+          {
+            "reference": "不是白",
+            "generated": "���",
+            "exact": false,
+            "boundary_stopped": true
+          },
+          {
+            "reference": "不是黄",
+            "generated": "���",
+            "exact": false,
+            "boundary_stopped": true
+          },
+          {
+            "reference": "白",
+            "generated": "蓝",
+            "exact": false,
+            "boundary_stopped": true
+          }
+        ]
+      }
+    },
+    {
+      "arm": "treatment",
+      "seed": 20260917,
+      "first_byte_weight": 5.0,
+      "epochs": 30,
+      "max_episodes": 25,
+      "train_episodes_available": 25,
+      "zero_step_checkpoint_digest": "6428abf9b421c7f95a4758c56310d93ba08bf73927a67b2cdf346681a5cef00e",
+      "checkpoint_digest": "c0c8e4bdef3f41ed8b6f41a1f1edf71be105e9b2cbb944778f8a01d7a51356c3",
+      "restore_matches": true,
+      "elapsed_seconds": 4.405999999959022,
+      "epoch_records": [
+        {
+          "epoch": 0,
+          "mean_loss": 2.7936498272418975,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 1,
+          "mean_loss": 1.5035896754264833,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 2,
+          "mean_loss": 1.1155284333229065,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 3,
+          "mean_loss": 1.0063372027873994,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 4,
+          "mean_loss": 0.9914030694961548,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 5,
+          "mean_loss": 0.9874371647834778,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 6,
+          "mean_loss": 0.9737447392940521,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 7,
+          "mean_loss": 0.9420036625862122,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 8,
+          "mean_loss": 0.944294900894165,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 9,
+          "mean_loss": 0.9652091288566589,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 10,
+          "mean_loss": 0.9629006969928742,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 11,
+          "mean_loss": 0.9549892652034759,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 12,
+          "mean_loss": 0.9680248951911926,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 13,
+          "mean_loss": 0.9517502212524414,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 14,
+          "mean_loss": 0.9435194945335388,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 15,
+          "mean_loss": 0.927358216047287,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 16,
+          "mean_loss": 0.9158338034152984,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 17,
+          "mean_loss": 0.9292521512508393,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 18,
+          "mean_loss": 0.948393349647522,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 19,
+          "mean_loss": 0.9519972252845764,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 20,
+          "mean_loss": 0.9455583083629608,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 21,
+          "mean_loss": 0.9515353846549988,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 22,
+          "mean_loss": 0.9144293344020844,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 23,
+          "mean_loss": 0.9234020674228668,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 24,
+          "mean_loss": 0.9408195233345031,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 25,
+          "mean_loss": 0.9344799077510834,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 26,
+          "mean_loss": 1.0033722770214082,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 27,
+          "mean_loss": 0.9981205177307129,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 28,
+          "mean_loss": 0.9914247918128968,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 29,
+          "mean_loss": 0.9338902604579925,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        }
+      ],
+      "train": {
+        "accuracy": 0.8433734939759037,
+        "positions": 166,
+        "mean_loss": 0.4341199004650116
+      },
+      "dev": {
+        "accuracy": 0.6415094339622641,
+        "positions": 106,
+        "mean_loss": 3.9021037444472313
+      },
+      "dev_generation": {
+        "episodes": 16,
+        "exact": 0,
+        "exact_rate": 0.0,
+        "boundary_stop_rate": 1.0,
+        "samples": [
+          {
+            "reference": "不是白",
+            "generated": "蓝",
+            "exact": false,
+            "boundary_stopped": true
+          },
+          {
+            "reference": "不是黄",
+            "generated": "蓝",
+            "exact": false,
+            "boundary_stopped": true
+          },
+          {
+            "reference": "白",
+            "generated": "蓝",
+            "exact": false,
+            "boundary_stopped": true
+          }
+        ]
+      }
+    },
+    {
+      "arm": "control",
+      "seed": 20260918,
+      "first_byte_weight": 1.0,
+      "epochs": 30,
+      "max_episodes": 25,
+      "train_episodes_available": 25,
+      "zero_step_checkpoint_digest": "aaec1dd98463fd8e9538dc111b328855feaaacb3f3ee03c2ef53a39ec3955009",
+      "checkpoint_digest": "affa9761bb5a512af48122098b282b6c49eaeb899f998c461480e27dd8d23a84",
+      "restore_matches": true,
+      "elapsed_seconds": 4.469000000040978,
+      "epoch_records": [
+        {
+          "epoch": 0,
+          "mean_loss": 2.890038621425629,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 1,
+          "mean_loss": 1.1534602463245391,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 2,
+          "mean_loss": 0.6030264782905579,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 3,
+          "mean_loss": 0.4729778790473938,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 4,
+          "mean_loss": 0.5115909314155579,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 5,
+          "mean_loss": 0.42378477156162264,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 6,
+          "mean_loss": 0.6027981817722321,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 7,
+          "mean_loss": 0.3934834825992584,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 8,
+          "mean_loss": 0.4734687703847885,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 9,
+          "mean_loss": 0.5286358743906021,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 10,
+          "mean_loss": 0.6305035644769669,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 11,
+          "mean_loss": 0.6986954969167709,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 12,
+          "mean_loss": 0.6969433534145355,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 13,
+          "mean_loss": 0.7464538729190826,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 14,
+          "mean_loss": 0.5675056141614914,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 15,
+          "mean_loss": 0.46963343799114227,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 16,
+          "mean_loss": 0.4074883311986923,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 17,
+          "mean_loss": 0.38807949900627137,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 18,
+          "mean_loss": 0.3804445469379425,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 19,
+          "mean_loss": 0.3817669153213501,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 20,
+          "mean_loss": 0.37682494401931765,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 21,
+          "mean_loss": 0.38039249420166016,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 22,
+          "mean_loss": 0.3791034623980522,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 23,
+          "mean_loss": 0.3861717373132706,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 24,
+          "mean_loss": 0.3904162093997002,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 25,
+          "mean_loss": 0.3970589378476143,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 26,
+          "mean_loss": 0.40332729518413546,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 27,
+          "mean_loss": 0.4140383678674698,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 28,
+          "mean_loss": 0.4317820370197296,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 29,
+          "mean_loss": 0.4604386323690414,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        }
+      ],
+      "train": {
+        "accuracy": 0.8433734939759037,
+        "positions": 166,
+        "mean_loss": 0.5845651018619538
+      },
+      "dev": {
+        "accuracy": 0.5754716981132075,
+        "positions": 106,
+        "mean_loss": 3.9303837895859033
+      },
+      "dev_generation": {
+        "episodes": 16,
+        "exact": 1,
+        "exact_rate": 0.0625,
+        "boundary_stop_rate": 1.0,
+        "samples": [
+          {
+            "reference": "不是白",
+            "generated": "相同",
+            "exact": false,
+            "boundary_stopped": true
+          },
+          {
+            "reference": "不是黄",
+            "generated": "相同",
+            "exact": false,
+            "boundary_stopped": true
+          },
+          {
+            "reference": "白",
+            "generated": "相同",
+            "exact": false,
+            "boundary_stopped": true
+          }
+        ]
+      }
+    },
+    {
+      "arm": "treatment",
+      "seed": 20260918,
+      "first_byte_weight": 5.0,
+      "epochs": 30,
+      "max_episodes": 25,
+      "train_episodes_available": 25,
+      "zero_step_checkpoint_digest": "aaec1dd98463fd8e9538dc111b328855feaaacb3f3ee03c2ef53a39ec3955009",
+      "checkpoint_digest": "e12f881cd5ac30fc340473e97621cdbac3ac4fca4649b45b31adc2a565c0c000",
+      "restore_matches": true,
+      "elapsed_seconds": 4.422000000020489,
+      "epoch_records": [
+        {
+          "epoch": 0,
+          "mean_loss": 2.8398756897449493,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 1,
+          "mean_loss": 1.7619026017189026,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 2,
+          "mean_loss": 1.446813007593155,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 3,
+          "mean_loss": 1.1246509802341462,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 4,
+          "mean_loss": 1.2146270489692688,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 5,
+          "mean_loss": 1.0217126750946044,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 6,
+          "mean_loss": 1.128398241996765,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 7,
+          "mean_loss": 1.1536490786075593,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 8,
+          "mean_loss": 1.2117696821689605,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 9,
+          "mean_loss": 1.0547798824310304,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 10,
+          "mean_loss": 0.9222932732105256,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 11,
+          "mean_loss": 0.9222715139389038,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 12,
+          "mean_loss": 0.8395220398902893,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 13,
+          "mean_loss": 0.8464458417892456,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 14,
+          "mean_loss": 0.7799480581283569,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 15,
+          "mean_loss": 0.9056410121917725,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 16,
+          "mean_loss": 0.8097670984268188,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 17,
+          "mean_loss": 0.8724990510940551,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 18,
+          "mean_loss": 0.8387585616111756,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 19,
+          "mean_loss": 0.8249748420715332,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 20,
+          "mean_loss": 0.8322047913074493,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 21,
+          "mean_loss": 0.8638915061950684,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 22,
+          "mean_loss": 0.9614529466629028,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 23,
+          "mean_loss": 1.085996425151825,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 24,
+          "mean_loss": 1.1380510759353637,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 25,
+          "mean_loss": 1.2104631131887436,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 26,
+          "mean_loss": 1.8055593287944793,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 27,
+          "mean_loss": 1.1179255139827728,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 28,
+          "mean_loss": 1.994484133720398,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 29,
+          "mean_loss": 1.7232625411450864,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        }
+      ],
+      "train": {
+        "accuracy": 0.7349397590361446,
+        "positions": 166,
+        "mean_loss": 1.1858246928453446
+      },
+      "dev": {
+        "accuracy": 0.5471698113207547,
+        "positions": 106,
+        "mean_loss": 4.790072252973914
+      },
+      "dev_generation": {
+        "episodes": 16,
+        "exact": 0,
+        "exact_rate": 0.0,
+        "boundary_stop_rate": 0.0,
+        "samples": [
+          {
+            "reference": "不是白",
+            "generated": "未未未未未未未未未未未未未未未未未未未未未�",
+            "exact": false,
+            "boundary_stopped": false
+          },
+          {
+            "reference": "不是黄",
+            "generated": "未未未未未未未未未未未未未未未未未未未未未�",
+            "exact": false,
+            "boundary_stopped": false
+          },
+          {
+            "reference": "白",
+            "generated": "未未未未未未未未未未未未未未未未未未未未未�",
+            "exact": false,
+            "boundary_stopped": false
+          }
+        ]
+      }
+    },
+    {
+      "arm": "control",
+      "seed": 20260919,
+      "first_byte_weight": 1.0,
+      "epochs": 30,
+      "max_episodes": 25,
+      "train_episodes_available": 25,
+      "zero_step_checkpoint_digest": "710c95ee1a9abfaf4f33ac1ae6990a1c22a102c4037b21e0e541aa8bc095ec52",
+      "checkpoint_digest": "c4c9b02709ac67f750a0083d2ef29b8036fe76459ee90cbeeb53cd6d472be80c",
+      "restore_matches": true,
+      "elapsed_seconds": 4.422000000020489,
+      "epoch_records": [
+        {
+          "epoch": 0,
+          "mean_loss": 3.1180369806289674,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 1,
+          "mean_loss": 1.2560786175727845,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 2,
+          "mean_loss": 0.7287355691194535,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 3,
+          "mean_loss": 0.5141522097587585,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 4,
+          "mean_loss": 0.4040268284082413,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 5,
+          "mean_loss": 0.48150587975978854,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 6,
+          "mean_loss": 0.5127228558063507,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 7,
+          "mean_loss": 0.47741177707910537,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 8,
+          "mean_loss": 0.45758600704371927,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 9,
+          "mean_loss": 0.3094754032790661,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 10,
+          "mean_loss": 0.27412851482629774,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 11,
+          "mean_loss": 0.2719998436048627,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 12,
+          "mean_loss": 0.23487466394901277,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 13,
+          "mean_loss": 0.24718141362071036,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 14,
+          "mean_loss": 0.2353988579660654,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 15,
+          "mean_loss": 0.22316924141719938,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 16,
+          "mean_loss": 0.2241875752992928,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 17,
+          "mean_loss": 0.2339428786188364,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 18,
+          "mean_loss": 0.21896876633167267,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 19,
+          "mean_loss": 0.21693540731444955,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 20,
+          "mean_loss": 0.22140253860503434,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 21,
+          "mean_loss": 0.22536115556955338,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 22,
+          "mean_loss": 0.20762994337826968,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 23,
+          "mean_loss": 0.21405589055269958,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 24,
+          "mean_loss": 0.21565813008695842,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 25,
+          "mean_loss": 0.20870151111856103,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 26,
+          "mean_loss": 0.20683056814596057,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 27,
+          "mean_loss": 0.21710715722292662,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 28,
+          "mean_loss": 0.22077546533197165,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 29,
+          "mean_loss": 0.25622931942343713,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        }
+      ],
+      "train": {
+        "accuracy": 0.9096385542168675,
+        "positions": 166,
+        "mean_loss": 0.212786387745291
+      },
+      "dev": {
+        "accuracy": 0.5943396226415094,
+        "positions": 106,
+        "mean_loss": 3.993464171886444
+      },
+      "dev_generation": {
+        "episodes": 16,
+        "exact": 0,
+        "exact_rate": 0.0,
+        "boundary_stop_rate": 1.0,
+        "samples": [
+          {
+            "reference": "不是白",
+            "generated": "蓝",
+            "exact": false,
+            "boundary_stopped": true
+          },
+          {
+            "reference": "不是黄",
+            "generated": "蓝",
+            "exact": false,
+            "boundary_stopped": true
+          },
+          {
+            "reference": "白",
+            "generated": "未知",
+            "exact": false,
+            "boundary_stopped": true
+          }
+        ]
+      }
+    },
+    {
+      "arm": "treatment",
+      "seed": 20260919,
+      "first_byte_weight": 5.0,
+      "epochs": 30,
+      "max_episodes": 25,
+      "train_episodes_available": 25,
+      "zero_step_checkpoint_digest": "710c95ee1a9abfaf4f33ac1ae6990a1c22a102c4037b21e0e541aa8bc095ec52",
+      "checkpoint_digest": "5aec7ee67fdd314e9d63b6450457f19bc7a7717398d02e3ad5b4cac213aac08a",
+      "restore_matches": true,
+      "elapsed_seconds": 4.406000000075437,
+      "epoch_records": [
+        {
+          "epoch": 0,
+          "mean_loss": 2.884495064020157,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 1,
+          "mean_loss": 1.4071915996074678,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 2,
+          "mean_loss": 1.2499419474601745,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 3,
+          "mean_loss": 1.100210783481598,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 4,
+          "mean_loss": 1.1501334738731384,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 5,
+          "mean_loss": 0.9685931116342544,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 6,
+          "mean_loss": 1.0609866869449616,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 7,
+          "mean_loss": 0.9785066986083985,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 8,
+          "mean_loss": 1.2865214657783508,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 9,
+          "mean_loss": 1.0619059072434902,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 10,
+          "mean_loss": 1.2472285687923432,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 11,
+          "mean_loss": 1.1190493613481522,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 12,
+          "mean_loss": 1.185275104045868,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 13,
+          "mean_loss": 1.325255377292633,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 14,
+          "mean_loss": 1.118670031130314,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 15,
+          "mean_loss": 1.4663775963149965,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 16,
+          "mean_loss": 0.9687037199735642,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 17,
+          "mean_loss": 1.1774276143312454,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 18,
+          "mean_loss": 1.3550250566005706,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 19,
+          "mean_loss": 1.2701760298013687,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 20,
+          "mean_loss": 1.3712394720315932,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 21,
+          "mean_loss": 2.125276726782322,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 22,
+          "mean_loss": 2.594617351591587,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 23,
+          "mean_loss": 1.252850540280342,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 24,
+          "mean_loss": 0.8048504761606455,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 25,
+          "mean_loss": 0.8219821398146451,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 26,
+          "mean_loss": 0.5857392321666702,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 27,
+          "mean_loss": 0.47901428091339765,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 28,
+          "mean_loss": 0.4527415785100311,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 29,
+          "mean_loss": 0.4278566164476797,
+          "episodes": 25,
+          "mean_contrastive_margin_gap": 0.0
+        }
+      ],
+      "train": {
+        "accuracy": 0.927710843373494,
+        "positions": 166,
+        "mean_loss": 0.17180395168252288
+      },
+      "dev": {
+        "accuracy": 0.6320754716981132,
+        "positions": 106,
+        "mean_loss": 4.219559513032436
+      },
+      "dev_generation": {
+        "episodes": 16,
+        "exact": 0,
+        "exact_rate": 0.0,
+        "boundary_stop_rate": 1.0,
+        "samples": [
+          {
+            "reference": "不是白",
+            "generated": "蓝",
+            "exact": false,
+            "boundary_stopped": true
+          },
+          {
+            "reference": "不是黄",
+            "generated": "未知",
+            "exact": false,
+            "boundary_stopped": true
+          },
+          {
+            "reference": "白",
+            "generated": "未知",
+            "exact": false,
+            "boundary_stopped": true
+          }
+        ]
+      }
+    }
+  ],
+  "dev_exact_per_seed": {
+    "control": [
+      0.25,
+      0.0625,
+      0.0
+    ],
+    "treatment": [
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  "dev_exact_mean": {
+    "control": 0.10416666666666667,
+    "treatment": 0.0
+  },
+  "verdict": "h_fbw_not_supported: treatment dev exact is not above control",
+  "final_evaluated": false,
+  "growth_admitted": false,
+  "can_promote": false,
+  "scope": "isolated sequence-workspace prototype only; the result must NOT be extrapolated to the chat() path (H-FBW spec section 3, residual risk 1)",
+  "report_digest": "5f48c95f4bbae4ace7707ed1af8fd77141ead6afa2bcdd5f7d436e0433310e39"
+}
