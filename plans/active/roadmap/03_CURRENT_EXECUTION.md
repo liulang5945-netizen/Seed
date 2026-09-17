@@ -190,7 +190,7 @@
 | 评价和交付 | M1–M5（D1 冻结）；G1 M3≥0.26/δ≥0.20；G2 M4≥0.50/δ≥0.25、fact_flip≥2/6，combo_flip 单列；G3 copy-misbind ΔM4≥0.50；G4 上下文 ΔM3≥0.30；G5 seed；G6 boundary/恢复 |
 | 结果去向 | 全门过 ⇒ 内容提取首次在可辨识 dev 获支持，转 §5.3 第 3 段（combo/真实语料另包）；copy probe 再失败 ⇒ 第二次 learnability 失败，停止自主改图、升级人工复审；matched 不过按修订 §6 路由 B/C，不扩预算 |
 
-合同：[H-A2 copy 修订（冻结）](../../reference/M5_R2_D2_COPY_MIXTURE_AMENDMENT_FROZEN_20260918.md)、[原预注册](../../reference/M5_R2_D2_PER_POSITION_EVIDENCE_PREREGISTRATION_FROZEN_20260918.md)、[假设备忘](../../reference/M5_R2_D2_HYPOTHESIS_SELECTION_MEMO_20260918.md)；证据：[probe](../../reports/r2_d2_learnability_probe_20260918.json)、[lr 诊断](../../reports/r2_d2_lr_stability_diagnostic_20260918.json)、[寻址诊断](../../reports/r2_d2_addressing_diagnostic_20260918.json)。
+合同：[H-A2 copy 修订（冻结）](../../reference/M5_R2_D2_COPY_MIXTURE_AMENDMENT_FROZEN_20260918.md)、[原预注册](../../reference/M5_R2_D2_PER_POSITION_EVIDENCE_PREREGISTRATION_FROZEN_20260918.md)、[假设备忘](../../reference/M5_R2_D2_HYPOTHESIS_SELECTION_MEMO_20260918.md)；证据：[probe](../../../reports/r2_d2_learnability_probe_20260918.json)、[lr 诊断](../../../reports/r2_d2_lr_stability_diagnostic_20260918.json)、[寻址诊断](../../../reports/r2_d2_addressing_diagnostic_20260918.json)。
 
 **结项历史指针：R2-D1 可辨识 dev 测量仪器 v1（2026-09-17，Q1–Q5 全过）。** 交付生成器/评分器/fixture（train 174/dev 98/final 94，digest `53ac9f88695f135d0…`）；天花板 M1=0.1735、M3=0.0581、M4=0.0，参照键全 1.0，b3 诊断 M4=5/11。合同 [D1 FROZEN](../../reference/M5_R2_D1_DEV_MEASUREMENT_CONTRACT_FROZEN_20260917.md)、[数据报告](../../../reports/r2_d1_data_contract_20260917.json)、[基线报告](../../../reports/r2_d1_surface_baselines_20260917.json)。本包只关闭测量缺口，不计为能力阶段进度。
 
