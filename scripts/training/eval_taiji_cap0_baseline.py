@@ -356,11 +356,31 @@ def run_baseline(
     constrained_decode: bool = False,
 ) -> dict[str, Any]:
     payload_set = _eval_set()
+    # 身份绑定（2026-09-17 补）：07 §4.1 与 roadmap 证据表要求基线分数绑定其
+    # 执行身份——git HEAD、checkpoint 字节摘要、冻版评价集摘要。旧 9/15 报告
+    # 缺这些字段，正是"默认 checkpoint 可能被测试写动、不能沿用旧身份"的根因。
+    git_head = subprocess.run(
+        ["git", "rev-parse", "HEAD"],
+        cwd=PROJECT_ROOT,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        check=False,
+    ).stdout.strip()
+    import hashlib
+
+    checkpoint_sha256 = hashlib.sha256(Path(checkpoint).read_bytes()).hexdigest()
+    eval_set_sha256 = hashlib.sha256(EVAL_SET_PATH.read_bytes()).hexdigest()
     report: dict[str, Any] = {
         "format": REPORT_FORMAT,
         "eval_set": str(EVAL_SET_PATH.relative_to(PROJECT_ROOT)),
         "eval_set_format": payload_set["format"],
         "eval_set_frozen_on": payload_set["frozen_on"],
+        "identity": {
+            "git_head": git_head,
+            "checkpoint_sha256": checkpoint_sha256,
+            "eval_set_sha256": eval_set_sha256,
+        },
         "checkpoint": str(checkpoint),
         "declared_mode": payload_set["declared_mode"],
         "trained_during_eval": False,
