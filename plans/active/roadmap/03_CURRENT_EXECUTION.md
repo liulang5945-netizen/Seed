@@ -1,10 +1,10 @@
 # Seed / Taiji 当前详细推进方案
 
-更新：2026-09-18。R2-D1 测量仪器已结项；R2-D2 最小 H-A1（纯生成+软寻址）在 learnability 阶段失败并定位机制（注意力塌缩到题干、材料质量为 0），H-A2 修订（copy 混合证据读出）合同已冻结，当前处于 v4 实现门阶段（零训练）。本文同时登记开发路径、当前模式和唯一活动入口。[01](01_SCOPE_AND_PHASES.md)管大阶段，[02](02_GATES_AND_CI.md)管证据与晋级，[07](07_MINI_MODEL_DELIVERY.md)管用户验收。[根需求](../TAIJI_CORE_REQUIREMENTS.md)与[架构合同](../TAIJI_NATIVE_ARCHITECTURE_V1.md)定义目的、职责和规则层级。
+更新：2026-09-18。R2-D1 测量仪器已结项；R2-D2 最小 H-A1 learnability 失败（寻址塌缩题干），H-A2 copy 混合实现门全绿、probe 未过门但机制精确定位（首回答字节查询由 prefix 无关的 start_vector 产生，「不」首字节被训练先验压制；五形状 train 满分）。按修订合同 §6 已停止自主改图，当前等待用户对下一变量（推荐 O1：问题条件化回答起点 graph v5）裁决。本文同时登记开发路径、当前模式和唯一活动入口。[01](01_SCOPE_AND_PHASES.md)管大阶段，[02](02_GATES_AND_CI.md)管证据与晋级，[07](07_MINI_MODEL_DELIVERY.md)管用户验收。[根需求](../TAIJI_CORE_REQUIREMENTS.md)与[架构合同](../TAIJI_NATIVE_ARCHITECTURE_V1.md)定义目的、职责和规则层级。
 
-## 当前唯一下一步：R2-D2 H-A2 实现门（graph v4 copy 混合，零训练），通过后跑 copy probe
+## 当前唯一下一步：用户裁决首字节变量（推荐 O1 问题条件化回答起点）；裁决前冻结训练
 
-**当前为M5 / R2原生语言能力；R2-D2 最小 H-A1 learnability 失败（机制已诊断），H-A2 copy 混合修订已冻结、实现未启。** H3.7/H3.8旧候选已结案；后续目标、容量、课程扫描及672档六seed巩固也已有结果，不能继续以P3b缺报告或“两次pilot全零”描述当前进度。R2-D1 已产出新身份 dev（corpus digest `53ac9f88695f…`）并通过 Q1–Q5 全部门：可接受固定策略天花板 M1=0.1735、M3=0.0581、M4=0.0，读背景参照解题器 M1/M3/M4/M5 全为 1.0。graph v3 实现门全绿；最小 H-A1 probe 未过线并定位到注意力塌缩（训练后寻址全在题干、材料质量≈0），H-A2 在同假设族加 copy 混合（A2=82,658 参数，p_copy 仅在可见 prefix 位置归一化，boundary 只能由生成分支给），v4 实现门与 copy-supported probe（fact/negation/sof 144 题 M1≥0.90）通过前不启动正式训练；lr 按 H3.8 冻结证据更正为 0.01；不读封存 final，没有 L2/M5 晋级或默认模型迁移；若 copy probe 再失败，按修订合同 §6 停止自主改图、升级人工复审。
+**当前为M5 / R2原生语言能力；R2-D2 处于第二次 learnability 停止后的用户裁决点，训练冻结。** H-A1（纯生成+软寻址）失败于寻址塌缩；H-A2（+copy 混合，82,658 参数）实现门全绿，probe loss 4.54→0.089，fact/sof/unknown/sou/combo_same train M1=1.0，但 negation 与 combo_different（答案均以「不」开头）为 0，copy-supported M1=0.667 未达 0.90 门；epoch 5 即平台（非预算问题），TF 诊断显示除首字节外目标概率全 1.0，根因为首步查询由 prefix 无关的 start_vector 产生、被 119:55 训练先验压向颜色字节——与 H-FBW/H3.8 首字节证据同根。按修订合同 §6 已停止自主改图；[首字节升级备忘](../../reference/M5_R2_D2_FIRST_BYTE_ESCALATION_MEMO_20260918.md)给出 O1–O4 取舍，唯一推荐 O1（r_0 改由问题干末状态条件化，材料仍只经证据读出，graph v5）；裁决前不跑新训练、不读 dev/final，没有 L2/M5 晋级或默认迁移。
 
 **本轮任务定位：完善与补全计划，用于指导后续开发。** [唯一VISION](../../reference/VISION_FUTURE_TECHNOLOGY.md)保留五套高上限方案，本文§5补齐能力目标、依赖、开发顺序、交付、验证及结果处置，01 §6衔接全项目阶段。此前将A-R2评审设为队首过早收窄了用户意图，本轮撤回：A-R2仅为规格示例，不是已选路线或必须立即作出的采用决定。多方案规划可以并列，未来实际实施仍须有明确范围。
 
@@ -27,7 +27,7 @@
 
 规划交付是一份可以回答“做什么、为什么、先后关系、做出什么、怎样验、结果不好怎么办”的开发指导计划，而不是要求用户现在从A/B/C/D/E选赢家。规划完成不等于研发完成；仍待标定的数值列明求取方法与冻结时点，不假装已经确认。
 
-**唯一下一步：执行 H-A2 v4 实现门（零训练）。** 最小 H-A1 在 learnability 阶段失败且机制已诊断（寻址塌缩题干），[copy 混合修订合同](../../reference/M5_R2_D2_COPY_MIXTURE_AMENDMENT_FROZEN_20260918.md)已冻结：v4 实现门（copy 概率/梯度/lesion/三版本恢复）→ A2 copy-supported probe（144 题 M1≥0.90）→ 三 seed×三臂 matched dev（G1–G6，fact_flip≥2/6，combo_flip 单列作 C 路由）。任何一门不过按修订合同 §6 路由；**copy probe 若再失败即第二次 learnability 失败，停止自主改图并升级人工复审**。R2-D1 卡片保留为结项指针（§5.7）。
+**唯一下一步：用户裁决首字节变量（推荐 O1）。** [升级备忘](../../reference/M5_R2_D2_FIRST_BYTE_ESCALATION_MEMO_20260918.md)§3 列 O1（问题条件化回答起点 r_0=tanh(h_question·W_start+b)，h_question 取材料标记之前的扫描状态；材料仍只经证据读出）、O2（形状均衡，需仪器修订）、O3（转 B，与证据不符）、O4（转规模/课程，违纪律）。若裁决 O1：冻结 graph v5 修订→实现门（新增 r_0 随题干变/随材料不变、同题干材料替换只经读出影响首步）→同一 copy probe 重跑；**O1 再失败则无第三次自主图修订，A 族路线交回用户全面评审**。裁决前训练冻结。
 
 **路线纠正继续有效**：主线是R2材料/问题/上下文→原生自由回答；最小任务族只是一种验证方法，D的真实行动环境、E的在线能力不成为R2前置。七次旧追加移到[历史快照](../../archive/history/R2_DIAGNOSTIC_QUEUE_BEFORE_DESIGN_OPTIONS_20260917.md)，保留原始负结果和当时判断，不再与本节争夺队首。
 
@@ -178,7 +178,7 @@
 
 ### 5.7 当前开发包卡片（唯一活动卡）与结项历史指针
 
-**R2-D2 逐位置证据记忆（H-A1→H-A2，VISION 方案 A）— 活动（开包 2026-09-18；v3 实现门全绿、最小 H-A1 learnability 失败已诊断、H-A2 copy 修订已冻结，当前 v4 实现门阶段，零训练）**
+**R2-D2 逐位置证据记忆（H-A1→H-A2，VISION 方案 A）— 活动·裁决点（2026-09-18；v3/v4 实现门全绿；H-A1 learnability 失败、H-A2 copy probe 0.667 未过门，根因定位首字节条件化；按 §6 停止自主改图，等待用户裁决 O1–O4，训练冻结）**
 
 | 项目 | 内容 |
 |---|---|
