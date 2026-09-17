@@ -26,8 +26,8 @@
 | B0/B1 | 评分/可达性审查、HANDOFF-M4 gate落地、B1表示门已完成 | 不再重开早期D1–D5；gate实现不等于产品核心实现 |
 | B2-v4 | [冻结协议](../../reference/M5_B2V4_COLLABORATION_JUDGMENT_PREREGISTRATION_FROZEN_20260916.md)，28a1cf02记录九门通过；a+c增益2.0≥1.65，逐格6/6、交错和lesion成立 | collaboration_supported只指冻结机制＋v3选择程序＋create族内；轴未独立晋级、产品未采用、跨内容结构未证 |
 | P5.2d v1 | [已提交报告](../../../reports/taiji_p5_2d_online_writeback_20260916.json)失败；成功反馈被10.0资源上限拒绝 | 找到信号不是完成在线学习；未触达验收不算通过 |
-| P5.2d本地v2 | 未跟踪reports/taiji_p5_2d_online_writeback_v2_20260916.json：预算64，a+c反馈applied，outcome仍failed；[R0审计](../../reference/M5_R0_EVIDENCE_GATE_AUDIT_20260916.md)已逐门核对 | 预算校准信号可作局部事实；A1假阳性，A2/A3/A5/G1不可判，A6仅部分可用；协议和runner的§8修订仍未同步，不得晋级。修正仪器降为并行债务，不阻塞R2主线 |
-| v2审查线索 | updated_pair仍b+c、六对预测全1.291667、后测收益0，但a1=true；a2/a3/a5/g1失败；恢复及rollback说明与细节需核对 | 必须逐门查证，不能认定只是预算问题，也不能未经诊断归罪核心架构 |
+| P5.2d本地v2 | ~~未跟踪~~〔更新 2026-09-16〕§8 已同步并重跑，报告现随 commit f89d7a0d 入库（**重跑覆盖了 R0 审计引用的未跟踪 v2 报告文件**——审计结论以 R0 文档留痕为准，特此披露）；§7 预算校准（64）+ §8 仪器修正后 outcome 字段为 supported | **不晋级（R0 判定维持）**：A2/A3/A5 经修正仪器后可判且通过（record 集 1→1、重放拒绝+digest 不变、恢复 digest 逐字节一致），A4/A6 过；但 **A1 实质未变**——updated_pair 仍 b+c、后测收益 0，仅预测排序首位，与 R0「A1 假阳性」判定一致；选择校准（首次 admission 后残差不确定性超 maximum_uncertainty=2.0）是 A1 的真实缺口。并行债务已了结，不阻塞 R2 主线 |
+| v2审查线索 | updated_pair仍b+c、六对预测全1.291667、后测收益0，但a1=true；a2/a3/a5/g1失败；恢复及rollback说明与细节需核对 | 〔更新 2026-09-16〕§8 同步重跑后：a2/a3/a5/g1 已可判且通过（g1 采样时机修正）；a1 的假阳性形态确认——根因 = 有界 select 未随准入改变（不确定性边界）+ 增益比较因选择未变而平凡成立；恢复与回滚细节已在 v2 报告 recovery_detail/rollback_detail 落盘并核对一致 |
 | CAP默认入口 | [基线](../../reference/M5_CAP0_BASELINE_RESULT_20260915.md)：原tick=2入口去回显后C/D/E为0；B/G辅助判断待人工确认 | 限定当时快照；默认checkpoint存在被测试写动的风险，不能沿用旧身份 |
 | P3b已提交材料 | [阶段结果](../../reference/M5_P3B_RESULT_20260916.md)：唯一共同tick17M，C/D差0，E差+0.05，未检测到该分辨率下效应 | 不等于分布无关或架构无效；J4 A/H及人工安全分支缺证 |
 | P3b工作区终态 | treatment记录finished_at、campaign_stop=regressed；18M persistent；对照17M material；R0已核实两臂停止 | 数据分布效应只有一个共同tick，仍not_resolved；18M原始输出可观察但C/D/E未达标，保护隔离仍有DEBT-I7 |
