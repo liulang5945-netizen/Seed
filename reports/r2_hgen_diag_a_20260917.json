@@ -1,0 +1,168 @@
+{
+  "format": "taiji-r2-hgen-diag-a-v1",
+  "seed": 20260917,
+  "epochs": 30,
+  "max_episodes": 25,
+  "zero_step_checkpoint_digest": "6428abf9b421c7f95a4758c56310d93ba08bf73927a67b2cdf346681a5cef00e",
+  "final_checkpoint_digest": "b6d87b85b72a9bc150c11bbb5cd747dca2a77bf2b2117b6b93567715e2e6ac43",
+  "corpus_mode_response": "蓝",
+  "corpus_mode_count": 6,
+  "dev_episodes": 16,
+  "exact_hits": 4,
+  "hit_rows": [
+    {
+      "reference": "未知",
+      "generated": "未知",
+      "exact": true,
+      "ref_len": 6,
+      "gen_len": 6,
+      "first_byte_is_mode": false,
+      "generated_is_mode": false
+    },
+    {
+      "reference": "未知",
+      "generated": "未知",
+      "exact": true,
+      "ref_len": 6,
+      "gen_len": 6,
+      "first_byte_is_mode": false,
+      "generated_is_mode": false
+    },
+    {
+      "reference": "未知",
+      "generated": "未知",
+      "exact": true,
+      "ref_len": 6,
+      "gen_len": 6,
+      "first_byte_is_mode": false,
+      "generated_is_mode": false
+    },
+    {
+      "reference": "未知",
+      "generated": "未知",
+      "exact": true,
+      "ref_len": 6,
+      "gen_len": 6,
+      "first_byte_is_mode": false,
+      "generated_is_mode": false
+    }
+  ],
+  "miss_rows": [
+    {
+      "reference": "不是白",
+      "generated": "���",
+      "exact": false,
+      "ref_len": 9,
+      "gen_len": 3,
+      "first_byte_is_mode": false,
+      "generated_is_mode": false
+    },
+    {
+      "reference": "不是黄",
+      "generated": "���",
+      "exact": false,
+      "ref_len": 9,
+      "gen_len": 3,
+      "first_byte_is_mode": false,
+      "generated_is_mode": false
+    },
+    {
+      "reference": "白",
+      "generated": "蓝",
+      "exact": false,
+      "ref_len": 3,
+      "gen_len": 3,
+      "first_byte_is_mode": false,
+      "generated_is_mode": true
+    },
+    {
+      "reference": "黄",
+      "generated": "未知",
+      "exact": false,
+      "ref_len": 3,
+      "gen_len": 6,
+      "first_byte_is_mode": false,
+      "generated_is_mode": false
+    },
+    {
+      "reference": "白",
+      "generated": "未知",
+      "exact": false,
+      "ref_len": 3,
+      "gen_len": 6,
+      "first_byte_is_mode": false,
+      "generated_is_mode": false
+    },
+    {
+      "reference": "白",
+      "generated": "未知",
+      "exact": false,
+      "ref_len": 3,
+      "gen_len": 6,
+      "first_byte_is_mode": false,
+      "generated_is_mode": false
+    },
+    {
+      "reference": "相同",
+      "generated": "蓝",
+      "exact": false,
+      "ref_len": 6,
+      "gen_len": 3,
+      "first_byte_is_mode": false,
+      "generated_is_mode": true
+    },
+    {
+      "reference": "不同",
+      "generated": "蓝",
+      "exact": false,
+      "ref_len": 6,
+      "gen_len": 3,
+      "first_byte_is_mode": false,
+      "generated_is_mode": true
+    },
+    {
+      "reference": "不是白",
+      "generated": "未知",
+      "exact": false,
+      "ref_len": 9,
+      "gen_len": 6,
+      "first_byte_is_mode": false,
+      "generated_is_mode": false
+    },
+    {
+      "reference": "不是黄",
+      "generated": "未知",
+      "exact": false,
+      "ref_len": 9,
+      "gen_len": 6,
+      "first_byte_is_mode": false,
+      "generated_is_mode": false
+    },
+    {
+      "reference": "白",
+      "generated": "���",
+      "exact": false,
+      "ref_len": 3,
+      "gen_len": 3,
+      "first_byte_is_mode": false,
+      "generated_is_mode": false
+    },
+    {
+      "reference": "黄",
+      "generated": "���",
+      "exact": false,
+      "ref_len": 3,
+      "gen_len": 3,
+      "first_byte_is_mode": false,
+      "generated_is_mode": false
+    }
+  ],
+  "coincidence_tests": {
+    "hit_first_byte_is_mode_share": 0.0,
+    "miss_first_byte_is_mode_share": 0.0,
+    "hit_generated_is_mode_share": 0.0,
+    "hit_mean_ref_len": 6.0,
+    "miss_mean_ref_len": 5.5
+  },
+  "interpretation_rule": "If hit episodes are dominated by short/high-frequency shapes whose first byte IS the corpus mode byte (and generation mostly echoes the mode response), the 0.25 is coincidence: the model repeats the marginal mode and sometimes the mode IS the answer. If hits include long/low-frequency answers with non-mode first bytes, positional conditioning exists to some degree."
+}
