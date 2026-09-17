@@ -1,0 +1,88 @@
+{
+  "format": "taiji-r2-h3-8-joint-sequence-corpus-scaled-v1",
+  "version": 1,
+  "generation_seed": 20260917,
+  "generator": "scripts/training/build_taiji_r2_h3_8_corpus.py",
+  "fixture": "tests\\fixtures\\r2_h3_8_joint_sequence_scaled_v1.jsonl",
+  "corpus_digest": "d34e9724c472b05f380513939600cdf0c1801d518551841d48b7720ef598ef49",
+  "splits": {
+    "dev": {
+      "episodes": 48,
+      "shapes": [
+        "combination_constraint",
+        "fact_replacement",
+        "negation",
+        "same_opening_different_content",
+        "unknown_information"
+      ],
+      "entities": [
+        "太阳",
+        "沙漠",
+        "湖水",
+        "灰",
+        "白",
+        "粉",
+        "银",
+        "雪"
+      ]
+    },
+    "final": {
+      "episodes": 48,
+      "shapes": [
+        "combination_constraint",
+        "fact_replacement",
+        "negation",
+        "same_opening_different_content",
+        "unknown_information"
+      ],
+      "entities": [
+        "冰川",
+        "夜晚",
+        "大海",
+        "棕",
+        "橙",
+        "火焰",
+        "紫",
+        "黑"
+      ]
+    },
+    "train": {
+      "episodes": 92,
+      "shapes": [
+        "combination_constraint",
+        "fact_replacement",
+        "negation",
+        "same_opening_different_content",
+        "unknown_information"
+      ],
+      "entities": [
+        "城市",
+        "天空",
+        "山川",
+        "树叶",
+        "森林",
+        "河流",
+        "海洋",
+        "红",
+        "绿",
+        "草",
+        "蓝",
+        "黄"
+      ]
+    }
+  },
+  "checks": {
+    "unique_prefixes_within_split": true,
+    "prefixes_disjoint_across_splits": true,
+    "templates_disjoint_across_splits": true,
+    "entities_disjoint_across_splits": true,
+    "combinations_disjoint_across_splits": true,
+    "all_shapes_in_every_split": true,
+    "same_opening_pairs_share_opening": true
+  },
+  "outcome": "passed",
+  "failed_checks": [],
+  "policy": "generation rules are never exposed to any model; the old H3.x 12/8/4 fixture stays engineering regression only",
+  "growth_admitted": false,
+  "can_promote": false
+}

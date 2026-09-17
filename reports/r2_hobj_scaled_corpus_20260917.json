@@ -1,0 +1,633 @@
+{
+  "format": "taiji-r2-hobj-matched-dev-v1",
+  "candidate_spec": "plans/reference/M5_R2_NEXT_CANDIDATE_GENERATION_STATE_TRAINING_20260917.md",
+  "implementability": "plans/reference/M5_R2_CANDIDATE_HGEN_IMPLEMENTABILITY_20260917.md",
+  "code_revision": "9780eb450d59d92fc9be1f9ddb3dee995577d829",
+  "fixture": "tests\\fixtures\\r2_h3_8_joint_sequence_v1.jsonl",
+  "corpus_sha256": "9ccc9df2f7c02b0f8a49511b82d291a0ad5245148517a6ff1fa6f2db29be4e14",
+  "frozen": {
+    "seeds": [
+      20260917,
+      20260918,
+      20260919
+    ],
+    "epochs": 30,
+    "max_episodes": 25,
+    "lambda_control": 0.0,
+    "lambda_treatment": 1.0,
+    "contrastive_margin": 1.0,
+    "wall_cap_seconds": 1800.0
+  },
+  "arms": [
+    {
+      "arm": "control",
+      "seed": 20260917,
+      "lambda": 0.0,
+      "epochs": 8,
+      "max_episodes": 92,
+      "train_episodes_available": 25,
+      "zero_step_checkpoint_digest": "6428abf9b421c7f95a4758c56310d93ba08bf73927a67b2cdf346681a5cef00e",
+      "checkpoint_digest": "52f0a6874e9a70d29e8a55463a5a1393d9c8e772cb93cb4d755dd56fda54e014",
+      "restore_matches": true,
+      "elapsed_seconds": 3.890999999945052,
+      "epoch_records": [
+        {
+          "epoch": 0,
+          "mean_loss": 1.4680088917198388,
+          "episodes": 92,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 1,
+          "mean_loss": 0.4441209445586023,
+          "episodes": 92,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 2,
+          "mean_loss": 0.352172099094352,
+          "episodes": 92,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 3,
+          "mean_loss": 0.3315260123319762,
+          "episodes": 92,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 4,
+          "mean_loss": 0.32338718320850446,
+          "episodes": 92,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 5,
+          "mean_loss": 0.37436055521855294,
+          "episodes": 92,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 6,
+          "mean_loss": 0.6614473114377293,
+          "episodes": 92,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 7,
+          "mean_loss": 0.7363306869266798,
+          "episodes": 92,
+          "mean_contrastive_margin_gap": 0.0
+        }
+      ],
+      "train": {
+        "accuracy": 0.8433734939759037,
+        "positions": 166,
+        "mean_loss": 0.4051331043243408
+      },
+      "dev": {
+        "accuracy": 0.6415094339622641,
+        "positions": 106,
+        "mean_loss": 3.9134252294898033
+      },
+      "dev_generation": {
+        "episodes": 16,
+        "exact": 0,
+        "exact_rate": 0.0,
+        "boundary_stop_rate": 1.0,
+        "samples": [
+          {
+            "reference": "不是白",
+            "generated": "蓝",
+            "exact": false,
+            "boundary_stopped": true
+          },
+          {
+            "reference": "不是黄",
+            "generated": "蓝",
+            "exact": false,
+            "boundary_stopped": true
+          },
+          {
+            "reference": "白",
+            "generated": "蓝",
+            "exact": false,
+            "boundary_stopped": true
+          }
+        ]
+      }
+    },
+    {
+      "arm": "treatment",
+      "seed": 20260917,
+      "lambda": 1.0,
+      "epochs": 8,
+      "max_episodes": 92,
+      "train_episodes_available": 25,
+      "zero_step_checkpoint_digest": "6428abf9b421c7f95a4758c56310d93ba08bf73927a67b2cdf346681a5cef00e",
+      "checkpoint_digest": "685199b9b8cb3354c3ebd3bbd827ea04b664a523b7faa458487dea5393209010",
+      "restore_matches": true,
+      "elapsed_seconds": 8.077999999979511,
+      "epoch_records": [
+        {
+          "epoch": 0,
+          "mean_loss": 2.3624810874462128,
+          "episodes": 92,
+          "mean_contrastive_margin_gap": -0.00034647532131360924
+        },
+        {
+          "epoch": 1,
+          "mean_loss": 2.225702069375826,
+          "episodes": 92,
+          "mean_contrastive_margin_gap": -0.04810919094344844
+        },
+        {
+          "epoch": 2,
+          "mean_loss": 7.037907246500254,
+          "episodes": 92,
+          "mean_contrastive_margin_gap": 1.2588529285124463
+        },
+        {
+          "epoch": 3,
+          "mean_loss": 5.721677013930235,
+          "episodes": 92,
+          "mean_contrastive_margin_gap": -0.3021183348382297
+        },
+        {
+          "epoch": 4,
+          "mean_loss": 2.0551522991496,
+          "episodes": 92,
+          "mean_contrastive_margin_gap": 2.377952534219493
+        },
+        {
+          "epoch": 5,
+          "mean_loss": 1.338200823374791,
+          "episodes": 92,
+          "mean_contrastive_margin_gap": 2.4964371056943806
+        },
+        {
+          "epoch": 6,
+          "mean_loss": 0.7598901942433061,
+          "episodes": 92,
+          "mean_contrastive_margin_gap": 4.892099541409508
+        },
+        {
+          "epoch": 7,
+          "mean_loss": 0.6929204776078342,
+          "episodes": 92,
+          "mean_contrastive_margin_gap": 4.854932485715203
+        }
+      ],
+      "train": {
+        "accuracy": 0.8975903614457831,
+        "positions": 166,
+        "mean_loss": 0.2241423873603344
+      },
+      "dev": {
+        "accuracy": 0.5849056603773585,
+        "positions": 106,
+        "mean_loss": 5.088944173417985
+      },
+      "dev_generation": {
+        "episodes": 16,
+        "exact": 1,
+        "exact_rate": 0.0625,
+        "boundary_stop_rate": 1.0,
+        "samples": [
+          {
+            "reference": "不是白",
+            "generated": "未知",
+            "exact": false,
+            "boundary_stopped": true
+          },
+          {
+            "reference": "不是黄",
+            "generated": "未知",
+            "exact": false,
+            "boundary_stopped": true
+          },
+          {
+            "reference": "白",
+            "generated": "未知",
+            "exact": false,
+            "boundary_stopped": true
+          }
+        ]
+      }
+    },
+    {
+      "arm": "control",
+      "seed": 20260918,
+      "lambda": 0.0,
+      "epochs": 8,
+      "max_episodes": 92,
+      "train_episodes_available": 25,
+      "zero_step_checkpoint_digest": "aaec1dd98463fd8e9538dc111b328855feaaacb3f3ee03c2ef53a39ec3955009",
+      "checkpoint_digest": "022c910080d8775a33d94c352a6998d22f7d0ae85b17d3ac2ac12c1cf46cb6d8",
+      "restore_matches": true,
+      "elapsed_seconds": 4.219000000040978,
+      "epoch_records": [
+        {
+          "epoch": 0,
+          "mean_loss": 1.3709101108429225,
+          "episodes": 92,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 1,
+          "mean_loss": 0.49088191905099415,
+          "episodes": 92,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 2,
+          "mean_loss": 0.5172182250282039,
+          "episodes": 92,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 3,
+          "mean_loss": 0.6993015866888606,
+          "episodes": 92,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 4,
+          "mean_loss": 0.4175916748202365,
+          "episodes": 92,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 5,
+          "mean_loss": 0.373608599052481,
+          "episodes": 92,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 6,
+          "mean_loss": 0.39103750155671785,
+          "episodes": 92,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 7,
+          "mean_loss": 0.43864690115594346,
+          "episodes": 92,
+          "mean_contrastive_margin_gap": 0.0
+        }
+      ],
+      "train": {
+        "accuracy": 0.8072289156626506,
+        "positions": 166,
+        "mean_loss": 0.3650418907403946
+      },
+      "dev": {
+        "accuracy": 0.6132075471698113,
+        "positions": 106,
+        "mean_loss": 3.404543537646532
+      },
+      "dev_generation": {
+        "episodes": 16,
+        "exact": 1,
+        "exact_rate": 0.0625,
+        "boundary_stop_rate": 1.0,
+        "samples": [
+          {
+            "reference": "不是白",
+            "generated": "相同",
+            "exact": false,
+            "boundary_stopped": true
+          },
+          {
+            "reference": "不是黄",
+            "generated": "相同",
+            "exact": false,
+            "boundary_stopped": true
+          },
+          {
+            "reference": "白",
+            "generated": "相同",
+            "exact": false,
+            "boundary_stopped": true
+          }
+        ]
+      }
+    },
+    {
+      "arm": "treatment",
+      "seed": 20260918,
+      "lambda": 1.0,
+      "epochs": 8,
+      "max_episodes": 92,
+      "train_episodes_available": 25,
+      "zero_step_checkpoint_digest": "aaec1dd98463fd8e9538dc111b328855feaaacb3f3ee03c2ef53a39ec3955009",
+      "checkpoint_digest": "0b2b6a77a734f0aa1c49850f0e484465ddd6a6658d87d3a5f29e77641188f919",
+      "restore_matches": true,
+      "elapsed_seconds": 8.14000000001397,
+      "epoch_records": [
+        {
+          "epoch": 0,
+          "mean_loss": 3.2519426462442977,
+          "episodes": 92,
+          "mean_contrastive_margin_gap": 0.20005122636971268
+        },
+        {
+          "epoch": 1,
+          "mean_loss": 1.4284971187943998,
+          "episodes": 92,
+          "mean_contrastive_margin_gap": 1.7728494561236836e-05
+        },
+        {
+          "epoch": 2,
+          "mean_loss": 1.3770586576150812,
+          "episodes": 92,
+          "mean_contrastive_margin_gap": 1.4819528745568316e-05
+        },
+        {
+          "epoch": 3,
+          "mean_loss": 1.3718498582425325,
+          "episodes": 92,
+          "mean_contrastive_margin_gap": 9.941018146017324e-06
+        },
+        {
+          "epoch": 4,
+          "mean_loss": 1.3674628242202427,
+          "episodes": 92,
+          "mean_contrastive_margin_gap": 9.347563204558e-06
+        },
+        {
+          "epoch": 5,
+          "mean_loss": 1.353260681681011,
+          "episodes": 92,
+          "mean_contrastive_margin_gap": 9.49009605076002e-06
+        },
+        {
+          "epoch": 6,
+          "mean_loss": 1.3545213276925294,
+          "episodes": 92,
+          "mean_contrastive_margin_gap": 8.517633313718049e-06
+        },
+        {
+          "epoch": 7,
+          "mean_loss": 1.3906453161135963,
+          "episodes": 92,
+          "mean_contrastive_margin_gap": 2.0221523616624914e-05
+        }
+      ],
+      "train": {
+        "accuracy": 0.8132530120481928,
+        "positions": 166,
+        "mean_loss": 0.331331604719162
+      },
+      "dev": {
+        "accuracy": 0.5471698113207547,
+        "positions": 106,
+        "mean_loss": 2.952044155448675
+      },
+      "dev_generation": {
+        "episodes": 16,
+        "exact": 0,
+        "exact_rate": 0.0,
+        "boundary_stop_rate": 1.0,
+        "samples": [
+          {
+            "reference": "不是白",
+            "generated": "蓝",
+            "exact": false,
+            "boundary_stopped": true
+          },
+          {
+            "reference": "不是黄",
+            "generated": "蓝",
+            "exact": false,
+            "boundary_stopped": true
+          },
+          {
+            "reference": "白",
+            "generated": "蓝",
+            "exact": false,
+            "boundary_stopped": true
+          }
+        ]
+      }
+    },
+    {
+      "arm": "control",
+      "seed": 20260919,
+      "lambda": 0.0,
+      "epochs": 8,
+      "max_episodes": 92,
+      "train_episodes_available": 25,
+      "zero_step_checkpoint_digest": "710c95ee1a9abfaf4f33ac1ae6990a1c22a102c4037b21e0e541aa8bc095ec52",
+      "checkpoint_digest": "abc243027bf1aa14c748f7a045271d4021b34618c8d1649758e59048e0ace198",
+      "restore_matches": true,
+      "elapsed_seconds": 4.233999999938533,
+      "epoch_records": [
+        {
+          "epoch": 0,
+          "mean_loss": 1.498642230325419,
+          "episodes": 92,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 1,
+          "mean_loss": 0.46575550556830736,
+          "episodes": 92,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 2,
+          "mean_loss": 0.362289328067361,
+          "episodes": 92,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 3,
+          "mean_loss": 0.2508248223862408,
+          "episodes": 92,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 4,
+          "mean_loss": 0.22684858597653068,
+          "episodes": 92,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 5,
+          "mean_loss": 0.2184222836462457,
+          "episodes": 92,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 6,
+          "mean_loss": 0.21407852909001318,
+          "episodes": 92,
+          "mean_contrastive_margin_gap": 0.0
+        },
+        {
+          "epoch": 7,
+          "mean_loss": 0.21768512544424637,
+          "episodes": 92,
+          "mean_contrastive_margin_gap": 0.0
+        }
+      ],
+      "train": {
+        "accuracy": 0.9156626506024096,
+        "positions": 166,
+        "mean_loss": 0.17321919180452824
+      },
+      "dev": {
+        "accuracy": 0.6037735849056604,
+        "positions": 106,
+        "mean_loss": 3.536176025867462
+      },
+      "dev_generation": {
+        "episodes": 16,
+        "exact": 0,
+        "exact_rate": 0.0,
+        "boundary_stop_rate": 1.0,
+        "samples": [
+          {
+            "reference": "不是白",
+            "generated": "不同",
+            "exact": false,
+            "boundary_stopped": true
+          },
+          {
+            "reference": "不是黄",
+            "generated": "不同",
+            "exact": false,
+            "boundary_stopped": true
+          },
+          {
+            "reference": "白",
+            "generated": "不同",
+            "exact": false,
+            "boundary_stopped": true
+          }
+        ]
+      }
+    },
+    {
+      "arm": "treatment",
+      "seed": 20260919,
+      "lambda": 1.0,
+      "epochs": 8,
+      "max_episodes": 92,
+      "train_episodes_available": 25,
+      "zero_step_checkpoint_digest": "710c95ee1a9abfaf4f33ac1ae6990a1c22a102c4037b21e0e541aa8bc095ec52",
+      "checkpoint_digest": "5b89bd5e233025acd8672355b31aff6bc0f2e691831ccd50c3258ebb4ce6b788",
+      "restore_matches": true,
+      "elapsed_seconds": 8.155999999959022,
+      "epoch_records": [
+        {
+          "epoch": 0,
+          "mean_loss": 5.20348063815871,
+          "episodes": 92,
+          "mean_contrastive_margin_gap": 0.09392749097036279
+        },
+        {
+          "epoch": 1,
+          "mean_loss": 5.334193925494733,
+          "episodes": 92,
+          "mean_contrastive_margin_gap": -2.434815802651903
+        },
+        {
+          "epoch": 2,
+          "mean_loss": 1.6404384264479512,
+          "episodes": 92,
+          "mean_contrastive_margin_gap": -0.15002214390298593
+        },
+        {
+          "epoch": 3,
+          "mean_loss": 1.458179383174233,
+          "episodes": 92,
+          "mean_contrastive_margin_gap": -0.06065123171909996
+        },
+        {
+          "epoch": 4,
+          "mean_loss": 1.4224286422781323,
+          "episodes": 92,
+          "mean_contrastive_margin_gap": -0.0475241684395334
+        },
+        {
+          "epoch": 5,
+          "mean_loss": 1.4297748933667722,
+          "episodes": 92,
+          "mean_contrastive_margin_gap": -0.0752304170442664
+        },
+        {
+          "epoch": 6,
+          "mean_loss": 1.5483861173624578,
+          "episodes": 92,
+          "mean_contrastive_margin_gap": -0.17089359850987143
+        },
+        {
+          "epoch": 7,
+          "mean_loss": 2.258552865813608,
+          "episodes": 92,
+          "mean_contrastive_margin_gap": -0.5929506683479184
+        }
+      ],
+      "train": {
+        "accuracy": 0.8313253012048193,
+        "positions": 166,
+        "mean_loss": 0.4674368018656969
+      },
+      "dev": {
+        "accuracy": 0.6037735849056604,
+        "positions": 106,
+        "mean_loss": 3.351952654309571
+      },
+      "dev_generation": {
+        "episodes": 16,
+        "exact": 1,
+        "exact_rate": 0.0625,
+        "boundary_stop_rate": 1.0,
+        "samples": [
+          {
+            "reference": "不是白",
+            "generated": "蓝",
+            "exact": false,
+            "boundary_stopped": true
+          },
+          {
+            "reference": "不是黄",
+            "generated": "蓝",
+            "exact": false,
+            "boundary_stopped": true
+          },
+          {
+            "reference": "白",
+            "generated": "蓝",
+            "exact": false,
+            "boundary_stopped": true
+          }
+        ]
+      }
+    }
+  ],
+  "dev_exact_per_seed": {
+    "control": [
+      0.0,
+      0.0625,
+      0.0
+    ],
+    "treatment": [
+      0.0625,
+      0.0,
+      0.0625
+    ]
+  },
+  "dev_exact_mean": {
+    "control": 0.020833333333333332,
+    "treatment": 0.041666666666666664
+  },
+  "verdict": "h_obj_supported: treatment dev exact is above control",
+  "final_evaluated": false,
+  "growth_admitted": false,
+  "can_promote": false,
+  "scope": "isolated sequence-workspace prototype only; the result must NOT be extrapolated to the chat() path (H-OBJ spec section 3, residual risk 1)",
+  "report_digest": "d20b8a044a862a3b9810a4e1452885f0ec0002786c58cbd1f16134aff9b89a7a"
+}

@@ -123,7 +123,15 @@ def _generation(
     }
 
 
-def _run_arm(arm: str, *, seed: int, lam: float, report_dir: Path) -> dict[str, Any]:
+def _run_arm(
+    arm: str,
+    *,
+    seed: int,
+    lam: float,
+    report_dir: Path,
+    epochs: int = EPOCHS,
+    max_episodes: int = MAX_EPISODES,
+) -> dict[str, Any]:
     torch.manual_seed(seed)
     config = SequenceWorkspaceConfig(seed=seed)
     prototype = SequenceWorkspacePrototype(config)
@@ -135,8 +143,8 @@ def _run_arm(arm: str, *, seed: int, lam: float, report_dir: Path) -> dict[str, 
 
     started = time.monotonic()
     epoch_records: list[dict[str, Any]] = []
-    for epoch in range(EPOCHS):
-        record = trainer.train_epoch(max_episodes=MAX_EPISODES)
+    for epoch in range(epochs):
+        record = trainer.train_epoch(max_episodes=max_episodes)
         epoch_records.append(
             {
                 "epoch": epoch,
@@ -167,8 +175,8 @@ def _run_arm(arm: str, *, seed: int, lam: float, report_dir: Path) -> dict[str, 
         "arm": arm,
         "seed": seed,
         "lambda": lam,
-        "epochs": EPOCHS,
-        "max_episodes": MAX_EPISODES,
+        "epochs": epochs,
+        "max_episodes": max_episodes,
         "train_episodes_available": len(train_split),
         "zero_step_checkpoint_digest": zero_digest,
         "checkpoint_digest": trainer.checkpoint()["checkpoint_digest"],
@@ -183,16 +191,31 @@ def _run_arm(arm: str, *, seed: int, lam: float, report_dir: Path) -> dict[str, 
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="H-OBJ matched dev (two arms)")
+    parser.add_argument(
+        "--fixture",
+        type=Path,
+        default=FIXTURE,
+        help="joint-sequence corpus (default: the H3.8 v1 fixture)",
+    )
     parser.add_argument("--report", type=Path, default=DEFAULT_REPORT)
+    parser.add_argument("--epochs", type=int, default=EPOCHS)
+    parser.add_argument("--max-episodes", type=int, default=MAX_EPISODES)
     parser.add_argument("--output-dir", type=Path, default=Path("reports/r2_hobj_matched_dev"))
     args = parser.parse_args(argv)
 
     report_dir = PROJECT_ROOT / args.output_dir
-    fixture_path = PROJECT_ROOT / FIXTURE
+    fixture_path = PROJECT_ROOT / args.fixture
     corpus_digest = __import__("hashlib").sha256(fixture_path.read_bytes()).hexdigest()
 
     arms = [
-        _run_arm(arm, seed=seed, lam=lam, report_dir=report_dir)
+        _run_arm(
+            arm,
+            seed=seed,
+            lam=lam,
+            report_dir=report_dir,
+            epochs=args.epochs,
+            max_episodes=args.max_episodes,
+        )
         for seed in SEEDS
         for arm, lam in (("control", LAMBDA_CONTROL), ("treatment", LAMBDA_TREATMENT))
     ]
