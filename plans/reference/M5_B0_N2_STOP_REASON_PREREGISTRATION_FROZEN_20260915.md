@@ -113,3 +113,27 @@
 2. 若 `drift.added` 非空 ⇒ 停止，先给新消费者做处置。
 3. 若 M4 落地后 `contract_intercepted` 计数在两规则间不再相同 ⇒ 停止并归因（说明增益对比被污染，见 I5）。
 4. 负结果如实落账，不改绿；`growth_admitted=false`、`can_promote=false` 贯穿。
+
+## §8 后续更新（2026-09-17；**只追加，不改上文冻结结论**）
+
+本预注册冻结于 2026-09-15，冻结时点的正确表述是**17 个消费文件 / 10 处判断点**
+（= 承载判断点的 9 个文件 + 仅记录聚合的 8 个文件）。
+
+2026-09-17 的 R2 工作新增文件后，**live 扫描面变为 19 个消费文件**。其中新增的真消费者 2 个：
+
+- `eval_taiji_b0_b2v4_collaboration_gate.py` —— `record_only`
+  （按面统计 episode 的 stop reason 频次，不作安全或能力判断）；
+- `audit_taiji_r2_h3_7_attribution.py` —— `judgement`
+  （断言冻结的 aggregate reason 出现在 R2 决策里）。
+
+另有 5 个**误报**记入扫描器的 `SCAN_EXCLUSIONS`（逐条写明理由）：`eval_taiji_p5_2d_online_writeback_gate.py`
+（只有计数键）、`eval_taiji_r2_h3_6b_dev_aggregate.py` / `eval_taiji_r2_h3_7_dev_aggregate.py`
+（**产生**自己的 R2 stop 决策，不消费 B0 episode 的 stop reason）、
+`taiji/language_alignment.py` 与 `tests/taiji_native/test_language_alignment.py`
+（那里的 `stop_reason` 是**生成终止原因** `end_marker`，与 B0 语义无关）。
+
+**判断点仍为 10 处**；`consumer_count_in_hardening_report` 仍为 11（历史 hardening 报告不改写）。
+
+⇒ **冻结时点的"17 个消费文件"表述保持原样**；当前 live 值为 **19 个消费文件**，
+由 N2 处置报告与 `test_b0_n2_stop_reason_disposition_contract` 同步钉住。
+按 §7.2，新增消费者已**全部完成处置**（drift 为空）。
