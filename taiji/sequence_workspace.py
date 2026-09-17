@@ -1,24 +1,34 @@
 """R2-H3.8 isolated joint-sequence-credit prototype.
 
-Contract: ``plans/reference/M5_R2_H3_8_ISOLATED_PROTOTYPE_CONTRACT_20260917.md``.
-This module is a self-contained research prototype.  It does not touch the
-default Seed entrypoint, does not read or write any existing Taiji checkpoint,
-and claims no capability.  It exists so the joint-sequence-credit computation
-graph can be implemented, gated, and later evaluated as its own package.
+Contract: ``plans/reference/M5_R2_H3_8_ISOLATED_PROTOTYPE_CONTRACT_20260917.md``
+(section 7 revises the workspace graph to a single prefix channel).  This module
+is a self-contained research prototype.  It does not touch the default Seed
+entrypoint, does not read or write any existing Taiji checkpoint, and claims no
+capability.  It exists so the joint-sequence-credit computation graph can be
+implemented, gated, and later evaluated as its own package.
 
-Computation graph (every detach / mask / reset / truncation point annotated):
+Workspace arm computation graph (v2, section 7; every detach / mask / reset /
+truncation point annotated):
 
     prefix bytes ──> prefix scan (causal, last state) ──> h0
                        │
                        ├──> workspace keys   W_key   (slots, slot_width)   [frozen after begin]
-                       ├──> workspace values W_value (slots, slot_width)   [frozen after begin]
-                       └──> renderer start state r0
+                       └──> workspace values W_value (slots, slot_width)   [frozen after begin]
+
+    start_vector (learned constant, prefix-independent) ──> r_0
 
     response y[t-1] ──> byte embedding ──> recurrent update r_t
                                               │        │
                                               │        └──> content addressing query -> softmax over
                                               │             W_key rows -> read = sum(a_i * W_value_i)
                                               └──> decode [r_t ; read] -> next-byte logits
+
+The prefix reaches the answer stream through exactly one path: the
+content-addressed read.  Zeroing the workspace parameters therefore makes the
+logits prefix-invariant, which is the structural gate of contract section 7.2.
+The no-workspace baseline arm keeps the v1 vanilla encoder (the prefix scan
+state initializes the renderer) and is widened by config for the parameter
+account of contract section 7.3.
 
 Annotations required by the contract:
 
@@ -53,23 +63,26 @@ import torch
 from .internalization import content_digest
 
 SEQUENCE_WORKSPACE_FORMAT = "taiji-sequence-workspace-v1"
-SEQUENCE_WORKSPACE_VERSION = 1
+#: Version 2 (contract section 7, 2026-09-17): the workspace arm's only prefix
+#: channel is the content-addressed read; ``start_vector`` replaces the
+#: ``renderer_start`` direct path.  Version-1 payloads are refused, never
+#: silently reinterpreted.
+SEQUENCE_WORKSPACE_VERSION = 2
 SEQUENCE_WORKSPACE_TRAINER_FORMAT = "taiji-sequence-workspace-trainer-v1"
 SEQUENCE_WORKSPACE_ALPHABET = 257
 SEQUENCE_WORKSPACE_BOUNDARY = 256
 SEQUENCE_WORKSPACE_SERIALIZATION = "torch.save/atomic"
 
-#: Declared trainable parameter inventory, in construction order.  The
-#: implementation gate asserts this list against the live tensors, so a future
-#: edit cannot add an undeclared trainable tensor.  The workspace arm carries
-#: the content-addressing tensors; the matched baseline arm (contract section 3)
-#: has no workspace and therefore no addressing path.
-SEQUENCE_WORKSPACE_PARAMETERS: tuple[str, ...] = (
+#: Canonical order used for per-name deterministic initialization.  Both arms'
+#: inventories are subsequences of this tuple, so tensors that exist in both
+#: arms share initial values under the same seed.
+_CANONICAL_PARAMETER_ORDER: tuple[str, ...] = (
     "prefix_embedding",
     "prefix_input",
     "prefix_recur",
     "prefix_bias",
     "renderer_start",
+    "start_vector",
     "renderer_embedding",
     "renderer_input",
     "renderer_recur",
@@ -81,23 +94,28 @@ SEQUENCE_WORKSPACE_PARAMETERS: tuple[str, ...] = (
     "decoder_bias",
 )
 
-#: Declared inventory of the no-workspace baseline arm.  It keeps every
-#: non-workspace tensor; ``decoder`` is narrower because there is no read
-#: vector to concatenate.  The two arms' parameter counts differ and the
-#: contract requires disclosing that rather than hiding it.
-SEQUENCE_WORKSPACE_BASELINE_PARAMETERS: tuple[str, ...] = (
-    "prefix_embedding",
-    "prefix_input",
-    "prefix_recur",
-    "prefix_bias",
-    "renderer_start",
-    "renderer_embedding",
-    "renderer_input",
-    "renderer_recur",
-    "renderer_bias",
-    "decoder",
-    "decoder_bias",
+#: Declared trainable parameter inventory for the workspace arm (v2 graph,
+#: contract section 7): the renderer starts from a learned constant
+#: ``start_vector`` and the prefix reaches the answer stream only through the
+#: content-addressed workspace read.  The implementation gate asserts this list
+#: against the live tensors.
+SEQUENCE_WORKSPACE_PARAMETERS: tuple[str, ...] = tuple(
+    name for name in _CANONICAL_PARAMETER_ORDER if name != "renderer_start"
 )
+
+#: Declared inventory of the no-workspace baseline arm.  The graph is the v1
+#: vanilla encoder (prefix scan state initializes the renderer); the arm is
+#: widened by config (renderer width 96, contract section 7.3) to align
+#: parameter counts with the workspace arm rather than hiding the difference.
+SEQUENCE_WORKSPACE_BASELINE_PARAMETERS: tuple[str, ...] = tuple(
+    name
+    for name in _CANONICAL_PARAMETER_ORDER
+    if name not in {"start_vector", "address_query", "workspace_key", "workspace_value"}
+)
+
+#: Baseline arm renderer width frozen by contract section 7.3 (parameter
+#: alignment: 103,601 versus the workspace arm's 101,025).
+SEQUENCE_WORKSPACE_BASELINE_RENDERER_WIDTH = 96
 
 
 def _finite_positive(value: float, name: str) -> float:
@@ -192,7 +210,7 @@ class SequenceWorkspacePrototype:
             # and every tensor that exists in both arms must also share its
             # initial values, so the comparison is attributable to the
             # workspace and not to initialization order.
-            index = SEQUENCE_WORKSPACE_PARAMETERS.index(name)
+            index = _CANONICAL_PARAMETER_ORDER.index(name)
             generator = torch.Generator().manual_seed(int(self.config.seed) * 1_000_003 + index)
             tensor = (
                 torch.rand(shape, generator=generator, dtype=torch.float32) * 2.0 - 1.0
@@ -203,16 +221,23 @@ class SequenceWorkspacePrototype:
         make("prefix_input", (pw, rw), 1.0 / math.sqrt(pw))
         make("prefix_recur", (rw, rw), 1.0 / math.sqrt(rw))
         make("prefix_bias", (rw,), 0.1)
-        make("renderer_start", (rw, rw), 1.0 / math.sqrt(rw))
+        decoder_columns = rw + sw if self.config.workspace_enabled else rw
+        if self.config.workspace_enabled:
+            # v2 graph (contract section 7): a learned constant start state;
+            # the prefix enters the answer stream only through the workspace
+            # rows generated here.
+            make("start_vector", (rw,), 0.5)
+            make("address_query", (rw, sw), 1.0 / math.sqrt(rw))
+            make("workspace_key", (rw, slots * sw), 1.0 / math.sqrt(rw))
+            make("workspace_value", (rw, slots * sw), 1.0 / math.sqrt(rw))
+        else:
+            # baseline arm keeps the v1 vanilla encoder: the prefix scan state
+            # initializes the renderer directly.
+            make("renderer_start", (rw, rw), 1.0 / math.sqrt(rw))
         make("renderer_embedding", (self.config.alphabet_size, rw), 0.5)
         make("renderer_input", (rw, rw), 1.0 / math.sqrt(rw))
         make("renderer_recur", (rw, rw), 1.0 / math.sqrt(rw))
         make("renderer_bias", (rw,), 0.1)
-        decoder_columns = rw + sw if self.config.workspace_enabled else rw
-        if self.config.workspace_enabled:
-            make("address_query", (rw, sw), 1.0 / math.sqrt(rw))
-            make("workspace_key", (rw, slots * sw), 1.0 / math.sqrt(rw))
-            make("workspace_value", (rw, slots * sw), 1.0 / math.sqrt(rw))
         make(
             "decoder",
             (decoder_columns, self.config.alphabet_size),
@@ -274,12 +299,15 @@ class SequenceWorkspacePrototype:
         slots = int(self.config.slots)
         sw = int(self.config.slot_width)
         if self.config.workspace_enabled:
+            # v2 single prefix channel: h0 only produces the workspace rows;
+            # the renderer starts from a learned constant (contract section 7).
             workspace_key = (h0 @ self._parameters["workspace_key"]).reshape(slots, sw)
             workspace_value = (h0 @ self._parameters["workspace_value"]).reshape(slots, sw)
+            renderer_state: torch.Tensor = self._parameters["start_vector"]
         else:
             workspace_key = None
             workspace_value = None
-        renderer_state = torch.tanh(h0 @ self._parameters["renderer_start"])
+            renderer_state = torch.tanh(h0 @ self._parameters["renderer_start"])
         return WorkspaceState(workspace_key, workspace_value, renderer_state)
 
     def step(

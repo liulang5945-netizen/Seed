@@ -9,7 +9,7 @@
       "prefix_input",
       "prefix_recur",
       "prefix_bias",
-      "renderer_start",
+      "start_vector",
       "renderer_embedding",
       "renderer_input",
       "renderer_recur",
@@ -20,8 +20,8 @@
       "decoder",
       "decoder_bias"
     ],
-    "parameter_count": 105057,
-    "initialization_digest": "0891c5086933fd8cd7f96805d46f3df2c13f8a305b61d1df13b019fc0342e5df"
+    "parameter_count": 101025,
+    "initialization_digest": "9e97bd3495af35ee9427c458080a4f7811f81aab91b417c54baae63270aa5b51"
   },
   "static_checks": {
     "ruff": {
@@ -80,13 +80,13 @@
       "tests/taiji_native/test_sequence_workspace_contract.py",
       "-q",
       "--no-header",
-      "--junitxml=C:\\Users\\23747\\AppData\\Local\\Temp\\h38-gates-s0kzplay\\gates.xml"
+      "--junitxml=C:\\Users\\23747\\AppData\\Local\\Temp\\h38-gates-ydyjko55\\gates.xml"
     ],
     "returncode": 0,
     "passed": true,
     "tail": [
-      "............                                                             [100%]",
-      "12 passed in 5.64s"
+      "..............                                                           [100%]",
+      "14 passed in 5.51s"
     ]
   },
   "gates": {
@@ -94,7 +94,8 @@
       "tests": [
         "test_gate1_parameter_inventory_matches_the_declared_list",
         "test_gate1_prototype_is_isolated_from_the_default_entry",
-        "test_gate1_baseline_arm_inventory_and_shared_initialization"
+        "test_gate1_baseline_arm_inventory_and_shared_initialization",
+        "test_gate1_workspace_start_is_a_learned_constant"
       ],
       "passed": true
     },
@@ -123,7 +124,8 @@
     "gate5_wiring": {
       "tests": [
         "test_gate5_missing_parameters_and_digest_tampering_are_rejected",
-        "test_gate5_prefix_and_workspace_both_affect_the_output"
+        "test_gate5_prefix_and_workspace_both_affect_the_output",
+        "test_gate5_workspace_is_the_only_prefix_channel"
       ],
       "passed": true
     }

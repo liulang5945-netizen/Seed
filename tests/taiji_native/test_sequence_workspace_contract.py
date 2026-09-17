@@ -18,6 +18,7 @@ import torch
 from taiji.internalization import content_digest
 from taiji.sequence_workspace import (
     SEQUENCE_WORKSPACE_BASELINE_PARAMETERS,
+    SEQUENCE_WORKSPACE_BASELINE_RENDERER_WIDTH,
     SEQUENCE_WORKSPACE_PARAMETERS,
     SequenceWorkspaceConfig,
     SequenceWorkspacePrototype,
@@ -64,22 +65,46 @@ def test_gate1_prototype_is_isolated_from_the_default_entry() -> None:
 
 
 def test_gate1_baseline_arm_inventory_and_shared_initialization() -> None:
-    baseline = SequenceWorkspacePrototype(SequenceWorkspaceConfig(seed=7, workspace_enabled=False))
+    baseline = SequenceWorkspacePrototype(
+        SequenceWorkspaceConfig(
+            seed=7,
+            workspace_enabled=False,
+            renderer_width=SEQUENCE_WORKSPACE_BASELINE_RENDERER_WIDTH,
+        )
+    )
     assert baseline.declared_parameter_names() == SEQUENCE_WORKSPACE_BASELINE_PARAMETERS
     assert tuple(name for name, _ in baseline.named_parameters()) == tuple(
         SEQUENCE_WORKSPACE_BASELINE_PARAMETERS
     )
     workspace = _prototype()
-    assert baseline.parameter_count() < workspace.parameter_count()
-    # shared tensors carry identical initial values so the two arms differ only
-    # by the workspace path (contract section 3's same-seed requirement)
-    for name, parameter in baseline.named_parameters():
-        if name == "decoder":
-            continue
-        torch.testing.assert_close(parameter, workspace.named_parameter(name), rtol=0, atol=0)
+    # contract section 7.3 parameter alignment: the widened baseline carries
+    # 103,601 parameters versus the workspace arm's 101,025 -- the residual
+    # favors the control and is disclosed, not hidden
+    assert baseline.parameter_count() == 103_601
+    assert workspace.parameter_count() == 101_025
+    # same-seed shared tensors of identical shape keep identical initial
+    # values so the arms differ only by the pathway under test
+    for name in ("prefix_embedding", "decoder_bias"):
+        torch.testing.assert_close(
+            baseline.named_parameter(name),
+            workspace.named_parameter(name),
+            rtol=0,
+            atol=0,
+        )
     loss, metrics = baseline.sequence_loss(*_batch()[0])
     assert bool(torch.isfinite(loss))
     assert metrics["positions"] > 0
+
+
+def test_gate1_workspace_start_is_a_learned_constant() -> None:
+    # v2 graph (contract section 7): no renderer_start direct path exists in
+    # the workspace arm; the renderer starts from start_vector
+    workspace = _prototype()
+    assert "renderer_start" not in dict(workspace.named_parameters())
+    assert "start_vector" in dict(workspace.named_parameters())
+    baseline = SequenceWorkspacePrototype(SequenceWorkspaceConfig(seed=7, workspace_enabled=False))
+    assert "renderer_start" in dict(baseline.named_parameters())
+    assert "start_vector" not in dict(baseline.named_parameters())
 
 
 # --------------------------------------------------------------------------- #
@@ -301,3 +326,22 @@ def test_gate5_prefix_and_workspace_both_affect_the_output() -> None:
         mutated.named_parameter("workspace_value").zero_()
     masked = mutated.teacher_forced_logits("问：天空的颜色？".encode(), response)
     assert not torch.allclose(first, masked), "masking the workspace must remove its contribution"
+
+
+def test_gate5_workspace_is_the_only_prefix_channel() -> None:
+    # contract section 7.2 structural gate: with the workspace parameters
+    # zeroed, teacher-forced logits for different prefixes must be
+    # bit-identical -- the prefix has no other route into the answer stream
+    zeroed = _prototype()
+    with torch.no_grad():
+        zeroed.named_parameter("workspace_key").zero_()
+        zeroed.named_parameter("workspace_value").zero_()
+    response = "蓝色".encode()
+    left = zeroed.teacher_forced_logits("问：天空的颜色？".encode(), response)
+    right = zeroed.teacher_forced_logits("完全不相干的另一段前文。".encode(), response)
+    torch.testing.assert_close(left, right, rtol=0, atol=0)
+    # and the live arm must NOT be prefix-invariant (the channel is real)
+    live = _prototype()
+    live_left = live.teacher_forced_logits("问：天空的颜色？".encode(), response)
+    live_right = live.teacher_forced_logits("完全不相干的另一段前文。".encode(), response)
+    assert not torch.allclose(live_left, live_right)
