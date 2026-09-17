@@ -332,6 +332,7 @@ def _run_arm(
     prototype = SequenceWorkspacePrototype(SequenceWorkspaceConfig(seed=seed))
     trainer = SequenceWorkspaceTrainer(prototype, learning_rate=LEARNING_RATE)
     trainer.set_episodes(corpus["train"])
+    trainer.enable_epoch_shuffle(seed=20260917 + seed)
     if lam > 0.0:
         trainer.enable_context_contrastive(weight=lam, margin=1.0)
     started = time.monotonic()
@@ -358,8 +359,8 @@ def main(argv: list[str] | None = None) -> int:
     sweep: list[dict[str, Any]] = []
     for scale in SCALES:
         corpus = _build_corpus(scale)
-        episodes_per_epoch = len(corpus["train"])
-        epochs = max(1, round(TARGET_STEPS / max(1, episodes_per_epoch)))
+        episodes_per_epoch = len(corpus["train"])  # full pool every epoch
+        epochs = 4  # fixed: every episode is seen exactly 4 times at every scale
         actual_steps = epochs * episodes_per_epoch
         arms = [
             dict(

@@ -602,6 +602,15 @@ class SequenceWorkspaceTrainer:
         # Readout-diagnosis countermeasure: up-weight the loss on the **first**
         # response byte (16/16 dev episodes err there).  1.0 = legacy behaviour.
         self.first_byte_weight = 1.0
+        # Per-epoch data-order shuffle (course-scale sweep).  ``None`` keeps the
+        # fixed data order — legacy behaviour, byte-for-byte.
+        self.epoch_shuffle_seed: int | None = None
+        self._shuffle_epoch_counter = 0
+
+    def enable_epoch_shuffle(self, seed: int) -> None:
+        """Reshuffle the episode order once per ``train_epoch`` (deterministic)."""
+
+        self.epoch_shuffle_seed = int(seed)
 
     def enable_first_byte_weight(self, weight: float) -> None:
         value = float(weight)
@@ -714,12 +723,20 @@ class SequenceWorkspaceTrainer:
         if not self.episodes:
             raise ValueError("sequence workspace trainer has no episodes")
         limit = len(self.episodes) if max_episodes is None else int(max_episodes)
+        if self.epoch_shuffle_seed is not None:
+            generator = torch.Generator().manual_seed(
+                self.epoch_shuffle_seed + self._shuffle_epoch_counter
+            )
+            order = torch.randperm(len(self.episodes), generator=generator).tolist()
+            self._shuffle_epoch_counter += 1
+        else:
+            order = list(self.data_order)
         records: list[dict[str, Any]] = []
-        for _ in range(limit):
-            index = self.data_order[self.cursor % len(self.data_order)]
+        for step_index in range(limit):
+            index = order[self.cursor % len(order)]
             # Deterministic shuffle source for the H-OBJ term: the **next** episode in
-            # the frozen data order (no extra random source, fully reproducible).
-            next_index = self.data_order[(self.cursor + 1) % len(self.data_order)]
+            # the (possibly shuffled) order — no extra random source.
+            next_index = order[(self.cursor + 1) % len(order)]
             record = self.train_step(
                 [self.episodes[index]],
                 contrastive_prefixes=[self.episodes[next_index][0]],

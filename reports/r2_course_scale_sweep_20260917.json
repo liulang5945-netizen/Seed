@@ -24,47 +24,47 @@
       "corpus_digest": "05a566525d03dbeaea1a5119a38abbf4e78eb57da6fb9c00ed22541b6bee564d",
       "dev_exact_per_seed": {
         "control": [
-          0.0,
+          0.36363636363636365,
           0.18181818181818182,
-          0.18181818181818182
+          0.0
         ],
         "treatment": [
           0.0,
-          0.1590909090909091,
-          0.20454545454545456
+          0.0,
+          0.0
         ]
       },
       "dev_exact_mean": {
-        "control": 0.12121212121212122,
-        "treatment": 0.12121212121212122
+        "control": 0.1818181818181818,
+        "treatment": 0.0
       },
       "margin_note": "lambda=1 vs lambda=0; seeds 20260917,20260918,20260919",
       "arms": [
         {
           "lambda": 0.0,
           "global_step": 704,
-          "elapsed_seconds": 3.922000000020489,
+          "elapsed_seconds": 4.234000000054948,
           "train": {
-            "accuracy": 0.8309859154929577,
-            "mean_loss": 0.43979014320807025
+            "accuracy": 0.852112676056338,
+            "mean_loss": 0.4187647668136792
           },
           "dev_forced": {
-            "accuracy": 0.591715976331361,
-            "mean_loss": 3.7402449033477088
+            "accuracy": 0.5621301775147929,
+            "mean_loss": 3.4880103790624575
           },
           "dev_generation": {
-            "exact_rate": 0.0,
-            "exact_count": 0,
+            "exact_rate": 0.36363636363636365,
+            "exact_count": 64,
             "episodes": 176,
             "samples": [
               {
                 "reference": "不同",
-                "generated": "绿",
+                "generated": "未知",
                 "exact": false
               },
               {
                 "reference": "相同",
-                "generated": "绿",
+                "generated": "未知",
                 "exact": false
               }
             ]
@@ -75,14 +75,14 @@
         {
           "lambda": 1.0,
           "global_step": 704,
-          "elapsed_seconds": 8.015999999945052,
+          "elapsed_seconds": 7.875,
           "train": {
-            "accuracy": 0.823943661971831,
-            "mean_loss": 0.4447623125531457
+            "accuracy": 0.852112676056338,
+            "mean_loss": 0.40016535567966377
           },
           "dev_forced": {
-            "accuracy": 0.5680473372781065,
-            "mean_loss": 3.810047633945942
+            "accuracy": 0.5325443786982249,
+            "mean_loss": 3.909930244765498
           },
           "dev_generation": {
             "exact_rate": 0.0,
@@ -91,12 +91,12 @@
             "samples": [
               {
                 "reference": "不同",
-                "generated": "绿",
+                "generated": "不昪知",
                 "exact": false
               },
               {
                 "reference": "相同",
-                "generated": "绿",
+                "generated": "不昪知",
                 "exact": false
               }
             ]
@@ -107,14 +107,14 @@
         {
           "lambda": 0.0,
           "global_step": 704,
-          "elapsed_seconds": 4.125,
+          "elapsed_seconds": 4.157000000006519,
           "train": {
-            "accuracy": 0.8309859154929577,
-            "mean_loss": 0.8220517794199457
+            "accuracy": 0.8732394366197183,
+            "mean_loss": 0.38724331642416393
           },
           "dev_forced": {
-            "accuracy": 0.6035502958579881,
-            "mean_loss": 3.8300182350636036
+            "accuracy": 0.5998520710059172,
+            "mean_loss": 4.133802674541419
           },
           "dev_generation": {
             "exact_rate": 0.18181818181818182,
@@ -128,7 +128,7 @@
               },
               {
                 "reference": "相同",
-                "generated": "绿",
+                "generated": "未知",
                 "exact": false
               }
             ]
@@ -139,28 +139,28 @@
         {
           "lambda": 1.0,
           "global_step": 704,
-          "elapsed_seconds": 8.016000000061467,
+          "elapsed_seconds": 7.766000000061467,
           "train": {
-            "accuracy": 0.6232394366197183,
-            "mean_loss": 3.649102632130962
+            "accuracy": 0.8309859154929577,
+            "mean_loss": 0.7724052505059675
           },
           "dev_forced": {
-            "accuracy": 0.3217455621301775,
-            "mean_loss": 8.334539046548095
+            "accuracy": 0.5739644970414202,
+            "mean_loss": 4.000363492152908
           },
           "dev_generation": {
-            "exact_rate": 0.1590909090909091,
-            "exact_count": 28,
+            "exact_rate": 0.0,
+            "exact_count": 0,
             "episodes": 176,
             "samples": [
               {
                 "reference": "不同",
-                "generated": "未���",
+                "generated": "红",
                 "exact": false
               },
               {
                 "reference": "相同",
-                "generated": "黄��",
+                "generated": "红",
                 "exact": false
               }
             ]
@@ -171,28 +171,28 @@
         {
           "lambda": 0.0,
           "global_step": 704,
-          "elapsed_seconds": 4.23499999998603,
+          "elapsed_seconds": 4.202999999979511,
           "train": {
-            "accuracy": 0.7764084507042254,
-            "mean_loss": 1.350957463982261
+            "accuracy": 0.8265845070422535,
+            "mean_loss": 0.4889060436451638
           },
           "dev_forced": {
-            "accuracy": 0.5591715976331361,
-            "mean_loss": 5.071984401523051
+            "accuracy": 0.5754437869822485,
+            "mean_loss": 4.583935204385356
           },
           "dev_generation": {
-            "exact_rate": 0.18181818181818182,
-            "exact_count": 32,
+            "exact_rate": 0.0,
+            "exact_count": 0,
             "episodes": 176,
             "samples": [
               {
                 "reference": "不同",
-                "generated": "绿",
+                "generated": "红",
                 "exact": false
               },
               {
                 "reference": "相同",
-                "generated": "未知",
+                "generated": "绿",
                 "exact": false
               }
             ]
@@ -203,28 +203,28 @@
         {
           "lambda": 1.0,
           "global_step": 704,
-          "elapsed_seconds": 8.062000000034459,
+          "elapsed_seconds": 7.843999999924563,
           "train": {
-            "accuracy": 0.7676056338028169,
-            "mean_loss": 1.8309223662257532
+            "accuracy": 0.8054577464788732,
+            "mean_loss": 0.9160141674378379
           },
           "dev_forced": {
-            "accuracy": 0.46449704142011833,
-            "mean_loss": 9.776439475509422
+            "accuracy": 0.4822485207100592,
+            "mean_loss": 5.389455440369519
           },
           "dev_generation": {
-            "exact_rate": 0.20454545454545456,
-            "exact_count": 36,
+            "exact_rate": 0.0,
+            "exact_count": 0,
             "episodes": 176,
             "samples": [
               {
                 "reference": "不同",
-                "generated": "未知",
+                "generated": "黄",
                 "exact": false
               },
               {
                 "reference": "相同",
-                "generated": "黄",
+                "generated": "红",
                 "exact": false
               }
             ]
@@ -238,52 +238,52 @@
       "scale": 8,
       "train_episodes": 672,
       "dev_episodes": 672,
-      "epochs": 1,
-      "actual_steps": 672,
+      "epochs": 4,
+      "actual_steps": 2688,
       "corpus_digest": "fdf7f7a3c3680b0edd168b05b9d8aaf2d0593fe75c7bce83afbea3c3f18b4231",
       "dev_exact_per_seed": {
         "control": [
-          0.011904761904761904,
-          0.19047619047619047,
-          0.38095238095238093
+          0.38095238095238093,
+          0.38095238095238093,
+          0.0
         ],
         "treatment": [
           0.0,
-          0.0,
-          0.19047619047619047
+          0.38095238095238093,
+          0.0
         ]
       },
       "dev_exact_mean": {
-        "control": 0.19444444444444442,
-        "treatment": 0.06349206349206349
+        "control": 0.25396825396825395,
+        "treatment": 0.12698412698412698
       },
       "margin_note": "lambda=1 vs lambda=0; seeds 20260917,20260918,20260919",
       "arms": [
         {
           "lambda": 0.0,
-          "global_step": 672,
-          "elapsed_seconds": 4.015999999945052,
+          "global_step": 2688,
+          "elapsed_seconds": 15.73499999998603,
           "train": {
-            "accuracy": 0.7513888888888889,
-            "mean_loss": 1.6599927394140868
+            "accuracy": 0.825925925925926,
+            "mean_loss": 0.6749072992021129
           },
           "dev_forced": {
-            "accuracy": 0.5298423423423423,
-            "mean_loss": 4.741527941277517
+            "accuracy": 0.6306306306306306,
+            "mean_loss": 3.9161251025895276
           },
           "dev_generation": {
-            "exact_rate": 0.011904761904761904,
-            "exact_count": 8,
+            "exact_rate": 0.38095238095238093,
+            "exact_count": 256,
             "episodes": 672,
             "samples": [
               {
                 "reference": "相同",
-                "generated": "黄",
+                "generated": "未知",
                 "exact": false
               },
               {
                 "reference": "不同",
-                "generated": "黄",
+                "generated": "未知",
                 "exact": false
               }
             ]
@@ -293,15 +293,15 @@
         },
         {
           "lambda": 1.0,
-          "global_step": 672,
-          "elapsed_seconds": 7.562999999965541,
+          "global_step": 2688,
+          "elapsed_seconds": 31.015999999945052,
           "train": {
-            "accuracy": 0.7303240740740741,
-            "mean_loss": 1.1503499201055438
+            "accuracy": 0.8333333333333334,
+            "mean_loss": 0.9745517344701857
           },
           "dev_forced": {
-            "accuracy": 0.4838588588588589,
-            "mean_loss": 5.173304611373515
+            "accuracy": 0.6246246246246246,
+            "mean_loss": 3.8142274245619774
           },
           "dev_generation": {
             "exact_rate": 0.0,
@@ -310,12 +310,12 @@
             "samples": [
               {
                 "reference": "相同",
-                "generated": "绿",
+                "generated": "棕",
                 "exact": false
               },
               {
                 "reference": "不同",
-                "generated": "绿",
+                "generated": "棕",
                 "exact": false
               }
             ]
@@ -325,19 +325,19 @@
         },
         {
           "lambda": 0.0,
-          "global_step": 672,
-          "elapsed_seconds": 4.0,
+          "global_step": 2688,
+          "elapsed_seconds": 16.219000000040978,
           "train": {
-            "accuracy": 0.6,
-            "mean_loss": 2.6922622725611465
+            "accuracy": 0.8333333333333334,
+            "mean_loss": 0.7405079586786174
           },
           "dev_forced": {
-            "accuracy": 0.4847972972972973,
-            "mean_loss": 5.0402400334188275
+            "accuracy": 0.5975975975975976,
+            "mean_loss": 3.671042386176331
           },
           "dev_generation": {
-            "exact_rate": 0.19047619047619047,
-            "exact_count": 128,
+            "exact_rate": 0.38095238095238093,
+            "exact_count": 256,
             "episodes": 672,
             "samples": [
               {
@@ -357,15 +357,138 @@
         },
         {
           "lambda": 1.0,
-          "global_step": 672,
-          "elapsed_seconds": 7.64000000001397,
+          "global_step": 2688,
+          "elapsed_seconds": 30.656000000075437,
           "train": {
-            "accuracy": 0.7379629629629629,
-            "mean_loss": 1.0429130465989667
+            "accuracy": 0.8358796296296296,
+            "mean_loss": 0.6872823840184581
           },
           "dev_forced": {
-            "accuracy": 0.4787912912912913,
-            "mean_loss": 4.428174686751196
+            "accuracy": 0.6276276276276276,
+            "mean_loss": 5.039072314365988
+          },
+          "dev_generation": {
+            "exact_rate": 0.38095238095238093,
+            "exact_count": 256,
+            "episodes": 672,
+            "samples": [
+              {
+                "reference": "相同",
+                "generated": "未知",
+                "exact": false
+              },
+              {
+                "reference": "不同",
+                "generated": "未知",
+                "exact": false
+              }
+            ]
+          },
+          "seed": 20260918,
+          "arm": "treatment"
+        },
+        {
+          "lambda": 0.0,
+          "global_step": 2688,
+          "elapsed_seconds": 16.219000000040978,
+          "train": {
+            "accuracy": 0.774074074074074,
+            "mean_loss": 1.5012645785297667
+          },
+          "dev_forced": {
+            "accuracy": 0.5645645645645646,
+            "mean_loss": 5.808779251007807
+          },
+          "dev_generation": {
+            "exact_rate": 0.0,
+            "exact_count": 0,
+            "episodes": 672,
+            "samples": [
+              {
+                "reference": "相同",
+                "generated": "黄",
+                "exact": false
+              },
+              {
+                "reference": "不同",
+                "generated": "黄",
+                "exact": false
+              }
+            ]
+          },
+          "seed": 20260919,
+          "arm": "control"
+        },
+        {
+          "lambda": 1.0,
+          "global_step": 2688,
+          "elapsed_seconds": 30.813000000081956,
+          "train": {
+            "accuracy": 0.7222222222222222,
+            "mean_loss": 0.5460486014684042
+          },
+          "dev_forced": {
+            "accuracy": 0.5255255255255256,
+            "mean_loss": 3.440259046497799
+          },
+          "dev_generation": {
+            "exact_rate": 0.0,
+            "exact_count": 0,
+            "episodes": 672,
+            "samples": [
+              {
+                "reference": "相同",
+                "generated": "蓝",
+                "exact": false
+              },
+              {
+                "reference": "不同",
+                "generated": "蓝",
+                "exact": false
+              }
+            ]
+          },
+          "seed": 20260919,
+          "arm": "treatment"
+        }
+      ]
+    },
+    {
+      "scale": 16,
+      "train_episodes": 2592,
+      "dev_episodes": 672,
+      "epochs": 4,
+      "actual_steps": 10368,
+      "corpus_digest": "21172ce5dd5236ea2593e9d4734e58f886e520549b296e805f41b47653d5ad37",
+      "dev_exact_per_seed": {
+        "control": [
+          0.0,
+          0.0,
+          0.38095238095238093
+        ],
+        "treatment": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "dev_exact_mean": {
+        "control": 0.12698412698412698,
+        "treatment": 0.0
+      },
+      "margin_note": "lambda=1 vs lambda=0; seeds 20260917,20260918,20260919",
+      "arms": [
+        {
+          "lambda": 0.0,
+          "global_step": 10368,
+          "elapsed_seconds": 62.26500000001397,
+          "train": {
+            "accuracy": 0.7620423892100193,
+            "mean_loss": 1.2275078756573758
+          },
+          "dev_forced": {
+            "accuracy": 0.5735735735735735,
+            "mean_loss": 5.624394631279366
           },
           "dev_generation": {
             "exact_rate": 0.0,
@@ -384,20 +507,116 @@
               }
             ]
           },
+          "seed": 20260917,
+          "arm": "control"
+        },
+        {
+          "lambda": 1.0,
+          "global_step": 10368,
+          "elapsed_seconds": 118.04700000002049,
+          "train": {
+            "accuracy": 0.7620423892100193,
+            "mean_loss": 1.7938366168075137
+          },
+          "dev_forced": {
+            "accuracy": 0.5885885885885885,
+            "mean_loss": 6.372410416603088
+          },
+          "dev_generation": {
+            "exact_rate": 0.0,
+            "exact_count": 0,
+            "episodes": 672,
+            "samples": [
+              {
+                "reference": "相同",
+                "generated": "红",
+                "exact": false
+              },
+              {
+                "reference": "不同",
+                "generated": "红",
+                "exact": false
+              }
+            ]
+          },
+          "seed": 20260917,
+          "arm": "treatment"
+        },
+        {
+          "lambda": 0.0,
+          "global_step": 10368,
+          "elapsed_seconds": 62.296999999904074,
+          "train": {
+            "accuracy": 0.7591522157996147,
+            "mean_loss": 1.1764632673175246
+          },
+          "dev_forced": {
+            "accuracy": 0.5435435435435435,
+            "mean_loss": 7.166896533398401
+          },
+          "dev_generation": {
+            "exact_rate": 0.0,
+            "exact_count": 0,
+            "episodes": 672,
+            "samples": [
+              {
+                "reference": "相同",
+                "generated": "黛",
+                "exact": false
+              },
+              {
+                "reference": "不同",
+                "generated": "黛",
+                "exact": false
+              }
+            ]
+          },
+          "seed": 20260918,
+          "arm": "control"
+        },
+        {
+          "lambda": 1.0,
+          "global_step": 10368,
+          "elapsed_seconds": 118.14099999994505,
+          "train": {
+            "accuracy": 0.7610789980732178,
+            "mean_loss": 1.3404168948347186
+          },
+          "dev_forced": {
+            "accuracy": 0.5069444444444444,
+            "mean_loss": 6.356785231757732
+          },
+          "dev_generation": {
+            "exact_rate": 0.0,
+            "exact_count": 0,
+            "episodes": 672,
+            "samples": [
+              {
+                "reference": "相同",
+                "generated": "黛",
+                "exact": false
+              },
+              {
+                "reference": "不同",
+                "generated": "黛",
+                "exact": false
+              }
+            ]
+          },
           "seed": 20260918,
           "arm": "treatment"
         },
         {
           "lambda": 0.0,
-          "global_step": 672,
-          "elapsed_seconds": 4.047000000020489,
+          "global_step": 10368,
+          "elapsed_seconds": 62.34299999999348,
           "train": {
-            "accuracy": 0.8407407407407408,
-            "mean_loss": 0.5461427212825843
+            "accuracy": 0.809368978805395,
+            "mean_loss": 0.9090012173501798
           },
           "dev_forced": {
-            "accuracy": 0.6096096096096096,
-            "mean_loss": 3.4440200314635323
+            "accuracy": 0.6156156156156156,
+            "mean_loss": 6.404861725512005
           },
           "dev_generation": {
             "exact_rate": 0.38095238095238093,
@@ -421,74 +640,15 @@
         },
         {
           "lambda": 1.0,
-          "global_step": 672,
-          "elapsed_seconds": 7.670999999972992,
+          "global_step": 10368,
+          "elapsed_seconds": 117.93799999996554,
           "train": {
-            "accuracy": 0.7513888888888889,
-            "mean_loss": 0.936683129253132
+            "accuracy": 0.7639691714836223,
+            "mean_loss": 1.0724737559571678
           },
           "dev_forced": {
-            "accuracy": 0.5503003003003003,
-            "mean_loss": 3.806448776186222
-          },
-          "dev_generation": {
-            "exact_rate": 0.19047619047619047,
-            "exact_count": 128,
-            "episodes": 672,
-            "samples": [
-              {
-                "reference": "相同",
-                "generated": "未知",
-                "exact": false
-              },
-              {
-                "reference": "不同",
-                "generated": "未知",
-                "exact": false
-              }
-            ]
-          },
-          "seed": 20260919,
-          "arm": "treatment"
-        }
-      ]
-    },
-    {
-      "scale": 16,
-      "train_episodes": 2592,
-      "dev_episodes": 672,
-      "epochs": 1,
-      "actual_steps": 2592,
-      "corpus_digest": "21172ce5dd5236ea2593e9d4734e58f886e520549b296e805f41b47653d5ad37",
-      "dev_exact_per_seed": {
-        "control": [
-          0.0,
-          0.0,
-          0.0
-        ],
-        "treatment": [
-          0.0,
-          0.0,
-          0.0
-        ]
-      },
-      "dev_exact_mean": {
-        "control": 0.0,
-        "treatment": 0.0
-      },
-      "margin_note": "lambda=1 vs lambda=0; seeds 20260917,20260918,20260919",
-      "arms": [
-        {
-          "lambda": 0.0,
-          "global_step": 2592,
-          "elapsed_seconds": 15.469000000040978,
-          "train": {
-            "accuracy": 0.7404263005780347,
-            "mean_loss": 3.3369195921931363
-          },
-          "dev_forced": {
-            "accuracy": 0.49155405405405406,
-            "mean_loss": 9.280826966322604
+            "accuracy": 0.5555555555555556,
+            "mean_loss": 6.350530059564681
           },
           "dev_generation": {
             "exact_rate": 0.0,
@@ -497,172 +657,12 @@
             "samples": [
               {
                 "reference": "相同",
-                "generated": "金",
+                "generated": "不是粉",
                 "exact": false
               },
               {
                 "reference": "不同",
-                "generated": "金",
-                "exact": false
-              }
-            ]
-          },
-          "seed": 20260917,
-          "arm": "control"
-        },
-        {
-          "lambda": 1.0,
-          "global_step": 2592,
-          "elapsed_seconds": 29.29700000002049,
-          "train": {
-            "accuracy": 0.6290944123314065,
-            "mean_loss": 5.4999964598704265
-          },
-          "dev_forced": {
-            "accuracy": 0.45645645645645644,
-            "mean_loss": 7.871545781691869
-          },
-          "dev_generation": {
-            "exact_rate": 0.0,
-            "exact_count": 0,
-            "episodes": 672,
-            "samples": [
-              {
-                "reference": "相同",
-                "generated": "不是青",
-                "exact": false
-              },
-              {
-                "reference": "不同",
-                "generated": "不是青",
-                "exact": false
-              }
-            ]
-          },
-          "seed": 20260917,
-          "arm": "treatment"
-        },
-        {
-          "lambda": 0.0,
-          "global_step": 2592,
-          "elapsed_seconds": 15.562000000034459,
-          "train": {
-            "accuracy": 0.7144749518304432,
-            "mean_loss": 4.7447413349449405
-          },
-          "dev_forced": {
-            "accuracy": 0.4491366366366366,
-            "mean_loss": 12.144225038233257
-          },
-          "dev_generation": {
-            "exact_rate": 0.0,
-            "exact_count": 0,
-            "episodes": 672,
-            "samples": [
-              {
-                "reference": "相同",
-                "generated": "不是青",
-                "exact": false
-              },
-              {
-                "reference": "不同",
-                "generated": "不是青",
-                "exact": false
-              }
-            ]
-          },
-          "seed": 20260918,
-          "arm": "control"
-        },
-        {
-          "lambda": 1.0,
-          "global_step": 2592,
-          "elapsed_seconds": 29.375,
-          "train": {
-            "accuracy": 0.7457851637764933,
-            "mean_loss": 3.05755689322523
-          },
-          "dev_forced": {
-            "accuracy": 0.5578078078078078,
-            "mean_loss": 8.048507549933024
-          },
-          "dev_generation": {
-            "exact_rate": 0.0,
-            "exact_count": 0,
-            "episodes": 672,
-            "samples": [
-              {
-                "reference": "相同",
-                "generated": "青",
-                "exact": false
-              },
-              {
-                "reference": "不同",
-                "generated": "青",
-                "exact": false
-              }
-            ]
-          },
-          "seed": 20260918,
-          "arm": "treatment"
-        },
-        {
-          "lambda": 0.0,
-          "global_step": 2592,
-          "elapsed_seconds": 15.421999999904074,
-          "train": {
-            "accuracy": 0.5889932562620424,
-            "mean_loss": 6.2764318449146765
-          },
-          "dev_forced": {
-            "accuracy": 0.3566066066066066,
-            "mean_loss": 12.04530509738695
-          },
-          "dev_generation": {
-            "exact_rate": 0.0,
-            "exact_count": 0,
-            "episodes": 672,
-            "samples": [
-              {
-                "reference": "相同",
-                "generated": "不是黄",
-                "exact": false
-              },
-              {
-                "reference": "不同",
-                "generated": "不是黄",
-                "exact": false
-              }
-            ]
-          },
-          "seed": 20260919,
-          "arm": "control"
-        },
-        {
-          "lambda": 1.0,
-          "global_step": 2592,
-          "elapsed_seconds": 29.45299999997951,
-          "train": {
-            "accuracy": 0.5038535645472062,
-            "mean_loss": 17.559962478546815
-          },
-          "dev_forced": {
-            "accuracy": 0.33633633633633636,
-            "mean_loss": 26.737599452336628
-          },
-          "dev_generation": {
-            "exact_rate": 0.0,
-            "exact_count": 0,
-            "episodes": 672,
-            "samples": [
-              {
-                "reference": "相同",
-                "generated": "鸶",
-                "exact": false
-              },
-              {
-                "reference": "不同",
-                "generated": "鸶",
+                "generated": "不是粉",
                 "exact": false
               }
             ]
