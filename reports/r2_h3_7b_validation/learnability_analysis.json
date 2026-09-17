@@ -1,0 +1,302 @@
+{
+  "format": "taiji-r2-h3-7b-learnability-analysis-v1",
+  "version": 1,
+  "corpus_digest": "0bc5b5540d4b622f907942f42d7b809e825932e50c6e6c505a3cd091edabd691",
+  "credit_consistency_tests": {
+    "returncode": 0,
+    "summary": "5 passed, 11 deselected in 7.08s"
+  },
+  "arms": {
+    "legacy_target": {
+      "zero": {
+        "checkpoint_digest": "97f4dc1ffbd4c658b407828e4ffcf39bfb1b8b88061dad740631692ede2c9b7e",
+        "teacher_forced_mean_surprise": 5.619194114819977,
+        "teacher_forced_accuracy": 0.0016339869281045752,
+        "exact_response_rate": 0.0,
+        "per_episode": [
+          {
+            "episode_id": "train-answer-red",
+            "teacher_forced_mean_surprise": 5.601901,
+            "teacher_forced_accuracy": 0.0
+          },
+          {
+            "episode_id": "train-answer-blue",
+            "teacher_forced_mean_surprise": 5.604413,
+            "teacher_forced_accuracy": 0.0
+          },
+          {
+            "episode_id": "train-answer-east-history",
+            "teacher_forced_mean_surprise": 5.729832,
+            "teacher_forced_accuracy": 0.0
+          },
+          {
+            "episode_id": "train-unknown-weather",
+            "teacher_forced_mean_surprise": 5.62178,
+            "teacher_forced_accuracy": 0.0
+          },
+          {
+            "episode_id": "train-unknown-price",
+            "teacher_forced_mean_surprise": 5.582937,
+            "teacher_forced_accuracy": 0.0
+          },
+          {
+            "episode_id": "train-unknown-owner",
+            "teacher_forced_mean_surprise": 5.603811,
+            "teacher_forced_accuracy": 0.0
+          },
+          {
+            "episode_id": "train-clarify-city",
+            "teacher_forced_mean_surprise": 5.636365,
+            "teacher_forced_accuracy": 0.0
+          },
+          {
+            "episode_id": "train-clarify-date",
+            "teacher_forced_mean_surprise": 5.695345,
+            "teacher_forced_accuracy": 0.0
+          },
+          {
+            "episode_id": "train-clarify-file",
+            "teacher_forced_mean_surprise": 5.68284,
+            "teacher_forced_accuracy": 0.0
+          },
+          {
+            "episode_id": "train-refuse-password",
+            "teacher_forced_mean_surprise": 5.560088,
+            "teacher_forced_accuracy": 0.019608
+          },
+          {
+            "episode_id": "train-refuse-token",
+            "teacher_forced_mean_surprise": 5.556352,
+            "teacher_forced_accuracy": 0.0
+          },
+          {
+            "episode_id": "train-refuse-bypass",
+            "teacher_forced_mean_surprise": 5.554666,
+            "teacher_forced_accuracy": 0.0
+          }
+        ]
+      },
+      "trained": {
+        "checkpoint_digest": "e026277490856d6f4329755b349b692e77c7fe6b215a72ab6775e42bd23033ee",
+        "teacher_forced_mean_surprise": 4.137603622649469,
+        "teacher_forced_accuracy": 0.1581446467475879,
+        "exact_response_rate": 0.0,
+        "per_episode": [
+          {
+            "episode_id": "train-answer-red",
+            "teacher_forced_mean_surprise": 4.145397,
+            "teacher_forced_accuracy": 0.155556
+          },
+          {
+            "episode_id": "train-answer-blue",
+            "teacher_forced_mean_surprise": 4.093221,
+            "teacher_forced_accuracy": 0.133333
+          },
+          {
+            "episode_id": "train-answer-east-history",
+            "teacher_forced_mean_surprise": 4.362494,
+            "teacher_forced_accuracy": 0.095238
+          },
+          {
+            "episode_id": "train-unknown-weather",
+            "teacher_forced_mean_surprise": 3.99601,
+            "teacher_forced_accuracy": 0.177778
+          },
+          {
+            "episode_id": "train-unknown-price",
+            "teacher_forced_mean_surprise": 4.055687,
+            "teacher_forced_accuracy": 0.244444
+          },
+          {
+            "episode_id": "train-unknown-owner",
+            "teacher_forced_mean_surprise": 4.017612,
+            "teacher_forced_accuracy": 0.145833
+          },
+          {
+            "episode_id": "train-clarify-city",
+            "teacher_forced_mean_surprise": 4.15265,
+            "teacher_forced_accuracy": 0.166667
+          },
+          {
+            "episode_id": "train-clarify-date",
+            "teacher_forced_mean_surprise": 4.182463,
+            "teacher_forced_accuracy": 0.142857
+          },
+          {
+            "episode_id": "train-clarify-file",
+            "teacher_forced_mean_surprise": 4.294174,
+            "teacher_forced_accuracy": 0.145833
+          },
+          {
+            "episode_id": "train-refuse-password",
+            "teacher_forced_mean_surprise": 4.325775,
+            "teacher_forced_accuracy": 0.156863
+          },
+          {
+            "episode_id": "train-refuse-token",
+            "teacher_forced_mean_surprise": 4.020191,
+            "teacher_forced_accuracy": 0.166667
+          },
+          {
+            "episode_id": "train-refuse-bypass",
+            "teacher_forced_mean_surprise": 4.005568,
+            "teacher_forced_accuracy": 0.166667
+          }
+        ]
+      },
+      "learnability": {
+        "surprise_delta": -1.48159,
+        "accuracy_delta": 0.156511,
+        "episodes_improved": 12,
+        "episodes_total": 12,
+        "train_learnable": true
+      }
+    },
+    "byte_aligned": {
+      "zero": {
+        "checkpoint_digest": "25f4aa75250679e0dccfd5f9fc215b7856df55d181769f0e7673ef7322492d95",
+        "teacher_forced_mean_surprise": 5.619194114819977,
+        "teacher_forced_accuracy": 0.0016339869281045752,
+        "exact_response_rate": 0.0,
+        "per_episode": [
+          {
+            "episode_id": "train-answer-red",
+            "teacher_forced_mean_surprise": 5.601901,
+            "teacher_forced_accuracy": 0.0
+          },
+          {
+            "episode_id": "train-answer-blue",
+            "teacher_forced_mean_surprise": 5.604413,
+            "teacher_forced_accuracy": 0.0
+          },
+          {
+            "episode_id": "train-answer-east-history",
+            "teacher_forced_mean_surprise": 5.729832,
+            "teacher_forced_accuracy": 0.0
+          },
+          {
+            "episode_id": "train-unknown-weather",
+            "teacher_forced_mean_surprise": 5.62178,
+            "teacher_forced_accuracy": 0.0
+          },
+          {
+            "episode_id": "train-unknown-price",
+            "teacher_forced_mean_surprise": 5.582937,
+            "teacher_forced_accuracy": 0.0
+          },
+          {
+            "episode_id": "train-unknown-owner",
+            "teacher_forced_mean_surprise": 5.603811,
+            "teacher_forced_accuracy": 0.0
+          },
+          {
+            "episode_id": "train-clarify-city",
+            "teacher_forced_mean_surprise": 5.636365,
+            "teacher_forced_accuracy": 0.0
+          },
+          {
+            "episode_id": "train-clarify-date",
+            "teacher_forced_mean_surprise": 5.695345,
+            "teacher_forced_accuracy": 0.0
+          },
+          {
+            "episode_id": "train-clarify-file",
+            "teacher_forced_mean_surprise": 5.68284,
+            "teacher_forced_accuracy": 0.0
+          },
+          {
+            "episode_id": "train-refuse-password",
+            "teacher_forced_mean_surprise": 5.560088,
+            "teacher_forced_accuracy": 0.019608
+          },
+          {
+            "episode_id": "train-refuse-token",
+            "teacher_forced_mean_surprise": 5.556352,
+            "teacher_forced_accuracy": 0.0
+          },
+          {
+            "episode_id": "train-refuse-bypass",
+            "teacher_forced_mean_surprise": 5.554666,
+            "teacher_forced_accuracy": 0.0
+          }
+        ]
+      },
+      "trained": {
+        "checkpoint_digest": "ee4209536b65c97b0a94f45a62b001ea6b8c4754c9a116edeacce0cf43205a79",
+        "teacher_forced_mean_surprise": 4.276169193883733,
+        "teacher_forced_accuracy": 0.15409080298786182,
+        "exact_response_rate": 0.0,
+        "per_episode": [
+          {
+            "episode_id": "train-answer-red",
+            "teacher_forced_mean_surprise": 4.336881,
+            "teacher_forced_accuracy": 0.155556
+          },
+          {
+            "episode_id": "train-answer-blue",
+            "teacher_forced_mean_surprise": 4.262341,
+            "teacher_forced_accuracy": 0.155556
+          },
+          {
+            "episode_id": "train-answer-east-history",
+            "teacher_forced_mean_surprise": 4.545077,
+            "teacher_forced_accuracy": 0.166667
+          },
+          {
+            "episode_id": "train-unknown-weather",
+            "teacher_forced_mean_surprise": 4.124011,
+            "teacher_forced_accuracy": 0.155556
+          },
+          {
+            "episode_id": "train-unknown-price",
+            "teacher_forced_mean_surprise": 4.167446,
+            "teacher_forced_accuracy": 0.2
+          },
+          {
+            "episode_id": "train-unknown-owner",
+            "teacher_forced_mean_surprise": 4.1515,
+            "teacher_forced_accuracy": 0.145833
+          },
+          {
+            "episode_id": "train-clarify-city",
+            "teacher_forced_mean_surprise": 4.309034,
+            "teacher_forced_accuracy": 0.119048
+          },
+          {
+            "episode_id": "train-clarify-date",
+            "teacher_forced_mean_surprise": 4.376331,
+            "teacher_forced_accuracy": 0.142857
+          },
+          {
+            "episode_id": "train-clarify-file",
+            "teacher_forced_mean_surprise": 4.362823,
+            "teacher_forced_accuracy": 0.145833
+          },
+          {
+            "episode_id": "train-refuse-password",
+            "teacher_forced_mean_surprise": 4.402174,
+            "teacher_forced_accuracy": 0.176471
+          },
+          {
+            "episode_id": "train-refuse-token",
+            "teacher_forced_mean_surprise": 4.17283,
+            "teacher_forced_accuracy": 0.119048
+          },
+          {
+            "episode_id": "train-refuse-bypass",
+            "teacher_forced_mean_surprise": 4.103584,
+            "teacher_forced_accuracy": 0.166667
+          }
+        ]
+      },
+      "learnability": {
+        "surprise_delta": -1.343025,
+        "accuracy_delta": 0.152457,
+        "episodes_improved": 12,
+        "episodes_total": 12,
+        "train_learnable": true
+      }
+    }
+  },
+  "read_only": true
+}
