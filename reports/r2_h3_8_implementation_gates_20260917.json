@@ -1,0 +1,133 @@
+{
+  "format": "taiji-r2-h3-8-implementation-gates-v1",
+  "version": 1,
+  "contract": "plans/reference/M5_R2_H3_8_ISOLATED_PROTOTYPE_CONTRACT_20260917.md",
+  "scope": "implementation gates only: no capability training, no evaluation split read, no default-entry or existing-checkpoint change",
+  "inventory": {
+    "declared_parameters": [
+      "prefix_embedding",
+      "prefix_input",
+      "prefix_recur",
+      "prefix_bias",
+      "renderer_start",
+      "renderer_embedding",
+      "renderer_input",
+      "renderer_recur",
+      "renderer_bias",
+      "address_query",
+      "workspace_key",
+      "workspace_value",
+      "decoder",
+      "decoder_bias"
+    ],
+    "parameter_count": 105057,
+    "initialization_digest": "1fd37ca821b72c18b7a6a9be5a6665cdee5ebcdd58288ed6517886b2300a57a6"
+  },
+  "static_checks": {
+    "ruff": {
+      "command": [
+        "C:\\Users\\23747\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "-m",
+        "ruff",
+        "check",
+        "taiji/sequence_workspace.py",
+        "tests/taiji_native/test_sequence_workspace_contract.py"
+      ],
+      "returncode": 0,
+      "passed": true,
+      "tail": [
+        "All checks passed!"
+      ]
+    },
+    "black": {
+      "command": [
+        "C:\\Users\\23747\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "-m",
+        "black",
+        "--no-cache",
+        "--check",
+        "taiji/sequence_workspace.py",
+        "tests/taiji_native/test_sequence_workspace_contract.py"
+      ],
+      "returncode": 0,
+      "passed": true,
+      "tail": [
+        "All done! ✨ 🍰 ✨",
+        "2 files would be left unchanged."
+      ]
+    },
+    "mypy": {
+      "command": [
+        "C:\\Users\\23747\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "-m",
+        "mypy",
+        "--follow-imports=silent",
+        "taiji/sequence_workspace.py"
+      ],
+      "returncode": 0,
+      "passed": true,
+      "tail": [
+        "pyproject.toml: note: unused section(s): module = ['neuroplex.life.*', 'neuroplex.loader', 'neuroplex.multimodal.*', 'neuroplex.safety.*', 'neuroplex.tools.browser', 'neuroplex.tools.browser_crawler', 'neuroplex.tools.builtin_tools', 'neuroplex.tools.desktop', 'neuroplex.tools.mini_search', 'neuroplex.tools.search.*', 'neuroplex.tools.searxng', 'neuroplex.tools.web']",
+        "Success: no issues found in 1 source file"
+      ]
+    }
+  },
+  "pytest": {
+    "command": [
+      "C:\\Users\\23747\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+      "-m",
+      "pytest",
+      "tests/taiji_native/test_sequence_workspace_contract.py",
+      "-q",
+      "--no-header",
+      "--junitxml=C:\\Users\\23747\\AppData\\Local\\Temp\\h38-gates-vhj5j7vy\\gates.xml"
+    ],
+    "returncode": 0,
+    "passed": true,
+    "tail": [
+      "...........                                                              [100%]",
+      "11 passed in 5.80s"
+    ]
+  },
+  "gates": {
+    "gate1_isolation_and_inventory": {
+      "tests": [
+        "test_gate1_parameter_inventory_matches_the_declared_list",
+        "test_gate1_prototype_is_isolated_from_the_default_entry"
+      ],
+      "passed": true
+    },
+    "gate2_gradients": {
+      "tests": [
+        "test_gate2_every_declared_parameter_receives_finite_nonzero_gradient",
+        "test_gate2_numerical_finite_difference_matches_autograd",
+        "test_gate2_disabling_the_workspace_connection_removes_its_gradient"
+      ],
+      "passed": true
+    },
+    "gate3_causal_mask": {
+      "tests": [
+        "test_gate3_future_labels_do_not_change_current_logits",
+        "test_gate3_step_by_step_matches_teacher_forced",
+        "test_gate3_empty_context_end_marker_and_max_length"
+      ],
+      "passed": true
+    },
+    "gate4_save_and_restore": {
+      "tests": [
+        "test_gate4_zero_step_save_fresh_process_and_continuation"
+      ],
+      "passed": true
+    },
+    "gate5_wiring": {
+      "tests": [
+        "test_gate5_missing_parameters_and_digest_tampering_are_rejected",
+        "test_gate5_prefix_and_workspace_both_affect_the_output"
+      ],
+      "passed": true
+    }
+  },
+  "outcome": "passed",
+  "growth_admitted": false,
+  "can_promote": false
+}
