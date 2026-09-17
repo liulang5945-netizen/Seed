@@ -1,0 +1,41 @@
+{
+  "format": "taiji-r2-capacity-discrimination-v1",
+  "purpose": "candidate 2 of the post-H-FBW decision (geometry capacity discriminator)",
+  "reference_control_mean_dev_exact": 0.10416666666666667,
+  "reference_control_source": "H-FBW/H-OBJ/H-GEN control arms (three-way reproduced)",
+  "frozen": {
+    "seeds": [
+      20260917,
+      20260918,
+      20260919
+    ],
+    "epochs": 30,
+    "max_episodes": 25,
+    "prefix_width": 96,
+    "renderer_width": 128,
+    "slot_width": 96
+  },
+  "wide": {
+    "train_accuracy": [
+      0.7951807228915663,
+      0.8192771084337349,
+      0.572289156626506
+    ],
+    "dev_forced_accuracy": [
+      0.4811320754716981,
+      0.6132075471698113,
+      0.4811320754716981
+    ],
+    "dev_exact_per_seed": [
+      0.0,
+      0.0625,
+      0.125
+    ],
+    "dev_exact_mean": 0.0625
+  },
+  "verdict": "capacity_rejected: wide geometry is worse than the standard control mean",
+  "final_evaluated": false,
+  "growth_admitted": false,
+  "can_promote": false,
+  "scope": "isolated sequence-workspace prototype only; must NOT be extrapolated to chat()"
+}
