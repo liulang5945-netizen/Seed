@@ -1,0 +1,147 @@
+{
+  "format": "taiji-r2-hgen-matched-dev-v1",
+  "candidate_spec": "plans/reference/M5_R2_NEXT_CANDIDATE_GENERATION_STATE_TRAINING_20260917.md",
+  "implementability": "plans/reference/M5_R2_CANDIDATE_HGEN_IMPLEMENTABILITY_20260917.md",
+  "code_revision": "8040467589a13046fa01a796dad2b0bb11a1b654",
+  "fixture": "tests\\fixtures\\r2_h3_8_joint_sequence_v1.jsonl",
+  "corpus_sha256": "6571ee23501814f700365a7856df715e9d0953ec9c6c740f7d76862eccbec3c4",
+  "frozen": {
+    "seed": 20260917,
+    "epochs": 2,
+    "max_episodes": 12,
+    "phi_max_control": 0.0,
+    "phi_max_treatment": 0.5,
+    "sampling_seed": 20260917,
+    "wall_cap_seconds": 1800.0
+  },
+  "arms": {
+    "control": {
+      "arm": "control",
+      "phi_max": 0.0,
+      "epochs": 2,
+      "max_episodes": 12,
+      "train_episodes_available": 25,
+      "zero_step_checkpoint_digest": "6428abf9b421c7f95a4758c56310d93ba08bf73927a67b2cdf346681a5cef00e",
+      "checkpoint_digest": "3a22da31f9b9069d12fc1b6e1dea1228d81189c12ee6afef966f94c20e620bbb",
+      "restore_matches": true,
+      "elapsed_seconds": 0.26500000001396984,
+      "epoch_records": [
+        {
+          "epoch": 0,
+          "mean_loss": 4.33070554335912,
+          "episodes": 12,
+          "phi_at_end": 0.0
+        },
+        {
+          "epoch": 1,
+          "mean_loss": 1.485619197289149,
+          "episodes": 12,
+          "phi_at_end": 0.0
+        }
+      ],
+      "train": {
+        "accuracy": 0.6265060240963856,
+        "positions": 166,
+        "mean_loss": 1.6155832266807557
+      },
+      "dev": {
+        "accuracy": 0.4716981132075472,
+        "positions": 106,
+        "mean_loss": 4.677411891520023
+      },
+      "dev_generation": {
+        "episodes": 16,
+        "exact": 0,
+        "exact_rate": 0.0,
+        "boundary_stop_rate": 1.0,
+        "samples": [
+          {
+            "reference": "不是白",
+            "generated": "蓝",
+            "exact": false,
+            "boundary_stopped": true
+          },
+          {
+            "reference": "不是黄",
+            "generated": "蓝",
+            "exact": false,
+            "boundary_stopped": true
+          },
+          {
+            "reference": "白",
+            "generated": "蓝",
+            "exact": false,
+            "boundary_stopped": true
+          }
+        ]
+      }
+    },
+    "treatment": {
+      "arm": "treatment",
+      "phi_max": 0.5,
+      "epochs": 2,
+      "max_episodes": 12,
+      "train_episodes_available": 25,
+      "zero_step_checkpoint_digest": "6428abf9b421c7f95a4758c56310d93ba08bf73927a67b2cdf346681a5cef00e",
+      "checkpoint_digest": "66fc33919641482dea6760975e02088654becf54a81fba826c09fdb9c54ba37a",
+      "restore_matches": true,
+      "elapsed_seconds": 0.25,
+      "epoch_records": [
+        {
+          "epoch": 0,
+          "mean_loss": 4.452660977840424,
+          "episodes": 12,
+          "phi_at_end": 0.25
+        },
+        {
+          "epoch": 1,
+          "mean_loss": 1.7074006001154582,
+          "episodes": 12,
+          "phi_at_end": 0.5
+        }
+      ],
+      "train": {
+        "accuracy": 0.4578313253012048,
+        "positions": 166,
+        "mean_loss": 1.7581921684741975
+      },
+      "dev": {
+        "accuracy": 0.33962264150943394,
+        "positions": 106,
+        "mean_loss": 4.499605484306812
+      },
+      "dev_generation": {
+        "episodes": 16,
+        "exact": 0,
+        "exact_rate": 0.0,
+        "boundary_stop_rate": 1.0,
+        "samples": [
+          {
+            "reference": "不是白",
+            "generated": "蓝",
+            "exact": false,
+            "boundary_stopped": true
+          },
+          {
+            "reference": "不是黄",
+            "generated": "蓝",
+            "exact": false,
+            "boundary_stopped": true
+          },
+          {
+            "reference": "白",
+            "generated": "蓝",
+            "exact": false,
+            "boundary_stopped": true
+          }
+        ]
+      }
+    }
+  },
+  "verdict": "h_gen_rejected: both arms have dev exact = 0",
+  "final_evaluated": false,
+  "growth_admitted": false,
+  "can_promote": false,
+  "scope": "isolated sequence-workspace prototype only; the result must NOT be extrapolated to the chat() path (H-GEN spec section 3, residual risk 1)",
+  "report_digest": "bcc00791df3a933c6d7d7c946aee006c01ee5bd9a8ffbe94eb4a0b5c069616db"
+}
