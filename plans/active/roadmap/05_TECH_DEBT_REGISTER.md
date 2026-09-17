@@ -21,9 +21,13 @@
   全量跑失败**（`unexpected file: invalid-name.json`、orphan 集合多出 `external_orphan`、
   `assert 2 == 1`、`DID NOT RAISE ValueError`）⇒ **是环境残留而非代码缺陷**，
   但**使"全量测试"这一最基本的验收手段不可靠**（有掩盖真失败的风险）。
-- **修法（建议，未实施）**：把这 7 处的 `store_root` 改到 pytest 的 `tmp_path`；
-  或至少在 teardown 清理父目录中属于本次 PID 的中间文件。
-  **不要**删除 `output/` 内既有残留（可能含历史证据，且属"个人/产物目录"禁区）。
+- **已处置（2026-09-17，归档而非删除）**：1052 个残留条目（31.4 GiB）已**移动**到
+  `output/_archived_manual-r5-canary_20260917/` —— **可随时恢复**；原目录只保留
+  `README.md`（**git 跟踪，必须保留**）与 `native-canary.pt`。
+  处置后复跑 8 个相关测试**全过**（含此前"单独过、全量失败"的 5 项）⇒ 假失败消除。
+- **⚠️ 根因仍未修**：那 7 个测试依然把 `store_root` 指向该共享目录 ⇒ **会再次累积**。
+  建议的根治（改 pytest `tmp_path`，或 teardown 清理本次 PID 的中间文件）**待实施**。
+  **下次清空前必须重新核查**该目录（通过标准：只剩 `README.md` 与 `native-canary.pt`）。
 
 ## 最新状态补充（2026-09-15，WP-3 落地后：仪器语义债）
 
