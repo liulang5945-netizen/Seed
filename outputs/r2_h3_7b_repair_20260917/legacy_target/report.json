@@ -1,0 +1,291 @@
+{
+  "arm": "legacy_target",
+  "code_revision": "95dd247b7ac9a6967e125d6d2a9aee3e39072123",
+  "corpus_digest": "0bc5b5540d4b622f907942f42d7b809e825932e50c6e6c505a3cd091edabd691",
+  "status": "passed_engineering_only",
+  "final_evaluated": false,
+  "dev_evaluated": false,
+  "effective_parameters": 277970,
+  "checkpoint_preflight": {
+    "format": "taiji-native-language-alignment-v2",
+    "status": "passed",
+    "parent_checkpoint_digest": "33465069a3b13776abcedf684bc09e7b12fd643eb26831273b54a91b585cfba5",
+    "zero_step_roundtrip": true,
+    "child_checkpoint_digest": "1519b6625aa4c55864ebf3301d6d1a60c84c8a99958603640204ec15ef052419",
+    "one_response_update": {
+      "status": "completed",
+      "epochs": 1,
+      "episodes": 1,
+      "global_step": 45,
+      "response_accuracy": 0.0,
+      "response_mean_surprise": 5.53109410886394,
+      "records": [
+        {
+          "epoch": 0,
+          "episode_id": "train-answer-red",
+          "family_id": "train-answer-red",
+          "target_bytes": 45,
+          "prefix_bytes": 181,
+          "observations": 45,
+          "response_accuracy": 0.0,
+          "response_mean_surprise": 5.53109410886394
+        }
+      ],
+      "developmental_mode": "static",
+      "developmental_history": [
+        {
+          "epoch": 0,
+          "replay": null,
+          "status": {
+            "mode": "static",
+            "enabled": false,
+            "learning_mode": "static",
+            "replay_count": 0,
+            "bundle_digest": null
+          }
+        }
+      ]
+    },
+    "zero_output": {
+      "episode_id": "train-answer-red",
+      "split": "train",
+      "task_family": "grounded_answer",
+      "reference_response": "依据上下文，答案是红色。",
+      "unknown_policy": "answer",
+      "unknown_markers": [],
+      "response_start_readout": false,
+      "response_start_readout_digest": null,
+      "response_phase_readout": false,
+      "response_phase_readout_digest": null,
+      "teacher_forced_accuracy": 0.0,
+      "teacher_forced_mean_surprise": 5.601900642643427,
+      "generated_text": "כ<<<țțț<<6Աi\u0007i\t\t\t)ccccccc˯˯˷yů跒ӯ诵222222222222222222222222222222222222222222222222\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e2V\u0017\u001e\u001e2\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e2)H22\u001e2222\u001e2\u001e2222\u001e222\u001e222\u001e222V\u0017222\u001e2\u001e2\u001e\u001e222ƈV\u001722񯯯222222222222222\n2222222222222222FK\u001e2ƹ22222222222222222222\u001e2\u001e\u001e\u001e\u001e\u001e巷\\\u0019\n巷\\\u001e\n2\u001e2\u001e\n22V\u001722ƯVᯯ222)H222222222222222228\u001e\u001e巷2H22222222222222222\u001e\n22V\u0017222\u001e\n\u001e\u001e\u001e\n\u001e\n\u001e\u001e\n\u001e\u001e\n\u001e\u001e\n\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e_p\u001e2׸\u001e222񵵆t2222222222222222222222222222\u001e2\u001e2\u001e2\u001e\u001e\u001e\n22V\u0017222\u001e\u001eƹ22)H2222222222222222FK\u001e2ƹ2222222222222222222FK\u001e\u001e\n2",
+      "generated_bytes_hex": "d79b3c3c3cc89bc89bc89b3c3cc29f36d4b16907690909092963636363636363cbafcbafcbb779c5afe8b792d3afe8afb53232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232321e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e3256171e1e321e1e1e1e1e1e1e1e1e32294832321e323232321e321e323232321e3232321e3232321e32323256173232321e321e321e1e323232c68856173232f1afafaf3232323232323232323232323232320a32323232323232323232323232323232464b1e32c6b932323232323232323232323232323232323232321e321e1e1e1e1ee5b7b75c190ae5b7b75c1e0a321e321e0a323256173232c6af56e1afaf32323229483232323232323232323232323232323232381e1ee5b7b7324832323232323232323232323232323232321e0a323256173232321e0a1e1e1e0a1e0a1e1e0a1e1e0a1e1e0a1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e5f701e32d7b81e323232f1b5b58674323232323232323232323232323232323232323232323232323232321e321e321e321e1e1e0a323256173232321e1ec6b93232294832323232323232323232323232323232464b1e32c6b932323232323232323232323232323232323232464b1e1e0a32",
+      "generated_bytes_length": 512,
+      "utf8_valid": true,
+      "no_replacement": true,
+      "exact_response": false,
+      "native_mode": true,
+      "external_provider": false,
+      "sequence_evaluation": "r2-sequence-criteria-v1",
+      "response_boundary_present": false,
+      "generation_stop_reason": "max_generation_bytes",
+      "sequence_valid": false,
+      "required_terms": [
+        "红色"
+      ],
+      "required_terms_hit": [],
+      "required_term_coverage": 0.0,
+      "forbidden_terms": [],
+      "forbidden_terms_hit": [],
+      "unknown_policy_satisfied": true,
+      "semantic_criteria_evaluated": true,
+      "semantic_criteria_pass": false,
+      "sequence_criterion_pass": false
+    },
+    "child_output": {
+      "episode_id": "train-answer-red",
+      "split": "train",
+      "task_family": "grounded_answer",
+      "reference_response": "依据上下文，答案是红色。",
+      "unknown_policy": "answer",
+      "unknown_markers": [],
+      "response_start_readout": false,
+      "response_start_readout_digest": null,
+      "response_phase_readout": false,
+      "response_phase_readout_digest": null,
+      "teacher_forced_accuracy": 0.06666666666666667,
+      "teacher_forced_mean_surprise": 5.079327664887419,
+      "generated_text": "MM橩M橩TMשM橢浵ccccccccccccBB\n|Я|n˯nB||Я2222222222222222222222222222222222222\n222222222\n\u001e\n\u001e\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n2\u001722\u00172\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nƈ22K\n\n\n\n\n\nƷ\u001722\n\n\n\n\n\n2\n\n\n\n\n\n\n\n\n\n2\n\n\n\n\n\n\n2V\u00172222222222222\n\n\n2\n\n2\n\n\n22\n2\n\n\n22\n\nQ\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\u001e\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\u001e\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nH22222222222222\n\n\n\n2\n\n\n2222222222\n\n\n2\n\n22\n2\n\n\u001e\n\n\n\n\n\n\n\n\n\n\n\nƯ2V\u001722\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n2\u001722ڷԷ2\n\n\n\n\n2\n\n\n\n2\n\n\n\n\np\n2K\n\n\n\n\n\n2Ʒ\u001722ڷԷ2\n\n\n\n2\n\n\n\n\n\n\n\n\n\n\n\n\n2K\u001e\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nƯ2\u0017222222222222222222\n\n\n22",
+      "generated_bytes_hex": "4d4de6a9a94de6a9a9544dd7a94de6a9a2e6b5b563636363636363636363636342420a7cd0af7c6ecbaf6e427c7cd0af323232323232323232323232323232323232323232323232323232323232323232323232320a3232323232323232320a1e0a1e0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a3217323217320a0a0a0a0a0a0a0a0a0a0a0a0a0a0ac68832324b0a0a0a0a0a0ac6b71732320a0a0a0a0a0a320a0a0a0a0a0a0a0a0a0a320a0a0a0a0a0a0a325617323232323232323232323232320a0a0a320a0a320a0a0a32320a320a0a0a32320a0a510a0a0a0a0a0a0a0a0a0a0a0a0a0a0a1e0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a1e0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a4832323232323232323232323232320a0a0a0a320a0a0a323232323232323232320a0a0a320a0a32320a320a0a1e0a0a0a0a0a0a0a0a0a0a0a0ac6af32561732320a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a32173232dab7d4b7320a0a0a0a0a320a0a0a0a320a0a0a0a0a700a324b0a0a0a0a0a0a32c6b7173232dab7d4b7320a0a0a0a320a0a0a0a0a0a0a0a0a0a0a0a0a324b1e0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0ac6af32173232323232323232323232323232323232320a0a0a32320a0a0a1e",
+      "generated_bytes_length": 512,
+      "utf8_valid": true,
+      "no_replacement": true,
+      "exact_response": false,
+      "native_mode": true,
+      "external_provider": false,
+      "sequence_evaluation": "r2-sequence-criteria-v1",
+      "response_boundary_present": false,
+      "generation_stop_reason": "max_generation_bytes",
+      "sequence_valid": false,
+      "required_terms": [
+        "红色"
+      ],
+      "required_terms_hit": [],
+      "required_term_coverage": 0.0,
+      "forbidden_terms": [],
+      "forbidden_terms_hit": [],
+      "unknown_policy_satisfied": true,
+      "semantic_criteria_evaluated": true,
+      "semantic_criteria_pass": false,
+      "sequence_criterion_pass": false
+    },
+    "caller_model_unchanged": true,
+    "atomic_save": true
+  },
+  "factorized_preflight": {
+    "format": "taiji-r2-h3-7-factorized-preflight-v1",
+    "status": "passed",
+    "episode_id": "train-answer-red",
+    "plan_target_candidate_changed": true,
+    "bridge_changed_after_byte_update": true,
+    "slot_planner_changed_after_byte_update": true,
+    "phase_after_advance": 0,
+    "reset_cleared_plan": true,
+    "protected_readout_unchanged": true,
+    "caller_restore_verified_in_finally": true
+  },
+  "zero_fresh_process": {
+    "restored": "33465069a3b13776abcedf684bc09e7b12fd643eb26831273b54a91b585cfba5",
+    "continued": "1519b6625aa4c55864ebf3301d6d1a60c84c8a99958603640204ec15ef052419"
+  },
+  "training": {
+    "status": "completed",
+    "epochs": 1,
+    "episodes": 12,
+    "global_step": 537,
+    "response_accuracy": 0.08325260659819483,
+    "response_mean_surprise": 4.813635562272809,
+    "records": [
+      {
+        "epoch": 0,
+        "episode_id": "train-answer-red",
+        "family_id": "train-answer-red",
+        "target_bytes": 45,
+        "prefix_bytes": 181,
+        "observations": 45,
+        "response_accuracy": 0.0,
+        "response_mean_surprise": 5.53109410886394
+      },
+      {
+        "epoch": 0,
+        "episode_id": "train-answer-blue",
+        "family_id": "train-answer-blue",
+        "target_bytes": 45,
+        "prefix_bytes": 181,
+        "observations": 45,
+        "response_accuracy": 0.022222222222222223,
+        "response_mean_surprise": 5.169821586559835
+      },
+      {
+        "epoch": 0,
+        "episode_id": "train-answer-east-history",
+        "family_id": "train-answer-east-history",
+        "target_bytes": 42,
+        "prefix_bytes": 261,
+        "observations": 42,
+        "response_accuracy": 0.047619047619047616,
+        "response_mean_surprise": 5.241670570719631
+      },
+      {
+        "epoch": 0,
+        "episode_id": "train-unknown-weather",
+        "family_id": "train-unknown-weather",
+        "target_bytes": 45,
+        "prefix_bytes": 161,
+        "observations": 45,
+        "response_accuracy": 0.044444444444444446,
+        "response_mean_surprise": 4.970413964925258
+      },
+      {
+        "epoch": 0,
+        "episode_id": "train-unknown-price",
+        "family_id": "train-unknown-price",
+        "target_bytes": 45,
+        "prefix_bytes": 170,
+        "observations": 45,
+        "response_accuracy": 0.1111111111111111,
+        "response_mean_surprise": 4.758017270458714
+      },
+      {
+        "epoch": 0,
+        "episode_id": "train-unknown-owner",
+        "family_id": "train-unknown-owner",
+        "target_bytes": 48,
+        "prefix_bytes": 174,
+        "observations": 48,
+        "response_accuracy": 0.10416666666666667,
+        "response_mean_surprise": 4.567613694011935
+      },
+      {
+        "epoch": 0,
+        "episode_id": "train-clarify-city",
+        "family_id": "train-clarify-city",
+        "target_bytes": 42,
+        "prefix_bytes": 151,
+        "observations": 42,
+        "response_accuracy": 0.09523809523809523,
+        "response_mean_surprise": 4.796886407920489
+      },
+      {
+        "epoch": 0,
+        "episode_id": "train-clarify-date",
+        "family_id": "train-clarify-date",
+        "target_bytes": 42,
+        "prefix_bytes": 151,
+        "observations": 42,
+        "response_accuracy": 0.09523809523809523,
+        "response_mean_surprise": 4.462716059580928
+      },
+      {
+        "epoch": 0,
+        "episode_id": "train-clarify-file",
+        "family_id": "train-clarify-file",
+        "target_bytes": 48,
+        "prefix_bytes": 154,
+        "observations": 48,
+        "response_accuracy": 0.16666666666666666,
+        "response_mean_surprise": 4.519746899434266
+      },
+      {
+        "epoch": 0,
+        "episode_id": "train-refuse-password",
+        "family_id": "train-refuse-password",
+        "target_bytes": 51,
+        "prefix_bytes": 162,
+        "observations": 51,
+        "response_accuracy": 0.09803921568627451,
+        "response_mean_surprise": 4.791096097959576
+      },
+      {
+        "epoch": 0,
+        "episode_id": "train-refuse-token",
+        "family_id": "train-refuse-token",
+        "target_bytes": 42,
+        "prefix_bytes": 156,
+        "observations": 42,
+        "response_accuracy": 0.09523809523809523,
+        "response_mean_surprise": 4.513816347396082
+      },
+      {
+        "epoch": 0,
+        "episode_id": "train-refuse-bypass",
+        "family_id": "train-refuse-bypass",
+        "target_bytes": 42,
+        "prefix_bytes": 156,
+        "observations": 42,
+        "response_accuracy": 0.11904761904761904,
+        "response_mean_surprise": 4.440733739443058
+      }
+    ],
+    "developmental_mode": "static",
+    "developmental_history": [
+      {
+        "epoch": 0,
+        "replay": null,
+        "status": {
+          "mode": "static",
+          "enabled": false,
+          "learning_mode": "static",
+          "replay_count": 0,
+          "bundle_digest": null
+        }
+      }
+    ]
+  },
+  "child_fresh_process": {
+    "restored": "7de9fe814bcd88c5ffaad88d6d360dda8b387be13182f69fc0f83387d5efd458",
+    "continued": "0edc0b9a48fce1387bc027beaaefc6fe50d94f5b19a5465366b5fa67f7819d08"
+  },
+  "checkpoint": "E:\\Seed\\outputs\\r2_h3_7b_repair_20260917\\legacy_target\\checkpoint.pt"
+}

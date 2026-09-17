@@ -1,0 +1,10 @@
+{
+  "arm": "byte_aligned",
+  "code_revision": "95dd247b7ac9a6967e125d6d2a9aee3e39072123",
+  "corpus_digest": "0bc5b5540d4b622f907942f42d7b809e825932e50c6e6c505a3cd091edabd691",
+  "status": "failed",
+  "final_evaluated": false,
+  "dev_evaluated": false,
+  "effective_parameters": 277970,
+  "error": "H3.7 checkpoint is missing its target encoder"
+}
