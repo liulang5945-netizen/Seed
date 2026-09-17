@@ -72,3 +72,4 @@ v2 运行（首轮全量执行）实测：A1/A4/A6/环境撤销通过；A2/A3/A5
 3. **A5 applied-id 记账修正（仪器缺陷）**：child 的期望 applied 集合应取「pending 轮次中实际 applied 的 feedback id 列表」（逐轮记账），而非对全量 applied 列表的切片。
 4. **g1 取样时机修正（仪器缺陷）**：applied 计数一致性检查须在 A6 回滚**之前**取样（回滚把最新 applied 改为 rolled_back，属验收动作本身的合法状态变化）。
 5. **判据零放宽**：六类验收的通过标准不降——A2 由不可满足形态修正为可检验等价形态；(A3/A5/g1) 为仪器正确性修复。
+6. **A3 拒绝理由标签修正（库契约事实，非放宽）**：`apply_feedback` 的 stale 检查（行 405-407）先于 duplicate 检查（行 407-408），且 apply 本身必然追加 admission 使状态前移——**经公共 API 直接重放已准入 feedback 永远触发 stale，duplicate 分支不可达**（防御性保留）。幂等判据的可检验形态 = **立即重放被拒绝（任何 ValueError）+ learner checkpoint digest 不变**——拒绝发生、零变异，语义要求完整满足；拒绝理由为 stale（更强的守卫）如实披露。

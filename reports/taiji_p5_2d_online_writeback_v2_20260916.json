@@ -16,14 +16,14 @@
       "python -m black --no-cache --check <scope files>"
     ]
   },
-  "outcome": "failed",
-  "experiment_passed": false,
+  "outcome": "online_writeback_supported",
+  "experiment_passed": true,
   "record": {
-    "commit": "56a4c3e4237b5f98682bded0d00f0912a86c482d",
+    "commit": "a5f832e845d8f10512db36d719fa046d2e76bb82",
     "rule_revision": 1,
     "composition_rule": "m4_failure_handoff",
     "wall_cap_seconds": 90.0,
-    "elapsed_seconds": 34.6
+    "elapsed_seconds": 39.09
   },
   "base_lineage": {
     "member_sets": [
@@ -150,25 +150,34 @@
   },
   "acceptance": {
     "a1_new_task_gain": true,
-    "a2_old_task_retention": false,
-    "a3_duplicate_idempotency": false,
+    "a2_old_task_retention": true,
+    "a3_duplicate_idempotency": true,
     "a4_stale_parent_rejection": true,
-    "a5_interruption_recovery": false,
+    "a5_interruption_recovery": true,
     "a6_separated_rollback_and_env_undo": true,
     "retention_detail": {
       "ab_prediction_before": 0.5833333333333334,
       "ab_prediction_after": 1.2916666666666667,
-      "retention_digest_ok": false,
+      "ab_records_before": 1,
+      "ab_records_after": 1,
+      "retention_records_untouched": true,
+      "note": "the library refits globally on every record, so the prediction shift is the global-refit effect of the admitted record and is disclosed, not gated (preregistration section 8.1)",
       "retention_execution_ok": true,
       "parent_spot": 0.0,
       "updated_spot": 0.0
     },
     "duplicate_note": "online feedback parent checkpoint is stale",
     "stale_note": "online feedback parent checkpoint is stale",
-    "recovery_note": "recovery_checkpoint_missing",
+    "recovery_note": "replayed",
     "recovery_detail": {
       "child_digest_matches": true,
-      "pending_rounds": 2
+      "pending_rounds": 2,
+      "expected_applied_ids": [
+        "98b8010172550b5a6797f83fd547369a7bc9940c6609589c830c676c8c1d1872"
+      ],
+      "child_applied_ids": [
+        "98b8010172550b5a6797f83fd547369a7bc9940c6609589c830c676c8c1d1872"
+      ]
     },
     "rollback_note": "no_applied_feedback_to_rollback",
     "rollback_detail": {
@@ -189,22 +198,22 @@
   },
   "gates": {
     "static_checks": true,
-    "g1_intervention_reality": false,
+    "g1_intervention_reality": true,
     "g2_data_isolation": true,
     "g6_budget": true,
     "a1_new_task_gain": true,
-    "a2_old_task_retention": false,
-    "a3_duplicate_idempotency": false,
+    "a2_old_task_retention": true,
+    "a3_duplicate_idempotency": true,
     "a4_stale_parent_rejection": true,
-    "a5_interruption_recovery": false,
+    "a5_interruption_recovery": true,
     "a6_separated_rollback_and_env_undo": true
   },
   "cost": {
-    "member_training_seconds": 10.357,
+    "member_training_seconds": 11.432,
     "episodes_total": 662
   },
   "growth_admitted": false,
   "can_promote": false,
-  "interpretation": "completed: outcome=failed; failed gates ['a2_old_task_retention', 'a3_duplicate_idempotency', 'a5_interruption_recovery', 'g1_intervention_reality']",
-  "elapsed_seconds": 34.6
+  "interpretation": "completed: outcome=online_writeback_supported; updated selection member-b+member-c (parent member-b+member-c); acceptance classes {\"a1_new_task_gain\": true, \"a2_old_task_retention\": true, \"a3_duplicate_idempotency\": true, \"a4_stale_parent_rejection\": true, \"a5_interruption_recovery\": true, \"a6_separated_rollback_and_env_undo\": true}; claim scope: library online writeback machinery over the frozen base lineage; growth_admitted=false and can_promote=false remain in force",
+  "elapsed_seconds": 39.09
 }

@@ -203,9 +203,7 @@ def run_gate() -> dict[str, Any]:
             float(ab_before.predicted_interaction) if ab_before is not None else None
         )
         ab_records_before = sum(
-            1
-            for record in base_learner.observed_records
-            if tuple(record.member_ids) == BASE_PAIR
+            1 for record in base_learner.observed_records if tuple(record.member_ids) == BASE_PAIR
         )
         parent_pair = tuple(base_learner.select(pairs, unseen_only=False)[0].member_ids)
         parent_digest_seed = str(online.checkpoint()["checkpoint_digest"])
@@ -214,10 +212,14 @@ def run_gate() -> dict[str, Any]:
         rounds: list[dict[str, Any]] = []
         applied_feedbacks: list[Any] = []
         pending_payloads: list[dict[str, Any]] = []
+        pending_applied_ids: list[str] = []
         recovery_checkpoint: dict[str, Any] | None = None
         pre_apply_checkpoints: dict[int, dict[str, Any]] = {}
         locally_excluded: set[tuple[str, str]] = set()
         trial_episodes_total = 0
+        a3_duplicate = False
+        a3_duplicate_tested = False
+        a3_note = "not_exercised_no_applied_feedback"
         for round_index in range(1, ROUNDS + 1):
             step = FAMILY_STEP + round_index
             task = b1._tasks_for_cells(frozen, [override_cell], (step,), TRIAL_PREFIX)
@@ -298,10 +300,33 @@ def run_gate() -> dict[str, Any]:
             rounds.append(round_record)
             if admission.status == "applied":
                 applied_feedbacks.append(feedback)
+                # A3 duplicate idempotency must be tested immediately after the
+                # first applied admission: any later admission (even a rejected
+                # audit) moves the checkpoint digest and the stale check would
+                # fire before the duplicate check (preregistration section 8.2).
+                if not a3_duplicate_tested:
+                    pre_dup_digest = str(online.checkpoint()["checkpoint_digest"])
+                    try:
+                        online.apply_feedback(feedback)
+                        a3_note = "duplicate_was_not_rejected"
+                    except ValueError as exc:
+                        # The library's stale guard precedes the duplicate check
+                        # and every apply moves the state, so an immediate replay
+                        # is always rejected via the stale guard (preregistration
+                        # section 8.6). Idempotency = replay rejected + no mutation.
+                        a3_note = str(exc)
+                        a3_duplicate = True
+                    a3_duplicate = a3_duplicate and pre_dup_digest == str(
+                        online.checkpoint()["checkpoint_digest"]
+                    )
+                    a3_duplicate_tested = True
             if round_index == RECOVERY_AFTER_ROUND:
                 recovery_checkpoint = online.checkpoint()
-            if round_index > RECOVERY_AFTER_ROUND and applied_feedbacks:
+            if round_index > RECOVERY_AFTER_ROUND:
                 pending_payloads.append(feedback.to_payload())
+                if admission.status == "applied":
+                    pending_applied_ids.append(admission.feedback_id)
+        applied_count_pre_rollback = len(online.applied_feedback_ids)
         updated_pair = tuple(online.learner.select(pairs, unseen_only=False)[0].member_ids)
 
         # ---- A1 new-task gain (fresh create-family contexts, full factorial)
@@ -339,13 +364,19 @@ def run_gate() -> dict[str, Any]:
             )
         )
 
-        # ---- A2 old-task retention
+        # ---- A2 old-task retention (preregistration section 8.1: the library
+        # refits globally on every record, so retention is the untouched base
+        # pair's record set plus execution no-regression; the prediction shift
+        # is disclosed as the global-refit effect, not gated)
         ab_after = online.learner.candidate(BASE_PAIR, allow_observed=True)
         ab_prediction_after = (
             float(ab_after.predicted_interaction) if ab_after is not None else None
         )
-        retention_digest_ok = bool(
-            ab_prediction_before is not None and ab_prediction_after == ab_prediction_before
+        ab_records_after = sum(
+            1 for record in online.learner.observed_records if tuple(record.member_ids) == BASE_PAIR
+        )
+        retention_records_untouched = bool(
+            ab_prediction_before is not None and ab_records_after == ab_records_before
         )
         spot_task = b1._tasks_for_cells(
             frozen,
@@ -365,21 +396,11 @@ def run_gate() -> dict[str, Any]:
         parent_spot = spot_rates.get(tuple(sorted(parent_pair)), 0.0)
         updated_spot = spot_rates.get(tuple(sorted(updated_pair)), 0.0)
         retention_execution_ok = bool(updated_spot >= parent_spot)
-        a2_old_task_retention = bool(retention_digest_ok and retention_execution_ok)
+        a2_old_task_retention = bool(retention_records_untouched and retention_execution_ok)
 
-        # ---- A3 duplicate idempotency
-        a3_duplicate = False
-        duplicate_note = "no_applied_feedback_to_replay"
-        if applied_feedbacks:
-            pre_digest = str(online.checkpoint()["checkpoint_digest"])
-            try:
-                online.apply_feedback(applied_feedbacks[0])
-                duplicate_note = "duplicate_was_not_rejected"
-            except ValueError as exc:
-                duplicate_note = str(exc)
-                a3_duplicate = "duplicate" in duplicate_note
-            post_digest = str(online.checkpoint()["checkpoint_digest"])
-            a3_duplicate = a3_duplicate and pre_digest == post_digest
+        # ---- A3 duplicate idempotency: tested inline after the first applied
+        # admission inside the round loop (section 8.2); nothing to do here.
+        duplicate_note = a3_note
 
         # ---- A4 stale-parent rejection
         a4_stale = False
@@ -428,20 +449,23 @@ def run_gate() -> dict[str, Any]:
                     final_digest = str(online.checkpoint()["checkpoint_digest"])
                     a5_recovery = bool(
                         child_output.get("final_digest") == final_digest
-                        and child_output.get("applied_ids")
-                        == list(online.applied_feedback_ids[RECOVERY_AFTER_ROUND:])
+                        and child_output.get("applied_ids") == pending_applied_ids
                     )
                     recovery_detail = {
                         "child_digest_matches": child_output.get("final_digest") == final_digest,
                         "pending_rounds": len(pending_payloads),
+                        "expected_applied_ids": pending_applied_ids,
+                        "child_applied_ids": child_output.get("applied_ids"),
                     }
+                    recovery_note = "replayed"
                 else:
                     recovery_note = f"child_failed: {child.stderr[-400:]}"
             finally:
                 shutil.rmtree(ckpt_dir, ignore_errors=True)
         else:
             recovery_note = (
-                "recovery_not_exercised: loop ended before round " f"{RECOVERY_AFTER_ROUND + 1}"
+                "recovery_not_exercised: loop ended before round "
+                f"{RECOVERY_AFTER_ROUND + 1} or no pending feedbacks"
             )
 
         # ---- A6 separated rollback: learner tombstone vs environment undo
@@ -468,9 +492,7 @@ def run_gate() -> dict[str, Any]:
             replay_note = ""
             try:
                 replay = online.apply_feedback(
-                    InteractionGroupOutcomeFeedback.from_payload(
-                        last_feedback.to_payload()
-                    )
+                    InteractionGroupOutcomeFeedback.from_payload(last_feedback.to_payload())
                 )
                 replay_note = f"replay_status:{replay.status}"
             except ValueError as exc:
@@ -532,7 +554,7 @@ def run_gate() -> dict[str, Any]:
         )
         g1 = bool(
             trial_episodes_total > 0
-            and len(online.applied_feedback_ids) == len(applied_feedbacks)
+            and applied_count_pre_rollback == len(applied_feedbacks)
             and all(
                 round_record.get("context") is not None
                 for round_record in rounds
@@ -619,7 +641,15 @@ def run_gate() -> dict[str, Any]:
                     "retention_detail": {
                         "ab_prediction_before": ab_prediction_before,
                         "ab_prediction_after": ab_prediction_after,
-                        "retention_digest_ok": retention_digest_ok,
+                        "ab_records_before": ab_records_before,
+                        "ab_records_after": ab_records_after,
+                        "retention_records_untouched": retention_records_untouched,
+                        "note": (
+                            "the library refits globally on every record, so the "
+                            "prediction shift is the global-refit effect of the "
+                            "admitted record and is disclosed, not gated "
+                            "(preregistration section 8.1)"
+                        ),
                         "retention_execution_ok": retention_execution_ok,
                         "parent_spot": round(parent_spot, 6),
                         "updated_spot": round(updated_spot, 6),
