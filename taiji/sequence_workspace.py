@@ -48,6 +48,19 @@ Annotations required by the contract:
 The workspace is frozen *within* an episode: it is computed once from the
 prefix and never written back during rendering.  Runtime adaptation (writing
 to the workspace during generation) is explicitly out of scope here.
+
+Version 3 (R2-D2, contract
+``plans/reference/M5_R2_D2_PER_POSITION_EVIDENCE_PREREGISTRATION_FROZEN_20260918.md``)
+adds a second evidence provenance while keeping every other edge of the graph:
+instead of deriving all evidence rows once from the final scan state, the
+prefix scan keeps every position state and projects one key/value evidence
+entry per position; the renderer addresses those L entries with the same
+content-read operator.  ``evidence_source`` selects between v2 rows
+(``final_state_slots``), per-position rows (``per_position``) and the
+parameter-matched broadcast control (``broadcast_final``, every position
+carries the final state).  Evaluation-only lesions (value/key row rotation,
+zeroed read) exist for the pre-registered misbind and zero-read probes; they
+never participate in training.
 """
 
 from __future__ import annotations
@@ -63,15 +76,24 @@ import torch
 from .internalization import content_digest
 
 SEQUENCE_WORKSPACE_FORMAT = "taiji-sequence-workspace-v1"
-#: Version 2 (contract section 7, 2026-09-17): the workspace arm's only prefix
-#: channel is the content-addressed read; ``start_vector`` replaces the
-#: ``renderer_start`` direct path.  Version-1 payloads are refused, never
-#: silently reinterpreted.
-SEQUENCE_WORKSPACE_VERSION = 2
+#: Version 3 (R2-D2, 2026-09-18): per-position evidence rows via
+#: ``evidence_source``.  Version 2 (single-channel workspace) remains
+#: restorable; version-1 payloads are refused, never silently reinterpreted.
+SEQUENCE_WORKSPACE_VERSION = 3
+#: Checkpoint payload versions this build is allowed to restore.
+SEQUENCE_WORKSPACE_SUPPORTED_VERSIONS = frozenset({2, 3})
 SEQUENCE_WORKSPACE_TRAINER_FORMAT = "taiji-sequence-workspace-trainer-v1"
 SEQUENCE_WORKSPACE_ALPHABET = 257
 SEQUENCE_WORKSPACE_BOUNDARY = 256
 SEQUENCE_WORKSPACE_SERIALIZATION = "torch.save/atomic"
+
+#: Evidence provenance for the workspace arm (R2-D2 graph v3).
+EVIDENCE_FINAL_STATE_SLOTS = "final_state_slots"
+EVIDENCE_PER_POSITION = "per_position"
+EVIDENCE_BROADCAST_FINAL = "broadcast_final"
+EVIDENCE_SOURCES = frozenset(
+    {EVIDENCE_FINAL_STATE_SLOTS, EVIDENCE_PER_POSITION, EVIDENCE_BROADCAST_FINAL}
+)
 
 #: Canonical order used for per-name deterministic initialization.  Both arms'
 #: inventories are subsequences of this tuple, so tensors that exist in both
@@ -90,6 +112,8 @@ _CANONICAL_PARAMETER_ORDER: tuple[str, ...] = (
     "address_query",
     "workspace_key",
     "workspace_value",
+    "evidence_key",
+    "evidence_value",
     "decoder",
     "decoder_bias",
 )
@@ -100,7 +124,19 @@ _CANONICAL_PARAMETER_ORDER: tuple[str, ...] = (
 #: content-addressed workspace read.  The implementation gate asserts this list
 #: against the live tensors.
 SEQUENCE_WORKSPACE_PARAMETERS: tuple[str, ...] = tuple(
-    name for name in _CANONICAL_PARAMETER_ORDER if name != "renderer_start"
+    name
+    for name in _CANONICAL_PARAMETER_ORDER
+    if name not in {"renderer_start", "evidence_key", "evidence_value"}
+)
+
+#: Declared inventory of the graph-v3 evidence arm (R2-D2): the per-position
+#: (or broadcast) projections ``evidence_key/evidence_value`` replace the v2
+#: ``workspace_key/workspace_value`` matrices; every other shared tensor keeps
+#: its name and initialization.  A and C1 share this exact inventory.
+SEQUENCE_WORKSPACE_EVIDENCE_PARAMETERS: tuple[str, ...] = tuple(
+    name
+    for name in _CANONICAL_PARAMETER_ORDER
+    if name not in {"renderer_start", "workspace_key", "workspace_value"}
 )
 
 #: Declared inventory of the no-workspace baseline arm.  The graph is the v1
@@ -110,7 +146,15 @@ SEQUENCE_WORKSPACE_PARAMETERS: tuple[str, ...] = tuple(
 SEQUENCE_WORKSPACE_BASELINE_PARAMETERS: tuple[str, ...] = tuple(
     name
     for name in _CANONICAL_PARAMETER_ORDER
-    if name not in {"start_vector", "address_query", "workspace_key", "workspace_value"}
+    if name
+    not in {
+        "start_vector",
+        "address_query",
+        "workspace_key",
+        "workspace_value",
+        "evidence_key",
+        "evidence_value",
+    }
 )
 
 #: Baseline arm renderer width frozen by contract section 7.3 (parameter
@@ -138,6 +182,10 @@ class SequenceWorkspaceConfig:
     alphabet_size: int = SEQUENCE_WORKSPACE_ALPHABET
     boundary_symbol: int = SEQUENCE_WORKSPACE_BOUNDARY
     workspace_enabled: bool = True
+    #: R2-D2 graph-v3 evidence provenance.  ``final_state_slots`` is the v2
+    #: graph exactly; the other two select the per-position evidence arm and
+    #: its parameter-matched broadcast control.
+    evidence_source: str = EVIDENCE_FINAL_STATE_SLOTS
 
     def __post_init__(self) -> None:
         for name in ("prefix_width", "slots", "slot_width", "renderer_width"):
@@ -150,6 +198,15 @@ class SequenceWorkspaceConfig:
             raise ValueError("sequence workspace alphabet is fixed at 257 native bytes")
         if int(self.boundary_symbol) != SEQUENCE_WORKSPACE_BOUNDARY:
             raise ValueError("sequence workspace boundary symbol is fixed at 256")
+        if str(self.evidence_source) not in EVIDENCE_SOURCES:
+            raise ValueError(
+                "evidence_source must be one of "
+                f"{sorted(EVIDENCE_SOURCES)}, got {self.evidence_source!r}"
+            )
+        if not self.workspace_enabled and self.evidence_source != EVIDENCE_FINAL_STATE_SLOTS:
+            raise ValueError(
+                "evidence_source variants require the workspace arm " "(workspace_enabled=True)"
+            )
 
     def to_payload(self) -> dict[str, Any]:
         return {
@@ -162,6 +219,7 @@ class SequenceWorkspaceConfig:
             "alphabet_size": int(self.alphabet_size),
             "boundary_symbol": int(self.boundary_symbol),
             "workspace_enabled": bool(self.workspace_enabled),
+            "evidence_source": str(self.evidence_source),
         }
 
 
@@ -174,8 +232,8 @@ class WorkspaceState:
     workspace arm.
     """
 
-    workspace_key: torch.Tensor | None  # (slots, slot_width) -- frozen after begin
-    workspace_value: torch.Tensor | None  # (slots, slot_width) -- frozen after begin
+    workspace_key: torch.Tensor | None  # (entries, slot_width) -- v2 slots or v3 positions
+    workspace_value: torch.Tensor | None  # (entries, slot_width) -- frozen after begin
     renderer_state: torch.Tensor  # (renderer_width,)
 
 
@@ -225,11 +283,16 @@ class SequenceWorkspacePrototype:
         if self.config.workspace_enabled:
             # v2 graph (contract section 7): a learned constant start state;
             # the prefix enters the answer stream only through the workspace
-            # rows generated here.
+            # rows generated here.  v3 (R2-D2) swaps the two row matrices for
+            # shared per-position projections; the renderer side is identical.
             make("start_vector", (rw,), 0.5)
             make("address_query", (rw, sw), 1.0 / math.sqrt(rw))
-            make("workspace_key", (rw, slots * sw), 1.0 / math.sqrt(rw))
-            make("workspace_value", (rw, slots * sw), 1.0 / math.sqrt(rw))
+            if self.config.evidence_source == EVIDENCE_FINAL_STATE_SLOTS:
+                make("workspace_key", (rw, slots * sw), 1.0 / math.sqrt(rw))
+                make("workspace_value", (rw, slots * sw), 1.0 / math.sqrt(rw))
+            else:
+                make("evidence_key", (rw, sw), 1.0 / math.sqrt(rw))
+                make("evidence_value", (rw, sw), 1.0 / math.sqrt(rw))
         else:
             # baseline arm keeps the v1 vanilla encoder: the prefix scan state
             # initializes the renderer directly.
@@ -248,11 +311,11 @@ class SequenceWorkspacePrototype:
     # ---------------------------------------------------------------- inventory
 
     def declared_parameter_names(self) -> tuple[str, ...]:
-        return (
-            SEQUENCE_WORKSPACE_PARAMETERS
-            if self.config.workspace_enabled
-            else SEQUENCE_WORKSPACE_BASELINE_PARAMETERS
-        )
+        if not self.config.workspace_enabled:
+            return SEQUENCE_WORKSPACE_BASELINE_PARAMETERS
+        if self.config.evidence_source == EVIDENCE_FINAL_STATE_SLOTS:
+            return SEQUENCE_WORKSPACE_PARAMETERS
+        return SEQUENCE_WORKSPACE_EVIDENCE_PARAMETERS
 
     def named_parameters(self) -> tuple[tuple[str, torch.nn.Parameter], ...]:
         return tuple((name, self._parameters[name]) for name in self.declared_parameter_names())
@@ -276,35 +339,83 @@ class SequenceWorkspacePrototype:
 
     # ------------------------------------------------------------ core forward
 
-    def _embed_prefix(self, prefix: bytes) -> torch.Tensor:
-        """Causal scan over prefix bytes; returns the last state h0."""
+    def _scan_prefix(self, prefix: bytes) -> tuple[torch.Tensor, tuple[torch.Tensor, ...]]:
+        """Causal scan over prefix bytes.
+
+        Returns the final state h_L and every post-byte state (h_1, …, h_L).
+        The v2 graph consumes only h_L; graph v3 consumes the full tuple so
+        evidence rows are written at distinct input positions.
+        """
 
         state = torch.zeros(int(self.config.renderer_width), dtype=torch.float32)
         embedding = self._parameters["prefix_embedding"]
+        states: list[torch.Tensor] = []
         for symbol in prefix:
             state = torch.tanh(
                 embedding[int(symbol)] @ self._parameters["prefix_input"]
                 + state @ self._parameters["prefix_recur"]
                 + self._parameters["prefix_bias"]
             )
-        return state
+            states.append(state)
+        return state, tuple(states)
 
-    def begin_episode(self, prefix: bytes) -> WorkspaceState:
-        """Build the per-episode workspace and start state.  Nothing carries over."""
+    def _embed_prefix(self, prefix: bytes) -> torch.Tensor:
+        """Causal scan over prefix bytes; returns the last state h0."""
+
+        return self._scan_prefix(prefix)[0]
+
+    def begin_episode(self, prefix: bytes, *, value_rotation: int = 0) -> WorkspaceState:
+        """Build the per-episode workspace and start state.  Nothing carries over.
+
+        ``value_rotation`` is the evaluation-only R2-D2 misbind lesion: value
+        rows are cyclically shifted against their keys while every row's
+        content is preserved.  It must stay zero on every training path.
+        """
 
         prefix = _validate_bytes(prefix, "prefix")
         if len(prefix) > int(self.config.max_sequence_bytes):
             raise ValueError("prefix exceeds max_sequence_bytes; truncation needs its own contract")
-        h0 = self._embed_prefix(prefix)
+        rotation = int(value_rotation)
+        if rotation < 0:
+            raise ValueError("value_rotation must be non-negative")
+        h0, states = self._scan_prefix(prefix)
         slots = int(self.config.slots)
         sw = int(self.config.slot_width)
         if self.config.workspace_enabled:
             # v2 single prefix channel: h0 only produces the workspace rows;
             # the renderer starts from a learned constant (contract section 7).
-            workspace_key = (h0 @ self._parameters["workspace_key"]).reshape(slots, sw)
-            workspace_value = (h0 @ self._parameters["workspace_value"]).reshape(slots, sw)
+            if self.config.evidence_source == EVIDENCE_FINAL_STATE_SLOTS:
+                workspace_key = (h0 @ self._parameters["workspace_key"]).reshape(slots, sw)
+                workspace_value = (h0 @ self._parameters["workspace_value"]).reshape(slots, sw)
+            else:
+                # Graph v3: one evidence entry per scan position (A), or L
+                # identical entries projected from the final state (C1 control,
+                # same machinery and parameters, no positional information).
+                if not states:
+                    raise ValueError(
+                        "graph v3 evidence requires a non-empty prefix "
+                        "(no scan positions to write)"
+                    )
+                if self.config.evidence_source == EVIDENCE_PER_POSITION:
+                    positions = torch.stack(states, dim=0)
+                    workspace_key = positions @ self._parameters["evidence_key"]
+                    workspace_value = positions @ self._parameters["evidence_value"]
+                else:
+                    # One computed row replicated L times (shared storage):
+                    # every entry is bit-identical, so the control differs
+                    # from A only in provenance, never in arithmetic.
+                    workspace_key = (h0 @ self._parameters["evidence_key"]).expand(len(states), -1)
+                    workspace_value = (h0 @ self._parameters["evidence_value"]).expand(
+                        len(states), -1
+                    )
+            if rotation:
+                workspace_value = torch.roll(
+                    workspace_value, shifts=rotation % workspace_value.shape[0], dims=0
+                )
             renderer_state: torch.Tensor = self._parameters["start_vector"]
         else:
+            if rotation:
+                raise ValueError("the baseline arm has no evidence rows to rotate")
             workspace_key = None
             workspace_value = None
             renderer_state = torch.tanh(h0 @ self._parameters["renderer_start"])
@@ -316,8 +427,13 @@ class SequenceWorkspacePrototype:
         previous_symbol: int,
         *,
         detach_workspace_read: bool = False,
+        zero_read: bool = False,
     ) -> tuple[WorkspaceState, torch.Tensor]:
-        """One recurrent renderer step.  Pure function of (state, previous_symbol)."""
+        """One recurrent renderer step.  Pure function of (state, previous_symbol).
+
+        ``zero_read`` is the evaluation-only R2-D2 read-ablation lesion: the
+        decoder receives a zero evidence vector instead of the addressed read.
+        """
 
         symbol = int(previous_symbol)
         if not 0 <= symbol < self.config.alphabet_size:
@@ -328,13 +444,16 @@ class SequenceWorkspacePrototype:
             + self._parameters["renderer_bias"]
         )
         if self.config.workspace_enabled:
-            read = self._content_read(state, detach=detach_workspace_read)
+            if zero_read:
+                read = torch.zeros(int(self.config.slot_width), dtype=renderer_state.dtype)
+            else:
+                read = self._content_read(state, detach=detach_workspace_read)
             logits = (
                 torch.cat((renderer_state, read), dim=0) @ self._parameters["decoder"]
                 + self._parameters["decoder_bias"]
             )
-        elif detach_workspace_read:
-            raise ValueError("the no-workspace baseline arm has no workspace read to detach")
+        elif detach_workspace_read or zero_read:
+            raise ValueError("the no-workspace baseline arm has no workspace read to ablate")
         else:
             logits = renderer_state @ self._parameters["decoder"] + self._parameters["decoder_bias"]
         return (
@@ -343,7 +462,7 @@ class SequenceWorkspacePrototype:
         )
 
     def _content_read(self, state: WorkspaceState, *, detach: bool) -> torch.Tensor:
-        """Softmax content addressing over workspace slots (no positional pick)."""
+        """Softmax content addressing over evidence rows (no positional pick)."""
 
         key = state.workspace_key
         value = state.workspace_value
@@ -469,7 +588,7 @@ class SequenceWorkspacePrototype:
         position_weights = torch.ones_like(per_position)
         position_weights[0] = first_weight
         loss = (per_position * position_weights).sum() / position_weights.sum()
-        margin_gap = 0.0
+        margin_gap: torch.Tensor | float = 0.0
         if weight > 0.0:
             if contrastive_prefix is None:
                 raise ValueError("contrastive_weight requires a contrastive_prefix")
@@ -499,17 +618,28 @@ class SequenceWorkspacePrototype:
         return loss, metrics
 
     @torch.no_grad()
-    def generate(self, prefix: bytes, *, max_bytes: int | None = None) -> GenerationResult:
-        """Greedy native generation for later inference checks (no parameter update)."""
+    def generate(
+        self,
+        prefix: bytes,
+        *,
+        max_bytes: int | None = None,
+        value_rotation: int = 0,
+        zero_read: bool = False,
+    ) -> GenerationResult:
+        """Greedy native generation for later inference checks (no parameter update).
+
+        ``value_rotation`` / ``zero_read`` are the R2-D2 evaluation-only
+        misbind and read-ablation lesions; both default to the intact graph.
+        """
 
         limit = int(max_bytes if max_bytes is not None else self.config.max_sequence_bytes)
-        state = self.begin_episode(prefix)
+        state = self.begin_episode(prefix, value_rotation=value_rotation)
         previous = int(self.config.boundary_symbol)
         produced = bytearray()
         stopped = False
         steps = 0
         while steps < limit:
-            state, logits = self.step(state, previous)
+            state, logits = self.step(state, previous, zero_read=zero_read)
             symbol = int(logits.argmax(dim=0))
             steps += 1
             if symbol == int(self.config.boundary_symbol):
@@ -787,7 +917,10 @@ class SequenceWorkspaceTrainer:
     def from_checkpoint(cls, payload: Mapping[str, Any]) -> SequenceWorkspaceTrainer:
         if payload.get("format") != SEQUENCE_WORKSPACE_TRAINER_FORMAT:
             raise ValueError("unsupported sequence workspace trainer format")
-        if int(payload.get("version", -1)) != SEQUENCE_WORKSPACE_VERSION:
+        # Dual read path (R2-D2): current writers emit version 3, version-2
+        # single-channel checkpoints stay restorable on their own graph, and
+        # anything older is refused rather than silently reinterpreted.
+        if int(payload.get("version", -1)) not in SEQUENCE_WORKSPACE_SUPPORTED_VERSIONS:
             raise ValueError("unsupported sequence workspace trainer version")
         expected = content_digest(
             {key: value for key, value in payload.items() if key != "checkpoint_digest"}

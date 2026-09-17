@@ -301,6 +301,31 @@ def _stem_head(stem: str) -> str:
     return head.replace("请判断", "")
 
 
+#: Split-specific answer-tail markers (R2-D2 contract section 4.2: the
+#: no-context model baseline keeps the question stem and the answer cue).
+TAIL_MARKERS = {"背景：": "答：", "线索：": "回答：", "已知：": "输出："}
+
+
+def remove_material_clause(prefix: str) -> str:
+    """Delete the background material while keeping the question stem and cue.
+
+    Used by the context-removed model baseline: same checkpoint, no retrain,
+    evaluated on stem-only prefixes.  The material marker identifies the
+    split, so the full tail marker is chosen explicitly (``答：`` must not
+    match inside dev's ``回答：``).
+    """
+
+    match = MATERIAL_CLAUSE.search(prefix)
+    if match is None:
+        raise RuntimeError(f"cannot locate material clause: {prefix}")
+    stem, rest = prefix[: match.start()], prefix[match.end() :]
+    bg_marker = match.group(0)
+    tail = TAIL_MARKERS[bg_marker]
+    if tail not in rest:
+        raise RuntimeError(f"cannot locate answer tail marker {tail}: {prefix}")
+    return stem + tail
+
+
 def reference_answer(record: dict[str, Any]) -> str:
     """Deterministic material reader for the Q5 self-check.  Parses background."""
 

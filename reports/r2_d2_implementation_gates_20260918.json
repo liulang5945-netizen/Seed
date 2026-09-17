@@ -1,0 +1,202 @@
+{
+  "format": "taiji-r2-d2-implementation-gates-v1",
+  "version": 1,
+  "contract": "plans/reference/M5_R2_D2_PER_POSITION_EVIDENCE_PREREGISTRATION_FROZEN_20260918.md",
+  "fixture": "tests\\fixtures\\r2_d1_measurement_v1.jsonl",
+  "scope": "implementation gates only: no capability training, no dev results, no default-entry change, final stays sealed",
+  "static_checks": {
+    "ruff": {
+      "command": [
+        "C:\\Users\\23747\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "-m",
+        "ruff",
+        "check",
+        "taiji/sequence_workspace.py",
+        "scripts/training/build_taiji_r2_d1_measurement_fixture.py",
+        "tests/taiji_native/test_sequence_workspace_v3_contract.py"
+      ],
+      "returncode": 0,
+      "passed": true,
+      "tail": [
+        "All checks passed!"
+      ]
+    },
+    "black": {
+      "command": [
+        "C:\\Users\\23747\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "-m",
+        "black",
+        "--no-cache",
+        "--check",
+        "taiji/sequence_workspace.py",
+        "scripts/training/build_taiji_r2_d1_measurement_fixture.py",
+        "tests/taiji_native/test_sequence_workspace_v3_contract.py"
+      ],
+      "returncode": 0,
+      "passed": true,
+      "tail": [
+        "All done! ✨ 🍰 ✨",
+        "3 files would be left unchanged."
+      ]
+    },
+    "mypy": {
+      "command": [
+        "C:\\Users\\23747\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "-m",
+        "mypy",
+        "--follow-imports=silent",
+        "taiji/sequence_workspace.py"
+      ],
+      "returncode": 0,
+      "passed": true,
+      "tail": [
+        "pyproject.toml: note: unused section(s): module = ['neuroplex.life.*', 'neuroplex.loader', 'neuroplex.multimodal.*', 'neuroplex.safety.*', 'neuroplex.tools.browser', 'neuroplex.tools.browser_crawler', 'neuroplex.tools.builtin_tools', 'neuroplex.tools.desktop', 'neuroplex.tools.mini_search', 'neuroplex.tools.search.*', 'neuroplex.tools.searxng', 'neuroplex.tools.web']",
+        "Success: no issues found in 1 source file"
+      ]
+    }
+  },
+  "pytest": {
+    "command": [
+      "C:\\Users\\23747\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+      "-m",
+      "pytest",
+      "tests/taiji_native/test_sequence_workspace_contract.py",
+      "tests/taiji_native/test_sequence_workspace_v3_contract.py",
+      "-q",
+      "--no-header",
+      "--junitxml=C:\\Users\\23747\\AppData\\Local\\Temp\\r2d2-gates-4i86uz3q\\gates.xml"
+    ],
+    "returncode": 0,
+    "passed": true,
+    "tail": [
+      "...........................                                              [100%]",
+      "27 passed in 7.73s"
+    ]
+  },
+  "gates": {
+    "gate1_inventory_counts": {
+      "tests": [
+        "test_gate1_v3_inventories_and_exact_parameter_counts",
+        "test_gate1_shared_names_keep_identical_initial_values"
+      ],
+      "passed": true
+    },
+    "gate2_single_channel": {
+      "tests": [
+        "test_gate2_zeroed_evidence_makes_v3_logits_prefix_invariant"
+      ],
+      "passed": true
+    },
+    "gate3_per_position_identity": {
+      "tests": [
+        "test_gate3_per_position_entries_are_position_specific_and_causally_ordered",
+        "test_gate3_broadcast_control_rows_are_bit_identical"
+      ],
+      "passed": true
+    },
+    "gate4_gradients_causality": {
+      "tests": [
+        "test_gate4_v3_evidence_parameters_receive_finite_nonzero_gradients",
+        "test_gate4_numerical_finite_difference_on_evidence_projections",
+        "test_gate4_zero_read_removes_evidence_gradients_but_keeps_renderer_gradients",
+        "test_gate4_v3_causal_mask_and_step_by_step_equivalence"
+      ],
+      "passed": true
+    },
+    "gate5_lesion_wiring": {
+      "tests": [
+        "test_gate5_misbind_rotation_is_deterministic_and_preserves_keys_and_content",
+        "test_gate5_lesions_rewire_the_read_at_logit_level"
+      ],
+      "passed": true
+    },
+    "gate6_restoration": {
+      "tests": [
+        "test_gate6_v3_roundtrip_restore_and_continuation",
+        "test_gate6_version_two_payloads_still_load_and_version_one_refused"
+      ],
+      "passed": true
+    },
+    "legacy_v2_unchanged": {
+      "tests": [
+        "test_gate1_parameter_inventory_matches_the_declared_list",
+        "test_gate1_prototype_is_isolated_from_the_default_entry",
+        "test_gate1_baseline_arm_inventory_and_shared_initialization",
+        "test_gate1_workspace_start_is_a_learned_constant",
+        "test_gate2_every_declared_parameter_receives_finite_nonzero_gradient",
+        "test_gate2_numerical_finite_difference_matches_autograd",
+        "test_gate2_disabling_the_workspace_connection_removes_its_gradient",
+        "test_gate3_future_labels_do_not_change_current_logits",
+        "test_gate3_step_by_step_matches_teacher_forced",
+        "test_gate3_empty_context_end_marker_and_max_length",
+        "test_gate4_zero_step_save_fresh_process_and_continuation",
+        "test_gate5_missing_parameters_and_digest_tampering_are_rejected",
+        "test_gate5_prefix_and_workspace_both_affect_the_output",
+        "test_gate5_workspace_is_the_only_prefix_channel"
+      ],
+      "passed": true
+    },
+    "gate7_context_removal": {
+      "synthetic_cases": [
+        {
+          "rendered": "问：天空是什么颜色？背景：天空是蓝。答：",
+          "removed": "问：天空是什么颜色？答：",
+          "expected": "问：天空是什么颜色？答：",
+          "passed": true
+        },
+        {
+          "rendered": "提问：雪与太阳的颜色一致吗？线索：雪是白，太阳是灰白；回答：",
+          "removed": "提问：雪与太阳的颜色一致吗？回答：",
+          "expected": "提问：雪与太阳的颜色一致吗？回答：",
+          "passed": true
+        },
+        {
+          "rendered": "提问：雪的颜色？线索：雪是乳白。另有资料称湖水是米色；回答：",
+          "removed": "提问：雪的颜色？回答：",
+          "expected": "提问：雪的颜色？回答：",
+          "passed": true
+        },
+        {
+          "rendered": "查询：夜晚属于黑吗。已知：夜晚不是黑。输出：",
+          "removed": "查询：夜晚属于黑吗。输出：",
+          "expected": "查询：夜晚属于黑吗。输出：",
+          "passed": true
+        }
+      ],
+      "fixture_records_checked": 366,
+      "paired_prefixes_checked": 41,
+      "pairs_with_diverging_stems": [],
+      "violations": [],
+      "passed": true
+    },
+    "gate0_inventory": {
+      "counts": {
+        "per_position": {
+          "parameter_count": 82593,
+          "expected": 82593,
+          "passed": true
+        },
+        "broadcast_final": {
+          "parameter_count": 82593,
+          "expected": 82593,
+          "passed": true
+        },
+        "final_state_slots": {
+          "parameter_count": 101025,
+          "expected": 101025,
+          "passed": true
+        }
+      },
+      "default_graph_is_v2": true,
+      "initialization_digests": {
+        "per_position": "5c42ae6a7f51a52d3443745253ab476f373a503c6cad9a71f4a9da0316d2bfe9",
+        "broadcast_final": "5c42ae6a7f51a52d3443745253ab476f373a503c6cad9a71f4a9da0316d2bfe9",
+        "final_state_slots": "63de2cfd14959e0f861714c4d75b07285230320fe3ab65f8fb7bdc89ae04b2c9"
+      },
+      "passed": true
+    }
+  },
+  "outcome": "passed",
+  "growth_admitted": false,
+  "can_promote": false
+}
