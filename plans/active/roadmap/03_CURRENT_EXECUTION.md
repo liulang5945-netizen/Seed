@@ -5,6 +5,8 @@
 > 完成（2026-09-17，a24f8763）：两臂工程验证均 `passed_engineering_only`（[A legacy_target](../../../reports/r2_h3_7b_validation/legacy_target/report.json)、[B byte_aligned](../../../reports/r2_h3_7b_validation/byte_aligned/report.json)）——corpus digest 与冻结 fixture 一致、有效参数 277,970 ≤ 300k、checkpoint 往返与 factorized preflight 通过、零步与训练后 checkpoint 均新进程复核且一步续训 digest 与进程内探针一致、每臂 12 episodes/537 byte 更新无非法值；final/dev 按设计未评分，checkpoint .pt 留本地（digest 已入报告）。
 >
 > 完成（2026-09-17，768cca14）：合同「唯一后续」第一半——[可学习性与残余信用一致性检查](../../../reports/r2_h3_7b_validation/learnability_analysis.json)（只读）：两臂均 train 可学习（legacy surprise 5.619→4.138、byte_aligned 5.619→4.276，各 12/12 episodes 改善；byte_aligned 降幅略小 = 确定性监督坐标差异，非能力主张）；四相有限差分与 post-target-update-prior 测试现场复跑全过。剩余：冻结带明确问题与停止线的 dev 验证包预注册。
+>
+> 完成（2026-09-17，d6e15460）：**H3.7B 包闭合**——[dev 验证包](../../../reports/r2_h3_7b_validation/dev_legacy_target/report.json)（冻结于合同 Dev 验证包节，两臂各 2 epochs/1074 更新，preflight 与 fresh-process 全绿）⇒ **停止线 ③ 触发**：byte 对齐 16-byte 窗口几何在 dev 上无优势（surprise Δ −1.4342 vs legacy −1.4344；accuracy Δ +0.177 vs +0.207），几何问题回答为**负**；两臂 train→dev 迁移均非零（停止线 ② 未触发）。final 未读；dev 结果仅诊断修复效果。**修复包结论**：修复的价值在一致性本身（prior/信用/恢复），几何更换无 dev 收益；H3.7B 按停止线诚实收口，不扩预算。
 
 > 更新：2026-09-17；R0证据与门禁审计已完成。本次决定将R2整模型语言能力设为当前主线；结构化R2入口、checkpoint前置、P1 developmental 对照、P2序列级只读评价、G1条件接口、H2/H3内部表示/读出审计、H3.1序列路径对照、H3.2 response-start候选读出、H3.3泛化控制与response-phase候选、H3.4逐位置条件信用审计、H3.5目标合同、H3.6-A target encoder plumbing及H3.6-B matched dev/bridge ablation均已完成；H3.6-B按预注册在final前负结果结项；本轮H3.7分解式回答工作空间与因果信用合同的隔离实现、preflight、三seed dev、消融与aggregate也已完成并在final前停止，训练权限不再扩展到同质补训或final读取，当前按固定归因顺序复审。
 > 本文是唯一执行顺序来源；[01](01_SCOPE_AND_PHASES.md)管总阶段，[02](02_GATES_AND_CI.md)管晋级，[07](07_MINI_MODEL_DELIVERY.md)管整模型验收。
