@@ -108,3 +108,29 @@ P3b 草案假设缺口来自**数据分布**（对话密度低）。H3.3→H3.8 
 
 - **放大档预算**（§6 第 3 项）：待 pilot 实测吞吐外推。
 - pilot 可立即启动（§2 的入口与起点已确认）。
+
+### §7.3 **起点修正**：语料绑定使「继承 H3.7B 权重」与「放大语料规模」不可兼得（2026-09-17）
+
+**首次 pilot 失败**：`ValueError: language alignment checkpoint corpus digest mismatch`。
+
+**根因（设计如此，非缺陷）**：`LanguageAlignmentTrainer.from_checkpoint` 校验
+`corpus_digest` 绑定 —— H3.7B 的 `byte_aligned/checkpoint.pt` 记录
+`corpus_digest = 0bc5b5540d4b622f907942f42d7b809e825932e50c6e6c505a3cd091edabd691`，
+**正是 `tests/fixtures/r2_h3_5a_response_plan_v3.jsonl`（24 行）**；
+而 P3b-v2 的语料（80 行）digest 不同 ⇒ 无法 `--resume`。
+
+**⇒ §2 的"起点"条款按下列方式修正（只追加，不改 §2 原文）**：
+
+P3b-v2 采用 **从零构建模型 + P3b-v2 语料**（`--response-plan-*` 显式复刻 H3.7B 的
+factorized 配置），**不使用 `--resume`**。理由：
+
+1. **H3.7B 的 child 只训了 1 epoch × 12 episodes（`global_step 537`）** ⇒ 权重增量很小，
+   继承价值有限；
+2. **H3.7B 的核心修复是代码级的**（prior + 0.75/0.25 混合信用，位于
+   `LanguageAlignmentTrainer`）⇒ **从零构建同样生效**，不依赖权重继承；
+3. **P3b-v2 的假设就是"目标对齐 + 放大规模"** ⇒ 必须换语料，而换语料按设计就不能 resume；
+4. 从零构建**更干净**（无 H3.5a 24 行语料的历史污染）。
+
+**对 J1 的影响**：J1 要求"前后对照同链路"。P3a 基线（`constrained_decode`）与
+P3b-v2 的评测仍需同链路；但**训练起点**从"H3.7B child"改为"从零构建"这件事，
+**必须在报告里显式披露**，不得表述为"在 H3.7B 之上继续"。
