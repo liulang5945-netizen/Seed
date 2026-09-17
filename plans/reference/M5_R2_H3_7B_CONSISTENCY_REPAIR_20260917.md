@@ -26,3 +26,12 @@
 ## 唯一后续
 
 工程验证通过后，先检查train可学习性及残余信用一致性，再冻结一个有明确问题和停止线的dev验证包；不自动把此一epoch探针扩成旧三seed补训。若发现确定性实现缺陷继续修复，不把它升级成VISION前置讨论。只有确实需要改变核心合同或资源范围才暂停请求决策。
+
+## Dev 验证包冻结（2026-09-17；§唯一后续的第二半）
+
+train 可学习性与残余信用一致性双绿后（`reports/r2_h3_7b_validation/learnability_analysis.json`，commit `768cca14`），冻结 dev 验证包：
+
+1. **问题**：修复链路（fixed prior + 0.75/0.25 混合信用）下，byte 对齐 16-byte 窗口 target（B）相对 legacy char-safe target（A）在 fixture **dev split（8 episodes）**上是否改善 teacher-forced surprise/accuracy；两臂各自零步→训练后的 dev 变化作为 train→dev 迁移诊断。**性质与边界**：修复效果与几何比较的工程验证——fixture dev 经既往开发，结果仅诊断、不作为泛化或能力证据；final 不读；不与旧 H3.7 dev 数字比较。
+2. **冻结预算**：seed 20260917；两臂各 **2 epochs**（12 train episodes × 2 = 24 episodes / 1074 byte 更新）；CPU 单线程；300k 参数预算；preflight 机制与工程验证臂完全一致；dev 评估只读且均自保存 checkpoint 的探针副本执行。wall cap 30 分钟。
+3. **停止线（任一触发即停止，不扩预算）**：① 非有限值/参数预算超限/更新预算不匹配；② 两臂训练后 dev surprise 均不低于各自零步基线（train→dev 迁移为零）；③ B 臂训练后 dev surprise ≥ A 臂训练后 dev surprise（byte 对齐几何无 dev 优势，几何问题回答为负）；④ wall 超限。触发即如实落账，不自动加预算或 epoch。
+4. **产物**：`reports/r2_h3_7b_validation/dev_<arm>.json` × 2 + 汇总；roadmap 更新；dev 结果不得据此晋级 L2 或宣称能力收益。
