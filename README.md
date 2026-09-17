@@ -2,7 +2,7 @@
 
 Research evidence: [Current results and conclusions (Chinese)](plans/reference/PROJECT_RESULTS_AND_CONCLUSIONS_20260917.md), separating validated mechanisms, negative results, actual outputs, and unresolved capability gaps.
 
-Current design status (2026-09-17): M5/R2 native language research is paused; no new architecture is adopted. The [single VISION](plans/reference/VISION_FUTURE_TECHNOLOGY.md) now compares five concrete high-ceiling designs (§15–16). Nonzero R2 scores have not exceeded the constant-answer baseline on the latest development set; see the [evidence audit](plans/reference/M5_R2_DESIGN_EVIDENCE_AUDIT_20260917.md). The [execution plan](plans/active/roadmap/03_CURRENT_EXECUTION.md) is the sole source for the next decision; older experiment descriptions below are not current execution instructions.
+Current planning status (2026-09-17): the task is to complete a development guide, not select or implement an architecture now. M5/R2 research remains paused. The [development plan §5](plans/active/roadmap/03_CURRENT_EXECUTION.md) covers capability progression, deliverables and verification; the [phase map §6](plans/active/roadmap/01_SCOPE_AND_PHASES.md) preserves project-wide dependencies. The [single VISION §15–17](plans/reference/VISION_FUTURE_TECHNOLOGY.md) retains five high-ceiling alternatives; A-R2 is an example, not the selected next experiment. Latest evidence limits remain in the [audit](plans/reference/M5_R2_DESIGN_EVIDENCE_AUDIT_20260917.md); older descriptions below are not execution instructions.
 
 Seed provides the project, product and runtime that trains, evaluates, deploys and hosts **Taiji** —
 a native cognitive architecture being built from online predictive-coding mechanisms, not from

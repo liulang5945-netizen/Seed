@@ -1,6 +1,6 @@
 # Seed — Taiji 原生认知架构的运行时
 
-当前设计状态（2026-09-17）：M5/R2原生语言研究暂停，未采用新架构。[唯一VISION](plans/reference/VISION_FUTURE_TECHNOLOGY.md) §15–16已补全五套具体高上限方案；最新R2非零分数尚未超过同开发集固定回答基线，见[证据复核](plans/reference/M5_R2_DESIGN_EVIDENCE_AUDIT_20260917.md)。[03执行计划](plans/active/roadmap/03_CURRENT_EXECUTION.md)是唯一下步决策来源；下方旧实验介绍不是当前执行指令。
+当前规划状态（2026-09-17）：主要完善用于指导开发的计划，不要求立即选型或实现。M5/R2研究仍暂停；[03 §5](plans/active/roadmap/03_CURRENT_EXECUTION.md)给出能力路径、开发交付与验证，[01 §6](plans/active/roadmap/01_SCOPE_AND_PHASES.md)保留全项目依赖，[唯一VISION §15–17](plans/reference/VISION_FUTURE_TECHNOLOGY.md)提供五套高上限备选。A-R2是规格示例，不是已选实验；证据边界仍见[复核](plans/reference/M5_R2_DESIGN_EVIDENCE_AUDIT_20260917.md)。下方旧实验介绍不是当前执行指令。
 
 Seed 是训练、评估、部署并托管 **Taiji** 的项目、产品与运行时。Taiji 是一个**原生认知架构**——从在线预测编码机制构建，而不是 Transformer 的包装。内核从**局部预测误差**中学习（无反向传播、无注意力矩阵、无上下文窗口、运行时无教师模型）；在内核之上，Taiji 拥有自己的表征、持续状态、记忆、目标、规划与行动选择，同时在合适处刻意复用成熟算法（embedding、SSM、MoE 式路由、优化器、检索）。Taiji 为之设计的一项关键能力，是**自我进化**——在学习中修订、生长并重组自己的结构（见[结构成长与协作](#结构成长与协作自我进化能力)）。
 

@@ -185,4 +185,4 @@ H-GEN、H-OBJ、H-FBW与wide在各自设置下未获得所需优势，支持停�
 
 当前维持收束暂停。没有新增训练、final评分、模型切换或Mini交付。
 
-P3b-v2后继报告已核对，不再占队首；多架构设计与A-R2草案已记录在[唯一VISION §15–16](VISION_FUTURE_TECHNOLOGY.md)。**唯一后续是03所列的A-R2采用/资源决策**；本页不另开路线，不把记录缺失自动变成重训授权。
+P3b-v2后继报告已核对，不再占队首。当前用户重点是完善开发指导计划：[唯一VISION §15–17](VISION_FUTURE_TECHNOLOGY.md)记录设计储备，[03 §5](../active/roadmap/03_CURRENT_EXECUTION.md)记录能力路径/交付/验证，[01 §6](../active/roadmap/01_SCOPE_AND_PHASES.md)记录全项目依赖。A-R2降为备选示例，未选为队首；唯一后续按03审阅计划覆盖与衔接，不把记录缺失自动变成重训授权。
