@@ -1,0 +1,57 @@
+{"entities": ["雪", "白"], "prefix": "提问：雪的颜色？线索：雪是白。回答：", "response": "白", "shape": "fact_replacement", "split": "dev", "template_id": "dev:fact"}
+{"entities": ["雪", "白"], "prefix": "提问：雪是否为白？线索：雪不是白。回答：", "response": "不是白", "shape": "negation", "split": "dev", "template_id": "dev:negation"}
+{"entities": ["雪", "黄"], "prefix": "提问：雪的颜色？线索：雪是黄。回答：", "response": "黄", "shape": "fact_replacement", "split": "dev", "template_id": "dev:fact"}
+{"entities": ["雪", "黄"], "prefix": "提问：雪是否为黄？线索：雪不是黄。回答：", "response": "不是黄", "shape": "negation", "split": "dev", "template_id": "dev:negation"}
+{"entities": ["雪"], "prefix": "提问：雪的颜色？线索：雪的信息缺失。回答：", "response": "未知", "shape": "unknown_information", "split": "dev", "template_id": "dev:unknown"}
+{"entities": ["雪", "白"], "prefix": "提问：请判断雪的颜色。线索：雪是白。回答：", "response": "白", "shape": "same_opening_different_content", "split": "dev", "template_id": "dev:same_opening_fact"}
+{"entities": ["雪"], "prefix": "提问：请判断雪的颜色。线索：雪的信息缺失。回答：", "response": "未知", "shape": "same_opening_different_content", "split": "dev", "template_id": "dev:same_opening_unknown"}
+{"entities": ["太阳", "白"], "prefix": "提问：太阳的颜色？线索：太阳是白。回答：", "response": "白", "shape": "fact_replacement", "split": "dev", "template_id": "dev:fact"}
+{"entities": ["太阳", "白"], "prefix": "提问：太阳是否为白？线索：太阳不是白。回答：", "response": "不是白", "shape": "negation", "split": "dev", "template_id": "dev:negation"}
+{"entities": ["太阳", "黄"], "prefix": "提问：太阳的颜色？线索：太阳是黄。回答：", "response": "黄", "shape": "fact_replacement", "split": "dev", "template_id": "dev:fact"}
+{"entities": ["太阳", "黄"], "prefix": "提问：太阳是否为黄？线索：太阳不是黄。回答：", "response": "不是黄", "shape": "negation", "split": "dev", "template_id": "dev:negation"}
+{"entities": ["太阳"], "prefix": "提问：太阳的颜色？线索：太阳的信息缺失。回答：", "response": "未知", "shape": "unknown_information", "split": "dev", "template_id": "dev:unknown"}
+{"entities": ["太阳", "白"], "prefix": "提问：请判断太阳的颜色。线索：太阳是白。回答：", "response": "白", "shape": "same_opening_different_content", "split": "dev", "template_id": "dev:same_opening_fact"}
+{"entities": ["太阳"], "prefix": "提问：请判断太阳的颜色。线索：太阳的信息缺失。回答：", "response": "未知", "shape": "same_opening_different_content", "split": "dev", "template_id": "dev:same_opening_unknown"}
+{"entities": ["雪", "太阳", "白"], "prefix": "提问：雪与太阳的颜色一致吗？线索：雪是白，太阳是白。回答：", "response": "相同", "shape": "combination_constraint", "split": "dev", "template_id": "dev:combination_same"}
+{"entities": ["雪", "太阳", "白", "黄"], "prefix": "提问：雪与太阳的颜色一致吗？线索：雪是白，太阳是黄。回答：", "response": "不同", "shape": "combination_constraint", "split": "dev", "template_id": "dev:combination_different"}
+{"entities": ["夜晚", "黑"], "prefix": "查询：夜晚的颜色。已知：夜晚是黑。输出：", "response": "黑", "shape": "fact_replacement", "split": "final", "template_id": "final:fact"}
+{"entities": ["夜晚", "黑"], "prefix": "查询：夜晚属于黑吗。已知：夜晚不是黑。输出：", "response": "不是黑", "shape": "negation", "split": "final", "template_id": "final:negation"}
+{"entities": ["夜晚", "橙"], "prefix": "查询：夜晚的颜色。已知：夜晚是橙。输出：", "response": "橙", "shape": "fact_replacement", "split": "final", "template_id": "final:fact"}
+{"entities": ["夜晚", "橙"], "prefix": "查询：夜晚属于橙吗。已知：夜晚不是橙。输出：", "response": "不是橙", "shape": "negation", "split": "final", "template_id": "final:negation"}
+{"entities": ["夜晚"], "prefix": "查询：夜晚的颜色。已知：夜晚的资料为空。输出：", "response": "未知", "shape": "unknown_information", "split": "final", "template_id": "final:unknown"}
+{"entities": ["夜晚", "黑"], "prefix": "查询：请判断夜晚的颜色。已知：夜晚是黑。输出：", "response": "黑", "shape": "same_opening_different_content", "split": "final", "template_id": "final:same_opening_fact"}
+{"entities": ["夜晚"], "prefix": "查询：请判断夜晚的颜色。已知：夜晚的资料为空。输出：", "response": "未知", "shape": "same_opening_different_content", "split": "final", "template_id": "final:same_opening_unknown"}
+{"entities": ["大海", "黑"], "prefix": "查询：大海的颜色。已知：大海是黑。输出：", "response": "黑", "shape": "fact_replacement", "split": "final", "template_id": "final:fact"}
+{"entities": ["大海", "黑"], "prefix": "查询：大海属于黑吗。已知：大海不是黑。输出：", "response": "不是黑", "shape": "negation", "split": "final", "template_id": "final:negation"}
+{"entities": ["大海", "橙"], "prefix": "查询：大海的颜色。已知：大海是橙。输出：", "response": "橙", "shape": "fact_replacement", "split": "final", "template_id": "final:fact"}
+{"entities": ["大海", "橙"], "prefix": "查询：大海属于橙吗。已知：大海不是橙。输出：", "response": "不是橙", "shape": "negation", "split": "final", "template_id": "final:negation"}
+{"entities": ["大海"], "prefix": "查询：大海的颜色。已知：大海的资料为空。输出：", "response": "未知", "shape": "unknown_information", "split": "final", "template_id": "final:unknown"}
+{"entities": ["大海", "黑"], "prefix": "查询：请判断大海的颜色。已知：大海是黑。输出：", "response": "黑", "shape": "same_opening_different_content", "split": "final", "template_id": "final:same_opening_fact"}
+{"entities": ["大海"], "prefix": "查询：请判断大海的颜色。已知：大海的资料为空。输出：", "response": "未知", "shape": "same_opening_different_content", "split": "final", "template_id": "final:same_opening_unknown"}
+{"entities": ["夜晚", "大海", "黑"], "prefix": "查询：夜晚、大海颜色是否相同。已知：夜晚是黑，大海是黑。输出：", "response": "相同", "shape": "combination_constraint", "split": "final", "template_id": "final:combination_same"}
+{"entities": ["夜晚", "大海", "黑", "橙"], "prefix": "查询：夜晚、大海颜色是否相同。已知：夜晚是黑，大海是橙。输出：", "response": "不同", "shape": "combination_constraint", "split": "final", "template_id": "final:combination_different"}
+{"entities": ["天空", "蓝"], "prefix": "问：天空是什么颜色？背景：天空是蓝。答：", "response": "蓝", "shape": "fact_replacement", "split": "train", "template_id": "train:fact"}
+{"entities": ["天空", "蓝"], "prefix": "问：天空是蓝吗？背景：不是蓝。答：", "response": "不是蓝", "shape": "negation", "split": "train", "template_id": "train:negation"}
+{"entities": ["天空", "绿"], "prefix": "问：天空是什么颜色？背景：天空是绿。答：", "response": "绿", "shape": "fact_replacement", "split": "train", "template_id": "train:fact"}
+{"entities": ["天空", "绿"], "prefix": "问：天空是绿吗？背景：不是绿。答：", "response": "不是绿", "shape": "negation", "split": "train", "template_id": "train:negation"}
+{"entities": ["天空"], "prefix": "问：天空是什么颜色？背景：没有关于天空的信息。答：", "response": "未知", "shape": "unknown_information", "split": "train", "template_id": "train:unknown"}
+{"entities": ["天空", "蓝"], "prefix": "问：请判断天空的颜色。背景：天空是蓝。答：", "response": "蓝", "shape": "same_opening_different_content", "split": "train", "template_id": "train:same_opening_fact"}
+{"entities": ["天空"], "prefix": "问：请判断天空的颜色。背景：没有关于天空的信息。答：", "response": "未知", "shape": "same_opening_different_content", "split": "train", "template_id": "train:same_opening_unknown"}
+{"entities": ["草", "蓝"], "prefix": "问：草是什么颜色？背景：草是蓝。答：", "response": "蓝", "shape": "fact_replacement", "split": "train", "template_id": "train:fact"}
+{"entities": ["草", "蓝"], "prefix": "问：草是蓝吗？背景：不是蓝。答：", "response": "不是蓝", "shape": "negation", "split": "train", "template_id": "train:negation"}
+{"entities": ["草", "绿"], "prefix": "问：草是什么颜色？背景：草是绿。答：", "response": "绿", "shape": "fact_replacement", "split": "train", "template_id": "train:fact"}
+{"entities": ["草", "绿"], "prefix": "问：草是绿吗？背景：不是绿。答：", "response": "不是绿", "shape": "negation", "split": "train", "template_id": "train:negation"}
+{"entities": ["草"], "prefix": "问：草是什么颜色？背景：没有关于草的信息。答：", "response": "未知", "shape": "unknown_information", "split": "train", "template_id": "train:unknown"}
+{"entities": ["草", "蓝"], "prefix": "问：请判断草的颜色。背景：草是蓝。答：", "response": "蓝", "shape": "same_opening_different_content", "split": "train", "template_id": "train:same_opening_fact"}
+{"entities": ["草"], "prefix": "问：请判断草的颜色。背景：没有关于草的信息。答：", "response": "未知", "shape": "same_opening_different_content", "split": "train", "template_id": "train:same_opening_unknown"}
+{"entities": ["树叶", "蓝"], "prefix": "问：树叶是什么颜色？背景：树叶是蓝。答：", "response": "蓝", "shape": "fact_replacement", "split": "train", "template_id": "train:fact"}
+{"entities": ["树叶", "蓝"], "prefix": "问：树叶是蓝吗？背景：不是蓝。答：", "response": "不是蓝", "shape": "negation", "split": "train", "template_id": "train:negation"}
+{"entities": ["树叶", "绿"], "prefix": "问：树叶是什么颜色？背景：树叶是绿。答：", "response": "绿", "shape": "fact_replacement", "split": "train", "template_id": "train:fact"}
+{"entities": ["树叶", "绿"], "prefix": "问：树叶是绿吗？背景：不是绿。答：", "response": "不是绿", "shape": "negation", "split": "train", "template_id": "train:negation"}
+{"entities": ["树叶"], "prefix": "问：树叶是什么颜色？背景：没有关于树叶的信息。答：", "response": "未知", "shape": "unknown_information", "split": "train", "template_id": "train:unknown"}
+{"entities": ["树叶", "蓝"], "prefix": "问：请判断树叶的颜色。背景：树叶是蓝。答：", "response": "蓝", "shape": "same_opening_different_content", "split": "train", "template_id": "train:same_opening_fact"}
+{"entities": ["树叶"], "prefix": "问：请判断树叶的颜色。背景：没有关于树叶的信息。答：", "response": "未知", "shape": "same_opening_different_content", "split": "train", "template_id": "train:same_opening_unknown"}
+{"entities": ["天空", "草", "蓝"], "prefix": "问：天空和草颜色相同吗？背景：天空是蓝，草是蓝。答：", "response": "相同", "shape": "combination_constraint", "split": "train", "template_id": "train:combination_same"}
+{"entities": ["天空", "草", "蓝", "绿"], "prefix": "问：天空和草颜色相同吗？背景：天空是蓝，草是绿。答：", "response": "不同", "shape": "combination_constraint", "split": "train", "template_id": "train:combination_different"}
+{"entities": ["天空", "树叶", "蓝"], "prefix": "问：天空和树叶颜色相同吗？背景：天空是蓝，树叶是蓝。答：", "response": "相同", "shape": "combination_constraint", "split": "train", "template_id": "train:combination_same"}
+{"entities": ["天空", "树叶", "蓝", "绿"], "prefix": "问：天空和树叶颜色相同吗？背景：天空是蓝，树叶是绿。答：", "response": "不同", "shape": "combination_constraint", "split": "train", "template_id": "train:combination_different"}
