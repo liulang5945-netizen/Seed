@@ -1,0 +1,413 @@
+{
+  "format": "taiji-r2-d2-learnability-probe-v1",
+  "version": 1,
+  "contract": "plans/reference/M5_R2_D2_PER_POSITION_EVIDENCE_PREREGISTRATION_FROZEN_20260918.md",
+  "graph_version": 3,
+  "arm": "A_per_position",
+  "corpus_digest": "53ac9f88695f135d0bb04b4d25d98ab686c82175c45ca8d4d53e64639efbeecb",
+  "split_read": "train",
+  "dev_read": false,
+  "final_read": false,
+  "seed": 20260917,
+  "epochs_run": 6,
+  "epochs_frozen": 30,
+  "frozen_learning_rate": 0.05,
+  "train_episodes": 174,
+  "optimizer_steps": 5220,
+  "elapsed_seconds": 40.92200000002049,
+  "wall_cap_seconds": 1200,
+  "parameter_count": 82593,
+  "preflight": {
+    "zero_step_path": "E:\\Seed\\reports\\r2_d2_checkpoints\\probe\\a_seed20260917_zero_step.pt",
+    "expected_logits_digest": "77167c6bc969f88fcd8f54b8264e5bac878a9a734a5ec30e3bec48d9d7495ab8",
+    "observed_logits_digest": "77167c6bc969f88fcd8f54b8264e5bac878a9a734a5ec30e3bec48d9d7495ab8",
+    "logits_match": true,
+    "expected_continuation_digest": "4cc87210fa3f3ddacd1dc856295c9697fdd8c77d9646b602c136584389c82cc8",
+    "observed_continuation_digest": "4cc87210fa3f3ddacd1dc856295c9697fdd8c77d9646b602c136584389c82cc8",
+    "continuation_matches": true,
+    "restored_version": 3,
+    "restored_evidence_source": "per_position",
+    "passed": true
+  },
+  "initial": {
+    "M1_exact": {
+      "numerator": 0,
+      "denominator": 174,
+      "value": 0.0
+    },
+    "M2_shape_macro": {
+      "value": 0.0
+    },
+    "M3_content_exact": {
+      "numerator": 0,
+      "denominator": 158,
+      "value": 0.0
+    },
+    "M4_flip_pair": {
+      "numerator": 0,
+      "denominator": 15,
+      "value": 0.0
+    },
+    "M5_inv_pair": {
+      "numerator": 0,
+      "denominator": 0,
+      "value": 0.0
+    },
+    "per_group_exact": {
+      "fact": {
+        "correct": 0,
+        "denominator": 48,
+        "exact": 0.0
+      },
+      "negation": {
+        "correct": 0,
+        "denominator": 48,
+        "exact": 0.0
+      },
+      "unknown": {
+        "correct": 0,
+        "denominator": 8,
+        "exact": 0.0
+      },
+      "same_opening_fact": {
+        "correct": 0,
+        "denominator": 48,
+        "exact": 0.0
+      },
+      "same_opening_unknown": {
+        "correct": 0,
+        "denominator": 8,
+        "exact": 0.0
+      },
+      "combination_same": {
+        "correct": 0,
+        "denominator": 7,
+        "exact": 0.0
+      },
+      "combination_different": {
+        "correct": 0,
+        "denominator": 7,
+        "exact": 0.0
+      }
+    },
+    "content_per_group_exact": {
+      "fact": {
+        "correct": 0,
+        "denominator": 48,
+        "exact": 0.0
+      },
+      "negation": {
+        "correct": 0,
+        "denominator": 48,
+        "exact": 0.0
+      },
+      "same_opening_fact": {
+        "correct": 0,
+        "denominator": 48,
+        "exact": 0.0
+      },
+      "combination_same": {
+        "correct": 0,
+        "denominator": 7,
+        "exact": 0.0
+      },
+      "combination_different": {
+        "correct": 0,
+        "denominator": 7,
+        "exact": 0.0
+      }
+    },
+    "mean_sequence_loss": 5.565496784517134
+  },
+  "final": {
+    "M1_exact": {
+      "numerator": 16,
+      "denominator": 174,
+      "value": 0.09195402298850575
+    },
+    "M2_shape_macro": {
+      "value": 0.047619047619047616
+    },
+    "M3_content_exact": {
+      "numerator": 16,
+      "denominator": 158,
+      "value": 0.10126582278481013
+    },
+    "M4_flip_pair": {
+      "numerator": 0,
+      "denominator": 15,
+      "value": 0.0
+    },
+    "M5_inv_pair": {
+      "numerator": 0,
+      "denominator": 0,
+      "value": 0.0
+    },
+    "per_group_exact": {
+      "fact": {
+        "correct": 8,
+        "denominator": 48,
+        "exact": 0.16666666666666666
+      },
+      "negation": {
+        "correct": 0,
+        "denominator": 48,
+        "exact": 0.0
+      },
+      "unknown": {
+        "correct": 0,
+        "denominator": 8,
+        "exact": 0.0
+      },
+      "same_opening_fact": {
+        "correct": 8,
+        "denominator": 48,
+        "exact": 0.16666666666666666
+      },
+      "same_opening_unknown": {
+        "correct": 0,
+        "denominator": 8,
+        "exact": 0.0
+      },
+      "combination_same": {
+        "correct": 0,
+        "denominator": 7,
+        "exact": 0.0
+      },
+      "combination_different": {
+        "correct": 0,
+        "denominator": 7,
+        "exact": 0.0
+      }
+    },
+    "content_per_group_exact": {
+      "fact": {
+        "correct": 8,
+        "denominator": 48,
+        "exact": 0.16666666666666666
+      },
+      "negation": {
+        "correct": 0,
+        "denominator": 48,
+        "exact": 0.0
+      },
+      "same_opening_fact": {
+        "correct": 8,
+        "denominator": 48,
+        "exact": 0.16666666666666666
+      },
+      "combination_same": {
+        "correct": 0,
+        "denominator": 7,
+        "exact": 0.0
+      },
+      "combination_different": {
+        "correct": 0,
+        "denominator": 7,
+        "exact": 0.0
+      }
+    },
+    "mean_sequence_loss": 3.5183502022904913
+  },
+  "trajectory": [
+    {
+      "epoch": 0,
+      "M1_exact": {
+        "numerator": 0,
+        "denominator": 174,
+        "value": 0.0
+      },
+      "M2_shape_macro": {
+        "value": 0.0
+      },
+      "M3_content_exact": {
+        "numerator": 0,
+        "denominator": 158,
+        "value": 0.0
+      },
+      "M4_flip_pair": {
+        "numerator": 0,
+        "denominator": 15,
+        "value": 0.0
+      },
+      "M5_inv_pair": {
+        "numerator": 0,
+        "denominator": 0,
+        "value": 0.0
+      },
+      "mean_sequence_loss": 5.565497
+    },
+    {
+      "epoch": 5,
+      "M1_exact": {
+        "numerator": 16,
+        "denominator": 174,
+        "value": 0.09195402298850575
+      },
+      "M2_shape_macro": {
+        "value": 0.047619047619047616
+      },
+      "M3_content_exact": {
+        "numerator": 16,
+        "denominator": 158,
+        "value": 0.10126582278481013
+      },
+      "M4_flip_pair": {
+        "numerator": 0,
+        "denominator": 15,
+        "value": 0.0
+      },
+      "M5_inv_pair": {
+        "numerator": 0,
+        "denominator": 0,
+        "value": 0.0
+      },
+      "mean_sequence_loss": 2.093431
+    },
+    {
+      "epoch": 10,
+      "M1_exact": {
+        "numerator": 4,
+        "denominator": 174,
+        "value": 0.022988505747126436
+      },
+      "M2_shape_macro": {
+        "value": 0.08163265306122448
+      },
+      "M3_content_exact": {
+        "numerator": 4,
+        "denominator": 158,
+        "value": 0.02531645569620253
+      },
+      "M4_flip_pair": {
+        "numerator": 0,
+        "denominator": 15,
+        "value": 0.0
+      },
+      "M5_inv_pair": {
+        "numerator": 0,
+        "denominator": 0,
+        "value": 0.0
+      },
+      "mean_sequence_loss": 4.746558
+    },
+    {
+      "epoch": 15,
+      "M1_exact": {
+        "numerator": 23,
+        "denominator": 174,
+        "value": 0.13218390804597702
+      },
+      "M2_shape_macro": {
+        "value": 0.19047619047619047
+      },
+      "M3_content_exact": {
+        "numerator": 23,
+        "denominator": 158,
+        "value": 0.14556962025316456
+      },
+      "M4_flip_pair": {
+        "numerator": 0,
+        "denominator": 15,
+        "value": 0.0
+      },
+      "M5_inv_pair": {
+        "numerator": 0,
+        "denominator": 0,
+        "value": 0.0
+      },
+      "mean_sequence_loss": 5.790834
+    },
+    {
+      "epoch": 20,
+      "M1_exact": {
+        "numerator": 7,
+        "denominator": 174,
+        "value": 0.040229885057471264
+      },
+      "M2_shape_macro": {
+        "value": 0.14285714285714285
+      },
+      "M3_content_exact": {
+        "numerator": 7,
+        "denominator": 158,
+        "value": 0.04430379746835443
+      },
+      "M4_flip_pair": {
+        "numerator": 0,
+        "denominator": 15,
+        "value": 0.0
+      },
+      "M5_inv_pair": {
+        "numerator": 0,
+        "denominator": 0,
+        "value": 0.0
+      },
+      "mean_sequence_loss": 6.28793
+    },
+    {
+      "epoch": 25,
+      "M1_exact": {
+        "numerator": 16,
+        "denominator": 174,
+        "value": 0.09195402298850575
+      },
+      "M2_shape_macro": {
+        "value": 0.047619047619047616
+      },
+      "M3_content_exact": {
+        "numerator": 16,
+        "denominator": 158,
+        "value": 0.10126582278481013
+      },
+      "M4_flip_pair": {
+        "numerator": 0,
+        "denominator": 15,
+        "value": 0.0
+      },
+      "M5_inv_pair": {
+        "numerator": 0,
+        "denominator": 0,
+        "value": 0.0
+      },
+      "mean_sequence_loss": 5.00518
+    },
+    {
+      "epoch": 30,
+      "M1_exact": {
+        "numerator": 16,
+        "denominator": 174,
+        "value": 0.09195402298850575
+      },
+      "M2_shape_macro": {
+        "value": 0.047619047619047616
+      },
+      "M3_content_exact": {
+        "numerator": 16,
+        "denominator": 158,
+        "value": 0.10126582278481013
+      },
+      "M4_flip_pair": {
+        "numerator": 0,
+        "denominator": 15,
+        "value": 0.0
+      },
+      "M5_inv_pair": {
+        "numerator": 0,
+        "denominator": 0,
+        "value": 0.0
+      },
+      "mean_sequence_loss": 3.51835
+    }
+  ],
+  "gate": {
+    "loss_le_0_50": false,
+    "train_m1_ge_0_90": false,
+    "within_wall_cap": true,
+    "preflight_passed": true
+  },
+  "outcome": "failed",
+  "reading": "train-only learnability probe per contract 5.2; train M3/M4 are descriptive, dev and final unread, not a capability claim",
+  "growth_admitted": false,
+  "can_promote": false
+}

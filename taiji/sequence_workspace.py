@@ -464,17 +464,26 @@ class SequenceWorkspacePrototype:
     def _content_read(self, state: WorkspaceState, *, detach: bool) -> torch.Tensor:
         """Softmax content addressing over evidence rows (no positional pick)."""
 
-        key = state.workspace_key
+        weights = self.addressing_weights(state, detach=detach)
         value = state.workspace_value
-        if key is None or value is None:
+        if value is None:
+            raise ValueError("content addressing requires the workspace arm")
+        if detach:
+            value = value.detach()
+        return weights @ value
+
+    def addressing_weights(self, state: WorkspaceState, *, detach: bool) -> torch.Tensor:
+        """Read-only introspection: softmax weights the current renderer query
+        assigns to every evidence row (diagnostics and lesion analysis)."""
+
+        key = state.workspace_key
+        if key is None:
             raise ValueError("content addressing requires the workspace arm")
         if detach:
             key = key.detach()
-            value = value.detach()
         query = state.renderer_state @ self._parameters["address_query"]
         scores = (key @ query) / math.sqrt(float(self.config.slot_width))
-        weights = torch.softmax(scores, dim=0)
-        return weights @ value
+        return torch.softmax(scores, dim=0)
 
     def teacher_forced_logits(self, prefix: bytes, response: bytes) -> torch.Tensor:
         """Logits for positions 0..len(response); last position predicts the end marker."""

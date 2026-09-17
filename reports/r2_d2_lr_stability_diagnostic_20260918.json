@@ -1,0 +1,453 @@
+{
+  "format": "taiji-r2-d2-lr-stability-diagnostic-v1",
+  "diagnostic_not_gate": true,
+  "learning_rate": 0.01,
+  "seed": 20260917,
+  "epochs": 30,
+  "train_episodes": 174,
+  "arms": {
+    "A_per_position": {
+      "arm": "A_per_position",
+      "parameter_count": 82593,
+      "initial_gradient_norms": {
+        "prefix_embedding": 0.012779666110873222,
+        "prefix_input": 0.04877687245607376,
+        "prefix_recur": 0.07672739028930664,
+        "prefix_bias": 0.11473959684371948,
+        "start_vector": 0.07860288769006729,
+        "renderer_embedding": 0.1452726572751999,
+        "renderer_input": 0.5648536086082458,
+        "renderer_recur": 0.443663626909256,
+        "renderer_bias": 0.24003706872463226,
+        "address_query": 0.0012024889001622796,
+        "evidence_key": 0.001143420347943902,
+        "evidence_value": 0.13654108345508575,
+        "decoder": 0.8320083022117615,
+        "decoder_bias": 0.4960087537765503
+      },
+      "initial_loss": 5.494867324829102,
+      "trajectory": [
+        {
+          "epoch": 1,
+          "mean_loss": 0.7714191610957014,
+          "byte_accuracy": 0.7486033519553073,
+          "shape_exact": {
+            "combination_different": 1.0,
+            "combination_same": 0.0,
+            "fact": 0.0,
+            "negation": 0.0,
+            "same_opening_fact": 0.0,
+            "same_opening_unknown": 0.0,
+            "unknown": 0.0
+          }
+        },
+        {
+          "epoch": 5,
+          "mean_loss": 0.6798957097290577,
+          "byte_accuracy": 0.7486033519553073,
+          "shape_exact": {
+            "combination_different": 0.0,
+            "combination_same": 0.0,
+            "fact": 0.16666666666666666,
+            "negation": 0.0,
+            "same_opening_fact": 0.16666666666666666,
+            "same_opening_unknown": 0.0,
+            "unknown": 0.0
+          }
+        },
+        {
+          "epoch": 10,
+          "mean_loss": 0.6503537967212327,
+          "byte_accuracy": 0.7597765363128491,
+          "shape_exact": {
+            "combination_different": 0.0,
+            "combination_same": 0.0,
+            "fact": 0.16666666666666666,
+            "negation": 0.0,
+            "same_opening_fact": 0.16666666666666666,
+            "same_opening_unknown": 0.75,
+            "unknown": 0.75
+          }
+        },
+        {
+          "epoch": 15,
+          "mean_loss": 0.891589227678447,
+          "byte_accuracy": 0.7737430167597765,
+          "shape_exact": {
+            "combination_different": 0.0,
+            "combination_same": 0.0,
+            "fact": 0.16666666666666666,
+            "negation": 0.0,
+            "same_opening_fact": 0.16666666666666666,
+            "same_opening_unknown": 0.0,
+            "unknown": 0.0
+          }
+        },
+        {
+          "epoch": 20,
+          "mean_loss": 0.6978403738774788,
+          "byte_accuracy": 0.8007448789571695,
+          "shape_exact": {
+            "combination_different": 0.2857142857142857,
+            "combination_same": 0.0,
+            "fact": 0.08333333333333333,
+            "negation": 0.125,
+            "same_opening_fact": 0.08333333333333333,
+            "same_opening_unknown": 0.0,
+            "unknown": 0.0
+          }
+        },
+        {
+          "epoch": 25,
+          "mean_loss": 0.6254099188693638,
+          "byte_accuracy": 0.7690875232774674,
+          "shape_exact": {
+            "combination_different": 0.14285714285714285,
+            "combination_same": 0.0,
+            "fact": 0.10416666666666667,
+            "negation": 0.041666666666666664,
+            "same_opening_fact": 0.125,
+            "same_opening_unknown": 0.0,
+            "unknown": 0.0
+          }
+        },
+        {
+          "epoch": 30,
+          "mean_loss": 0.674981863282744,
+          "byte_accuracy": 0.7849162011173184,
+          "shape_exact": {
+            "combination_different": 1.0,
+            "combination_same": 0.0,
+            "fact": 0.10416666666666667,
+            "negation": 0.0,
+            "same_opening_fact": 0.10416666666666667,
+            "same_opening_unknown": 1.0,
+            "unknown": 0.625
+          }
+        }
+      ],
+      "samples_after_30": [
+        {
+          "gold": "紫",
+          "generated": "不同"
+        },
+        {
+          "gold": "黄",
+          "generated": "绿"
+        },
+        {
+          "gold": "青",
+          "generated": "不同"
+        },
+        {
+          "gold": "未知",
+          "generated": "未知"
+        },
+        {
+          "gold": "青",
+          "generated": "不同"
+        },
+        {
+          "gold": "紫",
+          "generated": "绿"
+        }
+      ]
+    },
+    "C1_broadcast_final": {
+      "arm": "C1_broadcast_final",
+      "parameter_count": 82593,
+      "initial_gradient_norms": {
+        "prefix_embedding": 0.07023433595895767,
+        "prefix_input": 0.2853090465068817,
+        "prefix_recur": 0.23992502689361572,
+        "prefix_bias": 0.11493125557899475,
+        "start_vector": 0.07868259400129318,
+        "renderer_embedding": 0.14530883729457855,
+        "renderer_input": 0.5649271011352539,
+        "renderer_recur": 0.44376057386398315,
+        "renderer_bias": 0.24007871747016907,
+        "address_query": 9.754949070739372e-10,
+        "evidence_key": 9.636810238689009e-10,
+        "evidence_value": 0.3614315688610077,
+        "decoder": 0.9655737280845642,
+        "decoder_bias": 0.49600598216056824
+      },
+      "initial_loss": 5.495969295501709,
+      "trajectory": [
+        {
+          "epoch": 1,
+          "mean_loss": 0.634492390457241,
+          "byte_accuracy": 0.7597765363128491,
+          "shape_exact": {
+            "combination_different": 0.0,
+            "combination_same": 0.0,
+            "fact": 0.16666666666666666,
+            "negation": 0.0,
+            "same_opening_fact": 0.16666666666666666,
+            "same_opening_unknown": 0.0,
+            "unknown": 0.0
+          }
+        },
+        {
+          "epoch": 5,
+          "mean_loss": 0.5941964965955965,
+          "byte_accuracy": 0.7662942271880819,
+          "shape_exact": {
+            "combination_different": 0.0,
+            "combination_same": 0.0,
+            "fact": 0.16666666666666666,
+            "negation": 0.0,
+            "same_opening_fact": 0.0,
+            "same_opening_unknown": 0.0,
+            "unknown": 1.0
+          }
+        },
+        {
+          "epoch": 10,
+          "mean_loss": 0.6702054226021658,
+          "byte_accuracy": 0.7737430167597765,
+          "shape_exact": {
+            "combination_different": 0.0,
+            "combination_same": 0.0,
+            "fact": 0.16666666666666666,
+            "negation": 0.0,
+            "same_opening_fact": 0.16666666666666666,
+            "same_opening_unknown": 0.0,
+            "unknown": 0.0
+          }
+        },
+        {
+          "epoch": 15,
+          "mean_loss": 0.7308952549750778,
+          "byte_accuracy": 0.7662942271880819,
+          "shape_exact": {
+            "combination_different": 0.0,
+            "combination_same": 0.0,
+            "fact": 0.16666666666666666,
+            "negation": 0.0,
+            "same_opening_fact": 0.0,
+            "same_opening_unknown": 0.0,
+            "unknown": 1.0
+          }
+        },
+        {
+          "epoch": 20,
+          "mean_loss": 0.6197570787592867,
+          "byte_accuracy": 0.7802607076350093,
+          "shape_exact": {
+            "combination_different": 0.0,
+            "combination_same": 0.0,
+            "fact": 0.16666666666666666,
+            "negation": 0.0,
+            "same_opening_fact": 0.16666666666666666,
+            "same_opening_unknown": 0.0,
+            "unknown": 0.0
+          }
+        },
+        {
+          "epoch": 25,
+          "mean_loss": 0.674899333252989,
+          "byte_accuracy": 0.7662942271880819,
+          "shape_exact": {
+            "combination_different": 0.0,
+            "combination_same": 0.0,
+            "fact": 0.16666666666666666,
+            "negation": 0.0,
+            "same_opening_fact": 0.16666666666666666,
+            "same_opening_unknown": 0.0,
+            "unknown": 0.0
+          }
+        },
+        {
+          "epoch": 30,
+          "mean_loss": 0.5941614583134651,
+          "byte_accuracy": 0.7802607076350093,
+          "shape_exact": {
+            "combination_different": 0.0,
+            "combination_same": 0.0,
+            "fact": 0.16666666666666666,
+            "negation": 0.0,
+            "same_opening_fact": 0.16666666666666666,
+            "same_opening_unknown": 0.0,
+            "unknown": 0.0
+          }
+        }
+      ],
+      "samples_after_30": [
+        {
+          "gold": "紫",
+          "generated": "绿"
+        },
+        {
+          "gold": "黄",
+          "generated": "绿"
+        },
+        {
+          "gold": "青",
+          "generated": "绿"
+        },
+        {
+          "gold": "未知",
+          "generated": "绿"
+        },
+        {
+          "gold": "青",
+          "generated": "青"
+        },
+        {
+          "gold": "紫",
+          "generated": "青"
+        }
+      ]
+    },
+    "C0_final_state_slots": {
+      "arm": "C0_final_state_slots",
+      "parameter_count": 101025,
+      "initial_gradient_norms": {
+        "prefix_embedding": 0.036283332854509354,
+        "prefix_input": 0.14047394692897797,
+        "prefix_recur": 0.12017785757780075,
+        "prefix_bias": 0.06405428797006607,
+        "start_vector": 0.07851365953683853,
+        "renderer_embedding": 0.1453181654214859,
+        "renderer_input": 0.5650213360786438,
+        "renderer_recur": 0.4437650144100189,
+        "renderer_bias": 0.2401667982339859,
+        "address_query": 0.0024932650849223137,
+        "workspace_key": 0.0024905113968998194,
+        "workspace_value": 0.18051621317863464,
+        "decoder": 0.8510919809341431,
+        "decoder_bias": 0.4959466755390167
+      },
+      "initial_loss": 5.4865827560424805,
+      "trajectory": [
+        {
+          "epoch": 1,
+          "mean_loss": 0.7577219251757381,
+          "byte_accuracy": 0.7486033519553073,
+          "shape_exact": {
+            "combination_different": 0.0,
+            "combination_same": 0.0,
+            "fact": 0.16666666666666666,
+            "negation": 0.0,
+            "same_opening_fact": 0.16666666666666666,
+            "same_opening_unknown": 0.0,
+            "unknown": 0.0
+          }
+        },
+        {
+          "epoch": 5,
+          "mean_loss": 0.648778409279626,
+          "byte_accuracy": 0.7486033519553073,
+          "shape_exact": {
+            "combination_different": 0.0,
+            "combination_same": 0.0,
+            "fact": 0.16666666666666666,
+            "negation": 0.0,
+            "same_opening_fact": 0.16666666666666666,
+            "same_opening_unknown": 0.0,
+            "unknown": 0.0
+          }
+        },
+        {
+          "epoch": 10,
+          "mean_loss": 0.6337761289771946,
+          "byte_accuracy": 0.7821229050279329,
+          "shape_exact": {
+            "combination_different": 0.14285714285714285,
+            "combination_same": 0.0,
+            "fact": 0.16666666666666666,
+            "negation": 0.0,
+            "same_opening_fact": 0.16666666666666666,
+            "same_opening_unknown": 0.0,
+            "unknown": 0.0
+          }
+        },
+        {
+          "epoch": 15,
+          "mean_loss": 0.6971319226184111,
+          "byte_accuracy": 0.7486033519553073,
+          "shape_exact": {
+            "combination_different": 0.0,
+            "combination_same": 0.0,
+            "fact": 0.16666666666666666,
+            "negation": 0.0,
+            "same_opening_fact": 0.16666666666666666,
+            "same_opening_unknown": 0.0,
+            "unknown": 0.0
+          }
+        },
+        {
+          "epoch": 20,
+          "mean_loss": 0.7167637145210957,
+          "byte_accuracy": 0.7486033519553073,
+          "shape_exact": {
+            "combination_different": 0.0,
+            "combination_same": 0.0,
+            "fact": 0.16666666666666666,
+            "negation": 0.0,
+            "same_opening_fact": 0.16666666666666666,
+            "same_opening_unknown": 0.0,
+            "unknown": 0.0
+          }
+        },
+        {
+          "epoch": 25,
+          "mean_loss": 0.7019698265297659,
+          "byte_accuracy": 0.7486033519553073,
+          "shape_exact": {
+            "combination_different": 1.0,
+            "combination_same": 0.0,
+            "fact": 0.0,
+            "negation": 0.0,
+            "same_opening_fact": 0.0,
+            "same_opening_unknown": 0.0,
+            "unknown": 0.0
+          }
+        },
+        {
+          "epoch": 30,
+          "mean_loss": 0.600696597376774,
+          "byte_accuracy": 0.7486033519553073,
+          "shape_exact": {
+            "combination_different": 0.0,
+            "combination_same": 0.0,
+            "fact": 0.16666666666666666,
+            "negation": 0.0,
+            "same_opening_fact": 0.16666666666666666,
+            "same_opening_unknown": 0.0,
+            "unknown": 0.0
+          }
+        }
+      ],
+      "samples_after_30": [
+        {
+          "gold": "紫",
+          "generated": "绿"
+        },
+        {
+          "gold": "黄",
+          "generated": "绿"
+        },
+        {
+          "gold": "青",
+          "generated": "绿"
+        },
+        {
+          "gold": "未知",
+          "generated": "绿"
+        },
+        {
+          "gold": "青",
+          "generated": "绿"
+        },
+        {
+          "gold": "紫",
+          "generated": "绿"
+        }
+      ]
+    }
+  },
+  "growth_admitted": false,
+  "can_promote": false
+}

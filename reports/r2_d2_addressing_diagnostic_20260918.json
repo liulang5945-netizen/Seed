@@ -1,0 +1,275 @@
+{
+  "format": "taiji-r2-d2-addressing-diagnostic-v1",
+  "diagnostic_not_gate": true,
+  "epochs": 30,
+  "before_training": [
+    {
+      "id": "train:fact:030",
+      "shape": "fact",
+      "entries": 60,
+      "max_weight": 0.017087029293179512,
+      "entropy_nats": 4.094262599945068,
+      "uniform_entropy": 4.0943445622221,
+      "entropy_ratio": 0.9999799815878252,
+      "material_span": [
+        39,
+        54
+      ],
+      "material_mass": 0.24910567700862885,
+      "material_fraction_of_entries": 0.25,
+      "top5_positions": [
+        58,
+        26,
+        16,
+        18,
+        19
+      ]
+    },
+    {
+      "id": "train:fact:016",
+      "shape": "fact",
+      "entries": 60,
+      "max_weight": 0.017052562907338142,
+      "entropy_nats": 4.094254493713379,
+      "uniform_entropy": 4.0943445622221,
+      "entropy_ratio": 0.9999780017271744,
+      "material_span": [
+        39,
+        54
+      ],
+      "material_mass": 0.24988672137260437,
+      "material_fraction_of_entries": 0.25,
+      "top5_positions": [
+        58,
+        26,
+        16,
+        18,
+        19
+      ]
+    },
+    {
+      "id": "train:fact:029",
+      "shape": "fact",
+      "entries": 60,
+      "max_weight": 0.01709909178316593,
+      "entropy_nats": 4.094258785247803,
+      "uniform_entropy": 4.0943445622221,
+      "entropy_ratio": 0.9999790498886955,
+      "material_span": [
+        39,
+        54
+      ],
+      "material_mass": 0.24869407713413239,
+      "material_fraction_of_entries": 0.25,
+      "top5_positions": [
+        58,
+        26,
+        16,
+        18,
+        19
+      ]
+    },
+    {
+      "id": "train:negation:040",
+      "shape": "negation",
+      "entries": 51,
+      "max_weight": 0.020144512876868248,
+      "entropy_nats": 3.931732654571533,
+      "uniform_entropy": 3.9318256327243257,
+      "entropy_ratio": 0.9999763524221372,
+      "material_span": [
+        33,
+        45
+      ],
+      "material_mass": 0.23552647233009338,
+      "material_fraction_of_entries": 0.23529411764705882,
+      "top5_positions": [
+        21,
+        33,
+        49,
+        30,
+        42
+      ]
+    },
+    {
+      "id": "train:negation:032",
+      "shape": "negation",
+      "entries": 51,
+      "max_weight": 0.020187683403491974,
+      "entropy_nats": 3.9317243099212646,
+      "uniform_entropy": 3.9318256327243257,
+      "entropy_ratio": 0.9999742300873625,
+      "material_span": [
+        33,
+        45
+      ],
+      "material_mass": 0.23514492809772491,
+      "material_fraction_of_entries": 0.23529411764705882,
+      "top5_positions": [
+        21,
+        33,
+        49,
+        16,
+        30
+      ]
+    },
+    {
+      "id": "train:negation:012",
+      "shape": "negation",
+      "entries": 48,
+      "max_weight": 0.021431803703308105,
+      "entropy_nats": 3.87111759185791,
+      "uniform_entropy": 3.871201010907891,
+      "entropy_ratio": 0.9999784513772997,
+      "material_span": [
+        30,
+        42
+      ],
+      "material_mass": 0.24978771805763245,
+      "material_fraction_of_entries": 0.25,
+      "top5_positions": [
+        18,
+        30,
+        46,
+        27,
+        45
+      ]
+    }
+  ],
+  "after_training": [
+    {
+      "id": "train:fact:030",
+      "shape": "fact",
+      "entries": 60,
+      "max_weight": 1.0,
+      "entropy_nats": 1.993472010727859e-12,
+      "uniform_entropy": 4.0943445622221,
+      "entropy_ratio": 4.868842815822891e-13,
+      "material_span": [
+        39,
+        54
+      ],
+      "material_mass": 7.214258894048739e-14,
+      "material_fraction_of_entries": 0.25,
+      "top5_positions": [
+        28,
+        46,
+        7,
+        2,
+        3
+      ]
+    },
+    {
+      "id": "train:fact:016",
+      "shape": "fact",
+      "entries": 60,
+      "max_weight": 1.0,
+      "entropy_nats": -0.0,
+      "uniform_entropy": 4.0943445622221,
+      "entropy_ratio": -0.0,
+      "material_span": [
+        39,
+        54
+      ],
+      "material_mass": 0.0,
+      "material_fraction_of_entries": 0.25,
+      "top5_positions": [
+        29,
+        0,
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "id": "train:fact:029",
+      "shape": "fact",
+      "entries": 60,
+      "max_weight": 1.0,
+      "entropy_nats": 1.993472010727859e-12,
+      "uniform_entropy": 4.0943445622221,
+      "entropy_ratio": 4.868842815822891e-13,
+      "material_span": [
+        39,
+        54
+      ],
+      "material_mass": 7.214258894048739e-14,
+      "material_fraction_of_entries": 0.25,
+      "top5_positions": [
+        28,
+        46,
+        7,
+        2,
+        3
+      ]
+    },
+    {
+      "id": "train:negation:040",
+      "shape": "negation",
+      "entries": 51,
+      "max_weight": 1.0,
+      "entropy_nats": 8.288671971683902e-25,
+      "uniform_entropy": 3.9318256327243257,
+      "entropy_ratio": 2.1080975470269667e-25,
+      "material_span": [
+        33,
+        45
+      ],
+      "material_mass": 2.9997702412560403e-26,
+      "material_fraction_of_entries": 0.23529411764705882,
+      "top5_positions": [
+        7,
+        37,
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "id": "train:negation:032",
+      "shape": "negation",
+      "entries": 51,
+      "max_weight": 1.0,
+      "entropy_nats": -0.0,
+      "uniform_entropy": 3.9318256327243257,
+      "entropy_ratio": -0.0,
+      "material_span": [
+        33,
+        45
+      ],
+      "material_mass": 0.0,
+      "material_fraction_of_entries": 0.23529411764705882,
+      "top5_positions": [
+        7,
+        0,
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "id": "train:negation:012",
+      "shape": "negation",
+      "entries": 48,
+      "max_weight": 1.0,
+      "entropy_nats": -0.0,
+      "uniform_entropy": 3.871201010907891,
+      "entropy_ratio": -0.0,
+      "material_span": [
+        30,
+        42
+      ],
+      "material_mass": 0.0,
+      "material_fraction_of_entries": 0.25,
+      "top5_positions": [
+        19,
+        0,
+        1,
+        2,
+        3
+      ]
+    }
+  ],
+  "growth_admitted": false,
+  "can_promote": false
+}

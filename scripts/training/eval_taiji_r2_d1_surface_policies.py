@@ -254,12 +254,12 @@ def metrics(rows: list[dict[str, Any]]) -> dict[str, Any]:
         "M4_flip_pair": {
             "numerator": flip_hits,
             "denominator": len(flip_pairs),
-            "value": flip_hits / len(flip_pairs),
+            "value": flip_hits / len(flip_pairs) if flip_pairs else 0.0,
         },
         "M5_inv_pair": {
             "numerator": inv_hits,
             "denominator": len(inv_pairs),
-            "value": inv_hits / len(inv_pairs),
+            "value": inv_hits / len(inv_pairs) if inv_pairs else 0.0,
         },
         "per_group_exact": per_group,
         "content_per_group_exact": content_per_group,
