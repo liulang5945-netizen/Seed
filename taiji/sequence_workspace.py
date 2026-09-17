@@ -565,7 +565,7 @@ class SequenceWorkspaceTrainer:
         return payload
 
     def save(self, path: str | Path) -> Path:
-        from seed.persistence import atomic_save
+        from .persistence import atomic_save
 
         return atomic_save(self.checkpoint(), path)
 

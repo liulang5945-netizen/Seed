@@ -470,9 +470,9 @@ def _code_revision() -> str:
 
 
 def _atomic_save(payload: Mapping[str, Any], path: str | Path) -> Path:
-    """Load Seed persistence lazily so Taiji top-level imports stay acyclic."""
+    """Write a checkpoint through Taiji's own atomic-save helper."""
 
-    from seed.persistence import atomic_save
+    from .persistence import atomic_save
 
     return atomic_save(payload, path)
 

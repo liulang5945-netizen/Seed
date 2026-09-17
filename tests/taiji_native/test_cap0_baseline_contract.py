@@ -347,8 +347,12 @@ def test_utf8_dfa_excludes_invalid_byte_sequences() -> None:
     assert 0xC0 not in lead and 0xC1 not in lead  # overlong 引导被排除
     assert 0xF5 not in lead and 0xFF not in lead  # 超出 U+10FFFF
     assert _utf8_allowed(1, 0xE4) == list(range(0x80, 0xC0))
-    assert _utf8_allowed(3, 0xE0)[0] == 0xA0  # 排除 overlong
-    assert _utf8_allowed(3, 0xED)[-1] == 0x9F  # 排除 surrogate
+    # A 3-byte sequence has **two** continuation bytes remaining after its lead;
+    # `remaining == 3` is the 4-byte case.  (2667b93a fixed the DFA from the old
+    # `remaining == 3` form and this contract had to be re-synced.)
+    assert _utf8_allowed(2, 0xE4) == list(range(0x80, 0xC0))
+    assert _utf8_allowed(2, 0xE0)[0] == 0xA0  # 排除 overlong
+    assert _utf8_allowed(2, 0xED)[-1] == 0x9F  # 排除 surrogate
     assert _utf8_allowed(3, 0xF0)[0] == 0x90
     assert _utf8_allowed(3, 0xF4)[-1] == 0x8F
 
