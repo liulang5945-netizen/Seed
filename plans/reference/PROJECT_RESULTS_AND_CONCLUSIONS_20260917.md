@@ -2,6 +2,8 @@
 
 整理日期：2026-09-17。材料基线：`ec2274b3`。本次仅整理已有证据，没有新增训练、能力测试或架构采用。
 
+**后继证据补充（36a7b861之后的只读核对）**：P3b-v2现已有完整JSON报告及停止结案，旧文下方“缺报告/中断未判定”保留为当时快照，不是最新报告状态。原始报告dev teacher-forced accuracy由0升至0.1968898、surprise由5.5984298降至4.5277424，自由生成exact仍0/20；实际训练仅12个不同episode各两次，覆盖fact/negation。报告target geometry是h3_7_factorized_response_chunks，与结案文字byte-aligned不一致，因此不支持指定byte-aligned组合或唯一架构根因的归因。保留停止决定，不补发能力/阶段通过；详见[03 §4](../active/roadmap/03_CURRENT_EXECUTION.md)与[原始报告](../../reports/p3b_v2_pilot_20260917.json)。本补充未重新加载模型或运行评价。
+
 阅读定位：本文回答“做出了什么、证明了什么、哪里失败、还有什么不知道”；[收束记录](PROJECT_CONSOLIDATION_20260917.md)回答“停止了什么、留下哪些文件”；[03执行计划](../active/roadmap/03_CURRENT_EXECUTION.md)管理恢复工作后的顺序。本文不另开推进路线。
 
 ## 1. 总结先行
