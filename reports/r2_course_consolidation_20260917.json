@@ -1,0 +1,96 @@
+{
+  "format": "taiji-r2-course-consolidation-v1",
+  "purpose": "(i-a) consolidate the 672-episode control reading with 6 seeds",
+  "scale": 8,
+  "epochs": 4,
+  "episodes_per_epoch": 672,
+  "steps_per_seed": 2688,
+  "corpus_digest": "fdf7f7a3c3680b0edd168b05b9d8aaf2d0593fe75c7bce83afbea3c3f18b4231",
+  "seeds": [
+    20260917,
+    20260918,
+    20260919,
+    20260920,
+    20260921,
+    20260922
+  ],
+  "lambda": 0.0,
+  "results": [
+    {
+      "seed": 20260917,
+      "lambda": 0.0,
+      "train_accuracy": 0.825925925925926,
+      "dev_forced_accuracy": 0.6306306306306306,
+      "dev_exact_rate": 0.38095238095238093,
+      "dev_exact_count": 256,
+      "dev_episodes": 672,
+      "boundary_stop_rate": null
+    },
+    {
+      "seed": 20260918,
+      "lambda": 0.0,
+      "train_accuracy": 0.8333333333333334,
+      "dev_forced_accuracy": 0.5975975975975976,
+      "dev_exact_rate": 0.38095238095238093,
+      "dev_exact_count": 256,
+      "dev_episodes": 672,
+      "boundary_stop_rate": null
+    },
+    {
+      "seed": 20260919,
+      "lambda": 0.0,
+      "train_accuracy": 0.774074074074074,
+      "dev_forced_accuracy": 0.5645645645645646,
+      "dev_exact_rate": 0.0,
+      "dev_exact_count": 0,
+      "dev_episodes": 672,
+      "boundary_stop_rate": null
+    },
+    {
+      "seed": 20260920,
+      "lambda": 0.0,
+      "train_accuracy": 0.8717592592592592,
+      "dev_forced_accuracy": 0.5955330330330331,
+      "dev_exact_rate": 0.36904761904761907,
+      "dev_exact_count": 248,
+      "dev_episodes": 672,
+      "boundary_stop_rate": null
+    },
+    {
+      "seed": 20260921,
+      "lambda": 0.0,
+      "train_accuracy": 0.8384259259259259,
+      "dev_forced_accuracy": 0.6184309309309309,
+      "dev_exact_rate": 0.19047619047619047,
+      "dev_exact_count": 128,
+      "dev_episodes": 672,
+      "boundary_stop_rate": null
+    },
+    {
+      "seed": 20260922,
+      "lambda": 0.0,
+      "train_accuracy": 0.774074074074074,
+      "dev_forced_accuracy": 0.5555555555555556,
+      "dev_exact_rate": 0.023809523809523808,
+      "dev_exact_count": 16,
+      "dev_episodes": 672,
+      "boundary_stop_rate": null
+    }
+  ],
+  "dev_exact_rates": [
+    0.38095238095238093,
+    0.38095238095238093,
+    0.0,
+    0.36904761904761907,
+    0.19047619047619047,
+    0.023809523809523808
+  ],
+  "dev_exact_mean": 0.2242063492063492,
+  "dev_exact_pstdev": 0.16415578406248454,
+  "train_accuracy_mean": 0.8195987654320988,
+  "dev_forced_accuracy_mean": 0.5937187187187187,
+  "final_evaluated": false,
+  "growth_admitted": false,
+  "can_promote": false,
+  "scope": "isolated prototype only; must NOT be extrapolated to chat()"
+}
