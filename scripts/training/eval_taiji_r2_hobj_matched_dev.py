@@ -39,9 +39,13 @@ DEFAULT_REPORT = Path("reports/r2_hobj_matched_dev_20260917.json")
 REPORT_FORMAT = "taiji-r2-hobj-matched-dev-v1"
 
 # ---- frozen budget (spec 4) and frozen objective (spec 3.3) ------------------
-SEED = 20260917
-EPOCHS = 2
-MAX_EPISODES = 12
+# Scaled to the H3.8 budget (30 x 25) after the budget-discrimination finding:
+# at 2 x 12 no objective change could express itself at all (plans/reference/
+# M5_R2_BUDGET_DISCRIMINATION_20260917.md), and 30 x 25 is where dev exact first
+# becomes non-zero.  Three seeds so the verdict is not a single-seed accident.
+SEEDS = (20260917, 20260918, 20260919)
+EPOCHS = 30
+MAX_EPISODES = 25
 LAMBDA_TREATMENT = 1.0
 LAMBDA_CONTROL = 0.0
 CONTRASTIVE_MARGIN = 1.0
@@ -119,9 +123,9 @@ def _generation(
     }
 
 
-def _run_arm(arm: str, *, lam: float, report_dir: Path) -> dict[str, Any]:
-    torch.manual_seed(SEED)
-    config = SequenceWorkspaceConfig(seed=SEED)
+def _run_arm(arm: str, *, seed: int, lam: float, report_dir: Path) -> dict[str, Any]:
+    torch.manual_seed(seed)
+    config = SequenceWorkspaceConfig(seed=seed)
     prototype = SequenceWorkspacePrototype(config)
     trainer = SequenceWorkspaceTrainer(prototype, learning_rate=0.01)
     train_split = _phrase("train")
@@ -161,6 +165,7 @@ def _run_arm(arm: str, *, lam: float, report_dir: Path) -> dict[str, Any]:
 
     return {
         "arm": arm,
+        "seed": seed,
         "lambda": lam,
         "epochs": EPOCHS,
         "max_episodes": MAX_EPISODES,
@@ -187,13 +192,15 @@ def main(argv: list[str] | None = None) -> int:
     corpus_digest = __import__("hashlib").sha256(fixture_path.read_bytes()).hexdigest()
 
     arms = [
-        _run_arm("control", lam=LAMBDA_CONTROL, report_dir=report_dir),
-        _run_arm("treatment", lam=LAMBDA_TREATMENT, report_dir=report_dir),
+        _run_arm(arm, seed=seed, lam=lam, report_dir=report_dir)
+        for seed in SEEDS
+        for arm, lam in (("control", LAMBDA_CONTROL), ("treatment", LAMBDA_TREATMENT))
     ]
 
-    control, treatment = arms
-    control_exact = control["dev_generation"]["exact_rate"]
-    treatment_exact = treatment["dev_generation"]["exact_rate"]
+    control_rates = [a["dev_generation"]["exact_rate"] for a in arms if a["arm"] == "control"]
+    treatment_rates = [a["dev_generation"]["exact_rate"] for a in arms if a["arm"] == "treatment"]
+    control_exact = sum(control_rates) / max(1, len(control_rates))
+    treatment_exact = sum(treatment_rates) / max(1, len(treatment_rates))
 
     # Frozen stop lines (spec section 4).
     both_zero = control_exact == 0.0 and treatment_exact == 0.0
@@ -214,7 +221,7 @@ def main(argv: list[str] | None = None) -> int:
         "fixture": str(FIXTURE),
         "corpus_sha256": corpus_digest,
         "frozen": {
-            "seed": SEED,
+            "seeds": list(SEEDS),
             "epochs": EPOCHS,
             "max_episodes": MAX_EPISODES,
             "lambda_control": LAMBDA_CONTROL,
@@ -222,7 +229,9 @@ def main(argv: list[str] | None = None) -> int:
             "contrastive_margin": CONTRASTIVE_MARGIN,
             "wall_cap_seconds": WALL_CAP_SECONDS,
         },
-        "arms": {arm["arm"]: arm for arm in arms},
+        "arms": arms,
+        "dev_exact_per_seed": {"control": control_rates, "treatment": treatment_rates},
+        "dev_exact_mean": {"control": control_exact, "treatment": treatment_exact},
         "verdict": verdict,
         "final_evaluated": False,
         "growth_admitted": False,
@@ -240,12 +249,8 @@ def main(argv: list[str] | None = None) -> int:
     target.parent.mkdir(parents=True, exist_ok=True)
     target.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
-    print(
-        f"control   dev exact = {control_exact:.4f}  dev TF acc = {control['dev']['accuracy']:.4f}"
-    )
-    print(
-        f"treatment dev exact = {treatment_exact:.4f}  dev TF acc = {treatment['dev']['accuracy']:.4f}"
-    )
+    print(f"control   dev exact per-seed {control_rates}  mean {control_exact:.4f}")
+    print(f"treatment dev exact per-seed {treatment_rates}  mean {treatment_exact:.4f}")
     print(f"verdict: {verdict}")
     print(f"report -> {target}")
     return 0
