@@ -135,6 +135,22 @@ factorized 配置），**不使用 `--resume`**。理由：
 P3b-v2 的评测仍需同链路；但**训练起点**从"H3.7B child"改为"从零构建"这件事，
 **必须在报告里显式披露**，不得表述为"在 H3.7B 之上继续"。
 
+### §7.4 pilot 结果（**按 §4 停止线第 2 条结项**，2026-09-17）
+
+产物 `reports/p3b_v2_pilot_20260917.json`（2 epochs × 12 episodes，`--defer-final`）：
+
+| dev 指标（20 episodes） | baseline（零步） | child（训练后） | 变化 |
+|---|---|---|---|
+| `teacher_forced_accuracy` | 0.0000 | **0.1969** | **+0.1969** |
+| `teacher_forced_mean_surprise` | 5.5984 | **4.5277** | **−1.0707** |
+| **`exact_response`** | **0/20** | **0/20** | **0** |
+
+⇒ **J6 未达成** ⇒ 按 §4 第 2 条 **结项并归因架构层**；
+结论与界限详见 [pilot 结项报告](M5_P3B_V2_PILOT_CLOSURE_20260917.md)。
+
+**§2 / §3 / §4 的冻结条款未被修改**；本 pilot **不产生** L2 晋级或能力收益主张；
+final 未读；起点为从零构建（§7.3）。
+
 ### §7.4 用户要求收束：中断登记（2026-09-17，只追加）
 
 本次停止已核实的P3b-v2进程25624，未删除磁盘产物，未改J1–J6或停止线。现有checkpoint早于该进程启动，payload记录24episodes/1080byte更新，但目标为旧`h3_7_factorized_response_chunks`，与byte-aligned文字约定存在偏差；无完整pilot结果报告，不能据此判成功或判反假设成立。状态为“中断、未判定”，不追加训练、不重启。身份摘要、当前语料digest、checkpoint SHA256及唯一后续见[项目收束记录](PROJECT_CONSOLIDATION_20260917.md)及[机器记录](../../reports/project_consolidation_20260917.json)。本节取代§7.2的“pilot可立即启动”导航作用，不改写冻结协议。
