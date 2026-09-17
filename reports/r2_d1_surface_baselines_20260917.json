@@ -1,0 +1,5912 @@
+{
+  "format": "r2-d1-surface-baselines-v1",
+  "version": 1,
+  "corpus_digest": "53ac9f88695f135d0bb04b4d25d98ab686c82175c45ca8d4d53e64639efbeecb",
+  "data_report": "reports\\r2_d1_data_contract_20260917.json",
+  "fixture": "tests\\fixtures\\r2_d1_measurement_v1.jsonl",
+  "generator_git": {
+    "commit": "5f9aa1f9988a37741073d4f0e37e47048028133c",
+    "dirty": true
+  },
+  "acceptable_policies": [
+    "b0_global",
+    "b1_stem",
+    "b2_template"
+  ],
+  "diagnostic_arms": [
+    "b3_oracle_shape",
+    "reference_key"
+  ],
+  "note": "b3_oracle_shape consumes gold shape labels: diagnostic only, never enters gates and is never comparable to model scores.",
+  "acceptable_ceiling": {
+    "M1_exact": 0.17346938775510204,
+    "M3_content_exact": 0.05813953488372093,
+    "M4_flip_pair": 0.0
+  },
+  "gates": {
+    "Q1_structure": {
+      "passed": true,
+      "data_report_outcome": "passed",
+      "corpus_digest_match": true
+    },
+    "Q2_overall_ceiling": {
+      "passed": true,
+      "max_M1": 0.17346938775510204
+    },
+    "Q3_content_ceiling": {
+      "passed": true,
+      "max_M3": 0.05813953488372093
+    },
+    "Q4_flip_structure": {
+      "passed": true,
+      "max_M4": 0.0
+    },
+    "Q5_reference_key": {
+      "passed": true,
+      "M1": 1.0,
+      "M3": 1.0,
+      "M4": 1.0,
+      "M5": 1.0
+    }
+  },
+  "policies": {
+    "b0_global": {
+      "items": [
+        {
+          "id": "dev:negation:003",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是乳白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:negation:006",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是灰白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:020",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "米色",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:unknown:002",
+          "shape": "unknown",
+          "source_group": "unknown",
+          "content_dependent": false,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "未知",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:combination_different:005",
+          "shape": "combination_different",
+          "source_group": "combination_different",
+          "content_dependent": true,
+          "pair_id": "dev:combo_flip:04",
+          "pair_type": "combo_flip",
+          "gold": "不同",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_fact:018",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "灰白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:combination_same:004",
+          "shape": "combination_same",
+          "source_group": "combination_same",
+          "content_dependent": true,
+          "pair_id": "dev:combo_flip:03",
+          "pair_type": "combo_flip",
+          "gold": "相同",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:negation:018",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是灰白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:negation:010",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是灰白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_fact:015",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "乳白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:unknown:004",
+          "shape": "unknown",
+          "source_group": "unknown",
+          "content_dependent": false,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "未知",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:negation:004",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是米色",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:negation:002",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是灰白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:023",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "乳白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_fact:014",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "灰白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_unknown:004",
+          "shape": "same_opening_unknown",
+          "source_group": "same_opening_unknown",
+          "content_dependent": false,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "未知",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:010",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:fact_flip:湖水",
+          "pair_type": "fact_flip",
+          "gold": "灰白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:negation:017",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_fact:019",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "乳白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:021",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:fact_flip:晨雾",
+          "pair_type": "fact_flip",
+          "gold": "白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:negation:001",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:combination_different:004",
+          "shape": "combination_different",
+          "source_group": "combination_different",
+          "content_dependent": true,
+          "pair_id": "dev:combo_flip:03",
+          "pair_type": "combo_flip",
+          "gold": "不同",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_fact:010",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "灰白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_fact:009",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:negation:012",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是米色",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:016",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:invariance:03",
+          "pair_type": "invariance",
+          "gold": "米色",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:negation:015",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是乳白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_fact:017",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:combination_same:003",
+          "shape": "combination_same",
+          "source_group": "combination_same",
+          "content_dependent": true,
+          "pair_id": "dev:combo_flip:02",
+          "pair_type": "combo_flip",
+          "gold": "相同",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_unknown:006",
+          "shape": "same_opening_unknown",
+          "source_group": "same_opening_unknown",
+          "content_dependent": false,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "未知",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:unknown:005",
+          "shape": "unknown",
+          "source_group": "unknown",
+          "content_dependent": false,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "未知",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:007",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "乳白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:027",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:invariance:02",
+          "pair_type": "invariance",
+          "gold": "乳白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:026",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:invariance:01",
+          "pair_type": "invariance",
+          "gold": "米色",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:005",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:fact_flip:太阳",
+          "pair_type": "fact_flip",
+          "gold": "白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:018",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:fact_flip:礁石",
+          "pair_type": "fact_flip",
+          "gold": "灰白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:negation:011",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是乳白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_fact:012",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "米色",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:negation:019",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是乳白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_fact:006",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "灰白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:combination_different:001",
+          "shape": "combination_different",
+          "source_group": "combination_different",
+          "content_dependent": true,
+          "pair_id": "dev:combo_flip:00",
+          "pair_type": "combo_flip",
+          "gold": "不同",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_unknown:005",
+          "shape": "same_opening_unknown",
+          "source_group": "same_opening_unknown",
+          "content_dependent": false,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "未知",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:negation:020",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是米色",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:028",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:invariance:03",
+          "pair_type": "invariance",
+          "gold": "米色",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:negation:013",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_fact:021",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:003",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:invariance:00",
+          "pair_type": "invariance",
+          "gold": "乳白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:011",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:invariance:02",
+          "pair_type": "invariance",
+          "gold": "乳白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_unknown:002",
+          "shape": "same_opening_unknown",
+          "source_group": "same_opening_unknown",
+          "content_dependent": false,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "未知",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:001",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:fact_flip:雪",
+          "pair_type": "fact_flip",
+          "gold": "白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:negation:008",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是米色",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:combination_different:003",
+          "shape": "combination_different",
+          "source_group": "combination_different",
+          "content_dependent": true,
+          "pair_id": "dev:combo_flip:02",
+          "pair_type": "combo_flip",
+          "gold": "不同",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:negation:022",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是灰白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_fact:020",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "米色",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_fact:024",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "米色",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_fact:013",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:negation:005",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:negation:024",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是米色",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:014",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:fact_flip:云层",
+          "pair_type": "fact_flip",
+          "gold": "灰白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_fact:023",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "乳白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:013",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:fact_flip:云层",
+          "pair_type": "fact_flip",
+          "gold": "白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:015",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "乳白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:negation:023",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是乳白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_unknown:001",
+          "shape": "same_opening_unknown",
+          "source_group": "same_opening_unknown",
+          "content_dependent": false,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "未知",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:012",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "米色",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_fact:002",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "灰白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_fact:005",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:024",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "米色",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:unknown:001",
+          "shape": "unknown",
+          "source_group": "unknown",
+          "content_dependent": false,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "未知",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_fact:022",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "灰白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:017",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:fact_flip:礁石",
+          "pair_type": "fact_flip",
+          "gold": "白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:negation:009",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:006",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:fact_flip:太阳",
+          "pair_type": "fact_flip",
+          "gold": "灰白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:002",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:fact_flip:雪",
+          "pair_type": "fact_flip",
+          "gold": "灰白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:combination_different:002",
+          "shape": "combination_different",
+          "source_group": "combination_different",
+          "content_dependent": true,
+          "pair_id": "dev:combo_flip:01",
+          "pair_type": "combo_flip",
+          "gold": "不同",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_unknown:003",
+          "shape": "same_opening_unknown",
+          "source_group": "same_opening_unknown",
+          "content_dependent": false,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "未知",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:019",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "乳白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:negation:016",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是米色",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_fact:003",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "乳白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:combination_same:005",
+          "shape": "combination_same",
+          "source_group": "combination_same",
+          "content_dependent": true,
+          "pair_id": "dev:combo_flip:04",
+          "pair_type": "combo_flip",
+          "gold": "相同",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_fact:008",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "米色",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_fact:007",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "乳白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:unknown:003",
+          "shape": "unknown",
+          "source_group": "unknown",
+          "content_dependent": false,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "未知",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_fact:016",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "米色",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:009",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:fact_flip:湖水",
+          "pair_type": "fact_flip",
+          "gold": "白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:025",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:invariance:00",
+          "pair_type": "invariance",
+          "gold": "乳白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:negation:014",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是灰白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:004",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "米色",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:008",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:invariance:01",
+          "pair_type": "invariance",
+          "gold": "米色",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:combination_same:002",
+          "shape": "combination_same",
+          "source_group": "combination_same",
+          "content_dependent": true,
+          "pair_id": "dev:combo_flip:01",
+          "pair_type": "combo_flip",
+          "gold": "相同",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:unknown:006",
+          "shape": "unknown",
+          "source_group": "unknown",
+          "content_dependent": false,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "未知",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_fact:004",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "米色",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_fact:011",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "乳白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:022",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:fact_flip:晨雾",
+          "pair_type": "fact_flip",
+          "gold": "灰白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:negation:007",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是乳白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_fact:001",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:combination_same:001",
+          "shape": "combination_same",
+          "source_group": "combination_same",
+          "content_dependent": true,
+          "pair_id": "dev:combo_flip:00",
+          "pair_type": "combo_flip",
+          "gold": "相同",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:negation:021",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是白",
+          "prediction": "紫",
+          "correct": false
+        }
+      ],
+      "metrics": {
+        "M1_exact": {
+          "numerator": 0,
+          "denominator": 98,
+          "value": 0.0
+        },
+        "M2_shape_macro": {
+          "value": 0.0
+        },
+        "M3_content_exact": {
+          "numerator": 0,
+          "denominator": 86,
+          "value": 0.0
+        },
+        "M4_flip_pair": {
+          "numerator": 0,
+          "denominator": 11,
+          "value": 0.0
+        },
+        "M5_inv_pair": {
+          "numerator": 0,
+          "denominator": 4,
+          "value": 0.0
+        },
+        "per_group_exact": {
+          "fact": {
+            "correct": 0,
+            "denominator": 28,
+            "exact": 0.0
+          },
+          "negation": {
+            "correct": 0,
+            "denominator": 24,
+            "exact": 0.0
+          },
+          "unknown": {
+            "correct": 0,
+            "denominator": 6,
+            "exact": 0.0
+          },
+          "same_opening_fact": {
+            "correct": 0,
+            "denominator": 24,
+            "exact": 0.0
+          },
+          "same_opening_unknown": {
+            "correct": 0,
+            "denominator": 6,
+            "exact": 0.0
+          },
+          "combination_same": {
+            "correct": 0,
+            "denominator": 5,
+            "exact": 0.0
+          },
+          "combination_different": {
+            "correct": 0,
+            "denominator": 5,
+            "exact": 0.0
+          }
+        },
+        "content_per_group_exact": {
+          "fact": {
+            "correct": 0,
+            "denominator": 28,
+            "exact": 0.0
+          },
+          "negation": {
+            "correct": 0,
+            "denominator": 24,
+            "exact": 0.0
+          },
+          "same_opening_fact": {
+            "correct": 0,
+            "denominator": 24,
+            "exact": 0.0
+          },
+          "combination_same": {
+            "correct": 0,
+            "denominator": 5,
+            "exact": 0.0
+          },
+          "combination_different": {
+            "correct": 0,
+            "denominator": 5,
+            "exact": 0.0
+          }
+        }
+      }
+    },
+    "b1_stem": {
+      "items": [
+        {
+          "id": "dev:negation:003",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是乳白",
+          "prediction": "不是黄",
+          "correct": false
+        },
+        {
+          "id": "dev:negation:006",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是灰白",
+          "prediction": "不是黄",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:020",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "米色",
+          "prediction": "未知",
+          "correct": false
+        },
+        {
+          "id": "dev:unknown:002",
+          "shape": "unknown",
+          "source_group": "unknown",
+          "content_dependent": false,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "未知",
+          "prediction": "未知",
+          "correct": true
+        },
+        {
+          "id": "dev:combination_different:005",
+          "shape": "combination_different",
+          "source_group": "combination_different",
+          "content_dependent": true,
+          "pair_id": "dev:combo_flip:04",
+          "pair_type": "combo_flip",
+          "gold": "不同",
+          "prediction": "相同",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_fact:018",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "灰白",
+          "prediction": "未知",
+          "correct": false
+        },
+        {
+          "id": "dev:combination_same:004",
+          "shape": "combination_same",
+          "source_group": "combination_same",
+          "content_dependent": true,
+          "pair_id": "dev:combo_flip:03",
+          "pair_type": "combo_flip",
+          "gold": "相同",
+          "prediction": "相同",
+          "correct": true
+        },
+        {
+          "id": "dev:negation:018",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是灰白",
+          "prediction": "不是黄",
+          "correct": false
+        },
+        {
+          "id": "dev:negation:010",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是灰白",
+          "prediction": "不是黄",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_fact:015",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "乳白",
+          "prediction": "未知",
+          "correct": false
+        },
+        {
+          "id": "dev:unknown:004",
+          "shape": "unknown",
+          "source_group": "unknown",
+          "content_dependent": false,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "未知",
+          "prediction": "未知",
+          "correct": true
+        },
+        {
+          "id": "dev:negation:004",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是米色",
+          "prediction": "不是黄",
+          "correct": false
+        },
+        {
+          "id": "dev:negation:002",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是灰白",
+          "prediction": "不是黄",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:023",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "乳白",
+          "prediction": "未知",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_fact:014",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "灰白",
+          "prediction": "未知",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_unknown:004",
+          "shape": "same_opening_unknown",
+          "source_group": "same_opening_unknown",
+          "content_dependent": false,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "未知",
+          "prediction": "未知",
+          "correct": true
+        },
+        {
+          "id": "dev:fact:010",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:fact_flip:湖水",
+          "pair_type": "fact_flip",
+          "gold": "灰白",
+          "prediction": "未知",
+          "correct": false
+        },
+        {
+          "id": "dev:negation:017",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是白",
+          "prediction": "不是黄",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_fact:019",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "乳白",
+          "prediction": "未知",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:021",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:fact_flip:晨雾",
+          "pair_type": "fact_flip",
+          "gold": "白",
+          "prediction": "未知",
+          "correct": false
+        },
+        {
+          "id": "dev:negation:001",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是白",
+          "prediction": "不是黄",
+          "correct": false
+        },
+        {
+          "id": "dev:combination_different:004",
+          "shape": "combination_different",
+          "source_group": "combination_different",
+          "content_dependent": true,
+          "pair_id": "dev:combo_flip:03",
+          "pair_type": "combo_flip",
+          "gold": "不同",
+          "prediction": "相同",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_fact:010",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "灰白",
+          "prediction": "未知",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_fact:009",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "白",
+          "prediction": "未知",
+          "correct": false
+        },
+        {
+          "id": "dev:negation:012",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是米色",
+          "prediction": "不是黄",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:016",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:invariance:03",
+          "pair_type": "invariance",
+          "gold": "米色",
+          "prediction": "未知",
+          "correct": false
+        },
+        {
+          "id": "dev:negation:015",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是乳白",
+          "prediction": "不是黄",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_fact:017",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "白",
+          "prediction": "未知",
+          "correct": false
+        },
+        {
+          "id": "dev:combination_same:003",
+          "shape": "combination_same",
+          "source_group": "combination_same",
+          "content_dependent": true,
+          "pair_id": "dev:combo_flip:02",
+          "pair_type": "combo_flip",
+          "gold": "相同",
+          "prediction": "相同",
+          "correct": true
+        },
+        {
+          "id": "dev:same_opening_unknown:006",
+          "shape": "same_opening_unknown",
+          "source_group": "same_opening_unknown",
+          "content_dependent": false,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "未知",
+          "prediction": "未知",
+          "correct": true
+        },
+        {
+          "id": "dev:unknown:005",
+          "shape": "unknown",
+          "source_group": "unknown",
+          "content_dependent": false,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "未知",
+          "prediction": "未知",
+          "correct": true
+        },
+        {
+          "id": "dev:fact:007",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "乳白",
+          "prediction": "未知",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:027",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:invariance:02",
+          "pair_type": "invariance",
+          "gold": "乳白",
+          "prediction": "未知",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:026",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:invariance:01",
+          "pair_type": "invariance",
+          "gold": "米色",
+          "prediction": "未知",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:005",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:fact_flip:太阳",
+          "pair_type": "fact_flip",
+          "gold": "白",
+          "prediction": "未知",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:018",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:fact_flip:礁石",
+          "pair_type": "fact_flip",
+          "gold": "灰白",
+          "prediction": "未知",
+          "correct": false
+        },
+        {
+          "id": "dev:negation:011",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是乳白",
+          "prediction": "不是黄",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_fact:012",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "米色",
+          "prediction": "未知",
+          "correct": false
+        },
+        {
+          "id": "dev:negation:019",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是乳白",
+          "prediction": "不是黄",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_fact:006",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "灰白",
+          "prediction": "未知",
+          "correct": false
+        },
+        {
+          "id": "dev:combination_different:001",
+          "shape": "combination_different",
+          "source_group": "combination_different",
+          "content_dependent": true,
+          "pair_id": "dev:combo_flip:00",
+          "pair_type": "combo_flip",
+          "gold": "不同",
+          "prediction": "相同",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_unknown:005",
+          "shape": "same_opening_unknown",
+          "source_group": "same_opening_unknown",
+          "content_dependent": false,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "未知",
+          "prediction": "未知",
+          "correct": true
+        },
+        {
+          "id": "dev:negation:020",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是米色",
+          "prediction": "不是黄",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:028",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:invariance:03",
+          "pair_type": "invariance",
+          "gold": "米色",
+          "prediction": "未知",
+          "correct": false
+        },
+        {
+          "id": "dev:negation:013",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是白",
+          "prediction": "不是黄",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_fact:021",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "白",
+          "prediction": "未知",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:003",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:invariance:00",
+          "pair_type": "invariance",
+          "gold": "乳白",
+          "prediction": "未知",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:011",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:invariance:02",
+          "pair_type": "invariance",
+          "gold": "乳白",
+          "prediction": "未知",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_unknown:002",
+          "shape": "same_opening_unknown",
+          "source_group": "same_opening_unknown",
+          "content_dependent": false,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "未知",
+          "prediction": "未知",
+          "correct": true
+        },
+        {
+          "id": "dev:fact:001",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:fact_flip:雪",
+          "pair_type": "fact_flip",
+          "gold": "白",
+          "prediction": "未知",
+          "correct": false
+        },
+        {
+          "id": "dev:negation:008",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是米色",
+          "prediction": "不是黄",
+          "correct": false
+        },
+        {
+          "id": "dev:combination_different:003",
+          "shape": "combination_different",
+          "source_group": "combination_different",
+          "content_dependent": true,
+          "pair_id": "dev:combo_flip:02",
+          "pair_type": "combo_flip",
+          "gold": "不同",
+          "prediction": "相同",
+          "correct": false
+        },
+        {
+          "id": "dev:negation:022",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是灰白",
+          "prediction": "不是黄",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_fact:020",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "米色",
+          "prediction": "未知",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_fact:024",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "米色",
+          "prediction": "未知",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_fact:013",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "白",
+          "prediction": "未知",
+          "correct": false
+        },
+        {
+          "id": "dev:negation:005",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是白",
+          "prediction": "不是黄",
+          "correct": false
+        },
+        {
+          "id": "dev:negation:024",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是米色",
+          "prediction": "不是黄",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:014",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:fact_flip:云层",
+          "pair_type": "fact_flip",
+          "gold": "灰白",
+          "prediction": "未知",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_fact:023",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "乳白",
+          "prediction": "未知",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:013",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:fact_flip:云层",
+          "pair_type": "fact_flip",
+          "gold": "白",
+          "prediction": "未知",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:015",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "乳白",
+          "prediction": "未知",
+          "correct": false
+        },
+        {
+          "id": "dev:negation:023",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是乳白",
+          "prediction": "不是黄",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_unknown:001",
+          "shape": "same_opening_unknown",
+          "source_group": "same_opening_unknown",
+          "content_dependent": false,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "未知",
+          "prediction": "未知",
+          "correct": true
+        },
+        {
+          "id": "dev:fact:012",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "米色",
+          "prediction": "未知",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_fact:002",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "灰白",
+          "prediction": "未知",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_fact:005",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "白",
+          "prediction": "未知",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:024",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "米色",
+          "prediction": "未知",
+          "correct": false
+        },
+        {
+          "id": "dev:unknown:001",
+          "shape": "unknown",
+          "source_group": "unknown",
+          "content_dependent": false,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "未知",
+          "prediction": "未知",
+          "correct": true
+        },
+        {
+          "id": "dev:same_opening_fact:022",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "灰白",
+          "prediction": "未知",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:017",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:fact_flip:礁石",
+          "pair_type": "fact_flip",
+          "gold": "白",
+          "prediction": "未知",
+          "correct": false
+        },
+        {
+          "id": "dev:negation:009",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是白",
+          "prediction": "不是黄",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:006",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:fact_flip:太阳",
+          "pair_type": "fact_flip",
+          "gold": "灰白",
+          "prediction": "未知",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:002",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:fact_flip:雪",
+          "pair_type": "fact_flip",
+          "gold": "灰白",
+          "prediction": "未知",
+          "correct": false
+        },
+        {
+          "id": "dev:combination_different:002",
+          "shape": "combination_different",
+          "source_group": "combination_different",
+          "content_dependent": true,
+          "pair_id": "dev:combo_flip:01",
+          "pair_type": "combo_flip",
+          "gold": "不同",
+          "prediction": "相同",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_unknown:003",
+          "shape": "same_opening_unknown",
+          "source_group": "same_opening_unknown",
+          "content_dependent": false,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "未知",
+          "prediction": "未知",
+          "correct": true
+        },
+        {
+          "id": "dev:fact:019",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "乳白",
+          "prediction": "未知",
+          "correct": false
+        },
+        {
+          "id": "dev:negation:016",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是米色",
+          "prediction": "不是黄",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_fact:003",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "乳白",
+          "prediction": "未知",
+          "correct": false
+        },
+        {
+          "id": "dev:combination_same:005",
+          "shape": "combination_same",
+          "source_group": "combination_same",
+          "content_dependent": true,
+          "pair_id": "dev:combo_flip:04",
+          "pair_type": "combo_flip",
+          "gold": "相同",
+          "prediction": "相同",
+          "correct": true
+        },
+        {
+          "id": "dev:same_opening_fact:008",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "米色",
+          "prediction": "未知",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_fact:007",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "乳白",
+          "prediction": "未知",
+          "correct": false
+        },
+        {
+          "id": "dev:unknown:003",
+          "shape": "unknown",
+          "source_group": "unknown",
+          "content_dependent": false,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "未知",
+          "prediction": "未知",
+          "correct": true
+        },
+        {
+          "id": "dev:same_opening_fact:016",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "米色",
+          "prediction": "未知",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:009",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:fact_flip:湖水",
+          "pair_type": "fact_flip",
+          "gold": "白",
+          "prediction": "未知",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:025",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:invariance:00",
+          "pair_type": "invariance",
+          "gold": "乳白",
+          "prediction": "未知",
+          "correct": false
+        },
+        {
+          "id": "dev:negation:014",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是灰白",
+          "prediction": "不是黄",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:004",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "米色",
+          "prediction": "未知",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:008",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:invariance:01",
+          "pair_type": "invariance",
+          "gold": "米色",
+          "prediction": "未知",
+          "correct": false
+        },
+        {
+          "id": "dev:combination_same:002",
+          "shape": "combination_same",
+          "source_group": "combination_same",
+          "content_dependent": true,
+          "pair_id": "dev:combo_flip:01",
+          "pair_type": "combo_flip",
+          "gold": "相同",
+          "prediction": "相同",
+          "correct": true
+        },
+        {
+          "id": "dev:unknown:006",
+          "shape": "unknown",
+          "source_group": "unknown",
+          "content_dependent": false,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "未知",
+          "prediction": "未知",
+          "correct": true
+        },
+        {
+          "id": "dev:same_opening_fact:004",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "米色",
+          "prediction": "未知",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_fact:011",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "乳白",
+          "prediction": "未知",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:022",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:fact_flip:晨雾",
+          "pair_type": "fact_flip",
+          "gold": "灰白",
+          "prediction": "未知",
+          "correct": false
+        },
+        {
+          "id": "dev:negation:007",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是乳白",
+          "prediction": "不是黄",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_fact:001",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "白",
+          "prediction": "未知",
+          "correct": false
+        },
+        {
+          "id": "dev:combination_same:001",
+          "shape": "combination_same",
+          "source_group": "combination_same",
+          "content_dependent": true,
+          "pair_id": "dev:combo_flip:00",
+          "pair_type": "combo_flip",
+          "gold": "相同",
+          "prediction": "相同",
+          "correct": true
+        },
+        {
+          "id": "dev:negation:021",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是白",
+          "prediction": "不是黄",
+          "correct": false
+        }
+      ],
+      "metrics": {
+        "M1_exact": {
+          "numerator": 17,
+          "denominator": 98,
+          "value": 0.17346938775510204
+        },
+        "M2_shape_macro": {
+          "value": 0.42857142857142855
+        },
+        "M3_content_exact": {
+          "numerator": 5,
+          "denominator": 86,
+          "value": 0.05813953488372093
+        },
+        "M4_flip_pair": {
+          "numerator": 0,
+          "denominator": 11,
+          "value": 0.0
+        },
+        "M5_inv_pair": {
+          "numerator": 0,
+          "denominator": 4,
+          "value": 0.0
+        },
+        "per_group_exact": {
+          "fact": {
+            "correct": 0,
+            "denominator": 28,
+            "exact": 0.0
+          },
+          "negation": {
+            "correct": 0,
+            "denominator": 24,
+            "exact": 0.0
+          },
+          "unknown": {
+            "correct": 6,
+            "denominator": 6,
+            "exact": 1.0
+          },
+          "same_opening_fact": {
+            "correct": 0,
+            "denominator": 24,
+            "exact": 0.0
+          },
+          "same_opening_unknown": {
+            "correct": 6,
+            "denominator": 6,
+            "exact": 1.0
+          },
+          "combination_same": {
+            "correct": 5,
+            "denominator": 5,
+            "exact": 1.0
+          },
+          "combination_different": {
+            "correct": 0,
+            "denominator": 5,
+            "exact": 0.0
+          }
+        },
+        "content_per_group_exact": {
+          "fact": {
+            "correct": 0,
+            "denominator": 28,
+            "exact": 0.0
+          },
+          "negation": {
+            "correct": 0,
+            "denominator": 24,
+            "exact": 0.0
+          },
+          "same_opening_fact": {
+            "correct": 0,
+            "denominator": 24,
+            "exact": 0.0
+          },
+          "combination_same": {
+            "correct": 5,
+            "denominator": 5,
+            "exact": 1.0
+          },
+          "combination_different": {
+            "correct": 0,
+            "denominator": 5,
+            "exact": 0.0
+          }
+        }
+      }
+    },
+    "b2_template": {
+      "items": [
+        {
+          "id": "dev:negation:003",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是乳白",
+          "prediction": "不是黄",
+          "correct": false
+        },
+        {
+          "id": "dev:negation:006",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是灰白",
+          "prediction": "不是黄",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:020",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "米色",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:unknown:002",
+          "shape": "unknown",
+          "source_group": "unknown",
+          "content_dependent": false,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "未知",
+          "prediction": "未知",
+          "correct": true
+        },
+        {
+          "id": "dev:combination_different:005",
+          "shape": "combination_different",
+          "source_group": "combination_different",
+          "content_dependent": true,
+          "pair_id": "dev:combo_flip:04",
+          "pair_type": "combo_flip",
+          "gold": "不同",
+          "prediction": "相同",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_fact:018",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "灰白",
+          "prediction": "青",
+          "correct": false
+        },
+        {
+          "id": "dev:combination_same:004",
+          "shape": "combination_same",
+          "source_group": "combination_same",
+          "content_dependent": true,
+          "pair_id": "dev:combo_flip:03",
+          "pair_type": "combo_flip",
+          "gold": "相同",
+          "prediction": "相同",
+          "correct": true
+        },
+        {
+          "id": "dev:negation:018",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是灰白",
+          "prediction": "不是黄",
+          "correct": false
+        },
+        {
+          "id": "dev:negation:010",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是灰白",
+          "prediction": "不是黄",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_fact:015",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "乳白",
+          "prediction": "青",
+          "correct": false
+        },
+        {
+          "id": "dev:unknown:004",
+          "shape": "unknown",
+          "source_group": "unknown",
+          "content_dependent": false,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "未知",
+          "prediction": "未知",
+          "correct": true
+        },
+        {
+          "id": "dev:negation:004",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是米色",
+          "prediction": "不是黄",
+          "correct": false
+        },
+        {
+          "id": "dev:negation:002",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是灰白",
+          "prediction": "不是黄",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:023",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "乳白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_fact:014",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "灰白",
+          "prediction": "青",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_unknown:004",
+          "shape": "same_opening_unknown",
+          "source_group": "same_opening_unknown",
+          "content_dependent": false,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "未知",
+          "prediction": "未知",
+          "correct": true
+        },
+        {
+          "id": "dev:fact:010",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:fact_flip:湖水",
+          "pair_type": "fact_flip",
+          "gold": "灰白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:negation:017",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是白",
+          "prediction": "不是黄",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_fact:019",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "乳白",
+          "prediction": "青",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:021",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:fact_flip:晨雾",
+          "pair_type": "fact_flip",
+          "gold": "白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:negation:001",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是白",
+          "prediction": "不是黄",
+          "correct": false
+        },
+        {
+          "id": "dev:combination_different:004",
+          "shape": "combination_different",
+          "source_group": "combination_different",
+          "content_dependent": true,
+          "pair_id": "dev:combo_flip:03",
+          "pair_type": "combo_flip",
+          "gold": "不同",
+          "prediction": "相同",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_fact:010",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "灰白",
+          "prediction": "青",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_fact:009",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "白",
+          "prediction": "青",
+          "correct": false
+        },
+        {
+          "id": "dev:negation:012",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是米色",
+          "prediction": "不是黄",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:016",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:invariance:03",
+          "pair_type": "invariance",
+          "gold": "米色",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:negation:015",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是乳白",
+          "prediction": "不是黄",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_fact:017",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "白",
+          "prediction": "青",
+          "correct": false
+        },
+        {
+          "id": "dev:combination_same:003",
+          "shape": "combination_same",
+          "source_group": "combination_same",
+          "content_dependent": true,
+          "pair_id": "dev:combo_flip:02",
+          "pair_type": "combo_flip",
+          "gold": "相同",
+          "prediction": "相同",
+          "correct": true
+        },
+        {
+          "id": "dev:same_opening_unknown:006",
+          "shape": "same_opening_unknown",
+          "source_group": "same_opening_unknown",
+          "content_dependent": false,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "未知",
+          "prediction": "未知",
+          "correct": true
+        },
+        {
+          "id": "dev:unknown:005",
+          "shape": "unknown",
+          "source_group": "unknown",
+          "content_dependent": false,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "未知",
+          "prediction": "未知",
+          "correct": true
+        },
+        {
+          "id": "dev:fact:007",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "乳白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:027",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:invariance:02",
+          "pair_type": "invariance",
+          "gold": "乳白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:026",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:invariance:01",
+          "pair_type": "invariance",
+          "gold": "米色",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:005",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:fact_flip:太阳",
+          "pair_type": "fact_flip",
+          "gold": "白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:018",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:fact_flip:礁石",
+          "pair_type": "fact_flip",
+          "gold": "灰白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:negation:011",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是乳白",
+          "prediction": "不是黄",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_fact:012",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "米色",
+          "prediction": "青",
+          "correct": false
+        },
+        {
+          "id": "dev:negation:019",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是乳白",
+          "prediction": "不是黄",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_fact:006",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "灰白",
+          "prediction": "青",
+          "correct": false
+        },
+        {
+          "id": "dev:combination_different:001",
+          "shape": "combination_different",
+          "source_group": "combination_different",
+          "content_dependent": true,
+          "pair_id": "dev:combo_flip:00",
+          "pair_type": "combo_flip",
+          "gold": "不同",
+          "prediction": "相同",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_unknown:005",
+          "shape": "same_opening_unknown",
+          "source_group": "same_opening_unknown",
+          "content_dependent": false,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "未知",
+          "prediction": "未知",
+          "correct": true
+        },
+        {
+          "id": "dev:negation:020",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是米色",
+          "prediction": "不是黄",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:028",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:invariance:03",
+          "pair_type": "invariance",
+          "gold": "米色",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:negation:013",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是白",
+          "prediction": "不是黄",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_fact:021",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "白",
+          "prediction": "青",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:003",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:invariance:00",
+          "pair_type": "invariance",
+          "gold": "乳白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:011",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:invariance:02",
+          "pair_type": "invariance",
+          "gold": "乳白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_unknown:002",
+          "shape": "same_opening_unknown",
+          "source_group": "same_opening_unknown",
+          "content_dependent": false,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "未知",
+          "prediction": "未知",
+          "correct": true
+        },
+        {
+          "id": "dev:fact:001",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:fact_flip:雪",
+          "pair_type": "fact_flip",
+          "gold": "白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:negation:008",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是米色",
+          "prediction": "不是黄",
+          "correct": false
+        },
+        {
+          "id": "dev:combination_different:003",
+          "shape": "combination_different",
+          "source_group": "combination_different",
+          "content_dependent": true,
+          "pair_id": "dev:combo_flip:02",
+          "pair_type": "combo_flip",
+          "gold": "不同",
+          "prediction": "相同",
+          "correct": false
+        },
+        {
+          "id": "dev:negation:022",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是灰白",
+          "prediction": "不是黄",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_fact:020",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "米色",
+          "prediction": "青",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_fact:024",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "米色",
+          "prediction": "青",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_fact:013",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "白",
+          "prediction": "青",
+          "correct": false
+        },
+        {
+          "id": "dev:negation:005",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是白",
+          "prediction": "不是黄",
+          "correct": false
+        },
+        {
+          "id": "dev:negation:024",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是米色",
+          "prediction": "不是黄",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:014",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:fact_flip:云层",
+          "pair_type": "fact_flip",
+          "gold": "灰白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_fact:023",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "乳白",
+          "prediction": "青",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:013",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:fact_flip:云层",
+          "pair_type": "fact_flip",
+          "gold": "白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:015",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "乳白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:negation:023",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是乳白",
+          "prediction": "不是黄",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_unknown:001",
+          "shape": "same_opening_unknown",
+          "source_group": "same_opening_unknown",
+          "content_dependent": false,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "未知",
+          "prediction": "未知",
+          "correct": true
+        },
+        {
+          "id": "dev:fact:012",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "米色",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_fact:002",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "灰白",
+          "prediction": "青",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_fact:005",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "白",
+          "prediction": "青",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:024",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "米色",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:unknown:001",
+          "shape": "unknown",
+          "source_group": "unknown",
+          "content_dependent": false,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "未知",
+          "prediction": "未知",
+          "correct": true
+        },
+        {
+          "id": "dev:same_opening_fact:022",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "灰白",
+          "prediction": "青",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:017",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:fact_flip:礁石",
+          "pair_type": "fact_flip",
+          "gold": "白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:negation:009",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是白",
+          "prediction": "不是黄",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:006",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:fact_flip:太阳",
+          "pair_type": "fact_flip",
+          "gold": "灰白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:002",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:fact_flip:雪",
+          "pair_type": "fact_flip",
+          "gold": "灰白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:combination_different:002",
+          "shape": "combination_different",
+          "source_group": "combination_different",
+          "content_dependent": true,
+          "pair_id": "dev:combo_flip:01",
+          "pair_type": "combo_flip",
+          "gold": "不同",
+          "prediction": "相同",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_unknown:003",
+          "shape": "same_opening_unknown",
+          "source_group": "same_opening_unknown",
+          "content_dependent": false,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "未知",
+          "prediction": "未知",
+          "correct": true
+        },
+        {
+          "id": "dev:fact:019",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "乳白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:negation:016",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是米色",
+          "prediction": "不是黄",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_fact:003",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "乳白",
+          "prediction": "青",
+          "correct": false
+        },
+        {
+          "id": "dev:combination_same:005",
+          "shape": "combination_same",
+          "source_group": "combination_same",
+          "content_dependent": true,
+          "pair_id": "dev:combo_flip:04",
+          "pair_type": "combo_flip",
+          "gold": "相同",
+          "prediction": "相同",
+          "correct": true
+        },
+        {
+          "id": "dev:same_opening_fact:008",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "米色",
+          "prediction": "青",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_fact:007",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "乳白",
+          "prediction": "青",
+          "correct": false
+        },
+        {
+          "id": "dev:unknown:003",
+          "shape": "unknown",
+          "source_group": "unknown",
+          "content_dependent": false,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "未知",
+          "prediction": "未知",
+          "correct": true
+        },
+        {
+          "id": "dev:same_opening_fact:016",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "米色",
+          "prediction": "青",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:009",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:fact_flip:湖水",
+          "pair_type": "fact_flip",
+          "gold": "白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:025",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:invariance:00",
+          "pair_type": "invariance",
+          "gold": "乳白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:negation:014",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是灰白",
+          "prediction": "不是黄",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:004",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "米色",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:008",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:invariance:01",
+          "pair_type": "invariance",
+          "gold": "米色",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:combination_same:002",
+          "shape": "combination_same",
+          "source_group": "combination_same",
+          "content_dependent": true,
+          "pair_id": "dev:combo_flip:01",
+          "pair_type": "combo_flip",
+          "gold": "相同",
+          "prediction": "相同",
+          "correct": true
+        },
+        {
+          "id": "dev:unknown:006",
+          "shape": "unknown",
+          "source_group": "unknown",
+          "content_dependent": false,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "未知",
+          "prediction": "未知",
+          "correct": true
+        },
+        {
+          "id": "dev:same_opening_fact:004",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "米色",
+          "prediction": "青",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_fact:011",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "乳白",
+          "prediction": "青",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:022",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:fact_flip:晨雾",
+          "pair_type": "fact_flip",
+          "gold": "灰白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:negation:007",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是乳白",
+          "prediction": "不是黄",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_fact:001",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "白",
+          "prediction": "青",
+          "correct": false
+        },
+        {
+          "id": "dev:combination_same:001",
+          "shape": "combination_same",
+          "source_group": "combination_same",
+          "content_dependent": true,
+          "pair_id": "dev:combo_flip:00",
+          "pair_type": "combo_flip",
+          "gold": "相同",
+          "prediction": "相同",
+          "correct": true
+        },
+        {
+          "id": "dev:negation:021",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是白",
+          "prediction": "不是黄",
+          "correct": false
+        }
+      ],
+      "metrics": {
+        "M1_exact": {
+          "numerator": 17,
+          "denominator": 98,
+          "value": 0.17346938775510204
+        },
+        "M2_shape_macro": {
+          "value": 0.42857142857142855
+        },
+        "M3_content_exact": {
+          "numerator": 5,
+          "denominator": 86,
+          "value": 0.05813953488372093
+        },
+        "M4_flip_pair": {
+          "numerator": 0,
+          "denominator": 11,
+          "value": 0.0
+        },
+        "M5_inv_pair": {
+          "numerator": 0,
+          "denominator": 4,
+          "value": 0.0
+        },
+        "per_group_exact": {
+          "fact": {
+            "correct": 0,
+            "denominator": 28,
+            "exact": 0.0
+          },
+          "negation": {
+            "correct": 0,
+            "denominator": 24,
+            "exact": 0.0
+          },
+          "unknown": {
+            "correct": 6,
+            "denominator": 6,
+            "exact": 1.0
+          },
+          "same_opening_fact": {
+            "correct": 0,
+            "denominator": 24,
+            "exact": 0.0
+          },
+          "same_opening_unknown": {
+            "correct": 6,
+            "denominator": 6,
+            "exact": 1.0
+          },
+          "combination_same": {
+            "correct": 5,
+            "denominator": 5,
+            "exact": 1.0
+          },
+          "combination_different": {
+            "correct": 0,
+            "denominator": 5,
+            "exact": 0.0
+          }
+        },
+        "content_per_group_exact": {
+          "fact": {
+            "correct": 0,
+            "denominator": 28,
+            "exact": 0.0
+          },
+          "negation": {
+            "correct": 0,
+            "denominator": 24,
+            "exact": 0.0
+          },
+          "same_opening_fact": {
+            "correct": 0,
+            "denominator": 24,
+            "exact": 0.0
+          },
+          "combination_same": {
+            "correct": 5,
+            "denominator": 5,
+            "exact": 1.0
+          },
+          "combination_different": {
+            "correct": 0,
+            "denominator": 5,
+            "exact": 0.0
+          }
+        }
+      }
+    },
+    "b3_oracle_shape": {
+      "items": [
+        {
+          "id": "dev:negation:003",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是乳白",
+          "prediction": "不是黄",
+          "correct": false
+        },
+        {
+          "id": "dev:negation:006",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是灰白",
+          "prediction": "不是黄",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:020",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "米色",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:unknown:002",
+          "shape": "unknown",
+          "source_group": "unknown",
+          "content_dependent": false,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "未知",
+          "prediction": "未知",
+          "correct": true
+        },
+        {
+          "id": "dev:combination_different:005",
+          "shape": "combination_different",
+          "source_group": "combination_different",
+          "content_dependent": true,
+          "pair_id": "dev:combo_flip:04",
+          "pair_type": "combo_flip",
+          "gold": "不同",
+          "prediction": "不同",
+          "correct": true
+        },
+        {
+          "id": "dev:same_opening_fact:018",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "灰白",
+          "prediction": "青",
+          "correct": false
+        },
+        {
+          "id": "dev:combination_same:004",
+          "shape": "combination_same",
+          "source_group": "combination_same",
+          "content_dependent": true,
+          "pair_id": "dev:combo_flip:03",
+          "pair_type": "combo_flip",
+          "gold": "相同",
+          "prediction": "相同",
+          "correct": true
+        },
+        {
+          "id": "dev:negation:018",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是灰白",
+          "prediction": "不是黄",
+          "correct": false
+        },
+        {
+          "id": "dev:negation:010",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是灰白",
+          "prediction": "不是黄",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_fact:015",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "乳白",
+          "prediction": "青",
+          "correct": false
+        },
+        {
+          "id": "dev:unknown:004",
+          "shape": "unknown",
+          "source_group": "unknown",
+          "content_dependent": false,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "未知",
+          "prediction": "未知",
+          "correct": true
+        },
+        {
+          "id": "dev:negation:004",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是米色",
+          "prediction": "不是黄",
+          "correct": false
+        },
+        {
+          "id": "dev:negation:002",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是灰白",
+          "prediction": "不是黄",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:023",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "乳白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_fact:014",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "灰白",
+          "prediction": "青",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_unknown:004",
+          "shape": "same_opening_unknown",
+          "source_group": "same_opening_unknown",
+          "content_dependent": false,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "未知",
+          "prediction": "未知",
+          "correct": true
+        },
+        {
+          "id": "dev:fact:010",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:fact_flip:湖水",
+          "pair_type": "fact_flip",
+          "gold": "灰白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:negation:017",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是白",
+          "prediction": "不是黄",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_fact:019",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "乳白",
+          "prediction": "青",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:021",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:fact_flip:晨雾",
+          "pair_type": "fact_flip",
+          "gold": "白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:negation:001",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是白",
+          "prediction": "不是黄",
+          "correct": false
+        },
+        {
+          "id": "dev:combination_different:004",
+          "shape": "combination_different",
+          "source_group": "combination_different",
+          "content_dependent": true,
+          "pair_id": "dev:combo_flip:03",
+          "pair_type": "combo_flip",
+          "gold": "不同",
+          "prediction": "不同",
+          "correct": true
+        },
+        {
+          "id": "dev:same_opening_fact:010",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "灰白",
+          "prediction": "青",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_fact:009",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "白",
+          "prediction": "青",
+          "correct": false
+        },
+        {
+          "id": "dev:negation:012",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是米色",
+          "prediction": "不是黄",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:016",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:invariance:03",
+          "pair_type": "invariance",
+          "gold": "米色",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:negation:015",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是乳白",
+          "prediction": "不是黄",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_fact:017",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "白",
+          "prediction": "青",
+          "correct": false
+        },
+        {
+          "id": "dev:combination_same:003",
+          "shape": "combination_same",
+          "source_group": "combination_same",
+          "content_dependent": true,
+          "pair_id": "dev:combo_flip:02",
+          "pair_type": "combo_flip",
+          "gold": "相同",
+          "prediction": "相同",
+          "correct": true
+        },
+        {
+          "id": "dev:same_opening_unknown:006",
+          "shape": "same_opening_unknown",
+          "source_group": "same_opening_unknown",
+          "content_dependent": false,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "未知",
+          "prediction": "未知",
+          "correct": true
+        },
+        {
+          "id": "dev:unknown:005",
+          "shape": "unknown",
+          "source_group": "unknown",
+          "content_dependent": false,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "未知",
+          "prediction": "未知",
+          "correct": true
+        },
+        {
+          "id": "dev:fact:007",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "乳白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:027",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:invariance:02",
+          "pair_type": "invariance",
+          "gold": "乳白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:026",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:invariance:01",
+          "pair_type": "invariance",
+          "gold": "米色",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:005",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:fact_flip:太阳",
+          "pair_type": "fact_flip",
+          "gold": "白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:018",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:fact_flip:礁石",
+          "pair_type": "fact_flip",
+          "gold": "灰白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:negation:011",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是乳白",
+          "prediction": "不是黄",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_fact:012",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "米色",
+          "prediction": "青",
+          "correct": false
+        },
+        {
+          "id": "dev:negation:019",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是乳白",
+          "prediction": "不是黄",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_fact:006",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "灰白",
+          "prediction": "青",
+          "correct": false
+        },
+        {
+          "id": "dev:combination_different:001",
+          "shape": "combination_different",
+          "source_group": "combination_different",
+          "content_dependent": true,
+          "pair_id": "dev:combo_flip:00",
+          "pair_type": "combo_flip",
+          "gold": "不同",
+          "prediction": "不同",
+          "correct": true
+        },
+        {
+          "id": "dev:same_opening_unknown:005",
+          "shape": "same_opening_unknown",
+          "source_group": "same_opening_unknown",
+          "content_dependent": false,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "未知",
+          "prediction": "未知",
+          "correct": true
+        },
+        {
+          "id": "dev:negation:020",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是米色",
+          "prediction": "不是黄",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:028",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:invariance:03",
+          "pair_type": "invariance",
+          "gold": "米色",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:negation:013",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是白",
+          "prediction": "不是黄",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_fact:021",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "白",
+          "prediction": "青",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:003",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:invariance:00",
+          "pair_type": "invariance",
+          "gold": "乳白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:011",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:invariance:02",
+          "pair_type": "invariance",
+          "gold": "乳白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_unknown:002",
+          "shape": "same_opening_unknown",
+          "source_group": "same_opening_unknown",
+          "content_dependent": false,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "未知",
+          "prediction": "未知",
+          "correct": true
+        },
+        {
+          "id": "dev:fact:001",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:fact_flip:雪",
+          "pair_type": "fact_flip",
+          "gold": "白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:negation:008",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是米色",
+          "prediction": "不是黄",
+          "correct": false
+        },
+        {
+          "id": "dev:combination_different:003",
+          "shape": "combination_different",
+          "source_group": "combination_different",
+          "content_dependent": true,
+          "pair_id": "dev:combo_flip:02",
+          "pair_type": "combo_flip",
+          "gold": "不同",
+          "prediction": "不同",
+          "correct": true
+        },
+        {
+          "id": "dev:negation:022",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是灰白",
+          "prediction": "不是黄",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_fact:020",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "米色",
+          "prediction": "青",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_fact:024",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "米色",
+          "prediction": "青",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_fact:013",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "白",
+          "prediction": "青",
+          "correct": false
+        },
+        {
+          "id": "dev:negation:005",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是白",
+          "prediction": "不是黄",
+          "correct": false
+        },
+        {
+          "id": "dev:negation:024",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是米色",
+          "prediction": "不是黄",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:014",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:fact_flip:云层",
+          "pair_type": "fact_flip",
+          "gold": "灰白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_fact:023",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "乳白",
+          "prediction": "青",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:013",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:fact_flip:云层",
+          "pair_type": "fact_flip",
+          "gold": "白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:015",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "乳白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:negation:023",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是乳白",
+          "prediction": "不是黄",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_unknown:001",
+          "shape": "same_opening_unknown",
+          "source_group": "same_opening_unknown",
+          "content_dependent": false,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "未知",
+          "prediction": "未知",
+          "correct": true
+        },
+        {
+          "id": "dev:fact:012",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "米色",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_fact:002",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "灰白",
+          "prediction": "青",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_fact:005",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "白",
+          "prediction": "青",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:024",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "米色",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:unknown:001",
+          "shape": "unknown",
+          "source_group": "unknown",
+          "content_dependent": false,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "未知",
+          "prediction": "未知",
+          "correct": true
+        },
+        {
+          "id": "dev:same_opening_fact:022",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "灰白",
+          "prediction": "青",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:017",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:fact_flip:礁石",
+          "pair_type": "fact_flip",
+          "gold": "白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:negation:009",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是白",
+          "prediction": "不是黄",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:006",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:fact_flip:太阳",
+          "pair_type": "fact_flip",
+          "gold": "灰白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:002",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:fact_flip:雪",
+          "pair_type": "fact_flip",
+          "gold": "灰白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:combination_different:002",
+          "shape": "combination_different",
+          "source_group": "combination_different",
+          "content_dependent": true,
+          "pair_id": "dev:combo_flip:01",
+          "pair_type": "combo_flip",
+          "gold": "不同",
+          "prediction": "不同",
+          "correct": true
+        },
+        {
+          "id": "dev:same_opening_unknown:003",
+          "shape": "same_opening_unknown",
+          "source_group": "same_opening_unknown",
+          "content_dependent": false,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "未知",
+          "prediction": "未知",
+          "correct": true
+        },
+        {
+          "id": "dev:fact:019",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "乳白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:negation:016",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是米色",
+          "prediction": "不是黄",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_fact:003",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "乳白",
+          "prediction": "青",
+          "correct": false
+        },
+        {
+          "id": "dev:combination_same:005",
+          "shape": "combination_same",
+          "source_group": "combination_same",
+          "content_dependent": true,
+          "pair_id": "dev:combo_flip:04",
+          "pair_type": "combo_flip",
+          "gold": "相同",
+          "prediction": "相同",
+          "correct": true
+        },
+        {
+          "id": "dev:same_opening_fact:008",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "米色",
+          "prediction": "青",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_fact:007",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "乳白",
+          "prediction": "青",
+          "correct": false
+        },
+        {
+          "id": "dev:unknown:003",
+          "shape": "unknown",
+          "source_group": "unknown",
+          "content_dependent": false,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "未知",
+          "prediction": "未知",
+          "correct": true
+        },
+        {
+          "id": "dev:same_opening_fact:016",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "米色",
+          "prediction": "青",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:009",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:fact_flip:湖水",
+          "pair_type": "fact_flip",
+          "gold": "白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:025",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:invariance:00",
+          "pair_type": "invariance",
+          "gold": "乳白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:negation:014",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是灰白",
+          "prediction": "不是黄",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:004",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "米色",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:008",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:invariance:01",
+          "pair_type": "invariance",
+          "gold": "米色",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:combination_same:002",
+          "shape": "combination_same",
+          "source_group": "combination_same",
+          "content_dependent": true,
+          "pair_id": "dev:combo_flip:01",
+          "pair_type": "combo_flip",
+          "gold": "相同",
+          "prediction": "相同",
+          "correct": true
+        },
+        {
+          "id": "dev:unknown:006",
+          "shape": "unknown",
+          "source_group": "unknown",
+          "content_dependent": false,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "未知",
+          "prediction": "未知",
+          "correct": true
+        },
+        {
+          "id": "dev:same_opening_fact:004",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "米色",
+          "prediction": "青",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_fact:011",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "乳白",
+          "prediction": "青",
+          "correct": false
+        },
+        {
+          "id": "dev:fact:022",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:fact_flip:晨雾",
+          "pair_type": "fact_flip",
+          "gold": "灰白",
+          "prediction": "紫",
+          "correct": false
+        },
+        {
+          "id": "dev:negation:007",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是乳白",
+          "prediction": "不是黄",
+          "correct": false
+        },
+        {
+          "id": "dev:same_opening_fact:001",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "白",
+          "prediction": "青",
+          "correct": false
+        },
+        {
+          "id": "dev:combination_same:001",
+          "shape": "combination_same",
+          "source_group": "combination_same",
+          "content_dependent": true,
+          "pair_id": "dev:combo_flip:00",
+          "pair_type": "combo_flip",
+          "gold": "相同",
+          "prediction": "相同",
+          "correct": true
+        },
+        {
+          "id": "dev:negation:021",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是白",
+          "prediction": "不是黄",
+          "correct": false
+        }
+      ],
+      "metrics": {
+        "M1_exact": {
+          "numerator": 22,
+          "denominator": 98,
+          "value": 0.22448979591836735
+        },
+        "M2_shape_macro": {
+          "value": 0.5714285714285714
+        },
+        "M3_content_exact": {
+          "numerator": 10,
+          "denominator": 86,
+          "value": 0.11627906976744186
+        },
+        "M4_flip_pair": {
+          "numerator": 5,
+          "denominator": 11,
+          "value": 0.45454545454545453
+        },
+        "M5_inv_pair": {
+          "numerator": 0,
+          "denominator": 4,
+          "value": 0.0
+        },
+        "per_group_exact": {
+          "fact": {
+            "correct": 0,
+            "denominator": 28,
+            "exact": 0.0
+          },
+          "negation": {
+            "correct": 0,
+            "denominator": 24,
+            "exact": 0.0
+          },
+          "unknown": {
+            "correct": 6,
+            "denominator": 6,
+            "exact": 1.0
+          },
+          "same_opening_fact": {
+            "correct": 0,
+            "denominator": 24,
+            "exact": 0.0
+          },
+          "same_opening_unknown": {
+            "correct": 6,
+            "denominator": 6,
+            "exact": 1.0
+          },
+          "combination_same": {
+            "correct": 5,
+            "denominator": 5,
+            "exact": 1.0
+          },
+          "combination_different": {
+            "correct": 5,
+            "denominator": 5,
+            "exact": 1.0
+          }
+        },
+        "content_per_group_exact": {
+          "fact": {
+            "correct": 0,
+            "denominator": 28,
+            "exact": 0.0
+          },
+          "negation": {
+            "correct": 0,
+            "denominator": 24,
+            "exact": 0.0
+          },
+          "same_opening_fact": {
+            "correct": 0,
+            "denominator": 24,
+            "exact": 0.0
+          },
+          "combination_same": {
+            "correct": 5,
+            "denominator": 5,
+            "exact": 1.0
+          },
+          "combination_different": {
+            "correct": 5,
+            "denominator": 5,
+            "exact": 1.0
+          }
+        }
+      }
+    },
+    "reference_key": {
+      "items": [
+        {
+          "id": "dev:negation:003",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是乳白",
+          "prediction": "不是乳白",
+          "correct": true
+        },
+        {
+          "id": "dev:negation:006",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是灰白",
+          "prediction": "不是灰白",
+          "correct": true
+        },
+        {
+          "id": "dev:fact:020",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "米色",
+          "prediction": "米色",
+          "correct": true
+        },
+        {
+          "id": "dev:unknown:002",
+          "shape": "unknown",
+          "source_group": "unknown",
+          "content_dependent": false,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "未知",
+          "prediction": "未知",
+          "correct": true
+        },
+        {
+          "id": "dev:combination_different:005",
+          "shape": "combination_different",
+          "source_group": "combination_different",
+          "content_dependent": true,
+          "pair_id": "dev:combo_flip:04",
+          "pair_type": "combo_flip",
+          "gold": "不同",
+          "prediction": "不同",
+          "correct": true
+        },
+        {
+          "id": "dev:same_opening_fact:018",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "灰白",
+          "prediction": "灰白",
+          "correct": true
+        },
+        {
+          "id": "dev:combination_same:004",
+          "shape": "combination_same",
+          "source_group": "combination_same",
+          "content_dependent": true,
+          "pair_id": "dev:combo_flip:03",
+          "pair_type": "combo_flip",
+          "gold": "相同",
+          "prediction": "相同",
+          "correct": true
+        },
+        {
+          "id": "dev:negation:018",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是灰白",
+          "prediction": "不是灰白",
+          "correct": true
+        },
+        {
+          "id": "dev:negation:010",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是灰白",
+          "prediction": "不是灰白",
+          "correct": true
+        },
+        {
+          "id": "dev:same_opening_fact:015",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "乳白",
+          "prediction": "乳白",
+          "correct": true
+        },
+        {
+          "id": "dev:unknown:004",
+          "shape": "unknown",
+          "source_group": "unknown",
+          "content_dependent": false,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "未知",
+          "prediction": "未知",
+          "correct": true
+        },
+        {
+          "id": "dev:negation:004",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是米色",
+          "prediction": "不是米色",
+          "correct": true
+        },
+        {
+          "id": "dev:negation:002",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是灰白",
+          "prediction": "不是灰白",
+          "correct": true
+        },
+        {
+          "id": "dev:fact:023",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "乳白",
+          "prediction": "乳白",
+          "correct": true
+        },
+        {
+          "id": "dev:same_opening_fact:014",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "灰白",
+          "prediction": "灰白",
+          "correct": true
+        },
+        {
+          "id": "dev:same_opening_unknown:004",
+          "shape": "same_opening_unknown",
+          "source_group": "same_opening_unknown",
+          "content_dependent": false,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "未知",
+          "prediction": "未知",
+          "correct": true
+        },
+        {
+          "id": "dev:fact:010",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:fact_flip:湖水",
+          "pair_type": "fact_flip",
+          "gold": "灰白",
+          "prediction": "灰白",
+          "correct": true
+        },
+        {
+          "id": "dev:negation:017",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是白",
+          "prediction": "不是白",
+          "correct": true
+        },
+        {
+          "id": "dev:same_opening_fact:019",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "乳白",
+          "prediction": "乳白",
+          "correct": true
+        },
+        {
+          "id": "dev:fact:021",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:fact_flip:晨雾",
+          "pair_type": "fact_flip",
+          "gold": "白",
+          "prediction": "白",
+          "correct": true
+        },
+        {
+          "id": "dev:negation:001",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是白",
+          "prediction": "不是白",
+          "correct": true
+        },
+        {
+          "id": "dev:combination_different:004",
+          "shape": "combination_different",
+          "source_group": "combination_different",
+          "content_dependent": true,
+          "pair_id": "dev:combo_flip:03",
+          "pair_type": "combo_flip",
+          "gold": "不同",
+          "prediction": "不同",
+          "correct": true
+        },
+        {
+          "id": "dev:same_opening_fact:010",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "灰白",
+          "prediction": "灰白",
+          "correct": true
+        },
+        {
+          "id": "dev:same_opening_fact:009",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "白",
+          "prediction": "白",
+          "correct": true
+        },
+        {
+          "id": "dev:negation:012",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是米色",
+          "prediction": "不是米色",
+          "correct": true
+        },
+        {
+          "id": "dev:fact:016",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:invariance:03",
+          "pair_type": "invariance",
+          "gold": "米色",
+          "prediction": "米色",
+          "correct": true
+        },
+        {
+          "id": "dev:negation:015",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是乳白",
+          "prediction": "不是乳白",
+          "correct": true
+        },
+        {
+          "id": "dev:same_opening_fact:017",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "白",
+          "prediction": "白",
+          "correct": true
+        },
+        {
+          "id": "dev:combination_same:003",
+          "shape": "combination_same",
+          "source_group": "combination_same",
+          "content_dependent": true,
+          "pair_id": "dev:combo_flip:02",
+          "pair_type": "combo_flip",
+          "gold": "相同",
+          "prediction": "相同",
+          "correct": true
+        },
+        {
+          "id": "dev:same_opening_unknown:006",
+          "shape": "same_opening_unknown",
+          "source_group": "same_opening_unknown",
+          "content_dependent": false,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "未知",
+          "prediction": "未知",
+          "correct": true
+        },
+        {
+          "id": "dev:unknown:005",
+          "shape": "unknown",
+          "source_group": "unknown",
+          "content_dependent": false,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "未知",
+          "prediction": "未知",
+          "correct": true
+        },
+        {
+          "id": "dev:fact:007",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "乳白",
+          "prediction": "乳白",
+          "correct": true
+        },
+        {
+          "id": "dev:fact:027",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:invariance:02",
+          "pair_type": "invariance",
+          "gold": "乳白",
+          "prediction": "乳白",
+          "correct": true
+        },
+        {
+          "id": "dev:fact:026",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:invariance:01",
+          "pair_type": "invariance",
+          "gold": "米色",
+          "prediction": "米色",
+          "correct": true
+        },
+        {
+          "id": "dev:fact:005",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:fact_flip:太阳",
+          "pair_type": "fact_flip",
+          "gold": "白",
+          "prediction": "白",
+          "correct": true
+        },
+        {
+          "id": "dev:fact:018",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:fact_flip:礁石",
+          "pair_type": "fact_flip",
+          "gold": "灰白",
+          "prediction": "灰白",
+          "correct": true
+        },
+        {
+          "id": "dev:negation:011",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是乳白",
+          "prediction": "不是乳白",
+          "correct": true
+        },
+        {
+          "id": "dev:same_opening_fact:012",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "米色",
+          "prediction": "米色",
+          "correct": true
+        },
+        {
+          "id": "dev:negation:019",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是乳白",
+          "prediction": "不是乳白",
+          "correct": true
+        },
+        {
+          "id": "dev:same_opening_fact:006",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "灰白",
+          "prediction": "灰白",
+          "correct": true
+        },
+        {
+          "id": "dev:combination_different:001",
+          "shape": "combination_different",
+          "source_group": "combination_different",
+          "content_dependent": true,
+          "pair_id": "dev:combo_flip:00",
+          "pair_type": "combo_flip",
+          "gold": "不同",
+          "prediction": "不同",
+          "correct": true
+        },
+        {
+          "id": "dev:same_opening_unknown:005",
+          "shape": "same_opening_unknown",
+          "source_group": "same_opening_unknown",
+          "content_dependent": false,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "未知",
+          "prediction": "未知",
+          "correct": true
+        },
+        {
+          "id": "dev:negation:020",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是米色",
+          "prediction": "不是米色",
+          "correct": true
+        },
+        {
+          "id": "dev:fact:028",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:invariance:03",
+          "pair_type": "invariance",
+          "gold": "米色",
+          "prediction": "米色",
+          "correct": true
+        },
+        {
+          "id": "dev:negation:013",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是白",
+          "prediction": "不是白",
+          "correct": true
+        },
+        {
+          "id": "dev:same_opening_fact:021",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "白",
+          "prediction": "白",
+          "correct": true
+        },
+        {
+          "id": "dev:fact:003",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:invariance:00",
+          "pair_type": "invariance",
+          "gold": "乳白",
+          "prediction": "乳白",
+          "correct": true
+        },
+        {
+          "id": "dev:fact:011",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:invariance:02",
+          "pair_type": "invariance",
+          "gold": "乳白",
+          "prediction": "乳白",
+          "correct": true
+        },
+        {
+          "id": "dev:same_opening_unknown:002",
+          "shape": "same_opening_unknown",
+          "source_group": "same_opening_unknown",
+          "content_dependent": false,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "未知",
+          "prediction": "未知",
+          "correct": true
+        },
+        {
+          "id": "dev:fact:001",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:fact_flip:雪",
+          "pair_type": "fact_flip",
+          "gold": "白",
+          "prediction": "白",
+          "correct": true
+        },
+        {
+          "id": "dev:negation:008",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是米色",
+          "prediction": "不是米色",
+          "correct": true
+        },
+        {
+          "id": "dev:combination_different:003",
+          "shape": "combination_different",
+          "source_group": "combination_different",
+          "content_dependent": true,
+          "pair_id": "dev:combo_flip:02",
+          "pair_type": "combo_flip",
+          "gold": "不同",
+          "prediction": "不同",
+          "correct": true
+        },
+        {
+          "id": "dev:negation:022",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是灰白",
+          "prediction": "不是灰白",
+          "correct": true
+        },
+        {
+          "id": "dev:same_opening_fact:020",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "米色",
+          "prediction": "米色",
+          "correct": true
+        },
+        {
+          "id": "dev:same_opening_fact:024",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "米色",
+          "prediction": "米色",
+          "correct": true
+        },
+        {
+          "id": "dev:same_opening_fact:013",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "白",
+          "prediction": "白",
+          "correct": true
+        },
+        {
+          "id": "dev:negation:005",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是白",
+          "prediction": "不是白",
+          "correct": true
+        },
+        {
+          "id": "dev:negation:024",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是米色",
+          "prediction": "不是米色",
+          "correct": true
+        },
+        {
+          "id": "dev:fact:014",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:fact_flip:云层",
+          "pair_type": "fact_flip",
+          "gold": "灰白",
+          "prediction": "灰白",
+          "correct": true
+        },
+        {
+          "id": "dev:same_opening_fact:023",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "乳白",
+          "prediction": "乳白",
+          "correct": true
+        },
+        {
+          "id": "dev:fact:013",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:fact_flip:云层",
+          "pair_type": "fact_flip",
+          "gold": "白",
+          "prediction": "白",
+          "correct": true
+        },
+        {
+          "id": "dev:fact:015",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "乳白",
+          "prediction": "乳白",
+          "correct": true
+        },
+        {
+          "id": "dev:negation:023",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是乳白",
+          "prediction": "不是乳白",
+          "correct": true
+        },
+        {
+          "id": "dev:same_opening_unknown:001",
+          "shape": "same_opening_unknown",
+          "source_group": "same_opening_unknown",
+          "content_dependent": false,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "未知",
+          "prediction": "未知",
+          "correct": true
+        },
+        {
+          "id": "dev:fact:012",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "米色",
+          "prediction": "米色",
+          "correct": true
+        },
+        {
+          "id": "dev:same_opening_fact:002",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "灰白",
+          "prediction": "灰白",
+          "correct": true
+        },
+        {
+          "id": "dev:same_opening_fact:005",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "白",
+          "prediction": "白",
+          "correct": true
+        },
+        {
+          "id": "dev:fact:024",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "米色",
+          "prediction": "米色",
+          "correct": true
+        },
+        {
+          "id": "dev:unknown:001",
+          "shape": "unknown",
+          "source_group": "unknown",
+          "content_dependent": false,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "未知",
+          "prediction": "未知",
+          "correct": true
+        },
+        {
+          "id": "dev:same_opening_fact:022",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "灰白",
+          "prediction": "灰白",
+          "correct": true
+        },
+        {
+          "id": "dev:fact:017",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:fact_flip:礁石",
+          "pair_type": "fact_flip",
+          "gold": "白",
+          "prediction": "白",
+          "correct": true
+        },
+        {
+          "id": "dev:negation:009",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是白",
+          "prediction": "不是白",
+          "correct": true
+        },
+        {
+          "id": "dev:fact:006",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:fact_flip:太阳",
+          "pair_type": "fact_flip",
+          "gold": "灰白",
+          "prediction": "灰白",
+          "correct": true
+        },
+        {
+          "id": "dev:fact:002",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:fact_flip:雪",
+          "pair_type": "fact_flip",
+          "gold": "灰白",
+          "prediction": "灰白",
+          "correct": true
+        },
+        {
+          "id": "dev:combination_different:002",
+          "shape": "combination_different",
+          "source_group": "combination_different",
+          "content_dependent": true,
+          "pair_id": "dev:combo_flip:01",
+          "pair_type": "combo_flip",
+          "gold": "不同",
+          "prediction": "不同",
+          "correct": true
+        },
+        {
+          "id": "dev:same_opening_unknown:003",
+          "shape": "same_opening_unknown",
+          "source_group": "same_opening_unknown",
+          "content_dependent": false,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "未知",
+          "prediction": "未知",
+          "correct": true
+        },
+        {
+          "id": "dev:fact:019",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "乳白",
+          "prediction": "乳白",
+          "correct": true
+        },
+        {
+          "id": "dev:negation:016",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是米色",
+          "prediction": "不是米色",
+          "correct": true
+        },
+        {
+          "id": "dev:same_opening_fact:003",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "乳白",
+          "prediction": "乳白",
+          "correct": true
+        },
+        {
+          "id": "dev:combination_same:005",
+          "shape": "combination_same",
+          "source_group": "combination_same",
+          "content_dependent": true,
+          "pair_id": "dev:combo_flip:04",
+          "pair_type": "combo_flip",
+          "gold": "相同",
+          "prediction": "相同",
+          "correct": true
+        },
+        {
+          "id": "dev:same_opening_fact:008",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "米色",
+          "prediction": "米色",
+          "correct": true
+        },
+        {
+          "id": "dev:same_opening_fact:007",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "乳白",
+          "prediction": "乳白",
+          "correct": true
+        },
+        {
+          "id": "dev:unknown:003",
+          "shape": "unknown",
+          "source_group": "unknown",
+          "content_dependent": false,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "未知",
+          "prediction": "未知",
+          "correct": true
+        },
+        {
+          "id": "dev:same_opening_fact:016",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "米色",
+          "prediction": "米色",
+          "correct": true
+        },
+        {
+          "id": "dev:fact:009",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:fact_flip:湖水",
+          "pair_type": "fact_flip",
+          "gold": "白",
+          "prediction": "白",
+          "correct": true
+        },
+        {
+          "id": "dev:fact:025",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:invariance:00",
+          "pair_type": "invariance",
+          "gold": "乳白",
+          "prediction": "乳白",
+          "correct": true
+        },
+        {
+          "id": "dev:negation:014",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是灰白",
+          "prediction": "不是灰白",
+          "correct": true
+        },
+        {
+          "id": "dev:fact:004",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "米色",
+          "prediction": "米色",
+          "correct": true
+        },
+        {
+          "id": "dev:fact:008",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:invariance:01",
+          "pair_type": "invariance",
+          "gold": "米色",
+          "prediction": "米色",
+          "correct": true
+        },
+        {
+          "id": "dev:combination_same:002",
+          "shape": "combination_same",
+          "source_group": "combination_same",
+          "content_dependent": true,
+          "pair_id": "dev:combo_flip:01",
+          "pair_type": "combo_flip",
+          "gold": "相同",
+          "prediction": "相同",
+          "correct": true
+        },
+        {
+          "id": "dev:unknown:006",
+          "shape": "unknown",
+          "source_group": "unknown",
+          "content_dependent": false,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "未知",
+          "prediction": "未知",
+          "correct": true
+        },
+        {
+          "id": "dev:same_opening_fact:004",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "米色",
+          "prediction": "米色",
+          "correct": true
+        },
+        {
+          "id": "dev:same_opening_fact:011",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "乳白",
+          "prediction": "乳白",
+          "correct": true
+        },
+        {
+          "id": "dev:fact:022",
+          "shape": "fact",
+          "source_group": "fact",
+          "content_dependent": true,
+          "pair_id": "dev:fact_flip:晨雾",
+          "pair_type": "fact_flip",
+          "gold": "灰白",
+          "prediction": "灰白",
+          "correct": true
+        },
+        {
+          "id": "dev:negation:007",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是乳白",
+          "prediction": "不是乳白",
+          "correct": true
+        },
+        {
+          "id": "dev:same_opening_fact:001",
+          "shape": "same_opening_fact",
+          "source_group": "same_opening_fact",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "白",
+          "prediction": "白",
+          "correct": true
+        },
+        {
+          "id": "dev:combination_same:001",
+          "shape": "combination_same",
+          "source_group": "combination_same",
+          "content_dependent": true,
+          "pair_id": "dev:combo_flip:00",
+          "pair_type": "combo_flip",
+          "gold": "相同",
+          "prediction": "相同",
+          "correct": true
+        },
+        {
+          "id": "dev:negation:021",
+          "shape": "negation",
+          "source_group": "negation",
+          "content_dependent": true,
+          "pair_id": null,
+          "pair_type": null,
+          "gold": "不是白",
+          "prediction": "不是白",
+          "correct": true
+        }
+      ],
+      "metrics": {
+        "M1_exact": {
+          "numerator": 98,
+          "denominator": 98,
+          "value": 1.0
+        },
+        "M2_shape_macro": {
+          "value": 1.0
+        },
+        "M3_content_exact": {
+          "numerator": 86,
+          "denominator": 86,
+          "value": 1.0
+        },
+        "M4_flip_pair": {
+          "numerator": 11,
+          "denominator": 11,
+          "value": 1.0
+        },
+        "M5_inv_pair": {
+          "numerator": 4,
+          "denominator": 4,
+          "value": 1.0
+        },
+        "per_group_exact": {
+          "fact": {
+            "correct": 28,
+            "denominator": 28,
+            "exact": 1.0
+          },
+          "negation": {
+            "correct": 24,
+            "denominator": 24,
+            "exact": 1.0
+          },
+          "unknown": {
+            "correct": 6,
+            "denominator": 6,
+            "exact": 1.0
+          },
+          "same_opening_fact": {
+            "correct": 24,
+            "denominator": 24,
+            "exact": 1.0
+          },
+          "same_opening_unknown": {
+            "correct": 6,
+            "denominator": 6,
+            "exact": 1.0
+          },
+          "combination_same": {
+            "correct": 5,
+            "denominator": 5,
+            "exact": 1.0
+          },
+          "combination_different": {
+            "correct": 5,
+            "denominator": 5,
+            "exact": 1.0
+          }
+        },
+        "content_per_group_exact": {
+          "fact": {
+            "correct": 28,
+            "denominator": 28,
+            "exact": 1.0
+          },
+          "negation": {
+            "correct": 24,
+            "denominator": 24,
+            "exact": 1.0
+          },
+          "same_opening_fact": {
+            "correct": 24,
+            "denominator": 24,
+            "exact": 1.0
+          },
+          "combination_same": {
+            "correct": 5,
+            "denominator": 5,
+            "exact": 1.0
+          },
+          "combination_different": {
+            "correct": 5,
+            "denominator": 5,
+            "exact": 1.0
+          }
+        }
+      }
+    }
+  },
+  "growth_admitted": false,
+  "can_promote": false,
+  "outcome": "passed"
+}
