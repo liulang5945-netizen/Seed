@@ -1,0 +1,307 @@
+{
+  "format": "taiji-r2-h3-8-matched-dev-v1",
+  "version": 1,
+  "graph_version": 2,
+  "preregistration": "plans/reference/M5_R2_H3_8_MATCHED_DEV_PREREGISTRATION_FROZEN_20260917.md",
+  "corpus_digest": "5518ff500bbcb3551bc60cc13783442cd9fce870e8d17ee9dd4a7e165a17f6a8",
+  "seeds": [
+    20260917,
+    20260918,
+    20260919
+  ],
+  "epochs": 30,
+  "learning_rate": 0.01,
+  "final_read": false,
+  "results": {
+    "20260917": {
+      "workspace": {
+        "arm": "workspace",
+        "seed": 20260917,
+        "parameter_count": 101025,
+        "elapsed_seconds": 13.539,
+        "checkpoints": [
+          {
+            "epoch": 0,
+            "bytes": 421016,
+            "verified": true
+          },
+          {
+            "epoch": 15,
+            "bytes": 1241885,
+            "verified": true
+          },
+          {
+            "epoch": 30,
+            "bytes": 1241885,
+            "verified": true
+          }
+        ],
+        "train_fit": {
+          "accuracy": 0.8554216867469879,
+          "positions": 166,
+          "mean_loss": 0.32038582384586334
+        },
+        "dev": {
+          "forced_accuracy": 0.6320754716981132,
+          "forced_positions": 106,
+          "forced_mean_loss": 3.9724938701838255,
+          "exact_response_rate": 0.0,
+          "boundary_stop_rate": 1.0,
+          "episodes": 16
+        },
+        "lesion": {
+          "dev_accuracy_unlesioned": 0.6320754716981132,
+          "dev_accuracy_lesioned": 0.5754716981132075,
+          "drop": 0.05660377358490565
+        },
+        "final_checkpoint_digest": "ffd5948b6ee6060dd0afeff5b0d22eda8c55082c6e3bd0ab56d8530bd5d81bb0"
+      },
+      "baseline": {
+        "arm": "baseline",
+        "seed": 20260917,
+        "parameter_count": 103601,
+        "elapsed_seconds": 14.581,
+        "checkpoints": [
+          {
+            "epoch": 0,
+            "bytes": 430337,
+            "verified": true
+          },
+          {
+            "epoch": 15,
+            "bytes": 1269194,
+            "verified": true
+          },
+          {
+            "epoch": 30,
+            "bytes": 1269194,
+            "verified": true
+          }
+        ],
+        "train_fit": {
+          "accuracy": 0.8493975903614458,
+          "positions": 166,
+          "mean_loss": 0.301932273209095
+        },
+        "dev": {
+          "forced_accuracy": 0.5754716981132075,
+          "forced_positions": 106,
+          "forced_mean_loss": 3.79089068248868,
+          "exact_response_rate": 0.0,
+          "boundary_stop_rate": 1.0,
+          "episodes": 16
+        },
+        "lesion": null,
+        "final_checkpoint_digest": "242a434c618ce281a404e4b4b5c387c57f082882c6915a40c88ffd85092c6b3b"
+      }
+    },
+    "20260918": {
+      "workspace": {
+        "arm": "workspace",
+        "seed": 20260918,
+        "parameter_count": 101025,
+        "elapsed_seconds": 13.302,
+        "checkpoints": [
+          {
+            "epoch": 0,
+            "bytes": 421016,
+            "verified": true
+          },
+          {
+            "epoch": 15,
+            "bytes": 1241885,
+            "verified": true
+          },
+          {
+            "epoch": 30,
+            "bytes": 1241885,
+            "verified": true
+          }
+        ],
+        "train_fit": {
+          "accuracy": 0.8554216867469879,
+          "positions": 166,
+          "mean_loss": 0.35588460057973864
+        },
+        "dev": {
+          "forced_accuracy": 0.5849056603773585,
+          "forced_positions": 106,
+          "forced_mean_loss": 4.292435370385647,
+          "exact_response_rate": 0.0,
+          "boundary_stop_rate": 1.0,
+          "episodes": 16
+        },
+        "lesion": {
+          "dev_accuracy_unlesioned": 0.5849056603773585,
+          "dev_accuracy_lesioned": 0.5471698113207547,
+          "drop": 0.037735849056603765
+        },
+        "final_checkpoint_digest": "220843762401f993e6ed270f332719f0bc467542de023f562bb96163b83eff19"
+      },
+      "baseline": {
+        "arm": "baseline",
+        "seed": 20260918,
+        "parameter_count": 103601,
+        "elapsed_seconds": 11.345,
+        "checkpoints": [
+          {
+            "epoch": 0,
+            "bytes": 430337,
+            "verified": true
+          },
+          {
+            "epoch": 15,
+            "bytes": 1269194,
+            "verified": true
+          },
+          {
+            "epoch": 30,
+            "bytes": 1269194,
+            "verified": true
+          }
+        ],
+        "train_fit": {
+          "accuracy": 0.8554216867469879,
+          "positions": 166,
+          "mean_loss": 0.27121193826198575
+        },
+        "dev": {
+          "forced_accuracy": 0.5660377358490566,
+          "forced_positions": 106,
+          "forced_mean_loss": 3.636459045112133,
+          "exact_response_rate": 0.125,
+          "boundary_stop_rate": 1.0,
+          "episodes": 16
+        },
+        "lesion": null,
+        "final_checkpoint_digest": "6d01f480c48d5bc171b940c03e37ae91e715bdab0f48bf03bd2501cdd5a0dc8c"
+      }
+    },
+    "20260919": {
+      "workspace": {
+        "arm": "workspace",
+        "seed": 20260919,
+        "parameter_count": 101025,
+        "elapsed_seconds": 11.606,
+        "checkpoints": [
+          {
+            "epoch": 0,
+            "bytes": 421016,
+            "verified": true
+          },
+          {
+            "epoch": 15,
+            "bytes": 1241885,
+            "verified": true
+          },
+          {
+            "epoch": 30,
+            "bytes": 1241885,
+            "verified": true
+          }
+        ],
+        "train_fit": {
+          "accuracy": 0.8012048192771084,
+          "positions": 166,
+          "mean_loss": 0.4126666498184204
+        },
+        "dev": {
+          "forced_accuracy": 0.6509433962264151,
+          "forced_positions": 106,
+          "forced_mean_loss": 3.354914702475071,
+          "exact_response_rate": 0.0625,
+          "boundary_stop_rate": 1.0,
+          "episodes": 16
+        },
+        "lesion": {
+          "dev_accuracy_unlesioned": 0.6509433962264151,
+          "dev_accuracy_lesioned": 0.6886792452830188,
+          "drop": -0.037735849056603765
+        },
+        "final_checkpoint_digest": "0282182a66e90e5b09896be05180dccbdf762bee8fc83bf3546d75424ae0b305"
+      },
+      "baseline": {
+        "arm": "baseline",
+        "seed": 20260919,
+        "parameter_count": 103601,
+        "elapsed_seconds": 11.923,
+        "checkpoints": [
+          {
+            "epoch": 0,
+            "bytes": 430337,
+            "verified": true
+          },
+          {
+            "epoch": 15,
+            "bytes": 1269194,
+            "verified": true
+          },
+          {
+            "epoch": 30,
+            "bytes": 1269194,
+            "verified": true
+          }
+        ],
+        "train_fit": {
+          "accuracy": 0.8433734939759037,
+          "positions": 166,
+          "mean_loss": 0.3109445583820343
+        },
+        "dev": {
+          "forced_accuracy": 0.660377358490566,
+          "forced_positions": 106,
+          "forced_mean_loss": 3.359697140753269,
+          "exact_response_rate": 0.25,
+          "boundary_stop_rate": 1.0,
+          "episodes": 16
+        },
+        "lesion": null,
+        "final_checkpoint_digest": "24847214c2caa8034afac6609a012c0ad9f88a454d1b324ac1a322e4b31fc7b3"
+      }
+    }
+  },
+  "gates": {
+    "fit_per_seed": {
+      "20260917": true,
+      "20260918": true,
+      "20260919": true
+    },
+    "fit_seeds": [
+      20260917,
+      20260918,
+      20260919
+    ],
+    "win_per_seed": {
+      "20260917": true,
+      "20260918": true,
+      "20260919": false
+    },
+    "boundary_per_seed": {
+      "20260917": true,
+      "20260918": true,
+      "20260919": true
+    },
+    "lesion_per_seed": {
+      "20260917": true,
+      "20260918": true,
+      "20260919": false
+    },
+    "mean_dev_accuracy": {
+      "workspace": 0.6226415094339622,
+      "baseline": 0.60062893081761,
+      "margin": 0.022012578616352196
+    },
+    "gates": {
+      "g_fit_all_seeds": true,
+      "g_win_per_seed": false,
+      "g_win_mean_margin": false,
+      "g_boundary_non_regression": true,
+      "g_lesion_positive": false
+    }
+  },
+  "failures": [],
+  "outcome": "workspace_unused",
+  "elapsed_seconds": 76.707,
+  "growth_admitted": false,
+  "can_promote": false
+}

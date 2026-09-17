@@ -1,9 +1,10 @@
 """R2-H3.8 matched dev execution under the frozen preregistration.
 
 Preregistration: plans/reference/M5_R2_H3_8_MATCHED_DEV_PREREGISTRATION_FROZEN_20260917.md
-(frozen).  Three seeds by two arms plus the workspace-lesion column, the frozen
-numeric budget, and the frozen gates.  The final split is never read and no
-promotion is implied by any outcome.
+(frozen; section 7 reruns the v2 single-channel graph with unchanged gates).
+Three seeds by two arms plus the workspace-lesion column, the frozen numeric
+budget, and the frozen gates.  The final split is never read and no promotion
+is implied by any outcome.
 """
 
 from __future__ import annotations
@@ -27,6 +28,8 @@ import torch  # noqa: E402
 
 from taiji.internalization import content_digest  # noqa: E402
 from taiji.sequence_workspace import (  # noqa: E402
+    SEQUENCE_WORKSPACE_BASELINE_RENDERER_WIDTH,
+    SEQUENCE_WORKSPACE_VERSION,
     SequenceWorkspaceConfig,
     SequenceWorkspacePrototype,
     SequenceWorkspaceTrainer,
@@ -35,7 +38,7 @@ from taiji.sequence_workspace import (  # noqa: E402
 FIXTURE = Path("tests/fixtures/r2_h3_8_joint_sequence_v1.jsonl")
 CORPUS_DIGEST = "5518ff500bbcb3551bc60cc13783442cd9fce870e8d17ee9dd4a7e165a17f6a8"
 PREREGISTRATION = "plans/reference/M5_R2_H3_8_MATCHED_DEV_PREREGISTRATION_FROZEN_20260917.md"
-DEFAULT_REPORT = Path("reports/r2_h3_8_matched_dev_20260917.json")
+DEFAULT_REPORT = Path("reports/r2_h3_8_matched_dev_v2_20260917.json")
 REPORT_FORMAT = "taiji-r2-h3-8-matched-dev-v1"
 SEEDS = (20260917, 20260918, 20260919)
 EPOCHS = 30
@@ -141,7 +144,13 @@ def _run_arm_seed(
     started = time.perf_counter()
     workspace_enabled = arm == "workspace"
     prototype = SequenceWorkspacePrototype(
-        SequenceWorkspaceConfig(seed=seed, workspace_enabled=workspace_enabled)
+        SequenceWorkspaceConfig(
+            seed=seed,
+            workspace_enabled=workspace_enabled,
+            renderer_width=(
+                64 if workspace_enabled else SEQUENCE_WORKSPACE_BASELINE_RENDERER_WIDTH
+            ),
+        )
     )
     trainer = SequenceWorkspaceTrainer(
         prototype, learning_rate=LEARNING_RATE, code_revision="h38-matched-dev"
@@ -274,6 +283,24 @@ def main(argv: list[str] | None = None) -> int:
 
     train = _load_split("train")
     dev = _load_split("dev")
+
+    # dev preregistration section 7.2 hard prerequisite, re-checked at run
+    # time: with the workspace parameters zeroed, logits must be exactly
+    # prefix-invariant; if not, this graph version is disqualified from dev
+    structural_check = SequenceWorkspacePrototype(
+        SequenceWorkspaceConfig(seed=SEEDS[0], workspace_enabled=True)
+    )
+    with torch.no_grad():
+        structural_check.named_parameter("workspace_key").zero_()
+        structural_check.named_parameter("workspace_value").zero_()
+    probe_response = b"probe"
+    channel_left = structural_check.teacher_forced_logits("前文甲。".encode(), probe_response)
+    channel_right = structural_check.teacher_forced_logits(
+        "完全不同的前文乙。".encode(), probe_response
+    )
+    if not torch.equal(channel_left, channel_right):
+        raise RuntimeError("single-prefix-channel structural gate failed; refusing dev")
+
     work_root = Path(tempfile.mkdtemp(prefix="h38-dev-"))
     results: dict[int, dict[str, dict[str, Any]]] = {}
     failures: list[dict[str, Any]] = []
@@ -308,6 +335,7 @@ def main(argv: list[str] | None = None) -> int:
     payload = {
         "format": REPORT_FORMAT,
         "version": 1,
+        "graph_version": SEQUENCE_WORKSPACE_VERSION,
         "preregistration": PREREGISTRATION,
         "corpus_digest": digest,
         "seeds": list(SEEDS),
