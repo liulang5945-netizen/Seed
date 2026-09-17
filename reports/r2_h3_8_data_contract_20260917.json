@@ -1,0 +1,73 @@
+{
+  "format": "taiji-r2-h3-8-joint-sequence-corpus-v1",
+  "version": 1,
+  "generation_seed": 20260917,
+  "generator": "scripts/training/build_taiji_r2_h3_8_corpus.py",
+  "fixture": "tests\\fixtures\\r2_h3_8_joint_sequence_v1.jsonl",
+  "corpus_digest": "5518ff500bbcb3551bc60cc13783442cd9fce870e8d17ee9dd4a7e165a17f6a8",
+  "splits": {
+    "dev": {
+      "episodes": 16,
+      "shapes": [
+        "combination_constraint",
+        "fact_replacement",
+        "negation",
+        "same_opening_different_content",
+        "unknown_information"
+      ],
+      "entities": [
+        "太阳",
+        "白",
+        "雪",
+        "黄"
+      ]
+    },
+    "final": {
+      "episodes": 16,
+      "shapes": [
+        "combination_constraint",
+        "fact_replacement",
+        "negation",
+        "same_opening_different_content",
+        "unknown_information"
+      ],
+      "entities": [
+        "夜晚",
+        "大海",
+        "橙",
+        "黑"
+      ]
+    },
+    "train": {
+      "episodes": 25,
+      "shapes": [
+        "combination_constraint",
+        "fact_replacement",
+        "negation",
+        "same_opening_different_content",
+        "unknown_information"
+      ],
+      "entities": [
+        "天空",
+        "树叶",
+        "绿",
+        "草",
+        "蓝"
+      ]
+    }
+  },
+  "checks": {
+    "unique_prefixes_within_split": true,
+    "prefixes_disjoint_across_splits": true,
+    "templates_disjoint_across_splits": true,
+    "entities_disjoint_across_splits": true,
+    "combinations_disjoint_across_splits": true,
+    "all_shapes_in_every_split": true,
+    "same_opening_pairs_share_opening": true
+  },
+  "outcome": "passed",
+  "failed_checks": [],
+  "policy": "generation rules are never exposed to any model; the old H3.x 12/8/4 fixture stays engineering regression only",
+  "growth_admitted": false,
+  "can_promote": false
+}

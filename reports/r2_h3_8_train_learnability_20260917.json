@@ -1,0 +1,186 @@
+{
+  "format": "taiji-r2-h3-8-train-learnability-v1",
+  "version": 1,
+  "corpus_digest": "5518ff500bbcb3551bc60cc13783442cd9fce870e8d17ee9dd4a7e165a17f6a8",
+  "split_read": "train",
+  "dev_read": false,
+  "final_read": false,
+  "seed": 20260917,
+  "epochs": 30,
+  "frozen_learning_rate": 0.01,
+  "train_episodes": 25,
+  "optimizer_steps_per_arm": 750,
+  "arms": {
+    "workspace": {
+      "arm": "workspace",
+      "workspace_enabled": true,
+      "learning_rate": 0.01,
+      "epochs": 30,
+      "episodes_trained": 750,
+      "parameter_count": 105057,
+      "initial": {
+        "mean_loss": 5.5663205337524415,
+        "mean_surprise_bits": 8.030503030043056,
+        "accuracy": 0.0,
+        "positions": 166.0
+      },
+      "final": {
+        "mean_loss": 0.3490122902393341,
+        "mean_surprise_bits": 0.5035183003375869,
+        "accuracy": 0.8132530120481928,
+        "positions": 166.0
+      },
+      "trajectory": [
+        {
+          "epoch": 1,
+          "mean_loss": 1.870988793373108,
+          "mean_surprise_bits": 2.6992662537582084,
+          "accuracy": 0.8072289156626506,
+          "positions": 166.0
+        },
+        {
+          "epoch": 5,
+          "mean_loss": 0.3227083557844162,
+          "mean_surprise_bits": 0.4655697445436085,
+          "accuracy": 0.8373493975903614,
+          "positions": 166.0
+        },
+        {
+          "epoch": 10,
+          "mean_loss": 0.32221323311328887,
+          "mean_surprise_bits": 0.4648554335213414,
+          "accuracy": 0.8373493975903614,
+          "positions": 166.0
+        },
+        {
+          "epoch": 15,
+          "mean_loss": 0.3172541654109955,
+          "mean_surprise_bits": 0.4577010111398101,
+          "accuracy": 0.8373493975903614,
+          "positions": 166.0
+        },
+        {
+          "epoch": 20,
+          "mean_loss": 0.32548768281936646,
+          "mean_surprise_bits": 0.4695794658739399,
+          "accuracy": 0.8373493975903614,
+          "positions": 166.0
+        },
+        {
+          "epoch": 25,
+          "mean_loss": 0.33927993059158323,
+          "mean_surprise_bits": 0.48947747333762887,
+          "accuracy": 0.8554216867469879,
+          "positions": 166.0
+        },
+        {
+          "epoch": 30,
+          "mean_loss": 0.3490122902393341,
+          "mean_surprise_bits": 0.5035183003375869,
+          "accuracy": 0.8132530120481928,
+          "positions": 166.0
+        }
+      ],
+      "loss_delta": -5.2173082435131075,
+      "train_learnable": true,
+      "checkpoint_digest": "b0c1acc774913964b2cf893572103b5232156a8a2e62077e206761bbe5aa4a89"
+    },
+    "baseline": {
+      "arm": "baseline",
+      "workspace_enabled": false,
+      "learning_rate": 0.01,
+      "epochs": 30,
+      "episodes_trained": 750,
+      "parameter_count": 65073,
+      "initial": {
+        "mean_loss": 5.560207061767578,
+        "mean_surprise_bits": 8.02168315432788,
+        "accuracy": 0.0,
+        "positions": 166.0
+      },
+      "final": {
+        "mean_loss": 0.3026496994495392,
+        "mean_surprise_bits": 0.4366312205223854,
+        "accuracy": 0.8433734939759037,
+        "positions": 166.0
+      },
+      "trajectory": [
+        {
+          "epoch": 1,
+          "mean_loss": 1.1385427117347717,
+          "mean_surprise_bits": 1.6425699240600278,
+          "accuracy": 0.7530120481927711,
+          "positions": 166.0
+        },
+        {
+          "epoch": 5,
+          "mean_loss": 0.3183822751045227,
+          "mean_surprise_bits": 0.4593285294002406,
+          "accuracy": 0.8433734939759037,
+          "positions": 166.0
+        },
+        {
+          "epoch": 10,
+          "mean_loss": 0.30827659130096435,
+          "mean_surprise_bits": 0.44474910949205504,
+          "accuracy": 0.8433734939759037,
+          "positions": 166.0
+        },
+        {
+          "epoch": 15,
+          "mean_loss": 0.30512052059173583,
+          "mean_surprise_bits": 0.4401958619311561,
+          "accuracy": 0.8433734939759037,
+          "positions": 166.0
+        },
+        {
+          "epoch": 20,
+          "mean_loss": 0.3039852869510651,
+          "mean_surprise_bits": 0.4385580659875101,
+          "accuracy": 0.8433734939759037,
+          "positions": 166.0
+        },
+        {
+          "epoch": 25,
+          "mean_loss": 0.3027459907531738,
+          "mean_surprise_bits": 0.43677013950861987,
+          "accuracy": 0.8433734939759037,
+          "positions": 166.0
+        },
+        {
+          "epoch": 30,
+          "mean_loss": 0.3026496994495392,
+          "mean_surprise_bits": 0.4366312205223854,
+          "accuracy": 0.8433734939759037,
+          "positions": 166.0
+        }
+      ],
+      "loss_delta": -5.257557362318039,
+      "train_learnable": true,
+      "checkpoint_digest": "186d75ea1c73adbd2667ebb79233823f6ecf58efd829ca245e081b22a3e14dc6"
+    }
+  },
+  "stability_finding": {
+    "probe_learning_rate": 0.05,
+    "probe_epochs": 30,
+    "arm": "workspace_high_lr_stability_probe",
+    "initial": {
+      "mean_loss": 5.5663205337524415,
+      "mean_surprise_bits": 8.030503030043056,
+      "accuracy": 0.0,
+      "positions": 166.0
+    },
+    "final": {
+      "mean_loss": 9.855152931213379,
+      "mean_surprise_bits": 14.217980261063873,
+      "accuracy": 0.6385542168674698,
+      "positions": 166.0
+    },
+    "diverged": true,
+    "reading": "the workspace arm is lr-sensitive over the full budget: at 0.05 its loss rises above the initial value while the baseline tolerates that rate, so the shared frozen learning rate is 0.01 (stable for both arms).  This is an optimizer-stability finding, not a data finding; per contract section 4 the response is to return to the computation graph rather than add epochs or data"
+  },
+  "outcome": "passed",
+  "reading": "train-only learnability probe; numbers inform the matched-dev budget freeze and are not capability claims",
+  "growth_admitted": false,
+  "can_promote": false
+}

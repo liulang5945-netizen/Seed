@@ -21,7 +21,7 @@
       "decoder_bias"
     ],
     "parameter_count": 105057,
-    "initialization_digest": "1fd37ca821b72c18b7a6a9be5a6665cdee5ebcdd58288ed6517886b2300a57a6"
+    "initialization_digest": "0891c5086933fd8cd7f96805d46f3df2c13f8a305b61d1df13b019fc0342e5df"
   },
   "static_checks": {
     "ruff": {
@@ -80,20 +80,21 @@
       "tests/taiji_native/test_sequence_workspace_contract.py",
       "-q",
       "--no-header",
-      "--junitxml=C:\\Users\\23747\\AppData\\Local\\Temp\\h38-gates-vhj5j7vy\\gates.xml"
+      "--junitxml=C:\\Users\\23747\\AppData\\Local\\Temp\\h38-gates-s0kzplay\\gates.xml"
     ],
     "returncode": 0,
     "passed": true,
     "tail": [
-      "...........                                                              [100%]",
-      "11 passed in 5.80s"
+      "............                                                             [100%]",
+      "12 passed in 5.64s"
     ]
   },
   "gates": {
     "gate1_isolation_and_inventory": {
       "tests": [
         "test_gate1_parameter_inventory_matches_the_declared_list",
-        "test_gate1_prototype_is_isolated_from_the_default_entry"
+        "test_gate1_prototype_is_isolated_from_the_default_entry",
+        "test_gate1_baseline_arm_inventory_and_shared_initialization"
       ],
       "passed": true
     },

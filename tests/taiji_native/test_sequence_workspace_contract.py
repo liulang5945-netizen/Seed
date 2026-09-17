@@ -17,6 +17,7 @@ import torch
 
 from taiji.internalization import content_digest
 from taiji.sequence_workspace import (
+    SEQUENCE_WORKSPACE_BASELINE_PARAMETERS,
     SEQUENCE_WORKSPACE_PARAMETERS,
     SequenceWorkspaceConfig,
     SequenceWorkspacePrototype,
@@ -60,6 +61,25 @@ def test_gate1_prototype_is_isolated_from_the_default_entry() -> None:
     for module_name in ("taiji.model", "taiji.organs"):
         source = Path(importlib.import_module(module_name).__file__).read_text(encoding="utf-8")
         assert "sequence_workspace" not in source, module_name
+
+
+def test_gate1_baseline_arm_inventory_and_shared_initialization() -> None:
+    baseline = SequenceWorkspacePrototype(SequenceWorkspaceConfig(seed=7, workspace_enabled=False))
+    assert baseline.declared_parameter_names() == SEQUENCE_WORKSPACE_BASELINE_PARAMETERS
+    assert tuple(name for name, _ in baseline.named_parameters()) == tuple(
+        SEQUENCE_WORKSPACE_BASELINE_PARAMETERS
+    )
+    workspace = _prototype()
+    assert baseline.parameter_count() < workspace.parameter_count()
+    # shared tensors carry identical initial values so the two arms differ only
+    # by the workspace path (contract section 3's same-seed requirement)
+    for name, parameter in baseline.named_parameters():
+        if name == "decoder":
+            continue
+        torch.testing.assert_close(parameter, workspace.named_parameter(name), rtol=0, atol=0)
+    loss, metrics = baseline.sequence_loss(*_batch()[0])
+    assert bool(torch.isfinite(loss))
+    assert metrics["positions"] > 0
 
 
 # --------------------------------------------------------------------------- #

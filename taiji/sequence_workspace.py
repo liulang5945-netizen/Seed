@@ -61,7 +61,9 @@ SEQUENCE_WORKSPACE_SERIALIZATION = "torch.save/atomic"
 
 #: Declared trainable parameter inventory, in construction order.  The
 #: implementation gate asserts this list against the live tensors, so a future
-#: edit cannot add an undeclared trainable tensor.
+#: edit cannot add an undeclared trainable tensor.  The workspace arm carries
+#: the content-addressing tensors; the matched baseline arm (contract section 3)
+#: has no workspace and therefore no addressing path.
 SEQUENCE_WORKSPACE_PARAMETERS: tuple[str, ...] = (
     "prefix_embedding",
     "prefix_input",
@@ -75,6 +77,24 @@ SEQUENCE_WORKSPACE_PARAMETERS: tuple[str, ...] = (
     "address_query",
     "workspace_key",
     "workspace_value",
+    "decoder",
+    "decoder_bias",
+)
+
+#: Declared inventory of the no-workspace baseline arm.  It keeps every
+#: non-workspace tensor; ``decoder`` is narrower because there is no read
+#: vector to concatenate.  The two arms' parameter counts differ and the
+#: contract requires disclosing that rather than hiding it.
+SEQUENCE_WORKSPACE_BASELINE_PARAMETERS: tuple[str, ...] = (
+    "prefix_embedding",
+    "prefix_input",
+    "prefix_recur",
+    "prefix_bias",
+    "renderer_start",
+    "renderer_embedding",
+    "renderer_input",
+    "renderer_recur",
+    "renderer_bias",
     "decoder",
     "decoder_bias",
 )
@@ -99,6 +119,7 @@ class SequenceWorkspaceConfig:
     max_sequence_bytes: int = 512
     alphabet_size: int = SEQUENCE_WORKSPACE_ALPHABET
     boundary_symbol: int = SEQUENCE_WORKSPACE_BOUNDARY
+    workspace_enabled: bool = True
 
     def __post_init__(self) -> None:
         for name in ("prefix_width", "slots", "slot_width", "renderer_width"):
@@ -122,15 +143,21 @@ class SequenceWorkspaceConfig:
             "max_sequence_bytes": int(self.max_sequence_bytes),
             "alphabet_size": int(self.alphabet_size),
             "boundary_symbol": int(self.boundary_symbol),
+            "workspace_enabled": bool(self.workspace_enabled),
         }
 
 
 @dataclass(frozen=True)
 class WorkspaceState:
-    """Renderer state carried across one response.  Immutable on purpose."""
+    """Renderer state carried across one response.  Immutable on purpose.
 
-    workspace_key: torch.Tensor  # (slots, slot_width) -- frozen after begin
-    workspace_value: torch.Tensor  # (slots, slot_width) -- frozen after begin
+    The workspace tensors are ``None`` in the no-workspace baseline arm
+    (contract section 3); they are frozen after ``begin_episode`` in the
+    workspace arm.
+    """
+
+    workspace_key: torch.Tensor | None  # (slots, slot_width) -- frozen after begin
+    workspace_value: torch.Tensor | None  # (slots, slot_width) -- frozen after begin
     renderer_state: torch.Tensor  # (renderer_width,)
 
 
@@ -155,13 +182,18 @@ class SequenceWorkspacePrototype:
     def __init__(self, config: SequenceWorkspaceConfig | None = None) -> None:
         self.config = config or SequenceWorkspaceConfig()
         self._parameters: dict[str, torch.nn.Parameter] = {}
-        generator = torch.Generator().manual_seed(int(self.config.seed))
         pw = int(self.config.prefix_width)
         rw = int(self.config.renderer_width)
         slots = int(self.config.slots)
         sw = int(self.config.slot_width)
 
         def make(name: str, shape: tuple[int, ...], scale: float) -> None:
+            # Per-name determinism: the two contract arms share the same seed,
+            # and every tensor that exists in both arms must also share its
+            # initial values, so the comparison is attributable to the
+            # workspace and not to initialization order.
+            index = SEQUENCE_WORKSPACE_PARAMETERS.index(name)
+            generator = torch.Generator().manual_seed(int(self.config.seed) * 1_000_003 + index)
             tensor = (
                 torch.rand(shape, generator=generator, dtype=torch.float32) * 2.0 - 1.0
             ) * scale
@@ -176,16 +208,29 @@ class SequenceWorkspacePrototype:
         make("renderer_input", (rw, rw), 1.0 / math.sqrt(rw))
         make("renderer_recur", (rw, rw), 1.0 / math.sqrt(rw))
         make("renderer_bias", (rw,), 0.1)
-        make("address_query", (rw, sw), 1.0 / math.sqrt(rw))
-        make("workspace_key", (rw, slots * sw), 1.0 / math.sqrt(rw))
-        make("workspace_value", (rw, slots * sw), 1.0 / math.sqrt(rw))
-        make("decoder", (rw + sw, self.config.alphabet_size), 1.0 / math.sqrt(rw + sw))
+        decoder_columns = rw + sw if self.config.workspace_enabled else rw
+        if self.config.workspace_enabled:
+            make("address_query", (rw, sw), 1.0 / math.sqrt(rw))
+            make("workspace_key", (rw, slots * sw), 1.0 / math.sqrt(rw))
+            make("workspace_value", (rw, slots * sw), 1.0 / math.sqrt(rw))
+        make(
+            "decoder",
+            (decoder_columns, self.config.alphabet_size),
+            1.0 / math.sqrt(decoder_columns),
+        )
         make("decoder_bias", (self.config.alphabet_size,), 0.1)
 
     # ---------------------------------------------------------------- inventory
 
+    def declared_parameter_names(self) -> tuple[str, ...]:
+        return (
+            SEQUENCE_WORKSPACE_PARAMETERS
+            if self.config.workspace_enabled
+            else SEQUENCE_WORKSPACE_BASELINE_PARAMETERS
+        )
+
     def named_parameters(self) -> tuple[tuple[str, torch.nn.Parameter], ...]:
-        return tuple((name, self._parameters[name]) for name in SEQUENCE_WORKSPACE_PARAMETERS)
+        return tuple((name, self._parameters[name]) for name in self.declared_parameter_names())
 
     def named_parameter(self, name: str) -> torch.nn.Parameter:
         if name not in self._parameters:
@@ -199,10 +244,7 @@ class SequenceWorkspacePrototype:
             parameter.grad = None
 
     def parameters(self) -> tuple[torch.nn.Parameter, ...]:
-        return tuple(self._parameters[name] for name in SEQUENCE_WORKSPACE_PARAMETERS)
-
-    def declared_parameter_names(self) -> tuple[str, ...]:
-        return SEQUENCE_WORKSPACE_PARAMETERS
+        return tuple(self._parameters[name] for name in self.declared_parameter_names())
 
     def parameter_count(self) -> int:
         return int(sum(parameter.numel() for parameter in self.parameters()))
@@ -231,8 +273,12 @@ class SequenceWorkspacePrototype:
         h0 = self._embed_prefix(prefix)
         slots = int(self.config.slots)
         sw = int(self.config.slot_width)
-        workspace_key = (h0 @ self._parameters["workspace_key"]).reshape(slots, sw)
-        workspace_value = (h0 @ self._parameters["workspace_value"]).reshape(slots, sw)
+        if self.config.workspace_enabled:
+            workspace_key = (h0 @ self._parameters["workspace_key"]).reshape(slots, sw)
+            workspace_value = (h0 @ self._parameters["workspace_value"]).reshape(slots, sw)
+        else:
+            workspace_key = None
+            workspace_value = None
         renderer_state = torch.tanh(h0 @ self._parameters["renderer_start"])
         return WorkspaceState(workspace_key, workspace_value, renderer_state)
 
@@ -248,16 +294,21 @@ class SequenceWorkspacePrototype:
         symbol = int(previous_symbol)
         if not 0 <= symbol < self.config.alphabet_size:
             raise ValueError("renderer symbol is outside the native byte alphabet")
-        read = self._content_read(state, detach=detach_workspace_read)
         renderer_state = torch.tanh(
             self._parameters["renderer_embedding"][symbol] @ self._parameters["renderer_input"]
             + state.renderer_state @ self._parameters["renderer_recur"]
             + self._parameters["renderer_bias"]
         )
-        logits = (
-            torch.cat((renderer_state, read), dim=0) @ self._parameters["decoder"]
-            + self._parameters["decoder_bias"]
-        )
+        if self.config.workspace_enabled:
+            read = self._content_read(state, detach=detach_workspace_read)
+            logits = (
+                torch.cat((renderer_state, read), dim=0) @ self._parameters["decoder"]
+                + self._parameters["decoder_bias"]
+            )
+        elif detach_workspace_read:
+            raise ValueError("the no-workspace baseline arm has no workspace read to detach")
+        else:
+            logits = renderer_state @ self._parameters["decoder"] + self._parameters["decoder_bias"]
         return (
             WorkspaceState(state.workspace_key, state.workspace_value, renderer_state),
             logits,
@@ -268,6 +319,8 @@ class SequenceWorkspacePrototype:
 
         key = state.workspace_key
         value = state.workspace_value
+        if key is None or value is None:
+            raise ValueError("content addressing requires the workspace arm")
         if detach:
             key = key.detach()
             value = value.detach()
@@ -345,7 +398,8 @@ class SequenceWorkspacePrototype:
         }
 
     def load_parameter_payload(self, payload: Mapping[str, Any]) -> None:
-        missing = [name for name in SEQUENCE_WORKSPACE_PARAMETERS if name not in payload]
+        declared = self.declared_parameter_names()
+        missing = [name for name in declared if name not in payload]
         if missing:
             raise ValueError(f"sequence workspace checkpoint is missing parameters: {missing}")
         for name, parameter in self.named_parameters():
@@ -469,7 +523,7 @@ class SequenceWorkspaceTrainer:
             "code_revision": self.code_revision,
             "config": self.prototype.config.to_payload(),
             "parameters": self.prototype.parameter_payload(),
-            "parameter_names": list(SEQUENCE_WORKSPACE_PARAMETERS),
+            "parameter_names": list(self.prototype.declared_parameter_names()),
             "optimizer": _clone_optimizer_state(self.optimizer.state_dict()),
             "rng_state": torch.get_rng_state().clone(),
             "episodes": [
