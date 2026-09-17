@@ -2,6 +2,8 @@
 
 Research evidence: [Current results and conclusions (Chinese)](plans/reference/PROJECT_RESULTS_AND_CONCLUSIONS_20260917.md), separating validated mechanisms, negative results, actual outputs, and unresolved capability gaps.
 
+Current design status (2026-09-17): M5/R2 native language research is paused; no new architecture is adopted. The [single VISION](plans/reference/VISION_FUTURE_TECHNOLOGY.md) now compares five concrete high-ceiling designs (§15–16). Nonzero R2 scores have not exceeded the constant-answer baseline on the latest development set; see the [evidence audit](plans/reference/M5_R2_DESIGN_EVIDENCE_AUDIT_20260917.md). The [execution plan](plans/active/roadmap/03_CURRENT_EXECUTION.md) is the sole source for the next decision; older experiment descriptions below are not current execution instructions.
+
 Seed provides the project, product and runtime that trains, evaluates, deploys and hosts **Taiji** —
 a native cognitive architecture being built from online predictive-coding mechanisms, not from
 a Transformer wrapper. The kernel learns from **local prediction errors** (no backpropagation,
@@ -11,8 +13,8 @@ while deliberately reusing mature algorithms (embeddings, SSMs, MoE-style routin
 
 For the non-hype picture: the repository contains both the **Seed product shell** and the
 **Taiji research runtime**. The lowest-level executable substrate is the **Taiji Substrate
-Kernel v8 (TSK-v8)**, while the current M5 work evaluates a content-addressed K-axis learning
-and selection track on top of Taiji state and workbench contracts. These are working research
+Kernel v8 (TSK-v8)**, while the current M5 work focuses on R2 native language capability;
+the K-axis learning and selection results remain separate, limited evidence. These are working research
 systems, not a completed cognitive architecture or a released general-purpose model (see
 [Status](#status)).
 
@@ -78,9 +80,9 @@ window, a KV cache, a RAG hit, or a Python list.
 ### Learning: two planes
 
 1. **Developmental training** — batch offline formation of perceptual hierarchies, world
-   model, semantic memory and language organs. When it uses optimizers/distillation they are
-   explicitly marked `native-assisted`; the native kernel meanwhile runs its own local delta
-   rules (no `backward()` anywhere in `taiji/` since 2026-08-26).
+   model, semantic memory and language organs. Algorithms and supervision sources are disclosed
+   separately: optimizers/autograd do not imply an external teacher. The substrate retains local
+   delta rules; isolated sequence prototypes also use `backward()`, as allowed by the current architecture contract.
 2. **Lifetime learning** — runtime adaptation through local prediction errors, eligibility
    traces, reward/novelty modulation, episodic write, replay and structural plasticity, without
    catastrophic forgetting.
