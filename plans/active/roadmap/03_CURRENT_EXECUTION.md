@@ -1,10 +1,10 @@
 # Seed / Taiji 当前详细推进方案
 
-更新：2026-09-17。规划完善已交付；当前为用户 `/goal` 指令下的开发推进，首个开发包 R2-D1 可辨识 dev 测量仪器已执行并结项。本文同时登记开发路径、当前模式和唯一活动入口。[01](01_SCOPE_AND_PHASES.md)管大阶段，[02](02_GATES_AND_CI.md)管证据与晋级，[07](07_MINI_MODEL_DELIVERY.md)管用户验收。[根需求](../TAIJI_CORE_REQUIREMENTS.md)与[架构合同](../TAIJI_NATIVE_ARCHITECTURE_V1.md)定义目的、职责和规则层级。
+更新：2026-09-18。R2-D1 测量仪器已结项；R2-D2 学习假设（H-A1 逐位置证据记忆，VISION 方案 A 最小切片）预注册已冻结，当前处于实现门阶段（零训练）。本文同时登记开发路径、当前模式和唯一活动入口。[01](01_SCOPE_AND_PHASES.md)管大阶段，[02](02_GATES_AND_CI.md)管证据与晋级，[07](07_MINI_MODEL_DELIVERY.md)管用户验收。[根需求](../TAIJI_CORE_REQUIREMENTS.md)与[架构合同](../TAIJI_NATIVE_ARCHITECTURE_V1.md)定义目的、职责和规则层级。
 
-## 当前唯一下一步：R2-D1 仪器已结项，冻结下一学习假设包合同
+## 当前唯一下一步：R2-D2 实现门（graph v3，零训练），通过后才进入可学习性 probe
 
-**当前为M5 / R2原生语言能力；首个开发包（R2-D1 可辨识 dev 测量仪器）已结项，研究在仪器范围内推进，训练授权未新开。** H3.7/H3.8旧候选已结案；后续目标、容量、课程扫描及672档六seed巩固也已有结果，不能继续以P3b缺报告或“两次pilot全零”描述当前进度。R2-D1 已产出新身份 dev（corpus digest `53ac9f88695f…`）并通过 Q1–Q5 全部门：可接受固定策略天花板 M1=0.1735、M3=0.0581、M4=0.0，读背景参照解题器 M1/M3/M4/M5 全为 1.0。没有L2/M5晋级、默认模型迁移或Mini交付；本包不训练模型、不读封存 final。
+**当前为M5 / R2原生语言能力；首个学习假设包 R2-D2 已开包，合同冻结、实现未启。** H3.7/H3.8旧候选已结案；后续目标、容量、课程扫描及672档六seed巩固也已有结果，不能继续以P3b缺报告或“两次pilot全零”描述当前进度。R2-D1 已产出新身份 dev（corpus digest `53ac9f88695f…`）并通过 Q1–Q5 全部门：可接受固定策略天花板 M1=0.1735、M3=0.0581、M4=0.0，读背景参照解题器 M1/M3/M4/M5 全为 1.0。R2-D2 将在该 dev 上检验逐位置证据记忆假设（A=82,593 参数 vs C1 等机制广播对照 vs C0 v2 锚点 101,025）；实现门七项全绿且 checkpoint 前置检查通过前不启动训练，不读封存 final，没有L2/M5晋级或默认模型迁移。
 
 **本轮任务定位：完善与补全计划，用于指导后续开发。** [唯一VISION](../../reference/VISION_FUTURE_TECHNOLOGY.md)保留五套高上限方案，本文§5补齐能力目标、依赖、开发顺序、交付、验证及结果处置，01 §6衔接全项目阶段。此前将A-R2评审设为队首过早收窄了用户意图，本轮撤回：A-R2仅为规格示例，不是已选路线或必须立即作出的采用决定。多方案规划可以并列，未来实际实施仍须有明确范围。
 
@@ -27,7 +27,7 @@
 
 规划交付是一份可以回答“做什么、为什么、先后关系、做出什么、怎样验、结果不好怎么办”的开发指导计划，而不是要求用户现在从A/B/C/D/E选赢家。规划完成不等于研发完成；仍待标定的数值列明求取方法与冻结时点，不假装已经确认。
 
-**唯一后续建议：冻结下一学习假设包（§5.3 第 2 段）合同。** 该合同必须引用 R2-D1 dev digest `53ac9f88695f…`、以 M1–M5 为主指标族（可加不可换）、冻结单一学习假设与最少对照（含无上下文模型基线的执行方式，合同 §4.2）、训练/数值预算单独冻结；合同冻结前不启动训练。R2-D1 卡片已转结项指针（§5.7）。
+**唯一下一步：执行 R2-D2 实现门（零训练）。** H-A1 假设与三臂定义、G1–G6 门阈值、数值预算（probe 1 运行 + matched 9 运行、30 epochs、CPU 墙钟上限已冻结）全部在[预注册合同](../../reference/M5_R2_D2_PER_POSITION_EVIDENCE_PREREGISTRATION_FROZEN_20260918.md)中冻结；实现门七项（参数清单/单通道/逐位置身份/梯度因果/lesion 接线/恢复/无上下文构造）全绿并完成 checkpoint 前置检查后，才进入 train-only 可学习性 probe；probe 过线后才跑三 seed matched dev。任何一门不过按合同 §6 预承诺路由，不扩预算、不移动判据。R2-D1 卡片保留为结项指针（§5.7）。
 
 **路线纠正继续有效**：主线是R2材料/问题/上下文→原生自由回答；最小任务族只是一种验证方法，D的真实行动环境、E的在线能力不成为R2前置。七次旧追加移到[历史快照](../../archive/history/R2_DIAGNOSTIC_QUEUE_BEFORE_DESIGN_OPTIONS_20260917.md)，保留原始负结果和当时判断，不再与本节争夺队首。
 
@@ -176,21 +176,26 @@
 - CI按修改面做相关回归，持续记账本地与远端状态；训练/测试不得写入产品checkpoint或未经隔离的共享目录。存量技术债只在实际阻塞当前包时纳入，不要求先清完全部债。
 - 批准范围之外的训练/默认行为/真实动作不由计划文字自动授权。用户 `/goal` 开发指令已切换至开发推进（R2-D1 仪器包为首个、已结项）；训练预算与默认行为变更仍须在具体包合同中单独冻结，不提前排日期、选硬件或承诺能力。
 
-### 5.7 开发包卡片（结项历史指针；新包开包时在此登记唯一活动卡）
+### 5.7 当前开发包卡片（唯一活动卡）与结项历史指针
 
-**R2-D1 可辨识 dev 测量仪器 v1 — 已结项（2026-09-17，Q1–Q5 全过）**
+**R2-D2 逐位置证据记忆（H-A1，VISION 方案 A 最小切片）— 活动（开包 2026-09-18，实现门阶段，零训练）**
 
-| 项目 | 结项记录 |
+| 项目 | 内容 |
 |---|---|
-| 目的/范围 | 建立下一学习假设包的共同 dev：结构上区分无条件/表层命中与内容条件改善。仅仪器与固定策略；未训练/加载模型，未读封存 final，未改 taiji/ 代码 |
-| 交付与身份 | 生成器 [build_taiji_r2_d1_measurement_fixture.py](../../../scripts/training/build_taiji_r2_d1_measurement_fixture.py)、fixture `tests/fixtures/r2_d1_measurement_v1.jsonl`（train 174 / dev 98 / final 94）、评分器 [eval_taiji_r2_d1_surface_policies.py](../../../scripts/training/eval_taiji_r2_d1_surface_policies.py)；corpus digest `53ac9f88695f135d0bb04b4d25d98ab686c82175c45ca8d4d53e64639efbeecb` |
-| 资格门结果 | Q1 结构门过（七形状齐备、四向分离、dev 11 翻转对+4 不变对、配对结构与非相邻）；Q2 max(b0,b1,b2) M1=0.1735 ≤0.50；Q3 M3=0.0581 ≤0.50；Q4 M4=0.0；Q5 参照键 M1/M3/M4/M5=1.0 |
-| 诊断证据 | b3_oracle_shape（金形状标签，非可接受臂）M4=5/11=0.4545：组合对可由形状标签答对，6 个 fact_flip 全错——不读背景内容在结构上不可能完成内容翻转 |
-| 产物报告 | [数据合同报告](../../../reports/r2_d1_data_contract_20260917.json)、[表面策略基线报告](../../../reports/r2_d1_surface_baselines_20260917.json)（`growth_admitted=false`、`can_promote=false`）；合同 [M5_R2_D1_DEV_MEASUREMENT_CONTRACT_FROZEN_20260917.md](../../reference/M5_R2_D1_DEV_MEASUREMENT_CONTRACT_FROZEN_20260917.md) |
-| 仪器循环记录 | 首轮生成失败两处已按合同回生成器修复（不救分、不移动判据）：combo 对误用模回绕致 dev 6 对（合同为 5 个相邻对象对）；invariance 选色与 fact_flip 重叠致单字段配对链接互相覆盖。参照解题器同步按三 split 措辞重写 |
-| 结果去向 | dev 成为 §5.3 第 2 段的同一固定 dev；下一学习假设包合同必须引用本 digest、以 M1–M5 为主指标族（可加不可换）；训练/数值预算在该合同单独冻结 |
+| 目的/范围 | 在 R2-D1 可辨识 dev 上检验单一学习假设：证据条目逐位置写入（而非末状态一次派生）能否形成内容条件自由回答。只改隔离原型信息路径；不读 final、不动默认入口、不加 copy/辅助损失/快参数 |
+| 假设与替代解释 | H-A1：损失族（H-GEN/H-OBJ/H-FBW）与容量族（wide 2×）全灭后，收敛点为「内容如何从 prefix 状态进入生成路径」；替代解释由 C1（等机制 h0 广播，无逐位置信息）与 C0（v2 血缘锚点）承接，lesion 与无上下文基线排除捷径 |
+| 输入和接口 | D1 fixture（digest `53ac9f88695f…`，train 174/dev 98）；`sequence_workspace.py` graph v3，配置 `evidence_source=per_position/broadcast_final/final_state_slots`，checkpoint 版本 2→3 双读路径 |
+| 方案与修改面 | A/C1=82,593 参数（evidence_key/value 替换 workspace_key/value），C0=101,025；renderer、CE、seed 规则不变；misbind（V 相对 K 循环移位 L//2）与 zero_read 两评测 lesion；无上下文基线为同 checkpoint 删材料从句重评 |
+| 数据与学习 | 纯因果序列 CE，无新损失项；Adam lr=0.05；30 epochs；probe 1 运行先行（loss≤0.50 且 train M1≥0.90），过线后 matched 3 seeds×3 臂 |
+| 预算和可运行性 | CPU 单线程；probe wall 20 min、matched 30 min/运行×9，最坏约 5 小时；checkpoint 隔离目录，训练前完成保存/恢复前置检查 |
+| 评价和交付 | M1–M5（D1 冻结定义）；G1 M3≥0.26 且 δ_C1≥0.20；G2 M4≥0.50 且 δ_C1≥0.25、fact_flip≥2/6；G3 misbind ΔM4≥0.50；G4 上下文 ΔM3≥0.30；G5 seed 一致性；G6 boundary/恢复；门阈值见前看 dev 前冻结的合同 |
+| 结果去向 | 全门过 ⇒ 内容条件收益首次在可辨识 dev 上获支持，转 §5.3 第 3 段能力覆盖扩大（copy/压缩另包，不读 final）；不过按合同 §6 路由（A≈C1→B 绑定；fact 过 combo 垮→C 计算；仅 M1 升/lesion 不掉→否决），不扩预算 |
 
-01 §6 回看：R2 行「先有可辨识评价/数据/真实输出合同」前置已满足；离 L2、联合能力、M5 退出、产品采用的距离无实质变化——本包只关闭测量缺口，不计为能力阶段进度。
+合同：[M5_R2_D2_PER_POSITION_EVIDENCE_PREREGISTRATION_FROZEN_20260918.md](../../reference/M5_R2_D2_PER_POSITION_EVIDENCE_PREREGISTRATION_FROZEN_20260918.md)；假设选择与各候选取舍：[M5_R2_D2_HYPOTHESIS_SELECTION_MEMO_20260918.md](../../reference/M5_R2_D2_HYPOTHESIS_SELECTION_MEMO_20260918.md)。
+
+**结项历史指针：R2-D1 可辨识 dev 测量仪器 v1（2026-09-17，Q1–Q5 全过）。** 交付生成器/评分器/fixture（train 174/dev 98/final 94，digest `53ac9f88695f135d0…`）；天花板 M1=0.1735、M3=0.0581、M4=0.0，参照键全 1.0，b3 诊断 M4=5/11。合同 [D1 FROZEN](../../reference/M5_R2_D1_DEV_MEASUREMENT_CONTRACT_FROZEN_20260917.md)、[数据报告](../../../reports/r2_d1_data_contract_20260917.json)、[基线报告](../../../reports/r2_d1_surface_baselines_20260917.json)。本包只关闭测量缺口，不计为能力阶段进度。
+
+01 §6 回看：R2 行测量前置已满足；离 L2、联合能力、M5 退出、产品采用的距离无实质变化——能力结论以 R2-D2 门结果为准。
 
 ## 6. 防止规则再次变成僵硬闸门
 
