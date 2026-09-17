@@ -9,6 +9,8 @@ Seed 是训练、评估、部署并托管 **Taiji** 的项目、产品与运行�
 
 ## 语言 / Language
 
+研究进展入口：[当前结果与结论总览](plans/reference/PROJECT_RESULTS_AND_CONCLUSIONS_20260917.md)（已验证成果、负结果、真实输出、证据边界与未完成项）。
+
 - **简体中文**：本页为中文项目介绍
 - **English version**: [README.md](README.md)
 

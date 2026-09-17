@@ -4,6 +4,8 @@
 
 ## 项目位置
 
+先读[当前结果与结论总览](reference/PROJECT_RESULTS_AND_CONCLUSIONS_20260917.md)：按正向成果、负结果、不可判结果、真实输出和结论边界整理；运行收束状态见[收束记录](reference/PROJECT_CONSOLIDATION_20260917.md)。
+
 当前仍为M5知识与身体。2026-09-17按用户要求[阶段收束并暂停](reference/PROJECT_CONSOLIDATION_20260917.md)：H3.7B已结项，H3.8 v1/v2停止投入，P3b-v2中断未判定；没有阶段晋级或Mini交付。不执行下方历史文档的旧“下一步”，唯一执行状态以[03当前裁决](active/roadmap/03_CURRENT_EXECUTION.md)为准。
 
 P3b两臂已停止，数据分布效应只有一个共同检查点，阶段结论应按“不可判”封存；64预算在线复测是未提交候选，不能继续仅写“等训练结束”或“放宽预算即可通过”。

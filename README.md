@@ -1,5 +1,7 @@
 # Seed — runtime for the Taiji Native Cognitive Architecture
 
+Research evidence: [Current results and conclusions (Chinese)](plans/reference/PROJECT_RESULTS_AND_CONCLUSIONS_20260917.md), separating validated mechanisms, negative results, actual outputs, and unresolved capability gaps.
+
 Seed provides the project, product and runtime that trains, evaluates, deploys and hosts **Taiji** —
 a native cognitive architecture being built from online predictive-coding mechanisms, not from
 a Transformer wrapper. The kernel learns from **local prediction errors** (no backpropagation,
