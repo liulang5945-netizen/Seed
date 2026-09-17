@@ -377,10 +377,70 @@ class SequenceWorkspacePrototype:
         logits.append(step_logits)
         return torch.stack(logits, dim=0)
 
-    def sequence_loss(self, prefix: bytes, response: bytes) -> tuple[torch.Tensor, dict[str, Any]]:
-        """Real next-byte cross-entropy over the response plus the end marker."""
+    def _response_logits(
+        self,
+        prefix: bytes,
+        response: bytes,
+        *,
+        generation_state_ratio: float,
+        generator: torch.Generator | None = None,
+    ) -> torch.Tensor:
+        """Logits for the response positions, optionally under **scheduled sampling**.
 
-        logits = self.teacher_forced_logits(prefix, response)
+        ``generation_state_ratio == 0`` delegates to :meth:`teacher_forced_logits`
+        so the teacher-forced path stays bit-identical.  Above zero, the symbol fed
+        into the next step is the model's own ``argmax`` with that probability
+        (the *targets* are unaffected -- the caller still scores the true symbols).
+        """
+
+        if generation_state_ratio <= 0.0:
+            return self.teacher_forced_logits(prefix, response)
+        response = _validate_bytes(response, "response")
+        total = len(prefix) + len(response) + 1
+        if total > int(self.config.max_sequence_bytes):
+            raise ValueError(
+                "sequence exceeds max_sequence_bytes; truncation needs its own contract"
+            )
+        state = self.begin_episode(prefix)
+        collected: list[torch.Tensor] = []
+        previous = self.config.boundary_symbol
+        for symbol in response:
+            state, step_logits = self.step(state, previous)
+            collected.append(step_logits)
+            draw = float(torch.rand((), generator=generator).item())
+            if draw < generation_state_ratio:
+                # Scheduled sampling: condition the next step on what the model
+                # itself predicts (detached -- the sampling decision carries no
+                # gradient; the cross-entropy targets do).
+                previous = int(step_logits.detach().argmax(dim=0))
+            else:
+                previous = int(symbol)
+        state, step_logits = self.step(state, previous)
+        collected.append(step_logits)
+        return torch.stack(collected, dim=0)
+
+    def sequence_loss(
+        self,
+        prefix: bytes,
+        response: bytes,
+        *,
+        generation_state_ratio: float = 0.0,
+        generator: torch.Generator | None = None,
+    ) -> tuple[torch.Tensor, dict[str, Any]]:
+        """Real next-byte cross-entropy over the response plus the end marker.
+
+        The **targets are always the true symbols**; ``generation_state_ratio`` only
+        changes the prefix the model conditions on (scheduled sampling).  ``0.0``
+        reproduces the teacher-forced path exactly, which is what the frozen H3.8
+        records rely on.
+        """
+
+        ratio = float(generation_state_ratio)
+        if not 0.0 <= ratio <= 1.0:
+            raise ValueError("generation_state_ratio must be in [0, 1]")
+        logits = self._response_logits(
+            prefix, response, generation_state_ratio=ratio, generator=generator
+        )
         targets = torch.tensor(
             [int(symbol) for symbol in response] + [int(self.config.boundary_symbol)],
             dtype=torch.long,
@@ -486,6 +546,40 @@ class SequenceWorkspaceTrainer:
         self.data_order: tuple[int, ...] = ()
         self.cursor = 0
         self.global_step = 0
+        # Scheduled-sampling state.  ``phi_max == 0`` (the default) keeps the
+        # teacher-forced path exactly as before.  It is deliberately **not** part
+        # of the checkpoint: it is a training-time schedule, not model state, so a
+        # restored trainer must re-enable it explicitly (see the H-GEN spec).
+        self.generation_state_ratio_max = 0.0
+        self.generation_state_total_steps = 0
+        self.sampling_generator: torch.Generator | None = None
+
+    def enable_scheduled_sampling(
+        self,
+        *,
+        phi_max: float,
+        total_steps: int,
+        generator: torch.Generator | None = None,
+    ) -> None:
+        """Freeze ``phi_max`` and the linear-schedule horizon (H-GEN spec §5)."""
+
+        value = float(phi_max)
+        if not 0.0 <= value <= 1.0:
+            raise ValueError("phi_max must be in [0, 1]")
+        if int(total_steps) <= 0:
+            raise ValueError("total_steps must be positive")
+        self.generation_state_ratio_max = value
+        self.generation_state_total_steps = int(total_steps)
+        self.sampling_generator = generator
+
+    def current_generation_state_ratio(self) -> float:
+        """φ(t) = φ_max · global_step / total_steps, capped at φ_max."""
+
+        if self.generation_state_ratio_max <= 0.0:
+            return 0.0
+        horizon = max(1, self.generation_state_total_steps)
+        fraction = min(1.0, self.global_step / horizon)
+        return self.generation_state_ratio_max * fraction
 
     def set_episodes(self, episodes: Sequence[tuple[bytes, bytes]]) -> None:
         order = tuple(range(len(episodes)))
@@ -504,8 +598,14 @@ class SequenceWorkspaceTrainer:
         losses: list[torch.Tensor] = []
         positions = 0
         correct = 0
+        ratio = self.current_generation_state_ratio()
         for prefix, response in batch:
-            loss, metrics = self.prototype.sequence_loss(prefix, response)
+            loss, metrics = self.prototype.sequence_loss(
+                prefix,
+                response,
+                generation_state_ratio=ratio,
+                generator=self.sampling_generator,
+            )
             losses.append(loss)
             positions += int(metrics["positions"])
             correct += int(metrics["correct"])
@@ -518,6 +618,7 @@ class SequenceWorkspaceTrainer:
             "positions": positions,
             "accuracy": correct / max(1, positions),
             "global_step": self.global_step,
+            "generation_state_ratio": ratio,
         }
 
     def train_epoch(self, *, max_episodes: int | None = None) -> dict[str, Any]:

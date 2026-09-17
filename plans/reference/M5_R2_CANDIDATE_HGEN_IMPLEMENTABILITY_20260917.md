@@ -71,3 +71,32 @@ H3.8 失败说明"机制没被用起来"，本候选失败说明"exposure bias �
 2. 先跑 **φ=0 的对照**，确认与既有 H3.8 记录**可复现**（证明改动未引入偏移）；
 3. 再跑 **φ>0 的处理臂**，同一语料、同一预算；
 4. 判定：两臂 dev `exact` 是否可区分（即规格 §4 的停止线）。
+
+## §5 φ 的冻结值（**跑之前写死**，风险 §3.3）
+
+实现点已确认（`taiji/sequence_workspace.py`）：
+
+- `teacher_forced_logits`（L360-378）的内部循环里，**L375 `previous = int(symbol)` 就是唯一喂入点**；
+- `sequence_loss`（L380-398）再用**真实 `response + boundary`** 算 cross-entropy ⇒ **targets 与喂入点解耦**，
+  正是 scheduled sampling 需要的结构；
+- `generate()`（L401）已实现生成态（`argmax` 回灌）⇒ 语义一致，无新概念。
+
+**冻结项**：
+
+| 项 | 冻结值 | 理由 |
+|---|---|---|
+| **φ_max** | **0.5** | scheduled sampling 的常用上限；再高在短预算下易失稳 |
+| **调度** | **线性**：`φ(t) = φ_max × global_step / total_steps`，`total_steps = epochs × episodes` | 从纯 TF 平滑过渡，不突变 |
+| **随机性** | `torch.rand` 用**显式传入的 `generator`**；对照臂与处理臂**同种子** | 保证只差在 φ |
+| **φ=0 路径** | **直接复用 `teacher_forced_logits`**（不走新路径） | 逐字节等价，对照可复现 |
+
+**实现约束**：`teacher_forced_logits` **本身不改** —— 结构性 gate
+（`eval_taiji_r2_h3_8_matched_dev.py:297-298` 用它验证"零化 workspace 参数后不同前缀给出相同 logits"）
+依赖它严格的纯 TF 语义。
+⇒ 新增私有 `_response_logits(..., generation_state_ratio)`：
+**φ=0 时转调 `teacher_forced_logits`**，φ>0 时才走带采样的循环。
+
+**训练器接口**：`SequenceWorkspaceTrainer` 增
+`generation_state_ratio_max`（默认 `0.0`）与 `sampling_generator`；
+`train_step` 按 `global_step` 计算当前 φ 并透传给 `sequence_loss`。
+**默认 0 ⇒ 与既有 H3.8 记录逐字节等价**。
