@@ -46,3 +46,14 @@
 2. 实现门报告落盘 + 独立提交。
 3. 数据合同与小规模 train-only 可学习性检查 → 数值预算冻结成文。
 4. matched dev 预注册（指标/阈值/统计）→ 执行 → 独立提交 + roadmap。
+
+## §7 修订（2026-09-17，v2 单一前缀通道计算图 + 参数对齐对照——带日期修订，先例 P5.2d §7/§8）
+
+v1 matched dev（[报告](../../reports/r2_h3_8_matched_dev_20260917.json)，commit `55f7bf62`）落 `workspace_unused`：两臂均拟合（train 0.81–0.95），但零化 W 不持续损害 dev（病灶落差三 seed −0.0283/−0.0472/+0.0472），win 门 0/3。归因：§1.1 图中 `renderer_start` 使 prefix 经 h0 **直连** renderer 起点，W 只是并列通道而非唯一内容通道——renderer 可完全绕过 W，「内容寻址」在训练压力下退化为可选旁路。**这是计算图修订信号（§4.3），不是数据或 epoch 信号。**
+
+1. **§1 计算图修订（workspace 臂）**：删除 `renderer_start` 直连；renderer 起始状态改为**学习常量向量** `start_vector`（与 prefix 无关）。workspace 臂中 prefix 信息进入回答流的**唯一路径 = W 的内容寻址读**（h0 只生成 W_key/W_value 行）。基线臂图不变（vanilla：prefix 扫描态直连 renderer 起点）。
+2. **新增结构门测试（§2.5 追加）**：workspace 臂将 W 参数清零后，任意两个不同 prefix 在同一 response 上的 teacher-forced logits **逐位相等**——单一通道性质的直接判定；不通过则该图不得进入任何能力训练。
+3. **§3 两臂参数对齐修订**：基线臂 `renderer_width` 64→**96**（参数量 103,601），workspace 臂维持 64（v2 图参数量 101,025，`renderer_start` 4,096 换为 `start_vector` 64）。**残余差 −2,576、方向偏基线（对照臂参数更多）**——若 workspace 臂仍胜则混淆更小；分账披露义务不变。
+4. **版本隔离**：checkpoint `SEQUENCE_WORKSPACE_VERSION` 1→**2**；v1 payload 一律拒绝（图语义不同，禁止静默解释）。v1 报告与结论原样保留，不覆写。
+5. **不变项**：§1.2-1.9 其余条款、§2 五门结构、§3 数据合同与两臂设计、§4 冻结顺序与停止规则、§5 晋级门语义全部不变；matched dev 预算（seed/epoch/LR/wall/复核机制）沿用，仅报告落 v2 新文件（预注册 §7 同步）。
+6. **判读预承诺**：v2 下若病灶门仍不正 ⇒ `workspace_unused` 在唯一通道图中**结构上不可能由旁路解释**，归因升级回 §4.3 计算图（W 生成路径本身不可学/不可用），并停止该架构族继续追加预算，回到候选重议；若 win 门负但病灶门正 ⇒ 如实 `no_workspace_benefit`（W 承重但净收益不优于 vanilla 对照），同样停止追加。

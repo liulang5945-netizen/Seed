@@ -54,3 +54,13 @@
 ## §6 产物
 
 `scripts/training/eval_taiji_r2_h3_8_matched_dev.py` → `reports/r2_h3_8_matched_dev_20260917.json`（逐 seed × 臂 × 指标 + 门判定 + 参数差分账 + 停止原因）→ roadmap 更新 + 独立提交。
+
+## §7 修订（2026-09-17，v2 单一前缀通道重跑——承载实现合同 §7 的 dev 侧同步）
+
+v1 执行落 `workspace_unused`（`55f7bf62`）。实现合同 [§7 修订](M5_R2_H3_8_ISOLATED_PROTOTYPE_CONTRACT_20260917.md)冻结了图变更（workspace 臂 prefix 唯一路径 = W 读；`start_vector` 替代 `renderer_start`；checkpoint 版本 1→2；基线臂 `renderer_width` 96 参数对齐 103,601 vs 101,025）。本节同步 dev 侧条款：
+
+1. **§2/§3/§4 全部不变**：三 seed、LR 0.01、30 epochs、batch 1、门与阈值（fit 0.70 / win +0.03 / boundary −0.05 / lesion > 0 / 实现门仍绿）、指标 M1–M5 原样沿用——**修订的是图，不是判据**。
+2. **执行前新增硬前置（合同 §7.2 结构门）**：W 清零后不同 prefix 的 teacher-forced logits 逐位相等——不过此门不得跑任何 dev。
+3. **产物路径**：实现门重跑覆写门报告（同文件重执行属仪器复跑，报告内记录 v2 revision 绑定）；train-only 可学习性检查落**新文件** `reports/r2_h3_8_train_learnability_v2_20260917.json`（v2 图下两臂须仍可学，否则按 §4.3 停止线回图、不跑 dev）；matched dev 落**新文件** `reports/r2_h3_8_matched_dev_v2_20260917.json`。v1 各报告原样保留。
+4. **判读收紧（预承诺）**：同一 dev 已被 v1 评分一次，v2 的 G-win 即使通过也**只作工程证据**（机制修复有效），prospective 泛化主张仍留给后续独立 final/新语料评审；G-lesion 不过 ⇒ 唯一通道图中无旁路可解释，按合同 §7.6 停止该架构族追加、回候选重议。
+5. **closure-retrain 对照条件不变**：仅 v2 G-win 通过后另行冻结预算。
