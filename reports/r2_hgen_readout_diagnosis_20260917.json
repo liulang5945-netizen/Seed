@@ -1,0 +1,166 @@
+{
+  "format": "taiji-r2-hgen-readout-diagnosis-v1",
+  "checkpoint": "E:\\Seed\\reports\\r2_hobj_matched_dev\\control_checkpoint.pt",
+  "checkpoint_digest": "c4c9b02709ac67f750a0083d2ef29b8036fe76459ee90cbeeb53cd6d472be80c",
+  "global_step": 750,
+  "episodes_source": "tests\\fixtures\\r2_h3_8_joint_sequence_v1.jsonl",
+  "episodes": 16,
+  "teacher_forced_hit_rate": 0.5943396226415094,
+  "generation_exact_rate": 0.0,
+  "tf_first_error_distribution": {
+    "never": 0,
+    "pos_0": 16
+  },
+  "gen_first_divergence_distribution": {
+    "never": 0,
+    "pos_0": 16
+  },
+  "tf_first_error_median": 0,
+  "gen_first_divergence_median": 0,
+  "per_episode": [
+    {
+      "prefix_head": "提问：雪的颜",
+      "reference": "白",
+      "generated": "未知",
+      "tf_first_error": 0,
+      "gen_first_divergence": 0,
+      "tf_hit_rate": 0.25,
+      "gen_exact": false
+    },
+    {
+      "prefix_head": "提问：雪是否",
+      "reference": "不是白",
+      "generated": "未知",
+      "tf_first_error": 0,
+      "gen_first_divergence": 0,
+      "tf_hit_rate": 0.6,
+      "gen_exact": false
+    },
+    {
+      "prefix_head": "提问：雪的颜",
+      "reference": "黄",
+      "generated": "未知",
+      "tf_first_error": 0,
+      "gen_first_divergence": 0,
+      "tf_hit_rate": 0.25,
+      "gen_exact": false
+    },
+    {
+      "prefix_head": "提问：雪是否",
+      "reference": "不是黄",
+      "generated": "未知",
+      "tf_first_error": 0,
+      "gen_first_divergence": 0,
+      "tf_hit_rate": 0.6,
+      "gen_exact": false
+    },
+    {
+      "prefix_head": "提问：雪的颜",
+      "reference": "未知",
+      "generated": "不是绿",
+      "tf_first_error": 0,
+      "gen_first_divergence": 0,
+      "tf_hit_rate": 0.8571428571428571,
+      "gen_exact": false
+    },
+    {
+      "prefix_head": "提问：请判断",
+      "reference": "白",
+      "generated": "不是绿",
+      "tf_first_error": 0,
+      "gen_first_divergence": 0,
+      "tf_hit_rate": 0.25,
+      "gen_exact": false
+    },
+    {
+      "prefix_head": "提问：请判断",
+      "reference": "未知",
+      "generated": "蓝",
+      "tf_first_error": 0,
+      "gen_first_divergence": 0,
+      "tf_hit_rate": 0.8571428571428571,
+      "gen_exact": false
+    },
+    {
+      "prefix_head": "提问：太阳的",
+      "reference": "白",
+      "generated": "未知",
+      "tf_first_error": 0,
+      "gen_first_divergence": 0,
+      "tf_hit_rate": 0.25,
+      "gen_exact": false
+    },
+    {
+      "prefix_head": "提问：太阳是",
+      "reference": "不是白",
+      "generated": "蓝",
+      "tf_first_error": 0,
+      "gen_first_divergence": 0,
+      "tf_hit_rate": 0.5,
+      "gen_exact": false
+    },
+    {
+      "prefix_head": "提问：太阳的",
+      "reference": "黄",
+      "generated": "未知",
+      "tf_first_error": 0,
+      "gen_first_divergence": 0,
+      "tf_hit_rate": 0.25,
+      "gen_exact": false
+    },
+    {
+      "prefix_head": "提问：太阳是",
+      "reference": "不是黄",
+      "generated": "蓝",
+      "tf_first_error": 0,
+      "gen_first_divergence": 0,
+      "tf_hit_rate": 0.6,
+      "gen_exact": false
+    },
+    {
+      "prefix_head": "提问：太阳的",
+      "reference": "未知",
+      "generated": "蓝",
+      "tf_first_error": 0,
+      "gen_first_divergence": 0,
+      "tf_hit_rate": 0.8571428571428571,
+      "gen_exact": false
+    },
+    {
+      "prefix_head": "提问：请判断",
+      "reference": "白",
+      "generated": "蓝",
+      "tf_first_error": 0,
+      "gen_first_divergence": 0,
+      "tf_hit_rate": 0.25,
+      "gen_exact": false
+    },
+    {
+      "prefix_head": "提问：请判断",
+      "reference": "未知",
+      "generated": "蓝",
+      "tf_first_error": 0,
+      "gen_first_divergence": 0,
+      "tf_hit_rate": 0.8571428571428571,
+      "gen_exact": false
+    },
+    {
+      "prefix_head": "提问：雪与太",
+      "reference": "相同",
+      "generated": "未知",
+      "tf_first_error": 0,
+      "gen_first_divergence": 0,
+      "tf_hit_rate": 0.7142857142857143,
+      "gen_exact": false
+    },
+    {
+      "prefix_head": "提问：雪与太",
+      "reference": "不同",
+      "generated": "未知",
+      "tf_first_error": 0,
+      "gen_first_divergence": 0,
+      "tf_hit_rate": 0.7142857142857143,
+      "gen_exact": false
+    }
+  ]
+}
