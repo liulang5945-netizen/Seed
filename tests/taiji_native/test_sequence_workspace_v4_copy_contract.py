@@ -335,3 +335,24 @@ def test_gate6_v3_payload_loads_with_copy_off_and_v1_refused() -> None:
         assert "version" in str(error)
     else:  # pragma: no cover
         raise AssertionError("version-1 checkpoint was not refused")
+
+
+def test_microbatch_step_is_one_optimizer_step_over_mean_loss() -> None:
+    """Q1 amendment four: train_step over 8 episodes accumulates mean loss
+    gradients into exactly one Adam step (no graph change required)."""
+    prototype = _arm()
+    trainer = SequenceWorkspaceTrainer(prototype, learning_rate=0.01)
+    episodes = [
+        (
+            f"提问：obj{i}的颜色？线索：obj{i}是白。回答：".encode(),
+            "白".encode(),
+        )
+        for i in range(8)
+    ]
+    trainer.set_episodes(tuple(episodes))
+    before = content_digest(prototype.parameter_payload())
+    record = trainer.train_step(episodes)
+    after = content_digest(prototype.parameter_payload())
+    assert record["global_step"] == 1
+    assert after != before
+    assert bool(torch.isfinite(torch.tensor(record["loss"])))

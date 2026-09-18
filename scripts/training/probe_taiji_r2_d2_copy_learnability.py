@@ -214,6 +214,12 @@ def main() -> int:
         action="store_true",
         help="P1 amendment three: frozen shape-balanced training sampler on v4 A2",
     )
+    parser.add_argument(
+        "--microbatch-size",
+        type=int,
+        default=0,
+        help="Q1 amendment four: micro-batch gradient accumulation size (8 frozen)",
+    )
     args = parser.parse_args()
     if args.question_conditioned_start:
         report_format = "taiji-r2-d2-question-start-probe-v1"
@@ -223,12 +229,18 @@ def main() -> int:
         report_format = "taiji-r2-d2-balanced-shapes-probe-v1"
         contract = "plans/reference/M5_R2_D2_P1_BALANCED_TRAINING_AMENDMENT_FROZEN_20260918.md"
         arm_label = "A2_per_position_copy_balanced_shapes"
+    elif args.microbatch_size:
+        report_format = "taiji-r2-d2-microbatch-probe-v1"
+        contract = "plans/reference/M5_R2_D2_Q1_MICROBATCH_AMENDMENT_FROZEN_20260918.md"
+        arm_label = f"A2_per_position_copy_microbatch{args.microbatch_size}"
     else:
         report_format = DEFAULT_FORMAT
         contract = DEFAULT_CONTRACT
         arm_label = DEFAULT_ARM
-    if args.question_conditioned_start and args.balanced_shapes:
-        raise ValueError("balanced-shapes is frozen on the v4 A2 graph, not v5")
+    if sum((args.question_conditioned_start, args.balanced_shapes, bool(args.microbatch_size))) > 1:
+        raise ValueError("question-start, balanced-shapes and microbatch are mutually exclusive")
+    if args.microbatch_size and args.question_conditioned_start:
+        raise ValueError("microbatch Q1 is frozen on the v4 A2 graph, not v5")
 
     raw = [
         json.loads(line)
@@ -259,6 +271,9 @@ def main() -> int:
     elif args.balanced_shapes:
         code_revision = "r2d2-balanced-shapes-probe"
         checkpoint_prefix = "a2_balanced_seed20260917"
+    elif args.microbatch_size:
+        code_revision = "r2d2-microbatch-probe"
+        checkpoint_prefix = f"a2_microbatch{args.microbatch_size}_seed20260917"
     else:
         code_revision = "r2d2-copy-probe"
         checkpoint_prefix = "a2_seed20260917"
@@ -278,6 +293,10 @@ def main() -> int:
     for epoch in range(EPOCHS):
         if args.balanced_shapes:
             steps_taken += _balanced_epoch(trainer, rows, epoch)
+        elif args.microbatch_size:
+            for start in range(0, len(episodes), args.microbatch_size):
+                trainer.train_step(list(episodes[start : start + args.microbatch_size]))
+                steps_taken += 1
         else:
             trainer.train_epoch()
         if (epoch + 1) % 5 == 0 or epoch == EPOCHS - 1:
@@ -306,6 +325,25 @@ def main() -> int:
                 "no_late_collapse_gt_0_10": (late - previous) >= -0.10,
             }
         )
+    if args.microbatch_size:
+        # Q1 amendment four section 3 stability gate on the observed trajectory
+        loss_points = [point["mean_sequence_loss"] for point in trajectory[1:]]
+        bounded_increases = all(
+            later <= earlier * 1.15
+            for earlier, later in zip(loss_points[:-1], loss_points[1:], strict=True)
+        )
+        late_m1 = trajectory[-1]["M1_exact"]
+        previous_m1 = trajectory[-2]["M1_exact"]
+        gate.update(
+            {
+                "loss_increases_bounded_15pct": bounded_increases,
+                "no_late_collapse_gt_0_10": (late_m1 - previous_m1) >= -0.10,
+                "negation_m1_above_zero": per_shape_final["negation"] > 0.0,
+                "fact_and_sof_hold_0_90": (
+                    per_shape_final["fact"] >= 0.90 and per_shape_final["same_opening_fact"] >= 0.90
+                ),
+            }
+        )
     passed = all(gate.values())
     payload = {
         "format": report_format,
@@ -323,7 +361,8 @@ def main() -> int:
         "train_episodes": len(rows),
         "copy_supported_shapes": list(COPY_SUPPORTED_SHAPES),
         "balanced_shapes": bool(args.balanced_shapes),
-        "optimizer_steps": steps_taken if args.balanced_shapes else EPOCHS * len(rows),
+        "microbatch_size": int(args.microbatch_size),
+        "optimizer_steps": steps_taken or EPOCHS * len(rows),
         "elapsed_seconds": elapsed,
         "wall_cap_seconds": WALL_CAP_SECONDS,
         "parameter_count": prototype.parameter_count(),
