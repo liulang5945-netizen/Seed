@@ -267,7 +267,6 @@ def main() -> int:
     initial = _evaluate(prototype, rows)
     trajectory = [{"epoch": 0, **_compact(initial)}]
     steps_taken = 0
-    loss_readings = [float(initial["mean_sequence_loss"])]
     for epoch in range(EPOCHS):
         for start in range(0, len(episodes), MICROBATCH):
             batch = list(episodes[start : start + MICROBATCH])
@@ -276,7 +275,6 @@ def main() -> int:
             steps_taken += 1
         if (epoch + 1) % 5 == 0 or epoch == EPOCHS - 1:
             evaluation = _evaluate(prototype, rows)
-            loss_readings.append(float(evaluation["mean_sequence_loss"]))
             trajectory.append({"epoch": epoch + 1, **_compact(evaluation)})
     final = _evaluate(prototype, rows)
     elapsed = time.monotonic() - started
@@ -289,14 +287,18 @@ def main() -> int:
     trajectory_by_epoch = {item["epoch"]: item for item in trajectory}
     m1_e25 = float(trajectory_by_epoch[25]["copy_supported_M1"])
     m1_e30 = float(trajectory_by_epoch[30]["copy_supported_M1"])
-    min_loss = min(loss_readings)
+    # Q1 amendment four section 3 stability gate, exact wording: pairwise checks
+    # over the observed trajectory **excluding the epoch-0 pre-training reading**.
+    loss_points = [point["mean_sequence_loss"] for point in trajectory[1:]]
+    bounded_increases = all(
+        later <= earlier * 1.15
+        for earlier, later in zip(loss_points[:-1], loss_points[1:], strict=True)
+    )
     gate = {
         "P1_copy_supported_m1_ge_0_90": supported_m1 >= 0.90,
         "P2_copy_value_prob_ge_0_90": float(copy_intact["mean_copy_value_prob"]) >= 0.90,
         "P3_misbind_copy_prob_le_0_50": float(copy_misbound["mean_copy_value_prob"]) <= 0.50,
-        "P4_loss_increases_bounded_15pct": (
-            max(loss_readings) <= min_loss * 1.15 if min_loss > 0 else True
-        ),
+        "P4_loss_increases_bounded_15pct": bounded_increases,
         "P4_no_late_collapse_gt_0_10": m1_e30 >= m1_e25 - 0.10,
         "preflight_passed": bool(preflight["passed"]),
         "within_wall_cap": elapsed <= WALL_CAP_SECONDS,
