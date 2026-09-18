@@ -76,12 +76,12 @@ import torch
 from .internalization import content_digest
 
 SEQUENCE_WORKSPACE_FORMAT = "taiji-sequence-workspace-v1"
-#: Version 4 (R2-D2 H-A2, 2026-09-18): copy-mixture evidence readout via
-#: ``copy_mixture``.  Versions 2 (single-channel workspace) and 3 (per-position
-#: evidence) remain restorable; version-1 payloads are refused.
-SEQUENCE_WORKSPACE_VERSION = 4
+#: Version 5 (R2-D2 H-A3, 2026-09-18): question-conditioned renderer start via
+#: ``question_conditioned_start``.  Versions 2/3/4 remain restorable;
+#: version-1 payloads are refused.
+SEQUENCE_WORKSPACE_VERSION = 5
 #: Checkpoint payload versions this build is allowed to restore.
-SEQUENCE_WORKSPACE_SUPPORTED_VERSIONS = frozenset({2, 3, 4})
+SEQUENCE_WORKSPACE_SUPPORTED_VERSIONS = frozenset({2, 3, 4, 5})
 SEQUENCE_WORKSPACE_TRAINER_FORMAT = "taiji-sequence-workspace-trainer-v1"
 SEQUENCE_WORKSPACE_ALPHABET = 257
 SEQUENCE_WORKSPACE_BOUNDARY = 256
@@ -93,6 +93,13 @@ EVIDENCE_PER_POSITION = "per_position"
 EVIDENCE_BROADCAST_FINAL = "broadcast_final"
 EVIDENCE_SOURCES = frozenset(
     {EVIDENCE_FINAL_STATE_SLOTS, EVIDENCE_PER_POSITION, EVIDENCE_BROADCAST_FINAL}
+)
+
+#: Material-clause markers (byte form): the scan state immediately before the
+#: earliest marker is the question-conditioned renderer start state (graph v5),
+#: which by causal construction cannot yet contain material content.
+MATERIAL_MARKERS: tuple[bytes, ...] = tuple(
+    marker.encode("utf-8") for marker in ("背景：", "线索：", "已知：")
 )
 
 #: Canonical order used for per-name deterministic initialization.  Both arms'
@@ -116,6 +123,8 @@ _CANONICAL_PARAMETER_ORDER: tuple[str, ...] = (
     "evidence_value",
     "copy_gate_weight",
     "copy_gate_bias",
+    "answer_start_weight",
+    "answer_start_bias",
     "decoder",
     "decoder_bias",
 )
@@ -135,6 +144,8 @@ SEQUENCE_WORKSPACE_PARAMETERS: tuple[str, ...] = tuple(
         "evidence_value",
         "copy_gate_weight",
         "copy_gate_bias",
+        "answer_start_weight",
+        "answer_start_bias",
     }
 )
 
@@ -152,12 +163,29 @@ SEQUENCE_WORKSPACE_EVIDENCE_PARAMETERS: tuple[str, ...] = tuple(
         "workspace_value",
         "copy_gate_weight",
         "copy_gate_bias",
+        "answer_start_weight",
+        "answer_start_bias",
     }
 )
 
 #: Graph-v4 copy-mixture arm (R2-D2 H-A2): v3 evidence inventory plus the
 #: per-byte generate/copy gate (``64 + 1 = 65`` parameters; 82,658 total).
 SEQUENCE_WORKSPACE_COPY_PARAMETERS: tuple[str, ...] = tuple(
+    name
+    for name in _CANONICAL_PARAMETER_ORDER
+    if name
+    not in {
+        "renderer_start",
+        "workspace_key",
+        "workspace_value",
+        "answer_start_weight",
+        "answer_start_bias",
+    }
+)
+
+#: Graph-v5 arm (R2-D2 H-A3): v4 copy mixture plus the question-conditioned
+#: renderer start (``rw*rw + rw = 4,160`` parameters; 86,818 total).
+SEQUENCE_WORKSPACE_QUESTION_START_PARAMETERS: tuple[str, ...] = tuple(
     name
     for name in _CANONICAL_PARAMETER_ORDER
     if name not in {"renderer_start", "workspace_key", "workspace_value"}
@@ -180,6 +208,8 @@ SEQUENCE_WORKSPACE_BASELINE_PARAMETERS: tuple[str, ...] = tuple(
         "evidence_value",
         "copy_gate_weight",
         "copy_gate_bias",
+        "answer_start_weight",
+        "answer_start_bias",
     }
 )
 
@@ -216,6 +246,10 @@ class SequenceWorkspaceConfig:
     #: copy distribution over visible prefix byte positions.  Only valid for
     #: the position-aligned evidence arms (per_position / broadcast_final).
     copy_mixture: bool = False
+    #: R2-D2 H-A3 graph v5: condition the renderer start on the question-stem
+    #: scan state (the state immediately before the material marker) instead
+    #: of the prefix-independent learned constant.
+    question_conditioned_start: bool = False
 
     def __post_init__(self) -> None:
         for name in ("prefix_width", "slots", "slot_width", "renderer_width"):
@@ -244,6 +278,13 @@ class SequenceWorkspaceConfig:
                 "copy mixture needs position-aligned evidence rows "
                 "(per_position or broadcast_final), not the v2 slots"
             )
+        if self.question_conditioned_start and not self.workspace_enabled:
+            raise ValueError("question-conditioned start requires the workspace arm")
+        if self.question_conditioned_start and self.evidence_source == EVIDENCE_FINAL_STATE_SLOTS:
+            raise ValueError(
+                "question-conditioned start is defined on the position-aligned "
+                "evidence arms, not the v2 final-state slots"
+            )
 
     def to_payload(self) -> dict[str, Any]:
         return {
@@ -258,6 +299,7 @@ class SequenceWorkspaceConfig:
             "workspace_enabled": bool(self.workspace_enabled),
             "evidence_source": str(self.evidence_source),
             "copy_mixture": bool(self.copy_mixture),
+            "question_conditioned_start": bool(self.question_conditioned_start),
         }
 
 
@@ -336,6 +378,9 @@ class SequenceWorkspacePrototype:
             if self.config.copy_mixture:
                 make("copy_gate_weight", (rw,), 1.0 / math.sqrt(rw))
                 make("copy_gate_bias", (1,), 0.0)
+            if self.config.question_conditioned_start:
+                make("answer_start_weight", (rw, rw), 1.0 / math.sqrt(rw))
+                make("answer_start_bias", (rw,), 0.0)
         else:
             # baseline arm keeps the v1 vanilla encoder: the prefix scan state
             # initializes the renderer directly.
@@ -358,6 +403,8 @@ class SequenceWorkspacePrototype:
             return SEQUENCE_WORKSPACE_BASELINE_PARAMETERS
         if self.config.evidence_source == EVIDENCE_FINAL_STATE_SLOTS:
             return SEQUENCE_WORKSPACE_PARAMETERS
+        if self.config.question_conditioned_start:
+            return SEQUENCE_WORKSPACE_QUESTION_START_PARAMETERS
         if self.config.copy_mixture:
             return SEQUENCE_WORKSPACE_COPY_PARAMETERS
         return SEQUENCE_WORKSPACE_EVIDENCE_PARAMETERS
@@ -408,6 +455,37 @@ class SequenceWorkspacePrototype:
         """Causal scan over prefix bytes; returns the last state h0."""
 
         return self._scan_prefix(prefix)[0]
+
+    def _question_state(
+        self,
+        prefix: bytes,
+        states: tuple[torch.Tensor, ...],
+        h0: torch.Tensor,
+    ) -> torch.Tensor:
+        """Scan state at the end of the question stem, before material content.
+
+        Graph v5: the earliest material marker (``背景：/线索：/已知：``) splits
+        question from evidence.  Because the scan is causal, the state at the
+        last stem byte cannot contain marker or material information.  Prefixes
+        without a marker (synthetic tests) fall back to the final state.
+        """
+
+        if not self.config.question_conditioned_start:
+            return self._parameters["start_vector"]
+        marker_positions = [
+            prefix.find(marker) for marker in MATERIAL_MARKERS if prefix.find(marker) >= 0
+        ]
+        if not marker_positions:
+            return torch.tanh(
+                h0 @ self._parameters["answer_start_weight"] + self._parameters["answer_start_bias"]
+            )
+        stem_end = min(marker_positions) - 1
+        if stem_end < 0:
+            raise ValueError("question stem is empty before the material marker")
+        return torch.tanh(
+            states[stem_end] @ self._parameters["answer_start_weight"]
+            + self._parameters["answer_start_bias"]
+        )
 
     def begin_episode(
         self,
@@ -476,7 +554,7 @@ class SequenceWorkspacePrototype:
                 entry_bytes = tuple(
                     entry_bytes[(i - shift) % len(entry_bytes)] for i in range(len(entry_bytes))
                 )
-            renderer_state: torch.Tensor = self._parameters["start_vector"]
+            renderer_state: torch.Tensor = self._question_state(prefix, states, h0)
         else:
             if rotation or byte_rotation:
                 raise ValueError("the baseline arm has no evidence rows to rotate")

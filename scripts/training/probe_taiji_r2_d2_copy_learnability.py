@@ -36,9 +36,11 @@ from taiji.sequence_workspace import (  # noqa: E402
 
 FIXTURE = Path("tests/fixtures/r2_d1_measurement_v1.jsonl")
 CORPUS_DIGEST = "53ac9f88695f135d0bb04b4d25d98ab686c82175c45ca8d4d53e64639efbeecb"
-CHECKPOINT_DIR = Path("reports/r2_d2_checkpoints/copy_probe")
+DEFAULT_CHECKPOINT_DIR = Path("reports/r2_d2_checkpoints/copy_probe")
 DEFAULT_REPORT = Path("reports/r2_d2_copy_learnability_probe_20260918.json")
-FORMAT = "taiji-r2-d2-copy-learnability-probe-v1"
+DEFAULT_FORMAT = "taiji-r2-d2-copy-learnability-probe-v1"
+DEFAULT_CONTRACT = "plans/reference/M5_R2_D2_COPY_MIXTURE_AMENDMENT_FROZEN_20260918.md"
+DEFAULT_ARM = "A2_per_position_copy"
 EPOCHS = 30
 SEED = 20260917
 FROZEN_LEARNING_RATE = 0.01
@@ -165,7 +167,21 @@ def _compact(evaluation: dict[str, Any]) -> dict[str, Any]:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--report", type=Path, default=DEFAULT_REPORT)
+    parser.add_argument("--checkpoint-dir", type=Path, default=DEFAULT_CHECKPOINT_DIR)
+    parser.add_argument(
+        "--question-conditioned-start",
+        action="store_true",
+        help="graph v5 H-A3: condition the renderer start on the question stem",
+    )
     args = parser.parse_args()
+    if args.question_conditioned_start:
+        report_format = "taiji-r2-d2-question-start-probe-v1"
+        contract = "plans/reference/M5_R2_D2_QUESTION_START_AMENDMENT_FROZEN_20260918.md"
+        arm_label = "A5_per_position_copy_question_start"
+    else:
+        report_format = DEFAULT_FORMAT
+        contract = DEFAULT_CONTRACT
+        arm_label = DEFAULT_ARM
 
     raw = [
         json.loads(line)
@@ -183,15 +199,24 @@ def main() -> int:
     started = time.monotonic()
     torch.manual_seed(SEED)
     prototype = SequenceWorkspacePrototype(
-        SequenceWorkspaceConfig(seed=SEED, evidence_source=EVIDENCE_PER_POSITION, copy_mixture=True)
+        SequenceWorkspaceConfig(
+            seed=SEED,
+            evidence_source=EVIDENCE_PER_POSITION,
+            copy_mixture=True,
+            question_conditioned_start=bool(args.question_conditioned_start),
+        )
     )
+    code_revision = (
+        "r2d2-question-start-probe" if args.question_conditioned_start else "r2d2-copy-probe"
+    )
+    checkpoint_prefix = "a5_seed20260917" if args.question_conditioned_start else "a2_seed20260917"
     trainer = SequenceWorkspaceTrainer(
-        prototype, learning_rate=FROZEN_LEARNING_RATE, code_revision="r2d2-copy-probe"
+        prototype, learning_rate=FROZEN_LEARNING_RATE, code_revision=code_revision
     )
     trainer.set_episodes(episodes)
-    checkpoint_dir = PROJECT_ROOT / CHECKPOINT_DIR
+    checkpoint_dir = PROJECT_ROOT / args.checkpoint_dir
     checkpoint_dir.mkdir(parents=True, exist_ok=True)
-    preflight = _preflight(trainer, episodes, checkpoint_dir / "a2_seed20260917_zero_step.pt")
+    preflight = _preflight(trainer, episodes, checkpoint_dir / f"{checkpoint_prefix}_zero_step.pt")
     if not preflight["passed"]:
         raise RuntimeError(f"checkpoint preflight failed: {preflight}")
 
@@ -203,7 +228,7 @@ def main() -> int:
             trajectory.append({"epoch": epoch + 1, **_compact(_evaluate(prototype, rows))})
     final = _evaluate(prototype, rows)
     elapsed = time.monotonic() - started
-    trainer.save(checkpoint_dir / "a2_seed20260917_epoch30.pt")
+    trainer.save(checkpoint_dir / f"{checkpoint_prefix}_epoch30.pt")
 
     supported_m1 = float(final["copy_supported_M1"]["value"])
     gate = {
@@ -214,11 +239,11 @@ def main() -> int:
     }
     passed = all(gate.values())
     payload = {
-        "format": FORMAT,
+        "format": report_format,
         "version": 1,
-        "contract": "plans/reference/M5_R2_D2_COPY_MIXTURE_AMENDMENT_FROZEN_20260918.md",
+        "contract": contract,
         "graph_version": SEQUENCE_WORKSPACE_VERSION,
-        "arm": "A2_per_position_copy",
+        "arm": arm_label,
         "corpus_digest": digest,
         "split_read": "train",
         "dev_read": False,
@@ -238,7 +263,10 @@ def main() -> int:
         "gate": gate,
         "outcome": "passed" if passed else "failed",
         "reading": (
-            "copy-mixture train-only learnability per amendment 5.2; "
+            "question-conditioned-start train-only learnability per amendment-two 5.2; "
+            "uncopyable shapes and M3/M4 are descriptive; not a capability claim"
+            if args.question_conditioned_start
+            else "copy-mixture train-only learnability per amendment 5.2; "
             "uncopyable shapes and M3/M4 are descriptive; not a capability claim"
         ),
         "growth_admitted": False,
