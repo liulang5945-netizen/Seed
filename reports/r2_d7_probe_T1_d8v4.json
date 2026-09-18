@@ -1,0 +1,161 @@
+{
+  "format": "taiji-r2-d7-char-token-probe-v1",
+  "version": 1,
+  "contract": "plans/reference/M5_R2_D7_CHAR_TOKEN_CONTRACT_FROZEN_20260918.md",
+  "graph": "char-v1",
+  "arm": "T1",
+  "copy_induction": true,
+  "lambda_copy_value": 1.0,
+  "microbatch_size": 8,
+  "fixture": "tests\\fixtures\\r2_d1_measurement_v4.jsonl",
+  "corpus_digest": "2a46993e933f9a4236cda1be748a14710b83757d872e083fc8cc0fa6cb2b1dd0",
+  "vocab_size": 151,
+  "split_read": "train",
+  "dev_read": false,
+  "final_read": false,
+  "seed": 20260917,
+  "epochs_frozen": 30,
+  "frozen_learning_rate": 0.01,
+  "train_episodes": 4862,
+  "elapsed_seconds": 1283.469000000041,
+  "wall_cap_seconds": 1200,
+  "parameter_count": 72185,
+  "copy_induce_bias_end": 2.828022003173828,
+  "preflight": {
+    "expected_mixture_digest": "68e6161bea2239df5960780e27de5ba3fb4b8ed36851162df06b4cb1943c4e55",
+    "observed_mixture_digest": "68e6161bea2239df5960780e27de5ba3fb4b8ed36851162df06b4cb1943c4e55",
+    "mixture_match": true,
+    "continuation_matches": true,
+    "restored_version": 1,
+    "passed": true
+  },
+  "final": {
+    "M1_exact": {
+      "numerator": 4671,
+      "denominator": 4862,
+      "value": 0.9607157548334019
+    },
+    "copy_supported_M1": {
+      "numerator": 4608,
+      "denominator": 4608,
+      "value": 1.0
+    },
+    "mean_sequence_loss": 0.27374588423015167
+  },
+  "per_shape_exact": {
+    "combination_different": {
+      "numerator": 63,
+      "denominator": 63,
+      "value": 1.0
+    },
+    "combination_same": {
+      "numerator": 0,
+      "denominator": 63,
+      "value": 0.0
+    },
+    "fact": {
+      "numerator": 1536,
+      "denominator": 1536,
+      "value": 1.0
+    },
+    "negation": {
+      "numerator": 1536,
+      "denominator": 1536,
+      "value": 1.0
+    },
+    "same_opening_fact": {
+      "numerator": 1536,
+      "denominator": 1536,
+      "value": 1.0
+    },
+    "same_opening_unknown": {
+      "numerator": 0,
+      "denominator": 64,
+      "value": 0.0
+    },
+    "unknown": {
+      "numerator": 0,
+      "denominator": 64,
+      "value": 0.0
+    }
+  },
+  "value_length_groups": {
+    "multibyte": {
+      "numerator": 2304,
+      "denominator": 2304,
+      "value": 1.0
+    },
+    "singlebyte": {
+      "numerator": 2304,
+      "denominator": 2304,
+      "value": 1.0
+    }
+  },
+  "trajectory": [
+    {
+      "epoch": 0,
+      "mean_sequence_loss": 4.18727,
+      "M1_exact": 0.0,
+      "copy_supported_M1": 0.0
+    },
+    {
+      "epoch": 5,
+      "mean_sequence_loss": 0.054814,
+      "M1_exact": 0.9607157548334019,
+      "copy_supported_M1": 1.0
+    },
+    {
+      "epoch": 10,
+      "mean_sequence_loss": 0.472966,
+      "M1_exact": 0.7819827231591937,
+      "copy_supported_M1": 0.8250868055555556
+    },
+    {
+      "epoch": 15,
+      "mean_sequence_loss": 0.471038,
+      "M1_exact": 0.783833813245578,
+      "copy_supported_M1": 0.8270399305555556
+    },
+    {
+      "epoch": 20,
+      "mean_sequence_loss": 0.470973,
+      "M1_exact": 0.7865076100370219,
+      "copy_supported_M1": 0.8298611111111112
+    },
+    {
+      "epoch": 25,
+      "mean_sequence_loss": 0.28213,
+      "M1_exact": 0.960510078157137,
+      "copy_supported_M1": 1.0
+    },
+    {
+      "epoch": 30,
+      "mean_sequence_loss": 0.273746,
+      "M1_exact": 0.9607157548334019,
+      "copy_supported_M1": 1.0
+    }
+  ],
+  "copy_value_readout_intact": {
+    "mean_copy_value_prob": 0.9560185182598178,
+    "positions": 6912
+  },
+  "copy_value_readout_misbound": {
+    "mean_copy_value_prob": 0.12213539910063786,
+    "positions": 6912
+  },
+  "gate": {
+    "copy_supported_m1_ge_0_90": true,
+    "multibyte_m1_ge_0_90": true,
+    "singlebyte_m1_ge_0_90": true,
+    "copy_value_prob_ge_0_90": true,
+    "misbind_copy_prob_le_0_50": true,
+    "loss_increases_bounded_15pct": false,
+    "no_late_collapse_gt_0_10": true,
+    "preflight_passed": true,
+    "within_wall_cap": false
+  },
+  "outcome": "failed",
+  "reading": "R2-D7 H-Tok character-unit learnability probe (train-only); not a capability claim",
+  "growth_admitted": false,
+  "can_promote": false
+}
