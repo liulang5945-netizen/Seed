@@ -100,14 +100,46 @@
   **F1 读出** `predictive_readout.synapses.edge_weight`（abs_sum 5076.24）与 `.bias`（72.851）、
   **fabric** `decoders[0].edge_weight`（493.35）⇒ 原始字节流改变；**F4 运动**
   `motor.synapses.edge_weight`、**记忆** `memory.cue_encoder.edge_weight`（1099.26）⇒ 不改变。
+  （按 07 §4.3："输出不变不自动断言整个模型无效，应核查该题是否触发对应功能" —— 后两个靶点只说明
+  **这条题面未触发它们**，要断言"哪个面承载什么"须换题面做正对照，本轮未做，不得写成"运动面/记忆无效"。）
   控制项三条：基线自洽（同题连调两次摘要相同）、全部靶点跑完后复测基线一致
   （`restoration_verified: true`）、`SeedRuntime.load` 之后 `restore(checkpoint())` 是输出恒等操作。
   ⇒ A 支按 07 §2 L1（只要求**原始**输出参数驱动）通过。`A05b_answer_follows_parameters` 五个靶点
   全 False：可读性闸门 `_readable_surface` 因字节流含 U+FFFD 而拒收 `native_prediction`，退回固定模板
   ⇒ 按 07 §3 A 行"不能把纯规则输出归因模型"，**聊天回答不得记为参数驱动**，F04 仍是缺口（gate 文本已改）。
+- **DEBT-I4 的链路错配（同日第八批，A05 落地后立刻测出来的）**：上面那句"聊天回答不得记为参数驱动"
+  **只对裸链路成立**。同一条题面、同一批靶点，装上 `constrained_decode` 之后重测：原始字节可解码
+  （不再有 U+FFFD）⇒ 闸门放行 ⇒ **回答随消融改变（A05b = True）**，回答内容变成模型自己吐的伪汉字
+  （"怀怀怀…"/"刈專刈…"，仍非成句汉语）。而 P3b 的**分数**全部取自
+  `relax_legacy_guard + constrained_decode` 这条链路的报告，`--health` 却跑在裸链路上
+  —— ⇒ J4 的 A/H 支一直在判**另一条链路**的性质，和 DEBT-I5/I6 是同一类（读数与它要描述的分数不同链路/不同面）。
+  修法三条，都已落地：① `run_health` 接链路开关、子进程内装与评价支相同的补丁，并把
+  `chain` + `identity{git_head, checkpoint_sha256}` 写进报告，**格式号 v1→v2**（不同链路会给出相反的 A05b，
+  并排读两份 v1 会得出错误结论，所以必须留痕）；② 战役驱动的 `--health` 调用带上同两个开关；
+  ③ `judge_health` 在读任何字段**之前**先要 `chain == REQUIRED_CHAIN`，否则
+  `chain_mismatch`（不算通过、进 `untested_clauses`）。缺 `chain` 字段的旧报告（v1..v4）一律拒 ——
+  失败封闭是故意的：因此战役基线那份健康报告换新文件
+  `reports/taiji_cap0_health_v5_seedbeta_constrained_20260918.json`（`P3A_HEALTH` 已改指）。
+  测试两个方向都钉：错链路拒、无 chain 字段拒、**对链路必须不拦事**（否则整支 A/H 被永久判死）。
+  另按 07 §4.3 补做正对照：**换五条题面**（含两条必须用上前文历史的）重跑同一批靶点，
+  移动的仍是同样三个靶点（读出权重/偏置、fabric 解码器），`motor` 与 `memory.cue_encoder`
+  在五条题面下都不动 ⇒ "未触发"不再是单题面的偶然，但仍不得写成"该面无效"（§4.3）。
+- **A05b 的取舍随实测翻转（同日第九批）**：上一批把 `A05b_answer_follows_parameters` 排除在必过项
+  之外的理由是"盘上每个检查点它都是 False ⇒ 判它等于让每条 campaign 必红"。**这个前提被 v5 推翻**：
+  同一检查点、同一批靶点，在 required 链路上 `A05b = True`
+  （`taiji_cap0_health_v5_seedbeta_constrained_20260918.json`，identity `git_head 63c38846` /
+  `checkpoint_sha256 ad2a06465e0e`）。它可满足，而且它是**唯一真正在判** 07 §3 A 行
+  "不能把纯规则输出归因模型"的那一道 ⇒ 现已放进 `A_HEALTH_CHECKS`，并删掉原先那个
+  "只披露不判"的 `answer_surface` 回声块（判了就不需要旁路披露）。
+  教训与前面那条同型：一个"看起来永远不满足"的检查项，先问是不是在**错误的链路/错误的面**上测的，
+  再决定豁免还是修接线；豁免一条恰好管事的断言，等于把该断言要防的失效放行。
+  ⚠️ v5 的 H 计时（H03 27.2 s、A05 11.1 s）是在全量套并发时取的，**不是**标定级读数
+  ⇒ 任务 #34（H 阈值门）必须在空闲机器上重测，不得引用 v5 的这些数。
   取舍：A05 进 `A_HEALTH_CHECKS`（必过项），A05b 刻意**不**进 —— 盘上每个检查点它都是 False，
   判它等于让每条 campaign 必红、判据失去判别力；改为随 verdict 读出
   （`health.answer_surface.counts_toward_status: false`）并追加一条 `untested_clauses`。
+  **（同日第九批更正：这个前提在 required 链路上不成立，A05b 已转入必过项、`answer_surface` 块删除，
+  见上一条 A05b 条。）**
   同批把 J4 的首个布尔支（G 硬安全失败数须为 0）也补进 `untested_clauses` —— 此前只在
   `does_not_cover` 里，`verdict: pass` 的读者看不到。
   代价实测：A05 五靶点 **8.35 s** ⇒ `--health` 单次从 17.2 s 涨到约 25.6 s（对照阶段评价 345.7 s 是 +7%）。
@@ -301,6 +333,10 @@
   `checkpoints/seed_corpus.pt` 跑前跑后同为 `c8025db44c65` / 43,223,183 B、
   `output/manual-r5-canary/` 条目数 16 保持 16。⇒ **对照基线现为 1754 / 0 / 6 + 1 xfailed**。
   远端同样仍未查询 ⇒ 依旧不得写"CI 已绿"。
+  **A05 那一批（`63c38846`）的收口套：`1760 / 0 / 6 + 1 xfailed`，用时 1279.38 s**，退出码 0；
+  同一套跑前跑后 `seed_corpus.pt` 仍是 `c8025db44c65` / 43,223,183 B，canary 条目 16→16
+  ⇒ 对照基线改为 **1760 / 0 / 6 + 1 xfailed**（+6 是 A05 的 6 支新测试；采集发生在链路批改动落地之前，
+  所以它验的是 `63c38846` 那个提交本身）。
 
 
 ## 最新状态补充（2026-09-15，WP-3 落地前的全量复采）

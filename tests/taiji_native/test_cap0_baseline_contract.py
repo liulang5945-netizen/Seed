@@ -366,8 +366,12 @@ def test_utf8_dfa_excludes_invalid_byte_sequences() -> None:
 
 CONSTRAINED_REPORT = PROJECT_ROOT / "reports" / "taiji_cap0_baseline_constrained_20260915.json"
 HEALTH_REPORT = PROJECT_ROOT / "reports" / "taiji_cap0_health_v1_20260915.json"
-#: 第一份**执行了 A05**（隔离消融）的健康报告；v1/v3 里 A05 是 `null`。
+#: 第一份**执行了 A05**（隔离消融）的健康报告；v1/v3 里 A05 是 `null`。裸链路 ⇒ A05b 为 False。
 HEALTH_REPORT_V4 = PROJECT_ROOT / "reports" / "taiji_cap0_health_v4_seedbeta_20260918.json"
+#: 同一检查点在 **required 链路** 上的那份：A05b 翻成 True，且带 chain + identity（格式 v2）。
+HEALTH_REPORT_V5 = (
+    PROJECT_ROOT / "reports" / "taiji_cap0_health_v5_seedbeta_constrained_20260918.json"
+)
 
 
 def test_p1_section_10_records_the_constrained_chain_baseline() -> None:
@@ -776,7 +780,8 @@ def test_the_legacy_guard_relaxation_is_a_measured_no_op_after_m2_2i() -> None:
 
 #: 抄自 09-15 那份健康报告的实测取值。刻意写死字面量而不是由生产常量生成 fixture ——
 #: 后者会让"生产端偷偷少判一项"这件事变得测不出来；对齐由下面那条断言负责。
-#: A05/A05b 两行抄自 reports/taiji_cap0_health_v4_seedbeta_20260918.json（A05 已执行）。
+#: A05/A05b 两行抄自 **required 链路** 那份
+#: reports/taiji_cap0_health_v5_seedbeta_constrained_20260918.json（裸链路那份 v4 的 A05b 是 False）。
 HEALTH_REPORT_CHECKS = {
     "A01_new_process_load": True,
     "A01_load_does_not_advance_tick": True,
@@ -786,17 +791,21 @@ HEALTH_REPORT_CHECKS = {
     "A06_no_external_provider_in_N_mode": True,
     "H05_no_crash_over_n_runs": True,
     "A05_isolated_ablation": True,
-    "A05b_answer_follows_parameters": False,
+    "A05b_answer_follows_parameters": True,
 }
 
 
 def _health(
     checkpoint: str = "checkpoints\\seed_beta.pt", runs: int = 30, crashes: int = 0
 ) -> dict:
+    from scripts.training.check_p3b_criteria import REQUIRED_CHAIN
+
     return {
-        "format": "taiji-cap0-health-v1",
+        "format": "taiji-cap0-health-v2",
         "checkpoint": checkpoint,
         "trained_during_eval": False,
+        # A/H 的读数依链路而定 ⇒ 判据先要链路对得上，这份 fixture 必须带着它被要求的那个值。
+        "chain": dict(REQUIRED_CHAIN),
         "dimensions": {
             "A": {"name": "模型真实性", "checks": dict(HEALTH_REPORT_CHECKS)},
             "H": {
@@ -811,23 +820,32 @@ def _health(
 
 
 def test_the_judged_health_list_matches_the_sealed_health_report() -> None:
-    """要判的清单必须与仪器真产出的字段一致——少一项就会漏判一类回归。"""
+    """要判的清单必须与仪器真产出的字段一致——少一项就会漏判一类回归。
+
+    顺带钉住这条判据的**链路前提**：同一个检查点、同一批靶点，裸链路那份（v4）A05b 是 False，
+    required 链路那份（v5）是 True。清单按 v5 对齐，并把两版的差异显式读出来。
+    """
 
     from scripts.training.check_p3b_criteria import A05B_CHECK, A_HEALTH_CHECKS, MIN_STABILITY_RUNS
 
-    sealed = json.loads(HEALTH_REPORT_V4.read_text(encoding="utf-8"))
-    produced = sealed["dimensions"]["A"]["checks"]
-    assert set(A_HEALTH_CHECKS) == {
-        key for key, value in produced.items() if value is not None and key != A05B_CHECK
-    }
-    #: A05 从 09-15 的 `null`（未执行）变成实测布尔 ⇒ 它现在必须是必过项；
-    #: A05b 恰恰相反：盘上每个检查点它都是 False，判它等于让每条 campaign 必红。
+    v5 = json.loads(HEALTH_REPORT_V5.read_text(encoding="utf-8"))
+    produced = v5["dimensions"]["A"]["checks"]
+    assert set(A_HEALTH_CHECKS) == {key for key, value in produced.items() if value is not None}
     assert "A05_isolated_ablation" in A_HEALTH_CHECKS
-    assert A05B_CHECK not in A_HEALTH_CHECKS
+    assert A05B_CHECK in A_HEALTH_CHECKS, "required 链路上它可满足 ⇒ 没有豁免的理由"
     assert produced["A05_isolated_ablation"] is True
-    assert produced[A05B_CHECK] is False
+    assert produced[A05B_CHECK] is True
     assert MIN_STABILITY_RUNS == 30
-    assert sealed["dimensions"]["H"]["stability_runs"] >= MIN_STABILITY_RUNS
+    assert v5["dimensions"]["H"]["stability_runs"] >= MIN_STABILITY_RUNS
+
+    bare = json.loads(HEALTH_REPORT_V4.read_text(encoding="utf-8"))
+    assert bare["dimensions"]["A"]["checks"][A05B_CHECK] is False
+    assert bare["checkpoint"] == v5["checkpoint"]
+    assert (
+        bare["dimensions"]["A"]["ablation"]["targets"]
+        == v5["dimensions"]["A"]["ablation"]["targets"]
+    )
+    assert v5["chain"]["constrained_decode"] is True
 
 
 def test_health_reports_decide_the_clause_in_both_directions(tmp_path) -> None:
@@ -1088,25 +1106,141 @@ def test_the_sealed_report_records_the_ablation_verdict_as_measured() -> None:
     assert all(arm["answer_changed"] is False for arm in ablation["arms"])
 
 
-def test_a05b_is_disclosed_to_the_campaign_verdict_without_flipping_it() -> None:
-    """A05b 必须随 verdict 一起读出，但判它等于让每条 campaign 必红 —— 两个方向都测。"""
+def test_a_template_only_answer_now_fails_the_health_clause() -> None:
+    """A05b 进了必过项 ⇒ "回答退回固定模板"的那一臂必须判 fail（07 §3 A 的禁令就落在这里）。
+
+    三个方向：v5 的读数 ⇒ pass；把 A05b 翻成 False ⇒ fail 且点名它、并记为相对基线的回归；
+    那个只披露不判的 `answer_surface` 旁路块必须已经不存在（判了就不该再有旁路）。
+    """
 
     from scripts.training.check_p3b_criteria import A05B_CHECK, judge_health
 
     report = json.loads(CONSTRAINED_REPORT.read_text(encoding="utf-8"))
-    base = _health()
-    echoed = judge_health(base, base, report, report)
-    assert echoed["status"] == "pass"
-    assert echoed["answer_surface"]["check"] == A05B_CHECK
-    assert echoed["answer_surface"]["candidate_value"] is False
-    assert echoed["answer_surface"]["counts_toward_status"] is False
+    good = _health()
+    passed = judge_health(good, good, report, report)
+    assert passed["status"] == "pass"
+    assert "answer_surface" not in passed
 
-    healed = _health()
-    healed["dimensions"]["A"]["checks"][A05B_CHECK] = True
-    assert judge_health(base, healed, report, report)["answer_surface"]["candidate_value"] is True
-
-    dead = _health()
-    dead["dimensions"]["A"]["checks"]["A05_isolated_ablation"] = False
-    judged = judge_health(base, dead, report, report)
+    template_only = _health()
+    template_only["dimensions"]["A"]["checks"][A05B_CHECK] = False
+    judged = judge_health(good, template_only, report, report)
     assert judged["status"] == "fail"
-    assert judged["regressed_against_baseline"] == ["A05_isolated_ablation"]
+    assert A05B_CHECK in judged["candidate_checks_not_passing"]
+    assert judged["regressed_against_baseline"] == [A05B_CHECK]
+
+    #: 裸链路那份报告（A05b=False）**不能**拿来判约束链路的分数 —— 先拒判，不拿它当回归。
+    bare = _health()
+    bare["chain"] = {"relax_legacy_guard": False, "constrained_decode": False}
+    refused = judge_health(good, bare, report, report)
+    assert refused["status"] == "chain_mismatch"
+    assert refused["does_not_count_as_pass"] is True
+
+
+def test_a_health_report_from_another_chain_is_refused_before_anything_is_read(tmp_path) -> None:
+    """链路不对 ⇒ A/H 支根本不判。这不是形式主义：A05b 在裸链路实测 False、约束链路实测 True。
+
+    三个方向都测：错链路拒、**没有** chain 字段（v1..v4 那批封存报告）也拒、对链路才继续项链判。
+    """
+
+    from scripts.training import check_p3b_criteria as checker
+
+    report = json.loads(CONSTRAINED_REPORT.read_text(encoding="utf-8"))
+    base = _health()
+
+    bare = _health()
+    bare["chain"] = {"relax_legacy_guard": False, "constrained_decode": False}
+    refused = checker.judge_health(base, bare, report, report)
+    assert refused["status"] == "chain_mismatch"
+    assert refused["does_not_count_as_pass"] is True
+    assert "chain_mismatch" in refused["reason"] or "chain" in refused["reason"]
+
+    legacy = _health()
+    del legacy["chain"]
+    assert checker.judge_health(legacy, base, report, report)["status"] == "chain_mismatch"
+
+    #: 正向：链路一致时这条守卫必须**不**拦事，否则等于把整支 A/H 永久判死。
+    assert checker.judge_health(base, base, report, report)["status"] == "pass"
+
+    #: 接线：走 main()，错链路的 candidate 必须让 `untested_clauses` 说话，而不是静默 pass。
+    good = tmp_path / "good.json"
+    good.write_text(json.dumps(base, ensure_ascii=False), encoding="utf-8")
+    bad = tmp_path / "bare.json"
+    bad.write_text(json.dumps(bare, ensure_ascii=False), encoding="utf-8")
+    out = tmp_path / "verdict.json"
+    checker.main(
+        [
+            "--baseline",
+            str(CONSTRAINED_REPORT),
+            "--candidate",
+            str(_improved_candidate(tmp_path, CONSTRAINED_REPORT)),
+            "--baseline-health",
+            str(good),
+            "--candidate-health",
+            str(bad),
+            "--output",
+            str(out),
+        ]
+    )
+    verdict = json.loads(out.read_text(encoding="utf-8"))
+    assert verdict["health"]["status"] == "chain_mismatch"
+    assert any("chain_mismatch" in clause for clause in verdict["untested_clauses"])
+
+
+def test_the_chain_guard_checks_the_report_path_of_the_mode_actually_run(tmp_path) -> None:
+    """守卫要按**当前模式**查它真正写的那份报告。
+
+    旧写法只看 `--report` ⇒ `--health` + 链路开关（战役驱动就是这么调的）明明不碰 `--report`
+    也被拒。这个错只有真跑 CLI 才暴露 —— 战役那侧的单测把 subprocess 假掉了，看不见参数解析。
+    """
+
+    from types import SimpleNamespace
+
+    from scripts.training.eval_taiji_cap0_baseline import (
+        DEFAULT_HEALTH_REPORT,
+        DEFAULT_REPORT,
+        chain_report_conflict,
+    )
+
+    def args(**overrides):
+        base = {
+            "relax_legacy_guard": False,
+            "constrained_decode": False,
+            "health": False,
+            "report": DEFAULT_REPORT,
+            "health_report": DEFAULT_HEALTH_REPORT,
+        }
+        base.update(overrides)
+        return SimpleNamespace(**base)
+
+    assert chain_report_conflict(args()) is None
+    assert chain_report_conflict(args(relax_legacy_guard=True)) is not None
+    assert chain_report_conflict(args(relax_legacy_guard=True, report=tmp_path / "x.json")) is None
+    #: 战役实际发出的那个形状：健康支 + 显式 health-report ⇒ 必须放行。
+    assert (
+        chain_report_conflict(
+            args(
+                health=True,
+                relax_legacy_guard=True,
+                constrained_decode=True,
+                health_report=tmp_path / "h.json",
+            )
+        )
+        is None
+    )
+    assert chain_report_conflict(args(health=True, constrained_decode=True)) is not None
+
+
+def test_the_sealed_baseline_health_report_declares_the_required_chain() -> None:
+    """战役基线那份健康报告必须带 chain=REQUIRED_CHAIN，否则每场战役的 A/H 支都会白缺。"""
+
+    from scripts.training.check_p3b_criteria import REQUIRED_CHAIN
+    from scripts.training.run_p3b_campaign import P3A_BASELINE, P3A_HEALTH
+
+    sealed = json.loads(P3A_HEALTH.read_text(encoding="utf-8"))
+    assert sealed["chain"] == REQUIRED_CHAIN
+    assert sealed["format"] == "taiji-cap0-health-v2"
+    assert sealed["identity"]["git_head"]
+    assert sealed["identity"]["checkpoint_sha256"]
+    assert (
+        sealed["checkpoint"] == json.loads(P3A_BASELINE.read_text(encoding="utf-8"))["checkpoint"]
+    )

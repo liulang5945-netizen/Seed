@@ -35,8 +35,10 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 REPORT_FORMAT = "taiji-cap0-baseline-v1"
+#: v1 → v2: the report now carries `chain` + `identity`, because A05b's reading is chain-dependent.
+HEALTH_REPORT_FORMAT = "taiji-cap0-health-v2"
 DEFAULT_REPORT = PROJECT_ROOT / "reports" / "taiji_cap0_baseline_v1_20260915.json"
-DEFAULT_HEALTH_REPORT = PROJECT_ROOT / "reports" / "taiji_cap0_health_v1_20260915.json"
+DEFAULT_HEALTH_REPORT = PROJECT_ROOT / "reports" / "taiji_cap0_health_v5_default_20260918.json"
 DEFAULT_ADJUDICATION_REPORT = PROJECT_ROOT / "reports" / "taiji_cap0_adjudication_v1_20260915.json"
 DEFAULT_CHECKPOINT = PROJECT_ROOT / "checkpoints" / "seed_corpus.pt"
 EVAL_SET_PATH = PROJECT_ROOT / "plans" / "manifests" / "cap0_eval_set_v1.json"
@@ -268,6 +270,18 @@ def _health_child(payload: dict[str, Any]) -> int:
     import time
     import tracemalloc
 
+    #: A/H 必须与分数**同一条链路**（07 §4.1 的链路披露要求）。这条不是形式主义：
+    #: 在裸链路上原始字节含 U+FFFD，可读性闸门会丢弃 `native_prediction` 退回固定模板，
+    #: 于是 A05b（"回答是否随参数改变"）实测为 False；换成约束解码链路同一批消融它就变 True。
+    if payload.get("relax_legacy_guard"):
+        from scripts.training.probe_taiji_cap0_legacy_load import _install_legacy_guard
+
+        _install_legacy_guard()
+    if payload.get("constrained_decode"):
+        from scripts.training.probe_taiji_cap0_byte_output import install_constrained_decode
+
+        install_constrained_decode()
+
     from api.seed_runtime import SeedRuntime
 
     out: dict[str, Any] = {"checks": {}, "timings": {}, "memory": {}, "notes": {}}
@@ -351,9 +365,10 @@ def _health_child(payload: dict[str, Any]) -> int:
         "判据只看**原始 effector 输出**是否随参数改变（07 §2 L1）"
     )
     out["notes"]["A05b_answer_follows_parameters"] = (
-        "表层回答是否随消融改变。实测恒为 False：可读性闸门 _readable_surface 因字节流含 "
-        "U+FFFD 而拒收 native_prediction，退回固定模板 ⇒ 按 07 §3 A 行"
-        "“不能把纯规则输出归因模型”，聊天回答不得记为参数驱动"
+        "表层回答是否随消融改变，**读数依链路而定**：裸链路实测 False（原始字节含 U+FFFD，可读性"
+        "闸门 _readable_surface 拒收 native_prediction，退回固定模板 ⇒ 按 07 §3 A 行“不能把纯规则"
+        "输出归因模型”，此时聊天回答不得记为参数驱动）；约束解码链路同一批消融实测 True"
+        "（闸门放行，回答即模型自己吐的字节，但仍非成句汉语）"
     )
     out["notes"]["H06_interrupt_recovery"] = "需专门的恢复流程；本 runner 不自动执行 ⇒ not_executed"
     out["notes"]["H_gates"] = "门限未在本 runner 内设定：须按设备预检标定后冻结（07 §4.2）"
@@ -492,8 +507,6 @@ def run_baseline(
         encoding="utf-8",
         check=False,
     ).stdout.strip()
-    import hashlib
-
     checkpoint_sha256 = hashlib.sha256(Path(checkpoint).read_bytes()).hexdigest()
     eval_set_sha256 = hashlib.sha256(EVAL_SET_PATH.read_bytes()).hexdigest()
     report: dict[str, Any] = {
@@ -773,13 +786,39 @@ F_CONTRACTS: tuple[dict[str, str], ...] = (
 )
 
 
-def run_health(checkpoint: Path = DEFAULT_CHECKPOINT) -> dict[str, Any]:
-    """A/H 确定性检查 + F 合同引用。H **只采样数值**，门限留待标定后冻结。"""
+def run_health(
+    checkpoint: Path = DEFAULT_CHECKPOINT,
+    *,
+    relax_legacy_guard: bool = False,
+    constrained_decode: bool = False,
+) -> dict[str, Any]:
+    """A/H 确定性检查 + F 合同引用。H **只采样数值**，门限留待标定后冻结。
 
+    链路是显式参数并写进报告：**格式号从 v1 升到 v2 正因为** A05b（表层回答是否随参数改变）
+    的读数依链路而定 —— 把两份不同链路的健康报告并排读会得出相反结论。
+    """
+
+    git_head = subprocess.run(
+        ["git", "rev-parse", "HEAD"],
+        cwd=PROJECT_ROOT,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        check=False,
+    ).stdout.strip()
     report: dict[str, Any] = {
-        "format": "taiji-cap0-health-v1",
+        "format": HEALTH_REPORT_FORMAT,
         "checkpoint": _relative(checkpoint),
         "trained_during_eval": False,
+        # 与评价报告同款的身份绑定（07 §4.1）：消融结论取决于跑它的代码与权重。
+        "identity": {
+            "git_head": git_head,
+            "checkpoint_sha256": hashlib.sha256(Path(checkpoint).read_bytes()).hexdigest(),
+        },
+        "chain": {
+            "relax_legacy_guard": bool(relax_legacy_guard),
+            "constrained_decode": bool(constrained_decode),
+        },
         "dimensions": {},
     }
 
@@ -791,6 +830,8 @@ def run_health(checkpoint: Path = DEFAULT_CHECKPOINT) -> dict[str, Any]:
             "probe_prompt": "用一句话说明你能做什么。",
             "probe_prompt_alt": "把“猫坐在垫子上”改成疑问句。",
             "stability_runs": 30,
+            "relax_legacy_guard": bool(relax_legacy_guard),
+            "constrained_decode": bool(constrained_decode),
         }
     )
 
@@ -824,6 +865,30 @@ def run_health(checkpoint: Path = DEFAULT_CHECKPOINT) -> dict[str, Any]:
         "note": "F 只读引用既有冻结合同；不重算分数，也不得把局部 probe 当作整模型能力。",
     }
     return report
+
+
+def chain_report_conflict(args: argparse.Namespace) -> str | None:
+    """Which non-default-chain report path is missing, if any.
+
+    The two modes are checked **separately on purpose**: the original guard looked only at
+    ``--report``, so a legitimate ``--health`` run with chain flags -- exactly what the P3b campaign
+    driver issues -- was rejected even though it never touches ``--report``.  Only the real CLI
+    revealed that; the campaign's unit tests fake the subprocess.
+    """
+
+    off_default_chain = bool(args.relax_legacy_guard or args.constrained_decode)
+    if not off_default_chain:
+        return None
+    if args.health:
+        if args.health_report == DEFAULT_HEALTH_REPORT:
+            return (
+                "启用 --relax-legacy-guard / --constrained-decode 时必须显式指定 --health-report"
+                "（A05b 的读数依链路而定，不能把非默认链路的结果写进默认入口那份文件）"
+            )
+        return None
+    if args.report == DEFAULT_REPORT:
+        return "启用 --relax-legacy-guard / --constrained-decode 时必须显式指定 --report"
+    return None
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -867,9 +932,9 @@ def main(argv: list[str] | None = None) -> int:
     )
     args = parser.parse_args(argv)
 
-    if (args.relax_legacy_guard or args.constrained_decode) and args.report == DEFAULT_REPORT:
-        # 非默认链路必须显式指定报告路径，避免覆盖"默认入口"的基线报告。
-        parser.error("启用 --relax-legacy-guard / --constrained-decode 时必须显式指定 --report")
+    conflict = chain_report_conflict(args)
+    if conflict is not None:
+        parser.error(conflict)
 
     if args.child:
         payload = json.loads(sys.stdin.read())
@@ -900,7 +965,11 @@ def main(argv: list[str] | None = None) -> int:
         return 0
 
     if args.health:
-        health = run_health(args.checkpoint)
+        health = run_health(
+            args.checkpoint,
+            relax_legacy_guard=bool(args.relax_legacy_guard),
+            constrained_decode=bool(args.constrained_decode),
+        )
         health_path = (
             args.health_report
             if args.health_report.is_absolute()

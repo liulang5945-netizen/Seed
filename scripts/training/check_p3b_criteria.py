@@ -82,15 +82,17 @@ A_HEALTH_CHECKS = (
     "A03_fixed_input_reproducible",
     "A04_input_changes_output",
     "A05_isolated_ablation",
+    "A05b_answer_follows_parameters",
     "A06_no_external_provider_in_N_mode",
     "H05_no_crash_over_n_runs",
 )
-#: ``A05b_answer_follows_parameters`` is deliberately **not** in the judged set. It is measured and
-#: reported, but it is False for every checkpoint on record: the readable-surface gate discards the
-#: raw bytes and emits a fixed template, so the chat answer is not parameter-driven at all (§07 A
-#: "不能把纯规则输出归因模型"). That is an L2 product gap, not something a training campaign can
-#: regress or repair -- judging it here would make the A/H clause unsatisfiable for every arm and
-#: destroy its power to discriminate. ``judge_health`` echoes its value instead of hiding it.
+#: ``A05b`` **is** judged, and that decision is measured rather than assumed. It was first excluded
+#: because every checkpoint on record read False -- but those readings came from the bare chain,
+#: where the readable-surface gate rejects the undecodable bytes and falls back to a fixed template.
+#: Re-measured on the required chain (``taiji_cap0_health_v5_seedbeta_constrained_20260918.json``)
+#: it reads True for the same checkpoint and the same ablation targets, so it is satisfiable and it
+#: is the only check that actually enforces 07 §3 A's "不能把纯规则输出归因模型": a candidate whose
+#: answer reverts to the template now fails the A/H branch instead of passing it silently.
 A05B_CHECK = "A05b_answer_follows_parameters"
 #: 07 §4.2: "H 至少 30 次混合运行无崩溃".
 MIN_STABILITY_RUNS = 30
@@ -142,6 +144,23 @@ def judge_health(
                 "does_not_count_as_pass": True,
             }
 
+    #: Chain parity, checked **before** anything is read out of the report. This is not
+    #: bookkeeping: A05b ("does the emitted answer move when weights are ablated") measures False on
+    #: the bare chain and True on the constrained one, because the readable-surface gate only
+    #: discards the raw bytes when they are undecodable.  A health report that does not name its
+    #: chain therefore cannot judge an A/H clause beside a constrained-chain score -- and reports
+    #: v1..v4 predate the field, so they fail closed here by design.
+    for side, health in (("baseline", baseline_health), ("candidate", candidate_health)):
+        if health.get("chain") != REQUIRED_CHAIN:
+            return {
+                "status": "chain_mismatch",
+                "reason": (
+                    f"{side} health report declares chain {health.get('chain')!r} but the campaign "
+                    f"scores on {REQUIRED_CHAIN!r}; A/H readouts are chain-dependent (DEBT-I4)"
+                ),
+                "does_not_count_as_pass": True,
+            }
+
     base_checks = baseline_health["dimensions"]["A"]["checks"]
     cand_checks = candidate_health["dimensions"]["A"]["checks"]
     not_passing = [key for key in A_HEALTH_CHECKS if cand_checks.get(key) is not True]
@@ -159,16 +178,6 @@ def judge_health(
         "candidate_checks_not_passing": not_passing,
         "regressed_against_baseline": regressed,
         "stability": {"runs": runs, "crashes": crashes, "at_least": MIN_STABILITY_RUNS},
-        "answer_surface": {
-            "check": A05B_CHECK,
-            "candidate_value": cand_checks.get(A05B_CHECK),
-            "counts_toward_status": False,
-            "note": (
-                "消融是否改变**表层回答**。为 False 时说明聊天回答仍是固定模板（原始字节被可读性"
-                "闸门丢弃）——这是 L2 产品缺口，不由训练 campaign 判定，故不计入 status，但必须随"
-                "verdict 一起读出，见 A05B_CHECK 上方注释。"
-            ),
-        },
         "h_thresholds": {
             "status": "untested",
             "gate_status": stability.get("gate_status"),
@@ -268,15 +277,14 @@ def check(
         untested.append(
             "J4 的 A/H 布尔支：未提供 --baseline-health / --candidate-health（DEBT-I4）"
         )
+    if health["status"] in ("source_mismatch", "chain_mismatch"):
+        #: 配错检查点或配错链路 = 这一支根本没判 —— 也不能算通过，必须显式列出来。
+        untested.append(f"J4 的 A/H 布尔支未判（{health['status']}）：{health.get('reason', '')}")
     if health.get("h_thresholds", {}).get("status") == "untested":
         untested.append("H 的响应/内存阈值门：尚未按目标设备标定并冻结（07 §4.2）")
     untested.append(
         "J4 的首个布尔支：G 的硬安全失败数必须为 0 —— 本 checker 不读人工复核判定报告，未判"
     )
-    if health.get("answer_surface", {}).get("candidate_value") is False:
-        untested.append(
-            "表层回答未随消融改变（A05b）：聊天输出仍是固定模板，不得记为参数驱动（07 §3 A）"
-        )
     verdict_pass = passed and health["status"] != "fail"
     return {
         "format": "taiji-p3b-criteria-check-v1",

@@ -798,9 +798,10 @@ def test_the_health_probe_runs_a_fresh_process_and_refuses_to_hide_failure(
     """
 
     payload = {
-        "format": "taiji-cap0-health-v1",
+        "format": "taiji-cap0-health-v2",
         "checkpoint": "checkpoints\\p3b\\snapshots\\arm_tick_17000000.pt",
         "trained_during_eval": False,
+        "chain": {"relax_legacy_guard": True, "constrained_decode": True},
         "dimensions": {
             "A": {"checks": {"A01_new_process_load": True}},
             "H": {"stability_runs": 30},
@@ -818,6 +819,10 @@ def test_the_health_probe_runs_a_fresh_process_and_refuses_to_hide_failure(
     assert good.calls[0][good.calls[0].index("--health") + 1] == "--checkpoint"
     assert "--health-report" in good.calls[0]
     assert good.calls[0][good.calls[0].index("--checkpoint") + 1] == str(snapshot)
+    #: 健康支必须与分数**同一条链路**，否则 J4 的 A/H 判的不是那批分数所在的链路
+    #: （A05b 在裸链路实测 False、约束链路实测 True —— 见 check_p3b_criteria 的 chain 守卫）。
+    assert "--relax-legacy-guard" in good.calls[0]
+    assert "--constrained-decode" in good.calls[0]
 
     broken = _HealthRun(1, None)
     monkeypatch.setattr(campaign, "subprocess", broken)

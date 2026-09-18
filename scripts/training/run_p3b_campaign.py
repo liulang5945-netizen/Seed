@@ -53,7 +53,9 @@ CRITERIA = PROJECT_ROOT / "scripts" / "training" / "check_p3b_criteria.py"
 P3A_BASELINE = PROJECT_ROOT / "reports" / "taiji_cap0_baseline_constrained_20260915.json"
 #: The health sample taken from the *same* checkpoint as P3A_BASELINE (DEBT-I4).  Pairing is
 #: checked by the criteria checker, so this name has to stay tied to that report.
-P3A_HEALTH = PROJECT_ROOT / "reports" / "taiji_cap0_health_v3_seedbeta_20260918.json"
+#: The P3a reference health report **on the required chain** (v3/v4 were taken bare, so the
+#: criteria checker's chain-parity guard refuses them; see ``judge_health``).
+P3A_HEALTH = PROJECT_ROOT / "reports" / "taiji_cap0_health_v5_seedbeta_constrained_20260918.json"
 REQUIRED_CHAIN = {"relax_legacy_guard": True, "constrained_decode": True}
 MECHANISED = ("C", "D", "E")
 PENDING_DIMS = ("B", "G")
@@ -233,9 +235,13 @@ def _evaluate(checkpoint: Path, stage_path: Path, baseline: dict[str, Any]) -> d
 def _evaluate_health(checkpoint: Path, health_path: Path) -> dict[str, Any]:
     """07 §4.2's A/H boolean clause for one stage: re-run the health probe in a fresh process.
 
-    Cheap next to a CAP-0 stage (measured 17.2 s against 345.7 s), and without it J4's A/H branch
-    stays ``untested`` forever -- see DEBT-I4.  No reuse shortcut here: a health report is a
-    property of the file it was taken from, and re-running costs seconds.
+    Runs on **the same chain as the scores** -- the two flags are not interchangeable here: A05b
+    (does the emitted answer move under weight ablation) measures False bare and True constrained,
+    because the readable-surface gate only rejects the raw bytes when they are undecodable.  The
+    criteria checker refuses a health report whose ``chain`` is not the required one.
+    Cheap next to a CAP-0 stage (measured 17.2 s before A05, ~25.6 s with it, against 345.7 s), and
+    without it J4's A/H branch stays ``untested`` forever -- see DEBT-I4.  No reuse shortcut here:
+    a health report is a property of the file it was taken from, and re-running costs seconds.
     """
 
     health_path.parent.mkdir(parents=True, exist_ok=True)
@@ -250,6 +256,8 @@ def _evaluate_health(checkpoint: Path, health_path: Path) -> dict[str, Any]:
         str(checkpoint),
         "--health-report",
         str(health_path),
+        "--relax-legacy-guard",
+        "--constrained-decode",
     ]
     started = time.perf_counter()
     completed = subprocess.run(command, capture_output=True, text=True, check=False)
