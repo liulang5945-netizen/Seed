@@ -790,12 +790,28 @@ class SequenceWorkspacePrototype:
         evidence vector is zeroed and the copy term removed (``p = p_vocab``).
         """
 
+        new_state, probability, _ = self._step_mixture_and_copy(
+            state, previous_symbol, zero_read=zero_read
+        )
+        return new_state, probability
+
+    def _step_mixture_and_copy(
+        self, state: WorkspaceState, previous_symbol: int, *, zero_read: bool = False
+    ) -> tuple[WorkspaceState, torch.Tensor, torch.Tensor | None]:
+        """``step_distribution`` plus the raw copy-component distribution.
+
+        Returns ``(new_state, mixture, p_copy)``; ``p_copy is None`` exactly when
+        the copy term is absent (``zero_read`` or no position-aligned evidence),
+        in which case ``mixture is p_vocab``.  R2-D4 value supervision consumes
+        ``p_copy``; the mixture path is byte-for-byte the legacy computation.
+        """
+
         if not self.config.copy_mixture:
             raise ValueError("step_distribution requires copy_mixture=True")
         new_state, vocab_logits = self.step(state, previous_symbol, zero_read=zero_read)
         p_vocab = torch.softmax(vocab_logits, dim=0)
         if zero_read or new_state.entry_bytes is None:
-            return new_state, p_vocab
+            return new_state, p_vocab, None
         weights = self.addressing_weights(new_state, detach=False)
         p_copy = self._copy_distribution(new_state, weights)
         renderer_state = new_state.renderer_state
@@ -803,10 +819,28 @@ class SequenceWorkspacePrototype:
             renderer_state @ self._parameters["copy_gate_weight"]
             + self._parameters["copy_gate_bias"]
         )
-        return new_state, gate * p_vocab + (1.0 - gate) * p_copy
+        return new_state, gate * p_vocab + (1.0 - gate) * p_copy, p_copy
 
     def teacher_forced_distributions(self, prefix: bytes, response: bytes) -> torch.Tensor:
         """Mixture distributions at positions 0..len(response) (teacher-forced)."""
+
+        mixtures, _ = self.teacher_forced_mixture_and_copy(prefix, response)
+        return mixtures
+
+    def teacher_forced_mixture_and_copy(
+        self,
+        prefix: bytes,
+        response: bytes,
+        *,
+        value_rotation: int = 0,
+        entry_rotation: int = 0,
+    ) -> tuple[torch.Tensor, torch.Tensor]:
+        """Mixture **and** copy-component distributions, positions 0..len(response).
+
+        The rotation kwargs are the R2-D2 evaluation lesions, forwarded to
+        :meth:`begin_episode`; the R2-D4 misbind probe reads the copy component
+        under ``entry_rotation`` while training always uses the intact graph.
+        """
 
         prefix = _validate_bytes(prefix, "prefix")
         response = _validate_bytes(response, "response")
@@ -815,16 +849,26 @@ class SequenceWorkspacePrototype:
             raise ValueError(
                 "sequence exceeds max_sequence_bytes; truncation needs its own contract"
             )
-        state = self.begin_episode(prefix)
-        distributions: list[torch.Tensor] = []
+        state = self.begin_episode(
+            prefix, value_rotation=value_rotation, entry_rotation=entry_rotation
+        )
+        mixtures: list[torch.Tensor] = []
+        copies: list[torch.Tensor | None] = []
         previous = self.config.boundary_symbol
         for symbol in response:
-            state, probability = self.step_distribution(state, previous)
-            distributions.append(probability)
+            state, probability, copy_probability = self._step_mixture_and_copy(state, previous)
+            mixtures.append(probability)
+            copies.append(copy_probability)
             previous = int(symbol)
-        state, probability = self.step_distribution(state, previous)
-        distributions.append(probability)
-        return torch.stack(distributions, dim=0)
+        state, probability, copy_probability = self._step_mixture_and_copy(state, previous)
+        mixtures.append(probability)
+        copies.append(copy_probability)
+        if any(copy is None for copy in copies):
+            raise ValueError(
+                "copy component unavailable; teacher-forced copy readout requires "
+                "position-aligned evidence (per_position/broadcast evidence source)"
+            )
+        return torch.stack(mixtures, dim=0), torch.stack(copies, dim=0)  # type: ignore[arg-type]
 
     def teacher_forced_logits(self, prefix: bytes, response: bytes) -> torch.Tensor:
         """Logits for positions 0..len(response); last position predicts the end marker."""
@@ -899,6 +943,8 @@ class SequenceWorkspacePrototype:
         contrastive_margin: float = 1.0,
         contrastive_weight: float = 0.0,
         first_byte_weight: float = 1.0,
+        copy_value_weight: float = 0.0,
+        value_mask: Sequence[bool] | None = None,
     ) -> tuple[torch.Tensor, dict[str, Any]]:
         """Real next-byte cross-entropy over the response plus the end marker.
 
@@ -937,11 +983,23 @@ class SequenceWorkspacePrototype:
                     "scheduled sampling and contrastive terms are not defined "
                     "on the copy-mixture distribution (R2-D2 H-A2)"
                 )
-            distributions = self.teacher_forced_distributions(prefix, response)
+            copy_weight = float(copy_value_weight)
+            if copy_weight < 0.0:
+                raise ValueError("copy_value_weight cannot be negative")
+            if copy_weight > 0.0 and value_mask is None:
+                raise ValueError("copy_value_weight requires value_mask")
+            if copy_weight > 0.0:
+                distributions, copy_distributions = self.teacher_forced_mixture_and_copy(
+                    prefix, response
+                )
+            else:
+                distributions = self.teacher_forced_distributions(prefix, response)
             target_probs = distributions.gather(1, targets.unsqueeze(1)).squeeze(1)
             per_position = -target_probs.clamp_min(1e-12).log()
             logits = distributions
         else:
+            if copy_value_weight != 0.0:
+                raise ValueError("copy_value_weight requires copy_mixture=True")
             logits = self._response_logits(
                 prefix, response, generation_state_ratio=ratio, generator=generator
             )
@@ -950,6 +1008,7 @@ class SequenceWorkspacePrototype:
         position_weights[0] = first_weight
         loss = (per_position * position_weights).sum() / position_weights.sum()
         margin_gap: torch.Tensor | float = 0.0
+        copy_value_prob_mean = 0.0
         if weight > 0.0:
             if contrastive_prefix is None:
                 raise ValueError("contrastive_weight requires a contrastive_prefix")
@@ -965,6 +1024,17 @@ class SequenceWorkspacePrototype:
             margin_gap = shuffled_nll - correct_nll
             margin = torch.as_tensor(float(contrastive_margin), dtype=logits.dtype)
             loss = loss + weight * torch.relu(margin - margin_gap)
+        if self.config.copy_mixture and copy_value_weight > 0.0 and value_mask is not None:
+            mask = torch.tensor([bool(flag) for flag in value_mask], dtype=torch.bool)
+            if mask.numel() != len(response):
+                raise ValueError("value_mask must align with the response bytes")
+            if mask.any():
+                copy_probs = copy_distributions[:-1][mask]
+                copy_targets = targets[:-1][mask]
+                copy_hits = copy_probs.gather(1, copy_targets.unsqueeze(1)).squeeze(1)
+                copy_loss = -copy_hits.clamp_min(1e-12).log().mean()
+                loss = loss + copy_weight * copy_loss
+                copy_value_prob_mean = float(copy_hits.detach().mean())
         with torch.no_grad():
             predictions = logits.argmax(dim=1)
             correct = int((predictions == targets).sum())
@@ -975,6 +1045,7 @@ class SequenceWorkspacePrototype:
                 "mean_surprise": float(loss.detach()),
                 "contrastive_margin_gap": float(margin_gap),
                 "first_byte_hit": int(predictions[0].item() == targets[0].item()),
+                "copy_value_prob_mean": copy_value_prob_mean,
             }
         return loss, metrics
 
@@ -1102,6 +1173,10 @@ class SequenceWorkspaceTrainer:
         # Readout-diagnosis countermeasure: up-weight the loss on the **first**
         # response byte (16/16 dev episodes err there).  1.0 = legacy behaviour.
         self.first_byte_weight = 1.0
+        # R2-D4 copy-value supervision (H-T): auxiliary NLL of the true answer
+        # value bytes under the **copy component** at those positions.  0.0 keeps
+        # the objective bit-for-bit; training-time only, not in the checkpoint.
+        self.copy_value_weight = 0.0
         # Per-epoch data-order shuffle (course-scale sweep).  ``None`` keeps the
         # fixed data order — legacy behaviour, byte-for-byte.
         self.epoch_shuffle_seed: int | None = None
@@ -1128,6 +1203,14 @@ class SequenceWorkspaceTrainer:
             raise ValueError("contrastive margin must be finite")
         self.contrastive_weight = value
         self.contrastive_margin = float(margin)
+
+    def enable_copy_value_supervision(self, weight: float) -> None:
+        """Turn on the R2-D4 (H-T) auxiliary copy-component loss on value bytes."""
+
+        value = float(weight)
+        if value < 0.0:
+            raise ValueError("copy_value_weight cannot be negative")
+        self.copy_value_weight = value
 
     def enable_scheduled_sampling(
         self,
@@ -1169,23 +1252,31 @@ class SequenceWorkspaceTrainer:
         batch: Sequence[tuple[bytes, bytes]],
         *,
         contrastive_prefixes: Sequence[bytes] | None = None,
+        value_masks: Sequence[Sequence[bool]] | None = None,
     ) -> dict[str, Any]:
         """One optimizer step over an explicit batch.  Deterministic.
 
         ``contrastive_prefixes`` supplies, per batch item, the **shuffled** prefix used
         by the H-OBJ term (deterministically taken from the next episode in the frozen
         data order by :meth:`train_epoch`).  ``None`` leaves the objective unchanged.
+
+        ``value_masks`` supplies, per batch item, the response-byte mask selecting the
+        answer **value** positions for the R2-D4 copy supervision (H-T).  ``None``
+        leaves the objective unchanged; required when ``copy_value_weight > 0``.
         """
 
         if not batch:
             raise ValueError("sequence workspace batch cannot be empty")
         if contrastive_prefixes is not None and len(contrastive_prefixes) != len(batch):
             raise ValueError("contrastive_prefixes must align with the batch")
+        if value_masks is not None and len(value_masks) != len(batch):
+            raise ValueError("value_masks must align with the batch")
         self.optimizer.zero_grad(set_to_none=True)
         losses: list[torch.Tensor] = []
         positions = 0
         correct = 0
         margin_gaps: list[float] = []
+        copy_value_probs: list[float] = []
         ratio = self.current_generation_state_ratio()
         for position, (prefix, response) in enumerate(batch):
             loss, metrics = self.prototype.sequence_loss(
@@ -1199,11 +1290,14 @@ class SequenceWorkspaceTrainer:
                 contrastive_margin=self.contrastive_margin,
                 contrastive_weight=self.contrastive_weight,
                 first_byte_weight=self.first_byte_weight,
+                copy_value_weight=self.copy_value_weight,
+                value_mask=None if value_masks is None else value_masks[position],
             )
             losses.append(loss)
             positions += int(metrics["positions"])
             correct += int(metrics["correct"])
             margin_gaps.append(float(metrics["contrastive_margin_gap"]))
+            copy_value_probs.append(float(metrics["copy_value_prob_mean"]))
         total = torch.stack(losses).mean()
         total.backward()
         self.optimizer.step()
@@ -1215,6 +1309,11 @@ class SequenceWorkspaceTrainer:
             "global_step": self.global_step,
             "generation_state_ratio": ratio,
             "contrastive_margin_gap": sum(margin_gaps) / max(1, len(margin_gaps)),
+            "copy_value_prob_mean": (
+                sum(copy_value_probs) / max(1, len(copy_value_probs))
+                if copy_value_probs
+                else 0.0
+            ),
         }
 
     def train_epoch(self, *, max_episodes: int | None = None) -> dict[str, Any]:
