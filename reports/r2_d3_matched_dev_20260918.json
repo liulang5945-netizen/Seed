@@ -1,0 +1,4293 @@
+{
+  "format": "taiji-r2-d3-matched-dev-v1",
+  "version": 1,
+  "contract": "plans/reference/M5_R2_D3_FIRST_STEP_GEOMETRY_CONTRACT_FROZEN_20260918.md",
+  "corpus_digest": "53ac9f88695f135d0bb04b4d25d98ab686c82175c45ca8d4d53e64639efbeecb",
+  "dev_split": "dev",
+  "epochs": 30,
+  "lr": 0.01,
+  "microbatch": 8,
+  "seeds": [
+    20260917,
+    20260918,
+    20260919
+  ],
+  "runs": {
+    "H4_per_position_multih_pe": [
+      {
+        "seed": 20260917,
+        "parameter_count": 96034,
+        "elapsed_seconds": 48.95299999997951,
+        "eval": {
+          "full": {
+            "M1_exact": {
+              "numerator": 0,
+              "denominator": 98,
+              "value": 0.0
+            },
+            "M2_shape_macro": {
+              "value": 0.0
+            },
+            "M3_content_exact": {
+              "numerator": 0,
+              "denominator": 86,
+              "value": 0.0
+            },
+            "M4_flip_pair": {
+              "numerator": 0,
+              "denominator": 11,
+              "value": 0.0
+            },
+            "M5_inv_pair": {
+              "numerator": 0,
+              "denominator": 4,
+              "value": 0.0
+            },
+            "per_group_exact": {
+              "fact": {
+                "correct": 0,
+                "denominator": 28,
+                "exact": 0.0
+              },
+              "negation": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "unknown": {
+                "correct": 0,
+                "denominator": 6,
+                "exact": 0.0
+              },
+              "same_opening_fact": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "same_opening_unknown": {
+                "correct": 0,
+                "denominator": 6,
+                "exact": 0.0
+              },
+              "combination_same": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              },
+              "combination_different": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              }
+            },
+            "content_per_group_exact": {
+              "fact": {
+                "correct": 0,
+                "denominator": 28,
+                "exact": 0.0
+              },
+              "negation": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "same_opening_fact": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "combination_same": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              },
+              "combination_different": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              }
+            }
+          },
+          "no_context": {
+            "M1_exact": {
+              "numerator": 0,
+              "denominator": 98,
+              "value": 0.0
+            },
+            "M2_shape_macro": {
+              "value": 0.0
+            },
+            "M3_content_exact": {
+              "numerator": 0,
+              "denominator": 86,
+              "value": 0.0
+            },
+            "M4_flip_pair": {
+              "numerator": 0,
+              "denominator": 11,
+              "value": 0.0
+            },
+            "M5_inv_pair": {
+              "numerator": 0,
+              "denominator": 4,
+              "value": 0.0
+            },
+            "per_group_exact": {
+              "fact": {
+                "correct": 0,
+                "denominator": 28,
+                "exact": 0.0
+              },
+              "negation": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "unknown": {
+                "correct": 0,
+                "denominator": 6,
+                "exact": 0.0
+              },
+              "same_opening_fact": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "same_opening_unknown": {
+                "correct": 0,
+                "denominator": 6,
+                "exact": 0.0
+              },
+              "combination_same": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              },
+              "combination_different": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              }
+            },
+            "content_per_group_exact": {
+              "fact": {
+                "correct": 0,
+                "denominator": 28,
+                "exact": 0.0
+              },
+              "negation": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "same_opening_fact": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "combination_same": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              },
+              "combination_different": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              }
+            }
+          },
+          "zero_read": {
+            "M1_exact": {
+              "numerator": 0,
+              "denominator": 98,
+              "value": 0.0
+            },
+            "M2_shape_macro": {
+              "value": 0.0
+            },
+            "M3_content_exact": {
+              "numerator": 0,
+              "denominator": 86,
+              "value": 0.0
+            },
+            "M4_flip_pair": {
+              "numerator": 0,
+              "denominator": 11,
+              "value": 0.0
+            },
+            "M5_inv_pair": {
+              "numerator": 0,
+              "denominator": 4,
+              "value": 0.0
+            },
+            "per_group_exact": {
+              "fact": {
+                "correct": 0,
+                "denominator": 28,
+                "exact": 0.0
+              },
+              "negation": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "unknown": {
+                "correct": 0,
+                "denominator": 6,
+                "exact": 0.0
+              },
+              "same_opening_fact": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "same_opening_unknown": {
+                "correct": 0,
+                "denominator": 6,
+                "exact": 0.0
+              },
+              "combination_same": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              },
+              "combination_different": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              }
+            },
+            "content_per_group_exact": {
+              "fact": {
+                "correct": 0,
+                "denominator": 28,
+                "exact": 0.0
+              },
+              "negation": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "same_opening_fact": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "combination_same": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              },
+              "combination_different": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              }
+            }
+          },
+          "copy_misbind": {
+            "M1_exact": {
+              "numerator": 0,
+              "denominator": 98,
+              "value": 0.0
+            },
+            "M2_shape_macro": {
+              "value": 0.0
+            },
+            "M3_content_exact": {
+              "numerator": 0,
+              "denominator": 86,
+              "value": 0.0
+            },
+            "M4_flip_pair": {
+              "numerator": 0,
+              "denominator": 11,
+              "value": 0.0
+            },
+            "M5_inv_pair": {
+              "numerator": 0,
+              "denominator": 4,
+              "value": 0.0
+            },
+            "per_group_exact": {
+              "fact": {
+                "correct": 0,
+                "denominator": 28,
+                "exact": 0.0
+              },
+              "negation": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "unknown": {
+                "correct": 0,
+                "denominator": 6,
+                "exact": 0.0
+              },
+              "same_opening_fact": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "same_opening_unknown": {
+                "correct": 0,
+                "denominator": 6,
+                "exact": 0.0
+              },
+              "combination_same": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              },
+              "combination_different": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              }
+            },
+            "content_per_group_exact": {
+              "fact": {
+                "correct": 0,
+                "denominator": 28,
+                "exact": 0.0
+              },
+              "negation": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "same_opening_fact": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "combination_same": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              },
+              "combination_different": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              }
+            }
+          },
+          "value_misbind": {
+            "M1_exact": {
+              "numerator": 0,
+              "denominator": 98,
+              "value": 0.0
+            },
+            "M2_shape_macro": {
+              "value": 0.0
+            },
+            "M3_content_exact": {
+              "numerator": 0,
+              "denominator": 86,
+              "value": 0.0
+            },
+            "M4_flip_pair": {
+              "numerator": 0,
+              "denominator": 11,
+              "value": 0.0
+            },
+            "M5_inv_pair": {
+              "numerator": 0,
+              "denominator": 4,
+              "value": 0.0
+            },
+            "per_group_exact": {
+              "fact": {
+                "correct": 0,
+                "denominator": 28,
+                "exact": 0.0
+              },
+              "negation": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "unknown": {
+                "correct": 0,
+                "denominator": 6,
+                "exact": 0.0
+              },
+              "same_opening_fact": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "same_opening_unknown": {
+                "correct": 0,
+                "denominator": 6,
+                "exact": 0.0
+              },
+              "combination_same": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              },
+              "combination_different": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              }
+            },
+            "content_per_group_exact": {
+              "fact": {
+                "correct": 0,
+                "denominator": 28,
+                "exact": 0.0
+              },
+              "negation": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "same_opening_fact": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "combination_same": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              },
+              "combination_different": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              }
+            }
+          },
+          "pair_rates": {
+            "fact_flip": {
+              "numerator": 0,
+              "denominator": 6,
+              "value": 0.0
+            },
+            "combo_flip": {
+              "numerator": 0,
+              "denominator": 5,
+              "value": 0.0
+            },
+            "invariance": {
+              "numerator": 0,
+              "denominator": 4,
+              "value": 0.0
+            }
+          },
+          "boundary_stop_rate": 0.9489795918367347
+        }
+      },
+      {
+        "seed": 20260918,
+        "parameter_count": 96034,
+        "elapsed_seconds": 49.17200000002049,
+        "eval": {
+          "full": {
+            "M1_exact": {
+              "numerator": 0,
+              "denominator": 98,
+              "value": 0.0
+            },
+            "M2_shape_macro": {
+              "value": 0.0
+            },
+            "M3_content_exact": {
+              "numerator": 0,
+              "denominator": 86,
+              "value": 0.0
+            },
+            "M4_flip_pair": {
+              "numerator": 0,
+              "denominator": 11,
+              "value": 0.0
+            },
+            "M5_inv_pair": {
+              "numerator": 0,
+              "denominator": 4,
+              "value": 0.0
+            },
+            "per_group_exact": {
+              "fact": {
+                "correct": 0,
+                "denominator": 28,
+                "exact": 0.0
+              },
+              "negation": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "unknown": {
+                "correct": 0,
+                "denominator": 6,
+                "exact": 0.0
+              },
+              "same_opening_fact": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "same_opening_unknown": {
+                "correct": 0,
+                "denominator": 6,
+                "exact": 0.0
+              },
+              "combination_same": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              },
+              "combination_different": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              }
+            },
+            "content_per_group_exact": {
+              "fact": {
+                "correct": 0,
+                "denominator": 28,
+                "exact": 0.0
+              },
+              "negation": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "same_opening_fact": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "combination_same": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              },
+              "combination_different": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              }
+            }
+          },
+          "no_context": {
+            "M1_exact": {
+              "numerator": 0,
+              "denominator": 98,
+              "value": 0.0
+            },
+            "M2_shape_macro": {
+              "value": 0.0
+            },
+            "M3_content_exact": {
+              "numerator": 0,
+              "denominator": 86,
+              "value": 0.0
+            },
+            "M4_flip_pair": {
+              "numerator": 0,
+              "denominator": 11,
+              "value": 0.0
+            },
+            "M5_inv_pair": {
+              "numerator": 0,
+              "denominator": 4,
+              "value": 0.0
+            },
+            "per_group_exact": {
+              "fact": {
+                "correct": 0,
+                "denominator": 28,
+                "exact": 0.0
+              },
+              "negation": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "unknown": {
+                "correct": 0,
+                "denominator": 6,
+                "exact": 0.0
+              },
+              "same_opening_fact": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "same_opening_unknown": {
+                "correct": 0,
+                "denominator": 6,
+                "exact": 0.0
+              },
+              "combination_same": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              },
+              "combination_different": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              }
+            },
+            "content_per_group_exact": {
+              "fact": {
+                "correct": 0,
+                "denominator": 28,
+                "exact": 0.0
+              },
+              "negation": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "same_opening_fact": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "combination_same": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              },
+              "combination_different": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              }
+            }
+          },
+          "zero_read": {
+            "M1_exact": {
+              "numerator": 0,
+              "denominator": 98,
+              "value": 0.0
+            },
+            "M2_shape_macro": {
+              "value": 0.0
+            },
+            "M3_content_exact": {
+              "numerator": 0,
+              "denominator": 86,
+              "value": 0.0
+            },
+            "M4_flip_pair": {
+              "numerator": 0,
+              "denominator": 11,
+              "value": 0.0
+            },
+            "M5_inv_pair": {
+              "numerator": 0,
+              "denominator": 4,
+              "value": 0.0
+            },
+            "per_group_exact": {
+              "fact": {
+                "correct": 0,
+                "denominator": 28,
+                "exact": 0.0
+              },
+              "negation": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "unknown": {
+                "correct": 0,
+                "denominator": 6,
+                "exact": 0.0
+              },
+              "same_opening_fact": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "same_opening_unknown": {
+                "correct": 0,
+                "denominator": 6,
+                "exact": 0.0
+              },
+              "combination_same": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              },
+              "combination_different": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              }
+            },
+            "content_per_group_exact": {
+              "fact": {
+                "correct": 0,
+                "denominator": 28,
+                "exact": 0.0
+              },
+              "negation": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "same_opening_fact": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "combination_same": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              },
+              "combination_different": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              }
+            }
+          },
+          "copy_misbind": {
+            "M1_exact": {
+              "numerator": 0,
+              "denominator": 98,
+              "value": 0.0
+            },
+            "M2_shape_macro": {
+              "value": 0.0
+            },
+            "M3_content_exact": {
+              "numerator": 0,
+              "denominator": 86,
+              "value": 0.0
+            },
+            "M4_flip_pair": {
+              "numerator": 0,
+              "denominator": 11,
+              "value": 0.0
+            },
+            "M5_inv_pair": {
+              "numerator": 0,
+              "denominator": 4,
+              "value": 0.0
+            },
+            "per_group_exact": {
+              "fact": {
+                "correct": 0,
+                "denominator": 28,
+                "exact": 0.0
+              },
+              "negation": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "unknown": {
+                "correct": 0,
+                "denominator": 6,
+                "exact": 0.0
+              },
+              "same_opening_fact": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "same_opening_unknown": {
+                "correct": 0,
+                "denominator": 6,
+                "exact": 0.0
+              },
+              "combination_same": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              },
+              "combination_different": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              }
+            },
+            "content_per_group_exact": {
+              "fact": {
+                "correct": 0,
+                "denominator": 28,
+                "exact": 0.0
+              },
+              "negation": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "same_opening_fact": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "combination_same": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              },
+              "combination_different": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              }
+            }
+          },
+          "value_misbind": {
+            "M1_exact": {
+              "numerator": 0,
+              "denominator": 98,
+              "value": 0.0
+            },
+            "M2_shape_macro": {
+              "value": 0.0
+            },
+            "M3_content_exact": {
+              "numerator": 0,
+              "denominator": 86,
+              "value": 0.0
+            },
+            "M4_flip_pair": {
+              "numerator": 0,
+              "denominator": 11,
+              "value": 0.0
+            },
+            "M5_inv_pair": {
+              "numerator": 0,
+              "denominator": 4,
+              "value": 0.0
+            },
+            "per_group_exact": {
+              "fact": {
+                "correct": 0,
+                "denominator": 28,
+                "exact": 0.0
+              },
+              "negation": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "unknown": {
+                "correct": 0,
+                "denominator": 6,
+                "exact": 0.0
+              },
+              "same_opening_fact": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "same_opening_unknown": {
+                "correct": 0,
+                "denominator": 6,
+                "exact": 0.0
+              },
+              "combination_same": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              },
+              "combination_different": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              }
+            },
+            "content_per_group_exact": {
+              "fact": {
+                "correct": 0,
+                "denominator": 28,
+                "exact": 0.0
+              },
+              "negation": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "same_opening_fact": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "combination_same": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              },
+              "combination_different": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              }
+            }
+          },
+          "pair_rates": {
+            "fact_flip": {
+              "numerator": 0,
+              "denominator": 6,
+              "value": 0.0
+            },
+            "combo_flip": {
+              "numerator": 0,
+              "denominator": 5,
+              "value": 0.0
+            },
+            "invariance": {
+              "numerator": 0,
+              "denominator": 4,
+              "value": 0.0
+            }
+          },
+          "boundary_stop_rate": 0.5816326530612245
+        }
+      },
+      {
+        "seed": 20260919,
+        "parameter_count": 96034,
+        "elapsed_seconds": 48.73399999993853,
+        "eval": {
+          "full": {
+            "M1_exact": {
+              "numerator": 9,
+              "denominator": 98,
+              "value": 0.09183673469387756
+            },
+            "M2_shape_macro": {
+              "value": 0.04931972789115646
+            },
+            "M3_content_exact": {
+              "numerator": 9,
+              "denominator": 86,
+              "value": 0.10465116279069768
+            },
+            "M4_flip_pair": {
+              "numerator": 0,
+              "denominator": 11,
+              "value": 0.0
+            },
+            "M5_inv_pair": {
+              "numerator": 0,
+              "denominator": 4,
+              "value": 0.0
+            },
+            "per_group_exact": {
+              "fact": {
+                "correct": 5,
+                "denominator": 28,
+                "exact": 0.17857142857142858
+              },
+              "negation": {
+                "correct": 1,
+                "denominator": 24,
+                "exact": 0.041666666666666664
+              },
+              "unknown": {
+                "correct": 0,
+                "denominator": 6,
+                "exact": 0.0
+              },
+              "same_opening_fact": {
+                "correct": 3,
+                "denominator": 24,
+                "exact": 0.125
+              },
+              "same_opening_unknown": {
+                "correct": 0,
+                "denominator": 6,
+                "exact": 0.0
+              },
+              "combination_same": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              },
+              "combination_different": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              }
+            },
+            "content_per_group_exact": {
+              "fact": {
+                "correct": 5,
+                "denominator": 28,
+                "exact": 0.17857142857142858
+              },
+              "negation": {
+                "correct": 1,
+                "denominator": 24,
+                "exact": 0.041666666666666664
+              },
+              "same_opening_fact": {
+                "correct": 3,
+                "denominator": 24,
+                "exact": 0.125
+              },
+              "combination_same": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              },
+              "combination_different": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              }
+            }
+          },
+          "no_context": {
+            "M1_exact": {
+              "numerator": 0,
+              "denominator": 98,
+              "value": 0.0
+            },
+            "M2_shape_macro": {
+              "value": 0.0
+            },
+            "M3_content_exact": {
+              "numerator": 0,
+              "denominator": 86,
+              "value": 0.0
+            },
+            "M4_flip_pair": {
+              "numerator": 0,
+              "denominator": 11,
+              "value": 0.0
+            },
+            "M5_inv_pair": {
+              "numerator": 0,
+              "denominator": 4,
+              "value": 0.0
+            },
+            "per_group_exact": {
+              "fact": {
+                "correct": 0,
+                "denominator": 28,
+                "exact": 0.0
+              },
+              "negation": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "unknown": {
+                "correct": 0,
+                "denominator": 6,
+                "exact": 0.0
+              },
+              "same_opening_fact": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "same_opening_unknown": {
+                "correct": 0,
+                "denominator": 6,
+                "exact": 0.0
+              },
+              "combination_same": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              },
+              "combination_different": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              }
+            },
+            "content_per_group_exact": {
+              "fact": {
+                "correct": 0,
+                "denominator": 28,
+                "exact": 0.0
+              },
+              "negation": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "same_opening_fact": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "combination_same": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              },
+              "combination_different": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              }
+            }
+          },
+          "zero_read": {
+            "M1_exact": {
+              "numerator": 0,
+              "denominator": 98,
+              "value": 0.0
+            },
+            "M2_shape_macro": {
+              "value": 0.0
+            },
+            "M3_content_exact": {
+              "numerator": 0,
+              "denominator": 86,
+              "value": 0.0
+            },
+            "M4_flip_pair": {
+              "numerator": 0,
+              "denominator": 11,
+              "value": 0.0
+            },
+            "M5_inv_pair": {
+              "numerator": 0,
+              "denominator": 4,
+              "value": 0.0
+            },
+            "per_group_exact": {
+              "fact": {
+                "correct": 0,
+                "denominator": 28,
+                "exact": 0.0
+              },
+              "negation": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "unknown": {
+                "correct": 0,
+                "denominator": 6,
+                "exact": 0.0
+              },
+              "same_opening_fact": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "same_opening_unknown": {
+                "correct": 0,
+                "denominator": 6,
+                "exact": 0.0
+              },
+              "combination_same": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              },
+              "combination_different": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              }
+            },
+            "content_per_group_exact": {
+              "fact": {
+                "correct": 0,
+                "denominator": 28,
+                "exact": 0.0
+              },
+              "negation": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "same_opening_fact": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "combination_same": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              },
+              "combination_different": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              }
+            }
+          },
+          "copy_misbind": {
+            "M1_exact": {
+              "numerator": 0,
+              "denominator": 98,
+              "value": 0.0
+            },
+            "M2_shape_macro": {
+              "value": 0.0
+            },
+            "M3_content_exact": {
+              "numerator": 0,
+              "denominator": 86,
+              "value": 0.0
+            },
+            "M4_flip_pair": {
+              "numerator": 0,
+              "denominator": 11,
+              "value": 0.0
+            },
+            "M5_inv_pair": {
+              "numerator": 0,
+              "denominator": 4,
+              "value": 0.0
+            },
+            "per_group_exact": {
+              "fact": {
+                "correct": 0,
+                "denominator": 28,
+                "exact": 0.0
+              },
+              "negation": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "unknown": {
+                "correct": 0,
+                "denominator": 6,
+                "exact": 0.0
+              },
+              "same_opening_fact": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "same_opening_unknown": {
+                "correct": 0,
+                "denominator": 6,
+                "exact": 0.0
+              },
+              "combination_same": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              },
+              "combination_different": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              }
+            },
+            "content_per_group_exact": {
+              "fact": {
+                "correct": 0,
+                "denominator": 28,
+                "exact": 0.0
+              },
+              "negation": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "same_opening_fact": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "combination_same": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              },
+              "combination_different": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              }
+            }
+          },
+          "value_misbind": {
+            "M1_exact": {
+              "numerator": 9,
+              "denominator": 98,
+              "value": 0.09183673469387756
+            },
+            "M2_shape_macro": {
+              "value": 0.04931972789115646
+            },
+            "M3_content_exact": {
+              "numerator": 9,
+              "denominator": 86,
+              "value": 0.10465116279069768
+            },
+            "M4_flip_pair": {
+              "numerator": 0,
+              "denominator": 11,
+              "value": 0.0
+            },
+            "M5_inv_pair": {
+              "numerator": 0,
+              "denominator": 4,
+              "value": 0.0
+            },
+            "per_group_exact": {
+              "fact": {
+                "correct": 5,
+                "denominator": 28,
+                "exact": 0.17857142857142858
+              },
+              "negation": {
+                "correct": 1,
+                "denominator": 24,
+                "exact": 0.041666666666666664
+              },
+              "unknown": {
+                "correct": 0,
+                "denominator": 6,
+                "exact": 0.0
+              },
+              "same_opening_fact": {
+                "correct": 3,
+                "denominator": 24,
+                "exact": 0.125
+              },
+              "same_opening_unknown": {
+                "correct": 0,
+                "denominator": 6,
+                "exact": 0.0
+              },
+              "combination_same": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              },
+              "combination_different": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              }
+            },
+            "content_per_group_exact": {
+              "fact": {
+                "correct": 5,
+                "denominator": 28,
+                "exact": 0.17857142857142858
+              },
+              "negation": {
+                "correct": 1,
+                "denominator": 24,
+                "exact": 0.041666666666666664
+              },
+              "same_opening_fact": {
+                "correct": 3,
+                "denominator": 24,
+                "exact": 0.125
+              },
+              "combination_same": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              },
+              "combination_different": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              }
+            }
+          },
+          "pair_rates": {
+            "fact_flip": {
+              "numerator": 0,
+              "denominator": 6,
+              "value": 0.0
+            },
+            "combo_flip": {
+              "numerator": 0,
+              "denominator": 5,
+              "value": 0.0
+            },
+            "invariance": {
+              "numerator": 0,
+              "denominator": 4,
+              "value": 0.0
+            }
+          },
+          "boundary_stop_rate": 0.9081632653061225
+        }
+      }
+    ],
+    "H1_singlehead_pe_control": [
+      {
+        "seed": 20260917,
+        "parameter_count": 86818,
+        "elapsed_seconds": 43.25,
+        "eval": {
+          "full": {
+            "M1_exact": {
+              "numerator": 0,
+              "denominator": 98,
+              "value": 0.0
+            },
+            "M2_shape_macro": {
+              "value": 0.0
+            },
+            "M3_content_exact": {
+              "numerator": 0,
+              "denominator": 86,
+              "value": 0.0
+            },
+            "M4_flip_pair": {
+              "numerator": 0,
+              "denominator": 11,
+              "value": 0.0
+            },
+            "M5_inv_pair": {
+              "numerator": 0,
+              "denominator": 4,
+              "value": 0.0
+            },
+            "per_group_exact": {
+              "fact": {
+                "correct": 0,
+                "denominator": 28,
+                "exact": 0.0
+              },
+              "negation": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "unknown": {
+                "correct": 0,
+                "denominator": 6,
+                "exact": 0.0
+              },
+              "same_opening_fact": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "same_opening_unknown": {
+                "correct": 0,
+                "denominator": 6,
+                "exact": 0.0
+              },
+              "combination_same": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              },
+              "combination_different": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              }
+            },
+            "content_per_group_exact": {
+              "fact": {
+                "correct": 0,
+                "denominator": 28,
+                "exact": 0.0
+              },
+              "negation": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "same_opening_fact": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "combination_same": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              },
+              "combination_different": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              }
+            }
+          },
+          "no_context": {
+            "M1_exact": {
+              "numerator": 0,
+              "denominator": 98,
+              "value": 0.0
+            },
+            "M2_shape_macro": {
+              "value": 0.0
+            },
+            "M3_content_exact": {
+              "numerator": 0,
+              "denominator": 86,
+              "value": 0.0
+            },
+            "M4_flip_pair": {
+              "numerator": 0,
+              "denominator": 11,
+              "value": 0.0
+            },
+            "M5_inv_pair": {
+              "numerator": 0,
+              "denominator": 4,
+              "value": 0.0
+            },
+            "per_group_exact": {
+              "fact": {
+                "correct": 0,
+                "denominator": 28,
+                "exact": 0.0
+              },
+              "negation": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "unknown": {
+                "correct": 0,
+                "denominator": 6,
+                "exact": 0.0
+              },
+              "same_opening_fact": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "same_opening_unknown": {
+                "correct": 0,
+                "denominator": 6,
+                "exact": 0.0
+              },
+              "combination_same": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              },
+              "combination_different": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              }
+            },
+            "content_per_group_exact": {
+              "fact": {
+                "correct": 0,
+                "denominator": 28,
+                "exact": 0.0
+              },
+              "negation": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "same_opening_fact": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "combination_same": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              },
+              "combination_different": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              }
+            }
+          },
+          "zero_read": {
+            "M1_exact": {
+              "numerator": 0,
+              "denominator": 98,
+              "value": 0.0
+            },
+            "M2_shape_macro": {
+              "value": 0.0
+            },
+            "M3_content_exact": {
+              "numerator": 0,
+              "denominator": 86,
+              "value": 0.0
+            },
+            "M4_flip_pair": {
+              "numerator": 0,
+              "denominator": 11,
+              "value": 0.0
+            },
+            "M5_inv_pair": {
+              "numerator": 0,
+              "denominator": 4,
+              "value": 0.0
+            },
+            "per_group_exact": {
+              "fact": {
+                "correct": 0,
+                "denominator": 28,
+                "exact": 0.0
+              },
+              "negation": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "unknown": {
+                "correct": 0,
+                "denominator": 6,
+                "exact": 0.0
+              },
+              "same_opening_fact": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "same_opening_unknown": {
+                "correct": 0,
+                "denominator": 6,
+                "exact": 0.0
+              },
+              "combination_same": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              },
+              "combination_different": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              }
+            },
+            "content_per_group_exact": {
+              "fact": {
+                "correct": 0,
+                "denominator": 28,
+                "exact": 0.0
+              },
+              "negation": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "same_opening_fact": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "combination_same": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              },
+              "combination_different": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              }
+            }
+          },
+          "copy_misbind": {
+            "M1_exact": {
+              "numerator": 0,
+              "denominator": 98,
+              "value": 0.0
+            },
+            "M2_shape_macro": {
+              "value": 0.0
+            },
+            "M3_content_exact": {
+              "numerator": 0,
+              "denominator": 86,
+              "value": 0.0
+            },
+            "M4_flip_pair": {
+              "numerator": 0,
+              "denominator": 11,
+              "value": 0.0
+            },
+            "M5_inv_pair": {
+              "numerator": 0,
+              "denominator": 4,
+              "value": 0.0
+            },
+            "per_group_exact": {
+              "fact": {
+                "correct": 0,
+                "denominator": 28,
+                "exact": 0.0
+              },
+              "negation": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "unknown": {
+                "correct": 0,
+                "denominator": 6,
+                "exact": 0.0
+              },
+              "same_opening_fact": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "same_opening_unknown": {
+                "correct": 0,
+                "denominator": 6,
+                "exact": 0.0
+              },
+              "combination_same": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              },
+              "combination_different": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              }
+            },
+            "content_per_group_exact": {
+              "fact": {
+                "correct": 0,
+                "denominator": 28,
+                "exact": 0.0
+              },
+              "negation": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "same_opening_fact": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "combination_same": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              },
+              "combination_different": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              }
+            }
+          },
+          "value_misbind": {
+            "M1_exact": {
+              "numerator": 0,
+              "denominator": 98,
+              "value": 0.0
+            },
+            "M2_shape_macro": {
+              "value": 0.0
+            },
+            "M3_content_exact": {
+              "numerator": 0,
+              "denominator": 86,
+              "value": 0.0
+            },
+            "M4_flip_pair": {
+              "numerator": 0,
+              "denominator": 11,
+              "value": 0.0
+            },
+            "M5_inv_pair": {
+              "numerator": 0,
+              "denominator": 4,
+              "value": 0.0
+            },
+            "per_group_exact": {
+              "fact": {
+                "correct": 0,
+                "denominator": 28,
+                "exact": 0.0
+              },
+              "negation": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "unknown": {
+                "correct": 0,
+                "denominator": 6,
+                "exact": 0.0
+              },
+              "same_opening_fact": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "same_opening_unknown": {
+                "correct": 0,
+                "denominator": 6,
+                "exact": 0.0
+              },
+              "combination_same": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              },
+              "combination_different": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              }
+            },
+            "content_per_group_exact": {
+              "fact": {
+                "correct": 0,
+                "denominator": 28,
+                "exact": 0.0
+              },
+              "negation": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "same_opening_fact": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "combination_same": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              },
+              "combination_different": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              }
+            }
+          },
+          "pair_rates": {
+            "fact_flip": {
+              "numerator": 0,
+              "denominator": 6,
+              "value": 0.0
+            },
+            "combo_flip": {
+              "numerator": 0,
+              "denominator": 5,
+              "value": 0.0
+            },
+            "invariance": {
+              "numerator": 0,
+              "denominator": 4,
+              "value": 0.0
+            }
+          },
+          "boundary_stop_rate": 0.9387755102040817
+        }
+      },
+      {
+        "seed": 20260918,
+        "parameter_count": 86818,
+        "elapsed_seconds": 43.40700000000652,
+        "eval": {
+          "full": {
+            "M1_exact": {
+              "numerator": 1,
+              "denominator": 98,
+              "value": 0.01020408163265306
+            },
+            "M2_shape_macro": {
+              "value": 0.028571428571428574
+            },
+            "M3_content_exact": {
+              "numerator": 1,
+              "denominator": 86,
+              "value": 0.011627906976744186
+            },
+            "M4_flip_pair": {
+              "numerator": 0,
+              "denominator": 11,
+              "value": 0.0
+            },
+            "M5_inv_pair": {
+              "numerator": 0,
+              "denominator": 4,
+              "value": 0.0
+            },
+            "per_group_exact": {
+              "fact": {
+                "correct": 0,
+                "denominator": 28,
+                "exact": 0.0
+              },
+              "negation": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "unknown": {
+                "correct": 0,
+                "denominator": 6,
+                "exact": 0.0
+              },
+              "same_opening_fact": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "same_opening_unknown": {
+                "correct": 0,
+                "denominator": 6,
+                "exact": 0.0
+              },
+              "combination_same": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              },
+              "combination_different": {
+                "correct": 1,
+                "denominator": 5,
+                "exact": 0.2
+              }
+            },
+            "content_per_group_exact": {
+              "fact": {
+                "correct": 0,
+                "denominator": 28,
+                "exact": 0.0
+              },
+              "negation": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "same_opening_fact": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "combination_same": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              },
+              "combination_different": {
+                "correct": 1,
+                "denominator": 5,
+                "exact": 0.2
+              }
+            }
+          },
+          "no_context": {
+            "M1_exact": {
+              "numerator": 0,
+              "denominator": 98,
+              "value": 0.0
+            },
+            "M2_shape_macro": {
+              "value": 0.0
+            },
+            "M3_content_exact": {
+              "numerator": 0,
+              "denominator": 86,
+              "value": 0.0
+            },
+            "M4_flip_pair": {
+              "numerator": 0,
+              "denominator": 11,
+              "value": 0.0
+            },
+            "M5_inv_pair": {
+              "numerator": 0,
+              "denominator": 4,
+              "value": 0.0
+            },
+            "per_group_exact": {
+              "fact": {
+                "correct": 0,
+                "denominator": 28,
+                "exact": 0.0
+              },
+              "negation": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "unknown": {
+                "correct": 0,
+                "denominator": 6,
+                "exact": 0.0
+              },
+              "same_opening_fact": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "same_opening_unknown": {
+                "correct": 0,
+                "denominator": 6,
+                "exact": 0.0
+              },
+              "combination_same": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              },
+              "combination_different": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              }
+            },
+            "content_per_group_exact": {
+              "fact": {
+                "correct": 0,
+                "denominator": 28,
+                "exact": 0.0
+              },
+              "negation": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "same_opening_fact": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "combination_same": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              },
+              "combination_different": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              }
+            }
+          },
+          "zero_read": {
+            "M1_exact": {
+              "numerator": 0,
+              "denominator": 98,
+              "value": 0.0
+            },
+            "M2_shape_macro": {
+              "value": 0.0
+            },
+            "M3_content_exact": {
+              "numerator": 0,
+              "denominator": 86,
+              "value": 0.0
+            },
+            "M4_flip_pair": {
+              "numerator": 0,
+              "denominator": 11,
+              "value": 0.0
+            },
+            "M5_inv_pair": {
+              "numerator": 0,
+              "denominator": 4,
+              "value": 0.0
+            },
+            "per_group_exact": {
+              "fact": {
+                "correct": 0,
+                "denominator": 28,
+                "exact": 0.0
+              },
+              "negation": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "unknown": {
+                "correct": 0,
+                "denominator": 6,
+                "exact": 0.0
+              },
+              "same_opening_fact": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "same_opening_unknown": {
+                "correct": 0,
+                "denominator": 6,
+                "exact": 0.0
+              },
+              "combination_same": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              },
+              "combination_different": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              }
+            },
+            "content_per_group_exact": {
+              "fact": {
+                "correct": 0,
+                "denominator": 28,
+                "exact": 0.0
+              },
+              "negation": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "same_opening_fact": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "combination_same": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              },
+              "combination_different": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              }
+            }
+          },
+          "copy_misbind": {
+            "M1_exact": {
+              "numerator": 0,
+              "denominator": 98,
+              "value": 0.0
+            },
+            "M2_shape_macro": {
+              "value": 0.0
+            },
+            "M3_content_exact": {
+              "numerator": 0,
+              "denominator": 86,
+              "value": 0.0
+            },
+            "M4_flip_pair": {
+              "numerator": 0,
+              "denominator": 11,
+              "value": 0.0
+            },
+            "M5_inv_pair": {
+              "numerator": 0,
+              "denominator": 4,
+              "value": 0.0
+            },
+            "per_group_exact": {
+              "fact": {
+                "correct": 0,
+                "denominator": 28,
+                "exact": 0.0
+              },
+              "negation": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "unknown": {
+                "correct": 0,
+                "denominator": 6,
+                "exact": 0.0
+              },
+              "same_opening_fact": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "same_opening_unknown": {
+                "correct": 0,
+                "denominator": 6,
+                "exact": 0.0
+              },
+              "combination_same": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              },
+              "combination_different": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              }
+            },
+            "content_per_group_exact": {
+              "fact": {
+                "correct": 0,
+                "denominator": 28,
+                "exact": 0.0
+              },
+              "negation": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "same_opening_fact": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "combination_same": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              },
+              "combination_different": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              }
+            }
+          },
+          "value_misbind": {
+            "M1_exact": {
+              "numerator": 1,
+              "denominator": 98,
+              "value": 0.01020408163265306
+            },
+            "M2_shape_macro": {
+              "value": 0.028571428571428574
+            },
+            "M3_content_exact": {
+              "numerator": 1,
+              "denominator": 86,
+              "value": 0.011627906976744186
+            },
+            "M4_flip_pair": {
+              "numerator": 0,
+              "denominator": 11,
+              "value": 0.0
+            },
+            "M5_inv_pair": {
+              "numerator": 0,
+              "denominator": 4,
+              "value": 0.0
+            },
+            "per_group_exact": {
+              "fact": {
+                "correct": 0,
+                "denominator": 28,
+                "exact": 0.0
+              },
+              "negation": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "unknown": {
+                "correct": 0,
+                "denominator": 6,
+                "exact": 0.0
+              },
+              "same_opening_fact": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "same_opening_unknown": {
+                "correct": 0,
+                "denominator": 6,
+                "exact": 0.0
+              },
+              "combination_same": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              },
+              "combination_different": {
+                "correct": 1,
+                "denominator": 5,
+                "exact": 0.2
+              }
+            },
+            "content_per_group_exact": {
+              "fact": {
+                "correct": 0,
+                "denominator": 28,
+                "exact": 0.0
+              },
+              "negation": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "same_opening_fact": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "combination_same": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              },
+              "combination_different": {
+                "correct": 1,
+                "denominator": 5,
+                "exact": 0.2
+              }
+            }
+          },
+          "pair_rates": {
+            "fact_flip": {
+              "numerator": 0,
+              "denominator": 6,
+              "value": 0.0
+            },
+            "combo_flip": {
+              "numerator": 0,
+              "denominator": 5,
+              "value": 0.0
+            },
+            "invariance": {
+              "numerator": 0,
+              "denominator": 4,
+              "value": 0.0
+            }
+          },
+          "boundary_stop_rate": 0.9795918367346939
+        }
+      },
+      {
+        "seed": 20260919,
+        "parameter_count": 86818,
+        "elapsed_seconds": 43.43700000003446,
+        "eval": {
+          "full": {
+            "M1_exact": {
+              "numerator": 11,
+              "denominator": 98,
+              "value": 0.11224489795918367
+            },
+            "M2_shape_macro": {
+              "value": 0.06122448979591837
+            },
+            "M3_content_exact": {
+              "numerator": 11,
+              "denominator": 86,
+              "value": 0.12790697674418605
+            },
+            "M4_flip_pair": {
+              "numerator": 0,
+              "denominator": 11,
+              "value": 0.0
+            },
+            "M5_inv_pair": {
+              "numerator": 0,
+              "denominator": 4,
+              "value": 0.0
+            },
+            "per_group_exact": {
+              "fact": {
+                "correct": 5,
+                "denominator": 28,
+                "exact": 0.17857142857142858
+              },
+              "negation": {
+                "correct": 1,
+                "denominator": 24,
+                "exact": 0.041666666666666664
+              },
+              "unknown": {
+                "correct": 0,
+                "denominator": 6,
+                "exact": 0.0
+              },
+              "same_opening_fact": {
+                "correct": 5,
+                "denominator": 24,
+                "exact": 0.20833333333333334
+              },
+              "same_opening_unknown": {
+                "correct": 0,
+                "denominator": 6,
+                "exact": 0.0
+              },
+              "combination_same": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              },
+              "combination_different": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              }
+            },
+            "content_per_group_exact": {
+              "fact": {
+                "correct": 5,
+                "denominator": 28,
+                "exact": 0.17857142857142858
+              },
+              "negation": {
+                "correct": 1,
+                "denominator": 24,
+                "exact": 0.041666666666666664
+              },
+              "same_opening_fact": {
+                "correct": 5,
+                "denominator": 24,
+                "exact": 0.20833333333333334
+              },
+              "combination_same": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              },
+              "combination_different": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              }
+            }
+          },
+          "no_context": {
+            "M1_exact": {
+              "numerator": 0,
+              "denominator": 98,
+              "value": 0.0
+            },
+            "M2_shape_macro": {
+              "value": 0.0
+            },
+            "M3_content_exact": {
+              "numerator": 0,
+              "denominator": 86,
+              "value": 0.0
+            },
+            "M4_flip_pair": {
+              "numerator": 0,
+              "denominator": 11,
+              "value": 0.0
+            },
+            "M5_inv_pair": {
+              "numerator": 0,
+              "denominator": 4,
+              "value": 0.0
+            },
+            "per_group_exact": {
+              "fact": {
+                "correct": 0,
+                "denominator": 28,
+                "exact": 0.0
+              },
+              "negation": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "unknown": {
+                "correct": 0,
+                "denominator": 6,
+                "exact": 0.0
+              },
+              "same_opening_fact": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "same_opening_unknown": {
+                "correct": 0,
+                "denominator": 6,
+                "exact": 0.0
+              },
+              "combination_same": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              },
+              "combination_different": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              }
+            },
+            "content_per_group_exact": {
+              "fact": {
+                "correct": 0,
+                "denominator": 28,
+                "exact": 0.0
+              },
+              "negation": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "same_opening_fact": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "combination_same": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              },
+              "combination_different": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              }
+            }
+          },
+          "zero_read": {
+            "M1_exact": {
+              "numerator": 0,
+              "denominator": 98,
+              "value": 0.0
+            },
+            "M2_shape_macro": {
+              "value": 0.0
+            },
+            "M3_content_exact": {
+              "numerator": 0,
+              "denominator": 86,
+              "value": 0.0
+            },
+            "M4_flip_pair": {
+              "numerator": 0,
+              "denominator": 11,
+              "value": 0.0
+            },
+            "M5_inv_pair": {
+              "numerator": 0,
+              "denominator": 4,
+              "value": 0.0
+            },
+            "per_group_exact": {
+              "fact": {
+                "correct": 0,
+                "denominator": 28,
+                "exact": 0.0
+              },
+              "negation": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "unknown": {
+                "correct": 0,
+                "denominator": 6,
+                "exact": 0.0
+              },
+              "same_opening_fact": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "same_opening_unknown": {
+                "correct": 0,
+                "denominator": 6,
+                "exact": 0.0
+              },
+              "combination_same": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              },
+              "combination_different": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              }
+            },
+            "content_per_group_exact": {
+              "fact": {
+                "correct": 0,
+                "denominator": 28,
+                "exact": 0.0
+              },
+              "negation": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "same_opening_fact": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "combination_same": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              },
+              "combination_different": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              }
+            }
+          },
+          "copy_misbind": {
+            "M1_exact": {
+              "numerator": 0,
+              "denominator": 98,
+              "value": 0.0
+            },
+            "M2_shape_macro": {
+              "value": 0.0
+            },
+            "M3_content_exact": {
+              "numerator": 0,
+              "denominator": 86,
+              "value": 0.0
+            },
+            "M4_flip_pair": {
+              "numerator": 0,
+              "denominator": 11,
+              "value": 0.0
+            },
+            "M5_inv_pair": {
+              "numerator": 0,
+              "denominator": 4,
+              "value": 0.0
+            },
+            "per_group_exact": {
+              "fact": {
+                "correct": 0,
+                "denominator": 28,
+                "exact": 0.0
+              },
+              "negation": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "unknown": {
+                "correct": 0,
+                "denominator": 6,
+                "exact": 0.0
+              },
+              "same_opening_fact": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "same_opening_unknown": {
+                "correct": 0,
+                "denominator": 6,
+                "exact": 0.0
+              },
+              "combination_same": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              },
+              "combination_different": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              }
+            },
+            "content_per_group_exact": {
+              "fact": {
+                "correct": 0,
+                "denominator": 28,
+                "exact": 0.0
+              },
+              "negation": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "same_opening_fact": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "combination_same": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              },
+              "combination_different": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              }
+            }
+          },
+          "value_misbind": {
+            "M1_exact": {
+              "numerator": 11,
+              "denominator": 98,
+              "value": 0.11224489795918367
+            },
+            "M2_shape_macro": {
+              "value": 0.06122448979591837
+            },
+            "M3_content_exact": {
+              "numerator": 11,
+              "denominator": 86,
+              "value": 0.12790697674418605
+            },
+            "M4_flip_pair": {
+              "numerator": 0,
+              "denominator": 11,
+              "value": 0.0
+            },
+            "M5_inv_pair": {
+              "numerator": 0,
+              "denominator": 4,
+              "value": 0.0
+            },
+            "per_group_exact": {
+              "fact": {
+                "correct": 5,
+                "denominator": 28,
+                "exact": 0.17857142857142858
+              },
+              "negation": {
+                "correct": 1,
+                "denominator": 24,
+                "exact": 0.041666666666666664
+              },
+              "unknown": {
+                "correct": 0,
+                "denominator": 6,
+                "exact": 0.0
+              },
+              "same_opening_fact": {
+                "correct": 5,
+                "denominator": 24,
+                "exact": 0.20833333333333334
+              },
+              "same_opening_unknown": {
+                "correct": 0,
+                "denominator": 6,
+                "exact": 0.0
+              },
+              "combination_same": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              },
+              "combination_different": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              }
+            },
+            "content_per_group_exact": {
+              "fact": {
+                "correct": 5,
+                "denominator": 28,
+                "exact": 0.17857142857142858
+              },
+              "negation": {
+                "correct": 1,
+                "denominator": 24,
+                "exact": 0.041666666666666664
+              },
+              "same_opening_fact": {
+                "correct": 5,
+                "denominator": 24,
+                "exact": 0.20833333333333334
+              },
+              "combination_same": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              },
+              "combination_different": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              }
+            }
+          },
+          "pair_rates": {
+            "fact_flip": {
+              "numerator": 0,
+              "denominator": 6,
+              "value": 0.0
+            },
+            "combo_flip": {
+              "numerator": 0,
+              "denominator": 5,
+              "value": 0.0
+            },
+            "invariance": {
+              "numerator": 0,
+              "denominator": 4,
+              "value": 0.0
+            }
+          },
+          "boundary_stop_rate": 0.9387755102040817
+        }
+      }
+    ],
+    "C4_broadcast_multih_pe": [
+      {
+        "seed": 20260917,
+        "parameter_count": 96034,
+        "elapsed_seconds": 48.93799999996554,
+        "eval": {
+          "full": {
+            "M1_exact": {
+              "numerator": 1,
+              "denominator": 98,
+              "value": 0.01020408163265306
+            },
+            "M2_shape_macro": {
+              "value": 0.023809523809523808
+            },
+            "M3_content_exact": {
+              "numerator": 0,
+              "denominator": 86,
+              "value": 0.0
+            },
+            "M4_flip_pair": {
+              "numerator": 0,
+              "denominator": 11,
+              "value": 0.0
+            },
+            "M5_inv_pair": {
+              "numerator": 0,
+              "denominator": 4,
+              "value": 0.0
+            },
+            "per_group_exact": {
+              "fact": {
+                "correct": 0,
+                "denominator": 28,
+                "exact": 0.0
+              },
+              "negation": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "unknown": {
+                "correct": 0,
+                "denominator": 6,
+                "exact": 0.0
+              },
+              "same_opening_fact": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "same_opening_unknown": {
+                "correct": 1,
+                "denominator": 6,
+                "exact": 0.16666666666666666
+              },
+              "combination_same": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              },
+              "combination_different": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              }
+            },
+            "content_per_group_exact": {
+              "fact": {
+                "correct": 0,
+                "denominator": 28,
+                "exact": 0.0
+              },
+              "negation": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "same_opening_fact": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "combination_same": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              },
+              "combination_different": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              }
+            }
+          },
+          "no_context": {
+            "M1_exact": {
+              "numerator": 0,
+              "denominator": 98,
+              "value": 0.0
+            },
+            "M2_shape_macro": {
+              "value": 0.0
+            },
+            "M3_content_exact": {
+              "numerator": 0,
+              "denominator": 86,
+              "value": 0.0
+            },
+            "M4_flip_pair": {
+              "numerator": 0,
+              "denominator": 11,
+              "value": 0.0
+            },
+            "M5_inv_pair": {
+              "numerator": 0,
+              "denominator": 4,
+              "value": 0.0
+            },
+            "per_group_exact": {
+              "fact": {
+                "correct": 0,
+                "denominator": 28,
+                "exact": 0.0
+              },
+              "negation": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "unknown": {
+                "correct": 0,
+                "denominator": 6,
+                "exact": 0.0
+              },
+              "same_opening_fact": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "same_opening_unknown": {
+                "correct": 0,
+                "denominator": 6,
+                "exact": 0.0
+              },
+              "combination_same": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              },
+              "combination_different": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              }
+            },
+            "content_per_group_exact": {
+              "fact": {
+                "correct": 0,
+                "denominator": 28,
+                "exact": 0.0
+              },
+              "negation": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "same_opening_fact": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "combination_same": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              },
+              "combination_different": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              }
+            }
+          },
+          "zero_read": {
+            "M1_exact": {
+              "numerator": 0,
+              "denominator": 98,
+              "value": 0.0
+            },
+            "M2_shape_macro": {
+              "value": 0.0
+            },
+            "M3_content_exact": {
+              "numerator": 0,
+              "denominator": 86,
+              "value": 0.0
+            },
+            "M4_flip_pair": {
+              "numerator": 0,
+              "denominator": 11,
+              "value": 0.0
+            },
+            "M5_inv_pair": {
+              "numerator": 0,
+              "denominator": 4,
+              "value": 0.0
+            },
+            "per_group_exact": {
+              "fact": {
+                "correct": 0,
+                "denominator": 28,
+                "exact": 0.0
+              },
+              "negation": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "unknown": {
+                "correct": 0,
+                "denominator": 6,
+                "exact": 0.0
+              },
+              "same_opening_fact": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "same_opening_unknown": {
+                "correct": 0,
+                "denominator": 6,
+                "exact": 0.0
+              },
+              "combination_same": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              },
+              "combination_different": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              }
+            },
+            "content_per_group_exact": {
+              "fact": {
+                "correct": 0,
+                "denominator": 28,
+                "exact": 0.0
+              },
+              "negation": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "same_opening_fact": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "combination_same": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              },
+              "combination_different": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              }
+            }
+          },
+          "copy_misbind": {
+            "M1_exact": {
+              "numerator": 0,
+              "denominator": 98,
+              "value": 0.0
+            },
+            "M2_shape_macro": {
+              "value": 0.0
+            },
+            "M3_content_exact": {
+              "numerator": 0,
+              "denominator": 86,
+              "value": 0.0
+            },
+            "M4_flip_pair": {
+              "numerator": 0,
+              "denominator": 11,
+              "value": 0.0
+            },
+            "M5_inv_pair": {
+              "numerator": 0,
+              "denominator": 4,
+              "value": 0.0
+            },
+            "per_group_exact": {
+              "fact": {
+                "correct": 0,
+                "denominator": 28,
+                "exact": 0.0
+              },
+              "negation": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "unknown": {
+                "correct": 0,
+                "denominator": 6,
+                "exact": 0.0
+              },
+              "same_opening_fact": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "same_opening_unknown": {
+                "correct": 0,
+                "denominator": 6,
+                "exact": 0.0
+              },
+              "combination_same": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              },
+              "combination_different": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              }
+            },
+            "content_per_group_exact": {
+              "fact": {
+                "correct": 0,
+                "denominator": 28,
+                "exact": 0.0
+              },
+              "negation": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "same_opening_fact": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "combination_same": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              },
+              "combination_different": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              }
+            }
+          },
+          "value_misbind": {
+            "M1_exact": {
+              "numerator": 1,
+              "denominator": 98,
+              "value": 0.01020408163265306
+            },
+            "M2_shape_macro": {
+              "value": 0.023809523809523808
+            },
+            "M3_content_exact": {
+              "numerator": 0,
+              "denominator": 86,
+              "value": 0.0
+            },
+            "M4_flip_pair": {
+              "numerator": 0,
+              "denominator": 11,
+              "value": 0.0
+            },
+            "M5_inv_pair": {
+              "numerator": 0,
+              "denominator": 4,
+              "value": 0.0
+            },
+            "per_group_exact": {
+              "fact": {
+                "correct": 0,
+                "denominator": 28,
+                "exact": 0.0
+              },
+              "negation": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "unknown": {
+                "correct": 0,
+                "denominator": 6,
+                "exact": 0.0
+              },
+              "same_opening_fact": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "same_opening_unknown": {
+                "correct": 1,
+                "denominator": 6,
+                "exact": 0.16666666666666666
+              },
+              "combination_same": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              },
+              "combination_different": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              }
+            },
+            "content_per_group_exact": {
+              "fact": {
+                "correct": 0,
+                "denominator": 28,
+                "exact": 0.0
+              },
+              "negation": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "same_opening_fact": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "combination_same": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              },
+              "combination_different": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              }
+            }
+          },
+          "pair_rates": {
+            "fact_flip": {
+              "numerator": 0,
+              "denominator": 6,
+              "value": 0.0
+            },
+            "combo_flip": {
+              "numerator": 0,
+              "denominator": 5,
+              "value": 0.0
+            },
+            "invariance": {
+              "numerator": 0,
+              "denominator": 4,
+              "value": 0.0
+            }
+          },
+          "boundary_stop_rate": 1.0
+        }
+      },
+      {
+        "seed": 20260918,
+        "parameter_count": 96034,
+        "elapsed_seconds": 48.95299999997951,
+        "eval": {
+          "full": {
+            "M1_exact": {
+              "numerator": 6,
+              "denominator": 98,
+              "value": 0.061224489795918366
+            },
+            "M2_shape_macro": {
+              "value": 0.14285714285714285
+            },
+            "M3_content_exact": {
+              "numerator": 0,
+              "denominator": 86,
+              "value": 0.0
+            },
+            "M4_flip_pair": {
+              "numerator": 0,
+              "denominator": 11,
+              "value": 0.0
+            },
+            "M5_inv_pair": {
+              "numerator": 0,
+              "denominator": 4,
+              "value": 0.0
+            },
+            "per_group_exact": {
+              "fact": {
+                "correct": 0,
+                "denominator": 28,
+                "exact": 0.0
+              },
+              "negation": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "unknown": {
+                "correct": 5,
+                "denominator": 6,
+                "exact": 0.8333333333333334
+              },
+              "same_opening_fact": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "same_opening_unknown": {
+                "correct": 1,
+                "denominator": 6,
+                "exact": 0.16666666666666666
+              },
+              "combination_same": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              },
+              "combination_different": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              }
+            },
+            "content_per_group_exact": {
+              "fact": {
+                "correct": 0,
+                "denominator": 28,
+                "exact": 0.0
+              },
+              "negation": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "same_opening_fact": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "combination_same": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              },
+              "combination_different": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              }
+            }
+          },
+          "no_context": {
+            "M1_exact": {
+              "numerator": 0,
+              "denominator": 98,
+              "value": 0.0
+            },
+            "M2_shape_macro": {
+              "value": 0.0
+            },
+            "M3_content_exact": {
+              "numerator": 0,
+              "denominator": 86,
+              "value": 0.0
+            },
+            "M4_flip_pair": {
+              "numerator": 0,
+              "denominator": 11,
+              "value": 0.0
+            },
+            "M5_inv_pair": {
+              "numerator": 0,
+              "denominator": 4,
+              "value": 0.0
+            },
+            "per_group_exact": {
+              "fact": {
+                "correct": 0,
+                "denominator": 28,
+                "exact": 0.0
+              },
+              "negation": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "unknown": {
+                "correct": 0,
+                "denominator": 6,
+                "exact": 0.0
+              },
+              "same_opening_fact": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "same_opening_unknown": {
+                "correct": 0,
+                "denominator": 6,
+                "exact": 0.0
+              },
+              "combination_same": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              },
+              "combination_different": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              }
+            },
+            "content_per_group_exact": {
+              "fact": {
+                "correct": 0,
+                "denominator": 28,
+                "exact": 0.0
+              },
+              "negation": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "same_opening_fact": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "combination_same": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              },
+              "combination_different": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              }
+            }
+          },
+          "zero_read": {
+            "M1_exact": {
+              "numerator": 0,
+              "denominator": 98,
+              "value": 0.0
+            },
+            "M2_shape_macro": {
+              "value": 0.0
+            },
+            "M3_content_exact": {
+              "numerator": 0,
+              "denominator": 86,
+              "value": 0.0
+            },
+            "M4_flip_pair": {
+              "numerator": 0,
+              "denominator": 11,
+              "value": 0.0
+            },
+            "M5_inv_pair": {
+              "numerator": 0,
+              "denominator": 4,
+              "value": 0.0
+            },
+            "per_group_exact": {
+              "fact": {
+                "correct": 0,
+                "denominator": 28,
+                "exact": 0.0
+              },
+              "negation": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "unknown": {
+                "correct": 0,
+                "denominator": 6,
+                "exact": 0.0
+              },
+              "same_opening_fact": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "same_opening_unknown": {
+                "correct": 0,
+                "denominator": 6,
+                "exact": 0.0
+              },
+              "combination_same": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              },
+              "combination_different": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              }
+            },
+            "content_per_group_exact": {
+              "fact": {
+                "correct": 0,
+                "denominator": 28,
+                "exact": 0.0
+              },
+              "negation": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "same_opening_fact": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "combination_same": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              },
+              "combination_different": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              }
+            }
+          },
+          "copy_misbind": {
+            "M1_exact": {
+              "numerator": 0,
+              "denominator": 98,
+              "value": 0.0
+            },
+            "M2_shape_macro": {
+              "value": 0.0
+            },
+            "M3_content_exact": {
+              "numerator": 0,
+              "denominator": 86,
+              "value": 0.0
+            },
+            "M4_flip_pair": {
+              "numerator": 0,
+              "denominator": 11,
+              "value": 0.0
+            },
+            "M5_inv_pair": {
+              "numerator": 0,
+              "denominator": 4,
+              "value": 0.0
+            },
+            "per_group_exact": {
+              "fact": {
+                "correct": 0,
+                "denominator": 28,
+                "exact": 0.0
+              },
+              "negation": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "unknown": {
+                "correct": 0,
+                "denominator": 6,
+                "exact": 0.0
+              },
+              "same_opening_fact": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "same_opening_unknown": {
+                "correct": 0,
+                "denominator": 6,
+                "exact": 0.0
+              },
+              "combination_same": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              },
+              "combination_different": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              }
+            },
+            "content_per_group_exact": {
+              "fact": {
+                "correct": 0,
+                "denominator": 28,
+                "exact": 0.0
+              },
+              "negation": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "same_opening_fact": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "combination_same": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              },
+              "combination_different": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              }
+            }
+          },
+          "value_misbind": {
+            "M1_exact": {
+              "numerator": 6,
+              "denominator": 98,
+              "value": 0.061224489795918366
+            },
+            "M2_shape_macro": {
+              "value": 0.14285714285714285
+            },
+            "M3_content_exact": {
+              "numerator": 0,
+              "denominator": 86,
+              "value": 0.0
+            },
+            "M4_flip_pair": {
+              "numerator": 0,
+              "denominator": 11,
+              "value": 0.0
+            },
+            "M5_inv_pair": {
+              "numerator": 0,
+              "denominator": 4,
+              "value": 0.0
+            },
+            "per_group_exact": {
+              "fact": {
+                "correct": 0,
+                "denominator": 28,
+                "exact": 0.0
+              },
+              "negation": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "unknown": {
+                "correct": 5,
+                "denominator": 6,
+                "exact": 0.8333333333333334
+              },
+              "same_opening_fact": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "same_opening_unknown": {
+                "correct": 1,
+                "denominator": 6,
+                "exact": 0.16666666666666666
+              },
+              "combination_same": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              },
+              "combination_different": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              }
+            },
+            "content_per_group_exact": {
+              "fact": {
+                "correct": 0,
+                "denominator": 28,
+                "exact": 0.0
+              },
+              "negation": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "same_opening_fact": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "combination_same": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              },
+              "combination_different": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              }
+            }
+          },
+          "pair_rates": {
+            "fact_flip": {
+              "numerator": 0,
+              "denominator": 6,
+              "value": 0.0
+            },
+            "combo_flip": {
+              "numerator": 0,
+              "denominator": 5,
+              "value": 0.0
+            },
+            "invariance": {
+              "numerator": 0,
+              "denominator": 4,
+              "value": 0.0
+            }
+          },
+          "boundary_stop_rate": 0.9693877551020408
+        }
+      },
+      {
+        "seed": 20260919,
+        "parameter_count": 96034,
+        "elapsed_seconds": 48.23400000005495,
+        "eval": {
+          "full": {
+            "M1_exact": {
+              "numerator": 6,
+              "denominator": 98,
+              "value": 0.061224489795918366
+            },
+            "M2_shape_macro": {
+              "value": 0.14285714285714285
+            },
+            "M3_content_exact": {
+              "numerator": 0,
+              "denominator": 86,
+              "value": 0.0
+            },
+            "M4_flip_pair": {
+              "numerator": 0,
+              "denominator": 11,
+              "value": 0.0
+            },
+            "M5_inv_pair": {
+              "numerator": 0,
+              "denominator": 4,
+              "value": 0.0
+            },
+            "per_group_exact": {
+              "fact": {
+                "correct": 0,
+                "denominator": 28,
+                "exact": 0.0
+              },
+              "negation": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "unknown": {
+                "correct": 5,
+                "denominator": 6,
+                "exact": 0.8333333333333334
+              },
+              "same_opening_fact": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "same_opening_unknown": {
+                "correct": 1,
+                "denominator": 6,
+                "exact": 0.16666666666666666
+              },
+              "combination_same": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              },
+              "combination_different": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              }
+            },
+            "content_per_group_exact": {
+              "fact": {
+                "correct": 0,
+                "denominator": 28,
+                "exact": 0.0
+              },
+              "negation": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "same_opening_fact": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "combination_same": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              },
+              "combination_different": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              }
+            }
+          },
+          "no_context": {
+            "M1_exact": {
+              "numerator": 0,
+              "denominator": 98,
+              "value": 0.0
+            },
+            "M2_shape_macro": {
+              "value": 0.0
+            },
+            "M3_content_exact": {
+              "numerator": 0,
+              "denominator": 86,
+              "value": 0.0
+            },
+            "M4_flip_pair": {
+              "numerator": 0,
+              "denominator": 11,
+              "value": 0.0
+            },
+            "M5_inv_pair": {
+              "numerator": 0,
+              "denominator": 4,
+              "value": 0.0
+            },
+            "per_group_exact": {
+              "fact": {
+                "correct": 0,
+                "denominator": 28,
+                "exact": 0.0
+              },
+              "negation": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "unknown": {
+                "correct": 0,
+                "denominator": 6,
+                "exact": 0.0
+              },
+              "same_opening_fact": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "same_opening_unknown": {
+                "correct": 0,
+                "denominator": 6,
+                "exact": 0.0
+              },
+              "combination_same": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              },
+              "combination_different": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              }
+            },
+            "content_per_group_exact": {
+              "fact": {
+                "correct": 0,
+                "denominator": 28,
+                "exact": 0.0
+              },
+              "negation": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "same_opening_fact": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "combination_same": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              },
+              "combination_different": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              }
+            }
+          },
+          "zero_read": {
+            "M1_exact": {
+              "numerator": 0,
+              "denominator": 98,
+              "value": 0.0
+            },
+            "M2_shape_macro": {
+              "value": 0.0
+            },
+            "M3_content_exact": {
+              "numerator": 0,
+              "denominator": 86,
+              "value": 0.0
+            },
+            "M4_flip_pair": {
+              "numerator": 0,
+              "denominator": 11,
+              "value": 0.0
+            },
+            "M5_inv_pair": {
+              "numerator": 0,
+              "denominator": 4,
+              "value": 0.0
+            },
+            "per_group_exact": {
+              "fact": {
+                "correct": 0,
+                "denominator": 28,
+                "exact": 0.0
+              },
+              "negation": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "unknown": {
+                "correct": 0,
+                "denominator": 6,
+                "exact": 0.0
+              },
+              "same_opening_fact": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "same_opening_unknown": {
+                "correct": 0,
+                "denominator": 6,
+                "exact": 0.0
+              },
+              "combination_same": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              },
+              "combination_different": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              }
+            },
+            "content_per_group_exact": {
+              "fact": {
+                "correct": 0,
+                "denominator": 28,
+                "exact": 0.0
+              },
+              "negation": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "same_opening_fact": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "combination_same": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              },
+              "combination_different": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              }
+            }
+          },
+          "copy_misbind": {
+            "M1_exact": {
+              "numerator": 0,
+              "denominator": 98,
+              "value": 0.0
+            },
+            "M2_shape_macro": {
+              "value": 0.0
+            },
+            "M3_content_exact": {
+              "numerator": 0,
+              "denominator": 86,
+              "value": 0.0
+            },
+            "M4_flip_pair": {
+              "numerator": 0,
+              "denominator": 11,
+              "value": 0.0
+            },
+            "M5_inv_pair": {
+              "numerator": 0,
+              "denominator": 4,
+              "value": 0.0
+            },
+            "per_group_exact": {
+              "fact": {
+                "correct": 0,
+                "denominator": 28,
+                "exact": 0.0
+              },
+              "negation": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "unknown": {
+                "correct": 0,
+                "denominator": 6,
+                "exact": 0.0
+              },
+              "same_opening_fact": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "same_opening_unknown": {
+                "correct": 0,
+                "denominator": 6,
+                "exact": 0.0
+              },
+              "combination_same": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              },
+              "combination_different": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              }
+            },
+            "content_per_group_exact": {
+              "fact": {
+                "correct": 0,
+                "denominator": 28,
+                "exact": 0.0
+              },
+              "negation": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "same_opening_fact": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "combination_same": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              },
+              "combination_different": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              }
+            }
+          },
+          "value_misbind": {
+            "M1_exact": {
+              "numerator": 6,
+              "denominator": 98,
+              "value": 0.061224489795918366
+            },
+            "M2_shape_macro": {
+              "value": 0.14285714285714285
+            },
+            "M3_content_exact": {
+              "numerator": 0,
+              "denominator": 86,
+              "value": 0.0
+            },
+            "M4_flip_pair": {
+              "numerator": 0,
+              "denominator": 11,
+              "value": 0.0
+            },
+            "M5_inv_pair": {
+              "numerator": 0,
+              "denominator": 4,
+              "value": 0.0
+            },
+            "per_group_exact": {
+              "fact": {
+                "correct": 0,
+                "denominator": 28,
+                "exact": 0.0
+              },
+              "negation": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "unknown": {
+                "correct": 5,
+                "denominator": 6,
+                "exact": 0.8333333333333334
+              },
+              "same_opening_fact": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "same_opening_unknown": {
+                "correct": 1,
+                "denominator": 6,
+                "exact": 0.16666666666666666
+              },
+              "combination_same": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              },
+              "combination_different": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              }
+            },
+            "content_per_group_exact": {
+              "fact": {
+                "correct": 0,
+                "denominator": 28,
+                "exact": 0.0
+              },
+              "negation": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "same_opening_fact": {
+                "correct": 0,
+                "denominator": 24,
+                "exact": 0.0
+              },
+              "combination_same": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              },
+              "combination_different": {
+                "correct": 0,
+                "denominator": 5,
+                "exact": 0.0
+              }
+            }
+          },
+          "pair_rates": {
+            "fact_flip": {
+              "numerator": 0,
+              "denominator": 6,
+              "value": 0.0
+            },
+            "combo_flip": {
+              "numerator": 0,
+              "denominator": 5,
+              "value": 0.0
+            },
+            "invariance": {
+              "numerator": 0,
+              "denominator": 4,
+              "value": 0.0
+            }
+          },
+          "boundary_stop_rate": 0.9387755102040817
+        }
+      }
+    ]
+  },
+  "gates": {
+    "G1_m3_ceiling_and_delta": {
+      "passed": false,
+      "h4_m3_mean": 0.03488372093023256,
+      "delta_m3_mean": -0.011627906976744186
+    },
+    "G2_m4_flip_fact_subset": {
+      "passed": false,
+      "h4_m4_mean": 0.0,
+      "delta_m4_mean": 0.0,
+      "h4_fact_flip_mean": 0.0,
+      "h4_combo_flip_mean_routing": 0.0
+    },
+    "G3_copy_misbind_drop": {
+      "passed": false,
+      "m4_drop_mean": 0.0
+    },
+    "G4_context_margin": {
+      "passed": false,
+      "delta_m3_context_mean": 0.03488372093023256,
+      "no_context_m1_max": 0.0
+    },
+    "G5_seed_consistency": {
+      "passed": false,
+      "wins": 0,
+      "worst_delta_m4": 0.0
+    },
+    "G6_boundary_and_restore": {
+      "passed": false,
+      "boundary_min": 0.5816326530612245
+    },
+    "surface_ceiling": {
+      "h4_m1_beats_surface": false,
+      "h4_m3_beats_surface": false,
+      "h4_m4_beats_surface": false
+    }
+  },
+  "outcome": "failed",
+  "growth_admitted": false,
+  "can_promote": false
+}

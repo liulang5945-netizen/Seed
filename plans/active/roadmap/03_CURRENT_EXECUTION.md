@@ -1,12 +1,12 @@
 # Seed / Taiji 当前详细推进方案
 
-更新：2026-09-18，实验核对至P1均衡探针。D1仪器已结项；D2 H-A1/H-A2/H-A3学习探针未过门，用户裁决的P1形状均衡训练（v4 A2图，修订三冻结采样器）在单样本Adam下全程震荡发散（loss 6.61/2.75/2.98/1.15/1.21/7.03，M1 e20峰值0.644→e30=0），门全否。唯一稳定构型仍为v4 A2@lr0.01=0.667平台；跨四次运行反复出现失稳签名，尚未唯一归因（候选：梯度方差/批大小）。按修订三§4不再调采样/加权/lr/epoch/v5，进入二次评审，训练冻结。归因边界见§0.1、[A族评审备忘](../../reference/M5_R2_D2_A_FAMILY_REVIEW_MEMO_20260918.md)与VISION §18。[01](01_SCOPE_AND_PHASES.md)管大阶段，[02](02_GATES_AND_CI.md)管证据与晋级，[07](07_MINI_MODEL_DELIVERY.md)管用户验收。[根需求](../TAIJI_CORE_REQUIREMENTS.md)与[架构合同](../TAIJI_NATIVE_ARCHITECTURE_V1.md)定义目的、职责和规则层级。
+更新：2026-09-18，实验核对至R2-D3 matched dev。D1仪器已结项；D2 A族（H-A1/H-A2/H-A3/P1）四次学习门未过，经二次评审与用户S1裁决收束，路由到新假设包R2-D3首步读取几何（H-G，多头+位置编码）。D3 probe通过（train-only：copy-supported M1=1.0，negation 48/48首次突破，loss→0.0081）；matched dev 3臂×3seeds G1–G6全败（H4 M1=0/0/0.092，dev全臂贴地）——同seed checkpoint逐位一致证明训练可复现，失败定性为「train prefix记忆化而非组合绑定泛化」。瓶颈从可学习性转移到泛化；按合同§5预承诺转评审（目标函数/B绑定/规模），不再追加几何变体。归因见[§0.1](#01-最新证据与解释边界)、[D3结项评审备忘](../../reference/M5_R2_D3_MATCHED_DEV_REVIEW_MEMO_20260918.md)与[D3合同](../../reference/M5_R2_D3_FIRST_STEP_GEOMETRY_CONTRACT_FROZEN_20260918.md)。[01](01_SCOPE_AND_PHASES.md)管大阶段，[02](02_GATES_AND_CI.md)管证据与晋级，[07](07_MINI_MODEL_DELIVERY.md)管用户验收。[根需求](../TAIJI_CORE_REQUIREMENTS.md)与[架构合同](../TAIJI_NATIVE_ARCHITECTURE_V1.md)定义目的、职责和规则层级。
 
-## 当前唯一下一步：二次评审（梯度方差/批大小 vs P2 容量 vs P3 B），评审裁决前训练冻结
+## 当前唯一下一步：R2-D3 失败后的评审裁决（目标函数 vs B绑定 vs 规模/数据），裁决前训练冻结
 
-**当前为M5 / R2原生语言能力；R2-D2处于v3/v4/v5+P1四次探针失败后的二次评审点，训练冻结。** H-A1观察到寻址塌缩；H-A2（82,658参数）loss降至0.0885，五形状train exact=1.0，negation与combo_different为0，copy-supported=96/144，未达0.90门；H-A3条件化起点在同seed、30 epochs、lr0.01下复现0.667平台后晚期失稳，不能推成所有条件化/预算/优化方案无效；P1均衡改变边缘分布后训练失稳（失败的是「均衡+单样本」组合，未唯一归因）。这些结果不排除绑定/组合问题，也不排除梯度方差假设；[A族评审备忘](../../reference/M5_R2_D2_A_FAMILY_REVIEW_MEMO_20260918.md)§4提供二次评审选项与证据要求。不读dev/final；没有L2/M5晋级或默认迁移。
+**当前为M5 / R2原生语言能力；R2-D3处于probe通过但matched dev全败后的评审裁决点，训练冻结。** D2 A族四次学习门未过（0.667平台/negation恒0），二次评审与用户S1裁决后路由到D3；H-G（多头+PE，v6图，96,034参数）probe在train上完全解决可学习性（M1=0.96、negation 48/48），但dev上三臂×3seeds全贴地（G1–G6全败）、checkpoint逐位一致排除实现缺陷、dev输出刻画证明模型记忆化train prefix（0/98输出等于train response、copy未锁定材料行、退化为高频单字「索」）。**可学习性与泛化分离**：表达力足够，缺组合绑定外推。不能推成所有几何/架构变体无法泛化——判否范围限当前尺度、当前目标函数（仅答案CE）、当前数据量（174 episodes）；绑定/目标函数/规模未被排除。不读final；没有L2/M5晋级或默认迁移。
 
-**本轮对话的任务定位：继续完善开发指导计划，不启动实现或训练。** [唯一VISION](../../reference/VISION_FUTURE_TECHNOLOGY.md)§18新增信息通路、可替换变量、接口/学习责任、A–E完整演进与待决事项；本文§5.8登记覆盖和交接。9月17日撤回“立即选A”的规划指令是历史决定；后续研发已独立选择A的有限切片并推进D1/D2，不能继续写成尚未实施，也不能推成整套A已采用。其他任务的未提交代码/修订不由本轮纳入提交或授予训练权限。
+**当前对话任务定位：按合同执行完毕的R2-D3已结项归档，本轮维护计划至新评审裁决点，不启动裁决外的新训练。** [唯一VISION](../../reference/VISION_FUTURE_TECHNOLOGY.md)§18的信息通路/可替换变量/接口/学习责任规格继续有效；D3实施依据的是用户S1裁决（A族二次评审§6），不是本轮对话自行解冻。9月17日撤回“立即选A”的规划指令是历史决定；后续研发独立选择A的有限切片并推进D1/D2/D3，不能写成尚未实施，也不能推成整套A已采用。其他任务的未提交代码/修订不由本轮纳入提交或授予训练权限。
 
 ### 0.1 最新证据与解释边界
 
@@ -20,6 +20,8 @@
 | R2-D1 新 dev 98 题（七形状齐备，11 翻转对+4 不变对），Q1–Q5 全过；最佳可接受固定策略 M1=0.1735、M3=0.0581、M4=0.0，参照键 M1/M3/M4/M5=1.0 | dev 从此能结构性区分固定命中与内容改善；诊断臂 b3 即便用金形状标签 M4 也仅 5/11，证明不读内容不可能解 fact_flip |
 | D2 v4 train-only probe：copy-supported=96/144，门未过；negation 0/48、combination_different 0/7，其余五形状exact=1.0；报告dev_read/final_read=false | 局部训练可学性改善与关键失败同时保留；不是未见内容能力、L2或完整A的验证 |
 | D2 v5 H-A3（问题条件化r_0，86,818参数，实现门记录通过）同一probe：copy-supported e10–25=96/144平台（=v4），e25–30退化至20/144；loss 0.195→0.865；[报告](../../../reports/r2_d2_question_start_probe_20260918.json) | 该修改在冻结条件下不足以过门；相同聚合平台不能证明两图机制相同或启动来源普遍无影响，绑定/组合/更新规则/规模未被排除 |
+| D3 probe（H-G多头+PE，v6图，96,034参数，train-only）：epoch5即收敛，loss→0.0081，train M1=167/174，copy-supported=144/144，negation 48/48首次突破，combo_different仍0/7；[报告](../../../reports/r2_d3_multihead_probe_20260918.json) | 可学习性半边获支持：多头+PE使「不」首字节两类在train可拟合；train-only成功不是能力主张（被matched dev直接证实） |
+| D3 matched dev（3臂×3seeds，G1–G6全败）：H4 M1=0/0/0.092、H1+PE 0/0.010/0.112、C4 0.010/0.061/0.061；各反事实条件与逐对率全贴地；boundary_min=0.582；同seed（20260917）probe与matched checkpoint参数逐位一致；dev输出：negation首两字节「不是」正确但内容错、多形状退化单字「索」、0/98输出等于任何train response、dev/train prefix零重叠；[报告](../../../reports/r2_d3_matched_dev_20260918.json)、[评审备忘](../../reference/M5_R2_D3_MATCHED_DEV_REVIEW_MEMO_20260918.md) | 训练可复现、非实现缺陷；模型记忆化train prefix→response映射而非组合绑定泛化；多头与PE贡献在dev维度不可分辨（三臂同崩）；判否范围限当前尺度/目标函数（仅答案CE）/数据量（174 episodes）下的几何族，不推成所有架构变体无法泛化 |
 
 以上继承上轮静态train/dev、重复/常量基线与报告复核。R2-D1 只执行了仪器与固定策略，未评任何模型；逐形状固定策略分与逐题记录见[表面策略基线报告](../../../reports/r2_d1_surface_baselines_20260917.json)。详细范围、数值与归因限制见[设计依据复核](../../reference/M5_R2_DESIGN_EVIDENCE_AUDIT_20260917.md)。固定策略与模型同分不证明模型全部输出恒定；逐形状真相在新 dev 上已有逐题记录可供未来模型直接对账。
 
@@ -31,7 +33,7 @@ D2新增事实取自[copy探针报告](../../../reports/r2_d2_copy_learnability_
 
 规划交付是一份可以回答“做什么、为什么、先后关系、做出什么、怎样验、结果不好怎么办”的开发指导计划，而不是要求用户现在从A/B/C/D/E选赢家。规划完成不等于研发完成；仍待标定的数值列明求取方法与冻结时点，不假装已经确认。
 
-**唯一研究下一步：完成P1失败后的二次评审，先明确所需证据与有界实验范围。** P1已执行并触发修订三停止条款，旧“等待O1/P1”的建议不再有效。按[A族评审备忘§4](../../reference/M5_R2_D2_A_FAMILY_REVIEW_MEMO_20260918.md)比较梯度方差/批大小、容量与绑定等解释；必要局部实验可依[02 §2.5](02_GATES_AND_CI.md)作为评审取证子包，不必先完成全部架构选型。当前停止条款未解除，因此先填§5.9准入卡并取得相应范围裁决，再执行新增实验；本轮只修订规则，不启动训练、不读dev/final、不改旧门。
+**唯一研究下一步：完成R2-D3失败后的评审裁决，在目标函数 / B绑定 / 规模三方向中先明确所需证据与有界实验范围。** D3已按合同执行完毕（probe过、matched dev全败、评审备忘归档），D2二次评审的旧议题（梯度方差/批大小）在微批8三臂9运行中未见失稳，随D3结项一并收束。三个候选方向的判别证据设想见[D3评审备忘§5](../../reference/M5_R2_D3_MATCHED_DEV_REVIEW_MEMO_20260918.md)：目标函数（材料读取监督 vs 仅答案CE捷径）、B绑定（显式绑定结构）、规模/数据（等暴露口径扩train区分容量vs捷径）。裁决前训练冻结、不读final、不改旧门；新包需先冻结预注册合同再实施。
 
 **路线纠正继续有效**：主线是R2材料/问题/上下文→原生自由回答；最小任务族只是一种验证方法，D的真实行动环境、E的在线能力不成为R2前置。七次旧追加移到[历史快照](../../archive/history/R2_DIAGNOSTIC_QUEUE_BEFORE_DESIGN_OPTIONS_20260917.md)，保留原始负结果和当时判断，不再与本节争夺队首。
 
@@ -182,22 +184,22 @@ D2新增事实取自[copy探针报告](../../../reports/r2_d2_copy_learnability_
 
 ### 5.7 当前开发包卡片（唯一活动卡）与结项历史指针
 
-**R2-D2逐位置证据记忆（H-A1→H-A2→H-A3→P1均衡，VISION方案A的有限切片）— 活动·二次评审点（2026-09-18；v3/v4/v5 实现门均全绿，四次学习门未过；P1 形状均衡经用户裁决后在单样本 Adam 下震荡发散，已按修订三§4停止；跨运行失稳签名指向梯度方差，二次评审裁决前训练冻结）。**
+**R2-D3 首步读取几何（H-G：多头+位置编码，v6图；S1裁决后的新假设包）— 活动·评审裁决点（2026-09-18；probe通过（train-only），matched dev G1–G6全败，按合同§5预承诺转评审，训练冻结）。**
 
 | 项目 | 内容 |
 |---|---|
-| 目的/范围 | 在 R2-D1 可辨识 dev 上检验：逐位置证据 + copy 混合能否形成经反事实验证的内容条件自由回答。只改隔离原型；不读 final、不动默认入口、无快参数/世界模型 |
-| H-A1 结果（最小切片，已结项） | 实现门全绿、preflight 过；probe 未过线：0.05 震荡（同 H3.8 记录），0.01 三臂 epoch 1 平台（CE≈0.6，M1≈0.17）；寻址诊断——训练后权重熵 0、全落题干（byte 7/19/28，材料始于 30+），材料质量≈1e-26。判定：纯生成+软寻址+仅答案 CE 下读出塌缩为题干条件常量 |
-| H-A2 修订（冻结） | graph v4：p=π·p_vocab+(1−π)·p_copy，p_copy 仅在可见 prefix 位置归一化、boundary 仅 vocab 可给；新增 copy_gate 65 参数（A2=82,658）；C1-copy 等机制对照；copy-key 错位/zero_read 两 lesion；lr 依 H3.8 冻结证据更正 0.01 |
-| H-A2 probe 结果 | loss 4.54→0.089（e5平台）；fact/sof/unknown/sou/combo_same exact=1.0，negation 0/48、combo_different 0/7（答案均以「不」开头）；copy-supported 96/144=0.667 未达0.90；TF 诊断除首字节外概率1.0 |
-| H-A3修订（O1，冻结；实现门记录通过、学习门失败） | graph v5：r_0=tanh(h_question·W+b)，h_question为材料标记前扫描状态（86,818参数）；七实现门结果继承研发提交，本轮未复跑；probe e10–25为0.667，e30 copy-supported=20/144=0.1389、全train M1=20/174=0.1149、loss=0.8649；最终negation=4/48，不混用分母或时点 |
-| 数据与学习 | D1 fixture（digest `53ac9f88695f…`，train 174/dev 98）；copy-supported=fact/negation/sof（144），其余unknown/combo（30）单列，不用直接copy拟合替代其推导/边界能力；probe门=144题M1≥0.90；30 epochs |
-| 历史预算和可运行性 | H-A2为CPU单线程、probe wall 20 min、matched 30 min/运行×9；H-A3修订为1次probe、过门后才进入三seed×两臂matched。当前probe失败，后续预算未释放；训练前checkpoint隔离及preflight要求保留 |
-| 评价和交付 | M1–M5（D1 冻结）；G1 M3≥0.26/δ≥0.20；G2 M4≥0.50/δ≥0.25、fact_flip≥2/6，combo_flip 单列；G3 copy-misbind ΔM4≥0.50；G4 上下文 ΔM3≥0.30；G5 seed；G6 boundary/恢复（matched dev 未启动） |
-| P1 形状均衡训练（用户裁决，v4 A2 图+均衡采样，已验） | [修订三](../../reference/M5_R2_D2_P1_BALANCED_TRAINING_AMENDMENT_FROZEN_20260918.md)：174/epoch 七形状配额均衡（25×6+24）、有放回、seeded；全程震荡（loss 6.61/2.75/2.98/1.15/1.21/7.03，M1 e20峰值0.644→0），单样本 Adam 无法稳定消化高方差均衡流；门全否 |
-| 结果去向 | 四次学习门（A1/A2/A3/A2-balanced）均未过；跨运行反复出现优化失稳签名（0.05 震荡、v5 晚期失稳、均衡全程发散），稳定构型只有 v4 A2@0.01=平台0.667。P1 修订三§4 已禁再调采样/加权/lr/epoch/v5；进入二次评审（梯度方差/批大小 vs P2 容量 vs P3 B），裁决前训练冻结、不读dev/final、不改门 |
+| 目的/范围 | 检验假设H-G：回答首步尚无输出字节时，单头无位置感知的软寻址无法组合「问题类型×材料内位置」；多头独立查询+固定正弦PE能否驱动正确读取角色。只改隔离原型（v6：4头查询替换address_query+PE进键，96,034参数）；不读final、不动默认入口 |
+| 实现门 | H=1与v5逐位等价、PE仅进键、多头归一化/梯度/单头消融、v5材料隔离保持、v2–v6 checkpoint恢复矩阵+fresh preflight，全绿 |
+| probe 结果（train-only，seed 20260917） | passed：epoch5收敛，loss→0.0081，train M1=167/174=0.96，copy-supported M1=144/144=1.0，**negation 48/48首次突破**，combo_same 7/7，combo_different 0/7（C/B路由信号）；稳定性判据（loss增幅≤15%、e25→30无回撤）全过。[报告](../../../reports/r2_d3_multihead_probe_20260918.json) |
+| matched dev 结果（3臂×3seeds） | **G1–G6全败**：H4 M1=0/0/0.092、H1+PE对照 0/0.010/0.112、C4广播对照 0.010/0.061/0.061；no_context/zero_read/copy_misbind/value_misbind与fact_flip/combo_flip/invariance全贴地；boundary_min=0.582；surface天花板未超越。[报告](../../../reports/r2_d3_matched_dev_20260918.json) |
+| 归因（排除实现缺陷后定性） | 同seed（20260917）probe与matched checkpoint参数**逐位一致**→训练可复现；train重放精确（fact命中紫/黄/青）；dev输出刻画：negation首两字节「不是」正确但内容错、多形状退化高频单字「索」、0/98输出等于任何train response、dev/train prefix零重叠、copy未锁定材料行（目标值在材料中未复制）→**模型记忆化train prefix→response映射，未学组合绑定泛化** |
+| 结论与解释边界 | 可学习性与泛化**分离**：多头+PE解决train可学性（negation突破），但以记忆化方式实现；dev维度三臂同崩，多头vs PE贡献不可分辨。判否范围限当前尺度、目标函数（仅答案CE）、数据量（174 episodes）下的几何族；不能推成所有架构变体无法泛化 |
+| 结果去向 | 按合同§5预承诺：H-G在dev不获支持，转评审（**目标函数 / B绑定 / 规模**），不再追加几何变体（H5/H8/更多头/PE变体）；D2旧议题（梯度方差/批大小）在微批8三臂9运行中未见失稳，一并收束。[评审备忘](../../reference/M5_R2_D3_MATCHED_DEV_REVIEW_MEMO_20260918.md) |
+| 预算与可运行性 | probe 69.5s+matched 9×~49s CPU；checkpoint隔离于reports/r2_d3_checkpoints/；裁决前不释放新训练预算 |
 
-合同：[H-A3 问题起点修订（冻结）](../../reference/M5_R2_D2_QUESTION_START_AMENDMENT_FROZEN_20260918.md)、[H-A2 copy修订（冻结）](../../reference/M5_R2_D2_COPY_MIXTURE_AMENDMENT_FROZEN_20260918.md)、[原预注册](../../reference/M5_R2_D2_PER_POSITION_EVIDENCE_PREREGISTRATION_FROZEN_20260918.md)、[假设备忘](../../reference/M5_R2_D2_HYPOTHESIS_SELECTION_MEMO_20260918.md)；证据：[H-A1 probe](../../../reports/r2_d2_learnability_probe_20260918.json)、[H-A2 copy probe](../../../reports/r2_d2_copy_learnability_probe_20260918.json)、[H-A3 v5 probe](../../../reports/r2_d2_question_start_probe_20260918.json)、[lr诊断](../../../reports/r2_d2_lr_stability_diagnostic_20260918.json)、[寻址诊断](../../../reports/r2_d2_addressing_diagnostic_20260918.json)。
+合同：[D3 冻结](../../reference/M5_R2_D3_FIRST_STEP_GEOMETRY_CONTRACT_FROZEN_20260918.md)；评审议题三方向的具体化见[评审备忘§5](../../reference/M5_R2_D3_MATCHED_DEV_REVIEW_MEMO_20260918.md)。
+
+**结项历史指针：R2-D2 逐位置证据记忆 A 族（2026-09-18，四次学习门未过，S1 裁决收束路由至 D3）。** H-A1 寻址塌缩（权重熵 0、全落题干）→H-A2 copy 修订（82,658 参数，五形状 train exact=1.0，negation/combo_different 恒 0，copy-supported=0.667 平台）→H-A3 问题条件化起点（复现 0.667 平台后晚期失稳）→P1 形状均衡（单样本 Adam 下震荡发散，按修订三§4 停止）。Q1 微批 8 消除梯度方差失稳（R1 复证）。二次评审与用户裁决：S1 路由到 D3（已执行）；P2 容量/P3 B 未被排除，留待本轮 D3 后评审一并比较。合同与备忘：[A 族评审备忘](../../reference/M5_R2_D2_A_FAMILY_REVIEW_MEMO_20260918.md)、[R1 修订](../../reference/M5_R2_D2_R1_BALANCED_MICROBATCH_AMENDMENT_FROZEN_20260918.md)、[Q1 修订](../../reference/M5_R2_D2_Q1_MICROBATCH_AMENDMENT_FROZEN_20260918.md)、[P1 修订](../../reference/M5_R2_D2_P1_BALANCED_TRAINING_AMENDMENT_FROZEN_20260918.md)、[H-A3 修订](../../reference/M5_R2_D2_QUESTION_START_AMENDMENT_FROZEN_20260918.md)、[O1 升级备忘](../../reference/M5_R2_D2_FIRST_BYTE_ESCALATION_MEMO_20260918.md)、[H-A2 修订](../../reference/M5_R2_D2_COPY_MIXTURE_AMENDMENT_FROZEN_20260918.md)、[原预注册](../../reference/M5_R2_D2_PER_POSITION_EVIDENCE_PREREGISTRATION_FROZEN_20260918.md)、[假设选择备忘](../../reference/M5_R2_D2_HYPOTHESIS_SELECTION_MEMO_20260918.md)。
 
 **结项历史指针：R2-D1 可辨识 dev 测量仪器 v1（2026-09-17，Q1–Q5 全过）。** 交付生成器/评分器/fixture（train 174/dev 98/final 94，digest `53ac9f88695f135d0…`）；天花板 M1=0.1735、M3=0.0581、M4=0.0，参照键全 1.0，b3 诊断 M4=5/11。合同 [D1 FROZEN](../../reference/M5_R2_D1_DEV_MEASUREMENT_CONTRACT_FROZEN_20260917.md)、[数据报告](../../../reports/r2_d1_data_contract_20260917.json)、[基线报告](../../../reports/r2_d1_surface_baselines_20260917.json)。本包只关闭测量缺口，不计为能力阶段进度。
 
@@ -218,7 +220,7 @@ D2新增事实取自[copy探针报告](../../../reports/r2_d2_copy_learnability_
 
 规划完成的判断是开发者能说明“信息在哪里、谁用它、错误更新谁、用什么经历学、怎样验证、失败后更换什么”。数值尚未标定可以待定，但要有求取方法和冻结时点；不因保留待定项而要求现在批准全部架构。
 
-本轮仅修订以上规格与过期状态，保存所有报告/权重和历史合同；未提交实现不纳入本轮。唯一研究下一步仍是§0所列D2裁决，计划维护不添加另一条训练或全仓技术债队列。
+本轮仅修订以上规格与过期状态，保存所有报告/权重和历史合同；未提交实现不纳入本轮。唯一研究下一步仍是§0所列R2-D3失败后的评审裁决，计划维护不添加另一条训练或全仓技术债队列。
 
 **全面复审的设计输入**见VISION §18.9及A族评审备忘：A内容形成层、B绑定、A/B＋C计算和学习/课程/规模规格可以并列比较，不是必须逐个失败的队列。P1已经执行，当前二次评审不自动重试它。阶段出口仍是R2/L2；评审可以先批准一个有界局部取证子包，再据结果完成路线选择，不把“先完成全套设计评审”变成实验前置。
 
@@ -231,7 +233,7 @@ D2新增事实取自[copy探针报告](../../../reports/r2_d2_copy_learnability_
 - **允许的价值**：复现并定位合同缺陷；区分信息访问、绑定、表达或更新问题；确认收益是否被随机波动解释；标定影响决策的资源/规模关系。可先做最小取证，信号足够就回到主线决定。
 - **不足以追加的理由**：上次失败、改动容易、换一个seed也许会好、已经投入很多；或无论结果怎样都准备再试下一种。此类理由缺少决策价值，需补齐而非直接执行。
 - **同一主线的管理**：一个活动包可以包含已约定的局部实验与必要重复；不把每个对照建立为新主线，不因探针较小就漏记累计预算。已授权且未触发停止线时可按约定自主推进，超出时只升级受影响的决定。
-- **当前D2例子**：梯度方差/批大小是待判假设，局部诊断可能有价值。准入卡需区分“不更新权重的train诊断”与“改变更新规则后重新训练”，声明等数据暴露、等更新或等计算中的比较口径及不匹配项；不能以批大小变化后分数改善直接宣布梯度方差是唯一原因。确切实验与预算尚待裁决，本轮不预选数值或开跑。
+- **当前D3后例子**：目标函数（材料读取监督）、B绑定结构、规模/数据扩展是待判假设，三者可各出一个局部取证子包。准入卡需区分“改变训练目标后重新训练”与“等暴露口径下扩数据”，声明等数据暴露、等更新或等计算中的比较口径及不匹配项；不能以单一方向的分数改善直接宣布唯一根因。确切实验与预算尚待裁决，本轮不预选数值或开跑。
 - **返回主线**：按预定读数完成一次判断，保留正/负/不可判证据，更新当前决定与累计预算；必要补测只能在已批准范围内进行。没有继续判别的必要时结案，不要求把所有候选试遍，也不要求局部探针独自解决整个R2。
 
 ## 6. 防止规则再次变成僵硬闸门
