@@ -35,10 +35,48 @@ def test_probe_completed_and_edited_no_source(report):
     assert report["status"] == "completed"
     assert report.get("error") is None
     for arm in report["arms"].values():
-        assert arm.get("source_edited") is False
+        assert arm["source_edited"] is False
     joined = " ".join(report["does_not_do"])
     assert "edits no repository source" in joined
     assert "writes no checkpoint" in joined
+
+
+def test_the_source_edited_flag_can_actually_say_true(tmp_path: Path) -> None:
+    """Audit item B4: a flag that can only ever read False is not a measurement.
+
+    ``source_edited`` used to be a hard-coded ``False``, which made the assertion above pass for
+    the wrong reason forever.  It is now a before/after digest of ``taiji/``, so the helper must be
+    shown to react -- otherwise nothing changed except the wording.
+    """
+
+    import importlib.util
+    import sys
+
+    probe_path = (
+        Path(__file__).resolve().parents[2]
+        / "scripts"
+        / "training"
+        / "probe_taiji_cap0_legacy_load.py"
+    )
+    name = "_legacy_load_probe_for_b4"
+    if name not in sys.modules:
+        spec = importlib.util.spec_from_file_location(name, probe_path)
+        assert spec is not None and spec.loader is not None
+        loaded = importlib.util.module_from_spec(spec)
+        sys.modules[name] = loaded
+        spec.loader.exec_module(loaded)
+    probe = sys.modules[name]
+
+    repo = tmp_path / "repo"
+    tree = repo / "taiji"
+    tree.mkdir(parents=True)
+    (tree / "model.py").write_bytes(b"x = 1\n")
+    before = probe.source_fingerprint(repo)
+
+    (tree / "model.py").write_bytes(b"x = 2\n")
+    assert probe.source_fingerprint(repo) != before, "content change must be visible"
+    (tree / "added.py").write_bytes(b"y = 1\n")
+    assert probe.source_fingerprint(repo) != before, "an added file must be visible too"
 
 
 def test_current_guard_loads_the_trained_checkpoint_after_the_migration(report):

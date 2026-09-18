@@ -103,6 +103,13 @@ def test_model_format_is_read_from_the_substrate_key(report):
     assert reality["most_trained_model_format"] == "taiji-native-v8"
     assert reality["stranded_is_legacy_format"] is True
 
+    # B5: check the class the report describes, not just the report's own words. If the declared
+    # legacy set ever drops v8, the "stranded" reading is wrong and this goes red at the source.
+    from taiji.model import Taiji
+
+    assert {"taiji-native-v8", "taiji-native-v9"} <= set(Taiji.LEGACY_CHECKPOINT_FORMATS)
+    assert Taiji.CHECKPOINT_FORMAT == reality["default_model_format"]
+
     inventory = {row["filename"]: row for row in report["checkpoint_inventory"]}
     for name in ("seed_beta.pt", "resumed_seed_corpus.pt", "seed_corpus_prev_20260823.pt"):
         assert inventory[name]["model_format"] == "taiji-native-v8", name

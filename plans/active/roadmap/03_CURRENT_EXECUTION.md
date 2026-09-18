@@ -55,8 +55,10 @@ matched 未启动（[v4 补证](../../reference/M5_R2_D8_V4_MULTISEED_20260918.m
 **(iii)** 只修 `wall_cap` 门放行 matched（文档标注不推荐：不稳定训练下的读数不可归因）。
 
 **无需裁决即可推进的确定项**（本对话正在做）：已结项包的书账与仪器整修批次 ——
-CAP-0 加载器缺陷落地（`taiji/model.py` 的 identity-organ 分支仍会抛
-`enabled identity organ checkpoint payload is missing`）+ DEBT-I5/I6/I8 + 合同测试普查余项
+CAP-0 加载器缺陷**已落地**（M2-2i，提交 `30660167`：缺失载荷迁移 + 逐题复现证明行为未变 + DEBT-I5 结项，
+并顺带修好"约束解码锚点漂移导致整条 CAP-0 静默罢工"＝DEBT-I10）；
+**剩余**：DEBT-I7 测试隔离（其后果已成本：DEBT-I9 默认基座被套件写成 tick=36、不入 git ⇒ 不变量只能 xfail）、
+DEBT-I6 的原子写与复用前校验、DEBT-I8 报告相对路径、合同测试普查余项
 B4/B5/C1/C2 + §3"读封存 vs 复现封存"结构升级；阻塞条件（双臂在跑、改评测面会换掉评测语义）
 已随 P3b 两臂于 09-16 结束而解除。合同：[D8 冻结](../../reference/M5_R2_D8_SCALE_CONTRACT_FROZEN_20260918.md)。
 

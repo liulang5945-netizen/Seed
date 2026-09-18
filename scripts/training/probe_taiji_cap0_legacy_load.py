@@ -30,6 +30,7 @@ that is a refuse-vs-migrate policy decision, not a code question.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import subprocess
 import sys
@@ -87,14 +88,29 @@ def _install_legacy_guard() -> dict[str, Any]:
     }
 
 
+def source_fingerprint(root: Path = PROJECT_ROOT) -> str:
+    """Digest of the source tree this probe must never touch.
+
+    Module-level on purpose: a test can point it at a temporary tree and prove the
+    ``source_edited`` flag flips when something is edited -- which is the whole difference between
+    measuring that claim (audit item B4) and declaring it, as the earlier ``False`` literal did.
+    """
+
+    digest = hashlib.sha256()
+    for path in sorted((root / "taiji").rglob("*.py")):
+        digest.update(path.name.encode("utf-8"))
+        digest.update(path.read_bytes())
+    return digest.hexdigest()
+
+
 def _run_probe(checkpoint: Path, *, apply_guard: bool) -> dict[str, Any]:
     """One fresh-process load (+ optional chat probe) under a chosen guard policy."""
 
     started = time.perf_counter()
+    source_before = source_fingerprint()
     result: dict[str, Any] = {
         "checkpoint": checkpoint.name,
         "guard_relaxed": apply_guard,
-        "source_edited": False,
     }
     guard_info: dict[str, Any] = {}
     if apply_guard:
@@ -150,6 +166,7 @@ def _run_probe(checkpoint: Path, *, apply_guard: bool) -> dict[str, Any]:
         "templated": len(signatures) == 1 and len(answered) > 1,
         "signature": next(iter(signatures)) if len(signatures) == 1 else None,
     }
+    result["source_edited"] = source_before != source_fingerprint()
     result["seconds"] = round(time.perf_counter() - started, 3)
     return result
 

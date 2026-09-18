@@ -9,7 +9,7 @@
     "does not decide the refuse-vs-migrate policy question"
   ],
   "record": {
-    "commit": "85f4bd083918643489232fd595d7a2050dff9145",
+    "commit": "306601674196a2f83e7c4aef015523dab2135b46",
     "target_checkpoint": "seed_beta.pt",
     "control_checkpoint": "seed_corpus.pt"
   },
@@ -17,7 +17,6 @@
     "trained_current_guard": {
       "checkpoint": "seed_beta.pt",
       "guard_relaxed": false,
-      "source_edited": false,
       "load_ok": true,
       "tick": 16000000,
       "chat_organ_backend": "native-readable",
@@ -47,12 +46,12 @@
         "templated": true,
         "signature": "我已收到你的问题：“<PROMPT>”。当前原生语言表层正在形成稳定表达。"
       },
-      "seconds": 3.147
+      "source_edited": false,
+      "seconds": 3.107
     },
     "trained_relaxed_guard": {
       "checkpoint": "seed_beta.pt",
       "guard_relaxed": true,
-      "source_edited": false,
       "legacy_guard": {
         "patched": true,
         "legacy_formats": [
@@ -93,12 +92,12 @@
         "templated": true,
         "signature": "我已收到你的问题：“<PROMPT>”。当前原生语言表层正在形成稳定表达。"
       },
-      "seconds": 3.163
+      "source_edited": false,
+      "seconds": 3.127
     },
     "default_control_current_guard": {
       "checkpoint": "seed_corpus.pt",
       "guard_relaxed": false,
-      "source_edited": false,
       "load_ok": true,
       "tick": 36,
       "chat_organ_backend": "native-readable",
@@ -128,7 +127,8 @@
         "templated": true,
         "signature": "我已收到你的问题：“<PROMPT>”。当前原生语言表层正在形成稳定表达。"
       },
-      "seconds": 2.882
+      "source_edited": false,
+      "seconds": 2.669
     }
   },
   "verdict": {
@@ -139,5 +139,5 @@
     "reading": "relaxing the guard recovers the trained state, but its output is still the fixed template: the load defect and the language gap are separate problems and fixing the guard alone will not produce conversation"
   },
   "limits": "a successful load under a relaxed guard does not make the fix safe, and readable output would not by itself justify it: the refuse-vs-migrate question is a policy decision. This probe also cannot tell whether the recovered state was trained for language at all -- only a frozen evaluation set can.",
-  "elapsed_seconds": 10.075
+  "elapsed_seconds": 9.728
 }

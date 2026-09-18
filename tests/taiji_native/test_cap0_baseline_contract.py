@@ -444,6 +444,35 @@ def test_the_migrated_loader_reproduces_the_sealed_p3a_baseline_item_by_item() -
         ], f"{dim}: the migrated loader must not change what the model emits"
 
 
+POST_MIGRATION_REPORT = PROJECT_ROOT / "reports" / "taiji_cap0_baseline_postmigration_20260918.json"
+
+
+@pytest.mark.skipif(
+    not POST_MIGRATION_REPORT.exists(), reason="guard-free baseline run is not on disk"
+)
+def test_the_guard_free_chain_reproduces_the_sealed_baseline_exactly() -> None:
+    """The relaxed-guard patch was compensating for a loader bug, not changing the measurement.
+
+    After M2-2i the trained v8 file loads natively, so the same chain can be scored with
+    ``relax_legacy_guard: false``.  If the patch had been doing anything but keeping the load alive,
+    these numbers would move.  They do not -- same tallies, byte-identical outputs -- which is what
+    keeps every pre-migration CAP-0 conclusion valid instead of instrument-contaminated.
+    """
+
+    sealed = json.loads(CONSTRAINED_REPORT.read_text(encoding="utf-8"))
+    guard_free = json.loads(POST_MIGRATION_REPORT.read_text(encoding="utf-8"))
+    assert guard_free["chain"] == {"relax_legacy_guard": False, "constrained_decode": True}
+    assert sealed["chain"] == {"relax_legacy_guard": True, "constrained_decode": True}
+    for field in ("eval_set", "eval_set_format", "eval_set_frozen_on", "declared_mode"):
+        assert guard_free[field] == sealed[field], field
+    for dim in ("B", "C", "D", "E", "G"):
+        left, right = sealed["dimensions"][dim], guard_free["dimensions"][dim]
+        assert left["tally"]["machine_normalised"] == right["tally"]["machine_normalised"], dim
+        assert [i.get("raw_last_output") for i in left["items"]] == [
+            i.get("raw_last_output") for i in right["items"]
+        ], f"{dim}: dropping the patch must not change what the model emits"
+
+
 def test_constrained_chain_report_discloses_its_chain_and_scores() -> None:
     report = json.loads(CONSTRAINED_REPORT.read_text(encoding="utf-8"))
     # 链路必须显式披露（07 §4.1）：分数取自非默认链路，读者要能看见。
