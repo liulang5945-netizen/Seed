@@ -61,6 +61,20 @@
   结项文档该分支只能记 `untested`，**禁止**写成"未见退化故通过"。修法：另立 runner 覆盖 A（真实性/来源/
   拒绝类）、F（项目代表能力）、H（性能与稳定性）三类流程性检查；**本轮不做**（改 runner 会打断在跑双臂
   campaign 的评测链路）。
+- **DEBT-I4 ◐部分处置（2026-09-18 第六批）—— 缺的不是仪器，是接线**：`--health` 那条 runner **早就存在**
+  （`run_health()` 产 `taiji_cap0_health_v1_20260915.json`，含 A01/A01-tick/A02/A03/A04/A06 + H05 布尔判定、
+  `stability_runs=30 / crashes=0`、以及 `gate_status: to_be_calibrated`），缺的是"没人把它接进判据"。
+  现在接上了：`check_p3b_criteria` 新增 `judge_health()` + `--baseline-health/--candidate-health`，
+  J4 的 A/H 支按 07 §4.2 的**布尔**要求逐项链判，三态 `pass / fail / not_supplied`，
+  外加一条反错配守卫（两份健康报告的 `checkpoint` 不同 ⇒ `source_mismatch` 拒判——
+  与双臂配对那次是同一类失效）。**"没给报告"永远不算通过**：它进 `untested_clauses`，
+  所以 `verdict: pass` 不会被读成"A/H 也过了"。`A05_isolated_ablation`（报告里是 `null`）
+  刻意排除在必过项之外，并有测试钉住"清单 == 仪器真产出的非空字段集合"，防止生产端悄悄少判一项。
+  实测：`43 passed in 1.25 s`；`--health` 单次墙钟 **17.2 s**（本轮计时），
+  ⇒ 未来 campaign 若每阶段都跑健康支，代价是 +17 s/阶段（对照 CAP-0 阶段本身的 345.7 s 是 +5%）。
+  **仍开的两半**：① H 的响应/内存**阈值**门按 §4.2 要求"须按目标设备预检标定后冻结"，
+  本 runner 不设阈值 ⇒ 那半支永久 `untested` 直到有人标定（是用户/CI 的设备决策，不是我能代做的）；
+  ② F 维仍只有"合同引用"，没有任何执行 ⇒ J4/07 §5 里 F 那一支依旧不能声称判过。
 - **DEBT-I5（只登记，不处置）契约测试用字面行号锚定源码位置 ⇒ 源码一漂移，断言就失真而测试仍绿**。
   `scripts/training/eval_taiji_cap0_inventory.py:350-356` 把 `"line 2726-2732"`（以及 `"line 2611"`）
   作为**硬编码字符串**写进诊断文本，`tests/taiji_native/test_cap0_inventory_contract.py:102`
@@ -221,6 +235,12 @@
   同日又跑两套：**`1742 / 0 / 6 + 1 xfailed`**（21:08，带 DEBT-I7 第二版；跑前跑后 sha 同为 `c8025db4`）
   与 **`1743 / 0 / 6 + 1 xfailed`**（21:18，另含"放宽守卫已成空操作"那条逐叶断言）。
   ⇒ 对照基线现为 **1743 / 0 / 6 + 1 xfailed**，且"默认基座字节不变"已随套件一同成立。
+  **收口那一套（含本日全部改动）：`1746 / 0 / 6 + 1 xfailed`，21:30**。三条同时成立，都是测出来的：
+  ① 0 新增失败（用例数从本日早段 1727 涨到 1746，+19 全是本轮新测试）；
+  ② `checkpoints/seed_corpus.pt` 跑前跑后同为 sha `c8025db44c65` / 43,223,183 B
+  ⇒ **DEBT-I7 在套件规模上成立**（此前四次都把它改写）；
+  ③ `output/manual-r5-canary/` 条目数由 16 保持 16，且目录里最新文件的 mtime 早于本套起跑时刻
+  ⇒ 会话末 sweep 确实删掉了本会话写的那一对（不是"这套没写"）。
   **远端仍未查询**（`gh` 未认证）⇒ 继续禁止"CI 已绿"表述。
 
 

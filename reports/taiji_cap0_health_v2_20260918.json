@@ -1,0 +1,82 @@
+{
+  "format": "taiji-cap0-health-v1",
+  "checkpoint": "checkpoints\\seed_corpus.pt",
+  "trained_during_eval": false,
+  "dimensions": {
+    "A": {
+      "name": "模型真实性",
+      "checks": {
+        "A01_new_process_load": true,
+        "A01_load_does_not_advance_tick": true,
+        "A02_missing_checkpoint_rejected": true,
+        "A03_fixed_input_reproducible": true,
+        "A04_input_changes_output": true,
+        "H05_no_crash_over_n_runs": true,
+        "A06_no_external_provider_in_N_mode": true,
+        "A05_isolated_ablation": null
+      },
+      "tick_after_load": 2,
+      "provider_status": null,
+      "missing_checkpoint_error": "FileNotFoundError",
+      "error": null,
+      "notes": {
+        "A04_semantics": "输入确实改变了输出，但该入口的输出形态是固定模板回显（见 CAP-0 基线 §3）——A04 只证明“输入影响了链路”，不证明“产生了参数驱动的语言内容”，须人工确认",
+        "A05_isolated_ablation": "需在隔离副本上扰动权重或关闭记忆；本 runner 不自动执行 ⇒ not_executed"
+      }
+    },
+    "H": {
+      "name": "性能与稳定性",
+      "measurements": {
+        "H01_cold_start_seconds": 0.2797,
+        "H02_first_response_seconds": 0.3926,
+        "H03_total_seconds_for_runs": 13.681,
+        "H04_peak_traced_bytes": 164160
+      },
+      "stability_runs": 30,
+      "stability_crashes": 0,
+      "checks": {
+        "H05_no_crash_over_n_runs": true
+      },
+      "gate_status": "to_be_calibrated",
+      "gate_note": "门限未在本 runner 内设定：须按设备预检标定后冻结（07 §4.2）",
+      "notes": {
+        "H06_interrupt_recovery": "需专门的恢复流程；本 runner 不自动执行 ⇒ not_executed",
+        "H_gates": "门限未在本 runner 内设定：须按设备预检标定后冻结（07 §4.2）"
+      }
+    },
+    "F": {
+      "name": "项目代表能力",
+      "contracts": [
+        {
+          "id": "F01",
+          "capability": "B1 表示门",
+          "report": "reports/taiji_b0_b1_representation_20260915.json",
+          "gate": "六门全过 + outcome=representation_discriminative",
+          "report_present": true
+        },
+        {
+          "id": "F02",
+          "capability": "B2 选择门",
+          "report": "reports/taiji_b0_b2_selection_20260915.json",
+          "gate": "G1-G6 全过（当前为负结果 ⇒ 该能力未达，不得记为通过）",
+          "report_present": true
+        },
+        {
+          "id": "F03",
+          "capability": "结构空间（协作机制在仪器内）",
+          "report": "reports/taiji_b0_structure_space_probe_wide_20260915.json",
+          "gate": "create 行三格 +2.000、interleaved 6/6、零回归（须同时声明独立结构因素仍为 1）",
+          "report_present": true
+        },
+        {
+          "id": "F04",
+          "capability": "整模型加载链（CAP-0）",
+          "report": "reports/taiji_cap0_inventory_20260915.json",
+          "gate": "默认入口可加载并产出原始输出（现状 tick=2；16M-tick 被守卫挡住 ⇒ 记缺口）",
+          "report_present": true
+        }
+      ],
+      "note": "F 只读引用既有冻结合同；不重算分数，也不得把局部 probe 当作整模型能力。"
+    }
+  }
+}

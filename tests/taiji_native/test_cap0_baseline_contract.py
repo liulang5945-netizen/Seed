@@ -364,6 +364,7 @@ def test_utf8_dfa_excludes_invalid_byte_sequences() -> None:
 # --- §10 约束解码链路的基线对照 ---------------------------------------------
 
 CONSTRAINED_REPORT = PROJECT_ROOT / "reports" / "taiji_cap0_baseline_constrained_20260915.json"
+HEALTH_REPORT = PROJECT_ROOT / "reports" / "taiji_cap0_health_v1_20260915.json"
 
 
 def test_p1_section_10_records_the_constrained_chain_baseline() -> None:
@@ -766,3 +767,118 @@ def test_the_legacy_guard_relaxation_is_a_measured_no_op_after_m2_2i() -> None:
             relaxed["dimensions"][key]["tally"]["machine_normalised"]
             == strict["dimensions"][key]["tally"]["machine_normalised"]
         ), key
+
+
+# --- J4 的 A/H 布尔支（DEBT-I4） ------------------------------------------------
+
+#: 抄自 09-15 那份健康报告的实测取值。刻意写死字面量而不是由生产常量生成 fixture ——
+#: 后者会让"生产端偷偷少判一项"这件事变得测不出来；对齐由下面那条断言负责。
+HEALTH_REPORT_CHECKS = {
+    "A01_new_process_load": True,
+    "A01_load_does_not_advance_tick": True,
+    "A02_missing_checkpoint_rejected": True,
+    "A03_fixed_input_reproducible": True,
+    "A04_input_changes_output": True,
+    "A06_no_external_provider_in_N_mode": True,
+    "H05_no_crash_over_n_runs": True,
+    "A05_isolated_ablation": None,
+}
+
+
+def _health(
+    checkpoint: str = "checkpoints\\seed_beta.pt", runs: int = 30, crashes: int = 0
+) -> dict:
+    return {
+        "format": "taiji-cap0-health-v1",
+        "checkpoint": checkpoint,
+        "trained_during_eval": False,
+        "dimensions": {
+            "A": {"name": "模型真实性", "checks": dict(HEALTH_REPORT_CHECKS)},
+            "H": {
+                "name": "性能与稳定性",
+                "checks": {"H05_no_crash_over_n_runs": True},
+                "stability_runs": runs,
+                "stability_crashes": crashes,
+                "gate_status": "to_be_calibrated",
+            },
+        },
+    }
+
+
+def test_the_judged_health_list_matches_the_sealed_health_report() -> None:
+    """要判的清单必须与仪器真产出的字段一致——少一项就会漏判一类回归。"""
+
+    from scripts.training.check_p3b_criteria import A_HEALTH_CHECKS, MIN_STABILITY_RUNS
+
+    sealed = json.loads(HEALTH_REPORT.read_text(encoding="utf-8"))
+    assert set(A_HEALTH_CHECKS) == {
+        key for key, value in sealed["dimensions"]["A"]["checks"].items() if value is not None
+    }
+    assert "A05_isolated_ablation" not in A_HEALTH_CHECKS, "未执行的检查不得算进必过项"
+    assert MIN_STABILITY_RUNS == 30
+    assert sealed["dimensions"]["H"]["stability_runs"] >= MIN_STABILITY_RUNS
+
+
+def test_health_reports_decide_the_clause_in_both_directions(tmp_path) -> None:
+    """给两份健康报告 ⇒ J4 的 A/H 支真的在判：全好⇒0，翻掉一项⇒1。
+
+    走 ``main()`` 而不是只调函数——"接线没接上"正是这类判据最常见的失效形状。
+    """
+
+    from scripts.training import check_p3b_criteria as checker
+
+    out = tmp_path / "verdict.json"
+    candidate = _improved_candidate(tmp_path, CONSTRAINED_REPORT)
+    good = tmp_path / "good_health.json"
+    good.write_text(json.dumps(_health(), ensure_ascii=False), encoding="utf-8")
+    argv = [
+        "--baseline",
+        str(CONSTRAINED_REPORT),
+        "--candidate",
+        str(candidate),
+        "--baseline-health",
+        str(good),
+        "--candidate-health",
+        str(good),
+        "--output",
+        str(out),
+    ]
+    assert checker.main(argv) == 0
+    verdict = json.loads(out.read_text(encoding="utf-8"))
+    assert verdict["health"]["status"] == "pass"
+    assert verdict["health"]["h_thresholds"]["status"] == "untested"
+    assert any("阈值" in clause for clause in verdict["untested_clauses"])
+
+    broken = _health()
+    broken["dimensions"]["A"]["checks"]["A03_fixed_input_reproducible"] = False
+    bad = tmp_path / "bad_health.json"
+    bad.write_text(json.dumps(broken, ensure_ascii=False), encoding="utf-8")
+    argv[argv.index("--candidate-health") + 1] = str(bad)
+    assert checker.main(argv) == 1
+    result = json.loads(out.read_text(encoding="utf-8"))
+    assert result["health"]["status"] == "fail"
+    assert result["health"]["regressed_against_baseline"] == ["A03_fixed_input_reproducible"]
+
+
+def test_absent_or_mismatched_health_reports_are_never_counted_as_pass(tmp_path) -> None:
+    """三态里"没给"和"配错对象"都必须**不**算通过；稳定性不足要判 fail。"""
+
+    from scripts.training import check_p3b_criteria as checker
+
+    base = _health()
+    assert checker.judge_health(None, None) == {
+        "status": "not_supplied",
+        "reason": "未提供 --baseline-health / --candidate-health（DEBT-I4）",
+        "does_not_count_as_pass": True,
+    }
+    mismatch = checker.judge_health(base, _health(checkpoint="checkpoints\\seed_corpus.pt"))
+    assert mismatch["status"] == "source_mismatch"
+    assert "seed_corpus.pt" in mismatch["reason"]
+    assert checker.judge_health(base, _health(runs=29))["status"] == "fail"
+    assert checker.judge_health(base, _health(crashes=1))["status"] == "fail"
+
+    out = tmp_path / "verdict.json"
+    checker.main(["--baseline", str(CONSTRAINED_REPORT), "--output", str(out)])
+    verdict = json.loads(out.read_text(encoding="utf-8"))
+    assert verdict["health"]["status"] == "not_supplied"
+    assert any("DEBT-I4" in clause for clause in verdict["untested_clauses"])

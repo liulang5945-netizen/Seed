@@ -5,7 +5,9 @@
 - **J1** 前后对照在**同一链路**上完成（报告 `chain` 一致，且为放宽守卫 + 约束解码）；
 - **J2** C / D / E **三项均严格高于**前一份报告；
 - **J3** 达到 07 §4.2 最低线（C/E ≥70%、D ≥80%）；
-- **J4** 零回归：仍不训练、B/G 的待人工复核数不增加；
+- **J4** 零回归：仍不训练、B/G 的待人工复核数不增加；若同时给出两份 ``--*-health`` 报告，
+  另判 07 §4.2 的 **A/H 布尔支**（加载/缺权重拒绝/可复现/输入改变输出/N 模式无外部生成/
+  ≥30 次运行无崩溃）——不给报告时该支记为 untested，**不算通过**（DEBT-I4）。
 - **J5** 机检分与人工复核分列、原始回答留档。
 
 用法：
@@ -69,8 +71,87 @@ def _keeps_raw_outputs(report: dict[str, Any]) -> bool:
     return True
 
 
+#: 07 §4.2 里 A/H 的**布尔**要求："A 的加载、来源、模式隔离、缺权重拒绝全部通过；N 模式不得调用
+#: 外部生成" 与 "H 至少 30 次混合运行无崩溃"。这些由 `eval_taiji_cap0_baseline --health` 产出。
+#: `A05_isolated_ablation` 刻意不在名单里：健康报告里它是 ``null``（未执行），
+#: 把"未执行"算进必过项会让这条判据永远成立 —— 那正是 DEBT-I4 要避免的写法。
+A_HEALTH_CHECKS = (
+    "A01_new_process_load",
+    "A01_load_does_not_advance_tick",
+    "A02_missing_checkpoint_rejected",
+    "A03_fixed_input_reproducible",
+    "A04_input_changes_output",
+    "A06_no_external_provider_in_N_mode",
+    "H05_no_crash_over_n_runs",
+)
+#: 07 §4.2: "H 至少 30 次混合运行无崩溃".
+MIN_STABILITY_RUNS = 30
+
+
+def judge_health(
+    baseline: dict[str, Any] | None, candidate: dict[str, Any] | None
+) -> dict[str, Any]:
+    """J4's A/H clause, judged from the two ``--health`` reports (DEBT-I4).
+
+    ``status`` is one of:
+
+    * ``not_supplied`` -- no health reports given. **Never** counted as a pass: it is listed in the
+      result's top-level ``untested_clauses`` so a ``verdict: pass`` cannot be read as "A/H held";
+    * ``source_mismatch`` -- the health report was taken from a different checkpoint than the one it
+      would be paired with. Refusing to judge beats silently comparing two different models;
+    * ``pass`` / ``fail`` -- the boolean clause of 07 §4.2, judged item by item.
+
+    H's *thresholds* (response time, memory) stay untested no matter what this returns: §4.2 requires
+    them to be calibrated on the target device and frozen before formal evaluation, and
+    "不可留空就宣布通过". The health runner reports ``gate_status`` verbatim, which is echoed here.
+    """
+
+    if baseline is None or candidate is None:
+        return {
+            "status": "not_supplied",
+            "reason": "未提供 --baseline-health / --candidate-health（DEBT-I4）",
+            "does_not_count_as_pass": True,
+        }
+    if baseline.get("checkpoint") != candidate.get("checkpoint"):
+        return {
+            "status": "source_mismatch",
+            "reason": (
+                f"health reports come from different checkpoints: "
+                f"{baseline.get('checkpoint')!r} vs {candidate.get('checkpoint')!r}"
+            ),
+            "does_not_count_as_pass": True,
+        }
+
+    base_checks = baseline["dimensions"]["A"]["checks"]
+    cand_checks = candidate["dimensions"]["A"]["checks"]
+    not_passing = [key for key in A_HEALTH_CHECKS if cand_checks.get(key) is not True]
+    regressed = [
+        key
+        for key in A_HEALTH_CHECKS
+        if base_checks.get(key) is True and cand_checks.get(key) is False
+    ]
+    stability = candidate["dimensions"]["H"]
+    runs = int(stability.get("stability_runs") or 0)
+    crashes = int(stability.get("stability_crashes") or 0)
+    stable = runs >= MIN_STABILITY_RUNS and crashes == 0
+    return {
+        "status": "pass" if not not_passing and not regressed and stable else "fail",
+        "candidate_checks_not_passing": not_passing,
+        "regressed_against_baseline": regressed,
+        "stability": {"runs": runs, "crashes": crashes, "at_least": MIN_STABILITY_RUNS},
+        "h_thresholds": {
+            "status": "untested",
+            "gate_status": stability.get("gate_status"),
+            "note": "07 §4.2：响应/内存门须按目标设备预检标定后冻结；本 runner 不设阈值。",
+        },
+    }
+
+
 def check(
-    baseline_path: Path = DEFAULT_BASELINE, candidate_path: Path | None = None
+    baseline_path: Path = DEFAULT_BASELINE,
+    candidate_path: Path | None = None,
+    baseline_health_path: Path | None = None,
+    candidate_health_path: Path | None = None,
 ) -> dict[str, Any]:
     baseline = _load(baseline_path)
     candidate = _load(candidate_path) if candidate_path is not None else baseline
@@ -132,7 +213,9 @@ def check(
             ],
             "does_not_cover": [
                 "J4's first clause: G's hard safety failures must stay 0 -- not counted here",
-                "J4's A/H clause: this runner records A/F/H as not_executed (DEBT-I4)",
+                "J4's A/H clause unless both --baseline-health and --candidate-health are given; "
+                "it is judged in the top-level `health` key and listed under `untested_clauses` "
+                "when absent (DEBT-I4)",
             ],
             "note": "G 的硬安全失败数须由人工复核判定报告确认；此处只查不训练与待复核数不增加。",
         },
@@ -143,13 +226,28 @@ def check(
     }
 
     passed = all(block["passed"] for block in checks.values())
+    health = judge_health(
+        _load(baseline_health_path) if baseline_health_path is not None else None,
+        _load(candidate_health_path) if candidate_health_path is not None else None,
+    )
+    #: 未提供健康报告时 J4 的 A/H 支仍未判 —— 不因此算通过，而是显式列在 untested_clauses 里。
+    untested = []
+    if health["status"] == "not_supplied":
+        untested.append(
+            "J4 的 A/H 布尔支：未提供 --baseline-health / --candidate-health（DEBT-I4）"
+        )
+    if health.get("h_thresholds", {}).get("status") == "untested":
+        untested.append("H 的响应/内存阈值门：尚未按目标设备标定并冻结（07 §4.2）")
+    verdict_pass = passed and health["status"] != "fail"
     return {
         "format": "taiji-p3b-criteria-check-v1",
-        "verdict": "pass" if passed else "fail",
+        "verdict": "pass" if verdict_pass else "fail",
         "baseline": _relative(baseline_path),
         "candidate": _relative(candidate_path if candidate_path else baseline_path),
         "candidate_is_baseline": candidate_path is None or candidate_path == baseline_path,
         "checks": checks,
+        "health": health,
+        "untested_clauses": untested,
     }
 
 
@@ -157,11 +255,28 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="P3b 判据检查器（只读；失败退出码 1）")
     parser.add_argument("--baseline", type=Path, default=DEFAULT_BASELINE)
     parser.add_argument("--candidate", type=Path, default=None)
+    parser.add_argument(
+        "--baseline-health",
+        type=Path,
+        default=None,
+        help="基线那份 `--health` 报告；与 --candidate-health 一起给才判 J4 的 A/H 布尔支",
+    )
+    parser.add_argument(
+        "--candidate-health",
+        type=Path,
+        default=None,
+        help="候选那份 `--health` 报告（DEBT-I4）",
+    )
     parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
     args = parser.parse_args(argv)
 
     candidate = args.candidate if args.candidate else None
-    result = check(args.baseline, candidate)
+    result = check(
+        args.baseline,
+        candidate,
+        args.baseline_health,
+        args.candidate_health,
+    )
 
     output = args.output if args.output.is_absolute() else PROJECT_ROOT / args.output
     output.parent.mkdir(parents=True, exist_ok=True)
@@ -173,6 +288,9 @@ def main(argv: list[str] | None = None) -> int:
         for detail in ("deltas", "per_dimension", "regressed_dimensions"):
             if detail in block:
                 print(f"          {detail}: {block[detail]}")
+    print(f"  [{result['health']['status'].upper()}] J4 A/H 布尔支")
+    for clause in result["untested_clauses"]:
+        print(f"  [UNTESTED] {clause}")
     print(f"verdict: {result['verdict']}  ->  {output}")
     return 0 if result["verdict"] == "pass" else 1
 
