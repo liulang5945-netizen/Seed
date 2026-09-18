@@ -221,3 +221,8 @@ output/_archived_manual-r5-canary_*/
 # Per-run diagnostics; retained locally, not research source or frozen evidence.
 outputs/project-audit-*/
 .workbuddy-ai/
+
+# 2026-09-18：fixture 回归重放的临时输出（verify-only，用毕即删）
+reports/_v1v2_replay/
+reports/_v4reg/
+reports/_v4reg2/
