@@ -1,0 +1,59 @@
+{
+  "probe": "stage0_token_evidence",
+  "created_at": "2026-09-18T12:16:30+08:00",
+  "method_note": "只读统计代理：距离压缩比为字节步/概念步；覆盖率曲线为 Zipf 截断覆盖，非真实聚类熵。仅用于 token 化线预注册判定。",
+  "compression": {
+    "byte_steps": 869.0,
+    "concept_steps": 124.0,
+    "distance_compression_ratio": 7.008064516129032,
+    "p90_bytes_per_50_concepts": 4.16
+  },
+  "capacity": {
+    "capacity_scan": [
+      {
+        "capacity": 128.0,
+        "coverage": 1.0,
+        "marginal_gain": 0.0,
+        "avg_samples": 1.3191489361702127,
+        "distinct_units": 94.0
+      },
+      {
+        "capacity": 256.0,
+        "coverage": 1.0,
+        "marginal_gain": 0.0,
+        "avg_samples": 1.3191489361702127,
+        "distinct_units": 94.0
+      },
+      {
+        "capacity": 512.0,
+        "coverage": 1.0,
+        "marginal_gain": 0.0,
+        "avg_samples": 1.3191489361702127,
+        "distinct_units": 94.0
+      },
+      {
+        "capacity": 1024.0,
+        "coverage": 1.0,
+        "marginal_gain": 0.0,
+        "avg_samples": 1.3191489361702127,
+        "distinct_units": 94.0
+      },
+      {
+        "capacity": 2048.0,
+        "coverage": 1.0,
+        "marginal_gain": 0.0,
+        "avg_samples": 1.3191489361702127,
+        "distinct_units": 94.0
+      },
+      {
+        "capacity": 4096.0,
+        "coverage": 1.0,
+        "marginal_gain": 0.0,
+        "avg_samples": 1.3191489361702127,
+        "distinct_units": 94.0
+      }
+    ],
+    "marginal_gain_stop": 0.1,
+    "knee_capacity": 128.0
+  }
+}
