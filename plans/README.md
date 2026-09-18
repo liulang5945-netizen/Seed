@@ -1,6 +1,6 @@
 # Seed / Taiji 计划与架构入口
 
-> 更新：2026-09-18。本轮在唯一VISION §19给出项目缺口实际方案，§20补齐多模态共享认知，§21补齐自主学习的信息准入、抗污染和恢复；01/02/07同步阶段、风险准入与验收衔接。推荐设计不等于架构采用或新运行授权，局部实验仍按02 §2.5有条件准入；最新研究状态与唯一下一步只看03及有效合同/裁决。
+> 更新：2026-09-18。唯一VISION §19给出项目缺口实际方案，§20补齐多模态共享认知，§21补齐自主学习的信息准入、抗污染和恢复；本轮§22继续补齐不确定性、信念修订、有限记忆、技能/调度、版本一致性及长期评价，根需求/架构/01/02/07同步设计与验收入口。推荐设计不等于架构采用或新运行授权，局部实验仍按02 §2.5有条件准入；最新研究状态与唯一下一步只看03及有效合同/裁决。
 
 ## 项目位置
 
@@ -20,6 +20,8 @@
 | 七项项目缺口怎样实际解决？ | [VISION §19](reference/VISION_FUTURE_TECHNOLOGY.md#19-项目缺口的实际解决方案推荐核心学习配方演进与交付) | 核心/数据/学习/反馈/消费者/交付逐项映射，依赖与当前R2优先项明确，不自动开多条主线 |
 | 多模态怎样形成同一个模型？ | [VISION §20](reference/VISION_FUTURE_TECHNOLOGY.md#20-多模态共同认知专用编码共享事件跨模态学习与验收) | 专用编码、共享对象/事件、区域/时间引用、对齐课程与跨模态干预；不以OCR/ASR或答案拼接代替理解 |
 | 自主学习遇到恶意信息怎么办？ | [VISION §21](reference/VISION_FUTURE_TECHNOLOGY.md#21-自主学习的信息治理不可信输入分层准入抗污染与恢复)、[02 §2.6](active/roadmap/02_GATES_AND_CI.md) | 观察/相信/学习/行动分权，来源继承、候选隔离、快慢准入、污染撤销与回退；不承诺过滤绝对安全 |
+| 长期运行还有哪些机制缺口？ | [VISION §22](reference/VISION_FUTURE_TECHNOLOGY.md#22-长期运行的补全设计不确定性信念修订记忆预算技能与持续评价) | 何时求证、冲突/历史信念、有限记忆、技能与目标、私有状态隔离、自主调度和更新/恢复；同一压力序列检验共同收益 |
+| 怎样证明越用越会，而不是测试时偷学答案？ | [07 §4.4](active/roadmap/07_MINI_MODEL_DELIVERY.md#44-冻结能力与在线学习分账2026-09-18设计补充)、[VISION §22.8](reference/VISION_FUTURE_TECHNOLOGY.md#228-长期评价冻结能力和在线学习必须分账) | 固定能力测试保持冻结；在线流先记录预测再释放合法反馈，只评价后续适应，另测旧能力与资源成本 |
 | 什么算完成，何时给用户模型？ | [02 §2–3](active/roadmap/02_GATES_AND_CI.md)、[07](active/roadmap/07_MINI_MODEL_DELIVERY.md) | 规划/实验/能力/阶段/采用分别记账，L3触发后置用户验收 |
 | 如何从研究runner接成一个模型？ | [07 §5.2](active/roadmap/07_MINI_MODEL_DELIVERY.md)、[VISION §17.7](reference/VISION_FUTURE_TECHNOLOGY.md) | 权重/编码身份、会话映射、真实消费者、恢复与同bundle评价；候选接入不等于默认采用 |
 
@@ -42,7 +44,7 @@
 | [R2-H3.5-A matched预注册](reference/M5_R2_H3_5A_MATCHED_RUN_PREREGISTRATION_20260916.md) | v3控制集、三seed对照、plan消融、final延迟权限和停止门 |
 | [07 整模型验收](active/roadmap/07_MINI_MODEL_DELIVERY.md) | 真实输出评价、L3触发最小用户版本 |
 | [05 技术债](active/roadmap/05_TECH_DEBT_REGISTER.md) | 隔离、仪器、恢复与CI；按证据范围及明确后继修订解释 |
-| [唯一完整VISION](reference/VISION_FUTURE_TECHNOLOGY.md) | §15–18架构选择与开发；§19实际方案；§20多模态共同认知；§21信息治理、抗污染和恢复 |
+| [唯一完整VISION](reference/VISION_FUTURE_TECHNOLOGY.md) | §15–18架构选择与开发；§19实际方案；§20多模态；§21信息治理；§22长期认知、资源/版本与持续评价 |
 | [06 历史决策](active/roadmap/06_P5_2C_PRIME_NEXT_STEP_DECISION.md) | 旧C/A/B路线依据，不是当前执行授权 |
 | [旧执行计划快照](archive/history/EXECUTION_BEFORE_RULE_REPAIR_20260917.md) | 原逐轮台账与当时判断，保留追溯；全部旧“下一步”失效 |
 | [R2逐轮诊断快照](archive/history/R2_DIAGNOSTIC_QUEUE_BEFORE_DESIGN_OPTIONS_20260917.md) | 七次后继追加的旧队首与当时解释；当前结论由设计依据复核限定 |
