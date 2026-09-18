@@ -145,6 +145,29 @@
 结构决定的**，结项必须照此写 `un-judged`，并给出"若要做第二次，止损门限须与分辨率同源"的
 新预注册要求（详见[双臂新颖度配对修订](M5_P3B_NOVELTY_MATCHED_ARMS_AMENDMENT_20260915.md) §4.1）。
 
+## 阶段 2 与终态登记（2026-09-18 收尾时补，事实发生于 09-16 03:56）
+
+实验臂阶段 2（tick 18,000,000）在册，逐项核验：
+
+| 核验项 | 结果 |
+|---|---|
+| 分数 | C 0.0 / D 0.0625 / **E 0.10** ⇒ 与阶段 1 **逐维相同**（E 仍 −0.05） |
+| `eval_surface_drift` | `[]` |
+| `trained_during_eval` | false |
+| 快照 `metadata.tick` 与文件名 tick | 相同，`tick_corrected_from = null` |
+| 阶段评测耗时 | 298.4 s |
+| `improved` / `regression_kind` | false / **`persistent`** |
+| `stall_streak` / `campaign_stop` | 2 → 终 / **`regressed`**（03:56:54，训练器 terminate，exit 1） |
+| 判据（独立输出名） | J1/J4/J5 PASS、J2/J3 FAIL、`verdict: fail` ⇒ `reports/taiji_p3b_criteria_check_treatment_tick_18000000.json` |
+
+配对表在 18,000,000 这一行 `chain_ok = false`，**成因是"对照臂没有该 tick 的阶段"**（对照臂 02:47 已停），
+**不是**评测面漂移；这条区别必须写清，否则读者会把"不可比"读成"仪器异常"。
+
+⇒ 本 campaign 终态：**共同 tick 只有 1 个（17,000,000）**，主效应 +0.05（1 题）低于分辨率 0.15，
+按预声明规则记 **不可判**；上文"对结局的可预见判断"（persistent 会在阶段 2 砍掉实验臂）**按声明命中**，
+且该声明写于阶段 2 数据落地之前 ⇒ 这是"停止规则决定结局"的直接证据。
+结项见 [P3b 结果（结项）](M5_P3B_RESULT_20260916.md)。
+
 ## 待办与触发条件
 
 - 每 ~65–90 分钟一个阶段（取决于同机负载）。等待器在**任一带**达到 12 个阶段、

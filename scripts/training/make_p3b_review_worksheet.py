@@ -130,6 +130,19 @@ def build_worksheet(
     return "\n".join(lines) + "\n"
 
 
+def _display_path(path: Path) -> str:
+    """Repo-relative for readability, full path when it lives outside the repo.
+
+    Never raises: this runs *after* the worksheet has been written, so failing here would report
+    a successful export as a crash (which is what a relative ``--output`` used to do).
+    """
+
+    try:
+        return str(path.relative_to(PROJECT_ROOT))
+    except ValueError:
+        return str(path)
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="导出 CAP-0 待人工复核条目的评分表（只读）")
     parser.add_argument("--report", type=Path, required=True, help="一份 eval_taiji_cap0 报告")
@@ -150,7 +163,7 @@ def main(argv: list[str] | None = None) -> int:
         json.dumps(
             {
                 "event": "p3b_review_worksheet",
-                "output": str(args.output.relative_to(PROJECT_ROOT)),
+                "output": _display_path(args.output.resolve()),
                 "pending_items": counted,
                 "dimensions": list(PENDING_DIMENSIONS),
             },

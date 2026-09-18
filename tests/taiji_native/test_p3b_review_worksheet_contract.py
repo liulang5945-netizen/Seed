@@ -185,3 +185,26 @@ def test_default_output_is_a_worksheet_not_a_sealed_report(sheet: Any) -> None:
     assert sheet.DEFAULT_OUTPUT.parent == REPO / "reports"
     assert sheet.DEFAULT_OUTPUT.name.startswith("p3b_review_worksheet")
     assert sheet.DEFAULT_OUTPUT.resolve() not in forbidden
+
+
+def test_a_relative_output_exports_cleanly(
+    sheet: Any, monkeypatch: pytest.MonkeyPatch, tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    """A relative ``--output`` must not report failure for work it already did.
+
+    Regression, hit for real while regenerating the final-stage worksheet: the exporter wrote the
+    sheet and *then* raised ``ValueError`` from ``relative_to`` inside its printed summary, so the
+    exit code said "failed" about a file that existed and was complete.
+    """
+
+    monkeypatch.chdir(tmp_path)
+    assert sheet.main(["--report", str(P3A_BASELINE), "--output", "sheet.md"]) == 0
+
+    written = (tmp_path / "sheet.md").read_text(encoding="utf-8")
+    slots = SCORE_SLOT.findall(written)
+    assert len(slots) == 40, "every pending B/G item exports exactly one score slot"
+    assert all(not value.strip() for value in slots), "and none of them is pre-filled"
+
+    printed = json.loads(capsys.readouterr().out.strip())
+    assert printed["pending_items"] == 40
+    assert printed["output"].endswith("sheet.md"), "a path outside the repo is shown in full"
