@@ -135,6 +135,9 @@
   再决定豁免还是修接线；豁免一条恰好管事的断言，等于把该断言要防的失效放行。
   ⚠️ v5 的 H 计时（H03 27.2 s、A05 11.1 s）是在全量套并发时取的，**不是**标定级读数
   ⇒ 任务 #34（H 阈值门）必须在空闲机器上重测，不得引用 v5 的这些数。
+  证据：`37f665fc` 提交后，受影响的四个合同文件族（cap0 基线 / 战役驱动 / 清单 / 旧链路加载）
+  合跑 **`113 passed / 0 failed + 1 xfailed`（50.9 s）**，ruff/black 干净；
+  套件规模的复采在该提交之后另起一轮（结果按出口④的约定回填）。
   取舍：A05 进 `A_HEALTH_CHECKS`（必过项），A05b 刻意**不**进 —— 盘上每个检查点它都是 False，
   判它等于让每条 campaign 必红、判据失去判别力；改为随 verdict 读出
   （`health.answer_surface.counts_toward_status: false`）并追加一条 `untested_clauses`。
