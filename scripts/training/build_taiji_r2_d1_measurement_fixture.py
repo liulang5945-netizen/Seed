@@ -137,9 +137,44 @@ DISTRACTOR = {
 }
 
 
-def _records_for_split(split: str) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+#: R2-D5 H-E data factor: the v2 train color pool replaces three single-byte
+#: colors with three two-byte (6-byte UTF-8) colors whose six characters appear
+#: nowhere else in any pool, template, or split.  Row counts, shapes, stems,
+#: pair structure and the deterministic order are untouched; dev and final are
+#: generated exactly as in v1.  See
+#: plans/reference/M5_R2_D5_MULTIBYTE_FACTORIAL_CONTRACT_FROZEN_20260918.md.
+TRAIN_COLORS_V2: tuple[str, ...] = ("黄", "青", "紫", "琥珀", "珊瑚", "翡翠")
+TRAIN_OBJECTS_FORBIDDEN_CHARS = set("".join(POOLS["train"]["objects"]))
+
+
+def _assert_v2_pool_clean() -> None:
+    frozen_text: set[str] = set()
+    for split_pools in POOLS.values():
+        for group in split_pools.values():
+            frozen_text.update("".join(group))
+    for template_map in TEMPLATES.values():
+        for split_variant in template_map.values():
+            frozen_text.update(split_variant["prefix"])
+            frozen_text.update(split_variant["answer"])
+    for clause in CLAUSES.values():
+        frozen_text.update(clause.values())
+    for distractor in DISTRACTOR.values():
+        frozen_text.update(distractor)
+    frozen_text -= set("{}")  # slot braces and the placeholder colors themselves
+    for color in TRAIN_COLORS_V2[3:]:
+        for char in color:
+            if char in frozen_text:
+                raise RuntimeError(
+                    f"v2 train color {color!r} reuses character {char!r} "
+                    "present in the frozen vocabulary"
+                )
+
+
+def _records_for_split(
+    split: str, colors_override: tuple[str, ...] | None = None
+) -> tuple[list[dict[str, Any]], dict[str, Any]]:
     objects = POOLS[split]["objects"]
-    colors = POOLS[split]["colors"]
+    colors = POOLS[split]["colors"] if colors_override is None else colors_override
     clauses = CLAUSES[split]
     records: list[dict[str, Any]] = []
     counters = {shape: 0 for shape in SHAPES}
@@ -370,17 +405,27 @@ def reference_answer(record: dict[str, Any]) -> str:
 
 
 def _verify(
-    all_records: dict[str, list[dict[str, Any]]], metadata: dict[str, dict[str, Any]]
+    all_records: dict[str, list[dict[str, Any]]],
+    metadata: dict[str, dict[str, Any]],
+    colors_by_split: dict[str, tuple[str, ...]] | None = None,
 ) -> dict[str, Any]:
+    overrides = colors_by_split or {}
+    pools = {
+        split: {
+            "objects": POOLS[split]["objects"],
+            "colors": overrides.get(split, POOLS[split]["colors"]),
+        }
+        for split in POOLS
+    }
     splits = sorted(all_records)
     prefixes = {s: {r["prefix"] for r in all_records[s]} for s in splits}
     pairs_set = {s: {(r["prefix"], r["response"]) for r in all_records[s]} for s in splits}
-    entities = {s: {e for e in POOLS[s]["objects"] + POOLS[s]["colors"]} for s in splits}
+    entities = {s: {e for e in pools[s]["objects"] + pools[s]["colors"]} for s in splits}
     unknown_counts = {
         s: sum(1 for r in all_records[s] if r["shape"] in ("unknown", "same_opening_unknown"))
         for s in splits
     }
-    objects_n = {s: len(POOLS[s]["objects"]) for s in splits}
+    objects_n = {s: len(pools[s]["objects"]) for s in splits}
     checks: dict[str, Any] = {
         "unique_prefixes_within_split": all(
             len(prefixes[s]) == len(all_records[s]) for s in splits
@@ -459,16 +504,28 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--fixture", type=Path, default=FIXTURE)
     parser.add_argument("--report", type=Path, default=DATA_REPORT)
+    parser.add_argument(
+        "--variant",
+        choices=("v1", "v2"),
+        default="v1",
+        help="v2 (R2-D5 H-E): train color pool with three 6-byte colors; "
+        "dev/final rows are regenerated identically to v1",
+    )
     args = parser.parse_args()
+
+    colors_by_split: dict[str, tuple[str, ...]] = {}
+    if args.variant == "v2":
+        _assert_v2_pool_clean()
+        colors_by_split["train"] = TRAIN_COLORS_V2
 
     raw: dict[str, list[dict[str, Any]]] = {}
     metadata: dict[str, dict[str, Any]] = {}
     for split in ("train", "dev", "final"):
-        records, meta = _records_for_split(split)
+        records, meta = _records_for_split(split, colors_by_split.get(split))
         ordered, order_seed = _deterministic_order(records)
         raw[split] = ordered
         metadata[split] = {**meta, "order_seed": order_seed}
-    checks = _verify(raw, metadata)
+    checks = _verify(raw, metadata, colors_by_split)
     failed = [name for name, passed in checks.items() if passed is not True and passed is not None]
 
     if checks["reference_self_check"] is not True:
@@ -499,8 +556,10 @@ def main() -> int:
         file_sha = hashlib.sha256(fixture_path.read_bytes()).hexdigest()
 
     report = {
-        "format": FIXTURE_FORMAT,
-        "version": 1,
+        "format": "r2-d1-measurement-v2" if args.variant == "v2" else FIXTURE_FORMAT,
+        "version": 2 if args.variant == "v2" else 1,
+        "variant": args.variant,
+        "train_colors": list(colors_by_split.get("train", POOLS["train"]["colors"])),
         "generator": "scripts/training/build_taiji_r2_d1_measurement_fixture.py",
         "fixture": str(args.fixture),
         "fixture_sha256": file_sha,

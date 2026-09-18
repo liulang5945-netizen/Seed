@@ -1,0 +1,91 @@
+{
+  "format": "r2-d1-measurement-v2",
+  "version": 2,
+  "variant": "v2",
+  "train_colors": [
+    "黄",
+    "青",
+    "紫",
+    "琥珀",
+    "珊瑚",
+    "翡翠"
+  ],
+  "generator": "scripts/training/build_taiji_r2_d1_measurement_fixture.py",
+  "fixture": "tests\\fixtures\\r2_d1_measurement_v2.jsonl",
+  "fixture_sha256": "772fb3a7fd1d95f3bbd46071e5079beb4c5cdca140f4b20616944a5988299c85",
+  "corpus_digest": "182593f8deadf1b1b65c5f2ccbce3a7b7ee636ca8ea35ed00ccef3c5f84eebcc",
+  "splits": {
+    "train": {
+      "episodes": 174,
+      "unique_pairs": 174,
+      "shapes": {
+        "fact": 48,
+        "negation": 48,
+        "unknown": 8,
+        "same_opening_fact": 48,
+        "same_opening_unknown": 8,
+        "combination_same": 7,
+        "combination_different": 7
+      },
+      "pairs": {
+        "fact_flip_pairs": 8,
+        "combo_flip_pairs": 7,
+        "invariance_pairs": 0,
+        "order_seed": 210
+      }
+    },
+    "dev": {
+      "episodes": 98,
+      "unique_pairs": 98,
+      "shapes": {
+        "fact": 28,
+        "negation": 24,
+        "unknown": 6,
+        "same_opening_fact": 24,
+        "same_opening_unknown": 6,
+        "combination_same": 5,
+        "combination_different": 5
+      },
+      "pairs": {
+        "fact_flip_pairs": 6,
+        "combo_flip_pairs": 5,
+        "invariance_pairs": 4,
+        "order_seed": 209
+      }
+    },
+    "final": {
+      "episodes": 94,
+      "unique_pairs": 94,
+      "shapes": {
+        "fact": 24,
+        "negation": 24,
+        "unknown": 6,
+        "same_opening_fact": 24,
+        "same_opening_unknown": 6,
+        "combination_same": 5,
+        "combination_different": 5
+      },
+      "pairs": {
+        "fact_flip_pairs": 6,
+        "combo_flip_pairs": 5,
+        "invariance_pairs": 0,
+        "order_seed": 209
+      }
+    }
+  },
+  "checks": {
+    "unique_prefixes_within_split": true,
+    "prefixes_disjoint_across_splits": true,
+    "pairs_disjoint_across_splits": true,
+    "entities_disjoint_across_splits": true,
+    "all_shapes_in_every_split": true,
+    "unknown_once_per_object": true,
+    "flip_pair_counts": true,
+    "invariance_pairs_dev": true,
+    "pair_members_non_adjacent": true,
+    "pair_structure": true,
+    "reference_self_check": true
+  },
+  "outcome": "passed",
+  "failed_checks": []
+}

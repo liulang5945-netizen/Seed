@@ -67,7 +67,7 @@ from __future__ import annotations
 
 import math
 from collections.abc import Mapping, Sequence
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from pathlib import Path
 from typing import Any
 
@@ -77,11 +77,13 @@ from .internalization import content_digest
 
 SEQUENCE_WORKSPACE_FORMAT = "taiji-sequence-workspace-v1"
 #: Version 6 (R2-D3 H-G, 2026-09-18): multi-head position-aware readout via
-#: ``readout_heads`` and ``positional_keys``.  Versions 2-5 remain restorable;
-#: version-1 payloads are refused.
-SEQUENCE_WORKSPACE_VERSION = 6
+#: ``readout_heads`` and ``positional_keys``.  Version 7 (R2-D5 H-M, same day):
+#: optional copy persistence — a trainable scalar biasing the entry after the
+#: previous step's copy hit.  Versions 2-6 remain restorable; version-1
+#: payloads are refused.
+SEQUENCE_WORKSPACE_VERSION = 7
 #: Checkpoint payload versions this build is allowed to restore.
-SEQUENCE_WORKSPACE_SUPPORTED_VERSIONS = frozenset({2, 3, 4, 5, 6})
+SEQUENCE_WORKSPACE_SUPPORTED_VERSIONS = frozenset({2, 3, 4, 5, 6, 7})
 SEQUENCE_WORKSPACE_TRAINER_FORMAT = "taiji-sequence-workspace-trainer-v1"
 SEQUENCE_WORKSPACE_ALPHABET = 257
 SEQUENCE_WORKSPACE_BOUNDARY = 256
@@ -129,6 +131,7 @@ _CANONICAL_PARAMETER_ORDER: tuple[str, ...] = (
     "copy_gate_bias",
     "answer_start_weight",
     "answer_start_bias",
+    "copy_persist_bias",
     "decoder",
     "decoder_bias",
 )
@@ -154,6 +157,7 @@ SEQUENCE_WORKSPACE_PARAMETERS: tuple[str, ...] = tuple(
         "copy_gate_bias",
         "answer_start_weight",
         "answer_start_bias",
+        "copy_persist_bias",
     }
 )
 
@@ -177,6 +181,7 @@ SEQUENCE_WORKSPACE_EVIDENCE_PARAMETERS: tuple[str, ...] = tuple(
         "copy_gate_bias",
         "answer_start_weight",
         "answer_start_bias",
+        "copy_persist_bias",
     }
 )
 
@@ -196,6 +201,7 @@ SEQUENCE_WORKSPACE_COPY_PARAMETERS: tuple[str, ...] = tuple(
         "head_query_4",
         "answer_start_weight",
         "answer_start_bias",
+        "copy_persist_bias",
     }
 )
 
@@ -213,6 +219,7 @@ SEQUENCE_WORKSPACE_QUESTION_START_PARAMETERS: tuple[str, ...] = tuple(
         "head_query_2",
         "head_query_3",
         "head_query_4",
+        "copy_persist_bias",
     }
 )
 
@@ -228,6 +235,7 @@ SEQUENCE_WORKSPACE_MULTIHEAD_PARAMETERS: tuple[str, ...] = tuple(
         "address_query",
         "workspace_key",
         "workspace_value",
+        "copy_persist_bias",
     }
 )
 
@@ -254,6 +262,7 @@ SEQUENCE_WORKSPACE_BASELINE_PARAMETERS: tuple[str, ...] = tuple(
         "copy_gate_bias",
         "answer_start_weight",
         "answer_start_bias",
+        "copy_persist_bias",
     }
 )
 
@@ -314,6 +323,12 @@ class SequenceWorkspaceConfig:
     readout_heads: int = 1
     #: Add fixed sinusoidal positional encoding to evidence keys (v6).
     positional_keys: bool = False
+    #: R2-D5 H-M graph v7: copy persistence.  A trainable scalar biases the
+    #: evidence row **after** the previous step's copy hit inside every head's
+    #: pre-softmax addressing scores, turning independent per-step lookups into
+    #: a row-continuing pointer.  Requires ``copy_mixture``; the bias
+    #: initializes at exactly zero (bit-identical to v6 at step 0).
+    copy_persistence: bool = False
 
     def __post_init__(self) -> None:
         for name in ("prefix_width", "slots", "slot_width", "renderer_width"):
@@ -361,6 +376,11 @@ class SequenceWorkspaceConfig:
             )
         if self.positional_keys and self.evidence_source == EVIDENCE_FINAL_STATE_SLOTS:
             raise ValueError("positional keys require position-aligned evidence rows")
+        if self.copy_persistence and not self.copy_mixture:
+            raise ValueError(
+                "copy persistence is defined on the copy-mixture graphs (v4+), "
+                "it needs the per-step copy distribution to derive its pointer"
+            )
 
     def to_payload(self) -> dict[str, Any]:
         return {
@@ -378,6 +398,7 @@ class SequenceWorkspaceConfig:
             "question_conditioned_start": bool(self.question_conditioned_start),
             "readout_heads": int(self.readout_heads),
             "positional_keys": bool(self.positional_keys),
+            "copy_persistence": bool(self.copy_persistence),
         }
 
 
@@ -394,6 +415,10 @@ class WorkspaceState:
     workspace_value: torch.Tensor | None  # (entries, slot_width) -- frozen after begin
     renderer_state: torch.Tensor  # (renderer_width,)
     entry_bytes: tuple[int, ...] | None = None  # prefix byte per evidence row (v3/v4)
+    #: v7 copy persistence: entry index the previous step's copy component hit
+    #: (``None`` at episode start or when the last emitted byte was not a copy
+    #: of that row).  Inference/training state, never a parameter.
+    last_copy_position: int | None = None
 
 
 @dataclass(frozen=True)
@@ -460,6 +485,10 @@ class SequenceWorkspacePrototype:
             if self.config.copy_mixture:
                 make("copy_gate_weight", (rw,), 1.0 / math.sqrt(rw))
                 make("copy_gate_bias", (1,), 0.0)
+            if self.config.copy_persistence:
+                # v7: fixed zero start (bit-identical to v6 at initialization);
+                # not a rand-scaled tensor, so no generator draw is consumed.
+                self._parameters["copy_persist_bias"] = torch.nn.Parameter(torch.zeros(1))
             if self.config.question_conditioned_start:
                 make("answer_start_weight", (rw, rw), 1.0 / math.sqrt(rw))
                 make("answer_start_bias", (rw,), 0.0)
@@ -496,6 +525,7 @@ class SequenceWorkspacePrototype:
                 "copy_gate_bias",
                 "answer_start_weight",
                 "answer_start_bias",
+                "copy_persist_bias",
             }
         else:
             excluded |= {"workspace_key", "workspace_value"}
@@ -510,6 +540,8 @@ class SequenceWorkspacePrototype:
                 }
             if not self.config.copy_mixture:
                 excluded |= {"copy_gate_weight", "copy_gate_bias"}
+            if not self.config.copy_persistence:
+                excluded.add("copy_persist_bias")
             if not self.config.question_conditioned_start:
                 excluded |= {"answer_start_weight", "answer_start_bias"}
         return tuple(name for name in _CANONICAL_PARAMETER_ORDER if name not in excluded)
@@ -729,8 +761,31 @@ class SequenceWorkspacePrototype:
             [self._parameters[f"head_query_{h}"] for h in range(1, heads + 1)], dim=0
         )
 
-    def _head_weights(self, state: WorkspaceState, *, detach: bool) -> torch.Tensor:
-        """Per-head softmax weights with shape (heads, entries)."""
+    def _persist_offset(self, state: WorkspaceState) -> int | None:
+        """Entry index the v7 persistence bonus applies to (contract §2.2).
+
+        The row **after** the previous step's copy hit, or ``None`` when the
+        flag is off, the episode has no previous copy hit, or the hit sits at
+        the last visible entry (row-end: no wrap-around bonus).
+        """
+
+        if not self.config.copy_persistence or state.last_copy_position is None:
+            return None
+        target = int(state.last_copy_position) + 1
+        if state.entry_bytes is None or target >= len(state.entry_bytes):
+            return None
+        return target
+
+    def _head_weights(
+        self, state: WorkspaceState, *, detach: bool, persist_target: int | None = None
+    ) -> torch.Tensor:
+        """Per-head softmax weights with shape (heads, entries).
+
+        ``persist_target`` (v7): entry index receiving the trainable
+        ``copy_persist_bias`` additive bonus in **every** head's scores before
+        the softmax; ``None`` derives it from the state's copy pointer.  With
+        the flag off the scores stay untouched, reproducing v6 bit-for-bit.
+        """
 
         key = state.workspace_key
         if key is None:
@@ -741,6 +796,13 @@ class SequenceWorkspacePrototype:
         queries = torch.einsum("r,hrw->hw", renderer, self._readout_parameters())
         scores = torch.einsum("nw,hw->hn", key, queries)
         scores = scores / math.sqrt(float(self.config.slot_width))
+        if persist_target is None:
+            persist_target = self._persist_offset(state)
+        if persist_target is not None and self.config.copy_persistence:
+            scores = scores.clone()
+            scores[:, int(persist_target)] = (
+                scores[:, int(persist_target)] + self._parameters["copy_persist_bias"]
+            )
         return torch.softmax(scores, dim=-1)
 
     def _content_read(self, state: WorkspaceState, *, detach: bool) -> torch.Tensor:
@@ -796,7 +858,12 @@ class SequenceWorkspacePrototype:
         return new_state, probability
 
     def _step_mixture_and_copy(
-        self, state: WorkspaceState, previous_symbol: int, *, zero_read: bool = False
+        self,
+        state: WorkspaceState,
+        previous_symbol: int,
+        *,
+        zero_read: bool = False,
+        emitted_symbol: int | None = None,
     ) -> tuple[WorkspaceState, torch.Tensor, torch.Tensor | None]:
         """``step_distribution`` plus the raw copy-component distribution.
 
@@ -804,6 +871,12 @@ class SequenceWorkspacePrototype:
         the copy term is absent (``zero_read`` or no position-aligned evidence),
         in which case ``mixture is p_vocab``.  R2-D4 value supervision consumes
         ``p_copy``; the mixture path is byte-for-byte the legacy computation.
+
+        v7: under ``copy_persistence`` the returned state carries the copy
+        pointer — the entry the copy component argued for **if** the emitted
+        byte matches that row's byte (``emitted_symbol`` defaults to the greedy
+        mixture argmax, i.e. free-run semantics; teacher forcing passes the true
+        byte).  The pointer resets to ``None`` on any non-copy emission.
         """
 
         if not self.config.copy_mixture:
@@ -819,7 +892,17 @@ class SequenceWorkspacePrototype:
             renderer_state @ self._parameters["copy_gate_weight"]
             + self._parameters["copy_gate_bias"]
         )
-        return new_state, gate * p_vocab + (1.0 - gate) * p_copy, p_copy
+        mixture = gate * p_vocab + (1.0 - gate) * p_copy
+        if self.config.copy_persistence:
+            # Pointer = the evidence row the cross-head addressing weights
+            # argued for (p_copy is scattered over the byte space, so its
+            # argmax is a symbol, not a position).
+            stacked = weights if weights.ndim == 2 else weights.unsqueeze(0)
+            hit = int(stacked.detach().mean(dim=0).argmax())
+            emitted = int(emitted_symbol) if emitted_symbol is not None else int(mixture.argmax())
+            pointed = hit if int(new_state.entry_bytes[hit]) == emitted else None
+            new_state = replace(new_state, last_copy_position=pointed)
+        return new_state, mixture, p_copy
 
     def teacher_forced_distributions(self, prefix: bytes, response: bytes) -> torch.Tensor:
         """Mixture distributions at positions 0..len(response) (teacher-forced)."""
@@ -856,11 +939,15 @@ class SequenceWorkspacePrototype:
         copies: list[torch.Tensor | None] = []
         previous = self.config.boundary_symbol
         for symbol in response:
-            state, probability, copy_probability = self._step_mixture_and_copy(state, previous)
+            state, probability, copy_probability = self._step_mixture_and_copy(
+                state, previous, emitted_symbol=int(symbol)
+            )
             mixtures.append(probability)
             copies.append(copy_probability)
             previous = int(symbol)
-        state, probability, copy_probability = self._step_mixture_and_copy(state, previous)
+        state, probability, copy_probability = self._step_mixture_and_copy(
+            state, previous, emitted_symbol=int(self.config.boundary_symbol)
+        )
         mixtures.append(probability)
         copies.append(copy_probability)
         if any(copy is None for copy in copies):
