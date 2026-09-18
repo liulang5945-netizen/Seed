@@ -1,12 +1,12 @@
 # Seed / Taiji 计划与架构入口
 
-> 更新：2026-09-18。本轮补齐研究切片到完整能力的开发交付：01 §6.3–6.5定义证据继承、转段与产物，VISION §17.5–17.7定义课程覆盖和模型演进，07 §5.2定义同bundle集成。局部实验仍按02 §2.5有条件准入；计划维护不批准新运行，最新研究状态与唯一下一步只看03。
+> 更新：2026-09-18。本轮在唯一VISION §19给出项目缺口实际方案，§20补齐多模态共享认知，§21补齐自主学习的信息准入、抗污染和恢复；01/02/07同步阶段、风险准入与验收衔接。推荐设计不等于架构采用或新运行授权，局部实验仍按02 §2.5有条件准入；最新研究状态与唯一下一步只看03及有效合同/裁决。
 
 ## 项目位置
 
 先读[当前结果与结论总览](reference/PROJECT_RESULTS_AND_CONCLUSIONS_20260917.md)：按正向成果、负结果、不可判结果、真实输出和结论边界整理；运行收束状态见[收束记录](reference/PROJECT_CONSOLIDATION_20260917.md)。
 
-当前仍为M5/R2原生语言。D1测量底座可继承；后继D3–D5已有训练可学性和部分开发读数，但未过对应matched门，D5已结项并进入R2阶段评审，尚无L2/L3或Mini交付。最新逐包裁决见[03](active/roadmap/03_CURRENT_EXECUTION.md)，不在首页重复维护多个活动队首。旧672档结果仍按[历史复核](reference/M5_R2_DESIGN_EVIDENCE_AUDIT_20260917.md)保留，不覆盖后继事实，也不由train拟合推成泛化。
+当前仍为M5/R2原生语言。D1测量底座可继承；本次续写核对的[D8/v3 matched报告](../reports/r2_d8_matched_dev_20260918.json)多字值完整率均值0.3621达到K1，但M4/flip为0，整体outcome仍failed、未准晋级，不能抹去复制正信号或写成完整语言通过。最新逐包裁决见[03](active/roadmap/03_CURRENT_EXECUTION.md)及对应有效合同；若摘要与新报告不同步，先核对身份/裁决，不用旧“待启动”覆盖已发生结果。首页不另设活动队首；旧672结果仍按[历史复核](reference/M5_R2_DESIGN_EVIDENCE_AUDIT_20260917.md)保留。
 
 当前核心缺口是同任务中的共同表示、记忆消费、世界预测、规划选择与学习信用未形成统一能力证据。原P3b的数据分布效应只有一个共同检查点，不能判定；P5.2d后继报告虽有仪器修正，A1真实收益仍未闭合，不以预算放宽或汇总布尔代替。
 
@@ -16,7 +16,10 @@
 |---|---|---|
 | 项目整体还缺什么，何时晋级？ | [01 §2–6](active/roadmap/01_SCOPE_AND_PHASES.md) | M0–M8状态、能力缺口、依赖及交付，未完成的长期目标不被局部研究隐藏 |
 | 下一段开发具体要做什么？ | [03 §5](active/roadmap/03_CURRENT_EXECUTION.md)、[01 §6.4–6.5](active/roadmap/01_SCOPE_AND_PHASES.md) | 活动包与局部准入看03；转段条件及数据/模型/集成/评价交付看01，不把整条路线当一次授权 |
-| 现有设计受限时有哪些高上限选择？ | [VISION §15–18](reference/VISION_FUTURE_TECHNOLOGY.md) | 计算/学习机制、信息边界、可替换变量、接口与学习责任、完整演进及决策时点 |
+| 现有设计受限时有哪些高上限选择？ | [VISION §15–19](reference/VISION_FUTURE_TECHNOLOGY.md) | 五类备选及推荐双通道组合；具体计算/训练、取舍与否决，不能按模块名称或实现难度排名 |
+| 七项项目缺口怎样实际解决？ | [VISION §19](reference/VISION_FUTURE_TECHNOLOGY.md#19-项目缺口的实际解决方案推荐核心学习配方演进与交付) | 核心/数据/学习/反馈/消费者/交付逐项映射，依赖与当前R2优先项明确，不自动开多条主线 |
+| 多模态怎样形成同一个模型？ | [VISION §20](reference/VISION_FUTURE_TECHNOLOGY.md#20-多模态共同认知专用编码共享事件跨模态学习与验收) | 专用编码、共享对象/事件、区域/时间引用、对齐课程与跨模态干预；不以OCR/ASR或答案拼接代替理解 |
+| 自主学习遇到恶意信息怎么办？ | [VISION §21](reference/VISION_FUTURE_TECHNOLOGY.md#21-自主学习的信息治理不可信输入分层准入抗污染与恢复)、[02 §2.6](active/roadmap/02_GATES_AND_CI.md) | 观察/相信/学习/行动分权，来源继承、候选隔离、快慢准入、污染撤销与回退；不承诺过滤绝对安全 |
 | 什么算完成，何时给用户模型？ | [02 §2–3](active/roadmap/02_GATES_AND_CI.md)、[07](active/roadmap/07_MINI_MODEL_DELIVERY.md) | 规划/实验/能力/阶段/采用分别记账，L3触发后置用户验收 |
 | 如何从研究runner接成一个模型？ | [07 §5.2](active/roadmap/07_MINI_MODEL_DELIVERY.md)、[VISION §17.7](reference/VISION_FUTURE_TECHNOLOGY.md) | 权重/编码身份、会话映射、真实消费者、恢复与同bundle评价；候选接入不等于默认采用 |
 
@@ -39,7 +42,7 @@
 | [R2-H3.5-A matched预注册](reference/M5_R2_H3_5A_MATCHED_RUN_PREREGISTRATION_20260916.md) | v3控制集、三seed对照、plan消融、final延迟权限和停止门 |
 | [07 整模型验收](active/roadmap/07_MINI_MODEL_DELIVERY.md) | 真实输出评价、L3触发最小用户版本 |
 | [05 技术债](active/roadmap/05_TECH_DEBT_REGISTER.md) | 隔离、仪器、恢复与CI；按证据范围及明确后继修订解释 |
-| [唯一完整VISION](reference/VISION_FUTURE_TECHNOLOGY.md) | §15多架构设计；§16选择/迁移与历史A-R2示例；§17共用主干；§18接口/学习责任、可替换变量、演进与待决事项 |
+| [唯一完整VISION](reference/VISION_FUTURE_TECHNOLOGY.md) | §15–18架构选择与开发；§19实际方案；§20多模态共同认知；§21信息治理、抗污染和恢复 |
 | [06 历史决策](active/roadmap/06_P5_2C_PRIME_NEXT_STEP_DECISION.md) | 旧C/A/B路线依据，不是当前执行授权 |
 | [旧执行计划快照](archive/history/EXECUTION_BEFORE_RULE_REPAIR_20260917.md) | 原逐轮台账与当时判断，保留追溯；全部旧“下一步”失效 |
 | [R2逐轮诊断快照](archive/history/R2_DIAGNOSTIC_QUEUE_BEFORE_DESIGN_OPTIONS_20260917.md) | 七次后继追加的旧队首与当时解释；当前结论由设计依据复核限定 |
