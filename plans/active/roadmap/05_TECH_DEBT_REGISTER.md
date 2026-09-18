@@ -28,6 +28,16 @@
 - **⚠️ 根因仍未修**：那 7 个测试依然把 `store_root` 指向该共享目录 ⇒ **会再次累积**。
   建议的根治（改 pytest `tmp_path`，或 teardown 清理本次 PID 的中间文件）**待实施**。
   **下次清空前必须重新核查**该目录（通过标准：只剩 `README.md` 与 `native-canary.pt`）。
+- **✅ 根因的第二半已处置（2026-09-18 第五批，采用上面建议的第二种：teardown 清理本次 PID）**：
+  累积确实还在发生 —— 今天四次全量之间该目录从 **10 项 / 335 MB 涨到 14 项 / 500 MB**
+  （新增的都是 `s45-active-<pid>.pt` / `s45-terminal-scheduled-<pid>.pt`，每个 PID 一对）。
+  落地方式不是改那 7 个测试，而是利用它们**已经把 pid 写进文件名**这一点：
+  `tests/_canary_sweep.py:sweep(dir, pid)` + `tests/conftest.py` 的会话级 autouse teardown，
+  只删"名字末尾是本进程 pid（可选 `.pt`）"的条目 ⇒ 别的会话正在用的文件、`README.md`、
+  `native-canary.pt`、以及 09-17 归档的 1052 项都不在删除面内；形状不认识的后缀（`.bak`）宁可留下。
+  正反两向由 `tests/taiji_native/test_canary_residue_sweep_contract.py` 钉住
+  （在 tmp 目录上跑，不碰真目录）：`2 passed`。
+  **未做**：把那 7 个测试改到 `tmp_path`（更彻底，但要动 7 个文件的公共夹具；现在这条已足以止涨）。
 
 ## 最新状态补充（2026-09-15，WP-3 落地后：仪器语义债）
 
@@ -93,7 +103,9 @@
   读侧未被搬走、以及**真跑一次 `save()`** 后产品默认文件的 sha256 不变。
   实测 `15 passed in 3.11 s`（含既有 SeedRuntime 重用户 `test_native_life_status` / `test_semantic_provider`）。
   本条登记过的"26 个测试文件同时出现 SeedRuntime 与 save/train/reset"这一面**不需要逐个改**：
-  写路径被一次性收口在同一个落点上。第二实例（`output/manual-r5-canary/` 残留）不在本次修法内，仍未处置。
+  写路径被一次性收口在同一个落点上。**第二实例也已处置（同日第五批）**：见本文件开头
+  "DEBT-I7 的第二实例"那一条末尾的处置记录 —— `output/manual-r5-canary/` 的残留改成"会话结束时只删本进程 pid 命名的那批"，
+  实测该目录在今天四次全量之间从 10 项 / 335 MB 涨到 14 项 / 500 MB，正是这条通路还活着的证据。
   **第一版留了一个代码级缺口（同日第三批续，⚠ 这里的因果已重推过一次，第一版叙述是错的）**：
   `SeedRuntime.load()` 无参时把 `DEFAULT_CHECKPOINT` **记进** `self.checkpoint_path`，而 `save()` 的
   取值顺序是"显式参数 → 来源路径 → 默认"——只重定向"默认"这一档，走 `load()` 的运行时照样能写回产品文件。
