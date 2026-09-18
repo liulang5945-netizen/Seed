@@ -12,6 +12,7 @@ byte-graph level 0.529.
 
 from __future__ import annotations
 
+import argparse
 import json
 import sys
 import time
@@ -41,8 +42,17 @@ from taiji.sequence_char_workspace import (  # noqa: E402
 FIXTURES = {
     "v1": Path("tests/fixtures/r2_d1_measurement_v1.jsonl"),
     "v2": Path("tests/fixtures/r2_d1_measurement_v2.jsonl"),
+    # R2-D8 H-S scale pack: same shapes/templates/order rules, train pool scaled up
+    # (32 objects x 12 colours).  dev/final are byte-identical to v1, so the dev
+    # evaluation below keeps reading v1 unchanged.
+    "v3": Path("tests/fixtures/r2_d1_measurement_v3.jsonl"),
 }
 V1_CORPUS_DIGEST = "53ac9f88695f135d0bb04b4d25d98ab686c82175c45ca8d4d53e64639efbeecb"
+TRAIN_CORPUS_DIGESTS = {
+    "v1": V1_CORPUS_DIGEST,
+    "v2": None,  # v2 train differs from v1; the digest is recorded, not pinned
+    "v3": "a73703de2759491c923066e24beac56f910d820b365ed6148e062f12565c3554",
+}
 OUT_REPORT = Path("reports/r2_d7_matched_dev_20260918.json")
 CHECKPOINT_ROOT = Path("reports/r2_d7_checkpoints/matched")
 SEEDS = (20260917, 20260918, 20260919)
@@ -117,14 +127,18 @@ def _metrics(scored: list[dict[str, Any]]) -> dict[str, Any]:
     for row in flip_members:
         flip_pairs.setdefault(str(row["pair_id"]), []).append(row)
     flip_hits = sum(
-        1 for members in flip_pairs.values() if len(members) == 2 and all(m["correct"] for m in members)
+        1
+        for members in flip_pairs.values()
+        if len(members) == 2 and all(m["correct"] for m in members)
     )
     inv_members = [row for row in scored if row["pair_type"] == "invariance"]
     inv_pairs: dict[str, list[dict[str, Any]]] = {}
     for row in inv_members:
         inv_pairs.setdefault(str(row["pair_id"]), []).append(row)
     inv_hits = sum(
-        1 for members in inv_pairs.values() if len(members) == 2 and all(m["correct"] for m in members)
+        1
+        for members in inv_pairs.values()
+        if len(members) == 2 and all(m["correct"] for m in members)
     )
     shapes = sorted({row["shape"] for row in scored})
     macro = (
@@ -191,11 +205,15 @@ def _evaluate(workspace: SequenceCharWorkspace, dev_rows: list[dict[str, Any]]) 
             elif condition == "copy_misbind":
                 prefix = row["prefix"]
                 rotation = len(prefix) // 2
-                text = _generate_lesioned(workspace, prefix, row["response"], entry_rotation=rotation)
+                text = _generate_lesioned(
+                    workspace, prefix, row["response"], entry_rotation=rotation
+                )
             else:
                 prefix = row["prefix"]
                 rotation = len(prefix) // 2
-                text = _generate_lesioned(workspace, prefix, row["response"], value_rotation=rotation)
+                text = _generate_lesioned(
+                    workspace, prefix, row["response"], value_rotation=rotation
+                )
             scored.append(_score_row(row, text))
         out[condition] = _metrics(scored)
     full_scored = [_score_row(r, workspace.generate(r["prefix"]).text) for r in dev_rows]
@@ -224,14 +242,16 @@ def _generate_lesioned(
     ).text
 
 
-def _train(seed: int, train_rows: list[dict[str, Any]], dev_rows: list[dict[str, Any]]) -> dict[str, Any]:
+def _train(
+    seed: int, train_rows: list[dict[str, Any]], dev_rows: list[dict[str, Any]]
+) -> dict[str, Any]:
     started = time.monotonic()
     vocab = CharVocab("".join(r["prefix"] + r["response"] for r in train_rows))
     torch.manual_seed(seed)
-    workspace = SequenceCharWorkspace(
-        vocab, SequenceCharConfig(seed=seed, copy_induction=True)
+    workspace = SequenceCharWorkspace(vocab, SequenceCharConfig(seed=seed, copy_induction=True))
+    trainer = SequenceCharTrainer(
+        workspace, learning_rate=LR, code_revision=f"r2-d7-matched-{seed}"
     )
-    trainer = SequenceCharTrainer(workspace, learning_rate=LR, code_revision=f"r2-d7-matched-{seed}")
     trainer.enable_copy_value_supervision(LAMBDA_COPY)
     episodes = tuple((r["prefix"], r["response"]) for r in train_rows)
     masks = tuple(value_mask_for_char(r["shape"], r["response"]) for r in train_rows)
@@ -250,19 +270,34 @@ def _train(seed: int, train_rows: list[dict[str, Any]], dev_rows: list[dict[str,
         "seed": seed,
         "vocab_size": int(vocab.size),
         "parameter_count": workspace.parameter_count(),
-        "copy_induce_bias_end": float(
-            workspace._parameters["copy_induce_bias"].detach().item()
-        ),
+        "copy_induce_bias_end": float(workspace._parameters["copy_induce_bias"].detach().item()),
         "elapsed_seconds": time.monotonic() - started,
         "eval": evaluation,
     }
 
 
 def main() -> int:
+    global OUT_REPORT, CHECKPOINT_ROOT
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--fixture",
+        choices=sorted(FIXTURES),
+        default="v1",
+        help="train split source; dev keeps reading v1 (v3 dev is byte-identical to v1)",
+    )
+    parser.add_argument("--out-report", type=Path, default=OUT_REPORT)
+    parser.add_argument("--checkpoint-root", type=Path, default=CHECKPOINT_ROOT)
+    args = parser.parse_args()
+    OUT_REPORT = args.out_report
+    CHECKPOINT_ROOT = args.checkpoint_root
+
     if content_digest(_raw("v1")) != V1_CORPUS_DIGEST:
         raise RuntimeError("R2-D1 v1 corpus digest mismatch")
     dev_rows = [r for r in _raw("v1") if r["split"] == "dev"]
-    train_rows = _load_train()
+    train_rows = _load_train(FIXTURES[args.fixture])
+    train_digest = TRAIN_CORPUS_DIGESTS.get(args.fixture)
+    if train_digest is not None and content_digest(_raw(args.fixture)) != train_digest:
+        raise RuntimeError(f"R2-D1 {args.fixture} corpus digest mismatch")
 
     runs = [_train(seed, train_rows, dev_rows) for seed in SEEDS]
 
@@ -290,7 +325,18 @@ def main() -> int:
         "G2_m4_flip": mean(m4) >= 0.50 and mean(fact_flip) >= 2 / 6,
         "G3_copy_misbind_drop": mean(mis_drop) >= 0.50,
         "G4_context_margin": mean(context) >= 0.30 and max(m1_nc) <= 0.50,
-        "G5_seed_consistency": min(m3) >= 0.20 and min(m4) > 0,
+        # D8 contract section 5 **redefines** G5 for the scale pack: the core
+        # hypothesis is variance convergence, so this gate is about the per-seed
+        # spread of the multibyte `full_rate` (>=2 seeds above 0.10, worst >= 0).
+        # The v1/v2 path keeps the D7 definition unchanged (that pack is closed).
+        "G5_seed_consistency": (
+            (
+                sum(1 for c in completion if c["full_rate"] > 0.10) >= 2
+                and min(c["full_rate"] for c in completion) >= 0.0
+            )
+            if args.fixture == "v3"
+            else (min(m3) >= 0.20 and min(m4) > 0)
+        ),
         "G6_boundary": min(boundary) >= 0.95,
     }
     keys = {
@@ -303,9 +349,27 @@ def main() -> int:
         "format": "taiji-r2-d7-matched-dev-v1",
         "version": 1,
         "contract": "plans/reference/M5_R2_D7_CHAR_TOKEN_CONTRACT_FROZEN_20260918.md",
+        "scale_pack_contract": (
+            "plans/reference/M5_R2_D8_SCALE_CONTRACT_FROZEN_20260918.md"
+            if args.fixture == "v3"
+            else None
+        ),
+        "train_fixture": args.fixture,
+        "train_corpus_digest": content_digest(_raw(args.fixture)),
+        "dev_split": "v1 (byte-identical to v3 dev)",
+        "g5_definition": (
+            "D8 contract section 5: >=2 seeds with full_rate > 0.10 and worst >= 0"
+            if args.fixture == "v3"
+            else "D7: min(m3) >= 0.20 and min(m4) > 0"
+        ),
+        "multibyte_full_rate_per_seed": [c["full_rate"] for c in completion],
+        "loss_increases_gate_note": (
+            "probe-stage gate: treated as single-seed jitter (1/3) per user adjudication "
+            "(c) -> (b); see plans/reference/M5_R2_D8_PROBE_MULTISEED_20260918.md"
+        ),
         "graph": "char-v1",
         "seeds": list(SEEDS),
-        "arm": "T1 (v2 train + char graph + induction + lambda 1.0)",
+        "arm": f"T1 ({args.fixture} train + char graph + induction + lambda 1.0)",
         "byte_history_reference_descriptive": {
             "A00_d4_t2_m3_mean": 0.178,
             "note": "cross-granularity deltas are descriptive, not gates",
