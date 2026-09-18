@@ -28,6 +28,22 @@ logger = logging.getLogger("ApiServer.SeedRuntime")
 
 DEFAULT_CHECKPOINT = Path(__file__).resolve().parent.parent / "checkpoints" / "seed_corpus.pt"
 
+#: Where an unqualified ``save()`` lands.  This is deliberately a **separate name** from
+#: DEFAULT_CHECKPOINT (the product's default *load* source): the two used to be one constant, so a
+#: test that trained a runtime without passing ``checkpoint_path`` rewrote the model file the app
+#: serves -- and ``checkpoints/*.pt`` is not in git, so that damage cannot be undone (DEBT-I7).
+#: tests/conftest.py redirects this name to a scratch path for a test session and leaves reads alone.
+DEFAULT_SAVE_TARGET = DEFAULT_CHECKPOINT
+
+
+def resolve_save_target(
+    path: Path | str | None = None, checkpoint_path: Path | str | None = None
+) -> Path:
+    """The file a save would write: explicit argument, then the loaded-from path, then the default."""
+
+    return Path(path or checkpoint_path or DEFAULT_SAVE_TARGET)
+
+
 _TURN_MARKERS = ("\n问：", "问：")
 
 # 输入长度上限（字符）：基底逐字节处理前缀（实测 ≈430 字节/秒），十万级
@@ -1255,7 +1271,7 @@ class SeedRuntime:
         """落盘当前状态（默认写回来源检查点；原子写，崩溃不产生半写文件）。"""
         from seed.persistence import atomic_save, attach_metadata
 
-        target = Path(path or self.checkpoint_path or DEFAULT_CHECKPOINT)
+        target = resolve_save_target(path, self.checkpoint_path)
         with self._lock:
             workbench = self._sync_workbench_root()
             envelope = attach_metadata(

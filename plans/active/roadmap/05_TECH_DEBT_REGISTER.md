@@ -81,6 +81,19 @@
   （fixture 级隔离，且加一支"任何测试运行后 `seed_corpus.pt` 的 sha256 不变"的守卫测试）；
   ② 或让 `SeedRuntime.save()` 写默认路径需要显式参数，默认拒写。
   本轮不做：涉及 `api/` 与 26 个测试文件的公共夹具，且改 `taiji/`/评测面会打断在跑 campaign。
+- **DEBT-I7 ✅已处置（2026-09-18 第三批：写/读默认值拆分 + 会话级重定向）**：根因是结构性的——
+  `api/seed_runtime.py` 用**同一个常量**同时充当"产品默认加载的来源"与"不指定路径时 save 的落点"，
+  于是一支不传 `checkpoint_path` 的测试**没有办法安全地**调用 `save()`。修法：
+  ① 拆名——新增 `DEFAULT_SAVE_TARGET`（默认等于 `DEFAULT_CHECKPOINT`，产品行为一字不变）与
+  `resolve_save_target(path, checkpoint_path)`，`SeedRuntime.save()` 改走它；
+  ② `tests/conftest.py` 增加会话级 autouse fixture，**只**把 `DEFAULT_SAVE_TARGET` 指到 tmp 目录，
+  读侧 `DEFAULT_CHECKPOINT` 保持指向真文件（否则"默认入口服务哪个模型"就没有判断对象）；
+  ③ 新增 `tests/taiji_native/test_default_checkpoint_isolation_contract.py` 四支测试，正反都钉：
+  无路径的写靶落在 `checkpoints/` 之外、显式路径与"来源路径"仍然优先（重定向不许吞掉正常写盘）、
+  读侧未被搬走、以及**真跑一次 `save()`** 后产品默认文件的 sha256 不变。
+  实测 `15 passed in 3.11 s`（含既有 SeedRuntime 重用户 `test_native_life_status` / `test_semantic_provider`）。
+  本条登记过的"26 个测试文件同时出现 SeedRuntime 与 save/train/reset"这一面**不需要逐个改**：
+  写路径被一次性收口在同一个落点上。第二实例（`output/manual-r5-canary/` 残留）不在本次修法内，仍未处置。
 - **DEBT-I8 ✅已处置（2026-09-18 第二批）已提交的 P3b 报告里嵌着机器绝对路径 ⇒ 同一份快照的两次打分无法逐字节比对**。
   实证：驱动写的 `reports/p3b_stages/control/cap0_tick_17000000.json` 顶层
   `checkpoint = "E:\\Seed\\checkpoints\\..."`，而我手工复评同一份快照得到的却是
@@ -135,14 +148,26 @@
   该测试读的是**已封存报告**的 `model_reality.default_tick`，不是盘上的 `.pt`。所以要它翻红/翻绿
   必须**再生成一次盘点报告**，光恢复基座不会动它（这正是普查 §3 说的"读封存型测试永远不会红"）。
   已给 `eval_taiji_cap0_inventory.py` 补 `--report`，复采一律写新日期文件，不覆盖 09-15 那份证据。
-- **DEBT-I7 / I9 第二次复现（2026-09-18，全量套件，未处置）**：套件跑前 `seed_corpus.pt` 为
-  `tick = 36` / sha `105d621e5e7d`，跑后为 **`tick = 2` / sha `3fec3e477ef4`**（mtime 同步更新，
-  文件大小仍是 43,223,183 B）。⇒ 两点新增事实：① **这条通路不是幂等的**，每次跑套件都把默认基座
+  **DEBT-I7 处置后的状态（同日第三批）**：写侧已被隔离，产品默认文件从此**不会**再被套件改写；
+  盘上现存的是"某次套件重初始化"的 tick=2 基座（09-18 复采实测 `tick=2`、43,223,183 B，
+  与 09-15 封存报告里同一 tick 的 43,290,771 B 不同 ⇒ 连"同一 tick"都不保证同一份权重）。
+  **本条仍不结项**，因为剩下的问题是**来源**而非通路：需要一个非测试产生的默认基座
+  （官方重训或分发一份基座文件），并把它的 sha256 记进受审清单，让"默认入口服务的是哪个模型"
+  重新成为可判定命题。在那之前 `test_default_entry_serves_an_untrained_state` 保持
+  `xfail(strict=False)`，09-15 报告不追改。
+- **DEBT-I7 / I9 第二次复现（2026-09-18，全量套件，当时未处置）**：套件跑前 `seed_corpus.pt` 为
+  `tick = 36` / sha `105d621e5e7d`，跑后为 **`tick = 2` / sha `3fec3e477ef4`**（mtime 同步更新到
+  套件结束那一刻；**跑前尺寸未记录，故本条不作尺寸断言**）。⇒ 两点新增事实：① **这条通路不是幂等的**，每次跑套件都把默认基座
   重写成一份新的随机初始化态，所以"默认入口=未训练基座"这句话在盘上永远取不到证；
   ② 重写方向是 36→2，也就是说**测试会把一个已训练态退回未训练态**——比"重新初始化一遍基座"更糟，
   若哪天默认入口指向的是真训练态，套件会把它抹掉。
   本轮不处置（要动 `api/seed_runtime.py` 与 26 个测试文件的公共夹具），但**优先级应高于 I6/I8 那批**，
   因为它动摇的是"默认入口"这一产品事实，而不只是仪器。
+  **后效（同日第三批）**：已按上文 DEBT-I7 条目处置，写侧隔离落地；上面"26 个测试文件要逐个改"的
+  预估不成立——收口在一个落点即可。
+  **两处尺寸记载互相冲突，留此不作裁决**：本条复现前的 09-18 04:35 事件写"重存前后同为
+  43,223,183 B"，而 09-15 封存报告记同一 `tick=2` 的文件为 43,290,771 B——两句不可能同时为真。
+  可复验的只有：当前文件 43,223,183 B、两份报告各自如上。历史条目都不删，按 §4 约定只加指针。
 - **DEBT-I10（新，本轮已修，但教训未消化）约束解码是"源码副本补丁"，锚点钉在实现细节上 ⇒ 整条语言测量静默罢工**。
   `probe_taiji_cap0_byte_output.install_constrained_decode()` 曾要求 `Taiji.generate` 源码里存在
   `next_symbol = step.predicted_symbol`；R2 改写 `generate`（新增 `response_start`/`response_phase`）

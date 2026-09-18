@@ -48,6 +48,27 @@ def _observe_logging() -> None:
     yield
 
 
+@pytest.fixture(autouse=True, scope="session")
+def _redirect_default_save_target(tmp_path_factory) -> None:
+    """Keep ``SeedRuntime.save()`` from overwriting the model the product serves (DEBT-I7).
+
+    Only the *save* target moves. ``DEFAULT_CHECKPOINT`` -- what the app loads -- is left pointing
+    at the real file, because several tests assert against the shipped base and reads are not the
+    hazard. The invariant itself is asserted by
+    ``tests/taiji_native/test_default_checkpoint_isolation_contract.py``.
+    """
+
+    try:
+        from api import seed_runtime as _runtime
+    except Exception:  # pragma: no cover - optional dependency, same style as the reset fixture
+        yield
+        return
+    original = _runtime.DEFAULT_SAVE_TARGET
+    _runtime.DEFAULT_SAVE_TARGET = tmp_path_factory.mktemp("default-save-target") / "seed_corpus.pt"
+    yield
+    _runtime.DEFAULT_SAVE_TARGET = original
+
+
 def _reset_app_state_in_place(module) -> None:
     """Preserve imported singleton references while replacing per-test values."""
     fresh = module.AppState()
