@@ -189,6 +189,17 @@
   该测试读的是**已封存报告**的 `model_reality.default_tick`，不是盘上的 `.pt`。所以要它翻红/翻绿
   必须**再生成一次盘点报告**，光恢复基座不会动它（这正是普查 §3 说的"读封存型测试永远不会红"）。
   已给 `eval_taiji_cap0_inventory.py` 补 `--report`，复采一律写新日期文件，不覆盖 09-15 那份证据。
+  **DEBT-I9 的可检测半已落地（同日第六批）**：`plans/manifests/product_default_checkpoint_provenance.json`
+  记下当前默认基座的 sha256 / 字节数 / envelope tick / `trainer` / `saved_at_utc`，
+  `tests/taiji_native/test_product_default_checkpoint_provenance_contract.py` 三支把它变成守卫：
+  sha 变了就红，失败信息直接列两种可能（① 又有测试或**子进程**写了默认路径 ⇒ 先修写者；
+  ② 有意换基座 ⇒ 更新清单 + 记来源），并禁止"把期望值改成当前值了事"。
+  第三条测试钉住清单**必须继续自称 provenance=unknown**——记下来不等于变成出厂基座。
+  顺带确认了两件事：envelope 的 `saved_at_utc = 2026-09-18T14:18:32Z` 正是第四次套件结束那一刻
+  ⇒ 我先前那条"来源=套件写的"由文件自身证实；而带隔离的两次套件跑完 sha 都不变 ⇒ 守卫当前为绿。
+  **仍不结项**：来源问题要一份非测试产生的基座（官方重训或分发文件）。
+  已知边界也写进测试 docstring 了：conftest 的重定向只在 pytest 进程内生效，
+  **测试起的子进程仍会落到真实默认路径**——那正是本守卫存在的理由。
   **DEBT-I7 处置后的状态（同日第三批）**：写侧已被隔离，产品默认文件从此**不会**再被套件改写；
   盘上现存的是"某次套件重初始化"的 tick=2 基座（09-18 复采实测 `tick=2`、43,223,183 B，
   与 09-15 封存报告里同一 tick 的 43,290,771 B 不同 ⇒ 连"同一 tick"都不保证同一份权重）。

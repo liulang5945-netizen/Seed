@@ -1,0 +1,14 @@
+{
+  "format": "seed-product-default-checkpoint-provenance-v1",
+  "path": "checkpoints/seed_corpus.pt",
+  "sha256": "c8025db44c65f9c13e4bde4a09454d7e58e39ca54583cb86ef8d041ff540c657",
+  "bytes": 43223183,
+  "envelope_tick": 2,
+  "envelope_trainer": "api_seed_runtime",
+  "envelope_saved_at_utc": "2026-09-18T14:18:32Z",
+  "recorded_at_local": "2026-09-19T01:07:02",
+  "provenance": "unknown",
+  "provenance_note": "这份文件是测试套件重初始化的产物，不是随仓库分发的出厂基座：*.pt 不入 git，原 tick=2 基座已不可还原（DEBT-I9）。envelope 的 saved_at_utc 恰好等于 2026-09-18T14:18:32Z，即第四次全量套件结束的那一刻，而那次起跑早于写侧隔离落地，所以来源可判定为'套件写的'。",
+  "why_recorded": "DEBT-I9 的检测半：把'默认入口服务哪个模型'变成可判定命题——sha 变了就有测试红。这不解决来源问题（需要一份非测试产生的基座或官方重训），只让它可被发现。",
+  "before_L3_delivery": "必须在真机预检标定 H 阈值门并冻结，且默认入口要么换成训练态、要么在文档里明确它仍是出厂基座——三件事都不能用这份 manifest 代替。"
+}
