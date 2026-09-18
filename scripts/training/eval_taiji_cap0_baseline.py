@@ -658,7 +658,11 @@ F_CONTRACTS: tuple[dict[str, str], ...] = (
         "id": "F04",
         "capability": "整模型加载链（CAP-0）",
         "report": "reports/taiji_cap0_inventory_20260915.json",
-        "gate": "默认入口可加载并产出原始输出（现状 tick=2；16M-tick 被守卫挡住 ⇒ 记缺口）",
+        "gate": (
+            "默认入口可加载并产出原始输出（现状 tick=2 未训练基座）；16M-tick 训练态自 M2-2i 起"
+            "可经默认 loader 加载并过 A 支（reports/taiji_cap0_health_v3_seedbeta_20260918.json），"
+            "但 A05 未执行、H 阈值门未标定 ⇒ F04 仍是缺口，不得写成已通过"
+        ),
     },
 )
 
