@@ -1,6 +1,6 @@
 # Seed — Taiji 原生认知架构的运行时
 
-当前规划状态（2026-09-17）：主要完善用于指导开发的计划，不要求立即选型或实现。M5/R2研究仍暂停；[03 §5](plans/active/roadmap/03_CURRENT_EXECUTION.md)给出能力路径、开发交付与验证，[01 §6](plans/active/roadmap/01_SCOPE_AND_PHASES.md)保留全项目依赖，[唯一VISION §15–17](plans/reference/VISION_FUTURE_TECHNOLOGY.md)提供五套高上限备选。A-R2是规格示例，不是已选实验；证据边界仍见[复核](plans/reference/M5_R2_DESIGN_EVIDENCE_AUDIT_20260917.md)。下方旧实验介绍不是当前执行指令。
+当前状态（2026-09-18）：研究主线仍是M5/R2。D1测量仪器已结项；D2已实施有限A切片，但v4/v5学习探针未过门，唯一研究下一步为路线全面复审，停止自主修订/训练，不再等待O1试验。本轮仅补全[03 §5](plans/active/roadmap/03_CURRENT_EXECUTION.md)开发指导、[01 §6](plans/active/roadmap/01_SCOPE_AND_PHASES.md)阶段依赖与[唯一VISION §15–18](plans/reference/VISION_FUTURE_TECHNOLOGY.md)的多方案、信息接口、学习责任、迁移和演进设计。未晋级L2/L3、未交付Mini，证据见[结果总览](plans/reference/PROJECT_RESULTS_AND_CONCLUSIONS_20260917.md)。下方旧实验介绍不是当前执行指令。
 
 Seed 是训练、评估、部署并托管 **Taiji** 的项目、产品与运行时。Taiji 是一个**原生认知架构**——从在线预测编码机制构建，而不是 Transformer 的包装。内核从**局部预测误差**中学习（无反向传播、无注意力矩阵、无上下文窗口、运行时无教师模型）；在内核之上，Taiji 拥有自己的表征、持续状态、记忆、目标、规划与行动选择，同时在合适处刻意复用成熟算法（embedding、SSM、MoE 式路由、优化器、检索）。Taiji 为之设计的一项关键能力，是**自我进化**——在学习中修订、生长并重组自己的结构（见[结构成长与协作](#结构成长与协作自我进化能力)）。
 
@@ -173,7 +173,7 @@ M5 K 轴 scorecard 仍是有效的并行、限定范围机制结果；它不是�
 - 当前边界：原生语言路线已有结构化训练与恢复证据，但尚未建立 S2/L2 对话能力。K 轴的
   `promotion_gate=false`、`can_promote=false`、`growth_admitted=false` 仍保持诚实边界；不代表默认
   runtime 已挂接 owner，也不代表产品 rollout 已发生。
-- 当前状态（2026-09-17）：按用户要求[收束并暂停](plans/reference/PROJECT_CONSOLIDATION_20260917.md)。H3.7B已结项，H3.8 v1/v2按门禁停止投入；最新P3b-v2进程已停止，旧磁盘checkpoint保留，但缺完整pilot报告，能力结果未判定。不启动新训练、不切默认入口、不进入Mini验收；用户重新启动后唯一建议是现有产物的只读身份与合同核验。
+- 当前状态（2026-09-18）：[收束记录](plans/reference/PROJECT_CONSOLIDATION_20260917.md)保留历史范围；后继P3b-v2已补报告并结案，D1仪器与D2 v3/v4/v5探针已推进。当前进入A族路线全面复审，不重复排只读产物核验或O1试验。最新证据与归因限制见[结果总览](plans/reference/PROJECT_RESULTS_AND_CONCLUSIONS_20260917.md)，执行授权只看[03](plans/active/roadmap/03_CURRENT_EXECUTION.md)；这些结果未带来默认采用或Mini验收。
 - 诚实边界：这是一个训练中的学习机制原型，**不是**完整的认知架构，尚不是通用语言模型，也不构成任何 AGI 主张。当前 R2 将不可读或不可迁移的回答视为待解决失败，不包装成模型能力。
 
 ## 快速开始
