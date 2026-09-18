@@ -1,6 +1,6 @@
 # Seed — Taiji 原生认知架构的运行时
 
-开发指导（2026-09-18）：研究主线仍是M5/R2，D1–D5证据见[结果总览](plans/reference/PROJECT_RESULTS_AND_CONCLUSIONS_20260917.md)，当前活动包与唯一下一步只看[03](plans/active/roadmap/03_CURRENT_EXECUTION.md)。本轮[01 §6.3–6.5](plans/active/roadmap/01_SCOPE_AND_PHASES.md)补齐证据继承、能力转段与实际交付，[VISION §17.5–17.7](plans/reference/VISION_FUTURE_TECHNOLOGY.md)补课程覆盖与模型演进，[07 §5.2](plans/active/roadmap/07_MINI_MODEL_DELIVERY.md)补研究候选接入同一bundle的交接。必要局部实验仍可在授权约束内进行；计划本身不授权训练、不补发L2/L3或触发Mini交付。
+开发指导（2026-09-19）：主线仍是M5/R2。D8/v3多字值复制主门通过，但绑定未过、seed差异仍大；v4固定配方稳定门3/3失败，matched不放行。[下一步详案](plans/reference/M5_R2_D8_CLOSEOUT_NEXT_PLAN_20260919.md)推荐结束这轮固定配方尺度延伸，评审可学习内容绑定候选，方向待用户确认；尚未证明学习率是唯一原因或存在永久规模上限。[03](plans/active/roadmap/03_CURRENT_EXECUTION.md)仍是唯一活动队列，[VISION §19.12](plans/reference/VISION_FUTURE_TECHNOLOGY.md#1912-d8-a2后的推荐候选从发射延续转向可学习内容绑定)记录计算/学习方案，[阶段地图](plans/active/roadmap/01_SCOPE_AND_PHASES.md)与[交付标准](plans/active/roadmap/07_MINI_MODEL_DELIVERY.md)保留大阶段出口。计划不授权训练、不补发L2/L3或触发Mini交付；必要局部实验仍须限定范围授权。
 
 Seed 是训练、评估、部署并托管 **Taiji** 的项目、产品与运行时。Taiji 是一个**原生认知架构**——从在线预测编码机制构建，而不是 Transformer 的包装。内核从**局部预测误差**中学习（无反向传播、无注意力矩阵、无上下文窗口、运行时无教师模型）；在内核之上，Taiji 拥有自己的表征、持续状态、记忆、目标、规划与行动选择，同时在合适处刻意复用成熟算法（embedding、SSM、MoE 式路由、优化器、检索）。Taiji 为之设计的一项关键能力，是**自我进化**——在学习中修订、生长并重组自己的结构（见[结构成长与协作](#结构成长与协作自我进化能力)）。
 
