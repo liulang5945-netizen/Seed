@@ -1,0 +1,369 @@
+{
+  "format": "taiji-r2-d3-multihead-probe-v1",
+  "version": 1,
+  "contract": "plans/reference/M5_R2_D3_FIRST_STEP_GEOMETRY_CONTRACT_FROZEN_20260918.md",
+  "graph_version": 6,
+  "arm": "hg_heads4_pe1_microbatch8",
+  "corpus_digest": "53ac9f88695f135d0bb04b4d25d98ab686c82175c45ca8d4d53e64639efbeecb",
+  "split_read": "train",
+  "dev_read": false,
+  "final_read": false,
+  "seed": 20260917,
+  "epochs_frozen": 30,
+  "frozen_learning_rate": 0.01,
+  "train_episodes": 174,
+  "copy_supported_shapes": [
+    "fact",
+    "negation",
+    "same_opening_fact"
+  ],
+  "balanced_shapes": false,
+  "microbatch_size": 8,
+  "readout_heads": 4,
+  "positional_keys": true,
+  "optimizer_steps": 660,
+  "elapsed_seconds": 69.54700000002049,
+  "wall_cap_seconds": 1200,
+  "parameter_count": 96034,
+  "preflight": {
+    "expected_logits_digest": "51653905f51496b2c92ae3b77c1031d3d6bb6cbd1ab4fd86cc0dfe1079478040",
+    "observed_logits_digest": "51653905f51496b2c92ae3b77c1031d3d6bb6cbd1ab4fd86cc0dfe1079478040",
+    "logits_match": true,
+    "continuation_matches": true,
+    "restored_version": 6,
+    "restored_copy": true,
+    "passed": true
+  },
+  "initial": {
+    "M1_exact": {
+      "numerator": 0,
+      "denominator": 174,
+      "value": 0.0
+    },
+    "M2_shape_macro": {
+      "value": 0.0
+    },
+    "M3_content_exact": {
+      "numerator": 0,
+      "denominator": 158,
+      "value": 0.0
+    },
+    "M4_flip_pair": {
+      "numerator": 0,
+      "denominator": 15,
+      "value": 0.0
+    },
+    "M5_inv_pair": {
+      "numerator": 0,
+      "denominator": 0,
+      "value": 0.0
+    },
+    "per_group_exact": {
+      "fact": {
+        "correct": 0,
+        "denominator": 48,
+        "exact": 0.0
+      },
+      "negation": {
+        "correct": 0,
+        "denominator": 48,
+        "exact": 0.0
+      },
+      "unknown": {
+        "correct": 0,
+        "denominator": 8,
+        "exact": 0.0
+      },
+      "same_opening_fact": {
+        "correct": 0,
+        "denominator": 48,
+        "exact": 0.0
+      },
+      "same_opening_unknown": {
+        "correct": 0,
+        "denominator": 8,
+        "exact": 0.0
+      },
+      "combination_same": {
+        "correct": 0,
+        "denominator": 7,
+        "exact": 0.0
+      },
+      "combination_different": {
+        "correct": 0,
+        "denominator": 7,
+        "exact": 0.0
+      }
+    },
+    "content_per_group_exact": {
+      "fact": {
+        "correct": 0,
+        "denominator": 48,
+        "exact": 0.0
+      },
+      "negation": {
+        "correct": 0,
+        "denominator": 48,
+        "exact": 0.0
+      },
+      "same_opening_fact": {
+        "correct": 0,
+        "denominator": 48,
+        "exact": 0.0
+      },
+      "combination_same": {
+        "correct": 0,
+        "denominator": 7,
+        "exact": 0.0
+      },
+      "combination_different": {
+        "correct": 0,
+        "denominator": 7,
+        "exact": 0.0
+      }
+    },
+    "mean_sequence_loss": 4.563521546879034,
+    "copy_supported_M1": {
+      "numerator": 0,
+      "denominator": 144,
+      "value": 0.0,
+      "shapes": [
+        "fact",
+        "negation",
+        "same_opening_fact"
+      ]
+    },
+    "per_shape_exact": {
+      "combination_different": {
+        "denominator": 7,
+        "value": 0.0
+      },
+      "combination_same": {
+        "denominator": 7,
+        "value": 0.0
+      },
+      "fact": {
+        "denominator": 48,
+        "value": 0.0
+      },
+      "negation": {
+        "denominator": 48,
+        "value": 0.0
+      },
+      "same_opening_fact": {
+        "denominator": 48,
+        "value": 0.0
+      },
+      "same_opening_unknown": {
+        "denominator": 8,
+        "value": 0.0
+      },
+      "unknown": {
+        "denominator": 8,
+        "value": 0.0
+      }
+    }
+  },
+  "final": {
+    "M1_exact": {
+      "numerator": 167,
+      "denominator": 174,
+      "value": 0.9597701149425287
+    },
+    "M2_shape_macro": {
+      "value": 0.8571428571428571
+    },
+    "M3_content_exact": {
+      "numerator": 151,
+      "denominator": 158,
+      "value": 0.9556962025316456
+    },
+    "M4_flip_pair": {
+      "numerator": 8,
+      "denominator": 15,
+      "value": 0.5333333333333333
+    },
+    "M5_inv_pair": {
+      "numerator": 0,
+      "denominator": 0,
+      "value": 0.0
+    },
+    "per_group_exact": {
+      "fact": {
+        "correct": 48,
+        "denominator": 48,
+        "exact": 1.0
+      },
+      "negation": {
+        "correct": 48,
+        "denominator": 48,
+        "exact": 1.0
+      },
+      "unknown": {
+        "correct": 8,
+        "denominator": 8,
+        "exact": 1.0
+      },
+      "same_opening_fact": {
+        "correct": 48,
+        "denominator": 48,
+        "exact": 1.0
+      },
+      "same_opening_unknown": {
+        "correct": 8,
+        "denominator": 8,
+        "exact": 1.0
+      },
+      "combination_same": {
+        "correct": 7,
+        "denominator": 7,
+        "exact": 1.0
+      },
+      "combination_different": {
+        "correct": 0,
+        "denominator": 7,
+        "exact": 0.0
+      }
+    },
+    "content_per_group_exact": {
+      "fact": {
+        "correct": 48,
+        "denominator": 48,
+        "exact": 1.0
+      },
+      "negation": {
+        "correct": 48,
+        "denominator": 48,
+        "exact": 1.0
+      },
+      "same_opening_fact": {
+        "correct": 48,
+        "denominator": 48,
+        "exact": 1.0
+      },
+      "combination_same": {
+        "correct": 7,
+        "denominator": 7,
+        "exact": 1.0
+      },
+      "combination_different": {
+        "correct": 0,
+        "denominator": 7,
+        "exact": 0.0
+      }
+    },
+    "mean_sequence_loss": 0.00807605644927364,
+    "copy_supported_M1": {
+      "numerator": 144,
+      "denominator": 144,
+      "value": 1.0,
+      "shapes": [
+        "fact",
+        "negation",
+        "same_opening_fact"
+      ]
+    },
+    "per_shape_exact": {
+      "combination_different": {
+        "denominator": 7,
+        "value": 0.0
+      },
+      "combination_same": {
+        "denominator": 7,
+        "value": 1.0
+      },
+      "fact": {
+        "denominator": 48,
+        "value": 1.0
+      },
+      "negation": {
+        "denominator": 48,
+        "value": 1.0
+      },
+      "same_opening_fact": {
+        "denominator": 48,
+        "value": 1.0
+      },
+      "same_opening_unknown": {
+        "denominator": 8,
+        "value": 1.0
+      },
+      "unknown": {
+        "denominator": 8,
+        "value": 1.0
+      }
+    }
+  },
+  "trajectory": [
+    {
+      "epoch": 0,
+      "mean_sequence_loss": 4.563522,
+      "M1_exact": 0.0,
+      "copy_supported_M1": 0.0,
+      "M3_content_exact": 0.0,
+      "M4_flip_pair": 0.0
+    },
+    {
+      "epoch": 5,
+      "mean_sequence_loss": 0.010786,
+      "M1_exact": 0.9597701149425287,
+      "copy_supported_M1": 1.0,
+      "M3_content_exact": 0.9556962025316456,
+      "M4_flip_pair": 0.5333333333333333
+    },
+    {
+      "epoch": 10,
+      "mean_sequence_loss": 0.008672,
+      "M1_exact": 0.9597701149425287,
+      "copy_supported_M1": 1.0,
+      "M3_content_exact": 0.9556962025316456,
+      "M4_flip_pair": 0.5333333333333333
+    },
+    {
+      "epoch": 15,
+      "mean_sequence_loss": 0.008312,
+      "M1_exact": 0.9597701149425287,
+      "copy_supported_M1": 1.0,
+      "M3_content_exact": 0.9556962025316456,
+      "M4_flip_pair": 0.5333333333333333
+    },
+    {
+      "epoch": 20,
+      "mean_sequence_loss": 0.00818,
+      "M1_exact": 0.9597701149425287,
+      "copy_supported_M1": 1.0,
+      "M3_content_exact": 0.9556962025316456,
+      "M4_flip_pair": 0.5333333333333333
+    },
+    {
+      "epoch": 25,
+      "mean_sequence_loss": 0.008114,
+      "M1_exact": 0.9597701149425287,
+      "copy_supported_M1": 1.0,
+      "M3_content_exact": 0.9556962025316456,
+      "M4_flip_pair": 0.5333333333333333
+    },
+    {
+      "epoch": 30,
+      "mean_sequence_loss": 0.008076,
+      "M1_exact": 0.9597701149425287,
+      "copy_supported_M1": 1.0,
+      "M3_content_exact": 0.9556962025316456,
+      "M4_flip_pair": 0.5333333333333333
+    }
+  ],
+  "gate": {
+    "copy_supported_m1_ge_0_90": true,
+    "finite_declining_loss": true,
+    "within_wall_cap": true,
+    "preflight_passed": true,
+    "loss_increases_bounded_15pct": true,
+    "no_late_collapse_gt_0_10": true,
+    "negation_m1_above_zero": true,
+    "fact_and_sof_hold_0_90": true
+  },
+  "outcome": "passed",
+  "reading": "copy-mixture train-only learnability per amendment 5.2; uncopyable shapes and M3/M4 are descriptive; not a capability claim",
+  "growth_admitted": false,
+  "can_promote": false
+}

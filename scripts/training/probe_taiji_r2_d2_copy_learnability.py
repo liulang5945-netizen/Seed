@@ -218,8 +218,14 @@ def main() -> int:
         default=0,
         help="Q1 amendment four: micro-batch gradient accumulation size (8 frozen)",
     )
+    parser.add_argument("--readout-heads", type=int, default=1)
+    parser.add_argument("--positional-keys", action="store_true")
     args = parser.parse_args()
-    if args.question_conditioned_start:
+    if args.readout_heads > 1:
+        report_format = "taiji-r2-d3-multihead-probe-v1"
+        contract = "plans/reference/M5_R2_D3_FIRST_STEP_GEOMETRY_CONTRACT_FROZEN_20260918.md"
+        arm_label = f"hg_heads{args.readout_heads}_pe{int(bool(args.positional_keys))}_microbatch{args.microbatch_size}"
+    elif args.question_conditioned_start:
         report_format = "taiji-r2-d2-question-start-probe-v1"
         contract = "plans/reference/M5_R2_D2_QUESTION_START_AMENDMENT_FROZEN_20260918.md"
         arm_label = "A5_per_position_copy_question_start"
@@ -262,10 +268,16 @@ def main() -> int:
             seed=SEED,
             evidence_source=EVIDENCE_PER_POSITION,
             copy_mixture=True,
-            question_conditioned_start=bool(args.question_conditioned_start),
+            question_conditioned_start=bool(args.question_conditioned_start)
+            or args.readout_heads > 1,
+            readout_heads=int(args.readout_heads),
+            positional_keys=bool(args.positional_keys),
         )
     )
-    if args.question_conditioned_start:
+    if args.readout_heads > 1:
+        code_revision = "r2-d3-multihead-probe"
+        checkpoint_prefix = f"hg_h{args.readout_heads}_seed20260917"
+    elif args.question_conditioned_start:
         code_revision = "r2d2-question-start-probe"
         checkpoint_prefix = "a5_seed20260917"
     elif args.balanced_shapes and args.microbatch_size:
@@ -366,6 +378,8 @@ def main() -> int:
         "copy_supported_shapes": list(COPY_SUPPORTED_SHAPES),
         "balanced_shapes": bool(args.balanced_shapes),
         "microbatch_size": int(args.microbatch_size),
+        "readout_heads": int(args.readout_heads),
+        "positional_keys": bool(args.positional_keys),
         "optimizer_steps": steps_taken,
         "elapsed_seconds": elapsed,
         "wall_cap_seconds": WALL_CAP_SECONDS,

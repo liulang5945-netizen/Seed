@@ -76,12 +76,12 @@ import torch
 from .internalization import content_digest
 
 SEQUENCE_WORKSPACE_FORMAT = "taiji-sequence-workspace-v1"
-#: Version 5 (R2-D2 H-A3, 2026-09-18): question-conditioned renderer start via
-#: ``question_conditioned_start``.  Versions 2/3/4 remain restorable;
+#: Version 6 (R2-D3 H-G, 2026-09-18): multi-head position-aware readout via
+#: ``readout_heads`` and ``positional_keys``.  Versions 2-5 remain restorable;
 #: version-1 payloads are refused.
-SEQUENCE_WORKSPACE_VERSION = 5
+SEQUENCE_WORKSPACE_VERSION = 6
 #: Checkpoint payload versions this build is allowed to restore.
-SEQUENCE_WORKSPACE_SUPPORTED_VERSIONS = frozenset({2, 3, 4, 5})
+SEQUENCE_WORKSPACE_SUPPORTED_VERSIONS = frozenset({2, 3, 4, 5, 6})
 SEQUENCE_WORKSPACE_TRAINER_FORMAT = "taiji-sequence-workspace-trainer-v1"
 SEQUENCE_WORKSPACE_ALPHABET = 257
 SEQUENCE_WORKSPACE_BOUNDARY = 256
@@ -121,6 +121,10 @@ _CANONICAL_PARAMETER_ORDER: tuple[str, ...] = (
     "workspace_value",
     "evidence_key",
     "evidence_value",
+    "head_query_1",
+    "head_query_2",
+    "head_query_3",
+    "head_query_4",
     "copy_gate_weight",
     "copy_gate_bias",
     "answer_start_weight",
@@ -142,6 +146,10 @@ SEQUENCE_WORKSPACE_PARAMETERS: tuple[str, ...] = tuple(
         "renderer_start",
         "evidence_key",
         "evidence_value",
+        "head_query_1",
+        "head_query_2",
+        "head_query_3",
+        "head_query_4",
         "copy_gate_weight",
         "copy_gate_bias",
         "answer_start_weight",
@@ -161,6 +169,10 @@ SEQUENCE_WORKSPACE_EVIDENCE_PARAMETERS: tuple[str, ...] = tuple(
         "renderer_start",
         "workspace_key",
         "workspace_value",
+        "head_query_1",
+        "head_query_2",
+        "head_query_3",
+        "head_query_4",
         "copy_gate_weight",
         "copy_gate_bias",
         "answer_start_weight",
@@ -178,6 +190,10 @@ SEQUENCE_WORKSPACE_COPY_PARAMETERS: tuple[str, ...] = tuple(
         "renderer_start",
         "workspace_key",
         "workspace_value",
+        "head_query_1",
+        "head_query_2",
+        "head_query_3",
+        "head_query_4",
         "answer_start_weight",
         "answer_start_bias",
     }
@@ -188,7 +204,31 @@ SEQUENCE_WORKSPACE_COPY_PARAMETERS: tuple[str, ...] = tuple(
 SEQUENCE_WORKSPACE_QUESTION_START_PARAMETERS: tuple[str, ...] = tuple(
     name
     for name in _CANONICAL_PARAMETER_ORDER
-    if name not in {"renderer_start", "workspace_key", "workspace_value"}
+    if name
+    not in {
+        "renderer_start",
+        "workspace_key",
+        "workspace_value",
+        "head_query_1",
+        "head_query_2",
+        "head_query_3",
+        "head_query_4",
+    }
+)
+
+#: Graph-v6 multi-head arm (R2-D3 H-G): four head queries replace the single
+#: address_query (``4*rw*sw`` vs ``rw*sw``); positional encoding carries no
+#: parameters.  96,034 with copy mixture and question-conditioned start.
+SEQUENCE_WORKSPACE_MULTIHEAD_PARAMETERS: tuple[str, ...] = tuple(
+    name
+    for name in _CANONICAL_PARAMETER_ORDER
+    if name
+    not in {
+        "renderer_start",
+        "address_query",
+        "workspace_key",
+        "workspace_value",
+    }
 )
 
 #: Declared inventory of the no-workspace baseline arm.  The graph is the v1
@@ -206,6 +246,10 @@ SEQUENCE_WORKSPACE_BASELINE_PARAMETERS: tuple[str, ...] = tuple(
         "workspace_value",
         "evidence_key",
         "evidence_value",
+        "head_query_1",
+        "head_query_2",
+        "head_query_3",
+        "head_query_4",
         "copy_gate_weight",
         "copy_gate_bias",
         "answer_start_weight",
@@ -216,6 +260,20 @@ SEQUENCE_WORKSPACE_BASELINE_PARAMETERS: tuple[str, ...] = tuple(
 #: Baseline arm renderer width frozen by contract section 7.3 (parameter
 #: alignment: 103,601 versus the workspace arm's 101,025).
 SEQUENCE_WORKSPACE_BASELINE_RENDERER_WIDTH = 96
+
+
+def _sinusoidal_positional_encoding(length: int, width: int) -> torch.Tensor:
+    """Fixed sin/cos positional encoding (graph v6); not trainable."""
+
+    positions = torch.arange(0, length, dtype=torch.float32).unsqueeze(1)
+    frequencies = torch.exp(
+        torch.arange(0, width, 2, dtype=torch.float32) * (-math.log(10000.0) / width)
+    )
+    angles = positions * frequencies
+    encoding = torch.zeros(length, width, dtype=torch.float32)
+    encoding[:, 0::2] = torch.sin(angles)
+    encoding[:, 1::2] = torch.cos(angles)
+    return encoding
 
 
 def _finite_positive(value: float, name: str) -> float:
@@ -250,6 +308,12 @@ class SequenceWorkspaceConfig:
     #: scan state (the state immediately before the material marker) instead
     #: of the prefix-independent learned constant.
     question_conditioned_start: bool = False
+    #: R2-D3 H-G graph v6: number of independent readout heads.  ``1`` keeps
+    #: the single ``address_query`` head (bit-identical to graphs v3-v5);
+    #: ``4`` replaces it with four learnable head queries.
+    readout_heads: int = 1
+    #: Add fixed sinusoidal positional encoding to evidence keys (v6).
+    positional_keys: bool = False
 
     def __post_init__(self) -> None:
         for name in ("prefix_width", "slots", "slot_width", "renderer_width"):
@@ -285,6 +349,18 @@ class SequenceWorkspaceConfig:
                 "question-conditioned start is defined on the position-aligned "
                 "evidence arms, not the v2 final-state slots"
             )
+        if int(self.readout_heads) < 1:
+            raise ValueError("readout_heads must be >= 1")
+        if int(self.readout_heads) > 4:
+            raise ValueError("readout_heads above 4 is outside the frozen contract")
+        if int(self.readout_heads) > 1 and not self.workspace_enabled:
+            raise ValueError("multi-head readout requires the workspace arm")
+        if int(self.readout_heads) > 1 and self.evidence_source == EVIDENCE_FINAL_STATE_SLOTS:
+            raise ValueError(
+                "multi-head readout needs position-aligned evidence rows, not v2 slots"
+            )
+        if self.positional_keys and self.evidence_source == EVIDENCE_FINAL_STATE_SLOTS:
+            raise ValueError("positional keys require position-aligned evidence rows")
 
     def to_payload(self) -> dict[str, Any]:
         return {
@@ -300,6 +376,8 @@ class SequenceWorkspaceConfig:
             "evidence_source": str(self.evidence_source),
             "copy_mixture": bool(self.copy_mixture),
             "question_conditioned_start": bool(self.question_conditioned_start),
+            "readout_heads": int(self.readout_heads),
+            "positional_keys": bool(self.positional_keys),
         }
 
 
@@ -368,7 +446,11 @@ class SequenceWorkspacePrototype:
             # shared per-position projections; the renderer side is identical.
             # v4 (H-A2) adds the per-byte generate/copy gate.
             make("start_vector", (rw,), 0.5)
-            make("address_query", (rw, sw), 1.0 / math.sqrt(rw))
+            if int(self.config.readout_heads) == 1:
+                make("address_query", (rw, sw), 1.0 / math.sqrt(rw))
+            else:
+                for head in range(1, int(self.config.readout_heads) + 1):
+                    make(f"head_query_{head}", (rw, sw), 1.0 / math.sqrt(rw))
             if self.config.evidence_source == EVIDENCE_FINAL_STATE_SLOTS:
                 make("workspace_key", (rw, slots * sw), 1.0 / math.sqrt(rw))
                 make("workspace_value", (rw, slots * sw), 1.0 / math.sqrt(rw))
@@ -401,13 +483,36 @@ class SequenceWorkspacePrototype:
     def declared_parameter_names(self) -> tuple[str, ...]:
         if not self.config.workspace_enabled:
             return SEQUENCE_WORKSPACE_BASELINE_PARAMETERS
+        excluded = {"renderer_start"}
         if self.config.evidence_source == EVIDENCE_FINAL_STATE_SLOTS:
-            return SEQUENCE_WORKSPACE_PARAMETERS
-        if self.config.question_conditioned_start:
-            return SEQUENCE_WORKSPACE_QUESTION_START_PARAMETERS
-        if self.config.copy_mixture:
-            return SEQUENCE_WORKSPACE_COPY_PARAMETERS
-        return SEQUENCE_WORKSPACE_EVIDENCE_PARAMETERS
+            excluded |= {
+                "evidence_key",
+                "evidence_value",
+                "head_query_1",
+                "head_query_2",
+                "head_query_3",
+                "head_query_4",
+                "copy_gate_weight",
+                "copy_gate_bias",
+                "answer_start_weight",
+                "answer_start_bias",
+            }
+        else:
+            excluded |= {"workspace_key", "workspace_value"}
+            if int(self.config.readout_heads) > 1:
+                excluded.add("address_query")
+            else:
+                excluded |= {
+                    "head_query_1",
+                    "head_query_2",
+                    "head_query_3",
+                    "head_query_4",
+                }
+            if not self.config.copy_mixture:
+                excluded |= {"copy_gate_weight", "copy_gate_bias"}
+            if not self.config.question_conditioned_start:
+                excluded |= {"answer_start_weight", "answer_start_bias"}
+        return tuple(name for name in _CANONICAL_PARAMETER_ORDER if name not in excluded)
 
     def named_parameters(self) -> tuple[tuple[str, torch.nn.Parameter], ...]:
         return tuple((name, self._parameters[name]) for name in self.declared_parameter_names())
@@ -545,6 +650,10 @@ class SequenceWorkspacePrototype:
                         len(states), -1
                     )
                 entry_bytes = tuple(int(symbol) for symbol in prefix)
+                if self.config.positional_keys:
+                    workspace_key = workspace_key + _sinusoidal_positional_encoding(
+                        workspace_key.shape[0], int(self.config.slot_width)
+                    )
             if rotation:
                 workspace_value = torch.roll(
                     workspace_value, shifts=rotation % workspace_value.shape[0], dims=0
@@ -610,32 +719,53 @@ class SequenceWorkspacePrototype:
             logits,
         )
 
-    def _content_read(self, state: WorkspaceState, *, detach: bool) -> torch.Tensor:
-        """Softmax content addressing over evidence rows (no positional pick)."""
+    def _readout_parameters(self) -> torch.Tensor:
+        """Stacked readout query projections: shape (heads, rw, sw)."""
 
-        weights = self.addressing_weights(state, detach=detach)
-        value = state.workspace_value
-        if value is None:
-            raise ValueError("content addressing requires the workspace arm")
-        if detach:
-            value = value.detach()
-        return weights @ value
+        heads = int(self.config.readout_heads)
+        if heads == 1:
+            return self._parameters["address_query"].unsqueeze(0)
+        return torch.stack(
+            [self._parameters[f"head_query_{h}"] for h in range(1, heads + 1)], dim=0
+        )
 
-    def addressing_weights(self, state: WorkspaceState, *, detach: bool) -> torch.Tensor:
-        """Read-only introspection: softmax weights the current renderer query
-        assigns to every evidence row (diagnostics and lesion analysis)."""
+    def _head_weights(self, state: WorkspaceState, *, detach: bool) -> torch.Tensor:
+        """Per-head softmax weights with shape (heads, entries)."""
 
         key = state.workspace_key
         if key is None:
             raise ValueError("content addressing requires the workspace arm")
         if detach:
             key = key.detach()
-        query = state.renderer_state @ self._parameters["address_query"]
-        scores = (key @ query) / math.sqrt(float(self.config.slot_width))
-        return torch.softmax(scores, dim=0)
+        renderer = state.renderer_state
+        queries = torch.einsum("r,hrw->hw", renderer, self._readout_parameters())
+        scores = torch.einsum("nw,hw->hn", key, queries)
+        scores = scores / math.sqrt(float(self.config.slot_width))
+        return torch.softmax(scores, dim=-1)
+
+    def _content_read(self, state: WorkspaceState, *, detach: bool) -> torch.Tensor:
+        """Mean softmax content addressing over all heads (no positional pick)."""
+
+        weights = self._head_weights(state, detach=detach)
+        value = state.workspace_value
+        if value is None:
+            raise ValueError("content addressing requires the workspace arm")
+        if detach:
+            value = value.detach()
+        return (weights @ value).mean(dim=0)
+
+    def addressing_weights(self, state: WorkspaceState, *, detach: bool) -> torch.Tensor:
+        """Read-only introspection: addressing weights per evidence row.
+
+        Returns a 1-D tensor for the single-head graphs v3-v5 and a
+        ``(heads, entries)`` tensor for graph v6 multi-head readout.
+        """
+
+        weights = self._head_weights(state, detach=detach)
+        return weights.squeeze(0) if int(self.config.readout_heads) == 1 else weights
 
     def _copy_distribution(self, state: WorkspaceState, weights: torch.Tensor) -> torch.Tensor:
-        """p_copy[b] = sum of addressing weights on rows whose byte equals b.
+        """Mean p_copy across heads: p_copy[b] = sum of weights on byte-b rows.
 
         Normalized over visible prefix positions only; the boundary symbol
         (256) gets exactly zero mass, so stopping always goes through the
@@ -644,9 +774,12 @@ class SequenceWorkspacePrototype:
 
         if state.entry_bytes is None:
             raise ValueError("copy distribution requires position-aligned evidence rows")
-        distribution = torch.zeros(int(self.config.alphabet_size), dtype=weights.dtype)
         index = torch.tensor(state.entry_bytes, dtype=torch.long)
-        return distribution.index_add(0, index, weights)
+        stacked = weights if weights.ndim == 2 else weights.unsqueeze(0)
+        distribution = torch.zeros(int(self.config.alphabet_size), dtype=stacked.dtype)
+        for head_weights in stacked:
+            distribution = distribution.index_add(0, index, head_weights)
+        return distribution / stacked.shape[0]
 
     def step_distribution(
         self, state: WorkspaceState, previous_symbol: int, *, zero_read: bool = False
