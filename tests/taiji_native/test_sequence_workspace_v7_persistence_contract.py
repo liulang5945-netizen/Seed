@@ -18,6 +18,7 @@ from pathlib import Path
 import torch
 
 from taiji.sequence_workspace import (
+    SEQUENCE_WORKSPACE_SUPPORTED_VERSIONS,
     SEQUENCE_WORKSPACE_VERSION,
     SequenceWorkspaceConfig,
     SequenceWorkspacePrototype,
@@ -72,7 +73,9 @@ def _response() -> bytes:
 
 
 def test_gate1_v7_inventory() -> None:
-    assert SEQUENCE_WORKSPACE_VERSION == 7
+    # v8 bumped the current version; v7 must remain a restorable member.
+    assert SEQUENCE_WORKSPACE_VERSION == 8
+    assert 7 in SEQUENCE_WORKSPACE_SUPPORTED_VERSIONS
     persisted = _v7()
     assert persisted.parameter_count() == 96_035
     names = tuple(name for name, _ in persisted.named_parameters())

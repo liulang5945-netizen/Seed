@@ -1,0 +1,207 @@
+{
+  "format": "taiji-r2-d6-induction-probe-v1",
+  "version": 1,
+  "contract": "plans/reference/M5_R2_D6_INDUCTION_COPY_CONTRACT_FROZEN_20260918.md",
+  "graph_version": 8,
+  "arm": "B1",
+  "arm_label": "hb_induction_original_train",
+  "fixture": "v1",
+  "copy_induction": true,
+  "lambda_copy_value": 1.0,
+  "microbatch_size": 8,
+  "corpus_digest": "53ac9f88695f135d0bb04b4d25d98ab686c82175c45ca8d4d53e64639efbeecb",
+  "split_read": "train",
+  "dev_read": false,
+  "final_read": false,
+  "seed": 20260917,
+  "epochs_frozen": 30,
+  "frozen_learning_rate": 0.01,
+  "train_episodes": 174,
+  "elapsed_seconds": 131.43699999991804,
+  "wall_cap_seconds": 1200,
+  "parameter_count": 96035,
+  "copy_induce_bias_end": 0.19056838750839233,
+  "preflight": {
+    "expected_logits_digest": "51653905f51496b2c92ae3b77c1031d3d6bb6cbd1ab4fd86cc0dfe1079478040",
+    "observed_logits_digest": "51653905f51496b2c92ae3b77c1031d3d6bb6cbd1ab4fd86cc0dfe1079478040",
+    "logits_match": true,
+    "continuation_matches": true,
+    "restored_version": 8,
+    "passed": true
+  },
+  "final": {
+    "M1_exact": {
+      "numerator": 167,
+      "denominator": 174,
+      "value": 0.9597701149425287
+    },
+    "M2_shape_macro": {
+      "value": 0.8571428571428571
+    },
+    "M3_content_exact": {
+      "numerator": 151,
+      "denominator": 158,
+      "value": 0.9556962025316456
+    },
+    "M4_flip_pair": {
+      "numerator": 8,
+      "denominator": 15,
+      "value": 0.5333333333333333
+    },
+    "M5_inv_pair": {
+      "numerator": 0,
+      "denominator": 0,
+      "value": 0.0
+    },
+    "per_group_exact": {
+      "fact": {
+        "correct": 48,
+        "denominator": 48,
+        "exact": 1.0
+      },
+      "negation": {
+        "correct": 48,
+        "denominator": 48,
+        "exact": 1.0
+      },
+      "unknown": {
+        "correct": 8,
+        "denominator": 8,
+        "exact": 1.0
+      },
+      "same_opening_fact": {
+        "correct": 48,
+        "denominator": 48,
+        "exact": 1.0
+      },
+      "same_opening_unknown": {
+        "correct": 8,
+        "denominator": 8,
+        "exact": 1.0
+      },
+      "combination_same": {
+        "correct": 7,
+        "denominator": 7,
+        "exact": 1.0
+      },
+      "combination_different": {
+        "correct": 0,
+        "denominator": 7,
+        "exact": 0.0
+      }
+    },
+    "content_per_group_exact": {
+      "fact": {
+        "correct": 48,
+        "denominator": 48,
+        "exact": 1.0
+      },
+      "negation": {
+        "correct": 48,
+        "denominator": 48,
+        "exact": 1.0
+      },
+      "same_opening_fact": {
+        "correct": 48,
+        "denominator": 48,
+        "exact": 1.0
+      },
+      "combination_same": {
+        "correct": 7,
+        "denominator": 7,
+        "exact": 1.0
+      },
+      "combination_different": {
+        "correct": 0,
+        "denominator": 7,
+        "exact": 0.0
+      }
+    },
+    "mean_sequence_loss": 0.008187217583975002,
+    "copy_supported_M1": {
+      "numerator": 144,
+      "denominator": 144,
+      "value": 1.0,
+      "shapes": [
+        "fact",
+        "negation",
+        "same_opening_fact"
+      ]
+    }
+  },
+  "per_shape_exact": {
+    "combination_different": 0.0,
+    "combination_same": 1.0,
+    "fact": 1.0,
+    "negation": 1.0,
+    "same_opening_fact": 1.0,
+    "same_opening_unknown": 1.0,
+    "unknown": 1.0
+  },
+  "value_length_groups": null,
+  "trajectory": [
+    {
+      "epoch": 0,
+      "mean_sequence_loss": 4.563522,
+      "M1_exact": 0.0,
+      "copy_supported_M1": 0.0
+    },
+    {
+      "epoch": 5,
+      "mean_sequence_loss": 0.020245,
+      "M1_exact": 0.9597701149425287,
+      "copy_supported_M1": 1.0
+    },
+    {
+      "epoch": 10,
+      "mean_sequence_loss": 0.017298,
+      "M1_exact": 0.9597701149425287,
+      "copy_supported_M1": 1.0
+    },
+    {
+      "epoch": 15,
+      "mean_sequence_loss": 0.009435,
+      "M1_exact": 0.9597701149425287,
+      "copy_supported_M1": 1.0
+    },
+    {
+      "epoch": 20,
+      "mean_sequence_loss": 0.008445,
+      "M1_exact": 0.9597701149425287,
+      "copy_supported_M1": 1.0
+    },
+    {
+      "epoch": 25,
+      "mean_sequence_loss": 0.008272,
+      "M1_exact": 0.9597701149425287,
+      "copy_supported_M1": 1.0
+    },
+    {
+      "epoch": 30,
+      "mean_sequence_loss": 0.008187,
+      "M1_exact": 0.9597701149425287,
+      "copy_supported_M1": 1.0
+    }
+  ],
+  "copy_value_readout_intact": {
+    "mean_copy_value_prob": 0.9999991826437138,
+    "positions": 432
+  },
+  "copy_value_readout_misbound": {
+    "mean_copy_value_prob": 0.041666647932798735,
+    "positions": 432
+  },
+  "gate": {
+    "copy_supported_m1_ge_0_90": true,
+    "copy_value_prob_ge_0_90": true,
+    "misbind_copy_prob_le_0_50": true,
+    "loss_increases_bounded_15pct": true,
+    "no_late_collapse_gt_0_10": true,
+    "preflight_passed": true,
+    "within_wall_cap": true
+  },
+  "outcome": "passed",
+  "reading": "R2-D6 H-B induction-copy learnability probe (train-only); the bias sign is the mechanism-use readout; not a capability claim",
+  "growth_admitted": false,
+  "can_promote": false
+}

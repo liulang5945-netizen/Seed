@@ -79,11 +79,13 @@ SEQUENCE_WORKSPACE_FORMAT = "taiji-sequence-workspace-v1"
 #: Version 6 (R2-D3 H-G, 2026-09-18): multi-head position-aware readout via
 #: ``readout_heads`` and ``positional_keys``.  Version 7 (R2-D5 H-M, same day):
 #: optional copy persistence — a trainable scalar biasing the entry after the
-#: previous step's copy hit.  Versions 2-6 remain restorable; version-1
-#: payloads are refused.
-SEQUENCE_WORKSPACE_VERSION = 7
+#: previous step's copy hit.  Version 8 (R2-D6 H-B, same day): optional copy
+#: induction — a trainable scalar biasing every entry whose byte equals the
+#: symbol fed into the step (emitted-byte literal matching).  Versions 2-7
+#: remain restorable; version-1 payloads are refused.
+SEQUENCE_WORKSPACE_VERSION = 8
 #: Checkpoint payload versions this build is allowed to restore.
-SEQUENCE_WORKSPACE_SUPPORTED_VERSIONS = frozenset({2, 3, 4, 5, 6, 7})
+SEQUENCE_WORKSPACE_SUPPORTED_VERSIONS = frozenset({2, 3, 4, 5, 6, 7, 8})
 SEQUENCE_WORKSPACE_TRAINER_FORMAT = "taiji-sequence-workspace-trainer-v1"
 SEQUENCE_WORKSPACE_ALPHABET = 257
 SEQUENCE_WORKSPACE_BOUNDARY = 256
@@ -137,6 +139,8 @@ _CANONICAL_PARAMETER_ORDER: tuple[str, ...] = (
     # not shift, otherwise every new graph version would silently reinitialize
     # the decoder differently and freeze-era checkpoints would stop replaying.
     "copy_persist_bias",
+    # R2-D6 induction scalar: also appended at the tail (same index rule).
+    "copy_induce_bias",
 )
 
 #: Declared trainable parameter inventory for the workspace arm (v2 graph,
@@ -161,6 +165,7 @@ SEQUENCE_WORKSPACE_PARAMETERS: tuple[str, ...] = tuple(
         "answer_start_weight",
         "answer_start_bias",
         "copy_persist_bias",
+        "copy_induce_bias",
     }
 )
 
@@ -185,6 +190,7 @@ SEQUENCE_WORKSPACE_EVIDENCE_PARAMETERS: tuple[str, ...] = tuple(
         "answer_start_weight",
         "answer_start_bias",
         "copy_persist_bias",
+        "copy_induce_bias",
     }
 )
 
@@ -205,6 +211,7 @@ SEQUENCE_WORKSPACE_COPY_PARAMETERS: tuple[str, ...] = tuple(
         "answer_start_weight",
         "answer_start_bias",
         "copy_persist_bias",
+        "copy_induce_bias",
     }
 )
 
@@ -223,6 +230,7 @@ SEQUENCE_WORKSPACE_QUESTION_START_PARAMETERS: tuple[str, ...] = tuple(
         "head_query_3",
         "head_query_4",
         "copy_persist_bias",
+        "copy_induce_bias",
     }
 )
 
@@ -239,6 +247,7 @@ SEQUENCE_WORKSPACE_MULTIHEAD_PARAMETERS: tuple[str, ...] = tuple(
         "workspace_key",
         "workspace_value",
         "copy_persist_bias",
+        "copy_induce_bias",
     }
 )
 
@@ -266,6 +275,7 @@ SEQUENCE_WORKSPACE_BASELINE_PARAMETERS: tuple[str, ...] = tuple(
         "answer_start_weight",
         "answer_start_bias",
         "copy_persist_bias",
+        "copy_induce_bias",
     }
 )
 
@@ -332,6 +342,12 @@ class SequenceWorkspaceConfig:
     #: a row-continuing pointer.  Requires ``copy_mixture``; the bias
     #: initializes at exactly zero (bit-identical to v6 at step 0).
     copy_persistence: bool = False
+    #: R2-D6 H-B graph v8: copy induction.  A trainable scalar biases every
+    #: evidence row whose **preceding** byte equals the symbol fed into the
+    #: current step (the previously emitted byte under free-run, the true byte
+    #: under teacher forcing), chaining contiguous value rows into one copy.
+    #: Requires ``copy_mixture``; initializes at exactly zero.
+    copy_induction: bool = False
 
     def __post_init__(self) -> None:
         for name in ("prefix_width", "slots", "slot_width", "renderer_width"):
@@ -384,6 +400,11 @@ class SequenceWorkspaceConfig:
                 "copy persistence is defined on the copy-mixture graphs (v4+), "
                 "it needs the per-step copy distribution to derive its pointer"
             )
+        if self.copy_induction and not self.copy_mixture:
+            raise ValueError(
+                "copy induction is defined on the copy-mixture graphs (v4+), "
+                "the emitted-byte bonus steers the copy addressing"
+            )
 
     def to_payload(self) -> dict[str, Any]:
         return {
@@ -402,6 +423,7 @@ class SequenceWorkspaceConfig:
             "readout_heads": int(self.readout_heads),
             "positional_keys": bool(self.positional_keys),
             "copy_persistence": bool(self.copy_persistence),
+            "copy_induction": bool(self.copy_induction),
         }
 
 
@@ -492,6 +514,9 @@ class SequenceWorkspacePrototype:
                 # v7: fixed zero start (bit-identical to v6 at initialization);
                 # not a rand-scaled tensor, so no generator draw is consumed.
                 self._parameters["copy_persist_bias"] = torch.nn.Parameter(torch.zeros(1))
+            if self.config.copy_induction:
+                # v8: same fixed-zero rule as the v7 scalar.
+                self._parameters["copy_induce_bias"] = torch.nn.Parameter(torch.zeros(1))
             if self.config.question_conditioned_start:
                 make("answer_start_weight", (rw, rw), 1.0 / math.sqrt(rw))
                 make("answer_start_bias", (rw,), 0.0)
@@ -529,6 +554,7 @@ class SequenceWorkspacePrototype:
                 "answer_start_weight",
                 "answer_start_bias",
                 "copy_persist_bias",
+                "copy_induce_bias",
             }
         else:
             excluded |= {"workspace_key", "workspace_value"}
@@ -545,6 +571,8 @@ class SequenceWorkspacePrototype:
                 excluded |= {"copy_gate_weight", "copy_gate_bias"}
             if not self.config.copy_persistence:
                 excluded.add("copy_persist_bias")
+            if not self.config.copy_induction:
+                excluded.add("copy_induce_bias")
             if not self.config.question_conditioned_start:
                 excluded |= {"answer_start_weight", "answer_start_bias"}
         return tuple(name for name in _CANONICAL_PARAMETER_ORDER if name not in excluded)
@@ -735,7 +763,7 @@ class SequenceWorkspacePrototype:
             if zero_read:
                 read = torch.zeros(int(self.config.slot_width), dtype=renderer_state.dtype)
             else:
-                read = self._content_read(state, detach=detach_workspace_read)
+                read = self._content_read(state, detach=detach_workspace_read, induce_byte=symbol)
             logits = (
                 torch.cat((renderer_state, read), dim=0) @ self._parameters["decoder"]
                 + self._parameters["decoder_bias"]
@@ -780,14 +808,23 @@ class SequenceWorkspacePrototype:
         return target
 
     def _head_weights(
-        self, state: WorkspaceState, *, detach: bool, persist_target: int | None = None
+        self,
+        state: WorkspaceState,
+        *,
+        detach: bool,
+        persist_target: int | None = None,
+        induce_byte: int | None = None,
     ) -> torch.Tensor:
         """Per-head softmax weights with shape (heads, entries).
 
         ``persist_target`` (v7): entry index receiving the trainable
         ``copy_persist_bias`` additive bonus in **every** head's scores before
-        the softmax; ``None`` derives it from the state's copy pointer.  With
-        the flag off the scores stay untouched, reproducing v6 bit-for-bit.
+        the softmax; ``None`` derives it from the state's copy pointer.
+        ``induce_byte`` (v8): trainable ``copy_induce_bias`` on **every** row
+        whose entry byte equals that symbol (emitted-byte literal matching;
+        boundary symbols never match UTF-8 prefix bytes, so the episode's first
+        step carries no bonus).  With both flags off the scores stay untouched,
+        reproducing v6 bit-for-bit.
         """
 
         key = state.workspace_key
@@ -801,17 +838,36 @@ class SequenceWorkspacePrototype:
         scores = scores / math.sqrt(float(self.config.slot_width))
         if persist_target is None:
             persist_target = self._persist_offset(state)
-        if persist_target is not None and self.config.copy_persistence:
+        persist_active = persist_target is not None and self.config.copy_persistence
+        induce_active = False
+        match_index: list[int] = []
+        if self.config.copy_induction and state.entry_bytes is not None:
+            # Induction reads the *continuation*: bonus goes to every row whose
+            # **preceding** byte equals the symbol fed into this step, so the
+            # readout/copy mass lands on the byte after the literal match.
+            previous = int(induce_byte) if induce_byte is not None else -1
+            match_index = [
+                j for j in range(1, len(state.entry_bytes)) if state.entry_bytes[j - 1] == previous
+            ]
+            induce_active = bool(match_index)
+        if persist_active or induce_active:
             scores = scores.clone()
+        if persist_active and persist_target is not None:
             scores[:, int(persist_target)] = (
                 scores[:, int(persist_target)] + self._parameters["copy_persist_bias"]
             )
+        if induce_active:
+            scores[:, match_index] = scores[:, match_index] + self._parameters[
+                "copy_induce_bias"
+            ]
         return torch.softmax(scores, dim=-1)
 
-    def _content_read(self, state: WorkspaceState, *, detach: bool) -> torch.Tensor:
+    def _content_read(
+        self, state: WorkspaceState, *, detach: bool, induce_byte: int | None = None
+    ) -> torch.Tensor:
         """Mean softmax content addressing over all heads (no positional pick)."""
 
-        weights = self._head_weights(state, detach=detach)
+        weights = self._head_weights(state, detach=detach, induce_byte=induce_byte)
         value = state.workspace_value
         if value is None:
             raise ValueError("content addressing requires the workspace arm")
@@ -819,14 +875,16 @@ class SequenceWorkspacePrototype:
             value = value.detach()
         return (weights @ value).mean(dim=0)
 
-    def addressing_weights(self, state: WorkspaceState, *, detach: bool) -> torch.Tensor:
+    def addressing_weights(
+        self, state: WorkspaceState, *, detach: bool, induce_byte: int | None = None
+    ) -> torch.Tensor:
         """Read-only introspection: addressing weights per evidence row.
 
         Returns a 1-D tensor for the single-head graphs v3-v5 and a
         ``(heads, entries)`` tensor for graph v6 multi-head readout.
         """
 
-        weights = self._head_weights(state, detach=detach)
+        weights = self._head_weights(state, detach=detach, induce_byte=induce_byte)
         return weights.squeeze(0) if int(self.config.readout_heads) == 1 else weights
 
     def _copy_distribution(self, state: WorkspaceState, weights: torch.Tensor) -> torch.Tensor:
@@ -888,7 +946,9 @@ class SequenceWorkspacePrototype:
         p_vocab = torch.softmax(vocab_logits, dim=0)
         if zero_read or new_state.entry_bytes is None:
             return new_state, p_vocab, None
-        weights = self.addressing_weights(new_state, detach=False)
+        weights = self.addressing_weights(
+            new_state, detach=False, induce_byte=int(previous_symbol)
+        )
         p_copy = self._copy_distribution(new_state, weights)
         renderer_state = new_state.renderer_state
         gate = torch.sigmoid(

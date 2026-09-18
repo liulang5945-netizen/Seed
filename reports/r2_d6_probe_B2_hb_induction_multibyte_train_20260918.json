@@ -1,0 +1,220 @@
+{
+  "format": "taiji-r2-d6-induction-probe-v1",
+  "version": 1,
+  "contract": "plans/reference/M5_R2_D6_INDUCTION_COPY_CONTRACT_FROZEN_20260918.md",
+  "graph_version": 8,
+  "arm": "B2",
+  "arm_label": "hb_induction_multibyte_train",
+  "fixture": "v2",
+  "copy_induction": true,
+  "lambda_copy_value": 1.0,
+  "microbatch_size": 8,
+  "corpus_digest": "182593f8deadf1b1b65c5f2ccbce3a7b7ee636ca8ea35ed00ccef3c5f84eebcc",
+  "split_read": "train",
+  "dev_read": false,
+  "final_read": false,
+  "seed": 20260917,
+  "epochs_frozen": 30,
+  "frozen_learning_rate": 0.01,
+  "train_episodes": 174,
+  "elapsed_seconds": 148.01599999994505,
+  "wall_cap_seconds": 1200,
+  "parameter_count": 96035,
+  "copy_induce_bias_end": 0.2241472750902176,
+  "preflight": {
+    "expected_logits_digest": "50e5def0402380669987617f97c00c0305053a0ac48a1c49620f342043824ec9",
+    "observed_logits_digest": "50e5def0402380669987617f97c00c0305053a0ac48a1c49620f342043824ec9",
+    "logits_match": true,
+    "continuation_matches": true,
+    "restored_version": 8,
+    "passed": true
+  },
+  "final": {
+    "M1_exact": {
+      "numerator": 167,
+      "denominator": 174,
+      "value": 0.9597701149425287
+    },
+    "M2_shape_macro": {
+      "value": 0.8571428571428571
+    },
+    "M3_content_exact": {
+      "numerator": 151,
+      "denominator": 158,
+      "value": 0.9556962025316456
+    },
+    "M4_flip_pair": {
+      "numerator": 8,
+      "denominator": 15,
+      "value": 0.5333333333333333
+    },
+    "M5_inv_pair": {
+      "numerator": 0,
+      "denominator": 0,
+      "value": 0.0
+    },
+    "per_group_exact": {
+      "fact": {
+        "correct": 48,
+        "denominator": 48,
+        "exact": 1.0
+      },
+      "negation": {
+        "correct": 48,
+        "denominator": 48,
+        "exact": 1.0
+      },
+      "unknown": {
+        "correct": 8,
+        "denominator": 8,
+        "exact": 1.0
+      },
+      "same_opening_fact": {
+        "correct": 48,
+        "denominator": 48,
+        "exact": 1.0
+      },
+      "same_opening_unknown": {
+        "correct": 8,
+        "denominator": 8,
+        "exact": 1.0
+      },
+      "combination_same": {
+        "correct": 7,
+        "denominator": 7,
+        "exact": 1.0
+      },
+      "combination_different": {
+        "correct": 0,
+        "denominator": 7,
+        "exact": 0.0
+      }
+    },
+    "content_per_group_exact": {
+      "fact": {
+        "correct": 48,
+        "denominator": 48,
+        "exact": 1.0
+      },
+      "negation": {
+        "correct": 48,
+        "denominator": 48,
+        "exact": 1.0
+      },
+      "same_opening_fact": {
+        "correct": 48,
+        "denominator": 48,
+        "exact": 1.0
+      },
+      "combination_same": {
+        "correct": 7,
+        "denominator": 7,
+        "exact": 1.0
+      },
+      "combination_different": {
+        "correct": 0,
+        "denominator": 7,
+        "exact": 0.0
+      }
+    },
+    "mean_sequence_loss": 0.008151299191514885,
+    "copy_supported_M1": {
+      "numerator": 144,
+      "denominator": 144,
+      "value": 1.0,
+      "shapes": [
+        "fact",
+        "negation",
+        "same_opening_fact"
+      ]
+    }
+  },
+  "per_shape_exact": {
+    "combination_different": 0.0,
+    "combination_same": 1.0,
+    "fact": 1.0,
+    "negation": 1.0,
+    "same_opening_fact": 1.0,
+    "same_opening_unknown": 1.0,
+    "unknown": 1.0
+  },
+  "value_length_groups": {
+    "multibyte": {
+      "numerator": 72,
+      "denominator": 72,
+      "value": 1.0
+    },
+    "singlebyte": {
+      "numerator": 72,
+      "denominator": 72,
+      "value": 1.0
+    }
+  },
+  "trajectory": [
+    {
+      "epoch": 0,
+      "mean_sequence_loss": 4.451861,
+      "M1_exact": 0.0,
+      "copy_supported_M1": 0.0
+    },
+    {
+      "epoch": 5,
+      "mean_sequence_loss": 0.018826,
+      "M1_exact": 0.9597701149425287,
+      "copy_supported_M1": 1.0
+    },
+    {
+      "epoch": 10,
+      "mean_sequence_loss": 0.009154,
+      "M1_exact": 0.9597701149425287,
+      "copy_supported_M1": 1.0
+    },
+    {
+      "epoch": 15,
+      "mean_sequence_loss": 0.008535,
+      "M1_exact": 0.9597701149425287,
+      "copy_supported_M1": 1.0
+    },
+    {
+      "epoch": 20,
+      "mean_sequence_loss": 0.008323,
+      "M1_exact": 0.9597701149425287,
+      "copy_supported_M1": 1.0
+    },
+    {
+      "epoch": 25,
+      "mean_sequence_loss": 0.008215,
+      "M1_exact": 0.9597701149425287,
+      "copy_supported_M1": 1.0
+    },
+    {
+      "epoch": 30,
+      "mean_sequence_loss": 0.008151,
+      "M1_exact": 0.9597701149425287,
+      "copy_supported_M1": 1.0
+    }
+  ],
+  "copy_value_readout_intact": {
+    "mean_copy_value_prob": 0.9999907653272888,
+    "positions": 648
+  },
+  "copy_value_readout_misbound": {
+    "mean_copy_value_prob": 0.05499475465234819,
+    "positions": 648
+  },
+  "gate": {
+    "copy_supported_m1_ge_0_90": true,
+    "copy_value_prob_ge_0_90": true,
+    "misbind_copy_prob_le_0_50": true,
+    "loss_increases_bounded_15pct": true,
+    "no_late_collapse_gt_0_10": true,
+    "preflight_passed": true,
+    "within_wall_cap": true,
+    "multibyte_m1_ge_0_90": true,
+    "singlebyte_m1_ge_0_90": true
+  },
+  "outcome": "passed",
+  "reading": "R2-D6 H-B induction-copy learnability probe (train-only); the bias sign is the mechanism-use readout; not a capability claim",
+  "growth_admitted": false,
+  "can_promote": false
+}
