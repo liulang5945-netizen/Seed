@@ -1,0 +1,109 @@
+{
+  "format": "r2-d1-measurement-v4",
+  "version": 4,
+  "variant": "v4",
+  "train_colors": [
+    "黄",
+    "青",
+    "紫",
+    "金",
+    "棕",
+    "褐",
+    "蓝",
+    "绿",
+    "靛",
+    "绛",
+    "黛",
+    "绯",
+    "琥珀",
+    "珊瑚",
+    "翡翠",
+    "玛瑙",
+    "琉璃",
+    "玳瑁",
+    "琅玕",
+    "磬玉",
+    "霓裳",
+    "缥缈",
+    "鎏金",
+    "霜缟"
+  ],
+  "generator": "scripts/training/build_taiji_r2_d1_measurement_fixture.py",
+  "fixture": "tests\\fixtures\\r2_d1_measurement_v4.jsonl",
+  "fixture_sha256": "46aeff639870a40be4b0004eca3a11b933baec5e5dd69f19bf0894f1241d968d",
+  "corpus_digest": "2a46993e933f9a4236cda1be748a14710b83757d872e083fc8cc0fa6cb2b1dd0",
+  "splits": {
+    "train": {
+      "episodes": 4862,
+      "unique_pairs": 4862,
+      "shapes": {
+        "fact": 1536,
+        "negation": 1536,
+        "unknown": 64,
+        "same_opening_fact": 1536,
+        "same_opening_unknown": 64,
+        "combination_same": 63,
+        "combination_different": 63
+      },
+      "pairs": {
+        "fact_flip_pairs": 64,
+        "combo_flip_pairs": 63,
+        "invariance_pairs": 0,
+        "order_seed": 209
+      }
+    },
+    "dev": {
+      "episodes": 98,
+      "unique_pairs": 98,
+      "shapes": {
+        "fact": 28,
+        "negation": 24,
+        "unknown": 6,
+        "same_opening_fact": 24,
+        "same_opening_unknown": 6,
+        "combination_same": 5,
+        "combination_different": 5
+      },
+      "pairs": {
+        "fact_flip_pairs": 6,
+        "combo_flip_pairs": 5,
+        "invariance_pairs": 4,
+        "order_seed": 209
+      }
+    },
+    "final": {
+      "episodes": 94,
+      "unique_pairs": 94,
+      "shapes": {
+        "fact": 24,
+        "negation": 24,
+        "unknown": 6,
+        "same_opening_fact": 24,
+        "same_opening_unknown": 6,
+        "combination_same": 5,
+        "combination_different": 5
+      },
+      "pairs": {
+        "fact_flip_pairs": 6,
+        "combo_flip_pairs": 5,
+        "invariance_pairs": 0,
+        "order_seed": 209
+      }
+    }
+  },
+  "checks": {
+    "unique_prefixes_within_split": true,
+    "prefixes_disjoint_across_splits": true,
+    "pairs_disjoint_across_splits": true,
+    "entities_disjoint_across_splits": true,
+    "all_shapes_in_every_split": true,
+    "unknown_once_per_object": true,
+    "flip_pair_counts": true,
+    "invariance_pairs_dev": true,
+    "pair_members_non_adjacent": true,
+    "pair_structure": true,
+    "reference_self_check": true
+  },
+  "outcome": "passed",
+  "failed_checks": []
+}

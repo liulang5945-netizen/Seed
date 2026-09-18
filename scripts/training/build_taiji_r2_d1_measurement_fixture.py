@@ -201,6 +201,124 @@ TRAIN_COLORS_V3: tuple[str, ...] = (
 )
 
 
+#: R2-D8 scale pack, second step ((alpha) of the matched-dev routing): pools doubled
+#: again -- 64 objects x 24 colours (12 single-byte + 12 six-byte).  Every character of
+#: every colour word outside the first three is absent from the frozen vocabulary
+#: **including the 64-object pool**, and v4 train value characters stay disjoint from
+#: the dev/final value characters.  Shapes/templates/pair/order rules are untouched.
+TRAIN_OBJECTS_V4: tuple[str, ...] = TRAIN_OBJECTS_V3 + (
+    "荒原",
+    "溪流",
+    "梯田",
+    "盐湖",
+    "沙丘",
+    "冻土",
+    "竹林",
+    "断崖",
+    "海沟",
+    "火山口",
+    "冰川谷",
+    "苔原",
+    "红树林",
+    "礁岩群",
+    "陨石坑",
+    "峡谷口",
+    "风口",
+    "冰碛",
+    "岩溶",
+    "台地",
+    "凹地",
+    "岬角",
+    "峭壁",
+    "深谷",
+    "湖心岛",
+    "沙洲",
+    "泥沼",
+    "苇塘",
+    "松林",
+    "桦林",
+    "枫林",
+    "石林",
+)
+TRAIN_COLORS_V4: tuple[str, ...] = (
+    "黄",
+    "青",
+    "紫",
+    "金",
+    "棕",
+    "褐",
+    "蓝",
+    "绿",
+    "靛",
+    "绛",
+    "黛",
+    "绯",
+    "琥珀",
+    "珊瑚",
+    "翡翠",
+    "玛瑙",
+    "琉璃",
+    "玳瑁",
+    "琅玕",
+    "磬玉",
+    "霓裳",
+    "缥缈",
+    "鎏金",
+    "霜缟",
+)
+
+
+def _assert_scale_pool_clean(
+    objects: tuple[str, ...],
+    colors: tuple[str, ...],
+    *,
+    first_new_color: int = 3,
+    label: str = "scale",
+) -> None:
+    """Pool gate shared by the scale-pack variants (v3 / v4).
+
+    Cheaper than the v2 gate: only the colours at index >= first_new_color are
+    required to use characters absent from the frozen vocabulary, which is what the
+    contract actually pins (the first entries are reused single-byte colours).
+    """
+
+    frozen_text: set[str] = set()
+    for split_pools in POOLS.values():
+        for group in split_pools.values():
+            frozen_text.update("".join(group))
+    frozen_text.update("".join(objects))
+    for template_map in TEMPLATES.values():
+        for split_variant in template_map.values():
+            frozen_text.update(split_variant["prefix"])
+            frozen_text.update(split_variant["answer"])
+    for clause in CLAUSES.values():
+        frozen_text.update(clause.values())
+    for distractor in DISTRACTOR.values():
+        frozen_text.update(distractor)
+    frozen_text -= set("{}")
+    for color in colors[first_new_color:]:
+        for char in color:
+            if char in frozen_text:
+                raise RuntimeError(
+                    f"{label} colour {color!r} reuses character {char!r} "
+                    "present in the frozen vocabulary"
+                )
+    dev_final_value_chars: set[str] = set()
+    for split in ("dev", "final"):
+        dev_final_value_chars.update("".join(POOLS[split]["colors"]))
+    overlap = set("".join(colors)) & dev_final_value_chars
+    if overlap:
+        raise RuntimeError(f"{label} train value characters overlap dev/final: {sorted(overlap)}")
+    if len(set(colors)) != len(colors):
+        raise RuntimeError(f"{label} colours contain duplicates")
+    if len(set(objects)) != len(objects):
+        raise RuntimeError(f"{label} objects contain duplicates")
+    dev_final_objects = set(POOLS["dev"]["objects"]) | set(POOLS["final"]["objects"])
+    reused = set(objects) & dev_final_objects
+    if reused:
+        raise RuntimeError(f"{label} objects reuse dev/final words: {sorted(reused)}")
+
+
 def _assert_v3_pool_clean() -> None:
     """v3 gates: new characters unseen; train values disjoint from dev/final values."""
 
@@ -607,10 +725,11 @@ def main() -> int:
     parser.add_argument("--report", type=Path, default=DATA_REPORT)
     parser.add_argument(
         "--variant",
-        choices=("v1", "v2", "v3"),
+        choices=("v1", "v2", "v3", "v4"),
         default="v1",
         help="v2 (R2-D5 H-E): train color pool with three 6-byte colors; "
         "v3 (R2-D8 H-S): train objects 8->32 and colors 6->12 (6 single + 6 six-byte); "
+        "v4 (R2-D8 alpha): pools doubled again -- 64 objects x 24 colors; "
         "dev/final rows are regenerated identically to v1 in every variant",
     )
     args = parser.parse_args()
@@ -624,6 +743,10 @@ def main() -> int:
         _assert_v3_pool_clean()
         colors_by_split["train"] = TRAIN_COLORS_V3
         objects_by_split["train"] = TRAIN_OBJECTS_V3
+    elif args.variant == "v4":
+        _assert_scale_pool_clean(TRAIN_OBJECTS_V4, TRAIN_COLORS_V4, first_new_color=12, label="v4")
+        colors_by_split["train"] = TRAIN_COLORS_V4
+        objects_by_split["train"] = TRAIN_OBJECTS_V4
 
     raw: dict[str, list[dict[str, Any]]] = {}
     metadata: dict[str, dict[str, Any]] = {}
@@ -669,8 +792,9 @@ def main() -> int:
             "v1": FIXTURE_FORMAT,
             "v2": "r2-d1-measurement-v2",
             "v3": "r2-d1-measurement-v3",
+            "v4": "r2-d1-measurement-v4",
         }[args.variant],
-        "version": {"v1": 1, "v2": 2, "v3": 3}[args.variant],
+        "version": {"v1": 1, "v2": 2, "v3": 3, "v4": 4}[args.variant],
         "variant": args.variant,
         "train_colors": list(colors_by_split.get("train", POOLS["train"]["colors"])),
         "generator": "scripts/training/build_taiji_r2_d1_measurement_fixture.py",
