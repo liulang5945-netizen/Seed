@@ -51,6 +51,9 @@ TRAINER = PROJECT_ROOT / "scripts" / "training" / "train_p3b_aligned.py"
 EVALUATOR = PROJECT_ROOT / "scripts" / "training" / "eval_taiji_cap0_baseline.py"
 CRITERIA = PROJECT_ROOT / "scripts" / "training" / "check_p3b_criteria.py"
 P3A_BASELINE = PROJECT_ROOT / "reports" / "taiji_cap0_baseline_constrained_20260915.json"
+#: The health sample taken from the *same* checkpoint as P3A_BASELINE (DEBT-I4).  Pairing is
+#: checked by the criteria checker, so this name has to stay tied to that report.
+P3A_HEALTH = PROJECT_ROOT / "reports" / "taiji_cap0_health_v3_seedbeta_20260918.json"
 REQUIRED_CHAIN = {"relax_legacy_guard": True, "constrained_decode": True}
 MECHANISED = ("C", "D", "E")
 PENDING_DIMS = ("B", "G")
@@ -227,6 +230,37 @@ def _evaluate(checkpoint: Path, stage_path: Path, baseline: dict[str, Any]) -> d
     return report
 
 
+def _evaluate_health(checkpoint: Path, health_path: Path) -> dict[str, Any]:
+    """07 §4.2's A/H boolean clause for one stage: re-run the health probe in a fresh process.
+
+    Cheap next to a CAP-0 stage (measured 17.2 s against 345.7 s), and without it J4's A/H branch
+    stays ``untested`` forever -- see DEBT-I4.  No reuse shortcut here: a health report is a
+    property of the file it was taken from, and re-running costs seconds.
+    """
+
+    health_path.parent.mkdir(parents=True, exist_ok=True)
+    command = [
+        sys.executable,
+        "-X",
+        "utf8",
+        "-u",
+        str(EVALUATOR),
+        "--health",
+        "--checkpoint",
+        str(checkpoint),
+        "--health-report",
+        str(health_path),
+    ]
+    started = time.perf_counter()
+    completed = subprocess.run(command, capture_output=True, text=True, check=False)
+    if completed.returncode != 0 or not health_path.exists():
+        tail = (completed.stderr or completed.stdout or "")[-500:]
+        raise SystemExit(f"stage health probe failed (rc={completed.returncode}): {tail}")
+    health = _load(health_path)
+    health["_health_seconds"] = round(time.perf_counter() - started, 1)
+    return health
+
+
 #: A stage is only comparable with the P3a baseline if the frozen evaluation surface is the
 #: same surface -- not merely "the same script".  Verified equal on the plumbing smoke
 #: (same manifest, format, frozen date, mode, and C/D/E item order; only ``checkpoint`` differs).
@@ -252,6 +286,11 @@ STOP_DEFINITIONS: dict[str, Any] = {
         "an existing stage report is re-read only after _reuse_defects clears it "
         "(evaluation surface, chain, trained_during_eval); a defective one is re-scored if its "
         "snapshot survives and the run refuses to continue if it does not"
+    ),
+    "health_per_stage": (
+        "every stage also re-runs `--health` (measured 17.2 s against a 345.7 s CAP-0 stage) so "
+        "J4's A/H boolean clause is judged rather than left untested (DEBT-I4); the criteria call "
+        "pairs each health report with its own evaluation report and refuses on mismatch"
     ),
     "comparability": (
         "a stage must reproduce the P3a evaluation surface exactly ("
@@ -441,8 +480,13 @@ def run(
             frozen, tick = _snapshot(checkpoint, requested)
             stage_path = stage_dir / f"cap0_tick_{tick}.json"
             scored = _evaluate(frozen, stage_path, baseline)
+            health_path = stage_dir / f"health_tick_{tick}.json"
+            health = _evaluate_health(frozen, health_path)
             row = _stage_row(tick, scored, baseline, stage_path.name)
             row["snapshot"] = frozen.name
+            row["health_report"] = health_path.name
+            row["health_checks"] = health["dimensions"]["A"]["checks"]
+            row["health_seconds"] = health.get("_health_seconds")
             row["tick_corrected_from"] = None if tick == requested else requested
             row["eval_surface_drift"] = _surface_drift(scored, baseline)
             record["stages"].append(row)
@@ -487,6 +531,10 @@ def run(
                 str(P3A_BASELINE),
                 "--candidate",
                 str(stage_dir / record["stages"][-1]["report"]),
+                "--baseline-health",
+                str(P3A_HEALTH),
+                "--candidate-health",
+                str(stage_dir / record["stages"][-1]["health_report"]),
                 "--output",
                 str(criteria_report),
             ],

@@ -748,6 +748,85 @@ def test_criteria_report_paths_are_repo_relative(tmp_path, criteria) -> None:
 
 
 # --------------------------------------------------------------------------- #
+# Per-stage health probe (DEBT-I4): the A/H branch has to be judged, not assumed
+# --------------------------------------------------------------------------- #
+
+
+def test_the_p3a_health_sample_pairs_with_the_p3a_baseline(campaign: Any) -> None:
+    """判据按"健康报告 ↔ 它旁边那份评价报告"配对；这两份必须指同一个检查点。
+
+    否则每次真实战役的 A/H 支都会静默变成 ``source_mismatch`` —— 而 mismatch 不算通过，
+    也就是说整场战役的 J4 会一直缺这一支而没人注意到。
+    """
+
+    baseline = json.loads(
+        (REPO / "reports" / "taiji_cap0_baseline_constrained_20260915.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    health = json.loads(campaign.P3A_HEALTH.read_text(encoding="utf-8"))
+    assert health["checkpoint"] == baseline["checkpoint"]
+    assert health["dimensions"]["A"]["checks"]["A01_new_process_load"] is True
+
+
+class _HealthRun:
+    def __init__(self, returncode: int = 0, payload: dict | None = None) -> None:
+        self.calls: list[list[str]] = []
+        self.returncode = returncode
+        self.payload = payload
+
+    def run(self, command: list[str], **_kwargs: Any) -> Any:
+        self.calls.append(list(command))
+        if self.returncode == 0 and self.payload is not None:
+            target = Path(command[command.index("--health-report") + 1])
+            target.write_text(json.dumps(self.payload, ensure_ascii=False), encoding="utf-8")
+
+        class _Done:
+            stdout = ""
+            stderr = "child died"
+
+        _Done.returncode = self.returncode
+        return _Done()
+
+
+def test_the_health_probe_runs_a_fresh_process_and_refuses_to_hide_failure(
+    tmp_path, campaign: Any, monkeypatch
+) -> None:
+    """正向：命令形状对（`--health` + 显式 health-report），返回值带上耗时供阶段行记录。
+
+    反向：子进程非零退出必须 SystemExit —— 战役不能在没有 A/H 证据的情况下继续并假装判过。
+    """
+
+    payload = {
+        "format": "taiji-cap0-health-v1",
+        "checkpoint": "checkpoints\\p3b\\snapshots\\arm_tick_17000000.pt",
+        "trained_during_eval": False,
+        "dimensions": {
+            "A": {"checks": {"A01_new_process_load": True}},
+            "H": {"stability_runs": 30},
+        },
+    }
+    snapshot = tmp_path / "arm_tick_17000000.pt"
+    snapshot.write_bytes(b"unused")
+    health_path = tmp_path / "health_tick_17000000.json"
+
+    good = _HealthRun(0, payload)
+    monkeypatch.setattr(campaign, "subprocess", good)
+    result = campaign._evaluate_health(snapshot, health_path)
+    assert result["_health_seconds"] >= 0
+    assert result["dimensions"]["H"]["stability_runs"] == 30
+    assert good.calls[0][good.calls[0].index("--health") + 1] == "--checkpoint"
+    assert "--health-report" in good.calls[0]
+    assert good.calls[0][good.calls[0].index("--checkpoint") + 1] == str(snapshot)
+
+    broken = _HealthRun(1, None)
+    monkeypatch.setattr(campaign, "subprocess", broken)
+    with pytest.raises(SystemExit) as caught:
+        campaign._evaluate_health(snapshot, tmp_path / "health_tick_18000000.json")
+    assert "stage health probe failed" in str(caught.value)
+
+
+# --------------------------------------------------------------------------- #
 # Waiting is a reader.  Its only judgement is liveness, never capability.
 # --------------------------------------------------------------------------- #
 

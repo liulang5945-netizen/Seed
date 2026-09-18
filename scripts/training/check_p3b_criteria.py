@@ -89,16 +89,24 @@ MIN_STABILITY_RUNS = 30
 
 
 def judge_health(
-    baseline: dict[str, Any] | None, candidate: dict[str, Any] | None
+    baseline_health: dict[str, Any] | None,
+    candidate_health: dict[str, Any] | None,
+    baseline: dict[str, Any],
+    candidate: dict[str, Any],
 ) -> dict[str, Any]:
     """J4's A/H clause, judged from the two ``--health`` reports (DEBT-I4).
+
+    The pairing that matters is **health report ↔ the evaluation report beside it**, not
+    health ↔ health: a campaign legitimately compares one model at two ticks, so requiring the two
+    health reports to name the same checkpoint would reject every real run -- while failing to catch
+    the mistake that is actually easy to make here, since the sealed health reports on record were
+    taken from ``seed_corpus.pt`` while the CAP-0 evaluation reports come from ``seed_beta.pt``.
 
     ``status`` is one of:
 
     * ``not_supplied`` -- no health reports given. **Never** counted as a pass: it is listed in the
       result's top-level ``untested_clauses`` so a ``verdict: pass`` cannot be read as "A/H held";
-    * ``source_mismatch`` -- the health report was taken from a different checkpoint than the one it
-      would be paired with. Refusing to judge beats silently comparing two different models;
+    * ``source_mismatch`` -- a health report names a different checkpoint than its own report;
     * ``pass`` / ``fail`` -- the boolean clause of 07 §4.2, judged item by item.
 
     H's *thresholds* (response time, memory) stay untested no matter what this returns: §4.2 requires
@@ -106,31 +114,35 @@ def judge_health(
     "不可留空就宣布通过". The health runner reports ``gate_status`` verbatim, which is echoed here.
     """
 
-    if baseline is None or candidate is None:
+    if baseline_health is None or candidate_health is None:
         return {
             "status": "not_supplied",
             "reason": "未提供 --baseline-health / --candidate-health（DEBT-I4）",
             "does_not_count_as_pass": True,
         }
-    if baseline.get("checkpoint") != candidate.get("checkpoint"):
-        return {
-            "status": "source_mismatch",
-            "reason": (
-                f"health reports come from different checkpoints: "
-                f"{baseline.get('checkpoint')!r} vs {candidate.get('checkpoint')!r}"
-            ),
-            "does_not_count_as_pass": True,
-        }
+    for side, health, report in (
+        ("baseline", baseline_health, baseline),
+        ("candidate", candidate_health, candidate),
+    ):
+        if health.get("checkpoint") != report.get("checkpoint"):
+            return {
+                "status": "source_mismatch",
+                "reason": (
+                    f"{side} health report is from {health.get('checkpoint')!r} but the {side} "
+                    f"evaluation report is from {report.get('checkpoint')!r}"
+                ),
+                "does_not_count_as_pass": True,
+            }
 
-    base_checks = baseline["dimensions"]["A"]["checks"]
-    cand_checks = candidate["dimensions"]["A"]["checks"]
+    base_checks = baseline_health["dimensions"]["A"]["checks"]
+    cand_checks = candidate_health["dimensions"]["A"]["checks"]
     not_passing = [key for key in A_HEALTH_CHECKS if cand_checks.get(key) is not True]
     regressed = [
         key
         for key in A_HEALTH_CHECKS
         if base_checks.get(key) is True and cand_checks.get(key) is False
     ]
-    stability = candidate["dimensions"]["H"]
+    stability = candidate_health["dimensions"]["H"]
     runs = int(stability.get("stability_runs") or 0)
     crashes = int(stability.get("stability_crashes") or 0)
     stable = runs >= MIN_STABILITY_RUNS and crashes == 0
@@ -229,6 +241,8 @@ def check(
     health = judge_health(
         _load(baseline_health_path) if baseline_health_path is not None else None,
         _load(candidate_health_path) if candidate_health_path is not None else None,
+        baseline,
+        candidate,
     )
     #: 未提供健康报告时 J4 的 A/H 支仍未判 —— 不因此算通过，而是显式列在 untested_clauses 里。
     untested = []

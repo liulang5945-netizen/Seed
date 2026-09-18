@@ -866,16 +866,25 @@ def test_absent_or_mismatched_health_reports_are_never_counted_as_pass(tmp_path)
     from scripts.training import check_p3b_criteria as checker
 
     base = _health()
-    assert checker.judge_health(None, None) == {
+    report = json.loads(CONSTRAINED_REPORT.read_text(encoding="utf-8"))
+    assert checker.judge_health(None, None, report, report) == {
         "status": "not_supplied",
         "reason": "未提供 --baseline-health / --candidate-health（DEBT-I4）",
         "does_not_count_as_pass": True,
     }
-    mismatch = checker.judge_health(base, _health(checkpoint="checkpoints\\seed_corpus.pt"))
+
+    #: 这就是今天盘上真实存在的错配：唯一一份 09-15 健康报告来自 seed_corpus.pt，
+    #: 而 CAP-0 评价报告来自 seed_beta.pt。旧写法（比较两份健康报告彼此）会放它过去。
+    mispaired = _health(checkpoint="checkpoints\\seed_corpus.pt")
+    mismatch = checker.judge_health(mispaired, base, report, report)
     assert mismatch["status"] == "source_mismatch"
+    assert "baseline health report" in mismatch["reason"]
     assert "seed_corpus.pt" in mismatch["reason"]
-    assert checker.judge_health(base, _health(runs=29))["status"] == "fail"
-    assert checker.judge_health(base, _health(crashes=1))["status"] == "fail"
+    other_report = json.loads(HEALTH_REPORT.read_text(encoding="utf-8"))
+    assert checker.judge_health(base, base, other_report, report)["status"] == "source_mismatch"
+
+    assert checker.judge_health(base, _health(runs=29), report, report)["status"] == "fail"
+    assert checker.judge_health(base, _health(crashes=1), report, report)["status"] == "fail"
 
     out = tmp_path / "verdict.json"
     checker.main(["--baseline", str(CONSTRAINED_REPORT), "--output", str(out)])

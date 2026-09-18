@@ -75,6 +75,20 @@
   **仍开的两半**：① H 的响应/内存**阈值**门按 §4.2 要求"须按目标设备预检标定后冻结"，
   本 runner 不设阈值 ⇒ 那半支永久 `untested` 直到有人标定（是用户/CI 的设备决策，不是我能代做的）；
   ② F 维仍只有"合同引用"，没有任何执行 ⇒ J4/07 §5 里 F 那一支依旧不能声称判过。
+- **DEBT-I4 的第二半：配对守卫写反了，已改；并接进战役驱动（同日第六批续）**：
+  第一版 `judge_health` 比较的是"两份健康报告彼此的 checkpoint 是否相同"。这句**方向双重错误**：
+  真实战役本来就是同一模型的两个 tick ⇒ 会把每一次合法比较都拒掉；
+  而它**没检查**真正该检查的东西 —— 健康报告与它旁边那份评价报告是否同一检查点。
+  今天盘上就是这种错配的活例：唯一一份 09-15 健康报告来自 `seed_corpus.pt`，
+  而 CAP-0 评价报告来自 `seed_beta.pt`（旧守卫会放它过去）。
+  改成逐侧配对（`baseline` 与 `candidate` 各比一次），并补一支测试专门钉"用今天那两份真实文件去配，
+  必须报 mismatch"。另加 `test_the_p3a_health_sample_pairs_with_the_p3a_baseline` 钉住
+  `P3A_HEALTH` 与 `P3A_BASELINE` 同检查点 —— 换掉任一份都会红，而不是让每场战役的 A/H 支
+  静默退化成 `source_mismatch`（mismatch 不算通过，那等于整支 J4 白缺着）。
+  驱动侧：每阶段多跑一次 `--health`（实测 17.2 s，对照 CAP-0 阶段 345.7 s），
+  阶段行记 `health_report / health_checks / health_seconds`，criteria 调用带两份健康路径；
+  子进程非零退出 ⇒ `SystemExit("stage health probe failed…")`，不允许"没证据也继续"。
+  实测：本批 5 个合同文件合跑 `114 passed in 2.89 s`；ruff/black 干净。
 - **DEBT-I5（只登记，不处置）契约测试用字面行号锚定源码位置 ⇒ 源码一漂移，断言就失真而测试仍绿**。
   `scripts/training/eval_taiji_cap0_inventory.py:350-356` 把 `"line 2726-2732"`（以及 `"line 2611"`）
   作为**硬编码字符串**写进诊断文本，`tests/taiji_native/test_cap0_inventory_contract.py:102`
