@@ -11,7 +11,7 @@
     "reports 'untested' rather than 0 or pass for unmeasured dimensions"
   ],
   "record": {
-    "commit": "50b00be70e8ee480c5a541c44c252478d15c651f",
+    "commit": "85f4bd083918643489232fd595d7a2050dff9145",
     "default_checkpoint": "E:\\Seed\\checkpoints\\seed_corpus.pt"
   },
   "checkpoint_inventory": [
@@ -69,13 +69,13 @@
     },
     {
       "filename": "seed_corpus.pt",
-      "bytes": 43223183,
-      "modified_utc": "2026-09-14T19:36:10Z",
+      "bytes": 43290771,
+      "modified_utc": "2026-09-18T04:35:33Z",
       "is_default": true,
       "readable": true,
-      "tick": 2,
+      "tick": 36,
       "trainer": "api_seed_runtime",
-      "saved_at_utc": "2026-09-14T19:36:10Z",
+      "saved_at_utc": "2026-09-18T04:35:33Z",
       "has_metadata": true,
       "model_format": "taiji-native-v10",
       "has_taiji_adapter_block": true
@@ -99,15 +99,15 @@
     "default_checkpoint": "seed_corpus.pt",
     "load_ok": true,
     "load_error": null,
-    "default_tick": 2,
+    "default_tick": 36,
     "most_trained_checkpoint": "seed_beta.pt",
     "most_trained_tick": 16000000,
     "wiring_defect": true,
-    "wiring_defect_statement": "the default entry loads seed_corpus.pt (tick=2) while seed_beta.pt records tick=16000000; the trained state is not what the default path serves",
+    "wiring_defect_statement": "the default entry loads seed_corpus.pt (tick=36) while seed_beta.pt records tick=16000000; the trained state is not what the default path serves",
     "default_model_format": "taiji-native-v10",
     "most_trained_model_format": "taiji-native-v8",
     "stranded_is_legacy_format": true,
-    "stranded_defect_diagnosis": "restore() already supports legacy formats (taiji/model.py LEGACY_CHECKPOINT_FORMATS = v8/v9) and guards other payloads with 'is None and not is_legacy_checkpoint' (e.g. line 2611 for the predictive context, with a documented M2-2h migration), but the identity-organ branch at line 2726-2732 raises for ANY checkpoint whose payload is absent -- including v8 files that predate the organ. The fix follows an existing in-file pattern; whether to apply it is a refuse-vs-migrate policy decision, not a code question",
+    "stranded_defect_diagnosis": "restore() supports the legacy formats it declares (LEGACY_CHECKPOINT_FORMATS = v8/v9). The identity-organ branch now applies the same 'payload absent in a legacy format' migration the predictive context already used (M2-2h -> M2-2i), so a v8 file that predates the organ loads and keeps its freshly initialised organ. The remaining refusal is 'enabled identity organ checkpoint payload is missing', which now applies only to current-format checkpoints; organ lineage validation is unchanged and still fails closed on a payload from a different core",
     "missing_checkpoint_rejected": true,
     "missing_checkpoint_error": "FileNotFoundError: [Errno 2] No such file or directory: 'E:\\\\Seed\\\\checkpoints\\\\.cap0-does-not-exist.pt'",
     "fresh_process": true,
@@ -119,7 +119,7 @@
       "probed": true,
       "load_ok": true,
       "load_error": null,
-      "tick": 2,
+      "tick": 36,
       "chat_organ_backend": "native-readable",
       "turns_answered": 7,
       "turns_errored": 0,
@@ -133,18 +133,18 @@
     },
     "most_trained_entry": {
       "probed": true,
-      "load_ok": false,
-      "load_error": "ValueError: enabled identity organ checkpoint payload is missing",
-      "tick": null,
-      "chat_organ_backend": null,
-      "turns_answered": 0,
+      "load_ok": true,
+      "load_error": null,
+      "tick": 16000000,
+      "chat_organ_backend": "native-readable",
+      "turns_answered": 7,
       "turns_errored": 0,
-      "total_output_bytes": 0,
+      "total_output_bytes": 1015,
       "template_signature": {
-        "turns_considered": 0,
-        "distinct_signatures": 0,
-        "templated": false,
-        "signature": null
+        "turns_considered": 7,
+        "distinct_signatures": 1,
+        "templated": true,
+        "signature": "我已收到你的问题：“<PROMPT>”。当前原生语言表层正在形成稳定表达。"
       }
     },
     "default_turns": [
@@ -153,52 +153,102 @@
         "prompt": "请用一句话说明你是谁、由什么运行。",
         "raw_output": "我已收到你的问题：“请用一句话说明你是谁、由什么运行。”。当前原生语言表层正在形成稳定表达。",
         "output_bytes": 138,
-        "seconds": 0.442
+        "seconds": 0.48
       },
       {
         "label": "greeting",
         "prompt": "你好。",
         "raw_output": "我已收到你的问题：“你好。”。当前原生语言表层正在形成稳定表达。",
         "output_bytes": 96,
-        "seconds": 0.408
+        "seconds": 0.428
       },
       {
         "label": "knowledge_short",
         "prompt": "水的沸点在标准大气压下是多少摄氏度？",
         "raw_output": "我已收到你的问题：“水的沸点在标准大气压下是多少摄氏度？”。当前原生语言表层正在形成稳定表达。",
         "output_bytes": 141,
-        "seconds": 0.914
+        "seconds": 0.996
       },
       {
         "label": "context_a",
         "prompt": "请记住这个名称：项目内部代号是「星桥」。",
         "raw_output": "我已收到你的问题：“请记住这个名称：项目内部代号是「星桥」。”。当前原生语言表层正在形成稳定表达。",
         "output_bytes": 147,
-        "seconds": 1.508
+        "seconds": 1.522
       },
       {
         "label": "context_b",
         "prompt": "我刚才说的内部代号是什么？",
         "raw_output": "我已收到你的问题：“我刚才说的内部代号是什么？”。当前原生语言表层正在形成稳定表达。",
         "output_bytes": 126,
-        "seconds": 1.711
+        "seconds": 1.88
       },
       {
         "label": "unknown_boundary",
         "prompt": "请举一个你确实无法回答的问题，并说明为什么无法回答。",
         "raw_output": "我已收到你的问题：“请举一个你确实无法回答的问题，并说明为什么无法回答。”。当前原生语言表层正在形成稳定表达。",
         "output_bytes": 165,
-        "seconds": 2.063
+        "seconds": 2.284
       },
       {
         "label": "material_qa",
         "prompt": "材料：星桥项目在 2026 年 9 月完成 B2 选择门，结果是负结果。问题：B2 的结果是什么？",
         "raw_output": "我已收到你的问题：“材料：星桥项目在 2026 年 9 月完成 B2 选择门，结果是负结果。问题：B2 的结果是什么？”。当前原生语言表层正在形成稳定表达。",
         "output_bytes": 202,
-        "seconds": 2.374
+        "seconds": 2.779
       }
     ],
-    "most_trained_turns": null
+    "most_trained_turns": [
+      {
+        "label": "identity",
+        "prompt": "请用一句话说明你是谁、由什么运行。",
+        "raw_output": "我已收到你的问题：“请用一句话说明你是谁、由什么运行。”。当前原生语言表层正在形成稳定表达。",
+        "output_bytes": 138,
+        "seconds": 0.641
+      },
+      {
+        "label": "greeting",
+        "prompt": "你好。",
+        "raw_output": "我已收到你的问题：“你好。”。当前原生语言表层正在形成稳定表达。",
+        "output_bytes": 96,
+        "seconds": 0.986
+      },
+      {
+        "label": "knowledge_short",
+        "prompt": "水的沸点在标准大气压下是多少摄氏度？",
+        "raw_output": "我已收到你的问题：“水的沸点在标准大气压下是多少摄氏度？”。当前原生语言表层正在形成稳定表达。",
+        "output_bytes": 141,
+        "seconds": 1.41
+      },
+      {
+        "label": "context_a",
+        "prompt": "请记住这个名称：项目内部代号是「星桥」。",
+        "raw_output": "我已收到你的问题：“请记住这个名称：项目内部代号是「星桥」。”。当前原生语言表层正在形成稳定表达。",
+        "output_bytes": 147,
+        "seconds": 1.924
+      },
+      {
+        "label": "context_b",
+        "prompt": "我刚才说的内部代号是什么？",
+        "raw_output": "我已收到你的问题：“我刚才说的内部代号是什么？”。当前原生语言表层正在形成稳定表达。",
+        "output_bytes": 126,
+        "seconds": 2.335
+      },
+      {
+        "label": "unknown_boundary",
+        "prompt": "请举一个你确实无法回答的问题，并说明为什么无法回答。",
+        "raw_output": "我已收到你的问题：“请举一个你确实无法回答的问题，并说明为什么无法回答。”。当前原生语言表层正在形成稳定表达。",
+        "output_bytes": 165,
+        "seconds": 2.877
+      },
+      {
+        "label": "material_qa",
+        "prompt": "材料：星桥项目在 2026 年 9 月完成 B2 选择门，结果是负结果。问题：B2 的结果是什么？",
+        "raw_output": "我已收到你的问题：“材料：星桥项目在 2026 年 9 月完成 B2 选择门，结果是负结果。问题：B2 的结果是什么？”。当前原生语言表层正在形成稳定表达。",
+        "output_bytes": 202,
+        "seconds": 3.513
+      }
+    ]
   },
   "dimensions": {
     "A_model_reality": "measured (load chain, mode, missing-checkpoint rejection, tick provenance)",
@@ -211,7 +261,7 @@
     "H_performance_stability": "untested (no calibrated caps yet)",
     "I_continual_adaptation": "untested (not required for a first L3 delivery)"
   },
-  "gap_statement": "Three facts, kept apart. (1) WIRING: the default entry loads seed_corpus.pt at tick=2, a freshly initialised substrate saved by the API runtime, not a trained state. (2) STRANDED STATE: the most trained checkpoint on record (seed_beta.pt tick=16000000) cannot be loaded at all through this chain -- ValueError: enabled identity organ checkpoint payload is missing -- and the older checkpoints carry no current-format component block, so no trained state is currently reachable from the product entry. (3) CAPABILITY: on the diagnostic probe the default chain emits a fixed acknowledgement template that echoes the prompt (one signature across all turns), which per 07 section 3.B does not count as content ability. The honest reading is therefore: a wiring defect and a stranded-state defect are CONFIRMED, while whole-model conversational ability remains UNTESTED rather than failed, because no trained state could be served.",
+  "gap_statement": "Three facts, kept apart. (1) WIRING: the default entry loads seed_corpus.pt at tick=36, a freshly initialised substrate saved by the API runtime, not a trained state. (2) STRANDED STATE: the most trained checkpoint on record (seed_beta.pt tick=16000000) cannot be loaded at all through this chain -- None -- and the older checkpoints carry no current-format component block, so no trained state is currently reachable from the product entry. (3) CAPABILITY: on the diagnostic probe the default chain emits a fixed acknowledgement template that echoes the prompt (one signature across all turns), which per 07 section 3.B does not count as content ability. The honest reading is therefore: a wiring defect and a stranded-state defect are CONFIRMED, while whole-model conversational ability remains UNTESTED rather than failed, because no trained state could be served.",
   "next_decision": "two things, in order: (a) decide the correct default checkpoint / loading policy (a defect fix, not a research question); (b) freeze the CAP evaluation set (07 section 4.1: B/C/D/E 20 items each, G >= 20, A/H deterministic, F via the existing capability contracts) BEFORE any candidate score is seen, so the first scored B-H baseline is legitimate",
-  "elapsed_seconds": 14.041
+  "elapsed_seconds": 28.138
 }

@@ -10,6 +10,8 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+import pytest
+
 from scripts.training.eval_taiji_cap0_baseline import (
     DRIVEN_DIMENSIONS,
     NOT_EXECUTED_DIMENSIONS,
@@ -368,7 +370,78 @@ def test_p1_section_10_records_the_constrained_chain_baseline() -> None:
     text = P1_DIAGNOSIS.read_text(encoding="utf-8")
     for token in ("§10", "0.0625", "0.15", "必要条件", "P3b", "长度截断会被误读成内容问题"):
         assert token in text, token
-    assert "install_constrained_decode" in P1_PROBE.read_text(encoding="utf-8")
+    # 这里原来只断言 "install_constrained_decode" 出现在探针源码里 —— 一支纯子串 grep。
+    # 它在该链路实际已经罢工（锚点被 R2 的 generate 改动打掉）时仍旧是绿的。
+    # 真实检查在下一支测试里：当场安装，而不是在文件里找一个名字。
+
+
+def test_the_constrained_decode_patch_installs_against_the_current_model() -> None:
+    """Live guard: the CAP-0 chain must be *runnable*, not merely mentioned in source.
+
+    The wrapper replaces ``Taiji.generate`` in-process.  It used to anchor on a line inside that
+    method, and when R2 changed the implementation the whole language-capability instrument stopped
+    working while every contract test stayed green -- because the only "check" was a substring grep.
+    """
+
+    from scripts.training.probe_taiji_cap0_byte_output import install_constrained_decode
+    from taiji.adapter import Taiji
+
+    original = Taiji.generate
+    try:
+        installed = install_constrained_decode()
+        assert installed["patched"] is True
+        assert installed["dependencies_verified"], "must pin the interface it consumes"
+        assert "use_memory" in installed["ignored_kwargs"], "what it cannot honour is disclosed"
+        assert Taiji.generate is not original, "the arm must actually be in place"
+
+        patched = Taiji.generate
+        for kwargs in ({"response_start": True}, {"response_phase": True}):
+            with pytest.raises(RuntimeError, match="不支持"):
+                patched(object.__new__(Taiji), b"x", 1, **kwargs)
+        with pytest.raises(RuntimeError, match="boundary"):
+            patched(object.__new__(Taiji), b"x", 1, boundary=object(), authorization=object())
+    finally:
+        Taiji.generate = original
+    assert Taiji.generate is original, "the patch must not leak into other tests"
+
+
+REPRO_REPORT = PROJECT_ROOT / "reports" / "taiji_cap0_baseline_repro_20260918.json"
+
+
+@pytest.mark.skipif(
+    not REPRO_REPORT.exists(), reason="post-migration reproduction run is not on disk"
+)
+def test_the_migrated_loader_reproduces_the_sealed_p3a_baseline_item_by_item() -> None:
+    """M2-2i changed *access*, not behaviour -- and that has to be proven, not assumed.
+
+    The migration lets ``Taiji.restore`` take the trained v8 file without the in-process guard patch.
+    That is only benign if the thing now loading is the same model that was measured before, so the
+    frozen P3a chain was re-run and compared item by item against the sealed baseline: same eval
+    surface, same item order, same scores, byte-identical outputs.  Anything that changes behaviour
+    while "still loading fine" turns this red.
+    """
+
+    sealed = json.loads(CONSTRAINED_REPORT.read_text(encoding="utf-8"))
+    repro = json.loads(REPRO_REPORT.read_text(encoding="utf-8"))
+    assert (
+        repro["chain"]
+        == sealed["chain"]
+        == {
+            "relax_legacy_guard": True,
+            "constrained_decode": True,
+        }
+    )
+    for field in ("eval_set", "eval_set_format", "eval_set_frozen_on", "declared_mode"):
+        assert repro[field] == sealed[field], field
+    for dim in ("B", "C", "D", "E", "G"):
+        left, right = sealed["dimensions"][dim], repro["dimensions"][dim]
+        assert [i["id"] for i in left["items"]] == [i["id"] for i in right["items"]], dim
+        assert [i.get("score") for i in left["items"]] == [
+            i.get("score") for i in right["items"]
+        ], dim
+        assert [i.get("raw_last_output") for i in left["items"]] == [
+            i.get("raw_last_output") for i in right["items"]
+        ], f"{dim}: the migrated loader must not change what the model emits"
 
 
 def test_constrained_chain_report_discloses_its_chain_and_scores() -> None:

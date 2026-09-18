@@ -103,9 +103,12 @@ def _constrained_generate(model: object, prompt: bytes, length: int) -> bytes:
     return bytes(out)
 
 
-#: 包装 ``Taiji.generate`` 时必须仍能在源码里看到这行 —— 否则说明实现已变，
-#: 拒绝用过期副本继续（fail-closed，避免静默降级）。
-_GENERATE_ANCHOR = "next_symbol = step.predicted_symbol"
+#: 包装真正**消费**的接口，而不是 ``Taiji.generate`` 的内部某一行。
+#: 旧锚点 ``next_symbol = step.predicted_symbol`` 属于 generate 的实现细节：R2 改写 generate
+#: （新增 response_start/response_phase）后它就不存在了，于是整条 CAP-0 约束解码链路罢工，
+#: 而所有契约测试仍旧是绿的。锚点必须钉在"这个替换依赖什么"上：
+#: ``reset_dynamics`` + ``observe(learn=False)`` 产出带 ``probabilities`` 的 step。
+_PATCH_DEPENDENCIES = ("def reset_dynamics(", "def observe(", "probabilities")
 
 
 def install_constrained_decode() -> dict[str, object]:
@@ -119,10 +122,10 @@ def install_constrained_decode() -> dict[str, object]:
     from taiji.adapter import Taiji
 
     original = Taiji.generate
-    if _GENERATE_ANCHOR not in inspect.getsource(original):
-        raise RuntimeError(
-            f"Taiji.generate 的实现已变（缺少锚点 {_GENERATE_ANCHOR!r}）；拒绝用过期副本继续"
-        )
+    source = inspect.getsource(Taiji)
+    missing = [token for token in _PATCH_DEPENDENCIES if token not in source]
+    if missing:
+        raise RuntimeError(f"Taiji 不再提供约束解码包装所依赖的接口 {missing}；拒绝用过期副本继续")
 
     @functools.wraps(original)
     def patched(
@@ -134,11 +137,18 @@ def install_constrained_decode() -> dict[str, object]:
         sample: bool = False,
         reset: bool = True,
         use_memory: bool = False,
+        response_start: bool = False,
+        response_phase: bool = False,
         boundary: object = None,
         authorization: object = None,
     ) -> bytes:
         if boundary is not None or authorization is not None:
             raise RuntimeError("约束解码包装不支持带 boundary/authorization 的调用")
+        if response_start or response_phase:
+            raise RuntimeError(
+                "约束解码包装不支持 response_start / response_phase 读出"
+                "（会静默丢掉 R2 的响应通道语义）"
+            )
         # 注意：``boundary_symbol`` 是符号空间的特殊值（不保证落在 0..255 内），
         # 不能直接 ``bytes([...])``；"遇 boundary 即停"已由 _constrained_generate 处理。
         raw = _constrained_generate(self, bytes(prompt), int(length))
@@ -156,6 +166,8 @@ def install_constrained_decode() -> dict[str, object]:
     return {
         "patched": True,
         "anchor_present": True,
+        "dependencies_verified": list(_PATCH_DEPENDENCIES),
+        "ignored_kwargs": ["stop_at_boundary", "sample", "reset", "use_memory"],
         "original": f"{original.__module__}.{original.__qualname__}",
     }
 

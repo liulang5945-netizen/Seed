@@ -3334,7 +3334,13 @@ class Taiji:
         if self.identity_organ is None:
             if identity_payload is not None:
                 raise ValueError("checkpoint contains an enabled identity organ")
-        else:
+        elif not (identity_payload is None and is_legacy_checkpoint):
+            # M2-2i: v8/v9 checkpoints predate the identity organ, so a *missing* payload is the
+            # expected shape for those formats and the freshly initialised organ is kept -- the
+            # same tolerance the predictive-context (:mod:`is_legacy_checkpoint`) branches above
+            # already apply.  This relaxes **absence only**: any payload that is present still runs
+            # the lineage check below (a wrong parent keeps failing closed), and a non-legacy
+            # format with an absent payload still raises.
             if not isinstance(identity_payload, Mapping):
                 raise ValueError("enabled identity organ checkpoint payload is missing")
             lineage = identity_payload.get("lineage")

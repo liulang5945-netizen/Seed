@@ -41,11 +41,23 @@ def test_probe_completed_and_edited_no_source(report):
     assert "writes no checkpoint" in joined
 
 
-def test_current_guard_still_blocks_the_trained_checkpoint(report):
+def test_current_guard_loads_the_trained_checkpoint_after_the_migration(report):
+    """M2-2i landed: the product entry point loads the trained v8 file without the guard patch.
+
+    This test used to pin the refusal (``load_ok is False`` + the organ error).  Flipping it is the
+    point: the old assertions read a committed report, so a code change alone would have left them
+    green while describing a world that no longer exists.  What still has to hold is the *other*
+    half of the lesson -- loading is not capability: the recovered output remains one template.
+    """
+
     arm = report["arms"]["trained_current_guard"]
-    assert arm["load_ok"] is False
-    assert "identity organ checkpoint payload is missing" in arm["load_error"]
-    assert arm.get("tick") is None
+    assert arm["load_ok"] is True
+    assert arm["tick"] == 16_000_000
+    assert arm["chat_organ_backend"] == "native-readable"
+    summary = arm["output_summary"]
+    assert (
+        summary["templated"] is True and summary["distinct_signatures"] == 1
+    ), "a successful load must never be readable as a recovered language ability"
 
 
 def test_relaxed_guard_recovers_the_trained_state(report):

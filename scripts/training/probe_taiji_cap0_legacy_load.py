@@ -156,7 +156,10 @@ def _run_probe(checkpoint: Path, *, apply_guard: bool) -> dict[str, Any]:
 
 def _child(payload: dict[str, Any]) -> int:
     outcome = _run_probe(Path(payload["checkpoint"]), apply_guard=bool(payload["apply_guard"]))
-    print(json.dumps(outcome, ensure_ascii=False))
+    # ASCII-only on purpose: the parent decodes this pipe as utf-8, but a Chinese Windows gives the
+    # child a cp936 stdout, so any non-ASCII model text (now reachable, because the organ migration
+    # lets the relaxed load succeed) would raise inside the reader thread and leave stdout as None.
+    print(json.dumps(outcome, ensure_ascii=True))
     return 0
 
 
@@ -271,9 +274,16 @@ def run_probe() -> dict[str, Any]:
             }
         )
     DEFAULT_REPORT.parent.mkdir(parents=True, exist_ok=True)
-    temporary = DEFAULT_REPORT.with_suffix(DEFAULT_REPORT.suffix + ".tmp")
+    # An errored run must not overwrite the sealed report: that is exactly how this probe once
+    # replaced 115 lines of committed evidence with a four-line error stub.  Failures land in a
+    # sibling file, so the good report survives and the failure is still on disk.
+    failed = "error" in payload
+    target = (
+        DEFAULT_REPORT.with_name(DEFAULT_REPORT.stem + ".error.json") if failed else DEFAULT_REPORT
+    )
+    temporary = target.with_suffix(target.suffix + ".tmp")
     temporary.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
-    temporary.replace(DEFAULT_REPORT)
+    temporary.replace(target)
     return payload
 
 

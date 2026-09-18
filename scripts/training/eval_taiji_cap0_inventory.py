@@ -124,7 +124,7 @@ def _probe_child(payload: dict[str, Any]) -> int:
     except Exception as exc:  # noqa: BLE001
         result["load_ok"] = False
         result["load_error"] = f"{type(exc).__name__}: {exc}"
-        print(json.dumps(result, ensure_ascii=False))
+        print(json.dumps(result, ensure_ascii=True))
         return 0
 
     result["load_ok"] = True
@@ -163,7 +163,7 @@ def _probe_child(payload: dict[str, Any]) -> int:
                     }
                 )
         result["turns"] = turns
-    print(json.dumps(result, ensure_ascii=False))
+    print(json.dumps(result, ensure_ascii=True))
     return 0
 
 
@@ -348,14 +348,14 @@ def run_inventory() -> dict[str, Any]:
                     "most_trained_model_format": trained_format,
                     "stranded_is_legacy_format": stranded_is_legacy,
                     "stranded_defect_diagnosis": (
-                        "restore() already supports legacy formats "
-                        "(taiji/model.py LEGACY_CHECKPOINT_FORMATS = v8/v9) and guards other "
-                        "payloads with 'is None and not is_legacy_checkpoint' (e.g. line 2611 "
-                        "for the predictive context, with a documented M2-2h migration), but the "
-                        "identity-organ branch at line 2726-2732 raises for ANY checkpoint whose "
-                        "payload is absent -- including v8 files that predate the organ. The fix "
-                        "follows an existing in-file pattern; whether to apply it is a "
-                        "refuse-vs-migrate policy decision, not a code question"
+                        "restore() supports the legacy formats it declares "
+                        "(LEGACY_CHECKPOINT_FORMATS = v8/v9). The identity-organ branch now applies "
+                        "the same 'payload absent in a legacy format' migration the predictive "
+                        "context already used (M2-2h -> M2-2i), so a v8 file that predates the organ "
+                        "loads and keeps its freshly initialised organ. The remaining refusal is "
+                        "'enabled identity organ checkpoint payload is missing', which now applies "
+                        "only to current-format checkpoints; organ lineage validation is unchanged "
+                        "and still fails closed on a payload from a different core"
                         if stranded_is_legacy
                         else "the stranded checkpoint is not in a format restore() claims to support"
                     ),
@@ -421,9 +421,15 @@ def run_inventory() -> dict[str, Any]:
             }
         )
     DEFAULT_REPORT.parent.mkdir(parents=True, exist_ok=True)
-    temporary = DEFAULT_REPORT.with_suffix(DEFAULT_REPORT.suffix + ".tmp")
+    # An errored run must not overwrite the sealed report (see the same guard in
+    # probe_taiji_cap0_legacy_load.py): failures land in a sibling file, evidence survives.
+    failed = "error" in payload
+    target = (
+        DEFAULT_REPORT.with_name(DEFAULT_REPORT.stem + ".error.json") if failed else DEFAULT_REPORT
+    )
+    temporary = target.with_suffix(target.suffix + ".tmp")
     temporary.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
-    temporary.replace(DEFAULT_REPORT)
+    temporary.replace(target)
     return payload
 
 

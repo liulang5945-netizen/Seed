@@ -92,6 +92,30 @@
   报告内不含盘符（`re.search(r"[A-Za-z]:\\\\", text) is None`）。
   本轮不做：需要同时改评测面脚本与驱动收尾，而实验臂正在跑（驱动每阶段起子进程、
   收尾时重写campaign 记录）；等双臂结束后与 DEBT-I5/I6 同批处理。
+- **DEBT-I5 ✅已处置（2026-09-18，随 M2-2i 落地同批）**：`eval_taiji_cap0_inventory.py` 的诊断文字
+  已改为按**错误文本**描述（不再出现 `line 2726-2732` 之类位置断言），报告已再生；
+  `test_cap0_inventory_contract.py` 新增 `assert "line " not in diagnosis and "2726" not in diagnosis`
+  ⇒ 位置化石一回来就红。实证价值：R2 的工作把该行推到 3339（漂移 613 行），而旧断言一直绿。
+- **DEBT-I6 ◐部分处置（2026-09-18）**：原子写与"复用前校验"仍未做；但**已消除更危险的一种自我覆盖**——
+  探针/清单在带 `error` 时改写同名 `.error.json`，**不再覆盖封存报告**。
+  触发事实：本轮我重跑 `probe_taiji_cap0_legacy_load.py` 时它崩溃，把 115 行封存证据换成 4 行错误存根
+  （已 `git checkout` 还原并留档 `.git/stub_*.json`）。剩余部分仍须配故障注入测试。
+- **DEBT-I9（新，未处置）产品默认检查点被套件重写且不入 git ⇒ "默认入口=未训练基座"已无法从盘上取证**。
+  实证：`checkpoints/seed_corpus.pt` 现为 `tick = 36`、`trainer = api_seed_runtime`、
+  `saved_at_utc = 2026-09-18T04:35:33Z`（DEBT-I7 的那条通路），而 `*.pt` 在 `.gitignore` 里 ⇒
+  **原 tick=2 基座无法还原**。处置：`test_default_entry_serves_an_untrained_state` 保留全部断言但标
+  `xfail(strict=False, reason=DEBT-I9)`——基座恢复后会自动变 XPASS 提醒收严；
+  **把期望值改成 36 等于把污染正当化**。根因在 DEBT-I7，须先做隔离。
+- **DEBT-I10（新，本轮已修，但教训未消化）约束解码是"源码副本补丁"，锚点钉在实现细节上 ⇒ 整条语言测量静默罢工**。
+  `probe_taiji_cap0_byte_output.install_constrained_decode()` 曾要求 `Taiji.generate` 源码里存在
+  `next_symbol = step.predicted_symbol`；R2 改写 `generate`（新增 `response_start`/`response_phase`）
+  后锚点消失 ⇒ **CAP-0 全部维度 child 退出码 1、报告里 0 题**，而合同测试全绿——
+  因为唯一的"检查"是 `assert "install_constrained_decode" in <源码文本>`（纯子串 grep，普查判据里的空断言）。
+  本轮修法三件：① 锚点改钉**包装真正消费的接口**（`reset_dynamics` / `observe` / `probabilities`）；
+  ② 子机管道一律 ASCII（`ensure_ascii=True`：中文 Windows 子进程是 cp936，父进程按 utf-8 解码会
+  让 `stdout` 变 None 并触发上面那条 fail-closed 假象）；③ 新增**活体测试**当场安装补丁、
+  断言它拒绝不支持的 `response_start/response_phase/boundary` 调用，并在 finally 里还原 `Taiji.generate`。
+  **未消化部分（待办）**：B0/R2 那批"锚点钉源码行"的 copy-patch 仍用同类写法，应统一改为钉接口。
 - 出口④的对照基线仍为上一节所述 **1408 / 0 失败 / 6 跳过**；**远端仍未查询**（`gh` 未认证）⇒ 继续禁止"CI 已绿"表述。
 
 
