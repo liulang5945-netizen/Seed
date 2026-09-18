@@ -1,10 +1,10 @@
 # Seed / Taiji 当前详细推进方案
 
-更新：2026-09-18，实验核对至ce206079。D1仪器已结项；D2 H-A1/H-A2/H-A3学习探针未过门。O1已实施，v5在e10–25达到0.6667平台、e30 copy-supported降至20/144，loss升至0.8649；训练指标退化尚未唯一归因到优化器。按修订二§3停止A族自主改图，进入全面设计复审，训练冻结；不再排O1或预选P1续试。归因边界见§0.1、[A族评审备忘](../../reference/M5_R2_D2_A_FAMILY_REVIEW_MEMO_20260918.md)与VISION §18。本轮只补计划。[01](01_SCOPE_AND_PHASES.md)管大阶段，[02](02_GATES_AND_CI.md)管证据与晋级，[07](07_MINI_MODEL_DELIVERY.md)管用户验收。[根需求](../TAIJI_CORE_REQUIREMENTS.md)与[架构合同](../TAIJI_NATIVE_ARCHITECTURE_V1.md)定义目的、职责和规则层级。
+更新：2026-09-18，实验核对至P1均衡探针。D1仪器已结项；D2 H-A1/H-A2/H-A3学习探针未过门，用户裁决的P1形状均衡训练（v4 A2图，修订三冻结采样器）在单样本Adam下全程震荡发散（loss 6.61/2.75/2.98/1.15/1.21/7.03，M1 e20峰值0.644→e30=0），门全否。唯一稳定构型仍为v4 A2@lr0.01=0.667平台；跨四次运行反复出现失稳签名，尚未唯一归因（候选：梯度方差/批大小）。按修订三§4不再调采样/加权/lr/epoch/v5，进入二次评审，训练冻结。归因边界见§0.1、[A族评审备忘](../../reference/M5_R2_D2_A_FAMILY_REVIEW_MEMO_20260918.md)与VISION §18。[01](01_SCOPE_AND_PHASES.md)管大阶段，[02](02_GATES_AND_CI.md)管证据与晋级，[07](07_MINI_MODEL_DELIVERY.md)管用户验收。[根需求](../TAIJI_CORE_REQUIREMENTS.md)与[架构合同](../TAIJI_NATIVE_ARCHITECTURE_V1.md)定义目的、职责和规则层级。
 
-## 当前唯一下一步：A族全面评审（表达容量/更新规则/B绑定/规模），评审裁决前训练冻结
+## 当前唯一下一步：二次评审（梯度方差/批大小 vs P2 容量 vs P3 B），评审裁决前训练冻结
 
-**当前为M5 / R2原生语言能力；R2-D2处于v3/v4/v5探针失败后的用户全面评审点，训练冻结。** H-A1观察到寻址塌缩；H-A2（82,658参数）loss降至0.0885，五形状train exact=1.0，negation与combo_different为0，copy-supported=96/144，未达0.90门。H-A3实现门结果按研发记录继承，学习门仍未过；该条件化修改在同seed、30 epochs、lr0.01下不足，不能推成所有条件化、预算或优化方案无效，也未唯一排除绑定/组合问题。按修订二§3不再自主改图；[A族评审备忘](../../reference/M5_R2_D2_A_FAMILY_REVIEW_MEMO_20260918.md)提供待评设计与证据要求。不读dev/final；没有L2/M5晋级或默认迁移。
+**当前为M5 / R2原生语言能力；R2-D2处于v3/v4/v5+P1四次探针失败后的二次评审点，训练冻结。** H-A1观察到寻址塌缩；H-A2（82,658参数）loss降至0.0885，五形状train exact=1.0，negation与combo_different为0，copy-supported=96/144，未达0.90门；H-A3条件化起点在同seed、30 epochs、lr0.01下复现0.667平台后晚期失稳，不能推成所有条件化/预算/优化方案无效；P1均衡改变边缘分布后训练失稳（失败的是「均衡+单样本」组合，未唯一归因）。这些结果不排除绑定/组合问题，也不排除梯度方差假设；[A族评审备忘](../../reference/M5_R2_D2_A_FAMILY_REVIEW_MEMO_20260918.md)§4提供二次评审选项与证据要求。不读dev/final；没有L2/M5晋级或默认迁移。
 
 **本轮对话的任务定位：继续完善开发指导计划，不启动实现或训练。** [唯一VISION](../../reference/VISION_FUTURE_TECHNOLOGY.md)§18新增信息通路、可替换变量、接口/学习责任、A–E完整演进与待决事项；本文§5.8登记覆盖和交接。9月17日撤回“立即选A”的规划指令是历史决定；后续研发已独立选择A的有限切片并推进D1/D2，不能继续写成尚未实施，也不能推成整套A已采用。其他任务的未提交代码/修订不由本轮纳入提交或授予训练权限。
 
@@ -182,7 +182,7 @@ D2新增事实取自[copy探针报告](../../../reports/r2_d2_copy_learnability_
 
 ### 5.7 当前开发包卡片（唯一活动卡）与结项历史指针
 
-**R2-D2逐位置证据记忆（H-A1→H-A2→H-A3，VISION方案A的有限切片）— 活动·全面评审点（2026-09-18；v3/v4/v5 实现门均全绿，三次学习门未过；H-A3 经用户裁决 O1 实施后复现0.667平台并晚期失稳，修订二§3触发：自主图修订终止，等待A族全面评审，训练冻结）。**
+**R2-D2逐位置证据记忆（H-A1→H-A2→H-A3→P1均衡，VISION方案A的有限切片）— 活动·二次评审点（2026-09-18；v3/v4/v5 实现门均全绿，四次学习门未过；P1 形状均衡经用户裁决后在单样本 Adam 下震荡发散，已按修订三§4停止；跨运行失稳签名指向梯度方差，二次评审裁决前训练冻结）。**
 
 | 项目 | 内容 |
 |---|---|
@@ -194,7 +194,8 @@ D2新增事实取自[copy探针报告](../../../reports/r2_d2_copy_learnability_
 | 数据与学习 | D1 fixture（digest `53ac9f88695f…`，train 174/dev 98）；copy-supported=fact/negation/sof（144），其余unknown/combo（30）单列，不用直接copy拟合替代其推导/边界能力；probe门=144题M1≥0.90；30 epochs |
 | 历史预算和可运行性 | H-A2为CPU单线程、probe wall 20 min、matched 30 min/运行×9；H-A3修订为1次probe、过门后才进入三seed×两臂matched。当前probe失败，后续预算未释放；训练前checkpoint隔离及preflight要求保留 |
 | 评价和交付 | M1–M5（D1 冻结）；G1 M3≥0.26/δ≥0.20；G2 M4≥0.50/δ≥0.25、fact_flip≥2/6，combo_flip 单列；G3 copy-misbind ΔM4≥0.50；G4 上下文 ΔM3≥0.30；G5 seed；G6 boundary/恢复（matched dev 未启动） |
-| 结果去向 | 三次学习门均未过，自主图修订终止；进入[A族全面评审](../../reference/M5_R2_D2_A_FAMILY_REVIEW_MEMO_20260918.md)（P1优化/更新规则、P2容量/门几何、P3 B绑定、P4规模/课程），评审裁决前训练冻结、不读dev/final、不改门 |
+| P1 形状均衡训练（用户裁决，v4 A2 图+均衡采样，已验） | [修订三](../../reference/M5_R2_D2_P1_BALANCED_TRAINING_AMENDMENT_FROZEN_20260918.md)：174/epoch 七形状配额均衡（25×6+24）、有放回、seeded；全程震荡（loss 6.61/2.75/2.98/1.15/1.21/7.03，M1 e20峰值0.644→0），单样本 Adam 无法稳定消化高方差均衡流；门全否 |
+| 结果去向 | 四次学习门（A1/A2/A3/A2-balanced）均未过；跨运行反复出现优化失稳签名（0.05 震荡、v5 晚期失稳、均衡全程发散），稳定构型只有 v4 A2@0.01=平台0.667。P1 修订三§4 已禁再调采样/加权/lr/epoch/v5；进入二次评审（梯度方差/批大小 vs P2 容量 vs P3 B），裁决前训练冻结、不读dev/final、不改门 |
 
 合同：[H-A3 问题起点修订（冻结）](../../reference/M5_R2_D2_QUESTION_START_AMENDMENT_FROZEN_20260918.md)、[H-A2 copy修订（冻结）](../../reference/M5_R2_D2_COPY_MIXTURE_AMENDMENT_FROZEN_20260918.md)、[原预注册](../../reference/M5_R2_D2_PER_POSITION_EVIDENCE_PREREGISTRATION_FROZEN_20260918.md)、[假设备忘](../../reference/M5_R2_D2_HYPOTHESIS_SELECTION_MEMO_20260918.md)；证据：[H-A1 probe](../../../reports/r2_d2_learnability_probe_20260918.json)、[H-A2 copy probe](../../../reports/r2_d2_copy_learnability_probe_20260918.json)、[H-A3 v5 probe](../../../reports/r2_d2_question_start_probe_20260918.json)、[lr诊断](../../../reports/r2_d2_lr_stability_diagnostic_20260918.json)、[寻址诊断](../../../reports/r2_d2_addressing_diagnostic_20260918.json)。
 

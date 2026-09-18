@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import random
 import subprocess
 import sys
 import time
@@ -164,6 +165,41 @@ def _compact(evaluation: dict[str, Any]) -> dict[str, Any]:
     }
 
 
+def _balanced_epoch(
+    trainer: SequenceWorkspaceTrainer,
+    rows: list[dict[str, Any]],
+    epoch: int,
+    *,
+    epoch_size: int = 174,
+) -> int:
+    """Frozen P1 shape-balanced sampler (amendment three section 2).
+
+    Quotas 25 for six shapes and 24 for the last across sorted shapes; within a
+    shape draws are with replacement from one epoch-seeded RNG.  Training data
+    and evaluation are untouched; only the train_step order changes.
+    """
+
+    shapes = sorted({row["shape"] for row in rows})
+    groups = {
+        shape: [
+            (row["prefix"].encode("utf-8"), row["response"].encode("utf-8"))
+            for row in rows
+            if row["shape"] == shape
+        ]
+        for shape in shapes
+    }
+    base, extra = divmod(epoch_size, len(shapes))
+    rng = random.Random(SEED + epoch)
+    steps = 0
+    for index, shape in enumerate(shapes):
+        quota = base + (1 if index < extra else 0)
+        group = groups[shape]
+        for _ in range(quota):
+            trainer.train_step([rng.choice(group)])
+            steps += 1
+    return steps
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--report", type=Path, default=DEFAULT_REPORT)
@@ -173,15 +209,26 @@ def main() -> int:
         action="store_true",
         help="graph v5 H-A3: condition the renderer start on the question stem",
     )
+    parser.add_argument(
+        "--balanced-shapes",
+        action="store_true",
+        help="P1 amendment three: frozen shape-balanced training sampler on v4 A2",
+    )
     args = parser.parse_args()
     if args.question_conditioned_start:
         report_format = "taiji-r2-d2-question-start-probe-v1"
         contract = "plans/reference/M5_R2_D2_QUESTION_START_AMENDMENT_FROZEN_20260918.md"
         arm_label = "A5_per_position_copy_question_start"
+    elif args.balanced_shapes:
+        report_format = "taiji-r2-d2-balanced-shapes-probe-v1"
+        contract = "plans/reference/M5_R2_D2_P1_BALANCED_TRAINING_AMENDMENT_FROZEN_20260918.md"
+        arm_label = "A2_per_position_copy_balanced_shapes"
     else:
         report_format = DEFAULT_FORMAT
         contract = DEFAULT_CONTRACT
         arm_label = DEFAULT_ARM
+    if args.question_conditioned_start and args.balanced_shapes:
+        raise ValueError("balanced-shapes is frozen on the v4 A2 graph, not v5")
 
     raw = [
         json.loads(line)
@@ -206,10 +253,15 @@ def main() -> int:
             question_conditioned_start=bool(args.question_conditioned_start),
         )
     )
-    code_revision = (
-        "r2d2-question-start-probe" if args.question_conditioned_start else "r2d2-copy-probe"
-    )
-    checkpoint_prefix = "a5_seed20260917" if args.question_conditioned_start else "a2_seed20260917"
+    if args.question_conditioned_start:
+        code_revision = "r2d2-question-start-probe"
+        checkpoint_prefix = "a5_seed20260917"
+    elif args.balanced_shapes:
+        code_revision = "r2d2-balanced-shapes-probe"
+        checkpoint_prefix = "a2_balanced_seed20260917"
+    else:
+        code_revision = "r2d2-copy-probe"
+        checkpoint_prefix = "a2_seed20260917"
     trainer = SequenceWorkspaceTrainer(
         prototype, learning_rate=FROZEN_LEARNING_RATE, code_revision=code_revision
     )
@@ -222,8 +274,12 @@ def main() -> int:
 
     initial = _evaluate(prototype, rows)
     trajectory = [{"epoch": 0, **_compact(initial)}]
+    steps_taken = 0
     for epoch in range(EPOCHS):
-        trainer.train_epoch()
+        if args.balanced_shapes:
+            steps_taken += _balanced_epoch(trainer, rows, epoch)
+        else:
+            trainer.train_epoch()
         if (epoch + 1) % 5 == 0 or epoch == EPOCHS - 1:
             trajectory.append({"epoch": epoch + 1, **_compact(_evaluate(prototype, rows))})
     final = _evaluate(prototype, rows)
@@ -231,12 +287,25 @@ def main() -> int:
     trainer.save(checkpoint_dir / f"{checkpoint_prefix}_epoch30.pt")
 
     supported_m1 = float(final["copy_supported_M1"]["value"])
+    per_shape_final = {shape: values["value"] for shape, values in final["per_shape_exact"].items()}
     gate = {
         "copy_supported_m1_ge_0_90": supported_m1 >= COPY_M1_GATE,
         "finite_declining_loss": bool(final["mean_sequence_loss"] < initial["mean_sequence_loss"]),
         "within_wall_cap": elapsed <= WALL_CAP_SECONDS,
         "preflight_passed": preflight["passed"],
     }
+    if args.balanced_shapes:
+        late = trajectory[-1]["M1_exact"]
+        previous = trajectory[-2]["M1_exact"]
+        gate.update(
+            {
+                "negation_m1_above_zero": per_shape_final["negation"] > 0.0,
+                "fact_and_sof_hold_0_90": (
+                    per_shape_final["fact"] >= 0.90 and per_shape_final["same_opening_fact"] >= 0.90
+                ),
+                "no_late_collapse_gt_0_10": (late - previous) >= -0.10,
+            }
+        )
     passed = all(gate.values())
     payload = {
         "format": report_format,
@@ -253,6 +322,8 @@ def main() -> int:
         "frozen_learning_rate": FROZEN_LEARNING_RATE,
         "train_episodes": len(rows),
         "copy_supported_shapes": list(COPY_SUPPORTED_SHAPES),
+        "balanced_shapes": bool(args.balanced_shapes),
+        "optimizer_steps": steps_taken if args.balanced_shapes else EPOCHS * len(rows),
         "elapsed_seconds": elapsed,
         "wall_cap_seconds": WALL_CAP_SECONDS,
         "parameter_count": prototype.parameter_count(),
