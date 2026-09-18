@@ -165,18 +165,18 @@ def _compact(evaluation: dict[str, Any]) -> dict[str, Any]:
     }
 
 
-def _balanced_epoch(
-    trainer: SequenceWorkspaceTrainer,
+def _balanced_order(
     rows: list[dict[str, Any]],
     epoch: int,
     *,
     epoch_size: int = 174,
-) -> int:
-    """Frozen P1 shape-balanced sampler (amendment three section 2).
+) -> list[tuple[bytes, bytes]]:
+    """Frozen P1/R1 shape-balanced sequence (amendment three section 2).
 
     Quotas 25 for six shapes and 24 for the last across sorted shapes; within a
-    shape draws are with replacement from one epoch-seeded RNG.  Training data
-    and evaluation are untouched; only the train_step order changes.
+    shape draws are with replacement from one epoch-seeded RNG.  Returns the
+    full ordered 174-episode sequence; batching is applied by the caller so the
+    sampler stays identical between single-item and micro-batch runs.
     """
 
     shapes = sorted({row["shape"] for row in rows})
@@ -190,14 +190,12 @@ def _balanced_epoch(
     }
     base, extra = divmod(epoch_size, len(shapes))
     rng = random.Random(SEED + epoch)
-    steps = 0
+    ordered: list[tuple[bytes, bytes]] = []
     for index, shape in enumerate(shapes):
         quota = base + (1 if index < extra else 0)
         group = groups[shape]
-        for _ in range(quota):
-            trainer.train_step([rng.choice(group)])
-            steps += 1
-    return steps
+        ordered.extend(rng.choice(group) for _ in range(quota))
+    return ordered
 
 
 def main() -> int:
@@ -225,6 +223,10 @@ def main() -> int:
         report_format = "taiji-r2-d2-question-start-probe-v1"
         contract = "plans/reference/M5_R2_D2_QUESTION_START_AMENDMENT_FROZEN_20260918.md"
         arm_label = "A5_per_position_copy_question_start"
+    elif args.balanced_shapes and args.microbatch_size:
+        report_format = "taiji-r2-d2-balanced-microbatch-probe-v1"
+        contract = "plans/reference/M5_R2_D2_R1_BALANCED_MICROBATCH_AMENDMENT_FROZEN_20260918.md"
+        arm_label = f"A2_per_position_copy_balanced_microbatch{args.microbatch_size}"
     elif args.balanced_shapes:
         report_format = "taiji-r2-d2-balanced-shapes-probe-v1"
         contract = "plans/reference/M5_R2_D2_P1_BALANCED_TRAINING_AMENDMENT_FROZEN_20260918.md"
@@ -237,10 +239,8 @@ def main() -> int:
         report_format = DEFAULT_FORMAT
         contract = DEFAULT_CONTRACT
         arm_label = DEFAULT_ARM
-    if sum((args.question_conditioned_start, args.balanced_shapes, bool(args.microbatch_size))) > 1:
-        raise ValueError("question-start, balanced-shapes and microbatch are mutually exclusive")
-    if args.microbatch_size and args.question_conditioned_start:
-        raise ValueError("microbatch Q1 is frozen on the v4 A2 graph, not v5")
+    if args.question_conditioned_start and (args.balanced_shapes or args.microbatch_size):
+        raise ValueError("question-start cannot combine with balanced-shapes or microbatch")
 
     raw = [
         json.loads(line)
@@ -268,6 +268,9 @@ def main() -> int:
     if args.question_conditioned_start:
         code_revision = "r2d2-question-start-probe"
         checkpoint_prefix = "a5_seed20260917"
+    elif args.balanced_shapes and args.microbatch_size:
+        code_revision = "r2d2-balanced-microbatch-probe"
+        checkpoint_prefix = f"a2_balanced_microbatch{args.microbatch_size}_seed20260917"
     elif args.balanced_shapes:
         code_revision = "r2d2-balanced-shapes-probe"
         checkpoint_prefix = "a2_balanced_seed20260917"
@@ -291,14 +294,15 @@ def main() -> int:
     trajectory = [{"epoch": 0, **_compact(initial)}]
     steps_taken = 0
     for epoch in range(EPOCHS):
-        if args.balanced_shapes:
-            steps_taken += _balanced_epoch(trainer, rows, epoch)
-        elif args.microbatch_size:
-            for start in range(0, len(episodes), args.microbatch_size):
-                trainer.train_step(list(episodes[start : start + args.microbatch_size]))
+        ordered = _balanced_order(rows, epoch) if args.balanced_shapes else list(episodes)
+        if args.microbatch_size:
+            for start in range(0, len(ordered), args.microbatch_size):
+                trainer.train_step(ordered[start : start + args.microbatch_size])
                 steps_taken += 1
         else:
-            trainer.train_epoch()
+            for episode in ordered:
+                trainer.train_step([episode])
+                steps_taken += 1
         if (epoch + 1) % 5 == 0 or epoch == EPOCHS - 1:
             trajectory.append({"epoch": epoch + 1, **_compact(_evaluate(prototype, rows))})
     final = _evaluate(prototype, rows)
@@ -362,7 +366,7 @@ def main() -> int:
         "copy_supported_shapes": list(COPY_SUPPORTED_SHAPES),
         "balanced_shapes": bool(args.balanced_shapes),
         "microbatch_size": int(args.microbatch_size),
-        "optimizer_steps": steps_taken or EPOCHS * len(rows),
+        "optimizer_steps": steps_taken,
         "elapsed_seconds": elapsed,
         "wall_cap_seconds": WALL_CAP_SECONDS,
         "parameter_count": prototype.parameter_count(),
