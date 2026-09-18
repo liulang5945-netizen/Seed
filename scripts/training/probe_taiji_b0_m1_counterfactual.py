@@ -247,6 +247,7 @@ def build_counterfactual(
     if variant not in VARIANTS:
         raise ValueError(f"unknown variant {variant!r}; known: {sorted(VARIANTS)}")
 
+    held = frozen._member_episode
     original = inspect.getsource(frozen._member_episode)
     transformed = original
     replacements: list[dict[str, Any]] = []
@@ -295,7 +296,10 @@ def build_counterfactual(
         "frozen_source_lines": len(original.splitlines()),
         "counterfactual_source_lines": len(transformed.splitlines()),
         "added_lines": len(transformed.splitlines()) - len(original.splitlines()),
-        "frozen_attribute_unchanged": frozen._member_episode is not episode_fn,
+        #: Measured against the attribute captured on entry.  The previous spelling
+        #: (``is not episode_fn``) could never be False: ``episode_fn`` is a fresh object
+        #: from ``exec``, so that field asserted a tautology instead of the docstring's claim.
+        "frozen_attribute_unchanged": frozen._member_episode is held,
         "rule_text": " + ".join(item["anchor"].strip() for item in replacements),
     }
     return episode_fn, delta
@@ -322,6 +326,7 @@ def build_reverted(
     if variant not in VARIANTS:
         raise ValueError(f"unknown variant {variant!r}; known: {sorted(VARIANTS)}")
 
+    held = frozen._member_episode
     original = inspect.getsource(frozen._member_episode)
     transformed = original
     replacements: list[dict[str, Any]] = []
@@ -381,7 +386,10 @@ def build_reverted(
         "shipped_source_lines": len(original.splitlines()),
         "reverted_source_lines": len(transformed.splitlines()),
         "removed_lines": len(original.splitlines()) - len(transformed.splitlines()),
-        "frozen_attribute_unchanged": frozen._member_episode is not episode_fn,
+        #: Measured against the attribute captured on entry.  The previous spelling
+        #: (``is not episode_fn``) could never be False: ``episode_fn`` is a fresh object
+        #: from ``exec``, so that field asserted a tautology instead of the docstring's claim.
+        "frozen_attribute_unchanged": frozen._member_episode is held,
         "rule_text": " + ".join(item["anchor"].strip() for item in replacements),
     }
     return episode_fn, delta

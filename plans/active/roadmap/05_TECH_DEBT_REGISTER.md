@@ -59,7 +59,7 @@
   修法：断言**错误文本**（`"enabled identity organ checkpoint payload is missing"`）或从源码实际
   解析该行区间；**须与 CAP-0 加载器改动同批做**（见 [决策简报 §5 第 3 步](../../reference/CAP0_LEGACY_LOADER_DECISION_BRIEF_20260915.md)）；
   本轮不做（campaign 在跑，不能动 `taiji/` 与其评测面）。
-- **DEBT-I6（只登记，不处置）阶段报告非原子写 + 驱动"文件存在即复用"的续跑缺口**。
+- **DEBT-I6 ✅已处置（2026-09-18 第二批，含故障注入测试）阶段报告非原子写 + 驱动"文件存在即复用"的续跑缺口**。
   实测：`eval_taiji_cap0_baseline.py:792` 用 `report_path.write_text(...)` **普通覆写**写阶段报告；
   `run_p3b_campaign.py:149-150` 的 `_score_stage` 只看 `if stage_path.exists(): return _load(stage_path)`。
   ⇒ 若在写报告途中断电/被杀，续跑会**直接消费一份被截断的报告**（当前表现是 `json.loads` 抛错、
@@ -81,7 +81,7 @@
   （fixture 级隔离，且加一支"任何测试运行后 `seed_corpus.pt` 的 sha256 不变"的守卫测试）；
   ② 或让 `SeedRuntime.save()` 写默认路径需要显式参数，默认拒写。
   本轮不做：涉及 `api/` 与 26 个测试文件的公共夹具，且改 `taiji/`/评测面会打断在跑 campaign。
-- **DEBT-I8（只登记，不处置）已提交的 P3b 报告里嵌着机器绝对路径 ⇒ 同一份快照的两次打分无法逐字节比对**。
+- **DEBT-I8 ✅已处置（2026-09-18 第二批）已提交的 P3b 报告里嵌着机器绝对路径 ⇒ 同一份快照的两次打分无法逐字节比对**。
   实证：驱动写的 `reports/p3b_stages/control/cap0_tick_17000000.json` 顶层
   `checkpoint = "E:\\Seed\\checkpoints\\..."`，而我手工复评同一份快照得到的却是
   `"checkpoints\\..."`（因为我传的是相对路径）——两份报告除这一处拼写外**逐字段全等**。
@@ -92,6 +92,16 @@
   报告内不含盘符（`re.search(r"[A-Za-z]:\\\\", text) is None`）。
   本轮不做：需要同时改评测面脚本与驱动收尾，而实验臂正在跑（驱动每阶段起子进程、
   收尾时重写campaign 记录）；等双臂结束后与 DEBT-I5/I6 同批处理。
+- **DEBT-I8 ✅处置记录（2026-09-18 第二批）**：写出侧两处都相对化——`eval_taiji_cap0_baseline._relative()`
+  用于报告顶层 `checkpoint` 字段（run_baseline / run_health 两处；**子进程 payload 里的路径保持绝对**，
+  那是 IPC 不是证据），`check_p3b_criteria._relative()` 用于 `baseline` / `candidate` 两个字段。
+  合同测试 `test_criteria_report_paths_are_repo_relative` 钉住三件事：仓内路径 ⇒ 相对且**能解析回同一文件**、
+  仓外路径 ⇒ 原样保留（不是崩也不是静默改写）、以及 `check()` 真实产出的记录里两个字段无盘符
+  （`re.search(r"[A-Za-z]:[\\/]", ...) is None`）。
+  **已封存的历史报告不追改**：`reports/p3b_stages/**`、`taiji_p3b_campaign_*_20260915.json` 里的
+  `E:\\Seed\\...` 保持原样——它们是"当时确实是那条路径"的证据；此后同一快照的两次打分才可用哈希比对。
+  另注：R2 一侧已有 `_resolve_repo_path()` 同时吃两种拼写（`audit_taiji_r2_h3_7_attribution.py:150`），
+  ⇒ 读侧本就能兼容，本次只动写侧。
 - **DEBT-I5 ✅已处置（2026-09-18，随 M2-2i 落地同批）**：`eval_taiji_cap0_inventory.py` 的诊断文字
   已改为按**错误文本**描述（不再出现 `line 2726-2732` 之类位置断言），报告已再生；
   `test_cap0_inventory_contract.py` 新增 `assert "line " not in diagnosis and "2726" not in diagnosis`
@@ -100,12 +110,39 @@
   探针/清单在带 `error` 时改写同名 `.error.json`，**不再覆盖封存报告**。
   触发事实：本轮我重跑 `probe_taiji_cap0_legacy_load.py` 时它崩溃，把 115 行封存证据换成 4 行错误存根
   （已 `git checkout` 还原并留档 `.git/stub_*.json`）。剩余部分仍须配故障注入测试。
+- **DEBT-I6 ✅剩余部分处置（2026-09-18 第二批）**：三件都做完。
+  ① **写端原子化**——`eval_taiji_cap0_baseline.py` 新增 `_write_report()`（`tmp`+`replace`，临时名带
+  `getpid()`，防双臂同刻写同名报告互踩），main() 的三处报告写出（基线 / health / adjudication）全改走它；
+  驱动自己的 `_write()` 本来就原子写，未动。
+  ② **复用前校验**——`run_p3b_campaign._reuse_defects(report, baseline)`：评测面四字段 + C/D/E 逐题
+  **id 序列**（复用 `_surface_drift`，题数由基线导出而非钉死"20"，免化石）+ `chain` 必须等于 P3a 链路 +
+  `trained_during_eval is False`。`_evaluate()` 只在该表为空时才复用；不合格时**快照仍在**才重评，并把坏报告
+  留成 `*.unusable` 物证（本轮已丢过一次 115 行证据，不再静默覆盖）；快照已失 ⇒ `SystemExit` 拒绝续跑，
+  绝不"顺手重评一个更晚的状态"。
+  ③ **故障注入测试 4 支**（`test_p3b_campaign_contract.py`，一律 monkeypatch 掉评测子进程，成本 0）：
+  截断 JSON / 能解析但语义错（三种字段各自成一条）/ 快照缺失必须拒绝且**不得**起子进程 /
+  **正向**一支"合格报告照旧复用且不重评"——缺了正向，"永远重评"的实现也能骗过前三支。
+  实测：B0 批 `45 passed in 1.26 s`，cap0+p3b 批 `77 passed in 1.44 s`。
+  **顺带更正本节两处文字**：被审函数实名是 `_evaluate`（原文写 `_score_stage`），`:149-150` 已漂到
+  `:176-177`。
 - **DEBT-I9（新，未处置）产品默认检查点被套件重写且不入 git ⇒ "默认入口=未训练基座"已无法从盘上取证**。
   实证：`checkpoints/seed_corpus.pt` 现为 `tick = 36`、`trainer = api_seed_runtime`、
   `saved_at_utc = 2026-09-18T04:35:33Z`（DEBT-I7 的那条通路），而 `*.pt` 在 `.gitignore` 里 ⇒
   **原 tick=2 基座无法还原**。处置：`test_default_entry_serves_an_untrained_state` 保留全部断言但标
   `xfail(strict=False, reason=DEBT-I9)`——基座恢复后会自动变 XPASS 提醒收严；
   **把期望值改成 36 等于把污染正当化**。根因在 DEBT-I7，须先做隔离。
+  **更正（同日，2026-09-18 第二批）**：上面"基座恢复后会自动变 XPASS 提醒收严"是**错的**——
+  该测试读的是**已封存报告**的 `model_reality.default_tick`，不是盘上的 `.pt`。所以要它翻红/翻绿
+  必须**再生成一次盘点报告**，光恢复基座不会动它（这正是普查 §3 说的"读封存型测试永远不会红"）。
+  已给 `eval_taiji_cap0_inventory.py` 补 `--report`，复采一律写新日期文件，不覆盖 09-15 那份证据。
+- **DEBT-I7 / I9 第二次复现（2026-09-18，全量套件，未处置）**：套件跑前 `seed_corpus.pt` 为
+  `tick = 36` / sha `105d621e5e7d`，跑后为 **`tick = 2` / sha `3fec3e477ef4`**（mtime 同步更新，
+  文件大小仍是 43,223,183 B）。⇒ 两点新增事实：① **这条通路不是幂等的**，每次跑套件都把默认基座
+  重写成一份新的随机初始化态，所以"默认入口=未训练基座"这句话在盘上永远取不到证；
+  ② 重写方向是 36→2，也就是说**测试会把一个已训练态退回未训练态**——比"重新初始化一遍基座"更糟，
+  若哪天默认入口指向的是真训练态，套件会把它抹掉。
+  本轮不处置（要动 `api/seed_runtime.py` 与 26 个测试文件的公共夹具），但**优先级应高于 I6/I8 那批**，
+  因为它动摇的是"默认入口"这一产品事实，而不只是仪器。
 - **DEBT-I10（新，本轮已修，但教训未消化）约束解码是"源码副本补丁"，锚点钉在实现细节上 ⇒ 整条语言测量静默罢工**。
   `probe_taiji_cap0_byte_output.install_constrained_decode()` 曾要求 `Taiji.generate` 源码里存在
   `next_symbol = step.predicted_symbol`；R2 改写 `generate`（新增 `response_start`/`response_phase`）

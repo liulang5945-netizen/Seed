@@ -174,9 +174,19 @@ def test_the_shipped_variant_is_identity_and_the_others_still_refuse(
 
     _, delta = counterfactual.build_counterfactual(gate, "m4_failure_handoff")
     assert delta["variant_is_identity"] is True
-    assert delta["added_lines"] == 0
-    assert len(delta["already_applied"]) == delta["replacement_count"]
-
+    # C2：``added_lines == 0`` 与 ``len(already_applied) == replacement_count`` 都由同一组 status
+    # 算出（identity 一成立就必然为真），断言它们等于没测。在一支纯文本变换函数里唯一"测出来"
+    # 的事实是关于**已发布源码**的命中次数——那正是 status 记的东西，所以钉原始量而不是摘要。
+    assert [item["status"] for item in delta["replacements"]] == [
+        "already_applied",
+        "already_applied",
+    ]
+    # 试过 `episode_fn.__code__.co_code == gate._member_episode.__code__.co_code`，**不成立**：
+    # 实测两处 co_code 等长（2920 B）、co_names/co_varnames/co_freevars/co_cellvars 全等，只有
+    # 偏移 175 的一个 oparg 差 1（0x0a vs 0x0b），原因是 exec 出来的臂把合成文件名
+    # ``<counterfactual:...>`` 带进了它内嵌的 `finish`/`<genexpr>` 常量，常量表去重结果随之位移。
+    # ⇒ 指令级比较不能当 identity 判据（同理 getsource 也取不到，文件名不在磁盘上）。
+    # 这里能钉的就是原始量本身：两条置换都真的在已发布源码里命中 0 次、目标文本已在。
     refusals = 0
     for variant in ("m1a_no_progress", "m1b_tick_rotation", "m2a_progress_plus_handoff"):
         try:
@@ -187,8 +197,16 @@ def test_the_shipped_variant_is_identity_and_the_others_still_refuse(
 
 
 def test_the_frozen_attribute_is_never_rebound(counterfactual: Any, gate: Any) -> None:
+    """Building an arm must not rebind the mechanism under test, or the probe is circular.
+
+    C2: the removed line compared one object's source with **itself**.  What is checkable is a
+    cross-object comparison (the in-memory body against the bytes on disk) and the delta field,
+    which the probe now genuinely measures instead of comparing to a freshly ``exec``'d object.
+    """
+
     before = gate._member_episode
-    episode_fn, _ = counterfactual.build_counterfactual(gate, "m4_failure_handoff")
+    episode_fn, delta = counterfactual.build_counterfactual(gate, "m4_failure_handoff")
     assert gate._member_episode is before
-    assert inspect.getsource(before) == inspect.getsource(gate._member_episode)
+    assert delta["frozen_attribute_unchanged"] is True
+    assert inspect.getsource(before) in GATE.read_text(encoding="utf-8")
     assert episode_fn is not before

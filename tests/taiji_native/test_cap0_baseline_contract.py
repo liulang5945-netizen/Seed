@@ -563,8 +563,6 @@ def test_p3b_throughput_calibration_is_read_only_and_extrapolated() -> None:
 
 # --- P3b 判据检查器（J1–J5） -------------------------------------------------
 
-P3B_CHECKER = PROJECT_ROOT / "scripts" / "training" / "check_p3b_criteria.py"
-
 
 def _improved_candidate(tmp_path, source: Path) -> Path:
     payload = json.loads(source.read_text(encoding="utf-8"))
@@ -609,9 +607,47 @@ def test_p3b_checker_rejects_a_different_chain(tmp_path) -> None:
     assert result["verdict"] == "fail"
 
 
-def test_p3b_checker_is_read_only_and_has_exit_code_contract() -> None:
-    source = P3B_CHECKER.read_text(encoding="utf-8")
-    # 只读：不写训练/检查点；失败用退出码 1
-    assert "checkpoint_written" not in source
-    assert "return 0 if result[" in source and "else 1" in source
-    assert "不训练" in source or "只读" in source
+def test_p3b_checker_is_read_only_measured_not_declared(tmp_path) -> None:
+    """只读性要**测出来**：跑完 ``main()`` 后两份输入报告逐字节不变，且写只落在 ``--output``。
+
+    旧写法是 grep 源码字符串（``"checkpoint_written" not in source``），那种断言在任意改写下都
+    不会红（普查 §1"子串/散文 grep"）。
+    """
+
+    from scripts.training import check_p3b_criteria as checker
+
+    sources = (CONSTRAINED_REPORT, REPORT)
+    before = {path: path.read_bytes() for path in sources}
+    out = tmp_path / "verdict.json"
+    checker.main(["--baseline", str(CONSTRAINED_REPORT), "--output", str(out)])
+    assert {path: path.read_bytes() for path in sources} == before
+    assert sorted(p.name for p in tmp_path.iterdir()) == ["verdict.json"]
+
+
+def test_p3b_checker_exit_code_is_derived_from_the_verdict(tmp_path) -> None:
+    """C1：退出码要由判定**算出**——直接调 ``main()``，三个方向都得对。
+
+    基线自身⇒1（无改善）；真改善⇒0；**只满足 J2 不满足 J3⇒1**——最后这条是关键，否则
+    "有 delta 就返回 0"的退化实现也能通过前一对手。
+    """
+
+    from scripts.training import check_p3b_criteria as checker
+
+    out = tmp_path / "verdict.json"
+
+    def code(baseline: Path, candidate: Path | None) -> int:
+        argv = ["--baseline", str(baseline), "--output", str(out)]
+        if candidate is not None:
+            argv += ["--candidate", str(candidate)]
+        return checker.main(argv)
+
+    assert code(CONSTRAINED_REPORT, None) == 1
+    assert code(CONSTRAINED_REPORT, _improved_candidate(tmp_path, CONSTRAINED_REPORT)) == 0
+
+    #: 严格高于基线（C 0.0 / D 0.0625 / E 0.15）但全部低于最低线（0.7 / 0.8 / 0.7）。
+    under_min = tmp_path / "under_min.json"
+    payload = json.loads(CONSTRAINED_REPORT.read_text(encoding="utf-8"))
+    for key, value in (("C", 0.10), ("D", 0.10), ("E", 0.20)):
+        payload["dimensions"][key]["tally"]["machine_normalised"] = value
+    under_min.write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
+    assert code(CONSTRAINED_REPORT, under_min) == 1

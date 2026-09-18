@@ -36,6 +36,19 @@ def _load(path: Path) -> dict[str, Any]:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+def _relative(path: Path) -> str:
+    """Record repo-relative paths so two machines' reports of the same run are comparable.
+
+    A path outside the repository (a scratch directory) is reported as given rather than raised,
+    because the checker is used from tests as well as from the campaign driver.
+    """
+
+    try:
+        return str(Path(path).resolve().relative_to(PROJECT_ROOT))
+    except ValueError:
+        return str(path)
+
+
 def _normalised(report: dict[str, Any], key: str) -> float | None:
     tally = report.get("dimensions", {}).get(key, {}).get("tally") or {}
     value = tally.get("machine_normalised")
@@ -133,8 +146,8 @@ def check(
     return {
         "format": "taiji-p3b-criteria-check-v1",
         "verdict": "pass" if passed else "fail",
-        "baseline": str(baseline_path),
-        "candidate": str(candidate_path) if candidate_path else str(baseline_path),
+        "baseline": _relative(baseline_path),
+        "candidate": _relative(candidate_path if candidate_path else baseline_path),
         "candidate_is_baseline": candidate_path is None or candidate_path == baseline_path,
         "checks": checks,
     }

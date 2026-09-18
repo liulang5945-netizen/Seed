@@ -137,9 +137,14 @@ def test_reverting_the_shipped_variant_rebuilds_rule_revision_0(counterfactual, 
     assert delta["arm_is_shipped_source"] is False
     assert delta["frozen_attribute_unchanged"] is True
     assert frozen._member_episode is not episode_fn
+    # C2：``reverted_source_lines == shipped - removed`` 是 a-(a-b)=b 的算术恒等，等于没测。
+    # 换成两类真实观测：调用前后已发布函数体必须是同一段文本（臂构建不许 rebind 它），
+    # 以及臂的内容用编译产物里**真实存在**的 revision-1 停因字符串来判。
+    assert shipped == counterfactual.inspect.getsource(frozen._member_episode)
     assert delta["shipped_source_lines"] == len(shipped.splitlines())
     assert delta["removed_lines"] > 0
-    assert delta["reverted_source_lines"] == len(shipped.splitlines()) - delta["removed_lines"]
+    assert "all_members_blocked" in frozen._member_episode.__code__.co_consts
+    assert "all_members_blocked" not in episode_fn.__code__.co_consts
 
     names = episode_fn.__code__.co_varnames
     assert "last_success_index" not in names and "blocked" not in names

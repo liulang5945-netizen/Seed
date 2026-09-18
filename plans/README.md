@@ -39,6 +39,8 @@
 | [03 详细推进方案](active/roadmap/03_CURRENT_EXECUTION.md) | 当前规划模式、R2能力路径、开发包输入/交付/验证/退出，以及唯一活动入口 |
 | [R2设计依据复核](reference/M5_R2_DESIGN_EVIDENCE_AUDIT_20260917.md) | 课程与六seed结果、固定回答/重复样本风险、归因收紧与证据缺口 |
 | [R0证据与门禁审计](reference/M5_R0_EVIDENCE_GATE_AUDIT_20260916.md) | P3b终态、P5.2d v2逐门可用性与下一版仪器修正边界 |
+| [CAP-0旧权重加载器决策与落地](reference/CAP0_LEGACY_LOADER_DECISION_BRIEF_20260915.md) | v8/v9检查点被判"格式不支持"的根因、M2-2i迁移落地及**行为未变**证明（逐维同分＋100题输出逐字节相同）；只动恢复分支的 legacy 一侧，镜像分支与迁移后校验未放宽 |
+| [P3b双臂结项与二次战役决策](reference/M5_P3B_RESULT_20260916.md) | 双臂逐tick读数、"不可判"的定量理由、A′成对未见集NLL的实测成本与分辨率；是否再开战役是用户机时授权三选一 |
 | [R2语言目标与信用分配设计](reference/M5_R2_LANGUAGE_TARGET_CREDIT_DESIGN_20260916.md) | 历史语言目标与信用假设、实现来源；不覆盖后继证据或03执行裁决 |
 | [R2-H3.5分层回答计划合同](reference/M5_R2_H3_5_HIERARCHICAL_RESPONSE_PLAN_CONTRACT_20260916.md) | 回答计划与byte渲染分层、v3数据课程、预算、恢复、消融和最小可证伪对照 |
 | [R2-H3.5-A候选预注册](reference/M5_R2_H3_5A_RESPONSE_PLAN_PREREGISTRATION_20260916.md) | 32维plan、监督编码、运行时oracle禁令、checkpoint前置和smoke出口 |

@@ -21,12 +21,15 @@ this file reads the committed report and never re-runs it.
 from __future__ import annotations
 
 import json
+import re
 from pathlib import Path
 
 import pytest
 
 REPO = Path(__file__).resolve().parents[2]
 REPORT = REPO / "reports" / "taiji_cap0_inventory_20260915.json"
+#: 2026-09-18 的第二次采样：同一支仪器、修好写侧之后、且基座已被套件退回 tick=2。
+RESAMPLE = REPO / "reports" / "taiji_cap0_inventory_20260918.json"
 DELIVERY_PLAN = REPO / "plans" / "active" / "roadmap" / "07_MINI_MODEL_DELIVERY.md"
 RUNNER = REPO / "scripts" / "training" / "eval_taiji_cap0_inventory.py"
 
@@ -198,3 +201,32 @@ def test_gap_statement_separates_the_three_facts(report):
     assert "CAPABILITY" in gap
     assert "UNTESTED rather than failed" in gap
     assert "no trained state is currently reachable" in gap
+
+
+#: A path spelled with a drive letter, per DEBT-I8's prescribed pattern.
+DRIVE_LETTER = re.compile(r"[A-Za-z]:[\\/]")
+
+
+def test_sample_path_fields_are_relative_but_exception_text_is_not() -> None:
+    """DEBT-I8 的**产物级**验证，成对断言 ⇒ 单向的"报告里没有盘符"那种写法骗不过来。
+
+    * 09-15 那份的 ``record.default_checkpoint`` 带盘符（缺陷当时的样子）；
+    * 09-18 复采那份是仓内相对路径，并且能解析回同一个文件；
+    * 新报告里唯一仍含盘符的地方是 ``missing_checkpoint_error`` —— 那是**被捕获的异常文本**，
+      里面 quoted 的是子进程真的试过的那个绝对路径。把期望值改成相对等于篡改现场，所以豁免
+      写在这条断言里，而不是把整份报告做一次性 grep 后当作通过。
+    """
+
+    old = json.loads(REPORT.read_text(encoding="utf-8"))
+    text = RESAMPLE.read_text(encoding="utf-8")
+    new = json.loads(text)
+
+    assert DRIVE_LETTER.search(old["record"]["default_checkpoint"]) is not None
+    relative = new["record"]["default_checkpoint"]
+    assert DRIVE_LETTER.search(relative) is None
+    assert not Path(relative).is_absolute()
+    assert (REPO / relative).is_file()
+
+    hits = [line for line in text.splitlines() if DRIVE_LETTER.search(line)]
+    assert len(hits) == 1, hits
+    assert "missing_checkpoint_error" in hits[0], hits[0][:80]

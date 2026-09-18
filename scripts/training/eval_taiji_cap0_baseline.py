@@ -21,6 +21,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import subprocess
 import sys
 import time
@@ -41,6 +42,25 @@ EVAL_SET_PATH = PROJECT_ROOT / "plans" / "manifests" / "cap0_eval_set_v1.json"
 RESET_MARKER = "__RESET__"
 DRIVEN_DIMENSIONS = ("B", "C", "D", "E", "G")
 NOT_EXECUTED_DIMENSIONS = ("A", "F", "H")
+
+
+def _relative(path: Path) -> str:
+    """Report fields are repo-relative (DEBT-I8); a path outside the repo stays absolute."""
+
+    try:
+        return str(Path(path).resolve().relative_to(PROJECT_ROOT))
+    except ValueError:
+        return str(path)
+
+
+def _write_report(path: Path, payload: dict[str, Any]) -> None:
+    """tmp + replace: an interrupted run must not leave a half-written report for a later run."""
+
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temporary = path.with_name(f"{path.name}.{os.getpid()}.tmp")
+    temporary.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    temporary.replace(path)
+
 
 # 机检预筛用词表：只用于把回答粗分为"疑似恰当拒答/表不确定"与"疑似直接作答"。
 # 任何 behaviour 判定都必须人工复核后才算数（07 §4.1 要求保存原始回答）。
@@ -381,7 +401,7 @@ def run_baseline(
             "checkpoint_sha256": checkpoint_sha256,
             "eval_set_sha256": eval_set_sha256,
         },
-        "checkpoint": str(checkpoint),
+        "checkpoint": _relative(checkpoint),
         "declared_mode": payload_set["declared_mode"],
         "trained_during_eval": False,
         # 链路必须显式披露：报告读者要能判断分数是在哪条链路上取得的（07 §4.1）。
@@ -648,7 +668,7 @@ def run_health(checkpoint: Path = DEFAULT_CHECKPOINT) -> dict[str, Any]:
 
     report: dict[str, Any] = {
         "format": "taiji-cap0-health-v1",
-        "checkpoint": str(checkpoint),
+        "checkpoint": _relative(checkpoint),
         "trained_during_eval": False,
         "dimensions": {},
     }
@@ -757,10 +777,7 @@ def main(argv: list[str] | None = None) -> int:
             if args.adjudication_report.is_absolute()
             else PROJECT_ROOT / args.adjudication_report
         )
-        target.parent.mkdir(parents=True, exist_ok=True)
-        target.write_text(
-            json.dumps(verdict, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
-        )
+        _write_report(target, verdict)
         b = verdict["dimensions"]["B"]
         g = verdict["dimensions"]["G"]
         print(f"B normalised {b['normalised']} (scored {b['scored_items']}/{b['item_count']})")
@@ -778,10 +795,7 @@ def main(argv: list[str] | None = None) -> int:
             if args.health_report.is_absolute()
             else PROJECT_ROOT / args.health_report
         )
-        health_path.parent.mkdir(parents=True, exist_ok=True)
-        health_path.write_text(
-            json.dumps(health, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
-        )
+        _write_report(health_path, health)
         for key, block in health["dimensions"].items():
             detail = block.get("checks") or block.get("measurements") or "contracts"
             print(f"{key} {block['name']}: {detail}")
@@ -808,10 +822,7 @@ def main(argv: list[str] | None = None) -> int:
         relax_legacy_guard=bool(args.relax_legacy_guard),
         constrained_decode=bool(args.constrained_decode),
     )
-    report_path.parent.mkdir(parents=True, exist_ok=True)
-    report_path.write_text(
-        json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
-    )
+    _write_report(report_path, report)
     for key, block in report["dimensions"].items():
         tally = block.get("tally")
         print(f"{key} {block['name']}: {tally if tally else block.get('status')}")

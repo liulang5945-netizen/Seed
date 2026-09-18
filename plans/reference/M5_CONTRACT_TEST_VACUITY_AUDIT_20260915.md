@@ -71,6 +71,24 @@
    且退出码 1（宁可报错也不静默等满 6 小时）。两支新测试把**两个方向**都钉住
    （含"另一臂成孤儿不算我这臂的 stall"）。
 
+## §1e 追加（2026-09-18，B4/B5/C1/C2 + DEBT-I6/I8 落地批次）：三条过程事实
+
+1. **`co_code` 相等不能用作"exec 出来的臂 == 已发布机制"的判据。** 实测：两者 `co_code` 等长
+   （2920 B）、`co_names`/`co_varnames`/`co_freevars`/`co_cellvars` 全等、常量表同为 49 项，
+   但偏移 175 处一个 oparg 差 1（`0x0a` vs `0x0b`）。根因是臂的内嵌 `finish` / `<genexpr>`
+   代码对象带着合成文件名 `<counterfactual:m4_failure_handoff>`，常量去重结果随之位移。
+   ⇒ 同一原因使 `inspect.getsource(arm)` 直接 `OSError`（那份文本不在磁盘上）。
+   要判"臂是不是那条规则"，可用的是**编译产物里的常量/变量名集合**
+   （`"all_members_blocked" in arm.__code__.co_consts` 之类），不是指令字节。
+2. **"顺延理由"写的是另一支脚本。** C1 的顺延理由（"`main()` 要 200+ s 全新评测"）来自
+   `eval_taiji_cap0_baseline.py`，而该行的断言对象是 `check_p3b_criteria.py` 的 `main()`——
+   纯 JSON 比较，5 支测试含 3 次调用实测 0.21 s。一个错误的成本数字让一条真缺陷多挂了 3 天。
+   ⇒ 记法：**每条顺延理由都必须绑定"被顺延的那支脚本"的一次实测**，不沿用同目录邻居的数字。
+   （这是 [[feedback-recompute-dont-hand-carry]] 的第 5 种模式：把别处的测量值当本处的成本。）
+3. **本轮新写的测试自己红过一次，红得有价值。** `test_criteria_report_paths_are_repo_relative`
+   第一版断言 `reports/x.json` 存在——x.json 是我编的路径。教训不是"别编路径"，而是
+   **新断言必须在落地当轮就跑一遍**；同一批里另一条编造成本（`co_code`）也是靠跑出来的红才发现的。
+
 ## §2 未修，按价值排序（后续批次；每条都给了"正确不变量"）
 
 | 优先 | 位置 | 缺陷 | 应断言的东西 |
@@ -83,8 +101,8 @@
 | B3 ✅**已修（03:13）** | `test_b0_n2_stop_reason_semantics_contract.py:118-126` | 名叫"源码级钉住"，四条断言全部 grep **同一支仪器里定义的字符串常量**，从不打开真正落地的 gate 源码 | `assert counterfactual.M4_SELECTION in inspect.getsource(frozen_gate._member_episode)`，再把三条性质查在那段真实源码上。<br>落地方式：新增 `_blocked_branch(source)` 从**已发布**源码切出 `if chosen is None:` 到该 `return finish(...)` 的片段，三个标记缺任一即 `assert` 失败（不静默返回空串）。<br>**过程记录**：改完 `test_current_review_surface_is_complete` 立刻变红——清单把 J8 的 marker 钉在字面行 `assert GOAL_REASON not in block`，我把局部量改名 `branch` 就把它断了 ⇒ 变量改回 `block`（marker 只是漂移提示，见 §1d） |
 | B4 ✅**已修（2026-09-18）** | `test_cap0_legacy_load_contract.py:37-41` | `source_edited` 是探针**初始化的字面 False**，无人重算 ⇒ 断言的是声明不是测量 | 未按建议用 `git status`（工作树本来就有无关脏改动，会把"没改"测成"改了"），改为**源码树 sha256 前后差**：模块级 `source_fingerprint(root)` + `_run_probe` 进出各算一次，三臂实测 False；断言从 `.get()` 改严格索引。**另加能力测试**：临时目录里改一字节 / 加一个文件，指纹必须变——否则"永远 False"与旧字面量没有区别（这也修正了普查建议里"断言该差为空"的口径：要测的是**探针自己**那一段，不是工作树历史）。 |
 | B5 ✅**已修（2026-09-18）** | `test_cap0_inventory_contract.py:99-103` | 三条"格式支持"断言查的是 runner 自己拼的散文（句子含句子），不碰 `taiji/model.py`；`"2726-2732"` 是会腐烂的行号化石（已登记 DEBT-I5） | 按建议两头都做：① 断言**被测类常量** `{"taiji-native-v8","taiji-native-v9"} <= Taiji.LEGACY_CHECKPOINT_FORMATS` 且 `CHECKPOINT_FORMAT == 报告字段`；② 行号化石从诊断文字删除（实测该行随 R2 漂到 3339，差 613 行而旧断言一直绿），并新增"报告文字里不许出现行号/旧字面串"的断言，防止化石回来。 |
-| C1 ⏸**本轮不做** | `test_cap0_baseline_contract.py:458-463` | "退出码合同"断言的是 `return` 的一种拼写；`main()` 从未被调用 ⇒ 判分反向也绿 | 直接调 `main([...])`：基线自身→1，改进候选→0。**顺延理由**：`main()` 一次要 200+ s 全新评测并与在跑双臂争核（实测 273.7 → ~180 符号/秒），且要动评测面 |
-| C2 ⏸**本轮不做** | `test_b0_rule_revision_seal_contract.py:177-178,193` / `test_b0_m1_counterfactual_contract.py:106,138,140,142` | 由同一行/同组字段**算术蕴含**的断言（`frozen_attribute_unchanged` 就是 `is not` 的复述；行数等于 `a-(a-b)`；同一对象比自身源码） | 断言置换的 `status` 列表、`M4_SELECTION in getsource(...)`（B3 已按此式落地，可复用）、以及"生成的臂 ≠ 封存文本"。**顺延理由**：需逐字段重推 counterfactual delta 哪些是测得、哪些是算出，与主线无关，留 §2 |
+| C1 ✅**已修（2026-09-18）** | `test_cap0_baseline_contract.py`（现 `:612` 附近，行号已漂） | "退出码合同"断言的是 `return` 的一种拼写；`main()` 从未被调用 ⇒ 判分反向也绿。同一支测试还用 `"checkpoint_written" not in source` 充当"只读"证明（缺席 grep，同样恒绿） | 按建议直接调 `main()`：基线自身⇒1、改进候选⇒0，**并加第三个方向**"只满足 J2、不满足 J3⇒1"（否则"有 delta 就返回 0"的退化实现能骗过前两对手）。只读性改为测量：跑完 `main()` 后两份输入报告逐字节不变，且 `tmp_path` 里只多出 `--output` 一个文件。<br>**⚠ 本轮的顺延理由本身是错的，在此更正**：原文写"`main()` 一次要 200+ s 全新评测并与双臂争核（实测 273.7→~180 符号/秒）"——那是 `eval_taiji_cap0_baseline.py` 的 `main()`；本行涉及的是 `check_p3b_criteria.py` 的 `main()`，它只做两份 JSON 的比较、不加载模型。实测：含 3 次 `main()` 调用的 5 支 `p3b_checker` 测试共 **0.21 s**。教训：顺延理由也要落到"这支脚本"的测量上，不能沿用同目录另一支脚本的数字 |
+| C2 ✅**已修（2026-09-18）** | `test_b0_rule_revision_seal_contract.py:177-178,193` / `test_b0_m1_counterfactual_contract.py:106,138,140,142` | 由同一行/同组字段**算术蕴含**的断言（`frozen_attribute_unchanged` 就是 `is not` 的复述；行数等于 `a-(a-b)`；同一对象比自身源码） | 逐字段重推后分两类处置：① **生产端本来就是恒真的**——`delta["frozen_attribute_unchanged"]` 写成 `frozen._member_episode is not episode_fn`，而 `episode_fn` 是 `exec` 出来的新对象，永远不可能 `is` 相等 ⇒ 该字段与函数文档"captured before and re-checked after"不符。已在 `build_counterfactual`/`build_reverted` 两处改为进入时 `held = frozen._member_episode`、结束时比较 `is held`（今后测试里那条断言才有意义）。② **纯文本变换函数里没有别的可测量**：`added_lines`/`already_applied`/`variant_is_identity` 全由 `status` 导出，故改钉原始量 `status` 列表本身（长度 2 + 逐条值），并删去 `a-(a-b)` 那条恒等式，代之以跨观测点/跨对象的判据：调用前后已发布函数字符相同比对、以及用编译产物里真实存在的 revision-1 停因常量判反转臂（`"all_members_blocked" in shipped.__code__.co_consts` 且 `not in arm.__code__.co_consts`，实测通过）。<br>**新踩到的测量陷阱（见 §1e）**：想用 `co_code` 相等证明"反事实已退化为 identity"**不成立** |
 | C3 ✅**已修（03:07）** | `test_p3b_arm_corpus_contract.py:95,99,213-216` | `qualifies(..., "all")` 对任何输入都是 True ⇒ 两行零信息；`密度 > 2×对照密度` 由 `==1.0` 与 `<0.5` 两行蕴含 | 删去两行恒真断言（**理由写进 docstring**，不是静默删除），改为：过滤落点的显式期望表（元数据角色不算说话人）+ **嵌套性**（treatment 接受的每行 control 必接受）+ 一条防退行守卫（样本集若两规则重合则嵌套断言无意义 ⇒ 红）。密度两行换成独立区间 `0.15 < x < 0.30`（实测 0.2356） |
 | C4 ✅**已修（03:08）** | `test_p3b_campaign_contract.py:387-388` 一类 | 单段 fixture 的 pass-through 读取（已在 §1 第 5 条处理一处，其余同类待扫） | 一律两段以上，令"取第一个"会红。落地比建议更强：两臂阶段列表**各自乱序**、共同 tick 排在其中一臂的**第二位**、两个对照阶段彼此分数不同 ⇒ 任何"按位置 zip"的实现会算出错位的 delta 而不是恰好相同；另钉"链未核验的阶段仍报差值、但 `chain_ok=False"`。<br>**过程记录**：我第一版期望写错（19M 只有一臂有阶段 ⇒ 差值是 `None` 而非"仍报"），跑测试前自查发现并改掉 |
 

@@ -219,7 +219,7 @@ def _template_signature(turns: list[dict[str, Any]]) -> dict[str, Any]:
     }
 
 
-def run_inventory() -> dict[str, Any]:
+def run_inventory(report_path: Path = DEFAULT_REPORT) -> dict[str, Any]:
     started = time.perf_counter()
     payload: dict[str, Any] = {
         "format": REPORT_FORMAT,
@@ -325,7 +325,11 @@ def run_inventory() -> dict[str, Any]:
         payload.update(
             {
                 "status": "completed",
-                "record": {"commit": commit, "default_checkpoint": str(DEFAULT_CHECKPOINT)},
+                "record": {
+                    "commit": commit,
+                    # DEBT-I8: repo-relative so the same sample is byte-comparable across machines.
+                    "default_checkpoint": str(DEFAULT_CHECKPOINT.relative_to(PROJECT_ROOT)),
+                },
                 "checkpoint_inventory": inventory,
                 "model_reality": {
                     "checkpoint_exists": DEFAULT_CHECKPOINT.is_file(),
@@ -420,13 +424,11 @@ def run_inventory() -> dict[str, Any]:
                 "elapsed_seconds": round(time.perf_counter() - started, 3),
             }
         )
-    DEFAULT_REPORT.parent.mkdir(parents=True, exist_ok=True)
+    report_path.parent.mkdir(parents=True, exist_ok=True)
     # An errored run must not overwrite the sealed report (see the same guard in
     # probe_taiji_cap0_legacy_load.py): failures land in a sibling file, evidence survives.
     failed = "error" in payload
-    target = (
-        DEFAULT_REPORT.with_name(DEFAULT_REPORT.stem + ".error.json") if failed else DEFAULT_REPORT
-    )
+    target = report_path.with_name(report_path.stem + ".error.json") if failed else report_path
     temporary = target.with_suffix(target.suffix + ".tmp")
     temporary.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
     temporary.replace(target)
@@ -438,10 +440,16 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "--child", action="store_true", help="internal: run one fresh-process probe"
     )
+    parser.add_argument(
+        "--report",
+        type=Path,
+        default=DEFAULT_REPORT,
+        help="写出路径（默认覆盖本轮封存报告；复采别人跑出的现场时务必指新名）",
+    )
     args = parser.parse_args(argv)
     if args.child:
         return _probe_child(json.loads(sys.stdin.read()))
-    result = run_inventory()
+    result = run_inventory(args.report if args.report.is_absolute() else PROJECT_ROOT / args.report)
     reality = result.get("model_reality") or {}
     inventory = result.get("raw_output_inventory") or {}
     default_probe = inventory.get("default_entry") or {}

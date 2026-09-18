@@ -170,11 +170,39 @@ def _snapshot(checkpoint: Path, tick: int) -> tuple[Path, int]:
     return frozen, actual
 
 
-def _evaluate(checkpoint: Path, stage_path: Path) -> dict[str, Any]:
-    """Score one checkpoint on the frozen eval set with the P3a chain (fresh process per stage)."""
+def _evaluate(checkpoint: Path, stage_path: Path, baseline: dict[str, Any]) -> dict[str, Any]:
+    """Score one checkpoint on the frozen eval set with the P3a chain (fresh process per stage).
+
+    A stage report already on disk is reused only after ``_reuse_defects`` clears it (DEBT-I6).
+    Re-scoring is allowed only while the snapshot that stage was scored from still exists: the
+    live checkpoint has moved past that tick, so a replacement produced from it would carry an
+    older tick's label over a newer training state -- a mix no later reading could detect.
+    """
 
     if stage_path.exists():
-        return _load(stage_path)
+        try:
+            stored = _load(stage_path)
+        except (json.JSONDecodeError, UnicodeDecodeError) as error:
+            defects = [f"unreadable ({type(error).__name__})"]
+        else:
+            defects = _reuse_defects(stored, baseline)
+        if not defects:
+            return stored
+        if not checkpoint.exists():
+            raise SystemExit(
+                f"stage report {stage_path.name} is unusable ({'; '.join(defects)}) and its "
+                f"snapshot {checkpoint.name} is gone: refusing to re-score, because only the "
+                "snapshot proves which training state this tick had"
+            )
+        preserved = stage_path.with_name(f"{stage_path.stem}.unusable")
+        if preserved.exists():
+            preserved = preserved.with_name(f"{preserved.name}.{os.getpid()}")
+        stage_path.replace(preserved)
+        print(
+            f"re-scoring {stage_path.name} from {checkpoint.name}; "
+            f"kept {preserved.name} ({'; '.join(defects)})",
+            flush=True,
+        )
     stage_path.parent.mkdir(parents=True, exist_ok=True)
     command = [
         sys.executable,
@@ -220,6 +248,11 @@ STOP_DEFINITIONS: dict[str, Any] = {
         "the live checkpoint is copied to checkpoints/p3b/snapshots before scoring, "
         "because a stage costs ~205 s while the trainer overwrites the file"
     ),
+    "stage_reuse": (
+        "an existing stage report is re-read only after _reuse_defects clears it "
+        "(evaluation surface, chain, trained_during_eval); a defective one is re-scored if its "
+        "snapshot survives and the run refuses to continue if it does not"
+    ),
     "comparability": (
         "a stage must reproduce the P3a evaluation surface exactly ("
         + ", ".join(EVAL_SURFACE_FIELDS)
@@ -242,6 +275,21 @@ def _surface_drift(stage: dict[str, Any], baseline: dict[str, Any]) -> list[str]
         if scored != frozen:
             drift.append(f"{key}:item_ids")
     return drift
+
+
+def _reuse_defects(report: dict[str, Any], baseline: dict[str, Any]) -> list[str]:
+    """Why an on-disk stage report may **not** be trusted (DEBT-I6).  Empty list means reusable.
+
+    Item counts come from the baseline rather than a literal, so the check cannot rot into a fossil
+    if the frozen eval set is ever re-issued -- ``_surface_drift`` already compares item ids.
+    """
+
+    defects = _surface_drift(report, baseline)
+    if report.get("chain") != REQUIRED_CHAIN:
+        defects.append(f"chain {report.get('chain')!r} is not the P3a chain {REQUIRED_CHAIN}")
+    if report.get("trained_during_eval") is not False:
+        defects.append(f"trained_during_eval is {report.get('trained_during_eval')!r}")
+    return defects
 
 
 def _stage_row(
@@ -392,7 +440,7 @@ def run(
                 continue
             frozen, tick = _snapshot(checkpoint, requested)
             stage_path = stage_dir / f"cap0_tick_{tick}.json"
-            scored = _evaluate(frozen, stage_path)
+            scored = _evaluate(frozen, stage_path, baseline)
             row = _stage_row(tick, scored, baseline, stage_path.name)
             row["snapshot"] = frozen.name
             row["tick_corrected_from"] = None if tick == requested else requested

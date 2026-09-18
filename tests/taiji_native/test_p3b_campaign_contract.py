@@ -21,6 +21,7 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import re
 import sys
 import tempfile
 from pathlib import Path
@@ -619,6 +620,131 @@ def test_swapped_eval_surface_or_item_order_is_drift(campaign: Any) -> None:
     echoed = json.loads(json.dumps(stage))
     echoed["declared_mode"] = "T"
     assert "declared_mode" in campaign._surface_drift(echoed, base)
+
+
+# --------------------------------------------------------------------------- #
+# An on-disk stage report is a claim, not an instruction (DEBT-I6)
+# --------------------------------------------------------------------------- #
+
+
+class _Evaluator:
+    """Stand-in for the CAP-0 evaluator subprocess: records requests, can emit a report."""
+
+    def __init__(self, payload: dict[str, Any] | None = None) -> None:
+        self.calls: list[list[str]] = []
+        self.payload = payload
+
+    def run(self, command: list[str], **_kwargs: Any) -> Any:
+        self.calls.append(list(command))
+
+        class _Done:
+            returncode = 0
+            stdout = ""
+            stderr = ""
+
+        if self.payload is not None:
+            target = Path(self.calls[-1][self.calls[-1].index("--report") + 1])
+            target.write_text(json.dumps(self.payload, ensure_ascii=False), encoding="utf-8")
+        return _Done()
+
+
+def _stage_pair() -> tuple[dict[str, Any], dict[str, Any]]:
+    """A stage report that clears every reuse check, plus the baseline it matches."""
+
+    ids = [f"{key}{index}" for key in ("C", "D", "E") for index in range(20)]
+    stage = _surface([])
+    for key in ("C", "D", "E"):
+        stage["dimensions"][key]["items"] = [{"id": item} for item in ids if item.startswith(key)]
+    stage["chain"] = {"relax_legacy_guard": True, "constrained_decode": True}
+    stage["trained_during_eval"] = False
+    return stage, json.loads(json.dumps(stage))
+
+
+def _write(path: Path, payload: Any) -> Path:
+    path.write_text(
+        payload if isinstance(payload, str) else json.dumps(payload, ensure_ascii=False),
+        encoding="utf-8",
+    )
+    return path
+
+
+def test_a_valid_stage_report_is_reused_without_rescoring(tmp_path, campaign, monkeypatch) -> None:
+    """正向：合格报告照旧复用。缺了这条，"每次都重评"的实现也能骗过下面几条。"""
+
+    stage, baseline = _stage_pair()
+    stage_path = _write(tmp_path / "cap0_tick_17000000.json", stage)
+    snapshot = _write(tmp_path / "arm_tick_17000000.pt", "not-a-checkpoint")
+    evaluator = _Evaluator()
+    monkeypatch.setattr(campaign, "subprocess", evaluator)
+
+    assert campaign._evaluate(snapshot, stage_path, baseline) == stage
+    assert evaluator.calls == []
+
+
+def test_a_torn_stage_report_is_replaced_and_kept(tmp_path, campaign, monkeypatch) -> None:
+    """写一半的报告：不许消费，重评后要留作物证（它是"上次被杀"的唯一痕迹）。"""
+
+    stage, baseline = _stage_pair()
+    torn = json.dumps(stage, ensure_ascii=False)[:300]
+    stage_path = _write(tmp_path / "cap0_tick_17000000.json", torn)
+    snapshot = _write(tmp_path / "arm_tick_17000000.pt", "not-a-checkpoint")
+    replacement = json.loads(json.dumps(stage))
+    replacement["dimensions"]["C"]["tally"] = {"machine_normalised": 0.35}
+    evaluator = _Evaluator(replacement)
+    monkeypatch.setattr(campaign, "subprocess", evaluator)
+
+    scored = campaign._evaluate(snapshot, stage_path, baseline)
+    assert scored["dimensions"]["C"]["tally"]["machine_normalised"] == 0.35
+    assert len(evaluator.calls) == 1
+    kept = stage_path.with_name("cap0_tick_17000000.unusable")
+    assert kept.read_text(encoding="utf-8") == torn
+
+
+def test_a_well_formed_but_wrong_stage_report_is_not_reused(campaign) -> None:
+    """能解析、字段齐、语义不对的报告同样要拦——只查"能否 json.loads"会放过这一整类。"""
+
+    for field, value, expected in (
+        ("trained_during_eval", True, "trained_during_eval"),
+        ("declared_mode", "T", "declared_mode"),
+        ("chain", {"relax_legacy_guard": False, "constrained_decode": True}, "chain"),
+    ):
+        stage, baseline = _stage_pair()
+        stage[field] = value
+        defects = campaign._reuse_defects(stage, baseline)
+        assert any(expected in defect for defect in defects), (field, defects)
+
+    untouched, baseline = _stage_pair()
+    assert campaign._reuse_defects(untouched, baseline) == []
+
+
+def test_reuse_is_refused_when_the_snapshot_is_gone(tmp_path, campaign, monkeypatch) -> None:
+    """快照已失 ⇒ 拒绝续跑。重评会打分一个**更晚**的状态却贴着这个 tick 的标签。"""
+
+    stage, baseline = _stage_pair()
+    stage_path = _write(tmp_path / "cap0_tick_17000000.json", json.dumps(stage)[:300])
+    evaluator = _Evaluator(stage)
+    monkeypatch.setattr(campaign, "subprocess", evaluator)
+
+    with pytest.raises(SystemExit) as caught:
+        campaign._evaluate(tmp_path / "arm_tick_17000000.pt", stage_path, baseline)
+    assert evaluator.calls == []
+    assert "arm_tick_17000000.pt" in str(caught.value)
+
+
+def test_criteria_report_paths_are_repo_relative(tmp_path, criteria) -> None:
+    """DEBT-I8：报告里的路径不能带盘符，否则同一份快照的两次打分无法逐字节比对。"""
+
+    sealed = REPO / "reports" / "taiji_cap0_baseline_constrained_20260915.json"
+    inside = criteria._relative(sealed)
+    assert not Path(inside).is_absolute()
+    assert (REPO / inside).is_file()
+    outside = criteria._relative(tmp_path / "x.json")
+    assert Path(outside) == tmp_path / "x.json"
+
+    record = criteria.check(criteria.DEFAULT_BASELINE)
+    for field in ("baseline", "candidate"):
+        assert re.search(r"[A-Za-z]:[\\/]", record[field]) is None, field
+        assert (REPO / record[field]).is_file()
 
 
 # --------------------------------------------------------------------------- #
