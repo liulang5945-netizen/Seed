@@ -7,4 +7,5 @@ from scripts.training.eval_taiji_natural_language_workbench_grounding_modulariza
 
 def test_natural_language_workbench_grounding_modularization_gate_passes() -> None:
     report = evaluate()
-    assert report["gate"]["passed"] is True
+    failed = [key for key, passed in report["metrics"].items() if not passed]
+    assert report["gate"]["passed"] is True, failed
