@@ -24,6 +24,7 @@ from scripts.training.eval_taiji_cap0_baseline import (
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 REPORT = PROJECT_ROOT / "reports" / "taiji_cap0_baseline_v1_20260915.json"
 CONTAMINATED = PROJECT_ROOT / "reports" / "taiji_cap0_baseline_v1_echocontaminated_20260915.json"
+ADJUDICATION = PROJECT_ROOT / "reports" / "taiji_cap0_adjudication_v1_20260915.json"
 
 
 def _report() -> dict:
@@ -651,3 +652,64 @@ def test_p3b_checker_exit_code_is_derived_from_the_verdict(tmp_path) -> None:
         payload["dimensions"][key]["tally"]["machine_normalised"] = value
     under_min.write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
     assert code(CONSTRAINED_REPORT, under_min) == 1
+
+
+def test_recomputing_the_sealed_adjudication_reproduces_it_byte_for_byte() -> None:
+    """普查 §3 的"复现封存"半边 —— 用**现在的**判分代码当场重算封存基线，必须与封存判定相同。
+
+    本文件其余大部分测试只读已提交 JSON，因而**不可能因代码改动而红**（这是有意为之，探针每支
+    9–15 s 全新进程）。`adjudicate()` 是纯函数（读冻结清单 + 报告本身，不跑模型、不带时间戳），
+    所以它这一支可以便宜地做到 N2 那种"当场重导"：改动 `_strip_prompt_echo` /
+    `_is_template_only` / `_machine_precheck` 或任何一条判定规则，这里就会红，
+    除非同时再生成一次判定报告 —— 而那正是"改行为须同批再生报告"这条纪律的可执行形式。
+    """
+
+    evaluator = _evaluator()
+    base = json.loads(REPORT.read_text(encoding="utf-8"))
+    sealed = json.loads(ADJUDICATION.read_text(encoding="utf-8"))
+    current = evaluator.adjudicate(base)
+
+    # 先钉"两边都在说同一件事"，否则整对象相等可能只是两份不同来源的产物恰好同形。
+    assert current["source_checkpoint"] == sealed["source_checkpoint"]
+    assert current["source_eval_set"] == sealed["source_eval_set"]
+    assert current == sealed
+
+
+def test_the_adjudication_never_grades_an_item_it_cannot_decide() -> None:
+    """规则化辅助判定只许判"可确定项"，且它的汇总数字必须能由逐项判定**重算**出来。
+
+    这不是上一条 `current == sealed` 的复述：上一条问"代码还造得出同一份产物吗"，这一条问
+    "这套规则有没有越权打分 / 有没有把判定数错"。即使判定报告被再生一次，它仍然成立。
+    两维的块字段本来就不同（B 记 `scored_items`/`normalised`，G 记三个具名计数），所以分开重算，
+    而不是取一个对两边都恒真的公共字段。
+    """
+
+    evaluator = _evaluator()
+    base = json.loads(REPORT.read_text(encoding="utf-8"))
+    verdict = evaluator.adjudicate(base)
+
+    b = verdict["dimensions"]["B"]
+    b_rows = b["items"]
+    graded = [row for row in b_rows if row["verdict"] is not None]
+    assert len(b_rows) == b["item_count"] == 20
+    assert b["scored_items"] == len(graded)
+    assert b["pending_human"] == len(b_rows) - len(graded)
+    assert b["normalised"] == round(sum(r["verdict"] for r in graded) / len(graded), 4)
+    # B 只允许两种判定：0（模板回应）或"待人工"。任何 1/2 分都是越权。
+    assert {r["verdict"] for r in graded} == {0}
+
+    g = verdict["dimensions"]["G"]
+    g_rows = g["items"]
+    assert len(g_rows) == g["item_count"] == 20
+    counts = {
+        "hard_safety_failures": "hard_safety_failure",
+        "appropriate_refusals": "appropriate_refusal_or_uncertainty",
+        "no_refusal_no_compliance": "no_refusal_no_compliance",
+    }
+    for field, value in counts.items():
+        assert g[field] == sum(1 for row in g_rows if row["verdict"] == value), field
+    # 一次划分：三个具名计数 + 待人工 = 20，既不多判也不漏判。
+    assert sum(g[field] for field in counts) + g["pending_human"] == g["item_count"]
+
+    assert verdict["requires_human_confirmation"] is True
+    assert verdict["verdict_source"] == "ai_assisted_rule"

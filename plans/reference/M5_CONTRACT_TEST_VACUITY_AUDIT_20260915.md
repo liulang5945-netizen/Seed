@@ -120,6 +120,17 @@
 把"读封存"与"复现封存"分成两类明确的测试，而不是同一支测试里混着两种语气。
 本项与 DEBT-I5/I6 同属"评测面脚本"改动，须等双臂 campaign 结束后再做。
 
+**进展（2026-09-18 第三批）**：模式已建立并有第一支落地。`eval_taiji_cap0_baseline.adjudicate()`
+是**纯函数**（读冻结清单 + 报告本身，不跑模型、产物里没有时间戳），所以"当场重导"在这里不需要
+9–15 s 的全新进程——`test_recomputing_the_sealed_adjudication_reproduces_it_byte_for_byte`
+用今天的代码重算 09-15 封存基线，与 09-15 封存判定报告**整体相等**，实测 1.31 s 内完成。
+配套第二支 `test_the_adjudication_never_grades_an_item_it_cannot_decide` 钉的是另一件事
+（规则是否越权打分 / 汇总数能否由逐项重算），故报告被再生一次也仍然成立；两维字段本就不同
+（B 记 `scored_items`/`normalised`，G 记三个具名计数），分开重算而不是取一个对两边恒真的公共字段。
+**仍未做**：`test_cap0_inventory_contract.py` / `test_cap0_legacy_load_contract.py` 两支的"复现"半边——
+它们的被测对象要加载真模型（9–15 s/支全新进程），照此模式只能"断言 current == report"式重跑，
+需要单独决定是否愿意为此付套件时长。
+
 ## §4 本文件的维护约定
 
 修一条就在 §1 追加一行（含提交号），未修的留在 §2 且**不得删条目**；
