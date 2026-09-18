@@ -236,6 +236,9 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--arm", choices=sorted(ARMS), required=True)
     parser.add_argument(
+        """--seed""", type=int, default=SEED, help="one seed per run (contract: 20260917)"
+    )
+    parser.add_argument(
         "--fixture",
         type=Path,
         default=FIXTURE,
@@ -261,9 +264,9 @@ def main() -> int:
     vocab = CharVocab(_train_text(rows))
     episodes = tuple((row["prefix"], row["response"]) for row in rows)
     masks = tuple(value_mask_for_char(row["shape"], row["response"]) for row in rows)
-    torch.manual_seed(SEED)
+    torch.manual_seed(args.seed)
     workspace = SequenceCharWorkspace(
-        vocab, SequenceCharConfig(seed=SEED, copy_induction=induction)
+        vocab, SequenceCharConfig(seed=args.seed, copy_induction=induction)
     )
     trainer = SequenceCharTrainer(
         workspace, learning_rate=LEARNING_RATE, code_revision=f"r2-d7-{args.arm}-probe"
@@ -276,9 +279,9 @@ def main() -> int:
     if not preflight["passed"]:
         raise RuntimeError(f"char preflight failed: {preflight}")
     # Rebuild identical params after the subprocess touched nothing (fresh RNG).
-    torch.manual_seed(SEED)
+    torch.manual_seed(args.seed)
     workspace = SequenceCharWorkspace(
-        vocab, SequenceCharConfig(seed=SEED, copy_induction=induction)
+        vocab, SequenceCharConfig(seed=args.seed, copy_induction=induction)
     )
     trainer = SequenceCharTrainer(
         workspace, learning_rate=LEARNING_RATE, code_revision=f"r2-d7-{args.arm}-probe"
@@ -346,7 +349,7 @@ def main() -> int:
         "split_read": "train",
         "dev_read": False,
         "final_read": False,
-        "seed": SEED,
+        "seed": args.seed,
         "epochs_frozen": EPOCHS,
         "frozen_learning_rate": LEARNING_RATE,
         "train_episodes": len(episodes),
