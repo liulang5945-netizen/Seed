@@ -1,0 +1,161 @@
+{
+  "format": "taiji-r2-d7-char-token-probe-v1",
+  "version": 1,
+  "contract": "plans/reference/M5_R2_D7_CHAR_TOKEN_CONTRACT_FROZEN_20260918.md",
+  "graph": "char-v1",
+  "arm": "T1",
+  "copy_induction": true,
+  "lambda_copy_value": 1.0,
+  "microbatch_size": 8,
+  "fixture": "tests\\fixtures\\r2_d1_measurement_v3.jsonl",
+  "corpus_digest": "a73703de2759491c923066e24beac56f910d820b365ed6148e062f12565c3554",
+  "vocab_size": 103,
+  "split_read": "train",
+  "dev_read": false,
+  "final_read": false,
+  "seed": 20260918,
+  "epochs_frozen": 30,
+  "frozen_learning_rate": 0.01,
+  "train_episodes": 1278,
+  "elapsed_seconds": 596.390999999945,
+  "wall_cap_seconds": 1200,
+  "parameter_count": 61385,
+  "copy_induce_bias_end": 0.25354525446891785,
+  "preflight": {
+    "expected_mixture_digest": "e401c223f23c99517e09724014c702cd110fa8da2c5ecea2df5eb3d51bc697aa",
+    "observed_mixture_digest": "e401c223f23c99517e09724014c702cd110fa8da2c5ecea2df5eb3d51bc697aa",
+    "mixture_match": true,
+    "continuation_matches": true,
+    "restored_version": 1,
+    "passed": true
+  },
+  "final": {
+    "M1_exact": {
+      "numerator": 1183,
+      "denominator": 1278,
+      "value": 0.9256651017214398
+    },
+    "copy_supported_M1": {
+      "numerator": 1152,
+      "denominator": 1152,
+      "value": 1.0
+    },
+    "mean_sequence_loss": 0.08360876089667192
+  },
+  "per_shape_exact": {
+    "combination_different": {
+      "numerator": 0,
+      "denominator": 31,
+      "value": 0.0
+    },
+    "combination_same": {
+      "numerator": 31,
+      "denominator": 31,
+      "value": 1.0
+    },
+    "fact": {
+      "numerator": 384,
+      "denominator": 384,
+      "value": 1.0
+    },
+    "negation": {
+      "numerator": 384,
+      "denominator": 384,
+      "value": 1.0
+    },
+    "same_opening_fact": {
+      "numerator": 384,
+      "denominator": 384,
+      "value": 1.0
+    },
+    "same_opening_unknown": {
+      "numerator": 0,
+      "denominator": 32,
+      "value": 0.0
+    },
+    "unknown": {
+      "numerator": 0,
+      "denominator": 32,
+      "value": 0.0
+    }
+  },
+  "value_length_groups": {
+    "multibyte": {
+      "numerator": 576,
+      "denominator": 576,
+      "value": 1.0
+    },
+    "singlebyte": {
+      "numerator": 576,
+      "denominator": 576,
+      "value": 1.0
+    }
+  },
+  "trajectory": [
+    {
+      "epoch": 0,
+      "mean_sequence_loss": 4.081948,
+      "M1_exact": 0.0,
+      "copy_supported_M1": 0.0
+    },
+    {
+      "epoch": 5,
+      "mean_sequence_loss": 0.083025,
+      "M1_exact": 0.9256651017214398,
+      "copy_supported_M1": 1.0
+    },
+    {
+      "epoch": 10,
+      "mean_sequence_loss": 0.083164,
+      "M1_exact": 0.9256651017214398,
+      "copy_supported_M1": 1.0
+    },
+    {
+      "epoch": 15,
+      "mean_sequence_loss": 0.083285,
+      "M1_exact": 0.9256651017214398,
+      "copy_supported_M1": 1.0
+    },
+    {
+      "epoch": 20,
+      "mean_sequence_loss": 0.083607,
+      "M1_exact": 0.9256651017214398,
+      "copy_supported_M1": 1.0
+    },
+    {
+      "epoch": 25,
+      "mean_sequence_loss": 0.083902,
+      "M1_exact": 0.9256651017214398,
+      "copy_supported_M1": 1.0
+    },
+    {
+      "epoch": 30,
+      "mean_sequence_loss": 0.083609,
+      "M1_exact": 0.9256651017214398,
+      "copy_supported_M1": 1.0
+    }
+  ],
+  "copy_value_readout_intact": {
+    "mean_copy_value_prob": 0.9999998808596973,
+    "positions": 1728
+  },
+  "copy_value_readout_misbound": {
+    "mean_copy_value_prob": 0.11035369618156439,
+    "positions": 1728
+  },
+  "gate": {
+    "copy_supported_m1_ge_0_90": true,
+    "multibyte_m1_ge_0_90": true,
+    "singlebyte_m1_ge_0_90": true,
+    "copy_value_prob_ge_0_90": true,
+    "misbind_copy_prob_le_0_50": true,
+    "loss_increases_bounded_15pct": true,
+    "no_late_collapse_gt_0_10": true,
+    "preflight_passed": true,
+    "within_wall_cap": true
+  },
+  "outcome": "passed",
+  "reading": "R2-D7 H-Tok character-unit learnability probe (train-only); not a capability claim",
+  "growth_admitted": false,
+  "can_promote": false
+}
