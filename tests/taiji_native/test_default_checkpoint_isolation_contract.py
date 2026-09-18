@@ -60,6 +60,32 @@ def test_explicit_and_source_paths_still_beat_the_redirected_default(
     assert seed_runtime.resolve_save_target(None, None) == seed_runtime.DEFAULT_SAVE_TARGET
 
 
+def test_a_runtime_that_loaded_from_the_product_default_does_not_save_to_it(seed_runtime) -> None:
+    """``load()`` **records** the file it read, so redirecting the fallback alone was not enough.
+
+    ``SeedRuntime.load()`` with no argument resolves to ``DEFAULT_CHECKPOINT`` and stores that as
+    ``checkpoint_path``, and ``save()`` reads "explicit arg -> checkpoint_path -> default", so the
+    commonest real shape bypassed the first version of the guard.  This is a code-level hole closed
+    by the resolver mapping "source == product default" onto the redirected target; no suite run
+    today is known to have exercised it (the one sha move we could attribute happened in a run that
+    started *before* the guard existed).  Asserted behaviourally rather than by constant equality,
+    because a recorded default is invisible to a default-level switch.
+    """
+
+    product_default = seed_runtime.DEFAULT_CHECKPOINT
+    assert (
+        seed_runtime.resolve_save_target(None, product_default) == seed_runtime.DEFAULT_SAVE_TARGET
+    )
+
+    before = _sha(product_default)
+    runtime = seed_runtime.SeedRuntime.load()
+    assert runtime.checkpoint_path == product_default, "the guard must face the real source shape"
+    written = runtime.save()
+    assert written == seed_runtime.DEFAULT_SAVE_TARGET
+    assert written.is_file()
+    assert _sha(product_default) == before
+
+
 def test_the_default_load_source_was_not_redirected(seed_runtime) -> None:
     """只重定向写靶。若连读侧也搬走，"默认入口服务哪个模型"这条判断就没有对象了。"""
 

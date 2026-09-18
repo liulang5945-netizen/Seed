@@ -94,6 +94,21 @@
   实测 `15 passed in 3.11 s`（含既有 SeedRuntime 重用户 `test_native_life_status` / `test_semantic_provider`）。
   本条登记过的"26 个测试文件同时出现 SeedRuntime 与 save/train/reset"这一面**不需要逐个改**：
   写路径被一次性收口在同一个落点上。第二实例（`output/manual-r5-canary/` 残留）不在本次修法内，仍未处置。
+  **第一版留了一个代码级缺口（同日第三批续，⚠ 这里的因果已重推过一次，第一版叙述是错的）**：
+  `SeedRuntime.load()` 无参时把 `DEFAULT_CHECKPOINT` **记进** `self.checkpoint_path`，而 `save()` 的
+  取值顺序是"显式参数 → 来源路径 → 默认"——只重定向"默认"这一档，走 `load()` 的运行时照样能写回产品文件。
+  修法是把"来源 == 产品默认"也映射到被重定向的写靶（`resolve_save_target` 内两行；产品侧两名同值
+  ⇒ 行为不变），并补一支端到端守卫 `test_a_runtime_that_loaded_from_the_product_default_does_not_save_to_it`
+  （真 `load()` + 真 `save()`，断言产品文件 sha 不变）。实测 `5 passed in 2.06 s`。
+  **这条缺口是"代码上成立、今天的套件里未被触发"，不是"实测被写了一次"**：
+  最初我以为它被实测抓到（新采样本的 `saved_at_utc` 与封存样本不一致），重推时间线后不成立——
+  那次改写发生在 **13:58:40 起跑的那套**（我的 conftest 修正在 14:07:58 才落地 ⇒ 那一套没有隔离），
+  它在 14:18 结束时把 sha 从 `3fec3e47` 变成 `c8025db4`；
+  而 **14:27:34 起跑、带第一版隔离的那套**跑前跑后同为 `c8025db4`、`tick=2`、43,223,183 B
+  ⇒ 那才是"套件不再改写产品默认基座"的第一次套件级验证。
+  **教训**：一条"某修法不够"的断言，要有"触发它的那次运行"的时间线才算证据；只看到时间戳不一致就归因，
+  会把一次早于修法的写入算成修法的失效（[[feedback-recompute-dont-hand-carry]] 的第 6 种模式：
+  把相关当因果，且没有核对先后）。
 - **DEBT-I8 ✅已处置（2026-09-18 第二批）已提交的 P3b 报告里嵌着机器绝对路径 ⇒ 同一份快照的两次打分无法逐字节比对**。
   实证：驱动写的 `reports/p3b_stages/control/cap0_tick_17000000.json` 顶层
   `checkpoint = "E:\\Seed\\checkpoints\\..."`，而我手工复评同一份快照得到的却是

@@ -23,6 +23,7 @@ from __future__ import annotations
 import json
 import re
 from pathlib import Path
+from typing import Any
 
 import pytest
 
@@ -230,3 +231,55 @@ def test_sample_path_fields_are_relative_but_exception_text_is_not() -> None:
     hits = [line for line in text.splitlines() if DRIVE_LETTER.search(line)]
     assert len(hits) == 1, hits
     assert "missing_checkpoint_error" in hits[0], hits[0][:80]
+
+
+#: 允许"当场重采"与 09-18 样本不同的路径 —— 每一条都是"这次采样发生在何处/何提交"的属性，
+#: 不是仪器判据的属性。``[*]`` 匹配任意下标。
+VOLATILE_SAMPLE_PATHS = (
+    "record.commit",
+    "elapsed_seconds",
+    "raw_output_inventory.default_turns[*].seconds",
+    "raw_output_inventory.most_trained_turns[*].seconds",
+)
+
+
+def _leaves(value: Any, prefix: str = "") -> dict[str, Any]:
+    if isinstance(value, dict):
+        return {
+            child_key: leaf
+            for key, child in value.items()
+            for child_key, leaf in _leaves(child, f"{prefix}.{key}" if prefix else str(key)).items()
+        }
+    if isinstance(value, list):
+        return {
+            child_key: leaf
+            for index, child in enumerate(value)
+            for child_key, leaf in _leaves(child, f"{prefix}[{index}]").items()
+        }
+    return {prefix: value}
+
+
+def test_a_fresh_inventory_sample_reproduces_the_sealed_one(tmp_path) -> None:
+    """普查 §3 的"复现封存"半边（第二支）：**当场重跑盘点**，与 09-18 那份逐叶比较。
+
+    本文件其余断言都只读已提交 JSON，永不因代码改动而红（这是有意的，一次盘点 28 s）。
+    这一支会：改 `run_inventory` 的任何一条判据、或默认基座发生变化，这里就红。
+    允许不同的只有 4 条模式覆盖的叶子，并且同时钉住"被屏蔽的叶子远小于比较面"——
+    否则靠扩大屏蔽集就能把整份产物藏起来。
+
+    屏蔽集是从**实测**里挑的，不是猜的：09-15 与 09-18 两份样本共 201 个叶子，只有 24 个不同，
+    全部落在时长/时间戳、基座状态（bytes/tick）与 DEBT-I8 的路径拼写三类；
+    探针的**文本回答**一个都没变（⇒ 该仪器的模板输出与基座权重无关，这本身是一条副产品）。
+    """
+
+    from scripts.training.eval_taiji_cap0_inventory import run_inventory
+
+    fresh = run_inventory(tmp_path / "inventory.json")
+    sealed = json.loads(RESAMPLE.read_text(encoding="utf-8"))
+    old, new = _leaves(sealed), _leaves(fresh)
+
+    assert old.keys() == new.keys(), "仪器少产/多产了字段"
+    volatile = {path for path in old if re.sub(r"\[\d+\]", "[*]", path) in VOLATILE_SAMPLE_PATHS}
+    drifted = {path for path in old if old[path] != new[path]}
+    assert drifted <= volatile, sorted(drifted - volatile)[:8]
+    assert len(old) > 150 and len(volatile) * 5 < len(old), (len(old), len(volatile))

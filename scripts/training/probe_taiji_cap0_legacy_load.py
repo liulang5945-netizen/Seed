@@ -208,7 +208,7 @@ def _spawn(checkpoint: Path, *, apply_guard: bool) -> dict[str, Any]:
         }
 
 
-def run_probe() -> dict[str, Any]:
+def run_probe(report_path: Path = DEFAULT_REPORT) -> dict[str, Any]:
     started = time.perf_counter()
     payload: dict[str, Any] = {
         "format": REPORT_FORMAT,
@@ -290,14 +290,12 @@ def run_probe() -> dict[str, Any]:
                 "elapsed_seconds": round(time.perf_counter() - started, 3),
             }
         )
-    DEFAULT_REPORT.parent.mkdir(parents=True, exist_ok=True)
+    report_path.parent.mkdir(parents=True, exist_ok=True)
     # An errored run must not overwrite the sealed report: that is exactly how this probe once
     # replaced 115 lines of committed evidence with a four-line error stub.  Failures land in a
     # sibling file, so the good report survives and the failure is still on disk.
     failed = "error" in payload
-    target = (
-        DEFAULT_REPORT.with_name(DEFAULT_REPORT.stem + ".error.json") if failed else DEFAULT_REPORT
-    )
+    target = report_path.with_name(report_path.stem + ".error.json") if failed else report_path
     temporary = target.with_suffix(target.suffix + ".tmp")
     temporary.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
     temporary.replace(target)
@@ -307,10 +305,16 @@ def run_probe() -> dict[str, Any]:
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--child", action="store_true", help="internal: one fresh-process arm")
+    parser.add_argument(
+        "--report",
+        type=Path,
+        default=DEFAULT_REPORT,
+        help="写出路径（默认覆盖 09-15 封存报告；复采一律指新名）",
+    )
     args = parser.parse_args(argv)
     if args.child:
         return _child(json.loads(sys.stdin.read()))
-    result = run_probe()
+    result = run_probe(args.report if args.report.is_absolute() else PROJECT_ROOT / args.report)
     verdict = result.get("verdict") or {}
     arms = result.get("arms") or {}
     print(

@@ -39,9 +39,18 @@ DEFAULT_SAVE_TARGET = DEFAULT_CHECKPOINT
 def resolve_save_target(
     path: Path | str | None = None, checkpoint_path: Path | str | None = None
 ) -> Path:
-    """The file a save would write: explicit argument, then the loaded-from path, then the default."""
+    """The file a save would write: explicit argument, then the loaded-from path, then the default.
 
-    return Path(path or checkpoint_path or DEFAULT_SAVE_TARGET)
+    A runtime that *loaded from* the product default is redirected too: ``load()`` records the file
+    it read as ``checkpoint_path``, and "save back where it came from" is otherwise exactly how a
+    test rewrites the model the app serves (DEBT-I7).  Outside a test session the two names are the
+    same path, so the product's round-trip behaviour is unchanged.
+    """
+
+    if path is not None:
+        return Path(path)
+    source = Path(checkpoint_path) if checkpoint_path else DEFAULT_SAVE_TARGET
+    return DEFAULT_SAVE_TARGET if source == DEFAULT_CHECKPOINT else source
 
 
 _TURN_MARKERS = ("\n问：", "问：")
