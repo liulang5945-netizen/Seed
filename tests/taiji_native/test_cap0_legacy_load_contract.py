@@ -9,8 +9,10 @@ That "no" is the load-bearing part.  It is what separates a correctness defect f
 a capability gap, and a silent edit that made the recovered arm look conversational
 would invert the conclusion.  So both halves are asserted here.
 
-The probe runs three fresh-process arms (~9 s), so this file reads the committed
-report and never re-runs it.
+The probe runs three fresh-process arms (~9 s), so most of this file reads the committed report --
+with one deliberate exception: ``test_a_fresh_probe_sample_reproduces_the_sealed_one`` re-runs the
+probe in-process and compares leaf-by-leaf against the 09-18 sample, because a report-reading test
+can never go red when the instrument changes (audit §3).
 """
 
 from __future__ import annotations
@@ -19,10 +21,19 @@ import json
 from pathlib import Path
 
 import pytest
+from _report_leaves import leaves, tail
 
 REPO = Path(__file__).resolve().parents[2]
 REPORT = REPO / "reports" / "taiji_cap0_legacy_load_probe_20260915.json"
+#: 09-18 重采样：写侧隔离（DEBT-I7）落地之后，默认基座已稳定，因此可以当复现参照。
+RESAMPLE = REPO / "reports" / "taiji_cap0_legacy_load_probe_20260918.json"
 RUNNER = REPO / "scripts" / "training" / "probe_taiji_cap0_legacy_load.py"
+
+
+#: 允许"当场重跑"与参照样本不同的叶子：采样时刻、总耗时，以及每条臂的墙钟。
+#: 刻意**不含** ``tick`` / ``saved_at_utc`` / 输出文本 —— 那正是"默认基座又被谁改了"要看住的东西。
+VOLATILE_SAMPLE_FIELDS = frozenset({"seconds", "elapsed_seconds"})
+VOLATILE_SAMPLE_PATHS = frozenset({"record.commit"})
 
 
 @pytest.fixture(scope="module")
@@ -144,3 +155,43 @@ def test_probe_states_its_own_limits(report):
     # It must not claim to have decided anything.
     joined = " ".join(report["does_not_do"])
     assert "does not decide the refuse-vs-migrate policy question" in joined
+
+
+def test_a_fresh_probe_sample_reproduces_the_sealed_one(tmp_path) -> None:
+    """普查 §3 的"复现封存"半边（第三支）：**当场重跑三臂探针**，与 09-18 样本逐叶比较。
+
+    本文件其余断言只读已提交 JSON，仪器改了也不会红。这一支会红的情形包括：
+    某条臂不再能加载、恢复出的 tick 变了、原始输出不再是那条模板、或默认基座又被谁改写
+    （``tick`` / ``saved_at_utc`` 刻意不在易变名单里）。参照必须用 09-18 那份：
+    09-15 那份记的默认控制臂是 ``tick=36``，而那个基座已被套件改写掉（DEBT-I7/I9），
+    拿它当参照只会测到基座漂移而不是仪器。
+    实测成本 9.7 s（``elapsed_seconds`` 取自产物自身）。
+    """
+
+    from scripts.training.probe_taiji_cap0_legacy_load import run_probe
+
+    fresh = run_probe(tmp_path / "probe.json")
+    sealed = json.loads(RESAMPLE.read_text(encoding="utf-8"))
+    old, new = leaves(sealed), leaves(fresh)
+
+    assert old.keys() == new.keys(), "仪器少产/多产了字段"
+    shared = old.keys() & new.keys()
+    volatile = {
+        path
+        for path in shared
+        if tail(path) in VOLATILE_SAMPLE_FIELDS or path in VOLATILE_SAMPLE_PATHS
+    }
+    drifted = {path for path in shared if old[path] != new[path]}
+    assert drifted <= volatile, sorted(drifted - volatile)[:8]
+    assert len(shared) > 60 and len(volatile) * 3 < len(shared), (len(shared), len(volatile))
+
+    # 不依赖屏蔽集的正面表述：这条反事实的结论本身必须照样成立。
+    for name in ("trained_current_guard", "trained_relaxed_guard", "default_control_current_guard"):
+        fresh_arm, sealed_arm = fresh["arms"][name], sealed["arms"][name]
+        assert fresh_arm["load_ok"] is True, name
+        assert fresh_arm["output_summary"]["templated"] is True, name
+        assert [turn["raw_output"] for turn in fresh_arm["turns"]] == [
+            turn["raw_output"] for turn in sealed_arm["turns"]
+        ], name
+    assert fresh["verdict"]["recovered_tick"] == sealed["verdict"]["recovered_tick"] == 16_000_000
+    assert fresh["verdict"]["recovered_output_is_non_template"] is False

@@ -204,13 +204,23 @@
   ② 子机管道一律 ASCII（`ensure_ascii=True`：中文 Windows 子进程是 cp936，父进程按 utf-8 解码会
   让 `stdout` 变 None 并触发上面那条 fail-closed 假象）；③ 新增**活体测试**当场安装补丁、
   断言它拒绝不支持的 `response_start/response_phase/boundary` 调用，并在 finally 里还原 `Taiji.generate`。
-  **未消化部分（待办）**：B0/R2 那批"锚点钉源码行"的 copy-patch 仍用同类写法，应统一改为钉接口。
+  **未消化部分的更正（同日第五批，逐支查过）**：原先写"B0/R2 那批 copy-patch 仍用同类写法，应统一改为钉接口"，
+  这句把两类不同的东西混成一类了。全仓 `inspect.getsource`/`exec` 型脚本共 6 支：
+  `probe_taiji_cap0_byte_output`（**唯一一支静默罢工过的**，已改成钉接口）、
+  `probe_taiji_b0_m1_counterfactual` 与 `probe_taiji_b0_structure_space`（锚点失配时
+  **直接 SystemExit**"anchor appears N times... must be re-derived"——响亮的错，不是隐患）、
+  以及三支 W7 modularization 门（它们**以读源码为判据本身**，锚点失配 ⇒ 指标 False ⇒ 门红）。
+  ⇒ 不存在"统一改为钉接口"这件事；剩下的只是可观测性：那三支门的失败信息此前不说是哪条指标，
+  已在 `353d0e3d` 补上"报出未通过的指标名"。
 - 出口④的对照基线：上一节所述 **1408 / 0 失败 / 6 跳过** 已被后续轮次超出。2026-09-18 本地三次全量：
   `1727 / 0 / 6 + 1 xfailed`（批次二前的同码复采，20:12）→ `1732 / 2 / 6 + 1 xfailed`（批次二后，
   两道 `natural_language_workbench_*_modularization` 门红；单跑绿、与 cap0 同跑也绿 ⇒ 套件内跨测试污染，
   且当时的门测试只报 `False is True` 无法归因，已先加诊断）→ **`1740 / 0 / 6 + 1 xfailed`**（20:19，
   带 DEBT-I7 第一版写靶隔离；同一套跑前跑后 `seed_corpus.pt` sha 不变）。
   ⇒ 判"有无新增失败"自本条起以 **1740 / 0 / 6 + 1 xfailed** 为对照，1408 那条只作历史锚点。
+  同日又跑两套：**`1742 / 0 / 6 + 1 xfailed`**（21:08，带 DEBT-I7 第二版；跑前跑后 sha 同为 `c8025db4`）
+  与 **`1743 / 0 / 6 + 1 xfailed`**（21:18，另含"放宽守卫已成空操作"那条逐叶断言）。
+  ⇒ 对照基线现为 **1743 / 0 / 6 + 1 xfailed**，且"默认基座字节不变"已随套件一同成立。
   **远端仍未查询**（`gh` 未认证）⇒ 继续禁止"CI 已绿"表述。
 
 
