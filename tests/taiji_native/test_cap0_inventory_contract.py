@@ -23,9 +23,9 @@ from __future__ import annotations
 import json
 import re
 from pathlib import Path
-from typing import Any
 
 import pytest
+from _report_leaves import leaves, normalized  # tests/taiji_native/_report_leaves.py
 
 REPO = Path(__file__).resolve().parents[2]
 REPORT = REPO / "reports" / "taiji_cap0_inventory_20260915.json"
@@ -243,22 +243,6 @@ VOLATILE_SAMPLE_PATHS = (
 )
 
 
-def _leaves(value: Any, prefix: str = "") -> dict[str, Any]:
-    if isinstance(value, dict):
-        return {
-            child_key: leaf
-            for key, child in value.items()
-            for child_key, leaf in _leaves(child, f"{prefix}.{key}" if prefix else str(key)).items()
-        }
-    if isinstance(value, list):
-        return {
-            child_key: leaf
-            for index, child in enumerate(value)
-            for child_key, leaf in _leaves(child, f"{prefix}[{index}]").items()
-        }
-    return {prefix: value}
-
-
 def test_a_fresh_inventory_sample_reproduces_the_sealed_one(tmp_path) -> None:
     """普查 §3 的"复现封存"半边（第二支）：**当场重跑盘点**，与 09-18 那份逐叶比较。
 
@@ -276,10 +260,10 @@ def test_a_fresh_inventory_sample_reproduces_the_sealed_one(tmp_path) -> None:
 
     fresh = run_inventory(tmp_path / "inventory.json")
     sealed = json.loads(RESAMPLE.read_text(encoding="utf-8"))
-    old, new = _leaves(sealed), _leaves(fresh)
+    old, new = leaves(sealed), leaves(fresh)
 
     assert old.keys() == new.keys(), "仪器少产/多产了字段"
-    volatile = {path for path in old if re.sub(r"\[\d+\]", "[*]", path) in VOLATILE_SAMPLE_PATHS}
+    volatile = {path for path in old if normalized(path) in VOLATILE_SAMPLE_PATHS}
     drifted = {path for path in old if old[path] != new[path]}
     assert drifted <= volatile, sorted(drifted - volatile)[:8]
     assert len(old) > 150 and len(volatile) * 5 < len(old), (len(old), len(volatile))

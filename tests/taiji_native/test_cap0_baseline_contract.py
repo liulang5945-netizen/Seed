@@ -11,6 +11,7 @@ import json
 from pathlib import Path
 
 import pytest
+from _report_leaves import leaves, tail  # tests/taiji_native/_report_leaves.py
 
 from scripts.training.eval_taiji_cap0_baseline import (
     DRIVEN_DIMENSIONS,
@@ -713,3 +714,55 @@ def test_the_adjudication_never_grades_an_item_it_cannot_decide() -> None:
 
     assert verdict["requires_human_confirmation"] is True
     assert verdict["verdict_source"] == "ai_assisted_rule"
+
+
+#: 09-18 在**不放宽守卫**的链路上重跑的同一评测面报告（与 §10 的 P3a 基线只差那一档开关）。
+STRICT_CHAIN_REPORT = PROJECT_ROOT / "reports" / "taiji_cap0_baseline_postmigration_20260918.json"
+
+
+def test_the_legacy_guard_relaxation_is_a_measured_no_op_after_m2_2i() -> None:
+    """二次战役简报 §2e 的中心主张，落成可红断言：放宽守卫现在**不改变任何一题**。
+
+    两份报告同一检查点、同一冻结题面，唯一区别是 ``chain.relax_legacy_guard`` 的取值。
+    实测（本测试即证据）：1811 个共有叶子里只有 153 个不同，且不同项的字段名**恰好**是
+    ``seconds``（墙钟）与那个链路标志本身 ⇒ 分数、判分依据、100 题原始输出全部一致。
+    09-18 那份还多出三个 ``identity`` 哈希字段：那是两次运行之间的**架构**差异，
+    单独钉住，不混进"链路差异"这条主张里。
+    若哪天放宽守卫重新变得有意义（例如新的旧格式训练态），这条会红 —— 那正是选链路之前该知道的。
+    """
+
+    relaxed = json.loads(CONSTRAINED_REPORT.read_text(encoding="utf-8"))
+    strict = json.loads(STRICT_CHAIN_REPORT.read_text(encoding="utf-8"))
+
+    assert relaxed["chain"]["relax_legacy_guard"] is True
+    assert strict["chain"]["relax_legacy_guard"] is False
+    assert strict["checkpoint"] == relaxed["checkpoint"], "必须是同一个检查点才算对照"
+
+    old, new = leaves(relaxed), leaves(strict)
+    assert sorted(new.keys() - old.keys()) == [
+        "identity.checkpoint_sha256",
+        "identity.eval_set_sha256",
+        "identity.git_head",
+    ]
+    assert not old.keys() - new.keys()
+    shared = old.keys() & new.keys()
+    assert len(shared) > 1500, len(shared)
+
+    volatile = {
+        path for path in shared if tail(path) == "seconds" or path == "chain.relax_legacy_guard"
+    }
+    drifted = {path for path in shared if old[path] != new[path]}
+    assert drifted <= volatile, sorted(drifted - volatile)[:8]
+
+    # 不依赖上面那个集合的正面表述：每题原始输出与每个机检分都相同。
+    for key in DRIVEN_DIMENSIONS:
+        before_rows = relaxed["dimensions"][key]["items"]
+        after_rows = strict["dimensions"][key]["items"]
+        assert before_rows and len(before_rows) == len(after_rows), key
+        assert [(r["id"], r["raw_last_output"]) for r in before_rows] == [
+            (r["id"], r["raw_last_output"]) for r in after_rows
+        ], key
+        assert (
+            relaxed["dimensions"][key]["tally"]["machine_normalised"]
+            == strict["dimensions"][key]["tally"]["machine_normalised"]
+        ), key
