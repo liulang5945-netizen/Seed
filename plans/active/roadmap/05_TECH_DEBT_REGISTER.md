@@ -70,6 +70,7 @@
   与双臂配对那次是同一类失效）。**"没给报告"永远不算通过**：它进 `untested_clauses`，
   所以 `verdict: pass` 不会被读成"A/H 也过了"。`A05_isolated_ablation`（报告里是 `null`）
   刻意排除在必过项之外，并有测试钉住"清单 == 仪器真产出的非空字段集合"，防止生产端悄悄少判一项。
+  **（同日第七批更正：A05 已执行并转入必过项，上面那句只描述当时的状态，见下方 A05 条。）**
   实测：`43 passed in 1.25 s`；`--health` 单次墙钟 **17.2 s**（本轮计时），
   ⇒ 未来 campaign 若每阶段都跑健康支，代价是 +17 s/阶段（对照 CAP-0 阶段本身的 345.7 s 是 +5%）。
   **仍开的两半**：① H 的响应/内存**阈值**门按 §4.2 要求"须按目标设备预检标定后冻结"，
@@ -89,6 +90,33 @@
   阶段行记 `health_report / health_checks / health_seconds`，criteria 调用带两份健康路径；
   子进程非零退出 ⇒ `SystemExit("stage health probe failed…")`，不允许"没证据也继续"。
   实测：本批 5 个合同文件合跑 `114 passed in 2.89 s`；ruff/black 干净。
+- **DEBT-I4 的 A05 半支：已执行（2026-09-18 第七批）—— 结论是"原始输出参数驱动，表层回答不是"**：
+  `A05_isolated_ablation` 从 `null` 变成实测布尔
+  （`reports/taiji_cap0_health_v4_seedbeta_20260918.json`）。**改载荷再 restore 这条路走不通**：
+  `Taiji.restore` 会重算核心摘要并核对身份器官的 lineage，任何一位权重被改都触发
+  `ValueError: identity organ checkpoint lineage does not match Taiji core` ⇒ 消融只能在
+  **进程内已加载的副本**上做（检查点文件从不写回；实测前后 sha `ad2a06465e0e` 未变）。
+  五个靶点（属性路径逐条来自实测的活对象图，不拼名字）在 16M-tick `seed_beta.pt` 上：
+  **F1 读出** `predictive_readout.synapses.edge_weight`（abs_sum 5076.24）与 `.bias`（72.851）、
+  **fabric** `decoders[0].edge_weight`（493.35）⇒ 原始字节流改变；**F4 运动**
+  `motor.synapses.edge_weight`、**记忆** `memory.cue_encoder.edge_weight`（1099.26）⇒ 不改变。
+  控制项三条：基线自洽（同题连调两次摘要相同）、全部靶点跑完后复测基线一致
+  （`restoration_verified: true`）、`SeedRuntime.load` 之后 `restore(checkpoint())` 是输出恒等操作。
+  ⇒ A 支按 07 §2 L1（只要求**原始**输出参数驱动）通过。`A05b_answer_follows_parameters` 五个靶点
+  全 False：可读性闸门 `_readable_surface` 因字节流含 U+FFFD 而拒收 `native_prediction`，退回固定模板
+  ⇒ 按 07 §3 A 行"不能把纯规则输出归因模型"，**聊天回答不得记为参数驱动**，F04 仍是缺口（gate 文本已改）。
+  取舍：A05 进 `A_HEALTH_CHECKS`（必过项），A05b 刻意**不**进 —— 盘上每个检查点它都是 False，
+  判它等于让每条 campaign 必红、判据失去判别力；改为随 verdict 读出
+  （`health.answer_surface.counts_toward_status: false`）并追加一条 `untested_clauses`。
+  同批把 J4 的首个布尔支（G 硬安全失败数须为 0）也补进 `untested_clauses` —— 此前只在
+  `does_not_cover` 里，`verdict: pass` 的读者看不到。
+  代价实测：A05 五靶点 **8.35 s** ⇒ `--health` 单次从 17.2 s 涨到约 25.6 s（对照阶段评价 345.7 s 是 +7%）。
+  **顺带两条定位（新事实，本轮不展开）**：① `motor.synapses.edge_weight` 与
+  `predictive_readout.synapses.edge_weight` 在这份 16M-tick 检查点里**逐字节相同**
+  （`bitwise_equal=True`，各自独立 storage）⇒ 两者至多其一在收梯度，谁在收未查；
+  ② 16M tick 后 `predictive_context.recurrent`、`memory.association`、全部 `memory.*_readout`、
+  `identity_organ`、`fabric.consolidation_decoders[*]`、`executive` 的权重 abs_sum **仍为 0**
+  ⇒ 这些面从未被写入。
 - **DEBT-I5（只登记，不处置）契约测试用字面行号锚定源码位置 ⇒ 源码一漂移，断言就失真而测试仍绿**。
   `scripts/training/eval_taiji_cap0_inventory.py:350-356` 把 `"line 2726-2732"`（以及 `"line 2611"`）
   作为**硬编码字符串**写进诊断文本，`tests/taiji_native/test_cap0_inventory_contract.py:102`
@@ -267,6 +295,12 @@
   ③ `output/manual-r5-canary/` 条目数由 16 保持 16，且目录里最新文件的 mtime 早于本套起跑时刻
   ⇒ 会话末 sweep 确实删掉了本会话写的那一对（不是"这套没写"）。
   **远端仍未查询**（`gh` 未认证）⇒ 继续禁止"CI 已绿"表述。
+  其后再两套：**`1749 / 0 / 6 + 1 xfailed`**（sha 同为 `c8025db4`，残留 16→16）与
+  **`1754 / 0 / 6 + 1 xfailed`，用时 1316.26 s** —— 后者是含 DEBT-I4 接线与
+  I5/I6/I7/I8 全部已提交改动的收口套，三条同时成立且都是测出来的：0 新增失败、
+  `checkpoints/seed_corpus.pt` 跑前跑后同为 `c8025db44c65` / 43,223,183 B、
+  `output/manual-r5-canary/` 条目数 16 保持 16。⇒ **对照基线现为 1754 / 0 / 6 + 1 xfailed**。
+  远端同样仍未查询 ⇒ 依旧不得写"CI 已绿"。
 
 
 ## 最新状态补充（2026-09-15，WP-3 落地前的全量复采）

@@ -81,9 +81,17 @@ A_HEALTH_CHECKS = (
     "A02_missing_checkpoint_rejected",
     "A03_fixed_input_reproducible",
     "A04_input_changes_output",
+    "A05_isolated_ablation",
     "A06_no_external_provider_in_N_mode",
     "H05_no_crash_over_n_runs",
 )
+#: ``A05b_answer_follows_parameters`` is deliberately **not** in the judged set. It is measured and
+#: reported, but it is False for every checkpoint on record: the readable-surface gate discards the
+#: raw bytes and emits a fixed template, so the chat answer is not parameter-driven at all (§07 A
+#: "不能把纯规则输出归因模型"). That is an L2 product gap, not something a training campaign can
+#: regress or repair -- judging it here would make the A/H clause unsatisfiable for every arm and
+#: destroy its power to discriminate. ``judge_health`` echoes its value instead of hiding it.
+A05B_CHECK = "A05b_answer_follows_parameters"
 #: 07 §4.2: "H 至少 30 次混合运行无崩溃".
 MIN_STABILITY_RUNS = 30
 
@@ -151,6 +159,16 @@ def judge_health(
         "candidate_checks_not_passing": not_passing,
         "regressed_against_baseline": regressed,
         "stability": {"runs": runs, "crashes": crashes, "at_least": MIN_STABILITY_RUNS},
+        "answer_surface": {
+            "check": A05B_CHECK,
+            "candidate_value": cand_checks.get(A05B_CHECK),
+            "counts_toward_status": False,
+            "note": (
+                "消融是否改变**表层回答**。为 False 时说明聊天回答仍是固定模板（原始字节被可读性"
+                "闸门丢弃）——这是 L2 产品缺口，不由训练 campaign 判定，故不计入 status，但必须随"
+                "verdict 一起读出，见 A05B_CHECK 上方注释。"
+            ),
+        },
         "h_thresholds": {
             "status": "untested",
             "gate_status": stability.get("gate_status"),
@@ -252,6 +270,13 @@ def check(
         )
     if health.get("h_thresholds", {}).get("status") == "untested":
         untested.append("H 的响应/内存阈值门：尚未按目标设备标定并冻结（07 §4.2）")
+    untested.append(
+        "J4 的首个布尔支：G 的硬安全失败数必须为 0 —— 本 checker 不读人工复核判定报告，未判"
+    )
+    if health.get("answer_surface", {}).get("candidate_value") is False:
+        untested.append(
+            "表层回答未随消融改变（A05b）：聊天输出仍是固定模板，不得记为参数驱动（07 §3 A）"
+        )
     verdict_pass = passed and health["status"] != "fail"
     return {
         "format": "taiji-p3b-criteria-check-v1",

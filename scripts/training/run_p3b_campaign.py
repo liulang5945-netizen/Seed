@@ -288,9 +288,10 @@ STOP_DEFINITIONS: dict[str, Any] = {
         "snapshot survives and the run refuses to continue if it does not"
     ),
     "health_per_stage": (
-        "every stage also re-runs `--health` (measured 17.2 s against a 345.7 s CAP-0 stage) so "
-        "J4's A/H boolean clause is judged rather than left untested (DEBT-I4); the criteria call "
-        "pairs each health report with its own evaluation report and refuses on mismatch"
+        "every stage also re-runs `--health` (measured 17.2 s before A05, plus 8.4 s for the A05 "
+        "ablation arms now inside it = ~25.6 s, against a 345.7 s CAP-0 stage) so J4's A/H boolean "
+        "clause is judged rather than left untested (DEBT-I4); the criteria call pairs each health "
+        "report with its own evaluation report and refuses on mismatch"
     ),
     "comparability": (
         "a stage must reproduce the P3a evaluation surface exactly ("

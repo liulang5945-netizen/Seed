@@ -20,8 +20,10 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
+import re
 import subprocess
 import sys
 import time
@@ -171,6 +173,91 @@ def _score_closed(item: dict[str, Any], answer: str) -> dict[str, Any]:
     }
 
 
+#: A05 的消融靶点：属性路径**逐条来自实测的活对象图**（`.git` 临时探针 + 本仓库的
+#: `LIVE inventory`），不是拼出来的。四个族各取一个代表：F1 读出、F4 运动、组合区
+#: （fabric）、以及"关闭记忆"这一支（07 §3 A 行同时要求权重与记忆消融）。
+A05_ABLATION_TARGETS = (
+    "substrate.predictive_readout.synapses.edge_weight",
+    "substrate.predictive_readout.bias",
+    "substrate.motor.synapses.edge_weight",
+    "substrate.fabric.decoders[0].edge_weight",
+    "substrate.memory.cue_encoder.edge_weight",
+)
+
+
+def _resolve_leaf(model: Any, dotted: str) -> Any:
+    """Walk a measured attribute path such as ``fabric.decoders[0].edge_weight``."""
+
+    node = model
+    for part in dotted.split("."):
+        match = re.fullmatch(r"(\w+)\[(\d+)\]", part)
+        node = getattr(node, match.group(1))[int(match.group(2))] if match else getattr(node, part)
+    return node
+
+
+def _raw_native(runtime: Any, prompt: str) -> bytes:
+    """The **raw** effector output: the same call ``chat`` makes, before any surface organ."""
+
+    from api.seed_runtime import SeedRuntime
+    from taiji import InputFrame
+
+    text = SeedRuntime._serialize(prompt, [])
+    frame = InputFrame(
+        input_id="cap0:a05",
+        modality="text",
+        payload=text.encode("utf-8"),
+        source="cap0.a05.ablation",
+        timestamp=int(runtime.model.tick),
+        provenance="external",
+        confidence=1.0,
+    )
+    return bytes(runtime.model.generate_input(frame, 256, stop_at_boundary=True, sample=False))
+
+
+def _ablation_probe(runtime: Any, prompt: str) -> dict[str, Any]:
+    """A05：在**同一进程内的已加载副本**上逐靶清零，比较原始输出与表层回答。
+
+    清零后写回原值，并在全部靶点跑完后复测一次基线（``restoration_verified``）——
+    实测 5 个靶点顺序执行时该复测恒为真，所以不需要每个靶点重新加载模型。
+    检查点文件本身从不写回（07 §3 A：消融只在副本做）。
+    """
+
+    baseline_native = _raw_native(runtime, prompt)
+    baseline_answer = runtime.chat(prompt, history=[], learn=False)
+    arms: list[dict[str, Any]] = []
+    for dotted in A05_ABLATION_TARGETS:
+        record: dict[str, Any] = {"target": dotted}
+        try:
+            leaf = _resolve_leaf(runtime.model, dotted)
+        except (AttributeError, IndexError, KeyError, TypeError) as exc:
+            record.update(status="unresolved", error=f"{type(exc).__name__}: {exc}")
+            arms.append(record)
+            continue
+        saved = leaf.detach().clone()
+        record["shape"] = list(leaf.shape)
+        record["abs_sum_before"] = round(float(leaf.abs().sum()), 6)
+        record["informative"] = bool(record["abs_sum_before"] > 0.0)
+        leaf.zero_()
+        native = _raw_native(runtime, prompt)
+        answer = runtime.chat(prompt, history=[], learn=False)
+        leaf.copy_(saved)
+        record["native_changed"] = native != baseline_native
+        record["answer_changed"] = answer != baseline_answer
+        record["status"] = "executed"
+        arms.append(record)
+    restoration_verified = _raw_native(runtime, prompt) == baseline_native
+    informative = [arm for arm in arms if arm.get("informative")]
+    return {
+        "targets": list(A05_ABLATION_TARGETS),
+        "arms": arms,
+        "informative_arms": len(informative),
+        "native_sensitive": any(arm.get("native_changed") for arm in informative),
+        "answer_sensitive": any(arm.get("answer_changed") for arm in informative),
+        "restoration_verified": restoration_verified,
+        "baseline_native_sha256": hashlib.sha256(baseline_native).hexdigest()[:12],
+    }
+
+
 def _health_child(payload: dict[str, Any]) -> int:
     """子进程：A（模型真实性）/ H（性能与稳定性）的确定性检查。
 
@@ -242,14 +329,32 @@ def _health_child(payload: dict[str, Any]) -> int:
     out["provider_status"] = provider
     out["checks"]["A06_no_external_provider_in_N_mode"] = provider in (None, "", "disabled")
 
-    out["checks"]["A05_isolated_ablation"] = None
+    ablation_started = time.perf_counter()
+    try:
+        ablation = _ablation_probe(runtime, prompt)
+    except Exception as exc:  # noqa: BLE001 -- a failed probe must be reported, not kill the runner
+        ablation = {"status": "error", "error": f"{type(exc).__name__}: {exc}", "arms": []}
+    ablation["seconds"] = round(time.perf_counter() - ablation_started, 2)
+    out["ablation"] = ablation
+    out["checks"]["A05_isolated_ablation"] = bool(
+        ablation.get("native_sensitive") and ablation.get("restoration_verified")
+    )
+    out["checks"]["A05b_answer_follows_parameters"] = bool(ablation.get("answer_sensitive"))
     out["notes"]["A04_semantics"] = (
         "输入确实改变了输出，但该入口的输出形态是固定模板回显（见 CAP-0 基线 §3）——"
         "A04 只证明“输入影响了链路”，不证明“产生了参数驱动的语言内容”，须人工确认"
     )
-    out["notes"][
-        "A05_isolated_ablation"
-    ] = "需在隔离副本上扰动权重或关闭记忆；本 runner 不自动执行 ⇒ not_executed"
+    out["notes"]["A05_isolated_ablation"] = (
+        "已执行：在同一进程内已加载的副本上逐个靶点清零权重（检查点文件从不写回；"
+        "改载荷再 restore 这条路被身份器官的 lineage 摘要封死 —— "
+        "ValueError: identity organ checkpoint lineage does not match Taiji core）。"
+        "判据只看**原始 effector 输出**是否随参数改变（07 §2 L1）"
+    )
+    out["notes"]["A05b_answer_follows_parameters"] = (
+        "表层回答是否随消融改变。实测恒为 False：可读性闸门 _readable_surface 因字节流含 "
+        "U+FFFD 而拒收 native_prediction，退回固定模板 ⇒ 按 07 §3 A 行"
+        "“不能把纯规则输出归因模型”，聊天回答不得记为参数驱动"
+    )
     out["notes"]["H06_interrupt_recovery"] = "需专门的恢复流程；本 runner 不自动执行 ⇒ not_executed"
     out["notes"]["H_gates"] = "门限未在本 runner 内设定：须按设备预检标定后冻结（07 §4.2）"
     print(json.dumps(out, ensure_ascii=False))
@@ -660,8 +765,9 @@ F_CONTRACTS: tuple[dict[str, str], ...] = (
         "report": "reports/taiji_cap0_inventory_20260915.json",
         "gate": (
             "默认入口可加载并产出原始输出（现状 tick=2 未训练基座）；16M-tick 训练态自 M2-2i 起"
-            "可经默认 loader 加载并过 A 支（reports/taiji_cap0_health_v3_seedbeta_20260918.json），"
-            "但 A05 未执行、H 阈值门未标定 ⇒ F04 仍是缺口，不得写成已通过"
+            "可经默认 loader 加载并过 A 支（reports/taiji_cap0_health_v3_seedbeta_20260918.json）。"
+            "A05 现已执行：**原始** effector 输出随权重消融改变（参数驱动成立），但表层回答不随任何"
+            "消融改变（固定模板）且 H 阈值门未标定 ⇒ F04 仍是缺口，不得写成已通过"
         ),
     },
 )
@@ -695,6 +801,7 @@ def run_health(checkpoint: Path = DEFAULT_CHECKPOINT) -> dict[str, Any]:
         "tick_after_load": raw.get("tick_after_load"),
         "provider_status": raw.get("provider_status"),
         "missing_checkpoint_error": raw.get("missing_checkpoint_error"),
+        "ablation": raw.get("ablation", {}),
         "error": raw.get("error"),
         "notes": {k: v for k, v in notes.items() if k.startswith("A")},
     }

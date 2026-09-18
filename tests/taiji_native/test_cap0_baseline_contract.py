@@ -11,6 +11,7 @@ import json
 from pathlib import Path
 
 import pytest
+import torch
 from _report_leaves import leaves, tail  # tests/taiji_native/_report_leaves.py
 
 from scripts.training.eval_taiji_cap0_baseline import (
@@ -365,6 +366,8 @@ def test_utf8_dfa_excludes_invalid_byte_sequences() -> None:
 
 CONSTRAINED_REPORT = PROJECT_ROOT / "reports" / "taiji_cap0_baseline_constrained_20260915.json"
 HEALTH_REPORT = PROJECT_ROOT / "reports" / "taiji_cap0_health_v1_20260915.json"
+#: 第一份**执行了 A05**（隔离消融）的健康报告；v1/v3 里 A05 是 `null`。
+HEALTH_REPORT_V4 = PROJECT_ROOT / "reports" / "taiji_cap0_health_v4_seedbeta_20260918.json"
 
 
 def test_p1_section_10_records_the_constrained_chain_baseline() -> None:
@@ -773,6 +776,7 @@ def test_the_legacy_guard_relaxation_is_a_measured_no_op_after_m2_2i() -> None:
 
 #: 抄自 09-15 那份健康报告的实测取值。刻意写死字面量而不是由生产常量生成 fixture ——
 #: 后者会让"生产端偷偷少判一项"这件事变得测不出来；对齐由下面那条断言负责。
+#: A05/A05b 两行抄自 reports/taiji_cap0_health_v4_seedbeta_20260918.json（A05 已执行）。
 HEALTH_REPORT_CHECKS = {
     "A01_new_process_load": True,
     "A01_load_does_not_advance_tick": True,
@@ -781,7 +785,8 @@ HEALTH_REPORT_CHECKS = {
     "A04_input_changes_output": True,
     "A06_no_external_provider_in_N_mode": True,
     "H05_no_crash_over_n_runs": True,
-    "A05_isolated_ablation": None,
+    "A05_isolated_ablation": True,
+    "A05b_answer_follows_parameters": False,
 }
 
 
@@ -808,13 +813,19 @@ def _health(
 def test_the_judged_health_list_matches_the_sealed_health_report() -> None:
     """要判的清单必须与仪器真产出的字段一致——少一项就会漏判一类回归。"""
 
-    from scripts.training.check_p3b_criteria import A_HEALTH_CHECKS, MIN_STABILITY_RUNS
+    from scripts.training.check_p3b_criteria import A05B_CHECK, A_HEALTH_CHECKS, MIN_STABILITY_RUNS
 
-    sealed = json.loads(HEALTH_REPORT.read_text(encoding="utf-8"))
+    sealed = json.loads(HEALTH_REPORT_V4.read_text(encoding="utf-8"))
+    produced = sealed["dimensions"]["A"]["checks"]
     assert set(A_HEALTH_CHECKS) == {
-        key for key, value in sealed["dimensions"]["A"]["checks"].items() if value is not None
+        key for key, value in produced.items() if value is not None and key != A05B_CHECK
     }
-    assert "A05_isolated_ablation" not in A_HEALTH_CHECKS, "未执行的检查不得算进必过项"
+    #: A05 从 09-15 的 `null`（未执行）变成实测布尔 ⇒ 它现在必须是必过项；
+    #: A05b 恰恰相反：盘上每个检查点它都是 False，判它等于让每条 campaign 必红。
+    assert "A05_isolated_ablation" in A_HEALTH_CHECKS
+    assert A05B_CHECK not in A_HEALTH_CHECKS
+    assert produced["A05_isolated_ablation"] is True
+    assert produced[A05B_CHECK] is False
     assert MIN_STABILITY_RUNS == 30
     assert sealed["dimensions"]["H"]["stability_runs"] >= MIN_STABILITY_RUNS
 
@@ -891,3 +902,211 @@ def test_absent_or_mismatched_health_reports_are_never_counted_as_pass(tmp_path)
     verdict = json.loads(out.read_text(encoding="utf-8"))
     assert verdict["health"]["status"] == "not_supplied"
     assert any("DEBT-I4" in clause for clause in verdict["untested_clauses"])
+
+
+# --- A05 隔离消融（07 §3 A 行"受控权重/记忆消融"，"消融只在副本做"） ------------
+
+#: 假模型只要求题面稳定；真实探针的题面在 `run_health` 里。
+A05_PROMPT = "用一句话说明你能做什么。"
+
+
+def _sealed_ablation() -> dict:
+    return json.loads(HEALTH_REPORT_V4.read_text(encoding="utf-8"))["dimensions"]["A"]["ablation"]
+
+
+def test_every_ablation_target_resolves_on_a_real_model_at_its_recorded_shape() -> None:
+    """靶点清单是**活对象路径**：属性一改名，封存报告里的路径就必须解析失败或形状不符。
+
+    只读封存报告永远不会红，所以这里真的用 `SeedConfig` 造一个模型再解析。
+    """
+
+    from scripts.training.eval_taiji_cap0_baseline import A05_ABLATION_TARGETS, _resolve_leaf
+    from seed import Seed, SeedConfig
+
+    sealed = json.loads(HEALTH_REPORT_V4.read_text(encoding="utf-8"))
+    assert sealed["dimensions"]["A"]["notes"]["A05_isolated_ablation"].startswith("已执行")
+    config = SeedConfig.from_dict(
+        torch.load(
+            PROJECT_ROOT / "checkpoints" / "seed_beta.pt", map_location="cpu", weights_only=True
+        )["config"]
+    )
+    model = Seed(config)
+    assert tuple(A05_ABLATION_TARGETS) == tuple(_sealed_ablation()["targets"])
+    for arm in _sealed_ablation()["arms"]:
+        assert tuple(_resolve_leaf(model, arm["target"]).shape) == tuple(arm["shape"])
+    with pytest.raises(AttributeError):
+        _resolve_leaf(model, "substrate.no_such_organ.edge_weight")
+
+
+class _FakeModel:
+    """A model whose raw bytes either do or do not depend on the lesioned weights."""
+
+    def __init__(self, values: dict[str, float], *, weight_driven: bool, with_fabric: bool) -> None:
+        import types
+
+        def leaf(target: str) -> torch.Tensor:
+            return torch.full((3,), values[target])
+
+        self.substrate = types.SimpleNamespace(
+            predictive_readout=types.SimpleNamespace(
+                synapses=types.SimpleNamespace(
+                    edge_weight=leaf("substrate.predictive_readout.synapses.edge_weight")
+                ),
+                bias=leaf("substrate.predictive_readout.bias"),
+            ),
+            motor=types.SimpleNamespace(
+                synapses=types.SimpleNamespace(
+                    edge_weight=leaf("substrate.motor.synapses.edge_weight")
+                )
+            ),
+            memory=types.SimpleNamespace(
+                cue_encoder=types.SimpleNamespace(
+                    edge_weight=leaf("substrate.memory.cue_encoder.edge_weight")
+                )
+            ),
+        )
+        if with_fabric:
+            self.substrate.fabric = types.SimpleNamespace(
+                decoders=[
+                    types.SimpleNamespace(
+                        edge_weight=leaf("substrate.fabric.decoders[0].edge_weight")
+                    )
+                ]
+            )
+        self.tick = 0
+        self.weight_driven = weight_driven
+
+    def native_bytes(self) -> bytes:
+        if not self.weight_driven:
+            return b"constant-regardless-of-weights"
+        total = sum(float(t.abs().sum()) for t in self._leaves())
+        return f"native:{total:.4f}".encode()
+
+    def _leaves(self) -> tuple:
+        node = self.substrate
+        found = (
+            node.predictive_readout.synapses.edge_weight,
+            node.predictive_readout.bias,
+            node.motor.synapses.edge_weight,
+            node.memory.cue_encoder.edge_weight,
+        )
+        if hasattr(node, "fabric"):
+            found += (node.fabric.decoders[0].edge_weight,)
+        return found
+
+    def generate_input(self, frame, length, **kwargs) -> bytes:
+        return self.native_bytes()
+
+
+class _FakeRuntime:
+    def __init__(self, model, *, answer_follows_parameters: bool) -> None:
+        self.model = model
+        self.answer_follows_parameters = answer_follows_parameters
+
+    def chat(self, prompt, *, history=None, learn=True) -> str:
+        if not self.answer_follows_parameters:
+            return f"我已收到你的问题：“{prompt}”。当前原生语言表层正在形成稳定表达。"
+        return "答：" + self.model.native_bytes().decode()
+
+
+def _fake(leaf_value: float, *, weight_driven: bool, with_fabric: bool, answer_follows=False):
+    from scripts.training.eval_taiji_cap0_baseline import A05_ABLATION_TARGETS
+
+    values = {target: leaf_value for target in A05_ABLATION_TARGETS}
+    model = _FakeModel(values, weight_driven=weight_driven, with_fabric=with_fabric)
+    return _FakeRuntime(model, answer_follows_parameters=answer_follows)
+
+
+def test_ablation_probe_passes_only_when_the_raw_output_moves() -> None:
+    """两个方向都测：权重驱动 ⇒ True；输出与权重无关 ⇒ False（同样的靶点、同样的流程）。"""
+
+    from scripts.training.eval_taiji_cap0_baseline import _ablation_probe
+
+    driven = _ablation_probe(_fake(1.0, weight_driven=True, with_fabric=True), A05_PROMPT)
+    assert driven["informative_arms"] == 5
+    assert driven["native_sensitive"] is True
+    assert driven["answer_sensitive"] is False, "表层回答是模板，不该被记成参数驱动"
+    assert driven["restoration_verified"] is True
+    assert [arm["native_changed"] for arm in driven["arms"]] == [True] * 5
+
+    inert = _ablation_probe(_fake(1.0, weight_driven=False, with_fabric=True), A05_PROMPT)
+    assert inert["informative_arms"] == 5
+    assert inert["native_sensitive"] is False
+    assert [arm["native_changed"] for arm in inert["arms"]] == [False] * 5
+
+    voiced = _ablation_probe(
+        _fake(1.0, weight_driven=True, with_fabric=True, answer_follows=True), A05_PROMPT
+    )
+    assert voiced["answer_sensitive"] is True, "回答若真随参数改变，仪器必须看得见"
+
+
+def test_ablation_probe_refuses_to_count_targets_that_are_already_zero() -> None:
+    """全零靶点的"无变化"不含信息 —— 不能把它读成"输出与参数无关"，也不能读成通过。"""
+
+    from scripts.training.eval_taiji_cap0_baseline import _ablation_probe
+
+    probe = _ablation_probe(_fake(0.0, weight_driven=True, with_fabric=True), A05_PROMPT)
+    assert probe["informative_arms"] == 0
+    assert probe["native_sensitive"] is False
+    assert [arm["informative"] for arm in probe["arms"]] == [False] * 5
+
+
+def test_ablation_probe_leaves_the_copy_it_lesioned_untouched() -> None:
+    """消融只在副本做：跑完必须把每个靶点写回原值，且缺路径时记 unresolved 而不是崩。"""
+
+    from scripts.training.eval_taiji_cap0_baseline import A05_ABLATION_TARGETS, _ablation_probe
+
+    runtime = _fake(1.0, weight_driven=True, with_fabric=False)
+    watched = runtime.model.substrate.predictive_readout.synapses.edge_weight
+    before = watched.clone()
+    probe = _ablation_probe(runtime, A05_PROMPT)
+    statuses = {arm["target"]: arm["status"] for arm in probe["arms"]}
+    assert statuses["substrate.fabric.decoders[0].edge_weight"] == "unresolved"
+    assert statuses["substrate.predictive_readout.bias"] == "executed"
+    assert len(A05_ABLATION_TARGETS) == 5
+    assert torch.equal(watched, before)
+    assert probe["restoration_verified"] is True
+
+
+def test_the_sealed_report_records_the_ablation_verdict_as_measured() -> None:
+    """封存报告里的 A05 布尔必须等于**实测字段**的合取，不是写死 True。"""
+
+    sealed = json.loads(HEALTH_REPORT_V4.read_text(encoding="utf-8"))
+    checks = sealed["dimensions"]["A"]["checks"]
+    ablation = sealed["dimensions"]["A"]["ablation"]
+    assert checks["A05_isolated_ablation"] is bool(
+        ablation["native_sensitive"] and ablation["restoration_verified"]
+    )
+    assert checks["A05b_answer_follows_parameters"] is bool(ablation["answer_sensitive"])
+    assert ablation["restoration_verified"] is True
+    assert ablation["informative_arms"] == len(ablation["arms"])
+    #: 定位结论（不是推断，是逐项实测）：F1 读出与 fabric 承载输出，F4 运动与记忆编码不承载。
+    moved = {arm["target"]: arm["native_changed"] for arm in ablation["arms"]}
+    assert moved["substrate.predictive_readout.synapses.edge_weight"] is True
+    assert moved["substrate.motor.synapses.edge_weight"] is False
+    assert moved["substrate.memory.cue_encoder.edge_weight"] is False
+    assert all(arm["answer_changed"] is False for arm in ablation["arms"])
+
+
+def test_a05b_is_disclosed_to_the_campaign_verdict_without_flipping_it() -> None:
+    """A05b 必须随 verdict 一起读出，但判它等于让每条 campaign 必红 —— 两个方向都测。"""
+
+    from scripts.training.check_p3b_criteria import A05B_CHECK, judge_health
+
+    report = json.loads(CONSTRAINED_REPORT.read_text(encoding="utf-8"))
+    base = _health()
+    echoed = judge_health(base, base, report, report)
+    assert echoed["status"] == "pass"
+    assert echoed["answer_surface"]["check"] == A05B_CHECK
+    assert echoed["answer_surface"]["candidate_value"] is False
+    assert echoed["answer_surface"]["counts_toward_status"] is False
+
+    healed = _health()
+    healed["dimensions"]["A"]["checks"][A05B_CHECK] = True
+    assert judge_health(base, healed, report, report)["answer_surface"]["candidate_value"] is True
+
+    dead = _health()
+    dead["dimensions"]["A"]["checks"]["A05_isolated_ablation"] = False
+    judged = judge_health(base, dead, report, report)
+    assert judged["status"] == "fail"
+    assert judged["regressed_against_baseline"] == ["A05_isolated_ablation"]
