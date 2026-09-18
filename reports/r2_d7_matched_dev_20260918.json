@@ -1,0 +1,460 @@
+{
+  "format": "taiji-r2-d7-matched-dev-v1",
+  "version": 1,
+  "contract": "plans/reference/M5_R2_D7_CHAR_TOKEN_CONTRACT_FROZEN_20260918.md",
+  "graph": "char-v1",
+  "seeds": [
+    20260917,
+    20260918,
+    20260919
+  ],
+  "arm": "T1 (v2 train + char graph + induction + lambda 1.0)",
+  "byte_history_reference_descriptive": {
+    "A00_d4_t2_m3_mean": 0.178,
+    "note": "cross-granularity deltas are descriptive, not gates"
+  },
+  "runs": {
+    "T1_char_multibyte": [
+      {
+        "seed": 20260917,
+        "vocab_size": 56,
+        "parameter_count": 50810,
+        "copy_induce_bias_end": 0.17750771343708038,
+        "elapsed_seconds": 61.82799999997951,
+        "eval": {
+          "full": {
+            "M1_exact": {
+              "numerator": 36,
+              "denominator": 98,
+              "value": 0.3673469387755102
+            },
+            "M2_shape_macro": {
+              "value": 0.20408163265306123
+            },
+            "M3_content_exact": {
+              "numerator": 36,
+              "denominator": 86,
+              "value": 0.4186046511627907
+            },
+            "M4_flip_pair": {
+              "numerator": 0,
+              "denominator": 11,
+              "value": 0.0
+            },
+            "M5_inv_pair": {
+              "numerator": 0,
+              "denominator": 4,
+              "value": 0.0
+            }
+          },
+          "no_context": {
+            "M1_exact": {
+              "numerator": 0,
+              "denominator": 98,
+              "value": 0.0
+            },
+            "M2_shape_macro": {
+              "value": 0.0
+            },
+            "M3_content_exact": {
+              "numerator": 0,
+              "denominator": 86,
+              "value": 0.0
+            },
+            "M4_flip_pair": {
+              "numerator": 0,
+              "denominator": 11,
+              "value": 0.0
+            },
+            "M5_inv_pair": {
+              "numerator": 0,
+              "denominator": 4,
+              "value": 0.0
+            }
+          },
+          "copy_misbind": {
+            "M1_exact": {
+              "numerator": 0,
+              "denominator": 98,
+              "value": 0.0
+            },
+            "M2_shape_macro": {
+              "value": 0.0
+            },
+            "M3_content_exact": {
+              "numerator": 0,
+              "denominator": 86,
+              "value": 0.0
+            },
+            "M4_flip_pair": {
+              "numerator": 0,
+              "denominator": 11,
+              "value": 0.0
+            },
+            "M5_inv_pair": {
+              "numerator": 0,
+              "denominator": 4,
+              "value": 0.0
+            }
+          },
+          "value_misbind": {
+            "M1_exact": {
+              "numerator": 36,
+              "denominator": 98,
+              "value": 0.3673469387755102
+            },
+            "M2_shape_macro": {
+              "value": 0.20408163265306123
+            },
+            "M3_content_exact": {
+              "numerator": 36,
+              "denominator": 86,
+              "value": 0.4186046511627907
+            },
+            "M4_flip_pair": {
+              "numerator": 0,
+              "denominator": 11,
+              "value": 0.0
+            },
+            "M5_inv_pair": {
+              "numerator": 0,
+              "denominator": 4,
+              "value": 0.0
+            }
+          },
+          "pair_rates": {
+            "None": {
+              "pair_hits": 0,
+              "denominator": 0,
+              "value": 0.0
+            },
+            "combo_flip": {
+              "pair_hits": 0,
+              "denominator": 5,
+              "value": 0.0
+            },
+            "fact_flip": {
+              "pair_hits": 0,
+              "denominator": 6,
+              "value": 0.0
+            },
+            "invariance": {
+              "pair_hits": 0,
+              "denominator": 4,
+              "value": 0.0
+            }
+          },
+          "multibyte_completion": {
+            "episodes": 58,
+            "first_byte_rate": 0.8275862068965517,
+            "full_rate": 0.5172413793103449
+          },
+          "boundary_stop_rate": 1.0
+        }
+      },
+      {
+        "seed": 20260918,
+        "vocab_size": 56,
+        "parameter_count": 50810,
+        "copy_induce_bias_end": 0.1540088802576065,
+        "elapsed_seconds": 63.21900000004098,
+        "eval": {
+          "full": {
+            "M1_exact": {
+              "numerator": 18,
+              "denominator": 98,
+              "value": 0.1836734693877551
+            },
+            "M2_shape_macro": {
+              "value": 0.10204081632653061
+            },
+            "M3_content_exact": {
+              "numerator": 18,
+              "denominator": 86,
+              "value": 0.20930232558139536
+            },
+            "M4_flip_pair": {
+              "numerator": 0,
+              "denominator": 11,
+              "value": 0.0
+            },
+            "M5_inv_pair": {
+              "numerator": 0,
+              "denominator": 4,
+              "value": 0.0
+            }
+          },
+          "no_context": {
+            "M1_exact": {
+              "numerator": 0,
+              "denominator": 98,
+              "value": 0.0
+            },
+            "M2_shape_macro": {
+              "value": 0.0
+            },
+            "M3_content_exact": {
+              "numerator": 0,
+              "denominator": 86,
+              "value": 0.0
+            },
+            "M4_flip_pair": {
+              "numerator": 0,
+              "denominator": 11,
+              "value": 0.0
+            },
+            "M5_inv_pair": {
+              "numerator": 0,
+              "denominator": 4,
+              "value": 0.0
+            }
+          },
+          "copy_misbind": {
+            "M1_exact": {
+              "numerator": 0,
+              "denominator": 98,
+              "value": 0.0
+            },
+            "M2_shape_macro": {
+              "value": 0.0
+            },
+            "M3_content_exact": {
+              "numerator": 0,
+              "denominator": 86,
+              "value": 0.0
+            },
+            "M4_flip_pair": {
+              "numerator": 0,
+              "denominator": 11,
+              "value": 0.0
+            },
+            "M5_inv_pair": {
+              "numerator": 0,
+              "denominator": 4,
+              "value": 0.0
+            }
+          },
+          "value_misbind": {
+            "M1_exact": {
+              "numerator": 6,
+              "denominator": 98,
+              "value": 0.061224489795918366
+            },
+            "M2_shape_macro": {
+              "value": 0.03571428571428571
+            },
+            "M3_content_exact": {
+              "numerator": 6,
+              "denominator": 86,
+              "value": 0.06976744186046512
+            },
+            "M4_flip_pair": {
+              "numerator": 0,
+              "denominator": 11,
+              "value": 0.0
+            },
+            "M5_inv_pair": {
+              "numerator": 0,
+              "denominator": 4,
+              "value": 0.0
+            }
+          },
+          "pair_rates": {
+            "None": {
+              "pair_hits": 0,
+              "denominator": 0,
+              "value": 0.0
+            },
+            "combo_flip": {
+              "pair_hits": 0,
+              "denominator": 5,
+              "value": 0.0
+            },
+            "fact_flip": {
+              "pair_hits": 0,
+              "denominator": 6,
+              "value": 0.0
+            },
+            "invariance": {
+              "pair_hits": 0,
+              "denominator": 4,
+              "value": 0.0
+            }
+          },
+          "multibyte_completion": {
+            "episodes": 58,
+            "first_byte_rate": 0.6551724137931034,
+            "full_rate": 0.0
+          },
+          "boundary_stop_rate": 1.0
+        }
+      },
+      {
+        "seed": 20260919,
+        "vocab_size": 56,
+        "parameter_count": 50810,
+        "copy_induce_bias_end": 0.21105733513832092,
+        "elapsed_seconds": 80.79700000002049,
+        "eval": {
+          "full": {
+            "M1_exact": {
+              "numerator": 5,
+              "denominator": 98,
+              "value": 0.05102040816326531
+            },
+            "M2_shape_macro": {
+              "value": 0.14285714285714285
+            },
+            "M3_content_exact": {
+              "numerator": 5,
+              "denominator": 86,
+              "value": 0.05813953488372093
+            },
+            "M4_flip_pair": {
+              "numerator": 0,
+              "denominator": 11,
+              "value": 0.0
+            },
+            "M5_inv_pair": {
+              "numerator": 0,
+              "denominator": 4,
+              "value": 0.0
+            }
+          },
+          "no_context": {
+            "M1_exact": {
+              "numerator": 0,
+              "denominator": 98,
+              "value": 0.0
+            },
+            "M2_shape_macro": {
+              "value": 0.0
+            },
+            "M3_content_exact": {
+              "numerator": 0,
+              "denominator": 86,
+              "value": 0.0
+            },
+            "M4_flip_pair": {
+              "numerator": 0,
+              "denominator": 11,
+              "value": 0.0
+            },
+            "M5_inv_pair": {
+              "numerator": 0,
+              "denominator": 4,
+              "value": 0.0
+            }
+          },
+          "copy_misbind": {
+            "M1_exact": {
+              "numerator": 5,
+              "denominator": 98,
+              "value": 0.05102040816326531
+            },
+            "M2_shape_macro": {
+              "value": 0.14285714285714285
+            },
+            "M3_content_exact": {
+              "numerator": 5,
+              "denominator": 86,
+              "value": 0.05813953488372093
+            },
+            "M4_flip_pair": {
+              "numerator": 0,
+              "denominator": 11,
+              "value": 0.0
+            },
+            "M5_inv_pair": {
+              "numerator": 0,
+              "denominator": 4,
+              "value": 0.0
+            }
+          },
+          "value_misbind": {
+            "M1_exact": {
+              "numerator": 0,
+              "denominator": 98,
+              "value": 0.0
+            },
+            "M2_shape_macro": {
+              "value": 0.0
+            },
+            "M3_content_exact": {
+              "numerator": 0,
+              "denominator": 86,
+              "value": 0.0
+            },
+            "M4_flip_pair": {
+              "numerator": 0,
+              "denominator": 11,
+              "value": 0.0
+            },
+            "M5_inv_pair": {
+              "numerator": 0,
+              "denominator": 4,
+              "value": 0.0
+            }
+          },
+          "pair_rates": {
+            "None": {
+              "pair_hits": 0,
+              "denominator": 0,
+              "value": 0.0
+            },
+            "combo_flip": {
+              "pair_hits": 0,
+              "denominator": 5,
+              "value": 0.0
+            },
+            "fact_flip": {
+              "pair_hits": 0,
+              "denominator": 6,
+              "value": 0.0
+            },
+            "invariance": {
+              "pair_hits": 0,
+              "denominator": 4,
+              "value": 0.0
+            }
+          },
+          "multibyte_completion": {
+            "episodes": 58,
+            "first_byte_rate": 0.896551724137931,
+            "full_rate": 0.0
+          },
+          "boundary_stop_rate": 0.7755102040816326
+        }
+      }
+    ]
+  },
+  "gates": {
+    "G1_m3_ceiling": false,
+    "G2_m4_flip": false,
+    "G3_copy_misbind_drop": false,
+    "G4_context_margin": false,
+    "G5_seed_consistency": false,
+    "G6_boundary": false
+  },
+  "keys": {
+    "K1_multibyte_full_rate_ge_0_30": false,
+    "K2_m4_flip_ge_0_50": false,
+    "first_byte_holds_byte_graph_level_0_529": true
+  },
+  "metrics_mean": {
+    "m1": 0.20068027210884354,
+    "m3": 0.22868217054263565,
+    "m4": 0.0,
+    "no_context_m1_max": 0.0,
+    "fact_flip": 0.0,
+    "combo_flip": 0.0,
+    "multibyte_completion": {
+      "first_byte_rate": 0.7931034482758621,
+      "full_rate": 0.1724137931034483
+    },
+    "bias_end": 0.18085797627766928
+  },
+  "outcome": "failed",
+  "growth_admitted": false,
+  "can_promote": false
+}

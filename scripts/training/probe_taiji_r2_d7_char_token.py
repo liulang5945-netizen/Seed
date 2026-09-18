@@ -208,36 +208,22 @@ def _copy_value_readout(
             mask = value_mask_for_char(row["shape"], row["response"])
             if not any(mask):
                 continue
-            prefix = row["prefix"]
-            rotated = _rotate_material_values(prefix) if misbind else prefix
-            _, copies = workspace.teacher_forced_distributions(rotated, row["response"])
-            state = workspace.begin_episode(rotated)
-            slots = torch.tensor(
-                [state.char2slot.get(c, workspace.vocab.slot_of(c)) for c in row["response"]],
-                dtype=torch.long,
+            rotation = len(row["prefix"]) // 2 if misbind else 0
+            _, copies = workspace.teacher_forced_distributions(
+                row["prefix"], row["response"], entry_rotation=rotation
             )
+            # Target slots come from the INTACT episode: the lesion may not
+            # change the answer's identity space, only which row supplies it
+            # (byte-graph twin: p_copy's index space stays the true bytes).
+            state = workspace.begin_episode(row["prefix"])
+            missing = [c for c in row["response"] if c not in state.char2slot]
+            assert not missing, f"target glyph outside material: {missing}"
+            slots = torch.tensor([state.char2slot[c] for c in row["response"]], dtype=torch.long)
             mask_tensor = torch.tensor(mask, dtype=torch.bool)
             hits = copies[:-1][mask_tensor].gather(1, slots[mask_tensor].unsqueeze(1))
             total += float(hits.sum())
             count += int(hits.numel())
     return {"mean_copy_value_prob": total / count if count else 0.0, "positions": count}
-
-
-def _rotate_material_values(prefix: str) -> str:
-    """Entry-misbind at the character unit: rotate the material clause rows.
-
-    Mirrors the byte-graph entry_rotation lesion: the material segment (after
-    the marker up to the answer cue) is rotated by half its length.
-    """
-
-    for marker in ("背景：", "线索：", "已知："):
-        index = prefix.find(marker)
-        if index != -1:
-            tail_start = index + len(marker)
-            material = prefix[tail_start:]
-            shift = len(material) // 2
-            return prefix[:tail_start] + material[shift:] + material[:shift]
-    return prefix
 
 
 def _compact(evaluation: dict[str, Any]) -> dict[str, Any]:

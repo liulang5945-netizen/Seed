@@ -202,9 +202,18 @@ _CHAR_CANONICAL_ORDER: tuple[str, ...] = (
 class SequenceCharWorkspace:
     """Character-unit twin of the byte workspace (contract section 2)."""
 
-    def __init__(self, vocab: CharVocab, config: SequenceCharConfig | None = None) -> None:
+    def __init__(
+        self,
+        vocab: CharVocab,
+        config: SequenceCharConfig | None = None,
+        *,
+        value_rotation: int = 0,
+        entry_rotation: int = 0,
+    ) -> None:
         self.vocab = vocab
         self.config = config or SequenceCharConfig()
+        self.value_rotation = int(value_rotation)
+        self.entry_rotation = int(entry_rotation)
         pw = int(self.config.prefix_width)
         sw = int(self.config.slot_width)
         rw = int(self.config.renderer_width)
@@ -284,7 +293,18 @@ class SequenceCharWorkspace:
 
     # ------------------------------------------------------------- scanning
 
-    def begin_episode(self, prefix: str) -> SequenceCharWorkspaceState:
+    def begin_episode(
+        self, prefix: str, *, value_rotation: int = 0, entry_rotation: int = 0
+    ) -> SequenceCharWorkspaceState:
+        """Build the per-episode workspace.  ``entry_rotation`` is the
+        evaluation-only misbind lesion, byte-graph twin semantics: the entry
+        byte (identity) of each row is cyclically shifted while keys, values
+        and candidate slots stay put, so the copy pathway emits from
+        misaligned positions.  ``value_rotation`` cyclically shifts the value
+        rows against their keys (R2-D2 value-misbind twin).  Both must stay
+        zero on every training path.
+        """
+
         if len(prefix) > int(self.config.max_sequence_chars):
             raise ValueError("prefix exceeds max_sequence_chars")
         slots = self.vocab.encode(prefix)
@@ -326,11 +346,22 @@ class SequenceCharWorkspace:
             question_hidden @ self._parameters["answer_start_weight"]
             + self._parameters["answer_start_bias"]
         )
+        entry_codepoints = tuple(ord(character) for character in prefix)
+        if int(value_rotation) and value_rows.shape[0]:
+            vshift = int(value_rotation) % int(value_rows.shape[0])
+            value_rows = torch.cat((value_rows[vshift:], value_rows[:vshift]), dim=0)
+        if entry_rotation:
+            shift = int(entry_rotation) % max(1, len(entry_codepoints))
+            entry_codepoints = entry_codepoints[shift:] + entry_codepoints[:shift]
+            # Copy slots follow the rotated identities (byte-graph twin: the
+            # entry byte aligned to each evidence row shifts, keys/values do
+            # not); dynamic extras already exist for every material glyph.
+            entry_slots = tuple(char2slot[chr(codepoint)] for codepoint in entry_codepoints)
         return SequenceCharWorkspaceState(
             workspace_key=key_rows,
             workspace_value=value_rows,
             renderer_state=renderer_start,
-            entry_codepoints=tuple(ord(character) for character in prefix),
+            entry_codepoints=entry_codepoints,
             entry_slots=entry_slots,
             char2slot=char2slot,
             extra_slot_codepoints=extra_slot_codepoints,
@@ -432,6 +463,53 @@ class SequenceCharWorkspace:
             return ord(self.vocab.glyph_of(slot))
         return int(state.extra_slot_codepoints[slot])
 
+    def glyph_for_slot(self, state: SequenceCharWorkspaceState, slot: int) -> str:
+        if slot == CHAR_BOUNDARY_SLOT:
+            return ""
+        if slot == CHAR_UNK_SLOT:
+            return CHAR_UNK_GLYPH
+        if slot < int(self.vocab.size):
+            return self.vocab.glyph_of(slot)
+        return chr(int(state.extra_slot_codepoints[slot]))
+
+    @torch.no_grad()
+    def generate_lesioned(
+        self,
+        prefix: str,
+        *,
+        value_rotation: int = 0,
+        entry_rotation: int = 0,
+        max_chars: int | None = None,
+    ) -> CharGenerationResult:
+        """Greedy generation under an evaluation lesion applied at episode start.
+
+        Induction pointer transitions run inside the lesioned episode exactly
+        as intact generation does; the answer glyphs' slot identities come from
+        the INTACT mapping (a lesion may not change what the correct answer
+        character is, only which row supplies it).
+        """
+
+        limit = int(max_chars if max_chars is not None else self.config.max_sequence_chars)
+        state = self.begin_episode(
+            prefix, value_rotation=int(value_rotation), entry_rotation=int(entry_rotation)
+        )
+        previous_slot = CHAR_BOUNDARY_SLOT
+        produced: list[str] = []
+        stopped = False
+        steps = 0
+        while steps < limit:
+            state, mixture, _ = self.step_distribution(state, previous_slot)
+            slot = int(mixture.argmax())
+            steps += 1
+            if slot == CHAR_BOUNDARY_SLOT:
+                stopped = True
+                break
+            glyph = self.glyph_for_slot(state, slot)
+            produced.append(glyph)
+            state = replace(state, last_emitted_codepoint=ord(glyph) if glyph else None)
+            previous_slot = slot
+        return CharGenerationResult("".join(produced), stopped, steps)
+
     @torch.no_grad()
     def generate(self, prefix: str, *, max_chars: int | None = None) -> CharGenerationResult:
         limit = int(max_chars if max_chars is not None else self.config.max_sequence_chars)
@@ -455,16 +533,18 @@ class SequenceCharWorkspace:
     # --------------------------------------------------------- teacher forcing
 
     def teacher_forced_distributions(
-        self, prefix: str, response: str
+        self, prefix: str, response: str, *, entry_rotation: int = 0
     ) -> tuple[torch.Tensor, torch.Tensor]:
         """(mixture, copy) rows over candidates for positions 0..len(response).
 
         Teacher forcing feeds the TRUE previous glyph as the renderer input and
         carries the true previous codepoint as the induction pointer (the
         byte-graph rule: emissions before the first carry no bonus).
+        ``entry_rotation`` is the evaluation-only misbind lesion (training and
+        the D7 gates always use 0).
         """
 
-        state = self.begin_episode(prefix)
+        state = self.begin_episode(prefix, entry_rotation=int(entry_rotation))
         mixtures: list[torch.Tensor] = []
         copies: list[torch.Tensor] = []
         previous_slot = CHAR_BOUNDARY_SLOT
