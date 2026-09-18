@@ -131,9 +131,12 @@ _CANONICAL_PARAMETER_ORDER: tuple[str, ...] = (
     "copy_gate_bias",
     "answer_start_weight",
     "answer_start_bias",
-    "copy_persist_bias",
     "decoder",
     "decoder_bias",
+    # Appended last (R2-D5): canonical indices of the shared v2-v6 tensors must
+    # not shift, otherwise every new graph version would silently reinitialize
+    # the decoder differently and freeze-era checkpoints would stop replaying.
+    "copy_persist_bias",
 )
 
 #: Declared trainable parameter inventory for the workspace arm (v2 graph,

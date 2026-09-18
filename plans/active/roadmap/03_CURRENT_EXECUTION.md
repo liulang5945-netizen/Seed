@@ -1,12 +1,12 @@
 # Seed / Taiji 当前详细推进方案
 
-更新：2026-09-18，实验核对至R2-D4 matched dev。D1仪器已结项；D2 A族收束；D3 H-G（多头+PE）probe过但dev全败（记忆化），按§5路由转评审后用户裁决目标函数方向；D4 H-T（copy值监督，λ=1.0，零新参数）probe全门通过（copy-supported M1=1.0、值位置copy概率=1.0、错位崩至0.0417、稳定）；matched dev G1–G6全败但改善实质（M3均值0.178 vs D3的0.035，no_context首次贴地，train值域零泄漏，copy锁定正确材料值）——失败模式质变为「多字节值持续复制外推失败」（train值全单字3bytes，dev含双字色6bytes）。按合同§5预承诺：损失变体关闭，转评审（规模/数据扩train 或 B绑定驻留机制）。归因见[D4结项评审备忘](../../reference/M5_R2_D4_MATCHED_DEV_REVIEW_MEMO_20260918.md)与[D4合同](../../reference/M5_R2_D4_COPY_SUPERVISION_CONTRACT_FROZEN_20260918.md)。[01](01_SCOPE_AND_PHASES.md)管大阶段，[02](02_GATES_AND_CI.md)管证据与晋级，[07](07_MINI_MODEL_DELIVERY.md)管用户验收。[根需求](../TAIJI_CORE_REQUIREMENTS.md)与[架构合同](../TAIJI_NATIVE_ARCHITECTURE_V1.md)定义目的、职责和规则层级。
+更新：2026-09-18，实验核对至R2-D5 matched dev 2×2裁决。D1仪器已结项；D2 A族收束；D3几何（probe过/dev记忆化败）→D4目标（probe全绿/dev多字节截断、M3首超surface）→D5因子（三臂probe全绿/覆盖+驻留双判否：A01/A11 dev崩至0.008比不扩数据差20倍，A10驻留零效果）。三点连成一致结论：**byte位置模式可学、字/行级组合规律不可外推**——组合表征缺口需结构级新假设（B槽位/token化）而非更多单因子变体。过程中canonical索引事故被A00漂移复核拦截并修复（新名一律追加表尾+实现门必须含历史checkpoint重放断言）。按D5合同§5末行预承诺：**转R2阶段层面评审**（收束/B槽位/任务族外部对照三选项供裁决），D系列单因子变体线全部关闭，训练冻结。归因见[D5结项评审备忘](../../reference/M5_R2_D5_MATCHED_DEV_REVIEW_MEMO_20260918.md)与[D5合同](../../reference/M5_R2_D5_MULTIBYTE_FACTORIAL_CONTRACT_FROZEN_20260918.md)。[01](01_SCOPE_AND_PHASES.md)管大阶段，[02](02_GATES_AND_CI.md)管证据与晋级，[07](07_MINI_MODEL_DELIVERY.md)管用户验收。[根需求](../TAIJI_CORE_REQUIREMENTS.md)与[架构合同](../TAIJI_NATIVE_ARCHITECTURE_V1.md)定义目的、职责和规则层级。
 
-## 当前唯一下一步：R2-D4 失败后的评审裁决（规模/数据扩train vs B绑定持续copy机制），裁决前训练冻结
+## 当前唯一下一步：R2 阶段层面评审裁决（收束 L2 差距表述 / B 槽位新假设族 / 任务族外部对照），裁决前训练冻结
 
-**当前为M5 / R2原生语言能力；R2-D4处于probe通过但matched dev未过门后的评审裁决点，训练冻结。** D4以零新参数单变量（copy值监督λ=1.0）验证了目标函数假设的机制半边：train上copy通道完全接管值生成（值位置概率1.0）、错位即崩（0.0417）；dev上模型不再输出train值域、68/98预测逐字出现在自身材料中、copy锁定正确材料行的正确值首字节——但多字节色（米色/灰白/乳白）仅复制首字节即截断，M4/flip对仍全0，G1–G6全败（M3均值0.178未达0.26门，δM3均值0.143未达0.20门）。**瓶颈从「读取是否发生」精细化为「多字节持续copy的外推」**。不能推成copy监督无效——机制证据强；不能推成单靠扩数据或单靠驻留机制即可过门——两方向都只覆盖部分失败模式。不读final；没有L2/M5晋级或默认迁移。
+**当前为M5 / R2原生语言能力；R2-D5已按合同结项，处于阶段层面评审裁决点，训练冻结。** D3–D5三包沿「几何→目标→因子」单变量链推进：v6+多头PE解决train可学性但dev纯记忆化；v6+copy值监督使绑定建立（值位置copy概率=1.0、错位即崩）、dev M3首超表面基线（0.178）但多字节值截断；v7驻留+fixture v2覆盖的2×2双判否——覆盖训练使dev崩至0.008（比不扩数据差20倍）、驻留bias≈0且A11为负。dev行为轨迹（记忆化→正确首字节+截断→错位破坏）一致指向**字节级可学性与字/行级组合外推的边界**，与672行时代固定策略读数同向。三条单因子变体线（几何/损失/数据+驻留）均已按预承诺关闭；继续推进需要结构级新假设（B对象×值槽位、token化表示——后者已登记VISION §3.1b演进线）或阶段收束。不读final；没有L2/M5晋级或默认迁移。
 
-**当前对话任务定位：按合同执行完毕的R2-D3/R2-D4均已结项归档，本轮维护计划至新评审裁决点，不启动裁决外的新训练。** [唯一VISION](../../reference/VISION_FUTURE_TECHNOLOGY.md)§18的信息通路/可替换变量/接口/学习责任规格继续有效；D3/D4实施依据的是用户S1与「目标函数」两次裁决，不是本轮对话自行解冻。9月17日撤回“立即选A”的规划指令是历史决定；后续研发独立选择A的有限切片并推进D1–D4，不能写成尚未实施，也不能推成整套A已采用。其他任务的未提交代码/修订不由本轮纳入提交或授予训练权限。
+**当前对话任务定位：按合同执行完毕的R2-D3/D4/D5均已结项归档，本轮维护计划至阶段评审裁决点，不启动裁决外的新训练。** [唯一VISION](../../reference/VISION_FUTURE_TECHNOLOGY.md)§18的信息通路/可替换变量/接口/学习责任规格继续有效；D3/D4/D5实施依据的是用户S1、「目标函数」「2×2对比包」三次裁决，不是本轮对话自行解冻。9月17日撤回“立即选A”的规划指令是历史决定；后续研发独立选择A的有限切片并推进D1–D5，不能写成尚未实施，也不能推成整套A已采用。其他任务的未提交代码/修订不由本轮纳入提交或授予训练权限。
 
 ### 0.1 最新证据与解释边界
 
@@ -24,6 +24,8 @@
 | D3 matched dev（3臂×3seeds，G1–G6全败）：H4 M1=0/0/0.092、H1+PE 0/0.010/0.112、C4 0.010/0.061/0.061；各反事实条件与逐对率全贴地；boundary_min=0.582；同seed（20260917）probe与matched checkpoint参数逐位一致；dev输出：negation首两字节「不是」正确但内容错、多形状退化单字「索」、0/98输出等于任何train response、dev/train prefix零重叠；[报告](../../../reports/r2_d3_matched_dev_20260918.json)、[评审备忘](../../reference/M5_R2_D3_MATCHED_DEV_REVIEW_MEMO_20260918.md) | 训练可复现、非实现缺陷；模型记忆化train prefix→response映射而非组合绑定泛化；多头与PE贡献在dev维度不可分辨（三臂同崩）；判否范围限当前尺度/目标函数（仅答案CE）/数据量（174 episodes）下的几何族，不推成所有架构变体无法泛化 |
 | D4 probe（H-T copy值监督λ=1.0，v6图零新参数，train-only）：全门passed——copy-supported M1=144/144、值位置copy分量概率=1.0、entry_rotation错位后崩至0.0417、loss单调0.0168→0.0082无回撤；[报告](../../../reports/r2_d4_copy_supervision_probe_20260918.json) | copy通道在train上完全接管值生成且为真位置绑定（非byte频率）；λ=0逐位等价与D3冻结checkpoint重放断言均入实现门；首跑P4误报系判据实现口径偏差（epoch-0计入），按Q1修正四§3精确口径修正后通过 |
 | D4 matched dev（T2×3seeds vs D3 H4历史对照，G1–G6全败但改善实质）：M1=[0.184,0.051,0.235]、M3=[0.209,0.058,0.267]（均值0.178，δM3均值0.143）、no_context M3首次贴地[0,0.023,0.012]、M4/flip对全0、boundary_min=0.898；λ=0等价性复核逐位一致；dev行为刻画（seed 20260919）：train值域零泄漏、68/98预测逐字在自身材料内、双字色（米色/灰白）仅复制首字节即截断、combination_different 5/5；[报告](../../../reports/r2_d4_matched_dev_20260918.json)、[评审备忘](../../reference/M5_R2_D4_MATCHED_DEV_REVIEW_MEMO_20260918.md) | 失败模式从「是否读取材料」精细化为「多字节持续copy外推」：读取绑定已建立、值首字节正确、持续复制失败（train值域全单字节，dev双字节色6bytes从未进入训练分布；copy每步独立寻址无驻留偏置）；不能推成copy监督无效，也不能推成单靠扩数据或单靠驻留机制可过门 |
+| D5 probe（3臂：A10驻留/A01覆盖/A11双，train-only）：全门passed——A01/A11多字节值行72/72、copy值概率=1.0、错位崩至0.053、稳定；A10回归门全过（bias≈0.02）；canonical索引事故修复后重跑确认；[A10](../../../reports/r2_d5_probe_A10_hm_persistence_only_20260918.json)、[A01](../../../reports/r2_d5_probe_A01_he_coverage_only_20260918.json)、[A11](../../../reports/r2_d5_probe_A11_hehm_coverage_and_persistence_20260918.json) | 覆盖使多字节持续copy在train完全可学（H-E的train半边成立）；驻留在无压力train上不离开初值 |
+| D5 matched dev（3新臂×3seeds vs A00=D4 T2历史，G1–G6全败）：A10 dev读数与A00逐项相等（M3 0.178、completion同值、δ=0）；A01 M3崩至0.008、A11至0.004（**比不扩数据的A00差20倍**）；双字节full_rate全≈0、first_byte A01/A11反降（0.489/0.460<A00 0.529）；A11 bias终值**−0.044**（负）；A00漂移复核逐位一致；dev重放：A01输出`灰紽`/`米索`——首字节正确、第二字错位乱码，A00的12/76白值行正确在A01归零；[报告](../../../reports/r2_d5_matched_dev_20260918.json)、[评审备忘](../../reference/M5_R2_D5_MATCHED_DEV_REVIEW_MEMO_20260918.md) | H-M判否（无覆盖压力时驻留偏置无自发效果）；H-E判否且有害（train值词位置模式记忆摧毁已有泛化，第二字节置而非序列规律）；A11无协同；D3→D5 dev轨迹（记忆化→首字节正确+截断→错位破坏）收敛于「byte位置模式可学、字/行级组合规律不可外推」；组合表征缺口需结构级新假设，三条单因子变体线按预承诺全部关闭 |
 
 以上继承上轮静态train/dev、重复/常量基线与报告复核。R2-D1 只执行了仪器与固定策略，未评任何模型；逐形状固定策略分与逐题记录见[表面策略基线报告](../../../reports/r2_d1_surface_baselines_20260917.json)。详细范围、数值与归因限制见[设计依据复核](../../reference/M5_R2_DESIGN_EVIDENCE_AUDIT_20260917.md)。固定策略与模型同分不证明模型全部输出恒定；逐形状真相在新 dev 上已有逐题记录可供未来模型直接对账。
 
@@ -35,7 +37,7 @@ D2新增事实取自[copy探针报告](../../../reports/r2_d2_copy_learnability_
 
 规划交付是一份可以回答“做什么、为什么、先后关系、做出什么、怎样验、结果不好怎么办”的开发指导计划，而不是要求用户现在从A/B/C/D/E选赢家。规划完成不等于研发完成；仍待标定的数值列明求取方法与冻结时点，不假装已经确认。
 
-**唯一研究下一步：完成R2-D4失败后的评审裁决，在规模/数据扩train与B绑定持续copy机制两方向中先明确所需证据与有界实验范围（或裁决一个小型两臂对比包）。** D4已按合同执行完毕（probe全门过、matched dev未过门但失败模式质变、评审备忘归档）；D3后评审的「目标函数」议题已经由D4实施并给出结论（机制半边成立、损失变体线关闭）。两方向的判别证据设想见[D4结项评审备忘§4](../../reference/M5_R2_D4_MATCHED_DEV_REVIEW_MEMO_20260918.md)：规模方向直接命中「train值域无多字节色」的覆盖缺口；B方向直接命中「copy每步独立寻址无驻留」的归纳偏置缺口；两者各覆盖失败模式的一半，不互斥。裁决前训练冻结、不读final、不改旧门；新包需先冻结预注册合同再实施。
+**唯一研究下一步：R2阶段层面评审裁决——三选一：(a) 以D1–D5证据完成阶段收束（L2差距=组合表征，token化列入VISION §3.1b做设计推进）；(b) B槽位新假设族（对象×值槽位结构图v8，非已关闭的变体线）；(c) 任务族外部对照（同仪器换语料域检验结论特异性）。** D5已按合同结项（probe三臂全绿、matched双判否、评审备忘归档）；D3后「规模/数据 vs B绑定」议题已由D5实施并给出双判否结论。裁决前训练冻结、不读final、不改旧门；新包需先冻结预注册合同再实施。选项证据与限制见[D5结项评审备忘§5](../../reference/M5_R2_D5_MATCHED_DEV_REVIEW_MEMO_20260918.md)。
 
 **路线纠正继续有效**：主线是R2材料/问题/上下文→原生自由回答；最小任务族只是一种验证方法，D的真实行动环境、E的在线能力不成为R2前置。七次旧追加移到[历史快照](../../archive/history/R2_DIAGNOSTIC_QUEUE_BEFORE_DESIGN_OPTIONS_20260917.md)，保留原始负结果和当时判断，不再与本节争夺队首。
 
@@ -186,20 +188,21 @@ D2新增事实取自[copy探针报告](../../../reports/r2_d2_copy_learnability_
 
 ### 5.7 当前开发包卡片（唯一活动卡）与结项历史指针
 
-**R2-D4 copy 通道值监督（H-T：训练目标单变量，v6图零新参数；用户「目标函数」裁决后的假设包）— 活动·评审裁决点（2026-09-18；probe全门通过，matched dev G1–G6全败但失败模式质变，按合同§5预承诺转评审（规模/B绑定），损失变体线关闭，训练冻结）。**
+**R2-D5 多字节持续 copy 2×2 因子包（H-E 覆盖 × H-M 驻留，graph v7 + fixture v2；用户「2×2对比包」裁决产物）— 活动·阶段评审裁决点（2026-09-18；三臂 probe 全绿，matched dev G1–G6 全败且完成率无改善——双因子按合同§5末行判否，转 R2 阶段层面评审，训练冻结）。**
 
 | 项目 | 内容 |
 |---|---|
-| 目的/范围 | 检验假设H-T：仅答案CE允许值bytes经记忆捷径拟合，对答案值位置追加copy分量辅助NLL（λ=1.0冻结）后，寻址被驱动锁定「问题→材料行→值」绑定。图不变（v6，96,034参数，零新参数），单一变量=训练目标；值位置按shape推导（fact/sof全response、negation去「不是」、unknown/combo空）；不读final、不动默认入口 |
-| 实现门 | λ=0路径逐位一致（含D3冻结checkpoint重放0.008076…断言）、混合=gate·vocab+(1−gate)·copy结构分解、值mask全fixture规则（144监督episodes精确）、辅助梯度只达寻址链不达decoder、trainer集成与checkpoint往返，9测试全绿；全套taiji_native回归无新增失败 |
-| probe 结果（train-only，seed 20260917） | **全门passed**：copy-supported M1=144/144（P1）、值位置copy分量概率=1.0（P2完全接管）、错位后崩至0.0417（P3真位置绑定）、loss单调0.0168→0.0082无回撤（P4）；combo_different train仍0（C/B信号延续）。[报告](../../../reports/r2_d4_copy_supervision_probe_20260918.json) |
-| matched dev 结果（T2×3seeds，vs D3 H4历史对照） | **G1–G6全败**但改善实质：M1=[0.184,0.051,0.235]（D3: 0/0/0.092）、M3均值0.178（δM3均值0.143未达0.20）、no_context M3首次贴地[0,0.023,0.012]、M4/flip对全0、boundary_min=0.898；λ=0等价性复核逐位一致后引用历史对照合法。[报告](../../../reports/r2_d4_matched_dev_20260918.json) |
-| 失败模式刻画（dev行为，seed 20260919） | 相对D3质变：train值域**零泄漏**（0/98含蓝绿红黄青紫）；68/98预测逐字出现在该行自身材料内；copy锁定正确材料行的正确值**但多字节值仅复制首字节即截断**（`米`→`米色`、`灰`→`灰白`）；combination_different 5/5、combination_same 0/5（全答「不同」）→瓶颈从「读取是否发生」精细化为「**多字节持续copy外推**」：train值域全单字色（3bytes），双字色6bytes从未进入训练分布；copy每步独立寻址无驻留偏置 |
-| 结论与解释边界 | H-T在dev泛化维度不获支持；但「仅答案CE允许记忆捷径、copy监督驱动真实读取」的机制半边在train+dev行为上获强证据。不能推成copy监督无效，不能推成单靠扩数据或单靠驻留机制可过门；combo_same误答显示绑定精度问题不完全是值长度 |
-| 结果去向 | 按合同§5预承诺：损失函数变体关闭（λ调参/mask变体/加权方案不追加）；转评审两方向：**规模/数据**（等暴露扩train混入多字节值，直接命中覆盖缺口）vs **B绑定**（copy驻留/显式指针，直接命中归纳偏置缺口）；或小型两臂对比包。[评审备忘](../../reference/M5_R2_D4_MATCHED_DEV_REVIEW_MEMO_20260918.md) |
-| 预算与可运行性 | probe约2min+matched 4运行（含λ=0复核）约4min CPU；checkpoint隔离于reports/r2_d4_checkpoints/；裁决前不释放新训练预算 |
+| 目的/范围 | 一次读数裁决 D4 遗留两因子相对贡献：H-E 覆盖（train 值域混入三个 6-byte 新色，dev/final 逐字节不变）× H-M 驻留（v7：单个可训练 copy_persist_bias，softmax 前对上一步 copy 命中行的下一字节加 bonus，发射匹配指针规则）。行数/模板/更新数/评测口径全不变；不读final |
+| 实现门 | flag-off与zero-init与v6逐位一致、指针规则（首步无/行尾不绕回/zero_read无）、bias梯度路径、v2 fixture 158变更行精确+dev/final逐字节+新字符零泄漏、v7/v6/…checkpoint矩阵，10测试全绿；legacy 全家族回归 75/75 |
+| probe（train-only） | 三臂全门 passed：A01/A11 多字节值行 72/72、copy 值概率=1.0、错位崩至 0.053；A10 回归门全过 bias≈0.02。[A10](../../../reports/r2_d5_probe_A10_hm_persistence_only_20260918.json)、[A01](../../../reports/r2_d5_probe_A01_he_coverage_only_20260918.json)、[A11](../../../reports/r2_d5_probe_A11_hehm_coverage_and_persistence_20260918.json) |
+| matched dev | **全臂 G1–G6 全败**：A10 与 A00（D4 T2 历史）逐项相等（δ=0，机制零效果）；A01/A11 M3 崩至 0.008/0.004（比 A00 差 20 倍）、first_byte 反降、full_rate≈0、A11 bias=−0.044；A00 漂移复核逐位一致。[报告](../../../reports/r2_d5_matched_dev_20260918.json) |
+| 结论 | H-M 判否（无压力不学习）；H-E 判否且有害（train 值词位置模式记忆摧毁已有泛化：`米索`/`灰紽`=首字节对+第二字错）；A11 无协同。D3→D5 轨迹收敛：**byte 位置模式可学、字/行级组合规律不可外推**——继续需结构级新假设（B 槽位/token 化）或阶段收束 |
+| 流程记录 | canonical 索引事故（新参数名插中部→全体 decoder init 漂移）被 matched 的 A00 漂移复核拦截，修复=新名追加表尾、probe 重跑确认；教训：实现门必须含历史 checkpoint 重放断言 |
+| 结果去向 | 按合同§5末行转 R2 阶段层面评审（收束/B槽位/外部对照三选项见[D5评审备忘§5](../../reference/M5_R2_D5_MATCHED_DEV_REVIEW_MEMO_20260918.md)）；D 系列单因子变体线（几何/损失/数据+驻留）全部关闭 |
 
-合同：[D4 冻结](../../reference/M5_R2_D4_COPY_SUPERVISION_CONTRACT_FROZEN_20260918.md)；评审议题两方向的具体化见[评审备忘§4](../../reference/M5_R2_D4_MATCHED_DEV_REVIEW_MEMO_20260918.md)。
+合同：[D5 冻结](../../reference/M5_R2_D5_MULTIBYTE_FACTORIAL_CONTRACT_FROZEN_20260918.md)。
+
+**结项历史指针：R2-D4 copy 通道值监督（2026-09-18，probe 全门过、matched dev G1–G6 未过门，用户「目标函数」裁决产物→D5 接续）。** H-T（λ=1.0 值位置 copy 分量 NLL，零新参数）：train copy 完全接管值生成（概率=1.0、错位即崩 0.0417）；dev M3 均值 0.178 首超表面基线、no_context 贴地、train 值域零泄漏，但多字节值仅复制首字节即截断。失败模式精细化为「多字节持续 copy 外推」。合同与证据：[D4冻结](../../reference/M5_R2_D4_COPY_SUPERVISION_CONTRACT_FROZEN_20260918.md)、[D4评审备忘](../../reference/M5_R2_D4_MATCHED_DEV_REVIEW_MEMO_20260918.md)、[probe](../../../reports/r2_d4_copy_supervision_probe_20260918.json)、[matched](../../../reports/r2_d4_matched_dev_20260918.json)。
 
 **结项历史指针：R2-D3 首步读取几何（2026-09-18，probe过/train-only、matched dev G1–G6全败，S1裁决产物，用户裁决转「目标函数」→已由D4实施）。** H-G（多头+PE，v6图96,034参数）train上完全解决可学习性（M1=0.96、negation 48/48首次突破、loss 0.0081），dev三臂×3seeds全贴地；同seed checkpoint逐位一致排除实现缺陷；dev输出刻画=记忆化train prefix→response映射（0/98输出等于train response、copy未锁定材料行、退化单字「索」）。可学习性与泛化分离；几何变体线（H5/H8/PE变体）按合同关闭。合同与证据：[D3冻结](../../reference/M5_R2_D3_FIRST_STEP_GEOMETRY_CONTRACT_FROZEN_20260918.md)、[D3评审备忘](../../reference/M5_R2_D3_MATCHED_DEV_REVIEW_MEMO_20260918.md)、[probe](../../../reports/r2_d3_multihead_probe_20260918.json)、[matched dev](../../../reports/r2_d3_matched_dev_20260918.json)。
 

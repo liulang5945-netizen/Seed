@@ -17,13 +17,13 @@
   "epochs_frozen": 30,
   "frozen_learning_rate": 0.01,
   "train_episodes": 174,
-  "elapsed_seconds": 208.09299999999348,
+  "elapsed_seconds": 121.5,
   "wall_cap_seconds": 1200,
   "parameter_count": 96034,
   "copy_persist_bias_end": null,
   "preflight": {
-    "expected_logits_digest": "a48780b188b81559a879389862c4398c7a6638664fc974ed028939e4514016e5",
-    "observed_logits_digest": "a48780b188b81559a879389862c4398c7a6638664fc974ed028939e4514016e5",
+    "expected_logits_digest": "50e5def0402380669987617f97c00c0305053a0ac48a1c49620f342043824ec9",
+    "observed_logits_digest": "50e5def0402380669987617f97c00c0305053a0ac48a1c49620f342043824ec9",
     "logits_match": true,
     "continuation_matches": true,
     "restored_version": 7,
@@ -117,7 +117,7 @@
         "exact": 0.0
       }
     },
-    "mean_sequence_loss": 0.00816092115215808,
+    "mean_sequence_loss": 0.008146818613829378,
     "copy_supported_M1": {
       "numerator": 144,
       "denominator": 144,
@@ -153,53 +153,53 @@
   "trajectory": [
     {
       "epoch": 0,
-      "mean_sequence_loss": 4.43096,
+      "mean_sequence_loss": 4.451861,
       "M1_exact": 0.0,
       "copy_supported_M1": 0.0
     },
     {
       "epoch": 5,
-      "mean_sequence_loss": 0.014596,
+      "mean_sequence_loss": 0.019089,
       "M1_exact": 0.9597701149425287,
       "copy_supported_M1": 1.0
     },
     {
       "epoch": 10,
-      "mean_sequence_loss": 0.009075,
+      "mean_sequence_loss": 0.009079,
       "M1_exact": 0.9597701149425287,
       "copy_supported_M1": 1.0
     },
     {
       "epoch": 15,
-      "mean_sequence_loss": 0.008548,
+      "mean_sequence_loss": 0.008507,
       "M1_exact": 0.9597701149425287,
       "copy_supported_M1": 1.0
     },
     {
       "epoch": 20,
-      "mean_sequence_loss": 0.008336,
+      "mean_sequence_loss": 0.008307,
       "M1_exact": 0.9597701149425287,
       "copy_supported_M1": 1.0
     },
     {
       "epoch": 25,
-      "mean_sequence_loss": 0.008226,
+      "mean_sequence_loss": 0.008206,
       "M1_exact": 0.9597701149425287,
       "copy_supported_M1": 1.0
     },
     {
       "epoch": 30,
-      "mean_sequence_loss": 0.008161,
+      "mean_sequence_loss": 0.008147,
       "M1_exact": 0.9597701149425287,
       "copy_supported_M1": 1.0
     }
   ],
   "copy_value_readout_intact": {
-    "mean_copy_value_prob": 0.9999941340935083,
+    "mean_copy_value_prob": 0.9999924611162256,
     "positions": 648
   },
   "copy_value_readout_misbound": {
-    "mean_copy_value_prob": 0.054141379514385746,
+    "mean_copy_value_prob": 0.05333908048094853,
     "positions": 648
   },
   "gate": {
