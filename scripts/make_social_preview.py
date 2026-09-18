@@ -1,20 +1,34 @@
 """Render the GitHub social preview card (1280x640) for the Seed repository.
 
-Numbers are pinned to the committed benchmark reported in README.md:
-byte-cycle accuracy 0% -> 94.12% on the two-region [64, 48] benchmark, seed 7.
+2026-09 redesign: the card now leads with the architecture identity -- the
+Taiji wordmark and an ink emblem -- instead of a single kernel benchmark
+number, matching the current README narrative (architecture -> capabilities
+-> status).  The kernel facts are demoted to a footnote line and the
+lesion-control culture sentence stays as the footer signature.
+
+The emblem is a classic ink taiji whose halves carry a sparse network
+(paper-colored nodes on the ink half, ink nodes on the paper half, one
+seal-red apical node) -- the architecture in one mark.  Node placement is
+seeded with seed 7, the committed benchmark seed, so the render is
+deterministic.
 
 Palette is sampled from the existing brand assets in frontend/public
-(rice-paper white #FAFBF6, ink black #060604) so the card matches the
-taiji ink identity instead of introducing a new look.
+(rice-paper white #FAFBF6, ink black #060604, seal red #B02A1E).
 
 Usage:
     python scripts/make_social_preview.py
 Output:
     frontend/public/social-preview.png
+
+GitHub shows the social preview from the repository settings upload, so
+after regenerating this asset the image must be re-uploaded once via
+Settings -> General -> Social preview.
 """
 
 from __future__ import annotations
 
+import math
+import random
 from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageFont
@@ -27,11 +41,9 @@ INK = (6, 6, 4)
 INK_SOFT = (72, 72, 66)
 INK_FAINT = (168, 168, 158)
 INK_RULE = (206, 206, 196)
-WATERMARK = (237, 238, 231)
-WATERMARK_EDGE = (228, 229, 221)
 ACCENT = (176, 42, 30)
 
-MARGIN = 100
+MARGIN = 96
 
 FONT_DIR = Path("C:/Windows/Fonts")
 BOLD = FONT_DIR / "segoeuib.ttf"
@@ -42,101 +54,142 @@ MONO = FONT_DIR / "consolab.ttf"
 ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "frontend" / "public" / "social-preview.png"
 
+EMBLEM_CX, EMBLEM_CY, EMBLEM_R = 1024, 318, 160
+
 
 def font(path: Path, size: int) -> ImageFont.FreeTypeFont:
     return ImageFont.truetype(str(path), size * SS)
 
 
-def s(v: int) -> int:
-    return v * SS
+def s(v: float) -> int:
+    return int(round(v * SS))
 
 
-def draw_taiji(d: ImageDraw.ImageDraw, cx: int, cy: int, r: int) -> None:
-    """Ink taiji mark, kept as a pale background watermark behind the text."""
-    cx, cy, r = s(cx), s(cy), s(r)
-    d.ellipse([cx - r, cy - r, cx + r, cy + r], outline=WATERMARK_EDGE, width=max(1, SS))
-    d.pieslice([cx - r, cy - r, cx + r, cy + r], 90, 270, fill=WATERMARK)
-    half = r // 2
-    d.ellipse([cx - half, cy - r, cx + half, cy], fill=WATERMARK)
-    d.ellipse([cx - half, cy, cx + half, cy + r], fill=PAPER)
-    eye = r // 6
-    d.ellipse([cx - eye, cy - half - eye, cx + eye, cy - half + eye], fill=PAPER)
-    d.ellipse([cx - eye, cy + half - eye, cx + eye, cy + half + eye], fill=WATERMARK)
+def in_ink(x: float, y: float) -> bool:
+    """Classic taiji region test: which half of the emblem covers (x, y)."""
+
+    half = EMBLEM_R / 2
+    in_top = (x - EMBLEM_CX) ** 2 + (y - (EMBLEM_CY - half)) ** 2 <= half * half
+    in_bot = (x - EMBLEM_CX) ** 2 + (y - (EMBLEM_CY + half)) ** 2 <= half * half
+    return (x < EMBLEM_CX and not in_top) or in_bot
+
+
+def draw_emblem(d: ImageDraw.ImageDraw) -> None:
+    cx, cy, r = EMBLEM_CX, EMBLEM_CY, EMBLEM_R
+
+    # outer ink ring with a hairline inner ring for craft
+    d.ellipse([s(cx - r), s(cy - r), s(cx + r), s(cy + r)], outline=INK, width=3 * SS)
+    inner = r - 9
+    d.ellipse(
+        [s(cx - inner), s(cy - inner), s(cx + inner), s(cy + inner)],
+        outline=INK_RULE,
+        width=max(1, SS),
+    )
+
+    # classic halves: left ink, top bump paper, bottom bump ink, opposing eyes
+    d.pieslice([s(cx - r), s(cy - r), s(cx + r), s(cy + r)], 90, 270, fill=INK)
+    half = r / 2
+    d.ellipse([s(cx - half), s(cy - r), s(cx + half), s(cy)], fill=PAPER)
+    d.ellipse([s(cx - half), s(cy), s(cx + half), s(cy + r)], fill=INK)
+    eye = r / 7
+    d.ellipse([s(cx - eye), s(cy - half - eye), s(cx + eye), s(cy - half + eye)], fill=INK)
+    d.ellipse([s(cx - eye), s(cy + half - eye), s(cx + eye), s(cy + half + eye)], fill=PAPER)
+
+    # sparse network: seeded with the committed benchmark seed (7)
+    rng = random.Random(7)
+    nodes: list[tuple[float, float]] = []
+    guard = 0
+    while len(nodes) < 26 and guard < 6000:
+        guard += 1
+        ang = rng.uniform(0.0, 2.0 * math.pi)
+        rad = math.sqrt(rng.uniform(0.0, 1.0)) * (r - 30)
+        x, y = cx + rad * math.cos(ang), cy + rad * math.sin(ang)
+        if (x - cx) ** 2 + (y - cy) ** 2 > (r - 26) ** 2:
+            continue
+        if any((x - nx) ** 2 + (y - ny) ** 2 < 30**2 for nx, ny in nodes):
+            continue
+        nodes.append((x, y))
+
+    pairs: set[tuple[int, int]] = set()
+    for i, (x, y) in enumerate(nodes):
+        order = sorted(
+            (j for j in range(len(nodes)) if j != i),
+            key=lambda j: (nodes[j][0] - x) ** 2 + (nodes[j][1] - y) ** 2,
+        )
+        for j in order[:2]:
+            pairs.add((min(i, j), max(i, j)))
+
+    apex = min(range(len(nodes)), key=lambda j: nodes[j][1])
+    apex_pairs = {pair for pair in pairs if apex in pair}
+
+    for i, j in sorted(pairs):
+        (x1, y1), (x2, y2) = nodes[i], nodes[j]
+        mx, my = (x1 + x2) / 2, (y1 + y2) / 2
+        color = ACCENT if (i, j) in apex_pairs else (PAPER if in_ink(mx, my) else INK)
+        d.line([s(x1), s(y1), s(x2), s(y2)], fill=color, width=max(1, SS))
+
+    for j, (x, y) in enumerate(nodes):
+        if j == apex:
+            d.ellipse([s(x - 7), s(y - 7), s(x + 7), s(y + 7)], fill=ACCENT)
+        else:
+            d.ellipse(
+                [s(x - 4), s(y - 4), s(x + 4), s(y + 4)],
+                fill=PAPER if in_ink(x, y) else INK,
+            )
 
 
 def main() -> None:
     img = Image.new("RGB", (W * SS, H * SS), PAPER)
     d = ImageDraw.Draw(img)
 
-    # Headline metrics are measured first so the watermark can be placed in the
-    # leftover space on the right instead of colliding with the numbers.
-    f_hero = font(BOLD, 132)
-    hero_parts = (("0%", INK_SOFT), ("  \u2192  ", INK_FAINT), ("94.12%", INK))
-    hero_w = sum(d.textlength(t, font=f_hero) for t, _ in hero_parts)
-    hero_right = s(MARGIN) + hero_w
-
-    f_label = font(REG, 27)
-    label = "byte-cycle accuracy  \u00b7  two-region [64, 48] benchmark  \u00b7  seed 7"
-    text_right = max(hero_right, s(MARGIN) + d.textlength(label, font=f_label))
-
-    gap = s(46)
-    wm_r = min(s(150), max(s(70), (s(W) - gap - text_right) // 2))
-    wm_cx = s(W) - s(MARGIN) - wm_r
-    if wm_cx - wm_r > text_right + gap:
-        draw_taiji(d, cx=wm_cx // SS, cy=300, r=wm_r // SS)
-
     # top rule + eyebrow
-    d.line([s(MARGIN), s(96), s(W - MARGIN), s(96)], fill=INK_RULE, width=max(1, SS))
-    f_brow = font(SEMI, 21)
+    d.line([s(MARGIN), s(88), s(W - MARGIN), s(88)], fill=INK_RULE, width=max(1, SS))
     d.text(
-        (s(MARGIN), s(58)),
+        (s(MARGIN), s(50)),
         "SEED  \u00b7  TAIJI NATIVE COGNITIVE ARCHITECTURE",
-        font=f_brow,
+        font=font(SEMI, 21),
         fill=INK_SOFT,
     )
 
-    # headline: the measured jump
-    y_hero = s(150)
-    x = s(MARGIN)
-    for text, fill in hero_parts:
-        d.text((x, y_hero), text, font=f_hero, fill=fill)
-        x += d.textlength(text, font=f_hero)
+    # wordmark + statement
+    d.text((s(MARGIN), s(122)), "Taiji", font=font(BOLD, 140), fill=INK)
+    d.text((s(MARGIN), s(300)), "a native cognitive architecture", font=font(SEMI, 40), fill=INK)
+    d.line([s(MARGIN), s(364), s(MARGIN + 108), s(364)], fill=ACCENT, width=max(3, 3 * SS))
 
-    d.text((s(MARGIN), s(310)), label, font=f_label, fill=INK_SOFT)
+    # the three pillars -- self-evolution stays one pillar, not the headline
+    f_pillar = font(REG, 24)
+    pillar = "persistent state  \u00b7  causal body  \u00b7  self-evolving structure"
+    d.text((s(MARGIN), s(386)), pillar, font=f_pillar, fill=INK_SOFT)
 
-    # the claim
-    f_claim = font(BOLD, 54)
-    d.text((s(MARGIN), s(360)), "no backprop  /  no attention", font=f_claim, fill=INK)
+    # kernel facts demoted to a footnote line
+    f_kernel = font(REG, 23)
+    kernel = "no backprop  \u00b7  online 0% \u2192 94.12% byte-cycle accuracy"
+    d.text((s(MARGIN), s(424)), kernel, font=f_kernel, fill=INK_FAINT)
 
-    d.line([s(MARGIN), s(440), s(MARGIN + 108), s(440)], fill=ACCENT, width=max(3, 3 * SS))
+    # text must not run under the emblem
+    limit = EMBLEM_CX - EMBLEM_R - 40
+    for text, f in ((pillar, f_pillar), (kernel, f_kernel)):
+        if s(MARGIN) + d.textlength(text, font=f) > s(limit):
+            raise SystemExit(f"support line collides with the emblem: {text!r}")
 
-    # supporting facts
-    f_fact = font(REG, 25)
-    d.text(
-        (s(MARGIN), s(464)),
-        "learns online from local prediction errors  \u00b7  sparse fixed-fan-in synapses",
-        font=f_fact,
-        fill=INK_SOFT,
-    )
-    d.text(
-        (s(MARGIN), s(500)),
-        "slot-free episodic memory  \u00b7  surprise 5.4041 \u2192 0.1069  (98.02% reduction)",
-        font=f_fact,
-        fill=INK_SOFT,
-    )
+    draw_emblem(d)
 
     # footer
     d.line([s(MARGIN), s(548), s(W - MARGIN), s(548)], fill=INK_RULE, width=max(1, SS))
-    f_foot = font(MONO, 23)
-    d.text((s(MARGIN), s(566)), "github.com/liulang5945-netizen/Seed", font=f_foot, fill=INK)
-    f_foot_r = font(REG, 23)
-    tail = "every claim backed by a lesion-controlled script"
+    f_url = font(MONO, 22)
+    d.text((s(MARGIN), s(566)), "github.com/liulang5945-netizen/Seed", font=f_url, fill=INK)
+    f_tail = font(REG, 20)
+    tail = "every claim lesion-controlled  \u00b7  failures reported as failures"
     d.text(
-        (s(W - MARGIN) - d.textlength(tail, font=f_foot_r), s(566)),
+        (s(W - MARGIN) - d.textlength(tail, font=f_tail), s(566)),
         tail,
-        font=f_foot_r,
+        font=f_tail,
         fill=INK_SOFT,
     )
+    if d.textlength("github.com/liulang5945-netizen/Seed", font=f_url) + d.textlength(
+        tail, font=f_tail
+    ) > s(W - 2 * MARGIN - 24):
+        raise SystemExit("footer texts collide")
 
     # Assert every drawn glyph stays inside the safe margins, because Twitter,
     # Slack and WeChat each crop the card at a different aspect ratio.
