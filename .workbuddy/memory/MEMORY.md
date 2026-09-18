@@ -183,6 +183,11 @@ D8 是**机制地图最后一根预注册轴 = 尺度/暴露**（唯一变量：
 - 用 `C:/Users/23747/AppData/Local/Programs/Python/Python312/python.exe`
   （managed 3.13.12 无 torch/ruff/black）。
 - bash 外部命令 ls/cat/grep/head/tail/mkdir/rm 全部缺失：文件操作用 Read/Write/Edit/Glob/Grep
+  - ⚠️ **管道里用这些命令会连带杀掉上游进程**：2026-09-18 用
+    `python train.py ... 2>&1 | tail -c 900` ⇒ `tail: command not found` ⇒ 管道破裂 ⇒
+    **Python 进程被 SIGPIPE 带走、报告根本没生成**（跑了 9 分钟的训练白费）。
+  - **纪律**：长任务的输出过滤**必须用 `| python.exe -c "..."`**（Python 一定存在），
+    绝不用 `tail`/`head`/`cat`；`for`、`|`、重定向是 shell 内建/语法，可安全使用。
   工具或 `python -c`；目录操作用 `python -c "os.makedirs(...)"`。
 - 严禁 heredoc / `python -c` 内长中文：shim 逐行执行内容。提交信息用 Write 写
   `.git/COMMIT_MSG_TXT` 再 `git commit -F`。
