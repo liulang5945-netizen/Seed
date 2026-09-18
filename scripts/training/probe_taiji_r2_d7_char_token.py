@@ -31,7 +31,6 @@ import torch  # noqa: E402
 
 from taiji.internalization import content_digest  # noqa: E402
 from taiji.sequence_char_workspace import (  # noqa: E402
-    CHAR_BOUNDARY_SLOT,
     SEQUENCE_CHAR_WORKSPACE_VERSION,
     CharVocab,
     SequenceCharConfig,
@@ -67,11 +66,10 @@ def value_mask_for_char(shape: str, response: str) -> tuple[bool, ...]:
     raise ValueError(f"unknown shape for value mask: {shape!r}")
 
 
-def _load_train() -> list[dict[str, Any]]:
+def _load_train(fixture: Path | None = None) -> list[dict[str, Any]]:
+    source = PROJECT_ROOT / (FIXTURE if fixture is None else fixture)
     rows = [
-        json.loads(line)
-        for line in (PROJECT_ROOT / FIXTURE).read_text(encoding="utf-8").splitlines()
-        if line.strip()
+        json.loads(line) for line in source.read_text(encoding="utf-8").splitlines() if line.strip()
     ]
     return [row for row in rows if row["split"] == "train"]
 
@@ -237,11 +235,29 @@ def _compact(evaluation: dict[str, Any]) -> dict[str, Any]:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--arm", choices=sorted(ARMS), required=True)
+    parser.add_argument(
+        "--fixture",
+        type=Path,
+        default=FIXTURE,
+        help="train split source (default: the D7 v2 fixture; D8 passes the v3 fixture)",
+    )
+    parser.add_argument(
+        "--checkpoint-root",
+        type=Path,
+        default=CHECKPOINT_ROOT,
+        help="where the zero-step / epoch30 checkpoints are written",
+    )
+    parser.add_argument("--output-dir", type=Path, default=OUT_DIR)
+    parser.add_argument(
+        "--tag",
+        default="",
+        help="report filename tag; empty reproduces the frozen D7 filename",
+    )
     args = parser.parse_args()
     induction = ARMS[args.arm]
 
     started = time.monotonic()
-    rows = _load_train()
+    rows = _load_train(args.fixture)
     vocab = CharVocab(_train_text(rows))
     episodes = tuple((row["prefix"], row["response"]) for row in rows)
     masks = tuple(value_mask_for_char(row["shape"], row["response"]) for row in rows)
@@ -254,7 +270,7 @@ def main() -> int:
     )
     trainer.enable_copy_value_supervision(LAMBDA_COPY)
     trainer.set_episodes(episodes)
-    checkpoint_dir = PROJECT_ROOT / CHECKPOINT_ROOT / args.arm
+    checkpoint_dir = PROJECT_ROOT / args.checkpoint_root / args.arm
     checkpoint_dir.mkdir(parents=True, exist_ok=True)
     preflight = _preflight(trainer, episodes, masks, checkpoint_dir / "zero_step.pt")
     if not preflight["passed"]:
@@ -284,7 +300,6 @@ def main() -> int:
     trainer.save(checkpoint_dir / "epoch30.pt")
 
     supported_m1 = float(final["copy_supported_M1"]["value"])
-    per_shape_final = {shape: values["value"] for shape, values in final["per_shape_exact"].items()}
     groups = _value_groups(workspace, rows)
     copy_intact = _copy_value_readout(workspace, rows)
     copy_misbound = _copy_value_readout(workspace, rows, misbind=True)
@@ -319,11 +334,11 @@ def main() -> int:
         "copy_induction": induction,
         "lambda_copy_value": LAMBDA_COPY,
         "microbatch_size": MICROBATCH,
-        "fixture": "v2-train",
+        "fixture": str(args.fixture),
         "corpus_digest": content_digest(
             [
                 json.loads(line)
-                for line in (PROJECT_ROOT / FIXTURE).read_text(encoding="utf-8").splitlines()
+                for line in (PROJECT_ROOT / args.fixture).read_text(encoding="utf-8").splitlines()
                 if line.strip()
             ]
         ),
@@ -349,13 +364,13 @@ def main() -> int:
         "gate": gate,
         "outcome": "passed" if passed else "failed",
         "reading": (
-            "R2-D7 H-Tok character-unit learnability probe (train-only); "
-            "not a capability claim"
+            "R2-D7 H-Tok character-unit learnability probe (train-only); " "not a capability claim"
         ),
         "growth_admitted": False,
         "can_promote": False,
     }
-    out_path = PROJECT_ROOT / OUT_DIR / f"r2_d7_probe_{args.arm}_20260918.json"
+    suffix = f"_{args.tag}" if args.tag else "_20260918"
+    out_path = PROJECT_ROOT / args.output_dir / f"r2_d7_probe_{args.arm}{suffix}.json"
     out_path.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(
         json.dumps(

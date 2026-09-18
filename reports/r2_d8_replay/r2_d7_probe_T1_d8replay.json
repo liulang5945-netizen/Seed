@@ -1,0 +1,161 @@
+{
+  "format": "taiji-r2-d7-char-token-probe-v1",
+  "version": 1,
+  "contract": "plans/reference/M5_R2_D7_CHAR_TOKEN_CONTRACT_FROZEN_20260918.md",
+  "graph": "char-v1",
+  "arm": "T1",
+  "copy_induction": true,
+  "lambda_copy_value": 1.0,
+  "microbatch_size": 8,
+  "fixture": "tests\\fixtures\\r2_d1_measurement_v2.jsonl",
+  "corpus_digest": "182593f8deadf1b1b65c5f2ccbce3a7b7ee636ca8ea35ed00ccef3c5f84eebcc",
+  "vocab_size": 56,
+  "split_read": "train",
+  "dev_read": false,
+  "final_read": false,
+  "seed": 20260917,
+  "epochs_frozen": 30,
+  "frozen_learning_rate": 0.01,
+  "train_episodes": 174,
+  "elapsed_seconds": 77.39099999994505,
+  "wall_cap_seconds": 1200,
+  "parameter_count": 50810,
+  "copy_induce_bias_end": 0.17750771343708038,
+  "preflight": {
+    "expected_mixture_digest": "9b30f720ae6ea1ba31bd4752a7a6f13e4c002c80b6b894479594aca8e3ea6a06",
+    "observed_mixture_digest": "9b30f720ae6ea1ba31bd4752a7a6f13e4c002c80b6b894479594aca8e3ea6a06",
+    "mixture_match": true,
+    "continuation_matches": true,
+    "restored_version": 1,
+    "passed": true
+  },
+  "final": {
+    "M1_exact": {
+      "numerator": 151,
+      "denominator": 174,
+      "value": 0.867816091954023
+    },
+    "copy_supported_M1": {
+      "numerator": 144,
+      "denominator": 144,
+      "value": 1.0
+    },
+    "mean_sequence_loss": 0.11603597266032178
+  },
+  "per_shape_exact": {
+    "combination_different": {
+      "numerator": 2,
+      "denominator": 7,
+      "value": 0.2857142857142857
+    },
+    "combination_same": {
+      "numerator": 5,
+      "denominator": 7,
+      "value": 0.7142857142857143
+    },
+    "fact": {
+      "numerator": 48,
+      "denominator": 48,
+      "value": 1.0
+    },
+    "negation": {
+      "numerator": 48,
+      "denominator": 48,
+      "value": 1.0
+    },
+    "same_opening_fact": {
+      "numerator": 48,
+      "denominator": 48,
+      "value": 1.0
+    },
+    "same_opening_unknown": {
+      "numerator": 0,
+      "denominator": 8,
+      "value": 0.0
+    },
+    "unknown": {
+      "numerator": 0,
+      "denominator": 8,
+      "value": 0.0
+    }
+  },
+  "value_length_groups": {
+    "multibyte": {
+      "numerator": 72,
+      "denominator": 72,
+      "value": 1.0
+    },
+    "singlebyte": {
+      "numerator": 72,
+      "denominator": 72,
+      "value": 1.0
+    }
+  },
+  "trajectory": [
+    {
+      "epoch": 0,
+      "mean_sequence_loss": 3.825722,
+      "M1_exact": 0.0,
+      "copy_supported_M1": 0.0
+    },
+    {
+      "epoch": 5,
+      "mean_sequence_loss": 0.11813,
+      "M1_exact": 0.867816091954023,
+      "copy_supported_M1": 1.0
+    },
+    {
+      "epoch": 10,
+      "mean_sequence_loss": 0.12021,
+      "M1_exact": 0.867816091954023,
+      "copy_supported_M1": 1.0
+    },
+    {
+      "epoch": 15,
+      "mean_sequence_loss": 0.119431,
+      "M1_exact": 0.867816091954023,
+      "copy_supported_M1": 1.0
+    },
+    {
+      "epoch": 20,
+      "mean_sequence_loss": 0.11829,
+      "M1_exact": 0.867816091954023,
+      "copy_supported_M1": 1.0
+    },
+    {
+      "epoch": 25,
+      "mean_sequence_loss": 0.118633,
+      "M1_exact": 0.867816091954023,
+      "copy_supported_M1": 1.0
+    },
+    {
+      "epoch": 30,
+      "mean_sequence_loss": 0.116036,
+      "M1_exact": 0.867816091954023,
+      "copy_supported_M1": 1.0
+    }
+  ],
+  "copy_value_readout_intact": {
+    "mean_copy_value_prob": 0.9999978658225801,
+    "positions": 216
+  },
+  "copy_value_readout_misbound": {
+    "mean_copy_value_prob": 0.06960131425014929,
+    "positions": 216
+  },
+  "gate": {
+    "copy_supported_m1_ge_0_90": true,
+    "multibyte_m1_ge_0_90": true,
+    "singlebyte_m1_ge_0_90": true,
+    "copy_value_prob_ge_0_90": true,
+    "misbind_copy_prob_le_0_50": true,
+    "loss_increases_bounded_15pct": true,
+    "no_late_collapse_gt_0_10": true,
+    "preflight_passed": true,
+    "within_wall_cap": true
+  },
+  "outcome": "passed",
+  "reading": "R2-D7 H-Tok character-unit learnability probe (train-only); not a capability claim",
+  "growth_admitted": false,
+  "can_promote": false
+}

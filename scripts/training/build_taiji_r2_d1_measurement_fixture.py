@@ -146,6 +146,103 @@ DISTRACTOR = {
 TRAIN_COLORS_V2: tuple[str, ...] = ("黄", "青", "紫", "琥珀", "珊瑚", "翡翠")
 TRAIN_OBJECTS_FORBIDDEN_CHARS = set("".join(POOLS["train"]["objects"]))
 
+#: R2-D8 H-S scale pack: the *only* variable is train combination diversity.
+#: 32 objects x 12 colors (6 single-byte + 6 six-byte), every new character absent
+#: from the frozen vocabulary and every train VALUE character absent from the
+#: dev/final value characters.  Shapes, templates, stems, pair structure and the
+#: deterministic order are untouched; dev/final rows are regenerated identically.
+TRAIN_OBJECTS_V3: tuple[str, ...] = (
+    "天空",
+    "草",
+    "树叶",
+    "海洋",
+    "山川",
+    "城市",
+    "森林",
+    "河流",
+    "沙漠",
+    "湖泊",
+    "岛屿",
+    "峡谷",
+    "平原",
+    "丘陵",
+    "火山",
+    "草原",
+    "沼泽",
+    "三角洲",
+    "半岛",
+    "群岛",
+    "海峡",
+    "盆地",
+    "高原",
+    "河谷",
+    "绿洲",
+    "溶洞",
+    "瀑布",
+    "温泉",
+    "古道",
+    "驿站",
+    "险峰",
+    "崖壁",
+)
+TRAIN_COLORS_V3: tuple[str, ...] = (
+    "黄",
+    "青",
+    "紫",
+    "金",
+    "棕",
+    "褐",
+    "琥珀",
+    "珊瑚",
+    "翡翠",
+    "玛瑙",
+    "琉璃",
+    "玳瑁",
+)
+
+
+def _assert_v3_pool_clean() -> None:
+    """v3 gates: new characters unseen; train values disjoint from dev/final values."""
+
+    frozen_text: set[str] = set()
+    for split_pools in POOLS.values():
+        for group in split_pools.values():
+            frozen_text.update("".join(group))
+    frozen_text.update("".join(TRAIN_OBJECTS_V3))
+    for template_map in TEMPLATES.values():
+        for split_variant in template_map.values():
+            frozen_text.update(split_variant["prefix"])
+            frozen_text.update(split_variant["answer"])
+    for clause in CLAUSES.values():
+        frozen_text.update(clause.values())
+    for distractor in DISTRACTOR.values():
+        frozen_text.update(distractor)
+    frozen_text -= set("{}")
+    # every character of every v3-only color must be absent from the frozen text
+    for color in TRAIN_COLORS_V3[3:]:
+        for char in color:
+            if char in frozen_text:
+                raise RuntimeError(
+                    f"v3 train color {color!r} reuses character {char!r} "
+                    "present in the frozen vocabulary"
+                )
+    # train VALUE characters must not intersect dev/final VALUE characters
+    dev_final_value_chars: set[str] = set()
+    for split in ("dev", "final"):
+        dev_final_value_chars.update("".join(POOLS[split]["colors"]))
+    train_value_chars = set("".join(TRAIN_COLORS_V3))
+    overlap = train_value_chars & dev_final_value_chars
+    if overlap:
+        raise RuntimeError(f"v3 train value characters overlap dev/final: {sorted(overlap)}")
+    if len(set(TRAIN_COLORS_V3)) != len(TRAIN_COLORS_V3):
+        raise RuntimeError("v3 train colors contain duplicates")
+    if len(set(TRAIN_OBJECTS_V3)) != len(TRAIN_OBJECTS_V3):
+        raise RuntimeError("v3 train objects contain duplicates")
+    dev_final_objects = set(POOLS["dev"]["objects"]) | set(POOLS["final"]["objects"])
+    reused = set(TRAIN_OBJECTS_V3) & dev_final_objects
+    if reused:
+        raise RuntimeError(f"v3 train objects reuse dev/final words: {sorted(reused)}")
+
 
 def _assert_v2_pool_clean() -> None:
     frozen_text: set[str] = set()
@@ -171,9 +268,11 @@ def _assert_v2_pool_clean() -> None:
 
 
 def _records_for_split(
-    split: str, colors_override: tuple[str, ...] | None = None
+    split: str,
+    colors_override: tuple[str, ...] | None = None,
+    objects_override: tuple[str, ...] | None = None,
 ) -> tuple[list[dict[str, Any]], dict[str, Any]]:
-    objects = POOLS[split]["objects"]
+    objects = POOLS[split]["objects"] if objects_override is None else objects_override
     colors = POOLS[split]["colors"] if colors_override is None else colors_override
     clauses = CLAUSES[split]
     records: list[dict[str, Any]] = []
@@ -408,11 +507,13 @@ def _verify(
     all_records: dict[str, list[dict[str, Any]]],
     metadata: dict[str, dict[str, Any]],
     colors_by_split: dict[str, tuple[str, ...]] | None = None,
+    objects_by_split: dict[str, tuple[str, ...]] | None = None,
 ) -> dict[str, Any]:
     overrides = colors_by_split or {}
+    object_overrides = objects_by_split or {}
     pools = {
         split: {
-            "objects": POOLS[split]["objects"],
+            "objects": object_overrides.get(split, POOLS[split]["objects"]),
             "colors": overrides.get(split, POOLS[split]["colors"]),
         }
         for split in POOLS
@@ -506,26 +607,34 @@ def main() -> int:
     parser.add_argument("--report", type=Path, default=DATA_REPORT)
     parser.add_argument(
         "--variant",
-        choices=("v1", "v2"),
+        choices=("v1", "v2", "v3"),
         default="v1",
         help="v2 (R2-D5 H-E): train color pool with three 6-byte colors; "
-        "dev/final rows are regenerated identically to v1",
+        "v3 (R2-D8 H-S): train objects 8->32 and colors 6->12 (6 single + 6 six-byte); "
+        "dev/final rows are regenerated identically to v1 in every variant",
     )
     args = parser.parse_args()
 
     colors_by_split: dict[str, tuple[str, ...]] = {}
+    objects_by_split: dict[str, tuple[str, ...]] = {}
     if args.variant == "v2":
         _assert_v2_pool_clean()
         colors_by_split["train"] = TRAIN_COLORS_V2
+    elif args.variant == "v3":
+        _assert_v3_pool_clean()
+        colors_by_split["train"] = TRAIN_COLORS_V3
+        objects_by_split["train"] = TRAIN_OBJECTS_V3
 
     raw: dict[str, list[dict[str, Any]]] = {}
     metadata: dict[str, dict[str, Any]] = {}
     for split in ("train", "dev", "final"):
-        records, meta = _records_for_split(split, colors_by_split.get(split))
+        records, meta = _records_for_split(
+            split, colors_by_split.get(split), objects_by_split.get(split)
+        )
         ordered, order_seed = _deterministic_order(records)
         raw[split] = ordered
         metadata[split] = {**meta, "order_seed": order_seed}
-    checks = _verify(raw, metadata, colors_by_split)
+    checks = _verify(raw, metadata, colors_by_split, objects_by_split)
     failed = [name for name, passed in checks.items() if passed is not True and passed is not None]
 
     if checks["reference_self_check"] is not True:
@@ -556,8 +665,12 @@ def main() -> int:
         file_sha = hashlib.sha256(fixture_path.read_bytes()).hexdigest()
 
     report = {
-        "format": "r2-d1-measurement-v2" if args.variant == "v2" else FIXTURE_FORMAT,
-        "version": 2 if args.variant == "v2" else 1,
+        "format": {
+            "v1": FIXTURE_FORMAT,
+            "v2": "r2-d1-measurement-v2",
+            "v3": "r2-d1-measurement-v3",
+        }[args.variant],
+        "version": {"v1": 1, "v2": 2, "v3": 3}[args.variant],
         "variant": args.variant,
         "train_colors": list(colors_by_split.get("train", POOLS["train"]["colors"])),
         "generator": "scripts/training/build_taiji_r2_d1_measurement_fixture.py",
