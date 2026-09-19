@@ -253,13 +253,25 @@ class ProceduralSequenceLearner(nn.Module):
         epochs: int = 300,
         learning_rate: float = 0.05,
         action_kinds: Sequence[str] | None = None,
+        replay_source: EpisodicMemoryStore | Iterable[EpisodicMemoryRecord] | None = None,
+        replay_weight: float = 0.0,
     ) -> float:
-        """Replay ordered episodes into the recurrent procedural state."""
+        """Replay ordered episodes into the recurrent procedural state.
+
+        ``replay_source``/``replay_weight`` add experience replay: when the
+        weight is positive, every epoch accumulates the replay episodes'
+        gradients (scaled by the weight) into the same optimiser step as the
+        train episodes -- the classic anti-forgetting mixing.  With the
+        default weight 0.0 (or no replay source) the behaviour is bitwise
+        identical to the pre-replay contract.
+        """
 
         if int(epochs) <= 0 or float(learning_rate) <= 0.0:
             raise ValueError(
                 "sequential procedural consolidation epochs and learning_rate must be positive"
             )
+        if float(replay_weight) < 0.0:
+            raise ValueError("replay_weight cannot be negative")
         records = source.records if isinstance(source, EpisodicMemoryStore) else tuple(source)
         episodes = self._episodes(records)
         discovered_action_kinds = tuple(
@@ -283,6 +295,40 @@ class ProceduralSequenceLearner(nn.Module):
             raise ValueError("sequential records contain an action kind outside the readout")
         self._ensure_readout(resolved_action_kinds)
         assert self.readout is not None
+        replay_batches: list[tuple[torch.Tensor, torch.Tensor]] = []
+        if replay_source is not None and float(replay_weight) > 0.0:
+            replay_records = (
+                replay_source.records
+                if isinstance(replay_source, EpisodicMemoryStore)
+                else tuple(replay_source)
+            )
+            replay_episodes = self._episodes(replay_records)
+            replay_kinds = {
+                record.action_intent.kind
+                for episode in replay_episodes
+                for record in episode
+                if record.action_intent is not None
+            }
+            unknown = replay_kinds.difference(resolved_action_kinds)
+            if unknown:
+                raise ValueError(
+                    f"replay records introduce action kinds outside the readout: {sorted(unknown)}"
+                )
+            for episode in replay_episodes:
+                cues = torch.stack(
+                    [record.cue.detach().to(dtype=torch.float32) for record in episode]
+                )
+                if cues.ndim != 2 or cues.shape[1] != self.cue_dim:
+                    raise ValueError("replay record cue dimensions do not match the learner")
+                targets = torch.tensor(
+                    [
+                        self.action_kinds.index(record.action_intent.kind)
+                        for record in episode
+                        if record.action_intent is not None
+                    ],
+                    dtype=torch.long,
+                )
+                replay_batches.append((cues, targets))
         batches = []
         for episode in episodes:
             cues = torch.stack([record.cue.detach().to(dtype=torch.float32) for record in episode])
@@ -330,6 +376,24 @@ class ProceduralSequenceLearner(nn.Module):
                     gradients, (*recurrent, *readout_gradients), strict=True
                 ):
                     buffer += gradient
+            if replay_batches:
+                # Experience replay: the replay episodes' gradients join the
+                # same optimiser step, scaled by the replay weight, so the
+                # train objective and the retention objective are satisfied
+                # jointly instead of sequentially.
+                replay_count = float(len(replay_batches))
+                for cues, targets in replay_batches:
+                    hidden, trace = gru_forward_trace(self.encoder, cues)
+                    logits = self.readout(hidden)
+                    logit_error = softmax_error_delta(logits, targets) / replay_count
+                    logit_error = logit_error * float(replay_weight)
+                    hidden_error = backproject_linear(self.readout, logit_error)
+                    recurrent = gru_gradients(self.encoder, trace, hidden_error)
+                    readout_gradients = linear_gradients(self.readout, hidden, logit_error)
+                    for buffer, gradient in zip(
+                        gradients, (*recurrent, *readout_gradients), strict=True
+                    ):
+                        buffer += gradient
             final_loss = total_loss / episode_count
             optimizer.apply(gradients)
         self.consolidation_count += 1

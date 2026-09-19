@@ -584,6 +584,7 @@ class ArtifactInternalizationTrainer:
         holdout_experiences: Iterable[EvolutionExperience],
         retention_experiences: Iterable[EvolutionExperience],
         ranking_pairs: Iterable[tuple[GroundedFeatureExample, GroundedFeatureExample]] = (),
+        procedural_replay_weight: float = 0.0,
     ) -> ArtifactInternalizationReport:
         train_artifacts_tuple = _artifacts(train_artifacts, partition="train")
         holdout_artifacts_tuple = _artifacts(holdout_artifacts, partition="holdout")
@@ -649,11 +650,23 @@ class ArtifactInternalizationTrainer:
             retention_artifacts_tuple, retention_experiences_tuple
         )
         procedural_trial = ProceduralSequenceLearner.from_checkpoint(self.procedural.checkpoint())
-        procedural_trial.consolidate(
-            procedural_train,
-            epochs=self.procedural_epochs,
-            learning_rate=self.procedural_learning_rate,
-        )
+        if float(procedural_replay_weight) > 0.0:
+            # P5.1h recipe knob (contract section 6): retention-partition
+            # episodes join every epoch as replay gradients.  Default 0.0
+            # keeps the P5.1g frozen path bitwise unchanged.
+            procedural_trial.consolidate(
+                procedural_train,
+                epochs=self.procedural_epochs,
+                learning_rate=self.procedural_learning_rate,
+                replay_source=procedural_retention,
+                replay_weight=float(procedural_replay_weight),
+            )
+        else:
+            procedural_trial.consolidate(
+                procedural_train,
+                epochs=self.procedural_epochs,
+                learning_rate=self.procedural_learning_rate,
+            )
         procedural_train_accuracy = self._sequence_accuracy(procedural_trial, procedural_train)
         procedural_holdout_accuracy = self._sequence_accuracy(procedural_trial, procedural_holdout)
         procedural_retention_accuracy = self._sequence_accuracy(
