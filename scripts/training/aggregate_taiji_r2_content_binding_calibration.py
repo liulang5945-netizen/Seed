@@ -40,8 +40,13 @@ OUT_REPORT = Path("reports/r2_content_binding_v1/calibration_selection_20260920.
 REPORT_FORMAT = "r2-content-binding-calibration-selection-v1"
 
 
+main_args: argparse.Namespace | None = None
+
+
 def _load_run(arm: str, config: str) -> dict[str, Any] | None:
-    path = PROJECT_ROOT / OUTPUT_ROOT / arm / str(CALIBRATION_SEED) / config / "run_report.json"
+    seed = getattr(main_args, "seed", CALIBRATION_SEED)
+    root = getattr(main_args, "output_root", OUTPUT_ROOT)
+    path = PROJECT_ROOT / root / arm / str(seed) / config / "run_report.json"
     if not path.is_file():
         return None
     return json.loads(path.read_text(encoding="utf-8"))
@@ -50,7 +55,11 @@ def _load_run(arm: str, config: str) -> dict[str, Any] | None:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--report", type=Path, default=OUT_REPORT)
+    parser.add_argument("--output-root", type=Path, default=OUTPUT_ROOT)
+    parser.add_argument("--seed", type=int, default=CALIBRATION_SEED)
     args = parser.parse_args()
+    global main_args
+    main_args = args
 
     per_arm: OrderedDict[str, Any] = OrderedDict()
     all_runs_present = True
@@ -123,7 +132,8 @@ def main() -> int:
         "format": REPORT_FORMAT,
         "version": 1,
         "contract": "plans/reference/M5_R2_CONTENT_BINDING_CONTRACT_FROZEN_20260919.md",
-        "calibration_seed": CALIBRATION_SEED,
+        "calibration_seed": args.seed,
+        "output_root": str(args.output_root),
         "selection_rule": "content-binding-selection-v1",
         "flip_gate_classes": list(FLIP_GATE_CLASSES),
         "per_arm": per_arm,

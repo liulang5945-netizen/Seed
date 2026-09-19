@@ -47,6 +47,7 @@ from __future__ import annotations
 
 import hashlib
 import math
+from collections import OrderedDict
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, replace
 from pathlib import Path
@@ -764,6 +765,22 @@ class SequenceContentWorkspace:
             }
         return ce, copy_nll, metrics
 
+    def sequence_loglik(
+        self, question: str, material: str, response: str
+    ) -> tuple[torch.Tensor, int]:
+        """Summed TF log-likelihood of the full answer (incl. EOS) with live
+        gradients -- the pair-contrastive objective's building block."""
+
+        state0 = self.begin_episode(question, material)
+        mixtures, _ = self._teacher_forced_from_state(state0, response)
+        targets = torch.tensor(
+            [self._target_slot(state0, character) for character in response]
+            + [CONTENT_BOUNDARY_SLOT],
+            dtype=torch.long,
+        )
+        probs = mixtures.gather(1, targets.unsqueeze(1)).squeeze(1).clamp_min(1e-12)
+        return probs.log().sum(), int(targets.numel())
+
     def episode_loss(
         self,
         question: str,
@@ -882,6 +899,10 @@ class SequenceContentTrainer:
         self.code_revision = str(code_revision)
         self.data_digest = str(data_digest)
         self.copy_value_weight = 1.0
+        #: Pair-contrastive auxiliary (contract v2 section D1); off in v1.
+        self.pair_contrastive_weight = 0.0
+        self.pair_contrastive_margin = 1.0
+        self.trainer_revision = "v1"
         self.global_step = 0
         self.optimizer = torch.optim.AdamW(
             self.workspace.parameters(),
@@ -914,6 +935,66 @@ class SequenceContentTrainer:
 
     # -------------------------------------------------------------- training
 
+    def enable_pair_contrastive(self, weight: float = 1.0, margin: float = 1.0) -> None:
+        """Contract v2 section D1: group-counterfactual contrastive auxiliary.
+
+        Requires group-structured batches (consecutive items sharing
+        ``group_id``, two members per group).  gamma/weight freeze before any
+        v2 run; they are never tuned on calibration results.
+        """
+
+        if weight < 0.0 or margin < 0.0:
+            raise ValueError("pair_contrastive weight and margin cannot be negative")
+        self.pair_contrastive_weight = float(weight)
+        self.pair_contrastive_margin = float(margin)
+        self.trainer_revision = "v2-pair-contrastive" if weight > 0.0 else "v1"
+
+    def _pair_contrastive_term(
+        self, batch: Sequence[Mapping[str, Any]]
+    ) -> tuple[torch.Tensor, int]:
+        """softplus(s_crossed - s_own + gamma) per member, mean over groups.
+
+        s_own comes from the CE pass (summed log-likelihood = -ce x positions,
+        gradient-preserving); the two crossed sequences need one extra TF pass
+        per member.  Equal-answer groups degenerate to a constant (no grad).
+        """
+
+        groups: dict[str, list[Mapping[str, Any]]] = OrderedDict()
+        for item in batch:
+            group_id = item.get("group_id")
+            if group_id is None:
+                raise ValueError(
+                    "pair-contrastive batches must carry group_id on every item"
+                )
+            groups.setdefault(str(group_id), []).append(item)
+        terms = []
+        for group_id, members in groups.items():
+            if len(members) != 2:
+                raise ValueError(
+                    f"group {group_id} has {len(members)} members; exactly 2 required"
+                )
+            (item_a, item_b) = members
+            qa, ma, ra = (
+                str(item_a["question"]),
+                str(item_a["material"]),
+                str(item_a["response"]),
+            )
+            qb, mb, rb = (
+                str(item_b["question"]),
+                str(item_b["material"]),
+                str(item_b["response"]),
+            )
+            s_xx, _ = self.workspace.sequence_loglik(qa, ma, ra)
+            s_yy, _ = self.workspace.sequence_loglik(qb, mb, rb)
+            s_yx, _ = self.workspace.sequence_loglik(qa, ma, rb)
+            s_xy, _ = self.workspace.sequence_loglik(qb, mb, ra)
+            gamma = self.pair_contrastive_margin
+            terms.append(
+                torch.nn.functional.softplus(s_yx - s_xx + gamma)
+                + torch.nn.functional.softplus(s_xy - s_yy + gamma)
+            )
+        return torch.stack(terms).mean(), len(terms)
+
     def train_step(self, batch: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
         """One microbatch of items (question/material/response/copy_mask).
 
@@ -942,6 +1023,10 @@ class SequenceContentTrainer:
             ce_values.append(metrics["ce"])
             copy_values.append(metrics["copy_nll"])
         total = torch.stack(composites).mean()
+        pair_term = 0.0
+        if self.pair_contrastive_weight > 0.0:
+            pair_term, pair_groups = self._pair_contrastive_term(batch)
+            total = total + float(self.pair_contrastive_weight) * pair_term
         if not bool(torch.isfinite(total)):
             raise FloatingPointError(f"non-finite loss at step {self.global_step}")
         total.backward()
@@ -957,6 +1042,9 @@ class SequenceContentTrainer:
             "loss": float(total.detach()),
             "ce": sum(ce_values) / len(ce_values) if ce_values else 0.0,
             "copy_nll": sum(copy_values) / len(copy_values) if copy_values else 0.0,
+            "pair_contrastive": (
+                float(pair_term.detach()) if torch.is_tensor(pair_term) else float(pair_term)
+            ),
             "grad_norm": grad_norm,
             "lr": float(self.optimizer.param_groups[0]["lr"]),
             "global_step": self.global_step,
@@ -987,6 +1075,9 @@ class SequenceContentTrainer:
             "rng_state": torch.get_rng_state().clone(),
             "global_step": int(self.global_step),
             "copy_value_weight": float(self.copy_value_weight),
+            "trainer_revision": self.trainer_revision,
+            "pair_contrastive_weight": float(self.pair_contrastive_weight),
+            "pair_contrastive_margin": float(self.pair_contrastive_margin),
             "learning_rate": float(self.learning_rate),
             "total_updates": int(self.total_updates),
             "warmup_fraction": float(self.warmup_fraction),
@@ -1043,6 +1134,9 @@ class SequenceContentTrainer:
             pass  # fresh optimizer state when param identity differs
         trainer.global_step = int(payload.get("global_step", 0))
         trainer.copy_value_weight = float(payload.get("copy_value_weight", 1.0))
+        trainer.pair_contrastive_weight = float(payload.get("pair_contrastive_weight", 0.0))
+        trainer.pair_contrastive_margin = float(payload.get("pair_contrastive_margin", 1.0))
+        trainer.trainer_revision = str(payload.get("trainer_revision", "v1"))
         state = payload.get("rng_state")
         if isinstance(state, torch.Tensor):
             torch.set_rng_state(state)

@@ -284,6 +284,7 @@ def run(
     output_root: Path = OUTPUT_ROOT,
     mode: str = "calibration",
     wall_cap_seconds: int = WALL_CAP_SECONDS,
+    trainer_revision: str = "v1",
 ) -> dict[str, Any]:
     """One bounded training run.  Never called by this session's gate phase
     except through ``--mode smoke`` (test artifact)."""
@@ -305,6 +306,11 @@ def run(
         code_revision=f"r2-content-binding-{mode}",
         data_digest=digest,
     )
+    if trainer_revision == "v2":
+        # contract v2 section D1: group-counterfactual contrastive auxiliary
+        trainer.enable_pair_contrastive(weight=1.0, margin=1.0)
+    elif trainer_revision != "v1":
+        raise ValueError(f"unknown trainer revision: {trainer_revision}")
     run_dir = PROJECT_ROOT / output_root / arm / str(seed) / config_name
     run_dir.mkdir(parents=True, exist_ok=True)
     sampler = GroupSampler(records, seed=seed)
@@ -372,6 +378,9 @@ def run(
     report["workspace_version"] = SEQUENCE_CONTENT_WORKSPACE_VERSION
     report["candidate_construction"] = "content-candidates-v1"
     report["selection_rule"] = "content-binding-selection-v1"
+    report["trainer_revision"] = trainer.trainer_revision
+    report["pair_contrastive_weight"] = float(trainer.pair_contrastive_weight)
+    report["pair_contrastive_margin"] = float(trainer.pair_contrastive_margin)
     report["total_updates_planned"] = int(total_updates)
     report["updates_done"] = int(trainer.global_step)
     report["parameter_count"] = workspace.parameter_count()
@@ -414,6 +423,12 @@ def main() -> int:
     )
     parser.add_argument("--output-root", type=Path, default=OUTPUT_ROOT)
     parser.add_argument("--wall-cap-seconds", type=int, default=WALL_CAP_SECONDS)
+    parser.add_argument(
+        "--trainer-revision",
+        choices=("v1", "v2"),
+        default="v1",
+        help="v2 = pair-contrastive auxiliary (contract v2 section D1)",
+    )
     args = parser.parse_args()
 
     if args.mode == "smoke":
@@ -439,6 +454,7 @@ def main() -> int:
         output_root=output_root,
         mode=args.mode,
         wall_cap_seconds=args.wall_cap_seconds,
+        trainer_revision=args.trainer_revision,
     )
     print(
         json.dumps(
