@@ -69,3 +69,13 @@
 **累计结论（v1–v4）**：逐题 CE/配对目标/容量三轴均已检验；object_swap 绑定 margin 可缓慢学习但未饱和；relation 计算结构性不可达；TF 到自由生成的鸿沟恒定。剩余路径＝继续放大（margin 趋势暗示可行但泛化鸿沟未解）、架构级新假设（关系比较回路）、或停止投入。证据：[v4 聚合](../../reports/r2_content_binding_v4/calibration_selection_20260920.json)。
 
 **M5 退出关联（2026-09-20）**：完整 CAP 机器维度已执行（C/D/E 0.0 vs 冻结线 0.7–0.8，CAP 语言门未过）——R2 欠账与 CAP 语言门在此汇合；v4 的 margin 轨迹与脱耦发现即重启决策的证据基础。
+
+## §9 v5 追记（2026-09-20，延续运行判停＋"结构性钉死"判断修正）
+
+用户常设授权下 v5 延续运行（B/A×cal_lr1×16000 更新，串行约 2.5 小时）。**判定：仍无合格候选（copy 晚期崩塌至 0.27–0.33），v5 按冻结规则判停。** 但两条 v4 结论被 v5 修正/精化：
+
+1. **"relation_flip 结构性钉死"被推翻**：A/cal_lr1 的 relation margin 在 16000 更新达 **0.011**——全部四类 margin（fact/object/relation/negation）都可在此架构下饱和，只是速度极慢（relation 需 >8000 更新才开始动）；
+2. **margin-copy 张力（新发现，本包最重要的科学产出）**：margin 下降与 copy 能力崩塌耦合——B 臂 copy 从 0.647（11000，margin 未动期）崩至 0.268（16000，margin 饱和期）。TF-margin 优化与 copy 通道在长训中互斥；**margin 饱和 ≠ 可用绑定**。
+3. 消融区分度真实化：v5 末期 full 1.0 vs 其余臂 0.0 的格局在标定成功率上成立，但伴随 copy 崩塌，其"能力"含义受限。
+
+**v1–v5 完整弧线**：绑定四类对比在架构上全部可学（margin 均可饱和）但极慢（容量×低lr×长训）；饱和与 copy 崩塌耦合；自由生成泛化从未接近 0.90 线。剩余假设＝目标调度（margin 饱和后撤除对比压力以保 copy）、或架构/数据级改动。证据：[v5 聚合](../../reports/r2_content_binding_v5/calibration_selection_20260920.json)、两份 run report。
