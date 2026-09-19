@@ -70,3 +70,10 @@
 因果归属干净：控制组仅 L1 失败，唯一差异是 replay 旋钮——**经验回放配方闭合了 P5.1g 的 admission 缺口（0.4189→0.6053，+0.19），门槛一分未动**。report：`reports/taiji_p5_1h_admission_recipe_20260919.json`（含 budget approval 记录）。
 
 **剩余执行项**：ledger 采用写入（p51h:admission revision）与 parent-child 新进程恢复运行——属采纳执行步骤，按包合同 §4 在候选确立后进行。
+
+## §8 采纳执行完成（2026-09-19）
+
+- child checkpoint 原子保存（sha256 `daf2e877…87021d`，1.37MB）；adoption manifest 写入 `p51h:admission` revision（status=admitted，含 budget approval 记录与全部 digest）；
+- **parent-child 新进程恢复验证通过**（`reports/taiji_p5_1h_recovery_verification_20260919.json`）：独立进程加载 checkpoint 后重测 retention/holdout/independent 三指标逐位复现 manifest（0.6053/0.456/0.9333），checkpoint sha256 一致；
+- 实现期诚实更正：runner 初版把独立切片准确率测在二次训练的 trial 上（0.92）——更正为 child 本身的 0.9333（两值都过 L2 线，判定不变）；同轮修复 replay 词表过滤（按 train 实际发现的 kinds，父代空词表问题）；
+- **M5 知识轴缺口"可采用 child 的 admission"自此闭合**：真实语料 child 首次满足全部预注册准入线并被采纳记录。旧能力保持、独立测试、分账、恢复四要素齐备。

@@ -55,11 +55,9 @@ from eval_taiji_p5_1g_real_corpus_quota_budget_gate import (  # noqa: E402
     _build_arm_from_partitions,
     _checkpoint_roundtrip,
     _gate_records_g,
-    _procedural_records,
     _ranking_pairs,
     _sample_arm,
     _trainer_kwargs,
-    _trial_learner,
 )
 
 from taiji import ArtifactInternalizationTrainer  # noqa: E402
@@ -185,10 +183,11 @@ def run_sweep(
             ranking_pairs=pairs,
             procedural_replay_weight=float(weight),
         )
-        proc = _procedural_records(trainer, arm)
-        trial = _trial_learner(trainer, proc["train"])
+        # Measure on the adopted child readout itself (trainer.procedural is
+        # the once-consolidated trial after _adopt); a separate _trial_learner
+        # here would double-train and misreport the child.
         independent_records = _gate_records_g(independent, encoder=encoder)
-        independent_accuracy = _accuracy(trial, independent_records)
+        independent_accuracy = _accuracy(trainer.procedural, independent_records)
         roundtrip = _checkpoint_roundtrip(trainer, arm["train"][0][0])
         lines = evaluate_lines(
             retention_accuracy=float(report.procedural_retention_accuracy),
@@ -254,6 +253,107 @@ def run_sweep(
     return report_payload
 
 
+def run_adoption(
+    *,
+    replay_weight: float,
+    budget_approved: bool = False,
+    budget_approval_note: str = "",
+    use_memoization: bool = True,
+    checkpoint_path: Path | None = None,
+    manifest_path: Path | None = None,
+) -> dict[str, Any]:
+    """Adoption execution: run the selected recipe once, persist the child
+    checkpoint atomically, and write the p51h:admission manifest (or the
+    rejected/rolled-back state when any pre-registered line fails)."""
+
+    if not budget_approved:
+        raise SystemExit(
+            "P5.1h adoption refused: adoption runs a real consolidation pass "
+            "and requires the separately-approved training budget."
+        )
+    import hashlib
+
+    from taiji.persistence import atomic_save
+
+    sourced_path = PROJECT_ROOT / SOURCED_PATH
+    sourced_sample = _sample_arm(sourced_path)
+    sourced_partitions = {
+        "train": sourced_sample.trajectories[:TRAIN_COUNT],
+        "holdout": sourced_sample.trajectories[TRAIN_COUNT : TRAIN_COUNT + HOLDOUT_COUNT],
+        "retention": sourced_sample.trajectories[TRAIN_COUNT + HOLDOUT_COUNT : ARM_COUNT],
+    }
+    train_vocabulary = frozenset(
+        f"tool.{name}" for trajectory in sourced_partitions["train"] for name in trajectory.tool_calls
+    )
+    p51g_agate = _sample_agate(sourced_path, train_vocabulary, after_line=sourced_sample.last_line)
+    independent = _independent_slice(sourced_path, train_vocabulary, after_line=p51g_agate.last_line)
+
+    encoder = SemanticArtifactKnowledgeEncoder(embedder=shared_embedder_for_adoption(use_memoization))
+    trainer = ArtifactInternalizationTrainer(**_trainer_kwargs(encoder))
+    arm = _build_arm_from_partitions(sourced_partitions)
+    pairs = _ranking_pairs(trainer._examples(*arm["train"]))
+    report = trainer.consolidate(
+        arm["train"][0],
+        holdout_artifacts=arm["holdout"][0],
+        retention_artifacts=arm["retention"][0],
+        train_experiences=arm["train"][1],
+        holdout_experiences=arm["holdout"][1],
+        retention_experiences=arm["retention"][1],
+        ranking_pairs=pairs,
+        procedural_replay_weight=float(replay_weight),
+    )
+    independent_records = _gate_records_g(independent, encoder=encoder)
+    independent_accuracy = _accuracy(trainer.procedural, independent_records)
+    roundtrip = _checkpoint_roundtrip(trainer, arm["train"][0][0])
+    lines = evaluate_lines(
+        retention_accuracy=float(report.procedural_retention_accuracy),
+        independent_accuracy=float(independent_accuracy),
+        semantic_retention_before=float(report.semantic.retention_loss_before),
+        semantic_retention_after=float(report.semantic.retention_loss_after),
+        lesion_accuracy=float(report.procedural_lesion_holdout_accuracy),
+        roundtrip_preserved=bool(roundtrip["checkpoint_digest_preserved"]),
+    )
+
+    checkpoint_sha = None
+    if lines["all_pass"] and checkpoint_path is not None:
+        saved = atomic_save(trainer.checkpoint(), checkpoint_path)
+        checkpoint_sha = hashlib.sha256(Path(saved).read_bytes()).hexdigest()
+    manifest = {
+        "format": "taiji-p5-1h-adoption-manifest-v1",
+        "admission_revision": "p51h:admission",
+        "contract": CONTRACT,
+        "replay_weight": float(replay_weight),
+        "budget_approval_note": budget_approval_note,
+        "child_checkpoint_digest": str(report.child_checkpoint_digest),
+        "parent_checkpoint_digest": str(report.parent_checkpoint_digest),
+        "checkpoint_path": str(checkpoint_path) if checkpoint_path else None,
+        "checkpoint_sha256": checkpoint_sha,
+        "metrics": {
+            "procedural_retention_accuracy": float(report.procedural_retention_accuracy),
+            "procedural_holdout_accuracy": float(report.procedural_holdout_accuracy),
+            "independent_accuracy": float(independent_accuracy),
+            "semantic_retention_before": float(report.semantic.retention_loss_before),
+            "semantic_retention_after": float(report.semantic.retention_loss_after),
+            "lesion_accuracy": float(report.procedural_lesion_holdout_accuracy),
+        },
+        "lines": lines,
+        "status": "admitted" if lines["all_pass"] else "rolled_back",
+        "growth_admitted": False,
+        "can_promote": False,
+    }
+    if manifest_path is not None:
+        manifest_path.parent.mkdir(parents=True, exist_ok=True)
+        manifest_path.write_text(
+            json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+        )
+    return manifest
+
+
+def shared_embedder_for_adoption(use_memoization: bool) -> Any:
+    raw = DocumentEmbedder()
+    return _MemoizedEmbedder(raw) if use_memoization else raw
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
@@ -272,7 +372,46 @@ def main() -> int:
     )
     parser.add_argument("--report", type=Path, default=DEFAULT_REPORT)
     parser.add_argument("--no-memoization", action="store_true")
+    parser.add_argument(
+        "--adopt-with",
+        type=float,
+        default=None,
+        help="run the adoption execution for this replay weight instead of the sweep",
+    )
+    parser.add_argument(
+        "--checkpoint",
+        type=Path,
+        default=PROJECT_ROOT / "reports" / "taiji_p5_1h_child_20260919.pt",
+    )
+    parser.add_argument(
+        "--adoption-manifest",
+        type=Path,
+        default=PROJECT_ROOT / "reports" / "taiji_p5_1h_adoption_manifest_20260919.json",
+    )
     args = parser.parse_args()
+
+    if args.adopt_with is not None:
+        manifest = run_adoption(
+            replay_weight=float(args.adopt_with),
+            budget_approved=args.budget_approved,
+            budget_approval_note=args.budget_approval_note,
+            use_memoization=not args.no_memoization,
+            checkpoint_path=args.checkpoint,
+            manifest_path=args.adoption_manifest,
+        )
+        print(
+            json.dumps(
+                {
+                    "status": manifest["status"],
+                    "replay_weight": manifest["replay_weight"],
+                    "retention": manifest["metrics"]["procedural_retention_accuracy"],
+                    "independent": manifest["metrics"]["independent_accuracy"],
+                    "checkpoint_sha256": manifest["checkpoint_sha256"],
+                },
+                ensure_ascii=False,
+            )
+        )
+        return 0 if manifest["status"] == "admitted" else 1
 
     weights = tuple(float(item) for item in args.replay_weights.split(","))
     report = run_sweep(

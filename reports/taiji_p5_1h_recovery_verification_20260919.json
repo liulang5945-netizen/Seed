@@ -1,0 +1,22 @@
+{
+ "format": "taiji-p5-1h-recovery-verification-v1",
+ "checkpoint_sha256_match": true,
+ "accuracy_comparison": {
+  "procedural_retention_accuracy": {
+   "manifest": 0.6053268765133172,
+   "observed": 0.605327,
+   "match": true
+  },
+  "procedural_holdout_accuracy": {
+   "manifest": 0.456,
+   "observed": 0.456,
+   "match": true
+  },
+  "independent_accuracy": {
+   "manifest": 0.933333,
+   "observed": 0.933333,
+   "match": true
+  }
+ },
+ "recovery_verified": true
+}

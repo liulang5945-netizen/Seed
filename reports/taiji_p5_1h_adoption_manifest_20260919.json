@@ -1,0 +1,36 @@
+{
+  "format": "taiji-p5-1h-adoption-manifest-v1",
+  "admission_revision": "p51h:admission",
+  "contract": "plans/reference/M5_P5_1H_ADMISSION_PACKAGE_DRAFT_20260919.md",
+  "replay_weight": 0.25,
+  "budget_approval_note": "user approved training budget for the P5.1h calibration sweep (2026-09-19)",
+  "child_checkpoint_digest": "f6d9a125480ba5f3fe796670cc38f565b9a7997ea4451e379e800cf7357ef94e",
+  "parent_checkpoint_digest": "ea52b18c8b9b0a59c2cce08c0c95091f44ef19f363ddc2fb82f35bca96a20724",
+  "checkpoint_path": "E:\\Seed\\reports\\taiji_p5_1h_child_20260919.pt",
+  "checkpoint_sha256": "daf2e8779b9faa734994b8f9de084ab75744540bcda032d3f1c79aeb9b87021d",
+  "metrics": {
+    "procedural_retention_accuracy": 0.6053268765133172,
+    "procedural_holdout_accuracy": 0.456,
+    "independent_accuracy": 0.933333,
+    "semantic_retention_before": 1.0,
+    "semantic_retention_after": 0.0003694570383287108,
+    "lesion_accuracy": 0.0
+  },
+  "lines": {
+    "lines": {
+      "L1_retention": true,
+      "L2_independent_transfer": true,
+      "L3_semantic_retention": true,
+      "L4_lesion_roundtrip": true
+    },
+    "all_pass": true,
+    "thresholds": {
+      "retention_line": 0.5,
+      "independent_accuracy_line": 0.517,
+      "lesion_ceiling": 0.05
+    }
+  },
+  "status": "admitted",
+  "growth_admitted": false,
+  "can_promote": false
+}
