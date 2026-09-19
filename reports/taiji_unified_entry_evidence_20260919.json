@@ -1,0 +1,134 @@
+{
+  "format": "taiji-unified-entry-evidence-v1",
+  "version": 1,
+  "contract": "plans/reference/M5_UNIFIED_ENTRY_EVIDENCE_PACKAGE_DRAFT_20260919.md",
+  "preregistration": "plans/reference/M5_UNIFIED_ENTRY_PREREGISTRATION_FROZEN_20260919.md",
+  "bundle": {
+    "format": "taiji-unified-entry-bundle-v1",
+    "task_id": "p52a-p52-train-000",
+    "components": [
+      {
+        "name": "knowledge_child",
+        "kind": "p51h_adopted_child",
+        "path": "E:\\Seed\\reports\\taiji_p5_1h_child_20260919.pt",
+        "sha256": "daf2e8779b9faa734994b8f9de084ab75744540bcda032d3f1c79aeb9b87021d"
+      },
+      {
+        "name": "handoff_policy",
+        "kind": "collab_handoff_v1",
+        "path": "C:\\Users\\23747\\AppData\\Local\\Temp\\unified-entry-u4s2yh33\\handoff_policy.json",
+        "sha256": "d26a6b3abcde3b4e3fba1033a9a30e67555bf0739694391e352cf8f83232812d"
+      },
+      {
+        "name": "online_writeback",
+        "kind": "p52d_v2_descriptor",
+        "path": "C:\\Users\\23747\\AppData\\Local\\Temp\\unified-entry-u4s2yh33\\online_writeback_descriptor.json",
+        "sha256": "828aa89c35b36cab0b19193873b37e27ec153c40d63182832ecb3a6d42bede59"
+      }
+    ],
+    "digest": "7cfaeceabcece2ac7066d88eeef067c0fc916582787cb9d36b5da55928be6568"
+  },
+  "task": {
+    "main": "p52a-p52-train-000",
+    "unseen": "p52a-p52-train-004",
+    "template": "lang_confirm"
+  },
+  "per_arm": [
+    {
+      "arm": "full",
+      "config": {
+        "rule_revision": 1,
+        "memory_enabled": true,
+        "writeback_enabled": true,
+        "simple_strategy": false
+      },
+      "main_successes": 3,
+      "main_success_rate": 1.0,
+      "unseen_success": true,
+      "total_steps_with_injection": 6,
+      "executed_actions_with_injection": 4,
+      "all_trace_valid": true,
+      "elapsed_seconds": 0.250478700036183
+    },
+    {
+      "arm": "simple_strategy",
+      "config": {
+        "rule_revision": 0,
+        "memory_enabled": false,
+        "writeback_enabled": false,
+        "simple_strategy": true
+      },
+      "main_successes": 0,
+      "main_success_rate": 0.0,
+      "unseen_success": false,
+      "total_steps_with_injection": 8,
+      "executed_actions_with_injection": 8,
+      "all_trace_valid": true,
+      "elapsed_seconds": 0.1253699999069795
+    },
+    {
+      "arm": "disable_memory",
+      "config": {
+        "rule_revision": 1,
+        "memory_enabled": false,
+        "writeback_enabled": true,
+        "simple_strategy": false
+      },
+      "main_successes": 0,
+      "main_success_rate": 0.0,
+      "unseen_success": false,
+      "total_steps_with_injection": 8,
+      "executed_actions_with_injection": 8,
+      "all_trace_valid": true,
+      "elapsed_seconds": 0.08998389996122569
+    },
+    {
+      "arm": "disable_selection",
+      "config": {
+        "rule_revision": 0,
+        "memory_enabled": true,
+        "writeback_enabled": true,
+        "simple_strategy": false
+      },
+      "main_successes": 0,
+      "main_success_rate": 0.0,
+      "unseen_success": true,
+      "total_steps_with_injection": 8,
+      "executed_actions_with_injection": 0,
+      "all_trace_valid": true,
+      "elapsed_seconds": 0.11327720002736896
+    },
+    {
+      "arm": "disable_writeback",
+      "config": {
+        "rule_revision": 1,
+        "memory_enabled": true,
+        "writeback_enabled": false,
+        "simple_strategy": false
+      },
+      "main_successes": 3,
+      "main_success_rate": 1.0,
+      "unseen_success": true,
+      "total_steps_with_injection": 2,
+      "executed_actions_with_injection": 2,
+      "all_trace_valid": true,
+      "elapsed_seconds": 0.22104180010501295
+    }
+  ],
+  "lines": {
+    "L1_full_beats_all_ablations": true,
+    "L2_handoff_resource_line": true,
+    "L3_failure_injection_still_goals": true,
+    "L4_trace_and_safety": true
+  },
+  "all_trace_schema_valid": true,
+  "elapsed_seconds": 11.235640899976715,
+  "wall_caps": {
+    "per_arm": 120.0,
+    "total": 600.0
+  },
+  "outcome": "unified_entry_supported",
+  "experiment_passed": true,
+  "growth_admitted": false,
+  "can_promote": false
+}
