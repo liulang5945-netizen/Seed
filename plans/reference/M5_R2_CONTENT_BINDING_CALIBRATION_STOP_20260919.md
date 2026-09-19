@@ -32,3 +32,12 @@
 ## 5. 留下的资产
 
 实现门全套装测试（35+9）、数据 builder/三件套 fixture、A/B 计算图与 runner/恢复机制、成对评分器、标定证据链（4 份 run report + 聚合 + 诊断）、本备忘录。R2 主线下一步路线（更长预算/数据/机制假设/其他）按 §5.5 属新决定，不在本包内自动排队。
+
+
+## 6. v2 追记（2026-09-19，配对绑定目标判停）
+
+用户路线裁决选「配对绑定目标 v2」（[v2 FROZEN 合同](M5_R2_CONTENT_BINDING_CONTRACT_V2_FROZEN_20260919.md) §D1，γ=1.0/λ=1.0 标定前冻结）。v2 标定 4 次运行全部 completed（串行≈37 分钟），**两臂再次判停且未超过 v1**：最优复制 0.625（A/cal_lr3@1500）< v1 的 0.652；flip 宏最高 0.094 < v1 的 0.198；unknown_rate 几乎全程 1.0（边界保持更好）。证据：[v2 选择聚合](../../reports/r2_content_binding_v2/calibration_selection_20260920.json)、各 run report。
+
+**决定性诊断**（[pair_contrastive_diagnostic](../../reports/r2_content_binding_v2/pair_contrastive_diagnostic_20260920.json)，B/cal_lr1@2000 在 train 组上的逐类 hinge）：fact_flip/missing_to_filled hinge=0.0000（margin 在 train 完全满足）；distractor/unknown 为结构常数 1.3133；**object_swap（1.287/1.343）、relation_flip（1.317/1.310）、negation_scope（1.237/1.455）≈ softplus(γ)——margin 在 train 数据上从未满足**。
+
+判读：对比目标机制有效且方向正确（材料内可区分的对比被学会），但"问题→对象绑定"这一区分在 2000 更新/110k 参数/64 维问题编码下**连 train 拟合都实现不了**——瓶颈从"目标缺压力"（H-P 被削弱）精化为**表示/容量轴**：问题侧编码是单一 64 维 GRU 终态，object_swap 要求模型从问题中读出"问的是哪个对象"并条件化答案选择。残余可检验假设：更大容量/更长训练能否先在 train 上满足该 margin（train-only 可观测，无需确认集）；或机制级改动（问题编码宽度/交叉寻址）。两者都需新合同，不自动排队。

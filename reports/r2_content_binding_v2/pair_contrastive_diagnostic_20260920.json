@@ -1,0 +1,42 @@
+{
+  "format": "r2-content-binding-v2-pair-diagnostic-v1",
+  "checkpoint": "reports/r2_content_binding_v2/B/20260920/cal_lr1/update_002000.pt",
+  "note": "per-class pair-hinge on TRAIN groups at the final checkpoint: hinge near 0 = margin satisfied (own answer beats crossed by >= gamma); hinge ~1.31 = softplus(gamma), margin untouched",
+  "per_class": {
+    "distractor_invariant": {
+      "mean_hinge_a": 1.3133,
+      "mean_hinge_b": 1.3133,
+      "groups": 50
+    },
+    "fact_flip": {
+      "mean_hinge_a": 0.0,
+      "mean_hinge_b": 0.0,
+      "groups": 50
+    },
+    "missing_to_filled": {
+      "mean_hinge_a": 0.0,
+      "mean_hinge_b": 0.0,
+      "groups": 50
+    },
+    "negation_scope": {
+      "mean_hinge_a": 1.2374,
+      "mean_hinge_b": 1.4546,
+      "groups": 50
+    },
+    "object_swap": {
+      "mean_hinge_a": 1.2865,
+      "mean_hinge_b": 1.3427,
+      "groups": 50
+    },
+    "relation_flip": {
+      "mean_hinge_a": 1.3168,
+      "mean_hinge_b": 1.3098,
+      "groups": 50
+    },
+    "unknown_preserved": {
+      "mean_hinge_a": 1.3133,
+      "mean_hinge_b": 1.3133,
+      "groups": 50
+    }
+  }
+}
