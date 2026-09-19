@@ -1,0 +1,453 @@
+{
+  "format": "taiji-r2-content-binding-run-v1",
+  "version": 1,
+  "contract": "plans/reference/M5_R2_CONTENT_BINDING_CONTRACT_DRAFT_20260919.md",
+  "mode": "calibration",
+  "arm": "A",
+  "config": "cal_lr1",
+  "recipe": {
+    "learning_rate": 0.001
+  },
+  "seed": 20260920,
+  "split_read": "train",
+  "calibration_read": true,
+  "sealed_read": false,
+  "train_fixture": "tests\\fixtures\\r2_content_binding_v1_train.jsonl",
+  "data_digest": "a37e5d39576280943f9796aa7204ee14232c8e7443ce9fa02d7e9c44fcf740d0",
+  "vocab_size": 113,
+  "workspace_version": 1,
+  "candidate_construction": "content-candidates-v1",
+  "selection_rule": "content-binding-selection-v1",
+  "total_updates_planned": 2000,
+  "updates_done": 2000,
+  "parameter_count": 114483,
+  "compute_profile": {
+    "arm": "A",
+    "parameter_count": 114483,
+    "per_episode_mac_estimate": 1213440,
+    "content_module_mac_estimate": 87552
+  },
+  "health": [
+    {
+      "update": 100,
+      "loss": 1.3391226530075073,
+      "ce": 0.9332614690065384,
+      "copy_nll": 0.40586118266219273,
+      "grad_norm": 3.439377784729004,
+      "lr": 0.001,
+      "global_step": 100
+    },
+    {
+      "update": 200,
+      "loss": 1.0930229425430298,
+      "ce": 0.6306339576840401,
+      "copy_nll": 0.4623889553731715,
+      "grad_norm": 2.7068538665771484,
+      "lr": 0.000993862586531225,
+      "global_step": 200
+    },
+    {
+      "update": 300,
+      "loss": 0.7143094539642334,
+      "ce": 0.3530283556319773,
+      "copy_nll": 0.3612810708582401,
+      "grad_norm": 1.710056185722351,
+      "lr": 0.0009756177587652855,
+      "global_step": 300
+    },
+    {
+      "update": 400,
+      "loss": 0.7001129984855652,
+      "ce": 0.2820306229405105,
+      "copy_nll": 0.4180823948699981,
+      "grad_norm": 1.6678049564361572,
+      "lr": 0.0009457631880429201,
+      "global_step": 400
+    },
+    {
+      "update": 500,
+      "loss": 0.39526796340942383,
+      "ce": 0.18166243564337492,
+      "copy_nll": 0.21360551193356514,
+      "grad_norm": 1.0257153511047363,
+      "lr": 0.0009051132292283772,
+      "global_step": 500
+    },
+    {
+      "update": 600,
+      "loss": 0.6955169439315796,
+      "ce": 0.3139607557677664,
+      "copy_nll": 0.3815562464296818,
+      "grad_norm": 1.264056921005249,
+      "lr": 0.0008547767072315835,
+      "global_step": 600
+    },
+    {
+      "update": 700,
+      "loss": 0.25893932580947876,
+      "ce": 0.14188729028683156,
+      "copy_nll": 0.11705201386939734,
+      "grad_norm": 0.6860268115997314,
+      "lr": 0.0007961266711550921,
+      "global_step": 700
+    },
+    {
+      "update": 800,
+      "loss": 0.2596700191497803,
+      "ce": 0.18564658326795325,
+      "copy_nll": 0.07402344181355147,
+      "grad_norm": 0.3737979233264923,
+      "lr": 0.0007307629410938364,
+      "global_step": 800
+    },
+    {
+      "update": 900,
+      "loss": 0.6925172209739685,
+      "ce": 0.3652937412261963,
+      "copy_nll": 0.3272235244512558,
+      "grad_norm": 0.2186586707830429,
+      "lr": 0.0006604684692133597,
+      "global_step": 900
+    },
+    {
+      "update": 1000,
+      "loss": 0.2665790915489197,
+      "ce": 0.19210241246037185,
+      "copy_nll": 0.07447665785730351,
+      "grad_norm": 0.3377932906150818,
+      "lr": 0.0005871607054625496,
+      "global_step": 1000
+    },
+    {
+      "update": 1100,
+      "loss": 0.3844417929649353,
+      "ce": 0.2384380849543959,
+      "copy_nll": 0.14600371196866035,
+      "grad_norm": 0.18028096854686737,
+      "lr": 0.0005128392945374505,
+      "global_step": 1100
+    },
+    {
+      "update": 1200,
+      "loss": 0.39135074615478516,
+      "ce": 0.24756356005673297,
+      "copy_nll": 0.1437872052192688,
+      "grad_norm": 0.1961168497800827,
+      "lr": 0.0004395315307866404,
+      "global_step": 1200
+    },
+    {
+      "update": 1300,
+      "loss": 0.07804460823535919,
+      "ce": 0.06647338389302604,
+      "copy_nll": 0.011571227805688977,
+      "grad_norm": 0.27214017510414124,
+      "lr": 0.0003692370589061638,
+      "global_step": 1300
+    },
+    {
+      "update": 1400,
+      "loss": 0.31077131628990173,
+      "ce": 0.17763199281762354,
+      "copy_nll": 0.13313933369170172,
+      "grad_norm": 4.350460052490234,
+      "lr": 0.000303873328844908,
+      "global_step": 1400
+    },
+    {
+      "update": 1500,
+      "loss": 0.30164507031440735,
+      "ce": 0.14327065374527592,
+      "copy_nll": 0.1583744228046271,
+      "grad_norm": 2.58870267868042,
+      "lr": 0.0002452232927684166,
+      "global_step": 1500
+    },
+    {
+      "update": 1600,
+      "loss": 0.1952964961528778,
+      "ce": 0.13092312539811246,
+      "copy_nll": 0.0643733828223958,
+      "grad_norm": 0.836534857749939,
+      "lr": 0.00019488677077162295,
+      "global_step": 1600
+    },
+    {
+      "update": 1700,
+      "loss": 0.16552744805812836,
+      "ce": 0.15586832363624126,
+      "copy_nll": 0.009659115508839022,
+      "grad_norm": 0.21190011501312256,
+      "lr": 0.00015423681195707997,
+      "global_step": 1700
+    },
+    {
+      "update": 1800,
+      "loss": 0.5199859142303467,
+      "ce": 0.23604164460266475,
+      "copy_nll": 0.2839443112036406,
+      "grad_norm": 2.6314494609832764,
+      "lr": 0.00012438224123471442,
+      "global_step": 1800
+    },
+    {
+      "update": 1900,
+      "loss": 0.15127155184745789,
+      "ce": 0.14963971386896446,
+      "copy_nll": 0.0016318458947353065,
+      "grad_norm": 0.1219533160328865,
+      "lr": 0.00010613741346877496,
+      "global_step": 1900
+    },
+    {
+      "update": 2000,
+      "loss": 0.45079270005226135,
+      "ce": 0.18358982681820635,
+      "copy_nll": 0.26720287164334877,
+      "grad_norm": 5.849001407623291,
+      "lr": 0.0001,
+      "global_step": 2000
+    }
+  ],
+  "group_exposure_per_class": {
+    "fact_flip": 1143.0,
+    "object_swap": 1143.0,
+    "relation_flip": 1143.0,
+    "negation_scope": 1142.0,
+    "distractor_invariant": 1143.0,
+    "missing_to_filled": 1143.0,
+    "unknown_preserved": 1143.0
+  },
+  "saved_checkpoints": [
+    "reports\\r2_content_binding_v1\\A\\20260920\\cal_lr1\\latest.pt",
+    "reports\\r2_content_binding_v1\\A\\20260920\\cal_lr1\\update_000500.pt",
+    "reports\\r2_content_binding_v1\\A\\20260920\\cal_lr1\\update_001000.pt",
+    "reports\\r2_content_binding_v1\\A\\20260920\\cal_lr1\\update_001500.pt",
+    "reports\\r2_content_binding_v1\\A\\20260920\\cal_lr1\\update_002000.pt"
+  ],
+  "calibration_evaluations": [
+    {
+      "per_class": {
+        "fact_flip": {
+          "items": 64,
+          "item_exact": 0.296875,
+          "groups": 32,
+          "pair_rate": 0.125
+        },
+        "object_swap": {
+          "items": 64,
+          "item_exact": 0.328125,
+          "groups": 32,
+          "pair_rate": 0.0
+        },
+        "relation_flip": {
+          "items": 64,
+          "item_exact": 0.578125,
+          "groups": 32,
+          "pair_rate": 0.25
+        },
+        "negation_scope": {
+          "items": 64,
+          "item_exact": 0.390625,
+          "groups": 32,
+          "pair_rate": 0.0
+        },
+        "distractor_invariant": {
+          "items": 64,
+          "item_exact": 0.46875,
+          "groups": 32,
+          "pair_rate": 0.28125
+        },
+        "missing_to_filled": {
+          "items": 64,
+          "item_exact": 0.78125,
+          "groups": 32,
+          "pair_rate": 0.5625
+        },
+        "unknown_preserved": {
+          "items": 64,
+          "item_exact": 1.0,
+          "groups": 32,
+          "pair_rate": 1.0
+        }
+      },
+      "flip_pairwise_macro": 0.125,
+      "copy_rate": 0.39285714285714285,
+      "unknown_rate": 1.0,
+      "range_errors": 0,
+      "finite_parameters": true,
+      "update": 500,
+      "learning_rate": 0.001,
+      "checkpoint": "reports\\r2_content_binding_v1\\A\\20260920\\cal_lr1\\update_000500.pt"
+    },
+    {
+      "per_class": {
+        "fact_flip": {
+          "items": 64,
+          "item_exact": 0.09375,
+          "groups": 32,
+          "pair_rate": 0.03125
+        },
+        "object_swap": {
+          "items": 64,
+          "item_exact": 0.125,
+          "groups": 32,
+          "pair_rate": 0.0
+        },
+        "relation_flip": {
+          "items": 64,
+          "item_exact": 0.515625,
+          "groups": 32,
+          "pair_rate": 0.03125
+        },
+        "negation_scope": {
+          "items": 64,
+          "item_exact": 0.234375,
+          "groups": 32,
+          "pair_rate": 0.0
+        },
+        "distractor_invariant": {
+          "items": 64,
+          "item_exact": 0.21875,
+          "groups": 32,
+          "pair_rate": 0.125
+        },
+        "missing_to_filled": {
+          "items": 64,
+          "item_exact": 0.765625,
+          "groups": 32,
+          "pair_rate": 0.53125
+        },
+        "unknown_preserved": {
+          "items": 64,
+          "item_exact": 1.0,
+          "groups": 32,
+          "pair_rate": 1.0
+        }
+      },
+      "flip_pairwise_macro": 0.020833333333333332,
+      "copy_rate": 0.20089285714285715,
+      "unknown_rate": 1.0,
+      "range_errors": 0,
+      "finite_parameters": true,
+      "update": 1000,
+      "learning_rate": 0.001,
+      "checkpoint": "reports\\r2_content_binding_v1\\A\\20260920\\cal_lr1\\update_001000.pt"
+    },
+    {
+      "per_class": {
+        "fact_flip": {
+          "items": 64,
+          "item_exact": 0.59375,
+          "groups": 32,
+          "pair_rate": 0.40625
+        },
+        "object_swap": {
+          "items": 64,
+          "item_exact": 0.421875,
+          "groups": 32,
+          "pair_rate": 0.1875
+        },
+        "relation_flip": {
+          "items": 64,
+          "item_exact": 0.21875,
+          "groups": 32,
+          "pair_rate": 0.0
+        },
+        "negation_scope": {
+          "items": 64,
+          "item_exact": 0.40625,
+          "groups": 32,
+          "pair_rate": 0.0
+        },
+        "distractor_invariant": {
+          "items": 64,
+          "item_exact": 0.515625,
+          "groups": 32,
+          "pair_rate": 0.375
+        },
+        "missing_to_filled": {
+          "items": 64,
+          "item_exact": 0.78125,
+          "groups": 32,
+          "pair_rate": 0.5625
+        },
+        "unknown_preserved": {
+          "items": 64,
+          "item_exact": 0.96875,
+          "groups": 32,
+          "pair_rate": 0.9375
+        }
+      },
+      "flip_pairwise_macro": 0.19791666666666666,
+      "copy_rate": 0.5178571428571429,
+      "unknown_rate": 0.9791666666666666,
+      "range_errors": 0,
+      "finite_parameters": true,
+      "update": 1500,
+      "learning_rate": 0.001,
+      "checkpoint": "reports\\r2_content_binding_v1\\A\\20260920\\cal_lr1\\update_001500.pt"
+    },
+    {
+      "per_class": {
+        "fact_flip": {
+          "items": 64,
+          "item_exact": 0.46875,
+          "groups": 32,
+          "pair_rate": 0.25
+        },
+        "object_swap": {
+          "items": 64,
+          "item_exact": 0.421875,
+          "groups": 32,
+          "pair_rate": 0.15625
+        },
+        "relation_flip": {
+          "items": 64,
+          "item_exact": 0.296875,
+          "groups": 32,
+          "pair_rate": 0.0
+        },
+        "negation_scope": {
+          "items": 64,
+          "item_exact": 0.296875,
+          "groups": 32,
+          "pair_rate": 0.0
+        },
+        "distractor_invariant": {
+          "items": 64,
+          "item_exact": 0.46875,
+          "groups": 32,
+          "pair_rate": 0.3125
+        },
+        "missing_to_filled": {
+          "items": 64,
+          "item_exact": 0.765625,
+          "groups": 32,
+          "pair_rate": 0.53125
+        },
+        "unknown_preserved": {
+          "items": 64,
+          "item_exact": 0.84375,
+          "groups": 32,
+          "pair_rate": 0.71875
+        }
+      },
+      "flip_pairwise_macro": 0.13541666666666666,
+      "copy_rate": 0.4642857142857143,
+      "unknown_rate": 0.8958333333333334,
+      "range_errors": 0,
+      "finite_parameters": true,
+      "update": 2000,
+      "learning_rate": 0.001,
+      "checkpoint": "reports\\r2_content_binding_v1\\A\\20260920\\cal_lr1\\update_002000.pt"
+    }
+  ],
+  "selected": null,
+  "elapsed_seconds": 136.09400000004098,
+  "wall_cap_seconds": 5400,
+  "status": "completed",
+  "stop_reason": null,
+  "outcome": "passed",
+  "can_promote": false
+}

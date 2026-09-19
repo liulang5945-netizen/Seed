@@ -1,0 +1,998 @@
+{
+  "format": "r2-content-binding-calibration-selection-v1",
+  "version": 1,
+  "contract": "plans/reference/M5_R2_CONTENT_BINDING_CONTRACT_FROZEN_20260919.md",
+  "calibration_seed": 20260920,
+  "selection_rule": "content-binding-selection-v1",
+  "flip_gate_classes": [
+    "fact_flip",
+    "object_swap",
+    "relation_flip"
+  ],
+  "per_arm": {
+    "A": {
+      "runs": {
+        "cal_lr1": {
+          "status": "completed",
+          "updates_done": 2000,
+          "elapsed_seconds": 136.09400000004098,
+          "final_health": {
+            "update": 2000,
+            "loss": 0.45079270005226135,
+            "ce": 0.18358982681820635,
+            "copy_nll": 0.26720287164334877,
+            "grad_norm": 5.849001407623291,
+            "lr": 0.0001,
+            "global_step": 2000
+          },
+          "calibration_evaluations": [
+            {
+              "per_class": {
+                "fact_flip": {
+                  "items": 64,
+                  "item_exact": 0.296875,
+                  "groups": 32,
+                  "pair_rate": 0.125
+                },
+                "object_swap": {
+                  "items": 64,
+                  "item_exact": 0.328125,
+                  "groups": 32,
+                  "pair_rate": 0.0
+                },
+                "relation_flip": {
+                  "items": 64,
+                  "item_exact": 0.578125,
+                  "groups": 32,
+                  "pair_rate": 0.25
+                },
+                "negation_scope": {
+                  "items": 64,
+                  "item_exact": 0.390625,
+                  "groups": 32,
+                  "pair_rate": 0.0
+                },
+                "distractor_invariant": {
+                  "items": 64,
+                  "item_exact": 0.46875,
+                  "groups": 32,
+                  "pair_rate": 0.28125
+                },
+                "missing_to_filled": {
+                  "items": 64,
+                  "item_exact": 0.78125,
+                  "groups": 32,
+                  "pair_rate": 0.5625
+                },
+                "unknown_preserved": {
+                  "items": 64,
+                  "item_exact": 1.0,
+                  "groups": 32,
+                  "pair_rate": 1.0
+                }
+              },
+              "flip_pairwise_macro": 0.125,
+              "copy_rate": 0.39285714285714285,
+              "unknown_rate": 1.0,
+              "range_errors": 0,
+              "finite_parameters": true,
+              "update": 500,
+              "learning_rate": 0.001,
+              "checkpoint": "reports\\r2_content_binding_v1\\A\\20260920\\cal_lr1\\update_000500.pt"
+            },
+            {
+              "per_class": {
+                "fact_flip": {
+                  "items": 64,
+                  "item_exact": 0.09375,
+                  "groups": 32,
+                  "pair_rate": 0.03125
+                },
+                "object_swap": {
+                  "items": 64,
+                  "item_exact": 0.125,
+                  "groups": 32,
+                  "pair_rate": 0.0
+                },
+                "relation_flip": {
+                  "items": 64,
+                  "item_exact": 0.515625,
+                  "groups": 32,
+                  "pair_rate": 0.03125
+                },
+                "negation_scope": {
+                  "items": 64,
+                  "item_exact": 0.234375,
+                  "groups": 32,
+                  "pair_rate": 0.0
+                },
+                "distractor_invariant": {
+                  "items": 64,
+                  "item_exact": 0.21875,
+                  "groups": 32,
+                  "pair_rate": 0.125
+                },
+                "missing_to_filled": {
+                  "items": 64,
+                  "item_exact": 0.765625,
+                  "groups": 32,
+                  "pair_rate": 0.53125
+                },
+                "unknown_preserved": {
+                  "items": 64,
+                  "item_exact": 1.0,
+                  "groups": 32,
+                  "pair_rate": 1.0
+                }
+              },
+              "flip_pairwise_macro": 0.020833333333333332,
+              "copy_rate": 0.20089285714285715,
+              "unknown_rate": 1.0,
+              "range_errors": 0,
+              "finite_parameters": true,
+              "update": 1000,
+              "learning_rate": 0.001,
+              "checkpoint": "reports\\r2_content_binding_v1\\A\\20260920\\cal_lr1\\update_001000.pt"
+            },
+            {
+              "per_class": {
+                "fact_flip": {
+                  "items": 64,
+                  "item_exact": 0.59375,
+                  "groups": 32,
+                  "pair_rate": 0.40625
+                },
+                "object_swap": {
+                  "items": 64,
+                  "item_exact": 0.421875,
+                  "groups": 32,
+                  "pair_rate": 0.1875
+                },
+                "relation_flip": {
+                  "items": 64,
+                  "item_exact": 0.21875,
+                  "groups": 32,
+                  "pair_rate": 0.0
+                },
+                "negation_scope": {
+                  "items": 64,
+                  "item_exact": 0.40625,
+                  "groups": 32,
+                  "pair_rate": 0.0
+                },
+                "distractor_invariant": {
+                  "items": 64,
+                  "item_exact": 0.515625,
+                  "groups": 32,
+                  "pair_rate": 0.375
+                },
+                "missing_to_filled": {
+                  "items": 64,
+                  "item_exact": 0.78125,
+                  "groups": 32,
+                  "pair_rate": 0.5625
+                },
+                "unknown_preserved": {
+                  "items": 64,
+                  "item_exact": 0.96875,
+                  "groups": 32,
+                  "pair_rate": 0.9375
+                }
+              },
+              "flip_pairwise_macro": 0.19791666666666666,
+              "copy_rate": 0.5178571428571429,
+              "unknown_rate": 0.9791666666666666,
+              "range_errors": 0,
+              "finite_parameters": true,
+              "update": 1500,
+              "learning_rate": 0.001,
+              "checkpoint": "reports\\r2_content_binding_v1\\A\\20260920\\cal_lr1\\update_001500.pt"
+            },
+            {
+              "per_class": {
+                "fact_flip": {
+                  "items": 64,
+                  "item_exact": 0.46875,
+                  "groups": 32,
+                  "pair_rate": 0.25
+                },
+                "object_swap": {
+                  "items": 64,
+                  "item_exact": 0.421875,
+                  "groups": 32,
+                  "pair_rate": 0.15625
+                },
+                "relation_flip": {
+                  "items": 64,
+                  "item_exact": 0.296875,
+                  "groups": 32,
+                  "pair_rate": 0.0
+                },
+                "negation_scope": {
+                  "items": 64,
+                  "item_exact": 0.296875,
+                  "groups": 32,
+                  "pair_rate": 0.0
+                },
+                "distractor_invariant": {
+                  "items": 64,
+                  "item_exact": 0.46875,
+                  "groups": 32,
+                  "pair_rate": 0.3125
+                },
+                "missing_to_filled": {
+                  "items": 64,
+                  "item_exact": 0.765625,
+                  "groups": 32,
+                  "pair_rate": 0.53125
+                },
+                "unknown_preserved": {
+                  "items": 64,
+                  "item_exact": 0.84375,
+                  "groups": 32,
+                  "pair_rate": 0.71875
+                }
+              },
+              "flip_pairwise_macro": 0.13541666666666666,
+              "copy_rate": 0.4642857142857143,
+              "unknown_rate": 0.8958333333333334,
+              "range_errors": 0,
+              "finite_parameters": true,
+              "update": 2000,
+              "learning_rate": 0.001,
+              "checkpoint": "reports\\r2_content_binding_v1\\A\\20260920\\cal_lr1\\update_002000.pt"
+            }
+          ],
+          "group_exposure_per_class": {
+            "fact_flip": 1143.0,
+            "object_swap": 1143.0,
+            "relation_flip": 1143.0,
+            "negation_scope": 1142.0,
+            "distractor_invariant": 1143.0,
+            "missing_to_filled": 1143.0,
+            "unknown_preserved": 1143.0
+          }
+        },
+        "cal_lr3": {
+          "status": "completed",
+          "updates_done": 2000,
+          "elapsed_seconds": 135.875,
+          "final_health": {
+            "update": 2000,
+            "loss": 0.25894585251808167,
+            "ce": 0.1037760350300232,
+            "copy_nll": 0.1551698197126825,
+            "grad_norm": 0.09296416491270065,
+            "lr": 0.00030000000000000003,
+            "global_step": 2000
+          },
+          "calibration_evaluations": [
+            {
+              "per_class": {
+                "fact_flip": {
+                  "items": 64,
+                  "item_exact": 0.5,
+                  "groups": 32,
+                  "pair_rate": 0.0
+                },
+                "object_swap": {
+                  "items": 64,
+                  "item_exact": 0.484375,
+                  "groups": 32,
+                  "pair_rate": 0.0
+                },
+                "relation_flip": {
+                  "items": 64,
+                  "item_exact": 0.5,
+                  "groups": 32,
+                  "pair_rate": 0.0
+                },
+                "negation_scope": {
+                  "items": 64,
+                  "item_exact": 0.375,
+                  "groups": 32,
+                  "pair_rate": 0.0
+                },
+                "distractor_invariant": {
+                  "items": 64,
+                  "item_exact": 0.734375,
+                  "groups": 32,
+                  "pair_rate": 0.46875
+                },
+                "missing_to_filled": {
+                  "items": 64,
+                  "item_exact": 0.734375,
+                  "groups": 32,
+                  "pair_rate": 0.46875
+                },
+                "unknown_preserved": {
+                  "items": 64,
+                  "item_exact": 0.734375,
+                  "groups": 32,
+                  "pair_rate": 0.53125
+                }
+              },
+              "flip_pairwise_macro": 0.0,
+              "copy_rate": 0.6339285714285714,
+              "unknown_rate": 0.6458333333333334,
+              "range_errors": 0,
+              "finite_parameters": true,
+              "update": 500,
+              "learning_rate": 0.003,
+              "checkpoint": "reports\\r2_content_binding_v1\\A\\20260920\\cal_lr3\\update_000500.pt"
+            },
+            {
+              "per_class": {
+                "fact_flip": {
+                  "items": 64,
+                  "item_exact": 0.484375,
+                  "groups": 32,
+                  "pair_rate": 0.0
+                },
+                "object_swap": {
+                  "items": 64,
+                  "item_exact": 0.484375,
+                  "groups": 32,
+                  "pair_rate": 0.0
+                },
+                "relation_flip": {
+                  "items": 64,
+                  "item_exact": 0.5,
+                  "groups": 32,
+                  "pair_rate": 0.0
+                },
+                "negation_scope": {
+                  "items": 64,
+                  "item_exact": 0.5,
+                  "groups": 32,
+                  "pair_rate": 0.0
+                },
+                "distractor_invariant": {
+                  "items": 64,
+                  "item_exact": 0.71875,
+                  "groups": 32,
+                  "pair_rate": 0.4375
+                },
+                "missing_to_filled": {
+                  "items": 64,
+                  "item_exact": 0.625,
+                  "groups": 32,
+                  "pair_rate": 0.25
+                },
+                "unknown_preserved": {
+                  "items": 64,
+                  "item_exact": 1.0,
+                  "groups": 32,
+                  "pair_rate": 1.0
+                }
+              },
+              "flip_pairwise_macro": 0.0,
+              "copy_rate": 0.625,
+              "unknown_rate": 0.75,
+              "range_errors": 0,
+              "finite_parameters": true,
+              "update": 1000,
+              "learning_rate": 0.003,
+              "checkpoint": "reports\\r2_content_binding_v1\\A\\20260920\\cal_lr3\\update_001000.pt"
+            },
+            {
+              "per_class": {
+                "fact_flip": {
+                  "items": 64,
+                  "item_exact": 0.5,
+                  "groups": 32,
+                  "pair_rate": 0.0
+                },
+                "object_swap": {
+                  "items": 64,
+                  "item_exact": 0.5,
+                  "groups": 32,
+                  "pair_rate": 0.0
+                },
+                "relation_flip": {
+                  "items": 64,
+                  "item_exact": 0.484375,
+                  "groups": 32,
+                  "pair_rate": 0.0
+                },
+                "negation_scope": {
+                  "items": 64,
+                  "item_exact": 0.28125,
+                  "groups": 32,
+                  "pair_rate": 0.0
+                },
+                "distractor_invariant": {
+                  "items": 64,
+                  "item_exact": 0.75,
+                  "groups": 32,
+                  "pair_rate": 0.5
+                },
+                "missing_to_filled": {
+                  "items": 64,
+                  "item_exact": 0.5,
+                  "groups": 32,
+                  "pair_rate": 0.0
+                },
+                "unknown_preserved": {
+                  "items": 64,
+                  "item_exact": 1.0,
+                  "groups": 32,
+                  "pair_rate": 1.0
+                }
+              },
+              "flip_pairwise_macro": 0.0,
+              "copy_rate": 0.6428571428571429,
+              "unknown_rate": 0.6666666666666666,
+              "range_errors": 0,
+              "finite_parameters": true,
+              "update": 1500,
+              "learning_rate": 0.003,
+              "checkpoint": "reports\\r2_content_binding_v1\\A\\20260920\\cal_lr3\\update_001500.pt"
+            },
+            {
+              "per_class": {
+                "fact_flip": {
+                  "items": 64,
+                  "item_exact": 0.5,
+                  "groups": 32,
+                  "pair_rate": 0.0
+                },
+                "object_swap": {
+                  "items": 64,
+                  "item_exact": 0.5,
+                  "groups": 32,
+                  "pair_rate": 0.0
+                },
+                "relation_flip": {
+                  "items": 64,
+                  "item_exact": 0.5,
+                  "groups": 32,
+                  "pair_rate": 0.0
+                },
+                "negation_scope": {
+                  "items": 64,
+                  "item_exact": 0.375,
+                  "groups": 32,
+                  "pair_rate": 0.0
+                },
+                "distractor_invariant": {
+                  "items": 64,
+                  "item_exact": 0.75,
+                  "groups": 32,
+                  "pair_rate": 0.5
+                },
+                "missing_to_filled": {
+                  "items": 64,
+                  "item_exact": 0.5,
+                  "groups": 32,
+                  "pair_rate": 0.0
+                },
+                "unknown_preserved": {
+                  "items": 64,
+                  "item_exact": 1.0,
+                  "groups": 32,
+                  "pair_rate": 1.0
+                }
+              },
+              "flip_pairwise_macro": 0.0,
+              "copy_rate": 0.6428571428571429,
+              "unknown_rate": 0.6666666666666666,
+              "range_errors": 0,
+              "finite_parameters": true,
+              "update": 2000,
+              "learning_rate": 0.003,
+              "checkpoint": "reports\\r2_content_binding_v1\\A\\20260920\\cal_lr3\\update_002000.pt"
+            }
+          ],
+          "group_exposure_per_class": {
+            "fact_flip": 1143.0,
+            "object_swap": 1143.0,
+            "relation_flip": 1143.0,
+            "negation_scope": 1142.0,
+            "distractor_invariant": 1143.0,
+            "missing_to_filled": 1143.0,
+            "unknown_preserved": 1143.0
+          }
+        }
+      },
+      "eligible_candidates": [],
+      "selected": null,
+      "arm_status": "stopped_no_qualified_candidate"
+    },
+    "B": {
+      "runs": {
+        "cal_lr1": {
+          "status": "completed",
+          "updates_done": 2000,
+          "elapsed_seconds": 234.57800000009593,
+          "final_health": {
+            "update": 2000,
+            "loss": 0.14540734887123108,
+            "ce": 0.07433141462388448,
+            "copy_nll": 0.07107593273394741,
+            "grad_norm": 1.6863247156143188,
+            "lr": 0.0001,
+            "global_step": 2000
+          },
+          "calibration_evaluations": [
+            {
+              "per_class": {
+                "fact_flip": {
+                  "items": 64,
+                  "item_exact": 0.328125,
+                  "groups": 32,
+                  "pair_rate": 0.1875
+                },
+                "object_swap": {
+                  "items": 64,
+                  "item_exact": 0.34375,
+                  "groups": 32,
+                  "pair_rate": 0.0
+                },
+                "relation_flip": {
+                  "items": 64,
+                  "item_exact": 0.484375,
+                  "groups": 32,
+                  "pair_rate": 0.0
+                },
+                "negation_scope": {
+                  "items": 64,
+                  "item_exact": 0.5,
+                  "groups": 32,
+                  "pair_rate": 0.0
+                },
+                "distractor_invariant": {
+                  "items": 64,
+                  "item_exact": 0.546875,
+                  "groups": 32,
+                  "pair_rate": 0.3125
+                },
+                "missing_to_filled": {
+                  "items": 64,
+                  "item_exact": 1.0,
+                  "groups": 32,
+                  "pair_rate": 1.0
+                },
+                "unknown_preserved": {
+                  "items": 64,
+                  "item_exact": 1.0,
+                  "groups": 32,
+                  "pair_rate": 1.0
+                }
+              },
+              "flip_pairwise_macro": 0.0625,
+              "copy_rate": 0.49107142857142855,
+              "unknown_rate": 1.0,
+              "range_errors": 0,
+              "finite_parameters": true,
+              "update": 500,
+              "learning_rate": 0.001,
+              "checkpoint": "reports\\r2_content_binding_v1\\B\\20260920\\cal_lr1\\update_000500.pt"
+            },
+            {
+              "per_class": {
+                "fact_flip": {
+                  "items": 64,
+                  "item_exact": 0.53125,
+                  "groups": 32,
+                  "pair_rate": 0.28125
+                },
+                "object_swap": {
+                  "items": 64,
+                  "item_exact": 0.515625,
+                  "groups": 32,
+                  "pair_rate": 0.03125
+                },
+                "relation_flip": {
+                  "items": 64,
+                  "item_exact": 0.515625,
+                  "groups": 32,
+                  "pair_rate": 0.125
+                },
+                "negation_scope": {
+                  "items": 64,
+                  "item_exact": 0.359375,
+                  "groups": 32,
+                  "pair_rate": 0.0
+                },
+                "distractor_invariant": {
+                  "items": 64,
+                  "item_exact": 0.734375,
+                  "groups": 32,
+                  "pair_rate": 0.46875
+                },
+                "missing_to_filled": {
+                  "items": 64,
+                  "item_exact": 1.0,
+                  "groups": 32,
+                  "pair_rate": 1.0
+                },
+                "unknown_preserved": {
+                  "items": 64,
+                  "item_exact": 1.0,
+                  "groups": 32,
+                  "pair_rate": 1.0
+                }
+              },
+              "flip_pairwise_macro": 0.14583333333333334,
+              "copy_rate": 0.6517857142857143,
+              "unknown_rate": 1.0,
+              "range_errors": 0,
+              "finite_parameters": true,
+              "update": 1000,
+              "learning_rate": 0.001,
+              "checkpoint": "reports\\r2_content_binding_v1\\B\\20260920\\cal_lr1\\update_001000.pt"
+            },
+            {
+              "per_class": {
+                "fact_flip": {
+                  "items": 64,
+                  "item_exact": 0.390625,
+                  "groups": 32,
+                  "pair_rate": 0.21875
+                },
+                "object_swap": {
+                  "items": 64,
+                  "item_exact": 0.484375,
+                  "groups": 32,
+                  "pair_rate": 0.0
+                },
+                "relation_flip": {
+                  "items": 64,
+                  "item_exact": 0.515625,
+                  "groups": 32,
+                  "pair_rate": 0.125
+                },
+                "negation_scope": {
+                  "items": 64,
+                  "item_exact": 0.359375,
+                  "groups": 32,
+                  "pair_rate": 0.0
+                },
+                "distractor_invariant": {
+                  "items": 64,
+                  "item_exact": 0.71875,
+                  "groups": 32,
+                  "pair_rate": 0.5
+                },
+                "missing_to_filled": {
+                  "items": 64,
+                  "item_exact": 0.984375,
+                  "groups": 32,
+                  "pair_rate": 0.96875
+                },
+                "unknown_preserved": {
+                  "items": 64,
+                  "item_exact": 1.0,
+                  "groups": 32,
+                  "pair_rate": 1.0
+                }
+              },
+              "flip_pairwise_macro": 0.11458333333333333,
+              "copy_rate": 0.59375,
+              "unknown_rate": 1.0,
+              "range_errors": 0,
+              "finite_parameters": true,
+              "update": 1500,
+              "learning_rate": 0.001,
+              "checkpoint": "reports\\r2_content_binding_v1\\B\\20260920\\cal_lr1\\update_001500.pt"
+            },
+            {
+              "per_class": {
+                "fact_flip": {
+                  "items": 64,
+                  "item_exact": 0.1875,
+                  "groups": 32,
+                  "pair_rate": 0.0625
+                },
+                "object_swap": {
+                  "items": 64,
+                  "item_exact": 0.328125,
+                  "groups": 32,
+                  "pair_rate": 0.0
+                },
+                "relation_flip": {
+                  "items": 64,
+                  "item_exact": 0.5,
+                  "groups": 32,
+                  "pair_rate": 0.0625
+                },
+                "negation_scope": {
+                  "items": 64,
+                  "item_exact": 0.171875,
+                  "groups": 32,
+                  "pair_rate": 0.0
+                },
+                "distractor_invariant": {
+                  "items": 64,
+                  "item_exact": 0.359375,
+                  "groups": 32,
+                  "pair_rate": 0.25
+                },
+                "missing_to_filled": {
+                  "items": 64,
+                  "item_exact": 0.9375,
+                  "groups": 32,
+                  "pair_rate": 0.875
+                },
+                "unknown_preserved": {
+                  "items": 64,
+                  "item_exact": 1.0,
+                  "groups": 32,
+                  "pair_rate": 1.0
+                }
+              },
+              "flip_pairwise_macro": 0.041666666666666664,
+              "copy_rate": 0.375,
+              "unknown_rate": 1.0,
+              "range_errors": 0,
+              "finite_parameters": true,
+              "update": 2000,
+              "learning_rate": 0.001,
+              "checkpoint": "reports\\r2_content_binding_v1\\B\\20260920\\cal_lr1\\update_002000.pt"
+            }
+          ],
+          "group_exposure_per_class": {
+            "fact_flip": 1143.0,
+            "object_swap": 1143.0,
+            "relation_flip": 1143.0,
+            "negation_scope": 1142.0,
+            "distractor_invariant": 1143.0,
+            "missing_to_filled": 1143.0,
+            "unknown_preserved": 1143.0
+          }
+        },
+        "cal_lr3": {
+          "status": "completed",
+          "updates_done": 2000,
+          "elapsed_seconds": 235.09299999999348,
+          "final_health": {
+            "update": 2000,
+            "loss": 0.26600560545921326,
+            "ce": 0.10664657059169258,
+            "copy_nll": 0.15935903058880285,
+            "grad_norm": 0.09064579010009766,
+            "lr": 0.00030000000000000003,
+            "global_step": 2000
+          },
+          "calibration_evaluations": [
+            {
+              "per_class": {
+                "fact_flip": {
+                  "items": 64,
+                  "item_exact": 0.40625,
+                  "groups": 32,
+                  "pair_rate": 0.0
+                },
+                "object_swap": {
+                  "items": 64,
+                  "item_exact": 0.5,
+                  "groups": 32,
+                  "pair_rate": 0.0
+                },
+                "relation_flip": {
+                  "items": 64,
+                  "item_exact": 0.09375,
+                  "groups": 32,
+                  "pair_rate": 0.0
+                },
+                "negation_scope": {
+                  "items": 64,
+                  "item_exact": 0.40625,
+                  "groups": 32,
+                  "pair_rate": 0.0
+                },
+                "distractor_invariant": {
+                  "items": 64,
+                  "item_exact": 0.671875,
+                  "groups": 32,
+                  "pair_rate": 0.4375
+                },
+                "missing_to_filled": {
+                  "items": 64,
+                  "item_exact": 1.0,
+                  "groups": 32,
+                  "pair_rate": 1.0
+                },
+                "unknown_preserved": {
+                  "items": 64,
+                  "item_exact": 1.0,
+                  "groups": 32,
+                  "pair_rate": 1.0
+                }
+              },
+              "flip_pairwise_macro": 0.0,
+              "copy_rate": 0.59375,
+              "unknown_rate": 1.0,
+              "range_errors": 0,
+              "finite_parameters": true,
+              "update": 500,
+              "learning_rate": 0.003,
+              "checkpoint": "reports\\r2_content_binding_v1\\B\\20260920\\cal_lr3\\update_000500.pt"
+            },
+            {
+              "per_class": {
+                "fact_flip": {
+                  "items": 64,
+                  "item_exact": 0.46875,
+                  "groups": 32,
+                  "pair_rate": 0.0
+                },
+                "object_swap": {
+                  "items": 64,
+                  "item_exact": 0.5,
+                  "groups": 32,
+                  "pair_rate": 0.0
+                },
+                "relation_flip": {
+                  "items": 64,
+                  "item_exact": 0.53125,
+                  "groups": 32,
+                  "pair_rate": 0.09375
+                },
+                "negation_scope": {
+                  "items": 64,
+                  "item_exact": 0.5,
+                  "groups": 32,
+                  "pair_rate": 0.0
+                },
+                "distractor_invariant": {
+                  "items": 64,
+                  "item_exact": 0.75,
+                  "groups": 32,
+                  "pair_rate": 0.5
+                },
+                "missing_to_filled": {
+                  "items": 64,
+                  "item_exact": 0.890625,
+                  "groups": 32,
+                  "pair_rate": 0.78125
+                },
+                "unknown_preserved": {
+                  "items": 64,
+                  "item_exact": 1.0,
+                  "groups": 32,
+                  "pair_rate": 1.0
+                }
+              },
+              "flip_pairwise_macro": 0.03125,
+              "copy_rate": 0.6026785714285714,
+              "unknown_rate": 1.0,
+              "range_errors": 0,
+              "finite_parameters": true,
+              "update": 1000,
+              "learning_rate": 0.003,
+              "checkpoint": "reports\\r2_content_binding_v1\\B\\20260920\\cal_lr3\\update_001000.pt"
+            },
+            {
+              "per_class": {
+                "fact_flip": {
+                  "items": 64,
+                  "item_exact": 0.5,
+                  "groups": 32,
+                  "pair_rate": 0.0
+                },
+                "object_swap": {
+                  "items": 64,
+                  "item_exact": 0.484375,
+                  "groups": 32,
+                  "pair_rate": 0.0
+                },
+                "relation_flip": {
+                  "items": 64,
+                  "item_exact": 0.515625,
+                  "groups": 32,
+                  "pair_rate": 0.03125
+                },
+                "negation_scope": {
+                  "items": 64,
+                  "item_exact": 0.421875,
+                  "groups": 32,
+                  "pair_rate": 0.0
+                },
+                "distractor_invariant": {
+                  "items": 64,
+                  "item_exact": 0.734375,
+                  "groups": 32,
+                  "pair_rate": 0.5
+                },
+                "missing_to_filled": {
+                  "items": 64,
+                  "item_exact": 0.734375,
+                  "groups": 32,
+                  "pair_rate": 0.53125
+                },
+                "unknown_preserved": {
+                  "items": 64,
+                  "item_exact": 1.0,
+                  "groups": 32,
+                  "pair_rate": 1.0
+                }
+              },
+              "flip_pairwise_macro": 0.010416666666666666,
+              "copy_rate": 0.59375,
+              "unknown_rate": 0.9166666666666666,
+              "range_errors": 0,
+              "finite_parameters": true,
+              "update": 1500,
+              "learning_rate": 0.003,
+              "checkpoint": "reports\\r2_content_binding_v1\\B\\20260920\\cal_lr3\\update_001500.pt"
+            },
+            {
+              "per_class": {
+                "fact_flip": {
+                  "items": 64,
+                  "item_exact": 0.5,
+                  "groups": 32,
+                  "pair_rate": 0.0
+                },
+                "object_swap": {
+                  "items": 64,
+                  "item_exact": 0.453125,
+                  "groups": 32,
+                  "pair_rate": 0.0
+                },
+                "relation_flip": {
+                  "items": 64,
+                  "item_exact": 0.5,
+                  "groups": 32,
+                  "pair_rate": 0.0
+                },
+                "negation_scope": {
+                  "items": 64,
+                  "item_exact": 0.34375,
+                  "groups": 32,
+                  "pair_rate": 0.0
+                },
+                "distractor_invariant": {
+                  "items": 64,
+                  "item_exact": 0.6875,
+                  "groups": 32,
+                  "pair_rate": 0.46875
+                },
+                "missing_to_filled": {
+                  "items": 64,
+                  "item_exact": 0.609375,
+                  "groups": 32,
+                  "pair_rate": 0.40625
+                },
+                "unknown_preserved": {
+                  "items": 64,
+                  "item_exact": 1.0,
+                  "groups": 32,
+                  "pair_rate": 1.0
+                }
+              },
+              "flip_pairwise_macro": 0.0,
+              "copy_rate": 0.5580357142857143,
+              "unknown_rate": 0.8645833333333334,
+              "range_errors": 0,
+              "finite_parameters": true,
+              "update": 2000,
+              "learning_rate": 0.003,
+              "checkpoint": "reports\\r2_content_binding_v1\\B\\20260920\\cal_lr3\\update_002000.pt"
+            }
+          ],
+          "group_exposure_per_class": {
+            "fact_flip": 1143.0,
+            "object_swap": 1143.0,
+            "relation_flip": 1143.0,
+            "negation_scope": 1142.0,
+            "distractor_invariant": 1143.0,
+            "missing_to_filled": 1143.0,
+            "unknown_preserved": 1143.0
+          }
+        }
+      },
+      "eligible_candidates": [],
+      "selected": null,
+      "arm_status": "stopped_no_qualified_candidate"
+    }
+  },
+  "gates": {
+    "all_calibration_runs_completed": true,
+    "any_arm_selected": false
+  },
+  "next_step": "package stops: no arm produced a qualified candidate (contract §4)",
+  "outcome": "failed"
+}

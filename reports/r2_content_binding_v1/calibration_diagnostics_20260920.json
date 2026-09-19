@@ -1,0 +1,136 @@
+{
+  "format": "r2-content-binding-calibration-diagnostic-v1",
+  "note": "instrument sanity check for the calibration stop: the evaluation reproduced from the best candidate checkpoint bit-for-bit (copy_rate 0.6518, unknown_rate 1.0), plus raw prediction samples (two per class)",
+  "checkpoint": "reports/r2_content_binding_v1/B/20260920/cal_lr1/update_001000.pt",
+  "reproduced_copy_rate": 0.6517857142857143,
+  "reproduced_unknown_rate": 1.0,
+  "copy_induce_bias_end": 0.5221918821334839,
+  "samples": [
+    {
+      "group_class": "fact_flip",
+      "question": "求：峡湾的颜色是什么？",
+      "material": "材料：峡湾是黛，荷塘是青。回：",
+      "gold": "黛",
+      "prediction": "黛",
+      "correct": true,
+      "stopped_on_boundary": true
+    },
+    {
+      "group_class": "fact_flip",
+      "question": "求：峡湾的颜色是什么？",
+      "material": "材料：荷塘是青，峡湾是棕。回：",
+      "gold": "棕",
+      "prediction": "棕",
+      "correct": true,
+      "stopped_on_boundary": true
+    },
+    {
+      "group_class": "object_swap",
+      "question": "求：盐湖的颜色是什么？",
+      "material": "材料：盐湖是黛，荒漠是绯。回：",
+      "gold": "黛",
+      "prediction": "黛",
+      "correct": true,
+      "stopped_on_boundary": true
+    },
+    {
+      "group_class": "object_swap",
+      "question": "求：荒漠的颜色是什么？",
+      "material": "材料：盐湖是黛，荒漠是绯。回：",
+      "gold": "绯",
+      "prediction": "黛",
+      "correct": false,
+      "stopped_on_boundary": true
+    },
+    {
+      "group_class": "relation_flip",
+      "question": "求：芦荡与溶洞的颜色一致吗？",
+      "material": "材料：芦荡是青，溶洞是青。回：",
+      "gold": "相同",
+      "prediction": "相同",
+      "correct": true,
+      "stopped_on_boundary": true
+    },
+    {
+      "group_class": "relation_flip",
+      "question": "求：芦荡与溶洞的颜色一致吗？",
+      "material": "材料：芦荡是青，溶洞是绯。回：",
+      "gold": "不同",
+      "prediction": "相同",
+      "correct": false,
+      "stopped_on_boundary": true
+    },
+    {
+      "group_class": "negation_scope",
+      "question": "求：荒漠是否为青色的？",
+      "material": "材料：荒漠不是青，溶洞是青。回：",
+      "gold": "否",
+      "prediction": "是",
+      "correct": false,
+      "stopped_on_boundary": true
+    },
+    {
+      "group_class": "negation_scope",
+      "question": "求：荒漠是否为青色的？",
+      "material": "材料：荒漠是青，溶洞不是青。回：",
+      "gold": "是",
+      "prediction": "是",
+      "correct": true,
+      "stopped_on_boundary": true
+    },
+    {
+      "group_class": "distractor_invariant",
+      "question": "求：盐湖的颜色是什么？",
+      "material": "材料：盐湖是绯。回：",
+      "gold": "绯",
+      "prediction": "绯",
+      "correct": true,
+      "stopped_on_boundary": true
+    },
+    {
+      "group_class": "distractor_invariant",
+      "question": "求：盐湖的颜色是什么？",
+      "material": "材料：盐湖是绯，雪原是棕。回：",
+      "gold": "绯",
+      "prediction": "绯",
+      "correct": true,
+      "stopped_on_boundary": true
+    },
+    {
+      "group_class": "missing_to_filled",
+      "question": "求：竹林的颜色是什么？",
+      "material": "材料：荒漠是青，峡湾是黛；没有关于竹林的信息。回：",
+      "gold": "未知",
+      "prediction": "未知",
+      "correct": true,
+      "stopped_on_boundary": true
+    },
+    {
+      "group_class": "missing_to_filled",
+      "question": "求：竹林的颜色是什么？",
+      "material": "材料：荒漠是青，峡湾是黛；竹林是棕。回：",
+      "gold": "棕",
+      "prediction": "棕",
+      "correct": true,
+      "stopped_on_boundary": true
+    },
+    {
+      "group_class": "unknown_preserved",
+      "question": "求：请说出苔原的颜色。",
+      "material": "材料：缺少关于苔原的记载。回：",
+      "gold": "未知",
+      "prediction": "未知",
+      "correct": true,
+      "stopped_on_boundary": true
+    },
+    {
+      "group_class": "unknown_preserved",
+      "question": "求：请回答苔原的颜色。",
+      "material": "材料：没有关于苔原的信息。回：",
+      "gold": "未知",
+      "prediction": "未知",
+      "correct": true,
+      "stopped_on_boundary": true
+    }
+  ]
+}
