@@ -1,0 +1,574 @@
+{
+  "format": "r2-content-binding-data-v1",
+  "version": 1,
+  "namespace": "r2_content_binding_v1",
+  "contract": "plans/reference/M5_R2_CONTENT_BINDING_CONTRACT_DRAFT_20260919.md",
+  "generator": "scripts/training/build_taiji_r2_content_binding_data.py",
+  "fixtures": {
+    "train": {
+      "path": "tests\\fixtures\\r2_content_binding_v1_train.jsonl",
+      "sha256": "78c999e240df64d0aae82f87a73aef9e955a41265b24095fdf7f3f6bd6d76911"
+    },
+    "calibration": {
+      "path": "tests\\fixtures\\r2_content_binding_v1_calibration.jsonl",
+      "sha256": "a4d4f9b0f03225ffecbbb50c9a2a208bbfaa6411a5aefa5a4393ece592d7feea"
+    },
+    "sealed": {
+      "path": "tests\\fixtures\\r2_content_binding_v1_sealed.jsonl",
+      "sha256": "40189403d59bb143bc15eb07cdacc0376c8df7982ed412b25178338c2556024c"
+    }
+  },
+  "corpus_digest": "377a7391a5b76b026034ea62dacf33d7f9faebce559871db1adaa632ea6580c7",
+  "pools": {
+    "train": {
+      "objects": [
+        "山峰",
+        "河流",
+        "湖泊",
+        "森林",
+        "草原",
+        "沙漠",
+        "海湾",
+        "岛屿",
+        "峡谷",
+        "平原",
+        "火山",
+        "冰川",
+        "沼泽",
+        "丘陵",
+        "瀑布",
+        "溪流",
+        "洞穴",
+        "田野",
+        "星辰",
+        "云层",
+        "海洋",
+        "草地",
+        "岩石",
+        "泉水"
+      ],
+      "values_single": [
+        "红",
+        "蓝",
+        "绿",
+        "黄",
+        "紫",
+        "灰",
+        "黑",
+        "白"
+      ],
+      "values_double": [
+        "琥珀",
+        "珊瑚",
+        "翡翠",
+        "玛瑙",
+        "琉璃",
+        "玳瑁",
+        "鎏金",
+        "霜缟"
+      ]
+    },
+    "calibration": {
+      "objects": [
+        "苔原",
+        "峡湾",
+        "荷塘",
+        "竹林",
+        "盐湖",
+        "芦荡",
+        "陡崖",
+        "荒漠",
+        "桦林",
+        "雪原",
+        "礁群",
+        "溶洞"
+      ],
+      "values_single": [
+        "青",
+        "棕",
+        "绯",
+        "黛"
+      ],
+      "values_double": [
+        "缥缈",
+        "磬玉",
+        "琅玕",
+        "翠微"
+      ]
+    },
+    "sealed": {
+      "objects": [
+        "冰原",
+        "花海",
+        "松林",
+        "断崖",
+        "海沟",
+        "绿洲",
+        "星云",
+        "幽谷",
+        "枫林",
+        "沙洲",
+        "翠竹",
+        "玉兰",
+        "陡坡",
+        "荷叶",
+        "泉潭",
+        "岚峰"
+      ],
+      "values_single": [
+        "墨",
+        "银",
+        "朱",
+        "碧"
+      ],
+      "values_double": [
+        "霜瑙",
+        "金珀",
+        "玳璃",
+        "琥缟",
+        "绛霞",
+        "黛蓝",
+        "绯雪",
+        "素缟"
+      ]
+    }
+  },
+  "group_classes": [
+    "fact_flip",
+    "object_swap",
+    "relation_flip",
+    "negation_scope",
+    "distractor_invariant",
+    "missing_to_filled",
+    "unknown_preserved"
+  ],
+  "flip_gate_classes": [
+    "fact_flip",
+    "object_swap",
+    "relation_flip"
+  ],
+  "splits": {
+    "train": {
+      "items": 3584,
+      "groups": 1792,
+      "groups_per_class": {
+        "fact_flip": 256,
+        "object_swap": 256,
+        "relation_flip": 256,
+        "negation_scope": 256,
+        "distractor_invariant": 256,
+        "missing_to_filled": 256,
+        "unknown_preserved": 256
+      }
+    },
+    "calibration": {
+      "items": 448,
+      "groups": 224,
+      "groups_per_class": {
+        "fact_flip": 32,
+        "object_swap": 32,
+        "relation_flip": 32,
+        "negation_scope": 32,
+        "distractor_invariant": 32,
+        "missing_to_filled": 32,
+        "unknown_preserved": 32
+      }
+    },
+    "sealed": {
+      "items": 896,
+      "groups": 448,
+      "groups_per_class": {
+        "fact_flip": 64,
+        "object_swap": 64,
+        "relation_flip": 64,
+        "negation_scope": 64,
+        "distractor_invariant": 64,
+        "missing_to_filled": 64,
+        "unknown_preserved": 64
+      }
+    }
+  },
+  "checks": {
+    "quota_train": {
+      "passed": true,
+      "detail": {
+        "items": 3584,
+        "groups": 1792,
+        "per_class": {
+          "fact_flip": 256,
+          "object_swap": 256,
+          "relation_flip": 256,
+          "negation_scope": 256,
+          "distractor_invariant": 256,
+          "missing_to_filled": 256,
+          "unknown_preserved": 256
+        }
+      }
+    },
+    "pair_structure_train": {
+      "passed": true
+    },
+    "quota_calibration": {
+      "passed": true,
+      "detail": {
+        "items": 448,
+        "groups": 224,
+        "per_class": {
+          "fact_flip": 32,
+          "object_swap": 32,
+          "relation_flip": 32,
+          "negation_scope": 32,
+          "distractor_invariant": 32,
+          "missing_to_filled": 32,
+          "unknown_preserved": 32
+        }
+      }
+    },
+    "pair_structure_calibration": {
+      "passed": true
+    },
+    "quota_sealed": {
+      "passed": true,
+      "detail": {
+        "items": 896,
+        "groups": 448,
+        "per_class": {
+          "fact_flip": 64,
+          "object_swap": 64,
+          "relation_flip": 64,
+          "negation_scope": 64,
+          "distractor_invariant": 64,
+          "missing_to_filled": 64,
+          "unknown_preserved": 64
+        }
+      }
+    },
+    "pair_structure_sealed": {
+      "passed": true
+    },
+    "unique_prefixes_train": {
+      "passed": true
+    },
+    "unique_pairs_train": {
+      "passed": true
+    },
+    "unique_prefixes_calibration": {
+      "passed": true
+    },
+    "unique_pairs_calibration": {
+      "passed": true
+    },
+    "unique_prefixes_sealed": {
+      "passed": true
+    },
+    "unique_pairs_sealed": {
+      "passed": true
+    },
+    "prefixes_disjoint_train_calibration": {
+      "passed": true
+    },
+    "groups_disjoint_train_calibration": {
+      "passed": true
+    },
+    "prefixes_disjoint_train_sealed": {
+      "passed": true
+    },
+    "groups_disjoint_train_sealed": {
+      "passed": true
+    },
+    "prefixes_disjoint_calibration_sealed": {
+      "passed": true
+    },
+    "groups_disjoint_calibration_sealed": {
+      "passed": true
+    },
+    "entity_keys_disjoint_train_calibration": {
+      "passed": true
+    },
+    "value_keys_disjoint_train_calibration": {
+      "passed": true
+    },
+    "entity_keys_disjoint_train_sealed": {
+      "passed": true
+    },
+    "value_keys_disjoint_train_sealed": {
+      "passed": true
+    },
+    "entity_keys_disjoint_calibration_sealed": {
+      "passed": true
+    },
+    "value_keys_disjoint_calibration_sealed": {
+      "passed": true
+    },
+    "template_family_markers_disjoint": {
+      "passed": true
+    },
+    "word_surface_clean_train": {
+      "passed": true,
+      "detail": []
+    },
+    "word_surface_clean_calibration": {
+      "passed": true,
+      "detail": []
+    },
+    "word_surface_clean_sealed": {
+      "passed": true,
+      "detail": []
+    },
+    "in_group_relation_train": {
+      "passed": true
+    },
+    "copy_mask_and_closed_train": {
+      "passed": true
+    },
+    "no_conflicting_facts_train": {
+      "passed": true
+    },
+    "in_group_relation_calibration": {
+      "passed": true
+    },
+    "copy_mask_and_closed_calibration": {
+      "passed": true
+    },
+    "no_conflicting_facts_calibration": {
+      "passed": true
+    },
+    "in_group_relation_sealed": {
+      "passed": true
+    },
+    "copy_mask_and_closed_sealed": {
+      "passed": true
+    },
+    "no_conflicting_facts_sealed": {
+      "passed": true
+    },
+    "value_length_balance_train_fact_flip": {
+      "passed": true,
+      "detail": {
+        "single": 128,
+        "double": 128
+      }
+    },
+    "value_length_balance_train_object_swap": {
+      "passed": true,
+      "detail": {
+        "single": 128,
+        "double": 128
+      }
+    },
+    "value_length_balance_train_relation_flip": {
+      "passed": true,
+      "detail": {
+        "single": 128,
+        "double": 128
+      }
+    },
+    "value_length_balance_train_negation_scope": {
+      "passed": true,
+      "detail": {
+        "single": 128,
+        "double": 128
+      }
+    },
+    "value_length_balance_train_distractor_invariant": {
+      "passed": true,
+      "detail": {
+        "single": 128,
+        "double": 128
+      }
+    },
+    "value_length_balance_train_missing_to_filled": {
+      "passed": true,
+      "detail": {
+        "single": 128,
+        "double": 128
+      }
+    },
+    "negation_queried_balance_train": {
+      "passed": true,
+      "detail": {
+        "first": 128,
+        "second": 128
+      }
+    },
+    "distractor_position_balance_train": {
+      "passed": true,
+      "detail": {
+        "before": 128,
+        "after": 128
+      }
+    },
+    "value_length_balance_calibration_fact_flip": {
+      "passed": true,
+      "detail": {
+        "single": 16,
+        "double": 16
+      }
+    },
+    "value_length_balance_calibration_object_swap": {
+      "passed": true,
+      "detail": {
+        "single": 16,
+        "double": 16
+      }
+    },
+    "value_length_balance_calibration_relation_flip": {
+      "passed": true,
+      "detail": {
+        "single": 16,
+        "double": 16
+      }
+    },
+    "value_length_balance_calibration_negation_scope": {
+      "passed": true,
+      "detail": {
+        "single": 16,
+        "double": 16
+      }
+    },
+    "value_length_balance_calibration_distractor_invariant": {
+      "passed": true,
+      "detail": {
+        "single": 16,
+        "double": 16
+      }
+    },
+    "value_length_balance_calibration_missing_to_filled": {
+      "passed": true,
+      "detail": {
+        "single": 16,
+        "double": 16
+      }
+    },
+    "negation_queried_balance_calibration": {
+      "passed": true,
+      "detail": {
+        "first": 16,
+        "second": 16
+      }
+    },
+    "distractor_position_balance_calibration": {
+      "passed": true,
+      "detail": {
+        "before": 16,
+        "after": 16
+      }
+    },
+    "value_length_balance_sealed_fact_flip": {
+      "passed": true,
+      "detail": {
+        "single": 32,
+        "double": 32
+      }
+    },
+    "value_length_balance_sealed_object_swap": {
+      "passed": true,
+      "detail": {
+        "single": 32,
+        "double": 32
+      }
+    },
+    "value_length_balance_sealed_relation_flip": {
+      "passed": true,
+      "detail": {
+        "single": 32,
+        "double": 32
+      }
+    },
+    "value_length_balance_sealed_negation_scope": {
+      "passed": true,
+      "detail": {
+        "single": 32,
+        "double": 32
+      }
+    },
+    "value_length_balance_sealed_distractor_invariant": {
+      "passed": true,
+      "detail": {
+        "single": 32,
+        "double": 32
+      }
+    },
+    "value_length_balance_sealed_missing_to_filled": {
+      "passed": true,
+      "detail": {
+        "single": 32,
+        "double": 32
+      }
+    },
+    "negation_queried_balance_sealed": {
+      "passed": true,
+      "detail": {
+        "first": 32,
+        "second": 32
+      }
+    },
+    "distractor_position_balance_sealed": {
+      "passed": true,
+      "detail": {
+        "before": 32,
+        "after": 32
+      }
+    },
+    "length_and_object_bounds_train": {
+      "passed": true,
+      "detail": {
+        "max_prefix": 37,
+        "max_response": 2,
+        "object_counts": {
+          "2": 2304,
+          "1": 768,
+          "3": 512
+        }
+      }
+    },
+    "length_and_object_bounds_calibration": {
+      "passed": true,
+      "detail": {
+        "max_prefix": 38,
+        "max_response": 2,
+        "object_counts": {
+          "2": 288,
+          "1": 96,
+          "3": 64
+        }
+      }
+    },
+    "length_and_object_bounds_sealed": {
+      "passed": true,
+      "detail": {
+        "max_prefix": 38,
+        "max_response": 2,
+        "object_counts": {
+          "2": 576,
+          "1": 192,
+          "3": 128
+        }
+      }
+    },
+    "copyable_slice_denominators_calibration": {
+      "passed": true,
+      "detail": {
+        "copyable": 224,
+        "unseen_complete_value": 224,
+        "unseen_char": 224
+      }
+    },
+    "copyable_slice_denominators_sealed": {
+      "passed": true,
+      "detail": {
+        "copyable": 448,
+        "unseen_complete_value": 448,
+        "unseen_char": 340
+      }
+    },
+    "reference_self_check": {
+      "passed": true,
+      "detail": {
+        "mismatches": []
+      }
+    }
+  },
+  "outcome": "passed",
+  "failed_checks": []
+}

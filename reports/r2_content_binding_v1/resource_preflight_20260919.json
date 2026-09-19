@@ -1,0 +1,71 @@
+{
+  "format": "r2-content-binding-resource-preflight-v1",
+  "version": 1,
+  "contract": "plans/reference/M5_R2_CONTENT_BINDING_CONTRACT_DRAFT_20260919.md",
+  "date": "2026-09-19",
+  "nature": "resource measurement only; NOT a statistical training run — no capability, recipe or selection claims",
+  "machine": {
+    "platform": "Windows-11-10.0.26200-SP0",
+    "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+    "python": "3.12.10",
+    "torch": "2.13.0+cpu",
+    "torch_num_threads": 12,
+    "device": "CPU (local; no cloud, no new hardware)"
+  },
+  "data_identity": {
+    "train_fixture": "tests/fixtures/r2_content_binding_v1_train.jsonl",
+    "train_digest": "a37e5d39576280943f9796aa7204ee14232c8e7443ce9fa02d7e9c44fcf740d0",
+    "vocab_size": 113
+  },
+  "arms": {
+    "A": {
+      "arm": "A",
+      "learning_rate_recipe": "cal_lr1 (timing only; recipes share geometry)",
+      "seed": 20260920,
+      "updates_measured": 20,
+      "warmup_updates_excluded": 2,
+      "per_update_seconds": 0.0579,
+      "projected_2000_update_run_minutes": 1.9,
+      "parameter_count": 114483,
+      "zero_step_checkpoint_bytes": 1420647,
+      "rss_mb_after_run": 321.5
+    },
+    "B": {
+      "arm": "B",
+      "learning_rate_recipe": "cal_lr1 (timing only; recipes share geometry)",
+      "seed": 20260920,
+      "updates_measured": 20,
+      "warmup_updates_excluded": 2,
+      "per_update_seconds": 0.1101,
+      "projected_2000_update_run_minutes": 3.7,
+      "parameter_count": 108963,
+      "zero_step_checkpoint_bytes": 1357975,
+      "rss_mb_after_run": 329.2
+    }
+  },
+  "extrapolation": {
+    "note": "linear extrapolation from steady-state per-update timing; calibration evaluation passes and checkpoint I/O excluded",
+    "per_run_2000_updates_minutes_worst_arm": 3.7,
+    "ten_run_package_minutes": 36.7,
+    "per_run_cap_seconds": 5400,
+    "package_cap_hours": 12,
+    "artifact_cap_gib": 10,
+    "per_run_within_cap": true,
+    "package_within_cap": true,
+    "estimated_package_artifacts_gib": 0.02
+  },
+  "manifest_fields_filled": {
+    "threads": 12,
+    "precision": "float32",
+    "actual_memory_mb": 329.2,
+    "per_update_seconds_arm_A": 0.0579,
+    "per_update_seconds_arm_B": 0.1101,
+    "checkpoint_bytes_zero_step": {
+      "A": 1420647,
+      "B": 1357975
+    }
+  },
+  "conclusion": "projected resource use is far inside the contract caps; the budget decision can proceed on these numbers",
+  "can_promote": false,
+  "training_authorized": false
+}
