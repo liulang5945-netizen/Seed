@@ -341,6 +341,7 @@ def run(
     question_hidden_width: int = 0,
     relation_hidden: int = 96,
     calibration_points: tuple[int, ...] = CALIBRATION_POINTS,
+    pair_schedule: tuple[int, int] | None = None,
 ) -> dict[str, Any]:
     """One bounded training run.  Never called by this session's gate phase
     except through ``--mode smoke`` (test artifact)."""
@@ -370,6 +371,9 @@ def run(
     if trainer_revision == "v2":
         # contract v2 section D1: group-counterfactual contrastive auxiliary
         trainer.enable_pair_contrastive(weight=1.0, margin=1.0)
+        if pair_schedule is not None:
+            # contract v6 section G1: anneal the pair pressure to protect copy
+            trainer.enable_pair_schedule(hold_until=pair_schedule[0], anneal_until=pair_schedule[1])
     elif trainer_revision != "v1":
         raise ValueError(f"unknown trainer revision: {trainer_revision}")
     run_dir = PROJECT_ROOT / output_root / arm / str(seed) / config_name
@@ -517,6 +521,18 @@ def main() -> int:
         default="500,1000,1500,2000",
         help="comma-separated calibration evaluation updates (v4: 500,1000,2000,...,8000)",
     )
+    parser.add_argument(
+        "--pair-hold",
+        type=int,
+        default=None,
+        help="v6: anneal pair pressure starting at this update",
+    )
+    parser.add_argument(
+        "--pair-anneal",
+        type=int,
+        default=None,
+        help="v6: pair pressure reaches 0 at this update",
+    )
     args = parser.parse_args()
 
     if args.mode == "smoke":
@@ -551,6 +567,11 @@ def main() -> int:
         relation_hidden=args.relation_hidden,
         calibration_points=tuple(
             int(item) for item in args.calibration_points.split(",")
+        ),
+        pair_schedule=(
+            (args.pair_hold, args.pair_anneal)
+            if args.pair_hold is not None and args.pair_anneal is not None
+            else None
         ),
     )
     print(

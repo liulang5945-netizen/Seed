@@ -924,6 +924,8 @@ class SequenceContentTrainer:
         #: Pair-contrastive auxiliary (contract v2 section D1); off in v1.
         self.pair_contrastive_weight = 0.0
         self.pair_contrastive_margin = 1.0
+        self.pair_schedule_hold_until: int | None = None
+        self.pair_schedule_anneal_until: int | None = None
         self.trainer_revision = "v1"
         self.global_step = 0
         self.optimizer = torch.optim.AdamW(
@@ -970,6 +972,18 @@ class SequenceContentTrainer:
         self.pair_contrastive_weight = float(weight)
         self.pair_contrastive_margin = float(margin)
         self.trainer_revision = "v2-pair-contrastive" if weight > 0.0 else "v1"
+
+    def enable_pair_schedule(self, hold_until: int, anneal_until: int) -> None:
+        """Contract v6 section G1: linearly anneal the pair pressure from 1.0
+        to 0 over [hold_until, anneal_until]; full pressure before hold_until,
+        zero after anneal_until.  Requires pair contrastive enabled."""
+
+        if self.pair_contrastive_weight <= 0.0:
+            raise ValueError("pair schedule requires pair contrastive enabled")
+        if not 0 < hold_until < anneal_until:
+            raise ValueError("schedule requires 0 < hold_until < anneal_until")
+        self.pair_schedule_hold_until = int(hold_until)
+        self.pair_schedule_anneal_until = int(anneal_until)
 
     def _pair_contrastive_term(
         self, batch: Sequence[Mapping[str, Any]]
@@ -1048,7 +1062,7 @@ class SequenceContentTrainer:
         pair_term = 0.0
         if self.pair_contrastive_weight > 0.0:
             pair_term, pair_groups = self._pair_contrastive_term(batch)
-            total = total + float(self.pair_contrastive_weight) * pair_term
+            total = total + self._pair_weight_now() * pair_term
         if not bool(torch.isfinite(total)):
             raise FloatingPointError(f"non-finite loss at step {self.global_step}")
         total.backward()
@@ -1067,10 +1081,29 @@ class SequenceContentTrainer:
             "pair_contrastive": (
                 float(pair_term.detach()) if torch.is_tensor(pair_term) else float(pair_term)
             ),
+            "pair_weight_now": self._pair_weight_now(),
             "grad_norm": grad_norm,
             "lr": float(self.optimizer.param_groups[0]["lr"]),
             "global_step": self.global_step,
         }
+
+    def _pair_weight_now(self) -> float:
+        """Scheduled pair weight at the step about to run (v6 section G1)."""
+
+        base = float(self.pair_contrastive_weight)
+        if base <= 0.0:
+            return 0.0
+        hold = self.pair_schedule_hold_until
+        anneal = self.pair_schedule_anneal_until
+        if hold is None or anneal is None:
+            return base
+        step_now = self.global_step + 1
+        if step_now <= hold:
+            return base
+        if step_now >= anneal:
+            return 0.0
+        fraction = (anneal - step_now) / float(anneal - hold)
+        return base * fraction
 
     # ------------------------------------------------------------- checkpoint
 
@@ -1100,6 +1133,8 @@ class SequenceContentTrainer:
             "trainer_revision": self.trainer_revision,
             "pair_contrastive_weight": float(self.pair_contrastive_weight),
             "pair_contrastive_margin": float(self.pair_contrastive_margin),
+            "pair_schedule_hold_until": self.pair_schedule_hold_until,
+            "pair_schedule_anneal_until": self.pair_schedule_anneal_until,
             "learning_rate": float(self.learning_rate),
             "total_updates": int(self.total_updates),
             "warmup_fraction": float(self.warmup_fraction),
@@ -1158,6 +1193,10 @@ class SequenceContentTrainer:
         trainer.copy_value_weight = float(payload.get("copy_value_weight", 1.0))
         trainer.pair_contrastive_weight = float(payload.get("pair_contrastive_weight", 0.0))
         trainer.pair_contrastive_margin = float(payload.get("pair_contrastive_margin", 1.0))
+        hold = payload.get("pair_schedule_hold_until")
+        anneal = payload.get("pair_schedule_anneal_until")
+        trainer.pair_schedule_hold_until = int(hold) if hold is not None else None
+        trainer.pair_schedule_anneal_until = int(anneal) if anneal is not None else None
         trainer.trainer_revision = str(payload.get("trainer_revision", "v1"))
         state = payload.get("rng_state")
         if isinstance(state, torch.Tensor):
