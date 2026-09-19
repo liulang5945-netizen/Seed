@@ -525,7 +525,9 @@ def main() -> int:
         total = int(args.total_updates)
         cap = CALIBRATION_MAX_UPDATES if args.mode == "calibration" else FORMAL_MAX_UPDATES
         if args.calibration_points != "500,1000,1500,2000":
-            cap = 8000  # v4 contract: dense-point sweep carries an 8000-update cap
+            # v4/v5 dense-point sweeps: the cap follows the requested points
+            pts = tuple(int(item) for item in args.calibration_points.split(","))
+            cap = max(max(pts), 8000)
         if total > cap:
             raise SystemExit(f"--total-updates {total} exceeds the {args.mode} cap {cap}")
     else:
