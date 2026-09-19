@@ -118,6 +118,19 @@ v3 的 loss 门是 **1/3**（→ 判抖动，matched 正常）；v4 是 **3/3 �
   作 PBKDF2 口令，其中 hostname/username **就在仓库里**（`report.xml` 里直接写着 hostname）、
   machine/processor 取值空间极小 ⇒ 一旦盐公开，密钥可离线重放。**安全性接近混淆而非加密。**
 
+**(4f) 历史重写的隐藏陷阱（2026-09-19 实测）** ——
+
+- **`git filter-repo` 只重写 `refs/heads/*` 与 `refs/tags/*`，不碰自定义命名空间的 ref**
+  （本次是 `refs/codex/*`）。⇒ "路径已删但 blob 仍可达"的根因就是它：
+  `git log --all -- <path>` 显示 0（走 diff 逻辑），而 `rev-list --objects` 仍列出该路径。
+  **验证必须查「blob 是否仍可达」，不能只查「log 是否 0 次」**；处理 = 删这类 ref 后 `repack -ad`。
+- **远端还有 force-push 改不到的引用**：GitHub 的 `refs/pull/*/head`。若某 PR 提交含敏感路径，
+  旧对象在远端仍可能短期可达 ⇒ 彻底清除需删 PR 或联系平台支持。
+- **正确做法：镜像隔离** —— `git clone --mirror` → 在镜像里 filter → 验证 → 强推；
+  **主仓库全程只读**。历史重写**永远不要**在主仓库原地做。
+- **改写后所有提交哈希都变**（本次 1696 个里约 67% 的前缀变化）⇒ 文档/记忆里记录的旧 sha 全部失效。
+- **推前必须再验证一次**；`fetch --force` + `reset --hard` 前后要用**逐字节备份**保护未提交文件。
+
 ## 5. R2 当前状态（2026-09-18）
 
 **当前配置**：char-v1 字级图 + induction + λ_copy=1.0，lr=0.01，microbatch 8，30 epochs。
