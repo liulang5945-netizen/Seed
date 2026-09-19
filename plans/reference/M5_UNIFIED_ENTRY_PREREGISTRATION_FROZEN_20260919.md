@@ -37,3 +37,11 @@
 ## §4 纪律
 
 负结果不改绿；报告不覆写；冻结后不改本文数值；trace/成员身份与 bundle digest 绑定贯穿；临时脚本用毕即删。
+
+## §5 修订（2026-09-19，首轮运行的仪器缺陷撤回与任务选择修正）
+
+首轮运行（`unified_entry_supported` 表面成立）实测**全部 episode 为零动作空转成功**（executed_actions=0 却 success）——create_undo 族的 goal_files 在本环境下为空集，目标于 tick 0 即满足（与 P5.2b 缺陷审计 `M5_P5_2C_ENTRY_AUDIT_P5_2B_DEFECT_20260913.md` 同类）。按 02 §2.3.6（仪器失真撤回受影响判定）：
+
+1. **撤回首轮 `unified_entry_supported` 判定**（四线"通过"系空转所致，无效）；首轮报告原样保留于 git 历史，不覆写；
+2. **任务选择修正**：create_undo 族（全部 10 个任务实证 tick0_goal=True，空转）→ **lang_confirm 族**（实证 tick0_goal=False，需真实语言选择动作）：主任务 = 族内首个（`p52a-p52-train-000`），未见实例 = 族内次个；
+3. 其余设计（五臂、L1–L4 线、资源、停止线）零改动；实证依据与修正理由披露于报告。
