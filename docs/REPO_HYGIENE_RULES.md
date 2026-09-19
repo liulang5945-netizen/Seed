@@ -131,6 +131,23 @@ git clone --mirror <repo> <tmp-mirror>
 
 **且**：改写后**所有提交哈希都变** ⇒ 文档/记忆里记录的旧 sha 全部失效，需一并说明。
 
+**改完之后必须做两件收尾**（2026-09-19 实测漏做会留下假故障）：
+
+1. **重建 `commit-graph` 缓存**。历史重写 + `repack` 之后，`.git/objects/info/commit-graphs/`
+   里的分片仍引用**重写前的旧哈希** ⇒ `git fsck` 会报一片
+   `Could not read <old-sha>` / `failed to parse commit ... for commit-graph`。
+   **这不是数据丢失**（按提交主题核查，内容都在、只是哈希变了），但会让 `fsck` 假红、
+   也会拖慢 git。处理：
+
+   ```bash
+   rm -rf .git/objects/info/commit-graphs .git/objects/info/commit-graph
+   git commit-graph write --reachable
+   git fsck --no-progress --no-dangling     # 应回到 rc=0
+   ```
+
+2. **清掉自定义 ref 命名空间**（见 R6 第 1 条）后 `repack -ad` + `prune --expire=now`，
+   否则旧对象仍物理留在 pack 里。
+
 ---
 
 ## R7 危险操作前备份 `.git`，并**验证备份可读**
