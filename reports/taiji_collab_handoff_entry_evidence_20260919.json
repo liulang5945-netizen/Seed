@@ -1,0 +1,332 @@
+{
+  "format": "taiji-collab-handoff-entry-evidence-v1",
+  "version": 1,
+  "contract": "plans/reference/M5_COLLAB_HANDOFF_M4_PRODUCTIZATION_DRAFT_20260919.md",
+  "composition_rule": "m4_failure_handoff",
+  "rule_revision": 1,
+  "entry": "taiji.collab_handoff.execute_group_episode",
+  "episodes": [
+    {
+      "format": "taiji-collab-handoff-episode-v1",
+      "episode_id": "handoff_then_goal",
+      "composition_rule": "m4_failure_handoff",
+      "rule_revision": 1,
+      "active_members": [
+        "m0",
+        "m1",
+        "m2"
+      ],
+      "success": true,
+      "stop_reason": "goal_reached",
+      "events": [
+        {
+          "tick": 1,
+          "kind": "member_called",
+          "member": "m0",
+          "cue_count": 1,
+          "bind_failure": null,
+          "rule_revision": 1
+        },
+        {
+          "tick": 1,
+          "kind": "member_called",
+          "member": "m1",
+          "cue_count": 1,
+          "bind_failure": null,
+          "rule_revision": 1
+        },
+        {
+          "tick": 1,
+          "kind": "member_called",
+          "member": "m2",
+          "cue_count": 1,
+          "bind_failure": null,
+          "rule_revision": 1
+        },
+        {
+          "tick": 1,
+          "kind": "member_executed",
+          "member": "m0",
+          "executed": false,
+          "rule_revision": 1
+        },
+        {
+          "tick": 1,
+          "kind": "attempt_failed",
+          "member": "m0",
+          "rule_revision": 1
+        },
+        {
+          "tick": 2,
+          "kind": "member_called",
+          "member": "m0",
+          "cue_count": 1,
+          "bind_failure": null,
+          "rule_revision": 1
+        },
+        {
+          "tick": 2,
+          "kind": "member_called",
+          "member": "m1",
+          "cue_count": 1,
+          "bind_failure": null,
+          "rule_revision": 1
+        },
+        {
+          "tick": 2,
+          "kind": "member_called",
+          "member": "m2",
+          "cue_count": 1,
+          "bind_failure": null,
+          "rule_revision": 1
+        },
+        {
+          "tick": 2,
+          "kind": "member_executed",
+          "member": "m1",
+          "executed": true,
+          "rule_revision": 1
+        },
+        {
+          "tick": 3,
+          "kind": "goal_reached",
+          "rule_revision": 1
+        }
+      ],
+      "steps": [
+        {
+          "chosen": "m0",
+          "executed": false
+        },
+        {
+          "chosen": "m1",
+          "executed": true
+        }
+      ]
+    },
+    {
+      "format": "taiji-collab-handoff-episode-v1",
+      "episode_id": "all_members_blocked",
+      "composition_rule": "m4_failure_handoff",
+      "rule_revision": 1,
+      "active_members": [
+        "m0",
+        "m1",
+        "m2"
+      ],
+      "success": false,
+      "stop_reason": "all_members_blocked",
+      "events": [
+        {
+          "tick": 1,
+          "kind": "member_called",
+          "member": "m0",
+          "cue_count": 1,
+          "bind_failure": null,
+          "rule_revision": 1
+        },
+        {
+          "tick": 1,
+          "kind": "member_called",
+          "member": "m1",
+          "cue_count": 1,
+          "bind_failure": null,
+          "rule_revision": 1
+        },
+        {
+          "tick": 1,
+          "kind": "member_called",
+          "member": "m2",
+          "cue_count": 1,
+          "bind_failure": null,
+          "rule_revision": 1
+        },
+        {
+          "tick": 1,
+          "kind": "member_executed",
+          "member": "m0",
+          "executed": false,
+          "rule_revision": 1
+        },
+        {
+          "tick": 1,
+          "kind": "attempt_failed",
+          "member": "m0",
+          "rule_revision": 1
+        },
+        {
+          "tick": 2,
+          "kind": "member_called",
+          "member": "m0",
+          "cue_count": 1,
+          "bind_failure": null,
+          "rule_revision": 1
+        },
+        {
+          "tick": 2,
+          "kind": "member_called",
+          "member": "m1",
+          "cue_count": 1,
+          "bind_failure": null,
+          "rule_revision": 1
+        },
+        {
+          "tick": 2,
+          "kind": "member_called",
+          "member": "m2",
+          "cue_count": 1,
+          "bind_failure": null,
+          "rule_revision": 1
+        },
+        {
+          "tick": 2,
+          "kind": "member_executed",
+          "member": "m1",
+          "executed": false,
+          "rule_revision": 1
+        },
+        {
+          "tick": 2,
+          "kind": "attempt_failed",
+          "member": "m1",
+          "rule_revision": 1
+        },
+        {
+          "tick": 3,
+          "kind": "member_called",
+          "member": "m0",
+          "cue_count": 1,
+          "bind_failure": null,
+          "rule_revision": 1
+        },
+        {
+          "tick": 3,
+          "kind": "member_called",
+          "member": "m1",
+          "cue_count": 1,
+          "bind_failure": null,
+          "rule_revision": 1
+        },
+        {
+          "tick": 3,
+          "kind": "member_called",
+          "member": "m2",
+          "cue_count": 1,
+          "bind_failure": null,
+          "rule_revision": 1
+        },
+        {
+          "tick": 3,
+          "kind": "member_executed",
+          "member": "m2",
+          "executed": false,
+          "rule_revision": 1
+        },
+        {
+          "tick": 3,
+          "kind": "attempt_failed",
+          "member": "m2",
+          "rule_revision": 1
+        },
+        {
+          "tick": 4,
+          "kind": "member_called",
+          "member": "m0",
+          "cue_count": 1,
+          "bind_failure": null,
+          "rule_revision": 1
+        },
+        {
+          "tick": 4,
+          "kind": "member_called",
+          "member": "m1",
+          "cue_count": 1,
+          "bind_failure": null,
+          "rule_revision": 1
+        },
+        {
+          "tick": 4,
+          "kind": "member_called",
+          "member": "m2",
+          "cue_count": 1,
+          "bind_failure": null,
+          "rule_revision": 1
+        },
+        {
+          "tick": 4,
+          "kind": "stop",
+          "stop": "all_members_blocked",
+          "rule_revision": 1
+        }
+      ],
+      "steps": [
+        {
+          "chosen": "m0",
+          "executed": false
+        },
+        {
+          "chosen": "m1",
+          "executed": false
+        },
+        {
+          "chosen": "m2",
+          "executed": false
+        }
+      ]
+    },
+    {
+      "format": "taiji-collab-handoff-episode-v1",
+      "episode_id": "all_members_exhausted",
+      "composition_rule": "m4_failure_handoff",
+      "rule_revision": 1,
+      "active_members": [
+        "m0",
+        "m1",
+        "m2"
+      ],
+      "success": false,
+      "stop_reason": "all_members_exhausted",
+      "events": [
+        {
+          "tick": 1,
+          "kind": "member_called",
+          "member": "m0",
+          "cue_count": 1,
+          "bind_failure": "bind_error",
+          "rule_revision": 1
+        },
+        {
+          "tick": 1,
+          "kind": "member_called",
+          "member": "m1",
+          "cue_count": 1,
+          "bind_failure": "bind_error",
+          "rule_revision": 1
+        },
+        {
+          "tick": 1,
+          "kind": "member_called",
+          "member": "m2",
+          "cue_count": 1,
+          "bind_failure": "bind_error",
+          "rule_revision": 1
+        },
+        {
+          "tick": 1,
+          "kind": "stop",
+          "stop": "all_members_exhausted",
+          "rule_revision": 1
+        }
+      ],
+      "steps": []
+    }
+  ],
+  "checks": {
+    "all_events_carry_rule_revision": true,
+    "handoff_demonstrated": true,
+    "all_members_blocked_demonstrated": true,
+    "all_members_exhausted_demonstrated": true,
+    "handoff_episode_reached_goal": true
+  },
+  "outcome": "passed"
+}

@@ -155,3 +155,87 @@ def member_cue_count(steps: Sequence[ExecutionStep], member: str) -> int:
     episode's step count, so a late joiner is queried inside its repertoire)."""
 
     return member_own_steps(steps, member) + 1
+
+
+def execute_group_episode(
+    *,
+    active_members: Sequence[str],
+    episode_id: str,
+    policy: FailureHandoffPolicy,
+    invoke_member,
+    execute_chosen,
+    goal_reached,
+    max_steps: int = 8,
+) -> dict[str, Any]:
+    """The minimal product execution entry for one member-group episode.
+
+    The caller owns binding, action execution and goal checking (workbench-
+    specific); this entry owns the tick loop, the HANDOFF-M4 decision, and the
+    step/event records -- every event carries ``rule_revision`` so the same-
+    entry evidence shows WHICH rule the product path ran.
+    """
+
+    steps: list[ExecutionStep] = []
+    events: list[dict[str, Any]] = []
+    stop_reason: str | None = None
+    success = False
+    for tick in range(1, int(max_steps) + 1):
+        if goal_reached():
+            success = True
+            stop_reason = "goal_reached"
+            events.append({"tick": tick, "kind": "goal_reached", "rule_revision": policy.rule_revision})
+            break
+        calls: list[MemberCall] = []
+        for member in policy.active_members:
+            cue_count = member_cue_count(steps, member)
+            call = invoke_member(member, cue_count)
+            calls.append(call)
+            events.append(
+                {
+                    "tick": tick,
+                    "kind": "member_called",
+                    "member": member,
+                    "cue_count": cue_count,
+                    "bind_failure": call.bind_failure,
+                    "rule_revision": policy.rule_revision,
+                }
+            )
+        decision = policy.select(calls, steps)
+        if decision.stop is not None:
+            stop_reason = decision.stop
+            events.append({"tick": tick, "kind": "stop", "stop": stop_reason, "rule_revision": policy.rule_revision})
+            break
+        executed = bool(execute_chosen(decision.chosen.member))
+        steps.append(ExecutionStep(chosen=decision.chosen.member, executed=executed))
+        events.append(
+            {
+                "tick": tick,
+                "kind": "member_executed",
+                "member": decision.chosen.member,
+                "executed": executed,
+                "rule_revision": policy.rule_revision,
+            }
+        )
+        if not executed:
+            events.append(
+                {
+                    "tick": tick,
+                    "kind": "attempt_failed",
+                    "member": decision.chosen.member,
+                    "rule_revision": policy.rule_revision,
+                }
+            )
+    if stop_reason is None and success is False:
+        stop_reason = "step_cap"
+        events.append({"tick": max_steps, "kind": "stop", "stop": stop_reason, "rule_revision": policy.rule_revision})
+    return {
+        "format": "taiji-collab-handoff-episode-v1",
+        "episode_id": str(episode_id),
+        "composition_rule": policy.composition_rule,
+        "rule_revision": policy.rule_revision,
+        "active_members": list(policy.active_members),
+        "success": success,
+        "stop_reason": stop_reason,
+        "events": events,
+        "steps": [{"chosen": s.chosen, "executed": s.executed} for s in steps],
+    }

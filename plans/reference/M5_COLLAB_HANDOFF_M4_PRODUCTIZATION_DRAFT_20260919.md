@@ -34,3 +34,11 @@
 ## §5 结果去向与边界
 
 成立 ⇒ 协作轴"产品同入口选择"欠账闭合一项，轴级共同门/批准仍另评；不成立 ⇒ 记录产品宿主的结构性障碍，欠账保留。全程不触碰默认产品采用、不重启内容绑定线、不修改 P5.2b 冻结判据。
+
+## §6 结案（2026-09-19）
+
+实现门＋同入口选择证据全部完成，**协作轴"产品同入口选择"欠账闭合**：
+
+- 产品组件 `taiji/collab_handoff.py`（FailureHandoffPolicy revision 0/1 ＋ `execute_group_episode` 产品执行入口），9 门实现测试全绿（含 400 场景仪器-产品对齐 fuzz）；
+- 同入口证据 `reports/taiji_collab_handoff_entry_evidence_20260919.json`：三场景确定性运行——handoff_then_goal（m0 失败→让位 m1→goal_reached）、all_members_blocked、all_members_exhausted——全部事件携带 rule_revision=1，五项检查全过；
+- `taiji/` 从此拥有 HANDOFF-M4 的产品实现（此前只有 gate 脚本仪器）；后续 interaction 在线路径接入该组件即获得让位选择语义。
