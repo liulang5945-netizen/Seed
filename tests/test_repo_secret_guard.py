@@ -6,21 +6,42 @@
 覆盖不到 `output/p6-1d-packaged-data/security/` ⇒ 那一对凭据随 `8f7fc6fa` 进了历史，且已在
 `origin/main` 里。根目录那对值与打包那份**不同**，所以被泄的是打包运行自己生成的那一份。
 
-因此这里分两条测：① 跟踪清单里不许出现凭据/审计日志/`*.pt`；② 用 `git check-ignore --no-index`
-**实测规则能否命中嵌套路径** —— 只看 `.gitignore` 里有没有某个字符串是测不出这个 bug 的。
+因此这里分几条测：① 跟踪清单里不许出现凭据/审计日志/`*.pt`；② 用 `git check-ignore --no-index`
+**实测规则能否命中嵌套路径** —— 只看 `.gitignore` 里有没有某个字符串是测不出这个 bug 的；
+③ 按命名约定覆盖打包目录；④ 反向钉住通配不误伤有意入库的产物；⑤ 在位凭据的值不得等于历史 blob；
+⑥ 规范（R3）列出的凭据名 ⇔ 本文件盯的名字，必须一致（防"文档加了、守卫没跟上"）。
 """
 
 from __future__ import annotations
 
+import re
 import subprocess
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[1]
 
+#: **单一事实源**：`test_runtime_credentials_and_checkpoints_are_not_tracked` 与
+#: `test_guard_watches_every_credential_name_the_rules_list` 都读这份清单。
+#: 刻意做成同一个常量，是为了堵住一种假绿 —— 若漂移断言只比对一个"装饰性常量"，
+#: 那么只改常量就能让它变绿，而真正的跟踪清单检查仍然只盯旧的两个名字。
+#: `audit_logs/` 以 `/` 结尾，按**目录**匹配（其余按文件名 fnmatch）。
+CREDENTIAL_PATTERNS = (
+    ".jwt_secret",
+    ".storage_salt",
+    ".fernet_key",
+    "audit_logs/",
+    ".env*",
+    "*.pem",
+    "*.key",
+    "id_rsa*",
+    ".netrc",
+)
+
 #: 相对仓库根的嵌套样例：与今天实际泄漏的那条同形。
 NESTED_SECRET_PATHS = (
     "output/p6-1d-packaged-data/security/.jwt_secret",
     "output/p6-1d-packaged-data/security/.storage_salt",
+    "output/p6-1d-packaged-data/security/.fernet_key",
     "somewhere/deep/security/audit_logs/2026-09-19.log",
 )
 
@@ -47,15 +68,33 @@ INTENTIONALLY_TRACKED_UNDER_OUTPUT = (
 CREDENTIAL_FILES = (
     "security/.jwt_secret",
     "security/.storage_salt",
+    "security/.fernet_key",
     "dist/Seed/security/.jwt_secret",
     "dist/Seed/security/.storage_salt",
 )
+
+RULES_DOC = REPO / "docs" / "REPO_HYGIENE_RULES.md"
 
 
 def _sha16(data: bytes) -> str:
     import hashlib
 
     return hashlib.sha256(data).hexdigest()[:16]
+
+
+def _is_credential_path(path: str) -> bool:
+    """路径是否命中 R3 的凭据清单（目录项按前缀，其余按 basename fnmatch）。"""
+
+    if "audit_logs/" in path:
+        return True
+    import fnmatch
+
+    name = path.rsplit("/", 1)[-1]
+    return any(
+        fnmatch.fnmatch(name, pattern)
+        for pattern in CREDENTIAL_PATTERNS
+        if not pattern.endswith("/")
+    )
 
 
 def _history_blob_fingerprints(relative: str) -> list[tuple[str, str]]:
@@ -91,14 +130,44 @@ def _tracked() -> list[str]:
     return [line.strip() for line in result.stdout.splitlines() if line.strip()]
 
 
+def _documented_credential_names() -> tuple[str, ...]:
+    """从 R3 的"凭据类"一句里解析文件名清单。
+
+    解析结果为空必须**响**：文档一改写就静默返回空集合的话，下面的断言会永远绿 ——
+    那正是这批守卫要防的那种"永不红的检查"。
+    """
+
+    text = RULES_DOC.read_text(encoding="utf-8")
+    start = text.index("**凭据类**")
+    segment = text[start : text.index("。", start)]
+    names = tuple(re.findall(r"`([^`]+)`", segment))
+    assert names, (
+        "REPO_HYGIENE_RULES.md 的『凭据类』清单解析为空 —— 文档被改写，"
+        "解析器需同步修改，否则这条守卫会静默全绿"
+    )
+    return names
+
+
+def test_guard_watches_every_credential_name_the_rules_list() -> None:
+    """规范列出的凭据名 ⇔ 守卫盯着的名字，**必须相等**（双向）。
+
+    只查一侧就会漏：文档加了新凭据而守卫没跟上（今天真实发生的那次：`SecureStorage` 换成随机密钥
+    后多了 `.fernet_key`，`.gitignore` 已覆盖而守卫没盯），或守卫自己扩了范围而规范没写
+    （于是下一次"精简守卫"会静默删掉一条真实防线）。
+    """
+
+    documented = set(_documented_credential_names())
+    covered = set(CREDENTIAL_PATTERNS)
+    assert documented == covered, (
+        "R3 凭据清单与守卫覆盖不一致："
+        f"文档有而守卫不盯={sorted(documented - covered)}；"
+        f"守卫盯而文档未列={sorted(covered - documented)}"
+    )
+
+
 def test_runtime_credentials_and_checkpoints_are_not_tracked() -> None:
     tracked = _tracked()
-    secrets = [
-        path
-        for path in tracked
-        if path.endswith(("/security/.jwt_secret", "/security/.storage_salt"))
-        or "/security/audit_logs/" in path
-    ]
+    secrets = [path for path in tracked if _is_credential_path(path)]
     assert secrets == [], f"运行期凭据被跟踪：{secrets}"
     assert not [path for path in tracked if path.endswith(".pt")], "*.pt 不应进 git"
 
@@ -145,7 +214,7 @@ def test_wildcards_do_not_swallow_intentionally_tracked_output() -> None:
 def test_live_credentials_do_not_match_any_historical_blob() -> None:
     """**在位凭据的值不得等于任何一个已提交的历史 blob。**
 
-    这是前三条守卫的**结构性缺口**补丁。它们测的是「规则是否命中」与「跟踪清单是否为空」，
+    这是前面几条守卫的**结构性缺口**补丁。它们测的是「规则是否命中」与「跟踪清单是否为空」，
     因此拦不住下面这件事：文件**从未被跟踪**（清单为空 ✓）、规则**也确实命中**（嵌套路径 ✓），
     但**当前在用的值**与仓库历史里某个 blob **逐位相同** —— 也就是「在用的凭据能直接从历史里取出」。
 
