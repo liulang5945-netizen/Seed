@@ -242,3 +242,5 @@ reports/_v4reg2/
 # 与 output(s)/ 那两道同类：按产物类型写规则，而不是逐个实例名。
 report.xml
 junit*.xml
+# 2026-09-19：outputs/ 下同样存在的 junit 产物（含 hostname）
+focused-before.xml
