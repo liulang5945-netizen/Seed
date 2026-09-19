@@ -1,8 +1,8 @@
 # Seed / Taiji 当前详细推进方案
 
-更新：2026-09-19（内容绑定零训练实现门＋资源预检已交付）。D8固定配方尺度系列结束追加，v4稳定门3/3失败、matched不放行。合同[草案v1](../../reference/M5_R2_CONTENT_BINDING_CONTRACT_DRAFT_20260919.md)交付后，本轮按其§6"分步不跨权"完成**零训练实现门**：静态数据/评分器（7类题组×3 split，digest `377a7391…`）、A/B两臂计算图、有界runner/恢复，35项实现门测试＋旧char-v1图9项回归全绿；固定策略门四策略成对宏平均全为0.0、参照键1.0；资源预检显示最坏臂2000更新≈3.7分钟、10次运行≈37分钟，远在上限内。**未启动统计训练**；详见[实现门交付报告](../../reference/M5_R2_CONTENT_BINDING_IMPLEMENTATION_GATE_20260919.md)。历史证据见[D8收束详案](../../reference/M5_R2_D8_CLOSEOUT_NEXT_PLAN_20260919.md)。[01](01_SCOPE_AND_PHASES.md)管大阶段，[02](02_GATES_AND_CI.md)管晋级，[07](07_MINI_MODEL_DELIVERY.md)管后置用户验收。
+更新：2026-09-19（内容绑定 v1 标定判停）。用户批准训练预算后合同已升[FROZEN](../../reference/M5_R2_CONTENT_BINDING_CONTRACT_FROZEN_20260919.md)（`3c8ee5cd`），随即按冻结协议完成标定 4 次运行（seed 20260920，两臂×两配方×2000 更新，串行≈12.5 分钟，全部 completed）：**16 个评估点无一达到冻结选择门槛（复制≥0.90）——最高 B/cal_lr1@1000 复制 0.652/未知 1.000/flip 宏 0.146；按合同 §4"不合格即停止该臂，整包不进入确认，不补第三配方"，两臂判停，无正式运行、无确认批、sealed 未读取。** 失败模式：内容复制对未见值部分有效、未知边界完美；对象绑定（位置捷径）、关系翻转、否定作用域失败；B 臂槽位机制在该尺度未显出对 A 的优势。仪器健全性经重载复算确认。详见[标定判停备忘录](../../reference/M5_R2_CONTENT_BINDING_CALIBRATION_STOP_20260919.md)。历史证据见[D8收束详案](../../reference/M5_R2_D8_CLOSEOUT_NEXT_PLAN_20260919.md)。[01](01_SCOPE_AND_PHASES.md)管大阶段，[02](02_GATES_AND_CI.md)管晋级，[07](07_MINI_MODEL_DELIVERY.md)管后置用户验收。
 
-## 当前唯一下一步：内容绑定实现门与资源预检已交付——待训练预算审批（用户决定）；批准后草案升FROZEN并按seed 20260920运行标定
+## 当前唯一下一步：内容绑定 v1 已按冻结规则在标定判停（负结果）——R2 下一步路线决定待用户裁决；在此之前不自动排队任何新训练/数据/机制变体
 
 **历史微调（核对至 `281d0d4f`）**：当时新增进展是CAP/P3b仪器与预声明，未新增R2训练/能力报告。A/H布尔健康判定已接线，16M-tick候选可经默认loader加载的证据已补齐，但A05、H阈值/中断恢复及F实际执行仍不能记通过。具体继承与适用边界见[07 §9](07_MINI_MODEL_DELIVERY.md)；不触发Mini或二次战役。后继路线状态以上方合同草案为准。**（09-18 第七至九批后继指针：A05 隔离消融**已执行**并在 16M-tick 候选上给出实测布尔——原始 effector 输出随权重消融改变，`motor` 与记忆编码在该题面族下不触发；`63c38846`+`37f665fc`。同批测出并修好"健康支跑裸链路、分数跑约束链路"的链路错配，A05b 因此转入必过项。**仍未通过的三项不变**：H 响应/内存阈值未标定、H06 中断恢复未执行、F 维仍只有合同引用没有执行 ⇒ 本行"不能记通过"的结论方向未变，只是 A05 那一项从"未执行"变成"已执行且通过布尔判定"。详见[债册](05_TECH_DEBT_REGISTER.md) DEBT-I4 三条。）**
 
@@ -50,7 +50,7 @@ D2新增事实取自[copy探针报告](../../../reports/r2_d2_copy_learnability_
 
 规划交付是一份可以回答“做什么、为什么、先后关系、做出什么、怎样验、结果不好怎么办”的开发指导计划，而不是要求用户现在从A/B/C/D/E选赢家。规划完成不等于研发完成；仍待标定的数值列明求取方法与冻结时点，不假装已经确认。
 
-**唯一研究下一步（已更新 09-19）：静态数据与计算图/恢复实现门已完成，资源预检已完成——下一动作是训练预算审批（用户决定），批准前不启动任何统计训练。** 实现门交付：`scripts/training/build_taiji_r2_content_binding_data.py`＋`eval_taiji_r2_content_binding.py`＋`train_taiji_r2_content_binding.py`、`taiji/sequence_content_workspace.py`（A/B两臂）、三件套fixture与两份静态报告；核验七类成对任务、无oracle、两臂公共初始化、未见字符身份和save/restore/continue全部通过。预检数字与未测清单见[实现门交付报告](../../reference/M5_R2_CONTENT_BINDING_IMPLEMENTATION_GATE_20260919.md)。不是重启D8，也不是自动开跑标定/确认。
+**唯一研究下一步（已更新 09-19 判停后）：内容绑定 v1 已按冻结规则在标定判停——R2 下一步路线是新的用户决定，在此之前不自动排队任何训练/数据/机制变体。** 用户批准预算后合同升 FROZEN（`3c8ee5cd`），标定 4 次运行全部 completed，但 16 个评估点无一达到冻结选择门槛（复制≥0.90；最高 B/cal_lr1@1000 复制 0.652/未知 1.000）：按合同 §4 两臂判停，无正式运行、无确认批。失败模式与资产清单见[标定判停备忘录](../../reference/M5_R2_CONTENT_BINDING_CALIBRATION_STOP_20260919.md)。判停只结束 v1 配置投入，不证明该计算图族不能绑定；尺度/数据配方/训练时长在预设上限内未探索，属需另立合同的假设。
 
 - **事实收束**：v3实际1278行（合同1246是已记录算术笔误），K1过而绑定未过；v4实际4862行，三seed稳定门失败，matched未启动。报告计时合计约108.6分钟，不能沿用最初4次/90分钟作为已用总账。
 - **归因边界**：等epochs扩容同时改变总更新、词表/参数规模、题型占比和轨迹；日志CE不是完整训练复合loss。尚未证明只改lr即可修复，也没证明v3是最高可行规模。
@@ -235,16 +235,18 @@ DEBT-I8 报告路径相对化（含 09-15/09-18 两份产物的成对断言）�
 
 ### 5.7 当前开发包卡片（唯一活动卡）与结项历史指针
 
-**R2内容形成与绑定——零训练实现门＋资源预检已交付（2026-09-19），训练预算待用户审批。** 方向不再待确认，候选已实现但未经训练，不重开D8同配方追加。
+**结项历史指针：R2 内容绑定 v1（2026-09-19，用户批准预算→FROZEN→标定 4 次运行全部 completed→16 评估点无一达冻结选择门槛→两臂按合同 §4 判停，无正式运行/确认批）。** 最优候选 B/cal_lr1@1000：复制 0.652、未知 1.000、flip 宏 0.146；全场最高 flip 宏属 A（A/cal_lr1@1500=0.198，B 槽位机制在该尺度无优势）。失败模式：未见值内容复制部分有效（fact_flip 成对最高 0.41）、未知边界完美（unknown_preserved≈1.0）、缺失→补足翻转 B@500–1000 达 1.0；但对象绑定被位置捷径击败（object_swap≈0）、关系翻转与否定作用域≈0；B/cal_lr1 晚期退化（复制 0.652→0.375）。仪器经重载复算健全；sealed 未读取。判停只结束 v1 配置投入，尺度/数据配方/时长未探索属新合同假设。合同与证据：[FROZEN 合同](../../reference/M5_R2_CONTENT_BINDING_CONTRACT_FROZEN_20260919.md)、[标定判停备忘录](../../reference/M5_R2_CONTENT_BINDING_CALIBRATION_STOP_20260919.md)、[实现门交付报告](../../reference/M5_R2_CONTENT_BINDING_IMPLEMENTATION_GATE_20260919.md)、[选择聚合](../../../reports/r2_content_binding_v1/calibration_selection_20260920.json)、[仪器诊断](../../../reports/r2_content_binding_v1/calibration_diagnostics_20260920.json)。
+
+**R2 内容形成与绑定——活动卡已结项（判停），历史记录如下。**
 
 | 项目 | 内容 |
 |---|---|
 | 能力问题 | 如何让问题条件化的对象/关系内容状态形成，并使它驱动完整原生回答；复制保持是约束，绑定/翻转对是核心出口 |
 | 推荐形态 | 复用字符/来源复制资产；可学习对象—属性/关系绑定＋内容条件化生成。D6只试发射后继bonus，不是这一计算图 |
-| 一次性交付 | 已交付：静态数据/评分器（digest `377a7391…`）、A/B两臂计算图（参数114,483/108,963，计算量差已披露）、有界runner/恢复、35项实现门测试＋旧图9项回归全绿。详见[实现门交付报告](../../reference/M5_R2_CONTENT_BINDING_IMPLEMENTATION_GATE_20260919.md)及VISION §19.12 |
-| 评价边界 | 旧dev仅诊断/回归，新确认集独立（sealed切分母：可复制448/未见值448/未见字符340）；既保留逐seed/逐题自由输出，也验事实/关系成对变化。新门与容差须正式比较前冻结，不用旧K1单门宣称整体成功 |
-| 条件推进 | 合同草案（已交付）→静态数据/计算图/恢复实现门（**已过**）→资源预检（**已过**：最坏臂2000更新≈3.7分钟，10次≈37分钟≪12h；内存335MB≪10GiB）→~~预算审批~~（**待用户**）→FROZEN→两臂各最多两配方标定→各三seed正式比较→有限能力结案 |
-| 当前停止点 | 实现门与资源预检已过，**唯一阻塞是训练预算审批（用户决定）**；批准前不启动统计训练、标定或确认。拟议总预算20000更新、12小时、10GiB，预检外推37分钟/36分钟量级远在限内；Mini后置 |
+| 一次性交付 | 已交付：静态数据/评分器（digest `377a7391…`）、A/B两臂计算图（参数114,483/108,963，计算量差已披露）、有界runner/恢复、35项实现门测试＋旧图9项回归全绿、标定4次运行与判停证据 |
+| 评价边界 | sealed 确认集全程未读取（保持封闭可复用）；成对判据与固定策略地板经标定检验有效，可复用 |
+| 条件推进 | 合同草案→实现门（过）→资源预检（过）→预算审批（**用户已批准**）→FROZEN→标定（**判停**）→（不进入）正式/确认 |
+| 当前停止点 | v1 已按冻结规则结案（负结果）；R2 下一步路线决定待用户裁决，不自动排队新变体 |
 
 当前合同：[内容绑定实施草案v1](../../reference/M5_R2_CONTENT_BINDING_CONTRACT_DRAFT_20260919.md)；实现门交付记录：[实现门交付报告](../../reference/M5_R2_CONTENT_BINDING_IMPLEMENTATION_GATE_20260919.md)；历史依据：[D8收束与下一步](../../reference/M5_R2_D8_CLOSEOUT_NEXT_PLAN_20260919.md)。
 
@@ -324,6 +326,8 @@ DEBT-I8 报告路径相对化（含 09-15/09-18 两份产物的成对断言）�
 知识P5.1h、B2跨内容结构、身体能力注册/撤销与补偿、多系统记忆/生命调节/自主成长仍在[01总图](01_SCOPE_AND_PHASES.md)，不从清单抹去，也不全变成本包前置。需要扩面时一次选一个与阶段出口直接相关的缺口，并说明为何现有切片不足。
 
 ## 8. CI、历史与维护
+
+2026-09-19内容绑定标定核验：用户批准预算后合同升 FROZEN（`3c8ee5cd`，草案 sha256 已钉入冻结文件），随即串行运行标定 4 次（B/A×cal_lr1/cal_lr3，seed 20260920，各 2000 更新，全部 status=completed，合计≈12.5 分钟，无 incomplete/无 stop_reason）。选择聚合（`aggregate_taiji_r2_content_binding_calibration.py`，ruff 通过）判定两臂均无合格候选并出 [calibration_selection_20260920.json](../../../reports/r2_content_binding_v1/calibration_selection_20260920.json)；仪器健全性以 B/cal_lr1@1000 checkpoint 重载复算逐位一致（复制 0.6518/未知 1.0，range_error=0）并留 [诊断抽样](../../../reports/r2_content_binding_v1/calibration_diagnostics_20260920.json)。按合同 §4 未运行任何 formal 训练、未读取 sealed 确认集、未调整任何门或配方。4 份 run_report.json 入库（checkpoint .pt 按仓库惯例留在本地不入库）；实现门测试套件 44 passed 在判停后复跑仍绿。
 
 2026-09-19内容绑定实现门核验：交付[实现门交付报告](../../reference/M5_R2_CONTENT_BINDING_IMPLEMENTATION_GATE_20260919.md)所列全部代码/数据/测试。实测记录——数据builder全静态检查通过（fixture三件套，语料digest `377a7391a5b76b02…`）；`pytest tests/taiji_native/test_content_binding_data_v1_contract.py test_sequence_content_workspace_v1_contract.py test_content_binding_runner_contract.py test_sequence_char_workspace_v1_contract.py`＝44 passed（35项新实现门＋9项旧char-v1回归）；ruff对7个新增/改动文件零告警；runner双臂smoke（3–4更新）与20更新/臂的资源预检实测通过（B臂0.109s/更新、A臂0.058s/更新，12线程CPU，RSS≈335MB，零步checkpoint≈1.4MB；预检为计时测量，非统计训练，产物写入临时目录后清理）。**未运行标定/formal训练、未评价calibration/sealed模型输出、未查询远端CI**；旧D1/D8 fixture、旧合同、默认入口与旧checkpoint零改动。
 
