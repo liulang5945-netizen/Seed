@@ -33,7 +33,7 @@ from eval_taiji_p5_1f_real_corpus_same_budget_gate import (  # noqa: E402
     DocumentEmbedder,
     _MemoizedEmbedder,
 )
-from eval_taiji_p5_2a_predictive_execution_gate import p52  # noqa: E402
+from eval_taiji_p5_2a_predictive_execution_gate import p52a  # noqa: E402
 from eval_taiji_p5_2b_group_causal_corpora_gate import (  # noqa: E402
     MEMBER_IDS,
     STEP_CAP,
@@ -107,7 +107,7 @@ def _run_episode(
     injected = {"done": False}
 
     def finish(reason: str) -> dict[str, Any]:
-        success = bool(p52._goal_reached(environment, task))
+        success = bool(p52a._goal_reached(environment, task))
         executed_actions = sum(1 for item in steps if item.get("executed"))
         return {
             "episode_id": episode_id,
@@ -122,7 +122,7 @@ def _run_episode(
         }
 
     for tick in range(1, STEP_CAP + 1):
-        if p52._goal_reached(environment, task):
+        if p52a._goal_reached(environment, task):
             return finish("goal_reached")
         calls: list[MemberCall] = []
         raw_calls: list[dict[str, Any]] = []
@@ -132,7 +132,7 @@ def _run_episode(
             cue_count = member_cue_count(steps, member_id) if arm.memory_enabled else 1
             cues = tuple([cue] * cue_count)
             kind = str(learner.predict_episode(cues)[-1])
-            params, provenance, failure = p52._bind(kind, task, state)
+            params, provenance, failure = p52a._bind(kind, task, state)
             calls.append(MemberCall(member=member_id, bind_failure=failure))
             raw_calls.append(
                 {"member": member_id, "kind": kind, "bind_failure": failure, "params": params, "provenance": provenance}
@@ -218,7 +218,7 @@ def _run_episode(
         )
         if not executed:
             events.append({"tick": tick, "kind": "attempt_failed", "member": chosen["member"], "rule_revision": arm.rule_revision, "bundle_digest": episode_id})
-        if p52._goal_reached(environment, task):
+        if p52a._goal_reached(environment, task):
             return finish("goal_reached")
     return finish("step_cap")
 
