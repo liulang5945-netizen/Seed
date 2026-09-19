@@ -145,14 +145,21 @@ def postprocess() -> None:
     if not dist_seed.exists():
         raise RuntimeError(f"打包目录不存在: {dist_seed}")
 
-    for extra_dir in ("knowledge_store", "user_data", "security"):
+    for extra_dir in ("knowledge_store",):
         src = ROOT / extra_dir
         if src.exists():
             shutil.copytree(src, dist_seed / extra_dir, dirs_exist_ok=True)
             print(f"  已随包复制 {extra_dir}/")
 
+    # `security/` 与 `user_data/` 是**运行期可写状态**，不是应用资源：前者装着在用的 JWT 签名密钥
+    # 与存储盐（2026-09-19 实测：`dist/Seed/security/.jwt_secret` 与开发机那把逐字节相同，
+    # 就是这个复制把它带进包的），后者装着真实聊天记录。随包复制等于把凭据与用户数据发给每个收件人。
+    # 只建空目录：`JWTManager` / `SecureStorage` 在文件缺失时会各自随机重建（已实证的"删除即轮换"）。
+    # 守卫见 tests/test_repo_secret_guard.py::test_release_packaging_does_not_ship_runtime_...
     for empty_dir in (
         "agent_workspace",
+        "security",
+        "user_data",
         "taiji_data/feed_data",
         "taiji_data/sleep_data",
         "taiji_data/life_data",

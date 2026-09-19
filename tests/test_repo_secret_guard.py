@@ -165,6 +165,38 @@ def test_guard_watches_every_credential_name_the_rules_list() -> None:
     )
 
 
+#: 发布脚本的"随包复制"清单。`scripts/release.py` 的 `postprocess()` 用
+#: `shutil.copytree(ROOT/<name>, dist/Seed/<name>)` 把这些目录打进发布包 ——
+#: 2026-09-19 实测：其中 `security/` 装着**在用的** JWT 签名密钥与存储盐（与开发机逐字节相同，
+#: 也正是 `dist/Seed/security/.jwt_secret` 泄漏的来源），`user_data/` 装着真实聊天记录。
+#: 它们是**运行期可写状态**，不是应用资源 ⇒ 只能建空目录，让每个安装自行生成凭据。
+PACKAGING_STATE_DIRS = ("security", "user_data")
+
+
+def _copied_dirs_in_release_script(source: str) -> tuple[str, ...]:
+    """取 `postprocess()` 里 `for extra_dir in (...)` 的那个元组。"""
+
+    match = re.search(r"for extra_dir in \(([^)]*)\)", source)
+    assert match, "release.py 的 postprocess() 结构变了（找不到 extra_dir 循环），解析器需同步修改"
+    return tuple(re.findall(r'"([^"]+)"', match.group(1)))
+
+
+def test_release_packaging_does_not_ship_runtime_credentials_or_user_data() -> None:
+    """发布包不得携带凭据与用户数据目录。
+
+    前面几条守卫视的是"仓库里跟踪了什么"，**看不见打包这条外泄通路**：凭据可以完全不被跟踪，
+    却由 `release.py` 从工作目录 `copytree` 进 dist 随包发出去。
+    """
+
+    source = (REPO / "scripts" / "release.py").read_text(encoding="utf-8")
+    copied = _copied_dirs_in_release_script(source)
+    shipped = [name for name in PACKAGING_STATE_DIRS if name in copied]
+    assert shipped == [], (
+        f"release.py 会把运行期状态打进发布包：{shipped} —— "
+        "应改为只建空目录（`JWTManager`/`SecureStorage` 缺失即随机重建）"
+    )
+
+
 def test_runtime_credentials_and_checkpoints_are_not_tracked() -> None:
     tracked = _tracked()
     secrets = [path for path in tracked if _is_credential_path(path)]
