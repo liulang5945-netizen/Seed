@@ -654,23 +654,35 @@ class ArtifactInternalizationTrainer:
             # P5.1h recipe knob (contract section 6): retention-partition
             # episodes join every epoch as replay gradients.  Default 0.0
             # keeps the P5.1g frozen path bitwise unchanged.  Only retention
-            # records whose action kind exists in the readout vocabulary can
-            # be replayed (the corpus also carries trajectory-identifier
-            # capabilities the readout cannot emit).
-            replay_kinds = set(self.procedural.action_kinds)
+            # records whose action kind is in the trial's own discovered
+            # vocabulary are replayable (the corpus also carries
+            # trajectory-identifier capabilities the readout cannot emit);
+            # when none qualify, replay silently stays off.
+            train_kinds = {
+                record.action_intent.kind
+                for record in procedural_train
+                if record.action_intent is not None
+            }
             replay_records = tuple(
                 record
                 for record in procedural_retention
                 if record.action_intent is not None
-                and record.action_intent.kind in replay_kinds
+                and record.action_intent.kind in train_kinds
             )
-            procedural_trial.consolidate(
-                procedural_train,
-                epochs=self.procedural_epochs,
-                learning_rate=self.procedural_learning_rate,
-                replay_source=replay_records,
-                replay_weight=float(procedural_replay_weight),
-            )
+            if replay_records:
+                procedural_trial.consolidate(
+                    procedural_train,
+                    epochs=self.procedural_epochs,
+                    learning_rate=self.procedural_learning_rate,
+                    replay_source=replay_records,
+                    replay_weight=float(procedural_replay_weight),
+                )
+            else:
+                procedural_trial.consolidate(
+                    procedural_train,
+                    epochs=self.procedural_epochs,
+                    learning_rate=self.procedural_learning_rate,
+                )
         else:
             procedural_trial.consolidate(
                 procedural_train,
