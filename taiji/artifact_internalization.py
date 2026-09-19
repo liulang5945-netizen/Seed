@@ -653,12 +653,22 @@ class ArtifactInternalizationTrainer:
         if float(procedural_replay_weight) > 0.0:
             # P5.1h recipe knob (contract section 6): retention-partition
             # episodes join every epoch as replay gradients.  Default 0.0
-            # keeps the P5.1g frozen path bitwise unchanged.
+            # keeps the P5.1g frozen path bitwise unchanged.  Only retention
+            # records whose action kind exists in the readout vocabulary can
+            # be replayed (the corpus also carries trajectory-identifier
+            # capabilities the readout cannot emit).
+            replay_kinds = set(self.procedural.action_kinds)
+            replay_records = tuple(
+                record
+                for record in procedural_retention
+                if record.action_intent is not None
+                and record.action_intent.kind in replay_kinds
+            )
             procedural_trial.consolidate(
                 procedural_train,
                 epochs=self.procedural_epochs,
                 learning_rate=self.procedural_learning_rate,
-                replay_source=procedural_retention,
+                replay_source=replay_records,
                 replay_weight=float(procedural_replay_weight),
             )
         else:
