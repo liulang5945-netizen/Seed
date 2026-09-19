@@ -3,6 +3,8 @@ from __future__ import annotations
 import os
 from pathlib import Path
 
+from _scratch import artifact_scratch_root
+
 from api.seed_runtime import SeedRuntime
 from scripts.training.eval_taiji_runtime_structural_artifact_multi_round import (
     _batch,
@@ -45,12 +47,7 @@ def test_runtime_store_reconciliation_distinguishes_missing_and_orphan() -> None
     terminal_batch_id = str(terminal_schedule["batch_id"])
     first_id, second_id = _batch(runtime, terminal_batch_id).selected_candidate_ids
 
-    store_root = (
-        Path(__file__).resolve().parents[2]
-        / "output"
-        / "manual-r5-canary"
-        / f"s48-store-{os.getpid()}"
-    )
+    store_root = artifact_scratch_root() / f"s48-store-{os.getpid()}"
     before_retention_path = store_root.parent / f"s48-before-retention-{os.getpid()}.pt"
     after_retention_path = store_root.parent / f"s48-after-retention-{os.getpid()}.pt"
     store = StructuralValidationArtifactStore(store_root)

@@ -4,6 +4,7 @@ import os
 from pathlib import Path
 
 import pytest
+from _scratch import artifact_scratch_root
 
 from api.seed_runtime import SeedRuntime
 from scripts.training.eval_taiji_runtime_structural_artifact_multi_round import _record_round
@@ -38,12 +39,7 @@ def test_measured_artifact_sidecar_is_verified_and_legacy_is_explicit() -> None:
         first_id,
         evidence,
     )
-    store_root = (
-        Path(__file__).resolve().parents[2]
-        / "output"
-        / "manual-r5-canary"
-        / f"s49-store-{os.getpid()}"
-    )
+    store_root = artifact_scratch_root() / f"s49-store-{os.getpid()}"
     legacy_root = store_root.parent / f"s49-legacy-{os.getpid()}"
     checkpoint_path = store_root.parent / f"s49-runtime-{os.getpid()}.pt"
     store = StructuralValidationArtifactStore(store_root)

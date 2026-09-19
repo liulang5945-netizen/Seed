@@ -1,9 +1,9 @@
 from __future__ import annotations
 
 import os
-from pathlib import Path
 
 import torch
+from _scratch import artifact_scratch_root
 
 from api.seed_runtime import SeedRuntime
 from scripts.training.eval_taiji_structural_lineage_compaction import _record_terminal_subgraph
@@ -77,7 +77,7 @@ def _build_migrated_runtime() -> SeedRuntime:
 
 def test_restart_candidate_admission_and_rollback_continue_from_checkpoint() -> None:
     runtime = _build_migrated_runtime()
-    checkpoint_root = Path(__file__).resolve().parents[2] / "output" / "manual-r5-canary"
+    checkpoint_root = artifact_scratch_root()
     checkpoint_root.mkdir(parents=True, exist_ok=True)
     suffix = os.getpid()
     before_path = checkpoint_root / f"s31-before-admission-{suffix}.pt"

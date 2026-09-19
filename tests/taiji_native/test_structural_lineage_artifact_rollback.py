@@ -4,6 +4,7 @@ import os
 from pathlib import Path
 
 import torch
+from _scratch import artifact_scratch_root
 
 from scripts.training.eval_taiji_structural_lineage_restart_continuation import (
     _build_migrated_runtime,
@@ -34,7 +35,7 @@ def test_artifact_provenance_survives_rollback_and_terminal_compaction() -> None
     batch = runtime.model.architecture.structural_candidate_batches[-1]
     first_candidate, second_candidate = batch.selected_candidate_ids
 
-    checkpoint_root = Path(__file__).resolve().parents[2] / "output" / "manual-r5-canary"
+    checkpoint_root = artifact_scratch_root()
     checkpoint_root.mkdir(parents=True, exist_ok=True)
     suffix = os.getpid()
     before_path = checkpoint_root / f"s33-before-{suffix}.pt"

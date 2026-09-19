@@ -2,7 +2,8 @@ from __future__ import annotations
 
 import json
 import os
-from pathlib import Path
+
+from _scratch import artifact_scratch_root
 
 from api.seed_runtime import SeedRuntime
 from scripts.training.eval_taiji_workbench_measured_artifact_batch import _build_artifact
@@ -29,7 +30,7 @@ def test_seed_runtime_restarts_and_consumes_measured_artifact_batch() -> None:
         executions,
     )
 
-    checkpoint_root = Path(__file__).resolve().parents[2] / "output" / "manual-r5-canary"
+    checkpoint_root = artifact_scratch_root()
     checkpoint_root.mkdir(parents=True, exist_ok=True)
     suffix = os.getpid()
     checkpoint_path = checkpoint_root / f"s36-runtime-artifact-{suffix}.pt"

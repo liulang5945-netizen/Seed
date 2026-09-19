@@ -3,6 +3,8 @@ from __future__ import annotations
 import os
 from pathlib import Path
 
+from _scratch import artifact_scratch_root
+
 from api.seed_runtime import SeedRuntime
 from scripts.training.eval_taiji_structural_lineage_compaction import _record_terminal_subgraph
 from scripts.training.eval_taiji_workbench_multi_region_batch import (
@@ -130,7 +132,7 @@ def _build_migrated_runtime() -> tuple[SeedRuntime, dict[str, object]]:
 
 def test_restart_continuation_consumes_only_new_evidence() -> None:
     runtime, migration = _build_migrated_runtime()
-    checkpoint_root = Path(__file__).resolve().parents[2] / "output" / "manual-r5-canary"
+    checkpoint_root = artifact_scratch_root()
     checkpoint_root.mkdir(parents=True, exist_ok=True)
     suffix = os.getpid()
     migrated_path = checkpoint_root / f"s30-migrated-{suffix}.pt"

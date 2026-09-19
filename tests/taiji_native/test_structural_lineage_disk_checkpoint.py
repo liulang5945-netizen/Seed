@@ -1,9 +1,9 @@
 from __future__ import annotations
 
 import os
-from pathlib import Path
 
 import torch
+from _scratch import artifact_scratch_root
 
 from api.seed_runtime import SeedRuntime
 from scripts.training.eval_taiji_structural_lineage_compaction import _record_terminal_subgraph
@@ -56,7 +56,7 @@ def test_seed_runtime_disk_checkpoint_preserves_migration_and_rollback() -> None
         item.batch_id for item in runtime.model.architecture.structural_candidate_batches
     }
 
-    checkpoint_root = Path(__file__).resolve().parents[2] / "output" / "manual-r5-canary"
+    checkpoint_root = artifact_scratch_root()
     checkpoint_root.mkdir(parents=True, exist_ok=True)
     suffix = os.getpid()
     checkpoint = checkpoint_root / f"s29-migrated-{suffix}.pt"

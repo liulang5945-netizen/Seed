@@ -28,9 +28,7 @@ from taiji.sequence_workspace import (
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 FIXTURE = PROJECT_ROOT / "tests/fixtures/r2_d1_measurement_v1.jsonl"
-D4_PROBE_CHECKPOINT = (
-    PROJECT_ROOT / "reports/r2_d4_checkpoints/copy_supervision_probe/epoch30.pt"
-)
+D4_PROBE_CHECKPOINT = PROJECT_ROOT / "reports/r2_d4_checkpoints/copy_supervision_probe/epoch30.pt"
 D4_PROBE_REPORT = PROJECT_ROOT / "reports/r2_d4_copy_supervision_probe_20260918.json"
 
 
@@ -56,11 +54,11 @@ def _v8() -> SequenceWorkspacePrototype:
 
 
 def _prefix() -> bytes:
-    return "提问：雪的颜色？线索：雪是琥珀。回答：".encode("utf-8")
+    return "提问：雪的颜色？线索：雪是琥珀。回答：".encode()
 
 
 def _response() -> bytes:
-    return "琥珀".encode("utf-8")
+    return "琥珀".encode()
 
 
 # --------------------------------------------------------------------------- #
@@ -92,12 +90,12 @@ def test_gate1_zero_bias_bitwise_equal_v6() -> None:
         mixed, copies = on.teacher_forced_mixture_and_copy(prefix, response)
         v6_mixed, v6_copies = v6.teacher_forced_mixture_and_copy(prefix, response)
         assert torch.equal(mixed, v6_mixed) and torch.equal(copies, v6_copies)
-        assert on.sequence_loss(prefix, response)[0].item() == v6.sequence_loss(
-            prefix, response
-        )[0].item()
         assert (
-            on.generate(prefix, max_bytes=8).bytes_out
-            == v6.generate(prefix, max_bytes=8).bytes_out
+            on.sequence_loss(prefix, response)[0].item()
+            == v6.sequence_loss(prefix, response)[0].item()
+        )
+        assert (
+            on.generate(prefix, max_bytes=8).bytes_out == v6.generate(prefix, max_bytes=8).bytes_out
         )
 
 
@@ -145,7 +143,7 @@ def test_gate2_bonus_targets_successor_rows_of_every_match() -> None:
     prototype = _v8()
     with torch.no_grad():
         prototype._parameters["copy_induce_bias"].fill_(15.0)
-    prefix = "提问：雪的颜色？线索：雪是琥珀，不是琥珀。回答：".encode("utf-8")
+    prefix = "提问：雪的颜色？线索：雪是琥珀，不是琥珀。回答：".encode()
     state = prototype.begin_episode(prefix)
     entries = list(state.entry_bytes)  # type: ignore[arg-type]
     probe_byte = entries[30]  # an interior byte guaranteed to have successors
@@ -168,7 +166,7 @@ def test_gate2_inject_override_matches_step_emission() -> None:
     _, copies = prototype.teacher_forced_mixture_and_copy(prefix, response)
     # Step 3 conditions on the second byte of 琥: its unique-ish byte must
     # raise the continuation mass above the zero-init graph at that position.
-    third_byte = "琥".encode("utf-8")[1]
+    third_byte = "琥".encode()[1]
     with torch.no_grad():
         prototype._parameters["copy_induce_bias"].fill_(0.0)
     _, copies_zero = prototype.teacher_forced_mixture_and_copy(prefix, response)

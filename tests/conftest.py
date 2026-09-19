@@ -12,12 +12,9 @@ Minimal by design:
 from __future__ import annotations
 
 import logging
-import os
 from dataclasses import fields
-from pathlib import Path
 
 import pytest
-from _canary_sweep import sweep  # tests/_canary_sweep.py
 
 
 def pytest_addoption(parser):
@@ -70,25 +67,6 @@ def _redirect_default_save_target(tmp_path_factory) -> None:
     _runtime.DEFAULT_SAVE_TARGET = tmp_path_factory.mktemp("default-save-target") / "seed_corpus.pt"
     yield
     _runtime.DEFAULT_SAVE_TARGET = original
-
-
-#: The directory the artifact-store tests drop intermediates in (DEBT-I7, second instance).
-_CANARY_DIR = Path(__file__).resolve().parents[1] / "output" / "manual-r5-canary"
-
-
-@pytest.fixture(autouse=True, scope="session")
-def _sweep_own_canary_residue() -> None:
-    """Delete this session's artifact-store residue when it ends.
-
-    Those tests name every intermediate ``sNN-<kind>-<own pid>``, so ownership is unambiguous:
-    the sweep removes nothing that another process created, and nothing that was already there
-    (``README.md``, ``native-canary.pt``, and the 09-17 archive stay put).  Without this the
-    product's own output directory grows every run -- measured 335 MB -> 500 MB across four
-    suite runs on 2026-09-18.
-    """
-
-    yield
-    sweep(_CANARY_DIR, os.getpid())
 
 
 def _reset_app_state_in_place(module) -> None:

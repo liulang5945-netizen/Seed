@@ -4,6 +4,7 @@ import os
 from pathlib import Path
 
 import pytest
+from _scratch import artifact_scratch_root
 
 from api.seed_runtime import SeedRuntime
 from scripts.training.eval_taiji_runtime_structural_artifact_multi_round import _record_round
@@ -36,12 +37,7 @@ def _prepare_runtime() -> tuple[SeedRuntime, str, tuple[dict[str, object], ...]]
 
 
 def test_verified_measurement_bridge_is_opt_in_and_all_or_nothing() -> None:
-    root = (
-        Path(__file__).resolve().parents[2]
-        / "output"
-        / "manual-r5-canary"
-        / f"s51-store-{os.getpid()}"
-    )
+    root = artifact_scratch_root() / f"s51-store-{os.getpid()}"
     verified_checkpoint = root.parent / f"s51-verified-{os.getpid()}.pt"
     legacy_checkpoint = root.parent / f"s51-legacy-{os.getpid()}.pt"
     try:

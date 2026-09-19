@@ -2,7 +2,8 @@ from __future__ import annotations
 
 import concurrent.futures
 import os
-from pathlib import Path
+
+from _scratch import artifact_scratch_root
 
 from api.seed_runtime import SeedRuntime
 from scripts.training.eval_taiji_runtime_structural_artifact_multi_round import _record_round
@@ -30,12 +31,7 @@ def test_external_artifact_store_is_immutable_and_runtime_consumable() -> None:
         evidence,
     )
 
-    store_root = (
-        Path(__file__).resolve().parents[2]
-        / "output"
-        / "manual-r5-canary"
-        / f"s41-store-{os.getpid()}"
-    )
+    store_root = artifact_scratch_root() / f"s41-store-{os.getpid()}"
     concurrent_root = store_root.parent / f"s41-concurrent-{os.getpid()}"
     checkpoint_path = store_root.parent / f"s41-runtime-{os.getpid()}.pt"
     store = StructuralValidationArtifactStore(store_root)

@@ -5,6 +5,7 @@ import os
 from pathlib import Path
 
 import pytest
+from _scratch import artifact_scratch_root
 
 from scripts.training.eval_taiji_runtime_structural_artifact_multi_round import _record_round
 from scripts.training.eval_taiji_workbench_measured_artifact_batch import _build_artifact
@@ -49,12 +50,7 @@ def test_partial_measurement_bundle_fails_closed_then_recovers_explicitly() -> N
     )
     before_runtime = _checkpoint_digest(runtime.model.architecture.native_checkpoint())
 
-    root = (
-        Path(__file__).resolve().parents[2]
-        / "output"
-        / "manual-r5-canary"
-        / f"s50-store-{os.getpid()}"
-    )
+    root = artifact_scratch_root() / f"s50-store-{os.getpid()}"
     legacy_root = root.parent / f"s50-legacy-{os.getpid()}"
     try:
         partial_store = StructuralValidationArtifactStore(root)

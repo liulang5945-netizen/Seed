@@ -4,6 +4,7 @@ import os
 from pathlib import Path
 
 import pytest
+from _scratch import artifact_scratch_root
 
 from api.seed_runtime import SeedRuntime
 from scripts.training.eval_taiji_runtime_structural_artifact_multi_round import (
@@ -49,12 +50,7 @@ def test_runtime_projects_external_store_audit_without_mutation() -> None:
     terminal_batch_id = str(terminal_schedule["batch_id"])
     first_id, second_id = _batch(runtime, terminal_batch_id).selected_candidate_ids
 
-    store_root = (
-        Path(__file__).resolve().parents[2]
-        / "output"
-        / "manual-r5-canary"
-        / f"s47-store-{os.getpid()}"
-    )
+    store_root = artifact_scratch_root() / f"s47-store-{os.getpid()}"
     before_retention_path = store_root.parent / f"s47-before-retention-{os.getpid()}.pt"
     after_retention_path = store_root.parent / f"s47-after-retention-{os.getpid()}.pt"
     store = StructuralValidationArtifactStore(store_root)

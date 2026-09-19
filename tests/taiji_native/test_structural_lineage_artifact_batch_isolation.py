@@ -4,6 +4,7 @@ import os
 from pathlib import Path
 
 import torch
+from _scratch import artifact_scratch_root
 
 from scripts.training.eval_taiji_structural_lineage_restart_continuation import (
     _build_migrated_runtime,
@@ -61,7 +62,7 @@ def test_artifact_batch_rejects_unknown_keys_and_isolates_partial_failure() -> N
             == before_unknown_batch
         )
 
-    checkpoint_root = Path(__file__).resolve().parents[2] / "output" / "manual-r5-canary"
+    checkpoint_root = artifact_scratch_root()
     checkpoint_root.mkdir(parents=True, exist_ok=True)
     suffix = os.getpid()
     before_failure_path = checkpoint_root / f"s35-before-failure-{suffix}.pt"

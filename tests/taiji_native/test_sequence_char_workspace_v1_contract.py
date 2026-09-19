@@ -161,9 +161,7 @@ def test_gate3_induction_flag_off_equals_induction_on_zero_bias() -> None:
     on, _ = _workspace(copy_induction=True)
     off, _ = _workspace(copy_induction=False)
     mixture_on, copy_on = on.teacher_forced_distributions(sample["prefix"], sample["response"])
-    mixture_off, copy_off = off.teacher_forced_distributions(
-        sample["prefix"], sample["response"]
-    )
+    mixture_off, copy_off = off.teacher_forced_distributions(sample["prefix"], sample["response"])
     assert torch.allclose(mixture_on, mixture_off, atol=1e-7)
     assert torch.allclose(copy_on, copy_off, atol=1e-7)
     gen_on = on.generate(sample["prefix"], max_chars=6).text
@@ -240,9 +238,7 @@ def test_gate5_self_consistent_preflight(tmp_path: Path) -> None:
     assert result.returncode == 0, result.stderr
     observed = json.loads(result.stdout.strip().splitlines()[-1])
     assert observed["version"] == SEQUENCE_CHAR_WORKSPACE_VERSION
-    local_mixed, _ = workspace.teacher_forced_distributions(
-        sample["prefix"], sample["response"]
-    )
+    local_mixed, _ = workspace.teacher_forced_distributions(sample["prefix"], sample["response"])
     assert observed["sum"] == pytest.approx(float(local_mixed.sum()), abs=1e-5)
 
 

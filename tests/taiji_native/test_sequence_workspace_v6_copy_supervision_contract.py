@@ -27,7 +27,9 @@ from taiji.sequence_workspace import (
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 FIXTURE = PROJECT_ROOT / "tests/fixtures/r2_d1_measurement_v1.jsonl"
-D3_CHECKPOINT = PROJECT_ROOT / "reports/r2_d3_checkpoints/multihead_probe/hg_h4_seed20260917_epoch30.pt"
+D3_CHECKPOINT = (
+    PROJECT_ROOT / "reports/r2_d3_checkpoints/multihead_probe/hg_h4_seed20260917_epoch30.pt"
+)
 D3_REPORT = PROJECT_ROOT / "reports/r2_d3_multihead_probe_20260918.json"
 D3_FINAL_LOSS = 0.00807605644927364
 
@@ -51,11 +53,11 @@ def _prototype(seed: int = 20260917) -> SequenceWorkspacePrototype:
 
 
 def _prefix() -> bytes:
-    return "问：雪是什么颜色？背景：雪是白。答：".encode("utf-8")
+    return "问：雪是什么颜色？背景：雪是白。答：".encode()
 
 
 def _response() -> bytes:
-    return "白".encode("utf-8")
+    return "白".encode()
 
 
 def _rows() -> list[dict]:
@@ -163,7 +165,7 @@ def test_gate3_value_masks_over_full_fixture() -> None:
         if row["shape"] in ("fact", "same_opening_fact"):
             assert all(mask) and len(mask) > 0
         elif row["shape"] == "negation":
-            lead = "不是".encode("utf-8")
+            lead = "不是".encode()
             assert encoded[: len(lead)] == lead
             assert mask[: len(lead)] == (False,) * len(lead)
             assert any(mask[len(lead) :])
@@ -191,14 +193,16 @@ def test_gate3_value_mask_rejects_malformed_negation() -> None:
 def test_gate4_auxiliary_gradient_reaches_addressing_not_decoder() -> None:
     prototype = _prototype()
     mask = [True] * len(_response())
-    total = prototype.sequence_loss(_prefix(), _response(), copy_value_weight=1.0, value_mask=mask)[0]
-    (decoder_grad, head_grad) = torch.autograd.grad(
+    total = prototype.sequence_loss(_prefix(), _response(), copy_value_weight=1.0, value_mask=mask)[
+        0
+    ]
+    decoder_grad, head_grad = torch.autograd.grad(
         total,
         [prototype._parameters["decoder"], prototype._parameters["head_query_1"]],
         allow_unused=True,
     )
     answer_only = prototype.sequence_loss(_prefix(), _response())[0]
-    (answer_decoder_grad, answer_head_grad) = torch.autograd.grad(
+    answer_decoder_grad, answer_head_grad = torch.autograd.grad(
         answer_only,
         [prototype._parameters["decoder"], prototype._parameters["head_query_1"]],
         allow_unused=True,
@@ -236,7 +240,10 @@ def test_gate5_training_reduces_copy_loss_and_restores() -> None:
     torch.manual_seed(20260917)
     trainer = SequenceWorkspaceTrainer(_prototype(), learning_rate=0.05, code_revision="test")
     trainer.enable_copy_value_supervision(1.0)
-    batch = [(_prefix(), _response()), ("问：草是什么颜色？背景：草是绿。答：".encode(), "绿".encode())]
+    batch = [
+        (_prefix(), _response()),
+        ("问：草是什么颜色？背景：草是绿。答：".encode(), "绿".encode()),
+    ]
     masks = [[True] * 3, [True] * 3]
     first = trainer.train_step(batch, value_masks=masks)
     assert first["loss"] == first["loss"]  # finite

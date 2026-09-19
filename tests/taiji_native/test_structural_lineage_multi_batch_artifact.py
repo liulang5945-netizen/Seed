@@ -4,6 +4,7 @@ import os
 from pathlib import Path
 
 import torch
+from _scratch import artifact_scratch_root
 
 from scripts.training.eval_taiji_structural_lineage_restart_continuation import (
     _build_migrated_runtime,
@@ -61,7 +62,7 @@ def test_multi_batch_artifact_retention_preserves_active_lineage() -> None:
     assert terminal_batch.batch_id != active_batch_id
     first_candidate, second_candidate = terminal_batch.selected_candidate_ids
 
-    checkpoint_root = Path(__file__).resolve().parents[2] / "output" / "manual-r5-canary"
+    checkpoint_root = artifact_scratch_root()
     checkpoint_root.mkdir(parents=True, exist_ok=True)
     suffix = os.getpid()
     before_maintenance_path = checkpoint_root / f"s34-before-maintenance-{suffix}.pt"

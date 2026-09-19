@@ -233,9 +233,7 @@ def test_gate4_v4_payload_loads_without_question_start() -> None:
         ),
         code_revision="v4graph",
     )
-    v4_trainer.set_episodes(
-        (("提问：雪的颜色？线索：雪是白。回答：".encode(), "白".encode()),)
-    )
+    v4_trainer.set_episodes((("提问：雪的颜色？线索：雪是白。回答：".encode(), "白".encode()),))
     historical = dict(v4_trainer.checkpoint())
     historical["version"] = 4
     historical["checkpoint_digest"] = content_digest(

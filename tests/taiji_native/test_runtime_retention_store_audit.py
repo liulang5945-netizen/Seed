@@ -5,6 +5,7 @@ import os
 from pathlib import Path
 
 import pytest
+from _scratch import artifact_scratch_root
 
 from api.seed_runtime import SeedRuntime
 from scripts.training.eval_taiji_runtime_structural_artifact_multi_round import (
@@ -50,12 +51,7 @@ def test_store_audit_is_read_only_and_reports_runtime_orphans() -> None:
     terminal_batch = _batch(runtime, terminal_batch_id)
     first_id, second_id = terminal_batch.selected_candidate_ids
 
-    store_root = (
-        Path(__file__).resolve().parents[2]
-        / "output"
-        / "manual-r5-canary"
-        / f"s46-store-{os.getpid()}"
-    )
+    store_root = artifact_scratch_root() / f"s46-store-{os.getpid()}"
     checkpoint_path = store_root.parent / f"s46-runtime-{os.getpid()}.pt"
     before_retention_path = store_root.parent / f"s46-before-retention-{os.getpid()}.pt"
     after_retention_path = store_root.parent / f"s46-after-retention-{os.getpid()}.pt"

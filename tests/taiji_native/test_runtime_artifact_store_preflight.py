@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 import os
-from pathlib import Path
+
+from _scratch import artifact_scratch_root
 
 from api.seed_runtime import SeedRuntime
 from scripts.training.eval_taiji_runtime_structural_artifact_multi_round import _record_round
@@ -24,12 +25,7 @@ def test_runtime_artifact_store_preflights_all_candidates_before_mutation() -> N
     batch = runtime.model.architecture.structural_candidate_batches[-1]
     first_id, second_id = batch.selected_candidate_ids
     artifact, replay, _ = _build_artifact(runtime.model.architecture, first_id, evidence)
-    store_root = (
-        Path(__file__).resolve().parents[2]
-        / "output"
-        / "manual-r5-canary"
-        / f"s43-preflight-{os.getpid()}"
-    )
+    store_root = artifact_scratch_root() / f"s43-preflight-{os.getpid()}"
     checkpoint_path = store_root.parent / f"s43-preflight-runtime-{os.getpid()}.pt"
     store = StructuralValidationArtifactStore(store_root)
     legacy_policy = ArtifactConsumptionPolicy.legacy_compatible(

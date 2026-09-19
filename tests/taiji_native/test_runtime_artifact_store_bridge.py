@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 import os
-from pathlib import Path
+
+from _scratch import artifact_scratch_root
 
 from api.seed_runtime import SeedRuntime
 from scripts.training.eval_taiji_runtime_structural_artifact_multi_round import _record_round
@@ -28,12 +29,7 @@ def test_runtime_artifact_store_bridge_validates_before_native_mutation() -> Non
         candidate_id,
         evidence,
     )
-    store_root = (
-        Path(__file__).resolve().parents[2]
-        / "output"
-        / "manual-r5-canary"
-        / f"s42-bridge-{os.getpid()}"
-    )
+    store_root = artifact_scratch_root() / f"s42-bridge-{os.getpid()}"
     checkpoint_path = store_root.parent / f"s42-bridge-runtime-{os.getpid()}.pt"
     store = StructuralValidationArtifactStore(store_root)
     legacy_policy = ArtifactConsumptionPolicy.legacy_compatible(reason="historical-s42-bridge-test")

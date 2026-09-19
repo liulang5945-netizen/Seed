@@ -5,6 +5,8 @@ import copy
 import os
 from pathlib import Path
 
+from _scratch import artifact_scratch_root
+
 from api.seed_runtime import SeedRuntime
 from scripts.training.eval_taiji_workbench_measured_artifact_batch import _build_artifact
 from scripts.training.eval_taiji_workbench_multi_region_batch import (
@@ -32,7 +34,7 @@ def test_runtime_artifact_failures_are_isolated_and_concurrent_submit_is_idempot
         candidate_id,
         executions,
     )
-    checkpoint_root = Path(__file__).resolve().parents[2] / "output" / "manual-r5-canary"
+    checkpoint_root = artifact_scratch_root()
     checkpoint_root.mkdir(parents=True, exist_ok=True)
     suffix = os.getpid()
     checkpoint_path = checkpoint_root / f"s37-runtime-artifact-{suffix}.pt"

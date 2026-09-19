@@ -60,11 +60,11 @@ def _v7(seed: int = 20260917, *, flag: bool = True) -> SequenceWorkspacePrototyp
 
 
 def _prefix() -> bytes:
-    return "提问：雪的颜色？线索：雪是琥珀。回答：".encode("utf-8")
+    return "提问：雪的颜色？线索：雪是琥珀。回答：".encode()
 
 
 def _response() -> bytes:
-    return "琥珀".encode("utf-8")
+    return "琥珀".encode()
 
 
 # --------------------------------------------------------------------------- #
@@ -100,9 +100,10 @@ def test_gate1_flag_off_and_zero_bias_bitwise_equal_v6() -> None:
             mixed, copied = prototype.teacher_forced_mixture_and_copy(prefix, response)
             v6_mixed, v6_copied = v6.teacher_forced_mixture_and_copy(prefix, response)
             assert torch.equal(mixed, v6_mixed) and torch.equal(copied, v6_copied), name
-            assert prototype.sequence_loss(prefix, response)[0].tolist() == v6.sequence_loss(
-                prefix, response
-            )[0].tolist()
+            assert (
+                prototype.sequence_loss(prefix, response)[0].tolist()
+                == v6.sequence_loss(prefix, response)[0].tolist()
+            )
             assert (
                 prototype.generate(prefix, max_bytes=8).bytes_out
                 == v6.generate(prefix, max_bytes=8).bytes_out
@@ -210,7 +211,7 @@ def test_gate3_bias_receives_finite_gradient() -> None:
     read = (weights @ state.workspace_value).mean()  # type: ignore[operator]
     (grad_read,) = torch.autograd.grad(read, [prototype._parameters["copy_persist_bias"]])
     assert torch.isfinite(grad_read).all()
-    response = "琥珀".encode("utf-8")
+    response = "琥珀".encode()
     total, metrics = prototype.sequence_loss(
         _prefix(), response, copy_value_weight=1.0, value_mask=[True] * len(response)
     )
