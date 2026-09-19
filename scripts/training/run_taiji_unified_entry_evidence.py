@@ -240,7 +240,9 @@ def main() -> int:
     embedder = _MemoizedEmbedder(DocumentEmbedder()) if not args.no_memoization else DocumentEmbedder()
     members = _train_members(embedder)  # instrument caliber, frozen prereg §2
 
-    family = _family_tasks()["member-c"]  # create_undo family
+    family = _family_tasks()["member-a"]  # lang_confirm family (prereg §5:
+    # the create_undo family was withdrawn — every task is tick-0 satisfied
+    # in this harness, producing vacuous zero-action successes)
     main_task, unseen_task = family[0], family[1]
     cue_by_task = {
         task.task_id: torch.tensor(embedder.embed([task.goal_text])[0], dtype=torch.float32)
