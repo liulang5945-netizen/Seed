@@ -28,6 +28,20 @@
 - **⚠️ 根因仍未修**：那 7 个测试依然把 `store_root` 指向该共享目录 ⇒ **会再次累积**。
   建议的根治（改 pytest `tmp_path`，或 teardown 清理本次 PID 的中间文件）**待实施**。
   **下次清空前必须重新核查**该目录（通过标准：只剩 `README.md` 与 `native-canary.pt`）。
+- **DEBT-I7 第二例：根因已修（2026-09-19，`8a7966b4`）**，上面"待实施"就此关闭。做法**不是** tmp_path 也不是
+  teardown 清理，而是**让测试根本不拼那个路径**：18 个工件测试的根改为系统临时目录
+  （`tests/_scratch.py:artifact_scratch_root()`，保持 `<root>/<sNN-kind-<pid>>` 的形状，所以测试里
+  `store_root.parent/...` 的兄弟路径与清理循环原样可用），并**撤掉**会话末 sweep 兜底
+  （`tests/_canary_sweep.py` 与它的契约测试已删）—— 那套兜底只覆盖"跑到 teardown"的进程，
+  而残留恰恰来自被终止的进程（实测 12 文件 / 496 MiB，6 个已死 pid；今天手工清掉过一次，
+  **不清就会按这个速率继续长**）。
+  替代清理的是**预防**：`tests/taiji_native/test_artifact_store_scratch_contract.py` 四条守卫 ——
+  ① 静态扫 `tests/` 不许再拼该路径（**先跑出红：19 处含 conftest，改完转绿**；唯一具名豁免是
+  只读方 `_scratch.py`，第 ④ 条把"豁免面只有一个文件"也钉住）；② scratch 根必须在仓库外；
+  ③ 产品目录只应剩 `README.md` + `native-canary.pt`。验证：改写后的 24 个测试文件合跑
+  **62 passed / 0 failed（107.5 s）**，ruff/black 干净；跑完后产品目录确实只剩那 2 项、临时目录为空。
+  顺带更正本条上方的两处旧数字：涨速不是"335→500 MB / 四次全量"的线性外推，而是**每次被终止的运行
+  各留一对 ~43 MB**（12 个 = 6 pid × 2 文件），sweep 只能清活到 teardown 的那些。
 - **✅ 根因的第二半已处置（2026-09-18 第五批，采用上面建议的第二种：teardown 清理本次 PID）**：
   累积确实还在发生 —— 今天四次全量之间该目录从 **10 项 / 335 MB 涨到 14 项 / 500 MB**
   （新增的都是 `s45-active-<pid>.pt` / `s45-terminal-scheduled-<pid>.pt`，每个 PID 一对）。
