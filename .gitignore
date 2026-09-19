@@ -237,3 +237,8 @@ outputs/project-audit-*/
 reports/_v1v2_replay/
 reports/_v4reg/
 reports/_v4reg2/
+
+# 2026-09-19：pytest junit 产物（含 hostname/username，属机器指纹泄漏面）不入库。
+# 与 output(s)/ 那两道同类：按产物类型写规则，而不是逐个实例名。
+report.xml
+junit*.xml

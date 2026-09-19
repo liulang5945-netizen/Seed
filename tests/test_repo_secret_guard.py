@@ -40,6 +40,43 @@ INTENTIONALLY_TRACKED_UNDER_OUTPUT = (
     "output/playwright/seed-s2-packaged-workspace.png",
 )
 
+#: 需要比对"在位值 vs 历史 blob"的凭据文件（相对仓库根）。
+#: 2026-09-19 补：只测"规则是否命中"与"跟踪清单是否为空"**测不到这一条** ——
+#: `security/.storage_salt` 的在位值曾与已推送历史里的 blob `5bfda9cd` 逐位相同，
+#: 即"当前在用的盐可以从远端历史里取出"，而当时 4 条守卫全绿。
+CREDENTIAL_FILES = (
+    "security/.jwt_secret",
+    "security/.storage_salt",
+    "dist/Seed/security/.jwt_secret",
+    "dist/Seed/security/.storage_salt",
+)
+
+
+def _sha16(data: bytes) -> str:
+    import hashlib
+
+    return hashlib.sha256(data).hexdigest()[:16]
+
+
+def _history_blob_fingerprints(relative: str) -> list[tuple[str, str]]:
+    """**逐路径**取历史 blob 指纹。
+
+    必须逐路径查询：`git log -- a b c` 会把多个路径混在一起，无法逐路径归因
+    （这正是 2026-09-19 那次误判的成因）。
+    """
+
+    commits = [c for c in _git("log", "--all", "--format=%H", "--", relative).stdout.split() if c]
+    out: list[tuple[str, str]] = []
+    for commit in commits:
+        blob = subprocess.run(
+            ["git", "cat-file", "-p", f"{commit}:{relative}"],
+            cwd=REPO,
+            capture_output=True,
+        )
+        if blob.returncode == 0:
+            out.append((commit[:8], _sha16(blob.stdout)))
+    return out
+
 
 def _git(*args: str) -> subprocess.CompletedProcess:
     return subprocess.run(
@@ -103,3 +140,31 @@ def test_wildcards_do_not_swallow_intentionally_tracked_output() -> None:
     tracked = set(_tracked())
     swallowed = [path for path in INTENTIONALLY_TRACKED_UNDER_OUTPUT if path not in tracked]
     assert swallowed == [], f"通配把有意入库的产物一起吞掉了（这些路径应仍在跟踪中）：{swallowed}"
+
+
+def test_live_credentials_do_not_match_any_historical_blob() -> None:
+    """**在位凭据的值不得等于任何一个已提交的历史 blob。**
+
+    这是前三条守卫的**结构性缺口**补丁。它们测的是「规则是否命中」与「跟踪清单是否为空」，
+    因此拦不住下面这件事：文件**从未被跟踪**（清单为空 ✓）、规则**也确实命中**（嵌套路径 ✓），
+    但**当前在用的值**与仓库历史里某个 blob **逐位相同** —— 也就是「在用的凭据能直接从历史里取出」。
+
+    2026-09-19 实测踩中的正是这一条：`security/.storage_salt` 的在位值指纹 `f1d2ed7b…`
+    等于已推送历史里的 blob `5bfda9cd`，而当时四条守卫全绿。
+    """
+
+    offenders: list[str] = []
+    for relative in CREDENTIAL_FILES:
+        live = REPO / relative
+        if not live.is_file():
+            continue
+        live_fp = _sha16(live.read_bytes())
+        for commit, blob_fp in _history_blob_fingerprints(relative):
+            if blob_fp == live_fp:
+                offenders.append(f"{relative}: 在位值({live_fp}) == 历史 blob {commit}({blob_fp})")
+    assert (
+        offenders == []
+    ), (
+        "当前在用的凭据值可以从仓库历史里取出 —— 仅切断「继续被跟踪」不够，需要轮换：\n  "
+        + "\n  ".join(offenders)
+    )
