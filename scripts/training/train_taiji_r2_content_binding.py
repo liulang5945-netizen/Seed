@@ -69,9 +69,12 @@ GROUP_CLASSES = (
 FLIP_GATE_CLASSES = ("fact_flip", "object_swap", "relation_flip")
 #: Contract section 4: calibration microbatch = 4 groups = 8 items.
 BATCH_GROUPS = 4
-#: Contract section 4 calibration evaluation points and caps.
+#: Contract section 4 calibration evaluation points and caps.  v4 (contract
+#: 20260920 §F1) extends to 8000 updates with dense margin observation.
 CALIBRATION_POINTS = (500, 1000, 1500, 2000)
+CALIBRATION_POINTS_V4 = (500, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000)
 CALIBRATION_MAX_UPDATES = 2000
+CALIBRATION_V4_MAX_UPDATES = 8000
 FORMAL_MAX_UPDATES = 2000
 #: The two frozen candidate recipes (peak lr); everything else is shared.
 RECIPES: dict[str, dict[str, float]] = {
@@ -337,6 +340,7 @@ def run(
     trainer_revision: str = "v1",
     question_hidden_width: int = 0,
     relation_hidden: int = 96,
+    calibration_points: tuple[int, ...] = CALIBRATION_POINTS,
 ) -> dict[str, Any]:
     """One bounded training run.  Never called by this session's gate phase
     except through ``--mode smoke`` (test artifact)."""
@@ -404,7 +408,7 @@ def run(
             trainer.save(path)
             saved.append(_display_path(path))
             trainer.save(latest_path)
-        if mode == "calibration" and step in CALIBRATION_POINTS:
+        if mode == "calibration" and step in calibration_points:
             evaluation = evaluate_flip_scores(workspace, load_calibration_fixture())
             if trainer.pair_contrastive_weight > 0.0:
                 # contract v3 section E2 primary observable (train-only)
@@ -508,6 +512,11 @@ def main() -> int:
         default=96,
         help="relation/content MLP width (contract v3: 128)",
     )
+    parser.add_argument(
+        "--calibration-points",
+        default="500,1000,1500,2000",
+        help="comma-separated calibration evaluation updates (v4: 500,1000,2000,...,8000)",
+    )
     args = parser.parse_args()
 
     if args.mode == "smoke":
@@ -515,6 +524,8 @@ def main() -> int:
     elif args.total_updates is not None:
         total = int(args.total_updates)
         cap = CALIBRATION_MAX_UPDATES if args.mode == "calibration" else FORMAL_MAX_UPDATES
+        if args.calibration_points != "500,1000,1500,2000":
+            cap = 8000  # v4 contract: dense-point sweep carries an 8000-update cap
         if total > cap:
             raise SystemExit(f"--total-updates {total} exceeds the {args.mode} cap {cap}")
     else:
@@ -536,6 +547,9 @@ def main() -> int:
         trainer_revision=args.trainer_revision,
         question_hidden_width=args.question_hidden_width,
         relation_hidden=args.relation_hidden,
+        calibration_points=tuple(
+            int(item) for item in args.calibration_points.split(",")
+        ),
     )
     print(
         json.dumps(
