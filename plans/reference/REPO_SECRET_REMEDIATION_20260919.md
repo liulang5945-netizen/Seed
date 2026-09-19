@@ -125,3 +125,43 @@ output/p6-1d-packaged-data/security/.storage_salt
 **未做**：`security/`、`dist/Seed/security/` 未动（未泄漏，且前者 salt 可能派生着存量密文）；
 历史未重写（见 §2 B）。
 
+## §5 加固 C 已执行（2026-09-19）
+
+**问题**：`.gitignore` 里 `output/` 是**逐个实例名**列举（`output/taiji_m5_k_p3_0_*` 等一长串），
+当年 `p6-1d-packaged-data` 不在列表里 ⇒ 才被跟踪。**这与"带斜杠锚定"是同一类疏忽：
+写死了实例名，而不是命名约定** ⇒ 下一个打包目录会再次漏网。
+
+**改法**（两条互补的规则，见 `.gitignore` L215–220）：
+
+```
+output/*-packaged-data/     # 按命名约定覆盖整族
+output/p6-*/                # 兜住当前实例
+```
+
+**为什么不能整体 ignore `output/`**：那里**确有意入库的产物** ——
+`manual-r5-*/README.md` 与 `output/playwright/*.png`（共 23 个文件），是版本化的验收证据。
+
+**守卫同步加强**（`tests/test_repo_secret_guard.py`，2 → **4 条**）：
+
+| 测试 | 作用 |
+|---|---|
+| `..._runtime_credentials_and_checkpoints_are_not_tracked` | 查跟踪清单（凭据/审计日志/`*.pt`）|
+| `..._ignore_rules_reach_nested_packaged_data` | `check-ignore --no-index` 实测嵌套 security 路径 |
+| **`..._cover_packaged_data_dirs_by_convention`**（新） | 按约定覆盖：同时探 `p6-1d-packaged-data` 与**假想的** `anything-packaged-data` |
+| **`..._do_not_swallow_intentionally_tracked_output`**（新） | **反向钉住**：通配不得吞掉有意入库的产物 |
+
+**实测验证**：
+
+| 探测路径 | 结果 |
+|---|---|
+| `output/p6-1d-packaged-data/` | IGNORED（`output/p6-*/`）|
+| `output/p6-1d-packaged-data/data/app_settings.json` | **IGNORED** ⇒ 非凭据类运行产物也被护住 |
+| `output/v9-candidate-packaged-data/security/.storage_salt` | **IGNORED**（`output/*-packaged-data/`）⇒ 未来目录覆盖 |
+| `output/manual-r5-s0/README.md` / `output/playwright/*.png` | **not ignored，仍被跟踪** |
+| `output/` 下跟踪文件数 | **23（不变，零误伤）** |
+| 守卫测试 | **4 passed** |
+
+⇒ 两道独立防线：**凭据**由 `**/security/*` 护住（与目录名无关）；
+**运行产物**由 `<name>-packaged-data` 命名约定护住。二者都不再依赖"逐个实例名列举"。
+
+

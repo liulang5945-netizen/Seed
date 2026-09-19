@@ -209,6 +209,15 @@ output/taiji_m5_k_p4_6_functional_parent_objective_*/
 output/taiji_m5_k_runtime_attachment_*/
 output/taiji_m5_k_default_runtime_rollout_review_*/
 
+# 2026-09-19：打包运行的数据目录（命名约定 <name>-packaged-data）。
+# 当年 output/p6-1d-packaged-data/ 漏网，根因与"带斜杠锚定"同类：上面那批规则写死了
+# 逐个实例名，而这个目录不在列表里 —— 按约定写通配才不会漏下一个。
+# 注意：output/ 下确有意入库的产物（manual-r5-*/README.md、playwright/*.png），
+# 所以**不能**整体 ignore output/；这里只覆盖"打包运行数据目录"这一命名族，
+# 凭据另由上面的 **/security/* 规则护住（两道独立防线）。
+output/*-packaged-data/
+output/p6-*/
+
 # WorkBuddy 会话状态目录（记忆、技能、会话数据）；.workbuddy/memory/ 需随仓库保留
 !.workbuddy/
 .workbuddy/*
