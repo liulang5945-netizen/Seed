@@ -28,12 +28,12 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(PROJECT_ROOT))
 sys.path.insert(0, str(PROJECT_ROOT / "scripts" / "training"))
 
+import eval_taiji_p5_2a_predictive_execution_gate as p52a  # noqa: E402
 import torch  # noqa: E402
 from eval_taiji_p5_1f_real_corpus_same_budget_gate import (  # noqa: E402
     DocumentEmbedder,
     _MemoizedEmbedder,
 )
-from eval_taiji_p5_2a_predictive_execution_gate import p52a  # noqa: E402
 from eval_taiji_p5_2b_group_causal_corpora_gate import (  # noqa: E402
     MEMBER_IDS,
     STEP_CAP,
