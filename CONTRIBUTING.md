@@ -51,6 +51,30 @@ python scripts/sync_version.py        # Sync version to all files
 - Capability claims need a frozen holdout, relevant baselines and causal lesion/control.
 - Increasing model size or epochs is not an accepted response to a failed mechanism gate.
 
+## Repository hygiene
+
+Secrets and run artefacts must never enter the repository. The rules are short, the
+failure modes are not obvious, and this project has already paid for them once
+(2026-09-19: a runtime salt and a packaged `.jwt_secret` reached the remote history —
+not through carelessness, but through `.gitignore` patterns that were written by
+instance name):
+
+- Write `.gitignore` rules by **naming convention**, never by instance name
+  (`**/security/.storage_salt`, not `security/.storage_salt`).
+- A directory rule does **not** cover its children — verify with
+  `git check-ignore --no-index -v <nested/path>`.
+- Guards must be **two-sided** (must ignore X **and** must not ignore Y), and one of them
+  must compare **the live credential value against historical blobs** — the other four
+  checks were green while the in-use salt was still recoverable from history.
+- Rewriting history happens in a **mirror clone**, never in the working repository.
+  Note that `filter-repo` does not rewrite custom ref namespaces, and that remote
+  `refs/pull/*` cannot be force-pushed away.
+- Never derive a key from information that is already public or inferable
+  (hostname, username, `platform.machine()`). Use a persisted random key.
+
+Full rules, incident timeline and exact commands: [`docs/REPO_HYGIENE_RULES.md`](docs/REPO_HYGIENE_RULES.md).
+Machine-enforced by `tests/test_repo_secret_guard.py` — run it before committing.
+
 ## Pull requests
 
 1. Create a branch, normally `feat/<name>` or `fix/<name>`.

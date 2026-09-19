@@ -131,6 +131,20 @@ v3 的 loss 门是 **1/3**（→ 判抖动，matched 正常）；v4 是 **3/3 �
 - **改写后所有提交哈希都变**（本次 1696 个里约 67% 的前缀变化）⇒ 文档/记忆里记录的旧 sha 全部失效。
 - **推前必须再验证一次**；`fetch --force` + `reset --hard` 前后要用**逐字节备份**保护未提交文件。
 
+**(4g) 密钥材料不得取自已公开/可推得的信息（2026-09-19 修）** ——
+`SecureStorage` 曾用 `PBKDF2(hostname|machine|USERNAME|processor, salt)` 派生 Fernet 密钥；
+这四个分量里 hostname/USERNAME **就在仓库内容里**、machine/processor 取值空间极小
+⇒ **盐一旦泄漏即可离线重放，安全性接近混淆而非加密**。
+**已改为随机生成并持久化的 `.fernet_key`**（`Fernet.generate_key()`，0600），
+旧 PBKDF2 派生降级为**解密回退**（三级回退：新密钥 → 旧派生 → 最老 XOR），零数据损失。
+配套测试 `tests/test_secure_storage_key_source.py`（6 项，含"篡改机器指纹后密文仍可解"）。
+
+**仓库卫生规范已立**：`docs/REPO_HYGIENE_RULES.md`（R1–R10 + 提交前清单），
+`CONTRIBUTING.md` 增「Repository hygiene」节指向它；守卫 `tests/test_repo_secret_guard.py`（5 条）。
+核心条款：规则按命名约定写、目录规则不覆盖子文件、守卫双向钉住、
+判泄漏要比在位值与历史 blob 指纹、历史重写用镜像、危险操作先备份并验证可读、
+处置顺序=停跟踪→轮换→（可选）清历史、密钥材料不得取自已公开信息。
+
 ## 5. R2 当前状态（2026-09-18）
 
 **当前配置**：char-v1 字级图 + induction + λ_copy=1.0，lr=0.01，microbatch 8，30 epochs。

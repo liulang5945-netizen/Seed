@@ -76,6 +76,7 @@ taiji_data/
 # （`output/p6-1d-packaged-data/security/` 曾被这样漏掉并提交进历史，见 tests/test_repo_secret_guard.py）
 **/security/.jwt_secret
 **/security/.storage_salt
+**/security/.fernet_key
 **/security/audit_logs/
 
 # Logs

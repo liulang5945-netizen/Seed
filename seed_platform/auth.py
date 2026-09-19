@@ -169,20 +169,71 @@ class SecureStorage:
     """敏感数据加密存储
 
     使用 cryptography.fernet.Fernet（AES-128-CBC + HMAC-SHA256 AEAD）。
-    密钥由机器指纹经 PBKDF2HMAC(SHA256, 600k 迭代) 派生，
-    盐为随机生成并持久化在安全目录的 .storage_salt 文件中（不再硬编码）。
+    **密钥为随机生成并持久化**在安全目录的 `.fernet_key` 文件中
+    （`Fernet.generate_key()`，32 字节 urlsafe-base64，权限 0600）。
 
-    向后兼容：旧版本 XOR + HMAC 密文仍可解密（decrypt 自动回退并告警），
-    重新保存时自动以 Fernet 格式重写。
+    ⚠️ 安全说明（2026-09-19 修正）：旧实现用「机器指纹 + 随机盐」经
+    PBKDF2HMAC(SHA256, 600k) 派生密钥。但机器指纹的四个分量
+    （`platform.node` / `platform.machine` / `USERNAME` / `processor`）
+    都能从仓库内容或运行环境推得 ⇒ 「指纹 + 盐」的安全性接近**混淆**而非**加密**：
+    盐一旦泄漏即可离线重放（本仓库确实发生过盐泄漏）。现改为随机密钥，
+    盐只保留给 legacy 解密回退使用。
+
+    向后兼容（三级回退，见 `decrypt`）：① 当前随机密钥；② 旧 PBKDF2 派生密钥；
+    ③ 更早的 XOR + HMAC 方案。命中任一 legacy 路径都会告警，下次保存时自动以当前密钥重写。
     """
 
+    _KEY_FILE = ".fernet_key"
     _SALT_FILE = ".storage_salt"
     _PBKDF2_ITERATIONS = 600_000
 
     def __init__(self):
         from cryptography.fernet import Fernet
 
-        self._fernet = Fernet(self._derive_fernet_key())
+        # 正式密钥 = **随机生成并持久化的高熵密钥**（与 .jwt_secret 同构）。
+        # 历史实现是「机器指纹经 PBKDF2 派生」；但机器指纹的四个分量
+        # （platform.node / platform.machine / USERNAME / processor）都能从仓库内容
+        # 或运行环境推得，于是"指纹 + 盐"这条路的安全性接近混淆而非加密
+        # ⇒ 一旦盐泄漏（本仓库确实发生过），密钥即可离线重放。
+        # 旧派生路径只保留为**解密回退**，不再用于新数据。
+        self._fernet = Fernet(self._load_or_generate_fernet_key())
+        self._pbkdf2_fernet: object | None = None
+
+    def _key_path(self) -> str:
+        return os.path.join(_security_dir(), self._KEY_FILE)
+
+    def _load_or_generate_fernet_key(self) -> bytes:
+        """加载或生成高熵 Fernet 密钥（持久化在安全目录）。
+
+        与 `_load_or_generate_salt` 同一模式：文件在则复用，缺失或非法则重新生成并落盘。
+        """
+        from cryptography.fernet import Fernet
+
+        key_path = self._key_path()
+        if os.path.exists(key_path):
+            try:
+                with open(key_path, "rb") as f:
+                    key = f.read().strip()
+                Fernet(key)  # 格式校验：非法即视为不可用，走重新生成
+                return key
+            except Exception as e:
+                logger.warning(
+                    "【SecureStorage._load_or_generate_fernet_key】现有密钥不可用，将重新生成: %s",
+                    e,
+                )
+        key = Fernet.generate_key()
+        try:
+            with open(key_path, "wb") as f:
+                f.write(key)
+            try:
+                os.chmod(key_path, 0o600)
+            except Exception as e:
+                logger.debug(
+                    "【SecureStorage._load_or_generate_fernet_key】处理失败（非致命）: %s", e
+                )
+        except Exception as e:
+            logger.warning(f"保存 Fernet 密钥失败: {e}")
+        return key
 
     def _machine_fingerprint(self) -> str:
         """生成机器指纹（CPU + 用户名 + 主机名）"""
@@ -222,8 +273,13 @@ class SecureStorage:
             logger.warning(f"保存加密盐失败: {e}")
         return salt
 
-    def _derive_fernet_key(self) -> bytes:
-        """从机器指纹经 PBKDF2HMAC 派生 Fernet 密钥（urlsafe_b64 编码）"""
+    def _derive_fernet_key_pbkdf2(self) -> bytes:
+        """**仅用于 legacy 解密回退**：旧版从机器指纹经 PBKDF2HMAC 派生 Fernet 密钥。
+
+        新数据一律走 `_load_or_generate_fernet_key()`；本方法存在的唯一理由是
+        让历史上由该路径加密的密文仍可解开（本仓库已确认当前无此类存量密文，
+        故实际是"存在即安全网"）。
+        """
         from cryptography.hazmat.primitives import hashes
         from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 
@@ -235,6 +291,18 @@ class SecureStorage:
         )
         return base64.urlsafe_b64encode(kdf.derive(self._machine_fingerprint().encode("utf-8")))
 
+    def _legacy_pbkdf2_fernet(self):
+        """懒构造 legacy PBKDF2-Fernet 实例；构造失败则返回 None（并缓存该结论）。"""
+        from cryptography.fernet import Fernet
+
+        if self._pbkdf2_fernet is None:
+            try:
+                self._pbkdf2_fernet = Fernet(self._derive_fernet_key_pbkdf2())
+            except Exception as e:
+                logger.debug("【SecureStorage._legacy_pbkdf2_fernet】不可用: %s", e)
+                self._pbkdf2_fernet = False
+        return None if self._pbkdf2_fernet is False else self._pbkdf2_fernet
+
     def encrypt(self, plaintext: str) -> str:
         """加密字符串，返回 Base64 编码的密文（Fernet token）"""
         if not plaintext:
@@ -242,10 +310,13 @@ class SecureStorage:
         return self._fernet.encrypt(plaintext.encode("utf-8")).decode("ascii")
 
     def decrypt(self, ciphertext: str) -> str:
-        """解密 Base64 编码的密文
+        """解密 Base64 编码的密文（三级回退）
 
-        先尝试 Fernet 解密；失败则回退旧 XOR 路径（兼容历史数据），
-        并告警提示——下次 encrypt/保存会自动以 Fernet 重写。
+        1. 当前随机密钥（Fernet）；
+        2. 历史上由「机器指纹 + 盐」经 PBKDF2 派生的 Fernet 密钥（legacy）；
+        3. 更早的 XOR + HMAC 方案（legacy）。
+
+        任一 legacy 命中都会告警，提示下次 encrypt/保存时会自动以当前密钥重写。
         """
         if not ciphertext:
             return ""
@@ -259,6 +330,15 @@ class SecureStorage:
         except Exception as e:
             logger.warning(f"解密失败: {e}")
             return ""
+
+        legacy_fernet = self._legacy_pbkdf2_fernet()
+        if legacy_fernet is not None:
+            try:
+                value = legacy_fernet.decrypt(ciphertext.encode("ascii")).decode("utf-8")
+                logger.warning("legacy PBKDF2-derived key, re-encrypt on next save")
+                return value
+            except Exception as e:
+                logger.debug("【SecureStorage.decrypt】PBKDF2 回退未命中: %s", e)
 
         legacy = self._decrypt_legacy_xor(ciphertext)
         if legacy:
