@@ -101,6 +101,23 @@
 1/N seeds ⇒ 偶发抖动（可放行）；N/N ⇒ 系统性（不得放行）。
 v3 的 loss 门是 **1/3**（→ 判抖动，matched 正常）；v4 是 **3/3 且伴随机制读数退化**（→ 系统性）。
 
+**(4e) 仓库卫生判据（2026-09-19 实测得来，两条都踩过）** ——
+
+- **判「某文件是否已泄漏」必须比较「在位值与历史 blob 的指纹」**，**不是**数提交个数、
+  **也不是**看目录是否被 ignore。实测：`security/.storage_salt` 的路径历史有 blob，
+  且**在位值指纹与已推送的 blob `5bfda9cd` 逐位相同** ⇒ 那个盐"可从远端历史取出"，
+  而当时 4 条守卫全绿。反例：`security/.jwt_secret` 历史 0 个 blob ⇒ 未泄漏（此判成立）。
+- **多路径合并查询不能逐路径归因**：`git log -- a b c` 把多路径混在一起 →
+  曾据此误判"根目录那对也进过历史"。**必须逐路径查**。
+- **守卫的结构性缺口**：只测「规则是否命中」+「跟踪清单是否为空」**测不到**
+  「在位值 == 历史 blob」这一条 ⇒ 需专门补一条比对指纹的守卫（**红/绿各跑一次证明它能响**）。
+- **"目录规则"不覆盖子文件**：`output/` 与 `outputs/` 各自出现"目录被 ignore 但
+  `output/x.txt` NOT ignored"。**按实例名写规则会持续漏**，要按**命名约定**通配
+  （`<name>-packaged-data/`、`junit*.xml`）；且**必须反向钉住**，别为不泄漏把验收证据一起 ignore 掉。
+- **设计层弱点（登记，未改）**：`seed_platform/auth.py` 用**机器指纹**（`hostname|machine|USERNAME|processor`）
+  作 PBKDF2 口令，其中 hostname/username **就在仓库里**（`report.xml` 里直接写着 hostname）、
+  machine/processor 取值空间极小 ⇒ 一旦盐公开，密钥可离线重放。**安全性接近混淆而非加密。**
+
 ## 5. R2 当前状态（2026-09-18）
 
 **当前配置**：char-v1 字级图 + induction + λ_copy=1.0，lr=0.01，microbatch 8，30 epochs。
