@@ -1,0 +1,166 @@
+{
+  "format": "taiji-p5-1h-admission-recipe-report-v1",
+  "version": 1,
+  "contract": "plans/reference/M5_P5_1H_ADMISSION_PACKAGE_DRAFT_20260919.md",
+  "preregistration": "plans/reference/M5_P5_1G_REAL_CORPUS_QUOTA_BUDGET_PREREGISTRATION_20260912.md",
+  "budget_approval_note": "user approved training budget for the P5.1h calibration sweep (2026-09-19)",
+  "dataset": {
+    "name": "openbmb/UltraData-SFT-Agent-2609",
+    "license": "Apache-2.0"
+  },
+  "corpus_identity": {
+    "sourced_path": "data/ultradata/SFT-Agent-2609/data/Tool_Use/Tool_Use_part-1-of-9.jsonl",
+    "calls_quotas": {
+      "train": 989,
+      "holdout": 385,
+      "retention": 253
+    },
+    "admission_revision_inherited": "p51g:admission"
+  },
+  "recipe_grid": [
+    0.0,
+    0.25,
+    0.5,
+    1.0
+  ],
+  "independent_slice": {
+    "records": 16,
+    "first_line": 344,
+    "last_line": 361,
+    "pruned_out_of_vocabulary": 0
+  },
+  "per_recipe": [
+    {
+      "replay_weight": 0.0,
+      "procedural_retention_accuracy": 0.4188861985472155,
+      "procedural_holdout_accuracy": 0.4512,
+      "independent_accuracy": 0.92,
+      "semantic_retention_before": 1.0,
+      "semantic_retention_after": 0.0003694570383287108,
+      "lesion_accuracy": 0.0,
+      "admitted_in_report": false,
+      "lines": {
+        "lines": {
+          "L1_retention": false,
+          "L2_independent_transfer": true,
+          "L3_semantic_retention": true,
+          "L4_lesion_roundtrip": true
+        },
+        "all_pass": false,
+        "thresholds": {
+          "retention_line": 0.5,
+          "independent_accuracy_line": 0.517,
+          "lesion_ceiling": 0.05
+        }
+      },
+      "elapsed_seconds": 155.3741112999851
+    },
+    {
+      "replay_weight": 0.25,
+      "procedural_retention_accuracy": 0.6053268765133172,
+      "procedural_holdout_accuracy": 0.456,
+      "independent_accuracy": 0.92,
+      "semantic_retention_before": 1.0,
+      "semantic_retention_after": 0.0003694570383287108,
+      "lesion_accuracy": 0.0,
+      "admitted_in_report": true,
+      "lines": {
+        "lines": {
+          "L1_retention": true,
+          "L2_independent_transfer": true,
+          "L3_semantic_retention": true,
+          "L4_lesion_roundtrip": true
+        },
+        "all_pass": true,
+        "thresholds": {
+          "retention_line": 0.5,
+          "independent_accuracy_line": 0.517,
+          "lesion_ceiling": 0.05
+        }
+      },
+      "elapsed_seconds": 154.22395939996932
+    },
+    {
+      "replay_weight": 0.5,
+      "procedural_retention_accuracy": 0.576271186440678,
+      "procedural_holdout_accuracy": 0.4544,
+      "independent_accuracy": 0.893333,
+      "semantic_retention_before": 1.0,
+      "semantic_retention_after": 0.0003694570383287108,
+      "lesion_accuracy": 0.0,
+      "admitted_in_report": true,
+      "lines": {
+        "lines": {
+          "L1_retention": true,
+          "L2_independent_transfer": true,
+          "L3_semantic_retention": true,
+          "L4_lesion_roundtrip": true
+        },
+        "all_pass": true,
+        "thresholds": {
+          "retention_line": 0.5,
+          "independent_accuracy_line": 0.517,
+          "lesion_ceiling": 0.05
+        }
+      },
+      "elapsed_seconds": 153.72289239999373
+    },
+    {
+      "replay_weight": 1.0,
+      "procedural_retention_accuracy": 0.5665859564164649,
+      "procedural_holdout_accuracy": 0.4432,
+      "independent_accuracy": 0.92,
+      "semantic_retention_before": 1.0,
+      "semantic_retention_after": 0.0003694570383287108,
+      "lesion_accuracy": 0.0,
+      "admitted_in_report": true,
+      "lines": {
+        "lines": {
+          "L1_retention": true,
+          "L2_independent_transfer": true,
+          "L3_semantic_retention": true,
+          "L4_lesion_roundtrip": true
+        },
+        "all_pass": true,
+        "thresholds": {
+          "retention_line": 0.5,
+          "independent_accuracy_line": 0.517,
+          "lesion_ceiling": 0.05
+        }
+      },
+      "elapsed_seconds": 154.37049420003314
+    }
+  ],
+  "qualified_recipes": [
+    0.25,
+    0.5,
+    1.0
+  ],
+  "selected": {
+    "replay_weight": 0.25,
+    "procedural_retention_accuracy": 0.6053268765133172,
+    "procedural_holdout_accuracy": 0.456,
+    "independent_accuracy": 0.92,
+    "semantic_retention_before": 1.0,
+    "semantic_retention_after": 0.0003694570383287108,
+    "lesion_accuracy": 0.0,
+    "admitted_in_report": true,
+    "lines": {
+      "lines": {
+        "L1_retention": true,
+        "L2_independent_transfer": true,
+        "L3_semantic_retention": true,
+        "L4_lesion_roundtrip": true
+      },
+      "all_pass": true,
+      "thresholds": {
+        "retention_line": 0.5,
+        "independent_accuracy_line": 0.517,
+        "lesion_ceiling": 0.05
+      }
+    },
+    "elapsed_seconds": 154.22395939996932
+  },
+  "elapsed_seconds": 622.9977113999194,
+  "outcome": "passed"
+}
