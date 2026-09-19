@@ -46,6 +46,7 @@ from seed_platform.workbench import (  # noqa: E402
     WorkbenchEnvironment,
 )
 from taiji.collab_handoff import (  # noqa: E402
+    ExecutionStep,
     FailureHandoffPolicy,
     MemberCall,
     member_cue_count,
@@ -102,6 +103,7 @@ def _run_episode(
         (root / name).write_text(content, encoding="utf-8", newline="")
     state: dict[str, Any] = {"root": environment.root, "last_undo_token": None}
     steps: list[dict[str, Any]] = []
+    policy_steps: list[ExecutionStep] = []
     events: list[dict[str, Any]] = []
     policy = FailureHandoffPolicy(MEMBER_IDS, rule_revision=arm.rule_revision)
     injected = {"done": False}
@@ -129,7 +131,7 @@ def _run_episode(
         bindable: list[dict[str, Any]] = []
         for member_id in MEMBER_IDS:
             learner = members[member_id]
-            cue_count = member_cue_count(steps, member_id) if arm.memory_enabled else 1
+            cue_count = member_cue_count(policy_steps, member_id) if arm.memory_enabled else 1
             cues = tuple([cue] * cue_count)
             kind = str(learner.predict_episode(cues)[-1])
             params, provenance, failure = p52a._bind(kind, task, state)
@@ -154,7 +156,7 @@ def _run_episode(
             steps.append({"tick": tick, "called": [c["member"] for c in raw_calls], "executed": False, "stop": "all_members_exhausted"})
             events.append({"tick": tick, "kind": "stop", "stop": "all_members_exhausted", "rule_revision": arm.rule_revision, "bundle_digest": episode_id})
             return finish("all_members_exhausted")
-        decision = policy.select(calls, steps)
+        decision = policy.select(calls, policy_steps)
         chosen = next(c for c in raw_calls if c["member"] == decision.chosen.member)
         events.append({"tick": tick, "kind": "member_chosen", "member": chosen["member"], "rule_revision": arm.rule_revision, "bundle_digest": episode_id})
         kind = chosen["kind"]
@@ -206,6 +208,7 @@ def _run_episode(
                 "provenance": chosen["provenance"],
             }
         )
+        policy_steps.append(ExecutionStep(chosen=chosen["member"], executed=executed))
         events.append(
             {
                 "tick": tick,
