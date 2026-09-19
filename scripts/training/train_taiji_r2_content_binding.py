@@ -167,6 +167,56 @@ class GroupSampler:
         return batch
 
 
+def train_pair_margin_diagnostic(
+    workspace: Any,
+    train_records: list[dict[str, Any]],
+    *,
+    per_class_limit: int = 32,
+    gamma: float = 1.0,
+) -> dict[str, Any]:
+    """Contract v3 section E2 primary observable (train-only).
+
+    Mean pair hinge per group class on TRAIN groups: hinge -> 0 means the
+    model ranks its own member's answer above the crossed member's answer by
+    at least gamma nats under the same prefix (margin satisfied); ~
+    softplus(gamma) means the contrast was never realized.  Never touches
+    calibration or sealed data.
+    """
+
+    grouped: dict[str, list[dict[str, Any]]] = {}
+    for record in train_records:
+        grouped.setdefault(record["group_id"], []).append(record)
+    per_class: dict[str, list[float]] = {cls: [] for cls in GROUP_CLASSES}
+    hinge_b: dict[str, list[float]] = {cls: [] for cls in GROUP_CLASSES}
+    counts: dict[str, int] = {cls: 0 for cls in GROUP_CLASSES}
+    with torch.no_grad():
+        for members in grouped.values():
+            cls = members[0]["group_class"]
+            if counts[cls] >= per_class_limit:
+                continue
+            counts[cls] += 1
+            members = sorted(members, key=lambda r: r["member"])
+            a, b = members[0], members[1]
+            s_xx, _ = workspace.sequence_loglik(a["question"], a["material"], a["response"])
+            s_yy, _ = workspace.sequence_loglik(b["question"], b["material"], b["response"])
+            s_yx, _ = workspace.sequence_loglik(a["question"], a["material"], b["response"])
+            s_xy, _ = workspace.sequence_loglik(b["question"], b["material"], a["response"])
+            per_class[cls].append(
+                float(torch.nn.functional.softplus(s_yx - s_xx + gamma))
+            )
+            hinge_b[cls].append(
+                float(torch.nn.functional.softplus(s_xy - s_yy + gamma))
+            )
+    return {
+        cls: {
+            "mean_hinge_a": sum(per_class[cls]) / len(per_class[cls]) if per_class[cls] else None,
+            "mean_hinge_b": sum(hinge_b[cls]) / len(hinge_b[cls]) if hinge_b[cls] else None,
+            "groups": counts[cls],
+        }
+        for cls in GROUP_CLASSES
+    }
+
+
 def evaluate_flip_scores(
     workspace: SequenceContentWorkspace, records: list[dict[str, Any]]
 ) -> dict[str, Any]:
@@ -285,6 +335,8 @@ def run(
     mode: str = "calibration",
     wall_cap_seconds: int = WALL_CAP_SECONDS,
     trainer_revision: str = "v1",
+    question_hidden_width: int = 0,
+    relation_hidden: int = 96,
 ) -> dict[str, Any]:
     """One bounded training run.  Never called by this session's gate phase
     except through ``--mode smoke`` (test artifact)."""
@@ -293,7 +345,12 @@ def run(
     records = load_train_fixture()
     digest = content_digest(records)
     vocab = CharVocab("".join(r["question"] + r["material"] + r["response"] for r in records))
-    config = SequenceContentConfig(arm=arm, seed=seed)
+    config = SequenceContentConfig(
+        arm=arm,
+        seed=seed,
+        question_hidden_width=int(question_hidden_width) or 64,
+        relation_hidden=int(relation_hidden),
+    )
     torch.manual_seed(seed)
     workspace = SequenceContentWorkspace(vocab, config)
     recipe = RECIPES[config_name]
@@ -349,6 +406,11 @@ def run(
             trainer.save(latest_path)
         if mode == "calibration" and step in CALIBRATION_POINTS:
             evaluation = evaluate_flip_scores(workspace, load_calibration_fixture())
+            if trainer.pair_contrastive_weight > 0.0:
+                # contract v3 section E2 primary observable (train-only)
+                evaluation["train_pair_margins"] = train_pair_margin_diagnostic(
+                    workspace, records, gamma=float(trainer.pair_contrastive_margin)
+                )
             evaluation.update(
                 {
                     "update": step,
@@ -381,6 +443,11 @@ def run(
     report["trainer_revision"] = trainer.trainer_revision
     report["pair_contrastive_weight"] = float(trainer.pair_contrastive_weight)
     report["pair_contrastive_margin"] = float(trainer.pair_contrastive_margin)
+    report["capacity"] = {
+        "question_hidden_width": int(config.question_hidden_width),
+        "relation_hidden": int(config.relation_hidden),
+        "parameter_count": workspace.parameter_count(),
+    }
     report["total_updates_planned"] = int(total_updates)
     report["updates_done"] = int(trainer.global_step)
     report["parameter_count"] = workspace.parameter_count()
@@ -429,6 +496,18 @@ def main() -> int:
         default="v1",
         help="v2 = pair-contrastive auxiliary (contract v2 section D1)",
     )
+    parser.add_argument(
+        "--question-hidden-width",
+        type=int,
+        default=64,
+        help="question encoder width (contract v3: 128)",
+    )
+    parser.add_argument(
+        "--relation-hidden",
+        type=int,
+        default=96,
+        help="relation/content MLP width (contract v3: 128)",
+    )
     args = parser.parse_args()
 
     if args.mode == "smoke":
@@ -455,6 +534,8 @@ def main() -> int:
         mode=args.mode,
         wall_cap_seconds=args.wall_cap_seconds,
         trainer_revision=args.trainer_revision,
+        question_hidden_width=args.question_hidden_width,
+        relation_hidden=args.relation_hidden,
     )
     print(
         json.dumps(

@@ -103,6 +103,9 @@ class SequenceContentConfig:
     arm: str = "B"
     prefix_width: int = 48
     hidden_width: int = 64
+    #: v3 capacity axis (contract section E1): question-encoder width; defaults
+    #: to hidden_width so pre-v3 payloads load unchanged.
+    question_hidden_width: int = 0
     evidence_width: int = 48
     slot_count: int = 6
     binding_rounds: int = 3
@@ -117,10 +120,15 @@ class SequenceContentConfig:
     def __post_init__(self) -> None:
         if self.arm not in ARMS:
             raise ValueError(f"arm must be one of {ARMS}: {self.arm}")
+        if int(self.question_hidden_width) == 0:
+            object.__setattr__(
+                self, "question_hidden_width", int(self.hidden_width)
+            )
         for name in (
             "prefix_width",
             "hidden_width",
             "evidence_width",
+            "question_hidden_width",
             "slot_count",
             "binding_rounds",
             "relation_hidden",
@@ -138,6 +146,7 @@ class SequenceContentConfig:
             "arm": self.arm,
             "prefix_width": int(self.prefix_width),
             "hidden_width": int(self.hidden_width),
+            "question_hidden_width": int(self.question_hidden_width),
             "evidence_width": int(self.evidence_width),
             "slot_count": int(self.slot_count),
             "binding_rounds": int(self.binding_rounds),
@@ -246,6 +255,7 @@ class SequenceContentWorkspace:
         arm = self.config.arm
         pw = int(self.config.prefix_width)
         hw = int(self.config.hidden_width)
+        qhw = int(self.config.question_hidden_width)
         ew = int(self.config.evidence_width)
         sc = int(self.config.slot_count)
         rh = int(self.config.relation_hidden)
@@ -272,10 +282,10 @@ class SequenceContentWorkspace:
         make("material_bias", (hw,), 0.1)
         make("evidence_key", (hw, ew), 1.0 / math.sqrt(hw))
         make("evidence_value", (hw, ew), 1.0 / math.sqrt(hw))
-        make("question_input", (pw, hw), 1.0 / math.sqrt(pw))
-        make("question_recur", (hw, hw), 1.0 / math.sqrt(hw))
-        make("question_bias", (hw,), 0.1)
-        make("start_weight", (hw, rw), 1.0 / math.sqrt(hw))
+        make("question_input", (pw, qhw), 1.0 / math.sqrt(pw))
+        make("question_recur", (qhw, qhw), 1.0 / math.sqrt(qhw))
+        make("question_bias", (qhw,), 0.1)
+        make("start_weight", (qhw, rw), 1.0 / math.sqrt(qhw))
         make("start_bias", (rw,), 0.0)
         make("renderer_input", (pw + cw + ew, rw), 1.0 / math.sqrt(pw + cw + ew))
         make("renderer_recur", (rw, rw), 1.0 / math.sqrt(rw))
@@ -297,17 +307,17 @@ class SequenceContentWorkspace:
             make("slot_gru_weight_hidden", (gates, ew), 1.0 / math.sqrt(ew))
             make("slot_gru_bias_input", (gates,), 0.0)
             make("slot_gru_bias_hidden", (gates,), 0.0)
-            make("relation_mlp_input", (2 * ew + hw, rh), 1.0 / math.sqrt(2 * ew + hw))
+            make("relation_mlp_input", (2 * ew + qhw, rh), 1.0 / math.sqrt(2 * ew + qhw))
             make("relation_mlp_bias", (rh,), 0.1)
             make("relation_mlp_output", (rh, ew), 1.0 / math.sqrt(rh))
             make("relation_mlp_output_bias", (ew,), 0.1)
-            make("slot_pool_query", (hw, ew), 1.0 / math.sqrt(hw))
-            make("relation_pool_query", (hw, ew), 1.0 / math.sqrt(hw))
+            make("slot_pool_query", (qhw, ew), 1.0 / math.sqrt(qhw))
+            make("relation_pool_query", (qhw, ew), 1.0 / math.sqrt(qhw))
             make("content_proj", (2 * ew, cw), 1.0 / math.sqrt(2 * ew))
             make("content_proj_bias", (cw,), 0.1)
         else:
             for index in range(1, sc + 1):
-                make(f"head_query_{index}", (hw, ew), 1.0 / math.sqrt(hw))
+                make(f"head_query_{index}", (qhw, ew), 1.0 / math.sqrt(qhw))
             reads = sc * ew
             make("a_content_mlp_input", (reads, rh), 1.0 / math.sqrt(reads))
             make("a_content_mlp_bias", (rh,), 0.1)
@@ -430,11 +440,20 @@ class SequenceContentWorkspace:
         return char2slot, extra_slot_codepoints
 
     def _scan(
-        self, text: str, input_name: str, recur_name: str, bias_name: str
+        self,
+        text: str,
+        input_name: str,
+        recur_name: str,
+        bias_name: str,
+        width: int | None = None,
     ) -> tuple[torch.Tensor, torch.Tensor]:
-        """Recurrent scan returning (per-step hiddens, final hidden)."""
+        """Recurrent scan returning (per-step hiddens, final hidden); the
+        hidden width follows the named matrices unless given explicitly."""
 
-        hidden = torch.zeros(int(self.config.hidden_width), dtype=torch.float32)
+        hidden = torch.zeros(
+            int(width if width is not None else self.config.hidden_width),
+            dtype=torch.float32,
+        )
         steps: list[torch.Tensor] = []
         for character in text:
             slot = self.vocab.slot_of(character)
@@ -546,10 +565,13 @@ class SequenceContentWorkspace:
         keys_rows, _ = self._scan(
             material, "material_input", "material_recur", "material_bias"
         )
-        question_rows, question_vec = self._scan(
-            question, "question_input", "question_recur", "question_bias"
+        _question_rows, question_vec = self._scan(
+            question,
+            "question_input",
+            "question_recur",
+            "question_bias",
+            width=int(self.config.question_hidden_width),
         )
-        del question_rows
         ew = int(self.config.evidence_width)
         material_values = (
             keys_rows @ self._parameters["evidence_value"]
