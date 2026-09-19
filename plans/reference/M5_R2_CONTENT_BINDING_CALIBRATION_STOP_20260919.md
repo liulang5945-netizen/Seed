@@ -41,3 +41,16 @@
 **决定性诊断**（[pair_contrastive_diagnostic](../../reports/r2_content_binding_v2/pair_contrastive_diagnostic_20260920.json)，B/cal_lr1@2000 在 train 组上的逐类 hinge）：fact_flip/missing_to_filled hinge=0.0000（margin 在 train 完全满足）；distractor/unknown 为结构常数 1.3133；**object_swap（1.287/1.343）、relation_flip（1.317/1.310）、negation_scope（1.237/1.455）≈ softplus(γ)——margin 在 train 数据上从未满足**。
 
 判读：对比目标机制有效且方向正确（材料内可区分的对比被学会），但"问题→对象绑定"这一区分在 2000 更新/110k 参数/64 维问题编码下**连 train 拟合都实现不了**——瓶颈从"目标缺压力"（H-P 被削弱）精化为**表示/容量轴**：问题侧编码是单一 64 维 GRU 终态，object_swap 要求模型从问题中读出"问的是哪个对象"并条件化答案选择。残余可检验假设：更大容量/更长训练能否先在 train 上满足该 margin（train-only 可观测，无需确认集）；或机制级改动（问题编码宽度/交叉寻址）。两者都需新合同，不自动排队。
+
+
+## 7. v3 追记（2026-09-19，容量扩展判停）
+
+用户路线裁决选「更大容量 v3」（[v3 FROZEN 合同](M5_R2_CONTENT_BINDING_CONTRACT_V3_FROZEN_20260919.md) §E1：问题编码 64→128、关系/内容 MLP 96→128，149,507 参数；主检验=object_swap train margin 可满足性）。v3 标定 4 次全部 completed（≈37 分钟），**选择规则再次判停**（最优复制 0.603（A/cal_lr3@1000）、flip 宏最高 0.156（A/cal_lr1@2000），均远低于 0.90 门槛）。证据：[v3 选择聚合](../../reports/r2_content_binding_v3/calibration_selection_20260920.json)。
+
+**主检验读数（train pair hinge @2000 更新）**：
+- **object_swap：对容量敏感**——v2 终值 1.29/1.34（不动）→ v3 cal_lr1 降到 **0.32/0.43**（A）、0.68/0.62（B）：容量加大后 margin 朝满足方向移动，但 2000 更新内未达 0。H-C 部分成立：诊断出的瓶颈确实是容量敏感的。
+- **relation_flip：1.29–1.34 全程不动**（任何容量/配方）——"相同/不同"对比在该设计族内至今结构性无法实现于 train。
+- negation：部分移动（0.85–0.94 一侧）。
+- 标定泛化读数三版本横跨 0.5–0.65 复制率，与 train margin 状态脱钩（object_swap margin 部分满足并未带来标定成对改善）。
+
+**三轮累计画像**：v1（逐题 CE）、v2（+配对对比）、v3（+容量）三次单变量合同全部被同一冻结选择规则判停，标定复制率始终停在 0.5–0.65，距 0.90 门槛遥远；每轮都留下可复用证据（仪器、失败模式定位、margin 可观测性）。剩余假设（远更长训练、远更大容量、机制级重设计如问题交叉寻址、数据配方重构）均为数量级不同的新投入，且 §5.9 纪律提示应警惕"无论如何都再试下一种"的升级模式。R2 主线下一步（继续内容绑定线或按 01 §6 转其他退出缺口）是用户决定。
