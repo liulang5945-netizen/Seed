@@ -37,3 +37,22 @@
 ## §5 结果去向
 
 采纳（admitted）→ 报告 + ledger 状态 + parent-child 恢复证据 → M5 知识轴缺口闭合一项；判停（rolled_back）→ 负结果与可行域记录入账，缺口保留。两态都不自动晋级 M5 其他轴、不触发 R2 重启。
+
+## §6 静态探针结果与预注册线（2026-09-19，零训练，纯报告考古）
+
+**P5.1g admission 不可达的精确分解**（`reports/taiji_p5_1g_real_corpus_quota_budget_20260912.json` + runner `eval_taiji_p5_1g_real_corpus_quota_budget_gate.py`）：
+
+- 判据：`procedural retention accuracy ≥ 0.5`（ADMISSION_REVISION `p51g:admission`）；实测 **0.4189**，差距 0.081；
+- 新知识侧无碍：procedural holdout 0.4512、semantic holdout 1.0→0.000597（零退化）、a-gate 0.6514；
+- retention 上读数并非零学习：0.4189 比冻结 per-tick 多数基线 0.367 高 0.052——是"学到但不到线"；
+- **配方旋钮未动**：consolidate 的 `replay_digest` 为空、`passes=4` 默认、sourced 臂 ranking_pairs = 0——replay 与排序对两个现成机制在 P5.1g 完全未使用；
+- runner 未持久化任何 checkpoint（全 in-process），故 parent 侧对照只能靠仪器复跑（冻结 1200s 口径）获得，列入实现门而非本探针。
+
+**P5.1h 预注册线（冻结，不得看训练结果调整）**：
+1. procedural retention accuracy ≥ **0.5**（沿用 p51g 线，不放宽）；
+2. 独立测试内容迁移 margin ≥ **0.15**（a-gate 切片与 P5.1g 的 Tool_Use_000328–344 及 train 词表不相交）；
+3. semantic retention 损失退化 ≤ **0**（不劣化，沿用 P5.1g 实测 1.0→0.000369 的量级守恒）；
+4. 双 lesion 纪律与 checkpoint 往返不变。
+
+**配方变量（唯一允许变动面，标定阶段用）**：replay 比例 × passes × ranking pairs——三者机制现成、P5.1g 均未使用；数据配额与词表口径沿用冻结值。**边界**：门槛不动、语料身份不动（UltraData-SFT-Agent-2609, Apache-2.0）、默认产品采用仍非目标。
+
