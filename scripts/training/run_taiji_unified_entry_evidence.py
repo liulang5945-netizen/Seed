@@ -104,9 +104,9 @@ def _run_episode(
     state: dict[str, Any] = {"root": environment.root, "last_undo_token": None}
     steps: list[dict[str, Any]] = []
     policy_steps: list[ExecutionStep] = []
+    injection: dict[str, Any] = {"target": None, "released": False}
     events: list[dict[str, Any]] = []
     policy = FailureHandoffPolicy(MEMBER_IDS, rule_revision=arm.rule_revision)
-    injected = {"done": False}
 
     def finish(reason: str) -> dict[str, Any]:
         success = bool(p52a._goal_reached(environment, task))
@@ -188,13 +188,17 @@ def _run_episode(
             environment.consume_approval(tokened)
         outcome = environment.execute_tool(kind, params)
         executed = bool(outcome.success)
-        if (
-            inject_first_failure
-            and not injected["done"]
-            and chosen["member"] == min(c["member"] for c in bindable)
-        ):
-            executed = False
-            injected["done"] = True
+        if inject_first_failure and not injection["released"]:
+            # Persistent-incapability injection (prereg section 6): the first
+            # bindable member's executions keep failing until ANOTHER member
+            # has executed successfully — the premise the HANDOFF-M4 resource
+            # prediction assumes (a blocked member, not a one-off failure).
+            if injection["target"] is None:
+                injection["target"] = min(c["member"] for c in bindable)
+            if chosen["member"] == injection["target"]:
+                executed = False
+            elif any(s.executed for s in policy_steps):
+                injection["released"] = True
         last = environment.last_result
         if "transaction" in last and last["transaction"].get("undo_token"):
             state["last_undo_token"] = str(last["transaction"]["undo_token"])
@@ -319,6 +323,7 @@ def main() -> int:
                 "main_successes": successes,
                 "main_success_rate": successes / REPEATS,
                 "unseen_success": arm_runs[-1]["success"],
+                "total_steps_with_injection": len(arm_runs[0]["steps"]),
                 "executed_actions_with_injection": arm_runs[0]["executed_actions"],
                 "all_trace_valid": all(run["trace_valid"] for run in arm_runs),
                 "elapsed_seconds": time.perf_counter() - arm_started,
@@ -334,8 +339,8 @@ def main() -> int:
             if name != "full"
         ),
         "L2_handoff_resource_line": (
-            by_arm["full"]["executed_actions_with_injection"]
-            <= by_arm["disable_selection"]["executed_actions_with_injection"]
+            by_arm["full"]["total_steps_with_injection"]
+            <= by_arm["disable_selection"]["total_steps_with_injection"]
         ),
         "L3_failure_injection_still_goals": full["main_success_rate"] >= 2 / 3,
         "L4_trace_and_safety": all(entry["all_trace_valid"] for entry in per_arm),
