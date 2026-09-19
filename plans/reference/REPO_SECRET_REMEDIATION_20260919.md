@@ -89,3 +89,39 @@ output/p6-1d-packaged-data/security/.storage_salt
 
 **唯一需要动作的是 A**（删除 2 个文件，合计 96 字节，纯运行产物）。
 是否执行 A？执行后我会：删除 → 验证 `git status` 干净 → 确认应用可重新生成（只读检查，不启动训练）。
+
+## §4 执行记录（2026-09-19，已执行）
+
+用户确认后执行 A，**先备份再删除**：
+
+**① 备份（仓库外）** → `E:\Seed-backup-secrets-20260919\`
+
+| 文件 | 大小 | sha256 前 16 位 |
+|---|---|---|
+| `.jwt_secret` | 64 B | **`e6401f86c1313d6d`** |
+| `.storage_salt` | 32 B | `abe3c9f10563a1ab` |
+
+**交叉印证**：备份得到的 `.jwt_secret` sha256 前 16 位 **与 `727c53f7` 提交信息里记录的
+「pkg `e6401f86c1313d6d`」逐位吻合** ⇒ **确认删除的正是被提交进历史的那一套**。
+
+**② 删除**：两个文件已从 `output/p6-1d-packaged-data/security/` 移除，该目录现在为空。
+`git status` 除用户自己的 `taiji/organs.py` 外无变化（二者此前已 untracked）。
+
+**③ 重建路径实证（隔离环境）**：把 `_security_dir` 重定向到临时目录后实例化：
+
+| 步骤 | 结果 |
+|---|---|
+| 空目录 + `JWTManager()` | 自动生成 `.jwt_secret`（64 字符，`token_hex(32)`）✅ |
+| `SecureStorage()` | 自动生成 `.storage_salt`（32 字节）✅ |
+| 再次 `JWTManager()` | **复用**已有值，不重复生成 ✅ |
+
+⇒ **「删除即轮换」成立**：历史里那对值从此失效，且该目录下次运行会自动重建
+（重建出的新文件已被 `**/security/.jwt_secret` 规则护住，不会再被跟踪）。
+
+**④ 附带发现**：`_security_dir()` 在**当前开发形态**下解析到 `E:\Seed\security`
+（即未泄漏的那一套）；`output/p6-1d-packaged-data/security/` 是**打包运行形态**下的独立目录 ——
+这解释了为何三套凭据互不相同。
+
+**未做**：`security/`、`dist/Seed/security/` 未动（未泄漏，且前者 salt 可能派生着存量密文）；
+历史未重写（见 §2 B）。
+
