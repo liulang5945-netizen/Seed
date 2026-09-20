@@ -1,0 +1,138 @@
+{
+  "format": "taiji-r2-surface-decode-p1p2-v1",
+  "contract": "plans/reference/M5_R2_SURFACE_DECODING_CONTRACT_DRAFT_20260920.md",
+  "checkpoint": "checkpoints/seed_beta.pt",
+  "chain": {
+    "relax_legacy_guard": "n/a (直接走 Taiji.observe)",
+    "readout": "predictive"
+  },
+  "frozen_thresholds": {
+    "bigram_upper_bound": 0.406122,
+    "min_len_chars": 8,
+    "max_single_char_share": 0.35,
+    "gen_length_bytes": 96,
+    "temperature_seed": 20260920,
+    "seed_note": "冻结合同未规定采样种子；本件补固定种子以满足可复现，属披露而非改线"
+  },
+  "criterion_controls": {
+    "real_pass_rate": 1.0,
+    "shuffled_fail_rate": 0.9567,
+    "real_median_nll": -6.8136,
+    "shuffled_median_nll": -8.7833,
+    "threshold": -7.8,
+    "n": 300,
+    "note": "反向对照门：真中文须过、打乱中文须挂；不过则整件拒跑。首跑的四条件合取判据正是被这道对照否证的（打乱样本 100% 通过）"
+  },
+  "supersedes_run": "首跑（四条件合取判据）的 D1/D2 判定已撤回，不得引用",
+  "arms_run": [
+    "greedy",
+    "no_repeat",
+    "topk8",
+    "temp07"
+  ],
+  "arms_not_run": {
+    "beam2": "未实现（需快照分支状态），不假装跑过"
+  },
+  "task_count": 43,
+  "per_arm": {
+    "greedy": {
+      "n": 43,
+      "well_formed_rate": 0.2326,
+      "mean_len_chars": 32.47,
+      "distinct_chars": 115,
+      "single_char_share_median": 0.1875,
+      "bigram_repetition_median": 0.1613,
+      "tv_distance_to_corpus": 0.5105,
+      "samples": [
+        "我们一一丈（是文君则了了下伈（是文人人人人人五䟰文君则何家则你一",
+        "我为丈（（则为君刺人人人人人人个刑佐为个君吼䚄吼我他吼为吼吼利为",
+        "分君则人个刈（，为个君刺人人人人为人人为予有君人为，你为一䃽吰，"
+      ]
+    },
+    "no_repeat": {
+      "n": 43,
+      "well_formed_rate": 0.1395,
+      "mean_len_chars": 32,
+      "distinct_chars": 130,
+      "single_char_share_median": 0.1613,
+      "bigram_repetition_median": 0.129,
+      "tv_distance_to_corpus": 0.484,
+      "samples": [
+        "我们一一丈（是文君则了了下伈（是文了为了为下尝君你他尝君使是有扚",
+        "我为丈（（则为君刺了为了为个君吼伌为吼为为为为为为严䟥䉈君吼同同",
+        "分君则了个则个君刐孼别君了了个刑伌个有吼有扸了为了为个则是有我他"
+      ]
+    },
+    "topk8": {
+      "n": 43,
+      "well_formed_rate": 0.0,
+      "mean_len_chars": 32.63,
+      "distinct_chars": 877,
+      "single_char_share_median": 0.0323,
+      "bigram_repetition_median": 0.0,
+      "tv_distance_to_corpus": 0.219,
+      "samples": [
+        "昄句氊是我木㺆下︌秧㚰订戼齸？体や遐见实驸）\nאָ你玉的镐昀宺",
+        "朌分绖惈\n述最这亀巫\n贮侯有司臀朽㈼㥉宩君惡诀谁砪＼砺绸戰",
+        "封实说狣李他是课论为昸歈逌לּ\n\n汈解称羀㮀仺为殩琧焯个ﱈ佒 ㈙冮"
+      ]
+    },
+    "temp07": {
+      "n": 43,
+      "well_formed_rate": 0.0,
+      "mean_len_chars": 62,
+      "distinct_chars": 37,
+      "single_char_share_median": 0.3448,
+      "bigram_repetition_median": 0.1228,
+      "tv_distance_to_corpus": 0.8254,
+      "samples": [
+        "ḼyaZ��\u0018��!0o�\u001c��M�\u001bPc\\\u001el)ZౄĘ\u001aɣl��jFn|�ʪ�0上�\u001f翈5�\u001aϴ�޴��kPҢ氇\u001c���",
+        "ḼyaZ��\u0018��!0o�\u001c��M�\u001bPc\\\u001el)ZౄĘ\u001aɣl��jFn|�ʪ�0上�\u001f翈5�\u001aϴ�޴��kPҢ氇\u001c���",
+        "ḼyaZ��\u0018��!0o�\u001c��M�\u001bPc\\\u001el)ZౄĘ\u001aɣl��jFn|�ʪ�0上�\u001f翈5�\u001aϴ�޴��kPҢ氇\u001c���"
+      ]
+    }
+  },
+  "paired_vs_greedy": {
+    "no_repeat": {
+      "delta_percentage_points": -9.31,
+      "sign_test": {
+        "b": 3,
+        "c": 7,
+        "n": 10,
+        "p_two_sided": 0.34375
+      }
+    },
+    "topk8": {
+      "delta_percentage_points": -23.26,
+      "sign_test": {
+        "b": 0,
+        "c": 10,
+        "n": 10,
+        "p_two_sided": 0.001953
+      }
+    },
+    "temp07": {
+      "delta_percentage_points": -23.26,
+      "sign_test": {
+        "b": 0,
+        "c": 10,
+        "n": 10,
+        "p_two_sided": 0.001953
+      }
+    }
+  },
+  "judgment": {
+    "D1_decoding_improves": {
+      "arms": [],
+      "holds": false
+    },
+    "D2_decoding_exonerated": true,
+    "E1_collapse": false,
+    "E2_distribution_ok_structure_wrong": false
+  },
+  "claim_limits": [
+    "成句率提升只说明表层解码形态改善，不构成任何语言回答能力主张",
+    "该读出面是从未独立训练的运动面副本（P0-a′），本件不为其可训性辩护",
+    "beam-2 未跑 ⇒ 不得写成解码策略空间已被穷尽"
+  ]
+}
