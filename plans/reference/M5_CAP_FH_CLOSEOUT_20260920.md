@@ -93,6 +93,33 @@ episode + 逐对实际增益），不是整模型入口的语言能力**。若�
 
 `plans/reference/M5_P5_2A_PREDICTED_EXECUTION_PREREGISTRATION_20260913.md`（P5.2a 预测驱动执行预注册，自述"冻结日期 2026-09-13"）在 `git log` 中**无任何提交记录**，一直是未跟踪文件，而就绪度表 §8 的依赖行引用"P5.2a/b→P5.2d"。冻结合同不入版本库 ⇒ 无从判定它在哪个 revision 上冻结、也不能按摘要复算。本轮只登记，未代做提交。
 
+## §5 F04 锚点裁决与评价集 v2（所有者 2026-09-20 弹窗裁决：上限最高项）
+
+**问题**：F04 的复算器读的是 `reports/taiji_cap0_inventory_20260915.json`。换底之后，"默认入口服务的
+是训练态"在产品上已成立（新底实测 `tick_after_load=16000000`），但那份 09-15 封存件里读到的仍是
+`default_tick=36 / wiring_defect=true` ⇒ F04 继续判 fail。这不是判据错，是**判据锚在一份描述旧产品事实的
+封存件上**——与本仓记过的"基线取自封存报告"同型。
+
+**裁决**：评价集升 **v2**，F04 的 `reference` 改指新底 inventory 件
+`reports/taiji_cap0_inventory_beta_20260920.json`（已在收口套之后自动重出）。随带纪律：
+
+1. **v1 不覆写**，原样保留为历史判据；v2 只新增一份 manifest，`EVAL_SET_PATH` 指向它。
+   07 §4.2 要求判据修订"换版本、换独立测试" ⇒ `test_cap0_eval_set_contract.py` 里钉 v1 的断言
+   要么按 v2 更新、要么成对钉（v1 历史 + v2 现行），**不许**把 v1 的 digest/count 断言直接改成
+   迁就新文件而不留旧钉。
+2. **只有 F04 的 reference 变**；F01–F03 的门文本、`must_show`、`count=4`、`scoring=per_frozen_gate`
+   与 B/C/D/E/G 全部题面零改动 ⇒ v2 是"换引用"不是"放宽门"，diff 应当只有那一处路径。
+3. 复算器要新增一条**引用时效守卫**（原第三方案的守卫部分随 v2 一并做）：被引 inventory 里的
+   `model_reality` 若与来源清单登记的当前默认不是同一份（sha 或 path 不符），F04 判
+   `stale_reference` 而不是 fail/pass —— 这样下次再换底会响亮提醒，而不是静默沿用旧底结论。
+   配套必须有一支会红的合同测试（把清单指向别的 sha，断言 F04 变 `stale_reference`）。
+4. v2 落地后 F04 预期转 **partial 而非 pass**：新底上"输出非固定模板回显"这一子句是否成立仍未测
+   （新 inventory 是否仍记 `templated=true` 要读实件），不得因为换底就把 F04 整体点亮。
+
+**主线顺序（同轮裁决）**：R2 保持挂起，先结清收口与剩余项 —— 收口套复跑、F04 锚点 v2、
+CAP runner 两处收尾（默认常量引用产品常量、健康支摘要打印的 `contracts` 兜底谎报）、
+战役基线对绑 identity 的重出。B/G 40 题人工复核与所有者第 9 项批准仍是 M5 退出的最后两站。
+
 ## §4 这一轮没有推进的事
 
 R2 主线仍按 09-20 裁决挂起（排除登记保留在账）；P3b 二次战役、40 道 B/G 人工评分、链路 (a)/(b) 独立待决不变；Mini 继续后置。F 维判 pass **不**表示模型具备语言能力——F01 证的是表示门这台仪器的判别力，CAP 的语言维度仍由 C/D/E 的 0.0 说话。
