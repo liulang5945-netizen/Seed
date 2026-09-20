@@ -36,7 +36,9 @@ if str(PROJECT_ROOT) not in sys.path:
 
 REPORT_FORMAT = "taiji-cap0-baseline-v1"
 #: v1 → v2: the report now carries `chain` + `identity`, because A05b's reading is chain-dependent.
-HEALTH_REPORT_FORMAT = "taiji-cap0-health-v2"
+#: v2 → v3: the F block stopped being a file-existence list and became a re-adjudication of each
+#: frozen gate's own numbers. A v2 report's F rows cannot be read as F verdicts, so the number moves.
+HEALTH_REPORT_FORMAT = "taiji-cap0-health-v3"
 DEFAULT_REPORT = PROJECT_ROOT / "reports" / "taiji_cap0_baseline_v1_20260915.json"
 DEFAULT_HEALTH_REPORT = PROJECT_ROOT / "reports" / "taiji_cap0_health_v5_default_20260918.json"
 DEFAULT_ADJUDICATION_REPORT = PROJECT_ROOT / "reports" / "taiji_cap0_adjudication_v1_20260915.json"
@@ -752,47 +754,17 @@ def build_worksheet(report: dict[str, Any], path: Path) -> Path:
     return path
 
 
-#: F 维度只读引用的既有冻结合同（不重算分数）。
-F_CONTRACTS: tuple[dict[str, str], ...] = (
-    {
-        "id": "F01",
-        "capability": "B1 表示门",
-        "report": "reports/taiji_b0_b1_representation_20260915.json",
-        "gate": "六门全过 + outcome=representation_discriminative",
-    },
-    {
-        "id": "F02",
-        "capability": "B2 选择门",
-        "report": "reports/taiji_b0_b2_selection_20260915.json",
-        "gate": "G1-G6 全过（当前为负结果 ⇒ 该能力未达，不得记为通过）",
-    },
-    {
-        "id": "F03",
-        "capability": "结构空间（协作机制在仪器内）",
-        "report": "reports/taiji_b0_structure_space_probe_wide_20260915.json",
-        "gate": "create 行三格 +2.000、interleaved 6/6、零回归（须同时声明独立结构因素仍为 1）",
-    },
-    {
-        "id": "F04",
-        "capability": "整模型加载链（CAP-0）",
-        "report": "reports/taiji_cap0_inventory_20260915.json",
-        "gate": (
-            "默认入口可加载并产出原始输出（现状 tick=2 未训练基座）；16M-tick 训练态自 M2-2i 起"
-            "可经默认 loader 加载并过 A 支（reports/taiji_cap0_health_v3_seedbeta_20260918.json）。"
-            "A05 现已执行：**原始** effector 输出随权重消融改变（参数驱动成立），但表层回答不随任何"
-            "消融改变（固定模板）且 H 阈值门未标定 ⇒ F04 仍是缺口，不得写成已通过"
-        ),
-    },
-)
-
-
 def run_health(
     checkpoint: Path = DEFAULT_CHECKPOINT,
     *,
     relax_legacy_guard: bool = False,
     constrained_decode: bool = False,
+    f_live_evidence: bool = False,
 ) -> dict[str, Any]:
-    """A/H 确定性检查 + F 合同引用。H **只采样数值**，门限留待标定后冻结。
+    """A/H 确定性检查 + F 冻结门复算。H **只采样数值**，门限留待标定后冻结。
+
+    `f_live_evidence` 默认关：战役驱动的每阶段健康支要保持 +17 s/阶段的既有记账，
+    现场重跑统一入口（约 11 s）由 CAP 正式评价显式开启。
 
     链路是显式参数并写进报告：**格式号从 v1 升到 v2 正因为** A05b（表层回答是否随参数改变）
     的读数依链路而定 —— 把两份不同链路的健康报告并排读会得出相反结论。
@@ -856,15 +828,40 @@ def run_health(
         "gate_note": notes.get("H_gates", ""),
         "notes": {k: v for k, v in notes.items() if k.startswith("H")},
     }
-    report["dimensions"]["F"] = {
-        "name": "项目代表能力",
-        "contracts": [
-            {**contract, "report_present": (PROJECT_ROOT / contract["report"]).is_file()}
-            for contract in F_CONTRACTS
-        ],
-        "note": "F 只读引用既有冻结合同；不重算分数，也不得把局部 probe 当作整模型能力。",
-    }
+    report["dimensions"]["F"] = _f_dimension_block(f_live_evidence=bool(f_live_evidence))
     return report
+
+
+def _f_dimension_block(*, f_live_evidence: bool) -> dict[str, Any]:
+    """F 维：**逐冻结门复算**，而不是列一遍"证据文件在不在盘上"。
+
+    旧实现只记 `report_present`（一个文件存在性布尔）——那份报告里门到底过没过，
+    它一个字都不读。这属于本仓反复登记过的同一类失效（只读封存件的检查永远不会红）。
+    """
+
+    from scripts.training.eval_taiji_cap0_f_dimension import (
+        adjudicate_f_items,
+        f_dimension_gate,
+        run_unified_entry_live,
+    )
+
+    items = adjudicate_f_items(_dimension_items(_eval_set(), "F"))
+    live = (
+        run_unified_entry_live()
+        if f_live_evidence
+        else {"status": "not_executed", "reason": "未启用 --f-live-evidence ⇒ 本轮不重跑统一入口"}
+    )
+    return {
+        "name": "项目代表能力",
+        "scoring": "per_frozen_gate",
+        "items": items,
+        "live_entry_evidence": live,
+        "dimension_gate": f_dimension_gate(items, live),
+        "note": (
+            "F 各项从被引报告的原始数字复算其冻结门；报告在场不等于门过。"
+            "门文本中读不到可机检形态的子句记 unverified ⇒ 该项至多 partial，不冒称通过。"
+        ),
+    }
 
 
 def chain_report_conflict(args: argparse.Namespace) -> str | None:
@@ -912,7 +909,17 @@ def main(argv: list[str] | None = None) -> int:
         action="store_true",
         help="跑 A（模型真实性）/ H（性能稳定性）确定性检查与 F 合同引用",
     )
-    parser.add_argument("--health-report", type=Path, default=DEFAULT_HEALTH_REPORT)
+    parser.add_argument(
+        "--health-report",
+        type=Path,
+        default=DEFAULT_HEALTH_REPORT,
+        help="健康报告落盘路径（**新**文件；封存件不覆写）",
+    )
+    parser.add_argument(
+        "--f-live-evidence",
+        action="store_true",
+        help="F 维现场重跑统一入口证据包以展示输入→实际结果（约 11 秒、零训练、只写临时目录）",
+    )
     parser.add_argument(
         "--adjudicate",
         type=Path,
@@ -969,6 +976,7 @@ def main(argv: list[str] | None = None) -> int:
             args.checkpoint,
             relax_legacy_guard=bool(args.relax_legacy_guard),
             constrained_decode=bool(args.constrained_decode),
+            f_live_evidence=bool(args.f_live_evidence),
         )
         health_path = (
             args.health_report

@@ -172,6 +172,64 @@
   ② 16M tick 后 `predictive_context.recurrent`、`memory.association`、全部 `memory.*_readout`、
   `identity_organ`、`fabric.consolidation_decoders[*]`、`executive` 的权重 abs_sum **仍为 0**
   ⇒ 这些面从未被写入。
+- **DEBT-I4 的 F 半支：已处置（2026-09-20，第十批）—— F 维此前是一道空洞门**。
+  `run_health()` 的 F 支只产出 `report_present`（被引报告在不在盘上的布尔），**一个门字段都不读**；
+  runner 内还另抄了一份 `F_CONTRACTS` 门文本，且已与冻结评价集漂移（F04 抄件写"表层回答不随任何
+  消融改变"，而第九批已实测该读数依链路而定）。现在：项名/门文本/被引报告一律取自
+  `cap0_eval_set_v1.json`，逐项从被引报告的**原始数字**复算，另逐项机检 `must_show`
+  （07 §4.2"展示输入到实际结果，不得只报局部 probe"），**无机检实现的 must_show 会把已过门的项
+  压回 partial**。健康报告格式号 v2→v3（v2 的 F 行不可当判据读）。实测：F01 **pass**（六门+outcome+
+  自身链）、F02 **fail**（G4/G5 未过，负结果保持）、F03 **partial**（门文本里 "+2.000" 与
+  "interleaved 6/6" 在封存件无可定位字段 ⇒ 记 unverified，不猜）、F04 **fail**（默认入口输出
+  `templated=true / distinct_signatures=1`，且 `wiring_defect` / `default_tick=36` vs 16,000,000）。
+  统一入口五臂**现场重跑**逐位复现封存读数（`matches_sealed_report=true`，13.2 s，产物只写临时目录）。
+  教训与 DEBT-I5/普查 §1e 同型：**"证据文件在场"被当成"证据成立"**，是这类只读封存件检查的通病。
+- **DEBT-I4 的 H 半支（任务 #34）：标定采样已完成，阈值待冻结（2026-09-20）**。新脚本
+  `scripts/training/calibrate_taiji_cap0_h_gates.py`，空闲机 5 次重复、每次新建进程、显式 required 链，
+  产物 [reports/taiji_cap0_h_calibration_20260920.json](../../../reports/taiji_cap0_h_calibration_20260920.json)：
+  H01 0.2402–0.2801 s、H02 0.4760–0.5042 s、H03 折算 0.5570–0.5678 s/次、H04 207,791–210,942 B、
+  H05 150 次零崩溃。建议上限 = max×2，`threshold_status=proposed_not_frozen` ⇒ **冻结归所有者/CI**。
+  两条随带事实：① H 读数同样依链路而定（裸链单点 H02 0.3223 / H04 163,511 vs required 链
+  H02≈0.49 / H04≈211,000）⇒ **标定与正式评价必须同链取数**，否则门限一上线就永久误判；
+  ② `--health` 在 required 链实测 **28.1–28.6 s**（本册先后记过 17.2 s 与 25.6 s，都是裸链路口径）
+  ⇒ 战役每阶段预算加数按 ~28 s 记，换链成本约 +3 s。
+- **DEBT-I4 的链路纠正后果：A05b 在默认基座上仍是必过项之红（2026-09-20，待用户裁决）**。
+  第九批把 A05b 转入 `A_HEALTH_CHECKS` 的依据是 required 链上 `seed_beta.pt`（16M-tick）实测 True。
+  本轮把同一批消融在 required 链上对**默认基座 `seed_corpus.pt`** 重测（新件
+  `reports/taiji_cap0_exit_health_v3_required_chain_20260920.json`）：**A05=true、A05b=false** ⇒
+  那条"换链即翻 true"不成立到默认基座，而默认基座正是产品入口所服务的对象（DEBT-I9 的来源问题未结）。
+  后果：J4 的 A 支在默认基座上**永久判红**，除非 ① 换用可加载的 16M-tick 基座作默认，或 ② 把 A05b
+  降回"披露不判"，或 ③ 修好可读性闸门让回答真随参数变。本轮只登记，不改判据。
+  **另：C/D/E 换链后仍是 0.0（0/14、0/16、0/20，与裸链退出件逐项相同）** ⇒ 语言维度的失败**不是**
+  链路伪影，不能用"跑错链了"来解释它——这条要挡住日后拿链路问题给 CAP 语言门开脱的走法。
+- **登记：一份自称冻结的合同从未进版本库**。`plans/reference/M5_P5_2A_PREDICTED_EXECUTION_PREREGISTRATION_20260913.md`
+  正文写"冻结日期 2026-09-13"，但 `git log -- <file>` 无记录、至今未跟踪。冻结合同不入版本库 ⇒ 无法确定
+  它在哪个 revision 上冻结、也不能按摘要复算，而 [M5 就绪度评审表](../../reference/M5_EXIT_READINESS_REVIEW_20260920.md) §8 的依赖链"P5.2a/b→P5.2d"正引用它。处置待定。
+- **收口套当前在 HEAD 上是 7 红（2026-09-20 实测；本批之前既有，非本批引入）**。全量套
+  `1857 passed / 7 failed / 6 skipped + 1 xfailed`（1164.62 s）。本册最后记录的对照基线是
+  `1763 / 0 / 6 + 1 xfailed`，测试数的增长由 D1–D8 与统一入口/协作各批带入，但**这 7 支不是本批造成的**，
+  逐支核对如下：
+  - **5 支结构性增长门**（`test_continuous_structural_growth`、`test_cross_domain_structural_gain`、
+    `test_online_interaction_structural_bridge`、`test_structural_workspace_net_gain`、
+    `test_terminal_three_domain_governance`）：把 5 支单独跑（77.19 s）仍然全红，报的是各自
+    `evaluate()` 里的门断言（例：`online structural bridge requires two applied feedbacks`）；
+    这五支的导入面与本批改动的文件**零交集** ⇒ 属 W7-p4-10b 增长线自身的红，与 CAP/R2 主线不同链路。
+    **本轮未处置**，只把"它红在 HEAD"这件事钉下来。
+  - **1 支计划一致性门** `test_active_plans_have_one_execution_owner_and_resolvable_links`：
+    `plans/active` 里指向 `reports/taiji_p5_2d_online_writeback_v2_20260916.json` 的相对链接少了一级
+    `../`，共两处（01 的 P5.2d 行、03 的同一行）。该测试**一次只报第一支**，所以第一轮只暴露 01 ——
+    修法是先做一遍全量链接解析，别跟着测试一次改一处。两处已在本批改掉。
+  - **1 支审计面守卫** `test_current_review_surface_is_complete`：`live_consumers()` 比冻结清单多出
+    4 个文件（`taiji/collab_handoff.py`、`train_taiji_r2_content_binding.py`、
+    `run_taiji_collab_handoff_entry_evidence.py`、`run_taiji_unified_entry_evidence.py`）。
+    这正是该门的设计意图（fail-closed：新读 stop_reason 的文件必须先复核再入账）。逐条看：
+    协作交接的两支在**判定**里比较 stop_reason（相等判断与集合去重后驱动断言），
+    另两支只写入/聚合 ⇒ 分类应为 judgement 与 record_only 各二。**登记待复核入账，本批不动冻结清单**。
+  - `ruff check .` 同轮 4 红（D5/D6 matched_dev、D4 probe、collab runner 各一处，均行为不变的死变量/
+    死导入/等价写法），而 CI 的 "Lint with ruff" 是 blocking ⇒ 与上面同属"HEAD 不绿"。
+  - **口径**：后续任何批次的收口数以 **`1857 / 7 / 6 + 1 xfailed`** 为新对照，不得沿用 `1763 / 0`，
+    否则会把既有红读成新失败、或把新失败读成既有红。本批跑前跑后 `checkpoints/seed_corpus.pt`
+    仍是 `c8025db44c65f9c1…` / 43,223,183 B，`output/manual-r5-canary/` 条目 4（方向仍"不涨"）。
 - **DEBT-I5（只登记，不处置）契约测试用字面行号锚定源码位置 ⇒ 源码一漂移，断言就失真而测试仍绿**。
   `scripts/training/eval_taiji_cap0_inventory.py:350-356` 把 `"line 2726-2732"`（以及 `"line 2611"`）
   作为**硬编码字符串**写进诊断文本，`tests/taiji_native/test_cap0_inventory_contract.py:102`

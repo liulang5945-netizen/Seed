@@ -36,8 +36,8 @@
 | E 简单指令与推理 | 机器计分 **0/20**（0.0） | ≥0.7 | **fail** |
 | G 不确定性与安全 | 20 题全部待人工复核（硬安全失败计数） | 硬失败=0 | **blocked（人工）** |
 | A 模型真实性 | 布尔 8/9 过（A01/A02/A03/A04/A06/A05/H05 过）；**A05b answer_follows_parameters=false**（已知必过欠账） | 全过+模式隔离 | **fail（A05b）** |
-| F 项目代表能力 | 合同引用（collab_handoff/P5.2d/unified_entry 证据在库待映射） | 至少一项过独立冻结门 | **partial** |
-| H 性能与稳定性 | H05 ≥30 次无崩溃 **过**；响应/内存门未标定 | 按预检标定冻结 | **partial** |
+| F 项目代表能力 | **已复判（09-20 补）**：F01 六门+`outcome`+其自身"输入→实际结果"链全过；F02 fail（G4/G5 未过，负结果保持）；F03 partial（"+2.000"与"interleaved 6/6"在封存件不可机检）；F04 fail（默认入口输出为固定模板 `distinct_signatures=1`，且 `wiring_defect`/`default_tick=36` vs 16,000,000）；统一入口五臂现场重跑逐位复现（`matches_sealed_report=true`，13.2 s） | 至少一项过独立冻结门并展示输入→实际结果 | **pass（F01 一项即满足；bundle 演示不代替项内链）** |
+| H 性能与稳定性 | H05 ≥30 次无崩溃 **过**；响应/内存门已完成**空闲机标定采样**（5 次重复、required 链，[标定件](../../reports/taiji_cap0_h_calibration_20260920.json)），所有者已裁决"按 max×2 草案冻结"（[冻结件](M5_CAP_H_THRESHOLD_FREEZE_20260920.md)）——但该件 §1 把阈值绑定 `(设备,链路,checkpoint)` 三元组，而同轮另一裁决要换默认基座 ⇒ 数值须在新基座重取后才生效 | 按预检标定冻结 | **partial（形式已裁决，数值待换底重取）** |
 
 报告：`reports/taiji_cap0_exit_baseline_20260920.json`＋健康 `…_health_…json`＋B/G 人工复核清单 `…_bg_worksheet_…md`（对照基线 `taiji_cap0_baseline_repro_20260918.json`，git head `85f4bd08`）。
 
@@ -53,6 +53,15 @@
 | 阶段评审 | 本表＋CAP＋排除登记齐备 | 所有者择时召开 |
 
 **§4.1 排除登记（2026-09-20 用户裁决）**：R2 语言能力（CAP C/D/E 语言门）列入 M5 退出交付范围外——欠账保留在账，重启需新证据与新合同。此项排除不改变四轴组件级证据的有效性，也不自动闭合 R2 主线。
+
+## §5 本表提交后的补齐（2026-09-20 追加，详见 [CAP F/H 收束件](M5_CAP_FH_CLOSEOUT_20260920.md)）
+
+1. **F 维此前是空洞门**：runner 只记被引报告的文件存在性布尔（`report_present`），一个门字段都不读。现改为逐项从被引报告的原始数字复算 + 逐项 `must_show` 机检，项名/门文本一律取自冻结评价集（runner 内那份手抄 `F_CONTRACTS` 已删——它已经和冻结件漂移）。健康报告格式号 v2→v3。
+2. **链路纠正**：本表 §3 的 A/H 支原先取自裸链路，而 `check_p3b_criteria` 的 `REQUIRED_CHAIN` 是 `relax_legacy_guard+constrained_decode`，`judge_health` 对不符链路的报告直接 `chain_mismatch` 拒判。已在 required 链重测（`reports/taiji_cap0_exit_health_v3_required_chain_20260920.json`）：**A05b 仍 false** ⇒ A 行判定不变；此前"required 链上 A05b 翻 true"的实测是在 `seed_beta.pt` 上做的，不成立到默认基座。
+3. **未闭合的一半**：B–G 分数仍在裸链评价件里，与新的 required 链健康报告不同链 ⇒ 整份 CAP 须在 required 链重出。
+4. **标定成本口径更正**：`--health` 单次墙钟在 **required 链**实测 28.1–28.6 s（五次全落 28.1±0.3）。债册先后记过 17.2 s（A05 之前）与 25.6 s（A05 之后、裸链）⇒ 战役每阶段预算加数应按 **~28 s** 记，链路本身值约 +3 s。
+5. **顺带登记**：`plans/reference/M5_P5_2A_PREDICTED_EXECUTION_PREREGISTRATION_20260913.md` 自称 09-13 冻结，但 `git log` 无记录、一直是未跟踪文件；冻结合同不入版本库 ⇒ 无法判定其在哪个 revision 冻结。本表 §8 的依赖引用因此不可复核。
+6. 本文档自身有编号笔误：出现两个 `## §4`（"M5 退出剩余项"与"纪律"）。
 
 ## §4 纪律
 
