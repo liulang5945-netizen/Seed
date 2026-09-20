@@ -16,6 +16,13 @@
       "bytes": 1394775610
     }
   ],
+  "corpus_on_disk_verified": {
+    "path": "data/simple_zh/simple_zh_texts.jsonl",
+    "bytes": 1394775610,
+    "mtime_local": "2026-08-23 01:11",
+    "matches_envelope_fingerprint": true,
+    "meaning": "语料文件仍在盘且字节数与信封自述逐位相等 ⇒ 来源登记的一致性证据多一枚独立核对点；不构成生成性凭据。"
+  },
   "profile": {
     "region_sizes": [
       256,
