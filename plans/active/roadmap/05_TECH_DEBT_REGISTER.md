@@ -274,6 +274,20 @@
   **同批再次确认**：新底的 `default_entry.template_signature.templated=true` —— 换底**没有**把
   模板回显改掉 ⇒ F04 的"非模板"子句在新底仍不成立，它与"A05b 已转真"是两件事，不得互相顶替。
   上一条里"补丁留在会话外"的说法就此作废，以本条为准。
+- **评价集升 v2 落地（2026-09-20 续跑段，所有者裁决"上限最高项"）**。`cap0_eval_set_v2.json` 由脚本
+  从 v1 生成（不手抄），**唯一实质差别是 F04 的 `reference`** 挪向新底 inventory；合同测试
+  `test_v2_is_the_current_set_and_differs_from_v1_in_exactly_one_field` 用扁平化路径集把这件事钉死：
+  v1 与 v2 去掉版本元字段后必须同形状、且差异集合恰好等于那一条路径，F 项的 `gate`/`must_show`
+  文本逐条断言与 v1 相同 ⇒ **升版不是降线**。v1 不覆写，`test_cap0_eval_set_contract.py` 里对 v1 的
+  历史钉法原样保留。
+  同时给 F 维加了**引用时效守卫**（原第三方案的守卫部分）：F04 复算前先比对被引 inventory 里的
+  `default_checkpoint` 与来源清单登记的现行默认；不一致判第三态 **`stale_reference`**（既不是 pass
+  也不是 fail——拿旧产品事实出今天的结论时，判哪一边都是冒称），并配两支测试：造一份描述旧底的载荷
+  必须落 `stale_reference`；读不到现行登记时该子句记 `unverified` 而不是默认"未过期"。
+  换底后 F04 实测：**非 stale、仍 fail**（新底 `templated=true`）⇒ F 维 pass 的依据仍只是 F01 一项。
+  随带收掉两处本册记过的收尾：`eval_taiji_cap0_inventory.py` 的第四处硬编码默认路径（见上条）、
+  以及健康支摘要打印里 `"contracts"` 的谎报兜底（F 块结构已不是合同清单，现改印维度门判定）。
+  **仍未做**：`DEFAULT_REPORT` 指向 09-15 封存件（裸跑会覆写）、战役基线对绑 identity 重出。
 - **随带发现（登记，未处置）**：`eval_taiji_cap0_inventory.py` 的 `DEFAULT_REPORT` 仍指向
   `reports/taiji_cap0_inventory_20260915.json` ⇒ **裸跑该脚本会覆写一份封存报告**，违反"报告不覆写"。
   本轮两次重跑都显式传了 `--report`，纯属侥幸。改法取后者更合本仓纪律：目标已存在即拒跑并报错，

@@ -29,6 +29,20 @@ F01_REPORT = PROJECT_ROOT / "reports/taiji_b0_b1_representation_20260915.json"
 UNIFIED_ENTRY_SEALED = PROJECT_ROOT / "reports/taiji_unified_entry_evidence_20260919.json"
 
 
+def _reference_of(item_id: str) -> str:
+    """被引报告路径取自现行评价集，测试里不再抄第三份字面串。"""
+
+    return next(
+        str(item["reference"])
+        for item in _dimension_items(_eval_set(), "F")
+        if str(item["id"]) == item_id
+    )
+
+
+F04_REF = _reference_of("F04")
+F04_REPORT = PROJECT_ROOT / F04_REF
+
+
 def _f_items() -> list[dict[str, object]]:
     return _dimension_items(_eval_set(), "F")
 
@@ -238,6 +252,57 @@ def test_health_f_block_carries_recomputed_rows_and_no_longer_a_bare_list() -> N
     for row in block["items"]:
         assert "clauses" in row and "verdict" in row
         assert "must_show_clauses" in row
+
+
+def test_f04_on_the_current_eval_set_is_not_flagged_stale() -> None:
+    """v2 把 F04 的引用挪到新底 inventory ⇒ 时效守卫必须放行（否则换底没做成）。"""
+
+    from scripts.training.eval_taiji_cap0_baseline import EVAL_SET_PATH
+
+    assert EVAL_SET_PATH.name == "cap0_eval_set_v2.json"
+    row = _rows()["F04"]
+    staleness = [c for c in row["clauses"] if "当前产品默认基座" in c["clause"]]
+    assert staleness and staleness[0]["held"] is True
+    assert row["verdict"] != "stale_reference"
+    #: 换底没有把模板回显改掉，所以 F04 仍不是 pass —— 引用换了不等于门过了。
+    assert row["verdict"] == "fail"
+
+
+def test_a_reference_describing_another_substrate_reads_stale_not_failed(tmp_path) -> None:
+    """被引报告若描述别的基座，判过/判不过都算冒称 ⇒ 必须是第三种状态 stale_reference。"""
+
+    payload = json.loads(F04_REPORT.read_text(encoding="utf-8"))
+    shifted = copy.deepcopy(payload)
+    shifted["model_reality"]["default_checkpoint"] = "seed_corpus.pt"
+    shifted["model_reality"]["default_tick"] = 2
+    shifted["model_reality"]["wiring_defect"] = True
+    (tmp_path / "inv.json").write_text(json.dumps(shifted), encoding="utf-8")
+    item = {
+        "id": "F04",
+        "capability": "x",
+        "gate": "g",
+        "reference": "inv.json",
+        "must_show": "m",
+    }
+    row = adjudicate_f_items([item], root=tmp_path)[0]
+    assert row["verdict"] == "stale_reference"
+    assert row["gate_verdict"] == "stale_reference"
+
+
+def test_the_stale_check_is_inert_when_the_provenance_record_is_unreadable(
+    tmp_path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """读不到现行登记时不许"默认未过期"——守卫本身失效也得留在读数里。"""
+
+    from scripts.training import eval_taiji_cap0_f_dimension as fmod
+
+    monkeypatch.setattr(fmod, "_current_product_default_name", lambda: None)
+    row = adjudicate_f_items(
+        [{"id": "F04", "capability": "x", "gate": "g", "reference": F04_REF, "must_show": "m"}]
+    )[0]
+    staleness = [c for c in row["clauses"] if "当前产品默认基座" in c["clause"]][0]
+    assert staleness["held"] is None
+    assert row["verdict"] != "pass"
 
 
 def test_the_frozen_gate_text_used_for_recomputation_is_the_manifests_own(tmp_path: Path) -> None:

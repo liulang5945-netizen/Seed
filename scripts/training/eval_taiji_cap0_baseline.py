@@ -43,7 +43,9 @@ DEFAULT_REPORT = PROJECT_ROOT / "reports" / "taiji_cap0_baseline_v1_20260915.jso
 DEFAULT_HEALTH_REPORT = PROJECT_ROOT / "reports" / "taiji_cap0_health_v5_default_20260918.json"
 DEFAULT_ADJUDICATION_REPORT = PROJECT_ROOT / "reports" / "taiji_cap0_adjudication_v1_20260915.json"
 DEFAULT_CHECKPOINT = PROJECT_ROOT / "checkpoints" / "seed_corpus.pt"
-EVAL_SET_PATH = PROJECT_ROOT / "plans" / "manifests" / "cap0_eval_set_v1.json"
+#: 现行评价集。v1（frozen 2026-09-15）不覆写、仍由 `test_cap0_eval_set_contract.py` 按历史钉住；
+#: v2 的唯一实质改动是 F04 的 `reference`（默认基座换底，见其 `change_log`），门文本与题面零改动。
+EVAL_SET_PATH = PROJECT_ROOT / "plans" / "manifests" / "cap0_eval_set_v2.json"
 
 RESET_MARKER = "__RESET__"
 DRIVEN_DIMENSIONS = ("B", "C", "D", "E", "G")
@@ -985,7 +987,16 @@ def main(argv: list[str] | None = None) -> int:
         )
         _write_report(health_path, health)
         for key, block in health["dimensions"].items():
-            detail = block.get("checks") or block.get("measurements") or "contracts"
+            #: 别再拿 "contracts" 兜底谎报形状——F 块的结构早就不是合同清单了。
+            gate = block.get("dimension_gate")
+            if gate:
+                detail = (
+                    f"gate={gate['verdict']} "
+                    f"passing={gate['items_passing_gate_and_must_show']} "
+                    f"live={block['live_entry_evidence'].get('status')}"
+                )
+            else:
+                detail = block.get("checks") or block.get("measurements") or "n/a"
             print(f"{key} {block['name']}: {detail}")
         print(f"health report -> {health_path}")
         return 0

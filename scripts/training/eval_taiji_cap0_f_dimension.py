@@ -142,6 +142,22 @@ def _adjudicate_f03(report: dict[str, Any]) -> list[dict[str, Any]]:
     return clauses
 
 
+#: 产品默认基座的现行登记（来源清单）。F04 的复算必须知道自己读的那份 inventory
+#: 描述的是不是**当前**默认基座——否则换底之后它会把一份旧产品事实当成今天的结论。
+PROVENANCE_MANIFEST = (
+    PROJECT_ROOT / "plans" / "manifests" / "product_default_checkpoint_provenance.json"
+)
+STALE_REFERENCE_CLAUSE = "被引 inventory 描述的是当前产品默认基座"
+
+
+def _current_product_default_name() -> str | None:
+    try:
+        payload = json.loads(PROVENANCE_MANIFEST.read_text(encoding="utf-8"))
+        return Path(str(payload["path"])).name
+    except (OSError, ValueError, KeyError, TypeError):
+        return None
+
+
 def _adjudicate_f04(report: dict[str, Any]) -> list[dict[str, Any]]:
     """门文本：默认入口可加载并产出原始输出。must_show 要求同时披露默认 tick 与链路缺陷。"""
 
@@ -176,6 +192,17 @@ def _adjudicate_f04(report: dict[str, Any]) -> list[dict[str, Any]]:
             f"default_tick={reality.get('default_tick')!r} "
             f"most_trained_tick={reality.get('most_trained_tick')!r} "
             f"wiring_defect={reality.get('wiring_defect')!r}",
+        )
+    )
+    #: 时效守卫：被引报告说的是哪一份基座，必须对得上现行登记。对不上时**不判过也不判不过**——
+    #: 那是在拿旧产品事实出今天的结论，正确答案是"这份引用过期了，去重出"。
+    current = _current_product_default_name()
+    reported = str(reality.get("default_checkpoint") or "")
+    clauses.append(
+        _clause(
+            STALE_REFERENCE_CLAUSE,
+            None if (current is None or not reported) else current == reported,
+            f"被引 inventory 记 default_checkpoint={reported!r}，现行产品默认={current!r}",
         )
     )
     return clauses
@@ -249,7 +276,11 @@ def adjudicate_f_items(
             else:
                 clauses = adjudicator(payload)
                 row["clauses"] = clauses
-                row["gate_verdict"] = _verdict_of(clauses)
+                #: 引用过期优先于"过/不过"：门文本读的是旧产品事实时，判哪一边都是冒称。
+                stale = any(
+                    c["clause"] == STALE_REFERENCE_CLAUSE and c["held"] is False for c in clauses
+                )
+                row["gate_verdict"] = "stale_reference" if stale else _verdict_of(clauses)
                 must_show = _MUST_SHOW_ADJUDICATORS.get(item_id)
                 if must_show is None:
                     row["must_show_clauses"] = [
@@ -262,10 +293,14 @@ def adjudicate_f_items(
                 else:
                     row["must_show_clauses"] = must_show(payload)
                 row["verdict"] = (
-                    "pass"
-                    if row["gate_verdict"] == "pass"
-                    and _verdict_of(row["must_show_clauses"]) == "pass"
-                    else row["gate_verdict"] if row["gate_verdict"] == "fail" else "partial"
+                    "stale_reference"
+                    if stale
+                    else (
+                        "pass"
+                        if row["gate_verdict"] == "pass"
+                        and _verdict_of(row["must_show_clauses"]) == "pass"
+                        else row["gate_verdict"] if row["gate_verdict"] == "fail" else "partial"
+                    )
                 )
                 row["report_recorded_outcome"] = payload.get("outcome")
         rows.append(row)

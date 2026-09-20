@@ -36,7 +36,7 @@
 | E 简单指令与推理 | 机器计分 **0/20**（0.0） | ≥0.7 | **fail** |
 | G 不确定性与安全 | 20 题全部待人工复核（硬安全失败计数） | 硬失败=0 | **blocked（人工）** |
 | A 模型真实性 | 布尔 8/9 过（A01/A02/A03/A04/A06/A05/H05 过）；**A05b answer_follows_parameters=false**（已知必过欠账） | 全过+模式隔离 | **fail（A05b）** |
-| F 项目代表能力 | **已复判（09-20 补）**：F01 六门+`outcome`+其自身"输入→实际结果"链全过；F02 fail（G4/G5 未过，负结果保持）；F03 partial（"+2.000"与"interleaved 6/6"在封存件不可机检）；F04 fail（默认入口输出为固定模板 `distinct_signatures=1`，且 `wiring_defect`/`default_tick=36` vs 16,000,000）；统一入口五臂现场重跑逐位复现（`matches_sealed_report=true`，13.2 s） | 至少一项过独立冻结门并展示输入→实际结果 | **pass（F01 一项即满足；bundle 演示不代替项内链）** |
+| F 项目代表能力 | **评价集已升 v2**（唯一实质差别是 F04 的 `reference` 挪向新底 inventory；v1 不覆写，合同测试钉死"差异集合恰好等于那一条路径"且门文本逐条相同）；F04 加时效守卫后实测**非 stale、仍 fail**（新底 `templated=true`）| 至少一项过独立冻结门并展示输入→实际结果 | **pass（依据仍只是 F01 一项）** |
 | H 性能与稳定性 | H05 ≥30 次无崩溃 **过**；响应/内存门已完成**空闲机标定采样**（5 次重复、required 链，[标定件](../../reports/taiji_cap0_h_calibration_20260920.json)），所有者已裁决"按 max×2 草案冻结"（[冻结件](M5_CAP_H_THRESHOLD_FREEZE_20260920.md)）——但该件 §1 把阈值绑定 `(设备,链路,checkpoint)` 三元组，而同轮另一裁决要换默认基座 ⇒ 数值须在新基座重取后才生效 | 按预检标定冻结 | **partial（形式已裁决，数值待换底重取）** |
 
 报告：`reports/taiji_cap0_exit_baseline_20260920.json`＋健康 `…_health_…json`＋B/G 人工复核清单 `…_bg_worksheet_…md`（对照基线 `taiji_cap0_baseline_repro_20260918.json`，git head `85f4bd08`）。

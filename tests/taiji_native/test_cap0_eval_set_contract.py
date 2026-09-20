@@ -22,6 +22,63 @@ def _eval_set() -> dict:
     return json.loads(SET_PATH.read_text(encoding="utf-8"))
 
 
+#: 现行评价集与它的上一版冻结件。v1 **不覆写、按历史钉住**；v2 只允许一处实质差别。
+V2_PATH = PROJECT_ROOT / "plans" / "manifests" / "cap0_eval_set_v2.json"
+
+
+def _flat(payload: dict, prefix: str = "") -> dict:
+    out: dict = {}
+    for key, value in payload.items():
+        path = f"{prefix}.{key}" if prefix else str(key)
+        if isinstance(value, dict):
+            out.update(_flat(value, path))
+        elif isinstance(value, list):
+            for index, item in enumerate(value):
+                if isinstance(item, dict):
+                    out.update(_flat(item, f"{path}[{index}]"))
+                else:
+                    out[f"{path}[{index}]"] = item
+        else:
+            out[path] = value
+    return out
+
+
+def test_v2_is_the_current_set_and_differs_from_v1_in_exactly_one_field() -> None:
+    """升版不许顺手改门。v1→v2 的全部差别应当只有 F04 的被引报告那一条路径。"""
+
+    v1 = json.loads(SET_PATH.read_text(encoding="utf-8"))
+    v2 = json.loads(V2_PATH.read_text(encoding="utf-8"))
+    assert v2["format"] == "cap0-eval-set-v2"
+    assert v2["version"] == 2
+    assert v2["based_on"].endswith("cap0_eval_set_v1.json")
+
+    meta = {"format", "version", "based_on", "change_log"}
+    old, new = _flat({k: v for k, v in v1.items() if k not in meta}), _flat(
+        {k: v for k, v in v2.items() if k not in meta}
+    )
+    assert old.keys() == new.keys()
+    changed = {path for path in old if old[path] != new[path]}
+    assert changed == {"dimensions.F.items[3].reference"}, sorted(changed)
+    #: 门文本与 must_show 一字未动 ⇒ 这次升版不是"看完低分再降线"。
+    for index, item in enumerate(v2["dimensions"]["F"]["items"]):
+        assert item["gate"] == v1["dimensions"]["F"]["items"][index]["gate"]
+        assert item["must_show"] == v1["dimensions"]["F"]["items"][index]["must_show"]
+
+
+def test_v2_declares_that_it_changed_no_gate() -> None:
+    """变更日志必须自己说清"这不是放宽门"，否则升版可以被拿去做任何事。"""
+
+    v2 = json.loads(V2_PATH.read_text(encoding="utf-8"))
+    log = v2["change_log"]
+    assert log["explicitly_unchanged"]
+    assert "没有放宽" in log["not_a_relining"]
+    #: 路径按项 ID 标注（`items[F04]`）而不是按下标——下标会随题面重排而说谎。
+    assert [c["path"] for c in log["substantive_changes"]] == ["dimensions.F.items[F04].reference"]
+    assert (
+        PROJECT_ROOT / v2["dimensions"]["F"]["items"][3]["reference"]
+    ).is_file(), "F04 的被引报告必须真的在盘上——引用换了却指向不存在的件，等于把门拆了"
+
+
 def test_frozen_artefacts_exist() -> None:
     assert SET_PATH.is_file(), f"missing machine-readable set: {SET_PATH}"
     assert DOC_PATH.is_file(), f"missing frozen protocol doc: {DOC_PATH}"

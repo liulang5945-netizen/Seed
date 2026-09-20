@@ -1,0 +1,376 @@
+{
+  "format": "taiji-cap0-health-v3",
+  "checkpoint": "checkpoints\\seed_beta.pt",
+  "trained_during_eval": false,
+  "identity": {
+    "git_head": "4fb987494da38aaf376baf4794e8a8eb45ee06fe",
+    "checkpoint_sha256": "ad2a06465e0ef78c75aff7302a6f7a2ae11825d2f19361d9d65926006f3bf793"
+  },
+  "chain": {
+    "relax_legacy_guard": true,
+    "constrained_decode": true
+  },
+  "dimensions": {
+    "A": {
+      "name": "模型真实性",
+      "checks": {
+        "A01_new_process_load": true,
+        "A01_load_does_not_advance_tick": true,
+        "A02_missing_checkpoint_rejected": true,
+        "A03_fixed_input_reproducible": true,
+        "A04_input_changes_output": true,
+        "H05_no_crash_over_n_runs": true,
+        "A06_no_external_provider_in_N_mode": true,
+        "A05_isolated_ablation": true,
+        "A05b_answer_follows_parameters": true
+      },
+      "tick_after_load": 16000000,
+      "provider_status": null,
+      "missing_checkpoint_error": "FileNotFoundError",
+      "ablation": {
+        "targets": [
+          "substrate.predictive_readout.synapses.edge_weight",
+          "substrate.predictive_readout.bias",
+          "substrate.motor.synapses.edge_weight",
+          "substrate.fabric.decoders[0].edge_weight",
+          "substrate.memory.cue_encoder.edge_weight"
+        ],
+        "arms": [
+          {
+            "target": "substrate.predictive_readout.synapses.edge_weight",
+            "shape": [
+              257,
+              96
+            ],
+            "abs_sum_before": 5076.241211,
+            "informative": true,
+            "native_changed": true,
+            "answer_changed": true,
+            "status": "executed"
+          },
+          {
+            "target": "substrate.predictive_readout.bias",
+            "shape": [
+              257
+            ],
+            "abs_sum_before": 72.851227,
+            "informative": true,
+            "native_changed": true,
+            "answer_changed": true,
+            "status": "executed"
+          },
+          {
+            "target": "substrate.motor.synapses.edge_weight",
+            "shape": [
+              257,
+              96
+            ],
+            "abs_sum_before": 5076.241211,
+            "informative": true,
+            "native_changed": false,
+            "answer_changed": false,
+            "status": "executed"
+          },
+          {
+            "target": "substrate.fabric.decoders[0].edge_weight",
+            "shape": [
+              257,
+              48
+            ],
+            "abs_sum_before": 493.348877,
+            "informative": true,
+            "native_changed": true,
+            "answer_changed": true,
+            "status": "executed"
+          },
+          {
+            "target": "substrate.memory.cue_encoder.edge_weight",
+            "shape": [
+              384,
+              64
+            ],
+            "abs_sum_before": 1099.262817,
+            "informative": true,
+            "native_changed": false,
+            "answer_changed": false,
+            "status": "executed"
+          }
+        ],
+        "informative_arms": 5,
+        "native_sensitive": true,
+        "answer_sensitive": true,
+        "restoration_verified": true,
+        "baseline_native_sha256": "9b1662c58365",
+        "seconds": 9.65
+      },
+      "error": null,
+      "notes": {
+        "A04_semantics": "输入确实改变了输出，但该入口的输出形态是固定模板回显（见 CAP-0 基线 §3）——A04 只证明“输入影响了链路”，不证明“产生了参数驱动的语言内容”，须人工确认",
+        "A05_isolated_ablation": "已执行：在同一进程内已加载的副本上逐个靶点清零权重（检查点文件从不写回；改载荷再 restore 这条路被身份器官的 lineage 摘要封死 —— ValueError: identity organ checkpoint lineage does not match Taiji core）。判据只看**原始 effector 输出**是否随参数改变（07 §2 L1）",
+        "A05b_answer_follows_parameters": "表层回答是否随消融改变，**读数依链路而定**：裸链路实测 False（原始字节含 U+FFFD，可读性闸门 _readable_surface 拒收 native_prediction，退回固定模板 ⇒ 按 07 §3 A 行“不能把纯规则输出归因模型”，此时聊天回答不得记为参数驱动）；约束解码链路同一批消融实测 True（闸门放行，回答即模型自己吐的字节，但仍非成句汉语）"
+      }
+    },
+    "H": {
+      "name": "性能与稳定性",
+      "measurements": {
+        "H01_cold_start_seconds": 0.2579,
+        "H02_first_response_seconds": 0.6251,
+        "H03_total_seconds_for_runs": 22.574,
+        "H04_peak_traced_bytes": 206881
+      },
+      "stability_runs": 30,
+      "stability_crashes": 0,
+      "checks": {
+        "H05_no_crash_over_n_runs": true
+      },
+      "gate_status": "to_be_calibrated",
+      "gate_note": "门限未在本 runner 内设定：须按设备预检标定后冻结（07 §4.2）",
+      "notes": {
+        "H06_interrupt_recovery": "需专门的恢复流程；本 runner 不自动执行 ⇒ not_executed",
+        "H_gates": "门限未在本 runner 内设定：须按设备预检标定后冻结（07 §4.2）"
+      }
+    },
+    "F": {
+      "name": "项目代表能力",
+      "scoring": "per_frozen_gate",
+      "items": [
+        {
+          "id": "F01",
+          "capability": "B1 表示门",
+          "gate": "六门全过 + outcome=representation_discriminative",
+          "must_show": "输入到实际结果的完整链，不得只报局部 probe",
+          "report": "reports/taiji_b0_b1_representation_20260915.json",
+          "report_present": true,
+          "clauses": [
+            {
+              "clause": "六门全过",
+              "held": true,
+              "detail": "gates={'static_checks': True, 'fit_integrity': True, 'no_leakage': True, 'restore': True, 'controls_complete': True, 'stability': True}"
+            },
+            {
+              "clause": "outcome=representation_discriminative",
+              "held": true,
+              "detail": "outcome='representation_discriminative'"
+            }
+          ],
+          "gate_verdict": "pass",
+          "must_show_clauses": [
+            {
+              "clause": "候选格有实际执行的 episode（非仅拟合）",
+              "held": true,
+              "detail": "episodes.candidate=396"
+            },
+            {
+              "clause": "逐对**实际**增益在册（输入→结果，不是预测表）",
+              "held": true,
+              "detail": "actual_gain 条目数=6"
+            }
+          ],
+          "verdict": "pass",
+          "report_recorded_outcome": "representation_discriminative"
+        },
+        {
+          "id": "F02",
+          "capability": "B2 选择门",
+          "gate": "G1-G6 全过",
+          "must_show": "如实报告：当前为负结果（G4/G5 不过）⇒ 该能力未达，不得记为通过",
+          "report": "reports/taiji_b0_b2_selection_20260915.json",
+          "report_present": true,
+          "clauses": [
+            {
+              "clause": "G1-G6 全过",
+              "held": false,
+              "detail": "未过：['G4_task_gate_H1', 'G5_collaboration_gate_H2']"
+            },
+            {
+              "clause": "experiment_passed 与门一致",
+              "held": true,
+              "detail": "experiment_passed=False 全过=False"
+            }
+          ],
+          "gate_verdict": "fail",
+          "must_show_clauses": [
+            {
+              "clause": "must_show 链已机检",
+              "held": null,
+              "detail": "该项的 must_show 没有机检实现 ⇒ 至多 partial，不得记为已展示输入到实际结果"
+            }
+          ],
+          "verdict": "fail",
+          "report_recorded_outcome": "failed"
+        },
+        {
+          "id": "F03",
+          "capability": "结构空间（协作机制在仪器内）",
+          "gate": "create 行三格 +2.000、interleaved 6/6、零回归",
+          "must_show": "须同时声明：独立结构因素仍为 1；不得读作结构稳健性已证",
+          "report": "reports/taiji_b0_structure_space_probe_wide_20260915.json",
+          "report_present": true,
+          "clauses": [
+            {
+              "clause": "create 行三格为正增益",
+              "held": true,
+              "detail": "positive_gain_cells=['create__mismatch', 'create__observation', 'create__override']"
+            },
+            {
+              "clause": "零回归（m4_regresses_cells 为空）",
+              "held": true,
+              "detail": "m4_regresses_cells=[]"
+            },
+            {
+              "clause": "无未解释变化格（cells_with_unexplained_change 为空）",
+              "held": true,
+              "detail": "cells_with_unexplained_change=[]"
+            },
+            {
+              "clause": "create 行三格增益值 = +2.000",
+              "held": null,
+              "detail": "报告 verdict 块只给格名与计数，未给逐格增益数值 ⇒ 该子句无法从封存件机检"
+            },
+            {
+              "clause": "interleaved 6/6",
+              "held": null,
+              "detail": "报告内 interleaved 计数只出现在 frozen/audited=0 的审计块，与门文本所指的 6/6 不是同一量 ⇒ 该子句无法从封存件机检"
+            }
+          ],
+          "gate_verdict": "partial",
+          "must_show_clauses": [
+            {
+              "clause": "must_show 链已机检",
+              "held": null,
+              "detail": "该项的 must_show 没有机检实现 ⇒ 至多 partial，不得记为已展示输入到实际结果"
+            }
+          ],
+          "verdict": "partial",
+          "report_recorded_outcome": null
+        },
+        {
+          "id": "F04",
+          "capability": "整模型加载链（CAP-0）",
+          "gate": "默认入口可加载并产出原始输出",
+          "must_show": "现状：默认入口 metadata.tick=2（刚初始化基底）；最训练过的 16M-tick 状态被身份器官守卫挡住 ⇒ 如实记为缺口",
+          "report": "reports/taiji_cap0_inventory_beta4_20260920.json",
+          "report_present": true,
+          "clauses": [
+            {
+              "clause": "默认入口可加载",
+              "held": true,
+              "detail": "load_ok=True load_error=None"
+            },
+            {
+              "clause": "产出原始输出",
+              "held": true,
+              "detail": "total_output_bytes=1015 turns_answered=7"
+            },
+            {
+              "clause": "输出非固定模板回显（must_show：不得把模板归因模型）",
+              "held": false,
+              "detail": "templated=True distinct_signatures=1"
+            },
+            {
+              "clause": "默认入口服务的确实是训练态（must_show 披露项）",
+              "held": true,
+              "detail": "default_tick=16000000 most_trained_tick=16000000 wiring_defect=False"
+            },
+            {
+              "clause": "被引 inventory 描述的是当前产品默认基座",
+              "held": true,
+              "detail": "被引 inventory 记 default_checkpoint='seed_beta.pt'，现行产品默认='seed_beta.pt'"
+            }
+          ],
+          "gate_verdict": "fail",
+          "must_show_clauses": [
+            {
+              "clause": "must_show 链已机检",
+              "held": null,
+              "detail": "该项的 must_show 没有机检实现 ⇒ 至多 partial，不得记为已展示输入到实际结果"
+            }
+          ],
+          "verdict": "fail",
+          "report_recorded_outcome": null
+        }
+      ],
+      "live_entry_evidence": {
+        "status": "executed",
+        "runner": "scripts\\training\\run_taiji_unified_entry_evidence.py",
+        "task": {
+          "main": "p52a-p52-train-000",
+          "unseen": "p52a-p52-train-004",
+          "template": "lang_confirm"
+        },
+        "wall_cap_seconds": 600.0,
+        "elapsed_seconds": 14.022,
+        "returncode": 0,
+        "recomputed_lines": {
+          "L1_full_beats_all_ablations": true,
+          "L2_handoff_resource_line": true,
+          "L3_failure_injection_still_goals": true,
+          "L4_trace_and_safety": true
+        },
+        "recorded_lines": {
+          "L1_full_beats_all_ablations": true,
+          "L2_handoff_resource_line": true,
+          "L3_failure_injection_still_goals": true,
+          "L4_trace_and_safety": true
+        },
+        "lines_match_report": true,
+        "recomputed_all_pass": true,
+        "outcome_recorded": "unified_entry_supported",
+        "unverifiable_clauses": [
+          "L3:预注册文本要求'注入 m0 首选失败后 full 臂让位仍 goal_reached'，runner 实现的判据是 main_success_rate ≥ 2/3 —— 两者不同一，本模块按 runner 口径复算并如实登记该代理",
+          "L4:冻结文本还要求 bundle digest 逐臂一致与越权检查，逐臂 payload 未携带 digest ⇒ 不可机检"
+        ],
+        "per_arm": {
+          "disable_memory": {
+            "main_success_rate": 0.0,
+            "total_steps_with_injection": 8,
+            "executed_actions_with_injection": 8,
+            "unseen_success": false
+          },
+          "disable_selection": {
+            "main_success_rate": 0.0,
+            "total_steps_with_injection": 8,
+            "executed_actions_with_injection": 0,
+            "unseen_success": true
+          },
+          "disable_writeback": {
+            "main_success_rate": 1.0,
+            "total_steps_with_injection": 2,
+            "executed_actions_with_injection": 2,
+            "unseen_success": true
+          },
+          "full": {
+            "main_success_rate": 1.0,
+            "total_steps_with_injection": 6,
+            "executed_actions_with_injection": 4,
+            "unseen_success": true
+          },
+          "simple_strategy": {
+            "main_success_rate": 0.0,
+            "total_steps_with_injection": 8,
+            "executed_actions_with_injection": 8,
+            "unseen_success": false
+          }
+        },
+        "matches_sealed_report": true
+      },
+      "dimension_gate": {
+        "criterion": "至少一项满足其独立冻结门，并展示输入到实际结果（07 §4.2 / 评价集 gates.F）",
+        "items_passing_frozen_gate": [
+          "F01"
+        ],
+        "items_passing_gate_and_must_show": [
+          "F01"
+        ],
+        "end_to_end_demonstration": {
+          "unified_entry_reproduced": true,
+          "status": "executed",
+          "counts_as_item_chain": false
+        },
+        "verdict": "pass",
+        "reason": ""
+      },
+      "note": "F 各项从被引报告的原始数字复算其冻结门；报告在场不等于门过。门文本中读不到可机检形态的子句记 unverified ⇒ 该项至多 partial，不冒称通过。"
+    }
+  }
+}
