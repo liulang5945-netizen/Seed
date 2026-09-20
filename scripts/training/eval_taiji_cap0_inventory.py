@@ -47,6 +47,8 @@ VERSION = 1
 DELIVERY_PLAN = "plans/active/roadmap/07_MINI_MODEL_DELIVERY.md"
 DEFAULT_REPORT = PROJECT_ROOT / "reports" / "taiji_cap0_inventory_20260915.json"
 CHECKPOINT_DIR = PROJECT_ROOT / "checkpoints"
+#: 第四处硬编码默认基座（本会话实测改为引用产品常量会让字段面板守卫红，修法与登记见
+#: 05 债册"inventory 的字段面板随底而定"条；补丁已另存，与评价集 v2 同批落地）。
 DEFAULT_CHECKPOINT = CHECKPOINT_DIR / "seed_corpus.pt"
 
 #: Fixed diagnostic probe.  Explicitly NOT the frozen B-H evaluation set; it exists

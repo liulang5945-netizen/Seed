@@ -249,6 +249,19 @@
   （7 题、`templated=true`）。⇒ F04 那条"输出非固定模板回显"在新底上**仍不成立**，F04 预期停在
   fail/partial 而不是 pass；"表层回答随参数改变"（A05b 已转真）与"回答成句/非模板"是两件事，
   不得互相顶替。这也再次说明 §6 那条边界：换底修的是底色与来源，不是语言能力。
+- **inventory 的字段面板随底而定（2026-09-20 实测红；修法已定，本批未完）**。把第四处硬编码默认路径
+  改为引用 `api.seed_runtime.DEFAULT_CHECKPOINT` 后重跑：`wiring_defect` 由 `true` 转 `false`
+  （默认已是训练态，符合预期），`default_templated` 仍 `true`；但 `trained_probed /
+  trained_turns_answered / trained_templated` **整块消失** —— 因为"最训练的那份 ≠ 默认"这一分支
+  不再进入。字段面板复现守卫 `test_a_fresh_inventory_sample_reproduces_the_sealed_one` 随即红：
+  "仪器少产/多产了字段"。**这支护卫是真在判事的，红得对**（它不是只读封存件那一类）。
+  修法：`most_trained` 与默认同源时仍**恒发**这三字段（不探针则置 null），使 schema 与底无关；
+  本轮未做该修改，故把源改动回退、补丁留在会话外，与评价集 v2 同批做 —— **不把一处未收口的改动
+  连同它的红一起提交**。
+- **随带发现（登记，未处置）**：`eval_taiji_cap0_inventory.py` 的 `DEFAULT_REPORT` 仍指向
+  `reports/taiji_cap0_inventory_20260915.json` ⇒ **裸跑该脚本会覆写一份封存报告**，违反"报告不覆写"。
+  本轮两次重跑都显式传了 `--report`，纯属侥幸。改法取后者更合本仓纪律：目标已存在即拒跑并报错，
+  而不是把默认名挪走。
 - **换底前的收口套状态（2026-09-20 第十批实测；那 7 支在本批之前既有，非本批引入）**。全量套
   `1857 passed / 7 failed / 6 skipped + 1 xfailed`（1164.62 s）。本册最后记录的对照基线是
   `1763 / 0 / 6 + 1 xfailed`，测试数的增长由 D1–D8 与统一入口/协作各批带入，但**这 7 支不是本批造成的**，
