@@ -205,6 +205,17 @@
 - **登记：一份自称冻结的合同从未进版本库**。`plans/reference/M5_P5_2A_PREDICTED_EXECUTION_PREREGISTRATION_20260913.md`
   正文写"冻结日期 2026-09-13"，但 `git log -- <file>` 无记录、至今未跟踪。冻结合同不入版本库 ⇒ 无法确定
   它在哪个 revision 上冻结、也不能按摘要复算，而 [M5 就绪度评审表](../../reference/M5_EXIT_READINESS_REVIEW_20260920.md) §8 的依赖链"P5.2a/b→P5.2d"正引用它。处置待定。
+- **更正本册上一条"P5.2a 未入库冻结件"的处置（2026-09-20 所有者裁决 + 核对）**。核对结论：该文件是
+  已入库的 `plans/reference/M5_P5_2A_PREDICTIVE_EXECUTION_PREREGISTRATION_20260913.md` 的**早期变体草稿**——
+  它独有的数值（train/val/final = 24/8/12、相对差 +0.2、wall ≤600 s、max_steps 3/4/3）、
+  `PredictedExecutionTask` 与其五个门名在整个仓内**没有任何实现或下游引用**，§11"执行记录"永久空白，
+  且文件时间戳是 09-19，比它自称治理的那次运行晚六天。实际管过那次运行的合同、runner 与两份报告
+  全部指向已入库那份；P5.2b 也按"predictive_execution_insufficient"承接，依赖链不经过本草稿。
+  ⇒ 所有者裁决：**移入 `plans/archive/history/` 作历史草稿，不入版本库当冻结合同**（入库会制造两份
+  互相冲突的"09-13 冻结"，且会把证据链日期标错）。就绪度表 §8 的"P5.2a/b→P5.2d"经已入库那份可复核。
+  本条覆盖上一条末尾的"处置待定"，那句话说的是当时未核的状态；核完即按本条办。
+  教训与本会话反复出现的那类同型：**"自称冻结"不等于"冻结"**——冻结的凭据是版本历史 + 被实现的
+  常量 + 执行记录三者齐备，缺一就只能是草稿。
 - **DEBT-I9 结项（2026-09-20 第十一批）+ 换底带来的三条读数更正**。产品默认入口由
   `seed_corpus.pt`（套件重初始化产物，`trainer=api_seed_runtime`）换到 16M-tick 训练态
   `seed_beta.pt`，来源清单升 v2：四要素自述 + 进度流 + 当年长训命令行互证，且 `provenance_limits`
