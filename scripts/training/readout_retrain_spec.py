@@ -70,6 +70,9 @@ ARMS: dict[str, dict[str, Any]] = {
 #: 所有者 2026-09-20 批准的符号上限（每臂）。代码里也钉一道，免得"批了 16M、跑了 160M"。
 APPROVED_SYMBOL_CEILING = 16_000_000
 
+#: 训练器名。跑器写进 checkpoint 信封，判决器据此确认"这三份权重确实是本件训出来的"。
+TRAINER_NAME = "train_taiji_r2_readout_retrain"
+
 DEFAULT_CORPUS = PROJECT_ROOT / "data" / "p3b_all_fresh.jsonl"
 #: 这份清单里写着它自己的血缘推导（``skip_derivation`` 与 ``skip_symbols``）——
 #: 也就是"该副本已经吃过的前缀"是怎么算出来的。不许手抄。

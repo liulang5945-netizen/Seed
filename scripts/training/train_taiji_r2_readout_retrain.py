@@ -50,6 +50,7 @@ from readout_retrain_spec import (  # noqa: E402
     DEFAULT_CORPUS,
     DEFAULT_LINEAGE_MANIFEST,
     SURFACES,
+    TRAINER_NAME,
     iter_corpus_window,
     load_lineage_skip,
     sha256_of,
@@ -59,7 +60,6 @@ from seed import Seed  # noqa: E402
 from seed.persistence import atomic_save, attach_metadata, corpus_fingerprint  # noqa: E402
 from taiji import content_digest  # noqa: E402
 
-TRAINER_NAME = "train_taiji_r2_readout_retrain"
 DEFAULT_OUT_DIR = PROJECT_ROOT / "output" / "taiji_r2_readout_retrain"
 CONTRACT = "plans/reference/M5_R2_READOUT_RETRAIN_CONTRACT_DRAFT_20260920.md"
 
