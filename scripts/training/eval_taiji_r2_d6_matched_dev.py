@@ -22,7 +22,6 @@ sys.path.insert(0, str(PROJECT_ROOT))
 
 import torch  # noqa: E402
 
-from scripts.training.eval_taiji_r2_d1_surface_policies import metrics  # noqa: E402
 from scripts.training.eval_taiji_r2_d5_matched_dev import (  # noqa: E402
     _evaluate,
     _load,
@@ -151,9 +150,7 @@ def main() -> int:
     runs: list[dict[str, Any]] = []
     for seed in SEEDS:
         started = time.monotonic()
-        prototype = _run_training(
-            "v2", True, seed, f"r2-d6-b2-{seed}", train_by_fixture["v2"]
-        )
+        prototype = _run_training("v2", True, seed, f"r2-d6-b2-{seed}", train_by_fixture["v2"])
         target_dir = PROJECT_ROOT / CHECKPOINT_ROOT / str(seed)
         target_dir.mkdir(parents=True, exist_ok=True)
         trainer = SequenceWorkspaceTrainer(

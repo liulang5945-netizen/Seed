@@ -45,7 +45,7 @@ MICROBATCH = 8
 LAMBDA_COPY = 1.0
 COPY_SUPPORTED_SHAPES = ("fact", "negation", "same_opening_fact")
 NO_VALUE_SHAPES = ("unknown", "same_opening_unknown", "combination_same", "combination_different")
-NEGATION_LEAD = "不是".encode("utf-8")
+NEGATION_LEAD = "不是".encode()
 WALL_CAP_SECONDS = 20 * 60
 
 

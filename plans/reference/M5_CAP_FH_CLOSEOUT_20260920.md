@@ -37,6 +37,14 @@
 - **L3**：预注册文本要求"注入 m0 首选失败后 full 臂让位仍 `goal_reached`"，runner 实现的判据是 `main_success_rate ≥ 2/3`——两者不同一，本件按 runner 口径复算并登记该代理；
 - **L4**：冻结文本还要求 bundle digest 逐臂一致与越权检查，逐臂 payload 未携带 digest。
 
+### §1.5 F 维读法裁决（所有者 2026-09-20）
+
+07 §4.2 那句按 **"F01 一项即算满足"** 读：不要求代表能力必须出现在 `SeedRuntime.chat` 的整模型出口上。
+代价随判词一同入账——**F 维 pass 说的是 B1 表示门这台仪器的判别力经过了实际执行链验证（396 条候选格
+episode + 逐对实际增益），不是整模型入口的语言能力**。若改按严读法，F 维只能记 partial，而那要等 R2
+表达层（按同批裁决挂起中）才有对应的可判定出口。bundle 级现场重跑仍只记在 `end_to_end_demonstration`
+且 `counts_as_item_chain=false`，不作为点亮维度门的依据。
+
 ## §2 H 维：完成设备标定采样，阈值只提草案不冻结
 
 新脚本 `scripts/training/calibrate_taiji_cap0_h_gates.py`，产物 [reports/taiji_cap0_h_calibration_20260920.json](../../reports/taiji_cap0_h_calibration_20260920.json)。机器空闲、5 次重复、每次**新建进程**、链路显式取 `relax_legacy_guard+constrained_decode`（与正式评价同链路）。

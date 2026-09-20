@@ -1,0 +1,100 @@
+{
+  "format": "taiji-cap0-h-calibration-v1",
+  "repeats": 5,
+  "checkpoint": "E:\\Seed\\checkpoints\\seed_beta.pt",
+  "chain": {
+    "relax_legacy_guard": true,
+    "constrained_decode": true
+  },
+  "safety_factor": 2.0,
+  "samples": [
+    {
+      "H01_cold_start_seconds": 0.2349,
+      "H02_first_response_seconds": 0.6366,
+      "H03_total_seconds_for_runs": 22.1872,
+      "H04_peak_traced_bytes": 214040,
+      "sample_index": 0,
+      "stability_runs": 30,
+      "stability_crashes": 0,
+      "H05_no_crash_over_n_runs": true,
+      "wall_seconds_whole_health": 36.441
+    },
+    {
+      "H01_cold_start_seconds": 0.2611,
+      "H02_first_response_seconds": 0.6458,
+      "H03_total_seconds_for_runs": 22.3023,
+      "H04_peak_traced_bytes": 212656,
+      "sample_index": 1,
+      "stability_runs": 30,
+      "stability_crashes": 0,
+      "H05_no_crash_over_n_runs": true,
+      "wall_seconds_whole_health": 36.708
+    },
+    {
+      "H01_cold_start_seconds": 0.2345,
+      "H02_first_response_seconds": 0.6092,
+      "H03_total_seconds_for_runs": 22.0791,
+      "H04_peak_traced_bytes": 207318,
+      "sample_index": 2,
+      "stability_runs": 30,
+      "stability_crashes": 0,
+      "H05_no_crash_over_n_runs": true,
+      "wall_seconds_whole_health": 36.351
+    },
+    {
+      "H01_cold_start_seconds": 0.2493,
+      "H02_first_response_seconds": 0.6306,
+      "H03_total_seconds_for_runs": 22.2319,
+      "H04_peak_traced_bytes": 206760,
+      "sample_index": 3,
+      "stability_runs": 30,
+      "stability_crashes": 0,
+      "H05_no_crash_over_n_runs": true,
+      "wall_seconds_whole_health": 36.537
+    },
+    {
+      "H01_cold_start_seconds": 0.2606,
+      "H02_first_response_seconds": 0.632,
+      "H03_total_seconds_for_runs": 22.3461,
+      "H04_peak_traced_bytes": 211224,
+      "sample_index": 4,
+      "stability_runs": 30,
+      "stability_crashes": 0,
+      "H05_no_crash_over_n_runs": true,
+      "wall_seconds_whole_health": 36.732
+    }
+  ],
+  "summary": {
+    "H01_cold_start_seconds": {
+      "n": 5,
+      "min": 0.2345,
+      "median": 0.2493,
+      "max": 0.2611,
+      "proposed_ceiling": 0.5222
+    },
+    "H02_first_response_seconds": {
+      "n": 5,
+      "min": 0.6092,
+      "median": 0.632,
+      "max": 0.6458,
+      "proposed_ceiling": 1.2916
+    },
+    "H04_peak_traced_bytes": {
+      "n": 5,
+      "min": 206760.0,
+      "median": 211224.0,
+      "max": 214040.0,
+      "proposed_ceiling": 428080.0
+    },
+    "H03_seconds_per_chat_run": {
+      "n": 5,
+      "min": 0.736,
+      "median": 0.7411,
+      "max": 0.7449,
+      "proposed_ceiling": 1.4898
+    }
+  },
+  "threshold_status": "proposed_not_frozen",
+  "freeze_authority": "项目所有者/CI 的设备决策；本件不冻结任何阈值",
+  "disclosure": "阈值口径=该设备该链路该 checkpoint 上 max × safety_factor。它只约束'相对本机基线是否劣化'，不构成对用户侧设备的能力承诺；正式评价换设备或换链路须重标。"
+}

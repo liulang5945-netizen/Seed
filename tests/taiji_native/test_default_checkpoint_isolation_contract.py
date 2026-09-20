@@ -28,7 +28,10 @@ from pathlib import Path
 import pytest
 
 REPO = Path(__file__).resolve().parents[2]
-PRODUCT_DEFAULT = REPO / "checkpoints" / "seed_corpus.pt"
+#: 产品默认**读**源。2026-09-20 所有者裁决由 seed_corpus.pt（套件重初始化产物）换到
+#: 16M-tick 训练态；换底必须同时改这里与来源清单，否则本文件失去它要防的那个漂移。
+#: 不写死路径，直接跟随产品常量——写死两处正是本轮清掉的"两份手抄"漂移的同型问题。
+PRODUCT_DEFAULT = REPO / "checkpoints" / "seed_beta.pt"
 CHECKPOINTS_DIR = REPO / "checkpoints"
 
 

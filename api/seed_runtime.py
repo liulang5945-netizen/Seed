@@ -26,7 +26,13 @@ from taiji import InputFrame
 
 logger = logging.getLogger("ApiServer.SeedRuntime")
 
-DEFAULT_CHECKPOINT = Path(__file__).resolve().parent.parent / "checkpoints" / "seed_corpus.pt"
+#: 产品默认入口加载的基底。2026-09-20 所有者裁决由 `seed_corpus.pt` 换到此处的 16M-tick 训练态：
+#: 前者信封自述 `trainer=api_seed_runtime`（测试套件重初始化的产物），而这一份自述
+#: `trainer=train_seed_corpus`、`tick=16000000`、并带 M1 长训语料指纹（DEBT-I9 的来源半）。
+#: 换底前置实测：裸 `SeedRuntime.load` 无需任何进程内补丁即可加载并作答
+#: （见 plans/reference/M5_DEFAULT_SUBSTRATE_SWITCH_CONTRACT_20260920.md §1 与
+#: plans/reference/M5_CAP_FH_CLOSEOUT_20260920.md §3.2）。**这不构成任何语言能力主张。**
+DEFAULT_CHECKPOINT = Path(__file__).resolve().parent.parent / "checkpoints" / "seed_beta.pt"
 
 #: Where an unqualified ``save()`` lands.  This is deliberately a **separate name** from
 #: DEFAULT_CHECKPOINT (the product's default *load* source): the two used to be one constant, so a

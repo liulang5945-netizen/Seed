@@ -126,9 +126,7 @@ def _pair_type_rates(scored: list[dict[str, Any]]) -> dict[str, dict[str, Any]]:
             if row["correct"]:
                 hits.setdefault(str(row["pair_id"]), set()).add(row["id"])
         complete_pairs = {pid for pid, ids in members_by_pair.items() if len(ids) == 2}
-        pair_hits = sum(
-            1 for pid in complete_pairs if hits.get(pid, set()) == members_by_pair[pid]
-        )
+        pair_hits = sum(1 for pid in complete_pairs if hits.get(pid, set()) == members_by_pair[pid])
         out[pair_type] = {
             "pair_hits": pair_hits,
             "denominator": len(complete_pairs),
@@ -150,7 +148,6 @@ def _multibyte_completion(
     first_hits = 0
     full_hits = 0
     prefix_bytes = 0.0
-    total_bytes = 0
     members = 0
     with torch.no_grad():
         for row in rows:
@@ -211,9 +208,7 @@ def _build(
             copy_persistence=persistence,
         )
     )
-    trainer = SequenceWorkspaceTrainer(
-        prototype, learning_rate=LR, code_revision=f"r2-d5-{seed}"
-    )
+    trainer = SequenceWorkspaceTrainer(prototype, learning_rate=LR, code_revision=f"r2-d5-{seed}")
     trainer.enable_copy_value_supervision(LAMBDA_COPY)
     return prototype, trainer
 
@@ -322,9 +317,7 @@ def main() -> int:
         return [float(run["eval"][condition][metric_key]["value"]) for run in runs[arm]]
 
     def base_metric(condition: str, metric_key: str) -> list[float]:
-        return [
-            float(a00[seed]["eval"][condition][metric_key]["value"]) for seed in SEEDS
-        ]
+        return [float(a00[seed]["eval"][condition][metric_key]["value"]) for seed in SEEDS]
 
     adjudication: dict[str, Any] = {}
     for arm in ARMS:
@@ -349,9 +342,7 @@ def main() -> int:
             ),
             "G3_copy_misbind_drop": mean(mis_drop) >= 0.50,
             "G4_context_margin": mean(context) >= 0.30 and max(m1_nc) <= 0.50,
-            "G5_seed_consistency": (
-                sum(1 for d in delta_m4 if d > 0) >= 2 and min(delta_m4) >= 0
-            ),
+            "G5_seed_consistency": (sum(1 for d in delta_m4 if d > 0) >= 2 and min(delta_m4) >= 0),
             "G6_boundary_and_restore": min(boundary) >= 0.95,
         }
         passed = all(gates.values())

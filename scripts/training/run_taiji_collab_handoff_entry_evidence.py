@@ -19,7 +19,6 @@ sys.path.insert(0, str(PROJECT_ROOT))
 from taiji.collab_handoff import (  # noqa: E402
     STOP_ALL_MEMBERS_BLOCKED,
     STOP_ALL_MEMBERS_EXHAUSTED,
-    ExecutionStep,
     FailureHandoffPolicy,
     MemberCall,
     execute_group_episode,
@@ -86,15 +85,17 @@ def main() -> int:
     ):
         state: dict[str, Any] = {"m0_failures": 0, "done": False}
         invoke, execute, goal = scenario(state)
-        episodes.append(execute_group_episode(
-            active_members=members,
-            episode_id=name,
-            policy=policy,
-            invoke_member=invoke,
-            execute_chosen=execute,
-            goal_reached=goal,
-            max_steps=8,
-        ))
+        episodes.append(
+            execute_group_episode(
+                active_members=members,
+                episode_id=name,
+                policy=policy,
+                invoke_member=invoke,
+                execute_chosen=execute,
+                goal_reached=goal,
+                max_steps=8,
+            )
+        )
 
     stops = {episode["stop_reason"] for episode in episodes}
     handoff = episodes[0]
@@ -118,7 +119,8 @@ def main() -> int:
             "handoff_demonstrated": any(
                 event["kind"] == "member_executed" and event["member"] == "m1"
                 for event in handoff["events"]
-            ) and bool(handoff_events),
+            )
+            and bool(handoff_events),
             "all_members_blocked_demonstrated": STOP_ALL_MEMBERS_BLOCKED in stops,
             "all_members_exhausted_demonstrated": STOP_ALL_MEMBERS_EXHAUSTED in stops,
             "handoff_episode_reached_goal": handoff["stop_reason"] == "goal_reached",

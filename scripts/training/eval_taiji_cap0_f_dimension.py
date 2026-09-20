@@ -92,8 +92,9 @@ def _adjudicate_f02(report: dict[str, Any]) -> list[dict[str, Any]]:
         ),
         _clause(
             "experiment_passed 与门一致",
-            bool(report.get("gates")) and bool(report.get("experiment_passed")) is not None,
-            f"experiment_passed={report.get('experiment_passed')!r}",
+            bool(report.get("gates"))
+            and bool(report.get("experiment_passed")) == all(gates.values()),
+            f"experiment_passed={report.get('experiment_passed')!r} 全过={all(gates.values())!r}",
         ),
     ]
 

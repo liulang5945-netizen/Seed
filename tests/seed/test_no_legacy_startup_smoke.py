@@ -43,7 +43,17 @@ assert "/api/agent/memory/status" not in paths
 assert "/api/workspace/path" not in paths
 assert "/api/models/download_hf" not in paths
 assert "/api/system/switch_model" not in paths
-assert DEFAULT_CHECKPOINT.name == "seed_corpus.pt"
+# 不写死文件名：跟随来源清单登记的那一份。此前这里是第三处硬编码字面串，
+# 换默认基座时要同时改三个地方才不会漏 —— 少改一处就是一份"产品事实"没人守着。
+import json as _json
+from pathlib import Path as _P
+
+_recorded_default = _json.loads(
+    _P("plans/manifests/product_default_checkpoint_provenance.json").read_text(encoding="utf-8")
+)["path"]
+assert DEFAULT_CHECKPOINT.name == _P(_recorded_default).name, (
+    f"产品默认基座 {DEFAULT_CHECKPOINT.name!r} 与来源清单登记的 {_recorded_default!r} 不一致"
+)
 assert is_seed_active() is False
 print(f"no-legacy startup smoke passed: {len(paths)} API paths")
 """

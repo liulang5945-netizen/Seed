@@ -1,14 +1,48 @@
 {
-  "format": "seed-product-default-checkpoint-provenance-v1",
-  "path": "checkpoints/seed_corpus.pt",
-  "sha256": "c8025db44c65f9c13e4bde4a09454d7e58e39ca54583cb86ef8d041ff540c657",
-  "bytes": 43223183,
-  "envelope_tick": 2,
-  "envelope_trainer": "api_seed_runtime",
-  "envelope_saved_at_utc": "2026-09-18T14:18:32Z",
-  "recorded_at_local": "2026-09-19T01:07:02",
-  "provenance": "unknown",
-  "provenance_note": "这份文件是测试套件重初始化的产物，不是随仓库分发的出厂基座：*.pt 不入 git，原 tick=2 基座已不可还原（DEBT-I9）。envelope 的 saved_at_utc 恰好等于 2026-09-18T14:18:32Z，即第四次全量套件结束的那一刻，而那次起跑早于写侧隔离落地，所以来源可判定为'套件写的'。",
-  "why_recorded": "DEBT-I9 的检测半：把'默认入口服务哪个模型'变成可判定命题——sha 变了就有测试红。这不解决来源问题（需要一份非测试产生的基座或官方重训），只让它可被发现。",
-  "before_L3_delivery": "必须在真机预检标定 H 阈值门并冻结，且默认入口要么换成训练态、要么在文档里明确它仍是出厂基座——三件事都不能用这份 manifest 代替。"
+  "format": "seed-product-default-checkpoint-provenance-v2",
+  "supersedes": "seed-product-default-checkpoint-provenance-v1 (recorded 2026-09-19 for checkpoints/seed_corpus.pt; that file is a test-suite re-initialisation product, envelope trainer=api_seed_runtime, tick=2)",
+  "path": "checkpoints/seed_beta.pt",
+  "sha256": "ad2a06465e0ef78c75aff7302a6f7a2ae11825d2f19361d9d65926006f3bf793",
+  "bytes": 4143542,
+  "envelope_format": "seed-native-v1",
+  "substrate_format": "taiji-native-v8",
+  "envelope_tick": 16000000,
+  "envelope_trainer": "train_seed_corpus",
+  "envelope_saved_at_utc": "2026-08-24T02:23:26Z",
+  "file_mtime_local": "2026-08-24T10:23:26",
+  "corpus_fingerprint": [
+    {
+      "name": "simple_zh_texts.jsonl",
+      "bytes": 1394775610
+    }
+  ],
+  "profile": {
+    "region_sizes": [
+      256,
+      192,
+      128
+    ],
+    "memory_units": 384,
+    "alphabet_size": 257
+  },
+  "provenance": "m1_long_run_selfattested_plus_progress_stream",
+  "provenance_evidence": [
+    "envelope.metadata 自述 trainer=train_seed_corpus / tick=16000000 / saved_at_utc=2026-08-24T02:23:26Z / corpus_fingerprint=simple_zh_texts.jsonl(1,394,775,610 B)",
+    "reports/seed_beta_progress.jsonl 记有同一条长训的 tick 流（含 16,800,000 与 elapsed_seconds≈33,306），文件时间 2026-08-24 11:01，落在 16M 存档点之后",
+    "plans/archive/history/SEED_PUBLIC_BETA_ROADMAP.md 记有 2026-08-24 启动该长训的完整命令行（--resume/--checkpoint 均指 checkpoints/seed_beta.pt，--checkpoint-every 2000000）"
+  ],
+  "provenance_limits": [
+    "凭据是**信封自述 + 同期进度流 + 历史执行记录**三者互相吻合，不是可复算的训练日志摘要：日志 logs/long_train_20260824.log 已不在盘上，故'这份权重确实由那条命令产出'只能追认到三元组一致的程度。",
+    "tick=16,000,000 恰在 2,000,000 的存档边界上，与 --checkpoint-every 相符，但这仍是**一致性**证据而非**生成性**证据。",
+    "换底不构成任何语言能力主张：CAP 的语言维度须在新基座上重跑后按实测说话。"
+  ],
+  "preflight_v0": {
+    "question": "产品默认 loader 不加任何进程内补丁能否加载这份 v8 旧格式训练态",
+    "answer": "能",
+    "measured": "SeedRuntime.load 裸跑成功, tick=16000000, chat 返回 41 字符 str, 换题面输出改变; 装 relax_legacy_guard 补丁后读数逐位相同",
+    "meaning": "REQUIRED_CHAIN 里的 relax_legacy_guard 对本文件已是冗余（M2-2i 已把'旧格式缺 organ 载荷'的迁移落进 taiji/model.py 产品源码, 只放宽缺失、载荷在场仍走 lineage 校验）⇒ 换默认基座不需要把测试期 monkeypatch 搬进产品路径。",
+    "contract": "plans/reference/M5_DEFAULT_SUBSTRATE_SWITCH_CONTRACT_20260920.md"
+  },
+  "why_recorded": "DEBT-I9 的两半都在此收：可检测性（sha 变了就有测试红）+ 来源（默认入口服务的模型是谁、由什么产出、凭据到哪一层）。v1 只能记 unknown，因为那份文件是套件产物；v2 记的是训练态，故本件同时把 limits 写死，防止'记下来了'被读成'官方可复算了'。",
+  "before_L3_delivery": "H 响应/内存阈值按 (设备,链路,checkpoint) 三元组绑定 ⇒ 换底后必须在新基座重采 5 次再冻结（见 plans/reference/M5_CAP_H_THRESHOLD_FREEZE_20260920.md §3）；CAP 全套须在新基座上重出。"
 }

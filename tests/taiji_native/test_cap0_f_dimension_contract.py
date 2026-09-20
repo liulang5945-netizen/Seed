@@ -62,6 +62,30 @@ def test_f02_negative_result_stays_red_and_is_not_rescued() -> None:
     assert "G4_task_gate_H1" in failed[0]["detail"]
 
 
+def test_f02_consistency_clause_actually_compares_instead_of_being_always_true() -> None:
+    """钉住那条"报告自带结论与门一致"的子句：它必须能红，而不是恒真。
+
+    曾经写成 `bool(...) is not None` —— bool() 永远不是 None，于是这条子句永久为真，
+    一个"门全过但自带结论说没过"的自相矛盾载荷也照样放行。
+    """
+
+    base = {
+        "gates": {f"G{i}_x": True for i in range(1, 7)},
+        "experiment_passed": True,
+    }
+    consistent = _verdict_of_rows(F_ADJUDICATORS["F02"](base))
+    assert consistent == "pass"
+
+    contradictory = {
+        "gates": {f"G{i}_x": True for i in range(1, 7)},
+        "experiment_passed": False,
+    }
+    clauses = F_ADJUDICATORS["F02"](contradictory)
+    agreement = [c for c in clauses if "experiment_passed" in c["clause"]][0]
+    assert agreement["held"] is False, "自带结论与门不一致时必须红"
+    assert _verdict_of_rows(clauses) == "fail"
+
+
 def test_a_report_that_is_present_but_failed_its_gate_never_reads_as_pass() -> None:
     """同一份文件仍在场，只把 F01 的一道门改成不过 ⇒ 复算必须翻成 fail。"""
 
