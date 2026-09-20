@@ -219,6 +219,11 @@ output/taiji_m5_k_default_runtime_rollout_review_*/
 output/*-packaged-data/
 output/p6-*/
 
+# 2026-09-20：R2 受控重训语言读出的每臂运行目录（Arm {A,B,C} 的 checkpoint.pt /
+# run_report.json / progress.jsonl）。按**命名约定**写通配而不是逐个实例名——上面那批
+# taiji_m5_k_* 就是逐个列举，漏一个就漏一个。整树属运行产物；入库的结论走 reports/。
+output/taiji_r2_*/
+
 # WorkBuddy 会话状态目录（记忆、技能、会话数据）；.workbuddy/memory/ 需随仓库保留
 !.workbuddy/
 .workbuddy/*

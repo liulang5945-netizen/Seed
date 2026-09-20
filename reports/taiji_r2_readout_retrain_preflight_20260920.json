@@ -1,0 +1,61 @@
+{
+  "format": "taiji-r2-readout-retrain-preflight-v1",
+  "contract": "plans/reference/M5_R2_READOUT_RETRAIN_CONTRACT_DRAFT_20260920.md",
+  "purpose": "prove a checkpoint can be written and resumed by a NEW process before the formal arms start",
+  "source_artifacts": {
+    "run_report": "output/taiji_r2_readout_retrain_preflight/A/run_report.json",
+    "progress": "output/taiji_r2_readout_retrain_preflight/A/progress.jsonl"
+  },
+  "steps": [
+    {
+      "step": 1,
+      "argv": [
+        "--arms",
+        "A",
+        "--symbols",
+        "600",
+        "--checkpoint-every",
+        "200"
+      ],
+      "result": "completed",
+      "session_symbols": 600,
+      "resumed_from": null
+    },
+    {
+      "step": 2,
+      "argv": [
+        "--symbols",
+        "1000"
+      ],
+      "result": "completed",
+      "session_symbols": 400,
+      "resumed_from": "E:\\Seed\\output\\taiji_r2_readout_retrain_preflight\\A\\checkpoint.pt"
+    },
+    {
+      "step": 3,
+      "argv": [
+        "--symbols",
+        "1000"
+      ],
+      "result": "refused",
+      "stderr_contains": "already consumed 1000"
+    }
+  ],
+  "observed": {
+    "symbols_consumed": 1000,
+    "absolute_tick": 16001000,
+    "realised_write_surface": [
+      "predictive_readout"
+    ],
+    "write_surface_ok": true,
+    "base_checkpoint": "E:\\Seed\\checkpoints\\seed_beta.pt",
+    "base_checkpoint_sha256": "ad2a06465e0ef78c75aff7302a6f7a2ae11825d2f19361d9d65926006f3bf793",
+    "base_sources": [
+      "E:\\Seed\\checkpoints\\seed_beta.pt",
+      "E:\\Seed\\output\\taiji_r2_readout_retrain_preflight\\A\\checkpoint.pt"
+    ],
+    "skip_symbols": 11199800
+  },
+  "base_substrate_sha256_after": "ad2a06465e0ef78c75aff7302a6f7a2ae11825d2f19361d9d65926006f3bf793",
+  "verdict": "passed"
+}

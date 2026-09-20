@@ -4,10 +4,8 @@
 那里只授权一个先行动作——"跑一次几十 tick 的试标定，测 wall/tick 与峰值内存"，
 本脚本就是那件事，且只做那件事。它回答三个问题：
 
-1. **每 tick 墙钟**。三条臂分别是——
-   ``A`` 只训读出头（``readout="predictive"``，只有 ``predictive_readout`` 学）；
-   ``B`` 只训运动面（``readout="action"``，只有 ``motor`` 学）；
-   ``C`` 两处都冻结（``learn=False``，用来隔离"权重没变时的漂移"）。
+1. **每 tick 墙钟**，对三条臂分别测。臂的定义在 ``readout_retrain_spec.ARMS``，
+   与正式 runner 共用同一份，避免两处各写一份慢慢漂移。
 2. **峰值工作集**（Windows ``GetProcessMemoryInfo``）。取不到就记 ``null`` 并标
    ``unavailable``，不拿别的量冒充。
 3. **每条臂真的只动了它该动的那一处**——按 ``motor`` / ``predictive_readout`` 的
@@ -31,11 +29,10 @@ from __future__ import annotations
 import argparse
 import ctypes
 import ctypes.wintypes as wintypes
-import hashlib
 import json
 import sys
 import time
-from collections.abc import Iterator, Sequence
+from collections.abc import Sequence
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -45,9 +42,18 @@ import torch
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
-sys.path.insert(0, str(PROJECT_ROOT / "scripts" / "training"))
+if str(PROJECT_ROOT / "scripts" / "training") not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT / "scripts" / "training"))
 
-from train_seed_corpus import iter_corpus_symbols  # noqa: E402
+from readout_retrain_spec import (  # noqa: E402
+    ARMS,
+    DEFAULT_CORPUS,
+    DEFAULT_LINEAGE_MANIFEST,
+    SURFACES,
+    load_lineage_skip,
+    sha256_of,
+    take_symbols,
+)
 
 from seed import Seed  # noqa: E402
 from taiji import content_digest  # noqa: E402
@@ -55,45 +61,6 @@ from taiji import content_digest  # noqa: E402
 #: 硬上限：本仪器的身份是"标定"而不是"训练"。超过它就不再是几十 tick 的试标定，
 #: 而被合同授权的是试标定，所以这里直接拒跑，不给"反正没人管"留口子。
 CALIBRATION_TICK_CAP = 200
-
-DEFAULT_CORPUS = PROJECT_ROOT / "data" / "p3b_all_fresh.jsonl"
-#: 这份清单里写着它自己的血缘推导（``skip_derivation`` 与 ``skip_symbols``），
-#: 也就是"该副本已经吃过的前缀"是怎么算出来的——不许手抄。
-DEFAULT_LINEAGE_MANIFEST = PROJECT_ROOT / "plans" / "manifests" / "p3b_all_fresh_manifest.json"
-
-#: 三条臂的观察面开关。``write_surface`` 是**预期**写入面，跑完要核；
-#: ``("motor",)`` 表示只有 motor 的指纹允许变，以此类推。
-ARMS: dict[str, dict[str, Any]] = {
-    "A": {
-        "description": "只训读出头：运动面冻结，predictive_readout 单点写入",
-        "observe_kwargs": {
-            "learn": True,
-            "readout": "predictive",
-            "learn_motor": False,
-            "learn_fabric": False,
-            "learn_predictive_context": False,
-            "learn_predictive_readout": True,
-        },
-        "write_surface": ("predictive_readout",),
-    },
-    "B": {
-        "description": "只训运动面：原运动面路径，读出冻结",
-        "observe_kwargs": {
-            "learn": True,
-            "readout": "action",
-            "learn_motor": True,
-            "learn_predictive_readout": False,
-        },
-        "write_surface": ("motor",),
-    },
-    "C": {
-        "description": "双冻结漂移对照：符号流过，两处都不学",
-        "observe_kwargs": {"learn": False, "readout": "action"},
-        "write_surface": (),
-    },
-}
-
-_SURFACES = ("motor", "predictive_readout")
 
 
 class _ProcessMemoryCounters(ctypes.Structure):
@@ -139,67 +106,10 @@ def peak_working_set_bytes() -> int | None:
         return None
 
 
-def sha256_of(path: Path) -> str:
-    digest = hashlib.sha256()
-    with open(path, "rb") as handle:
-        for chunk in iter(lambda: handle.read(1 << 20), b""):
-            digest.update(chunk)
-    return digest.hexdigest()
+def surface_digests(substrate: Any) -> dict[str, str]:
+    """Fingerprints of the two weight surfaces this experiment may touch."""
 
-
-def load_lineage_skip(manifest_path: Path, corpus_path: Path) -> dict[str, Any]:
-    """Read the lineage-derived skip point for ``corpus_path`` out of its manifest.
-
-    The point of going through the manifest is that the skip is *derived* from checkpoint
-    lineage (``skip_derivation``) rather than typed by hand.  A corpus that is not the
-    manifest's own output has no such derivation, and this function says so instead of
-    guessing a number.
-    """
-
-    if not manifest_path.is_file():
-        raise SystemExit(f"lineage manifest not found: {manifest_path}")
-    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
-    recorded = str(manifest.get("output", ""))
-    if Path(recorded).name != corpus_path.name:
-        raise SystemExit(
-            f"{corpus_path.name} is not the output recorded in {manifest_path.name} "
-            f"(it says {recorded!r}); there is no lineage-derived skip for it"
-        )
-    skip = manifest.get("skip_symbols")
-    if not isinstance(skip, int) or skip < 0:
-        raise SystemExit(f"{manifest_path.name} carries no usable skip_symbols")
-    try:
-        recorded_path = manifest_path.resolve().relative_to(PROJECT_ROOT).as_posix()
-    except ValueError:
-        # A manifest outside the repo is legitimate for a fixture; do not invent a relative path.
-        recorded_path = str(manifest_path)
-    return {
-        "manifest": recorded_path,
-        "skip_symbols": skip,
-        "first_emitted_row": manifest.get("first_emitted_row"),
-        "replay_symbols_from_seen_region": manifest.get("replay_symbols_from_seen_region"),
-        "skip_derivation": manifest.get("skip_derivation"),
-    }
-
-
-def take_symbols(corpus_paths: Sequence[Path], skip_symbols: int, count: int) -> list[int]:
-    """The next ``count`` symbols after the already-consumed prefix."""
-
-    stream: Iterator[int] = iter_corpus_symbols(corpus_paths)
-    for _ in range(skip_symbols):
-        try:
-            next(stream)
-        except StopIteration as exc:  # pragma: no cover - short corpus
-            raise SystemExit(
-                f"corpus is shorter than the lineage skip ({skip_symbols} symbols)"
-            ) from exc
-    taken: list[int] = []
-    for _ in range(count):
-        try:
-            taken.append(next(stream))
-        except StopIteration as exc:  # pragma: no cover - short corpus
-            raise SystemExit(f"corpus ran out after {len(taken)} of {count} symbols") from exc
-    return taken
+    return {surface: content_digest(getattr(substrate, surface).to_payload()) for surface in SURFACES}
 
 
 def run_arm(
@@ -218,10 +128,7 @@ def run_arm(
     # ``readout`` 不允许在同一个 dynamics episode 内切换；每个臂是全新实例 + 全新 episode。
     substrate.reset_dynamics(episode_id=f"readout-retrain-step0-{name}")
 
-    before = {
-        surface: content_digest(getattr(substrate, surface).to_payload()) for surface in _SURFACES
-    }
-
+    before = surface_digests(substrate)
     for index in range(warmup):
         substrate.observe(symbols[index], **spec["observe_kwargs"])
 
@@ -231,12 +138,9 @@ def run_arm(
         substrate.observe(symbols[index], **spec["observe_kwargs"])
         per_tick.append(time.perf_counter() - started)
 
-    after = {
-        surface: content_digest(getattr(substrate, surface).to_payload()) for surface in _SURFACES
-    }
-    changed = {surface: before[surface] != after[surface] for surface in _SURFACES}
+    after = surface_digests(substrate)
+    realised = {surface for surface in SURFACES if before[surface] != after[surface]}
     expected = set(spec["write_surface"])
-    realised = {surface for surface, moved in changed.items() if moved}
     wall = sum(per_tick)
     return {
         "description": spec["description"],
@@ -270,7 +174,9 @@ def build_parser() -> argparse.ArgumentParser:
         default=None,
         help="覆盖血缘推导出的前缀跳过量；低于清单值需加 --i-accept-replaying-seen-symbols",
     )
-    parser.add_argument("--ticks", type=int, default=30, help=f"计时 tick 数（上限 {CALIBRATION_TICK_CAP}）")
+    parser.add_argument(
+        "--ticks", type=int, default=30, help=f"计时 tick 数（上限 {CALIBRATION_TICK_CAP}）"
+    )
     parser.add_argument("--warmup-ticks", type=int, default=5)
     parser.add_argument("--arms", default="A,B,C")
     parser.add_argument("--device", default="cpu")
@@ -308,9 +214,7 @@ def main() -> int:
         parser.error(f"{report_path} already exists; this instrument never overwrites a report")
 
     checkpoint_path = (
-        Path(args.checkpoint)
-        if args.checkpoint is not None
-        else _default_checkpoint(parser)
+        Path(args.checkpoint) if args.checkpoint is not None else _default_checkpoint(parser)
     )
     if not checkpoint_path.is_file():
         parser.error(f"checkpoint not found: {checkpoint_path}")
