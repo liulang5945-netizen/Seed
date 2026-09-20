@@ -247,6 +247,25 @@ VOLATILE_SAMPLE_PATHS = (
 )
 
 
+def test_the_instrument_refuses_to_overwrite_an_existing_report(tmp_path) -> None:
+    """裸跑不许把封存件盖掉 —— 这是实测发现的风险，不是假想。
+
+    `DEFAULT_REPORT` 历史上就指着 09-15 那份件，任何一次忘了传 `--report` 的运行都会原地覆盖
+    判据锚点。守卫要能红：目标已存在 ⇒ 拒跑，且**旧字节一个都没动**。
+    """
+
+    from scripts.training.eval_taiji_cap0_inventory import run_inventory
+
+    existing = tmp_path / "sealed.json"
+    existing.write_text('{"sentinel": "do not touch me"}', encoding="utf-8")
+
+    with pytest.raises(SystemExit) as caught:
+        run_inventory(existing)
+
+    assert "不覆写" in str(caught.value)
+    assert existing.read_text(encoding="utf-8") == '{"sentinel": "do not touch me"}'
+
+
 def test_the_rebase_records_what_the_substrate_change_actually_changed() -> None:
     """重基不许是"把对不上的一次抹平"：旧件说过的产品事实必须仍可核对。
 

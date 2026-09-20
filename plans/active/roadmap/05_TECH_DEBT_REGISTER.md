@@ -287,7 +287,9 @@
   换底后 F04 实测：**非 stale、仍 fail**（新底 `templated=true`）⇒ F 维 pass 的依据仍只是 F01 一项。
   随带收掉两处本册记过的收尾：`eval_taiji_cap0_inventory.py` 的第四处硬编码默认路径（见上条）、
   以及健康支摘要打印里 `"contracts"` 的谎报兜底（F 块结构已不是合同清单，现改印维度门判定）。
-  **仍未做**：`DEFAULT_REPORT` 指向 09-15 封存件（裸跑会覆写）、战役基线对绑 identity 重出。
+  **已补的洞**：`run_inventory()` 此前裸跑就会把 `DEFAULT_REPORT`（=09-15 那份历史件）原地覆盖，
+  而报告正是判据锚点、盖掉不可复原；现改为"目标已存在即拒跑"，并配一支测试钉"拒跑且旧字节一字未动"
+  （50 passed + 1 xfailed，ruff 全仓干净）。**仍开**：战役基线对绑 identity 重出。
 - **随带发现（登记，未处置）**：`eval_taiji_cap0_inventory.py` 的 `DEFAULT_REPORT` 仍指向
   `reports/taiji_cap0_inventory_20260915.json` ⇒ **裸跑该脚本会覆写一份封存报告**，违反"报告不覆写"。
   本轮两次重跑都显式传了 `--report`，纯属侥幸。改法取后者更合本仓纪律：目标已存在即拒跑并报错，

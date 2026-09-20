@@ -223,6 +223,13 @@ def _template_signature(turns: list[dict[str, Any]]) -> dict[str, Any]:
 
 
 def run_inventory(report_path: Path = DEFAULT_REPORT) -> dict[str, Any]:
+    #: 封存件不覆写（预注册 §4）。`DEFAULT_REPORT` 指的就是 09-15 那份历史件 —— 在此之前**裸跑一次
+    #: 就把它原地盖掉**，且 `*.json` 报告是判据的锚点，盖掉即不可复原。拒跑而不是挪默认名，
+    #: 是为了让"写到哪儿"始终是一个显式决定。
+    if Path(report_path).exists():
+        raise SystemExit(
+            f"拒跑：目标报告已存在 {report_path}。封存件不覆写，请另给 --report 一个新文件名。"
+        )
     started = time.perf_counter()
     payload: dict[str, Any] = {
         "format": REPORT_FORMAT,
