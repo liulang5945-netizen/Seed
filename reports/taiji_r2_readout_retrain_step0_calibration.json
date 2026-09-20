@@ -1,0 +1,138 @@
+{
+  "status": "completed",
+  "generated_at_utc": "2026-09-20T11:06:13Z",
+  "contract": "plans/reference/M5_R2_READOUT_RETRAIN_CONTRACT_DRAFT_20260920.md",
+  "step": "step-0 cost calibration (wall/tick + peak working set)",
+  "checkpoint": {
+    "path": "E:\\Seed\\checkpoints\\seed_beta.pt",
+    "sha256": "ad2a06465e0ef78c75aff7302a6f7a2ae11825d2f19361d9d65926006f3bf793",
+    "bytes": 4143542,
+    "envelope_tick": 16000000
+  },
+  "corpus": {
+    "paths": [
+      "E:\\Seed\\data\\p3b_all_fresh.jsonl"
+    ],
+    "lineage": {
+      "manifest": "plans/manifests/p3b_all_fresh_manifest.json",
+      "skip_symbols": 11199800,
+      "first_emitted_row": 2893,
+      "replay_symbols_from_seen_region": 0,
+      "skip_derivation": {
+        "beta": {
+          "checkpoint": "checkpoints\\seed_beta.pt",
+          "tick": 16000000,
+          "corpus_names": [
+            "simple_zh_texts.jsonl"
+          ]
+        },
+        "prior": {
+          "checkpoint": "checkpoints\\resumed_seed_corpus.pt",
+          "tick": 4800200,
+          "corpus_names": [
+            "dialogue_extended_clean.jsonl"
+          ]
+        },
+        "method": "tick difference"
+      }
+    },
+    "skip_symbols": 11199800,
+    "replay_symbols_in_window": 0
+  },
+  "device": "cpu",
+  "warmup_ticks": 5,
+  "timed_ticks": 30,
+  "arms": {
+    "A": {
+      "description": "只训读出头：运动面冻结，predictive_readout 单点写入",
+      "observe_kwargs": {
+        "learn": true,
+        "readout": "predictive",
+        "learn_motor": false,
+        "learn_fabric": false,
+        "learn_predictive_context": false,
+        "learn_predictive_readout": true
+      },
+      "expected_write_surface": [
+        "predictive_readout"
+      ],
+      "realised_write_surface": [
+        "predictive_readout"
+      ],
+      "write_surface_ok": true,
+      "timed_ticks": 30,
+      "wall_seconds": 0.070889,
+      "seconds_per_tick": 0.00236296,
+      "ticks_per_hour": 1523512.885,
+      "first_tick_seconds": 0.0021215,
+      "last_tick_seconds": 0.0019293,
+      "digests_before": {
+        "motor": "af421331cbef035ba1ad3ec908b450dc573e660d461a172faacf5bee0f1fd70a",
+        "predictive_readout": "c4ddf51f6cc6d8edf8d5048938e90e162a2bd4d4065f85b8b04d9b4a1d3d2dc5"
+      },
+      "digests_after": {
+        "motor": "af421331cbef035ba1ad3ec908b450dc573e660d461a172faacf5bee0f1fd70a",
+        "predictive_readout": "1c543b443bfd1d8a3a8b8fbfa0e3ae70afd8a6481f4bd8e1d787ccea07499bc2"
+      }
+    },
+    "B": {
+      "description": "只训运动面：原运动面路径，读出冻结",
+      "observe_kwargs": {
+        "learn": true,
+        "readout": "action",
+        "learn_motor": true,
+        "learn_predictive_readout": false
+      },
+      "expected_write_surface": [
+        "motor"
+      ],
+      "realised_write_surface": [
+        "motor"
+      ],
+      "write_surface_ok": true,
+      "timed_ticks": 30,
+      "wall_seconds": 0.0955,
+      "seconds_per_tick": 0.003183337,
+      "ticks_per_hour": 1130888.868,
+      "first_tick_seconds": 0.0036234,
+      "last_tick_seconds": 0.0037262,
+      "digests_before": {
+        "motor": "af421331cbef035ba1ad3ec908b450dc573e660d461a172faacf5bee0f1fd70a",
+        "predictive_readout": "c4ddf51f6cc6d8edf8d5048938e90e162a2bd4d4065f85b8b04d9b4a1d3d2dc5"
+      },
+      "digests_after": {
+        "motor": "aeb6a613e6cd844989343f835f5e47aab6382c2aa8d6c4d53b2c70f0fb523c4a",
+        "predictive_readout": "c4ddf51f6cc6d8edf8d5048938e90e162a2bd4d4065f85b8b04d9b4a1d3d2dc5"
+      }
+    },
+    "C": {
+      "description": "双冻结漂移对照：符号流过，两处都不学",
+      "observe_kwargs": {
+        "learn": false,
+        "readout": "action"
+      },
+      "expected_write_surface": [],
+      "realised_write_surface": [],
+      "write_surface_ok": true,
+      "timed_ticks": 30,
+      "wall_seconds": 0.06036,
+      "seconds_per_tick": 0.00201199,
+      "ticks_per_hour": 1789273.307,
+      "first_tick_seconds": 0.0021425,
+      "last_tick_seconds": 0.0025085,
+      "digests_before": {
+        "motor": "af421331cbef035ba1ad3ec908b450dc573e660d461a172faacf5bee0f1fd70a",
+        "predictive_readout": "c4ddf51f6cc6d8edf8d5048938e90e162a2bd4d4065f85b8b04d9b4a1d3d2dc5"
+      },
+      "digests_after": {
+        "motor": "af421331cbef035ba1ad3ec908b450dc573e660d461a172faacf5bee0f1fd70a",
+        "predictive_readout": "c4ddf51f6cc6d8edf8d5048938e90e162a2bd4d4065f85b8b04d9b4a1d3d2dc5"
+      }
+    }
+  },
+  "peak_working_set_bytes": 289566720,
+  "peak_working_set_mb": 276.152,
+  "peak_working_set_status": "measured",
+  "checkpoint_sha256_after": "ad2a06465e0ef78c75aff7302a6f7a2ae11825d2f19361d9d65926006f3bf793",
+  "checkpoint_unchanged": true
+}
