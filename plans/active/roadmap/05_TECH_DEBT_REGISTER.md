@@ -290,6 +290,19 @@
   **已补的洞**：`run_inventory()` 此前裸跑就会把 `DEFAULT_REPORT`（=09-15 那份历史件）原地覆盖，
   而报告正是判据锚点、盖掉不可复原；现改为"目标已存在即拒跑"，并配一支测试钉"拒跑且旧字节一字未动"
   （50 passed + 1 xfailed，ruff 全仓干净）。**仍开**：战役基线对绑 identity 重出。
+- **战役基线对：核完影响面后**建议不做重指向**，本条同时更正本会话上一批写下的"重取剩绑 identity
+  的质量项"那句（那是没数引用面就写的）。实测三件事：
+  ① 现行两份 `P3A_BASELINE`(09-15) 与 `P3A_HEALTH`(09-18 v5) 的 `checkpoint` **本来就同为
+  `seed_beta.pt`**，链路也同为 required 对 ⇒ 换底之后它们与产品默认**同底**，配对守卫要的
+  "健康报告与它旁边的评价报告同检查点"已满足；
+  ② 我新重出的两份件确实更强（带 `identity{git_head, checkpoint_sha256}`，`trained_during_eval=false`），
+  但 **`judge_health` 只读 `chain` 与 `checkpoint`，一个字都不读 `identity`** ⇒ 绑身份不改变任何判定；
+  ③ 把常量挪到新件要动 **8 处引用**，其中 4 处是在钉**那份历史件的事实**（评审工作表用
+  09-15 件生成、campaign 合同测试读它的特定读数、审计脚本的 `p3a_base`、`check_p3b_criteria` 的
+  `DEFAULT_BASELINE`）。挪动它们等于为了一点判定收益去改写"第一次双臂 campaign 当时比的是什么"。
+  ⇒ **结论：留旧件为 P3a 历史基线，不动**；新重出的两件（`taiji_cap0_beta_default_20260920.json`
+  与 `taiji_cap0_health_v3_beta_default_20260920b.json`）作为**换底后现行产品事实的配对件**入库，
+  下一次真要跑新 campaign 时按当时的 git head 现取现用，而不是把一个钉历史的常量搬来搬去。
 - **随带发现（登记，未处置）**：`eval_taiji_cap0_inventory.py` 的 `DEFAULT_REPORT` 仍指向
   `reports/taiji_cap0_inventory_20260915.json` ⇒ **裸跑该脚本会覆写一份封存报告**，违反"报告不覆写"。
   本轮两次重跑都显式传了 `--report`，纯属侥幸。改法取后者更合本仓纪律：目标已存在即拒跑并报错，
