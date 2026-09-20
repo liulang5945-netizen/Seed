@@ -1,0 +1,216 @@
+{
+  "format": "taiji-cap0-inventory-report-v1",
+  "version": 1,
+  "status": "completed",
+  "delivery_plan": "plans/active/roadmap/07_MINI_MODEL_DELIVERY.md",
+  "scope": "CAP-0 inventory: what model actually runs, through which chain, and what it emits today.  Diagnostic probe only; the frozen B-H baseline is NOT produced here",
+  "does_not_do": [
+    "trains nothing and writes no checkpoint",
+    "does not freeze or score the official B/C/D/E/G sets (that freeze is a decision)",
+    "does not switch product behaviour or external providers",
+    "reports 'untested' rather than 0 or pass for unmeasured dimensions"
+  ],
+  "record": {
+    "commit": "06a973adc69157d783ee067be246e047675b17d6",
+    "default_checkpoint": "checkpoints\\seed_beta.pt"
+  },
+  "checkpoint_inventory": [
+    {
+      "filename": ".p2-12-conflict.pt",
+      "bytes": 43309755,
+      "modified_utc": "2026-09-13T12:24:34Z",
+      "is_default": false,
+      "readable": true,
+      "tick": 65,
+      "trainer": "api_seed_runtime",
+      "saved_at_utc": "2026-09-13T12:24:34Z",
+      "has_metadata": true,
+      "model_format": "taiji-native-v10",
+      "has_taiji_adapter_block": true
+    },
+    {
+      "filename": ".p2-12-natural-language-write.pt",
+      "bytes": 43316555,
+      "modified_utc": "2026-09-13T12:24:33Z",
+      "is_default": false,
+      "readable": true,
+      "tick": 65,
+      "trainer": "api_seed_runtime",
+      "saved_at_utc": "2026-09-13T12:24:33Z",
+      "has_metadata": true,
+      "model_format": "taiji-native-v10",
+      "has_taiji_adapter_block": true
+    },
+    {
+      "filename": "resumed_seed_corpus.pt",
+      "bytes": 4144660,
+      "modified_utc": "2026-08-23T12:57:03Z",
+      "is_default": false,
+      "readable": true,
+      "tick": 4800200,
+      "trainer": "resume_checkpoint",
+      "saved_at_utc": "2026-08-23T12:57:03Z",
+      "has_metadata": true,
+      "model_format": "taiji-native-v8",
+      "has_taiji_adapter_block": false
+    },
+    {
+      "filename": "seed_beta.pt",
+      "bytes": 4143542,
+      "modified_utc": "2026-08-24T02:23:26Z",
+      "is_default": true,
+      "readable": true,
+      "tick": 16000000,
+      "trainer": "train_seed_corpus",
+      "saved_at_utc": "2026-08-24T02:23:26Z",
+      "has_metadata": true,
+      "model_format": "taiji-native-v8",
+      "has_taiji_adapter_block": false
+    },
+    {
+      "filename": "seed_corpus.pt",
+      "bytes": 43223183,
+      "modified_utc": "2026-09-18T14:18:32Z",
+      "is_default": false,
+      "readable": true,
+      "tick": 2,
+      "trainer": "api_seed_runtime",
+      "saved_at_utc": "2026-09-18T14:18:32Z",
+      "has_metadata": true,
+      "model_format": "taiji-native-v10",
+      "has_taiji_adapter_block": true
+    },
+    {
+      "filename": "seed_corpus_prev_20260823.pt",
+      "bytes": 4142296,
+      "modified_utc": "2026-08-22T18:28:18Z",
+      "is_default": false,
+      "readable": true,
+      "tick": null,
+      "trainer": null,
+      "saved_at_utc": null,
+      "has_metadata": false,
+      "model_format": "taiji-native-v8",
+      "has_taiji_adapter_block": false
+    }
+  ],
+  "model_reality": {
+    "checkpoint_exists": true,
+    "default_checkpoint": "seed_beta.pt",
+    "load_ok": true,
+    "load_error": null,
+    "default_tick": 16000000,
+    "most_trained_checkpoint": "seed_beta.pt",
+    "most_trained_tick": 16000000,
+    "wiring_defect": false,
+    "wiring_defect_statement": null,
+    "default_model_format": "taiji-native-v8",
+    "most_trained_model_format": "taiji-native-v8",
+    "stranded_is_legacy_format": true,
+    "stranded_defect_diagnosis": "restore() supports the legacy formats it declares (LEGACY_CHECKPOINT_FORMATS = v8/v9). The identity-organ branch now applies the same 'payload absent in a legacy format' migration the predictive context already used (M2-2h -> M2-2i), so a v8 file that predates the organ loads and keeps its freshly initialised organ. The remaining refusal is 'enabled identity organ checkpoint payload is missing', which now applies only to current-format checkpoints; organ lineage validation is unchanged and still fails closed on a payload from a different core",
+    "missing_checkpoint_rejected": true,
+    "missing_checkpoint_error": "FileNotFoundError: [Errno 2] No such file or directory: 'E:\\\\Seed\\\\checkpoints\\\\.cap0-does-not-exist.pt'",
+    "fresh_process": true,
+    "external_provider_used": false
+  },
+  "raw_output_inventory": {
+    "probe_kind": "diagnostic, not the frozen B-H evaluation set",
+    "default_entry": {
+      "probed": true,
+      "load_ok": true,
+      "load_error": null,
+      "tick": 16000000,
+      "chat_organ_backend": "native-readable",
+      "turns_answered": 7,
+      "turns_errored": 0,
+      "total_output_bytes": 1015,
+      "template_signature": {
+        "turns_considered": 7,
+        "distinct_signatures": 1,
+        "templated": true,
+        "signature": "我已收到你的问题：“<PROMPT>”。当前原生语言表层正在形成稳定表达。"
+      }
+    },
+    "most_trained_entry": {
+      "probed": false,
+      "load_ok": null,
+      "load_error": null,
+      "tick": null,
+      "turns_answered": null,
+      "turns_errored": null,
+      "total_output_bytes": null,
+      "template_signature": {
+        "turns_considered": null,
+        "distinct_signatures": null,
+        "templated": null,
+        "signature": null
+      }
+    },
+    "default_turns": [
+      {
+        "label": "identity",
+        "prompt": "请用一句话说明你是谁、由什么运行。",
+        "raw_output": "我已收到你的问题：“请用一句话说明你是谁、由什么运行。”。当前原生语言表层正在形成稳定表达。",
+        "output_bytes": 138,
+        "seconds": 0.617
+      },
+      {
+        "label": "greeting",
+        "prompt": "你好。",
+        "raw_output": "我已收到你的问题：“你好。”。当前原生语言表层正在形成稳定表达。",
+        "output_bytes": 96,
+        "seconds": 0.962
+      },
+      {
+        "label": "knowledge_short",
+        "prompt": "水的沸点在标准大气压下是多少摄氏度？",
+        "raw_output": "我已收到你的问题：“水的沸点在标准大气压下是多少摄氏度？”。当前原生语言表层正在形成稳定表达。",
+        "output_bytes": 141,
+        "seconds": 1.423
+      },
+      {
+        "label": "context_a",
+        "prompt": "请记住这个名称：项目内部代号是「星桥」。",
+        "raw_output": "我已收到你的问题：“请记住这个名称：项目内部代号是「星桥」。”。当前原生语言表层正在形成稳定表达。",
+        "output_bytes": 147,
+        "seconds": 1.864
+      },
+      {
+        "label": "context_b",
+        "prompt": "我刚才说的内部代号是什么？",
+        "raw_output": "我已收到你的问题：“我刚才说的内部代号是什么？”。当前原生语言表层正在形成稳定表达。",
+        "output_bytes": 126,
+        "seconds": 2.356
+      },
+      {
+        "label": "unknown_boundary",
+        "prompt": "请举一个你确实无法回答的问题，并说明为什么无法回答。",
+        "raw_output": "我已收到你的问题：“请举一个你确实无法回答的问题，并说明为什么无法回答。”。当前原生语言表层正在形成稳定表达。",
+        "output_bytes": 165,
+        "seconds": 2.924
+      },
+      {
+        "label": "material_qa",
+        "prompt": "材料：星桥项目在 2026 年 9 月完成 B2 选择门，结果是负结果。问题：B2 的结果是什么？",
+        "raw_output": "我已收到你的问题：“材料：星桥项目在 2026 年 9 月完成 B2 选择门，结果是负结果。问题：B2 的结果是什么？”。当前原生语言表层正在形成稳定表达。",
+        "output_bytes": 202,
+        "seconds": 3.462
+      }
+    ],
+    "most_trained_turns": null
+  },
+  "dimensions": {
+    "A_model_reality": "measured (load chain, mode, missing-checkpoint rejection, tick provenance)",
+    "B_basic_dialogue": "untested (frozen set not yet frozen)",
+    "C_basic_qa": "untested (frozen set not yet frozen)",
+    "D_context": "untested (frozen set not yet frozen)",
+    "E_instruction_reasoning": "untested (frozen set not yet frozen)",
+    "F_representative_capability": "partial: B1/B2 gates exist and are green/negative respectively, but they are selector-surface results, not whole-model conversation ability",
+    "G_uncertainty_safety": "untested (frozen set not yet frozen)",
+    "H_performance_stability": "untested (no calibrated caps yet)",
+    "I_continual_adaptation": "untested (not required for a first L3 delivery)"
+  },
+  "gap_statement": "no trained checkpoint was found on record, so the default chain's lack of content ability cannot be separated from a wiring defect",
+  "next_decision": "two things, in order: (a) decide the correct default checkpoint / loading policy (a defect fix, not a research question); (b) freeze the CAP evaluation set (07 section 4.1: B/C/D/E 20 items each, G >= 20, A/H deterministic, F via the existing capability contracts) BEFORE any candidate score is seen, so the first scored B-H baseline is legitimate",
+  "elapsed_seconds": 15.305
+}

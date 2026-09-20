@@ -258,6 +258,22 @@
   修法：`most_trained` 与默认同源时仍**恒发**这三字段（不探针则置 null），使 schema 与底无关；
   本轮未做该修改，故把源改动回退、补丁留在会话外，与评价集 v2 同批做 —— **不把一处未收口的改动
   连同它的红一起提交**。
+- **接上条：该修改已在同会话续跑段落地，且"恒发字段"只解决了一半**。补回
+  `template_signature` 的四个空值叶子之后，守卫不再报"少产"，改报**"多产字段"**——根因不在仪器，
+  而在**比较基线**：`RESAMPLE` 指的是换底前的 09-18 样本，那份描述的是另一个产品事实
+  （默认是未训练底、且训练态被单独探过针）。继续拿它比，就是把一次有意的换底读成仪器漂移。
+  处置三件，都按本仓既有纪律：
+  ① **重基比较基线**到新底样本 `reports/taiji_cap0_inventory_beta4_20260920.json`
+  （"改行为须同批再生报告"），09-18 旧件原样留档不覆写，并以
+  `RESAMPLE_BEFORE_SUBSTRATE_SWITCH` 具名保留；
+  ② 给缺行开一条**有界豁免**：只允许 `raw_output_inventory.most_trained_turns[*]` 在
+  `most_trained_entry.probed is False` 时缺失，**多产字段一律红**，缺别的路径也红；
+  ③ 为防"重基"被当成"把对不上的一次抹平"，另加一支测试**钉住换底前后两份样本的差异本身**
+  （旧：`default_checkpoint=seed_corpus.pt` + `wiring_defect=true`；新：`seed_beta.pt` +
+  `default_tick=16000000` + `wiring_defect=false`），若哪天默认被悄悄挪回测试产物，这一支即红。
+  **同批再次确认**：新底的 `default_entry.template_signature.templated=true` —— 换底**没有**把
+  模板回显改掉 ⇒ F04 的"非模板"子句在新底仍不成立，它与"A05b 已转真"是两件事，不得互相顶替。
+  上一条里"补丁留在会话外"的说法就此作废，以本条为准。
 - **随带发现（登记，未处置）**：`eval_taiji_cap0_inventory.py` 的 `DEFAULT_REPORT` 仍指向
   `reports/taiji_cap0_inventory_20260915.json` ⇒ **裸跑该脚本会覆写一份封存报告**，违反"报告不覆写"。
   本轮两次重跑都显式传了 `--report`，纯属侥幸。改法取后者更合本仓纪律：目标已存在即拒跑并报错，

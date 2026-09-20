@@ -47,9 +47,10 @@ VERSION = 1
 DELIVERY_PLAN = "plans/active/roadmap/07_MINI_MODEL_DELIVERY.md"
 DEFAULT_REPORT = PROJECT_ROOT / "reports" / "taiji_cap0_inventory_20260915.json"
 CHECKPOINT_DIR = PROJECT_ROOT / "checkpoints"
-#: 第四处硬编码默认基座（本会话实测改为引用产品常量会让字段面板守卫红，修法与登记见
-#: 05 债册"inventory 的字段面板随底而定"条；补丁已另存，与评价集 v2 同批落地）。
-DEFAULT_CHECKPOINT = CHECKPOINT_DIR / "seed_corpus.pt"
+#: 跟随产品默认入口，不再自抄一份路径。此前这里是第四处硬编码 `seed_corpus.pt`：换底之后
+#: 这份盘点仍自报 `default_checkpoint=seed_corpus.pt / default_tick=2`（同型问题已在来源清单、
+#: 隔离合同、启动 smoke 三处收口）。
+from api.seed_runtime import DEFAULT_CHECKPOINT  # noqa: E402
 
 #: Fixed diagnostic probe.  Explicitly NOT the frozen B-H evaluation set; it exists
 #: only to show what the current chain actually emits, verbatim.
@@ -309,7 +310,24 @@ def run_inventory(report_path: Path = DEFAULT_REPORT) -> dict[str, Any]:
             probe: dict[str, Any] | None, signature: dict[str, Any] | None
         ) -> dict[str, Any]:
             if probe is None:
-                return {"probed": False}
+                #: 字段面板不得随"这份是否单独探过针"而增减：形状变了会让复现守卫把
+                #: 一次正常的换底误读成仪器漂移，也让下游在不同底上看到不同字段集。
+                #: 未单独探针时如实记 probed=false，其余留空值而不是删字段。
+                return {
+                    "probed": False,
+                    "load_ok": None,
+                    "load_error": None,
+                    "tick": None,
+                    "turns_answered": None,
+                    "turns_errored": None,
+                    "total_output_bytes": None,
+                    "template_signature": {
+                        "turns_considered": None,
+                        "distinct_signatures": None,
+                        "templated": None,
+                        "signature": None,
+                    },
+                }
             turns = probe.get("turns") or []
             answered = [turn for turn in turns if "raw_output" in turn]
             return {

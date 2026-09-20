@@ -30,7 +30,11 @@ from _report_leaves import leaves, normalized  # tests/taiji_native/_report_leav
 REPO = Path(__file__).resolve().parents[2]
 REPORT = REPO / "reports" / "taiji_cap0_inventory_20260915.json"
 #: 2026-09-18 的第二次采样：同一支仪器、修好写侧之后、且基座已被套件退回 tick=2。
-RESAMPLE = REPO / "reports" / "taiji_cap0_inventory_20260918.json"
+#: 比较基线。2026-09-20 默认基座换底（所有者裁决）之后，09-18 那份样本描述的是**另一个产品事实**
+#: （默认=未训练底、单独探针过最训练的那份），继续拿它比会把一次有意的换底读成仪器漂移。
+#: 按本仓"改行为须同批再生报告"的既有做法**重基**到新底样本；旧件不覆写、原样留作历史。
+RESAMPLE = REPO / "reports" / "taiji_cap0_inventory_beta4_20260920.json"
+RESAMPLE_BEFORE_SUBSTRATE_SWITCH = REPO / "reports" / "taiji_cap0_inventory_20260918.json"
 DELIVERY_PLAN = REPO / "plans" / "active" / "roadmap" / "07_MINI_MODEL_DELIVERY.md"
 RUNNER = REPO / "scripts" / "training" / "eval_taiji_cap0_inventory.py"
 
@@ -243,6 +247,27 @@ VOLATILE_SAMPLE_PATHS = (
 )
 
 
+def test_the_rebase_records_what_the_substrate_change_actually_changed() -> None:
+    """重基不许是"把对不上的一次抹平"：旧件说过的产品事实必须仍可核对。
+
+    钉的是换底前后各一份样本之间的**差异本身**——旧默认是未训练底且被判定存在接线缺陷，
+    新默认就是那份 16M-tick 训练态。若哪天有人悄悄把默认挪回测试产物，这一支会红。
+    """
+
+    before = json.loads(RESAMPLE_BEFORE_SUBSTRATE_SWITCH.read_text(encoding="utf-8"))
+    after = json.loads(RESAMPLE.read_text(encoding="utf-8"))
+    old_reality = before["model_reality"]
+    new_reality = after["model_reality"]
+    assert old_reality["default_checkpoint"] == "seed_corpus.pt"
+    assert old_reality["wiring_defect"] is True
+    assert new_reality["default_checkpoint"] == "seed_beta.pt"
+    assert int(new_reality["default_tick"]) == 16000000
+    assert new_reality["wiring_defect"] is False
+    #: 换底没有把模板回显这件事改掉——训练态经入口仍是固定模板（这是 F04 与 A05b 的分界）。
+    assert new_reality["default_checkpoint"] == new_reality["most_trained_checkpoint"]
+    assert after["raw_output_inventory"]["default_entry"]["template_signature"]["templated"] is True
+
+
 def test_a_fresh_inventory_sample_reproduces_the_sealed_one(tmp_path) -> None:
     """普查 §3 的"复现封存"半边（第二支）：**当场重跑盘点**，与 09-18 那份逐叶比较。
 
@@ -262,8 +287,22 @@ def test_a_fresh_inventory_sample_reproduces_the_sealed_one(tmp_path) -> None:
     sealed = json.loads(RESAMPLE.read_text(encoding="utf-8"))
     old, new = leaves(sealed), leaves(fresh)
 
-    assert old.keys() == new.keys(), "仪器少产/多产了字段"
-    volatile = {path for path in old if normalized(path) in VOLATILE_SAMPLE_PATHS}
-    drifted = {path for path in old if old[path] != new[path]}
+    #: 字段面比较原先要求两边完全同形。换底之后有一个**合法**的形状变化：默认入口服务的
+    #: 就是那份最训练的 checkpoint 时，仪器不再对它单独跑第二遍探针，于是
+    #: `raw_output_inventory.most_trained_turns[*]` 的逐行叶子不存在。
+    #: 批准范围钉死在这里 —— 只允许这一个前缀缺失，且必须同时满足 `probed is False`；
+    #: 多产字段、或缺的是别的路径、或 probed 为真却缺行，一律红。
+    missing = old.keys() - new.keys()
+    added = new.keys() - old.keys()
+    assert not added, f"仪器多产了字段：{sorted(added)[:8]}"
+    turns_prefix = "raw_output_inventory.most_trained_turns["
+    assert all(path.startswith(turns_prefix) for path in missing), sorted(missing)[:8]
+    if missing:
+        entry = fresh["raw_output_inventory"]["most_trained_entry"]
+        assert entry["probed"] is False, "只有'未单独探针'才允许缺 most_trained 逐行输出"
+        assert entry["template_signature"]["templated"] is None, "未探针却给了模板判定"
+    common = old.keys() & new.keys()
+    volatile = {path for path in common if normalized(path) in VOLATILE_SAMPLE_PATHS}
+    drifted = {path for path in common if old[path] != new[path]}
     assert drifted <= volatile, sorted(drifted - volatile)[:8]
     assert len(old) > 150 and len(volatile) * 5 < len(old), (len(old), len(volatile))
