@@ -660,6 +660,31 @@ frontend-design 技能的转发，43 行，仅 LICENSE 有无之别），而本�
 - 两个待所有者输入项不变：logo 判定、托盘退不出的具体操作序列（该症状已由并行会话在
   `cce2b0f3` 复现并修复）。
 
+### 17.5 UI 交互自动化验证：5/6 通过（第 6 项需 OS 级输入，非应用缺陷）
+
+方法：dev 模式启动 + CDP `Runtime.evaluate` 驱动**真实按钮点击**
+（完整链路：Vue `@click` → 桥 → IPC → 主进程 → Electron API），
+判据用渲染进程可观测信号（Electron 不支持 `Browser.getWindowForTarget`）：
+
+| 步骤 | 判据 | 结果 |
+|---|---|---|
+| 标题栏窗口按钮存在 | 3 个 `.titlebar-window-btn` + 桥接在 | **PASS** |
+| 最大化 | `outer=2560x1392` = 工作区尺寸 | **PASS** |
+| 向下还原 | `outer=1280x800` | **PASS** |
+| 最小化 | `visibilityState=hidden` | **PASS** |
+| 从最小化恢复 | `Page.bringToFront` 后 visible | **FAIL（CDP 能力边界）**——真实路径是任务栏/托盘图标点击，属 OS 级输入，无法自动化 |
+| 关闭到托盘 | 窗口隐藏且进程存活 | **PASS** |
+
+**过程中抓到并修复一个我自己埋的真 bug**：初版首载兜底在 3 秒后**替换 body.innerHTML**——
+这会销毁 `#app`，把正在慢速挂载的 Vue 应用杀死（所有者截图里的占位屏永久停留即此，
+刷新才能恢复）。已改为**非破坏性**方案：首载竞态防御（1.5 秒后检查 `#app`，未挂载就
+自动重载，`sessionStorage` 计数最多 4 次、递增延迟）+ 叠加式提示（绝不替换 DOM）。
+这个 bug 与 GPU 问题**并存**：上一轮只修 GPU 并不完整。
+
+诊断方法论（本轮新增）：`app.asar` 里 grep 特征字符串验证改动是否进包；
+CDP `Network.responseReceived` 抓"JS 被 text/html 兜底"（MIME 错误的实锤）；
+`document.visibilityState` / `outerWidth×outerHeight` 作为窗口状态判据。
+
 ---
 
 ## 16 Logo 候选：北斗映衬神经元（应所有者要求，2026-09-21）
