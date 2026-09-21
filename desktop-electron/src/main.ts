@@ -124,18 +124,19 @@ html, body { margin: 0; padding: 0; overflow: hidden; height: 100%; }
 /**
  * 窗口圆角 —— main.py: WINDOW_RADIUS(18) + _apply_window_shape() 的 Electron 等价物。
  *
- * PyQt6 时代圆角靠 setMask(QRegion) 在窗口层面物理裁切，Electron 无 mask 等价物；
- * 窗口本身已是 transparent: true，缺的是页面侧：app.css 给 html/body 铺了不透明
- * 方形背景，从内容圆角后面露出尖角。改为 CSS 方案——html 透明（!important 压掉
- * app.css 的 var(--background)），body 承载背景并裁 18px 圆角，body 的
- * overflow:hidden（NO_SCROLLBAR_CSS）使内容跟随圆角裁切。最大化归零对应
- * main.py 的 clearMask()，联动信号是 syncWindowState 写入的 data-maximized。
+ * **职责归一（2026-09-21，所有者四张截图定位）**：窗口的背景、1px 外框与 18px 圆角
+ * 由应用自己的 `.app-wrapper` 负责（frontend/src/assets/styles/shell.css「窗口层」，
+ * 承接 Qt 侧 _window_frame_qss 的设计）——壳侧**只负责把 html/body 挖透明**，
+ * 让那一层露出来。
+ *
+ * 此前壳侧还给 body 铺了白底 + 18px 圆角，与 .app-wrapper 的圆角叠加：
+ * body 的白底从 wrapper 圆角后面露出尖角、wrapper 的 1px 灰边框与 body 圆角之间
+ * 夹出透明缝隙（所有者四张截图：直角残留 / 双层框 / 透明缝）——两层画圆角必然如此。
+ * 最大化归零由 shell.css 的 :root[data-maximized] 规则承担（app 自己的层），
+ * 联动信号仍是 syncWindowState 写入的 data-maximized。
  */
-const WINDOW_RADIUS_PX = 18
 const WINDOW_RADIUS_CSS = `
-html { background: transparent !important; }
-body { border-radius: ${WINDOW_RADIUS_PX}px; }
-html[data-maximized='true'] body { border-radius: 0; }
+html, body { background: transparent !important; }
 `
 
 /**
