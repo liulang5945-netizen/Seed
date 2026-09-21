@@ -1,0 +1,37 @@
+# Electron 打包配置 —— 替代 desktop/seed.spec(PyInstaller 双入口) + desktop/installer.nsi(NSIS 脚本)。
+#
+# 双轨期声明：本配置**不启用**为出货路径。PyQt6 侧仍由 scripts/release.py 走
+# 前端构建 -> PyInstaller -> 后处理 -> NSIS 五步流程出 SeedSetup.exe。
+# 待 Electron 侧通过双轨验证后，再由 scripts/release.py 增一条分支接管。
+
+appId: Seed.Desktop.Shell
+productName: Seed
+copyright: Seed
+
+directories:
+  output: release
+  buildResources: build
+
+# 只打编译产物，不打源码（源码以 TS 形式保留在 src/）
+files:
+  - dist/**/*
+  - package.json
+
+# 前端资源不打进来：它由 Python 后端自己托管（api/app.py::_mount_static_assets 挂
+# frontend/dist + SPA catch-all），所以随 SeedBackend.exe 的打包布局走，不在这里重复一份。
+# 同理 seed.spec 里那份「源码 dist 与内置 dist 必须一致」的校验，在 Electron 侧不需要。
+
+win:
+  target:
+    - target: nsis
+      arch:
+        - x64
+  icon: ../icon.ico
+
+nsis:
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  shortcutName: Seed
+  artifactName: SeedSetup-${version}-electron.exe

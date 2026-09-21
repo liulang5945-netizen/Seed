@@ -52,6 +52,12 @@
   `string`** ⇒ 需要字符串字面量类型时表必须在 `.ts` 里用 `const` 类型参数，JS 侧做不到。
   `npm i -D <pkg>` 不带版本会写入 `"*"`，实际解析到 `typescript@7.0.2`（原生 Go 版，`ts.factory`
   为 `undefined`）⇒ 工具一律精确钉版本。
+- **Electron 壳（2026-09-21 实测）**：本机环境设了 `ELECTRON_RUN_AS_NODE=1` ⇒ `electron.exe
+  --version` 打印 **Node** 版本（`v24.x`）而非 `v44.x`，且 `require('electron')` 退化为返回路径
+  字符串，报 `Cannot read properties of undefined (reading 'isPackaged')`——**症状与「二进制没装」
+  极易混淆**；启动前必须 `unset`。二进制不随 `npm install` 下载，补下用
+  `ELECTRON_MIRROR=https://npmmirror.com/mirrors/electron/ node node_modules/electron/install.js`。
+  受限会话下另需 `--no-sandbox --disable-gpu --disable-gpu-compositing --in-process-gpu`。
 
 ## 5 当前状态与归档索引
 
@@ -59,7 +65,9 @@
   `plans/reference/FRONTEND_TS_VS_HARNESS_ADOPTION_DECISION_BRIEF_20260921.md`。门禁 = `npm run
   typecheck`（`vue-tsc`，作用域为 tsconfig include 白名单棘轮）+ `check:api-types`（生成物逐字节绑
   `tests/snapshots/openapi_baseline.json`）+ 两个既有守卫已扩到 `.ts`。**45 个 `.vue` 未动**。
-  **Electron 迁移待所有者裁定**（同简报 §8）。
+- **Electron 壳已落地**（同简报 §9，新增 `desktop-electron/`，**未动 `desktop/`**；PyQt6 仍为出货路径）：
+  冒烟端到端通过（8000 ready → 8765 ready → frontend loaded → **桥接自检通过**），
+  `AppTitlebar.vue` 零改动。未闭合：`SeedWs.exe` 第三入口、frozen 路径、UI 交互实测。
 
 - **产品默认基座 `checkpoints/seed_beta.pt`**（16M tick，trainer=`train_seed_corpus`，来源登记 v2）；
   DEBT-I9 未结项。H 阈值已在新底重标并冻结（绑 设备/链路/checkpoint）。**M5 限定退出已获批准**

@@ -199,9 +199,14 @@ WebSocket 服务（8765）、子进程崩溃自动重启并以 job object 保证
 ### 8.2 支持迁移的实测证据
 
 1. `main.py` 第 46–113 行（约 70 行）是纯 Qt/PyInstaller 战场疤痕：
-   `QTWEBENGINE_CHROMIUM_FLAGS=--disable-gpu --single-process`、`QT_OPENGL=software`、
    `_prepare_frozen_qt_dll_path()`、`QTWEBENGINEPROCESS_PATH`、`_QT_DLL_DIRECTORY_HANDLES`、
-   `_QT_PRELOADED_LIBRARIES`——Electron 的 Chromium 自带解决，**整段消失**。
+   `_QT_PRELOADED_LIBRARIES`——这一段是 PyInstaller 找不到嵌套 `Qt6/bin` 导致的 DLL 加载顺序问题，
+   Electron 侧不存在对应概念，**整段消失**。
+   **但需订正一处我先前讲过头的话**：同段里还有 `QTWEBENGINE_CHROMIUM_FLAGS=--disable-gpu
+   --single-process` / `QT_OPENGL=software`，"整段消失"对这部分**不成立**。§9.4 实测显示，
+   在受限会话里 Electron 同样需要 `--no-sandbox --disable-gpu --disable-gpu-compositing
+   --in-process-gpu` 才能起来（否则 `FATAL: GPU process isn't usable. Goodbye.` 直接 abort）。
+   差别在于：Qt 侧只能把这类开关写死在 70 行 ctypes 里，Electron 侧它是启动参数/环境变量。
 2. `frontend/vite.config.js` 里有个 `strip-crossorigin` 插件，注释写明是「QWebEngineView 兼容」——
    又一处**只为 Qt 壳存在**的构建期 hack。
 3. PyInstaller bundle 会因此卸掉整个 Qt6/QtWebEngine（体积主项），Electron 侧增量大致抵消；
@@ -226,3 +231,102 @@ WebSocket 服务（8765）、子进程崩溃自动重启并以 job object 保证
 
 Electron 迁移**不改变** §3 对选项乙的否决。它解决的是「壳归到哪个生态」，不解决「agent 效果」；
 后者在 ② 层（Python），不属于任何壳语言的作用范围。
+
+---
+
+## 9 Electron 壳迁移 —— 执行记录（2026-09-21）
+
+### 9.1 落盘（新增目录，**未改动 `desktop/` 任何文件**）
+
+| 文件 | 职责 |
+|---|---|
+| `desktop-electron/src/config.ts` | 端口/路径/环境契约，逐项标注对应的 `main.py` 常量 |
+| `desktop-electron/src/logger.ts` | 文件 sink + 控制台；子进程输出用文件 fd（绝不用 pipe，原因见 main.py 注释） |
+| `desktop-electron/src/settings.ts` | 窗口几何持久化，**复用同一份 `desktop/settings.json`** |
+| `desktop-electron/src/backend.ts` | `BackendManager` 移植 + owner record 孤儿回收 |
+| `desktop-electron/src/websocket.ts` | `WebSocketManager` 移植（8765） |
+| `desktop-electron/src/preload.ts` | **QWebChannel 形状兼容层** |
+| `desktop-electron/src/main.ts` | 应用生命周期/窗口/托盘/看门狗/桥接自检 |
+| `desktop-electron/{package.json,tsconfig.json,electron-builder.yml,.gitignore}` | 工具链与打包配置（替代 `seed.spec` + `installer.nsi`） |
+
+### 9.2 冒烟测试：端到端通过（本机实测）
+
+```
+2026-09-21 03:34:04.901 - SeedDesktop - INFO - Backend started on port 8000 (PID: 28676)
+2026-09-21 03:34:15.021 - SeedDesktop - INFO - Backend is ready
+2026-09-21 03:34:15.349 - SeedDesktop - INFO - WebSocket server started on port 8765 (PID: 9124)
+2026-09-21 03:34:15.852 - SeedDesktop - INFO - WebSocket server ready on port 8765
+2026-09-21 03:34:15.965 - SeedDesktop - INFO - Loading frontend: http://127.0.0.1:8000/#/?taiji_client=desktop
+2026-09-21 03:34:17.235 - SeedDesktop - INFO - Frontend loaded successfully
+2026-09-21 03:34:17.243 - SeedDesktop - INFO - Window bridge self-check passed (qt.webChannelTransport + QWebChannel present)
+```
+
+最后一行是本次移植**唯一被标注为「离线无法证明」的接口**：`contextBridge` 能否承载
+「可 new 的函数 + 回调内传函数」。实测成立 ⇒ `AppTitlebar.vue` 能找到 `channel.objects.seedWindow`，
+窗口控制按钮可用，**且 `.vue` 零改动**。
+
+停止路径亦已验证：TaskStop 硬杀后端口 8000/8765 全部释放，`logs/seed_backend.owner.json`
+按设计留存且指向已死进程（下次启动回收），清理后重跑正常。PyQt6 同名日志
+（`logs/desktop_main.log`，含 2026-08-28 的 `Child job object armed` 记录）与 Electron 记录同文件共存，
+双轨可直接并排对照。
+
+### 9.3 与 PyQt6 的逐项对照
+
+| 项 | 结论 |
+|---|---|
+| frozen Qt DLL 加载（`_prepare_frozen_qt_dll_path` 等） | **消失**（PyInstaller 特有问题） |
+| `_EdgeResizeFilter`（约 50 行） | **消失**（`frame:false` 由系统原生处理边缘缩放） |
+| `_apply_window_shape`（QRegion 圆角遮罩） | **消失**（透明窗 + 前端 CSS 圆角） |
+| `_RestartWorker(QThread)` | **消失**（Node 异步，直接 await） |
+| 注入 `qwebchannel.js` 资源 | 换成 preload 里的形状兼容层，**前端契约不变** |
+| 拖拽 | 新增：主进程注入 `-webkit-app-region: drag`（Electron 无 `startSystemMove`） |
+| toggle-maximize | 新增 300ms 去抖（原生标题栏双击与前端 `@dblclick` 会互相抵消） |
+| 桥接自检 | 新增 `verifyBridge()`，失败留明确 error 而非静默失效 |
+| 孤儿回收 | 由 Job Object 改为 **owner record**（见 9.5.6） |
+
+### 9.4 复现命令
+
+```bash
+cd desktop-electron
+npm install          # 若 electron 二进制未下载：见 9.5.3
+unset ELECTRON_RUN_AS_NODE
+SEED_DISABLE_GPU=1 \
+SEED_PYTHON="C:/Users/23747/AppData/Local/Programs/Python/Python312/python.exe" \
+  ./node_modules/electron/dist/electron.exe . \
+  --no-sandbox --disable-gpu --disable-gpu-compositing --in-process-gpu
+```
+
+`SEED_PYTHON` 是必需的：本机 PATH 上的 `python` 是 managed 3.13（无 uvicorn），
+Python312 才有 `uvicorn 0.52.1 / fastapi 0.141.1`。
+后四个 Chromium 开关是**受限会话下**的必需项，普通桌面环境可能不需要，且 `--no-sandbox`
+是安全降级——因此它们只出现在启动命令里，**不写进应用**。
+
+### 9.5 未闭合项（诚实清单）
+
+1. **`SeedWs.exe` 缺失**：`main.py` 的 frozen 分支用进程内守护线程跑 8765 WS，Electron 无法在
+   Node 里跑 Python，改为独立子进程，但 `seed.spec` 目前只有 `Seed.exe` / `SeedBackend.exe`
+   两个入口。frozen 分支会**明确报错并记日志**，不会静默降级。补第三个入口即可闭合。
+2. **frozen 路径整体未验证**：本机无法构建 `SeedBackend.exe`，dev 路径已实测，打包路径未测。
+3. **`ELECTRON_RUN_AS_NODE=1` 是本机环境变量，不是仓库问题**。未清掉它时 `electron.exe --version`
+   打印 `v24.21.0`（Node 版本）而非 `v44.4.3`，`require('electron')` 退化为返回路径字符串，
+   表现为 `TypeError: Cannot read properties of undefined (reading 'isPackaged')`。
+   **症状与二进制缺失高度混淆，值得记住这一条判据**。
+4. **electron 二进制未随 `npm install` 下载**（287 包 29 秒装完但无 `dist/`）。
+   补下命令：`ELECTRON_MIRROR=https://npmmirror.com/mirrors/electron/ node node_modules/electron/install.js`。
+5. **未验证**：UI 实际交互（三个窗口按钮、拖拽、托盘菜单、关闭到托盘）。日志只能证明桥已就位。
+6. **孤儿回收语义变更**：Node 无法调 Win32，Job Object 的「主进程怎么死都回收」不成立。
+   改为启动子进程时把 `(electronPid, backendPid)` 写入 `logs/seed_backend.owner.json`，
+   判定变成「electronPid 存活 ⇒ 别的实例在用，不碰；已死而 backendPid 存活 ⇒ 确凿孤儿，回收」。
+   精度不低于原来的 image+ppid 规则，但**跨壳有缺口**：PyQt6 侧不写这份记录，它留下的
+   `SeedBackend.exe` 孤儿 Electron 认不出来（反方向由 PyQt6 自己的规则兜底，故任一侧启动都自愈）。
+   要彻底闭合需两侧共用同一份 record。
+7. **本机未做**：`npm run lint`（desktop-electron 无 eslint 配置）、单元测试（无测试框架）。
+   目前唯一的门是 `npm run typecheck`，且它已用 13 个真实错误证明过会响。
+
+### 9.6 待所有者裁定
+
+1. **GPU/沙箱降级开关是否成为默认**：§8.2 的订正说明受限环境下 Electron 也需要降级开关。
+   默认保留 GPU（迁移收益之一）还是默认 `--disable-gpu`（与 Qt 基线对齐）？
+2. **是否加单实例锁**：PyQt6 允许开多个实例（第二个的后端会 bind 失败、白窗重试）。Electron 可用
+   `requestSingleInstanceLock()` 消除该失效模式，但会引入与 PyQt6 的行为差异，故未擅自加。
+3. **`SeedWs.exe` 第三入口的排期**（§9.5.1）。
