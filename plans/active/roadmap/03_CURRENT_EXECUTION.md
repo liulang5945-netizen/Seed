@@ -328,7 +328,7 @@ DEBT-I8 报告路径相对化（含 09-15/09-18 两份产物的成对断言）�
 | 已闭合②（2026-09-21 根因修复，红绿证据） | 托盘「退出」无反应根因＝窗口 close 拦截**无条件** `preventDefault()` 拦死 `app.quit()` 的窗口关闭步骤。修复＝`quitting` 真退出标志（quit()/before-quit 置位，close 拦截放行）；验证接缝 `SEED_TRAY_SMOKE=1`（与 SEED_FORCE_FROZEN 同风格）：红跑 exit 5（quit 后进程 10s 仍活＝症状复现）→ 修复后进程干净退出（Backend stopped→WS stopped→exit）＝绿；typecheck 过。**待所有者下次打包版实测人工确认**（托盘菜单 click 与 smoke 调用的是同一 quit()） |
 | 未闭合③ | UI 实际交互其余项（三个窗口按钮、拖拽、关闭到托盘）：日志只证明桥就位，行为未验 |
 | 未闭合④（技术债） | 跨壳孤儿回收缺口：PyQt6 侧不写 owner record，Electron 认不出 PyQt6 留下的 SeedBackend.exe 孤儿（任一侧启动自愈；彻底闭合需两侧共用同一份 record） |
-| 未闭合⑤（待所有者裁定） | 单实例锁：PyQt6 允许多实例（第二个后端 bind 失败白窗重试）；Electron 可 `requestSingleInstanceLock()` 消除该失效模式，但引入跨壳行为差异，未擅自加 |
+| 已闭合⑤（2026-09-21 所有者裁定＋实测） | 单实例锁已加（`requestSingleInstanceLock`）：第二个实例 0.9s 内 exit 0 退出、首实例存活且 `second-instance` 时窗口弹到前台；消除「双开 → 第二个后端 bind 8000 失败白窗」失效模式。dev 双实例验证过（打包版行为同机制） |
 | 门与验证边界 | desktop-electron 唯一门 typecheck（无 lint/测试框架，typecheck 曾以 13 真实错误证明会响）；打包 ≈30 min 属重任务，R2 重训等待期内不并行打包/重评测（负载边界）；UI 冒烟级验证可接受 |
 
 **活动卡：M5-P5.1h 知识内化与采用（2026-09-19 选定，草案已交付）。** 能力问题：把 P5.1g 已证明的真实语料内容因果收益（九门全过、a-gate 0.6514）推进为可通过准入的 child——独立测试、旧能力保持、admission 线可达、来源/收益分账。当前停止点：草案待用户批准；批准后先静态只读探针（无训练）预注册 admission 线，再实现门，训练预算单独审批。合同：[P5.1h 包合同草案 v1](../../reference/M5_P5_1H_ADMISSION_PACKAGE_DRAFT_20260919.md)。

@@ -464,10 +464,27 @@ app.on('before-quit', () => {
   websocket.stop()
 })
 
-void app.whenReady().then(bootstrap).catch((cause: unknown) => {
-  logger.error('Bootstrap failed', cause)
-  app.exit(1)
-})
+/**
+ * 单实例锁（2026-09-21 所有者裁定）：第二个实例启动即退出，并把已有窗口弹到前台。
+ * 消除「双开 → 第二个后端 bind 8000 失败 → 白窗重试」的失效模式（PyQt6 壳允许
+ * 多开、第二个必白窗——那是缺陷不是要兼容的行为）。锁必须在 app ready 前请求。
+ */
+const gotSingleInstanceLock = app.requestSingleInstanceLock()
+if (!gotSingleInstanceLock) {
+  app.quit()
+} else {
+  app.on('second-instance', () => {
+    if (mainWindow !== null && !mainWindow.isDestroyed()) {
+      if (mainWindow.isMinimized()) mainWindow.restore()
+      mainWindow.show()
+      mainWindow.focus()
+    }
+  })
+  void app.whenReady().then(bootstrap).catch((cause: unknown) => {
+    logger.error('Bootstrap failed', cause)
+    app.exit(1)
+  })
+}
 
 // ---- 托盘退出链路 smoke（SEED_TRAY_SMOKE=1 启用；验证用接缝，与 config.ts 的
 // SEED_FORCE_FROZEN 同风格，出货路径不受影响）。----
