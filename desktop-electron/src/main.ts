@@ -122,6 +122,23 @@ html, body { margin: 0; padding: 0; overflow: hidden; height: 100%; }
 `
 
 /**
+ * 窗口圆角 —— main.py: WINDOW_RADIUS(18) + _apply_window_shape() 的 Electron 等价物。
+ *
+ * PyQt6 时代圆角靠 setMask(QRegion) 在窗口层面物理裁切，Electron 无 mask 等价物；
+ * 窗口本身已是 transparent: true，缺的是页面侧：app.css 给 html/body 铺了不透明
+ * 方形背景，从内容圆角后面露出尖角。改为 CSS 方案——html 透明（!important 压掉
+ * app.css 的 var(--background)），body 承载背景并裁 18px 圆角，body 的
+ * overflow:hidden（NO_SCROLLBAR_CSS）使内容跟随圆角裁切。最大化归零对应
+ * main.py 的 clearMask()，联动信号是 syncWindowState 写入的 data-maximized。
+ */
+const WINDOW_RADIUS_PX = 18
+const WINDOW_RADIUS_CSS = `
+html { background: transparent !important; }
+body { border-radius: ${WINDOW_RADIUS_PX}px; }
+html[data-maximized='true'] body { border-radius: 0; }
+`
+
+/**
  * main.py: _find_brand_icon() —— 覆盖 frozen / dev 两种布局。
  *
  * 实测订正：frozen 首次跑挂在这里，日志是 `Brand icon not found; tray disabled`。
@@ -288,6 +305,7 @@ function createWindow(): BrowserWindow {
   window.webContents.on('did-finish-load', () => {
     void window.webContents.insertCSS(DRAG_REGION_CSS)
     void window.webContents.insertCSS(NO_SCROLLBAR_CSS)
+    void window.webContents.insertCSS(WINDOW_RADIUS_CSS)
     if (frontendLoaded) return
     frontendLoaded = true
     logger.info('Frontend loaded successfully')

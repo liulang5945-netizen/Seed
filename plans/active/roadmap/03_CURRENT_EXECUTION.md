@@ -329,6 +329,7 @@ DEBT-I8 报告路径相对化（含 09-15/09-18 两份产物的成对断言）�
 | 未闭合③ | UI 实际交互其余项（三个窗口按钮、拖拽、关闭到托盘）：日志只证明桥就位，行为未验 |
 | 未闭合④（技术债） | 跨壳孤儿回收缺口：PyQt6 侧不写 owner record，Electron 认不出 PyQt6 留下的 SeedBackend.exe 孤儿（任一侧启动自愈；彻底闭合需两侧共用同一份 record） |
 | 已闭合⑤（2026-09-21 所有者裁定＋实测） | 单实例锁已加（`requestSingleInstanceLock`）：第二个实例 0.9s 内 exit 0 退出、首实例存活且 `second-instance` 时窗口弹到前台；消除「双开 → 第二个后端 bind 8000 失败白窗」失效模式。dev 双实例验证过（打包版行为同机制） |
+| 已闭合⑥（2026-09-21 根因修复，CDP 双分支验证） | 窗口圆角回归（所有者报「圆角后面还是存在尖角」）：PyQt6 时代靠 `setMask(QRegion)` 窗口级物理裁切＋web_view 背景透明，Electron 无 mask 等价物，`app.css:9` 的 `html, body` 不透明方形背景从内容圆角后露出尖角。修复＝壳侧 `WINDOW_RADIUS_CSS`（html 透明 `!important` 压掉页面背景、body 承载 `var(--background)` 裁 18px＝`WINDOW_RADIUS`、`data-maximized='true'` 时归零对应 `clearMask()`），复用 `did-finish-load` 注入点，零 .vue 改动。CDP 实测：html `rgba(0,0,0,0)`＋body `18px`；置位 maximized `0px`→恢复 `18px` 双分支绿。**验证教训：`npx electron .` 跑 `dist/` 产物而 typecheck 是 `--noEmit`，改 TS 后必须先 `npm run build`——首次 CDP 读数假红（CSS 全部未生效）即因验证了旧代码** |
 | 门与验证边界 | desktop-electron 唯一门 typecheck（无 lint/测试框架，typecheck 曾以 13 真实错误证明会响）；打包 ≈30 min 属重任务，R2 重训等待期内不并行打包/重评测（负载边界）；UI 冒烟级验证可接受 |
 
 **活动卡：M5-P5.1h 知识内化与采用（2026-09-19 选定，草案已交付）。** 能力问题：把 P5.1g 已证明的真实语料内容因果收益（九门全过、a-gate 0.6514）推进为可通过准入的 child——独立测试、旧能力保持、admission 线可达、来源/收益分账。当前停止点：草案待用户批准；批准后先静态只读探针（无训练）预注册 admission 线，再实现门，训练预算单独审批。合同：[P5.1h 包合同草案 v1](../../reference/M5_P5_1H_ADMISSION_PACKAGE_DRAFT_20260919.md)。
