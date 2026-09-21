@@ -514,6 +514,83 @@ makensis 完整跑完（卸载器 + 安装器两次编译），blockmap 生成�
 
 ---
 
+## 13 安装测试（NSIS 静默安装 → 运行 → 卸载）—— 首次执行（2026-09-21 续）
+
+### 13.1 安装：通过
+
+```
+./SeedSetup-1.6.0-electron.exe /S /D=E:\_seed_install_probe      # 59 秒, rc=0
+```
+
+- 装到自定义目录，**未要求提权**（按用户安装）
+- **9371 files / 1764.9 MB**，与 `win-unpacked/` 一致
+- `Seed.exe` / `SeedBackend.exe` / `SeedWs.exe` / `_internal/` / `resources/` 齐备，卸载器在位
+- 桌面与开始菜单快捷方式均已创建
+
+### 13.2 运行：通过（零告警）
+
+```
+Backend worker started on port 8000 -> Backend is ready
+WebSocket server started on port 8765 -> WebSocket server ready on port 8765
+Loading frontend: http://127.0.0.1:8000/#/?taiji_client=desktop
+Frontend loaded successfully
+Window bridge self-check passed (qt.webChannelTransport + QWebChannel present)
+```
+
+### 13.3 卸载：**未通过（产品缺陷）**
+
+| 尝试 | 结果 |
+|---|---|
+| `Uninstall Seed.exe /S` | **rc=0 但什么都没删** —— 9375 文件与两个快捷方式原样保留 |
+| `Uninstall Seed.exe /S _?=E:\_seed_install_probe` | **rc=2**，仍无删除 |
+| 注册表 `HKCU / HKLM\...\CurrentVersion\Uninstall` | **找不到** Seed 的登记项 ⇒ 控制面板里也不会出现 |
+
+定性：**卸载流程存在缺陷**。但本次只测了**静默卸载**；交互式卸载（用户在控制面板/开始菜单
+点 Uninstall 的正常路径）未测，不能断言它同样失败。需单独定位——若连交互式也失败，
+那是出货阻断项。
+
+### 13.4 本机批量 I/O 第三次复现
+
+删除 9375 文件的安装树时，**9375 → 4271 之后再次 FROZEN 数分钟**（18 秒零字节变化）；
+而同一目录的另一次删除只用 **2.3 秒**。加上 §11.4 那两次，这一现象已三度复现，其中一类成因
+已确证是批删守卫（`SAFE_DELETE_BULK_CONFIRM_REQUIRED`），其余仍未定性。
+
+**结论：凡涉及对本机大目录做批量删除/拷贝的步骤，都可能需要人工介入，不能假设它必然完成。**
+本简报多处的「清空/删除」步骤都应按此前提来读。
+
+### 13.5 探针残留（如实记录）
+
+- `E:\_seed_install_probe\` 残留 **4271 文件**（清理进行到一半被本机 I/O 卡住后中止）
+- 桌面 / 开始菜单的 `Seed.lnk` 仍在
+
+这两项需要手工删除；本简报不再尝试（已三次验证本机批量删除不可靠）。
+
+---
+
+## 14 技能检索结论（应所有者要求：提升审美与前端设计）
+
+本地 skills-marketplace 不存在，走 SkillHub 检索（5 组查询，命中 8 个相关项），
+并对前三名做了**下载 + 解包 + 危险信号扫描**（管道执行远程脚本 / 递归删除 / 硬编码凭据 /
+敏感文件路径 / base64 混淆 / eval-exec —— 三者**零命中**）。
+
+**核心结论：不必安装。** 检索到的 `frontend-design-2`、`anthropics-frontend-design`、
+`frontend-design`、`frontend-design-cn` 等 SKILL.md **内容几乎相同**（均为 Anthropic 官方
+frontend-design 技能的转发，43 行，仅 LICENSE 有无之别），而本会话已可用的 **`impeccable`
+正是同一血统的衍生**（其 DERIVATIVE_NOTICE.md 可证）——装它们是重复。
+
+另注意：SkillHub 上名为 **`impeccable`** 的是另一个东西（简诗 AI 的海报设计系统，
+奶油色/焦橙色/Oswald/Lora），与本会话的 `impeccable` 同名不同物，**勿混淆**。
+
+若所有者仍想要一个**不与现有能力重叠**的增量，唯一有独立价值的是：
+
+| slug | 分值 | 补的是什么 |
+|---|---|---|
+| `web-design` | 0.110 | 布局 / 排版 / 色彩 / 间距 / 响应式的 **CSS 实现模式** —— 把"美"落到可执行的规范，与生成侧不重叠 |
+
+（`tri-frontend-design` 另含动效引擎与交互物理层，是另一个方向，本次未深查。）
+
+---
+
 ## 12 Python 侧载荷装入 Electron 包 —— 闭合 §11.2（2026-09-21 续）
 
 ### 12.1 改动
