@@ -14,14 +14,17 @@ const allowedGenericTransport = new Set([
 ])
 const ignoredFiles = new Set([
   path.join('components', 'FileUploadQueue.vue'),
+  // 由 openapi-typescript 从冻结快照生成：其中的 `/api/...` 是 schema 键，
+  // 不是前端调用点，纳入扫描只会产生假阳性。
+  path.join('api', 'schema.d.ts'),
 ])
-const facadeFile = path.join('composables', 'nativeApi.js')
+const facadeFile = path.join('api', 'paths.ts')
 
 function collectFiles(dir, result = []) {
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
     const absolute = path.join(dir, entry.name)
     if (entry.isDirectory()) collectFiles(absolute, result)
-    else if (/\.(?:js|vue)$/.test(entry.name)) result.push(absolute)
+    else if (/\.(?:js|ts|vue)$/.test(entry.name)) result.push(absolute)
   }
   return result
 }

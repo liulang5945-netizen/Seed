@@ -1,0 +1,6 @@
+# 生成物：schema.d.ts 由 openapi-typescript 从 tests/snapshots/openapi_baseline.json
+# 产出，并受 frontend/scripts/check-api-types.mjs 逐字节守护。
+# 任何格式化都会让该门失败，因此必须排除。
+src/api/schema.d.ts
+dist
+node_modules

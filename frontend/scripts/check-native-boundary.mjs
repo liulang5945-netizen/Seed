@@ -27,7 +27,7 @@ function collectFiles(dir, result = []) {
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
     const absolute = path.join(dir, entry.name)
     if (entry.isDirectory()) collectFiles(absolute, result)
-    else if (/\.(?:js|vue)$/.test(entry.name)) result.push(absolute)
+    else if (/\.(?:js|ts|vue)$/.test(entry.name)) result.push(absolute)
   }
   return result
 }

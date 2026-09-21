@@ -222,9 +222,11 @@ jobs:
         run: npm ci
 
       # F01: ESLint blocking 门禁——错误会阻断合并，警告暂不阻断（当前 0 errors / ~210 warnings）
+      # TS: 扩展名加入 .ts；生成物 src/api/schema.d.ts 由 .eslintrc.cjs 的
+      #   ignorePatterns 排除（对它 lint 只会制造假阳性）。
       - name: Lint frontend
         working-directory: frontend
-        run: npx eslint src --ext .js,.vue
+        run: npx eslint src --ext .js,.ts,.vue
 
       - name: Check native frontend boundary
         working-directory: frontend
@@ -233,6 +235,19 @@ jobs:
       - name: Check frontend API contract
         working-directory: frontend
         run: npm run check:api-contract
+
+      # TS: 类型门。作用域是 frontend/tsconfig.json 的 include 显式白名单（棘轮，
+      #   只增不减）——新增 .ts 文件必须进白名单，否则它是「没被检查」而不是「通过」。
+      #   与后端 mypy 棘轮（MYPY_CORE_BASELINE）同构：把「不许变差」变成硬约束。
+      - name: Typecheck frontend with vue-tsc (ratchet scope)
+        working-directory: frontend
+        run: npm run typecheck
+
+      # TS: 生成物漂移门。schema.d.ts 提交入库，但必须逐字节等于从冻结快照
+      #   tests/snapshots/openapi_baseline.json 重新生成的结果（同 check:aliases 约定）。
+      - name: Check generated API types are fresh
+        working-directory: frontend
+        run: npm run check:api-types
 
       - name: Run frontend tests
         working-directory: frontend

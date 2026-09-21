@@ -47,8 +47,19 @@
   目录规则不覆盖子文件（按命名约定通配 + 反向钉住）。历史重写用 `git clone --mirror` 镜像隔离、
   **永不**原地做；`filter-repo` 不重写自定义 ref 与远端 `refs/pull/*`；改完重建 commit-graph
   （旧 sha 全失效）。
+- **前端工具链（2026-09-21 实测）**：Vite / Vitest **不会**把 `./x.js` 说明符重写到 `x.ts` ⇒ 任何
+  JS→TS 改名前必须先验解析（本仓 20 处 import 会全断）。`Object.freeze` 会把属性**拓宽为
+  `string`** ⇒ 需要字符串字面量类型时表必须在 `.ts` 里用 `const` 类型参数，JS 侧做不到。
+  `npm i -D <pkg>` 不带版本会写入 `"*"`，实际解析到 `typescript@7.0.2`（原生 Go 版，`ts.factory`
+  为 `undefined`）⇒ 工具一律精确钉版本。
 
 ## 5 当前状态与归档索引
+
+- **前端 TS 地基已落地**（2026-09-21，产品侧工程支线，**不入研究主线队列**）：详见
+  `plans/reference/FRONTEND_TS_VS_HARNESS_ADOPTION_DECISION_BRIEF_20260921.md`。门禁 = `npm run
+  typecheck`（`vue-tsc`，作用域为 tsconfig include 白名单棘轮）+ `check:api-types`（生成物逐字节绑
+  `tests/snapshots/openapi_baseline.json`）+ 两个既有守卫已扩到 `.ts`。**45 个 `.vue` 未动**。
+  **Electron 迁移待所有者裁定**（同简报 §8）。
 
 - **产品默认基座 `checkpoints/seed_beta.pt`**（16M tick，trainer=`train_seed_corpus`，来源登记 v2）；
   DEBT-I9 未结项。H 阈值已在新底重标并冻结（绑 设备/链路/checkpoint）。**M5 限定退出已获批准**

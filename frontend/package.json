@@ -7,10 +7,13 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "lint": "eslint src --ext .js,.vue --fix",
+    "lint": "eslint src --ext .js,.ts,.vue --fix",
     "format": "prettier --write src",
+    "typecheck": "vue-tsc --noEmit",
     "gen:aliases": "node scripts/gen-hljs-aliases.mjs",
+    "gen:api-types": "openapi-typescript ../tests/snapshots/openapi_baseline.json -o src/api/schema.d.ts",
     "check:aliases": "node scripts/gen-hljs-aliases.mjs --check",
+    "check:api-types": "node scripts/check-api-types.mjs",
     "check:native-boundary": "node scripts/check-native-boundary.mjs",
     "check:api-contract": "node scripts/check-api-contract.mjs",
     "test": "vitest run",
@@ -34,6 +37,7 @@
     "vue-router": "^4.6.4"
   },
   "devDependencies": {
+    "@typescript-eslint/parser": "8.70.0",
     "@vitejs/plugin-vue": "^6.0.6",
     "@vue/test-utils": "^2.4.6",
     "eslint": "^8.57.0",
@@ -42,13 +46,16 @@
     "eslint-plugin-import": "^2.31.0",
     "eslint-plugin-vue": "^9.32.0",
     "jsdom": "^25.0.0",
+    "openapi-typescript": "7.13.0",
     "playwright": "^1.60.0",
     "prettier": "^3.4.0",
+    "typescript": "5.9.3",
     "unplugin-auto-import": "^21.0.0",
     "unplugin-vue-components": "^32.1.0",
     "vite": "^8.0.8",
     "vite-plugin-vue-devtools": "^8.1.1",
-    "vitest": "^2.1.0"
+    "vitest": "^2.1.0",
+    "vue-tsc": "3.3.11"
   },
   "overrides": {
     "nanoid": "^3.3.18",

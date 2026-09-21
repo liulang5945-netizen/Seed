@@ -28,6 +28,12 @@ coverage
 
 .eslintcache
 
+# unplugin-auto-import / unplugin-vue-components 的 dts 生成物。
+# 装上 typescript 之后这两个插件才开始写它们（此前项目无 typescript 故从未产生）。
+# 每次 dev/build 都会重写，且没有漂移门 ⇒ 不入库，与「生成物要么有门要么不入库」一致。
+auto-imports.d.ts
+components.d.ts
+
 # Cypress
 /cypress/videos/
 /cypress/screenshots/

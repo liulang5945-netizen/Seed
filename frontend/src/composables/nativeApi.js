@@ -2,93 +2,19 @@
  * Seed native API facade.
  *
  * Product code should depend on these named operations instead of rebuilding
- * `/api/...` URLs and JSON request options in each view.  The endpoint paths
- * remain explicit here so the OpenAPI contract checker has one client-side
- * source to audit; request payloads stay plain objects and are serialized only
+ * `/api/...` URLs and JSON request options in each view.  Endpoint paths live in
+ * `src/api/paths.ts` — the single client-side source the OpenAPI contract
+ * checker audits; request payloads stay plain objects and are serialized only
  * at this boundary.
  */
 import { API_BASE, authFetch } from './apiClient.js'
 
-export const nativeApiPaths = Object.freeze({
-  runtime: Object.freeze({
-    bootstrap: '/api/runtime/bootstrap',
-    status: '/api/runtime/status',
-  }),
-  auth: Object.freeze({
-    login: '/api/auth/login',
-    changePassword: '/api/auth/change_password',
-    status: '/api/auth/status',
-    enable: '/api/auth/enable',
-    disable: '/api/auth/disable',
-    refresh: '/api/auth/refresh',
-  }),
-  settings: Object.freeze({
-    all: '/api/settings',
-    runtime: '/api/settings/runtime',
-  }),
-  chat: Object.freeze({
-    sessions: '/api/chat/sessions',
-    history: '/api/chat/history/{session_id}',
-    stream: '/api/chat/stream',
-    workbenchStream: '/api/chat/workbench/stream',
-    workbenchInterpret: '/api/chat/workbench/interpret',
-    workbenchNaturalLanguagePlan: '/api/chat/workbench/natural-language/plan',
-    workbenchNaturalLanguageApprove: '/api/chat/workbench/natural-language/approve',
-    workbenchNaturalLanguageExecute: '/api/chat/workbench/natural-language/execute',
-    upload: '/api/chat/upload',
-  }),
-  training: Object.freeze({
-    uploadDataset: '/api/train/upload_dataset',
-    files: '/api/train/files',
-    file: '/api/train/file/{filename}',
-    preview: '/api/train/preview/{filename}',
-    pause: '/api/train/pause',
-    resume: '/api/train/resume',
-    stop: '/api/train/stop',
-    checkpoints: '/api/train/checkpoints',
-    resumeCheckpoint: '/api/train/resume_checkpoint',
-    native: '/api/train/native',
-  }),
-  workbench: Object.freeze({
-    capabilities: '/api/workbench/capabilities',
-    events: '/api/workbench/events',
-    files: '/api/workbench/files',
-    workspace: '/api/workbench/workspace',
-    file: '/api/workbench/file',
-    programmingLanguage: '/api/workbench/programming-language',
-    preview: '/api/workbench/preview',
-    execute: '/api/workbench/execute',
-    taijiAdmit: '/api/workbench/taiji/admit',
-    taijiExecute: '/api/workbench/taiji/execute',
-    taijiProject: '/api/workbench/taiji/project',
-    taijiReproject: '/api/workbench/taiji/reproject',
-    taijiRecoveryPortfolio: '/api/workbench/taiji/recovery-branch/portfolio',
-    taijiRecoveryPortfolioContext: '/api/workbench/taiji/recovery-branch/context',
-    loopPreflight: '/api/workbench/loop/preflight',
-    loopExecute: '/api/workbench/loop/execute',
-  }),
-  clientExtensions: Object.freeze({
-    status: '/api/client-extensions',
-    prepare: '/api/client-extensions/prepare',
-    commit: '/api/client-extensions/commit',
-    dependency: '/api/client-extensions/dependency',
-    rollback: '/api/client-extensions/rollback',
-    beginCall: '/api/client-extensions/{plugin_id}/call/begin',
-    endCall: '/api/client-extensions/{plugin_id}/call/end',
-    retire: '/api/client-extensions/{plugin_id}/retire',
-    quarantine: '/api/client-extensions/{plugin_id}/quarantine',
-  }),
-  system: Object.freeze({
-    health: '/api/health',
-    version: '/api/system/version',
-    reset: '/api/system/reset',
-    quickPaths: '/api/system/quick_paths',
-    selectFolder: '/api/system/select_folder',
-    selectFile: '/api/system/select_file',
-    validatePath: '/api/system/validate_path',
-    openFolder: '/api/system/open_folder',
-  }),
-})
+import { nativeApiPaths } from '../api/paths'
+// 路径表已上移至 src/api/paths.ts：只有 TS 文件里的 const 类型参数才能让端点
+// 保持字符串字面量类型，contract.ts 的编译期契约门以此为依据。
+// 此处仅转出，保持既有 import 点（20 处）与运行时语义完全不变。
+export { nativeApiPaths }
+
 
 function urlFor(path, query = {}) {
   const search = new URLSearchParams()

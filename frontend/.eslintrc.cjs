@@ -1,5 +1,8 @@
 module.exports = {
   root: true,
+  // 生成物：由 openapi-typescript 从冻结快照产出，逐字节受 check:api-types 守护。
+  // 对它做 lint/格式化会同时制造假阳性并破坏那份逐字节比对。
+  ignorePatterns: ['src/api/schema.d.ts', 'dist'],
   env: {
     browser: true,
     es2022: true,
@@ -22,11 +25,11 @@ module.exports = {
       // 必须同时保留 node —— alias resolver 不识别 `node:fs` 这类内置模块协议前缀，
       // 只配 alias 会让 `import { readFileSync } from 'node:fs'` 被误判 no-unresolved。
       node: {
-        extensions: ['.js', '.mjs', '.cjs', '.vue', '.json'],
+        extensions: ['.js', '.mjs', '.cjs', '.ts', '.vue', '.json'],
       },
       alias: {
         map: [['@', './src']],
-        extensions: ['.js', '.vue', '.json'],
+        extensions: ['.js', '.ts', '.vue', '.json'],
       },
     },
     'import/core-modules': ['node:fs', 'node:path', 'node:url', 'node:os'],
@@ -46,6 +49,15 @@ module.exports = {
     'import/no-unresolved': 'error',
   },
   overrides: [
+    {
+      // TS 源文件：root parser 是 vue-eslint-parser，它不解析 TS 语法
+      // （`import type`、`<const T>` 会直接报 Parsing error），必须换 parser。
+      // 注意：将来 .vue 的 <script lang="ts"> 还需要在 root 的 parserOptions
+      // 里补 `parser: '@typescript-eslint/parser'`，本次尚无 TS 版 SFC，故不加。
+      files: ['**/*.ts'],
+      parser: '@typescript-eslint/parser',
+      parserOptions: { ecmaVersion: 'latest', sourceType: 'module' },
+    },
     {
       // 测试文件：注入 vitest 全局变量
       files: ['**/__tests__/**/*.{js,ts}', '**/*.{test,spec}.{js,ts}'],
