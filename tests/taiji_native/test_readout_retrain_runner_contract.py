@@ -282,6 +282,53 @@ def test_a_second_process_continues_at_the_recorded_offset(
     assert second["skip_symbols"] == 4
 
 
+def test_a_final_progress_entry_never_reports_a_fake_zero(
+    tmp_path: Path, corpus: tuple[Path, Path]
+) -> None:
+    """A budget that is a multiple of ``--progress-every`` used to end on a fabricated 0.0.
+
+    The loop's own write at ``consumed == symbols`` consumed the counters, and the post-loop
+    write then emitted ``online_accuracy = 0.0`` for an empty window -- which reads exactly like
+    "the arm collapsed".  The shipped A arm did this (2026-09-21).  Now an empty window reports
+    ``null`` plus a cumulative line that is always meaningful.
+    """
+
+    source, manifest = corpus
+    out_dir = tmp_path / "run"
+    _run_cli(
+        [
+            "--arms",
+            "A",
+            "--symbols",
+            "40",
+            "--checkpoint-every",
+            "40",
+            "--progress-every",
+            "40",
+            "--out-dir",
+            str(out_dir),
+            "--corpus",
+            str(source),
+            "--lineage-manifest",
+            str(manifest),
+        ]
+    )
+    rows = [
+        json.loads(line)
+        for line in (out_dir / "A" / "progress.jsonl").read_text(encoding="utf-8").strip().splitlines()
+    ]
+    final = rows[-1]
+    assert final["final"] is True
+    assert final["window_symbols"] == 0
+    assert final["online_accuracy"] is None, "an empty window must not report 0.0"
+    assert final["mean_surprise"] is None
+    assert final["cumulative_online_accuracy"] is not None
+
+    report = json.loads((out_dir / "A" / "run_report.json").read_text(encoding="utf-8"))
+    assert report["session_readout"]["online_accuracy"] is not None
+    assert report["session_readout"]["comparable_across_arms"] is False
+
+
 def test_a_finished_arm_refuses_to_run_again(
     tmp_path: Path, corpus: tuple[Path, Path]
 ) -> None:

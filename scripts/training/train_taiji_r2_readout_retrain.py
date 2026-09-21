@@ -142,9 +142,13 @@ def run_arm(
     session_id = f"{arm}-{_utc_now()}"
     session_symbols = 0
     before = surface_digests(substrate)
+    # 累计计数 + 一个"上次落笔时的快照"。**不要用"写完就清零"**：当预算正好是 ``progress_every``
+    # 的整数倍时，循环里那次已经把计数清零，收尾再写一次就会写下一条 acc=0.0 的**假**终值
+    # （A 臂 16M 实测踩到，2026-09-21 修）。
     seen = 0
     correct = 0
     surprise = 0.0
+    mark = (0, 0, 0.0)
     absolute_tick = base_tick + consumed
     last_progress: dict[str, Any] = {}
 
@@ -169,7 +173,8 @@ def run_arm(
         atomic_save(envelope, checkpoint_path)
 
     def _write_progress(final: bool) -> dict[str, Any]:
-        nonlocal seen, correct, surprise
+        nonlocal mark
+        window_n = seen - mark[0]
         entry = {
             "arm": arm,
             "session_id": session_id,
@@ -178,16 +183,18 @@ def run_arm(
             "symbols_budget": symbols,
             "absolute_tick": absolute_tick,
             "session_symbols": session_symbols,
-            "online_accuracy": correct / max(1, seen),
-            "mean_surprise": surprise / max(1, seen),
+            "window_symbols": window_n,
+            # 窗口内没有新样本时如实写 null，不写 0.0——0.0 会被读成"准确率塌到零"。
+            "online_accuracy": (correct - mark[1]) / window_n if window_n else None,
+            "mean_surprise": (surprise - mark[2]) / window_n if window_n else None,
+            "cumulative_online_accuracy": correct / seen if seen else None,
+            "cumulative_mean_surprise": surprise / seen if seen else None,
             "elapsed_seconds": round(time.perf_counter() - session_started, 3),
             "final": final,
         }
         with progress_path.open("a", encoding="utf-8") as handle:
             handle.write(json.dumps(entry, ensure_ascii=False) + "\n")
-        seen = 0
-        correct = 0
-        surprise = 0.0
+        mark = (seen, correct, surprise)
         return entry
 
     # 三臂看的是同一段符号流：起点固定为血缘跳过量，长度固定为预算。
@@ -246,6 +253,15 @@ def run_arm(
             "wall_seconds": round(wall, 3),
             "seconds_per_symbol": round(wall / session_symbols, 9) if session_symbols else None,
             "symbols": session_symbols,
+        },
+        # 本会话的**整段**读数（窗口口径之外的累计口径）：这是报告里唯一该被引用的准确率，
+        # 因为 final 那条进度行的窗口可能正好是空的。
+        "session_readout": {
+            "scored_symbols": seen,
+            "online_accuracy": correct / seen if seen else None,
+            "mean_surprise": surprise / seen if seen else None,
+            "comparable_across_arms": False,
+            "note": "臂内趋势读数；A 走读出头、B 走运动面，两臂这个数来自不同的头，不可直接互比",
         },
         "last_progress": last_progress,
         "digests_before": before,
