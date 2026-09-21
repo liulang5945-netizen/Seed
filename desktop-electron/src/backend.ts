@@ -203,8 +203,9 @@ export class BackendManager {
    * PyQt6 侧靠内核 Job Object 覆盖「主进程怎么死都回收」，并用 CreateToolhelp32Snapshot
    * 取「端口持有者的父进程是否还在」来判孤儿。Node 两者都拿不到，因此换一条更强的路：
    * **启动子进程时把 (electronPid, backendPid) 显式记到 logs/seed_backend.owner.json**。
-   * 于是判定变成三态，且不需要 netstat / tasklist / 任何 Win32 调用：
-   *   - 记录里 electronPid 仍存活 ⇒ 那是另一个正在运行的客户端实例，**不碰**；
+   * 于是判定变成四态，且不需要 netstat / tasklist / 任何 Win32 调用：
+   *   - electronPid === 本进程 ⇒ 自己上一轮的子进程（看门狗重启路径），照常回收；
+   *   - electronPid 是**别人**且仍存活 ⇒ 另一个正在运行的客户端实例，**不碰**；
    *   - electronPid 已死、backendPid 存活 ⇒ 确凿的本产品孤儿，**回收**；
    *   - 两者皆死 / 无记录 ⇒ 无可回收对象，留给后端自己 bind 失败并报错。
    *
@@ -216,9 +217,16 @@ export class BackendManager {
     const record = this.readOwnerRecord()
     if (record === null) return
 
-    if (isPidAlive(record.electronPid)) {
-      logger.info(
-        `Port ${this.port} is held by a live client instance (Electron PID ${record.electronPid}); leaving it alone`,
+    // 自我排除：main.py 原逻辑里有 `owner == os.getpid()` 这一条，移植时曾漏掉，
+    // 实测踩到——看门狗重启时记录里的 electronPid 就是本进程，不排除的话会把
+    // **自己上一轮的子进程**误判成「另一个客户端实例」而跳过回收，随后在同一端口上
+    // 再起一个后端，两个必然互相 bind 失败（日志里报出的 PID 正是自身）。
+    const isOwnRecord = record.electronPid === process.pid
+    if (!isOwnRecord && isPidAlive(record.electronPid)) {
+      logger.error(
+        `Port ${this.port} is held by a live client instance (Electron PID ${record.electronPid})；` +
+          '本实例的后端将无法 bind，窗口会停在加载失败页。根因是多实例并发，' +
+          '需单实例锁才能消除（见简报 §9.6.2）。',
       )
       return
     }

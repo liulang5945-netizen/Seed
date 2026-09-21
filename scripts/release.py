@@ -13,6 +13,7 @@
 输出:
     dist/Seed/Seed.exe          — 主程序（GUI）
     dist/Seed/SeedBackend.exe   — 后端进程（Windows）
+    dist/Seed/SeedWs.exe        — WebSocket 工作进程（Windows，Electron 壳使用）
     dist/SeedSetup.exe          — NSIS 安装程序（如未跳过）
 """
 
@@ -106,9 +107,12 @@ def _verify_artifacts(expect_installer: bool) -> list[str]:
 
     # PyInstaller 产物：seed.spec 的 COLLECT name 为 "Seed"，故落在 dist/Seed/ 下
     is_win = sys.platform == "win32"
-    for exe_stem in ("Seed", "SeedBackend"):
-        if exe_stem == "SeedBackend" and not is_win:
-            continue  # SeedBackend 仅 Windows 双进程方案需要
+    # SeedWs 是 Electron 壳（desktop-electron/）的 8765 入口：Node 进程无法 import
+    # Python 模块，必须独立子进程。PyQt6 侧用进程内守护线程跑同一模块，不需要它，
+    # 故该入口对既有出货路径无影响；补齐校验是防止它静默缺失。
+    for exe_stem in ("Seed", "SeedBackend", "SeedWs"):
+        if exe_stem in ("SeedBackend", "SeedWs") and not is_win:
+            continue  # 二者均仅 Windows 双进程方案需要
         exe_name = f"{exe_stem}.exe" if is_win else exe_stem
         exe_path = DIST_DIR / "Seed" / exe_name
         if not exe_path.exists():
@@ -203,7 +207,7 @@ def build_frontend() -> bool:
 
 
 def build_pyinstaller() -> bool:
-    """PyInstaller 打包（双入口 Seed.exe + SeedBackend.exe，见 desktop/seed.spec）。"""
+    """PyInstaller 打包（三入口 Seed.exe + SeedBackend.exe + SeedWs.exe，见 desktop/seed.spec）。"""
     return _run(
         [
             sys.executable,

@@ -76,7 +76,11 @@ export class WebSocketManager {
       )
       return
     }
-    const args = FROZEN ? [] : ['-m', 'neuroplex.core.websocket_server']
+    // 打包侧 desktop/seed_ws.py 接受 [port]；dev 侧走的是模块入口
+    // `python -m neuroplex.core.websocket_server`，其 __main__ 固定调用
+    // start_server() 默认端口 8765（与 main.py 的 WS_PORT 同源），因此**不要**在
+    // dev 下设置 SEED_WS_PORT，否则两侧会不一致。
+    const args = FROZEN ? [String(this.port)] : ['-m', 'neuroplex.core.websocket_server']
 
     try {
       this.logFd = openChildLog('desktop_ws.log')

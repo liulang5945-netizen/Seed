@@ -58,6 +58,11 @@
   极易混淆**；启动前必须 `unset`。二进制不随 `npm install` 下载，补下用
   `ELECTRON_MIRROR=https://npmmirror.com/mirrors/electron/ node node_modules/electron/install.js`。
   受限会话下另需 `--no-sandbox --disable-gpu --disable-gpu-compositing --in-process-gpu`。
+- **移植「进程守卫」类逻辑必查自我排除**：`main.py` 原本有 `owner == os.getpid()` 一处，
+  漏掉后看门狗重启会把**自己上一轮的 child** 误判成「另一个实例」而跳过回收，随后同端口再起
+  一个 ⇒ 两个互相 bind 失败。判据：凡「按持有者判孤儿」的逻辑，先问「持有者可能是我自己吗」。
+  另：改动 `desktop-electron/src/*.ts` 后**必须先 `npm run build`**——直接跑
+  `electron.exe .` 会用到旧 `dist/`，导致新加的环境变量看起来"没生效"（实测踩过）。
 
 ## 5 当前状态与归档索引
 

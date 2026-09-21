@@ -1,14 +1,20 @@
 # -*- mode: python ; coding: utf-8 -*-
-"""Seed 桌面端双入口打包规格（由 scripts/release.py 调用）。
+"""Seed 桌面端三入口打包规格（由 scripts/release.py 调用）。
 
 - Seed.exe        : GUI 主入口（windowed，desktop/main.py）
 - SeedBackend.exe : 后端工作进程（console，desktop/backend_worker.py）
+- SeedWs.exe      : 8765 WebSocket 服务器工作进程（console，desktop/seed_ws.py）
 
-两个入口经 MERGE 共享同一份 _internal 依赖，避免体积翻倍。
+三个入口经 MERGE 共享同一份 _internal 依赖，避免体积翻倍。
 frozen 模式下主程序以子进程拉起 SeedBackend.exe，等价于开发模式
 的 `python -m uvicorn api.app:app`，规避：
 1. `sys.executable -m uvicorn` 递归启动 GUI 的问题；
 2. 进程内线程/多进程方案与 logging 配置、PyInstaller spawn 的冲突。
+
+SeedWs.exe 目前只被 Electron 壳（desktop-electron/）使用：Node 进程无法 import
+Python 模块，8765 必须有独立子进程入口。PyQt6 侧的 frozen 分支用进程内守护线程跑
+同一模块（见 desktop/main.py: WebSocketManager._start_inproc），因此**新增该入口
+对 PyQt6 出货路径无任何行为影响**。
 """
 import importlib.util
 import os
@@ -39,6 +45,24 @@ a_backend = Analysis(
     binaries=[],
     datas=[],
     hiddenimports=_common_hiddenimports + _semantic_provider_hiddenimports,
+    hookspath=[],
+    hooksconfig={},
+    runtime_hooks=[],
+    excludes=[],
+    win_no_prefer_redirects=False,
+    win_private_assemblies=False,
+    cipher=block_cipher,
+    noarchive=False,
+)
+
+a_ws = Analysis(
+    [str(ROOT / "desktop" / "seed_ws.py")],
+    pathex=[str(ROOT)],
+    binaries=[],
+    # 数据资产不在此声明：MERGE 让三个 exe 共享同一份 _internal，且 COLLECT 只列
+    # a_main.datas，因此 a_ws 运行时同样能看到全部数据，此处重复声明只会造成重复条目。
+    datas=[],
+    hiddenimports=_common_hiddenimports + _semantic_provider_hiddenimports + ["websockets"],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
@@ -110,19 +134,24 @@ a_main = Analysis(
 # the Windows ICU used by the PyQt6 wheel and makes QtCore.pyd fail with
 # WinError 127 before the desktop window is created.
 _system_icu_basenames = {"icuuc.dll", "icudt78.dll"}
-for _analysis in (a_main, a_backend):
+for _analysis in (a_main, a_backend, a_ws):
     _analysis.binaries = TOC(
         entry
         for entry in _analysis.binaries
         if Path(entry[0]).name.lower() not in _system_icu_basenames
     )
 
-# 合并重复模块，两个 exe 共享 _internal（新版 PyInstaller 需三元组：
+# 合并重复模块，三个 exe 共享 _internal（新版 PyInstaller 需三元组：
 # (analysis, identifier, path_to_exe)）
-MERGE((a_main, "seed-main", "Seed"), (a_backend, "seed-backend", "SeedBackend"))
+MERGE(
+    (a_main, "seed-main", "Seed"),
+    (a_backend, "seed-backend", "SeedBackend"),
+    (a_ws, "seed-ws", "SeedWs"),
+)
 
 pyz_main = PYZ(a_main.pure, a_main.zipped_data, cipher=block_cipher)
 pyz_backend = PYZ(a_backend.pure, a_backend.zipped_data, cipher=block_cipher)
+pyz_ws = PYZ(a_ws.pure, a_ws.zipped_data, cipher=block_cipher)
 
 _icon = str(ROOT / "icon.ico") if (ROOT / "icon.ico").exists() else str(ROOT / "frontend" / "public" / "favicon.ico")
 
@@ -153,12 +182,29 @@ exe_backend = EXE(
     console=True,
 )
 
+exe_ws = EXE(
+    pyz_ws,
+    a_ws.scripts,
+    [],
+    exclude_binaries=True,
+    name="SeedWs",
+    debug=False,
+    bootloader_ignore_signals=False,
+    strip=False,
+    upx=False,
+    console=True,
+)
+
 coll = COLLECT(
     exe_main,
     exe_backend,
+    exe_ws,
     a_main.binaries,
     a_main.zipfiles,
     a_main.datas,
+    a_ws.binaries,
+    a_ws.zipfiles,
+    a_ws.datas,
     strip=False,
     upx=False,
     upx_exclude=[],

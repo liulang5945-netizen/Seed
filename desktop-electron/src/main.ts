@@ -93,23 +93,44 @@ const DRAG_REGION_CSS = `
 .titlebar-window-btn { -webkit-app-region: no-drag; }
 `
 
-/** main.py: _find_brand_icon() —— 覆盖 frozen / dev 两种布局，找不到再退到根 icon.ico。 */
+/**
+ * main.py: _find_brand_icon() —— 覆盖 frozen / dev 两种布局。
+ *
+ * 实测订正：frozen 首次跑挂在这里，日志是 `Brand icon not found; tray disabled`。
+ * 原因是候选路径沿用了 Electron 的 `process.resourcesPath` 概念，而本项目 frozen 布局是
+ * PyInstaller 的 onedir —— datas 落在 `_internal/` 下：
+ *   dist/Seed/_internal/frontend/dist/seed-taiji-network.png
+ *   dist/Seed/_internal/icon.ico
+ * 两种布局都保留探测（electron-builder 打包时资源会在 resources/），并记录候选数，
+ * 使再次落空时是可诊断的告警而不是静默禁用托盘。
+ */
 function findBrandIcon(): string | null {
-  const candidates = FROZEN
+  const relativeCandidates = FROZEN
     ? [
-        path.join(process.resourcesPath || ROOT_DIR, 'frontend', 'dist', 'seed-taiji-network.png'),
-        path.join(ROOT_DIR, 'frontend', 'dist', 'seed-taiji-network.png'),
-        path.join(ROOT_DIR, 'icon.ico'),
+        path.join('frontend', 'dist', 'seed-taiji-network.png'),
+        path.join('frontend', 'dist', 'favicon.ico'),
+        'icon.ico',
       ]
     : [
-        path.join(ROOT_DIR, 'frontend', 'public', 'seed-taiji-network.png'),
-        path.join(ROOT_DIR, 'frontend', 'dist', 'seed-taiji-network.png'),
-        path.join(ROOT_DIR, 'frontend', 'public', 'favicon.ico'),
-        path.join(ROOT_DIR, 'icon.ico'),
+        path.join('frontend', 'public', 'seed-taiji-network.png'),
+        path.join('frontend', 'dist', 'seed-taiji-network.png'),
+        path.join('frontend', 'public', 'favicon.ico'),
+        'icon.ico',
       ]
+
+  const roots = FROZEN
+    ? [path.join(ROOT_DIR, '_internal'), process.resourcesPath, ROOT_DIR].filter(
+        (root): root is string => typeof root === 'string' && root.length > 0,
+      )
+    : [ROOT_DIR]
+
+  const candidates = roots.flatMap((root) =>
+    relativeCandidates.map((relative) => path.join(root, relative)),
+  )
   for (const candidate of candidates) {
     if (fs.existsSync(candidate)) return candidate
   }
+  logger.warn(`Brand icon not found; 窗口与托盘图标将缺省。已探测 ${candidates.length} 个路径`)
   return null
 }
 

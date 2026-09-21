@@ -8,16 +8,26 @@
 import * as path from 'node:path'
 import { app } from 'electron'
 
-/** main.py: FROZEN = getattr(sys, "frozen", False) */
-export const FROZEN = app.isPackaged
+/**
+ * main.py: FROZEN = getattr(sys, "frozen", False)
+ *
+ * `SEED_FORCE_FROZEN=1` 是本移植新增的**验证用接缝**：SeedBackend.exe / SeedWs.exe 只有
+ * 在 packaged 状态下才会被走到，而 electron-builder 打一次包成本很高。该开关允许直接在
+ * 源码树上跑 frozen 分支、对真实 PyInstaller 产物做端到端验证。默认关闭，出货路径不受影响。
+ */
+export const FROZEN = app.isPackaged || process.env.SEED_FORCE_FROZEN === '1'
 
 /**
  * main.py: ROOT_DIR = exe 目录（frozen）/ 仓库根（开发）。
  * 开发态 __dirname 为 <repo>/desktop-electron/dist ⇒ 上溯两级 = <repo>。
+ *
+ * `SEED_ROOT_DIR` 与 SEED_FORCE_FROZEN 配套：源码树上跑 frozen 分支时，exe 是
+ * node_modules 里的 electron.exe，`path.dirname(app.getPath('exe'))` 指向错误位置，
+ * 必须显式指定产物根目录（即 PyInstaller 的 dist/Seed/）。
  */
-export const ROOT_DIR = FROZEN
-  ? path.dirname(app.getPath('exe'))
-  : path.resolve(__dirname, '..', '..')
+export const ROOT_DIR =
+  process.env.SEED_ROOT_DIR ??
+  (FROZEN ? path.dirname(app.getPath('exe')) : path.resolve(__dirname, '..', '..'))
 
 /** main.py: SETTINGS_FILE = ROOT_DIR / "desktop" / "settings.json" —— 刻意复用同一份文件。 */
 export const SETTINGS_FILE = path.join(ROOT_DIR, 'desktop', 'settings.json')

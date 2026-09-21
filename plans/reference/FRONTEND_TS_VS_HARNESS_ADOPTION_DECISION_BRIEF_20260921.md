@@ -330,3 +330,84 @@ Python312 才有 `uvicorn 0.52.1 / fastapi 0.141.1`。
 2. **是否加单实例锁**：PyQt6 允许开多个实例（第二个的后端会 bind 失败、白窗重试）。Electron 可用
    `requestSingleInstanceLock()` 消除该失效模式，但会引入与 PyQt6 的行为差异，故未擅自加。
 3. **`SeedWs.exe` 第三入口的排期**（§9.5.1）。
+
+---
+
+## 10 SeedWs 第三入口与 frozen 路径验证（2026-09-21 续）
+
+**本轮闭合了 §9.5 的 1、3、4 三项**；2、5、6 与 §9.6 的三项裁定仍在。
+
+### 10.1 闭合 §9.5.1：`SeedWs.exe` 已产出并被真实使用
+
+- 新增 `desktop/seed_ws.py`：8765 的独立进程入口，用法 `SeedWs.exe [port]`。与既有
+  `desktop/backend_worker.py` 完全同构（函数级 import、依赖 PyInstaller 的 `pathex=[ROOT]`），
+  故 `python desktop/seed_ws.py` 直接跑会 `ModuleNotFoundError: neuroplex` —— **这是预期的，
+  不是缺陷**；dev 路径走的是 `python -m neuroplex.core.websocket_server`（已由 §9.2 验证）。
+- `desktop/seed.spec` 改为**三入口**：新增 `a_ws` Analysis、把 `a_ws` 纳入 ICU 过滤循环、
+  `MERGE` 三项、`pyz_ws` / `exe_ws`、`COLLECT` 补齐 `exe_ws + a_ws.{binaries,zipfiles,datas}`。
+  PyQt6 出货路径**行为零变化**（它用进程内线程跑同一模块，不需要该入口）。
+- `scripts/release.py` 的 `_verify_artifacts` 补上 `SeedWs`（否则新入口缺失时无人报错），
+  并同步更新两处「双入口」措辞。
+- 实测（`python -m PyInstaller --clean --noconfirm desktop/seed.spec`，与 release.py 同参）：
+  三个 PYZ / 三个 PKG / 三个 EXE 全部构建成功，`COLLECT` 完成；
+  `dist/Seed/` = `Seed.exe` + `SeedBackend.exe` + `SeedWs.exe` + `_internal/`（9,293 文件，1.45 GB）。
+
+### 10.2 frozen 分支端到端验证通过
+
+先加了验证接缝（§10.3），再对着上述真实产物跑 Electron：
+
+```
+Backend worker started on port 8000 (PID: 32936)      ← "worker" = 确认走的是 frozen 分支
+Backend is ready
+WebSocket server started on port 8765 (PID: 10848)    ← SeedWs.exe
+WebSocket server ready on port 8765
+Loading frontend: http://127.0.0.1:8000/#/?taiji_client=desktop
+Frontend loaded successfully
+Window bridge self-check passed (qt.webChannelTransport + QWebChannel present)
+```
+
+全链路零告警。三条结论：frozen 分支的 `SeedBackend.exe` / `SeedWs.exe` 解析与拉起成立；
+打包后端确实托管了前端（`api/app.py::_mount_static_assets` 的 `_internal/frontend/dist`）；
+桥接自检在 frozen 下同样通过。
+
+### 10.3 新增验证接缝：`SEED_FORCE_FROZEN` / `SEED_ROOT_DIR`
+
+`SeedBackend.exe` / `SeedWs.exe` 只有 packaged 才走得到，而 electron-builder 打一次包成本很高。
+这两个环境变量允许在源码树上直接跑 frozen 分支、对真实 PyInstaller 产物做端到端验证。
+默认关闭，出货路径不受影响。
+
+**注意**：改动 `desktop-electron/src/*.ts` 后**必须先 `npm run build`** 再跑 `electron.exe`，
+否则用的是旧 `dist/`。本轮曾因此得到一个假读数（新加的环境变量看起来"没生效"），见 §10.5。
+
+### 10.4 本轮抓到的两个真 bug（都是 frozen/repeat 运行才暴露的）
+
+1. **`reapOrphanedBackend` 漏了自我排除**。`main.py` 原有 `owner == os.getpid()` 一条，移植时丢掉。
+   后果：看门狗重启时把**自己上一轮的 child** 当成「另一个客户端实例」而跳过回收，随后在同一
+   端口上再起一个后端，两个必然互相 bind 失败。日志里报出的 PID 就是自身。已修为四态判定
+   （自己 / 别人的活实例 / 孤儿 / 无可回收）。
+2. **`findBrandIcon()` 的 frozen 候选路径错**。沿用了 Electron 的 `process.resourcesPath` 概念，
+   而本项目 frozen 布局是 PyInstaller onedir，datas 在 `_internal/` 下：
+   `dist/Seed/_internal/frontend/dist/seed-taiji-network.png`。后果是**托盘被直接禁用**、
+   窗口图标缺省（日志 `Brand icon not found; tray disabled`）。已改为两套根都探测，并在落空时
+   打印候选数，使再次失败可诊断而非静默降级。
+
+### 10.5 我自己的流程错误（如实记录）
+
+首次 frozen 探针**无效**：我直接跑 `node_modules/electron/dist/electron.exe .`，绕过了
+`npm run build`，于是 `dist/` 是旧的、`SEED_FORCE_FROZEN` 根本没进产物，探针实际跑的是 dev 分支。
+这个无效探针意外暴露了 §10.4.1 那个 bug（因为 dev 分支也会走 `reapOrphanedBackend`）。
+结论：**`npm start` 的 `build && electron .` 顺序不是装饰，别绕过它。**
+
+### 10.6 更新后的未闭合清单
+
+| §9.5 项 | 状态 |
+|---|---|
+| 1 `SeedWs.exe` 缺失 | **已闭合**（§10.1） |
+| 2 frozen 路径未验证 | **已闭合**（§10.2） |
+| 3 `ELECTRON_RUN_AS_NODE` 判据 | 已记录，未闭合（环境侧事项） |
+| 4 electron 二进制需镜像补下 | 已记录，未闭合（环境侧事项） |
+| 5 UI 实际交互未验证 | **仍未验证**（按钮/拖拽/托盘菜单/关闭到托盘；日志只能证明桥已就位） |
+| 6 孤儿回收跨壳缺口 | 仍未闭合（PyQt6 不写 owner record） |
+
+`dist/`（1.45 GB）为构建产物且已被 `.gitignore` 忽略；下一次 `release.py` 会经 `clean_outputs()`
+重建它。若要回收磁盘可直接删除 `dist/` 与 `build/`。
