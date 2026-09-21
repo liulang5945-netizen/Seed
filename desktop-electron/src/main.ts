@@ -104,7 +104,14 @@ const DRAG_REGION_CSS = `
  * 两种布局都保留探测（electron-builder 打包时资源会在 resources/），并记录候选数，
  * 使再次落空时是可诊断的告警而不是静默禁用托盘。
  */
+let brandIconCache: string | null | undefined
+
 function findBrandIcon(): string | null {
+  // 结果缓存：本函数被 createWindow（setIcon）与 createTray 各调一次，且日志里的
+  // `Brand icon not found` 会随之重复。实测打包版一次启动打出 3 条同样的 WARN，
+  // 属于纯噪声。缓存后每条启动只告警一次。
+  if (brandIconCache !== undefined) return brandIconCache
+
   const relativeCandidates = FROZEN
     ? [
         path.join('frontend', 'dist', 'seed-taiji-network.png'),
@@ -128,9 +135,13 @@ function findBrandIcon(): string | null {
     relativeCandidates.map((relative) => path.join(root, relative)),
   )
   for (const candidate of candidates) {
-    if (fs.existsSync(candidate)) return candidate
+    if (fs.existsSync(candidate)) {
+      brandIconCache = candidate
+      return candidate
+    }
   }
   logger.warn(`Brand icon not found; 窗口与托盘图标将缺省。已探测 ${candidates.length} 个路径`)
+  brandIconCache = null
   return null
 }
 
@@ -331,8 +342,23 @@ function quit(): void {
 /** main.py: _check_backend + _RestartWorker —— Node 是异步的，线程类整体消失。 */
 async function checkBackend(): Promise<void> {
   if (restarting) return
-  const needBackend = !backend.isRunning()
-  const needWs = !websocket.isRunning()
+
+  // 入口缺失是永久性状况（打包产物里就没有这个文件），重试只会每 10 秒刷一遍同样的
+  // ERROR。实测于 release/win-unpacked：壳-only 的 Electron 包会无限刷错误日志。
+  // 首次已明确报过错，这里停手，并停掉定时器本身。
+  const backendMissing = backend.isArtifactMissing()
+  const wsMissing = websocket.isArtifactMissing()
+  if (backendMissing && wsMissing) {
+    if (statusTimer !== null) {
+      clearInterval(statusTimer)
+      statusTimer = null
+    }
+    logger.error('打包产物缺少 Python 侧载荷（后端与 WebSocket 入口均缺失），已停止看门狗重试。')
+    return
+  }
+
+  const needBackend = !backend.isRunning() && !backendMissing
+  const needWs = !websocket.isRunning() && !wsMissing
   if (!needBackend && !needWs) return
   restarting = true
   try {

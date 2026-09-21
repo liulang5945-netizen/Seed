@@ -83,9 +83,15 @@ export class BackendManager {
   private process: ChildProcess | null = null
   private running = false
   private logFd: number | null = null
+  /** 打包产物里根本不存在该入口 —— 永久性状况，看门狗不应反复重试刷日志。 */
+  private artifactMissing = false
 
   readonly port = Number(process.env.SEED_PORT ?? 8000)
   readonly host = BACKEND_HOST
+
+  isArtifactMissing(): boolean {
+    return this.artifactMissing
+  }
 
   isRunning(): boolean {
     return this.running && this.process !== null && this.process.exitCode === null && !this.process.killed
@@ -138,7 +144,14 @@ export class BackendManager {
   private async startFrozen(): Promise<void> {
     const worker = resolveFrozenBackend()
     if (worker === null) {
-      logger.error(`SeedBackend.exe not found under ${ROOT_DIR}`)
+      // 打包产物里没有后端入口 = 永久性状况（不是子进程崩了），置标记让看门狗别再重试。
+      // 实测于 Electron 包 release/win-unpacked：该目录只有 Electron + Seed.exe + app.asar，
+      // Python 侧载荷需另行打进包内（见简报 §11）。
+      this.artifactMissing = true
+      logger.error(
+        `SeedBackend.exe not found under ${ROOT_DIR}：当前打包产物不含后端进程入口。` +
+          '若这是 Electron 包，说明 Python 侧载荷尚未随之分发。看门狗将不再重试。',
+      )
       return
     }
 

@@ -63,6 +63,15 @@
   一个 ⇒ 两个互相 bind 失败。判据：凡「按持有者判孤儿」的逻辑，先问「持有者可能是我自己吗」。
   另：改动 `desktop-electron/src/*.ts` 后**必须先 `npm run build`**——直接跑
   `electron.exe .` 会用到旧 `dist/`，导致新加的环境变量看起来"没生效"（实测踩过）。
+- **electron-builder 打包（2026-09-21 实测）**：三个卡点都要绕 —— ①工具链下载挂死：从
+  `app-builder-lib/out/toolsets/windows.js` 读确切版本 + **官方 sha256**，手工抓取校验后放入
+  `%LOCALAPPDATA%/electron-builder/Cache/<releaseName>/`；②`unpacking default Electron
+  distribution` 死住 ⇒ 配 `electronDist: node_modules/electron/dist`；③`release/` 已存在时
+  `copying unpacked Electron` 死住（32/75 文件后零增长）⇒ 每次构建前清空 `release/`
+  （已固化为 `scripts/clean-release.mjs` 并接进 `npm run dist`）。
+  **根因未定性**（工具缺陷 vs 本机 VM 大文件 I/O 不稳），只记可复现的最短操作序列。
+  另：Electron 包默认**只含壳**，Python 侧载荷（`SeedBackend.exe`/`SeedWs.exe`/`_internal`）
+  需另行以 `extraResources` 打进包，否则装完是空壳。
 
 ## 5 当前状态与归档索引
 

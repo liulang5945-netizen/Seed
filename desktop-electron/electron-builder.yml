@@ -8,6 +8,20 @@ appId: Seed.Desktop.Shell
 productName: Seed
 copyright: Seed
 
+# 直接用 node_modules 里已解压好的 Electron 发行版，而不是让 electron-builder 自己解压。
+#
+# 实测（2026-09-21）：不设此项时构建稳定卡死在
+#   • no custom electronDist provided, unpacking default Electron distribution
+# 之后 —— release/ 全空、无任何子进程、CPU 近零，等 8 分钟无进展（换镜像/不走镜像都试过，
+# 两种配置卡在不同位置）。缓存的 electron-v44.4.3-win32-x64.zip 本身经校验完整
+# （158.2 MB / 73 条目 / zip integrity OK），且手工 sha256 校验过的三个工具链 7z
+# 补进缓存后仍卡在同一处，故排除网络与资产损坏。
+#
+# 代价与前提：要求 electron 的 dist 已存在，即 `npm install` 的 postinstall 成功下载过。
+# 本机首次 install 时该下载被静默跳过，补下方式见简报 §9.5.4。版本仍由 package.json
+# 精确钉死（electron 44.4.3），因此这里不会引入版本漂移。
+electronDist: node_modules/electron/dist
+
 directories:
   output: release
   buildResources: build

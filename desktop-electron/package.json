@@ -2,13 +2,15 @@
   "name": "seed-desktop-electron",
   "version": "1.6.0",
   "private": true,
+  "author": "Seed",
+  "license": "UNLICENSED",
   "description": "Seed 桌面客户端 —— Electron 壳（TS）。双轨期与 desktop/（PyQt6）并存，后者仍为出货路径。",
   "main": "dist/main.js",
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "start": "npm run build && electron .",
-    "dist": "npm run build && electron-builder"
+    "dist": "node scripts/clean-release.mjs && npm run build && electron-builder"
   },
   "devDependencies": {
     "@types/node": "^22",

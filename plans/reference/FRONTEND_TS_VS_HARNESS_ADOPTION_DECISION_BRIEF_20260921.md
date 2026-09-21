@@ -440,3 +440,74 @@ QtWebEngine 打出的 `Failed to create GLES3 context, fallback to GLES2` 与
 
 与本次改动无关的既有现象（仅留痕）：spec 的 datas 中 `(ROOT/"version.json", ".")` 被
 `if src.exists()` 静默跳过（`dist/Seed/_internal/version.json` 不存在），因仓库根无该文件。
+
+---
+
+## 11 Electron 打包（electron-builder）—— 首次验证（2026-09-21 续）
+
+### 11.1 结果：安装包产出了
+
+```
+cd desktop-electron
+CSC_IDENTITY_AUTO_DISCOVERY=false npm run dist      # 34 秒，rc=0
+
+release/SeedSetup-1.6.0-electron.exe            111.76 MB
+  sha256 c52c054d1d7b104871eeda59068058f0820165908351ae4175f76fe8dc37bccc
+release/SeedSetup-1.6.0-electron.exe.blockmap     0.12 MB
+release/win-unpacked/                            76 files / 385.7 MB
+```
+
+makensis 完整跑完（卸载器 + 安装器两次编译），blockmap 生成。签名跳过（本机无证书，
+`no signing info identified`），符合预期。**Electron 迁移的最后一道未验证门槛到此闭合。**
+
+### 11.2 包内容：只有壳，Python 侧载荷不在其中
+
+`release/win-unpacked/` 的实际内容是 Electron 本体 + `Seed.exe` + `resources/app.asar`；
+**`SeedBackend.exe` / `SeedWs.exe` / `_internal` / `frontend` 一个都不在**。
+因此该安装包目前**不可用**——装完只能得到一个找不到后端的空壳。
+
+这与 `electron-builder.yml` 里「前端不打进来、由 Python 后端自己托管」的既有判断一致，
+但当时只处理了 frontend，漏了后端进程本身。闭合方式：把 PyInstaller 产物
+（`SeedBackend.exe` / `SeedWs.exe` / `_internal`）作为 `extraResources` 一并分发，
+并接进 `scripts/release.py`——即 §11.6 的下一步。
+
+### 11.3 三个卡点（均已绕过；根因未定性，见 §11.4）
+
+| # | 现象 | 绕过方式 |
+|---|---|---|
+| 1 | 工具链下载挂死。不走镜像时卡在 electron 本体下载；`ELECTRON_BUILDER_BINARIES_MIRROR` 指向 npmmirror 时卡在 nsis/winCodeSign 下载（镜像对 HEAD 返回 302，而 GitHub 返回 200） | 从 `app-builder-lib/out/toolsets/windows.js` 读出确切版本与**官方 sha256**，手工抓取并校验后放入 `%LOCALAPPDATA%/electron-builder/Cache/<releaseName>/`：`nsis-3.0.4.1.7z`(1,287,512 B) / `nsis-resources-3.4.1.7z`(730,800 B) / `winCodeSign-2.6.0.7z`(5,635,384 B)，三者 sha256 全部匹配 |
+| 2 | 卡在 `• no custom electronDist provided, unpacking default Electron distribution`，`release/` 全空、无子进程、CPU 近零 | 配置 `electronDist: node_modules/electron/dist`，直接用已解压且**实测跑通过**的发行版 |
+| 3 | `release/` 已存在时卡在 `• copying unpacked Electron`，`win-unpacked` 拷到 32/75 文件后 18 秒零字节增长（两采样判定 FROZEN） | 每次构建前清空 `release/`。已固化为 `scripts/clean-release.mjs`，并接进 `npm run dist` |
+
+卡点 2 的缓存 zip 经 python `zipfile` 校验**完整**（`electron-v44.4.3-win32-x64.zip`，158.2 MB，
+73 条目，`testzip()` 通过），故排除资产损坏。
+
+### 11.4 未定性项（诚实标注）
+
+**以上三个卡点究竟是 electron-builder 的缺陷，还是本机（VMware 虚拟机，
+`vmware-vmx.exe` 内存 19 GB）的大文件 I/O 不稳定，判据不足，不作结论。**
+
+- 两次成功（30 s / 33 s / 34 s）都发生在 `release/` 不存在的状态下；
+- 但也有一次「`fs.rmSync` 删除已存在的大目录」同样挂住（`[clean-release] 已清空` 都没打出来，
+  `release/` 残留 3 文件），而用 python `shutil.rmtree` 删同一目录只用 0.7 s。
+- 因此本简报只记录「可复现的最短操作序列」，不宣称根因。若在正常机器上重跑仍复现，
+  再按工具缺陷立项。
+
+### 11.5 顺带修掉的四个降级路径缺陷（均在真实打包产物上复验）
+
+用打包出的 `release/win-unpacked/Seed.exe` 跑（它**不含** Python 载荷，正好验证降级路径）：
+
+| 缺陷 | 修前 | 修后（复验读数） |
+|---|---|---|
+| `SeedWs.exe not found` 的措辞**已过期**——仍写「请先在 desktop/seed.spec 增加第三个入口」，而那件事 §10.1 已做完 | 误导读者去查一个不存在的问题 | 改为指出真因：「当前打包产物不含 8765 的 WebSocket 入口……需把它们打进 Electron 包（接进 scripts/release.py）」 |
+| 看门狗**每 10 秒无限重试**（入口缺失是永久性状况） | 每分钟刷 4 条 ERROR，无休止 | 首次报错后置 `artifactMissing`，看门狗停手并停掉定时器：`已停止看门狗重试。` 之后**一分钟零日志** |
+| `Brand icon not found` 每次调用都告警 | 一次启动打 3 条（2 条重复 + 1 条 tray disabled） | 结果缓存后只剩 1 条 + 1 条不同来源的 `tray disabled` |
+| `SeedBackend.exe not found` 只报路径 | 无法判断是打包缺件还是子进程崩了 | 补足语义：`当前打包产物不含后端进程入口……看门狗将不再重试。` |
+
+### 11.6 仍未闭合
+
+1. **Python 侧载荷未打进 Electron 包**——这是 Electron 能否出货的唯一硬缺口（§11.2）。
+2. **`scripts/release.py` 未接 Electron 分支**——目前 Electron 打包只能手工 `npm run dist`。
+3. **安装器未做安装测试**——安装会改动用户机器（Program Files / 快捷方式 / 注册表），
+   未擅自执行。打包产物本身已验证，安装流程未验证。
+4. **UI 实际交互仍未验证**（承接 §9.5.5）。

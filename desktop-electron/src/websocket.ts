@@ -57,8 +57,14 @@ export class WebSocketManager {
   private process: ChildProcess | null = null
   private running = false
   private logFd: number | null = null
+  /** 打包产物里根本不存在该入口 —— 永久性状况，看门狗不应反复重试刷日志。 */
+  private artifactMissing = false
 
   readonly port = WS_PORT
+
+  isArtifactMissing(): boolean {
+    return this.artifactMissing
+  }
 
   isRunning(): boolean {
     return this.running && this.process !== null && this.process.exitCode === null && !this.process.killed
@@ -70,9 +76,15 @@ export class WebSocketManager {
 
     const command = FROZEN ? resolveFrozenWsWorker() : resolvePython()
     if (command === null) {
+      // 本条错误信息曾写成「请先在 desktop/seed.spec 增加第三个入口」。该入口已于
+      // 2026-09-21 补齐（SeedWs.exe 可正常构建，并已在 PyInstaller 产物的 frozen 验证中
+      // 跑通），所以现在走到这里含义不同：**分发出来的 Electron 包里不含 Python 侧载荷**。
+      // 实测于 release/win-unpacked：该目录只有 Electron + Seed.exe + app.asar。
+      this.artifactMissing = true
       logger.error(
-        'SeedWs.exe not found：打包模式下 WebSocket 服务器缺少入口。' +
-          '需在 desktop/seed.spec 增加第三个入口（seed_ws.py -> SeedWs.exe）后再启用 Electron 出货路径。',
+        `SeedWs.exe not found under ${ROOT_DIR}：当前打包产物不含 8765 的 WebSocket 入口。` +
+          '若这是 Electron 包，说明 SeedBackend.exe / SeedWs.exe / _internal 尚未随之分发；' +
+          '需把它们打进 Electron 包（接进 scripts/release.py，见简报 §11）。看门狗将不再重试。',
       )
       return
     }
