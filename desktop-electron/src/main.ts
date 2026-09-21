@@ -74,6 +74,13 @@ const websocket = new WebSocketManager()
 
 let mainWindow: BrowserWindow | null = null
 let tray: TrayType | null = null
+/**
+ * 真退出标志：quit() 与任何 app.quit() 来源（before-quit 统一置位）都会置 true，
+ * 窗口 close 拦截据此放行。没有它，close→preventDefault→hide 会把 app.quit()
+ * 的窗口关闭步骤拦死 ⇒ 托盘「退出」表现为「点了没反应」（2026-09-21 所有者实测
+ * 症状，SEED_TRAY_SMOKE=1 红跑 exit 5 复现、修复后 exit 0 闭合）。
+ */
+let quitting = false
 let settings: DesktopSettings = {}
 let frontendLoaded = false
 let statusTimer: NodeJS.Timeout | null = null
@@ -269,10 +276,10 @@ function createWindow(): BrowserWindow {
   window.on('enter-full-screen', syncWindowState)
   window.on('leave-full-screen', syncWindowState)
 
-  // main.py: closeEvent —— 关闭即最小化到托盘；无托盘时才真正退出
+  // main.py: closeEvent —— 关闭即最小化到托盘；无托盘或真退出（quitting）时放行
   window.on('close', (event) => {
     persistGeometry()
-    if (tray !== null) {
+    if (tray !== null && !quitting) {
       event.preventDefault()
       window.hide()
     }
@@ -352,6 +359,7 @@ function createTray(): void {
 }
 
 function quit(): void {
+  quitting = true
   backend.stop()
   websocket.stop()
   if (statusTimer !== null) {
@@ -451,6 +459,7 @@ app.on('window-all-closed', () => {
 })
 
 app.on('before-quit', () => {
+  quitting = true
   backend.stop()
   websocket.stop()
 })
@@ -459,3 +468,38 @@ void app.whenReady().then(bootstrap).catch((cause: unknown) => {
   logger.error('Bootstrap failed', cause)
   app.exit(1)
 })
+
+// ---- 托盘退出链路 smoke（SEED_TRAY_SMOKE=1 启用；验证用接缝，与 config.ts 的
+// SEED_FORCE_FROZEN 同风格，出货路径不受影响）。----
+// 步骤①：窗口 close —— 预期被拦截为 hide、进程存活（关闭到托盘行为）；
+// 步骤②：调用 quit() —— 预期进程在 10s 内真退出（exit 0）。
+// 红绿判据：close 拦截若无 quitting 放行，quit() 会被窗口 close→preventDefault
+// 拦死 ⇒ 进程不退出，10s 后 exit 5 —— 即「点退出没反应」的可复现红。
+if (process.env.SEED_TRAY_SMOKE === '1') {
+  void app.whenReady().then(() => {
+    setTimeout(() => {
+      if (mainWindow === null) {
+        logger.error('SMOKE-FAIL: window missing')
+        app.exit(3)
+        return
+      }
+      mainWindow.close()
+      setTimeout(() => {
+        if (mainWindow !== null && !mainWindow.isDestroyed() && mainWindow.isVisible()) {
+          logger.error('SMOKE-FAIL: window still visible after close（hide 拦截失效）')
+          app.exit(4)
+          return
+        }
+        logger.info('SMOKE-STEP1-OK: close→hide, process alive')
+        setTimeout(() => {
+          logger.info('SMOKE-STEP2: invoking quit()')
+          quit()
+          setTimeout(() => {
+            logger.error('SMOKE-FAIL: process alive 10s after quit() —— 「点退出没反应」复现')
+            app.exit(5)
+          }, 10_000)
+        }, 1_000)
+      }, 1_000)
+    }, 15_000)
+  })
+}
