@@ -33,6 +33,9 @@
 `api/` · `frontend/` · `instruments/` · `neuroplex/` · `seed/` · `seed_platform/` ·
 `taiji/` · `tests/` · `scripts/` · `desktop/` · `desktop-electron/`（src 与 package.json）
 
+### 仓库配置（tracked，不可删）
+`.github/`（CI workflow）· `.devcontainer/`（容器配置）
+
 ### B 账本与证据（tracked，不可删）
 `plans/`（**只追加**）· `docs/` · `reports/`（注意 `!reports/_gate_*.log` 白名单例外，见 R4）·
 `artifacts/` · `design/` · `eval-r5b-s1-20260830/` · `.playwright-mcp/` · `.workbuddy/`（memory 随仓库保留）
@@ -44,6 +47,10 @@
 - **不删**：`security/` —— 运行凭据在内部（文件本体已被 `**/security/*` 覆盖，见 R3）
 - **谨慎**：`checkpoints/`（实测 767 MB）—— `*.pt` 按 R3 不入库，但**产品基座在此**
 - **谨慎**：`taiji_data/` —— `seed*.spec` 打包 datas 的来源
+- **按命名族管理**：`output/` 与 `outputs/` —— 混合体：既有**有意入库**的验收证据
+  （`output/manual-r5-*/README.md`、`output/playwright/*.png`，见 R4 反向钉住），
+  又有大量按命名约定 ignore 的运行目录（`output/taiji_r2_*/`、`output/*-packaged-data/`）。
+  **不能整体 ignore，也不能整体删除**；新增运行目录必须按命名约定进 `.gitignore`（R1）。
 
 ### D 构建产物（ignored，随时可删）
 `build/` · `dist/`（PyInstaller）· `frontend/dist/`（Vite）·
@@ -58,7 +65,7 @@
 
 ### E 工具缓存与状态（ignored，随时可删）
 `.black_cache/` · `.mypy_cache/` · `.ruff_cache/` · `.npm-cache/` · `.vscode/` ·
-`__pycache__/` · `neuroplex.egg-info/` · `_libs/`
+`__pycache__/` · `neuroplex.egg-info/` · `_libs/` · `node_modules/`（各处依赖树）
 
 **两个例外不在此列**：`.codex/`（含 git worktree 副本，删它等于销毁 worktree）、
 `.local/`（opencode/copilot 会话状态）——两者在清理工具里归入「需所有者裁定」。
@@ -163,4 +170,7 @@ python scripts/clean_worktree.py --apply     # 实际删除
 ```bash
 # 5) 工作区结构：有没有不在台账里的根级目录 / 空目录
 python scripts/clean_worktree.py            # 默认 dry-run，只看不动
+
+# 6) 结构守卫（会响的门）：台账外目录即红
+CODEBUDDY_SAFE_DELETE_ENABLED=0 python -m pytest tests/test_folder_structure_guard.py -q
 ```

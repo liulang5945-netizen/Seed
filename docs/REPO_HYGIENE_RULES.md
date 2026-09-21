@@ -211,4 +211,8 @@ git ls-files | grep -Ei '(secret|salt|\.pem$|\.key$|\.pt$|audit_logs)' | grep -v
 
 # 4) 准备提交前，确认没有"在位值 == 历史 blob"
 #    守卫 R4 的最后一条已覆盖；如需手工核对见 R5 的两条命令
+
+# 5) 工作区结构（见 FOLDER_STRUCTURE_RULES.md）
+python scripts/clean_worktree.py                       # dry-run：台账外目录/空目录
+CODEBUDDY_SAFE_DELETE_ENABLED=0 python -m pytest tests/test_folder_structure_guard.py -q
 ```

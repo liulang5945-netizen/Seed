@@ -642,6 +642,24 @@ frontend-design 技能的转发，43 行，仅 LICENSE 有无之别），而本�
 1. 复现版是否足够「像」——若还差，差在哪个细节（眼大小 / 盘占比 / mesh 密度）；
 2. 星象版方向是否对——若是，下一步把它做成 `icon.ico` + 托盘/窗口图标并重建安装包。
 
+### 17.4 结构守卫落地（S5 的执行器 + 会响的门，应所有者「制定文件夹规则」要求）
+
+- 规范本体：`docs/FOLDER_STRUCTURE_RULES.md`（S1–S8），与 R 系互补（R 管内容卫生、S 管结构）。
+- 清理工具：`scripts/clean_worktree.py`，**默认 dry-run**、`--apply` 才删；豁免清单硬编码
+  （frontend/dist、desktop-electron/dist、SeedSetup-*、.m0-checkpoint-*、direct-*），
+  逐项断言 `git check-ignore`，新增 OWNER_DECISION 段（只报告永不删除）。
+- **dry-run 当场拦下一次误删**：初版清单把 `data/` 标成可删，实测 **63.5 GB**——那是 dev
+  模式的运行数据根（S6），内含训练数据。已改入 OWNER_DECISION 并订正规范 S2
+  （`data/`、`security/` 不删，`checkpoints/`、`taiji_data/` 谨慎）。
+- **结构守卫**：`tests/test_folder_structure_guard.py`（4 条）——台账的单一事实源是规范
+  文档的 S2 节（守卫解析它，不是另抄一份清单）。① 根级出现台账外目录即红，红消息给出
+  两条出路；② 反向钉住核心模块必须始终在台账；③ 命名族 ignore 规则须命中假想新目录（R1）；
+  ④ 文档本体存在且 S2 可解析。**红绿各跑一次**：造 `zzz-unknown-probe/` → 红跑精确点名；
+  移除 → 绿。`.gitignore` 补四条缺口（`/.tmp-*/`、`/.m0-checkpoint-*/`、`.mypy_cache/`、
+  `.ruff_cache/`，R4 双向校验通过）。
+- 两个待所有者输入项不变：logo 判定、托盘退不出的具体操作序列（该症状已由并行会话在
+  `cce2b0f3` 复现并修复）。
+
 ---
 
 ## 16 Logo 候选：北斗映衬神经元（应所有者要求，2026-09-21）
