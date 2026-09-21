@@ -28,6 +28,9 @@ ROOT = Path(__file__).resolve().parent.parent
 DIST_DIR = ROOT / "dist"
 BUILD_DIR = ROOT / "build"
 FRONTEND_DIST = ROOT / "frontend" / "dist"
+# Electron 壳（双轨期并行实现；见 plans/reference/FRONTEND_TS_VS_HARNESS_ADOPTION_DECISION_BRIEF_20260921.md）
+ELECTRON_DIR = ROOT / "desktop-electron"
+ELECTRON_RELEASE_DIR = ELECTRON_DIR / "release"
 
 
 def _read_version() -> str:
@@ -39,7 +42,12 @@ def _read_version() -> str:
     return m.group(1) if m else "unknown"
 
 
-def _run(cmd: list[str], cwd: Path | None = None, label: str = "") -> bool:
+def _run(
+    cmd: list[str],
+    cwd: Path | None = None,
+    label: str = "",
+    env: dict[str, str] | None = None,
+) -> bool:
     """运行子进程，实时输出。"""
     print(f"\n{'=' * 50}")
     print(f"  {label}")
@@ -50,6 +58,7 @@ def _run(cmd: list[str], cwd: Path | None = None, label: str = "") -> bool:
         cmd,
         cwd=str(cwd) if cwd else None,
         shell=(os.name == "nt"),
+        env=env,
     )
     return result.returncode == 0
 
@@ -91,8 +100,11 @@ def _verify_packaged_frontend() -> None:
     print(f"  前端一致性校验通过（源码 dist = 客户端内置 dist，共 {len(source_files)} 个文件）")
 
 
-def _verify_artifacts(expect_installer: bool) -> list[str]:
+def _verify_artifacts(expect_installer: bool, electron: bool = False) -> list[str]:
     """验证构建产物存在且大小合理。
+
+    ``electron=True`` 验证 Electron 分支产物：安装包 + ``release/win-unpacked`` 里的
+    Python 侧载荷；此时不检查 NSIS 的 SeedSetup.exe，也不做 PyQt6 特有的内置前端一致性校验。
 
     ``expect_installer`` 表达的是「本次是否真的应该产出安装包」这一事实，
     而不是命令行标志。二者不等价：makensis 缺失时 NSIS 环节被判为非致命
@@ -122,15 +134,52 @@ def _verify_artifacts(expect_installer: bool) -> list[str]:
         if size_mb < 1:
             errors.append(f"{exe_name} 大小异常: {size_mb:.1f} MB（预期 > 1 MB）")
 
-    # 内置前端一致性：把「改了前端却打出旧包」变成显式失败
-    try:
-        _verify_packaged_frontend()
-    except RuntimeError as exc:
-        errors.append(str(exc))
+    # 内置前端一致性：把「改了前端却打出旧包」变成显式失败。
+    # 这条校验比的是「源码 frontend/dist 与 PyInstaller 内置那份是否逐文件相同」，
+    # 是 PyQt6 双进程布局特有的；Electron 包的资源由 extraFiles 直接取自 dist/Seed/，
+    # 不存在两份副本，故不适用。
+    if not electron:
+        try:
+            _verify_packaged_frontend()
+        except RuntimeError as exc:
+            errors.append(str(exc))
 
-    # NSIS（installer.nsi 的 OutFile 为 ..\dist\SeedSetup.exe）
-    if expect_installer and not (DIST_DIR / "SeedSetup.exe").exists():
+    if electron:
+        errors.extend(_verify_electron_artifacts())
+    elif expect_installer and not (DIST_DIR / "SeedSetup.exe").exists():
+        # NSIS（installer.nsi 的 OutFile 为 ..\dist\SeedSetup.exe）
         errors.append("dist/SeedSetup.exe 不存在")
+
+    return errors
+
+
+def _verify_electron_artifacts() -> list[str]:
+    """Electron 分支产物校验。
+
+    重点**不是**「安装包存在」——那只能证明 electron-builder 跑完了。真正的门是
+    **Python 侧载荷确实进了包**：简报 §11.2 记录过一次壳-only 的包，装完找不到后端。
+    这条校验就是把那次缺口钉死，避免它以「构建成功」的样子再次发生。
+    """
+    errors: list[str] = []
+    version = _read_version()
+
+    installer = ELECTRON_RELEASE_DIR / f"SeedSetup-{version}-electron.exe"
+    if not installer.exists():
+        errors.append(f"desktop-electron/release/SeedSetup-{version}-electron.exe 不存在")
+    else:
+        size_mb = installer.stat().st_size / (1024 * 1024)
+        # Electron 本体已约占 200 MB 未压缩 / 约 90 MB 压缩，再加 Python 载荷。
+        if size_mb < 50:
+            errors.append(
+                f"Electron 安装包大小异常: {size_mb:.1f} MB（预期 > 50 MB，应含 Electron 本体与 Python 载荷）"
+            )
+
+    unpacked = ELECTRON_RELEASE_DIR / "win-unpacked"
+    for name in ("Seed.exe", "SeedBackend.exe", "SeedWs.exe"):
+        if not (unpacked / name).exists():
+            errors.append(f"win-unpacked/{name} 不存在（Python 侧载荷未打进 Electron 包？）")
+    if not (unpacked / "_internal").is_dir():
+        errors.append("win-unpacked/_internal 不存在（PyInstaller 依赖树未打进 Electron 包）")
 
     return errors
 
@@ -222,6 +271,33 @@ def build_pyinstaller() -> bool:
     )
 
 
+def build_electron() -> bool:
+    """electron-builder 打包（Electron 壳 + PyInstaller 产物）。
+
+    只在 --electron 模式下**替代 build_nsis()**；**PyInstaller 仍必须先跑**，因为
+    `desktop-electron/electron-builder.yml` 的 extraFiles 直接取自 `dist/Seed/`
+    （SeedBackend.exe / SeedWs.exe / _internal）—— Python 侧载荷本来就靠它产出。
+
+    双轨期纪律：本函数不触碰 PyQt6 分支的任何步骤；默认路径完全不经过它。
+    """
+    if not (ELECTRON_DIR / "node_modules").is_dir():
+        print("  WARNING: desktop-electron/node_modules 不存在，无法打包 Electron 版")
+        print("  请先执行: cd desktop-electron && npm install")
+        return False
+
+    env = dict(os.environ)
+    # 本机无代码签名证书。不显式关掉探测时 electron-builder 会去尝试签名，
+    # 表现为一条无谓的失败路径；置 false 后它明确跳过并继续。
+    env.setdefault("CSC_IDENTITY_AUTO_DISCOVERY", "false")
+
+    return _run(
+        [_npm(), "run", "dist"],
+        cwd=ELECTRON_DIR,
+        label="[5/5] electron-builder 打包",
+        env=env,
+    )
+
+
 def _find_makensis() -> str | None:
     """定位 makensis。
 
@@ -266,6 +342,11 @@ def main() -> None:
     parser.add_argument("--skip-frontend", action="store_true", help="跳过前端构建")
     parser.add_argument("--no-clean", action="store_true", help="保留旧 dist/build")
     parser.add_argument("--check-only", action="store_true", help="仅验证产物，不执行构建")
+    parser.add_argument(
+        "--electron",
+        action="store_true",
+        help="打包 Electron 版安装包（替代最后的 NSIS 步骤；PyInstaller 仍会先跑，其产物是 Electron 包的输入）",
+    )
     args = parser.parse_args()
 
     version = _read_version()
@@ -274,7 +355,11 @@ def main() -> None:
     if args.check_only:
         # 仅验证时无法得知 NSIS 是否可用，按「本机能否编译安装包」这一事实判定，
         # 与完整构建走同一套逻辑，避免两条路径对同一产物给出不同结论。
-        errors = _verify_artifacts(not args.skip_nsis and _find_makensis() is not None)
+        # Electron 模式下不涉及 NSIS，故把 installer_expected 置 False。
+        errors = _verify_artifacts(
+            not args.electron and not args.skip_nsis and _find_makensis() is not None,
+            electron=args.electron,
+        )
         if errors:
             print("\n产物验证失败:")
             for e in errors:
@@ -330,9 +415,16 @@ def main() -> None:
         print(f"\n后处理失败: {exc}")
         sys.exit(1)
 
-    # Step 5: NSIS
+    # Step 5: 安装包。默认走 NSIS（PyQt6）；--electron 走 electron-builder。
+    # 两条路径互斥，且都消费上一步的 dist/Seed/（Electron 侧作为 extraFiles 来源），
+    # 因此 PyInstaller 步骤在两种模式下都不能跳过。
     installer_expected = False
-    if not args.skip_nsis:
+    if args.electron:
+        if not build_electron():
+            print("\nelectron-builder 打包失败")
+            sys.exit(1)
+        print("  electron-builder 打包完成")
+    elif not args.skip_nsis:
         ok, installer_expected = build_nsis()
         if not ok:
             print("\nNSIS 编译失败")
@@ -342,7 +434,7 @@ def main() -> None:
 
     # Verify
     print("\n验证构建产物...")
-    errors = _verify_artifacts(installer_expected)
+    errors = _verify_artifacts(installer_expected, electron=args.electron)
     if errors:
         print("产物验证失败:")
         for e in errors:
@@ -355,6 +447,9 @@ def main() -> None:
     print(f"  Seed v{version} 构建完成")
     print(f"  输出: {DIST_DIR}")
     print(f"  总大小: {total / 1024 / 1024:.1f} MB")
+    if args.electron:
+        print(f"  Electron 输出: {ELECTRON_RELEASE_DIR}")
+        print(f"  安装包: {ELECTRON_RELEASE_DIR / f'SeedSetup-{version}-electron.exe'}")
     print(f"{'=' * 50}")
 
 

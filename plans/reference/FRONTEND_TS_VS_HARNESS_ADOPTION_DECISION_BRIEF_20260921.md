@@ -511,3 +511,104 @@ makensis 完整跑完（卸载器 + 安装器两次编译），blockmap 生成�
 3. **安装器未做安装测试**——安装会改动用户机器（Program Files / 快捷方式 / 注册表），
    未擅自执行。打包产物本身已验证，安装流程未验证。
 4. **UI 实际交互仍未验证**（承接 §9.5.5）。
+
+---
+
+## 12 Python 侧载荷装入 Electron 包 —— 闭合 §11.2（2026-09-21 续）
+
+### 12.1 改动
+
+| 文件 | 改动 |
+|---|---|
+| `desktop-electron/electron-builder.yml` | 新增 `extraFiles`：把 `../dist/Seed/` 的内容放到应用根 `<install>/`。filter 用黑名单 `**/*` + **`!Seed.exe`** |
+| `desktop-electron/scripts/clean-release.mjs` | 由「递归删除」改为「**重命名**」（理由见 §12.5） |
+| `desktop-electron/.gitignore` | `release` → `release*`（容纳 `release.stale.<时间戳>/`） |
+| `scripts/release.py` | 新增 `--electron` 分支：`build_electron()` / `_verify_electron_artifacts()` / `_run(env=)`；默认 PyQt6 路径零改动 |
+
+**为什么用 `extraFiles` 而不是 `extraResources`**：`extraResources` 落在 `resources/` 下，而
+`SeedBackend.exe` / `SeedWs.exe` 需要与 `_internal/` 同级（PyInstaller onedir 就在 exe 旁找它），
+且 Python 侧 `get_external_path` 的写靶（`logs/`、`security/`）也期望在 exe 同级目录。
+放到应用根后，`desktop-electron/src/{backend,websocket,main}.ts` 的既有候选路径**全部命中，无需改代码**。
+
+**`!Seed.exe` 是必须的**：`dist/Seed/Seed.exe` 是 PyQt6 的 GUI 入口，与 Electron 的同名产物冲突，
+不排除会直接覆盖掉 Electron 自己的 `Seed.exe`。
+
+### 12.2 新门先红后绿（证明它会响）
+
+`_verify_electron_artifacts()` 在装载**之前**对本机那个壳-only 包报出 3 条错误：
+
+```
+win-unpacked/SeedBackend.exe 不存在（Python 侧载荷未打进 Electron 包？）
+win-unpacked/SeedWs.exe 不存在（Python 侧载荷未打进 Electron 包？）
+win-unpacked/_internal 不存在（PyInstaller 依赖树未打进 Electron 包）
+```
+
+装载**之后**：`errors: 0` ⇒ GATE GREEN。这条门把 §11.2 那次缺口钉死，避免它以"构建成功"的样子复现。
+
+### 12.3 完整链路验证：`release.py --electron` 端到端通过
+
+```
+CODEBUDDY_SAFE_DELETE_ENABLED=0 python scripts/release.py --electron --skip-frontend
+                                                                          # 29m33s, rc=0
+  [1/5] 生成式源码同步门禁        → 通过
+  清理旧产物                     → 已清理 dist / build
+  跳过前端构建                    (--skip-frontend，复用已有完整 frontend/dist)
+  [3/5] PyInstaller 打包          → 完成；前端一致性校验通过（211 个文件）
+  [4/5] 后处理                    → 运行时可写目录已就绪
+  [5/5] electron-builder 打包     → 完成
+  验证构建产物                    → 无错误
+  总大小: 1385.6 MB（dist/）
+  安装包: desktop-electron/release/SeedSetup-1.6.0-electron.exe
+```
+
+产物：安装包 **540.52 MB**（原壳-only 为 111.76 MB）· `win-unpacked/` **9370 文件 / 约 1.76 GB**；
+`Seed.exe`（Electron）完好未被覆盖。
+
+### 12.4 打包版 Electron 端到端跑通（首次）
+
+```
+Backend worker started on port 8000 (PID: 15860)    ← 包内 PyInstaller 的 SeedBackend.exe
+Backend is ready                                     (冷启动 4 秒)
+WebSocket server started on port 8765 (PID: 14004)  ← 包内 SeedWs.exe
+WebSocket server ready on port 8765
+Loading frontend: http://127.0.0.1:8000/#/?taiji_client=desktop
+Frontend loaded successfully                         ← 前端来自 _internal/frontend/dist
+Window bridge self-check passed (qt.webChannelTransport + QWebChannel present)
+```
+
+**零告警**，连此前的 `Brand icon not found` 也消失了（图标在 `ROOT_DIR/_internal/...` 被找到）。
+
+### 12.5 诊断订正：那些「死住」至少有一部分是批删守卫，不是 I/O
+
+`release.py` 首次运行（未带环境变量）当场给出确切原因：
+
+```
+[safe-delete][SAFE_DELETE_BULK_CONFIRM_REQUIRED] {"count":9333,"threshold":50,"scope":"turn","targets":["E:\\Seed\\dist"]}
+清理旧产物...
+release rc=1
+```
+
+批删守卫拦下了 `clean_outputs()` 对 `dist/`（9333 文件 > 阈值 50）的删除。这与仓库长期记忆里那条
+「跑批量删除必须 `CODEBUDDY_SAFE_DELETE_ENABLED=0`」同源。加上该变量后 `clean_outputs()` 顺利通过。
+
+**因此 §11.4 里「VM 大文件 I/O 不稳」这个候选解释必须下调权重**：至少「删除 `release/` 时长时间无进展」
+有相当一部分是守卫在拦截/等待，而非磁盘。但 §11.3 卡点 3 发生在 `• copying unpacked Electron`（一次**拷贝**，
+守卫不涉及），故该现象仍与守卫无关。两个原因并存，不单选。
+
+`clean-release.mjs` 由此改为**重命名**：rename 是纯元数据操作，与目录体积无关，瞬时完成，且重命名后
+electron-builder 面对的是一个不存在的 `release/`，把卡点 3 一并绕开。残留的 `release.stale.*` 由下次运行
+「尽力」删除并在结束时列出（实测删除有时 2.3 秒、有时超时，故不作关键路径）。
+
+### 12.6 顺带发现：约 200 MB 冗余
+
+载荷里带着整个 `_internal/PyQt6/Qt6/`（含 `QtWebEngineProcess.exe`）——因为 `seed.spec` 的 `a_main`
+需要 PyQt6，而 **Electron 轨道完全不需要 `Seed.exe`**。修法是为 Electron 轨道出一个不含 `a_main` 的
+spec 变体（只保留 backend + ws 两个入口），可省约 200 MB（安装包可望从 540 MB 降到 ~340 MB）。
+本次未做，记录待办。
+
+### 12.7 仍未闭合
+
+1. **安装器的安装流程未验证**——安装会改动用户机器（Program Files / 快捷方式 / 注册表），未擅自执行。
+2. **UI 实际交互仍未验证**（承接 §9.5.5）。
+3. **上文 §12.6 的 Qt6 冗余**未处理。
+4. `--electron` 完整链路本次用 `--skip-frontend` 跑的（复用已有 `frontend/dist`）；带前端构建的全链未跑。

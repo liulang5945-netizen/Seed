@@ -35,6 +35,27 @@ files:
 # frontend/dist + SPA catch-all），所以随 SeedBackend.exe 的打包布局走，不在这里重复一份。
 # 同理 seed.spec 里那份「源码 dist 与内置 dist 必须一致」的校验，在 Electron 侧不需要。
 
+# ── Python 侧载荷 ─────────────────────────────────────────────────────────────
+# 实测教训（简报 §11.2）：不加这一段时打出的包**只有壳** —— Electron + Seed.exe +
+# resources/app.asar，SeedBackend.exe / SeedWs.exe / _internal 一个都不在，装完找不到后端。
+#
+# 用 extraFiles 而非 extraResources：extraResources 会落在 resources/ 下，而这两者需要与
+# _internal/ 同级（PyInstaller onedir 就在 exe 旁找它），且 Python 侧 get_external_path 的
+# 写靶（logs/、security/）也期望在 exe 同级目录，故放到应用根 <install>/。
+# desktop-electron/src/{backend,websocket,main}.ts 的候选路径已覆盖该布局，无需改代码。
+#
+# ⚠ `!Seed.exe` 是**必须**的：../dist/Seed/Seed.exe 是 PyQt6 的 GUI 入口，与 Electron 的同名
+#   产物冲突，不排除会直接**覆盖掉 Electron 自己的 Seed.exe**。
+#
+# 前置：本段要求 ../dist/Seed/ 已由 PyInstaller 产出。单独跑 `npm run dist` 会因源目录
+# 缺失而失败——这是有意的（失败要响）。完整流程走 `python scripts/release.py --electron`。
+extraFiles:
+  - from: ../dist/Seed
+    to: .
+    filter:
+      - "**/*"
+      - "!Seed.exe"
+
 win:
   target:
     - target: nsis

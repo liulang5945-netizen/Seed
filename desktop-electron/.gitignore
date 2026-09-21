@@ -1,4 +1,6 @@
 node_modules
 dist
-release
+# release* 而非 release：clean-release.mjs 用「重命名」绕开本机不可靠的大目录递归删除，
+# 会留下 release.stale.<时间戳>/ 这类目录
+release*
 *.log

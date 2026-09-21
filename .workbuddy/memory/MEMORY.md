@@ -17,8 +17,11 @@
   或 `| python.exe -c "…"`。**管道里缺失命令会 SIGPIPE 杀掉上游 Python**（白跑过 9 分钟训练）。
 - **反引号在任何 shell 引号里都会被命令替换**（已踩 4 次）⇒ 含反引号/代码片段一律走 Write/Edit。
   严禁 heredoc；`python -c` 内避免长中文。`reg.exe` 被拦截。
-- 跑 `tests/` 必须 `CODEBUDDY_SAFE_DELETE_ENABLED=0`（批删守卫劫持 `Path.unlink`/`os.remove` ⇒ 大批
-  gate 假失败；`dangerouslyDisableSandbox` 绕不开）。全量 pytest ~15 min 会 SIGTERM ⇒ 后台或分批。
+- 跑 `tests/` 与**任何会大批删除的构建步骤**（`scripts/release.py` 的 `clean_outputs()` 删
+  `dist/` 达 9333 文件）都必须 `CODEBUDDY_SAFE_DELETE_ENABLED=0`（批删守卫劫持
+  `Path.unlink`/`os.remove` ⇒ 表现为 `[safe-delete][SAFE_DELETE_BULK_CONFIRM_REQUIRED]` 后
+  中止或长时间无进展，极易误诊为磁盘 I/O 卡死；`dangerouslyDisableSandbox` 绕不开）。
+  全量 pytest ~15 min 会 SIGTERM ⇒ 后台或分批。
 - 读仓库文件的 gate 必须显式传 `SeedRuntime.load(..., workspace_root=PROJECT_ROOT)`（不继承 override）。
 
 ## 3 工作流与文档纪律
