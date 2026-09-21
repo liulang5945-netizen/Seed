@@ -117,14 +117,21 @@ def _verify_artifacts(expect_installer: bool, electron: bool = False) -> list[st
     if not (FRONTEND_DIST / "index.html").exists():
         errors.append("frontend/dist/index.html 不存在")
 
-    # PyInstaller 产物：seed.spec 的 COLLECT name 为 "Seed"，故落在 dist/Seed/ 下
+    # PyInstaller 产物：COLLECT name 为 "Seed"，故落在 dist/Seed/ 下
     is_win = sys.platform == "win32"
     # SeedWs 是 Electron 壳（desktop-electron/）的 8765 入口：Node 进程无法 import
     # Python 模块，必须独立子进程。PyQt6 侧用进程内守护线程跑同一模块，不需要它，
     # 故该入口对既有出货路径无影响；补齐校验是防止它静默缺失。
-    for exe_stem in ("Seed", "SeedBackend", "SeedWs"):
-        if exe_stem in ("SeedBackend", "SeedWs") and not is_win:
-            continue  # 二者均仅 Windows 双进程方案需要
+    #
+    # --electron 用的是 seed-electron.spec（两入口，无 Seed.exe）：GUI 是 Electron 自己的
+    # Seed.exe，不归 PyInstaller 产，因此这里不能要求 dist/Seed/Seed.exe 存在。
+    if electron:
+        exe_stems = ("SeedBackend", "SeedWs")
+    else:
+        exe_stems = ("Seed", "SeedBackend", "SeedWs")
+    for exe_stem in exe_stems:
+        if exe_stem != "Seed" and not is_win:
+            continue  # 仅 Windows 双进程方案需要
         exe_name = f"{exe_stem}.exe" if is_win else exe_stem
         exe_path = DIST_DIR / "Seed" / exe_name
         if not exe_path.exists():
@@ -255,8 +262,12 @@ def build_frontend() -> bool:
     )
 
 
-def build_pyinstaller() -> bool:
-    """PyInstaller 打包（三入口 Seed.exe + SeedBackend.exe + SeedWs.exe，见 desktop/seed.spec）。"""
+def build_pyinstaller(spec_name: str = "seed.spec") -> bool:
+    """PyInstaller 打包。
+
+    默认 ``seed.spec`` = 三入口（Seed.exe + SeedBackend.exe + SeedWs.exe，PyQt6 出货路径）；
+    ``--electron`` 传 ``seed-electron.spec`` = 两入口（无 Seed.exe，省约 200 MB Qt6 运行时）。
+    """
     return _run(
         [
             sys.executable,
@@ -264,10 +275,10 @@ def build_pyinstaller() -> bool:
             "PyInstaller",
             "--clean",
             "--noconfirm",
-            str(ROOT / "desktop" / "seed.spec"),
+            str(ROOT / "desktop" / spec_name),
         ],
         cwd=ROOT,
-        label="[3/5] PyInstaller 打包",
+        label=f"[3/5] PyInstaller 打包（{spec_name}）",
     )
 
 
@@ -393,8 +404,9 @@ def main() -> None:
     else:
         print("\n  跳过前端构建")
 
-    # Step 3: PyInstaller
-    if not build_pyinstaller():
+    # Step 3: PyInstaller。--electron 用两入口规格（无 Seed.exe / 无 PyQt6），
+    # GUI 由 Electron 壳自己承担，避免往包里塞约 200 MB 的 Qt6 运行时。
+    if not build_pyinstaller("seed-electron.spec" if args.electron else "seed.spec"):
         print("\nPyInstaller 打包失败")
         sys.exit(1)
     print("  PyInstaller 打包完成")

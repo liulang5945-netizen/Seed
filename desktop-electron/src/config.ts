@@ -55,10 +55,15 @@ export const ORPHAN_BACKEND_IMAGE = 'SeedBackend.exe'
 
 /**
  * main.py 在导入 PyQt6 之前设 `QTWEBENGINE_CHROMIUM_FLAGS=--disable-gpu --single-process`
- * 以规避受限桌面下的 renderer 卡死。Electron 的 Chromium 无同类冻结问题，默认不开；
- * 仍保留显式开关，便于在同样受限的机器上复现该降级。
+ * 以规避受限桌面下的 renderer 卡死。
+ *
+ * **默认值已反转（2026-09-21，所有者实测）**：本简报早先判断「Electron 的 Chromium 无同类
+ * 问题，默认保留 GPU」——实测推翻。所有者双击快捷方式启动打包版（未带任何降级开关），
+ * Vue 应用未挂载、停在占位屏且出现滚动条；带上 GPU 降级开关的多次自动化验证则全部通过。
+ * 本机是受限 VM，与 QWebEngine 当年卡死的成因同类。故现在**默认关 GPU**，
+ * `SEED_DISABLE_GPU=0` 可显式打开，便于在正常机器上对比。
  */
-export const DISABLE_GPU = process.env.SEED_DISABLE_GPU === '1'
+export const DISABLE_GPU = process.env.SEED_DISABLE_GPU !== '0'
 
 /** main.py: build_frontend_url() */
 export function buildFrontendUrl(port: number): string {

@@ -94,6 +94,17 @@ const DRAG_REGION_CSS = `
 `
 
 /**
+ * 无边框窗口不应出现滚动条。
+ *
+ * 所有者实测截图：占位屏（以及部分页面）撑出 body 滚动条，在 `transparent: true` 的
+ * 透明窗口上表现为右侧一条竖向长条，视觉上像「边上多了根柱子」。根因是页面自身
+ * `body` 有默认 margin 且内容超高。这里从壳侧统一压掉，不需要改任何 .vue。
+ */
+const NO_SCROLLBAR_CSS = `
+html, body { margin: 0; padding: 0; overflow: hidden; height: 100%; }
+`
+
+/**
  * main.py: _find_brand_icon() —— 覆盖 frozen / dev 两种布局。
  *
  * 实测订正：frozen 首次跑挂在这里，日志是 `Brand icon not found; tray disabled`。
@@ -259,6 +270,7 @@ function createWindow(): BrowserWindow {
 
   window.webContents.on('did-finish-load', () => {
     void window.webContents.insertCSS(DRAG_REGION_CSS)
+    void window.webContents.insertCSS(NO_SCROLLBAR_CSS)
     if (frontendLoaded) return
     frontendLoaded = true
     logger.info('Frontend loaded successfully')
