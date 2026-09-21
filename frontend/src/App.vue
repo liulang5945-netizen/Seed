@@ -12,12 +12,12 @@
               <!-- === Titlebar（自绘，与下方共享同一背景宿主） === -->
               <AppTitlebar :collapsed="sidebarCollapsed" @toggle-sidebar="toggleSidebar" />
 
-              <div class="app-body" :class="{ 'sidebar-collapsed': sidebarCollapsed }">
+              <div class="app-body" :class="{ 'sidebar-collapsed': sidebarCollapsed, 'dock-full': workspaceStore.isFull }">
                 <!-- === Sidebar === -->
-                <AppSidebar 
-                  :width="sidebarWidth" 
+                <AppSidebar
+                  :width="sidebarWidth"
                   :is-resizing="isResizing"
-                  @resize-start="onSidebarResizeStart" 
+                  @resize-start="onSidebarResizeStart"
                 />
 
                 <!-- === Router View === -->
@@ -26,7 +26,7 @@
                   <router-view v-else v-slot="{ Component }">
                     <transition name="route" mode="out-in">
                       <keep-alive
-                        :include="['ChatView', 'TrainingView', 'WorkspaceView', 'KBView', 'AgentConfigView', 'LifeStatusView']"
+                        :include="['ChatView', 'TrainingView', 'KBView', 'AgentConfigView', 'LifeStatusView']"
                         :max="6"
                       >
                         <component :is="Component" />
@@ -35,6 +35,9 @@
                 </router-view>
                 <ClientExtensionSlot slot-name="route" aria-label="客户端扩展" />
                 </div>
+
+                <!-- === Workspace Dock：全局侧拉 IDE（任何页面可展开；dsh 式工作区） === -->
+                <WorkspaceDock />
               </div>
 
               <div
@@ -69,10 +72,12 @@ import AppSidebar from './components/AppSidebar.vue'
 import AppTitlebar from './components/AppTitlebar.vue'
 import RouteErrorView from './components/RouteErrorView.vue'
 import ClientExtensionSlot from './components/ClientExtensionSlot.vue'
+import WorkspaceDock from './components/WorkspaceDock.vue'
 import { UploadCloud } from 'lucide-vue-next'
 import { useAppStore } from './stores/appStore.js'
 import { useChatStore } from './stores/chatStore.js'
 import { useRuntimeStore } from './stores/runtimeStore.js'
+import { useWorkspaceStore } from './stores/workspaceStore.js'
 import { useApi } from './composables/useApi.js'
 import { useWebSocket } from './composables/useWebSocket.js'
 import { useClientExtensions } from './composables/useClientExtensions.js'
@@ -83,6 +88,7 @@ import router from './router'
 const appStore = useAppStore()
 const chatStore = useChatStore()
 const runtimeStore = useRuntimeStore()
+const workspaceStore = useWorkspaceStore()
 const clientExtensions = useClientExtensions()
 const routeError = ref('')
 

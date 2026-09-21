@@ -7,6 +7,15 @@
         <div class="topbar-title">{{ chatStore.currentSessionName || '新对话' }}</div>
       </div>
       <div class="topbar-spacer"></div>
+      <button
+        class="dock-toggle"
+        :class="{ active: workspaceStore.isOpen }"
+        :aria-pressed="workspaceStore.isOpen"
+        title="IDE 工作区 (侧拉面板)"
+        @click="workspaceStore.toggle()"
+      >
+        <PanelRight :size="15" />
+      </button>
       <div class="vitals" aria-label="生命体征">
         <span v-for="v in vitalChips" :key="v.label" class="vital-chip" :title="v.label">
           <span class="vdot" :class="v.dot"></span>
@@ -40,7 +49,7 @@
           @like="likeMsg"
           @regenerate="chatStore.regenerateMessage"
         />
-        <WorkbenchTaskCard
+        <WorkbenchTimeline
           v-if="workbenchMode || workbench.interpretation.value || workbench.plan.value || workbench.execution.value"
           :interpretation="workbench.interpretation.value"
           :plan="workbench.plan.value"
@@ -78,19 +87,21 @@
 
 <script setup>
 import { computed, inject, nextTick, onMounted, ref, watch } from 'vue'
-import { Brain, Bug, GitBranch, LineChart, ScrollText, SlidersHorizontal } from 'lucide-vue-next'
+import { Brain, Bug, GitBranch, LineChart, ScrollText, SlidersHorizontal, PanelRight } from 'lucide-vue-next'
 import ChatComposer from './ChatComposer.vue'
 import ChatMessageList from './ChatMessageList.vue'
-import WorkbenchTaskCard from './WorkbenchTaskCard.vue'
+import WorkbenchTimeline from './WorkbenchTimeline.vue'
 import { nativeApi } from '@/composables/nativeApi.js'
 import { useChatStore } from '@/stores/chatStore.js'
 import { useNaturalLanguageWorkbench } from '@/composables/useNaturalLanguageWorkbench.js'
 import { useRuntimeStore } from '@/stores/runtimeStore.js'
+import { useWorkspaceStore } from '@/stores/workspaceStore.js'
 
 defineOptions({ name: 'ChatView' })
 
 const chatStore = useChatStore()
 const runtimeStore = useRuntimeStore()
+const workspaceStore = useWorkspaceStore()
 const workbench = useNaturalLanguageWorkbench()
 const toast = inject('toast', () => {})
 
@@ -282,6 +293,17 @@ onMounted(scrollToBottom)
 
 /* 生命体征芯片（顶栏右侧） */
 .vitals { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+
+/* IDE 工作区 Dock 开关（顶栏右侧，dsh 式侧拉面板入口） */
+.dock-toggle {
+  width: 32px; height: 32px; flex-shrink: 0;
+  display: inline-flex; align-items: center; justify-content: center;
+  border-radius: 8px; color: var(--muted-foreground);
+  transition: background 120ms ease, color 120ms ease;
+}
+.dock-toggle:hover { background: var(--muted); color: var(--foreground); }
+.dock-toggle.active { color: var(--primary); background: color-mix(in srgb, var(--primary) 10%, transparent); }
+.dock-toggle:focus-visible { outline: 2px solid var(--ring); outline-offset: 1px; }
 .vital-chip { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px 4px 8px; border-radius: 999px; background: var(--muted); border: 1px solid var(--border); font-size: 0.72rem; line-height: 1; color: var(--foreground); white-space: nowrap; }
 .vital-chip .vdot { width: 7px; height: 7px; border-radius: 50%; flex: none; box-shadow: 0 0 6px 0 currentColor; }
 .vital-chip .vdot.c1 { background: var(--chart-1); color: var(--chart-1); }

@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest'
 import { mount } from '@vue/test-utils'
-import WorkbenchTaskCard from '../components/WorkbenchTaskCard.vue'
+import WorkbenchTimeline from '../components/WorkbenchTimeline.vue'
 
-describe('WorkbenchTaskCard', () => {
+describe('WorkbenchTimeline', () => {
   it('shows Taiji goal intake and the honest semantic-provider boundary', () => {
-    const wrapper = mount(WorkbenchTaskCard, {
+    const wrapper = mount(WorkbenchTimeline, {
       props: {
         interpretation: {
           interpretation: { status: 'candidate' },
@@ -13,14 +13,14 @@ describe('WorkbenchTaskCard', () => {
       },
     })
 
-    expect(wrapper.text()).toContain('Taiji 目标证据')
+    expect(wrapper.text()).toContain('目标证据')
     expect(wrapper.text()).toContain('查看工作区文件')
     expect(wrapper.text()).toContain('等待语义器官')
     expect(wrapper.text()).toContain('语言器官只负责表达')
   })
 
   it('requires every returned approval before exposing execution', async () => {
-    const wrapper = mount(WorkbenchTaskCard, {
+    const wrapper = mount(WorkbenchTimeline, {
       props: {
         plan: {
           plan_id: 'plan-1',
@@ -35,18 +35,18 @@ describe('WorkbenchTaskCard', () => {
       },
     })
 
-    expect(wrapper.find('button.action-button.primary').exists()).toBe(false)
-    await wrapper.find('button.action-button.secondary').trigger('click')
+    expect(wrapper.find('button.wt-action.primary').exists()).toBe(false)
+    await wrapper.find('button.wt-action.secondary').trigger('click')
     expect(wrapper.emitted('approve')).toEqual([['request-1']])
 
     await wrapper.setProps({ approvalTokens: { 'request-1': 'token-1' } })
-    expect(wrapper.find('button.action-button.primary').exists()).toBe(true)
-    await wrapper.find('button.action-button.primary').trigger('click')
+    expect(wrapper.find('button.wt-action.primary').exists()).toBe(true)
+    await wrapper.find('button.wt-action.primary').trigger('click')
     expect(wrapper.emitted('execute')).toHaveLength(1)
   })
 
   it('distinguishes provider evidence from Taiji grounding', () => {
-    const wrapper = mount(WorkbenchTaskCard, {
+    const wrapper = mount(WorkbenchTimeline, {
       props: {
         interpretation: {
           interpretation: { status: 'resolved' },
@@ -58,9 +58,9 @@ describe('WorkbenchTaskCard', () => {
       },
     })
 
-    expect(wrapper.text()).toContain('语义步骤证据')
+    expect(wrapper.text()).toContain('语义步骤')
     expect(wrapper.text()).toContain('读取 README.md')
-    expect(wrapper.text()).toContain('等待 Taiji grounding')
+    // 有语义步骤时不再显示边界说明
     expect(wrapper.text()).not.toContain('等待语义器官')
   })
 })

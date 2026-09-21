@@ -19,7 +19,6 @@ describe('AppSidebar', () => {
       history: createMemoryHistory(),
       routes: [
         { path: '/', component: Dummy },
-        { path: '/workspace', component: Dummy },
         { path: '/agent', component: Dummy },
         { path: '/kb', component: Dummy },
         { path: '/train', component: Dummy },
@@ -45,14 +44,18 @@ describe('AppSidebar', () => {
     expect(wrapper.find('nav[aria-label="主导航"]').exists()).toBe(true)
   })
 
-  it('导航包含全部 6 个入口', async () => {
+  it('导航包含全部 5 个路由入口 + IDE 工作区 Dock 开关', async () => {
     const wrapper = await mountSidebar()
     const links = wrapper.findAll('nav a.nav-item')
-    expect(links.length).toBe(6)
+    expect(links.length).toBe(5)
     const hrefs = links.map((l) => l.attributes('href'))
-    for (const path of ['/workspace', '/agent', '/kb', '/train', '/life', '/settings']) {
+    for (const path of ['/agent', '/kb', '/train', '/life', '/settings']) {
       expect(hrefs).toContain(path)
     }
+    // IDE 工作区：dock 开关 button（不再走路由），激活态与 workspaceStore 联动
+    const dockToggle = wrapper.findAll('nav button.nav-item')
+    expect(dockToggle).toHaveLength(1)
+    expect(dockToggle[0].text()).toContain('IDE 工作区')
   })
 
   it('生命状态只保留主导航入口，不渲染重复的底部状态块', async () => {

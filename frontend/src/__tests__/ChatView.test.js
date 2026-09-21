@@ -228,6 +228,6 @@ describe('ChatView', () => {
     expect(planPayload).not.toHaveProperty('parameter_bindings')
     expect(planPayload).not.toHaveProperty('patch')
     expect(planPayload).not.toHaveProperty('action_intent')
-    expect(wrapper.find('.workbench-task-card').exists()).toBe(true)
+    expect(wrapper.find('.workbench-timeline').exists()).toBe(true)
   })
 })

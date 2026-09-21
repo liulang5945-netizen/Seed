@@ -245,10 +245,12 @@ function eventStatus(event) {
 .av-user :deep(svg) { width: 16px; height: 16px; color: var(--accent-foreground); }
 .msg-body { min-width: 0; max-width: 78%; display: flex; flex-direction: column; gap: 5px; }
 .msg-user .msg-body { align-items: flex-end; }
+/* dsh 式会话流：助手回复全宽流式（无气泡容器），用户消息浅底块靠右 */
+.msg-ai .msg-body { max-width: 100%; }
 .msg-name { font-size: 0.74rem; color: var(--muted-foreground); padding: 0 4px; }
 .bubble { padding: 12px 16px; border-radius: 18px; font-size: 0.92rem; line-height: 1.62; max-width: 100%; }
-.msg-user .bubble { background: var(--primary); color: var(--primary-foreground); border-bottom-right-radius: 6px; }
-.msg-ai .bubble { background: var(--card); border: 1px solid var(--border); color: var(--foreground); border-bottom-left-radius: 6px; }
+.msg-user .bubble { background: var(--muted); color: var(--foreground); border: 1px solid var(--border); border-bottom-right-radius: 6px; }
+.msg-ai .bubble { background: transparent; border: 0; color: var(--foreground); padding: 2px 4px; }
 .bubble p { margin: 0; }
 .bubble p + p { margin-top: 8px; }
 .bubble .lead { font-weight: 600; }
@@ -258,7 +260,7 @@ function eventStatus(event) {
 .msg-steps li::before { content: counter(step); position: absolute; left: 0; top: 1px; width: 18px; height: 18px; border-radius: 50%; background: color-mix(in srgb, var(--primary) 14%, transparent); color: var(--primary); font-size: 0.7rem; font-weight: 700; display: grid; place-items: center; }
 .msg-steps code, .bubble code { font-family: var(--font-mono); font-size: 0.82em; background: color-mix(in srgb, var(--primary) 12%, transparent); color: var(--primary); padding: 1px 6px; border-radius: 6px; }
 .msg-actions { display: flex; gap: 4px; margin-top: 4px; }
-.workbench-trace { margin-top: 8px; padding: 10px 12px; border: 1px solid var(--border); border-radius: 12px; background: color-mix(in srgb, var(--muted) 72%, transparent); }
+.workbench-trace { margin-top: 8px; padding: 10px 12px; border: 1px solid color-mix(in srgb, var(--primary) 22%, var(--border)); border-radius: 12px; background: color-mix(in srgb, var(--primary) 4%, var(--card)); }
 .workbench-trace-head { display: flex; align-items: center; gap: 7px; color: var(--foreground); font-size: 0.74rem; font-weight: 650; }
 .workbench-trace-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--chart-2); flex: none; }
 .workbench-trace-count { margin-left: auto; color: var(--muted-foreground); font-size: 0.68rem; font-weight: 500; }

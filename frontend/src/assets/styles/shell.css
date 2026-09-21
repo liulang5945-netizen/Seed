@@ -150,6 +150,17 @@ html, body {
   margin-left: 8px;
 }
 
+/* ===== 工作区 Dock：全局侧拉 IDE（WorkspaceDock.vue） =====
+   分栏档：dock 定宽（组件内联 style），router-wrapper 以 flex:1 自然收缩。
+   全宽档：router-wrapper 让位，dock 独占（体验等同原 /workspace 独立页）。 */
+.app-body.dock-full .router-wrapper {
+  display: none;
+}
+
+.app-body.dock-full .workspace-dock {
+  margin-left: 0;
+}
+
 /* ===== 侧边栏：无边框透明面板 ===== */
 .sidebar {
   width: var(--sidebar-width, 248px);

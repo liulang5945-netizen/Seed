@@ -62,6 +62,21 @@ class="session-del-btn" :aria-label="`删除会话 ${session.name}`"
 
     <!-- 导航分组 -->
     <nav class="nav-scroll" aria-label="主导航">
+      <div>
+        <div class="nav-section-label">工作台</div>
+        <!-- IDE 工作区：全局 Dock 开关（不再走路由，任何页面侧拉出工作区） -->
+        <button
+          class="nav-item nav-button"
+          :class="{ active: workspaceStore.isOpen }"
+          :aria-pressed="workspaceStore.isOpen"
+          @click="workspaceStore.toggle()"
+        >
+          <span class="nav-icon-wrap">
+            <PanelRight :size="16" aria-hidden="true" />
+          </span>
+          <span class="nav-label">IDE 工作区</span>
+        </button>
+      </div>
       <div v-for="group in navGroups" :key="group.title">
         <div class="nav-section-label">{{ group.title }}</div>
         <RouterLink
@@ -81,10 +96,11 @@ v-for="item in group.items" :key="item.path"
 <script setup>
 import { computed, ref, onMounted, onUnmounted } from 'vue'
 import { RouterLink, useRouter, useRoute } from 'vue-router'
-import { Plus, MessageSquare, X, Search, BookOpen, Zap, Cpu, Layout, Settings, Heart } from 'lucide-vue-next'
+import { Plus, MessageSquare, X, Search, BookOpen, Zap, Cpu, Settings, Heart, PanelRight } from 'lucide-vue-next'
 import { useChatStore } from '@/stores/chatStore.js'
 import { useAppStore } from '@/stores/appStore.js'
 import { useRuntimeStore } from '@/stores/runtimeStore.js'
+import { useWorkspaceStore } from '@/stores/workspaceStore.js'
 import TaijiLogo from './TaijiLogo.vue'
 
 defineProps({
@@ -97,6 +113,7 @@ defineEmits(['resize-start'])
 const chatStore = useChatStore()
 const appStore = useAppStore()
 const runtimeStore = useRuntimeStore()
+const workspaceStore = useWorkspaceStore()
 const router = useRouter()
 const route = useRoute()
 const t = (key) => appStore.t(key)
@@ -125,7 +142,6 @@ function handleNewChat() { chatStore.createNewSession(); router.push('/').catch(
 function openSession(id) { chatStore.switchSession(id); router.push('/').catch(() => {}) }
 
 const navGroups = computed(() => [
-  { title: '工作台', items: [{ path: '/workspace', icon: Layout, label: 'IDE' }] },
   { title: '能力', items: [
     { path: '/agent', icon: Cpu, label: t('capability_tools') },
     { path: '/kb', icon: BookOpen, label: t('kb_management') },
@@ -140,6 +156,15 @@ const navGroups = computed(() => [
 
 <style scoped>
 /* 组件独有样式。通用 sidebar/nav-item/session-item 等由 app.css 统一管理 */
+
+/* IDE 工作区 Dock 开关：button 形态对齐 RouterLink 的 .nav-item 视觉 */
+.nav-button {
+  width: 100%;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+}
+
 .session-name {
   display: flex; align-items: center; gap: 7px; min-width: 0; font-size: 0.85rem;
   color: var(--text-secondary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
