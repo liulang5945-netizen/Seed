@@ -250,3 +250,12 @@ report.xml
 junit*.xml
 # 2026-09-19：outputs/ 下同样存在的 junit 产物（含 hostname）
 focused-before.xml
+
+# 2026-09-21：目录结构规范（docs/FOLDER_STRUCTURE_RULES.md）落地。
+# 根级实验草稿目录按命名约定写（R1）：； 是既有
+# 实验遗留的同族目录。带前导斜杠锚定在仓库根（R2），不会波及子目录里的同名物。
+# 四者在本仓库均无 tracked 文件（R4 反向检查通过）。工具缓存两枚此前漏网，按工具名写。
+/.tmp-*/
+/.m0-checkpoint-*/
+.mypy_cache/
+.ruff_cache/
