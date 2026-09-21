@@ -315,12 +315,36 @@ function createWindow(): BrowserWindow {
         console.error('JS Error:', msg, 'at', url, ':', line);
         return false;
       };
-      setTimeout(() => {
-        const app = document.getElementById('app');
-        if (app && app.children.length === 0) {
-          document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;background:#0d1117;color:#e2e8f0;font-family:sans-serif;"><div style="text-align:center;"><h1 style="font-size:48px;margin-bottom:16px;">Seed</h1><p style="color:#94a3b8;margin-top:8px;">界面加载中，请稍候...</p></div></div>';
-        }
-      }, 3000);
+      // 首载竞态防御 + 非破坏性占位（两层）：
+      // ① 首载时 /assets/*.js 偶发被 SPA 兜底以 text/html 应答（实测：模块被拒、
+      //    Vue 不挂载，重载即恢复）——1.5s 后检查 #app，未挂载就自动重载
+      //    （sessionStorage 计数，最多 4 次、递增延迟，防无限循环）；
+      // ② 第 2 次尝试起浮一层提示，但绝不替换 body——替换会销毁 #app，把正在
+      //    慢速挂载的 Vue 应用杀死（所有者机器实测：占位屏永久停留）。
+      (function boot() {
+        setTimeout(function() {
+          const app = document.getElementById('app');
+          if (app && app.children.length > 0) {
+            try { sessionStorage.removeItem('seedBootTries'); } catch (e) {}
+            return 'mounted';
+          }
+          let tries = 0;
+          try { tries = Number(sessionStorage.getItem('seedBootTries') || 0); } catch (e) {}
+          tries += 1;
+          try { sessionStorage.setItem('seedBootTries', String(tries)); } catch (e) {}
+          if (tries <= 4) {
+            setTimeout(function() { location.reload(); }, 1200 * tries);
+          }
+          if (!document.getElementById('seed-boot-tip')) {
+            const tip = document.createElement('div');
+            tip.id = 'seed-boot-tip';
+            tip.style.cssText = 'position:fixed;inset:0;z-index:2147483647;display:flex;align-items:center;justify-content:center;background:#0d1117;color:#e2e8f0;font-family:sans-serif;';
+            tip.innerHTML = '<div style="text-align:center"><h1 style="font-size:44px;margin:0 0 12px">Seed</h1><p style="color:#94a3b8">界面加载中，请稍候…（自动重试 ' + tries + '/4）</p></div>';
+            document.body.appendChild(tip);
+          }
+          return 'boot#' + tries;
+        }, 1500);
+      })();
     `)
     syncWindowState()
   })
