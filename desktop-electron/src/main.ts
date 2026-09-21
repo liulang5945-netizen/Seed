@@ -55,7 +55,17 @@ if (FROZEN) {
 /** main.py: _set_windows_app_identity() —— 必须在任何窗口创建之前调用。 */
 app.setAppUserModelId(APP_USER_MODEL_ID)
 if (DISABLE_GPU) {
+  // 实测（2026-09-21，所有者机器）：只给 --disable-gpu 不够 —— Chromium 仍会起一个
+  // 软件合成的 GPU 进程，而在受限 VM 上它会被自身沙箱挡住，直接
+  //   FATAL: GPU process isn't usable. Goodbye.
+  // 四件套（no-sandbox + disable-gpu + disable-gpu-compositing + in-process-gpu）
+  // 是多次验证过能跑通的组合。--no-sandbox 属安全降级，但本应用只加载
+  // 127.0.0.1 的本地内容，且 PyQt6 出货版的 --single-process 本就是同级取舍。
+  // 正常机器上用 SEED_DISABLE_GPU=0 可恢复完整沙箱 + GPU。
+  app.commandLine.appendSwitch('no-sandbox')
   app.commandLine.appendSwitch('disable-gpu')
+  app.commandLine.appendSwitch('disable-gpu-compositing')
+  app.commandLine.appendSwitch('in-process-gpu')
   app.commandLine.appendSwitch('disable-webgl')
 }
 

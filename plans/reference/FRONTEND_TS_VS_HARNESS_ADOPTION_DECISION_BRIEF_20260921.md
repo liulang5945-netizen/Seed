@@ -640,6 +640,12 @@ frontend-design 技能的转发，43 行，仅 LICENSE 有无之别），而本�
    根因判定为 **GPU 默认开启**：所有者双击启动时未带任何降级开关，而本机是受限 VM，
    与 QWebEngine 当年卡死同类。**§8.2「Electron 默认保留 GPU」的判断据此反转**——
    `DISABLE_GPU` 现默认为真，`SEED_DISABLE_GPU=0` 可显式打开（正常机器上对比用）。
+   **且只给 `--disable-gpu` 不够**：实测打包版默认启动直接
+   `FATAL: GPU process isn't usable. Goodbye.`（Chromium 仍会起一个软件合成的 GPU 进程，
+   在受限 VM 上被自身沙箱挡住）。多次验证能跑通的组合是四件套：
+   `no-sandbox + disable-gpu + disable-gpu-compositing + in-process-gpu`，已固化为默认。
+   `--no-sandbox` 属安全降级，但本应用只加载 127.0.0.1 的本地内容，且 PyQt6 出货版的
+   `--single-process` 本就是同级取舍。
 2. **长条 = body 默认 margin + 内容超高**在透明窗口上撑出滚动条。壳侧注入
    `NO_SCROLLBAR_CSS`（`html, body { margin:0; overflow:hidden; height:100% }`）压掉，
    零 .vue 改动。
@@ -647,6 +653,49 @@ frontend-design 技能的转发，43 行，仅 LICENSE 有无之别），而本�
 3. **托盘退不出程序**：本轮未能复现，需要所有者补一下操作序列（是点了「退出」没反应，
    还是左键点托盘图标没有菜单/没恢复窗口）——两者走的是完全不同的代码路径
    （`quit()` vs `tray.on('click')`），定位前需要先分辨。
+
+### 16.2 Electron 专用规格落地：§12.6 闭合
+
+`desktop/seed-electron.spec`（两入口，无 `Seed.exe` / 无 PyQt6）+ `release.py --electron` 改用它 +
+`_verify_artifacts` 在 electron 模式不再要求 `dist/Seed/Seed.exe`。
+
+实测（`release.py --electron --skip-frontend`，32m09s，rc=0）：
+
+| | 之前（三入口） | 现在（两入口） |
+|---|---|---|
+| `dist` 总体积 | 1385.6 MB | **826.4 MB** |
+| 安装包 | 540.52 MB | **403.39 MB** |
+| `win-unpacked` | 9370 文件 / 1764.7 MB | 7688 文件 / 1252.2 MB |
+| `_internal/PyQt6` | 存在 | **零残留** |
+| 运行日志中的 Qt 条目 | QtWebEngineProcess 等 | 无 |
+
+PyQt6 出货路径（默认 `seed.spec`）零改动。
+
+### 16.3 GPU 降级的第二层修正（关键）
+
+只给 `--disable-gpu` **不够**：打包版默认启动直接
+`FATAL: GPU process isn't usable. Goodbye.`（Chromium 仍会起一个软件合成的 GPU 进程，
+在受限 VM 上被自身沙箱挡住）。多次验证能跑通的四件套已固化为默认：
+`no-sandbox + disable-gpu + disable-gpu-compositing + in-process-gpu`。
+
+**最终验证（CDP，最硬的一条）**：把安装版**不带任何开关**启动（完全模拟所有者双击快捷方式），
+用 `Runtime.evaluate` 直接读渲染进程 DOM：
+
+```
+CDP_CHECK: {"appChildren":1, "bodyHead":"Seed\n等待运行时\nCtrl K\n新对话\n对话\n解释 Taiji 的原始字节输..."}
+```
+
+`#app` 有子节点 = **Vue 真实挂载**，body 文本即真实应用界面（侧栏 + 历史消息）——
+占位屏问题修复。卸载后目录/快捷方式/注册表键全部移除。
+
+### 16.4 clean-release.mjs 再修正 + 一条验证方法论
+
+- 上一版在关键路径上 `fs.rmSync` 陈旧的 `release.stale.*`（~500 MB），随机挂住
+  （最快 0.2 s，最慢 22 分钟零进展，直接卡死整条 `npm run dist`）。
+  改为**只重命名当前 `release/`、绝不删除任何东西**，陈旧目录只列出，由人工或后续清理。
+- **哈希不能作为「包含某改动」的证据**：本轮两次不同构建的安装包 sha256 前缀曾完全相同，
+  用 `app.asar` 字符串 grep（`no-sandbox` / `in-process-gpu` 计数）才确认新改动是否真的进了包。
+  以后验证「改动是否进了产物」，直接 grep 产物里的特征字符串，比看哈希可靠。
 
 ---
 

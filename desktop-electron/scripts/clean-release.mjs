@@ -45,9 +45,14 @@ function staleDirs() {
     .sort()
 }
 
-for (const name of staleDirs()) {
-  bestEffortRemove(path.join(projectDir, name))
-}
+/**
+ * 只重命名当前 release/；**绝不在关键路径上删除任何东西**。
+ *
+ * 实测（2026-09-21）：在这里 `fs.rmSync` 一个 ~500 MB 的陈旧目录会随机挂住
+ * （最快 0.2 s，最慢 22 分钟零进展，直接卡死整条 `npm run dist`）。
+ * 所以旧的 release.stale.* 一律**不删、只列出**，由人工或后续任务清理；
+ * 它们已被 .gitignore 忽略，不影响仓库。
+ */
 
 if (fs.existsSync(releaseDir)) {
   const stamp = new Date().toISOString().replace(/[:.]/g, '-')
@@ -60,6 +65,6 @@ if (fs.existsSync(releaseDir)) {
 
 const leftovers = staleDirs()
 if (leftovers.length > 0) {
-  console.log(`[clean-release] 注意：以下陈旧目录未能删除，可在方便时手工清理（约 500 MB/个）:`)
+  console.log(`[clean-release] 注意：存在 ${leftovers.length} 个陈旧目录未删除（本机批量删除不可靠，不在关键路径上删）：`)
   for (const name of leftovers) console.log(`  ${name}/`)
 }
