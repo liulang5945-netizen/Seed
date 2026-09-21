@@ -537,17 +537,37 @@ Frontend loaded successfully
 Window bridge self-check passed (qt.webChannelTransport + QWebChannel present)
 ```
 
-### 13.3 卸载：**未通过（产品缺陷）**
+### 13.3 卸载：**二次执行后更正 —— 卸载没有缺陷，是第一次测错了**
 
-| 尝试 | 结果 |
-|---|---|
-| `Uninstall Seed.exe /S` | **rc=0 但什么都没删** —— 9375 文件与两个快捷方式原样保留 |
-| `Uninstall Seed.exe /S _?=E:\_seed_install_probe` | **rc=2**，仍无删除 |
-| 注册表 `HKCU / HKLM\...\CurrentVersion\Uninstall` | **找不到** Seed 的登记项 ⇒ 控制面板里也不会出现 |
+**首测读数（保留，便于对照）**：`Uninstall Seed.exe /S` → rc=0 但 9375 文件与两个快捷方式原样保留；
+加 `_?=` 形式 → rc=2 仍无删除；当时的探针在注册表里找不到登记项，据此判为「产品缺陷」。
 
-定性：**卸载流程存在缺陷**。但本次只测了**静默卸载**；交互式卸载（用户在控制面板/开始菜单
-点 Uninstall 的正常路径）未测，不能断言它同样失败。需单独定位——若连交互式也失败，
-那是出货阻断项。
+**首测的两个结论都不成立**：
+
+1. **我的安装命令把 `/D=` 路径没加引号**。`/D=E:\_seed_install_probe` 里的 `\_` 被 bash 当转义
+   吃掉了 `\`，安装器把**畸形路径** `E:_seed_install_probe` 写进了 `InstallLocation` 与
+   `UninstallString`。卸载器照这个错误路径做 `RMDir /r`，自然是无害空操作——rc=0、什么都不删。
+2. 「注册表找不到登记项」是**探针写错**。正确的探针在
+   `HKCU\Software\Microsoft\Windows\CurrentVersion\Uninstall\571056b5-…` 找到了
+   `DisplayName = Seed 1.6.0`（当时 `InstallLocation` 恰好就是那个畸形值）。
+
+**复测（路径加引号）证明卸载链路完整可用**：
+
+```
+装：SeedSetup-1.6.0-electron.exe /S /D=E:\_seed_install_probe2        # rc=0, 9371 files
+     UninstallString = "E:\_seed_install_probe2\Uninstall Seed.exe" /currentuser   ← 反斜杠在
+卸：Uninstall Seed.exe /S                                            # rc=0
+     安装目录已移除: True
+     桌面快捷方式已移除: True
+     卸载登记键已删除: True
+     残留 Seed 进程: 0
+```
+
+**结论（更正后）：安装 → 运行 → 卸载 全链通过，无产品缺陷。** 上一版 §13.3 的「产品缺陷」结论作废。
+
+**教训（已进长期记忆）**：NSIS 的 `/D=` 自定义路径在 bash 里**必须加引号**，否则 `\_` 会被当转义吃掉，
+产生一个「安装看似成功、运行也正常（文件落在了别处）、只有卸载才暴露」的登记。
+这类错误最阴险的地方就在于它不报错。
 
 ### 13.4 本机批量 I/O 第三次复现
 
@@ -558,12 +578,12 @@ Window bridge self-check passed (qt.webChannelTransport + QWebChannel present)
 **结论：凡涉及对本机大目录做批量删除/拷贝的步骤，都可能需要人工介入，不能假设它必然完成。**
 本简报多处的「清空/删除」步骤都应按此前提来读。
 
-### 13.5 探针残留（如实记录）
+### 13.5 探针残留：已全部清理
 
-- `E:\_seed_install_probe\` 残留 **4271 文件**（清理进行到一半被本机 I/O 卡住后中止）
-- 桌面 / 开始菜单的 `Seed.lnk` 仍在
-
-这两项需要手工删除；本简报不再尝试（已三次验证本机批量删除不可靠）。
+首测后 `E:\_seed_install_probe\` 曾残留 4271 文件（清理进行到一半被本机 I/O 卡住后中止）、
+桌面 / 开始菜单的 `Seed.lnk` 仍在。复测后统一清理：**目录与两个快捷方式均已删除，0.2 秒完成**
+（其中快捷方式的删除由 probe2 的卸载顺带覆盖——两次安装共用同一 `ShortcutName = Seed`）；
+注册表键也由 probe2 的卸载顺带删除（两次安装共用同一 appId 派生的 GUID）。
 
 ---
 
@@ -588,6 +608,34 @@ frontend-design 技能的转发，43 行，仅 LICENSE 有无之别），而本�
 | `web-design` | 0.110 | 布局 / 排版 / 色彩 / 间距 / 响应式的 **CSS 实现模式** —— 把"美"落到可执行的规范，与生成侧不重叠 |
 
 （`tri-frontend-design` 另含动效引擎与交互物理层，是另一个方向，本次未深查。）
+
+---
+
+## 15 桌面快捷方式图标改为四角圆润（应所有者要求，2026-09-21）
+
+### 15.1 现状确认
+
+渲染 `icon.ico` 的 256 帧并取样：**四角 alpha 全为 255（不透明）＝直角**。用户要求改为圆角。
+
+### 15.2 处理
+
+- `icon.ico` → 备份为 `icon.ico.bak`（git 里另有原件）
+- 以 256 帧为底，**4x 超采样**画圆角 alpha 遮罩（抗锯齿），半径 48px ≈ 19%（接近 Win11 应用图标比例）
+- 覆盖 alpha 后重建全部尺寸 `256/128/64/48/32/16`
+- 复核：**四角 alpha = 0**（透明＝圆角）、中心 255、六帧齐全
+- `npm run dist` 重建，使圆角图标在构建期嵌进 `Seed.exe`（快捷方式图标取自 exe 的内嵌图标）
+
+### 15.3 验证
+
+- 用 `[System.Drawing.Icon]::ExtractAssociatedIcon()` 从**安装后**的 `Seed.exe` 抽出图标渲染成 PNG，
+  目视确认四角圆润（见 §15.4 的安装步骤）
+- 注意：托盘/窗口图标走的是另一份资产 `frontend/public/seed-taiji-network.png`
+  （`findBrandIcon()` 的候选），**本次未动**；若也要圆角需单独处理。
+
+### 15.4 顺带完成：用圆角图标重做了一轮「装 → 运行 → 卸」
+
+安装（rc=0，9371 文件）→ 启动（后端/WS/前端/桥接自检全通，零告警）→ 卸载（目录、快捷方式、
+注册表键全部移除）。即 §13 的结论在圆角图标的新安装包上**复验通过**。
 
 ---
 

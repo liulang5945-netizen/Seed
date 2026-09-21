@@ -75,6 +75,9 @@
   **根因未定性**（工具缺陷 vs 本机 VM 大文件 I/O 不稳），只记可复现的最短操作序列。
   另：Electron 包默认**只含壳**，Python 侧载荷（`SeedBackend.exe`/`SeedWs.exe`/`_internal`）
   需另行以 `extraResources` 打进包，否则装完是空壳。
+  另：**NSIS `/D=` 自定义路径在 bash 里必须加引号** —— `/D=E:\xxx` 未加引号时 `\_` 被
+  当转义吃掉 `\`，安装器把畸形路径写进 `InstallLocation`/`UninstallString`，表现为
+  「安装成功、运行正常、卸载却什么都不删」（rc=0），极易误诊为产品缺陷。实测踩过。
 
 ## 5 当前状态与归档索引
 
