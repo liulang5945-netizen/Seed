@@ -411,3 +411,32 @@ Window bridge self-check passed (qt.webChannelTransport + QWebChannel present)
 
 `dist/`（1.45 GB）为构建产物且已被 `.gitignore` 忽略；下一次 `release.py` 会经 `clean_outputs()`
 重建它。若要回收磁盘可直接删除 `dist/` 与 `build/`。
+
+### 10.7 补做的回归检查：PyQt6 出货路径未被破坏
+
+我改的是**出货路径的** `desktop/seed.spec`，但 §10.1/§10.2 只跑了 `SeedBackend.exe` 与
+`SeedWs.exe`。构建成功 ≠ 运行正常，因此补跑了一次 `dist/Seed/Seed.exe`：
+
+```
+Backend worker started on port 8000 (PID: 28984)
+Child job object armed (kill-on-close)            <- Job Object 路径仍工作
+Backend is ready
+WebSocket server started in-process on port 8765  <- 进程内线程，与原设计一致
+WebSocket server ready on port 8765
+Loading frontend: http://127.0.0.1:8000/#/?taiji_client=desktop
+Page loaded: http://127.0.0.1:8000/#/?taiji_client=desktop (ok=True)
+Frontend loaded successfully
+websockets.server - connection open
+Taiji.WebSocket - 新客户端连接: ('127.0.0.1', 49542)   <- 前端 useWebSocket 已连上 8765
+```
+
+结论：三入口改造与 `release.py` 的校验补齐**未破坏 PyQt6 出货路径**——不只窗口起来，
+前端与 8765 的 WebSocket 通道也真实建立。
+
+QtWebEngine 打出的 `Failed to create GLES3 context, fallback to GLES2` 与
+`Cannot use V8 Proxy resolver in single process mode` 是受限桌面下的既有噪声
+（正对应 main.py 里 `--disable-gpu --single-process` 那段注释），不影响启动。
+硬杀后 8000/8765 全部释放、无残留 Seed 进程 —— Job Object 的 kill-on-close 语义仍然成立。
+
+与本次改动无关的既有现象（仅留痕）：spec 的 datas 中 `(ROOT/"version.json", ".")` 被
+`if src.exists()` 静默跳过（`dist/Seed/_internal/version.json` 不存在），因仓库根无该文件。
