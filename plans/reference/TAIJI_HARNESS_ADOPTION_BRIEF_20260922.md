@@ -69,4 +69,5 @@ taiji-harness/                      ← dsh fork（MIT 合规：保留上游 LIC
 - G1-3 build ✓：`pnpm run build` 通过（tsc + tsdown，客户端 263 artifacts，末尾 `✓ built`）
 - G1-4 web ✓：`pnpm dsh web --no-open` 起服（沙箱 HOME 重定向到 `E:\Seed\.dsh-sandbox-home` 绕开 `~/.dsh` 锁），3080 监听、token URL 浏览器打开 → **UI 完整渲染**（中文本地化「DSH 本地构建」：新建会话/工作区/插件/设置/模型选择器 DeepSeek-V41-Flash/composer `/`指令+`@`文件/访问模式/内测声明弹窗）。**fork 从源码跑通，G1 通过**。
 - G1-5 test 基线：延后到 G2 前单独跑（vitest 全量耗时；rename 回归对照用 build+web 已足够，test 基线数在 G2 提交前补记）。
-- **G1 结论：通过。** fork 源码 12697 文件（纯源码树，node_modules/lib/tsbuildinfo 零命中，内嵌 .gitignore 生效）落 `taiji-harness/`。
+- **G1 结论：通过。** fork 源码 12697 文件（纯源码树，node_modules/lib/tsbuildinfo 零命中，内嵌 .gitignore 生效）落 `taiji-harness/`。提交 82042a2f。
+- **检查点（2026-09-22）**：所有者选择「先停，亲自验原版 UI 再决定是否进 G2」。当前状态=G1 已过、G2 未启动、旧线（frontend/desktop-electron）未删。恢复指令：所有者跑 `npx @deepseek-ai/dsh web` 验原版，确认后由所有者点头再进 G2（rename+品牌化）。
