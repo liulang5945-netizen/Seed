@@ -365,6 +365,10 @@ def test_a_finished_arm_is_skipped_so_a_campaign_can_be_re_run(
     assert summary["status"] == "completed"
     assert summary["arms_status"] == {"B": "already_complete", "C": "already_complete"}
     assert summary["failed_arms"] == []
+    # 已经跑满的臂不是 pending：把 already_complete 算成 pending 会吐出 `--arms B,C` 这种
+    # 什么都不做的"续跑命令"（2026-09-22 实测踩到）。
+    assert summary["arms_pending"] == []
+    assert summary["resume_command"] is None
     second_session = json.loads((out_dir / "C" / "run_report.json").read_text(encoding="utf-8"))[
         "session"
     ]["session_id"]

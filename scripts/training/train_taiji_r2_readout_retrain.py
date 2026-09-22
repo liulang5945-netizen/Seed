@@ -454,8 +454,11 @@ def main() -> int:
     ok_states = ("completed", "already_complete", "stopped_by_request")
     status_by_arm = {r["arm"]: r["status"] for r in reports}
     failed = [arm for arm, state in status_by_arm.items() if state not in ok_states]
-    #: 本次请求的臂里还没跑完的（含被优雅停机打断的那个）：供"下一步"直接读，不用翻进度流。
-    pending = [arm for arm in arms if status_by_arm.get(arm) != "completed"]
+    #: 本次请求的臂里**还没跑满预算**的（含被优雅停机打断的）：供"下一步"直接读，不用翻进度流。
+    #: ``already_complete`` **不是** pending —— 它已经跑满，第一次实现把它算进去，于是
+    #: ``resume_command`` 会吐出 `--arms A,B` 这种空转命令（2026-09-22 C 臂跑完时实测踩到）。
+    done_states = ("completed", "already_complete")
+    pending = [arm for arm in arms if status_by_arm.get(arm) not in done_states]
     summary = {
         "trainer": TRAINER_NAME,
         "contract": CONTRACT,

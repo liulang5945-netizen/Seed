@@ -283,6 +283,29 @@ python scripts/training/train_taiji_r2_readout_retrain.py \
 ⇒ 慢的不在语料侧。**候选解释**：本机已知的**间歇性 I/O 卡顿**（另一线独立记录过同机文件操作
 停顿 0.2 s～22 min，且明确未定性）。**证据不足以断定**，故只登记现象与两个被排除项，不下结论。
 
+### §4.7 三臂全部跑满（2026-09-22 12:55 取证）
+
+| 臂 | status | symbols | **写入面（实测）** | wall | s/符号 | checkpoint sha256 |
+|---|---|---|---|---|---|---|
+| A | completed | 16,000,000 | `['predictive_readout']` | 11.72 h | 0.0026378 | `732e59cf…` |
+| B | completed | 16,000,000 | `['motor']` | 18.64 h | 0.0041938 | `766dfa04…` |
+| C | completed | 16,000,000 | **`[]`** | 10.87 h（跨 3 个会话）| 0.0022415（末会话）| `97cb2c08…` |
+
+- **写入面隔离三向拿齐**：A 只动读出头、B 只动运动面、C 两处都不动。
+  这是 §3 设计要隔离的那个自变量，现在**是实测而不是声明**。
+- 基底 `checkpoints/seed_beta.pt` sha256 跑前跑后未变（`base_checkpoint_unchanged: true`）。
+- `campaign_report.json`：`arms_status = {A: already_complete, B: already_complete, C: completed}`、
+  `failed_arms = []`、`status = completed`。
+- 三臂合计 **41.23 h**（§4.2③ 估 37.3 h、§4.5 估 42 h）——差额含一次 **14 min 重启损失**与一次中段外部负载扰动。
+
+**又一处我自己的缺陷（同批修，如实记账）**：`arms_pending` 把 `already_complete` 当成 pending，
+于是 C 跑完时它吐出 `resume_command = "--arms A,B …"` —— 一条**什么都不做的空转命令**。
+定义改为"**没跑满预算的**才算 pending"（`completed`/`already_complete` 都算跑满），
+并把"二次复跑后 `arms_pending == []` 且 `resume_command is None`"写进回归
+（`test_a_finished_arm_is_skipped_so_a_campaign_can_be_re_run`）。
+
+⇒ 训练侧到此结束。判决件 `reports/taiji_r2_readout_retrain_verdict_20260920.json`（M1/M2/K2）另起一节。
+
 ## §5 数值线（草案，认可后冻结；执行前不调）
 
 | 项 | 草案值 | 依据 |
