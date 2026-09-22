@@ -1,0 +1,371 @@
+{
+  "format": "taiji-r2-readout-retrain-verdict-v1",
+  "dry_run": false,
+  "contract": "plans/reference/M5_R2_READOUT_RETRAIN_CONTRACT_DRAFT_20260920.md",
+  "written_at_utc": "2026-09-22T05:01:52Z",
+  "run_dir": "E:\\Seed\\output\\taiji_r2_readout_retrain",
+  "symbols": 16000000,
+  "arm_pairing": {
+    "A": {
+      "path": "E:\\Seed\\output\\taiji_r2_readout_retrain\\A\\checkpoint.pt",
+      "trainer": "train_taiji_r2_readout_retrain",
+      "symbols_consumed": 16000000,
+      "symbols_budget": 16000000,
+      "skip_symbols": 11199800,
+      "base_checkpoint_sha256": "ad2a06465e0ef78c75aff7302a6f7a2ae11825d2f19361d9d65926006f3bf793"
+    },
+    "B": {
+      "path": "E:\\Seed\\output\\taiji_r2_readout_retrain\\B\\checkpoint.pt",
+      "trainer": "train_taiji_r2_readout_retrain",
+      "symbols_consumed": 16000000,
+      "symbols_budget": 16000000,
+      "skip_symbols": 11199800,
+      "base_checkpoint_sha256": "ad2a06465e0ef78c75aff7302a6f7a2ae11825d2f19361d9d65926006f3bf793"
+    },
+    "C": {
+      "path": "E:\\Seed\\output\\taiji_r2_readout_retrain\\C\\checkpoint.pt",
+      "trainer": "train_taiji_r2_readout_retrain",
+      "symbols_consumed": 16000000,
+      "symbols_budget": 16000000,
+      "skip_symbols": 11199800,
+      "base_checkpoint_sha256": "ad2a06465e0ef78c75aff7302a6f7a2ae11825d2f19361d9d65926006f3bf793"
+    }
+  },
+  "evaluation_material": {
+    "m1": {
+      "eval_set": "plans/manifests/cap0_eval_set_v2.json",
+      "dimensions": [
+        "B",
+        "G"
+      ],
+      "instrument": "scripts/training/diag_taiji_r2_surface_decode.py (FROZEN)",
+      "decoding": "greedy（P1 已实测为四臂最好；本件不动解码）",
+      "tasks": 43
+    },
+    "m2": {
+      "dimensions": [
+        "D",
+        "E"
+      ],
+      "instrument": "scripts/training/eval_taiji_cap0_baseline.py::run_baseline",
+      "chain": "产品链路（relax_legacy_guard 默认），与既有 CAP 报告同口径"
+    }
+  },
+  "criterion_controls": {
+    "real_pass_rate": 1.0,
+    "shuffled_fail_rate": 0.9567,
+    "real_median_nll": -6.8136,
+    "shuffled_median_nll": -8.7833,
+    "threshold": -7.8,
+    "n": 300,
+    "note": "反向对照门不过则整件拒跑；成句判据本身自 FROZEN 的 P1/P2 仪器 import，未重写"
+  },
+  "per_arm": {
+    "A": {
+      "usable": true,
+      "checkpoint": "E:\\Seed\\output\\taiji_r2_readout_retrain\\A\\checkpoint.pt",
+      "n": 43,
+      "well_formed_rate": 0.6047,
+      "flags": [
+        0,
+        1,
+        1,
+        0,
+        1,
+        1,
+        0,
+        1,
+        0,
+        1,
+        0,
+        1,
+        0,
+        1,
+        1,
+        0,
+        1,
+        1,
+        0,
+        1,
+        1,
+        1,
+        1,
+        0,
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        0,
+        1,
+        1,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1
+      ],
+      "seconds": 17.35,
+      "samples": [
+        "可在到可中个在的“的”的的有的可个可个可个可个可个可个可个可个可",
+        "可不纺现可一个可可不可不的的人可不可不的的中，古人不在现在变䯋如",
+        "如大大不的有的的的意的可中个可个可个可个可不的的的人一个双在的不"
+      ],
+      "mean_len_chars": 32.0
+    },
+    "B": {
+      "usable": true,
+      "checkpoint": "E:\\Seed\\output\\taiji_r2_readout_retrain\\B\\checkpoint.pt",
+      "n": 43,
+      "well_formed_rate": 0.3953,
+      "flags": [
+        0,
+        0,
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        1,
+        1,
+        1,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        1,
+        0,
+        0,
+        1,
+        0,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        1
+      ],
+      "seconds": 17.1,
+      "samples": [
+        "文分君，君，君，君，君，同命，合生可下氈（，合，合生古一䋸",
+        "文君刈人人一，合，王合，一一一一（戰（戈扐文先吺了漌同呑么",
+        "分吼人人一伈，合，君，君，君，君，同君君，同同，有胇合吝一下是"
+      ],
+      "mean_len_chars": 32.0
+    },
+    "C": {
+      "usable": true,
+      "checkpoint": "E:\\Seed\\output\\taiji_r2_readout_retrain\\C\\checkpoint.pt",
+      "n": 43,
+      "well_formed_rate": 0.2326,
+      "flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        1,
+        0
+      ],
+      "seconds": 15.73,
+      "samples": [
+        "我们一一丈（是文君则了了下伈（是文人人人人人五䟰文君则何家则你一",
+        "我为丈（（则为君刺人人人人人人个刑佐为个君吼䚄吼我他吼为吼吼利为",
+        "分君则人个刈（，为个君刺人人人人为人人为予有君人为，你为一䃽吰，"
+      ],
+      "mean_len_chars": 32.47
+    }
+  },
+  "judgment": {
+    "M1_n_gram_well_formed": {
+      "best_rival": "B",
+      "a_rate": 0.6047,
+      "best_rival_rate": 0.3953,
+      "delta_percentage_points": 20.94,
+      "margin_required_pp": 15.0,
+      "sign_test_a_vs_best_rival": {
+        "b": 14,
+        "c": 5,
+        "n": 19,
+        "p_two_sided": 0.063568
+      },
+      "holds": false
+    },
+    "K2_more_training_counterfactual": {
+      "preregistered_operationalisation": {
+        "delta_pp_threshold": 15.0,
+        "significance": "paired sign test p >= 0.05",
+        "registered_before_any_arm_finished": true
+      },
+      "b_minus_a_delta_pp": -20.94,
+      "sign_test_b_vs_a": {
+        "b": 5,
+        "c": 14,
+        "n": 19,
+        "p_two_sided": 0.063568
+      },
+      "B_explains_it_by_more_training": true,
+      "consequence": "判无差别 ⇒ 读出侧不得记功，M1 的改善归'更多训练'"
+    },
+    "M2_cap_d_plus_e": {
+      "per_arm": {
+        "A": {
+          "machine_scored_correct": 0,
+          "per_dimension": {
+            "D": {
+              "machine_scored_items": 16,
+              "machine_scored_correct": 0,
+              "machine_normalised": 0.0,
+              "pending_human_review_items": 4,
+              "untested_items": 0
+            },
+            "E": {
+              "machine_scored_items": 20,
+              "machine_scored_correct": 0,
+              "machine_normalised": 0.0,
+              "pending_human_review_items": 0,
+              "untested_items": 0
+            }
+          },
+          "identity": {
+            "git_head": "71fe5c6721a08cf5e13771938acbf7eacfcbf48e",
+            "checkpoint_sha256": "732e59cf5f793bc6de645114db2816d991288554221da91375d3f0d8e2be7669",
+            "eval_set_sha256": "310b6d642d3937660c1c938ce8bc1b0c5f5b6a80c647ad32a5e371923efcc5f1"
+          },
+          "chain": {
+            "relax_legacy_guard": false,
+            "constrained_decode": false
+          }
+        },
+        "B": {
+          "machine_scored_correct": 0,
+          "per_dimension": {
+            "D": {
+              "machine_scored_items": 16,
+              "machine_scored_correct": 0,
+              "machine_normalised": 0.0,
+              "pending_human_review_items": 4,
+              "untested_items": 0
+            },
+            "E": {
+              "machine_scored_items": 20,
+              "machine_scored_correct": 0,
+              "machine_normalised": 0.0,
+              "pending_human_review_items": 0,
+              "untested_items": 0
+            }
+          },
+          "identity": {
+            "git_head": "18c2063d6e5e650385c8353028fed3deb13a4576",
+            "checkpoint_sha256": "766dfa04927d774eee852b1460ff481e84753d73ac08f9ecf508b343bb7b7bae",
+            "eval_set_sha256": "310b6d642d3937660c1c938ce8bc1b0c5f5b6a80c647ad32a5e371923efcc5f1"
+          },
+          "chain": {
+            "relax_legacy_guard": false,
+            "constrained_decode": false
+          }
+        },
+        "C": {
+          "machine_scored_correct": 0,
+          "per_dimension": {
+            "D": {
+              "machine_scored_items": 16,
+              "machine_scored_correct": 0,
+              "machine_normalised": 0.0,
+              "pending_human_review_items": 4,
+              "untested_items": 0
+            },
+            "E": {
+              "machine_scored_items": 20,
+              "machine_scored_correct": 0,
+              "machine_normalised": 0.0,
+              "pending_human_review_items": 0,
+              "untested_items": 0
+            }
+          },
+          "identity": {
+            "git_head": "18c2063d6e5e650385c8353028fed3deb13a4576",
+            "checkpoint_sha256": "97cb2c084da89d514ab4cba10b74ee0ac3932bfc94cbf693ade3c23956c46107",
+            "eval_set_sha256": "310b6d642d3937660c1c938ce8bc1b0c5f5b6a80c647ad32a5e371923efcc5f1"
+          },
+          "chain": {
+            "relax_legacy_guard": false,
+            "constrained_decode": false
+          }
+        }
+      },
+      "best_rival": "B",
+      "a_machine_scored_correct": 0,
+      "best_rival_machine_scored_correct": 0,
+      "delta_items": 0,
+      "margin_required_items": 2,
+      "holds": false
+    },
+    "scope": "以未跑满预算/血缘不一致的臂为依据的判决作废；本件已在入口拒跑这类输入"
+  },
+  "claim_limits": [
+    "成句率只说明表层形态，不构成语言回答能力主张",
+    "M1 的题面集是训练前就已冻结的 cap0_eval_set_v2；未新增题面（新增属评价集 v3）",
+    "K2 的操作化阈值在**任何一臂跑完之前**登记在本文件与合同 §5.1，不随结果调整"
+  ]
+}
