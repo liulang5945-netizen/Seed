@@ -1,11 +1,11 @@
 # Seed / Taiji 长期工作记忆
 
-> 只留跨轮次仍有效的契约、纪律与判据；归档细节见 §5。整理：2026-09-20。
+> 只留跨轮次仍有效的契约/纪律/判据；细节见 §5 与 `docs/*_RULES.md`。整理 2026-09-22。
 
-## 1 架构契约（机器强制，不得放宽凑绿）
+## 1 架构契约（机器强制）
 
 - `taiji/` 自足：禁 import seed / seed_platform / neuroplex / transformers（含传递性）；AST 级强制于
-  `tests/taiji_native/test_architecture_contract.py`、`test_naming_boundary_contract.py`。
+  `tests/taiji_native/test_{architecture,naming_boundary}_contract.py`。
 - `instruments/` → taiji 单向（仅 `content_digest`）；`taiji/` 对 instruments 零引用。语义 encoder 的
   embedder 必须显式注入（fail closed）。`neuroplex/` 不得 import seed/taiji。
 - 红线：`taiji-document-embedder-v1` 的 payload 格式与 digest 锚不得变更。
@@ -14,90 +14,51 @@
 
 - Python 用 `C:/Users/23747/AppData/Local/Programs/Python/Python312/python.exe`（managed 3.13 无 torch/ruff）。
 - **bash 无 ls/cat/grep/head/tail/mkdir/rm**：文件用 Read/Write/Edit/Glob/Grep，目录/过滤用 `python -c`
-  或 `| python.exe -c "…"`。**管道里缺失命令会 SIGPIPE 杀掉上游 Python**（白跑过 9 分钟训练）。
+  或 `| python.exe -c "…"`。**管道里缺失命令会 SIGPIPE 杀掉上游 Python**。
 - **反引号在任何 shell 引号里都会被命令替换**（已踩 4 次）⇒ 含反引号/代码片段一律走 Write/Edit。
   严禁 heredoc；`python -c` 内避免长中文。`reg.exe` 被拦截。
-- 跑 `tests/` 与**任何会大批删除的构建步骤**（`scripts/release.py` 的 `clean_outputs()` 删
-  `dist/` 达 9333 文件）都必须 `CODEBUDDY_SAFE_DELETE_ENABLED=0`（批删守卫劫持
-  `Path.unlink`/`os.remove` ⇒ 表现为 `[safe-delete][SAFE_DELETE_BULK_CONFIRM_REQUIRED]` 后
-  中止或长时间无进展，极易误诊为磁盘 I/O 卡死；`dangerouslyDisableSandbox` 绕不开）。
-  全量 pytest ~15 min 会 SIGTERM ⇒ 后台或分批。
-- 读仓库文件的 gate 必须显式传 `SeedRuntime.load(..., workspace_root=PROJECT_ROOT)`（不继承 override）。
+- **跑 `tests/` 与任何大批删除的构建步骤必须 `CODEBUDDY_SAFE_DELETE_ENABLED=0`**：批删守卫劫持
+  `Path.unlink`/`os.remove` ⇒ 中止或长时间无进展，**极易误诊为磁盘 I/O 卡死**，沙箱开关绕不开。
+  全量 pytest ~15 min 会 SIGTERM。读仓库文件的 gate 必须显式传
+  `SeedRuntime.load(..., workspace_root=PROJECT_ROOT)`。
 
 ## 3 工作流与文档纪律
 
-流程：预注册 → 实现 → 门禁 → 报告 → 提交；负结果**如实落账，绝不改绿**。文档分四类：
-冻结判据/预注册**只追加**（新结论写新预注册）；冻结证据**只追加**（被覆盖则恢复归档版+另存）；
-导航/状态文档（03 的"唯一下一步"）**必须改**；原文写错**改+注明原值**。
+预注册 → 实现 → 门禁 → 报告 → 提交；负结果**如实落账，绝不改绿**。文档四类：冻结判据/预注册与
+冻结证据**只追加**（新结论写新预注册；被覆盖则恢复归档版+另存）；导航/状态文档（03 的"唯一下一步"）
+**必须改**；原文写错**改+注明原值**。
 
 - 归属证明用引用图检查；回归测试**双向钉住**；**守卫必须红/绿各跑一次证明能响**（否则是装饰）。
-- 测试改完读回全文（Edit 可能匹配错缩进而静默失效）；同一文件多处替换**必须串行**。临时探针用毕即删。
-- 链接前缀 `plans/reference/*` → `../../`、`plans/active/roadmap/*` → `../../../`；改完跑链接校验。
-- 正结果先问"相邻设置能否复现"；交互效应声明前必须做规模扫描。提交信息写 `.git/COMMIT_MSG_*` 再 `-F`。
-- ⚠️ 本仓可能有**并行会话**：审计结论标取证时刻、提交前重跑；别清理未跟踪内容。
+- 测试改完读回全文（Edit 可能匹配错缩进而静默失效）；同一文件多处替换**必须串行**。探针用毕即删。
+- 链接前缀 `plans/reference/*`→`../../`、`plans/active/roadmap/*`→`../../../`；改完跑链接校验。
+- 正结果先问"相邻设置能否复现"；交互效应声明前做规模扫描。提交信息写 `.git/COMMIT_MSG_*` 再 `-F`。
+- ⚠️ **本仓常有并行会话**：结论标取证时刻、提交前重跑 `git log`；别清理未跟踪内容。
 
 ## 4 可复用判据
 
 - **边际退化**：不同输入生成同一字节串且等于 train 众数 ⇒ 学到边际分布，前向/机制层解释全不成立。
-- **长跑/批处理**：幂等重跑要用**多臂**测试证明（单臂绿挡不住 campaign 在首个完成项中止）；
-  时刻进文件名换安全字符（`:` 在 Windows 非法）；driver 分臂记状态；**报速率报中位窗口不报累计**；
-  空窗口指标写 `null` 不写 `0.0`。
 - **预算分层**：否决只在「对照臂在该预算下已能产出非零 exact」时有效；"改动生效但两臂逐位相同"
   ⇒ 是**预算不足以表达**，不是假设被否决。
 - **抖动 vs 系统性**：1/N seeds ⇒ 抖动可放行；N/N 且机制读数退化 ⇒ 系统性不得放行。
+- **长跑/批处理**：幂等重跑要用**多臂**测试证明；时刻进文件名换安全字符（`:` 在 Windows 非法）；
+  driver 分臂记状态；**报速率报中位窗口不报累计**；空窗口指标写 `null` 不写 `0.0`。
 - **`counterfactual._run_scripted` 不能判合同合法性**：绕过 `policy_for` 的拦截。
 - **写进代码的预期值必须有可否决通路**（否则是装饰）。
-- **仓库卫生**（全文见 `docs/REPO_HYGIENE_RULES.md`，守卫 `tests/test_repo_secret_guard.py`）：
-  判泄漏比**在位值 vs 历史 blob 指纹**（≠数提交、≠看 ignore）；多路径合并查询不能逐路径归因；
-  目录规则不覆盖子文件（按命名约定通配 + 反向钉住）。历史重写用 `git clone --mirror` 镜像隔离、
-  **永不**原地做；`filter-repo` 不重写自定义 ref 与远端 `refs/pull/*`；改完重建 commit-graph
-  （旧 sha 全失效）。
-- **前端工具链（2026-09-21 实测）**：Vite / Vitest **不会**把 `./x.js` 说明符重写到 `x.ts` ⇒ 任何
-  JS→TS 改名前必须先验解析（本仓 20 处 import 会全断）。`Object.freeze` 会把属性**拓宽为
-  `string`** ⇒ 需要字符串字面量类型时表必须在 `.ts` 里用 `const` 类型参数，JS 侧做不到。
-  `npm i -D <pkg>` 不带版本会写入 `"*"`，实际解析到 `typescript@7.0.2`（原生 Go 版，`ts.factory`
-  为 `undefined`）⇒ 工具一律精确钉版本。
-- **Electron 壳（2026-09-21 实测）**：本机环境设了 `ELECTRON_RUN_AS_NODE=1` ⇒ `electron.exe
-  --version` 打印 **Node** 版本（`v24.x`）而非 `v44.x`，且 `require('electron')` 退化为返回路径
-  字符串，报 `Cannot read properties of undefined (reading 'isPackaged')`——**症状与「二进制没装」
-  极易混淆**；启动前必须 `unset`。二进制不随 `npm install` 下载，补下用
-  `ELECTRON_MIRROR=https://npmmirror.com/mirrors/electron/ node node_modules/electron/install.js`。
-  受限会话下另需 `--no-sandbox --disable-gpu --disable-gpu-compositing --in-process-gpu`。
-- **移植「进程守卫」类逻辑必查自我排除**：`main.py` 原本有 `owner == os.getpid()` 一处，
-  漏掉后看门狗重启会把**自己上一轮的 child** 误判成「另一个实例」而跳过回收，随后同端口再起
-  一个 ⇒ 两个互相 bind 失败。判据：凡「按持有者判孤儿」的逻辑，先问「持有者可能是我自己吗」。
-  另：改动 `desktop-electron/src/*.ts` 后**必须先 `npm run build`**——直接跑
-  `electron.exe .` 会用到旧 `dist/`，导致新加的环境变量看起来"没生效"（实测踩过）。
-- **electron-builder 打包（2026-09-21 实测）**：三个卡点都要绕 —— ①工具链下载挂死：从
-  `app-builder-lib/out/toolsets/windows.js` 读确切版本 + **官方 sha256**，手工抓取校验后放入
-  `%LOCALAPPDATA%/electron-builder/Cache/<releaseName>/`；②`unpacking default Electron
-  distribution` 死住 ⇒ 配 `electronDist: node_modules/electron/dist`；③`release/` 已存在时
-  `copying unpacked Electron` 死住（32/75 文件后零增长）⇒ 每次构建前清空 `release/`
-  （已固化为 `scripts/clean-release.mjs` 并接进 `npm run dist`）。
-  **根因未定性**（工具缺陷 vs 本机 VM 大文件 I/O 不稳），只记可复现的最短操作序列。
-  另：Electron 包默认**只含壳**，Python 侧载荷（`SeedBackend.exe`/`SeedWs.exe`/`_internal`）
-  需另行以 `extraResources` 打进包，否则装完是空壳。
-  另：**NSIS `/D=` 自定义路径在 bash 里必须加引号** —— `/D=E:\xxx` 未加引号时 `\_` 被
-  当转义吃掉 `\`，安装器把畸形路径写进 `InstallLocation`/`UninstallString`，表现为
-  「安装成功、运行正常、卸载却什么都不删」（rc=0），极易误诊为产品缺陷。实测踩过。
+- **仓库卫生**（全文 `docs/REPO_HYGIENE_RULES.md`）：判泄漏比**在位值 vs 历史 blob 指纹**（≠数提交、
+  ≠看 ignore）；目录规则不覆盖子文件（命名约定通配+反向钉住）。历史重写用 `git clone --mirror` 镜像
+  隔离、**永不**原地做；`filter-repo` 不重写自定义 ref 与远端 `refs/pull/*`。
+- **桌面/前端工具链与打包**（全文 `docs/DESKTOP_AUTOMATION_PITFALLS.md`）：Vite/Vitest **不**重写
+  `./x.js`→`x.ts`；`ELECTRON_RUN_AS_NODE=1` 让 `electron.exe --version` 打印 Node 版本（像"二进制没装"）；
+  NSIS `/D=` 路径在 bash 里**必须加引号**。
 
 ## 5 当前状态与归档索引
 
-- **前端 TS 地基已落地**（2026-09-21，产品侧工程支线，**不入研究主线队列**）：详见
-  `plans/reference/FRONTEND_TS_VS_HARNESS_ADOPTION_DECISION_BRIEF_20260921.md`。门禁 = `npm run
-  typecheck`（`vue-tsc`，作用域为 tsconfig include 白名单棘轮）+ `check:api-types`（生成物逐字节绑
-  `tests/snapshots/openapi_baseline.json`）+ 两个既有守卫已扩到 `.ts`。**45 个 `.vue` 未动**。
-- **Electron 壳已落地**（同简报 §9，新增 `desktop-electron/`，**未动 `desktop/`**；PyQt6 仍为出货路径）：
-  冒烟端到端通过（8000 ready → 8765 ready → frontend loaded → **桥接自检通过**），
-  `AppTitlebar.vue` 零改动。未闭合：`SeedWs.exe` 第三入口、frozen 路径、UI 交互实测。
-
-- **产品默认基座 `checkpoints/seed_beta.pt`**（16M tick，trainer=`train_seed_corpus`，来源登记 v2）；
-  DEBT-I9 未结项。H 阈值已在新底重标并冻结（绑 设备/链路/checkpoint）。**M5 限定退出已获批准**
-  （2026-09-20），**R2 语言能力是其显式排除项**。
-- **R2 执行中：受控重训语言读出**（合同 `plans/reference/M5_R2_READOUT_RETRAIN_CONTRACT_DRAFT_20260920.md`，
-  臂 A/B + 反事实 C）。所有者已批 §5 数值线与 §4 预算（N ≤ 16M/臂）；两前置已过（步骤 0 成本、
-  保存/新进程恢复）；**A/B 已跑满**（写入面实测分别为 `predictive_readout` / `motor`），**C 续跑中**；
-  判决器已就位（M1/M2/K2，判据 import 自 FROZEN 的 P1/P2 仪器）。成本/估时以合同 §4.2–4.5 为准。
+- **产品默认基座 `checkpoints/seed_beta.pt`**（16M tick，来源登记 v2）；DEBT-I9 未结项。H 阈值绑
+  `(设备,链路,checkpoint)`。**M5 限定退出已获批准**（2026-09-20），**R2 语言能力是其显式排除项**。
+- **R2 执行中：受控重训语言读出**（合同 `plans/reference/M5_R2_READOUT_RETRAIN_CONTRACT_DRAFT_20260920.md`）：
+  A/B 已跑满（写入面**实测** `predictive_readout` / `motor`），C 续跑中；判决器（M1/M2/K2）就位。
   `checkpoints/*.pt` 只读、写靶隔离。
+- **产品侧工程支线**（不入研究主线）：前端 TS 地基 + Electron 壳 + 打包链路，见
+  `plans/reference/FRONTEND_TS_VS_HARNESS_ADOPTION_DECISION_BRIEF_20260921.md`。
 - 回退备份 `E:/Seed-backup-{git,secrets}-20260919`；未确认前别跑 `git gc`/`prune`。
-  v1–v6 判停、D1–D8 结项见 `plans/reference/M5_R2_*`。
+  R2 v1–v6 判停、D1–D8 结项见同一目录。
