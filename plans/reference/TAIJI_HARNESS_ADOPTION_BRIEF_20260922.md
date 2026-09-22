@@ -71,3 +71,5 @@ taiji-harness/                      ← dsh fork（MIT 合规：保留上游 LIC
 - G1-5 test 基线：延后到 G2 前单独跑（vitest 全量耗时；rename 回归对照用 build+web 已足够，test 基线数在 G2 提交前补记）。
 - **G1 结论：通过。** fork 源码 12697 文件（纯源码树，node_modules/lib/tsbuildinfo 零命中，内嵌 .gitignore 生效）落 `taiji-harness/`。提交 82042a2f。
 - **检查点（2026-09-22）**：所有者选择「先停，亲自验原版 UI 再决定是否进 G2」。当前状态=G1 已过、G2 未启动、旧线（frontend/desktop-electron）未删。恢复指令：所有者跑 `npx @deepseek-ai/dsh web` 验原版，确认后由所有者点头再进 G2（rename+品牌化）。
+- **顺序裁决（2026-09-22，G2 启动令）**：所有者裁定「**网页端做好再做一版客户端版**」——G2/G3/G4 全部以 web 形态推进，桌面客户端（fork `apps/desktop`，Electron+内置运行时）挪到 G5 末位；届时需修 dev/package 流程的运行时下载链（nodejs.org/GitHub releases/pythonhosted 三源，本机 GitHub 通道不稳定 → 打国内镜像补丁）。验证过程中 fork 侧 Electron 二进制已就位（npmmirror 镜像 + 工作区缓存 `E:\Seed\.electron-cache`，后者为未跟踪目录）。**G2 即刻执行**。
+- **G2 完成（2026-09-22）**：scope rename @deepseek-ai/*→@taiji/*（两遍机械替换 5206+43 文件；外部 npm 包 @deepseek-ai/libreoffice-kit 为唯一合法保留，相关 155 处回修；.agents/notes 冻结档案误改已还原 HEAD）；品牌化=client locale 字典（zh/en）+web 壳 title/manifest+vite 注入+desktop 菜单/About，冒烟首页 title 实测「Taiji Harness Local Build」；WELCOME_NOTICE_VERSION→2026-09-22.1 保证新声明重弹；build+test:gui 绿。遗留：electron-builder productName（打包身份）归 G5。
