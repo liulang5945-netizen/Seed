@@ -11,24 +11,23 @@ import { LOG_DIR } from './config'
 
 export type LogLevel = 'debug' | 'info' | 'warn' | 'error'
 
-let sink: fs.WriteStream | null = null
 let sinkReady = false
 
-function ensureSink(): fs.WriteStream | null {
-  if (sinkReady) return sink
-  sinkReady = true
+/**
+ * 为什么是同步写（appendFileSync）而不是 WriteStream：app.exit(1) 这类退出路径
+ * 不会 flush 异步流——2026-09-22 frozen「显示不了界面」排查中，bootstrap 失败的
+ * error 日志随 stream 缓冲一起丢失，文件为空、死因不可查。日志频率低（每条一行），
+ * 同步追加的性能代价可忽略；换来的是「任何时刻断电/崩溃，已写的日志必然在盘上」。
+ */
+function ensureSink(): boolean {
+  if (sinkReady) return true
   try {
     fs.mkdirSync(LOG_DIR, { recursive: true })
-    sink = fs.createWriteStream(path.join(LOG_DIR, 'desktop_main.log'), { flags: 'a' })
-    sink.on('error', () => {
-      // 写日志失败不能反过来打断客户端；断开 sink 后退化为仅控制台。
-      sink = null
-    })
+    sinkReady = true
   } catch (cause) {
-    sink = null
-    writeConsole(`[SeedDesktop] 日志文件不可用，退化为仅控制台输出：${String(cause)}`)
+    writeConsole(`[SeedDesktop] 日志目录不可用，退化为仅控制台输出：${String(cause)}`)
   }
-  return sink
+  return sinkReady
 }
 
 function stamp(): string {
@@ -57,7 +56,13 @@ function writeConsole(line: string): void {
 
 export function log(level: LogLevel, message: string, detail?: unknown): void {
   const line = `${stamp()} - SeedDesktop - ${level.toUpperCase()} - ${message}${describe(detail)}`
-  ensureSink()?.write(line + '\n')
+  if (ensureSink()) {
+    try {
+      fs.appendFileSync(path.join(LOG_DIR, 'desktop_main.log'), line + '\n')
+    } catch {
+      // 单条写失败不打断客户端；下一条再试
+    }
+  }
   // main.py 保留 debug 级不进控制台；这里同样只放行 info 以上
   if (level !== 'debug') writeConsole(line)
 }

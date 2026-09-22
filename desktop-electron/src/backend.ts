@@ -190,7 +190,13 @@ export class BackendManager {
     }
   }
 
-  private async waitForReady(timeoutMs = 30_000): Promise<boolean> {
+  /**
+   * 冷启动实测（2026-09-22，所有者机器）：frozen SeedBackend（PyInstaller + torch 解包）
+   * 首次就绪可超 100 s（14:02:35 spawn → 14:04+ 才监听 8000）。原 30 s 预算会让
+   * bootstrap 误判死亡 → app.exit(1) → 窗口从未创建（「显示不了界面」）。与 spawn
+   * 硬超时（AbortSignal.timeout(120_000)，同 main.py: timeout=120）对齐为 120 s。
+   */
+  private async waitForReady(timeoutMs = 120_000): Promise<boolean> {
     const deadline = Date.now() + timeoutMs
     while (Date.now() < deadline) {
       try {
