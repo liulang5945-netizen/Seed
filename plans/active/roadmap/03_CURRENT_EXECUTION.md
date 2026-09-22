@@ -366,7 +366,7 @@ DEBT-I8 报告路径相对化（含 09-15/09-18 两份产物的成对断言）�
 
 ### 5.7 当前开发包卡片与结项历史指针
 
-当前并行线三条：M6 desktop 交付线（下方活动卡）、R2 读出重训三臂（§0 第十三/十四批，训练等待中）、M5-P5.1h（草案待批）。
+当前并行线：M6 desktop 交付线（下方活动卡）、R2 读出重训（三臂 16M 全部跑满、判决已出——M1 裕度过但显著性差一个不一致对、M2 地板效应、K2 预注册文本缺陷待所有者裁定，见 §0 第十八批）、M5-P5.1h（草案待批）。
 
 **活动卡：M6 desktop 交付线（2026-09-21 纳入计划体系；此前执行记录散于[决策简报](../../reference/FRONTEND_TS_VS_HARNESS_ADOPTION_DECISION_BRIEF_20260921.md)与当日 git 提交链 b4566be3→b73a259c，未进计划账本）。**
 
@@ -382,7 +382,7 @@ DEBT-I8 报告路径相对化（含 09-15/09-18 两份产物的成对断言）�
 | 已闭合⑥（2026-09-21 根因修复，CDP 双分支验证＋所有者打包版确认） | 窗口圆角回归（所有者报「圆角后面还是存在尖角」）：PyQt6 时代靠 `setMask(QRegion)` 窗口级物理裁切＋web_view 背景透明，Electron 无 mask 等价物，`app.css:9` 的 `html, body` 不透明方形背景从内容圆角后露出尖角。修复＝壳侧 `WINDOW_RADIUS_CSS`（html 透明 `!important` 压掉页面背景、body 承载 `var(--background)` 裁 18px＝`WINDOW_RADIUS`、`data-maximized='true'` 时归零对应 `clearMask()`），复用 `did-finish-load` 注入点，零 .vue 改动。CDP 实测：html `rgba(0,0,0,0)`＋body `18px`；置位 maximized `0px`→恢复 `18px` 双分支绿。**验证教训：`npx electron .` 跑 `dist/` 产物而 typecheck 是 `--noEmit`，改 TS 后必须先 `npm run build`——首次 CDP 读数假红（CSS 全部未生效）即因验证了旧代码** |
 | 门与验证边界 | desktop-electron 唯一门 typecheck（无 lint/测试框架，typecheck 曾以 13 真实错误证明会响）；打包 ≈30 min 属重任务，R2 重训等待期内不并行打包/重评测（负载边界）；UI 冒烟级验证可接受 |
 
-**活动卡：M6 前端 DSH 式工作区 Dock 改造（2026-09-21 立项当日实施完成）。** 所有者三裁定：全局 Dock（App 壳层）／移除 `/workspace` 独立页（面板可全宽）／布局+会话流+视觉三层全做。**实施结果**：新增 `workspaceStore`（dockMode collapsed/split/full + 宽度持久化）与 `WorkspaceDock.vue`（全局单实例常驻，承自 WorkspaceView 全量 IDE 逻辑；首帧 immediate watch 修正为 beginOpen 显式初始化）；`/workspace` 路由、侧栏旧入口、WorkspaceView.vue 及其测试删除，AppSidebar 改 Dock 开关 button、ChatView 顶栏加 PanelRight 开关；`WorkbenchTaskCard`→`WorkbenchTimeline`（dsh 式 append-only 垂直时间线，props/emits 兼容零逻辑改动替换）；视觉刷新＝助手消息去气泡全宽流式 + 用户消息浅底块 + trace 行统一时间线语言（全部走既有 CSS 变量）。**验证**：vitest 267/267 绿（含 WorkspaceDock.test 迁移 9 用例与 WorkbenchTimeline.test 3 用例）；vite build 过；CDP 实测五项——初始收起/分栏展开 560px+ide-layout+文件树/全宽 router 让位/切回分栏/收起+localStorage 持久化全绿，`.msg-ai .bubble` transparent 规则经 CSSOM 确认在产物生效。待所有者 dev/打包版人工目测 5 套主题与拖拽手感。合同：[改造方案](../../reference/M6_FRONTEND_DSH_WORKSPACE_DOCK_PLAN_20260921.md)。
+**活动卡：M6 前端 DSH 式工作区 Dock 改造（2026-09-21 立项当日实施完成）。** 所有者三裁定：全局 Dock（App 壳层）／移除 `/workspace` 独立页（面板可全宽）／布局+会话流+视觉三层全做。**实施结果**：新增 `workspaceStore`（dockMode collapsed/split/full + 宽度持久化）与 `WorkspaceDock.vue`（全局单实例常驻，承自 WorkspaceView 全量 IDE 逻辑；首帧 immediate watch 修正为 beginOpen 显式初始化）；`/workspace` 路由、侧栏旧入口、WorkspaceView.vue 及其测试删除，AppSidebar 改 Dock 开关 button、ChatView 顶栏加 PanelRight 开关；`WorkbenchTaskCard`→`WorkbenchTimeline`（dsh 式 append-only 垂直时间线，props/emits 兼容零逻辑改动替换）；视觉刷新＝助手消息去气泡全宽流式 + 用户消息浅底块 + trace 行统一时间线语言（全部走既有 CSS 变量）。**验证**：vitest 267/267 绿（含 WorkspaceDock.test 迁移 9 用例与 WorkbenchTimeline.test 3 用例）；vite build 过；CDP 实测五项——初始收起/分栏展开 560px+ide-layout+文件树/全宽 router 让位/切回分栏/收起+localStorage 持久化全绿，`.msg-ai .bubble` transparent 规则经 CSSOM 确认在产物生效。**补充验证（2026-09-22）**：主题抽查 5 套（classic/dark/teal/violet/warm）背景与主色各自隔离、dock 背景随主题（dark 下 rgb(14,17,21)）无穿透；拖拽链路实测工作（560→720→960 递增、480–960 clamp 与 localStorage 持久化生效、向左拖=加宽语义正确）；时间线规则 `.workbench-timeline` 在产物 CSS 确认存在。剩余仅手感级人工项（拖拽顺滑度、真实对话+轨迹时间线的观感），不阻塞闭合。合同：[改造方案](../../reference/M6_FRONTEND_DSH_WORKSPACE_DOCK_PLAN_20260921.md)。
 
 **活动卡：M5-P5.1h 知识内化与采用（2026-09-19 选定，草案已交付）。** 能力问题：把 P5.1g 已证明的真实语料内容因果收益（九门全过、a-gate 0.6514）推进为可通过准入的 child——独立测试、旧能力保持、admission 线可达、来源/收益分账。当前停止点：草案待用户批准；批准后先静态只读探针（无训练）预注册 admission 线，再实现门，训练预算单独审批。合同：[P5.1h 包合同草案 v1](../../reference/M5_P5_1H_ADMISSION_PACKAGE_DRAFT_20260919.md)。
 
