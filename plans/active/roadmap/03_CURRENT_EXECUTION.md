@@ -366,7 +366,7 @@ DEBT-I8 报告路径相对化（含 09-15/09-18 两份产物的成对断言）�
 
 ### 5.7 当前开发包卡片与结项历史指针
 
-当前并行线：M6 desktop 交付线（下方活动卡）、R2 读出重训（三臂 16M 全部跑满、判决已出——M1 裕度过但显著性差一个不一致对、M2 地板效应、K2 预注册文本缺陷待所有者裁定，见 §0 第十八批）、M5-P5.1h（草案待批）。
+当前并行线：**Taiji Harness 主线（dsh fork，G1 执行中，下方活动卡）**、R2 读出重训（判决已出——M1 裕度过但显著性差一个不一致对、M2 地板效应、K2 预注册文本缺陷待所有者裁定，见 §0 第十八批）、M5-P5.1h（草案待批）。M6 desktop 交付线随 Vue 前端线转入退役轨道（fork 跑通后删旧线）。
 
 **活动卡：M6 desktop 交付线（2026-09-21 纳入计划体系；此前执行记录散于[决策简报](../../reference/FRONTEND_TS_VS_HARNESS_ADOPTION_DECISION_BRIEF_20260921.md)与当日 git 提交链 b4566be3→b73a259c，未进计划账本）。**
 
@@ -382,7 +382,9 @@ DEBT-I8 报告路径相对化（含 09-15/09-18 两份产物的成对断言）�
 | 已闭合⑥（2026-09-21 根因修复，CDP 双分支验证＋所有者打包版确认） | 窗口圆角回归（所有者报「圆角后面还是存在尖角」）：PyQt6 时代靠 `setMask(QRegion)` 窗口级物理裁切＋web_view 背景透明，Electron 无 mask 等价物，`app.css:9` 的 `html, body` 不透明方形背景从内容圆角后露出尖角。修复＝壳侧 `WINDOW_RADIUS_CSS`（html 透明 `!important` 压掉页面背景、body 承载 `var(--background)` 裁 18px＝`WINDOW_RADIUS`、`data-maximized='true'` 时归零对应 `clearMask()`），复用 `did-finish-load` 注入点，零 .vue 改动。CDP 实测：html `rgba(0,0,0,0)`＋body `18px`；置位 maximized `0px`→恢复 `18px` 双分支绿。**验证教训：`npx electron .` 跑 `dist/` 产物而 typecheck 是 `--noEmit`，改 TS 后必须先 `npm run build`——首次 CDP 读数假红（CSS 全部未生效）即因验证了旧代码** |
 | 门与验证边界 | desktop-electron 唯一门 typecheck（无 lint/测试框架，typecheck 曾以 13 真实错误证明会响）；打包 ≈30 min 属重任务，R2 重训等待期内不并行打包/重评测（负载边界）；UI 冒烟级验证可接受 |
 
-**活动卡：M6 前端 DSH 式工作区 Dock 改造——v2 裁决变更（2026-09-22 所有者反馈，当日实施）。** 所有者实测后三点：①挤压变形（根因＝视口 786px < Dock 560+侧栏 248，且 IDE 三栏塞 560px 面板必然溢出）；②**「IDE 和侧边展开是重复设计」——推翻 v1 的「移除 /workspace」裁定，改为照主流（Claude Artifacts）抄**；③工作流改为「浏览器先看效果再封装」。**v2 实施**：侧面板改 `ArtifactsPanel`（工件视图：对话代码块「⛶ 面板打开」注入 `artifactStore`，预览=iframe sandbox 渲染 HTML / 代码=高亮只读，宽度自适应 `clamp(420px,44vw,760px)` 无文件树无属性栏）；`/workspace` 独立 IDE 页从 git 历史恢复（keep-alive 语义原样）；侧栏恢复路由入口；工作台轨迹时间线（v1 交付）保留。**遗留**：其他盘安装加固（frozen 可写路径 logs/data/checkpoints 迁 userData 或 fallback）记技术债待做。合同：[改造方案](../../reference/M6_FRONTEND_DSH_WORKSPACE_DOCK_PLAN_20260921.md)。
+**活动卡：Taiji Harness（dsh 整仓 fork）——当前前端/产品主线（2026-09-22 九项裁决闭合立项）。** 所有者逐项问答裁定：整仓 fork 自主迭代／dsh 前端为主+Taiji 风格／Taiji runtime=模型（纯硬接，失败即读数）／本仓 `taiji-harness/`／fork 跑通后删 `frontend/`+`desktop-electron/`／生命系统=侧栏面板+上下文注入（含训练/知识）／`@taiji/*` scope／沿用太极图标。里程碑 G1 fork 健康→G2 rename 品牌→G3 Taiji provider（此后删旧线）→G4 生命系统→G5 交付。合同：[立项决策简报](../../reference/TAIJI_HARNESS_ADOPTION_BRIEF_20260922.md)。
+
+**已作废：M6 前端 DSH 式工作区 Dock 改造 v1/v2（2026-09-21/22）。** v1（全局 Dock 塞 IDE）被所有者实测判「重复设计+挤压变形」，v2（Artifacts 工件面板）仍不满意，最终裁决转向：不改造自研 UI，直接 fork dsh 本体（见上卡）。v1/v2 代码随 G3 后的旧线删除一并退役；轨迹时间线/工件面板的交互结论已作为「dsh 已有更优实现」的认知输入。原合同：[改造方案](../../reference/M6_FRONTEND_DSH_WORKSPACE_DOCK_PLAN_20260921.md)。
 
 **活动卡：M5-P5.1h 知识内化与采用（2026-09-19 选定，草案已交付）。** 能力问题：把 P5.1g 已证明的真实语料内容因果收益（九门全过、a-gate 0.6514）推进为可通过准入的 child——独立测试、旧能力保持、admission 线可达、来源/收益分账。当前停止点：草案待用户批准；批准后先静态只读探针（无训练）预注册 admission 线，再实现门，训练预算单独审批。合同：[P5.1h 包合同草案 v1](../../reference/M5_P5_1H_ADMISSION_PACKAGE_DRAFT_20260919.md)。
 
