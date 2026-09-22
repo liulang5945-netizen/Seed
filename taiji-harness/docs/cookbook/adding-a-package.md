@@ -2,7 +2,7 @@
 
 English | [中文](adding-a-package.zh.md)
 
-The file-by-file checklist for a new `@deepseek-ai/dsh-<name>` package. This checklist is validated against the bash and adapter packages as templates; if it drifts from them, fix it here.
+The file-by-file checklist for a new `@taiji/dsh-<name>` package. This checklist is validated against the bash and adapter packages as templates; if it drifts from them, fix it here.
 
 ## 1. Create the package
 
@@ -24,7 +24,7 @@ packages/<group>/<pkg>/
 
 Choose an existing group when one matches the package's role (`core`, `llm`, `shell`, `compaction`, `subagent`, `todo`, `session`, `client`/`host`, `util`, or `test-support`). A new group is allowed, but it is a pure container: no `package.json`, no source files, and packages still sit exactly one level below it.
 
-package.json invariants (enforced by `pnpm run constraints` / `scripts/check-workspace-constraints.ts`): `private: true`, a `version` matching the root `package.json`, `type: module`, `main: "lib/index.js"`, `types: "lib/types/index.d.ts"`, `exports["."].types: "./lib/types/index.d.ts"`, `exports["."].default: "./lib/index.js"`, `@deepseek-ai/cordis` in BOTH peerDependencies and devDependencies (same range). Mirror every dsh peer dependency in devDependencies. `@deepseek-ai/schemastery` goes in `dependencies` (it is a runtime validator), matching agent-loop. The `files` list contains exactly `lib/index.js`, `lib/types/**/*.d.ts`, and package-specific runtime artifacts recognized by the gate; a package that publishes `./invariant` also includes `lib/invariant.js`. A package whose runtime export points into the emitted tree also includes `lib/types/**/*.js`. Do not publish `src`, declaration maps, JS maps, or stale root declaration files. CLI app packages with a package `bin` include `lib/bin.js` immediately after `lib/index.js` in `files`.
+package.json invariants (enforced by `pnpm run constraints` / `scripts/check-workspace-constraints.ts`): `private: true`, a `version` matching the root `package.json`, `type: module`, `main: "lib/index.js"`, `types: "lib/types/index.d.ts"`, `exports["."].types: "./lib/types/index.d.ts"`, `exports["."].default: "./lib/index.js"`, `@taiji/cordis` in BOTH peerDependencies and devDependencies (same range). Mirror every dsh peer dependency in devDependencies. `@taiji/schemastery` goes in `dependencies` (it is a runtime validator), matching agent-loop. The `files` list contains exactly `lib/index.js`, `lib/types/**/*.d.ts`, and package-specific runtime artifacts recognized by the gate; a package that publishes `./invariant` also includes `lib/invariant.js`. A package whose runtime export points into the emitted tree also includes `lib/types/**/*.js`. Do not publish `src`, declaration maps, JS maps, or stale root declaration files. CLI app packages with a package `bin` include `lib/bin.js` immediately after `lib/index.js` in `files`.
 
 In-package relative imports use explicit `.ts` specifiers in source (for example, `export * from './types.ts'`). The compiler rewrites those to `.js` in emitted JS and leaves explicit `.ts` specifiers in declarations, which standard NodeNext/Node16 TypeScript consumers resolve to the sibling `.d.ts` files.
 
@@ -32,7 +32,7 @@ In-package relative imports use explicit `.ts` specifiers in source (for example
 
 | File | Change |
 |---|---|
-| `tsconfig.base.json` | no edit for an existing group; for a new group, add a `./packages/<group>/*/src` candidate to the `@deepseek-ai/dsh-*` wildcard |
+| `tsconfig.base.json` | no edit for an existing group; for a new group, add a `./packages/<group>/*/src` candidate to the `@taiji/dsh-*` wildcard |
 | `tsconfig.host.json` (Host package) or `tsconfig.client.json` (Client package) | add `{ "path": "./packages/<group>/<pkg>" }` to `references` — an ordinary package belongs to exactly one aggregate, never both. `api/remotes` uses a repository-specific split because the Host generates a contract that the Client consumes in a later phase; new packages must not copy it ([layout](../development.md#typescript-project-layout)) |
 
 A `packages/client/*` package additionally extends `tsconfig.base.client.json` instead of `tsconfig.base.json`, and a client plugin package declares `dsh.client` in package.json, exports `./client`, and calls the shared tsdown preset (`packages/client/tsdown.client.ts`) — see [packages/client/AGENTS.md](../../packages/client/AGENTS.md) for the client-side contract.

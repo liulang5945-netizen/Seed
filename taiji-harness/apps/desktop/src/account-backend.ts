@@ -1,8 +1,8 @@
 /** Native account commands and Gateway state stream; no renderer receives credentials. */
 import { randomUUID } from 'node:crypto'
 import WebSocket from 'ws'
-import { parseRemoteStreamServerMessage, REMOTE_STREAM_MUX_PATH } from '@deepseek-ai/dsh-api-gateway/stream-protocol'
-import type { AccountView, SignInAttemptId } from '@deepseek-ai/dsh-deepseek-account/types'
+import { parseRemoteStreamServerMessage, REMOTE_STREAM_MUX_PATH } from '@taiji/dsh-api-gateway/stream-protocol'
+import type { AccountView, SignInAttemptId } from '@taiji/dsh-deepseek-account/types'
 
 /** Authenticated unary caller shared with native onboarding. */
 export type AccountInvoke = (request: { namespace: string; method: string; args: Record<string, unknown> }) => Promise<unknown>

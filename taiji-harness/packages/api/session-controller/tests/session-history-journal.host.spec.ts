@@ -1,14 +1,14 @@
 /** Raw Session journal transport and message-aligned pagination coverage. */
 
 import { describe, expect, it, vi } from 'vitest'
-import { Context } from '@deepseek-ai/cordis'
-import AgentRegistry, { type Agent, type AssistantStreamFrame } from '@deepseek-ai/dsh-agent'
-import SessionStore from '@deepseek-ai/dsh-session'
-import { LlmAttemptId, ToolCallId, createMessage, createToolResultMessage, createUserMessage } from '@deepseek-ai/dsh-llm'
-import type { MessageSource } from '@deepseek-ai/dsh-llm'
-import type { Session, SessionEvent, SessionId } from '@deepseek-ai/dsh-session'
-import { SessionHistoryController } from '@deepseek-ai/dsh-api-session-controller/src/history.ts'
-import type { SessionFollowFrame, SessionPage, SessionWireEvent } from '@deepseek-ai/dsh-api-session-controller/types'
+import { Context } from '@taiji/cordis'
+import AgentRegistry, { type Agent, type AssistantStreamFrame } from '@taiji/dsh-agent'
+import SessionStore from '@taiji/dsh-session'
+import { LlmAttemptId, ToolCallId, createMessage, createToolResultMessage, createUserMessage } from '@taiji/dsh-llm'
+import type { MessageSource } from '@taiji/dsh-llm'
+import type { Session, SessionEvent, SessionId } from '@taiji/dsh-session'
+import { SessionHistoryController } from '@taiji/dsh-api-session-controller/src/history.ts'
+import type { SessionFollowFrame, SessionPage, SessionWireEvent } from '@taiji/dsh-api-session-controller/types'
 import { createSessionTestRemote, installSessionReadTestServices } from './test-remote.ts'
 
 type CheckpointSource = Extract<MessageSource, { readonly kind: 'compact-checkpoint' }>

@@ -7,18 +7,18 @@ import { fileURLToPath } from 'node:url'
 import type { Browser, Page } from 'playwright'
 import { chromium } from 'playwright'
 import { afterAll, beforeAll, describe, expect, it, onTestFailed } from 'vitest'
-import type { Agent, AgentHandle } from '@deepseek-ai/dsh-agent'
-import { bundlePatchPaths, composeEntries, loadOverlayPatches } from '@deepseek-ai/dsh-app-boot'
-import { ToolCallId, createUserMessage, LlmAdapter } from '@deepseek-ai/dsh-llm'
-import type { ContextFormed, GenerateOptions, StreamChunk } from '@deepseek-ai/dsh-llm'
-import { SessionId, type SessionEvent } from '@deepseek-ai/dsh-session'
+import type { Agent, AgentHandle } from '@taiji/dsh-agent'
+import { bundlePatchPaths, composeEntries, loadOverlayPatches } from '@taiji/dsh-app-boot'
+import { ToolCallId, createUserMessage, LlmAdapter } from '@taiji/dsh-llm'
+import type { ContextFormed, GenerateOptions, StreamChunk } from '@taiji/dsh-llm'
+import { SessionId, type SessionEvent } from '@taiji/dsh-session'
 import {
   ScheduleId,
   createEveryScheduleRecord,
   foldScheduleEvents,
   resolveEveryOccurrence,
   type EveryScheduleRecord,
-} from '@deepseek-ai/dsh-schedule'
+} from '@taiji/dsh-schedule'
 import {
   assertFixtureInventory,
   captureStableAria,
@@ -36,7 +36,7 @@ import {
   saveFailureShot,
 } from './support.ts'
 
-declare module '@deepseek-ai/dsh-llm' {
+declare module '@taiji/dsh-llm' {
   interface MessageSourceMap {
     'schedule-web-e2e': { kind: 'schedule-web-e2e' } & ContextFormed
   }
@@ -677,11 +677,11 @@ describe.skipIf(MODE === 'record')('web e2e: active Schedule catalog', () => {
       loadOverlayPatches('Schedule catalog overlay roster', OVERLAY),
     ])
     expect(base.find(entry => entry.id === 'ui-schedule')).toMatchObject({
-      name: '@deepseek-ai/dsh-client-ui-schedule',
+      name: '@taiji/dsh-client-ui-schedule',
       disabled: true,
     })
     expect(scheduled.find(entry => entry.id === 'ui-schedule')).toMatchObject({
-      name: '@deepseek-ai/dsh-client-ui-schedule',
+      name: '@taiji/dsh-client-ui-schedule',
       disabled: false,
     })
 

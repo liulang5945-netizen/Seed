@@ -1,6 +1,6 @@
 /** Explicit product usage events over OTLP/HTTP; no automatic collection or Session access. */
-import { Context, Service } from '@deepseek-ai/cordis'
-import z from '@deepseek-ai/schemastery'
+import { Context, Service } from '@taiji/cordis'
+import z from '@taiji/schemastery'
 import { SeverityNumber, type Logger } from '@opentelemetry/api-logs'
 import { validateHeaderValue } from 'node:http'
 import { JsonLogsSerializer } from '@opentelemetry/otlp-transformer'
@@ -10,7 +10,7 @@ import { ExportResultCode } from '@opentelemetry/core'
 import { resourceFromAttributes } from '@opentelemetry/resources'
 import { BatchLogRecordProcessor, LoggerProvider } from '@opentelemetry/sdk-logs'
 
-declare module '@deepseek-ai/cordis' {
+declare module '@taiji/cordis' {
   interface Context {
     productTelemetry: ProductTelemetry
   }
@@ -137,7 +137,7 @@ export default class ProductTelemetry extends Service {
         },
       })],
     })
-    this.logger = provider.getLogger('@deepseek-ai/dsh-host-product-telemetry-otel')
+    this.logger = provider.getLogger('@taiji/dsh-host-product-telemetry-otel')
     ctx.effect(() => async () => {
       let timer!: ReturnType<typeof setTimeout>
       const deadline = new Promise<void>((resolve) => {

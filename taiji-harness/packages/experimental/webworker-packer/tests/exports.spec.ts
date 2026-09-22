@@ -5,7 +5,7 @@ import { join } from 'node:path'
 import { expect, it, type TestContext } from 'vitest'
 import { packVfsImage, type PackOptions } from '../src/pack.ts'
 
-const SUBJECT = '@deepseek-ai/dsh-image-export-fixture'
+const SUBJECT = '@taiji/dsh-image-export-fixture'
 
 function fixture(test: TestContext, face: unknown, source = 'export const value = 1'): PackOptions {
   const root = mkdtempSync(join(tmpdir(), 'dsh-image-exports-'))

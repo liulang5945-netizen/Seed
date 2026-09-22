@@ -4,10 +4,10 @@ import { existsSync, readFileSync } from 'node:fs'
 import { createRequire } from 'node:module'
 import { dirname, join } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
-import type { Context, Plugin } from '@deepseek-ai/cordis'
-import type {} from '@deepseek-ai/cordis-plugin-loader'
-import type { WebBootGraph } from '@deepseek-ai/dsh-client-modules/client'
-import type {} from '@deepseek-ai/dsh-client-modules'
+import type { Context, Plugin } from '@taiji/cordis'
+import type {} from '@taiji/cordis-plugin-loader'
+import type { WebBootGraph } from '@taiji/dsh-client-modules/client'
+import type {} from '@taiji/dsh-client-modules'
 
 /** Observed Loader entries, registered plugin instances, loaded modules, and delivered Client entries. */
 export interface RuntimeRoster {
@@ -89,7 +89,7 @@ export function experimentalRuntimeReferences(roster: RuntimeRoster): string[] {
     ...roster.client.entries.flatMap(entry => [entry.id, ...entry.inject ?? [], ...entry.external ?? []]),
     ...roster.client.batches.flatMap(batch => batch.entries),
   ])
-  return [...references].filter(reference => reference.includes('@deepseek-ai/dsh-experimental-')
+  return [...references].filter(reference => reference.includes('@taiji/dsh-experimental-')
     || (reference.startsWith('file:') && (fileURLToPath(reference).replaceAll('\\', '/').includes('/packages/experimental/')
-      || modulePackage(reference)?.startsWith('@deepseek-ai/dsh-experimental-')))).sort()
+      || modulePackage(reference)?.startsWith('@taiji/dsh-experimental-')))).sort()
 }

@@ -4,8 +4,8 @@ import { resolve } from 'node:path'
 import ts from 'typescript'
 import type { MaybeMockedDeep } from '@vitest/spy'
 import { describe, expect, expectTypeOf, it } from 'vitest'
-import type { TypertRemoteNamespace, TypertRemoteNamespaceMap } from '@deepseek-ai/dsh-typert-protocol'
-import type {} from '@deepseek-ai/dsh-api-settings-controller/remote'
+import type { TypertRemoteNamespace, TypertRemoteNamespaceMap } from '@taiji/dsh-typert-protocol'
+import type {} from '@taiji/dsh-api-settings-controller/remote'
 import type { RemoteMock } from '../src/index.ts'
 
 const root = resolve(import.meta.dirname, '../../../..')
@@ -40,10 +40,10 @@ function compile(source: string, artifact?: string) {
     rewriteRelativeImportExtensions: false,
     types: ['node'],
     paths: {
-      '@deepseek-ai/cordis': [cordisEntry],
-      '@deepseek-ai/dsh-brand': [brandEntry],
-      '@deepseek-ai/dsh-typert-protocol': [protocolEntry],
-      '@deepseek-ai/fixture/remote': [artifactPath],
+      '@taiji/cordis': [cordisEntry],
+      '@taiji/dsh-brand': [brandEntry],
+      '@taiji/dsh-typert-protocol': [protocolEntry],
+      '@taiji/fixture/remote': [artifactPath],
     },
   }
   // The real protocol and Mock alias are compiled; only unrelated Cordis/runtime assembly is excluded.
@@ -80,7 +80,7 @@ function compile(source: string, artifact?: string) {
 describe('RemoteMock proxy types', { timeout: 60_000 }, () => {
   it('keeps production closed while an empty generated map permits Mock calls and overrides', () => {
     compile(`
-import type { TypertRemoteNamespace, TypertClientRemote } from '@deepseek-ai/dsh-typert-protocol'
+import type { TypertRemoteNamespace, TypertClientRemote } from '@taiji/dsh-typert-protocol'
 import type { MockedRemote } from '../src/remote-proxy.ts'
 type IsAny<T> = 0 extends (1 & T) ? true : false
 declare const local: MockedRemote
@@ -101,7 +101,7 @@ void loose
   it('preserves generated arguments, results and native spy overrides', () => {
     compile(`
 import type { MockedRemote } from '../src/remote-proxy.ts'
-import type {} from '@deepseek-ai/fixture/remote'
+import type {} from '@taiji/fixture/remote'
 type IsAny<T> = 0 extends (1 & T) ? true : false
 declare const local: MockedRemote
 const spy = local.fixture.echo
@@ -124,9 +124,9 @@ void [argumentIsTyped, resultIsTyped, result]
 
   it('keeps partial and empty namespaces closed inside a non-empty map', () => {
     compile(`
-import type { TypertClientRemote, TypertRemoteNamespace } from '@deepseek-ai/dsh-typert-protocol'
+import type { TypertClientRemote, TypertRemoteNamespace } from '@taiji/dsh-typert-protocol'
 import type { MockedRemote } from '../src/remote-proxy.ts'
-import type {} from '@deepseek-ai/fixture/remote'
+import type {} from '@taiji/fixture/remote'
 type PartialMap = { fixture: Pick<TypertRemoteNamespace<'fixture'>, 'echo'>; empty: {} }
 declare const local: MockedRemote<PartialMap>
 declare const production: TypertClientRemote
@@ -166,15 +166,15 @@ void known
       fileName: proxyPath,
       compilerOptions: { module: ts.ModuleKind.ESNext, target: ts.ScriptTarget.ES2024 },
     })
-    expect(runtime.outputText).not.toContain('@deepseek-ai/dsh-typert-protocol')
+    expect(runtime.outputText).not.toContain('@taiji/dsh-typert-protocol')
     expect(runtime.outputText).not.toContain('@vitest/spy')
   })
 })
 
 /** Synthetic Remote methods exercise the mapping without copying business signatures. */
 const fixtureDeclaration = `
-import type { TypertRemoteNamespace } from '@deepseek-ai/dsh-typert-protocol'
-declare module '@deepseek-ai/dsh-typert-protocol' {
+import type { TypertRemoteNamespace } from '@taiji/dsh-typert-protocol'
+declare module '@taiji/dsh-typert-protocol' {
   interface TypertRemoteMap {
     'fixture/echo': (value: string) => number
     'fixture/watch': (after: number, signal?: AbortSignal) => AsyncIterable<number>

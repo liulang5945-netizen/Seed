@@ -1,8 +1,8 @@
 /** Bind parent-specific child evidence into the static first-party migration inventory. */
 
-import { createSessionFormatCatalog } from '@deepseek-ai/dsh-session-format'
-import type { SessionFormatCatalog, SessionFormatJsonValue } from '@deepseek-ai/dsh-session-format'
-import { createSessionFormatV3ToV4, sessionFormatV3ToV4 } from '@deepseek-ai/dsh-session-format-v3-to-v4'
+import { createSessionFormatCatalog } from '@taiji/dsh-session-format'
+import type { SessionFormatCatalog, SessionFormatJsonValue } from '@taiji/dsh-session-format'
+import { createSessionFormatV3ToV4, sessionFormatV3ToV4 } from '@taiji/dsh-session-format-v3-to-v4'
 import { sessionFormatCatalogOptions } from './generated.ts'
 
 /**

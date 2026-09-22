@@ -1,13 +1,13 @@
 // @vitest-environment jsdom
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { act, cleanup, fireEvent, render, screen, within } from '@testing-library/react'
-import { makeTranslate, RemoteError, sessionSnapshot } from '@deepseek-ai/dsh-client-test-runtime'
+import { makeTranslate, RemoteError, sessionSnapshot } from '@taiji/dsh-client-test-runtime'
 import type {
   SessionListState, SessionSummary, SessionSnapshot,
-} from '@deepseek-ai/dsh-api-session-controller/client'
-import type { SubagentAddress, SubagentCatalogRow } from '@deepseek-ai/dsh-subagent/client'
-import type { SessionId } from '@deepseek-ai/dsh-session/types'
-import type { SessionStatusSnapshot } from '@deepseek-ai/dsh-client-ui-session/client'
+} from '@taiji/dsh-api-session-controller/client'
+import type { SubagentAddress, SubagentCatalogRow } from '@taiji/dsh-subagent/client'
+import type { SessionId } from '@taiji/dsh-session/types'
+import type { SessionStatusSnapshot } from '@taiji/dsh-client-ui-session/client'
 import {
   SubagentCatalogAction, SubagentHeaderLineage,
   type SubagentCatalogActionProps, type SubagentHeaderLineageProps,

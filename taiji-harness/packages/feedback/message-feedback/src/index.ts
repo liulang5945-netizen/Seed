@@ -1,21 +1,21 @@
 /**
  * Canonical Session-log feedback for finalized assistant messages.
- * @module @deepseek-ai/dsh-message-feedback
+ * @module @taiji/dsh-message-feedback
  */
 
 import { Buffer } from 'node:buffer'
 import { randomUUID } from 'node:crypto'
 import { isDeepStrictEqual } from 'node:util'
-import { Context, Service } from '@deepseek-ai/cordis'
-import s from '@deepseek-ai/schemastery'
+import { Context, Service } from '@taiji/cordis'
+import s from '@taiji/schemastery'
 import { z } from 'zod'
-import { FEEDBACK_CATEGORIES } from '@deepseek-ai/dsh-command-feedback'
-import { SessionSeq } from '@deepseek-ai/dsh-session/types'
-import { deriveEventMessage, isAppendSurfaceEvent } from '@deepseek-ai/dsh-session/surface'
-import type { SessionEvent, SessionId } from '@deepseek-ai/dsh-session/types'
-import type {} from '@deepseek-ai/dsh-session'
-import type { SessionInspection } from '@deepseek-ai/dsh-session-persistence'
-import { TypertRemoteService, Remote } from '@deepseek-ai/dsh-typert-protocol'
+import { FEEDBACK_CATEGORIES } from '@taiji/dsh-command-feedback'
+import { SessionSeq } from '@taiji/dsh-session/types'
+import { deriveEventMessage, isAppendSurfaceEvent } from '@taiji/dsh-session/surface'
+import type { SessionEvent, SessionId } from '@taiji/dsh-session/types'
+import type {} from '@taiji/dsh-session'
+import type { SessionInspection } from '@taiji/dsh-session-persistence'
+import { TypertRemoteService, Remote } from '@taiji/dsh-typert-protocol'
 import type {
   MessageFeedbackDeleteRequest,
   MessageFeedbackDeleteResult,
@@ -42,7 +42,7 @@ export interface Config {
   readonly maxNoteBytes: number
 }
 
-declare module '@deepseek-ai/cordis' {
+declare module '@taiji/cordis' {
   interface Context {
     messageFeedback: MessageFeedbackService
   }

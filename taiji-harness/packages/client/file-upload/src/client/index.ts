@@ -1,13 +1,13 @@
 /** Browser background-upload Cordis service. */
 
-import type { Context } from '@deepseek-ai/cordis'
+import type { Context } from '@taiji/cordis'
 import { FileUploadRuntime } from './runtime.ts'
 import type { FileUploadService } from './contract.ts'
 
 export type { FileUploadProgress, FileUploadService } from './contract.ts'
 export type { FileUploadReceiptId, FileUploadValue } from '../types.ts'
 
-declare module '@deepseek-ai/cordis' {
+declare module '@taiji/cordis' {
   interface Context {
     /** Session-addressed browser service for staged file uploads. */
     fileUpload: FileUploadService

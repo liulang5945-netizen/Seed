@@ -1,5 +1,5 @@
 {
-  "name": "@deepseek-ai/dsh-client-hmr",
+  "name": "@taiji/dsh-client-hmr",
   "description": "Web client graph synchronization and rebuilt-bundle reload transport",
   "version": "0.1.7-alpha.1",
   "publishConfig": {
@@ -32,7 +32,7 @@
   "dsh": {
     "client": {
       "inject": [
-        "@deepseek-ai/dsh-client-modules"
+        "@taiji/dsh-client-modules"
       ],
       "platform": "web",
       "immediately": true
@@ -40,17 +40,17 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@deepseek-ai/schemastery": "workspace:^"
+    "@taiji/schemastery": "workspace:^"
   },
   "peerDependencies": {
-    "@deepseek-ai/cordis": "workspace:^"
+    "@taiji/cordis": "workspace:^"
   },
   "devDependencies": {
-    "@deepseek-ai/cordis-plugin-loader": "workspace:^",
-    "@deepseek-ai/dsh-client-modules": "workspace:^",
-    "@deepseek-ai/dsh-host-webserver": "workspace:^",
-    "@deepseek-ai/dsh-invariants": "workspace:^",
-    "@deepseek-ai/cordis": "workspace:^"
+    "@taiji/cordis-plugin-loader": "workspace:^",
+    "@taiji/dsh-client-modules": "workspace:^",
+    "@taiji/dsh-host-webserver": "workspace:^",
+    "@taiji/dsh-invariants": "workspace:^",
+    "@taiji/cordis": "workspace:^"
   },
   "files": [
     "lib/index.js",

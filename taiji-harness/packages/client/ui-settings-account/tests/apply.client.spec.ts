@@ -1,16 +1,16 @@
 // @vitest-environment jsdom
 /** Desktop account operations and ordinary-browser isolation in the shipped client composition. */
 import { afterEach, expect, vi } from 'vitest'
-import { ok } from '@deepseek-ai/dsh-remote-mock'
-import { RemoteError } from '@deepseek-ai/dsh-typert-protocol'
-import { createClientTest, type TestClient, webApp } from '@deepseek-ai/dsh-client-test-runtime/src/assembly/index.ts'
-import type { AccountDetails, AccountView, AccountUserId, SignInAttemptId } from '@deepseek-ai/dsh-deepseek-account/types'
-import { resolveSlotLabel } from '@deepseek-ai/dsh-client-ui-slots'
+import { ok } from '@taiji/dsh-remote-mock'
+import { RemoteError } from '@taiji/dsh-typert-protocol'
+import { createClientTest, type TestClient, webApp } from '@taiji/dsh-client-test-runtime/src/assembly/index.ts'
+import type { AccountDetails, AccountView, AccountUserId, SignInAttemptId } from '@taiji/dsh-deepseek-account/types'
+import { resolveSlotLabel } from '@taiji/dsh-client-ui-slots'
 import type { AccountSectionInjected } from '../src/client/AccountSection.tsx'
 import { CONTACT_CONFIG_GLOBAL } from '../src/contact-config.ts'
 
 const it = createClientTest({ roster: webApp })
-const SELF = '@deepseek-ai/dsh-client-ui-settings-account'
+const SELF = '@taiji/dsh-client-ui-settings-account'
 const view: AccountView = { status: 'signed-out', attempt: null, links: { usageUrl: '', topUpUrl: '' } }
 const stored: AccountView = { ...view, status: 'credential-stored' }
 const profile: AccountDetails['profile'] = { status: 'ready', value: { id: 'account-user' as AccountUserId, name: 'User', contact: null } }

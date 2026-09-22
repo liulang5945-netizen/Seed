@@ -1,10 +1,10 @@
 /** Desktop account settings registration and reconnecting Remote subscription. */
-import type { Context } from '@deepseek-ai/cordis'
-import type {} from '@deepseek-ai/dsh-client-locale/client'
-import type {} from '@deepseek-ai/dsh-client-ui-settings/client'
-import type {} from '@deepseek-ai/dsh-client-ui-renderer/client'
-import type {} from '@deepseek-ai/dsh-api-remotes/client'
-import type { AccountView, AccountDetails } from '@deepseek-ai/dsh-deepseek-account/types'
+import type { Context } from '@taiji/cordis'
+import type {} from '@taiji/dsh-client-locale/client'
+import type {} from '@taiji/dsh-client-ui-settings/client'
+import type {} from '@taiji/dsh-client-ui-renderer/client'
+import type {} from '@taiji/dsh-api-remotes/client'
+import type { AccountView, AccountDetails } from '@taiji/dsh-deepseek-account/types'
 import type { PlatformBridge } from './PlatformOverlay.tsx'
 import { Config, CONTACT_CONFIG_GLOBAL } from '../contact-config.ts'
 import { contactUrl } from './contact-url.ts'
@@ -17,7 +17,7 @@ export type { AccountMenuProps } from './AccountMenu.tsx'
 export type { AccountSnapshot } from './AccountSection.tsx'
 export type { AccountKey } from './locales.ts'
 
-declare module '@deepseek-ai/dsh-client-ui-slots' {
+declare module '@taiji/dsh-client-ui-slots' {
   interface LocaleNamespaceMap { 'settings.account': AccountKey }
 }
 /** Services required by account settings. */

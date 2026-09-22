@@ -1,6 +1,6 @@
 /** Todo changes relative to the preceding recorded write. */
-import type { ToolCallBlock } from '@deepseek-ai/dsh-client-ui-chat/client'
-import type { TranslateNS } from '@deepseek-ai/dsh-client-ui-slots'
+import type { ToolCallBlock } from '@taiji/dsh-client-ui-chat/client'
+import type { TranslateNS } from '@taiji/dsh-client-ui-slots'
 import type { ToolDetailsModel } from '../components/ToolDetails.tsx'
 import type { TodoBaseline } from './todo-history.ts'
 import { todosDetail } from './details-card-model.ts'

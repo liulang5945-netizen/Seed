@@ -31,7 +31,7 @@ try {
   createPluginProfile(profile)
   await writeFile(join(project, 'desktop-runtime.json'), JSON.stringify({
     schemaVersion: 1, release, platform: process.platform, arch: process.arch, files: [],
-    sharedPackages: ['@deepseek-ai/dsh', '@deepseek-ai/dsh-desktop-host']
+    sharedPackages: ['@taiji/dsh', '@taiji/dsh-desktop-host']
       .map(name => ({ name, version: manifest.version, path: `node_modules/${name}` })),
   }))
   await cp(join(repo, 'apps/desktop/lib/types'), join(application, 'lib'), { recursive: true })

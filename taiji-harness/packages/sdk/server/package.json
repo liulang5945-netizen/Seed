@@ -1,5 +1,5 @@
 {
-  "name": "@deepseek-ai/dsh-sdk-jsonrpc-server",
+  "name": "@taiji/dsh-sdk-jsonrpc-server",
   "description": "Stdio JSON-RPC server plugin for out-of-process DeepSeek Harness SDK clients",
   "version": "0.1.7-alpha.1",
   "publishConfig": {
@@ -27,34 +27,34 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "@deepseek-ai/dsh-brand": "workspace:^",
-    "@deepseek-ai/schemastery": "workspace:^"
+    "@taiji/dsh-brand": "workspace:^",
+    "@taiji/schemastery": "workspace:^"
   },
   "peerDependencies": {
-    "@deepseek-ai/cordis": "workspace:^",
-    "@deepseek-ai/dsh-agent": "workspace:^",
-    "@deepseek-ai/dsh-attachment": "workspace:^",
-    "@deepseek-ai/dsh-llm": "workspace:^",
-    "@deepseek-ai/dsh-llm-deepseek": "workspace:^",
-    "@deepseek-ai/dsh-scope": "workspace:^",
-    "@deepseek-ai/dsh-sdk-protocol": "workspace:^",
-    "@deepseek-ai/dsh-session": "workspace:^",
-    "@deepseek-ai/dsh-subagent": "workspace:^"
+    "@taiji/cordis": "workspace:^",
+    "@taiji/dsh-agent": "workspace:^",
+    "@taiji/dsh-attachment": "workspace:^",
+    "@taiji/dsh-llm": "workspace:^",
+    "@taiji/dsh-llm-deepseek": "workspace:^",
+    "@taiji/dsh-scope": "workspace:^",
+    "@taiji/dsh-sdk-protocol": "workspace:^",
+    "@taiji/dsh-session": "workspace:^",
+    "@taiji/dsh-subagent": "workspace:^"
   },
   "devDependencies": {
-    "@deepseek-ai/cordis": "workspace:^",
-    "@deepseek-ai/cordis-plugin-loader": "workspace:^",
-    "@deepseek-ai/dsh-agent": "workspace:^",
-    "@deepseek-ai/dsh-agent-loop": "workspace:^",
-    "@deepseek-ai/dsh-agent-loop-testkit": "workspace:^",
-    "@deepseek-ai/dsh-attachment": "workspace:^",
-    "@deepseek-ai/dsh-llm": "workspace:^",
-    "@deepseek-ai/dsh-llm-deepseek": "workspace:^",
-    "@deepseek-ai/dsh-scope": "workspace:^",
-    "@deepseek-ai/dsh-sdk-protocol": "workspace:^",
-    "@deepseek-ai/dsh-session": "workspace:^",
-    "@deepseek-ai/dsh-session-persistence-jsonl": "workspace:^",
-    "@deepseek-ai/dsh-session-projection": "workspace:^",
-    "@deepseek-ai/dsh-subagent": "workspace:^"
+    "@taiji/cordis": "workspace:^",
+    "@taiji/cordis-plugin-loader": "workspace:^",
+    "@taiji/dsh-agent": "workspace:^",
+    "@taiji/dsh-agent-loop": "workspace:^",
+    "@taiji/dsh-agent-loop-testkit": "workspace:^",
+    "@taiji/dsh-attachment": "workspace:^",
+    "@taiji/dsh-llm": "workspace:^",
+    "@taiji/dsh-llm-deepseek": "workspace:^",
+    "@taiji/dsh-scope": "workspace:^",
+    "@taiji/dsh-sdk-protocol": "workspace:^",
+    "@taiji/dsh-session": "workspace:^",
+    "@taiji/dsh-session-persistence-jsonl": "workspace:^",
+    "@taiji/dsh-session-projection": "workspace:^",
+    "@taiji/dsh-subagent": "workspace:^"
   }
 }

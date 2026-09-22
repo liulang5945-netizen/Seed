@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest'
-import { SessionFormatEventCollector, type SessionFormatEvent, type SessionFormatJsonObject } from '@deepseek-ai/dsh-session-format'
-import { createSessionFormatCatalogWithChildren, sessionFormatCatalog } from '@deepseek-ai/dsh-session-format-catalog'
-import { Session, SessionId, SessionLogOffset, type SessionEvent, type SessionHeader } from '@deepseek-ai/dsh-session'
-import { imageOffloadProjection } from '@deepseek-ai/dsh-compaction-image-offload/projection'
+import { SessionFormatEventCollector, type SessionFormatEvent, type SessionFormatJsonObject } from '@taiji/dsh-session-format'
+import { createSessionFormatCatalogWithChildren, sessionFormatCatalog } from '@taiji/dsh-session-format-catalog'
+import { Session, SessionId, SessionLogOffset, type SessionEvent, type SessionHeader } from '@taiji/dsh-session'
+import { imageOffloadProjection } from '@taiji/dsh-compaction-image-offload/projection'
 import { createSessionFormatV3ToV4 } from '../src/index.ts'
 import { remapV3References } from '../src/references.ts'
 

@@ -1,15 +1,15 @@
 #!/usr/bin/env node
 /**
  * Command-line entry for dsh.
- * @module @deepseek-ai/dsh/bin
+ * @module @taiji/dsh/bin
  */
 
 /* v8 ignore file -- built-bin acceptance exercises this self-executing dispatch. */
 
 import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
-import { loadLayeredEnv, StartupError } from '@deepseek-ai/dsh-app-boot'
-import { resolveDshHome } from '@deepseek-ai/dsh-home-paths'
+import { loadLayeredEnv, StartupError } from '@taiji/dsh-app-boot'
+import { resolveDshHome } from '@taiji/dsh-home-paths'
 import { parseDshArgs } from './args.ts'
 import { reportStartupFailure } from './startup-diagnostics.ts'
 

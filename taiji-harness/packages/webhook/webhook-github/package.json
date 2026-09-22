@@ -1,5 +1,5 @@
 {
-  "name": "@deepseek-ai/dsh-webhook-github",
+  "name": "@taiji/dsh-webhook-github",
   "description": "Signed GitHub HTTP webhook adapter for the DeepSeek Harness webhook runtime",
   "version": "0.1.7-alpha.1",
   "publishConfig": {
@@ -32,24 +32,24 @@
   ],
   "license": "MIT",
   "peerDependencies": {
-    "@deepseek-ai/cordis": "workspace:^",
-    "@deepseek-ai/dsh-credentials": "workspace:^",
-    "@deepseek-ai/dsh-host-webserver": "workspace:^",
-    "@deepseek-ai/dsh-session": "workspace:^",
-    "@deepseek-ai/dsh-webhook": "workspace:^"
+    "@taiji/cordis": "workspace:^",
+    "@taiji/dsh-credentials": "workspace:^",
+    "@taiji/dsh-host-webserver": "workspace:^",
+    "@taiji/dsh-session": "workspace:^",
+    "@taiji/dsh-webhook": "workspace:^"
   },
   "dependencies": {
-    "@deepseek-ai/dsh-util-values": "workspace:^",
-    "@deepseek-ai/schemastery": "workspace:^",
+    "@taiji/dsh-util-values": "workspace:^",
+    "@taiji/schemastery": "workspace:^",
     "@octokit/webhooks": "^14.2.0"
   },
   "devDependencies": {
-    "@deepseek-ai/cordis": "workspace:^",
-    "@deepseek-ai/cordis-plugin-include": "workspace:^",
-    "@deepseek-ai/cordis-plugin-loader": "workspace:^",
-    "@deepseek-ai/dsh-credentials": "workspace:^",
-    "@deepseek-ai/dsh-host-webserver": "workspace:^",
-    "@deepseek-ai/dsh-session": "workspace:^",
-    "@deepseek-ai/dsh-webhook": "workspace:^"
+    "@taiji/cordis": "workspace:^",
+    "@taiji/cordis-plugin-include": "workspace:^",
+    "@taiji/cordis-plugin-loader": "workspace:^",
+    "@taiji/dsh-credentials": "workspace:^",
+    "@taiji/dsh-host-webserver": "workspace:^",
+    "@taiji/dsh-session": "workspace:^",
+    "@taiji/dsh-webhook": "workspace:^"
   }
 }

@@ -1,9 +1,9 @@
 /** Desktop installation admission and task inspection for the shared Web Host. */
 
-import type { Context } from '@deepseek-ai/cordis'
-import type {} from '@deepseek-ai/dsh-agent'
-import type {} from '@deepseek-ai/dsh-jobs'
-import type {} from '@deepseek-ai/dsh-client-connection'
+import type { Context } from '@taiji/cordis'
+import type {} from '@taiji/dsh-agent'
+import type {} from '@taiji/dsh-jobs'
+import type {} from '@taiji/dsh-client-connection'
 
 /**
  * Register update admission on the owning Host context.

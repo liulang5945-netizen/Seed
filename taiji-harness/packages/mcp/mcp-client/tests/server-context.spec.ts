@@ -1,10 +1,10 @@
 import { afterEach, describe, expect, it } from 'vitest'
-import { Context } from '@deepseek-ai/cordis'
-import SystemPrompt, { renderPrompt } from '@deepseek-ai/dsh-system-prompt'
-import ToolRuntime from '@deepseek-ai/dsh-tools'
-import { ToolCallId } from '@deepseek-ai/dsh-llm'
-import McpResources from '@deepseek-ai/dsh-mcp-resources'
-import { createScope } from '@deepseek-ai/dsh-scope'
+import { Context } from '@taiji/cordis'
+import SystemPrompt, { renderPrompt } from '@taiji/dsh-system-prompt'
+import ToolRuntime from '@taiji/dsh-tools'
+import { ToolCallId } from '@taiji/dsh-llm'
+import McpResources from '@taiji/dsh-mcp-resources'
+import { createScope } from '@taiji/dsh-scope'
 import { registerServerContext } from '../src/server-context.ts'
 
 const roots: Context[] = []

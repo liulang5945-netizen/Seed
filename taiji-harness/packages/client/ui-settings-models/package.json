@@ -1,5 +1,5 @@
 {
-  "name": "@deepseek-ai/dsh-client-ui-settings-models",
+  "name": "@taiji/dsh-client-ui-settings-models",
   "description": "Models settings and shared product-onboarding dialogs over existing settings and credential joins",
   "version": "0.1.7-alpha.1",
   "publishConfig": {
@@ -28,9 +28,9 @@
   "dsh": {
     "client": {
       "inject": [
-        "@deepseek-ai/dsh-client-ui-settings",
-        "@deepseek-ai/dsh-client-locale",
-        "@deepseek-ai/dsh-api-remotes"
+        "@taiji/dsh-client-ui-settings",
+        "@taiji/dsh-client-locale",
+        "@taiji/dsh-api-remotes"
       ],
       "platform": "web"
     }
@@ -41,26 +41,26 @@
   },
   "license": "MIT",
   "peerDependencies": {
-    "@deepseek-ai/cordis": "workspace:^"
+    "@taiji/cordis": "workspace:^"
   },
   "devDependencies": {
-    "@deepseek-ai/dsh-host-webserver": "workspace:^",
-    "@deepseek-ai/dsh-api-remotes": "workspace:^",
-    "@deepseek-ai/dsh-client-locale": "workspace:^",
-    "@deepseek-ai/dsh-client-store": "workspace:^",
-    "@deepseek-ai/dsh-client-test-runtime": "workspace:^",
-    "@deepseek-ai/dsh-client-ui-primitives": "workspace:^",
-    "@deepseek-ai/dsh-client-ui-settings": "workspace:^",
-    "@deepseek-ai/dsh-client-ui-slots": "workspace:^",
+    "@taiji/dsh-host-webserver": "workspace:^",
+    "@taiji/dsh-api-remotes": "workspace:^",
+    "@taiji/dsh-client-locale": "workspace:^",
+    "@taiji/dsh-client-store": "workspace:^",
+    "@taiji/dsh-client-test-runtime": "workspace:^",
+    "@taiji/dsh-client-ui-primitives": "workspace:^",
+    "@taiji/dsh-client-ui-settings": "workspace:^",
+    "@taiji/dsh-client-ui-slots": "workspace:^",
     "@types/react": "~18.3.1",
-    "@deepseek-ai/cordis": "workspace:^",
+    "@taiji/cordis": "workspace:^",
     "react": "^18.2.0",
-    "@deepseek-ai/dsh-client-ui-renderer": "workspace:^",
-    "@deepseek-ai/dsh-util-values": "workspace:^",
-    "@deepseek-ai/dsh-remote-mock": "workspace:^"
+    "@taiji/dsh-client-ui-renderer": "workspace:^",
+    "@taiji/dsh-util-values": "workspace:^",
+    "@taiji/dsh-remote-mock": "workspace:^"
   },
   "dependencies": {
-    "@deepseek-ai/schemastery": "workspace:^"
+    "@taiji/schemastery": "workspace:^"
   },
   "files": [
     "lib/index.js",

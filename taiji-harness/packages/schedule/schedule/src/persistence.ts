@@ -1,7 +1,7 @@
 /** Schedule-owned use of the shared session durability barrier. */
 
-import type { Context } from '@deepseek-ai/cordis'
-import type { Session } from '@deepseek-ai/dsh-session'
+import type { Context } from '@taiji/cordis'
+import type { Session } from '@taiji/dsh-session'
 
 /** Failure to prove that the current live prefix reached a persistence listener. */
 export class SchedulePersistenceError extends Error {

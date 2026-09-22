@@ -1,5 +1,5 @@
 /** Locale-owned copy for experimental voice input. */
-import type {} from '@deepseek-ai/dsh-client-ui-slots'
+import type {} from '@taiji/dsh-client-ui-slots'
 /** Dictionary namespace for every voice control. */
 export const NS = 'voice-input'
 
@@ -174,7 +174,7 @@ export const en: Record<VoiceKey, string> = {
   tooLarge: 'The recording exceeds the service limit. Try a shorter recording.',
 }
 
-declare module '@deepseek-ai/dsh-client-ui-slots' {
+declare module '@taiji/dsh-client-ui-slots' {
   interface LocaleNamespaceMap {
     /** Experimental microphone and transcription controls. */
     'voice-input': VoiceKey

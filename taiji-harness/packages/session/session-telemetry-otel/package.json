@@ -1,5 +1,5 @@
 {
-  "name": "@deepseek-ai/dsh-session-telemetry-otel",
+  "name": "@taiji/dsh-session-telemetry-otel",
   "description": "OpenTelemetry backend for the DeepSeek Harness telemetry seam: hands captured session records to the OTel JS SDK's log pipeline",
   "version": "0.1.7-alpha.1",
   "publishConfig": {
@@ -33,33 +33,33 @@
     "@opentelemetry/otlp-exporter-base": "^0.220.0",
     "@opentelemetry/resources": "^2.9.0",
     "@opentelemetry/sdk-logs": "^0.220.0",
-    "@deepseek-ai/schemastery": "workspace:^"
+    "@taiji/schemastery": "workspace:^"
   },
   "peerDependencies": {
-    "@deepseek-ai/dsh-command-feedback": "workspace:^",
-    "@deepseek-ai/dsh-message-feedback": "workspace:^",
-    "@deepseek-ai/dsh-llm": "workspace:^",
-    "@deepseek-ai/dsh-session": "workspace:^",
-    "@deepseek-ai/dsh-session-telemetry": "workspace:^",
-    "@deepseek-ai/dsh-anonymous-user-id": "workspace:^",
-    "@deepseek-ai/cordis": "workspace:^"
+    "@taiji/dsh-command-feedback": "workspace:^",
+    "@taiji/dsh-message-feedback": "workspace:^",
+    "@taiji/dsh-llm": "workspace:^",
+    "@taiji/dsh-session": "workspace:^",
+    "@taiji/dsh-session-telemetry": "workspace:^",
+    "@taiji/dsh-anonymous-user-id": "workspace:^",
+    "@taiji/cordis": "workspace:^"
   },
   "devDependencies": {
-    "@deepseek-ai/cordis-plugin-logger-console": "workspace:^",
-    "@deepseek-ai/cordis-plugin-loader": "workspace:^",
-    "@deepseek-ai/dsh-app-boot": "workspace:^",
-    "@deepseek-ai/dsh-bash-local": "workspace:^",
-    "@deepseek-ai/dsh-command-feedback": "workspace:^",
-    "@deepseek-ai/dsh-message-feedback": "workspace:^",
-    "@deepseek-ai/dsh-llm": "workspace:^",
-    "@deepseek-ai/dsh-loader-smoke": "workspace:^",
-    "@deepseek-ai/dsh-session": "workspace:^",
-    "@deepseek-ai/dsh-session-checkpoint-policy": "workspace:^",
-    "@deepseek-ai/dsh-session-persistence-jsonl": "workspace:^",
-    "@deepseek-ai/dsh-session-telemetry": "workspace:^",
-    "@deepseek-ai/dsh-subprocess-local": "workspace:^",
-    "@deepseek-ai/dsh-anonymous-user-id": "workspace:^",
-    "@deepseek-ai/cordis": "workspace:^",
-    "@deepseek-ai/dsh-http-proxy": "workspace:^"
+    "@taiji/cordis-plugin-logger-console": "workspace:^",
+    "@taiji/cordis-plugin-loader": "workspace:^",
+    "@taiji/dsh-app-boot": "workspace:^",
+    "@taiji/dsh-bash-local": "workspace:^",
+    "@taiji/dsh-command-feedback": "workspace:^",
+    "@taiji/dsh-message-feedback": "workspace:^",
+    "@taiji/dsh-llm": "workspace:^",
+    "@taiji/dsh-loader-smoke": "workspace:^",
+    "@taiji/dsh-session": "workspace:^",
+    "@taiji/dsh-session-checkpoint-policy": "workspace:^",
+    "@taiji/dsh-session-persistence-jsonl": "workspace:^",
+    "@taiji/dsh-session-telemetry": "workspace:^",
+    "@taiji/dsh-subprocess-local": "workspace:^",
+    "@taiji/dsh-anonymous-user-id": "workspace:^",
+    "@taiji/cordis": "workspace:^",
+    "@taiji/dsh-http-proxy": "workspace:^"
   }
 }

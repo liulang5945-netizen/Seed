@@ -10,16 +10,16 @@
  * throw (`gateway/internal`, or `gateway/cancelled` once the caller's signal
  * aborted), so product code that never awaits a rejection sees none; stream
  * items and failures pass through as the stream yields them.
- * @module @deepseek-ai/dsh-client-test-runtime/src/assembly/remote-proxies
+ * @module @taiji/dsh-client-test-runtime/src/assembly/remote-proxies
  */
-import type { Context } from '@deepseek-ai/cordis'
-import { cancelledFailure, carrierFailure } from '@deepseek-ai/dsh-api-gateway/client'
-import type { ConnectionHandle } from '@deepseek-ai/dsh-client-connection/client'
-import type { RemoteMock } from '@deepseek-ai/dsh-remote-mock'
+import type { Context } from '@taiji/cordis'
+import { cancelledFailure, carrierFailure } from '@taiji/dsh-api-gateway/client'
+import type { ConnectionHandle } from '@taiji/dsh-client-connection/client'
+import type { RemoteMock } from '@taiji/dsh-remote-mock'
 import type { ClientPluginModule } from './roster.ts'
 
 /** The assembly row the proxies stand in for; its generated clients exist only in built `lib/`. */
-export const REMOTES_PACKAGE = '@deepseek-ai/dsh-api-remotes'
+export const REMOTES_PACKAGE = '@taiji/dsh-api-remotes'
 
 const PREFIX = 'remote.'
 

@@ -1,7 +1,7 @@
 /** File opening action in an unpreviewable document's empty state. */
 import type { ReactNode } from 'react'
-import type { InjectFace, PropsLocale, PropsRuntime } from '@deepseek-ai/dsh-client-ui-slots'
-import type {} from '@deepseek-ai/dsh-client-ui-sidebar-documentpreview/client'
+import type { InjectFace, PropsLocale, PropsRuntime } from '@taiji/dsh-client-ui-slots'
+import type {} from '@taiji/dsh-client-ui-sidebar-documentpreview/client'
 import type { NS } from './locales.ts'
 import { FileOpenTarget, type OpenPathInjected } from './OpenPathAction.tsx'
 

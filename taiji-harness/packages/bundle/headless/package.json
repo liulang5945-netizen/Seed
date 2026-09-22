@@ -1,5 +1,5 @@
 {
-  "name": "@deepseek-ai/dsh-headless",
+  "name": "@taiji/dsh-headless",
   "description": "The dsh one-shot bundle: a direct core Agent/Session runner over dsh-base with no Host, HTTP, or browser layer",
   "version": "0.1.7-alpha.1",
   "publishConfig": {
@@ -40,32 +40,32 @@
     }
   },
   "dependencies": {
-    "@deepseek-ai/dsh-brand": "workspace:^",
-    "@deepseek-ai/dsh-cmdline": "workspace:^",
-    "@deepseek-ai/dsh-util-values": "workspace:^",
-    "@deepseek-ai/schemastery": "workspace:^",
+    "@taiji/dsh-brand": "workspace:^",
+    "@taiji/dsh-cmdline": "workspace:^",
+    "@taiji/dsh-util-values": "workspace:^",
+    "@taiji/schemastery": "workspace:^",
     "commander": "^15.0.0"
   },
   "peerDependencies": {
-    "@deepseek-ai/cordis": "workspace:^",
-    "@deepseek-ai/cordis-plugin-loader": "workspace:^",
-    "@deepseek-ai/dsh-agent": "workspace:^",
-    "@deepseek-ai/dsh-agent-default-model": "workspace:^",
-    "@deepseek-ai/dsh-llm": "workspace:^",
-    "@deepseek-ai/dsh-session": "workspace:^",
-    "@deepseek-ai/dsh-session-query": "workspace:^",
-    "@deepseek-ai/dsh-fs": "workspace:^"
+    "@taiji/cordis": "workspace:^",
+    "@taiji/cordis-plugin-loader": "workspace:^",
+    "@taiji/dsh-agent": "workspace:^",
+    "@taiji/dsh-agent-default-model": "workspace:^",
+    "@taiji/dsh-llm": "workspace:^",
+    "@taiji/dsh-session": "workspace:^",
+    "@taiji/dsh-session-query": "workspace:^",
+    "@taiji/dsh-fs": "workspace:^"
   },
   "devDependencies": {
-    "@deepseek-ai/cordis": "workspace:^",
-    "@deepseek-ai/cordis-plugin-loader": "workspace:^",
-    "@deepseek-ai/dsh-agent": "workspace:^",
-    "@deepseek-ai/dsh-agent-default-model": "workspace:^",
-    "@deepseek-ai/dsh-agent-loop": "workspace:^",
-    "@deepseek-ai/dsh-agent-loop-testkit": "workspace:^",
-    "@deepseek-ai/dsh-llm": "workspace:^",
-    "@deepseek-ai/dsh-session": "workspace:^",
-    "@deepseek-ai/dsh-session-query": "workspace:^",
-    "@deepseek-ai/dsh-fs": "workspace:^"
+    "@taiji/cordis": "workspace:^",
+    "@taiji/cordis-plugin-loader": "workspace:^",
+    "@taiji/dsh-agent": "workspace:^",
+    "@taiji/dsh-agent-default-model": "workspace:^",
+    "@taiji/dsh-agent-loop": "workspace:^",
+    "@taiji/dsh-agent-loop-testkit": "workspace:^",
+    "@taiji/dsh-llm": "workspace:^",
+    "@taiji/dsh-session": "workspace:^",
+    "@taiji/dsh-session-query": "workspace:^",
+    "@taiji/dsh-fs": "workspace:^"
   }
 }

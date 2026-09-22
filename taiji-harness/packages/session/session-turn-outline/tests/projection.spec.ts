@@ -10,17 +10,17 @@
  */
 
 import { describe, expect, expectTypeOf, it } from 'vitest'
-import { Context } from '@deepseek-ai/cordis'
-import { createAssistantMessage, createUserMessage } from '@deepseek-ai/dsh-llm'
-import type { ContextFormed } from '@deepseek-ai/dsh-llm'
-import SessionStore, { SessionId, SessionLogOffset, SessionSeq } from '@deepseek-ai/dsh-session'
-import type { Session, SessionEvent } from '@deepseek-ai/dsh-session'
-import SessionProjectionRegistry from '@deepseek-ai/dsh-session-projection'
-import * as SessionTurnOutlinePlugin from '@deepseek-ai/dsh-session-turn-outline'
-import { turnOutlineProjectionDefinition } from '@deepseek-ai/dsh-session-turn-outline/src/projection.ts'
-import type { TurnOutlineEntry, TurnOutlineState } from '@deepseek-ai/dsh-session-turn-outline/types'
+import { Context } from '@taiji/cordis'
+import { createAssistantMessage, createUserMessage } from '@taiji/dsh-llm'
+import type { ContextFormed } from '@taiji/dsh-llm'
+import SessionStore, { SessionId, SessionLogOffset, SessionSeq } from '@taiji/dsh-session'
+import type { Session, SessionEvent } from '@taiji/dsh-session'
+import SessionProjectionRegistry from '@taiji/dsh-session-projection'
+import * as SessionTurnOutlinePlugin from '@taiji/dsh-session-turn-outline'
+import { turnOutlineProjectionDefinition } from '@taiji/dsh-session-turn-outline/src/projection.ts'
+import type { TurnOutlineEntry, TurnOutlineState } from '@taiji/dsh-session-turn-outline/types'
 
-declare module '@deepseek-ai/dsh-llm' {
+declare module '@taiji/dsh-llm' {
   interface MessageSourceMap {
     'test-injector': { kind: 'test-injector' } & ContextFormed
   }

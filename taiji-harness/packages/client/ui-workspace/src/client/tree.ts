@@ -5,15 +5,15 @@
  */
 import {
   type SessionListState, type SessionSearchResultItem, type SessionSummary,
-} from '@deepseek-ai/dsh-api-session-controller/client'
-import type { WorkspaceId, WorkspaceView } from '@deepseek-ai/dsh-api-workspace-controller/client'
+} from '@taiji/dsh-api-session-controller/client'
+import type { WorkspaceId, WorkspaceView } from '@taiji/dsh-api-workspace-controller/client'
 import type {
   SessionStatusSnapshot,
-} from '@deepseek-ai/dsh-client-ui-session/client'
-import type {} from '@deepseek-ai/dsh-schedule/client'
-import type { SessionId } from '@deepseek-ai/dsh-session/types'
-import { assertNever } from '@deepseek-ai/dsh-util-values'
-import { workspaceTitleOf } from '@deepseek-ai/dsh-util-workspace-path'
+} from '@taiji/dsh-client-ui-session/client'
+import type {} from '@taiji/dsh-schedule/client'
+import type { SessionId } from '@taiji/dsh-session/types'
+import { assertNever } from '@taiji/dsh-util-values'
+import { workspaceTitleOf } from '@taiji/dsh-util-workspace-path'
 
 /** Group key for Sessions outside every Workspace. */
 export const UNGROUPED_KEY = ''

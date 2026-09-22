@@ -7,20 +7,20 @@
  * disposal removes the contribution (HMR safety). The same plugin registers
  * its Settings row and invalidates that row on host settings changes.
  */
-import { Context } from '@deepseek-ai/cordis'
+import { Context } from '@taiji/cordis'
 import { describe, expect, it, onTestFinished, vi } from 'vitest'
-import { SlotRegistry } from '@deepseek-ai/dsh-client-ui-renderer/client'
-import type { SessionId } from '@deepseek-ai/dsh-session/types'
-import { LocaleRuntime } from '@deepseek-ai/dsh-client-locale/client'
-import { TestRemote } from '@deepseek-ai/dsh-client-test-runtime'
-import { remoteDefaultResponses } from '@deepseek-ai/dsh-client-test-runtime/src/assembly/remote-default-responses.ts'
-import { RemoteMock } from '@deepseek-ai/dsh-remote-mock'
-import { apply as settingsApply, inject as settingsInject } from '@deepseek-ai/dsh-client-ui-settings/client'
-import type { CommandDecoration, PopupSelectSpec } from '@deepseek-ai/dsh-client-ui-commands/client'
-import { PopupSelectController } from '@deepseek-ai/dsh-client-ui-commands/client'
+import { SlotRegistry } from '@taiji/dsh-client-ui-renderer/client'
+import type { SessionId } from '@taiji/dsh-session/types'
+import { LocaleRuntime } from '@taiji/dsh-client-locale/client'
+import { TestRemote } from '@taiji/dsh-client-test-runtime'
+import { remoteDefaultResponses } from '@taiji/dsh-client-test-runtime/src/assembly/remote-default-responses.ts'
+import { RemoteMock } from '@taiji/dsh-remote-mock'
+import { apply as settingsApply, inject as settingsInject } from '@taiji/dsh-client-ui-settings/client'
+import type { CommandDecoration, PopupSelectSpec } from '@taiji/dsh-client-ui-commands/client'
+import { PopupSelectController } from '@taiji/dsh-client-ui-commands/client'
 import type {
   PermissionCatalog, PermissionSelection,
-} from '@deepseek-ai/dsh-permission-presets/client'
+} from '@taiji/dsh-permission-presets/client'
 import {
   PermissionRow, type PermissionRowInjected,
 } from '../src/client/PermissionRow.tsx'

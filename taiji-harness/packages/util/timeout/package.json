@@ -1,5 +1,5 @@
 {
-  "name": "@deepseek-ai/dsh-timeout",
+  "name": "@taiji/dsh-timeout",
   "description": "Zero-dependency timeout/deadline primitive: clampTimeout, deadline, timeoutOf, TimeoutReason (timing + classification only, no termination)",
   "version": "0.1.7-alpha.1",
   "publishConfig": {
@@ -27,9 +27,9 @@
   ],
   "license": "MIT",
   "peerDependencies": {
-    "@deepseek-ai/cordis": "workspace:^"
+    "@taiji/cordis": "workspace:^"
   },
   "devDependencies": {
-    "@deepseek-ai/cordis": "workspace:^"
+    "@taiji/cordis": "workspace:^"
   }
 }

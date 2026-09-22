@@ -1,8 +1,8 @@
 /** The changed-files card: a header and per-file rows that open the turn's review, and a four-row fold. */
 import { useEffect, useId, useRef, useState } from 'react'
-import { resolveWorkspacePath } from '@deepseek-ai/dsh-util-workspace-path'
-import { HoverCard, IconChevronDownOutlineRegular, IconChevronUpOutlineRegular } from '@deepseek-ai/dsh-client-ui-primitives'
-import type { InjectFace, PropsLocale, SessionStandardProps } from '@deepseek-ai/dsh-client-ui-slots'
+import { resolveWorkspacePath } from '@taiji/dsh-util-workspace-path'
+import { HoverCard, IconChevronDownOutlineRegular, IconChevronUpOutlineRegular } from '@taiji/dsh-client-ui-primitives'
+import type { InjectFace, PropsLocale, SessionStandardProps } from '@taiji/dsh-client-ui-slots'
 import { changesDiffUrl, type ChangesSummary } from '../changes.ts'
 import type { DeliverablesInjected } from './Deliverables.tsx'
 import { FileDiff } from './FileDiff.tsx'

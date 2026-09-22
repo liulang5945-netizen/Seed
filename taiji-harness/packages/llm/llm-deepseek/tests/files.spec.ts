@@ -1,9 +1,9 @@
 /** Messages file-reference admission, bounded recovery and request-wide inline fallback. */
-import type { AnonymousUserId } from '@deepseek-ai/dsh-anonymous-user-id'
+import type { AnonymousUserId } from '@taiji/dsh-anonymous-user-id'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { AttachmentId, ImageVariantId } from '@deepseek-ai/dsh-attachment'
-import type { ImageAttachmentRef, RequestImageAttachment } from '@deepseek-ai/dsh-attachment'
-import { createAssistantMessage, createToolResultMessage, LlmError, ToolCallId } from '@deepseek-ai/dsh-llm'
+import { AttachmentId, ImageVariantId } from '@taiji/dsh-attachment'
+import type { ImageAttachmentRef, RequestImageAttachment } from '@taiji/dsh-attachment'
+import { createAssistantMessage, createToolResultMessage, LlmError, ToolCallId } from '@taiji/dsh-llm'
 import { DeepSeekFileId } from '../src/file-id.ts'
 import { DeepSeekFileStore } from '../src/file-store.ts'
 import { resolveAdapterOptions } from '../src/config.ts'

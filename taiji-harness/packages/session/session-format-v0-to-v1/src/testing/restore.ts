@@ -1,9 +1,9 @@
-import { createSessionFormatCatalog } from '@deepseek-ai/dsh-session-format'
+import { createSessionFormatCatalog } from '@taiji/dsh-session-format'
 import type {
   SessionFormatArtifact,
   SessionFormatCurrentEncoder,
   SessionFormatRecovery,
-} from '@deepseek-ai/dsh-session-format'
+} from '@taiji/dsh-session-format'
 import { releasedV0SessionFormatCodec, releasedV1SessionFormatCodec } from '../codec.ts'
 import { sessionFormatV0ToV1 } from '../migration.ts'
 import { assertReleasedV1Header } from '../validation.ts'

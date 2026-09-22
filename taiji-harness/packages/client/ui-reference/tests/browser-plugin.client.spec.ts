@@ -3,17 +3,17 @@
  * deterministic ordering and labels, quoted-path suppression, pick projections, codec
  * round-trip, and registration lifecycle.
  */
-import { Context, Service } from '@deepseek-ai/cordis'
+import { Context, Service } from '@taiji/cordis'
 import { afterEach, beforeEach, describe, expect, it, onTestFinished, vi } from 'vitest'
-import { LocaleRuntime } from '@deepseek-ai/dsh-client-locale/client'
-import type { SessionId } from '@deepseek-ai/dsh-session/types'
-import { RemoteError, TestSessions } from '@deepseek-ai/dsh-client-test-runtime'
-import type { SessionFixture } from '@deepseek-ai/dsh-client-test-runtime'
+import { LocaleRuntime } from '@taiji/dsh-client-locale/client'
+import type { SessionId } from '@taiji/dsh-session/types'
+import { RemoteError, TestSessions } from '@taiji/dsh-client-test-runtime'
+import type { SessionFixture } from '@taiji/dsh-client-test-runtime'
 import type {
   CandidateRequest, ClientSessionContext, InputTriggerCandidate, InputTriggerSource,
-} from '@deepseek-ai/dsh-client-ui-input-trigger/client'
-import type { FileReferenceCandidate } from '@deepseek-ai/dsh-file-reference/types'
-import type { SessionReferenceMentionCandidate } from '@deepseek-ai/dsh-session-reference/types'
+} from '@taiji/dsh-client-ui-input-trigger/client'
+import type { FileReferenceCandidate } from '@taiji/dsh-file-reference/types'
+import type { SessionReferenceMentionCandidate } from '@taiji/dsh-session-reference/types'
 import { apply, inject } from '../src/client/index.ts'
 import { apply as nodeApply } from '../src/index.ts'
 

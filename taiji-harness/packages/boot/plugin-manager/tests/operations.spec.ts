@@ -4,7 +4,7 @@ import { join, resolve } from 'node:path'
 import { tmpdir } from 'node:os'
 import { PassThrough } from 'node:stream'
 import { expect, it, onTestFinished, vi } from 'vitest'
-import { initProfile, readProfileManifest } from '@deepseek-ai/dsh-app-boot'
+import { initProfile, readProfileManifest } from '@taiji/dsh-app-boot'
 import { anchorPathSpec, readProfileRegistry, runPluginCommand, runProfilePnpm, viewProfilePackage } from '../src/operations.ts'
 
 const command = vi.hoisted(() => ({ run: vi.fn<(...args: unknown[]) => ReturnType<typeof result>>() }))
@@ -102,7 +102,7 @@ it('initializes missing profiles under the same lock and reports initialization'
     await runPluginCommand({ ...context, profile }, ['root'], {
       execution: 'service', outputBytes: 100, lockWaitMs: 1000, onOutput: (text) => { messages.push(text) },
     })
-    expect(readProfileManifest('test', join(home, 'profiles', profile)).dsh?.profile?.bundles).toContain('@deepseek-ai/dsh-base')
+    expect(readProfileManifest('test', join(home, 'profiles', profile)).dsh?.profile?.bundles).toContain('@taiji/dsh-base')
   }
   expect(messages.filter(text => text.includes('initialized profile'))).toHaveLength(2)
 })

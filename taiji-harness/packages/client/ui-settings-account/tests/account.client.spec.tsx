@@ -1,8 +1,8 @@
 // @vitest-environment jsdom
 import { cleanup, fireEvent, render, screen, act } from '@testing-library/react'
 import { afterEach, expect, it, onTestFinished, vi } from 'vitest'
-import type { GlobalStandardProps } from '@deepseek-ai/dsh-client-ui-slots'
-import type { AccountDetails, AccountView, SignInAttemptId } from '@deepseek-ai/dsh-deepseek-account/types'
+import type { GlobalStandardProps } from '@taiji/dsh-client-ui-slots'
+import type { AccountDetails, AccountView, SignInAttemptId } from '@taiji/dsh-deepseek-account/types'
 import type { PlatformBridge } from '../src/client/PlatformOverlay.tsx'
 import { AccountSection, type AccountSectionInjected, type AccountSnapshot } from '../src/client/AccountSection.tsx'
 import type {} from '../src/client/index.ts'

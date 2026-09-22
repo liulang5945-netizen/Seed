@@ -1,16 +1,16 @@
 /** Registers the target-neutral Conversation assembly, shell, input, and docks. */
-import type { Context } from '@deepseek-ai/cordis'
-import z from '@deepseek-ai/schemastery'
-import type { ISessions, SessionBinding } from '@deepseek-ai/dsh-api-session-controller/client'
-import { IconPaperclipOutlineRegular } from '@deepseek-ai/dsh-client-ui-primitives'
-import { createSnapshotStore, type BoundActions } from '@deepseek-ai/dsh-client-store'
-import { resolveSlotLabel } from '@deepseek-ai/dsh-client-ui-slots'
-import type { SessionId } from '@deepseek-ai/dsh-session/types'
+import type { Context } from '@taiji/cordis'
+import z from '@taiji/schemastery'
+import type { ISessions, SessionBinding } from '@taiji/dsh-api-session-controller/client'
+import { IconPaperclipOutlineRegular } from '@taiji/dsh-client-ui-primitives'
+import { createSnapshotStore, type BoundActions } from '@taiji/dsh-client-store'
+import { resolveSlotLabel } from '@taiji/dsh-client-ui-slots'
+import type { SessionId } from '@taiji/dsh-session/types'
 // Type-only service and declaration merges used by this assembly.
-import type {} from '@deepseek-ai/dsh-client-locale/client'
-import type {} from '@deepseek-ai/dsh-client-ui-renderer/client'
-import type {} from '@deepseek-ai/dsh-client-ui-session/client'
-import type {} from '@deepseek-ai/dsh-client-ui-settings/client'
+import type {} from '@taiji/dsh-client-locale/client'
+import type {} from '@taiji/dsh-client-ui-renderer/client'
+import type {} from '@taiji/dsh-client-ui-session/client'
+import type {} from '@taiji/dsh-client-ui-settings/client'
 import { UiConversation } from './conversation/assembly.ts'
 import type { ViewTab } from './contract/views.ts'
 import type {
@@ -20,8 +20,8 @@ import type {
 import type { InputNotice } from './contract/input.ts'
 import type { ReferenceInsert } from './contract/draft-editor.ts'
 import { createConversationStore, readConversationViewPreference } from './stores.ts'
-import { formatFileMention } from '@deepseek-ai/dsh-file-reference/grammar'
-import { relativizeToCwd, workspaceTitleOf } from '@deepseek-ai/dsh-util-workspace-path'
+import { formatFileMention } from '@taiji/dsh-file-reference/grammar'
+import { relativizeToCwd, workspaceTitleOf } from '@taiji/dsh-util-workspace-path'
 import { ConversationController, UnsupportedImageMediaTypeError, isImageMediaType } from './service.ts'
 import type { IConversation } from './service.ts'
 import { ComposerBlockRegistry } from './input/blocks.ts'
@@ -42,7 +42,7 @@ import { DEVELOPER_TOOLS_VIEW_ID, resolveActiveView } from './view-selection.ts'
 import { en, NS, zh, type ConversationKey } from './locales.ts'
 import { CONVERSATION_SETTINGS_NAMESPACE, type ConversationSettings } from '../submission-settings.ts'
 
-declare module '@deepseek-ai/dsh-client-ui-slots' {
+declare module '@taiji/dsh-client-ui-slots' {
   interface LocaleNamespaceMap {
     /** Conversation shell, composer, queue, and dock copy. */
     conversation: ConversationKey

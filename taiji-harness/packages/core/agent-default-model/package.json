@@ -1,5 +1,5 @@
 {
-  "name": "@deepseek-ai/dsh-agent-default-model",
+  "name": "@taiji/dsh-agent-default-model",
   "description": "Default model selection shared by Agent entry points",
   "version": "0.1.7-alpha.1",
   "publishConfig": {
@@ -27,18 +27,18 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "@deepseek-ai/schemastery": "workspace:^",
-    "@deepseek-ai/dsh-config-editor": "workspace:^"
+    "@taiji/schemastery": "workspace:^",
+    "@taiji/dsh-config-editor": "workspace:^"
   },
   "peerDependencies": {
-    "@deepseek-ai/dsh-agent": "workspace:^",
-    "@deepseek-ai/dsh-llm": "workspace:^",
-    "@deepseek-ai/cordis": "workspace:^"
+    "@taiji/dsh-agent": "workspace:^",
+    "@taiji/dsh-llm": "workspace:^",
+    "@taiji/cordis": "workspace:^"
   },
   "devDependencies": {
-    "@deepseek-ai/dsh-agent": "workspace:^",
-    "@deepseek-ai/dsh-llm": "workspace:^",
-    "@deepseek-ai/cordis": "workspace:^",
-    "@deepseek-ai/dsh-settings": "workspace:^"
+    "@taiji/dsh-agent": "workspace:^",
+    "@taiji/dsh-llm": "workspace:^",
+    "@taiji/cordis": "workspace:^",
+    "@taiji/dsh-settings": "workspace:^"
   }
 }

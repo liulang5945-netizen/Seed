@@ -4,21 +4,21 @@
  */
 
 import { describe, expect, it } from 'vitest'
-import { Context } from '@deepseek-ai/cordis'
-import { createUserMessage, ToolCallId, StreamChunk  } from '@deepseek-ai/dsh-llm'
-import SessionStore, { SessionEvent, SessionId } from '@deepseek-ai/dsh-session'
-import SystemPrompt from '@deepseek-ai/dsh-system-prompt'
-import LlmRuntime from '@deepseek-ai/dsh-llm'
-import type { ContextFormed } from '@deepseek-ai/dsh-llm'
-import ToolRuntime, { defineContentToolFixture, TOOL_ABORTED_BEFORE_DISPATCH, TOOL_RUNTIME_SCHEDULER, type PostToolDecision, type PreToolDecision } from '@deepseek-ai/dsh-tools'
-import AgentRegistry, { type Agent } from '@deepseek-ai/dsh-agent'
-import AgentLoop from '@deepseek-ai/dsh-agent-loop'
-import SessionProjectionRegistry from '@deepseek-ai/dsh-session-projection'
+import { Context } from '@taiji/cordis'
+import { createUserMessage, ToolCallId, StreamChunk  } from '@taiji/dsh-llm'
+import SessionStore, { SessionEvent, SessionId } from '@taiji/dsh-session'
+import SystemPrompt from '@taiji/dsh-system-prompt'
+import LlmRuntime from '@taiji/dsh-llm'
+import type { ContextFormed } from '@taiji/dsh-llm'
+import ToolRuntime, { defineContentToolFixture, TOOL_ABORTED_BEFORE_DISPATCH, TOOL_RUNTIME_SCHEDULER, type PostToolDecision, type PreToolDecision } from '@taiji/dsh-tools'
+import AgentRegistry, { type Agent } from '@taiji/dsh-agent'
+import AgentLoop from '@taiji/dsh-agent-loop'
+import SessionProjectionRegistry from '@taiji/dsh-session-projection'
 import { MockAdapter, textResponse } from './mock-adapter.ts'
-import { PtcRuntime } from '@deepseek-ai/dsh-ptc-runtime'
-import type { PtcRunRequest, PtcRunResult } from '@deepseek-ai/dsh-ptc-runtime'
+import { PtcRuntime } from '@taiji/dsh-ptc-runtime'
+import type { PtcRunRequest, PtcRunResult } from '@taiji/dsh-ptc-runtime'
 
-declare module '@deepseek-ai/dsh-llm' {
+declare module '@taiji/dsh-llm' {
   interface MessageSourceMap {
     'p': { kind: 'p' } & ContextFormed
   }
@@ -693,7 +693,7 @@ describe('tool-call scheduler: failure quiescence', () => {
 describe('PTC mode native-tool denial through the agent loop', () => {
   /** A minimal in-process PTC runtime for test purposes — never actually runs. */
   class FakePtcRuntime extends PtcRuntime {
-    resolve(request: import('@deepseek-ai/dsh-ptc-runtime').PtcRunRequest): import('@deepseek-ai/dsh-ptc-runtime').PtcRunSpec { return { ...request, cwd: request.cwd ?? process.cwd(), timeoutMs: request.timeoutMs ?? 120_000 } }
+    resolve(request: import('@taiji/dsh-ptc-runtime').PtcRunRequest): import('@taiji/dsh-ptc-runtime').PtcRunSpec { return { ...request, cwd: request.cwd ?? process.cwd(), timeoutMs: request.timeoutMs ?? 120_000 } }
 
     readonly language = 'typescript'
     readonly isolation = 'fake' as const

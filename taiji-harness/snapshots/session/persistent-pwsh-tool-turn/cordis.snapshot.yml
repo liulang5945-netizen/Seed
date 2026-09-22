@@ -1,11 +1,11 @@
 # Keyless replay counterpart to persistent-pwsh.cordis.yml.
 - id: llm-deepseek
-  name: '@deepseek-ai/dsh-llm-deepseek'
+  name: '@taiji/dsh-llm-deepseek'
   disabled: true
 
 - insert:
     - id: llm-replay
-      name: '@deepseek-ai/dsh-llm-replay'
+      name: '@taiji/dsh-llm-replay'
       config:
         providers:
           - id: deepseek-official
@@ -15,81 +15,81 @@
 
 - insert:
     - id: terminal
-      name: '@deepseek-ai/dsh-terminal'
+      name: '@taiji/dsh-terminal'
 
 - id: sandbox-policy
-  name: '@deepseek-ai/dsh-sandbox-policy'
+  name: '@taiji/dsh-sandbox-policy'
   config:
     mode: danger-full-access
     workspaceRoot: !!js process.cwd()
 
 - id: subprocess
-  name: '@deepseek-ai/dsh-subprocess-local'
+  name: '@taiji/dsh-subprocess-local'
 
 - insert:
     - id: terminal-pwsh
-      name: '@deepseek-ai/dsh-terminal-bash'
+      name: '@taiji/dsh-terminal-bash'
       config:
         shellDialect: pwsh
         timeoutMs: 30000
 
 - id: agent-default-model
-  name: '@deepseek-ai/dsh-agent-default-model'
+  name: '@taiji/dsh-agent-default-model'
   config:
     provider: deepseek-official
     model: deepseek-v4-pro
 
 - id: session-persistence-jsonl
-  name: '@deepseek-ai/dsh-session-persistence-jsonl'
+  name: '@taiji/dsh-session-persistence-jsonl'
   config:
     root: !!js dshHomePath('sessions')
     compression: none
 
 - id: agent-instructions
-  name: '@deepseek-ai/dsh-agent-instructions'
+  name: '@taiji/dsh-agent-instructions'
   disabled: true
 
 - id: system-prompt
-  name: '@deepseek-ai/dsh-system-prompt'
+  name: '@taiji/dsh-system-prompt'
   config:
     personaPrefix: You are a concise snapshot agent working in {{cwd}}.
 
 - id: tool-jobs
-  name: '@deepseek-ai/dsh-tool-jobs'
+  name: '@taiji/dsh-tool-jobs'
   disabled: true
 
 - id: goal
-  name: '@deepseek-ai/dsh-goal'
+  name: '@taiji/dsh-goal'
   disabled: true
 
 - id: goal-round-driver
-  name: '@deepseek-ai/dsh-goal-round-driver'
+  name: '@taiji/dsh-goal-round-driver'
   disabled: true
 
 - id: command-goal
-  name: '@deepseek-ai/dsh-command-goal'
+  name: '@taiji/dsh-command-goal'
   disabled: true
 
 - id: tool-goal
-  name: '@deepseek-ai/dsh-tool-goal'
+  name: '@taiji/dsh-tool-goal'
   disabled: true
 
 - id: skill
-  name: '@deepseek-ai/dsh-skill'
+  name: '@taiji/dsh-skill'
   disabled: true
 
 - id: skill-filesystem
-  name: '@deepseek-ai/dsh-skill-filesystem'
+  name: '@taiji/dsh-skill-filesystem'
   disabled: true
 
 - id: tool-skill
-  name: '@deepseek-ai/dsh-tool-skill'
+  name: '@taiji/dsh-tool-skill'
   disabled: true
 
 - id: tool-bash
-  name: '@deepseek-ai/dsh-tool-bash'
+  name: '@taiji/dsh-tool-bash'
   disabled: true
 
 - insert:
     - id: tool-pwsh-persistent
-      name: '@deepseek-ai/dsh-tool-pwsh-persistent'
+      name: '@taiji/dsh-tool-pwsh-persistent'

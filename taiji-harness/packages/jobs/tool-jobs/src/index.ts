@@ -5,23 +5,23 @@
  * collected to the owning agent: injected into a busy owner's next step, or
  * opening a turn on an idle one under the default `wakeup` delivery, bounded
  * per owner.
- * @module @deepseek-ai/dsh-tool-jobs
+ * @module @taiji/dsh-tool-jobs
  */
 
-import type { Context } from '@deepseek-ai/cordis'
-import z from '@deepseek-ai/schemastery'
-import { boundContextSummary, createUserMessage, type ContentBlock } from '@deepseek-ai/dsh-llm'
-import type { ContextFormed } from '@deepseek-ai/dsh-llm'
-import { TextRetainer } from '@deepseek-ai/dsh-output-retention'
-import { defineTool } from '@deepseek-ai/dsh-tools'
-import type { GenericCallView, ToolDefinition, ToolExecution } from '@deepseek-ai/dsh-tools'
-import { JobId } from '@deepseek-ai/dsh-jobs'
-import type { JobView, JobRead } from '@deepseek-ai/dsh-jobs'
-import type { Agent } from '@deepseek-ai/dsh-agent'
-import type {} from '@deepseek-ai/dsh-agent'
+import type { Context } from '@taiji/cordis'
+import z from '@taiji/schemastery'
+import { boundContextSummary, createUserMessage, type ContentBlock } from '@taiji/dsh-llm'
+import type { ContextFormed } from '@taiji/dsh-llm'
+import { TextRetainer } from '@taiji/dsh-output-retention'
+import { defineTool } from '@taiji/dsh-tools'
+import type { GenericCallView, ToolDefinition, ToolExecution } from '@taiji/dsh-tools'
+import { JobId } from '@taiji/dsh-jobs'
+import type { JobView, JobRead } from '@taiji/dsh-jobs'
+import type { Agent } from '@taiji/dsh-agent'
+import type {} from '@taiji/dsh-agent'
 import { publicJob, renderModelDelta, statusLine } from './render.ts'
 import type { PublicJobSnapshot } from './render.ts'
-declare module '@deepseek-ai/dsh-llm' {
+declare module '@taiji/dsh-llm' {
   interface MessageSourceMap {
     'tool-jobs': { kind: 'tool-jobs' } & ContextFormed
   }

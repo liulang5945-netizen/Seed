@@ -3,7 +3,7 @@ description: "OpenSSH connection configuration and remote helper lifecycle for d
 kind: "package-reference"
 ---
 
-# @deepseek-ai/dsh-ssh
+# @taiji/dsh-ssh
 
 English | [中文](README.zh.md)
 

@@ -1,5 +1,5 @@
 {
-  "name": "@deepseek-ai/dsh-session-format-v3-to-v4",
+  "name": "@taiji/dsh-session-format-v3-to-v4",
   "description": "Streaming tool-role migration and delivery validation from Session V3 to V4",
   "version": "0.1.7-alpha.1",
   "publishConfig": {
@@ -39,13 +39,13 @@
     }
   },
   "dependencies": {
-    "@deepseek-ai/dsh-session-format": "workspace:^",
-    "@deepseek-ai/dsh-session-format-v2-to-v3": "workspace:^"
+    "@taiji/dsh-session-format": "workspace:^",
+    "@taiji/dsh-session-format-v2-to-v3": "workspace:^"
   },
   "peerDependencies": {
-    "@deepseek-ai/cordis": "workspace:^"
+    "@taiji/cordis": "workspace:^"
   },
   "devDependencies": {
-    "@deepseek-ai/cordis": "workspace:^"
+    "@taiji/cordis": "workspace:^"
   }
 }

@@ -1,6 +1,6 @@
 /** Chat display preferences stored in the Host user-settings document. */
 
-import z from '@deepseek-ai/schemastery'
+import z from '@taiji/schemastery'
 
 /** Settings namespace owned by the Chat target. */
 export const CHAT_SETTINGS_NAMESPACE = 'ui-chat'

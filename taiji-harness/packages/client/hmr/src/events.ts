@@ -5,7 +5,7 @@
  * the two ends from drifting, not from parsing.
  */
 
-import type { WebBootGraph } from '@deepseek-ai/dsh-client-modules'
+import type { WebBootGraph } from '@taiji/dsh-client-modules'
 
 /** One SSE frame: the settled graph on connection or change, or one rebuilt bundle notice. */
 export type PluginsEventFrame =

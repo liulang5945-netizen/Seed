@@ -1,7 +1,7 @@
 /** Live executor configuration through Loader updates. */
 import { expect, it, onTestFinished } from 'vitest'
-import { Context } from '@deepseek-ai/cordis'
-import LocalSubprocessRuntime from '@deepseek-ai/dsh-subprocess-local'
+import { Context } from '@taiji/cordis'
+import LocalSubprocessRuntime from '@taiji/dsh-subprocess-local'
 import { PwshLocalExecutor } from '../src/index.ts'
 import { liveConfig } from '../../../settings/settings/tests/live-config.ts'
 

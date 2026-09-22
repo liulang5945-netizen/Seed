@@ -1,6 +1,6 @@
 # AGENTS.md
 
-This workspace owns `@deepseek-ai/node-addon-system`: the Linux `landlock-run` confinement executable and the POSIX `system.node` binding. It shares the root pnpm workspace and lockfile; native packages have one independent version and release workflow.
+This workspace owns `@taiji/node-addon-system`: the Linux `landlock-run` confinement executable and the POSIX `system.node` binding. It shares the root pnpm workspace and lockfile; native packages have one independent version and release workflow.
 
 ## Runtime rules
 

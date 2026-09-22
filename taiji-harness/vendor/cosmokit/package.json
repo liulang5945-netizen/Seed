@@ -1,5 +1,5 @@
 {
-  "name": "@deepseek-ai/cosmokit",
+  "name": "@taiji/cosmokit",
   "description": "A collection of common utilities",
   "version": "1.8.4",
   "publishConfig": {

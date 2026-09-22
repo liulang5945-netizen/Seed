@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 
-import { Context } from '@deepseek-ai/cordis'
+import { Context } from '@taiji/cordis'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { apply } from '../src/client/index.ts'
 import { ClientRealmSource } from '../src/client/inspection/realm.ts'
@@ -365,8 +365,8 @@ describe('experimental Inspector Client plugin', () => {
     Reflect.set(globalThis, '__DSH_BOOT__', {
       rev: 'graph',
       entries: [{
-        id: '@deepseek-ai/dsh-experimental-inspector',
-        url: 'plugins/@deepseek-ai/dsh-experimental-inspector/client.js?rev=bundle-rev',
+        id: '@taiji/dsh-experimental-inspector',
+        url: 'plugins/@taiji/dsh-experimental-inspector/client.js?rev=bundle-rev',
         rev: 'bundle-rev',
       }],
     })
@@ -409,9 +409,9 @@ describe('experimental Inspector Client plugin', () => {
         outcome?: { result?: { scripts?: Array<{ scriptKey: string; url: string; sourceMapUrl: string }> } }
       }).find(frame => frame.requestId === 'source-request-1')
       const script = response?.outcome?.result?.scripts?.[0]
-      expect(script?.url).toContain('/plugins/@deepseek-ai/dsh-experimental-inspector/client.js?rev=bundle-rev')
+      expect(script?.url).toContain('/plugins/@taiji/dsh-experimental-inspector/client.js?rev=bundle-rev')
       expect(script?.sourceMapUrl)
-        .toContain('/plugins/@deepseek-ai/dsh-experimental-inspector/client.js.map?rev=bundle-rev')
+        .toContain('/plugins/@taiji/dsh-experimental-inspector/client.js.map?rev=bundle-rev')
       scriptKey = script?.scriptKey
     })
     socket.receive({

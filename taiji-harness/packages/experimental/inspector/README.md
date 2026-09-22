@@ -3,7 +3,7 @@ description: "Experimental Chrome DevTools inspection for Host and browser Clien
 kind: "package-reference"
 ---
 
-# @deepseek-ai/dsh-experimental-inspector
+# @taiji/dsh-experimental-inspector
 
 English | [中文](README.zh.md)
 
@@ -82,8 +82,8 @@ The Host logs a `devtools://` URL after the Worker listens. The same Worker serv
 Both plugin faces provide the same service:
 
 ```ts
-import type { Context } from '@deepseek-ai/cordis'
-import type { InspectorJsonValue } from '@deepseek-ai/dsh-experimental-inspector'
+import type { Context } from '@taiji/cordis'
+import type { InspectorJsonValue } from '@taiji/dsh-experimental-inspector'
 
 declare const ctx: Context
 declare const topic: string

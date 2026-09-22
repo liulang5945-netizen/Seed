@@ -3,7 +3,7 @@ description: "Define an Agent’s child plugins in ordinary Cordis YAML. Declare
 kind: "package-reference"
 ---
 
-# @deepseek-ai/dsh-agent-preset
+# @taiji/dsh-agent-preset
 
 English | [中文](README.zh.md)
 
@@ -27,11 +27,11 @@ Define an Agent’s child plugins in ordinary Cordis YAML. Declare several prese
 
 ```yaml
 - id: agent-preset-registry
-  name: '@deepseek-ai/dsh-agent-preset-registry'
+  name: '@taiji/dsh-agent-preset-registry'
   config:
     default: standard
 - id: preset-standard
-  name: '@deepseek-ai/dsh-agent-preset'
+  name: '@taiji/dsh-agent-preset'
   config:
     id: standard
     plugins: []

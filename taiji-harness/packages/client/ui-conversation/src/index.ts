@@ -1,9 +1,9 @@
 /** Host registration for browser conversation preferences. */
-import type {} from '@deepseek-ai/dsh-settings'
+import type {} from '@taiji/dsh-settings'
 
-import type { Volatile, Context } from '@deepseek-ai/cordis'
+import type { Volatile, Context } from '@taiji/cordis'
 import type { BusyEnterBehavior } from './submission-settings.ts'
-import z from '@deepseek-ai/schemastery'
+import z from '@taiji/schemastery'
 import { BUSY_ENTER_FIELD } from './submission-settings.ts'
 
 import { ConversationSettingsFields } from './submission-settings.ts'

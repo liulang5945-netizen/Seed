@@ -1,5 +1,5 @@
 {
-  "name": "@deepseek-ai/dsh-settings",
+  "name": "@taiji/dsh-settings",
   "description": "Abstract user-settings seam (ctx.settings) for the DeepSeek Harness",
   "version": "0.1.7-alpha.1",
   "publishConfig": {
@@ -32,29 +32,29 @@
   ],
   "license": "MIT",
   "peerDependencies": {
-    "@deepseek-ai/cordis": "workspace:^",
-    "@deepseek-ai/dsh-brand": "workspace:^",
-    "@deepseek-ai/dsh-invariants": "workspace:^",
-    "@deepseek-ai/dsh-session": "workspace:^",
-    "@deepseek-ai/schemastery": "workspace:^"
+    "@taiji/cordis": "workspace:^",
+    "@taiji/dsh-brand": "workspace:^",
+    "@taiji/dsh-invariants": "workspace:^",
+    "@taiji/dsh-session": "workspace:^",
+    "@taiji/schemastery": "workspace:^"
   },
   "devDependencies": {
-    "@deepseek-ai/cordis": "workspace:^",
-    "@deepseek-ai/dsh-brand": "workspace:^",
-    "@deepseek-ai/dsh-invariants": "workspace:^",
-    "@deepseek-ai/dsh-session": "workspace:^",
-    "@deepseek-ai/schemastery": "workspace:^",
-    "@deepseek-ai/cordis-plugin-timer": "workspace:^",
-    "@deepseek-ai/dsh-app-boot": "workspace:^",
-    "@deepseek-ai/dsh-hmr": "workspace:^",
-    "@deepseek-ai/dsh-agent-default-model": "workspace:^",
+    "@taiji/cordis": "workspace:^",
+    "@taiji/dsh-brand": "workspace:^",
+    "@taiji/dsh-invariants": "workspace:^",
+    "@taiji/dsh-session": "workspace:^",
+    "@taiji/schemastery": "workspace:^",
+    "@taiji/cordis-plugin-timer": "workspace:^",
+    "@taiji/dsh-app-boot": "workspace:^",
+    "@taiji/dsh-hmr": "workspace:^",
+    "@taiji/dsh-agent-default-model": "workspace:^",
     "yaml": "^2.8.1"
   },
   "dependencies": {
-    "@deepseek-ai/dsh-util-values": "workspace:^",
-    "@deepseek-ai/dsh-config-editor": "workspace:^",
-    "@deepseek-ai/cordis-plugin-loader": "workspace:^",
-    "@deepseek-ai/cosmokit": "workspace:^",
+    "@taiji/dsh-util-values": "workspace:^",
+    "@taiji/dsh-config-editor": "workspace:^",
+    "@taiji/cordis-plugin-loader": "workspace:^",
+    "@taiji/cosmokit": "workspace:^",
     "yaml": "^2.8.1"
   }
 }

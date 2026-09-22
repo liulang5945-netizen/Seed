@@ -1,9 +1,9 @@
 /** Account settings renders safe Host state and explicit login actions. */
 import { Big } from 'big.js'
 import { useEffect, useState } from 'react'
-import { Button, IconRightUpOutlineRegular } from '@deepseek-ai/dsh-client-ui-primitives'
-import type { AccountDetails, AccountView, SignInAttemptId } from '@deepseek-ai/dsh-deepseek-account/types'
-import type { PropsRuntime, PropsLocale, InjectFace, HostObservable } from '@deepseek-ai/dsh-client-ui-slots'
+import { Button, IconRightUpOutlineRegular } from '@taiji/dsh-client-ui-primitives'
+import type { AccountDetails, AccountView, SignInAttemptId } from '@taiji/dsh-deepseek-account/types'
+import type { PropsRuntime, PropsLocale, InjectFace, HostObservable } from '@taiji/dsh-client-ui-slots'
 import { PlatformOverlay, type PlatformBridge } from './PlatformOverlay.tsx'
 import { formatBalance } from './formatBalance.ts'
 import { AccountAvatar } from './AccountAvatar.tsx'

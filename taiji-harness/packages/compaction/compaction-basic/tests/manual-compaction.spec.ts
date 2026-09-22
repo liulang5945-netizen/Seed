@@ -1,22 +1,22 @@
-import { imageOffloadProjection } from '@deepseek-ai/dsh-compaction-image-offload/projection'
+import { imageOffloadProjection } from '@taiji/dsh-compaction-image-offload/projection'
 import { describe, expect, it, vi } from 'vitest'
-import { Context } from '@deepseek-ai/cordis'
-import AgentLoop from '@deepseek-ai/dsh-agent-loop'
-import { mountAgentLoopTestDependencies } from '@deepseek-ai/dsh-agent-loop-testkit'
-import InvariantRegistry from '@deepseek-ai/dsh-invariants'
-import { CommandId } from '@deepseek-ai/dsh-commands/brand'
-import * as SessionInvariant from '@deepseek-ai/dsh-session/invariant'
-import * as AgentInvariant from '@deepseek-ai/dsh-agent/invariant'
-import * as AgentLoopInvariant from '@deepseek-ai/dsh-agent-loop/invariant'
-import * as CompactionInvariant from '@deepseek-ai/dsh-compaction/invariant'
-import { BasicCompactionEngine } from '@deepseek-ai/dsh-compaction-basic'
-import { CompactionId, isCompactCheckpointSource, ManualCompactionError } from '@deepseek-ai/dsh-compaction'
-import type { CompactionResult } from '@deepseek-ai/dsh-compaction'
+import { Context } from '@taiji/cordis'
+import AgentLoop from '@taiji/dsh-agent-loop'
+import { mountAgentLoopTestDependencies } from '@taiji/dsh-agent-loop-testkit'
+import InvariantRegistry from '@taiji/dsh-invariants'
+import { CommandId } from '@taiji/dsh-commands/brand'
+import * as SessionInvariant from '@taiji/dsh-session/invariant'
+import * as AgentInvariant from '@taiji/dsh-agent/invariant'
+import * as AgentLoopInvariant from '@taiji/dsh-agent-loop/invariant'
+import * as CompactionInvariant from '@taiji/dsh-compaction/invariant'
+import { BasicCompactionEngine } from '@taiji/dsh-compaction-basic'
+import { CompactionId, isCompactCheckpointSource, ManualCompactionError } from '@taiji/dsh-compaction'
+import type { CompactionResult } from '@taiji/dsh-compaction'
 import {
   createAssistantMessage,
   createUserMessage,
   LlmAdapter,
-} from '@deepseek-ai/dsh-llm'
+} from '@taiji/dsh-llm'
 import type {
   ContentBlock,
   LlmResolvedModelInfo,
@@ -24,19 +24,19 @@ import type {
   RequestMessage,
   StreamChunk,
   TokenUsage,
-} from '@deepseek-ai/dsh-llm'
-import SessionStore, { buildForkSeed, Session, SessionId, type SessionEvent } from '@deepseek-ai/dsh-session'
-import SessionProjectionRegistry from '@deepseek-ai/dsh-session-projection'
-import LlmRuntime from '@deepseek-ai/dsh-llm'
-import type { ContextFormed } from '@deepseek-ai/dsh-llm'
-import TokenMeter from '@deepseek-ai/dsh-token-meter'
-import type { Agent } from '@deepseek-ai/dsh-agent'
+} from '@taiji/dsh-llm'
+import SessionStore, { buildForkSeed, Session, SessionId, type SessionEvent } from '@taiji/dsh-session'
+import SessionProjectionRegistry from '@taiji/dsh-session-projection'
+import LlmRuntime from '@taiji/dsh-llm'
+import type { ContextFormed } from '@taiji/dsh-llm'
+import TokenMeter from '@taiji/dsh-token-meter'
+import type { Agent } from '@taiji/dsh-agent'
 import type {
   SummarizationInput,
   SummaryResult,
-} from '@deepseek-ai/dsh-compaction-basic/src/summarizer.ts'
+} from '@taiji/dsh-compaction-basic/src/summarizer.ts'
 
-declare module '@deepseek-ai/dsh-llm' {
+declare module '@taiji/dsh-llm' {
   interface MessageSourceMap {
     'listener': { kind: 'listener' } & ContextFormed
     'rival': { kind: 'rival' } & ContextFormed

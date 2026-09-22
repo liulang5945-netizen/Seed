@@ -1,6 +1,6 @@
 /** Prepared calls retain their endpoint and credential generation. */
 import { afterEach, expect, it } from 'vitest'
-import type { AnonymousUserId } from '@deepseek-ai/dsh-anonymous-user-id'
+import type { AnonymousUserId } from '@taiji/dsh-anonymous-user-id'
 import { Config, DeepSeekAdapter, plainOptions, resolveAdapterOptions } from '../src/index.ts'
 import type { DeepSeekConnectionOptions } from '../src/index.ts'
 import { assemble, chunks, MODEL, options, server } from './helpers.ts'

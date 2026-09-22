@@ -1,9 +1,9 @@
 /** Account Service Definition shared by platform, API, and model consumers. */
-import { Context, Service } from '@deepseek-ai/cordis'
+import { Context, Service } from '@taiji/cordis'
 import type { AccountDetails, AccountView, SignInAttemptId } from './types.ts'
 export type { AccountDetails, AccountProfile, AccountWallet, AccountLinks, AccountView, SignInAttemptId, SignInAttemptView, SignInErrorCode } from './types.ts'
 
-declare module '@deepseek-ai/cordis' {
+declare module '@taiji/cordis' {
   interface Context {
     deepseekAccount: DeepSeekAccount
   }

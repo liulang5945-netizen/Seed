@@ -1,6 +1,6 @@
 {
-  "name": "DeepSeek Harness",
-  "short_name": "DSH",
+  "name": "Taiji Harness",
+  "short_name": "Taiji",
   "start_url": "./",
   "scope": "./",
   "display": "fullscreen",

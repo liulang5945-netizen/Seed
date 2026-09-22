@@ -161,13 +161,13 @@ Source: [`packages/interaction/user-questions/src/index.ts`](../../packages/inte
 
 #### `user-questions/request` — waterfall
 
-Ask composed answerers for structured user input. Return an answer to claim the request or call `next()` to delegate. Scope-filtered dispatch (`@deepseek-ai/dsh-scope`): agent-scoped listeners receive only that agent.
+Ask composed answerers for structured user input. Return an answer to claim the request or call `next()` to delegate. Scope-filtered dispatch (`@taiji/dsh-scope`): agent-scoped listeners receive only that agent.
 
 ```ts cordis-catalog
 /**
  * Ask composed answerers for structured user input. Return an answer to
  * claim the request or call `next()` to delegate. Scope-filtered dispatch
- * (`@deepseek-ai/dsh-scope`): agent-scoped listeners receive only that agent.
+ * (`@taiji/dsh-scope`): agent-scoped listeners receive only that agent.
  * @param request - pending user-question request.
  * @mode waterfall
  */

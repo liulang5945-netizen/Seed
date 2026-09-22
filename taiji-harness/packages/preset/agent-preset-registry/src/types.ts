@@ -1,5 +1,5 @@
 /** Client-safe payloads and event declarations owned by the agent-preset domain. */
-import type { SessionId } from '@deepseek-ai/dsh-session/types'
+import type { SessionId } from '@taiji/dsh-session/types'
 
 
 /**
@@ -26,7 +26,7 @@ export interface AgentPresetRoster {
   readonly modeSelectionEnabled: boolean
 }
 
-declare module '@deepseek-ai/dsh-typert-protocol' {
+declare module '@taiji/dsh-typert-protocol' {
   interface RemoteErrorDetailsMap {
     /** No declaration supplies the requested identity. */
     'agent-preset/not-found': { readonly agentPreset: string; readonly available: readonly string[] }
@@ -37,7 +37,7 @@ declare module '@deepseek-ai/dsh-typert-protocol' {
   }
 }
 
-declare module '@deepseek-ai/dsh-session-projection/types' {
+declare module '@taiji/dsh-session-projection/types' {
   interface SessionProjectionStateMap {
     agentPreset: string | null
   }
@@ -47,7 +47,7 @@ declare module '@deepseek-ai/dsh-session-projection/types' {
   }
 }
 
-declare module '@deepseek-ai/cordis' {
+declare module '@taiji/cordis' {
   interface Events {
     /**
      * One session committed a different agent preset to its durable log.

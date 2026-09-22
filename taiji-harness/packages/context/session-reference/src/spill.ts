@@ -1,7 +1,7 @@
 /** Full projected transcripts and model-visible spill outcomes for bounded reference previews. */
 
-import type { SessionId } from '@deepseek-ai/dsh-session'
-import type { SaveTextSpill, SpillRef, SpillStore } from '@deepseek-ai/dsh-spill'
+import type { SessionId } from '@taiji/dsh-session'
+import type { SaveTextSpill, SpillRef, SpillStore } from '@taiji/dsh-spill'
 import type { ReferencedSessionData, ReferenceRetentionStats } from './projection.ts'
 
 /** Warning shared by inline previews and retrievable full transcripts. */

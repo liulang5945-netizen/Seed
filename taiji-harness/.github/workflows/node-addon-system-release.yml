@@ -1,4 +1,4 @@
-# Build and publish the @deepseek-ai/node-addon-system package family from the
+# Build and publish the @taiji/node-addon-system package family from the
 # harness source of record. Rehearsal and publication consume the same packed
 # tarballs; each native binary is built on its matching architecture.
 name: Node Addon System Release
@@ -58,7 +58,7 @@ jobs:
           cache-dependency-path: pnpm-lock.yaml
 
       - name: Install dependencies
-        run: pnpm install --filter @deepseek-ai/node-addon-system-workspace... --frozen-lockfile
+        run: pnpm install --filter @taiji/node-addon-system-workspace... --frozen-lockfile
 
       - name: Install musl toolchain
         if: runner.os == 'Linux'
@@ -105,7 +105,7 @@ jobs:
           cache-dependency-path: pnpm-lock.yaml
 
       - name: Install dependencies
-        run: pnpm install --filter @deepseek-ai/node-addon-system-workspace... --frozen-lockfile
+        run: pnpm install --filter @taiji/node-addon-system-workspace... --frozen-lockfile
 
       - name: Build TypeScript
         run: pnpm build:ts

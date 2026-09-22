@@ -1,16 +1,16 @@
 /**
  * Agent-scoped durable one-shot and fixed-rate reminders over the session event log.
- * @module @deepseek-ai/dsh-schedule
+ * @module @taiji/dsh-schedule
  */
 
-import type { Context } from '@deepseek-ai/cordis'
-import type { Agent } from '@deepseek-ai/dsh-agent'
-import type { SessionId } from '@deepseek-ai/dsh-session'
-import type {} from '@deepseek-ai/dsh-session-persistence'
+import type { Context } from '@taiji/cordis'
+import type { Agent } from '@taiji/dsh-agent'
+import type { SessionId } from '@taiji/dsh-session'
+import type {} from '@taiji/dsh-session-persistence'
 // Type-only: resolves ctx.sessionProjections for the optional projection child.
-import type {} from '@deepseek-ai/dsh-session-projection'
+import type {} from '@taiji/dsh-session-projection'
 // Type-only: the Workspace registry's archive-admission events this plugin answers.
-import type { SessionActivity } from '@deepseek-ai/dsh-workspace'
+import type { SessionActivity } from '@taiji/dsh-workspace'
 import { flushSchedulePersistence } from './persistence.ts'
 import { scheduleProjectionDefinition } from './projection.ts'
 import { ScheduleRuntime } from './runtime.ts'

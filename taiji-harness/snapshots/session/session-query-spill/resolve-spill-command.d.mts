@@ -1,5 +1,5 @@
 /** Typed Cordis plugin exports for the query-spill verification fixture. */
-import type { Context } from '@deepseek-ai/cordis'
+import type { Context } from '@taiji/cordis'
 
 /** Scenario-local plugin identifier. */
 export const name: 'query-spill-verification-path'

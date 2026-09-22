@@ -1,7 +1,7 @@
 import { readFile } from 'node:fs/promises'
 import { resolve } from 'node:path'
 import { expect, it } from 'vitest'
-import { runLoaderSmoke, LOADER_SMOKE_TEST_TIMEOUT_MS } from '@deepseek-ai/dsh-loader-smoke'
+import { runLoaderSmoke, LOADER_SMOKE_TEST_TIMEOUT_MS } from '@taiji/dsh-loader-smoke'
 
 it('exports the explicitly submitted event through the headless Loader composition', async () => {
   let captures: unknown

@@ -2,7 +2,7 @@
 
 import { homedir } from 'node:os'
 import { posix, win32 } from 'node:path'
-import { runNativeCommand, type NativeCommandRunner } from '@deepseek-ai/dsh-native-command'
+import { runNativeCommand, type NativeCommandRunner } from '@taiji/dsh-native-command'
 
 /** Platform observations replaceable in directory-resolution tests. */
 interface DocumentsDirectoryInternals {

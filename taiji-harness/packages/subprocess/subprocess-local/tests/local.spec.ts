@@ -3,25 +3,25 @@ import os from 'node:os'
 import { syncBuiltinESMExports } from 'node:module'
 import { describe, expect, it, vi } from 'vitest'
 import { basename, dirname, relative, resolve } from 'node:path'
-import { Context } from '@deepseek-ai/cordis'
-import LocalSubprocessRuntime from '@deepseek-ai/dsh-subprocess-local'
-import type { SubprocessSpawnSpec, SubprocessTerminalHandle, SubprocessTerminalSpawnSpec } from '@deepseek-ai/dsh-subprocess'
+import { Context } from '@taiji/cordis'
+import LocalSubprocessRuntime from '@taiji/dsh-subprocess-local'
+import type { SubprocessSpawnSpec, SubprocessTerminalHandle, SubprocessTerminalSpawnSpec } from '@taiji/dsh-subprocess'
 import { childEnv } from '../src/spawn.ts'
 import { signalLinuxDirectProcess } from '../src/linux-scope.ts'
 
 function mockWin32ForIsolatedRuntime(): void {
-  vi.doMock('@deepseek-ai/dsh-win32-process', () => ({
+  vi.doMock('@taiji/dsh-win32-process', () => ({
     loadWin32ProcessBindings: vi.fn(),
     probeCurrentTokenJobSupport: vi.fn(),
   }))
 }
 
 function unmockWin32ForIsolatedRuntime(): void {
-  vi.doUnmock('@deepseek-ai/dsh-win32-process')
+  vi.doUnmock('@taiji/dsh-win32-process')
 }
 
 function mockNodePtyForIsolatedRuntime(spawn: unknown): void {
-  vi.doMock('@deepseek-ai/dsh-lazy-require', () => ({
+  vi.doMock('@taiji/dsh-lazy-require', () => ({
     createLazyRequire: (specifier: string) => () => {
       if (specifier === 'node-pty') return { spawn }
       throw new Error(`unexpected lazy dependency ${specifier}`)
@@ -30,7 +30,7 @@ function mockNodePtyForIsolatedRuntime(spawn: unknown): void {
 }
 
 function unmockLazyRequireForIsolatedRuntime(): void {
-  vi.doUnmock('@deepseek-ai/dsh-lazy-require')
+  vi.doUnmock('@taiji/dsh-lazy-require')
 }
 
 function spec(command: string, overrides: Partial<SubprocessSpawnSpec> = {}): SubprocessSpawnSpec {

@@ -4,8 +4,8 @@ import { spawn, execFile, type ChildProcessWithoutNullStreams } from 'node:child
 import { mkdtemp, rm } from 'node:fs/promises'
 import { join } from 'node:path'
 import { createConnection, type Socket } from 'node:net'
-import { Context, Service } from '@deepseek-ai/cordis'
-import schema from '@deepseek-ai/schemastery'
+import { Context, Service } from '@taiji/cordis'
+import schema from '@taiji/schemastery'
 import { z } from 'zod'
 import { SshRpcPeer, SSH_PROTOCOL_VERSION } from './protocol.ts'
 import { helloSchema, type SshStreamEndpoint } from './schemas.ts'
@@ -39,7 +39,7 @@ export interface Config {
   leaseMs?: number
 }
 
-declare module '@deepseek-ai/cordis' {
+declare module '@taiji/cordis' {
   interface Context { ssh: SshConnection }
 }
 

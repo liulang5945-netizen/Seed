@@ -2,12 +2,12 @@
  * Public type vocabulary of the workspace entity: the `WorkspaceId` brand and
  * the `Workspace` consumer interface. Types only — the `WorkspaceId` factory
  * lives in `index.ts` (this file carries no runtime code).
- * @module @deepseek-ai/dsh-workspace/src/types
+ * @module @taiji/dsh-workspace/src/types
  */
 
-import type { Branded } from '@deepseek-ai/dsh-brand'
-import type { SessionId } from '@deepseek-ai/dsh-session/types'
-import type {} from '@deepseek-ai/dsh-typert-protocol'
+import type { Branded } from '@taiji/dsh-brand'
+import type { SessionId } from '@taiji/dsh-session/types'
+import type {} from '@taiji/dsh-typert-protocol'
 
 /**
  * Identifies one workspace record. A generated uuid, never the path: path
@@ -15,7 +15,7 @@ import type {} from '@deepseek-ai/dsh-typert-protocol'
  */
 export type WorkspaceId = Branded<'WorkspaceId'>
 
-declare module '@deepseek-ai/dsh-typert-protocol' {
+declare module '@taiji/dsh-typert-protocol' {
   interface RemoteErrorDetailsMap {
     /** No registration carries that Workspace identity. */
     'workspace/not-found': { readonly workspaceId: WorkspaceId }

@@ -1,5 +1,5 @@
 /** Provider-neutral speech transcription inputs and registration metadata. */
-import type { Branded } from '@deepseek-ai/dsh-brand'
+import type { Branded } from '@taiji/dsh-brand'
 
 /** Configured identity of one transcription provider. */
 export type SpeechProviderId = Branded<'SpeechProviderId'>

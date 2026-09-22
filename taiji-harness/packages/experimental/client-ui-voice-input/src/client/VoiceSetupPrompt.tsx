@@ -1,8 +1,8 @@
 /** First-use guidance after explicit enablement, once the Host finishes inspecting its cache. */
 import { useEffect } from 'react'
-import { Button, Modal } from '@deepseek-ai/dsh-client-ui-primitives'
-import type { InjectFace, PropsLocale, PropsRuntime } from '@deepseek-ai/dsh-client-ui-slots'
-import type {} from '@deepseek-ai/dsh-client-ui-plugin-manager/client'
+import { Button, Modal } from '@taiji/dsh-client-ui-primitives'
+import type { InjectFace, PropsLocale, PropsRuntime } from '@taiji/dsh-client-ui-slots'
+import type {} from '@taiji/dsh-client-ui-plugin-manager/client'
 import type { VoiceInputInjected } from './VoiceInput.tsx'
 import type { NS } from './locales.ts'
 

@@ -2,13 +2,13 @@
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import yaml from 'js-yaml'
-import type { Context } from '@deepseek-ai/cordis'
-import { entryListSchema } from '@deepseek-ai/cordis-plugin-include'
-import type { EntryOptions } from '@deepseek-ai/cordis-plugin-loader'
-import Timer from '@deepseek-ai/cordis-plugin-timer'
-import { initProfile, mountRootInclude, readProfilePatches, type ProfileContext } from '@deepseek-ai/dsh-app-boot'
-import Hmr from '@deepseek-ai/dsh-hmr'
-import ConfigEditor from '@deepseek-ai/dsh-config-editor'
+import type { Context } from '@taiji/cordis'
+import { entryListSchema } from '@taiji/cordis-plugin-include'
+import type { EntryOptions } from '@taiji/cordis-plugin-loader'
+import Timer from '@taiji/cordis-plugin-timer'
+import { initProfile, mountRootInclude, readProfilePatches, type ProfileContext } from '@taiji/dsh-app-boot'
+import Hmr from '@taiji/dsh-hmr'
+import ConfigEditor from '@taiji/dsh-config-editor'
 import Settings from '../src/index.ts'
 
 /** Attach the profile runtime to an initialized Loader with a source-module importer. */
@@ -20,7 +20,7 @@ export async function profileComposition(ctx: Context, home: string, baseFile: s
   await writeFile(join(home, 'package.json'), '{"name":"test-installation"}\n')
   await writeFile(join(bundle, 'package.json'), JSON.stringify({ name: 'test-profile-bundle', version: '1.0.0', dsh: { bundle: { patch: 'cordis.patch.yml' } } }))
   const rows = yaml.load(await readFile(baseFile, 'utf8'), { schema: entryListSchema }) as EntryOptions[]
-  for (const row of rows) row.id ??= row.name.replace('@deepseek-ai/dsh-', '')
+  for (const row of rows) row.id ??= row.name.replace('@taiji/dsh-', '')
   await writeFile(join(bundle, 'cordis.patch.yml'), yaml.dump([{ insert: rows }], { schema: entryListSchema }))
   await writeFile(join(dir, 'cordis.yml'), '[]\n')
   const profile: ProfileContext = {

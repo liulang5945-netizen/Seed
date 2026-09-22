@@ -3,7 +3,7 @@ description: "Live graph synchronization and development bundle reloads for Web 
 kind: "package-reference"
 ---
 
-# @deepseek-ai/dsh-client-hmr
+# @taiji/dsh-client-hmr
 
 English | [中文](README.zh.md)
 

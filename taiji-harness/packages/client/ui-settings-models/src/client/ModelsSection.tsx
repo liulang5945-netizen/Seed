@@ -22,9 +22,9 @@
 
 import { useId, useState } from 'react'
 import type { ReactNode } from 'react'
-import { Button, IconPlusOutlineRegular, Modal, SegmentedControl } from '@deepseek-ai/dsh-client-ui-primitives'
-import type { InjectFace, PropsRenderSlots } from '@deepseek-ai/dsh-client-ui-slots'
-import type { SettingsNamespaceView } from '@deepseek-ai/dsh-api-remotes/client'
+import { Button, IconPlusOutlineRegular, Modal, SegmentedControl } from '@taiji/dsh-client-ui-primitives'
+import type { InjectFace, PropsRenderSlots } from '@taiji/dsh-client-ui-slots'
+import type { SettingsNamespaceView } from '@taiji/dsh-api-remotes/client'
 // Type-only: pulls this package's SlotMap merge (the two Models child slots).
 import type {} from './slot-contract.ts'
 import { CustomProviderCard } from './CustomProviderCard.tsx'

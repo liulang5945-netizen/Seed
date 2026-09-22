@@ -1,9 +1,9 @@
 /** Deferred directory reads paired with independently controlled watch streams. */
 import { vi } from 'vitest'
 import type { Mock } from 'vitest'
-import type { RemoteResult } from '@deepseek-ai/dsh-api-remotes/client'
-import { RemoteError } from '@deepseek-ai/dsh-client-test-runtime'
-import type { SessionId } from '@deepseek-ai/dsh-session/types'
+import type { RemoteResult } from '@taiji/dsh-api-remotes/client'
+import { RemoteError } from '@taiji/dsh-client-test-runtime'
+import type { SessionId } from '@taiji/dsh-session/types'
 import type { ListWorkspaceDirectory, WatchWorkspaceDirectory } from '../src/client/face.ts'
 import type { DirLevel } from '../src/client/store.ts'
 import { DirectoryWatches } from './scripted-watch.client.ts'

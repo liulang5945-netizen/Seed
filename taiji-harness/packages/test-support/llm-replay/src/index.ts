@@ -4,21 +4,21 @@
  * compaction calls, then binds fresh live sessions to parent/child scripts by
  * first-call order. Throw and hang cases require an explicit override because
  * a session log cannot reconstruct them alone.
- * @module @deepseek-ai/dsh-llm-replay
+ * @module @taiji/dsh-llm-replay
  */
 
 import { existsSync, readFileSync, writeFileSync } from 'node:fs'
 import { delimiter as pathDelimiter } from 'node:path'
-import type { Context } from '@deepseek-ai/cordis'
-import type {} from '@deepseek-ai/dsh-compaction'
-import type {} from '@deepseek-ai/dsh-deepseek-llm-api-extensions'
-import { SESSION_FORMAT_VERSION, SessionLogOffset, type SessionEvent } from '@deepseek-ai/dsh-session'
-import type { SessionLogOffset as SessionLogOffsetType } from '@deepseek-ai/dsh-session'
+import type { Context } from '@taiji/cordis'
+import type {} from '@taiji/dsh-compaction'
+import type {} from '@taiji/dsh-deepseek-llm-api-extensions'
+import { SESSION_FORMAT_VERSION, SessionLogOffset, type SessionEvent } from '@taiji/dsh-session'
+import type { SessionLogOffset as SessionLogOffsetType } from '@taiji/dsh-session'
 import {
   createSessionFormatCatalogWithChildren,
   SessionFormatUnsupportedMigrationError,
   sessionFormatCatalog,
-} from '@deepseek-ai/dsh-session-format-catalog'
+} from '@taiji/dsh-session-format-catalog'
 import type {
   ContentBlock,
   GenerateOptions,
@@ -32,9 +32,9 @@ import type {
   StreamChunk,
   SystemPromptUpdate,
   TokenUsage,
-} from '@deepseek-ai/dsh-llm'
-import { LlmAdapter, LlmError, ReasoningEffortId, expandAssistantStream, offloadedImageText, requestImageHandleText, resolveRetryPolicy } from '@deepseek-ai/dsh-llm'
-import { assertNever } from '@deepseek-ai/dsh-util-values'
+} from '@taiji/dsh-llm'
+import { LlmAdapter, LlmError, ReasoningEffortId, expandAssistantStream, offloadedImageText, requestImageHandleText, resolveRetryPolicy } from '@taiji/dsh-llm'
+import { assertNever } from '@taiji/dsh-util-values'
 
 const PACKED_CHUNK_ROW_TYPES = new Set(['text-chunks', 'reasoning-chunks', 'tool-call-chunks'])
 

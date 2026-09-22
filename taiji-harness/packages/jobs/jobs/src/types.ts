@@ -2,10 +2,10 @@
  * Types shared by job producers, the registry, and its consumers. The
  * client-safe projection vocabulary lives in `./view.ts`; the service
  * implementation lives in `./index.ts`.
- * @module @deepseek-ai/dsh-jobs/types
+ * @module @taiji/dsh-jobs/types
  */
 
-import type { SessionId } from '@deepseek-ai/dsh-session'
+import type { SessionId } from '@taiji/dsh-session'
 import type { JobId } from './brand.ts'
 import type { JobChannel, JobChunk, JobKind, JobView } from './view.ts'
 

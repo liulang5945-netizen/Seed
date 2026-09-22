@@ -3,7 +3,7 @@ description: "面向用户与维护者的文件型凭据提供方：选择、配
 kind: "package-reference"
 ---
 
-# @deepseek-ai/dsh-credentials-local
+# @taiji/dsh-credentials-local
 
 [English](README.md) | 中文
 
@@ -34,7 +34,7 @@ kind: "package-reference"
 ### 设置
 
 ```yaml
-- name: '@deepseek-ai/dsh-credentials-local'
+- name: '@taiji/dsh-credentials-local'
   config:
     path: /absolute/path/to/.credentials.yaml
 ```
@@ -53,8 +53,8 @@ kind: "package-reference"
 用 `set` 保存密钥、用 `unset` 移除、用 `describe` 检查密钥是否已配置——与凭据 API 提供的操作相同：
 
 ```ts
-import type { Context } from '@deepseek-ai/cordis'
-import { credentialRef } from '@deepseek-ai/dsh-credentials'
+import type { Context } from '@taiji/cordis'
+import { credentialRef } from '@taiji/dsh-credentials'
 
 declare const ctx: Context
 

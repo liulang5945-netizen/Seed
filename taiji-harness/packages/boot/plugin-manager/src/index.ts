@@ -4,19 +4,19 @@ import { existsSync, readFileSync } from 'node:fs'
 import { readFile, rm } from 'node:fs/promises'
 import { join } from 'node:path'
 import { pathToFileURL } from 'node:url'
-import { withFileLock, writeFileAtomic } from '@deepseek-ai/dsh-atomic-write'
-import { Context } from '@deepseek-ai/cordis'
-import type { EntryOptions } from '@deepseek-ai/cordis-plugin-loader'
-import type { PatchOptions } from '@deepseek-ai/cordis-plugin-include'
-import z from '@deepseek-ai/schemastery'
-import { TypertRemoteService, Remote } from '@deepseek-ai/dsh-typert-protocol'
-import { pluginEntryId, readPluginInventory } from '@deepseek-ai/dsh-host-plugin-inventory'
+import { withFileLock, writeFileAtomic } from '@taiji/dsh-atomic-write'
+import { Context } from '@taiji/cordis'
+import type { EntryOptions } from '@taiji/cordis-plugin-loader'
+import type { PatchOptions } from '@taiji/cordis-plugin-include'
+import z from '@taiji/schemastery'
+import { TypertRemoteService, Remote } from '@taiji/dsh-typert-protocol'
+import { pluginEntryId, readPluginInventory } from '@taiji/dsh-host-plugin-inventory'
 import {
   readPluginMeta, readProfileManifest, resolveBundleDir, loadOverlayPatches, composeEntries,
   reconcileProfilePatches, readProfilePatches, OPTIONAL_BUNDLES, bundlePatchPaths,
-} from '@deepseek-ai/dsh-app-boot'
-import type {} from '@deepseek-ai/dsh-hmr'
-import type { ProfileContext, ProfileManifest } from '@deepseek-ai/dsh-app-boot'
+} from '@taiji/dsh-app-boot'
+import type {} from '@taiji/dsh-hmr'
+import type { ProfileContext, ProfileManifest } from '@taiji/dsh-app-boot'
 import { bundleManifest, readProfileRegistry, registryArguments, runProfilePnpm, saveManifest, viewProfilePackage } from './operations.ts'
 import { classifyInstallFailure } from './install-failure.ts'
 import { InvalidInstallSpecError, parseInstallSpec, type ParsedInstallSpec } from './install-spec.ts'
@@ -57,15 +57,15 @@ export interface Config {
 const REGISTRY_URL = /^https?:\/\/\S+$/
 
 const protectedModules = new Set([
-  '@deepseek-ai/dsh-plugin-manager', '@deepseek-ai/cordis-plugin-loader',
-  '@deepseek-ai/cordis-plugin-include', '@deepseek-ai/dsh-api-gateway',
-  '@deepseek-ai/dsh-host-webserver', '@deepseek-ai/dsh-client-modules',
-  '@deepseek-ai/dsh-client-ui-settings-plugin-inventory', '@deepseek-ai/dsh-client-ui-plugin-manager',
-  '@deepseek-ai/dsh-host-plugin-inventory', '@deepseek-ai/dsh-typert-registry',
-  '@deepseek-ai/dsh-api-remotes',
-  '@deepseek-ai/cordis-plugin-timer', '@deepseek-ai/dsh-client-connection',
-  '@deepseek-ai/dsh-host-frontend-static', '@deepseek-ai/dsh-tools',
-  '@deepseek-ai/dsh-hmr',
+  '@taiji/dsh-plugin-manager', '@taiji/cordis-plugin-loader',
+  '@taiji/cordis-plugin-include', '@taiji/dsh-api-gateway',
+  '@taiji/dsh-host-webserver', '@taiji/dsh-client-modules',
+  '@taiji/dsh-client-ui-settings-plugin-inventory', '@taiji/dsh-client-ui-plugin-manager',
+  '@taiji/dsh-host-plugin-inventory', '@taiji/dsh-typert-registry',
+  '@taiji/dsh-api-remotes',
+  '@taiji/cordis-plugin-timer', '@taiji/dsh-client-connection',
+  '@taiji/dsh-host-frontend-static', '@taiji/dsh-tools',
+  '@taiji/dsh-hmr',
 ])
 
 /** The profile files an installation writes and a failed or cancelled one restores. */
@@ -157,7 +157,7 @@ function parsedForRegistry(spec: string): ParsedInstallSpec {
   }
 }
 
-declare module '@deepseek-ai/cordis' {
+declare module '@taiji/cordis' {
   interface Context {
     /** Persistent management of the current profile's composition and packages. */
     pluginManager: PluginManager

@@ -3,8 +3,8 @@ import { useRef, useState } from 'react'
 import type { ReactNode } from 'react'
 import {
   IconChevronDownOutlineRegular, IconFolderOpenOutlineRegular, IconRightUpOutlineRegular, Menu, Tooltip,
-} from '@deepseek-ai/dsh-client-ui-primitives'
-import type { TranslateNS } from '@deepseek-ai/dsh-client-ui-slots'
+} from '@taiji/dsh-client-ui-primitives'
+import type { TranslateNS } from '@taiji/dsh-client-ui-slots'
 import type { OpenInAppPathFailure } from './open-path.ts'
 import { useOpenFailureToast } from './open-failure-toast.tsx'
 import type { NS } from './locales.ts'

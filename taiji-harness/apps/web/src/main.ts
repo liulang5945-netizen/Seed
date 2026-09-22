@@ -1,5 +1,5 @@
 /** Browser entry for the Web client. */
-import { AppWebEntry, applyIndexInjections } from '@deepseek-ai/dsh-client-web'
+import { AppWebEntry, applyIndexInjections } from '@taiji/dsh-client-web'
 
 interface DesktopBootGlobal {
   dshDesktopBoot?: {

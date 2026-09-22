@@ -1,9 +1,9 @@
 /** React-free Client Workspace service and command facade. */
 
-import { Service, type Context } from '@deepseek-ai/cordis'
-import type { SessionId } from '@deepseek-ai/dsh-session/types'
-import type { RemoteFailure } from '@deepseek-ai/dsh-typert-protocol'
-import type { WorkspaceId } from '@deepseek-ai/dsh-workspace/types'
+import { Service, type Context } from '@taiji/cordis'
+import type { SessionId } from '@taiji/dsh-session/types'
+import type { RemoteFailure } from '@taiji/dsh-typert-protocol'
+import type { WorkspaceId } from '@taiji/dsh-workspace/types'
 import type { WorkspaceInitializeDefaultRequest, WorkspaceView } from '../types.ts'
 import type { ClientWorkspaceModel, WorkspaceSnapshot } from './model.ts'
 

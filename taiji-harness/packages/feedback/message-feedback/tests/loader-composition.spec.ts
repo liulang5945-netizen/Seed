@@ -3,12 +3,12 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { pathToFileURL } from 'node:url'
 import { afterEach, describe, expect, it } from 'vitest'
-import { Context } from '@deepseek-ai/cordis'
-import Include from '@deepseek-ai/cordis-plugin-include'
-import Loader from '@deepseek-ai/cordis-plugin-loader'
-import SessionStore, { SessionId } from '@deepseek-ai/dsh-session'
-import JsonlSessionPersistence from '@deepseek-ai/dsh-session-persistence-jsonl'
-import { remoteMethods } from '@deepseek-ai/dsh-typert-protocol'
+import { Context } from '@taiji/cordis'
+import Include from '@taiji/cordis-plugin-include'
+import Loader from '@taiji/cordis-plugin-loader'
+import SessionStore, { SessionId } from '@taiji/dsh-session'
+import JsonlSessionPersistence from '@taiji/dsh-session-persistence-jsonl'
+import { remoteMethods } from '@taiji/dsh-typert-protocol'
 import MessageFeedbackService from '../src/index.ts'
 import { appendMessageFixture } from './helpers.ts'
 
@@ -27,9 +27,9 @@ async function loadComposition(configPath: string): Promise<Context> {
   await ctx.plugin(Loader)
   ctx.loader.builtins.include = Include
   const modules = new Map<string, unknown>([
-    ['@deepseek-ai/dsh-session', SessionStore],
-    ['@deepseek-ai/dsh-session-persistence-jsonl', JsonlSessionPersistence],
-    ['@deepseek-ai/dsh-message-feedback', MessageFeedbackService],
+    ['@taiji/dsh-session', SessionStore],
+    ['@taiji/dsh-session-persistence-jsonl', JsonlSessionPersistence],
+    ['@taiji/dsh-message-feedback', MessageFeedbackService],
   ])
   ctx.loader.internal = {
     version: 'v2',
@@ -55,12 +55,12 @@ describe('message feedback through a real Loader composition', () => {
     root = await mkdtemp(join(tmpdir(), 'dsh-message-feedback-loader-'))
     const configPath = join(root, 'cordis.yml')
     await writeFile(configPath, [
-      "- name: '@deepseek-ai/dsh-session'",
-      "- name: '@deepseek-ai/dsh-session-persistence-jsonl'",
+      "- name: '@taiji/dsh-session'",
+      "- name: '@taiji/dsh-session-persistence-jsonl'",
       '  config:',
       `    root: ${JSON.stringify(join(root, 'sessions'))}`,
       '    compression: none',
-      "- name: '@deepseek-ai/dsh-message-feedback'",
+      "- name: '@taiji/dsh-message-feedback'",
       '  config:',
       '    maxNoteBytes: 32',
       '',

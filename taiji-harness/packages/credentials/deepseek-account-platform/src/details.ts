@@ -1,6 +1,6 @@
 /** Platform Web profile and wallet queries projected for account UI consumers. */
 import { z } from 'zod'
-import type { AccountDetails, AccountProfile, AccountUserId } from '@deepseek-ai/dsh-deepseek-account/types'
+import type { AccountDetails, AccountProfile, AccountUserId } from '@taiji/dsh-deepseek-account/types'
 import { PlatformAuthError, requestAccount } from './protocol.ts'
 
 const user = z.object({

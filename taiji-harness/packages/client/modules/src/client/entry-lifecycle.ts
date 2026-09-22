@@ -1,5 +1,5 @@
 /** Loader lifecycle operations shared by live graph reconciliation and code replacement. */
-import type { Entry } from '@deepseek-ai/cordis-plugin-loader'
+import type { Entry } from '@taiji/cordis-plugin-loader'
 
 /**
  * Release a runtime before clearing its entry fiber so Loader refresh can import new code.

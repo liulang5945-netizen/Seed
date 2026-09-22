@@ -1,12 +1,12 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { Context } from '@deepseek-ai/cordis'
-import LlmRuntime, { createUserMessage, ReasoningEffortId } from '@deepseek-ai/dsh-llm'
-import type { StreamChunk } from '@deepseek-ai/dsh-llm'
+import { Context } from '@taiji/cordis'
+import LlmRuntime, { createUserMessage, ReasoningEffortId } from '@taiji/dsh-llm'
+import type { StreamChunk } from '@taiji/dsh-llm'
 import { liveConfig } from '../../../settings/settings/tests/live-config.ts'
 const configurations = new WeakMap<Context, Awaited<ReturnType<typeof liveConfig>>>()
-import * as LlmPiAi from '@deepseek-ai/dsh-llm-pi-ai'
-import { PiAiAdapter } from '@deepseek-ai/dsh-llm-pi-ai'
-import type { ContextFormed } from '@deepseek-ai/dsh-llm'
+import * as LlmPiAi from '@taiji/dsh-llm-pi-ai'
+import { PiAiAdapter } from '@taiji/dsh-llm-pi-ai'
+import type { ContextFormed } from '@taiji/dsh-llm'
 import { getBuiltinModels } from '@earendil-works/pi-ai/providers/all'
 import { AssistantMessageEventStream } from '@earendil-works/pi-ai/utils/event-stream'
 import type { Api, Model, OpenAICompletionsCompat, Provider } from '@earendil-works/pi-ai'
@@ -17,7 +17,7 @@ import { assemble } from './assemble.ts'
 import { memoryAuth } from './auth-double.ts'
 import { closeMockServers, mockServer, textEvents } from './mock-server.ts'
 
-declare module '@deepseek-ai/dsh-llm' {
+declare module '@taiji/dsh-llm' {
   interface MessageSourceMap {
     'test': { kind: 'test' } & ContextFormed
   }

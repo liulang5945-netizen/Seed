@@ -1,5 +1,5 @@
 {
-  "name": "@deepseek-ai/dsh-tool-workspace-dependencies",
+  "name": "@taiji/dsh-tool-workspace-dependencies",
   "description": "The load_workspace_dependencies tool: absolute paths into a bundled Python, Node.js, and pnpm payload",
   "version": "0.1.7-alpha.1",
   "publishConfig": {
@@ -26,19 +26,19 @@
   ],
   "license": "MIT",
   "peerDependencies": {
-    "@deepseek-ai/dsh-tools": "workspace:^",
-    "@deepseek-ai/cordis": "workspace:^"
+    "@taiji/dsh-tools": "workspace:^",
+    "@taiji/cordis": "workspace:^"
   },
   "devDependencies": {
-    "@deepseek-ai/dsh-tools": "workspace:^",
-    "@deepseek-ai/cordis": "workspace:^",
-    "@deepseek-ai/cordis-plugin-loader": "workspace:^",
-    "@deepseek-ai/cordis-plugin-include": "workspace:^",
-    "@deepseek-ai/dsh-agent": "workspace:^",
-    "@deepseek-ai/dsh-llm": "workspace:^",
-    "@deepseek-ai/dsh-system-prompt": "workspace:^"
+    "@taiji/dsh-tools": "workspace:^",
+    "@taiji/cordis": "workspace:^",
+    "@taiji/cordis-plugin-loader": "workspace:^",
+    "@taiji/cordis-plugin-include": "workspace:^",
+    "@taiji/dsh-agent": "workspace:^",
+    "@taiji/dsh-llm": "workspace:^",
+    "@taiji/dsh-system-prompt": "workspace:^"
   },
   "dependencies": {
-    "@deepseek-ai/schemastery": "workspace:^"
+    "@taiji/schemastery": "workspace:^"
   }
 }

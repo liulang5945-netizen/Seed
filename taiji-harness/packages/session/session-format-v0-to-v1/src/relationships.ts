@@ -1,6 +1,6 @@
-import { deepEqualJson } from '@deepseek-ai/dsh-util-values'
-import { SessionFormatError } from '@deepseek-ai/dsh-session-format'
-import type { SessionFormatArtifact, SessionFormatEvent, SessionFormatJsonValue } from '@deepseek-ai/dsh-session-format'
+import { deepEqualJson } from '@taiji/dsh-util-values'
+import { SessionFormatError } from '@taiji/dsh-session-format'
+import type { SessionFormatArtifact, SessionFormatEvent, SessionFormatJsonValue } from '@taiji/dsh-session-format'
 import { releasedV0Record } from './validation-helpers.ts'
 import { RELEASED_V0_EVENT_DISPOSITIONS } from './dispositions.ts'
 

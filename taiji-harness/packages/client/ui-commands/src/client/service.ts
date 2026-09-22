@@ -12,22 +12,22 @@
  * Catalog RPCs retain an existing Client Session through completion and
  * wait for its initial history open to succeed before contacting the Host.
  */
-import { Service } from '@deepseek-ai/cordis'
-import type { Context } from '@deepseek-ai/cordis'
+import { Service } from '@taiji/cordis'
+import type { Context } from '@taiji/cordis'
 // Type-only: pulls the ctx.remote merge and the forwarded-event key face
 // (`commands/change` rides the allowlist) into this program.
-import type {} from '@deepseek-ai/dsh-api-remotes/client'
-import type { CommandResult } from '@deepseek-ai/dsh-commands/types'
-import type { Context as ClientContext } from '@deepseek-ai/cordis'
-import type { ISessions, SessionBinding } from '@deepseek-ai/dsh-api-session-controller/client'
-import type { SessionId } from '@deepseek-ai/dsh-session/types'
-import { WeakMapWithValues } from '@deepseek-ai/dsh-util-values'
-import type { TranslateNS } from '@deepseek-ai/dsh-client-locale/client'
-import { rankByName } from '@deepseek-ai/dsh-client-ui-primitives'
+import type {} from '@taiji/dsh-api-remotes/client'
+import type { CommandResult } from '@taiji/dsh-commands/types'
+import type { Context as ClientContext } from '@taiji/cordis'
+import type { ISessions, SessionBinding } from '@taiji/dsh-api-session-controller/client'
+import type { SessionId } from '@taiji/dsh-session/types'
+import { WeakMapWithValues } from '@taiji/dsh-util-values'
+import type { TranslateNS } from '@taiji/dsh-client-locale/client'
+import { rankByName } from '@taiji/dsh-client-ui-primitives'
 import type {
   CandidateRequest, ClientSessionContext, CommandClaim, PickOutcome, InputTriggerCandidate, InputTriggerPick,
   SubmitAttachment, SubmitEnvelope, SubmitOutcome,
-} from '@deepseek-ai/dsh-client-ui-input-trigger/client'
+} from '@taiji/dsh-client-ui-input-trigger/client'
 import type { CommandContribution, CommandDecoration, CommandUiContract } from './contract.ts'
 import type { CommandDescriptor } from './directory.ts'
 import { CommandDirectory } from './directory.ts'
@@ -36,14 +36,14 @@ import { builtinRowFace, sectionRows } from './presentation.ts'
 import { claimToken } from './resolution.ts'
 import type { TokenSegment } from './popup.ts'
 
-declare module '@deepseek-ai/dsh-api-session-controller/client' {
+declare module '@taiji/dsh-api-session-controller/client' {
   interface SessionReferenceSourceMap {
     /** A command-catalog fetch waiting for initial history and its RPC result. */
     commandCatalog: unknown
   }
 }
 
-declare module '@deepseek-ai/cordis' {
+declare module '@taiji/cordis' {
   interface Events {
     /**
      * This browser client completed one admitted Host command execution.

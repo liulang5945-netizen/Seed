@@ -2,8 +2,8 @@ import { mkdir, mkdtemp, readFile, readdir, rename, rm, writeFile } from 'node:f
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { afterAll, describe, expect, it } from 'vitest'
-import { Context } from '@deepseek-ai/cordis'
-import Storage, { storageBackendServiceKey } from '@deepseek-ai/dsh-storage'
+import { Context } from '@taiji/cordis'
+import Storage, { storageBackendServiceKey } from '@taiji/dsh-storage'
 import { runKvBackendContract } from '../../storage/tests/contract.ts'
 import { Config, JsonStorageBackend, apply } from '../src/index.ts'
 

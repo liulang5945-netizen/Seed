@@ -1,18 +1,18 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
-import type { SessionId } from '@deepseek-ai/dsh-session/types'
+import type { SessionId } from '@taiji/dsh-session/types'
 import type {
   TeamMemberView as TeamRosterMember,
   TeamTaskView as TeamTask,
   TeamView,
-} from '@deepseek-ai/dsh-experimental-agent-team/client'
-import type { RemoteResult } from '@deepseek-ai/dsh-api-remotes/client'
+} from '@taiji/dsh-experimental-agent-team/client'
+import type { RemoteResult } from '@taiji/dsh-api-remotes/client'
 import {
   IconCloseOutlineRegular, IconRefreshOutlineRegular, IconUserOutlineRegular, StateDot,
   useAnchoredPosition, useDismissOnOutsidePointer, type StateDotState,
-} from '@deepseek-ai/dsh-client-ui-primitives'
-import type { PropsLocale, PropsRuntime } from '@deepseek-ai/dsh-client-ui-slots'
-import type {} from '@deepseek-ai/dsh-client-ui-conversation/client'
+} from '@taiji/dsh-client-ui-primitives'
+import type { PropsLocale, PropsRuntime } from '@taiji/dsh-client-ui-slots'
+import type {} from '@taiji/dsh-client-ui-conversation/client'
 import { NS, type TeamKey } from './locales.ts'
 import css from './TeamAction.module.css'
 

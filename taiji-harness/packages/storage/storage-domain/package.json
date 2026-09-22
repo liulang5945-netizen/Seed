@@ -1,5 +1,5 @@
 {
-  "name": "@deepseek-ai/dsh-storage-domain",
+  "name": "@taiji/dsh-storage-domain",
   "description": "Domain data form (ctx.storage.domain): schema-validated, event-emitting KV domains over storage backends for the DeepSeek Harness",
   "version": "0.1.7-alpha.1",
   "publishConfig": {
@@ -32,17 +32,17 @@
   ],
   "license": "MIT",
   "peerDependencies": {
-    "@deepseek-ai/dsh-invariants": "workspace:^",
-    "@deepseek-ai/dsh-storage": "workspace:^",
-    "@deepseek-ai/cordis": "workspace:^"
+    "@taiji/dsh-invariants": "workspace:^",
+    "@taiji/dsh-storage": "workspace:^",
+    "@taiji/cordis": "workspace:^"
   },
   "dependencies": {
-    "@deepseek-ai/schemastery": "workspace:^",
+    "@taiji/schemastery": "workspace:^",
     "zod": "^4.4.3"
   },
   "devDependencies": {
-    "@deepseek-ai/dsh-invariants": "workspace:^",
-    "@deepseek-ai/dsh-storage": "workspace:^",
-    "@deepseek-ai/cordis": "workspace:^"
+    "@taiji/dsh-invariants": "workspace:^",
+    "@taiji/dsh-storage": "workspace:^",
+    "@taiji/cordis": "workspace:^"
   }
 }

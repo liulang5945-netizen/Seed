@@ -3,9 +3,9 @@
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { dirname, join, posix } from 'node:path'
-import { isSessionFormatJsonObject, parseSessionFormatLogFilename, sessionFormatLogFilename } from '@deepseek-ai/dsh-session-format'
-import { createSessionFormatCatalogWithChildren, historicalSessionFormatCatalog, sessionFormatCatalog } from '@deepseek-ai/dsh-session-format-catalog'
-import { historicalChildCatalogSource } from '@deepseek-ai/dsh-session-format-v3-to-v4'
+import { isSessionFormatJsonObject, parseSessionFormatLogFilename, sessionFormatLogFilename } from '@taiji/dsh-session-format'
+import { createSessionFormatCatalogWithChildren, historicalSessionFormatCatalog, sessionFormatCatalog } from '@taiji/dsh-session-format-catalog'
+import { historicalChildCatalogSource } from '@taiji/dsh-session-format-v3-to-v4'
 import { packVfsOverlay, type ImageTree, type PackOverlayResult } from './pack.ts'
 import type { ImageFiles } from './transform-image.ts'
 

@@ -3,7 +3,7 @@ description: "Configure explicit product usage events, OTLP/HTTP routing, batchi
 kind: "package-reference"
 ---
 
-# @deepseek-ai/dsh-host-product-telemetry-otel
+# @taiji/dsh-host-product-telemetry-otel
 
 English | [中文](README.zh.md)
 
@@ -28,7 +28,7 @@ Send selected product usage events to an OTLP/HTTP collector. Events carry a nam
 Mount the plugin in a Cordis composition with the application identity; override the collector endpoint when needed. The shipped profiles do not mount it. Set `DSH_APP_VERSION` to the running application release version in the launcher environment; the schema rejects an absent version.
 
 ```yaml
-- name: '@deepseek-ai/dsh-host-product-telemetry-otel'
+- name: '@taiji/dsh-host-product-telemetry-otel'
   config:
     endpoint: https://dsh-otel-collector.deepseeksvc.com/v1/logs
     serviceName: deepseek-harness

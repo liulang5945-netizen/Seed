@@ -1,12 +1,12 @@
-/** Content-block structure helpers. @module @deepseek-ai/dsh-llm/content */
+/** Content-block structure helpers. @module @taiji/dsh-llm/content */
 
 import type { ContentBlock, ImageBlock, LlmImageRequestBudget } from './types.ts'
 import type { RequestMessage } from './types.ts'
 import type { Message } from './message.ts'
 import type {
   AttachmentStore, FileAttachmentRef, ImageAttachmentRef, ImageMediaType, RequestImageAttachment,
-} from '@deepseek-ai/dsh-attachment'
-import { assertNever } from '@deepseek-ai/dsh-util-values'
+} from '@taiji/dsh-attachment'
+import { assertNever } from '@taiji/dsh-util-values'
 
 /** Execution-world path that model tools can use to read one normalized attachment. */
 export interface ImageAttachmentAccess {

@@ -1,28 +1,28 @@
 /** Session commands whose activation policy is explicit at each Remote method. */
 
 import { randomUUID } from 'node:crypto'
-import type { Context } from '@deepseek-ai/cordis'
-import { brandString } from '@deepseek-ai/dsh-brand'
-import type { Agent, ModelSelection as AgentModelSelection } from '@deepseek-ai/dsh-agent'
-import { AttachmentError } from '@deepseek-ai/dsh-attachment'
+import type { Context } from '@taiji/cordis'
+import { brandString } from '@taiji/dsh-brand'
+import type { Agent, ModelSelection as AgentModelSelection } from '@taiji/dsh-agent'
+import { AttachmentError } from '@taiji/dsh-attachment'
 import type {
   AttachmentAdmissionPart, FileAttachmentRef, ImageAttachmentRef,
-} from '@deepseek-ai/dsh-attachment'
-import type { FileUploadReceiptId } from '@deepseek-ai/dsh-client-file-upload/types'
-import type {} from '@deepseek-ai/dsh-client-file-upload'
+} from '@taiji/dsh-attachment'
+import type { FileUploadReceiptId } from '@taiji/dsh-client-file-upload/types'
+import type {} from '@taiji/dsh-client-file-upload'
 import {
   ReasoningEffortId, assistantStreamChunks, createUserMessage, freezeMessage,
-} from '@deepseek-ai/dsh-llm'
-import type { MessageSource } from '@deepseek-ai/dsh-llm'
-import { buildForkSeed } from '@deepseek-ai/dsh-session/fork'
-import { SessionLogOffset, SessionSeq } from '@deepseek-ai/dsh-session'
-import type { SessionEvent, SessionHeader, SessionId, UserMessage } from '@deepseek-ai/dsh-session'
-import { SessionQueryError, type SessionObservation } from '@deepseek-ai/dsh-session-query'
-import { SessionTitleInvalidError } from '@deepseek-ai/dsh-session-title'
-import { canonicalClientTimeZone } from '@deepseek-ai/dsh-util-time'
-import { assertNever } from '@deepseek-ai/dsh-util-values'
-import { RemoteError, remoteErrorOf } from '@deepseek-ai/dsh-typert-protocol'
-import type { Workspace } from '@deepseek-ai/dsh-workspace'
+} from '@taiji/dsh-llm'
+import type { MessageSource } from '@taiji/dsh-llm'
+import { buildForkSeed } from '@taiji/dsh-session/fork'
+import { SessionLogOffset, SessionSeq } from '@taiji/dsh-session'
+import type { SessionEvent, SessionHeader, SessionId, UserMessage } from '@taiji/dsh-session'
+import { SessionQueryError, type SessionObservation } from '@taiji/dsh-session-query'
+import { SessionTitleInvalidError } from '@taiji/dsh-session-title'
+import { canonicalClientTimeZone } from '@taiji/dsh-util-time'
+import { assertNever } from '@taiji/dsh-util-values'
+import { RemoteError, remoteErrorOf } from '@taiji/dsh-typert-protocol'
+import type { Workspace } from '@taiji/dsh-workspace'
 import {
   ApiSessionAgentController,
   ApiSessionCwdConflict,

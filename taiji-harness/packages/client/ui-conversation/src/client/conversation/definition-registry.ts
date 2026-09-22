@@ -1,5 +1,5 @@
-import { Service, type Context } from '@deepseek-ai/cordis'
-import { notifySubscribers } from '@deepseek-ai/dsh-client-store'
+import { Service, type Context } from '@taiji/cordis'
+import { notifySubscribers } from '@taiji/dsh-client-store'
 
 /** Shared lifecycle and stable-entry storage for one Conversation Definition registry. */
 export abstract class ConversationDefinitionRegistry<Definition> {

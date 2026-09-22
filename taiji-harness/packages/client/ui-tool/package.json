@@ -1,5 +1,5 @@
 {
-  "name": "@deepseek-ai/dsh-client-ui-tool",
+  "name": "@taiji/dsh-client-ui-tool",
   "description": "Client Tool call-tree renderer and keyed per-tool presentation slot",
   "version": "0.1.7-alpha.1",
   "publishConfig": {
@@ -28,10 +28,10 @@
   "dsh": {
     "client": {
       "inject": [
-        "@deepseek-ai/dsh-api-workspace-controller",
-        "@deepseek-ai/dsh-client-connection",
-        "@deepseek-ai/dsh-client-locale",
-        "@deepseek-ai/dsh-client-ui-conversation"
+        "@taiji/dsh-api-workspace-controller",
+        "@taiji/dsh-client-connection",
+        "@taiji/dsh-client-locale",
+        "@taiji/dsh-client-ui-conversation"
       ],
       "platform": "web"
     }
@@ -42,39 +42,39 @@
   },
   "license": "MIT",
   "peerDependencies": {
-    "@deepseek-ai/cordis": "workspace:^"
+    "@taiji/cordis": "workspace:^"
   },
   "devDependencies": {
-    "@deepseek-ai/dsh-spill-policy": "workspace:^",
-    "@deepseek-ai/dsh-agent": "workspace:^",
-    "@deepseek-ai/dsh-llm": "workspace:^",
-    "@deepseek-ai/dsh-session": "workspace:^",
-    "@deepseek-ai/dsh-system-prompt": "workspace:^",
-    "@deepseek-ai/dsh-tools": "workspace:^",
-    "@deepseek-ai/dsh-tool-jobs": "workspace:^",
-    "@deepseek-ai/dsh-tool-session-query": "workspace:^",
-    "@deepseek-ai/dsh-tool-terminal": "workspace:^",
-    "@deepseek-ai/dsh-spill": "workspace:^",
-    "@deepseek-ai/cordis": "workspace:^",
-    "@deepseek-ai/dsh-api-remotes": "workspace:^",
-    "@deepseek-ai/dsh-client-connection": "workspace:^",
-    "@deepseek-ai/dsh-client-locale": "workspace:^",
-    "@deepseek-ai/dsh-client-test-runtime": "workspace:^",
-    "@deepseek-ai/dsh-client-ui-conversation": "workspace:^",
-    "@deepseek-ai/dsh-client-ui-primitives": "workspace:^",
-    "@deepseek-ai/dsh-client-ui-slots": "workspace:^",
+    "@taiji/dsh-spill-policy": "workspace:^",
+    "@taiji/dsh-agent": "workspace:^",
+    "@taiji/dsh-llm": "workspace:^",
+    "@taiji/dsh-session": "workspace:^",
+    "@taiji/dsh-system-prompt": "workspace:^",
+    "@taiji/dsh-tools": "workspace:^",
+    "@taiji/dsh-tool-jobs": "workspace:^",
+    "@taiji/dsh-tool-session-query": "workspace:^",
+    "@taiji/dsh-tool-terminal": "workspace:^",
+    "@taiji/dsh-spill": "workspace:^",
+    "@taiji/cordis": "workspace:^",
+    "@taiji/dsh-api-remotes": "workspace:^",
+    "@taiji/dsh-client-connection": "workspace:^",
+    "@taiji/dsh-client-locale": "workspace:^",
+    "@taiji/dsh-client-test-runtime": "workspace:^",
+    "@taiji/dsh-client-ui-conversation": "workspace:^",
+    "@taiji/dsh-client-ui-primitives": "workspace:^",
+    "@taiji/dsh-client-ui-slots": "workspace:^",
     "@testing-library/react": "^16.1.0",
     "@types/react": "~18.3.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "@deepseek-ai/dsh-api-workspace-controller": "workspace:^",
-    "@deepseek-ai/dsh-client-ui-chat": "workspace:^",
-    "@deepseek-ai/dsh-client-ui-renderer": "workspace:^",
-    "@deepseek-ai/dsh-client-ui-session": "workspace:^",
-    "@deepseek-ai/dsh-util-workspace-path": "workspace:^",
-    "@deepseek-ai/dsh-attachment": "workspace:^",
+    "@taiji/dsh-api-workspace-controller": "workspace:^",
+    "@taiji/dsh-client-ui-chat": "workspace:^",
+    "@taiji/dsh-client-ui-renderer": "workspace:^",
+    "@taiji/dsh-client-ui-session": "workspace:^",
+    "@taiji/dsh-util-workspace-path": "workspace:^",
+    "@taiji/dsh-attachment": "workspace:^",
     "clsx": "^2.0.0",
-    "@deepseek-ai/dsh-ptc-runtime": "workspace:^"
+    "@taiji/dsh-ptc-runtime": "workspace:^"
   },
   "files": [
     "lib/index.js",

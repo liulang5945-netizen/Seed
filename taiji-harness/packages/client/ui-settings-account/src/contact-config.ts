@@ -1,5 +1,5 @@
 /** Public questionnaire deployment options shared by Host and Client. */
-import z from '@deepseek-ai/schemastery'
+import z from '@taiji/schemastery'
 
 /** Questionnaire destination and its supported source option. */
 export interface Config {

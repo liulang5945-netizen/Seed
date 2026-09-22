@@ -1,5 +1,5 @@
 {
-  "name": "@deepseek-ai/dsh-launch-environment",
+  "name": "@taiji/dsh-launch-environment",
   "description": "Immutable DeepSeek Harness launch environment that records which layer supplied each value",
   "version": "0.1.7-alpha.1",
   "publishConfig": {
@@ -27,9 +27,9 @@
   ],
   "license": "MIT",
   "peerDependencies": {
-    "@deepseek-ai/cordis": "workspace:^"
+    "@taiji/cordis": "workspace:^"
   },
   "devDependencies": {
-    "@deepseek-ai/cordis": "workspace:^"
+    "@taiji/cordis": "workspace:^"
   }
 }

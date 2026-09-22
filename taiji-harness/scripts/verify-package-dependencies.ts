@@ -19,7 +19,7 @@ import {
 } from './verify-client-packages.ts'
 
 const GATE = 'verify-package-dependencies'
-const CORDIS = '@deepseek-ai/cordis'
+const CORDIS = '@taiji/cordis'
 const WORKSPACE_RANGE = 'workspace:^'
 const RELEASE_MANIFEST_GLOB = 'packages/!(experimental)/*/package.json'
 const WORKSPACE_MANIFEST_GLOBS = [
@@ -216,7 +216,7 @@ export function collectRuntimeSourceExportUses(path: string, source: string): Ru
   for (const statement of sourceFile.statements) {
     if (!ts.isImportDeclaration(statement)
       || !ts.isStringLiteralLike(statement.moduleSpecifier)
-      || statement.moduleSpecifier.text !== '@deepseek-ai/dsh-lazy-require') continue
+      || statement.moduleSpecifier.text !== '@taiji/dsh-lazy-require') continue
     const bindings = statement.importClause?.namedBindings
     if (bindings !== undefined && ts.isNamespaceImport(bindings)) {
       lazyRequireNamespaces.add(bindings.name.text)

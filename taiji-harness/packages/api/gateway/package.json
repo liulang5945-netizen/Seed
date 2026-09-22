@@ -1,5 +1,5 @@
 {
-  "name": "@deepseek-ai/dsh-api-gateway",
+  "name": "@taiji/dsh-api-gateway",
   "description": "Typert Remote Host dispatcher and Client API endpoint",
   "version": "0.1.7-alpha.1",
   "publishConfig": {
@@ -36,8 +36,8 @@
   "dsh": {
     "client": {
       "inject": [
-        "@deepseek-ai/dsh-typert-registry",
-        "@deepseek-ai/dsh-client-connection"
+        "@taiji/dsh-typert-registry",
+        "@taiji/dsh-client-connection"
       ],
       "platform": "web",
       "immediately": true
@@ -55,25 +55,25 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "@deepseek-ai/dsh-deque": "workspace:^",
-    "@deepseek-ai/dsh-timeout": "workspace:^",
-    "@deepseek-ai/schemastery": "workspace:^",
+    "@taiji/dsh-deque": "workspace:^",
+    "@taiji/dsh-timeout": "workspace:^",
+    "@taiji/schemastery": "workspace:^",
     "ws": "^8.21.0",
-    "@deepseek-ai/dsh-typert-protocol": "workspace:^"
+    "@taiji/dsh-typert-protocol": "workspace:^"
   },
   "peerDependencies": {
-    "@deepseek-ai/cordis": "workspace:^",
-    "@deepseek-ai/dsh-client-connection": "workspace:^"
+    "@taiji/cordis": "workspace:^",
+    "@taiji/dsh-client-connection": "workspace:^"
   },
   "devDependencies": {
-    "@deepseek-ai/dsh-brand": "workspace:^",
-    "@deepseek-ai/dsh-client-connection": "workspace:^",
-    "@deepseek-ai/dsh-host-webserver": "workspace:^",
-    "@deepseek-ai/dsh-remote-mock": "workspace:^",
-    "@deepseek-ai/dsh-typert-registry": "workspace:^",
-    "@deepseek-ai/dsh-util-crypto": "workspace:^",
+    "@taiji/dsh-brand": "workspace:^",
+    "@taiji/dsh-client-connection": "workspace:^",
+    "@taiji/dsh-host-webserver": "workspace:^",
+    "@taiji/dsh-remote-mock": "workspace:^",
+    "@taiji/dsh-typert-registry": "workspace:^",
+    "@taiji/dsh-util-crypto": "workspace:^",
     "@types/ws": "^8.18.1",
-    "@deepseek-ai/cordis": "workspace:^",
+    "@taiji/cordis": "workspace:^",
     "zod": "^4.4.3"
   }
 }

@@ -1,5 +1,5 @@
 {
-  "name": "@deepseek-ai/dsh-api-account-controller",
+  "name": "@taiji/dsh-api-account-controller",
   "description": "Expose safe account operations over authenticated Remote",
   "version": "0.1.7-alpha.1",
   "publishConfig": {
@@ -47,13 +47,13 @@
     "zod": "^4.4.3"
   },
   "peerDependencies": {
-    "@deepseek-ai/cordis": "workspace:^",
-    "@deepseek-ai/dsh-deepseek-account": "workspace:^",
-    "@deepseek-ai/dsh-typert-protocol": "workspace:^"
+    "@taiji/cordis": "workspace:^",
+    "@taiji/dsh-deepseek-account": "workspace:^",
+    "@taiji/dsh-typert-protocol": "workspace:^"
   },
   "devDependencies": {
-    "@deepseek-ai/cordis": "workspace:^",
-    "@deepseek-ai/dsh-deepseek-account": "workspace:^",
-    "@deepseek-ai/dsh-typert-protocol": "workspace:^"
+    "@taiji/cordis": "workspace:^",
+    "@taiji/dsh-deepseek-account": "workspace:^",
+    "@taiji/dsh-typert-protocol": "workspace:^"
   }
 }

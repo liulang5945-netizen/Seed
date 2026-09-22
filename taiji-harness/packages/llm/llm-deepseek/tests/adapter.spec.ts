@@ -1,28 +1,28 @@
 /** HTTP lifecycle, routing and optional Cordis services under real composition. */
-import type { DeepSeekAccount } from '@deepseek-ai/dsh-deepseek-account'
-import type { AnonymousUserId } from '@deepseek-ai/dsh-anonymous-user-id'
+import type { DeepSeekAccount } from '@taiji/dsh-deepseek-account'
+import type { AnonymousUserId } from '@taiji/dsh-anonymous-user-id'
 import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { pathToFileURL } from 'node:url'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { Context, LoggerLevel, Service } from '@deepseek-ai/cordis'
-import LocalAttachments from '@deepseek-ai/dsh-attachment-local'
-import AgentRegistry, { installModelSelection } from '@deepseek-ai/dsh-agent'
-import type { Agent, ModelSelectionRef } from '@deepseek-ai/dsh-agent'
-import AgentLoop from '@deepseek-ai/dsh-agent-loop'
-import SystemPrompt from '@deepseek-ai/dsh-system-prompt'
-import ToolRuntime from '@deepseek-ai/dsh-tools'
-import SessionProjectionRegistry from '@deepseek-ai/dsh-session-projection'
-import { AttachmentId } from '@deepseek-ai/dsh-attachment'
-import Loader from '@deepseek-ai/cordis-plugin-loader'
-import Include from '@deepseek-ai/cordis-plugin-include'
-import LlmRuntime, { createAssistantMessage, createSystemMessage, createToolResultMessage, createUserMessage, ToolCallId } from '@deepseek-ai/dsh-llm'
-import type { Message } from '@deepseek-ai/dsh-llm'
-import { credentialRef } from '@deepseek-ai/dsh-credentials'
-import LocalCredentials from '@deepseek-ai/dsh-credentials-local'
+import { Context, LoggerLevel, Service } from '@taiji/cordis'
+import LocalAttachments from '@taiji/dsh-attachment-local'
+import AgentRegistry, { installModelSelection } from '@taiji/dsh-agent'
+import type { Agent, ModelSelectionRef } from '@taiji/dsh-agent'
+import AgentLoop from '@taiji/dsh-agent-loop'
+import SystemPrompt from '@taiji/dsh-system-prompt'
+import ToolRuntime from '@taiji/dsh-tools'
+import SessionProjectionRegistry from '@taiji/dsh-session-projection'
+import { AttachmentId } from '@taiji/dsh-attachment'
+import Loader from '@taiji/cordis-plugin-loader'
+import Include from '@taiji/cordis-plugin-include'
+import LlmRuntime, { createAssistantMessage, createSystemMessage, createToolResultMessage, createUserMessage, ToolCallId } from '@taiji/dsh-llm'
+import type { Message } from '@taiji/dsh-llm'
+import { credentialRef } from '@taiji/dsh-credentials'
+import LocalCredentials from '@taiji/dsh-credentials-local'
 import { profileComposition } from '../../../settings/settings/tests/profile-composition.ts'
-import SessionStore, { SessionId } from '@deepseek-ai/dsh-session'
+import SessionStore, { SessionId } from '@taiji/dsh-session'
 import { DeepSeekAdapter } from '../src/adapter.ts'
 import { object } from '../src/replay.ts'
 import { DeepSeekFileStore } from '../src/file-store.ts'
@@ -55,7 +55,7 @@ async function send(agent: Agent, text: string) {
   expect(agent.session.snapshotEvents().at(-1)).toMatchObject({ type: 'turn/end', data: { reason: { kind: 'completed' } } })
 }
 
-declare module '@deepseek-ai/dsh-llm' {
+declare module '@taiji/dsh-llm' {
   interface MessageSourceMap {
     'saved-notice': { kind: 'saved-notice' }
   }
@@ -257,11 +257,11 @@ describe('Cordis provider composition', () => {
     await ctx.plugin(Loader)
     ctx.loader.builtins.include = Include
     const modules = new Map<string, unknown>([
-      ['@deepseek-ai/dsh-llm', LlmRuntime], ['@deepseek-ai/dsh-llm-deepseek', Messages],
-      ['@deepseek-ai/dsh-credentials-local', LocalCredentials],
-      ['@deepseek-ai/dsh-agent', AgentRegistry], ['@deepseek-ai/dsh-agent-loop', AgentLoop],
-      ['@deepseek-ai/dsh-session', SessionStore], ['@deepseek-ai/dsh-session-projection', SessionProjectionRegistry],
-      ['@deepseek-ai/dsh-system-prompt', SystemPrompt], ['@deepseek-ai/dsh-tools', ToolRuntime],
+      ['@taiji/dsh-llm', LlmRuntime], ['@taiji/dsh-llm-deepseek', Messages],
+      ['@taiji/dsh-credentials-local', LocalCredentials],
+      ['@taiji/dsh-agent', AgentRegistry], ['@taiji/dsh-agent-loop', AgentLoop],
+      ['@taiji/dsh-session', SessionStore], ['@taiji/dsh-session-projection', SessionProjectionRegistry],
+      ['@taiji/dsh-system-prompt', SystemPrompt], ['@taiji/dsh-tools', ToolRuntime],
     ])
     // The importer supplies source modules while Loader still owns configuration and effects.
     for (const name of modules.keys()) {

@@ -5,28 +5,28 @@
  * or command substitution, and no pre-tool approval or rewrite path; only
  * blocking decisions are honored. Shared execution and parsing live in
  * `dsh-hook-protocol`.
- * @module @deepseek-ai/dsh-hooks-codex
+ * @module @taiji/dsh-hooks-codex
  */
 
 // Each dialect bridge keeps its complete dependency list visible at the entry
 // point; a cross-package facade for imports alone would add indirection.
 /* jscpd:ignore-start */
 import { readFileSync } from 'node:fs'
-import type { Context } from '@deepseek-ai/cordis'
-import z from '@deepseek-ai/schemastery'
-import type { Agent, PreStepDecision } from '@deepseek-ai/dsh-agent'
-import type {} from '@deepseek-ai/dsh-session-projection'
-import { createUserMessage } from '@deepseek-ai/dsh-llm'
-import type { ContextFormed } from '@deepseek-ai/dsh-llm'
-declare module '@deepseek-ai/dsh-llm' {
+import type { Context } from '@taiji/cordis'
+import z from '@taiji/schemastery'
+import type { Agent, PreStepDecision } from '@taiji/dsh-agent'
+import type {} from '@taiji/dsh-session-projection'
+import { createUserMessage } from '@taiji/dsh-llm'
+import type { ContextFormed } from '@taiji/dsh-llm'
+declare module '@taiji/dsh-llm' {
   interface MessageSourceMap {
     'hooks-codex': { kind: 'hooks-codex' } & ContextFormed
   }
 }
 
-import type { ContentBlock, MessageSource } from '@deepseek-ai/dsh-llm'
-import type { UserMessage } from '@deepseek-ai/dsh-session'
-import type { PostToolDecision, PreToolDecision, ToolExecution, ToolExecutionResult } from '@deepseek-ai/dsh-tools'
+import type { ContentBlock, MessageSource } from '@taiji/dsh-llm'
+import type { UserMessage } from '@taiji/dsh-session'
+import type { PostToolDecision, PreToolDecision, ToolExecution, ToolExecutionResult } from '@taiji/dsh-tools'
 import {
   appendHookInvoked,
   appendHookResult,
@@ -39,7 +39,7 @@ import {
   type HookOutput,
   type MatcherGroup,
   type MergedHookOutcome,
-} from '@deepseek-ai/dsh-hook-protocol'
+} from '@taiji/dsh-hook-protocol'
 import { parseCodexConfig, type CodexHookConfig } from './config.ts'
 /* jscpd:ignore-end */
 

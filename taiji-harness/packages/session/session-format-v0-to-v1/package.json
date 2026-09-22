@@ -1,5 +1,5 @@
 {
-  "name": "@deepseek-ai/dsh-session-format-v0-to-v1",
+  "name": "@taiji/dsh-session-format-v0-to-v1",
   "description": "Frozen released-v0 Session codec and identity migration to v1",
   "version": "0.1.7-alpha.1",
   "publishConfig": {
@@ -39,14 +39,14 @@
     }
   },
   "dependencies": {
-    "@deepseek-ai/dsh-session-format": "workspace:^",
-    "@deepseek-ai/dsh-util-values": "workspace:^"
+    "@taiji/dsh-session-format": "workspace:^",
+    "@taiji/dsh-util-values": "workspace:^"
   },
   "peerDependencies": {
-    "@deepseek-ai/cordis": "workspace:^"
+    "@taiji/cordis": "workspace:^"
   },
   "devDependencies": {
-    "@deepseek-ai/cordis": "workspace:^",
-    "@deepseek-ai/dsh-session": "workspace:^"
+    "@taiji/cordis": "workspace:^",
+    "@taiji/dsh-session": "workspace:^"
   }
 }

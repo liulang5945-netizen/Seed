@@ -1,25 +1,25 @@
-import { imageOffloadProjection } from '@deepseek-ai/dsh-compaction-image-offload/projection'
+import { imageOffloadProjection } from '@taiji/dsh-compaction-image-offload/projection'
 import { describe, expect, it } from 'vitest'
-import { Context } from '@deepseek-ai/cordis'
-import { ToolCallId , createMessage, createToolResultMessage } from '@deepseek-ai/dsh-llm'
-import type { ContentBlock } from '@deepseek-ai/dsh-llm'
+import { Context } from '@taiji/cordis'
+import { ToolCallId , createMessage, createToolResultMessage } from '@taiji/dsh-llm'
+import type { ContentBlock } from '@taiji/dsh-llm'
 import SessionStore, {
   Session,
   SessionId,
   SessionSeq,
-} from '@deepseek-ai/dsh-session'
-import type { SurfaceEvent } from '@deepseek-ai/dsh-session'
-import * as SessionInvariant from '@deepseek-ai/dsh-session/invariant'
-import InvariantRegistry from '@deepseek-ai/dsh-invariants'
-import SessionProjectionRegistry from '@deepseek-ai/dsh-session-projection'
-import TokenMeter from '@deepseek-ai/dsh-token-meter'
+} from '@taiji/dsh-session'
+import type { SurfaceEvent } from '@taiji/dsh-session'
+import * as SessionInvariant from '@taiji/dsh-session/invariant'
+import InvariantRegistry from '@taiji/dsh-invariants'
+import SessionProjectionRegistry from '@taiji/dsh-session-projection'
+import TokenMeter from '@taiji/dsh-token-meter'
 import ToolResultPruner, {
   codePointLength,
   DEFAULTS,
   PRUNE_MARKER,
   resolveConfig,
-} from '@deepseek-ai/dsh-compaction-tool-result-pruner'
-import type { ToolResultPruneConfig } from '@deepseek-ai/dsh-compaction-tool-result-pruner'
+} from '@taiji/dsh-compaction-tool-result-pruner'
+import type { ToolResultPruneConfig } from '@taiji/dsh-compaction-tool-result-pruner'
 
 const MODEL = 'test-model'
 const SMALL: ToolResultPruneConfig = {

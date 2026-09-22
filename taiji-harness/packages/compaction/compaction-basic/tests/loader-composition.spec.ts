@@ -3,15 +3,15 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { pathToFileURL } from 'node:url'
 import { afterEach, describe, expect, it } from 'vitest'
-import { Context } from '@deepseek-ai/cordis'
-import Loader from '@deepseek-ai/cordis-plugin-loader'
-import Include from '@deepseek-ai/cordis-plugin-include'
-import LlmRuntime from '@deepseek-ai/dsh-llm'
-import SessionStore from '@deepseek-ai/dsh-session'
-import SessionProjectionRegistry from '@deepseek-ai/dsh-session-projection'
-import TokenMeter from '@deepseek-ai/dsh-token-meter'
-import BasicCompactionEngine from '@deepseek-ai/dsh-compaction-basic'
-import ToolResultPruner from '@deepseek-ai/dsh-compaction-tool-result-pruner'
+import { Context } from '@taiji/cordis'
+import Loader from '@taiji/cordis-plugin-loader'
+import Include from '@taiji/cordis-plugin-include'
+import LlmRuntime from '@taiji/dsh-llm'
+import SessionStore from '@taiji/dsh-session'
+import SessionProjectionRegistry from '@taiji/dsh-session-projection'
+import TokenMeter from '@taiji/dsh-token-meter'
+import BasicCompactionEngine from '@taiji/dsh-compaction-basic'
+import ToolResultPruner from '@taiji/dsh-compaction-tool-result-pruner'
 
 let root: string | undefined
 let context: Context | undefined
@@ -33,12 +33,12 @@ async function loadYaml(lines: readonly string[]): Promise<Context> {
   await context.plugin(Loader)
   context.loader.builtins.include = Include
   const modules = new Map<string, unknown>([
-    ['@deepseek-ai/dsh-llm', LlmRuntime],
-    ['@deepseek-ai/dsh-session', SessionStore],
-    ['@deepseek-ai/dsh-session-projection', SessionProjectionRegistry],
-    ['@deepseek-ai/dsh-token-meter', TokenMeter],
-    ['@deepseek-ai/dsh-compaction-tool-result-pruner', ToolResultPruner],
-    ['@deepseek-ai/dsh-compaction-basic', BasicCompactionEngine],
+    ['@taiji/dsh-llm', LlmRuntime],
+    ['@taiji/dsh-session', SessionStore],
+    ['@taiji/dsh-session-projection', SessionProjectionRegistry],
+    ['@taiji/dsh-token-meter', TokenMeter],
+    ['@taiji/dsh-compaction-tool-result-pruner', ToolResultPruner],
+    ['@taiji/dsh-compaction-basic', BasicCompactionEngine],
   ])
   context.loader.internal = {
     version: 'v2',
@@ -58,16 +58,16 @@ async function loadYaml(lines: readonly string[]): Promise<Context> {
 describe('real Loader composition', () => {
   it('loads the shipped token-meter, pruning, and compaction-basic YAML order', async () => {
     const loaded = await loadYaml([
-      "- name: '@deepseek-ai/dsh-llm'",
-      "- name: '@deepseek-ai/dsh-session'",
-      "- name: '@deepseek-ai/dsh-session-projection'",
-      "- name: '@deepseek-ai/dsh-token-meter'",
-      "- name: '@deepseek-ai/dsh-compaction-tool-result-pruner'",
+      "- name: '@taiji/dsh-llm'",
+      "- name: '@taiji/dsh-session'",
+      "- name: '@taiji/dsh-session-projection'",
+      "- name: '@taiji/dsh-token-meter'",
+      "- name: '@taiji/dsh-compaction-tool-result-pruner'",
       '  config:',
       '    thresholdChars: 100',
       '    headChars: 20',
       '    tailChars: 10',
-      "- name: '@deepseek-ai/dsh-compaction-basic'",
+      "- name: '@taiji/dsh-compaction-basic'",
       '  config:',
       '    thresholdRatio: 0.5',
       '    headroomTokens: 4000',

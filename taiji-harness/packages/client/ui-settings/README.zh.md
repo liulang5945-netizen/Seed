@@ -3,7 +3,7 @@ description: "设置领域底座插件：共享配置表单、schema 服务，�
 kind: "package-reference"
 ---
 
-# @deepseek-ai/dsh-client-ui-settings
+# @taiji/dsh-client-ui-settings
 
 [English](README.md) | 中文
 

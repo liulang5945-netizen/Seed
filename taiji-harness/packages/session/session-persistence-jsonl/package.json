@@ -1,5 +1,5 @@
 {
-  "name": "@deepseek-ai/dsh-session-persistence-jsonl",
+  "name": "@taiji/dsh-session-persistence-jsonl",
   "description": "JSONL durable session persistence backend for the DeepSeek Harness",
   "version": "0.1.7-alpha.1",
   "publishConfig": {
@@ -28,23 +28,23 @@
   ],
   "license": "MIT",
   "peerDependencies": {
-    "@deepseek-ai/dsh-session": "workspace:^",
-    "@deepseek-ai/dsh-session-persistence": "workspace:^",
-    "@deepseek-ai/cordis": "workspace:^"
+    "@taiji/dsh-session": "workspace:^",
+    "@taiji/dsh-session-persistence": "workspace:^",
+    "@taiji/cordis": "workspace:^"
   },
   "dependencies": {
-    "@deepseek-ai/dsh-llm": "workspace:^",
-    "@deepseek-ai/dsh-session-format": "workspace:^",
-    "@deepseek-ai/dsh-session-format-catalog": "workspace:^",
-    "@deepseek-ai/dsh-session-format-v3-to-v4": "workspace:^",
-    "@deepseek-ai/node-addon-system": "workspace:^",
-    "@deepseek-ai/schemastery": "workspace:^",
+    "@taiji/dsh-llm": "workspace:^",
+    "@taiji/dsh-session-format": "workspace:^",
+    "@taiji/dsh-session-format-catalog": "workspace:^",
+    "@taiji/dsh-session-format-v3-to-v4": "workspace:^",
+    "@taiji/node-addon-system": "workspace:^",
+    "@taiji/schemastery": "workspace:^",
     "koffi": "^3.1.0"
   },
   "devDependencies": {
-    "@deepseek-ai/dsh-session": "workspace:^",
-    "@deepseek-ai/dsh-session-format-v0-to-v1": "workspace:^",
-    "@deepseek-ai/dsh-session-persistence": "workspace:^",
-    "@deepseek-ai/cordis": "workspace:^"
+    "@taiji/dsh-session": "workspace:^",
+    "@taiji/dsh-session-format-v0-to-v1": "workspace:^",
+    "@taiji/dsh-session-persistence": "workspace:^",
+    "@taiji/cordis": "workspace:^"
   }
 }

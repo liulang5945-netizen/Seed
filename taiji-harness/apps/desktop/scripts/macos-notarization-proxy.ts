@@ -5,7 +5,7 @@ import { closeSync, mkdirSync, openSync, readFileSync, rmSync, writeFileSync } f
 import { connect } from 'node:net'
 import { homedir } from 'node:os'
 import { dirname, join, resolve } from 'node:path'
-import { tryLockExclusive } from '@deepseek-ai/node-addon-system/flock'
+import { tryLockExclusive } from '@taiji/node-addon-system/flock'
 
 interface ProxyState {
   readonly enabled: boolean

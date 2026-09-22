@@ -1,14 +1,14 @@
 import { readFileSync, readdirSync } from 'node:fs'
 import { join, relative } from 'node:path'
 import { describe, expect, it } from 'vitest'
-import { SESSION_FORMAT_VERSION, Session, SessionId, type SessionEvent } from '@deepseek-ai/dsh-session'
-import { createSessionFormatCatalogWithChildren } from '@deepseek-ai/dsh-session-format-catalog'
+import { SESSION_FORMAT_VERSION, Session, SessionId, type SessionEvent } from '@taiji/dsh-session'
+import { createSessionFormatCatalogWithChildren } from '@taiji/dsh-session-format-catalog'
 import {
   generationLogFilename,
   scanLog,
-} from '@deepseek-ai/dsh-session-persistence-jsonl/src/format.ts'
-import { foldSubagentDescriptor } from '@deepseek-ai/dsh-subagent'
-import { projectionCacheDomainSpec } from '@deepseek-ai/dsh-session-projection-cache'
+} from '@taiji/dsh-session-persistence-jsonl/src/format.ts'
+import { foldSubagentDescriptor } from '@taiji/dsh-subagent'
+import { projectionCacheDomainSpec } from '@taiji/dsh-session-projection-cache'
 import {
   buildVfsExampleFiles,
   VFS_EXAMPLE_OLDEST_MESSAGE,

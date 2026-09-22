@@ -1,8 +1,8 @@
 /** Published terminal operations and cleanup failures over the remote provider seam. */
 import { duplexPair } from 'node:stream'
 import { once } from 'node:events'
-import { Context } from '@deepseek-ai/cordis'
-import type { SubprocessTerminalSpawnSpec } from '@deepseek-ai/dsh-subprocess'
+import { Context } from '@taiji/cordis'
+import type { SubprocessTerminalSpawnSpec } from '@taiji/dsh-subprocess'
 import { describe, expect, it, onTestFinished, vi } from 'vitest'
 import { z } from 'zod'
 import { SshSubprocessRuntime } from '../src/index.ts'

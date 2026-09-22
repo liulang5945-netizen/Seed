@@ -1,5 +1,5 @@
 /** Client-safe account state; credentials never cross this projection. */
-import type { Branded } from '@deepseek-ai/dsh-brand'
+import type { Branded } from '@taiji/dsh-brand'
 
 /** Identity of one local login attempt, unrelated to the platform request ID. */
 export type SignInAttemptId = Branded<'SignInAttemptId'>

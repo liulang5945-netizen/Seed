@@ -3,12 +3,12 @@
 // through one serialized read-modify-write so a rotating credential cannot be
 // lost between processes.
 import { afterEach, describe, expect, it } from 'vitest'
-import { Context } from '@deepseek-ai/cordis'
+import { Context } from '@taiji/cordis'
 import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
-import { credentialKey, credentialKeyScope, credentialRef, parseCredentialKey } from '@deepseek-ai/dsh-credentials'
-import type { CredentialKey, CredentialRecord } from '@deepseek-ai/dsh-credentials'
+import { credentialKey, credentialKeyScope, credentialRef, parseCredentialKey } from '@taiji/dsh-credentials'
+import type { CredentialKey, CredentialRecord } from '@taiji/dsh-credentials'
 import { LocalCredentialProvider } from '../src/index.ts'
 
 /** Credential documents are seeded owner-only, exactly as the provider creates them. */

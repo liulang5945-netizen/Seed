@@ -1,6 +1,6 @@
-import type { ObservableSnapshot } from '@deepseek-ai/dsh-client-store'
-import type { InjectFace, PropsLocale, PropsRuntime } from '@deepseek-ai/dsh-client-ui-slots'
-import type {} from '@deepseek-ai/dsh-client-ui-conversation/client'
+import type { ObservableSnapshot } from '@taiji/dsh-client-store'
+import type { InjectFace, PropsLocale, PropsRuntime } from '@taiji/dsh-client-ui-slots'
+import type {} from '@taiji/dsh-client-ui-conversation/client'
 import { NS, type OpenInAppKey } from './locales.ts'
 import { OpenTargetButton } from './OpenTargetButton.tsx'
 

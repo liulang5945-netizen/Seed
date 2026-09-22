@@ -10,15 +10,15 @@
  */
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
-import type { SessionListState, SessionSummary } from '@deepseek-ai/dsh-api-session-controller/client'
-import type { WorkspaceId, WorkspaceSnapshot } from '@deepseek-ai/dsh-api-workspace-controller/client'
-import type { SessionStatusSnapshot } from '@deepseek-ai/dsh-client-ui-session/client'
-import type { SessionId } from '@deepseek-ai/dsh-session/types'
-import { createSnapshotStore } from '@deepseek-ai/dsh-client-store'
-import type { GlobalStandardProps, PropsLocale, PropsRuntime } from '@deepseek-ai/dsh-client-ui-slots'
-import { bindSnapshotSelector, makeTranslate } from '@deepseek-ai/dsh-client-test-runtime'
-import { en as commonEn } from '@deepseek-ai/dsh-client-locale/src/locales/en.ts'
-import { zh as commonZh } from '@deepseek-ai/dsh-client-locale/src/locales/zh.ts'
+import type { SessionListState, SessionSummary } from '@taiji/dsh-api-session-controller/client'
+import type { WorkspaceId, WorkspaceSnapshot } from '@taiji/dsh-api-workspace-controller/client'
+import type { SessionStatusSnapshot } from '@taiji/dsh-client-ui-session/client'
+import type { SessionId } from '@taiji/dsh-session/types'
+import { createSnapshotStore } from '@taiji/dsh-client-store'
+import type { GlobalStandardProps, PropsLocale, PropsRuntime } from '@taiji/dsh-client-ui-slots'
+import { bindSnapshotSelector, makeTranslate } from '@taiji/dsh-client-test-runtime'
+import { en as commonEn } from '@taiji/dsh-client-locale/src/locales/en.ts'
+import { zh as commonZh } from '@taiji/dsh-client-locale/src/locales/zh.ts'
 import type {
   MenuOpenState, RowToast, RowToastState, SessionArchiveConfirmInjected, SessionArchiveConfirmRequest,
   SessionRenameDialogInjected, SessionRenameTarget,
@@ -449,7 +449,7 @@ describe('SessionArchiveConfirmDialog', () => {
 
 // A provider outside this package may merge its own family into the kind map;
 // the dialog must describe it without knowing its copy.
-declare module '@deepseek-ai/dsh-workspace/types' {
+declare module '@taiji/dsh-workspace/types' {
   interface SessionActivityKindMap {
     probe: true
   }

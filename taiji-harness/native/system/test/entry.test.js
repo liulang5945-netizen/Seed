@@ -15,9 +15,9 @@ import {
   grantArgs,
   launcherPath,
   probe,
-} from '@deepseek-ai/node-addon-system/landlock-run';
+} from '@taiji/node-addon-system/landlock-run';
 
-await assert.rejects(import('@deepseek-ai/node-addon-system'), {
+await assert.rejects(import('@taiji/node-addon-system'), {
   code: 'ERR_PACKAGE_PATH_NOT_EXPORTED',
 });
 
@@ -35,7 +35,7 @@ assert.deepEqual(
 assert.deepEqual(grantArgs({ readWrite: ['/a'], readOnly: ['/b'] }), ['--ro', '/b', '--rw', '/a']);
 
 // --- launcherPath: resolves the platform package next to its package.json ---
-const platformPackage = `@deepseek-ai/node-addon-system-${process.platform}-${process.arch}`;
+const platformPackage = `@taiji/node-addon-system-${process.platform}-${process.arch}`;
 const resolvedViaSeam = launcherPath((specifier) => {
   assert.equal(specifier, `${platformPackage}/package.json`);
   return path.join('/fake-install', specifier);

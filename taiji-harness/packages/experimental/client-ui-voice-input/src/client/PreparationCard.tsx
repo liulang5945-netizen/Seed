@@ -1,8 +1,8 @@
 /** Provider-owned preparation steps and persisted recognition preferences. */
 import { useEffect, useState } from 'react'
-import { Button, DisclosureRow, IconChevronDownOutlineRegular, StateDot, type StateDotState } from '@deepseek-ai/dsh-client-ui-primitives'
-import type { InjectFace, PropsLocale } from '@deepseek-ai/dsh-client-ui-slots'
-import type { SpeechPreparationState, SpeechProviderId, SpeechProviderView, SpeechSelectionPatch } from '@deepseek-ai/dsh-experimental-speech-to-text/types'
+import { Button, DisclosureRow, IconChevronDownOutlineRegular, StateDot, type StateDotState } from '@taiji/dsh-client-ui-primitives'
+import type { InjectFace, PropsLocale } from '@taiji/dsh-client-ui-slots'
+import type { SpeechPreparationState, SpeechProviderId, SpeechProviderView, SpeechSelectionPatch } from '@taiji/dsh-experimental-speech-to-text/types'
 import type { VoiceInputInjected } from './VoiceInput.tsx'
 import { NS } from './locales.ts'
 import css from './VoiceInput.module.css'

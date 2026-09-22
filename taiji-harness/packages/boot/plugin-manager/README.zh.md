@@ -3,7 +3,7 @@ description: "通过 Web 侧边栏或 agent 启停 profile 插件，并安装、
 kind: "package-reference"
 ---
 
-# @deepseek-ai/dsh-plugin-manager
+# @taiji/dsh-plugin-manager
 
 [English](README.md) | 中文
 

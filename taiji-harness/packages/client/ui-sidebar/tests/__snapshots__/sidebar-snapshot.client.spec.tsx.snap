@@ -133,7 +133,7 @@ exports[`sidebar shell snapshots > renders Windows caption controls in expanded 
                 <span
                   class="localBuildTitle"
                 >
-                  DSH Local Build
+                  Taiji Harness Local Build
                 </span>
                 <span
                   class="buildVersion"
@@ -367,7 +367,7 @@ exports[`sidebar shell snapshots > renders the expanded column (wordmark, capsul
                 <span
                   class="localBuildTitle"
                 >
-                  DSH Local Build
+                  Taiji Harness Local Build
                 </span>
                 <span
                   class="buildVersion"
@@ -501,7 +501,7 @@ exports[`sidebar shell snapshots > renders the expanded column in the default lo
                 <span
                   class="localBuildTitle"
                 >
-                  DSH 本地构建
+                  Taiji Harness 本地构建
                 </span>
                 <span
                   class="buildVersion"

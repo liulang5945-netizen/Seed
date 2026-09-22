@@ -30,7 +30,7 @@ import { entryDirs, packageDirs, platformDirs, readJson, root } from './repo.mjs
 const args = process.argv.slice(2);
 const currentPlatformOnly = args.includes('--current-platform-only');
 const tarballDir = path.resolve(args.find((arg) => !arg.startsWith('--')) || path.join(root, 'dist', 'npm'));
-const entryPackageName = '@deepseek-ai/node-addon-system';
+const entryPackageName = '@taiji/node-addon-system';
 
 function tarballName(manifest) {
   if (manifest.name.startsWith('@')) {
@@ -166,15 +166,15 @@ import { spawnSync } from 'node:child_process';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { grantArgs, launcherPath, probe } from '@deepseek-ai/node-addon-system/landlock-run';
-import { tryLockExclusive } from '@deepseek-ai/node-addon-system/flock';
+import { grantArgs, launcherPath, probe } from '@taiji/node-addon-system/landlock-run';
+import { tryLockExclusive } from '@taiji/node-addon-system/flock';
 
-await assert.rejects(import('@deepseek-ai/node-addon-system'), {
+await assert.rejects(import('@taiji/node-addon-system'), {
   code: 'ERR_PACKAGE_PATH_NOT_EXPORTED',
 });
 
 const requireLandlock = process.env.NALR_REQUIRE_LANDLOCK === '1';
-const platformPackage = '@deepseek-ai/node-addon-system-' + process.platform + '-' + process.arch;
+const platformPackage = '@taiji/node-addon-system-' + process.platform + '-' + process.arch;
 const resolved = launcherPath();
 assert.ok(path.isAbsolute(resolved), 'launcherPath must be absolute');
 assert.ok(resolved.includes(path.join(...platformPackage.split('/'))), 'launcherPath must point into the platform package: ' + resolved);

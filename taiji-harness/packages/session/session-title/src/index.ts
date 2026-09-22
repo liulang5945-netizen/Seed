@@ -1,24 +1,24 @@
 /**
  * Log-backed session title service, deterministic fallback, and provider contract.
- * @module @deepseek-ai/dsh-session-title
+ * @module @taiji/dsh-session-title
  */
 
-import { Context, FiberState, Service, type Fiber } from '@deepseek-ai/cordis'
-import z from '@deepseek-ai/schemastery'
+import { Context, FiberState, Service, type Fiber } from '@taiji/cordis'
+import z from '@taiji/schemastery'
 import { z as zod } from 'zod'
 import type { ZodType } from 'zod'
-import type { Branded } from '@deepseek-ai/dsh-brand'
-import { isAgentLoopRequest } from '@deepseek-ai/dsh-llm'
-import type { GenerateOptions } from '@deepseek-ai/dsh-llm'
-import { assertNever, deepFreeze } from '@deepseek-ai/dsh-util-values'
+import type { Branded } from '@taiji/dsh-brand'
+import { isAgentLoopRequest } from '@taiji/dsh-llm'
+import type { GenerateOptions } from '@taiji/dsh-llm'
+import { assertNever, deepFreeze } from '@taiji/dsh-util-values'
 import type {
   Session,
   SessionEvent,
-} from '@deepseek-ai/dsh-session'
-import { SessionSeq } from '@deepseek-ai/dsh-session'
-import type {} from '@deepseek-ai/dsh-session-projection'
-import type { ProjectionDefinition } from '@deepseek-ai/dsh-session-projection'
-import type {} from '@deepseek-ai/dsh-agent'
+} from '@taiji/dsh-session'
+import { SessionSeq } from '@taiji/dsh-session'
+import type {} from '@taiji/dsh-session-projection'
+import type { ProjectionDefinition } from '@taiji/dsh-session-projection'
+import type {} from '@taiji/dsh-agent'
 export type {
   SessionTitleEventData,
   SessionTitleModelIdentity,
@@ -62,13 +62,13 @@ export interface Config {
   readonly maxTitleBytes: number
 }
 
-declare module '@deepseek-ai/cordis' {
+declare module '@taiji/cordis' {
   interface Context {
     sessionTitle: SessionTitleService
   }
 }
 
-declare module '@deepseek-ai/dsh-session/types' {
+declare module '@taiji/dsh-session/types' {
   interface SessionEventMap {
     /**
      * Latest-wins session title snapshot. Log-only: it never enters the model

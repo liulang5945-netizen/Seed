@@ -1,5 +1,5 @@
 {
-  "name": "@deepseek-ai/dsh-config-editor",
+  "name": "@taiji/dsh-config-editor",
   "description": "Persist plugin configuration through profile patches and Loader reconciliation",
   "version": "0.1.7-alpha.1",
   "publishConfig": {
@@ -27,27 +27,27 @@
   ],
   "license": "MIT",
   "peerDependencies": {
-    "@deepseek-ai/cordis": "workspace:^",
-    "@deepseek-ai/cordis-plugin-loader": "workspace:^",
-    "@deepseek-ai/dsh-hmr": "workspace:^",
-    "@deepseek-ai/cordis-plugin-include": "workspace:^",
-    "@deepseek-ai/dsh-app-boot": "workspace:^"
+    "@taiji/cordis": "workspace:^",
+    "@taiji/cordis-plugin-loader": "workspace:^",
+    "@taiji/dsh-hmr": "workspace:^",
+    "@taiji/cordis-plugin-include": "workspace:^",
+    "@taiji/dsh-app-boot": "workspace:^"
   },
   "dependencies": {
-    "@deepseek-ai/dsh-atomic-write": "workspace:^",
+    "@taiji/dsh-atomic-write": "workspace:^",
     "yaml": "^2.8.1",
     "js-yaml": "^4.1.0"
   },
   "devDependencies": {
-    "@deepseek-ai/cordis": "workspace:^",
-    "@deepseek-ai/cordis-plugin-loader": "workspace:^",
-    "@deepseek-ai/dsh-hmr": "workspace:^",
-    "@deepseek-ai/cordis-plugin-include": "workspace:^",
+    "@taiji/cordis": "workspace:^",
+    "@taiji/cordis-plugin-loader": "workspace:^",
+    "@taiji/dsh-hmr": "workspace:^",
+    "@taiji/cordis-plugin-include": "workspace:^",
     "@types/js-yaml": "^4.0.9",
-    "@deepseek-ai/dsh-app-boot": "workspace:^"
+    "@taiji/dsh-app-boot": "workspace:^"
   },
   "peerDependenciesMeta": {
-    "@deepseek-ai/dsh-hmr": {
+    "@taiji/dsh-hmr": {
       "optional": true
     }
   }

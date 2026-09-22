@@ -1,6 +1,6 @@
 /** Account Remote delegation preserves provider results, failures, and stream lifetime. */
-import { Context } from '@deepseek-ai/cordis'
-import type { DeepSeekAccount } from '@deepseek-ai/dsh-deepseek-account'
+import { Context } from '@taiji/cordis'
+import type { DeepSeekAccount } from '@taiji/dsh-deepseek-account'
 import type { AccountView, SignInAttemptId } from '../src/types.ts'
 import { afterEach, expect, it, vi } from 'vitest'
 import AccountController from '../src/index.ts'

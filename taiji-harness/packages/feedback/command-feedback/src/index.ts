@@ -5,15 +5,15 @@
  * authoritative log-only event and does not start model work. The append is
  * eager but unflushed, so acknowledgement reports that the entry is logged,
  * not that it reached disk.
- * @module @deepseek-ai/dsh-command-feedback
+ * @module @taiji/dsh-command-feedback
  */
 
-import type { Context } from '@deepseek-ai/cordis'
-import { CommandDefinitionId } from '@deepseek-ai/dsh-commands/brand'
-import type { CommandInvocation, CommandResult } from '@deepseek-ai/dsh-commands'
-import type { Session } from '@deepseek-ai/dsh-session'
-import { getOrCreateAnonymousUserId } from '@deepseek-ai/dsh-anonymous-user-id'
-import { TypertRemoteService, Remote } from '@deepseek-ai/dsh-typert-protocol'
+import type { Context } from '@taiji/cordis'
+import { CommandDefinitionId } from '@taiji/dsh-commands/brand'
+import type { CommandInvocation, CommandResult } from '@taiji/dsh-commands'
+import type { Session } from '@taiji/dsh-session'
+import { getOrCreateAnonymousUserId } from '@taiji/dsh-anonymous-user-id'
+import { TypertRemoteService, Remote } from '@taiji/dsh-typert-protocol'
 import type {
   FeedbackCategory,
   FeedbackRecord,
@@ -42,7 +42,7 @@ export const inject = ['commands']
 
 const USAGE = 'Usage: /feedback <text>'
 
-declare module '@deepseek-ai/cordis' {
+declare module '@taiji/cordis' {
   interface Context {
     sessionFeedback: SessionFeedbackService
   }
@@ -117,7 +117,7 @@ export class SessionFeedbackService extends TypertRemoteService {
 export function apply(ctx: Context): void {
   ctx.plugin(SessionFeedbackService)
   ctx.commands.register({
-    definitionId: CommandDefinitionId('@deepseek-ai/dsh-command-feedback'),
+    definitionId: CommandDefinitionId('@taiji/dsh-command-feedback'),
     name: 'feedback',
     description: 'Record feedback about this session',
     input: { hint: '<text>' },

@@ -8,16 +8,16 @@
 import { join, dirname } from 'node:path'
 import { mkdir, readFile, readdir, stat, writeFile } from 'node:fs/promises'
 import { fileURLToPath } from 'node:url'
-import { Context } from '@deepseek-ai/cordis'
-import { LOADER_SMOKE_TEST_TIMEOUT_MS, runLoaderSmoke } from '@deepseek-ai/dsh-loader-smoke'
+import { Context } from '@taiji/cordis'
+import { LOADER_SMOKE_TEST_TIMEOUT_MS, runLoaderSmoke } from '@taiji/dsh-loader-smoke'
 import {
   SESSION_FORMAT_VERSION,
   SessionId,
   SessionSeq,
   type SessionEvent,
   type SessionHeader,
-} from '@deepseek-ai/dsh-session'
-import JsonlSessionPersistence from '@deepseek-ai/dsh-session-persistence-jsonl'
+} from '@taiji/dsh-session'
+import JsonlSessionPersistence from '@taiji/dsh-session-persistence-jsonl'
 import {
   generationLogFilename,
   generationLogPath,

@@ -1,5 +1,5 @@
 {
-  "name": "@deepseek-ai/dsh-util-values",
+  "name": "@taiji/dsh-util-values",
   "description": "Duplicate-install-safe value primitives for the DeepSeek Harness",
   "version": "0.1.7-alpha.1",
   "publishConfig": {
@@ -27,9 +27,9 @@
   ],
   "license": "MIT",
   "peerDependencies": {
-    "@deepseek-ai/cordis": "workspace:^"
+    "@taiji/cordis": "workspace:^"
   },
   "devDependencies": {
-    "@deepseek-ai/cordis": "workspace:^"
+    "@taiji/cordis": "workspace:^"
   }
 }

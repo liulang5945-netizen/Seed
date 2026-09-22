@@ -12,17 +12,17 @@ import { tmpdir } from 'node:os'
 import { delimiter, dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { promisify } from 'node:util'
-import { Context } from '@deepseek-ai/cordis'
+import { Context } from '@taiji/cordis'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import type { Agent } from '@deepseek-ai/dsh-agent'
-import SubagentRuntime from '@deepseek-ai/dsh-subagent'
-import SessionProjectionRegistry from '@deepseek-ai/dsh-session-projection'
+import type { Agent } from '@taiji/dsh-agent'
+import SubagentRuntime from '@taiji/dsh-subagent'
+import SessionProjectionRegistry from '@taiji/dsh-session-projection'
 import type {
   SubprocessHandle,
   SubprocessOutcome,
   SubprocessSpawnSpec,
-} from '@deepseek-ai/dsh-subprocess'
-import LocalSubprocessRuntime from '@deepseek-ai/dsh-subprocess-local'
+} from '@taiji/dsh-subprocess'
+import LocalSubprocessRuntime from '@taiji/dsh-subprocess-local'
 import * as codex from '../src/index.ts'
 import type { CodexPermissionMode } from '../src/run.ts'
 import {

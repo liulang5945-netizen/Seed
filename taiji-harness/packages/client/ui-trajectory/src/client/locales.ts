@@ -194,7 +194,7 @@ export const zh = {
 /** The trajectory dictionary key union. */
 export type TrajectoryKey = keyof typeof zh
 
-declare module '@deepseek-ai/dsh-client-ui-slots' {
+declare module '@taiji/dsh-client-ui-slots' {
   interface LocaleNamespaceMap {
     /** The complete trajectory ledger, timeline, inspector, and toolbar copy. */
     trajectory: TrajectoryKey
@@ -203,7 +203,7 @@ declare module '@deepseek-ai/dsh-client-ui-slots' {
 
 /** Namespace-bound translator threaded through trajectory presentation code. */
 export type TrajectoryTranslate =
-  import('@deepseek-ai/dsh-client-ui-slots').TranslateNS<typeof NS>
+  import('@taiji/dsh-client-ui-slots').TranslateNS<typeof NS>
 
 /** English dictionary, checked complete against the Chinese source of truth. */
 export const en: Record<TrajectoryKey, string> = {

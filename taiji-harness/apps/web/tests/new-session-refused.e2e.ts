@@ -15,7 +15,7 @@ const BROKEN_PRESET = {
   id: PRESET_ID,
   name: 'Renamed plugin',
   description: 'Names a plugin that no longer resolves.',
-  plugins: [{ id: 'ghost', name: '@deepseek-ai/dsh-no-such-plugin' }],
+  plugins: [{ id: 'ghost', name: '@taiji/dsh-no-such-plugin' }],
 }
 
 describe.skipIf(MODE === 'record')('web e2e: refused New Session', () => {

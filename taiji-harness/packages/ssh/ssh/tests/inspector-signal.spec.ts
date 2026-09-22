@@ -3,8 +3,8 @@ import { spawn, spawnSync } from 'node:child_process'
 import { once } from 'node:events'
 import { mkdtemp, realpath, rm } from 'node:fs/promises'
 import { createInterface } from 'node:readline'
-import { Context } from '@deepseek-ai/cordis'
-import { LocalSandboxProvider } from '@deepseek-ai/dsh-sandbox-local'
+import { Context } from '@taiji/cordis'
+import { LocalSandboxProvider } from '@taiji/dsh-sandbox-local'
 import { describe, expect, it } from 'vitest'
 
 // This fixture has no credentials, application state, or descendants. Port zero

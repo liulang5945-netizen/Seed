@@ -1,11 +1,11 @@
-/** Package-owned durable workflow-record invariants. @module @deepseek-ai/dsh-tool-workflow/invariant */
+/** Package-owned durable workflow-record invariants. @module @taiji/dsh-tool-workflow/invariant */
 
-import type { Context } from '@deepseek-ai/cordis'
-import type { Session, SessionEvent } from '@deepseek-ai/dsh-session'
-import type { InvariantFailure, InvariantInstaller } from '@deepseek-ai/dsh-invariants'
+import type { Context } from '@taiji/cordis'
+import type { Session, SessionEvent } from '@taiji/dsh-session'
+import type { InvariantFailure, InvariantInstaller } from '@taiji/dsh-invariants'
 import type {} from './types.ts'
 
-const PACKAGE_NAME = '@deepseek-ai/dsh-tool-workflow'
+const PACKAGE_NAME = '@taiji/dsh-tool-workflow'
 
 /** Cordis companion plugin name. */
 export const name = 'tool-workflow-invariant'

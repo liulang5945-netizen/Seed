@@ -1,20 +1,20 @@
 import { describe, expect, it } from 'vitest'
-import { Context } from '@deepseek-ai/cordis'
-import { createUserMessage, ToolCallId, type ContentBlock, type GenerateOptions } from '@deepseek-ai/dsh-llm'
-import { SessionId } from '@deepseek-ai/dsh-session'
-import AgentLoop from '@deepseek-ai/dsh-agent-loop'
-import { mountAgentLoopTestDependencies } from '@deepseek-ai/dsh-agent-loop-testkit'
-import InvariantRegistry from '@deepseek-ai/dsh-invariants'
-import type {} from '@deepseek-ai/dsh-system-prompt'
-import * as SessionInvariant from '@deepseek-ai/dsh-session/invariant'
-import * as AgentInvariant from '@deepseek-ai/dsh-agent/invariant'
-import * as AgentLoopInvariant from '@deepseek-ai/dsh-agent-loop/invariant'
+import { Context } from '@taiji/cordis'
+import { createUserMessage, ToolCallId, type ContentBlock, type GenerateOptions } from '@taiji/dsh-llm'
+import { SessionId } from '@taiji/dsh-session'
+import AgentLoop from '@taiji/dsh-agent-loop'
+import { mountAgentLoopTestDependencies } from '@taiji/dsh-agent-loop-testkit'
+import InvariantRegistry from '@taiji/dsh-invariants'
+import type {} from '@taiji/dsh-system-prompt'
+import * as SessionInvariant from '@taiji/dsh-session/invariant'
+import * as AgentInvariant from '@taiji/dsh-agent/invariant'
+import * as AgentLoopInvariant from '@taiji/dsh-agent-loop/invariant'
 import SubagentRuntime, {
   type ResolvedSubagentStartRequest,
   type SubagentStartRequest,
-} from '@deepseek-ai/dsh-subagent'
-import type { Config as ToolConfig, ObjectJsonSchema } from '@deepseek-ai/dsh-tools'
-import { defineContentToolFixture, RUN_CODE_NAME } from '@deepseek-ai/dsh-tools'
+} from '@taiji/dsh-subagent'
+import type { Config as ToolConfig, ObjectJsonSchema } from '@taiji/dsh-tools'
+import { defineContentToolFixture, RUN_CODE_NAME } from '@taiji/dsh-tools'
 import { MockAdapter, textResponse, toolCallResponse } from '../../../core/agent-loop/tests/mock-adapter.ts'
 import { startInProcessRun } from '../src/index.ts'
 import {
@@ -63,7 +63,7 @@ async function setup(script: Script, options: SetupOptions = {}) {
     ctx.provide('ptcRuntime', {
       language: 'typescript',
       isolation: 'test',
-      resolve: (request: import('@deepseek-ai/dsh-ptc-runtime').PtcRunRequest) => ({ ...request, cwd: request.cwd ?? process.cwd(), timeoutMs: 120_000 }),
+      resolve: (request: import('@taiji/dsh-ptc-runtime').PtcRunRequest) => ({ ...request, cwd: request.cwd ?? process.cwd(), timeoutMs: 120_000 }),
       run: options.codeRun ?? (() => Promise.resolve({ logs: [] })),
     } as never)
   }

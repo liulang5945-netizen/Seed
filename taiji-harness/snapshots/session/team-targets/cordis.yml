@@ -10,6 +10,6 @@
   disabled: true
 - insert:
     - id: agent-team
-      name: '@deepseek-ai/dsh-experimental-agent-team'
+      name: '@taiji/dsh-experimental-agent-team'
     - id: tool-agent-team
-      name: '@deepseek-ai/dsh-experimental-tool-agent-team'
+      name: '@taiji/dsh-experimental-tool-agent-team'

@@ -3,7 +3,7 @@ import { cleanup, render } from '@testing-library/react'
 import { afterEach, describe, expect, it } from 'vitest'
 import {
   PluginArtworkDefault, PluginArtworkLoop, PluginArtworkSearch, PluginArtworkSubagent, PluginArtworkTerminal,
-} from '@deepseek-ai/dsh-client-ui-primitives'
+} from '@taiji/dsh-client-ui-primitives'
 
 afterEach(cleanup)
 

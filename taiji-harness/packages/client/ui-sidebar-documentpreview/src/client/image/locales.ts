@@ -23,7 +23,7 @@ export const en = {
   unsupported: 'Image preview requires the complete file contents.',
 } satisfies Record<ImagePreviewKey, string>
 
-declare module '@deepseek-ai/dsh-client-ui-slots' {
+declare module '@taiji/dsh-client-ui-slots' {
   interface LocaleNamespaceMap {
     /** Image preview selection, accessible name, and status text. */
     sidebarImage: ImagePreviewKey

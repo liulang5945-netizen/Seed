@@ -1,5 +1,5 @@
 {
-  "name": "@deepseek-ai/dsh-acp",
+  "name": "@taiji/dsh-acp",
   "description": "Automation-only Agent Client Protocol server for driving DeepSeek Harness agents over JSON-RPC stdio",
   "version": "0.1.7-alpha.1",
   "publishConfig": {
@@ -28,39 +28,39 @@
   "license": "MIT",
   "dependencies": {
     "@agentclientprotocol/sdk": "1.4.0",
-    "@deepseek-ai/dsh-brand": "workspace:^",
-    "@deepseek-ai/schemastery": "workspace:^"
+    "@taiji/dsh-brand": "workspace:^",
+    "@taiji/schemastery": "workspace:^"
   },
   "peerDependencies": {
-    "@deepseek-ai/cordis": "workspace:^",
-    "@deepseek-ai/dsh-agent": "workspace:^",
-    "@deepseek-ai/dsh-attachment": "workspace:^",
-    "@deepseek-ai/dsh-llm": "workspace:^",
-    "@deepseek-ai/dsh-mcp-client": "workspace:^",
-    "@deepseek-ai/dsh-session": "workspace:^",
-    "@deepseek-ai/dsh-session-persistence": "workspace:^",
-    "@deepseek-ai/dsh-token-meter": "workspace:^",
-    "@deepseek-ai/dsh-user-approval": "workspace:^"
+    "@taiji/cordis": "workspace:^",
+    "@taiji/dsh-agent": "workspace:^",
+    "@taiji/dsh-attachment": "workspace:^",
+    "@taiji/dsh-llm": "workspace:^",
+    "@taiji/dsh-mcp-client": "workspace:^",
+    "@taiji/dsh-session": "workspace:^",
+    "@taiji/dsh-session-persistence": "workspace:^",
+    "@taiji/dsh-token-meter": "workspace:^",
+    "@taiji/dsh-user-approval": "workspace:^"
   },
   "peerDependenciesMeta": {
-    "@deepseek-ai/dsh-token-meter": {
+    "@taiji/dsh-token-meter": {
       "optional": true
     }
   },
   "devDependencies": {
-    "@deepseek-ai/cordis": "workspace:^",
-    "@deepseek-ai/dsh-agent": "workspace:^",
-    "@deepseek-ai/dsh-agent-loop": "workspace:^",
-    "@deepseek-ai/dsh-agent-loop-testkit": "workspace:^",
-    "@deepseek-ai/dsh-attachment": "workspace:^",
-    "@deepseek-ai/dsh-llm": "workspace:^",
-    "@deepseek-ai/dsh-mcp-client": "workspace:^",
-    "@deepseek-ai/dsh-session": "workspace:^",
-    "@deepseek-ai/dsh-session-persistence": "workspace:^",
-    "@deepseek-ai/dsh-session-persistence-jsonl": "workspace:^",
-    "@deepseek-ai/dsh-session-projection": "workspace:^",
-    "@deepseek-ai/dsh-token-meter": "workspace:^",
-    "@deepseek-ai/dsh-tools": "workspace:^",
-    "@deepseek-ai/dsh-user-approval": "workspace:^"
+    "@taiji/cordis": "workspace:^",
+    "@taiji/dsh-agent": "workspace:^",
+    "@taiji/dsh-agent-loop": "workspace:^",
+    "@taiji/dsh-agent-loop-testkit": "workspace:^",
+    "@taiji/dsh-attachment": "workspace:^",
+    "@taiji/dsh-llm": "workspace:^",
+    "@taiji/dsh-mcp-client": "workspace:^",
+    "@taiji/dsh-session": "workspace:^",
+    "@taiji/dsh-session-persistence": "workspace:^",
+    "@taiji/dsh-session-persistence-jsonl": "workspace:^",
+    "@taiji/dsh-session-projection": "workspace:^",
+    "@taiji/dsh-token-meter": "workspace:^",
+    "@taiji/dsh-tools": "workspace:^",
+    "@taiji/dsh-user-approval": "workspace:^"
   }
 }

@@ -3,7 +3,7 @@ description: "dsh Web 客户端插件页上的 Subagent 设置页：subagent 命
 kind: "package-reference"
 ---
 
-# @deepseek-ai/dsh-client-ui-settings-subagent
+# @taiji/dsh-client-ui-settings-subagent
 
 [English](README.md) | 中文
 

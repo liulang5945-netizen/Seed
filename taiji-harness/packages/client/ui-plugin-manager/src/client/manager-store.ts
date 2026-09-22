@@ -6,8 +6,8 @@
  * change made on another surface shows here without a manual refresh.
  */
 
-import { randomUUID } from '@deepseek-ai/dsh-util-crypto'
-import type { Context as ClientContext } from '@deepseek-ai/cordis'
+import { randomUUID } from '@taiji/dsh-util-crypto'
+import type { Context as ClientContext } from '@taiji/cordis'
 import type {
   BundleInfo,
   ChangeResult,
@@ -23,12 +23,12 @@ import type {
   PluginSpecInspection,
   ReadOnlyReason,
   Registry,
-} from '@deepseek-ai/dsh-api-remotes/client'
-import { REGISTRY_URL } from '@deepseek-ai/dsh-plugin-manager/registry'
-import { createSnapshotStore, type SnapshotStore } from '@deepseek-ai/dsh-client-store'
-import type { HostObservable } from '@deepseek-ai/dsh-client-ui-slots'
-import type { LocalizedText, PluginLocalizedMeta } from '@deepseek-ai/dsh-package-manifest'
-import type { SettingsDescribeFace, ConfigForms } from '@deepseek-ai/dsh-client-ui-settings/client'
+} from '@taiji/dsh-api-remotes/client'
+import { REGISTRY_URL } from '@taiji/dsh-plugin-manager/registry'
+import { createSnapshotStore, type SnapshotStore } from '@taiji/dsh-client-store'
+import type { HostObservable } from '@taiji/dsh-client-ui-slots'
+import type { LocalizedText, PluginLocalizedMeta } from '@taiji/dsh-package-manifest'
+import type { SettingsDescribeFace, ConfigForms } from '@taiji/dsh-client-ui-settings/client'
 import type { ConfigLedger } from './config-ledger.ts'
 import { shortName } from './presentation.ts'
 

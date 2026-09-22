@@ -3,12 +3,12 @@ import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
-import { Context } from '@deepseek-ai/cordis'
-import Loader from '@deepseek-ai/cordis-plugin-loader'
-import Include, { applyEntryPatches } from '@deepseek-ai/cordis-plugin-include'
-import { loadOverlayPatches } from '@deepseek-ai/dsh-app-boot'
-import { OfficeSourceKey, type OfficeToPdfRequest } from '@deepseek-ai/dsh-office-to-pdf'
-import * as LibreOfficeProvider from '@deepseek-ai/dsh-office-to-pdf'
+import { Context } from '@taiji/cordis'
+import Loader from '@taiji/cordis-plugin-loader'
+import Include, { applyEntryPatches } from '@taiji/cordis-plugin-include'
+import { loadOverlayPatches } from '@taiji/dsh-app-boot'
+import { OfficeSourceKey, type OfficeToPdfRequest } from '@taiji/dsh-office-to-pdf'
+import * as LibreOfficeProvider from '@taiji/dsh-office-to-pdf'
 import { expect, it, onTestFinished } from 'vitest'
 
 it('loads one shared conversion row and retains caller-owned PDFs after disposal', async () => {
@@ -20,7 +20,7 @@ it('loads one shared conversion row and retains caller-owned PDFs after disposal
   })
   const rows = loadOverlayPatches('conversion-test', fileURLToPath(new URL('../cordis.patch.yml', import.meta.url)))
     .flatMap(patch => patch.insert ?? [])
-    .filter(row => row.name === '@deepseek-ai/dsh-office-to-pdf')
+    .filter(row => row.name === '@taiji/dsh-office-to-pdf')
   expect(rows.map(row => row.id)).toEqual(['office-to-pdf'])
   const configured = applyEntryPatches(rows, [{ id: 'office-to-pdf', config: { maxConcurrentConversions: 1 } }],
     (message) => { throw new Error(message) })
@@ -33,7 +33,7 @@ it('loads one shared conversion row and retains caller-owned PDFs after disposal
   ctx.loader.internal = {
     version: 'v2',
     async import(specifier: string) {
-      if (specifier !== '@deepseek-ai/dsh-office-to-pdf') throw new Error(`Unexpected plugin: ${specifier}`)
+      if (specifier !== '@taiji/dsh-office-to-pdf') throw new Error(`Unexpected plugin: ${specifier}`)
       return LibreOfficeProvider
     },
   } as unknown as NonNullable<typeof ctx.loader.internal>

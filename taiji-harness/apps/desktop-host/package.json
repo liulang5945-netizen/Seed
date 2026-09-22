@@ -1,5 +1,5 @@
 {
-  "name": "@deepseek-ai/dsh-desktop-host",
+  "name": "@taiji/dsh-desktop-host",
   "description": "Private Node-mode host process for the Electron desktop application",
   "version": "0.1.7-alpha.1",
   "private": true,
@@ -10,16 +10,16 @@
     "lib/index.js"
   ],
   "dependencies": {
-    "@deepseek-ai/cordis": "workspace:^",
-    "@deepseek-ai/dsh": "workspace:^",
-    "@deepseek-ai/dsh-agent": "workspace:^",
-    "@deepseek-ai/dsh-app-boot": "workspace:^",
-    "@deepseek-ai/dsh-client-connection": "workspace:^",
-    "@deepseek-ai/dsh-host-webserver": "workspace:^",
-    "@deepseek-ai/dsh-home-paths": "workspace:^",
-    "@deepseek-ai/dsh-jobs": "workspace:^",
-    "@deepseek-ai/dsh-tool-workspace-dependencies": "workspace:^",
-    "@deepseek-ai/dsh-skill-office": "workspace:^",
-    "@deepseek-ai/dsh-deepseek-account": "workspace:^"
+    "@taiji/cordis": "workspace:^",
+    "@taiji/dsh": "workspace:^",
+    "@taiji/dsh-agent": "workspace:^",
+    "@taiji/dsh-app-boot": "workspace:^",
+    "@taiji/dsh-client-connection": "workspace:^",
+    "@taiji/dsh-host-webserver": "workspace:^",
+    "@taiji/dsh-home-paths": "workspace:^",
+    "@taiji/dsh-jobs": "workspace:^",
+    "@taiji/dsh-tool-workspace-dependencies": "workspace:^",
+    "@taiji/dsh-skill-office": "workspace:^",
+    "@taiji/dsh-deepseek-account": "workspace:^"
   }
 }

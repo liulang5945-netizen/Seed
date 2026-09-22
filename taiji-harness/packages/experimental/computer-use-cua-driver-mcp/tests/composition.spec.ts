@@ -4,20 +4,20 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { Context, FiberState } from '@deepseek-ai/cordis'
-import Loader from '@deepseek-ai/cordis-plugin-loader'
-import Include from '@deepseek-ai/cordis-plugin-include'
-import ComputerUse from '@deepseek-ai/dsh-computer-use'
-import { ComputerUseProviderName } from '@deepseek-ai/dsh-computer-use/brand'
-import SystemPrompt from '@deepseek-ai/dsh-system-prompt'
-import ToolRuntime from '@deepseek-ai/dsh-tools'
-import LlmRuntime, { LlmAdapter, ToolCallId, createUserMessage } from '@deepseek-ai/dsh-llm'
-import type { GenerateOptions, LlmResolvedModelInfo, StreamChunk } from '@deepseek-ai/dsh-llm'
-import SessionStore, { SessionId } from '@deepseek-ai/dsh-session'
-import AgentRegistry from '@deepseek-ai/dsh-agent'
-import AgentLoop from '@deepseek-ai/dsh-agent-loop'
-import SessionProjectionRegistry from '@deepseek-ai/dsh-session-projection'
-import LocalAttachmentStore from '@deepseek-ai/dsh-attachment-local'
+import { Context, FiberState } from '@taiji/cordis'
+import Loader from '@taiji/cordis-plugin-loader'
+import Include from '@taiji/cordis-plugin-include'
+import ComputerUse from '@taiji/dsh-computer-use'
+import { ComputerUseProviderName } from '@taiji/dsh-computer-use/brand'
+import SystemPrompt from '@taiji/dsh-system-prompt'
+import ToolRuntime from '@taiji/dsh-tools'
+import LlmRuntime, { LlmAdapter, ToolCallId, createUserMessage } from '@taiji/dsh-llm'
+import type { GenerateOptions, LlmResolvedModelInfo, StreamChunk } from '@taiji/dsh-llm'
+import SessionStore, { SessionId } from '@taiji/dsh-session'
+import AgentRegistry from '@taiji/dsh-agent'
+import AgentLoop from '@taiji/dsh-agent-loop'
+import SessionProjectionRegistry from '@taiji/dsh-session-projection'
+import LocalAttachmentStore from '@taiji/dsh-attachment-local'
 import * as Provider from '../src/index.ts'
 
 const TOOL = 'mcp__cua-driver-mcp__screenshot'
@@ -60,31 +60,31 @@ async function load(mode?: string): Promise<{ ctx: Context; root: string; model:
   roots.push(root)
   const model = new ScreenshotModel()
   const modules = new Map<string, unknown>([
-    ['@deepseek-ai/dsh-computer-use', ComputerUse],
-    ['@deepseek-ai/dsh-system-prompt', SystemPrompt],
-    ['@deepseek-ai/dsh-tools', ToolRuntime],
-    ['@deepseek-ai/dsh-llm', LlmRuntime],
-    ['@deepseek-ai/dsh-session', SessionStore],
-    ['@deepseek-ai/dsh-agent', AgentRegistry],
-    ['@deepseek-ai/dsh-agent-loop', AgentLoop],
-    ['@deepseek-ai/dsh-session-projection', SessionProjectionRegistry],
-    ['@deepseek-ai/dsh-attachment-local', LocalAttachmentStore],
+    ['@taiji/dsh-computer-use', ComputerUse],
+    ['@taiji/dsh-system-prompt', SystemPrompt],
+    ['@taiji/dsh-tools', ToolRuntime],
+    ['@taiji/dsh-llm', LlmRuntime],
+    ['@taiji/dsh-session', SessionStore],
+    ['@taiji/dsh-agent', AgentRegistry],
+    ['@taiji/dsh-agent-loop', AgentLoop],
+    ['@taiji/dsh-session-projection', SessionProjectionRegistry],
+    ['@taiji/dsh-attachment-local', LocalAttachmentStore],
     ['@fixture/model', { inject: ['llm'], apply(ctx: Context) { ctx.effect(() => ctx.llm.registerAdapter(['fixture'], model)) } }],
-    ['@deepseek-ai/dsh-experimental-computer-use-cua-driver-mcp', Provider],
+    ['@taiji/dsh-experimental-computer-use-cua-driver-mcp', Provider],
   ])
   const configPath = join(root, 'cordis.yml')
   await writeFile(configPath, JSON.stringify([...modules.keys()].map(name => ({
-    id: name === '@deepseek-ai/dsh-experimental-computer-use-cua-driver-mcp' ? 'computer-use-driver' : undefined,
+    id: name === '@taiji/dsh-experimental-computer-use-cua-driver-mcp' ? 'computer-use-driver' : undefined,
     name,
-    config: name === '@deepseek-ai/dsh-experimental-computer-use-cua-driver-mcp'
+    config: name === '@taiji/dsh-experimental-computer-use-cua-driver-mcp'
       ? {
         command: process.execPath,
         args: [fixture, root, ...(mode === undefined ? [] : [mode])],
         reconnect: { initialDelayMs: 20, maxDelayMs: 40, maxAttempts: 2 },
       }
-      : name === '@deepseek-ai/dsh-attachment-local'
+      : name === '@taiji/dsh-attachment-local'
         ? { dshHome: root }
-        : name === '@deepseek-ai/dsh-agent-loop' ? { agents: [] } : {},
+        : name === '@taiji/dsh-agent-loop' ? { agents: [] } : {},
   }))))
   const ctx = new Context()
   contexts.push(ctx)

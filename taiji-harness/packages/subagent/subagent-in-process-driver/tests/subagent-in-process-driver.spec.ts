@@ -1,21 +1,21 @@
-import { ToolCallId, createUserMessage } from '@deepseek-ai/dsh-llm'
-import type { ContextFormed } from '@deepseek-ai/dsh-llm'
+import { ToolCallId, createUserMessage } from '@taiji/dsh-llm'
+import type { ContextFormed } from '@taiji/dsh-llm'
 import { describe, expect, it } from 'vitest'
-import { Context } from '@deepseek-ai/cordis'
-import { type Agent, type AgentOptions } from '@deepseek-ai/dsh-agent'
-import { SessionId } from '@deepseek-ai/dsh-session'
-import AgentLoop from '@deepseek-ai/dsh-agent-loop'
-import { mountAgentLoopTestDependencies } from '@deepseek-ai/dsh-agent-loop-testkit'
-import InvariantRegistry from '@deepseek-ai/dsh-invariants'
-import * as SessionInvariant from '@deepseek-ai/dsh-session/invariant'
-import * as AgentInvariant from '@deepseek-ai/dsh-agent/invariant'
-import * as AgentLoopInvariant from '@deepseek-ai/dsh-agent-loop/invariant'
-import SubagentRuntime, { snapshotSubagentDescriptor } from '@deepseek-ai/dsh-subagent'
-import { defineContentToolFixture } from '@deepseek-ai/dsh-tools'
+import { Context } from '@taiji/cordis'
+import { type Agent, type AgentOptions } from '@taiji/dsh-agent'
+import { SessionId } from '@taiji/dsh-session'
+import AgentLoop from '@taiji/dsh-agent-loop'
+import { mountAgentLoopTestDependencies } from '@taiji/dsh-agent-loop-testkit'
+import InvariantRegistry from '@taiji/dsh-invariants'
+import * as SessionInvariant from '@taiji/dsh-session/invariant'
+import * as AgentInvariant from '@taiji/dsh-agent/invariant'
+import * as AgentLoopInvariant from '@taiji/dsh-agent-loop/invariant'
+import SubagentRuntime, { snapshotSubagentDescriptor } from '@taiji/dsh-subagent'
+import { defineContentToolFixture } from '@taiji/dsh-tools'
 import { maxTokensResponse, MockAdapter, textResponse, toolCallResponse } from '../../../core/agent-loop/tests/mock-adapter.ts'
 import { startInProcessRun } from '../src/index.ts'
 
-declare module '@deepseek-ai/dsh-llm' {
+declare module '@taiji/dsh-llm' {
   interface MessageSourceMap {
     'late-metadata': { kind: 'late-metadata' } & ContextFormed
   }

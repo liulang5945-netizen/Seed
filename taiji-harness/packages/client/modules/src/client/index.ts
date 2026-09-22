@@ -8,10 +8,10 @@
  * its bootstrap export, which constructs the system and retains the same
  * exports for this package's graph row. The plugin face enrolls the module
  * system attached to its own Loader as `ctx.modules`.
- * @module @deepseek-ai/dsh-client-modules/client
+ * @module @taiji/dsh-client-modules/client
  */
-import type { Context } from '@deepseek-ai/cordis'
-import type { Loader } from '@deepseek-ai/cordis-plugin-loader'
+import type { Context } from '@taiji/cordis'
+import type { Loader } from '@taiji/cordis-plugin-loader'
 import { ClientModuleSystem } from './system.ts'
 import { parseBootManifest } from './manifest.ts'
 import type {

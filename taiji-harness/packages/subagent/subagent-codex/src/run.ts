@@ -4,16 +4,16 @@
  * creation, flatten post-publication failures, and dispose to whole-range
  * quiescence.
  *
- * @module @deepseek-ai/dsh-subagent-codex/run
+ * @module @taiji/dsh-subagent-codex/run
  */
 
 import { randomUUID } from 'node:crypto'
 import { readFileSync, writeFileSync } from 'node:fs'
 import { createRequire } from 'node:module'
 import { dirname, resolve } from 'node:path'
-import { brandString } from '@deepseek-ai/dsh-brand'
-import type { ContentBlock } from '@deepseek-ai/dsh-llm'
-import type { SessionId } from '@deepseek-ai/dsh-session'
+import { brandString } from '@taiji/dsh-brand'
+import type { ContentBlock } from '@taiji/dsh-llm'
+import type { SessionId } from '@taiji/dsh-session'
 import {
   settleRunResult,
   subprocessRunHandle,
@@ -21,12 +21,12 @@ import {
   type SubagentRun,
   type SubagentStartRequest,
   type SubagentStopReason,
-} from '@deepseek-ai/dsh-subagent'
+} from '@taiji/dsh-subagent'
 import type {
   SubprocessHandle,
   SubprocessOutcome,
   SubprocessSpawnSpec,
-} from '@deepseek-ai/dsh-subprocess'
+} from '@taiji/dsh-subprocess'
 import {
   CodexAppServerWire,
   type CodexWireFailureFacts,

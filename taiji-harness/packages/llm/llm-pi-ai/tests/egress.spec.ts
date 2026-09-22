@@ -1,7 +1,7 @@
 import { createServer, type Server } from 'node:http'
 import type { AddressInfo } from 'node:net'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
-import { installProxyFromEnvironment } from '@deepseek-ai/dsh-http-proxy'
+import { installProxyFromEnvironment } from '@taiji/dsh-http-proxy'
 
 let seen: string[] = []
 let proxy: Server
@@ -32,8 +32,8 @@ async function observe(run: () => Promise<unknown>): Promise<string[]> {
   return seen
 }
 import { vi } from 'vitest'
-import { Context } from '@deepseek-ai/cordis'
-import LlmRuntime from '@deepseek-ai/dsh-llm'
+import { Context } from '@taiji/cordis'
+import LlmRuntime from '@taiji/dsh-llm'
 import * as LlmPiAi from '../src/index.ts'
 import { discoverModels } from '../src/discovery.ts'
 

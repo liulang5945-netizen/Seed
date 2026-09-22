@@ -43,7 +43,7 @@ it('shows the failed asset, actual download source and recovery advice, then ret
   const page = await newEnglishPage(browser), tripwire = watchConsole(page)
   await page.goto(scaffold.authenticatedUrl)
   await page.getByRole('button', { name: 'Plugins', exact: true }).click()
-  await page.locator('[data-plugin-package="@deepseek-ai/dsh-experimental-voice-input-bundle"]').getByRole('button').click()
+  await page.locator('[data-plugin-package="@taiji/dsh-experimental-voice-input-bundle"]').getByRole('button').click()
   await page.getByRole('button', { name: 'Download and prepare', exact: true }).click()
   const alert = page.getByRole('alert').filter({ hasText: 'Cannot download model.int8.onnx' })
   await alert.waitFor()

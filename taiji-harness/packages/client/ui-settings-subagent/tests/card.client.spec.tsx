@@ -3,11 +3,11 @@
 
 import { act, cleanup, fireEvent, render, screen } from '@testing-library/react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { bindSnapshotSelector } from '@deepseek-ai/dsh-client-test-runtime'
-import { createSnapshotStore } from '@deepseek-ai/dsh-client-store'
+import { bindSnapshotSelector } from '@taiji/dsh-client-test-runtime'
+import { createSnapshotStore } from '@taiji/dsh-client-store'
 import { SubagentCard, type SubagentCardProps } from '../src/client/SubagentCard.tsx'
 import type { SubagentLimitsCardState } from '../src/client/subagent-limits-card-controller.ts'
-import type { SettingsFieldState, SettingsFormShell } from '@deepseek-ai/dsh-client-ui-primitives'
+import type { SettingsFieldState, SettingsFormShell } from '@taiji/dsh-client-ui-primitives'
 import type { SubagentModelSelectionCardState } from '../src/client/subagent-model-selection-card-controller.ts'
 import { en } from '../src/client/locales.ts'
 

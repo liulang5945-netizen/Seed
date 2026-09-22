@@ -15,7 +15,7 @@ export default defineConfig([
     dts: false,
     clean: false,
     deps: {
-      alwaysBundle: ['@deepseek-ai/cordis-plugin-include'],
+      alwaysBundle: ['@taiji/cordis-plugin-include'],
     },
   },
   {

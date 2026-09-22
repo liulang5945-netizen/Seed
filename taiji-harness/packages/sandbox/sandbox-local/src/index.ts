@@ -18,7 +18,7 @@
  * NTFS hard links alias one file object across paths, reads stay unconfined,
  * and a tree another AppContainer tool has ACL'd with a package SID is not
  * readable by the Low-integrity child.
- * @module @deepseek-ai/dsh-sandbox-local
+ * @module @taiji/dsh-sandbox-local
  */
 
 import { spawnSync } from 'node:child_process'
@@ -31,14 +31,14 @@ import {
   LAUNCHER_FAILURE_EXIT,
   launcherPath as landlockLauncherPath,
   probe as defaultProbeLandlock,
-} from '@deepseek-ai/node-addon-system/landlock-run'
-import { Context } from '@deepseek-ai/cordis'
-import z from '@deepseek-ai/schemastery'
-import { SandboxProvider, SandboxUnavailableError, canonicalPath } from '@deepseek-ai/dsh-sandbox'
-import type { ConfinedArgv, ConfinedSandboxMode, RunnerFailureRule, SandboxEnforcement, SandboxPolicy } from '@deepseek-ai/dsh-sandbox'
-import type { SessionId } from '@deepseek-ai/dsh-session'
-import { AclWriteGrant, assertTempRootOutsideWorkspace, tempWriteSid, workspaceWriteSid } from '@deepseek-ai/dsh-sandbox-windows-acl'
-import { assertNever } from '@deepseek-ai/dsh-util-values'
+} from '@taiji/node-addon-system/landlock-run'
+import { Context } from '@taiji/cordis'
+import z from '@taiji/schemastery'
+import { SandboxProvider, SandboxUnavailableError, canonicalPath } from '@taiji/dsh-sandbox'
+import type { ConfinedArgv, ConfinedSandboxMode, RunnerFailureRule, SandboxEnforcement, SandboxPolicy } from '@taiji/dsh-sandbox'
+import type { SessionId } from '@taiji/dsh-session'
+import { AclWriteGrant, assertTempRootOutsideWorkspace, tempWriteSid, workspaceWriteSid } from '@taiji/dsh-sandbox-windows-acl'
+import { assertNever } from '@taiji/dsh-util-values'
 import { bwrapProfileArgs, landlockProfileArgs, seatbeltProfileArgs } from './profiles.ts'
 
 /** Plugin config. All optional — `static Config` supplies the defaults. */
@@ -160,7 +160,7 @@ interface AclTempCapability {
 const PLATFORM_CHAINS: Record<string, readonly SelectedRunner['runner'][]> = {
   linux: ['bwrap', 'landlock'],
   darwin: ['seatbelt'],
-  // The Windows restricted-token runner (@deepseek-ai/dsh-sandbox-windows-acl):
+  // The Windows restricted-token runner (@taiji/dsh-sandbox-windows-acl):
   // a sole candidate, selected without a probe — its execution-time refusal
   // fails closed through its stderr signature (windows-acl-run:) and exit 127.
   win32: ['windows-acl'],
@@ -565,9 +565,9 @@ export class LocalSandboxProvider extends SandboxProvider {
   private windowsAclRunnerInvocation(): string[] {
     const override = this.internals.windowsAclRunnerArgs
     if (override !== undefined) return override
-    const builtEntry = this.internals.windowsAclRunnerEntry ?? fileURLToPath(import.meta.resolve('@deepseek-ai/dsh-sandbox-windows-acl/runner'))
+    const builtEntry = this.internals.windowsAclRunnerEntry ?? fileURLToPath(import.meta.resolve('@taiji/dsh-sandbox-windows-acl/runner'))
     if (existsSync(builtEntry)) return [process.execPath, builtEntry]
-    const sourceEntry = fileURLToPath(import.meta.resolve('@deepseek-ai/dsh-sandbox-windows-acl/src/runner.ts'))
+    const sourceEntry = fileURLToPath(import.meta.resolve('@taiji/dsh-sandbox-windows-acl/src/runner.ts'))
     const sourceConfig = fileURLToPath(new URL('../../../../tsconfig.base.json', import.meta.url))
     const registration = `import { register } from ${JSON.stringify(import.meta.resolve('tsx/esm/api'))}; register({ tsconfig: ${JSON.stringify(sourceConfig)} });`
     return [process.execPath, '--import', `data:text/javascript,${encodeURIComponent(registration)}`, sourceEntry]

@@ -1,15 +1,15 @@
 /** Click-to-record toolbar activity; transcripts remain in the original Session draft. */
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
-import type { HostObservable, InjectFace, PropsLocale, PropsRuntime } from '@deepseek-ai/dsh-client-ui-slots'
-import type { TokenSpan } from '@deepseek-ai/dsh-client-ui-conversation/client'
-import type { TranscriptionRequest } from '@deepseek-ai/dsh-experimental-api-speech-to-text/types'
-import type { SpeechProviderId, SpeechSelection, SpeechSelectionPatch, Transcript } from '@deepseek-ai/dsh-experimental-speech-to-text/types'
-import type { RemoteResult } from '@deepseek-ai/dsh-typert-protocol'
+import type { HostObservable, InjectFace, PropsLocale, PropsRuntime } from '@taiji/dsh-client-ui-slots'
+import type { TokenSpan } from '@taiji/dsh-client-ui-conversation/client'
+import type { TranscriptionRequest } from '@taiji/dsh-experimental-api-speech-to-text/types'
+import type { SpeechProviderId, SpeechSelection, SpeechSelectionPatch, Transcript } from '@taiji/dsh-experimental-speech-to-text/types'
+import type { RemoteResult } from '@taiji/dsh-typert-protocol'
 import { RecordingError, audioBase64, type Recording } from './audio.ts'
 import type { SpeechReadiness } from './readiness.ts'
 import { Waveform } from './Waveform.tsx'
 import { NS } from './locales.ts'
-import { Button, IconCloseOutlineRegular, IconStopFillRegular, IconMicrophoneOutlineRegular, StateDot, Tooltip } from '@deepseek-ai/dsh-client-ui-primitives'
+import { Button, IconCloseOutlineRegular, IconStopFillRegular, IconMicrophoneOutlineRegular, StateDot, Tooltip } from '@taiji/dsh-client-ui-primitives'
 import css from './VoiceInput.module.css'
 
 /** Host calls injected without exposing a Cordis Context to React. */

@@ -1,5 +1,5 @@
-import { Context } from '@deepseek-ai/cordis'
-import { createScope } from '@deepseek-ai/dsh-scope'
+import { Context } from '@taiji/cordis'
+import { createScope } from '@taiji/dsh-scope'
 import { expect, it, onTestFinished } from 'vitest'
 import { harness, declare } from './harness.ts'
 import { auditRows, mountPreset, livePresetMounts } from '../src/mount.ts'

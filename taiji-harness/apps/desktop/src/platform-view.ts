@@ -2,7 +2,7 @@
 import type { EventEmitter } from 'node:events'
 import { randomUUID } from 'node:crypto'
 import { WebContentsView, session, shell, type View, type WebFrameMain } from 'electron'
-import { mergePlatformCookies, type PlatformSession } from '@deepseek-ai/dsh-deepseek-account'
+import { mergePlatformCookies, type PlatformSession } from '@taiji/dsh-deepseek-account'
 
 import { PLATFORM_IPC, type PlatformLocale } from './platform-ipc.ts'
 

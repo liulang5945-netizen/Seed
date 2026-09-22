@@ -1,6 +1,6 @@
 /** Feishu questionnaire context follows the Platform Web ticket fields. */
 import type { Config } from '../contact-config.ts'
-import type { AccountProfile } from '@deepseek-ai/dsh-deepseek-account/types'
+import type { AccountProfile } from '@taiji/dsh-deepseek-account/types'
 
 /**
  * Build an external questionnaire URL without authentication credentials.

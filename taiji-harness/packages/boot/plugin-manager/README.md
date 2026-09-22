@@ -3,7 +3,7 @@ description: "Enable profile plugins and install, remove or select bundles from 
 kind: "package-reference"
 ---
 
-# @deepseek-ai/dsh-plugin-manager
+# @taiji/dsh-plugin-manager
 
 English | [中文](README.zh.md)
 

@@ -1,7 +1,7 @@
 import { describe, expect, expectTypeOf, it } from 'vitest'
-import type { ShellExecRequest, ShellExecSpec, ShellExecution, ShellExecutor, ShellRunResult } from '@deepseek-ai/dsh-shell'
-import { DEFAULT_HOOK_TIMEOUT_MS, runHook } from '@deepseek-ai/dsh-hook-protocol'
-import type { RunHookOptions } from '@deepseek-ai/dsh-hook-protocol'
+import type { ShellExecRequest, ShellExecSpec, ShellExecution, ShellExecutor, ShellRunResult } from '@taiji/dsh-shell'
+import { DEFAULT_HOOK_TIMEOUT_MS, runHook } from '@taiji/dsh-hook-protocol'
+import type { RunHookOptions } from '@taiji/dsh-hook-protocol'
 
 /**
  * A minimal stand-in for the bits of {@link ShellExecutor} that {@link runHook}

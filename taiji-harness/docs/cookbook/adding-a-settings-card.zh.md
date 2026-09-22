@@ -7,8 +7,8 @@
 ## 1. 声明即时字段
 
 ```ts
-import type { Context, Volatile } from '@deepseek-ai/cordis'
-import z from '@deepseek-ai/schemastery'
+import type { Context, Volatile } from '@taiji/cordis'
+import z from '@taiji/schemastery'
 
 export interface Config {
   endpoint: Volatile<string | undefined>
@@ -65,7 +65,7 @@ ctx.slots.inject('plugins.detail.badge', () => ctx.slots.register({
     ".": { "types": "./lib/types/index.d.ts", "default": "./lib/index.js" },
     "./client": { "types": "./lib/types/client/index.d.ts", "default": "./lib/client.js" }
   },
-  "dsh": { "client": { "platform": "web", "inject": ["@deepseek-ai/dsh-client-ui-settings"] } }
+  "dsh": { "client": { "platform": "web", "inject": ["@taiji/dsh-client-ui-settings"] } }
 }
 ```
 

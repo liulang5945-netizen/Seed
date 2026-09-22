@@ -18,9 +18,9 @@ import { fileURLToPath } from 'node:url'
 import type { Browser, Page } from 'playwright'
 import { chromium } from 'playwright'
 import { afterAll, beforeAll, describe, expect, it, onTestFailed } from 'vitest'
-import type { SessionEvent, SessionId } from '@deepseek-ai/dsh-session'
-import type { Agent } from '@deepseek-ai/dsh-agent'
-import type { SubagentPromptRequestId } from '@deepseek-ai/dsh-subagent'
+import type { SessionEvent, SessionId } from '@taiji/dsh-session'
+import type { Agent } from '@taiji/dsh-agent'
+import type { SubagentPromptRequestId } from '@taiji/dsh-subagent'
 import {
   acknowledgeReloadConnectionLoss, assertFixtureInventory, captureStableAria, compareOrRefreshGolden,
   launchWebScaffold, readPersistedEvents, watchConsole, webSnapshotMode, type WebScaffold,

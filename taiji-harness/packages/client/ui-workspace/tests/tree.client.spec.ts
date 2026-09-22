@@ -1,12 +1,12 @@
 import { describe, expect, it } from 'vitest'
-import type { SessionListState, SessionSummary } from '@deepseek-ai/dsh-api-session-controller/client'
-import type { WorkspaceId, WorkspaceView } from '@deepseek-ai/dsh-api-workspace-controller/client'
+import type { SessionListState, SessionSummary } from '@taiji/dsh-api-session-controller/client'
+import type { WorkspaceId, WorkspaceView } from '@taiji/dsh-api-workspace-controller/client'
 import type {
   SessionPendingInteraction, SessionStatus, SessionStatusSnapshot,
-} from '@deepseek-ai/dsh-client-ui-session/client'
-import type { ScheduleId, ScheduleRecord } from '@deepseek-ai/dsh-schedule/client'
-import type { SessionId } from '@deepseek-ai/dsh-session/types'
-import type { SessionProjectionSnapshot } from '@deepseek-ai/dsh-api-session-controller/client'
+} from '@taiji/dsh-client-ui-session/client'
+import type { ScheduleId, ScheduleRecord } from '@taiji/dsh-schedule/client'
+import type { SessionId } from '@taiji/dsh-session/types'
+import type { SessionProjectionSnapshot } from '@taiji/dsh-api-session-controller/client'
 import {
   type ArchivedFilter,
   deriveFlat, deriveGroups, deriveSearchResults, orderByRecency, owningGroupKey, owningParentFolder,

@@ -1,9 +1,9 @@
 /** Shell launch menu owned by the terminal provider's guide entry. */
 import { useEffect, useState, type ReactNode } from 'react'
-import { Button, IconChevronDownOutlineRegular, Menu } from '@deepseek-ai/dsh-client-ui-primitives'
-import type { TerminalLaunchShells } from '@deepseek-ai/dsh-api-terminal-controller/client'
-import type { InjectFace, PropsLocale, PropsRuntime } from '@deepseek-ai/dsh-client-ui-slots'
-import type {} from '@deepseek-ai/dsh-client-ui-sidebar-right/client'
+import { Button, IconChevronDownOutlineRegular, Menu } from '@taiji/dsh-client-ui-primitives'
+import type { TerminalLaunchShells } from '@taiji/dsh-api-terminal-controller/client'
+import type { InjectFace, PropsLocale, PropsRuntime } from '@taiji/dsh-client-ui-slots'
+import type {} from '@taiji/dsh-client-ui-sidebar-right/client'
 import type {} from './locales.ts'
 import { TerminalGuideIcon } from './TerminalIcon.tsx'
 import css from './TerminalGuide.module.css'

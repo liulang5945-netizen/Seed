@@ -1,5 +1,5 @@
 /** Electron navigation and guest lifetime, independent from DOM placement. */
-import { createSnapshotStore, type SnapshotStore } from '@deepseek-ai/dsh-client-store'
+import { createSnapshotStore, type SnapshotStore } from '@taiji/dsh-client-store'
 import type { DesktopBrowserBridge, DesktopBrowserLeaseId } from '../../types.ts'
 import type { ElectronWebviewPresentation, WebviewElement } from './ElectronWebviewPresentation.ts'
 import { emptyBrowserFrame, type BrowserFrame, type BrowserFrameState, type BrowserLoadError } from '../browser/BrowserFrame.ts'

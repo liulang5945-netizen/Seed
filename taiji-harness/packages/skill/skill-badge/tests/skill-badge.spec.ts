@@ -1,10 +1,10 @@
 import { createHash } from 'node:crypto'
 import { readFile } from 'node:fs/promises'
 import { fileURLToPath } from 'node:url'
-import { Context } from '@deepseek-ai/cordis'
+import { Context } from '@taiji/cordis'
 import { describe, expect, it } from 'vitest'
-import SkillRegistry from '@deepseek-ai/dsh-skill'
-import * as SkillBadge from '@deepseek-ai/dsh-skill-badge'
+import SkillRegistry from '@taiji/dsh-skill'
+import * as SkillBadge from '@taiji/dsh-skill-badge'
 
 describe('dsh-skill-badge', () => {
   it('registers and disposes the bundled badge skill', async () => {

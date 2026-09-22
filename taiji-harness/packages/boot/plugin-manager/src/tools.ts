@@ -1,12 +1,12 @@
 /** Agent-facing current-profile management using the same service as Web controls. */
-import { assertNever } from '@deepseek-ai/dsh-util-values'
-import type { Context } from '@deepseek-ai/cordis'
+import { assertNever } from '@taiji/dsh-util-values'
+import type { Context } from '@taiji/cordis'
 import type {} from './index.ts'
-import type {} from '@deepseek-ai/dsh-sandbox-policy'
-import type {} from '@deepseek-ai/dsh-user-approval'
-import { approveEscalation } from '@deepseek-ai/dsh-sandbox'
+import type {} from '@taiji/dsh-sandbox-policy'
+import type {} from '@taiji/dsh-user-approval'
+import { approveEscalation } from '@taiji/dsh-sandbox'
 import type { PluginEntryId } from './types.ts'
-import { defineTool } from '@deepseek-ai/dsh-tools'
+import { defineTool } from '@taiji/dsh-tools'
 
 /** Required services for the management tool. */
 export const inject = ['tools', 'pluginManager', 'sandboxPolicy']

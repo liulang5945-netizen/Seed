@@ -23,58 +23,58 @@ describe('desktop package-set selection', () => {
 
   it('includes only the available internal production closure', () => {
     const available = new Map<string, PackedDesktopPackage>([
-      ['@deepseek-ai/dsh', packed('@deepseek-ai/dsh', {
-        dependencies: { '@deepseek-ai/dsh-base': '^1.0.0', external: '^2.0.0' },
-        optionalDependencies: { '@deepseek-ai/platform-package': '1.0.0', '@deepseek-ai/missing-platform': '1.0.0' },
+      ['@taiji/dsh', packed('@taiji/dsh', {
+        dependencies: { '@taiji/dsh-base': '^1.0.0', external: '^2.0.0' },
+        optionalDependencies: { '@taiji/platform-package': '1.0.0', '@taiji/missing-platform': '1.0.0' },
       })],
-      ['@deepseek-ai/dsh-desktop-host', packed('@deepseek-ai/dsh-desktop-host', {
-        dependencies: { '@deepseek-ai/dsh': '^1.0.0' },
+      ['@taiji/dsh-desktop-host', packed('@taiji/dsh-desktop-host', {
+        dependencies: { '@taiji/dsh': '^1.0.0' },
       })],
-      ['@deepseek-ai/dsh-base', packed('@deepseek-ai/dsh-base', {
-        peerDependencies: { '@deepseek-ai/cordis': '^1.0.0' },
+      ['@taiji/dsh-base', packed('@taiji/dsh-base', {
+        peerDependencies: { '@taiji/cordis': '^1.0.0' },
       })],
-      ['@deepseek-ai/cordis', packed('@deepseek-ai/cordis')],
-      ['@deepseek-ai/platform-package', packed('@deepseek-ai/platform-package')],
-      ['@deepseek-ai/unused', packed('@deepseek-ai/unused')],
+      ['@taiji/cordis', packed('@taiji/cordis')],
+      ['@taiji/platform-package', packed('@taiji/platform-package')],
+      ['@taiji/unused', packed('@taiji/unused')],
     ])
     expect(selectDesktopPackageClosure(available).map(entry => entry.manifest.name)).toEqual([
-      '@deepseek-ai/cordis',
-      '@deepseek-ai/dsh',
-      '@deepseek-ai/dsh-base',
-      '@deepseek-ai/dsh-desktop-host',
-      '@deepseek-ai/platform-package',
+      '@taiji/cordis',
+      '@taiji/dsh',
+      '@taiji/dsh-base',
+      '@taiji/dsh-desktop-host',
+      '@taiji/platform-package',
     ])
   })
 
   it.each([
-    '@deepseek-ai/dsh-base', '@deepseek-ai/cordis', '@deepseek-ai/node-addon-system',
+    '@taiji/dsh-base', '@taiji/cordis', '@taiji/node-addon-system',
   ])('rejects required prepared package %s absent from the packed release inputs', (dependency) => {
     const available = new Map<string, PackedDesktopPackage>([
-      ['@deepseek-ai/dsh', packed('@deepseek-ai/dsh', {
+      ['@taiji/dsh', packed('@taiji/dsh', {
         dependencies: { [dependency]: '^1.0.0' },
       })],
-      ['@deepseek-ai/dsh-desktop-host', packed('@deepseek-ai/dsh-desktop-host', {
-        dependencies: { '@deepseek-ai/dsh': '^1.0.0' },
+      ['@taiji/dsh-desktop-host', packed('@taiji/dsh-desktop-host', {
+        dependencies: { '@taiji/dsh': '^1.0.0' },
       })],
     ])
     expect(() => selectDesktopPackageClosure(available)).toThrow(/unpacked package/u)
     expect(() => selectDesktopPackageClosure(new Map([
-      ['@deepseek-ai/dsh', packed('@deepseek-ai/dsh')],
-    ]))).toThrow(/omit @deepseek-ai\/dsh-desktop-host/u)
+      ['@taiji/dsh', packed('@taiji/dsh')],
+    ]))).toThrow(/omit @taiji\/dsh-desktop-host/u)
   })
 
   it('leaves independently published Office packages to npm resolution', () => {
     const available = new Map<string, PackedDesktopPackage>([
-      ['@deepseek-ai/dsh', packed('@deepseek-ai/dsh', {
+      ['@taiji/dsh', packed('@taiji/dsh', {
         dependencies: {
           '@deepseek-ai/libreoffice-kit': '0.0.1',
           '@deepseek-ai/libreoffice-kit-wasm': '0.0.1',
         },
       })],
-      ['@deepseek-ai/dsh-desktop-host', packed('@deepseek-ai/dsh-desktop-host')],
+      ['@taiji/dsh-desktop-host', packed('@taiji/dsh-desktop-host')],
     ])
     expect(selectDesktopPackageClosure(available).map(entry => entry.manifest.name)).toEqual([
-      '@deepseek-ai/dsh', '@deepseek-ai/dsh-desktop-host',
+      '@taiji/dsh', '@taiji/dsh-desktop-host',
     ])
   })
 

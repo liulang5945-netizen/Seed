@@ -1,5 +1,5 @@
 {
-  "name": "@deepseek-ai/dsh-client-ui-directory-picker-browse",
+  "name": "@taiji/dsh-client-ui-directory-picker-browse",
   "description": "In-app directory browsing surface: the workspace directory-flow owner rendering the host's listing and creation primitives",
   "version": "0.1.7-alpha.1",
   "publishConfig": {
@@ -28,10 +28,10 @@
   "dsh": {
     "client": {
       "inject": [
-        "@deepseek-ai/dsh-api-remotes",
-        "@deepseek-ai/dsh-client-ui-renderer",
-        "@deepseek-ai/dsh-client-ui-workspace",
-        "@deepseek-ai/dsh-client-locale"
+        "@taiji/dsh-api-remotes",
+        "@taiji/dsh-client-ui-renderer",
+        "@taiji/dsh-client-ui-workspace",
+        "@taiji/dsh-client-locale"
       ],
       "platform": "web"
     }
@@ -42,19 +42,19 @@
   },
   "license": "MIT",
   "peerDependencies": {
-    "@deepseek-ai/cordis": "workspace:^"
+    "@taiji/cordis": "workspace:^"
   },
   "devDependencies": {
-    "@deepseek-ai/dsh-api-remotes": "workspace:^",
-    "@deepseek-ai/dsh-client-locale": "workspace:^",
-    "@deepseek-ai/dsh-client-test-runtime": "workspace:^",
-    "@deepseek-ai/dsh-client-ui-primitives": "workspace:^",
-    "@deepseek-ai/dsh-client-ui-renderer": "workspace:^",
-    "@deepseek-ai/dsh-client-ui-slots": "workspace:^",
-    "@deepseek-ai/dsh-client-ui-workspace": "workspace:^",
+    "@taiji/dsh-api-remotes": "workspace:^",
+    "@taiji/dsh-client-locale": "workspace:^",
+    "@taiji/dsh-client-test-runtime": "workspace:^",
+    "@taiji/dsh-client-ui-primitives": "workspace:^",
+    "@taiji/dsh-client-ui-renderer": "workspace:^",
+    "@taiji/dsh-client-ui-slots": "workspace:^",
+    "@taiji/dsh-client-ui-workspace": "workspace:^",
     "@testing-library/react": "^16.1.0",
     "@types/react": "~18.3.1",
-    "@deepseek-ai/cordis": "workspace:^",
+    "@taiji/cordis": "workspace:^",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "clsx": "^2.0.0"

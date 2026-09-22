@@ -10,8 +10,8 @@ import {
   IconRightUpOutlineRegular,
   SHIELD_OUTLINE_PATH,
   ICON_REGULAR_STROKE,
-} from '@deepseek-ai/dsh-client-ui-primitives'
-import type { InjectFace, PropsLocale, PropsRuntime, PropsStore } from '@deepseek-ai/dsh-client-ui-slots'
+} from '@taiji/dsh-client-ui-primitives'
+import type { InjectFace, PropsLocale, PropsRuntime, PropsStore } from '@taiji/dsh-client-ui-slots'
 import type { BrowserInjected } from '../browser/BrowserController.ts'
 import { emptyBrowserFrame } from '../browser/BrowserFrame.ts'
 import { currentBrowserTarget } from '../browser/BrowserPersistence.ts'

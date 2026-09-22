@@ -1,4 +1,4 @@
-import { Context } from '@deepseek-ai/cordis'
+import { Context } from '@taiji/cordis'
 import type {
   AgentContext,
   ISessions,
@@ -7,11 +7,11 @@ import type {
   SessionReference,
   SessionRetainInfo,
   SessionSnapshot,
-} from '@deepseek-ai/dsh-api-session-controller/client'
-import { MutableSessionEventSource } from '@deepseek-ai/dsh-api-session-controller/client'
-import { createSnapshotStore } from '@deepseek-ai/dsh-client-store'
-import type { HostObservable, RootStandardSourceContribution } from '@deepseek-ai/dsh-client-ui-slots'
-import type { SessionId } from '@deepseek-ai/dsh-session/types'
+} from '@taiji/dsh-api-session-controller/client'
+import { MutableSessionEventSource } from '@taiji/dsh-api-session-controller/client'
+import { createSnapshotStore } from '@taiji/dsh-client-store'
+import type { HostObservable, RootStandardSourceContribution } from '@taiji/dsh-client-ui-slots'
+import type { SessionId } from '@taiji/dsh-session/types'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import {
   apply,

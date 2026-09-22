@@ -1,18 +1,18 @@
 /**
  * Bundled `dsh-badge` skill provider.
  *
- * @module @deepseek-ai/dsh-skill-badge
+ * @module @taiji/dsh-skill-badge
  */
 
 import { readFile } from 'node:fs/promises'
 import { fileURLToPath } from 'node:url'
-import type { Context } from '@deepseek-ai/cordis'
+import type { Context } from '@taiji/cordis'
 import {
   BUNDLED_SKILL_RANK,
   type SkillCandidate,
   type SkillDefinition,
   type SkillProvider,
-} from '@deepseek-ai/dsh-skill'
+} from '@taiji/dsh-skill'
 
 const PROVIDER_NAME = 'dsh-badge'
 const SKILL_BODY_URL = new URL('../assets/dsh-badge.md', import.meta.url)

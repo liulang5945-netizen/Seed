@@ -4,9 +4,9 @@ import { copyFile, mkdir, mkdtemp, readFile, readdir, rm } from 'node:fs/promise
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
-import { Context } from '@deepseek-ai/cordis'
-import { Session, SessionId, SESSION_FORMAT_VERSION } from '@deepseek-ai/dsh-session'
-import JsonlSessionPersistence from '@deepseek-ai/dsh-session-persistence-jsonl'
+import { Context } from '@taiji/cordis'
+import { Session, SessionId, SESSION_FORMAT_VERSION } from '@taiji/dsh-session'
+import JsonlSessionPersistence from '@taiji/dsh-session-persistence-jsonl'
 import {
   runBuiltBenchmarkWorker,
   type BuiltBenchmarkWorkerRun,

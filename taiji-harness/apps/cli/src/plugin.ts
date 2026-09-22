@@ -1,7 +1,7 @@
 /** dsh plugin forwards pnpm through the shared profile package operations. */
-import { runPluginCommand } from '@deepseek-ai/dsh-plugin-manager/operations'
+import { runPluginCommand } from '@taiji/dsh-plugin-manager/operations'
 import { INSTALL_ANCHOR } from './profile-boot.ts'
-import { resolveProfileDir } from '@deepseek-ai/dsh-app-boot'
+import { resolveProfileDir } from '@taiji/dsh-app-boot'
 import { join } from 'node:path'
 
 /** Run package management for a profile.

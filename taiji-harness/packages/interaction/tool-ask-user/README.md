@@ -3,7 +3,7 @@ description: "The model-facing ask_user_question tool over the user-questions se
 kind: "package-reference"
 ---
 
-# @deepseek-ai/dsh-tool-ask-user
+# @taiji/dsh-tool-ask-user
 
 English | [中文](README.zh.md)
 

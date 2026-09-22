@@ -3,12 +3,12 @@ import { existsSync } from 'node:fs'
 import { mkdir, mkdtemp, open } from 'node:fs/promises'
 import { join, resolve } from 'node:path'
 import { execa } from 'execa'
-import { withFileLock, writeFileAtomic } from '@deepseek-ai/dsh-atomic-write'
+import { withFileLock, writeFileAtomic } from '@taiji/dsh-atomic-write'
 import {
   DEFAULT_PROFILE_BUNDLES, bundlePatchPaths, initProfile, PROFILE_TEMPLATES, readProfileManifest,
   resolveBundleDir, resolveProfileDir, loadOverlayPatches, type ProfileManifest,
-} from '@deepseek-ai/dsh-app-boot'
-import { scrubbedParentEnv } from '@deepseek-ai/dsh-subprocess'
+} from '@taiji/dsh-app-boot'
+import { scrubbedParentEnv } from '@taiji/dsh-subprocess'
 import type { PackageResult, Registry } from './types.ts'
 
 /** Profile and invocation locations supplied by the launcher. */

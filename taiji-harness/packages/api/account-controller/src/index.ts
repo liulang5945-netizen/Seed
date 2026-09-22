@@ -1,8 +1,8 @@
 /** Authenticated Remote operations for account UI consumers. */
-import { Context } from '@deepseek-ai/cordis'
-import { Remote, TypertRemoteService } from '@deepseek-ai/dsh-typert-protocol'
-import type {} from '@deepseek-ai/dsh-deepseek-account'
-import type { AccountDetails } from '@deepseek-ai/dsh-deepseek-account/types'
+import { Context } from '@taiji/cordis'
+import { Remote, TypertRemoteService } from '@taiji/dsh-typert-protocol'
+import type {} from '@taiji/dsh-deepseek-account'
+import type { AccountDetails } from '@taiji/dsh-deepseek-account/types'
 import type { AccountView, SignInAttemptId } from './types.ts'
 
 /** Account commands and reconnect-safe state stream. */

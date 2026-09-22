@@ -56,7 +56,7 @@ export function verifyInstalledProductIsolation(directory: string, optionalBundl
 }
 
 function rejectExperimental(name: string, chain: readonly string[]): void {
-  if (name.startsWith('@deepseek-ai/dsh-experimental-')) {
+  if (name.startsWith('@taiji/dsh-experimental-')) {
     throw new Error(`default product includes an experimental package: ${chain.join(' -> ')}`)
   }
 }

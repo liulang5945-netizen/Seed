@@ -3,7 +3,7 @@ description: "Use and debug the experimental Web Agent Teams roster, shared task
 kind: "package-reference"
 ---
 
-# @deepseek-ai/dsh-experimental-client-ui-agent-team
+# @taiji/dsh-experimental-client-ui-agent-team
 
 English | [中文](README.zh.md)
 
@@ -25,7 +25,7 @@ This package adds an Agent Teams action to the Web conversation header, where a 
 <a id="use-this-package"></a>
 ## Use this package
 
-Enable this package through [`@deepseek-ai/dsh-experimental-agent-team-profile`](../agent-team-profile/README.md), which supplies the Team service, tools, and Web UI together. The Web Client loader mounts the `/client` export; the root Host export is inert, and the package has no user configuration fields.
+Enable this package through [`@taiji/dsh-experimental-agent-team-profile`](../agent-team-profile/README.md), which supplies the Team service, tools, and Web UI together. The Web Client loader mounts the `/client` export; the root Host export is inert, and the package has no user configuration fields.
 
 ### Inspect and navigate the roster
 
@@ -45,7 +45,7 @@ The read-only task board shows task identity, owner, blockers, readiness, adviso
 <details>
 <summary>Implementation internals — click to expand</summary>
 
-The Client export mounts the generated `ctx.remote.agentTeams` contribution from [`@deepseek-ai/dsh-experimental-agent-team/remote`](../agent-team/README.md), then registers its locale dictionaries and one conversation-header slot through Cordis effects. Disposing the plugin fiber removes both registrations.
+The Client export mounts the generated `ctx.remote.agentTeams` contribution from [`@taiji/dsh-experimental-agent-team/remote`](../agent-team/README.md), then registers its locale dictionaries and one conversation-header slot through Cordis effects. Disposing the plugin fiber removes both registrations.
 
 The panel renders outside the conversation container and stays within the viewport. Opening moves focus into the panel; Escape or Close returns focus to its trigger. Clicking outside or moving focus outside the panel and trigger closes it without moving focus back. Opening or refreshing the panel reads the complete Team view. Overlapping refreshes keep the newest response, and responses for a previous conversation are ignored.
 

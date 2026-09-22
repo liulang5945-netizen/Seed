@@ -4,17 +4,17 @@
  */
 
 import { describe, expect, it, vi } from 'vitest'
-import { Context } from '@deepseek-ai/cordis'
-import { PtcRuntime } from '@deepseek-ai/dsh-ptc-runtime'
-import { createScope, type Scope } from '@deepseek-ai/dsh-scope'
+import { Context } from '@taiji/cordis'
+import { PtcRuntime } from '@taiji/dsh-ptc-runtime'
+import { createScope, type Scope } from '@taiji/dsh-scope'
 import { mkdirSync, mkdtempSync, rmSync, symlinkSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join, sep } from 'node:path'
-import { turnBoundaryProjectionDefinition } from '@deepseek-ai/dsh-agent-loop'
-import { ToolCallId } from '@deepseek-ai/dsh-llm'
-import SystemPrompt, { renderPrompt } from '@deepseek-ai/dsh-system-prompt'
-import ToolRuntime, { type ToolResult } from '@deepseek-ai/dsh-tools'
-import { FileSystem, FsError, FsTargetKey, FsVersion } from '@deepseek-ai/dsh-fs'
+import { turnBoundaryProjectionDefinition } from '@taiji/dsh-agent-loop'
+import { ToolCallId } from '@taiji/dsh-llm'
+import SystemPrompt, { renderPrompt } from '@taiji/dsh-system-prompt'
+import ToolRuntime, { type ToolResult } from '@taiji/dsh-tools'
+import { FileSystem, FsError, FsTargetKey, FsVersion } from '@taiji/dsh-fs'
 import type {
   FsDirEntry,
   FsEditOutcome,
@@ -24,18 +24,18 @@ import type {
   FsTarget,
   FsWriteIntent,
   FsWriteOutcome,
-} from '@deepseek-ai/dsh-fs'
-import * as FsPolicy from '@deepseek-ai/dsh-fs-observation-policy'
-import * as ToolFs from '@deepseek-ai/dsh-tool-fs'
+} from '@taiji/dsh-fs'
+import * as FsPolicy from '@taiji/dsh-fs-observation-policy'
+import * as ToolFs from '@taiji/dsh-tool-fs'
 import { STREAM_MIN_SIZE } from '../src/read.ts'
 import { formatReadOutput } from '../src/read-render.ts'
 import type { FileReadOutcome } from '../src/read-render.ts'
 import { sessionCwd } from '../src/session-cwd.ts'
-import ApprovalService from '@deepseek-ai/dsh-user-approval'
-import type { SandboxExecutionPolicy, SandboxMode } from '@deepseek-ai/dsh-sandbox'
-import SandboxPolicyService from '@deepseek-ai/dsh-sandbox-policy'
-import { SessionId, SessionLogOffset, SessionSeq } from '@deepseek-ai/dsh-session'
-import SessionProjectionRegistry from '@deepseek-ai/dsh-session-projection'
+import ApprovalService from '@taiji/dsh-user-approval'
+import type { SandboxExecutionPolicy, SandboxMode } from '@taiji/dsh-sandbox'
+import SandboxPolicyService from '@taiji/dsh-sandbox-policy'
+import { SessionId, SessionLogOffset, SessionSeq } from '@taiji/dsh-session'
+import SessionProjectionRegistry from '@taiji/dsh-session-projection'
 
 const testToolSignal = new AbortController().signal
 
@@ -1061,7 +1061,7 @@ function withPersona(...sections: string[]): string {
 
 /** Schema assembly only: these cases never execute user code. */
 class GuidancePtcRuntime extends PtcRuntime {
-  resolve(request: import('@deepseek-ai/dsh-ptc-runtime').PtcRunRequest): import('@deepseek-ai/dsh-ptc-runtime').PtcRunSpec { return { ...request, cwd: request.cwd ?? process.cwd(), timeoutMs: request.timeoutMs ?? 120_000 } }
+  resolve(request: import('@taiji/dsh-ptc-runtime').PtcRunRequest): import('@taiji/dsh-ptc-runtime').PtcRunSpec { return { ...request, cwd: request.cwd ?? process.cwd(), timeoutMs: request.timeoutMs ?? 120_000 } }
 
   readonly language = 'typescript'
   readonly isolation = 'fake'

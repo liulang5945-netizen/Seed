@@ -3,9 +3,9 @@
 
 import { cleanup, fireEvent, render, screen } from '@testing-library/react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { bindSnapshotSelector } from '@deepseek-ai/dsh-client-test-runtime'
-import { createSnapshotStore } from '@deepseek-ai/dsh-client-store'
-import type { SettingsFieldState, SettingsFormShell } from '@deepseek-ai/dsh-client-ui-primitives'
+import { bindSnapshotSelector } from '@taiji/dsh-client-test-runtime'
+import { createSnapshotStore } from '@taiji/dsh-client-store'
+import type { SettingsFieldState, SettingsFormShell } from '@taiji/dsh-client-ui-primitives'
 import { ShellCard, type ShellCardProps } from '../src/client/ShellCard.tsx'
 import type { ShellCardState } from '../src/client/shell-card-controller.ts'
 import { en } from '../src/client/locales.ts'

@@ -1,15 +1,15 @@
 /** Authenticated, cancellation-aware Client access to the speech capability. */
-import { Context } from '@deepseek-ai/cordis'
-import z from '@deepseek-ai/schemastery'
-import { Remote, RemoteError, TypertRemoteService } from '@deepseek-ai/dsh-typert-protocol'
-import type {} from '@deepseek-ai/dsh-experimental-speech-to-text'
-import type { SpeechProviderId, SpeechSelectionPatch, Transcript } from '@deepseek-ai/dsh-experimental-speech-to-text/types'
+import { Context } from '@taiji/cordis'
+import z from '@taiji/schemastery'
+import { Remote, RemoteError, TypertRemoteService } from '@taiji/dsh-typert-protocol'
+import type {} from '@taiji/dsh-experimental-speech-to-text'
+import type { SpeechProviderId, SpeechSelectionPatch, Transcript } from '@taiji/dsh-experimental-speech-to-text/types'
 import type { SpeechCatalog, TranscriptionRequest } from './types.ts'
-import { validateWave } from '@deepseek-ai/dsh-experimental-speech-to-text/wave'
+import { validateWave } from '@taiji/dsh-experimental-speech-to-text/wave'
 
 export type * from './types.ts'
 
-declare module '@deepseek-ai/cordis' {
+declare module '@taiji/cordis' {
   interface Context {
     /** Experimental speech Remote controller. */
     speechController: SpeechController

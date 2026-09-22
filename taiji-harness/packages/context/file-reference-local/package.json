@@ -1,5 +1,5 @@
 {
-  "name": "@deepseek-ai/dsh-file-reference-local",
+  "name": "@taiji/dsh-file-reference-local",
   "description": "Local-filesystem ctx.fileReferences provider with bounded fuzzy indexes",
   "version": "0.1.7-alpha.1",
   "publishConfig": {
@@ -32,20 +32,20 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "@deepseek-ai/schemastery": "workspace:^"
+    "@taiji/schemastery": "workspace:^"
   },
   "peerDependencies": {
-    "@deepseek-ai/dsh-agent": "workspace:^",
-    "@deepseek-ai/dsh-file-reference": "workspace:^",
-    "@deepseek-ai/dsh-system-prompt": "workspace:^",
-    "@deepseek-ai/dsh-tools": "workspace:^",
-    "@deepseek-ai/cordis": "workspace:^"
+    "@taiji/dsh-agent": "workspace:^",
+    "@taiji/dsh-file-reference": "workspace:^",
+    "@taiji/dsh-system-prompt": "workspace:^",
+    "@taiji/dsh-tools": "workspace:^",
+    "@taiji/cordis": "workspace:^"
   },
   "devDependencies": {
-    "@deepseek-ai/dsh-agent": "workspace:^",
-    "@deepseek-ai/dsh-file-reference": "workspace:^",
-    "@deepseek-ai/dsh-system-prompt": "workspace:^",
-    "@deepseek-ai/dsh-tools": "workspace:^",
-    "@deepseek-ai/cordis": "workspace:^"
+    "@taiji/dsh-agent": "workspace:^",
+    "@taiji/dsh-file-reference": "workspace:^",
+    "@taiji/dsh-system-prompt": "workspace:^",
+    "@taiji/dsh-tools": "workspace:^",
+    "@taiji/cordis": "workspace:^"
   }
 }

@@ -6,11 +6,11 @@
  */
 
 import { describe, expect, it } from 'vitest'
-import type { Context as ClientContext } from '@deepseek-ai/cordis'
-import type { RemoteErrorCode } from '@deepseek-ai/dsh-api-remotes/client'
-import { RemoteError } from '@deepseek-ai/dsh-client-test-runtime'
-import type { SessionSummary } from '@deepseek-ai/dsh-api-session-controller/client'
-import type { SessionId } from '@deepseek-ai/dsh-session/types'
+import type { Context as ClientContext } from '@taiji/cordis'
+import type { RemoteErrorCode } from '@taiji/dsh-api-remotes/client'
+import { RemoteError } from '@taiji/dsh-client-test-runtime'
+import type { SessionSummary } from '@taiji/dsh-api-session-controller/client'
+import type { SessionId } from '@taiji/dsh-session/types'
 import {
   AGENT_PRESET_SETTINGS_NS, AgentPresetSettingsController,
   writeDefaultPreset, writeModeSelectionEnabled,

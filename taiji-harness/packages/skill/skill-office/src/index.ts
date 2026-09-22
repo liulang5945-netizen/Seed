@@ -4,9 +4,9 @@ import { readFileSync, statSync } from 'node:fs'
 import { readFile } from 'node:fs/promises'
 import { isAbsolute, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import type { Context } from '@deepseek-ai/cordis'
-import z from '@deepseek-ai/schemastery'
-import { BUNDLED_SKILL_RANK, type SkillCandidate, type SkillProvider } from '@deepseek-ai/dsh-skill'
+import type { Context } from '@taiji/cordis'
+import z from '@taiji/schemastery'
+import { BUNDLED_SKILL_RANK, type SkillCandidate, type SkillProvider } from '@taiji/dsh-skill'
 import { parse as parseYaml } from 'yaml'
 
 const SKILL_NAMES = ['office-docx', 'office-pptx', 'office-xlsx'] as const

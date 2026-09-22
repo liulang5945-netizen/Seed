@@ -6,8 +6,8 @@ import { readFile } from 'node:fs/promises'
 import { fileURLToPath } from 'node:url'
 import type { Browser, Page } from 'playwright'
 import { chromium } from 'playwright'
-import { FiberState } from '@deepseek-ai/cordis'
-import { createUserMessage } from '@deepseek-ai/dsh-llm'
+import { FiberState } from '@taiji/cordis'
+import { createUserMessage } from '@taiji/dsh-llm'
 import { afterAll, beforeAll, describe, expect, it, onTestFailed } from 'vitest'
 import { join } from 'node:path'
 import {
@@ -24,7 +24,7 @@ const EXPORTS_EN_EXPECTED = join(SNAPSHOT_DIR, 'exports-en.expected.md')
 const FIXTURE_PLUGINS = fileURLToPath(new URL('./fixtures/plugins', import.meta.url))
 const MODE = webSnapshotMode()
 /** The profile manifest's bundles as the scaffold initializes them. */
-const SCAFFOLD_BUNDLES = ['@deepseek-ai/dsh-base', '@deepseek-ai/dsh-web-app', SCAFFOLD_DEFAULTS_BUNDLE]
+const SCAFFOLD_BUNDLES = ['@taiji/dsh-base', '@taiji/dsh-web-app', SCAFFOLD_DEFAULTS_BUNDLE]
 
 describe('web e2e: plugin manager', () => {
   let scaffold: WebScaffold
@@ -160,9 +160,9 @@ describe('web e2e: plugin manager', () => {
       images.push(`${label}: image, ${size.width}×${size.height}, decoded`)
     }
     await checkImage('[data-plugin-package="@fixture/bundle"]', fixtureIcon, 'Third-party bundle card')
-    const team = panel.locator('[data-plugin-package="@deepseek-ai/dsh-experimental-agent-team-profile"]')
+    const team = panel.locator('[data-plugin-package="@taiji/dsh-experimental-agent-team-profile"]')
     expect(await team.getByRole('switch').getAttribute('aria-checked')).toBe('false')
-    await checkImage('[data-plugin-package="@deepseek-ai/dsh-experimental-agent-team-profile"]', teamIcon, 'Disabled Agent Teams card')
+    await checkImage('[data-plugin-package="@taiji/dsh-experimental-agent-team-profile"]', teamIcon, 'Disabled Agent Teams card')
     try {
       for (const colorScheme of ['light', 'dark'] as const) {
         await page.emulateMedia({ colorScheme })
@@ -221,7 +221,7 @@ describe('web e2e: plugin manager', () => {
     const panel = await openPluginsPanel()
     await panel.getByRole('button', { name: '查看 智能体团队', exact: true }).click()
     const packageName = panel.locator('[data-plugin-name]')
-    expect(await packageName.textContent()).toBe('@deepseek-ai/dsh-experimental-agent-team-profile')
+    expect(await packageName.textContent()).toBe('@taiji/dsh-experimental-agent-team-profile')
     expect(await panel.getByText('启用团队协作、团队工具、成员列表和共享任务看板。').count()).toBe(1)
     const child = panel.locator('[data-plugin-row]', { hasText: 'tool-agent-team' })
     await child.getByText('团队工具', { exact: true }).waitFor()
@@ -229,7 +229,7 @@ describe('web e2e: plugin manager', () => {
     try {
       await setLanguage('en')
       await panel.getByRole('heading', { name: 'Agent Teams', exact: true }).waitFor()
-      expect(await packageName.textContent()).toBe('@deepseek-ai/dsh-experimental-agent-team-profile')
+      expect(await packageName.textContent()).toBe('@taiji/dsh-experimental-agent-team-profile')
       expect(await panel.getByText('Enable team collaboration, team tools, the member roster, and the shared task board.').count()).toBe(1)
       await child.getByText('Team Tools', { exact: true }).waitFor()
       expect(await child.getByText('Give agents tools to coordinate members, exchange messages, and manage shared tasks.', { exact: true }).count()).toBe(1)
@@ -285,7 +285,7 @@ describe('web e2e: plugin manager', () => {
         const manifest = JSON.parse(await homeFile('profiles', 'scaffold', 'package.json')) as {
           dsh: { profile: { bundles: string[] } }
         }
-        expect(manifest.dsh.profile.bundles).toEqual([...SCAFFOLD_BUNDLES, '@deepseek-ai/dsh-experimental-agent-team-profile'])
+        expect(manifest.dsh.profile.bundles).toEqual([...SCAFFOLD_BUNDLES, '@taiji/dsh-experimental-agent-team-profile'])
         await panel.getByRole('button', { name: '查看 智能体团队', exact: true }).click()
         for (const id of ['agent-team', 'tool-agent-team', 'ui-agent-team']) {
           await panel.locator('[data-plugin-row]', { hasText: id }).first().waitFor()

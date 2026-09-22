@@ -1,9 +1,9 @@
-import type { Context } from '@deepseek-ai/cordis'
-import { notifySubscribers, type ObservableSnapshot } from '@deepseek-ai/dsh-client-store'
+import type { Context } from '@taiji/cordis'
+import { notifySubscribers, type ObservableSnapshot } from '@taiji/dsh-client-store'
 import type {
   ConversationLocation, ConversationNode, ConversationTimelineSnapshot, ConversationViewBuilder,
   ConversationViewDefinition, ConversationGroupInput, GroupNodePosition, NodeChange, NodeKey, PartialAssistant, RunningToolCall,
-} from '@deepseek-ai/dsh-client-ui-conversation/client'
+} from '@taiji/dsh-client-ui-conversation/client'
 import type { ChatConversationViewNode, ChatNode, ChatNodeDataMap, ChatNodeKind } from '../contract/chat-nodes.ts'
 import { isRunningTool } from '../contract/chat-nodes.ts'
 import { isVisibleChatNode } from '../contract/chat-visibility.ts'

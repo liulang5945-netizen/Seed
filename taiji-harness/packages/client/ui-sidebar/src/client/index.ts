@@ -1,14 +1,14 @@
 /** Registers the sidebar shell and global panel navigation. */
-import type { Context as ClientContext } from '@deepseek-ai/cordis'
-import { createSnapshotStore } from '@deepseek-ai/dsh-client-store'
-import { resolveSlotLabel } from '@deepseek-ai/dsh-client-ui-slots'
-import type { MainPanelId } from '@deepseek-ai/dsh-client-ui-layout/client'
+import type { Context as ClientContext } from '@taiji/cordis'
+import { createSnapshotStore } from '@taiji/dsh-client-store'
+import { resolveSlotLabel } from '@taiji/dsh-client-ui-slots'
+import type { MainPanelId } from '@taiji/dsh-client-ui-layout/client'
 // Type-only: pulls the locale plugin's Context merge (ctx.locale).
-import type {} from '@deepseek-ai/dsh-client-locale/client'
+import type {} from '@taiji/dsh-client-locale/client'
 // Type-only: pulls the SlotRegistry service merge (ctx.slots).
-import type {} from '@deepseek-ai/dsh-client-ui-renderer/client'
+import type {} from '@taiji/dsh-client-ui-renderer/client'
 // Type-only: pulls the Session root standard-props merge.
-import type {} from '@deepseek-ai/dsh-client-ui-session/client'
+import type {} from '@taiji/dsh-client-ui-session/client'
 import type { SidebarPanelMetadata, SidebarRootInjected } from './contract/slots.ts'
 import { HeaderLeadingControls } from './HeaderLeadingControls.tsx'
 import { SidebarRoot } from './SidebarRoot.tsx'
@@ -21,7 +21,7 @@ export type {
 } from './contract/slots.ts'
 export type { SidebarKey } from './locales.ts'
 
-declare module '@deepseek-ai/dsh-client-ui-slots' {
+declare module '@taiji/dsh-client-ui-slots' {
   interface LocaleNamespaceMap {
     /** Sidebar controls and global panel copy. */
     sidebar: SidebarKey

@@ -1,8 +1,8 @@
 /** Runtime plugin trees shared by Agents selecting one preset revision. */
-import { Context, type Fiber } from '@deepseek-ai/cordis'
-import { EntryTree, type EntryOptions } from '@deepseek-ai/cordis-plugin-loader'
+import { Context, type Fiber } from '@taiji/cordis'
+import { EntryTree, type EntryOptions } from '@taiji/cordis-plugin-loader'
 import type { PresetDefinition } from './definition.ts'
-import { scopeOf, scopeParentOf, type ScopeKey } from '@deepseek-ai/dsh-scope'
+import { scopeOf, scopeParentOf, type ScopeKey } from '@taiji/dsh-scope'
 
 /** In-memory Loader tree; only the profile configuration editor persists definitions. */
 class PresetTree extends EntryTree {

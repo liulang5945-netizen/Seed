@@ -3,7 +3,7 @@ description: "配置显式产品使用事件、OTLP/HTTP 路由、批量发送�
 kind: "package-reference"
 ---
 
-# @deepseek-ai/dsh-host-product-telemetry-otel
+# @taiji/dsh-host-product-telemetry-otel
 
 [English](README.md) | 中文
 
@@ -28,7 +28,7 @@ kind: "package-reference"
 在 Cordis 组合中挂载插件并提供应用标识；需要时可覆盖接收地址。内置 profile 不挂载本插件。启动器环境须将 `DSH_APP_VERSION` 设为运行中应用的发布版本；缺少版本时 schema 会拒绝配置。
 
 ```yaml
-- name: '@deepseek-ai/dsh-host-product-telemetry-otel'
+- name: '@taiji/dsh-host-product-telemetry-otel'
   config:
     endpoint: https://dsh-otel-collector.deepseeksvc.com/v1/logs
     serviceName: deepseek-harness

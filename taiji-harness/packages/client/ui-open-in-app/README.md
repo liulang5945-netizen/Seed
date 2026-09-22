@@ -3,7 +3,7 @@ description: "Web \"Open In...\" controls: the Session-header split button launc
 kind: "package-reference"
 ---
 
-# @deepseek-ai/dsh-client-ui-open-in-app
+# @taiji/dsh-client-ui-open-in-app
 
 English | [中文](README.zh.md)
 
@@ -43,7 +43,7 @@ Mounted controls with the same association reader and file share one query and i
 <details>
 <summary>Implementation internals — click to expand</summary>
 
-The plugin registers the split button on `conversation.session.header.utilities` through the standard slot/inject currency and registers the `open-in-app` dictionaries as one effect. A page-lifetime controller ([`src/client/controller.ts`](src/client/controller.ts)) owns the once-per-page availability read, the persisted choice snapshot store, and the launch POST; the component receives both stores through the inject `hooks` compartment, so every Session header shares one truth. Document-relative route forms and wire payload types come from the host package's browser-safe `@deepseek-ai/dsh-host-open-in-app/shared` subpath. In-flight launches are guarded by a ref — repeat clicks and menu picks during a launch are ignored whole (a pick would otherwise persist a choice the gesture never opened) — and the busy/error dress is timer-driven around the `launch` promise.
+The plugin registers the split button on `conversation.session.header.utilities` through the standard slot/inject currency and registers the `open-in-app` dictionaries as one effect. A page-lifetime controller ([`src/client/controller.ts`](src/client/controller.ts)) owns the once-per-page availability read, the persisted choice snapshot store, and the launch POST; the component receives both stores through the inject `hooks` compartment, so every Session header shares one truth. Document-relative route forms and wire payload types come from the host package's browser-safe `@taiji/dsh-host-open-in-app/shared` subpath. In-flight launches are guarded by a ref — repeat clicks and menu picks during a launch are ignored whole (a pick would otherwise persist a choice the gesture never opened) — and the busy/error dress is timer-driven around the `launch` promise.
 
 The directory and file adapters supply application metadata and operations to [`OpenTargetButton`](src/client/OpenTargetButton.tsx), which owns menu ordering, default markers, icons, sizing, and gesture feedback. The file header and empty state share `FileOpenTarget`, while `OpenPathInjected.applications` queries `session.workspacePathApplications` through [`open-path.ts`](src/client/open-path.ts). Opening uses `session.openWorkspacePath`; the Host revalidates an explicitly selected handler before launch. The directory adapter keeps the existing catalog routes. `FileRouteAction` supplies the same control to delivery cards and change review through `deliverables.file.actions` and `deliverables.review.file.actions`; their authenticated routes retain Session file authorization. A failed or unavailable file query therefore needs no platform-specific UI implementation.
 

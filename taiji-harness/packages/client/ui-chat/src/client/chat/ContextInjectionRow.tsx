@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import type { ChatViewSlotProps } from '../contract/slots.ts'
-import { DisclosureRow, IconContextInjectionOutlineRegular, ReferenceIconRegular } from '@deepseek-ai/dsh-client-ui-primitives'
+import { DisclosureRow, IconContextInjectionOutlineRegular, ReferenceIconRegular } from '@taiji/dsh-client-ui-primitives'
 import type { ContextMessageNode } from '../contract/snapshot.ts'
 import { contextBody } from './ContextBody.tsx'
 import css from './ContextInjectionRow.module.css'

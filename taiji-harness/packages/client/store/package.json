@@ -1,5 +1,5 @@
 {
-  "name": "@deepseek-ai/dsh-client-store",
+  "name": "@taiji/dsh-client-store",
   "description": "React-free observable and snapshot-store contracts with the shared Zustand/Immer engine",
   "version": "0.1.7-alpha.1",
   "publishConfig": {
@@ -23,10 +23,10 @@
   },
   "license": "MIT",
   "peerDependencies": {
-    "@deepseek-ai/cordis": "workspace:^"
+    "@taiji/cordis": "workspace:^"
   },
   "devDependencies": {
-    "@deepseek-ai/cordis": "workspace:^",
+    "@taiji/cordis": "workspace:^",
     "zustand": "~4.4.7",
     "immer": "^10.1.1"
   },

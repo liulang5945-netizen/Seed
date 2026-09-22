@@ -10,12 +10,12 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { act, cleanup, fireEvent, render } from '@testing-library/react'
 import type { ReactNode } from 'react'
-import { createSnapshotStore } from '@deepseek-ai/dsh-client-store'
-import type { IconProps } from '@deepseek-ai/dsh-client-ui-primitives'
+import { createSnapshotStore } from '@taiji/dsh-client-store'
+import type { IconProps } from '@taiji/dsh-client-ui-primitives'
 import { GuideBody } from '../src/client/tabs/guide/GuideBody.tsx'
 import type { GuideBodyProps } from '../src/client/tabs/guide/GuideBody.tsx'
 import type { SidebarRightGuideBox } from '../src/client/tab-registry.ts'
-import { bindSnapshotSelector } from '@deepseek-ai/dsh-client-test-runtime'
+import { bindSnapshotSelector } from '@taiji/dsh-client-test-runtime'
 import css from '../src/client/tabs/guide/GuideBody.module.css'
 
 afterEach(cleanup)

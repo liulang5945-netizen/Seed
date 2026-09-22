@@ -1,12 +1,12 @@
 /**
  * Human-facing `/compact` command over the backend-independent compaction seam.
- * @module @deepseek-ai/dsh-command-compact
+ * @module @taiji/dsh-command-compact
  */
 
-import type { Context } from '@deepseek-ai/cordis'
-import { CommandDefinitionId } from '@deepseek-ai/dsh-commands/brand'
-import { ManualCompactionError } from '@deepseek-ai/dsh-compaction'
-import type { CommandInvocation, CommandResult } from '@deepseek-ai/dsh-commands'
+import type { Context } from '@taiji/cordis'
+import { CommandDefinitionId } from '@taiji/dsh-commands/brand'
+import { ManualCompactionError } from '@taiji/dsh-compaction'
+import type { CommandInvocation, CommandResult } from '@taiji/dsh-commands'
 
 export const name = 'command-compact'
 export const inject = ['commands', 'compaction']
@@ -99,7 +99,7 @@ export function apply(ctx: Context): void {
     // invocation can enter while already-started handler promises quiesce.
     yield async () => { await Promise.allSettled(active) }
     yield ctx.commands.register({
-      definitionId: CommandDefinitionId('@deepseek-ai/dsh-command-compact'),
+      definitionId: CommandDefinitionId('@taiji/dsh-command-compact'),
       name: 'compact',
       description: 'Compact older conversation history',
       handler,

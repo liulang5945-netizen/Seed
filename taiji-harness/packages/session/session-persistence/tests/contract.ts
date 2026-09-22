@@ -8,13 +8,13 @@
  * vocabulary, freshness, and torn-tail repair. Backend-specific behavior
  * (file layout, encodings, artifact export) stays in each backend's own spec.
  *
- * @module @deepseek-ai/dsh-session-persistence/tests/contract
+ * @module @taiji/dsh-session-persistence/tests/contract
  */
 
 import { describe, expect, it } from 'vitest'
-import { SessionSeq, SESSION_FORMAT_VERSION, SessionId } from '@deepseek-ai/dsh-session'
-import type { SessionEvent, SessionHeader } from '@deepseek-ai/dsh-session'
-import { MessageId, freezeMessage } from '@deepseek-ai/dsh-llm'
+import { SessionSeq, SESSION_FORMAT_VERSION, SessionId } from '@taiji/dsh-session'
+import type { SessionEvent, SessionHeader } from '@taiji/dsh-session'
+import { MessageId, freezeMessage } from '@taiji/dsh-llm'
 import {
   SessionAlreadyExistsError,
   SessionAlreadyOwnedError,

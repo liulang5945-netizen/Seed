@@ -5,12 +5,12 @@
  * inside the source's open turn. Both preserve every fully written event and
  * close the unfinished step and turn. Calls in already closed steps remain
  * unchanged, including any missing results.
- * @module @deepseek-ai/dsh-session/repair
+ * @module @taiji/dsh-session/repair
  */
 
-import { brandString } from '@deepseek-ai/dsh-brand'
-import type { MessageId, ToolCallId, ToolResultMessage } from '@deepseek-ai/dsh-llm'
-import { deepFreeze } from '@deepseek-ai/dsh-util-values'
+import { brandString } from '@taiji/dsh-brand'
+import type { MessageId, ToolCallId, ToolResultMessage } from '@taiji/dsh-llm'
+import { deepFreeze } from '@taiji/dsh-util-values'
 import { SessionSeq } from './types.ts'
 import type { SessionEvent, SessionSeq as SessionSeqType } from './types.ts'
 

@@ -3,7 +3,7 @@ description: "Web 客户端插件的动态图同步与开发时 bundle 重载。
 kind: "package-reference"
 ---
 
-# @deepseek-ai/dsh-client-hmr
+# @taiji/dsh-client-hmr
 
 [English](README.md) | 中文
 

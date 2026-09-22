@@ -1,5 +1,5 @@
 {
-  "name": "@deepseek-ai/dsh-client-file-upload",
+  "name": "@taiji/dsh-client-file-upload",
   "description": "Agent-scoped browser file upload, streaming intake, and staged receipt service",
   "version": "0.1.7-alpha.1",
   "publishConfig": {
@@ -40,7 +40,7 @@
   "dsh": {
     "client": {
       "inject": [
-        "@deepseek-ai/dsh-api-remotes"
+        "@taiji/dsh-api-remotes"
       ],
       "platform": "web",
       "immediately": true
@@ -63,22 +63,22 @@
   ],
   "dependencies": {
     "zod": "^4.4.3",
-    "@deepseek-ai/dsh-typert-protocol": "workspace:^",
-    "@deepseek-ai/dsh-brand": "workspace:^"
+    "@taiji/dsh-typert-protocol": "workspace:^",
+    "@taiji/dsh-brand": "workspace:^"
   },
   "peerDependencies": {
-    "@deepseek-ai/cordis": "workspace:^",
-    "@deepseek-ai/dsh-scope": "workspace:^"
+    "@taiji/cordis": "workspace:^",
+    "@taiji/dsh-scope": "workspace:^"
   },
   "devDependencies": {
-    "@deepseek-ai/cordis": "workspace:^",
-    "@deepseek-ai/dsh-agent": "workspace:^",
-    "@deepseek-ai/dsh-client-connection": "workspace:^",
-    "@deepseek-ai/dsh-commands": "workspace:^",
-    "@deepseek-ai/dsh-scope": "workspace:^",
-    "@deepseek-ai/dsh-util-crypto": "workspace:^",
-    "@deepseek-ai/dsh-api-remotes": "workspace:^",
-    "@deepseek-ai/dsh-session": "workspace:^",
-    "@deepseek-ai/dsh-attachment": "workspace:^"
+    "@taiji/cordis": "workspace:^",
+    "@taiji/dsh-agent": "workspace:^",
+    "@taiji/dsh-client-connection": "workspace:^",
+    "@taiji/dsh-commands": "workspace:^",
+    "@taiji/dsh-scope": "workspace:^",
+    "@taiji/dsh-util-crypto": "workspace:^",
+    "@taiji/dsh-api-remotes": "workspace:^",
+    "@taiji/dsh-session": "workspace:^",
+    "@taiji/dsh-attachment": "workspace:^"
   }
 }

@@ -5,7 +5,7 @@ import { syncBuiltinESMExports } from 'node:module'
 import { tmpdir } from 'node:os'
 import { dirname, join } from 'node:path'
 import { pathToFileURL } from 'node:url'
-import { ModuleLoader } from '@deepseek-ai/cordis-plugin-loader'
+import { ModuleLoader } from '@taiji/cordis-plugin-loader'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { readPluginMeta, resolvePluginResource } from '../src/package-meta.ts'
 

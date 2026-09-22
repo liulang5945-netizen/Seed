@@ -10,10 +10,10 @@ import { expect, it, onTestFinished } from 'vitest'
 
 it.each([false, true])('settles startup after parent IPC disconnect (boot failure: %s)', async (fail) => {
   const root = mkdtempSync(join(tmpdir(), 'desktop-disconnect-'))
-  const modules = join(root, 'node_modules', '@deepseek-ai')
+  const modules = join(root, 'node_modules', '@taiji')
   const hostDirectory = fileURLToPath(new URL('../../desktop-host/', import.meta.url))
   const manifest = JSON.parse(readFileSync(join(hostDirectory, 'package.json'), 'utf8')) as { dependencies: Record<string, string> }
-  const stubbed = new Set(['@deepseek-ai/dsh-app-boot', '@deepseek-ai/dsh', '@deepseek-ai/dsh-home-paths'])
+  const stubbed = new Set(['@taiji/dsh-app-boot', '@taiji/dsh', '@taiji/dsh-home-paths'])
   for (const name of Object.keys(manifest.dependencies)) {
     const destination = join(root, 'node_modules', name)
     mkdirSync(dirname(destination), { recursive: true })

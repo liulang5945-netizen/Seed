@@ -1,6 +1,6 @@
 /** Shared projection of the live LLM registry into the browser model catalog. */
 
-import type { Context } from '@deepseek-ai/cordis'
+import type { Context } from '@taiji/cordis'
 import type {
   ModelCatalog,
   ModelReasoning,

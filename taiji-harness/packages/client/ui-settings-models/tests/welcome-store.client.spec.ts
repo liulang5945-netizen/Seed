@@ -1,9 +1,9 @@
 import { describe, expect, it, vi } from 'vitest'
-import { Context } from '@deepseek-ai/cordis'
-import { SettingsSchemaService } from '@deepseek-ai/dsh-client-ui-settings/src/client/schema.ts'
-import { SettingsDescribeMirror } from '@deepseek-ai/dsh-client-ui-settings/src/client/settings-mirror.ts'
-import { ConfigFormController } from '@deepseek-ai/dsh-client-ui-settings/src/client/config-form.ts'
-import { RemoteError } from '@deepseek-ai/dsh-client-test-runtime'
+import { Context } from '@taiji/cordis'
+import { SettingsSchemaService } from '@taiji/dsh-client-ui-settings/src/client/schema.ts'
+import { SettingsDescribeMirror } from '@taiji/dsh-client-ui-settings/src/client/settings-mirror.ts'
+import { ConfigFormController } from '@taiji/dsh-client-ui-settings/src/client/config-form.ts'
+import { RemoteError } from '@taiji/dsh-client-test-runtime'
 import { decodeWelcomeSection, WelcomeNoticeStore } from '../src/client/welcome-store.ts'
 import {
   WELCOME_NOTICE_ACK_FIELD, WELCOME_NOTICE_SETTINGS_NAMESPACE, WELCOME_NOTICE_VERSION,

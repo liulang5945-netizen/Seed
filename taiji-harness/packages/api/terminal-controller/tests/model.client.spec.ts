@@ -1,12 +1,12 @@
 /** Browser view ownership across slow RPCs, remounts and transport generations. */
 import { setImmediate } from 'node:timers/promises'
 import { afterEach, expect, it, vi } from 'vitest'
-import { RemoteStream, RemoteStreamCarrierError, type ClientRemote, type RemoteStreamOptions } from '@deepseek-ai/dsh-api-gateway/client'
-import { createSnapshotStore } from '@deepseek-ai/dsh-client-store'
-import { RemoteError, type RemoteResult } from '@deepseek-ai/dsh-typert-protocol'
-import { streamMethod } from '@deepseek-ai/dsh-remote-mock'
-import type {} from '@deepseek-ai/dsh-api-terminal-controller/remote'
-import type { SessionId } from '@deepseek-ai/dsh-session/types'
+import { RemoteStream, RemoteStreamCarrierError, type ClientRemote, type RemoteStreamOptions } from '@taiji/dsh-api-gateway/client'
+import { createSnapshotStore } from '@taiji/dsh-client-store'
+import { RemoteError, type RemoteResult } from '@taiji/dsh-typert-protocol'
+import { streamMethod } from '@taiji/dsh-remote-mock'
+import type {} from '@taiji/dsh-api-terminal-controller/remote'
+import type { SessionId } from '@taiji/dsh-session/types'
 import { TerminalView, type TerminalRemote } from '../src/client/model.ts'
 import type { TerminalEnvironment, TerminalFrame, WebTerminalId, WebTerminalInfo } from '../src/types.ts'
 

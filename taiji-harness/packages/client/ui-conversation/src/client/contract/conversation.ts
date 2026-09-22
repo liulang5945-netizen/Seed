@@ -1,5 +1,5 @@
-import type { SessionEventLike } from '@deepseek-ai/dsh-api-session-controller/client'
-import type { SessionEvent } from '@deepseek-ai/dsh-session/types'
+import type { SessionEventLike } from '@taiji/dsh-api-session-controller/client'
+import type { SessionEvent } from '@taiji/dsh-session/types'
 import type {
   ConversationGroupData, ConversationGroupedView, ConversationGroupInput,
 } from './groups.ts'

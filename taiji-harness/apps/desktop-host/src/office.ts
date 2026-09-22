@@ -1,9 +1,9 @@
 /** Desktop Office skills and bundled authoring dependencies. */
 
 import { dirname, join } from 'node:path'
-import type { Context } from '@deepseek-ai/cordis'
-import * as officeSkills from '@deepseek-ai/dsh-skill-office'
-import * as workspaceDependencies from '@deepseek-ai/dsh-tool-workspace-dependencies'
+import type { Context } from '@taiji/cordis'
+import * as officeSkills from '@taiji/dsh-skill-office'
+import * as workspaceDependencies from '@taiji/dsh-tool-workspace-dependencies'
 
 /** Loader identity for the application-owned Office composition. */
 export const name = 'desktop-office'

@@ -1,5 +1,5 @@
 {
-  "name": "@deepseek-ai/dsh-api-remotes",
+  "name": "@taiji/dsh-api-remotes",
   "description": "Remote BFF assembly for application-selected Host capabilities",
   "version": "0.1.7-alpha.1",
   "publishConfig": {
@@ -32,7 +32,7 @@
   "dsh": {
     "client": {
       "inject": [
-        "@deepseek-ai/dsh-api-gateway"
+        "@taiji/dsh-api-gateway"
       ],
       "platform": "web",
       "immediately": true
@@ -50,52 +50,52 @@
     "lib/types/**/*.d.ts"
   ],
   "dependencies": {
-    "@deepseek-ai/dsh-deque": "workspace:^",
-    "@deepseek-ai/dsh-session": "workspace:^",
-    "@deepseek-ai/dsh-util-values": "workspace:^"
+    "@taiji/dsh-deque": "workspace:^",
+    "@taiji/dsh-session": "workspace:^",
+    "@taiji/dsh-util-values": "workspace:^"
   },
   "peerDependencies": {
-    "@deepseek-ai/cordis": "workspace:^",
-    "@deepseek-ai/dsh-scope": "workspace:^"
+    "@taiji/cordis": "workspace:^",
+    "@taiji/dsh-scope": "workspace:^"
   },
   "devDependencies": {
-    "@deepseek-ai/cordis": "workspace:^",
-    "@deepseek-ai/dsh-agent": "workspace:^",
-    "@deepseek-ai/dsh-agent-preset-registry": "workspace:^",
-    "@deepseek-ai/dsh-api-gateway": "workspace:^",
-    "@deepseek-ai/dsh-api-job-controller": "workspace:^",
-    "@deepseek-ai/dsh-api-session-controller": "workspace:^",
-    "@deepseek-ai/dsh-api-settings-controller": "workspace:^",
-    "@deepseek-ai/dsh-api-workspace-controller": "workspace:^",
-    "@deepseek-ai/dsh-client-connection": "workspace:^",
-    "@deepseek-ai/dsh-client-file-upload": "workspace:^",
-    "@deepseek-ai/dsh-commands": "workspace:^",
-    "@deepseek-ai/dsh-cordis-host-runner": "workspace:^",
-    "@deepseek-ai/dsh-credentials": "workspace:^",
-    "@deepseek-ai/dsh-file-reference": "workspace:^",
-    "@deepseek-ai/dsh-goal": "workspace:^",
-    "@deepseek-ai/dsh-host-plugin-inventory": "workspace:^",
-    "@deepseek-ai/dsh-llm": "workspace:^",
-    "@deepseek-ai/dsh-message-feedback": "workspace:^",
-    "@deepseek-ai/dsh-scope": "workspace:^",
-    "@deepseek-ai/dsh-permission-presets": "workspace:^",
-    "@deepseek-ai/dsh-session-reference": "workspace:^",
-    "@deepseek-ai/dsh-settings": "workspace:^",
-    "@deepseek-ai/dsh-subagent": "workspace:^",
-    "@deepseek-ai/dsh-typert-protocol": "workspace:^",
-    "@deepseek-ai/dsh-user-approval": "workspace:^",
-    "@deepseek-ai/dsh-user-questions": "workspace:^",
-    "@deepseek-ai/dsh-client-connection": "workspace:^",
-    "@deepseek-ai/dsh-client-file-upload": "workspace:^",
-    "@deepseek-ai/dsh-typert-protocol": "workspace:^",
-    "@deepseek-ai/dsh-scope": "workspace:^",
-    "@deepseek-ai/dsh-api-session-controller": "workspace:^",
-    "@deepseek-ai/dsh-api-workspace-files": "workspace:^",
+    "@taiji/cordis": "workspace:^",
+    "@taiji/dsh-agent": "workspace:^",
+    "@taiji/dsh-agent-preset-registry": "workspace:^",
+    "@taiji/dsh-api-gateway": "workspace:^",
+    "@taiji/dsh-api-job-controller": "workspace:^",
+    "@taiji/dsh-api-session-controller": "workspace:^",
+    "@taiji/dsh-api-settings-controller": "workspace:^",
+    "@taiji/dsh-api-workspace-controller": "workspace:^",
+    "@taiji/dsh-client-connection": "workspace:^",
+    "@taiji/dsh-client-file-upload": "workspace:^",
+    "@taiji/dsh-commands": "workspace:^",
+    "@taiji/dsh-cordis-host-runner": "workspace:^",
+    "@taiji/dsh-credentials": "workspace:^",
+    "@taiji/dsh-file-reference": "workspace:^",
+    "@taiji/dsh-goal": "workspace:^",
+    "@taiji/dsh-host-plugin-inventory": "workspace:^",
+    "@taiji/dsh-llm": "workspace:^",
+    "@taiji/dsh-message-feedback": "workspace:^",
+    "@taiji/dsh-scope": "workspace:^",
+    "@taiji/dsh-permission-presets": "workspace:^",
+    "@taiji/dsh-session-reference": "workspace:^",
+    "@taiji/dsh-settings": "workspace:^",
+    "@taiji/dsh-subagent": "workspace:^",
+    "@taiji/dsh-typert-protocol": "workspace:^",
+    "@taiji/dsh-user-approval": "workspace:^",
+    "@taiji/dsh-user-questions": "workspace:^",
+    "@taiji/dsh-client-connection": "workspace:^",
+    "@taiji/dsh-client-file-upload": "workspace:^",
+    "@taiji/dsh-typert-protocol": "workspace:^",
+    "@taiji/dsh-scope": "workspace:^",
+    "@taiji/dsh-api-session-controller": "workspace:^",
+    "@taiji/dsh-api-workspace-files": "workspace:^",
     "zod": "^4.4.3",
-    "@deepseek-ai/dsh-command-feedback": "workspace:^",
-    "@deepseek-ai/dsh-api-terminal-controller": "workspace:^",
-    "@deepseek-ai/dsh-plugin-manager": "workspace:^",
-    "@deepseek-ai/dsh-office-to-pdf": "workspace:^",
-    "@deepseek-ai/dsh-api-account-controller": "workspace:^"
+    "@taiji/dsh-command-feedback": "workspace:^",
+    "@taiji/dsh-api-terminal-controller": "workspace:^",
+    "@taiji/dsh-plugin-manager": "workspace:^",
+    "@taiji/dsh-office-to-pdf": "workspace:^",
+    "@taiji/dsh-api-account-controller": "workspace:^"
   }
 }

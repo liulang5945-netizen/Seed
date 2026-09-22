@@ -3,7 +3,7 @@ description: "通过声明式 preset 选择 Agent 的工具、提示词和技能
 kind: "package-reference"
 ---
 
-# @deepseek-ai/dsh-agent-preset-registry
+# @taiji/dsh-agent-preset-registry
 
 [English](README.md) | 中文
 
@@ -29,11 +29,11 @@ kind: "package-reference"
 
 ```yaml
 - id: agent-preset-registry
-  name: '@deepseek-ai/dsh-agent-preset-registry'
+  name: '@taiji/dsh-agent-preset-registry'
   config:
     default: standard
 - id: preset-standard
-  name: '@deepseek-ai/dsh-agent-preset'
+  name: '@taiji/dsh-agent-preset'
   config:
     id: standard
     plugins: []
@@ -45,7 +45,7 @@ kind: "package-reference"
 
 Web 内置定义来自 `dsh-web-app` bundle。定义使用普通插件行；注册表不扫描目录，也不接受 preset 路径。`agent-preset-registry` 条目的 volatile 字段 `selectedDefault` 与 `modeSelectionEnabled` 保留用户默认值和选择器可见性；隐藏选择器时使用部署 `default`。
 
-注册表不写入任何声明。新建 preset 或覆盖内置 preset 都是 bundle 补丁：插入一行 `@deepseek-ai/dsh-agent-preset`，或按该行 id 写覆盖补丁，再用 `plugin_manager` 安装到 profile；创造模式在对话中编写这类 bundle。
+注册表不写入任何声明。新建 preset 或覆盖内置 preset 都是 bundle 补丁：插入一行 `@taiji/dsh-agent-preset`，或按该行 id 写覆盖补丁，再用 `plugin_manager` 安装到 profile；创造模式在对话中编写这类 bundle。
 
 <a id="understand-the-implementation"></a>
 ## 理解实现

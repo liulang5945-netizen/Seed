@@ -3,7 +3,7 @@ description: "Choose Agent presets and the new-task default in Web, and read wha
 kind: "package-reference"
 ---
 
-# @deepseek-ai/dsh-client-ui-agent-preset
+# @taiji/dsh-client-ui-agent-preset
 
 English | [中文](README.zh.md)
 

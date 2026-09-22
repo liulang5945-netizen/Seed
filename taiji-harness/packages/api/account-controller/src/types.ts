@@ -1,2 +1,2 @@
 /** Account Remote values contain no credential payloads. */
-export type { AccountDetails, AccountView, SignInAttemptId } from '@deepseek-ai/dsh-deepseek-account/types'
+export type { AccountDetails, AccountView, SignInAttemptId } from '@taiji/dsh-deepseek-account/types'

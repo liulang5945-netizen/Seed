@@ -1,9 +1,9 @@
 /** Synthetic current-generation history and paced reply for browser measurements. */
-import { createAssistantMessage, createSystemMessage, createUserMessage, createToolResultMessage, ToolCallId } from '@deepseek-ai/dsh-llm'
-import type { StreamChunk } from '@deepseek-ai/dsh-llm'
-import { AssistantStreamAccumulator } from '@deepseek-ai/dsh-llm/assistant-stream'
-import { Session, SessionId, SESSION_FORMAT_VERSION } from '@deepseek-ai/dsh-session'
-import type {} from '@deepseek-ai/dsh-session-title'
+import { createAssistantMessage, createSystemMessage, createUserMessage, createToolResultMessage, ToolCallId } from '@taiji/dsh-llm'
+import type { StreamChunk } from '@taiji/dsh-llm'
+import { AssistantStreamAccumulator } from '@taiji/dsh-llm/assistant-stream'
+import { Session, SessionId, SESSION_FORMAT_VERSION } from '@taiji/dsh-session'
+import type {} from '@taiji/dsh-session-title'
 
 /** Closed turns in the browser history workload. */
 export const HISTORY_TURNS = 240

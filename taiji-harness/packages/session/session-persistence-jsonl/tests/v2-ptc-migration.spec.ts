@@ -1,9 +1,9 @@
 /** Real JSONL publication and provider-neutral message preservation across the V2 PTC rename. */
 
-import { Context } from '@deepseek-ai/cordis'
-import { SESSION_FORMAT_VERSION, Session, SessionId } from '@deepseek-ai/dsh-session'
-import type { SessionFormatEvent } from '@deepseek-ai/dsh-session-format'
-import JsonlSessionPersistence from '@deepseek-ai/dsh-session-persistence-jsonl'
+import { Context } from '@taiji/cordis'
+import { SESSION_FORMAT_VERSION, Session, SessionId } from '@taiji/dsh-session'
+import type { SessionFormatEvent } from '@taiji/dsh-session-format'
+import JsonlSessionPersistence from '@taiji/dsh-session-persistence-jsonl'
 import { createHash } from 'node:crypto'
 import { mkdir, mkdtemp, readFile, readdir, rm, stat, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'

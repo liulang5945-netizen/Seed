@@ -1,7 +1,7 @@
 /** Compare raw plugin configs using schema metadata without executing config hooks or validators. */
-import type { Plugin } from '@deepseek-ai/cordis'
-import { deepEqual } from '@deepseek-ai/cosmokit'
-import type Schema from '@deepseek-ai/schemastery'
+import type { Plugin } from '@taiji/cordis'
+import { deepEqual } from '@taiji/cosmokit'
+import type Schema from '@taiji/schemastery'
 import { isJsExpr } from './utils.ts'
 
 function isSchemastery(schema: Plugin.Runtime['Config']): schema is Schema {

@@ -1,5 +1,5 @@
 {
-  "name": "@deepseek-ai/cordis-plugin-timer",
+  "name": "@taiji/cordis-plugin-timer",
   "description": "Timer service for cordis",
   "version": "1.1.5",
   "publishConfig": {
@@ -30,9 +30,9 @@
   "author": "Shigma <shigma10826@gmail.com>",
   "license": "MIT",
   "peerDependencies": {
-    "@deepseek-ai/cordis": "workspace:^"
+    "@taiji/cordis": "workspace:^"
   },
   "dependencies": {
-    "@deepseek-ai/cosmokit": "workspace:^"
+    "@taiji/cosmokit": "workspace:^"
   }
 }

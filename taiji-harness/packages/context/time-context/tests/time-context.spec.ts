@@ -1,19 +1,19 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { Context } from '@deepseek-ai/cordis'
-import Loader from '@deepseek-ai/cordis-plugin-loader'
-import { createUserMessage, ToolCallId, LlmAdapter } from '@deepseek-ai/dsh-llm'
-import type { GenerateOptions, StreamChunk } from '@deepseek-ai/dsh-llm'
-import type { ContextFormed } from '@deepseek-ai/dsh-llm'
-import { Session, SessionId, type SessionEvent } from '@deepseek-ai/dsh-session'
-import AgentRegistry, { agentEvents, type Agent } from '@deepseek-ai/dsh-agent'
-import { defineContentToolFixture } from '@deepseek-ai/dsh-tools'
-import AgentLoop from '@deepseek-ai/dsh-agent-loop'
-import SessionProjectionRegistry from '@deepseek-ai/dsh-session-projection'
-import { unsupportedInbox, mountAgentLoopTestDependencies } from '@deepseek-ai/dsh-agent-loop-testkit'
-import * as timeContext from '@deepseek-ai/dsh-time-context'
-import type { Config } from '@deepseek-ai/dsh-time-context'
+import { Context } from '@taiji/cordis'
+import Loader from '@taiji/cordis-plugin-loader'
+import { createUserMessage, ToolCallId, LlmAdapter } from '@taiji/dsh-llm'
+import type { GenerateOptions, StreamChunk } from '@taiji/dsh-llm'
+import type { ContextFormed } from '@taiji/dsh-llm'
+import { Session, SessionId, type SessionEvent } from '@taiji/dsh-session'
+import AgentRegistry, { agentEvents, type Agent } from '@taiji/dsh-agent'
+import { defineContentToolFixture } from '@taiji/dsh-tools'
+import AgentLoop from '@taiji/dsh-agent-loop'
+import SessionProjectionRegistry from '@taiji/dsh-session-projection'
+import { unsupportedInbox, mountAgentLoopTestDependencies } from '@taiji/dsh-agent-loop-testkit'
+import * as timeContext from '@taiji/dsh-time-context'
+import type { Config } from '@taiji/dsh-time-context'
 
-declare module '@deepseek-ai/dsh-llm' {
+declare module '@taiji/dsh-llm' {
   interface MessageSourceMap {
     'compaction-basic': { kind: 'compaction-basic' } & ContextFormed
     'time-context-test': { kind: 'time-context-test' } & ContextFormed

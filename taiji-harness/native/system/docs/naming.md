@@ -2,11 +2,11 @@
 
 ## npm packages
 
-The public package family belongs to the `@deepseek-ai` scope and uses the `node-addon-system` package prefix; platform packages append platform information only:
+The public package family belongs to the `@taiji` scope and uses the `node-addon-system` package prefix; platform packages append platform information only:
 
 ```text
-@deepseek-ai/node-addon-system
-@deepseek-ai/node-addon-system-<platform>
+@taiji/node-addon-system
+@taiji/node-addon-system-<platform>
 ```
 
 Platform suffixes carry OS and CPU. Linux libc variants live inside the same platform package and are declared in `prebuilds.json`.

@@ -4,7 +4,7 @@
  * mode enum, so adding a mode changes only the table below.
  */
 
-import type { ObservableSnapshot } from '@deepseek-ai/dsh-client-store'
+import type { ObservableSnapshot } from '@taiji/dsh-client-store'
 import type { TranscriptViewMode } from '../chat-settings.ts'
 
 /** Presentation capabilities that one work-details mode enables. */

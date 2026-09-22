@@ -2,10 +2,10 @@ import { randomUUID } from 'node:crypto'
 import { once } from 'node:events'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import WebSocket, { type RawData } from 'ws'
-import { Context, symbols } from '@deepseek-ai/cordis'
-import { apply as applyConnection, inject as connectionInject } from '@deepseek-ai/dsh-client-connection'
-import WebServer from '@deepseek-ai/dsh-host-webserver'
-import { MAX_TIMER_DELAY_MS } from '@deepseek-ai/dsh-timeout'
+import { Context, symbols } from '@taiji/cordis'
+import { apply as applyConnection, inject as connectionInject } from '@taiji/dsh-client-connection'
+import WebServer from '@taiji/dsh-host-webserver'
+import { MAX_TIMER_DELAY_MS } from '@taiji/dsh-timeout'
 import {
   Remote,
   remoteErrorOf,
@@ -17,10 +17,10 @@ import {
   type TypertContextMap,
   type TypertContextWire,
   RemoteError,
-} from '@deepseek-ai/dsh-typert-protocol'
-import TypertRegistry from '@deepseek-ai/dsh-typert-registry'
+} from '@taiji/dsh-typert-protocol'
+import TypertRegistry from '@taiji/dsh-typert-registry'
 
-declare module '@deepseek-ai/dsh-typert-protocol' {
+declare module '@taiji/dsh-typert-protocol' {
   interface RemoteErrorDetailsMap {
     'fixture/rejected': { readonly retryable: boolean }
     'fixture/broken': { readonly count: bigint }
@@ -33,7 +33,7 @@ import TypertGatewayService, {
   type TypertRemoteEventDispatch,
   type TypertRemoteEventInvocation,
   type TypertRemoteEventOutcome,
-} from '@deepseek-ai/dsh-api-gateway'
+} from '@taiji/dsh-api-gateway'
 import { z } from 'zod'
 import type {
   RemoteEventClientId,

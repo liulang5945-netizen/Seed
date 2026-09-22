@@ -5,21 +5,21 @@ import { tmpdir } from 'node:os'
 import { dirname, join } from 'node:path'
 import { pathToFileURL } from 'node:url'
 import { afterEach, describe, expect, it } from 'vitest'
-import { Context } from '@deepseek-ai/cordis'
-import Loader from '@deepseek-ai/cordis-plugin-loader'
-import Include from '@deepseek-ai/cordis-plugin-include'
-import { agentEvents, type Agent } from '@deepseek-ai/dsh-agent'
-import { createUserMessage, ToolCallId } from '@deepseek-ai/dsh-llm'
-import * as systemPromptPlugin from '@deepseek-ai/dsh-system-prompt'
-import * as toolsPlugin from '@deepseek-ai/dsh-tools'
-import * as fsPlugin from '@deepseek-ai/dsh-fs-local'
-import * as toolFsPlugin from '@deepseek-ai/dsh-tool-fs'
-import * as sessionPlugin from '@deepseek-ai/dsh-session'
-import { Session, SessionId } from '@deepseek-ai/dsh-session'
-import * as queryPlugin from '@deepseek-ai/dsh-session-query-sqlite'
-import * as referencePlugin from '@deepseek-ai/dsh-session-reference'
-import * as spillPlugin from '@deepseek-ai/dsh-spill-local'
-import { sessionDir } from '@deepseek-ai/dsh-spill-local'
+import { Context } from '@taiji/cordis'
+import Loader from '@taiji/cordis-plugin-loader'
+import Include from '@taiji/cordis-plugin-include'
+import { agentEvents, type Agent } from '@taiji/dsh-agent'
+import { createUserMessage, ToolCallId } from '@taiji/dsh-llm'
+import * as systemPromptPlugin from '@taiji/dsh-system-prompt'
+import * as toolsPlugin from '@taiji/dsh-tools'
+import * as fsPlugin from '@taiji/dsh-fs-local'
+import * as toolFsPlugin from '@taiji/dsh-tool-fs'
+import * as sessionPlugin from '@taiji/dsh-session'
+import { Session, SessionId } from '@taiji/dsh-session'
+import * as queryPlugin from '@taiji/dsh-session-query-sqlite'
+import * as referencePlugin from '@taiji/dsh-session-reference'
+import * as spillPlugin from '@taiji/dsh-spill-local'
+import { sessionDir } from '@taiji/dsh-spill-local'
 import * as sourcePlugin from './fixtures/source-session.ts'
 
 let context: Context | undefined
@@ -44,14 +44,14 @@ describe('session-reference real Loader composition', () => {
     await ctx.plugin(Loader)
     ctx.loader.builtins.include = Include
     const modules = new Map<string, unknown>([
-      ['@deepseek-ai/dsh-session', sessionPlugin],
-      ['@deepseek-ai/dsh-system-prompt', systemPromptPlugin],
-      ['@deepseek-ai/dsh-tools', toolsPlugin],
-      ['@deepseek-ai/dsh-fs-local', fsPlugin],
-      ['@deepseek-ai/dsh-tool-fs', toolFsPlugin],
-      ['@deepseek-ai/dsh-session-query-sqlite', queryPlugin],
-      ['@deepseek-ai/dsh-session-reference', referencePlugin],
-      ['@deepseek-ai/dsh-spill-local', spillPlugin],
+      ['@taiji/dsh-session', sessionPlugin],
+      ['@taiji/dsh-system-prompt', systemPromptPlugin],
+      ['@taiji/dsh-tools', toolsPlugin],
+      ['@taiji/dsh-fs-local', fsPlugin],
+      ['@taiji/dsh-tool-fs', toolFsPlugin],
+      ['@taiji/dsh-session-query-sqlite', queryPlugin],
+      ['@taiji/dsh-session-reference', referencePlugin],
+      ['@taiji/dsh-spill-local', spillPlugin],
       ['./source-session.ts', sourcePlugin],
     ])
     ctx.loader.internal = {

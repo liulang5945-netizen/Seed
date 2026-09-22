@@ -3,7 +3,7 @@ description: "Enable experimental speech input from the plugin manager."
 kind: "package-bundle"
 ---
 
-# @deepseek-ai/dsh-experimental-voice-input-bundle
+# @taiji/dsh-experimental-voice-input-bundle
 
 English | [中文](README.zh.md)
 

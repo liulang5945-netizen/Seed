@@ -1,9 +1,9 @@
 /** Public plugin management records shared with clients. */
-import type { Branded } from '@deepseek-ai/dsh-brand'
-import type { PluginLocalizedMeta } from '@deepseek-ai/dsh-package-manifest'
-import type { PluginInventoryEntry } from '@deepseek-ai/dsh-host-plugin-inventory/types'
-export type { PluginEntryId } from '@deepseek-ai/dsh-host-plugin-inventory/types'
-import type { PluginEntryId } from '@deepseek-ai/dsh-host-plugin-inventory/types'
+import type { Branded } from '@taiji/dsh-brand'
+import type { PluginLocalizedMeta } from '@taiji/dsh-package-manifest'
+import type { PluginInventoryEntry } from '@taiji/dsh-host-plugin-inventory/types'
+export type { PluginEntryId } from '@taiji/dsh-host-plugin-inventory/types'
+import type { PluginEntryId } from '@taiji/dsh-host-plugin-inventory/types'
 
 /** Reasons a profile control cannot modify its target. */
 export type ReadOnlyReason = 'management-required' | 'unaddressable'
@@ -216,7 +216,7 @@ export interface PluginChange {
   readonly reason: 'plugin' | 'bundle' | 'install' | 'remove'
 }
 
-declare module '@deepseek-ai/cordis' {
+declare module '@taiji/cordis' {
   interface Events {
     /**
      * The profile's plugins, bundles, or composition changed: a manager

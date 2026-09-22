@@ -10,12 +10,12 @@
  * Host-effective default again.
  */
 
-import type { Context as ClientContext } from '@deepseek-ai/cordis'
+import type { Context as ClientContext } from '@taiji/cordis'
 // Type-only: pulls the ctx.remote merge into this program.
-import type {} from '@deepseek-ai/dsh-api-remotes/client'
-import type { SessionSummary } from '@deepseek-ai/dsh-api-session-controller/client'
-import { createSnapshotStore, type SnapshotStore } from '@deepseek-ai/dsh-client-store'
-import type {} from '@deepseek-ai/dsh-agent-preset-registry/types'
+import type {} from '@taiji/dsh-api-remotes/client'
+import type { SessionSummary } from '@taiji/dsh-api-session-controller/client'
+import { createSnapshotStore, type SnapshotStore } from '@taiji/dsh-client-store'
+import type {} from '@taiji/dsh-agent-preset-registry/types'
 import { presetOptions, readRoster } from './settings-store.ts'
 import type { AgentPresetOption } from './settings-store.ts'
 

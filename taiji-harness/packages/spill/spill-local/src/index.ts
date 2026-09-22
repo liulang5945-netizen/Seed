@@ -1,20 +1,20 @@
 /**
  * `LocalSpillStore`: the host-filesystem implementation of the
- * `@deepseek-ai/dsh-spill` storage seam. Persists oversized text to a
+ * `@taiji/dsh-spill` storage seam. Persists oversized text to a
  * private, session-scoped file (see `./store.ts` for the traversal-safe naming
  * and exclusive owner-only write) and returns a path locator plus local
  * read/grep retrieval guidance. After activation it runs one best-effort
  * startup sweep that reclaims spill files older than `cleanupPeriodDays`.
  *
- * @module @deepseek-ai/dsh-spill-local
+ * @module @taiji/dsh-spill-local
  */
 
-import { Context } from '@deepseek-ai/cordis'
+import { Context } from '@taiji/cordis'
 import { resolve } from 'node:path'
 import { tmpdir } from 'node:os'
-import z from '@deepseek-ai/schemastery'
-import { SpillLocator, SpillStore } from '@deepseek-ai/dsh-spill'
-import type { SaveTextSpill, SpillRef } from '@deepseek-ai/dsh-spill'
+import z from '@taiji/schemastery'
+import { SpillLocator, SpillStore } from '@taiji/dsh-spill'
+import type { SaveTextSpill, SpillRef } from '@taiji/dsh-spill'
 import { gatherSweepRoots, sweepSpillRoots } from './cleanup.ts'
 import type { SweepRoot, WarnFn } from './cleanup.ts'
 import { privateRoot, saveTextFile } from './store.ts'

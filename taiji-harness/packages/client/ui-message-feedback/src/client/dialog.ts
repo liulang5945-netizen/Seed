@@ -3,13 +3,13 @@
  * failure toasts. One form serves two targets: the Session itself (a bare `/feedback`)
  * and one assistant message (Like or Dislike). The overlay view renders from
  * the store and raises the acknowledgement after a successful submission.
- * @module @deepseek-ai/dsh-client-ui-message-feedback/client/dialog
+ * @module @taiji/dsh-client-ui-message-feedback/client/dialog
  */
 
-import { createSnapshotStore, type SnapshotStore } from '@deepseek-ai/dsh-client-store'
-import type { MessageId } from '@deepseek-ai/dsh-api-remotes/client'
-import type { FeedbackCategory, FeedbackRecord } from '@deepseek-ai/dsh-command-feedback/types'
-import type { MessageFeedbackRating } from '@deepseek-ai/dsh-message-feedback/types'
+import { createSnapshotStore, type SnapshotStore } from '@taiji/dsh-client-store'
+import type { MessageId } from '@taiji/dsh-api-remotes/client'
+import type { FeedbackCategory, FeedbackRecord } from '@taiji/dsh-command-feedback/types'
+import type { MessageFeedbackRating } from '@taiji/dsh-message-feedback/types'
 import type { MessageFeedbackActionResult } from './controller.ts'
 
 /** What one open dialog submits to. */

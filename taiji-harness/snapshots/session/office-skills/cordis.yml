@@ -1,5 +1,5 @@
 - insert:
     - id: office-skills
-      name: '@deepseek-ai/dsh-skill-office'
+      name: '@taiji/dsh-skill-office'
       config:
         assetRoot: !!js process.cwd() + '/office-skills'

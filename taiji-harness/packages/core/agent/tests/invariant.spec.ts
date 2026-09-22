@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest'
-import { Context } from '@deepseek-ai/cordis'
-import type { Agent } from '@deepseek-ai/dsh-agent'
-import * as AgentInvariant from '@deepseek-ai/dsh-agent/invariant'
-import { scopeTarget } from '@deepseek-ai/dsh-scope'
-import InvariantRegistry from '@deepseek-ai/dsh-invariants'
+import { Context } from '@taiji/cordis'
+import type { Agent } from '@taiji/dsh-agent'
+import * as AgentInvariant from '@taiji/dsh-agent/invariant'
+import { scopeTarget } from '@taiji/dsh-scope'
+import InvariantRegistry from '@taiji/dsh-invariants'
 
 async function setup(): Promise<Context> {
   const ctx = new Context()

@@ -4,7 +4,7 @@ import {
   Button, IconCheckOutlineRegular, IconChevronDownOutlineRegular, IconChevronLeftOutlineRegular,
   IconChevronRightOutlineRegular, IconChevronUpOutlineRegular, IconCloseOutlineRegular,
   IconEditOutlineRegular, MarkdownText,
-} from '@deepseek-ai/dsh-client-ui-primitives'
+} from '@taiji/dsh-client-ui-primitives'
 import {
   planReviewOf,
   type QuestionAnswer, type QuestionComposerProps,

@@ -4,10 +4,10 @@
  * target metadata for matching queued and live invalidations.
  */
 
-import type { Context } from '@deepseek-ai/cordis'
-import { Deque } from '@deepseek-ai/dsh-deque'
-import { RemoteError } from '@deepseek-ai/dsh-typert-protocol'
-import type { FsObservation, FsTarget } from '@deepseek-ai/dsh-fs'
+import type { Context } from '@taiji/cordis'
+import { Deque } from '@taiji/dsh-deque'
+import { RemoteError } from '@taiji/dsh-typert-protocol'
+import type { FsObservation, FsTarget } from '@taiji/dsh-fs'
 import type { WorkspaceFileWatchFrame } from './types.ts'
 
 /** One target invalidation, optionally carrying its instrumented observation. */

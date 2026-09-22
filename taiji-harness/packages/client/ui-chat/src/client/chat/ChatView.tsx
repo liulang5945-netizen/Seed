@@ -4,18 +4,18 @@
 import { memo, useCallback, useMemo, useRef, useState, type ComponentProps } from 'react'
 import type {
   NodeKey, RenderEntry, RenderMessageImages,
-} from '@deepseek-ai/dsh-client-ui-conversation/client'
-import type { InboxState } from '@deepseek-ai/dsh-agent/types'
+} from '@taiji/dsh-client-ui-conversation/client'
+import type { InboxState } from '@taiji/dsh-agent/types'
 import {
   Button, IconChevronDownOutlineRegular, MarkdownDelegateProvider, Modal,
-} from '@deepseek-ai/dsh-client-ui-primitives'
+} from '@taiji/dsh-client-ui-primitives'
 import type { ChatViewSlotProps, OpenFileOptions } from '../contract/slots.ts'
 import type { ChatSnapshot } from '../contract/snapshot.ts'
 import { PendingSteeringBubble, PendingSubmissionBubble } from './MessageItem.tsx'
 import { ChatNodeSeat } from './ChatNodeSeat.tsx'
 import { ChatGroupSeat } from './ChatGroupSeat.tsx'
 import { chatRenderKey } from './render-entry.ts'
-import { assertNever } from '@deepseek-ai/dsh-util-values'
+import { assertNever } from '@taiji/dsh-util-values'
 import { TurnNavigator } from './TurnNavigator.tsx'
 import { mergeTurnRailItems } from './turn-rail-items.ts'
 import { useChatScroll } from './use-chat-scroll.ts'

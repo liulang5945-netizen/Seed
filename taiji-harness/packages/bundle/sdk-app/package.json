@@ -1,5 +1,5 @@
 {
-  "name": "@deepseek-ai/dsh-sdk-app",
+  "name": "@taiji/dsh-sdk-app",
   "description": "The dsh SDK profile bundle: stdio JSON-RPC serving and process lifecycle over dsh-base",
   "version": "0.1.7-alpha.1",
   "publishConfig": {
@@ -34,18 +34,18 @@
     }
   },
   "dependencies": {
-    "@deepseek-ai/dsh-cmdline": "workspace:^",
-    "@deepseek-ai/dsh-sdk-jsonrpc-server": "workspace:^",
-    "@deepseek-ai/schemastery": "workspace:^",
+    "@taiji/dsh-cmdline": "workspace:^",
+    "@taiji/dsh-sdk-jsonrpc-server": "workspace:^",
+    "@taiji/schemastery": "workspace:^",
     "commander": "^15.0.0",
-    "@deepseek-ai/dsh-skill-office": "workspace:^",
-    "@deepseek-ai/dsh-tool-workspace-dependencies": "workspace:^"
+    "@taiji/dsh-skill-office": "workspace:^",
+    "@taiji/dsh-tool-workspace-dependencies": "workspace:^"
   },
   "peerDependencies": {
-    "@deepseek-ai/cordis": "workspace:^"
+    "@taiji/cordis": "workspace:^"
   },
   "devDependencies": {
-    "@deepseek-ai/cordis-plugin-include": "workspace:^",
-    "@deepseek-ai/cordis": "workspace:^"
+    "@taiji/cordis-plugin-include": "workspace:^",
+    "@taiji/cordis": "workspace:^"
   }
 }

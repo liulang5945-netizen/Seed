@@ -1,10 +1,10 @@
 // @vitest-environment jsdom
 /** Collapsed progress summaries and Host-owned steps survive view remounts. */
 import { act, cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react'
-import { bindSnapshotSelector, makeTranslate } from '@deepseek-ai/dsh-client-test-runtime'
-import { createSnapshotStore } from '@deepseek-ai/dsh-client-store'
-import { zh as commonZh } from '@deepseek-ai/dsh-client-locale/src/locales/zh.ts'
-import type { SpeechPreparationState, SpeechPreparationStep, SpeechProviderId } from '@deepseek-ai/dsh-experimental-speech-to-text/types'
+import { bindSnapshotSelector, makeTranslate } from '@taiji/dsh-client-test-runtime'
+import { createSnapshotStore } from '@taiji/dsh-client-store'
+import { zh as commonZh } from '@taiji/dsh-client-locale/src/locales/zh.ts'
+import type { SpeechPreparationState, SpeechPreparationStep, SpeechProviderId } from '@taiji/dsh-experimental-speech-to-text/types'
 import { afterEach, expect, it, vi } from 'vitest'
 import { PreparationCard, VoicePreparation } from '../src/client/PreparationCard.tsx'
 import type { VoiceInputProps } from '../src/client/VoiceInput.tsx'

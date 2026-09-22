@@ -1,5 +1,5 @@
 {
-  "name": "@deepseek-ai/dsh-cmdline",
+  "name": "@taiji/dsh-cmdline",
   "description": "Immutable command-line handoff from a dsh launcher to any app plugin that injects cmdlineArgs",
   "version": "0.1.7-alpha.1",
   "publishConfig": {
@@ -27,13 +27,13 @@
   ],
   "license": "MIT",
   "peerDependencies": {
-    "@deepseek-ai/cordis-plugin-loader": "workspace:^",
-    "@deepseek-ai/cordis": "workspace:^"
+    "@taiji/cordis-plugin-loader": "workspace:^",
+    "@taiji/cordis": "workspace:^"
   },
   "devDependencies": {
-    "@deepseek-ai/cordis-plugin-include": "workspace:^",
-    "@deepseek-ai/cordis-plugin-loader": "workspace:^",
+    "@taiji/cordis-plugin-include": "workspace:^",
+    "@taiji/cordis-plugin-loader": "workspace:^",
     "commander": "^15.0.0",
-    "@deepseek-ai/cordis": "workspace:^"
+    "@taiji/cordis": "workspace:^"
   }
 }

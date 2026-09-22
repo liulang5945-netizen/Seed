@@ -1,22 +1,22 @@
 /** Workspace archive and directory UI capability. */
 
-import { Service, type Context } from '@deepseek-ai/cordis'
-import type { ClientRemote, DirectoryListing, RemoteFailure } from '@deepseek-ai/dsh-api-remotes/client'
+import { Service, type Context } from '@taiji/cordis'
+import type { ClientRemote, DirectoryListing, RemoteFailure } from '@taiji/dsh-api-remotes/client'
 import type {
   ISessions,
   SessionCreateError,
   SessionReference,
   SessionTarget,
   SessionListState,
-} from '@deepseek-ai/dsh-api-session-controller/client'
-import { createSnapshotStore } from '@deepseek-ai/dsh-client-store'
-import type { SubagentAddress } from '@deepseek-ai/dsh-subagent/client'
+} from '@taiji/dsh-api-session-controller/client'
+import { createSnapshotStore } from '@taiji/dsh-client-store'
+import type { SubagentAddress } from '@taiji/dsh-subagent/client'
 import type {
   IWorkspaces, WorkspaceId, WorkspaceSnapshot, WorkspaceView,
-} from '@deepseek-ai/dsh-api-workspace-controller/client'
-import type { SessionId } from '@deepseek-ai/dsh-session/types'
-import type {} from '@deepseek-ai/dsh-client-ui-layout/client'
-import type {} from '@deepseek-ai/dsh-client-locale/client'
+} from '@taiji/dsh-api-workspace-controller/client'
+import type { SessionId } from '@taiji/dsh-session/types'
+import type {} from '@taiji/dsh-client-ui-layout/client'
+import type {} from '@taiji/dsh-client-locale/client'
 import type { RowToast } from './contract/slots.ts'
 import { en, zh } from './locales.ts'
 import { pinOrderAccounts, pinOrderSource } from './pin-order.ts'
@@ -106,7 +106,7 @@ export interface UiWorkspace {
   createDirectory(path: string, name: string): Promise<string>
 }
 
-declare module '@deepseek-ai/cordis' {
+declare module '@taiji/cordis' {
   interface Context {
     /** Cross-Controller Workspace navigation and directory UI capability. */
     uiWorkspace: UiWorkspace

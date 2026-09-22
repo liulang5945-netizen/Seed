@@ -1,6 +1,6 @@
-DeepSeek Harness
-DeepSeek Harness
-Welcome to DeepSeek Harness
+Taiji Harness
+Taiji Harness
+Welcome to Taiji Harness
 Build potential. Explore intelligence.
 Sign in
 Add API Key

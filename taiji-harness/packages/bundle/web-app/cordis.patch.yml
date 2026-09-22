@@ -45,102 +45,102 @@
     # Host-owned opt-in sampled when a new Web session receives its preset
     # delegation tools. The Plugins page edits this settings namespace.
     - id: subagent-model-selection-settings
-      name: '@deepseek-ai/dsh-tool-subagent/model-selection-settings'
+      name: '@taiji/dsh-tool-subagent/model-selection-settings'
 
     - id: message-feedback
-      name: '@deepseek-ai/dsh-message-feedback'
+      name: '@taiji/dsh-message-feedback'
       config:
         maxNoteBytes: 8192
 
     # Browser Session export: `/export` command plus the shared download dialog.
     - id: session-log-download
-      name: '@deepseek-ai/dsh-session-log-export'
+      name: '@taiji/dsh-session-log-export'
 
     # Session-header "Open In..." split button over the host application
     # resolution (macOS/Windows/Linux; a host with no resolved application
     # renders no button). Two halves: the host routes and the browser surface.
     - id: open-in-app
-      name: '@deepseek-ai/dsh-host-open-in-app'
+      name: '@taiji/dsh-host-open-in-app'
       config:
         probeTimeoutMs: 10000
         iconTimeoutMs: 10000
         launchWatchMs: 1000
 
     - id: ui-open-in-app
-      name: '@deepseek-ai/dsh-client-ui-open-in-app'
+      name: '@taiji/dsh-client-ui-open-in-app'
 
     - id: workspace
-      name: '@deepseek-ai/dsh-workspace'
+      name: '@taiji/dsh-workspace'
 
     - id: session-reference
-      name: '@deepseek-ai/dsh-session-reference'
+      name: '@taiji/dsh-session-reference'
 
     - id: file-reference-local
-      name: '@deepseek-ai/dsh-file-reference-local'
+      name: '@taiji/dsh-file-reference-local'
 
     # Whole-log turn/step counts for the chat stats strip (the sessionStats
     # projection key); the projection registry itself is a base-layer row.
     - id: session-stats
-      name: '@deepseek-ai/dsh-session-stats'
+      name: '@taiji/dsh-session-stats'
 
     # Whole-log turn outline for the chat turn rail (the turnOutline
     # projection key): every turn stays navigable before its events page in.
     - id: session-turn-outline
-      name: '@deepseek-ai/dsh-session-turn-outline'
+      name: '@taiji/dsh-session-turn-outline'
 
     # Resolve bind host, SSH launch, and display once at boot, then mount the
     # matching dual-face directory picker. Mount -native or -browse directly in
     # an overlay to pin the interaction.
     - id: directory-picker
-      name: '@deepseek-ai/dsh-host-directory-picker-auto'
+      name: '@taiji/dsh-host-directory-picker-auto'
 
     # Read-only projection of current Loader entries for trusted client RPCs.
     - id: plugin-inventory
-      name: '@deepseek-ai/dsh-host-plugin-inventory'
+      name: '@taiji/dsh-host-plugin-inventory'
 
     # Session commands, cold reads, and live control over Typert Remote.
     - id: session-controller
-      name: '@deepseek-ai/dsh-api-session-controller'
+      name: '@taiji/dsh-api-session-controller'
 
     # One background job's observation record streamed over Typert Remote;
     # the roster rides the session control stream above.
     - id: job-controller
-      name: '@deepseek-ai/dsh-api-job-controller'
+      name: '@taiji/dsh-api-job-controller'
     # Workspace file service: bounded read, directory listing, and the
     # agent-write change feed inside the session workspace root.
     - id: terminal-controller
-      name: '@deepseek-ai/dsh-api-terminal-controller'
+      name: '@taiji/dsh-api-terminal-controller'
     - id: workspace-files
-      name: '@deepseek-ai/dsh-api-workspace-files'
+      name: '@taiji/dsh-api-workspace-files'
 
     # Configuration-surface reads and writes over Typert Remote. Each method
     # reports an actionable error when its settings-domain provider is absent.
     - id: ui-settings-account
-      name: '@deepseek-ai/dsh-client-ui-settings-account'
+      name: '@taiji/dsh-client-ui-settings-account'
 
     - id: account-controller
-      name: '@deepseek-ai/dsh-api-account-controller'
+      name: '@taiji/dsh-api-account-controller'
 
     - id: settings-controller
-      name: '@deepseek-ai/dsh-api-settings-controller'
+      name: '@taiji/dsh-api-settings-controller'
 
     # Workspace commands and reconnect-safe projection over Typert Remote.
     - id: workspace-controller
-      name: '@deepseek-ai/dsh-api-workspace-controller'
+      name: '@taiji/dsh-api-workspace-controller'
 
     - id: cordis-host-runner
-      name: '@deepseek-ai/dsh-cordis-host-runner'
+      name: '@taiji/dsh-cordis-host-runner'
 
     # The Host inspect providers are process-global: the registry rejects a
     # duplicate id, so they register here once and every preset's `tool-cordis`
     # row reads them.
     - id: cordis-inspect-providers
-      name: '@deepseek-ai/dsh-tool-cordis/host'
+      name: '@taiji/dsh-tool-cordis/host'
 
     # Ordinary provider for the parsed Web flags. Its plugin-level injection
     # waits for cmdlineArgs; no launcher metadata or special row kind is needed.
     - id: web-startup
-      name: '@deepseek-ai/dsh-web-app/startup'
+      name: '@taiji/dsh-web-app/startup'
 
     # ── layer 2: transport/service ──────────────────────────────────────────────
 
@@ -148,7 +148,7 @@
     # webStartup provider, with these deployment fallbacks. The dist is served by
     # the web-runtime row below through the fallback seat.
     - id: webserver
-      name: '@deepseek-ai/dsh-host-webserver'
+      name: '@taiji/dsh-host-webserver'
       inject: [webStartup]
       config:
         host: !!js ctx.webStartup.host ?? '127.0.0.1'
@@ -168,7 +168,7 @@
     # suppresses the prompt section for that agent while retaining the host-owned
     # shell variable.
     - id: web-runtime
-      name: '@deepseek-ai/dsh-web-app'
+      name: '@taiji/dsh-web-app'
       inject: [webStartup]
       config:
         openBrowser: !!js ctx.webStartup.openBrowser
@@ -181,7 +181,7 @@
     # is a row rather than a child of web-runtime because its node half is a
     # client-side package, which a host-side bundle cannot import.
     - id: client-hmr
-      name: '@deepseek-ai/dsh-client-hmr'
+      name: '@taiji/dsh-client-hmr'
 
     # ── browser plugin roster (dsh.client rows; node halves are layer-2 hosts) ──
 
@@ -190,12 +190,12 @@
     # the shell kernel constructs before cordis exists (adopted as a plugin
     # entry by the kernel, never fetched).
     - id: modules
-      name: '@deepseek-ai/dsh-client-modules'
+      name: '@taiji/dsh-client-modules'
 
     # Owns both ends of the web transport: node half binds the gateway to the
     # webserver under /api; browser half is the fetch/SSE client.
     - id: connection
-      name: '@deepseek-ai/dsh-client-connection'
+      name: '@taiji/dsh-client-connection'
       inject: [webRuntime]
       config:
         # LAN literals derived from the active bind plus --trusted-host extras.
@@ -206,205 +206,205 @@
     # Raw Blob and ReadableStream uploads run independently of Connection's
     # RPC and generation service.
     - id: file-upload
-      name: '@deepseek-ai/dsh-client-file-upload'
+      name: '@taiji/dsh-client-file-upload'
 
     - id: api-remotes
-      name: '@deepseek-ai/dsh-api-remotes'
+      name: '@taiji/dsh-api-remotes'
 
     - id: cordis-client-runner
-      name: '@deepseek-ai/dsh-cordis-client-runner'
+      name: '@taiji/dsh-cordis-client-runner'
 
     - id: ui-theme
-      name: '@deepseek-ai/dsh-client-ui-theme'
+      name: '@taiji/dsh-client-ui-theme'
 
     - id: locale
-      name: '@deepseek-ai/dsh-client-locale'
+      name: '@taiji/dsh-client-locale'
 
     - id: ui-layout
-      name: '@deepseek-ai/dsh-client-ui-layout'
+      name: '@taiji/dsh-client-ui-layout'
 
     - id: ui-renderer
-      name: '@deepseek-ai/dsh-client-ui-renderer'
+      name: '@taiji/dsh-client-ui-renderer'
 
     - id: ui-session
-      name: '@deepseek-ai/dsh-client-ui-session'
+      name: '@taiji/dsh-client-ui-session'
 
     # Unified resource model: protocol providers behind the useResource hook.
     - id: resources
-      name: '@deepseek-ai/dsh-client-resources'
+      name: '@taiji/dsh-client-resources'
 
     - id: ui-sidebar
-      name: '@deepseek-ai/dsh-client-ui-sidebar'
+      name: '@taiji/dsh-client-ui-sidebar'
 
     # The right Sidebar: one docking surface per session over ui-dockkit.
     - id: ui-sidebar-right
-      name: '@deepseek-ai/dsh-client-ui-sidebar-right'
+      name: '@taiji/dsh-client-ui-sidebar-right'
 
 
     - id: office-to-pdf
-      name: '@deepseek-ai/dsh-office-to-pdf'
+      name: '@taiji/dsh-office-to-pdf'
 
     # The right Sidebar's document tab: bounded file reads with selectable
     # Markdown, code, HTML, PDF, Office, and plain-text renderers.
     - id: ui-sidebar-documentpreview
-      name: '@deepseek-ai/dsh-client-ui-sidebar-documentpreview'
+      name: '@taiji/dsh-client-ui-sidebar-documentpreview'
 
     # Web profiles opt in; Desktop retains sandboxed HTTP(S) Browser tabs.
     - id: ui-sidebar-browser
-      name: '@deepseek-ai/dsh-client-ui-sidebar-browser'
+      name: '@taiji/dsh-client-ui-sidebar-browser'
       disabled: !!js "ctx.get('profileContext')?.name !== 'desktop'"
 
     - id: ui-sidebar-terminal
-      name: '@deepseek-ai/dsh-client-ui-sidebar-terminal'
+      name: '@taiji/dsh-client-ui-sidebar-terminal'
     # The right Sidebar's workspace file tree tab type.
     - id: ui-sidebar-files
-      name: '@deepseek-ai/dsh-client-ui-sidebar-files'
+      name: '@taiji/dsh-client-ui-sidebar-files'
 
     - id: ui-settings
-      name: '@deepseek-ai/dsh-client-ui-settings'
+      name: '@taiji/dsh-client-ui-settings'
 
     - id: ui-settings-general
-      name: '@deepseek-ai/dsh-client-ui-settings-general'
+      name: '@taiji/dsh-client-ui-settings-general'
 
     - id: ui-settings-models
-      name: '@deepseek-ai/dsh-client-ui-settings-models'
+      name: '@taiji/dsh-client-ui-settings-models'
 
     # Plugin management: the sidebar Plugins page installs, enables, disables,
     # and removes the profile's bundles through the `pluginManager` Remote.
     # Without a profile-backed Host it reports itself unavailable.
     - id: ui-plugin-manager
-      name: '@deepseek-ai/dsh-client-ui-plugin-manager'
+      name: '@taiji/dsh-client-ui-plugin-manager'
 
     # Read-only Plugin list tab in the Settings Plugins section; the built-in
     # bundles the sidebar page leaves out are inspected here.
     - id: ui-settings-plugin-inventory
-      name: '@deepseek-ai/dsh-client-ui-settings-plugin-inventory'
+      name: '@taiji/dsh-client-ui-settings-plugin-inventory'
 
     - id: ui-conversation
-      name: '@deepseek-ai/dsh-client-ui-conversation'
+      name: '@taiji/dsh-client-ui-conversation'
 
     - id: ui-approval
-      name: '@deepseek-ai/dsh-client-ui-approval'
+      name: '@taiji/dsh-client-ui-approval'
 
     - id: ui-chat
-      name: '@deepseek-ai/dsh-client-ui-chat'
+      name: '@taiji/dsh-client-ui-chat'
 
     # Official occupants for the generic sidebar and conversation brand slots.
     - id: ui-brand-official
-      name: '@deepseek-ai/dsh-client-ui-brand-official'
+      name: '@taiji/dsh-client-ui-brand-official'
 
     - id: ui-attachment
-      name: '@deepseek-ai/dsh-client-ui-attachment'
+      name: '@taiji/dsh-client-ui-attachment'
 
     # Tool call tree, generic fallback, and keyed business Tool views.
     - id: ui-tool
-      name: '@deepseek-ai/dsh-client-ui-tool'
+      name: '@taiji/dsh-client-ui-tool'
 
     - id: ui-cordis
-      name: '@deepseek-ai/dsh-client-ui-cordis'
+      name: '@taiji/dsh-client-ui-cordis'
 
     # Turn tail: the changed-files card and delivery cards under each closing
     # assistant message. Remove this entry to turn the surface off; the tail
     # hole renders empty.
     - id: ui-deliverables
-      name: '@deepseek-ai/dsh-client-ui-deliverables'
+      name: '@taiji/dsh-client-ui-deliverables'
 
     # Records each top-level turn's changed files from git working-tree
     # snapshots; the changed-files card above renders its events.
     - id: workspace-changes
-      name: '@deepseek-ai/dsh-workspace-changes'
+      name: '@taiji/dsh-workspace-changes'
 
 
     - id: ui-workspace
-      name: '@deepseek-ai/dsh-client-ui-workspace'
+      name: '@taiji/dsh-client-ui-workspace'
 
     # Durable workflow lifecycle as an independent Chat node after the
     # existing generic workflow tool row.
     - id: ui-workflow-run
-      name: '@deepseek-ai/dsh-client-ui-workflow-run'
+      name: '@taiji/dsh-client-ui-workflow-run'
 
     # Input triggers: the '/' | '@' pipeline (ui-input-trigger), the command surface over
     # it (ui-commands), and the reference sources (ui-skill / ui-reference).
     - id: ui-input-trigger
-      name: '@deepseek-ai/dsh-client-ui-input-trigger'
+      name: '@taiji/dsh-client-ui-input-trigger'
 
     - id: ui-commands
-      name: '@deepseek-ai/dsh-client-ui-commands'
+      name: '@taiji/dsh-client-ui-commands'
 
     - id: ui-skill
-      name: '@deepseek-ai/dsh-client-ui-skill'
+      name: '@taiji/dsh-client-ui-skill'
 
     - id: ui-subagent
-      name: '@deepseek-ai/dsh-client-ui-subagent'
+      name: '@taiji/dsh-client-ui-subagent'
 
     - id: ui-reference
-      name: '@deepseek-ai/dsh-client-ui-reference'
+      name: '@taiji/dsh-client-ui-reference'
 
 
     # Background jobs: the session-header roster with on-demand streaming
     # record panels over the session job-output service.
     - id: ui-jobs
-      name: '@deepseek-ai/dsh-client-ui-jobs'
+      name: '@taiji/dsh-client-ui-jobs'
 
     # Read-only active Schedule catalog. The shipped Web graph resolves the
     # client package but leaves it disabled; the explicit Schedule overlay
     # enables this same row together with the host Schedule services.
     - id: ui-schedule
-      name: '@deepseek-ai/dsh-client-ui-schedule'
+      name: '@taiji/dsh-client-ui-schedule'
       disabled: true
 
     # Goal surface: GoalBar in the input dock over the goal session projection.
     - id: ui-goal
-      name: '@deepseek-ai/dsh-client-ui-goal'
+      name: '@taiji/dsh-client-ui-goal'
 
     # The feedback surface: Like/Dislike in the assistant-message action
     # strip, the feedback dialog behind Dislike and /feedback with its
     # acknowledgement toast, over the messageFeedback and sessionFeedback Remotes.
     - id: ui-message-feedback
-      name: '@deepseek-ai/dsh-client-ui-message-feedback'
+      name: '@taiji/dsh-client-ui-message-feedback'
 
     # Model selection: the /model popupSelect + composer seat over session.models.
     - id: ui-model-selection
-      name: '@deepseek-ai/dsh-client-ui-model-selection'
+      name: '@taiji/dsh-client-ui-model-selection'
 
     - id: ui-permission
-      name: '@deepseek-ai/dsh-client-ui-permission-presets'
+      name: '@taiji/dsh-client-ui-permission-presets'
 
     # The agent-preset row in General settings: the default preset for
     # sessions created later. Absent a roster it renders nothing.
     - id: ui-agent-preset
-      name: '@deepseek-ai/dsh-client-ui-agent-preset'
+      name: '@taiji/dsh-client-ui-agent-preset'
 
     # The Built-in plugins settings section: the navigation entry and the tab
     # row the inventory tab registers into. The official configuration pages
     # are the companion rows below.
     - id: ui-settings-plugins
-      name: '@deepseek-ai/dsh-client-ui-settings-plugins'
+      name: '@taiji/dsh-client-ui-settings-plugins'
 
     # The official settings pages: one companion package per host-plane
     # namespace, each registering its page into the Plugins page while the
     # Host serves the namespace.
     - id: ui-settings-shell
-      name: '@deepseek-ai/dsh-client-ui-settings-shell'
+      name: '@taiji/dsh-client-ui-settings-shell'
 
     - id: ui-settings-agent-loop
-      name: '@deepseek-ai/dsh-client-ui-settings-agent-loop'
+      name: '@taiji/dsh-client-ui-settings-agent-loop'
 
     - id: ui-settings-subagent
-      name: '@deepseek-ai/dsh-client-ui-settings-subagent'
+      name: '@taiji/dsh-client-ui-settings-subagent'
 
     - id: ui-settings-web-search
-      name: '@deepseek-ai/dsh-client-ui-settings-web-search'
+      name: '@taiji/dsh-client-ui-settings-web-search'
 
     # Plan control: the composer plan seat over the plan projection + /plan channel.
     - id: ui-plan
-      name: '@deepseek-ai/dsh-client-ui-plan'
+      name: '@taiji/dsh-client-ui-plan'
 
     - id: ui-user-questions
-      name: '@deepseek-ai/dsh-client-ui-user-questions'
+      name: '@taiji/dsh-client-ui-user-questions'
 
     - id: ui-trajectory
-      name: '@deepseek-ai/dsh-client-ui-trajectory'
+      name: '@taiji/dsh-client-ui-trajectory'
 
 # ── the agent plane moves behind agent presets ─────────────────────────────
 #
@@ -539,6 +539,6 @@
 # `package.json` `dsh.bundle.patch`.
 - insert:
     - id: agent-preset-registry
-      name: '@deepseek-ai/dsh-agent-preset-registry'
+      name: '@taiji/dsh-agent-preset-registry'
       config:
         default: standard

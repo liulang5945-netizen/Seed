@@ -3,7 +3,7 @@ description: "面向 Host 与浏览器 Client Cordis 运行时的实验性 Chrom
 kind: "package-reference"
 ---
 
-# @deepseek-ai/dsh-experimental-inspector
+# @taiji/dsh-experimental-inspector
 
 [English](README.md) | 中文
 
@@ -82,8 +82,8 @@ Worker 监听后，Host 会记录一个 `devtools://` URL。同一个 Worker 提
 两个插件端都提供同一个服务：
 
 ```ts
-import type { Context } from '@deepseek-ai/cordis'
-import type { InspectorJsonValue } from '@deepseek-ai/dsh-experimental-inspector'
+import type { Context } from '@taiji/cordis'
+import type { InspectorJsonValue } from '@taiji/dsh-experimental-inspector'
 
 declare const ctx: Context
 declare const topic: string

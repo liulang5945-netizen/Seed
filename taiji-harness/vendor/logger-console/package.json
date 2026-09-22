@@ -1,5 +1,5 @@
 {
-  "name": "@deepseek-ai/cordis-plugin-logger-console",
+  "name": "@taiji/cordis-plugin-logger-console",
   "description": "Console logger exporter for cordis",
   "version": "1.0.3",
   "publishConfig": {
@@ -32,11 +32,11 @@
   "author": "Shigma <shigma10826@gmail.com>",
   "license": "MIT",
   "peerDependencies": {
-    "@deepseek-ai/cordis": "workspace:^"
+    "@taiji/cordis": "workspace:^"
   },
   "dependencies": {
-    "@deepseek-ai/cosmokit": "workspace:^",
-    "@deepseek-ai/schemastery": "workspace:^",
+    "@taiji/cosmokit": "workspace:^",
+    "@taiji/schemastery": "workspace:^",
     "supports-color": "^9.4.0"
   }
 }

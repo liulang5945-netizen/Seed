@@ -4,11 +4,11 @@
  * proving removal (HMR safety) and the injected controller faces.
  */
 
-import { Context } from '@deepseek-ai/cordis'
+import { Context } from '@taiji/cordis'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { SlotRegistry } from '@deepseek-ai/dsh-client-ui-renderer/client'
-import { LocaleRuntime } from '@deepseek-ai/dsh-client-locale/client'
-import type {} from '@deepseek-ai/dsh-client-ui-conversation/client'
+import { SlotRegistry } from '@taiji/dsh-client-ui-renderer/client'
+import { LocaleRuntime } from '@taiji/dsh-client-locale/client'
+import type {} from '@taiji/dsh-client-ui-conversation/client'
 import { apply, inject, type OpenInAppActionInjected, type OpenPathInjected } from '../src/client/index.ts'
 import { apply as nodeApply } from '../src/index.ts'
 import { OpenInAppAction } from '../src/client/OpenInAppAction.tsx'
