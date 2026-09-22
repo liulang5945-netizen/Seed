@@ -62,6 +62,8 @@ from taiji import content_digest  # noqa: E402
 
 DEFAULT_OUT_DIR = PROJECT_ROOT / "output" / "taiji_r2_readout_retrain"
 CONTRACT = "plans/reference/M5_R2_READOUT_RETRAIN_CONTRACT_DRAFT_20260920.md"
+#: 优雅停机的检查间隔（符号数）。一次 ``stat`` 相对 2.4 ms/符号 的 tick 可忽略。
+DEFAULT_STOP_CHECK_EVERY = 10_000
 
 
 class ArmAlreadyComplete(RuntimeError):
@@ -114,6 +116,8 @@ def run_arm(
     skip_symbols: int,
     device: str,
     fresh: bool,
+    stop_file: Path | None = None,
+    stop_check_every: int = 10_000,
 ) -> dict[str, Any]:
     spec = ARMS[arm]
     arm_dir.mkdir(parents=True, exist_ok=True)
@@ -174,6 +178,7 @@ def run_arm(
     mark = (0, 0, 0.0)
     absolute_tick = base_tick + consumed
     last_progress: dict[str, Any] = {}
+    stopped_by_request = False
 
     def _persist() -> None:
         envelope = attach_metadata(
@@ -226,7 +231,15 @@ def run_arm(
         next(stream)
 
     for _ in range(consumed, symbols):
-        symbol = next(stream)
+        try:
+            symbol = next(stream)
+        except StopIteration as exc:
+            # 语料比预算短时以前会甩一个裸 StopIteration 栈；这里的"错在哪、还剩多少"是
+            # 操作者真正需要的信息（2026-09-22 由 stop-file 的测试顺带撞出来）。
+            raise SystemExit(
+                f"corpus exhausted for arm {arm} after {consumed} of {symbols} symbols "
+                f"(skip_symbols={skip_symbols}); the budget does not fit the stream"
+            ) from exc
         step = substrate.observe(symbol, **spec["observe_kwargs"])
         consumed += 1
         session_symbols += 1
@@ -240,6 +253,12 @@ def run_arm(
             last_progress = _write_progress(final=False)
         if consumed % checkpoint_every == 0:
             _persist()
+        if stop_file is not None and consumed % stop_check_every == 0 and stop_file.exists():
+            # 「现在把进度存下来然后停」以前只能靠运气（等下一个 checkpoint 边界）；
+            # 有了这个哨兵文件，停止点就是确定的，且最多只丢 stop_check_every 个符号。
+            stop_file.unlink()
+            stopped_by_request = True
+            break
 
     last_progress = _write_progress(final=True)
     _persist()
@@ -248,8 +267,15 @@ def run_arm(
     realised = {surface for surface in SURFACES if before[surface] != after[surface]}
     expected = set(spec["write_surface"])
     wall = time.perf_counter() - session_started
+    if realised != expected:
+        status = "failed"
+    elif stopped_by_request:
+        status = "stopped_by_request"
+    else:
+        status = "completed"
     report = {
-        "status": "completed" if realised == expected else "failed",
+        "status": status,
+        "stop_reason": "stopped_by_request" if stopped_by_request else None,
         "arm": arm,
         "arm_description": spec["description"],
         "observe_kwargs": spec["observe_kwargs"],
@@ -316,6 +342,13 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--skip-symbols", type=int, default=None)
     parser.add_argument("--fresh", action="store_true", help="忽略已有臂 checkpoint，从基底重开")
     parser.add_argument("--i-accept-exceeding-approved-budget", action="store_true")
+    parser.add_argument(
+        "--stop-file",
+        default=None,
+        help="「优雅停机」哨兵路径（缺省 <out-dir>/STOP_RUN）：文件一出现就落盘并退出，"
+        f"最多只丢 --stop-check-every（缺省 {DEFAULT_STOP_CHECK_EVERY}）个符号。",
+    )
+    parser.add_argument("--stop-check-every", type=int, default=DEFAULT_STOP_CHECK_EVERY)
     return parser
 
 
@@ -332,6 +365,8 @@ def main() -> int:
         )
     if args.checkpoint_every <= 0 or args.progress_every <= 0:
         parser.error("--checkpoint-every / --progress-every must be positive")
+    if args.stop_check_every <= 0:
+        parser.error("--stop-check-every must be positive")
 
     arms = [name.strip().upper() for name in args.arms.split(",") if name.strip()]
     unknown = [name for name in arms if name not in ARMS]
@@ -344,6 +379,9 @@ def main() -> int:
     checkpoints_dir = (PROJECT_ROOT / "checkpoints").resolve()
     if out_dir.resolve().is_relative_to(checkpoints_dir):
         parser.error(f"--out-dir must not live under {checkpoints_dir}")
+    stop_file = Path(args.stop_file) if args.stop_file else out_dir / "STOP_RUN"
+    if not stop_file.is_absolute():
+        stop_file = PROJECT_ROOT / stop_file
 
     base_checkpoint = (
         Path(args.base_checkpoint) if args.base_checkpoint else _default_checkpoint(parser)
@@ -389,6 +427,8 @@ def main() -> int:
                 skip_symbols=skip_symbols,
                 device=args.device,
                 fresh=args.fresh,
+                stop_file=stop_file,
+                stop_check_every=args.stop_check_every,
             )
         except ArmAlreadyComplete as exc:
             # 跳过而不是中止：多臂 campaign 的"重跑同一条命令"必须幂等，否则先跑完的臂
@@ -402,16 +442,33 @@ def main() -> int:
             flush=True,
         )
         reports.append(report)
+        if report["status"] == "stopped_by_request":
+            # 优雅停机是操作者的请求，不是失败：停下让 campaign 层显式返回，
+            # 已落盘的 checkpoint 会在下次同一条命令里接着跑。
+            print(f"[{arm}] stopped by request; campaign stops here", flush=True)
+            break
 
     base_unchanged = sha256_of(base_checkpoint) == base_sha256
-    # ``already_complete`` 不算失败：第二次跑同一条命令本来就该什么都不做。
-    failed = [r["arm"] for r in reports if r["status"] not in ("completed", "already_complete")]
+    # ``already_complete``（第二次跑同一条命令本来就什么都不做）与 ``stopped_by_request``
+    # （操作者要求优雅停机）都不算失败。
+    ok_states = ("completed", "already_complete", "stopped_by_request")
+    status_by_arm = {r["arm"]: r["status"] for r in reports}
+    failed = [arm for arm, state in status_by_arm.items() if state not in ok_states]
+    #: 本次请求的臂里还没跑完的（含被优雅停机打断的那个）：供"下一步"直接读，不用翻进度流。
+    pending = [arm for arm in arms if status_by_arm.get(arm) != "completed"]
     summary = {
         "trainer": TRAINER_NAME,
         "contract": CONTRACT,
         "written_at_utc": _utc_now(),
         "arms": arms,
-        "arms_status": {r["arm"]: r["status"] for r in reports},
+        "arms_status": status_by_arm,
+        "arms_pending": pending,
+        "resume_command": (
+            f"--arms {','.join(pending)} --symbols {args.symbols} "
+            f"--checkpoint-every {args.checkpoint_every} --progress-every {args.progress_every}"
+        )
+        if pending
+        else None,
         "symbols_budget": args.symbols,
         "skip_symbols": skip_symbols,
         "base_checkpoint": str(base_checkpoint),

@@ -371,6 +371,79 @@ def test_a_finished_arm_is_skipped_so_a_campaign_can_be_re_run(
     assert second_session == first_session, "a skipped arm must not be re-run"
 
 
+def test_a_stop_file_saves_and_exits_cleanly(tmp_path: Path, corpus: tuple[Path, Path]) -> None:
+    """「现在把进度存下来然后停」必须是确定的能力，不能靠等下一个 checkpoint 边界。
+
+    哨兵文件一出现就在下一次检查点落盘并退出：报告标 ``stopped_by_request``（**不是失败**），
+    checkpoint 记下确切消费量，同一条命令再跑就从那里接着跑。机器要重启时这就是停止点。
+    """
+
+    source, manifest = corpus
+    out_dir = tmp_path / "run"
+    stop_file = tmp_path / "STOP_RUN"
+    stop_file.write_text("stop", encoding="utf-8")
+    summary = _run_cli(
+        [
+            "--arms",
+            "C",
+            "--symbols",
+            "400",
+            "--checkpoint-every",
+            "100000",  # 比预算大 ⇒ 只有优雅停机那条路径会落盘
+            "--progress-every",
+            "100000",
+            "--stop-check-every",
+            "100",
+            "--out-dir",
+            str(out_dir),
+            "--corpus",
+            str(source),
+            "--lineage-manifest",
+            str(manifest),
+            "--stop-file",
+            str(stop_file),
+        ]
+    )
+    assert summary["status"] == "completed", "优雅停机不是失败"
+    assert summary["arms_status"] == {"C": "stopped_by_request"}
+    assert summary["arms_pending"] == ["C"]
+    assert summary["resume_command"].startswith("--arms C")
+
+    import torch
+
+    envelope = torch.load(out_dir / "C" / "checkpoint.pt", map_location="cpu", weights_only=False)
+    consumed = int(envelope["metadata"]["symbols_consumed"])
+    assert 0 < consumed < 400, "停机必须落盘，且落在预算之内"
+    assert not stop_file.exists(), "哨兵用一次即失效，否则续跑会立刻又停"
+
+    report = json.loads((out_dir / "C" / "run_report.json").read_text(encoding="utf-8"))
+    assert report["status"] == "stopped_by_request"
+    assert report["stop_reason"] == "stopped_by_request"
+    assert report["symbols_consumed"] == consumed
+
+    # 同一条命令再跑：从记录的消费量接着跑，不重放前缀
+    resumed = _run_cli(
+        [
+            "--arms",
+            "C",
+            "--symbols",
+            "400",
+            "--checkpoint-every",
+            "400",
+            "--out-dir",
+            str(out_dir),
+            "--corpus",
+            str(source),
+            "--lineage-manifest",
+            str(manifest),
+        ]
+    )
+    assert resumed["arms_status"] == {"C": "completed"}
+    final = json.loads((out_dir / "C" / "run_report.json").read_text(encoding="utf-8"))
+    assert final["symbols_consumed"] == 400
+    assert final["session"]["symbols"] == 400 - consumed
+
+
 def test_fresh_is_the_only_way_to_redo_a_finished_arm(
     tmp_path: Path, corpus: tuple[Path, Path]
 ) -> None:
