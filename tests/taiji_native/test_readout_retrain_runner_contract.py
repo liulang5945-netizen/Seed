@@ -329,7 +329,49 @@ def test_a_final_progress_entry_never_reports_a_fake_zero(
     assert report["session_readout"]["comparable_across_arms"] is False
 
 
-def test_a_finished_arm_refuses_to_run_again(
+def test_a_finished_arm_is_skipped_so_a_campaign_can_be_re_run(
+    tmp_path: Path, corpus: tuple[Path, Path]
+) -> None:
+    """Re-running the same command must be idempotent, including for a multi-arm campaign.
+
+    The first version aborted the whole campaign at the first finished arm, so a campaign whose
+    process died mid-way (which is exactly what happened to arm C) could not be resumed with the
+    command it was started with.  Now a finished arm is skipped and recorded, and the arm that
+    still has budget is the only one that does work.
+    """
+
+    source, manifest = corpus
+    out_dir = tmp_path / "run"
+    args = [
+        "--arms",
+        "B,C",
+        "--symbols",
+        "30",
+        "--checkpoint-every",
+        "30",
+        "--out-dir",
+        str(out_dir),
+        "--corpus",
+        str(source),
+        "--lineage-manifest",
+        str(manifest),
+    ]
+    _run_cli(args)
+    first_session = json.loads((out_dir / "C" / "run_report.json").read_text(encoding="utf-8"))[
+        "session"
+    ]["session_id"]
+
+    summary = _run_cli(args)
+    assert summary["status"] == "completed"
+    assert summary["arms_status"] == {"B": "already_complete", "C": "already_complete"}
+    assert summary["failed_arms"] == []
+    second_session = json.loads((out_dir / "C" / "run_report.json").read_text(encoding="utf-8"))[
+        "session"
+    ]["session_id"]
+    assert second_session == first_session, "a skipped arm must not be re-run"
+
+
+def test_fresh_is_the_only_way_to_redo_a_finished_arm(
     tmp_path: Path, corpus: tuple[Path, Path]
 ) -> None:
     source, manifest = corpus
@@ -349,12 +391,15 @@ def test_a_finished_arm_refuses_to_run_again(
         str(manifest),
     ]
     _run_cli(args)
-    completed = subprocess.run(
-        [sys.executable, str(RUNNER), *args],
-        cwd=str(REPO),
-        capture_output=True,
-        text=True,
-        timeout=900,
-    )
-    assert completed.returncode != 0
-    assert "already consumed" in completed.stderr + completed.stdout
+    before = json.loads((out_dir / "C" / "run_report.json").read_text(encoding="utf-8"))
+    assert before["symbols_consumed"] == 30
+    assert before["fresh"] is False
+
+    # ``--fresh`` 是唯一的重做通路：换新会话，且旧报告被**归档**而不是删掉。
+    summary = _run_cli([*args, "--fresh"])
+    assert summary["arms_status"] == {"C": "completed"}
+    after = json.loads((out_dir / "C" / "run_report.json").read_text(encoding="utf-8"))
+    assert after["session"]["session_id"] != before["session"]["session_id"]
+    assert after["fresh"] is True
+    assert after["archived_previous_report"] is not None
+    assert Path(after["archived_previous_report"]).is_file()

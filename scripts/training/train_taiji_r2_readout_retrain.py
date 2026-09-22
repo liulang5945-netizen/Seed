@@ -64,6 +64,16 @@ DEFAULT_OUT_DIR = PROJECT_ROOT / "output" / "taiji_r2_readout_retrain"
 CONTRACT = "plans/reference/M5_R2_READOUT_RETRAIN_CONTRACT_DRAFT_20260920.md"
 
 
+class ArmAlreadyComplete(RuntimeError):
+    """An arm already consumed its whole budget and ``--fresh`` was not given.
+
+    It is its own type so a multi-arm campaign can **skip** it and carry on.  The first version
+    raised a bare ``SystemExit``, which aborted the campaign at the first finished arm -- so the
+    documented "re-run the same command to resume" was **false**, and after A and B had finished,
+    C was left without a driver when its process died (2026-09-22, measured).
+    """
+
+
 def surface_digests(substrate: Any) -> dict[str, str]:
     """Fingerprints of the two weight surfaces this experiment may touch."""
 
@@ -72,6 +82,17 @@ def surface_digests(substrate: Any) -> dict[str, str]:
 
 def _utc_now() -> str:
     return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+
+def _stamp_for_filename() -> str:
+    """A filesystem-safe UTC stamp: ``:`` is illegal in a Windows filename.
+
+    ``_utc_now()`` is right for JSON fields and wrong for filenames -- the first version used it
+    for the archived report's name and ``--fresh`` crash-landed with ``WinError 123``
+    (caught by ``test_fresh_is_the_only_way_to_redo_a_finished_arm``, 2026-09-22).
+    """
+
+    return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H-%M-%SZ")
 
 
 def _envelope_metadata(envelope: dict[str, Any]) -> dict[str, Any]:
@@ -119,7 +140,7 @@ def run_arm(
             )
         consumed = int(extra.get("symbols_consumed", 0))
         if consumed >= symbols:
-            raise SystemExit(
+            raise ArmAlreadyComplete(
                 f"arm {arm} already consumed {consumed} >= requested {symbols}; "
                 "pass --fresh to redo it"
             )
@@ -128,7 +149,9 @@ def run_arm(
         model = Seed.from_checkpoint(previous, device=device)
     else:
         if fresh and report_path.is_file():
-            archived_report = str(report_path.with_name(f"run_report.prev-{_utc_now()}.json"))
+            archived_report = str(
+                report_path.with_name(f"run_report.prev-{_stamp_for_filename()}.json")
+            )
             report_path.rename(archived_report)
         model = Seed.from_checkpoint(base_envelope, device=device)
 
@@ -352,20 +375,27 @@ def main() -> int:
     reports: list[dict[str, Any]] = []
     for arm in arms:
         print(f"[{arm}] start: budget={args.symbols} skip={skip_symbols}", flush=True)
-        report = run_arm(
-            arm=arm,
-            symbols=args.symbols,
-            checkpoint_every=args.checkpoint_every,
-            progress_every=args.progress_every,
-            arm_dir=out_dir / arm,
-            base_checkpoint=base_checkpoint,
-            base_sha256=base_sha256,
-            corpus_paths=corpus_paths,
-            corpus_digest=digest,
-            skip_symbols=skip_symbols,
-            device=args.device,
-            fresh=args.fresh,
-        )
+        try:
+            report = run_arm(
+                arm=arm,
+                symbols=args.symbols,
+                checkpoint_every=args.checkpoint_every,
+                progress_every=args.progress_every,
+                arm_dir=out_dir / arm,
+                base_checkpoint=base_checkpoint,
+                base_sha256=base_sha256,
+                corpus_paths=corpus_paths,
+                corpus_digest=digest,
+                skip_symbols=skip_symbols,
+                device=args.device,
+                fresh=args.fresh,
+            )
+        except ArmAlreadyComplete as exc:
+            # 跳过而不是中止：多臂 campaign 的"重跑同一条命令"必须幂等，否则先跑完的臂
+            # 会把还没跑完的臂一起带走（2026-09-22 实测 C 臂就是这样丢了 driver）。
+            print(f"[{arm}] already_complete: {exc}; skipping (--fresh to redo)", flush=True)
+            reports.append({"arm": arm, "status": "already_complete", "detail": str(exc)})
+            continue
         print(
             f"[{arm}] {report['status']}: consumed={report['symbols_consumed']} "
             f"wall={report['session']['wall_seconds']}s surface={report['realised_write_surface']}",
@@ -374,12 +404,14 @@ def main() -> int:
         reports.append(report)
 
     base_unchanged = sha256_of(base_checkpoint) == base_sha256
-    failed = [report["arm"] for report in reports if report["status"] != "completed"]
+    # ``already_complete`` 不算失败：第二次跑同一条命令本来就该什么都不做。
+    failed = [r["arm"] for r in reports if r["status"] not in ("completed", "already_complete")]
     summary = {
         "trainer": TRAINER_NAME,
         "contract": CONTRACT,
         "written_at_utc": _utc_now(),
         "arms": arms,
+        "arms_status": {r["arm"]: r["status"] for r in reports},
         "symbols_budget": args.symbols,
         "skip_symbols": skip_symbols,
         "base_checkpoint": str(base_checkpoint),

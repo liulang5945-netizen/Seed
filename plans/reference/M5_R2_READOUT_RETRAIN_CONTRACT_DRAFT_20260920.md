@@ -186,6 +186,45 @@ M2（`eval_taiji_cap0_baseline.run_baseline` 的 D+E 机器计分之和）、K2�
    不是模型性质。**报速率要报中位窗口，不要报累计**——累计会把一次性扰动永久计入。
 2. 因此总时长估计从 42.3 h 修回 **≈42 h**，其中约 2 h 是那次外部扰动，不属本件成本。
 
+### §4.5 第二次执行记录：B 臂完成、C 臂续跑（2026-09-22 10:00 取证）
+
+**B 臂 `completed`**（§4.4 写它时还在跑）：
+
+| 项 | 实测 |
+|---|---|
+| `symbols_consumed` / `symbols_budget` | 16,000,000 / 16,000,000 |
+| `absolute_tick` | 32,000,000 |
+| **写入面** | **`['motor']`**，`write_surface_ok=true` |
+| wall | 67,100.0 s = **18.64 h** |
+| s/符号 | 0.004193752（累计）；**中位窗口 0.0038199**；首 0.0037119 / 末 0.003823 |
+| checkpoint | sha256 `766dfa04…`；基底 sha 未变 |
+
+⇒ **写入面隔离在 A、B 两臂都拿到实测**：A 只动 `predictive_readout`、B 只动 `motor`。
+C 臂完成后这条才算三臂齐（见下）。
+
+**C 臂**：进程在 **12,250,000** 处死亡（`campaign_report.json` 未生成、`tasklist` 无 python 进程）。
+已续跑：resume 点 = 最后落盘的 checkpoint（**12,000,000**，故重做 250k 符号），
+中位窗口速率 0.0024165（首 0.0024264 / 末 0.0023641，平坦）⇒ 剩 4M 约 **2.7 h**。
+
+**两处我自己的缺陷（都在 2026-09-22 被抓到，如实记账）**：
+
+1. **"重跑同一命令即幂等"是假的。** 原实现对"已跑满的臂"`raise SystemExit`，于是多臂 campaign 会
+   **在第一个跑完的臂上中止**——A/B 早已完成，C 却停在 12.25M 且没有任何 driver 去接它。
+   我上一轮对所有者说"重跑同一条命令即可续跑，幂等"，**那句话当时不成立**。
+   修法：引入 `ArmAlreadyComplete`，campaign 层**跳过并记录**（`arms_status`），`--fresh` 是唯一重做通路。
+   回归测试 `test_a_finished_arm_is_skipped_so_a_campaign_can_be_re_run`：同一条命令复跑后
+   `arms_status == {B: already_complete, C: already_complete}`、`failed_arms == []`，
+   且 C 的 `session_id` **逐字不变**（证明没被偷偷重跑）。
+2. **`--fresh` 在 Windows 上必崩。** 归档旧报告的文件名用了 `_utc_now()`，含 `:` ⇒
+   `OSError [WinError 123]`。**是上面那条新写的测试当场抓到的**（此前 `--fresh` 路径从未被执行过）。
+   修法：新增 `_stamp_for_filename()`（`:` → `-`），JSON 字段仍用 `_utc_now()`。
+
+**教训（可复用，已入 MEMORY）**：
+
+- 「幂等重跑」这类承诺必须**用测试证明**，而且要证**多臂**情形——单臂测试全绿挡不住 campaign 层中止。
+- **把时刻写进文件名**要换安全字符集（`:` 在 Windows 非法）。
+- 长跑的 driver 要**分开记每臂状态**（`arms_status`），否则"哪一臂停了"只能靠翻进度流猜。
+
 ## §5 数值线（草案，认可后冻结；执行前不调）
 
 | 项 | 草案值 | 依据 |
