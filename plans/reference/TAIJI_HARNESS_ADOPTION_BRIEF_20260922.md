@@ -64,4 +64,9 @@ taiji-harness/                      ← dsh fork（MIT 合规：保留上游 LIC
 ## 5. 执行记录
 
 - G1 启动：2026-09-22（本简报落盘后）
-- （待补）各门通过时刻与基线数字
+- **G1-1 源码落地 ✓**：git clone 两次被网络掐（Connection reset）→ 改走 codeload tarball（master @ 2026-09-22，27.1 MB）解包到 `taiji-harness/`；15 个符号链接（CLAUDE.md→AGENTS.md 等）在 Windows 沙箱无法创建 → 全部物化为副本；上游版本 `@deepseek-ai/dsh-root 0.1.7-alpha.1`，pnpm 钉 11.7.0（corepack 缓存被沙箱拦 → `npx pnpm@11.7.0` 走 npm 缓存成功）
+- **G1-2 install ✓**：`Done in 2m26.1s`（bin 警告＝lib 未构建，预期）
+- G1-3 build ✓：`pnpm run build` 通过（tsc + tsdown，客户端 263 artifacts，末尾 `✓ built`）
+- G1-4 web ✓：`pnpm dsh web --no-open` 起服（沙箱 HOME 重定向到 `E:\Seed\.dsh-sandbox-home` 绕开 `~/.dsh` 锁），3080 监听、token URL 浏览器打开 → **UI 完整渲染**（中文本地化「DSH 本地构建」：新建会话/工作区/插件/设置/模型选择器 DeepSeek-V41-Flash/composer `/`指令+`@`文件/访问模式/内测声明弹窗）。**fork 从源码跑通，G1 通过**。
+- G1-5 test 基线：延后到 G2 前单独跑（vitest 全量耗时；rename 回归对照用 build+web 已足够，test 基线数在 G2 提交前补记）。
+- **G1 结论：通过。** fork 源码 12697 文件（纯源码树，node_modules/lib/tsbuildinfo 零命中，内嵌 .gitignore 生效）落 `taiji-harness/`。

@@ -54,6 +54,7 @@ CORE_MODULES = (
     "scripts",
     "desktop",
     "desktop-electron",
+    "taiji-harness",
     "plans",
     "docs",
     "reports",

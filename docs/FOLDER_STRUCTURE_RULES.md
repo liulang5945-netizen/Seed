@@ -31,7 +31,8 @@
 
 ### A 源码（tracked，不可删）
 `api/` · `frontend/` · `instruments/` · `neuroplex/` · `seed/` · `seed_platform/` ·
-`taiji/` · `tests/` · `scripts/` · `desktop/` · `desktop-electron/`（src 与 package.json）
+`taiji/` · `tests/` · `scripts/` · `desktop/` · `desktop-electron/`（src 与 package.json）·
+`taiji-harness/`（dsh fork：Taiji Harness 主线，node_modules/lib 等构建输出由其内嵌 .gitignore 排除）
 
 ### 仓库配置（tracked，不可删）
 `.github/`（CI workflow）· `.devcontainer/`（容器配置）
