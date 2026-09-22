@@ -26,6 +26,12 @@ const routes = [
     meta: { title: '能力与工具' }
   },
   {
+    path: '/workspace',
+    name: 'workspace',
+    component: () => import('@/views/WorkspaceView.vue'),
+    meta: { title: 'IDE 工作区' }
+  },
+  {
     path: '/life',
     name: 'life',
     component: () => import('@/views/LifeStatusView.vue'),

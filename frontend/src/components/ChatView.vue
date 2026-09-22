@@ -9,10 +9,10 @@
       <div class="topbar-spacer"></div>
       <button
         class="dock-toggle"
-        :class="{ active: workspaceStore.isOpen }"
-        :aria-pressed="workspaceStore.isOpen"
-        title="IDE 工作区 (侧拉面板)"
-        @click="workspaceStore.toggle()"
+        :class="{ active: artifactStore.isOpen }"
+        :aria-pressed="artifactStore.isOpen"
+        title="工件面板（对话中的代码 / 预览）"
+        @click="toggleArtifactPanel"
       >
         <PanelRight :size="15" />
       </button>
@@ -95,13 +95,13 @@ import { nativeApi } from '@/composables/nativeApi.js'
 import { useChatStore } from '@/stores/chatStore.js'
 import { useNaturalLanguageWorkbench } from '@/composables/useNaturalLanguageWorkbench.js'
 import { useRuntimeStore } from '@/stores/runtimeStore.js'
-import { useWorkspaceStore } from '@/stores/workspaceStore.js'
+import { useArtifactStore } from '@/stores/artifactStore.js'
 
 defineOptions({ name: 'ChatView' })
 
 const chatStore = useChatStore()
 const runtimeStore = useRuntimeStore()
-const workspaceStore = useWorkspaceStore()
+const artifactStore = useArtifactStore()
 const workbench = useNaturalLanguageWorkbench()
 const toast = inject('toast', () => {})
 
@@ -227,6 +227,16 @@ async function executeWorkbenchPlan() {
 
 function toggleWorkbench() {
   workbenchMode.value = !workbenchMode.value
+}
+
+// 工件面板开关：无工件时引导（面板内容由对话代码块「面板打开」驱动）
+function toggleArtifactPanel() {
+  if (artifactStore.currentArtifact === null) {
+    toast('对话中还没有工件——点任意代码块右上角的「⛶ 面板打开」试试', 'info')
+    return
+  }
+  if (artifactStore.isOpen) artifactStore.collapse()
+  else artifactStore.setMode('split')
 }
 
 function resetWorkbench() {

@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { mount, flushPromises } from '@vue/test-utils'
-import { createPinia } from 'pinia'
-import WorkspaceDock from '../components/WorkspaceDock.vue'
+import { defineComponent, h, KeepAlive } from 'vue'
+import WorkspaceView from '../views/WorkspaceView.vue'
 import { authFetch } from '../composables/apiClient.js'
 
 // 隔离网络——所有请求经 mock 路由，不发真实请求
@@ -45,9 +45,6 @@ let renameResponse = () => jsonResponse({ status: 'ok' })
 const mountedWrappers = []
 
 beforeEach(() => {
-  // Dock 初始为分栏档（展开态触发 beginOpen：挂载 body + loadTree）
-  localStorage.setItem('taiji_dock_mode', 'split')
-  localStorage.removeItem('taiji_dock_width')
   authFetch.mockReset()
   renameResponse = () => jsonResponse({ status: 'ok', path: 'GUIDE.md' })
   authFetch.mockImplementation((url, options = {}) => {
@@ -107,23 +104,25 @@ beforeEach(() => {
 
 afterEach(() => {
   for (const wrapper of mountedWrappers.splice(0)) wrapper.unmount()
-  localStorage.removeItem('taiji_dock_mode')
-  localStorage.removeItem('taiji_dock_width')
 })
 
 // MonacoEditor 依赖真实编辑器运行时，stub 后仅验证视图接线；
-// Dock 以展开态挂载（split）触发 beginOpen——body 挂载、loadTree 单发
-const mountDock = ({ toast = vi.fn() } = {}) => {
-  const wrapper = mount(WorkspaceDock, {
-    global: {
-      plugins: [createPinia()],
-      provide: {
-        toast,
-        $confirm: vi.fn(() => Promise.resolve(true)),
+// 用 KeepAlive 包裹以触发 onActivated（loadTree 统一由它负责）
+const mountView = ({ toast = vi.fn() } = {}) => {
+  const wrapper = mount(
+    defineComponent({
+      render: () => h(KeepAlive, null, { default: () => h(WorkspaceView) }),
+    }),
+    {
+      global: {
+        provide: {
+          toast,
+          $confirm: vi.fn(() => Promise.resolve(true)),
+        },
+        stubs: { MonacoEditor: true, WebTerminal: true },
       },
-      stubs: { MonacoEditor: true, WebTerminal: true },
-    },
-  })
+    }
+  )
   mountedWrappers.push(wrapper)
   return wrapper
 }
@@ -153,31 +152,28 @@ const renameCalls = () =>
     ([u, o]) => u.endsWith('/api/workbench/preview') && (o?.method || '') === 'POST'
   )
 
-const findButtonByTitle = (wrapper, title) =>
-  wrapper.findAll('button').find((b) => b.attributes('title') === title)
-
-describe('WorkspaceDock', () => {
-  it('展开态挂载 loadTree 只发一次（beginOpen 统一负责）', async () => {
-    mountDock()
+describe('WorkspaceView', () => {
+  it('首次挂载 loadTree 只发一次（onActivated 统一负责）', async () => {
+    mountView()
     await flushPromises()
     expect(treeCalls()).toBe(1)
   })
 
   it('保存失败时 toast 后端返回的 detail', async () => {
     const toastFn = vi.fn()
-    const wrapper = mountDock({ toast: toastFn })
+    const wrapper = mountView({ toast: toastFn })
     await flushPromises()
     wrapper.findComponent({ name: 'MonacoEditor' }).vm.$emit('save-error', '无权限写入')
     expect(toastFn).toHaveBeenCalledWith('无权限写入', 'error')
   })
 
-  it('工具条显示当前工作区路径，点击打开文件夹打开对话框并惰性加载快捷路径', async () => {
-    const wrapper = mountDock()
+  it('顶栏显示当前工作区路径，点击打开文件夹打开对话框并惰性加载快捷路径', async () => {
+    const wrapper = mountView()
     await flushPromises()
-    expect(wrapper.find('.dock-path').text()).toBe('E:/Seed/agent_workspace')
+    expect(wrapper.find('.topbar-path').text()).toBe('E:/Seed/agent_workspace')
     expect(wrapper.find('.dlg-overlay').exists()).toBe(false)
 
-    const btn = findButtonByTitle(wrapper, '打开文件夹')
+    const btn = wrapper.findAll('button').find((b) => b.text().includes('打开文件夹'))
     expect(btn).toBeTruthy()
     await btn.trigger('click')
     expect(wrapper.find('.dlg-box h3').text()).toBe('打开项目文件夹')
@@ -188,41 +184,42 @@ describe('WorkspaceDock', () => {
     expect(wrapper.find('.qp-btn').exists()).toBe(true)
   })
 
-  it('切换目录成功后工具条路径更新并重新加载文件树', async () => {
-    const wrapper = mountDock()
+  it('切换目录成功后顶栏路径更新并重新加载文件树', async () => {
+    const wrapper = mountView()
     await flushPromises()
     const before = treeCalls()
     expect(before).toBeGreaterThan(0)
 
-    const btn = findButtonByTitle(wrapper, '打开文件夹')
+    const btn = wrapper.findAll('button').find((b) => b.text().includes('打开文件夹'))
     await btn.trigger('click')
     await wrapper.find('.dlg-box .dlg-input').setValue('E:/Seed/data')
     await wrapper.find('.dlg-btn.primary').trigger('click')
     await flushPromises()
 
     expect(treeCalls()).toBeGreaterThan(before)
-    expect(wrapper.find('.dock-path').text()).toBe('E:/Seed/data')
+    expect(wrapper.find('.topbar-path').text()).toBe('E:/Seed/data')
     expect(wrapper.find('.dlg-overlay').exists()).toBe(false)
   })
 
   it('终端按钮切换底部终端面板显隐且激活态高亮', async () => {
-    const wrapper = mountDock()
+    const wrapper = mountView()
     await flushPromises()
     expect(wrapper.find('.ide-terminal').exists()).toBe(false)
 
-    const btn = findButtonByTitle(wrapper, '终端 (Ctrl+`)')
+    const btn = wrapper.findAll('button').find((b) => b.text() === '终端')
     expect(btn.classes()).not.toContain('active')
     await btn.trigger('click')
     expect(wrapper.find('.ide-terminal').exists()).toBe(true)
     expect(btn.classes()).toContain('active')
+    expect(btn.text()).toBe('收起终端')
 
     await btn.trigger('click')
     expect(wrapper.find('.ide-terminal').exists()).toBe(false)
-    expect(btn.classes()).not.toContain('active')
+    expect(btn.text()).toBe('终端')
   })
 
   it('展开目录通过 native Workbench 读取子目录，折叠只本地重算', async () => {
-    const wrapper = mountDock()
+    const wrapper = mountView()
     await flushPromises()
     const before = authFetch.mock.calls.length
     expect(wrapper.findAll('.tree-item').some((i) => i.text() === 'main.py')).toBe(false)
@@ -240,7 +237,7 @@ describe('WorkspaceDock', () => {
   })
 
   it('右栏工作区统计基于文件树递归计算', async () => {
-    const wrapper = mountDock()
+    const wrapper = mountView()
     await flushPromises()
     const statsGroup = wrapper
       .findAll('.panel-right .prop-group')
@@ -252,11 +249,14 @@ describe('WorkspaceDock', () => {
     expect(statsGroup.text()).toContain('1')
     expect(statsGroup.text()).toContain('目录数')
     expect(statsGroup.text()).toContain('1')
+    // 硬编码假数据已清除
+    expect(wrapper.text()).not.toContain('Seed检查器')
+    expect(wrapper.text()).not.toContain('128 GPU')
   })
 
   it('右键重命名：预填当前名，成功后重新加载文件树并 toast', async () => {
     const toastFn = vi.fn()
-    const wrapper = mountDock({ toast: toastFn })
+    const wrapper = mountView({ toast: toastFn })
     await flushPromises()
     const before = treeCalls()
 
@@ -276,7 +276,7 @@ describe('WorkspaceDock', () => {
   it('右键重命名失败时 toast 后端 detail（如 409 目标已存在）', async () => {
     renameResponse = () => jsonResponse({ detail: '目标已存在: GUIDE.md' }, false, 409)
     const toastFn = vi.fn()
-    const wrapper = mountDock({ toast: toastFn })
+    const wrapper = mountView({ toast: toastFn })
     await flushPromises()
 
     await runRenameFlow(wrapper, 'GUIDE.md')
@@ -286,7 +286,7 @@ describe('WorkspaceDock', () => {
   })
 
   it('右键重命名未改名（新名与原名相同）时不发请求', async () => {
-    const wrapper = mountDock()
+    const wrapper = mountView()
     await flushPromises()
 
     await runRenameFlow(wrapper, 'README.md')

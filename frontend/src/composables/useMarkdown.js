@@ -99,6 +99,7 @@ marked.use({
       return `<div class="code-block-wrapper">
   <div class="code-header">
     <span class="code-lang">${language}</span>
+    <button class="code-open-btn">⛶ 面板打开</button>
     <button class="code-copy-btn">📋 复制</button>
   </div>
   <pre><code class="hljs language-${language}">${body}</code></pre>
@@ -126,12 +127,30 @@ const safeCopyText = async (text) => {
   document.body.removeChild(textArea);
 };
 
-// 事件委托：处理代码块复制按钮点击
+// 事件委托：处理代码块复制 / 面板打开按钮点击
 // 注意：不能用 data-* 做钩子——purifyConfig 里 ALLOW_DATA_ATTR: false 会把它清掉，
-// 曾导致复制按钮在生产环境完全点不动。这里统一以 .code-copy-btn 类为锚点。
+// 曾导致复制按钮在生产环境完全点不动。这里统一以 .code-copy-btn / .code-open-btn 类为锚点。
 if (typeof document !== 'undefined' && !window.__taijiMarkdownCopyHandler) {
   window.__taijiMarkdownCopyHandler = true;
   document.addEventListener('click', async (e) => {
+    const openBtn = e.target?.closest?.('.code-open-btn');
+    if (openBtn) {
+      // 「面板打开」：把该代码块注入工件面板（Claude Artifacts 式交互）
+      const wrapper = openBtn.closest('.code-block-wrapper');
+      const pre = wrapper?.querySelector('pre');
+      if (!pre) return;
+      const codeEl = pre.querySelector('code');
+      const langClass = [...(codeEl?.classList || [])].find((c) => c.startsWith('language-'));
+      const language = langClass ? langClass.slice('language-'.length) : 'text';
+      const { useArtifactStore } = await import('../stores/artifactStore.js');
+      useArtifactStore().openArtifact({
+        title: `${language} 代码`,
+        language,
+        content: pre.innerText,
+        kind: 'code',
+      });
+      return;
+    }
     const btn = e.target?.closest?.('.code-copy-btn');
     if (!btn) return;
     const pre = btn.closest('.code-block-wrapper')?.querySelector('pre');

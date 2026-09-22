@@ -298,8 +298,10 @@ function eventStatus(event) {
 .markdown-body :deep(.code-block-wrapper) { margin: 10px 0; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; background: var(--muted); }
 .markdown-body :deep(.code-header) { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-bottom: 1px solid var(--border); font-size: 0.74rem; color: var(--muted-foreground); }
 .markdown-body :deep(.code-lang) { font-family: var(--font-mono); font-weight: 600; color: var(--foreground); }
-.markdown-body :deep(.code-copy-btn) { margin-left: auto; border: 0; background: transparent; color: var(--muted-foreground); font-size: 0.72rem; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; padding: 3px 7px; border-radius: 7px; transition: background .14s ease, color .14s ease; }
-.markdown-body :deep(.code-copy-btn:hover) { background: var(--card); color: var(--foreground); }
+.markdown-body :deep(.code-copy-btn), .markdown-body :deep(.code-open-btn) { margin-left: auto; border: 0; background: transparent; color: var(--muted-foreground); font-size: 0.72rem; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; padding: 3px 7px; border-radius: 7px; transition: background .14s ease, color .14s ease; }
+.markdown-body :deep(.code-open-btn) { margin-left: auto; }
+.markdown-body :deep(.code-copy-btn) { margin-left: 0; }
+.markdown-body :deep(.code-copy-btn:hover), .markdown-body :deep(.code-open-btn:hover) { background: var(--card); color: var(--foreground); }
 .markdown-body :deep(pre) { margin: 0; padding: 12px 14px; overflow-x: auto; font-family: var(--font-mono); font-size: 0.8rem; line-height: 1.6; background: transparent; border: 0; }
 .markdown-body :deep(code) { font-family: var(--font-mono); font-size: 0.85em; background: color-mix(in srgb, var(--primary) 12%, transparent); color: var(--primary); padding: 1px 6px; border-radius: 6px; }
 .markdown-body :deep(pre code) { background: transparent; padding: 0; color: var(--foreground); font-size: inherit; }
