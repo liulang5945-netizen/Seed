@@ -1397,23 +1397,29 @@ describe('first-use Workspace preparation', () => {
     expect(created?.path).toBe(await realpath(join(h.directoryRoot, 'nested', 'Workspace')))
   })
 
-  it.each(['persisted', 'live', 'archived'] as const)('refuses automatic creation for a %s cwd-less Session', async (kind) => {
+  it.each(['persisted', 'live', 'archived'] as const)('creates the default Workspace for a %s cwd-less Session when no Workspace exists', async (kind) => {
     const history = header('old')
     const h = await firstUse(kind === 'persisted' ? { sessions: [history] } : { liveSessions: [history] })
     if (kind === 'archived') await h.registry.archiveSession(history.id)
-    await expect(h.registry.initializeDefault(h.resolveDirectory)).resolves.toBeUndefined()
-    expect(h.registry.list()).toEqual([])
-    expect(storedState(h.pool).defaultWorkspaceId).toBeUndefined()
-    expect(h.resolveDirectory).not.toHaveBeenCalled()
+    const created = await h.registry.initializeDefault(h.resolveDirectory)
+    expect(created?.path).toBe(await realpath(join(h.directoryRoot, 'nested', 'Workspace')))
+    // A Session without a working directory cannot join the new Workspace: it
+    // stays ungrouped rather than being adopted silently.
+    expect(created?.sessionIds).toEqual([])
+    expect(h.registry.list()).toEqual([created])
+    if (kind === 'archived') expect(h.registry.archivedSessionIds).toEqual([history.id])
   })
 
-  it('refuses a non-empty Workspace list and newly persisted history', async () => {
+  it('refuses while a Workspace exists and is eligible again once the registry is empty', async () => {
     const h = await firstUse()
     const explicit = await h.registry.create(h.directoryRoot)
     await expect(h.registry.initializeDefault(h.resolveDirectory)).resolves.toBeUndefined()
+    expect(h.resolveDirectory).not.toHaveBeenCalled()
     await h.registry.delete(explicit.id)
     h.setSessions([header('arrived')])
-    await expect(h.registry.initializeDefault(h.resolveDirectory)).resolves.toBeUndefined()
+    // Persistent history does not veto creation: without any Workspace the
+    // product would otherwise open with nothing selectable.
+    expect(await h.registry.initializeDefault(h.resolveDirectory)).toBeDefined()
   })
 
   it('fails on a same-path file and remains eligible after it is removed', async () => {
@@ -1429,28 +1435,15 @@ describe('first-use Workspace preparation', () => {
     expect((await h.registry.initializeDefault(h.resolveDirectory))?.path).toBe(path)
   })
 
-  it.each(['persisted', 'live'] as const)('refuses registration when a %s Session appears during directory preparation', async (kind) => {
-    const h = await firstUse()
-    const arrived = header('arrived-during-preparation')
-    if (kind === 'persisted') {
-      h.list.mockResolvedValueOnce([]).mockResolvedValueOnce([
-        { header: arrived, revision: SessionPersistenceRevision('arrived-revision') },
-      ])
-    } else {
-      vi.spyOn(h.ctx.sessions, 'list').mockReturnValueOnce([]).mockReturnValueOnce([{ header: arrived }] as never)
-    }
-    await expect(h.registry.initializeDefault(h.resolveDirectory)).resolves.toBeUndefined()
-    expect(h.registry.list()).toEqual([])
-    expect(storedState(h.pool).defaultWorkspaceId).toBeUndefined()
-  })
-
-  it('does not infer an empty live Session store when the peer is unavailable', async () => {
+  it('initializes without the Session store peer', async () => {
     const h = await harness()
     contexts.push(h.ctx)
-    const resolveDirectory = vi.fn(async () => { throw new Error('unexpected directory lookup') })
-    await expect(h.registry.initializeDefault(resolveDirectory)).rejects.toThrow('Session store')
-    expect(resolveDirectory).not.toHaveBeenCalled()
-    expect(storedState(h.pool).defaultWorkspaceId).toBeUndefined()
+    const root = await makeDir('no-session-store')
+    const created = await h.registry.initializeDefault(async () => ({
+      path: join(root, 'Workspace'),
+      title: 'Workspace',
+    }))
+    expect(created?.path).toBe(await realpath(join(root, 'Workspace')))
   })
 
   it('rolls back a failed final marker write and allows a retry', async () => {

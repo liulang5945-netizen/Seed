@@ -10,11 +10,11 @@ Status: implemented
 
 ## Decision
 
-启动时等待完整的 Workspace 和 Session 基线。两份列表均为空时，Client 请求 Host 准备默认 Workspace，随后创建或复用并选中其空白 Session。Session 存在前不可输入，之后使用常规 composer 流程。[Session scope 与供给通道](../architecture/2026-07-25-web-client-session-scope-and-provide-channel.zh.md)负责 blank Session 复用与供给通道的理由。
+启动时等待完整的 Workspace 和 Session 基线。Workspace 列表为空时，Client 请求 Host 准备默认 Workspace，随后创建或复用并选中其空白 Session。Session 存在前不可输入，之后使用常规 composer 流程。[Session scope 与供给通道](../architecture/2026-07-25-web-client-session-scope-and-provide-channel.zh.md)负责 blank Session 复用与供给通道的理由。
 
-[Workspace registry](../../../../packages/workspace/workspace/README.zh.md#first-use-workspace)负责资格判断和目录准备。所有 live Session、持久化 header 和已归档身份都计入判断，包括侧栏中不可见的条目。操作共用 registry 修改队列，并在目录准备后重新检查 Session 历史，因为 Session 可以独立启动。
+[Workspace registry](../../../../packages/workspace/workspace/README.zh.md#first-use-workspace)负责资格判断和目录准备：资格即注册表为空，且 [Session 历史不再否决准备](2026-09-23-first-use-eligibility-ignores-session-history.zh.md)。操作运行在注册表修改队列内，该队列串行化每一次 Workspace 写入。
 
-Client 在启动时按其语言解析初始目录名和标题。Host 控制器解析 Documents 位置；注册表接收不依赖 locale 的目录解析器。解析器仅在允许创建时于变更队列内运行，因此重复请求直接复用持久化的 Workspace，无需再次查询操作系统目录。持久化 Workspace id 独立于名称记录初始化成功。改名、切换语言、重启或删除登记均不能再次初始化默认工作区。标记与登记一起提交，因此登记失败可以重试。目录内容仍遵循已有的[仅删除元数据策略](2026-07-27-workspace-registration-deletion.zh.md)。
+Client 在启动时按其语言解析初始目录名和标题。Host 控制器解析 Documents 位置；注册表接收不依赖 locale 的目录解析器。解析器仅在允许创建时于变更队列内运行，因此重复请求直接复用持久化的 Workspace，无需再次查询操作系统目录。持久化 Workspace id 独立于名称记录初始化成功。改名或切换语言不能再次初始化默认工作区。删除登记会在同一次写入中清除该身份，启动时也会清除「Workspace 已不在表中」的持久身份，因此后续满足条件的准备会重建一个默认工作区，而不是留下「无可选工作区」。标记与登记一起提交，因此登记失败可以重试。目录内容仍遵循已有的[仅删除元数据策略](2026-07-27-workspace-registration-deletion.zh.md)。
 
 不符合首次使用条件时不返回 Workspace，也不显示失败弹窗。准备失败时提供现有文件夹选择器；后续列表通知不会触发启动流程重试。成功的登记会在 Session 创建或提示词发送失败后保留。选中默认或手动选择的 Workspace 均不会提交消息。
 

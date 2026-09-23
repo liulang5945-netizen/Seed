@@ -3535,9 +3535,9 @@ export const SERVICE_API: readonly ServiceApiEntry[] = [
       },
       {
         signature: 'initializeDefault(resolveDirectory: () => Promise<{ path: string; title: string }>): Promise<Workspace | undefined>',
-        description: 'Initialize the default Workspace only while both the registry and Session history are empty. Repeated requests reuse its durable identity; deleting that registration drops the identity with it, so the next eligible preparation creates a replacement default Workspace rather than leaving the product with nothing selectable.',
+        description: 'Initialize the default Workspace while the registry holds no Workspace at all. Session history never vetoes creation: a registry without any Workspace leaves the product with nothing selectable and, on a host whose directory picker is unavailable, no way back — so the default Workspace is the recovery. Sessions that cannot join it (a different working directory, or none at all) stay ungrouped. Repeated requests reuse its durable identity; deleting that registration drops the identity with it, so the next eligible preparation creates a replacement default Workspace.',
         parameters: [{ name: 'resolveDirectory', description: 'resolve the absolute directory and initial title; called only for eligible creation, inside the registry mutation queue. Missing directories are created recursively before registration. After resolution, caller cancellation does not roll back creation or registration.' }],
-        returns: 'the initialized Workspace, or undefined when automatic creation is ineligible.',
+        returns: 'the initialized Workspace, or undefined while a Workspace already exists.',
       },
       {
         signature: 'get(id: WorkspaceId): Workspace | undefined',

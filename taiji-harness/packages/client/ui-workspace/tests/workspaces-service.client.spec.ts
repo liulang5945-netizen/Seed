@@ -357,11 +357,24 @@ describe('UiWorkspaceService', () => {
     expect(b.notify).not.toHaveBeenCalled()
   })
 
-  it('requires explicit selection when the startup Session list contains history', async () => {
-    const b = bench({ workspaces: workspaceState(), sessions: sessionState([summary('history')]) })
-    await setImmediate()
-    expect(b.workspaces.initializeDefault).not.toHaveBeenCalled()
-    expect(b.sessions.create).not.toHaveBeenCalled()
+  it('prepares the default Workspace even when the startup Session list contains history', async () => {
+    const b = bench({ language: 'en', configureWorkspaces: (workspaces) => {
+      workspaces.initializeDefault.mockImplementation(async () => {
+        const item = workspace('default')
+        workspaces.list.set(workspaceState([item]))
+        return item
+      })
+    } })
+    b.sessions.list.set(sessionState([summary('history')]))
+    b.workspaces.list.set(workspaceState())
+    await vi.waitFor(() => {
+      expect(b.sessions.retain).toHaveBeenCalledExactlyOnceWith(sid('created-default'), { source: 'mainView' })
+    })
+    expect(b.workspaces.initializeDefault).toHaveBeenCalledExactlyOnceWith(
+      { directoryName: 'Default workspace', title: 'Default workspace' },
+      expect.any(AbortSignal),
+    )
+    expect(b.sessions.create).toHaveBeenCalledWith({ workspaceId: wid('default') })
   })
 
   it('publishes a startup directory failure once without creating a Session', async () => {
