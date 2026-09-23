@@ -21,6 +21,9 @@ importers:
 
   .:
     devDependencies:
+      '@stylistic/eslint-plugin':
+        specifier: ^5.10.0
+        version: 5.10.0(eslint@10.5.0(jiti@2.7.0))
       '@taiji/dsh-agent':
         specifier: workspace:^
         version: link:packages/core/agent
@@ -63,9 +66,6 @@ importers:
       '@taiji/dsh-web-fetch-http':
         specifier: workspace:^
         version: link:packages/web/web-fetch-http
-      '@stylistic/eslint-plugin':
-        specifier: ^5.10.0
-        version: 5.10.0(eslint@10.5.0(jiti@2.7.0))
       '@testing-library/dom':
         specifier: ^10.4.1
         version: 10.4.2
@@ -569,6 +569,12 @@ importers:
         specifier: ^8.21.0
         version: 8.21.0
     devDependencies:
+      '@electron/get':
+        specifier: ^5.1.0
+        version: 5.1.0(supports-color@9.4.0)
+      '@electron/notarize':
+        specifier: 2.5.0
+        version: 2.5.0
       '@taiji/dsh-app-boot':
         specifier: workspace:^
         version: link:../../packages/boot/app-boot
@@ -593,12 +599,6 @@ importers:
       '@taiji/node-addon-system':
         specifier: workspace:^
         version: link:../../native/system/packages/entry
-      '@electron/get':
-        specifier: ^5.1.0
-        version: 5.1.0(supports-color@9.4.0)
-      '@electron/notarize':
-        specifier: 2.5.0
-        version: 2.5.0
       '@types/js-yaml':
         specifier: ^4.0.9
         version: 4.0.9
@@ -1566,12 +1566,12 @@ importers:
 
   packages/boot/app-boot:
     dependencies:
-      '@taiji/dsh-package-manifest':
-        specifier: workspace:^
-        version: link:../../util/package-manifest
       '@eslint-community/regexpp':
         specifier: ^4.12.2
         version: 4.12.2
+      '@taiji/dsh-package-manifest':
+        specifier: workspace:^
+        version: link:../../util/package-manifest
       ajv:
         specifier: ^8.20.0
         version: 8.20.0
@@ -1907,6 +1907,9 @@ importers:
       '@taiji/dsh-llm-retry':
         specifier: workspace:^
         version: link:../../llm/llm-retry
+      '@taiji/dsh-llm-taiji':
+        specifier: workspace:^
+        version: link:../../llm/llm-taiji
       '@taiji/dsh-mcp-resources':
         specifier: workspace:^
         version: link:../../mcp/mcp-resources
@@ -2632,6 +2635,9 @@ importers:
         specifier: ^11.0.0
         version: 11.0.4
     devDependencies:
+      '@deepseek-ai/libreoffice-kit':
+        specifier: 0.0.1
+        version: 0.0.1
       '@taiji/cordis':
         specifier: workspace:^
         version: link:../../../vendor/cordis
@@ -2665,9 +2671,6 @@ importers:
       '@taiji/dsh-typert-registry':
         specifier: workspace:^
         version: link:../../typert/registry
-      '@deepseek-ai/libreoffice-kit':
-        specifier: 0.0.1
-        version: 0.0.1
 
   packages/client/connection:
     dependencies:
@@ -3241,6 +3244,21 @@ importers:
         specifier: link:../../../vendor/schemastery
         version: link:../../../vendor/schemastery
     devDependencies:
+      '@lexical/headless':
+        specifier: ^0.49.0
+        version: 0.49.0(typescript@6.0.3)
+      '@lexical/history':
+        specifier: ^0.49.0
+        version: 0.49.0(typescript@6.0.3)
+      '@lexical/plain-text':
+        specifier: ^0.49.0
+        version: 0.49.0(typescript@6.0.3)
+      '@lexical/text':
+        specifier: ^0.49.0
+        version: 0.49.0(typescript@6.0.3)
+      '@lexical/utils':
+        specifier: ^0.49.0
+        version: 0.49.0(typescript@6.0.3)
       '@taiji/cordis':
         specifier: workspace:^
         version: link:../../../vendor/cordis
@@ -3337,21 +3355,6 @@ importers:
       '@taiji/dsh-workspace':
         specifier: workspace:^
         version: link:../../workspace/workspace
-      '@lexical/headless':
-        specifier: ^0.49.0
-        version: 0.49.0(typescript@6.0.3)
-      '@lexical/history':
-        specifier: ^0.49.0
-        version: 0.49.0(typescript@6.0.3)
-      '@lexical/plain-text':
-        specifier: ^0.49.0
-        version: 0.49.0(typescript@6.0.3)
-      '@lexical/text':
-        specifier: ^0.49.0
-        version: 0.49.0(typescript@6.0.3)
-      '@lexical/utils':
-        specifier: ^0.49.0
-        version: 0.49.0(typescript@6.0.3)
       '@types/react':
         specifier: ~18.3.1
         version: 18.3.31
@@ -4154,6 +4157,9 @@ importers:
 
   packages/client/ui-primitives:
     devDependencies:
+      '@shikijs/langs':
+        specifier: ^4.3.1
+        version: 4.3.1
       '@taiji/cordis':
         specifier: workspace:^
         version: link:../../../vendor/cordis
@@ -4163,9 +4169,6 @@ importers:
       '@taiji/dsh-util-workspace-path':
         specifier: workspace:^
         version: link:../../util/workspace-path
-      '@shikijs/langs':
-        specifier: ^4.3.1
-        version: 4.3.1
       '@types/mdast':
         specifier: ^4.0.4
         version: 4.0.4
@@ -4948,6 +4951,12 @@ importers:
         specifier: link:../../../vendor/schemastery
         version: link:../../../vendor/schemastery
     devDependencies:
+      '@fortune-sheet/core':
+        specifier: 1.0.4
+        version: 1.0.4(patch_hash=488dad2a7648b7d4df31f6bd776b7849fd0fb85be8f1acf268efff758caba3c0)
+      '@fortune-sheet/react':
+        specifier: 1.0.4
+        version: 1.0.4(patch_hash=c17549e117c8fb99f408497c1e84292c21f25516fb762a32518f91b4d9ab0f04)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@taiji/cordis':
         specifier: workspace:^
         version: link:../../../vendor/cordis
@@ -5008,12 +5017,6 @@ importers:
       '@taiji/dsh-util-workspace-path':
         specifier: workspace:^
         version: link:../../util/workspace-path
-      '@fortune-sheet/core':
-        specifier: 1.0.4
-        version: 1.0.4(patch_hash=488dad2a7648b7d4df31f6bd776b7849fd0fb85be8f1acf268efff758caba3c0)
-      '@fortune-sheet/react':
-        specifier: 1.0.4
-        version: 1.0.4(patch_hash=c17549e117c8fb99f408497c1e84292c21f25516fb762a32518f91b4d9ab0f04)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@testing-library/react':
         specifier: ^16.1.0
         version: 16.3.2(@testing-library/dom@10.4.2)(@types/react-dom@18.3.7(@types/react@18.3.31))(@types/react@18.3.31)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -6750,15 +6753,15 @@ importers:
 
   packages/document/office-to-pdf:
     dependencies:
+      '@deepseek-ai/libreoffice-kit':
+        specifier: 0.0.1
+        version: 0.0.1
       '@taiji/dsh-brand':
         specifier: workspace:^
         version: link:../../util/brand
       '@taiji/dsh-typert-protocol':
         specifier: workspace:^
         version: link:../../typert/protocol
-      '@deepseek-ai/libreoffice-kit':
-        specifier: 0.0.1
-        version: 0.0.1
       '@taiji/schemastery':
         specifier: link:../../../vendor/schemastery
         version: link:../../../vendor/schemastery
@@ -7020,12 +7023,12 @@ importers:
 
   packages/experimental/browser-use-playwright-mcp:
     dependencies:
-      '@taiji/dsh-experimental-browser-use-runtime':
-        specifier: workspace:^
-        version: link:../browser-use-runtime
       '@playwright/mcp':
         specifier: 0.0.80
         version: 0.0.80
+      '@taiji/dsh-experimental-browser-use-runtime':
+        specifier: workspace:^
+        version: link:../browser-use-runtime
     devDependencies:
       '@taiji/cordis':
         specifier: workspace:^
@@ -7127,6 +7130,9 @@ importers:
       '@browserbasehq/stagehand':
         specifier: 4.1.0
         version: 4.1.0
+      '@puppeteer/browsers':
+        specifier: 3.2.2
+        version: 3.2.2(yauzl@3.4.0)
       '@taiji/dsh-experimental-browser-use-runtime':
         specifier: workspace:^
         version: link:../browser-use-runtime
@@ -7142,9 +7148,6 @@ importers:
       '@taiji/schemastery':
         specifier: link:../../../vendor/schemastery
         version: link:../../../vendor/schemastery
-      '@puppeteer/browsers':
-        specifier: 3.2.2
-        version: 3.2.2(yauzl@3.4.0)
       zod:
         specifier: ^4.4.3
         version: 4.4.3
@@ -7662,15 +7665,15 @@ importers:
 
   packages/experimental/webworker-runtime:
     dependencies:
+      '@noble/hashes':
+        specifier: ^2.3.0
+        version: 2.3.0
       '@taiji/dsh-client-web':
         specifier: workspace:^
         version: link:../../client/web
       '@taiji/dsh-util-crypto':
         specifier: workspace:^
         version: link:../../util/crypto
-      '@noble/hashes':
-        specifier: ^2.3.0
-        version: 2.3.0
       '@yarnpkg/parsers':
         specifier: ^3.1.0
         version: 3.1.0
@@ -8677,9 +8680,6 @@ importers:
 
   packages/host/product-telemetry-otel:
     dependencies:
-      '@taiji/schemastery':
-        specifier: link:../../../vendor/schemastery
-        version: link:../../../vendor/schemastery
       '@opentelemetry/api':
         specifier: ^1.9.1
         version: 1.9.1
@@ -8701,6 +8701,9 @@ importers:
       '@opentelemetry/sdk-logs':
         specifier: ^0.220.0
         version: 0.220.0(@opentelemetry/api@1.9.1)
+      '@taiji/schemastery':
+        specifier: link:../../../vendor/schemastery
+        version: link:../../../vendor/schemastery
     devDependencies:
       '@taiji/cordis':
         specifier: workspace:^
@@ -9127,6 +9130,9 @@ importers:
 
   packages/llm/llm-pi-ai:
     dependencies:
+      '@earendil-works/pi-ai':
+        specifier: ^0.85.1
+        version: 0.85.1(patch_hash=b9bcce474fb2ac44633dff0fa722816a5bff5451b4575d5874035ea14ba70a4f)(@modelcontextprotocol/sdk@1.29.0(zod@4.4.3))(ws@8.21.0)(zod@4.4.3)
       '@taiji/dsh-brand':
         specifier: workspace:^
         version: link:../../util/brand
@@ -9136,9 +9142,6 @@ importers:
       '@taiji/schemastery':
         specifier: link:../../../vendor/schemastery
         version: link:../../../vendor/schemastery
-      '@earendil-works/pi-ai':
-        specifier: ^0.85.1
-        version: 0.85.1(patch_hash=b9bcce474fb2ac44633dff0fa722816a5bff5451b4575d5874035ea14ba70a4f)(@modelcontextprotocol/sdk@1.29.0(zod@4.4.3))(ws@8.21.0)(zod@4.4.3)
     devDependencies:
       '@taiji/cordis':
         specifier: workspace:^
@@ -9237,6 +9240,31 @@ importers:
       '@taiji/dsh-tools':
         specifier: workspace:^
         version: link:../../core/tools
+
+  packages/llm/llm-taiji:
+    dependencies:
+      '@taiji/cosmokit':
+        specifier: link:../../../vendor/cosmokit
+        version: link:../../../vendor/cosmokit
+      '@taiji/schemastery':
+        specifier: link:../../../vendor/schemastery
+        version: link:../../../vendor/schemastery
+    devDependencies:
+      '@taiji/cordis':
+        specifier: workspace:^
+        version: link:../../../vendor/cordis
+      '@taiji/cordis-plugin-include':
+        specifier: workspace:^
+        version: link:../../../vendor/include
+      '@taiji/cordis-plugin-loader':
+        specifier: workspace:^
+        version: link:../../../vendor/loader
+      '@taiji/dsh-llm':
+        specifier: workspace:^
+        version: link:../llm
+      '@taiji/dsh-settings':
+        specifier: workspace:^
+        version: link:../../settings/settings
 
   packages/llm/plugin-package-inventory-deepseek:
     dependencies:
@@ -9415,16 +9443,28 @@ importers:
 
   packages/mcp/mcp-client:
     dependencies:
+      '@modelcontextprotocol/client':
+        specifier: 2.0.0
+        version: 2.0.0
       '@taiji/dsh-util-values':
         specifier: workspace:^
         version: link:../../util/values
       '@taiji/schemastery':
         specifier: link:../../../vendor/schemastery
         version: link:../../../vendor/schemastery
-      '@modelcontextprotocol/client':
+    devDependencies:
+      '@modelcontextprotocol/node':
+        specifier: 2.0.0
+        version: 2.0.0(@modelcontextprotocol/server@2.0.0)(hono@4.12.29)
+      '@modelcontextprotocol/server':
         specifier: 2.0.0
         version: 2.0.0
-    devDependencies:
+      '@modelcontextprotocol/server-everything':
+        specifier: ^2026.7.4
+        version: 2026.7.4
+      '@modelcontextprotocol/server-filesystem':
+        specifier: ^2026.7.4
+        version: 2026.7.10(zod@4.4.3)
       '@taiji/cordis':
         specifier: workspace:^
         version: link:../../../vendor/cordis
@@ -9458,18 +9498,6 @@ importers:
       '@taiji/dsh-tools':
         specifier: workspace:^
         version: link:../../core/tools
-      '@modelcontextprotocol/node':
-        specifier: 2.0.0
-        version: 2.0.0(@modelcontextprotocol/server@2.0.0)(hono@4.12.29)
-      '@modelcontextprotocol/server':
-        specifier: 2.0.0
-        version: 2.0.0
-      '@modelcontextprotocol/server-everything':
-        specifier: ^2026.7.4
-        version: 2026.7.4
-      '@modelcontextprotocol/server-filesystem':
-        specifier: ^2026.7.4
-        version: 2026.7.10(zod@4.4.3)
       zod:
         specifier: ^4.4.3
         version: 4.4.3
@@ -10505,9 +10533,6 @@ importers:
 
   packages/session/session-telemetry-otel:
     dependencies:
-      '@taiji/schemastery':
-        specifier: link:../../../vendor/schemastery
-        version: link:../../../vendor/schemastery
       '@opentelemetry/api':
         specifier: ^1.9.1
         version: 1.9.1
@@ -10526,6 +10551,9 @@ importers:
       '@opentelemetry/sdk-logs':
         specifier: ^0.220.0
         version: 0.220.0(@opentelemetry/api@1.9.1)
+      '@taiji/schemastery':
+        specifier: link:../../../vendor/schemastery
+        version: link:../../../vendor/schemastery
     devDependencies:
       '@taiji/cordis':
         specifier: workspace:^
@@ -11732,15 +11760,15 @@ importers:
       '@anthropic-ai/sdk':
         specifier: 0.93.0
         version: 0.93.0(zod@4.4.3)
+      '@modelcontextprotocol/sdk':
+        specifier: ^1.29.0
+        version: 1.29.0(zod@4.4.3)
       '@taiji/dsh-brand':
         specifier: workspace:^
         version: link:../../util/brand
       '@taiji/schemastery':
         specifier: link:../../../vendor/schemastery
         version: link:../../../vendor/schemastery
-      '@modelcontextprotocol/sdk':
-        specifier: ^1.29.0
-        version: 1.29.0(zod@4.4.3)
       zod:
         specifier: ^4.4.3
         version: 4.4.3
@@ -11799,6 +11827,9 @@ importers:
 
   packages/subagent/subagent-codex:
     dependencies:
+      '@openai/codex':
+        specifier: 0.153.4
+        version: 0.153.4
       '@taiji/dsh-brand':
         specifier: workspace:^
         version: link:../../util/brand
@@ -11808,9 +11839,6 @@ importers:
       '@taiji/schemastery':
         specifier: link:../../../vendor/schemastery
         version: link:../../../vendor/schemastery
-      '@openai/codex':
-        specifier: 0.153.4
-        version: 0.153.4
     devDependencies:
       '@taiji/cordis':
         specifier: workspace:^
@@ -12896,15 +12924,15 @@ importers:
 
   packages/web/tool-web:
     dependencies:
+      '@joplin/turndown-plugin-gfm':
+        specifier: ^1.0.67
+        version: 1.0.67
       '@taiji/dsh-util-values':
         specifier: workspace:^
         version: link:../../util/values
       '@taiji/schemastery':
         specifier: link:../../../vendor/schemastery
         version: link:../../../vendor/schemastery
-      '@joplin/turndown-plugin-gfm':
-        specifier: ^1.0.67
-        version: 1.0.67
       turndown:
         specifier: ^7.2.4
         version: 7.2.4
@@ -13107,15 +13135,15 @@ importers:
 
   packages/webhook/webhook-github:
     dependencies:
+      '@octokit/webhooks':
+        specifier: ^14.2.0
+        version: 14.2.0
       '@taiji/dsh-util-values':
         specifier: workspace:^
         version: link:../../util/values
       '@taiji/schemastery':
         specifier: link:../../../vendor/schemastery
         version: link:../../../vendor/schemastery
-      '@octokit/webhooks':
-        specifier: ^14.2.0
-        version: 14.2.0
     devDependencies:
       '@taiji/cordis':
         specifier: workspace:^
@@ -13814,6 +13842,9 @@ importers:
 
   vendor/cordis:
     dependencies:
+      '@standard-schema/spec':
+        specifier: ^1.1.0
+        version: 1.1.0
       '@taiji/cordis-plugin-include':
         specifier: workspace:^
         version: link:../include
@@ -13823,9 +13854,6 @@ importers:
       '@taiji/cosmokit':
         specifier: link:../cosmokit
         version: link:../cosmokit
-      '@standard-schema/spec':
-        specifier: ^1.1.0
-        version: 1.1.0
 
   vendor/cosmokit: {}
 
@@ -13919,12 +13947,12 @@ importers:
 
   vendor/schemastery:
     dependencies:
-      '@taiji/cosmokit':
-        specifier: link:../cosmokit
-        version: link:../cosmokit
       '@standard-schema/spec':
         specifier: ^1.1.0
         version: 1.1.0
+      '@taiji/cosmokit':
+        specifier: link:../cosmokit
+        version: link:../cosmokit
 
   vendor/timer:
     dependencies:
@@ -18590,13 +18618,9 @@ packages:
     deprecated: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
     hasBin: true
 
-  glob@7.2.0:
-    resolution: {integrity: sha512-lmLf6gtyrPq8tTjSmrO94wBeQbFR3HbLHbuyD69wuyQkImp2hWqMGB47OX65FBkPffO641IP9jWa1z4ivqG26Q==}
-    deprecated: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
-
   glob@7.2.3:
     resolution: {integrity: sha512-nFR0zLpU2YCaRxwoCJvL6UvCH2JFyFVIvwTLsIf21AuHlMskA1hhTdk+LlYJtOlYt9v6dvszD2BGRqBL+iQK9Q==}
-    deprecated: Glob versions prior to v9 are no longer supported
+    deprecated: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
 
   global-agent@3.0.0:
     resolution: {integrity: sha512-PT6XReJ+D07JvGoxQMkT6qji/jVNfX/h364XHZOWeRzy64sSFr+xJ5OX7LI3b4MPQzdL4H8Y8M0xzPpsVMwA8Q==}
@@ -26008,15 +26032,6 @@ snapshots:
       package-json-from-dist: 1.0.1
       path-scurry: 1.11.1
 
-  glob@7.2.0:
-    dependencies:
-      fs.realpath: 1.0.0
-      inflight: 1.0.6
-      inherits: 2.0.4
-      minimatch: 3.1.5
-      once: 1.4.0
-      path-is-absolute: 1.0.1
-
   glob@7.2.3:
     dependencies:
       fs.realpath: 1.0.0
@@ -27750,7 +27765,7 @@ snapshots:
 
   rimraf@2.6.3:
     dependencies:
-      glob: 7.2.0
+      glob: 7.2.3
 
   roarr@2.15.4:
     dependencies:

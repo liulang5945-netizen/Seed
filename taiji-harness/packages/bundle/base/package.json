@@ -61,6 +61,7 @@
     "@taiji/dsh-llm": "workspace:^",
     "@taiji/dsh-llm-deepseek": "workspace:^",
     "@taiji/dsh-llm-pi-ai": "workspace:^",
+    "@taiji/dsh-llm-taiji": "workspace:^",
     "@taiji/dsh-llm-retry": "workspace:^",
     "@taiji/dsh-mcp-resources": "workspace:^",
     "@taiji/dsh-permission-presets": "workspace:^",

@@ -397,6 +397,7 @@
       "@taiji/dsh-llm-replay": ["./packages/test-support/llm-replay/src"],
       "@taiji/dsh-llm-retry": ["./packages/llm/llm-retry/src"],
       "@taiji/dsh-llm-retry/invariant": ["./packages/llm/llm-retry/src/invariant.ts"],
+      "@taiji/dsh-llm-taiji": ["./packages/llm/llm-taiji/src"],
       "@taiji/dsh-loader-smoke": ["./packages/test-support/loader-smoke/src"],
       "@taiji/dsh-lsp": ["./packages/lsp/lsp/src"],
       "@taiji/dsh-lsp-stdio": ["./packages/lsp/lsp-stdio/src"],

@@ -523,3 +523,12 @@
     # choice.
     - id: llm-deepseek
       name: '@taiji/dsh-llm-deepseek'
+
+    # The Taiji local-runtime adapter: this fork's own language organ mounted as
+    # one more provider route beside DeepSeek. The endpoint defaults to the
+    # runtime's local address and no credential is involved, so the route has no
+    # config here. The route exists on the LLM registry only while the runtime's
+    # own `GET /api/health` reports it able to serve; a runtime that is merely
+    # still loading stays registered so its request records the real outcome.
+    - id: llm-taiji
+      name: '@taiji/dsh-llm-taiji'
