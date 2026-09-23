@@ -113,6 +113,7 @@ def run_training(
     max_symbols: int | None = None,
     resume_checkpoint: Path | str | None = None,
     device: str | torch.device = "cpu",
+    keep_history: Path | str | None = None,
 ) -> dict[str, float]:
     """Stream the corpus through ``Seed.observe`` with periodic persistence."""
 
@@ -125,6 +126,9 @@ def run_training(
     progress_path = Path(progress_path)
     checkpoint_path.parent.mkdir(parents=True, exist_ok=True)
     progress_path.parent.mkdir(parents=True, exist_ok=True)
+    if keep_history is not None:
+        keep_history = Path(keep_history)
+        keep_history.mkdir(parents=True, exist_ok=True)
 
     model = Seed(config, device=resolve_device(device), episode_id="seed-corpus")
     if resume_checkpoint is not None:
@@ -141,6 +145,12 @@ def run_training(
             extra={"trainer": "train_seed_corpus"},
         )
         atomic_save(envelope, checkpoint_path)
+        # 2026-09-23：**保号存档**。此前 `--checkpoint-every` 反复覆盖同一个文件，
+        # 于是"训练中途某个 tick 的状态"直接消失——后来才想到要量的指标（例如槽可分离性）
+        # 连事后补算都做不到，只剩首尾两个端点。这里每次落盘**额外**写一份带 tick 的快照；
+        # 主路径 `checkpoint_path` 的行为一字不变（兼容既有工具与流程）。
+        if keep_history is not None:
+            atomic_save(envelope, keep_history / f"checkpoint_{int(model.tick):012d}.pt")
 
     started = time.perf_counter()
     # 续训时以模型自身 tick 为基线：进度统计与检查点节奏（% checkpoint_every）
@@ -236,6 +246,18 @@ def main() -> None:
     )
     parser.add_argument("--resume", default=None)
     parser.add_argument(
+        "--keep-checkpoints",
+        choices=("on", "off"),
+        default="on",
+        help="保号存档：每次落盘额外写一份 checkpoint_<tick>.pt（默认开）。"
+        "关掉它会退回「反复覆盖同一个文件」的旧行为——那样后来才想到的指标无法事后补算。",
+    )
+    parser.add_argument(
+        "--checkpoint-history-dir",
+        default=None,
+        help="保号存档目录；缺省为 <--checkpoint>.history/",
+    )
+    parser.add_argument(
         "--receptors-factored",
         action="store_true",
         help="R2 组合绑定实验：把 BytePredictiveContext.receptors 改成按两半分块。"
@@ -271,6 +293,12 @@ def main() -> None:
         config = SeedConfig(taiji=taiji_config)
         max_symbols = args.max_symbols
 
+    history_dir = None
+    if args.keep_checkpoints == "on":
+        history_dir = Path(args.checkpoint_history_dir) if args.checkpoint_history_dir else (
+            Path(args.checkpoint + ".history")
+        )
+
     if args.receptors_factored:
         # 只在 struct-on 臂上打开。关着的时候连 config 都不多一个键的不同取值（默认 False）。
         config = replace(config, taiji=replace(config.taiji, receptors_factored=True))
@@ -286,6 +314,7 @@ def main() -> None:
         max_symbols=max_symbols,
         resume_checkpoint=args.resume,
         device=args.device,
+        keep_history=history_dir,
     )
     print(json.dumps(summary, ensure_ascii=False))
 
