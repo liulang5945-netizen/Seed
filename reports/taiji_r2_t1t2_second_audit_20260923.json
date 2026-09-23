@@ -1,0 +1,58 @@
+{
+  "determinism": {
+    "identical_sections": false,
+    "differing_sections": [
+      "cognitive_state",
+      "identity_organ",
+      "state"
+    ]
+  },
+  "f6_sensitivity": {
+    "six_families": {
+      "tick0": {
+        "1_activity_block": 0.630292,
+        "2_trace_block": 0.725584,
+        "3_context": 0.64166,
+        "4_context_trace": 0.676704,
+        "5_readout_dist": 0.619838
+      },
+      "trained_16m": {
+        "1_activity_block": 0.458602,
+        "2_trace_block": 0.57656,
+        "3_context": 0.419656,
+        "4_context_trace": 0.519856,
+        "5_readout_dist": 0.458688
+      },
+      "delta": {
+        "1_activity_block": -0.17169,
+        "2_trace_block": -0.149024,
+        "3_context": -0.222004,
+        "4_context_trace": -0.156848,
+        "5_readout_dist": -0.16115
+      }
+    },
+    "five_families_no_f6": {
+      "tick0": {
+        "1_activity_block": 0.630292,
+        "2_trace_block": 0.718384,
+        "3_context": 0.582693,
+        "4_context_trace": 0.676704,
+        "5_readout_dist": 0.574403
+      },
+      "trained_16m": {
+        "1_activity_block": 0.425494,
+        "2_trace_block": 0.533034,
+        "3_context": 0.343858,
+        "4_context_trace": 0.449985,
+        "5_readout_dist": 0.295866
+      },
+      "delta": {
+        "1_activity_block": -0.204798,
+        "2_trace_block": -0.18535,
+        "3_context": -0.238835,
+        "4_context_trace": -0.226719,
+        "5_readout_dist": -0.278537
+      }
+    }
+  }
+}
