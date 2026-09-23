@@ -909,6 +909,10 @@ export const TYPE_LINK_EXEMPTIONS: Readonly<Record<string, string>> = {
   TerminalFrame: 'Browser terminal stream frames are owned by packages/api/terminal-controller/README.md',
   TerminalRetentionFrame: 'Browser terminal window holds are owned by packages/api/terminal-controller/README.md',
   WebTerminalId: 'Browser terminal identity is owned by packages/api/terminal-controller/README.md',
+  DeleteSessionOptions: 'session deletion options are owned by packages/workspace/workspace/src/index.ts',
+  SessionPersistenceDeleteOptions: 'session deletion options are owned by packages/session/session-persistence/src/index.ts',
+  WorkspaceDeleteSessionRequest: 'Host session deletion request is owned by packages/api/workspace-controller/src/types.ts',
+  WorkspaceDeleteSessionValue: 'Host session deletion result is owned by packages/api/workspace-controller/src/types.ts',
 }
 
 /** Repository data policy consumed by the Cordis catalog projector. */

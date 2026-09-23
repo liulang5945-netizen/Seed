@@ -245,6 +245,7 @@ export class WorkspaceRegistry extends Service {
 
     await this.recoverPendingMutation()
     this.validateStoredState(this.state)
+    await this.healStaleDefaultIdentity()
     if (!this.state.initialized) {
       const headers = await this.listStoredHeaders()
       await this.replaceHeaderIndex(headers)
@@ -286,7 +287,9 @@ export class WorkspaceRegistry extends Service {
   /**
    * Initialize the default Workspace only while both the registry and Session
    * history are empty. Repeated requests reuse its durable identity; deleting
-   * that registration permanently disables automatic creation.
+   * that registration drops the identity with it, so the next eligible
+   * preparation creates a replacement default Workspace rather than leaving
+   * the product with nothing selectable.
    * @param resolveDirectory - resolve the absolute directory and initial title;
    * called only for eligible creation, inside the registry mutation queue.
    * Missing directories are created recursively before registration.
@@ -341,7 +344,9 @@ export class WorkspaceRegistry extends Service {
    * Delete one workspace registration while retaining its directory and every
    * session log. The durable order is updated before the table deletion; a
    * failed table write restores the prior order and keeps the entity
-   * published. Unknown ids are an idempotent no-op for domain callers.
+   * published. Deleting the Workspace the durable default identity names
+   * clears that identity in the same write, so the marker can never outlive
+   * its Workspace. Unknown ids are an idempotent no-op for domain callers.
    * @param id - Workspace registration to remove.
    * @returns `true` when a record was deleted, `false` when it was unknown.
    */
@@ -714,12 +719,16 @@ export class WorkspaceRegistry extends Service {
     const entity = this.entities.get(id)
     if (entity === undefined) return false
     const state = this.requireState()
-    const nextState = {
+    const nextState: WorkspaceDomainState = {
       ...state,
       pendingMutation: undefined,
       initialized: true,
       workspaceIds: state.workspaceIds.filter(workspaceId => workspaceId !== id),
     }
+    // The default identity is a relation to a row, not a free-standing flag: a
+    // marker naming a deleted Workspace cannot be told apart from corrupt
+    // state and would keep automatic creation pinned to a dead identity.
+    if (nextState.defaultWorkspaceId === id) delete nextState.defaultWorkspaceId
     await this.setState({
       ...nextState,
       pendingMutation: { operation: 'delete', workspaceId: id },
@@ -754,6 +763,28 @@ export class WorkspaceRegistry extends Service {
       )
     }
     return true
+  }
+
+  /**
+   * Drop a durable default identity whose Workspace is absent from the table.
+   * State written before deletion cleared the identity could survive as
+   * "initialized, no Workspaces, stale identity", which is the one shape where
+   * the product opens with nothing selectable and no automatic way back:
+   * `initializeDefault` silently returns undefined for the dead id. The write
+   * path makes the relation an invariant, so a survivor is corruption or
+   * legacy media and is repaired once, loudly.
+   */
+  private async healStaleDefaultIdentity(): Promise<void> {
+    const state = this.requireState()
+    const id = state.defaultWorkspaceId
+    if (id === undefined || this.requireTable().get(id) !== undefined) return
+    this.ctx.logger.warn(
+      `workspace: stored default Workspace '${id}' is absent from the registry; `
+      + 'clearing the stale identity so first-use preparation can run again',
+    )
+    const repaired: WorkspaceDomainState = { ...state }
+    delete repaired.defaultWorkspaceId
+    await this.setState(repaired)
   }
 
   /**

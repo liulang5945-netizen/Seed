@@ -38,6 +38,8 @@ interface HarnessOptions {
   liveSessions?: SessionHeader[]
   sessionStore?: boolean
   backend?: StorageBackend
+  /** Runs after the storage peers exist and before the registry starts, so a test can observe startup logging. */
+  beforeInit?: (ctx: Context) => void
 }
 
 /** Boot the real storage/domain/registry composition over controllable header-only peers. */
@@ -73,6 +75,7 @@ async function harness(options: HarnessOptions = {}) {
 
   const changes: DomainChanged[] = []
   ctx.on('domain/changed', (change) => { changes.push(change) })
+  options.beforeInit?.(ctx)
   const fiber = await ctx.plugin(WorkspaceRegistry)
   const initChanges = [...changes]
   changes.length = 0
@@ -1355,18 +1358,43 @@ describe('first-use Workspace preparation', () => {
     expect(storedState(h.pool).defaultWorkspaceId).toBeUndefined()
   })
 
-  it('keeps the initialization marker across deletion and restart', async () => {
+  it('clears the default identity with its Workspace so first-use preparation runs again', async () => {
     const h = await firstUse()
     const workspace = (await h.registry.initializeDefault(h.resolveDirectory))!
     await workspace.setTitle('Renamed')
     expect((await h.registry.initializeDefault(h.resolveDirectory))?.title).toBe('Renamed')
     await h.registry.delete(workspace.id)
+    // A durable default identity must never name a Workspace that is gone:
+    // the leftover marker is indistinguishable from a corrupt state and pins
+    // automatic creation to a dead identity.
+    expect(storedState(h.pool).defaultWorkspaceId).toBeUndefined()
     await h.ctx.fiber.dispose()
+
     const restarted = await firstUse({ pool: h.pool })
-    await expect(restarted.registry.initializeDefault(restarted.resolveDirectory)).resolves.toBeUndefined()
-    expect(storedState(h.pool).defaultWorkspaceId).toBe(workspace.id)
     expect(restarted.registry.list()).toEqual([])
-    expect(restarted.resolveDirectory).not.toHaveBeenCalled()
+    const recreated = await restarted.registry.initializeDefault(restarted.resolveDirectory)
+    expect(recreated?.path).toBe(await realpath(join(h.directoryRoot, 'nested', 'Workspace')))
+    expect(recreated?.id).not.toBe(workspace.id)
+    expect(storedState(h.pool).defaultWorkspaceId).toBe(recreated?.id)
+  })
+
+  it('heals a stored default identity whose Workspace is missing', async () => {
+    const stale = WorkspaceId('00000000-0000-4000-8000-0000000000ff')
+    const pool = storedPool([], {
+      initialized: true,
+      workspaceIds: [],
+      defaultWorkspaceId: stale,
+    })
+    let warn = vi.fn()
+    const h = await firstUse({
+      pool,
+      beforeInit: (ctx) => { warn = vi.spyOn(ctx.logger, 'warn').mockImplementation(() => {}) },
+    })
+
+    expect(warn).toHaveBeenCalledWith(expect.stringContaining(stale))
+    expect(storedState(pool).defaultWorkspaceId).toBeUndefined()
+    const created = await h.registry.initializeDefault(h.resolveDirectory)
+    expect(created?.path).toBe(await realpath(join(h.directoryRoot, 'nested', 'Workspace')))
   })
 
   it.each(['persisted', 'live', 'archived'] as const)('refuses automatic creation for a %s cwd-less Session', async (kind) => {

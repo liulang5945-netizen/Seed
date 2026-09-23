@@ -408,6 +408,18 @@ abstract stat(id: SessionId, options?: SessionPersistenceStatOptions): Promise<S
  * @returns one snapshot per stored session.
  */
 abstract list(options?: SessionPersistenceListOptions): Promise<readonly SessionPersistenceSnapshot[]>
+
+/**
+ * Physically remove one stored session's artifacts. The session stops
+ * existing: later `stat`/`list`/`open` observe nothing for the id, and the
+ * log is not recoverable through this service.
+ * @param id - the stored session to remove.
+ * @param options - optional cancellation.
+ * @throws {SessionAlreadyOwnedError} while an active write handle in this
+ *   process, or a cross-process writer, holds the session.
+ * @throws {SessionPersistenceNotFoundError} when the session does not exist.
+ */
+abstract delete(id: SessionId, options?: SessionPersistenceDeleteOptions): Promise<void>
 ```
 
 Types: [SessionId](core.md)

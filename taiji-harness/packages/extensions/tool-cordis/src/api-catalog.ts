@@ -1968,6 +1968,12 @@ export const SERVICE_API: readonly ServiceApiEntry[] = [
         parameters: [{ name: 'options', description: 'optional cancellation.' }],
         returns: 'one snapshot per stored session.',
       },
+      {
+        signature: 'abstract delete(id: SessionId, options?: SessionPersistenceDeleteOptions): Promise<void>',
+        description: 'Physically remove one stored session\'s artifacts. The session stops existing: later `stat`/`list`/`open` observe nothing for the id, and the log is not recoverable through this service.',
+        parameters: [{ name: 'id', description: 'the stored session to remove.' }, { name: 'options', description: 'optional cancellation.' }],
+        throws: ['{SessionAlreadyOwnedError} while an active write handle in this process, or a cross-process writer, holds the session.', '{SessionPersistenceNotFoundError} when the session does not exist.'],
+      },
     ],
   },
   {
@@ -3453,6 +3459,12 @@ export const SERVICE_API: readonly ServiceApiEntry[] = [
         returns: 'the complete resulting archive set.',
       },
       {
+        signature: '@Remote(\'deleteSession\') deleteSession(request: WorkspaceDeleteSessionRequest): Promise<WorkspaceDeleteSessionValue>',
+        description: 'Delete one Session physically, including its log artifacts, and forget its Workspace accounting. A live Session refuses as `workspace/session-open`; without `stopActivity` running work refuses as `workspace/session-active` with the reported activity.',
+        parameters: [{ name: 'request', description: 'Session identity to delete and whether to stop its work.' }],
+        returns: 'the complete resulting archive and pin sets.',
+      },
+      {
         signature: '@Remote(\'pinSession\') pinSession(request: WorkspacePinSessionRequest): Promise<WorkspacePinValue>',
         description: 'Surface one known unarchived Session ahead of unpinned Sessions.',
         parameters: [{ name: 'request', description: 'Session identity to pin.' }],
@@ -3523,7 +3535,7 @@ export const SERVICE_API: readonly ServiceApiEntry[] = [
       },
       {
         signature: 'initializeDefault(resolveDirectory: () => Promise<{ path: string; title: string }>): Promise<Workspace | undefined>',
-        description: 'Initialize the default Workspace only while both the registry and Session history are empty. Repeated requests reuse its durable identity; deleting that registration permanently disables automatic creation.',
+        description: 'Initialize the default Workspace only while both the registry and Session history are empty. Repeated requests reuse its durable identity; deleting that registration drops the identity with it, so the next eligible preparation creates a replacement default Workspace rather than leaving the product with nothing selectable.',
         parameters: [{ name: 'resolveDirectory', description: 'resolve the absolute directory and initial title; called only for eligible creation, inside the registry mutation queue. Missing directories are created recursively before registration. After resolution, caller cancellation does not roll back creation or registration.' }],
         returns: 'the initialized Workspace, or undefined when automatic creation is ineligible.',
       },
@@ -3541,7 +3553,7 @@ export const SERVICE_API: readonly ServiceApiEntry[] = [
       },
       {
         signature: 'delete(id: WorkspaceId): Promise<boolean>',
-        description: 'Delete one workspace registration while retaining its directory and every session log. The durable order is updated before the table deletion; a failed table write restores the prior order and keeps the entity published. Unknown ids are an idempotent no-op for domain callers.',
+        description: 'Delete one workspace registration while retaining its directory and every session log. The durable order is updated before the table deletion; a failed table write restores the prior order and keeps the entity published. Deleting the Workspace the durable default identity names clears that identity in the same write, so the marker can never outlive its Workspace. Unknown ids are an idempotent no-op for domain callers.',
         parameters: [{ name: 'id', description: 'Workspace registration to remove.' }],
         returns: '`true` when a record was deleted, `false` when it was unknown.',
       },
@@ -3562,6 +3574,12 @@ export const SERVICE_API: readonly ServiceApiEntry[] = [
         description: 'Unarchive one session durably by dropping it from the registry-global archive set; the accounting slot was never touched, so the session returns to its recorded position. Unarchiving runs no session-existence check because removing an id cannot introduce an unknown one, so an entry whose session is gone still resolves. An id that is not archived resolves without writing.',
         parameters: [{ name: 'sessionId', description: 'The session to unarchive.' }],
         returns: 'resolution after durability.',
+      },
+      {
+        signature: 'deleteSession(sessionId: SessionId, options: DeleteSessionOptions = {}): Promise<void>',
+        description: 'Delete one session physically and forget its registry accounting. The session must exist (live or in session persistence). A session this Host still holds live is closed first through closeSessionForDelete: its Agent cancels the running work, settles, flushes, and releases the storage write ownership, so the log removal does not fight a writer. A session no provider can close stays refused with WorkspaceOpenSessionError. Without `stopActivity` the session must then also be inactive: the `workspace/session-activity` waterfall is asked once, and any reported activity rejects with WorkspaceActiveSessionError before anything is written. With `stopActivity` the providers stop the session\'s work before the removal, so no wake they induce can still address the session while its log exists.\n\nThe durable write drops the session from the archive and pin sets in one global-state write and from its owning Workspace\'s record; a crash between those writes leaves only a benign leftover (an archived id whose session is gone, or a record slot the cwd filter drops), so no pending-mutation marker is needed. The storage owner\'s `sessionPersistence.delete` then removes the log artifacts; its not-found refusal after the accounting write resolves the deletion (a concurrent external removal already produced the asked-for state). A failing storage delete propagates and leaves the session ungrouped — the accounting removal is not rolled back, and a retry converges.',
+        parameters: [{ name: 'sessionId', description: 'The session to delete.' }, { name: 'options', description: 'Whether running work is stopped instead of refusing.' }],
+        returns: 'resolution after the accounting write and the log removal.',
       },
       {
         signature: 'pinSession(sessionId: SessionId): Promise<void>',
@@ -4196,6 +4214,14 @@ export const EVENT_API: readonly EventApiEntry[] = [
     parameters: [{ name: 'request', description: 'the session about to be archived.' }, { name: 'next', description: 'delegate to the remaining providers.' }],
   },
   {
+    name: 'workspace/session-close',
+    mode: 'parallel',
+    signature: '\'workspace/session-close\'(request: SessionActivityRequest): Promise<void> | void',
+    summary: 'Close a Session the caller is deleting while this Host still holds it live.',
+    description: 'Close a Session the caller is deleting while this Host still holds it live. The provider that owns the Session\'s Agent is the only one that can tear it down, so it stops the running work, waits for it to settle, flushes the log, and releases the Agent\'s storage write ownership; only then can the registry remove the log. The registry awaits every listener and re-checks liveness: a Session no provider closed stays refused with WorkspaceOpenSessionError, so a foreign owner — subagent routing, or a provider that is not composed — keeps its Session. A rejection is logged by the registry rather than replacing that refusal.',
+    parameters: [{ name: 'request', description: 'the session about to be deleted.' }],
+  },
+  {
     name: 'workspace/session-stop',
     mode: 'parallel',
     signature: '\'workspace/session-stop\'(request: SessionActivityRequest): Promise<void> | void',
@@ -4774,6 +4800,10 @@ export const TYPE_API: readonly TypeApiEntry[] = [
   {
     name: 'DeepSeekLlmApiJson',
     declaration: 'export type DeepSeekLlmApiJson = null | boolean | number | string | DeepSeekLlmApiJson[] | {\n    [key: string]: DeepSeekLlmApiJson;\n};',
+  },
+  {
+    name: 'DeleteSessionOptions',
+    declaration: 'export interface DeleteSessionOptions {\n    readonly stopActivity?: boolean;\n}',
   },
   {
     name: 'DeveloperMessage',
@@ -6308,6 +6338,10 @@ export const TYPE_API: readonly TypeApiEntry[] = [
     declaration: 'export interface SessionPersistenceCreateOptions {\n    readonly signal?: AbortSignal;\n    readonly inheritedEventCount?: SessionLogOffset;\n}',
   },
   {
+    name: 'SessionPersistenceDeleteOptions',
+    declaration: 'export interface SessionPersistenceDeleteOptions {\n    readonly signal?: AbortSignal;\n}',
+  },
+  {
     name: 'SessionPersistenceListOptions',
     declaration: 'export interface SessionPersistenceListOptions {\n    readonly signal?: AbortSignal;\n}',
   },
@@ -7626,6 +7660,14 @@ export const TYPE_API: readonly TypeApiEntry[] = [
   {
     name: 'WorkspaceDeleteRequest',
     declaration: 'export interface WorkspaceDeleteRequest {\n    readonly workspaceId: WorkspaceId;\n}',
+  },
+  {
+    name: 'WorkspaceDeleteSessionRequest',
+    declaration: 'export interface WorkspaceDeleteSessionRequest {\n    readonly sessionId: SessionId;\n    readonly stopActivity?: boolean;\n}',
+  },
+  {
+    name: 'WorkspaceDeleteSessionValue',
+    declaration: 'export interface WorkspaceDeleteSessionValue {\n    readonly archivedSessionIds: readonly SessionId[];\n    readonly pinnedSessionIds: readonly SessionId[];\n}',
   },
   {
     name: 'WorkspaceDeleteValue',

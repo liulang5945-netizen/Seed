@@ -389,6 +389,16 @@ Host service backing the generated `ctx.remote.workspace` namespace.
 @Remote('unarchiveSession') unarchiveSession(request: WorkspaceUnarchiveSessionRequest): Promise<WorkspaceArchiveValue>
 
 /**
+ * Delete one Session physically, including its log artifacts, and forget
+ * its Workspace accounting. A live Session refuses as
+ * `workspace/session-open`; without `stopActivity` running work refuses as
+ * `workspace/session-active` with the reported activity.
+ * @param request - Session identity to delete and whether to stop its work.
+ * @returns the complete resulting archive and pin sets.
+ */
+@Remote('deleteSession') deleteSession(request: WorkspaceDeleteSessionRequest): Promise<WorkspaceDeleteSessionValue>
+
+/**
  * Surface one known unarchived Session ahead of unpinned Sessions.
  * @param request - Session identity to pin.
  * @returns the complete resulting pin set, most recently pinned first.
@@ -494,7 +504,9 @@ async create(path: string, title?: string): Promise<Workspace>
 /**
  * Initialize the default Workspace only while both the registry and Session
  * history are empty. Repeated requests reuse its durable identity; deleting
- * that registration permanently disables automatic creation.
+ * that registration drops the identity with it, so the next eligible
+ * preparation creates a replacement default Workspace rather than leaving
+ * the product with nothing selectable.
  * @param resolveDirectory - resolve the absolute directory and initial title;
  * called only for eligible creation, inside the registry mutation queue.
  * Missing directories are created recursively before registration.
@@ -522,7 +534,9 @@ list(): Workspace[]
  * Delete one workspace registration while retaining its directory and every
  * session log. The durable order is updated before the table deletion; a
  * failed table write restores the prior order and keeps the entity
- * published. Unknown ids are an idempotent no-op for domain callers.
+ * published. Deleting the Workspace the durable default identity names
+ * clears that identity in the same write, so the marker can never outlive
+ * its Workspace. Unknown ids are an idempotent no-op for domain callers.
  * @param id - Workspace registration to remove.
  * @returns `true` when a record was deleted, `false` when it was unknown.
  */
@@ -567,6 +581,37 @@ archiveSession(sessionId: SessionId, options: ArchiveSessionOptions = {}): Promi
  * @returns resolution after durability.
  */
 unarchiveSession(sessionId: SessionId): Promise<void>
+
+/**
+ * Delete one session physically and forget its registry accounting. The
+ * session must exist (live or in session persistence). A session this Host
+ * still holds live is closed first through {@link closeSessionForDelete}:
+ * its Agent cancels the running work, settles, flushes, and releases the
+ * storage write ownership, so the log removal does not fight a writer. A
+ * session no provider can close stays refused with
+ * {@link WorkspaceOpenSessionError}. Without `stopActivity` the session
+ * must then also be inactive: the `workspace/session-activity` waterfall is
+ * asked once, and any reported activity rejects with
+ * {@link WorkspaceActiveSessionError} before anything is written. With
+ * `stopActivity` the providers stop the session's work before the removal,
+ * so no wake they induce can still address the session while its log
+ * exists.
+ *
+ * The durable write drops the session from the archive and pin sets in one
+ * global-state write and from its owning Workspace's record; a crash between
+ * those writes leaves only a benign leftover (an archived id whose session
+ * is gone, or a record slot the cwd filter drops), so no pending-mutation
+ * marker is needed. The storage owner's `sessionPersistence.delete` then
+ * removes the log artifacts; its not-found refusal after the accounting
+ * write resolves the deletion (a concurrent external removal already
+ * produced the asked-for state). A failing storage delete propagates and
+ * leaves the session ungrouped — the accounting removal is not rolled back,
+ * and a retry converges.
+ * @param sessionId - The session to delete.
+ * @param options - Whether running work is stopped instead of refusing.
+ * @returns resolution after the accounting write and the log removal.
+ */
+deleteSession(sessionId: SessionId, options: DeleteSessionOptions = {}): Promise<void>
 
 /**
  * Pin one session durably, prepending it to the registry-global pin set.
@@ -623,6 +668,32 @@ Ask the composed providers what still runs for a session before it is archived. 
  * @mode waterfall
  */
 'workspace/session-activity'( request: SessionActivityRequest, next: () => Promise<readonly SessionActivity[]>, ): Promise<readonly SessionActivity[]>
+```
+
+Source: [`packages/workspace/workspace/src/index.ts`](../../packages/workspace/workspace/src/index.ts)
+
+<a id="workspacesession-close--parallel"></a>
+
+#### `workspace/session-close` — parallel
+
+Close a Session the caller is deleting while this Host still holds it live. The provider that owns the Session's Agent is the only one that can tear it down, so it stops the running work, waits for it to settle, flushes the log, and releases the Agent's storage write ownership; only then can the registry remove the log. The registry awaits every listener and re-checks liveness: a Session no provider closed stays refused with WorkspaceOpenSessionError, so a foreign owner — subagent routing, or a provider that is not composed — keeps its Session. A rejection is logged by the registry rather than replacing that refusal.
+
+```ts cordis-catalog
+/**
+ * Close a Session the caller is deleting while this Host still holds it
+ * live. The provider that owns the Session's Agent is the only one that
+ * can tear it down, so it stops the running work, waits for it to settle,
+ * flushes the log, and releases the Agent's storage write ownership; only
+ * then can the registry remove the log. The registry awaits every
+ * listener and re-checks liveness: a Session no provider closed stays
+ * refused with {@link WorkspaceOpenSessionError}, so a foreign owner —
+ * subagent routing, or a provider that is not composed — keeps its
+ * Session. A rejection is logged by the registry rather than replacing
+ * that refusal.
+ * @param request - the session about to be deleted.
+ * @mode parallel
+ */
+'workspace/session-close'(request: SessionActivityRequest): Promise<void> | void
 ```
 
 Source: [`packages/workspace/workspace/src/index.ts`](../../packages/workspace/workspace/src/index.ts)
