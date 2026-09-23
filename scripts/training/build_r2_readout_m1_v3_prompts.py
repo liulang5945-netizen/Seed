@@ -51,7 +51,13 @@ def sha256_of(path: Path) -> str:
     return digest.hexdigest()
 
 
-def extract() -> dict[str, Any]:
+def extract(offset_within_stride: int = 0) -> dict[str, Any]:
+    """``offset_within_stride`` 把等距抽样的相位挪一段。
+
+    0 ⇒ v3 主集；``stride // 2`` ⇒ 与主集**不相交**的复制集（同一个总体、同样的密度）。
+    两个集合都由这一条规则决定，所以"复制集是不是被挑过的"这个问题不成立：挪一个常数而已。
+    """
+
     rows: list[tuple[int, int, str]] = []  # (row_index, byte_offset, text)
     offset = 0
     with CORPUS.open("r", encoding="utf-8") as handle:
@@ -67,7 +73,11 @@ def extract() -> dict[str, Any]:
     if not rows:
         raise SystemExit("可用区间为空：抽题规则与语料不匹配，拒跑而不是产出空集")
     stride = max(1, len(rows) // PROMPT_COUNT)
-    picked = rows[::stride][:PROMPT_COUNT]
+    if not 0 <= offset_within_stride < stride:
+        raise SystemExit(
+            f"相位偏移必须在 [0, {stride}) 内——超出就会与主集重叠（本件要求复制集不相交）"
+        )
+    picked = rows[offset_within_stride::stride][:PROMPT_COUNT]
     if len(picked) < PROMPT_COUNT:
         raise SystemExit(f"只抽到 {len(picked)} 条（要 {PROMPT_COUNT} 条），规则不成立，拒跑")
 
@@ -84,7 +94,7 @@ def extract() -> dict[str, Any]:
     return {
         "format": "r2-readout-m1-v3-prompts-v1",
         "built_at_utc": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
-        "purpose": "M1 功效补足的未见题面集（机械抽取，无人工挑选）",
+        "purpose": "M1 未见题面集（机械抽取，无人工挑选）；相位 0 为主集，stride//2 为复制集",
         "source": {
             "corpus": str(CORPUS.relative_to(PROJECT_ROOT).as_posix()),
             "corpus_sha256": sha256_of(CORPUS),
@@ -95,11 +105,13 @@ def extract() -> dict[str, Any]:
             "first_eligible_row_index": rows[0][0],
             "eligible_rows": len(rows),
             "stride": stride,
+            "offset_within_stride": offset_within_stride,
             "count": PROMPT_COUNT,
             "prompt_chars": PROMPT_CHARS,
             "note": (
                 "行内累计偏移 = Σ(len(text.encode())+1)，与 p3b 血缘清单的 emitted_symbols 口径一致；"
-                "题面取前 N 个字符（字符口径，不切多字节）"
+                "题面取前 N 个字符（字符口径，不切多字节）；"
+                "新一条见第 (offset_within_stride + stride*k) 行"
             ),
         },
         "outside_training_window": True,
@@ -110,6 +122,12 @@ def extract() -> dict[str, Any]:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--out", default=str(OUT))
+    parser.add_argument(
+        "--offset",
+        type=int,
+        default=0,
+        help="等距抽样的相位；0 = 主集，stride//2 = 与主集不相交的复制集（须显式给）",
+    )
     args = parser.parse_args()
     out = Path(args.out)
     if not out.is_absolute():
@@ -117,7 +135,7 @@ def main() -> int:
     if out.exists():
         parser.error(f"{out} already exists; 封存的题面集不覆写（要换就换文件名并另立预注册）")
 
-    payload = extract()
+    payload = extract(args.offset)
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(

@@ -1,0 +1,1143 @@
+{
+  "format": "r2-readout-m1-v3-prompts-v1",
+  "built_at_utc": "2026-09-23T02:34:53Z",
+  "purpose": "M1 未见题面集（机械抽取，无人工挑选）；相位 0 为主集，stride//2 为复制集",
+  "source": {
+    "corpus": "data/p3b_all_fresh.jsonl",
+    "corpus_sha256": "a21bfcef93566acd80a0591b0e387b0dff54ebbbfeeefa6fdd7d0405dd0403ad",
+    "lineage_manifest": "plans/manifests/p3b_all_fresh_manifest.json"
+  },
+  "rule": {
+    "eligible_offset_min": 16000000,
+    "first_eligible_row_index": 4026,
+    "eligible_rows": 25850,
+    "stride": 161,
+    "offset_within_stride": 80,
+    "count": 160,
+    "prompt_chars": 32,
+    "note": "行内累计偏移 = Σ(len(text.encode())+1)，与 p3b 血缘清单的 emitted_symbols 口径一致；题面取前 N 个字符（字符口径，不切多字节）；新一条见第 (offset_within_stride + stride*k) 行"
+  },
+  "outside_training_window": true,
+  "prompts": [
+    {
+      "id": "v3-000",
+      "row_index": 4106,
+      "byte_offset": 16541743,
+      "prompt": "作者：契诃夫\n\n九岁的凡卡·茹科夫，三个月前给送到鞋匠阿里亚希涅",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-001",
+      "row_index": 4267,
+      "byte_offset": 16971221,
+      "prompt": "在古文中，“象”不仅仅是特指大象，还指更广泛的形象、形态。例如，",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-002",
+      "row_index": 4428,
+      "byte_offset": 17308039,
+      "prompt": "另一个常用的词汇“便宜”，代表价格低廉。商场打折时，我们常说“便",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-003",
+      "row_index": 4589,
+      "byte_offset": 17642517,
+      "prompt": "首先，“斯”常用于表达某种明确的指向，比如在“斯人”一词中，意指",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-004",
+      "row_index": 4750,
+      "byte_offset": 17971928,
+      "prompt": "比如，形容关系紧密，我们常用的词语是“巩固”。在工作中，团队的凝",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-005",
+      "row_index": 4911,
+      "byte_offset": 18301885,
+      "prompt": "首先，谓字所蕴含的“称谓”概念为我们日常生活增添了许多条理和层次",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-006",
+      "row_index": 5072,
+      "byte_offset": 18632293,
+      "prompt": "从文字的构造上看，“耳”是一个象形字，看起来像是一个人的侧面耳朵",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-007",
+      "row_index": 5233,
+      "byte_offset": 18959521,
+      "prompt": "首先，“玩”有多种含义。最常见的是指游戏或消遣。例如，我们常说的",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-008",
+      "row_index": 5394,
+      "byte_offset": 19284534,
+      "prompt": "除此之外，“乏力”也常见，表达的是没有力气，像是你连续爬了三十层",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-009",
+      "row_index": 5555,
+      "byte_offset": 19603640,
+      "prompt": "首先，“焦”最直接的含义是指物质因为加热过度而变黑甚至变脆的状态",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-010",
+      "row_index": 5716,
+      "byte_offset": 19922826,
+      "prompt": "在日常生活中，我们经常使用“夹”字。比如，当你用筷子夹菜时，需要",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-011",
+      "row_index": 5877,
+      "byte_offset": 20246541,
+      "prompt": "这个字还可以组成许多相关的词语。例如，“饥饿”是一种比“饿”更为",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-012",
+      "row_index": 6038,
+      "byte_offset": 20559088,
+      "prompt": "在更广泛的使用中，“萌”被用来形容任何事物的初生和发展阶段。无论",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-013",
+      "row_index": 6199,
+      "byte_offset": 20874032,
+      "prompt": "“尸”这个字的本义是指人的身体，特别是指死者的身体。在古老的文化",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-014",
+      "row_index": 6360,
+      "byte_offset": 21188041,
+      "prompt": "在人类情感中，“畏”可以分成多种形式。比如畏惧，它常指对某种威胁",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-015",
+      "row_index": 6521,
+      "byte_offset": 21502178,
+      "prompt": "古人常说“谦受益，满招损”，意思是谦虚能让人不断进步，而骄傲自满",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-016",
+      "row_index": 6682,
+      "byte_offset": 21816630,
+      "prompt": "在传统的神话故事和民间信仰中，也常有“魄”的应用。例如，在人去世",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-017",
+      "row_index": 6843,
+      "byte_offset": 22127875,
+      "prompt": "再者，“煞”字在表示程度时，常用于极限词汇。例如，“美煞了”、“",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-018",
+      "row_index": 7004,
+      "byte_offset": 22438260,
+      "prompt": "闺秀，是对古代受过良好教育的女子的称谓，代表着才华与德行兼备的女",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-019",
+      "row_index": 7165,
+      "byte_offset": 22747701,
+      "prompt": "一个常见的词语“湍急”，形容水流急速，常见于峡谷、瀑布等地。湍急",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-020",
+      "row_index": 7326,
+      "byte_offset": 23060596,
+      "prompt": "在更抽象的层面，\"撩\"扩展到了人与人之间的互动，尤其是一般用在表",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-021",
+      "row_index": 7487,
+      "byte_offset": 23371778,
+      "prompt": "一个常见的与“锭”相关的词是“金锭”。金锭在古代和现代都是一种贵",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-022",
+      "row_index": 7648,
+      "byte_offset": 23682976,
+      "prompt": "从另一个角度来看，“苓”不仅是某类植物的代称，它还象征着顽强的生",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-023",
+      "row_index": 7809,
+      "byte_offset": 23994213,
+      "prompt": "首先，“瞿”有关于眼睛的意思。在某些文学作品中，这个字常用来形容",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-024",
+      "row_index": 7970,
+      "byte_offset": 24308126,
+      "prompt": "在历史文献中，我们常常看到“红缨枪”这个词汇，指的是在枪头装饰有",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-025",
+      "row_index": 8131,
+      "byte_offset": 24611559,
+      "prompt": "在宗教场所中，龛常用来安置神像，比如置于庙宇内的佛龛，里面供奉着",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-026",
+      "row_index": 8292,
+      "byte_offset": 24920332,
+      "prompt": "蚶类动物在中国人的日常生活中并不陌生。作为餐桌上的美味佳肴，它被",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-027",
+      "row_index": 8453,
+      "byte_offset": 25227344,
+      "prompt": "泥鳅是一种特别的淡水小鱼，擅长在泥沙中穿行，经常被认为是生活能力",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-028",
+      "row_index": 8614,
+      "byte_offset": 25530790,
+      "prompt": "通过这个字，我们可以延伸出很多表示碰撞、冲击和大声响动的词语。比",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-029",
+      "row_index": 8775,
+      "byte_offset": 25838546,
+      "prompt": "首先，俪字的构成可以追溯到很久以前，左边是“亻”，表示与人有关。",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-030",
+      "row_index": 8936,
+      "byte_offset": 26145237,
+      "prompt": "嵋字由“山”和“眉”两个部分构成，“山”意在体现巍峨的大山，而“",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-031",
+      "row_index": 9097,
+      "byte_offset": 26454699,
+      "prompt": "“惇”字本身，就是敦厚、笃实的象征。在人际交往中，我们常常以“惇",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-032",
+      "row_index": 9258,
+      "byte_offset": 26762927,
+      "prompt": "在古代诗文中，“鸢”常常被用来描写自由、远见和力量。例如，“九万",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-033",
+      "row_index": 9419,
+      "byte_offset": 27070664,
+      "prompt": "在实际应用中，我们会将一套书籍或是官方文献用帙来保存。这就像是给",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-034",
+      "row_index": 9580,
+      "byte_offset": 27375954,
+      "prompt": "首先，提到“叟”，不禁让人联想到乡村田野里，拄着拐杖，在夕阳下缓",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-035",
+      "row_index": 9741,
+      "byte_offset": 27684831,
+      "prompt": "在人们的日常应用中，“湧”常常被用来描绘某种力量或情感的突然爆发",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-036",
+      "row_index": 9902,
+      "byte_offset": 28088723,
+      "prompt": "首先，我们谈谈阿根廷的社会结构。阿根廷社会是一个多民族、多文化的",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-037",
+      "row_index": 10063,
+      "byte_offset": 28545905,
+      "prompt": "从小我们或许就听闻过水手的故事，不外乎惊涛骇浪中与大自然抗争的英",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-038",
+      "row_index": 10224,
+      "byte_offset": 28988454,
+      "prompt": "从哲学的角度来看，意识引发了无数的思考和争论。古希腊哲学家柏拉图",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-039",
+      "row_index": 10385,
+      "byte_offset": 29429062,
+      "prompt": "说起老子，《道德经》是他留给世人的瑰宝。全书仅五千余字，却涵盖了",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-040",
+      "row_index": 10546,
+      "byte_offset": 29839723,
+      "prompt": "1988年，赫斯特将一条真实的鲨鱼用甲醛溶液浸泡，展示在英国伦敦",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-041",
+      "row_index": 10707,
+      "byte_offset": 30261391,
+      "prompt": "《胡桃夹子》由俄国作曲家柴可夫斯基于1892年谱曲，根据德国作家",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-042",
+      "row_index": 10868,
+      "byte_offset": 30687521,
+      "prompt": "波斯地毯发源于古代波斯帝国，也就是今日的伊朗。制作地毯是一门经过",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-043",
+      "row_index": 11029,
+      "byte_offset": 31106732,
+      "prompt": "1931年，这座宏伟的建筑在经济大萧条期间拔地而起，以其创纪录的",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-044",
+      "row_index": 11190,
+      "byte_offset": 31523287,
+      "prompt": "防毒面具的主要作用是保护我们免受有毒气体、烟雾或有害微颗粒的侵害",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-045",
+      "row_index": 11351,
+      "byte_offset": 31954354,
+      "prompt": "想象一下，在一个寒冷的早晨，你趿拉着鞋子去买早餐，咖啡店的服务员",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-046",
+      "row_index": 11512,
+      "byte_offset": 32381657,
+      "prompt": "这种反应可能源于一种常见却鲜为人知的心理障碍，名为节肢恐惧症（A",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-047",
+      "row_index": 11673,
+      "byte_offset": 32816714,
+      "prompt": "沙滩网球，这个结合了网球和沙滩排球的运动，不仅仅是为了娱乐，它还",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-048",
+      "row_index": 11834,
+      "byte_offset": 33218650,
+      "prompt": "干煸四季豆可以说是色香味俱全的绝佳代表，制作过程虽然看似简单，却",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-049",
+      "row_index": 11995,
+      "byte_offset": 33623629,
+      "prompt": "阿拉伯烤饼，或称“皮塔饼”，是一种平而圆的面包，烘烤时其外皮会膨",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-050",
+      "row_index": 12156,
+      "byte_offset": 34029566,
+      "prompt": "β射线是一种具有一定穿透能力的射线，它是由衰变过程中放出的高速电",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-051",
+      "row_index": 12317,
+      "byte_offset": 34457605,
+      "prompt": "你知道吗？许多动物其实是高科技的天才。从最小的微生物到庞大的哺乳",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-052",
+      "row_index": 12478,
+      "byte_offset": 34891010,
+      "prompt": "让我们穿越时空，回到古代中国，一睹纸是如何一步步成为我们熟知的模",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-053",
+      "row_index": 12639,
+      "byte_offset": 35324195,
+      "prompt": "我们先从一个简单的例子开始。假设你在网上购买一本书。你在电脑前打",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-054",
+      "row_index": 12800,
+      "byte_offset": 35757910,
+      "prompt": "首先，节能家电如何帮助我们节省能源？新兴的节能技术通过各种方式显",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-055",
+      "row_index": 12961,
+      "byte_offset": 36227484,
+      "prompt": "让我们从一个办公场景想象开始。你正在公司策划一个项目，需要撰写一",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-056",
+      "row_index": 13122,
+      "byte_offset": 36653723,
+      "prompt": "想象一下，你在一个安静的湖边散步，突然有人丢下一块石头，水面上出",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-057",
+      "row_index": 13283,
+      "byte_offset": 37079765,
+      "prompt": "最先要提到的是，草本植物具有四季鲜明的特征。春天，万物复苏，它们",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-058",
+      "row_index": 13444,
+      "byte_offset": 37492210,
+      "prompt": "腕龙科，属于蜥脚下目（Sauropoda），是陆地上曾经存在过的",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-059",
+      "row_index": 13605,
+      "byte_offset": 37902071,
+      "prompt": "科学家们通过研究地震波和火山活动揭示了板块构造的奥秘。地球的最外",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-060",
+      "row_index": 13766,
+      "byte_offset": 38312264,
+      "prompt": "阴天的形成是一个复杂的气象过程，涉及空气中的水汽、温度变化以及气",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-061",
+      "row_index": 13927,
+      "byte_offset": 38724855,
+      "prompt": "仙女座，提及这个名字，你或许会立即联想到那幅被困在岩石上的希腊神",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-062",
+      "row_index": 14088,
+      "byte_offset": 39150112,
+      "prompt": "首先，让我们来聊聊狮子的家庭生活。狮子是少数具有社群生活的大型猫",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-063",
+      "row_index": 14249,
+      "byte_offset": 39562446,
+      "prompt": "谈到银河，我们不得不提到一些基础的天文学知识。银河系是一个庞大的",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-064",
+      "row_index": 14410,
+      "byte_offset": 39976790,
+      "prompt": "让我们从声音本质切入，通过感官中的“听”来解码猫咪的叫声。虽然猫",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-065",
+      "row_index": 14571,
+      "byte_offset": 40384968,
+      "prompt": "先举个最简单也最日常的例子。当我们分吃饭桌上的一块蛋糕时，第一个",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-066",
+      "row_index": 14732,
+      "byte_offset": 40799893,
+      "prompt": "先来说说阳台在日常生活中的基本功能。首先，阳台最基本的用途就是晾",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-067",
+      "row_index": 14893,
+      "byte_offset": 41226304,
+      "prompt": "说起音乐教室，我们常常首先想到的是那些五线谱和钢琴键盘的空间。但",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-068",
+      "row_index": 15054,
+      "byte_offset": 41640821,
+      "prompt": "绣花球，其实不是所有人想象中的软软的布球。它是一种传统的手工艺品",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-069",
+      "row_index": 15215,
+      "byte_offset": 42066813,
+      "prompt": "首先，宽容是一种对他人错误的理解和接受。想象一下，你的一位同事因",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-070",
+      "row_index": 15376,
+      "byte_offset": 42501553,
+      "prompt": "首先，舞蹈比赛是展示艺术与技术的完美结合。舞蹈中每一个旋转、每一",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-071",
+      "row_index": 15537,
+      "byte_offset": 42697886,
+      "prompt": "小朋友们，你们有没有听说过“投资”这个词呢？今天，我们就来聊聊什",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-072",
+      "row_index": 15698,
+      "byte_offset": 42880386,
+      "prompt": "活动策划师的任务就是为各种活动设计出完美的计划。无论是生日派对、",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-073",
+      "row_index": 15859,
+      "byte_offset": 43070392,
+      "prompt": "羞耻心是一种我们都会有的感觉，就像高兴、难过一样，是我们心里的情",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-074",
+      "row_index": 16020,
+      "byte_offset": 43267515,
+      "prompt": "很久以前，在中国的宋朝，有一位伟大的文学大师，他的名字叫欧阳修（",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-075",
+      "row_index": 16181,
+      "byte_offset": 43463463,
+      "prompt": "同学们，你们听说过箜篌（kōng hóu）吗？它是一种中国古代的",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-076",
+      "row_index": 16342,
+      "byte_offset": 43679532,
+      "prompt": "你喜欢看电影吗？无论是超级英雄打败坏蛋，还是勇敢的小女孩去寻找宝",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-077",
+      "row_index": 16503,
+      "byte_offset": 43884503,
+      "prompt": "庙会通常举办在寺庙或道观附近，因为古人相信这些地方有神灵庇佑。庙",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-078",
+      "row_index": 16664,
+      "byte_offset": 44077851,
+      "prompt": "小朋友们，你们知道吗？在遥远的法国巴黎，有一个既现代又神秘的建筑",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-079",
+      "row_index": 16825,
+      "byte_offset": 44278585,
+      "prompt": "首先，当我们在森林、公园或者野外游玩时，千万不要随便靠近或试图去",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-080",
+      "row_index": 16986,
+      "byte_offset": 44496719,
+      "prompt": "1. 做文明观众\n\n当你在体育场里观看比赛时，要做到文明有礼。不",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-081",
+      "row_index": 17147,
+      "byte_offset": 44699711,
+      "prompt": "小朋友们，你们知道什么是“投资回报”吗？让我们一起了解一下吧！\n",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-082",
+      "row_index": 17308,
+      "byte_offset": 44896374,
+      "prompt": "今天，我们来认识一位了不起的网球明星——玛丽亚·莎拉波娃。她不仅",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-083",
+      "row_index": 17469,
+      "byte_offset": 45092038,
+      "prompt": "首先，什么是苦瓜呢？苦瓜是一种绿色的蔬菜，外形像小小的黄瓜，但表",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-084",
+      "row_index": 17630,
+      "byte_offset": 45285494,
+      "prompt": "你知道日本人最喜欢的一种汤吗？那就是味噌汤！味噌汤在日本非常流行",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-085",
+      "row_index": 17791,
+      "byte_offset": 45499187,
+      "prompt": "小朋友们，你们知道吗？我们周围有许多小小的东西在悄悄地工作着，虽",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-086",
+      "row_index": 17952,
+      "byte_offset": 45700297,
+      "prompt": "每个人的身体都像一本非常特别的书，这本书里写满了我们所需的所有信",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-087",
+      "row_index": 18113,
+      "byte_offset": 45886935,
+      "prompt": "你有没有在厨房看到妈妈用搅拌器做蛋糕或其他美味的食物？那么，你有",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-088",
+      "row_index": 18274,
+      "byte_offset": 46081920,
+      "prompt": "同学们，你们知道吗？在很久很久以前，有一位聪明的科学家叫阿尔·海",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-089",
+      "row_index": 18435,
+      "byte_offset": 46269101,
+      "prompt": "你有没有注意过在城市里那些高高的建筑物是怎么建成的呢？这可是建筑",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-090",
+      "row_index": 18596,
+      "byte_offset": 46527079,
+      "prompt": "亲爱的小朋友们，你们好！今天我们来认识一种有趣的图形——梯形。梯",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-091",
+      "row_index": 18757,
+      "byte_offset": 46819990,
+      "prompt": "小朋友们，你们好！今天我们要来聊一聊什么是“数据解释”。听起来很",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-092",
+      "row_index": 18918,
+      "byte_offset": 46996236,
+      "prompt": "大家好！今天我们来一起了解一下蔬菜这个神奇的世界。蔬菜是我们每天",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-093",
+      "row_index": 19079,
+      "byte_offset": 47183832,
+      "prompt": "鳄鱼龙生活在大约1亿5千万年前的侏罗纪时期，比我们人类要早得多呢",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-094",
+      "row_index": 19240,
+      "byte_offset": 47366532,
+      "prompt": "冰川是什么呢？冰川是大片的积雪在多年积累之后形成的厚厚的冰层，就",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-095",
+      "row_index": 19401,
+      "byte_offset": 47535379,
+      "prompt": "小朋友们，我们一起来认识一下神奇的草原气候吧！草原是大自然中的一",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-096",
+      "row_index": 19562,
+      "byte_offset": 47715295,
+      "prompt": "生态位可以简单地理解为一种生物在生态系统中“住哪里”、“吃什么”",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-097",
+      "row_index": 19723,
+      "byte_offset": 47874039,
+      "prompt": "枫树还可以给我们带来甜甜的枫糖浆呢！在春天的时候，人们会从枫树中",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-098",
+      "row_index": 19884,
+      "byte_offset": 48007773,
+      "prompt": "腹部是个很神奇的地方，因为它里面“住”着很多重要的器官哦。比如，",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-099",
+      "row_index": 20045,
+      "byte_offset": 48152213,
+      "prompt": "小朋友们，你们好！今天我们要一起认识一个非常特别的数字——数字8",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-100",
+      "row_index": 20206,
+      "byte_offset": 48331074,
+      "prompt": "游戏时间对我们来说非常重要。它不仅让我们感到快乐，还能帮助我们学",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-101",
+      "row_index": 20367,
+      "byte_offset": 48503624,
+      "prompt": "首先，我们需要一些材料：面粉、白糖、鸡蛋、牛奶，还有黄油。我们还",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-102",
+      "row_index": 20528,
+      "byte_offset": 48659674,
+      "prompt": "果蔬条是用新鲜的水果和蔬菜做成的。它们可以是甜甜的苹果、香香的胡",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-103",
+      "row_index": 20689,
+      "byte_offset": 48817096,
+      "prompt": "惊恐是一种特殊的感觉，当我们遇到突如其来的事情，或者看到些让我们",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-104",
+      "row_index": 20850,
+      "byte_offset": 48979744,
+      "prompt": "小朋友们，你们知道吗？鼓是世界上最古老、最有趣的乐器之一呢！今天",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-105",
+      "row_index": 21011,
+      "byte_offset": 49118369,
+      "prompt": "答：\n小明购买3本书，每本书的花费是19元，所以总共花费的金额为",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-106",
+      "row_index": 21172,
+      "byte_offset": 49172618,
+      "prompt": "答： 小学生可以用图示的方式辅助解题。首先画出两家人家的宠物情况",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-107",
+      "row_index": 21333,
+      "byte_offset": 49229518,
+      "prompt": "答： \n首先，我们要先算出小明花了多少钱：12 元。\n然后，我们",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-108",
+      "row_index": 21494,
+      "byte_offset": 49289741,
+      "prompt": "答：\n1. 计算小明共有多少个水果：15个橙子+30个苹果=45",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-109",
+      "row_index": 21655,
+      "byte_offset": 49348074,
+      "prompt": "答：根据题意，可以列出算式：10 + 2 = ?，表示小明明天要",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-110",
+      "row_index": 21816,
+      "byte_offset": 49404435,
+      "prompt": "今天是星期五，那么明天是星期几呢？\n答：\n根据星期的顺序，星期五",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-111",
+      "row_index": 21977,
+      "byte_offset": 49461180,
+      "prompt": "答：\n小红有3杯水，每杯水有250毫升，那么她总共有水的数量为：",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-112",
+      "row_index": 22138,
+      "byte_offset": 49521412,
+      "prompt": "答： \n1. 先画出示意图，确定长方形的长和宽:\n       ",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-113",
+      "row_index": 22299,
+      "byte_offset": 49578589,
+      "prompt": "答：\n商品原价是100元，打8折意味着可以打八折即只需要支付原价",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-114",
+      "row_index": 22460,
+      "byte_offset": 49637932,
+      "prompt": "答： \n要求出一个球多少钱，就需要用已知条件去求出单价。已知条件",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-115",
+      "row_index": 22621,
+      "byte_offset": 49696927,
+      "prompt": "答：\n1. 列方程\n设正方形的边长为a，则矩形的长为(42 - ",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-116",
+      "row_index": 22782,
+      "byte_offset": 49754248,
+      "prompt": "小熊去超市买了3个苹果和2个橘子，3个橙子和4个梨子，她一共花了",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-117",
+      "row_index": 22943,
+      "byte_offset": 49822482,
+      "prompt": "答：\n1. 定义问题：需要将30个学生分成数个组，每组有5个人。",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-118",
+      "row_index": 23104,
+      "byte_offset": 49879724,
+      "prompt": "答：\n小明和小红总共有36个红色的石子和48个蓝色的石子，总共有",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-119",
+      "row_index": 23265,
+      "byte_offset": 49936701,
+      "prompt": "答：小明手里有两个水杯，一个装满了水，一个没装水。他想将装满水的",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-120",
+      "row_index": 23426,
+      "byte_offset": 49991775,
+      "prompt": "答：\n1. 小明家有6个苹果，小红家有8个苹果，用手指数一数，可",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-121",
+      "row_index": 23587,
+      "byte_offset": 50050594,
+      "prompt": "答： \n1. 先用减法算出8个苹果的数量：20 - 8 = 12",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-122",
+      "row_index": 23748,
+      "byte_offset": 50107893,
+      "prompt": "答：\n小明家的苹果和橙子总数为2+3=5个。\n小李家的苹果和橙子",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-123",
+      "row_index": 23909,
+      "byte_offset": 50169340,
+      "prompt": "答： \n小明有5个苹果，需要平均分给他的三个朋友，我们可以按照下",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-124",
+      "row_index": 24070,
+      "byte_offset": 50222686,
+      "prompt": "答：\n小明有5个苹果，他要分给3个朋友，那么可以用除法来解决这个",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-125",
+      "row_index": 24231,
+      "byte_offset": 50284562,
+      "prompt": "答：\n要平均分给4个朋友，我们需要把小明的12个橙子分成4份。\n",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-126",
+      "row_index": 24392,
+      "byte_offset": 50341846,
+      "prompt": "答： \n设女生有x个，则男生有 3/5 * 30 = 18 个。",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-127",
+      "row_index": 24553,
+      "byte_offset": 50394870,
+      "prompt": "答：假设小明在公园里走了 x 公里路程。根据题目描述，小明走了一",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-128",
+      "row_index": 24714,
+      "byte_offset": 50452097,
+      "prompt": "答：\n小明有5个糖果，他把其中的2个糖果分给了小红，我们可以用减",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-129",
+      "row_index": 24875,
+      "byte_offset": 50507296,
+      "prompt": "答： \n小学一年级或二年级的学生可以通过以下步骤解答：\n1. 确",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-130",
+      "row_index": 25036,
+      "byte_offset": 50568763,
+      "prompt": "答：\n要求平分 $12$ 个橙子给 $3$ 个朋友，可以使用除法",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-131",
+      "row_index": 25197,
+      "byte_offset": 50623918,
+      "prompt": "答：\n小明有10元钱，他买了一本8元的数学书，现在需要算出他还剩",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-132",
+      "row_index": 25358,
+      "byte_offset": 50684731,
+      "prompt": "答：\n小明有5块糖果，小红有3块糖果，求两人一共有多少块糖果？\n",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-133",
+      "row_index": 25519,
+      "byte_offset": 50741719,
+      "prompt": "答：\n首先，小明和小红共有 14 + 9 = 23 支铅笔。\n将",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-134",
+      "row_index": 25680,
+      "byte_offset": 50799843,
+      "prompt": "答： \n小明买了一件衣服花费50元，他交了100元，售货员需要找",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-135",
+      "row_index": 25841,
+      "byte_offset": 50858717,
+      "prompt": "答：小学一年级学生可能还不够理解星期几的概念，所以我们可以借助日",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-136",
+      "row_index": 26002,
+      "byte_offset": 50915765,
+      "prompt": "答：\n总数共有20+15=35个小孩。\n每组需要1个小男生和1个",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-137",
+      "row_index": 26163,
+      "byte_offset": 50969241,
+      "prompt": "答：\n将3个苹果和5个苹果相加即可得出答案。小学一年级的学生还没",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-138",
+      "row_index": 26324,
+      "byte_offset": 51028505,
+      "prompt": "小明买了8个苹果，他吃掉了3个，请问他现在还有几个苹果？\n答：\n",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-139",
+      "row_index": 26485,
+      "byte_offset": 51080792,
+      "prompt": "答：\n小明买了一只价值20元的玩具熊，用50元的纸币付款，所以商",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-140",
+      "row_index": 26646,
+      "byte_offset": 51141142,
+      "prompt": "答： \n小学一二年级的学生对于数的概念尚不深入，可以通过实际物体",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-141",
+      "row_index": 26807,
+      "byte_offset": 51200488,
+      "prompt": "答：\n为了平分糖果，我们需要将6颗糖果分成3份。为了实现这一点，",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-142",
+      "row_index": 26968,
+      "byte_offset": 51258512,
+      "prompt": "答：\n一箱苹果汁有多少瓶？答案是12瓶。\n小明买了3箱苹果汁，所",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-143",
+      "row_index": 27129,
+      "byte_offset": 51314347,
+      "prompt": "答： \n小明的数学竞赛总分可以通过将他在每一轮的得分相加得到。 ",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-144",
+      "row_index": 27290,
+      "byte_offset": 51368908,
+      "prompt": "答：\n1. 将10个橙子分成三份，则每份橙子数为10 ÷ 3 =",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-145",
+      "row_index": 27451,
+      "byte_offset": 51425158,
+      "prompt": "答： \n小明一开始手里有7个糖果，又从妈妈那里拿到了3个糖果，所",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-146",
+      "row_index": 27612,
+      "byte_offset": 51482433,
+      "prompt": "答：小明有3个球，小华有4个球，他们一共有多少个球？\n答案：小明",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-147",
+      "row_index": 27773,
+      "byte_offset": 51538882,
+      "prompt": "答：\n设井深为S（单位为米），第n次跳的深度为a（单位为米），则",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-148",
+      "row_index": 27934,
+      "byte_offset": 51598110,
+      "prompt": "答： 篮球场的面积等于长乘以宽，即 S = 长 × 宽。 根据题",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-149",
+      "row_index": 28095,
+      "byte_offset": 51650037,
+      "prompt": "答： \n将糖果分成两组的方法非常简单，只需要将糖果的总数除以2即",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-150",
+      "row_index": 28256,
+      "byte_offset": 51706279,
+      "prompt": "答：\n1. 将每只小狗的重量相加\n10公斤 + 15公斤 + 8",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-151",
+      "row_index": 28417,
+      "byte_offset": 51763375,
+      "prompt": "答：\n男生人数 : 女生人数 = 30 : 20 = 3 : 2",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-152",
+      "row_index": 28578,
+      "byte_offset": 51823707,
+      "prompt": "答： \n小明手上有13个石头\n减去送给朋友的3个石头\n13 - ",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-153",
+      "row_index": 28739,
+      "byte_offset": 51878628,
+      "prompt": "答： \n1. 首先，我们需要根据所给条件列方程式。\n假设红笔有x",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-154",
+      "row_index": 28900,
+      "byte_offset": 51932588,
+      "prompt": "答：\n糖果总数 = 4份 × 12颗/份 = 48颗\n小明自己拿",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-155",
+      "row_index": 29061,
+      "byte_offset": 51989638,
+      "prompt": "答：\n要将10块糖果平均分给5个朋友，就需要用到除法，即10÷5",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-156",
+      "row_index": 29222,
+      "byte_offset": 52046624,
+      "prompt": "答：\n如果我们让每个盒子里的小球数量为x，那么5个盒子中的小球总",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-157",
+      "row_index": 29383,
+      "byte_offset": 52101083,
+      "prompt": "答：\n一共有4个人吃饭，每个人分别吃了2+3=5个食物。\n因此，",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-158",
+      "row_index": 29544,
+      "byte_offset": 52160290,
+      "prompt": "答：小学一年级或二年级的学生可以使用简单的算术加法来解决这个问题",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-159",
+      "row_index": 29705,
+      "byte_offset": 52215705,
+      "prompt": "答：首先，我们可以列出小明一开始有的苹果数量：3个。然后，他送了",
+      "prompt_chars": 32
+    }
+  ]
+}
