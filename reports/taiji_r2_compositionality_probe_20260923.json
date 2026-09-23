@@ -1,0 +1,245 @@
+{
+  "format": "taiji-r2-compositionality-probe-v1",
+  "status": "completed",
+  "written_at_utc": "2026-09-23T02:52:49Z",
+  "contract": "plans/reference/M5_R2_COMPOSITIONALITY_PROBE_CONTRACT_20260923.md",
+  "question": "换一个槽的效应，是否跨另一个槽保持一致（表征可否按槽分解）",
+  "preregistered_thresholds": {
+    "separable_floor": 0.9,
+    "entangled_ceiling": 0.5,
+    "baseline_gap_floor": 0.1,
+    "note": "96 维 cue 里随机方向的余弦 ≈ 0（sd≈0.10）；同时报实测基线"
+  },
+  "disclosures": [
+    "cue 取自 substrate._state.motor_context（私有）——公开 TaijiStep 没暴露 cue",
+    "刺激集由执行者撰写（合同未规定来源），表与阈值随执行件在打分前提交",
+    "测量路径复用 P3 执行件（_prefill/_kl_nats），两个仪器不各自实现"
+  ],
+  "failure": null,
+  "checkpoints": {
+    "base": {
+      "label": "base",
+      "checkpoint": "E:\\Seed\\checkpoints\\seed_beta.pt",
+      "null_control": {
+        "cue_l1_diff": 0.0,
+        "kl_nats": 0.0,
+        "ok": true
+      },
+      "rows": [
+        {
+          "family": "f1",
+          "consistency_A": 0.479212,
+          "consistency_B": 0.446991,
+          "kl_a_to_a1": 0.01885108,
+          "kl_b_to_b1": 0.03404867,
+          "kl_both": 0.01634905,
+          "kl_interaction_ratio": 0.309057,
+          "prompts": {
+            "00": "我在北京看见了一只猫",
+            "10": "我在上海看见了一只猫",
+            "01": "我在北京看见了一只狗",
+            "11": "我在上海看见了一只狗"
+          }
+        },
+        {
+          "family": "f2",
+          "consistency_A": 0.419656,
+          "consistency_B": 0.925588,
+          "kl_a_to_a1": 0.01013835,
+          "kl_b_to_b1": 0.06474739,
+          "kl_both": 0.05004971,
+          "kl_interaction_ratio": 0.668348,
+          "prompts": {
+            "00": "早上的时候我常常读书",
+            "10": "晚上的时候我常常读书",
+            "01": "早上的时候我常常写字",
+            "11": "晚上的时候我常常写字"
+          }
+        },
+        {
+          "family": "f3",
+          "consistency_A": 0.184595,
+          "consistency_B": 0.741821,
+          "kl_a_to_a1": 0.02098485,
+          "kl_b_to_b1": 0.0600803,
+          "kl_both": 0.02825987,
+          "kl_interaction_ratio": 0.348607,
+          "prompts": {
+            "00": "他喜欢春天还是音乐",
+            "10": "他喜欢冬天还是音乐",
+            "01": "他喜欢春天还是美术",
+            "11": "他喜欢冬天还是美术"
+          }
+        },
+        {
+          "family": "f4",
+          "consistency_A": 0.343858,
+          "consistency_B": 0.828172,
+          "kl_a_to_a1": 0.0146479,
+          "kl_b_to_b1": 0.05266831,
+          "kl_both": 0.03627705,
+          "kl_interaction_ratio": 0.538905,
+          "prompts": {
+            "00": "苹果的味道和蜂蜜很像",
+            "10": "香蕉的味道和蜂蜜很像",
+            "01": "苹果的味道和柠檬很像",
+            "11": "香蕉的味道和柠檬很像"
+          }
+        },
+        {
+          "family": "f5",
+          "consistency_A": 0.317425,
+          "consistency_B": 0.367778,
+          "kl_a_to_a1": 0.01151113,
+          "kl_b_to_b1": 0.01382857,
+          "kl_both": 0.01834225,
+          "kl_interaction_ratio": 0.723854,
+          "prompts": {
+            "00": "请你告诉我学习和时间的区别",
+            "10": "请你告诉我工作和时间的区别",
+            "01": "请你告诉我学习和空间的区别",
+            "11": "请你告诉我工作和空间的区别"
+          }
+        },
+        {
+          "family": "f6",
+          "consistency_A": 0.5951,
+          "consistency_B": 0.587212,
+          "kl_a_to_a1": 0.02846858,
+          "kl_b_to_b1": 0.01343046,
+          "kl_both": 0.04397739,
+          "kl_interaction_ratio": 1.049604,
+          "prompts": {
+            "00": "我昨天熬夜所以今天很累",
+            "10": "我昨天早起所以今天很累",
+            "01": "我昨天熬夜所以今天很精神",
+            "11": "我昨天早起所以今天很精神"
+          }
+        }
+      ],
+      "summary": {
+        "consistency_median": 0.479212,
+        "consistency_min": 0.184595,
+        "consistency_max": 0.925588,
+        "baseline_median": -0.022546,
+        "baseline_n": 30,
+        "gap_over_baseline": 0.501758,
+        "kl_interaction_ratio_median": 0.668348
+      },
+      "verdict": "entangled",
+      "seconds": 2.73
+    },
+    "arm_A": {
+      "label": "arm_A",
+      "checkpoint": "E:\\Seed\\output\\taiji_r2_readout_retrain\\A\\checkpoint.pt",
+      "null_control": {
+        "cue_l1_diff": 0.0,
+        "kl_nats": 0.0,
+        "ok": true
+      },
+      "rows": [
+        {
+          "family": "f1",
+          "consistency_A": 0.479212,
+          "consistency_B": 0.446991,
+          "kl_a_to_a1": 0.03199549,
+          "kl_b_to_b1": 0.02986603,
+          "kl_both": 0.0226731,
+          "kl_interaction_ratio": 0.366514,
+          "prompts": {
+            "00": "我在北京看见了一只猫",
+            "10": "我在上海看见了一只猫",
+            "01": "我在北京看见了一只狗",
+            "11": "我在上海看见了一只狗"
+          }
+        },
+        {
+          "family": "f2",
+          "consistency_A": 0.419656,
+          "consistency_B": 0.925588,
+          "kl_a_to_a1": 0.02034893,
+          "kl_b_to_b1": 0.07443951,
+          "kl_both": 0.03040882,
+          "kl_interaction_ratio": 0.320807,
+          "prompts": {
+            "00": "早上的时候我常常读书",
+            "10": "晚上的时候我常常读书",
+            "01": "早上的时候我常常写字",
+            "11": "晚上的时候我常常写字"
+          }
+        },
+        {
+          "family": "f3",
+          "consistency_A": 0.184595,
+          "consistency_B": 0.741821,
+          "kl_a_to_a1": 0.01783927,
+          "kl_b_to_b1": 0.07866981,
+          "kl_both": 0.09874383,
+          "kl_interaction_ratio": 1.023156,
+          "prompts": {
+            "00": "他喜欢春天还是音乐",
+            "10": "他喜欢冬天还是音乐",
+            "01": "他喜欢春天还是美术",
+            "11": "他喜欢冬天还是美术"
+          }
+        },
+        {
+          "family": "f4",
+          "consistency_A": 0.343858,
+          "consistency_B": 0.828172,
+          "kl_a_to_a1": 0.0077947,
+          "kl_b_to_b1": 0.04824066,
+          "kl_both": 0.02857492,
+          "kl_interaction_ratio": 0.509944,
+          "prompts": {
+            "00": "苹果的味道和蜂蜜很像",
+            "10": "香蕉的味道和蜂蜜很像",
+            "01": "苹果的味道和柠檬很像",
+            "11": "香蕉的味道和柠檬很像"
+          }
+        },
+        {
+          "family": "f5",
+          "consistency_A": 0.317425,
+          "consistency_B": 0.367778,
+          "kl_a_to_a1": 0.0060237,
+          "kl_b_to_b1": 0.00687746,
+          "kl_both": 0.01199445,
+          "kl_interaction_ratio": 0.929719,
+          "prompts": {
+            "00": "请你告诉我学习和时间的区别",
+            "10": "请你告诉我工作和时间的区别",
+            "01": "请你告诉我学习和空间的区别",
+            "11": "请你告诉我工作和空间的区别"
+          }
+        },
+        {
+          "family": "f6",
+          "consistency_A": 0.5951,
+          "consistency_B": 0.587212,
+          "kl_a_to_a1": 0.02084463,
+          "kl_b_to_b1": 0.03498868,
+          "kl_both": 0.06004332,
+          "kl_interaction_ratio": 1.075403,
+          "prompts": {
+            "00": "我昨天熬夜所以今天很累",
+            "10": "我昨天早起所以今天很累",
+            "01": "我昨天熬夜所以今天很精神",
+            "11": "我昨天早起所以今天很精神"
+          }
+        }
+      ],
+      "summary": {
+        "consistency_median": 0.479212,
+        "consistency_min": 0.184595,
+        "consistency_max": 0.925588,
+        "baseline_median": -0.022546,
+        "baseline_n": 30,
+        "gap_over_baseline": 0.501758,
+        "kl_interaction_ratio_median": 0.929719
+      },
+      "verdict": "entangled",
+      "seconds": 2.75
+    }
+  }
+}
