@@ -1,0 +1,318 @@
+{
+  "format": "taiji-r2-init-seed-spread-v1",
+  "written_at_utc": "2026-09-23T03:39:03Z",
+  "question": "训练后 16M 的可分离性是否落在初始化（跨 seed）分布之外——即'训练把它花掉了'是否成立",
+  "preregistered_seeds": [
+    20260822,
+    20260823,
+    20260824,
+    20260825,
+    20260826,
+    20260827,
+    20260828,
+    20260901
+  ],
+  "preregistered_rule": "训练值 < init min 或 > init max ⇒ beyond_init_range；否则 within_init_range",
+  "disclosures": [
+    "样本只有 8 个 seed，min/max 作为界很脆；z 分数也只作旁注",
+    "本件只判'训练前后之差是否超出初始化波动'，不判因果机制",
+    "刺激集仍是那 6 个冻结族"
+  ],
+  "per_seed": [
+    {
+      "seed": 20260822,
+      "1_activity_block": {
+        "consistency_median": 0.630292,
+        "baseline_median": 0.005275,
+        "verdict": "partial"
+      },
+      "2_trace_block": {
+        "consistency_median": 0.725584,
+        "baseline_median": -0.047891,
+        "verdict": "partial"
+      },
+      "3_context": {
+        "consistency_median": 0.64166,
+        "baseline_median": 0.013306,
+        "verdict": "partial"
+      },
+      "4_context_trace": {
+        "consistency_median": 0.676704,
+        "baseline_median": -0.070502,
+        "verdict": "partial"
+      },
+      "5_readout_dist": {
+        "consistency_median": 0.619838,
+        "baseline_median": -0.001321,
+        "verdict": "partial"
+      }
+    },
+    {
+      "seed": 20260823,
+      "1_activity_block": {
+        "consistency_median": 0.603723,
+        "baseline_median": 0.046355,
+        "verdict": "partial"
+      },
+      "2_trace_block": {
+        "consistency_median": 0.653902,
+        "baseline_median": 0.041109,
+        "verdict": "partial"
+      },
+      "3_context": {
+        "consistency_median": 0.578996,
+        "baseline_median": 0.07926,
+        "verdict": "partial"
+      },
+      "4_context_trace": {
+        "consistency_median": 0.54782,
+        "baseline_median": 0.035155,
+        "verdict": "partial"
+      },
+      "5_readout_dist": {
+        "consistency_median": 0.595213,
+        "baseline_median": 0.134107,
+        "verdict": "partial"
+      }
+    },
+    {
+      "seed": 20260824,
+      "1_activity_block": {
+        "consistency_median": 0.620188,
+        "baseline_median": 0.070935,
+        "verdict": "partial"
+      },
+      "2_trace_block": {
+        "consistency_median": 0.64932,
+        "baseline_median": 0.034804,
+        "verdict": "partial"
+      },
+      "3_context": {
+        "consistency_median": 0.657562,
+        "baseline_median": 0.084142,
+        "verdict": "partial"
+      },
+      "4_context_trace": {
+        "consistency_median": 0.631834,
+        "baseline_median": 0.043568,
+        "verdict": "partial"
+      },
+      "5_readout_dist": {
+        "consistency_median": 0.612478,
+        "baseline_median": 0.081561,
+        "verdict": "partial"
+      }
+    },
+    {
+      "seed": 20260825,
+      "1_activity_block": {
+        "consistency_median": 0.538798,
+        "baseline_median": -0.049034,
+        "verdict": "partial"
+      },
+      "2_trace_block": {
+        "consistency_median": 0.615009,
+        "baseline_median": -0.050802,
+        "verdict": "partial"
+      },
+      "3_context": {
+        "consistency_median": 0.600419,
+        "baseline_median": -0.056089,
+        "verdict": "partial"
+      },
+      "4_context_trace": {
+        "consistency_median": 0.633765,
+        "baseline_median": 0.002122,
+        "verdict": "partial"
+      },
+      "5_readout_dist": {
+        "consistency_median": 0.585194,
+        "baseline_median": -0.0072,
+        "verdict": "partial"
+      }
+    },
+    {
+      "seed": 20260826,
+      "1_activity_block": {
+        "consistency_median": 0.618308,
+        "baseline_median": 0.02539,
+        "verdict": "partial"
+      },
+      "2_trace_block": {
+        "consistency_median": 0.677513,
+        "baseline_median": 0.001887,
+        "verdict": "partial"
+      },
+      "3_context": {
+        "consistency_median": 0.641765,
+        "baseline_median": 0.064113,
+        "verdict": "partial"
+      },
+      "4_context_trace": {
+        "consistency_median": 0.578736,
+        "baseline_median": 0.026218,
+        "verdict": "partial"
+      },
+      "5_readout_dist": {
+        "consistency_median": 0.634233,
+        "baseline_median": 0.067782,
+        "verdict": "partial"
+      }
+    },
+    {
+      "seed": 20260827,
+      "1_activity_block": {
+        "consistency_median": 0.598653,
+        "baseline_median": 0.005416,
+        "verdict": "partial"
+      },
+      "2_trace_block": {
+        "consistency_median": 0.617066,
+        "baseline_median": -0.019344,
+        "verdict": "partial"
+      },
+      "3_context": {
+        "consistency_median": 0.58604,
+        "baseline_median": -0.001341,
+        "verdict": "partial"
+      },
+      "4_context_trace": {
+        "consistency_median": 0.64572,
+        "baseline_median": -0.061957,
+        "verdict": "partial"
+      },
+      "5_readout_dist": {
+        "consistency_median": 0.566069,
+        "baseline_median": 0.007899,
+        "verdict": "partial"
+      }
+    },
+    {
+      "seed": 20260828,
+      "1_activity_block": {
+        "consistency_median": 0.604954,
+        "baseline_median": -0.014735,
+        "verdict": "partial"
+      },
+      "2_trace_block": {
+        "consistency_median": 0.634983,
+        "baseline_median": -0.022935,
+        "verdict": "partial"
+      },
+      "3_context": {
+        "consistency_median": 0.665788,
+        "baseline_median": 0.014676,
+        "verdict": "partial"
+      },
+      "4_context_trace": {
+        "consistency_median": 0.509517,
+        "baseline_median": -0.004851,
+        "verdict": "partial"
+      },
+      "5_readout_dist": {
+        "consistency_median": 0.608975,
+        "baseline_median": 0.070151,
+        "verdict": "partial"
+      }
+    },
+    {
+      "seed": 20260901,
+      "1_activity_block": {
+        "consistency_median": 0.605301,
+        "baseline_median": 0.033931,
+        "verdict": "partial"
+      },
+      "2_trace_block": {
+        "consistency_median": 0.709365,
+        "baseline_median": 0.017888,
+        "verdict": "partial"
+      },
+      "3_context": {
+        "consistency_median": 0.672377,
+        "baseline_median": -0.14115,
+        "verdict": "partial"
+      },
+      "4_context_trace": {
+        "consistency_median": 0.629948,
+        "baseline_median": 0.029596,
+        "verdict": "partial"
+      },
+      "5_readout_dist": {
+        "consistency_median": 0.659216,
+        "baseline_median": -0.128583,
+        "verdict": "partial"
+      }
+    }
+  ],
+  "summary": {
+    "1_activity_block": {
+      "init_stats": {
+        "n": 8,
+        "min": 0.538798,
+        "median": 0.605301,
+        "max": 0.630292,
+        "mean": 0.602527,
+        "stdev": 0.027834
+      },
+      "init_values": [
+        0.630292,
+        0.603723,
+        0.620188,
+        0.538798,
+        0.618308,
+        0.598653,
+        0.604954,
+        0.605301
+      ],
+      "trained_16m": 0.4586,
+      "verdict": "beyond_init_range",
+      "trained_z_score": -5.171
+    },
+    "2_trace_block": {
+      "init_stats": {
+        "n": 8,
+        "min": 0.615009,
+        "median": 0.653902,
+        "max": 0.725584,
+        "mean": 0.660343,
+        "stdev": 0.040863
+      },
+      "init_values": [
+        0.725584,
+        0.653902,
+        0.64932,
+        0.615009,
+        0.677513,
+        0.617066,
+        0.634983,
+        0.709365
+      ],
+      "trained_16m": 0.5766,
+      "verdict": "beyond_init_range",
+      "trained_z_score": -2.049
+    },
+    "3_context": {
+      "init_stats": {
+        "n": 8,
+        "min": 0.578996,
+        "median": 0.641765,
+        "max": 0.672377,
+        "mean": 0.630576,
+        "stdev": 0.036872
+      },
+      "init_values": [
+        0.64166,
+        0.578996,
+        0.657562,
+        0.600419,
+        0.641765,
+        0.58604,
+        0.665788,
+        0.672377
+      ],
+      "trained_16m": 0.4197,
+      "verdict": "beyond_init_range",
+      "trained_z_score": -5.719
+    }
+  }
+}

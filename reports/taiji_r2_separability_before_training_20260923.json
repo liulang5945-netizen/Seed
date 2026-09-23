@@ -1,0 +1,91 @@
+{
+  "format": "taiji-r2-separability-before-vs-after-training-v1",
+  "written_at_utc": "2026-09-23T03:38:17Z",
+  "question": "同一构造路径、同一把尺子：训练 16M 让各级可分离性变了多少",
+  "comparability": "两端都走 `Seed(SeedConfig(...))` 这条训练器路径；前端是同一 config 的第 0 tick，后端是 `Seed.from_checkpoint` 读回的同一份 checkpoint",
+  "disclosures": [
+    "未能核实训练器当初是否**恰好**从这一份第 0 tick 配置起步；若训练器另加过器官或另设过 seed，本对比就名不副实——数字要按此打折读",
+    "刺激集仍是那 6 个冻结族"
+  ],
+  "profile_before_tick0": {
+    "1_activity_block": {
+      "consistency_median": 0.630292,
+      "baseline_median": 0.005275,
+      "verdict": "partial"
+    },
+    "2_trace_block": {
+      "consistency_median": 0.725584,
+      "baseline_median": -0.047891,
+      "verdict": "partial"
+    },
+    "3_context": {
+      "consistency_median": 0.64166,
+      "baseline_median": 0.013306,
+      "verdict": "partial"
+    },
+    "4_context_trace": {
+      "consistency_median": 0.676704,
+      "baseline_median": -0.070502,
+      "verdict": "partial"
+    },
+    "5_readout_dist": {
+      "consistency_median": 0.619838,
+      "baseline_median": -0.001321,
+      "verdict": "partial"
+    }
+  },
+  "profile_after_16m": {
+    "1_activity_block": {
+      "consistency_median": 0.458602,
+      "baseline_median": -0.017629,
+      "verdict": "not_separable"
+    },
+    "2_trace_block": {
+      "consistency_median": 0.57656,
+      "baseline_median": -0.042146,
+      "verdict": "partial"
+    },
+    "3_context": {
+      "consistency_median": 0.419656,
+      "baseline_median": -0.030995,
+      "verdict": "not_separable"
+    },
+    "4_context_trace": {
+      "consistency_median": 0.519856,
+      "baseline_median": -0.016083,
+      "verdict": "partial"
+    },
+    "5_readout_dist": {
+      "consistency_median": 0.458688,
+      "baseline_median": -0.164507,
+      "verdict": "not_separable"
+    }
+  },
+  "per_stage_delta": {
+    "1_activity_block": {
+      "before_tick0": 0.630292,
+      "after_16m": 0.458602,
+      "delta": -0.17169
+    },
+    "2_trace_block": {
+      "before_tick0": 0.725584,
+      "after_16m": 0.57656,
+      "delta": -0.149024
+    },
+    "3_context": {
+      "before_tick0": 0.64166,
+      "after_16m": 0.419656,
+      "delta": -0.222004
+    },
+    "4_context_trace": {
+      "before_tick0": 0.676704,
+      "after_16m": 0.519856,
+      "delta": -0.156848
+    },
+    "5_readout_dist": {
+      "before_tick0": 0.619838,
+      "after_16m": 0.458688,
+      "delta": -0.16115
+    }
+  }
+}
