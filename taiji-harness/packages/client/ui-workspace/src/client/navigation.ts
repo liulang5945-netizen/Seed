@@ -179,7 +179,7 @@ class UiWorkspaceService extends Service implements UiWorkspace {
         this.archivedView = undefined
         const conversation = this.ctx.get('conversation')
         if (blocked !== undefined && conversation !== undefined) {
-          conversation.blocks.set(blocked, undefined)
+          conversation.blocks.set(blocked, 'workspace-archive', undefined)
         }
         const reference = this.mainReference
         this.mainReference = undefined
@@ -413,9 +413,13 @@ class UiWorkspaceService extends Service implements UiWorkspace {
       ? current
       : undefined
     if (next === this.blockedSession) return
-    if (this.blockedSession !== undefined) conversation.blocks.set(this.blockedSession, undefined)
+    if (this.blockedSession !== undefined) {
+      conversation.blocks.set(this.blockedSession, 'workspace-archive', undefined)
+    }
     this.blockedSession = next
-    if (next !== undefined) conversation.blocks.set(next, { reason: this.composerBlockReason() })
+    if (next !== undefined) {
+      conversation.blocks.set(next, 'workspace-archive', { reason: this.composerBlockReason() })
+    }
   }
 
   /** Re-evaluate the composer block once the conversation service is composed. */
@@ -466,6 +470,7 @@ class UiWorkspaceService extends Service implements UiWorkspace {
   ): void {
     signal.throwIfAborted()
     const reference = this.sessions.retain(target, { source: 'mainView' })
+    const previousArchivedView = this.archivedView
     try {
       signal.throwIfAborted()
       beforeOpen?.(reference.sessionId)
@@ -476,23 +481,26 @@ class UiWorkspaceService extends Service implements UiWorkspace {
       const subagentAddress = typeof target === 'string'
         ? this.sessions.subagentAddress(reference.sessionId)
         : target
+      // A target already inside the archive set opens as a deliberate read-only
+      // view, and the flag is set BEFORE any selection or retention write: a
+      // reconcile these writes trigger must see the view as deliberate, or it
+      // reads the new selection as an archive event and closes it again.
+      this.archivedView = this.workspaces.list.getSnapshot().archivedSessionIds
+        .includes(reference.sessionId)
+        ? reference.sessionId
+        : undefined
       this.selection.set({
         sessionId: reference.sessionId,
         ...(subagentAddress === undefined ? {} : { subagentAddress }),
       })
     } catch (error: unknown) {
+      this.archivedView = previousArchivedView
       reference.release()
       throw error
     }
     const previous = this.mainReference
     this.mainReference = reference
     previous?.release()
-    // A target already inside the archive set opens as a deliberate read-only
-    // view; every other open leaves any such view behind.
-    this.archivedView = this.workspaces.list.getSnapshot().archivedSessionIds
-      .includes(reference.sessionId)
-      ? reference.sessionId
-      : undefined
     if (panel === 'reveal') this.ctx.layout.selectPanel(null)
     this.publishComposerBlock()
   }

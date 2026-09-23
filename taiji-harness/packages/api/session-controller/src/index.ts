@@ -4,6 +4,7 @@ import { hostname } from 'node:os'
 import { resolve } from 'node:path'
 import type { Agent } from '@taiji/dsh-agent'
 import type {} from '@taiji/dsh-fs'
+import type {} from '@taiji/dsh-workspace'
 import { Context } from '@taiji/cordis'
 import z from '@taiji/schemastery'
 import { errorChain } from '@taiji/dsh-llm'
@@ -169,6 +170,12 @@ export class SessionController extends TypertRemoteService {
     })
     ctx.on('session/disposed', (session) => {
       ctx.emit('api-session/removed', session.id)
+    })
+    // The Workspace registry asks a live Session's owner to close it before it
+    // deletes the log; this controller holds the Agent handle that releases
+    // the storage write ownership, and a Session it does not own stays live.
+    ctx.on('workspace/session-close', async ({ sessionId }) => {
+      await this.agents.closeSession(sessionId)
     })
     const publishAgentAvailability = ({ agent }: { agent: Agent }): undefined => {
       if (ctx.sessions.get(agent.id) === agent.session) {

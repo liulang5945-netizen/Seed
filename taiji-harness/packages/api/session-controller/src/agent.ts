@@ -4,7 +4,7 @@ import { mkdir } from 'node:fs/promises'
 import type { Context } from '@taiji/cordis'
 import { installModelSelection } from '@taiji/dsh-agent'
 import type {
-  Agent, AgentOptions, AgentSetup, ModelSelection as AgentModelSelection, ModelSelectionRef,
+  Agent, AgentHandle, AgentOptions, AgentSetup, ModelSelection as AgentModelSelection, ModelSelectionRef,
 } from '@taiji/dsh-agent'
 import type {} from '@taiji/dsh-agent-default-model'
 import type {} from '@taiji/dsh-agent-preset-registry'
@@ -140,6 +140,15 @@ export async function inspectApiSession(
 export class ApiSessionAgentController {
   private readonly resumes = new Map<SessionId, Promise<Agent>>()
   private readonly creations = new Map<SessionId, Promise<Agent>>()
+  /**
+   * Live handles this controller created or resumed, by Session. The handle is
+   * the capability that tears one Agent down — the only way to release the
+   * storage write ownership a Host-side Session deletion must take over — and
+   * this controller is the consumer owner the registry exposes it to.
+   */
+  private readonly handles = new Map<SessionId, AgentHandle>()
+  /** Sessions being closed for deletion: no resolve may start or reuse one while its log is going away. */
+  private readonly closing = new Set<SessionId>()
   private readonly selections = new WeakMap<Agent, InstalledSelection>()
   private readonly imageAdmissionChains = new WeakMap<Agent, Promise<void>>()
 
@@ -184,6 +193,16 @@ export class ApiSessionAgentController {
     sessionId: SessionId,
     observation?: SessionObservation,
   ): Promise<ApiSessionAgentResult> {
+    // A Session being closed for deletion must not be resumed, reused, or
+    // handed out again: its log is about to go away, and the close is waiting
+    // for the running work to settle.
+    if (this.closing.has(sessionId)) {
+      return {
+        error: new RemoteError('session/agent-busy', `session "${sessionId}" is being deleted`, {
+          reason: 'session deletion in progress',
+        }),
+      }
+    }
     const live = this.liveAgent(sessionId)
     if (live !== undefined) return live
     const attached = this.ctx.sessions.get(sessionId)
@@ -434,11 +453,13 @@ export class ApiSessionAgentController {
     if (published !== undefined && hasApiSessionSubagentOwner(this.ctx, published, live)) {
       throw new ApiSessionSubagentOwnership(sessionId)
     }
-    return (await this.ctx.agents.resume({
+    const handle = await this.ctx.agents.resume({
       resumeSessionId: sessionId,
       agentOptions: this.agentOptions(),
       setup: composition.setup,
-    })).agent
+    })
+    this.handles.set(sessionId, handle)
+    return handle.agent
   }
 
   private async createOrAdopt(
@@ -466,11 +487,13 @@ export class ApiSessionAgentController {
         const storedPreset = this.presetForObservation(observation)
         this.assertPresetUnchanged(sessionId, presetId, storedPreset)
         const composition = await this.composeAgent(storedPreset)
-        return (await this.ctx.agents.resume({
+        const handle = await this.ctx.agents.resume({
           resumeSessionId: sessionId,
           agentOptions: this.agentOptions(),
           setup: composition.setup,
-        })).agent
+        })
+        this.handles.set(sessionId, handle)
+        return handle.agent
       } catch (error: unknown) {
         if (!(error instanceof SessionQueryError)
           || error.code !== 'SESSION_QUERY_SESSION_NOT_FOUND') throw error
@@ -483,7 +506,7 @@ export class ApiSessionAgentController {
       throw new Error(`failed to ensure project directory "${cwd}": ${String(error)}`, { cause: error })
     }
     const composition = await this.composeAgent(presetId)
-    return (await this.ctx.agents.create({
+    const created = await this.ctx.agents.create({
       sessionId,
       agentOptions: this.agentOptions(),
       meta: {
@@ -491,7 +514,39 @@ export class ApiSessionAgentController {
         ...(composition.agentPreset === undefined ? {} : { agentPreset: composition.agentPreset }),
       },
       setup: composition.setup,
-    })).agent
+    })
+    this.handles.set(sessionId, created)
+    return created.agent
+  }
+
+  /**
+   * Close one live Session this controller owns, so a Host-side deletion can
+   * take over its log. The close mirrors the user's own stop — cancelling
+   * running work without re-waking the Session — then settles, flushes the
+   * log, and disposes the Agent handle, the only capability that releases the
+   * storage write ownership.
+   * @param sessionId - ordinary Session identity to close.
+   * @returns whether this Host no longer holds the Session live.
+   */
+  async closeSession(sessionId: SessionId): Promise<boolean> {
+    const handle = this.handles.get(sessionId)
+    const agent = this.ctx.agents.get(sessionId)
+    if (agent === undefined) return true
+    // A live Session nobody here published — subagent routing, or an owner
+    // outside this composition — keeps its Agent: only its holder may tear it
+    // down, and the registry refuses the deletion instead.
+    if (handle === undefined) return false
+    this.closing.add(sessionId)
+    try {
+      if (agent.status === 'running') agent.cancel({ kind: 'user' })
+      await agent.whenIdle()
+      await this.ctx.sessions.flush(agent.session)
+      await handle.dispose()
+      return true
+    } finally {
+      this.handles.delete(sessionId)
+      this.closing.delete(sessionId)
+    }
   }
 
   private agentOptions(): AgentOptions {

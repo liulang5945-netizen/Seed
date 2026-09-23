@@ -92,7 +92,7 @@ export class ModelDirectoryResolver extends Service {
     if (conversation !== undefined) {
       const publish = (): void => {
         if (sessions.binding(sessionId) !== binding) return
-        conversation.blocks.set(sessionId, directory.store.getSnapshot().routable === false
+        conversation.blocks.set(sessionId, 'model-selection', directory.store.getSnapshot().routable === false
           ? { reason: this.blockReason() }
           : undefined)
       }
@@ -103,7 +103,7 @@ export class ModelDirectoryResolver extends Service {
           stop()
           const current = sessions.binding(sessionId)
           if (current !== undefined && current !== binding && live.directories.get(current) !== undefined) return
-          conversation.blocks.set(sessionId, undefined)
+          conversation.blocks.set(sessionId, 'model-selection', undefined)
         }
       }, 'ui-model-selection: composer block')
     }

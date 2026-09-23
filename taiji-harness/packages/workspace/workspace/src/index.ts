@@ -56,10 +56,10 @@ export class WorkspaceUnknownSessionError extends Error {
 }
 
 /**
- * A deleteSession request named a session that is live in this Host process.
- * Its agent still holds the storage write ownership, so the physical log
- * removal was refused without a write; the session must stop running and be
- * closed before deletion.
+ * A deleteSession request named a session that is live in this Host process
+ * and that no provider closed — its Agent belongs to another owner (subagent
+ * routing) or its owner is not composed. The log removal would fight a
+ * writer, so it was refused without a write.
  */
 export class WorkspaceOpenSessionError extends Error {
   /**
@@ -172,6 +172,21 @@ declare module '@taiji/cordis' {
      * @mode parallel
      */
     'workspace/session-stop'(request: SessionActivityRequest): Promise<void> | void
+    /**
+     * Close a Session the caller is deleting while this Host still holds it
+     * live. The provider that owns the Session's Agent is the only one that
+     * can tear it down, so it stops the running work, waits for it to settle,
+     * flushes the log, and releases the Agent's storage write ownership; only
+     * then can the registry remove the log. The registry awaits every
+     * listener and re-checks liveness: a Session no provider closed stays
+     * refused with {@link WorkspaceOpenSessionError}, so a foreign owner —
+     * subagent routing, or a provider that is not composed — keeps its
+     * Session. A rejection is logged by the registry rather than replacing
+     * that refusal.
+     * @param request - the session about to be deleted.
+     * @mode parallel
+     */
+    'workspace/session-close'(request: SessionActivityRequest): Promise<void> | void
   }
 }
 
@@ -434,15 +449,18 @@ export class WorkspaceRegistry extends Service {
 
   /**
    * Delete one session physically and forget its registry accounting. The
-   * session must exist (live or in session persistence) and must not be live
-   * in this Host process: its agent owns the storage write ownership, so the
-   * log removal would fight the writer — the session must be closed first.
-   * Without `stopActivity` the session must also be inactive: the
-   * `workspace/session-activity` waterfall is asked once, and any reported
-   * activity rejects with {@link WorkspaceActiveSessionError} before anything
-   * is written. With `stopActivity` the providers stop the session's work
-   * before the removal, so no wake they induce can still address the session
-   * while its log exists.
+   * session must exist (live or in session persistence). A session this Host
+   * still holds live is closed first through {@link closeSessionForDelete}:
+   * its Agent cancels the running work, settles, flushes, and releases the
+   * storage write ownership, so the log removal does not fight a writer. A
+   * session no provider can close stays refused with
+   * {@link WorkspaceOpenSessionError}. Without `stopActivity` the session
+   * must then also be inactive: the `workspace/session-activity` waterfall is
+   * asked once, and any reported activity rejects with
+   * {@link WorkspaceActiveSessionError} before anything is written. With
+   * `stopActivity` the providers stop the session's work before the removal,
+   * so no wake they induce can still address the session while its log
+   * exists.
    *
    * The durable write drops the session from the archive and pin sets in one
    * global-state write and from its owning Workspace's record; a crash between
@@ -464,7 +482,10 @@ export class WorkspaceRegistry extends Service {
         throw new WorkspaceUnknownSessionError(sessionId, 'delete')
       }
       if (this.ctx.get('sessions')?.get(sessionId) !== undefined) {
-        throw new WorkspaceOpenSessionError(sessionId)
+        await this.closeSessionForDelete(sessionId)
+        if (this.ctx.get('sessions')?.get(sessionId) !== undefined) {
+          throw new WorkspaceOpenSessionError(sessionId)
+        }
       }
       if (options.stopActivity !== true) {
         const activity = await this.ctx.waterfall(
@@ -576,6 +597,25 @@ export class WorkspaceRegistry extends Service {
       const failures = error instanceof AggregateError ? error.errors : [error]
       for (const failure of failures) {
         this.ctx.logger.warn(`workspace: stopping session '${sessionId}' for archive failed: ${String(failure)}`)
+      }
+    }
+  }
+
+  /**
+   * Ask the provider that owns a live session to close it before its log is
+   * removed. A failing provider is logged, not retried: the caller re-checks
+   * liveness right after and refuses the deletion when the session is still
+   * live, so a Session this composition cannot close keeps its log.
+   */
+  private async closeSessionForDelete(sessionId: SessionId): Promise<void> {
+    try {
+      await this.ctx.parallel('workspace/session-close', { sessionId })
+    } catch (error: unknown) {
+      // ctx.parallel settles every listener and rejects with one AggregateError.
+      /* v8 ignore next -- the plain arm guards a rethrowing dispatcher. */
+      const failures = error instanceof AggregateError ? error.errors : [error]
+      for (const failure of failures) {
+        this.ctx.logger.warn(`workspace: closing session '${sessionId}' for delete failed: ${String(failure)}`)
       }
     }
   }

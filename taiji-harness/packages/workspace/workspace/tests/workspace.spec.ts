@@ -55,12 +55,16 @@ async function harness(options: HarnessOptions = {}) {
     listed.map(header => ({ header, revision: SessionPersistenceRevision(`rev-${header.id}`) })))
   const open = vi.fn(() => { throw new Error('event bodies must not be opened') })
   const stat = vi.fn(() => { throw new Error('per-session stat must not be needed') })
-  ctx.provide('sessionPersistence', { list, open, stat } as never)
+  const remove = vi.fn(async () => {})
+  ctx.provide('sessionPersistence', { list, open, stat, delete: remove } as never)
 
+  /** The Host's live-session face; a test may drop an entry to let a close settle. */
+  const live = new Map<SessionId, { header: SessionHeader }>(
+    (options.liveSessions ?? []).map(meta => [meta.id, { header: meta }]),
+  )
   if (options.sessionStore === true) {
     await ctx.plugin(SessionStore)
   } else if (options.liveSessions !== undefined) {
-    const live = new Map(options.liveSessions.map(meta => [meta.id, { header: meta }]))
     ctx.provide('sessions', {
       get: (id: SessionId) => live.get(id),
       list: () => [...live.values()],
@@ -82,6 +86,8 @@ async function harness(options: HarnessOptions = {}) {
     list,
     open,
     stat,
+    remove,
+    live,
     setSessions: (headers: SessionHeader[]) => { listed = headers },
   }
 }
@@ -1034,6 +1040,58 @@ describe('registry-global session archive', () => {
     await result.registry.archiveSession(SessionId('known'))
     expect(asked).toEqual(['known'])
     expect(result.registry.archivedSessionIds).toEqual(['known'])
+  })
+
+  it('closes a live session through its owner before removing the log', async () => {
+    const dir = await makeDir('delete-live')
+    const result = await harness({
+      sessions: [header('held', dir, 100)],
+      liveSessions: [header('held', dir, 100)],
+    })
+    const order: string[] = []
+    result.ctx.on('workspace/session-close', ({ sessionId }) => {
+      order.push(`close:${sessionId}`)
+      // The owner releases the Session: the registry's re-check must see it gone.
+      result.live.delete(sessionId)
+    })
+
+    await result.registry.deleteSession(SessionId('held'))
+    expect(order).toEqual(['close:held'])
+    expect(result.remove).toHaveBeenCalledWith('held')
+  })
+
+  it('keeps a live session no provider closes, and logs the failing provider', async () => {
+    const dir = await makeDir('delete-held')
+    const result = await harness({
+      sessions: [header('held', dir, 100)],
+      liveSessions: [header('held', dir, 100)],
+    })
+    result.ctx.on('workspace/session-close', () => { throw new Error('close exploded') })
+    const warn = vi.spyOn(result.ctx.logger, 'warn').mockImplementation(() => {})
+
+    await expect(result.registry.deleteSession(SessionId('held'))).rejects.toMatchObject({
+      name: 'WorkspaceOpenSessionError',
+      sessionId: 'held',
+    })
+    expect(warn).toHaveBeenCalledWith(expect.stringContaining('close exploded'))
+    expect(result.remove).not.toHaveBeenCalled()
+    expect(storedState(result.pool).archivedSessionIds).toEqual([])
+  })
+
+  it('drops a cold session from the archive and pin sets and removes its log', async () => {
+    const dir = await makeDir('delete-cold')
+    const result = await harness({ sessions: [header('gone', dir, 100), header('kept', dir, 200)] })
+    // Pin first: an archived session refuses pinning.
+    await result.registry.pinSession(SessionId('gone'))
+    await result.registry.archiveSession(SessionId('gone'))
+
+    await result.registry.deleteSession(SessionId('gone'))
+    expect(result.registry.archivedSessionIds).toEqual([])
+    expect(result.registry.pinnedSessionIds).toEqual([])
+    expect(storedState(result.pool).archivedSessionIds).toEqual([])
+    expect(result.remove).toHaveBeenCalledWith('gone')
+    // Only the named session's log goes: the other one is untouched.
+    expect(result.remove).toHaveBeenCalledTimes(1)
   })
 
   it('restores the archive set across restarts and defaults it for pre-field media', async () => {

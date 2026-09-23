@@ -125,6 +125,12 @@ function DeleteConfirmForm({ request, deleteSession, onSettle, t }: {
         setActivity(refused.details.activity)
         return
       }
+      // A live Session the Host could not close — another owner holds it — is
+      // named in the user's own language rather than by its RPC code.
+      if (refused?.code === 'workspace/session-open') {
+        setError(t('sessionDelete.confirm.heldOpen'))
+        return
+      }
       setError(reason instanceof Error ? reason.message : String(reason))
     })
   }

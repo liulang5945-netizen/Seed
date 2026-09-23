@@ -1072,6 +1072,25 @@ describe('UiWorkspaceService', () => {
     expect(b.selectPanel).toHaveBeenCalledTimes(2)
   })
 
+  it('keeps an archived Session open when releasing the previous target republishes the list', () => {
+    const b = bench()
+    b.workspaces.list.set(workspaceState([], [sid('archived')]))
+    b.uiWorkspace.openSession(sid('current'))
+    // Releasing the previous reference republishes the Session list, exactly as
+    // a `retainedBy` count change does. The deliberate read-only view must
+    // survive the reconcile that follow-up write triggers: the archived flag is
+    // recorded before the write, not after it.
+    b.sessions.retained[0]!.release.mockImplementation(() => {
+      b.sessions.list.set(sessionState([summary('archived'), summary('current')]))
+    })
+
+    b.uiWorkspace.openSession(sid('archived'))
+
+    expect(b.sessions.retained.map(item => item.reference.sessionId))
+      .toEqual([sid('current'), sid('archived')])
+    expect(b.sessions.retained[1]!.release).not.toHaveBeenCalled()
+  })
+
   it('forwards archive commands and preserves failures', async () => {
     const idle = sid('idle')
     const b = bench()

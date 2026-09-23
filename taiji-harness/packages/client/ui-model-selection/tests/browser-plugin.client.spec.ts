@@ -107,7 +107,11 @@ async function bench(locale: 'zh' | 'en' = 'zh') {
   const blocks = new Map<SessionId, { reason: string } | undefined>()
   ctx.provide('conversation', {
     blocks: {
-      set: (id: SessionId, block: { reason: string } | undefined) => { blocks.set(id, block) },
+      set: (id: SessionId, owner: string, block: { reason: string } | undefined) => {
+        // The plugin owns one key: another owner's block must never land here.
+        expect(owner).toBe('model-selection')
+        blocks.set(id, block)
+      },
     },
   })
   let contribution: CommandContribution | undefined
