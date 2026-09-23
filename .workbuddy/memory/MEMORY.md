@@ -15,7 +15,8 @@
 - Python 用 `C:/Users/23747/AppData/Local/Programs/Python/Python312/python.exe`（managed 3.13 无 torch/ruff）。
 - **bash 无 ls/cat/grep/head/tail/mkdir/rm**：文件用 Read/Write/Edit/Glob/Grep，目录/过滤用 `python -c`
   或 `| python.exe -c "…"`。**管道里缺失命令会 SIGPIPE 杀掉上游 Python**。
-- **反引号在任何 shell 引号里都会被命令替换**（已踩 4 次）⇒ 含反引号/代码片段一律走 Write/Edit。
+- **反引号在任何 shell 引号里都会被命令替换**（已踩 **5** 次）⇒ 含反引号/代码片段/长文本一律走
+  Write/Edit 或**脚本文件**。第 5 次是"只是往日志追加一段 Markdown"——标识符被吃空、文件被改坏。
   严禁 heredoc；`python -c` 内避免长中文。`reg.exe` 被拦截。
 - **跑 `tests/` 与任何大批删除的构建步骤必须 `CODEBUDDY_SAFE_DELETE_ENABLED=0`**：批删守卫劫持
   `Path.unlink`/`os.remove` ⇒ 中止或长时间无进展，**极易误诊为磁盘 I/O 卡死**。
@@ -49,17 +50,15 @@
   ≠看 ignore）；目录规则不覆盖子文件。历史重写用 `git clone --mirror` 镜像隔离、**永不**原地做；
   `filter-repo` 不重写自定义 ref 与远端 `refs/pull/*`。
 - **桌面/前端工具链与打包**（全文 `docs/DESKTOP_AUTOMATION_PITFALLS.md`）：Vite/Vitest **不**重写
-  `./x.js`→`x.ts`；`ELECTRON_RUN_AS_NODE=1` 让 `--version` 打印 Node 版本（像"二进制没装"）；
-  NSIS `/D=` 在 bash 里**必须加引号**。
+  `./x.js`→`x.ts`；`ELECTRON_RUN_AS_NODE=1` 让 `--version` 打印 Node 版本（像"二进制没装"）。
 
 ## 5 当前状态与归档索引
 
 - **产品默认基座 `checkpoints/seed_beta.pt`**（16M tick，来源登记 v2）；DEBT-I9 未结项。H 阈值绑
   `(设备,链路,checkpoint)`。**M5 限定退出已获批准**（2026-09-20），**R2 语言能力是其显式排除项**。
-- **R2：受控重训语言读出判决已出**（`plans/reference/M5_R2_READOUT_RETRAIN_*.md` §8）：
-  三臂各 16M 跑满、写入面三向隔离**实测**；**M1、M2 均不成立**
-  （M1 只差一个不一致对 p=0.0636），K2 预注册有双侧/单侧缺陷待所有者裁决。`checkpoints/*.pt` 只读。
+- **R2 语言读出**：受控重训三臂各 16M 跑满、写入面三向隔离**实测**（M1 在 CAP-43 未达、在**钉死的
+  题面总体 P** 上成立并复现；M2 三臂齐平 0/36，地板效应）。组合性探针：**槽结构初始化时就有
+  （跨 seed 0.58–0.73），是训练把它花掉的** ⇒ 杠杆在训练侧。见 `plans/reference/M5_R2_*.md`。
 - **产品侧工程支线**（不入研究主线）：前端 TS 地基 + Electron 壳 + 打包链路，见
   `plans/reference/FRONTEND_TS_VS_HARNESS_ADOPTION_DECISION_BRIEF_20260921.md`。
 - 回退备份 `E:/Seed-backup-{git,secrets}-20260919`；未确认前别跑 `git gc`/`prune`。
-  R2 v1–v6 判停、D1–D8 结项见同目录。
