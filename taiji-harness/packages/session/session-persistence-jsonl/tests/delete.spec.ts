@@ -82,4 +82,30 @@ describe('JsonlSessionPersistence.delete', () => {
     const { persistence } = await boot()
     await expect(persistence.delete(SessionId('missing'))).rejects.toBeInstanceOf(SessionPersistenceNotFoundError)
   })
+
+  it('never leaves an artifact behind when a write open races the deletion', async () => {
+    const { persistence, root } = await boot()
+    const id = SessionId('raced')
+    const dir = sessionDir(root, '/work', id)
+    await (await stored(persistence, 'raced')).close()
+    expect(existsSync(dir)).toBe(true)
+
+    // Exactly one side can win — the writer's claim refuses the deletion, or the
+    // deletion's lease refuses the open — and a resolved deletion means no log
+    // artifact survives it. A race that "resurrected" the directory after the
+    // removal would show up here as a resolved deletion beside a live path.
+    const [opened, deleted] = await Promise.allSettled([
+      persistence.open(id, 'write'),
+      persistence.delete(id),
+    ])
+
+    if (deleted.status === 'fulfilled') {
+      expect(existsSync(dir)).toBe(false)
+      expect(await persistence.stat(id)).toBeUndefined()
+    } else {
+      expect(deleted.reason).toBeInstanceOf(SessionAlreadyOwnedError)
+      expect(existsSync(dir)).toBe(true)
+    }
+    if (opened.status === 'fulfilled') await opened.value.close()
+  })
 })
