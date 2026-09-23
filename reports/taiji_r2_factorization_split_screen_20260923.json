@@ -1,0 +1,100 @@
+{
+  "format": "taiji-r2-factorization-split-screen-v1",
+  "written_at_utc": "2026-09-23T03:33:38Z",
+  "question": "1152 的两半各分多少通道，能把最终 cue 的可分离性抬得最高（初始化口径）",
+  "preregistered_splits": [
+    0,
+    24,
+    32,
+    40,
+    48,
+    56,
+    64,
+    72,
+    96
+  ],
+  "ladder": {
+    "separable_floor": 0.9,
+    "not_separable_below": 0.5
+  },
+  "disclosures": [
+    "刺激集只有 6 个族，在小集合上挑最好的 k 就是在挑 ⇒ 本件产出只是候选，不是结论",
+    "真正的判据仍是在训练后的配对臂上按 Step 0 口径量",
+    "k=0/96 的独占档未实现（SparseReceptorBank 不接受零宽），已在代码里跳过"
+  ],
+  "rows": [
+    {
+      "k_activity": 24,
+      "k_trace": 72,
+      "1_activity_block": 0.630292,
+      "2_trace_block": 0.725584,
+      "3_context": 0.688913,
+      "4_context_trace": 0.720168,
+      "5_readout_dist": 0.672911
+    },
+    {
+      "k_activity": 32,
+      "k_trace": 64,
+      "1_activity_block": 0.630292,
+      "2_trace_block": 0.725584,
+      "3_context": 0.674531,
+      "4_context_trace": 0.696279,
+      "5_readout_dist": 0.682303
+    },
+    {
+      "k_activity": 40,
+      "k_trace": 56,
+      "1_activity_block": 0.630292,
+      "2_trace_block": 0.725584,
+      "3_context": 0.685603,
+      "4_context_trace": 0.75476,
+      "5_readout_dist": 0.682674
+    },
+    {
+      "k_activity": 48,
+      "k_trace": 48,
+      "1_activity_block": 0.630292,
+      "2_trace_block": 0.725584,
+      "3_context": 0.623617,
+      "4_context_trace": 0.695834,
+      "5_readout_dist": 0.632414
+    },
+    {
+      "k_activity": 56,
+      "k_trace": 40,
+      "1_activity_block": 0.630292,
+      "2_trace_block": 0.725584,
+      "3_context": 0.718822,
+      "4_context_trace": 0.713417,
+      "5_readout_dist": 0.709812
+    },
+    {
+      "k_activity": 64,
+      "k_trace": 32,
+      "1_activity_block": 0.630292,
+      "2_trace_block": 0.725584,
+      "3_context": 0.666213,
+      "4_context_trace": 0.713548,
+      "5_readout_dist": 0.660524
+    },
+    {
+      "k_activity": 72,
+      "k_trace": 24,
+      "1_activity_block": 0.630292,
+      "2_trace_block": 0.725584,
+      "3_context": 0.682135,
+      "4_context_trace": 0.738983,
+      "5_readout_dist": 0.68396
+    }
+  ],
+  "ranked_by_context_consistency": [
+    56,
+    24,
+    40,
+    72,
+    32,
+    64,
+    48
+  ],
+  "best_k_activity": 56
+}

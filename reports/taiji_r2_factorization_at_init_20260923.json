@@ -1,0 +1,110 @@
+{
+  "format": "taiji-r2-factorization-at-init-v1",
+  "written_at_utc": "2026-09-23T03:31:47Z",
+  "contract": "plans/reference/M5_R2_COMPOSITION_BINDING_BUDGET_PROPOSAL_20260923.md",
+  "question": "分块受力面在**初始化**时是否已经提高最终 cue 的可分离性",
+  "why_this_is_valid": "receptors 是固定随机稀疏压缩、不训练，故这次改动的效果在初始化时就已完整存在；本件**只能否证、不能确认**",
+  "preregistered_ladder": {
+    "separable_floor": 0.9,
+    "not_separable_below": 0.5
+  },
+  "checkpoints": {
+    "off_at_init": {
+      "label": "off",
+      "profile": {
+        "1_activity_block": {
+          "consistency_median": 0.630292,
+          "baseline_median": 0.015118,
+          "gap_over_baseline": 0.615173,
+          "verdict": "partial"
+        },
+        "2_trace_block": {
+          "consistency_median": 0.725584,
+          "baseline_median": -0.012017,
+          "gap_over_baseline": 0.737602,
+          "verdict": "partial"
+        },
+        "3_context": {
+          "consistency_median": 0.64166,
+          "baseline_median": 0.018122,
+          "gap_over_baseline": 0.623537,
+          "verdict": "partial"
+        },
+        "4_context_trace": {
+          "consistency_median": 0.676704,
+          "baseline_median": -0.000785,
+          "gap_over_baseline": 0.67749,
+          "verdict": "partial"
+        },
+        "5_readout_dist": {
+          "consistency_median": 0.619838,
+          "baseline_median": -4.2e-05,
+          "gap_over_baseline": 0.61988,
+          "verdict": "partial"
+        }
+      }
+    },
+    "on_at_init": {
+      "label": "on",
+      "profile": {
+        "1_activity_block": {
+          "consistency_median": 0.630292,
+          "baseline_median": 0.015118,
+          "gap_over_baseline": 0.615173,
+          "verdict": "partial"
+        },
+        "2_trace_block": {
+          "consistency_median": 0.725584,
+          "baseline_median": -0.012017,
+          "gap_over_baseline": 0.737602,
+          "verdict": "partial"
+        },
+        "3_context": {
+          "consistency_median": 0.623617,
+          "baseline_median": 0.003983,
+          "gap_over_baseline": 0.619634,
+          "verdict": "partial"
+        },
+        "4_context_trace": {
+          "consistency_median": 0.695834,
+          "baseline_median": -0.00957,
+          "gap_over_baseline": 0.705404,
+          "verdict": "partial"
+        },
+        "5_readout_dist": {
+          "consistency_median": 0.632414,
+          "baseline_median": -0.022013,
+          "gap_over_baseline": 0.654426,
+          "verdict": "partial"
+        }
+      }
+    }
+  },
+  "per_stage_delta": {
+    "1_activity_block": {
+      "off": 0.630292,
+      "on": 0.630292,
+      "delta": 0.0
+    },
+    "2_trace_block": {
+      "off": 0.725584,
+      "on": 0.725584,
+      "delta": 0.0
+    },
+    "3_context": {
+      "off": 0.64166,
+      "on": 0.623617,
+      "delta": -0.018043
+    },
+    "4_context_trace": {
+      "off": 0.676704,
+      "on": 0.695834,
+      "delta": 0.01913
+    },
+    "5_readout_dist": {
+      "off": 0.619838,
+      "on": 0.632414,
+      "delta": 0.012576
+    }
+  }
+}
