@@ -75,7 +75,7 @@
 }
 
 /* Keep hover detection on a stationary box while the mark moves within it;
-   hover rules target the hitbox so a slot-occupant mark swims too. */
+   hover rules target the hitbox so a slot-occupant mark spins too. */
 .fishHitbox {
   display: inline-flex;
   flex: none;
@@ -83,9 +83,9 @@
   justify-content: center;
 }
 
-/* The swim morph's curves poke slightly past the viewBox edges, so clipping
-   would slice the tail mid-wag. The hero mark stays in the same primary ink
-   as its headline. */
+/* The hover spin is a SMIL rotate on the mark's own path; the sway below shifts
+   the svg a hair off centre, so overflow stays visible to avoid clipping the
+   disc edge. The hero mark inherits its headline's primary ink. */
 .fish {
   display: block;
   overflow: visible;
@@ -93,10 +93,9 @@
   color: var(--dsw-alias-label-primary);
 }
 
-/* Hover swim: a slow continuous sway about the body center — the head
-   (left) lifts as the whale rises, then settles back with a small
-   counter-tilt, like treading water. Negative rotation = head up (the head
-   is the left half; origin 50% 60%). */
+/* Hover sway: a slow continuous tilt about the mark centre — the disc leans a
+   few degrees one way, then settles back with a small counter-tilt. This rides
+   on top of the path's own rotation for a lively but restrained motion. */
 @keyframes hero-fish-swim {
   0%,
   100% {
