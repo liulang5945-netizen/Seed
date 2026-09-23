@@ -52,7 +52,7 @@ kind: "package-reference"
 | `persistedReadConcurrency` | `4` | 继承批量读取的并发持久化日志读取数 |
 | `preparedSessionCacheSize` | `5` | 继承的 `observeSession` 读取器为复用保留的冷 prepared-Session 观察数 |
 
-生成的[配置目录](../../../docs/config-catalog.zh.md#deepseek-aidsh-session-query-sqlite)是每个受支持字段及其 JSDoc 的穷尽式真源。
+生成的[配置目录](../../../docs/config-catalog.zh.md#taijidsh-session-query-sqlite)是每个受支持字段及其 JSDoc 的穷尽式真源。
 
 ### 搜索行为
 

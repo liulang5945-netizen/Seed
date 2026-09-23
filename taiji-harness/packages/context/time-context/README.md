@@ -46,7 +46,7 @@ The minimal mount needs no configuration. A positive `refreshIntervalMs` suppres
 | `timeZone` | process zone | Fallback display zone when the open turn has no unique browser zone |
 | `refreshIntervalMs` | `0` (every eligible step) | Minimum milliseconds between durable injections in one session |
 
-The generated [configuration catalog](../../../docs/config-catalog.md#deepseek-aidsh-time-context) is the exhaustive source for every accepted field and its JSDoc.
+The generated [configuration catalog](../../../docs/config-catalog.md#taijidsh-time-context) is the exhaustive source for every accepted field and its JSDoc.
 
 ### Choosing the zone
 
@@ -90,7 +90,7 @@ Read these pages when the package-level contract is not enough. They move from t
 
 - [Schedule user guide](../../../docs/user/guide/schedule.md) — the official configuration path for mounting this plugin.
 - [Context group map](../README.md) — sibling request-context packages.
-- [Generated configuration catalog](../../../docs/config-catalog.md#deepseek-aidsh-time-context) — every accepted config field and its source declaration.
+- [Generated configuration catalog](../../../docs/config-catalog.md#taijidsh-time-context) — every accepted config field and its source declaration.
 
 -----
 

@@ -50,7 +50,7 @@ kind: "package-reference"
 | `path` | 必填 | SQLite 数据库文件路径，或 `:memory:` |
 | `journalMode` | `wal` | Journal mode：`wal`、`delete`、`truncate` 或 `persist` |
 
-`wal` 适合本地磁盘；回滚日志模式（`delete`／`truncate`／`persist`）适合 WAL 共享内存文件不可用的文件系统，例如网络挂载。生成的[配置目录](../../../docs/config-catalog.zh.md#deepseek-aidsh-storage-sqlite)是每个受支持字段及其 JSDoc 的穷尽式真源。
+`wal` 适合本地磁盘；回滚日志模式（`delete`／`truncate`／`persist`）适合 WAL 共享内存文件不可用的文件系统，例如网络挂载。生成的[配置目录](../../../docs/config-catalog.zh.md#taijidsh-storage-sqlite)是每个受支持字段及其 JSDoc 的穷尽式真源。
 
 ### 可观察行为
 

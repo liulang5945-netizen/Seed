@@ -51,7 +51,7 @@ When you want to change when reminders fire or which tools they cover, mount the
 | `exclude` | `[]` | These tools are never tracked; calls to them neither count nor reset |
 | `argumentsPreviewChars` | `500` | How many characters of the repeated arguments the detailed reminder shows |
 
-Invalid configuration fails at startup with a clear error — an empty `thresholds` list, a repeat count below 2, or a duplicate — never a silent change of behavior. The generated [configuration catalog](../../../docs/config-catalog.md#deepseek-aidsh-repeat-tool-reminder) documents every accepted value.
+Invalid configuration fails at startup with a clear error — an empty `thresholds` list, a repeat count below 2, or a duplicate — never a silent change of behavior. The generated [configuration catalog](../../../docs/config-catalog.md#taijidsh-repeat-tool-reminder) documents every accepted value.
 
 ### What you get
 
@@ -107,7 +107,7 @@ Reminders ride the post-execute decision's `additionalContexts` (source `{kind: 
 Read these pages when the package-level contract is not enough. They move from the tools waterfall to exhaustive configuration and the guard group map.
 
 - [Tools subsystem reference](../../../docs/subsystems/tools.md) — the `tools/execute` waterfall, `additionalContexts`, and decision shapes this guard consumes.
-- [Generated configuration catalog](../../../docs/config-catalog.md#deepseek-aidsh-repeat-tool-reminder) — every accepted config field and its source declaration.
+- [Generated configuration catalog](../../../docs/config-catalog.md#taijidsh-repeat-tool-reminder) — every accepted config field and its source declaration.
 - [guard group map](../README.md) — the sibling guard packages and the loop-hygiene family.
 
 -----

@@ -49,7 +49,7 @@ kind: "package-reference"
 | `package_allowlist` | `[]` | 接纳包名的正则源；为空则全部接纳 |
 | `package_blocklist` | `[]` | 在 allowlist 匹配之后排除包名的正则源 |
 
-生成的[配置目录](../../../docs/config-catalog.zh.md#deepseek-aidsh-invariants)是每个受支持字段及其 JSDoc 的穷尽式真源。
+生成的[配置目录](../../../docs/config-catalog.zh.md#taijidsh-invariants)是每个受支持字段及其 JSDoc 的穷尽式真源。
 
 ### 运行哪些检查
 
@@ -127,7 +127,7 @@ ctx.plugin(SessionInvariant)
 当包级约定不够用时阅读以下页面。它们从生成的服务参考逐步进入决策证据与组地图。
 
 - [运行时不变量子系统](../../../docs/subsystems/invariants.zh.md)——`Config`、installer、服务与配套入口约定的生成参考。
-- [生成的配置目录](../../../docs/config-catalog.zh.md#deepseek-aidsh-invariants)——每个受支持配置字段及其源声明。
+- [生成的配置目录](../../../docs/config-catalog.zh.md#taijidsh-invariants)——每个受支持配置字段及其源声明。
 - [运行时不变量约定 Agent Note](../../../.agents/notes/implemented/architecture/2026-07-19-package-invariant-runtime-contracts.zh.md)——运行时不变量可以断言什么，以及强制配套入口接线的机械门禁。
 - [runtime-diagnostics 组地图](../../README.zh.md)——相邻的诊断包。
 

@@ -46,7 +46,7 @@ kind: "package-reference"
 | `runnerFailureSignatures` | `[]` | 识别自定义 runner 自身失败方言的不区分大小写 stderr 子串；与 `runnerCommand` 搭配必需 |
 | `probeTimeoutMs` | `5,000` | 每次竞争 runner 候选功能探测的超时时间 |
 
-生成的[配置目录](../../../docs/config-catalog.zh.md#deepseek-aidsh-sandbox-local)是每个受支持字段及其 JSDoc 的穷尽式真源。
+生成的[配置目录](../../../docs/config-catalog.zh.md#taijidsh-sandbox-local)是每个受支持字段及其 JSDoc 的穷尽式真源。
 
 ### 受限执行与强制执行
 

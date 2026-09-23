@@ -66,7 +66,7 @@ Read these pages when the plan surface is not enough. They move from the chip to
 
 - [dsh-plan-mode](../../plan/plan-mode/README.md) — owns plan mode, the `/plan` command, the projection, and the policy section.
 - [ui-conversation](../ui-conversation/README.md) — declares the composer's `conversation.input.plan` seat and the placeholder locale keys.
-- [Tool catalog](../../../docs/tool-catalog.md#deepseek-aidsh-plan-mode) — the `exit_plan_mode` tool schema the model uses to leave plan mode.
+- [Tool catalog](../../../docs/tool-catalog.md#taijidsh-plan-mode) — the `exit_plan_mode` tool schema the model uses to leave plan mode.
 - [Client package map](../README.md) — adjacent browser UI packages.
 
 -----

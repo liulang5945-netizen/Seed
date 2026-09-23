@@ -49,7 +49,7 @@ Use it when you own a Claude Code `hooks.json` (or a settings file whose `hooks`
 | `defaultTimeoutMs` | `600,000` | Per-hook timeout when a hook sets none (the Claude Code default) |
 | `stderrSummaryMaxChars` | `500` | Character cap on the persisted `hook/result` stderr summary |
 
-The generated [configuration catalog](../../../docs/config-catalog.md#deepseek-aidsh-hooks-claude-code) is the exhaustive source for every accepted field.
+The generated [configuration catalog](../../../docs/config-catalog.md#taijidsh-hooks-claude-code) is the exhaustive source for every accepted field.
 
 ### What your hooks can do
 
@@ -129,7 +129,7 @@ Read these pages when the package-level contract is not enough. They move from t
 - [Hook protocol library](../hook-protocol/README.md) — the shared hook rules this bridge applies.
 - [Hook bridges Agent Note](../../../.agents/notes/archived/feature/2026-06-30-hook-bridges.md) — the bridge design, decision mapping, and deferred gaps.
 - [Interception extension-points Agent Note](../../../.agents/notes/implemented/feature/2026-06-30-interception-extension-points.md) — the typed-Decision surface the bridge maps onto.
-- [Generated configuration catalog](../../../docs/config-catalog.md#deepseek-aidsh-hooks-claude-code) — every accepted config field and its source declaration.
+- [Generated configuration catalog](../../../docs/config-catalog.md#taijidsh-hooks-claude-code) — every accepted config field and its source declaration.
 
 -----
 

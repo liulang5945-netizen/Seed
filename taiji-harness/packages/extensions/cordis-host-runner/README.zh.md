@@ -39,7 +39,7 @@ kind: "package-reference"
 |---|---|---|
 | `vmTimeoutMs` | `5000` | host 半在 vm 中同步执行的那部分被中止求值前可运行的毫秒数 |
 
-生成的[配置目录](../../../docs/config-catalog.zh.md#deepseek-aidsh-cordis-host-runner)是每个受支持字段的穷尽式真源。
+生成的[配置目录](../../../docs/config-catalog.zh.md#taijidsh-cordis-host-runner)是每个受支持字段的穷尽式真源。
 
 ### run 会做什么
 
@@ -95,7 +95,7 @@ runner 基于两项职责划分。**注册表与沙箱是同一个服务。** `D
 - [工具包](../tool-cordis/README.zh.md)——使用其检查注册表的只读工具。
 - [Client runner](../cordis-client-runner/README.zh.md)——应答运行请求并装载浏览器半代码的浏览器半。
 - [UI 包](../ui-cordis/README.zh.md)——用户批准并操作运行的面板。
-- [生成的配置目录](../../../docs/config-catalog.zh.md#deepseek-aidsh-cordis-host-runner)——每个受支持配置字段。
+- [生成的配置目录](../../../docs/config-catalog.zh.md#taijidsh-cordis-host-runner)——每个受支持配置字段。
 - [extensions 子系统](../../../docs/subsystems/extensions.zh.md)——生成的 `ctx.cordisInspect` 与 `ctx.dynamicCordisRunner` API 及 `cordis/*` 事件。
 - [自引用 Cordis 工具集 Agent Note](../../../.agents/notes/implemented/feature/2026-07-08-self-referential-cordis-toolset.zh.md)——沙箱语义、生命周期与组合的理由。
 

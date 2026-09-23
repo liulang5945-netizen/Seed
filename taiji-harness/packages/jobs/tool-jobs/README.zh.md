@@ -56,7 +56,7 @@ kind: "package-reference"
 | `completionDelivery` | `wakeup` | `wakeup` 为空闲所有者开启一轮；`quiet` 让通知继续待领 |
 | `maxConsecutiveWakes` | `3` | 一个所有者可由唤醒开启的轮数，超出后通知降级为注入 |
 
-生成的[配置目录](../../../docs/config-catalog.zh.md#deepseek-aidsh-tool-jobs)是每个受支持字段及其 JSDoc 的穷尽式真源。
+生成的[配置目录](../../../docs/config-catalog.zh.md#taijidsh-tool-jobs)是每个受支持字段及其 JSDoc 的穷尽式真源。
 
 ### 可能出什么问题
 
@@ -107,8 +107,8 @@ kind: "package-reference"
 - [jobs 组映射](../README.zh.md)——同级组页面及其包表格。
 - [注册表约定](../jobs/README.zh.md)——工具背后的抽象 `ctx.jobs` 服务。
 - [进程本地注册表](../jobs-local/README.zh.md)——任务在本进程中的运行位置。
-- [生成的工具目录](../../../docs/tool-catalog.zh.md#deepseek-aidsh-tool-jobs)——`job_output`、`job_list` 与 `job_kill` 的确切 schema。
-- [生成的配置目录](../../../docs/config-catalog.zh.md#deepseek-aidsh-tool-jobs)——每个受支持配置字段及其源声明。
+- [生成的工具目录](../../../docs/tool-catalog.zh.md#taijidsh-tool-jobs)——`job_output`、`job_list` 与 `job_kill` 的确切 schema。
+- [生成的配置目录](../../../docs/config-catalog.zh.md#taijidsh-tool-jobs)——每个受支持配置字段及其源声明。
 - [任务注册表 seam Agent Note](../../../.agents/notes/archived/architecture/2026-07-26-job-registry-seam.md)——按所有者隔离的注册表约定及其理由。
 
 -----
@@ -140,7 +140,7 @@ Track every background job id you start. You are notified in-session when a job 
 
 #### 模型看到什么
 
-该工具集可见时，会看到生成的 [`job_output`、`job_list` 和 `job_kill` schema](../../../docs/tool-catalog.zh.md#deepseek-aidsh-tool-jobs)。
+该工具集可见时，会看到生成的 [`job_output`、`job_list` 和 `job_kill` schema](../../../docs/tool-catalog.zh.md#taijidsh-tool-jobs)。
 
 #### Token 影响
 

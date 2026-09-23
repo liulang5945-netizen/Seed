@@ -48,7 +48,7 @@ kind: "package-reference"
 | `enableRunInBackground` | `true` | 组合中有 job 注册表时暴露 `run_in_background`；为 `false` 时拒绝强制后台调用 |
 | `promoteOnTimeout` | `true` | 到达超时的前台命令继续作为它的后台任务运行，而不是杀掉它 |
 
-生成的[配置目录](../../../docs/config-catalog.zh.md#deepseek-aidsh-tool-pwsh)是每个受支持字段及其 JSDoc 的穷尽式真源；生成的[工具目录](../../../docs/tool-catalog.zh.md#deepseek-aidsh-tool-pwsh)携带完整参数 schema。
+生成的[配置目录](../../../docs/config-catalog.zh.md#taijidsh-tool-pwsh)是每个受支持字段及其 JSDoc 的穷尽式真源；生成的[工具目录](../../../docs/tool-catalog.zh.md#taijidsh-tool-pwsh)携带完整参数 schema。
 
 ### 运行命令
 
@@ -111,8 +111,8 @@ kind: "package-reference"
 - [tool-jobs](../../jobs/tool-jobs/README.zh.md)——后台运行的 `job_output`、`job_list` 与 `job_kill` 控制。
 - [pwsh 工具与 bash 对齐 Agent Note](../../../.agents/notes/implemented/feature/2026-08-02-pwsh-tool-bash-parity.zh.md)——为什么工具镜像 bash 工具。
 - [Windows ACL 受限令牌沙箱 Agent Note](../../../.agents/notes/implemented/feature/2026-08-08-windows-acl-restricted-token-sandbox.zh.md)——语言模式与命名管道约定。
-- [生成的工具目录](../../../docs/tool-catalog.zh.md#deepseek-aidsh-tool-pwsh)——`pwsh` 参数 schema 的确切内容。
-- [生成的配置目录](../../../docs/config-catalog.zh.md#deepseek-aidsh-tool-pwsh)——每个受支持配置字段及其源声明。
+- [生成的工具目录](../../../docs/tool-catalog.zh.md#taijidsh-tool-pwsh)——`pwsh` 参数 schema 的确切内容。
+- [生成的配置目录](../../../docs/config-catalog.zh.md#taijidsh-tool-pwsh)——每个受支持配置字段及其源声明。
 
 -----
 
@@ -143,7 +143,7 @@ Non-zero exits are reported as `[exit code: N]` markers; investigate failures be
 
 #### 模型看到什么
 
-模型会看到生成的 [`pwsh` schema](../../../docs/tool-catalog.zh.md#deepseek-aidsh-tool-pwsh)。按 agent 作用域实施的工具限制可以移除该 agent 的定义。
+模型会看到生成的 [`pwsh` schema](../../../docs/tool-catalog.zh.md#taijidsh-tool-pwsh)。按 agent 作用域实施的工具限制可以移除该 agent 的定义。
 
 #### Token 影响
 

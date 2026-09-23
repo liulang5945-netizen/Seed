@@ -41,7 +41,7 @@ kind: "package-reference"
 
 ### 最小配置
 
-在 Windows 上挂载 ACL 受限令牌提供方；在 Linux 与 macOS 上则改挂本地 runner 提供方。执行器自身的配置与本地 pwsh 执行器的配置项完全相同；生成的[配置目录](../../../docs/config-catalog.zh.md#deepseek-aidsh-pwsh-sandbox)是完整真源。
+在 Windows 上挂载 ACL 受限令牌提供方；在 Linux 与 macOS 上则改挂本地 runner 提供方。执行器自身的配置与本地 pwsh 执行器的配置项完全相同；生成的[配置目录](../../../docs/config-catalog.zh.md#taijidsh-pwsh-sandbox)是完整真源。
 
 ```yaml
 - id: sandbox

@@ -87,7 +87,7 @@ References keep local Session data, scoped Contexts, and history streams alive, 
 |---|---:|---|
 | `nativeOpen` | platform-detected | Whether Session workspace paths can be handed to a native desktop opener |
 
-The generated [configuration catalog](../../../docs/config-catalog.md#deepseek-aidsh-api-session-controller) is the exhaustive source for accepted fields and their JSDoc.
+The generated [configuration catalog](../../../docs/config-catalog.md#taijidsh-api-session-controller) is the exhaustive source for accepted fields and their JSDoc.
 
 -----
 

@@ -46,7 +46,7 @@ kind: "package-reference"
 | `toolCallTimeoutMs` | MCP 客户端默认值 | 单次调用的超时覆盖值，单位为毫秒 |
 | `reconnect` | MCP 客户端策略 | 可选的重连覆盖配置 |
 
-生成的[配置目录](../../../docs/config-catalog.zh.md#deepseek-aidsh-experimental-computer-use-cua-driver-mcp)列出了接受的字段。超时和重连默认值由 [MCP 客户端](../../mcp/mcp-client/README.zh.md)定义。
+生成的[配置目录](../../../docs/config-catalog.zh.md#taijidsh-experimental-computer-use-cua-driver-mcp)列出了接受的字段。超时和重连默认值由 [MCP 客户端](../../mcp/mcp-client/README.zh.md)定义。
 
 ### 激活与所有权
 

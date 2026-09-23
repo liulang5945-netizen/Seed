@@ -51,7 +51,7 @@ kind: "package-reference"
 | `exclude` | `[]` | 绝不跟踪这些工具；对它们的调用既不计数也不重置 |
 | `argumentsPreviewChars` | `500` | 详细提醒中显示多少字符的重复参数 |
 
-无效配置会在启动时以清晰错误失败——空的 `thresholds` 列表、小于 2 的重复次数或重复值——绝不会静默改变行为。生成的[配置目录](../../../docs/config-catalog.zh.md#deepseek-aidsh-repeat-tool-reminder)记录每个受支持的值。
+无效配置会在启动时以清晰错误失败——空的 `thresholds` 列表、小于 2 的重复次数或重复值——绝不会静默改变行为。生成的[配置目录](../../../docs/config-catalog.zh.md#taijidsh-repeat-tool-reminder)记录每个受支持的值。
 
 ### 你会得到什么
 
@@ -107,7 +107,7 @@ guard 建立在四项承诺之上：
 当包级约定不够用时阅读以下页面。它们从工具 waterfall（瀑布式事件）逐步进入穷尽式配置与 guard 组映射。
 
 - [工具子系统参考](../../../docs/subsystems/tools.zh.md)——本 guard 消费的 `tools/execute` waterfall、`additionalContexts` 与决策形态。
-- [生成配置目录](../../../docs/config-catalog.zh.md#deepseek-aidsh-repeat-tool-reminder)——每个受支持配置字段及其源声明。
+- [生成配置目录](../../../docs/config-catalog.zh.md#taijidsh-repeat-tool-reminder)——每个受支持配置字段及其源声明。
 - [guard 组映射](../README.zh.md)——同组的 guard 包与循环卫生家族。
 
 -----

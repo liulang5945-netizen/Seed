@@ -54,7 +54,7 @@ kind: "package-reference"
 | `agents[].sessionId` | — | 确切身份：首次使用创建，重新挂载时恢复已实体化的历史 |
 | `agents[].resumeSessionId` | — | 加载这个持久化会话而不是创建新会话；与 `sessionId` 互斥 |
 
-生成的[配置目录](../../../docs/config-catalog.zh.md#deepseek-aidsh-agent-loop) 列出所有接受的字段。`maxParallelToolCalls` 是在下一个工具组开始时读取的 volatile Config 字段；`agents` 仍是启动配置。
+生成的[配置目录](../../../docs/config-catalog.zh.md#taijidsh-agent-loop) 列出所有接受的字段。`maxParallelToolCalls` 是在下一个工具组开始时读取的 volatile Config 字段；`agents` 仍是启动配置。
 
 ### 以编程方式创建或恢复 agent
 

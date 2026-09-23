@@ -61,7 +61,7 @@ All keys are optional; the defaults are the shipped read caps.
 | `readMaxBytes` | `51200` | Byte cap on one `read` call's selected lines; overflow ends the window with a capped footer |
 | `readStreamMinSize` | `10485760` | Files at or above this size (or of unknown size) stream instead of loading whole into memory |
 
-The generated [configuration catalog](../../../docs/config-catalog.md#deepseek-aidsh-tool-fs) is the exhaustive source for every accepted field and its JSDoc.
+The generated [configuration catalog](../../../docs/config-catalog.md#taijidsh-tool-fs) is the exhaustive source for every accepted field and its JSDoc.
 
 ### Policy and sandbox behavior
 
@@ -122,7 +122,7 @@ Read these pages when the package-level contract is not enough. They move from t
 - [fs-local](../fs-local/README.md) — the host-filesystem backend these tools run against.
 - [fs-sandbox](../fs-sandbox/README.md) — the sandbox-enforcing backend that adds the escalation fields.
 - [fs-observation-policy](../fs-observation-policy/README.md) — the policy plugin that guards mutations through the `fs/*` events.
-- [Generated tool catalog](../../../docs/tool-catalog.md#deepseek-aidsh-tool-fs) — the exhaustive schemas this package registers.
+- [Generated tool catalog](../../../docs/tool-catalog.md#taijidsh-tool-fs) — the exhaustive schemas this package registers.
 
 -----
 
@@ -165,7 +165,7 @@ Prefix-stable while the visible tool set, plugin scope, and guidance text are un
 
 #### What the model sees
 
-The model sees the generated [`read`, `read_image`, `write`, and `edit` schemas](../../../docs/tool-catalog.md#deepseek-aidsh-tool-fs), with snake_case arguments. The image tool appears only while a durable attachment store is mounted; its schema is route-independent, and the strict gate refuses at execution. Scoped tool restrictions can remove any definition for one agent.
+The model sees the generated [`read`, `read_image`, `write`, and `edit` schemas](../../../docs/tool-catalog.md#taijidsh-tool-fs), with snake_case arguments. The image tool appears only while a durable attachment store is mounted; its schema is route-independent, and the strict gate refuses at execution. Scoped tool restrictions can remove any definition for one agent.
 
 #### Token effect
 

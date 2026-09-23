@@ -49,7 +49,7 @@ One-time reminders come in two forms: after a delay — for example "in 30 minut
 
 A successful create returns the reminder with its id, target time, state, and delivery mode; `schedule_list` shows all pending reminders in the order you created them; canceling by id removes a pending reminder, and an unknown or already-finished id reports `schedule_not_found` without changing anything.
 
-Input that cannot become a reminder — an empty prompt, more than one selector, an invalid time zone, a non-future or out-of-range time, a repeating interval below 5 minutes — returns a stable error code instead of succeeding. The generated [tool catalog](../../../docs/tool-catalog.md#deepseek-aidsh-schedule) owns the exact arguments each tool accepts.
+Input that cannot become a reminder — an empty prompt, more than one selector, an invalid time zone, a non-future or out-of-range time, a repeating interval below 5 minutes — returns a stable error code instead of succeeding. The generated [tool catalog](../../../docs/tool-catalog.md#taijidsh-schedule) owns the exact arguments each tool accepts.
 
 ### When reminders fire
 
@@ -134,7 +134,7 @@ The plugin answers the Workspace registry's archive admission ([seam](../../work
 Read these pages when the package-level contract is not enough. They move from the shared subsystem contracts to the exact tool schemas and the decision evidence behind the delivery design.
 
 - [Session-local Schedule subsystem](../../../docs/subsystems/schedule.md) — durable record, transition, view, and delivery contracts with the exact type definitions.
-- [Generated tool catalog](../../../docs/tool-catalog.md#deepseek-aidsh-schedule) — the complete `schedule_create`, `schedule_list`, and `schedule_delete` schemas the model receives.
+- [Generated tool catalog](../../../docs/tool-catalog.md#taijidsh-schedule) — the complete `schedule_create`, `schedule_list`, and `schedule_delete` schemas the model receives.
 - [Durable Web Schedule decision](../../../.agents/notes/implemented/feature/2026-08-05-durable-web-schedule.md) — persistence and lifecycle decisions behind the package.
 - [Conversational delivery decision](../../../.agents/notes/archived/simplification/2026-08-09-conversational-schedule-delivery.md) — the no-receipt boundary and follow-up delivery.
 - [Explicit time-zone boundary](../../../.agents/notes/implemented/simplification/2026-08-09-explicit-schedule-time-zone.md) — why the model must always pass an explicit zone.
@@ -150,7 +150,7 @@ Read these pages when the package-level contract is not enough. They move from t
 
 #### What the model sees
 
-The model sees the three generated tool schemas only in a live root Agent created after this plugin loads; the [generated tool catalog](../../../docs/tool-catalog.md#deepseek-aidsh-schedule) owns the exact argument and result schemas. Tool results contain the canonical JSON values described above.
+The model sees the three generated tool schemas only in a live root Agent created after this plugin loads; the [generated tool catalog](../../../docs/tool-catalog.md#taijidsh-schedule) owns the exact argument and result schemas. Tool results contain the canonical JSON values described above.
 
 #### Token effect
 

@@ -57,7 +57,7 @@ kind: "package-reference"
 | `timeoutMs` | `30000` | 一次发送等待的绝对上限 |
 | `disposeGraceMs` | `3000` | 清理升级到 `SIGKILL` 前的宽限时间 |
 
-生成的[配置目录](../../../docs/config-catalog.zh.md#deepseek-aidsh-terminal-bash)是每个字段的穷尽式真源，包括就绪计时（`pollIntervalMs`、`exactProbeAfterMs`、`idleSilenceMs`、`handoffGraceMs`）、终端尺寸（`rows`、`cols`）与 scrollback 上限（`scrollbackLines`、`scrollbackMaxBytes`）。
+生成的[配置目录](../../../docs/config-catalog.zh.md#taijidsh-terminal-bash)是每个字段的穷尽式真源，包括就绪计时（`pollIntervalMs`、`exactProbeAfterMs`、`idleSilenceMs`、`handoffGraceMs`）、终端尺寸（`rows`、`cols`）与 scrollback 上限（`scrollbackLines`、`scrollbackMaxBytes`）。
 
 ### shell 方言与就绪
 

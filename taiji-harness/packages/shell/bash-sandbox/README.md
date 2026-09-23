@@ -41,7 +41,7 @@ Choose it when a deployment needs file-level confinement for Bash commands: the 
 
 ### Minimal configuration
 
-The executor takes no sandbox configuration of its own: the default mode and workspace root come from `ctx.sandboxPolicy`, and the runner choice belongs to the `ctx.sandbox` provider. Its own config is the local executor's knobs verbatim; the generated [configuration catalog](../../../docs/config-catalog.md#deepseek-aidsh-bash-sandbox) is the exhaustive source.
+The executor takes no sandbox configuration of its own: the default mode and workspace root come from `ctx.sandboxPolicy`, and the runner choice belongs to the `ctx.sandbox` provider. Its own config is the local executor's knobs verbatim; the generated [configuration catalog](../../../docs/config-catalog.md#taijidsh-bash-sandbox) is the exhaustive source.
 
 ```yaml
 - id: sandbox
@@ -123,7 +123,7 @@ Read these pages when the executor contract is not enough. They move from the se
 
 #### What the model sees
 
-The generated [`dsh-tool-bash` schemas](../../../docs/tool-catalog.md#deepseek-aidsh-tool-bash) are the baseline. By advertising a confining `sandboxMode`, this backend augments `bash` with `sandbox_permissions` (enum `workspace-write` | `danger-full-access`) and `justification`. The policy owner separately contributes the current capability-neutral `sandbox:policy` context.
+The generated [`dsh-tool-bash` schemas](../../../docs/tool-catalog.md#taijidsh-tool-bash) are the baseline. By advertising a confining `sandboxMode`, this backend augments `bash` with `sandbox_permissions` (enum `workspace-write` | `danger-full-access`) and `justification`. The policy owner separately contributes the current capability-neutral `sandbox:policy` context.
 
 #### Token effect
 

@@ -88,7 +88,7 @@ agent（智能体）及宿主 UI 可以用各 agent 本地工作区中经过排�
 
 - [文件引用 seam](../file-reference/README.zh.md)——本提供方所实现的服务约定与 `@file` 语法。
 - [会话引用子系统](../../../docs/subsystems/session-reference.zh.md)——宿主 UI 背后的共享文件引用约定。
-- [文件系统工具目录](../../../docs/tool-catalog.zh.md#deepseek-aidsh-tool-fs)——发现能力必须匹配其命名空间的 `read` 工具。
+- [文件系统工具目录](../../../docs/tool-catalog.zh.md#taijidsh-tool-fs)——发现能力必须匹配其命名空间的 `read` 工具。
 - [上下文组地图](../README.zh.md)——相邻的请求上下文包。
 
 -----

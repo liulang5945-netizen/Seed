@@ -89,7 +89,7 @@ These pages cover server configuration, execution, and the decisions behind reso
 
 #### What the model sees
 
-The [generated tool schemas](../../../docs/tool-catalog.md#deepseek-aidsh-mcp-resources) define three tools shared by all caller-visible configured servers. With none, native schemas, PTC declarations and bindings, and the server-name prompt are absent. Connecting, disconnecting, or retrying an active client leaves these shared tool definitions unchanged. When system-prompt assembly is mounted and providers are visible, the `MCP resource servers` section says `Use list_mcp_resources, list_mcp_resource_templates, or read_mcp_resource with one of these names as the server argument: <JSON array>.` The names come from the same scoped registry, including servers with neither tools nor instructions. An empty registry contributes no section.
+The [generated tool schemas](../../../docs/tool-catalog.md#taijidsh-mcp-resources) define three tools shared by all caller-visible configured servers. With none, native schemas, PTC declarations and bindings, and the server-name prompt are absent. Connecting, disconnecting, or retrying an active client leaves these shared tool definitions unchanged. When system-prompt assembly is mounted and providers are visible, the `MCP resource servers` section says `Use list_mcp_resources, list_mcp_resource_templates, or read_mcp_resource with one of these names as the server argument: <JSON array>.` The names come from the same scoped registry, including servers with neither tools nor instructions. An empty registry contributes no section.
 
 #### Token effect
 

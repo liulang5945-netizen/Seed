@@ -48,7 +48,7 @@ Every session the server creates uses the provider and model configured here. Bo
 | `model` | — | Model for every session's agent |
 | `sessionListPageSize` | `100` | Maximum summaries returned in one `session/list` page |
 
-The generated [configuration catalog](../../../docs/config-catalog.md#deepseek-aidsh-acp) is the exhaustive source for every accepted field and its JSDoc.
+The generated [configuration catalog](../../../docs/config-catalog.md#taijidsh-acp) is the exhaustive source for every accepted field and its JSDoc.
 
 ### Start a server
 

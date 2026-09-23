@@ -53,7 +53,7 @@ kind: "package-reference"
 | `maxTokens` | `4096` | Messages 请求生成 token 的正整数上限 |
 | `maxUses` | `5` | 每次请求使用 `web_search` 服务器工具的正整数上限 |
 
-生成的[配置目录](../../../docs/config-catalog.zh.md#deepseek-aidsh-web-search-deepseek) 列出所有接受的字段。每次搜索从即时 Config 引用捕获选项。
+生成的[配置目录](../../../docs/config-catalog.zh.md#taijidsh-web-search-deepseek) 列出所有接受的字段。每次搜索从即时 Config 引用捕获选项。
 
 ### 搜索返回什么
 
@@ -110,7 +110,7 @@ kind: "package-reference"
 - [web 包映射](../README.zh.md)——六包家族与各角色。
 - [dsh-web](../web/README.zh.md)——本提供方注册进入的 web 服务。
 - [dsh-tool-web](../tool-web/README.zh.md)——渲染本提供方来源的面向模型 `web_search` 工具。
-- [生成配置目录](../../../docs/config-catalog.zh.md#deepseek-aidsh-web-search-deepseek)——每个受支持配置字段及其源声明。
+- [生成配置目录](../../../docs/config-catalog.zh.md#taijidsh-web-search-deepseek)——每个受支持配置字段及其源声明。
 - [web 能力 seam 决策](../../../.agents/notes/implemented/architecture/2026-06-24-web-capability-seam.zh.md)——搜索与抓取为何共用一项提供方选择服务。
 
 -----

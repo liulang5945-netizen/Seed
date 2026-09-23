@@ -49,7 +49,7 @@ The only plugin field is `root`, which holds the unit files and directories. It 
 |---|---|---|
 | `root` | required | Directory holding `<unit>.json` files and `<unit>/` trees; created `0o700` on demand |
 
-The generated [configuration catalog](../../../docs/config-catalog.md#deepseek-aidsh-storage-json) is the exhaustive source for every accepted field and its JSDoc.
+The generated [configuration catalog](../../../docs/config-catalog.md#taijidsh-storage-json) is the exhaustive source for every accepted field and its JSDoc.
 
 ### Observable behavior
 

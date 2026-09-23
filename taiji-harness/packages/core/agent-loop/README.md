@@ -54,7 +54,7 @@ Agents declared in the config start automatically when the plugin loads. Each en
 | `agents[].sessionId` | — | Exact identity: first use creates, a remount resumes materialized history |
 | `agents[].resumeSessionId` | — | Load this persisted session instead of creating one; mutually exclusive with `sessionId` |
 
-The generated [configuration catalog](../../../docs/config-catalog.md#deepseek-aidsh-agent-loop) lists every accepted field. `maxParallelToolCalls` is a volatile Config field sampled for the next tool group; `agents` remains startup configuration.
+The generated [configuration catalog](../../../docs/config-catalog.md#taijidsh-agent-loop) lists every accepted field. `maxParallelToolCalls` is a volatile Config field sampled for the next tool group; `agents` remains startup configuration.
 
 ### Create or resume agents programmatically
 

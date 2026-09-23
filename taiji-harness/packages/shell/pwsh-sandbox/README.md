@@ -41,7 +41,7 @@ Choose it when a deployment needs file-level confinement for PowerShell commands
 
 ### Minimal configuration
 
-On Windows, mount the ACL restricted-token provider; on Linux and macOS, mount the local runner provider instead. The executor's own config is the local pwsh executor's knobs verbatim; the generated [configuration catalog](../../../docs/config-catalog.md#deepseek-aidsh-pwsh-sandbox) is the exhaustive source.
+On Windows, mount the ACL restricted-token provider; on Linux and macOS, mount the local runner provider instead. The executor's own config is the local pwsh executor's knobs verbatim; the generated [configuration catalog](../../../docs/config-catalog.md#taijidsh-pwsh-sandbox) is the exhaustive source.
 
 ```yaml
 - id: sandbox

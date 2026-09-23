@@ -41,7 +41,7 @@ Load the local store package with a document path:
     path: /absolute/path/to/.credentials.yaml
 ```
 
-The local store README owns the full configuration surface; the generated [configuration catalog](../../../docs/config-catalog.md#deepseek-aidsh-credentials-local) is the exhaustive field list.
+The local store README owns the full configuration surface; the generated [configuration catalog](../../../docs/config-catalog.md#taijidsh-credentials-local) is the exhaustive field list.
 
 ### Storing, checking, and removing keys
 

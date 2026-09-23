@@ -46,7 +46,7 @@ kind: "package-reference"
 | `searchProvider` | （未设置） | 固定的搜索提供方 id；未设置时仅在恰好一个可用时自动选择 |
 | `fetchProvider` | （未设置） | 固定的抓取提供方 id；未设置时仅在恰好一个可用时自动选择 |
 
-生成的[配置目录](../../../docs/config-catalog.zh.md#deepseek-aidsh-web)是每个受支持字段及其 JSDoc 的穷尽式真源。
+生成的[配置目录](../../../docs/config-catalog.zh.md#taijidsh-web)是每个受支持字段及其 JSDoc 的穷尽式真源。
 
 ### 搜索与抓取
 
@@ -128,7 +128,7 @@ const page = await ctx.web.fetch({ url: 'https://example.com' })
 - [web 包映射](../README.zh.md)——六包家族与各角色。
 - [dsh-tool-web](../tool-web/README.zh.md)——构建于本服务之上的面向模型 `web_search` 与 `web_fetch` 工具。
 - [dsh-web-fetch-http](../web-fetch-http/README.zh.md)——已交付的匿名 HTTP(S) 抓取后端。
-- [生成配置目录](../../../docs/config-catalog.zh.md#deepseek-aidsh-web)——每个受支持配置字段及其源声明。
+- [生成配置目录](../../../docs/config-catalog.zh.md#taijidsh-web)——每个受支持配置字段及其源声明。
 - [web 能力 seam 决策](../../../.agents/notes/implemented/architecture/2026-06-24-web-capability-seam.zh.md)——搜索与抓取为何共用一项提供方选择服务。
 
 -----

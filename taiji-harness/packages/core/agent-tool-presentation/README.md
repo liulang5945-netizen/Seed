@@ -39,7 +39,7 @@ Add this row to an agent preset to fix how every agent joined to that preset see
 |---|---|---|
 | `mode` | required | `native` — every schema; `ptc` — `run_code` plus generated SDK; `both` — both forms |
 
-The generated [configuration catalog](../../../docs/config-catalog.md#deepseek-aidsh-agent-tool-presentation) is the exhaustive source for every accepted field. `mode` is required rather than defaulted because a preset without this row inherits the deployment default.
+The generated [configuration catalog](../../../docs/config-catalog.md#taijidsh-agent-tool-presentation) is the exhaustive source for every accepted field. `mode` is required rather than defaulted because a preset without this row inherits the deployment default.
 
 ### What PTC mode requires
 

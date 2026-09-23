@@ -2,5 +2,5 @@
 # side as of the last confirmed-consistent state. Both languages carry equal authority;
 # after editing either side, bring the other along and re-record with:
 #   pnpm run verify-translation-pairing --write packages/session/session-telemetry-otel/README.md
-README.md: 35dc351bd56fdce396eb4c89c321008eb14796ce
-README.zh.md: c414e6461a175412bd44e6fdacd22df0da2eb902
+README.md: f513e052f5621af1a9033640455d0be0fb0c0010
+README.zh.md: 190daf87dfd4dcfc71a35865609696db16daf2b5

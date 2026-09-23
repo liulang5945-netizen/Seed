@@ -52,7 +52,7 @@ Choose it when you want full-text recall over prior sessions with ranking and pa
 | `persistedReadConcurrency` | `4` | Concurrent persisted-log reads for inherited batch reads |
 | `preparedSessionCacheSize` | `5` | Cold prepared-Session observations the inherited `observeSession` reader retains for reuse |
 
-The generated [configuration catalog](../../../docs/config-catalog.md#deepseek-aidsh-session-query-sqlite) is the exhaustive source for every accepted field and its JSDoc.
+The generated [configuration catalog](../../../docs/config-catalog.md#taijidsh-session-query-sqlite) is the exhaustive source for every accepted field and its JSDoc.
 
 ### Search behavior
 

@@ -38,7 +38,7 @@ kind: "package-reference"
 | `maxSearchResults` | `100` | 一次搜索调用返回的最大已授权命中数 |
 | `searchTimeoutMs` | `30000` | 附加到两个全文搜索工具的协作式截止时间 |
 
-生成的[配置目录](../../../docs/config-catalog.zh.md#deepseek-aidsh-tool-session-query)是每个受支持字段及其 JSDoc 的穷尽式真源。
+生成的[配置目录](../../../docs/config-catalog.zh.md#taijidsh-tool-session-query)是每个受支持字段及其 JSDoc 的穷尽式真源。
 
 ### 模型可以做什么
 
@@ -101,7 +101,7 @@ kind: "package-reference"
 
 当包级约定不够用时阅读以下页面。它们从工具表面逐步进入底层服务、schema 目录与设计证据。
 
-- [生成的工具目录](../../../docs/tool-catalog.zh.md#deepseek-aidsh-tool-session-query)——模型看到的五个工具 schema。
+- [生成的工具目录](../../../docs/tool-catalog.zh.md#taijidsh-tool-session-query)——模型看到的五个工具 schema。
 - [dsh-session-query](../session-query/README.zh.md)——这些工具调用的服务。
 - [dsh-session-query-sqlite](../session-query-sqlite/README.zh.md)——两个搜索工具背后的全文后端。
 - [会话查询子系统参考](../../../docs/subsystems/session-query.zh.md)——工具之下的类型级约定。
@@ -136,7 +136,7 @@ Use session_search to find relevant work from prior sessions, or session_event_s
 
 #### 模型看到什么
 
-模型会看到生成的 [`session_search`、`session_event_search`、`session_trace`、`session_event_trace` 与 `session_event_read` schema](../../../docs/tool-catalog.zh.md#deepseek-aidsh-tool-session-query)。搜索过滤器会增加固定 schema token，而游标、工作区路径、输出分页与模型可控结果上限仍不存在。
+模型会看到生成的 [`session_search`、`session_event_search`、`session_trace`、`session_event_trace` 与 `session_event_read` schema](../../../docs/tool-catalog.zh.md#taijidsh-tool-session-query)。搜索过滤器会增加固定 schema token，而游标、工作区路径、输出分页与模型可控结果上限仍不存在。
 
 #### Token 影响
 

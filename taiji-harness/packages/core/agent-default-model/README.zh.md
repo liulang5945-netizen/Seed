@@ -43,7 +43,7 @@ kind: "package-reference"
 | `provider` | 必填 | 新 agent 使用的已注册提供方路由 |
 | `model` | 必填 | 新 agent 使用的、由提供方持有的模型 id |
 
-生成的[配置目录](../../../docs/config-catalog.zh.md#deepseek-aidsh-agent-default-model) 列出所有接受的字段。`reasoningEffort` 是可选的；保存不含此字段的选择，会从 profile 的完整配置覆盖中移除此字段。
+生成的[配置目录](../../../docs/config-catalog.zh.md#taijidsh-agent-default-model) 列出所有接受的字段。`reasoningEffort` 是可选的；保存不含此字段的选择，会从 profile 的完整配置覆盖中移除此字段。
 
 ### 读取与更改默认值
 
@@ -92,7 +92,7 @@ await ctx.agentDefaultModel.saveSelection({ provider, model, reasoningEffort: 'h
 
 - [Core 子系统](../../../docs/subsystems/core.zh.md)——`Agent` 句柄与 `AgentOptions` 路由选择。
 - [agent-loop 包](../agent-loop/README.zh.md)——agent 在请求时如何解析提供方与模型。
-- [生成配置目录](../../../docs/config-catalog.zh.md#deepseek-aidsh-agent-default-model)——每个受支持配置字段及其源声明。
+- [生成配置目录](../../../docs/config-catalog.zh.md#taijidsh-agent-default-model)——每个受支持配置字段及其源声明。
 - [core 分组地图](../README.zh.md)——core 各包如何组合。
 
 -----

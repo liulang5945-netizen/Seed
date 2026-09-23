@@ -61,7 +61,7 @@ kind: "package-reference"
 | `providers` | 无 | 可选的仅回放提供方与模型目录；模型可声明 `contextWindow`、文本／图片模态、图片模型使用的正整数 `imageRequestTokens`，以及让无密钥场景演练历史内系统提示词替换的 `systemPromptUpdate: in-history`；非法值会在加载时失败（`llm-replay: provider "…" model "…" systemPromptUpdate must be "in-history" when present`），路由绝不执行提供方 I/O |
 | `paceMs` | 无（突发） | 可选的每分片延迟（毫秒），用于真正的增量投递 |
 
-生成的[配置目录](../../../docs/config-catalog.zh.md#deepseek-aidsh-llm-replay)是每个受支持字段及其 JSDoc 的穷尽式真源。
+生成的[配置目录](../../../docs/config-catalog.zh.md#taijidsh-llm-replay)是每个受支持字段及其 JSDoc 的穷尽式真源。
 
 ### fixture 的工作方式
 

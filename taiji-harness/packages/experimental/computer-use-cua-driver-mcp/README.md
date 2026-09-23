@@ -46,7 +46,7 @@ Add these rows to a composition that already provides tools and system-prompt se
 | `toolCallTimeoutMs` | MCP client default | Per-call timeout override in milliseconds |
 | `reconnect` | MCP client policy | Optional reconnection overrides |
 
-The generated [configuration catalog](../../../docs/config-catalog.md#deepseek-aidsh-experimental-computer-use-cua-driver-mcp) lists accepted fields. The [MCP client](../../mcp/mcp-client/README.md) owns timeout and reconnection defaults.
+The generated [configuration catalog](../../../docs/config-catalog.md#taijidsh-experimental-computer-use-cua-driver-mcp) lists accepted fields. The [MCP client](../../mcp/mcp-client/README.md) owns timeout and reconnection defaults.
 
 ### Activation and ownership
 

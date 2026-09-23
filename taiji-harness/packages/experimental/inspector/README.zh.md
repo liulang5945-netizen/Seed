@@ -72,7 +72,7 @@ Host 插件注入 `webServer`，接受以下字段：
 | `maxCordisNodes` | `2048` | 一个 realm 快照截断前允许的 Context 与 Fiber 节点数 |
 | `maxDisconnectedCordisTrees` | `8` | 作为非实时快照保留的最近断联 realm 树数量 |
 
-生成的[配置目录](../../../docs/config-catalog.zh.md#deepseek-aidsh-experimental-inspector)是全部已接受字段及其声明的详尽来源。
+生成的[配置目录](../../../docs/config-catalog.zh.md#taijidsh-experimental-inspector)是全部已接受字段及其声明的详尽来源。
 
 Worker 监听后，Host 会记录一个 `devtools://` URL。同一个 Worker 提供 `/json`、`/json/list`、`/json/version`、`/devtools/page/<id>` target WebSocket 和 `/ingest` Client source。
 

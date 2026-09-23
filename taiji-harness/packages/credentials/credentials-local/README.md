@@ -46,7 +46,7 @@ Use it as the default local store: the product's base composition loads it, and 
 | `watch` | `true` | Reload the file automatically when it changes on disk |
 | `debounceMs` | `100` | Wait this long after a change before reloading, in milliseconds |
 
-The generated [configuration catalog](../../../docs/config-catalog.md#deepseek-aidsh-credentials-local) is the exhaustive source for every accepted field and its JSDoc.
+The generated [configuration catalog](../../../docs/config-catalog.md#taijidsh-credentials-local) is the exhaustive source for every accepted field and its JSDoc.
 
 ### Storing and removing keys
 

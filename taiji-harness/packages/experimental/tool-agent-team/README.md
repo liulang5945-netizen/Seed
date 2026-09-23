@@ -48,7 +48,7 @@ The smallest addition to an existing composition is the two-package fragment fro
 | `freshProvider` | `spawn` | Provider that starts fresh teammates |
 | `forkProvider` | `fork` | Provider that starts fork teammates |
 
-The generated [configuration catalog](../../../docs/config-catalog.md#deepseek-aidsh-experimental-tool-agent-team) is the exhaustive source for every accepted field and its JSDoc.
+The generated [configuration catalog](../../../docs/config-catalog.md#taijidsh-experimental-tool-agent-team) is the exhaustive source for every accepted field and its JSDoc.
 
 Try it by asking the Lead model: "create a teammate named reviewer to check the diff, then send reviewer the change summary". The model calls the creation tool and then the messaging tool.
 
@@ -113,7 +113,7 @@ Read these pages when the package-level contract is not enough. They move from t
 
 - [agent-team package](../agent-team/README.md) — the `ctx.agentTeams` domain service behind these tools.
 - [Agent Teams subsystem](../../../docs/subsystems/agent-team.md) — durable Team types and service API.
-- [Generated tool catalog](../../../docs/tool-catalog.md#deepseek-aidsh-experimental-tool-agent-team) — every tool schema the model receives.
+- [Generated tool catalog](../../../docs/tool-catalog.md#taijidsh-experimental-tool-agent-team) — every tool schema the model receives.
 - [Agent Teams Agent Note](../../../.agents/notes/implemented/feature/2026-08-05-agent-teams.md) — model-facing, scoping, and isolation decisions.
 
 -----

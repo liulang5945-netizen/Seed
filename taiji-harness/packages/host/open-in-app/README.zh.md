@@ -47,7 +47,7 @@ kind: "package-reference"
 | `iconTimeoutMs` | 必填 | 图标提取主机命令（macOS 的 `plutil`/`sips`、Windows 的 PowerShell 提取）的逐命令期限（毫秒）。 |
 | `launchWatchMs` | 必填 | 每次启动的早期失败看护窗口：窗口关闭时仍在运行的启动器计为已启动并继续运行，因此它约束的是 open 路由挂起一次成功启动的时长。 |
 
-三个期限彼此独立，调整一种操作的超时不会改变其他操作的响应时间；超时是失败上界而非延迟预算，命令健康时保守的解析/图标期限没有任何代价。生成的[配置目录](../../../docs/config-catalog.zh.md#deepseek-aidsh-host-open-in-app)是所有可接受字段的详尽来源。
+三个期限彼此独立，调整一种操作的超时不会改变其他操作的响应时间；超时是失败上界而非延迟预算，命令健康时保守的解析/图标期限没有任何代价。生成的[配置目录](../../../docs/config-catalog.zh.md#taijidsh-host-open-in-app)是所有可接受字段的详尽来源。
 
 ### 目录及其解析方式
 

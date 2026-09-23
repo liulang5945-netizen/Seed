@@ -74,7 +74,7 @@ ctx.tools.register(defineTool({
 | `mode` | `native` | 可见工具向模型呈现的方式：`native`、`ptc` 或 `both` |
 | `maxParallelSubCalls` | `10` | `run_code` 程序重叠子调用的并发上限；`1` 恢复严格串行分发 |
 
-生成的[配置目录](../../../docs/config-catalog.zh.md#deepseek-aidsh-tools)是每个受支持字段的穷尽式真源。非原生模式要求已组合的 `ctx.ptcRuntime` 且其语言有已注册的 SDK 渲染器；agent preset 通过 [`dsh-agent-tool-presentation`](../agent-tool-presentation/README.zh.md) 自行选择呈现方式，单个 agent 可用 `presentAs(mode)` 遮蔽默认值。
+生成的[配置目录](../../../docs/config-catalog.zh.md#taijidsh-tools)是每个受支持字段的穷尽式真源。非原生模式要求已组合的 `ctx.ptcRuntime` 且其语言有已注册的 SDK 渲染器；agent preset 通过 [`dsh-agent-tool-presentation`](../agent-tool-presentation/README.zh.md) 自行选择呈现方式，单个 agent 可用 `presentAs(mode)` 遮蔽默认值。
 
 ### 按 agent 限制工具
 
@@ -145,7 +145,7 @@ ctx.tools.register(defineTool({
 包级约定对大多数消费方已经足够；需要周边领域时再阅读以下页面。
 
 - [工具子系统](../../../docs/subsystems/tools.zh.md)——完整流水线类型、schema DSL 与生成的服务 API。
-- [生成工具目录](../../../docs/tool-catalog.zh.md#deepseek-aidsh-tools)——模型收到的已交付工具 schema。
+- [生成工具目录](../../../docs/tool-catalog.zh.md#taijidsh-tools)——模型收到的已交付工具 schema。
 - [工具执行流水线](../../../docs/tool-execution-pipeline.zh.md)——可视化流水线。
 - [添加工具实操手册](../../../docs/cookbook/adding-a-tool.zh.md)——分步骤的工具编写指南。
 - [协作式取消 Agent Note](../../../.agents/notes/implemented/architecture/2026-07-19-cooperative-tool-cancellation.zh.md)——完整取消约定。
@@ -160,7 +160,7 @@ ctx.tools.register(defineTool({
 
 #### 模型看到什么
 
-在普通模式下，模型会看到每个可见定义的确切名称、描述与 JSON Schema；已交付定义记录在生成的[工具目录](../../../docs/tool-catalog.zh.md#deepseek-aidsh-tools)中。agent 作用域的限制、遮蔽与扩展注册会改变该 agent 的最终工具集合。
+在普通模式下，模型会看到每个可见定义的确切名称、描述与 JSON Schema；已交付定义记录在生成的[工具目录](../../../docs/tool-catalog.zh.md#taijidsh-tools)中。agent 作用域的限制、遮蔽与扩展注册会改变该 agent 的最终工具集合。
 
 #### Token 影响
 
@@ -174,7 +174,7 @@ ctx.tools.register(defineTool({
 
 #### 模型看到什么
 
-PTC mode 会公开生成的 [`run_code` schema](../../../docs/tool-catalog.zh.md#deepseek-aidsh-tools)、下方 SDK 说明，以及按所加载运行时语言生成的精确 SDK 块。TypeScript 说明会把生成声明明确标为只能在程序内使用的绑定。当当前 `bash` 参数 schema 接受示例参数时，说明还会给出以 `run_code` 包住 `tools.bash(...)` 的完整调用。`tools:sdk` 段使用 first-party 顺序 5000，并关闭提示词变量插值，使两种运行时语言都原样保留工具描述和 schema 中的 `{{…}}` 文本。`both` 会同时公开普通 schema 与此 PTC mode API；在 `ptc` 下，提示词还会带上处于更早 first-party 顺序的 `tools:ptc-only` 规则，让模型先读到「可以调用哪些工具」再读「每个工具做什么」。
+PTC mode 会公开生成的 [`run_code` schema](../../../docs/tool-catalog.zh.md#taijidsh-tools)、下方 SDK 说明，以及按所加载运行时语言生成的精确 SDK 块。TypeScript 说明会把生成声明明确标为只能在程序内使用的绑定。当当前 `bash` 参数 schema 接受示例参数时，说明还会给出以 `run_code` 包住 `tools.bash(...)` 的完整调用。`tools:sdk` 段使用 first-party 顺序 5000，并关闭提示词变量插值，使两种运行时语言都原样保留工具描述和 schema 中的 `{{…}}` 文本。`both` 会同时公开普通 schema 与此 PTC mode API；在 `ptc` 下，提示词还会带上处于更早 first-party 顺序的 `tools:ptc-only` 规则，让模型先读到「可以调用哪些工具」再读「每个工具做什么」。
 
 ##### 带 bash 的 TypeScript PTC mode SDK 说明
 

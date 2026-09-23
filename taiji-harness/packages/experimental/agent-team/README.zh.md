@@ -54,7 +54,7 @@ kind: "package-reference"
 | `maxMessageBytes` | `65,536` | 单条发送消息的最大尺寸 |
 | `disposalTimeoutMs` | `5,000` | 关闭清理允许的时间 |
 
-生成的[配置目录](../../../docs/config-catalog.zh.md#deepseek-aidsh-experimental-agent-team)是每个受支持字段及其 JSDoc 的穷尽式真源。
+生成的[配置目录](../../../docs/config-catalog.zh.md#taijidsh-experimental-agent-team)是每个受支持字段及其 JSDoc 的穷尽式真源。
 
 ### Teammate
 

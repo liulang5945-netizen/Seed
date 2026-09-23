@@ -59,7 +59,7 @@ kind: "package-reference"
 
 ### 调整压缩开始的时机
 
-所有设置都可选。设上下文窗口为 `W`、生效请求输出上限为 `O`、余量为 `B`，默认触发阈值为 `floor(min(W × 0.8, W − O − B))`，其中 `B = 65,536` tokens。逐字保留的近期历史预算仍为 `W − O` 的 16%。下表列出全部设置；生成的[配置目录](../../../docs/config-catalog.zh.md#deepseek-aidsh-compaction-basic)还包含字段类型。
+所有设置都可选。设上下文窗口为 `W`、生效请求输出上限为 `O`、余量为 `B`，默认触发阈值为 `floor(min(W × 0.8, W − O − B))`，其中 `B = 65,536` tokens。逐字保留的近期历史预算仍为 `W − O` 的 16%。下表列出全部设置；生成的[配置目录](../../../docs/config-catalog.zh.md#taijidsh-compaction-basic)还包含字段类型。
 
 | 字段 | 默认值 | 含义 |
 |---|---|---|
@@ -153,7 +153,7 @@ kind: "package-reference"
 - [工具结果修剪器](../compaction-tool-result-pruner/README.zh.md)——先修剪超大工具输出的可选配套工具。
 - [人类 /compact 命令](../command-compact/README.zh.md)——无需等待压力的按需压缩。
 - [Token meter](../../llm/token-meter/README.zh.md)——决定何时压缩的测量服务。
-- [生成配置目录](../../../docs/config-catalog.zh.md#deepseek-aidsh-compaction-basic)——每个受支持配置字段及其源声明。
+- [生成配置目录](../../../docs/config-catalog.zh.md#taijidsh-compaction-basic)——每个受支持配置字段及其源声明。
 
 -----
 

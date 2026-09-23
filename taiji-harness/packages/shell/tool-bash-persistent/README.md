@@ -48,7 +48,7 @@ The default `shell` backend starts an interactive bash through `dsh-terminal-bas
 | `maxOutputChars` | `16,000` | Maximum retained command-output characters; fixed diagnostics are added afterward |
 | `description` | `Run commands in a persistent bash shell. State, including the current directory and exported environment variables, persists across calls for this agent.` | Model-facing environment contract; deployments may describe their environment |
 
-The generated [configuration catalog](../../../docs/config-catalog.md#deepseek-aidsh-tool-bash-persistent) is the exhaustive source for every accepted field and its JSDoc.
+The generated [configuration catalog](../../../docs/config-catalog.md#taijidsh-tool-bash-persistent) is the exhaustive source for every accepted field and its JSDoc.
 
 ### What the agent can rely on
 
@@ -100,8 +100,8 @@ Read these pages when the package-level contract is not enough. They move from t
 - [terminal-bash backend](../../terminal/terminal-bash/README.md) — the default `shell` backend.
 - [tool-terminal](../../terminal/tool-terminal/README.md) — six model-facing terminal tools for interactive work.
 - [Persistent PTY sessions Agent Note](../../../.agents/notes/implemented/feature/2026-07-16-persistent-pty-sessions.md) — the owner-scoped session design and its rationale.
-- [Generated tool catalog](../../../docs/tool-catalog.md#deepseek-aidsh-tool-bash-persistent) — the exact `bash` argument schema.
-- [Generated configuration catalog](../../../docs/config-catalog.md#deepseek-aidsh-tool-bash-persistent) — every accepted config field and its source declaration.
+- [Generated tool catalog](../../../docs/tool-catalog.md#taijidsh-tool-bash-persistent) — the exact `bash` argument schema.
+- [Generated configuration catalog](../../../docs/config-catalog.md#taijidsh-tool-bash-persistent) — every accepted config field and its source declaration.
 
 -----
 
@@ -112,7 +112,7 @@ Read these pages when the package-level contract is not enough. They move from t
 
 #### What the model sees
 
-The generated [`bash` schema](../../../docs/tool-catalog.md#deepseek-aidsh-tool-bash-persistent), including the configured `description`. The plugin contributes no standalone system-prompt section; the deployment owns persona and environment guidance.
+The generated [`bash` schema](../../../docs/tool-catalog.md#taijidsh-tool-bash-persistent), including the configured `description`. The plugin contributes no standalone system-prompt section; the deployment owns persona and environment guidance.
 
 #### Token effect
 

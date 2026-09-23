@@ -95,7 +95,7 @@ Results contain the last attempted stage, target, saved-state change, applicatio
 
 #### What the model sees
 
-The [`plugin_manager` tool](../../../docs/tool-catalog.md#deepseek-aidsh-plugin-manager) lists plugin entries and bundles and performs profile-wide changes. Its results include saved-state changes, application status and package diagnostics. Management operations do not inject messages into Agents.
+The [`plugin_manager` tool](../../../docs/tool-catalog.md#taijidsh-plugin-manager) lists plugin entries and bundles and performs profile-wide changes. Its results include saved-state changes, application status and package diagnostics. Management operations do not inject messages into Agents.
 
 #### Token effect
 

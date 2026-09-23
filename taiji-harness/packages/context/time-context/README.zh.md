@@ -46,7 +46,7 @@ kind: "package-reference"
 | `timeZone` | 进程时区 | 当前开放轮次没有唯一浏览器时区时的显示回退时区 |
 | `refreshIntervalMs` | `0`（每个合格步骤） | 同一会话中两次持久注入之间的最小毫秒数 |
 
-生成的[配置目录](../../../docs/config-catalog.zh.md#deepseek-aidsh-time-context)是每个受支持字段及其 JSDoc 的穷尽式真源。
+生成的[配置目录](../../../docs/config-catalog.zh.md#taijidsh-time-context)是每个受支持字段及其 JSDoc 的穷尽式真源。
 
 ### 选择时区
 
@@ -90,7 +90,7 @@ kind: "package-reference"
 
 - [Schedule 用户指南](../../../docs/user/guide/schedule.zh.md)——挂载本插件的官方配置路径。
 - [context 组地图](../README.zh.md)——相邻的请求上下文包。
-- [生成的配置目录](../../../docs/config-catalog.zh.md#deepseek-aidsh-time-context)——每个受支持配置字段及其源声明。
+- [生成的配置目录](../../../docs/config-catalog.zh.md#taijidsh-time-context)——每个受支持配置字段及其源声明。
 
 -----
 

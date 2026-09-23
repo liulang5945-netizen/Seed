@@ -50,7 +50,7 @@ kind: "package-reference"
 | `fallbackMaxBytes` | 必填 | 回退允许的最大 UTF-8 字节数；不得超过 `maxTitleBytes` |
 | `maxTitleBytes` | 必填 | 接受任何来源标题的最大 UTF-8 字节数 |
 
-生成的[配置目录](../../../docs/config-catalog.zh.md#deepseek-aidsh-session-title)是每个受支持字段及其 JSDoc 的穷尽式真源。
+生成的[配置目录](../../../docs/config-catalog.zh.md#taijidsh-session-title)是每个受支持字段及其 JSDoc 的穷尽式真源。
 
 ### 添加提供方
 

@@ -48,7 +48,7 @@ kind: "package-reference"
 | `freshProvider` | `spawn` | 启动 fresh teammate 的提供方 |
 | `forkProvider` | `fork` | 启动 fork teammate 的提供方 |
 
-生成的[配置目录](../../../docs/config-catalog.zh.md#deepseek-aidsh-experimental-tool-agent-team)是每个受支持字段及其 JSDoc 的穷尽式真源。
+生成的[配置目录](../../../docs/config-catalog.zh.md#taijidsh-experimental-tool-agent-team)是每个受支持字段及其 JSDoc 的穷尽式真源。
 
 试试这样要求 Lead 模型：「创建一个名为 reviewer 的 teammate 检查 diff，再把变更摘要发给 reviewer」。模型会调用创建工具，然后调用消息工具。
 
@@ -113,7 +113,7 @@ member scope 上的一个 `team:policy` 段落说明共享的协作规则；固�
 
 - [agent-team 包](../agent-team/README.zh.md)——这些工具背后的 `ctx.agentTeams` 领域服务。
 - [Agent Teams 子系统](../../../docs/subsystems/agent-team.zh.md)——持久 Team 类型与服务 API。
-- [生成的工具目录](../../../docs/tool-catalog.zh.md#deepseek-aidsh-experimental-tool-agent-team)——模型接收的每个工具 schema。
+- [生成的工具目录](../../../docs/tool-catalog.zh.md#taijidsh-experimental-tool-agent-team)——模型接收的每个工具 schema。
 - [Agent Teams Agent Note](../../../.agents/notes/implemented/feature/2026-08-05-agent-teams.zh.md)——模型侧、scoping 与隔离决策。
 
 -----

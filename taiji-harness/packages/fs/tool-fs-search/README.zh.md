@@ -66,7 +66,7 @@ kind: "package-reference"
 | `stderrMaxBytes` | `65536` | `rg` stderr 的诊断尾部预算 |
 | `searchMetaMaxBytes` | `65536` | 一次搜索序列化 `presentationMeta` 的字节上限；超出部分丢弃尾部的组/路径 |
 
-生成的[配置目录](../../../docs/config-catalog.zh.md#deepseek-aidsh-tool-fs-search)是每个受支持字段及其 JSDoc 的穷尽式真源。
+生成的[配置目录](../../../docs/config-catalog.zh.md#taijidsh-tool-fs-search)是每个受支持字段及其 JSDoc 的穷尽式真源。
 
 ### 部署要求
 
@@ -123,7 +123,7 @@ Node 部署在受支持的 macOS、Linux 与 Windows 目标上获得 `@vscode/ri
 - [子进程能力](../../../docs/subsystems/subprocess.zh.md)——这些工具执行所经由的 spawn seam。
 - [Spill 存储](../../spill/spill/README.zh.md)——使达到上限结果可完整恢复的可选后端。
 - [超时工具](../../util/timeout/README.zh.md)——终止宽限期的 `MAX_TIMER_DELAY_MS` 上限。
-- [生成工具目录](../../../docs/tool-catalog.zh.md#deepseek-aidsh-tool-fs-search)——本包注册的穷尽式 schema。
+- [生成工具目录](../../../docs/tool-catalog.zh.md#taijidsh-tool-fs-search)——本包注册的穷尽式 schema。
 
 -----
 
@@ -166,7 +166,7 @@ Use the grep tool — not shell grep or rg — to search file contents. Use read
 
 #### 模型看到的内容
 
-glob 描述声明了配置的超过上限排序方式。生成的 [`glob` 和 `grep` schema](../../../docs/tool-catalog.zh.md#deepseek-aidsh-tool-fs-search) 使用 `sampleOverCapGlobResults: true`；工具无条件注册。
+glob 描述声明了配置的超过上限排序方式。生成的 [`glob` 和 `grep` schema](../../../docs/tool-catalog.zh.md#taijidsh-tool-fs-search) 使用 `sampleOverCapGlobResults: true`；工具无条件注册。
 
 #### Token 影响
 

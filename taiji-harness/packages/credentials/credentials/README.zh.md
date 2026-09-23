@@ -41,7 +41,7 @@ kind: "package-reference"
     path: /absolute/path/to/.credentials.yaml
 ```
 
-本地存储 README 拥有完整配置面；生成的[配置目录](../../../docs/config-catalog.zh.md#deepseek-aidsh-credentials-local)是穷尽式字段清单。
+本地存储 README 拥有完整配置面；生成的[配置目录](../../../docs/config-catalog.zh.md#taijidsh-credentials-local)是穷尽式字段清单。
 
 ### 存储、检查与移除密钥
 

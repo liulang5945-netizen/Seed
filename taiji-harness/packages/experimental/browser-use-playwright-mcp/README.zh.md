@@ -45,7 +45,7 @@ kind: "package-reference"
 | `endpoint` | attach 时必填 | 已有浏览器调试端点 |
 | `toolCallTimeoutMs` | MCP 客户端默认值 | 单次调用超时，单位为毫秒 |
 
-[配置目录](../../../docs/config-catalog.zh.md#deepseek-aidsh-experimental-browser-use-playwright-mcp)列出接受的字段。浏览器模式由 profile 或 preset 选择。子进程会清空继承的 `PLAYWRIGHT_MCP_*` 选项，避免其替换该配置。
+[配置目录](../../../docs/config-catalog.zh.md#taijidsh-experimental-browser-use-playwright-mcp)列出接受的字段。浏览器模式由 profile 或 preset 选择。子进程会清空继承的 `PLAYWRIGHT_MCP_*` 选项，避免其替换该配置。
 
 为整个进程配置系统提示词的 `toolOrder` 时，将浏览器工具留在 `<unlisted-tools>` 中。显式列出浏览器工具名称可能导致未获得浏览器连接的 Session 无法组装提示词。
 

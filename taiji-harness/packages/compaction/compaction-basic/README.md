@@ -59,7 +59,7 @@ You can verify success by watching the conversation continue past the point wher
 
 ### Tuning when condensation starts
 
-All settings are optional. With context window `W`, effective request output cap `O`, and headroom `B`, the default trigger is `floor(min(W × 0.8, W − O − B))`, where `B = 65,536` tokens. Retention keeps the newest 16% of `W − O` verbatim. The table below lists every setting; the generated [configuration catalog](../../../docs/config-catalog.md#deepseek-aidsh-compaction-basic) also includes their types.
+All settings are optional. With context window `W`, effective request output cap `O`, and headroom `B`, the default trigger is `floor(min(W × 0.8, W − O − B))`, where `B = 65,536` tokens. Retention keeps the newest 16% of `W − O` verbatim. The table below lists every setting; the generated [configuration catalog](../../../docs/config-catalog.md#taijidsh-compaction-basic) also includes their types.
 
 | Field | Default | Meaning |
 |---|---|---|
@@ -153,7 +153,7 @@ Read these pages when the package-level contract is not enough; they move from t
 - [Tool-result pruner](../compaction-tool-result-pruner/README.md) — the optional companion that trims oversized tool outputs first.
 - [Human /compact command](../command-compact/README.md) — on-demand condensation without waiting for pressure.
 - [Token meter](../../llm/token-meter/README.md) — the measurement service that decides when to condense.
-- [Generated configuration catalog](../../../docs/config-catalog.md#deepseek-aidsh-compaction-basic) — every accepted config field and its source declaration.
+- [Generated configuration catalog](../../../docs/config-catalog.md#taijidsh-compaction-basic) — every accepted config field and its source declaration.
 
 -----
 

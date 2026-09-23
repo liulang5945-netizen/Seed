@@ -49,7 +49,7 @@ kind: "package-reference"
 | `presets` | `workspace-write`、`danger-full-access` | 预设名称 → 沙箱／审批捆绑的表 |
 | `defaultPreset` | 推断 | 固定到新会话的预设；组合默认值不匹配任何预设时必填 |
 
-生成的[配置目录](../../../docs/config-catalog.zh.md#deepseek-aidsh-permission-presets)是每个受支持字段及其 JSDoc 的穷尽式真源。`custom` 保留给推导出的非预设状态，`auto` 则保留给 Auto review integration。挂载需要具有约束能力的 bash 执行器（会报告 `sandboxMode` 的执行器）与审批服务。
+生成的[配置目录](../../../docs/config-catalog.zh.md#taijidsh-permission-presets)是每个受支持字段及其 JSDoc 的穷尽式真源。`custom` 保留给推导出的非预设状态，`auto` 则保留给 Auto review integration。挂载需要具有约束能力的 bash 执行器（会报告 `sandboxMode` 的执行器）与审批服务。
 
 ### 切换预设
 

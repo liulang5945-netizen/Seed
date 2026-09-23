@@ -60,7 +60,7 @@ kind: "package-reference"
 | `shutdownTimeoutMs` | `5000` | 升级前用于优雅 `shutdown`／`exit` 的预算 |
 | `killGraceMs` | `2000` | 请求取消及 SIGTERM→SIGKILL 升级的宽限期 |
 
-`servers` 必须至少包含一个配置项，每个 id 都必须非空；定时器预算必须是 Node 定时器范围内的正整数，字节上限必须为正。生成的[配置目录](../../../docs/config-catalog.zh.md#deepseek-aidsh-lsp-stdio)是每个受支持字段的穷尽式真源。
+`servers` 必须至少包含一个配置项，每个 id 都必须非空；定时器预算必须是 Node 定时器范围内的正整数，字节上限必须为正。生成的[配置目录](../../../docs/config-catalog.zh.md#taijidsh-lsp-stdio)是每个受支持字段的穷尽式真源。
 
 ### 查询做什么
 

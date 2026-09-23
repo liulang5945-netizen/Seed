@@ -46,7 +46,7 @@ Loading the plugin registers `ctx.jobs`; every field is optional.
 | `settledRetainBytes` | `16384` | Ring retention kept after a job settles, in UTF-8 bytes; bytes the model has not read stay until its first terminal read |
 | `pumpPollMs` | `150` | Poll interval for a job's pull sources, in milliseconds |
 
-The generated [configuration catalog](../../../docs/config-catalog.md#deepseek-aidsh-jobs-local) is the exhaustive source for the accepted fields.
+The generated [configuration catalog](../../../docs/config-catalog.md#taijidsh-jobs-local) is the exhaustive source for the accepted fields.
 
 ### What each owner gets
 

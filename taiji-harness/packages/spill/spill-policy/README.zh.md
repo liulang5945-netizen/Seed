@@ -42,7 +42,7 @@ kind: "package-reference"
 |---|---|---|
 | `maxInlineBytes` | 省略 | 纯文本结果面向模型的上下文上限（UTF-8 字节）；省略时完全禁用该策略 |
 
-生成的[配置目录](../../../docs/config-catalog.zh.md#deepseek-aidsh-spill-policy)是每个受支持字段的穷尽式真源。负数或小数上限会让插件加载失败，而不是破坏每次调用的行为。
+生成的[配置目录](../../../docs/config-catalog.zh.md#taijidsh-spill-policy)是每个受支持字段的穷尽式真源。负数或小数上限会让插件加载失败，而不是破坏每次调用的行为。
 
 ### 模型看到什么
 

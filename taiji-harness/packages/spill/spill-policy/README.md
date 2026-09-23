@@ -42,7 +42,7 @@ Load the policy with a `maxInlineBytes` budget, in UTF-8 bytes, and a spill back
 |---|---|---|
 | `maxInlineBytes` | omitted | Model-facing context cap for a plain-text result, in UTF-8 bytes; omitted disables the policy entirely |
 
-The generated [configuration catalog](../../../docs/config-catalog.md#deepseek-aidsh-spill-policy) is the exhaustive source for every accepted field. A negative or fractional cap fails plugin load rather than corrupting per-call behavior.
+The generated [configuration catalog](../../../docs/config-catalog.md#taijidsh-spill-policy) is the exhaustive source for every accepted field. A negative or fractional cap fails plugin load rather than corrupting per-call behavior.
 
 ### What the model sees
 

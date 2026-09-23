@@ -136,7 +136,7 @@ Unchanged guidance preserves its prompt prefix. Mounting or removing the provide
 
 #### What the model sees
 
-The [`stagehand_` tool catalog](../../../docs/tool-catalog.md#deepseek-aidsh-experimental-browser-use-stagehand-native) defines navigation, tab management, screenshots, actions, observation, and extraction. Results contain current page facts or validated structured data. Supported screenshots appear as durable image attachments. Errors remain visible so the model can inspect state before retrying.
+The [`stagehand_` tool catalog](../../../docs/tool-catalog.md#taijidsh-experimental-browser-use-stagehand-native) defines navigation, tab management, screenshots, actions, observation, and extraction. Results contain current page facts or validated structured data. Supported screenshots appear as durable image attachments. Errors remain visible so the model can inspect state before retrying.
 
 #### Token effect
 

@@ -39,7 +39,7 @@ kind: "package-reference"
 - name: '@taiji/dsh-tool-fs'
 ```
 
-后端的配置与本地后端完全相同（`cwd` 解析默认值与 `diffBasisMaxBytes` 覆写上限）；[配置目录](../../../docs/config-catalog.zh.md#deepseek-aidsh-fs-sandbox)是完整配置的真源。
+后端的配置与本地后端完全相同（`cwd` 解析默认值与 `diffBasisMaxBytes` 覆写上限）；[配置目录](../../../docs/config-catalog.zh.md#taijidsh-fs-sandbox)是完整配置的真源。
 
 ### 围栏行为
 

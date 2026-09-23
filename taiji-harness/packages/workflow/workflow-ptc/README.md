@@ -44,7 +44,7 @@ With those dependencies available, mount the engine and its model-facing consume
 | `maxItemsPerCall` | `4096` | Items accepted by one `parallel()` or `pipeline()` call. |
 | `syncTimeoutMs` | `5000` | VM timeout for the script's initial synchronous slice, in milliseconds. |
 
-An owning consumer may set `WorkflowStartRequest.subagentProvider` and lower `WorkflowStartRequest.maxTotalAgents` for one run. Script hooks cannot change either choice. Process heap, output, control and termination limits belong to the Node PTC provider; the engine adds no overall elapsed timer. The generated [configuration catalog](../../../docs/config-catalog.md#deepseek-aidsh-workflow-ptc) defines accepted engine fields.
+An owning consumer may set `WorkflowStartRequest.subagentProvider` and lower `WorkflowStartRequest.maxTotalAgents` for one run. Script hooks cannot change either choice. Process heap, output, control and termination limits belong to the Node PTC provider; the engine adds no overall elapsed timer. The generated [configuration catalog](../../../docs/config-catalog.md#taijidsh-workflow-ptc) defines accepted engine fields.
 
 The Node PTC provider's `maxPendingCalls` also limits workflow concurrency: child startup, result waits and disposal use those slots. Progress batches use at most one additional slot. Leave headroom when setting `maxConcurrentAgents`.
 

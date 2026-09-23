@@ -66,7 +66,7 @@ kind: "package-reference"
 
 - [dsh-plan-mode](../../plan/plan-mode/README.zh.md)——拥有 plan 模式、`/plan` 命令、投影与 policy 段。
 - [ui-conversation](../ui-conversation/README.zh.md)——声明 composer 的 `conversation.input.plan` 座位与 placeholder locale 键。
-- [工具目录](../../../docs/tool-catalog.zh.md#deepseek-aidsh-plan-mode)——模型退出 plan 模式所用的 `exit_plan_mode` 工具 schema。
+- [工具目录](../../../docs/tool-catalog.zh.md#taijidsh-plan-mode)——模型退出 plan 模式所用的 `exit_plan_mode` 工具 schema。
 - [客户端包映射](../README.zh.md)——相邻的浏览器 UI 包。
 
 -----

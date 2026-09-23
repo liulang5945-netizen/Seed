@@ -53,7 +53,7 @@ kind: "package-reference"
 | `graceMs` | `3,000` | 终止升级与退出后管道排空的宽限时间 |
 | `pwshPath` | 自动解析 | 显式 pwsh 可执行文件；否则依次探测常见位置，再查 PATH |
 
-生成的[配置目录](../../../docs/config-catalog.zh.md#deepseek-aidsh-pwsh-local)是每个受支持字段及其 JSDoc 的穷尽式真源。
+生成的[配置目录](../../../docs/config-catalog.zh.md#taijidsh-pwsh-local)是每个受支持字段及其 JSDoc 的穷尽式真源。
 
 ### 运行命令
 

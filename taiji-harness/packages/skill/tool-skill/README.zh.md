@@ -45,7 +45,7 @@ agent 可以在会话期间发现并加载 skill。在首次请求前，如果�
 |---|---|---|
 | `catalogDescriptionMaxLength` | `500` | 会话目录中渲染的规范化描述最大长度；最小为 3 |
 
-生成的[配置目录](../../../docs/config-catalog.zh.md#deepseek-aidsh-tool-skill)是每个受支持字段的穷尽式真源。
+生成的[配置目录](../../../docs/config-catalog.zh.md#taijidsh-tool-skill)是每个受支持字段的穷尽式真源。
 
 ### 模型得到什么
 
@@ -98,7 +98,7 @@ agent 可以在会话期间发现并加载 skill。在首次请求前，如果�
 
 - [skill 子系统参考](../../../docs/subsystems/skills.zh.md)——目录背后的注册表与提供方词汇。
 - [skill 包](../skill/README.zh.md)——注册表与共享的 `renderSkillContent` 渲染。
-- [生成工具目录](../../../docs/tool-catalog.zh.md#deepseek-aidsh-tool-skill)——模型接收的精确 `skill` schema。
+- [生成工具目录](../../../docs/tool-catalog.zh.md#taijidsh-tool-skill)——模型接收的精确 `skill` schema。
 - [用户显式 skill 调用 Agent Note](../../../.agents/notes/archived/feature/2026-08-08-user-explicit-skill-invocation.md)——`/name` 手势设计。
 
 -----
@@ -139,7 +139,7 @@ A user may also invoke a skill directly; its <skill_content> block then appears 
 
 #### 模型看到什么
 
-模型会看到生成的 [`skill` schema](../../../docs/tool-catalog.zh.md#deepseek-aidsh-tool-skill)。
+模型会看到生成的 [`skill` schema](../../../docs/tool-catalog.zh.md#taijidsh-tool-skill)。
 
 #### Token 影响
 

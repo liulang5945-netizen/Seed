@@ -74,7 +74,7 @@ Load the plugin alongside the skill registry; it requires `ctx.skills`.
 | `watch` | `true` | Watch local roots and invalidate the provider when the catalog may have changed |
 | `bundledSkillDir` | — | Bundled skill root scanned at rank 600 when configured |
 
-The remaining `watch*` fields tune Chokidar behavior — polling, stability window, interval, project cap, and symlink following. The generated [configuration catalog](../../../docs/config-catalog.md#deepseek-aidsh-skill-filesystem) is the exhaustive source for every field.
+The remaining `watch*` fields tune Chokidar behavior — polling, stability window, interval, project cap, and symlink following. The generated [configuration catalog](../../../docs/config-catalog.md#taijidsh-skill-filesystem) is the exhaustive source for every field.
 
 ### Change detection
 

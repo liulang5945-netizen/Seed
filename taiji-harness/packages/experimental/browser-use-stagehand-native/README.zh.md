@@ -136,7 +136,7 @@ stagehand_act, stagehand_observe, and stagehand_extract use the separately confi
 
 #### 模型看到什么
 
-[`stagehand_` 工具目录](../../../docs/tool-catalog.zh.md#deepseek-aidsh-experimental-browser-use-stagehand-native)定义导航、标签页管理、截图、操作、观察和提取。结果包含当前页面事实或验证后的结构化数据。支持的截图以持久图像附件呈现。错误保持可见，让模型在重试前检查状态。
+[`stagehand_` 工具目录](../../../docs/tool-catalog.zh.md#taijidsh-experimental-browser-use-stagehand-native)定义导航、标签页管理、截图、操作、观察和提取。结果包含当前页面事实或验证后的结构化数据。支持的截图以持久图像附件呈现。错误保持可见，让模型在重试前检查状态。
 
 #### Token 影响
 

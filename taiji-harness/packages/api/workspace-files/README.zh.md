@@ -66,7 +66,7 @@ kind: "package-reference"
 | `maxLines` | `5000` | 页大小的缺省值与上限（行）；更大的 `limit` 被拒绝 |
 | `maxEntries` | `2000` | 返回目录条目数上限；其余丢弃并报告截断 |
 
-生成的[配置目录](../../../docs/config-catalog.zh.md#deepseek-aidsh-api-workspace-files)是每个可接受字段及其 JSDoc 的完备来源。
+生成的[配置目录](../../../docs/config-catalog.zh.md#taijidsh-api-workspace-files)是每个可接受字段及其 JSDoc 的完备来源。
 
 ### 失败
 

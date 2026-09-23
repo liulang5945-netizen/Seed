@@ -60,7 +60,7 @@ The `servers` record maps each stable provider id to one server command. The pro
 | `shutdownTimeoutMs` | `5000` | Graceful `shutdown`/`exit` budget before escalation |
 | `killGraceMs` | `2000` | Request-cancel and SIGTERM→SIGKILL escalation grace |
 
-`servers` must contain at least one entry with non-empty ids; timer budgets must be positive integers within Node's timer range, and byte caps must be positive. The generated [configuration catalog](../../../docs/config-catalog.md#deepseek-aidsh-lsp-stdio) is the exhaustive source for every accepted field.
+`servers` must contain at least one entry with non-empty ids; timer budgets must be positive integers within Node's timer range, and byte caps must be positive. The generated [configuration catalog](../../../docs/config-catalog.md#taijidsh-lsp-stdio) is the exhaustive source for every accepted field.
 
 ### What a query does
 

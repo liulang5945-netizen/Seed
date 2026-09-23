@@ -46,7 +46,7 @@ kind: "package-reference"
 | `settledRetainBytes` | `16384` | 任务结算后保留的环容量，UTF-8 字节；模型尚未读取的字节保留到它的首次终态读取 |
 | `pumpPollMs` | `150` | 任务拉取源的轮询间隔，毫秒 |
 
-生成的[配置目录](../../../docs/config-catalog.zh.md#deepseek-aidsh-jobs-local)是每个受支持字段的穷尽式真源。
+生成的[配置目录](../../../docs/config-catalog.zh.md#taijidsh-jobs-local)是每个受支持字段的穷尽式真源。
 
 ### 每个所有者得到什么
 

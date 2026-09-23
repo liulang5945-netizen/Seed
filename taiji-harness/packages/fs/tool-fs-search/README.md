@@ -66,7 +66,7 @@ Routine budgets stay out of the model-facing schema: a model that needs surround
 | `stderrMaxBytes` | `65536` | Diagnostic-tail budget for `rg` stderr |
 | `searchMetaMaxBytes` | `65536` | Max bytes of one search's serialized `presentationMeta`; trailing groups/paths drop past it |
 
-The generated [configuration catalog](../../../docs/config-catalog.md#deepseek-aidsh-tool-fs-search) is the exhaustive source for every accepted field and its JSDoc.
+The generated [configuration catalog](../../../docs/config-catalog.md#taijidsh-tool-fs-search) is the exhaustive source for every accepted field and its JSDoc.
 
 ### Deployment requirement
 
@@ -123,7 +123,7 @@ Read these pages when the package-level contract is not enough. They move from t
 - [Subprocess capability](../../../docs/subsystems/subprocess.md) — the spawn seam these tools execute through.
 - [Spill store](../../spill/spill/README.md) — the optional backend that makes capped results fully recoverable.
 - [Timeout utility](../../util/timeout/README.md) — the `MAX_TIMER_DELAY_MS` bound on the terminate grace.
-- [Generated tool catalog](../../../docs/tool-catalog.md#deepseek-aidsh-tool-fs-search) — the exhaustive schemas this package registers.
+- [Generated tool catalog](../../../docs/tool-catalog.md#taijidsh-tool-fs-search) — the exhaustive schemas this package registers.
 
 -----
 
@@ -166,7 +166,7 @@ Prefix-stable while the visible tool set, plugin scope, sampling choice, and gui
 
 #### What the model sees
 
-The glob description states the configured over-cap ordering. The generated [`glob` and `grep` schemas](../../../docs/tool-catalog.md#deepseek-aidsh-tool-fs-search) use `sampleOverCapGlobResults: true`; the tools are registered unconditionally.
+The glob description states the configured over-cap ordering. The generated [`glob` and `grep` schemas](../../../docs/tool-catalog.md#taijidsh-tool-fs-search) use `sampleOverCapGlobResults: true`; the tools are registered unconditionally.
 
 #### Token effect
 

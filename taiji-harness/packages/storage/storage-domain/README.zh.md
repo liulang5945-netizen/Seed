@@ -66,7 +66,7 @@ domain.table('workspaces').update(id, (r) => ({ ...r, path: newPath }))
 | `backend` | 必填 | 未显式路由的每个领域的默认后端名称 |
 | `routes` | `{}` | 逐领域覆盖：领域名称 → 后端名称 |
 
-生成的[配置目录](../../../docs/config-catalog.zh.md#deepseek-aidsh-storage-domain)是所有受支持字段及其 JSDoc 的完整真源。
+生成的[配置目录](../../../docs/config-catalog.zh.md#taijidsh-storage-domain)是所有受支持字段及其 JSDoc 的完整真源。
 
 ### 可观察行为与失败
 

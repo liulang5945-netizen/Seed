@@ -74,7 +74,7 @@ The `mode` config decides what the model sees: `native` (every visible schema), 
 | `mode` | `native` | How visible tools are presented to the model: `native`, `ptc`, or `both` |
 | `maxParallelSubCalls` | `10` | Concurrency cap for a `run_code` program's overlapping sub-calls; `1` restores strictly serial dispatch |
 
-The generated [configuration catalog](../../../docs/config-catalog.md#deepseek-aidsh-tools) is the exhaustive source for every accepted field. Non-native modes require a composed `ctx.ptcRuntime` whose language has a registered SDK renderer; an agent preset selects its own presentation with [`dsh-agent-tool-presentation`](../agent-tool-presentation/README.md), and one agent can shadow the default with `presentAs(mode)`.
+The generated [configuration catalog](../../../docs/config-catalog.md#taijidsh-tools) is the exhaustive source for every accepted field. Non-native modes require a composed `ctx.ptcRuntime` whose language has a registered SDK renderer; an agent preset selects its own presentation with [`dsh-agent-tool-presentation`](../agent-tool-presentation/README.md), and one agent can shadow the default with `presentAs(mode)`.
 
 ### Restrict tools per agent
 
@@ -145,7 +145,7 @@ Tool plugins call `ctx.tools.register()` and their schemas flow into prompt asse
 The package-level contract is enough for most consumers; read these when you need the surrounding domain.
 
 - [Tools subsystem](../../../docs/subsystems/tools.md) — the full pipeline types, schema DSL, and generated service API.
-- [Generated tool catalog](../../../docs/tool-catalog.md#deepseek-aidsh-tools) — the shipped tools' schemas the model receives.
+- [Generated tool catalog](../../../docs/tool-catalog.md#taijidsh-tools) — the shipped tools' schemas the model receives.
 - [Tool execution pipeline](../../../docs/tool-execution-pipeline.md) — the pipeline visualized.
 - [Adding a tool cookbook](../../../docs/cookbook/adding-a-tool.md) — step-by-step tool authoring.
 - [Cooperative cancellation Agent Note](../../../.agents/notes/implemented/architecture/2026-07-19-cooperative-tool-cancellation.md) — the full cancellation contract.
@@ -160,7 +160,7 @@ The package-level contract is enough for most consumers; read these when you nee
 
 #### What the model sees
 
-In normal mode the model sees each visible definition's exact name, description, and JSON Schema; the shipped definitions are recorded in the generated [tool catalog](../../../docs/tool-catalog.md#deepseek-aidsh-tools). Agent-scoped restrictions, shadows, and extension registrations change that agent's end-tool set.
+In normal mode the model sees each visible definition's exact name, description, and JSON Schema; the shipped definitions are recorded in the generated [tool catalog](../../../docs/tool-catalog.md#taijidsh-tools). Agent-scoped restrictions, shadows, and extension registrations change that agent's end-tool set.
 
 #### Token effect
 
@@ -174,7 +174,7 @@ Prefix-stable while visible definitions and their order are unchanged. Registrat
 
 #### What the model sees
 
-PTC mode exposes the generated [`run_code` schema](../../../docs/tool-catalog.md#deepseek-aidsh-tools), the SDK instructions below, and the generated exact SDK block for the loaded runtime's language. The TypeScript instructions identify generated declarations as program-only bindings. When the current `bash` parameter schema accepts the example arguments, they also show a complete `run_code` call around `tools.bash(...)`. The `tools:sdk` section uses first-party order 5000 and disables prompt-variable interpolation, preserving literal `{{…}}` text in tool descriptions and schemas for both runtime languages. `both` exposes normal schemas and this PTC mode API; under `ptc` the prompt also carries the `tools:ptc-only` rule earlier in the first-party order, so the model reads which tools it may call before it reads what each one is for.
+PTC mode exposes the generated [`run_code` schema](../../../docs/tool-catalog.md#taijidsh-tools), the SDK instructions below, and the generated exact SDK block for the loaded runtime's language. The TypeScript instructions identify generated declarations as program-only bindings. When the current `bash` parameter schema accepts the example arguments, they also show a complete `run_code` call around `tools.bash(...)`. The `tools:sdk` section uses first-party order 5000 and disables prompt-variable interpolation, preserving literal `{{…}}` text in tool descriptions and schemas for both runtime languages. `both` exposes normal schemas and this PTC mode API; under `ptc` the prompt also carries the `tools:ptc-only` rule earlier in the first-party order, so the model reads which tools it may call before it reads what each one is for.
 
 ##### TypeScript PTC mode SDK instructions with bash
 

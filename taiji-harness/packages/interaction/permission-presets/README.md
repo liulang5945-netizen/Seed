@@ -49,7 +49,7 @@ The plugin config defines the preset table and the default for fresh sessions. E
 | `presets` | `workspace-write`, `danger-full-access` | Table of preset name → sandbox/approval bundle |
 | `defaultPreset` | inferred | Preset pinned into fresh sessions; required when composition defaults match no preset |
 
-The generated [configuration catalog](../../../docs/config-catalog.md#deepseek-aidsh-permission-presets) is the exhaustive source for every accepted field and its JSDoc. `custom` is reserved for the derived not-a-preset state, while `auto` is reserved for the Auto review integration. Mounting requires a confining bash executor (one that reports a `sandboxMode`) and the approval service.
+The generated [configuration catalog](../../../docs/config-catalog.md#taijidsh-permission-presets) is the exhaustive source for every accepted field and its JSDoc. `custom` is reserved for the derived not-a-preset state, while `auto` is reserved for the Auto review integration. Mounting requires a confining bash executor (one that reports a `sandboxMode`) and the approval service.
 
 ### Switching presets
 

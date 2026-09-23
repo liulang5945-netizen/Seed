@@ -49,7 +49,7 @@ The registry is enabled by default and checks every registered package unless fi
 | `package_allowlist` | `[]` | Regex sources admitting package names; empty admits all |
 | `package_blocklist` | `[]` | Regex sources excluding package names after allowlist matching |
 
-The generated [configuration catalog](../../../docs/config-catalog.md#deepseek-aidsh-invariants) is the exhaustive source for every accepted field and its JSDoc.
+The generated [configuration catalog](../../../docs/config-catalog.md#taijidsh-invariants) is the exhaustive source for every accepted field and its JSDoc.
 
 ### Which checks run
 
@@ -127,7 +127,7 @@ This section explains the design behind the registry; the observable behavior is
 Read these pages when the package-level contract is not enough. They move from the generated service reference to the decision evidence and the group map.
 
 - [Runtime invariants subsystem](../../../docs/subsystems/invariants.md) — the generated reference for `Config`, the installer, the service, and the companion contract.
-- [Generated configuration catalog](../../../docs/config-catalog.md#deepseek-aidsh-invariants) — every accepted config field and its source declaration.
+- [Generated configuration catalog](../../../docs/config-catalog.md#taijidsh-invariants) — every accepted config field and its source declaration.
 - [Invariant runtime contracts Agent Note](../../../.agents/notes/implemented/architecture/2026-07-19-package-invariant-runtime-contracts.md) — what a runtime invariant may assert and the mechanical gate that enforces companion wiring.
 - [Runtime-diagnostics group map](../../README.md) — adjacent diagnostics packages.
 

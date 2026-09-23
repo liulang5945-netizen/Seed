@@ -50,7 +50,7 @@ Two fields: the database path and the journal mode. `:memory:` opens an in-proce
 | `path` | required | SQLite database file path, or `:memory:` |
 | `journalMode` | `wal` | Journal mode: `wal`, `delete`, `truncate`, or `persist` |
 
-`wal` suits local disks; a rollback-journal mode (`delete`/`truncate`/`persist`) fits filesystems where WAL's shared-memory files do not work, such as network mounts. The generated [configuration catalog](../../../docs/config-catalog.md#deepseek-aidsh-storage-sqlite) is the exhaustive source for every accepted field and its JSDoc.
+`wal` suits local disks; a rollback-journal mode (`delete`/`truncate`/`persist`) fits filesystems where WAL's shared-memory files do not work, such as network mounts. The generated [configuration catalog](../../../docs/config-catalog.md#taijidsh-storage-sqlite) is the exhaustive source for every accepted field and its JSDoc.
 
 ### Observable behavior
 

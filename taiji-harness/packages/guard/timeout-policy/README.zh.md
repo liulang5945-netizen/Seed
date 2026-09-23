@@ -39,7 +39,7 @@ kind: "package-reference"
 - name: '@taiji/dsh-tool-call-timeout-policy'
 ```
 
-限时在配置工具的位置设置。例如，`dsh-tool-web` 的 `fetchTimeoutMs`／`searchTimeoutMs` 设置（默认 30,000 ms）把限时放到 `web_fetch` 与 `web_search` 上。没有限时的工具——随附的 `bash`、`read`、`write`、`edit`——绝不会被切断。生成的[配置目录](../../../docs/config-catalog.zh.md#deepseek-aidsh-tool-web)列出会产生限时的工具设置。
+限时在配置工具的位置设置。例如，`dsh-tool-web` 的 `fetchTimeoutMs`／`searchTimeoutMs` 设置（默认 30,000 ms）把限时放到 `web_fetch` 与 `web_search` 上。没有限时的工具——随附的 `bash`、`read`、`write`、`edit`——绝不会被切断。生成的[配置目录](../../../docs/config-catalog.zh.md#taijidsh-tool-web)列出会产生限时的工具设置。
 
 ### 你会得到什么
 
@@ -90,7 +90,7 @@ kind: "package-reference"
 
 - [工具子系统参考](../../../docs/subsystems/tools.zh.md)——本包装层挂钩的 `tools/execute` waterfall（瀑布式事件）与决策形态。
 - [超时截止时间库 Agent Note](../../../.agents/notes/implemented/architecture/2026-07-06-timeout-deadline-library.zh.md)——时序／终止拆分以及截止时间为何只通知。
-- [生成配置目录](../../../docs/config-catalog.zh.md#deepseek-aidsh-tool-web)——策略所执行的 `dsh-tool-web` 的 `fetchTimeoutMs`／`searchTimeoutMs` 预算。
+- [生成配置目录](../../../docs/config-catalog.zh.md#taijidsh-tool-web)——策略所执行的 `dsh-tool-web` 的 `fetchTimeoutMs`／`searchTimeoutMs` 预算。
 - [guard 组映射](../README.zh.md)——同组的 guard 包与循环卫生家族。
 
 -----

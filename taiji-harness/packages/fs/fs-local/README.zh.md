@@ -46,7 +46,7 @@ kind: "package-reference"
 | `cwd` | `process.cwd()` | 相对路径的基准目录 |
 | `diffBasisMaxBytes` | `10 MiB` | 每次覆写 diff 一侧的 UTF-8 字节上限；更大的覆写返回 `before: null` |
 
-生成的[配置目录](../../../docs/config-catalog.zh.md#deepseek-aidsh-fs-local)完整列出了所有受支持字段及其 JSDoc。
+生成的[配置目录](../../../docs/config-catalog.zh.md#taijidsh-fs-local)完整列出了所有受支持字段及其 JSDoc。
 
 ### 你能做什么
 

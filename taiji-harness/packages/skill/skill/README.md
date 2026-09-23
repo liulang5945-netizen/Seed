@@ -43,7 +43,7 @@ Load the plugin like any Cordis plugin. The only configuration limits how many c
 |---|---|---|
 | `collectCacheMaxEntries` | `128` | Completed cwd/provider catalogs kept in memory |
 
-The generated [configuration catalog](../../../docs/config-catalog.md#deepseek-aidsh-skill) is the exhaustive source for every accepted field.
+The generated [configuration catalog](../../../docs/config-catalog.md#taijidsh-skill) is the exhaustive source for every accepted field.
 
 ### What the registry gives you
 
@@ -114,7 +114,7 @@ Read these pages when the package-level contract is not enough. They move from t
 - [Skill subsystem reference](../../../docs/subsystems/skills.md) — the registry, provider contract, and local discovery priority.
 - [skill-filesystem package](../skill-filesystem/README.md) — the shipped local provider that discovers skills from disk.
 - [tool-skill package](../tool-skill/README.md) — the consumer that renders the session catalog and the `skill` tool.
-- [Generated configuration catalog](../../../docs/config-catalog.md#deepseek-aidsh-skill) — every config field and its source declaration.
+- [Generated configuration catalog](../../../docs/config-catalog.md#taijidsh-skill) — every config field and its source declaration.
 - [Skill invocation policy Agent Note](../../../.agents/notes/implemented/feature/2026-07-28-skill-invocation-policy.md) — the rationale for the model and user invocation controls.
 
 -----

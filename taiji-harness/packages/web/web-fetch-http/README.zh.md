@@ -48,7 +48,7 @@ kind: "package-reference"
 | `maxRedirects` | `5` | 同源重定向最大跳数（`0` 表示不跟随） |
 | `userAgent` | `deepseek-harness/…` | 每次请求发送的 `User-Agent` 标头 |
 
-生成的[配置目录](../../../docs/config-catalog.zh.md#deepseek-aidsh-web-fetch-http)是每个受支持字段及其 JSDoc 的穷尽式真源。
+生成的[配置目录](../../../docs/config-catalog.zh.md#taijidsh-web-fetch-http)是每个受支持字段及其 JSDoc 的穷尽式真源。
 
 ### 抓取返回什么
 
@@ -111,7 +111,7 @@ const page = await ctx.web.fetch({ url: 'https://example.com' })
 - [web 包映射](../README.zh.md)——六包家族与各角色。
 - [dsh-web](../web/README.zh.md)——本提供方注册进入的 web 服务。
 - [dsh-tool-web](../tool-web/README.zh.md)——渲染本提供方正文的面向模型 `web_fetch` 工具。
-- [生成配置目录](../../../docs/config-catalog.zh.md#deepseek-aidsh-web-fetch-http)——每个受支持配置字段及其源声明。
+- [生成配置目录](../../../docs/config-catalog.zh.md#taijidsh-web-fetch-http)——每个受支持配置字段及其源声明。
 - [web 能力 seam 决策](../../../.agents/notes/implemented/architecture/2026-06-24-web-capability-seam.zh.md)——搜索与抓取为何共用一项提供方选择服务。
 
 -----

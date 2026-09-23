@@ -51,7 +51,7 @@ kind: "package-reference"
 |---|---|---|
 | `providerName` | `fork` | 注册到 `ctx.subagents` 的提供方名称 |
 
-生成的[配置目录](../../../docs/config-catalog.zh.md#deepseek-aidsh-subagent-fork-in-process)是每个受支持字段及其 JSDoc 的穷尽式真源。
+生成的[配置目录](../../../docs/config-catalog.zh.md#taijidsh-subagent-fork-in-process)是每个受支持字段及其 JSDoc 的穷尽式真源。
 
 ### 一次 fork 委派会做什么
 
@@ -99,7 +99,7 @@ base 组合包与 ACP（Agent Client Protocol）/headless 示例在委派工具�
 - [dsh-subagent-in-process-driver](../subagent-in-process-driver/README.zh.md)——本后端调用的共享运行驱动器。
 - [dsh-subagent-spawn-in-process](../subagent-spawn-in-process/README.zh.md)——全新子级的兄弟后端。
 - [dsh-tool-subagent](../tool-subagent/README.zh.md)——指向该提供方的面向模型委派工具。
-- [生成配置目录](../../../docs/config-catalog.zh.md#deepseek-aidsh-subagent-fork-in-process)——每个受支持配置字段及其源声明。
+- [生成配置目录](../../../docs/config-catalog.zh.md#taijidsh-subagent-fork-in-process)——每个受支持配置字段及其源声明。
 - [fork 保持 one-shot](../../../.agents/notes/implemented/architecture/2026-08-10-fork-children-stay-one-shot.zh.md)——随附组合为何把 fork 绑定为 one-shot。
 
 -----

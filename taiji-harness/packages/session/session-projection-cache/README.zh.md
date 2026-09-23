@@ -50,7 +50,7 @@ kind: "package-reference"
 | `writeEveryEvents` | 必填 | 在各必写点之间强制一次持久检查点写入的每会话已提交事件数 |
 | `writeIntervalMs` | 必填 | 各必写点之间脏检查点最长可保持未写入的时间 |
 
-本插件注入 `storageDomain`、`sessionProjections` 与 `sessions`。生成的[配置目录](../../../docs/config-catalog.zh.md#deepseek-aidsh-session-projection-cache)是每个受支持字段及其 JSDoc 的穷尽式真源。
+本插件注入 `storageDomain`、`sessionProjections` 与 `sessions`。生成的[配置目录](../../../docs/config-catalog.zh.md#taijidsh-session-projection-cache)是每个受支持字段及其 JSDoc 的穷尽式真源。
 
 ### 检查点如何写入
 

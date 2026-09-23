@@ -9,7 +9,7 @@ This file is GENERATED from source (`scripts/gen-config-catalog.ts`) and verifie
 
 A `Requires:` line lists the service keys the plugin `inject`s: its `cordis.yml` tree must also load providers for those services. Scope is the harness tier (`packages/`); the vendored cordis plugins a config tree may also load (the console logger, …) are pinned upstream source ([vendoring policy](../vendor/README.md)) and not catalogued here.
 
-<a id="deepseek-aidsh-acp"></a>
+<a id="taijidsh-acp"></a>
 
 ## `@taiji/dsh-acp`
 
@@ -33,7 +33,7 @@ Depends on: `Stream` (`@agentclientprotocol/sdk`)
 
 Source: [`packages/acp/acp/src/index.ts:75`](../packages/acp/acp/src/index.ts)
 
-<a id="deepseek-aidsh-agent-default-model"></a>
+<a id="taijidsh-agent-default-model"></a>
 
 ## `@taiji/dsh-agent-default-model`
 
@@ -53,7 +53,7 @@ Depends on: `Volatile` (`@taiji/cordis`)
 
 Source: [`packages/core/agent-default-model/src/index.ts:24`](../packages/core/agent-default-model/src/index.ts)
 
-<a id="deepseek-aidsh-agent-instructions"></a>
+<a id="taijidsh-agent-instructions"></a>
 
 ## `@taiji/dsh-agent-instructions`
 
@@ -85,7 +85,7 @@ export interface Config {
 
 Source: [`packages/context/agent-instructions/src/config.ts:18`](../packages/context/agent-instructions/src/config.ts)
 
-<a id="deepseek-aidsh-agent-loop"></a>
+<a id="taijidsh-agent-loop"></a>
 
 ## `@taiji/dsh-agent-loop`
 
@@ -117,7 +117,7 @@ Depends on: [`AgentOptions`](subsystems/core.md) · [`SessionId`](subsystems/cor
 
 Source: [`packages/core/agent-loop/src/index.ts:292`](../packages/core/agent-loop/src/index.ts)
 
-<a id="deepseek-aidsh-agent-preset"></a>
+<a id="taijidsh-agent-preset"></a>
 
 ## `@taiji/dsh-agent-preset`
 
@@ -132,7 +132,7 @@ Depends on: [`PresetDefinition`](../packages/preset/agent-preset-registry/src/in
 
 Source: [`packages/preset/agent-preset/src/index.ts:9`](../packages/preset/agent-preset/src/index.ts)
 
-<a id="deepseek-aidsh-agent-preset-registry"></a>
+<a id="taijidsh-agent-preset-registry"></a>
 
 ## `@taiji/dsh-agent-preset-registry`
 
@@ -154,7 +154,7 @@ Depends on: `Volatile` (`@taiji/cordis`)
 
 Source: [`packages/preset/agent-preset-registry/src/preset.ts:13`](../packages/preset/agent-preset-registry/src/preset.ts)
 
-<a id="deepseek-aidsh-agent-tool-presentation"></a>
+<a id="taijidsh-agent-tool-presentation"></a>
 
 ## `@taiji/dsh-agent-tool-presentation`
 
@@ -178,7 +178,7 @@ Depends on: [`ToolPresentationMode`](subsystems/tools.md)
 
 Source: [`packages/core/agent-tool-presentation/src/index.ts:38`](../packages/core/agent-tool-presentation/src/index.ts)
 
-<a id="deepseek-aidsh-api-gateway"></a>
+<a id="taijidsh-api-gateway"></a>
 
 ## `@taiji/dsh-api-gateway`
 
@@ -196,7 +196,7 @@ export interface Config {
 
 Source: [`packages/api/gateway/src/index.ts:144`](../packages/api/gateway/src/index.ts)
 
-<a id="deepseek-aidsh-api-job-controller"></a>
+<a id="taijidsh-api-job-controller"></a>
 
 ## `@taiji/dsh-api-job-controller`
 
@@ -214,7 +214,31 @@ export interface Config {
 
 Source: [`packages/api/job-controller/src/index.ts:35`](../packages/api/job-controller/src/index.ts)
 
-<a id="deepseek-aidsh-api-session-controller"></a>
+<a id="taijidsh-api-life-controller"></a>
+
+## `@taiji/dsh-api-life-controller`
+
+Requires: `typert`
+
+```ts config-catalog
+/** Runtime address, timeouts, and polling cadence. */
+export interface Config {
+  /** Base URL of the Taiji local runtime. */
+  baseURL?: string
+  /** Interval between reads while nothing runs. */
+  pollIntervalMs?: number
+  /** Interval between reads while training holds the runtime. */
+  activePollIntervalMs?: number
+  /** Maximum duration of one runtime request. */
+  requestTimeoutMs?: number
+  /** Checkpoint rows carried into one snapshot. */
+  maxCheckpoints?: number
+}
+```
+
+Source: [`packages/api/life-controller/src/index.ts:25`](../packages/api/life-controller/src/index.ts)
+
+<a id="taijidsh-api-session-controller"></a>
 
 ## `@taiji/dsh-api-session-controller`
 
@@ -228,9 +252,9 @@ export interface Config {
 }
 ```
 
-Source: [`packages/api/session-controller/src/index.ts:79`](../packages/api/session-controller/src/index.ts)
+Source: [`packages/api/session-controller/src/index.ts:80`](../packages/api/session-controller/src/index.ts)
 
-<a id="deepseek-aidsh-api-settings-controller"></a>
+<a id="taijidsh-api-settings-controller"></a>
 
 ## `@taiji/dsh-api-settings-controller`
 
@@ -244,7 +268,7 @@ export interface SettingsControllerInternals {
 
 Source: [`packages/api/settings-controller/src/index.ts:35`](../packages/api/settings-controller/src/index.ts)
 
-<a id="deepseek-aidsh-api-terminal-controller"></a>
+<a id="taijidsh-api-terminal-controller"></a>
 
 ## `@taiji/dsh-api-terminal-controller`
 
@@ -289,7 +313,7 @@ export interface Config {
 
 Source: [`packages/api/terminal-controller/src/index.ts:26`](../packages/api/terminal-controller/src/index.ts)
 
-<a id="deepseek-aidsh-api-workspace-controller"></a>
+<a id="taijidsh-api-workspace-controller"></a>
 
 ## `@taiji/dsh-api-workspace-controller`
 
@@ -305,9 +329,9 @@ export interface Config {
 }
 ```
 
-Source: [`packages/api/workspace-controller/src/index.ts:34`](../packages/api/workspace-controller/src/index.ts)
+Source: [`packages/api/workspace-controller/src/index.ts:36`](../packages/api/workspace-controller/src/index.ts)
 
-<a id="deepseek-aidsh-api-workspace-files"></a>
+<a id="taijidsh-api-workspace-files"></a>
 
 ## `@taiji/dsh-api-workspace-files`
 
@@ -335,7 +359,7 @@ export interface Config {
 
 Source: [`packages/api/workspace-files/src/index.ts:70`](../packages/api/workspace-files/src/index.ts)
 
-<a id="deepseek-aidsh-attachment-local"></a>
+<a id="taijidsh-attachment-local"></a>
 
 ## `@taiji/dsh-attachment-local`
 
@@ -370,7 +394,7 @@ export interface Config {
 
 Source: [`packages/attachment/attachment-local/src/index.ts:61`](../packages/attachment/attachment-local/src/index.ts)
 
-<a id="deepseek-aidsh-bash-local"></a>
+<a id="taijidsh-bash-local"></a>
 
 ## `@taiji/dsh-bash-local`
 
@@ -398,7 +422,7 @@ Depends on: `Volatile` (`@taiji/cordis`)
 
 Source: [`packages/shell/bash-local/src/index.ts:41`](../packages/shell/bash-local/src/index.ts)
 
-<a id="deepseek-aidsh-bash-sandbox"></a>
+<a id="taijidsh-bash-sandbox"></a>
 
 ## `@taiji/dsh-bash-sandbox`
 
@@ -415,11 +439,11 @@ Requires: `subprocess` · `sandbox` · `sandboxPolicy`
 export type Config = LocalConfig
 ```
 
-Depends on: [`LocalConfig`](#deepseek-aidsh-bash-local)
+Depends on: [`LocalConfig`](#taijidsh-bash-local)
 
 Source: [`packages/shell/bash-sandbox/src/index.ts:36`](../packages/shell/bash-sandbox/src/index.ts)
 
-<a id="deepseek-aidsh-client-connection"></a>
+<a id="taijidsh-client-connection"></a>
 
 ## `@taiji/dsh-client-connection`
 
@@ -465,7 +489,7 @@ export interface ConnectionRecoveryConfig {
 
 Source: [`packages/client/connection/src/index.ts:92`](../packages/client/connection/src/index.ts)
 
-<a id="deepseek-aidsh-client-hmr"></a>
+<a id="taijidsh-client-hmr"></a>
 
 ## `@taiji/dsh-client-hmr`
 
@@ -481,7 +505,7 @@ export interface Config {
 
 Source: [`packages/client/hmr/src/index.ts:30`](../packages/client/hmr/src/index.ts)
 
-<a id="deepseek-aidsh-client-ui-settings-account"></a>
+<a id="taijidsh-client-ui-settings-account"></a>
 
 ## `@taiji/dsh-client-ui-settings-account`
 
@@ -497,7 +521,7 @@ export interface Config {
 
 Source: [`packages/client/ui-settings-account/src/contact-config.ts:5`](../packages/client/ui-settings-account/src/contact-config.ts)
 
-<a id="deepseek-aidsh-client-ui-settings-models"></a>
+<a id="taijidsh-client-ui-settings-models"></a>
 
 ## `@taiji/dsh-client-ui-settings-models`
 
@@ -511,7 +535,7 @@ export interface Config {
 
 Source: [`packages/client/ui-settings-models/src/onboarding-config.ts:6`](../packages/client/ui-settings-models/src/onboarding-config.ts)
 
-<a id="deepseek-aidsh-client-ui-sidebar-documentpreview"></a>
+<a id="taijidsh-client-ui-sidebar-documentpreview"></a>
 
 ## `@taiji/dsh-client-ui-sidebar-documentpreview`
 
@@ -543,7 +567,7 @@ export interface Config {
 
 Source: [`packages/client/ui-sidebar-documentpreview/src/config.ts:5`](../packages/client/ui-sidebar-documentpreview/src/config.ts)
 
-<a id="deepseek-aidsh-client-ui-theme"></a>
+<a id="taijidsh-client-ui-theme"></a>
 
 ## `@taiji/dsh-client-ui-theme`
 
@@ -564,7 +588,7 @@ Depends on: `Volatile` (`@taiji/cordis`)
 
 Source: [`packages/client/ui-theme/src/index.ts:22`](../packages/client/ui-theme/src/index.ts)
 
-<a id="deepseek-aidsh-compaction-basic"></a>
+<a id="taijidsh-compaction-basic"></a>
 
 ## `@taiji/dsh-compaction-basic`
 
@@ -612,7 +636,7 @@ export interface ModelCompactPolicyConfig extends CompactionPolicyConfig {
 
 Source: [`packages/compaction/compaction-basic/src/types.ts:40`](../packages/compaction/compaction-basic/src/types.ts)
 
-<a id="deepseek-aidsh-compaction-tool-result-pruner"></a>
+<a id="taijidsh-compaction-tool-result-pruner"></a>
 
 ## `@taiji/dsh-compaction-tool-result-pruner`
 
@@ -632,7 +656,7 @@ export interface ToolResultPruneConfig {
 
 Source: [`packages/compaction/compaction-tool-result-pruner/src/types.ts:5`](../packages/compaction/compaction-tool-result-pruner/src/types.ts)
 
-<a id="deepseek-aidsh-cordis-host-runner"></a>
+<a id="taijidsh-cordis-host-runner"></a>
 
 ## `@taiji/dsh-cordis-host-runner`
 
@@ -648,7 +672,7 @@ export interface Config {
 
 Source: [`packages/extensions/cordis-host-runner/src/index.ts:93`](../packages/extensions/cordis-host-runner/src/index.ts)
 
-<a id="deepseek-aidsh-credentials-local"></a>
+<a id="taijidsh-credentials-local"></a>
 
 ## `@taiji/dsh-credentials-local`
 
@@ -668,7 +692,7 @@ export interface Config {
 
 Source: [`packages/credentials/credentials-local/src/index.ts:64`](../packages/credentials/credentials-local/src/index.ts)
 
-<a id="deepseek-aidsh-deepseek-account-platform"></a>
+<a id="taijidsh-deepseek-account-platform"></a>
 
 ## `@taiji/dsh-deepseek-account-platform`
 
@@ -706,7 +730,7 @@ export interface Config {
 
 Source: [`packages/credentials/deepseek-account-platform/src/index.ts:23`](../packages/credentials/deepseek-account-platform/src/index.ts)
 
-<a id="deepseek-aidsh-experimental-agent-team"></a>
+<a id="taijidsh-experimental-agent-team"></a>
 
 ## `@taiji/dsh-experimental-agent-team`
 
@@ -730,7 +754,7 @@ export interface Config {
 
 Source: [`packages/experimental/agent-team/src/types.ts:130`](../packages/experimental/agent-team/src/types.ts)
 
-<a id="deepseek-aidsh-experimental-api-speech-to-text"></a>
+<a id="taijidsh-experimental-api-speech-to-text"></a>
 
 ## `@taiji/dsh-experimental-api-speech-to-text`
 
@@ -748,7 +772,7 @@ export interface Config {
 
 Source: [`packages/experimental/api-speech-to-text/src/index.ts:20`](../packages/experimental/api-speech-to-text/src/index.ts)
 
-<a id="deepseek-aidsh-experimental-browser-use-chrome-devtools-mcp"></a>
+<a id="taijidsh-experimental-browser-use-chrome-devtools-mcp"></a>
 
 ## `@taiji/dsh-experimental-browser-use-chrome-devtools-mcp`
 
@@ -763,7 +787,7 @@ Depends on: `BrowserMcpConfig` (`@taiji/dsh-experimental-browser-use-runtime/mcp
 
 Source: [`packages/experimental/browser-use-chrome-devtools-mcp/src/index.ts:14`](../packages/experimental/browser-use-chrome-devtools-mcp/src/index.ts)
 
-<a id="deepseek-aidsh-experimental-browser-use-playwright-mcp"></a>
+<a id="taijidsh-experimental-browser-use-playwright-mcp"></a>
 
 ## `@taiji/dsh-experimental-browser-use-playwright-mcp`
 
@@ -778,7 +802,7 @@ Depends on: `BrowserMcpConfig` (`@taiji/dsh-experimental-browser-use-runtime/mcp
 
 Source: [`packages/experimental/browser-use-playwright-mcp/src/index.ts:15`](../packages/experimental/browser-use-playwright-mcp/src/index.ts)
 
-<a id="deepseek-aidsh-experimental-browser-use-stagehand-native"></a>
+<a id="taijidsh-experimental-browser-use-stagehand-native"></a>
 
 ## `@taiji/dsh-experimental-browser-use-stagehand-native`
 
@@ -820,7 +844,7 @@ Depends on: `ModelConfig` (`@browserbasehq/stagehand`)
 
 Source: [`packages/experimental/browser-use-stagehand-native/src/index.ts:28`](../packages/experimental/browser-use-stagehand-native/src/index.ts)
 
-<a id="deepseek-aidsh-experimental-computer-use-cua-driver-mcp"></a>
+<a id="taijidsh-experimental-computer-use-cua-driver-mcp"></a>
 
 ## `@taiji/dsh-experimental-computer-use-cua-driver-mcp`
 
@@ -844,7 +868,7 @@ Depends on: [`McpClient`](../packages/mcp/mcp-client/src/index.ts)
 
 Source: [`packages/experimental/computer-use-cua-driver-mcp/src/index.ts:20`](../packages/experimental/computer-use-cua-driver-mcp/src/index.ts)
 
-<a id="deepseek-aidsh-experimental-inspector"></a>
+<a id="taijidsh-experimental-inspector"></a>
 
 ## `@taiji/dsh-experimental-inspector`
 
@@ -912,7 +936,7 @@ export interface InspectorOptions {
 
 Source: [`packages/experimental/inspector/src/index.ts:66`](../packages/experimental/inspector/src/index.ts)
 
-<a id="deepseek-aidsh-experimental-ptc-runtime-python"></a>
+<a id="taijidsh-experimental-ptc-runtime-python"></a>
 
 ## `@taiji/dsh-experimental-ptc-runtime-python`
 
@@ -978,7 +1002,7 @@ export interface Config {
 
 Source: [`packages/experimental/ptc-runtime-python/src/index.ts:42`](../packages/experimental/ptc-runtime-python/src/index.ts)
 
-<a id="deepseek-aidsh-experimental-speech-to-text"></a>
+<a id="taijidsh-experimental-speech-to-text"></a>
 
 ## `@taiji/dsh-experimental-speech-to-text`
 
@@ -996,7 +1020,7 @@ Depends on: `Volatile` (`@taiji/cordis`)
 
 Source: [`packages/experimental/speech-to-text/src/index.ts:20`](../packages/experimental/speech-to-text/src/index.ts)
 
-<a id="deepseek-aidsh-experimental-speech-to-text-sensevoice"></a>
+<a id="taijidsh-experimental-speech-to-text-sensevoice"></a>
 
 ## `@taiji/dsh-experimental-speech-to-text-sensevoice`
 
@@ -1050,7 +1074,7 @@ export interface Config {
 
 Source: [`packages/experimental/speech-to-text-sensevoice/src/config.ts:6`](../packages/experimental/speech-to-text-sensevoice/src/config.ts)
 
-<a id="deepseek-aidsh-experimental-tool-agent-team"></a>
+<a id="taijidsh-experimental-tool-agent-team"></a>
 
 ## `@taiji/dsh-experimental-tool-agent-team`
 
@@ -1068,7 +1092,7 @@ export interface Config {
 
 Source: [`packages/experimental/tool-agent-team/src/index.ts:17`](../packages/experimental/tool-agent-team/src/index.ts)
 
-<a id="deepseek-aidsh-file-reference-local"></a>
+<a id="taijidsh-file-reference-local"></a>
 
 ## `@taiji/dsh-file-reference-local`
 
@@ -1088,7 +1112,7 @@ export interface Config {
 
 Source: [`packages/context/file-reference-local/src/index.ts:34`](../packages/context/file-reference-local/src/index.ts)
 
-<a id="deepseek-aidsh-fs-local"></a>
+<a id="taijidsh-fs-local"></a>
 
 ## `@taiji/dsh-fs-local`
 
@@ -1107,7 +1131,7 @@ export interface Config {
 
 Source: [`packages/fs/fs-local/src/index.ts:45`](../packages/fs/fs-local/src/index.ts)
 
-<a id="deepseek-aidsh-fs-sandbox"></a>
+<a id="taijidsh-fs-sandbox"></a>
 
 ## `@taiji/dsh-fs-sandbox`
 
@@ -1123,11 +1147,11 @@ Requires: `sandboxPolicy`
 export type Config = LocalConfig
 ```
 
-Depends on: [`LocalConfig`](#deepseek-aidsh-fs-local)
+Depends on: [`LocalConfig`](#taijidsh-fs-local)
 
 Source: [`packages/fs/fs-sandbox/src/index.ts:45`](../packages/fs/fs-sandbox/src/index.ts)
 
-<a id="deepseek-aidsh-goal"></a>
+<a id="taijidsh-goal"></a>
 
 ## `@taiji/dsh-goal`
 
@@ -1143,7 +1167,7 @@ export interface Config {
 
 Source: [`packages/goal/goal/src/index.ts:172`](../packages/goal/goal/src/index.ts)
 
-<a id="deepseek-aidsh-headless"></a>
+<a id="taijidsh-headless"></a>
 
 ## `@taiji/dsh-headless`
 
@@ -1163,7 +1187,7 @@ export interface Config {
 
 Source: [`packages/bundle/headless/src/index.ts:42`](../packages/bundle/headless/src/index.ts)
 
-<a id="deepseek-aidsh-hmr"></a>
+<a id="taijidsh-hmr"></a>
 
 ## `@taiji/dsh-hmr`
 
@@ -1185,7 +1209,7 @@ Depends on: `ChokidarOptions` (`chokidar`)
 
 Source: [`packages/boot/hmr/src/index.ts:51`](../packages/boot/hmr/src/index.ts)
 
-<a id="deepseek-aidsh-hooks-claude-code"></a>
+<a id="taijidsh-hooks-claude-code"></a>
 
 ## `@taiji/dsh-hooks-claude-code`
 
@@ -1223,7 +1247,7 @@ export interface Config {
 
 Source: [`packages/hooks/hooks-claude-code/src/index.ts:51`](../packages/hooks/hooks-claude-code/src/index.ts)
 
-<a id="deepseek-aidsh-hooks-codex"></a>
+<a id="taijidsh-hooks-codex"></a>
 
 ## `@taiji/dsh-hooks-codex`
 
@@ -1250,7 +1274,7 @@ export interface Config {
 
 Source: [`packages/hooks/hooks-codex/src/index.ts:50`](../packages/hooks/hooks-codex/src/index.ts)
 
-<a id="deepseek-aidsh-host-directory-picker-browse"></a>
+<a id="taijidsh-host-directory-picker-browse"></a>
 
 ## `@taiji/dsh-host-directory-picker-browse`
 
@@ -1264,7 +1288,7 @@ export interface Config {
 
 Source: [`packages/host/directory-picker-browse/src/index.ts:181`](../packages/host/directory-picker-browse/src/index.ts)
 
-<a id="deepseek-aidsh-host-frontend-static"></a>
+<a id="taijidsh-host-frontend-static"></a>
 
 ## `@taiji/dsh-host-frontend-static`
 
@@ -1280,7 +1304,7 @@ export interface Config {
 
 Source: [`packages/host/frontend-static/src/index.ts:30`](../packages/host/frontend-static/src/index.ts)
 
-<a id="deepseek-aidsh-host-open-in-app"></a>
+<a id="taijidsh-host-open-in-app"></a>
 
 ## `@taiji/dsh-host-open-in-app`
 
@@ -1311,7 +1335,7 @@ export interface Config {
 
 Source: [`packages/host/open-in-app/src/index.ts:50`](../packages/host/open-in-app/src/index.ts)
 
-<a id="deepseek-aidsh-host-product-telemetry-otel"></a>
+<a id="taijidsh-host-product-telemetry-otel"></a>
 
 ## `@taiji/dsh-host-product-telemetry-otel`
 
@@ -1345,7 +1369,7 @@ export interface Config {
 
 Source: [`packages/host/product-telemetry-otel/src/index.ts:37`](../packages/host/product-telemetry-otel/src/index.ts)
 
-<a id="deepseek-aidsh-host-webserver"></a>
+<a id="taijidsh-host-webserver"></a>
 
 ## `@taiji/dsh-host-webserver`
 
@@ -1367,7 +1391,7 @@ export interface Config {
 
 Source: [`packages/host/webserver/src/index.ts:59`](../packages/host/webserver/src/index.ts)
 
-<a id="deepseek-aidsh-invariants"></a>
+<a id="taijidsh-invariants"></a>
 
 ## `@taiji/dsh-invariants`
 
@@ -1385,7 +1409,7 @@ export interface Config {
 
 Source: [`packages/runtime-diagnostics/invariants/src/index.ts:15`](../packages/runtime-diagnostics/invariants/src/index.ts)
 
-<a id="deepseek-aidsh-jobs-local"></a>
+<a id="taijidsh-jobs-local"></a>
 
 ## `@taiji/dsh-jobs-local`
 
@@ -1412,7 +1436,27 @@ export interface Config {
 
 Source: [`packages/jobs/jobs-local/src/index.ts:45`](../packages/jobs/jobs-local/src/index.ts)
 
-<a id="deepseek-aidsh-llm-deepseek"></a>
+<a id="taijidsh-life-context"></a>
+
+## `@taiji/dsh-life-context`
+
+Requires: `systemPrompt` · `lifeController`
+
+```ts config-catalog
+/** Reading policy, throttling, and the line budget. Invalid values fail plugin load. */
+export interface Config {
+  /** Mount no section and no pre-step listener when false. Default true. */
+  enabled?: boolean
+  /** Minimum milliseconds between durable injections. Default 30_000; 0 injects at every eligible step. */
+  refreshIntervalMs?: number
+  /** Hard character budget for one `life-state` line. Default 400. */
+  maxChars?: number
+}
+```
+
+Source: [`packages/context/life-context/src/index.ts:34`](../packages/context/life-context/src/index.ts)
+
+<a id="taijidsh-llm-deepseek"></a>
 
 ## `@taiji/dsh-llm-deepseek`
 
@@ -1503,7 +1547,7 @@ Depends on: [`ModelModality`](../packages/llm/llm/src/index.ts) · [`RetryPolicy
 
 Source: [`packages/llm/llm-deepseek/src/config.ts:28`](../packages/llm/llm-deepseek/src/config.ts)
 
-<a id="deepseek-aidsh-llm-pi-ai"></a>
+<a id="taijidsh-llm-pi-ai"></a>
 
 ## `@taiji/dsh-llm-pi-ai`
 
@@ -1778,7 +1822,7 @@ Depends on: `Api` (`@earendil-works/pi-ai`) · `CacheRetention` (`@earendil-work
 
 Source: [`packages/llm/llm-pi-ai/src/config.ts:222`](../packages/llm/llm-pi-ai/src/config.ts)
 
-<a id="deepseek-aidsh-llm-replay"></a>
+<a id="taijidsh-llm-replay"></a>
 
 ## `@taiji/dsh-llm-replay`
 
@@ -1857,7 +1901,7 @@ Depends on: [`ModelModality`](../packages/llm/llm/src/index.ts) · [`RetryPolicy
 
 Source: [`packages/test-support/llm-replay/src/index.ts:1123`](../packages/test-support/llm-replay/src/index.ts)
 
-<a id="deepseek-aidsh-llm-retry"></a>
+<a id="taijidsh-llm-retry"></a>
 
 ## `@taiji/dsh-llm-retry`
 
@@ -1870,7 +1914,50 @@ export type Config = Readonly<Record<string, never>>
 
 Source: [`packages/llm/llm-retry/src/index.ts:25`](../packages/llm/llm-retry/src/index.ts)
 
-<a id="deepseek-aidsh-lsp-stdio"></a>
+<a id="taijidsh-llm-taiji"></a>
+
+## `@taiji/dsh-llm-taiji`
+
+Requires: `llm`
+
+```ts config-catalog
+/**
+ * Plugin config, validated by the same-named schemastery schema and doubling
+ * as the `llm-taiji` settings-section shape. Every field is optional in yml:
+ * omitting `baseURL` uses the runtime's local address, and omitting `models`
+ * advertises the runtime's single language organ.
+ */
+export interface Config {
+  /** Endpoint root of the Taiji runtime; defaults to the runtime's local address. */
+  baseURL: Volatile<string | undefined>
+  /** Advisory models shown by discovery consumers; defaults to the runtime's single entry. */
+  models: Volatile<TaijiCatalogModel[]>
+  /** Provider-owned model-request retry policy; omission uses normal mode with five retries. */
+  retryPolicy: Volatile<RetryPolicyConfig | undefined>
+}
+
+/**
+ * One advisory model entry for the Taiji runtime. The runtime serves exactly
+ * one language organ and its chat endpoint carries no model id, so an entry is
+ * a selector label the harness routes by — never a wire value.
+ */
+export interface TaijiCatalogModel {
+  /** Selector id accepted by `GenerateOptions.model`; never sent to the runtime. */
+  id: string
+  /** Selector label; defaults to {@link id}. */
+  name?: string
+  /** Optional selector detail for a deployment running several runtimes. */
+  description?: string
+  /** Known combined request/response capacity; omitted when the deployment knows none. */
+  contextWindow?: number
+}
+```
+
+Depends on: [`RetryPolicyConfig`](../packages/llm/llm/src/index.ts) · `Volatile` (`@taiji/cordis`)
+
+Source: [`packages/llm/llm-taiji/src/config.ts:17`](../packages/llm/llm-taiji/src/config.ts)
+
+<a id="taijidsh-lsp-stdio"></a>
 
 ## `@taiji/dsh-lsp-stdio`
 
@@ -1912,7 +1999,7 @@ export interface LspLocalServerConfig {
 
 Source: [`packages/lsp/lsp-stdio/src/index.ts:82`](../packages/lsp/lsp-stdio/src/index.ts)
 
-<a id="deepseek-aidsh-mcp-client"></a>
+<a id="taijidsh-mcp-client"></a>
 
 ## `@taiji/dsh-mcp-client`
 
@@ -1989,7 +2076,7 @@ export interface ReconnectConfig {
 
 Source: [`packages/mcp/mcp-client/src/index.ts:104`](../packages/mcp/mcp-client/src/index.ts)
 
-<a id="deepseek-aidsh-message-feedback"></a>
+<a id="taijidsh-message-feedback"></a>
 
 ## `@taiji/dsh-message-feedback`
 
@@ -2005,7 +2092,7 @@ export interface Config {
 
 Source: [`packages/feedback/message-feedback/src/index.ts:40`](../packages/feedback/message-feedback/src/index.ts)
 
-<a id="deepseek-aidsh-office-to-pdf"></a>
+<a id="taijidsh-office-to-pdf"></a>
 
 ## `@taiji/dsh-office-to-pdf`
 
@@ -2055,7 +2142,7 @@ export interface Config {
 
 Source: [`packages/document/office-to-pdf/src/index.ts:31`](../packages/document/office-to-pdf/src/index.ts)
 
-<a id="deepseek-aidsh-permission-presets"></a>
+<a id="taijidsh-permission-presets"></a>
 
 ## `@taiji/dsh-permission-presets`
 
@@ -2095,7 +2182,7 @@ Depends on: [`ApprovalPolicy`](subsystems/approval.md) · [`SandboxMode`](subsys
 
 Source: [`packages/interaction/permission-presets/src/index.ts:155`](../packages/interaction/permission-presets/src/index.ts)
 
-<a id="deepseek-aidsh-persona"></a>
+<a id="taijidsh-persona"></a>
 
 ## `@taiji/dsh-persona`
 
@@ -2124,7 +2211,7 @@ export interface Config {
 
 Source: [`packages/preset/persona/src/index.ts:30`](../packages/preset/persona/src/index.ts)
 
-<a id="deepseek-aidsh-plan-mode"></a>
+<a id="taijidsh-plan-mode"></a>
 
 ## `@taiji/dsh-plan-mode`
 
@@ -2140,7 +2227,7 @@ export interface PlanModeConfig {
 
 Source: [`packages/plan/plan-mode/src/index.ts:70`](../packages/plan/plan-mode/src/index.ts)
 
-<a id="deepseek-aidsh-plugin-manager"></a>
+<a id="taijidsh-plugin-manager"></a>
 
 ## `@taiji/dsh-plugin-manager`
 
@@ -2170,7 +2257,7 @@ export interface Config {
 
 Source: [`packages/boot/plugin-manager/src/index.ts:37`](../packages/boot/plugin-manager/src/index.ts)
 
-<a id="deepseek-aidsh-plugin-package-inventory-deepseek"></a>
+<a id="taijidsh-plugin-package-inventory-deepseek"></a>
 
 ## `@taiji/dsh-plugin-package-inventory-deepseek`
 
@@ -2186,7 +2273,7 @@ export interface Config {
 
 Source: [`packages/llm/plugin-package-inventory-deepseek/src/index.ts:32`](../packages/llm/plugin-package-inventory-deepseek/src/index.ts)
 
-<a id="deepseek-aidsh-ptc-runtime-node"></a>
+<a id="taijidsh-ptc-runtime-node"></a>
 
 ## `@taiji/dsh-ptc-runtime-node`
 
@@ -2222,7 +2309,7 @@ export interface LaunchConfig {
 
 Source: [`packages/ptc-runtime/ptc-runtime-node/src/index.ts:26`](../packages/ptc-runtime/ptc-runtime-node/src/index.ts)
 
-<a id="deepseek-aidsh-pwsh-local"></a>
+<a id="taijidsh-pwsh-local"></a>
 
 ## `@taiji/dsh-pwsh-local`
 
@@ -2257,7 +2344,7 @@ Depends on: `Volatile` (`@taiji/cordis`)
 
 Source: [`packages/shell/pwsh-local/src/index.ts:58`](../packages/shell/pwsh-local/src/index.ts)
 
-<a id="deepseek-aidsh-pwsh-sandbox"></a>
+<a id="taijidsh-pwsh-sandbox"></a>
 
 ## `@taiji/dsh-pwsh-sandbox`
 
@@ -2275,11 +2362,11 @@ Requires: `subprocess` · `sandbox` · `sandboxPolicy`
 export type Config = LocalConfig
 ```
 
-Depends on: [`LocalConfig`](#deepseek-aidsh-pwsh-local)
+Depends on: [`LocalConfig`](#taijidsh-pwsh-local)
 
 Source: [`packages/shell/pwsh-sandbox/src/index.ts:40`](../packages/shell/pwsh-sandbox/src/index.ts)
 
-<a id="deepseek-aidsh-repeat-tool-reminder"></a>
+<a id="taijidsh-repeat-tool-reminder"></a>
 
 ## `@taiji/dsh-repeat-tool-reminder`
 
@@ -2313,7 +2400,7 @@ export interface Config {
 
 Source: [`packages/guard/repeat-tool-reminder/src/index.ts:35`](../packages/guard/repeat-tool-reminder/src/index.ts)
 
-<a id="deepseek-aidsh-sandbox-local"></a>
+<a id="taijidsh-sandbox-local"></a>
 
 ## `@taiji/dsh-sandbox-local`
 
@@ -2345,7 +2432,7 @@ export interface Config {
 
 Source: [`packages/sandbox/sandbox-local/src/index.ts:45`](../packages/sandbox/sandbox-local/src/index.ts)
 
-<a id="deepseek-aidsh-sandbox-policy"></a>
+<a id="taijidsh-sandbox-policy"></a>
 
 ## `@taiji/dsh-sandbox-policy`
 
@@ -2374,7 +2461,7 @@ Depends on: [`SandboxMode`](subsystems/sandbox.md)
 
 Source: [`packages/sandbox/sandbox-policy/src/index.ts:71`](../packages/sandbox/sandbox-policy/src/index.ts)
 
-<a id="deepseek-aidsh-sdk-app"></a>
+<a id="taijidsh-sdk-app"></a>
 
 ## `@taiji/dsh-sdk-app`
 
@@ -2390,7 +2477,7 @@ export interface Config {
 
 Source: [`packages/bundle/sdk-app/src/index.ts:23`](../packages/bundle/sdk-app/src/index.ts)
 
-<a id="deepseek-aidsh-sdk-jsonrpc-server"></a>
+<a id="taijidsh-sdk-jsonrpc-server"></a>
 
 ## `@taiji/dsh-sdk-jsonrpc-server`
 
@@ -2414,7 +2501,7 @@ Depends on: `Readable` (`node:stream`) · `Writable` (`node:stream`)
 
 Source: [`packages/sdk/server/src/index.ts:25`](../packages/sdk/server/src/index.ts)
 
-<a id="deepseek-aidsh-session-log-deepseek"></a>
+<a id="taijidsh-session-log-deepseek"></a>
 
 ## `@taiji/dsh-session-log-deepseek`
 
@@ -2430,7 +2517,7 @@ export interface Config {
 
 Source: [`packages/session/session-log-deepseek/src/index.ts:38`](../packages/session/session-log-deepseek/src/index.ts)
 
-<a id="deepseek-aidsh-session-log-export"></a>
+<a id="taijidsh-session-log-export"></a>
 
 ## `@taiji/dsh-session-log-export`
 
@@ -2449,7 +2536,7 @@ export type SessionLogCompressionLevel = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
 
 Source: [`packages/session-query/session-log-export/src/index.ts:46`](../packages/session-query/session-log-export/src/index.ts)
 
-<a id="deepseek-aidsh-session-persistence-jsonl"></a>
+<a id="taijidsh-session-persistence-jsonl"></a>
 
 ## `@taiji/dsh-session-persistence-jsonl`
 
@@ -2472,9 +2559,9 @@ export interface Config {
 export type JsonlCompression = 'zstd' | 'none'
 ```
 
-Source: [`packages/session/session-persistence-jsonl/src/index.ts:90`](../packages/session/session-persistence-jsonl/src/index.ts)
+Source: [`packages/session/session-persistence-jsonl/src/index.ts:91`](../packages/session/session-persistence-jsonl/src/index.ts)
 
-<a id="deepseek-aidsh-session-projection-cache"></a>
+<a id="taijidsh-session-projection-cache"></a>
 
 ## `@taiji/dsh-session-projection-cache`
 
@@ -2498,7 +2585,7 @@ export interface Config {
 
 Source: [`packages/session/session-projection-cache/src/index.ts:75`](../packages/session/session-projection-cache/src/index.ts)
 
-<a id="deepseek-aidsh-session-query-sqlite"></a>
+<a id="taijidsh-session-query-sqlite"></a>
 
 ## `@taiji/dsh-session-query-sqlite`
 
@@ -2546,7 +2633,7 @@ Depends on: [`SessionQueryConfig`](../packages/session-query/session-query/src/i
 
 Source: [`packages/session-query/session-query-sqlite/src/index.ts:92`](../packages/session-query/session-query-sqlite/src/index.ts)
 
-<a id="deepseek-aidsh-session-reference"></a>
+<a id="taijidsh-session-reference"></a>
 
 ## `@taiji/dsh-session-reference`
 
@@ -2568,7 +2655,7 @@ export interface Config {
 
 Source: [`packages/context/session-reference/src/config.ts:11`](../packages/context/session-reference/src/config.ts)
 
-<a id="deepseek-aidsh-session-telemetry-otel"></a>
+<a id="taijidsh-session-telemetry-otel"></a>
 
 ## `@taiji/dsh-session-telemetry-otel`
 
@@ -2613,7 +2700,7 @@ Depends on: `BatchLogRecordProcessorOptions` (`@opentelemetry/sdk-logs`) · `OTL
 
 Source: [`packages/session/session-telemetry-otel/src/index.ts:100`](../packages/session/session-telemetry-otel/src/index.ts)
 
-<a id="deepseek-aidsh-session-title"></a>
+<a id="taijidsh-session-title"></a>
 
 ## `@taiji/dsh-session-title`
 
@@ -2633,7 +2720,7 @@ export interface Config {
 
 Source: [`packages/session/session-title/src/index.ts:56`](../packages/session/session-title/src/index.ts)
 
-<a id="deepseek-aidsh-session-title-all-prompts-llm"></a>
+<a id="taijidsh-session-title-all-prompts-llm"></a>
 
 ## `@taiji/dsh-session-title-all-prompts-llm`
 
@@ -2648,7 +2735,7 @@ Depends on: [`SessionTitleLlmConfig`](../packages/session/session-title-llm/src/
 
 Source: [`packages/session/session-title-all-prompts-llm/src/index.ts:15`](../packages/session/session-title-all-prompts-llm/src/index.ts)
 
-<a id="deepseek-aidsh-session-title-first-prompt-llm"></a>
+<a id="taijidsh-session-title-first-prompt-llm"></a>
 
 ## `@taiji/dsh-session-title-first-prompt-llm`
 
@@ -2663,7 +2750,7 @@ Depends on: [`SessionTitleLlmConfig`](../packages/session/session-title-llm/src/
 
 Source: [`packages/session/session-title-first-prompt-llm/src/index.ts:15`](../packages/session/session-title-first-prompt-llm/src/index.ts)
 
-<a id="deepseek-aidsh-shell-env"></a>
+<a id="taijidsh-shell-env"></a>
 
 ## `@taiji/dsh-shell-env`
 
@@ -2677,7 +2764,7 @@ export interface Config {
 
 Source: [`packages/shell/shell-env/src/index.ts:30`](../packages/shell/shell-env/src/index.ts)
 
-<a id="deepseek-aidsh-skill"></a>
+<a id="taijidsh-skill"></a>
 
 ## `@taiji/dsh-skill`
 
@@ -2691,7 +2778,7 @@ export interface Config {
 
 Source: [`packages/skill/skill/src/index.ts:278`](../packages/skill/skill/src/index.ts)
 
-<a id="deepseek-aidsh-skill-filesystem"></a>
+<a id="taijidsh-skill-filesystem"></a>
 
 ## `@taiji/dsh-skill-filesystem`
 
@@ -2729,7 +2816,7 @@ export interface Config {
 
 Source: [`packages/skill/skill-filesystem/src/index.ts:49`](../packages/skill/skill-filesystem/src/index.ts)
 
-<a id="deepseek-aidsh-skill-office"></a>
+<a id="taijidsh-skill-office"></a>
 
 ## `@taiji/dsh-skill-office`
 
@@ -2745,7 +2832,7 @@ export interface Config {
 
 Source: [`packages/skill/skill-office/src/index.ts:15`](../packages/skill/skill-office/src/index.ts)
 
-<a id="deepseek-aidsh-spill-local"></a>
+<a id="taijidsh-spill-local"></a>
 
 ## `@taiji/dsh-spill-local`
 
@@ -2774,7 +2861,7 @@ export interface Config {
 
 Source: [`packages/spill/spill-local/src/index.ts:31`](../packages/spill/spill-local/src/index.ts)
 
-<a id="deepseek-aidsh-spill-policy"></a>
+<a id="taijidsh-spill-policy"></a>
 
 ## `@taiji/dsh-spill-policy`
 
@@ -2794,7 +2881,7 @@ export interface Config {
 
 Source: [`packages/spill/spill-policy/src/index.ts:61`](../packages/spill/spill-policy/src/index.ts)
 
-<a id="deepseek-aidsh-ssh"></a>
+<a id="taijidsh-ssh"></a>
 
 ## `@taiji/dsh-ssh`
 
@@ -2828,7 +2915,7 @@ export interface Config {
 
 Source: [`packages/ssh/ssh/src/index.ts:17`](../packages/ssh/ssh/src/index.ts)
 
-<a id="deepseek-aidsh-storage-domain"></a>
+<a id="taijidsh-storage-domain"></a>
 
 ## `@taiji/dsh-storage-domain`
 
@@ -2851,7 +2938,7 @@ export interface Config {
 
 Source: [`packages/storage/storage-domain/src/index.ts:52`](../packages/storage/storage-domain/src/index.ts)
 
-<a id="deepseek-aidsh-storage-json"></a>
+<a id="taijidsh-storage-json"></a>
 
 ## `@taiji/dsh-storage-json`
 
@@ -2872,7 +2959,7 @@ export interface Config {
 
 Source: [`packages/storage/storage-json/src/index.ts:28`](../packages/storage/storage-json/src/index.ts)
 
-<a id="deepseek-aidsh-storage-sqlite"></a>
+<a id="taijidsh-storage-sqlite"></a>
 
 ## `@taiji/dsh-storage-sqlite`
 
@@ -2912,7 +2999,7 @@ export type JournalMode = 'wal' | 'delete' | 'truncate' | 'persist'
 
 Source: [`packages/storage/storage-sqlite/src/index.ts:24`](../packages/storage/storage-sqlite/src/index.ts)
 
-<a id="deepseek-aidsh-subagent"></a>
+<a id="taijidsh-subagent"></a>
 
 ## `@taiji/dsh-subagent`
 
@@ -2930,7 +3017,7 @@ Depends on: `Volatile` (`@taiji/cordis`)
 
 Source: [`packages/subagent/subagent/src/index.ts:192`](../packages/subagent/subagent/src/index.ts)
 
-<a id="deepseek-aidsh-subagent-acp"></a>
+<a id="taijidsh-subagent-acp"></a>
 
 ## `@taiji/dsh-subagent-acp`
 
@@ -2983,7 +3070,7 @@ export type PermissionPolicy = 'allow' | 'reject'
 
 Source: [`packages/subagent/subagent-acp/src/index.ts:27`](../packages/subagent/subagent-acp/src/index.ts)
 
-<a id="deepseek-aidsh-subagent-claude-code"></a>
+<a id="taijidsh-subagent-claude-code"></a>
 
 ## `@taiji/dsh-subagent-claude-code`
 
@@ -3018,7 +3105,7 @@ export type ClaudeCodePermissionMode = typeof CLAUDE_CODE_PERMISSION_MODES[numbe
 
 Source: [`packages/subagent/subagent-claude-code/src/index.ts:38`](../packages/subagent/subagent-claude-code/src/index.ts)
 
-<a id="deepseek-aidsh-subagent-codex"></a>
+<a id="taijidsh-subagent-codex"></a>
 
 ## `@taiji/dsh-subagent-codex`
 
@@ -3051,7 +3138,7 @@ export type CodexPermissionMode =
 
 Source: [`packages/subagent/subagent-codex/src/index.ts:36`](../packages/subagent/subagent-codex/src/index.ts)
 
-<a id="deepseek-aidsh-subagent-dsh-sdk"></a>
+<a id="taijidsh-subagent-dsh-sdk"></a>
 
 ## `@taiji/dsh-subagent-dsh-sdk`
 
@@ -3107,7 +3194,7 @@ export interface Config {
 
 Source: [`packages/subagent/subagent-dsh-sdk/src/index.ts:34`](../packages/subagent/subagent-dsh-sdk/src/index.ts)
 
-<a id="deepseek-aidsh-subagent-fork-in-process"></a>
+<a id="taijidsh-subagent-fork-in-process"></a>
 
 ## `@taiji/dsh-subagent-fork-in-process`
 
@@ -3123,7 +3210,7 @@ export interface Config {
 
 Source: [`packages/subagent/subagent-fork-in-process/src/index.ts:31`](../packages/subagent/subagent-fork-in-process/src/index.ts)
 
-<a id="deepseek-aidsh-subagent-spawn-in-process"></a>
+<a id="taijidsh-subagent-spawn-in-process"></a>
 
 ## `@taiji/dsh-subagent-spawn-in-process`
 
@@ -3139,7 +3226,7 @@ export interface Config {
 
 Source: [`packages/subagent/subagent-spawn-in-process/src/index.ts:25`](../packages/subagent/subagent-spawn-in-process/src/index.ts)
 
-<a id="deepseek-aidsh-system-prompt"></a>
+<a id="taijidsh-system-prompt"></a>
 
 ## `@taiji/dsh-system-prompt`
 
@@ -3169,9 +3256,9 @@ export interface Config {
 }
 ```
 
-Source: [`packages/core/system-prompt/src/index.ts:247`](../packages/core/system-prompt/src/index.ts)
+Source: [`packages/core/system-prompt/src/index.ts:248`](../packages/core/system-prompt/src/index.ts)
 
-<a id="deepseek-aidsh-terminal-bash"></a>
+<a id="taijidsh-terminal-bash"></a>
 
 ## `@taiji/dsh-terminal-bash`
 
@@ -3221,7 +3308,7 @@ export type ShellDialect = 'bash' | 'pwsh'
 
 Source: [`packages/terminal/terminal-bash/src/config.ts:10`](../packages/terminal/terminal-bash/src/config.ts)
 
-<a id="deepseek-aidsh-time-context"></a>
+<a id="taijidsh-time-context"></a>
 
 ## `@taiji/dsh-time-context`
 
@@ -3239,7 +3326,7 @@ export interface Config {
 
 Source: [`packages/context/time-context/src/index.ts:56`](../packages/context/time-context/src/index.ts)
 
-<a id="deepseek-aidsh-tmux-context"></a>
+<a id="taijidsh-tmux-context"></a>
 
 ## `@taiji/dsh-tmux-context`
 
@@ -3255,7 +3342,7 @@ export interface Config {
 
 Source: [`packages/context/tmux-context/src/index.ts:47`](../packages/context/tmux-context/src/index.ts)
 
-<a id="deepseek-aidsh-token-meter"></a>
+<a id="taijidsh-token-meter"></a>
 
 ## `@taiji/dsh-token-meter`
 
@@ -3268,7 +3355,7 @@ export type TokenMeterConfig = Record<string, never>
 
 Source: [`packages/llm/token-meter/src/types.ts:13`](../packages/llm/token-meter/src/types.ts)
 
-<a id="deepseek-aidsh-tool-bash"></a>
+<a id="taijidsh-tool-bash"></a>
 
 ## `@taiji/dsh-tool-bash`
 
@@ -3297,7 +3384,7 @@ export interface Config {
 
 Source: [`packages/shell/tool-bash/src/index.ts:37`](../packages/shell/tool-bash/src/index.ts)
 
-<a id="deepseek-aidsh-tool-bash-persistent"></a>
+<a id="taijidsh-tool-bash-persistent"></a>
 
 ## `@taiji/dsh-tool-bash-persistent`
 
@@ -3319,7 +3406,7 @@ export interface Config {
 
 Source: [`packages/shell/tool-bash-persistent/src/index.ts:443`](../packages/shell/tool-bash-persistent/src/index.ts)
 
-<a id="deepseek-aidsh-tool-fs"></a>
+<a id="taijidsh-tool-fs"></a>
 
 ## `@taiji/dsh-tool-fs`
 
@@ -3341,7 +3428,7 @@ export interface Config {
 
 Source: [`packages/fs/tool-fs/src/index.ts:25`](../packages/fs/tool-fs/src/index.ts)
 
-<a id="deepseek-aidsh-tool-fs-search"></a>
+<a id="taijidsh-tool-fs-search"></a>
 
 ## `@taiji/dsh-tool-fs-search`
 
@@ -3376,7 +3463,7 @@ export interface Config {
 
 Source: [`packages/fs/tool-fs-search/src/index.ts:73`](../packages/fs/tool-fs-search/src/index.ts)
 
-<a id="deepseek-aidsh-tool-goal"></a>
+<a id="taijidsh-tool-goal"></a>
 
 ## `@taiji/dsh-tool-goal`
 
@@ -3392,7 +3479,7 @@ export interface Config {
 
 Source: [`packages/goal/tool-goal/src/index.ts:32`](../packages/goal/tool-goal/src/index.ts)
 
-<a id="deepseek-aidsh-tool-jobs"></a>
+<a id="taijidsh-tool-jobs"></a>
 
 ## `@taiji/dsh-tool-jobs`
 
@@ -3426,7 +3513,7 @@ export type CompletionDelivery = 'quiet' | 'wakeup'
 
 Source: [`packages/jobs/tool-jobs/src/index.ts:41`](../packages/jobs/tool-jobs/src/index.ts)
 
-<a id="deepseek-aidsh-tool-lsp"></a>
+<a id="taijidsh-tool-lsp"></a>
 
 ## `@taiji/dsh-tool-lsp`
 
@@ -3446,7 +3533,7 @@ export interface Config {
 
 Source: [`packages/lsp/tool-lsp/src/index.ts:57`](../packages/lsp/tool-lsp/src/index.ts)
 
-<a id="deepseek-aidsh-tool-present"></a>
+<a id="taijidsh-tool-present"></a>
 
 ## `@taiji/dsh-tool-present`
 
@@ -3462,7 +3549,7 @@ export interface Config {
 
 Source: [`packages/deliverables/tool-present/src/index.ts:15`](../packages/deliverables/tool-present/src/index.ts)
 
-<a id="deepseek-aidsh-tool-pwsh"></a>
+<a id="taijidsh-tool-pwsh"></a>
 
 ## `@taiji/dsh-tool-pwsh`
 
@@ -3491,7 +3578,7 @@ export interface Config {
 
 Source: [`packages/shell/tool-pwsh/src/index.ts:54`](../packages/shell/tool-pwsh/src/index.ts)
 
-<a id="deepseek-aidsh-tool-pwsh-persistent"></a>
+<a id="taijidsh-tool-pwsh-persistent"></a>
 
 ## `@taiji/dsh-tool-pwsh-persistent`
 
@@ -3513,7 +3600,7 @@ export interface Config {
 
 Source: [`packages/shell/tool-pwsh-persistent/src/index.ts:480`](../packages/shell/tool-pwsh-persistent/src/index.ts)
 
-<a id="deepseek-aidsh-tool-ralph"></a>
+<a id="taijidsh-tool-ralph"></a>
 
 ## `@taiji/dsh-tool-ralph`
 
@@ -3535,7 +3622,7 @@ export interface Config {
 
 Source: [`packages/workflow/tool-ralph/src/index.ts:21`](../packages/workflow/tool-ralph/src/index.ts)
 
-<a id="deepseek-aidsh-tool-session-query"></a>
+<a id="taijidsh-tool-session-query"></a>
 
 ## `@taiji/dsh-tool-session-query`
 
@@ -3553,7 +3640,7 @@ export interface Config {
 
 Source: [`packages/session-query/tool-session-query/src/index.ts:28`](../packages/session-query/tool-session-query/src/index.ts)
 
-<a id="deepseek-aidsh-tool-skill"></a>
+<a id="taijidsh-tool-skill"></a>
 
 ## `@taiji/dsh-tool-skill`
 
@@ -3569,7 +3656,7 @@ export interface Config {
 
 Source: [`packages/skill/tool-skill/src/index.ts:61`](../packages/skill/tool-skill/src/index.ts)
 
-<a id="deepseek-aidsh-tool-str-replace-editor"></a>
+<a id="taijidsh-tool-str-replace-editor"></a>
 
 ## `@taiji/dsh-tool-str-replace-editor`
 
@@ -3587,7 +3674,7 @@ export interface Config {
 
 Source: [`packages/fs/tool-str-replace-editor/src/index.ts:505`](../packages/fs/tool-str-replace-editor/src/index.ts)
 
-<a id="deepseek-aidsh-tool-subagent"></a>
+<a id="taijidsh-tool-subagent"></a>
 
 ## `@taiji/dsh-tool-subagent`
 
@@ -3658,7 +3745,7 @@ Depends on: [`AgentOptions`](subsystems/core.md)
 
 Source: [`packages/subagent/tool-subagent/src/index.ts:48`](../packages/subagent/tool-subagent/src/index.ts)
 
-<a id="deepseek-aidsh-tool-terminal"></a>
+<a id="taijidsh-tool-terminal"></a>
 
 ## `@taiji/dsh-tool-terminal`
 
@@ -3676,7 +3763,7 @@ export interface Config {
 
 Source: [`packages/terminal/tool-terminal/src/index.ts:36`](../packages/terminal/tool-terminal/src/index.ts)
 
-<a id="deepseek-aidsh-tool-todo"></a>
+<a id="taijidsh-tool-todo"></a>
 
 ## `@taiji/dsh-tool-todo`
 
@@ -3698,7 +3785,7 @@ export interface Config {
 
 Source: [`packages/todo/tool-todo/src/index.ts:29`](../packages/todo/tool-todo/src/index.ts)
 
-<a id="deepseek-aidsh-tool-web"></a>
+<a id="taijidsh-tool-web"></a>
 
 ## `@taiji/dsh-tool-web`
 
@@ -3726,7 +3813,7 @@ export interface Config {
 
 Source: [`packages/web/tool-web/src/index.ts:37`](../packages/web/tool-web/src/index.ts)
 
-<a id="deepseek-aidsh-tool-workflow"></a>
+<a id="taijidsh-tool-workflow"></a>
 
 ## `@taiji/dsh-tool-workflow`
 
@@ -3752,7 +3839,7 @@ export interface Config {
 
 Source: [`packages/workflow/tool-workflow/src/index.ts:44`](../packages/workflow/tool-workflow/src/index.ts)
 
-<a id="deepseek-aidsh-tool-workspace-dependencies"></a>
+<a id="taijidsh-tool-workspace-dependencies"></a>
 
 ## `@taiji/dsh-tool-workspace-dependencies`
 
@@ -3774,7 +3861,7 @@ export interface Config {
 
 Source: [`packages/skill/tool-workspace-dependencies/src/index.ts:15`](../packages/skill/tool-workspace-dependencies/src/index.ts)
 
-<a id="deepseek-aidsh-tools"></a>
+<a id="taijidsh-tools"></a>
 
 ## `@taiji/dsh-tools`
 
@@ -3810,7 +3897,7 @@ export type ToolPresentationMode = 'native' | 'ptc' | 'both'
 
 Source: [`packages/core/tools/src/index.ts:663`](../packages/core/tools/src/index.ts)
 
-<a id="deepseek-aidsh-typert-loader"></a>
+<a id="taijidsh-typert-loader"></a>
 
 ## `@taiji/dsh-typert-loader`
 
@@ -3826,7 +3913,7 @@ export interface Config {
 
 Source: [`packages/typert/loader/src/index.ts:48`](../packages/typert/loader/src/index.ts)
 
-<a id="deepseek-aidsh-user-approval"></a>
+<a id="taijidsh-user-approval"></a>
 
 ## `@taiji/dsh-user-approval`
 
@@ -3857,7 +3944,7 @@ export type ApprovalPolicy = 'ask' | 'never'
 
 Source: [`packages/interaction/user-approval/src/index.ts:135`](../packages/interaction/user-approval/src/index.ts)
 
-<a id="deepseek-aidsh-web"></a>
+<a id="taijidsh-web"></a>
 
 ## `@taiji/dsh-web`
 
@@ -3878,7 +3965,7 @@ export interface WebRuntimeConfig {
 
 Source: [`packages/web/web/src/index.ts:55`](../packages/web/web/src/index.ts)
 
-<a id="deepseek-aidsh-web-app"></a>
+<a id="taijidsh-web-app"></a>
 
 ## `@taiji/dsh-web-app`
 
@@ -3905,7 +3992,7 @@ export interface Config {
 
 Source: [`packages/bundle/web-app/src/index.ts:44`](../packages/bundle/web-app/src/index.ts)
 
-<a id="deepseek-aidsh-web-fetch-http"></a>
+<a id="taijidsh-web-fetch-http"></a>
 
 ## `@taiji/dsh-web-fetch-http`
 
@@ -3929,7 +4016,7 @@ export interface Config {
 
 Source: [`packages/web/web-fetch-http/src/index.ts:32`](../packages/web/web-fetch-http/src/index.ts)
 
-<a id="deepseek-aidsh-web-search-deepseek"></a>
+<a id="taijidsh-web-search-deepseek"></a>
 
 ## `@taiji/dsh-web-search-deepseek`
 
@@ -3959,7 +4046,7 @@ Depends on: `Volatile` (`@taiji/cordis`)
 
 Source: [`packages/web/web-search-deepseek/src/index.ts:46`](../packages/web/web-search-deepseek/src/index.ts)
 
-<a id="deepseek-aidsh-web-search-exa"></a>
+<a id="taijidsh-web-search-exa"></a>
 
 ## `@taiji/dsh-web-search-exa`
 
@@ -3983,7 +4070,7 @@ export interface Config {
 
 Source: [`packages/web/web-search-exa/src/index.ts:35`](../packages/web/web-search-exa/src/index.ts)
 
-<a id="deepseek-aidsh-web-search-perplexity"></a>
+<a id="taijidsh-web-search-perplexity"></a>
 
 ## `@taiji/dsh-web-search-perplexity`
 
@@ -4007,7 +4094,7 @@ export interface Config {
 
 Source: [`packages/web/web-search-perplexity/src/index.ts:30`](../packages/web/web-search-perplexity/src/index.ts)
 
-<a id="deepseek-aidsh-webhook-github"></a>
+<a id="taijidsh-webhook-github"></a>
 
 ## `@taiji/dsh-webhook-github`
 
@@ -4029,7 +4116,7 @@ export interface Config {
 
 Source: [`packages/webhook/webhook-github/src/index.ts:17`](../packages/webhook/webhook-github/src/index.ts)
 
-<a id="deepseek-aidsh-workflow-ptc"></a>
+<a id="taijidsh-workflow-ptc"></a>
 
 ## `@taiji/dsh-workflow-ptc`
 
@@ -4053,7 +4140,7 @@ export interface Config {
 
 Source: [`packages/workflow/workflow-ptc/src/index.ts:32`](../packages/workflow/workflow-ptc/src/index.ts)
 
-<a id="deepseek-aidsh-workspace-changes"></a>
+<a id="taijidsh-workspace-changes"></a>
 
 ## `@taiji/dsh-workspace-changes`
 
@@ -4109,6 +4196,7 @@ These load from a `cordis.yml` entry with no `config:` block; they declare no co
 - `@taiji/dsh-client-ui-input-trigger` ([`packages/client/ui-input-trigger/src/index.ts`](../packages/client/ui-input-trigger/src/index.ts))
 - `@taiji/dsh-client-ui-jobs` ([`packages/client/ui-jobs/src/index.ts`](../packages/client/ui-jobs/src/index.ts))
 - `@taiji/dsh-client-ui-layout` ([`packages/client/ui-layout/src/index.ts`](../packages/client/ui-layout/src/index.ts))
+- `@taiji/dsh-client-ui-life` ([`packages/client/ui-life/src/index.ts`](../packages/client/ui-life/src/index.ts))
 - `@taiji/dsh-client-ui-message-feedback` ([`packages/client/ui-message-feedback/src/index.ts`](../packages/client/ui-message-feedback/src/index.ts))
 - `@taiji/dsh-client-ui-model-selection` ([`packages/client/ui-model-selection/src/index.ts`](../packages/client/ui-model-selection/src/index.ts))
 - `@taiji/dsh-client-ui-open-in-app` ([`packages/client/ui-open-in-app/src/index.ts`](../packages/client/ui-open-in-app/src/index.ts))

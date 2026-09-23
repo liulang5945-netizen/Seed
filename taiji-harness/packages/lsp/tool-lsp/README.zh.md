@@ -43,7 +43,7 @@ kind: "package-reference"
 | `maxResultChars` | `16000` | 完整渲染结果的最大长度，包括截断元数据 |
 | `timeoutMs` | `60000` | 由 `dsh-tool-call-timeout-policy` 强制执行的工具调用超时预算；覆盖完整的排队打开／查询／关闭生命周期，且模型不可配置 |
 
-生成的[配置目录](../../../docs/config-catalog.zh.md#deepseek-aidsh-tool-lsp)是每个受支持字段的穷尽式真源。
+生成的[配置目录](../../../docs/config-catalog.zh.md#taijidsh-tool-lsp)是每个受支持字段的穷尽式真源。
 
 ### 失败与恢复
 
@@ -120,7 +120,7 @@ Use search/read for ordinary navigation. Use lsp when textual matches are ambigu
 
 #### 模型看到什么
 
-模型会看到生成的 [`lsp` schema](../../../docs/tool-catalog.zh.md#deepseek-aidsh-tool-lsp)。
+模型会看到生成的 [`lsp` schema](../../../docs/tool-catalog.zh.md#taijidsh-tool-lsp)。
 
 #### Token 影响
 

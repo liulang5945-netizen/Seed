@@ -42,7 +42,7 @@ kind: "package-reference"
 | `maxImageResolution` | `192` | 最大光栅图像 DPI；覆盖 kit 的默认值 `144`。 |
 | `fontFallbacks` | kit 默认值 | 有序字体族优先组；每组至少包含两个含非空白字符的名称。 |
 
-[配置目录](../../../docs/config-catalog.zh.md#deepseek-aidsh-office-to-pdf)定义全部字体、归档和图像设置。`fontDirectories` 接受绝对目录；省略时使用 kit 的平台默认值。显式 `fontFallbacks` 替换 kit 的默认分组。已安装的请求字体仍优先使用，缺失字形仍可由其他系统字体提供。原生引擎可能在应用这些优先规则前选中已安装的度量兼容字体。
+[配置目录](../../../docs/config-catalog.zh.md#taijidsh-office-to-pdf)定义全部字体、归档和图像设置。`fontDirectories` 接受绝对目录；省略时使用 kit 的平台默认值。显式 `fontFallbacks` 替换 kit 的默认分组。已安装的请求字体仍优先使用，缺失字形仍可由其他系统字体提供。原生引擎可能在应用这些优先规则前选中已安装的度量兼容字体。
 
 [有界转换决策](../../../.agents/notes/implemented/architecture/2026-09-15-bounded-office-conversion.zh.md)说明队列准入、缓存限额与共享取消的设计依据。
 
