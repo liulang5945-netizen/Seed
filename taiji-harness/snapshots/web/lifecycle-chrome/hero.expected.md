@@ -14,7 +14,7 @@
 - button "Settings"
 - banner:
   - button "Open right sidebar"
-- text: From Wuji to Taiji Preview
+- text: State at Its Utmost Preview
 - button "Choose workspace": workspace
 - button "Standard mode"
 - textbox "Describe what you want to build, / commands, @ files or sessions":
