@@ -286,6 +286,12 @@
     - id: ui-plugin-manager
       name: '@taiji/dsh-client-ui-plugin-manager'
 
+    # The life panel: the sidebar Life page renders the Taiji local runtime's
+    # readings — organs, training, knowledge, host — and drives its training
+    # and scheduler controls through the life controller's Client facade.
+    - id: ui-life
+      name: '@taiji/dsh-client-ui-life'
+
     # Read-only Plugin list tab in the Settings Plugins section; the built-in
     # bundles the sidebar page leaves out are inspected here.
     - id: ui-settings-plugin-inventory

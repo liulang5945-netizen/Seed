@@ -84,6 +84,7 @@
     "@taiji/dsh-client-ui-input-trigger": "workspace:^",
     "@taiji/dsh-client-ui-jobs": "workspace:^",
     "@taiji/dsh-client-ui-layout": "workspace:^",
+    "@taiji/dsh-client-ui-life": "workspace:^",
     "@taiji/dsh-client-ui-message-feedback": "workspace:^",
     "@taiji/dsh-client-ui-model-selection": "workspace:^",
     "@taiji/dsh-client-ui-open-in-app": "workspace:^",

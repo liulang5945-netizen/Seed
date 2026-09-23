@@ -281,6 +281,8 @@
       "@taiji/dsh-client-ui-jobs": ["./packages/client/ui-jobs/src"],
       "@taiji/dsh-client-ui-jobs/client": ["./packages/client/ui-jobs/src/client/index.ts"],
       "@taiji/dsh-client-ui-jobs/invariant": ["./packages/client/ui-jobs/src/invariant.ts"],
+      "@taiji/dsh-client-ui-life": ["./packages/client/ui-life/src"],
+      "@taiji/dsh-client-ui-life/client": ["./packages/client/ui-life/src/client/index.ts"],
       "@taiji/dsh-client-ui-schedule": ["./packages/client/ui-schedule/src"],
       "@taiji/dsh-client-ui-schedule/client": ["./packages/client/ui-schedule/src/client/index.ts"],
       "@taiji/dsh-client-ui-plan": ["./packages/client/ui-plan/src"],
