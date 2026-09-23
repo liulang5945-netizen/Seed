@@ -66,12 +66,30 @@ def main() -> int:
     #: 沿用训练器默认值会把两臂训在**另一份语料**上，"tick0 → 16M"的对比立刻作废。
     parser.add_argument("--corpus", default="data/simple_zh/simple_zh_texts.jsonl")
     parser.add_argument("--out-dir", required=True)
+    #: 被外部杀掉后接着跑：从该 checkpoint 恢复，并按 `model.tick` **自动跳过**已消费的前缀
+    #: （语料迭代是纯流式、不打乱，所以跳过是精确的）。不提供这个开关时，一次中断就白跑整臂。
+    parser.add_argument("--resume-from", default=None)
     # 消融开关（默认全开 = 现行配方）
+    parser.add_argument("--learn", choices=("on", "off"), default="on", help="总闸；off = 正对照臂（什么都不学）")
     parser.add_argument("--learn-fabric", choices=("on", "off"), default="on")
-    parser.add_argument("--learn-readout", choices=("on", "off"), default="on")
     parser.add_argument("--learn-motor", choices=("on", "off"), default="on")
+    # 下面两个在**这条配方里**是空操作（守卫生效：`tests/taiji_native/test_t1t2_ablation_switches_bite.py`）
+    parser.add_argument("--learn-readout", choices=("on", "off"), default="on")
     parser.add_argument("--use-memory", choices=("on", "off"), default="on")
     args = parser.parse_args()
+
+    # 宁可**报错**也不让一条"以为自己消融了"的臂跑完 1M 符号：这类空操作臂会给出**假阴性**
+    # （"关掉它结构却没变"），而且从读数上看不出来。
+    if args.learn_readout == "off":
+        parser.error(
+            "--learn-readout off 在本配方里是空操作：readout=\"action\" 下 predictive_context/"
+            "predictive_readout 根本不参与前向（tests/taiji_native/test_t1t2_ablation_switches_bite.py 钉住）"
+        )
+    if args.use_memory == "off":
+        parser.error(
+            "--use-memory off 在本配方里是空操作：这条配方不写 memory"
+            "（同上守卫测试钉住）。要测情景侧得先换配方并另立预注册。"
+        )
 
     from train_seed_corpus import iter_corpus_symbols
 
@@ -82,8 +100,8 @@ def main() -> int:
     out_dir = Path(args.out_dir)
     if not out_dir.is_absolute():
         out_dir = PROJECT_ROOT / out_dir
-    if (out_dir / "trajectory.jsonl").exists():
-        parser.error(f"{out_dir}/trajectory.jsonl already exists; 不覆写（换目录或换臂名）")
+    if (out_dir / "trajectory.jsonl").exists() and not args.resume_from:
+        parser.error(f"{out_dir}/trajectory.jsonl already exists; 不覆写（换目录、换臂名，或用 --resume-from 接着跑）")
     out_dir.mkdir(parents=True, exist_ok=True)
 
     confirm_families = json.loads(CONFIRMATION.read_text(encoding="utf-8"))["families"]
@@ -92,7 +110,7 @@ def main() -> int:
     config = SeedConfig(taiji=TaijiConfig.from_dict({**values, "seed": args.seed}))
 
     # 消融：`learn=False` 是总闸，`None` 表示跟随总闸。关掉某一项就显式传 False。
-    observe_kwargs: dict[str, Any] = {"learn": True}
+    observe_kwargs: dict[str, Any] = {"learn": args.learn == "on"}
     if args.learn_fabric == "off":
         observe_kwargs["learn_fabric"] = False
     if args.learn_motor == "off":
@@ -105,12 +123,16 @@ def main() -> int:
         observe_kwargs["use_identity"] = False
 
     model = Seed(config, episode_id=f"t1t2-{args.arm_name}")
+    skip = 0
+    if args.resume_from:
+        model.restore(torch.load(args.resume_from, map_location="cpu", weights_only=False))
+        skip = int(model.tick)
     boundary = config.taiji.boundary_symbol
     corpus_paths = [str(PROJECT_ROOT / args.corpus)]
 
     trajectory = out_dir / "trajectory.jsonl"
     started = time.perf_counter()
-    ticks = 0
+    ticks = skip  # 续跑时从恢复点的 tick 起算，进度与测量节奏才对得上
     window_ticks = 0
     window_correct = 0
     window_surprise = 0.0
@@ -139,9 +161,16 @@ def main() -> int:
         print(json.dumps(row, ensure_ascii=False), flush=True)
         return row
 
-    _measure_now(0)  # 第 0 点：这一臂自己的初始化
-    for symbol in iter_corpus_symbols(corpus_paths, boundary=boundary):
-        step = model.observe(symbol, **observe_kwargs)
+    _measure_now(ticks)  # 第 0 点：这一臂自己的初始化（续跑时是恢复点的读数）
+    stream = iter_corpus_symbols(corpus_paths, boundary=boundary)
+    for _ in range(skip):  # 接着跑：精确跳过已消费的前缀（流式、不打乱）
+        next(stream)
+    for symbol in stream:
+        # ⚠️ 必须直接调 substrate：`Seed.observe` **只转发** learn / learn_motor / use_memory /
+        # use_identity（`seed/model.py:78`），四个消融开关传进去会直接 TypeError（已实测）。
+        # 这里显式给 `readout="action"`，与 `Seed.observe`（不转发 readout ⇒ 用 substrate 默认）
+        # 以及训练器保持逐字一致。
+        step = model.substrate.observe(symbol, readout="action", **observe_kwargs)
         ticks += 1
         if step.prior_prediction is not None:
             window_ticks += 1
