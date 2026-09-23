@@ -61,7 +61,19 @@ VERDICT_REPORT = PROJECT_ROOT / "reports" / "taiji_r2_separability_profile_20260
 DRY_RUN_REPORT = (
     PROJECT_ROOT / "reports" / "taiji_r2_separability_profile_pipeline_check_20260923.json"
 )
-STAGES = ("1_region_trace", "2_cortical_projection", "3_context_organ", "4_final_cue", "5_readout_dist")
+#: **修正后的层级**（第一版把"拼接"当成了"损失"，见模块末尾的更正说明）。
+#:
+#: 真实拓扑（读码所得）：`cat(region.activity…) + cat(region.trace…)`（1152，**无权重**）
+#: → `BytePredictiveContext.receptors`（**有学习权重** 1152→96）→ `context`（96）→ 读出。
+#: 所以**只有 `context` 这一级是"经过学习映射"的**，前两级只是把两部分接起来——
+#: 把它们的数字当成"逐级损失"来读是错的：两个 block 的余弦**不可比**，拼接本身就会改变余弦。
+STAGES = (
+    "1_activity_block",  # 各区 activity 拼接（576）——无权重
+    "2_trace_block",  # 各区 trace 拼接（576）——无权重，且是 fabric 投影真正消费的部分
+    "3_context",  # receptors(1152→96) 的输出（96）——**唯一有学习权重的一级**
+    "4_context_trace",  # 上一步 context 的副本（rec尾current 的输入，96）
+    "5_readout_dist",  # 读出分布（257）
+)
 
 
 def _flatten(value: Any) -> torch.Tensor:
@@ -155,12 +167,14 @@ def _cells(substrate: Any, runtime: Any, family: dict[str, Any], tag: str) -> di
             prompt = family["skeleton"].format(a=family["a"][i], b=family["b"][j])
             with _Taps(substrate) as taps:
                 _prefill(substrate, runtime, prompt, f"prof-{tag}-{family['id']}-{i}{j}")
+            regions = substrate._state.regions
+            encoded = taps.encode_out[-1]  # encode 返回 (context, trace)
             out[f"{i}{j}"] = {
                 "prompt": prompt,
-                "1_region_trace": _region_trace(substrate._state.regions),
-                "2_cortical_projection": _flatten(taps.encode_in[-1]),
-                "3_context_organ": _flatten(taps.encode_out[-1]),
-                "4_final_cue": _flatten(taps.readout_in[-1]),
+                "1_activity_block": _flatten([region.activity for region in regions]),
+                "2_trace_block": _region_trace(regions),
+                "3_context": _flatten(encoded[0]),
+                "4_context_trace": _flatten(encoded[1]),
                 "5_readout_dist": _flatten(taps.readout_out[-1]),
             }
     return out
@@ -183,11 +197,11 @@ def probe(label: str, checkpoint: Path, runtime_cls: Any) -> dict[str, Any]:
     per_stage: dict[str, list[float]] = {stage: [] for stage in STAGES}
     us: dict[str, list[torch.Tensor]] = {stage: [] for stage in STAGES}
     vs: dict[str, list[torch.Tensor]] = {stage: [] for stage in STAGES}
-    stage3_eq_stage4 = 0
+    # `_gated_temporal_candidate is None` ⇒ `context` 就是直接喂给读出的那个，中间没有额外候选层。
+    # 这一条决定"第 3 级"与"最终 cue"是不是同一处，报出来比猜好。
+    gated_absent = bool(getattr(substrate, "_gated_temporal_candidate", None) is None)
     for family in FAMILIES:
         cells = _cells(substrate, runtime, family, label)
-        if bool(torch.equal(cells["00"]["3_context_organ"], cells["00"]["4_final_cue"])):
-            stage3_eq_stage4 += 1
         for stage in STAGES:
             c00, c10 = cells["00"][stage], cells["10"][stage]
             c01, c11 = cells["01"][stage], cells["11"][stage]
@@ -234,7 +248,7 @@ def probe(label: str, checkpoint: Path, runtime_cls: Any) -> dict[str, Any]:
         "label": label,
         "checkpoint": str(checkpoint),
         "null_control": {"per_stage_abs_diff": null, "ok": null_ok},
-        "stage3_equals_stage4_families": stage3_eq_stage4,
+        "gated_temporal_candidate_absent": gated_absent,
         "profile": profile,
     }
 
@@ -243,22 +257,36 @@ def _localize(entry: dict[str, Any]) -> dict[str, Any]:
     """提案 §3.3 的决策树，先写死，按剖面机械套用。"""
 
     p = entry["profile"]
-    early_ok = all(p[s]["verdict"] == "separable" for s in STAGES[:2])
-    mid_ok = all(p[s]["verdict"] == "separable" for s in STAGES[2:4])
-    late_ok = p[STAGES[4]]["verdict"] == "separable"
-    if not early_ok:
-        level = "level_1_2_region_or_cortical"
-        note = "第 1–2 级就不可分离 ⇒ 点名区域/皮层投影"
-    elif not mid_ok:
-        level = "level_3_4_context_organ"
-        note = "1–2 级可分离、3–4 级不可分离 ⇒ 点名上下文器官/递归混合"
-    elif not late_ok:
+    #: 无权重级（拼接块）的**上界**：任何一个 block 自己有多可分离。
+    upstream = max(p["1_activity_block"]["consistency_median"], p["2_trace_block"]["consistency_median"])
+    learned = p["3_context"]["consistency_median"]
+    late = p["5_readout_dist"]["consistency_median"]
+    drop = round(upstream - learned, 6)
+    if learned >= SEPARABLE_FLOOR:
+        level = "none_learned_stage_ok"
+        note = "学习映射后仍可分离 ⇒ 与组合性探针结论冲突，须复核"
+    elif drop >= 0.05:
+        level = "level_3_receptors_learned_map"
+        note = (
+            f"学习映射（receptors 1152→96）把可分离性从块上界 {upstream:.4f} 拉到 {learned:.4f}"
+            f"（−{drop:.4f}）⇒ **点名 `BytePredictiveContext.receptors`**"
+        )
+    elif late > learned + 0.05:
         level = "level_5_readout"
-        note = "1–4 级可分离、只有读出分布不可分离 ⇒ 提案前提作废，改从读出侧立题"
+        note = "学习映射损失不显著、读出分布反而更可分离 ⇒ 瓶颈的归因要重写"
     else:
-        level = "none_all_separable"
-        note = "全程可分离 ⇒ 与组合性探针结论冲突，须复核"
-    return {"named_level": level, "reason": note}
+        level = "upstream_of_any_map"
+        note = (
+            "块本身就不分离（学习映射没有显著再损失）⇒ 缺口在**区域动力学**，"
+            "不在任何学习映射上"
+        )
+    return {
+        "named_level": level,
+        "reason": note,
+        "upstream_block_ceiling": round(upstream, 6),
+        "learned_stage": round(learned, 6),
+        "drop_at_learned_stage": drop,
+    }
 
 
 def main() -> int:

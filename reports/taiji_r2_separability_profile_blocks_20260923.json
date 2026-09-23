@@ -1,0 +1,167 @@
+{
+  "format": "taiji-r2-separability-profile-v1",
+  "status": "completed",
+  "written_at_utc": "2026-09-23T03:07:25Z",
+  "authorised_by": "plans/reference/M5_R2_COMPOSITION_BINDING_BUDGET_PROPOSAL_20260923.md §3（所有者 2026-09-23 批 Step 0）",
+  "question": "可分离性是在链路的哪一级丢的",
+  "preregistered_ladder": {
+    "separable_floor": 0.9,
+    "not_separable_below": 0.5
+  },
+  "disclosures": [
+    "在实例上临时包 predictive_context.encode 与 predictive_readout.probabilities 取真实前向值，跑完恢复；未改 taiji/ 任何文件",
+    "第 1 级取 substrate._state.regions（私有）",
+    "刺激集沿用组合性探针的冻结 FAMILIES，不另写一份"
+  ],
+  "failure": null,
+  "checkpoints": {
+    "base": {
+      "label": "base",
+      "checkpoint": "E:\\Seed\\checkpoints\\seed_beta.pt",
+      "null_control": {
+        "per_stage_abs_diff": {
+          "1_activity_block": 0.0,
+          "2_trace_block": 0.0,
+          "3_context": 0.0,
+          "4_context_trace": 0.0,
+          "5_readout_dist": 0.0
+        },
+        "ok": true
+      },
+      "gated_temporal_candidate_absent": true,
+      "profile": {
+        "1_activity_block": {
+          "consistency_median": 0.458602,
+          "consistency_min": 0.224375,
+          "consistency_max": 0.516654,
+          "baseline_median": -0.032593,
+          "baseline_n": 60,
+          "gap_over_baseline": 0.491195,
+          "verdict": "not_separable",
+          "flattened_dim": 576
+        },
+        "2_trace_block": {
+          "consistency_median": 0.57656,
+          "consistency_min": 0.475188,
+          "consistency_max": 0.788406,
+          "baseline_median": 0.005646,
+          "baseline_n": 60,
+          "gap_over_baseline": 0.570914,
+          "verdict": "partial",
+          "flattened_dim": 576
+        },
+        "3_context": {
+          "consistency_median": 0.419656,
+          "consistency_min": 0.184595,
+          "consistency_max": 0.5951,
+          "baseline_median": -0.030995,
+          "baseline_n": 60,
+          "gap_over_baseline": 0.450651,
+          "verdict": "not_separable",
+          "flattened_dim": 96
+        },
+        "4_context_trace": {
+          "consistency_median": 0.519856,
+          "consistency_min": 0.271954,
+          "consistency_max": 0.77178,
+          "baseline_median": 0.013197,
+          "baseline_n": 60,
+          "gap_over_baseline": 0.506659,
+          "verdict": "partial",
+          "flattened_dim": 96
+        },
+        "5_readout_dist": {
+          "consistency_median": 0.458688,
+          "consistency_min": -0.218328,
+          "consistency_max": 0.779639,
+          "baseline_median": 0.02767,
+          "baseline_n": 60,
+          "gap_over_baseline": 0.431018,
+          "verdict": "not_separable",
+          "flattened_dim": 257
+        }
+      },
+      "localization": {
+        "named_level": "level_3_receptors_learned_map",
+        "reason": "学习映射（receptors 1152→96）把可分离性从块上界 0.5766 拉到 0.4197（−0.1569）⇒ **点名 `BytePredictiveContext.receptors`**",
+        "upstream_block_ceiling": 0.57656,
+        "learned_stage": 0.419656,
+        "drop_at_learned_stage": 0.156904
+      }
+    },
+    "arm_A": {
+      "label": "arm_A",
+      "checkpoint": "E:\\Seed\\output\\taiji_r2_readout_retrain\\A\\checkpoint.pt",
+      "null_control": {
+        "per_stage_abs_diff": {
+          "1_activity_block": 0.0,
+          "2_trace_block": 0.0,
+          "3_context": 0.0,
+          "4_context_trace": 0.0,
+          "5_readout_dist": 0.0
+        },
+        "ok": true
+      },
+      "gated_temporal_candidate_absent": true,
+      "profile": {
+        "1_activity_block": {
+          "consistency_median": 0.458602,
+          "consistency_min": 0.224375,
+          "consistency_max": 0.516654,
+          "baseline_median": -0.032593,
+          "baseline_n": 60,
+          "gap_over_baseline": 0.491195,
+          "verdict": "not_separable",
+          "flattened_dim": 576
+        },
+        "2_trace_block": {
+          "consistency_median": 0.57656,
+          "consistency_min": 0.475188,
+          "consistency_max": 0.788406,
+          "baseline_median": 0.005646,
+          "baseline_n": 60,
+          "gap_over_baseline": 0.570914,
+          "verdict": "partial",
+          "flattened_dim": 576
+        },
+        "3_context": {
+          "consistency_median": 0.419656,
+          "consistency_min": 0.184595,
+          "consistency_max": 0.5951,
+          "baseline_median": -0.030995,
+          "baseline_n": 60,
+          "gap_over_baseline": 0.450651,
+          "verdict": "not_separable",
+          "flattened_dim": 96
+        },
+        "4_context_trace": {
+          "consistency_median": 0.519856,
+          "consistency_min": 0.271954,
+          "consistency_max": 0.77178,
+          "baseline_median": 0.013197,
+          "baseline_n": 60,
+          "gap_over_baseline": 0.506659,
+          "verdict": "partial",
+          "flattened_dim": 96
+        },
+        "5_readout_dist": {
+          "consistency_median": 0.702301,
+          "consistency_min": -0.692437,
+          "consistency_max": 0.872531,
+          "baseline_median": 0.191809,
+          "baseline_n": 60,
+          "gap_over_baseline": 0.510493,
+          "verdict": "partial",
+          "flattened_dim": 257
+        }
+      },
+      "localization": {
+        "named_level": "level_3_receptors_learned_map",
+        "reason": "学习映射（receptors 1152→96）把可分离性从块上界 0.5766 拉到 0.4197（−0.1569）⇒ **点名 `BytePredictiveContext.receptors`**",
+        "upstream_block_ceiling": 0.57656,
+        "learned_stage": 0.419656,
+        "drop_at_learned_stage": 0.156904
+      }
+    }
+  }
+}
