@@ -187,20 +187,18 @@ def main() -> int:
                 ),
                 out_dir / f"checkpoint_{ticks}.pt",
             )
-            # §5.3：每臂的在线准确率/惊讶度必须一起报，让"是不是根本没学"可见
-            print(
-                json.dumps(
-                    {
-                        "arm": args.arm_name,
-                        "step": ticks,
-                        "online_accuracy": round(window_correct / max(1, window_ticks), 4),
-                        "mean_surprise": round(window_surprise / max(1, window_ticks), 4),
-                        "elapsed_seconds": round(time.perf_counter() - started, 2),
-                    },
-                    ensure_ascii=False,
-                ),
-                flush=True,
-            )
+            # §5.3：每臂的在线准确率/惊讶度必须一起报，让"是不是根本没学"可见。
+            # **必须落盘**，不能只 print：首轮只打 stdout，结果三臂的准确率只能从后台任务缓冲里捞。
+            progress = {
+                "arm": args.arm_name,
+                "step": ticks,
+                "online_accuracy": round(window_correct / max(1, window_ticks), 4),
+                "mean_surprise": round(window_surprise / max(1, window_ticks), 4),
+                "elapsed_seconds": round(time.perf_counter() - started, 2),
+            }
+            with trajectory.open("a", encoding="utf-8") as handle:
+                handle.write(json.dumps(progress, ensure_ascii=False) + "\n")
+            print(json.dumps(progress, ensure_ascii=False), flush=True)
             window_ticks = 0
             window_correct = 0
             window_surprise = 0.0
