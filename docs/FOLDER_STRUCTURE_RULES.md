@@ -30,9 +30,9 @@
 ## S2 顶层目录台账（唯一权威清单；新增/删除目录必须改这张表）
 
 ### A 源码（tracked，不可删）
-`api/` · `frontend/` · `instruments/` · `neuroplex/` · `seed/` · `seed_platform/` ·
-`taiji/` · `tests/` · `scripts/` · `desktop/` · `desktop-electron/`（src 与 package.json）·
-`taiji-harness/`（dsh fork：Taiji Harness 主线，node_modules/lib 等构建输出由其内嵌 .gitignore 排除）
+`api/` · `instruments/` · `neuroplex/` · `seed/` · `seed_platform/` ·
+`taiji/` · `tests/` · `scripts/` ·
+`taiji-harness/`（dsh fork：Taiji Harness 主线，兼产品界面与打包；node_modules/lib 等构建输出由其内嵌 .gitignore 排除）
 
 ### 仓库配置（tracked，不可删）
 `.github/`（CI workflow）· `.devcontainer/`（容器配置）
@@ -47,26 +47,26 @@
 - **不删**：`data/` —— dev 模式的运行数据根（S6），实测 **63.5 GB**，内含训练数据
 - **不删**：`security/` —— 运行凭据在内部（文件本体已被 `**/security/*` 覆盖，见 R3）
 - **谨慎**：`checkpoints/`（实测 767 MB）—— `*.pt` 按 R3 不入库，但**产品基座在此**
-- **谨慎**：`taiji_data/` —— `seed*.spec` 打包 datas 的来源
+- **谨慎**：`taiji_data/` —— 训练/检查点侧的数据根，体积大（旧桌面打包规格曾以此为 datas 来源，该规格已随 2026-09-23 旧线退役）
 - **按命名族管理**：`output/` 与 `outputs/` —— 混合体：既有**有意入库**的验收证据
   （`output/manual-r5-*/README.md`、`output/playwright/*.png`，见 R4 反向钉住），
   又有大量按命名约定 ignore 的运行目录（`output/taiji_r2_*/`、`output/*-packaged-data/`）。
   **不能整体 ignore，也不能整体删除**；新增运行目录必须按命名约定进 `.gitignore`（R1）。
 
 ### D 构建产物（ignored，随时可删）
-`build/` · `dist/`（PyInstaller）· `frontend/dist/`（Vite）·
-`desktop-electron/dist/`（tsc）· `desktop-electron/release/`
+`build/` · `dist/`
 
-**两个例外必须记住**：
-- `frontend/dist/` 虽属 D，但**开发态与打包态都靠它出界面**——平时不删；
-- `desktop-electron/release/` 里 **`SeedSetup-*.exe` + `.blockmap` 是最终交付物**，
-  清理时保留，只删 `win-unpacked/` 与 `release.stale.*/`。
-- 另：`dist/` 是 electron-builder `extraFiles` 的输入，删了它之后下次
-  `npm run dist` 前需先跑 `release.py --electron` 重建。
+2026-09-23（G3 通过后）旧线整体退役：`frontend/`（Vue 界面）、`desktop/`（PyQt6 壳）、
+`desktop-electron/`（Electron 壳）三个源码目录被删，随之消失的还有它们的产物目录
+`frontend/dist/`（Vite）、`desktop-electron/dist/`（tsc）、`desktop-electron/release/`
+（electron-builder 安装包）。本仓不再有任何前端/桌面构建产物；界面与分发改由
+`taiji-harness/` 自带机制承担（见 S7）。
 
 ### E 工具缓存与状态（ignored，随时可删）
 `.black_cache/` · `.mypy_cache/` · `.ruff_cache/` · `.npm-cache/` · `.vscode/` ·
-`__pycache__/` · `neuroplex.egg-info/` · `_libs/` · `node_modules/`（各处依赖树）
+`__pycache__/` · `neuroplex.egg-info/` · `_libs/` · `node_modules/`（各处依赖树）·
+`.electron-cache/`（harness 侧的 Electron 二进制）· `.dsh-sbx*/`（harness 起服用的沙箱
+HOME，内含其会话日志与凭据，全为本机运行态）
 
 **两个例外不在此列**：`.codex/`（含 git worktree 副本，删它等于销毁 worktree）、
 `.local/`（opencode/copilot 会话状态）——两者在清理工具里归入「需所有者裁定」。
@@ -95,13 +95,11 @@
 
 | 构建 | 输出目录 | 由谁产出 |
 |---|---|---|
-| Vite（前端） | `frontend/dist/` | `npm run build` |
-| tsc（Electron 主进程） | `desktop-electron/dist/` | `npm run build` |
-| PyInstaller | `dist/` + `build/` | `python scripts/release.py …` |
-| electron-builder | `desktop-electron/release/` | `npm run dist` |
+| PyInstaller（历史） | `dist/` + `build/` | 旧发布脚本 `scripts/release.py`（2026-09-23 随旧线退役，本仓已无发布入口） |
 
-**规则**：不要手工往这些目录里放/改任何东西；不要把构建产物拷到仓库其他位置
-（要"留一份"就打 tag 或走 release.py，它自己会产出安装包）。
+**规则**：不要手工往这些目录里放/改任何东西；不要把构建产物拷到仓库其他位置。
+旧线另有三条构建链（Vite → `frontend/dist/`、tsc → `desktop-electron/dist/`、
+electron-builder → `desktop-electron/release/`），已随目录本身一并退役。
 
 ---
 
@@ -122,13 +120,13 @@ git 不跟踪空目录，所以**空目录不可能有版本价值**。运行时
 
 ---
 
-## S7 打包产物的唯一入口是 `scripts/release.py`
+## S7 打包产物（本仓自 2026-09-23 起不再承担打包）
 
-`dist/`、`build/`、`desktop-electron/release/` 由 release.py 产出与清理
-（`clean_outputs()`）；electron-builder 侧的清理由
-`desktop-electron/scripts/clean-release.mjs` 承担（**只重命名、不删除**——本机
-批量删除大目录不可靠的教训见该文件头注释）。手工往 `dist/`、`release/` 里塞东西、
-或手工"清理"它们，都会破坏两条构建链的增量假设。
+旧发布入口 `scripts/release.py`（前端构建 + PyInstaller + 后处理 + NSIS + electron-builder
+分支）与 `desktop-electron/scripts/clean-release.mjs` 随旧线退役一并删除；产品界面与
+分发改由 `taiji-harness/` 自带机制承担（web 先行，客户端版见 G5 裁决）。因此本仓不再
+有"打包产物目录"这一说：`dist/`、`build/` 若出现，只可能是外部/临时流程留下的，
+按 D 类随时可删，也不再有任何增量假设需要保护。
 
 ---
 
@@ -142,8 +140,8 @@ git 不跟踪空目录，所以**空目录不可能有版本价值**。运行时
 - `plans/`：计划与结项账本，**只追加**（见各计划文件的冻结纪律）
 - `reports/`：验收证据与报告；`_gate_*.log` 白名单随仓库走
 - `design/`：设计稿与候选方案（如 `logo-candidates/`），选定后原候选保留作决策记录
-- `desktop/` 与 `desktop-electron/`：两个壳各自自足；**跨壳共享的约定写在两边的
-  配置注释里**，不建"共享目录"
+- `taiji-harness/`：dsh fork，自成 pnpm workspace（`apps/`、`packages/`、`vendor/` 等）；
+  其内部约定见该目录的 `AGENTS.md` 与 `CONTRIBUTING.md`，根仓规则不越界管它
 
 ---
 
@@ -158,8 +156,7 @@ python scripts/clean_worktree.py --apply     # 实际删除
 
 安全带（与本次手工清理一致）：
 1. 只删 **S2 表中标注 ignored** 的目录与其下的空目录；
-2. 豁免清单硬编码：`frontend/dist`、`desktop-electron/dist`、
-   `desktop-electron/release/SeedSetup-*`、`.m0-checkpoint-*`（名字像实验标记，保守保留）、
+2. 豁免清单硬编码：`.m0-checkpoint-*`（名字像实验标记，保守保留）、
    `direct-*`（tracked，须人工逐个确认）；
 3. 每个目标先断言 `git check-ignore`，不满足即跳过；
 4. 需 `CODEBUDDY_SAFE_DELETE_ENABLED=0`（本机批删守卫会拦截，见该环境教训）。

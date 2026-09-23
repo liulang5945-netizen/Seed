@@ -4,9 +4,7 @@
 
 安全带（与 2026-09-21 手工清理一致，勿删）：
 1. 只删「C 运行时产物 / D 构建产物 / E 工具缓存 / F 实验草稿」四类（见规范 S1/S2）；
-2. 豁免清单硬编码：frontend/dist（后端在服务的前端）、desktop-electron/dist（TS 产物）、
-   desktop-electron/release/SeedSetup-*（最终安装包）、.m0-checkpoint-*（保守保留）、
-   direct-*（tracked，须人工逐个确认）；
+2. 豁免清单硬编码：.m0-checkpoint-*（保守保留）、direct-*（tracked，须人工逐个确认）；
 3. 每个目标先断言 `git check-ignore`，不满足即跳过并报告；
 4. 本机批量删除大目录可能很慢（间歇性 I/O），属正常，勿中途中断。
 """
@@ -16,15 +14,12 @@ from __future__ import annotations
 import argparse
 import os
 import subprocess
-import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SKIP_FOREVER = {".git", ".workbuddy", "node_modules"}
 
 # F 类豁免：即使匹配删除清单也不删（理由见 docs/FOLDER_STRUCTURE_RULES.md S2/S7）
 EXEMPT = {
-    os.path.join("frontend", "dist"),
-    os.path.join("desktop-electron", "dist"),
     ".m0-checkpoint-a4x_ye4_",
 }
 # 特殊：tracked 的实验工作区，删除须人工逐个 git ls-files 确认（S2「特殊」节）
@@ -40,8 +35,6 @@ HUMAN_ONLY_PREFIXES = ("direct-",)
 # - .local/          opencode/copilot 的会话状态
 # - checkpoints/ security/  S2 标注「谨慎/不删」
 #
-# dist/ 仍是 electron-builder extraFiles 的输入：删了它，下次 `npm run dist` 前
-# 需先跑 `release.py --electron`（它会重建）。
 DELETABLE_DIRS = [
     "build",
     "dist",
@@ -70,9 +63,12 @@ OWNER_DECISION = ["data", ".codex", "taiji_data", ".local", "checkpoints", "secu
 
 
 def git_ignored(rel: str) -> bool:
-    return subprocess.run(
-        ["git", "check-ignore", "-q", rel], cwd=ROOT, capture_output=True, text=True
-    ).returncode == 0
+    return (
+        subprocess.run(
+            ["git", "check-ignore", "-q", rel], cwd=ROOT, capture_output=True, text=True
+        ).returncode
+        == 0
+    )
 
 
 def tree_count(path: str) -> tuple[int, float]:
@@ -90,9 +86,6 @@ def tree_count(path: str) -> tuple[int, float]:
 def exempt(rel: str) -> bool:
     normalized = rel.replace("\\", "/")
     if normalized in {e.replace("\\", "/") for e in EXEMPT}:
-        return True
-    base = os.path.basename(normalized)
-    if base.startswith("SeedSetup-"):
         return True
     if normalized.startswith(HUMAN_ONLY_PREFIXES):
         return True
@@ -122,24 +115,6 @@ def plan_dirs() -> list[tuple[str, int, float, str]]:
             plan.append((entry, *tree_count(full), "非 git-ignored，跳过"))
             continue
         plan.append((entry, *tree_count(full), "删除"))
-    return plan
-
-
-def plan_release() -> list[tuple[str, int, float, str]]:
-    plan: list[tuple[str, int, float, str]] = []
-    release = os.path.join(ROOT, "desktop-electron", "release")
-    if not os.path.isdir(release):
-        return plan
-    for entry in sorted(os.listdir(release)):
-        rel = os.path.join("desktop-electron", "release", entry)
-        if entry.startswith("SeedSetup-"):
-            plan.append((rel, *tree_count(os.path.join(release, entry)), "保留（最终安装包）"))
-            continue
-        if not git_ignored(rel):
-            plan.append((rel, *tree_count(os.path.join(release, entry)), "非 git-ignored，跳过"))
-            continue
-        n, mb = tree_count(os.path.join(release, entry))
-        plan.append((rel, n, mb, "删除"))
     return plan
 
 
@@ -177,7 +152,7 @@ def main() -> None:
     print(f"=== 工作区清理（{mode}）===\n")
 
     total_files = 0
-    for rel, n, mb, verdict in plan_dirs() + plan_release():
+    for rel, n, mb, verdict in plan_dirs():
         mark = "x" if verdict == "删除" else " "
         print(f"  [{mark}] {rel:52s} {n:6d} files {mb:9.1f} MB  {verdict}")
         if verdict == "删除":
@@ -202,7 +177,7 @@ def main() -> None:
     import shutil  # noqa: F401  （remove_dir 内使用）
 
     done = 0
-    for rel, _n, _mb, verdict in plan_dirs() + plan_release():
+    for rel, _n, _mb, verdict in plan_dirs():
         if verdict != "删除":
             continue
         if remove_dir(rel):

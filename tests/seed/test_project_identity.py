@@ -24,23 +24,6 @@ def test_distribution_and_readme_are_seed() -> None:
     assert "Seed is the project" not in readme  # avoid reintroducing two identities
 
 
-def test_desktop_build_artifact_is_seed() -> None:
-    release = (REPO / "scripts" / "release.py").read_text(encoding="utf-8")
-    installer = (REPO / "desktop" / "installer.nsi").read_text(encoding="utf-8")
-    spec = REPO / "desktop" / "seed.spec"
-
-    assert spec.is_file()
-    assert not (REPO / "desktop" / "neuroplex.spec").exists()
-    # 打包产物身份守护：唯一发布入口 release.py（原 build.py 已并入并删除，
-    # 见 commit 52ee10c）现走 seed.spec 双入口（Seed.exe + SeedBackend.exe），
-    # 主产物名必须是 Seed。
-    assert "seed.spec" in release
-    assert '"--clean"' in release
-    assert 'name="Seed"' in spec.read_text(encoding="utf-8")
-    assert "_append_data_tree" in spec.read_text(encoding="utf-8")
-    assert '!define APP_EXE "Seed.exe"' in installer
-
-
 def test_legacy_neuroplex_is_explicitly_a_frozen_comparison() -> None:
     direction = REPO / "plans" / "active" / "ARCHITECTURE_DIRECTION_2026_08.md"
     text = direction.read_text(encoding="utf-8")

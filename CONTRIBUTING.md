@@ -20,9 +20,6 @@ Or use the **Dev Container** (recommended): open the project in VS Code with the
 # Lint & format (pre-commit hooks run these automatically)
 ruff check .
 black --check .
-
-# Frontend lint & test
-cd frontend && npm run lint && npm test
 ```
 
 Run the complete regression suite before submitting:
@@ -31,13 +28,11 @@ Run the complete regression suite before submitting:
 python -m pytest tests -q
 ```
 
-### Building a release
+### Building the product UI
 
-```bash
-python scripts/release.py            # Full build (frontend + PyInstaller + NSIS)
-python scripts/release.py --skip-nsis # Without NSIS installer
-python scripts/sync_version.py        # Sync version to all files
-```
+The UI and its packaging live in the `taiji-harness/` workspace (a fork of DeepSeek Harness;
+its own pnpm workspace, `CONTRIBUTING.md` / `CONTRIBUTING.zh.md` inside). This repository no
+longer carries a release script: it is the local runtime that Taiji Harness talks to.
 
 ## Native-core rules
 

@@ -22,7 +22,6 @@
 
 from __future__ import annotations
 
-import fnmatch
 import re
 import subprocess
 from pathlib import Path
@@ -32,19 +31,22 @@ DOC = REPO / "docs" / "FOLDER_STRUCTURE_RULES.md"
 
 #: 命名族：匹配即视为已知（无需进台账），但删除仍须走 clean_worktree 的豁免逻辑。
 #: `_pytest_*` / `.pytest-*` 与 `direct-*` 分别对应 .gitignore 既有规则与 S2「特殊」节。
+#: `.dsh-sbx*`（Taiji Harness 起服沙箱 HOME）与 `.electron-cache`（harness 侧的 Electron
+#: 二进制缓存）是 2026-09-22/23 验证时落在仓库根的两族本机运行态，同样按「命名约定」收编。
 FAMILY_PREFIXES = (
     ".tmp-",
     ".m0-checkpoint-",
     "_pytest_",
     ".pytest-",
     "direct-",
+    ".dsh-sbx",
+    ".electron-cache",
 )
 
 #: 反向钉住：这些模块是仓库的骨架，台账**必须**始终列有它们 ——
 #: 即使某个模块目录暂时不存在（如被清理的构建目录、或尚未 clone 的子树）。
 CORE_MODULES = (
     "api",
-    "frontend",
     "instruments",
     "neuroplex",
     "seed",
@@ -52,8 +54,6 @@ CORE_MODULES = (
     "taiji",
     "tests",
     "scripts",
-    "desktop",
-    "desktop-electron",
     "taiji-harness",
     "plans",
     "docs",
@@ -154,7 +154,8 @@ def test_scratch_family_ignore_rules_bite_on_hypothetical_names():
         if result.returncode != 0:
             misses.append(rel)
     assert not misses, (
-        "命名族的 ignore 规则未命中假想路径: " + ", ".join(misses) +
-        " —— .gitignore 的 /.tmp-*/ 、/.m0-checkpoint-*/ 、_pytest_*/ 、.pytest-*/ 或"
+        "命名族的 ignore 规则未命中假想路径: "
+        + ", ".join(misses)
+        + " —— .gitignore 的 /.tmp-*/ 、/.m0-checkpoint-*/ 、_pytest_*/ 、.pytest-*/ 或"
         "工具缓存规则被改坏，见 docs/FOLDER_STRUCTURE_RULES.md S3。"
     )

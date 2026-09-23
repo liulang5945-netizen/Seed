@@ -1,8 +1,8 @@
-# Seed — 容器化部署（API 服务 + 静态前端）
+# Seed — 容器化部署（API 服务）
 #
 # 说明：
-#   - Seed 的主形态是 PyQt6 桌面应用（desktop/），Docker 镜像面向"服务端 / 无头"
-#     部署场景：只运行 FastAPI 后端 + 构建好的前端静态资源。
+#   - 本镜像只跑 FastAPI 后端（8000），面向"服务端 / 无头"部署；界面由 Taiji Harness
+#     承担（`taiji-harness/`，独立于本镜像），镜像内不再打包任何前端静态资源。
 #   - 模型检查点（checkpoints/*.pt）体积较大且不入库，需通过 volume 挂载提供，
 #     否则后端以无模型的降级模式启动。
 #
@@ -12,19 +12,6 @@
 # 或使用 docker-compose：
 #   docker compose up --build
 
-# ---------- Stage 1: 前端构建 ----------
-FROM node:22-slim AS frontend-builder
-WORKDIR /app/frontend
-
-# 先拷贝依赖清单以利用层缓存
-COPY frontend/package.json frontend/package-lock.json ./
-RUN npm ci
-
-# 拷贝源码并构建
-COPY frontend/ ./
-RUN npm run build
-
-# ---------- Stage 2: Python 运行时 ----------
 FROM python:3.12-slim AS runtime
 
 # 避免交互式安装 / 生成 .pyc，日志直出
@@ -52,14 +39,10 @@ COPY seed_platform/ ./seed_platform/
 COPY neuroplex/ ./neuroplex/
 COPY api/ ./api/
 COPY instruments/ ./instruments/
-COPY desktop/ ./desktop/
 RUN pip install -e ".[legacy]"
 
 # 构建期导入断言：把「镜像内缺包」从运行时 smoke 前移到 build 层，漏拷贝即刻失败。
-RUN python -c "import api.app, instruments; import importlib.util; assert importlib.util.find_spec('desktop.main') is not None"
-
-# 拷贝前端构建产物（后端以此为静态资源）
-COPY --from=frontend-builder /app/frontend/dist ./frontend/dist
+RUN python -c "import api.app, instruments; print('image imports OK')"
 
 # 训练脚本进镜像；data/ 不进——它被 .gitignore 忽略（CI 全新 checkout 下不存在），
 # 且本机体量约 1.9GB，与 checkpoints 同为本地运行时资源，统一由 compose 挂载提供。

@@ -22,11 +22,6 @@ venv
 coverage.xml
 report.xml
 
-# 前端（构建在镜像内单独 stage 完成，排除依赖与产物以减小上下文）
-frontend/node_modules
-frontend/dist
-frontend/.dev*.log
-
 # 构建与分发产物
 build
 dist

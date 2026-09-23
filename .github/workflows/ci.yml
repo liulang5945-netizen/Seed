@@ -57,9 +57,6 @@ jobs:
       - name: Install package (editable)
         run: pip install -e . --no-deps
 
-      - name: Check version consistency
-        run: python scripts/sync_version.py --check
-
       # R4: ruff 主门禁已包含 I（isort）+ UP（pyupgrade）——存量 1922 处已清零，
       # advisory 步骤已转正移除，新违规直接阻断。
       - name: Lint with ruff
@@ -199,87 +196,6 @@ jobs:
             seed-report.xml
             report.xml
             coverage.xml
-
-  # F02: 不设 needs——本 job 不消费 test 的任何产物（e2e/smoke.cjs 只依赖 vite
-  # preview，不碰后端）。挂 needs: test 会让 test 红时本 job 变成 skipped 而非
-  # failure（§14.8 实测：test 连红 7 次期间本 job 从未执行），于是 vitest 里的
-  # hljsAliases 同步门禁、eslint、npm audit 全部静默失效。只改前端的 PR 尤其危险。
-  build-frontend:
-    runs-on: ubuntu-latest
-    # R8: 实测 108s（依赖安装 + 构建 + 审计 + E2E）；15m 兜死挂场景。
-    timeout-minutes: 15
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-          cache-dependency-path: frontend/package-lock.json
-
-      - name: Install frontend dependencies
-        working-directory: frontend
-        run: npm ci
-
-      # F01: ESLint blocking 门禁——错误会阻断合并，警告暂不阻断（当前 0 errors / ~210 warnings）
-      # TS: 扩展名加入 .ts；生成物 src/api/schema.d.ts 由 .eslintrc.cjs 的
-      #   ignorePatterns 排除（对它 lint 只会制造假阳性）。
-      - name: Lint frontend
-        working-directory: frontend
-        run: npx eslint src --ext .js,.ts,.vue
-
-      - name: Check native frontend boundary
-        working-directory: frontend
-        run: npm run check:native-boundary
-
-      - name: Check frontend API contract
-        working-directory: frontend
-        run: npm run check:api-contract
-
-      # TS: 类型门。作用域是 frontend/tsconfig.json 的 include 显式白名单（棘轮，
-      #   只增不减）——新增 .ts 文件必须进白名单，否则它是「没被检查」而不是「通过」。
-      #   与后端 mypy 棘轮（MYPY_CORE_BASELINE）同构：把「不许变差」变成硬约束。
-      - name: Typecheck frontend with vue-tsc (ratchet scope)
-        working-directory: frontend
-        run: npm run typecheck
-
-      # TS: 生成物漂移门。schema.d.ts 提交入库，但必须逐字节等于从冻结快照
-      #   tests/snapshots/openapi_baseline.json 重新生成的结果（同 check:aliases 约定）。
-      - name: Check generated API types are fresh
-        working-directory: frontend
-        run: npm run check:api-types
-
-      - name: Run frontend tests
-        working-directory: frontend
-        run: npx vitest run
-
-      - name: Build frontend
-        working-directory: frontend
-        run: npm run build
-
-      - name: Verify build output
-        run: |
-          test -f frontend/dist/index.html || (echo "dist/index.html missing" && exit 1)
-          echo "Frontend build OK"
-
-      # F04-R3: 前端依赖 CVE 扫描——与后端 pip-audit 对等
-      - name: Audit frontend dependencies for known CVEs
-        working-directory: frontend
-        run: npm audit --production --audit-level=high
-
-      # F02-R3: Playwright E2E 冒烟测试——build 后启动 preview 服务器运行 E2E
-      - name: Install Playwright browsers
-        working-directory: frontend
-        run: npx playwright install --with-deps chromium
-
-      - name: Run E2E smoke tests
-        env:
-          SEED_E2E_BASE_URL: http://localhost:4173
-        working-directory: frontend
-        run: |
-          npx vite preview --port 4173 &
-          sleep 3
-          node e2e/smoke.cjs
 
   # R4: 同 F02，不设 needs——镜像构建自带完整依赖安装，与 test 无产物耦合。
   # §14.8 记载的两个缺陷（Dockerfile 缺 data/ 目录、seed_platform 未随包安装导致
@@ -426,10 +342,3 @@ jobs:
           path: |
             report-win.xml
             coverage-win.xml
-
-      # F05: 桌面构建配置轻量验证——编译检查 seed.spec / release.py（唯一发布入口），
-      # 及时发现语法或导入破坏，避免本地打包时才暴露（完整 PyInstaller 构建较重，不入 PR 门禁）
-      - name: Validate desktop build configuration
-        run: |
-          python -c "import py_compile; py_compile.compile('scripts/release.py', doraise=True)"
-          python -c "import ast; ast.parse(open('desktop/seed.spec', encoding='utf-8').read()); print('seed.spec: syntax OK')"

@@ -271,23 +271,26 @@ through `eval_taiji_m5_k_p4_13_promotion_course.py`. The read-only scorecard red
 
 ## Product shell
 
-Seed ships as a self-contained Windows desktop build (dual-entry `Seed.exe` +
-`SeedBackend.exe`): double-click launches the backend, activates the native runtime and serves
-the web UI on `http://127.0.0.1:8000` — chat, training dashboard, lifecycle dashboard, IDE
-workspace and agent configuration within a few seconds. For the backend install
-`python -m pip install -e ".[dev,legacy]"`; to run the Qt desktop shell, add the `desktop`
-extra. Development mode:
+The product UI is **Taiji Harness** (`taiji-harness/`, a fork of DeepSeek Harness kept in this
+repository). The Python side of this repository is the **local runtime** it talks to: start it
+with `python -m uvicorn api.app:app --host 127.0.0.1 --port 8000` after
+`python -m pip install -e ".[dev,legacy]"`, and Taiji Harness reaches it through its
+`taiji-local` provider route. See `taiji-harness/CONTRIBUTING.md` for the workspace's own
+build and start commands.
 
 ```bash
-python -m uvicorn api.app:app --host 127.0.0.1 --port 8000   # backend + web UI
-python desktop/main.py                                       # desktop shell
-cd frontend && npm ci && npm run dev                         # frontend dev server
+python -m uvicorn api.app:app --host 127.0.0.1 --port 8000   # backend runtime
 ```
 
 Environment knobs: `SEED_PORT` (default 8000), `SEED_HOST` (default 127.0.0.1),
-`SEED_RUNTIME=1` (activate the Seed native runtime on startup). The frontend requires Node
-20.19+ or 22.12+. Docker users can run `docker compose up --build`. Historical beta evidence
-is in `reports/seed_public_beta_release_20260823.md`.
+`SEED_RUNTIME=1` (activate the Seed native runtime on startup). Docker users can run
+`docker compose up --build`.
+
+The product UI is **Taiji Harness** (`taiji-harness/`, a fork of DeepSeek Harness living in
+this repository). It runs as its own pnpm workspace and talks to this backend as its local
+model route (`taiji-local` → `http://127.0.0.1:8000/api/chat/stream`); see
+`taiji-harness/CONTRIBUTING.md` for its build and start commands. Historical beta evidence is
+in `reports/seed_public_beta_release_20260823.md`.
 
 ## Source layout
 
@@ -296,8 +299,7 @@ taiji/                  native architecture, organs, memory, K workers and G sel
 seed/                   Seed compatibility API and runtime-facing model boundary
 seed_platform/          checkpoint, lineage, workbench and product runtime services
 api/                    FastAPI backend and training/workbench routes
-frontend/               Vue product shell, contract checks, unit tests and E2E smoke tests
-desktop/                Windows Qt shell and PyInstaller entrypoint
+taiji-harness/          Taiji Harness (dsh fork): product UI, agent shell and packaging
 scripts/training/       verification, foundation training and M5 evidence runners
 tests/                  Python regression, API, runtime and ownership-contract tests
 reports/                committed, machine-readable evidence per milestone

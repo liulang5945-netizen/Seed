@@ -112,7 +112,7 @@ tmp_manual_parent/
 # .codex/ 与 .codex_tmp/ 是两条独立规则：gitignore 无前缀通配语义，
 # `.codex/` 只匹配同名目录，覆盖不到 `.codex_tmp/`，两者都要写。
 # .codex/ 不只是临时文件，还含 git worktree 副本（见 git worktree list），
-# 副本里有同名的 plans/ tests/ scripts/ frontend/，会被仓库级
+# 副本里有同名的 plans/ tests/ scripts/ 等镜像，会被仓库级
 # Grep / ruff / vitest 一并扫到而使统计基数与门禁结论失真。
 .codex/
 
@@ -120,11 +120,11 @@ tmp_manual_parent/
 .DS_Store
 Thumbs.db
 
-# Build artifacts
-frontend/dist/
-
 # Other tools
 .mimocode/
+# Taiji Harness 侧的本机工具缓存：Electron 二进制（npmmirror 镜像下载一次复用）。
+# 与 .npm-cache/ 同类（E 类工具缓存），带前导斜杠锚定仓库根。
+/.electron-cache/
 .verify_pycache/
 update_code/
 update_frontend/
@@ -165,9 +165,6 @@ _scratch/
 # Checkpoint directories (large model files)
 checkpoint-*/
 FINAL/
-
-# Frontend dev logs
-frontend/.dev*.log
 
 # Temporary/dev scripts
 _test_*.py

@@ -209,15 +209,13 @@ restored = Seed.from_checkpoint(checkpoint)
 
 ## 产品外壳
 
-Seed 以自包含 Windows 桌面构建交付（双入口 `Seed.exe` + `SeedBackend.exe`）：双击即拉起后端、激活原生运行时，并在数秒内于 `http://127.0.0.1:8000` 提供 Web UI——聊天、训练面板、生命状态雷达图、IDE 工作区与 Agent 配置。运行后端前执行 `python -m pip install -e ".[dev,legacy]"`；运行 Qt 桌面壳时再加上 `desktop` extra。开发模式：
+产品界面是 **Taiji Harness**（`taiji-harness/`，本仓内保留的 DeepSeek Harness fork）。本仓 Python 侧是它对接的**本地运行时**：`python -m pip install -e ".[dev,legacy]"` 安装后以 `python -m uvicorn api.app:app --host 127.0.0.1 --port 8000` 起服务，Taiji Harness 经 `taiji-local` provider 路由直连它；workspace 自身的构建与启动命令见 `taiji-harness/CONTRIBUTING.zh.md`。
 
 ```bash
-python -m uvicorn api.app:app --host 127.0.0.1 --port 8000   # 后端 + Web UI
-python desktop/main.py                                       # 桌面壳
-cd frontend && npm ci && npm run dev                         # 前端开发服务器
+python -m uvicorn api.app:app --host 127.0.0.1 --port 8000   # 后端运行时
 ```
 
-环境开关：`SEED_PORT`（默认 8000）、`SEED_HOST`（默认 127.0.0.1）、`SEED_RUNTIME=1`（启动时激活 Seed 原生运行时）。前端要求 Node 20.19+ 或 22.12+；Docker 用户可执行 `docker compose up --build`。历史 beta 证据见 `reports/seed_public_beta_release_20260823.md`。
+环境开关：`SEED_PORT`（默认 8000）、`SEED_HOST`（默认 127.0.0.1）、`SEED_RUNTIME=1`（启动时激活 Seed 原生运行时）。Docker 用户可执行 `docker compose up --build`；产品界面在 `taiji-harness/`（自带 pnpm workspace，构建与启动命令见 `taiji-harness/CONTRIBUTING.zh.md`）。历史 beta 证据见 `reports/seed_public_beta_release_20260823.md`。
 
 ## 源码结构
 
@@ -226,8 +224,7 @@ taiji/                  原生架构、器官、记忆、K worker 与 G 选择/�
 seed/                   Seed 兼容 API 与面向运行时的模型边界
 seed_platform/          checkpoint、谱系、Workbench 与产品运行时服务
 api/                    FastAPI 后端、训练与 Workbench 路由
-frontend/               Vue 产品外壳、合同检查、单元测试与 E2E 冒烟
-desktop/                Windows Qt 外壳与 PyInstaller 入口
+taiji-harness/          Taiji Harness（dsh fork）：产品界面、agent 外壳与打包
 scripts/training/       验证、foundation 训练与 M5 证据 runner
 tests/                  Python 回归、API、运行时与所有权合同测试
 reports/                每个里程碑的机器可读、已提交证据

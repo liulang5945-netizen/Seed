@@ -3,6 +3,12 @@
 > 2026-09-22 由 `.workbuddy/memory/MEMORY.md` **单方合并瘦身**时移出（原文逐条保留，未改写）。
 > MEMORY.md §4 只留一行指针：**细节在本文**。每条都是**本机实测**，不是推断或传闻。
 > 适用范围：产品侧工程支线（前端 TS 地基、`desktop-electron/` 壳、Electron 打包），**不入研究主线队列**。
+>
+> **2026-09-23 现状**：该支线与 `frontend/`、`desktop/`、`desktop-electron/` 三个目录、
+> `scripts/release.py` 发布链一起整体退役（产品界面改由 `taiji-harness/` 承担，见
+> `plans/reference/TAIJI_HARNESS_ADOPTION_BRIEF_20260922.md`）。本文**保留为历史教训**：
+> 其中关于 Vite/Vitest 行为、Windows 进程与文件 I/O、批删守卫的条目仍适用于新线，
+> 涉及已删路径与 electron-builder 的条目只作记录、不再有可执行对象。
 
 ## 前端工具链（2026-09-21 实测）
 
