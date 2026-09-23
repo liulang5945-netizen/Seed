@@ -71,7 +71,7 @@ async function bench(): Promise<{
 async function materialize(ctx: Context, agent: Agent, root: string): Promise<string> {
   agent.session.append('turn/start', { turn: 1 })
   await ctx.sessions.flush(agent.session)
-  return sessionDir(root, agent.session.header.cwd!, agent.id)
+  return sessionDir(root, agent.session.header.cwd, agent.id)
 }
 
 describe('closing a live Session for deletion', () => {

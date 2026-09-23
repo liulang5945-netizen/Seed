@@ -64,7 +64,7 @@ async function loadComposition(baseURL: string): Promise<Context> {
     resolveSync(): never { throw new Error('unexpected synchronous module resolution') },
     load(): never { throw new Error('unexpected module load') },
   }
-  await ctx.loader.create({ name: 'cordis:include', config: { path: `${pathToFileURL(configPath).href}` } })
+  await ctx.loader.create({ name: 'cordis:include', config: { path: pathToFileURL(configPath).href } })
   await ctx.loader.await()
   return ctx
 }

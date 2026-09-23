@@ -14,7 +14,7 @@ describe('Taiji plugin registration', () => {
   it('registers its page policy with the mounted settings service', async () => {
     const runtime = await mockRuntime()
     const configure = vi.fn((_presentation: { auto?: boolean }, _owner: unknown) => () => {})
-    const settings = Object.assign(Object.create(SettingsForms.prototype), { configure })
+    const settings = Object.assign(Object.create(SettingsForms.prototype) as SettingsForms, { configure })
     const ctx = new Context()
     await ctx.plugin(LlmRuntime)
     ctx.provide('settings', settings)

@@ -155,9 +155,9 @@ function DeleteConfirmForm({ request, deleteSession, onSettle, t }: {
         </>
       )}
     >
-      {stopFirst && (
+      {activity !== undefined && (
         <ul className={browserCss.archiveActivity} aria-label={t('sessionDelete.confirm.activity')}>
-          {activity?.map((entry, index) => (
+          {activity.map((entry, index) => (
             <li key={`${entry.kind}-${String(index)}`}>{activityLine(entry, t)}</li>
           ))}
         </ul>

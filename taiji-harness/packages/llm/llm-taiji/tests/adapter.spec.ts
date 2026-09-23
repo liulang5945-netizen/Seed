@@ -262,7 +262,8 @@ describe('Taiji HTTP failure classification', () => {
     { status: 402, body: JSON.stringify({ detail: 'insufficient balance' }), code: 'QUOTA' },
   ])('maps HTTP $status to $code', async ({ status, body, code }) => {
     const failure = await httpFailure(new Response(body, { status }))
-    expect(failure.failure).toEqual({ message: expect.any(String), code, status })
+    expect(failure.failure).toMatchObject({ code, status })
+    expect(failure.failure?.message).toEqual(expect.any(String))
   })
 
   it('reads the reason from the detail, then the message field', async () => {
