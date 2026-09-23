@@ -23,6 +23,7 @@ import argparse
 import json
 import sys
 import time
+from dataclasses import replace
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -70,6 +71,14 @@ def main() -> int:
     #: （语料迭代是纯流式、不打乱，所以跳过是精确的）。不提供这个开关时，一次中断就白跑整臂。
     parser.add_argument("--resume-from", default=None)
     # 消融开关（默认全开 = 现行配方）
+    parser.add_argument(
+        "--set",
+        action="append",
+        default=[],
+        metavar="KEY=VALUE",
+        help="覆盖 config 里的标量（可多次）。例：--set synapse_decay=1e-3。"
+        "键不存在即报错，不做静默忽略。",
+    )
     parser.add_argument("--learn", choices=("on", "off"), default="on", help="总闸；off = 正对照臂（什么都不学）")
     parser.add_argument("--learn-fabric", choices=("on", "off"), default="on")
     parser.add_argument("--learn-motor", choices=("on", "off"), default="on")
@@ -108,6 +117,26 @@ def main() -> int:
     values = dict(torch.load(PROJECT_ROOT / "checkpoints" / "seed_beta.pt", map_location="cpu", weights_only=False)["config"]["taiji"])
     values.pop("receptors_factored", None)
     config = SeedConfig(taiji=TaijiConfig.from_dict({**values, "seed": args.seed}))
+
+    # config 覆盖（T3 的候选全是现成旋钮 ⇒ 不动 taiji/）：键必须存在、类型按现值强制，
+    # 否则**报错退出**——静默忽略一个拼错的键会让整条臂在测一个不存在的改动。
+    applied: dict[str, object] = {}
+    for item in args.set:
+        key, separator, raw = item.partition("=")
+        if not separator or not key:
+            parser.error(f"--set 需要 KEY=VALUE 形式，收到 {item!r}")
+        if not hasattr(config.taiji, key):
+            parser.error(f"config 里没有 {key!r}；拒跑（不做静默忽略）")
+        current = getattr(config.taiji, key)
+        if isinstance(current, bool):
+            value: object = raw.strip().lower() in ("1", "true", "yes", "on")
+        elif isinstance(current, int) and not isinstance(current, bool):
+            value = int(raw)
+        else:
+            value = float(raw)
+        applied[key] = value
+    if applied:
+        config = replace(config, taiji=replace(config.taiji, **applied))
 
     # 消融：`learn=False` 是总闸，`None` 表示跟随总闸。关掉某一项就显式传 False。
     observe_kwargs: dict[str, Any] = {"learn": args.learn == "on"}
@@ -212,6 +241,7 @@ def main() -> int:
         "prereg": "plans/reference/M5_R2_T1_T2_PREREG_20260923.md",
         "budget": args.budget,
         "observe_kwargs": observe_kwargs,
+        "config_overrides_applied": applied,
         "measurements": measurements,
         "wall_seconds": round(time.perf_counter() - started, 2),
         "confirmation_families_sha256_file": str(CONFIRMATION),
