@@ -20,4 +20,4 @@ DeepSeek Harness is designed to be deeply customizable. We do not believe that p
 
 We have already seen exciting projects emerge from the community, and we hope to see the ecosystem continue to grow in its own directions.
 
-Into the unknown.
+From Wuji to Taiji.

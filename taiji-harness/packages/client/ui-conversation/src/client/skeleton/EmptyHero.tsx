@@ -74,7 +74,9 @@ export interface HeroShellProps {
 /* The mark is a Taiji disc (viewBox 0 0 24 24, centre 12,12), so it is spun by
    a rotation about its centre rather than a path morph: the yin-yang is
    point-symmetric, so a continuous rotate is the only way to "move" it while
-   keeping the geometry intact. */
+   keeping the geometry intact. The spin runs counter-clockwise — the direction
+   the mark's own S-divider leads, from the upper-left lobe down through the
+   centre and out to the lower-right one. */
 const HERO_MARK_CENTER = 12
 const HERO_MARK_SPIN_DUR = '8s'
 
@@ -103,8 +105,8 @@ function HeroFish({ hovering }: { hovering: boolean }) {
           <animateTransform
             attributeName="transform"
             type="rotate"
-            from={`0 ${HERO_MARK_CENTER} ${HERO_MARK_CENTER}`}
-            to={`360 ${HERO_MARK_CENTER} ${HERO_MARK_CENTER}`}
+            from={`360 ${HERO_MARK_CENTER} ${HERO_MARK_CENTER}`}
+            to={`0 ${HERO_MARK_CENTER} ${HERO_MARK_CENTER}`}
             dur={HERO_MARK_SPIN_DUR}
             repeatCount="indefinite"
           />

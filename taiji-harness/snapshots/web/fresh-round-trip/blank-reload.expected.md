@@ -1,6 +1,6 @@
 - banner:
   - button "Open right sidebar"
-- text: Into the Unknown Preview
+- text: From Wuji to Taiji Preview
 - button "Choose workspace": workspace
 - button "Standard mode"
 - textbox "Describe what you want to build, / commands, @ files or sessions"
