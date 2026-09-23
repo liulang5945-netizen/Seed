@@ -1,0 +1,231 @@
+/* Life panel layout: stacked sections of fact rows, meters, and action rows. */
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 24px 32px 48px;
+  max-width: 760px;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.subtitle {
+  margin: 0;
+  color: var(--dsw-alias-text-tertiary, var(--dsw-alias-text-secondary, inherit));
+  font-size: 13px;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sectionTitle {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.organTitle {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--dsw-alias-text-secondary, inherit);
+}
+
+.organ {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 8px 24px;
+}
+
+.fact {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  min-width: 0;
+}
+
+.factLabel {
+  color: var(--dsw-alias-text-tertiary, var(--dsw-alias-text-secondary, inherit));
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+.factValue {
+  font-size: 13px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.badgeText {
+  white-space: nowrap;
+}
+
+.groupLabel {
+  margin: 0;
+  font-size: 12px;
+  color: var(--dsw-alias-text-tertiary, var(--dsw-alias-text-secondary, inherit));
+}
+
+.meters {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.meter {
+  display: grid;
+  grid-template-columns: 88px 1fr 48px;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+}
+
+.meterLabel {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.meterTrack {
+  display: block;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--dsw-alias-fill-secondary, rgba(127, 127, 127, 0.2));
+  overflow: hidden;
+}
+
+.meterFill {
+  display: block;
+  height: 100%;
+  border-radius: 3px;
+  background: var(--dsw-alias-fill-accent, currentColor);
+}
+
+.meterValue {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.muted {
+  margin: 0;
+  font-size: 13px;
+  color: var(--dsw-alias-text-tertiary, var(--dsw-alias-text-secondary, inherit));
+}
+
+.unavailable {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.unavailableList {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 12px;
+  color: var(--dsw-alias-text-secondary, inherit);
+}
+
+.trainingBadges {
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.progress {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.progressTrack {
+  display: block;
+  height: 8px;
+  border-radius: 4px;
+  background: var(--dsw-alias-fill-secondary, rgba(127, 127, 127, 0.2));
+  overflow: hidden;
+}
+
+.progressFill {
+  display: block;
+  height: 100%;
+  border-radius: 4px;
+  background: var(--dsw-alias-fill-accent, currentColor);
+  transition: width 0.3s ease;
+}
+
+.progressMetrics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  font-size: 12px;
+}
+
+.progressMetric {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
+  font-variant-numeric: tabular-nums;
+}
+
+.errorLine {
+  margin: 0;
+  font-size: 12px;
+  color: var(--dsw-alias-text-danger, #c0392b);
+}
+
+.confirmLine {
+  margin: 0;
+  font-size: 12px;
+  color: var(--dsw-alias-text-warning, #b26a00);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.table th,
+.table td {
+  text-align: left;
+  padding: 4px 8px;
+  border-bottom: 1px solid var(--dsw-alias-border-secondary, rgba(127, 127, 127, 0.25));
+  font-weight: inherit;
+}
+
+.table th {
+  color: var(--dsw-alias-text-tertiary, var(--dsw-alias-text-secondary, inherit));
+  font-size: 11px;
+}
+
+.loading {
+  margin: 0;
+  color: var(--dsw-alias-text-tertiary, var(--dsw-alias-text-secondary, inherit));
+}

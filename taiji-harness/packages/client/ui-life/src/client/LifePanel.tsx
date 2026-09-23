@@ -1,0 +1,434 @@
+/**
+ * The global Life page: what the Taiji local runtime reported last, and the
+ * controls that act on it. Five sections top to bottom — source provenance,
+ * the life organs, training with its checkpoint roster, the knowledge base,
+ * and the host projection. Every number comes from the controller's snapshot
+ * stream; a control failure renders the Host's stable error code, never the
+ * raw RPC text, and an accepted action refreshes through the stream instead
+ * of a local state write.
+ */
+
+import { useSyncExternalStore, useState, type ReactNode } from 'react'
+import { LifeControlError, type ILife } from '@taiji/dsh-api-life-controller/client'
+import type {
+  LifeCheckpointView,
+  LifeLegacyView,
+  LifeNativeView,
+  LifeProgressView,
+  LifeSnapshot,
+} from '@taiji/dsh-api-life-controller/client'
+import type { RemoteFailure } from '@taiji/dsh-typert-protocol'
+import { Button, StateDot, Tag, type StateDotState } from '@taiji/dsh-client-ui-primitives'
+import type { InjectFace, PropsLocale, PropsRuntime } from '@taiji/dsh-client-ui-slots'
+import type { LifeLocaleKey } from './locales.ts'
+import css from './LifePanel.module.css'
+
+/** Injected share of the panel: the Client Life facade. */
+export interface LifePanelInjected {
+  /** State and control verbs, backed by the snapshot stream. */
+  readonly life: ILife
+}
+
+/** Full component props assembled by the main slot renderer. */
+export type LifePanelProps =
+  PropsRuntime<'main'>
+  & PropsLocale<'life'>
+  & InjectFace<LifePanelInjected>
+
+/** A control the panel is waiting on, or one awaiting its confirming click. */
+type PendingVerb = 'lifeStart' | 'lifeStop' | 'feed' | 'sleep' | 'play' | 'trainStart' | 'trainPause' | 'trainResume' | 'trainStop' | 'trainReset'
+
+/** The verbs a confirming second click protects. */
+const CONFIRMED: ReadonlySet<PendingVerb> = new Set(['trainStop', 'trainReset'])
+
+/** Format one ISO instant for a fact row; an unparseable value passes through. */
+function formatInstant(iso: string): string {
+  const parsed = new Date(iso)
+  return Number.isNaN(parsed.getTime()) ? iso : parsed.toLocaleString()
+}
+
+/** Format a byte count in the largest unit that stays readable. */
+function formatBytes(bytes: number): string {
+  if (bytes < 1024) return `${bytes} B`
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
+}
+
+/** Clamp a 0..100 meter to its track. */
+function clampPct(value: number): number {
+  return Math.min(100, Math.max(0, value))
+}
+
+/** Resolve the panel copy for one Host failure. */
+function errorText(rpc: RemoteFailure, t: LifePanelProps['t']): string {
+  const details = (typeof rpc.details === 'object' && rpc.details !== null ? rpc.details : {}) as Record<string, unknown>
+  switch (rpc.code) {
+    case 'life/runtime-error':
+      return t('errRuntimeError', { status: String(details.status ?? '') })
+    case 'life/runtime-unreachable':
+      return t('errUnreachable', { reason: String(details.reason ?? '') })
+    case 'life/unavailable':
+      return t('errUnavailable', { reason: String(details.reason ?? '') })
+    case 'life/conflict':
+      return t('errConflict', { reason: String(details.reason ?? '') })
+    case 'life/bad-request':
+      return t('errBadRequest', { field: String(details.field ?? ''), reason: String(details.reason ?? '') })
+    default:
+      return t('errFallback', { code: rpc.code })
+  }
+}
+
+/**
+ * Render the global Life page.
+ * @param props - runtime share, the panel dictionaries, and the Life facade.
+ * @returns the page element.
+ */
+export function LifePanel({ t, life }: LifePanelProps): ReactNode {
+  const state = useSyncExternalStore(life.subscribe, life.getSnapshot)
+  const [pending, setPending] = useState<PendingVerb | null>(null)
+  const [confirming, setConfirming] = useState<PendingVerb | null>(null)
+  const [failureText, setFailureText] = useState<string | null>(null)
+  const [refreshing, setRefreshing] = useState(false)
+
+  /** Run one control verb, surfacing a refusal as the Host's stable error code. */
+  const run = (verb: PendingVerb, invoke: () => Promise<unknown>): void => {
+    if (CONFIRMED.has(verb) && confirming !== verb) {
+      setConfirming(verb)
+      return
+    }
+    setConfirming(null)
+    setPending(verb)
+    void invoke()
+      .then(() => { setFailureText(null) })
+      .catch((error: unknown) => {
+        setFailureText(error instanceof LifeControlError ? errorText(error.rpcError, t) : t('errStreamFailed'))
+      })
+      .finally(() => { setPending(null) })
+  }
+
+  if (state.state === 'loading') {
+    return <div className={css.page}><p className={css.loading}>{t('loading')}</p></div>
+  }
+
+  if (state.state === 'error' || state.snapshot === undefined) {
+    return (
+      <div className={css.page}>
+        <p className={css.errorLine}>{t('errorTitle')}</p>
+        <Button
+          disabled={refreshing}
+          onClick={() => {
+            setRefreshing(true)
+            void life.refresh().catch(() => {}).finally(() => { setRefreshing(false) })
+          }}
+        >
+          {t('retry')}
+        </Button>
+      </div>
+    )
+  }
+
+  const snapshot = state.snapshot
+  const shared = { t, snapshot, pending, run, life }
+
+  return (
+    <div className={css.page}>
+      <header className={css.header}>
+        <h2 className={css.title}>{t('title')}</h2>
+        <p className={css.subtitle}>{t('subtitle')}</p>
+      </header>
+
+      <SourceSection t={t} snapshot={snapshot} />
+      <LifeSection {...shared} />
+      <TrainingSection {...shared} />
+      <KnowledgeSection t={t} snapshot={snapshot} />
+      <HostSection t={t} snapshot={snapshot} />
+
+      {failureText !== null && <p className={css.errorLine} role="alert">{failureText}</p>}
+      {confirming !== null && <p className={css.confirmLine}>{t(confirming === 'trainStop' ? 'confirmStop' : 'confirmReset')}</p>}
+    </div>
+  )
+}
+
+/** Shared props of the two control-carrying sections. */
+interface SectionControlProps {
+  readonly t: LifePanelProps['t']
+  readonly snapshot: LifeSnapshot
+  readonly pending: PendingVerb | null
+  readonly run: (verb: PendingVerb, invoke: () => Promise<unknown>) => void
+  readonly life: ILife
+}
+
+/** One labeled fact row. */
+function Fact({ label, children }: { label: string; children: ReactNode }): ReactNode {
+  return (
+    <div className={css.fact}>
+      <span className={css.factLabel}>{label}</span>
+      <span className={css.factValue}>{children}</span>
+    </div>
+  )
+}
+
+/** One horizontal 0..100 meter. */
+function Meter({ label, value }: { label: string; value: number }): ReactNode {
+  return (
+    <div className={css.meter}>
+      <span className={css.meterLabel}>{label}</span>
+      <span className={css.meterTrack}>
+        <span className={css.meterFill} style={{ width: `${clampPct(value)}%` }} />
+      </span>
+      <span className={css.meterValue}>{value.toFixed(1)}</span>
+    </div>
+  )
+}
+
+/** Meters for one open need/drive map, insertion-ordered. */
+function MeterMap({ t, values }: { t: LifePanelProps['t']; values: Readonly<Record<string, number>> }): ReactNode {
+  const entries = Object.entries(values)
+  if (entries.length === 0) return <p className={css.muted}>{t('noReadings')}</p>
+  return (
+    <div className={css.meters}>
+      {entries.map(([name, value]) => <Meter key={name} label={name} value={value} />)}
+    </div>
+  )
+}
+
+/** The section-heading key for whichever organ answered. */
+function sourceKeyOf(snapshot: LifeSnapshot): LifeLocaleKey {
+  return snapshot.source === 'native' ? 'sourceNative' : snapshot.source === 'legacy' ? 'sourceLegacy' : 'sourceAbsent'
+}
+
+/** Section 1: which organ answered, when, and which sources did not. */
+function SourceSection({ t, snapshot }: { t: LifePanelProps['t']; snapshot: LifeSnapshot }): ReactNode {
+  const badge = snapshot.availability.runtime === 'down'
+    ? { key: 'downBadge' as LifeLocaleKey, dot: 'error' as StateDotState }
+    : snapshot.fresh
+      ? { key: 'freshBadge' as LifeLocaleKey, dot: 'done' as StateDotState }
+      : { key: 'staleBadge' as LifeLocaleKey, dot: 'warning' as StateDotState }
+  return (
+    <section className={css.section} aria-label={t('sectionSource')}>
+      <h3 className={css.sectionTitle}>{t('sectionSource')}</h3>
+      <div className={css.facts}>
+        <Fact label={t('sourceLabel')}>
+          {t(sourceKeyOf(snapshot))}
+          <StateDot state={badge.dot} /> <span className={css.badgeText}>{t(badge.key)}</span>
+        </Fact>
+        <Fact label={t('observedAtLabel')}>{formatInstant(snapshot.observedAt)}</Fact>
+        <Fact label={t('pollLabel')}>{t('secondsShort', { count: String(snapshot.pollIntervalMs / 1000) })}</Fact>
+      </div>
+      {snapshot.unavailable.length > 0 && (
+        <div className={css.unavailable}>
+          <p className={css.muted}>{t('unavailableTitle')}</p>
+          <ul className={css.unavailableList}>
+            {snapshot.unavailable.map(line => <li key={line}>{line}</li>)}
+          </ul>
+        </div>
+      )}
+    </section>
+  )
+}
+
+/** The native organ block: mode, tick, and the open need and drive meters. */
+function NativeOrgan({ t, native }: { t: LifePanelProps['t']; native: LifeNativeView }): ReactNode {
+  return (
+    <div className={css.organ}>
+      <h4 className={css.organTitle}>{t('organNative')}</h4>
+      <div className={css.facts}>
+        <Fact label={t('modeLabel')}>{native.mode}</Fact>
+        <Fact label={t('tickLabel')}>{native.tick}</Fact>
+      </div>
+      <p className={css.groupLabel}>{t('needsLabel')}</p>
+      <MeterMap t={t} values={native.needs} />
+      <p className={css.groupLabel}>{t('drivesLabel')}</p>
+      <MeterMap t={t} values={native.drives} />
+    </div>
+  )
+}
+
+/** The legacy organ block: activity, dominant need, meters, and counters. */
+function LegacyOrgan({ t, legacy }: { t: LifePanelProps['t']; legacy: LifeLegacyView }): ReactNode {
+  return (
+    <div className={css.organ}>
+      <h4 className={css.organTitle}>{t('organLegacy')}</h4>
+      <div className={css.facts}>
+        <Fact label={t('lifeStateLabel')}>{legacy.isRunning ? legacy.lifeState : t('schedulerStopped')}</Fact>
+        <Fact label={t('dominantLabel')}>{legacy.dominantNeed}</Fact>
+        <Fact label={t('heartbeatsLabel')}>{legacy.totalHeartbeats}</Fact>
+        <Fact label={t('eventsLabel')}>{legacy.totalEvents}</Fact>
+        {legacy.lastHeartbeat !== undefined && <Fact label={t('lastHeartbeatLabel')}>{formatInstant(legacy.lastHeartbeat)}</Fact>}
+        {legacy.lastActivity !== undefined && <Fact label={t('lastActivityLabel')}>{formatInstant(legacy.lastActivity)}</Fact>}
+      </div>
+      <p className={css.groupLabel}>{t('needsLabel')}</p>
+      <MeterMap t={t} values={legacy.needs} />
+    </div>
+  )
+}
+
+/** Section 2: the organs' readings plus the legacy scheduler controls. */
+function LifeSection({ t, snapshot, pending, run, life }: SectionControlProps): ReactNode {
+  const lifeView = snapshot.life
+  const busy = pending !== null
+  return (
+    <section className={css.section} aria-label={t('sectionLife')}>
+      <h3 className={css.sectionTitle}>{t('sectionLife')}</h3>
+      {lifeView === undefined
+        ? <p className={css.muted}>{t('noReading')}</p>
+        : (
+            <>
+              {lifeView.native !== undefined && <NativeOrgan t={t} native={lifeView.native} />}
+              {lifeView.legacy !== undefined && <LegacyOrgan t={t} legacy={lifeView.legacy} />}
+            </>
+          )}
+      <div className={css.actions} role="group" aria-label={t('organLegacy')}>
+        <Button disabled={busy} onClick={() => run('lifeStart', () => life.lifeStart())}>{t('lifeStart')}</Button>
+        <Button disabled={busy} onClick={() => run('lifeStop', () => life.lifeStop())}>{t('lifeStop')}</Button>
+        <Button disabled={busy} onClick={() => run('feed', () => life.lifeAction({ action: 'feed' }))}>{t('actionFeed')}</Button>
+        <Button disabled={busy} onClick={() => run('sleep', () => life.lifeAction({ action: 'sleep' }))}>{t('actionSleep')}</Button>
+        <Button disabled={busy} onClick={() => run('play', () => life.lifeAction({ action: 'play' }))}>{t('actionPlay')}</Button>
+      </div>
+    </section>
+  )
+}
+
+/** The checkpoint roster table. */
+function Checkpoints({ t, checkpoints }: { t: LifePanelProps['t']; checkpoints: readonly LifeCheckpointView[] }): ReactNode {
+  if (checkpoints.length === 0) return <p className={css.muted}>{t('checkpointsEmpty')}</p>
+  return (
+    <table className={css.table}>
+      <thead>
+        <tr>
+          <th scope="col">{t('colName')}</th>
+          <th scope="col">{t('colStep')}</th>
+          <th scope="col">{t('colSize')}</th>
+          <th scope="col">{t('colSaved')}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {checkpoints.map(cp => (
+          <tr key={cp.filename}>
+            <td>{cp.filename}</td>
+            <td>{cp.step}</td>
+            <td>{formatBytes(cp.bytes)}</td>
+            <td>{cp.savedAtUtc !== '' ? formatInstant(cp.savedAtUtc) : formatInstant(cp.modifiedUtc)}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  )
+}
+
+/** One training progress metric. */
+function ProgressMetric({ label, value }: { label: string; value: ReactNode }): ReactNode {
+  return (
+    <span className={css.progressMetric}>
+      <span className={css.factLabel}>{label}</span> {value}
+    </span>
+  )
+}
+
+/** The progress block for the latest sample. */
+function Progress({ t, progress }: { t: LifePanelProps['t']; progress: LifeProgressView }): ReactNode {
+  return (
+    <div className={css.progress}>
+      <span className={css.progressTrack}>
+        <span className={css.progressFill} style={{ width: `${clampPct(progress.fraction * 100)}%` }} />
+      </span>
+      <div className={css.progressMetrics}>
+        <ProgressMetric label={t('lossLabel')} value={progress.loss.toFixed(3)} />
+        <ProgressMetric label={t('stepLabel')} value={`${progress.step} / ${progress.totalSteps}`} />
+        <ProgressMetric label={t('epochLabel')} value={`${progress.epoch} / ${progress.totalEpochs}`} />
+        {progress.eta !== undefined && <ProgressMetric label={t('etaLabel')} value={t('secondsShort', { count: String(Math.round(progress.eta)) })} />}
+        <ProgressMetric label={t('rateLabel')} value={t('rateUnit', { count: progress.samplesPerSec.toFixed(1) })} />
+      </div>
+    </div>
+  )
+}
+
+/** Section 3: training state badges, progress, controls, and the roster. */
+function TrainingSection({ t, snapshot, pending, run, life }: SectionControlProps): ReactNode {
+  const training = snapshot.training
+  const streamKey: LifeLocaleKey = snapshot.availability.trainingStream === 'streaming'
+    ? 'streamStreaming'
+    : snapshot.availability.trainingStream === 'closed'
+      ? 'streamClosed'
+      : 'streamIdle'
+  const busy = pending !== null
+  const active = training.isTraining
+  return (
+    <section className={css.section} aria-label={t('sectionTraining')}>
+      <h3 className={css.sectionTitle}>{t('sectionTraining')}</h3>
+      <div className={css.facts}>
+        <Fact label={t('streamLabel')}>
+          <StateDot state={snapshot.availability.trainingStream === 'streaming' ? 'ongoing' : snapshot.availability.trainingStream === 'closed' ? 'error' : 'idle'} />
+          {t(streamKey)}
+        </Fact>
+      </div>
+      <p className={css.trainingBadges}>
+        <Tag tone={active ? 'solid' : 'neutral'}>{active ? t('trainingRunning') : t('trainingIdle')}</Tag>
+        {training.pauseRequested && <Tag tone="warning">{t('trainingPauseRequested')}</Tag>}
+        {training.stopRequested && <Tag tone="warning">{t('trainingStopRequested')}</Tag>}
+        {training.publishing && <Tag tone="info">{t('trainingPublishing')}</Tag>}
+      </p>
+      {training.progress !== undefined ? <Progress t={t} progress={training.progress} /> : <p className={css.muted}>{t('noProgress')}</p>}
+      <div className={css.actions} role="group" aria-label={t('sectionTraining')}>
+        <Button disabled={busy || active} onClick={() => run('trainStart', () => life.trainStart())}>{t('trainStart')}</Button>
+        <Button disabled={busy || !active || training.stopRequested} onClick={() => run('trainPause', () => life.trainPause())}>{t('trainPause')}</Button>
+        <Button disabled={busy || !active || training.stopRequested} onClick={() => run('trainResume', () => life.trainResume())}>{t('trainResume')}</Button>
+        <Button disabled={busy || !active} onClick={() => run('trainStop', () => life.trainStop())}>{t('trainStop')}</Button>
+        <Button disabled={busy || !active} onClick={() => run('trainReset', () => life.trainReset())}>{t('trainReset')}</Button>
+      </div>
+      <h4 className={css.organTitle}>{t('checkpointsTitle')}</h4>
+      <Checkpoints t={t} checkpoints={training.checkpoints} />
+    </section>
+  )
+}
+
+/** Section 4: the knowledge base size, or its unavailability. */
+function KnowledgeSection({ t, snapshot }: { t: LifePanelProps['t']; snapshot: LifeSnapshot }): ReactNode {
+  const knowledge = snapshot.availability.knowledge === 'ok' ? snapshot.knowledge : undefined
+  return (
+    <section className={css.section} aria-label={t('sectionKnowledge')}>
+      <h3 className={css.sectionTitle}>{t('sectionKnowledge')}</h3>
+      {knowledge === undefined
+        ? <p className={css.muted}>{t('knowledgeUnavailable')}</p>
+        : (
+            <div className={css.facts}>
+              <Fact label={t('docsLabel')}>{knowledge.docCount}</Fact>
+              <Fact label={t('chunksLabel')}>{knowledge.chunkCount}</Fact>
+              <Fact label={t('embedDimLabel')}>{knowledge.embedDim > 0 ? knowledge.embedDim : t('embeddingsNo')}</Fact>
+              <Fact label={t('embeddingsYes')}><StateDot state={knowledge.hasEmbeddings ? 'done' : 'idle'} /></Fact>
+            </div>
+          )}
+    </section>
+  )
+}
+
+/** Section 5: the host projection — health, model, seed activity, memory. */
+function HostSection({ t, snapshot }: { t: LifePanelProps['t']; snapshot: LifeSnapshot }): ReactNode {
+  const { health, memory } = snapshot
+  if (health === undefined && memory === undefined) return <p className={css.muted}>{t('noReading')}</p>
+  return (
+    <section className={css.section} aria-label={t('sectionHost')}>
+      <h3 className={css.sectionTitle}>{t('sectionHost')}</h3>
+      <div className={css.facts}>
+        {health !== undefined && (
+          <>
+            <Fact label={t('healthLabel')}>
+              {health.state}
+              {!health.startupComplete && <Tag tone="warning">{t('startupIncomplete')}</Tag>}
+            </Fact>
+            <Fact label={t('modelLabel')}>{health.modelName !== '' ? health.modelName : t('modelNone')}</Fact>
+            <Fact label={t('seedLabel')}>
+              <StateDot state={health.seedActive ? 'done' : 'idle'} />
+              {health.seedActive ? t('seedActive') : t('seedInactive')}
+            </Fact>
+          </>
+        )}
+        {memory !== undefined && (
+          <Fact label={t('memoryLabel')}>
+            {t('memoryUsed', { pct: memory.usedPct.toFixed(0), available: memory.availableGb.toFixed(1), total: memory.totalGb.toFixed(1) })}
+          </Fact>
+        )}
+      </div>
+    </section>
+  )
+}
