@@ -176,6 +176,63 @@
 
 **除这一件之外，现在没有别的需要你决定的事**（K2 口径、v3 扩大题面、Step 0 都已定并已执行完毕）。
 
+## §9 Step 1 执行记录（2026-09-23，所有者授权改 `organs.py` 后）
+
+### §9.0 又一处必须更正：`receptors` **不是学习映射**，它压根不训练
+
+写 §7 时我把它叫"学习映射"。实现前读码后确认：`SparseReceptorBank` 的 `channel` / `polarity` 在
+**构造时由 generator 抽定，之后没有任何路径改它**；`BytePredictiveContext.learn()` 只更新
+`recurrent`（而那组权重在本基座里 abs_sum 为 0）。⇒ **1152→96 那一步是"固定的随机稀疏压缩"，
+不是被优化的映射。**
+
+**这条更正让结论更硬**：既然那一处**不训练**，那么"再训多久"都不会把它变好——
+**唯一的杠杆就是架构**。这正好也是 §4 把 Step 1 设计成"改架构 + 配对臂"而不是"多训一会儿"的理由。
+
+### §9.1 改了什么（`taiji/` 只动授权的那一处 + 一个默认关闭的配置开关）
+
+| 文件 | 改动 |
+|---|---|
+| `taiji/config.py` | 加 `receptors_factored: bool = False`。**老 checkpoint 的 config 没有这个键 ⇒ 取默认值即可加载**（有测试钉住）。 |
+| `taiji/organs.py` | `BytePredictiveContext` 在开关打开时**额外**建两张半宽 `SparseReceptorBank`（activity 半 → 前一半通道、trace 半 → 后一半），`encode` 改走它们。**原来那张 map 照建照存**，所以迁移/消融/既有测试的引用面一个都没动。载荷加两枚键，**开关与载荷单边存在即报错**（不许把未分块权重当分块结果静默加载）。 |
+
+**配对保证的实现要点**：两张分块 map 用**独立的 generator**（固定种子 `RECEPTOR_FACTOR_SEED`）抽样，
+**不消耗主 RNG 流** ⇒ 开/关两臂里**其它器官的拓扑逐位相同**，两臂的差别只剩 `encode` 走哪条路。
+
+### §9.2 三道验证（都过了才开的训练）
+
+1. **默认路径逐位不变**：改动后重跑冻结的剖面仪器，五级数字**逐位复现**改动前那一版
+   （0.4586 / 0.5766 / 0.4197 / 0.5199 / 0.4587 与各自基线）。
+2. **配对是真的**（`tests/taiji_native/test_receptor_factorization_contract.py`，6 项全绿）：
+   整份载荷逐键做 sha256 指纹比较，**只有三处允许不同** —— `config`（只差开关本身）、
+   `predictive_context`（就是要改的那处）、以及 `identity_organ.lineage.parent_checkpoint_digest`
+   （**由 config 差异派生**的记录，两臂本就该有不同的血缘指纹）。**`rng_state` 逐位相同**，
+   这是"独立 generator 确实没消耗主流"的直接证据。
+3. **能存能读（训练前必做）**：用真实训练路径（`train_seed_corpus.py`）各跑一次 `--smoke`，
+   两臂 checkpoint 都能 `Seed.from_checkpoint` 读回；`on` 臂读回的两半**二次加载逐位相同**；
+   把 `on` 的载荷配上 `receptors_factored=False` 的 config ⇒ **守卫正常拦截**。
+
+### §9.3 开跑（2026-09-23，串行后台）
+
+```
+train_seed_corpus.py --max-symbols 16000000 --checkpoint-every 500000 --progress-every 250000 \
+    --receptors-factored --checkpoint output/taiji_r2_struct/on/checkpoint.pt  --progress output/taiji_r2_struct/on/progress.jsonl
+train_seed_corpus.py --max-symbols 16000000 --checkpoint-every 500000 --progress-every 250000 \
+                         --checkpoint output/taiji_r2_struct/off/checkpoint.pt --progress output/taiji_r2_struct/off/progress.jsonl
+```
+
+* 两臂**同语料、同种子、同数据顺序、同预算**；串行跑（不并行，避免 CPU 争用污染速率读数）。
+* 预估 **约 22–38 h**（按上一轮实测 0.0026–0.0042 s/符号外推）。
+* 产物落 `output/taiji_r2_struct/{on,off}/`（已被 `.gitignore` 的 `output/taiji_r2_*/` 命名族规则覆盖）。
+
+### §9.4 跑完之后按什么判（**判据在训练前就已冻结，见 §4.2，不再改**）
+
+* **主判据（机制）**：`struct-on` 的**可分离性 `consistency` 中位**显著高于 `struct-off`
+  （逐族配对、精确符号检验 **p < 0.05**），仪器用 Step 0 那一版**分块口径**。
+  **不达标 ⇒ 不进入下一步、不申请更大预算。**
+* **副读数（只报不判）**：成句率（题面总体 P）、CAP D+E 机器计分、P3 的 KL。
+  副读数**不得**用来推翻主判据的否定结论。
+* 边界照旧：**成句率不是会回答**；不得据此解除 R2 的 M5 排除；不得改 CAP 冻结线。
+
 ## §5 什么会否掉本提案的前提（**先说清楚**）
 
 1. **Step 0 出现"全程可分离、只有读出分布不可分离"** ⇒ 前面三条线索的归因要重写（§3.3 第 3 行），

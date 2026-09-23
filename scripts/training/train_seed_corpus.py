@@ -26,6 +26,7 @@ import json
 import sys
 import time
 from collections.abc import Iterator, Sequence
+from dataclasses import replace
 from pathlib import Path
 
 import torch
@@ -235,6 +236,13 @@ def main() -> None:
     )
     parser.add_argument("--resume", default=None)
     parser.add_argument(
+        "--receptors-factored",
+        action="store_true",
+        help="R2 组合绑定实验：把 BytePredictiveContext.receptors 改成按两半分块。"
+        "**默认关，现行行为与载荷逐位不变**（守卫 tests/taiji_native/"
+        "test_receptor_factorization_contract.py）。",
+    )
+    parser.add_argument(
         "--smoke",
         action="store_true",
         help="tiny default config and budget for a fast end-to-end run",
@@ -262,6 +270,10 @@ def main() -> None:
             )
         config = SeedConfig(taiji=taiji_config)
         max_symbols = args.max_symbols
+
+    if args.receptors_factored:
+        # 只在 struct-on 臂上打开。关着的时候连 config 都不多一个键的不同取值（默认 False）。
+        config = replace(config, taiji=replace(config.taiji, receptors_factored=True))
 
     summary = run_training(
         corpus_paths=args.corpus,

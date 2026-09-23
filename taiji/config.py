@@ -203,6 +203,11 @@ class TaijiConfig:
     # deliberately sized by a visible capacity field rather than an implicit
     # multiple of motor width, so growth remains auditable under each profile.
     predictive_context_fan_in: int = 12
+    #: R2 组合绑定实验（2026-09-23，所有者授权）：把 `BytePredictiveContext.receptors`
+    #: 的 1152→96 固定稀疏压缩改成**按两半分块** —— 各区 activity 的那一半只进前一半通道，
+    #: 各区 trace 的那一半只进后一半通道，两半不再落进同一批通道。
+    #: **默认 False ＝ 现行行为，逐位不变**；老 checkpoint 的 config 没有这个键，取默认值即可加载。
+    receptors_factored: bool = False
 
     memory_units: int = 192
     memory_fan_in: int = 32

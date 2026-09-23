@@ -63,6 +63,11 @@ class ByteSensor:
         return (*prefix, *body, *suffix)
 
 
+#: R2 组合绑定实验：分块受力面用**独立** generator 的固定种子。
+#: 独立是为了不动主 RNG 流 —— 开/关两臂的其它器官拓扑因此逐位相同（见 BytePredictiveContext.__init__）。
+RECEPTOR_FACTOR_SEED = 20260923
+
+
 class SparseReceptorBank:
     """Fold every cortical signal into a shared, bounded motor evidence space.
 
@@ -322,6 +327,35 @@ class BytePredictiveContext:
             context_norm=config.motor_context_norm,
             device=self.device,
         )
+        # R2 组合绑定实验（所有者 2026-09-23 授权）：分块受力面。默认关闭 ⇒ 上面那张 map 就是全部，
+        # 行为与载荷逐位不变。开启时**额外**建两张半宽 map（各接受一半输入、只写自己那一半输出通道），
+        # `encode` 改走它们；旧 map 仍然照建照存，这样迁移、消融、既有测试的引用面一个都不动。
+        #
+        # **刻意用独立 generator**：分块 map 的抽样不消耗主 RNG 流，所以"开"与"关"两臂里
+        # **其它器官的拓扑逐位相同**，两臂的差别只剩 encode 走哪条路——否则两臂连随机初始化都不同，
+        # 配对就白配了。
+        self.receptors_factor: tuple[SparseReceptorBank, SparseReceptorBank] | None = None
+        self._factor_split = sum(config.region_sizes)
+        if bool(getattr(config, "receptors_factored", False)):
+            dedicated = torch.Generator(device="cpu")
+            dedicated.manual_seed(RECEPTOR_FACTOR_SEED)
+            half = config.motor_context_dim // 2
+            self.receptors_factor = (
+                SparseReceptorBank(
+                    self._factor_split,
+                    half,
+                    generator=dedicated,
+                    context_norm=config.motor_context_norm,
+                    device=self.device,
+                ),
+                SparseReceptorBank(
+                    config.cortical_context_dim - self._factor_split,
+                    config.motor_context_dim - half,
+                    generator=dedicated,
+                    context_norm=config.motor_context_norm,
+                    device=self.device,
+                ),
+            )
         # A one-unit context cannot exclude its only input.  Normal profiles
         # forbid self contacts so the residual carries preceding context rather
         # than an instantaneous self gain.
@@ -346,7 +380,18 @@ class BytePredictiveContext:
     ) -> tuple[torch.Tensor, torch.Tensor]:
         """Return the current context and exact prior trace used to form it."""
 
-        base = self.receptors.forward(cortical_state)
+        if self.receptors_factor is None:
+            base = self.receptors.forward(cortical_state)
+        else:
+            # 分块：前半（各区 activity 的拼接）只进前一半通道，后半（trace）只进后一半。
+            activity_bank, trace_bank = self.receptors_factor
+            base = torch.cat(
+                [
+                    activity_bank.forward(cortical_state[: self._factor_split]),
+                    trace_bank.forward(cortical_state[self._factor_split :]),
+                ],
+                dim=0,
+            )
         if prior_context is None:
             trace = torch.zeros(self.config.motor_context_dim, device=self.device)
         else:
@@ -392,15 +437,33 @@ class BytePredictiveContext:
         )
 
     def to_payload(self) -> dict[str, Any]:
-        return {
+        payload: dict[str, Any] = {
             "format": self.PAYLOAD_FORMAT,
             "receptors": self.receptors.to_payload(),
             "recurrent": self.recurrent.to_payload(),
         }
+        if self.receptors_factor is not None:
+            payload["receptors_factor_activity"] = self.receptors_factor[0].to_payload()
+            payload["receptors_factor_trace"] = self.receptors_factor[1].to_payload()
+        return payload
 
     def load_payload(self, payload: Mapping[str, Any]) -> None:
         if payload.get("format") != self.PAYLOAD_FORMAT:
             raise ValueError("unsupported predictive context payload")
+        # 分块受力面的开关必须与载荷**一致**：任一侧单边存在就报错，
+        # 不许"以为是分块结果加载了未分块的权重"这种静默错配。
+        factor_keys = ("receptors_factor_activity", "receptors_factor_trace")
+        present = [key for key in factor_keys if key in payload]
+        if self.receptors_factor is None and present:
+            raise ValueError(
+                "checkpoint carries a factored receptor map but the architecture is not factored "
+                "(config.receptors_factored is false)"
+            )
+        if self.receptors_factor is not None and len(present) != len(factor_keys):
+            raise ValueError("checkpoint is missing the factored receptor maps")
+        if self.receptors_factor is not None:
+            for bank, key in zip(self.receptors_factor, factor_keys, strict=True):
+                bank.load_payload(payload[key])
         # A v9→v10 migration may have transplanted the old motor map.  That
         # valid private topology is now persistent F1 state, so a later v10
         # restore must load it from its own content-addressed payload rather
