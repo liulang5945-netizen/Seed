@@ -270,6 +270,53 @@ def test_m1_needs_both_the_margin_and_the_sign_test(verdict: Any) -> None:
     assert verdict.judge_m1(noisy, False)["holds"] is False
 
 
+def test_a_sealed_prompt_set_replaces_the_cap_prompts(verdict: Any) -> None:
+    """The v3 power round runs on a sealed prompt set, and must say where those prompts came from."""
+
+    prompts_file = REPO / "plans" / "manifests" / "r2_readout_m1_v3_prompts.json"
+    if not prompts_file.is_file():
+        pytest.skip("v3 prompt set not built yet")
+    tasks, meta = verdict.m1_tasks(prompts_file)
+    assert len(tasks) == 160
+    assert meta["source"] == "sealed_prompt_set"
+    assert meta["format"] == "r2-readout-m1-v3-prompts-v1"
+    # 抽取规则必须随报告一起走，否则读者无法判断"这些题是哪来的"
+    assert meta["rule"]["count"] == 160
+    assert meta["rule"]["eligible_offset_min"] == 16_000_000
+    assert all(len(prompt) <= 32 for _, prompt in tasks)
+    # 缺省口径不变（上一轮的 CAP B/G 43 轮仍可复现）
+    default_tasks, default_meta = verdict.m1_tasks(None)
+    assert len(default_tasks) == 43
+    assert default_meta["source"].startswith("cap0_eval_set_v2")
+
+
+def test_the_echo_control_detects_copied_context(verdict: Any) -> None:
+    prompt = "用父亲和妹妹的话来说，我在音乐方面简直是一个白痴"
+    assert verdict._prompt_echo_rate("我在音乐方面简直是一个白痴并且", prompt) == 1
+    assert verdict._prompt_echo_rate("完全是另一段毫不相干的话", prompt) == 0
+    assert verdict._prompt_echo_rate("短", prompt) == 0
+
+
+def test_k2_reports_both_readings_and_they_can_disagree(verdict: Any) -> None:
+    """上一轮 §5.1 把"无差别"写成了**有符号**比较，于是"B 差 A 很多"也被判成无差别。
+
+    这一轮把两种口径并列：A 远好于 B（16.7 pp）但配对检验不显著（p=0.0625）时，
+    字面口径说"无差别"，双侧口径说"可分辨"——报告必须同时给出，不许只留一个。
+    """
+
+    per_arm = {
+        "A": {"usable": True, "flags": [1] * 5 + [0] * 25, "well_formed_rate": 5 / 30},
+        "B": {"usable": True, "flags": [0] * 30, "well_formed_rate": 0.0},
+        "C": {"usable": True, "flags": [0] * 30, "well_formed_rate": 0.0},
+    }
+    k2 = verdict.judge_k2(per_arm, False)
+    assert k2["b_minus_a_delta_pp"] == -16.67
+    assert k2["literal_reading"]["no_difference"] is True
+    assert k2["bilateral_reading"]["no_difference"] is False
+    assert "相反" in k2["consequence"]
+    assert k2["preregistered_operationalisation"]["bilateral_formula"].startswith("|B - A|")
+
+
 def test_k2_operationalisation_is_pre_registered_in_the_contract() -> None:
     """K2's threshold was absent from the frozen §5; it must have been written down first."""
 

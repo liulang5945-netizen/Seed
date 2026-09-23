@@ -118,8 +118,28 @@ def verify_pairing(run_dir: Path, symbols: int, dry_run: bool) -> dict[str, Any]
     return seen
 
 
-def m1_tasks() -> list[tuple[str, str]]:
-    """The frozen P1/P2 prompt set: every turn of every B/G item, in collection order."""
+def m1_tasks(prompts_file: Path | None = None) -> tuple[list[tuple[str, str]], dict[str, Any]]:
+    """M1 的题面。
+
+    缺省＝已 FROZEN 的 P1/P2 题面（CAP 现行集合 B/G 两维的每一轮，按收集顺序）。
+    给了 ``--prompts-file`` 就改用那份**封存好的未见题面集**（v3 功效补足轮），
+    此时报告里必须带上它的来源与抽取规则，否则读者无法判断"这些题是哪来的"。
+    """
+
+    if prompts_file is not None:
+        payload = json.loads(prompts_file.read_text(encoding="utf-8"))
+        items = payload.get("prompts") or []
+        tasks = [(str(item["id"]), str(item["prompt"])) for item in items if item.get("prompt")]
+        if not tasks:
+            raise SystemExit(f"{prompts_file} 里没取到题面：字段名与预期不符，拒跑")
+        return tasks, {
+            "source": "sealed_prompt_set",
+            "file": str(prompts_file),
+            "format": payload.get("format"),
+            "count": len(tasks),
+            "rule": payload.get("rule"),
+            "built_at_utc": payload.get("built_at_utc"),
+        }
 
     payload = json.loads(EVAL_SET.read_text(encoding="utf-8"))
     tasks: list[tuple[str, str]] = []
@@ -131,16 +151,34 @@ def m1_tasks() -> list[tuple[str, str]]:
                     tasks.append((str(item["id"]), str(prompt)))
     if not tasks:
         raise SystemExit("评价集里没取到任何题面：字段名与预期不符，拒跑而不是静默产出空报告")
-    return tasks
+    return tasks, {
+        "source": "cap0_eval_set_v2: dimensions " + "/".join(M1_DIMENSIONS),
+        "file": str(EVAL_SET.relative_to(PROJECT_ROOT).as_posix()),
+        "count": len(tasks),
+    }
 
 
-def run_m1(run_dir: Path, dry_run: bool) -> dict[str, Any]:
+def _prompt_echo_rate(text: str, prompt: str, width: int = 8) -> int:
+    """1 if any ``width``-char substring of the output also occurs in the prompt.
+
+    Only meaningful when the prompt is real prose (the v3 set), where "copy the context" is an
+    available strategy that would inflate well-formedness without any readout ability.
+    """
+
+    if len(text) < width:
+        return 0
+    return int(any(text[i : i + width] in prompt for i in range(len(text) - width + 1)))
+
+
+def run_m1(
+    run_dir: Path, dry_run: bool, prompts_file: Path | None = None
+) -> dict[str, Any]:
     from diag_taiji_r2_surface_decode import _serialize_prompt  # noqa: PLC2701
 
     from api.seed_runtime import SeedRuntime
 
     base = SeedRuntime.load(PROJECT_ROOT / "checkpoints" / "seed_beta.pt")
-    tasks = m1_tasks()
+    tasks, prompt_meta = m1_tasks(prompts_file)
     ngram = build_ngram_model()
     controls = assert_criterion_discriminates(ngram)
 
@@ -159,17 +197,27 @@ def run_m1(run_dir: Path, dry_run: bool) -> dict[str, Any]:
                 )
             )
         flags = [1 if well_formed(text, ngram) else 0 for text in texts]
+        echoes = [
+            _prompt_echo_rate(text, prompt) for text, (_, prompt) in zip(texts, tasks, strict=True)
+        ]
         per_arm[arm] = {
             "usable": checkpoint is not None,
             "checkpoint": None if checkpoint is None else str(checkpoint),
             "n": len(texts),
             "well_formed_rate": round(sum(flags) / len(flags), 4),
             "flags": flags,
+            # 回声控制：题面是真实散文时「照抄上下文」是一条可走的路，必须让它可见。
+            "prompt_echo_8gram_rate": round(sum(echoes) / len(echoes), 4),
             "seconds": round(time.perf_counter() - started, 2),
             "samples": texts[:3],
             "mean_len_chars": round(sum(len(t) for t in texts) / len(texts), 2),
         }
-    return {"tasks": len(tasks), "controls": controls, "per_arm": per_arm}
+    return {
+        "tasks": len(tasks),
+        "prompt_meta": prompt_meta,
+        "controls": controls,
+        "per_arm": per_arm,
+    }
 
 
 def judge_m1(per_arm: dict[str, Any], dry_run: bool) -> dict[str, Any]:
@@ -209,20 +257,38 @@ def judge_k2(m1_per_arm: dict[str, Any], dry_run: bool) -> dict[str, Any]:
     pairs = list(zip(a["flags"], b["flags"], strict=True))
     delta_pp = round((b["well_formed_rate"] - a["well_formed_rate"]) * 100, 2)
     test = sign_test([(ours, rival) for ours, rival in pairs])
-    indistinguishable = bool(delta_pp < M1_MARGIN_PP and test["p_two_sided"] >= 0.05)
+    #: 字面口径＝重训读出合同 §5.1 冻结的写法（**有符号**），上一轮就是按它报的。
+    literal = bool(delta_pp < M1_MARGIN_PP and test["p_two_sided"] >= 0.05)
+    #: 双侧口径＝§5.1 同一段自己写明的本意（「B 落后 A 不到 15 pp」）。**只对本轮生效**，
+    #: 由 M5_R2_READOUT_RETRAIN_V3_POWER_PREREG_20260923 §3 预注册；不得回溯套到上一轮。
+    bilateral = bool(abs(delta_pp) < M1_MARGIN_PP and test["p_two_sided"] >= 0.05)
     return {
         "preregistered_operationalisation": {
+            "literal_formula": "B - A < +15 pp 且 p >= 0.05（重训合同 §5.1 原文）",
+            "bilateral_formula": "|B - A| < +15 pp 且 p >= 0.05（v3 轮预注册 §3，仅本轮）",
             "delta_pp_threshold": M1_MARGIN_PP,
             "significance": "paired sign test p >= 0.05",
             "registered_before_any_arm_finished": True,
         },
         "b_minus_a_delta_pp": delta_pp,
         "sign_test_b_vs_a": test,
-        "B_explains_it_by_more_training": indistinguishable,
+        "B_explains_it_by_more_training": literal,
+        "literal_reading": {
+            "no_difference": literal,
+            "note": "上一轮的判定口径；本轮如实并列，便于对照",
+        },
+        "bilateral_reading": {
+            "no_difference": bilateral,
+            "note": "修正版口径；**只对本轮生效**，不回溯",
+        },
         "consequence": (
             "判无差别 ⇒ 读出侧不得记功，M1 的改善归'更多训练'"
-            if indistinguishable
-            else "A 与 B 可分辨 ⇒ 读出侧可归因（仍须过 M1/M2 才算过）"
+            if (literal and bilateral)
+            else (
+                "两种口径结论相反 ⇒ 必须分别引用；本轮按预注册取**双侧**口径为准"
+                if literal != bilateral
+                else "A 与 B 可分辨 ⇒ 读出侧可归因（仍须过 M1/M2 才算过）"
+            )
         ),
     }
 
@@ -279,6 +345,11 @@ def build_parser() -> argparse.ArgumentParser:
         help="用同一份基座冒充三臂，只验证管线；报告里 judgment 被显式抑制",
     )
     parser.add_argument("--skip-m2", action="store_true", help="只跑 M1/K2（M2 较慢）")
+    parser.add_argument(
+        "--prompts-file",
+        default=None,
+        help="改用一份**封存好的**未见题面集（如 v3 功效补足轮）；缺省用已 FROZEN 的 CAP B/G 口径",
+    )
     return parser
 
 
@@ -298,8 +369,12 @@ def main() -> int:
     if report_path.exists():
         parser.error(f"{report_path} already exists; verdicts are never overwritten")
 
+    prompts_file = Path(args.prompts_file) if args.prompts_file else None
+    if prompts_file is not None and not prompts_file.is_file():
+        parser.error(f"prompts file not found: {prompts_file}")
+
     pairing = verify_pairing(run_dir, args.symbols, args.dry_run)
-    m1 = run_m1(run_dir, args.dry_run)
+    m1 = run_m1(run_dir, args.dry_run, prompts_file)
     judgment: dict[str, Any] = {
         "M1_n_gram_well_formed": judge_m1(m1["per_arm"], args.dry_run),
         "K2_more_training_counterfactual": judge_k2(m1["per_arm"], args.dry_run),
@@ -320,11 +395,14 @@ def main() -> int:
         "arm_pairing": pairing,
         "evaluation_material": {
             "m1": {
+                "prompts": m1["prompt_meta"],
                 "eval_set": str(EVAL_SET.relative_to(PROJECT_ROOT).as_posix()),
-                "dimensions": list(M1_DIMENSIONS),
+                "cap_dimensions_used_by_default": list(M1_DIMENSIONS),
                 "instrument": "scripts/training/diag_taiji_r2_surface_decode.py (FROZEN)",
                 "decoding": "greedy（P1 已实测为四臂最好；本件不动解码）",
                 "tasks": m1["tasks"],
+                "echo_control": "prompt_echo_8gram_rate：输出中出现任一 8 字题面子串的比例；"
+                "不参与判定，只让「照抄上下文」这条解释可见",
             },
             "m2": {
                 "dimensions": list(M2_DIMENSIONS),

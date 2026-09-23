@@ -1,0 +1,1142 @@
+{
+  "format": "r2-readout-m1-v3-prompts-v1",
+  "built_at_utc": "2026-09-23T02:13:18Z",
+  "purpose": "M1 功效补足的未见题面集（机械抽取，无人工挑选）",
+  "source": {
+    "corpus": "data/p3b_all_fresh.jsonl",
+    "corpus_sha256": "a21bfcef93566acd80a0591b0e387b0dff54ebbbfeeefa6fdd7d0405dd0403ad",
+    "lineage_manifest": "plans/manifests/p3b_all_fresh_manifest.json"
+  },
+  "rule": {
+    "eligible_offset_min": 16000000,
+    "first_eligible_row_index": 4026,
+    "eligible_rows": 25850,
+    "stride": 161,
+    "count": 160,
+    "prompt_chars": 32,
+    "note": "行内累计偏移 = Σ(len(text.encode())+1)，与 p3b 血缘清单的 emitted_symbols 口径一致；题面取前 N 个字符（字符口径，不切多字节）"
+  },
+  "outside_training_window": true,
+  "prompts": [
+    {
+      "id": "v3-000",
+      "row_index": 4026,
+      "byte_offset": 16000346,
+      "prompt": "用父亲和妹妹的话来说，我在音乐方面简直是一个白痴，当然，这是他们",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-001",
+      "row_index": 4187,
+      "byte_offset": 16804997,
+      "prompt": "“场所”这个词可以用来指各种活动发生的地方，例如学校是学习的场所",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-002",
+      "row_index": 4348,
+      "byte_offset": 17138706,
+      "prompt": "首先，话代表了口头表达。语言是人类最为基本和直接的交流工具，而口",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-003",
+      "row_index": 4509,
+      "byte_offset": 17477884,
+      "prompt": "在数据分析中，“样本”也是一个与“例”紧密相关的词语。样本实际上",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-004",
+      "row_index": 4670,
+      "byte_offset": 17807710,
+      "prompt": "首先，我们来看“夫”的基本含义——丈夫。这是最常见的用法，也是每",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-005",
+      "row_index": 4831,
+      "byte_offset": 18139731,
+      "prompt": "首先谈到“依靠”，我们常说依靠亲人、朋友，这是指在困难或需要帮助",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-006",
+      "row_index": 4992,
+      "byte_offset": 18467058,
+      "prompt": "首先，“犯”最常见的用法之一是指违规或违法行为，如“犯罪”、“犯",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-007",
+      "row_index": 5153,
+      "byte_offset": 18797805,
+      "prompt": "说到冬，首先想到的便是“冬天”。冬天是四季之一，气温降至最低，常",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-008",
+      "row_index": 5314,
+      "byte_offset": 19122327,
+      "prompt": "首先，茶是中国传统饮品之一，历史悠久，种类繁多。常见的有绿茶、红",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-009",
+      "row_index": 5475,
+      "byte_offset": 19446328,
+      "prompt": "蒸除了在烹饪中扮演重要角色，在气象现象中也发挥着关键作用。我们常",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-010",
+      "row_index": 5636,
+      "byte_offset": 19765511,
+      "prompt": "先从实际的例子谈起。在运动场上，一位足球守门员看到皮球飞向球门，",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-011",
+      "row_index": 5797,
+      "byte_offset": 20085186,
+      "prompt": "首先，从字形上来说，“辐”字由“车”和“射”两个部分组成。这个构",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-012",
+      "row_index": 5958,
+      "byte_offset": 20405411,
+      "prompt": "与“仓”相关的词汇相当丰富，比如“粮仓”，“仓库”，“兵仓”以及",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-013",
+      "row_index": 6119,
+      "byte_offset": 20716330,
+      "prompt": "“狱”字在古代的应用非常广泛。古代社会非常重视法制，因此，有关犯",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-014",
+      "row_index": 6280,
+      "byte_offset": 21030957,
+      "prompt": "首先，韵是诗词的灵魂所在，讲究平仄和押韵，使得诗句朗朗上口，读起",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-015",
+      "row_index": 6441,
+      "byte_offset": 21346304,
+      "prompt": "在现实中，你或许已经注意到“叮”这个字在描述声音时具有一种独特的",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-016",
+      "row_index": 6602,
+      "byte_offset": 21660411,
+      "prompt": "首先，谈及“沃”，我们往往会联想到大地的丰饶。词语“肥沃”是最常",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-017",
+      "row_index": 6763,
+      "byte_offset": 21974009,
+      "prompt": "与“陀”相关的词汇中，最为人熟知的是“陀螺”。你可以想象一下一个",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-018",
+      "row_index": 6924,
+      "byte_offset": 22284404,
+      "prompt": "首先，我们来看看一些常见的词汇。如“沦陷”，最初多用来描述一座城",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-019",
+      "row_index": 7085,
+      "byte_offset": 22593635,
+      "prompt": "先讲“胺”的性质，胺分子通常具有类似于氨的气味，很容易引起人联想",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-020",
+      "row_index": 7246,
+      "byte_offset": 22904639,
+      "prompt": "首先，让我们来看“虔诚”。虔诚不仅指宗教中的虔徒对神灵的崇拜，亦",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-021",
+      "row_index": 7407,
+      "byte_offset": 23216444,
+      "prompt": "“募”在古代首先用于军队中，指的是征兵、召募士兵的过程。你可以想",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-022",
+      "row_index": 7568,
+      "byte_offset": 23527943,
+      "prompt": "我们先从禾本科植物说起，最常见的例子有小麦、水稻、玉米和竹子。禾",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-023",
+      "row_index": 7729,
+      "byte_offset": 23838655,
+      "prompt": "举个例子，当我们在没有实际证据的情况下，对某件事情做出判断，这时",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-024",
+      "row_index": 7890,
+      "byte_offset": 24151491,
+      "prompt": "首先，在日常生活中，“褒奖”是一个常见的词汇，表示对某人某事进行",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-025",
+      "row_index": 8051,
+      "byte_offset": 24462739,
+      "prompt": "另一个常见用法是用来描述某物直立、竖起的状态。比如“撅起来”，可",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-026",
+      "row_index": 8212,
+      "byte_offset": 24766373,
+      "prompt": "首先，“汾”的基本意义与水有关，指的是山西省的“汾河”。汾河是华",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-027",
+      "row_index": 8373,
+      "byte_offset": 25074605,
+      "prompt": "在古代诗歌和文学作品中，“甬”时常作为地域的象征出现，和宁波的自",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-028",
+      "row_index": 8534,
+      "byte_offset": 25379658,
+      "prompt": "首先，我们来看“剽窃”这个词。在学术和创作领域，“剽窃”是一个非",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-029",
+      "row_index": 8695,
+      "byte_offset": 25686066,
+      "prompt": "在史书中，“大猷”常用来描述国家的宏伟策划。例如，一位帝王推行新",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-030",
+      "row_index": 8856,
+      "byte_offset": 25992491,
+      "prompt": "钒的最大特点之一是它具有极佳的耐腐蚀性。当你看到一些金属结构，比",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-031",
+      "row_index": 9017,
+      "byte_offset": 26301538,
+      "prompt": "我们生活中的灶炀，就是指灶火。古时候，厨房里烧火做饭是重要的家务",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-032",
+      "row_index": 9178,
+      "byte_offset": 26609109,
+      "prompt": "在日常生活中，“袂”被常常用来设计成不同的词语。比如“袂云”，形",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-033",
+      "row_index": 9339,
+      "byte_offset": 26917470,
+      "prompt": "“咹”这个字在汉字中显得相对冷僻，它在日常交流中出现的频率不高，",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-034",
+      "row_index": 9500,
+      "byte_offset": 27223607,
+      "prompt": "首先，“郴”字，有一个非常重要的组成部分——“邑”，这表示与城市",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-035",
+      "row_index": 9661,
+      "byte_offset": 27531879,
+      "prompt": "狒狒是一种群居动物，拥有复杂的社会结构和行为方式。它们常以群体为",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-036",
+      "row_index": 9822,
+      "byte_offset": 27869223,
+      "prompt": "1789年，当乔治·华盛顿第一次当选为总统时，美国还只是一个刚刚",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-037",
+      "row_index": 9983,
+      "byte_offset": 28323846,
+      "prompt": "许多人可能不知道，中国是全球最大的水电生产国。水电不仅是一种可再",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-038",
+      "row_index": 10144,
+      "byte_offset": 28770908,
+      "prompt": "补语是什么？简单来说，补语是用来补充说明主语或宾语的词或短语。比",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-039",
+      "row_index": 10305,
+      "byte_offset": 29218480,
+      "prompt": "小说的核心人物之一，伊凡·卡拉马佐夫，是个无神论者，他的观点和思",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-040",
+      "row_index": 10466,
+      "byte_offset": 29638586,
+      "prompt": "首先，朱光潜认为，美不仅存在于艺术作品中，也存在于日常生活的每一",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-041",
+      "row_index": 10627,
+      "byte_offset": 30046795,
+      "prompt": "艺术歌曲起源于19世纪初，当时的浪漫主义作曲家们如舒伯特和舒曼，",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-042",
+      "row_index": 10788,
+      "byte_offset": 30478723,
+      "prompt": "据说，狂欢节的起源可以追溯到公元前，古罗马的“萨图尔纳利亚”节日",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-043",
+      "row_index": 10949,
+      "byte_offset": 30899662,
+      "prompt": "从历史上看，年糕最早可以追溯到汉代。《礼记·月令》中提到的“糍”",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-044",
+      "row_index": 11110,
+      "byte_offset": 31311449,
+      "prompt": "金缕玉衣，顾名思义，是用金丝将数百甚至数千块加工的玉片缝缀成一件",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-045",
+      "row_index": 11271,
+      "byte_offset": 31736417,
+      "prompt": "首先，值得一提的是装备的重要性。骑山地自行车时，头盔是必不可少的",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-046",
+      "row_index": 11432,
+      "byte_offset": 32167249,
+      "prompt": "一个有趣的小故事可以助你理解维生素到底有多重要。想象一下，一位跑",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-047",
+      "row_index": 11593,
+      "byte_offset": 32603434,
+      "prompt": "想象一个普通的周末早晨，一个年轻的上班族小李。他醒来后，第一件事",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-048",
+      "row_index": 11754,
+      "byte_offset": 33021509,
+      "prompt": "记得高中时，我的一个朋友小林是长跑队的一员。长跑，光听这个词，都",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-049",
+      "row_index": 11915,
+      "byte_offset": 33422784,
+      "prompt": "炸酱麻辣面的基础在于两种关键元素——炸酱和麻辣调味。炸酱多由豆瓣",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-050",
+      "row_index": 12076,
+      "byte_offset": 33819921,
+      "prompt": "想象一下，你正在乘坐一辆安静行驶的电车。车厢内一切都毫不动摇，似",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-051",
+      "row_index": 12237,
+      "byte_offset": 34243253,
+      "prompt": "食品化学，这个名词一听起来可能有些抽象和复杂，但它实际上构成了我",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-052",
+      "row_index": 12398,
+      "byte_offset": 34676368,
+      "prompt": "人的尿液由肾脏产生。肾脏是我们体内天然的过滤器，每天过滤将近18",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-053",
+      "row_index": 12559,
+      "byte_offset": 35104210,
+      "prompt": "在工业革命之前，铠甲的制作主要依赖于冶金技术、工艺设计和材料科学",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-054",
+      "row_index": 12720,
+      "byte_offset": 35541635,
+      "prompt": "霍金辐射从何而来？想象一下，有一个巨大的黑洞，它的引力是如此强大",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-055",
+      "row_index": 12881,
+      "byte_offset": 35988120,
+      "prompt": "首先，从历史的发展来看，显示器的演变堪称一部科技进步的缩影。早期",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-056",
+      "row_index": 13042,
+      "byte_offset": 36440060,
+      "prompt": "想象一下，有一天，你随手画了一只小鸟。不知不觉中，你将这只小鸟画",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-057",
+      "row_index": 13203,
+      "byte_offset": 36874778,
+      "prompt": "首先，麻雀属于雀形目，这个分类下包含了各种我们熟知的小鸟如喜鹊、",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-058",
+      "row_index": 13364,
+      "byte_offset": 37289403,
+      "prompt": "首先，让我们从薄荷的生物学特性讲起。薄荷属于唇形科，是一种多年生",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-059",
+      "row_index": 13525,
+      "byte_offset": 37693526,
+      "prompt": "古袋鼠，并不是我们今天看到的那些在澳大利亚大草原上跳来跳去的现代",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-060",
+      "row_index": 13686,
+      "byte_offset": 38106158,
+      "prompt": "我们生活在一个动态变化的地质环境中。比如说，首先来讲讲地震。地震",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-061",
+      "row_index": 13847,
+      "byte_offset": 38516152,
+      "prompt": "想象一下，你正站在一艘船上，手中握着一根带有温度传感器的线，你缓",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-062",
+      "row_index": 14008,
+      "byte_offset": 38934957,
+      "prompt": "想象一下，一片宁静的湿地，芦苇轻轻摇曳，水鸟在平静的水面上浮游。",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-063",
+      "row_index": 14169,
+      "byte_offset": 39355093,
+      "prompt": "首先，土豆并不是简单的“地里的土里长出的豆子”。它是茄科植物的一",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-064",
+      "row_index": 14330,
+      "byte_offset": 39771117,
+      "prompt": "你知道吗，肾每天要过滤约200升血液，最终产生1.5至2升尿液，",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-065",
+      "row_index": 14491,
+      "byte_offset": 40180929,
+      "prompt": "这是一个简单得不能再简单的问题，大多数成年人都会毫不犹豫地回答“",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-066",
+      "row_index": 14652,
+      "byte_offset": 40596666,
+      "prompt": "早起，当第一缕阳光透过窗户洒进家中，一片洁白的地板上若有若无地闪",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-067",
+      "row_index": 14813,
+      "byte_offset": 41014857,
+      "prompt": "一天早晨，张先生决定尝试骑电动车去上班，替代他每天驾驶的小汽车。",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-068",
+      "row_index": 14974,
+      "byte_offset": 41431672,
+      "prompt": "首先，羽绒服为何如此保暖？这其中有一项关键技术：羽绒的蓬松度。蓬",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-069",
+      "row_index": 15135,
+      "byte_offset": 41852084,
+      "prompt": "记得有一次，在一个餐馆排队等待时，我看到了一位年轻的小伙子为前面",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-070",
+      "row_index": 15296,
+      "byte_offset": 42287113,
+      "prompt": "长号的起源可以追溯到文艺复兴时期。当时，它被称为\"sackbut",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-071",
+      "row_index": 15457,
+      "byte_offset": 42608993,
+      "prompt": "战争开始时，朝鲜试图控制整个半岛，并向韩国发起了进攻。这个时候，",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-072",
+      "row_index": 15618,
+      "byte_offset": 42787677,
+      "prompt": "护士的工作非常重要。他们会给病人量体温、测血压，还会帮医生打针、",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-073",
+      "row_index": 15779,
+      "byte_offset": 42975353,
+      "prompt": "比如说，有一天小明对小丽说：“我在面包店工作，挺不错的，面包会有",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-074",
+      "row_index": 15940,
+      "byte_offset": 43167312,
+      "prompt": "你是否听过一个神奇的故事，让人感觉仿佛置身于一个充满魔法与爱情的",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-075",
+      "row_index": 16101,
+      "byte_offset": 43364569,
+      "prompt": "小朋友们，你们听说过丁托列托吗？他是16世纪意大利的一位著名画家",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-076",
+      "row_index": 16262,
+      "byte_offset": 43571717,
+      "prompt": "一位摇滚歌手通常会和一个乐队合作演出。这个乐队可能包括吉他手、贝",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-077",
+      "row_index": 16423,
+      "byte_offset": 43786110,
+      "prompt": "首先，复活节的主要象征之一是彩蛋。俄罗斯的彩蛋不仅色彩鲜艳，有的",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-078",
+      "row_index": 16584,
+      "byte_offset": 43982420,
+      "prompt": "同学们，你们有没有听说过圣索菲亚大教堂？它是世界上著名的建筑奇观",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-079",
+      "row_index": 16745,
+      "byte_offset": 44174988,
+      "prompt": "罗马人非常喜欢用马赛克来装饰他们的房子、庙宇和公共浴场。你可以想",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-080",
+      "row_index": 16906,
+      "byte_offset": 44387021,
+      "prompt": "什么是抗压能力？\n\n抗压能力就是当我们面对困难和挑战时，能够保持",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-081",
+      "row_index": 17067,
+      "byte_offset": 44597563,
+      "prompt": "首先，当我们遇到冲突时，不要急着发脾气或者指责别人。我们可以深呼",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-082",
+      "row_index": 17228,
+      "byte_offset": 44799307,
+      "prompt": "冬天到了，大雪覆盖了地面，这时候你有没有想过在雪地里飞驰而下呢？",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-083",
+      "row_index": 17389,
+      "byte_offset": 44996382,
+      "prompt": "制作鱼皮饺的过程非常有趣。首先，人们会把新鲜的鱼肉剁成泥，再与一",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-084",
+      "row_index": 17550,
+      "byte_offset": 45192263,
+      "prompt": "美式热狗通常是由一个面包和一根香肠组成的。面包像个小船一样，把香",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-085",
+      "row_index": 17711,
+      "byte_offset": 45391652,
+      "prompt": "首先，让我们认识一下电流、电压和电阻这三个小伙伴。\n\n1. 电流",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-086",
+      "row_index": 17872,
+      "byte_offset": 45601829,
+      "prompt": "小朋友们，你们知道我们的身体是由什么组成的吗？我们的身体是由无数",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-087",
+      "row_index": 18033,
+      "byte_offset": 45794278,
+      "prompt": "小朋友们，你们有没有想过，当你们摸到一只毛茸茸的小猫或者一个光滑",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-088",
+      "row_index": 18194,
+      "byte_offset": 45986659,
+      "prompt": "汽车的发明和发展离不开两次工业革命。第一次工业革命发生在18世纪",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-089",
+      "row_index": 18355,
+      "byte_offset": 46178677,
+      "prompt": "那么，光子计算是什么呢？我们先来了解一下光子。光子是光的微小粒子",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-090",
+      "row_index": 18516,
+      "byte_offset": 46396090,
+      "prompt": "你有没有想过，当你在网上登录游戏账户或给朋友发消息时，是怎么保护",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-091",
+      "row_index": 18677,
+      "byte_offset": 46674403,
+      "prompt": "什么是斐波那契数列？\n\n斐波那契数列是一个由意大利数学家斐波那契",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-092",
+      "row_index": 18838,
+      "byte_offset": 46909538,
+      "prompt": "嗨，小朋友们！今天我想给大家介绍一种非常特别的动物，它的名字叫无",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-093",
+      "row_index": 18999,
+      "byte_offset": 47093740,
+      "prompt": "剑龙是一种生活在古代的恐龙，科学家认为它们生活在大约1.5亿年前",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-094",
+      "row_index": 19160,
+      "byte_offset": 47279173,
+      "prompt": "几百万年前，一些简单的植物开始在陆地上冒出头来，它们是苔藓和蕨类",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-095",
+      "row_index": 19321,
+      "byte_offset": 47453526,
+      "prompt": "赤道非常特别，因为它是地球上阳光最强的地方。这里几乎没有冬天和夏",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-096",
+      "row_index": 19482,
+      "byte_offset": 47622652,
+      "prompt": "小朋友们，你们知道什么是“矮行星”吗？矮行星是一些特别的小天体，",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-097",
+      "row_index": 19643,
+      "byte_offset": 47801011,
+      "prompt": "同学们，你们知道什么是微塑料吗？微塑料是一种非常小的塑料颗粒，通",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-098",
+      "row_index": 19804,
+      "byte_offset": 47938677,
+      "prompt": "在寒冷的冬天，当天空中飘下洁白的雪花时，小朋友们可以用雪橇从小山",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-099",
+      "row_index": 19965,
+      "byte_offset": 48075186,
+      "prompt": "当我们用照相机或者手机拍照的时候，照相机会“咔嚓”一声，把我们看",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-100",
+      "row_index": 20126,
+      "byte_offset": 48250523,
+      "prompt": "小朋友，你们有没有注意过，“空”这个概念出现在我们的生活中有很多",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-101",
+      "row_index": 20287,
+      "byte_offset": 48420235,
+      "prompt": "小朋友们，你们知道吗？被子是我们睡觉时的好伙伴哦！无论是炎热的夏",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-102",
+      "row_index": 20448,
+      "byte_offset": 48578788,
+      "prompt": "当汽车在行驶过程中遇到了一些问题，比如轮胎破了，发动机发不动了，",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-103",
+      "row_index": 20609,
+      "byte_offset": 48738611,
+      "prompt": "铁皮青蛙是用一种特別的金属——铁皮做成的。它的身体是绿色的，还画",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-104",
+      "row_index": 20770,
+      "byte_offset": 48902988,
+      "prompt": "当我们在幼儿园里，比如在操场上玩游戏或者在教室里做手工，我们都会",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-105",
+      "row_index": 20931,
+      "byte_offset": 49059910,
+      "prompt": "小朋友们，你们知道什么是“编舞”吗？编舞就像是为舞蹈设计魔法，让",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-106",
+      "row_index": 21092,
+      "byte_offset": 49146746,
+      "prompt": "答： \n设男生参加比赛人数为$x$，女生参加比赛人数为$y$，根",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-107",
+      "row_index": 21253,
+      "byte_offset": 49203384,
+      "prompt": "班里有20个学生，其中10个男生，剩下的是女生。问班里有多少女生",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-108",
+      "row_index": 21414,
+      "byte_offset": 49262228,
+      "prompt": "A. 2个\nB. 3个\nC. 4个\nD. 5个\n答： \n小明一开",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-109",
+      "row_index": 21575,
+      "byte_offset": 49318294,
+      "prompt": "答： \n这道题需要算一下这个长方形的面积，以及每支笔能够涂满的面",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-110",
+      "row_index": 21736,
+      "byte_offset": 49375045,
+      "prompt": "答：\n小明有3只糖果，小红有5只糖果，在数线上，我们可以用小明的",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-111",
+      "row_index": 21897,
+      "byte_offset": 49432731,
+      "prompt": "答：小明家有三只猫，所以小明抱出去的只有1只猫，那么回来时还剩下",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-112",
+      "row_index": 22058,
+      "byte_offset": 49491199,
+      "prompt": "答： \n小明和小红平均分到的糖果数为5个，那么一共分了2份，也就",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-113",
+      "row_index": 22219,
+      "byte_offset": 49549046,
+      "prompt": "答：小明有三个小球，小红有五个小球，表示小红比小明多两个小球。因",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-114",
+      "row_index": 22380,
+      "byte_offset": 49609926,
+      "prompt": "答：\n1. 计算男生喜欢的水果总数：25 x 3 = 75\n2.",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-115",
+      "row_index": 22541,
+      "byte_offset": 49669367,
+      "prompt": "答：\n1. 确定问题：题目要我们求出小明还剩下多少颗糖果。\n2.",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-116",
+      "row_index": 22702,
+      "byte_offset": 49725776,
+      "prompt": "答：\n小明有5颗糖果，他要和他的两个朋友平均分配这些糖果，那么他",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-117",
+      "row_index": 22863,
+      "byte_offset": 49788474,
+      "prompt": "答：\n1. 用长除法计算每位朋友能得到几颗糖，19 ÷ 5 = ",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-118",
+      "row_index": 23024,
+      "byte_offset": 49850757,
+      "prompt": "答： \n题目中给出了班上学生总数和男生人数，要求求出女生人数。可",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-119",
+      "row_index": 23185,
+      "byte_offset": 49910552,
+      "prompt": "答：\n1. 将题目中提供的数据列出来：小明有30个糖果，小红有2",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-120",
+      "row_index": 23346,
+      "byte_offset": 49962548,
+      "prompt": "答：\n1. 因为小明要分给两个朋友吃，所以总共需要分成3份糖果。",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-121",
+      "row_index": 23507,
+      "byte_offset": 50023805,
+      "prompt": "答： \n1. 首先，我们需要阅读题目并理解题意，题目告诉我们小明",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-122",
+      "row_index": 23668,
+      "byte_offset": 50080133,
+      "prompt": "答：\n要将10元分成5份相同的部分，可以先将10元用除法分成5份",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-123",
+      "row_index": 23829,
+      "byte_offset": 50137812,
+      "prompt": "答： \n小明手里有13个糖果，想要平均分给4个朋友。那么我们可以",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-124",
+      "row_index": 23990,
+      "byte_offset": 50195193,
+      "prompt": "答：小明5个铅笔盒里有8支铅笔，可以用乘法运算解答。 \n答案：小",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-125",
+      "row_index": 24151,
+      "byte_offset": 50251413,
+      "prompt": "答：设重的橙子分别为A、B、C。那么，第一次称重的6个橙子中一定",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-126",
+      "row_index": 24312,
+      "byte_offset": 50311979,
+      "prompt": "答：小明昨天有5个水果，今天他又买了3个，所以他现在一共有5+3",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-127",
+      "row_index": 24473,
+      "byte_offset": 50368353,
+      "prompt": "<img src=\"https://i.imgur.com/SU",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-128",
+      "row_index": 24634,
+      "byte_offset": 50423203,
+      "prompt": "答： \n小明有3个苹果，小红有5个苹果。\n他们一共有多少个苹果？",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-129",
+      "row_index": 24795,
+      "byte_offset": 50479856,
+      "prompt": "答： 小明有7个苹果，小红有5个苹果，小丽有3个苹果，让我们把这",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-130",
+      "row_index": 24956,
+      "byte_offset": 50538533,
+      "prompt": "答：\n小明有4颗糖果，他平分给2个朋友，所以两个朋友一共分得4颗",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-131",
+      "row_index": 25117,
+      "byte_offset": 50596844,
+      "prompt": "答：\n首先，我们设小明分享给了x个同学。\n然后，小明先本着公平分",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-132",
+      "row_index": 25278,
+      "byte_offset": 50653378,
+      "prompt": "答：\n这道题用到的是初步的除法运算，步骤如下：\n1. 计算平均数",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-133",
+      "row_index": 25439,
+      "byte_offset": 50712253,
+      "prompt": "答：\n小明一开始有 8 本书，他送了 3 本书给小红，还送了 2",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-134",
+      "row_index": 25600,
+      "byte_offset": 50774184,
+      "prompt": "答： \n小明开始有10个糖果，他分给小红5个。这是一个减法问题，",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-135",
+      "row_index": 25761,
+      "byte_offset": 50831298,
+      "prompt": "答： 小明一共买了8+4=12个橙子，所以他现在一共有12个橙子",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-136",
+      "row_index": 25922,
+      "byte_offset": 50887968,
+      "prompt": "答： \n小明有10元，购买了一支笔芯花费2元，他还剩： \n10元",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-137",
+      "row_index": 26083,
+      "byte_offset": 50941791,
+      "prompt": "答：\n首先，需要知道小明要送出的玫瑰花数量为8+6=14朵。\n因",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-138",
+      "row_index": 26244,
+      "byte_offset": 50998874,
+      "prompt": "答：\n1. 首先将5个苹果平均分配给3个朋友，可以用竖式计算法：",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-139",
+      "row_index": 26405,
+      "byte_offset": 51054208,
+      "prompt": "答：\n要求每个朋友平均分到糖果数，只需要将总糖果数除以朋友数即可",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-140",
+      "row_index": 26566,
+      "byte_offset": 51110047,
+      "prompt": "在动物园里，小明看到了5只猫和3只狗，小华看到了2只猫和4只狗。",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-141",
+      "row_index": 26727,
+      "byte_offset": 51171760,
+      "prompt": "答：将小明和小刚的书的数量相加即可，即 8 + 3 = 11。所",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-142",
+      "row_index": 26888,
+      "byte_offset": 51228840,
+      "prompt": "小明说：“今天我最喜欢的运动是足球。” 明天是星期五，请问今天是",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-143",
+      "row_index": 27049,
+      "byte_offset": 51285044,
+      "prompt": "答：\n首先，我们需要排除白花都在两端的情况，即首尾都是白花的情况",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-144",
+      "row_index": 27210,
+      "byte_offset": 51341207,
+      "prompt": "答： \n小明手中有三个糖果，记为X = 3\n小红比小明多一个糖果",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-145",
+      "row_index": 27371,
+      "byte_offset": 51396410,
+      "prompt": "答： \n剩下的糖果 = 总数 - 小明拿走的数量 - 小华拿走的",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-146",
+      "row_index": 27532,
+      "byte_offset": 51453191,
+      "prompt": "答：\n小明手里原本有5只红色球+3只绿色球=8只球。\n然后他又买",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-147",
+      "row_index": 27693,
+      "byte_offset": 51509798,
+      "prompt": "答：小明家里有 5 个苹果，他又买了 3 个橘子，所以他一共有 ",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-148",
+      "row_index": 27854,
+      "byte_offset": 51569058,
+      "prompt": "答：\n小明一共有10颗糖，他拿出了5颗糖，那么他还剩下多少颗糖呢",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-149",
+      "row_index": 28015,
+      "byte_offset": 51626523,
+      "prompt": "答： \n小明有6个苹果要分成3组，可以用除法求解。6除以3等于2",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-150",
+      "row_index": 28176,
+      "byte_offset": 51679986,
+      "prompt": "答：\n为了让小明的三位朋友平分24枚糖果，我们需要进行除法运算。",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-151",
+      "row_index": 28337,
+      "byte_offset": 51733695,
+      "prompt": "答：\n小明有3块，小红有2块，所以小明比小红多1块。\n小华有几块",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-152",
+      "row_index": 28498,
+      "byte_offset": 51795971,
+      "prompt": "答：将小明、小华和小刚的糖果数量相加即可得到三人一共有的糖果数量",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-153",
+      "row_index": 28659,
+      "byte_offset": 51851864,
+      "prompt": "答：\n小明一共有9块巧克力和4块糖果，平分给三个朋友，那么每个朋",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-154",
+      "row_index": 28820,
+      "byte_offset": 51907787,
+      "prompt": "答：小明原本有10本书，将其中2本书送给小红，那么小明手中剩下的",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-155",
+      "row_index": 28981,
+      "byte_offset": 51961665,
+      "prompt": "答： \n步骤1：求出男同学的数量\n25 × 3/5 = 15\n小",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-156",
+      "row_index": 29142,
+      "byte_offset": 52018997,
+      "prompt": "答：\n小明跑步的时间可以根据距离和速度的公式计算出来：时间 = ",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-157",
+      "row_index": 29303,
+      "byte_offset": 52074926,
+      "prompt": "答：\n小明昨天买了10个橙子，今天又买了6个橙子，总共买了10+",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-158",
+      "row_index": 29464,
+      "byte_offset": 52130390,
+      "prompt": "答：两个人的图书数量之和即为他们一共有的图书数量。因此，将小明和",
+      "prompt_chars": 32
+    },
+    {
+      "id": "v3-159",
+      "row_index": 29625,
+      "byte_offset": 52184656,
+      "prompt": "答：小明手里有3个苹果，小红比小明多1个苹果，那么小红手里有4个",
+      "prompt_chars": 32
+    }
+  ]
+}
