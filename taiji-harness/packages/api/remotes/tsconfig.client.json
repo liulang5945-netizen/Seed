@@ -93,6 +93,9 @@
       "path": "../terminal-controller/tsconfig.client.json"
     },
     {
+      "path": "../life-controller/tsconfig.client.json"
+    },
+    {
       "path": "../../boot/plugin-manager"
     },
     {

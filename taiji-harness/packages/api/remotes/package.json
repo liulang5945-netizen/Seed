@@ -94,6 +94,7 @@
     "zod": "^4.4.3",
     "@taiji/dsh-command-feedback": "workspace:^",
     "@taiji/dsh-api-terminal-controller": "workspace:^",
+    "@taiji/dsh-api-life-controller": "workspace:^",
     "@taiji/dsh-plugin-manager": "workspace:^",
     "@taiji/dsh-office-to-pdf": "workspace:^",
     "@taiji/dsh-api-account-controller": "workspace:^"

@@ -39,10 +39,9 @@ export interface ILife {
   /**
    * Start a native training run.
    * @param request - run parameters; omitted fields keep the runtime's defaults.
-   * @param signal - caller lifetime.
    * @returns the runtime's acceptance message.
    */
-  trainStart(request?: LifeTrainStartRequest, signal?: AbortSignal): Promise<LifeControlValue>
+  trainStart(request?: LifeTrainStartRequest): Promise<LifeControlValue>
   /**
    * Pause the running training.
    * @param signal - caller lifetime.
@@ -112,8 +111,8 @@ export class LifeClient extends Service implements ILife {
     return result.value
   }
 
-  async trainStart(request: LifeTrainStartRequest = {}, signal?: AbortSignal): Promise<LifeControlValue> {
-    return await this.unwrap(this.model.trainStart(request, signal))
+  async trainStart(request: LifeTrainStartRequest = {}): Promise<LifeControlValue> {
+    return await this.unwrap(this.model.trainStart(request))
   }
 
   async trainPause(signal?: AbortSignal): Promise<LifeControlValue> {

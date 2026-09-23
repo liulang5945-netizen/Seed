@@ -1,7 +1,7 @@
 /** Client-side Life snapshot model shared by Remote transport and panel projection. */
 
 import type {} from '@taiji/dsh-api-life-controller/remote'
-import type { RemoteFailure, RemoteResult, TypertClientRemote } from '@taiji/dsh-typert-protocol'
+import { RemoteError, type RemoteFailure, type RemoteResult, type TypertClientRemote } from '@taiji/dsh-typert-protocol'
 import type {
   LifeActionRequest,
   LifeControlValue,
@@ -90,13 +90,13 @@ export class ClientLifeModel implements LifeStreamSink {
   }
 
   /**
-   * Start a training run.
+   * Start a training run. The Host's verb takes no caller lifetime: the run is
+   * accepted or refused as a whole, and its progress arrives through `follow`.
    * @param request - run parameters.
-   * @param signal - caller lifetime.
    * @returns the runtime's acceptance message or the Host failure.
    */
-  trainStart(request: LifeTrainStartRequest, signal?: AbortSignal): Promise<RemoteResult<LifeControlValue>> {
-    return this.remote.trainStart(request, signal)
+  trainStart(request: LifeTrainStartRequest): Promise<RemoteResult<LifeControlValue>> {
+    return this.remote.trainStart(request)
   }
 
   /**
@@ -175,9 +175,7 @@ export function failureOf(error: unknown): RemoteFailure {
   if (typeof error === 'object' && error !== null && 'code' in error && 'message' in error) {
     return error as RemoteFailure
   }
-  return {
-    code: 'life/stream-failed',
-    message: error instanceof Error ? error.message : String(error),
-    details: {},
-  }
+  return new RemoteError('life/stream-failed', error instanceof Error ? error.message : String(error), {
+    reason: error instanceof Error ? error.message : String(error),
+  })
 }

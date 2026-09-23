@@ -8,8 +8,8 @@
  * the stream instead of a local state write.
  */
 
-import { useSyncExternalStore, useState, type ReactNode } from 'react'
-import { LifeControlError, type ILife } from '@taiji/dsh-api-life-controller/client'
+import { useCallback, useSyncExternalStore, useState, type ReactNode } from 'react'
+import type { ILife, LifeSnapshotState } from '@taiji/dsh-api-life-controller/client'
 import type {
   LifeCheckpointView,
   LifeLegacyView,
@@ -59,6 +59,22 @@ function clampPct(value: number): number {
   return Math.min(100, Math.max(0, value))
 }
 
+/**
+ * Read the Host refusal a `ctx.life` verb rejected with. The panel matches it
+ * structurally rather than importing the controller's error class, because a
+ * cross-plugin value import is what this client forbids; the two packages
+ * collaborate through the `life` service instead.
+ * @param error - whatever a control verb rejected with.
+ * @returns the refusal, or undefined when the rejection carries none.
+ */
+function refusalOf(error: unknown): RemoteFailure | undefined {
+  if (typeof error !== 'object' || error === null) return undefined
+  const candidate = (error as { rpcError?: unknown }).rpcError
+  return typeof candidate === 'object' && candidate !== null && 'code' in candidate && 'message' in candidate
+    ? candidate as RemoteFailure
+    : undefined
+}
+
 /** Resolve the panel copy for one Host failure. */
 function errorText(rpc: RemoteFailure, t: LifePanelProps['t']): string {
   const details = (typeof rpc.details === 'object' && rpc.details !== null ? rpc.details : {}) as Record<string, unknown>
@@ -73,6 +89,8 @@ function errorText(rpc: RemoteFailure, t: LifePanelProps['t']): string {
       return t('errConflict', { reason: String(details.reason ?? '') })
     case 'life/bad-request':
       return t('errBadRequest', { field: String(details.field ?? ''), reason: String(details.reason ?? '') })
+    case 'life/stream-failed':
+      return t('errStreamFailed')
     default:
       return t('errFallback', { code: rpc.code })
   }
@@ -84,7 +102,11 @@ function errorText(rpc: RemoteFailure, t: LifePanelProps['t']): string {
  * @returns the page element.
  */
 export function LifePanel({ t, life }: LifePanelProps): ReactNode {
-  const state = useSyncExternalStore(life.subscribe, life.getSnapshot)
+  // React calls both callbacks as bare functions, so the service's methods must
+  // be bound here: an unbound `life.getSnapshot` would lose its receiver.
+  const subscribe = useCallback((listener: () => void): (() => void) => life.subscribe(listener), [life])
+  const readState = useCallback((): LifeSnapshotState => life.getSnapshot(), [life])
+  const state = useSyncExternalStore(subscribe, readState)
   const [pending, setPending] = useState<PendingVerb | null>(null)
   const [confirming, setConfirming] = useState<PendingVerb | null>(null)
   const [failureText, setFailureText] = useState<string | null>(null)
@@ -101,7 +123,8 @@ export function LifePanel({ t, life }: LifePanelProps): ReactNode {
     void invoke()
       .then(() => { setFailureText(null) })
       .catch((error: unknown) => {
-        setFailureText(error instanceof LifeControlError ? errorText(error.rpcError, t) : t('errStreamFailed'))
+        const refusal = refusalOf(error)
+        setFailureText(refusal === undefined ? t('errStreamFailed') : errorText(refusal, t))
       })
       .finally(() => { setPending(null) })
   }

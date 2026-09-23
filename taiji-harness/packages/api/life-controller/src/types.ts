@@ -20,6 +20,8 @@ declare module '@taiji/dsh-typert-protocol' {
     'life/conflict': { readonly reason: string }
     /** The request is not a shape the runtime accepts. */
     'life/bad-request': { readonly field: string; readonly reason: string }
+    /** A value the namespace could not carry as a Remote failure at all. */
+    'life/stream-failed': { readonly reason: string }
   }
 }
 
