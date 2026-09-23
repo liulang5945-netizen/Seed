@@ -1091,6 +1091,35 @@ describe('UiWorkspaceService', () => {
     expect(b.sessions.retained[1]!.release).not.toHaveBeenCalled()
   })
 
+  it('keeps a deliberately opened archived Session open across list republishes', () => {
+    const b = bench()
+    b.workspaces.list.set(workspaceState([], [sid('archived')]))
+    b.uiWorkspace.openSession(sid('archived'))
+    expect(b.sessions.retained[0]!.reference.sessionId).toBe(sid('archived'))
+
+    // A refresh that loses the id and puts it back — plus the list republishes
+    // the retention writes themselves trigger — must not close the view.
+    b.sessions.list.set(sessionState([summary('archived')]))
+    b.workspaces.list.set(workspaceState([], []))
+    b.sessions.list.set(sessionState([summary('archived')]))
+    b.workspaces.list.set(workspaceState([], [sid('archived')]))
+
+    expect(b.sessions.retained[0]!.release).not.toHaveBeenCalled()
+  })
+
+  it('ends the deliberate view when this service unarchives the Session', async () => {
+    const b = bench()
+    b.workspaces.list.set(workspaceState([], [sid('archived')]))
+    b.uiWorkspace.openSession(sid('archived'))
+    b.workspaces.onUnarchive = async () => { b.workspaces.list.set(workspaceState([], [])) }
+
+    await b.uiWorkspace.unarchiveSession(sid('archived'))
+    // Ordinary again: a later archive event closes the view.
+    b.workspaces.list.set(workspaceState([], [sid('archived')]))
+
+    expect(b.sessions.retained[0]!.release).toHaveBeenCalledOnce()
+  })
+
   it('forwards archive commands and preserves failures', async () => {
     const idle = sid('idle')
     const b = bench()

@@ -142,9 +142,11 @@ class UiWorkspaceService extends Service implements UiWorkspace {
   private mainReference: SessionReference | undefined
   /**
    * The Session currently viewed read-only because it was already archived
-   * when it was opened or restored. This is the one state where an archived
-   * current selection is deliberate, so `clearArchivedCurrent` keeps it; an
-   * unarchive or a later archive event resets it.
+   * when it was opened or restored, so an archived current selection is
+   * deliberate and `clearArchivedCurrent` keeps it. Only this service's own
+   * archive/unarchive actions end that state: a Workspace snapshot must never
+   * decide it, because a refresh that loses and regains its ids would
+   * otherwise close the view under the user.
    */
   private archivedView: SessionId | undefined
   /** The Session whose composer block this service currently holds raised. */
@@ -274,6 +276,9 @@ class UiWorkspaceService extends Service implements UiWorkspace {
 
   async unarchiveSession(sessionId: SessionId): Promise<void> {
     await this.workspaces.unarchiveSession(sessionId)
+    // The Session is a normal one again, so a later archive event must be able
+    // to close it: the deliberate read-only view ends here, not on a snapshot.
+    if (this.archivedView === sessionId) this.archivedView = undefined
   }
 
   async deleteSession(sessionId: SessionId, options: { readonly stopActivity?: boolean } = {}): Promise<void> {
@@ -429,15 +434,13 @@ class UiWorkspaceService extends Service implements UiWorkspace {
 
   /** @returns true when an archived current selection was cleared. */
   private clearArchivedCurrent(): boolean {
-    const { archivedSessionIds, phase } = this.workspaces.list.getSnapshot()
-    // A deliberately opened read-only archived view is not an archive event.
-    if (this.archivedView !== undefined && phase === 'ready'
-      && !archivedSessionIds.includes(this.archivedView)) {
-      this.archivedView = undefined
-    }
+    // The deliberate read-only view is decided when the Session is opened, and
+    // only this service's own archive/unarchive actions revoke it; the snapshot
+    // is read for membership alone, so a republish that drops the id and puts
+    // it back cannot close the open view.
     const current = this.mainReference?.sessionId
     if (current === undefined || current === this.archivedView
-      || !archivedSessionIds.includes(current)) return false
+      || !this.workspaces.list.getSnapshot().archivedSessionIds.includes(current)) return false
     this.clearMain()
     return true
   }
@@ -482,9 +485,8 @@ class UiWorkspaceService extends Service implements UiWorkspace {
         ? this.sessions.subagentAddress(reference.sessionId)
         : target
       // A target already inside the archive set opens as a deliberate read-only
-      // view, and the flag is set BEFORE any selection or retention write: a
-      // reconcile these writes trigger must see the view as deliberate, or it
-      // reads the new selection as an archive event and closes it again.
+      // view, recorded BEFORE any selection or retention write: a reconcile
+      // those writes trigger must already see the view as deliberate.
       this.archivedView = this.workspaces.list.getSnapshot().archivedSessionIds
         .includes(reference.sessionId)
         ? reference.sessionId
