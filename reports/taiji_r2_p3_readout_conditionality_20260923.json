@@ -1,0 +1,315 @@
+{
+  "format": "taiji-r2-p3-readout-conditionality-v1",
+  "status": "completed",
+  "written_at_utc": "2026-09-23T02:47:36Z",
+  "contract": "plans/reference/M5_R2_SURFACE_DECODING_CONTRACT_DRAFT_20260920.md",
+  "probe": "P3 读出器的条件性（cue 是否随提问改变 + 读出分布 KL）",
+  "preregistered_thresholds": {
+    "kl_nats_threshold": 0.01,
+    "cue_l1_relative_floor": 0.001,
+    "cue_change_rate_floor": 0.9,
+    "cue_change_operationalisation_written_by": "本件（合同只写了'改变'，没给判读线）"
+  },
+  "disclosures": [
+    "cue 取自 substrate._state.motor_context（私有）——公开 step 没暴露 cue，而判据要求测 cue",
+    "刺激集由我撰写（合同只规定'同骨架两题'）；表随执行件在打分前提交，之后不得改"
+  ],
+  "failure": null,
+  "checkpoints": {
+    "base": {
+      "label": "base",
+      "checkpoint": "E:\\Seed\\checkpoints\\seed_beta.pt",
+      "null_control": {
+        "cue_l1_diff": 0.0,
+        "kl_nats": 0.0,
+        "ok": true
+      },
+      "rows": [
+        {
+          "kind": "minimal",
+          "prompt_a": "我想知道猫是什么",
+          "prompt_b": "我想知道狗是什么",
+          "cue_l1_relative": 0.0803337127,
+          "kl_nats": 0.0077695483
+        },
+        {
+          "kind": "minimal",
+          "prompt_a": "我想知道苹果是什么",
+          "prompt_b": "我想知道香蕉是什么",
+          "cue_l1_relative": 0.1221745113,
+          "kl_nats": 0.018390663
+        },
+        {
+          "kind": "minimal",
+          "prompt_a": "我想知道北京是什么",
+          "prompt_b": "我想知道上海是什么",
+          "cue_l1_relative": 0.1284715703,
+          "kl_nats": 0.0482031852
+        },
+        {
+          "kind": "minimal",
+          "prompt_a": "我想知道水是什么",
+          "prompt_b": "我想知道火是什么",
+          "cue_l1_relative": 0.0731123228,
+          "kl_nats": 0.0123866582
+        },
+        {
+          "kind": "minimal",
+          "prompt_a": "场所这个词是什么意思",
+          "prompt_b": "时间这个词是什么意思",
+          "cue_l1_relative": 0.0948653196,
+          "kl_nats": 0.0257846881
+        },
+        {
+          "kind": "minimal",
+          "prompt_a": "语言这个词是什么意思",
+          "prompt_b": "文字这个词是什么意思",
+          "cue_l1_relative": 0.094931493,
+          "kl_nats": 0.0128331995
+        },
+        {
+          "kind": "minimal",
+          "prompt_a": "音乐这个词是什么意思",
+          "prompt_b": "美术这个词是什么意思",
+          "cue_l1_relative": 0.0899241559,
+          "kl_nats": 0.020416921
+        },
+        {
+          "kind": "minimal",
+          "prompt_a": "请解释一下学习",
+          "prompt_b": "请解释一下工作",
+          "cue_l1_relative": 0.1563109492,
+          "kl_nats": 0.0346850716
+        },
+        {
+          "kind": "minimal",
+          "prompt_a": "请解释一下春天",
+          "prompt_b": "请解释一下冬天",
+          "cue_l1_relative": 0.0890325932,
+          "kl_nats": 0.0154169826
+        },
+        {
+          "kind": "minimal",
+          "prompt_a": "他不喜欢下雨",
+          "prompt_b": "他不喜欢刮风",
+          "cue_l1_relative": 0.1696204702,
+          "kl_nats": 0.0297095403
+        },
+        {
+          "kind": "minimal",
+          "prompt_a": "他不喜欢早起",
+          "prompt_b": "他不喜欢熬夜",
+          "cue_l1_relative": 0.1861288098,
+          "kl_nats": 0.2301136404
+        },
+        {
+          "kind": "minimal",
+          "prompt_a": "这本书讲的是历史",
+          "prompt_b": "这本书讲的是数学",
+          "cue_l1_relative": 0.1568927513,
+          "kl_nats": 0.0506512001
+        },
+        {
+          "kind": "unrelated",
+          "prompt_a": "我想知道猫是什么",
+          "prompt_b": "他不喜欢早起",
+          "cue_l1_relative": 0.2009624015,
+          "kl_nats": 0.0771272257
+        },
+        {
+          "kind": "unrelated",
+          "prompt_a": "请解释一下学习",
+          "prompt_b": "这本书讲的是历史",
+          "cue_l1_relative": 0.2635681553,
+          "kl_nats": 0.0815517157
+        },
+        {
+          "kind": "unrelated",
+          "prompt_a": "场所这个词是什么意思",
+          "prompt_b": "我想知道苹果是什么",
+          "cue_l1_relative": 0.2146409059,
+          "kl_nats": 0.0835807696
+        },
+        {
+          "kind": "unrelated",
+          "prompt_a": "他不喜欢刮风",
+          "prompt_b": "请解释一下冬天",
+          "cue_l1_relative": 0.2190759226,
+          "kl_nats": 0.0895323679
+        }
+      ],
+      "minimal": {
+        "n": 12,
+        "cue_l1_relative_median": 0.1221745113,
+        "cue_l1_relative_max": 0.1861288098,
+        "cue_change_rate": 1.0,
+        "kl_nats_median": 0.0257846881,
+        "kl_nats_max": 0.2301136404,
+        "kl_nats_min": 0.0077695483
+      },
+      "unrelated_control": {
+        "n": 4,
+        "cue_l1_relative_median": 0.2190759226,
+        "kl_nats_median": 0.0835807696
+      },
+      "criterion": {
+        "cue_changes": true,
+        "kl_median_ge_threshold": true,
+        "kl_threshold": 0.01,
+        "cue_l1_relative_floor": 0.001,
+        "cue_change_rate_floor": 0.9,
+        "C1_content_enters": true,
+        "C2_content_absent": false
+      },
+      "seconds": 3.47
+    },
+    "arm_A": {
+      "label": "arm_A",
+      "checkpoint": "E:\\Seed\\output\\taiji_r2_readout_retrain\\A\\checkpoint.pt",
+      "null_control": {
+        "cue_l1_diff": 0.0,
+        "kl_nats": 0.0,
+        "ok": true
+      },
+      "rows": [
+        {
+          "kind": "minimal",
+          "prompt_a": "我想知道猫是什么",
+          "prompt_b": "我想知道狗是什么",
+          "cue_l1_relative": 0.0803337127,
+          "kl_nats": 0.020016985
+        },
+        {
+          "kind": "minimal",
+          "prompt_a": "我想知道苹果是什么",
+          "prompt_b": "我想知道香蕉是什么",
+          "cue_l1_relative": 0.1221745113,
+          "kl_nats": 0.0332612246
+        },
+        {
+          "kind": "minimal",
+          "prompt_a": "我想知道北京是什么",
+          "prompt_b": "我想知道上海是什么",
+          "cue_l1_relative": 0.1284715703,
+          "kl_nats": 0.0338680632
+        },
+        {
+          "kind": "minimal",
+          "prompt_a": "我想知道水是什么",
+          "prompt_b": "我想知道火是什么",
+          "cue_l1_relative": 0.0731123228,
+          "kl_nats": 0.0118398182
+        },
+        {
+          "kind": "minimal",
+          "prompt_a": "场所这个词是什么意思",
+          "prompt_b": "时间这个词是什么意思",
+          "cue_l1_relative": 0.0948653196,
+          "kl_nats": 0.0335067883
+        },
+        {
+          "kind": "minimal",
+          "prompt_a": "语言这个词是什么意思",
+          "prompt_b": "文字这个词是什么意思",
+          "cue_l1_relative": 0.094931493,
+          "kl_nats": 0.0220110267
+        },
+        {
+          "kind": "minimal",
+          "prompt_a": "音乐这个词是什么意思",
+          "prompt_b": "美术这个词是什么意思",
+          "cue_l1_relative": 0.0899241559,
+          "kl_nats": 0.0364982933
+        },
+        {
+          "kind": "minimal",
+          "prompt_a": "请解释一下学习",
+          "prompt_b": "请解释一下工作",
+          "cue_l1_relative": 0.1563109492,
+          "kl_nats": 0.0383813046
+        },
+        {
+          "kind": "minimal",
+          "prompt_a": "请解释一下春天",
+          "prompt_b": "请解释一下冬天",
+          "cue_l1_relative": 0.0890325932,
+          "kl_nats": 0.0282419138
+        },
+        {
+          "kind": "minimal",
+          "prompt_a": "他不喜欢下雨",
+          "prompt_b": "他不喜欢刮风",
+          "cue_l1_relative": 0.1696204702,
+          "kl_nats": 0.0369937643
+        },
+        {
+          "kind": "minimal",
+          "prompt_a": "他不喜欢早起",
+          "prompt_b": "他不喜欢熬夜",
+          "cue_l1_relative": 0.1861288098,
+          "kl_nats": 0.0552727878
+        },
+        {
+          "kind": "minimal",
+          "prompt_a": "这本书讲的是历史",
+          "prompt_b": "这本书讲的是数学",
+          "cue_l1_relative": 0.1568927513,
+          "kl_nats": 0.0582821965
+        },
+        {
+          "kind": "unrelated",
+          "prompt_a": "我想知道猫是什么",
+          "prompt_b": "他不喜欢早起",
+          "cue_l1_relative": 0.2009624015,
+          "kl_nats": 0.0758289099
+        },
+        {
+          "kind": "unrelated",
+          "prompt_a": "请解释一下学习",
+          "prompt_b": "这本书讲的是历史",
+          "cue_l1_relative": 0.2635681553,
+          "kl_nats": 0.2324606776
+        },
+        {
+          "kind": "unrelated",
+          "prompt_a": "场所这个词是什么意思",
+          "prompt_b": "我想知道苹果是什么",
+          "cue_l1_relative": 0.2146409059,
+          "kl_nats": 0.0485902876
+        },
+        {
+          "kind": "unrelated",
+          "prompt_a": "他不喜欢刮风",
+          "prompt_b": "请解释一下冬天",
+          "cue_l1_relative": 0.2190759226,
+          "kl_nats": 0.0751522034
+        }
+      ],
+      "minimal": {
+        "n": 12,
+        "cue_l1_relative_median": 0.1221745113,
+        "cue_l1_relative_max": 0.1861288098,
+        "cue_change_rate": 1.0,
+        "kl_nats_median": 0.0338680632,
+        "kl_nats_max": 0.0582821965,
+        "kl_nats_min": 0.0118398182
+      },
+      "unrelated_control": {
+        "n": 4,
+        "cue_l1_relative_median": 0.2190759226,
+        "kl_nats_median": 0.0758289099
+      },
+      "criterion": {
+        "cue_changes": true,
+        "kl_median_ge_threshold": true,
+        "kl_threshold": 0.01,
+        "cue_l1_relative_floor": 0.001,
+        "cue_change_rate_floor": 0.9,
+        "C1_content_enters": true,
+        "C2_content_absent": false
+      },
+      "seconds": 3.28
+    }
+  },
+  "reading": "C1 ⇒ 内容确实进到了读出器，缺口在更下游（表征/组合绑定）"
+}

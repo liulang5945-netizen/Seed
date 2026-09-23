@@ -100,7 +100,8 @@ def _prefill(substrate: Any, runtime: Any, prompt: str, episode: str) -> dict[st
         use_memory=False,
         use_identity=False,
     )
-    for symbol in _serialize_prompt(runtime, prompt).encode("utf-8"):
+    # ``_serialize_prompt`` 返回的就是 bytes（P1/P2 的 generate 也按 bytes 用）
+    for symbol in _serialize_prompt(runtime, prompt):
         step = substrate.observe(
             int(symbol), learn=False, readout="predictive", use_memory=False, use_identity=False
         )
