@@ -142,6 +142,7 @@ export const SERVICE_PAGE: Record<string, string> = {
   workspaceChanges: 'deliverables.md',
   terminalController: 'workspace.md',
   directoryPickerController: 'workspace.md',
+  lifeController: 'life.md',
 }
 
 /**
@@ -195,6 +196,7 @@ export const SERVICE_WALK_EXEMPTIONS: Record<string, string> = {
   slots: 'client-side interface-typed browser service — packages/client/ui-renderer/README.md owns the API',
   theme: 'client-side interface-typed browser service — packages/client/ui-theme/README.md owns the API',
   workspaces: 'client-side interface-typed browser service — packages/api/workspace-controller/README.md owns the API',
+  life: 'client-side interface-typed browser service — packages/api/life-controller/README.md owns the API',
   resources: 'client-side resource model (protocol providers, pins, live sources) — packages/client/resources/README.md owns the API',
   sidebarRight: 'client-side right-Sidebar navigation face — packages/client/ui-sidebar-right/README.md owns the API',
   sidebarRightTabs: 'client-side right-Sidebar tab-type registry — packages/client/ui-sidebar-right/README.md owns the API',
@@ -761,6 +763,11 @@ export const LINK_MAP: Readonly<Record<string, string>> = {
   ProjectionCheckpoint: 'session-projection.md',
   DirectoryPickerCapability: 'workspace.md',
   DirectoryListing: 'workspace.md',
+  LifeActionRequest: 'life.md',
+  LifeControlValue: 'life.md',
+  LifeFollowFrame: 'life.md',
+  LifeSnapshotValue: 'life.md',
+  LifeTrainStartRequest: 'life.md',
   TypertContribution: 'invariants.md',
   TypertRemoteEventSource: 'typert.md',
   RemoteEventHostInfo: 'typert.md',

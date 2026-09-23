@@ -84,8 +84,9 @@
 | `workflow/log` | `emit` | [`packages/workflow/workflow/src/index.ts:58`](../packages/workflow/workflow/src/index.ts) | [`workflow`](../packages/workflow/workflow) (`events.dispatch`) | [`tool-workflow`](../packages/workflow/tool-workflow) |
 | `workflow/phase` | `emit` | [`packages/workflow/workflow/src/index.ts:51`](../packages/workflow/workflow/src/index.ts) | [`workflow`](../packages/workflow/workflow) (`events.dispatch`) | [`tool-workflow`](../packages/workflow/tool-workflow) |
 | `workflow/start` | `emit` | [`packages/workflow/workflow/src/index.ts:43`](../packages/workflow/workflow/src/index.ts) | [`workflow`](../packages/workflow/workflow) (`events.dispatch`) | [`workflow`](../packages/workflow/workflow) |
-| `workspace/session-activity` | `waterfall` | [`packages/workspace/workspace/src/index.ts:129`](../packages/workspace/workspace/src/index.ts) | [`workspace`](../packages/workspace/workspace) (`waterfall`) | [`agent`](../packages/core/agent), [`jobs`](../packages/jobs/jobs), [`schedule`](../packages/schedule/schedule), [`subagent`](../packages/subagent/subagent) |
-| `workspace/session-stop` | `parallel` | [`packages/workspace/workspace/src/index.ts:147`](../packages/workspace/workspace/src/index.ts) | [`workspace`](../packages/workspace/workspace) (`parallel`) | [`agent`](../packages/core/agent), [`jobs`](../packages/jobs/jobs), [`schedule`](../packages/schedule/schedule), [`subagent`](../packages/subagent/subagent) |
+| `workspace/session-activity` | `waterfall` | [`packages/workspace/workspace/src/index.ts:156`](../packages/workspace/workspace/src/index.ts) | [`workspace`](../packages/workspace/workspace) (`waterfall`) | [`agent`](../packages/core/agent), [`jobs`](../packages/jobs/jobs), [`schedule`](../packages/schedule/schedule), [`subagent`](../packages/subagent/subagent) |
+| `workspace/session-close` | `parallel` | [`packages/workspace/workspace/src/index.ts:189`](../packages/workspace/workspace/src/index.ts) | [`workspace`](../packages/workspace/workspace) (`parallel`) | `session-controller` |
+| `workspace/session-stop` | `parallel` | [`packages/workspace/workspace/src/index.ts:174`](../packages/workspace/workspace/src/index.ts) | [`workspace`](../packages/workspace/workspace) (`parallel`) | [`agent`](../packages/core/agent), [`jobs`](../packages/jobs/jobs), [`schedule`](../packages/schedule/schedule), [`subagent`](../packages/subagent/subagent) |
 
 ## Non-harness or undeclared event strings seen in package source
 
@@ -97,7 +98,7 @@
 | `internal/service` | - | [`agent-preset-registry`](../packages/preset/agent-preset-registry), `gateway` |
 | `internal/status` | - | [`agent`](../packages/core/agent), `inspector`, [`web`](../packages/web/web) |
 | `internal/update` | - | [`app-boot`](../packages/boot/app-boot) |
-| `loader/volatile-update` | - | [`llm-deepseek`](../packages/llm/llm-deepseek), [`llm-pi-ai`](../packages/llm/llm-pi-ai) |
+| `loader/volatile-update` | - | [`llm-deepseek`](../packages/llm/llm-deepseek), [`llm-pi-ai`](../packages/llm/llm-pi-ai), [`llm-taiji`](../packages/llm/llm-taiji) |
 | `slots/changed` | `ui-renderer` (`emit`) | - |
 
 Maintenance mode: generated: Cordis event declarations and producer/listener edges are resolved from the repository TypeScript Program.

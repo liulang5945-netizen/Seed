@@ -300,6 +300,13 @@ const SERVICE_ROLES: ServiceRole[] = [
     note: 'Owns Workspace commands and reconnect-safe Workspace state delivery through the generated Remote namespace.',
   },
   {
+    key: 'lifeController',
+    pkg: 'api-life-controller',
+    title: 'Host Taiji runtime life Remote controller',
+    mode: 'core',
+    note: 'Owns snapshot polling of the Taiji local runtime and the control verbs a life panel issues through the generated Remote namespace; every reading carries its source, freshness, and per-source availability.',
+  },
+  {
     key: 'directoryPickerController',
     pkg: 'api-workspace-controller',
     title: 'Host directory-picking Remote controller',

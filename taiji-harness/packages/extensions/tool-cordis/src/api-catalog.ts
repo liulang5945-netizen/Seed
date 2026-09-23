@@ -1338,6 +1338,73 @@ export const SERVICE_API: readonly ServiceApiEntry[] = [
     ],
   },
   {
+    key: 'lifeController',
+    summary: 'Host service backing the generated `ctx.remote.life` namespace.',
+    description: 'Host service backing the generated `ctx.remote.life` namespace.',
+    methods: [
+      {
+        signature: '@Remote async snapshot(signal: AbortSignal): Promise<LifeSnapshotValue>',
+        description: 'Read the current runtime snapshot.',
+        parameters: [{ name: 'signal', description: 'caller lifetime.' }],
+        returns: 'the snapshot, marked `down` when the runtime did not answer.',
+      },
+      {
+        signature: '@Remote({ mode: \'stream\' }) follow(signal: AbortSignal): AsyncIterable<LifeFollowFrame>',
+        description: 'Stream the current snapshot first, then every change.',
+        parameters: [{ name: 'signal', description: 'stream lifetime.' }],
+        returns: 'the opening snapshot followed by replacement frames.',
+      },
+      {
+        signature: '@Remote async trainStart(request: LifeTrainStartRequest): Promise<LifeControlValue>',
+        description: 'Start a native training run and fold its progress into the snapshot stream.',
+        parameters: [{ name: 'request', description: 'run parameters; omitted fields keep the runtime\'s defaults.' }],
+        returns: 'the runtime\'s acceptance message; progress arrives through `follow`.',
+      },
+      {
+        signature: '@Remote async trainPause(signal: AbortSignal): Promise<LifeControlValue>',
+        description: 'Pause the running training.',
+        parameters: [{ name: 'signal', description: 'caller lifetime.' }],
+        returns: 'the runtime\'s message.',
+      },
+      {
+        signature: '@Remote async trainResume(signal: AbortSignal): Promise<LifeControlValue>',
+        description: 'Resume a paused training.',
+        parameters: [{ name: 'signal', description: 'caller lifetime.' }],
+        returns: 'the runtime\'s message.',
+      },
+      {
+        signature: '@Remote async trainStop(signal: AbortSignal): Promise<LifeControlValue>',
+        description: 'Stop the running training after its current step.',
+        parameters: [{ name: 'signal', description: 'caller lifetime.' }],
+        returns: 'the runtime\'s message.',
+      },
+      {
+        signature: '@Remote async trainReset(signal: AbortSignal): Promise<LifeControlValue>',
+        description: 'Force-release the training lock the runtime still holds.',
+        parameters: [{ name: 'signal', description: 'caller lifetime.' }],
+        returns: 'the runtime\'s message.',
+      },
+      {
+        signature: '@Remote async lifeStart(signal: AbortSignal): Promise<LifeControlValue>',
+        description: 'Start the Legacy life scheduler.',
+        parameters: [{ name: 'signal', description: 'caller lifetime.' }],
+        returns: 'the runtime\'s message.',
+      },
+      {
+        signature: '@Remote async lifeStop(signal: AbortSignal): Promise<LifeControlValue>',
+        description: 'Stop the Legacy life scheduler.',
+        parameters: [{ name: 'signal', description: 'caller lifetime.' }],
+        returns: 'the runtime\'s message.',
+      },
+      {
+        signature: '@Remote async lifeAction(request: LifeActionRequest, signal: AbortSignal): Promise<LifeControlValue>',
+        description: 'Force one Legacy life activity.',
+        parameters: [{ name: 'request', description: 'activity and operator-visible reason.' }, { name: 'signal', description: 'caller lifetime.' }],
+        returns: 'the runtime\'s message.',
+      },
+    ],
+  },
+  {
     key: 'llm',
     summary: 'The abstract `llm` service: an adapter registry plus a streaming model-call API, interceptable via the `llm/stream` waterfall.',
     description: 'The abstract `llm` service: an adapter registry plus a streaming model-call API, interceptable via the `llm/stream` waterfall.',
@@ -5308,6 +5375,90 @@ export const TYPE_API: readonly TypeApiEntry[] = [
   {
     name: 'KvUnitDescriptor',
     declaration: 'export interface KvUnitDescriptor {\n    readonly name: string;\n    readonly version: number;\n    readonly tables: readonly string[];\n    readonly hasGlobal: boolean;\n    readonly layout?: \'single\' | \'per-record\';\n    readonly compatibleVersions?: readonly number[];\n}',
+  },
+  {
+    name: 'LifeActionRequest',
+    declaration: 'export interface LifeActionRequest {\n    readonly action: \'feed\' | \'sleep\' | \'play\';\n    readonly reason?: string;\n}',
+  },
+  {
+    name: 'LifeAvailability',
+    declaration: 'export interface LifeAvailability {\n    readonly runtime: LifeRuntimeState;\n    readonly legacy: LifeLegacyState;\n    readonly knowledge: LifeKnowledgeState;\n    readonly trainingStream: LifeTrainingStreamState;\n}',
+  },
+  {
+    name: 'LifeCheckpointView',
+    declaration: 'export interface LifeCheckpointView {\n    readonly filename: string;\n    readonly step: number;\n    readonly bytes: number;\n    readonly modifiedUtc: string;\n    readonly savedAtUtc: string;\n    readonly numEpochs: number;\n}',
+  },
+  {
+    name: 'LifeControlValue',
+    declaration: 'export interface LifeControlValue {\n    readonly message: string;\n}',
+  },
+  {
+    name: 'LifeFollowFrame',
+    declaration: 'export type LifeFollowFrame = {\n    readonly type: \'baseline\';\n    readonly value: LifeSnapshot;\n} | {\n    readonly type: \'snapshot\';\n    readonly value: LifeSnapshot;\n};',
+  },
+  {
+    name: 'LifeHealthView',
+    declaration: 'export interface LifeHealthView {\n    readonly state: string;\n    readonly modelLoaded: boolean;\n    readonly modelName: string;\n    readonly seedActive: boolean;\n    readonly startupComplete: boolean;\n}',
+  },
+  {
+    name: 'LifeKnowledgeState',
+    declaration: 'export type LifeKnowledgeState = \'ok\' | \'disabled\' | \'down\';',
+  },
+  {
+    name: 'LifeKnowledgeView',
+    declaration: 'export interface LifeKnowledgeView {\n    readonly docCount: number;\n    readonly chunkCount: number;\n    readonly hasEmbeddings: boolean;\n    readonly embedDim: number;\n}',
+  },
+  {
+    name: 'LifeLegacyState',
+    declaration: 'export type LifeLegacyState = \'ok\' | \'disabled\' | \'down\';',
+  },
+  {
+    name: 'LifeLegacyView',
+    declaration: 'export interface LifeLegacyView {\n    readonly isRunning: boolean;\n    readonly lifeState: string;\n    readonly dominantNeed: string;\n    readonly needs: Readonly<Record<string, number>>;\n    readonly totalHeartbeats: number;\n    readonly totalEvents: number;\n    readonly lastHeartbeat?: string;\n    readonly lastActivity?: string;\n}',
+  },
+  {
+    name: 'LifeLifeView',
+    declaration: 'export interface LifeLifeView {\n    readonly isRunning: boolean;\n    readonly native?: LifeNativeView;\n    readonly legacy?: LifeLegacyView;\n}',
+  },
+  {
+    name: 'LifeMemoryView',
+    declaration: 'export interface LifeMemoryView {\n    readonly totalGb: number;\n    readonly availableGb: number;\n    readonly usedPct: number;\n}',
+  },
+  {
+    name: 'LifeNativeView',
+    declaration: 'export interface LifeNativeView {\n    readonly tick: number;\n    readonly mode: string;\n    readonly needs: Readonly<Record<string, number>>;\n    readonly drives: Readonly<Record<string, number>>;\n}',
+  },
+  {
+    name: 'LifeProgressView',
+    declaration: 'export interface LifeProgressView {\n    readonly fraction: number;\n    readonly step: number;\n    readonly loss: number;\n    readonly elapsed: number;\n    readonly eta?: number;\n    readonly epoch: number;\n    readonly totalEpochs: number;\n    readonly samplesPerSec: number;\n    readonly totalSteps: number;\n}',
+  },
+  {
+    name: 'LifeRuntimeState',
+    declaration: 'export type LifeRuntimeState = \'ok\' | \'down\';',
+  },
+  {
+    name: 'LifeSnapshot',
+    declaration: 'export interface LifeSnapshot {\n    readonly source: LifeSource;\n    readonly observedAt: string;\n    readonly fresh: boolean;\n    readonly pollIntervalMs: number;\n    readonly health?: LifeHealthView;\n    readonly memory?: LifeMemoryView;\n    readonly life?: LifeLifeView;\n    readonly training: LifeTrainingView;\n    readonly knowledge?: LifeKnowledgeView;\n    readonly availability: LifeAvailability;\n    readonly unavailable: readonly string[];\n}',
+  },
+  {
+    name: 'LifeSnapshotValue',
+    declaration: 'export interface LifeSnapshotValue {\n    readonly snapshot: LifeSnapshot;\n}',
+  },
+  {
+    name: 'LifeSource',
+    declaration: 'export type LifeSource = \'native\' | \'legacy\' | \'absent\';',
+  },
+  {
+    name: 'LifeTrainingStreamState',
+    declaration: 'export type LifeTrainingStreamState = \'idle\' | \'streaming\' | \'closed\';',
+  },
+  {
+    name: 'LifeTrainingView',
+    declaration: 'export interface LifeTrainingView {\n    readonly isTraining: boolean;\n    readonly pauseRequested: boolean;\n    readonly stopRequested: boolean;\n    readonly publishing: boolean;\n    readonly progress?: LifeProgressView;\n    readonly checkpoints: readonly LifeCheckpointView[];\n}',
+  },
+  {
+    name: 'LifeTrainStartRequest',
+    declaration: 'export interface LifeTrainStartRequest {\n    readonly datasets?: readonly string[];\n    readonly parameterBudget?: number;\n    readonly seed?: number;\n    readonly maxSymbols?: number;\n}',
   },
   {
     name: 'LlmAdapter',

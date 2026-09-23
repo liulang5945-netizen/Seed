@@ -9,7 +9,7 @@ English | [中文](README.zh.md)
 
 ## Summary
 
-Stream the Taiji local runtime through the `taiji-local` route. The runtime is this fork's own language organ: it speaks plain text over one `POST /api/chat/stream` call and exposes its readiness at `GET /api/health`. This adapter carries a harness request into that shape, emits the runtime's answer as one text block, and turns every other outcome — an in-band failure frame, a non-2xx response, an unreachable endpoint, a frame this route does not serve — into the provider-neutral failure the Trajectory records. It adds no quality processing: the answer is passed through verbatim. This package runs beside the [DeepSeek](../llm-deepseek/README.md) and [pi-ai](../llm-pi-ai/README.md) adapters, and leaves the deployment's default model to the composition.
+Stream the Taiji local runtime through the `taiji-local` route. The runtime is this fork's own language organ: it speaks plain text over one `POST /api/chat/stream` call and exposes its readiness at `GET /api/health`. This adapter carries a harness request into that shape, emits the runtime's answer as one text block, and turns every other outcome — failure frame, non-2xx response, unreachable endpoint, unserved frame — into the provider-neutral failure the Trajectory records. It does no quality processing: the answer passes through verbatim. This package runs beside the [DeepSeek](../llm-deepseek/README.md) and [pi-ai](../llm-pi-ai/README.md) adapters, and leaves the deployment's default model to the composition.
 
 ## Table of Contents
 
@@ -174,6 +174,8 @@ One `stream()` call makes one chat request and one health probe is made per plug
 #### What the model sees
 
 The runtime receives the current user turn, the effective system prompt, and the completed pairs of the conversation, all as plain text. It receives no tool schemas, no reasoning, no images, and no token counts: harness content the runtime's shape has no slot for is dropped rather than described. The harness system prompt normally arrives as the leading system-role message.
+
+- Request body: `{"prompt","system_prompt","history"}` — the runtime's three fields, and nothing else.
 
 #### Token effect
 

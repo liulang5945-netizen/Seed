@@ -9,7 +9,7 @@ kind: "package-reference"
 
 ## Summary
 
-通过 `taiji-local` 路由接入 Taiji 本地运行时。该运行时是本 fork 自己的语言器官：它以纯文本说话，只提供一次 `POST /api/chat/stream` 调用，并在 `GET /api/health` 上公开自身就绪状态。本适配器把 harness 请求装进这个形状，把运行时的回答作为一个文本块产出，并把其它一切结果——带内失败帧、非 2xx 响应、不可达端点、本路由不服务的帧——归一化为 Trajectory 能记录的 provider 中性失败。它不做任何质量加工：回答原样透传。本包可与 [DeepSeek](../llm-deepseek/README.md) 和 [pi-ai](../llm-pi-ai/README.md) 适配器同时挂载，部署的默认模型由装配决定。
+通过 `taiji-local` 路由接入 Taiji 本地运行时。该运行时是本 fork 自己的语言器官：它以纯文本说话，只提供一次 `POST /api/chat/stream` 调用，并在 `GET /api/health` 上公开自身就绪状态。本适配器把 harness 请求装进这个形状，把运行时的回答作为一个文本块产出，并把其它一切结果——失败帧、非 2xx 响应、不可达端点、不服务的帧——归一化为 Trajectory 能记录的 provider 中性失败。它不做任何质量加工：回答原样透传。本包可与 [DeepSeek](../llm-deepseek/README.md) 和 [pi-ai](../llm-pi-ai/README.md) 适配器同时挂载，部署的默认模型由装配决定。
 
 ## Table of Contents
 
@@ -174,6 +174,8 @@ data: "生成出错: ..."
 #### 模型看到什么
 
 运行时收到的是当前用户轮次、生效的系统提示词，以及对话中已经完成的配对，全部为纯文本。它收不到工具 schema、推理、图片，也收不到 token 计数：harness 内容中该运行时形状没有位置的部分被丢弃，而不是被描述出来。harness 的系统提示词通常以开头那条 system 消息的形式抵达。
+
+- 请求体：`{"prompt","system_prompt","history"}` —— 运行时的三个字段，别无其它。
 
 #### Token 影响
 

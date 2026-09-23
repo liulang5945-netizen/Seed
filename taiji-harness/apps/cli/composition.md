@@ -192,6 +192,8 @@ flowchart LR
   cfg --> plugin_dsh_base_fs_sandbox
   plugin_dsh_base_llm_deepseek["llm-deepseek<br/>@taiji/dsh-llm-deepseek"]
   cfg --> plugin_dsh_base_llm_deepseek
+  plugin_dsh_base_llm_taiji["llm-taiji<br/>@taiji/dsh-llm-taiji"]
+  cfg --> plugin_dsh_base_llm_taiji
 ```
 
 | Plugin id | Package / module |
@@ -288,6 +290,7 @@ flowchart LR
 | `agent-loop` | `@taiji/dsh-agent-loop` |
 | `fs-sandbox` | `@taiji/dsh-fs-sandbox` |
 | `llm-deepseek` | `@taiji/dsh-llm-deepseek` |
+| `llm-taiji` | `@taiji/dsh-llm-taiji` |
 
 Source config: [`packages/bundle/base/cordis.patch.yml`](../../packages/bundle/base/cordis.patch.yml).
 

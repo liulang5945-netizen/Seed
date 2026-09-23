@@ -208,6 +208,7 @@ const SENTENCE_MODEL_EXPERIENCE: Readonly<Record<string, SentenceContract>> = {
   'packages/api/session-controller': { kind: 'none', reason: 'Session API and transport owner; invoked Agent commands own any model-visible effect.' },
   'packages/api/settings-controller': { kind: 'none', reason: 'Configuration-surface API owner; it registers no prompt, tool, or session event.' },
   'packages/api/workspace-controller': { kind: 'none', reason: 'Workspace API and state projection owner; it registers no prompt, tool, or session event.' },
+  'packages/api/life-controller': { kind: 'none', reason: 'Local-runtime life API and state projection owner; it registers no prompt, tool, or session event.' },
   'packages/api/workspace-files': { kind: 'none', reason: 'Workspace file read API and its Client resource provider; it registers no prompt, tool, or session event.' },
   'packages/typert/protocol': { kind: 'none', reason: 'Compiler-independent Remote protocol declarations; registers nothing model-facing.' },
   'packages/typert/generator': { kind: 'none', reason: 'The build-time generator runs outside any agent runtime and touches no model request.' },

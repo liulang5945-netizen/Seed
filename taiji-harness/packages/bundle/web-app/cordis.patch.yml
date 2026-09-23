@@ -128,6 +128,11 @@
     - id: workspace-controller
       name: '@taiji/dsh-api-workspace-controller'
 
+    # Taiji local-runtime life readings and control verbs: the snapshot stream
+    # the life panel renders, polled from the runtime this fork talks to.
+    - id: life-controller
+      name: '@taiji/dsh-api-life-controller'
+
     - id: cordis-host-runner
       name: '@taiji/dsh-cordis-host-runner'
 

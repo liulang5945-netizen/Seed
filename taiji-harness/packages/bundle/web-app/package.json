@@ -55,6 +55,7 @@
     "@taiji/dsh-agent-preset-registry": "workspace:^",
     "@taiji/dsh-agent-tool-presentation": "workspace:^",
     "@taiji/dsh-api-job-controller": "workspace:^",
+    "@taiji/dsh-api-life-controller": "workspace:^",
     "@taiji/dsh-api-remotes": "workspace:^",
     "@taiji/dsh-api-session-controller": "workspace:^",
     "@taiji/dsh-api-settings-controller": "workspace:^",
