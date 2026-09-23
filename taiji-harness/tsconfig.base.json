@@ -392,6 +392,7 @@
       "@taiji/dsh-jobs-local": ["./packages/jobs/jobs-local/src"],
       "@taiji/dsh-launch-environment": ["./packages/util/launch-environment/src"],
       "@taiji/dsh-lazy-require": ["./packages/util/lazy-require/src"],
+      "@taiji/dsh-life-context": ["./packages/context/life-context/src"],
       "@taiji/dsh-llm": ["./packages/llm/llm/src"],
       "@taiji/dsh-llm/invariant": ["./packages/llm/llm/src/invariant.ts"],
       "@taiji/dsh-llm-deepseek": ["./packages/llm/llm-deepseek/src"],

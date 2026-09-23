@@ -175,7 +175,11 @@ One `stream()` call makes one chat request and one health probe is made per plug
 
 The runtime receives the current user turn, the effective system prompt, and the completed pairs of the conversation, all as plain text. It receives no tool schemas, no reasoning, no images, and no token counts: harness content the runtime's shape has no slot for is dropped rather than described. The harness system prompt normally arrives as the leading system-role message.
 
-- Request body: `{"prompt","system_prompt","history"}` — the runtime's three fields, and nothing else.
+##### Request body
+
+```markdown
+{"prompt","system_prompt","history"}
+```
 
 #### Token effect
 

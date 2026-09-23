@@ -134,6 +134,7 @@
     "@taiji/dsh-host-plugin-inventory": "workspace:^",
     "@taiji/dsh-host-webserver": "workspace:^",
     "@taiji/dsh-launch-environment": "workspace:^",
+    "@taiji/dsh-life-context": "workspace:^",
     "@taiji/dsh-message-feedback": "workspace:^",
     "@taiji/dsh-office-to-pdf": "workspace:^",
     "@taiji/dsh-persona": "workspace:^",

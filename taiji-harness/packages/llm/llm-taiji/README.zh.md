@@ -175,7 +175,11 @@ data: "生成出错: ..."
 
 运行时收到的是当前用户轮次、生效的系统提示词，以及对话中已经完成的配对，全部为纯文本。它收不到工具 schema、推理、图片，也收不到 token 计数：harness 内容中该运行时形状没有位置的部分被丢弃，而不是被描述出来。harness 的系统提示词通常以开头那条 system 消息的形式抵达。
 
-- 请求体：`{"prompt","system_prompt","history"}` —— 运行时的三个字段，别无其它。
+##### 请求体
+
+```markdown
+{"prompt","system_prompt","history"}
+```
 
 #### Token 影响
 

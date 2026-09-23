@@ -133,6 +133,12 @@
     - id: life-controller
       name: '@taiji/dsh-api-life-controller'
 
+    # Fold those readings into each model step: one static policy section plus
+    # a throttled durable life-state line, omitted wholesale when the runtime
+    # is unreachable or the reading went stale.
+    - id: life-context
+      name: '@taiji/dsh-life-context'
+
     - id: cordis-host-runner
       name: '@taiji/dsh-cordis-host-runner'
 
