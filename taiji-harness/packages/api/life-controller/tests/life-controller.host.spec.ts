@@ -52,7 +52,7 @@ async function nextFrame(iterator: AsyncIterator<LifeFollowFrame>): Promise<Life
 }
 
 describe('LifeController snapshot', () => {
-  it('reports a native reading with its provenance and gated surfaces', async () => {
+  it('reports a native reading with its source, availability, and gated surfaces', async () => {
     const { controller, runtime } = await harness()
     runtime.checkpoints = [
       { filename: 'seed_native.pt', step: 1000, bytes: 2048, modified_utc: '2026-09-23T10:00:00', saved_at_utc: '2026-09-23T09:59:00', num_epochs: 1 },

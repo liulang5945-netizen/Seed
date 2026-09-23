@@ -1,5 +1,5 @@
 ---
-description: "Host 与 Client 的生命控制：轮询 Taiji 本地 runtime 并连同出处搬运其数值，以及下发其训练与 legacy 控制动词。"
+description: "Host 与 Client 的生命控制：轮询 Taiji 本地 runtime 并连同应答的器官搬运每份读数，以及下发其训练与 legacy 控制动词。"
 kind: "package-reference"
 ---
 # Life Controller
@@ -83,4 +83,4 @@ runtime 的 HTTP 面是本包唯一使用的契约：路径固定，载荷词表
 
 </details>
 
-**运行时不变式：** 不发布伴生入口。Taiji runtime 拥有每个已测量的取值；控制器轮询它，并连同出处搬运每份读数。
+**运行时不变式：** 不发布伴生入口。Taiji runtime 拥有每个已测量的取值；控制器轮询它，并连同应答的器官搬运每份读数。

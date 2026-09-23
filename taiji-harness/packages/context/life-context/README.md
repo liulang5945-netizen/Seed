@@ -25,7 +25,7 @@ Append the Taiji runtime's life readings to model requests. This plugin mounts b
 
 Mount this plugin after `@taiji/dsh-api-life-controller` in a composition whose Host talks to the Taiji local runtime. It declares `inject = ['systemPrompt', 'lifeController']` and contributes nothing else to the tree.
 
-The generated [configuration catalog](../../../docs/config-catalog.md#deepseek-aidsh-life-context) is the exhaustive source for every accepted field and its JSDoc.
+The generated [configuration catalog](../../../docs/config-catalog.md#taijidsh-life-context) is the exhaustive source for every accepted field and its JSDoc.
 
 | Field | Default | Meaning |
 |---|---|---|
@@ -42,6 +42,10 @@ Each accepted model step appends one durable user message whose source kind is `
 - A legacy reading reports `state`, `dominant`, the five scheduler needs, and heartbeat counters. Segments with nothing to report are dropped, never defaulted.
 
 An injection is skipped while inside `refreshIntervalMs` unless the reading changed significantly: a training-state flip, a changed dominant need, or any single need drifting more than ten points. A snapshot whose runtime read failed is omitted as `unreachable`; one older than sixty seconds is omitted as `stale`. Each omission reason warns once per process.
+
+**Runtime invariant:** No companion is published. This package owns two context contributions over the snapshot the life controller already polls.
+
+-----
 
 <a id="model-experience"></a>
 ## Model Experience

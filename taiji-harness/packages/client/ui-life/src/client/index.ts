@@ -1,7 +1,7 @@
 /**
  * Life panel, browser half: the **Life** entry of the sidebar and the global
  * page it opens in the main column. The page renders the Taiji local
- * runtime's last reading — source provenance, the life organs, training with
+ * runtime's last reading — where it came from, the life organs, training with
  * its checkpoint roster, the knowledge base, and the host projection — and
  * drives the training and legacy scheduler controls through `ctx.life`.
  */

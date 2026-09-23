@@ -182,7 +182,7 @@ export interface LifeAvailability {
   readonly trainingStream: LifeTrainingStreamState
 }
 
-/** One complete reading of the runtime, with its provenance. */
+/** One complete reading of the runtime, naming the organ that answered. */
 export interface LifeSnapshot {
   /** Which organ answered the life numbers. */
   readonly source: LifeSource

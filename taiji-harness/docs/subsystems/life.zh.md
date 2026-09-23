@@ -18,7 +18,7 @@ Source: [`packages/api/life-controller/src/types.ts`](../../packages/api/life-co
 
 ## 快照
 
-`LifeSnapshot` 是一次完整读数及其出处：`source`（哪个器官提供了生命数值）、`observedAt`（本次读数的 ISO-8601 时刻）、`fresh`（仅当本轮 status 读取有应答时为真）、`pollIntervalMs`（取数时生效的轮询间隔）、可选的 `health`、`memory`、`life`、`knowledge` 投影、始终存在的 `training` 投影、`availability`，以及 `unavailable`。
+`LifeSnapshot` 是一次完整读数，并指明应答的器官：`source`（哪个器官提供了生命数值）、`observedAt`（本次读数的 ISO-8601 时刻）、`fresh`（仅当本轮 status 读取有应答时为真）、`pollIntervalMs`（取数时生效的轮询间隔）、可选的 `health`、`memory`、`life`、`knowledge` 投影、始终存在的 `training` 投影、`availability`，以及 `unavailable`。
 
 `unavailable` 为每个未应答的来源保留一行便于运维阅读的说明，使面板能够指出 runtime 的哪一部分缺失，而不是显示空白。没有人测量过的量保持缺失而非默认零，因为一个永久为零的读数读起来像已测得的事实，反而掩盖了来源从未应答。
 

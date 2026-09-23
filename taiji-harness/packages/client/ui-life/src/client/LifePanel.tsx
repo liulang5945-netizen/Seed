@@ -1,11 +1,11 @@
 /**
  * The global Life page: what the Taiji local runtime reported last, and the
- * controls that act on it. Five sections top to bottom — source provenance,
- * the life organs, training with its checkpoint roster, the knowledge base,
- * and the host projection. Every number comes from the controller's snapshot
- * stream; a control failure renders the Host's stable error code, never the
- * raw RPC text, and an accepted action refreshes through the stream instead
- * of a local state write.
+ * controls that act on it. Five sections top to bottom — where the reading
+ * came from, the life organs, training with its checkpoint roster, the
+ * knowledge base, and the host projection. Every number comes from the
+ * controller's snapshot stream; a control failure renders the Host's stable
+ * error code, never the raw RPC text, and an accepted action refreshes through
+ * the stream instead of a local state write.
  */
 
 import { useSyncExternalStore, useState, type ReactNode } from 'react'

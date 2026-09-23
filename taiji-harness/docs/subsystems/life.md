@@ -18,7 +18,7 @@ The status section that holds the life numbers names its own organ, and that nam
 
 ## The snapshot
 
-`LifeSnapshot` is one complete reading with its provenance: `source` (which organ answered the life numbers), `observedAt` (the ISO-8601 instant this reading was taken), `fresh` (true only when the status read answered this cycle), `pollIntervalMs` (the cadence in force when the reading was taken), the optional `health`, `memory`, `life`, and `knowledge` projections, the always-present `training` projection, `availability`, and `unavailable`.
+`LifeSnapshot` is one complete reading, naming the organ that answered: `source` (which organ answered the life numbers), `observedAt` (the ISO-8601 instant this reading was taken), `fresh` (true only when the status read answered this cycle), `pollIntervalMs` (the cadence in force when the reading was taken), the optional `health`, `memory`, `life`, and `knowledge` projections, the always-present `training` projection, `availability`, and `unavailable`.
 
 `unavailable` holds one operator-readable line per source that did not answer, so a panel can say which part of the runtime is missing instead of showing a blank. A quantity nobody measured stays absent rather than defaulted to zero, because a permanent zero reads as a measured fact and hides that the source never answered.
 

@@ -1,5 +1,5 @@
 ---
-description: "Host and Client Life control: poll the Taiji local runtime, carry its numbers with their provenance, and issue its training and legacy control verbs."
+description: "Host and Client Life control: poll the Taiji local runtime, carry each reading with the organ that answered it, and issue its training and legacy control verbs."
 kind: "package-reference"
 ---
 # Life Controller
@@ -83,4 +83,4 @@ The runtime's HTTP face is the only contract this package speaks: the paths are 
 
 </details>
 
-**Runtime invariant:** No companion is published. The Taiji runtime owns every measured value; the controller polls it and carries each reading together with its provenance.
+**Runtime invariant:** No companion is published. The Taiji runtime owns every measured value; the controller polls it and carries each reading together with the organ that answered it.

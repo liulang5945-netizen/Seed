@@ -36,6 +36,10 @@ kind: "package-reference"
 
 -----
 
+**运行时不变式：** 不发布伴随包。本包只在 life controller 的 Client 门面已携带的读数与控制动词之上提供一个浏览器面板。
+
+-----
+
 <a id="model-experience"></a>
 ## Model Experience
 

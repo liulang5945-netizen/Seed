@@ -25,7 +25,7 @@ kind: "package-reference"
 
 在 Host 与 Taiji 本地运行时对话的装配里，把本插件挂在 `@taiji/dsh-api-life-controller` 之后。它声明 `inject = ['systemPrompt', 'lifeController']`，此外不向组件树贡献任何东西。
 
-生成的[配置目录](../../../docs/config-catalog.zh.md#deepseek-aidsh-life-context)是每个受支持字段及其 JSDoc 的穷尽式真源。
+生成的[配置目录](../../../docs/config-catalog.zh.md#taijidsh-life-context)是每个受支持字段及其 JSDoc 的穷尽式真源。
 
 | 字段 | 默认值 | 含义 |
 |---|---|---|
@@ -42,6 +42,10 @@ kind: "package-reference"
 - legacy 读数报告 `state`、`dominant`、五项调度器需求与心跳计数。没有内容可报的段被丢弃，绝不补默认值。
 
 处于 `refreshIntervalMs` 之内时跳过注入，除非读数发生了显著变化：训练态翻转、主导需求变化，或任一单项需求漂移超过十分。runtime 读取失败的快照以 `unreachable` 省略；超过六十秒的快照以 `stale` 省略。每种省略原因在进程内只警告一次。
+
+**运行时不变式：** 不发布伴随包。本包只在 life controller 已轮询的快照之上提供两项上下文贡献。
+
+-----
 
 <a id="model-experience"></a>
 ## Model Experience
