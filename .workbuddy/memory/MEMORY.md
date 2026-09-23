@@ -15,9 +15,9 @@
 - Python 用 `C:/Users/23747/AppData/Local/Programs/Python/Python312/python.exe`（managed 3.13 无 torch/ruff）。
 - **bash 无 ls/cat/grep/head/tail/mkdir/rm**：文件用 Read/Write/Edit/Glob/Grep，目录/过滤用 `python -c`
   或 `| python.exe -c "…"`。**管道里缺失命令会 SIGPIPE 杀掉上游 Python**。
-- **反引号在任何 shell 引号里都会被命令替换**（已踩 **5** 次）⇒ 含反引号/代码片段/长文本一律走
-  Write/Edit 或**脚本文件**。第 5 次是"只是往日志追加一段 Markdown"——标识符被吃空、文件被改坏。
-  严禁 heredoc；`python -c` 内避免长中文。`reg.exe` 被拦截。
+- **反引号在任何 shell 引号里都会被命令替换**（同一天内已踩 **8** 次，规则写着照样犯）⇒
+  **多行文本一律先 Write 成文件再合并，禁止写进 `python -c` 的字符串**（连"追加一段 Markdown"都会中招：
+  标识符被吃空、三引号串被打断）。严禁 heredoc；`python -c` 内避免长中文。`reg.exe` 被拦截。
 - **跑 `tests/` 与任何大批删除的构建步骤必须 `CODEBUDDY_SAFE_DELETE_ENABLED=0`**：批删守卫劫持
   `Path.unlink`/`os.remove` ⇒ 中止或长时间无进展，**极易误诊为磁盘 I/O 卡死**。
   全量 pytest ~15 min 会 SIGTERM。读仓库文件的 gate 必须显式传
