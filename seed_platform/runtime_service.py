@@ -141,13 +141,24 @@ def _auth_section(auth_header: str) -> dict:
     return section
 
 
+def _scaled_organ_values(values: dict | None) -> dict[str, float]:
+    """Scale every 0..1 organ value by one factor to the payload's 0..100.
+
+    Needs and drives come from the same organ in the same units, so they share
+    this single transform: no dimension is invented, none is dropped, and no
+    second unit enters the payload.
+    """
+
+    return {str(name): round(float(value) * 100.0, 2) for name, value in (values or {}).items()}
+
+
 def _native_life_section() -> dict | None:
     """Life data measured by the Taiji homeostasis organ, or ``None``.
 
     Returns ``None`` when no native runtime is active so the caller can fall
-    back to Legacy.  Native drive units are 0..1; the client contract for
-    ``life.needs`` is 0..100, so the only transform here is that scaling — no
-    dimension is invented and none is dropped.
+    back to Legacy.  A detached organ reports nothing beyond ``status``,
+    ``is_running`` and ``needs``: a tick it never reached stays a schema
+    default instead of being reported as a measured zero.
     """
 
     try:
@@ -165,19 +176,14 @@ def _native_life_section() -> dict | None:
             "status": "seed",
             "is_running": False,
             "needs": {},
-            "total_interactions": 0,
-            "uptime_seconds": 0,
         }
-    needs = {
-        str(name): round(float(value) * 100.0, 2)
-        for name, value in (homeostasis.get("needs") or {}).items()
-    }
     return {
         "status": "seed",
         "is_running": True,
-        "needs": needs,
-        "total_interactions": 0,
-        "uptime_seconds": 0,
+        "needs": _scaled_organ_values(homeostasis.get("needs")),
+        "drives": _scaled_organ_values(homeostasis.get("drives")),
+        "mode": str(homeostasis.get("mode") or ""),
+        "tick": int(homeostasis.get("tick", 0)),
     }
 
 
@@ -192,8 +198,6 @@ def _life_section() -> dict:
             "status": "seed",
             "is_running": False,
             "needs": {},
-            "total_interactions": 0,
-            "uptime_seconds": 0,
         }
     try:
         from neuroplex.life.life_scheduler import get_life_scheduler
@@ -201,12 +205,19 @@ def _life_section() -> dict:
         scheduler = get_life_scheduler()
         status = scheduler.get_status()
         needs = scheduler.needs.to_dict() if hasattr(scheduler, "needs") else {}
+        # Report only what the scheduler tracks.  The previous shape also
+        # published `total_interactions`/`uptime_seconds`, which no scheduler
+        # ever measured, so both read as a permanent zero on the panel.
         return {
             "status": "ok",
             "is_running": bool(status.get("is_running", False)),
             "needs": needs,
-            "total_interactions": int(status.get("total_interactions", 0)),
-            "uptime_seconds": int(status.get("uptime_seconds", 0)),
+            "life_state": str(status.get("life_state") or ""),
+            "dominant_need": str(status.get("dominant_need") or ""),
+            "total_heartbeats": int(status.get("total_heartbeats", 0)),
+            "total_events": int(status.get("total_events", 0)),
+            "last_heartbeat": status.get("last_heartbeat"),
+            "last_activity": status.get("last_activity"),
         }
     except Exception as exc:  # pragma: no cover - defensive
         logger.warning(f"runtime_service: life status unavailable: {exc}")
@@ -214,8 +225,6 @@ def _life_section() -> dict:
             "status": "unknown",
             "is_running": False,
             "needs": {},
-            "total_interactions": 0,
-            "uptime_seconds": 0,
         }
 
 
@@ -275,7 +284,11 @@ def _training_section() -> dict:
         from seed_platform.app_state import app_state
 
         section["is_training"] = bool(getattr(app_state, "is_training", False))
-        section["publishing"] = bool(getattr(app_state, "is_publishing", False))
+        section["publishing"] = bool(getattr(app_state, "publishing", False))
+        # These two request flags live on the singleton under their own names;
+        # the previous shape never read them, so both read as a permanent False.
+        section["pause_requested"] = bool(getattr(app_state, "pause_training_requested", False))
+        section["stop_requested"] = bool(getattr(app_state, "stop_training_requested", False))
     except Exception as e:  # pragma: no cover - defensive
         logger.debug("【_training_section】处理失败（非致命）: %s", e)
     return section

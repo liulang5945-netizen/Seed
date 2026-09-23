@@ -356,10 +356,55 @@
       },
       "LifePayload": {
         "properties": {
+          "dominant_need": {
+            "default": "",
+            "title": "Dominant Need",
+            "type": "string"
+          },
+          "drives": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "default": {},
+            "title": "Drives",
+            "type": "object"
+          },
           "is_running": {
             "default": false,
             "title": "Is Running",
             "type": "boolean"
+          },
+          "last_activity": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Activity"
+          },
+          "last_heartbeat": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Heartbeat"
+          },
+          "life_state": {
+            "default": "",
+            "title": "Life State",
+            "type": "string"
+          },
+          "mode": {
+            "default": "",
+            "title": "Mode",
+            "type": "string"
           },
           "needs": {
             "additionalProperties": {
@@ -374,14 +419,19 @@
             "title": "Status",
             "type": "string"
           },
-          "total_interactions": {
+          "tick": {
             "default": 0,
-            "title": "Total Interactions",
+            "title": "Tick",
             "type": "integer"
           },
-          "uptime_seconds": {
+          "total_events": {
             "default": 0,
-            "title": "Uptime Seconds",
+            "title": "Total Events",
+            "type": "integer"
+          },
+          "total_heartbeats": {
+            "default": 0,
+            "title": "Total Heartbeats",
             "type": "integer"
           }
         },

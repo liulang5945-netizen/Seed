@@ -28,11 +28,17 @@ async def get_life_status():
         scheduler = get_life_scheduler()
         status = scheduler.get_status()
         needs = scheduler.needs.to_dict() if hasattr(scheduler, "needs") else {}
+        # 只报调度器真的测到的量。旧实现还回落到恒 0 的
+        # total_interactions/uptime_seconds —— 调度器从不统计这两项，面板上就是假值。
         return {
-            "is_running": status.get("is_running", False),
+            "is_running": bool(status.get("is_running", False)),
             "needs": needs,
-            "total_interactions": status.get("total_interactions", 0),
-            "uptime_seconds": status.get("uptime_seconds", 0),
+            "life_state": str(status.get("life_state") or ""),
+            "dominant_need": str(status.get("dominant_need") or ""),
+            "total_heartbeats": int(status.get("total_heartbeats", 0)),
+            "total_events": int(status.get("total_events", 0)),
+            "last_heartbeat": status.get("last_heartbeat"),
+            "last_activity": status.get("last_activity"),
         }
     except Exception as e:
         logger.error(f"获取生命状态失败: {e}")

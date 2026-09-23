@@ -53,8 +53,19 @@ class LifePayload(BaseModel):
     # dimensions the runtime never measured and silently drop the ones it did,
     # so the runtime owns the vocabulary and this stays a passthrough.
     needs: dict[str, float] = {}
-    total_interactions: int = 0
-    uptime_seconds: int = 0
+    # Only what the owning organ measures: the Legacy scheduler reports
+    # heartbeats, events and last timestamps, the native organ reports mode,
+    # tick and drives.  A field nobody measures must not exist here — it can
+    # only ever read as a false zero.
+    mode: str = ""
+    tick: int = 0
+    drives: dict[str, float] = {}
+    dominant_need: str = ""
+    life_state: str = ""
+    total_heartbeats: int = 0
+    total_events: int = 0
+    last_heartbeat: str | None = None
+    last_activity: str | None = None
 
 
 class ToolInfo(BaseModel):
