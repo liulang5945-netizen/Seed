@@ -22,11 +22,12 @@ import { createHash, randomBytes } from 'node:crypto'
 import {
   SessionPersistence, SessionPersistenceRevision, SessionFormatUnsupportedError,
   SessionPersistenceCorruptionError,
-  SessionAlreadyExistsError, SessionPersistenceNotFoundError,
+  SessionAlreadyExistsError, SessionAlreadyOwnedError, SessionPersistenceNotFoundError,
   assertStoredId, materializeCreateHeader, sessionFormatVersionRefusal, validateStoredEvents,
   type SessionAccess, type SessionHandle,
   type SessionHandleReadResult,
   type SessionLocation, type SessionPersistenceCreateOptions,
+  type SessionPersistenceDeleteOptions,
   type SessionPersistenceListOptions, type SessionPersistenceOpenOptions,
   type SessionPersistenceSnapshot, type SessionPersistenceStatOptions,
   type SessionPersistenceRevision as PersistenceRevision,
@@ -506,6 +507,57 @@ class JsonlSessionPersistence extends SessionPersistence {
     }
     signal?.throwIfAborted()
     return snapshots
+  }
+
+  /**
+   * Physically remove one stored session: its artifact directory (every
+   * generation and the POSIX lock file) leaves the root. The removal runs
+   * under the session's cross-process write lock, so a writer in another
+   * process refuses it as `SessionAlreadyOwnedError`; a writer in this
+   * process refuses the same way before any filesystem work. A created-but-
+   * unmaterialized session in this process refuses identically — its creator
+   * handle still owns the id. The removal is not recoverable through this
+   * service.
+   * @param id - the stored session to remove.
+   * @param options - optional cancellation.
+   * @throws {SessionAlreadyOwnedError} while a writer holds the session here or across processes.
+   * @throws {SessionPersistenceNotFoundError} when the session does not exist.
+   */
+  async delete(id: SessionId, options?: SessionPersistenceDeleteOptions): Promise<void> {
+    const signal = options?.signal
+    signal?.throwIfAborted()
+    if (this.tracker.hasPending(id) || this.tracker.hasWriter(id)) {
+      throw new SessionAlreadyOwnedError(id)
+    }
+    await this.ensureRootEncoding()
+    signal?.throwIfAborted()
+    const selected = await this.findLog(id, signal)
+    if (selected === undefined) throw new SessionPersistenceNotFoundError(id)
+    const dir = dirname(selected.sourcePath)
+    // The lock excludes every other writer for the whole removal; on POSIX it
+    // also pins the lock file's inode while the directory is unlinked.
+    const lease = await this.acquireLease(id, undefined, dir)
+    try {
+      signal?.throwIfAborted()
+      try {
+        await rm(dir, { recursive: true })
+      } catch (error: unknown) {
+        // A concurrent external removal already produced the asked-for state.
+        if (!isENOENT(error)) throw error
+      }
+      this.coldLogMemo.delete(id)
+      const preparation = this.migrationPreparations.get(id)
+      if (preparation !== undefined && this.migrationPreparations.get(id) === preparation) {
+        preparation.controller.abort()
+        this.migrationPreparations.delete(id)
+      }
+      /* v8 ignore next 3 -- native Windows coverage exercises this platform dispatch; Linux covers the POSIX peer */
+      if (process.platform !== 'win32') {
+        await this.syncDirPosix(dirname(dir))
+      }
+    } finally {
+      await lease.release()
+    }
   }
 
   // --- handle-facing storage internals (package-private via the handle class below) ---

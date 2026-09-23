@@ -9,7 +9,7 @@ import { randomUUID } from 'node:crypto'
 import { mkdir, stat } from 'node:fs/promises'
 import { Context, Service } from '@taiji/cordis'
 import type { SessionHeader, SessionId } from '@taiji/dsh-session'
-import type {} from '@taiji/dsh-session-persistence'
+import { SessionPersistenceNotFoundError } from '@taiji/dsh-session-persistence'
 import type { DomainGlobal, KvTable } from '@taiji/dsh-storage-domain'
 import { WorkspaceEntity } from './entity.ts'
 import type { WorkspaceEntityHost } from './entity.ts'
@@ -40,18 +40,34 @@ export function WorkspaceId(id: string): WorkspaceId {
 }
 
 /**
- * An archiveSession or pinSession request named a session neither live nor in
- * session persistence — a definite miss only; storage faults propagate as
- * themselves.
+ * An archiveSession, pinSession, or deleteSession request named a session
+ * neither live nor in session persistence — a definite miss only; storage
+ * faults propagate as themselves.
  */
 export class WorkspaceUnknownSessionError extends Error {
   /**
    * @param sessionId - The unknown session id.
    * @param verb - The registry operation that named the session.
    */
-  constructor(readonly sessionId: SessionId, verb: 'archive' | 'pin') {
+  constructor(readonly sessionId: SessionId, verb: 'archive' | 'pin' | 'delete') {
     super(`cannot ${verb} session '${sessionId}': live sessions and session persistence hold no such session`)
     this.name = 'WorkspaceUnknownSessionError'
+  }
+}
+
+/**
+ * A deleteSession request named a session that is live in this Host process.
+ * Its agent still holds the storage write ownership, so the physical log
+ * removal was refused without a write; the session must stop running and be
+ * closed before deletion.
+ */
+export class WorkspaceOpenSessionError extends Error {
+  /**
+   * @param sessionId - The live session id.
+   */
+  constructor(readonly sessionId: SessionId) {
+    super(`cannot delete session '${sessionId}': the session is live in this Host`)
+    this.name = 'WorkspaceOpenSessionError'
   }
 }
 
@@ -106,6 +122,17 @@ export interface ArchiveSessionOptions {
    * refusing the archive because of it. The archive is written first, then
    * the stops are requested; running work is never awaited to settlement, and
    * a provider failure is logged without undoing the archive.
+   */
+  readonly stopActivity?: boolean
+}
+
+/** Caller choices for {@link WorkspaceRegistry.deleteSession}. */
+export interface DeleteSessionOptions {
+  /**
+   * Ask the composed providers to stop the session's running work instead of
+   * refusing the deletion because of it. The stops are requested before the
+   * removal writes, so no wake they induce can still address the session
+   * while its log exists.
    */
   readonly stopActivity?: boolean
 }
@@ -402,6 +429,71 @@ export class WorkspaceRegistry extends Service {
         ...state,
         archivedSessionIds: state.archivedSessionIds.filter(id => id !== sessionId),
       })
+    })
+  }
+
+  /**
+   * Delete one session physically and forget its registry accounting. The
+   * session must exist (live or in session persistence) and must not be live
+   * in this Host process: its agent owns the storage write ownership, so the
+   * log removal would fight the writer — the session must be closed first.
+   * Without `stopActivity` the session must also be inactive: the
+   * `workspace/session-activity` waterfall is asked once, and any reported
+   * activity rejects with {@link WorkspaceActiveSessionError} before anything
+   * is written. With `stopActivity` the providers stop the session's work
+   * before the removal, so no wake they induce can still address the session
+   * while its log exists.
+   *
+   * The durable write drops the session from the archive and pin sets in one
+   * global-state write and from its owning Workspace's record; a crash between
+   * those writes leaves only a benign leftover (an archived id whose session
+   * is gone, or a record slot the cwd filter drops), so no pending-mutation
+   * marker is needed. The storage owner's `sessionPersistence.delete` then
+   * removes the log artifacts; its not-found refusal after the accounting
+   * write resolves the deletion (a concurrent external removal already
+   * produced the asked-for state). A failing storage delete propagates and
+   * leaves the session ungrouped — the accounting removal is not rolled back,
+   * and a retry converges.
+   * @param sessionId - The session to delete.
+   * @param options - Whether running work is stopped instead of refusing.
+   * @returns resolution after the accounting write and the log removal.
+   */
+  deleteSession(sessionId: SessionId, options: DeleteSessionOptions = {}): Promise<void> {
+    return this.enqueueOperation(async () => {
+      if (!(await this.sessionKnown(sessionId))) {
+        throw new WorkspaceUnknownSessionError(sessionId, 'delete')
+      }
+      if (this.ctx.get('sessions')?.get(sessionId) !== undefined) {
+        throw new WorkspaceOpenSessionError(sessionId)
+      }
+      if (options.stopActivity !== true) {
+        const activity = await this.ctx.waterfall(
+          'workspace/session-activity', { sessionId }, () => Promise.resolve([]),
+        )
+        if (activity.length > 0) throw new WorkspaceActiveSessionError(sessionId, activity)
+      } else {
+        await this.stopSessionActivity(sessionId)
+      }
+
+      const state = this.requireState()
+      await this.setState({
+        ...state,
+        archivedSessionIds: state.archivedSessionIds.filter(id => id !== sessionId),
+        pinnedSessionIds: state.pinnedSessionIds.filter(id => id !== sessionId),
+      })
+      for (const entity of this.entities.values()) {
+        const record = this.requireTable().get(entity.id) as WorkspaceRecord
+        if (!record.sessionIds.includes(sessionId)) continue
+        await entity.detachSession(sessionId)
+      }
+      try {
+        await this.ctx.sessionPersistence.delete(sessionId)
+      } catch (error: unknown) {
+        if (!(error instanceof SessionPersistenceNotFoundError)) throw error
+        this.ctx.logger.warn(
+          `workspace: session '${sessionId}' was already absent from session persistence when deleted`,
+        )
+      }
     })
   }
 

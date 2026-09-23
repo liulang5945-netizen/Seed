@@ -112,6 +112,12 @@ declare module '@taiji/cordis' {
   }
 }
 
+/** Options for {@link SessionPersistence.delete}. */
+export interface SessionPersistenceDeleteOptions {
+  /** Optional cancellation observed before backend work starts. */
+  readonly signal?: AbortSignal
+}
+
 /**
  * Durable append-only session storage addressed through per-session handles.
  *
@@ -199,6 +205,18 @@ export abstract class SessionPersistence extends Service {
    * @returns one snapshot per stored session.
    */
   abstract list(options?: SessionPersistenceListOptions): Promise<readonly SessionPersistenceSnapshot[]>
+
+  /**
+   * Physically remove one stored session's artifacts. The session stops
+   * existing: later `stat`/`list`/`open` observe nothing for the id, and the
+   * log is not recoverable through this service.
+   * @param id - the stored session to remove.
+   * @param options - optional cancellation.
+   * @throws {SessionAlreadyOwnedError} while an active write handle in this
+   *   process, or a cross-process writer, holds the session.
+   * @throws {SessionPersistenceNotFoundError} when the session does not exist.
+   */
+  abstract delete(id: SessionId, options?: SessionPersistenceDeleteOptions): Promise<void>
 }
 
 export default SessionPersistence

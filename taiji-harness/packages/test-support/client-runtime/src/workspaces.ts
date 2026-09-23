@@ -173,6 +173,26 @@ export class TestWorkspaces implements IWorkspaces {
   }
 
   /**
+   * Delete a session physically (recorded). The default mirrors the
+   * production face's observable effect: the id leaves both the archive and
+   * the pin set.
+   * @param sessionId - session to delete.
+   * @param options - `stopActivity` asks the Host to stop running work first.
+   */
+  async deleteSession(sessionId: SessionId, options?: { readonly stopActivity?: boolean }): Promise<void> {
+    this.calls.push({ method: 'deleteSession', args: [sessionId, options] })
+    const stub = this.stubs.get('deleteSession')
+    if (stub !== undefined) {
+      await (stub(sessionId, options) as Promise<void>)
+      return
+    }
+    await this.update((draft) => {
+      draft.archivedSessionIds = draft.archivedSessionIds.filter(id => id !== sessionId)
+      draft.pinnedSessionIds = draft.pinnedSessionIds.filter(id => id !== sessionId)
+    })
+  }
+
+  /**
    * Pin a session (recorded). The default mirrors the production face's
    * observable effect: the id leads the list state's pin set.
    * @param sessionId - session to pin.

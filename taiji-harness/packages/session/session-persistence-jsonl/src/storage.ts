@@ -432,6 +432,17 @@ export class JsonlBackendTracker {
   }
 
   /**
+   * Whether an active write handle or a pending claim holds the id in this
+   * process. A delete must refuse while one does: the writer's next append
+   * would recreate the artifact after the removal.
+   * @param id - the session to test.
+   * @returns true while a write claim exists.
+   */
+  hasWriter(id: SessionId): boolean {
+    return this.writers.has(id)
+  }
+
+  /**
    * Roll a failed write open back.
    * @param id - the session whose claim is dropped.
    */

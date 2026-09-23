@@ -817,7 +817,7 @@ export function WorkspaceBrowser({
   startSession,
   open,
   requestSessionRename,
-  notifyArchivedNotOpenable,
+  notifyArchivedReadonly,
   renameWorkspace,
   deleteWorkspace,
   insertWorkspaceBefore,
@@ -848,13 +848,11 @@ export function WorkspaceBrowser({
   const archivedFilter = useStore(s => s.archivedFilter ?? 'default')
   const groupExpansion = useStore(s => s.groupExpansion)
   const sessionOrderByAccount = useStore(s => s.sessionOrderByAccount)
-  // Archived sessions are not openable: the row stays visible under the
-  // filter but a click explains instead of navigating.
+  // An archived row stays viewable: clicking it opens the read-only view (the
+  // composer blocks input through the archived composer block) and explains
+  // how to continue.
   const guardedOpen = (sessionId: SessionId): void => {
-    if (archivedSessionIds.includes(sessionId)) {
-      notifyArchivedNotOpenable()
-      return
-    }
+    if (archivedSessionIds.includes(sessionId)) notifyArchivedReadonly()
     open(sessionId)
   }
   const workspaceReady = workspacePhase === 'ready' && workspaceStreamState !== 'loading'
@@ -980,10 +978,7 @@ export function WorkspaceBrowser({
   const composingRef = useRef(false)
 
   const openSearchResult = (sessionId: SessionId): void => {
-    if (archivedSessionIds.includes(sessionId)) {
-      notifyArchivedNotOpenable()
-      return
-    }
+    if (archivedSessionIds.includes(sessionId)) notifyArchivedReadonly()
     setRevealSessionId(sessionId)
     setQuery('')
     setSearchExpanded(false)

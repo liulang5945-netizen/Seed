@@ -1,12 +1,13 @@
 // @vitest-environment jsdom
 /**
  * The shipped Session row actions rendered directly with hand-built props:
- * the pin, rename, fork, and archive menu rows, the archive and pin hover
- * buttons, and the two `shell.overlay` surfaces they raise (rename dialog,
- * row notice). Every action reads its own injected hooks and calls its own
- * injected callbacks; what those callbacks do is apply.client.spec's
- * subject. The browser and the slot machinery stay out; the assembled
- * chain lives in rename-assembly.client.spec.
+ * the pin, rename, fork, archive, and delete menu rows, the archive, pin, and
+ * archived-only delete hover buttons, the Session header's unarchive
+ * affordance, and the `shell.overlay` surfaces the actions raise (rename
+ * dialog, archive and delete confirmations, row notice). Every action reads
+ * its own injected hooks and calls its own injected callbacks; what those
+ * callbacks do is apply.client.spec's subject. The browser and the slot
+ * machinery stay out; the assembled chain lives in rename-assembly.client.spec.
  */
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
@@ -20,12 +21,15 @@ import { bindSnapshotSelector, makeTranslate } from '@taiji/dsh-client-test-runt
 import { en as commonEn } from '@taiji/dsh-client-locale/src/locales/en.ts'
 import { zh as commonZh } from '@taiji/dsh-client-locale/src/locales/zh.ts'
 import type {
-  MenuOpenState, RowToast, RowToastState, SessionArchiveConfirmInjected, SessionArchiveConfirmRequest,
+  MenuOpenState, RowToast, RowToastState, SessionArchiveConfirmInjected,
+  SessionArchiveConfirmRequest, SessionDeleteConfirmInjected, SessionDeleteConfirmRequest,
   SessionRenameDialogInjected, SessionRenameTarget,
 } from '../src/client/contract/slots.ts'
 import {
   ArchiveSessionMenuItem, ArchiveSessionRowButton, SessionArchiveConfirmDialog,
+  SessionUnarchiveHeaderAction, type SessionUnarchiveHeaderActionProps,
 } from '../src/client/session-actions/ArchiveSession.tsx'
+import { DeleteSessionMenuItem, DeleteSessionRowButton, SessionDeleteConfirmDialog } from '../src/client/session-actions/DeleteSession.tsx'
 import { ForkSessionMenuItem } from '../src/client/session-actions/ForkSession.tsx'
 import { PinSessionMenuItem, PinSessionRowButton } from '../src/client/session-actions/PinSession.tsx'
 import { RenameSessionMenuItem, SessionRenameDialog } from '../src/client/session-actions/RenameSession.tsx'
@@ -455,6 +459,153 @@ declare module '@taiji/dsh-workspace/types' {
   }
 }
 
+describe('SessionUnarchiveHeaderAction', () => {
+  /**
+   * The header affordance's seat. The header slot is Session-scoped, so the
+   * runtimes the component never touches are absent and the cast names the
+   * seat the renderer assembles — the same shape every other Session-header
+   * spec hands its entry.
+   */
+  function headerSeat(archivedSessionIds: readonly SessionId[], unarchiveSession: () => void) {
+    return {
+      sessionId: ROW.sessionId,
+      t,
+      ...standard,
+      useWorkspaces: hook({ ...workspaces, archivedSessionIds }),
+      unarchiveSession,
+    } as SessionUnarchiveHeaderActionProps
+  }
+
+  it('renders the unarchive button only while the open session is archived, and unblocks on resolution', () => {
+    const unarchiveSession = vi.fn()
+    const { unmount } = render(
+      <SessionUnarchiveHeaderAction {...headerSeat([], unarchiveSession)} />,
+    )
+    expect(screen.queryByRole('button', { name: '取消归档' })).toBeNull()
+    unmount()
+    render(<SessionUnarchiveHeaderAction {...headerSeat([sid('one')], unarchiveSession)} />)
+    fireEvent.click(screen.getByRole('button', { name: '取消归档' }))
+    expect(unarchiveSession).toHaveBeenCalledWith(sid('one'))
+  })
+})
+
+describe('delete action', () => {
+  /** The delete share over fixed membership: the bound Set hook and the request callback the entries call. */
+  const deleteShare = (archived: readonly string[] = []) => ({
+    useArchived: hook(idSet(...archived)),
+    requestSessionDelete: vi.fn(),
+  })
+
+  it('menu row closes the menu, then asks for the delete confirmation', () => {
+    const { state, setMenuOpen } = openMenu()
+    const del = deleteShare()
+    render(<DeleteSessionMenuItem {...menuRow(state)} {...del} />)
+    fireEvent.click(screen.getByRole('menuitem', { name: '删除会话' }))
+    expect(del.requestSessionDelete).toHaveBeenCalledWith(sid('one'))
+    expect(setMenuOpen).toHaveBeenCalledWith(false)
+    expect(callOrder(setMenuOpen)).toBeLessThan(callOrder(del.requestSessionDelete))
+  })
+
+  it('hover button arms only on an archived row', () => {
+    const grouped = deleteShare()
+    const { unmount } = render(<DeleteSessionRowButton {...actionRow} {...grouped} />)
+    expect(screen.queryByRole('button', { name: '删除会话' })).toBeNull()
+    expect(grouped.requestSessionDelete).not.toHaveBeenCalled()
+    unmount()
+
+    const archived = deleteShare(['one'])
+    render(<DeleteSessionRowButton {...actionRow} {...archived} />)
+    fireEvent.click(screen.getByRole('button', { name: '删除会话' }))
+    expect(archived.requestSessionDelete).toHaveBeenCalledWith(sid('one'))
+  })
+
+  describe('SessionDeleteConfirmDialog', () => {
+    /** The dialog over a test-owned request source; settling clears the request the way apply does. */
+    function deleteDialog(deleteSession: SessionDeleteConfirmInjected['deleteSession'], translate = t) {
+      const request = createSnapshotStore<SessionDeleteConfirmRequest | null>(null)
+      const settleSessionDelete = vi.fn(() => { request.set(null) })
+      render(
+        <SessionDeleteConfirmDialog
+          {...overlay}
+          t={translate}
+          useDeleteRequest={bindSnapshotSelector(request)}
+          settleSessionDelete={settleSessionDelete}
+          deleteSession={deleteSession}
+        />,
+      )
+      const ask = (request_: SessionDeleteConfirmRequest): void => {
+        act(() => { request.set(request_) })
+      }
+      return { settleSessionDelete, ask }
+    }
+
+    it('renders nothing until a confirmation is requested', () => {
+      deleteDialog(vi.fn(async () => {}))
+      expect(screen.queryByRole('dialog')).toBeNull()
+    })
+
+    it('warns that the deletion is irreversible, then deletes on confirm', async () => {
+      const pending = Promise.withResolvers<undefined>()
+      const deleteSession = vi.fn(() => pending.promise)
+      const { settleSessionDelete, ask } = deleteDialog(deleteSession)
+      ask({ sessionId: sid('one'), displayTitle: 'Session title' })
+      const dialog = screen.getByRole('dialog', { name: '删除此会话？' })
+      expect(dialog.textContent).toContain('“Session title”及其全部对话记录将被永久删除')
+      expect(dialog.textContent).toContain('删除后不可恢复')
+      expect(screen.queryByRole('list')).toBeNull()
+      fireEvent.click(screen.getByRole('button', { name: '删除' }))
+      expect(deleteSession).toHaveBeenCalledWith(sid('one'), undefined)
+      expect(screen.getByRole('status').textContent).toBe('正在删除…')
+      await act(async () => { pending.resolve(undefined) })
+      expect(settleSessionDelete).toHaveBeenCalledOnce()
+      expect(screen.queryByRole('dialog')).toBeNull()
+    })
+
+    it('escalates a running-work refusal into the stop-and-delete confirm', async () => {
+      const refusal = Object.assign(new Error('workspace session delete failed: workspace/session-active: active'), {
+        name: 'WorkspaceSessionDeleteError',
+        rpcError: {
+          code: 'workspace/session-active',
+          details: { activity: [{ kind: 'turn' as const }, { kind: 'job' as const, items: [{ id: 'bash-1', label: 'pnpm run build' }] }] },
+        },
+      })
+      const deleteSession = vi.fn<SessionDeleteConfirmInjected['deleteSession']>()
+        .mockRejectedValueOnce(refusal)
+        .mockResolvedValueOnce(undefined)
+      const { settleSessionDelete, ask } = deleteDialog(deleteSession)
+      ask({ sessionId: sid('one'), displayTitle: 'Session title' })
+      fireEvent.click(screen.getByRole('button', { name: '删除' }))
+      await waitFor(() => { expect(screen.getByRole('button', { name: '停止并删除' })).toBeTruthy() })
+      const lines = [...screen.getByRole('list', { name: '将被停止的工作' }).querySelectorAll('li')].map(li => li.textContent)
+      expect(lines).toEqual(['进行中的回合', '1 个后台任务：pnpm run build'])
+      fireEvent.click(screen.getByRole('button', { name: '停止并删除' }))
+      expect(deleteSession).toHaveBeenLastCalledWith(sid('one'), { stopActivity: true })
+      await waitFor(() => { expect(settleSessionDelete).toHaveBeenCalledOnce() })
+      expect(screen.queryByRole('dialog')).toBeNull()
+    })
+
+    it('keeps the dialog open with a surfaced rejection and settles on Cancel', async () => {
+      const deleteSession = vi.fn<SessionDeleteConfirmInjected['deleteSession']>()
+        .mockRejectedValueOnce(new Error('delete exploded'))
+      const { settleSessionDelete, ask } = deleteDialog(deleteSession)
+      ask({ sessionId: sid('one'), displayTitle: 'Session title' })
+      fireEvent.click(screen.getByRole('button', { name: '删除' }))
+      await waitFor(() => { expect(screen.getByRole('alert').textContent).toBe('delete exploded') })
+      expect(settleSessionDelete).not.toHaveBeenCalled()
+      fireEvent.click(screen.getByRole('button', { name: '取消' }))
+      expect(settleSessionDelete).toHaveBeenCalledOnce()
+      expect(deleteSession).toHaveBeenCalledOnce()
+    })
+
+    it('selects the irreversible-warning wording in English too', () => {
+      const { ask } = deleteDialog(vi.fn(async () => {}), tEn)
+      ask({ sessionId: sid('one'), displayTitle: 'Session title' })
+      expect(screen.getByRole('dialog', { name: 'Delete this session?' }).textContent)
+        .toContain('“Session title” and its whole conversation history will be permanently deleted')
+    })
+  })
+})
+
 describe('RowActionToast', () => {
   /** The notice surface over a test-owned notice source; dismissal clears the notice the way apply does. */
   function toastSurface() {
@@ -515,8 +666,9 @@ describe('RowActionToast', () => {
   it.each([
     ['pinFailed', '置顶失败，请稍后重试'],
     ['unpinFailed', '取消置顶失败，请稍后重试'],
-    ['archivedNotOpenable', '已归档对话暂时无法查看，请取消归档后查看'],
+    ['archivedReadonly', '已归档对话以只读模式打开；如需继续，请先取消归档'],
     ['defaultWorkspaceFailed', '无法创建默认工作区，请通过“选择工作区”选择文件夹'],
+    ['sessionDeleted', '会话已删除'],
   ] as const)('shows the %s warning and takes it down when its hold ends', (kind, text) => {
     vi.useFakeTimers()
     try {

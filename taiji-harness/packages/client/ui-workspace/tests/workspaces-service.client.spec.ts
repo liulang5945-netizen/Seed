@@ -196,6 +196,15 @@ class FakeWorkspaces implements IWorkspaces {
   declare readonly insertSessionBefore: IWorkspaces['insertSessionBefore']
   readonly pinCalls: SessionId[] = []
   readonly unpinCalls: SessionId[] = []
+  readonly deleteCalls: SessionId[] = []
+  onDelete: IWorkspaces['deleteSession'] = async (sessionId) => {
+    this.deleteCalls.push(sessionId)
+    this.list.update(state => ({
+      ...state,
+      archivedSessionIds: state.archivedSessionIds.filter(id => id !== sessionId),
+      pinnedSessionIds: state.pinnedSessionIds.filter(id => id !== sessionId),
+    }))
+  }
   onPin: IWorkspaces['pinSession'] = async (sessionId) => {
     this.list.update(state => ({
       ...state,
@@ -215,6 +224,11 @@ class FakeWorkspaces implements IWorkspaces {
   unarchiveSession(sessionId: SessionId): Promise<void> {
     this.unarchiveCalls.push(sessionId)
     return this.onUnarchive(sessionId)
+  }
+
+  deleteSession(sessionId: SessionId, options?: { readonly stopActivity?: boolean }): Promise<void> {
+    void options
+    return this.onDelete(sessionId)
   }
 
   pinSession(sessionId: SessionId): Promise<void> {
@@ -302,6 +316,7 @@ function bench(options: BenchOptions = {}) {
     sessions,
     view.actions,
     notify,
+    () => 'archived sessions are read-only',
   )
   return { ctx, directoryPicker, sessions, uiWorkspace, workspaces, layout, selectPanel, view, notify }
 }

@@ -924,7 +924,9 @@ describe('workspace browser rows', () => {
     // the pin marker stays off an archived row.
     expect(screen.queryByRole('img', { name: '已归档' })).toBeNull()
     expect(screen.queryByRole('img', { name: '已置顶' })).toBeNull()
-    expect(row.getAttribute('aria-description')).toBe('已归档对话暂时无法查看，请取消归档后查看')
+    // The description names the read-only stance: an archived row opens, but
+    // only as a view.
+    expect(row.getAttribute('aria-description')).toBe('已归档，只读查看')
   })
 
   it('double-clicking the title asks for the rename dialog with the current title, but not on a blank row', () => {

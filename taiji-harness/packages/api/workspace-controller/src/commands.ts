@@ -7,6 +7,7 @@ import {
   WorkspaceArchivedSessionPinError,
   WorkspaceId,
   WorkspaceMoveInvalidError,
+  WorkspaceOpenSessionError,
   WorkspaceOrderInvalidError,
   WorkspaceUnknownSessionError,
 } from '@taiji/dsh-workspace'
@@ -18,6 +19,8 @@ import type {
   WorkspaceCreateRequest,
   WorkspaceCreateValue,
   WorkspaceDeleteRequest,
+  WorkspaceDeleteSessionRequest,
+  WorkspaceDeleteSessionValue,
   WorkspaceDeleteValue,
   WorkspaceInsertBeforeRequest,
   WorkspaceInsertSessionBeforeRequest,
@@ -192,6 +195,48 @@ export class WorkspaceCommands {
   async unarchiveSession(request: WorkspaceUnarchiveSessionRequest): Promise<WorkspaceArchiveValue> {
     await this.ctx.workspaceRegistry.unarchiveSession(request.sessionId)
     return { archivedSessionIds: [...this.ctx.workspaceRegistry.archivedSessionIds] }
+  }
+
+  /**
+   * Delete one Session physically and forget its registry accounting. A live
+   * Session refuses as `workspace/session-open`; without `stopActivity`
+   * running work refuses as `workspace/session-active` with the reported
+   * activity, and with it the work is stopped before the removal.
+   * @param request - Session identity to delete and whether to stop its work.
+   * @returns the complete resulting archive and pin sets.
+   */
+  async deleteSession(request: WorkspaceDeleteSessionRequest): Promise<WorkspaceDeleteSessionValue> {
+    try {
+      await this.ctx.workspaceRegistry.deleteSession(
+        request.sessionId,
+        request.stopActivity === true ? { stopActivity: true } : {},
+      )
+    } catch (error) {
+      if (error instanceof WorkspaceUnknownSessionError) {
+        throw new RemoteError('session/not-found', error.message, { sessionId: request.sessionId }, { cause: error })
+      }
+      if (error instanceof WorkspaceActiveSessionError) {
+        throw new RemoteError(
+          'workspace/session-active',
+          error.message,
+          { sessionId: request.sessionId, activity: error.activity },
+          { cause: error },
+        )
+      }
+      if (error instanceof WorkspaceOpenSessionError) {
+        throw new RemoteError(
+          'workspace/session-open',
+          error.message,
+          { sessionId: request.sessionId },
+          { cause: error },
+        )
+      }
+      throw error
+    }
+    return {
+      archivedSessionIds: [...this.ctx.workspaceRegistry.archivedSessionIds],
+      pinnedSessionIds: [...this.ctx.workspaceRegistry.pinnedSessionIds],
+    }
   }
 
   /**

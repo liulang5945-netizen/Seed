@@ -12,12 +12,16 @@ import { LocaleRuntime } from '@taiji/dsh-client-locale/client'
 import { apply, inject } from '@taiji/dsh-client-ui-workspace/client'
 import type { WorkspaceBrowserInjected, WorkspacePickerInjected } from '@taiji/dsh-client-ui-workspace/client'
 import {
-  type ArchiveSessionInjected, type ForkSessionInjected, menuOpenStateFactory, type PinSessionInjected,
-  type RenameSessionInjected, type RowToastInjected, type SessionArchiveConfirmInjected, type SessionRenameDialogInjected,
+  type ArchiveSessionInjected, type DeleteSessionInjected, type ForkSessionInjected, menuOpenStateFactory,
+  type PinSessionInjected, type RenameSessionInjected, type RowToastInjected, type SessionArchiveConfirmInjected,
+  type SessionDeleteConfirmInjected, type SessionRenameDialogInjected, type UnarchiveHeaderInjected,
   type WorkspaceViewStoreHandle,
 } from '../src/client/contract/slots.ts'
 import { WorkspaceBrowser } from '../src/client/rows/WorkspaceBrowser.tsx'
-import { ArchiveSessionMenuItem, ArchiveSessionRowButton, SessionArchiveConfirmDialog } from '../src/client/session-actions/ArchiveSession.tsx'
+import {
+  ArchiveSessionMenuItem, ArchiveSessionRowButton, SessionArchiveConfirmDialog, SessionUnarchiveHeaderAction,
+} from '../src/client/session-actions/ArchiveSession.tsx'
+import { DeleteSessionMenuItem, DeleteSessionRowButton, SessionDeleteConfirmDialog } from '../src/client/session-actions/DeleteSession.tsx'
 import { ForkSessionMenuItem } from '../src/client/session-actions/ForkSession.tsx'
 import { PinSessionMenuItem, PinSessionRowButton } from '../src/client/session-actions/PinSession.tsx'
 import { RenameSessionMenuItem, SessionRenameDialog } from '../src/client/session-actions/RenameSession.tsx'
@@ -137,16 +141,26 @@ async function bench() {
   }
 }
 
-type HoleName = 'sidebar.workspaces' | 'conversation.hero.workspace' | 'conversation.empty.workspace' | 'shell.overlay'
+type HoleName =
+  | 'sidebar.workspaces' | 'conversation.hero.workspace' | 'conversation.empty.workspace'
+  | 'shell.overlay' | 'conversation.session.header.actions'
 
 const MENU_ITEM = 'sidebar.workspaces.session.menu.item'
 const ROW_ACTION = 'sidebar.workspaces.session.row.action'
-type RowListName = typeof MENU_ITEM | typeof ROW_ACTION | 'shell.overlay'
+const HEADER_ACTION = 'conversation.session.header.actions'
+type RowListName = typeof MENU_ITEM | typeof ROW_ACTION | typeof HEADER_ACTION | 'shell.overlay'
 
-/** Declare any subset of the holes with a single root registration ('root' is a single slot); the overlay is a list. */
+/** The holes that host a list of entries rather than one slot. */
+const LIST_HOLES: ReadonlySet<string> = new Set<string>(['shell.overlay', HEADER_ACTION])
+
+/** Declare any subset of the holes under this registry's own root ('root' is a single slot); lists take a list spec. */
 function declare(slots: SlotRegistry, ...names: HoleName[]): () => void {
   const children = Object.fromEntries(names.map(name => [
-    name, { kind: name === 'shell.overlay' ? 'list' : 'single', scope: 'root' },
+    name,
+    {
+      kind: LIST_HOLES.has(name) ? 'list' : 'single',
+      scope: name === HEADER_ACTION ? 'session' : 'root',
+    },
   ]))
   return slots.register({ name: 'root', children } as never, () => null)
 }
@@ -215,9 +229,9 @@ describe('ui-workspace apply', () => {
     await Promise.resolve()
     expect(after.slots.entries('conversation.hero.workspace')[0]!.component).toBe(WorkspacePicker)
     // The row actions follow the browser's own declaration, whenever it lands.
-    expect(after.slots.entries(MENU_ITEM)).toHaveLength(4)
-    expect(after.slots.entries(ROW_ACTION)).toHaveLength(2)
-    expect(after.slots.entries('shell.overlay')).toHaveLength(3)
+    expect(after.slots.entries(MENU_ITEM)).toHaveLength(5)
+    expect(after.slots.entries(ROW_ACTION)).toHaveLength(3)
+    expect(after.slots.entries('shell.overlay')).toHaveLength(4)
   })
 
   it('declares the two Session row lists and registers the shipped actions and overlay surfaces into them', async () => {
@@ -238,14 +252,17 @@ describe('ui-workspace apply', () => {
       ['rename', 200, RenameSessionMenuItem, 'workspace'],
       ['fork', 300, ForkSessionMenuItem, 'workspace'],
       ['archive', 400, ArchiveSessionMenuItem, 'workspace'],
+      ['delete', 500, DeleteSessionMenuItem, 'workspace'],
     ])
     expect(rows(ROW_ACTION)).toEqual([
       ['archive', 100, ArchiveSessionRowButton, 'workspace'],
       ['pin', 200, PinSessionRowButton, 'workspace'],
+      ['delete', 300, DeleteSessionRowButton, 'workspace'],
     ])
     expect(rows('shell.overlay')).toEqual([
       ['workspace.session-rename', undefined, SessionRenameDialog, 'workspace'],
       ['workspace.session-archive', undefined, SessionArchiveConfirmDialog, 'workspace'],
+      ['workspace.session-delete', undefined, SessionDeleteConfirmDialog, 'workspace'],
       ['workspace.row-toast', undefined, RowActionToast, 'workspace'],
     ])
     // Only the browser declares the viewing store; its handle hands out the
@@ -262,6 +279,33 @@ describe('ui-workspace apply', () => {
       expect(faceOf(entry(b.slots, MENU_ITEM, id))).not.toHaveProperty('notify')
       expect(faceOf(entry(b.slots, ROW_ACTION, id))).not.toHaveProperty('notify')
     }
+    // The delete share hands the row the archived Set its hover button arms
+    // on and the request hop both entries raise; the dialog holds the Host
+    // hop and the pending request.
+    const deleteFace = faceOf(entry(b.slots, ROW_ACTION, 'delete')) as DeleteSessionInjected
+    expect(deleteFace.hooks.archived.getSnapshot()).toEqual(new Set())
+    expect(deleteFace.requestSessionDelete).toBeTypeOf('function')
+    const deleteDialog = faceOf(entry(b.slots, 'shell.overlay', 'workspace.session-delete')) as SessionDeleteConfirmInjected
+    expect(deleteDialog.hooks.deleteRequest.getSnapshot()).toBeNull()
+    expect(deleteDialog.deleteSession).toBeTypeOf('function')
+  })
+
+  it('rides the Session header with the archived restore affordance', async () => {
+    const b = await bench()
+    declare(b.slots, HEADER_ACTION)
+    await b.ctx.plugin({ inject: [...inject], apply }).await()
+    await Promise.resolve()
+    const header = b.slots.entries(HEADER_ACTION)
+    expect(header.map(registration => [
+      registration.options.id, registration.options.order, registration.component, registration.locale,
+    ])).toEqual([
+      ['workspace-unarchive', 5, SessionUnarchiveHeaderAction, 'workspace'],
+    ])
+    // The header seat carries no hooks source: the entry reads the archived
+    // set through the global Workspace hook the Session seat already binds.
+    const face = faceOf(header[0]!) as UnarchiveHeaderInjected
+    expect(Object.keys(face)).toEqual(['unarchiveSession'])
+    expect(face.unarchiveSession).toBeTypeOf('function')
   })
 
   it('derives the pinned and archived Sets from the Workspace snapshot, rebuilt only when it changes', async () => {
@@ -437,12 +481,12 @@ describe('ui-workspace apply', () => {
     const browser = faceOf(b.slots.entries('sidebar.workspaces')[0]!) as WorkspaceBrowserInjected
     const view = viewInstance(b.slots)
 
-    // The browser raises the not-openable notice into the same entry, and the source notifies.
+    // The browser raises the read-only notice into the same entry, and the source notifies.
     expect(toast.hooks.toast.getSnapshot()).toBeNull()
     const noticed = vi.fn()
     const unsubscribe = toast.hooks.toast.subscribe(noticed)
-    browser.notifyArchivedNotOpenable()
-    expect(toast.hooks.toast.getSnapshot()).toEqual({ kind: 'archivedNotOpenable', seq: 1 })
+    browser.notifyArchivedReadonly()
+    expect(toast.hooks.toast.getSnapshot()).toEqual({ kind: 'archivedReadonly', seq: 1 })
     expect(noticed).toHaveBeenCalledOnce()
     toast.dismissToast()
     expect(toast.hooks.toast.getSnapshot()).toBeNull()
@@ -589,9 +633,9 @@ describe('ui-workspace apply', () => {
     declare(b.slots, 'sidebar.workspaces', 'conversation.hero.workspace', 'conversation.empty.workspace', 'shell.overlay')
     const fiber = b.ctx.plugin({ inject: [...inject], apply })
     await fiber.await()
-    expect(b.slots.entries(MENU_ITEM)).toHaveLength(4)
-    expect(b.slots.entries(ROW_ACTION)).toHaveLength(2)
-    expect(b.slots.entries('shell.overlay')).toHaveLength(3)
+    expect(b.slots.entries(MENU_ITEM)).toHaveLength(5)
+    expect(b.slots.entries(ROW_ACTION)).toHaveLength(3)
+    expect(b.slots.entries('shell.overlay')).toHaveLength(4)
     await fiber.dispose()
     expect(b.slots.entries('sidebar.workspaces')).toHaveLength(0)
     expect(b.slots.entries('conversation.hero.workspace')).toHaveLength(0)

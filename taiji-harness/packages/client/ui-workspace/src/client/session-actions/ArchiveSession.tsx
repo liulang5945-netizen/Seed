@@ -13,15 +13,22 @@ import type {} from '@taiji/dsh-agent/types'
 import type {} from '@taiji/dsh-jobs/view'
 import type {} from '@taiji/dsh-schedule/client'
 import type {} from '@taiji/dsh-subagent/client'
+import type { InjectFace, PropsLocale, PropsRuntime } from '@taiji/dsh-client-ui-slots'
 import {
   Button, IconArchiveOutlineRegular, IconUnarchiveOutlineRegular, MenuItemButton, Modal, Tooltip,
 } from '@taiji/dsh-client-ui-primitives'
 import type {
   ArchiveSessionInjected, SessionArchiveConfirmInjected, SessionArchiveConfirmProps, SessionArchiveConfirmRequest,
-  SessionMenuItemProps, SessionRowActionProps,
+  SessionMenuItemProps, SessionRowActionProps, UnarchiveHeaderInjected,
 } from '../contract/slots.ts'
 import css from '../rows/Rows.module.css'
 import browserCss from '../rows/WorkspaceBrowser.module.css'
+
+/** Full props of the Session header's unarchive affordance. */
+export type SessionUnarchiveHeaderActionProps =
+  PropsRuntime<'conversation.session.header.actions'>
+  & PropsLocale<'workspace'>
+  & InjectFace<UnarchiveHeaderInjected>
 
 /**
  * Menu row (order 400): archive, or restore an archived row.
@@ -166,4 +173,28 @@ function activityLine(entry: SessionActivity, t: SessionArchiveConfirmProps['t']
     case 'schedule': return t(`archive.confirm.schedules.${plural}`, { n, names })
     default: return t(`archive.confirm.other.${plural}`, { kind: entry.kind, n })
   }
+}
+
+/**
+ * The read-only archived view's explicit restore affordance (order 5 in the
+ * Session header actions): an Unarchive button that renders only while the
+ * open Session is archived, unblocking the composer on resolution.
+ * @param props - the open Session, the Workspace snapshot hook, and the unarchive hop.
+ * @returns the button, or nothing while the Session is not archived.
+ */
+export function SessionUnarchiveHeaderAction({
+  sessionId, useWorkspaces, unarchiveSession, t,
+}: SessionUnarchiveHeaderActionProps) {
+  const archived = useWorkspaces(state => state.archivedSessionIds.includes(sessionId))
+  if (!archived) return null
+  return (
+    <Button
+      variant="outline"
+      size="sm"
+      icon={<IconUnarchiveOutlineRegular size={14} />}
+      onClick={() => { unarchiveSession(sessionId) }}
+    >
+      {t('menu.unarchiveSession')}
+    </Button>
+  )
 }

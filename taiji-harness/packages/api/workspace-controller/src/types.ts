@@ -44,6 +44,10 @@ declare module '@taiji/dsh-typert-protocol' {
       readonly sessionId: SessionId
       readonly activity: readonly SessionActivity[]
     }
+    /** The Session is live in the Host process and owns its storage write lock, so deletion was refused without a write. */
+    'workspace/session-open': {
+      readonly sessionId: SessionId
+    }
     /** The Session or its anchor is not in the Workspace's manual order. */
     'workspace/move-invalid': {
       readonly workspaceId: WorkspaceId
@@ -135,6 +139,23 @@ export interface WorkspaceArchiveSessionRequest {
 /** Session requested for restoration from the archived Session list. */
 export interface WorkspaceUnarchiveSessionRequest {
   readonly sessionId: SessionId
+}
+
+/**
+ * Session requested for physical deletion. The Session must not be live in
+ * the Host process; without `stopActivity` running work refuses the deletion
+ * as `workspace/session-active`, with it the work is stopped before the
+ * removal.
+ */
+export interface WorkspaceDeleteSessionRequest {
+  readonly sessionId: SessionId
+  readonly stopActivity?: boolean
+}
+
+/** Complete archive and pin sets after one Session deletion. */
+export interface WorkspaceDeleteSessionValue {
+  readonly archivedSessionIds: readonly SessionId[]
+  readonly pinnedSessionIds: readonly SessionId[]
 }
 
 /** Complete archived Session set after a mutation. */

@@ -26,11 +26,11 @@
  * row of a Session's "..." menu is an entry of
  * `sidebar.workspaces.session.menu.item`, and every hover button at the row's
  * end is an entry of `sidebar.workspaces.session.row.action`. The shipped
- * actions — pin, rename, fork, archive — are ordinary entries this package
- * registers from `apply`, each carrying its own behavior in its own inject
- * face and reading its own Host state through hooks that face injects, so a
- * client plugin's action lands beside them by `order` and needs nothing from
- * the browser beyond the row identity.
+ * actions — pin, rename, fork, archive, delete — are ordinary entries this
+ * package registers from `apply`, each carrying its own behavior in its own
+ * inject face and reading its own Host state through hooks that face injects,
+ * so a client plugin's action lands beside them by `order` and needs nothing
+ * from the browser beyond the row identity.
  */
 import type {
   HostObservable, InjectFace, PropsHooks, PropsLocale, PropsRenderSlots, PropsRuntime, PropsStore, SlotHookFactory,
@@ -102,10 +102,10 @@ declare module '@taiji/dsh-client-ui-slots' {
     /**
      * The rows of one Session's "..." menu, in ascending `order`. ui-workspace
      * registers the shipped rows here — `pin` (100), `rename` (200), `fork`
-     * (300), `archive` (400) — so a plugin row is placed by its own `order`
-     * among them. Use a package-namespaced `id`; reusing a shipped id at
-     * another `priority` shadows that row. Each entry renders one
-     * `role="menuitem"` `<button>` (the shipped rows use ui-primitives'
+     * (300), `archive` (400), `delete` (500) — so a plugin row is placed by
+     * its own `order` among them. Use a package-namespaced `id`; reusing a
+     * shipped id at another `priority` shadows that row. Each entry renders
+     * one `role="menuitem"` `<button>` (the shipped rows use ui-primitives'
      * `MenuItemButton`, which adds the host styling and `separatorBefore`),
      * decides its own visibility from its own state, and dismisses the menu
      * through the injected `useMenuOpenState` hook after acting; the list's
@@ -192,7 +192,7 @@ export type WorkspaceBrowserInjected = {
    * Workspace, then the recent Workspace, or clear into the New Session view.
    */
   startSession: (workspaceId?: WorkspaceId) => void
-  /** Open a real Session. */
+  /** Open a real Session; an archived row opens as a read-only view. */
   open: (sessionId: SessionId) => void
   /**
    * Search current visible conversation messages. The Host fixes the result
@@ -206,8 +206,8 @@ export type WorkspaceBrowserInjected = {
   searchResultLimit: number
   /** Open the Session rename dialog (a row title double-click); the rename action entry raises the same request. */
   requestSessionRename: (sessionId: SessionId, currentTitle: string) => void
-  /** Tell the user an archived row cannot be opened (a click on it). */
-  notifyArchivedNotOpenable: () => void
+  /** Tell the user an archived row opened as a read-only view (a click on it). */
+  notifyArchivedReadonly: () => void
   /** Rename a Host Workspace (rejects on name conflict; resolves on durability). */
   renameWorkspace: (workspaceId: WorkspaceId, title: string) => Promise<void>
   /** Delete only a Host Workspace registration; directory and Session logs remain. */
@@ -244,8 +244,9 @@ export type RowToast =
   | { kind: 'stoppedAndArchived'; sessionId: SessionId }
   | { kind: 'pinFailed' }
   | { kind: 'unpinFailed' }
-  | { kind: 'archivedNotOpenable' }
+  | { kind: 'archivedReadonly' }
   | { kind: 'defaultWorkspaceFailed' }
+  | { kind: 'sessionDeleted' }
   /**
    * An explicit New Session request that failed. `message` is untranslated:
    * a Host refusal as `code: message` — the stable code stays in the copy so
@@ -299,6 +300,17 @@ export interface ArchiveSessionInjected {
 }
 
 /**
+ * The read-only archived view's restore share: the Session header's unarchive
+ * affordance reads the archived set through the global Workspace hook the
+ * Session seat already carries, and calls the same unarchive hop the row's
+ * menu uses.
+ */
+export interface UnarchiveHeaderInjected {
+  /** Remove a Session from the registry-global archived set. */
+  unarchiveSession: (sessionId: SessionId) => void
+}
+
+/**
  * A stop-and-archive confirmation the archive action asked for: the Host
  * refused the plain archive because this work still runs.
  */
@@ -334,6 +346,52 @@ export interface SessionArchiveConfirmInjected {
 export interface ForkSessionInjected {
   /** Fork a Session at its last completed turn; the child arrives through the Host list. */
   forkSession: (sessionId: SessionId) => void
+}
+
+/**
+ * Delete action share (menu row and archived-row hover button). The entry
+ * raises the confirmation; the dialog entry performs the Host call, so the
+ * destructive request always passes through one explicit consent step.
+ */
+export interface DeleteSessionInjected {
+  hooks: {
+    /** Archived Session ids (the hover button only arms on an archived row). */
+    archived: HostObservable<ReadonlySet<SessionId>>
+  }
+  /** Ask for the delete confirmation dialog, seeded with the row's title. */
+  requestSessionDelete: (sessionId: SessionId) => void
+}
+
+/**
+ * A Session deletion the delete action asked for, plus the activity a Host
+ * refusal for running work reported after the first confirm press.
+ */
+export interface SessionDeleteConfirmRequest {
+  /** Session to delete. */
+  sessionId: SessionId
+  /** The row's display title, named in the dialog. */
+  displayTitle: string
+  /** What the Host reported running after a refused plain delete; absent before it. */
+  activity?: readonly SessionActivity[]
+}
+
+/**
+ * Delete dialog share: the pending confirmation, its settlement, and the Host
+ * hop the dialog confirms with (`stopActivity` when the refusal named work).
+ */
+export interface SessionDeleteConfirmInjected {
+  hooks: {
+    /** The confirmation asked for, until the dialog consumes or cancels it. */
+    deleteRequest: HostObservable<SessionDeleteConfirmRequest | null>
+  }
+  /** Consume or cancel the pending confirmation. */
+  settleSessionDelete: () => void
+  /**
+   * Delete a Session physically on the Host; with `stopActivity` the Host
+   * stops the reported work first. Resolves once the accounting write and the
+   * log removal are durable.
+   */
+  deleteSession: (sessionId: SessionId, options?: { readonly stopActivity?: boolean }) => Promise<void>
 }
 
 /** Rename action share: the row only raises the request; the dialog entry answers it. */
@@ -389,6 +447,13 @@ export type SessionArchiveConfirmProps =
   & PropsLocale<'workspace'>
   & Omit<SessionArchiveConfirmInjected, 'hooks'>
   & PropsHooks<SessionArchiveConfirmInjected['hooks']>
+
+/** Props of the delete dialog entry in `shell.overlay`. */
+export type SessionDeleteConfirmProps =
+  PropsRuntime<'shell.overlay'>
+  & PropsLocale<'workspace'>
+  & Omit<SessionDeleteConfirmInjected, 'hooks'>
+  & PropsHooks<SessionDeleteConfirmInjected['hooks']>
 
 /** Props of the row toast entry in `shell.overlay`. */
 export type RowToastProps =

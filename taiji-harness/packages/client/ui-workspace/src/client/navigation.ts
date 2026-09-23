@@ -15,6 +15,7 @@ import type {
   IWorkspaces, WorkspaceId, WorkspaceSnapshot, WorkspaceView,
 } from '@taiji/dsh-api-workspace-controller/client'
 import type { SessionId } from '@taiji/dsh-session/types'
+import type {} from '@taiji/dsh-client-ui-conversation/client'
 import type {} from '@taiji/dsh-client-ui-layout/client'
 import type {} from '@taiji/dsh-client-locale/client'
 import type { RowToast } from './contract/slots.ts'
@@ -72,6 +73,14 @@ export interface UiWorkspace {
    * @param sessionId - Session to unarchive.
    */
   unarchiveSession(sessionId: SessionId): Promise<void>
+  /**
+   * Delete a Session physically on the Host — its log artifacts leave session
+   * storage and its Workspace accounting is dropped — then refresh the
+   * Session list so the deleted row leaves the catalog.
+   * @param sessionId - Session to delete.
+   * @param options - `stopActivity` asks the Host to stop the Session's running work instead of refusing.
+   */
+  deleteSession(sessionId: SessionId, options?: { readonly stopActivity?: boolean }): Promise<void>
   /**
    * Pin a Session on the Host, then lead it in its accounts' saved orders
    * (its Workspace group or Ungrouped, and the flat list). The order write
@@ -131,6 +140,15 @@ class UiWorkspaceService extends Service implements UiWorkspace {
     {}, { persist: { name: 'dsh.sessions.current' } },
   )
   private mainReference: SessionReference | undefined
+  /**
+   * The Session currently viewed read-only because it was already archived
+   * when it was opened or restored. This is the one state where an archived
+   * current selection is deliberate, so `clearArchivedCurrent` keeps it; an
+   * unarchive or a later archive event resets it.
+   */
+  private archivedView: SessionId | undefined
+  /** The Session whose composer block this service currently holds raised. */
+  private blockedSession: SessionId | undefined
 
   /**
    * @param ctx - Client root Context.
@@ -139,6 +157,7 @@ class UiWorkspaceService extends Service implements UiWorkspace {
    * @param sessions - pure Session Controller.
    * @param view - the browser's viewing-store write set (one instance shared with its registration).
    * @param notify - show one notice through the Workspace notice channel.
+   * @param composerBlockReason - the localized composer-block copy for a read-only archived view.
    */
   constructor(
     ctx: Context,
@@ -147,6 +166,7 @@ class UiWorkspaceService extends Service implements UiWorkspace {
     private readonly sessions: ISessions,
     private readonly view: Pick<WorkspaceViewStoreActions, 'pinSessionOrder'>,
     private readonly notify: (toast: RowToast) => void,
+    private readonly composerBlockReason: () => string,
   ) {
     super(ctx, 'uiWorkspace')
     ctx.effect(() => {
@@ -154,6 +174,13 @@ class UiWorkspaceService extends Service implements UiWorkspace {
       return () => {
         stop()
         this.lifetime.abort()
+        const blocked = this.blockedSession
+        this.blockedSession = undefined
+        this.archivedView = undefined
+        const conversation = this.ctx.get('conversation')
+        if (blocked !== undefined && conversation !== undefined) {
+          conversation.blocks.set(blocked, undefined)
+        }
         const reference = this.mainReference
         this.mainReference = undefined
         reference?.release()
@@ -249,6 +276,15 @@ class UiWorkspaceService extends Service implements UiWorkspace {
     await this.workspaces.unarchiveSession(sessionId)
   }
 
+  async deleteSession(sessionId: SessionId, options: { readonly stopActivity?: boolean } = {}): Promise<void> {
+    await this.workspaces.deleteSession(sessionId, options)
+    // The deleted Session leaves the Host catalog only through a fresh list
+    // pull; the sidebar row and a current view converge onto its removal.
+    this.sessions.refresh().catch((reason: unknown) => {
+      console.warn('session list refresh after delete failed:', reason)
+    })
+  }
+
   async pinSession(sessionId: SessionId): Promise<void> {
     await this.workspaces.pinSession(sessionId)
     const { items, pinnedSessionIds, archivedSessionIds } = this.workspaces.list.getSnapshot()
@@ -286,6 +322,8 @@ class UiWorkspaceService extends Service implements UiWorkspace {
     const reconcile = (): void => {
       if (this.lifetime.signal.aborted) return
       if (this.clearArchivedCurrent()) return
+      if (this.clearMissingCurrent()) return
+      this.publishComposerBlock()
       if (initial !== 'waiting') return
       const workspace = this.workspaces.list.getSnapshot()
       const sessions = this.sessions.list.getSnapshot()
@@ -360,11 +398,52 @@ class UiWorkspaceService extends Service implements UiWorkspace {
     }
   }
 
+  /**
+   * Raise the archived composer block for the current read-only archived view,
+   * or clear the previously raised one. The conversation service may not be
+   * composed yet; publishes retry on the next selection or list change, and
+   * `apply` re-publishes once the service arrives.
+   */
+  private publishComposerBlock(): void {
+    const conversation = this.ctx.get('conversation')
+    if (conversation === undefined) return
+    const current = this.mainReference?.sessionId
+    const next = current !== undefined
+      && this.workspaces.list.getSnapshot().archivedSessionIds.includes(current)
+      ? current
+      : undefined
+    if (next === this.blockedSession) return
+    if (this.blockedSession !== undefined) conversation.blocks.set(this.blockedSession, undefined)
+    this.blockedSession = next
+    if (next !== undefined) conversation.blocks.set(next, { reason: this.composerBlockReason() })
+  }
+
+  /** Re-evaluate the composer block once the conversation service is composed. */
+  refreshComposerBlock(): void {
+    this.publishComposerBlock()
+  }
+
   /** @returns true when an archived current selection was cleared. */
   private clearArchivedCurrent(): boolean {
+    const { archivedSessionIds, phase } = this.workspaces.list.getSnapshot()
+    // A deliberately opened read-only archived view is not an archive event.
+    if (this.archivedView !== undefined && phase === 'ready'
+      && !archivedSessionIds.includes(this.archivedView)) {
+      this.archivedView = undefined
+    }
     const current = this.mainReference?.sessionId
-    if (current === undefined
-      || !this.workspaces.list.getSnapshot().archivedSessionIds.includes(current)) return false
+    if (current === undefined || current === this.archivedView
+      || !archivedSessionIds.includes(current)) return false
+    this.clearMain()
+    return true
+  }
+
+  /** @returns true when a current selection absent from the ready Session list was cleared. */
+  private clearMissingCurrent(): boolean {
+    const sessions = this.sessions.list.getSnapshot()
+    if (sessions.phase !== 'ready') return false
+    const current = this.mainReference?.sessionId
+    if (current === undefined || sessions.byId[current] !== undefined) return false
     this.clearMain()
     return true
   }
@@ -372,9 +451,11 @@ class UiWorkspaceService extends Service implements UiWorkspace {
   private clearMain(): void {
     const previous = this.mainReference
     this.mainReference = undefined
+    this.archivedView = undefined
     this.selection.set({})
     previous?.release()
     this.ctx.layout.selectPanel(null)
+    this.publishComposerBlock()
   }
 
   private replaceMain(
@@ -406,7 +487,14 @@ class UiWorkspaceService extends Service implements UiWorkspace {
     const previous = this.mainReference
     this.mainReference = reference
     previous?.release()
+    // A target already inside the archive set opens as a deliberate read-only
+    // view; every other open leaves any such view behind.
+    this.archivedView = this.workspaces.list.getSnapshot().archivedSessionIds
+      .includes(reference.sessionId)
+      ? reference.sessionId
+      : undefined
     if (panel === 'reveal') this.ctx.layout.selectPanel(null)
+    this.publishComposerBlock()
   }
 
 }
