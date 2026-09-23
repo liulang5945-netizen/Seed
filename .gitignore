@@ -263,4 +263,5 @@ focused-before.xml
 # 2026-09-23：Taiji Harness（dsh fork）本地运行沙箱 HOME。起服命令把 USERPROFILE/HOME
 # 重定向到这里（绕开 ~/.dsh 锁），目录内含 .dsh/.credentials.yaml、会话日志与 AppData
 # 缓存，全是本机运行态；带前导斜杠锚定仓库根（R2），不波及子目录同名物。
-/.dsh-sbx/
+# 通配后缀：每次验证可能新开一个干净 HOME（.dsh-sbx2、.dsh-sbx3…），逐个列举必漏。
+/.dsh-sbx*/
