@@ -238,7 +238,7 @@ export interface Config {
 }
 ```
 
-来源： [`packages/api/life-controller/src/index.ts:28`](../packages/api/life-controller/src/index.ts)
+来源： [`packages/api/life-controller/src/index.ts:29`](../packages/api/life-controller/src/index.ts)
 
 <a id="taijidsh-api-session-controller"></a>
 
