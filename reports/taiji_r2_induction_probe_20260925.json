@@ -1,0 +1,67 @@
+{
+  "format": "taiji-r2-induction-probe-v1",
+  "rng_seed": 20260924,
+  "trials": 30,
+  "string_len_chars": 6,
+  "tiers": {
+    "strong": ">=0.5",
+    "weak": ">=0.2",
+    "none": "<0.2"
+  },
+  "rows": [
+    {
+      "model": "base_16M",
+      "per_condition": {
+        "two_copies": {
+          "first_char_hit_rate": 0.0,
+          "full_loop_hit_rate": 0.0
+        },
+        "one_copy": {
+          "first_char_hit_rate": 0.0,
+          "full_loop_hit_rate": 0.0
+        },
+        "degenerate_check": {
+          "first_char_hit_rate": 0.0,
+          "full_loop_hit_rate": 0.0
+        }
+      },
+      "verdict": "no_induction_measured"
+    },
+    {
+      "model": "t1_8M",
+      "per_condition": {
+        "two_copies": {
+          "first_char_hit_rate": 0.0,
+          "full_loop_hit_rate": 0.0
+        },
+        "one_copy": {
+          "first_char_hit_rate": 0.0,
+          "full_loop_hit_rate": 0.0
+        },
+        "degenerate_check": {
+          "first_char_hit_rate": 0.0,
+          "full_loop_hit_rate": 0.0
+        }
+      },
+      "verdict": "no_induction_measured"
+    },
+    {
+      "model": "t5_5M",
+      "per_condition": {
+        "two_copies": {
+          "first_char_hit_rate": 0.0,
+          "full_loop_hit_rate": 0.0
+        },
+        "one_copy": {
+          "first_char_hit_rate": 0.0,
+          "full_loop_hit_rate": 0.0
+        },
+        "degenerate_check": {
+          "first_char_hit_rate": 0.0,
+          "full_loop_hit_rate": 0.0
+        }
+      },
+      "verdict": "no_induction_measured"
+    }
+  ]
+}
