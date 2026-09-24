@@ -12,6 +12,10 @@ so a later consolidation pass, or the Life panel, can read native and legacy
 samples through one shape.  Records are written with an append handle instead of
 rewriting the whole file the way the legacy improver does, and every failure
 here is non-fatal to the request that produced it.
+
+It also collects the assembled system prompt as a **constraint seed**: the
+native corpus holds dialogue only, so a constraint reaches the model through
+training rather than through a prompt prefix.
 """
 
 from __future__ import annotations
@@ -21,6 +25,7 @@ import logging
 import os
 import threading
 import time
+from hashlib import sha256
 from typing import Any
 
 from seed_platform.paths import get_external_path
@@ -31,7 +36,15 @@ _LOCK = threading.Lock()
 _DIR_NAME = "turn_records"
 _STRATEGY_FILE = "strategy_records.jsonl"
 _TASK_FILE = "task_outcomes.jsonl"
+_CONSTRAINT_FILE = "constraint_seeds.jsonl"
 _MAX_FIELD_CHARS = 200
+# The constraint seeds are training material, not a log: keep the whole prompt
+# (one assembled system prompt), still bounded so one runaway caller cannot
+# inflate the file.
+_MAX_CONSTRAINT_CHARS = 2000
+# Process-local dedup: the assembled system prompt is stable across turns, so
+# without this every turn would append the same seed.
+_SEEN_CONSTRAINTS: set[str] = set()
 # Statistics stay bounded on a long-lived runtime; the summary is a read for
 # operators and consolidation, not an audit of every turn ever taken.
 _MAX_SUMMARY_LINES = 20000
@@ -134,6 +147,54 @@ def _read(filename: str, limit: int = _MAX_SUMMARY_LINES) -> list[dict[str, Any]
     return records[-limit:]
 
 
+def record_constraint(system_prompt: str) -> None:
+    """Collect one assembled system prompt as a *training* seed, not a request field.
+
+    The native corpus is dialogue only (``{"text": "问：…\\n答：…"}``), so a system
+    prompt has no inference-time form the model was ever trained on: splicing it
+    into the byte stream would invent an out-of-distribution prefix, while
+    dropping it leaves the prompt with no effect at all.  The honest channel for
+    a constraint is therefore the corpus, not the prompt — so the native branch
+    keeps what the caller already sends and lets training internalise it later.
+    Identical prompts are recorded once per process.
+    """
+
+    text = (system_prompt or "").strip()
+    if not text:
+        return
+    digest = sha256(text.encode("utf-8")).hexdigest()
+    with _LOCK:
+        if digest in _SEEN_CONSTRAINTS:
+            return
+        _SEEN_CONSTRAINTS.add(digest)
+    try:
+        _append(
+            _CONSTRAINT_FILE,
+            {
+                "kind": "constraint",
+                "sha256": digest,
+                "text": text[:_MAX_CONSTRAINT_CHARS],
+            },
+        )
+    except Exception as e:  # pragma: no cover - defensive, never breaks a turn
+        logger.debug("【record_constraint】处理失败（非致命）: %s", e)
+
+
+def constraints() -> list[dict[str, Any]]:
+    """Return the distinct constraint seeds collected so far, newest first.
+
+    Deduplication happens here rather than on write so the file stays a plain
+    append-only log a later corpus builder can replay.
+    """
+
+    seen: dict[str, dict[str, Any]] = {}
+    for record in _read(_CONSTRAINT_FILE):
+        digest = str(record.get("sha256") or "")
+        if digest and digest not in seen:
+            seen[digest] = record
+    return sorted(seen.values(), key=lambda record: float(record.get("recorded_at") or 0), reverse=True)
+
+
 def summarize() -> dict[str, Any]:
     """Return what the native rings hold, for the Life surface and consolidation.
 
@@ -145,6 +206,7 @@ def summarize() -> dict[str, Any]:
     try:
         strategies = _read(_STRATEGY_FILE)
         tasks = _read(_TASK_FILE)
+        seeds = constraints()
     except Exception as e:  # pragma: no cover - defensive
         logger.debug("【summarize】处理失败（非致命）: %s", e)
         return {"available": False, "reason": str(e)}
@@ -162,7 +224,8 @@ def summarize() -> dict[str, Any]:
         "tasks": len(tasks),
         "tasks_succeeded": succeeded,
         "tasks_failed": len(tasks) - succeeded,
+        "constraint_seeds": len(seeds),
         "last_recorded_at": max(
-            [float(record.get("recorded_at") or 0) for record in strategies + tasks] or [0.0]
+            [float(record.get("recorded_at") or 0) for record in strategies + tasks + seeds] or [0.0]
         ),
     }

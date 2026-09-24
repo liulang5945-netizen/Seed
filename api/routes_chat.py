@@ -101,11 +101,18 @@ def _record_native_turn(request, answer, readable, workbench_result):
     task rings — and the sleep phases that analyse them had no samples at all.
     ``_record_life_interaction`` is deliberately not called here: the native
     homeostatic organ already observes and settles this same turn.
+
+    ``request.system_prompt`` is collected as a *training* seed rather than sent
+    to the model: the native corpus is dialogue only, so a system prompt has no
+    inference-time form the model was trained on.  Constraint internalisation
+    belongs to the corpus (see ``seed_platform.turn_records.record_constraint``).
     """
 
     try:
         from api.chat_strategies import _record_evolution, _record_recursive_strategies
+        from seed_platform.turn_records import record_constraint
 
+        record_constraint(request.system_prompt)
         _record_evolution(request.prompt, answer, readable)
         _record_recursive_strategies(
             request.prompt,

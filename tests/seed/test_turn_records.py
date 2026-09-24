@@ -26,6 +26,7 @@ from seed_platform import turn_records
 @pytest.fixture()
 def records_dir(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
     monkeypatch.setattr(turn_records, "get_external_path", lambda rel: str(tmp_path / rel))
+    turn_records._SEEN_CONSTRAINTS.clear()
     return tmp_path / "data" / "turn_records"
 
 
@@ -121,3 +122,50 @@ def test_tool_names_reads_only_real_calls() -> None:
     assert routes_chat._tool_names_from_workbench({"tool_call": "bash"}) == []
     assert routes_chat._tool_names_from_workbench({"tool_call": {"action": "read"}}) == ["read"]
     assert routes_chat._tool_names_from_workbench({"tool_call": {"name": "bash"}}) == ["bash"]
+
+
+def test_constraint_seed_is_collected_once_per_process(records_dir: Path) -> None:
+    turn_records.record_constraint("你是Seed，一个独立的AI生命体。")
+    turn_records.record_constraint("你是Seed，一个独立的AI生命体。")
+
+    records = _read(records_dir / "constraint_seeds.jsonl")
+    assert len(records) == 1
+    assert records[0]["kind"] == "constraint"
+    assert records[0]["sha256"]
+    assert records[0]["text"] == "你是Seed，一个独立的AI生命体。"
+
+
+def test_blank_constraint_is_skipped(records_dir: Path) -> None:
+    turn_records.record_constraint("   ")
+    assert _read(records_dir / "constraint_seeds.jsonl") == []
+
+
+def test_constraints_dedupes_across_appends(records_dir: Path) -> None:
+    # Two identical lines as a restarted process would leave them.
+    turn_records.record_constraint("policy A")
+    turn_records._SEEN_CONSTRAINTS.clear()
+    turn_records.record_constraint("policy A")
+    turn_records.record_constraint("policy B")
+
+    assert len(_read(records_dir / "constraint_seeds.jsonl")) == 3
+    texts = [record["text"] for record in turn_records.constraints()]
+    assert sorted(texts) == ["policy A", "policy B"]
+
+
+def test_summarize_counts_constraint_seeds(records_dir: Path) -> None:
+    turn_records.record_constraint("policy A")
+
+    assert turn_records.summarize()["constraint_seeds"] == 1
+
+
+def test_native_turn_collects_the_system_prompt(
+    records_dir: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setattr(chat_strategies, "legacy_available", lambda: False)
+    request = ChatRequest(prompt="hello", system_prompt="可执行约束段")
+
+    routes_chat._record_native_turn(request, "answer", True, None)
+
+    records = _read(records_dir / "constraint_seeds.jsonl")
+    assert len(records) == 1
+    assert records[0]["text"] == "可执行约束段"
