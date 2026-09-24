@@ -29,9 +29,9 @@
 
 | ID | 内容 | 重放动作 | 证据 |
 | --- | --- | --- | --- |
-| M1 | scope 更名 `@deepseek-ai/*` → `@taiji/*`（包目录名不变，`dsh-` 前缀保留） | 全文本替换 `@deepseek-ai/`→`@taiji/`；**唯一豁免** `python/sdk`、`python/sdk-runtime` 未改（真重命名有发布后果，未裁定）。注意改名会连带 lockfile/registry URL 区——以替换后 `pnpm install` 重建为准 | `88ad3040`（5206+43 文件）、清单见 `908a04f3` 尾部五类残余 |
-| M2 | 品牌文案对（固定字符串替换表）：`DeepSeek Harness`→`Taiji Harness`（身份句唯一定义处 `packages/core/system-prompt/src/index.ts` 的 `includeHarnessIdentity`，其余全部机械跟随）；首屏 slogan 现值「态之极境 / State at Its Utmost」（zh/en locale 两侧）；「探索未至之境/Into the Unknown」全仓禁再现 | 按表逐对替换；同步面：locale 字典、`skeleton.client.spec` 断言、web 快照期望（`snapshots/web/*`）、6 个 web e2e needle、`CONTRIBUTING(.zh).md` | `908a04f3`、`19fb5130`、`3c852a97`、`d4987c05`（预览版徽标摘除） |
-| M3 | 生成目录与锚：`config-catalog(.zh)`、`tool-catalog(.zh)`、`api-catalog.ts`、subsystem cordis-surface 区、slot-catalog、doc-graphs、tsconfig paths——全部由 `scripts/gen-*` 按**当前包名**产出（M1 之后自然翻成 `taijidsh-*` 锚） | 跑 §2 第 6 步后依次 `gen-cordis-catalog`／`gen-config-catalog`／`gen-tool-catalog`／`gen-client-catalog`／`gen-doc-graphs`／`gen-tsconfig-paths`，再 `--check` | 锚收敛先例 `eab07afe`（100 文件 642 处一次性对齐） |
+| M1 | scope 更名 `@deepseek-ai/*` → `@taiji/*`（包目录名不变，`dsh-` 前缀保留） | 全文本替换 `@deepseek-ai/`→`@taiji/`；**豁免仅限包名/发布身份**（`python/sdk*` 的 `deepseek_harness*` 不改——D2），其**串值**照改。三种形态都要盯：带斜杠 `@taiji/`、**独立段** `'@taiji'`（python/sdk 测试、native/system、boot 与 cli 测试、THIRD_PARTY_NOTICES、desktop-host 安装锚）、**转义正则** `/^@taiji\//`（`packages/client/tsdown.client.ts`、`benchmarks/tsdown.config.ts`）；改名会连带 lockfile/registry URL 区——以替换后 `pnpm install` 重建为准 | `88ad3040`（5206+43 文件）、清单见 `908a04f3` 尾部五类残余；文件级审计 2026-09-24 登记残差 22 条均属此族 |
+| M2 | 品牌文案对（固定字符串替换表）：`DeepSeek Harness`→`Taiji Harness`（身份句唯一定义处 `packages/core/system-prompt/src/index.ts` 的 `includeHarnessIdentity`，其余全部机械跟随）；**上游缩略语 `DSH` 单独出现处**→`Taiji`／`Taiji Harness`（locale `brand.localBuild`、`apps/web/index.html` 标题与 `vite.config.ts` 注入、`manifest.webmanifest` short_name、ui-agent-preset 向导文案、ui-sidebar-browser 错误文案）；首屏 slogan 现值「态之极境 / State at Its Utmost」（zh/en locale 两侧）；「探索未至之境/Into the Unknown」全仓禁再现 | 按表逐对替换；同步面：locale 字典、`skeleton.client.spec` 断言、web 快照期望（`snapshots/web/*`）、6 个 web e2e needle、`CONTRIBUTING(.zh).md` | `908a04f3`、`19fb5130`、`3c852a97`、`d4987c05`（预览版徽标摘除）、`88ad3040`（DSH 缩略语面） |
+| M3 | 生成目录与锚：`config-catalog(.zh)`、`tool-catalog(.zh)`、`api-catalog.ts`、subsystem cordis-surface 区、slot-catalog（`packages/extensions/cordis-client-runner/src/client/slot-catalog.ts`）、`apps/cli/composition.md`、doc-graphs、tsconfig paths——全部由 `scripts/gen-*`／装配变化按**当前包名**产出（M1 之后自然翻成 `taijidsh-*` 锚；H 组每片装配都会连带刷新 slot-catalog 与 composition.md） | 跑 §2 第 6 步后依次 `gen-cordis-catalog`／`gen-config-catalog`／`gen-tool-catalog`／`gen-client-catalog`／`gen-doc-graphs`／`gen-tsconfig-paths`，再 `--check` | 锚收敛先例 `eab07afe`（100 文件 642 处一次性对齐）、`b90c0de2`（ui-life 装配连带 slot-catalog） |
 | M4 | `package.json` 的 `repository/homepage/bugs` **保持指上游**——这是上游事实引用（THIRD_PARTY 同款），不是品牌残余，不改 | 无动作（防误改条目） | 边界裁定见 `908a04f3` 尾部⑤类分析 |
 
 ### H 组 · 手写增量（能力包与上游文件修改）
@@ -57,17 +57,18 @@
 | H2d | `tsconfig.host.json` / `tsconfig.client.json` | 新包项目引用；`tsconfig.base.json` 别名由 `gen-tsconfig-paths` 生成（M3） |
 | H2e | `packages/api/remotes/src/index.ts` | `lifeRemote` 的 import、type re-export 与 **mount 清单行**（漏了＝浏览器 `remote.life` 永不激活）；其 `package.json` devDependencies + `tsconfig.client.json` 引用 | `8924e2d4` |
 | H2f | 根 `AGENTS.md`/文档站点登记 | `SERVICE_PAGE`/`SERVICE_ROLES`/`SENTENCE_MODEL_EXPERIENCE`/`linkedTypePages`（`gen-cordis-catalog.ts` 的类型链接表：`Life*` 全系）随每片追加 | 各片 |
+| H2g | `.agents/notes/implemented/feature/**`（目录上游本有） | 我方每个行为改动按纪律增/改中英 note 对——决策反转须**新 Note＋旧 Note 原地更新事实并交叉链接**，不许只改旧文件（实证：first-use 资格 2026-09-23 新增 ＋ default-workspace 2026-09-20 更新＝`e8433b39` 配套）。重放：新增 note 整文件拷回（零冲突）；上游若动同文件人工合并 | `e8433b39`、`8955806a` |
 
 **H3 · 上游文件的功能性修改**（真正的 merge 冲突面；逐条给锚点）：
 
 | ID | 上游文件/区域 | 改动 | 证据 |
 | --- | --- | --- | --- |
 | H3a | `packages/client/ui-conversation` `conversation.blocks` | 每会话单槽 → **按 owner 键控多源注册表**（`COMPOSER_BLOCK_OWNERS`，归档只读 > 模型不可路由） | `5f5158ca` |
-| H3b | `packages/core/workspace` `WorkspaceRegistry` | ① `deleteSession`：摘 archive/pin + 关闭 live（`ctx.parallel('workspace/session-close')` 后复查）+ 物理删；② 默认身份不变量（删默认工作区同写清 `defaultWorkspaceId`）+ 启动自愈 `healStaleDefaultIdentity()`；③ 首次创建资格放宽为"注册表为空" | `8955806a`、`4b8ab255`、`e8433b39` |
-| H3c | `packages/api/session-controller` + `session-persistence-jsonl` | `ApiSessionAgentController` **保留 AgentHandle** + `closeSession`（cancel→whenIdle→flush→dispose）+ `closing` 集合；jsonl `delete` 首组测试与并发不变式 | `8955806a`、`9619bf99` |
+| H3b | `packages/workspace/workspace`（`WorkspaceRegistry`；**勘误：原文写的 `packages/core/workspace` 不存在**——文件级审计 2026-09-24 钉正） | ① `deleteSession`：摘 archive/pin + 关闭 live（`ctx.parallel('workspace/session-close')` 后复查）+ 物理删；② 默认身份不变量（删默认工作区同写清 `defaultWorkspaceId`）+ 启动自愈 `healStaleDefaultIdentity()`（`workspace.spec.ts` 的 `beforeInit` 日志观察缝为其测试配套）；③ 首次创建资格放宽为"注册表为空"。**装配面必同落**：`packages/api/workspace-controller/**` 8 文件（client model/service + commands + types + index + tests×2：`WorkspaceDeleteSession*` 动词、`WorkspaceSessionDeleteError`、`workspace/session-open` 拒绝读数） | `8955806a`、`4b8ab255`、`e8433b39` |
+| H3c | `packages/api/session-controller` + `packages/session/session-persistence`（接口）+ `session-persistence-jsonl` | `ApiSessionAgentController` **保留 AgentHandle** + `closeSession`（cancel→whenIdle→flush→dispose）+ `closing` 集合；`SessionPersistence` 接口增 `delete` 契约 + `SessionPersistenceDeleteOptions`（不存在抛 `SessionPersistenceNotFoundError`）——**连带 7 个合同测试桩补 `delete`**（feedback helpers、schedule plugin.spec、session-query×4、session-checkpoint-policy）；jsonl `delete` 首组测试与并发不变式 | `8955806a`、`9619bf99` |
 | H3d | `packages/client/ui-layout` + `ui-workspace` | `MainPanelId` 加 `'life'`；归档行只读打开（标志**只由本服务动作结束、快照不得改写**）、回档入口、删除入口与确认框、`replaceMain` 写入顺序修复 | `9091906d`、`3c852a97`、`d4987c05` |
 | H3e | `packages/core/system-prompt` | `SECTION_ORDERS.LIFE_POLICY: 700`（TEAM_POLICY 与 PTC_ONLY 之间）；身份句文案在 M2 | `5d46e522` |
-| H3f | 品牌资产（上游文件替换） | `FishLogo`→几何太极 mark、favicon 族、字标、welcome 页（`lib/welcome/*` 的构建源）；swim 动画→旋转动势 | `44d1d2af`、`d4987c05` |
+| H3f | 品牌资产（上游文件替换） | `FishLogo`→几何太极 mark、favicon 族、字标、welcome 页（`lib/welcome/*` 的构建源，**连带 `packages/client/ui-settings-models/src/onboarding-copy.ts` 的 `WELCOME_NOTICE_VERSION` bump**）；swim 动画→旋转动势。路径清单（文件级审计补登）：`apps/web/{index.html, vite.config.ts, public/manifest.webmanifest, public/favicon.svg, public/favicon-dark.svg}` | `44d1d2af`、`d4987c05`、`88ad3040` |
 | H3g | 首屏空态（EmptyHero 所在包） | 徽标节点删除 + `.previewBadge/.titleGroup` CSS 移除 | `d4987c05` |
 | H3h | `docs/subsystems/*` + 各包 README | life.md 对新建、workspace 等页随 H3 各条**重生成**（gen 产物，归 M3 校验） | 各片 |
 | H3i | `.gitattributes`/行尾 | fork 仓内 ts 源以 LF 入库（`eol=lf`）；生成器 verbatim 归一（`gen-config-catalog` pasteText）——防 CRLF 进双语门 | `905d29f5` |
@@ -104,3 +105,4 @@
 - H3 各条的锚点随上游重构漂移的风险：本清单以"功能点 + 文件族"定位，不背行号；若上游整文件重写对应功能（如 blocks 合同再变），该条**升级重设计**而非硬贴。
 - 并行工人在飞文件（system-prompt 回退、host.spec `:225`）——升级前须先收敛（所有者裁定后并入或回滚）。
 - 本清单随改造增长：**每片合入即追加/修订对应行**（新增 H 条、更新证据哈希）；"清单完整性"就是同步机制的全部安全性所在。
+- **文件级完整性审计已跑（2026-09-24）**：对 `82042a2f6..HEAD -- taiji-harness` 的 5065 个内容差异文件做双规则归并（M 内容模式 ∧ 路径白名单）⇒ 57 残差逐条人工判定：**真清单缺口已全部修条**——H3b 路径勘误（`packages/core/workspace` 不存在）＋ controller 装配面 8 文件、H3c 接口契约与 7 个连带测试桩、M2 缺 `DSH` 缩略语对、M3 缺 `apps/cli/composition.md`、H2g note 纪律未登记、H3f 资产路径与 welcome 版本 bump；余 22 条为 M1 变体形态（独立段/转义正则），已登记进 M1。脚本与输出：`E:\Seed\.dsh-sbx2\audit_fork_diff.py`／`audit-out.txt`（仓外，不入 git）。
