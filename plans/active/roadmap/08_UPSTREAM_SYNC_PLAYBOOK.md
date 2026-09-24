@@ -97,12 +97,12 @@
 3. 17 项门禁批（md-wrap／md-links／doc-refs／subsystem-pages／summaries／model-experience／limitations／invariants／meta／dependencies／cordis-config／doc-budgets／export-jsdoc／translation-pairing…）＋`verify-cordis-catalog/inspect`；`verify-client-ui-i18n` 唯一合法红＝`BrandWordmark`（既存）。
 4. 定向 vitest：`llm-taiji`、life 五包 + `packages/core/system-prompt`、`ui-conversation`+`ui-workspace`+`session-controller`+`session-persistence-jsonl`（H3 契约用例——**这些用例是行为合同的守卫，红了就是重放丢了条目**）。
 5. 真机读数（G3/G4 判据）：web 起服 → 模型面板出现 Taiji 组 → 发真回合由 Taiji 应答（约束在语料内，不拼 prompt）→ Life 面板六分区读数与 `GET /api/runtime/status`/`/api/artifacts`/`/api/consolidation/status` 逐项一致 → 记忆写入/召回闭环（journal 计数增长、下一回合可见注入块）。
-6. lint：仅允许**登记基线**（ui-life errorText 7 条 + 工人在飞项）内条目；出现新红＝丢改。
+6. lint：仅允许**登记基线**（ui-life errorText 7 条；重测于 2026-09-24 恰为 7）内条目；出现新红＝丢改。
 
 ## 6 · 已知薄弱点（诚实登记）
 
 - ~~中文 `config-catalog.zh.md` 是手工镜像~~ **已收敛（2026-09-24）**：`scripts/gen-config-catalog-zh.ts` 与英文侧从**同一份** `collectConfigCatalog` 渲染（锚/标题/逐字围栏/`来源：` 行号结构性一致，翻译骨架内聚为脚本常量），`verify-config-catalog-zh` 已入 doc-sync 门与 §5 判据②；main() 另有 en/zh 围栏逐字对拍，双渲染器一旦漂移即炸。旧的手工镜像叙事（含 `H3i` 之外的“先跑 gen 再手对 zh”流程）全部作废，防重放时误走旧路。
 - H3 各条的锚点随上游重构漂移的风险：本清单以"功能点 + 文件族"定位，不背行号；若上游整文件重写对应功能（如 blocks 合同再变），该条**升级重设计**而非硬贴。
-- 并行工人在飞文件（system-prompt 回退、host.spec `:225`）——升级前须先收敛（所有者裁定后并入或回滚）。
+- ~~并行工人在飞文件（system-prompt 回退、host.spec `:225`）~~ **已收敛（2026-09-24 所有者裁定回滚）**：system-prompt 两文件恢复 Taiji 身份句；`:225` 查实是 HEAD 既有类型错（非在飞改动），按仓内惯用法 `failure?.message` 修复——**全量 `tsc -b tsconfig.host.json` 首次 0 错**。仍在飞＝life-context ×4 与 session-memory-taiji ×2（六文件 lint/tsc 零新增，未裁定，升级前仍需收敛）。
 - 本清单随改造增长：**每片合入即追加/修订对应行**（新增 H 条、更新证据哈希）；"清单完整性"就是同步机制的全部安全性所在。
 - **文件级完整性审计已跑（2026-09-24）**：对 `82042a2f6..HEAD -- taiji-harness` 的 5065 个内容差异文件做双规则归并（M 内容模式 ∧ 路径白名单）⇒ 57 残差逐条人工判定：**真清单缺口已全部修条**——H3b 路径勘误（`packages/core/workspace` 不存在）＋ controller 装配面 8 文件、H3c 接口契约与 7 个连带测试桩、M2 缺 `DSH` 缩略语对、M3 缺 `apps/cli/composition.md`、H2g note 纪律未登记、H3f 资产路径与 welcome 版本 bump；余 22 条为 M1 变体形态（独立段/转义正则），已登记进 M1。脚本与输出：`E:\Seed\.dsh-sbx2\audit_fork_diff.py`／`audit-out.txt`（仓外，不入 git）。

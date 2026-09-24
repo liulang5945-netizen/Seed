@@ -1,4 +1,4 @@
-﻿import { afterEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import { Context } from '@taiji/cordis'
 import { remoteErrorOf } from '@taiji/dsh-typert-protocol'
 import type { LifeFollowFrame } from '../src/types.ts'
@@ -222,7 +222,7 @@ describe('LifeController training control', () => {
     const failure = remoteErrorOf(await controller.trainStart({}).catch((error: unknown) => error))
 
     expect(failure).toMatchObject({ code: 'life/conflict' })
-    expect(failure.message).toContain('训练已在运行')
+    expect(failure?.message).toContain('训练已在运行')
     const { snapshot } = await controller.snapshot(new AbortController().signal)
     expect(snapshot.availability.trainingStream).toBe('idle')
     expect(snapshot.training.progress).toBeUndefined()
