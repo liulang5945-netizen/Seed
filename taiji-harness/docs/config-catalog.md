@@ -2536,6 +2536,26 @@ export type SessionLogCompressionLevel = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
 
 Source: [`packages/session-query/session-log-export/src/index.ts:46`](../packages/session-query/session-log-export/src/index.ts)
 
+<a id="taijidsh-session-memory-taiji"></a>
+
+## `@taiji/dsh-session-memory-taiji`
+
+```ts config-catalog
+/** Report endpoint, sampling budget, and per-report timeout. Invalid values fail plugin load. */
+export interface Config {
+  /** Runtime base URL; trailing slashes are stripped. Default `http://127.0.0.1:8000`. */
+  baseURL?: string
+  /** Report no turn when false. Default true. */
+  enabled?: boolean
+  /** Character budget applied independently to the prompt and the answer. Default 2000. */
+  maxTextChars?: number
+  /** Milliseconds one report may take before it is abandoned. Default 5000. */
+  timeoutMs?: number
+}
+```
+
+Source: [`packages/session/session-memory-taiji/src/index.ts:28`](../packages/session/session-memory-taiji/src/index.ts)
+
 <a id="taijidsh-session-persistence-jsonl"></a>
 
 ## `@taiji/dsh-session-persistence-jsonl`

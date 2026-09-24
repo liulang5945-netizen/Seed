@@ -31,7 +31,7 @@ const call = (overrides: Partial<GenerateOptions> = {}): GenerateOptions => ({
 })
 
 /** A branded session id; the adapter only ever stringifies it. */
-const sessionOf = (id: string) => id as GenerateOptions['sessionId']
+const sessionOf = (id: string) => id as NonNullable<GenerateOptions['sessionId']>
 
 async function collect(stream: AsyncIterable<StreamChunk>): Promise<StreamChunk[]> {
   const chunks: StreamChunk[] = []

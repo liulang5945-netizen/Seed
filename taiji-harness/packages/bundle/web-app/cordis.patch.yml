@@ -139,6 +139,13 @@
     - id: life-context
       name: '@taiji/dsh-life-context'
 
+    # Report each top-level turn's prompt and answer to the same runtime's
+    # durable memory journal over POST /api/memory/record. Best-effort: a
+    # report never delays or fails the turn, and the plugin writes nothing to
+    # any model request.
+    - id: session-memory-taiji
+      name: '@taiji/dsh-session-memory-taiji'
+
     - id: cordis-host-runner
       name: '@taiji/dsh-cordis-host-runner'
 

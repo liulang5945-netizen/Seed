@@ -518,6 +518,71 @@
         "title": "MemoryPayload",
         "type": "object"
       },
+      "MemoryRecordRequest": {
+        "description": "One Taiji-native memory entry reported by a caller (the harness).\n\nThe runtime stores the entry and never interprets its text: recall, ranking,\nand consolidation belong to the journal's readers.  ``kind`` is free-form on\npurpose — the journal records what happened, and a new kind of event must not\nneed a runtime change to be recordable.",
+        "properties": {
+          "importance": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Importance"
+          },
+          "kind": {
+            "title": "Kind",
+            "type": "string"
+          },
+          "metadata": {
+            "additionalProperties": true,
+            "default": {},
+            "title": "Metadata",
+            "type": "object"
+          },
+          "session_id": {
+            "default": "",
+            "title": "Session Id",
+            "type": "string"
+          },
+          "source": {
+            "default": "",
+            "title": "Source",
+            "type": "string"
+          },
+          "tags": {
+            "default": [],
+            "items": {
+              "type": "string"
+            },
+            "title": "Tags",
+            "type": "array"
+          },
+          "text": {
+            "title": "Text",
+            "type": "string"
+          },
+          "turn": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Turn"
+          }
+        },
+        "required": [
+          "kind",
+          "text"
+        ],
+        "title": "MemoryRecordRequest",
+        "type": "object"
+      },
       "NativeTrainRequest": {
         "properties": {
           "datasets": {
@@ -3634,6 +3699,150 @@
         "summary": "Record Mcp Client Capability Shadow",
         "tags": [
           "mcp-client-capabilities"
+        ]
+      }
+    },
+    "/api/memory/recall": {
+      "get": {
+        "description": "Return ranked entries; an empty query ranks by importance and recency.",
+        "operationId": "memory_recall_api_memory_recall_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "query",
+            "required": false,
+            "schema": {
+              "default": "",
+              "title": "Query",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "kind",
+            "required": false,
+            "schema": {
+              "default": "",
+              "title": "Kind",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "session_id",
+            "required": false,
+            "schema": {
+              "default": "",
+              "title": "Session Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "tag",
+            "required": false,
+            "schema": {
+              "default": "",
+              "title": "Tag",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 8,
+              "maximum": 200,
+              "minimum": 0,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Memory Recall",
+        "tags": [
+          "memory"
+        ]
+      }
+    },
+    "/api/memory/record": {
+      "post": {
+        "description": "Append one entry; a repeated report of the same content is not appended twice.\n\nThe outcome is returned rather than raised, so a reporter retrying a write\ncan tell \"recorded\" from \"duplicate\" without treating either as an error.",
+        "operationId": "memory_record_api_memory_record_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MemoryRecordRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Memory Record",
+        "tags": [
+          "memory"
+        ]
+      }
+    },
+    "/api/memory/status": {
+      "get": {
+        "description": "Return journal counts, for operators and the Life surface.",
+        "operationId": "memory_status_api_memory_status_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Memory Status",
+        "tags": [
+          "memory"
         ]
       }
     },

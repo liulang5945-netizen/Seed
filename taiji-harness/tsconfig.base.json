@@ -447,6 +447,7 @@
       "@taiji/dsh-session-log-deepseek": ["./packages/session/session-log-deepseek/src"],
       "@taiji/dsh-session-log-deepseek/invariant": ["./packages/session/session-log-deepseek/src/invariant.ts"],
       "@taiji/dsh-session-log-export": ["./packages/session-query/session-log-export/src"],
+      "@taiji/dsh-session-memory-taiji": ["./packages/session/session-memory-taiji/src"],
       "@taiji/dsh-session-persistence": ["./packages/session/session-persistence/src"],
       "@taiji/dsh-session-persistence-jsonl": ["./packages/session/session-persistence-jsonl/src"],
       "@taiji/dsh-session-projection": ["./packages/session/session-projection/src"],

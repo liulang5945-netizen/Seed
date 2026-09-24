@@ -223,6 +223,7 @@ def _register_routers(app: FastAPI):
     from .routes_chat import router as chat_router
     from .routes_client_extensions import router as client_extensions_router
     from .routes_mcp_client_capabilities import router as mcp_client_capabilities_router
+    from .routes_memory import router as memory_router
     from .routes_model_switch import router as model_switch_router
     from .routes_models import router as models_router
     from .routes_plugins import router as plugins_router
@@ -254,6 +255,7 @@ def _register_routers(app: FastAPI):
         if optional_router is not None:
             app.include_router(optional_router)
     app.include_router(chat_router)
+    app.include_router(memory_router)
     app.include_router(training_router)
     if rag_router is not None:
         app.include_router(rag_router)

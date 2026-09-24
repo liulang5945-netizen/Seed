@@ -29,6 +29,23 @@ function nativeSnapshot(overrides: Partial<LifeSnapshot> = {}): LifeSnapshot {
   }
 }
 
+/**
+ * The same snapshot with its optional readings *absent*, which is how the
+ * controller reports a source that never answered.  Absence has to be built by
+ * omission rather than by assigning `undefined`: the readings are optional
+ * properties under `exactOptionalPropertyTypes`.
+ */
+function withoutReadings(snapshot: LifeSnapshot): LifeSnapshot {
+  const { health: _health, memory: _memory, life: _life, knowledge: _knowledge, ...rest } = snapshot
+  return rest
+}
+
+/** The same snapshot with only its knowledge reading absent. */
+function withoutKnowledge(snapshot: LifeSnapshot): LifeSnapshot {
+  const { knowledge: _knowledge, ...rest } = snapshot
+  return rest
+}
+
 describe('renderLifeState', () => {
   it('renders a native reading with needs, drives, training, and knowledge', () => {
     const reading = renderLifeState(nativeSnapshot(), BASE + 5_000, 400)
@@ -42,7 +59,7 @@ describe('renderLifeState', () => {
   })
 
   it('renders a legacy reading with its scheduler counters and omits empty segments', () => {
-    const snapshot = nativeSnapshot({
+    const snapshot = withoutKnowledge(nativeSnapshot({
       life: {
         isRunning: true,
         legacy: {
@@ -56,8 +73,7 @@ describe('renderLifeState', () => {
           lastActivity: '2026-09-23T11:58:00',
         },
       },
-      knowledge: undefined,
-    })
+    }))
     const reading = renderLifeState(snapshot, BASE + 8_000, 400)
     expect(reading).toEqual({
       kind: 'inject',
@@ -68,18 +84,20 @@ describe('renderLifeState', () => {
   })
 
   it('renders the training state with modifiers and live progress', () => {
-    const snapshot = nativeSnapshot({
+    const snapshot = withoutKnowledge(nativeSnapshot({
       training: {
         isTraining: true,
         pauseRequested: true,
         stopRequested: false,
         publishing: false,
         checkpoints: [],
-        progress: { fraction: 0.5, step: 500, loss: 1.25, elapsed: 10, eta: 10, epoch: 1, totalEpochs: 1, samplesPerSec: 100, totalSteps: 1000 },
+        progress: {
+          fraction: 0.5, step: 500, loss: 1.25, elapsed: 10, eta: 10,
+          epoch: 1, totalEpochs: 1, samplesPerSec: 100, totalSteps: 1000,
+        },
       },
       availability: { runtime: 'ok', legacy: 'disabled', knowledge: 'disabled', trainingStream: 'streaming' },
-      knowledge: undefined,
-    })
+    }))
     const reading = renderLifeState(snapshot, BASE + 1_000, 400)
     expect(reading).toEqual({
       kind: 'inject',
@@ -100,14 +118,10 @@ describe('renderLifeState', () => {
   })
 
   it('omits an unreachable runtime without inventing a reading', () => {
-    const snapshot = nativeSnapshot({
+    const snapshot = withoutReadings(nativeSnapshot({
       availability: { runtime: 'down', legacy: 'down', knowledge: 'down', trainingStream: 'idle' },
-      health: undefined,
-      memory: undefined,
-      life: undefined,
-      knowledge: undefined,
       training: { isTraining: false, pauseRequested: false, stopRequested: false, publishing: false, checkpoints: [] },
-    })
+    }))
     expect(renderLifeState(snapshot, BASE + 1_000, 400)).toEqual({ kind: 'omit', reason: 'unreachable' })
   })
 

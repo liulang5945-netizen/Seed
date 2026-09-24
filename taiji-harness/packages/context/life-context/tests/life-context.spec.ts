@@ -39,6 +39,17 @@ function nativeSnapshot(overrides: Partial<LifeSnapshot> = {}): LifeSnapshot {
   }
 }
 
+/**
+ * The same snapshot with its optional readings *absent*, which is how the
+ * controller reports a source that never answered.  Absence is built by
+ * omission rather than by assigning `undefined`: the readings are optional
+ * properties under `exactOptionalPropertyTypes`.
+ */
+function withoutReadings(snapshot: LifeSnapshot): LifeSnapshot {
+  const { health: _health, memory: _memory, life: _life, knowledge: _knowledge, ...rest } = snapshot
+  return rest
+}
+
 interface Mount {
   readonly ctx: Context
   readonly sections: Array<{ readonly name: string; readonly order: number; readonly text: string }>
@@ -72,7 +83,7 @@ async function fire(ctx: Context, signal: AbortSignal = SIGNAL): Promise<readonl
   const proposed = createUserMessage({ content: [{ type: 'text', text: 'request' }], source: { kind: 'user' } })
   const decision: PreStepDecision = await agentEvents(ctx, AGENT).waterfall(
     'agent/pre-step',
-    { agent: AGENT, messages: [proposed], turn: 1, step: 1, signal },
+    { messages: [proposed], turn: 1, step: 1, signal },
     () => Promise.resolve({ kind: 'enter' as const, messages: [proposed] }),
   )
   if (decision.kind !== 'enter') throw new Error('unexpected reject')
@@ -84,7 +95,7 @@ describe('life-context policy section', () => {
     const { sections } = await mount()
     expect(sections).toHaveLength(1)
     expect(sections[0]).toMatchObject({ name: 'life:policy', order: 700 })
-    expect(sections[0].text).toContain('internal telemetry')
+    expect(sections[0]!.text).toContain('internal telemetry')
   })
 
   it('registers nothing when disabled', async () => {
@@ -140,11 +151,9 @@ describe('life-context pre-step injection', () => {
   })
 
   it('omits an unreachable runtime without inventing a reading', async () => {
-    const harness = await mount({}, nativeSnapshot({
+    const harness = await mount({}, withoutReadings(nativeSnapshot({
       availability: { runtime: 'down', legacy: 'down', knowledge: 'down', trainingStream: 'idle' },
-      life: undefined,
-      knowledge: undefined,
-    }))
+    })))
     expect(await fire(harness.ctx)).toHaveLength(1)
   })
 

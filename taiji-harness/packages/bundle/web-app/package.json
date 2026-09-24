@@ -142,6 +142,7 @@
     "@taiji/dsh-plan-mode": "workspace:^",
     "@taiji/dsh-plugin-manager": "workspace:^",
     "@taiji/dsh-session-log-export": "workspace:^",
+    "@taiji/dsh-session-memory-taiji": "workspace:^",
     "@taiji/dsh-session-reference": "workspace:^",
     "@taiji/dsh-session-stats": "workspace:^",
     "@taiji/dsh-session-turn-outline": "workspace:^",

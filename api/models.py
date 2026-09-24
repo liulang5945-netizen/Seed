@@ -281,3 +281,22 @@ class RAGSearchRequest(BaseModel):
 
 class CreateProjectRequest(BaseModel):
     type: str = "empty"
+
+
+class MemoryRecordRequest(BaseModel):
+    """One Taiji-native memory entry reported by a caller (the harness).
+
+    The runtime stores the entry and never interprets its text: recall, ranking,
+    and consolidation belong to the journal's readers.  ``kind`` is free-form on
+    purpose — the journal records what happened, and a new kind of event must not
+    need a runtime change to be recordable.
+    """
+
+    kind: str
+    text: str
+    session_id: str = ""
+    turn: int | None = None
+    tags: list[str] = []
+    importance: float | None = None
+    source: str = ""
+    metadata: dict = {}
