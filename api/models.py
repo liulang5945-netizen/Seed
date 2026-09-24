@@ -300,3 +300,20 @@ class MemoryRecordRequest(BaseModel):
     importance: float | None = None
     source: str = ""
     metadata: dict = {}
+
+
+class ConsolidationRequest(BaseModel):
+    """One native sleep pass.
+
+    ``organs`` decides whether the substrate sleeps at all and ``learn`` whether
+    that sleep may change weights; both default off, because housekeeping must
+    never train a brain by accident.
+    """
+
+    reason: str = "manual"
+    organs: bool = False
+    learn: bool = False
+    cycles_per_text: int = 1
+    max_symbols: int = 64
+    max_texts: int = 8
+    max_records: int = 200

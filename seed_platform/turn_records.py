@@ -210,6 +210,26 @@ def record_constraint(system_prompt: str) -> None:
         logger.debug("【record_constraint】处理失败（非致命）: %s", e)
 
 
+def strategies(limit: int = _MAX_SUMMARY_LINES) -> list[dict[str, Any]]:
+    """Return recorded strategy samples, oldest first, most recent ``limit`` kept."""
+
+    try:
+        return _read(_STRATEGY_FILE, limit)
+    except Exception as e:  # pragma: no cover - defensive
+        logger.debug("【strategies】读取失败（非致命）: %s", e)
+        return []
+
+
+def tasks(limit: int = _MAX_SUMMARY_LINES) -> list[dict[str, Any]]:
+    """Return recorded task outcomes, oldest first, most recent ``limit`` kept."""
+
+    try:
+        return _read(_TASK_FILE, limit)
+    except Exception as e:  # pragma: no cover - defensive
+        logger.debug("【tasks】读取失败（非致命）: %s", e)
+        return []
+
+
 def constraints() -> list[dict[str, Any]]:
     """Return the distinct constraint seeds collected so far, newest first.
 

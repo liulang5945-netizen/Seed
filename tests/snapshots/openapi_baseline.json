@@ -256,6 +256,48 @@
         "title": "ChatWorkbenchRequest",
         "type": "object"
       },
+      "ConsolidationRequest": {
+        "description": "One native sleep pass.\n\n``organs`` decides whether the substrate sleeps at all and ``learn`` whether\nthat sleep may change weights; both default off, because housekeeping must\nnever train a brain by accident.",
+        "properties": {
+          "cycles_per_text": {
+            "default": 1,
+            "title": "Cycles Per Text",
+            "type": "integer"
+          },
+          "learn": {
+            "default": false,
+            "title": "Learn",
+            "type": "boolean"
+          },
+          "max_records": {
+            "default": 200,
+            "title": "Max Records",
+            "type": "integer"
+          },
+          "max_symbols": {
+            "default": 64,
+            "title": "Max Symbols",
+            "type": "integer"
+          },
+          "max_texts": {
+            "default": 8,
+            "title": "Max Texts",
+            "type": "integer"
+          },
+          "organs": {
+            "default": false,
+            "title": "Organs",
+            "type": "boolean"
+          },
+          "reason": {
+            "default": "manual",
+            "title": "Reason",
+            "type": "string"
+          }
+        },
+        "title": "ConsolidationRequest",
+        "type": "object"
+      },
       "DatasetCheckRequest": {
         "properties": {
           "file_path": {
@@ -3174,6 +3216,86 @@
         "summary": "Retire Client Extension",
         "tags": [
           "client-extensions"
+        ]
+      }
+    },
+    "/api/consolidate": {
+      "post": {
+        "description": "Run one native sleep pass.\n\nThe pass reads the native rings, writes the rehearsal corpus and the\ndata-ring spec, and — only when asked — hands the night's texts to the\nsubstrate's own sleep scheduler.  ``learn`` additionally allows that sleep to\nchange weights, so it stays an explicit request rather than a default.",
+        "operationId": "consolidate_api_consolidate_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConsolidationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Consolidate",
+        "tags": [
+          "consolidation"
+        ]
+      }
+    },
+    "/api/consolidation/spec": {
+      "get": {
+        "description": "Return the data ring's current product, or null when none was ever written.",
+        "operationId": "consolidation_spec_api_consolidation_spec_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Consolidation Spec",
+        "tags": [
+          "consolidation"
+        ]
+      }
+    },
+    "/api/consolidation/status": {
+      "get": {
+        "description": "Return the last pass's report plus what the native rings hold now.",
+        "operationId": "consolidation_status_api_consolidation_status_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Consolidation Status",
+        "tags": [
+          "consolidation"
         ]
       }
     },

@@ -20,8 +20,12 @@ router = APIRouter()
 NATIVE_DATASET_SUFFIXES = frozenset({".jsonl", ".ndjson", ".json", ".txt", ".text", ".md", ".csv"})
 # data/ 顶层的平台配置文件，不是语料，必须从数据集列表中排除。
 RESERVED_DATA_FILES = frozenset({"app_settings.json", "runtime_preference.json"})
-# 递归扫描时跳过的目录名（缓存、版本控制、检查点等非语料目录）。
-_SKIPPED_DIRS = frozenset({"__pycache__", ".git", ".ipynb_checkpoints", "checkpoints", "logs"})
+# 递归扫描时跳过的目录名（缓存、版本控制、检查点等非语料目录）。turn_records 与
+# memory 是递归环的输入日志（记录里没有 text 字段，作数据集必然不可训练），睡眠巩固
+# 的产物 data/consolidated/ 则**必须**保持可扫描——它就是给训练选的文件。
+_SKIPPED_DIRS = frozenset(
+    {"__pycache__", ".git", ".ipynb_checkpoints", "checkpoints", "logs", "turn_records", "memory"}
+)
 _MAX_SCAN_DEPTH = 4
 # 预览/校验只采样前若干条记录，避免对 GB 级语料做全量扫描导致请求超时。
 PREVIEW_SCAN_RECORDS = 2_000
