@@ -12,6 +12,7 @@ import { LifeFeed } from './feed.ts'
 import { LifeRuntimeClient } from './runtime-client.ts'
 import type {
   LifeActionRequest,
+  LifeConsolidateRequest,
   LifeControlValue,
   LifeFollowFrame,
   LifeProgressView,
@@ -186,6 +187,17 @@ export class LifeController extends TypertRemoteService {
   @Remote
   async trainReset(signal: AbortSignal): Promise<LifeControlValue> {
     return await this.command(() => this.client.trainReset(signal))
+  }
+
+  /**
+   * Run one native sleep consolidation pass.
+   * @param request - pass parameters; omitted fields keep the runtime's defaults.
+   * @param signal - caller lifetime.
+   * @returns the runtime's pass report message.
+   */
+  @Remote
+  async consolidate(request: LifeConsolidateRequest, signal: AbortSignal): Promise<LifeControlValue> {
+    return await this.command(() => this.client.consolidate(request, signal))
   }
 
   /**

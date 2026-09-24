@@ -8,17 +8,18 @@ Source: [`packages/api/life-controller/src/types.ts`](../../packages/api/life-co
 
 ## 数据来源
 
-控制器按三个层级读取 runtime 的 HTTP 面，而某个数值来自哪一层本身就是数据的一部分。
+控制器按四个层级读取 runtime 的 HTTP 面，而某个数值来自哪一层本身就是数据的一部分。
 
-- 常开读取：`GET /api/runtime/status` 携带 health、memory、life、training 四个分节，`GET /api/train/checkpoints` 携带 checkpoint 名单。只要 runtime 进程存活，两者都会应答。
+- 常开读取：`GET /api/runtime/status` 携带 health、memory、life、training 四个分节，`GET /api/train/checkpoints` 携带 checkpoint 名单，`GET /api/consolidation/status` 携带记忆日志计数与睡眠 pass 的产物——pass 计数、最近语料、数据环规格与最近报告。只要 runtime 进程存活，三者都会应答；早于巩固面的 runtime 在该路径应答 `404`，控制器据此记录为一行 `unavailable` 而非快照失败。
 - 受门控读取：`GET /api/life/status`（legacy 调度器）与 `GET /api/rag/status`（知识索引）仅在 runtime 通过 `SEED_ENABLE_LEGACY` 启用其 Legacy surface 时才挂载。未挂载的受门控路径应答 `404`，控制器据此记录为 `disabled`——即"该来源从未存在"，而不是"runtime 坏了"。
 - 训练进度流：`POST /api/train/native` 应答一条 server-sent event 流，其中每个 `progress` 事件携带一个 `LifeProgressView`，由 `completed` 或 `error` 事件结束本次运行。
+- 巩固控制：`POST /api/consolidate` 运行一次 native 睡眠 pass（分析、投影、规格化，仅在被要求时才让基底入睡），并以 JSON 应答其报告。
 
 承载生命数值的 status 分节会自报其来源器官，而该名称决定数据结构。`life.status === 'seed'` 报告 native homeostasis 器官，产出 `LifeNativeView`（观测计数、器官模式，以及 runtime 已缩放到 0..100 的开放 need 与 drive 映射）；`life.status === 'ok'` 报告 legacy 调度器，产出 `LifeLegacyView`（其循环标志、当前活动、主导 need、need 映射、心跳与事件计数，以及最近心跳和最近活动时刻）。其他取值使 `life` 缺失。控制器不会重新换算 native homeostasis 的数值，也不会用 native 读数顶替 legacy 读数：两个器官各自使用自己的量纲，是否可比由消费方判断。
 
 ## 快照
 
-`LifeSnapshot` 是一次完整读数，并指明应答的器官：`source`（哪个器官提供了生命数值）、`observedAt`（本次读数的 ISO-8601 时刻）、`fresh`（仅当本轮 status 读取有应答时为真）、`pollIntervalMs`（取数时生效的轮询间隔）、可选的 `health`、`memory`、`life`、`knowledge` 投影、始终存在的 `training` 投影、`availability`，以及 `unavailable`。
+`LifeSnapshot` 是一次完整读数，并指明应答的器官：`source`（哪个器官提供了生命数值）、`observedAt`（本次读数的 ISO-8601 时刻）、`fresh`（仅当本轮 status 读取有应答时为真）、`pollIntervalMs`（取数时生效的轮询间隔）、可选的 `health`、`memory`、`life`、`knowledge`、`consolidation` 投影、始终存在的 `training` 投影、`availability`，以及 `unavailable`。
 
 `unavailable` 为每个未应答的来源保留一行便于运维阅读的说明，使面板能够指出 runtime 的哪一部分缺失，而不是显示空白。没有人测量过的量保持缺失而非默认零，因为一个永久为零的读数读起来像已测得的事实，反而掩盖了来源从未应答。
 
@@ -35,6 +36,7 @@ Source: [`packages/api/life-controller/src/types.ts`](../../packages/api/life-co
 | `trainResume` | 一元 | 请求 runtime 恢复已暂停的训练，返回其消息。 |
 | `trainStop` | 一元 | 请求 runtime 在当前 step 之后停止，返回其消息。 |
 | `trainReset` | 一元 | 强制 runtime 释放其仍持有的训练锁，返回其消息。 |
+| `consolidate` | 一元 | 经 `POST /api/consolidate` 运行一次 native 睡眠巩固 pass，返回 runtime 的报告消息；请求的 `reason` 可省略，默认使用 runtime 自己的取值。 |
 | `lifeStart` | 一元 | 启动受门控的 legacy 生命调度器，返回其消息。 |
 | `lifeStop` | 一元 | 停止受门控的 legacy 生命调度器，返回其消息。 |
 | `lifeAction` | 一元 | 携带运维可见的原因，强制执行一次受门控的 legacy 活动——`feed`、`sleep` 或 `play`，返回 runtime 的消息。 |
@@ -120,6 +122,14 @@ Host service backing the generated `ctx.remote.life` namespace.
  * @returns the runtime's message.
  */
 @Remote async trainReset(signal: AbortSignal): Promise<LifeControlValue>
+
+/**
+ * Run one native sleep consolidation pass.
+ * @param request - pass parameters; omitted fields keep the runtime's defaults.
+ * @param signal - caller lifetime.
+ * @returns the runtime's pass report message.
+ */
+@Remote async consolidate(request: LifeConsolidateRequest, signal: AbortSignal): Promise<LifeControlValue>
 
 /**
  * Start the Legacy life scheduler.

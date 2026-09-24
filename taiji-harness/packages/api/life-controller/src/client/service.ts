@@ -4,6 +4,7 @@ import { Service, type Context } from '@taiji/cordis'
 import type { RemoteFailure, RemoteResult } from '@taiji/dsh-typert-protocol'
 import type {
   LifeActionRequest,
+  LifeConsolidateRequest,
   LifeControlValue,
   LifeSnapshot,
   LifeTrainStartRequest,
@@ -67,6 +68,13 @@ export interface ILife {
    */
   trainReset(signal?: AbortSignal): Promise<LifeControlValue>
   /**
+   * Run one native sleep consolidation pass.
+   * @param request - pass parameters; omitted fields keep the runtime's defaults.
+   * @param signal - caller lifetime.
+   * @returns the runtime's pass report message.
+   */
+  consolidate(request?: LifeConsolidateRequest, signal?: AbortSignal): Promise<LifeControlValue>
+  /**
    * Start the Legacy life scheduler.
    * @param signal - caller lifetime.
    * @returns the runtime's message.
@@ -129,6 +137,10 @@ export class LifeClient extends Service implements ILife {
 
   async trainReset(signal?: AbortSignal): Promise<LifeControlValue> {
     return await this.unwrap(this.model.trainReset(signal))
+  }
+
+  async consolidate(request: LifeConsolidateRequest = {}, signal?: AbortSignal): Promise<LifeControlValue> {
+    return await this.unwrap(this.model.consolidate(request, signal))
   }
 
   async lifeStart(signal?: AbortSignal): Promise<LifeControlValue> {

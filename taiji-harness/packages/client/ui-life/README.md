@@ -9,7 +9,7 @@ English | [中文](README.zh.md)
 
 ## Summary
 
-Open the **Life** entry in the Web sidebar to inspect and drive the Taiji local runtime this Host talks to. One global page renders the latest reading in five sections — where the reading came from and how fresh it is, the life organs, training with its checkpoint roster, the knowledge base, and the host projection — and carries the controls: scheduler start and stop, forced feeding, sleeping, and playing, and training start, pause, resume, stop, and force release. Numbers come from the controller's snapshot stream; a refusal renders the Host's stable error code, never raw RPC text.
+Open the **Life** entry in the Web sidebar to inspect and drive the Taiji local runtime this Host talks to. One global page renders the latest reading in six sections — source and freshness, the life organs, training with its checkpoints, the knowledge base, memory with its consolidation products, and the host projection — and carries the controls: scheduler start and stop, forced feeding, sleeping, and playing, training start, pause, resume, stop, and force release, and one consolidation pass. Numbers come from the controller's snapshot stream; a refusal renders the Host's stable error code, never raw RPC text.
 
 ## Table of Contents
 
@@ -30,9 +30,9 @@ Mount this plugin in a web composition whose Host carries [`@taiji/dsh-api-life-
 <a id="understand-the-implementation"></a>
 ## Understand the implementation
 
-The page subscribes to the controller's identity-stable snapshot state with `useSyncExternalStore`, so a stream frame swaps one object and a panel re-render follows. The five sections project one `LifeSnapshot`: the source section names the organ that answered and lists every source that did not; the life section renders the native organ's need and drive meters or the legacy scheduler's facts and meters; training shows its state badges, the latest progress sample, and the checkpoint roster; knowledge shows the index size only when the gated surface answered; the host section shows health, model, seed activity, and memory.
+The page subscribes to the controller's identity-stable snapshot state with `useSyncExternalStore`, so a stream frame swaps one object and a panel re-render follows. The six sections project one `LifeSnapshot`: the source section names the organ that answered and lists every source that did not; the life section renders the native organ's need and drive meters or the legacy scheduler's facts and meters; training shows its state badges, the latest progress sample, and the checkpoint roster; knowledge shows the index size only when the gated surface answered; memory and consolidation shows the journal counts by kind, the pass counter with its latest corpus, the data-ring spec behind its readiness gate, and the latest pass report — or says the surface was not served instead of showing a blank; the host section shows health, model, seed activity, and memory.
 
-Controls disable while a verb is in flight and show their outcome without touching the snapshot: an accepted verb refreshes through the stream, and a refusal raises the Host's error code — `life/conflict`, `life/unavailable`, and their siblings — as the panel's localized copy. Stopping a run and force-releasing the training lock ask for a confirming second click.
+Controls disable while a verb is in flight and show their outcome without touching the snapshot: an accepted verb refreshes through the stream, and a refusal raises the Host's error code — `life/conflict`, `life/unavailable`, and their siblings — as the panel's localized copy. Stopping a run and force-releasing the training lock ask for a confirming second click; running a consolidation pass offers no such confirmation because it writes rehearsal files, never weights.
 
 -----
 

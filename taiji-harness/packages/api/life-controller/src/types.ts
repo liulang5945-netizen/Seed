@@ -172,6 +172,62 @@ export interface LifeKnowledgeView {
   readonly embedDim: number
 }
 
+/** Memory journal counts, as the consolidation status reports them. */
+export interface LifeJournalView {
+  /** Entries the journal holds. */
+  readonly entries: number
+  /** Entry counts by kind; the runtime owns the vocabulary. */
+  readonly byKind: Readonly<Record<string, number>>
+  /** Sessions the journal has seen. */
+  readonly sessions: number
+  /** Unix seconds of the newest entry, zero while the journal is empty. */
+  readonly lastRecordedAt: number
+}
+
+/** The data ring's product as the runtime last wrote it. */
+export interface LifeSpecView {
+  /** Why the readiness gate passed, in the runtime's own words. */
+  readonly reason: string
+  /** Datasets the spec names, ready to hand to a training request. */
+  readonly datasets: readonly string[]
+  /** Weaknesses the pass measured, in the runtime's own words. */
+  readonly weaknesses: readonly string[]
+}
+
+/** The newest sleep pass's own report, in the runtime's words. */
+export interface LifePassReportView {
+  /** What triggered the pass. */
+  readonly reason: string
+  /** Why the data ring was ready, or what held it back. */
+  readonly specReason: string
+  /** How long the pass took, in milliseconds. */
+  readonly durationMs: number
+  /** Weaknesses the pass measured. */
+  readonly weaknesses: readonly string[]
+  /** What this pass could not measure, stated instead of guessed. */
+  readonly notes: readonly string[]
+}
+
+/** Native sleep consolidation and the memory journal it rehearses. */
+export interface LifeConsolidationView {
+  /** Sleep passes completed. */
+  readonly passes: number
+  /** Unix seconds of the last pass, zero when none has run. */
+  readonly lastPassAt: number
+  /** Dataset-relative name of the newest corpus, empty when none was written. */
+  readonly lastCorpus: string
+  /** Distinct texts rolled forward across passes. */
+  readonly projectedDigests: number
+  /** Whether a pass is running right now. */
+  readonly running: boolean
+  /** The spec file as it stands, null while the readiness gate has never passed. */
+  readonly spec: LifeSpecView | null
+  /** The newest pass's report, null before the first pass. */
+  readonly lastReport: LifePassReportView | null
+  /** The journal this pass reads from, counted live. */
+  readonly journal: LifeJournalView
+}
+
 /** Availability of every source behind one snapshot. */
 export interface LifeAvailability {
   /** Runtime status read. */
@@ -204,6 +260,8 @@ export interface LifeSnapshot {
   readonly training: LifeTrainingView
   /** Knowledge projection, absent when the gated surface did not answer. */
   readonly knowledge?: LifeKnowledgeView
+  /** Memory and consolidation projection, absent when the runtime does not serve it. */
+  readonly consolidation?: LifeConsolidationView
   /** Availability of every source behind this snapshot. */
   readonly availability: LifeAvailability
   /** One line per source that did not answer, in operator-readable form. */
@@ -236,6 +294,12 @@ export interface LifeTrainStartRequest {
   readonly seed?: number
   /** Upper bound on symbols consumed; omitted uses the runtime's default. */
   readonly maxSymbols?: number
+}
+
+/** Request to run one native sleep consolidation pass. */
+export interface LifeConsolidateRequest {
+  /** Operator-visible reason recorded with the pass; omitted uses the runtime's default. */
+  readonly reason?: string
 }
 
 /** Request to force one Legacy life activity. */

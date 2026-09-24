@@ -219,7 +219,11 @@ def test_state_rolls_forward_across_passes(workspace: Path) -> None:
     )
     assert state["passes"] == 2
     assert len(state["projected"]) == 1
-    assert sleep_pass.status()["passes"] == 2
+    status = sleep_pass.status()
+    assert status["passes"] == 2
+    # The journal the pass reads from is reported in the same status, live.
+    assert status["journal"]["entries"] == 1
+    assert status["journal"]["by_kind"] == {"interaction": 1}
 
 
 # ======================== 器官睡眠（默认不跑） ========================
@@ -290,6 +294,7 @@ def test_consolidation_endpoints_are_reachable(client: TestClient) -> None:
     assert after["passes"] == 1
     assert after["last_report"]["reason"] == "http"
     assert after["last_corpus"].startswith("consolidated/corpus-")
+    assert after["journal"]["entries"] == 1
 
 
 def test_consolidate_rejects_an_impossible_budget(client: TestClient) -> None:

@@ -236,7 +236,7 @@ export interface Config {
 }
 ```
 
-Source: [`packages/api/life-controller/src/index.ts:25`](../packages/api/life-controller/src/index.ts)
+Source: [`packages/api/life-controller/src/index.ts:26`](../packages/api/life-controller/src/index.ts)
 
 <a id="taijidsh-api-session-controller"></a>
 

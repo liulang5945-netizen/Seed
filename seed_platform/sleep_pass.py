@@ -582,7 +582,11 @@ def _projected_records(projection: dict[str, Any]) -> list[dict[str, str]]:
 
 
 def status() -> dict[str, Any]:
-    """Return what the last pass did and what the data ring holds now."""
+    """Return what the last pass did, what the data ring holds, and what the journal holds.
+
+    The memory journal is the pass's own input, so it rides here rather than
+    making the panel poll two endpoints; both counts are read live from disk.
+    """
 
     state = _load_state()
     spec_path = os.path.join(_consolidation_dir(), _SPEC_FILE)
@@ -612,4 +616,5 @@ def status() -> dict[str, Any]:
         "running": _RUNNING,
         "spec": spec,
         "last_report": report,
+        "journal": memory_store.status(),
     }

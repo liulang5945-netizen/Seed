@@ -10,6 +10,8 @@ import { RemoteError } from '@taiji/dsh-typert-protocol'
 import type {
   LifeActionRequest,
   LifeCheckpointView,
+  LifeConsolidateRequest,
+  LifeConsolidationView,
   LifeControlValue,
   LifeHealthView,
   LifeKnowledgeView,
@@ -17,6 +19,7 @@ import type {
   LifeLifeView,
   LifeMemoryView,
   LifeNativeView,
+  LifePassReportView,
   LifeProgressView,
   LifeRuntimeState,
   LifeSnapshot,
@@ -30,6 +33,7 @@ const STATUS_PATH = '/api/runtime/status'
 const CHECKPOINTS_PATH = '/api/train/checkpoints'
 const LEGACY_LIFE_PATH = '/api/life/status'
 const KNOWLEDGE_PATH = '/api/rag/status'
+const CONSOLIDATION_PATH = '/api/consolidation/status'
 const TRAIN_NATIVE_PATH = '/api/train/native'
 const LEGACY_LIFE_START_PATH = '/api/taiji/life/start'
 const LEGACY_LIFE_STOP_PATH = '/api/taiji/life/stop'
@@ -117,6 +121,13 @@ export class LifeRuntimeClient {
     const checkpoints = training === undefined || runtime === 'down'
       ? undefined
       : await this.readCheckpoints(signal, unavailable)
+    // The consolidation surface is newer than some running runtimes, so it is
+    // read only while the status read answered and a missing endpoint becomes
+    // one line in `unavailable` rather than a failure.
+    const consolidation = runtime === 'down'
+      ? undefined
+      : await this.readConsolidation(signal, unavailable)
+    const consolidationReading = consolidation === undefined ? undefined : consolidationView(consolidation)
     const source = lifeSource(status?.body)
 
     return {
@@ -129,6 +140,7 @@ export class LifeRuntimeClient {
       ...(life === undefined ? {} : { life }),
       training: { ...(training ?? emptyTraining()), ...(checkpoints === undefined ? {} : { checkpoints }) },
       ...(knowledgeReading === undefined ? {} : { knowledge: knowledgeReading }),
+      ...(consolidationReading === undefined ? {} : { consolidation: consolidationReading }),
       availability: {
         runtime,
         legacy: legacy.state,
@@ -215,6 +227,18 @@ export class LifeRuntimeClient {
   }
 
   /**
+   * Run one native sleep consolidation pass.
+   * @param request - pass parameters; omitted fields keep the runtime's defaults.
+   * @param signal - caller lifetime.
+   * @returns the runtime's pass report message.
+   */
+  consolidate(request: LifeConsolidateRequest, signal: AbortSignal): Promise<LifeControlValue> {
+    // The runtime's body model is required, so a reason is always sent —
+    // defaulting to its own `manual` when the caller named none.
+    return this.command('/api/consolidate', signal, request.reason ?? 'manual')
+  }
+
+  /**
    * Start the Legacy life scheduler.
    * @param signal - caller lifetime.
    * @returns the runtime's message.
@@ -268,6 +292,20 @@ export class LifeRuntimeClient {
       const rows = value(reply.body, 'checkpoints')
       if (!Array.isArray(rows)) return undefined
       return rows.slice(0, this.options.maxCheckpoints).map(checkpointView)
+    } catch (error) {
+      unavailable.push(describeFailure(error))
+      return undefined
+    }
+  }
+
+  private async readConsolidation(signal: AbortSignal, unavailable: string[]): Promise<unknown | undefined> {
+    try {
+      const reply = await this.read(CONSOLIDATION_PATH, signal)
+      if (reply.status !== 200) {
+        unavailable.push(`consolidation: HTTP ${String(reply.status)}`)
+        return undefined
+      }
+      return reply.body
     } catch (error) {
       unavailable.push(describeFailure(error))
       return undefined
@@ -414,6 +452,42 @@ function knowledgeView(body: unknown): LifeKnowledgeView {
     chunkCount: number(body, 'chunk_count'),
     hasEmbeddings: flag(body, 'has_embeddings'),
     embedDim: number(body, 'embed_dim'),
+  }
+}
+
+/** Memory and consolidation projection from `GET /api/consolidation/status`. */
+function consolidationView(body: unknown): LifeConsolidationView {
+  const journal = object(body, 'journal') ?? {}
+  const spec = object(body, 'spec')
+  const report = object(body, 'last_report')
+  const reportSpec = report === undefined ? undefined : object(report, 'spec')
+  return {
+    passes: number(body, 'passes'),
+    lastPassAt: number(body, 'last_pass_at'),
+    lastCorpus: text(body, 'last_corpus'),
+    projectedDigests: number(body, 'projected_digests'),
+    running: flag(body, 'running'),
+    spec: spec === undefined
+      ? null
+      : { reason: text(spec, 'reason'), datasets: stringList(spec['datasets']), weaknesses: stringList(spec['weaknesses']) },
+    lastReport: report === undefined ? null : passReportView(report, reportSpec),
+    journal: {
+      entries: number(journal, 'entries'),
+      byKind: numericMap(journal['by_kind']),
+      sessions: number(journal, 'sessions'),
+      lastRecordedAt: number(journal, 'last_recorded_at'),
+    },
+  }
+}
+
+/** One pass report, its gate reason read from the report's own spec block. */
+function passReportView(report: Record<string, unknown>, spec: Record<string, unknown> | undefined): LifePassReportView {
+  return {
+    reason: text(report, 'reason'),
+    specReason: spec === undefined ? '' : text(spec, 'reason'),
+    durationMs: number(report, 'duration_ms'),
+    weaknesses: stringList(report['weaknesses']),
+    notes: stringList(report['notes']),
   }
 }
 
@@ -594,6 +668,12 @@ function numericMap(raw: unknown): Readonly<Record<string, number>> {
     if (typeof entry === 'number' && Number.isFinite(entry)) out[key] = entry
   }
   return out
+}
+
+/** String list, non-strings dropped; the runtime owns these lines verbatim. */
+function stringList(raw: unknown): readonly string[] {
+  if (!Array.isArray(raw)) return []
+  return raw.filter((entry): entry is string => typeof entry === 'string')
 }
 
 /** Operator-readable one-liner for a failed read. */

@@ -1,11 +1,12 @@
 /**
  * The global Life page: what the Taiji local runtime reported last, and the
- * controls that act on it. Five sections top to bottom — where the reading
+ * controls that act on it. Six sections top to bottom — where the reading
  * came from, the life organs, training with its checkpoint roster, the
- * knowledge base, and the host projection. Every number comes from the
- * controller's snapshot stream; a control failure renders the Host's stable
- * error code, never the raw RPC text, and an accepted action refreshes through
- * the stream instead of a local state write.
+ * knowledge base, memory with its consolidation products, and the host
+ * projection. Every number comes from the controller's snapshot stream;
+ * a control failure renders the Host's stable error code, never the raw RPC
+ * text, and an accepted action refreshes through the stream instead of a
+ * local state write.
  */
 
 import { useCallback, useSyncExternalStore, useState, type ReactNode } from 'react'
@@ -36,7 +37,7 @@ export type LifePanelProps =
   & InjectFace<LifePanelInjected>
 
 /** A control the panel is waiting on, or one awaiting its confirming click. */
-type PendingVerb = 'lifeStart' | 'lifeStop' | 'feed' | 'sleep' | 'play' | 'trainStart' | 'trainPause' | 'trainResume' | 'trainStop' | 'trainReset'
+type PendingVerb = 'lifeStart' | 'lifeStop' | 'feed' | 'sleep' | 'play' | 'trainStart' | 'trainPause' | 'trainResume' | 'trainStop' | 'trainReset' | 'consolidate'
 
 /** The verbs a confirming second click protects. */
 const CONFIRMED: ReadonlySet<PendingVerb> = new Set(['trainStop', 'trainReset'])
@@ -164,6 +165,7 @@ export function LifePanel({ t, life }: LifePanelProps): ReactNode {
       <LifeSection {...shared} />
       <TrainingSection {...shared} />
       <KnowledgeSection t={t} snapshot={snapshot} />
+      <ConsolidationSection {...shared} />
       <HostSection t={t} snapshot={snapshot} />
 
       {failureText !== null && <p className={css.errorLine} role="alert">{failureText}</p>}
@@ -296,17 +298,17 @@ function LifeSection({ t, snapshot, pending, run, life }: SectionControlProps): 
       {lifeView === undefined
         ? <p className={css.muted}>{t('noReading')}</p>
         : (
-            <>
-              {lifeView.native !== undefined && <NativeOrgan t={t} native={lifeView.native} />}
-              {lifeView.legacy !== undefined && <LegacyOrgan t={t} legacy={lifeView.legacy} />}
-            </>
-          )}
+          <>
+            {lifeView.native !== undefined && <NativeOrgan t={t} native={lifeView.native} />}
+            {lifeView.legacy !== undefined && <LegacyOrgan t={t} legacy={lifeView.legacy} />}
+          </>
+        )}
       <div className={css.actions} role="group" aria-label={t('organLegacy')}>
-        <Button disabled={busy} onClick={() => run('lifeStart', () => life.lifeStart())}>{t('lifeStart')}</Button>
-        <Button disabled={busy} onClick={() => run('lifeStop', () => life.lifeStop())}>{t('lifeStop')}</Button>
-        <Button disabled={busy} onClick={() => run('feed', () => life.lifeAction({ action: 'feed' }))}>{t('actionFeed')}</Button>
-        <Button disabled={busy} onClick={() => run('sleep', () => life.lifeAction({ action: 'sleep' }))}>{t('actionSleep')}</Button>
-        <Button disabled={busy} onClick={() => run('play', () => life.lifeAction({ action: 'play' }))}>{t('actionPlay')}</Button>
+        <Button disabled={busy} onClick={() =>{  run('lifeStart', () => life.lifeStart()) }}>{t('lifeStart')}</Button>
+        <Button disabled={busy} onClick={() =>{  run('lifeStop', () => life.lifeStop()) }}>{t('lifeStop')}</Button>
+        <Button disabled={busy} onClick={() =>{  run('feed', () => life.lifeAction({ action: 'feed' })) }}>{t('actionFeed')}</Button>
+        <Button disabled={busy} onClick={() =>{  run('sleep', () => life.lifeAction({ action: 'sleep' })) }}>{t('actionSleep')}</Button>
+        <Button disabled={busy} onClick={() =>{  run('play', () => life.lifeAction({ action: 'play' })) }}>{t('actionPlay')}</Button>
       </div>
     </section>
   )
@@ -393,11 +395,11 @@ function TrainingSection({ t, snapshot, pending, run, life }: SectionControlProp
       </p>
       {training.progress !== undefined ? <Progress t={t} progress={training.progress} /> : <p className={css.muted}>{t('noProgress')}</p>}
       <div className={css.actions} role="group" aria-label={t('sectionTraining')}>
-        <Button disabled={busy || active} onClick={() => run('trainStart', () => life.trainStart())}>{t('trainStart')}</Button>
-        <Button disabled={busy || !active || training.stopRequested} onClick={() => run('trainPause', () => life.trainPause())}>{t('trainPause')}</Button>
-        <Button disabled={busy || !active || training.stopRequested} onClick={() => run('trainResume', () => life.trainResume())}>{t('trainResume')}</Button>
-        <Button disabled={busy || !active} onClick={() => run('trainStop', () => life.trainStop())}>{t('trainStop')}</Button>
-        <Button disabled={busy || !active} onClick={() => run('trainReset', () => life.trainReset())}>{t('trainReset')}</Button>
+        <Button disabled={busy || active} onClick={() =>{  run('trainStart', () => life.trainStart()) }}>{t('trainStart')}</Button>
+        <Button disabled={busy || !active || training.stopRequested} onClick={() =>{  run('trainPause', () => life.trainPause()) }}>{t('trainPause')}</Button>
+        <Button disabled={busy || !active || training.stopRequested} onClick={() =>{  run('trainResume', () => life.trainResume()) }}>{t('trainResume')}</Button>
+        <Button disabled={busy || !active} onClick={() =>{  run('trainStop', () => life.trainStop()) }}>{t('trainStop')}</Button>
+        <Button disabled={busy || !active} onClick={() =>{  run('trainReset', () => life.trainReset()) }}>{t('trainReset')}</Button>
       </div>
       <h4 className={css.organTitle}>{t('checkpointsTitle')}</h4>
       <Checkpoints t={t} checkpoints={training.checkpoints} />
@@ -414,18 +416,89 @@ function KnowledgeSection({ t, snapshot }: { t: LifePanelProps['t']; snapshot: L
       {knowledge === undefined
         ? <p className={css.muted}>{t('knowledgeUnavailable')}</p>
         : (
-            <div className={css.facts}>
-              <Fact label={t('docsLabel')}>{knowledge.docCount}</Fact>
-              <Fact label={t('chunksLabel')}>{knowledge.chunkCount}</Fact>
-              <Fact label={t('embedDimLabel')}>{knowledge.embedDim > 0 ? knowledge.embedDim : t('embeddingsNo')}</Fact>
-              <Fact label={t('embeddingsYes')}><StateDot state={knowledge.hasEmbeddings ? 'done' : 'idle'} /></Fact>
-            </div>
-          )}
+          <div className={css.facts}>
+            <Fact label={t('docsLabel')}>{knowledge.docCount}</Fact>
+            <Fact label={t('chunksLabel')}>{knowledge.chunkCount}</Fact>
+            <Fact label={t('embedDimLabel')}>{knowledge.embedDim > 0 ? knowledge.embedDim : t('embeddingsNo')}</Fact>
+            <Fact label={t('embeddingsYes')}><StateDot state={knowledge.hasEmbeddings ? 'done' : 'idle'} /></Fact>
+          </div>
+        )}
     </section>
   )
 }
 
-/** Section 5: the host projection — health, model, seed activity, memory. */
+/** One line of a runtime-owned string list, rendered as its own row. */
+function LineList({ title, lines, empty }: { title: string; lines: readonly string[]; empty: string }): ReactNode {
+  return (
+    <>
+      <p className={css.groupLabel}>{title}</p>
+      {lines.length === 0
+        ? <p className={css.muted}>{empty}</p>
+        : <ul className={css.unavailableList}>{lines.map(line => <li key={line}>{line}</li>)}</ul>}
+    </>
+  )
+}
+
+/** Section 5: the memory journal, the consolidation passes, and their products. */
+function ConsolidationSection({ t, snapshot, pending, run, life }: SectionControlProps): ReactNode {
+  const view = snapshot.consolidation
+  const busy = pending !== null
+  const kinds = view === undefined ? [] : Object.entries(view.journal.byKind)
+  return (
+    <section className={css.section} aria-label={t('sectionConsolidation')}>
+      <h3 className={css.sectionTitle}>{t('sectionConsolidation')}</h3>
+      {view === undefined
+        ? <p className={css.muted}>{t('consolidationUnavailable')}</p>
+        : (
+          <>
+            <div className={css.facts}>
+              <Fact label={t('journalLabel')}>{view.journal.entries}</Fact>
+              <Fact label={t('journalKindsLabel')}>
+                {kinds.length === 0 ? t('noReadings') : kinds.map(([kind, count]) => `${kind}: ${String(count)}`).join(' · ')}
+              </Fact>
+              <Fact label={t('passesLabel')}>{view.passes}</Fact>
+              <Fact label={t('lastPassLabel')}>
+                {view.lastPassAt > 0 ? formatInstant(new Date(view.lastPassAt * 1000).toISOString()) : t('notYet')}
+              </Fact>
+              <Fact label={t('projectedDigestsLabel')}>{view.projectedDigests}</Fact>
+              <Fact label={t('lastCorpusLabel')}>{view.lastCorpus !== '' ? view.lastCorpus : t('notYet')}</Fact>
+            </div>
+            {view.running && <p className={css.trainingBadges}><Tag tone="warning">{t('passRunning')}</Tag></p>}
+            <h4 className={css.organTitle}>{t('specTitle')}</h4>
+            {view.spec === null
+              ? <p className={css.muted}>{t('specNotReady')}</p>
+              : (
+                <div className={css.facts}>
+                  <Fact label={t('gateReasonLabel')}>{view.spec.reason}</Fact>
+                  <Fact label={t('datasetsLabel')}>
+                    {view.spec.datasets.length === 0 ? t('notYet') : view.spec.datasets.join(', ')}
+                  </Fact>
+                </div>
+              )}
+            <h4 className={css.organTitle}>{t('reportTitle')}</h4>
+            {view.lastReport === null
+              ? <p className={css.muted}>{t('noReport')}</p>
+              : (
+                <>
+                  <div className={css.facts}>
+                    <Fact label={t('triggerLabel')}>{view.lastReport.reason}</Fact>
+                    <Fact label={t('gateReasonLabel')}>{view.lastReport.specReason !== '' ? view.lastReport.specReason : t('notYet')}</Fact>
+                    <Fact label={t('durationLabel')}>{t('secondsShort', { count: (view.lastReport.durationMs / 1000).toFixed(1) })}</Fact>
+                  </div>
+                  <LineList title={t('weaknessesTitle')} lines={view.lastReport.weaknesses} empty={t('noWeaknesses')} />
+                  <LineList title={t('notesTitle')} lines={view.lastReport.notes} empty={t('noNotes')} />
+                </>
+              )}
+            <div className={css.actions} role="group" aria-label={t('sectionConsolidation')}>
+              <Button disabled={busy} onClick={() => { run('consolidate', () => life.consolidate()) }}>{t('runConsolidate')}</Button>
+            </div>
+          </>
+        )}
+    </section>
+  )
+}
+
+/** Section 6: the host projection — health, model, seed activity, memory. */
 function HostSection({ t, snapshot }: { t: LifePanelProps['t']; snapshot: LifeSnapshot }): ReactNode {
   const { health, memory } = snapshot
   if (health === undefined && memory === undefined) return <p className={css.muted}>{t('noReading')}</p>

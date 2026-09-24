@@ -6,8 +6,11 @@ import type {
   LifeSnapshot,
   LifeSnapshotState,
 } from '@taiji/dsh-api-life-controller/client'
-import type { RemoteFailure } from '@taiji/dsh-typert-protocol'
+import { RemoteError, type RemoteFailure } from '@taiji/dsh-typert-protocol'
 import { LifePanel, type LifePanelProps } from '../src/client/LifePanel.tsx'
+// Pulls the `LocaleNamespaceMap` augmentation into this program, so
+// `LifePanelProps['t']` resolves to the framework-injected translate seat.
+import type {} from '../src/client/index.ts'
 import { en, type LifeLocaleKey } from '../src/client/locales.ts'
 
 afterEach(cleanup)
@@ -46,6 +49,26 @@ function nativeSnapshot(overrides: Partial<LifeSnapshot> = {}): LifeSnapshot {
     },
     training: { isTraining: false, pauseRequested: false, stopRequested: false, publishing: false, checkpoints: [] },
     knowledge: { docCount: 12, chunkCount: 340, hasEmbeddings: true, embedDim: 768 },
+    consolidation: {
+      passes: 2,
+      lastPassAt: 1_760_000_100,
+      lastCorpus: 'data/consolidated/corpus-20260923T080000Z-pass-2.jsonl',
+      projectedDigests: 3,
+      running: false,
+      spec: {
+        reason: 'interaction journal holds 3 entries',
+        datasets: ['data/consolidated/night-1.jsonl'],
+        weaknesses: ['recency'],
+      },
+      lastReport: {
+        reason: 'manual',
+        specReason: 'interaction journal holds 3 entries',
+        durationMs: 1_500,
+        weaknesses: ['recency'],
+        notes: ['corpus written'],
+      },
+      journal: { entries: 4, byKind: { interaction: 3, reflection: 1 }, sessions: 2, lastRecordedAt: 1_760_000_000 },
+    },
     availability: { runtime: 'ok', legacy: 'disabled', knowledge: 'ok', trainingStream: 'idle' },
     unavailable: [],
     ...overrides,
@@ -89,7 +112,7 @@ function stubLife(snapshot: LifeSnapshot | undefined, state: LifeSnapshotState['
       return () => { listeners.delete(listener) }
     },
     refresh: vi.fn(async () => {
-      if (current.snapshot === undefined) throw new LifeControlError({ code: 'life/stream-failed', message: 'no snapshot', details: {} })
+      if (current.snapshot === undefined) throw new LifeControlError(new RemoteError('life/stream-failed', 'no snapshot', { reason: 'no snapshot' }))
       return current.snapshot
     }),
     trainStart: vi.fn(accept),
@@ -97,6 +120,7 @@ function stubLife(snapshot: LifeSnapshot | undefined, state: LifeSnapshotState['
     trainResume: vi.fn(accept),
     trainStop: vi.fn(accept),
     trainReset: vi.fn(accept),
+    consolidate: vi.fn(accept),
     lifeStart: vi.fn(accept),
     lifeStop: vi.fn(accept),
     lifeAction: vi.fn(accept),
@@ -115,14 +139,14 @@ function mountPanel(life: ILife): void {
   render(<LifePanel {...standard} t={t} life={life} />)
 }
 
-const UNAVAILABLE: RemoteFailure = {
-  code: 'life/unavailable',
-  message: 'legacy surface is not mounted',
-  details: { source: 'life', reason: 'legacy surface is not mounted' },
-}
+const UNAVAILABLE: RemoteFailure = new RemoteError(
+  'life/unavailable',
+  'legacy surface is not mounted',
+  { source: 'life', reason: 'legacy surface is not mounted' },
+)
 
 describe('LifePanel', () => {
-  it('renders a native reading across all five sections', () => {
+  it('renders a native reading across all six sections', () => {
     const { life } = stubLife(nativeSnapshot())
     mountPanel(life)
 
@@ -130,6 +154,7 @@ describe('LifePanel', () => {
     expect(screen.getByText(en.sectionLife)).not.toBeNull()
     expect(screen.getByText(en.sectionTraining)).not.toBeNull()
     expect(screen.getByText(en.sectionKnowledge)).not.toBeNull()
+    expect(screen.getByText(en.sectionConsolidation)).not.toBeNull()
     expect(screen.getByText(en.sectionHost)).not.toBeNull()
 
     expect(screen.getByText(en.sourceNative)).not.toBeNull()
@@ -145,6 +170,54 @@ describe('LifePanel', () => {
 
     expect(screen.getByText('test-model')).not.toBeNull()
     expect(screen.getByText(en.seedActive)).not.toBeNull()
+  })
+
+  it('renders the memory journal, the pass products, and runs a pass on click', async () => {
+    const { life } = stubLife(nativeSnapshot())
+    mountPanel(life)
+
+    expect(screen.getByText('4')).not.toBeNull()
+    expect(screen.getByText('interaction: 3 · reflection: 1')).not.toBeNull()
+    expect(screen.getByText('2')).not.toBeNull()
+    expect(screen.getByText('data/consolidated/corpus-20260923T080000Z-pass-2.jsonl')).not.toBeNull()
+    // The gate reason appears in both the spec block and the report block.
+    expect(screen.getAllByText('interaction journal holds 3 entries')).toHaveLength(2)
+    expect(screen.getByText('data/consolidated/night-1.jsonl')).not.toBeNull()
+    expect(screen.getByText('1.5 s')).not.toBeNull()
+    expect(screen.getByText('recency')).not.toBeNull()
+    expect(screen.getByText('corpus written')).not.toBeNull()
+    expect(screen.queryByText(en.passRunning)).toBeNull()
+
+    fireEvent.click(screen.getByRole('button', { name: en.runConsolidate }))
+    await waitFor(() => { expect(life.consolidate).toHaveBeenCalledTimes(1) })
+  })
+
+  it('reports an unserved consolidation surface and an unpassed readiness gate honestly', () => {
+    const { consolidation: omitted, ...unServed } = nativeSnapshot()
+    expect(omitted).toBeDefined()
+    const missing = stubLife(unServed)
+    mountPanel(missing.life)
+    expect(screen.getByText(en.consolidationUnavailable)).not.toBeNull()
+    expect(screen.queryByRole('button', { name: en.runConsolidate })).toBeNull()
+    cleanup()
+
+    const gated = stubLife(nativeSnapshot({
+      consolidation: {
+        passes: 0,
+        lastPassAt: 0,
+        lastCorpus: '',
+        projectedDigests: 0,
+        running: false,
+        spec: null,
+        lastReport: null,
+        journal: { entries: 0, byKind: {}, sessions: 0, lastRecordedAt: 0 },
+      },
+    }))
+    mountPanel(gated.life)
+    expect(screen.getByText(en.specNotReady)).not.toBeNull()
+    expect(screen.getByText(en.noReport)).not.toBeNull()
+    expect(screen.getByText(en.noReadings)).not.toBeNull()
+    expect(screen.getAllByText(en.notYet).length).toBeGreaterThanOrEqual(2)
   })
 
   it('renders the legacy organ with its scheduler facts and controls', () => {

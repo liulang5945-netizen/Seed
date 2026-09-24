@@ -764,6 +764,7 @@ export const LINK_MAP: Readonly<Record<string, string>> = {
   DirectoryPickerCapability: 'workspace.md',
   DirectoryListing: 'workspace.md',
   LifeActionRequest: 'life.md',
+  LifeConsolidateRequest: 'life.md',
   LifeControlValue: 'life.md',
   LifeFollowFrame: 'life.md',
   LifeSnapshotValue: 'life.md',

@@ -4,6 +4,7 @@ import type {} from '@taiji/dsh-api-life-controller/remote'
 import { RemoteError, type RemoteFailure, type RemoteResult, type TypertClientRemote } from '@taiji/dsh-typert-protocol'
 import type {
   LifeActionRequest,
+  LifeConsolidateRequest,
   LifeControlValue,
   LifeSnapshot,
   LifeTrainStartRequest,
@@ -136,6 +137,16 @@ export class ClientLifeModel implements LifeStreamSink {
   }
 
   /**
+   * Run one native sleep consolidation pass.
+   * @param request - pass parameters.
+   * @param signal - caller lifetime.
+   * @returns the runtime's pass report message or the Host failure.
+   */
+  consolidate(request: LifeConsolidateRequest, signal?: AbortSignal): Promise<RemoteResult<LifeControlValue>> {
+    return this.remote.consolidate(request, signal)
+  }
+
+  /**
    * Start the Legacy life scheduler.
    * @param signal - caller lifetime.
    * @returns the runtime's message or the Host failure.
@@ -170,7 +181,11 @@ export class ClientLifeModel implements LifeStreamSink {
   }
 }
 
-/** Normalize a thrown or returned failure into the Remote failure shape. */
+/**
+ * Normalize a thrown or returned failure into the Remote failure shape.
+ * @param error - whatever a call rejected or returned as its failure.
+ * @returns the Remote failure carrying its stable code and message.
+ */
 export function failureOf(error: unknown): RemoteFailure {
   if (typeof error === 'object' && error !== null && 'code' in error && 'message' in error) {
     return error as RemoteFailure
