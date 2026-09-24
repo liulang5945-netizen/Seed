@@ -1,0 +1,318 @@
+{
+  "format": "taiji-r2-init-seed-spread-v1",
+  "written_at_utc": "2026-09-24T02:15:36Z",
+  "question": "训练后 16M 的可分离性是否落在初始化（跨 seed）分布之外——即'训练把它花掉了'是否成立",
+  "preregistered_seeds": [
+    20260822,
+    20260823,
+    20260824,
+    20260825,
+    20260826,
+    20260827,
+    20260828,
+    20260901
+  ],
+  "preregistered_rule": "训练值 < init min 或 > init max ⇒ beyond_init_range；否则 within_init_range",
+  "disclosures": [
+    "样本只有 8 个 seed，min/max 作为界很脆；z 分数也只作旁注",
+    "本件只判'训练前后之差是否超出初始化波动'，不判因果机制",
+    "刺激集仍是那 6 个冻结族"
+  ],
+  "per_seed": [
+    {
+      "seed": 20260822,
+      "1_activity_block": {
+        "consistency_median": 0.665856,
+        "baseline_median": -0.010124,
+        "verdict": "partial"
+      },
+      "2_trace_block": {
+        "consistency_median": 0.748245,
+        "baseline_median": -0.009392,
+        "verdict": "partial"
+      },
+      "3_context": {
+        "consistency_median": 0.754038,
+        "baseline_median": -0.043511,
+        "verdict": "partial"
+      },
+      "4_context_trace": {
+        "consistency_median": 0.688135,
+        "baseline_median": -0.035845,
+        "verdict": "partial"
+      },
+      "5_readout_dist": {
+        "consistency_median": 0.745123,
+        "baseline_median": -0.046007,
+        "verdict": "partial"
+      }
+    },
+    {
+      "seed": 20260823,
+      "1_activity_block": {
+        "consistency_median": 0.664499,
+        "baseline_median": -0.025288,
+        "verdict": "partial"
+      },
+      "2_trace_block": {
+        "consistency_median": 0.637421,
+        "baseline_median": 0.007033,
+        "verdict": "partial"
+      },
+      "3_context": {
+        "consistency_median": 0.619361,
+        "baseline_median": 0.029579,
+        "verdict": "partial"
+      },
+      "4_context_trace": {
+        "consistency_median": 0.449259,
+        "baseline_median": 0.025429,
+        "verdict": "not_separable"
+      },
+      "5_readout_dist": {
+        "consistency_median": 0.613482,
+        "baseline_median": 0.098059,
+        "verdict": "partial"
+      }
+    },
+    {
+      "seed": 20260824,
+      "1_activity_block": {
+        "consistency_median": 0.764365,
+        "baseline_median": -0.010463,
+        "verdict": "partial"
+      },
+      "2_trace_block": {
+        "consistency_median": 0.711969,
+        "baseline_median": -0.009242,
+        "verdict": "partial"
+      },
+      "3_context": {
+        "consistency_median": 0.789478,
+        "baseline_median": -0.019731,
+        "verdict": "partial"
+      },
+      "4_context_trace": {
+        "consistency_median": 0.60009,
+        "baseline_median": 0.069076,
+        "verdict": "partial"
+      },
+      "5_readout_dist": {
+        "consistency_median": 0.804464,
+        "baseline_median": 0.00077,
+        "verdict": "partial"
+      }
+    },
+    {
+      "seed": 20260825,
+      "1_activity_block": {
+        "consistency_median": 0.718378,
+        "baseline_median": -0.009783,
+        "verdict": "partial"
+      },
+      "2_trace_block": {
+        "consistency_median": 0.701969,
+        "baseline_median": 0.006351,
+        "verdict": "partial"
+      },
+      "3_context": {
+        "consistency_median": 0.667486,
+        "baseline_median": 0.074225,
+        "verdict": "partial"
+      },
+      "4_context_trace": {
+        "consistency_median": 0.619645,
+        "baseline_median": 0.021959,
+        "verdict": "partial"
+      },
+      "5_readout_dist": {
+        "consistency_median": 0.66302,
+        "baseline_median": 0.107456,
+        "verdict": "partial"
+      }
+    },
+    {
+      "seed": 20260826,
+      "1_activity_block": {
+        "consistency_median": 0.375147,
+        "baseline_median": -0.055195,
+        "verdict": "not_separable"
+      },
+      "2_trace_block": {
+        "consistency_median": 0.657663,
+        "baseline_median": 0.004938,
+        "verdict": "partial"
+      },
+      "3_context": {
+        "consistency_median": 0.432614,
+        "baseline_median": 0.00323,
+        "verdict": "not_separable"
+      },
+      "4_context_trace": {
+        "consistency_median": 0.631755,
+        "baseline_median": -0.042264,
+        "verdict": "partial"
+      },
+      "5_readout_dist": {
+        "consistency_median": 0.346724,
+        "baseline_median": 0.054136,
+        "verdict": "not_separable"
+      }
+    },
+    {
+      "seed": 20260827,
+      "1_activity_block": {
+        "consistency_median": 0.503656,
+        "baseline_median": 0.032026,
+        "verdict": "partial"
+      },
+      "2_trace_block": {
+        "consistency_median": 0.711202,
+        "baseline_median": -0.003807,
+        "verdict": "partial"
+      },
+      "3_context": {
+        "consistency_median": 0.575963,
+        "baseline_median": -0.103026,
+        "verdict": "partial"
+      },
+      "4_context_trace": {
+        "consistency_median": 0.686789,
+        "baseline_median": -0.004023,
+        "verdict": "partial"
+      },
+      "5_readout_dist": {
+        "consistency_median": 0.548989,
+        "baseline_median": -0.067423,
+        "verdict": "partial"
+      }
+    },
+    {
+      "seed": 20260828,
+      "1_activity_block": {
+        "consistency_median": 0.669308,
+        "baseline_median": 0.023674,
+        "verdict": "partial"
+      },
+      "2_trace_block": {
+        "consistency_median": 0.654341,
+        "baseline_median": -0.010965,
+        "verdict": "partial"
+      },
+      "3_context": {
+        "consistency_median": 0.631191,
+        "baseline_median": -0.01182,
+        "verdict": "partial"
+      },
+      "4_context_trace": {
+        "consistency_median": 0.637348,
+        "baseline_median": -0.040367,
+        "verdict": "partial"
+      },
+      "5_readout_dist": {
+        "consistency_median": 0.678392,
+        "baseline_median": 0.004811,
+        "verdict": "partial"
+      }
+    },
+    {
+      "seed": 20260901,
+      "1_activity_block": {
+        "consistency_median": 0.402498,
+        "baseline_median": -0.057886,
+        "verdict": "not_separable"
+      },
+      "2_trace_block": {
+        "consistency_median": 0.656446,
+        "baseline_median": -0.050228,
+        "verdict": "partial"
+      },
+      "3_context": {
+        "consistency_median": 0.419391,
+        "baseline_median": -0.055573,
+        "verdict": "not_separable"
+      },
+      "4_context_trace": {
+        "consistency_median": 0.55061,
+        "baseline_median": -0.088966,
+        "verdict": "partial"
+      },
+      "5_readout_dist": {
+        "consistency_median": 0.449526,
+        "baseline_median": 0.013658,
+        "verdict": "not_separable"
+      }
+    }
+  ],
+  "summary": {
+    "1_activity_block": {
+      "init_stats": {
+        "n": 8,
+        "min": 0.375147,
+        "median": 0.665856,
+        "max": 0.764365,
+        "mean": 0.595463,
+        "stdev": 0.147848
+      },
+      "init_values": [
+        0.665856,
+        0.664499,
+        0.764365,
+        0.718378,
+        0.375147,
+        0.503656,
+        0.669308,
+        0.402498
+      ],
+      "trained_16m": 0.4586,
+      "verdict": "within_init_range",
+      "trained_z_score": -0.926
+    },
+    "2_trace_block": {
+      "init_stats": {
+        "n": 8,
+        "min": 0.637421,
+        "median": 0.701969,
+        "max": 0.748245,
+        "mean": 0.684907,
+        "stdev": 0.038671
+      },
+      "init_values": [
+        0.748245,
+        0.637421,
+        0.711969,
+        0.701969,
+        0.657663,
+        0.711202,
+        0.654341,
+        0.656446
+      ],
+      "trained_16m": 0.5766,
+      "verdict": "beyond_init_range",
+      "trained_z_score": -2.801
+    },
+    "3_context": {
+      "init_stats": {
+        "n": 8,
+        "min": 0.419391,
+        "median": 0.631191,
+        "max": 0.789478,
+        "mean": 0.61119,
+        "stdev": 0.134028
+      },
+      "init_values": [
+        0.754038,
+        0.619361,
+        0.789478,
+        0.667486,
+        0.432614,
+        0.575963,
+        0.631191,
+        0.419391
+      ],
+      "trained_16m": 0.4197,
+      "verdict": "within_init_range",
+      "trained_z_score": -1.429
+    }
+  }
+}

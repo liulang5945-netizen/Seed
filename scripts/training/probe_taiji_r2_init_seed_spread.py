@@ -34,6 +34,7 @@ if str(PROJECT_ROOT) not in sys.path:
 if str(PROJECT_ROOT / "scripts" / "training") not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT / "scripts" / "training"))
 
+from probe_taiji_r2_compositionality import FAMILIES  # noqa: E402
 from probe_taiji_r2_separability_before_training import measure  # noqa: E402
 
 #: 预注册的种子集合（先定后跑）
@@ -60,6 +61,11 @@ def _stats(values: list[float]) -> dict[str, Any]:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--config-from", default=str(PROJECT_ROOT / "checkpoints" / "seed_beta.pt"))
+    parser.add_argument(
+        "--families-file",
+        default=None,
+        help="给一个族集 JSON（如确认集）就量那个集；缺省用筛选集 6 族",
+    )
     parser.add_argument("--out-report", default=None)
     args = parser.parse_args()
     from seed import Seed, SeedConfig
@@ -69,11 +75,15 @@ def main() -> int:
     values = dict(envelope["config"]["taiji"])
     values.pop("receptors_factored", None)
     base = TaijiConfig.from_dict(values)
+    families = FAMILIES
+    if args.families_file:
+        payload = json.loads(Path(args.families_file).read_text(encoding="utf-8"))
+        families = payload["families"]
 
     per_seed: list[dict[str, Any]] = []
     for seed in SEEDS:
         model = Seed(SeedConfig(taiji=replace(base, seed=seed)))
-        per_seed.append({"seed": seed, **measure(model.architecture, f"seed{seed}")})
+        per_seed.append({"seed": seed, **measure(model.architecture, f"seed{seed}", families)})
 
     stages = sorted(TRAINED)
     summary: dict[str, Any] = {}

@@ -40,10 +40,12 @@ from probe_taiji_r2_compositionality import (  # noqa: E402
 from probe_taiji_r2_separability_profile import STAGES, _cells, _cos, _median  # noqa: E402
 
 
-def measure(substrate: Any, label: str) -> dict[str, Any]:
+def measure(
+    substrate: Any, label: str, families: list[dict[str, Any]] | None = None
+) -> dict[str, Any]:
     per_stage: dict[str, list[float]] = {stage: [] for stage in STAGES}
     us: dict[str, list[torch.Tensor]] = {stage: [] for stage in STAGES}
-    for family in FAMILIES:
+    for family in families if families is not None else FAMILIES:
         cells = _cells(substrate, None, family, label)
         for stage in STAGES:
             c00, c10 = cells["00"][stage], cells["10"][stage]
