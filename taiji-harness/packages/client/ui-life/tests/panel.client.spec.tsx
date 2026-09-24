@@ -47,17 +47,27 @@ function nativeSnapshot(overrides: Partial<LifeSnapshot> = {}): LifeSnapshot {
       isRunning: true,
       native: { tick: 41, mode: 'wake', needs: { curiosity: 42.5, fatigue: 10 }, drives: { exploration: 40 } },
     },
-    training: { isTraining: false, pauseRequested: false, stopRequested: false, publishing: false, checkpoints: [] },
+    training: {
+      isTraining: false,
+      pauseRequested: false,
+      stopRequested: false,
+      publishing: false,
+      checkpoints: [],
+      datasets: [
+        { path: 'consolidated/night-1.jsonl', sizeBytes: 4096 },
+        { path: 'simple_zh/dialogue_extended_clean.jsonl', sizeBytes: 108_327_171 },
+      ],
+    },
     knowledge: { docCount: 12, chunkCount: 340, hasEmbeddings: true, embedDim: 768 },
     consolidation: {
       passes: 2,
       lastPassAt: 1_760_000_100,
-      lastCorpus: 'data/consolidated/corpus-20260923T080000Z-pass-2.jsonl',
+      lastCorpus: 'consolidated/corpus-20260923T080000Z-pass-2.jsonl',
       projectedDigests: 3,
       running: false,
       spec: {
         reason: 'interaction journal holds 3 entries',
-        datasets: ['data/consolidated/night-1.jsonl'],
+        datasets: ['consolidated/night-1.jsonl'],
         weaknesses: ['recency'],
       },
       lastReport: {
@@ -97,24 +107,21 @@ function legacySnapshot(overrides: Partial<LifeSnapshot> = {}): LifeSnapshot {
   })
 }
 
-/** An in-memory ILife whose verbs are observable fakes. */
-function stubLife(snapshot: LifeSnapshot | undefined, state: LifeSnapshotState['state'] = 'ready'): {
-  life: ILife
-  emit: (next: LifeSnapshot) => void
-} {
+/**
+ * An in-memory ILife whose verbs are observable fakes. The same fakes come
+ * back under `mocks`: assertions read them as plain function properties,
+ * because a method reference on `ILife` is an unbound-method violation.
+ */
+function stubLife(snapshot: LifeSnapshot | undefined, state: LifeSnapshotState['state'] = 'ready') {
   let current: LifeSnapshotState = { snapshot, state, error: null }
   const listeners = new Set<() => void>()
   const accept = async (): Promise<{ message: string }> => ({ message: 'accepted' })
-  const life: ILife = {
-    getSnapshot: () => current,
-    subscribe: listener => {
-      listeners.add(listener)
-      return () => { listeners.delete(listener) }
-    },
-    refresh: vi.fn(async () => {
-      if (current.snapshot === undefined) throw new LifeControlError(new RemoteError('life/stream-failed', 'no snapshot', { reason: 'no snapshot' }))
-      return current.snapshot
-    }),
+  const refresh = vi.fn(async () => {
+    if (current.snapshot === undefined) throw new LifeControlError(new RemoteError('life/stream-failed', 'no snapshot', { reason: 'no snapshot' }))
+    return current.snapshot
+  })
+  const mocks = {
+    refresh,
     trainStart: vi.fn(accept),
     trainPause: vi.fn(accept),
     trainResume: vi.fn(accept),
@@ -125,9 +132,18 @@ function stubLife(snapshot: LifeSnapshot | undefined, state: LifeSnapshotState['
     lifeStop: vi.fn(accept),
     lifeAction: vi.fn(accept),
   }
+  const life: ILife = {
+    getSnapshot: () => current,
+    subscribe: (listener) => {
+      listeners.add(listener)
+      return () => { listeners.delete(listener) }
+    },
+    ...mocks,
+  }
   return {
     life,
-    emit: next => {
+    mocks,
+    emit: (next: LifeSnapshot) => {
       current = { snapshot: next, state: 'ready', error: null }
       for (const listener of listeners) listener()
     },
@@ -173,23 +189,24 @@ describe('LifePanel', () => {
   })
 
   it('renders the memory journal, the pass products, and runs a pass on click', async () => {
-    const { life } = stubLife(nativeSnapshot())
+    const { life, mocks } = stubLife(nativeSnapshot())
     mountPanel(life)
 
     expect(screen.getByText('4')).not.toBeNull()
     expect(screen.getByText('interaction: 3 · reflection: 1')).not.toBeNull()
     expect(screen.getByText('2')).not.toBeNull()
-    expect(screen.getByText('data/consolidated/corpus-20260923T080000Z-pass-2.jsonl')).not.toBeNull()
+    expect(screen.getByText('consolidated/corpus-20260923T080000Z-pass-2.jsonl')).not.toBeNull()
     // The gate reason appears in both the spec block and the report block.
     expect(screen.getAllByText('interaction journal holds 3 entries')).toHaveLength(2)
-    expect(screen.getByText('data/consolidated/night-1.jsonl')).not.toBeNull()
+    // The spec's dataset also sits in the training roster below.
+    expect(screen.getAllByText('consolidated/night-1.jsonl').length).toBeGreaterThanOrEqual(1)
     expect(screen.getByText('1.5 s')).not.toBeNull()
     expect(screen.getByText('recency')).not.toBeNull()
     expect(screen.getByText('corpus written')).not.toBeNull()
     expect(screen.queryByText(en.passRunning)).toBeNull()
 
     fireEvent.click(screen.getByRole('button', { name: en.runConsolidate }))
-    await waitFor(() => { expect(life.consolidate).toHaveBeenCalledTimes(1) })
+    await waitFor(() => { expect(mocks.consolidate).toHaveBeenCalledTimes(1) })
   })
 
   it('reports an unserved consolidation surface and an unpassed readiness gate honestly', () => {
@@ -234,6 +251,66 @@ describe('LifePanel', () => {
     }
   })
 
+  it('feeds the selection into trainStart, preselected from the data ring spec', async () => {
+    const { life, mocks } = stubLife(nativeSnapshot())
+    mountPanel(life)
+
+    // The roster renders with runtime-owned sizes, and the spec's dataset arrives ticked.
+    expect(screen.getByText('4.0 KB')).not.toBeNull()
+    expect(screen.getByText('103.3 MB')).not.toBeNull()
+    expect(screen.getByText(/1 selected/)).not.toBeNull()
+    expect(screen.getByText(/names 1/)).not.toBeNull()
+    const specDataset = screen.getByRole('checkbox', { name: /consolidated\/night-1\.jsonl/ })
+    const otherDataset = screen.getByRole('checkbox', { name: /dialogue_extended_clean/ })
+    expect((specDataset as HTMLInputElement).checked).toBe(true)
+    expect((otherDataset as HTMLInputElement).checked).toBe(false)
+
+    fireEvent.click(screen.getByRole('button', { name: en.trainStart }))
+    await waitFor(() => {
+      expect(mocks.trainStart).toHaveBeenLastCalledWith({ datasets: ['consolidated/night-1.jsonl'] })
+    })
+
+    // Unticking every dataset falls back to the runtime default corpus.
+    fireEvent.click(specDataset)
+    expect(screen.getByText(/0 selected/)).not.toBeNull()
+    expect(screen.getByText(en.datasetsDefaultHint)).not.toBeNull()
+    fireEvent.click(screen.getByRole('button', { name: en.trainStart }))
+    await waitFor(() => {
+      expect(mocks.trainStart).toHaveBeenLastCalledWith({})
+    })
+  })
+
+  it('reports an unserved roster honestly and still starts on the runtime default', async () => {
+    const { life, mocks } = stubLife(nativeSnapshot({
+      training: { isTraining: false, pauseRequested: false, stopRequested: false, publishing: false, checkpoints: [] },
+    }))
+    mountPanel(life)
+
+    expect(screen.getByText(en.datasetsUnavailable)).not.toBeNull()
+    fireEvent.click(screen.getByRole('button', { name: en.trainStart }))
+    await waitFor(() => {
+      expect(mocks.trainStart).toHaveBeenLastCalledWith({})
+    })
+  })
+
+  it('warns when the spec names a dataset the roster lacks', () => {
+    const consolidation = nativeSnapshot().consolidation
+    if (consolidation === undefined || consolidation.spec === null) throw new Error('fixture must carry a spec')
+    const { life } = stubLife(nativeSnapshot({
+      consolidation: {
+        ...consolidation,
+        spec: { ...consolidation.spec, datasets: ['consolidated/gone.jsonl', 'consolidated/night-1.jsonl'] },
+      },
+    }))
+    mountPanel(life)
+
+    expect(screen.getByText(/missing from the roster: consolidated\/gone\.jsonl/)).not.toBeNull()
+    expect(screen.getByText(/names 2/)).not.toBeNull()
+    // The missing entry cannot be ticked; the present one still preselects.
+    expect(screen.getByText(/1 selected/)).not.toBeNull()
+    expect(screen.queryByRole('checkbox', { name: /consolidated\/gone\.jsonl/ })).toBeNull()
+  })
+
   it('marks a stale reading and lists the sources that did not answer', () => {
     const { life } = stubLife(nativeSnapshot({
       fresh: false,
@@ -247,13 +324,16 @@ describe('LifePanel', () => {
   })
 
   it('requires a confirming click before stopping training, then runs the verb', async () => {
-    const { life } = stubLife(nativeSnapshot({
+    const { life, mocks } = stubLife(nativeSnapshot({
       training: {
         isTraining: true,
         pauseRequested: false,
         stopRequested: false,
         publishing: false,
-        progress: { fraction: 0.25, step: 5, loss: 1.3, elapsed: 60, eta: 180, epoch: 1, totalEpochs: 4, samplesPerSec: 12.5, totalSteps: 20 },
+        progress: {
+          fraction: 0.25, step: 5, loss: 1.3, elapsed: 60, eta: 180,
+          epoch: 1, totalEpochs: 4, samplesPerSec: 12.5, totalSteps: 20,
+        },
         checkpoints: [
           { filename: 'ckpt-000005.pt', step: 5, bytes: 2048, modifiedUtc: '2026-09-23T08:01:00.000Z', savedAtUtc: '2026-09-23T08:01:00.000Z', numEpochs: 1 },
         ],
@@ -269,15 +349,15 @@ describe('LifePanel', () => {
     expect(stop.hasAttribute('disabled')).toBe(false)
     fireEvent.click(stop)
     expect(screen.getByText(en.confirmStop)).not.toBeNull()
-    expect(life.trainStop).not.toHaveBeenCalled()
+    expect(mocks.trainStop).not.toHaveBeenCalled()
 
     fireEvent.click(screen.getByRole('button', { name: en.trainStop }))
-    await waitFor(() => { expect(life.trainStop).toHaveBeenCalledTimes(1) })
+    await waitFor(() => { expect(mocks.trainStop).toHaveBeenCalledTimes(1) })
   })
 
   it('renders a control refusal as stable copy and clears it on the next success', async () => {
-    const { life } = stubLife(legacySnapshot())
-    vi.mocked(life.lifeStop).mockRejectedValue(new LifeControlError(UNAVAILABLE))
+    const { life, mocks } = stubLife(legacySnapshot())
+    mocks.lifeStop.mockRejectedValue(new LifeControlError(UNAVAILABLE))
     mountPanel(life)
 
     fireEvent.click(screen.getByRole('button', { name: en.lifeStop }))
@@ -301,6 +381,6 @@ describe('LifePanel', () => {
     mountPanel(failing.life)
     expect(screen.getByText(en.errorTitle)).not.toBeNull()
     fireEvent.click(screen.getByRole('button', { name: en.retry }))
-    await waitFor(() => { expect(failing.life.refresh).toHaveBeenCalledTimes(1) })
+    await waitFor(() => { expect(failing.mocks.refresh).toHaveBeenCalledTimes(1) })
   })
 })

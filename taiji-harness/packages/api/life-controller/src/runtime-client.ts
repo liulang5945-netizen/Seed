@@ -13,6 +13,7 @@ import type {
   LifeConsolidateRequest,
   LifeConsolidationView,
   LifeControlValue,
+  LifeDatasetView,
   LifeHealthView,
   LifeKnowledgeView,
   LifeLegacyView,
@@ -31,6 +32,7 @@ import type {
 /** Fixed runtime endpoints this client speaks to. */
 const STATUS_PATH = '/api/runtime/status'
 const CHECKPOINTS_PATH = '/api/train/checkpoints'
+const TRAIN_FILES_PATH = '/api/train/files'
 const LEGACY_LIFE_PATH = '/api/life/status'
 const KNOWLEDGE_PATH = '/api/rag/status'
 const CONSOLIDATION_PATH = '/api/consolidation/status'
@@ -128,6 +130,12 @@ export class LifeRuntimeClient {
       ? undefined
       : await this.readConsolidation(signal, unavailable)
     const consolidationReading = consolidation === undefined ? undefined : consolidationView(consolidation)
+    // The trainable roster feeds the panel's dataset chooser; it answers
+    // whenever the runtime is up, and its absence leaves the field absent.
+    const trainFiles = runtime === 'down'
+      ? undefined
+      : await this.readTrainFiles(signal, unavailable)
+    const datasetsReading = trainFiles === undefined ? undefined : trainFilesView(trainFiles)
     const source = lifeSource(status?.body)
 
     return {
@@ -138,7 +146,11 @@ export class LifeRuntimeClient {
       ...(health === undefined ? {} : { health }),
       ...(memory === undefined ? {} : { memory }),
       ...(life === undefined ? {} : { life }),
-      training: { ...(training ?? emptyTraining()), ...(checkpoints === undefined ? {} : { checkpoints }) },
+      training: {
+        ...(training ?? emptyTraining()),
+        ...(checkpoints === undefined ? {} : { checkpoints }),
+        ...(datasetsReading === undefined ? {} : { datasets: datasetsReading }),
+      },
       ...(knowledgeReading === undefined ? {} : { knowledge: knowledgeReading }),
       ...(consolidationReading === undefined ? {} : { consolidation: consolidationReading }),
       availability: {
@@ -298,11 +310,25 @@ export class LifeRuntimeClient {
     }
   }
 
-  private async readConsolidation(signal: AbortSignal, unavailable: string[]): Promise<unknown | undefined> {
+  private async readConsolidation(signal: AbortSignal, unavailable: string[]): Promise<unknown> {
     try {
       const reply = await this.read(CONSOLIDATION_PATH, signal)
       if (reply.status !== 200) {
         unavailable.push(`consolidation: HTTP ${String(reply.status)}`)
+        return undefined
+      }
+      return reply.body
+    } catch (error) {
+      unavailable.push(describeFailure(error))
+      return undefined
+    }
+  }
+
+  private async readTrainFiles(signal: AbortSignal, unavailable: string[]): Promise<unknown> {
+    try {
+      const reply = await this.read(TRAIN_FILES_PATH, signal)
+      if (reply.status !== 200) {
+        unavailable.push(`train-files: HTTP ${String(reply.status)}`)
         return undefined
       }
       return reply.body
@@ -453,6 +479,19 @@ function knowledgeView(body: unknown): LifeKnowledgeView {
     hasEmbeddings: flag(body, 'has_embeddings'),
     embedDim: number(body, 'embed_dim'),
   }
+}
+
+/** Trainable roster projection from `GET /api/train/files`; `undefined` when the body carried no roster. */
+function trainFilesView(body: unknown): readonly LifeDatasetView[] | undefined {
+  const entries = value(body, 'entries')
+  if (!Array.isArray(entries)) return undefined
+  const rows: LifeDatasetView[] = []
+  for (const row of entries) {
+    const path = text(row, 'path')
+    if (path === '') continue
+    rows.push({ path, sizeBytes: number(row, 'size_bytes') })
+  }
+  return rows
 }
 
 /** Memory and consolidation projection from `GET /api/consolidation/status`. */

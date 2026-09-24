@@ -43,13 +43,13 @@ const CONSOLIDATION_STATUS = {
   directory: 'data/consolidated',
   passes: 2,
   last_pass_at: 1_760_000_100,
-  last_corpus: 'data/consolidated/corpus-20260923T080000Z-pass-2.jsonl',
+  last_corpus: 'consolidated/corpus-20260923T080000Z-pass-2.jsonl',
   projected_digests: 3,
   running: false,
   spec: {
     reason: 'interaction journal holds 3 entries',
     weaknesses: ['recency'],
-    datasets: ['data/consolidated/night-1.jsonl'],
+    datasets: ['consolidated/night-1.jsonl'],
   },
   last_report: {
     pass_id: 'pass-2',
@@ -72,12 +72,12 @@ describe('LifeController consolidation read', () => {
     expect(snapshot.consolidation).toEqual({
       passes: 2,
       lastPassAt: 1_760_000_100,
-      lastCorpus: 'data/consolidated/corpus-20260923T080000Z-pass-2.jsonl',
+      lastCorpus: 'consolidated/corpus-20260923T080000Z-pass-2.jsonl',
       projectedDigests: 3,
       running: false,
       spec: {
         reason: 'interaction journal holds 3 entries',
-        datasets: ['data/consolidated/night-1.jsonl'],
+        datasets: ['consolidated/night-1.jsonl'],
         weaknesses: ['recency'],
       },
       lastReport: {

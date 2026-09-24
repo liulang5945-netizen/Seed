@@ -24,7 +24,7 @@ kind: "package-reference"
 
 Host 控制器拥有唯一一个面向 Taiji 本地 runtime 的轮询循环，并由它服务所有消费方。每轮只读一次 runtime，盖上当时生效的间隔，并仅在渲染结果变化时发布，因此[生命子系统参考](../../../docs/subsystems/life.zh.md)保持为读数的唯一描述，而本 README 拥有包契约：配置、线上动词及其失败。`follow()` 先发出一帧携带当前快照的 `baseline`，此后每次变化发出一帧替换快照的 `snapshot`；重连会以新的 baseline 开始新一代，因此消费方从不依赖在断线期间收到每一帧。
 
-runtime 是唯一事实来源，而读数会说明每个数值的出处。`GET /api/runtime/status` 始终可用，其 `life` 分节自选来源器官——`seed` 为 native homeostasis 器官，`ok` 为 legacy 调度器——`GET /api/train/checkpoints` 携带已保存运行的名单，而 `GET /api/consolidation/status` 携带记忆日志计数与睡眠 pass 的产物（pass 计数、最近语料、数据环规格与最近报告）。legacy 生命 surface（`/api/life`）与知识索引（`/api/rag`）仅在 runtime 通过 `SEED_ENABLE_LEGACY` 启用它们时才挂载；未挂载的路径应答 `404`，控制器据此记录为 `disabled` 而非失败，而 `/api/taiji/life` 下的 legacy 控制动词在同样情形下以 `life/unavailable` 拒绝。运行中的 runtime 不提供的巩固读取会成为一行 `unavailable` 而非快照失败，因为较旧的 runtime 是部署的事实，不是坏掉的读数。因此每份快照都携带 `source`、`observedAt`、`fresh`、`availability`，以及每个未应答来源的一行 `unavailable`；没有人测量过的量保持缺失而非默认零。控制器不会重新换算 native homeostasis 的数值，也不会用 native 读数顶替 legacy 读数。
+runtime 是唯一事实来源，而读数会说明每个数值的出处。`GET /api/runtime/status` 始终可用，其 `life` 分节自选来源器官——`seed` 为 native homeostasis 器官，`ok` 为 legacy 调度器——`GET /api/train/checkpoints` 携带已保存运行的名单，`GET /api/train/files` 携带可训练数据集名单（data 目录下的 POSIX 相对路径及其大小），而 `GET /api/consolidation/status` 携带记忆日志计数与睡眠 pass 的产物（pass 计数、最近语料、数据环规格与最近报告）。legacy 生命 surface（`/api/life`）与知识索引（`/api/rag`）仅在 runtime 通过 `SEED_ENABLE_LEGACY` 启用它们时才挂载；未挂载的路径应答 `404`，控制器据此记录为 `disabled` 而非失败，而 `/api/taiji/life` 下的 legacy 控制动词在同样情形下以 `life/unavailable` 拒绝。运行中的 runtime 不提供的巩固读取会成为一行 `unavailable` 而非快照失败，因为较旧的 runtime 是部署的事实，不是坏掉的读数。因此每份快照都携带 `source`、`observedAt`、`fresh`、`availability`，以及每个未应答来源的一行 `unavailable`；没有人测量过的量保持缺失而非默认零。控制器不会重新换算 native homeostasis 的数值，也不会用 native 读数顶替 legacy 读数。
 
 ### 配置
 

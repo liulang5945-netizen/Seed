@@ -10,7 +10,7 @@ Source: [`packages/api/life-controller/src/types.ts`](../../packages/api/life-co
 
 控制器按四个层级读取 runtime 的 HTTP 面，而某个数值来自哪一层本身就是数据的一部分。
 
-- 常开读取：`GET /api/runtime/status` 携带 health、memory、life、training 四个分节，`GET /api/train/checkpoints` 携带 checkpoint 名单，`GET /api/consolidation/status` 携带记忆日志计数与睡眠 pass 的产物——pass 计数、最近语料、数据环规格与最近报告。只要 runtime 进程存活，三者都会应答；早于巩固面的 runtime 在该路径应答 `404`，控制器据此记录为一行 `unavailable` 而非快照失败。
+- 常开读取：`GET /api/runtime/status` 携带 health、memory、life、training 四个分节，`GET /api/train/checkpoints` 携带 checkpoint 名单，`GET /api/train/files` 携带可训练数据集名单（data 目录下的 POSIX 相对路径及其大小），`GET /api/consolidation/status` 携带记忆日志计数与睡眠 pass 的产物——pass 计数、最近语料、数据环规格与最近报告。只要 runtime 进程存活，各层都会应答；早于巩固面的 runtime 在该路径应答 `404`，控制器据此记录为一行 `unavailable` 而非快照失败。
 - 受门控读取：`GET /api/life/status`（legacy 调度器）与 `GET /api/rag/status`（知识索引）仅在 runtime 通过 `SEED_ENABLE_LEGACY` 启用其 Legacy surface 时才挂载。未挂载的受门控路径应答 `404`，控制器据此记录为 `disabled`——即"该来源从未存在"，而不是"runtime 坏了"。
 - 训练进度流：`POST /api/train/native` 应答一条 server-sent event 流，其中每个 `progress` 事件携带一个 `LifeProgressView`，由 `completed` 或 `error` 事件结束本次运行。
 - 巩固控制：`POST /api/consolidate` 运行一次 native 睡眠 pass（分析、投影、规格化，仅在被要求时才让基底入睡），并以 JSON 应答其报告。
@@ -23,7 +23,7 @@ Source: [`packages/api/life-controller/src/types.ts`](../../packages/api/life-co
 
 `unavailable` 为每个未应答的来源保留一行便于运维阅读的说明，使面板能够指出 runtime 的哪一部分缺失，而不是显示空白。没有人测量过的量保持缺失而非默认零，因为一个永久为零的读数读起来像已测得的事实，反而掩盖了来源从未应答。
 
-`LifeAvailability` 独立分类每个来源：`runtime` 为 `ok` 或 `down`，`legacy` 与 `knowledge` 为 `ok`、`disabled` 或 `down`，`trainingStream` 为 `idle`、`streaming` 或 `closed`。`LifeTrainingView` 携带 runtime 的训练锁标志、它尚未观测到的暂停与停止请求、发布锁、最新的 `LifeProgressView`，以及按最新在前的 checkpoint 名单（截断到 `maxCheckpoints` 上限）。
+`LifeAvailability` 独立分类每个来源：`runtime` 为 `ok` 或 `down`，`legacy` 与 `knowledge` 为 `ok`、`disabled` 或 `down`，`trainingStream` 为 `idle`、`streaming` 或 `closed`。`LifeTrainingView` 携带 runtime 的训练锁标志、它尚未观测到的暂停与停止请求、发布锁、最新的 `LifeProgressView`、按最新在前的 checkpoint 名单（截断到 `maxCheckpoints` 上限），以及 `datasets`——面板提供给一次运行的可训练名册（`path` 与 runtime 报出的 `size_bytes`），该读取未应答时保持缺失。
 
 ## Remote 方法
 

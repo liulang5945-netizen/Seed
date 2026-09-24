@@ -121,6 +121,7 @@ export class LifeFeed {
         /* v8 ignore next -- readSnapshot converts transport failures into a down snapshot. */
         this.ctx.logger.warn(`life-controller: snapshot read failed: ${String(error)}`)
       })
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- Disposal can flip while the loop awaits the next tick.
       if (this.stopped) return
       await new Promise<void>((resolve) => {
         this.timer = setTimeout(resolve, this.interval())

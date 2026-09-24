@@ -144,6 +144,14 @@ export interface LifeCheckpointView {
   readonly numEpochs: number
 }
 
+/** One trainable dataset file as `GET /api/train/files` lists it. */
+export interface LifeDatasetView {
+  /** POSIX path relative to the runtime's data directory. */
+  readonly path: string
+  /** File size in bytes. */
+  readonly sizeBytes: number
+}
+
 /** Training state, progress, and the checkpoint roster. */
 export interface LifeTrainingView {
   /** Whether a training run holds the runtime's training lock. */
@@ -158,6 +166,8 @@ export interface LifeTrainingView {
   readonly progress?: LifeProgressView
   /** Checkpoint roster, newest first as the runtime returns it. */
   readonly checkpoints: readonly LifeCheckpointView[]
+  /** Trainable dataset roster, absent when the roster read did not answer. */
+  readonly datasets?: readonly LifeDatasetView[]
 }
 
 /** Knowledge base size, present only when the gated surface answered. */

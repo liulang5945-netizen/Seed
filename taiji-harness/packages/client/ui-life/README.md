@@ -30,7 +30,7 @@ Mount this plugin in a web composition whose Host carries [`@taiji/dsh-api-life-
 <a id="understand-the-implementation"></a>
 ## Understand the implementation
 
-The page subscribes to the controller's identity-stable snapshot state with `useSyncExternalStore`, so a stream frame swaps one object and a panel re-render follows. The six sections project one `LifeSnapshot`: the source section names the organ that answered and lists every source that did not; the life section renders the native organ's need and drive meters or the legacy scheduler's facts and meters; training shows its state badges, the latest progress sample, and the checkpoint roster; knowledge shows the index size only when the gated surface answered; memory and consolidation shows the journal counts by kind, the pass counter with its latest corpus, the data-ring spec behind its readiness gate, and the latest pass report — or says the surface was not served instead of showing a blank; the host section shows health, model, seed activity, and memory.
+The page subscribes to the controller's identity-stable snapshot state with `useSyncExternalStore`, so a stream frame swaps one object and a panel re-render follows. The six sections project one `LifeSnapshot`: the source section names the organ that answered and lists every source that did not; the life section renders the native organ's need and drive meters or the legacy scheduler's facts and meters; training shows its state badges, the latest progress sample, the selectable dataset roster — preselected from the data ring spec while that spec still names files on disk — and the checkpoint roster; knowledge shows the index size only when the gated surface answered; memory and consolidation shows the journal counts by kind, the pass counter with its latest corpus, the data-ring spec behind its readiness gate, and the latest pass report — or says the surface was not served instead of showing a blank; the host section shows health, model, seed activity, and memory.
 
 Controls disable while a verb is in flight and show their outcome without touching the snapshot: an accepted verb refreshes through the stream, and a refusal raises the Host's error code — `life/conflict`, `life/unavailable`, and their siblings — as the panel's localized copy. Stopping a run and force-releasing the training lock ask for a confirming second click; running a consolidation pass offers no such confirmation because it writes rehearsal files, never weights.
 
@@ -53,6 +53,6 @@ None; the page renders for the operator and contributes nothing to any model req
 
 <a id="known-limitations-and-deferred-work"></a>
 
-- Starting a training run uses the runtime's own defaults; a form for datasets, parameter budget, seed, and symbol cap awaits a consumer.
+- Starting a training run picks its datasets from the roster; parameter budget, seed, and symbol cap still use the runtime's defaults and await a form.
 - The knowledge section is read-only, matching the panel's contract; upload, rebuild, and clear belong to the runtime's own surface.
 - The poll interval is displayed but not editable here; it is a property of the controller's configuration.

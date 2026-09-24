@@ -9,7 +9,7 @@
  * local state write.
  */
 
-import { useCallback, useSyncExternalStore, useState, type ReactNode } from 'react'
+import { useCallback, useEffect, useSyncExternalStore, useState, type ReactNode } from 'react'
 import type { ILife, LifeSnapshotState } from '@taiji/dsh-api-life-controller/client'
 import type {
   LifeCheckpointView,
@@ -181,6 +181,40 @@ interface SectionControlProps {
   readonly pending: PendingVerb | null
   readonly run: (verb: PendingVerb, invoke: () => Promise<unknown>) => void
   readonly life: ILife
+}
+
+/**
+ * Roster selection preselected from the data ring's spec: the spec's dataset
+ * list applies itself whenever that list changes (including the first poll
+ * that brings the roster in), while a manual choice survives later roster
+ * refreshes — the poll replaces the array identity, never the user's ticks.
+ * @param specDatasets - dataset paths the spec names, absent without a spec.
+ * @param roster - the trainable roster, absent when the read did not answer.
+ * @returns the current selection and the toggle for one roster entry.
+ */
+function useDatasetSelection(
+  specDatasets: readonly string[] | undefined,
+  roster: readonly { path: string }[] | undefined,
+): { selected: ReadonlySet<string>; toggle: (path: string) => void } {
+  const specKey = specDatasets?.join('\n') ?? null
+  const [selected, setSelected] = useState<ReadonlySet<string>>(() => new Set())
+  const [appliedKey, setAppliedKey] = useState<string | null>(null)
+  useEffect(() => {
+    if (specKey === null || roster === undefined || appliedKey === specKey) return
+    const paths = new Set(roster.map(entry => entry.path))
+    setSelected(new Set(specKey.split('\n').filter(path => path !== '' && paths.has(path))))
+    setAppliedKey(specKey)
+  }, [specKey, roster, appliedKey])
+  /** Tick one roster entry without disturbing the rest of the selection. */
+  const toggle = (path: string): void => {
+    setSelected((current) => {
+      const next = new Set(current)
+      if (next.has(path)) next.delete(path)
+      else next.add(path)
+      return next
+    })
+  }
+  return { selected, toggle }
 }
 
 /** One labeled fact row. */
@@ -378,6 +412,14 @@ function TrainingSection({ t, snapshot, pending, run, life }: SectionControlProp
       : 'streamIdle'
   const busy = pending !== null
   const active = training.isTraining
+  const datasets = training.datasets
+  const rosterPaths = datasets === undefined ? undefined : new Set(datasets.map(dataset => dataset.path))
+  const specDatasets = snapshot.consolidation?.spec?.datasets
+  const specMissing = rosterPaths === undefined || specDatasets === undefined
+    ? []
+    : specDatasets.filter(path => !rosterPaths.has(path))
+  const { selected, toggle } = useDatasetSelection(specDatasets, datasets)
+
   return (
     <section className={css.section} aria-label={t('sectionTraining')}>
       <h3 className={css.sectionTitle}>{t('sectionTraining')}</h3>
@@ -394,8 +436,46 @@ function TrainingSection({ t, snapshot, pending, run, life }: SectionControlProp
         {training.publishing && <Tag tone="info">{t('trainingPublishing')}</Tag>}
       </p>
       {training.progress !== undefined ? <Progress t={t} progress={training.progress} /> : <p className={css.muted}>{t('noProgress')}</p>}
+      <h4 className={css.organTitle}>{t('datasetsTitle')}</h4>
+      {datasets === undefined
+        ? <p className={css.muted}>{t('datasetsUnavailable')}</p>
+        : datasets.length === 0
+          ? <p className={css.muted}>{t('datasetsEmpty')}</p>
+          : (
+            <>
+              <ul className={css.datasetList}>
+                {datasets.map(dataset => (
+                  <li key={dataset.path} className={css.datasetRow}>
+                    <label>
+                      <input
+                        type="checkbox"
+                        checked={selected.has(dataset.path)}
+                        disabled={busy || active}
+                        onChange={() => { toggle(dataset.path) }}
+                      />
+                      <span className={css.datasetPath}>{dataset.path}</span>
+                    </label>
+                    <span className={css.datasetSize}>{formatBytes(dataset.sizeBytes)}</span>
+                  </li>
+                ))}
+              </ul>
+              <p className={css.muted}>
+                {t('datasetsSelected', { count: String(selected.size) })}
+                {specDatasets === undefined ? '' : ` · ${t('specNames', { count: String(specDatasets.length) })}`}
+              </p>
+              {specMissing.length > 0 && (
+                <p className={css.muted}>{t('specMissing', { list: specMissing.join(', ') })}</p>
+              )}
+              {selected.size === 0 && <p className={css.muted}>{t('datasetsDefaultHint')}</p>}
+            </>
+          )}
       <div className={css.actions} role="group" aria-label={t('sectionTraining')}>
-        <Button disabled={busy || active} onClick={() =>{  run('trainStart', () => life.trainStart()) }}>{t('trainStart')}</Button>
+        <Button
+          disabled={busy || active}
+          onClick={() => { run('trainStart', () => life.trainStart(selected.size > 0 ? { datasets: [...selected] } : {})) }}
+        >
+          {t('trainStart')}
+        </Button>
         <Button disabled={busy || !active || training.stopRequested} onClick={() =>{  run('trainPause', () => life.trainPause()) }}>{t('trainPause')}</Button>
         <Button disabled={busy || !active || training.stopRequested} onClick={() =>{  run('trainResume', () => life.trainResume()) }}>{t('trainResume')}</Button>
         <Button disabled={busy || !active} onClick={() =>{  run('trainStop', () => life.trainStop()) }}>{t('trainStop')}</Button>

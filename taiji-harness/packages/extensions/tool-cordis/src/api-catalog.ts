@@ -5407,6 +5407,10 @@ export const TYPE_API: readonly TypeApiEntry[] = [
     declaration: 'export interface LifeControlValue {\n    readonly message: string;\n}',
   },
   {
+    name: 'LifeDatasetView',
+    declaration: 'export interface LifeDatasetView {\n    readonly path: string;\n    readonly sizeBytes: number;\n}',
+  },
+  {
     name: 'LifeFollowFrame',
     declaration: 'export type LifeFollowFrame = {\n    readonly type: \'baseline\';\n    readonly value: LifeSnapshot;\n} | {\n    readonly type: \'snapshot\';\n    readonly value: LifeSnapshot;\n};',
   },
@@ -5480,7 +5484,7 @@ export const TYPE_API: readonly TypeApiEntry[] = [
   },
   {
     name: 'LifeTrainingView',
-    declaration: 'export interface LifeTrainingView {\n    readonly isTraining: boolean;\n    readonly pauseRequested: boolean;\n    readonly stopRequested: boolean;\n    readonly publishing: boolean;\n    readonly progress?: LifeProgressView;\n    readonly checkpoints: readonly LifeCheckpointView[];\n}',
+    declaration: 'export interface LifeTrainingView {\n    readonly isTraining: boolean;\n    readonly pauseRequested: boolean;\n    readonly stopRequested: boolean;\n    readonly publishing: boolean;\n    readonly progress?: LifeProgressView;\n    readonly checkpoints: readonly LifeCheckpointView[];\n    readonly datasets?: readonly LifeDatasetView[];\n}',
   },
   {
     name: 'LifeTrainStartRequest',

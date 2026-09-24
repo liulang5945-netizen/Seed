@@ -138,6 +138,42 @@
   color: var(--dsw-alias-text-tertiary, var(--dsw-alias-text-secondary, inherit));
 }
 
+.datasetList {
+  margin: 0;
+  padding: 0 0 0 18px;
+  max-height: 220px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 12px;
+  list-style: disc;
+}
+
+.datasetRow {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  min-width: 0;
+}
+
+.datasetRow label {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  min-width: 0;
+}
+
+.datasetPath {
+  overflow-wrap: anywhere;
+}
+
+.datasetSize {
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+  color: var(--dsw-alias-text-tertiary, var(--dsw-alias-text-secondary, inherit));
+}
+
 .unavailable {
   display: flex;
   flex-direction: column;
