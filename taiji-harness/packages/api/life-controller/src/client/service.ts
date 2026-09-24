@@ -23,7 +23,10 @@ export class LifeControlError extends Error {
 
 /** Client Life state and control verbs consumed by the life panel. */
 export interface ILife {
-  /** Read the identity-stable current snapshot state. */
+  /**
+   * Read the identity-stable current snapshot state.
+   * @returns the current snapshot state.
+   */
   getSnapshot(): LifeSnapshotState
   /**
    * Subscribe to snapshot changes.

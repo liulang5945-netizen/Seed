@@ -68,6 +68,30 @@ describe('shared config schema catalog', () => {
     expect(provider?.pastes?.[0]?.text).toBe('export type Config = BrowserConfig')
   })
 
+  it('pastes CRLF-free text from a Windows-authored source file', () => {
+    const { root, write } = fixture()
+    write('packages/test/provider/src/index.ts', [
+      "import Schema from '@taiji/schemastery'",
+      '/** Inline config used to check the pasted line endings. */',
+      'export interface Config {',
+      '  /** Snapshot size bound. */',
+      '  size?: number',
+      '}',
+      'export const Config = Schema.object({ size: Schema.number() })',
+      'export function apply(ctx: unknown, config: Config): void {}',
+      '',
+    ].join('\r\n'))
+    const provider = collectConfigCatalog(root).find(entry => entry.pkg === '@test/provider')
+    expect(provider?.pastes?.[0]?.text).toBe([
+      '/** Inline config used to check the pasted line endings. */',
+      'export interface Config {',
+      '  /** Snapshot size bound. */',
+      '  size?: number',
+      '}',
+    ].join('\n'))
+    expect(provider?.pastes?.[0]?.text).not.toContain('\r')
+  })
+
   it('rejects a schema field absent from the shared config type', () => {
     const { root } = fixture(sharedSchema.replace('headless: Schema.boolean()', 'headless: Schema.boolean(), hidden: Schema.string()'))
     expect(() => collectConfigCatalog(root)).toThrow("schema validates key 'hidden' but config type 'Config' declares no such member")

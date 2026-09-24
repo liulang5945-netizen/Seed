@@ -238,7 +238,7 @@ export interface Config {
 }
 ```
 
-来源： [`packages/api/life-controller/src/index.ts:25`](../packages/api/life-controller/src/index.ts)
+来源： [`packages/api/life-controller/src/index.ts:26`](../packages/api/life-controller/src/index.ts)
 
 <a id="taijidsh-api-session-controller"></a>
 
@@ -331,7 +331,7 @@ export interface Config {
 }
 ```
 
-源码：[`packages/api/workspace-controller/src/index.ts:36`](../packages/api/workspace-controller/src/index.ts)
+来源： [`packages/api/workspace-controller/src/index.ts:36`](../packages/api/workspace-controller/src/index.ts)
 
 <a id="taijidsh-api-workspace-files"></a>
 
@@ -1915,6 +1915,49 @@ export type Config = Readonly<Record<string, never>>
 ```
 
 来源： [`packages/llm/llm-retry/src/index.ts:25`](../packages/llm/llm-retry/src/index.ts)
+
+<a id="taijidsh-llm-taiji"></a>
+
+## `@taiji/dsh-llm-taiji`
+
+需要： `llm`
+
+```ts config-catalog
+/**
+ * Plugin config, validated by the same-named schemastery schema and doubling
+ * as the `llm-taiji` settings-section shape. Every field is optional in yml:
+ * omitting `baseURL` uses the runtime's local address, and omitting `models`
+ * advertises the runtime's single language organ.
+ */
+export interface Config {
+  /** Endpoint root of the Taiji runtime; defaults to the runtime's local address. */
+  baseURL: Volatile<string | undefined>
+  /** Advisory models shown by discovery consumers; defaults to the runtime's single entry. */
+  models: Volatile<TaijiCatalogModel[]>
+  /** Provider-owned model-request retry policy; omission uses normal mode with five retries. */
+  retryPolicy: Volatile<RetryPolicyConfig | undefined>
+}
+
+/**
+ * One advisory model entry for the Taiji runtime. The runtime serves exactly
+ * one language organ and its chat endpoint carries no model id, so an entry is
+ * a selector label the harness routes by — never a wire value.
+ */
+export interface TaijiCatalogModel {
+  /** Selector id accepted by `GenerateOptions.model`; never sent to the runtime. */
+  id: string
+  /** Selector label; defaults to {@link id}. */
+  name?: string
+  /** Optional selector detail for a deployment running several runtimes. */
+  description?: string
+  /** Known combined request/response capacity; omitted when the deployment knows none. */
+  contextWindow?: number
+}
+```
+
+Depends on: [`RetryPolicyConfig`](../packages/llm/llm/src/index.ts) · `Volatile` (`@taiji/cordis`)
+
+来源： [`packages/llm/llm-taiji/src/config.ts:17`](../packages/llm/llm-taiji/src/config.ts)
 
 <a id="taijidsh-lsp-stdio"></a>
 
@@ -4197,6 +4240,7 @@ export interface Config {
 - `@taiji/dsh-client-ui-input-trigger`（[`packages/client/ui-input-trigger/src/index.ts`](../packages/client/ui-input-trigger/src/index.ts)）
 - `@taiji/dsh-client-ui-jobs`（[`packages/client/ui-jobs/src/index.ts`](../packages/client/ui-jobs/src/index.ts)）
 - `@taiji/dsh-client-ui-layout`（[`packages/client/ui-layout/src/index.ts`](../packages/client/ui-layout/src/index.ts)）
+- `@taiji/dsh-client-ui-life`（[`packages/client/ui-life/src/index.ts`](../packages/client/ui-life/src/index.ts)）
 - `@taiji/dsh-client-ui-message-feedback`（[`packages/client/ui-message-feedback/src/index.ts`](../packages/client/ui-message-feedback/src/index.ts)）
 - `@taiji/dsh-client-ui-model-selection`（[`packages/client/ui-model-selection/src/index.ts`](../packages/client/ui-model-selection/src/index.ts)）
 - `@taiji/dsh-client-ui-open-in-app`（[`packages/client/ui-open-in-app/src/index.ts`](../packages/client/ui-open-in-app/src/index.ts)）

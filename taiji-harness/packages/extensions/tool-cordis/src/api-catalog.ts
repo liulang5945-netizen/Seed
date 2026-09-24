@@ -1385,6 +1385,12 @@ export const SERVICE_API: readonly ServiceApiEntry[] = [
         returns: 'the runtime\'s message.',
       },
       {
+        signature: '@Remote async consolidate(request: LifeConsolidateRequest, signal: AbortSignal): Promise<LifeControlValue>',
+        description: 'Run one native sleep consolidation pass.',
+        parameters: [{ name: 'request', description: 'pass parameters; omitted fields keep the runtime\'s defaults.' }, { name: 'signal', description: 'caller lifetime.' }],
+        returns: 'the runtime\'s pass report message.',
+      },
+      {
         signature: '@Remote async lifeStart(signal: AbortSignal): Promise<LifeControlValue>',
         description: 'Start the Legacy life scheduler.',
         parameters: [{ name: 'signal', description: 'caller lifetime.' }],
@@ -5389,6 +5395,14 @@ export const TYPE_API: readonly TypeApiEntry[] = [
     declaration: 'export interface LifeCheckpointView {\n    readonly filename: string;\n    readonly step: number;\n    readonly bytes: number;\n    readonly modifiedUtc: string;\n    readonly savedAtUtc: string;\n    readonly numEpochs: number;\n}',
   },
   {
+    name: 'LifeConsolidateRequest',
+    declaration: 'export interface LifeConsolidateRequest {\n    readonly reason?: string;\n}',
+  },
+  {
+    name: 'LifeConsolidationView',
+    declaration: 'export interface LifeConsolidationView {\n    readonly passes: number;\n    readonly lastPassAt: number;\n    readonly lastCorpus: string;\n    readonly projectedDigests: number;\n    readonly running: boolean;\n    readonly spec: LifeSpecView | null;\n    readonly lastReport: LifePassReportView | null;\n    readonly journal: LifeJournalView;\n}',
+  },
+  {
     name: 'LifeControlValue',
     declaration: 'export interface LifeControlValue {\n    readonly message: string;\n}',
   },
@@ -5399,6 +5413,10 @@ export const TYPE_API: readonly TypeApiEntry[] = [
   {
     name: 'LifeHealthView',
     declaration: 'export interface LifeHealthView {\n    readonly state: string;\n    readonly modelLoaded: boolean;\n    readonly modelName: string;\n    readonly seedActive: boolean;\n    readonly startupComplete: boolean;\n}',
+  },
+  {
+    name: 'LifeJournalView',
+    declaration: 'export interface LifeJournalView {\n    readonly entries: number;\n    readonly byKind: Readonly<Record<string, number>>;\n    readonly sessions: number;\n    readonly lastRecordedAt: number;\n}',
   },
   {
     name: 'LifeKnowledgeState',
@@ -5429,6 +5447,10 @@ export const TYPE_API: readonly TypeApiEntry[] = [
     declaration: 'export interface LifeNativeView {\n    readonly tick: number;\n    readonly mode: string;\n    readonly needs: Readonly<Record<string, number>>;\n    readonly drives: Readonly<Record<string, number>>;\n}',
   },
   {
+    name: 'LifePassReportView',
+    declaration: 'export interface LifePassReportView {\n    readonly reason: string;\n    readonly specReason: string;\n    readonly durationMs: number;\n    readonly weaknesses: readonly string[];\n    readonly notes: readonly string[];\n}',
+  },
+  {
     name: 'LifeProgressView',
     declaration: 'export interface LifeProgressView {\n    readonly fraction: number;\n    readonly step: number;\n    readonly loss: number;\n    readonly elapsed: number;\n    readonly eta?: number;\n    readonly epoch: number;\n    readonly totalEpochs: number;\n    readonly samplesPerSec: number;\n    readonly totalSteps: number;\n}',
   },
@@ -5438,7 +5460,7 @@ export const TYPE_API: readonly TypeApiEntry[] = [
   },
   {
     name: 'LifeSnapshot',
-    declaration: 'export interface LifeSnapshot {\n    readonly source: LifeSource;\n    readonly observedAt: string;\n    readonly fresh: boolean;\n    readonly pollIntervalMs: number;\n    readonly health?: LifeHealthView;\n    readonly memory?: LifeMemoryView;\n    readonly life?: LifeLifeView;\n    readonly training: LifeTrainingView;\n    readonly knowledge?: LifeKnowledgeView;\n    readonly availability: LifeAvailability;\n    readonly unavailable: readonly string[];\n}',
+    declaration: 'export interface LifeSnapshot {\n    readonly source: LifeSource;\n    readonly observedAt: string;\n    readonly fresh: boolean;\n    readonly pollIntervalMs: number;\n    readonly health?: LifeHealthView;\n    readonly memory?: LifeMemoryView;\n    readonly life?: LifeLifeView;\n    readonly training: LifeTrainingView;\n    readonly knowledge?: LifeKnowledgeView;\n    readonly consolidation?: LifeConsolidationView;\n    readonly availability: LifeAvailability;\n    readonly unavailable: readonly string[];\n}',
   },
   {
     name: 'LifeSnapshotValue',
@@ -5447,6 +5469,10 @@ export const TYPE_API: readonly TypeApiEntry[] = [
   {
     name: 'LifeSource',
     declaration: 'export type LifeSource = \'native\' | \'legacy\' | \'absent\';',
+  },
+  {
+    name: 'LifeSpecView',
+    declaration: 'export interface LifeSpecView {\n    readonly reason: string;\n    readonly datasets: readonly string[];\n    readonly weaknesses: readonly string[];\n}',
   },
   {
     name: 'LifeTrainingStreamState',
