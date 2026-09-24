@@ -132,6 +132,13 @@ class ChatRequest(BaseModel):
     prompt: str
     system_prompt: str = "你是Seed，一个独立的AI生命体。你用自己的大脑思考，用工具探索世界。"
     history: list[list[str]] = []
+    # Taiji 原生学习元数据（对应 harness 的 `GenerateOptions`）：运行时把它
+    # 们记进自己的策略环/任务环，**从不喂给模型**——native 输入仍是
+    # prompt 与 history 的 byte 流。`purpose` 非空表示这是一次辅助模型调用
+    # （会话标题、上下文压缩），不是用户回合。
+    session_id: str = ""
+    purpose: str = ""
+    tools: list[str] = []
 
 
 class ChatWorkbenchRequest(ChatRequest):

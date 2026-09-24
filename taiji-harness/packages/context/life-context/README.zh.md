@@ -9,7 +9,7 @@ kind: "package-reference"
 
 ## Summary
 
-把 Taiji 运行时的生命读数并入模型请求。本插件挂载在 [`@taiji/dsh-api-life-controller`](../../api/life-controller/README.md) 旁，把它的快照流变成两处上下文贡献：系统提示里的一段静态策略，以及每个合格步骤追加的一条持久 `life-state` 用户消息，携带需求、驱力、训练状态与知识库规模。读数有节流、有单行预算，runtime 不可达或快照过期时整块省略。它自身不做任何判断：每个数字都原样来自运行时器官。
+把 Taiji 运行时的生命读数并入模型请求。本插件挂载在 [`@taiji/dsh-api-life-controller`](../../api/life-controller/README.zh.md) 旁，把它的快照流变成两处上下文贡献：系统提示里的一段静态策略，以及每个合格步骤追加的一条持久 `life-state` 用户消息，携带需求、驱力、训练状态与知识库规模。读数有节流、有单行预算，runtime 不可达或快照过期时整块省略。它自身不做任何判断：每个数字都原样来自运行时器官。
 
 ## Table of Contents
 

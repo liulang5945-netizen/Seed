@@ -106,20 +106,37 @@ def _record_native_turn(request, answer, readable, workbench_result):
     to the model: the native corpus is dialogue only, so a system prompt has no
     inference-time form the model was trained on.  Constraint internalisation
     belongs to the corpus (see ``seed_platform.turn_records.record_constraint``).
+
+    An auxiliary model call (non-empty ``request.purpose``: session title,
+    context compaction) is **not** a user turn and feeds neither ring — entering
+    one would put a task the user never issued into the task ring and skew the
+    task-type statistics the sleep phases analyse.  The offered tool names and
+    the session id travel the other way: they are recorded on the turn's
+    outcome so per-tool and per-session analysis has samples at all.
     """
 
+    if request.purpose:
+        logger.debug("【_record_native_turn】辅助模型调用（purpose=%s）不进学习环", request.purpose)
+        return
     try:
         from api.chat_strategies import _record_evolution, _record_recursive_strategies
         from seed_platform.turn_records import record_constraint
 
         record_constraint(request.system_prompt)
-        _record_evolution(request.prompt, answer, readable)
+        _record_evolution(
+            request.prompt,
+            answer,
+            readable,
+            session_id=request.session_id,
+            tools_offered=request.tools,
+        )
         _record_recursive_strategies(
             request.prompt,
             request.system_prompt,
             readable,
             1,
             _tool_names_from_workbench(workbench_result),
+            session_id=request.session_id,
         )
     except Exception as e:
         logger.debug("【_record_native_turn】处理失败（非致命）: %s", e)

@@ -74,11 +74,16 @@ The chat call is `POST {baseURL}/api/chat/stream` with `Accept: text/event-strea
 {
   "prompt": "the current user turn as plain text",
   "system_prompt": "the effective system prompt, omitted when there is none",
-  "history": [["user text", "assistant text"]]
+  "history": [["user text", "assistant text"]],
+  "session_id": "the Session this request belongs to",
+  "purpose": "the auxiliary-call classification, omitted for an ordinary turn",
+  "tools": ["the names of the tools this request offers the model"]
 }
 ```
 
 `prompt` is the last user-role message's visible text. `system_prompt` is the last system-role message's visible text, or the one-shot `GenerateOptions.system` when no system-role message carries one; omitting it makes the runtime apply its own default persona. `history` pairs each earlier user-side message with the assistant text that followed it, and a user-side message with no reply keeps its pair with an empty second element.
+
+`session_id`, `purpose`, and `tools` travel as transport metadata for the runtime's own learning rings: the Session that made the request, the auxiliary classification when the call is not an ordinary turn (`session-title`, `compaction`), and the names of the tools the offer contained. The runtime records them and none of them enters the model's input; an ordinary turn without metadata omits all three.
 
 The response is SSE. A successful stream writes one `final` frame and then its sentinel:
 
@@ -173,12 +178,12 @@ One `stream()` call makes one chat request and one health probe is made per plug
 
 #### What the model sees
 
-The runtime receives the current user turn, the effective system prompt, and the completed pairs of the conversation, all as plain text. It receives no tool schemas, no reasoning, no images, and no token counts: harness content the runtime's shape has no slot for is dropped rather than described. The harness system prompt normally arrives as the leading system-role message.
+The runtime receives the current user turn, the effective system prompt, and the completed pairs of the conversation, all as plain text, plus tool names as request metadata that stays out of the model's input. What the model sees is therefore exactly the prose: no tool schemas, no reasoning, no images, and no token counts — harness content the runtime's shape has no slot for is dropped rather than described. The harness system prompt normally arrives as the leading system-role message.
 
 ##### Request body
 
 ```markdown
-{"prompt","system_prompt","history"}
+{"prompt","system_prompt","history","session_id","purpose","tools"}
 ```
 
 #### Token effect

@@ -174,10 +174,28 @@
             "title": "Prompt",
             "type": "string"
           },
+          "purpose": {
+            "default": "",
+            "title": "Purpose",
+            "type": "string"
+          },
+          "session_id": {
+            "default": "",
+            "title": "Session Id",
+            "type": "string"
+          },
           "system_prompt": {
             "default": "你是Seed，一个独立的AI生命体。你用自己的大脑思考，用工具探索世界。",
             "title": "System Prompt",
             "type": "string"
+          },
+          "tools": {
+            "default": [],
+            "items": {
+              "type": "string"
+            },
+            "title": "Tools",
+            "type": "array"
           }
         },
         "required": [
@@ -207,10 +225,28 @@
             "title": "Prompt",
             "type": "string"
           },
+          "purpose": {
+            "default": "",
+            "title": "Purpose",
+            "type": "string"
+          },
+          "session_id": {
+            "default": "",
+            "title": "Session Id",
+            "type": "string"
+          },
           "system_prompt": {
             "default": "你是Seed，一个独立的AI生命体。你用自己的大脑思考，用工具探索世界。",
             "title": "System Prompt",
             "type": "string"
+          },
+          "tools": {
+            "default": [],
+            "items": {
+              "type": "string"
+            },
+            "title": "Tools",
+            "type": "array"
           }
         },
         "required": [
@@ -804,11 +840,16 @@
           "life": {
             "$ref": "#/components/schemas/LifePayload",
             "default": {
+              "dominant_need": "",
+              "drives": {},
               "is_running": false,
+              "life_state": "",
+              "mode": "",
               "needs": {},
               "status": "ok",
-              "total_interactions": 0,
-              "uptime_seconds": 0
+              "tick": 0,
+              "total_events": 0,
+              "total_heartbeats": 0
             }
           },
           "memory": {

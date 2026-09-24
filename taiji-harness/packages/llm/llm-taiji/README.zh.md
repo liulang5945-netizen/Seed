@@ -9,7 +9,7 @@ kind: "package-reference"
 
 ## Summary
 
-通过 `taiji-local` 路由接入 Taiji 本地运行时。该运行时是本 fork 自己的语言器官：它以纯文本说话，只提供一次 `POST /api/chat/stream` 调用，并在 `GET /api/health` 上公开自身就绪状态。本适配器把 harness 请求装进这个形状，把运行时的回答作为一个文本块产出，并把其它一切结果——失败帧、非 2xx 响应、不可达端点、不服务的帧——归一化为 Trajectory 能记录的 provider 中性失败。它不做任何质量加工：回答原样透传。本包可与 [DeepSeek](../llm-deepseek/README.md) 和 [pi-ai](../llm-pi-ai/README.md) 适配器同时挂载，部署的默认模型由装配决定。
+通过 `taiji-local` 路由接入 Taiji 本地运行时。该运行时是本 fork 自己的语言器官：它以纯文本说话，只提供一次 `POST /api/chat/stream` 调用，并在 `GET /api/health` 上公开自身就绪状态。本适配器把 harness 请求装进这个形状，把运行时的回答作为一个文本块产出，并把其它一切结果——失败帧、非 2xx 响应、不可达端点、不服务的帧——归一化为 Trajectory 能记录的 provider 中性失败。它不做任何质量加工：回答原样透传。本包可与 [DeepSeek](../llm-deepseek/README.zh.md) 和 [pi-ai](../llm-pi-ai/README.zh.md) 适配器同时挂载，部署的默认模型由装配决定。
 
 ## Table of Contents
 
@@ -36,8 +36,8 @@ kind: "package-reference"
 ```yaml
 - name: '@taiji/dsh-llm-taiji'
   config:
-    baseURL: http://127.0.0.1:8000   # 可选；这就是默认值
-    models:                          # 可选；默认只有一条
+    baseURL: http://127.0.0.1:8000   # optional; this is the default
+    models:                          # optional; defaults to one entry
       - id: taiji-local
         name: Taiji（本地运行时）
 ```
@@ -72,13 +72,18 @@ kind: "package-reference"
 
 ```json
 {
-  "prompt": "当前用户轮次的纯文本",
-  "system_prompt": "生效的系统提示词，没有则省略",
-  "history": [["用户文本", "助手文本"]]
+  "prompt": "the current user turn as plain text",
+  "system_prompt": "the effective system prompt, omitted when there is none",
+  "history": [["user text", "assistant text"]],
+  "session_id": "the Session this request belongs to",
+  "purpose": "the auxiliary-call classification, omitted for an ordinary turn",
+  "tools": ["the names of the tools this request offers the model"]
 }
 ```
 
 `prompt` 是最后一条 user 消息的可见文本。`system_prompt` 是最后一条 system 消息的可见文本；若没有任何 system 消息承载提示词，则用一次性调用的 `GenerateOptions.system`；省略该字段会让运行时套用它自己的默认人格。`history` 把此前每条用户侧消息与其后的助手文本配成一对；没有回复的用户侧消息保留该对，第二个元素为空串。
+
+`session_id`、`purpose` 与 `tools` 作为**传输元数据**供运行时自己的学习环使用：发起请求的 Session、调用不是普通轮次时的辅助分类（`session-title`、`compaction`），以及本次提供中包含的工具名。运行时记录它们，而它们都不进入模型输入；不带元数据的普通轮次会同时省略这三项。
 
 响应是 SSE。成功的流先写一个 `final` 帧，再写哨兵：
 
@@ -159,10 +164,10 @@ data: "生成出错: ..."
 <a id="further-exploration"></a>
 ## 进一步阅读
 
-- [dsh-llm 服务](../llm/README.md)——本适配器注册所在的 provider 中性服务。
-- [llm-deepseek 适配器](../llm-deepseek/README.md)——本包模仿其结构的直连 Messages 实现。
-- [LLM 流式子系统](../../../docs/subsystems/llm-streaming.md)——`StreamChunk` 协议与适配器约定。
-- [llm-retry](../llm-retry/README.md)——执行本适配器 `retryPolicy` 的重试执行器。
+- [dsh-llm 服务](../llm/README.zh.md)——本适配器注册所在的 provider 中性服务。
+- [llm-deepseek 适配器](../llm-deepseek/README.zh.md)——本包模仿其结构的直连 Messages 实现。
+- [LLM 流式子系统](../../../docs/subsystems/llm-streaming.zh.md)——`StreamChunk` 协议与适配器约定。
+- [llm-retry](../llm-retry/README.zh.md)——执行本适配器 `retryPolicy` 的重试执行器。
 
 -----
 
@@ -173,12 +178,12 @@ data: "生成出错: ..."
 
 #### 模型看到什么
 
-运行时收到的是当前用户轮次、生效的系统提示词，以及对话中已经完成的配对，全部为纯文本。它收不到工具 schema、推理、图片，也收不到 token 计数：harness 内容中该运行时形状没有位置的部分被丢弃，而不是被描述出来。harness 的系统提示词通常以开头那条 system 消息的形式抵达。
+运行时收到的是当前用户轮次、生效的系统提示词，以及对话中已经完成的配对，全部为纯文本；工具名作为请求元数据一并抵达，并留在模型输入之外。因此模型看到的正是这些文本：它收不到工具 schema、推理、图片，也收不到 token 计数——harness 内容中该运行时形状没有位置的部分被丢弃，而不是被描述出来。harness 的系统提示词通常以开头那条 system 消息的形式抵达。
 
 ##### 请求体
 
 ```markdown
-{"prompt","system_prompt","history"}
+{"prompt","system_prompt","history","session_id","purpose","tools"}
 ```
 
 #### Token 影响

@@ -5,6 +5,10 @@
  * assistant]` pairs, so anything the shape has no slot for — reasoning,
  * tool calls, images, tool results — is dropped instead of being rewritten
  * into prose the runtime never asked for.
+ *
+ * Tool *names* are the exception: they travel as request metadata so the
+ * runtime can record which tools a turn offered. The calls and results
+ * themselves are still dropped.
  */
 
 import type { GenerateOptions, RequestMessage } from '@taiji/dsh-llm'
@@ -14,6 +18,9 @@ import type { GenerateOptions, RequestMessage } from '@taiji/dsh-llm'
  *
  * `system_prompt` is omitted when the request carries none, which is what
  * makes the runtime apply its own default persona.
+ *
+ * `session_id`, `purpose`, and `tools` are transport metadata: the runtime
+ * keeps them for its own learning rings and never feeds them to the model.
  */
 export interface TaijiChatRequest {
   /** Plain text of this request's current user turn. */
@@ -22,6 +29,12 @@ export interface TaijiChatRequest {
   system_prompt?: string
   /** Completed turns, each `[user text, assistant text]`, oldest first. */
   history: [string, string][]
+  /** Session this request belongs to, when the loop stamped one. */
+  session_id?: string
+  /** Auxiliary-call classification; an ordinary turn leaves it unset. */
+  purpose?: string
+  /** Names of the tools this request offers the model. */
+  tools?: string[]
 }
 
 /** Join one message's visible text blocks; every other block type contributes nothing. */
@@ -74,9 +87,15 @@ export function buildChatRequest(options: GenerateOptions): TaijiChatRequest {
 
   const current = promptIndex === -1 ? undefined : messages.at(promptIndex)
   const systemText = system ?? options.system
+  // Names only: the runtime records what a turn offered, and every schema
+  // would be weight the endpoint has no slot for anyway.
+  const toolNames = (options.tools ?? []).map(tool => tool.name)
   return {
     prompt: current === undefined ? '' : textOf(current),
     ...systemText ? { system_prompt: systemText } : {},
     history,
+    ...options.sessionId === undefined ? {} : { session_id: String(options.sessionId) },
+    ...options.purpose === undefined ? {} : { purpose: options.purpose },
+    ...toolNames.length === 0 ? {} : { tools: toolNames },
   }
 }

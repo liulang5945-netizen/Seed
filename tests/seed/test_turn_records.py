@@ -8,7 +8,9 @@
 
   1. native 回合记录本身落盘（append-only jsonl）与 ``summarize`` 的计数；
   2. ``_record_*`` 在 legacy 不可用时**分发到 native 后端**，而不是直接返回；
-  3. ``_record_native_turn`` 把一回合同时喂给策略环与任务环，且工具名只取真实调用。
+  3. ``_record_native_turn`` 把一回合同时喂给策略环与任务环，且工具名只取真实调用；
+  4. 回合载荷里的元数据（session / purpose / offered tools）的落点——辅助模型
+     调用不进学习环，会话与「提供了哪些工具」成为记录上的归因字段。
 """
 
 from __future__ import annotations
@@ -33,7 +35,9 @@ def records_dir(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
 def _read(path: Path) -> list[dict]:
     if not path.exists():
         return []
-    return [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
+    return [
+        json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line.strip()
+    ]
 
 
 def test_records_append_and_summarize(records_dir: Path) -> None:
@@ -100,9 +104,7 @@ def test_reflection_strategy_only_for_multi_step(
     ]
 
 
-def test_native_turn_feeds_both_rings(
-    records_dir: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
+def test_native_turn_feeds_both_rings(records_dir: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(chat_strategies, "legacy_available", lambda: False)
     request = ChatRequest(prompt="hello", system_prompt="policy")
 
@@ -169,3 +171,66 @@ def test_native_turn_collects_the_system_prompt(
     records = _read(records_dir / "constraint_seeds.jsonl")
     assert len(records) == 1
     assert records[0]["text"] == "可执行约束段"
+
+
+def test_records_carry_the_session_and_the_offered_tools(records_dir: Path) -> None:
+    turn_records.record_strategy("prompt", "sys", "task", True, 1.0, "session-1")
+    turn_records.record_task_outcome(
+        "task", True, "answer", session_id="session-1", tools_offered=["bash", "read", "bash"]
+    )
+
+    strategies = _read(records_dir / "strategy_records.jsonl")
+    assert strategies[0]["session_id"] == "session-1"
+    tasks = _read(records_dir / "task_outcomes.jsonl")
+    assert tasks[0]["session_id"] == "session-1"
+    # Offered, not used: duplicates collapse and order is the caller's.
+    assert tasks[0]["tools_offered"] == ["bash", "read"]
+
+
+def test_records_omit_attribution_they_do_not_have(records_dir: Path) -> None:
+    turn_records.record_strategy("prompt", "sys", "task", True, 1.0)
+    turn_records.record_task_outcome("task", True, "answer", tools_offered=["", None])
+
+    strategy = _read(records_dir / "strategy_records.jsonl")[0]
+    assert "session_id" not in strategy
+    task = _read(records_dir / "task_outcomes.jsonl")[0]
+    assert "session_id" not in task
+    assert "tools_offered" not in task
+
+
+def test_native_turn_records_session_and_offered_tools(
+    records_dir: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setattr(chat_strategies, "legacy_available", lambda: False)
+    request = ChatRequest(
+        prompt="hello",
+        system_prompt="policy",
+        session_id="session-9",
+        tools=["bash", "read"],
+    )
+
+    routes_chat._record_native_turn(request, "hi there", True, None)
+
+    tasks = _read(records_dir / "task_outcomes.jsonl")
+    assert tasks[0]["session_id"] == "session-9"
+    assert tasks[0]["tools_offered"] == ["bash", "read"]
+    strategies = _read(records_dir / "strategy_records.jsonl")
+    assert {record["session_id"] for record in strategies} == {"session-9"}
+
+
+def test_auxiliary_call_enters_no_ring(records_dir: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(chat_strategies, "legacy_available", lambda: False)
+    request = ChatRequest(
+        prompt="给这段对话起个标题",
+        system_prompt="你是标题生成器",
+        purpose="session-title",
+        session_id="session-9",
+        tools=["bash"],
+    )
+
+    routes_chat._record_native_turn(request, "标题", True, None)
+
+    assert _read(records_dir / "task_outcomes.jsonl") == []
+    assert _read(records_dir / "strategy_records.jsonl") == []
+    # A title generator's prompt is not a product constraint either.
+    assert _read(records_dir / "constraint_seeds.jsonl") == []

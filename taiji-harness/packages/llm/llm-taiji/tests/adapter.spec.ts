@@ -30,6 +30,9 @@ const call = (overrides: Partial<GenerateOptions> = {}): GenerateOptions => ({
   ...overrides,
 })
 
+/** A branded session id; the adapter only ever stringifies it. */
+const sessionOf = (id: string) => id as GenerateOptions['sessionId']
+
 async function collect(stream: AsyncIterable<StreamChunk>): Promise<StreamChunk[]> {
   const chunks: StreamChunk[] = []
   for await (const chunk of stream) chunks.push(chunk)
@@ -180,6 +183,35 @@ describe('Taiji chat request', () => {
       prompt: '二',
       history: [['一', '']],
     })
+  })
+
+  it('carries the session, purpose, and offered tool names as request metadata', async () => {
+    const runtime = await runtimeFor({ kind: 'frames', frames: [finalFrame('answer'), DONE] })
+
+    await collect(adapterOf(runtime.url).stream(call({
+      sessionId: sessionOf('session-1'),
+      purpose: 'session-title',
+      tools: [
+        { name: 'bash', description: 'run a command', parameters: {} },
+        { name: 'read', description: 'read a file', parameters: {} },
+      ],
+    })))
+
+    expect(runtime.requests[0]?.body).toEqual({
+      prompt: '你好',
+      history: [],
+      session_id: 'session-1',
+      purpose: 'session-title',
+      tools: ['bash', 'read'],
+    })
+  })
+
+  it('omits the metadata an ordinary request does not carry', async () => {
+    const runtime = await runtimeFor({ kind: 'frames', frames: [finalFrame('answer'), DONE] })
+
+    await collect(adapterOf(runtime.url).stream(call({ tools: [] })))
+
+    expect(runtime.requests[0]?.body).toEqual({ prompt: '你好', history: [] })
   })
 })
 

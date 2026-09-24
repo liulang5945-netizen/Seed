@@ -141,11 +141,15 @@ def _build_history(request):
     return history
 
 
-def _record_evolution(prompt, result_text, success):
+def _record_evolution(prompt, result_text, success, session_id="", tools_offered=None):
     """记录到进化引擎（任务环输入）。
 
     legacy 分支写 neuroplex 的 EvolutionEngine；Seed 原生分支写 native 回合记录
     （`seed_platform.turn_records`），否则原生回合对任务环完全隐形。
+
+    `session_id` 与 `tools_offered` 只被 native 分支消费（回合归因与「本回合
+    提供了哪些工具」的证据）；legacy 的 EvolutionEngine 只认 steps，且本函数
+    一直以固定的 `chat` 步喂它，故不传过去以免改变既有行为。
     """
     if legacy_available():
         try:
@@ -174,18 +178,24 @@ def _record_evolution(prompt, result_text, success):
             success=success,
             final_answer=result_text[:200] if success else "",
             error="" if success else (result_text[:200] if result_text else "empty"),
+            session_id=session_id,
+            tools_offered=tools_offered,
         )
     except Exception as e:
         logger.debug("【_record_evolution】native 处理失败（非致命）: %s", e)
 
 
-def _record_recursive_strategies(prompt, system_prompt, success, reasoning_steps, tool_names):
+def _record_recursive_strategies(
+    prompt, system_prompt, success, reasoning_steps, tool_names, session_id=""
+):
     """记录推理策略到递归改进系统（RecursiveImprover 输入环）。
 
     递归闭环的输入侧：每次推理把实际使用的策略（prompt / 工具选择 / 反思）
     记录到 RecursiveImprover，睡眠时 analyze_and_improve() 才有数据可分析。
     质量分：success → 1.0，失败 → 0.2（供 high(>=0.8)/low(<0.4) 分组）。
     legacy 分支写 neuroplex 的 RecursiveImprover；Seed 原生分支写 native 回合记录。
+    `tool_names` 是**本回合实际调用**的工具（不是可用的工具集）；`session_id` 只被
+    native 分支用于归因。
     """
     if legacy_available():
         try:
@@ -194,7 +204,9 @@ def _record_recursive_strategies(prompt, system_prompt, success, reasoning_steps
             improver = get_recursive_improver()
             q = 1.0 if success else 0.2
             # prompt 策略（system_prompt 是实际生效的提示策略）
-            improver.record_strategy("prompt", (system_prompt or "")[:200], prompt[:200], success, q)
+            improver.record_strategy(
+                "prompt", (system_prompt or "")[:200], prompt[:200], success, q
+            )
             # 工具选择策略（每个用过的工具一条，供按工具统计成功率）
             for tool in tool_names:
                 improver.record_strategy("tool_choice", tool, prompt[:200], success, q)
@@ -210,11 +222,13 @@ def _record_recursive_strategies(prompt, system_prompt, success, reasoning_steps
         from seed_platform.turn_records import record_strategy
 
         q = 1.0 if success else 0.2
-        record_strategy("prompt", (system_prompt or "")[:200], prompt[:200], success, q)
+        record_strategy("prompt", (system_prompt or "")[:200], prompt[:200], success, q, session_id)
         for tool in tool_names:
-            record_strategy("tool_choice", tool, prompt[:200], success, q)
+            record_strategy("tool_choice", tool, prompt[:200], success, q, session_id)
         if reasoning_steps >= 2:
-            record_strategy("reflection", f"react_{reasoning_steps}steps", prompt[:200], success, q)
+            record_strategy(
+                "reflection", f"react_{reasoning_steps}steps", prompt[:200], success, q, session_id
+            )
     except Exception as e:
         logger.debug("【_record_recursive_strategies】native 处理失败（非致命）: %s", e)
 

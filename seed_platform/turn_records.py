@@ -11,7 +11,9 @@ under the shared external data root and keeps the legacy field vocabulary
 so a later consolidation pass, or the Life panel, can read native and legacy
 samples through one shape.  Records are written with an append handle instead of
 rewriting the whole file the way the legacy improver does, and every failure
-here is non-fatal to the request that produced it.
+here is non-fatal to the request that produced it.  A record carries the
+harness Session that produced it, and a task outcome also carries the tools the
+turn offered the model — the caller's request metadata, never model input.
 
 It also collects the assembled system prompt as a **constraint seed**: the
 native corpus holds dialogue only, so a constraint reaches the model through
@@ -59,7 +61,28 @@ def _records_dir() -> str:
 def _clip(value: Any) -> str:
     """Clip a free-text field to the legacy record budget."""
 
-    return str(value or "")[: _MAX_FIELD_CHARS]
+    return str(value or "")[:_MAX_FIELD_CHARS]
+
+
+def _attribution(session_id: str) -> dict[str, Any]:
+    """The attribution key a record carries when the caller knows the Session."""
+
+    sid = str(session_id or "")
+    return {} if not sid else {"session_id": sid[:_MAX_FIELD_CHARS]}
+
+
+def _offered(tools_offered: Any) -> dict[str, Any]:
+    """The tool names a turn *offered*, clipped to the record budget.
+
+    Offered is not used: a turn's actually-used tools are its ``tool_choice``
+    strategy records.  The offered set is kept beside the outcome because
+    "what was on offer and what was chosen" is the sample a tool-selection
+    analysis needs, and it is invisible from the used set alone.
+    """
+
+    names = [_clip(name) for name in tools_offered or [] if str(name or "").strip()]
+    unique = list(dict.fromkeys(names))
+    return {} if not unique else {"tools_offered": unique}
 
 
 def _append(filename: str, payload: dict[str, Any]) -> None:
@@ -81,12 +104,14 @@ def record_strategy(
     task: str,
     success: bool,
     quality_score: float,
+    session_id: str = "",
 ) -> None:
     """Record one strategy use: the strategy ring's input.
 
     Mirrors ``RecursiveImprover.record_strategy`` so sleep-time analysis sees the
     same three kinds (``prompt``/``tool_choice``/``reflection``) from a native
-    turn as it does from a legacy one.
+    turn as it does from a legacy one.  ``session_id`` attributes the sample to
+    the harness Session that produced it.
     """
 
     try:
@@ -99,6 +124,7 @@ def record_strategy(
                 "task": _clip(task),
                 "success": bool(success),
                 "quality_score": float(quality_score),
+                **_attribution(session_id),
             },
         )
     except Exception as e:  # pragma: no cover - defensive, never breaks a turn
@@ -110,6 +136,8 @@ def record_task_outcome(
     success: bool,
     final_answer: str = "",
     error: str = "",
+    session_id: str = "",
+    tools_offered: Any = None,
 ) -> None:
     """Record one task outcome: the task ring's input."""
 
@@ -122,6 +150,8 @@ def record_task_outcome(
                 "success": bool(success),
                 "final_answer": _clip(final_answer),
                 "error": _clip(error),
+                **_attribution(session_id),
+                **_offered(tools_offered),
             },
         )
     except Exception as e:  # pragma: no cover - defensive, never breaks a turn
@@ -192,7 +222,9 @@ def constraints() -> list[dict[str, Any]]:
         digest = str(record.get("sha256") or "")
         if digest and digest not in seen:
             seen[digest] = record
-    return sorted(seen.values(), key=lambda record: float(record.get("recorded_at") or 0), reverse=True)
+    return sorted(
+        seen.values(), key=lambda record: float(record.get("recorded_at") or 0), reverse=True
+    )
 
 
 def summarize() -> dict[str, Any]:
@@ -226,6 +258,7 @@ def summarize() -> dict[str, Any]:
         "tasks_failed": len(tasks) - succeeded,
         "constraint_seeds": len(seeds),
         "last_recorded_at": max(
-            [float(record.get("recorded_at") or 0) for record in strategies + tasks + seeds] or [0.0]
+            [float(record.get("recorded_at") or 0) for record in strategies + tasks + seeds]
+            or [0.0]
         ),
     }

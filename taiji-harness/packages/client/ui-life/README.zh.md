@@ -23,7 +23,7 @@ kind: "package-reference"
 <a id="use-this-package"></a>
 ## Use this package
 
-把本插件挂进一个 Host 携带 [`@taiji/dsh-api-life-controller`](../../api/life-controller/README.md) 的 web 组合——面板读取 `ctx.life`（由 controller 的浏览器半边安装的 Client 门面），并在 `dsh.client` manifest 里声明这一依赖。它只贡献一个侧栏入口与一个主面板，别无其它。
+把本插件挂进一个 Host 携带 [`@taiji/dsh-api-life-controller`](../../api/life-controller/README.zh.md) 的 web 组合——面板读取 `ctx.life`（由 controller 的浏览器半边安装的 Client 门面），并在 `dsh.client` manifest 里声明这一依赖。它只贡献一个侧栏入口与一个主面板，别无其它。
 
 -----
 
