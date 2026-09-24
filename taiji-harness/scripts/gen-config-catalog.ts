@@ -20,7 +20,7 @@ const OUT = 'docs/config-catalog.md'
 /** The fenced-block info string for pasted config declarations (skipped by
  * doc-typecheck, since a lone declaration referencing imports is not
  * standalone-compilable). */
-const FENCE = 'ts config-catalog'
+export const FENCE = 'ts config-catalog'
 
 /** TypeScript/Node global type names a config declaration may reference
  * without importing; never treated as unresolved. Extend when a new global
@@ -35,8 +35,10 @@ const GLOBAL_TYPES = new Set([
 /** How a package classifies for the catalog. */
 type Kind = 'config' | 'no-config' | 'seam' | 'library'
 
-/** One name a pasted declaration references but the paste does not contain. */
-interface TypeRef {
+/** One name a pasted declaration references but the paste does not contain.
+ * Exported for the Chinese mirror (`gen-config-catalog-zh.ts`), which renders
+ * the same entries with translated labels. */
+export interface TypeRef {
   /** The name as it appears in the pasted text (the local import alias). */
   alias: string
   /** The name the source module exports it under (pre-alias). */

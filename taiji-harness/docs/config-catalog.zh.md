@@ -1,5 +1,6 @@
-<!-- 英文源文件由 scripts/gen-config-catalog.ts 生成；本中文文件是通过双语配对维护的经评审对侧。
-     更新时先运行 `pnpm run gen-config-catalog` 更新英文，再更新本文件并运行 `pnpm run verify-translation-pairing --write docs/config-catalog.md` 重新记录配对。 -->
+<!-- 本文件由 scripts/gen-config-catalog-zh.ts 从源码收集结果生成（与英文版同源），请勿手改。
+     更新：`pnpm run gen-config-catalog` → `pnpm run gen-config-catalog-zh` →
+     `pnpm run verify-translation-pairing --write docs/config-catalog.md` 重新记录配对。 -->
 
 # 插件配置目录
 
@@ -7,9 +8,9 @@
 
 每个 `config:` 块均可由 `cordis.yml` 条目设置：针对每个可加载的 harness 包，原样列出其 `apply` 函数或服务构造函数接收的配置声明（包括 JSDoc），并附上所有引用类型——包内类型直接粘贴，其他类型则提供链接。粘贴的内容是插件声明的完整配置类型——运行时 schema 有意排除的字段是仅供运行时使用的 seam（其自身的 JSDoc 会如此说明），不能通过 `cordis.yml` 设置。这是以**部署**为轴的参考文档——插件作者所依据的连接方式请参阅各[子系统页面](subsystems/core.zh.md)中的生成 `cordis-surface` 区域，面向模型的工具 schema 请参阅[工具目录](tool-catalog.zh.md)，而 [subsystems/](subsystems/core.zh.md) 则记录了这些声明所引用的类型。
 
-英文源文件由源代码（`scripts/gen-config-catalog.ts`）生成，并通过 `pnpm run verify-config-catalog`（`doc-sync` 的一部分）验证新鲜度；本中文文件作为经评审对侧通过双语配对维护。声明块使用 `ts config-catalog` 围栏（doc-typecheck 会跳过它，因为单独引用导入项的声明无法独立编译）。英文生成器还会将运行时 schemastery schema 与粘贴的声明进行交叉核对——每个经 schema 验证的键（包括嵌套键）都必须能在声明的配置类型中找到——因此，粘贴内容无法隐藏加载器接受的字段。
+本文件与英文版同为生成物：由 `scripts/gen-config-catalog-zh.ts` 从同一份源码收集结果渲染（更新先跑 `pnpm run gen-config-catalog` 再跑 `pnpm run gen-config-catalog-zh`），并通过 `pnpm run verify-config-catalog-zh`（`doc-sync` 的一部分）验证新鲜度——请勿手改。声明块使用 `ts config-catalog` 围栏（doc-typecheck 会跳过它，因为单独引用导入项的声明无法独立编译）。生成器还会将运行时 schemastery schema 与粘贴的声明进行交叉核对——每个经 schema 验证的键（包括嵌套键）都必须能在声明的配置类型中找到——因此，粘贴内容无法隐藏加载器接受的字段。
 
-`Requires:` 行列出插件通过 `inject` 注入的服务键：其 `cordis.yml` 树还必须加载这些服务的提供者。范围限定为 harness 层级（`packages/`）；配置树还可能加载的 vendored cordis 插件（控制台日志记录器等）固定为上游源代码（参见 [vendoring policy](../vendor/README.md)），未收录于此目录。
+`需要：` 行列出插件通过 `inject` 注入的服务键：其 `cordis.yml` 树还必须加载这些服务的提供者。范围限定为 harness 层级（`packages/`）；配置树还可能加载的 vendored cordis 插件（控制台日志记录器等）固定为上游源代码（参见 [vendoring policy](../vendor/README.md)），未收录于此目录。
 
 <a id="taijidsh-acp"></a>
 
@@ -31,7 +32,7 @@ export interface AcpConfig {
 }
 ```
 
-Depends on: `Stream` (`@agentclientprotocol/sdk`)
+依赖： `Stream` (`@agentclientprotocol/sdk`)
 
 来源： [`packages/acp/acp/src/index.ts:75`](../packages/acp/acp/src/index.ts)
 
@@ -51,7 +52,7 @@ export interface Config {
 }
 ```
 
-Depends on: `Volatile` (`@taiji/cordis`)
+依赖： `Volatile` (`@taiji/cordis`)
 
 来源： [`packages/core/agent-default-model/src/index.ts:24`](../packages/core/agent-default-model/src/index.ts)
 
@@ -115,7 +116,7 @@ export interface Config {
 }
 ```
 
-Depends on: [`AgentOptions`](subsystems/core.zh.md) · [`SessionId`](subsystems/core.zh.md) · `Volatile` (`@taiji/cosmokit`)
+依赖： [`AgentOptions`](subsystems/core.zh.md) · [`SessionId`](subsystems/core.zh.md) · `Volatile` (`@taiji/cosmokit`)
 
 来源： [`packages/core/agent-loop/src/index.ts:292`](../packages/core/agent-loop/src/index.ts)
 
@@ -152,7 +153,7 @@ export interface Config {
 }
 ```
 
-Depends on: `Volatile` (`@taiji/cordis`)
+依赖： `Volatile` (`@taiji/cordis`)
 
 来源： [`packages/preset/agent-preset-registry/src/preset.ts:13`](../packages/preset/agent-preset-registry/src/preset.ts)
 
@@ -176,7 +177,7 @@ export interface Config {
 }
 ```
 
-Depends on: [`ToolPresentationMode`](subsystems/tools.zh.md)
+依赖： [`ToolPresentationMode`](subsystems/tools.zh.md)
 
 来源： [`packages/core/agent-tool-presentation/src/index.ts:38`](../packages/core/agent-tool-presentation/src/index.ts)
 
@@ -196,13 +197,13 @@ export interface Config {
 }
 ```
 
-来源：[`packages/api/gateway/src/index.ts:144`](../packages/api/gateway/src/index.ts)
+来源： [`packages/api/gateway/src/index.ts:144`](../packages/api/gateway/src/index.ts)
 
 <a id="taijidsh-api-job-controller"></a>
 
 ## `@taiji/dsh-api-job-controller`
 
-需要：`jobs` · `typert`
+需要： `jobs` · `typert`
 
 ```ts config-catalog
 /** Job Controller deployment policy. */
@@ -214,7 +215,7 @@ export interface Config {
 }
 ```
 
-Source: [`packages/api/job-controller/src/index.ts:35`](../packages/api/job-controller/src/index.ts)
+来源： [`packages/api/job-controller/src/index.ts:35`](../packages/api/job-controller/src/index.ts)
 
 <a id="taijidsh-api-life-controller"></a>
 
@@ -319,7 +320,7 @@ export interface Config {
 
 ## `@taiji/dsh-api-workspace-controller`
 
-需要：`typert` · `workspaceRegistry`
+需要： `typert` · `workspaceRegistry`
 
 ```ts config-catalog
 /** First-use directory policy for the Host account. */
@@ -420,7 +421,7 @@ export interface Config {
 }
 ```
 
-Depends on: `Volatile` (`@taiji/cordis`)
+依赖： `Volatile` (`@taiji/cordis`)
 
 来源： [`packages/shell/bash-local/src/index.ts:41`](../packages/shell/bash-local/src/index.ts)
 
@@ -441,7 +442,7 @@ Depends on: `Volatile` (`@taiji/cordis`)
 export type Config = LocalConfig
 ```
 
-Depends on: [`LocalConfig`](#taijidsh-bash-local)
+依赖： [`LocalConfig`](#taijidsh-bash-local)
 
 来源： [`packages/shell/bash-sandbox/src/index.ts:36`](../packages/shell/bash-sandbox/src/index.ts)
 
@@ -586,7 +587,7 @@ export interface Config {
 export type ThemePreference = typeof THEME_PREFERENCES[number]
 ```
 
-Depends on: `Volatile` (`@taiji/cordis`)
+依赖： `Volatile` (`@taiji/cordis`)
 
 来源： [`packages/client/ui-theme/src/index.ts:22`](../packages/client/ui-theme/src/index.ts)
 
@@ -785,7 +786,7 @@ export interface Config {
 export type Config = BrowserMcpConfig
 ```
 
-Depends on: `BrowserMcpConfig` (`@taiji/dsh-experimental-browser-use-runtime/mcp`)
+依赖： `BrowserMcpConfig` (`@taiji/dsh-experimental-browser-use-runtime/mcp`)
 
 来源： [`packages/experimental/browser-use-chrome-devtools-mcp/src/index.ts:14`](../packages/experimental/browser-use-chrome-devtools-mcp/src/index.ts)
 
@@ -800,7 +801,7 @@ Depends on: `BrowserMcpConfig` (`@taiji/dsh-experimental-browser-use-runtime/mcp
 export type Config = BrowserMcpConfig
 ```
 
-Depends on: `BrowserMcpConfig` (`@taiji/dsh-experimental-browser-use-runtime/mcp`)
+依赖： `BrowserMcpConfig` (`@taiji/dsh-experimental-browser-use-runtime/mcp`)
 
 来源： [`packages/experimental/browser-use-playwright-mcp/src/index.ts:15`](../packages/experimental/browser-use-playwright-mcp/src/index.ts)
 
@@ -842,7 +843,7 @@ export interface StagehandModelConfig {
 }
 ```
 
-Depends on: `ModelConfig` (`@browserbasehq/stagehand`)
+依赖： `ModelConfig` (`@browserbasehq/stagehand`)
 
 来源： [`packages/experimental/browser-use-stagehand-native/src/index.ts:28`](../packages/experimental/browser-use-stagehand-native/src/index.ts)
 
@@ -866,7 +867,7 @@ export interface Config {
 }
 ```
 
-Depends on: [`McpClient`](../packages/mcp/mcp-client/src/index.ts)
+依赖： [`McpClient`](../packages/mcp/mcp-client/src/index.ts)
 
 来源： [`packages/experimental/computer-use-cua-driver-mcp/src/index.ts:20`](../packages/experimental/computer-use-cua-driver-mcp/src/index.ts)
 
@@ -1018,7 +1019,7 @@ export interface Config {
 }
 ```
 
-Depends on: `Volatile` (`@taiji/cordis`)
+依赖： `Volatile` (`@taiji/cordis`)
 
 来源： [`packages/experimental/speech-to-text/src/index.ts:20`](../packages/experimental/speech-to-text/src/index.ts)
 
@@ -1149,7 +1150,7 @@ export interface Config {
 export type Config = LocalConfig
 ```
 
-Depends on: [`LocalConfig`](#taijidsh-fs-local)
+依赖： [`LocalConfig`](#taijidsh-fs-local)
 
 来源： [`packages/fs/fs-sandbox/src/index.ts:45`](../packages/fs/fs-sandbox/src/index.ts)
 
@@ -1207,7 +1208,7 @@ export interface HmrConfig extends ChokidarOptions {
 }
 ```
 
-Depends on: `ChokidarOptions` (`chokidar`)
+依赖： `ChokidarOptions` (`chokidar`)
 
 来源： [`packages/boot/hmr/src/index.ts:51`](../packages/boot/hmr/src/index.ts)
 
@@ -1545,7 +1546,7 @@ export interface DeepSeekCatalogModel {
 }
 ```
 
-Depends on: [`ModelModality`](../packages/llm/llm/src/index.ts) · [`RetryPolicyConfig`](../packages/llm/llm/src/index.ts) · [`SystemPromptUpdate`](../packages/llm/llm/src/index.ts) · `Volatile` (`@taiji/cordis`)
+依赖： [`ModelModality`](../packages/llm/llm/src/index.ts) · [`RetryPolicyConfig`](../packages/llm/llm/src/index.ts) · [`SystemPromptUpdate`](../packages/llm/llm/src/index.ts) · `Volatile` (`@taiji/cordis`)
 
 来源： [`packages/llm/llm-deepseek/src/config.ts:28`](../packages/llm/llm-deepseek/src/config.ts)
 
@@ -1820,7 +1821,7 @@ export type PiAiThinkingFormat = NonNullable<OpenAICompletionsCompat['thinkingFo
 export type PiAiThinkingTokenBudgetField = NonNullable<OpenAICompletionsCompat['thinkingTokenBudgetField']>
 ```
 
-Depends on: `Api` (`@earendil-works/pi-ai`) · `CacheRetention` (`@earendil-works/pi-ai`) · `Model` (`@earendil-works/pi-ai`) · `ModelThinkingLevel` (`@earendil-works/pi-ai`) · `OpenAICompletionsCompat` (`@earendil-works/pi-ai`) · [`RetryPolicyConfig`](../packages/llm/llm/src/index.ts) · `ThinkingBudgets` (`@earendil-works/pi-ai`) · `Transport` (`@earendil-works/pi-ai`) · `Volatile` (`@taiji/cordis`)
+依赖： `Api` (`@earendil-works/pi-ai`) · `CacheRetention` (`@earendil-works/pi-ai`) · `Model` (`@earendil-works/pi-ai`) · `ModelThinkingLevel` (`@earendil-works/pi-ai`) · `OpenAICompletionsCompat` (`@earendil-works/pi-ai`) · [`RetryPolicyConfig`](../packages/llm/llm/src/index.ts) · `ThinkingBudgets` (`@earendil-works/pi-ai`) · `Transport` (`@earendil-works/pi-ai`) · `Volatile` (`@taiji/cordis`)
 
 来源： [`packages/llm/llm-pi-ai/src/config.ts:222`](../packages/llm/llm-pi-ai/src/config.ts)
 
@@ -1899,7 +1900,7 @@ export interface ReplayModelConfig {
 }
 ```
 
-Depends on: [`ModelModality`](../packages/llm/llm/src/index.ts) · [`RetryPolicyConfig`](../packages/llm/llm/src/index.ts) · [`SystemPromptUpdate`](../packages/llm/llm/src/index.ts)
+依赖： [`ModelModality`](../packages/llm/llm/src/index.ts) · [`RetryPolicyConfig`](../packages/llm/llm/src/index.ts) · [`SystemPromptUpdate`](../packages/llm/llm/src/index.ts)
 
 来源： [`packages/test-support/llm-replay/src/index.ts:1123`](../packages/test-support/llm-replay/src/index.ts)
 
@@ -1955,7 +1956,7 @@ export interface TaijiCatalogModel {
 }
 ```
 
-Depends on: [`RetryPolicyConfig`](../packages/llm/llm/src/index.ts) · `Volatile` (`@taiji/cordis`)
+依赖： [`RetryPolicyConfig`](../packages/llm/llm/src/index.ts) · `Volatile` (`@taiji/cordis`)
 
 来源： [`packages/llm/llm-taiji/src/config.ts:17`](../packages/llm/llm-taiji/src/config.ts)
 
@@ -2202,7 +2203,7 @@ export interface PresetSpec {
 }
 ```
 
-Depends on: [`ApprovalPolicy`](subsystems/approval.zh.md) · [`SandboxMode`](subsystems/sandbox.zh.md) · `Volatile` (`@taiji/cordis`)
+依赖： [`ApprovalPolicy`](subsystems/approval.zh.md) · [`SandboxMode`](subsystems/sandbox.zh.md) · `Volatile` (`@taiji/cordis`)
 
 来源： [`packages/interaction/permission-presets/src/index.ts:155`](../packages/interaction/permission-presets/src/index.ts)
 
@@ -2364,7 +2365,7 @@ export interface Config {
 }
 ```
 
-Depends on: `Volatile` (`@taiji/cordis`)
+依赖： `Volatile` (`@taiji/cordis`)
 
 来源： [`packages/shell/pwsh-local/src/index.ts:58`](../packages/shell/pwsh-local/src/index.ts)
 
@@ -2386,7 +2387,7 @@ Depends on: `Volatile` (`@taiji/cordis`)
 export type Config = LocalConfig
 ```
 
-Depends on: [`LocalConfig`](#taijidsh-pwsh-local)
+依赖： [`LocalConfig`](#taijidsh-pwsh-local)
 
 来源： [`packages/shell/pwsh-sandbox/src/index.ts:40`](../packages/shell/pwsh-sandbox/src/index.ts)
 
@@ -2481,7 +2482,7 @@ export interface Config {
 }
 ```
 
-Depends on: [`SandboxMode`](subsystems/sandbox.zh.md)
+依赖： [`SandboxMode`](subsystems/sandbox.zh.md)
 
 来源： [`packages/sandbox/sandbox-policy/src/index.ts:71`](../packages/sandbox/sandbox-policy/src/index.ts)
 
@@ -2521,7 +2522,7 @@ export interface JsonRpcConfig {
 }
 ```
 
-Depends on: `Readable` (`node:stream`) · `Writable` (`node:stream`)
+依赖： `Readable` (`node:stream`) · `Writable` (`node:stream`)
 
 来源： [`packages/sdk/server/src/index.ts:25`](../packages/sdk/server/src/index.ts)
 
@@ -2673,7 +2674,7 @@ export type OpenAt = 'startup' | 'first-search' | 'never'
 export type JournalMode = 'wal' | 'delete' | 'truncate' | 'persist'
 ```
 
-Depends on: [`SessionQueryConfig`](../packages/session-query/session-query/src/index.ts)
+依赖： [`SessionQueryConfig`](../packages/session-query/session-query/src/index.ts)
 
 来源： [`packages/session-query/session-query-sqlite/src/index.ts:92`](../packages/session-query/session-query-sqlite/src/index.ts)
 
@@ -2740,7 +2741,7 @@ export enum SessionTelemetryMode {
 }
 ```
 
-Depends on: `BatchLogRecordProcessorOptions` (`@opentelemetry/sdk-logs`) · `OTLPExporterNodeConfigBase` (`@opentelemetry/otlp-exporter-base`)
+依赖： `BatchLogRecordProcessorOptions` (`@opentelemetry/sdk-logs`) · `OTLPExporterNodeConfigBase` (`@opentelemetry/otlp-exporter-base`)
 
 来源： [`packages/session/session-telemetry-otel/src/index.ts:100`](../packages/session/session-telemetry-otel/src/index.ts)
 
@@ -2775,7 +2776,7 @@ export interface Config {
 export type Config = SessionTitleLlmConfig
 ```
 
-Depends on: [`SessionTitleLlmConfig`](../packages/session/session-title-llm/src/index.ts)
+依赖： [`SessionTitleLlmConfig`](../packages/session/session-title-llm/src/index.ts)
 
 来源： [`packages/session/session-title-all-prompts-llm/src/index.ts:15`](../packages/session/session-title-all-prompts-llm/src/index.ts)
 
@@ -2790,7 +2791,7 @@ Depends on: [`SessionTitleLlmConfig`](../packages/session/session-title-llm/src/
 export type Config = SessionTitleLlmConfig
 ```
 
-Depends on: [`SessionTitleLlmConfig`](../packages/session/session-title-llm/src/index.ts)
+依赖： [`SessionTitleLlmConfig`](../packages/session/session-title-llm/src/index.ts)
 
 来源： [`packages/session/session-title-first-prompt-llm/src/index.ts:15`](../packages/session/session-title-first-prompt-llm/src/index.ts)
 
@@ -3057,7 +3058,7 @@ export interface Config {
 }
 ```
 
-Depends on: `Volatile` (`@taiji/cordis`)
+依赖： `Volatile` (`@taiji/cordis`)
 
 来源： [`packages/subagent/subagent/src/index.ts:192`](../packages/subagent/subagent/src/index.ts)
 
@@ -3785,7 +3786,7 @@ export interface Config {
 }
 ```
 
-Depends on: [`AgentOptions`](subsystems/core.zh.md)
+依赖： [`AgentOptions`](subsystems/core.zh.md)
 
 来源： [`packages/subagent/tool-subagent/src/index.ts:48`](../packages/subagent/tool-subagent/src/index.ts)
 
@@ -3887,7 +3888,7 @@ export interface Config {
 
 ## `@taiji/dsh-tool-workspace-dependencies`
 
-需要：`tools`
+需要： `tools`
 
 ```ts config-catalog
 /** Payload location and optional installation directory. */
@@ -3903,7 +3904,7 @@ export interface Config {
 }
 ```
 
-来源：[`packages/skill/tool-workspace-dependencies/src/index.ts:15`](../packages/skill/tool-workspace-dependencies/src/index.ts)
+来源： [`packages/skill/tool-workspace-dependencies/src/index.ts:15`](../packages/skill/tool-workspace-dependencies/src/index.ts)
 
 <a id="taijidsh-tools"></a>
 
@@ -4086,7 +4087,7 @@ export interface Config {
 }
 ```
 
-Depends on: `Volatile` (`@taiji/cordis`)
+依赖： `Volatile` (`@taiji/cordis`)
 
 来源： [`packages/web/web-search-deepseek/src/index.ts:46`](../packages/web/web-search-deepseek/src/index.ts)
 
@@ -4217,7 +4218,7 @@ export interface Config {
 
 - `@taiji/dsh-acp-app` — 需要 `cmdlineArgs`（[`packages/bundle/acp-app/src/index.ts`](../packages/bundle/acp-app/src/index.ts)）
 - `@taiji/dsh-agent`（[`packages/core/agent/src/index.ts`](../packages/core/agent/src/index.ts)）
-- `@taiji/dsh-api-account-controller` — 需要 `deepseekAccount` ([`packages/api/account-controller/src/index.ts`](../packages/api/account-controller/src/index.ts))
+- `@taiji/dsh-api-account-controller` — 需要 `deepseekAccount`（[`packages/api/account-controller/src/index.ts`](../packages/api/account-controller/src/index.ts)）
 - `@taiji/dsh-api-remotes` — 需要 `typertGateway`（[`packages/api/remotes/src/index.ts`](../packages/api/remotes/src/index.ts)）
 - `@taiji/dsh-authorization` — 需要 `credentials`（[`packages/credentials/authorization/src/index.ts`](../packages/credentials/authorization/src/index.ts)）
 - `@taiji/dsh-browser-use`（[`packages/browser-use/browser-use/src/index.ts`](../packages/browser-use/browser-use/src/index.ts)）
@@ -4233,7 +4234,7 @@ export interface Config {
 - `@taiji/dsh-client-ui-commands`（[`packages/client/ui-commands/src/index.ts`](../packages/client/ui-commands/src/index.ts)）
 - `@taiji/dsh-client-ui-conversation`（[`packages/client/ui-conversation/src/index.ts`](../packages/client/ui-conversation/src/index.ts)）
 - `@taiji/dsh-client-ui-cordis`（[`packages/extensions/ui-cordis/src/index.ts`](../packages/extensions/ui-cordis/src/index.ts)）
-- `@taiji/dsh-client-ui-deliverables` — 需要 `systemPrompt` · `connection` · `sessionQuery` · `sessionController`（[`packages/client/ui-deliverables/src/index.ts`](../packages/client/ui-deliverables/src/index.ts)）
+- `@taiji/dsh-client-ui-deliverables` — 需要 `systemPrompt` · `connection` · `sessionQuery` · `sessionController` · `workspaceFiles` · `fs` · `sandboxPolicy` · `workspaceChanges`（[`packages/client/ui-deliverables/src/index.ts`](../packages/client/ui-deliverables/src/index.ts)）
 - `@taiji/dsh-client-ui-directory-picker-browse`（[`packages/client/ui-directory-picker-browse/src/index.ts`](../packages/client/ui-directory-picker-browse/src/index.ts)）
 - `@taiji/dsh-client-ui-directory-picker-native`（[`packages/client/ui-directory-picker-native/src/index.ts`](../packages/client/ui-directory-picker-native/src/index.ts)）
 - `@taiji/dsh-client-ui-goal`（[`packages/client/ui-goal/src/index.ts`](../packages/client/ui-goal/src/index.ts)）
@@ -4271,19 +4272,19 @@ export interface Config {
 - `@taiji/dsh-client-ui-user-questions`（[`packages/client/ui-user-questions/src/index.ts`](../packages/client/ui-user-questions/src/index.ts)）
 - `@taiji/dsh-client-ui-workflow-run`（[`packages/client/ui-workflow-run/src/index.ts`](../packages/client/ui-workflow-run/src/index.ts)）
 - `@taiji/dsh-client-ui-workspace`（[`packages/client/ui-workspace/src/index.ts`](../packages/client/ui-workspace/src/index.ts)）
-- `@taiji/dsh-command-compact` — 需要 `commands` · `compact`（[`packages/compaction/command-compact/src/index.ts`](../packages/compaction/command-compact/src/index.ts)）
+- `@taiji/dsh-command-compact` — 需要 `commands` · `compaction`（[`packages/compaction/command-compact/src/index.ts`](../packages/compaction/command-compact/src/index.ts)）
 - `@taiji/dsh-command-feedback` — 需要 `commands`（[`packages/feedback/command-feedback/src/index.ts`](../packages/feedback/command-feedback/src/index.ts)）
 - `@taiji/dsh-command-goal` — 需要 `commands` · `goals`（[`packages/goal/command-goal/src/index.ts`](../packages/goal/command-goal/src/index.ts)）
 - `@taiji/dsh-commands`（[`packages/interaction/commands/src/index.ts`](../packages/interaction/commands/src/index.ts)）
-- `@taiji/dsh-compaction-image-offload`，需要 `agents` 和 `sessions`（[`packages/compaction/compaction-image-offload/src/index.ts`](../packages/compaction/compaction-image-offload/src/index.ts)）
+- `@taiji/dsh-compaction-image-offload` — 需要 `agents` · `sessions`（[`packages/compaction/compaction-image-offload/src/index.ts`](../packages/compaction/compaction-image-offload/src/index.ts)）
 - `@taiji/dsh-computer-use`（[`packages/computer-use/computer-use/src/index.ts`](../packages/computer-use/computer-use/src/index.ts)）
-- `@taiji/dsh-config-editor` — requires `loader` · `profileContext`（[`packages/boot/config-editor/src/index.ts`](../packages/boot/config-editor/src/index.ts)）
+- `@taiji/dsh-config-editor` — 需要 `loader` · `profileContext`（[`packages/boot/config-editor/src/index.ts`](../packages/boot/config-editor/src/index.ts)）
 - `@taiji/dsh-cordis-client-runner`（[`packages/extensions/cordis-client-runner/src/index.ts`](../packages/extensions/cordis-client-runner/src/index.ts)）
 - `@taiji/dsh-deepseek-llm-api-extensions`（[`packages/llm/deepseek-llm-api-extensions/src/index.ts`](../packages/llm/deepseek-llm-api-extensions/src/index.ts)）
 - `@taiji/dsh-experimental-auto-review` — 需要 `llm` · `permissionPresets` · `sessions` · `tools`（[`packages/experimental/auto-review/src/index.ts`](../packages/experimental/auto-review/src/index.ts)）
 - `@taiji/dsh-experimental-client-ui-agent-team`（[`packages/experimental/client-ui-agent-team/src/index.ts`](../packages/experimental/client-ui-agent-team/src/index.ts)）
 - `@taiji/dsh-experimental-client-ui-voice-input`（[`packages/experimental/client-ui-voice-input/src/index.ts`](../packages/experimental/client-ui-voice-input/src/index.ts)）
-- `@taiji/dsh-experimental-computer-use-cua-driver-native` — requires `computerUse` · `tools` · `systemPrompt`（[`packages/experimental/computer-use-cua-driver-native/src/index.ts`](../packages/experimental/computer-use-cua-driver-native/src/index.ts)）
+- `@taiji/dsh-experimental-computer-use-cua-driver-native` — 需要 `computerUse` · `tools` · `systemPrompt`（[`packages/experimental/computer-use-cua-driver-native/src/index.ts`](../packages/experimental/computer-use-cua-driver-native/src/index.ts)）
 - `@taiji/dsh-fs-observation-policy`（[`packages/fs/fs-observation-policy/src/index.ts`](../packages/fs/fs-observation-policy/src/index.ts)）
 - `@taiji/dsh-fs-ssh` — 需要 `ssh` · `sandboxPolicy`（[`packages/ssh/fs-ssh/src/index.ts`](../packages/ssh/fs-ssh/src/index.ts)）
 - `@taiji/dsh-goal-round-driver` — 需要 `agents` · `goals` · `sessions`（[`packages/goal/goal-round-driver/src/index.ts`](../packages/goal/goal-round-driver/src/index.ts)）
@@ -4300,15 +4301,15 @@ export interface Config {
 - `@taiji/dsh-session-projection`（[`packages/session/session-projection/src/index.ts`](../packages/session/session-projection/src/index.ts)）
 - `@taiji/dsh-session-stats` — 需要 `sessionProjections`（[`packages/session/session-stats/src/index.ts`](../packages/session/session-stats/src/index.ts)）
 - `@taiji/dsh-session-turn-outline` — 需要 `sessionProjections`（[`packages/session/session-turn-outline/src/index.ts`](../packages/session/session-turn-outline/src/index.ts)）
-- `@taiji/dsh-settings` — requires `configEditor` · `profileContext`（[`packages/settings/settings/src/index.ts`](../packages/settings/settings/src/index.ts)）
+- `@taiji/dsh-settings` — 需要 `configEditor` · `profileContext`（[`packages/settings/settings/src/index.ts`](../packages/settings/settings/src/index.ts)）
 - `@taiji/dsh-skill-badge` — 需要 `skills`（[`packages/skill/skill-badge/src/index.ts`](../packages/skill/skill-badge/src/index.ts)）
 - `@taiji/dsh-storage`（[`packages/storage/storage/src/index.ts`](../packages/storage/storage/src/index.ts)）
 - `@taiji/dsh-subprocess-local`（[`packages/subprocess/subprocess-local/src/index.ts`](../packages/subprocess/subprocess-local/src/index.ts)）
 - `@taiji/dsh-subprocess-ssh` — 需要 `ssh`（[`packages/ssh/subprocess-ssh/src/index.ts`](../packages/ssh/subprocess-ssh/src/index.ts)）
 - `@taiji/dsh-terminal`（[`packages/terminal/terminal/src/index.ts`](../packages/terminal/terminal/src/index.ts)）
-- `@taiji/dsh-tool-ask-user` — 需要 `tools` · `userInteraction`（[`packages/interaction/tool-ask-user/src/index.ts`](../packages/interaction/tool-ask-user/src/index.ts)）
+- `@taiji/dsh-tool-ask-user` — 需要 `tools` · `userQuestions`（[`packages/interaction/tool-ask-user/src/index.ts`](../packages/interaction/tool-ask-user/src/index.ts)）
 - `@taiji/dsh-tool-call-timeout-policy` — 需要 `tools`（[`packages/guard/timeout-policy/src/index.ts`](../packages/guard/timeout-policy/src/index.ts)）
-- `@taiji/dsh-tool-cordis` — 需要 `tools` · `systemPrompt` · `cordisInspect`（[`packages/extensions/tool-cordis/src/index.ts`](../packages/extensions/tool-cordis/src/index.ts)）
+- `@taiji/dsh-tool-cordis` — 需要 `tools` · `cordisInspect`（[`packages/extensions/tool-cordis/src/index.ts`](../packages/extensions/tool-cordis/src/index.ts)）
 - `@taiji/dsh-tool-subagent-control` — 需要 `tools` · `subagents`（[`packages/subagent/tool-subagent-control/src/index.ts`](../packages/subagent/tool-subagent-control/src/index.ts)）
 - `@taiji/dsh-user-questions`（[`packages/interaction/user-questions/src/index.ts`](../packages/interaction/user-questions/src/index.ts)）
 - `@taiji/dsh-webhook` — 需要 `agents` · `agentDefaultModel` · `agentPresets` · `permissionPresets` · `sessionTitle` · `workspaceRegistry`（[`packages/webhook/webhook/src/index.ts`](../packages/webhook/webhook/src/index.ts)）
@@ -4321,7 +4322,7 @@ export interface Config {
 - `@taiji/dsh-attachment` — 抽象 `AttachmentStore`（[`packages/attachment/attachment/src/index.ts`](../packages/attachment/attachment/src/index.ts)）
 - `@taiji/dsh-compaction` — 抽象 `CompactionEngine`（[`packages/compaction/compaction/src/index.ts`](../packages/compaction/compaction/src/index.ts)）
 - `@taiji/dsh-credentials` — 抽象 `CredentialProvider`（[`packages/credentials/credentials/src/index.ts`](../packages/credentials/credentials/src/index.ts)）
-- `@taiji/dsh-deepseek-account` — 抽象类 `DeepSeekAccount` ([`packages/credentials/deepseek-account/src/index.ts`](../packages/credentials/deepseek-account/src/index.ts))
+- `@taiji/dsh-deepseek-account` — 抽象 `DeepSeekAccount`（[`packages/credentials/deepseek-account/src/index.ts`](../packages/credentials/deepseek-account/src/index.ts)）
 - `@taiji/dsh-file-reference` — 抽象 `FileReferenceService`（[`packages/context/file-reference/src/index.ts`](../packages/context/file-reference/src/index.ts)）
 - `@taiji/dsh-fs` — 抽象 `FileSystem`（[`packages/fs/fs/src/index.ts`](../packages/fs/fs/src/index.ts)）
 - `@taiji/dsh-host-directory-picker` — 抽象 `DirectoryPicker`（[`packages/host/directory-picker/src/index.ts`](../packages/host/directory-picker/src/index.ts)）

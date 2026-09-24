@@ -31,7 +31,7 @@
 | --- | --- | --- | --- |
 | M1 | scope 更名 `@deepseek-ai/*` → `@taiji/*`（包目录名不变，`dsh-` 前缀保留） | 全文本替换 `@deepseek-ai/`→`@taiji/`；**豁免仅限包名/发布身份**（`python/sdk*` 的 `deepseek_harness*` 不改——D2），其**串值**照改。三种形态都要盯：带斜杠 `@taiji/`、**独立段** `'@taiji'`（python/sdk 测试、native/system、boot 与 cli 测试、THIRD_PARTY_NOTICES、desktop-host 安装锚）、**转义正则** `/^@taiji\//`（`packages/client/tsdown.client.ts`、`benchmarks/tsdown.config.ts`）；改名会连带 lockfile/registry URL 区——以替换后 `pnpm install` 重建为准 | `88ad3040`（5206+43 文件）、清单见 `908a04f3` 尾部五类残余；文件级审计 2026-09-24 登记残差 22 条均属此族 |
 | M2 | 品牌文案对（固定字符串替换表）：`DeepSeek Harness`→`Taiji Harness`（身份句唯一定义处 `packages/core/system-prompt/src/index.ts` 的 `includeHarnessIdentity`，其余全部机械跟随）；**上游缩略语 `DSH` 单独出现处**→`Taiji`／`Taiji Harness`（locale `brand.localBuild`、`apps/web/index.html` 标题与 `vite.config.ts` 注入、`manifest.webmanifest` short_name、ui-agent-preset 向导文案、ui-sidebar-browser 错误文案）；首屏 slogan 现值「态之极境 / State at Its Utmost」（zh/en locale 两侧）；「探索未至之境/Into the Unknown」全仓禁再现 | 按表逐对替换；同步面：locale 字典、`skeleton.client.spec` 断言、web 快照期望（`snapshots/web/*`）、6 个 web e2e needle、`CONTRIBUTING(.zh).md` | `908a04f3`、`19fb5130`、`3c852a97`、`d4987c05`（预览版徽标摘除）、`88ad3040`（DSH 缩略语面） |
-| M3 | 生成目录与锚：`config-catalog(.zh)`、`tool-catalog(.zh)`、`api-catalog.ts`、subsystem cordis-surface 区、slot-catalog（`packages/extensions/cordis-client-runner/src/client/slot-catalog.ts`）、`apps/cli/composition.md`、doc-graphs、tsconfig paths——全部由 `scripts/gen-*`／装配变化按**当前包名**产出（M1 之后自然翻成 `taijidsh-*` 锚；H 组每片装配都会连带刷新 slot-catalog 与 composition.md） | 跑 §2 第 6 步后依次 `gen-cordis-catalog`／`gen-config-catalog`／`gen-tool-catalog`／`gen-client-catalog`／`gen-doc-graphs`／`gen-tsconfig-paths`，再 `--check` | 锚收敛先例 `eab07afe`（100 文件 642 处一次性对齐）、`b90c0de2`（ui-life 装配连带 slot-catalog） |
+| M3 | 生成目录与锚：`config-catalog(.zh)`、`tool-catalog(.zh)`、`api-catalog.ts`、subsystem cordis-surface 区、slot-catalog（`packages/extensions/cordis-client-runner/src/client/slot-catalog.ts`）、`apps/cli/composition.md`、doc-graphs、tsconfig paths——全部由 `scripts/gen-*`／装配变化按**当前包名**产出（M1 之后自然翻成 `taijidsh-*` 锚；H 组每片装配都会连带刷新 slot-catalog 与 composition.md） | 跑 §2 第 6 步后依次 `gen-cordis-catalog`／`gen-config-catalog`／`gen-config-catalog-zh`（zh 镜像同为生成物，见 §6 收敛记录）／`gen-tool-catalog`／`gen-client-catalog`／`gen-doc-graphs`／`gen-tsconfig-paths`，再 `--check`；两份 catalog 改动后重录配对 `verify-translation-pairing --write docs/config-catalog.md` | 锚收敛先例 `eab07afe`（100 文件 642 处一次性对齐）、`b90c0de2`（ui-life 装配连带 slot-catalog） |
 | M4 | `package.json` 的 `repository/homepage/bugs` **保持指上游**——这是上游事实引用（THIRD_PARTY 同款），不是品牌残余，不改 | 无动作（防误改条目） | 边界裁定见 `908a04f3` 尾部⑤类分析 |
 
 ### H 组 · 手写增量（能力包与上游文件修改）
@@ -93,7 +93,7 @@
 ## 5 · 复验集（一轮重放后的通过判据）
 
 1. §2 第 6 步四连（tsc host → tsdown host → tsc client → tsdown client）零错。
-2. 文档/生成物 `--check`：`gen-cordis-catalog`／`gen-config-catalog`（＋zh 镜像手工同步＋pairing `--write`）／`gen-doc-graphs`／`gen-tsconfig-paths`。
+2. 文档/生成物 `--check`：`gen-cordis-catalog`／`gen-config-catalog`＋`verify-config-catalog-zh`（zh 侧由 `gen-config-catalog-zh` 生成，跑完重录 pairing `--write`）／`gen-doc-graphs`／`gen-tsconfig-paths`。
 3. 17 项门禁批（md-wrap／md-links／doc-refs／subsystem-pages／summaries／model-experience／limitations／invariants／meta／dependencies／cordis-config／doc-budgets／export-jsdoc／translation-pairing…）＋`verify-cordis-catalog/inspect`；`verify-client-ui-i18n` 唯一合法红＝`BrandWordmark`（既存）。
 4. 定向 vitest：`llm-taiji`、life 五包 + `packages/core/system-prompt`、`ui-conversation`+`ui-workspace`+`session-controller`+`session-persistence-jsonl`（H3 契约用例——**这些用例是行为合同的守卫，红了就是重放丢了条目**）。
 5. 真机读数（G3/G4 判据）：web 起服 → 模型面板出现 Taiji 组 → 发真回合由 Taiji 应答（约束在语料内，不拼 prompt）→ Life 面板六分区读数与 `GET /api/runtime/status`/`/api/artifacts`/`/api/consolidation/status` 逐项一致 → 记忆写入/召回闭环（journal 计数增长、下一回合可见注入块）。
@@ -101,7 +101,7 @@
 
 ## 6 · 已知薄弱点（诚实登记）
 
-- **中文 `config-catalog.zh.md` 是手工镜像**（生成器只写英文）——每次 M3 后必须手同步锚与 `Source` 行号；已有先例三轮均靠人抓。正式化为 verify 脚本仍是待办（05 债）。
+- ~~中文 `config-catalog.zh.md` 是手工镜像~~ **已收敛（2026-09-24）**：`scripts/gen-config-catalog-zh.ts` 与英文侧从**同一份** `collectConfigCatalog` 渲染（锚/标题/逐字围栏/`来源：` 行号结构性一致，翻译骨架内聚为脚本常量），`verify-config-catalog-zh` 已入 doc-sync 门与 §5 判据②；main() 另有 en/zh 围栏逐字对拍，双渲染器一旦漂移即炸。旧的手工镜像叙事（含 `H3i` 之外的“先跑 gen 再手对 zh”流程）全部作废，防重放时误走旧路。
 - H3 各条的锚点随上游重构漂移的风险：本清单以"功能点 + 文件族"定位，不背行号；若上游整文件重写对应功能（如 blocks 合同再变），该条**升级重设计**而非硬贴。
 - 并行工人在飞文件（system-prompt 回退、host.spec `:225`）——升级前须先收敛（所有者裁定后并入或回滚）。
 - 本清单随改造增长：**每片合入即追加/修订对应行**（新增 H 条、更新证据哈希）；"清单完整性"就是同步机制的全部安全性所在。

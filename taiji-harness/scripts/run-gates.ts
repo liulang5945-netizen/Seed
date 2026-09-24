@@ -797,6 +797,7 @@ function docSyncLeafGates(options: {
     pnpmScript('export-jsdoc', 'verify-export-jsdoc', { label: 'export jsdoc' }),
     pnpmScript('tool-catalog', 'verify-tool-catalog', { label: 'tool catalog' }),
     pnpmScript('config-catalog', 'verify-config-catalog', { label: 'config catalog' }),
+    pnpmScript('config-catalog-zh', 'verify-config-catalog-zh', { label: 'config catalog zh mirror' }),
     pnpmScript('plugin-packages', 'verify-plugin-packages', { label: 'skill plugin package list' }),
     pnpmScript('dependency-catalog', 'verify-dependency-catalog', { label: 'npm dependency catalog', quick: true }),
     pnpmScript('persistence-catalog', 'verify-persistence-catalog', { label: 'persistence catalog' }),

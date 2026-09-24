@@ -163,6 +163,8 @@
     "verify-tool-catalog": "tsx scripts/gen-tool-catalog.ts --check",
     "gen-config-catalog": "tsx scripts/gen-config-catalog.ts",
     "verify-config-catalog": "tsx scripts/gen-config-catalog.ts --check",
+    "gen-config-catalog-zh": "tsx scripts/gen-config-catalog-zh.ts",
+    "verify-config-catalog-zh": "tsx scripts/gen-config-catalog-zh.ts --check",
     "gen-plugin-packages": "tsx scripts/gen-plugin-packages.ts",
     "verify-plugin-packages": "tsx scripts/gen-plugin-packages.ts --check",
     "gen-dependency-catalog": "tsx scripts/gen-dependency-catalog.ts",
