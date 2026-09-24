@@ -10,16 +10,17 @@ Source: [`packages/api/life-controller/src/types.ts`](../../packages/api/life-co
 
 The controller reads the runtime's HTTP face in four tiers, and which tier a number came from is part of the data.
 
-- Always-on reads: `GET /api/runtime/status` carries the health, memory, life, and training sections, `GET /api/train/checkpoints` carries the checkpoint roster, `GET /api/train/files` carries the trainable dataset roster (POSIX paths under the data directory with their sizes), and `GET /api/consolidation/status` carries the memory journal counts with the sleep pass's products — pass counter, latest corpus, data-ring spec, and latest report. All three tiers answer whenever the runtime process is up; a runtime that predates the consolidation surface answers `404` there, which the controller records as one `unavailable` line rather than a snapshot failure.
+- Always-on reads: `GET /api/runtime/status` carries the health, memory, life, and training sections, `GET /api/train/checkpoints` carries the checkpoint roster, `GET /api/train/files` carries the trainable dataset roster (POSIX paths under the data directory with their sizes), `GET /api/artifacts` carries the publish state — which checkpoint answers and which settings names for the next start — and `GET /api/consolidation/status` carries the memory journal counts with the sleep pass's products — pass counter, latest corpus, data-ring spec, and latest report. All tiers answer whenever the runtime process is up; a runtime that predates the consolidation surface answers `404` there, which the controller records as one `unavailable` line rather than a snapshot failure.
 - Gated reads: `GET /api/life/status` (the Legacy scheduler) and `GET /api/rag/status` (the knowledge index) are mounted only while the runtime enables its Legacy surface through `SEED_ENABLE_LEGACY`. An unmounted gated path answers `404`, which the controller records as `disabled` — a source that was never there, not a runtime that broke.
 - The training progress stream: `POST /api/train/native` and `POST /api/train/resume_checkpoint` (continuing from a saved checkpoint, datasets and a tick cap included) answer one shared server-sent event stream whose `progress` events carry one `LifeProgressView` each and whose `warning` events — a corpus-drift notice on a resumed run, for one — the controller folds into the snapshot's `training.warnings`; a `completed` or `error` event ends the run.
 - The consolidation control: `POST /api/consolidate` runs one native sleep pass (analyse, project, specify, and only on request sleep the substrate) and answers its report as JSON.
+- The activation control: `POST /api/runtime/activate` answers later turns from a platform-owned checkpoint — the empty name selects the built-in seed — and persists the choice in settings. The retired `/api/model/publish|published|export_gguf` APIs answer `410`; activation over a checkpoint is the publish surface.
 
 The status section that holds the life numbers names its own organ, and that name decides the shape. `life.status === 'seed'` reports the native homeostasis organ and yields `LifeNativeView` (observation count, organ mode, and the open need and drive maps the runtime scales to 0..100); `life.status === 'ok'` reports the legacy scheduler and yields `LifeLegacyView` (its loop flag, current activity, dominant need, need map, heartbeat and event counters, and the last heartbeat and activity instants). Any other value leaves `life` absent. The controller never rescales a native homeostatic value and never substitutes a native reading for a legacy one: the two organs report on their own scales, and the consumer decides whether the numbers are comparable.
 
 ## The snapshot
 
-`LifeSnapshot` is one complete reading, naming the organ that answered: `source` (which organ answered the life numbers), `observedAt` (the ISO-8601 instant this reading was taken), `fresh` (true only when the status read answered this cycle), `pollIntervalMs` (the cadence in force when the reading was taken), the optional `health`, `memory`, `life`, `knowledge`, and `consolidation` projections, the always-present `training` projection, `availability`, and `unavailable`.
+`LifeSnapshot` is one complete reading, naming the organ that answered: `source` (which organ answered the life numbers), `observedAt` (the ISO-8601 instant this reading was taken), `fresh` (true only when the status read answered this cycle), `pollIntervalMs` (the cadence in force when the reading was taken), the optional `health`, `memory`, `life`, `knowledge`, `consolidation`, and `artifacts` projections, the always-present `training` projection, `availability`, and `unavailable`.
 
 `unavailable` holds one operator-readable line per source that did not answer, so a panel can say which part of the runtime is missing instead of showing a blank. A quantity nobody measured stays absent rather than defaulted to zero, because a permanent zero reads as a measured fact and hides that the source never answered.
 
@@ -38,6 +39,7 @@ The status section that holds the life numbers names its own organ, and that nam
 | `trainStop` | unary | Asks the runtime to stop after its current step and returns its message. |
 | `trainReset` | unary | Forces the runtime to release a training lock it still holds and returns its message. |
 | `consolidate` | unary | Runs one native sleep consolidation pass through `POST /api/consolidate` and returns the runtime's report message; the request's `reason` is optional and defaults to the runtime's own. |
+| `activateCheckpoint` | unary | Answers later turns from a platform-owned checkpoint through `POST /api/runtime/activate` — the empty name activates the built-in seed — and persists the choice in settings; a missing or unloadable checkpoint is the runtime's own `life/runtime-error` refusal. |
 | `lifeStart` | unary | Starts the gated Legacy life scheduler and returns its message. |
 | `lifeStop` | unary | Stops the gated Legacy life scheduler and returns its message. |
 | `lifeAction` | unary | Forces one gated Legacy activity — `feed`, `sleep`, or `play` — with an operator-visible reason, and returns the runtime's message. |
@@ -139,6 +141,16 @@ Host service backing the generated `ctx.remote.life` namespace.
  * @returns the runtime's pass report message.
  */
 @Remote async consolidate(request: LifeConsolidateRequest, signal: AbortSignal): Promise<LifeControlValue>
+
+/**
+ * Answer later turns from a platform-owned checkpoint; the empty id activates
+ * the built-in seed. A failure is the runtime's own refusal — activation
+ * swaps the model every later turn runs through.
+ * @param request - checkpoint name inside the runtime's checkpoint directory.
+ * @param signal - caller lifetime.
+ * @returns the runtime's message naming what became active.
+ */
+@Remote async activateCheckpoint(request: LifeActivateRequest, signal: AbortSignal): Promise<LifeControlValue>
 
 /**
  * Start the Legacy life scheduler.

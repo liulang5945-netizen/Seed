@@ -24,7 +24,7 @@ kind: "package-reference"
 
 Host 控制器拥有唯一一个面向 Taiji 本地 runtime 的轮询循环，并由它服务所有消费方。每轮只读一次 runtime，盖上当时生效的间隔，并仅在渲染结果变化时发布，因此[生命子系统参考](../../../docs/subsystems/life.zh.md)保持为读数的唯一描述，而本 README 拥有包契约：配置、线上动词及其失败。`follow()` 先发出一帧携带当前快照的 `baseline`，此后每次变化发出一帧替换快照的 `snapshot`；重连会以新的 baseline 开始新一代，因此消费方从不依赖在断线期间收到每一帧。
 
-runtime 是唯一事实来源，而读数会说明每个数值的出处。`GET /api/runtime/status` 始终可用，其 `life` 分节自选来源器官——`seed` 为 native homeostasis 器官，`ok` 为 legacy 调度器——`GET /api/train/checkpoints` 携带已保存运行的名单，`GET /api/train/files` 携带可训练数据集名单（data 目录下的 POSIX 相对路径及其大小），而 `GET /api/consolidation/status` 携带记忆日志计数与睡眠 pass 的产物（pass 计数、最近语料、数据环规格与最近报告）。legacy 生命 surface（`/api/life`）与知识索引（`/api/rag`）仅在 runtime 通过 `SEED_ENABLE_LEGACY` 启用它们时才挂载；未挂载的路径应答 `404`，控制器据此记录为 `disabled` 而非失败，而 `/api/taiji/life` 下的 legacy 控制动词在同样情形下以 `life/unavailable` 拒绝。运行中的 runtime 不提供的巩固读取会成为一行 `unavailable` 而非快照失败，因为较旧的 runtime 是部署的事实，不是坏掉的读数。因此每份快照都携带 `source`、`observedAt`、`fresh`、`availability`，以及每个未应答来源的一行 `unavailable`；没有人测量过的量保持缺失而非默认零。控制器不会重新换算 native homeostasis 的数值，也不会用 native 读数顶替 legacy 读数。
+runtime 是唯一事实来源，而读数会说明每个数值的出处。`GET /api/runtime/status` 始终可用，其 `life` 分节自选来源器官——`seed` 为 native homeostasis 器官，`ok` 为 legacy 调度器——`GET /api/train/checkpoints` 携带已保存运行的名单，`GET /api/train/files` 携带可训练数据集名单（data 目录下的 POSIX 相对路径及其大小），`GET /api/artifacts` 携带发布态（哪个检查点在应答、settings 为下次启动点名了哪个），而 `GET /api/consolidation/status` 携带记忆日志计数与睡眠 pass 的产物（pass 计数、最近语料、数据环规格与最近报告）。旧模型发布 API（`/api/model/publish`、`/api/model/published`、`/api/model/export_gguf`）是已退出的 410 墓碑——`POST /api/runtime/activate` 激活平台所有的检查点才是发布面。legacy 生命 surface（`/api/life`）与知识索引（`/api/rag`）仅在 runtime 通过 `SEED_ENABLE_LEGACY` 启用它们时才挂载；未挂载的路径应答 `404`，控制器据此记录为 `disabled` 而非失败，而 `/api/taiji/life` 下的 legacy 控制动词在同样情形下以 `life/unavailable` 拒绝。运行中的 runtime 不提供的巩固读取会成为一行 `unavailable` 而非快照失败，因为较旧的 runtime 是部署的事实，不是坏掉的读数。因此每份快照都携带 `source`、`observedAt`、`fresh`、`availability`，以及每个未应答来源的一行 `unavailable`；没有人测量过的量保持缺失而非默认零。控制器不会重新换算 native homeostasis 的数值，也不会用 native 读数顶替 legacy 读数。
 
 ### 配置
 
@@ -51,6 +51,7 @@ runtime 是唯一事实来源，而读数会说明每个数值的出处。`GET /
 | `trainStop` | 一元 | 请求 runtime 在当前 step 之后停止。 | `life/runtime-error`、`life/conflict`、`life/bad-request`、`life/runtime-unreachable`。 |
 | `trainReset` | 一元 | 强制 runtime 释放其仍持有的训练锁。 | `life/runtime-error`、`life/conflict`、`life/bad-request`、`life/runtime-unreachable`。 |
 | `consolidate` | 一元 | 运行一次 native 睡眠巩固 pass 并返回 runtime 的报告消息；请求的 `reason` 可省略，默认使用 runtime 自己的取值。 | `life/runtime-error`、`life/conflict`、`life/bad-request`、`life/runtime-unreachable`。 |
+| `activateCheckpoint` | 一元 | 让后续回合改由平台所有的检查点应答（`POST /api/runtime/activate`）；空 id 激活内置 seed。 | `life/runtime-error`——检查点缺失或无法加载是 runtime 自己的拒绝；目录外名称为 `life/bad-request`。 |
 | `lifeStart` | 一元 | 启动受门控的 legacy 生命调度器。 | legacy surface 未挂载时为 `life/unavailable`，以及 runtime 自身的拒绝码。 |
 | `lifeStop` | 一元 | 停止受门控的 legacy 生命调度器。 | legacy surface 未挂载时为 `life/unavailable`，以及 runtime 自身的拒绝码。 |
 | `lifeAction` | 一元 | 携带运维可见的原因，强制执行一次受门控的 legacy 活动——`feed`、`sleep` 或 `play`。 | 活动名不在其中时为 `life/bad-request`，legacy surface 未挂载时为 `life/unavailable`。 |

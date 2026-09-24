@@ -4,6 +4,7 @@ import type {} from '@taiji/dsh-api-life-controller/remote'
 import { RemoteError, type RemoteFailure, type RemoteResult, type TypertClientRemote } from '@taiji/dsh-typert-protocol'
 import type {
   LifeActionRequest,
+  LifeActivateRequest,
   LifeConsolidateRequest,
   LifeControlValue,
   LifeResumeCheckpointRequest,
@@ -156,6 +157,16 @@ export class ClientLifeModel implements LifeStreamSink {
    */
   consolidate(request: LifeConsolidateRequest, signal?: AbortSignal): Promise<RemoteResult<LifeControlValue>> {
     return this.remote.consolidate(request, signal)
+  }
+
+  /**
+   * Answer later turns from a platform-owned checkpoint (empty id = built-in).
+   * @param request - checkpoint name inside the runtime's checkpoint directory.
+   * @param signal - caller lifetime.
+   * @returns the runtime's message or the Host failure.
+   */
+  activateCheckpoint(request: LifeActivateRequest, signal?: AbortSignal): Promise<RemoteResult<LifeControlValue>> {
+    return this.remote.activateCheckpoint(request, signal)
   }
 
   /**

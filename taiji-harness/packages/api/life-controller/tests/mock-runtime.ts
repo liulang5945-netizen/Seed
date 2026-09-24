@@ -29,6 +29,8 @@ export interface MockLifeRuntime {
   knowledgeReply: { status: number; body?: unknown }
   /** Rows `GET /api/train/checkpoints` answers with. */
   checkpoints: unknown[]
+  /** Payload `GET /api/artifacts` answers with. */
+  artifacts: Record<string, unknown>
   /** Script consumed by the next `POST /api/train/native`. */
   training: TrainingScript
   /** Script consumed by the next `POST /api/train/resume_checkpoint`. */
@@ -111,6 +113,13 @@ export async function mockLifeRuntime(): Promise<MockLifeRuntime> {
     legacyReply: { status: 404 },
     knowledgeReply: { status: 404 },
     checkpoints: [],
+    artifacts: {
+      status: 'ok',
+      artifact_types: ['taiji_checkpoint'],
+      artifacts: [],
+      runtime: { kind: 'taiji', configured_checkpoint_id: '', active_checkpoint_id: '' },
+      language_provider: null,
+    },
     get training() { return training },
     set training(script: TrainingScript) { training = script },
     get resume() { return resume },
@@ -164,6 +173,11 @@ async function handle(
   }
   if (request.method === 'GET' && path === '/api/train/checkpoints') {
     await json(response, 200, { status: 'ok', checkpoints: runtime.checkpoints })
+    return
+  }
+  if (request.method === 'GET' && path === '/api/artifacts') {
+    const scripted = runtime.controlReplies.get(path)
+    await json(response, scripted?.status ?? 200, scripted?.body ?? runtime.artifacts)
     return
   }
   if (request.method === 'POST' && path === '/api/train/native') {

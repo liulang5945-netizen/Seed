@@ -244,6 +244,14 @@ export interface LifeConsolidationView {
   readonly journal: LifeJournalView
 }
 
+/** Where the running model came from, as `GET /api/artifacts` reports it. */
+export interface LifeArtifactsView {
+  /** Checkpoint the live runtime answers with; empty means the built-in seed. */
+  readonly activeId: string
+  /** Checkpoint settings name after the next start; empty means the built-in seed. */
+  readonly configuredId: string
+}
+
 /** Availability of every source behind one snapshot. */
 export interface LifeAvailability {
   /** Runtime status read. */
@@ -278,6 +286,8 @@ export interface LifeSnapshot {
   readonly knowledge?: LifeKnowledgeView
   /** Memory and consolidation projection, absent when the runtime does not serve it. */
   readonly consolidation?: LifeConsolidationView
+  /** Model publish surface: which checkpoint answers, and which settings names. */
+  readonly artifacts?: LifeArtifactsView
   /** Availability of every source behind this snapshot. */
   readonly availability: LifeAvailability
   /** One line per source that did not answer, in operator-readable form. */
@@ -326,6 +336,12 @@ export interface LifeResumeCheckpointRequest {
   readonly datasets?: readonly string[]
   /** Upper bound on ticks added; omitted runs the selected corpus through once. */
   readonly maxTicks?: number
+}
+
+/** Request to answer later turns from a platform-owned checkpoint. */
+export interface LifeActivateRequest {
+  /** Checkpoint name inside the runtime's checkpoint directory; the empty string activates the built-in seed. */
+  readonly checkpointId: string
 }
 
 /** Request to force one Legacy life activity. */

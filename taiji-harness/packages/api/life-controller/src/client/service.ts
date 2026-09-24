@@ -4,6 +4,7 @@ import { Service, type Context } from '@taiji/cordis'
 import type { RemoteFailure, RemoteResult } from '@taiji/dsh-typert-protocol'
 import type {
   LifeActionRequest,
+  LifeActivateRequest,
   LifeConsolidateRequest,
   LifeControlValue,
   LifeResumeCheckpointRequest,
@@ -86,6 +87,14 @@ export interface ILife {
    */
   consolidate(request?: LifeConsolidateRequest, signal?: AbortSignal): Promise<LifeControlValue>
   /**
+   * Answer later turns from a platform-owned checkpoint; the empty id
+   * activates the built-in seed.
+   * @param request - checkpoint name inside the runtime's checkpoint directory.
+   * @param signal - caller lifetime.
+   * @returns the runtime's message naming what became active.
+   */
+  activateCheckpoint(request: LifeActivateRequest, signal?: AbortSignal): Promise<LifeControlValue>
+  /**
    * Start the Legacy life scheduler.
    * @param signal - caller lifetime.
    * @returns the runtime's message.
@@ -156,6 +165,10 @@ export class LifeClient extends Service implements ILife {
 
   async consolidate(request: LifeConsolidateRequest = {}, signal?: AbortSignal): Promise<LifeControlValue> {
     return await this.unwrap(this.model.consolidate(request, signal))
+  }
+
+  async activateCheckpoint(request: LifeActivateRequest, signal?: AbortSignal): Promise<LifeControlValue> {
+    return await this.unwrap(this.model.activateCheckpoint(request, signal))
   }
 
   async lifeStart(signal?: AbortSignal): Promise<LifeControlValue> {

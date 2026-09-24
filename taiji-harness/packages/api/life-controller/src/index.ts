@@ -13,6 +13,7 @@ import { LifeRuntimeClient } from './runtime-client.ts'
 import type { LifeTrainingSink } from './runtime-client.ts'
 import type {
   LifeActionRequest,
+  LifeActivateRequest,
   LifeConsolidateRequest,
   LifeControlValue,
   LifeFollowFrame,
@@ -228,6 +229,19 @@ export class LifeController extends TypertRemoteService {
   @Remote
   async consolidate(request: LifeConsolidateRequest, signal: AbortSignal): Promise<LifeControlValue> {
     return await this.command(() => this.client.consolidate(request, signal))
+  }
+
+  /**
+   * Answer later turns from a platform-owned checkpoint; the empty id activates
+   * the built-in seed. A failure is the runtime's own refusal — activation
+   * swaps the model every later turn runs through.
+   * @param request - checkpoint name inside the runtime's checkpoint directory.
+   * @param signal - caller lifetime.
+   * @returns the runtime's message naming what became active.
+   */
+  @Remote
+  async activateCheckpoint(request: LifeActivateRequest, signal: AbortSignal): Promise<LifeControlValue> {
+    return await this.command(() => this.client.activateCheckpoint(request, signal))
   }
 
   /**

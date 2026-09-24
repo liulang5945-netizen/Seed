@@ -1397,6 +1397,12 @@ export const SERVICE_API: readonly ServiceApiEntry[] = [
         returns: 'the runtime\'s pass report message.',
       },
       {
+        signature: '@Remote async activateCheckpoint(request: LifeActivateRequest, signal: AbortSignal): Promise<LifeControlValue>',
+        description: 'Answer later turns from a platform-owned checkpoint; the empty id activates the built-in seed. A failure is the runtime\'s own refusal — activation swaps the model every later turn runs through.',
+        parameters: [{ name: 'request', description: 'checkpoint name inside the runtime\'s checkpoint directory.' }, { name: 'signal', description: 'caller lifetime.' }],
+        returns: 'the runtime\'s message naming what became active.',
+      },
+      {
         signature: '@Remote async lifeStart(signal: AbortSignal): Promise<LifeControlValue>',
         description: 'Start the Legacy life scheduler.',
         parameters: [{ name: 'signal', description: 'caller lifetime.' }],
@@ -5393,6 +5399,14 @@ export const TYPE_API: readonly TypeApiEntry[] = [
     declaration: 'export interface LifeActionRequest {\n    readonly action: \'feed\' | \'sleep\' | \'play\';\n    readonly reason?: string;\n}',
   },
   {
+    name: 'LifeActivateRequest',
+    declaration: 'export interface LifeActivateRequest {\n    readonly checkpointId: string;\n}',
+  },
+  {
+    name: 'LifeArtifactsView',
+    declaration: 'export interface LifeArtifactsView {\n    readonly activeId: string;\n    readonly configuredId: string;\n}',
+  },
+  {
     name: 'LifeAvailability',
     declaration: 'export interface LifeAvailability {\n    readonly runtime: LifeRuntimeState;\n    readonly legacy: LifeLegacyState;\n    readonly knowledge: LifeKnowledgeState;\n    readonly trainingStream: LifeTrainingStreamState;\n}',
   },
@@ -5474,7 +5488,7 @@ export const TYPE_API: readonly TypeApiEntry[] = [
   },
   {
     name: 'LifeSnapshot',
-    declaration: 'export interface LifeSnapshot {\n    readonly source: LifeSource;\n    readonly observedAt: string;\n    readonly fresh: boolean;\n    readonly pollIntervalMs: number;\n    readonly health?: LifeHealthView;\n    readonly memory?: LifeMemoryView;\n    readonly life?: LifeLifeView;\n    readonly training: LifeTrainingView;\n    readonly knowledge?: LifeKnowledgeView;\n    readonly consolidation?: LifeConsolidationView;\n    readonly availability: LifeAvailability;\n    readonly unavailable: readonly string[];\n}',
+    declaration: 'export interface LifeSnapshot {\n    readonly source: LifeSource;\n    readonly observedAt: string;\n    readonly fresh: boolean;\n    readonly pollIntervalMs: number;\n    readonly health?: LifeHealthView;\n    readonly memory?: LifeMemoryView;\n    readonly life?: LifeLifeView;\n    readonly training: LifeTrainingView;\n    readonly knowledge?: LifeKnowledgeView;\n    readonly consolidation?: LifeConsolidationView;\n    readonly artifacts?: LifeArtifactsView;\n    readonly availability: LifeAvailability;\n    readonly unavailable: readonly string[];\n}',
   },
   {
     name: 'LifeSnapshotValue',

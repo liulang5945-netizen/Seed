@@ -9,6 +9,8 @@
 import { RemoteError } from '@taiji/dsh-typert-protocol'
 import type {
   LifeActionRequest,
+  LifeActivateRequest,
+  LifeArtifactsView,
   LifeCheckpointView,
   LifeConsolidateRequest,
   LifeConsolidationView,
@@ -37,6 +39,8 @@ const TRAIN_FILES_PATH = '/api/train/files'
 const LEGACY_LIFE_PATH = '/api/life/status'
 const KNOWLEDGE_PATH = '/api/rag/status'
 const CONSOLIDATION_PATH = '/api/consolidation/status'
+const ARTIFACTS_PATH = '/api/artifacts'
+const RUNTIME_ACTIVATE_PATH = '/api/runtime/activate'
 const TRAIN_NATIVE_PATH = '/api/train/native'
 const RESUME_CHECKPOINT_PATH = '/api/train/resume_checkpoint'
 const LEGACY_LIFE_START_PATH = '/api/taiji/life/start'
@@ -142,6 +146,12 @@ export class LifeRuntimeClient {
       ? undefined
       : await this.readTrainFiles(signal, unavailable)
     const datasetsReading = trainFiles === undefined ? undefined : trainFilesView(trainFiles)
+    // The publish surface answers whenever the runtime is up; its absence
+    // (an older runtime without the artifacts router) is one unavailable
+    // line, not a broken snapshot.
+    const artifacts = runtime === 'down'
+      ? undefined
+      : await this.readArtifacts(signal, unavailable)
     const source = lifeSource(status?.body)
 
     return {
@@ -159,6 +169,7 @@ export class LifeRuntimeClient {
       },
       ...(knowledgeReading === undefined ? {} : { knowledge: knowledgeReading }),
       ...(consolidationReading === undefined ? {} : { consolidation: consolidationReading }),
+      ...(artifacts === undefined ? {} : { artifacts }),
       availability: {
         runtime,
         legacy: legacy.state,
@@ -281,6 +292,19 @@ export class LifeRuntimeClient {
   }
 
   /**
+   * Answer later turns from a platform-owned checkpoint (empty id = built-in).
+   * @param request - checkpoint name the runtime resolves inside its directory.
+   * @param signal - caller lifetime.
+   * @returns the runtime's acceptance message naming what became active.
+   */
+  async activateCheckpoint(request: LifeActivateRequest, signal: AbortSignal): Promise<LifeControlValue> {
+    // The body is always sent: `checkpoint_id` distinguishes an explicit
+    // built-in request ('') from an omission the runtime would default-fill.
+    const reply = await this.send(RUNTIME_ACTIVATE_PATH, { checkpoint_id: request.checkpointId }, signal)
+    return controlValue(reply)
+  }
+
+  /**
    * Start the Legacy life scheduler.
    * @param signal - caller lifetime.
    * @returns the runtime's message.
@@ -362,6 +386,25 @@ export class LifeRuntimeClient {
         return undefined
       }
       return reply.body
+    } catch (error) {
+      unavailable.push(describeFailure(error))
+      return undefined
+    }
+  }
+
+  private async readArtifacts(signal: AbortSignal, unavailable: string[]): Promise<LifeArtifactsView | undefined> {
+    try {
+      const reply = await this.read(ARTIFACTS_PATH, signal)
+      if (reply.status !== 200) {
+        unavailable.push(`artifacts: HTTP ${String(reply.status)}`)
+        return undefined
+      }
+      const runtime = object(reply.body, 'runtime')
+      if (runtime === undefined) {
+        unavailable.push('artifacts: no runtime block')
+        return undefined
+      }
+      return { activeId: text(runtime, 'active_checkpoint_id'), configuredId: text(runtime, 'configured_checkpoint_id') }
     } catch (error) {
       unavailable.push(describeFailure(error))
       return undefined

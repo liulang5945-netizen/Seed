@@ -79,6 +79,7 @@ function nativeSnapshot(overrides: Partial<LifeSnapshot> = {}): LifeSnapshot {
       },
       journal: { entries: 4, byKind: { interaction: 3, reflection: 1 }, sessions: 2, lastRecordedAt: 1_760_000_000 },
     },
+    artifacts: { activeId: '', configuredId: '' },
     availability: { runtime: 'ok', legacy: 'disabled', knowledge: 'ok', trainingStream: 'idle' },
     unavailable: [],
     ...overrides,
@@ -129,6 +130,7 @@ function stubLife(snapshot: LifeSnapshot | undefined, state: LifeSnapshotState['
     trainStop: vi.fn(accept),
     trainReset: vi.fn(accept),
     consolidate: vi.fn(accept),
+    activateCheckpoint: vi.fn(accept),
     lifeStart: vi.fn(accept),
     lifeStop: vi.fn(accept),
     lifeAction: vi.fn(accept),
@@ -350,6 +352,65 @@ describe('LifePanel', () => {
     await waitFor(() => {
       expect(mocks.trainResumeCheckpoint).toHaveBeenLastCalledWith({ checkpoint: 'seed_beta.pt' })
     })
+  })
+
+  it('shows the publish state on the checkpoint rows and activates with confirmation', async () => {
+    const { life, mocks } = stubLife(nativeSnapshot({
+      artifacts: { activeId: 'seed_beta.pt', configuredId: 'other.pt' },
+      training: {
+        isTraining: false,
+        pauseRequested: false,
+        stopRequested: false,
+        publishing: false,
+        checkpoints: [
+          { filename: 'seed_beta.pt', step: 10, bytes: 2048, modifiedUtc: '2026-09-23T08:00:00.000Z', savedAtUtc: '2026-09-23T08:00:00.000Z', numEpochs: 1 },
+          { filename: 'other.pt', step: 20, bytes: 2048, modifiedUtc: '2026-09-23T09:00:00.000Z', savedAtUtc: '2026-09-23T09:00:00.000Z', numEpochs: 1 },
+        ],
+      },
+    }))
+    mountPanel(life)
+
+    // The header states what answers and what the next start will use; each
+    // name also appears on its checkpoint row, so both occurrences count.
+    expect(screen.getByText(en.activeCheckpointLabel)).not.toBeNull()
+    expect(screen.getAllByText('seed_beta.pt')).toHaveLength(2)
+    expect(screen.getByText(en.configuredCheckpointLabel)).not.toBeNull()
+    expect(screen.getAllByText('other.pt')).toHaveLength(2)
+    // The active row carries the badge and cannot re-activate itself; the
+    // other row offers an enabled activation. Rows follow checkpoint order.
+    expect(screen.getByText(en.artifactsActiveBadge)).not.toBeNull()
+    expect(screen.getByText(en.artifactsConfiguredBadge)).not.toBeNull()
+    const activateButtons = screen.getAllByRole('button', { name: en.activateRow })
+    expect((activateButtons[0] as HTMLButtonElement).disabled).toBe(true)
+    const otherActivate = activateButtons[1]
+    if (otherActivate === undefined) throw new Error('expected an activate button for other.pt')
+    expect((otherActivate as HTMLButtonElement).disabled).toBe(false)
+    fireEvent.click(otherActivate)
+    expect(screen.getByText(en.confirmActivate)).not.toBeNull()
+    expect(mocks.activateCheckpoint).not.toHaveBeenCalled()
+    fireEvent.click(otherActivate)
+    await waitFor(() => {
+      expect(mocks.activateCheckpoint).toHaveBeenLastCalledWith({ checkpointId: 'other.pt' })
+    })
+
+    // Built-in switch is offered because a checkpoint is active, and is itself
+    // a confirming verb: first click arms, second sends the empty name.
+    const builtin = screen.getByRole('button', { name: en.activateBuiltin })
+    fireEvent.click(builtin)
+    expect(screen.getByText(en.confirmActivate)).not.toBeNull()
+    fireEvent.click(screen.getByRole('button', { name: en.activateBuiltin }))
+    await waitFor(() => {
+      expect(mocks.activateCheckpoint).toHaveBeenLastCalledWith({ checkpointId: '' })
+    })
+  })
+
+  it('says honestly when the publish surface did not answer', () => {
+    const { artifacts, ...rest } = nativeSnapshot()
+    expect(artifacts).toBeDefined()
+    const { life } = stubLife(rest)
+    mountPanel(life)
+    expect(screen.getByText(en.artifactsUnavailable)).not.toBeNull()
+    expect(screen.queryByText(en.activeCheckpointLabel)).toBeNull()
   })
 
   it('marks a stale reading and lists the sources that did not answer', () => {

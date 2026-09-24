@@ -37,10 +37,10 @@ export type LifePanelProps =
   & InjectFace<LifePanelInjected>
 
 /** A control the panel is waiting on, or one awaiting its confirming click. */
-type PendingVerb = 'lifeStart' | 'lifeStop' | 'feed' | 'sleep' | 'play' | 'trainStart' | 'trainResumeCheckpoint' | 'trainPause' | 'trainResume' | 'trainStop' | 'trainReset' | 'consolidate'
+type PendingVerb = 'lifeStart' | 'lifeStop' | 'feed' | 'sleep' | 'play' | 'trainStart' | 'trainResumeCheckpoint' | 'trainPause' | 'trainResume' | 'trainStop' | 'trainReset' | 'consolidate' | 'activateCheckpoint'
 
 /** The verbs a confirming second click protects. */
-const CONFIRMED: ReadonlySet<PendingVerb> = new Set(['trainStop', 'trainReset'])
+const CONFIRMED: ReadonlySet<PendingVerb> = new Set(['trainStop', 'trainReset', 'activateCheckpoint'])
 
 /** Format one ISO instant for a fact row; an unparseable value passes through. */
 function formatInstant(iso: string): string {
@@ -169,7 +169,11 @@ export function LifePanel({ t, life }: LifePanelProps): ReactNode {
       <HostSection t={t} snapshot={snapshot} />
 
       {failureText !== null && <p className={css.errorLine} role="alert">{failureText}</p>}
-      {confirming !== null && <p className={css.confirmLine}>{t(confirming === 'trainStop' ? 'confirmStop' : 'confirmReset')}</p>}
+      {confirming !== null && (
+        <p className={css.confirmLine}>
+          {t(confirming === 'trainStop' ? 'confirmStop' : confirming === 'trainReset' ? 'confirmReset' : 'confirmActivate')}
+        </p>
+      )}
     </div>
   )
 }
@@ -348,11 +352,13 @@ function LifeSection({ t, snapshot, pending, run, life }: SectionControlProps): 
   )
 }
 
-/** The checkpoint roster table, each row offering a resumed run from that checkpoint. */
-function Checkpoints({ t, checkpoints, resumeDisabled, onResume }: {
+/** The checkpoint roster table, each row offering a resumed run and an activation. */
+function Checkpoints({ t, checkpoints, artifacts, busy, onActivate, onResume }: {
   t: LifePanelProps['t']
   checkpoints: readonly LifeCheckpointView[]
-  resumeDisabled: boolean
+  artifacts: LifeSnapshot['artifacts']
+  busy: boolean
+  onActivate: (filename: string) => void
   onResume: (filename: string) => void
 }): ReactNode {
   if (checkpoints.length === 0) return <p className={css.muted}>{t('checkpointsEmpty')}</p>
@@ -370,12 +376,26 @@ function Checkpoints({ t, checkpoints, resumeDisabled, onResume }: {
       <tbody>
         {checkpoints.map(cp => (
           <tr key={cp.filename}>
-            <td>{cp.filename}</td>
+            <td>
+              {cp.filename}
+              {artifacts?.activeId === cp.filename && <Tag tone="solid">{t('artifactsActiveBadge')}</Tag>}
+              {artifacts !== undefined && artifacts.configuredId === cp.filename && artifacts.configuredId !== artifacts.activeId && (
+                <Tag tone="info">{t('artifactsConfiguredBadge')}</Tag>
+              )}
+            </td>
             <td>{cp.step}</td>
             <td>{formatBytes(cp.bytes)}</td>
             <td>{cp.savedAtUtc !== '' ? formatInstant(cp.savedAtUtc) : formatInstant(cp.modifiedUtc)}</td>
             <td>
-              <Button disabled={resumeDisabled} onClick={() => { onResume(cp.filename) }}>{t('resumeFrom')}</Button>
+              <div className={css.actions}>
+                <Button disabled={busy} onClick={() => { onResume(cp.filename) }}>{t('resumeFrom')}</Button>
+                <Button
+                  disabled={busy || artifacts?.activeId === cp.filename}
+                  onClick={() => { onActivate(cp.filename) }}
+                >
+                  {t('activateRow')}
+                </Button>
+              </div>
             </td>
           </tr>
         ))}
@@ -496,10 +516,34 @@ function TrainingSection({ t, snapshot, pending, run, life }: SectionControlProp
         <Button disabled={busy || !active} onClick={() =>{  run('trainReset', () => life.trainReset()) }}>{t('trainReset')}</Button>
       </div>
       <h4 className={css.organTitle}>{t('checkpointsTitle')}</h4>
+      {snapshot.artifacts === undefined
+        ? <p className={css.muted}>{t('artifactsUnavailable')}</p>
+        : (
+          <div className={css.facts}>
+            <Fact label={t('activeCheckpointLabel')}>
+              {snapshot.artifacts.activeId === '' ? t('builtInModel') : snapshot.artifacts.activeId}
+            </Fact>
+            {snapshot.artifacts.configuredId !== snapshot.artifacts.activeId && (
+              <Fact label={t('configuredCheckpointLabel')}>
+                {snapshot.artifacts.configuredId === '' ? t('builtInModel') : snapshot.artifacts.configuredId}
+              </Fact>
+            )}
+            <div className={css.actions}>
+              <Button
+                disabled={busy || snapshot.artifacts.activeId === ''}
+                onClick={() => { run('activateCheckpoint', () => life.activateCheckpoint({ checkpointId: '' })) }}
+              >
+                {t('activateBuiltin')}
+              </Button>
+            </div>
+          </div>
+        )}
       <Checkpoints
         t={t}
         checkpoints={training.checkpoints}
-        resumeDisabled={busy || active}
+        artifacts={snapshot.artifacts}
+        busy={busy}
+        onActivate={(filename) => { run('activateCheckpoint', () => life.activateCheckpoint({ checkpointId: filename })) }}
         onResume={(filename) => {
           run('trainResumeCheckpoint', () => life.trainResumeCheckpoint({
             checkpoint: filename,
