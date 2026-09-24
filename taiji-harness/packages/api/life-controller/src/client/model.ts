@@ -6,6 +6,7 @@ import type {
   LifeActionRequest,
   LifeConsolidateRequest,
   LifeControlValue,
+  LifeResumeCheckpointRequest,
   LifeSnapshot,
   LifeTrainStartRequest,
 } from '../types.ts'
@@ -98,6 +99,17 @@ export class ClientLifeModel implements LifeStreamSink {
    */
   trainStart(request: LifeTrainStartRequest): Promise<RemoteResult<LifeControlValue>> {
     return this.remote.trainStart(request)
+  }
+
+  /**
+   * Continue training from a saved checkpoint. Same acceptance shape as
+   * `trainStart`: the run is accepted or refused as a whole, and its progress
+   * — corpus-drift warnings included — arrives through `follow`.
+   * @param request - checkpoint name and optional datasets and tick cap.
+   * @returns the runtime's acceptance message or the Host failure.
+   */
+  trainResumeCheckpoint(request: LifeResumeCheckpointRequest): Promise<RemoteResult<LifeControlValue>> {
+    return this.remote.trainResumeCheckpoint(request)
   }
 
   /**

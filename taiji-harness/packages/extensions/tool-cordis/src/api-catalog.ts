@@ -1361,6 +1361,12 @@ export const SERVICE_API: readonly ServiceApiEntry[] = [
         returns: 'the runtime\'s acceptance message; progress arrives through `follow`.',
       },
       {
+        signature: '@Remote async trainResumeCheckpoint(request: LifeResumeCheckpointRequest): Promise<LifeControlValue>',
+        description: 'Continue training from a saved checkpoint and fold its progress into the snapshot stream, carrying the runtime\'s corpus-drift warnings through.',
+        parameters: [{ name: 'request', description: 'checkpoint name and optional datasets and tick cap.' }],
+        returns: 'the runtime\'s acceptance message; progress arrives through `follow`.',
+      },
+      {
         signature: '@Remote async trainPause(signal: AbortSignal): Promise<LifeControlValue>',
         description: 'Pause the running training.',
         parameters: [{ name: 'signal', description: 'caller lifetime.' }],
@@ -5459,6 +5465,10 @@ export const TYPE_API: readonly TypeApiEntry[] = [
     declaration: 'export interface LifeProgressView {\n    readonly fraction: number;\n    readonly step: number;\n    readonly loss: number;\n    readonly elapsed: number;\n    readonly eta?: number;\n    readonly epoch: number;\n    readonly totalEpochs: number;\n    readonly samplesPerSec: number;\n    readonly totalSteps: number;\n}',
   },
   {
+    name: 'LifeResumeCheckpointRequest',
+    declaration: 'export interface LifeResumeCheckpointRequest {\n    readonly checkpoint: string;\n    readonly datasets?: readonly string[];\n    readonly maxTicks?: number;\n}',
+  },
+  {
     name: 'LifeRuntimeState',
     declaration: 'export type LifeRuntimeState = \'ok\' | \'down\';',
   },
@@ -5484,7 +5494,7 @@ export const TYPE_API: readonly TypeApiEntry[] = [
   },
   {
     name: 'LifeTrainingView',
-    declaration: 'export interface LifeTrainingView {\n    readonly isTraining: boolean;\n    readonly pauseRequested: boolean;\n    readonly stopRequested: boolean;\n    readonly publishing: boolean;\n    readonly progress?: LifeProgressView;\n    readonly checkpoints: readonly LifeCheckpointView[];\n    readonly datasets?: readonly LifeDatasetView[];\n}',
+    declaration: 'export interface LifeTrainingView {\n    readonly isTraining: boolean;\n    readonly pauseRequested: boolean;\n    readonly stopRequested: boolean;\n    readonly publishing: boolean;\n    readonly progress?: LifeProgressView;\n    readonly checkpoints: readonly LifeCheckpointView[];\n    readonly datasets?: readonly LifeDatasetView[];\n    readonly warnings?: readonly string[];\n}',
   },
   {
     name: 'LifeTrainStartRequest',

@@ -12,7 +12,7 @@ Source: [`packages/api/life-controller/src/types.ts`](../../packages/api/life-co
 
 - 常开读取：`GET /api/runtime/status` 携带 health、memory、life、training 四个分节，`GET /api/train/checkpoints` 携带 checkpoint 名单，`GET /api/train/files` 携带可训练数据集名单（data 目录下的 POSIX 相对路径及其大小），`GET /api/consolidation/status` 携带记忆日志计数与睡眠 pass 的产物——pass 计数、最近语料、数据环规格与最近报告。只要 runtime 进程存活，各层都会应答；早于巩固面的 runtime 在该路径应答 `404`，控制器据此记录为一行 `unavailable` 而非快照失败。
 - 受门控读取：`GET /api/life/status`（legacy 调度器）与 `GET /api/rag/status`（知识索引）仅在 runtime 通过 `SEED_ENABLE_LEGACY` 启用其 Legacy surface 时才挂载。未挂载的受门控路径应答 `404`，控制器据此记录为 `disabled`——即"该来源从未存在"，而不是"runtime 坏了"。
-- 训练进度流：`POST /api/train/native` 应答一条 server-sent event 流，其中每个 `progress` 事件携带一个 `LifeProgressView`，由 `completed` 或 `error` 事件结束本次运行。
+- 训练进度流：`POST /api/train/native` 与 `POST /api/train/resume_checkpoint`（从已保存的 checkpoint 续训，可带数据集与 tick 上限）应答同一条 server-sent event 流：每个 `progress` 事件携带一个 `LifeProgressView`，`warning` 事件（例如续训时的语料漂移提醒）由控制器折叠进快照的 `training.warnings`，由 `completed` 或 `error` 事件结束本次运行。
 - 巩固控制：`POST /api/consolidate` 运行一次 native 睡眠 pass（分析、投影、规格化，仅在被要求时才让基底入睡），并以 JSON 应答其报告。
 
 承载生命数值的 status 分节会自报其来源器官，而该名称决定数据结构。`life.status === 'seed'` 报告 native homeostasis 器官，产出 `LifeNativeView`（观测计数、器官模式，以及 runtime 已缩放到 0..100 的开放 need 与 drive 映射）；`life.status === 'ok'` 报告 legacy 调度器，产出 `LifeLegacyView`（其循环标志、当前活动、主导 need、need 映射、心跳与事件计数，以及最近心跳和最近活动时刻）。其他取值使 `life` 缺失。控制器不会重新换算 native homeostasis 的数值，也不会用 native 读数顶替 legacy 读数：两个器官各自使用自己的量纲，是否可比由消费方判断。
@@ -23,7 +23,7 @@ Source: [`packages/api/life-controller/src/types.ts`](../../packages/api/life-co
 
 `unavailable` 为每个未应答的来源保留一行便于运维阅读的说明，使面板能够指出 runtime 的哪一部分缺失，而不是显示空白。没有人测量过的量保持缺失而非默认零，因为一个永久为零的读数读起来像已测得的事实，反而掩盖了来源从未应答。
 
-`LifeAvailability` 独立分类每个来源：`runtime` 为 `ok` 或 `down`，`legacy` 与 `knowledge` 为 `ok`、`disabled` 或 `down`，`trainingStream` 为 `idle`、`streaming` 或 `closed`。`LifeTrainingView` 携带 runtime 的训练锁标志、它尚未观测到的暂停与停止请求、发布锁、最新的 `LifeProgressView`、按最新在前的 checkpoint 名单（截断到 `maxCheckpoints` 上限），以及 `datasets`——面板提供给一次运行的可训练名册（`path` 与 runtime 报出的 `size_bytes`），该读取未应答时保持缺失。
+`LifeAvailability` 独立分类每个来源：`runtime` 为 `ok` 或 `down`，`legacy` 与 `knowledge` 为 `ok`、`disabled` 或 `down`，`trainingStream` 为 `idle`、`streaming` 或 `closed`。`LifeTrainingView` 携带 runtime 的训练锁标志、它尚未观测到的暂停与停止请求、发布锁、最新的 `LifeProgressView`、按最新在前的 checkpoint 名单（截断到 `maxCheckpoints` 上限）、`datasets`——面板提供给一次运行的可训练名册（`path` 与 runtime 报出的 `size_bytes`），该读取未应答时保持缺失——以及 `warnings`：本 Host 上一次运行中 runtime 自己的消息，新运行被接受时清空、运行结束后仍保留。
 
 ## Remote 方法
 
@@ -32,6 +32,7 @@ Source: [`packages/api/life-controller/src/types.ts`](../../packages/api/life-co
 | `snapshot` | 一元 | 返回当前 `LifeSnapshot`；当轮询循环尚无快照时会先读取一次，而未能应答的 runtime 产出标记为 `down`、`fresh` 为假的快照，而不是失败。 |
 | `follow` | 流 | 先发出一帧携带当前快照的 `baseline`，此后每次读数变化发出一帧替换整份快照的 `snapshot`；重连会以新 baseline 开始新一代。 |
 | `trainStart` | 一元 | 通过进度流启动一次 native 运行并以 runtime 的接受应答；同一 Host 上的第二次运行以 `life/conflict` 拒绝，进度经由 `follow` 到达。 |
+| `trainResumeCheckpoint` | 一元 | 经同一进度流从已保存的 checkpoint 续训——接受数据集与 tick 上限，并把 runtime 的语料漂移 warning 折叠进 `training.warnings`；同一 Host 上的第二次运行以 `life/conflict` 拒绝。 |
 | `trainPause` | 一元 | 请求 runtime 暂停正在运行的训练，返回其消息。 |
 | `trainResume` | 一元 | 请求 runtime 恢复已暂停的训练，返回其消息。 |
 | `trainStop` | 一元 | 请求 runtime 在当前 step 之后停止，返回其消息。 |
@@ -94,6 +95,14 @@ Host service backing the generated `ctx.remote.life` namespace.
  * @returns the runtime's acceptance message; progress arrives through `follow`.
  */
 @Remote async trainStart(request: LifeTrainStartRequest): Promise<LifeControlValue>
+
+/**
+ * Continue training from a saved checkpoint and fold its progress into the
+ * snapshot stream, carrying the runtime's corpus-drift warnings through.
+ * @param request - checkpoint name and optional datasets and tick cap.
+ * @returns the runtime's acceptance message; progress arrives through `follow`.
+ */
+@Remote async trainResumeCheckpoint(request: LifeResumeCheckpointRequest): Promise<LifeControlValue>
 
 /**
  * Pause the running training.

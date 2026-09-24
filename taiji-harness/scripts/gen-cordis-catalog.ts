@@ -767,6 +767,7 @@ export const LINK_MAP: Readonly<Record<string, string>> = {
   LifeConsolidateRequest: 'life.md',
   LifeControlValue: 'life.md',
   LifeFollowFrame: 'life.md',
+  LifeResumeCheckpointRequest: 'life.md',
   LifeSnapshotValue: 'life.md',
   LifeTrainStartRequest: 'life.md',
   TypertContribution: 'invariants.md',

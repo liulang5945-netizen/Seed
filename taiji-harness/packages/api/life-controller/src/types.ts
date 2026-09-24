@@ -168,6 +168,12 @@ export interface LifeTrainingView {
   readonly checkpoints: readonly LifeCheckpointView[]
   /** Trainable dataset roster, absent when the roster read did not answer. */
   readonly datasets?: readonly LifeDatasetView[]
+  /**
+   * Warnings the runtime's own progress stream carried for this Host's last
+   * run — a corpus-drift notice on a resumed run is the case that matters.
+   * Absent while no run reported one; a new run clears the list.
+   */
+  readonly warnings?: readonly string[]
 }
 
 /** Knowledge base size, present only when the gated surface answered. */
@@ -310,6 +316,16 @@ export interface LifeTrainStartRequest {
 export interface LifeConsolidateRequest {
   /** Operator-visible reason recorded with the pass; omitted uses the runtime's default. */
   readonly reason?: string
+}
+
+/** Request to continue training from a saved checkpoint. */
+export interface LifeResumeCheckpointRequest {
+  /** Checkpoint file name inside the runtime's checkpoint directory. */
+  readonly checkpoint: string
+  /** Dataset paths relative to the data directory; omitted trains the runtime default corpus. */
+  readonly datasets?: readonly string[]
+  /** Upper bound on ticks added; omitted runs the selected corpus through once. */
+  readonly maxTicks?: number
 }
 
 /** Request to force one Legacy life activity. */

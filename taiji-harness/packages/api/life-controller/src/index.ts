@@ -10,12 +10,14 @@ import z from '@taiji/schemastery'
 import { Remote, RemoteError, TypertRemoteService } from '@taiji/dsh-typert-protocol'
 import { LifeFeed } from './feed.ts'
 import { LifeRuntimeClient } from './runtime-client.ts'
+import type { LifeTrainingSink } from './runtime-client.ts'
 import type {
   LifeActionRequest,
   LifeConsolidateRequest,
   LifeControlValue,
   LifeFollowFrame,
   LifeProgressView,
+  LifeResumeCheckpointRequest,
   LifeSnapshotValue,
   LifeTrainStartRequest,
 } from './types.ts'
@@ -70,6 +72,7 @@ export class LifeController extends TypertRemoteService {
   private active: AbortController | undefined
   private accepted = false
   private progress: LifeProgressView | undefined
+  private warnings: string[] = []
   private stream: 'idle' | 'streaming' | 'closed' = 'idle'
 
   /**
@@ -115,6 +118,28 @@ export class LifeController extends TypertRemoteService {
    */
   @Remote
   async trainStart(request: LifeTrainStartRequest): Promise<LifeControlValue> {
+    return await this.beginRun((signal, sink) => this.client.streamTraining(request, signal, sink))
+  }
+
+  /**
+   * Continue training from a saved checkpoint and fold its progress into the
+   * snapshot stream, carrying the runtime's corpus-drift warnings through.
+   * @param request - checkpoint name and optional datasets and tick cap.
+   * @returns the runtime's acceptance message; progress arrives through `follow`.
+   */
+  @Remote
+  async trainResumeCheckpoint(request: LifeResumeCheckpointRequest): Promise<LifeControlValue> {
+    return await this.beginRun((signal, sink) => this.client.resumeCheckpoint(request, signal, sink))
+  }
+
+  /**
+   * Open one training run through the shared exclusivity: one stream per Host,
+   * the run accepted or refused as a whole, every later frame folded into the
+   * snapshot. A new run clears the previous run's warnings.
+   * @param open - how to open this run's stream against a signal and sink.
+   * @returns the acceptance message.
+   */
+  private async beginRun(open: (signal: AbortSignal, sink: LifeTrainingSink) => Promise<void>): Promise<LifeControlValue> {
     if (this.active !== undefined) {
       throw new RemoteError('life/conflict', 'a training stream is already open on this Host', {
         reason: 'start requested while the previous run still streams',
@@ -126,14 +151,19 @@ export class LifeController extends TypertRemoteService {
     this.accepted = false
     this.stream = 'streaming'
     this.progress = undefined
-    const run = this.client.streamTraining(request, controller.signal, {
+    this.warnings = []
+    const run = open(controller.signal, {
       accepted: () => {
         this.accepted = true
         accepted.resolve()
       },
       progress: (sample) => {
         this.progress = sample
-        this.feed.sync(this.progress, 'streaming')
+        this.feed.sync(this.progress, this.stream, this.warnings)
+      },
+      warning: (message) => {
+        this.warnings.push(message)
+        this.feed.sync(this.progress, this.stream, this.warnings)
       },
       completed: (message) => { this.settle(undefined, message) },
       failed: (reason) => { this.settle(reason) },
@@ -234,7 +264,7 @@ export class LifeController extends TypertRemoteService {
   /** Run one control verb, then re-read so the panel sees the effect immediately. */
   private async command(verb: () => Promise<LifeControlValue>): Promise<LifeControlValue> {
     const value = await verb()
-    this.feed.sync(this.progress, this.stream)
+    this.feed.sync(this.progress, this.stream, this.warnings)
     return value
   }
 
@@ -252,7 +282,9 @@ export class LifeController extends TypertRemoteService {
     this.stream = reason !== undefined && started ? 'closed' : 'idle'
     if (reason !== undefined && started) this.ctx.logger.warn(`life-controller: training stream ended: ${reason}`)
     else if (message !== undefined) this.ctx.logger.info(`life-controller: training finished: ${message}`)
-    this.feed.sync(this.progress, this.stream)
+    // The settled run's warnings stay folded until a new run clears them: a
+    // corpus-drift notice is a fact the operator must still be able to read.
+    this.feed.sync(this.progress, this.stream, this.warnings)
   }
 }
 

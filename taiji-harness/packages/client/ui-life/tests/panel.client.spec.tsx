@@ -123,6 +123,7 @@ function stubLife(snapshot: LifeSnapshot | undefined, state: LifeSnapshotState['
   const mocks = {
     refresh,
     trainStart: vi.fn(accept),
+    trainResumeCheckpoint: vi.fn(accept),
     trainPause: vi.fn(accept),
     trainResume: vi.fn(accept),
     trainStop: vi.fn(accept),
@@ -309,6 +310,46 @@ describe('LifePanel', () => {
     // The missing entry cannot be ticked; the present one still preselects.
     expect(screen.getByText(/1 selected/)).not.toBeNull()
     expect(screen.queryByRole('checkbox', { name: /consolidated\/gone\.jsonl/ })).toBeNull()
+  })
+
+  it('resumes a training run from a checkpoint row with the selected datasets', async () => {
+    const { life, mocks } = stubLife(nativeSnapshot({
+      training: {
+        isTraining: false,
+        pauseRequested: false,
+        stopRequested: false,
+        publishing: false,
+        datasets: [
+          { path: 'consolidated/night-1.jsonl', sizeBytes: 4096 },
+          { path: 'simple_zh/dialogue_extended_clean.jsonl', sizeBytes: 108_327_171 },
+        ],
+        checkpoints: [
+          { filename: 'seed_beta.pt', step: 1_600_000, bytes: 2048, modifiedUtc: '2026-09-23T08:01:00.000Z', savedAtUtc: '2026-09-23T08:01:00.000Z', numEpochs: 1 },
+        ],
+        warnings: ['语料已变更：检查点原指纹 abc123，本次续训 def456'],
+      },
+    }))
+    mountPanel(life)
+
+    // The runtime's own drift notice renders verbatim beside its label.
+    expect(screen.getByText(en.runWarning)).not.toBeNull()
+    expect(screen.getByText('语料已变更：检查点原指纹 abc123，本次续训 def456')).not.toBeNull()
+
+    // The spec preselects its dataset; resume sends the checkpoint plus that selection.
+    fireEvent.click(screen.getByRole('button', { name: en.resumeFrom }))
+    await waitFor(() => {
+      expect(mocks.trainResumeCheckpoint).toHaveBeenLastCalledWith({
+        checkpoint: 'seed_beta.pt',
+        datasets: ['consolidated/night-1.jsonl'],
+      })
+    })
+
+    // With nothing selected the request carries only the checkpoint name.
+    fireEvent.click(screen.getByRole('checkbox', { name: /consolidated\/night-1\.jsonl/ }))
+    fireEvent.click(screen.getByRole('button', { name: en.resumeFrom }))
+    await waitFor(() => {
+      expect(mocks.trainResumeCheckpoint).toHaveBeenLastCalledWith({ checkpoint: 'seed_beta.pt' })
+    })
   })
 
   it('marks a stale reading and lists the sources that did not answer', () => {

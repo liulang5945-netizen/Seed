@@ -45,6 +45,7 @@ runtime 是唯一事实来源，而读数会说明每个数值的出处。`GET /
 | `snapshot` | 一元 | 读取当前快照；未能应答的 runtime 产出标记为 `down`、`fresh` 为假的快照。 | 仅当中止不是调用方发起时才抛 `life/runtime-unreachable`。 |
 | `follow` | 流 | 以 `baseline` 帧开启一代，此后每次变化替换快照。 | 同 `snapshot`；丢失的载体由 Client 流负责重试。 |
 | `trainStart` | 一元 | 通过进度流启动一次 native 运行，并以 runtime 的接受应答。 | 当同一 Host 上已有运行在流式输出时为 `life/conflict`，以及 runtime 自身的拒绝码。 |
+| `trainResumeCheckpoint` | 一元 | 经同一进度流从已保存的 checkpoint 续训（含 runtime 的语料漂移 warning），并以 runtime 的接受应答。 | 当同一 Host 上已有运行在流式输出时为 `life/conflict`，以及 runtime 自身的拒绝码。 |
 | `trainPause` | 一元 | 请求 runtime 暂停正在运行的训练。 | `life/runtime-error`、`life/conflict`、`life/bad-request`、`life/runtime-unreachable`。 |
 | `trainResume` | 一元 | 请求 runtime 恢复已暂停的训练。 | `life/runtime-error`、`life/conflict`、`life/bad-request`、`life/runtime-unreachable`。 |
 | `trainStop` | 一元 | 请求 runtime 在当前 step 之后停止。 | `life/runtime-error`、`life/conflict`、`life/bad-request`、`life/runtime-unreachable`。 |

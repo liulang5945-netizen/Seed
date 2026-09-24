@@ -12,7 +12,7 @@ The controller reads the runtime's HTTP face in four tiers, and which tier a num
 
 - Always-on reads: `GET /api/runtime/status` carries the health, memory, life, and training sections, `GET /api/train/checkpoints` carries the checkpoint roster, `GET /api/train/files` carries the trainable dataset roster (POSIX paths under the data directory with their sizes), and `GET /api/consolidation/status` carries the memory journal counts with the sleep pass's products — pass counter, latest corpus, data-ring spec, and latest report. All three tiers answer whenever the runtime process is up; a runtime that predates the consolidation surface answers `404` there, which the controller records as one `unavailable` line rather than a snapshot failure.
 - Gated reads: `GET /api/life/status` (the Legacy scheduler) and `GET /api/rag/status` (the knowledge index) are mounted only while the runtime enables its Legacy surface through `SEED_ENABLE_LEGACY`. An unmounted gated path answers `404`, which the controller records as `disabled` — a source that was never there, not a runtime that broke.
-- The training progress stream: `POST /api/train/native` answers a server-sent event stream whose `progress` events carry one `LifeProgressView` each, and whose `completed` or `error` event ends the run.
+- The training progress stream: `POST /api/train/native` and `POST /api/train/resume_checkpoint` (continuing from a saved checkpoint, datasets and a tick cap included) answer one shared server-sent event stream whose `progress` events carry one `LifeProgressView` each and whose `warning` events — a corpus-drift notice on a resumed run, for one — the controller folds into the snapshot's `training.warnings`; a `completed` or `error` event ends the run.
 - The consolidation control: `POST /api/consolidate` runs one native sleep pass (analyse, project, specify, and only on request sleep the substrate) and answers its report as JSON.
 
 The status section that holds the life numbers names its own organ, and that name decides the shape. `life.status === 'seed'` reports the native homeostasis organ and yields `LifeNativeView` (observation count, organ mode, and the open need and drive maps the runtime scales to 0..100); `life.status === 'ok'` reports the legacy scheduler and yields `LifeLegacyView` (its loop flag, current activity, dominant need, need map, heartbeat and event counters, and the last heartbeat and activity instants). Any other value leaves `life` absent. The controller never rescales a native homeostatic value and never substitutes a native reading for a legacy one: the two organs report on their own scales, and the consumer decides whether the numbers are comparable.
@@ -23,7 +23,7 @@ The status section that holds the life numbers names its own organ, and that nam
 
 `unavailable` holds one operator-readable line per source that did not answer, so a panel can say which part of the runtime is missing instead of showing a blank. A quantity nobody measured stays absent rather than defaulted to zero, because a permanent zero reads as a measured fact and hides that the source never answered.
 
-`LifeAvailability` classifies each source independently: `runtime` is `ok` or `down`, `legacy` and `knowledge` are `ok`, `disabled`, or `down`, and `trainingStream` is `idle`, `streaming`, or `closed`. `LifeTrainingView` carries the runtime's training lock flag, the pause and stop requests it has not observed yet, the publish lock, the latest `LifeProgressView`, the checkpoint roster newest-first, truncated to the `maxCheckpoints` bound, and `datasets` — the trainable roster the panel offers a run (`path` plus the runtime's `size_bytes`), absent when that read did not answer.
+`LifeAvailability` classifies each source independently: `runtime` is `ok` or `down`, `legacy` and `knowledge` are `ok`, `disabled`, or `down`, and `trainingStream` is `idle`, `streaming`, or `closed`. `LifeTrainingView` carries the runtime's training lock flag, the pause and stop requests it has not observed yet, the publish lock, the latest `LifeProgressView`, the checkpoint roster newest-first, truncated to the `maxCheckpoints` bound, `datasets` — the trainable roster the panel offers a run (`path` plus the runtime's `size_bytes`), absent when that read did not answer — and `warnings`, the runtime's own messages from this Host's last run, cleared when a new run is accepted and kept after it settles.
 
 ## Remote methods
 
@@ -32,6 +32,7 @@ The status section that holds the life numbers names its own organ, and that nam
 | `snapshot` | unary | Returns the current `LifeSnapshot`; when the poll loop has none yet it reads one, and a runtime that did not answer yields a snapshot marked `down` with `fresh` false rather than a failure. |
 | `follow` | stream | Opens with one `baseline` frame carrying the current snapshot, then one `snapshot` replacement frame per changed reading; a reconnect starts a new generation with a fresh baseline. |
 | `trainStart` | unary | Starts a native run through the progress stream and resolves with the runtime's acceptance; a second run on the same Host rejects as `life/conflict`, and progress arrives through `follow`. |
+| `trainResumeCheckpoint` | unary | Continues training from a saved checkpoint over the same progress stream — accepting its datasets and tick cap, and carrying the runtime's corpus-drift warnings into `training.warnings`; a second run on the same Host rejects as `life/conflict`. |
 | `trainPause` | unary | Asks the runtime to pause the running training and returns its message. |
 | `trainResume` | unary | Asks the runtime to resume a paused training and returns its message. |
 | `trainStop` | unary | Asks the runtime to stop after its current step and returns its message. |
@@ -94,6 +95,14 @@ Host service backing the generated `ctx.remote.life` namespace.
  * @returns the runtime's acceptance message; progress arrives through `follow`.
  */
 @Remote async trainStart(request: LifeTrainStartRequest): Promise<LifeControlValue>
+
+/**
+ * Continue training from a saved checkpoint and fold its progress into the
+ * snapshot stream, carrying the runtime's corpus-drift warnings through.
+ * @param request - checkpoint name and optional datasets and tick cap.
+ * @returns the runtime's acceptance message; progress arrives through `follow`.
+ */
+@Remote async trainResumeCheckpoint(request: LifeResumeCheckpointRequest): Promise<LifeControlValue>
 
 /**
  * Pause the running training.

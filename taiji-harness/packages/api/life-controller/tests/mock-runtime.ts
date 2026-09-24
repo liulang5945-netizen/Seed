@@ -31,6 +31,8 @@ export interface MockLifeRuntime {
   checkpoints: unknown[]
   /** Script consumed by the next `POST /api/train/native`. */
   training: TrainingScript
+  /** Script consumed by the next `POST /api/train/resume_checkpoint`. */
+  resume: TrainingScript
   /** Reply one control verb gives, keyed by path; absent means `{status: 200}`. */
   controlReplies: Map<string, { status: number; body?: unknown }>
   /** Close the stream of a held training run. */
@@ -87,6 +89,11 @@ export function errorFrame(message: string): string {
   return JSON.stringify({ type: 'error', message })
 }
 
+/** One runtime `warning` frame, as a corpus-drift notice on a resumed run arrives. */
+export function warningFrame(message: string): string {
+  return JSON.stringify({ type: 'warning', message })
+}
+
 /**
  * Start the stand-in on an ephemeral loopback port.
  * @returns the runtime handle; every scripted field is mutable between requests,
@@ -95,6 +102,7 @@ export function errorFrame(message: string): string {
 export async function mockLifeRuntime(): Promise<MockLifeRuntime> {
   const requests: RecordedRequest[] = []
   let training: TrainingScript = { kind: 'frames', frames: [] }
+  let resume: TrainingScript = { kind: 'frames', frames: [] }
   let held: ServerResponse | undefined
   const runtime: MockLifeRuntime = {
     url: '',
@@ -105,6 +113,8 @@ export async function mockLifeRuntime(): Promise<MockLifeRuntime> {
     checkpoints: [],
     get training() { return training },
     set training(script: TrainingScript) { training = script },
+    get resume() { return resume },
+    set resume(script: TrainingScript) { resume = script },
     controlReplies: new Map(),
     async closeTraining() {
       held?.end()
@@ -158,6 +168,10 @@ async function handle(
   }
   if (request.method === 'POST' && path === '/api/train/native') {
     await stream(response, runtime.training, hold)
+    return
+  }
+  if (request.method === 'POST' && path === '/api/train/resume_checkpoint') {
+    await stream(response, runtime.resume, hold)
     return
   }
   const scripted = runtime.controlReplies.get(path)

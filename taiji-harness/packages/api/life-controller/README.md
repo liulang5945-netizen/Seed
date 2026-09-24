@@ -45,6 +45,7 @@ The active cadence applies while the runtime reports training or a progress stre
 | `snapshot` | unary | Read the current snapshot; a runtime that did not answer yields a snapshot marked `down` with `fresh` false. | `life/runtime-unreachable` only for an abort that is not the caller's. |
 | `follow` | stream | Open a generation with a `baseline` frame, then replace the snapshot per change. | Same as `snapshot`; a lost carrier is retried by the Client stream. |
 | `trainStart` | unary | Start a native run over the progress stream and resolve with the runtime's acceptance. | `life/conflict` when a run already streams on this Host, plus the runtime's refusal codes. |
+| `trainResumeCheckpoint` | unary | Continue training from a saved checkpoint over the same progress stream — corpus-drift warnings included — and resolve with the runtime's acceptance. | `life/conflict` when a run already streams on this Host, plus the runtime's refusal codes. |
 | `trainPause` | unary | Ask the runtime to pause the running training. | `life/runtime-error`, `life/conflict`, `life/bad-request`, `life/runtime-unreachable`. |
 | `trainResume` | unary | Ask the runtime to resume a paused training. | `life/runtime-error`, `life/conflict`, `life/bad-request`, `life/runtime-unreachable`. |
 | `trainStop` | unary | Ask the runtime to stop after its current step. | `life/runtime-error`, `life/conflict`, `life/bad-request`, `life/runtime-unreachable`. |

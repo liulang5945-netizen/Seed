@@ -6,6 +6,7 @@ import type {
   LifeActionRequest,
   LifeConsolidateRequest,
   LifeControlValue,
+  LifeResumeCheckpointRequest,
   LifeSnapshot,
   LifeTrainStartRequest,
 } from '../types.ts'
@@ -46,6 +47,13 @@ export interface ILife {
    * @returns the runtime's acceptance message.
    */
   trainStart(request?: LifeTrainStartRequest): Promise<LifeControlValue>
+  /**
+   * Continue training from a saved checkpoint; progress and corpus-drift
+   * warnings arrive through the snapshot stream.
+   * @param request - checkpoint name and optional datasets and tick cap.
+   * @returns the runtime's acceptance message.
+   */
+  trainResumeCheckpoint(request: LifeResumeCheckpointRequest): Promise<LifeControlValue>
   /**
    * Pause the running training.
    * @param signal - caller lifetime.
@@ -124,6 +132,10 @@ export class LifeClient extends Service implements ILife {
 
   async trainStart(request: LifeTrainStartRequest = {}): Promise<LifeControlValue> {
     return await this.unwrap(this.model.trainStart(request))
+  }
+
+  async trainResumeCheckpoint(request: LifeResumeCheckpointRequest): Promise<LifeControlValue> {
+    return await this.unwrap(this.model.trainResumeCheckpoint(request))
   }
 
   async trainPause(signal?: AbortSignal): Promise<LifeControlValue> {

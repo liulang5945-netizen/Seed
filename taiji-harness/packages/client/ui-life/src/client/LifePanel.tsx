@@ -37,7 +37,7 @@ export type LifePanelProps =
   & InjectFace<LifePanelInjected>
 
 /** A control the panel is waiting on, or one awaiting its confirming click. */
-type PendingVerb = 'lifeStart' | 'lifeStop' | 'feed' | 'sleep' | 'play' | 'trainStart' | 'trainPause' | 'trainResume' | 'trainStop' | 'trainReset' | 'consolidate'
+type PendingVerb = 'lifeStart' | 'lifeStop' | 'feed' | 'sleep' | 'play' | 'trainStart' | 'trainResumeCheckpoint' | 'trainPause' | 'trainResume' | 'trainStop' | 'trainReset' | 'consolidate'
 
 /** The verbs a confirming second click protects. */
 const CONFIRMED: ReadonlySet<PendingVerb> = new Set(['trainStop', 'trainReset'])
@@ -348,8 +348,13 @@ function LifeSection({ t, snapshot, pending, run, life }: SectionControlProps): 
   )
 }
 
-/** The checkpoint roster table. */
-function Checkpoints({ t, checkpoints }: { t: LifePanelProps['t']; checkpoints: readonly LifeCheckpointView[] }): ReactNode {
+/** The checkpoint roster table, each row offering a resumed run from that checkpoint. */
+function Checkpoints({ t, checkpoints, resumeDisabled, onResume }: {
+  t: LifePanelProps['t']
+  checkpoints: readonly LifeCheckpointView[]
+  resumeDisabled: boolean
+  onResume: (filename: string) => void
+}): ReactNode {
   if (checkpoints.length === 0) return <p className={css.muted}>{t('checkpointsEmpty')}</p>
   return (
     <table className={css.table}>
@@ -359,6 +364,7 @@ function Checkpoints({ t, checkpoints }: { t: LifePanelProps['t']; checkpoints: 
           <th scope="col">{t('colStep')}</th>
           <th scope="col">{t('colSize')}</th>
           <th scope="col">{t('colSaved')}</th>
+          <th scope="col">{t('colResume')}</th>
         </tr>
       </thead>
       <tbody>
@@ -368,6 +374,9 @@ function Checkpoints({ t, checkpoints }: { t: LifePanelProps['t']; checkpoints: 
             <td>{cp.step}</td>
             <td>{formatBytes(cp.bytes)}</td>
             <td>{cp.savedAtUtc !== '' ? formatInstant(cp.savedAtUtc) : formatInstant(cp.modifiedUtc)}</td>
+            <td>
+              <Button disabled={resumeDisabled} onClick={() => { onResume(cp.filename) }}>{t('resumeFrom')}</Button>
+            </td>
           </tr>
         ))}
       </tbody>
@@ -436,6 +445,11 @@ function TrainingSection({ t, snapshot, pending, run, life }: SectionControlProp
         {training.publishing && <Tag tone="info">{t('trainingPublishing')}</Tag>}
       </p>
       {training.progress !== undefined ? <Progress t={t} progress={training.progress} /> : <p className={css.muted}>{t('noProgress')}</p>}
+      {(training.warnings ?? []).map(message => (
+        <p key={message} className={css.trainingBadges}>
+          <Tag tone="warning">{t('runWarning')}</Tag> <span className={css.badgeText}>{message}</span>
+        </p>
+      ))}
       <h4 className={css.organTitle}>{t('datasetsTitle')}</h4>
       {datasets === undefined
         ? <p className={css.muted}>{t('datasetsUnavailable')}</p>
@@ -482,7 +496,17 @@ function TrainingSection({ t, snapshot, pending, run, life }: SectionControlProp
         <Button disabled={busy || !active} onClick={() =>{  run('trainReset', () => life.trainReset()) }}>{t('trainReset')}</Button>
       </div>
       <h4 className={css.organTitle}>{t('checkpointsTitle')}</h4>
-      <Checkpoints t={t} checkpoints={training.checkpoints} />
+      <Checkpoints
+        t={t}
+        checkpoints={training.checkpoints}
+        resumeDisabled={busy || active}
+        onResume={(filename) => {
+          run('trainResumeCheckpoint', () => life.trainResumeCheckpoint({
+            checkpoint: filename,
+            ...(selected.size > 0 ? { datasets: [...selected] } : {}),
+          }))
+        }}
+      />
     </section>
   )
 }

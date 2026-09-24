@@ -29,6 +29,7 @@ export class LifeFeed {
   private snapshot: LifeSnapshot | undefined
   private lastPublished: string | undefined
   private progress: LifeProgressView | undefined
+  private warnings: readonly string[] = []
   private stream: LifeTrainingStreamState = 'idle'
   private lastOkAt: string | undefined
   private timer: ReturnType<typeof setTimeout> | undefined
@@ -94,10 +95,12 @@ export class LifeFeed {
    * Record the progress stream's state and re-read once.
    * @param progress - latest sample, absent when the stream carries none.
    * @param stream - how the stream stands.
+   * @param warnings - warnings the last run's stream carried, empty when none.
    */
-  sync(progress: LifeProgressView | undefined, stream: LifeTrainingStreamState): void {
+  sync(progress: LifeProgressView | undefined, stream: LifeTrainingStreamState, warnings: readonly string[]): void {
     this.progress = progress
     this.stream = stream
+    this.warnings = warnings
     void this.refresh(this.lifetime.signal)
   }
 
@@ -105,6 +108,7 @@ export class LifeFeed {
   private async refresh(signal: AbortSignal): Promise<LifeSnapshot> {
     const snapshot = await this.client.readSnapshot(signal, {
       ...(this.progress === undefined ? {} : { progress: this.progress }),
+      ...(this.warnings.length === 0 ? {} : { warnings: this.warnings }),
       stream: this.stream,
       ...(this.lastOkAt === undefined ? {} : { lastOkAt: this.lastOkAt }),
     })

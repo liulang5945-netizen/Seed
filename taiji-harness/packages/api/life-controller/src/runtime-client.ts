@@ -22,6 +22,7 @@ import type {
   LifeNativeView,
   LifePassReportView,
   LifeProgressView,
+  LifeResumeCheckpointRequest,
   LifeRuntimeState,
   LifeSnapshot,
   LifeSource,
@@ -37,6 +38,7 @@ const LEGACY_LIFE_PATH = '/api/life/status'
 const KNOWLEDGE_PATH = '/api/rag/status'
 const CONSOLIDATION_PATH = '/api/consolidation/status'
 const TRAIN_NATIVE_PATH = '/api/train/native'
+const RESUME_CHECKPOINT_PATH = '/api/train/resume_checkpoint'
 const LEGACY_LIFE_START_PATH = '/api/taiji/life/start'
 const LEGACY_LIFE_STOP_PATH = '/api/taiji/life/stop'
 const LEGACY_LIFE_ACTION_PATH = '/api/taiji/life/action'
@@ -55,6 +57,8 @@ export interface LifeRuntimeOptions {
 export interface LifeTrainingCarry {
   /** Latest progress sample from the open stream, when one is open. */
   readonly progress?: LifeProgressView
+  /** Warnings the open (or last settled) stream carried, when there are any. */
+  readonly warnings?: readonly string[]
   /** How the progress stream stands. */
   readonly stream: 'idle' | 'streaming' | 'closed'
   /** ISO-8601 instant of the last observation the runtime answered, when known. */
@@ -67,6 +71,8 @@ export interface LifeTrainingSink {
   accepted(): void
   /** One progress sample arrived. */
   progress(sample: LifeProgressView): void
+  /** The run reported a non-fatal warning (a corpus-drift notice, for one). */
+  warning(message: string): void
   /** The run finished; the runtime names its checkpoint. */
   completed(message: string): void
   /** The run failed after starting. */
@@ -175,10 +181,30 @@ export class LifeRuntimeClient {
     signal: AbortSignal,
     sink: LifeTrainingSink,
   ): Promise<void> {
-    const reply = await this.open(TRAIN_NATIVE_PATH, {
+    await this.foldStream(TRAIN_NATIVE_PATH, trainBody(request), signal, sink)
+  }
+
+  /**
+   * Continue training from a saved checkpoint over the same progress-stream
+   * contract, including the runtime's corpus-drift `warning` events.
+   * @param request - checkpoint name and optional datasets and tick cap.
+   * @param signal - run lifetime; aborting stops folding, not the runtime's run.
+   * @param sink - destinations for progress, warnings, completion, failure, and an early end.
+   */
+  async resumeCheckpoint(
+    request: LifeResumeCheckpointRequest,
+    signal: AbortSignal,
+    sink: LifeTrainingSink,
+  ): Promise<void> {
+    await this.foldStream(RESUME_CHECKPOINT_PATH, resumeBody(request), signal, sink)
+  }
+
+  /** Open one training stream and fold its shared SSE contract to the sink. */
+  private async foldStream(path: string, body: Record<string, unknown>, signal: AbortSignal, sink: LifeTrainingSink): Promise<void> {
+    const reply = await this.open(path, {
       method: 'POST',
       headers: { 'content-type': 'application/json', accept: 'text/event-stream' },
-      body: JSON.stringify(trainBody(request)),
+      body: JSON.stringify(body),
     }, signal)
     if (!reply.ok || reply.body === null) {
       throw await responseError(reply)
@@ -188,6 +214,10 @@ export class LifeRuntimeClient {
       const event = frame as { readonly type?: unknown }
       if (event.type === 'progress') {
         sink.progress(progressView(frame))
+        continue
+      }
+      if (event.type === 'warning') {
+        sink.warning(text(frame, 'message'))
         continue
       }
       if (event.type === 'completed') {
@@ -461,12 +491,14 @@ function trainingView(body: unknown, carry: LifeTrainingCarry): LifeTrainingView
   const training = object(body, 'training')
   if (training === undefined) return undefined
   const progress = carry.progress
+  const warnings = carry.warnings
   return {
     isTraining: flag(training, 'is_training'),
     pauseRequested: flag(training, 'pause_requested'),
     stopRequested: flag(training, 'stop_requested'),
     publishing: flag(training, 'publishing'),
     ...(progress === undefined ? {} : { progress }),
+    ...(warnings === undefined || warnings.length === 0 ? {} : { warnings }),
     checkpoints: [],
   }
 }
@@ -548,6 +580,15 @@ function trainBody(request: LifeTrainStartRequest): Record<string, unknown> {
     ...(request.parameterBudget === undefined ? {} : { parameter_budget: request.parameterBudget }),
     ...(request.seed === undefined ? {} : { seed: request.seed }),
     ...(request.maxSymbols === undefined ? {} : { max_symbols: request.maxSymbols }),
+  }
+}
+
+/** Request body the runtime's `ResumeRequest` accepts; `checkpoint` is always sent. */
+function resumeBody(request: LifeResumeCheckpointRequest): Record<string, unknown> {
+  return {
+    checkpoint: request.checkpoint,
+    ...(request.datasets === undefined ? {} : { datasets: [...request.datasets] }),
+    ...(request.maxTicks === undefined ? {} : { max_ticks: request.maxTicks }),
   }
 }
 
