@@ -36,7 +36,7 @@ The generated [configuration catalog](../../../docs/config-catalog.md#taijidsh-l
 <a id="understand-the-implementation"></a>
 ## Understand the implementation
 
-Each accepted model step appends one durable user message whose source kind is `life-context`, rendered from the controller's latest snapshot:
+Each accepted model step prepends one durable user message whose source kind is `life-context`, rendered from the controller's latest snapshot:
 
 - `life-state age=5s source=native tick=41 mode=wake needs[curiosity=42.5 fatigue=10 stress=1.5] drives[exploration=40 replay=10 rest=0 play=30] training[off] knowledge[12 docs 340 chunks]` — a native reading.
 - A legacy reading reports `state`, `dominant`, the five scheduler needs, and heartbeat counters. Segments with nothing to report are dropped, never defaulted.
@@ -54,7 +54,7 @@ An injection is skipped while inside `refreshIntervalMs` unless the reading chan
 
 #### What the model sees
 
-Readings arrive as one durable user message appended after the step's other messages, and the system prompt carries a `life:policy` section at the repository's `LIFE_POLICY` position explaining that readings are internal telemetry, not evidence.
+Readings arrive as one durable user message prepended ahead of the step's other messages, and the system prompt carries a `life:policy` section at the repository's `LIFE_POLICY` position explaining that readings are internal telemetry, not evidence.
 
 ##### A native reading
 

@@ -36,7 +36,7 @@ kind: "package-reference"
 <a id="understand-the-implementation"></a>
 ## Understand the implementation
 
-每个被接受的模型步骤都会追加一条持久用户消息，其 source kind 为 `life-context`，由 controller 的最新快照渲染：
+每个被接受的模型步骤都会前置一条持久用户消息，其 source kind 为 `life-context`，由 controller 的最新快照渲染：
 
 - `life-state age=5s source=native tick=41 mode=wake needs[curiosity=42.5 fatigue=10 stress=1.5] drives[exploration=40 replay=10 rest=0 play=30] training[off] knowledge[12 docs 340 chunks]` —— native 读数。
 - legacy 读数报告 `state`、`dominant`、五项调度器需求与心跳计数。没有内容可报的段被丢弃，绝不补默认值。
@@ -54,7 +54,7 @@ kind: "package-reference"
 
 #### 模型看到什么
 
-读数以一条持久用户消息的形式追加在该步骤的其它消息之后，系统提示词则在仓库 `LIFE_POLICY` 位置携带一段 `life:policy` section，说明读数是内部遥测、不是证据。
+读数以一条持久用户消息的形式前置在该步骤的其它消息之前，系统提示词则在仓库 `LIFE_POLICY` 位置携带一段 `life:policy` section，说明读数是内部遥测、不是证据。
 
 ##### 一条原生读数
 

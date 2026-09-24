@@ -409,6 +409,7 @@
       "@taiji/dsh-lsp-stdio": ["./packages/lsp/lsp-stdio/src"],
       "@taiji/dsh-mcp-client": ["./packages/mcp/mcp-client/src"],
       "@taiji/dsh-mcp-resources": ["./packages/mcp/mcp-resources/src"],
+      "@taiji/dsh-memory-context": ["./packages/context/memory-context/src"],
       "@taiji/dsh-message-feedback": ["./packages/feedback/message-feedback/src"],
       "@taiji/dsh-native-command": ["./packages/util/native-command/src"],
       "@taiji/dsh-office-to-pdf": ["./packages/document/office-to-pdf/src"],

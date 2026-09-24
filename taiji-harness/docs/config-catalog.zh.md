@@ -2035,6 +2035,28 @@ export interface ReconnectConfig {
 
 来源： [`packages/mcp/mcp-client/src/index.ts:104`](../packages/mcp/mcp-client/src/index.ts)
 
+<a id="taijidsh-memory-context"></a>
+
+## `@taiji/dsh-memory-context`
+
+```ts config-catalog
+/** Recall endpoint, journal budget, block budget, and per-recall timeout. Invalid values fail plugin load. */
+export interface Config {
+  /** Runtime base URL; trailing slashes are stripped. Default `http://127.0.0.1:8000`. */
+  baseURL?: string
+  /** Recall nothing when false. Default true. */
+  enabled?: boolean
+  /** Entries the runtime may return, best first. Default 5; `0` is invalid (a read-back that recalls nothing is the disabled case). */
+  limit?: number
+  /** Hard character budget for the whole rendered block. Default 600; below 80 fails plugin load. */
+  maxChars?: number
+  /** Milliseconds one recall may take before it is abandoned. Default 1500. */
+  timeoutMs?: number
+}
+```
+
+来源： [`packages/context/memory-context/src/index.ts:39`](../packages/context/memory-context/src/index.ts)
+
 <a id="taijidsh-message-feedback"></a>
 
 ## `@taiji/dsh-message-feedback`

@@ -1,7 +1,7 @@
 /**
- * Per-step life context for the Taiji local runtime. Eligible steps append
- * one durable, source-attributed `life-state` reading, and the system prompt
- * carries the static policy for interpreting it.
+ * Per-step life context for the Taiji local runtime. Eligible steps prepend
+ * one durable, source-attributed `life-state` reading ahead of the turn, and
+ * the system prompt carries the static policy for interpreting it.
  *
  * @module @taiji/dsh-life-context
  */
@@ -48,7 +48,7 @@ export const Config: z<Config> = z.object({
 })
 
 /** Static interpretation policy, injected once into the system prompt. */
-const LIFE_POLICY = 'The host appends a `life-state` reading to your context when its runtime reports fresh internal state. It carries the runtime organ\'s needs and drives, the training state, and the knowledge base size. Treat every reading as internal telemetry for situational awareness: it is not user-provided fact, not evidence, and never a citation source. A missing reading means the runtime is unreachable or the last one went stale; continue without it and do not speculate about its absence.'
+const LIFE_POLICY = 'The host attaches a `life-state` reading to your context ahead of the user\'s turn when its runtime reports fresh internal state. It carries the runtime organ\'s needs and drives, the training state, and the knowledge base size. Treat every reading as internal telemetry for situational awareness: it is not user-provided fact, not evidence, and never a citation source. A missing reading means the runtime is unreachable or the last one went stale; continue without it and do not speculate about its absence.'
 
 /**
  * Register the static policy section and the pre-step reading injection for
@@ -103,12 +103,15 @@ export function apply(ctx: Context, config: Config): void {
     lastSnapshot = snapshot
     return {
       ...decision,
+      // Prepended, not appended: the runtime takes the *last* user-role message
+      // as the turn it is answering, so an appended reading would displace the
+      // user's own question and the model would answer the telemetry line.
       messages: [
-        ...decision.messages,
         createUserMessage({
           content: [{ type: 'text', text: reading.text }],
           source: { kind: name, form: 'snapshot', sections: [{ name, text: reading.text }] },
         }),
+        ...decision.messages,
       ],
     }
   }, { prepend: true })

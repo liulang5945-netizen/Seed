@@ -307,6 +307,7 @@
     { "path": "./packages/schedule/schedule" },
     { "path": "./packages/context/time-context" },
     { "path": "./packages/context/life-context" },
+    { "path": "./packages/context/memory-context" },
     { "path": "./packages/context/file-reference" },
     { "path": "./packages/context/file-reference-local" },
     { "path": "./packages/context/tmux-context" },

@@ -110,12 +110,15 @@ describe('life-context policy section', () => {
 })
 
 describe('life-context pre-step injection', () => {
-  it('appends one durable life-context message on the first eligible step', async () => {
+  it('prepends one durable life-context message ahead of the turn', async () => {
     const { ctx } = await mount()
     const messages = await fire(ctx)
     expect(messages).toHaveLength(2)
-    const reading = messages[1]
+    // Ahead of the user's message, never after it: the runtime treats the last
+    // user-role message as the turn it answers.
+    const reading = messages[0]
     expect(reading?.source.kind).toBe('life-context')
+    expect(messages[1]?.source.kind).toBe('user')
     expect(reading?.content).toEqual([{
       type: 'text',
       text: 'life-state age=0s source=native tick=41 mode=wake'
@@ -146,8 +149,8 @@ describe('life-context pre-step injection', () => {
     }))
     const messages = await fire(harness.ctx)
     expect(messages).toHaveLength(2)
-    if (messages[1] === undefined) throw new Error('expected a reading')
-    expect(messages[1].source.kind).toBe('life-context')
+    if (messages[0] === undefined) throw new Error('expected a reading')
+    expect(messages[0].source.kind).toBe('life-context')
   })
 
   it('omits an unreachable runtime without inventing a reading', async () => {
