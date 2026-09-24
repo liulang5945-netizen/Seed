@@ -162,3 +162,59 @@ T3 §6.2 已指出：本轮窗口没覆盖到"退化"这个现象。延长轮就
 
 **下一步（需授权）**：改 `taiji/fabric.py` 的**写入规则本身**。T3 §5 已预定：这必须**另立预注册**，
 且需要**新的文件授权** —— 所以本件停在决策点，不擅自动手。
+
+## §9 读 `taiji/fabric.py` 的结果（所有者授权"先读码定位"之后）
+
+### §9.1 读到的写入块（`fabric.py:392-470`，全在 `if learn:` 之内）
+
+| # | 写入 | 被 `learn_scale` 缩放？ |
+|---|---|---|
+| 1 | `decoder.local_update(lower_error, old.trace, lr=predictive_learning_rate*learn_scale, decay)` | 是 |
+| 2 | `consolidation_decoders[i].local_update(...)` | 是（走 `consolidation_learn_scale`，**本配方为 0 ⇒ 根本不写**） |
+| 3 | `transition.local_update(state_error, old.trace, lr=transition_learning_rate*learn_scale, decay)` | 是 |
+| 4 | `lateral.anti_hebbian_update(activity, lr=lateral_learning_rate*learn_scale, baseline=mean_rate²)` | 是 |
+| 5 | `trace_baselines[i].lerp_(trace, cortical_baseline_rate)` | **否** |
+
+另有 `structural_update`（**离散换连接**，也不能被 `learn_scale` 缩放），但它只在 `restructure=True` 时跑，
+而 `model.py:2553` 里 `restructure` 只在**巩固路径**为真 ⇒ **醒来训练时是关的**。
+
+**关键**：醒来路径 `model.py:1993` 只传 `learn=fabric_learning` 与 `episodic_feedback`，
+**没有传 `learn_scale`** ⇒ 四笔权重写入**被一起锁在 1.0**，从 `Taiji.observe` 无法单独缩放任何一笔。
+
+### §9.2 那条"最像"的线索（对手基点）**被自己的审计否掉了**
+
+读码时最强的候选是 #5「对手基点」：它**不被 `learn_scale` 缩放**、默认 `adapt_homeostasis=True`、
+醒来路径没覆盖 ⇒ 每 tick 都在动；而 `opponent_trace = trace − trace_baselines[i]` 是**每区共享的零点**，
+结构上无法编码"哪个槽"，却会改变偏差尺度 —— 正是会把槽方向揉掉的那类操作。
+
+**但零训练审计不支持它**（`reports/taiji_r2_baseline_drift_audit_20260924.json`，只读 `t1` 已有存档）：
+
+| 量 | 观察 |
+|---|---|
+| `‖baseline‖` 三区 | 区0 平（~0.075）；区1 **0.0120 → 0.0259**（×2.2）；区2 **0.00216 → 0.00959**（×4.4） |
+| 每 250k 的位移 | **恒定 ~0.019–0.030，无趋势**（`lerp_` 固定速率的必然结果） |
+| 与 4.25M 台阶的关系 | **没有任何变化** |
+
+⇒ 按本件预写的判读线：**"平稳漂移、与 4.25M 无关" ⇒ 假说减弱**。
+**据此省掉了那 5.5 h 的 `adapt_homeostasis=False` 判别臂。**
+
+> ⚠️ 本次审计首版把"位移"整列算错了：我按**文件名**排序，而驱动写的是**不补零**的
+> `checkpoint_<ticks>.pt`，字典序把 `250000` 排到了 `2500000` 之后 ⇒ 差是跟错前驱算的。
+> 已改成**按 tick 数值排序**并重跑（上表是修正后的数）。
+
+### §9.3 由此得到的真正结论：**T3 的否定是在错误的窗口里取得的**
+
+T3 三臂（各 1M）扫了 `predictive_learning_rate` / `synapse_decay` / laterals+transitions，
+"全不中"。**但 1M 窗口里根本没有退化**（退化从 4.25M 才开始）——
+所以那个否定**不能**说明"强度调不动退化"，它只说明"强度调不动 1M 内的游走"。
+**这是 T3 设计时我自己指出的窗口问题（§6.2），现在必须按它重做。**
+
+而且要测"强度"，还得把四笔**一起**缩（因为 `learn_scale` 就是把它们一起缩的），
+但配置层只能逐项设 ⇒ 用**配置等价写法**：把 `predictive_learning_rate`、`transition_learning_rate`、
+`lateral_learning_rate` 与 `synapse_decay` **各 ÷5 同时设**，等价于 `learn_scale≈0.2`。**纯 config、不动 `taiji/`。**
+
+### §9.4 本件**没有**改 `fabric.py`，理由
+
+读完了码，**我仍然点不出"具体是哪一笔"**（四笔权重写入被锁在一起、基点那条已被审计否掉）。
+在"点不出哪一笔"的时候去改写入规则，**就是 `receptors` 那次错误的翻版**（靶点靠感觉、结果白跑）。
+⇒ 先补这一条判别臂；它若也是否定的，才轮到"改规则"，而且那时要说清楚改的是**哪一笔的什么性质**。

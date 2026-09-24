@@ -1,0 +1,339 @@
+{
+  "format": "taiji-r2-baseline-drift-audit-v1",
+  "question": "trace_baselines 的漂移是否与 4.25M 那个结构性下台阶相关",
+  "arm_dir": "E:\\Seed\\output\\taiji_r2_t1t2\\t1",
+  "n_snapshots": 32,
+  "first_norms": [
+    0.07409,
+    0.011977,
+    0.002156
+  ],
+  "last_norms": [
+    0.076909,
+    0.025918,
+    0.008414
+  ],
+  "readings": [
+    {
+      "tick": 250000,
+      "baseline_norms": [
+        0.07409,
+        0.011977,
+        0.002156
+      ],
+      "baseline_shift_from_prev": null,
+      "structure_context": 0.638243
+    },
+    {
+      "tick": 500000,
+      "baseline_norms": [
+        0.079712,
+        0.014368,
+        0.002465
+      ],
+      "baseline_shift_from_prev": 0.024497,
+      "structure_context": 0.619451
+    },
+    {
+      "tick": 750000,
+      "baseline_norms": [
+        0.077552,
+        0.014018,
+        0.002346
+      ],
+      "baseline_shift_from_prev": 0.019979,
+      "structure_context": 0.656759
+    },
+    {
+      "tick": 1000000,
+      "baseline_norms": [
+        0.075888,
+        0.014312,
+        0.002522
+      ],
+      "baseline_shift_from_prev": 0.022705,
+      "structure_context": 0.716117
+    },
+    {
+      "tick": 1250000,
+      "baseline_norms": [
+        0.079475,
+        0.016865,
+        0.003021
+      ],
+      "baseline_shift_from_prev": 0.024837,
+      "structure_context": 0.689355
+    },
+    {
+      "tick": 1500000,
+      "baseline_norms": [
+        0.076127,
+        0.018312,
+        0.003698
+      ],
+      "baseline_shift_from_prev": 0.024562,
+      "structure_context": 0.650927
+    },
+    {
+      "tick": 1750000,
+      "baseline_norms": [
+        0.078816,
+        0.016938,
+        0.003305
+      ],
+      "baseline_shift_from_prev": 0.024698,
+      "structure_context": 0.629848
+    },
+    {
+      "tick": 2000000,
+      "baseline_norms": [
+        0.081063,
+        0.020483,
+        0.004618
+      ],
+      "baseline_shift_from_prev": 0.029527,
+      "structure_context": 0.680319
+    },
+    {
+      "tick": 2250000,
+      "baseline_norms": [
+        0.076935,
+        0.01737,
+        0.004169
+      ],
+      "baseline_shift_from_prev": 0.027487,
+      "structure_context": 0.629427
+    },
+    {
+      "tick": 2500000,
+      "baseline_norms": [
+        0.073806,
+        0.016299,
+        0.002975
+      ],
+      "baseline_shift_from_prev": 0.029749,
+      "structure_context": 0.638776
+    },
+    {
+      "tick": 2750000,
+      "baseline_norms": [
+        0.076157,
+        0.017899,
+        0.004171
+      ],
+      "baseline_shift_from_prev": 0.025158,
+      "structure_context": 0.571391
+    },
+    {
+      "tick": 3000000,
+      "baseline_norms": [
+        0.077219,
+        0.020381,
+        0.006474
+      ],
+      "baseline_shift_from_prev": 0.023622,
+      "structure_context": 0.623922
+    },
+    {
+      "tick": 3250000,
+      "baseline_norms": [
+        0.073912,
+        0.019266,
+        0.005394
+      ],
+      "baseline_shift_from_prev": 0.021378,
+      "structure_context": 0.61338
+    },
+    {
+      "tick": 3500000,
+      "baseline_norms": [
+        0.07515,
+        0.020259,
+        0.005121
+      ],
+      "baseline_shift_from_prev": 0.021892,
+      "structure_context": 0.524284
+    },
+    {
+      "tick": 3750000,
+      "baseline_norms": [
+        0.077017,
+        0.021839,
+        0.006563
+      ],
+      "baseline_shift_from_prev": 0.021648,
+      "structure_context": 0.621712
+    },
+    {
+      "tick": 4000000,
+      "baseline_norms": [
+        0.074356,
+        0.020302,
+        0.005656
+      ],
+      "baseline_shift_from_prev": 0.018823,
+      "structure_context": 0.606353
+    },
+    {
+      "tick": 4250000,
+      "baseline_norms": [
+        0.076054,
+        0.023537,
+        0.008573
+      ],
+      "baseline_shift_from_prev": 0.024559,
+      "structure_context": 0.570558
+    },
+    {
+      "tick": 4500000,
+      "baseline_norms": [
+        0.074468,
+        0.020893,
+        0.006063
+      ],
+      "baseline_shift_from_prev": 0.020608,
+      "structure_context": 0.536671
+    },
+    {
+      "tick": 4750000,
+      "baseline_norms": [
+        0.075086,
+        0.022462,
+        0.006491
+      ],
+      "baseline_shift_from_prev": 0.019817,
+      "structure_context": 0.509289
+    },
+    {
+      "tick": 5000000,
+      "baseline_norms": [
+        0.074033,
+        0.023287,
+        0.007328
+      ],
+      "baseline_shift_from_prev": 0.017889,
+      "structure_context": 0.526129
+    },
+    {
+      "tick": 5250000,
+      "baseline_norms": [
+        0.07374,
+        0.021685,
+        0.005958
+      ],
+      "baseline_shift_from_prev": 0.021335,
+      "structure_context": 0.546929
+    },
+    {
+      "tick": 5500000,
+      "baseline_norms": [
+        0.073859,
+        0.02115,
+        0.005415
+      ],
+      "baseline_shift_from_prev": 0.019059,
+      "structure_context": 0.527852
+    },
+    {
+      "tick": 5750000,
+      "baseline_norms": [
+        0.076756,
+        0.025042,
+        0.007698
+      ],
+      "baseline_shift_from_prev": 0.025794,
+      "structure_context": 0.536128
+    },
+    {
+      "tick": 6000000,
+      "baseline_norms": [
+        0.074975,
+        0.023179,
+        0.006801
+      ],
+      "baseline_shift_from_prev": 0.020308,
+      "structure_context": 0.564137
+    },
+    {
+      "tick": 6250000,
+      "baseline_norms": [
+        0.071367,
+        0.021822,
+        0.005937
+      ],
+      "baseline_shift_from_prev": 0.018203,
+      "structure_context": 0.626367
+    },
+    {
+      "tick": 6500000,
+      "baseline_norms": [
+        0.073669,
+        0.023325,
+        0.00685
+      ],
+      "baseline_shift_from_prev": 0.020176,
+      "structure_context": 0.506836
+    },
+    {
+      "tick": 6750000,
+      "baseline_norms": [
+        0.07337,
+        0.023251,
+        0.007343
+      ],
+      "baseline_shift_from_prev": 0.018902,
+      "structure_context": 0.606743
+    },
+    {
+      "tick": 7000000,
+      "baseline_norms": [
+        0.075834,
+        0.024664,
+        0.007622
+      ],
+      "baseline_shift_from_prev": 0.02361,
+      "structure_context": 0.528459
+    },
+    {
+      "tick": 7250000,
+      "baseline_norms": [
+        0.073645,
+        0.024722,
+        0.008495
+      ],
+      "baseline_shift_from_prev": 0.022148,
+      "structure_context": 0.618363
+    },
+    {
+      "tick": 7500000,
+      "baseline_norms": [
+        0.072779,
+        0.025361,
+        0.00959
+      ],
+      "baseline_shift_from_prev": 0.020539,
+      "structure_context": 0.566014
+    },
+    {
+      "tick": 7750000,
+      "baseline_norms": [
+        0.072335,
+        0.023366,
+        0.007016
+      ],
+      "baseline_shift_from_prev": 0.02295,
+      "structure_context": 0.541313
+    },
+    {
+      "tick": 8000000,
+      "baseline_norms": [
+        0.076909,
+        0.025918,
+        0.008414
+      ],
+      "baseline_shift_from_prev": 0.023095,
+      "structure_context": 0.558614
+    }
+  ],
+  "note": "零训练、只读既有存档；本件只给相关性，因果要靠 adapt_homeostasis=False 的判别臂"
+}
