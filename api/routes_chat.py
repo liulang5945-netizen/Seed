@@ -81,6 +81,43 @@ def _workbench_event(event):
     }
 
 
+def _tool_names_from_workbench(workbench_result):
+    """Extract the tools one turn actually used, for per-tool strategy stats."""
+
+    if not workbench_result:
+        return []
+    call = workbench_result.get("tool_call")
+    if not isinstance(call, dict):
+        return []
+    name = call.get("name") or call.get("tool") or call.get("action")
+    return [str(name)] if name else []
+
+
+def _record_native_turn(request, answer, readable, workbench_result):
+    """Feed one Seed-native turn into the Taiji recursive loop's input rings.
+
+    The native branch never passes through ``chat_strategies._stream_unified``,
+    so without this call every harness turn stayed invisible to the strategy and
+    task rings — and the sleep phases that analyse them had no samples at all.
+    ``_record_life_interaction`` is deliberately not called here: the native
+    homeostatic organ already observes and settles this same turn.
+    """
+
+    try:
+        from api.chat_strategies import _record_evolution, _record_recursive_strategies
+
+        _record_evolution(request.prompt, answer, readable)
+        _record_recursive_strategies(
+            request.prompt,
+            request.system_prompt,
+            readable,
+            1,
+            _tool_names_from_workbench(workbench_result),
+        )
+    except Exception as e:
+        logger.debug("【_record_native_turn】处理失败（非致命）: %s", e)
+
+
 def _seed_event_generator(request, seed_runtime, *, workbench=False):
     """Seed 原生分支：用户消息转为 byte 流喂入基底，generate 产出回复。
 
@@ -126,12 +163,14 @@ def _seed_event_generator(request, seed_runtime, *, workbench=False):
                 request.prompt,
                 history=request.history or None,
             )
+            readable = _answer_readable(answer)
+            _record_native_turn(request, answer, readable, workbench_result)
             event = {
                 "type": "final",
                 "data": {
                     "answer": answer,
                     "step": 1,
-                    "readable": _answer_readable(answer),
+                    "readable": readable,
                     "language_backend": seed_runtime.chat_language_backend,
                     "runtime": "seed",
                     "workbench": (

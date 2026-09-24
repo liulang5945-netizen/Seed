@@ -78,7 +78,11 @@ def _record_life_interaction(
     used_tools: bool = False,
     had_search_results: bool = False,
 ):
-    """记录交互到生命系统（带真实指标）"""
+    """记录交互到生命系统（带真实指标）
+
+    Seed 原生分支无需在此记录：它的稳态器官在每次 `generate_input` 时已由
+    Taiji 自动 observe/settle，重复记会把同一次交互计两遍。
+    """
     if not legacy_available():
         return
     try:
@@ -138,26 +142,41 @@ def _build_history(request):
 
 
 def _record_evolution(prompt, result_text, success):
-    """记录到进化引擎"""
-    if not legacy_available():
+    """记录到进化引擎（任务环输入）。
+
+    legacy 分支写 neuroplex 的 EvolutionEngine；Seed 原生分支写 native 回合记录
+    （`seed_platform.turn_records`），否则原生回合对任务环完全隐形。
+    """
+    if legacy_available():
+        try:
+            from neuroplex.life.evolution_engine import get_evolution_engine
+
+            evo = get_evolution_engine()
+            if success:
+                evo.record_task_success(
+                    task=prompt[:200],
+                    steps=[{"action": "chat", "tool": "react"}],
+                    final_answer=result_text[:200],
+                )
+            else:
+                evo.record_task_failure(
+                    task=prompt[:200],
+                    error=result_text[:200] if result_text else "empty",
+                )
+        except Exception as e:
+            logger.debug("【_record_evolution】处理失败（非致命）: %s", e)
         return
     try:
-        from neuroplex.life.evolution_engine import get_evolution_engine
+        from seed_platform.turn_records import record_task_outcome
 
-        evo = get_evolution_engine()
-        if success:
-            evo.record_task_success(
-                task=prompt[:200],
-                steps=[{"action": "chat", "tool": "react"}],
-                final_answer=result_text[:200],
-            )
-        else:
-            evo.record_task_failure(
-                task=prompt[:200],
-                error=result_text[:200] if result_text else "empty",
-            )
+        record_task_outcome(
+            task=prompt[:200],
+            success=success,
+            final_answer=result_text[:200] if success else "",
+            error="" if success else (result_text[:200] if result_text else "empty"),
+        )
     except Exception as e:
-        logger.debug("【_record_evolution】处理失败（非致命）: %s", e)
+        logger.debug("【_record_evolution】native 处理失败（非致命）: %s", e)
 
 
 def _record_recursive_strategies(prompt, system_prompt, success, reasoning_steps, tool_names):
@@ -166,26 +185,38 @@ def _record_recursive_strategies(prompt, system_prompt, success, reasoning_steps
     递归闭环的输入侧：每次推理把实际使用的策略（prompt / 工具选择 / 反思）
     记录到 RecursiveImprover，睡眠时 analyze_and_improve() 才有数据可分析。
     质量分：success → 1.0，失败 → 0.2（供 high(>=0.8)/low(<0.4) 分组）。
+    legacy 分支写 neuroplex 的 RecursiveImprover；Seed 原生分支写 native 回合记录。
     """
-    if not legacy_available():
+    if legacy_available():
+        try:
+            from neuroplex.life.recursive_improver import get_recursive_improver
+
+            improver = get_recursive_improver()
+            q = 1.0 if success else 0.2
+            # prompt 策略（system_prompt 是实际生效的提示策略）
+            improver.record_strategy("prompt", (system_prompt or "")[:200], prompt[:200], success, q)
+            # 工具选择策略（每个用过的工具一条，供按工具统计成功率）
+            for tool in tool_names:
+                improver.record_strategy("tool_choice", tool, prompt[:200], success, q)
+            # 反思策略（多步推理 = 展开了反思/规划）
+            if reasoning_steps >= 2:
+                improver.record_strategy(
+                    "reflection", f"react_{reasoning_steps}steps", prompt[:200], success, q
+                )
+        except Exception as e:
+            logger.debug("【_record_recursive_strategies】处理失败（非致命）: %s", e)
         return
     try:
-        from neuroplex.life.recursive_improver import get_recursive_improver
+        from seed_platform.turn_records import record_strategy
 
-        improver = get_recursive_improver()
         q = 1.0 if success else 0.2
-        # prompt 策略（system_prompt 是实际生效的提示策略）
-        improver.record_strategy("prompt", (system_prompt or "")[:200], prompt[:200], success, q)
-        # 工具选择策略（每个用过的工具一条，供按工具统计成功率）
+        record_strategy("prompt", (system_prompt or "")[:200], prompt[:200], success, q)
         for tool in tool_names:
-            improver.record_strategy("tool_choice", tool, prompt[:200], success, q)
-        # 反思策略（多步推理 = 展开了反思/规划）
+            record_strategy("tool_choice", tool, prompt[:200], success, q)
         if reasoning_steps >= 2:
-            improver.record_strategy(
-                "reflection", f"react_{reasoning_steps}steps", prompt[:200], success, q
-            )
+            record_strategy("reflection", f"react_{reasoning_steps}steps", prompt[:200], success, q)
     except Exception as e:
-        logger.debug("【_record_recursive_strategies】处理失败（非致命）: %s", e)
+        logger.debug("【_record_recursive_strategies】native 处理失败（非致命）: %s", e)
 
 
 def _has_react_engine() -> bool:
