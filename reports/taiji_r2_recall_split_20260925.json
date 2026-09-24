@@ -1,0 +1,62 @@
+{
+  "format": "taiji-r2-recall-split-diagnostic-v1",
+  "prereg": "plans/reference/M5_R2_T8_MECHANISM_DESIGN_20260925.md",
+  "item": {
+    "turns": [
+      "我叫阿岩。",
+      "我的名字是什么？"
+    ],
+    "expected_contains": [
+      "阿岩"
+    ]
+  },
+  "rows": [
+    {
+      "model": "base_16M",
+      "exp1_feedback_norms_head": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "exp1_feedback_norm_tail_mean": 0.0,
+      "exp2_forced": {
+        "hit": false,
+        "text": "到：刑人人人人人人人个有君亼（有我他愶到：我他师，家则亰个则亯是"
+      },
+      "exp2_zero": {
+        "hit": false,
+        "text": "到：刑人人人人人人人个有君亼（有我他愶到：我他师，家则亰个则亯是"
+      },
+      "verdict": "(c) 召回后解码有罪（强制反馈也解不出）"
+    },
+    {
+      "model": "A_16M",
+      "exp1_feedback_norms_head": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "exp1_feedback_norm_tail_mean": 0.0,
+      "exp2_forced": {
+        "hit": false,
+        "text": "可不可可不的的的的木可个可个可个可个可个可个可不的的人可一个友在"
+      },
+      "exp2_zero": {
+        "hit": false,
+        "text": "可不可可不的的的的木可个可个可个可个可个可个可不的的人可一个友在"
+      },
+      "verdict": "(c) 召回后解码有罪（强制反馈也解不出）"
+    }
+  ],
+  "note": "零 taiji/ 改动：状态外读 + fabric.step/reset 实例级包装；forced=强制告知段反馈"
+}
