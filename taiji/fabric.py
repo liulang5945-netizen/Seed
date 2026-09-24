@@ -74,6 +74,8 @@ class TaijiFabric:
             decoder.edge_weight.zero_()
         # The running means supply the opponent origins.  They are homeostatic
         # statistics, not trainable parameters.
+        # R2 组合绑定实验：区0-only 读出（见 predictive_context 的掩码注释）
+        self._region_total = sum(config.region_sizes)
         self.trace_baselines = tuple(
             torch.zeros(region_size, device=self.device) for region_size in config.region_sizes
         )
@@ -571,13 +573,25 @@ class TaijiFabric:
         bit-identical because it never sees the cue snapshot.
         """
 
-        return torch.cat(
+        context = torch.cat(
             [
                 *(region.activity for region in regions),
                 *(region.trace for region in regions),
             ],
             dim=0,
         )
+        if self.config.predictive_context_region0_only:
+            # R2 组合绑定实验（所有者 2026-09-24 授权）：只把**区 0** 的 (activity, trace) 喂给 F1。
+            # 逐区审计（2026-09-24）显示槽结构只存在于区 0（16M 时 trace 0.729 / activity 0.709），
+            # 而三区全拼接会被区1/2 的随机方向稀释（全拼接 0.420 vs 区0 单独 0.729）。
+            # 实现＝**掩码**而非改宽度：`receptors` 的形状与既有 checkpoint 完全不动；
+            # 其余区按零掩掉 ⇒ 那些输入坐标在固定受体表里的边自然带零。
+            n0 = regions[0].activity.shape[0]
+            keep = torch.zeros_like(context)
+            keep[:n0] = 1.0
+            keep[self._region_total : self._region_total + n0] = 1.0
+            context = context * keep
+        return context
 
     def to_payload(self) -> dict[str, Any]:
         return {

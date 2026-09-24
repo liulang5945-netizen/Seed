@@ -1,0 +1,123 @@
+{
+  "format": "taiji-r2-region0-cue-precheck-v1",
+  "checkpoint": "E:\\Seed\\checkpoints\\seed_beta.pt",
+  "question": "掩码成只吃区 0 后，**已训练 16M** 的 cue 可分离性是否回到区 0 的水平",
+  "mask_bites": true,
+  "context_width": 1152,
+  "profiles": {
+    "current_readout": {
+      "1_activity_block": {
+        "consistency_median": 0.458602,
+        "baseline_median": -0.017629,
+        "verdict": "not_separable"
+      },
+      "2_trace_block": {
+        "consistency_median": 0.57656,
+        "baseline_median": -0.042146,
+        "verdict": "partial"
+      },
+      "3_context": {
+        "consistency_median": 0.419656,
+        "baseline_median": -0.030995,
+        "verdict": "not_separable"
+      },
+      "4_context_trace": {
+        "consistency_median": 0.519856,
+        "baseline_median": -0.016083,
+        "verdict": "partial"
+      },
+      "5_readout_dist": {
+        "consistency_median": 0.458688,
+        "baseline_median": -0.164507,
+        "verdict": "not_separable"
+      }
+    },
+    "region0_only_readout": {
+      "1_activity_block": {
+        "consistency_median": 0.458602,
+        "baseline_median": -0.017629,
+        "verdict": "not_separable"
+      },
+      "2_trace_block": {
+        "consistency_median": 0.57656,
+        "baseline_median": -0.042146,
+        "verdict": "partial"
+      },
+      "3_context": {
+        "consistency_median": 0.742235,
+        "baseline_median": -0.03611,
+        "verdict": "partial"
+      },
+      "4_context_trace": {
+        "consistency_median": 0.798874,
+        "baseline_median": -0.057075,
+        "verdict": "partial"
+      },
+      "5_readout_dist": {
+        "consistency_median": 0.834844,
+        "baseline_median": 0.04552,
+        "verdict": "partial"
+      }
+    },
+    "current_readout_confirmation": {
+      "1_activity_block": {
+        "consistency_median": 0.5245,
+        "baseline_median": 0.024783,
+        "verdict": "partial"
+      },
+      "2_trace_block": {
+        "consistency_median": 0.685828,
+        "baseline_median": 0.038985,
+        "verdict": "partial"
+      },
+      "3_context": {
+        "consistency_median": 0.525302,
+        "baseline_median": -0.000879,
+        "verdict": "partial"
+      },
+      "4_context_trace": {
+        "consistency_median": 0.450227,
+        "baseline_median": 0.037007,
+        "verdict": "not_separable"
+      },
+      "5_readout_dist": {
+        "consistency_median": 0.844946,
+        "baseline_median": 0.197081,
+        "verdict": "partial"
+      }
+    },
+    "region0_only_readout_confirmation": {
+      "1_activity_block": {
+        "consistency_median": 0.5245,
+        "baseline_median": 0.024783,
+        "verdict": "partial"
+      },
+      "2_trace_block": {
+        "consistency_median": 0.685828,
+        "baseline_median": 0.038985,
+        "verdict": "partial"
+      },
+      "3_context": {
+        "consistency_median": 0.72565,
+        "baseline_median": 0.008943,
+        "verdict": "partial"
+      },
+      "4_context_trace": {
+        "consistency_median": 0.688378,
+        "baseline_median": 0.061357,
+        "verdict": "partial"
+      },
+      "5_readout_dist": {
+        "consistency_median": 0.860388,
+        "baseline_median": 0.108502,
+        "verdict": "partial"
+      }
+    }
+  },
+  "delta_region0_minus_current": {
+    "1_activity_block": 0.0,
+    "2_trace_block": 0.0,
+    "3_context": 0.322579
+  },
+  "note": "零训练、只读既有 checkpoint；若拉不回来 ⇒ '只吃区0'当场否掉，不跑训练"
+}

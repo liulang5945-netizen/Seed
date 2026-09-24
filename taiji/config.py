@@ -208,6 +208,12 @@ class TaijiConfig:
     #: 各区 trace 的那一半只进后一半通道，两半不再落进同一批通道。
     #: **默认 False ＝ 现行行为，逐位不变**；老 checkpoint 的 config 没有这个键，取默认值即可加载。
     receptors_factored: bool = False
+    #: R2 组合绑定实验（2026-09-24）：`predictive_context` 只把**区 0** 的 (activity, trace)
+    #: 喂给 F1（其余区按零掩码，宽度不变 ⇒ `receptors` 形状与既有 checkpoint 完全不动）。
+    #: 依据：逐区审计显示槽结构只存在于区 0（16M 时 0.729/0.709），而三区全拼接
+    #: 会被区1/2 的随机方向稀释（全拼接 0.420 vs 区0 单独 0.729）。
+    #: **默认 False ＝ 现行行为，逐位不变**。
+    predictive_context_region0_only: bool = False
 
     memory_units: int = 192
     memory_fan_in: int = 32
