@@ -1,0 +1,39 @@
+{
+  "format": "taiji-r2-per-region-degradation-v1",
+  "arm_dir": "E:\\Seed\\output\\taiji_r2_t1t2\\_base16m",
+  "region_sizes": [
+    256,
+    192,
+    128
+  ],
+  "ticks": [
+    16000000
+  ],
+  "curves": {
+    "r0_2_trace_block": [
+      0.728966
+    ],
+    "r0_1_activity_block": [
+      0.708568
+    ],
+    "r1_2_trace_block": [
+      0.315892
+    ],
+    "r1_1_activity_block": [
+      0.295019
+    ],
+    "r2_2_trace_block": [
+      0.35455
+    ],
+    "r2_1_activity_block": [
+      0.226995
+    ],
+    "all_2_trace_block": [
+      0.57656
+    ],
+    "all_1_activity_block": [
+      0.458602
+    ]
+  },
+  "note": "零训练、只读既有存档；判读线见模块文档（某区先破 ⇒ 有空间结构；三区同步 ⇒ 指向共享机制）"
+}
