@@ -1,0 +1,60 @@
+{
+  "format": "taiji-r2-masked-arm-a-v1",
+  "prereg": "plans/reference/M5_R2_T7_MASKED_A_PREREG_20260924.md",
+  "staged_checkpoint": "E:\\Seed\\output\\taiji_r2_readout_retrain\\A_masked\\checkpoint.pt",
+  "scores": {
+    "A": {
+      "sum": 0,
+      "per_dimension": {
+        "D": {
+          "machine_scored_items": 16,
+          "machine_scored_correct": 0,
+          "machine_normalised": 0.0,
+          "pending_human_review_items": 4,
+          "untested_items": 0
+        },
+        "E": {
+          "machine_scored_items": 20,
+          "machine_scored_correct": 0,
+          "machine_normalised": 0.0,
+          "pending_human_review_items": 0,
+          "untested_items": 0
+        }
+      },
+      "identity": {
+        "git_head": "c643ee42092f96180512518aac9c6fc8c29c9537",
+        "checkpoint_sha256": "732e59cf5f793bc6de645114db2816d991288554221da91375d3f0d8e2be7669",
+        "eval_set_sha256": "310b6d642d3937660c1c938ce8bc1b0c5f5b6a80c647ad32a5e371923efcc5f1"
+      }
+    },
+    "A_masked": {
+      "sum": 0,
+      "per_dimension": {
+        "D": {
+          "machine_scored_items": 16,
+          "machine_scored_correct": 0,
+          "machine_normalised": 0.0,
+          "pending_human_review_items": 4,
+          "untested_items": 0
+        },
+        "E": {
+          "machine_scored_items": 20,
+          "machine_scored_correct": 0,
+          "machine_normalised": 0.0,
+          "pending_human_review_items": 0,
+          "untested_items": 0
+        }
+      },
+      "identity": {
+        "git_head": "c643ee42092f96180512518aac9c6fc8c29c9537",
+        "checkpoint_sha256": "6218d4f50718c0191a63927fe1d02b544ef53b4c1a6b588bf2b24dcbb9185fb5",
+        "eval_set_sha256": "310b6d642d3937660c1c938ce8bc1b0c5f5b6a80c647ad32a5e371923efcc5f1"
+      }
+    }
+  },
+  "sanity_S_A_zero": true,
+  "verdict": {
+    "verdict": "READ_FIX_INSUFFICIENT",
+    "note": "F1 已训练 + 可分离 cue 仍 0 ⇒ 问题在更深处；先读逐题生成样本"
+  }
+}
