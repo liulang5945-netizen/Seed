@@ -54,6 +54,32 @@ export interface LifeHealthView {
   readonly startupComplete: boolean
 }
 
+/** Workbench capability snapshot, from the status payload's `tools` section. */
+export interface LifeWorkbenchView {
+  /** Snapshot state as the runtime reports it; `ok` or an error marker. */
+  readonly status: string
+  /** Offered capabilities; zero is a measured zero. */
+  readonly count: number
+  /** Snapshot provenance, e.g. the workbench module that produced it. */
+  readonly source: string
+  /** Who owns the snapshot; empty when the runtime names no owner. */
+  readonly owner: string
+  /** Revision counter of the current snapshot. */
+  readonly revision: number
+  /** The runtime's own failure text, empty while the snapshot answers. */
+  readonly error: string
+}
+
+/** Runtime authentication state, from the status payload's `auth` section. */
+export interface LifeAuthView {
+  /** Whether the runtime enforces authentication at all. */
+  readonly enabled: boolean
+  /** Whether this Host's request carried valid credentials. */
+  readonly authenticated: boolean
+  /** Whether a token was presented and validated. */
+  readonly tokenValid: boolean
+}
+
 /** Host memory projection. */
 export interface LifeMemoryView {
   /** Total memory in GiB. */
@@ -288,6 +314,10 @@ export interface LifeSnapshot {
   readonly consolidation?: LifeConsolidationView
   /** Model publish surface: which checkpoint answers, and which settings names. */
   readonly artifacts?: LifeArtifactsView
+  /** Workbench capability snapshot, absent on a runtime that does not report the section. */
+  readonly workbench?: LifeWorkbenchView
+  /** Runtime authentication state, absent on a runtime that does not report the section. */
+  readonly auth?: LifeAuthView
   /** Availability of every source behind this snapshot. */
   readonly availability: LifeAvailability
   /** One line per source that did not answer, in operator-readable form. */

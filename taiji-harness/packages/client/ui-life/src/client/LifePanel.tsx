@@ -646,10 +646,19 @@ function ConsolidationSection({ t, snapshot, pending, run, life }: SectionContro
   )
 }
 
-/** Section 6: the host projection — health, model, seed activity, memory. */
+/** Section 6: the host projection — health, model, seed activity, memory, capabilities, auth. */
 function HostSection({ t, snapshot }: { t: LifePanelProps['t']; snapshot: LifeSnapshot }): ReactNode {
-  const { health, memory } = snapshot
-  if (health === undefined && memory === undefined) return <p className={css.muted}>{t('noReading')}</p>
+  const { health, memory, workbench, auth } = snapshot
+  if (health === undefined && memory === undefined && workbench === undefined && auth === undefined) {
+    return <p className={css.muted}>{t('noReading')}</p>
+  }
+  const authText = auth === undefined
+    ? null
+    : !auth.enabled
+      ? t('authDisabled')
+      : auth.authenticated && auth.tokenValid
+        ? t('authOk')
+        : t('authFailed')
   return (
     <section className={css.section} aria-label={t('sectionHost')}>
       <h3 className={css.sectionTitle}>{t('sectionHost')}</h3>
@@ -666,6 +675,20 @@ function HostSection({ t, snapshot }: { t: LifePanelProps['t']; snapshot: LifeSn
               {health.seedActive ? t('seedActive') : t('seedInactive')}
             </Fact>
           </>
+        )}
+        {workbench !== undefined && (
+          <Fact label={t('workbenchLabel')}>
+            {workbench.status === 'ok'
+              ? t('workbenchCount', { count: String(workbench.count), revision: String(workbench.revision) })
+              : <><Tag tone="warning">{workbench.status}</Tag> {workbench.error}</>}
+            <span className={css.muted}> {workbench.source}{workbench.owner === '' ? '' : ` · ${workbench.owner}`}</span>
+          </Fact>
+        )}
+        {auth !== undefined && authText !== null && (
+          <Fact label={t('authLabel')}>
+            <StateDot state={!auth.enabled ? 'idle' : auth.authenticated && auth.tokenValid ? 'done' : 'error'} />
+            {authText}
+          </Fact>
         )}
         {memory !== undefined && (
           <Fact label={t('memoryLabel')}>

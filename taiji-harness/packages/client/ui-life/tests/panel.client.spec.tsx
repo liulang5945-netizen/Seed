@@ -80,6 +80,8 @@ function nativeSnapshot(overrides: Partial<LifeSnapshot> = {}): LifeSnapshot {
       journal: { entries: 4, byKind: { interaction: 3, reflection: 1 }, sessions: 2, lastRecordedAt: 1_760_000_000 },
     },
     artifacts: { activeId: '', configuredId: '' },
+    workbench: { status: 'ok', count: 16, source: 'seed_platform.workbench.CapabilitySnapshot', owner: 'Taiji native Workbench', revision: 6, error: '' },
+    auth: { enabled: false, authenticated: true, tokenValid: false },
     availability: { runtime: 'ok', legacy: 'disabled', knowledge: 'ok', trainingStream: 'idle' },
     unavailable: [],
     ...overrides,
@@ -411,6 +413,30 @@ describe('LifePanel', () => {
     mountPanel(life)
     expect(screen.getByText(en.artifactsUnavailable)).not.toBeNull()
     expect(screen.queryByText(en.activeCheckpointLabel)).toBeNull()
+  })
+
+  it('states workbench capabilities and the three authentication outcomes', () => {
+    mountPanel(stubLife(nativeSnapshot()).life)
+    expect(screen.getByText(en.workbenchLabel)).not.toBeNull()
+    expect(screen.getByText(/16 \(rev 6\)/)).not.toBeNull()
+    expect(screen.getByText(/CapabilitySnapshot · Taiji native Workbench/)).not.toBeNull()
+    expect(screen.getByText(en.authDisabled)).not.toBeNull()
+    cleanup()
+
+    mountPanel(stubLife(nativeSnapshot({ auth: { enabled: true, authenticated: true, tokenValid: true } })).life)
+    expect(screen.getByText(en.authOk)).not.toBeNull()
+    cleanup()
+
+    mountPanel(stubLife(nativeSnapshot({ auth: { enabled: true, authenticated: false, tokenValid: false } })).life)
+    expect(screen.getByText(en.authFailed)).not.toBeNull()
+    cleanup()
+
+    // A failed capability snapshot shows the runtime's own status and text, never a zero.
+    mountPanel(stubLife(nativeSnapshot({
+      workbench: { status: 'error', count: 0, source: '', owner: '', revision: 0, error: '快照构建失败' },
+    })).life)
+    expect(screen.getByText('error')).not.toBeNull()
+    expect(screen.getByText('快照构建失败')).not.toBeNull()
   })
 
   it('marks a stale reading and lists the sources that did not answer', () => {

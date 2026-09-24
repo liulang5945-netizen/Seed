@@ -5407,6 +5407,10 @@ export const TYPE_API: readonly TypeApiEntry[] = [
     declaration: 'export interface LifeArtifactsView {\n    readonly activeId: string;\n    readonly configuredId: string;\n}',
   },
   {
+    name: 'LifeAuthView',
+    declaration: 'export interface LifeAuthView {\n    readonly enabled: boolean;\n    readonly authenticated: boolean;\n    readonly tokenValid: boolean;\n}',
+  },
+  {
     name: 'LifeAvailability',
     declaration: 'export interface LifeAvailability {\n    readonly runtime: LifeRuntimeState;\n    readonly legacy: LifeLegacyState;\n    readonly knowledge: LifeKnowledgeState;\n    readonly trainingStream: LifeTrainingStreamState;\n}',
   },
@@ -5488,7 +5492,7 @@ export const TYPE_API: readonly TypeApiEntry[] = [
   },
   {
     name: 'LifeSnapshot',
-    declaration: 'export interface LifeSnapshot {\n    readonly source: LifeSource;\n    readonly observedAt: string;\n    readonly fresh: boolean;\n    readonly pollIntervalMs: number;\n    readonly health?: LifeHealthView;\n    readonly memory?: LifeMemoryView;\n    readonly life?: LifeLifeView;\n    readonly training: LifeTrainingView;\n    readonly knowledge?: LifeKnowledgeView;\n    readonly consolidation?: LifeConsolidationView;\n    readonly artifacts?: LifeArtifactsView;\n    readonly availability: LifeAvailability;\n    readonly unavailable: readonly string[];\n}',
+    declaration: 'export interface LifeSnapshot {\n    readonly source: LifeSource;\n    readonly observedAt: string;\n    readonly fresh: boolean;\n    readonly pollIntervalMs: number;\n    readonly health?: LifeHealthView;\n    readonly memory?: LifeMemoryView;\n    readonly life?: LifeLifeView;\n    readonly training: LifeTrainingView;\n    readonly knowledge?: LifeKnowledgeView;\n    readonly consolidation?: LifeConsolidationView;\n    readonly artifacts?: LifeArtifactsView;\n    readonly workbench?: LifeWorkbenchView;\n    readonly auth?: LifeAuthView;\n    readonly availability: LifeAvailability;\n    readonly unavailable: readonly string[];\n}',
   },
   {
     name: 'LifeSnapshotValue',
@@ -5513,6 +5517,10 @@ export const TYPE_API: readonly TypeApiEntry[] = [
   {
     name: 'LifeTrainStartRequest',
     declaration: 'export interface LifeTrainStartRequest {\n    readonly datasets?: readonly string[];\n    readonly parameterBudget?: number;\n    readonly seed?: number;\n    readonly maxSymbols?: number;\n}',
+  },
+  {
+    name: 'LifeWorkbenchView',
+    declaration: 'export interface LifeWorkbenchView {\n    readonly status: string;\n    readonly count: number;\n    readonly source: string;\n    readonly owner: string;\n    readonly revision: number;\n    readonly error: string;\n}',
   },
   {
     name: 'LlmAdapter',

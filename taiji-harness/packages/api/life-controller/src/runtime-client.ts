@@ -11,6 +11,7 @@ import type {
   LifeActionRequest,
   LifeActivateRequest,
   LifeArtifactsView,
+  LifeAuthView,
   LifeCheckpointView,
   LifeConsolidateRequest,
   LifeConsolidationView,
@@ -30,6 +31,7 @@ import type {
   LifeSource,
   LifeTrainingView,
   LifeTrainStartRequest,
+  LifeWorkbenchView,
 } from './types.ts'
 
 /** Fixed runtime endpoints this client speaks to. */
@@ -122,6 +124,10 @@ export class LifeRuntimeClient {
     const health = status === undefined ? undefined : healthView(status.body)
     const memory = status === undefined ? undefined : memoryView(status.body)
     const life = status === undefined ? undefined : lifeView(status.body)
+    // The workbench and auth sections ride the same always-on status read;
+    // a runtime that omits a section keeps it absent rather than zero-filled.
+    const workbench = status === undefined ? undefined : workbenchView(status.body)
+    const auth = status === undefined ? undefined : authView(status.body)
     const training = trainingView(status?.body, carry)
 
     // The gated life surface is probed for availability: its numbers already
@@ -161,6 +167,8 @@ export class LifeRuntimeClient {
       pollIntervalMs: 0,
       ...(health === undefined ? {} : { health }),
       ...(memory === undefined ? {} : { memory }),
+      ...(workbench === undefined ? {} : { workbench }),
+      ...(auth === undefined ? {} : { auth }),
       ...(life === undefined ? {} : { life }),
       training: {
         ...(training ?? emptyTraining()),
@@ -494,6 +502,31 @@ function memoryView(body: unknown): LifeMemoryView | undefined {
     totalGb: number(memory, 'total_gb'),
     availableGb: number(memory, 'available_gb'),
     usedPct: number(memory, 'used_pct'),
+  }
+}
+
+/** Workbench capability projection from the status payload's `tools` section. */
+function workbenchView(body: unknown): LifeWorkbenchView | undefined {
+  const tools = object(body, 'tools')
+  if (tools === undefined) return undefined
+  return {
+    status: text(tools, 'status'),
+    count: number(tools, 'count'),
+    source: text(tools, 'source'),
+    owner: text(tools, 'owner'),
+    revision: number(tools, 'revision'),
+    error: text(tools, 'error'),
+  }
+}
+
+/** Authentication projection from the status payload's `auth` section. */
+function authView(body: unknown): LifeAuthView | undefined {
+  const auth = object(body, 'auth')
+  if (auth === undefined) return undefined
+  return {
+    enabled: flag(auth, 'enabled'),
+    authenticated: flag(auth, 'authenticated'),
+    tokenValid: flag(auth, 'token_valid'),
   }
 }
 
