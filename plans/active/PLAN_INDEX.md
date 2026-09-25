@@ -65,7 +65,7 @@
 |---|---|---|---|
 | **B-0** | P0+P1+P2 三轮修复 | ✅ 完成（116 测试） | `project_audit_fixes{,_p2}_2026-08-23.md` |
 | **B-1** | `detect_modality` 抽为纯函数（无 self） | ✅ 完成 | 等价守卫 3 绿（`a6895b6a`） |
-| **B-2** | `_infer_domain` 族迁移（依赖 `self.neurons`） | ⏳ **需负责人签字** | 黄金向量等价测试先行；见 §6 |
+| **B-2** | `_infer_domain` 迁移完成（neurons 提升为参数；黄金向量 330 格等价）✅；`_reencode_domain_generation_context` 挂起（需 neuroplex tokenizer 夹具） | ⏳ 留 B-3 | 见 §6 |
 | **B-3** | Cortex 神对象完整拆分（路由/域推断/生成三簇） | ⏳ **需负责人签字** | 每迁一簇配等价测试；冻结基线，禁静默漂移 |
 | **B-4** | 核心推理路径覆盖率 ≥60% | ⏳ 待 B-3 后 | — |
 
