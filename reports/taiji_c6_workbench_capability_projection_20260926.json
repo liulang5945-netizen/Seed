@@ -1,0 +1,27 @@
+{
+  "probe": "taiji_c6_workbench_capability_projection",
+  "establishes": "the runtime's declared capabilities can be rendered into the 问/答 shape the native trainer accepts, and that file is judged native_trainable; it establishes no capability, no admission, and no wiring",
+  "snapshot": {
+    "format": "seed-workbench-contract-v1",
+    "version": 1,
+    "revision": 6,
+    "snapshot_id": "93bd90dbb765f4cbc7f9d5d15b1533bf13734758c64e32381970880fcac9c850",
+    "declared_capabilities": 16
+  },
+  "rendered": {
+    "path": "output\\c6_probe\\c6-workbench-capability-probe.jsonl",
+    "outside_trainer_scan_roots": true,
+    "question": "这个运行环境的工作台现在可以执行哪些操作？",
+    "answer_lead": "当前工作台声明了以下能力。",
+    "documents": 16,
+    "invalid_records": 0,
+    "native_trainable": true,
+    "chars_min": 132,
+    "chars_median": 197.0,
+    "chars_max": 473,
+    "cjk_ratio_min": 0.101,
+    "cjk_ratio_median": 0.243,
+    "cjk_ratio_max": 0.344
+  },
+  "sample": "问：这个运行环境的工作台现在可以执行哪些操作？\n答：当前工作台声明了以下能力。workspace.list：List entries in the active workspace.；风险等级 read_only；可逆；类别 workspace；参数 path=relative directory path, default .。"
+}
