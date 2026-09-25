@@ -36,7 +36,7 @@ import torch.nn.functional as F
 
 # P2（2026-08-23）：纯算法辅助函数抽离，避免 Cortex 神对象继续膨胀。
 # 仅承载无 self 状态的纯函数；保持推理数学逐位等价。
-from neuroplex.brain import _cortex_helpers, _cortex_quality
+from neuroplex.brain import _cortex_alignment, _cortex_helpers, _cortex_quality
 
 logger = logging.getLogger("Cortex")
 
@@ -1798,92 +1798,29 @@ class Cortex:
         selected = sorted_nids[:top_k]
 
         return selected if selected else list(self.neurons.keys())
-
+    # B-3 C-2（2026-09-25）：本方法体已抽离至 neuroplex/brain/_cortex_alignment.py
+    # （self._general_sp 提升为参数、纯函数、黄金向量逐组复现）。真正逻辑见 _cortex_alignment。
     def _reencode_domain_generation_context(
         self,
         prefix_text: str,
         generated_ids: list[int],
         decode_sp,
     ) -> list[int]:
-        """Re-encode the complete general context after a domain-token step.
-
-        SentencePiece tokenization is boundary-sensitive: encoding a generated
-        domain piece by itself and appending its general IDs is not equivalent
-        to encoding ``prefix + generated_text``.  Generation must preserve the
-        same text-level context that training used for alignment.
-        """
-        generated_text = decode_sp.DecodeIds(generated_ids) if generated_ids else ""
-        general_ids = self._general_sp.encode(prefix_text + generated_text)
-        return general_ids if general_ids else [0]
-
-    def _get_domain_to_general_alignment(self, domain: str, domain_sp) -> dict[int, list]:
-        """S6: 构建 domain token ID → general token IDs 对齐表（带缓存 + 热插拔失效）。
-
-        消除自回归生成时的 domain→text→general re-encode 往返。
-        对每个 domain token，预计算其 general token IDs 映射。
-
-        热插拔：缓存项携带 tokenizer 指纹，任一 tokenizer（域/general）被替换后
-        自动失效重建；也可用 invalidate_alignment_cache() 手动失效。
-
-        可编辑层：set_alignment_rules() 注入的 AlignmentRules 中匹配的 domain
-        piece 跳过自动转译，改用人工指定的 general piece 文本编码
-        （新增特殊神经元时补充专业术语映射）。
-
-        Args:
-            domain: 域名（如 "zh"）
-            domain_sp: 域 tokenizer
-
-        Returns:
-            {domain_token_id: [general_token_ids]} 映射表
-        """
-        # 指纹 = (域 tokenizer 指纹, general tokenizer 指纹, 规则版本)
-        rules_ver = self._alignment_rules.version if self._alignment_rules is not None else 0
-        fp = (
-            tokenizer_fingerprint(domain_sp),
-            tokenizer_fingerprint(self._general_sp),
-            rules_ver,
+        return _cortex_alignment.reencode_domain_generation_context(
+            self._general_sp, prefix_text, generated_ids, decode_sp
         )
-        cached = self._domain_to_general_cache.get(domain)
-        if cached is not None and cached.get("fp") == fp:
-            return cached["alignment"]
-
-        if self._general_sp is None:
-            return {}
-
-        alignment: dict[int, list] = {}
-        vocab_size = domain_sp.GetPieceSize() if hasattr(domain_sp, "GetPieceSize") else 0
-        for domain_id in range(vocab_size):
-            piece = domain_sp.id_to_piece(domain_id)
-            manual = None
-            if self._alignment_rules is not None:
-                manual = self._alignment_rules.get(domain, piece)
-            if manual is not None:
-                # 人工规则：general piece 文本 → general ids（可多段，逐段 encode 拼接）
-                general_ids = []
-                for gp in manual:
-                    general_ids.extend(self._general_sp.encode(gp))
-                alignment[domain_id] = (
-                    general_ids
-                    if general_ids
-                    else [self._general_sp.pad_id() if hasattr(self._general_sp, "pad_id") else 0]
-                )
-                continue
-            if piece.startswith("<0x") and piece.endswith(">"):
-                # byte fallback piece（如 <0x0A>）：必须 decode 成真实字节再 encode，
-                # 否则 "<0x0A>" 会被当作 6 个字符编码，换行语义丢失
-                text = domain_sp.decode([domain_id])
-            else:
-                text = piece
-            general_ids = self._general_sp.encode(text)
-            if general_ids:
-                alignment[domain_id] = general_ids
-            else:
-                # 空映射用 pad_id 兜底
-                pad_id = self._general_sp.pad_id() if hasattr(self._general_sp, "pad_id") else 0
-                alignment[domain_id] = [pad_id]
-
-        self._domain_to_general_cache[domain] = {"fp": fp, "alignment": alignment}
-        print(f"[S6] 域 '{domain}' 对齐表已构建: {len(alignment)} entries", flush=True)
+        return general_ids if general_ids else [0]
+    # B-3 C-2（2026-09-25）：本方法体已抽离至 _cortex_alignment.py
+    # （self 依赖 _general_sp/_alignment_rules/_domain_to_general_cache 提升为参数，
+    #  缓存仍在 self 上、由引用写回）。真正逻辑见 _cortex_alignment。
+    def _get_domain_to_general_alignment(self, domain: str, domain_sp) -> dict[int, list]:
+        return _cortex_alignment.get_domain_to_general_alignment(
+            self._general_sp,
+            self._alignment_rules,
+            self._domain_to_general_cache,
+            domain,
+            domain_sp,
+        )
         return alignment
 
     def set_alignment_rules(self, rules) -> None:
