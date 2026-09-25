@@ -45,19 +45,32 @@ function textOf(message: RequestMessage): string {
 /**
  * Translate one assembled request into the runtime's chat shape.
  *
- * The current turn is the last user-role message; every message before it
- * becomes one `[user, assistant]` pair when a user-side message is followed by
- * an assistant reply. A user-side message with no reply keeps its pair with an
- * empty second element, so the user's words survive rather than being dropped.
+ * The current turn is the last user-role message that is the user's own input —
+ * one carrying no source, or sourced `user`. Harness-owned durable context is
+ * user-role too, and the loop appends its runtime-context snapshot *after* the
+ * turn, so "the last user-role message" is not the question and the runtime has
+ * exactly one prompt slot. A request whose user-role messages are all
+ * harness-owned — an auxiliary caller's framed instruction — sends the last of
+ * them rather than an empty prompt.
+ *
+ * Every message before the current turn becomes one `[user, assistant]` pair
+ * when a user-side message is followed by an assistant reply. A user-side
+ * message with no reply keeps its pair with an empty second element, so the
+ * user's words survive rather than being dropped. Messages from the current turn
+ * on have no slot and are dropped.
  * @param options - the fully assembled request.
  * @returns the runtime's request body.
  */
 export function buildChatRequest(options: GenerateOptions): TaijiChatRequest {
   const messages = options.messages
   let promptIndex = -1
+  let lastUserIndex = -1
   for (const [position, message] of messages.entries()) {
-    if (message.role === 'user') promptIndex = position
+    if (message.role !== 'user') continue
+    lastUserIndex = position
+    if (message.source === undefined || message.source.kind === 'user') promptIndex = position
   }
+  if (promptIndex === -1) promptIndex = lastUserIndex
 
   const history: [string, string][] = []
   let pending: string | undefined

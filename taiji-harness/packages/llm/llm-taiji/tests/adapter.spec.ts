@@ -19,6 +19,23 @@ const PROVIDER = 'taiji-local'
 const MODEL = 'taiji-local'
 
 const user = (text: string) => createUserMessage({ source: { kind: 'user' }, content: [{ type: 'text', text }] })
+
+declare module '@taiji/dsh-llm' {
+  interface MessageSourceMap {
+    'llm-taiji-spec-context': { kind: 'llm-taiji-spec-context' }
+    'llm-taiji-spec-auxiliary': { kind: 'llm-taiji-spec-auxiliary' }
+  }
+}
+
+/**
+ * A harness-owned durable context message: user-role, appended by the loop
+ * rather than typed by the user, exactly as the runtime-context snapshot and
+ * the life-state and recalled-memory injections are.
+ */
+const harnessContext = (text: string) => createUserMessage({
+  source: { kind: 'llm-taiji-spec-context' },
+  content: [{ type: 'text', text }],
+})
 const assistant = (text: string) => createAssistantMessage({
   content: text.length === 0 ? [] : [{ type: 'text', text }],
   source: { provider: PROVIDER, model: MODEL },
@@ -112,6 +129,39 @@ describe('Taiji chat request', () => {
       system_prompt: '你是Seed',
       history: [['第一个问题', '第一个回答']],
     })
+  })
+
+  it('sends the user turn as the prompt when harness context follows it', async () => {
+    const runtime = await runtimeFor({ kind: 'frames', frames: [finalFrame('answer'), DONE] })
+    const messages = [
+      harnessContext('life-state age=4s source=native tick=408'),
+      user('我的问题'),
+      harnessContext('Current runtime context. This snapshot supersedes earlier runtime-context snapshots.'),
+    ]
+
+    await collect(adapterOf(runtime.url).stream(call({ messages })))
+
+    // The runtime has exactly one prompt slot. Harness-owned durable context is
+    // a user-role message too and the loop appends its snapshot after the turn,
+    // so the question is what the slot carries; what precedes it stays history
+    // and what follows it has no slot, exactly as any post-turn message.
+    expect(runtime.requests[0]?.body).toEqual({
+      prompt: '我的问题',
+      history: [['life-state age=4s source=native tick=408', '']],
+    })
+  })
+
+  it('falls back to the last user-role message when none is the user own input', async () => {
+    const runtime = await runtimeFor({ kind: 'frames', frames: [finalFrame('answer'), DONE] })
+    // What an auxiliary caller sends: one framed instruction, no user turn.
+    const framed = createUserMessage({
+      source: { kind: 'llm-taiji-spec-auxiliary' },
+      content: [{ type: 'text', text: 'Generate the session title from this JSON array' }],
+    })
+
+    await collect(adapterOf(runtime.url).stream(call({ messages: [framed] })))
+
+    expect(runtime.requests[0]?.body).toEqual({ prompt: 'Generate the session title from this JSON array', history: [] })
   })
 
   it('takes the one-shot system field when no system message carries a prompt', async () => {

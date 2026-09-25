@@ -83,7 +83,7 @@ The chat call is `POST {baseURL}/api/chat/stream` with `Accept: text/event-strea
 }
 ```
 
-`prompt` is the last user-role message's visible text. `system_prompt` is the last system-role message's visible text, or the one-shot `GenerateOptions.system` when no system-role message carries one; omitting it makes the runtime apply its own default persona. `history` pairs each earlier user-side message with the assistant text that followed it, and a user-side message with no reply keeps its pair with an empty second element.
+`prompt` is the visible text of the last user-role message that is the user's own input — one carrying no source, or sourced `user`. Harness-owned durable context is user-role as well (the loop's runtime-context snapshot, a life-state line, recalled memory), and the loop appends its snapshot *after* the turn, so reading "the last user-role message" would send that context as the question and demote the user's own words into `history` — and the runtime has exactly one prompt slot. A request whose user-role messages are all harness-owned, which is what an auxiliary caller frames, sends the last of them rather than an empty prompt. `system_prompt` is the last system-role message's visible text, or the one-shot `GenerateOptions.system` when no system-role message carries one; omitting it makes the runtime apply its own default persona. `history` pairs each earlier user-side message with the assistant text that followed it, and a user-side message with no reply keeps its pair with an empty second element. Messages from the current turn on have no slot and are dropped.
 
 `session_id`, `purpose`, and `tools` travel as transport metadata for the runtime's own learning rings: the Session that made the request, the auxiliary classification when the call is not an ordinary turn (`session-title`, `compaction`), and the names of the tools the offer contained. The runtime records them and none of them enters the model's input; an ordinary turn without metadata omits all three.
 
@@ -219,7 +219,7 @@ None; the runtime owns its state.
 - **No token usage is reported** — the runtime discloses no counts, so the token meter falls back to its own estimator for this route.
 - **Readiness recovery takes up to one poll interval** — the route follows a readiness change at the next `readinessPollMs` probe rather than instantly, so a turn issued inside that window meets the previous verdict.
 - **The catalog is advisory and unverified** — the adapter never asks the runtime which models it serves, because the runtime's endpoint takes no model id.
-- **History outside the paired shape is dropped** — messages after the current user turn, and non-text blocks anywhere, contribute nothing to the request. Nothing is rewritten to compensate, and the Session log keeps the original content.
+- **History outside the paired shape is dropped** — messages after the current user turn, which includes the loop's runtime-context snapshot, and non-text blocks anywhere, contribute nothing to the request. Nothing is rewritten to compensate, and the Session log keeps the original content.
 - **No replay state is produced** — a `finish` chunk carries none, because the runtime's frame holds no opaque provider metadata to replay.
 
 <a id="dev-note"></a>
