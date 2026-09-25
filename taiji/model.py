@@ -722,6 +722,16 @@ class Taiji:
         return self._copy_circuit
 
     @torch.no_grad()
+    def cortical_cue(self) -> torch.Tensor:
+        """当前皮质状态寻址线索（CPU 拷贝）。
+
+        A2.4 协议写入口的公开读取面：chat 协议在告知段结束时取它作为
+        剪贴板事件的 cue，与训练语义逐字一致。
+        """
+
+        return self.fabric.cortical_context(self._state.regions).detach().cpu().clone()
+
+    @torch.no_grad()
     def record_told_content(self, content: bytes) -> int:
         """A2.1 language write gate: store told bytes + the current cortical cue.
 
@@ -731,8 +741,7 @@ class Taiji:
 
         if self._copy_circuit is None:
             raise RuntimeError("copy circuit is not mounted")
-        cue = self.fabric.cortical_context(self._state.regions)
-        return self._copy_circuit.store.record(bytes(content), cue.detach().cpu().clone())
+        return self._copy_circuit.store.record(bytes(content), self.cortical_cue())
 
     @property
     def adaptive_residual_bridge_enabled(self) -> bool:

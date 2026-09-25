@@ -291,6 +291,46 @@ class SeedRuntime:
         parts.append(f"问：{prompt}\n答：")
         return "\n".join(parts)
 
+    def enable_copy_circuit(self, payload_path: str | Path, *, max_events: int = 4) -> None:
+        """A2.4 协议开闸（显式 opt-in）：挂载复制回路并载入训练后参数。
+
+        不默认开启——产品基座加载路径零变化；调用后 ``chat`` 在生成前把
+        历史用户轮写入剪贴板（见 ``_record_told_history``）。
+        """
+        import torch
+
+        substrate = self.model.substrate
+        with self._lock:
+            if substrate.copy_circuit is None:
+                substrate.mount_copy_circuit(max_events=max_events)
+            payload = torch.load(payload_path, weights_only=False)["copy_circuit"]
+            substrate.copy_circuit.load_payload(payload)
+
+    def _record_told_history(self, circuit: Any, history: Sequence[tuple[str, str]] | None) -> None:
+        """A2.4：生成前把历史用户轮写进剪贴板（cue＝该轮告知段末的皮质态，训练语义）。
+
+        预喂行只为取 cue；随后的 ``generate_input(reset=True)`` 从头重喂全文，
+        动力学态不受此行影响，而 store 挂在回路上、跨 reset 持久。当前提问轮
+        不入库（它是问，不是被告知内容）。
+        """
+        substrate = self.model.substrate
+        circuit.store.clear()
+        substrate.reset_dynamics(episode_id=f"chat:{self.model.tick}:told")
+        substrate.observe(
+            int(substrate.config.boundary_symbol),
+            learn=False,
+            readout="predictive",
+            use_memory=False,
+        )
+        for user, assistant in history or []:
+            if not user or not assistant:
+                continue
+            for symbol in f"问：{user}\n".encode():
+                substrate.observe(int(symbol), learn=False, readout="predictive", use_memory=False)
+            circuit.store.record(user.encode("utf-8"), substrate.cortical_cue())
+            for symbol in f"答：{assistant}\n".encode():
+                substrate.observe(int(symbol), learn=False, readout="predictive", use_memory=False)
+
     def chat(
         self,
         prompt: str,
@@ -305,6 +345,9 @@ class SeedRuntime:
         prompt = (prompt or "")[:MAX_PROMPT_CHARS]
         text = self._serialize(prompt, history)
         with self._lock:
+            circuit = self.model.substrate.copy_circuit
+            if circuit is not None:
+                self._record_told_history(circuit, history)
             frame = InputFrame(
                 input_id=f"chat:{self.model.tick}",
                 modality="text",
