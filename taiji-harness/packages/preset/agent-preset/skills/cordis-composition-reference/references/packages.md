@@ -17,6 +17,7 @@ Every package below exports a Cordis plugin that a bundle patch can name in a Lo
 | `@taiji/dsh-api-account-controller` | no | Expose safe account operations over authenticated Remote |
 | `@taiji/dsh-api-gateway` | yes | Typert Remote Host dispatcher and Client API endpoint |
 | `@taiji/dsh-api-job-controller` | yes | Job Remote observation stream and the reference-counted client job-output service |
+| `@taiji/dsh-api-life-controller` | yes | Taiji local-runtime life Remote: snapshot polling, control verbs, and reconnect-safe state |
 | `@taiji/dsh-api-remotes` | no | Remote BFF assembly for application-selected Host capabilities |
 | `@taiji/dsh-api-session-controller` | yes | Session Remote commands, cold reads, and live control transport |
 | `@taiji/dsh-api-settings-controller` | yes | Remote owner for the configuration surfaces over the settings-domain seams |
@@ -77,6 +78,7 @@ Every package below exports a Cordis plugin that a bundle patch can name in a Lo
 | `@taiji/dsh-client-ui-input-trigger` | no | Input trigger pipeline: '/' and '@' detection, candidate menu, pick routing to registered sources |
 | `@taiji/dsh-client-ui-jobs` | no | Session-header background-job list with on-demand streaming record panels |
 | `@taiji/dsh-client-ui-layout` | no | Shell plugin: three-column AppFrame with drag handles, ctx.layout viewing-state service (navigation + panels) |
+| `@taiji/dsh-client-ui-life` | no | The Life panel for the dsh web client: the sidebar Life entry and the global page it opens, reading the Taiji runtime's organs and driving its training and legacy life controls |
 | `@taiji/dsh-client-ui-message-feedback` | no | The Web feedback surface: per-message Like/Dislike in the assistant-message action strip and the feedback dialog behind both ratings and /feedback, backed by the messageFeedback and sessionFeedback Host Remotes |
 | `@taiji/dsh-client-ui-model-selection` | no | Model selection over the shared model catalog, Session projection, and session.selectModel |
 | `@taiji/dsh-client-ui-open-in-app` | no | Web "Open In..." controls: the Session-header split button opening the workspace directory in an installed application, and the document preview's default-application controls for one file |
@@ -133,6 +135,8 @@ Every package below exports a Cordis plugin that a bundle patch can name in a Lo
 |---|---|---|
 | `@taiji/dsh-agent-instructions` | yes | Workspace context loader for AGENTS.md/CLAUDE.md instruction files |
 | `@taiji/dsh-file-reference-local` | yes | Local-filesystem ctx.fileReferences provider with bounded fuzzy indexes |
+| `@taiji/dsh-life-context` | yes | Durable per-step life-state readings from the Taiji local runtime |
+| `@taiji/dsh-memory-context` | yes | Durable per-turn recall of the Taiji local runtime's memory journal |
 | `@taiji/dsh-session-reference` | yes | Cross-session snapshot references and durable untrusted model context (ctx.sessionReferenceResolver) |
 | `@taiji/dsh-time-context` | yes | Opt-in durable per-step context with the current time and elapsed time |
 | `@taiji/dsh-tmux-context` | yes | Opt-in durable per-step context with this agent's tmux pane and window location |
@@ -279,6 +283,7 @@ Every package below exports a Cordis plugin that a bundle patch can name in a Lo
 | `@taiji/dsh-llm-deepseek` | yes | DeepSeek Messages adapter |
 | `@taiji/dsh-llm-pi-ai` | yes | pi-ai-backed DeepSeek adapter for the DeepSeek Harness LLM seam (design-verification twin of dsh-llm-deepseek) |
 | `@taiji/dsh-llm-retry` | yes | Provider-routed LLM request retry policy for the DeepSeek Harness |
+| `@taiji/dsh-llm-taiji` | yes | Taiji local-runtime adapter |
 | `@taiji/dsh-plugin-package-inventory-deepseek` | yes | Active Loader-backed plugin package inventory for official DeepSeek LLM API requests |
 | `@taiji/dsh-token-meter` | yes | Replay-aware token measurement service (ctx.tokenMeter) for the DeepSeek Harness |
 
@@ -348,6 +353,7 @@ Every package below exports a Cordis plugin that a bundle patch can name in a Lo
 |---|---|---|
 | `@taiji/dsh-session-checkpoint-policy` | no | Semantic session durability checkpoints before model requests and tool side effects |
 | `@taiji/dsh-session-log-deepseek` | yes | Incremental lossless session-log request extension for the official DeepSeek LLM API |
+| `@taiji/dsh-session-memory-taiji` | yes | Report each top-level Taiji Host turn's prompt and answer to the local runtime's durable memory journal |
 | `@taiji/dsh-session-persistence-jsonl` | yes | JSONL durable session persistence backend for the DeepSeek Harness |
 | `@taiji/dsh-session-projection` | no | Session-projection seam: the merge-extensible projection type table, the provider contract, and the ctx.sessionProjections registry serving whole current values of log-derived per-session state |
 | `@taiji/dsh-session-projection-cache` | yes | Persisted projection cache (ctx.sessionProjectionCache): durable per-session checkpoint records on the session_projcache storage domain (per-record layout), throttled write-behind, and the cached listing read |
