@@ -1,0 +1,90 @@
+{
+  "probe": "taiji_c6_kind_widening_impact",
+  "establishes": "which code sites gate on the corpus source_kind, and how an existing ledger replays when it carries a kind or a contract version its reader does not know; it establishes no admission and writes no product data",
+  "outside_repo_writes": true,
+  "contract": {
+    "EVOLUTION_CONTRACT_VERSION": 1,
+    "corpus_allowlist": [
+      "client_plugin_artifact",
+      "mcp_artifact",
+      "skill_artifact",
+      "verified_domain_material"
+    ],
+    "experience_allowlist": [
+      "workbench",
+      "skill",
+      "mcp",
+      "client_plugin",
+      "user_correction",
+      "provider"
+    ]
+  },
+  "E1_construct_candidate_kind": {
+    "kind": "workbench_artifact",
+    "rejected": true,
+    "error": "ValueError: unsupported evolution corpus source_kind"
+  },
+  "E2_replay_unknown_kind": {
+    "injected": "workbench_artifact",
+    "rejected": true,
+    "error": "ValueError: unsupported evolution corpus source_kind"
+  },
+  "E3_replay_version_bump": {
+    "injected_version": 2,
+    "replay_rejected": true,
+    "replay_error": "ValueError: unsupported evolution corpus version",
+    "construct_rejected": true,
+    "construct_error": "ValueError: unsupported evolution corpus version"
+  },
+  "E4_reuse_round_trip": {
+    "round_trips": true,
+    "error": ""
+  },
+  "E5_registry_lifecycle_new_kind": {
+    "fails_at": "register",
+    "error": "ValueError: unsupported evolution corpus source_kind",
+    "replayed": false
+  },
+  "E6_registry_lifecycle_reused_kind": {
+    "fails_at": "replay",
+    "error": "ValueError: source registry artifact kind mismatch",
+    "registered": true,
+    "replayed": false
+  },
+  "E7_sites": {
+    "corpus_allowlist": [
+      "taiji/evolution_experience.py:231: raise ValueError(\"unsupported evolution corpus version\")",
+      "taiji/evolution_experience.py:251: raise ValueError(\"unsupported evolution corpus source_kind\")",
+      "taiji/evolution_experience.py:253: raise ValueError(\"unsupported evolution corpus unit_kind\")",
+      "taiji/evolution_experience.py:256: raise ValueError(\"unsupported evolution corpus status\")",
+      "taiji/evolution_experience.py:360: raise ValueError(\"unsupported evolution corpus format\")"
+    ],
+    "experience_allowlist": [
+      "taiji/evolution_experience.py:33: EVOLUTION_EXPERIENCE_SOURCE_KINDS = (",
+      "taiji/evolution_experience.py:446: raise ValueError(\"unsupported evolution experience version\")",
+      "taiji/evolution_experience.py:456: if self.source_kind not in EVOLUTION_EXPERIENCE_SOURCE_KINDS:",
+      "taiji/evolution_experience.py:457: raise ValueError(\"unsupported evolution experience source_kind\")",
+      "taiji/evolution_experience.py:466: raise ValueError(\"unsupported evolution experience status\")",
+      "taiji/evolution_experience.py:616: raise ValueError(\"unsupported evolution experience format\")",
+      "taiji/evolution_experience.py:671: \"EVOLUTION_EXPERIENCE_SOURCE_KINDS\","
+    ],
+    "event_allowlist": [
+      "seed_platform/evolution_adapters.py:36: _EVENT_SOURCE_KINDS = frozenset({\"skill\", \"mcp\", \"client_plugin\"})",
+      "seed_platform/evolution_adapters.py:515: if source_kind not in _EVENT_SOURCE_KINDS:"
+    ],
+    "internalization_allowlist": [
+      "taiji/artifact_internalization.py:30: _ADMITTED_SOURCE_KINDS = frozenset({\"skill_artifact\", \"mcp_artifact\"})",
+      "taiji/artifact_internalization.py:85: if any(item.source_kind not in _ADMITTED_SOURCE_KINDS for item in items):",
+      "taiji/artifact_internalization.py:173: if artifact.source_kind not in _ADMITTED_SOURCE_KINDS:"
+    ],
+    "registry_naming_rule": [
+      "seed_platform/source_registry.py:239: if any(item.source_kind != f\"{registry.source_kind}_artifact\" for item in corpus):",
+      "seed_platform/source_registry.py:240: raise ValueError(\"source registry artifact kind mismatch\")"
+    ],
+    "kind_dispatch": [
+      "seed_platform/evolution_adapters.py:582: skill_digest=source_digest if source_kind == \"skill\" else \"\",",
+      "seed_platform/evolution_adapters.py:583: mcp_server_digest=source_digest if source_kind == \"mcp\" else \"\",",
+      "seed_platform/evolution_adapters.py:585: plugin_digest=source_digest if source_kind == \"client_plugin\" else \"\","
+    ]
+  }
+}
