@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import {
+  archiveManifestPaths,
   extendArchiveManifest,
   gitBlobHash,
   parseArchiveManifest,
@@ -27,6 +28,22 @@ describe('archived Agent Notes', () => {
     expect(isArchivedAgentNotePath('.agents/notes/archived/process/example.md')).toBe(true)
     expect(isArchivedAgentNotePath('.agents\\notes\\archived\\process\\example.md')).toBe(true)
     expect(isArchivedAgentNotePath('.agents/notes/implemented/process/example.md')).toBe(false)
+  })
+
+  it('spells the manifest path for both Git readers in either checkout layout', () => {
+    // Upstream layout: this directory is the repository root, so both readers
+    // take the same path.
+    expect(archiveManifestPaths('')).toEqual({
+      tree: '.agents/notes/archived/manifest.json',
+      revision: '.agents/notes/archived/manifest.json',
+    })
+    // Fork layout: the harness is one subdirectory, and only `git show <ref>:<path>`
+    // resolves from the outer root — the `ls-tree` pathspec stays local, so
+    // prefixing both would look for the manifest twice down.
+    expect(archiveManifestPaths('taiji-harness/')).toEqual({
+      tree: '.agents/notes/archived/manifest.json',
+      revision: 'taiji-harness/.agents/notes/archived/manifest.json',
+    })
   })
 
   it('accepts one complete implemented triplet with matching archive metadata', () => {

@@ -5,6 +5,7 @@ import { existsSync, readFileSync, readdirSync, writeFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { AGENT_NOTE_CLASSES, agentNoteRoot } from './agent-note-tree.ts'
 import {
+  archiveManifestPaths,
   extendArchiveManifest,
   parseArchiveManifest,
   renderArchiveManifest,
@@ -23,7 +24,10 @@ if (args.length > 0 && !writeMode) {
 const archiveRoot = resolve(agentNoteRoot, 'archived')
 const manifestPath = resolve(archiveRoot, 'manifest.json')
 const repoRoot = resolve(agentNoteRoot, '../..')
-const manifestRepoPath = '.agents/notes/archived/manifest.json'
+// `git show <ref>:<path>` resolves from the repository root, which is not this
+// directory when the harness is one subdirectory of a larger checkout; the
+// `ls-tree` pathspec stays relative to this directory.
+const { tree: manifestTreePath, revision: manifestRepoPath } = archiveManifestPaths(runGit(['rev-parse', '--show-prefix']).trim())
 const errors: string[] = []
 const allowedRootFiles = new Set(['AGENTS.md', 'manifest.json'])
 const kinds = new Set<string>()
@@ -67,7 +71,7 @@ function runGit(args: string[]): string {
 
 function readBaselineManifest(ref: string): ArchiveManifest {
   runGit(['cat-file', '-e', `${ref}^{commit}`])
-  const manifestEntry = runGit(['ls-tree', '--name-only', ref, '--', manifestRepoPath]).trim()
+  const manifestEntry = runGit(['ls-tree', '--name-only', ref, '--', manifestTreePath]).trim()
   if (manifestEntry === '') return { version: 1, files: {} }
   return parseArchiveManifest(runGit(['show', `${ref}:${manifestRepoPath}`]))
 }

@@ -10,6 +10,29 @@ export interface ArchiveManifest {
   files: Readonly<Record<string, string>>
 }
 
+/** The frozen-content manifest's path, spelled for each of the two Git readers. */
+export interface ArchiveManifestPaths {
+  /** Pathspec for `git ls-tree`, which resolves against the working directory. */
+  readonly tree: string
+  /** Path for `git show <ref>:<path>`, which resolves from the repository root. */
+  readonly revision: string
+}
+
+/** Manifest location under the Agent Note archive, relative to the harness root. */
+export const ARCHIVE_MANIFEST_PATH = '.agents/notes/archived/manifest.json'
+
+/**
+ * Spell the manifest path for both Git readers, which resolve it differently.
+ * @param rootPrefix - the working directory's path under the repository root as
+ *   `git rev-parse --show-prefix` reports it: empty when this directory is the
+ *   root, a trailing-slash prefix when it is one subdirectory of a larger
+ *   checkout.
+ * @returns the `ls-tree` pathspec and the `show` path.
+ */
+export function archiveManifestPaths(rootPrefix: string): ArchiveManifestPaths {
+  return { tree: ARCHIVE_MANIFEST_PATH, revision: `${rootPrefix}${ARCHIVE_MANIFEST_PATH}` }
+}
+
 /** Hash one archived artifact independently of the repository's Git object format. */
 function archiveContentHash(content: Buffer): string {
   return `sha256:${createHash('sha256').update(content).digest('hex')}`
