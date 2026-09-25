@@ -1,0 +1,1633 @@
+{
+  "format": "taiji-r2-a25-event-cue-separability-v1",
+  "prereg": "plans/reference/SPEC-A-17_r2_a2_3b_format_align_prereg_20260925.md §7.3",
+  "reading_rule": "full<0.6 且 region0>=0.8 ⇒ 病因1（键形态，先修键不加参数）；full<0.6 且 region0<0.6 而 oracle 高 ⇒ 病因2（需要可学的事件选择器）；full>=0.8 ⇒ 病因3（本件单点 cue 挑得对，线上失败来自生成期逐步 cue 漂移，下一案改测逐答案步 cue）",
+  "checkpoint": "checkpoints/seed_beta.pt",
+  "source": "extension",
+  "arm": 0,
+  "base_sha256_unchanged": true,
+  "items": 48,
+  "summary": {
+    "full_key_top1_rate": 0.7708,
+    "region0_key_top1_rate": 0.7917,
+    "oracle_key_top1_rate": 1.0,
+    "by_kind": {
+      "city": {
+        "n": 12,
+        "full": 0.5,
+        "region0": 0.5,
+        "overlap": 1.0
+      },
+      "dish": {
+        "n": 13,
+        "full": 0.7692,
+        "region0": 0.8462,
+        "overlap": 1.0
+      },
+      "pet": {
+        "n": 11,
+        "full": 1.0,
+        "region0": 1.0,
+        "overlap": 1.0
+      },
+      "project": {
+        "n": 12,
+        "full": 0.8333,
+        "region0": 0.8333,
+        "overlap": 1.0
+      }
+    },
+    "margin_median_full": 0.020695,
+    "margin_median_region0": 0.023338,
+    "per_item_margins_full": [
+      0.021139,
+      0.009673,
+      0.000399,
+      0.000656,
+      0.024482,
+      0.047361,
+      0.010857,
+      0.019832,
+      0.034462,
+      0.013235,
+      0.009659,
+      0.046309,
+      0.022619,
+      0.0327,
+      0.019178,
+      0.026745,
+      0.023062,
+      0.012722,
+      0.018247,
+      0.024784,
+      0.022435,
+      0.028014,
+      0.015018,
+      0.026832,
+      0.017887,
+      0.045109,
+      0.012318,
+      0.001709,
+      0.01669,
+      0.039595,
+      0.014731,
+      0.024695,
+      0.033841,
+      0.004976,
+      0.002511,
+      0.013739,
+      0.049274,
+      0.000353,
+      0.038084,
+      0.051892,
+      0.032743,
+      0.034707,
+      0.009443,
+      0.026497,
+      0.015091,
+      0.02025,
+      0.024055,
+      0.003017
+    ],
+    "per_item_margins_region0": [
+      0.014197,
+      0.006124,
+      0.005329,
+      0.007096,
+      0.023318,
+      0.049676,
+      0.010861,
+      0.026303,
+      0.037427,
+      0.009728,
+      0.010001,
+      0.050564,
+      0.025838,
+      0.036192,
+      0.01891,
+      0.028184,
+      0.026942,
+      0.0156,
+      0.022757,
+      0.030148,
+      0.024318,
+      0.027188,
+      0.014394,
+      0.015109,
+      0.017987,
+      0.050125,
+      0.00635,
+      0.00565,
+      0.014965,
+      0.045168,
+      0.0128,
+      0.027435,
+      0.03667,
+      0.009851,
+      0.00305,
+      0.024291,
+      0.050887,
+      0.007345,
+      0.039228,
+      0.05718,
+      0.034022,
+      0.026701,
+      0.01238,
+      0.035661,
+      0.023359,
+      0.017694,
+      0.029319,
+      0.012955
+    ]
+  },
+  "rows": [
+    {
+      "id": "X002",
+      "source": "extension",
+      "kind": "city",
+      "n_events": 2,
+      "told": [
+        "我住在苏州。",
+        "地铁上被人踩了一脚。"
+      ],
+      "ask": "我住哪？",
+      "correct_event_id": 1,
+      "full_key": {
+        "picked_id": 2,
+        "picked_content": "地铁上被人踩了一脚。",
+        "margin": 0.021139,
+        "top_score": 0.180283,
+        "picked_correct": false
+      },
+      "region0_key": {
+        "picked_id": 2,
+        "picked_content": "地铁上被人踩了一脚。",
+        "margin": 0.014197,
+        "top_score": 0.185007,
+        "picked_correct": false
+      },
+      "oracle_key": {
+        "picked_id": 1,
+        "picked_correct": true,
+        "top_overlap": 0.5
+      }
+    },
+    {
+      "id": "X008",
+      "source": "extension",
+      "kind": "dish",
+      "n_events": 2,
+      "told": [
+        "我最爱吃小笼包。",
+        "请介绍一下青藏高原。"
+      ],
+      "ask": "我最爱吃什么？",
+      "correct_event_id": 4,
+      "full_key": {
+        "picked_id": 5,
+        "picked_content": "请介绍一下青藏高原。",
+        "margin": 0.009673,
+        "top_score": 0.174989,
+        "picked_correct": false
+      },
+      "region0_key": {
+        "picked_id": 5,
+        "picked_content": "请介绍一下青藏高原。",
+        "margin": 0.006124,
+        "top_score": 0.180626,
+        "picked_correct": false
+      },
+      "oracle_key": {
+        "picked_id": 4,
+        "picked_correct": true,
+        "top_overlap": 0.5714
+      }
+    },
+    {
+      "id": "X010",
+      "source": "extension",
+      "kind": "city",
+      "n_events": 2,
+      "told": [
+        "我住在西安。",
+        "楼下新开的面馆排了很长队。"
+      ],
+      "ask": "我住哪？",
+      "correct_event_id": 7,
+      "full_key": {
+        "picked_id": 7,
+        "picked_content": "我住在西安。",
+        "margin": 0.000399,
+        "top_score": 0.175675,
+        "picked_correct": true
+      },
+      "region0_key": {
+        "picked_id": 7,
+        "picked_content": "我住在西安。",
+        "margin": 0.005329,
+        "top_score": 0.193573,
+        "picked_correct": true
+      },
+      "oracle_key": {
+        "picked_id": 7,
+        "picked_correct": true,
+        "top_overlap": 0.5
+      }
+    },
+    {
+      "id": "X012",
+      "source": "extension",
+      "kind": "project",
+      "n_events": 2,
+      "told": [
+        "我的项目叫晨星。",
+        "请讲讲活字印刷术的来历。"
+      ],
+      "ask": "我的项目叫什么？",
+      "correct_event_id": 10,
+      "full_key": {
+        "picked_id": 10,
+        "picked_content": "我的项目叫晨星。",
+        "margin": 0.000656,
+        "top_score": 0.182655,
+        "picked_correct": true
+      },
+      "region0_key": {
+        "picked_id": 10,
+        "picked_content": "我的项目叫晨星。",
+        "margin": 0.007096,
+        "top_score": 0.201454,
+        "picked_correct": true
+      },
+      "oracle_key": {
+        "picked_id": 10,
+        "picked_correct": true,
+        "top_overlap": 0.625
+      }
+    },
+    {
+      "id": "X014",
+      "source": "extension",
+      "kind": "pet",
+      "n_events": 2,
+      "told": [
+        "我养了一只浣熊。",
+        "旧钥匙串找不到了。"
+      ],
+      "ask": "我养的动物是什么？",
+      "correct_event_id": 13,
+      "full_key": {
+        "picked_id": 13,
+        "picked_content": "我养了一只浣熊。",
+        "margin": 0.024482,
+        "top_score": 0.177328,
+        "picked_correct": true
+      },
+      "region0_key": {
+        "picked_id": 13,
+        "picked_content": "我养了一只浣熊。",
+        "margin": 0.023318,
+        "top_score": 0.183599,
+        "picked_correct": true
+      },
+      "oracle_key": {
+        "picked_id": 13,
+        "picked_correct": true,
+        "top_overlap": 0.2222
+      }
+    },
+    {
+      "id": "X016",
+      "source": "extension",
+      "kind": "dish",
+      "n_events": 2,
+      "told": [
+        "我最爱吃辣子鸡。",
+        "简述一下光合作用的过程。"
+      ],
+      "ask": "我最爱吃什么？",
+      "correct_event_id": 16,
+      "full_key": {
+        "picked_id": 16,
+        "picked_content": "我最爱吃辣子鸡。",
+        "margin": 0.047361,
+        "top_score": 0.174666,
+        "picked_correct": true
+      },
+      "region0_key": {
+        "picked_id": 16,
+        "picked_content": "我最爱吃辣子鸡。",
+        "margin": 0.049676,
+        "top_score": 0.189202,
+        "picked_correct": true
+      },
+      "oracle_key": {
+        "picked_id": 16,
+        "picked_correct": true,
+        "top_overlap": 0.5714
+      }
+    },
+    {
+      "id": "X018",
+      "source": "extension",
+      "kind": "city",
+      "n_events": 2,
+      "told": [
+        "我住在青岛。",
+        "旧钥匙串找不到了。"
+      ],
+      "ask": "我住哪？",
+      "correct_event_id": 19,
+      "full_key": {
+        "picked_id": 19,
+        "picked_content": "我住在青岛。",
+        "margin": 0.010857,
+        "top_score": 0.181573,
+        "picked_correct": true
+      },
+      "region0_key": {
+        "picked_id": 19,
+        "picked_content": "我住在青岛。",
+        "margin": 0.010861,
+        "top_score": 0.194928,
+        "picked_correct": true
+      },
+      "oracle_key": {
+        "picked_id": 19,
+        "picked_correct": true,
+        "top_overlap": 0.5
+      }
+    },
+    {
+      "id": "X020",
+      "source": "extension",
+      "kind": "project",
+      "n_events": 2,
+      "told": [
+        "我的项目叫石径。",
+        "说说潮汐是怎么形成的。"
+      ],
+      "ask": "我的项目叫什么？",
+      "correct_event_id": 22,
+      "full_key": {
+        "picked_id": 22,
+        "picked_content": "我的项目叫石径。",
+        "margin": 0.019832,
+        "top_score": 0.189719,
+        "picked_correct": true
+      },
+      "region0_key": {
+        "picked_id": 22,
+        "picked_content": "我的项目叫石径。",
+        "margin": 0.026303,
+        "top_score": 0.200135,
+        "picked_correct": true
+      },
+      "oracle_key": {
+        "picked_id": 22,
+        "picked_correct": true,
+        "top_overlap": 0.625
+      }
+    },
+    {
+      "id": "X022",
+      "source": "extension",
+      "kind": "pet",
+      "n_events": 2,
+      "told": [
+        "我养了一只树袋熊。",
+        "楼下新开的面馆排了很长队。"
+      ],
+      "ask": "我养的动物是什么？",
+      "correct_event_id": 25,
+      "full_key": {
+        "picked_id": 25,
+        "picked_content": "我养了一只树袋熊。",
+        "margin": 0.034462,
+        "top_score": 0.183548,
+        "picked_correct": true
+      },
+      "region0_key": {
+        "picked_id": 25,
+        "picked_content": "我养了一只树袋熊。",
+        "margin": 0.037427,
+        "top_score": 0.18818,
+        "picked_correct": true
+      },
+      "oracle_key": {
+        "picked_id": 25,
+        "picked_correct": true,
+        "top_overlap": 0.2222
+      }
+    },
+    {
+      "id": "X024",
+      "source": "extension",
+      "kind": "dish",
+      "n_events": 2,
+      "told": [
+        "我最爱吃羊肉泡馍。",
+        "请介绍一下青藏高原。"
+      ],
+      "ask": "我最爱吃什么？",
+      "correct_event_id": 28,
+      "full_key": {
+        "picked_id": 29,
+        "picked_content": "请介绍一下青藏高原。",
+        "margin": 0.013235,
+        "top_score": 0.175057,
+        "picked_correct": false
+      },
+      "region0_key": {
+        "picked_id": 29,
+        "picked_content": "请介绍一下青藏高原。",
+        "margin": 0.009728,
+        "top_score": 0.183523,
+        "picked_correct": false
+      },
+      "oracle_key": {
+        "picked_id": 28,
+        "picked_correct": true,
+        "top_overlap": 0.5714
+      }
+    },
+    {
+      "id": "X026",
+      "source": "extension",
+      "kind": "city",
+      "n_events": 2,
+      "told": [
+        "我住在长沙。",
+        "旧钥匙串找不到了。"
+      ],
+      "ask": "我住哪？",
+      "correct_event_id": 31,
+      "full_key": {
+        "picked_id": 31,
+        "picked_content": "我住在长沙。",
+        "margin": 0.009659,
+        "top_score": 0.180713,
+        "picked_correct": true
+      },
+      "region0_key": {
+        "picked_id": 31,
+        "picked_content": "我住在长沙。",
+        "margin": 0.010001,
+        "top_score": 0.19568,
+        "picked_correct": true
+      },
+      "oracle_key": {
+        "picked_id": 31,
+        "picked_correct": true,
+        "top_overlap": 0.5
+      }
+    },
+    {
+      "id": "X028",
+      "source": "extension",
+      "kind": "project",
+      "n_events": 2,
+      "told": [
+        "我的项目叫归云。",
+        "介绍一下印象派绘画的起源。"
+      ],
+      "ask": "我的项目叫什么？",
+      "correct_event_id": 34,
+      "full_key": {
+        "picked_id": 34,
+        "picked_content": "我的项目叫归云。",
+        "margin": 0.046309,
+        "top_score": 0.166071,
+        "picked_correct": true
+      },
+      "region0_key": {
+        "picked_id": 34,
+        "picked_content": "我的项目叫归云。",
+        "margin": 0.050564,
+        "top_score": 0.181345,
+        "picked_correct": true
+      },
+      "oracle_key": {
+        "picked_id": 34,
+        "picked_correct": true,
+        "top_overlap": 0.625
+      }
+    },
+    {
+      "id": "X030",
+      "source": "extension",
+      "kind": "pet",
+      "n_events": 2,
+      "told": [
+        "我养了一只蓝舌蜥。",
+        "冰箱里的牛奶好像过期了。"
+      ],
+      "ask": "我养的动物是什么？",
+      "correct_event_id": 37,
+      "full_key": {
+        "picked_id": 37,
+        "picked_content": "我养了一只蓝舌蜥。",
+        "margin": 0.022619,
+        "top_score": 0.205287,
+        "picked_correct": true
+      },
+      "region0_key": {
+        "picked_id": 37,
+        "picked_content": "我养了一只蓝舌蜥。",
+        "margin": 0.025838,
+        "top_score": 0.219757,
+        "picked_correct": true
+      },
+      "oracle_key": {
+        "picked_id": 37,
+        "picked_correct": true,
+        "top_overlap": 0.2222
+      }
+    },
+    {
+      "id": "X032",
+      "source": "extension",
+      "kind": "dish",
+      "n_events": 2,
+      "told": [
+        "我最爱吃胡辣汤。",
+        "介绍一下印象派绘画的起源。"
+      ],
+      "ask": "我最爱吃什么？",
+      "correct_event_id": 40,
+      "full_key": {
+        "picked_id": 40,
+        "picked_content": "我最爱吃胡辣汤。",
+        "margin": 0.0327,
+        "top_score": 0.153685,
+        "picked_correct": true
+      },
+      "region0_key": {
+        "picked_id": 40,
+        "picked_content": "我最爱吃胡辣汤。",
+        "margin": 0.036192,
+        "top_score": 0.168247,
+        "picked_correct": true
+      },
+      "oracle_key": {
+        "picked_id": 40,
+        "picked_correct": true,
+        "top_overlap": 0.5714
+      }
+    },
+    {
+      "id": "X034",
+      "source": "extension",
+      "kind": "city",
+      "n_events": 2,
+      "told": [
+        "我住在昆明。",
+        "冰箱里的牛奶好像过期了。"
+      ],
+      "ask": "我住哪？",
+      "correct_event_id": 43,
+      "full_key": {
+        "picked_id": 43,
+        "picked_content": "我住在昆明。",
+        "margin": 0.019178,
+        "top_score": 0.177392,
+        "picked_correct": true
+      },
+      "region0_key": {
+        "picked_id": 43,
+        "picked_content": "我住在昆明。",
+        "margin": 0.01891,
+        "top_score": 0.192911,
+        "picked_correct": true
+      },
+      "oracle_key": {
+        "picked_id": 43,
+        "picked_correct": true,
+        "top_overlap": 0.5
+      }
+    },
+    {
+      "id": "X036",
+      "source": "extension",
+      "kind": "project",
+      "n_events": 2,
+      "told": [
+        "我的项目叫听涛。",
+        "介绍一下印象派绘画的起源。"
+      ],
+      "ask": "我的项目叫什么？",
+      "correct_event_id": 46,
+      "full_key": {
+        "picked_id": 46,
+        "picked_content": "我的项目叫听涛。",
+        "margin": 0.026745,
+        "top_score": 0.172406,
+        "picked_correct": true
+      },
+      "region0_key": {
+        "picked_id": 46,
+        "picked_content": "我的项目叫听涛。",
+        "margin": 0.028184,
+        "top_score": 0.185909,
+        "picked_correct": true
+      },
+      "oracle_key": {
+        "picked_id": 46,
+        "picked_correct": true,
+        "top_overlap": 0.625
+      }
+    },
+    {
+      "id": "X038",
+      "source": "extension",
+      "kind": "pet",
+      "n_events": 2,
+      "told": [
+        "我养了一只蜜獾。",
+        "阳台上的茉莉今年没开花。"
+      ],
+      "ask": "我养的动物是什么？",
+      "correct_event_id": 49,
+      "full_key": {
+        "picked_id": 49,
+        "picked_content": "我养了一只蜜獾。",
+        "margin": 0.023062,
+        "top_score": 0.191705,
+        "picked_correct": true
+      },
+      "region0_key": {
+        "picked_id": 49,
+        "picked_content": "我养了一只蜜獾。",
+        "margin": 0.026942,
+        "top_score": 0.203237,
+        "picked_correct": true
+      },
+      "oracle_key": {
+        "picked_id": 49,
+        "picked_correct": true,
+        "top_overlap": 0.2222
+      }
+    },
+    {
+      "id": "X040",
+      "source": "extension",
+      "kind": "dish",
+      "n_events": 2,
+      "told": [
+        "我最爱吃臭豆腐。",
+        "请讲讲活字印刷术的来历。"
+      ],
+      "ask": "我最爱吃什么？",
+      "correct_event_id": 52,
+      "full_key": {
+        "picked_id": 52,
+        "picked_content": "我最爱吃臭豆腐。",
+        "margin": 0.012722,
+        "top_score": 0.173773,
+        "picked_correct": true
+      },
+      "region0_key": {
+        "picked_id": 52,
+        "picked_content": "我最爱吃臭豆腐。",
+        "margin": 0.0156,
+        "top_score": 0.187528,
+        "picked_correct": true
+      },
+      "oracle_key": {
+        "picked_id": 52,
+        "picked_correct": true,
+        "top_overlap": 0.5714
+      }
+    },
+    {
+      "id": "X042",
+      "source": "extension",
+      "kind": "city",
+      "n_events": 2,
+      "told": [
+        "我住在兰州。",
+        "旧钥匙串找不到了。"
+      ],
+      "ask": "我住哪？",
+      "correct_event_id": 55,
+      "full_key": {
+        "picked_id": 55,
+        "picked_content": "我住在兰州。",
+        "margin": 0.018247,
+        "top_score": 0.165514,
+        "picked_correct": true
+      },
+      "region0_key": {
+        "picked_id": 55,
+        "picked_content": "我住在兰州。",
+        "margin": 0.022757,
+        "top_score": 0.177603,
+        "picked_correct": true
+      },
+      "oracle_key": {
+        "picked_id": 55,
+        "picked_correct": true,
+        "top_overlap": 0.5
+      }
+    },
+    {
+      "id": "X044",
+      "source": "extension",
+      "kind": "project",
+      "n_events": 2,
+      "told": [
+        "我的项目叫折柳。",
+        "简述一下光合作用的过程。"
+      ],
+      "ask": "我的项目叫什么？",
+      "correct_event_id": 58,
+      "full_key": {
+        "picked_id": 58,
+        "picked_content": "我的项目叫折柳。",
+        "margin": 0.024784,
+        "top_score": 0.161161,
+        "picked_correct": true
+      },
+      "region0_key": {
+        "picked_id": 58,
+        "picked_content": "我的项目叫折柳。",
+        "margin": 0.030148,
+        "top_score": 0.171738,
+        "picked_correct": true
+      },
+      "oracle_key": {
+        "picked_id": 58,
+        "picked_correct": true,
+        "top_overlap": 0.625
+      }
+    },
+    {
+      "id": "X046",
+      "source": "extension",
+      "kind": "pet",
+      "n_events": 2,
+      "told": [
+        "我养了一只刺猬。",
+        "楼下新开的面馆排了很长队。"
+      ],
+      "ask": "我养的动物是什么？",
+      "correct_event_id": 61,
+      "full_key": {
+        "picked_id": 61,
+        "picked_content": "我养了一只刺猬。",
+        "margin": 0.022435,
+        "top_score": 0.168249,
+        "picked_correct": true
+      },
+      "region0_key": {
+        "picked_id": 61,
+        "picked_content": "我养了一只刺猬。",
+        "margin": 0.024318,
+        "top_score": 0.165923,
+        "picked_correct": true
+      },
+      "oracle_key": {
+        "picked_id": 61,
+        "picked_correct": true,
+        "top_overlap": 0.2222
+      }
+    },
+    {
+      "id": "X048",
+      "source": "extension",
+      "kind": "dish",
+      "n_events": 2,
+      "told": [
+        "我最爱吃糖芋苗。",
+        "请讲讲活字印刷术的来历。"
+      ],
+      "ask": "我最爱吃什么？",
+      "correct_event_id": 64,
+      "full_key": {
+        "picked_id": 64,
+        "picked_content": "我最爱吃糖芋苗。",
+        "margin": 0.028014,
+        "top_score": 0.190996,
+        "picked_correct": true
+      },
+      "region0_key": {
+        "picked_id": 64,
+        "picked_content": "我最爱吃糖芋苗。",
+        "margin": 0.027188,
+        "top_score": 0.199978,
+        "picked_correct": true
+      },
+      "oracle_key": {
+        "picked_id": 64,
+        "picked_correct": true,
+        "top_overlap": 0.5714
+      }
+    },
+    {
+      "id": "X050",
+      "source": "extension",
+      "kind": "city",
+      "n_events": 2,
+      "told": [
+        "我住在宁波。",
+        "冰箱里的牛奶好像过期了。"
+      ],
+      "ask": "我住哪？",
+      "correct_event_id": 67,
+      "full_key": {
+        "picked_id": 67,
+        "picked_content": "我住在宁波。",
+        "margin": 0.015018,
+        "top_score": 0.165753,
+        "picked_correct": true
+      },
+      "region0_key": {
+        "picked_id": 67,
+        "picked_content": "我住在宁波。",
+        "margin": 0.014394,
+        "top_score": 0.177951,
+        "picked_correct": true
+      },
+      "oracle_key": {
+        "picked_id": 67,
+        "picked_correct": true,
+        "top_overlap": 0.5
+      }
+    },
+    {
+      "id": "X052",
+      "source": "extension",
+      "kind": "project",
+      "n_events": 2,
+      "told": [
+        "我的项目叫疏影。",
+        "请介绍一下青藏高原。"
+      ],
+      "ask": "我的项目叫什么？",
+      "correct_event_id": 70,
+      "full_key": {
+        "picked_id": 71,
+        "picked_content": "请介绍一下青藏高原。",
+        "margin": 0.026832,
+        "top_score": 0.180401,
+        "picked_correct": false
+      },
+      "region0_key": {
+        "picked_id": 71,
+        "picked_content": "请介绍一下青藏高原。",
+        "margin": 0.015109,
+        "top_score": 0.180447,
+        "picked_correct": false
+      },
+      "oracle_key": {
+        "picked_id": 70,
+        "picked_correct": true,
+        "top_overlap": 0.625
+      }
+    },
+    {
+      "id": "X054",
+      "source": "extension",
+      "kind": "pet",
+      "n_events": 2,
+      "told": [
+        "我养了一只鹦鹉。",
+        "阳台上的茉莉今年没开花。"
+      ],
+      "ask": "我养的动物是什么？",
+      "correct_event_id": 73,
+      "full_key": {
+        "picked_id": 73,
+        "picked_content": "我养了一只鹦鹉。",
+        "margin": 0.017887,
+        "top_score": 0.180632,
+        "picked_correct": true
+      },
+      "region0_key": {
+        "picked_id": 73,
+        "picked_content": "我养了一只鹦鹉。",
+        "margin": 0.017987,
+        "top_score": 0.188417,
+        "picked_correct": true
+      },
+      "oracle_key": {
+        "picked_id": 73,
+        "picked_correct": true,
+        "top_overlap": 0.2222
+      }
+    },
+    {
+      "id": "X056",
+      "source": "extension",
+      "kind": "dish",
+      "n_events": 2,
+      "told": [
+        "我最爱吃鸭血粉。",
+        "请讲讲活字印刷术的来历。"
+      ],
+      "ask": "我最爱吃什么？",
+      "correct_event_id": 76,
+      "full_key": {
+        "picked_id": 76,
+        "picked_content": "我最爱吃鸭血粉。",
+        "margin": 0.045109,
+        "top_score": 0.199802,
+        "picked_correct": true
+      },
+      "region0_key": {
+        "picked_id": 76,
+        "picked_content": "我最爱吃鸭血粉。",
+        "margin": 0.050125,
+        "top_score": 0.210741,
+        "picked_correct": true
+      },
+      "oracle_key": {
+        "picked_id": 76,
+        "picked_correct": true,
+        "top_overlap": 0.5714
+      }
+    },
+    {
+      "id": "X058",
+      "source": "extension",
+      "kind": "city",
+      "n_events": 2,
+      "told": [
+        "我住在温州。",
+        "地铁上被人踩了一脚。"
+      ],
+      "ask": "我住哪？",
+      "correct_event_id": 79,
+      "full_key": {
+        "picked_id": 80,
+        "picked_content": "地铁上被人踩了一脚。",
+        "margin": 0.012318,
+        "top_score": 0.183551,
+        "picked_correct": false
+      },
+      "region0_key": {
+        "picked_id": 80,
+        "picked_content": "地铁上被人踩了一脚。",
+        "margin": 0.00635,
+        "top_score": 0.190568,
+        "picked_correct": false
+      },
+      "oracle_key": {
+        "picked_id": 79,
+        "picked_correct": true,
+        "top_overlap": 0.5
+      }
+    },
+    {
+      "id": "X060",
+      "source": "extension",
+      "kind": "project",
+      "n_events": 2,
+      "told": [
+        "我的项目叫临风。",
+        "请讲讲活字印刷术的来历。"
+      ],
+      "ask": "我的项目叫什么？",
+      "correct_event_id": 82,
+      "full_key": {
+        "picked_id": 83,
+        "picked_content": "请讲讲活字印刷术的来历。",
+        "margin": 0.001709,
+        "top_score": 0.174264,
+        "picked_correct": false
+      },
+      "region0_key": {
+        "picked_id": 83,
+        "picked_content": "请讲讲活字印刷术的来历。",
+        "margin": 0.00565,
+        "top_score": 0.18328,
+        "picked_correct": false
+      },
+      "oracle_key": {
+        "picked_id": 82,
+        "picked_correct": true,
+        "top_overlap": 0.625
+      }
+    },
+    {
+      "id": "X062",
+      "source": "extension",
+      "kind": "pet",
+      "n_events": 2,
+      "told": [
+        "我养了一只仓鼠。",
+        "楼下新开的面馆排了很长队。"
+      ],
+      "ask": "我养的动物是什么？",
+      "correct_event_id": 85,
+      "full_key": {
+        "picked_id": 85,
+        "picked_content": "我养了一只仓鼠。",
+        "margin": 0.01669,
+        "top_score": 0.149239,
+        "picked_correct": true
+      },
+      "region0_key": {
+        "picked_id": 85,
+        "picked_content": "我养了一只仓鼠。",
+        "margin": 0.014965,
+        "top_score": 0.143616,
+        "picked_correct": true
+      },
+      "oracle_key": {
+        "picked_id": 85,
+        "picked_correct": true,
+        "top_overlap": 0.2222
+      }
+    },
+    {
+      "id": "X064",
+      "source": "extension",
+      "kind": "dish",
+      "n_events": 2,
+      "told": [
+        "我最爱吃蟹黄汤包。",
+        "介绍一下印象派绘画的起源。"
+      ],
+      "ask": "我最爱吃什么？",
+      "correct_event_id": 88,
+      "full_key": {
+        "picked_id": 88,
+        "picked_content": "我最爱吃蟹黄汤包。",
+        "margin": 0.039595,
+        "top_score": 0.152992,
+        "picked_correct": true
+      },
+      "region0_key": {
+        "picked_id": 88,
+        "picked_content": "我最爱吃蟹黄汤包。",
+        "margin": 0.045168,
+        "top_score": 0.166668,
+        "picked_correct": true
+      },
+      "oracle_key": {
+        "picked_id": 88,
+        "picked_correct": true,
+        "top_overlap": 0.5714
+      }
+    },
+    {
+      "id": "X066",
+      "source": "extension",
+      "kind": "city",
+      "n_events": 2,
+      "told": [
+        "我住在洛阳。",
+        "阳台上的茉莉今年没开花。"
+      ],
+      "ask": "我住哪？",
+      "correct_event_id": 91,
+      "full_key": {
+        "picked_id": 92,
+        "picked_content": "阳台上的茉莉今年没开花。",
+        "margin": 0.014731,
+        "top_score": 0.165791,
+        "picked_correct": false
+      },
+      "region0_key": {
+        "picked_id": 92,
+        "picked_content": "阳台上的茉莉今年没开花。",
+        "margin": 0.0128,
+        "top_score": 0.174933,
+        "picked_correct": false
+      },
+      "oracle_key": {
+        "picked_id": 91,
+        "picked_correct": true,
+        "top_overlap": 0.5
+      }
+    },
+    {
+      "id": "X068",
+      "source": "extension",
+      "kind": "project",
+      "n_events": 2,
+      "told": [
+        "我的项目叫宿雨。",
+        "简述一下光合作用的过程。"
+      ],
+      "ask": "我的项目叫什么？",
+      "correct_event_id": 94,
+      "full_key": {
+        "picked_id": 94,
+        "picked_content": "我的项目叫宿雨。",
+        "margin": 0.024695,
+        "top_score": 0.164075,
+        "picked_correct": true
+      },
+      "region0_key": {
+        "picked_id": 94,
+        "picked_content": "我的项目叫宿雨。",
+        "margin": 0.027435,
+        "top_score": 0.175496,
+        "picked_correct": true
+      },
+      "oracle_key": {
+        "picked_id": 94,
+        "picked_correct": true,
+        "top_overlap": 0.625
+      }
+    },
+    {
+      "id": "X070",
+      "source": "extension",
+      "kind": "pet",
+      "n_events": 2,
+      "told": [
+        "我养了一只乌龟。",
+        "阳台上的茉莉今年没开花。"
+      ],
+      "ask": "我养的动物是什么？",
+      "correct_event_id": 97,
+      "full_key": {
+        "picked_id": 97,
+        "picked_content": "我养了一只乌龟。",
+        "margin": 0.033841,
+        "top_score": 0.19266,
+        "picked_correct": true
+      },
+      "region0_key": {
+        "picked_id": 97,
+        "picked_content": "我养了一只乌龟。",
+        "margin": 0.03667,
+        "top_score": 0.201988,
+        "picked_correct": true
+      },
+      "oracle_key": {
+        "picked_id": 97,
+        "picked_correct": true,
+        "top_overlap": 0.2222
+      }
+    },
+    {
+      "id": "X072",
+      "source": "extension",
+      "kind": "dish",
+      "n_events": 2,
+      "told": [
+        "我最爱吃牛肉面。",
+        "说说潮汐是怎么形成的。"
+      ],
+      "ask": "我最爱吃什么？",
+      "correct_event_id": 100,
+      "full_key": {
+        "picked_id": 100,
+        "picked_content": "我最爱吃牛肉面。",
+        "margin": 0.004976,
+        "top_score": 0.156077,
+        "picked_correct": true
+      },
+      "region0_key": {
+        "picked_id": 100,
+        "picked_content": "我最爱吃牛肉面。",
+        "margin": 0.009851,
+        "top_score": 0.169773,
+        "picked_correct": true
+      },
+      "oracle_key": {
+        "picked_id": 100,
+        "picked_correct": true,
+        "top_overlap": 0.5714
+      }
+    },
+    {
+      "id": "X074",
+      "source": "extension",
+      "kind": "city",
+      "n_events": 2,
+      "told": [
+        "我住在扬州。",
+        "楼下新开的面馆排了很长队。"
+      ],
+      "ask": "我住哪？",
+      "correct_event_id": 103,
+      "full_key": {
+        "picked_id": 104,
+        "picked_content": "楼下新开的面馆排了很长队。",
+        "margin": 0.002511,
+        "top_score": 0.122418,
+        "picked_correct": false
+      },
+      "region0_key": {
+        "picked_id": 104,
+        "picked_content": "楼下新开的面馆排了很长队。",
+        "margin": 0.00305,
+        "top_score": 0.126048,
+        "picked_correct": false
+      },
+      "oracle_key": {
+        "picked_id": 103,
+        "picked_correct": true,
+        "top_overlap": 0.5
+      }
+    },
+    {
+      "id": "X076",
+      "source": "extension",
+      "kind": "project",
+      "n_events": 2,
+      "told": [
+        "我的项目叫行舟。",
+        "说说潮汐是怎么形成的。"
+      ],
+      "ask": "我的项目叫什么？",
+      "correct_event_id": 106,
+      "full_key": {
+        "picked_id": 106,
+        "picked_content": "我的项目叫行舟。",
+        "margin": 0.013739,
+        "top_score": 0.186811,
+        "picked_correct": true
+      },
+      "region0_key": {
+        "picked_id": 106,
+        "picked_content": "我的项目叫行舟。",
+        "margin": 0.024291,
+        "top_score": 0.201375,
+        "picked_correct": true
+      },
+      "oracle_key": {
+        "picked_id": 106,
+        "picked_correct": true,
+        "top_overlap": 0.625
+      }
+    },
+    {
+      "id": "X078",
+      "source": "extension",
+      "kind": "pet",
+      "n_events": 2,
+      "told": [
+        "我养了一只水獭。",
+        "冰箱里的牛奶好像过期了。"
+      ],
+      "ask": "我养的动物是什么？",
+      "correct_event_id": 109,
+      "full_key": {
+        "picked_id": 109,
+        "picked_content": "我养了一只水獭。",
+        "margin": 0.049274,
+        "top_score": 0.205257,
+        "picked_correct": true
+      },
+      "region0_key": {
+        "picked_id": 109,
+        "picked_content": "我养了一只水獭。",
+        "margin": 0.050887,
+        "top_score": 0.215806,
+        "picked_correct": true
+      },
+      "oracle_key": {
+        "picked_id": 109,
+        "picked_correct": true,
+        "top_overlap": 0.2222
+      }
+    },
+    {
+      "id": "X080",
+      "source": "extension",
+      "kind": "dish",
+      "n_events": 2,
+      "told": [
+        "我最爱吃酸菜鱼。",
+        "请介绍一下青藏高原。"
+      ],
+      "ask": "我最爱吃什么？",
+      "correct_event_id": 112,
+      "full_key": {
+        "picked_id": 113,
+        "picked_content": "请介绍一下青藏高原。",
+        "margin": 0.000353,
+        "top_score": 0.160543,
+        "picked_correct": false
+      },
+      "region0_key": {
+        "picked_id": 112,
+        "picked_content": "我最爱吃酸菜鱼。",
+        "margin": 0.007345,
+        "top_score": 0.166621,
+        "picked_correct": true
+      },
+      "oracle_key": {
+        "picked_id": 112,
+        "picked_correct": true,
+        "top_overlap": 0.5714
+      }
+    },
+    {
+      "id": "X084",
+      "source": "extension",
+      "kind": "project",
+      "n_events": 2,
+      "told": [
+        "我的项目叫望舒。",
+        "介绍一下印象派绘画的起源。"
+      ],
+      "ask": "我的项目叫什么？",
+      "correct_event_id": 115,
+      "full_key": {
+        "picked_id": 115,
+        "picked_content": "我的项目叫望舒。",
+        "margin": 0.038084,
+        "top_score": 0.154871,
+        "picked_correct": true
+      },
+      "region0_key": {
+        "picked_id": 115,
+        "picked_content": "我的项目叫望舒。",
+        "margin": 0.039228,
+        "top_score": 0.163822,
+        "picked_correct": true
+      },
+      "oracle_key": {
+        "picked_id": 115,
+        "picked_correct": true,
+        "top_overlap": 0.625
+      }
+    },
+    {
+      "id": "X086",
+      "source": "extension",
+      "kind": "pet",
+      "n_events": 2,
+      "told": [
+        "我养了一只狐狸。",
+        "楼下新开的面馆排了很长队。"
+      ],
+      "ask": "我养的动物是什么？",
+      "correct_event_id": 118,
+      "full_key": {
+        "picked_id": 118,
+        "picked_content": "我养了一只狐狸。",
+        "margin": 0.051892,
+        "top_score": 0.215343,
+        "picked_correct": true
+      },
+      "region0_key": {
+        "picked_id": 118,
+        "picked_content": "我养了一只狐狸。",
+        "margin": 0.05718,
+        "top_score": 0.220416,
+        "picked_correct": true
+      },
+      "oracle_key": {
+        "picked_id": 118,
+        "picked_correct": true,
+        "top_overlap": 0.2222
+      }
+    },
+    {
+      "id": "X088",
+      "source": "extension",
+      "kind": "dish",
+      "n_events": 2,
+      "told": [
+        "我最爱吃口水鸡。",
+        "简述一下光合作用的过程。"
+      ],
+      "ask": "我最爱吃什么？",
+      "correct_event_id": 121,
+      "full_key": {
+        "picked_id": 121,
+        "picked_content": "我最爱吃口水鸡。",
+        "margin": 0.032743,
+        "top_score": 0.163427,
+        "picked_correct": true
+      },
+      "region0_key": {
+        "picked_id": 121,
+        "picked_content": "我最爱吃口水鸡。",
+        "margin": 0.034022,
+        "top_score": 0.175493,
+        "picked_correct": true
+      },
+      "oracle_key": {
+        "picked_id": 121,
+        "picked_correct": true,
+        "top_overlap": 0.5714
+      }
+    },
+    {
+      "id": "X090",
+      "source": "extension",
+      "kind": "city",
+      "n_events": 2,
+      "told": [
+        "我住在芜湖。",
+        "地铁上被人踩了一脚。"
+      ],
+      "ask": "我住哪？",
+      "correct_event_id": 124,
+      "full_key": {
+        "picked_id": 125,
+        "picked_content": "地铁上被人踩了一脚。",
+        "margin": 0.034707,
+        "top_score": 0.200355,
+        "picked_correct": false
+      },
+      "region0_key": {
+        "picked_id": 125,
+        "picked_content": "地铁上被人踩了一脚。",
+        "margin": 0.026701,
+        "top_score": 0.206693,
+        "picked_correct": false
+      },
+      "oracle_key": {
+        "picked_id": 124,
+        "picked_correct": true,
+        "top_overlap": 0.5
+      }
+    },
+    {
+      "id": "X092",
+      "source": "extension",
+      "kind": "project",
+      "n_events": 2,
+      "told": [
+        "我的项目叫未央。",
+        "简述一下光合作用的过程。"
+      ],
+      "ask": "我的项目叫什么？",
+      "correct_event_id": 127,
+      "full_key": {
+        "picked_id": 127,
+        "picked_content": "我的项目叫未央。",
+        "margin": 0.009443,
+        "top_score": 0.15369,
+        "picked_correct": true
+      },
+      "region0_key": {
+        "picked_id": 127,
+        "picked_content": "我的项目叫未央。",
+        "margin": 0.01238,
+        "top_score": 0.168267,
+        "picked_correct": true
+      },
+      "oracle_key": {
+        "picked_id": 127,
+        "picked_correct": true,
+        "top_overlap": 0.625
+      }
+    },
+    {
+      "id": "X094",
+      "source": "extension",
+      "kind": "pet",
+      "n_events": 2,
+      "told": [
+        "我养了一只蝙蝠。",
+        "楼下新开的面馆排了很长队。"
+      ],
+      "ask": "我养的动物是什么？",
+      "correct_event_id": 130,
+      "full_key": {
+        "picked_id": 130,
+        "picked_content": "我养了一只蝙蝠。",
+        "margin": 0.026497,
+        "top_score": 0.179547,
+        "picked_correct": true
+      },
+      "region0_key": {
+        "picked_id": 130,
+        "picked_content": "我养了一只蝙蝠。",
+        "margin": 0.035661,
+        "top_score": 0.190118,
+        "picked_correct": true
+      },
+      "oracle_key": {
+        "picked_id": 130,
+        "picked_correct": true,
+        "top_overlap": 0.2222
+      }
+    },
+    {
+      "id": "X096",
+      "source": "extension",
+      "kind": "dish",
+      "n_events": 2,
+      "told": [
+        "我最爱吃狮子头。",
+        "说说潮汐是怎么形成的。"
+      ],
+      "ask": "我最爱吃什么？",
+      "correct_event_id": 133,
+      "full_key": {
+        "picked_id": 133,
+        "picked_content": "我最爱吃狮子头。",
+        "margin": 0.015091,
+        "top_score": 0.167947,
+        "picked_correct": true
+      },
+      "region0_key": {
+        "picked_id": 133,
+        "picked_content": "我最爱吃狮子头。",
+        "margin": 0.023359,
+        "top_score": 0.182169,
+        "picked_correct": true
+      },
+      "oracle_key": {
+        "picked_id": 133,
+        "picked_correct": true,
+        "top_overlap": 0.5714
+      }
+    },
+    {
+      "id": "X098",
+      "source": "extension",
+      "kind": "city",
+      "n_events": 2,
+      "told": [
+        "我住在自贡。",
+        "地铁上被人踩了一脚。"
+      ],
+      "ask": "我住哪？",
+      "correct_event_id": 136,
+      "full_key": {
+        "picked_id": 137,
+        "picked_content": "地铁上被人踩了一脚。",
+        "margin": 0.02025,
+        "top_score": 0.177981,
+        "picked_correct": false
+      },
+      "region0_key": {
+        "picked_id": 137,
+        "picked_content": "地铁上被人踩了一脚。",
+        "margin": 0.017694,
+        "top_score": 0.18891,
+        "picked_correct": false
+      },
+      "oracle_key": {
+        "picked_id": 136,
+        "picked_correct": true,
+        "top_overlap": 0.5
+      }
+    },
+    {
+      "id": "X100",
+      "source": "extension",
+      "kind": "project",
+      "n_events": 2,
+      "told": [
+        "我的项目叫知秋。",
+        "简述一下光合作用的过程。"
+      ],
+      "ask": "我的项目叫什么？",
+      "correct_event_id": 139,
+      "full_key": {
+        "picked_id": 139,
+        "picked_content": "我的项目叫知秋。",
+        "margin": 0.024055,
+        "top_score": 0.160389,
+        "picked_correct": true
+      },
+      "region0_key": {
+        "picked_id": 139,
+        "picked_content": "我的项目叫知秋。",
+        "margin": 0.029319,
+        "top_score": 0.174181,
+        "picked_correct": true
+      },
+      "oracle_key": {
+        "picked_id": 139,
+        "picked_correct": true,
+        "top_overlap": 0.625
+      }
+    },
+    {
+      "id": "X104",
+      "source": "extension",
+      "kind": "dish",
+      "n_events": 2,
+      "told": [
+        "我最爱吃夫妻肺片。",
+        "说说潮汐是怎么形成的。"
+      ],
+      "ask": "我最爱吃什么？",
+      "correct_event_id": 142,
+      "full_key": {
+        "picked_id": 142,
+        "picked_content": "我最爱吃夫妻肺片。",
+        "margin": 0.003017,
+        "top_score": 0.165519,
+        "picked_correct": true
+      },
+      "region0_key": {
+        "picked_id": 142,
+        "picked_content": "我最爱吃夫妻肺片。",
+        "margin": 0.012955,
+        "top_score": 0.176868,
+        "picked_correct": true
+      },
+      "oracle_key": {
+        "picked_id": 142,
+        "picked_correct": true,
+        "top_overlap": 0.5714
+      }
+    }
+  ]
+}

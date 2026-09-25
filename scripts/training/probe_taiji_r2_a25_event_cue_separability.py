@@ -43,11 +43,32 @@ for entry in (PROJECT_ROOT, PROJECT_ROOT / "scripts" / "training"):
         sys.path.insert(0, str(entry))
 
 MANIFEST = PROJECT_ROOT / "plans/manifests/cap0_eval_set_v2.json"
+#: 扩展集（104 题，实体与评价集/训练表双不相交）——§13 说选择的价格是 **+17/48**，
+#: 但那个数是在"替它挑对"的上界上量的；本件要回答的是"免训练的键能挑对多少"。
+SURFACE_REPORT = PROJECT_ROOT / "reports/taiji_r2_copy_surface_extension_20260925.json"
+SURFACE_MANIFEST = PROJECT_ROOT / "plans/manifests/r2_copy_surface_extension_v1.json"
 MAX_REPLY_BYTES = 64
 
 
 def _sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def extension_selection_items(arm: int = 0) -> list[tuple[str, dict[str, Any]]]:
+    """扩展集里**库里确有 ≥2 条告知、且挂了电路仍未命中**的题——选择侧的真分母。
+
+    只有一条告知的题（`given_then_ask`）不进来：那种库没有可挑的第二个事件，
+    把它们算进分母就是把"无需选择"混进"选择失败"（§9 的总分就是这么被摊平的）。
+    """
+    payload = json.loads(SURFACE_MANIFEST.read_text(encoding="utf-8"))
+    items = {str(item["id"]): item for item in payload["dimensions"]["X"]["items"]}
+    data = json.loads(SURFACE_REPORT.read_text(encoding="utf-8"))
+    misses = {str(row["id"]) for row in data["treated_arms"][arm]["rows"] if not bool(row["hit"])}
+    return [
+        (item_id, items[item_id])
+        for item_id in sorted(misses)
+        if item_id in items and len(items[item_id]["turns"]) >= 3
+    ]
 
 
 def _slice_regions(cue: torch.Tensor, region_sizes: tuple[int, ...]) -> torch.Tensor:
@@ -91,6 +112,15 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--checkpoint", default="checkpoints/seed_beta.pt")
     parser.add_argument("--items", type=int, default=16, help="取 D 维多轮题的前 N 题")
+    parser.add_argument(
+        "--source",
+        choices=("cap-dim", "extension"),
+        default="cap-dim",
+        help="cap-dim＝§9 那 16 题；extension＝扩展集里库里≥2条告知且挂电路仍未命中的题",
+    )
+    parser.add_argument(
+        "--arm", type=int, default=0, help="extension 档取哪一臂的未命中清单（0＝seed-A）"
+    )
     parser.add_argument("--out-report", default=None)
     args = parser.parse_args()
 
@@ -109,17 +139,29 @@ def main() -> int:
     region_sizes = tuple(int(size) for size in substrate.config.region_sizes)
 
     items = load_items()
-    multi_turn = [
-        (item_id, item)
-        for item_id, item in sorted(items.items())
-        if item["dimension"] == "D" and len(item.get("turns") or []) >= 2 and copyable_tokens(item)
-    ][: args.items]
+    if args.source == "extension":
+        multi_turn = extension_selection_items(args.arm)
+    else:
+        multi_turn = [
+            (item_id, item)
+            for item_id, item in sorted(items.items())
+            if item["dimension"] == "D"
+            and len(item.get("turns") or []) >= 2
+            and copyable_tokens(item)
+        ][: args.items]
 
     rows: list[dict[str, Any]] = []
     for item_id, item in multi_turn:
         turns = [str(turn) for turn in item["turns"]]
         ask = turns[-1]
         told = turns[:-1]
+        tokens = list(copyable_tokens(item))
+        bearers = [turn for turn in told if any(token in turn for token in tokens)]
+        if args.source == "extension" and (not bearers or bearers[0] != told[0]):
+            #: 本件的"正确事件"＝第一条含可复制答案词的告知。扩展集的形状是
+            #: tell→distractor→ask，所以它就是 `told[0]`——**断言而不是假设**：
+            #: 题面形状一变，"挑对/挑错"的分母会悄悄错掉。
+            raise AssertionError(f"{item_id}: 含答案词的告知不是第一条，选择分母失效")
         history: list[tuple[str, str]] = []
         for index, turn in enumerate(told):
             record_told_history(
@@ -178,6 +220,8 @@ def main() -> int:
         rows.append(
             {
                 "id": item_id,
+                "source": args.source,
+                "kind": item.get("kind"),
                 "n_events": len(events),
                 "told": told,
                 "ask": ask,
@@ -202,10 +246,34 @@ def main() -> int:
         values = [row[key]["margin"] for row in rows if row[key]["margin"] is not None]
         return None if not values else round(statistics.median(values), 6)
 
+    def _by_stratum() -> dict[str, dict[str, float]]:
+        """§13 预登记的判读线：**只按 kind 分层看，不看总分**。
+        §9 那次三岔口一支没命中，就是因为总分把"字面重叠能救的族"和"间接指代"混在了一起。
+        """
+        strata: dict[str, list[dict[str, Any]]] = {}
+        for row in rows:
+            strata.setdefault(str(row.get("kind") or "unknown"), []).append(row)
+        return {
+            kind: {
+                "n": len(group),
+                "full": round(
+                    sum(1 for r in group if r["full_key"]["picked_correct"]) / len(group), 4
+                ),
+                "region0": round(
+                    sum(1 for r in group if r["region0_key"]["picked_correct"]) / len(group), 4
+                ),
+                "overlap": round(
+                    sum(1 for r in group if r["oracle_key"]["picked_correct"]) / len(group), 4
+                ),
+            }
+            for kind, group in sorted(strata.items())
+        }
+
     verdict = {
         "full_key_top1_rate": _rate("full_key"),
         "region0_key_top1_rate": _rate("region0_key"),
         "oracle_key_top1_rate": _rate("oracle_key"),
+        "by_kind": _by_stratum(),
         "margin_median_full": _median_margin("full_key"),
         "margin_median_region0": _median_margin("region0_key"),
         "per_item_margins_full": [row["full_key"]["margin"] for row in rows],
@@ -221,6 +289,8 @@ def main() -> int:
             "下一案改测逐答案步 cue）"
         ),
         "checkpoint": args.checkpoint,
+        "source": args.source,
+        "arm": args.arm if args.source == "extension" else None,
         "base_sha256_unchanged": _sha256(checkpoint) == sha_before,
         "items": len(rows),
         "summary": verdict,
@@ -241,11 +311,17 @@ def main() -> int:
         json.dumps(
             {
                 "items": len(rows),
+                "source": args.source,
                 "full": verdict["full_key_top1_rate"],
                 "region0": verdict["region0_key_top1_rate"],
                 "oracle": verdict["oracle_key_top1_rate"],
                 "base_unchanged": report["base_sha256_unchanged"],
-                "out": out.relative_to(PROJECT_ROOT).as_posix(),
+                "by_kind": verdict["by_kind"],
+                "out": (
+                    out.relative_to(PROJECT_ROOT).as_posix()
+                    if out.is_relative_to(PROJECT_ROOT)
+                    else str(out)
+                ),
             }
         )
     )
