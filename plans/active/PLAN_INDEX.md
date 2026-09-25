@@ -34,7 +34,7 @@
 |---|---|---|
 | M1–M4 | 早期里程碑 | ✅ 已完成（详见 01_SCOPE_AND_PHASES） |
 | **M5** | 限定退出 | ✅ **2026-09-20 批准落盘**（[批准书](../reference/M5_EXIT_APPROVAL_20260920.md)） |
-| **M6** | **产品交付（当前大阶段）** | 🔄 **界面载体＝`taiji-harness/`**（dsh 整仓 fork）；原 `desktop-electron/`＋`frontend/`＋`desktop/` 与发布链 **2026-09-23 随裁决 6 退役**（G3 通过后删旧线）。里程碑：**G1 ✓ G2 ✓（含 G2b–G2h 修复轮）G3 ✓**（`dsh-llm-taiji` 硬接 8000，真机回合由 Taiji 应答）→ **G4 进行中**（六步全落地；判据①②④达成、③挂账待裁定）→ **G5 交付**（web 先行，客户端版后做） |
+| **M6** | **产品交付（当前大阶段）** | 🔄 **界面载体＝`taiji-harness/`**（dsh 整仓 fork）；原 `desktop-electron/`＋`frontend/`＋`desktop/` 与发布链 **2026-09-23 随裁决 6 退役**（G3 通过后删旧线）。里程碑：**G1 ✓ G2 ✓（含 G2b–G2h 修复轮）G3 ✓**（`dsh-llm-taiji` 硬接 8000，真机回合由 Taiji 应答）→ **G4 进行中**（六步全落地；判据①②④⑤⑥ 已取到本轮读数（2026-09-26：①四连 rc 全 0、②③ 44 叶 40 绿、⑤ 真机 UI 三取数、⑥ lint 与基线一致），**判据③ 真机训练回合挂账待裁定**）→ **G5 交付**（web 先行，客户端版后做；**2026-09-26 已出只读就绪清点 [G5 就绪清点](../reference/TAIJI_G5_READINESS_20260926.md)**：打包机制存在但未实跑；装机默认 provider 实测为 `deepseek-official/deepseek-flash`（`packages/bundle/base/cordis.patch.yml:82-86`）而**非 Taiji**，改它属产品默认变更；我方六包只在 `base`＋`web-app` 装配里，桌面 bundle 链为 0） |
 
 ### M6 开放项（2026-09-25 就地修订；细节与读数在 03 §5.7 的 Taiji Harness 活动卡）
 
