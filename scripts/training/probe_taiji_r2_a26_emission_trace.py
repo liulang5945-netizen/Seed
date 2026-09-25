@@ -227,9 +227,18 @@ def _classify(rows: list[dict[str, Any]]) -> str:
     best_mass = max(float(row["copy_mass_on_target"]) for row in rows)
     if max(gates) < GATE_EPS and any(forced_hits):
         return "gate_closed"  # 门基本没开，但强行全开就命中 ⇒ 问题在开关的学习
-    if not any(aimed) and best_mass < 0.2:
-        return "address_miss"  # copy 分布自己就指不到目标字节（含"门没开且全开也没用"）
-    return "emission_loses"  # copy 指对了/有质量，但最终 argmax 仍被词汇 logits 压住
+    #: `emission_loses` 必须有**正面证据**：某一步 copy 指对了目标字节，最终 argmax 却不是它。
+    #: 上一版把这条写成了兜底分支（"不是纯指错就归发射被压"），于是 3 道只有 1–2 步指对的题
+    #: 被标成 `emission_loses`——而它们的指对步全都 argmax==target（p_copy=1.0 且真发出了），
+    #: 等于**没有任何"被词汇压住"的证据**。分诊标签把结论带偏过一次，这里按证据收紧。
+    suppressed = [row["copy_top_byte"] == row["target_byte"] and not row["emitted"] for row in rows]
+    if any(suppressed):
+        return "emission_loses"  # copy 指对了却没发出 ⇒ 发射混合被词汇 logits 压住
+    if not any(aimed):
+        return "address_miss"  # 一步都没指对过（含"门没开且全开也没用"这一子类）
+    #: 有指对步、却从没出现"指对而不发出" ⇒ 症结是**走不稳**（逐字节续接时掉出目标串），
+    #: 不是发射侧被压。这一类此前被兜底分支错归，是本轮读数里最值得记的一次自我纠正。
+    return "continuation_slips"
 
 
 def main() -> int:
@@ -325,7 +334,11 @@ def main() -> int:
                 "classes": counts,
                 "chain_identical_all": chain_all,
                 "base_unchanged": report["base_sha256_unchanged"],
-                "out": out.relative_to(PROJECT_ROOT).as_posix(),
+                "out": (
+                    out.relative_to(PROJECT_ROOT).as_posix()
+                    if out.is_relative_to(PROJECT_ROOT)
+                    else str(out)
+                ),
             }
         )
     )

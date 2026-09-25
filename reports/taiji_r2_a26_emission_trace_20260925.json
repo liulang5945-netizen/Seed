@@ -1,0 +1,496 @@
+{
+  "format": "taiji-r2-a26-emission-trace-v1",
+  "prereg": "plans/reference/SPEC-A-17_r2_a2_3b_format_align_prereg_20260925.md §10",
+  "failing_items": [
+    "D03",
+    "D05",
+    "D10",
+    "D13",
+    "D19",
+    "D20"
+  ],
+  "chain_identical_all": true,
+  "class_counts": {
+    "address_miss": 3,
+    "emission_loses": 3
+  },
+  "gate_abs_median": 42.58435,
+  "copy_mass_on_target_median": 0.021948500000000003,
+  "per_item": {
+    "D03": {
+      "told": "我偏好简短回答。",
+      "answer": "简短",
+      "store_contents": [
+        "我偏好简短回答。"
+      ],
+      "reconstructed_answer": "健��",
+      "contradicts_failure_list": false,
+      "chain_identical": true,
+      "steps": 6,
+      "class": "address_miss",
+      "trace": [
+        {
+          "step": 0,
+          "argmax_byte": 229,
+          "target_byte": 231,
+          "copy_top_byte": 229,
+          "copy_mass_on_target": 0.000879,
+          "gate_value": 96.2771,
+          "p_with_copy": 0.0,
+          "p_vocab_only": 0.01247776,
+          "forced_open_would_hit": false,
+          "emitted": false
+        },
+        {
+          "step": 1,
+          "argmax_byte": 129,
+          "target_byte": 174,
+          "copy_top_byte": 129,
+          "copy_mass_on_target": 0.009277,
+          "gate_value": 69.0902,
+          "p_with_copy": 0.0,
+          "p_vocab_only": 0.07984214,
+          "forced_open_would_hit": false,
+          "emitted": false
+        },
+        {
+          "step": 2,
+          "argmax_byte": 165,
+          "target_byte": 128,
+          "copy_top_byte": 165,
+          "copy_mass_on_target": 0.014319,
+          "gate_value": 38.4383,
+          "p_with_copy": 4.041e-05,
+          "p_vocab_only": 0.00219911,
+          "forced_open_would_hit": false,
+          "emitted": false
+        },
+        {
+          "step": 3,
+          "argmax_byte": 189,
+          "target_byte": 231,
+          "copy_top_byte": 189,
+          "copy_mass_on_target": 0.024618,
+          "gate_value": 58.2719,
+          "p_with_copy": 0.0,
+          "p_vocab_only": 0.02808096,
+          "forced_open_would_hit": false,
+          "emitted": false
+        },
+        {
+          "step": 4,
+          "argmax_byte": 231,
+          "target_byte": 159,
+          "copy_top_byte": 231,
+          "copy_mass_on_target": 0.080644,
+          "gate_value": 42.5526,
+          "p_with_copy": 1.06e-06,
+          "p_vocab_only": 0.00162487,
+          "forced_open_would_hit": false,
+          "emitted": false
+        },
+        {
+          "step": 5,
+          "argmax_byte": 159,
+          "target_byte": 173,
+          "copy_top_byte": 174,
+          "copy_mass_on_target": 0.112062,
+          "gate_value": 22.3364,
+          "p_with_copy": 0.00025862,
+          "p_vocab_only": 0.00253443,
+          "forced_open_would_hit": false,
+          "emitted": false
+        }
+      ],
+      "id": "D03"
+    },
+    "D05": {
+      "told": "我的项目叫 Seed。",
+      "answer": "Seed",
+      "store_contents": [
+        "我的项目叫 Seed。"
+      ],
+      "reconstructed_answer": "� Se",
+      "contradicts_failure_list": false,
+      "chain_identical": true,
+      "steps": 4,
+      "class": "address_miss",
+      "trace": [
+        {
+          "step": 0,
+          "argmax_byte": 230,
+          "target_byte": 83,
+          "copy_top_byte": 230,
+          "copy_mass_on_target": 0.005016,
+          "gate_value": 110.4372,
+          "p_with_copy": 0.0,
+          "p_vocab_only": 3e-06,
+          "forced_open_would_hit": false,
+          "emitted": false
+        },
+        {
+          "step": 1,
+          "argmax_byte": 32,
+          "target_byte": 101,
+          "copy_top_byte": 32,
+          "copy_mass_on_target": 0.013364,
+          "gate_value": 50.5452,
+          "p_with_copy": 0.0,
+          "p_vocab_only": 1.085e-05,
+          "forced_open_would_hit": false,
+          "emitted": false
+        },
+        {
+          "step": 2,
+          "argmax_byte": 83,
+          "target_byte": 101,
+          "copy_top_byte": 83,
+          "copy_mass_on_target": 0.024035,
+          "gate_value": 32.215,
+          "p_with_copy": 1e-08,
+          "p_vocab_only": 0.00018727,
+          "forced_open_would_hit": false,
+          "emitted": false
+        },
+        {
+          "step": 3,
+          "argmax_byte": 101,
+          "target_byte": 100,
+          "copy_top_byte": 101,
+          "copy_mass_on_target": 0.111136,
+          "gate_value": 42.6161,
+          "p_with_copy": 1.898e-05,
+          "p_vocab_only": 0.00337666,
+          "forced_open_would_hit": false,
+          "emitted": false
+        }
+      ],
+      "id": "D05"
+    },
+    "D10": {
+      "told": "不对，我叫小林。",
+      "answer": "小林",
+      "store_contents": [
+        "不对，我叫小林。"
+      ],
+      "reconstructed_answer": "对，",
+      "contradicts_failure_list": false,
+      "chain_identical": true,
+      "steps": 6,
+      "class": "emission_loses",
+      "trace": [
+        {
+          "step": 0,
+          "argmax_byte": 229,
+          "target_byte": 229,
+          "copy_top_byte": 229,
+          "copy_mass_on_target": 0.719888,
+          "gate_value": 94.9251,
+          "p_with_copy": 1.0,
+          "p_vocab_only": 0.31281832,
+          "forced_open_would_hit": true,
+          "emitted": true
+        },
+        {
+          "step": 1,
+          "argmax_byte": 175,
+          "target_byte": 176,
+          "copy_top_byte": 175,
+          "copy_mass_on_target": 0.056196,
+          "gate_value": 32.2359,
+          "p_with_copy": 0.0,
+          "p_vocab_only": 0.05069088,
+          "forced_open_would_hit": false,
+          "emitted": false
+        },
+        {
+          "step": 2,
+          "argmax_byte": 185,
+          "target_byte": 143,
+          "copy_top_byte": 185,
+          "copy_mass_on_target": 0.006641,
+          "gate_value": 34.0708,
+          "p_with_copy": 4.65e-06,
+          "p_vocab_only": 0.00706487,
+          "forced_open_would_hit": false,
+          "emitted": false
+        },
+        {
+          "step": 3,
+          "argmax_byte": 239,
+          "target_byte": 230,
+          "copy_top_byte": 239,
+          "copy_mass_on_target": 0.013636,
+          "gate_value": 39.002,
+          "p_with_copy": 0.00081304,
+          "p_vocab_only": 0.28929836,
+          "forced_open_would_hit": false,
+          "emitted": false
+        },
+        {
+          "step": 4,
+          "argmax_byte": 188,
+          "target_byte": 158,
+          "copy_top_byte": 188,
+          "copy_mass_on_target": 0.02281,
+          "gate_value": 48.2184,
+          "p_with_copy": 0.0,
+          "p_vocab_only": 0.00051269,
+          "forced_open_would_hit": false,
+          "emitted": false
+        },
+        {
+          "step": 5,
+          "argmax_byte": 140,
+          "target_byte": 151,
+          "copy_top_byte": 140,
+          "copy_mass_on_target": 0.014544,
+          "gate_value": 47.7205,
+          "p_with_copy": 0.0,
+          "p_vocab_only": 0.00694255,
+          "forced_open_would_hit": false,
+          "emitted": false
+        }
+      ],
+      "id": "D10"
+    },
+    "D13": {
+      "told": "其实我负责测试。",
+      "answer": "测试",
+      "store_contents": [
+        "其实我负责测试。"
+      ],
+      "reconstructed_answer": "负负",
+      "contradicts_failure_list": false,
+      "chain_identical": true,
+      "steps": 6,
+      "class": "emission_loses",
+      "trace": [
+        {
+          "step": 0,
+          "argmax_byte": 232,
+          "target_byte": 230,
+          "copy_top_byte": 232,
+          "copy_mass_on_target": 0.12921,
+          "gate_value": 95.9955,
+          "p_with_copy": 0.0,
+          "p_vocab_only": 0.14306173,
+          "forced_open_would_hit": false,
+          "emitted": false
+        },
+        {
+          "step": 1,
+          "argmax_byte": 180,
+          "target_byte": 181,
+          "copy_top_byte": 175,
+          "copy_mass_on_target": 0.019144,
+          "gate_value": 46.4663,
+          "p_with_copy": 0.0,
+          "p_vocab_only": 0.00557845,
+          "forced_open_would_hit": false,
+          "emitted": false
+        },
+        {
+          "step": 2,
+          "argmax_byte": 159,
+          "target_byte": 139,
+          "copy_top_byte": 159,
+          "copy_mass_on_target": 0.012271,
+          "gate_value": 32.4989,
+          "p_with_copy": 0.0,
+          "p_vocab_only": 0.01524711,
+          "forced_open_would_hit": false,
+          "emitted": false
+        },
+        {
+          "step": 3,
+          "argmax_byte": 232,
+          "target_byte": 232,
+          "copy_top_byte": 232,
+          "copy_mass_on_target": 0.79862,
+          "gate_value": 74.2415,
+          "p_with_copy": 1.0,
+          "p_vocab_only": 0.01362254,
+          "forced_open_would_hit": true,
+          "emitted": true
+        },
+        {
+          "step": 4,
+          "argmax_byte": 180,
+          "target_byte": 175,
+          "copy_top_byte": 175,
+          "copy_mass_on_target": 0.298206,
+          "gate_value": 40.0438,
+          "p_with_copy": 0.00070394,
+          "p_vocab_only": 0.38071188,
+          "forced_open_would_hit": false,
+          "emitted": false
+        },
+        {
+          "step": 5,
+          "argmax_byte": 159,
+          "target_byte": 149,
+          "copy_top_byte": 159,
+          "copy_mass_on_target": 0.006977,
+          "gate_value": 18.5755,
+          "p_with_copy": 2e-08,
+          "p_vocab_only": 0.000593,
+          "forced_open_would_hit": false,
+          "emitted": false
+        }
+      ],
+      "id": "D13"
+    },
+    "D19": {
+      "told": "我的项目叫 Seed。",
+      "answer": "Seed",
+      "store_contents": [
+        "我的项目叫 Seed。"
+      ],
+      "reconstructed_answer": "� Se",
+      "contradicts_failure_list": false,
+      "chain_identical": true,
+      "steps": 4,
+      "class": "address_miss",
+      "trace": [
+        {
+          "step": 0,
+          "argmax_byte": 230,
+          "target_byte": 83,
+          "copy_top_byte": 230,
+          "copy_mass_on_target": 0.00607,
+          "gate_value": 101.8897,
+          "p_with_copy": 0.0,
+          "p_vocab_only": 2.87e-06,
+          "forced_open_would_hit": false,
+          "emitted": false
+        },
+        {
+          "step": 1,
+          "argmax_byte": 32,
+          "target_byte": 101,
+          "copy_top_byte": 32,
+          "copy_mass_on_target": 0.014505,
+          "gate_value": 48.1586,
+          "p_with_copy": 0.0,
+          "p_vocab_only": 2.28e-05,
+          "forced_open_would_hit": false,
+          "emitted": false
+        },
+        {
+          "step": 2,
+          "argmax_byte": 83,
+          "target_byte": 101,
+          "copy_top_byte": 83,
+          "copy_mass_on_target": 0.02752,
+          "gate_value": 22.9633,
+          "p_with_copy": 1.38e-06,
+          "p_vocab_only": 0.00046044,
+          "forced_open_would_hit": false,
+          "emitted": false
+        },
+        {
+          "step": 3,
+          "argmax_byte": 101,
+          "target_byte": 100,
+          "copy_top_byte": 101,
+          "copy_mass_on_target": 0.098936,
+          "gate_value": 37.897,
+          "p_with_copy": 1.792e-05,
+          "p_vocab_only": 0.0065084,
+          "forced_open_would_hit": false,
+          "emitted": false
+        }
+      ],
+      "id": "D19"
+    },
+    "D20": {
+      "told": "我说过我喜欢绿茶。",
+      "answer": "绿茶",
+      "store_contents": [
+        "我说过我喜欢绿茶。"
+      ],
+      "reconstructed_answer": "说说",
+      "contradicts_failure_list": false,
+      "chain_identical": true,
+      "steps": 6,
+      "class": "emission_loses",
+      "trace": [
+        {
+          "step": 0,
+          "argmax_byte": 232,
+          "target_byte": 231,
+          "copy_top_byte": 135,
+          "copy_mass_on_target": 0.000141,
+          "gate_value": 94.3889,
+          "p_with_copy": 0.0,
+          "p_vocab_only": 0.02396714,
+          "forced_open_would_hit": false,
+          "emitted": false
+        },
+        {
+          "step": 1,
+          "argmax_byte": 175,
+          "target_byte": 187,
+          "copy_top_byte": 175,
+          "copy_mass_on_target": 0.011293,
+          "gate_value": 34.3793,
+          "p_with_copy": 0.0,
+          "p_vocab_only": 0.00149746,
+          "forced_open_would_hit": false,
+          "emitted": false
+        },
+        {
+          "step": 2,
+          "argmax_byte": 180,
+          "target_byte": 191,
+          "copy_top_byte": 180,
+          "copy_mass_on_target": 0.091362,
+          "gate_value": 29.7279,
+          "p_with_copy": 1.026e-05,
+          "p_vocab_only": 0.0095962,
+          "forced_open_would_hit": false,
+          "emitted": false
+        },
+        {
+          "step": 3,
+          "argmax_byte": 232,
+          "target_byte": 232,
+          "copy_top_byte": 232,
+          "copy_mass_on_target": 0.415523,
+          "gate_value": 44.5617,
+          "p_with_copy": 1.0,
+          "p_vocab_only": 0.05127192,
+          "forced_open_would_hit": true,
+          "emitted": true
+        },
+        {
+          "step": 4,
+          "argmax_byte": 175,
+          "target_byte": 140,
+          "copy_top_byte": 140,
+          "copy_mass_on_target": 0.318364,
+          "gate_value": 22.0709,
+          "p_with_copy": 0.02537378,
+          "p_vocab_only": 0.00284876,
+          "forced_open_would_hit": false,
+          "emitted": false
+        },
+        {
+          "step": 5,
+          "argmax_byte": 180,
+          "target_byte": 182,
+          "copy_top_byte": 180,
+          "copy_mass_on_target": 0.021087,
+          "gate_value": 23.1309,
+          "p_with_copy": 1.414e-05,
+          "p_vocab_only": 0.02317286,
+          "forced_open_would_hit": false,
+          "emitted": false
+        }
+      ],
+      "id": "D20"
+    }
+  },
+  "base_sha256_unchanged": true
+}
