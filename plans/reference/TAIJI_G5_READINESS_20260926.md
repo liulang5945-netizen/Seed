@@ -18,7 +18,7 @@
 
 ## 2 · 与 G5 直接相关的本轮欠账（已消掉）
 
-* **doc-sync 全量 44 叶重跑＝40 绿／4 红**（`0a5ba891`／`61040729`）；红＝`dependency-catalog` locale 假红、持久化两条等格式 5 裁定、一条 Windows 符号链接权限用例。
+* **doc-sync 全量 43 叶重跑＝39 绿／4 红**（`0a5ba891`／`61040729`）；红＝`dependency-catalog` locale 假红、持久化两条等格式 5 裁定、一条 Windows 符号链接权限用例。
 * **我方包 README 骨架 7 份不合规已补齐**（`26539ade`）——这类"包文档不合格"在交付审阅时最容易被点名，且此前被"这叶跑不了"的错判遮着。
 * **判据①（tsc→tsdown 四连）与判据⑥（lint 基线）本轮取到读数**（判据⑥ 7 条 error 全在 `ui-life/src/client/LifePanel.tsx`＝与登记基线一致，无新红）。
 
