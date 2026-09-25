@@ -33,7 +33,7 @@ Session Controller control 流中的一帧：
 `SessionJob` 是浏览器安全类型，与其他 Session Remote 约定一起由 [`packages/api/session-controller/src/types.ts`](../../../../packages/api/session-controller/src/types.ts) 拥有：
 
 ```ts
-import type { JobId } from '@deepseek-ai/dsh-jobs/brand'
+import type { JobId } from '@taiji/dsh-jobs/brand'
 
 export interface SessionJob {
   id: JobId

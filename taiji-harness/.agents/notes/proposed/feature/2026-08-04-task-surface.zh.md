@@ -86,7 +86,7 @@ Task Surface 服务通过受 schema 校验的配置定义限制。初始默认�
 浏览器安全的领域包从 `@deepseek-ai/dsh-brand` 以仅类型方式导入 `Branded` 原语，并拥有全部三个 Task Surface ID。根据[规范工具输出约定](../../implemented/architecture/2026-07-20-canonical-tool-output-contract.zh.md)，规范值仅存在于本次执行中。因此，回放通过 `output.presentationMeta(args, value)` 将以下带标签的载荷随 `tool/result.meta` 一并持久化：
 
 ```ts
-import type { Branded } from '@deepseek-ai/dsh-brand'
+import type { Branded } from '@taiji/dsh-brand'
 
 type TaskSurfaceId = Branded<'TaskSurfaceId'>
 type TaskSurfaceSubmissionId = Branded<'TaskSurfaceSubmissionId'>

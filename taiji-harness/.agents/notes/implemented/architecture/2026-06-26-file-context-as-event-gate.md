@@ -77,7 +77,7 @@ These events carry existing `dsh-fs` vocabulary (`FsTarget`, `FsVersion`, `FsObs
 The actor is typed `object` in `dsh-fs` — a pure opaque carrier the provider contract never reads or narrows. The owner-derivation (`actor.agent?.session`) and the `{ agent?: { session? } }` structural shape stay entirely inside `dsh-fs-observation-policy`, which narrows the `object` actor to that shape in its listeners. `dsh-fs` owns the event names and the fs vocabulary; it does NOT own the policy layer's runtime owner structure.
 
 ```ts
-import type { FsObservation, FsTarget, FsVersion, FsWriteIntent } from '@deepseek-ai/dsh-fs'
+import type { FsObservation, FsTarget, FsVersion, FsWriteIntent } from '@taiji/dsh-fs'
 
 interface Events {
   /**

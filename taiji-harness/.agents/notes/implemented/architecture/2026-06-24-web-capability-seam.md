@@ -77,7 +77,7 @@ Provider packages depend only on `dsh-web` and Cordis. They own credentials, end
 `ctx.web` is a provider registry plus a provider-selecting execution API. The registry half stays close to `LlmRuntime`: a `Map<id, provider>` per capability kind, `registerSearchProvider` / `registerFetchProvider` methods that return disposers, duplicate ids that throw `WebError`, and execution-time resolution that throws when the selected provider is absent or unusable. The authoritative signatures live in `packages/web/web/src/types.ts`; the seam's shape:
 
 ```ts
-import type { WebFetchRequest, WebFetchResult, WebSearchRequest, WebSearchResult } from '@deepseek-ai/dsh-web'
+import type { WebFetchRequest, WebFetchResult, WebSearchRequest, WebSearchResult } from '@taiji/dsh-web'
 
 interface WebSearchProvider {
   readonly id: string

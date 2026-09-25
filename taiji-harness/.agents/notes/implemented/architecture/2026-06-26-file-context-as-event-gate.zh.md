@@ -77,7 +77,7 @@ editText(target: FsTarget, edit: FsEditRequest, expected?: { version: FsVersion 
 actor 在 `dsh-fs` 中类型为 `object`——一个纯粹的不透明载体，提供方约定从不读取或收窄它。owner 的推导（`actor.agent?.session`）和 `{ agent?: { session? } }` 结构形状完全留在 `dsh-fs-observation-policy` 内部，由其在监听器中将 `object` actor 收窄为该形状。`dsh-fs` 拥有事件名和 fs 词汇；它不拥有策略层的运行时 owner 结构。
 
 ```ts
-import type { FsObservation, FsTarget, FsVersion, FsWriteIntent } from '@deepseek-ai/dsh-fs'
+import type { FsObservation, FsTarget, FsVersion, FsWriteIntent } from '@taiji/dsh-fs'
 
 interface Events {
   /**

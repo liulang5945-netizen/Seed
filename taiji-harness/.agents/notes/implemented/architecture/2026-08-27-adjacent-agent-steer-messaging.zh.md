@@ -26,7 +26,7 @@ sibling、自身目标、超过一条边的 ancestor、陈旧 Agent 对象、未
 两个方向使用同一种持久来源。服务从已授权 Agent 推导 `senderSessionId`，并把模型可见内容组装为 `Agent <sender-id> sent a message:`，因此来源信息不会偏离权限。
 
 ```ts
-import type { SessionId } from '@deepseek-ai/dsh-session'
+import type { SessionId } from '@taiji/dsh-session'
 
 interface AgentMessageSource {
   readonly kind: 'agent-message'
