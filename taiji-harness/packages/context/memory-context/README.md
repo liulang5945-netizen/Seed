@@ -17,6 +17,7 @@ Read the Taiji runtime's memory journal back into model requests. This plugin re
 - [Understand the implementation](#understand-the-implementation)
 - [Model Experience](#model-experience)
 - [Known Limitations and Deferred Work](#known-limitations-and-deferred-work)
+- [Dev Note](#dev-note)
 
 -----
 
@@ -84,3 +85,13 @@ The block is a durable user message, so it shifts the message prefix for that tu
 - The last-served-turn memory is in-process: a Host restart forgets it and may recall twice in quick succession.
 - Recall is one HTTP request to `baseURL`; a runtime that is unreachable, slower than `timeoutMs`, or answers a body without the documented entries recalls nothing, warns once per process, and is never retried.
 - The block echoes at most 40 characters of the query and at most `limit` entries; dropped entries are signalled by `truncated=1` rather than named.
+
+<a id="dev-note"></a>
+### Dev Note
+
+<details>
+<summary>Working context for maintainers — click to expand</summary>
+
+Recall runs once per turn and is read-only: this package never writes the journal, which keeps [`@taiji/dsh-session-memory-taiji`](../../session/session-memory-taiji/README.md) the sole owner of which memories exist. It contributes its own `source` kind to durable Session events, so a build that does not know that kind refuses to read a log containing it — treating the key as a local detail is the trap here. The warning budget is one per process rather than one per turn, so a runtime with no memory degrades quietly after the first notice.
+
+</details>

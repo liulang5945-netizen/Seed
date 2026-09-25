@@ -17,6 +17,7 @@ Open the **Life** entry in the Web sidebar to inspect and drive the Taiji local 
 - [Understand the implementation](#understand-the-implementation)
 - [Model Experience](#model-experience)
 - [Known Limitations and Deferred Work](#known-limitations-and-deferred-work)
+- [Dev Note](#dev-note)
 
 -----
 
@@ -56,3 +57,13 @@ None; the page renders for the operator and contributes nothing to any model req
 - Starting a training run picks its datasets from the roster; parameter budget, seed, and symbol cap still use the runtime's defaults and await a form.
 - The knowledge section is read-only, matching the panel's contract; upload, rebuild, and clear belong to the runtime's own surface.
 - The poll interval is displayed but not editable here; it is a property of the controller's configuration.
+
+<a id="dev-note"></a>
+### Dev Note
+
+<details>
+<summary>Working context for maintainers — click to expand</summary>
+
+The panel keeps no copy of a reading: every cell projects the controller's current snapshot frame, and an accepted verb refreshes through the stream rather than updating local state first. A section the runtime did not serve is stated in words instead of rendering zeros, because a stale reading presented as current is the failure this panel exists to avoid.
+
+</details>

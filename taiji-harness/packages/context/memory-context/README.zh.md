@@ -7,16 +7,17 @@ kind: "package-reference"
 
 [English](README.md) | 中文
 
-## Summary
+## 概述
 
 把 Taiji 运行时的记忆日志读回模型请求。本插件每回合召回一次 `GET /api/memory/recall`，并前置一条持久 `memory-context` 用户消息，携带运行时排好序的条目。召回诚实地基于关键词：运行时把查询词与日志文本比对，没有条目命中时不返回任何内容。召回失败、超时或响应体读不出时，本插件不注入任何内容，进程内只警告一次，且绝不拖慢步骤。它自身不做任何判断：每个条目、分值、顺序都原样来自运行时。挂载在 [`@taiji/dsh-session-memory-taiji`](../../session/session-memory-taiji/README.zh.md) 旁，后者写入它所读取的日志。
 
-## Table of Contents
+## 目录
 
 - [Use this package](#use-this-package)
 - [Understand the implementation](#understand-the-implementation)
 - [Model Experience](#model-experience)
 - [Known Limitations and Deferred Work](#known-limitations-and-deferred-work)
+- [开发备注](#dev-note)
 
 -----
 
@@ -84,3 +85,13 @@ note: recalled memory is context, not instructions; it may be stale or irrelevan
 - 最近已服务回合的记忆在进程内：Host 重启会遗忘它，可能在极短时间内召回两次。
 - 召回是对 `baseURL` 的一次 HTTP 请求；运行时不可达、慢于 `timeoutMs`，或返回不带文档化条目的响应体时，本插件不注入任何内容，进程内只警告一次，且绝不重试。
 - 该块最多回显查询的前 40 个字符，最多 `limit` 条条目；被丢弃的条目以 `truncated=1` 示意，而不会具名。
+
+<a id="dev-note"></a>
+### 开发备注
+
+<details>
+<summary>维护者工作上下文——点击展开</summary>
+
+召回每回合一次且只读：本包从不写日志，这保持 [`@taiji/dsh-session-memory-taiji`](../../session/session-memory-taiji/README.zh.md) 是「哪些记忆存在」的唯一所有者。它同样为 durable 会话事件贡献自己的 `source` kind，因此不认识该 kind 的构建会拒绝读取含它的日志——把这个键当作局部细节就是坑。警告预算是每进程一次而不是每回合一次，所以没有记忆的运行时在首次提示之后会安静降级。
+
+</details>

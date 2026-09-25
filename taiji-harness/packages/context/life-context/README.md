@@ -17,6 +17,7 @@ Append the Taiji runtime's life readings to model requests. This plugin mounts b
 - [Understand the implementation](#understand-the-implementation)
 - [Model Experience](#model-experience)
 - [Known Limitations and Deferred Work](#known-limitations-and-deferred-work)
+- [Dev Note](#dev-note)
 
 -----
 
@@ -77,3 +78,13 @@ Readings are durable user messages, so each one stays in the conversation and is
 - The throttle and last-reading memory are in-process: a Host restart forgets them and may inject twice in quick succession.
 - Readings are as fresh as the controller's poll loop; the plugin performs no polling of its own.
 - Injection is global to the Host's agents. Per-agent opt-out would follow the system prompt's scoped registration and is deferred until a consumer needs it.
+
+<a id="dev-note"></a>
+### Dev Note
+
+<details>
+<summary>Working context for maintainers — click to expand</summary>
+
+This package contributes a `source` kind to durable Session events, which makes it a party to a format change rather than a local edit: a build that does not know the kind refuses to read a log containing it unless the event carries `ignorable: true`. Readings are folded in only while the controller's snapshot is served and fresh, and an unreachable runtime omits the contribution entirely — a zero-valued life line presented as current is the reading this package exists to prevent.
+
+</details>

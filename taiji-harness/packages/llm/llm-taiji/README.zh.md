@@ -7,18 +7,18 @@ kind: "package-reference"
 
 [English](README.md) | 中文
 
-## Summary
+## 概述
 
 通过 `taiji-local` 路由接入 Taiji 本地运行时。该运行时是本 fork 自己的语言器官：它以纯文本说话，只提供一次 `POST /api/chat/stream` 调用，并在 `GET /api/health` 上公开自身就绪状态。本适配器把 harness 请求装进这个形状，把运行时的回答作为一个文本块产出，并把其它一切结果——失败帧、非 2xx 响应、不可达端点、不服务的帧——归一化为 Trajectory 能记录的 provider 中性失败。它不做任何质量加工：回答原样透传。本包可与 [DeepSeek](../llm-deepseek/README.zh.md) 和 [pi-ai](../llm-pi-ai/README.zh.md) 适配器同时挂载，部署的默认模型由装配决定。
 
-## Table of Contents
+## 目录
 
 - [使用本包](#use-this-package)
 - [理解实现](#understand-the-implementation)
 - [进一步阅读](#further-exploration)
 - [模型体验](#model-experience)
 - [已知限制与后续工作](#known-limitations-and-deferred-work)
-- [开发者备注](#dev-note)
+- [开发备注](#dev-note)
 
 -----
 
@@ -223,7 +223,7 @@ data: "生成出错: ..."
 - **不产出重放状态**——`finish` 块不携带它，因为运行时的帧里没有任何可供重放的不透明 provider 元数据。
 
 <a id="dev-note"></a>
-### 开发者备注
+### 开发备注
 
 无。
 

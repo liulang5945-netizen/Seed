@@ -7,16 +7,17 @@ kind: "package-reference"
 
 [English](README.md) | 中文
 
-## Summary
+## 概述
 
 点开 Web 侧栏的**生命**入口，检查并驱动 Taiji 本地运行时。六个分区渲染最新读数——来源与新鲜度、生命器官、训练（含检查点清单）、知识库、记忆与巩固产物、宿主投影——并携带控制组：调度启停、强制喂食/睡眠/玩耍，带可勾选数据集名册的训练启动、从任一在列检查点续训、暂停、继续、停止与强制解锁，以及一次巩固 pass。数字全部来自 controller 的快照流；拒绝以 Host 的稳定错误码呈现，绝不吐裸 RPC 文本。
 
-## Table of Contents
+## 目录
 
 - [Use this package](#use-this-package)
 - [Understand the implementation](#understand-the-implementation)
 - [Model Experience](#model-experience)
 - [Known Limitations and Deferred Work](#known-limitations-and-deferred-work)
+- [开发备注](#dev-note)
 
 -----
 
@@ -56,3 +57,13 @@ kind: "package-reference"
 - 启动训练的数据集由面板名册勾选；参数预算、种子与符号上限仍用运行时默认值，表单留待出现消费方再做。
 - 知识分区按面板合同为只读；上传、重建与清除属于运行时自己的表面。
 - 轮询间隔在此只展示不可编辑；它是 controller 配置的属性。
+
+<a id="dev-note"></a>
+### 开发备注
+
+<details>
+<summary>维护者工作上下文——点击展开</summary>
+
+面板不保存任何读数副本：每一格都从 controller 的当前快照帧投影，被接受的动词也是经流刷新，而不是先改本地状态。运行时未服务的分区以文字说明，而不是渲染成零值——把滞后读数呈现为当前值，正是本面板要避开的失败形态。
+
+</details>

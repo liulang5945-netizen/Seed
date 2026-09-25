@@ -7,16 +7,17 @@ kind: "package-reference"
 
 [English](README.md) | 中文
 
-## Summary
+## 概述
 
 把 Taiji 运行时的生命读数并入模型请求。本插件挂载在 [`@taiji/dsh-api-life-controller`](../../api/life-controller/README.zh.md) 旁，把它的快照流变成两处上下文贡献：系统提示里的一段静态策略，以及每个合格步骤追加的一条持久 `life-state` 用户消息，携带需求、驱力、训练状态与知识库规模。读数有节流、有单行预算，runtime 不可达或快照过期时整块省略。它自身不做任何判断：每个数字都原样来自运行时器官。
 
-## Table of Contents
+## 目录
 
 - [Use this package](#use-this-package)
 - [Understand the implementation](#understand-the-implementation)
 - [Model Experience](#model-experience)
 - [Known Limitations and Deferred Work](#known-limitations-and-deferred-work)
+- [开发备注](#dev-note)
 
 -----
 
@@ -77,3 +78,13 @@ life-state age=5s source=native tick=41 mode=wake needs[curiosity=42.5 fatigue=1
 - 节流与最近读数记忆都在进程内：Host 重启会遗忘它们，可能在极短时间内注入两次。
 - 读数的新鲜度以 controller 的轮询循环为准；本插件自身不做轮询。
 - 注入对 Host 的所有 agent 全局生效。按 agent 退出可以走 system prompt 的 scoped 注册，留待出现消费方再做。
+
+<a id="dev-note"></a>
+### 开发备注
+
+<details>
+<summary>维护者工作上下文——点击展开</summary>
+
+本包为 durable 会话事件贡献了一个 `source` kind，这使它成为一次格式变更的当事方，而非一处局部改动：不认识该 kind 的构建会拒绝读取含它的日志，除非事件带 `ignorable: true`。读数只在 controller 快照被服务且新鲜时折入，运行时不可达时整块省略——把零值的生命行呈现为当前值，正是本包要防的那类读数。
+
+</details>
