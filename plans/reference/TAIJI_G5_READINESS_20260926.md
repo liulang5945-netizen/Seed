@@ -38,11 +38,28 @@
 
 **因此 D3 依赖 D2，三条裁定不是并列的**：Taiji 路由按合同不需要凭据，但它要求本机 8000 端口的 python 运行时在跑（`llm-taiji` 走 HTTP，未就绪时按设计不注册 adapter）。⇒ **在"运行时怎么随包"（D2）定下来之前，把装机默认改成 Taiji 只会把"要 key 才能答"换成"要另起进程才能答"**，两者都不是"装起即用"。所以合理排期是先裁 D2、再随它一起裁 D3，而 D1（打包实跑）可以现在就做以拿最便宜的失败信号。
 
-**仍待做的一次真机复验**（不需裁定，但**需要 pnpm 与一次前端构建**）：干净 profile 起一次 web，读 `ctx.agentDefaultModel.currentSelection()` 与 `listProviders()` 的交集，确认上面这条静态结论在真装配里成立（默认=可输入、首轮请求=报缺 key）。**本轮试过一条捷径并失败**：`vitest.e2e.config.ts` 的 `include` 只有 `packages/*/*/tests/**/*.e2e.ts` 与 `apps/cli/tests/**/*.e2e.ts` ⇒ 直接跑 `apps/web/tests/default-model.e2e.ts` 报 `No test files found`；该文件属 `test:web:built` 那条 lane（要先 `pnpm run build` 出 web dist）⇒ **这条复验并入 §4-R1（在有 pnpm 的机器上做）**，不在本机强跑。因此 §3.5 的结论当前标注为**静态读码所得（行号可查）**，不是真机读数。
+**仍待做的一次真机复验**（不需裁定，需要一次前端构建＋一次本机启动）：干净 profile 起一次 web，读 `ctx.agentDefaultModel.currentSelection()` 与 `listProviders()` 的交集，确认上面这条静态结论在真装配里成立（默认=可输入、首轮请求=报缺 key）。**本轮试过一条捷径并失败**：`vitest.e2e.config.ts` 的 `include` 只有 `packages/*/*/tests/**/*.e2e.ts` 与 `apps/cli/tests/**/*.e2e.ts` ⇒ 直接跑 `apps/web/tests/default-model.e2e.ts` 报 `No test files found`；该文件属 `test:web:built` 那条 lane（要先 `pnpm run build` 出 web dist）。**这一段原先写的"并入 §4-R1、在有 pnpm 的机器上做"是错的**：那来自同一天被否证的"本机跑不了 pnpm"错误前提（corepack 0.34.6 可跑锁定的 pnpm 11.7.0，本轮已用它实跑构建与安装，见 08 §6 ④），所以这条复验的技术前提本机具备，**不并入 R1**；它剩下的唯一门槛是要不要在这台共享 worktree 上起一次长驻服务。因此 §3.5 的结论当前标注为**静态读码所得（行号可查）**，不是真机读数。
 
-## 4 · 需要所有者拍板的三条（按能声称的最强结论排）
+**2026-09-26 同轮补：这条结论现在有三条互相独立的静态支撑，而且"怎么真机验"也定了**：
+① 装配里有这个适配器——`packages/bundle/base/cordis.patch.yml:524-525` 是真挂载条目
+（`- id: llm-deepseek` / `name: '@taiji/dsh-llm-deepseek'`），其上方注释写明"键与端点都不内联，
+按请求从 `llm-deepseek:` 设置节＋凭据存储解析"；
+② 注册无条件——`packages/llm/llm-deepseek/src/index.ts:114` 在 `apply` 里直接
+`ctx.llm.registerAdapter([PROVIDER], adapter)`，前面没有凭据判断；
+③ 凭据按请求解析——同文件 `:65-81` 拿不到 key 时抛可操作文案。
+⇒ "装机默认**可输入、首发报缺 key**"这条判断的证据链是完整的，只差一次真实启动。
 
-* **R1｜打包实跑在哪台机器**：`package:desktop:win:x64` 需要 pnpm 与桌面工具链。可选：① 本机装 pnpm 后我跑（会给本机加全局依赖，且要下载 Electron 等）；② 所有者在能跑的机器上执行并把产物/日志回传；③ 先只跑 `build:desktop`（不签名）拿"能构建"的证据，再谈装机即用。**推荐 ③→②**：先要最便宜的失败信号。
+**为什么不能拿现有测试 lane 代替真机**：`apps/web/tests/scaffold.ts:459-460` 的
+`launchWebScaffold()` 第一行就 `requireDist()`（要 `pnpm run build:web` 产物），且该 lane 自己
+写明"fixture-less scaffold registers no adapter at all"（见 `apps/web/tests/default-model.e2e.ts`
+顶部注释）——**它按设计不注册任何 adapter**，拿它测"默认路由有没有服务"会得出**假阴性**。
+⇒ 真要验只能起一次带 ship 配置的 `dsh web`（＋浏览器或直连 HTTP 读 `listProviders()` 与
+`agentDefaultModel.currentSelection()` 的交集）。本机 corepack 可用，所以这一步的技术前提已具备，
+剩下的只是要不要在这台机器上起一个长驻服务。**下一轮若继续推进，这就是首选动作**（不需裁定）。
+
+## 4 · 需要所有者拍板的三条：D3／D2／R4（按能声称的最强结论排；原 R1 已并入 R4）
+
+* **R1｜打包实跑在哪台机器**：**这条的前提已被同日实跑否证，实际并入了 R4**。原写法假设"要先装 pnpm 与桌面工具链"；事实是 corepack 无需全局安装即可跑锁定的 pnpm 11.7.0（08 §6 ④），且本机已实跑 `package:desktop:dir` 一次——**它在拉任何二进制之前**先撞 R4 的 `.env.windows`（`build:desktop` 侧 rc=0）。⇒ 真问题不再是"哪台机器能跑"，而是"填不出 R4 那组产品值就一步也往前走"；可做的最强动作相应变为：**R4 落定后在本机跑 `package:desktop:dir` 的 unsigned 变体**，拿到"能出 dir 产物"的证据（不必换机器、不必降级到只跑 `build:desktop`）。
 * **D3 默认 provider 怎么定**：(a) 装机默认＝Taiji（改 profile 配置，产品默认变更）；(b) 默认仍是上游 provider，Taiji 作为可选组（现状）；(c) 首启动做一次引导选择。**这条决定"Taiji provider 为默认"这句话能不能说**，我不自行改。
 * **D2 运行时怎么随包**：随包附带并拉起／首启动引导用户启动／文档要求自备。**这条决定"一条命令装起即用"能不能声称**，也决定客户端版的工作量排序。**本轮读原文后已把选项收敛**：(a) 扩 `pythonPackages`＝撞发布物体积上限（基本排除），**(b) 给后端开独立分发通道（建议按此估工）**，(c) 要求用户自备并启动（兜底，但要改判据口径）。详见 §1 的 D2 行。
 * **R4｜桌面打包需要一份本地 `.env.windows`，里面是产品决定**（2026-09-26 实跑 `package:desktop:dir` 撞出来的第一道门，在拉任何二进制之前）：`.env.windows.example` 要求填 `DSH_DESKTOP_APP_ID`（**示例默认值是 `com.deepseek.harness`＝上游身份，fork 要用就得改成自己的 app id**）、自动更新环境 `DSH_DESKTOP_AUTO_UPDATE_ENV`、**强制更新端点** `DSH_DESKTOP_MANDATORY_UPDATE_TEST_ORIGIN`／`_PROD_ORIGIN`（现在为空）、更新回退页 JSON（含 `allowedAuthOrigins` 登录白名单）、可选 `DSH_DESKTOP_NPM_REGISTRY`（**"for the bundled dsh runtime install"**），以及签名三件套（`WINDOWS_CER_FILE`／`SIGNTOOL`／`KEY_CONTAINER`，本机构建可走 `:unsigned` 变体）。⇒ **客户端版（G5 后半）真正的前置是三件**：① 定下 Taiji 版的应用身份与更新端点（或明确"客户端不做自动更新"）；② 回答"包怎么到达安装现场"（发布 `@taiji/*`／指镜像／用 packed tarball，`release:pack` 是否喂给这一步尚未查清）；③ 再谈签名链。这三件都不是我能在只读清点里替你定的，但没有它们 `package:desktop:*` 连跑都跑不起来——**这条比"缺 electron"更靠前，也更贵**。
