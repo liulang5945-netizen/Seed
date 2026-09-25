@@ -76,6 +76,11 @@ this scaffold lifetime. **This is the keyless first-run configuration lane**; th
 **附带读数（对 §6 ⑨ 的锁文件同步门有用）**：`build:web` 触发了一次 pnpm 隐式安装，**`pnpm-lock.yaml` 零漂移**（`git status --porcelain -- pnpm-lock.yaml` 为空）⇒ `bc16104e` 补齐 5 个 importer 之后，先前"每次安装都静默改写锁文件"的现象已消失。
 **同一条 lane 暴露的一处环境性红（登记为 08 §6 ⑩）**：`:603` 的工具花名册内联快照期望含 `bash`、Windows 本机实得 `pwsh` ⇒ 该断言把**宿主 shell** 烤进了快照，与 `project-doc-site.spec` 的 symlink EPERM 同类（环境依赖，非 fork 回归）；本轮未为它改判据，也未跑该文件其余 6 条。
 
+**2026-09-26 同日第二批真机读数（装上钉住的 `chromium_headless_shell` 后跑那 4 条 keyless 浏览器 lane）**：跑的是 `vitest run --config vitest.web.config.ts` 下的 `onboarding-usable-provider`／`onboarding-deepseek-config`／`onboarding-native`／`deepseek-messages-settings`，共 **8 条用例红**（其余通过）。**红里带出三条我们要的表层读数**：
+① **Taiji 组在交付装配的"设置 › 模型"里在场且可编辑**——ARIA 金样 diff 里是新增行 `+ text: Taiji（本地运行时）`／`+ button "编辑 Taiji（本地运行时） (taiji-local)"`；这条的结构性支撑是 `packages/client/ui-settings-models/src/client/store.ts:183-185` 把 `llm.listProviders()` 与 `listConfigurableProviders()` join 成行 ⇒ **行在场＝注册面在场，不是 UI 自己造的**。运行时前提本轮独立量过：`GET http://127.0.0.1:8000/api/health` **HTTP 200**、`model_loaded`／`taiji_available`／`seed_active` 全 true。⇒ **"启动即得 Taiji 组"在"运行时在场"这个前提下已有表层读数**；它同时把 D2 的口径钉成一句话：**运行时不在场时这一行按设计不出现**（`packages/llm/llm-taiji/src/index.ts:26,66-70` 的就绪探测），所以 D2 三条选项里只有"随包带并拉起"或"引导用户启动"能让这行在装机首启出现。
+② **D3 的表层半句验到了**：同一次 diff 里 DeepSeek 行的状态图标从 `API 密钥已配置` 变成 **`API 密钥缺失`**，并且其下 `textbox "API 密钥"`（placeholder 输入 API 密钥）在场 ⇒ 默认路由**可输入、无凭据**这条不再只有 API 层证据。
+③ **8 条红的共同形态**＝全在等"添加一个 API Key 开始使用"这张首启动卡片或其字段（`locator.waitFor` 15 s／30 s 超时）。与上游设计自洽的解释是：该卡片只在"没有任何可用路由"时出现，而本 fork 在运行时在场时**已经有一条免凭据可用路由**（`onboarding-usable-provider` 这条测试的名字本身就说明"配好另一个可用提供商就会结束 onboarding"）。⇒ **这条因果本轮没有钉死**：判别实验要把 8000 端口的运行时停掉再跑一次，而那是并行会话共用的服务，**停它由所有者排期，我不做**。登记为 08 §6 ⑪。
+
 ## 4 · 需要所有者拍板的三条：D3／D2／R4（按能声称的最强结论排；原 R1 已并入 R4）
 
 * **R1｜打包实跑在哪台机器**：**这条的前提已被同日实跑否证，实际并入了 R4**。原写法假设"要先装 pnpm 与桌面工具链"；事实是 corepack 无需全局安装即可跑锁定的 pnpm 11.7.0（08 §6 ④），且本机已实跑 `package:desktop:dir` 一次——**它在拉任何二进制之前**先撞 R4 的 `.env.windows`（`build:desktop` 侧 rc=0）。⇒ 真问题不再是"哪台机器能跑"，而是"填不出 R4 那组产品值就一步也往前走"；可做的最强动作相应变为：**R4 落定后在本机跑 `package:desktop:dir` 的 unsigned 变体**，拿到"能出 dir 产物"的证据（不必换机器、不必降级到只跑 `build:desktop`）。
