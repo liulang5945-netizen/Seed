@@ -103,6 +103,10 @@
 5. 真机读数（G3/G4 判据）：web 起服 → 模型面板出现 Taiji 组（**启动顺序不再敏感**：运行时晚于 harness 就绪时，该组在一个 `readinessPollMs` 内自行出现，目录按需从活注册表计算故无需重启）→ 发真回合由 Taiji 应答（约束在语料内，不拼 prompt）→ Life 面板六分区读数与 `GET /api/runtime/status`/`/api/artifacts`/`/api/consolidation/status` 逐项一致 → 记忆写入/召回闭环（journal 计数增长、下一回合可见注入块）。
 6. lint：仅允许**登记基线**（ui-life errorText 7 条；重测于 2026-09-24 恰为 7）内条目；出现新红＝丢改。
 
+7. **web 表层 lane（`vitest.web.config.ts`，2026-09-26 起列入）**：`apps/web/tests/**/*.e2e.ts` 有两个本机前提——`apps/web/dist`（`corepack pnpm run build:web`）与**版本钉住的** chromium headless shell（`corepack pnpm --filter @taiji/dsh-web-frontend exec playwright install chromium-headless-shell`）。二进制版本不匹配时的读数是**用例全 skip ＋ 文件级失败**（2026-09-26 实测：`Test Files 4 failed`／`Tests 11 skipped`，报错原文 `browserType.launch: Executable doesn't exist at …chromium_headless_shell-1228…`），**只看 `Tests` 计数会误以为「已经跑过了」** ⇒ 这条面自 fork 起一直是零覆盖，列进复验集正是为了不再靠看不见来通过。
+   **面的大小（2026-09-26 实测）**＝`apps/web/tests/*.e2e.ts` **139 个文件／321 条用例**（显式 skip 0 条）⇒ 全量是几十分钟级
+   的独立批次，不适合作每轮门；本轮只把**四条 keyless（无凭据首启动）文件**列为最小面（≈3 分钟）。
+
 ## 6 · 已知薄弱点（诚实登记）
 
 - ~~中文 `config-catalog.zh.md` 是手工镜像~~ **已收敛（2026-09-24）**：`scripts/gen-config-catalog-zh.ts` 与英文侧从**同一份** `collectConfigCatalog` 渲染（锚/标题/逐字围栏/`来源：` 行号结构性一致，翻译骨架内聚为脚本常量），`verify-config-catalog-zh` 已入 doc-sync 门与 §5 判据②；main() 另有 en/zh 围栏逐字对拍，双渲染器一旦漂移即炸。旧的手工镜像叙事（含 `H3i` 之外的“先跑 gen 再手对 zh”流程）全部作废，防重放时误走旧路。
