@@ -40,7 +40,7 @@
 
 | ID | 包 | 作用（一句话） | 装配面（必须同落，见 H2） | 证据 |
 | --- | --- | --- | --- | --- |
-| H1a | `packages/llm/llm-taiji` | `taiji-local` 路由硬接 8000 `/api/chat/stream`；失败全走 `LlmError` 归一化；health 判可路由 | base patch `llm-taiji` 行、`tsconfig.host.json` 引用 | `d59d918f` |
+| H1a | `packages/llm/llm-taiji` | `taiji-local` 路由硬接 8000 `/api/chat/stream`；失败全走 `LlmError` 归一化；health 判可路由，并在插件存活期内**按 `readinessPollMs`（默认 5000、下限 250，非 volatile＝装配选择）再探测**——加载时不可达的运行时此后会被路由，探测串行化以防两次首注册撞 `DUPLICATE_ADAPTER`，停表挂 `ctx.effect`。重放时**勿退回旧形**（「只在 load 与 `loader/volatile-update` 采样」＝运行时冷启动晚于 harness 启动就永久缺席模型目录） | base patch `llm-taiji` 行、`tsconfig.host.json` 引用 | `d59d918f`、`8210a077`（轮询落地；该提交由并发会话的不带 pathspec 提交吞并，故哈希归属混装——按文件族取，别按信息取）、`31d47384`（真组合用例） |
 | H1b | `packages/api/life-controller` | 单轮询器读 runtime：快照/替换帧流 + 12 个 Remote 动词（train/consolidate/activate/legacy 族） | web-app host `life-controller` + **client `ui-life` 行的前置**、remotes 挂清单（`lifeRemote`）、`RemoteErrorDetailsMap` 的 `life/*` declare-merge | `b61d1656`、`8924e2d4`、`fdd…` 等三片 |
 | H1c | `packages/context/life-context` | `life:policy` 静态段 + `agent/pre-step` **前置**注入 life-state（节流/新鲜门） | web-app host `life-context` 行、system-prompt `SECTION_ORDERS.LIFE_POLICY`（H3e） | `5d46e522`、`ec8baac1`（注入位置修正） |
 | H1d | `packages/context/memory-context` | 每回合一次 `GET /api/memory/recall` 前置注入（零命中不注、失败整块弃） | web-app host `memory-context` 行 | `ec8baac1` |
@@ -97,7 +97,7 @@
 2. 文档/生成物 `--check`：`gen-cordis-catalog`／`gen-config-catalog`＋`verify-config-catalog-zh`（zh 侧由 `gen-config-catalog-zh` 生成，跑完重录 pairing `--write`）／`gen-doc-graphs`／`gen-tsconfig-paths`。
 3. 17 项门禁批（md-wrap／md-links／doc-refs／subsystem-pages／summaries／model-experience／limitations／invariants／meta／dependencies／cordis-config／doc-budgets／export-jsdoc／translation-pairing…）＋`verify-cordis-catalog/inspect`；`verify-client-ui-i18n` 唯一合法红＝`BrandWordmark`（既存）。
 4. 定向 vitest：`llm-taiji`、life 五包 + `packages/core/system-prompt`、`ui-conversation`+`ui-workspace`+`session-controller`+`session-persistence-jsonl`（H3 契约用例——**这些用例是行为合同的守卫，红了就是重放丢了条目**）。
-5. 真机读数（G3/G4 判据）：web 起服 → 模型面板出现 Taiji 组 → 发真回合由 Taiji 应答（约束在语料内，不拼 prompt）→ Life 面板六分区读数与 `GET /api/runtime/status`/`/api/artifacts`/`/api/consolidation/status` 逐项一致 → 记忆写入/召回闭环（journal 计数增长、下一回合可见注入块）。
+5. 真机读数（G3/G4 判据）：web 起服 → 模型面板出现 Taiji 组（**启动顺序不再敏感**：运行时晚于 harness 就绪时，该组在一个 `readinessPollMs` 内自行出现，目录按需从活注册表计算故无需重启）→ 发真回合由 Taiji 应答（约束在语料内，不拼 prompt）→ Life 面板六分区读数与 `GET /api/runtime/status`/`/api/artifacts`/`/api/consolidation/status` 逐项一致 → 记忆写入/召回闭环（journal 计数增长、下一回合可见注入块）。
 6. lint：仅允许**登记基线**（ui-life errorText 7 条；重测于 2026-09-24 恰为 7）内条目；出现新红＝丢改。
 
 ## 6 · 已知薄弱点（诚实登记）
@@ -106,4 +106,5 @@
 - H3 各条的锚点随上游重构漂移的风险：本清单以"功能点 + 文件族"定位，不背行号；若上游整文件重写对应功能（如 blocks 合同再变），该条**升级重设计**而非硬贴。
 - ~~并行工人在飞文件（system-prompt 回退、host.spec `:225`）~~ **已收敛（2026-09-24 所有者裁定回滚）**：system-prompt 两文件恢复 Taiji 身份句；`:225` 查实是 HEAD 既有类型错（非在飞改动），按仓内惯用法 `failure?.message` 修复——**全量 `tsc -b tsconfig.host.json` 首次 0 错**。仍在飞＝life-context ×4 与 session-memory-taiji ×2（六文件 lint/tsc 零新增，未裁定，升级前仍需收敛）。
 - 本清单随改造增长：**每片合入即追加/修订对应行**（新增 H 条、更新证据哈希）；"清单完整性"就是同步机制的全部安全性所在。
+- **共享 worktree 的提交归属风险（2026-09-25 实测）**：并行会话执行**不带 pathspec** 的 `git commit` 时，会把本会话已 `git add` 的暂存面一并提交进它自己的信息里——llm-taiji 的就绪轮询修复即因此挂在 `8210a077`（`feat(taiji): 复制回路补 init_seed 通道`）名下：内容无损、归属混装。**纪律**：本仓一律用 `git commit -m … -- <pathspec>`（不依赖暂存区，也不吞别人的暂存），与 03 §四「提交一律带 pathspec」同源；重放与取证按**文件族**定位改造，不按提交信息。
 - **文件级完整性审计已跑（2026-09-24，2026-09-25 复跑增量）**：对 `82042a2f6..HEAD -- taiji-harness` 的内容差异文件做双规则归并（M 内容模式 ∧ 路径白名单）⇒ 首轮 5065 文件/57 残差逐条人工判定：**真清单缺口已全部修条**——H3b 路径勘误（`packages/core/workspace` 不存在）＋ controller 装配面 8 文件、H3c 接口契约与 7 个连带测试桩、M2 缺 `DSH` 缩略语对、M3 缺 `apps/cli/composition.md`、H2g note 纪律未登记、H3f 资产路径与 welcome 版本 bump；余 22 条为 M1 变体形态（独立段/转义正则），已登记进 M1。**09-25 复跑**（5068 文件/57 残差，与首轮持平）暴露白名单盲区：`scripts/` 整目录前缀把我方对上游脚本的改动全部吞进 h-whitelist（zh 工具链 3 个上游文件改动不产残差）⇒ 补 **H3j** 登记，且此后**审计绿≠清单全**——凡动 `scripts/`、根 `package.json` 的上游文件改动必须人工对到 H 条目。脚本与输出：`E:\Seed\.dsh-sbx2\audit_fork_diff.py`／`audit-out.txt`（仓外，不入 git）。
