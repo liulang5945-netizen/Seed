@@ -141,7 +141,45 @@ S1 不过线 ⇒ 与 A2.3 同义：学习规则在该协议下不成立，回到
 3. 这条读数同时给 A2.4 的一句结论**降级**：A2.3 §7 曾以"D06 带干扰项也答对"佐证"能从多条记忆里挑对那条"；
    对齐链上干扰项题的挑对率极低 ⇒ 那个单题读数不足以支撑"事件选择已成"的一般主张。
 
-### 7.3 S2 判读 / CAP 重测 / §4.3 回归门
+### 7.3 下一案（事件选择）的现成件——已做过仓内调研，避免重复查
 
-（待追加。）
+若走 §4 判据解释的第二分支（把"挑哪条记忆"变成可学项），这些是**已核实存在**的可复用件，
+不必重新翻仓：
 
+* **唯一同形的现成器官**：`taiji/content_selection.py` 的 `ContentSelector`——零初始化
+  `nn.Linear(6→1)` 给候选打分（特征＝candidate×context 的乘积，`FEATURE_NAMES:23-30`）、
+  `select()` 取 argmax（`:275`）、更新走**无图局部规则** `apply_linear_delta`＋MSE delta
+  （`:309-313/:336-337`），且**已进 adapter 的 checkpoint 面**（`taiji/adapter.py:7779-7812`）。
+  ⇒ 零初始化 ⇒ 可延续本仓"挂载位级不变"的分账纪律。
+* **余弦的解析梯度**：`taiji/local_learning.py:221-243` `cosine_similarity_delta` 直接给
+  d/dleft、d/dright；另有 `softmax_error_delta:101-113`、`apply_linear_delta:117-144`、
+  `LocalAdam:403-439` 同族可用。
+* **反面对照（说明"写死余弦 top-1"不是仓内唯一做法）**：`identity_organ.py:276-297/:433-437`
+  与 `cue_binding.py:102-111` 的路由确实是写死余弦＋硬阈（0.99/0.85），但**同处的槽内两头是学的**
+  （`_train_head` 在 softmax 竞争上 `local_update`，调制＝`reward − baseline`，`:359-381`）；
+  `memory.py:321-343` 的 `EpisodicField.recall` 干脆不是 top-1 而是 Hopfield 式迭代完成。
+  ⇒ 事件选择这一层在 copy 家族里**没有先例**，需要新建，但形态有现成样板。
+
+**关键疑点（先测再设计，别直接上学习器）**：事件键用的 `fabric.cortical_context()`
+是 `torch.cat([*activity, *trace])`、**不归一化**、维度＝`2*sum(region_sizes)`
+（`taiji/fabric.py:549-566`、`taiji/config.py:844-846`），而区 0 掩码只存在于另一条
+`predictive_context()`（`fabric.py:568-594`）——即**事件键今天仍带着区 1/2 的方向**。
+既有实测一边指向"槽结构只在区 0"（16M 仍 0.729/0.709），一边又当场否掉了
+"只吃区 0 就结构保持"（掩码把 consistency 0.4197→0.7422，但 T5 主判据 3/4 不过）；
+而"**同模型先后两条告知的 cortical_context 两两余弦分布**"这件直接测量**没有先例**。
+⇒ 下一案的第一步应是该零训练测量（必须在 base_16M 上取，小模型的 cue 可分性不可外推）：
+若区 0 化／加判别性学习前 cue 本身就不可分，那么先修的是**键的形态**，不是再加一个学习器。
+这也可能与 A-4（`predictive_context_region0_only`，前件已满足）合流成同一刀。
+
+*已排除的一个替罪羊*（写下来免得下一案再去查一遍）：`cortical_context()` 在
+`_cue_snapshot` 被冻结时返回的是快照而非实况（`fabric.py:545-547/558`），
+但快照只在 `identity_recall.used` 时打（`model.py:2052-2059`），而 identity 需
+`identity_enabled = use_memory and …`（`model.py:2047`）——本链全程 `use_memory=False`
+⇒ 从不打快照，且 `reset_dynamics` 会清（`model.py:1619`）。
+**所以入库 cue 确实是实况两段拼接向量，"挑错事件"不能推给陈旧快照**。
+
+
+
+### 7.4 S2 判读 / chat 形态严格 CAP 三臂 / §4.3 回归门
+
+（待追加——读数链自动跑：judge → chat CAP → strict 复算 → 回归门两臂。）
