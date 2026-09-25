@@ -36,6 +36,12 @@
 
 纪律：零训练（`learn=False`）、`checkpoints/` 只读且跑前后 sha256 复核、只写 `reports/` 一份新件；
 失败题清单从 §10 的 ceiling 读数里**机器读取**（不手抄题号），读不到就直接退出。
+
+**历史形态 `--history`**：`oracle`（默认，本件首跑用的就是它）只留含答案词的那条告知，
+等于替模型把干扰清干净；`scored` 逐轮走产品原语复原**当初被记分的那份历史**（含模型自己的
+脏自答），并额外用 `_answer_raw` 完整重发一遍最后轮来核对"这次未命中是否复现"。
+扩展集首跑后加了这一档：oracle 档里 3 轮题的 `address_miss` 明显扎堆，而真实记分链上命中
+几乎只发生在 2 轮题——两种形态给出的第一限制因素不是同一个，所以占比必须说清在哪条链上取的。
 """
 
 from __future__ import annotations
@@ -57,6 +63,10 @@ for entry in (PROJECT_ROOT, PROJECT_ROOT / "scripts" / "training"):
         sys.path.insert(0, str(entry))
 
 CEILING_REPORT = PROJECT_ROOT / "reports/taiji_r2_a25_selection_ceiling_20260925.json"
+#: 扩展集三臂读数（104 题、实体与评价集与训练表双不相交）——同一支探针在更宽更陌生的样本上
+#: 再数一遍成因占比；§12 的结论是 n=6 定不了比例，这一批就是去补那个比例的。
+SURFACE_REPORT = PROJECT_ROOT / "reports/taiji_r2_copy_surface_extension_20260925.json"
+SURFACE_MANIFEST = PROJECT_ROOT / "plans/manifests/r2_copy_surface_extension_v1.json"
 #: 反事实"全开"的幅度，与 §4.1 结构存在性判据用的是同一个数（不新调参）。
 FORCED_GATE = 20.0
 MAX_STEPS = 12
@@ -66,6 +76,22 @@ GATE_EPS = 1.0
 
 def _sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def failing_item_ids_extension(surface_report: Path = SURFACE_REPORT, arm: int = 0) -> list[str]:
+    """从扩展集三臂读数里机器读取"挂了电路仍未命中"的题号（默认 seed-A 那臂）。"""
+    data = json.loads(surface_report.read_text(encoding="utf-8"))
+    return sorted(
+        str(row["id"]) for row in data["treated_arms"][arm]["rows"] if not bool(row["hit"])
+    )
+
+
+def extension_items() -> dict[str, Any]:
+    """扩展集题面（与 CAP 评价集同构：`turns` + `expected_contains`）。"""
+    payload = json.loads(SURFACE_MANIFEST.read_text(encoding="utf-8"))
+    return {
+        str(item["id"]): {**item, "dimension": "X"} for item in payload["dimensions"]["X"]["items"]
+    }
 
 
 def failing_item_ids(ceiling_report: Path = CEILING_REPORT) -> list[str]:
@@ -100,6 +126,56 @@ def _oracle_history(substrate: Any, circuit: Any, turns: list[str], tokens: list
     return history
 
 
+def _scored_history(runtime: Any, turns: list[str]) -> list[tuple[str, str]]:
+    """按**记分链**复原真实历史：逐轮调用产品侧那支 `_answer_raw`，历史滚动累积。
+
+    与 `score_taiji_r2_copy_surface_extension.run_arm` 用的是同一个函数、同一个 64 字节上限，
+    所以最终喂进去的 prompt 字节与当初判"未命中"时逐位相同；oracle 历史不相同
+    （它只留含答案词的那条告知，且库里恒为 1 条）。分诊要落在**被记分的那条链**上。
+    """
+    from score_taiji_r2_copy_circuit_chat_cap import _answer_raw
+
+    history: list[tuple[str, str]] = []
+    for turn in turns[:-1]:
+        history.append((turn, _answer_raw(runtime, turn, history)))
+    return history
+
+
+def _product_reply(runtime: Any, substrate: Any, prompt_bytes: bytes) -> str:
+    """产品解码原语，但**不重新入库**——用来在"摘掉干扰的库"上重发同一份提示词。
+
+    与 `_answer_raw` 除入库一步外逐字相同（同一个 `generate_input`、同一个 64 字节上限、
+    同一套折字），所以两串相等是这条对照成立的先决条件，冒烟里对着核。
+    """
+    from score_taiji_r2_copy_circuit_chat_cap import MAX_ANSWER_BYTES
+
+    from taiji import InputFrame
+
+    frame = InputFrame(
+        input_id=f"a26-abl:{substrate.tick}",
+        modality="text",
+        payload=prompt_bytes,
+        source="r2.a26.ablation",
+        timestamp=substrate.tick,
+        provenance="external",
+        confidence=1.0,
+    )
+    raw = runtime.model.generate_input(frame, MAX_ANSWER_BYTES, stop_at_boundary=True, sample=False)
+    return _reply_clean(raw)
+
+
+def _keep_only_target_events(circuit: Any, told_bytes: bytes) -> int:
+    """摘掉库里的干扰事件，**沿用原 cue**（不重喂前缀——cue 一变就不是同一条链了）。
+
+    返回保留的事件数。0 表示那条告知根本没入库，此题的消融读数无意义，调用方要响。
+    """
+    keep = [event for event in circuit.store.events() if bytes(event.content) == told_bytes]
+    circuit.store.clear()
+    for event in keep:
+        circuit.store.record(bytes(event.content), event.cue)
+    return len(keep)
+
+
 def _reply_clean(raw: bytes) -> str:
     from api.seed_runtime import _TURN_MARKERS
 
@@ -112,9 +188,26 @@ def _reply_clean(raw: bytes) -> str:
 
 
 def trace_item(
-    substrate: Any, circuit: Any, *, turns: list[str], tokens: list[str], told: str
+    substrate: Any,
+    circuit: Any,
+    *,
+    turns: list[str],
+    tokens: list[str],
+    told: str,
+    history_mode: str = "oracle",
+    store_mode: str = "all",
+    runtime: Any = None,
 ) -> dict[str, Any]:
-    """对一题做逐步轨迹，并给出分诊类别。"""
+    """对一题做逐步轨迹，并给出分诊类别。
+
+    `history_mode`：`oracle`＝只留含答案词的那条告知（与 §10 天花板探针同形）；
+    `scored`＝逐轮用产品原语复原**当初被记分的那份历史**（自答是模型自己生成的脏串也算在内）。
+    两者不是一回事：oracle 把干扰替模型清掉了，scored 才是"未命中清单"真正发生时的现场。
+
+    `store_mode`：`all`＝按历史如实入库；`target`＝**只留含答案的那条告知**（其余事件用原 cue
+    重放，不改写）。`scored`＋`target` 是给"事件选择"定价的那一刀：提示词与记分链逐位相同，
+    只有库里的干扰被摘掉——oracle 档把这两件事一起改了，所以它的读数不能当选择的价格。
+    """
     from api.seed_runtime import SeedRuntime, record_told_history
 
     config = substrate.config
@@ -123,12 +216,36 @@ def trace_item(
         return {"id": None, "class": "no_copyable_answer"}
     answer_bytes = answer.encode("utf-8")
 
-    #: 入库只走一条路径：`_oracle_history` 内部按线上顺序（先入库再生成自答），
-    #: 这里不再额外 record 一次，否则"轨迹诊断用的样本"与 ceiling/CAP 用的样本不同形。
-    history = _oracle_history(substrate, circuit, turns, tokens)
+    #: 入库只走一条路径：两个历史构造函数内部都按线上顺序（先入库再生成自答），
+    #: 这里不再额外 record 一次自答，否则"轨迹诊断用的样本"与 ceiling/CAP 用的样本不同形。
+    if history_mode == "scored":
+        if runtime is None:
+            raise ValueError("history_mode='scored' 需要 runtime（_answer_raw 走产品原语）")
+        history = _scored_history(runtime, turns)
+    else:
+        history = _oracle_history(substrate, circuit, turns, tokens)
     prompt = SeedRuntime._serialize(turns[-1], history)
     record_told_history(substrate, circuit, history, episode_id="a26:final")
     prompt_bytes = prompt.encode("utf-8")
+    kept: int | None = None
+    if store_mode == "target":
+        kept = _keep_only_target_events(circuit, told.encode("utf-8"))
+        if kept == 0:
+            #: 目标告知没在库里——继续走只会得到一条空轨迹，把"消融没做成"读成"选择没问题"。
+            return {
+                "told": told,
+                "answer": answer,
+                "history_mode": history_mode,
+                "store_mode": store_mode,
+                "store_contents": [
+                    event.content.decode("utf-8", errors="replace")
+                    for event in circuit.store.events()
+                ],
+                "class": "ablation_no_target_event",
+                "chain_identical": False,
+                "steps": 0,
+                "trace": [],
+            }
 
     substrate.reset_dynamics(episode_id="generation")
     substrate.observe(
@@ -141,8 +258,10 @@ def trace_item(
     product_probs = step.probabilities.detach().cpu().clone()
 
     events = circuit.store.events()
-    #: 库里应当正好一条告知（oracle 历史）；不是就说明入库构造与 ceiling/CAP 不同形。
+    #: 库里有几条告知由历史构造决定：oracle 档恒 1 条，scored 档是真实的那几条
+    #: （扩展集 3 轮题的中间轮本身就是一条**无关告知**）。这里只如实记下内容，不断言条数。
     store_contents = [event.content.decode("utf-8", errors="replace") for event in events]
+    told_bytes = told.encode("utf-8")
     rows: list[dict[str, Any]] = []
     chain_ok = True
     emitted_bytes = bytearray()
@@ -187,6 +306,9 @@ def trace_item(
                 "p_vocab_only": round(float(vocab_only[target_byte]), 8),
                 #: 反事实：把门强行全开（与 §4.1 结构存在性判据同一个幅度），目标字节会不会成为 argmax。
                 "forced_open_would_hit": bool(int(forced.argmax()) == target_byte),
+                #: 事件归因：`best_match` 这一步挑中的是不是那条含答案的告知。scored 档下
+                #: "指错字节"常常其实是"挑错了事件"——键侧与选择侧修法不同，不记就分不开。
+                "on_target_event": bytes(snap["event"].content) == told_bytes,
                 "emitted": emitted,
             }
         )
@@ -196,10 +318,21 @@ def trace_item(
         substrate.observe(argmax_byte, learn=False, readout="predictive", use_memory=False)
     reconstructed = emitted_bytes.decode("utf-8", errors="replace")
     classification = _classify(rows)
-    return {
+    replay: str | None = None
+    if history_mode == "scored":
+        #: 现场复现自检：把最后一步换成产品那支 `_answer_raw` 完整生成一次（64 字节、折字），
+        #: 若这样仍不命中，才说明本探针看到的失败**就是**记分件看到的那次失败。
+        from score_taiji_r2_copy_circuit_chat_cap import _answer_raw
+
+        replay = _answer_raw(runtime, turns[-1], history)
+    record = {
         "told": told,
         "answer": answer,
+        "history_mode": history_mode,
+        "store_mode": store_mode,
+        "target_events_kept": kept,
         "store_contents": store_contents,
+        "steps_on_wrong_event": sum(1 for row in rows if not row["on_target_event"]),
         "reconstructed_answer": reconstructed[:80],
         #: 自检：若重构串真的含答案词，这题就不该出现在失败清单里——出现即说明
         #: 本探针与 ceiling/CAP 两处构造不一致，结论必须回炉而不是接着分诊。
@@ -209,6 +342,21 @@ def trace_item(
         "class": classification,
         "trace": rows,
     }
+    if replay is not None:
+        record["scored_replay_answer"] = replay[:80]
+        record["reproduces_recorded_miss"] = answer not in replay
+        if store_mode == "target":
+            #: 先证"不入库的那支解码"与 `_answer_raw` 同链（不摘干扰时两串必须相等），
+            #: 否则下面的消融读数是在另一条链上取的。
+            same_chain = _product_reply(runtime, substrate, prompt_bytes) == replay
+            _keep_only_target_events(circuit, told_bytes)
+            ablated = _product_reply(runtime, substrate, prompt_bytes)
+            record["ablation_chain_matches_scored"] = same_chain
+            record["ablated_replay_answer"] = ablated[:80]
+            #: 这一条就是"事件选择"的价格：提示词与库内 cue 都和记分链相同，只把干扰告知摘掉，
+            #: 看产品解码能不能把答案发出来。`oracle` 档同时改了提示词，定不出这个价。
+            record["ablation_hits"] = answer in ablated
+    return record
 
 
 def _classify(rows: list[dict[str, Any]]) -> str:
@@ -224,7 +372,6 @@ def _classify(rows: list[dict[str, Any]]) -> str:
     gates = [abs(float(row["gate_value"])) for row in rows]
     forced_hits = [bool(row["forced_open_would_hit"]) for row in rows]
     aimed = [int(row["copy_top_byte"]) == int(row["target_byte"]) for row in rows]
-    best_mass = max(float(row["copy_mass_on_target"]) for row in rows)
     if max(gates) < GATE_EPS and any(forced_hits):
         return "gate_closed"  # 门基本没开，但强行全开就命中 ⇒ 问题在开关的学习
     #: `emission_loses` 必须有**正面证据**：某一步 copy 指对了目标字节，最终 argmax 却不是它。
@@ -248,11 +395,38 @@ def main() -> int:
         "--circuit", default="output/taiji_r2_copy_circuit_chat/judge/circuit-final.pt"
     )
     parser.add_argument("--out-report", default=None)
+    parser.add_argument(
+        "--source",
+        choices=("ceiling", "extension"),
+        default="ceiling",
+        help="ceiling＝§10 那 6 道（选择做对仍失败）；extension＝扩展集里挂电路仍未命中的题",
+    )
+    parser.add_argument(
+        "--history",
+        choices=("oracle", "scored"),
+        default="oracle",
+        help="oracle＝替模型清掉干扰（与 §10 同形）；scored＝复原当初被记分的那份历史",
+    )
+    parser.add_argument(
+        "--store",
+        choices=("all", "target"),
+        default="all",
+        help="all＝按历史如实入库；target＝库里只留含答案的那条告知（配 scored 即选择的价格）",
+    )
     args = parser.parse_args()
+    if args.store == "target" and args.history != "scored":
+        #: oracle 档本来就只有目标那一条，"摘干扰"是空操作——跑出来的消融数会把空操作读成结论。
+        print(json.dumps({"error": "--store target 只在 --history scored 下有意义"}))
+        return 1
 
-    ids = failing_item_ids()
+    if args.source == "extension":
+        ids = failing_item_ids_extension()
+    else:
+        ids = failing_item_ids()
     if not ids:
-        print(json.dumps({"error": "ceiling 读数里没找到两臂都失败的题"}))
+        print(
+            json.dumps({"error": f"{args.source} 读数里没找到失败题（读数变了就先查仪器，别硬跑）"})
+        )
         return 1
 
     from score_taiji_r2_copy_strict_cap import copyable_tokens, load_items
@@ -261,7 +435,8 @@ def main() -> int:
 
     checkpoint = PROJECT_ROOT / args.checkpoint
     sha_before = _sha256(checkpoint)
-    items = load_items()
+    #: 题面与题号同源取——扩展集的 id 在 CAP 评价集里不存在，混用会静默漏题。
+    items = extension_items() if args.source == "extension" else load_items()
     runtime = SeedRuntime.load(checkpoint)
     substrate = runtime.model.substrate
     if substrate.copy_circuit is None:
@@ -279,7 +454,14 @@ def main() -> int:
             per_item[item_id] = {"class": "no_copyable_answer"}
             continue
         per_item[item_id] = trace_item(
-            substrate, substrate.copy_circuit, turns=turns, tokens=tokens, told=told
+            substrate,
+            substrate.copy_circuit,
+            turns=turns,
+            tokens=tokens,
+            told=told,
+            history_mode=args.history,
+            store_mode=args.store,
+            runtime=runtime,
         )
         per_item[item_id]["id"] = item_id
 
@@ -290,12 +472,43 @@ def main() -> int:
     #: 链同一性只对"真取了轨迹的题"负责——`no_copyable_answer` 那类没有发射步骤可比，
     #: 把它们算进分母会让探针自己假失败。
     chain_all = bool(traced) and all(bool(record.get("chain_identical")) for record in traced)
+    replay_flags = [
+        record["reproduces_recorded_miss"]
+        for record in per_item.values()
+        if "reproduces_recorded_miss" in record
+    ]
+    #: 消融档的先决条件：不摘干扰时 `_product_reply` 必须与 `_answer_raw` 逐字相同。
+    #: 一题都没证到要写 `null` 而不是 `true`（`all(空集)` 是真空真，会把"没验"读成"验过了"）。
+    checked = [
+        bool(record.get("ablation_chain_matches_scored"))
+        for record in per_item.values()
+        if "ablation_chain_matches_scored" in record
+    ]
+    ablation_chain_all: bool | None = sum(checked) == len(checked) if checked else None
     report = {
         "format": "taiji-r2-a26-emission-trace-v1",
-        "prereg": "plans/reference/SPEC-A-17_r2_a2_3b_format_align_prereg_20260925.md §10",
+        "prereg": "plans/reference/SPEC-A-17_r2_a2_3b_format_align_prereg_20260925.md §10/§12",
+        "source": args.source,
+        "history_mode": args.history,
+        "store_mode": args.store,
+        "ablation_hits": sum(
+            1 for record in per_item.values() if record.get("ablation_hits") is True
+        ),
+        "ablation_chain_matches_scored_all": ablation_chain_all,
         "failing_items": ids,
         "chain_identical_all": chain_all,
         "class_counts": counts,
+        #: 逐步事件归因：多少步的 `best_match` 落在**别的**告知上（选择侧），多少步落在目标事件内
+        #: 却指错位置（键侧）。两者是两笔不同的账，`address_miss` 一个标签混着它们。
+        "steps_total": sum(len(record.get("trace", [])) for record in per_item.values()),
+        "steps_on_wrong_event": sum(
+            int(record.get("steps_on_wrong_event", 0)) for record in per_item.values()
+        ),
+        #: scored 模式的现场复现率：复现不出"题号里那次未命中"的题，不能拿来定成因占比。
+        "reproduces_recorded_miss": {
+            "true": sum(1 for flag in replay_flags if flag),
+            "false": sum(1 for flag in replay_flags if not flag),
+        },
         "gate_abs_median": statistics.median(
             [
                 abs(float(row["gate_value"]))
@@ -331,7 +544,11 @@ def main() -> int:
         json.dumps(
             {
                 "items": len(ids),
+                "history_mode": args.history,
+                "store_mode": args.store,
+                "ablation_hits": report["ablation_hits"],
                 "classes": counts,
+                "reproduces_recorded_miss": report["reproduces_recorded_miss"],
                 "chain_identical_all": chain_all,
                 "base_unchanged": report["base_sha256_unchanged"],
                 "out": (
