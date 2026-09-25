@@ -43,7 +43,7 @@
 3. **i18n pairing 全仓欠账**（约 252 对 out-of-sync，G2 rename 改了两侧 `.md` 未重录 `.i18n.yaml`）——**所有者 2026-09-25 裁定＝分批人工核对后重录**（不是一把 `--write` 全刷）；第一批＝我方改造过的包族（life 五包／llm-taiji／workspace／session-controller）。
 4. ~~**6 个在飞文件**~~ **已查清为行尾幻影（2026-09-25 实测）**：`life-context` ×4、`session-memory-taiji` ×2 在 `git status` 显示 `M`，而 `git diff HEAD --numstat` 为空 ⇒ 与 HEAD 零内容差（`core.autocrlf=true` 所致）；**无待裁定的在飞改动，升级重放不被它阻塞**（08 §6）。
 5. **既存红门**：~~`verify-concrete-terms` 3 处 `provenance` 命中~~ **2026-09-25 已清、该门转绿**（改为点名实际字段 `count`/`revision`/`source`/`owner`，提交 `9a4be7ab`）；余 `verify-plugin-packages` 1 处（产物在他人包，未处置）。
-6. **J（2026-09-25 新发现，未闭合）**：判据⑤ 那个真回合的答复把 **harness 的运行时上下文快照**当成「你的问题」引用 ⇒ native 链路收到的 `prompt` 不是用户提问。已核两条静态事实：`llm-taiji/src/chat.ts:57-60` 取**最后一条 user-role 消息**作 `prompt`；该快照文本出自 `system-prompt/src/index.ts:307`，同文件 `:251` 自述「动态 runtime-context 快照**进 model history**（默认 true）」。**待一次插桩**钉住它由哪一处发、以什么 role（若为 system-role 就不会成为 prompt）；与 C7 把 life-context/memory-context 改前置同族，但那一轮只改了那两个包。
+6. ~~**J（2026-09-25 新发现）**：native 链路收到的 `prompt` 不是用户提问~~ ⇒ **同日已钉死并修复**：agent-loop 的 runtime-context 快照是 durable **user** 消息（`source.kind='runtime-context'`，`agent-loop/src/runtime-context.ts:14/20`）且按设计追加在本轮**之后**，而 `llm-taiji/src/chat.ts` 取「最后一条 user-role 消息」当运行时唯一的 `prompt` ⇒ 用户提问被降级进 `history`。修法＝取最后一条**属用户本人输入**的 user 消息（不带 source 或 `source.kind==='user'`，口径同 `memory-context/src/index.ts:95`），全为 harness 自有时**兜底**取最后一条 user-role（辅助调用 `session-title` 依赖该兜底，否则发空 prompt）。取证＝8098 转发代理抓真实请求体（零改仓、零插桩）：修前 `prompt` 496 字符快照／history 3 对，修后 `prompt` 17 字符提问／history 2 对；红绿＋真机各一次，提交 `9155fca0`。**连带提醒 A 线自查**：此前凡经 web 回合取过的读数，其 prompt 都不是题面（直接 curl runtime 的读数不受影响）。
 
 ### 已作废：M6 desktop 线未闭合五项（2026-09-21 立卡）
 
