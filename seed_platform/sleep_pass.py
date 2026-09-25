@@ -47,7 +47,7 @@ logger = logging.getLogger("SeedPlatform.SleepPass")
 
 _LOCK = threading.Lock()
 _RUNNING = False
-_DIR_NAME = "consolidation"
+_DIR_NAME = os.path.join("data", "consolidation")
 _CORPUS_DIR = os.path.join("data", "consolidated")
 _STATE_FILE = "state.json"
 _SPEC_FILE = "next_training_data_spec.json"
@@ -73,7 +73,12 @@ _MAX_TEXT_CHARS = 4000
 
 
 def _consolidation_dir() -> str:
-    """Return (and create) the directory the pass keeps its artifacts in."""
+    """Return (and create) the directory the pass keeps its artifacts in.
+
+    It sits inside the external ``data`` tree like the corpus dir: the default
+    external root is the project root, so a state directory beside it would land
+    in the tracked tree and trip the repository structure guard.
+    """
 
     return get_external_path(_DIR_NAME)
 

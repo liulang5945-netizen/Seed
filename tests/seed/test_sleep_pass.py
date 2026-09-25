@@ -187,12 +187,12 @@ def test_spec_is_written_only_when_the_data_ring_is_ready(workspace: Path) -> No
     quiet = sleep_pass.run(reason="quiet")
     assert quiet["spec"]["written"] is False
     assert quiet["spec"]["reason"].startswith("not ready")
-    assert not (workspace / "consolidation" / sleep_pass._SPEC_FILE).exists()
+    assert not (workspace / "data" / "consolidation" / sleep_pass._SPEC_FILE).exists()
 
     _seed_constraint("你是Taiji。")
     ready = sleep_pass.run(reason="ready")
     assert ready["spec"]["written"] is True
-    spec_path = workspace / "consolidation" / sleep_pass._SPEC_FILE
+    spec_path = workspace / "data" / "consolidation" / sleep_pass._SPEC_FILE
     spec = json.loads(spec_path.read_text(encoding="utf-8"))
     # Legacy key names, native content, and a named corpus the trainer accepts.
     for key in ("timestamp", "reason", "metrics", "weaknesses", "training_recommendations"):
@@ -207,7 +207,7 @@ def test_state_rolls_forward_across_passes(workspace: Path) -> None:
     _seed_interaction("问：一\n答：一", turn=1)
     sleep_pass.run(reason="first")
     state = json.loads(
-        (workspace / "consolidation" / sleep_pass._STATE_FILE).read_text(encoding="utf-8")
+        (workspace / "data" / "consolidation" / sleep_pass._STATE_FILE).read_text(encoding="utf-8")
     )
     assert state["passes"] == 1
     assert state["last_corpus"].startswith("consolidated/corpus-")
@@ -215,7 +215,7 @@ def test_state_rolls_forward_across_passes(workspace: Path) -> None:
 
     sleep_pass.run(reason="second")
     state = json.loads(
-        (workspace / "consolidation" / sleep_pass._STATE_FILE).read_text(encoding="utf-8")
+        (workspace / "data" / "consolidation" / sleep_pass._STATE_FILE).read_text(encoding="utf-8")
     )
     assert state["passes"] == 2
     assert len(state["projected"]) == 1
