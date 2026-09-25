@@ -48,6 +48,6 @@
 
 ## 5 · 我可以在裁定前继续做的（无需批）
 
-* 把 `prepare:desktop` / `release:vendor` 的**包来源**查清：本机 gitignored 产物 `apps/desktop/.desktop-build/development/project/desktop-runtime.json` 里出现 `@deepseek-ai/dsh-agent-default-model` 这类**改名前的包名**，而已跟踪文件里 `@deepseek-ai/dsh-` 为 **0 处**（2026-09-26 复算）⇒ 疑点：桌面暂存可能拉的是**已发布上游包**而非本 fork 产物。这条查清后，客户端版的真实工作量才有数。
+* ~~把 `prepare:desktop` / `release:vendor` 的**包来源**查清：本机 gitignored 产物 `apps/desktop/.desktop-build/development/project/desktop-runtime.json` 里出现 `@deepseek-ai/dsh-agent-default-model` 这类**改名前的包名**，而已跟踪文件里 `@deepseek-ai/dsh-` 为 **0 处**（2026-09-26 复算）⇒ 疑点：桌面暂存可能拉的是**已发布上游包**而非本 fork 产物。~~ **【同日已否证】**：该产物的 mtime 是 **09-22 16:26**，而改名提交 `88ad3040e`（G2 rename，5206＋43 文件）落在 **09-22 18:51** ⇒ 产物比改名**早 2.5 小时**，它是**改名前的本机构建残留**，不是"桌面线拉已发布上游包"的证据。副产品事实：这条暂存链在 G1 期就真跑通过一次（`schemaVersion 1`、`release.version 0.1.7-alpha.1`、`nodeVersion 24.18.1`、**`sharedPackages` 1495 项**）⇒ 桌面打包的**起点机制是存在的**，只是这台机器上的产物是旧的。
 * **在真实 web 装配里查"装机默认是否可输入"**（零改产品码的只读探针，与判据⑤ 同一条取数路径）：起一次不带 settings 的干净 profile，读 `ctx.agentDefaultModel.currentSelection()` 与 `listProviders()` 的交集，判 `deepseek-official/deepseek-flash` 是否真在服务、composer 是否可输入。它直接决定 §4-D3 三个选项里哪个是"最小可用交付"，且**不需要任何裁定**就能先拿到读数。
 * 把 web-first 的"启动即得 Taiji 组"写成可复验的验收脚本（复用判据⑤ 已有的 Playwright 取数路径），为 D2 的三个选项各留一条读数口径。
