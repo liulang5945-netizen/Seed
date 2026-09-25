@@ -105,3 +105,5 @@ this scaffold lifetime. **This is the keyless first-run configuration lane**; th
 3. **需裁定（R4，比缺 electron 更靠前）**：`apps/desktop/.env.windows` 的产品值——应用身份（示例仍是上游的 `com.deepseek.harness`）、自动更新环境与强制更新端点、是否声明「客户端不做自动更新」。这三件不落定，`package:desktop:*` 连跑都跑不起来 ⇒ 「打包」这半句取不到任何读数。落定后本机可直接跑 unsigned 变体（corepack 已实证可用，不必换机器）。
 4. **挂账但不自动触发**：G4 判据③ 真机训练回合（真训练→进度流→停止→检查点复验→真续训→真激活），等 R2 收束与所有者放行，不因「继续推进」字样而起。
 5. **方法债（别重复踩）**：要区分 provider 的「撤回原因」，直接复用 H3o 那条 lane 的形状——**声明面 `listConfigurableProviders()` 与注册面 `listProviders()` 分开断言**，本轮就靠这一对把「包没挂载」那一支排除掉的；不要再自建第二判据（本轮已因此写错过一次「现有 lane 测不到」）。
+
+**收口读数（本轮最后一次全量叶批，2026-09-26 21:13）**：doc-sync 复跑＝**43 叶／唯一红 `docs-site-projection`**（即 `project-doc-site.spec.ts` 需 `symlink()` 而本机 EPERM 那条已登记环境红，见 08 §6 ④）⇒ **今日全部改动**（含 H3o 新增的那条 lane 与它的 overlay 行）**未引入新红**；新增文件另过 oxlint **0 error／0 warning**（90 条规则）。**一处口径提醒**：本仓没有可直接整体调用的聚合入口跑这 43 叶，我用的是仓外批跑脚本，它把嵌套的 `verify-doc-site-fragments` 双计成 44 叶——**以仓库自身聚合报告的 43 为准**。
