@@ -2,5 +2,5 @@
 # side as of the last confirmed-consistent state. Both languages carry equal authority;
 # after editing either side, bring the other along and re-record with:
 #   pnpm run verify-translation-pairing --write docs/cordis-tutorial/01-first-plugin.md
-01-first-plugin.md: 79df2f42df1f34a7ef32cc81607e1b926a1854ae
-01-first-plugin.zh.md: b7cfce290e86cebb12d99bcc438a281d4a988b4b
+01-first-plugin.md: a1ccc64c46f4976fbccfeef580c6d2f2183a2bbe
+01-first-plugin.zh.md: 5785767a52ebe6baadb747735d9bb9b98cc9d3f2
