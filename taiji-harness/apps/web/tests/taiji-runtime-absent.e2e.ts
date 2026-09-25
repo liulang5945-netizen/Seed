@@ -33,6 +33,9 @@ it('withdraws the taiji-local route and asks for a key again when the runtime is
   const ids = scaffold.ctx.llm.listProviders().map(provider => provider.id)
   expect(ids).not.toContain('taiji-local')
   expect(ids).toContain('deepseek-official')
+  // The declaration must survive a dead port: only the readiness probe withdraws
+  // the route. If this fails, the overlay replaced the row instead of probing it.
+  expect(scaffold.ctx.llm.listConfigurableProviders().map(entry => entry.provider)).toContain('taiji-local')
   const card = page.getByRole('dialog', { name: CREDENTIAL_STEP })
   await card.waitFor({ timeout: 15_000 })
   expect(await card.getByLabel('API 密钥', { exact: true }).count()).toBeGreaterThan(0)
