@@ -1086,6 +1086,28 @@ importers:
         specifier: workspace:^
         version: link:../../typert/registry
 
+  packages/api/life-controller:
+    dependencies:
+      '@taiji/dsh-typert-protocol':
+        specifier: workspace:^
+        version: link:../../typert/protocol
+      '@taiji/schemastery':
+        specifier: link:../../../vendor/schemastery
+        version: link:../../../vendor/schemastery
+      zod:
+        specifier: ^4.4.3
+        version: 4.4.3
+    devDependencies:
+      '@taiji/cordis':
+        specifier: workspace:^
+        version: link:../../../vendor/cordis
+      '@taiji/dsh-api-gateway':
+        specifier: workspace:^
+        version: link:../gateway
+      '@taiji/dsh-client-connection':
+        specifier: workspace:^
+        version: link:../../client/connection
+
   packages/api/remotes:
     dependencies:
       '@taiji/dsh-deque':
@@ -1116,6 +1138,9 @@ importers:
       '@taiji/dsh-api-job-controller':
         specifier: workspace:^
         version: link:../job-controller
+      '@taiji/dsh-api-life-controller':
+        specifier: workspace:^
+        version: link:../life-controller
       '@taiji/dsh-api-session-controller':
         specifier: workspace:^
         version: link:../session-controller
@@ -2283,6 +2308,9 @@ importers:
       '@taiji/dsh-api-job-controller':
         specifier: workspace:^
         version: link:../../api/job-controller
+      '@taiji/dsh-api-life-controller':
+        specifier: workspace:^
+        version: link:../../api/life-controller
       '@taiji/dsh-api-remotes':
         specifier: workspace:^
         version: link:../../api/remotes
@@ -2367,6 +2395,9 @@ importers:
       '@taiji/dsh-client-ui-layout':
         specifier: workspace:^
         version: link:../../client/ui-layout
+      '@taiji/dsh-client-ui-life':
+        specifier: workspace:^
+        version: link:../../client/ui-life
       '@taiji/dsh-client-ui-message-feedback':
         specifier: workspace:^
         version: link:../../client/ui-message-feedback
@@ -2520,6 +2551,12 @@ importers:
       '@taiji/dsh-launch-environment':
         specifier: workspace:^
         version: link:../../util/launch-environment
+      '@taiji/dsh-life-context':
+        specifier: workspace:^
+        version: link:../../context/life-context
+      '@taiji/dsh-memory-context':
+        specifier: workspace:^
+        version: link:../../context/memory-context
       '@taiji/dsh-message-feedback':
         specifier: workspace:^
         version: link:../../feedback/message-feedback
@@ -2538,6 +2575,9 @@ importers:
       '@taiji/dsh-session-log-export':
         specifier: workspace:^
         version: link:../../session-query/session-log-export
+      '@taiji/dsh-session-memory-taiji':
+        specifier: workspace:^
+        version: link:../../session/session-memory-taiji
       '@taiji/dsh-session-reference':
         specifier: workspace:^
         version: link:../../context/session-reference
@@ -3758,6 +3798,57 @@ importers:
       react:
         specifier: ^18.2.0
         version: 18.3.1
+
+  packages/client/ui-life:
+    devDependencies:
+      '@taiji/cordis':
+        specifier: workspace:^
+        version: link:../../../vendor/cordis
+      '@taiji/dsh-api-life-controller':
+        specifier: workspace:^
+        version: link:../../api/life-controller
+      '@taiji/dsh-client-locale':
+        specifier: workspace:^
+        version: link:../locale
+      '@taiji/dsh-client-test-runtime':
+        specifier: workspace:^
+        version: link:../../test-support/client-runtime
+      '@taiji/dsh-client-ui-layout':
+        specifier: workspace:^
+        version: link:../ui-layout
+      '@taiji/dsh-client-ui-primitives':
+        specifier: workspace:^
+        version: link:../ui-primitives
+      '@taiji/dsh-client-ui-renderer':
+        specifier: workspace:^
+        version: link:../ui-renderer
+      '@taiji/dsh-client-ui-sidebar':
+        specifier: workspace:^
+        version: link:../ui-sidebar
+      '@taiji/dsh-client-ui-slots':
+        specifier: workspace:^
+        version: link:../ui-slots
+      '@taiji/dsh-typert-protocol':
+        specifier: workspace:^
+        version: link:../../typert/protocol
+      '@testing-library/react':
+        specifier: ^16.1.0
+        version: 16.3.2(@testing-library/dom@10.4.2)(@types/react-dom@18.3.7(@types/react@18.3.31))(@types/react@18.3.31)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@types/react':
+        specifier: ~18.3.1
+        version: 18.3.31
+      '@types/react-dom':
+        specifier: ~18.3.0
+        version: 18.3.7(@types/react@18.3.31)
+      clsx:
+        specifier: ^2.1.1
+        version: 2.1.1
+      react:
+        specifier: ^18.2.0
+        version: 18.3.1
+      react-dom:
+        specifier: ^18.2.0
+        version: 18.3.1(react@18.3.1)
 
   packages/client/ui-message-feedback:
     devDependencies:
@@ -6163,6 +6254,44 @@ importers:
       '@taiji/dsh-tools':
         specifier: workspace:^
         version: link:../../core/tools
+
+  packages/context/life-context:
+    dependencies:
+      '@taiji/schemastery':
+        specifier: link:../../../vendor/schemastery
+        version: link:../../../vendor/schemastery
+    devDependencies:
+      '@taiji/cordis':
+        specifier: workspace:^
+        version: link:../../../vendor/cordis
+      '@taiji/dsh-agent':
+        specifier: workspace:^
+        version: link:../../core/agent
+      '@taiji/dsh-api-life-controller':
+        specifier: workspace:^
+        version: link:../../api/life-controller
+      '@taiji/dsh-llm':
+        specifier: workspace:^
+        version: link:../../llm/llm
+
+  packages/context/memory-context:
+    dependencies:
+      '@taiji/schemastery':
+        specifier: link:../../../vendor/schemastery
+        version: link:../../../vendor/schemastery
+    devDependencies:
+      '@taiji/cordis':
+        specifier: workspace:^
+        version: link:../../../vendor/cordis
+      '@taiji/dsh-agent':
+        specifier: workspace:^
+        version: link:../../core/agent
+      '@taiji/dsh-llm':
+        specifier: workspace:^
+        version: link:../../llm/llm
+      '@taiji/dsh-session':
+        specifier: workspace:^
+        version: link:../../core/session
 
   packages/context/session-reference:
     dependencies:
@@ -10390,6 +10519,25 @@ importers:
       '@taiji/dsh-session-persistence-jsonl':
         specifier: workspace:^
         version: link:../session-persistence-jsonl
+
+  packages/session/session-memory-taiji:
+    dependencies:
+      '@taiji/schemastery':
+        specifier: link:../../../vendor/schemastery
+        version: link:../../../vendor/schemastery
+    devDependencies:
+      '@taiji/cordis':
+        specifier: workspace:^
+        version: link:../../../vendor/cordis
+      '@taiji/dsh-agent':
+        specifier: workspace:^
+        version: link:../../core/agent
+      '@taiji/dsh-llm':
+        specifier: workspace:^
+        version: link:../../llm/llm
+      '@taiji/dsh-session':
+        specifier: workspace:^
+        version: link:../../core/session
 
   packages/session/session-persistence:
     dependencies:
