@@ -1,0 +1,585 @@
+{
+  "format": "taiji-r2-copy-circuit-training-v2",
+  "prereg": "plans/reference/SPEC-A-17_r2_a2_3b_format_align_prereg_20260925.md",
+  "stage": "judge",
+  "protocol": "chat",
+  "max_reply_bytes": 64,
+  "episodes_done": 3519,
+  "misaddressed_episodes": 1428,
+  "minutes": 90.01,
+  "budget_minutes": 90.0,
+  "stopped_by": "budget",
+  "lr_address": 0.05,
+  "lr_gate": 0.02,
+  "seed": 20260926,
+  "circuit_seed": 20260926,
+  "base_checkpoint": "checkpoints\\seed_beta.pt",
+  "history": [
+    {
+      "episodes": 50,
+      "minutes": 1.4,
+      "address_top1_recent50": 0.662,
+      "gate_abs_mean_recent50": 1.4866,
+      "advantage_mean_recent50": 0.2631,
+      "misaddressed_episodes_recent50": 24
+    },
+    {
+      "episodes": 100,
+      "minutes": 2.68,
+      "address_top1_recent50": 0.7483,
+      "gate_abs_mean_recent50": 5.8363,
+      "advantage_mean_recent50": 0.3439,
+      "misaddressed_episodes_recent50": 19
+    },
+    {
+      "episodes": 150,
+      "minutes": 4.03,
+      "address_top1_recent50": 0.7692,
+      "gate_abs_mean_recent50": 11.0948,
+      "advantage_mean_recent50": 0.383,
+      "misaddressed_episodes_recent50": 22
+    },
+    {
+      "episodes": 200,
+      "minutes": 5.39,
+      "address_top1_recent50": 0.75,
+      "gate_abs_mean_recent50": 15.4956,
+      "advantage_mean_recent50": 0.3775,
+      "misaddressed_episodes_recent50": 22
+    },
+    {
+      "episodes": 250,
+      "minutes": 6.71,
+      "address_top1_recent50": 0.7771,
+      "gate_abs_mean_recent50": 19.6926,
+      "advantage_mean_recent50": 0.4072,
+      "misaddressed_episodes_recent50": 21
+    },
+    {
+      "episodes": 300,
+      "minutes": 8.03,
+      "address_top1_recent50": 0.7785,
+      "gate_abs_mean_recent50": 25.2147,
+      "advantage_mean_recent50": 0.4226,
+      "misaddressed_episodes_recent50": 21
+    },
+    {
+      "episodes": 350,
+      "minutes": 9.2,
+      "address_top1_recent50": 0.7458,
+      "gate_abs_mean_recent50": 26.8878,
+      "advantage_mean_recent50": 0.4032,
+      "misaddressed_episodes_recent50": 15
+    },
+    {
+      "episodes": 400,
+      "minutes": 10.39,
+      "address_top1_recent50": 0.7912,
+      "gate_abs_mean_recent50": 30.7035,
+      "advantage_mean_recent50": 0.4378,
+      "misaddressed_episodes_recent50": 16
+    },
+    {
+      "episodes": 450,
+      "minutes": 11.57,
+      "address_top1_recent50": 0.7663,
+      "gate_abs_mean_recent50": 33.0514,
+      "advantage_mean_recent50": 0.4307,
+      "misaddressed_episodes_recent50": 15
+    },
+    {
+      "episodes": 500,
+      "minutes": 12.94,
+      "address_top1_recent50": 0.7465,
+      "gate_abs_mean_recent50": 35.8,
+      "advantage_mean_recent50": 0.4441,
+      "misaddressed_episodes_recent50": 22
+    },
+    {
+      "episodes": 550,
+      "minutes": 14.17,
+      "address_top1_recent50": 0.7967,
+      "gate_abs_mean_recent50": 36.5401,
+      "advantage_mean_recent50": 0.5151,
+      "misaddressed_episodes_recent50": 17
+    },
+    {
+      "episodes": 600,
+      "minutes": 15.41,
+      "address_top1_recent50": 0.8125,
+      "gate_abs_mean_recent50": 39.483,
+      "advantage_mean_recent50": 0.5199,
+      "misaddressed_episodes_recent50": 17
+    },
+    {
+      "episodes": 650,
+      "minutes": 16.72,
+      "address_top1_recent50": 0.7971,
+      "gate_abs_mean_recent50": 39.129,
+      "advantage_mean_recent50": 0.4984,
+      "misaddressed_episodes_recent50": 21
+    },
+    {
+      "episodes": 700,
+      "minutes": 17.95,
+      "address_top1_recent50": 0.8214,
+      "gate_abs_mean_recent50": 39.8916,
+      "advantage_mean_recent50": 0.552,
+      "misaddressed_episodes_recent50": 17
+    },
+    {
+      "episodes": 750,
+      "minutes": 19.24,
+      "address_top1_recent50": 0.7949,
+      "gate_abs_mean_recent50": 39.0178,
+      "advantage_mean_recent50": 0.5691,
+      "misaddressed_episodes_recent50": 19
+    },
+    {
+      "episodes": 800,
+      "minutes": 20.71,
+      "address_top1_recent50": 0.8017,
+      "gate_abs_mean_recent50": 40.714,
+      "advantage_mean_recent50": 0.559,
+      "misaddressed_episodes_recent50": 27
+    },
+    {
+      "episodes": 850,
+      "minutes": 22.09,
+      "address_top1_recent50": 0.8636,
+      "gate_abs_mean_recent50": 41.316,
+      "advantage_mean_recent50": 0.602,
+      "misaddressed_episodes_recent50": 24
+    },
+    {
+      "episodes": 900,
+      "minutes": 23.47,
+      "address_top1_recent50": 0.8295,
+      "gate_abs_mean_recent50": 42.7133,
+      "advantage_mean_recent50": 0.5544,
+      "misaddressed_episodes_recent50": 23
+    },
+    {
+      "episodes": 950,
+      "minutes": 24.76,
+      "address_top1_recent50": 0.8061,
+      "gate_abs_mean_recent50": 42.6722,
+      "advantage_mean_recent50": 0.5999,
+      "misaddressed_episodes_recent50": 19
+    },
+    {
+      "episodes": 1000,
+      "minutes": 26.07,
+      "address_top1_recent50": 0.8205,
+      "gate_abs_mean_recent50": 42.2137,
+      "advantage_mean_recent50": 0.5917,
+      "misaddressed_episodes_recent50": 21
+    },
+    {
+      "episodes": 1050,
+      "minutes": 27.26,
+      "address_top1_recent50": 0.8614,
+      "gate_abs_mean_recent50": 42.8638,
+      "advantage_mean_recent50": 0.6127,
+      "misaddressed_episodes_recent50": 16
+    },
+    {
+      "episodes": 1100,
+      "minutes": 28.68,
+      "address_top1_recent50": 0.8333,
+      "gate_abs_mean_recent50": 43.6792,
+      "advantage_mean_recent50": 0.6284,
+      "misaddressed_episodes_recent50": 26
+    },
+    {
+      "episodes": 1150,
+      "minutes": 30.03,
+      "address_top1_recent50": 0.7987,
+      "gate_abs_mean_recent50": 46.8307,
+      "advantage_mean_recent50": 0.6451,
+      "misaddressed_episodes_recent50": 22
+    },
+    {
+      "episodes": 1200,
+      "minutes": 31.38,
+      "address_top1_recent50": 0.8255,
+      "gate_abs_mean_recent50": 47.0499,
+      "advantage_mean_recent50": 0.6416,
+      "misaddressed_episodes_recent50": 22
+    },
+    {
+      "episodes": 1250,
+      "minutes": 32.66,
+      "address_top1_recent50": 0.7962,
+      "gate_abs_mean_recent50": 46.3955,
+      "advantage_mean_recent50": 0.6217,
+      "misaddressed_episodes_recent50": 19
+    },
+    {
+      "episodes": 1300,
+      "minutes": 33.89,
+      "address_top1_recent50": 0.8512,
+      "gate_abs_mean_recent50": 47.1187,
+      "advantage_mean_recent50": 0.6949,
+      "misaddressed_episodes_recent50": 18
+    },
+    {
+      "episodes": 1350,
+      "minutes": 35.18,
+      "address_top1_recent50": 0.8024,
+      "gate_abs_mean_recent50": 49.9024,
+      "advantage_mean_recent50": 0.6704,
+      "misaddressed_episodes_recent50": 20
+    },
+    {
+      "episodes": 1400,
+      "minutes": 36.53,
+      "address_top1_recent50": 0.8214,
+      "gate_abs_mean_recent50": 48.8978,
+      "advantage_mean_recent50": 0.6835,
+      "misaddressed_episodes_recent50": 21
+    },
+    {
+      "episodes": 1450,
+      "minutes": 37.76,
+      "address_top1_recent50": 0.8344,
+      "gate_abs_mean_recent50": 48.8166,
+      "advantage_mean_recent50": 0.6844,
+      "misaddressed_episodes_recent50": 20
+    },
+    {
+      "episodes": 1500,
+      "minutes": 38.85,
+      "address_top1_recent50": 0.8061,
+      "gate_abs_mean_recent50": 50.4696,
+      "advantage_mean_recent50": 0.6898,
+      "misaddressed_episodes_recent50": 15
+    },
+    {
+      "episodes": 1550,
+      "minutes": 40.12,
+      "address_top1_recent50": 0.8102,
+      "gate_abs_mean_recent50": 49.5061,
+      "advantage_mean_recent50": 0.687,
+      "misaddressed_episodes_recent50": 22
+    },
+    {
+      "episodes": 1600,
+      "minutes": 41.17,
+      "address_top1_recent50": 0.8083,
+      "gate_abs_mean_recent50": 52.3013,
+      "advantage_mean_recent50": 0.713,
+      "misaddressed_episodes_recent50": 13
+    },
+    {
+      "episodes": 1650,
+      "minutes": 42.45,
+      "address_top1_recent50": 0.7792,
+      "gate_abs_mean_recent50": 52.7124,
+      "advantage_mean_recent50": 0.7208,
+      "misaddressed_episodes_recent50": 23
+    },
+    {
+      "episodes": 1700,
+      "minutes": 43.73,
+      "address_top1_recent50": 0.8487,
+      "gate_abs_mean_recent50": 50.6011,
+      "advantage_mean_recent50": 0.7357,
+      "misaddressed_episodes_recent50": 23
+    },
+    {
+      "episodes": 1750,
+      "minutes": 44.88,
+      "address_top1_recent50": 0.8323,
+      "gate_abs_mean_recent50": 48.9459,
+      "advantage_mean_recent50": 0.7467,
+      "misaddressed_episodes_recent50": 17
+    },
+    {
+      "episodes": 1800,
+      "minutes": 46.07,
+      "address_top1_recent50": 0.8528,
+      "gate_abs_mean_recent50": 51.3014,
+      "advantage_mean_recent50": 0.759,
+      "misaddressed_episodes_recent50": 18
+    },
+    {
+      "episodes": 1850,
+      "minutes": 47.24,
+      "address_top1_recent50": 0.8483,
+      "gate_abs_mean_recent50": 51.7035,
+      "advantage_mean_recent50": 0.7452,
+      "misaddressed_episodes_recent50": 16
+    },
+    {
+      "episodes": 1900,
+      "minutes": 48.47,
+      "address_top1_recent50": 0.8491,
+      "gate_abs_mean_recent50": 48.2487,
+      "advantage_mean_recent50": 0.7644,
+      "misaddressed_episodes_recent50": 21
+    },
+    {
+      "episodes": 1950,
+      "minutes": 49.74,
+      "address_top1_recent50": 0.8077,
+      "gate_abs_mean_recent50": 53.4556,
+      "advantage_mean_recent50": 0.7406,
+      "misaddressed_episodes_recent50": 22
+    },
+    {
+      "episodes": 2000,
+      "minutes": 50.97,
+      "address_top1_recent50": 0.8519,
+      "gate_abs_mean_recent50": 53.5687,
+      "advantage_mean_recent50": 0.7645,
+      "misaddressed_episodes_recent50": 21
+    },
+    {
+      "episodes": 2050,
+      "minutes": 52.27,
+      "address_top1_recent50": 0.8473,
+      "gate_abs_mean_recent50": 52.3473,
+      "advantage_mean_recent50": 0.8017,
+      "misaddressed_episodes_recent50": 24
+    },
+    {
+      "episodes": 2100,
+      "minutes": 53.56,
+      "address_top1_recent50": 0.84,
+      "gate_abs_mean_recent50": 53.0977,
+      "advantage_mean_recent50": 0.7853,
+      "misaddressed_episodes_recent50": 19
+    },
+    {
+      "episodes": 2150,
+      "minutes": 54.75,
+      "address_top1_recent50": 0.8418,
+      "gate_abs_mean_recent50": 53.5785,
+      "advantage_mean_recent50": 0.8125,
+      "misaddressed_episodes_recent50": 18
+    },
+    {
+      "episodes": 2200,
+      "minutes": 55.95,
+      "address_top1_recent50": 0.8314,
+      "gate_abs_mean_recent50": 51.7443,
+      "advantage_mean_recent50": 0.8034,
+      "misaddressed_episodes_recent50": 18
+    },
+    {
+      "episodes": 2250,
+      "minutes": 57.2,
+      "address_top1_recent50": 0.8081,
+      "gate_abs_mean_recent50": 53.2969,
+      "advantage_mean_recent50": 0.8025,
+      "misaddressed_episodes_recent50": 20
+    },
+    {
+      "episodes": 2300,
+      "minutes": 58.55,
+      "address_top1_recent50": 0.837,
+      "gate_abs_mean_recent50": 55.4574,
+      "advantage_mean_recent50": 0.8032,
+      "misaddressed_episodes_recent50": 24
+    },
+    {
+      "episodes": 2350,
+      "minutes": 59.74,
+      "address_top1_recent50": 0.8562,
+      "gate_abs_mean_recent50": 56.4124,
+      "advantage_mean_recent50": 0.8353,
+      "misaddressed_episodes_recent50": 19
+    },
+    {
+      "episodes": 2400,
+      "minutes": 60.97,
+      "address_top1_recent50": 0.84,
+      "gate_abs_mean_recent50": 57.836,
+      "advantage_mean_recent50": 0.8159,
+      "misaddressed_episodes_recent50": 21
+    },
+    {
+      "episodes": 2450,
+      "minutes": 62.21,
+      "address_top1_recent50": 0.8442,
+      "gate_abs_mean_recent50": 54.0269,
+      "advantage_mean_recent50": 0.831,
+      "misaddressed_episodes_recent50": 21
+    },
+    {
+      "episodes": 2500,
+      "minutes": 63.56,
+      "address_top1_recent50": 0.8284,
+      "gate_abs_mean_recent50": 51.8901,
+      "advantage_mean_recent50": 0.8046,
+      "misaddressed_episodes_recent50": 25
+    },
+    {
+      "episodes": 2550,
+      "minutes": 64.79,
+      "address_top1_recent50": 0.8564,
+      "gate_abs_mean_recent50": 55.7641,
+      "advantage_mean_recent50": 0.8259,
+      "misaddressed_episodes_recent50": 20
+    },
+    {
+      "episodes": 2600,
+      "minutes": 66.14,
+      "address_top1_recent50": 0.8151,
+      "gate_abs_mean_recent50": 55.1254,
+      "advantage_mean_recent50": 0.8422,
+      "misaddressed_episodes_recent50": 25
+    },
+    {
+      "episodes": 2650,
+      "minutes": 67.4,
+      "address_top1_recent50": 0.8239,
+      "gate_abs_mean_recent50": 56.5467,
+      "advantage_mean_recent50": 0.8457,
+      "misaddressed_episodes_recent50": 22
+    },
+    {
+      "episodes": 2700,
+      "minutes": 68.8,
+      "address_top1_recent50": 0.8235,
+      "gate_abs_mean_recent50": 58.5141,
+      "advantage_mean_recent50": 0.8188,
+      "misaddressed_episodes_recent50": 27
+    },
+    {
+      "episodes": 2750,
+      "minutes": 70.01,
+      "address_top1_recent50": 0.8828,
+      "gate_abs_mean_recent50": 55.0133,
+      "advantage_mean_recent50": 0.878,
+      "misaddressed_episodes_recent50": 19
+    },
+    {
+      "episodes": 2800,
+      "minutes": 71.54,
+      "address_top1_recent50": 0.8202,
+      "gate_abs_mean_recent50": 60.345,
+      "advantage_mean_recent50": 0.8812,
+      "misaddressed_episodes_recent50": 32
+    },
+    {
+      "episodes": 2850,
+      "minutes": 72.67,
+      "address_top1_recent50": 0.8424,
+      "gate_abs_mean_recent50": 52.893,
+      "advantage_mean_recent50": 0.8396,
+      "misaddressed_episodes_recent50": 16
+    },
+    {
+      "episodes": 2900,
+      "minutes": 73.96,
+      "address_top1_recent50": 0.8723,
+      "gate_abs_mean_recent50": 56.2634,
+      "advantage_mean_recent50": 0.8764,
+      "misaddressed_episodes_recent50": 22
+    },
+    {
+      "episodes": 2950,
+      "minutes": 75.11,
+      "address_top1_recent50": 0.8696,
+      "gate_abs_mean_recent50": 55.7725,
+      "advantage_mean_recent50": 0.8699,
+      "misaddressed_episodes_recent50": 14
+    },
+    {
+      "episodes": 3000,
+      "minutes": 76.43,
+      "address_top1_recent50": 0.8766,
+      "gate_abs_mean_recent50": 56.4319,
+      "advantage_mean_recent50": 0.8959,
+      "misaddressed_episodes_recent50": 21
+    },
+    {
+      "episodes": 3050,
+      "minutes": 77.75,
+      "address_top1_recent50": 0.8377,
+      "gate_abs_mean_recent50": 58.3829,
+      "advantage_mean_recent50": 0.8829,
+      "misaddressed_episodes_recent50": 18
+    },
+    {
+      "episodes": 3100,
+      "minutes": 79.22,
+      "address_top1_recent50": 0.8649,
+      "gate_abs_mean_recent50": 58.2399,
+      "advantage_mean_recent50": 0.8816,
+      "misaddressed_episodes_recent50": 20
+    },
+    {
+      "episodes": 3150,
+      "minutes": 80.49,
+      "address_top1_recent50": 0.8598,
+      "gate_abs_mean_recent50": 59.7926,
+      "advantage_mean_recent50": 0.9143,
+      "misaddressed_episodes_recent50": 17
+    },
+    {
+      "episodes": 3200,
+      "minutes": 82.0,
+      "address_top1_recent50": 0.8264,
+      "gate_abs_mean_recent50": 55.8747,
+      "advantage_mean_recent50": 0.8493,
+      "misaddressed_episodes_recent50": 28
+    },
+    {
+      "episodes": 3250,
+      "minutes": 83.31,
+      "address_top1_recent50": 0.8904,
+      "gate_abs_mean_recent50": 59.1553,
+      "advantage_mean_recent50": 0.901,
+      "misaddressed_episodes_recent50": 20
+    },
+    {
+      "episodes": 3300,
+      "minutes": 84.51,
+      "address_top1_recent50": 0.8625,
+      "gate_abs_mean_recent50": 54.9477,
+      "advantage_mean_recent50": 0.915,
+      "misaddressed_episodes_recent50": 15
+    },
+    {
+      "episodes": 3350,
+      "minutes": 85.84,
+      "address_top1_recent50": 0.8493,
+      "gate_abs_mean_recent50": 57.3367,
+      "advantage_mean_recent50": 0.9091,
+      "misaddressed_episodes_recent50": 21
+    },
+    {
+      "episodes": 3400,
+      "minutes": 87.03,
+      "address_top1_recent50": 0.8452,
+      "gate_abs_mean_recent50": 55.7863,
+      "advantage_mean_recent50": 0.9097,
+      "misaddressed_episodes_recent50": 20
+    },
+    {
+      "episodes": 3450,
+      "minutes": 88.26,
+      "address_top1_recent50": 0.8581,
+      "gate_abs_mean_recent50": 59.3022,
+      "advantage_mean_recent50": 0.9217,
+      "misaddressed_episodes_recent50": 18
+    },
+    {
+      "episodes": 3500,
+      "minutes": 89.52,
+      "address_top1_recent50": 0.881,
+      "gate_abs_mean_recent50": 55.3438,
+      "advantage_mean_recent50": 0.9097,
+      "misaddressed_episodes_recent50": 20
+    }
+  ],
+  "smoke_criteria": {
+    "address_top1_ge_0.5": true,
+    "gate_abs_mean_gt_0.05": true,
+    "pass": true
+  },
+  "base_sha256_unchanged": true
+}
