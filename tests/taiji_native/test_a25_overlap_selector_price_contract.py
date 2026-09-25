@@ -96,6 +96,8 @@ def test_first_event_selector_is_the_ceiling_not_a_lucky_pick(tmp_path) -> None:
     from taiji.copy_circuit import ToldContentStore
 
     original = ToldContentStore.best_match
+    price.PROBE["used"] = 0
+    price.PROBE["picks"] = {}
     price._install("first")
     try:
         store = ToldContentStore(cue_dim=4, max_events=4)
@@ -103,6 +105,10 @@ def test_first_event_selector_is_the_ceiling_not_a_lucky_pick(tmp_path) -> None:
         store.record("我表哥住在西安。".encode(), torch.ones(4))
         picked = store.best_match(torch.zeros(4))
         assert bytes(picked.content) == "我住在苏州。".encode()
+        #: 每一档都必须留下"补丁被走到"的计数——天花板档上一版就是漏了这个，
+        #: 整份读数只能按未核验处理。
+        assert price.PROBE["used"] == 1
+        assert price.PROBE["picks"] == {"我住在苏州。": 1}
     finally:
         price._uninstall()
         ToldContentStore.best_match = original

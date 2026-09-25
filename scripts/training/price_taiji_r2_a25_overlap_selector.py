@@ -96,8 +96,16 @@ def _first_event_selection(self: Any, cue: Any) -> Any:
     """
     events = self.events()
     if not events:
+        PROBE["empty_store"] = int(PROBE["empty_store"] or 0) + 1
         return None
-    return min(events, key=lambda event: int(event.event_id))
+    chosen = min(events, key=lambda event: int(event.event_id))
+    #: 计数器必须**每一档都装**：上一版只给规则键装了，天花板档跑完 `used` 是 0，
+    #: 报告无法自证"补丁真被走到"，整份读数只能按未核验处理（它确实是响亮失败、退出码 2）。
+    PROBE["used"] = int(PROBE["used"] or 0) + 1
+    picks = PROBE.setdefault("picks", {})
+    key = bytes(chosen.content).decode("utf-8", errors="replace")
+    picks[key] = int(picks.get(key, 0)) + 1  # type: ignore[index]
+    return chosen
 
 
 def _answer_raw_with_query(runtime: Any, prompt: str, history: Any) -> str:
@@ -255,6 +263,7 @@ def main() -> int:
         PROBE["used"] = 0
         PROBE["no_query"] = 0
         PROBE["empty_store"] = 0
+        PROBE["picks"] = {}
         _install(args.selector)
         try:
             arm = run_arm(items, checkpoint, circuit)
@@ -270,6 +279,10 @@ def main() -> int:
                 "selector_used_calls": used,
                 "selector_no_query_calls": no_query,
                 "selector_empty_store_calls": empty_store,
+                #: 被选中内容的分布：天花板档必须几乎全落在**告知**上，落在干扰上就是构造错了。
+                "selector_picks_top5": sorted(
+                    dict(PROBE.get("picks") or {}).items(), key=lambda kv: -kv[1]
+                )[:5],
                 "items": arm["items"],
                 "texts": arm["texts"],
                 "strict_hits": arm["strict_hits"],
