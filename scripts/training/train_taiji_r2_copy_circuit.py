@@ -129,7 +129,7 @@ def main() -> int:
     ).hexdigest()
     if probe_digest != twin_digest:
         raise RuntimeError("S0 self-check failed: circuit checkpoint round-trip digest mismatch")
-    circuit.store._events.clear()  # 自检事件不进训练
+    circuit.store.clear()  # 自检事件不进训练
 
     if args.resume:
         resume_path = Path(args.resume)
@@ -166,25 +166,36 @@ def main() -> int:
             break
         turns, answer = make_episode(rng)
         substrate.reset_dynamics(episode_id=f"a23-{args.stage}-{done}")
+        # 单事件训练体制（多事件寻址属 A2.4）：每 episode 清库，best_match 必中本条。
+        circuit.store.clear()
         _feed(substrate, turns[0].encode("utf-8"))
         circuit.store.record(
             turns[0].encode("utf-8"),
             substrate.fabric.cortical_context(substrate._state.regions).detach().cpu().clone(),
         )
-        _feed(substrate, "".join(turns[1:]).encode("utf-8"))
-        emitted: dict[int, int] = {}
-        for byte in answer.encode("utf-8"):
+        ask_bytes = "".join(turns[1:]).encode("utf-8")
+        _feed(substrate, ask_bytes)
+        tell_bytes = turns[0].encode("utf-8")
+        answer_bytes = answer.encode("utf-8")
+        # rev4（预注册 §6）：标签修正——答案必为告知段连续子串，span+k 是唯一正确对齐；
+        # 旧"首个未发射出现位"在 UTF-8 下常指错位置（重复字节），寻址一直在吃错标签。
+        span = tell_bytes.find(answer_bytes)
+        if span < 0:
+            done += 1
+            continue
+        prev_byte = int(ask_bytes[-1])
+        for k, byte in enumerate(answer_bytes):
             state = substrate._state
             cue = substrate.fabric.cortical_context(state.regions)
             ctx = state.motor_context
-            snap = circuit.addressing(cue=cue.detach().cpu().clone(), f1_context=ctx)
+            snap = circuit.addressing(
+                cue=cue.detach().cpu().clone(), f1_context=ctx, prev_byte=prev_byte
+            )
             if snap is None:
                 break
             top1 = int(snap["scores"].argmax())
-            codes = snap["codes"]
-            matches = [i for i, c in enumerate(codes.tolist()) if c == byte]
-            want = matches[min(emitted.get(byte, 0), len(matches) - 1)] if matches else -1
-            window_hits += int(want >= 0 and top1 == want)
+            want = span + k
+            window_hits += int(top1 == want)
             window_steps += 1
             base_evidence = float(
                 config.consolidation_read_gain
@@ -200,23 +211,24 @@ def main() -> int:
                 max(float(p_without[byte]), 1e-12)
             )
             advantage = max(-2.0, min(2.0, advantage))
-            if want >= 0:
-                circuit.learn(
-                    snap,
-                    f1_context=ctx,
-                    target_position=want,
-                    advantage=advantage,
-                    lr_address=args.lr_address,
-                    lr_gate=args.lr_gate,
-                )
+            circuit.learn(
+                snap,
+                f1_context=ctx,
+                target_position=want,
+                advantage=advantage,
+                lr_address=args.lr_address,
+                lr_gate=args.lr_gate,
+            )
             window_gate.append(
                 abs(
-                    circuit.addressing(cue=cue.detach().cpu().clone(), f1_context=ctx)["gate_value"]
+                    circuit.addressing(
+                        cue=cue.detach().cpu().clone(), f1_context=ctx, prev_byte=prev_byte
+                    )["gate_value"]
                 )
             )
             window_adv.append(advantage)
-            emitted[byte] = emitted.get(byte, 0) + 1
             substrate.observe(int(byte), learn=False, readout="predictive", use_memory=False)
+            prev_byte = int(byte)
         done += 1
         if done % 50 == 0:
             hit_rate = window_hits / max(window_steps, 1)

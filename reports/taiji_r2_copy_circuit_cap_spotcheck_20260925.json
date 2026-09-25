@@ -1,0 +1,379 @@
+{
+  "format": "taiji-r2-copy-circuit-cap-spotcheck-v1",
+  "prereg": "plans/reference/M5_R2_A2_3_PREREG_20260925.md §4-S2②",
+  "checkpoint": "seed_beta.pt",
+  "circuit": "output/taiji_r2_copy_circuit/judge/circuit-final.pt",
+  "control_no_circuit": {
+    "items": 36,
+    "correct": 0,
+    "rows": [
+      {
+        "id": "D01",
+        "hit": false,
+        "text": "\n\n\n\n�（：�）：��"
+      },
+      {
+        "id": "D02",
+        "hit": false,
+        "text": "\n\n\n我（（我）：我"
+      },
+      {
+        "id": "D03",
+        "hit": false,
+        "text": "刼�则人��个�，��"
+      },
+      {
+        "id": "D04",
+        "hit": false,
+        "text": "\n\n\n\n�（（）：我为"
+      },
+      {
+        "id": "D05",
+        "hit": false,
+        "text": "\n\n\n\n�（（））））"
+      },
+      {
+        "id": "D06",
+        "hit": false,
+        "text": "\n\n\n\n�（（））））"
+      },
+      {
+        "id": "D07",
+        "hit": false,
+        "text": "\n\n\n杈（（我下君��"
+      },
+      {
+        "id": "D08",
+        "hit": false,
+        "text": "\n\n\n我（：�）：��"
+      },
+      {
+        "id": "D09",
+        "hit": false,
+        "text": "\n\n\n戼���）））））"
+      },
+      {
+        "id": "D10",
+        "hit": false,
+        "text": "\n\n\n\n\n\n\n\n\n（（（）��"
+      },
+      {
+        "id": "D11",
+        "hit": false,
+        "text": "\n\n我（：�）：君�"
+      },
+      {
+        "id": "D12",
+        "hit": false,
+        "text": "\n\n\n漈（��））））�"
+      },
+      {
+        "id": "D13",
+        "hit": false,
+        "text": "�则人����������"
+      },
+      {
+        "id": "D18",
+        "hit": false,
+        "text": "\n\n\n杈（��）：我君�"
+      },
+      {
+        "id": "D19",
+        "hit": false,
+        "text": "\n\n\n\n\n\n\n\n\n（（（）��"
+      },
+      {
+        "id": "D20",
+        "hit": false,
+        "text": "\n\n\n\n�（（）：���"
+      },
+      {
+        "id": "E01",
+        "hit": false,
+        "text": "刺人����个则是�"
+      },
+      {
+        "id": "E02",
+        "hit": false,
+        "text": "有：�则为�����为�"
+      },
+      {
+        "id": "E03",
+        "hit": false,
+        "text": "\n\n\n��（�����人����"
+      },
+      {
+        "id": "E04",
+        "hit": false,
+        "text": "\n\n\n\n戈�）：�����"
+      },
+      {
+        "id": "E05",
+        "hit": false,
+        "text": "\n\n\n杈（（）：我人"
+      },
+      {
+        "id": "E06",
+        "hit": false,
+        "text": "\n\n\n\n戈�（（）：��"
+      },
+      {
+        "id": "E07",
+        "hit": false,
+        "text": "刼����君��个�，�"
+      },
+      {
+        "id": "E08",
+        "hit": false,
+        "text": "我为�����为为分君"
+      },
+      {
+        "id": "E09",
+        "hit": false,
+        "text": "来�������为����君��"
+      },
+      {
+        "id": "E10",
+        "hit": false,
+        "text": "」是文则我了为��"
+      },
+      {
+        "id": "E11",
+        "hit": false,
+        "text": "\n\n\n\n\n\n\n\n\n（（（（��"
+      },
+      {
+        "id": "E12",
+        "hit": false,
+        "text": "\n\n\n杈（（））））"
+      },
+      {
+        "id": "E13",
+        "hit": false,
+        "text": "则为�����为�，为�"
+      },
+      {
+        "id": "E14",
+        "hit": false,
+        "text": "\n\n\n我（））））���"
+      },
+      {
+        "id": "E15",
+        "hit": false,
+        "text": "刑们��了为君吼�刑"
+      },
+      {
+        "id": "E16",
+        "hit": false,
+        "text": "别刑人�������是"
+      },
+      {
+        "id": "E17",
+        "hit": false,
+        "text": "别�刺人��������"
+      },
+      {
+        "id": "E18",
+        "hit": false,
+        "text": "\n\n\n�（（））））�"
+      },
+      {
+        "id": "E19",
+        "hit": false,
+        "text": "\n\n杈（��）：我下�"
+      },
+      {
+        "id": "E20",
+        "hit": false,
+        "text": "\n\n\n杈���）：�����"
+      }
+    ]
+  },
+  "treated_with_circuit": {
+    "items": 36,
+    "correct": 5,
+    "rows": [
+      {
+        "id": "D01",
+        "hit": true,
+        "text": "阿岩�������」��岩��"
+      },
+      {
+        "id": "D02",
+        "hit": false,
+        "text": "�戝杭�������佝����佝"
+      },
+      {
+        "id": "D03",
+        "hit": false,
+        "text": "囥潮���殮柮���"
+      },
+      {
+        "id": "D04",
+        "hit": true,
+        "text": "7 17 学�7777��������7 "
+      },
+      {
+        "id": "D05",
+        "hit": false,
+        "text": "� �ddd����皚d ��  ��"
+      },
+      {
+        "id": "D06",
+        "hit": true,
+        "text": "阿岩�阿岩�������利�"
+      },
+      {
+        "id": "D07",
+        "hit": false,
+        "text": "�戝�潝����������������"
+      },
+      {
+        "id": "D08",
+        "hit": false,
+        "text": "�茶墬���梬梬��"
+      },
+      {
+        "id": "D09",
+        "hit": true,
+        "text": "242 42����������� 42��"
+      },
+      {
+        "id": "D10",
+        "hit": false,
+        "text": "阿岩�������家家岿�"
+      },
+      {
+        "id": "D11",
+        "hit": false,
+        "text": "�戝歝����������佝����"
+      },
+      {
+        "id": "D12",
+        "hit": false,
+        "text": "7777��������欢�777�777"
+      },
+      {
+        "id": "D13",
+        "hit": false,
+        "text": "�负贵���负舑�负�"
+      },
+      {
+        "id": "D18",
+        "hit": false,
+        "text": "岩������丘�岩�������"
+      },
+      {
+        "id": "D19",
+        "hit": false,
+        "text": "雮�d 幈 ��Sed�� �"
+      },
+      {
+        "id": "D20",
+        "hit": false,
+        "text": "濇��������欢���诬��"
+      },
+      {
+        "id": "E01",
+        "hit": false,
+        "text": "药�毯�� 4 4 4 4��24 "
+      },
+      {
+        "id": "E02",
+        "hit": false,
+        "text": "��������“�‒��"
+      },
+      {
+        "id": "E03",
+        "hit": false,
+        "text": "�0 4 �� 4 4 4 ��  4 "
+      },
+      {
+        "id": "E04",
+        "hit": false,
+        "text": "4 26 庸���,,4 2�4 庸42"
+      },
+      {
+        "id": "E05",
+        "hit": false,
+        "text": "����������������"
+      },
+      {
+        "id": "E06",
+        "hit": false,
+        "text": "� �2 12 �2 ��2 2 ��"
+      },
+      {
+        "id": "E07",
+        "hit": false,
+        "text": "����������������"
+      },
+      {
+        "id": "E08",
+        "hit": false,
+        "text": "�� 2 庚2 2 2 庚2 2 2 "
+      },
+      {
+        "id": "E09",
+        "hit": true,
+        "text": "�三277���教72��2�2�"
+      },
+      {
+        "id": "E10",
+        "hit": false,
+        "text": "�“�������������"
+      },
+      {
+        "id": "E11",
+        "hit": false,
+        "text": "教镰丅������00 丅���"
+      },
+      {
+        "id": "E12",
+        "hit": false,
+        "text": "庸��数丯�数丽�教�"
+      },
+      {
+        "id": "E13",
+        "hit": false,
+        "text": "��“����������"
+      },
+      {
+        "id": "E14",
+        "hit": false,
+        "text": "庉“‌���丅�����"
+      },
+      {
+        "id": "E15",
+        "hit": false,
+        "text": "��䐟䯯����������"
+      },
+      {
+        "id": "E16",
+        "hit": false,
+        "text": "��丘������������为�"
+      },
+      {
+        "id": "E17",
+        "hit": false,
+        "text": "�  ��   尝  家宯���"
+      },
+      {
+        "id": "E18",
+        "hit": false,
+        "text": " ��胟说�诉三三三"
+      },
+      {
+        "id": "E19",
+        "hit": false,
+        "text": "胪�����說胟��胟胟�"
+      },
+      {
+        "id": "E20",
+        "hit": false,
+        "text": "误��������柩柩�䯩���"
+      }
+    ]
+  },
+  "verdict": "S2② 通过（D+E>0 且 > 对照）"
+}

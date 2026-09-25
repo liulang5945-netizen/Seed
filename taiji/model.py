@@ -2111,6 +2111,7 @@ class Taiji:
             episodic_evidence = episodic_evidence + self._copy_circuit.evidence(
                 cue=self.fabric.cortical_context(regions),
                 f1_context=context,
+                prev_byte=int(symbol),
             )
         if readout == "predictive":
             probabilities = predictive_readout.probabilities(

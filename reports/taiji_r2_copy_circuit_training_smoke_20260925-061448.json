@@ -1,0 +1,1056 @@
+{
+  "format": "taiji-r2-copy-circuit-training-v1",
+  "prereg": "plans/reference/M5_R2_A2_3_PREREG_20260925.md",
+  "stage": "smoke",
+  "episodes_done": 7447,
+  "minutes": 10.0,
+  "budget_minutes": 10.0,
+  "stopped_by": "budget",
+  "lr_address": 0.15,
+  "lr_gate": 0.002,
+  "seed": 20260925,
+  "base_checkpoint": null,
+  "history": [
+    {
+      "episodes": 50,
+      "minutes": 0.07,
+      "address_top1_recent50": 0.2761,
+      "gate_abs_mean_recent50": 0.2167,
+      "advantage_mean_recent50": 0.1563
+    },
+    {
+      "episodes": 100,
+      "minutes": 0.14,
+      "address_top1_recent50": 0.2833,
+      "gate_abs_mean_recent50": 0.7288,
+      "advantage_mean_recent50": 0.194
+    },
+    {
+      "episodes": 150,
+      "minutes": 0.21,
+      "address_top1_recent50": 0.3086,
+      "gate_abs_mean_recent50": 1.3555,
+      "advantage_mean_recent50": 0.218
+    },
+    {
+      "episodes": 200,
+      "minutes": 0.28,
+      "address_top1_recent50": 0.3156,
+      "gate_abs_mean_recent50": 1.9359,
+      "advantage_mean_recent50": 0.224
+    },
+    {
+      "episodes": 250,
+      "minutes": 0.36,
+      "address_top1_recent50": 0.367,
+      "gate_abs_mean_recent50": 2.8307,
+      "advantage_mean_recent50": 0.3126
+    },
+    {
+      "episodes": 300,
+      "minutes": 0.42,
+      "address_top1_recent50": 0.2996,
+      "gate_abs_mean_recent50": 3.8854,
+      "advantage_mean_recent50": 0.2775
+    },
+    {
+      "episodes": 350,
+      "minutes": 0.48,
+      "address_top1_recent50": 0.4082,
+      "gate_abs_mean_recent50": 4.6475,
+      "advantage_mean_recent50": 0.3369
+    },
+    {
+      "episodes": 400,
+      "minutes": 0.54,
+      "address_top1_recent50": 0.3439,
+      "gate_abs_mean_recent50": 5.9664,
+      "advantage_mean_recent50": 0.3124
+    },
+    {
+      "episodes": 450,
+      "minutes": 0.6,
+      "address_top1_recent50": 0.3226,
+      "gate_abs_mean_recent50": 6.6749,
+      "advantage_mean_recent50": 0.3369
+    },
+    {
+      "episodes": 500,
+      "minutes": 0.67,
+      "address_top1_recent50": 0.2944,
+      "gate_abs_mean_recent50": 7.703,
+      "advantage_mean_recent50": 0.2905
+    },
+    {
+      "episodes": 550,
+      "minutes": 0.74,
+      "address_top1_recent50": 0.3472,
+      "gate_abs_mean_recent50": 8.5806,
+      "advantage_mean_recent50": 0.368
+    },
+    {
+      "episodes": 600,
+      "minutes": 0.81,
+      "address_top1_recent50": 0.3309,
+      "gate_abs_mean_recent50": 9.9893,
+      "advantage_mean_recent50": 0.3219
+    },
+    {
+      "episodes": 650,
+      "minutes": 0.88,
+      "address_top1_recent50": 0.3441,
+      "gate_abs_mean_recent50": 11.1688,
+      "advantage_mean_recent50": 0.3932
+    },
+    {
+      "episodes": 700,
+      "minutes": 0.95,
+      "address_top1_recent50": 0.3504,
+      "gate_abs_mean_recent50": 12.3709,
+      "advantage_mean_recent50": 0.3805
+    },
+    {
+      "episodes": 750,
+      "minutes": 1.03,
+      "address_top1_recent50": 0.3938,
+      "gate_abs_mean_recent50": 13.8821,
+      "advantage_mean_recent50": 0.434
+    },
+    {
+      "episodes": 800,
+      "minutes": 1.1,
+      "address_top1_recent50": 0.3521,
+      "gate_abs_mean_recent50": 15.0831,
+      "advantage_mean_recent50": 0.3855
+    },
+    {
+      "episodes": 850,
+      "minutes": 1.16,
+      "address_top1_recent50": 0.3383,
+      "gate_abs_mean_recent50": 15.9029,
+      "advantage_mean_recent50": 0.3945
+    },
+    {
+      "episodes": 900,
+      "minutes": 1.23,
+      "address_top1_recent50": 0.3268,
+      "gate_abs_mean_recent50": 17.1973,
+      "advantage_mean_recent50": 0.3601
+    },
+    {
+      "episodes": 950,
+      "minutes": 1.3,
+      "address_top1_recent50": 0.3627,
+      "gate_abs_mean_recent50": 18.5433,
+      "advantage_mean_recent50": 0.4252
+    },
+    {
+      "episodes": 1000,
+      "minutes": 1.37,
+      "address_top1_recent50": 0.3555,
+      "gate_abs_mean_recent50": 19.4333,
+      "advantage_mean_recent50": 0.4465
+    },
+    {
+      "episodes": 1050,
+      "minutes": 1.44,
+      "address_top1_recent50": 0.3684,
+      "gate_abs_mean_recent50": 20.6464,
+      "advantage_mean_recent50": 0.4492
+    },
+    {
+      "episodes": 1100,
+      "minutes": 1.5,
+      "address_top1_recent50": 0.3755,
+      "gate_abs_mean_recent50": 22.1177,
+      "advantage_mean_recent50": 0.4682
+    },
+    {
+      "episodes": 1150,
+      "minutes": 1.57,
+      "address_top1_recent50": 0.3759,
+      "gate_abs_mean_recent50": 22.5293,
+      "advantage_mean_recent50": 0.4575
+    },
+    {
+      "episodes": 1200,
+      "minutes": 1.64,
+      "address_top1_recent50": 0.4,
+      "gate_abs_mean_recent50": 24.3677,
+      "advantage_mean_recent50": 0.4699
+    },
+    {
+      "episodes": 1250,
+      "minutes": 1.7,
+      "address_top1_recent50": 0.3702,
+      "gate_abs_mean_recent50": 25.6774,
+      "advantage_mean_recent50": 0.4705
+    },
+    {
+      "episodes": 1300,
+      "minutes": 1.77,
+      "address_top1_recent50": 0.3731,
+      "gate_abs_mean_recent50": 26.7009,
+      "advantage_mean_recent50": 0.5011
+    },
+    {
+      "episodes": 1350,
+      "minutes": 1.84,
+      "address_top1_recent50": 0.3411,
+      "gate_abs_mean_recent50": 28.039,
+      "advantage_mean_recent50": 0.4347
+    },
+    {
+      "episodes": 1400,
+      "minutes": 1.91,
+      "address_top1_recent50": 0.3629,
+      "gate_abs_mean_recent50": 29.5136,
+      "advantage_mean_recent50": 0.4943
+    },
+    {
+      "episodes": 1450,
+      "minutes": 1.98,
+      "address_top1_recent50": 0.3866,
+      "gate_abs_mean_recent50": 28.9157,
+      "advantage_mean_recent50": 0.4474
+    },
+    {
+      "episodes": 1500,
+      "minutes": 2.05,
+      "address_top1_recent50": 0.4242,
+      "gate_abs_mean_recent50": 30.9879,
+      "advantage_mean_recent50": 0.5459
+    },
+    {
+      "episodes": 1550,
+      "minutes": 2.12,
+      "address_top1_recent50": 0.3692,
+      "gate_abs_mean_recent50": 29.3732,
+      "advantage_mean_recent50": 0.5249
+    },
+    {
+      "episodes": 1600,
+      "minutes": 2.19,
+      "address_top1_recent50": 0.332,
+      "gate_abs_mean_recent50": 30.4708,
+      "advantage_mean_recent50": 0.4355
+    },
+    {
+      "episodes": 1650,
+      "minutes": 2.26,
+      "address_top1_recent50": 0.3962,
+      "gate_abs_mean_recent50": 30.548,
+      "advantage_mean_recent50": 0.5173
+    },
+    {
+      "episodes": 1700,
+      "minutes": 2.33,
+      "address_top1_recent50": 0.2906,
+      "gate_abs_mean_recent50": 31.7642,
+      "advantage_mean_recent50": 0.4107
+    },
+    {
+      "episodes": 1750,
+      "minutes": 2.4,
+      "address_top1_recent50": 0.4144,
+      "gate_abs_mean_recent50": 31.8891,
+      "advantage_mean_recent50": 0.5224
+    },
+    {
+      "episodes": 1800,
+      "minutes": 2.47,
+      "address_top1_recent50": 0.3701,
+      "gate_abs_mean_recent50": 34.4905,
+      "advantage_mean_recent50": 0.4796
+    },
+    {
+      "episodes": 1850,
+      "minutes": 2.54,
+      "address_top1_recent50": 0.388,
+      "gate_abs_mean_recent50": 34.2461,
+      "advantage_mean_recent50": 0.5492
+    },
+    {
+      "episodes": 1900,
+      "minutes": 2.61,
+      "address_top1_recent50": 0.3829,
+      "gate_abs_mean_recent50": 34.7885,
+      "advantage_mean_recent50": 0.511
+    },
+    {
+      "episodes": 1950,
+      "minutes": 2.68,
+      "address_top1_recent50": 0.3309,
+      "gate_abs_mean_recent50": 34.61,
+      "advantage_mean_recent50": 0.4499
+    },
+    {
+      "episodes": 2000,
+      "minutes": 2.75,
+      "address_top1_recent50": 0.3391,
+      "gate_abs_mean_recent50": 35.0088,
+      "advantage_mean_recent50": 0.4495
+    },
+    {
+      "episodes": 2050,
+      "minutes": 2.82,
+      "address_top1_recent50": 0.3481,
+      "gate_abs_mean_recent50": 34.9314,
+      "advantage_mean_recent50": 0.4893
+    },
+    {
+      "episodes": 2100,
+      "minutes": 2.88,
+      "address_top1_recent50": 0.3665,
+      "gate_abs_mean_recent50": 35.8117,
+      "advantage_mean_recent50": 0.4619
+    },
+    {
+      "episodes": 2150,
+      "minutes": 2.95,
+      "address_top1_recent50": 0.4,
+      "gate_abs_mean_recent50": 37.2509,
+      "advantage_mean_recent50": 0.4952
+    },
+    {
+      "episodes": 2200,
+      "minutes": 3.02,
+      "address_top1_recent50": 0.4043,
+      "gate_abs_mean_recent50": 39.7827,
+      "advantage_mean_recent50": 0.5283
+    },
+    {
+      "episodes": 2250,
+      "minutes": 3.09,
+      "address_top1_recent50": 0.2912,
+      "gate_abs_mean_recent50": 38.7228,
+      "advantage_mean_recent50": 0.4012
+    },
+    {
+      "episodes": 2300,
+      "minutes": 3.15,
+      "address_top1_recent50": 0.39,
+      "gate_abs_mean_recent50": 39.8726,
+      "advantage_mean_recent50": 0.5201
+    },
+    {
+      "episodes": 2350,
+      "minutes": 3.22,
+      "address_top1_recent50": 0.381,
+      "gate_abs_mean_recent50": 37.2015,
+      "advantage_mean_recent50": 0.4736
+    },
+    {
+      "episodes": 2400,
+      "minutes": 3.29,
+      "address_top1_recent50": 0.3945,
+      "gate_abs_mean_recent50": 40.6535,
+      "advantage_mean_recent50": 0.5098
+    },
+    {
+      "episodes": 2450,
+      "minutes": 3.36,
+      "address_top1_recent50": 0.3755,
+      "gate_abs_mean_recent50": 42.0755,
+      "advantage_mean_recent50": 0.4708
+    },
+    {
+      "episodes": 2500,
+      "minutes": 3.42,
+      "address_top1_recent50": 0.3333,
+      "gate_abs_mean_recent50": 39.5178,
+      "advantage_mean_recent50": 0.4486
+    },
+    {
+      "episodes": 2550,
+      "minutes": 3.49,
+      "address_top1_recent50": 0.3723,
+      "gate_abs_mean_recent50": 40.1912,
+      "advantage_mean_recent50": 0.5261
+    },
+    {
+      "episodes": 2600,
+      "minutes": 3.55,
+      "address_top1_recent50": 0.3667,
+      "gate_abs_mean_recent50": 41.0953,
+      "advantage_mean_recent50": 0.469
+    },
+    {
+      "episodes": 2650,
+      "minutes": 3.62,
+      "address_top1_recent50": 0.4453,
+      "gate_abs_mean_recent50": 39.1081,
+      "advantage_mean_recent50": 0.592
+    },
+    {
+      "episodes": 2700,
+      "minutes": 3.69,
+      "address_top1_recent50": 0.4135,
+      "gate_abs_mean_recent50": 39.8173,
+      "advantage_mean_recent50": 0.5563
+    },
+    {
+      "episodes": 2750,
+      "minutes": 3.75,
+      "address_top1_recent50": 0.434,
+      "gate_abs_mean_recent50": 42.5722,
+      "advantage_mean_recent50": 0.565
+    },
+    {
+      "episodes": 2800,
+      "minutes": 3.81,
+      "address_top1_recent50": 0.3373,
+      "gate_abs_mean_recent50": 39.9667,
+      "advantage_mean_recent50": 0.4617
+    },
+    {
+      "episodes": 2850,
+      "minutes": 3.88,
+      "address_top1_recent50": 0.3975,
+      "gate_abs_mean_recent50": 42.3124,
+      "advantage_mean_recent50": 0.525
+    },
+    {
+      "episodes": 2900,
+      "minutes": 3.94,
+      "address_top1_recent50": 0.4223,
+      "gate_abs_mean_recent50": 43.5159,
+      "advantage_mean_recent50": 0.5563
+    },
+    {
+      "episodes": 2950,
+      "minutes": 4.0,
+      "address_top1_recent50": 0.3566,
+      "gate_abs_mean_recent50": 41.294,
+      "advantage_mean_recent50": 0.4688
+    },
+    {
+      "episodes": 3000,
+      "minutes": 4.07,
+      "address_top1_recent50": 0.3893,
+      "gate_abs_mean_recent50": 39.356,
+      "advantage_mean_recent50": 0.4753
+    },
+    {
+      "episodes": 3050,
+      "minutes": 4.13,
+      "address_top1_recent50": 0.3629,
+      "gate_abs_mean_recent50": 42.2566,
+      "advantage_mean_recent50": 0.4887
+    },
+    {
+      "episodes": 3100,
+      "minutes": 4.2,
+      "address_top1_recent50": 0.3783,
+      "gate_abs_mean_recent50": 42.7756,
+      "advantage_mean_recent50": 0.5118
+    },
+    {
+      "episodes": 3150,
+      "minutes": 4.27,
+      "address_top1_recent50": 0.3811,
+      "gate_abs_mean_recent50": 43.5052,
+      "advantage_mean_recent50": 0.5139
+    },
+    {
+      "episodes": 3200,
+      "minutes": 4.33,
+      "address_top1_recent50": 0.437,
+      "gate_abs_mean_recent50": 43.3026,
+      "advantage_mean_recent50": 0.592
+    },
+    {
+      "episodes": 3250,
+      "minutes": 4.4,
+      "address_top1_recent50": 0.3822,
+      "gate_abs_mean_recent50": 41.6164,
+      "advantage_mean_recent50": 0.508
+    },
+    {
+      "episodes": 3300,
+      "minutes": 4.46,
+      "address_top1_recent50": 0.3794,
+      "gate_abs_mean_recent50": 45.353,
+      "advantage_mean_recent50": 0.5082
+    },
+    {
+      "episodes": 3350,
+      "minutes": 4.52,
+      "address_top1_recent50": 0.3801,
+      "gate_abs_mean_recent50": 44.157,
+      "advantage_mean_recent50": 0.5215
+    },
+    {
+      "episodes": 3400,
+      "minutes": 4.59,
+      "address_top1_recent50": 0.3386,
+      "gate_abs_mean_recent50": 44.2891,
+      "advantage_mean_recent50": 0.4796
+    },
+    {
+      "episodes": 3450,
+      "minutes": 4.66,
+      "address_top1_recent50": 0.4007,
+      "gate_abs_mean_recent50": 45.3803,
+      "advantage_mean_recent50": 0.562
+    },
+    {
+      "episodes": 3500,
+      "minutes": 4.73,
+      "address_top1_recent50": 0.3402,
+      "gate_abs_mean_recent50": 44.9201,
+      "advantage_mean_recent50": 0.4772
+    },
+    {
+      "episodes": 3550,
+      "minutes": 4.8,
+      "address_top1_recent50": 0.3556,
+      "gate_abs_mean_recent50": 43.2865,
+      "advantage_mean_recent50": 0.4842
+    },
+    {
+      "episodes": 3600,
+      "minutes": 4.87,
+      "address_top1_recent50": 0.3852,
+      "gate_abs_mean_recent50": 45.4689,
+      "advantage_mean_recent50": 0.5233
+    },
+    {
+      "episodes": 3650,
+      "minutes": 4.94,
+      "address_top1_recent50": 0.3827,
+      "gate_abs_mean_recent50": 47.6403,
+      "advantage_mean_recent50": 0.51
+    },
+    {
+      "episodes": 3700,
+      "minutes": 5.0,
+      "address_top1_recent50": 0.3004,
+      "gate_abs_mean_recent50": 43.6157,
+      "advantage_mean_recent50": 0.4324
+    },
+    {
+      "episodes": 3750,
+      "minutes": 5.07,
+      "address_top1_recent50": 0.4203,
+      "gate_abs_mean_recent50": 43.6868,
+      "advantage_mean_recent50": 0.5624
+    },
+    {
+      "episodes": 3800,
+      "minutes": 5.14,
+      "address_top1_recent50": 0.3913,
+      "gate_abs_mean_recent50": 48.2576,
+      "advantage_mean_recent50": 0.5234
+    },
+    {
+      "episodes": 3850,
+      "minutes": 5.21,
+      "address_top1_recent50": 0.3732,
+      "gate_abs_mean_recent50": 47.2986,
+      "advantage_mean_recent50": 0.5204
+    },
+    {
+      "episodes": 3900,
+      "minutes": 5.28,
+      "address_top1_recent50": 0.3765,
+      "gate_abs_mean_recent50": 49.1575,
+      "advantage_mean_recent50": 0.5313
+    },
+    {
+      "episodes": 3950,
+      "minutes": 5.34,
+      "address_top1_recent50": 0.4219,
+      "gate_abs_mean_recent50": 47.0006,
+      "advantage_mean_recent50": 0.5422
+    },
+    {
+      "episodes": 4000,
+      "minutes": 5.41,
+      "address_top1_recent50": 0.4111,
+      "gate_abs_mean_recent50": 46.8048,
+      "advantage_mean_recent50": 0.5386
+    },
+    {
+      "episodes": 4050,
+      "minutes": 5.47,
+      "address_top1_recent50": 0.3919,
+      "gate_abs_mean_recent50": 51.5125,
+      "advantage_mean_recent50": 0.561
+    },
+    {
+      "episodes": 4100,
+      "minutes": 5.53,
+      "address_top1_recent50": 0.4118,
+      "gate_abs_mean_recent50": 46.1809,
+      "advantage_mean_recent50": 0.5605
+    },
+    {
+      "episodes": 4150,
+      "minutes": 5.6,
+      "address_top1_recent50": 0.3552,
+      "gate_abs_mean_recent50": 48.6272,
+      "advantage_mean_recent50": 0.4986
+    },
+    {
+      "episodes": 4200,
+      "minutes": 5.66,
+      "address_top1_recent50": 0.4059,
+      "gate_abs_mean_recent50": 46.4412,
+      "advantage_mean_recent50": 0.5371
+    },
+    {
+      "episodes": 4250,
+      "minutes": 5.73,
+      "address_top1_recent50": 0.4397,
+      "gate_abs_mean_recent50": 47.7065,
+      "advantage_mean_recent50": 0.5725
+    },
+    {
+      "episodes": 4300,
+      "minutes": 5.79,
+      "address_top1_recent50": 0.3457,
+      "gate_abs_mean_recent50": 44.4601,
+      "advantage_mean_recent50": 0.4813
+    },
+    {
+      "episodes": 4350,
+      "minutes": 5.85,
+      "address_top1_recent50": 0.3885,
+      "gate_abs_mean_recent50": 49.1165,
+      "advantage_mean_recent50": 0.5266
+    },
+    {
+      "episodes": 4400,
+      "minutes": 5.92,
+      "address_top1_recent50": 0.3962,
+      "gate_abs_mean_recent50": 46.2203,
+      "advantage_mean_recent50": 0.5385
+    },
+    {
+      "episodes": 4450,
+      "minutes": 5.98,
+      "address_top1_recent50": 0.4402,
+      "gate_abs_mean_recent50": 51.2654,
+      "advantage_mean_recent50": 0.5777
+    },
+    {
+      "episodes": 4500,
+      "minutes": 6.05,
+      "address_top1_recent50": 0.4007,
+      "gate_abs_mean_recent50": 50.9684,
+      "advantage_mean_recent50": 0.5234
+    },
+    {
+      "episodes": 4550,
+      "minutes": 6.11,
+      "address_top1_recent50": 0.4116,
+      "gate_abs_mean_recent50": 48.7144,
+      "advantage_mean_recent50": 0.5887
+    },
+    {
+      "episodes": 4600,
+      "minutes": 6.18,
+      "address_top1_recent50": 0.3978,
+      "gate_abs_mean_recent50": 49.2843,
+      "advantage_mean_recent50": 0.556
+    },
+    {
+      "episodes": 4650,
+      "minutes": 6.24,
+      "address_top1_recent50": 0.3925,
+      "gate_abs_mean_recent50": 48.5205,
+      "advantage_mean_recent50": 0.5863
+    },
+    {
+      "episodes": 4700,
+      "minutes": 6.31,
+      "address_top1_recent50": 0.3658,
+      "gate_abs_mean_recent50": 47.3006,
+      "advantage_mean_recent50": 0.5241
+    },
+    {
+      "episodes": 4750,
+      "minutes": 6.38,
+      "address_top1_recent50": 0.4024,
+      "gate_abs_mean_recent50": 48.1624,
+      "advantage_mean_recent50": 0.5151
+    },
+    {
+      "episodes": 4800,
+      "minutes": 6.45,
+      "address_top1_recent50": 0.3863,
+      "gate_abs_mean_recent50": 47.7821,
+      "advantage_mean_recent50": 0.5621
+    },
+    {
+      "episodes": 4850,
+      "minutes": 6.51,
+      "address_top1_recent50": 0.4247,
+      "gate_abs_mean_recent50": 47.8016,
+      "advantage_mean_recent50": 0.5879
+    },
+    {
+      "episodes": 4900,
+      "minutes": 6.58,
+      "address_top1_recent50": 0.3719,
+      "gate_abs_mean_recent50": 46.9719,
+      "advantage_mean_recent50": 0.5221
+    },
+    {
+      "episodes": 4950,
+      "minutes": 6.65,
+      "address_top1_recent50": 0.3632,
+      "gate_abs_mean_recent50": 49.1427,
+      "advantage_mean_recent50": 0.5486
+    },
+    {
+      "episodes": 5000,
+      "minutes": 6.71,
+      "address_top1_recent50": 0.4232,
+      "gate_abs_mean_recent50": 47.6105,
+      "advantage_mean_recent50": 0.5763
+    },
+    {
+      "episodes": 5050,
+      "minutes": 6.78,
+      "address_top1_recent50": 0.39,
+      "gate_abs_mean_recent50": 47.3644,
+      "advantage_mean_recent50": 0.5517
+    },
+    {
+      "episodes": 5100,
+      "minutes": 6.85,
+      "address_top1_recent50": 0.4106,
+      "gate_abs_mean_recent50": 49.5258,
+      "advantage_mean_recent50": 0.5756
+    },
+    {
+      "episodes": 5150,
+      "minutes": 6.92,
+      "address_top1_recent50": 0.4094,
+      "gate_abs_mean_recent50": 46.7772,
+      "advantage_mean_recent50": 0.5427
+    },
+    {
+      "episodes": 5200,
+      "minutes": 6.98,
+      "address_top1_recent50": 0.4552,
+      "gate_abs_mean_recent50": 48.5472,
+      "advantage_mean_recent50": 0.6052
+    },
+    {
+      "episodes": 5250,
+      "minutes": 7.05,
+      "address_top1_recent50": 0.367,
+      "gate_abs_mean_recent50": 49.8179,
+      "advantage_mean_recent50": 0.4993
+    },
+    {
+      "episodes": 5300,
+      "minutes": 7.12,
+      "address_top1_recent50": 0.4218,
+      "gate_abs_mean_recent50": 47.6978,
+      "advantage_mean_recent50": 0.5507
+    },
+    {
+      "episodes": 5350,
+      "minutes": 7.18,
+      "address_top1_recent50": 0.4149,
+      "gate_abs_mean_recent50": 50.2832,
+      "advantage_mean_recent50": 0.5536
+    },
+    {
+      "episodes": 5400,
+      "minutes": 7.26,
+      "address_top1_recent50": 0.4494,
+      "gate_abs_mean_recent50": 47.3313,
+      "advantage_mean_recent50": 0.6251
+    },
+    {
+      "episodes": 5450,
+      "minutes": 7.32,
+      "address_top1_recent50": 0.3626,
+      "gate_abs_mean_recent50": 50.2612,
+      "advantage_mean_recent50": 0.468
+    },
+    {
+      "episodes": 5500,
+      "minutes": 7.39,
+      "address_top1_recent50": 0.3865,
+      "gate_abs_mean_recent50": 49.3281,
+      "advantage_mean_recent50": 0.5718
+    },
+    {
+      "episodes": 5550,
+      "minutes": 7.46,
+      "address_top1_recent50": 0.3902,
+      "gate_abs_mean_recent50": 45.9596,
+      "advantage_mean_recent50": 0.5328
+    },
+    {
+      "episodes": 5600,
+      "minutes": 7.53,
+      "address_top1_recent50": 0.3974,
+      "gate_abs_mean_recent50": 52.5142,
+      "advantage_mean_recent50": 0.5564
+    },
+    {
+      "episodes": 5650,
+      "minutes": 7.59,
+      "address_top1_recent50": 0.4008,
+      "gate_abs_mean_recent50": 54.2048,
+      "advantage_mean_recent50": 0.558
+    },
+    {
+      "episodes": 5700,
+      "minutes": 7.66,
+      "address_top1_recent50": 0.3976,
+      "gate_abs_mean_recent50": 52.1641,
+      "advantage_mean_recent50": 0.5305
+    },
+    {
+      "episodes": 5750,
+      "minutes": 7.73,
+      "address_top1_recent50": 0.4246,
+      "gate_abs_mean_recent50": 50.169,
+      "advantage_mean_recent50": 0.5837
+    },
+    {
+      "episodes": 5800,
+      "minutes": 7.8,
+      "address_top1_recent50": 0.3876,
+      "gate_abs_mean_recent50": 48.7446,
+      "advantage_mean_recent50": 0.5526
+    },
+    {
+      "episodes": 5850,
+      "minutes": 7.86,
+      "address_top1_recent50": 0.3977,
+      "gate_abs_mean_recent50": 50.3221,
+      "advantage_mean_recent50": 0.5619
+    },
+    {
+      "episodes": 5900,
+      "minutes": 7.93,
+      "address_top1_recent50": 0.4423,
+      "gate_abs_mean_recent50": 53.3532,
+      "advantage_mean_recent50": 0.599
+    },
+    {
+      "episodes": 5950,
+      "minutes": 8.0,
+      "address_top1_recent50": 0.4216,
+      "gate_abs_mean_recent50": 50.2543,
+      "advantage_mean_recent50": 0.5822
+    },
+    {
+      "episodes": 6000,
+      "minutes": 8.06,
+      "address_top1_recent50": 0.384,
+      "gate_abs_mean_recent50": 46.8221,
+      "advantage_mean_recent50": 0.5063
+    },
+    {
+      "episodes": 6050,
+      "minutes": 8.13,
+      "address_top1_recent50": 0.4343,
+      "gate_abs_mean_recent50": 51.819,
+      "advantage_mean_recent50": 0.6297
+    },
+    {
+      "episodes": 6100,
+      "minutes": 8.2,
+      "address_top1_recent50": 0.3915,
+      "gate_abs_mean_recent50": 50.5158,
+      "advantage_mean_recent50": 0.5691
+    },
+    {
+      "episodes": 6150,
+      "minutes": 8.27,
+      "address_top1_recent50": 0.4753,
+      "gate_abs_mean_recent50": 54.2976,
+      "advantage_mean_recent50": 0.6508
+    },
+    {
+      "episodes": 6200,
+      "minutes": 8.33,
+      "address_top1_recent50": 0.4032,
+      "gate_abs_mean_recent50": 47.295,
+      "advantage_mean_recent50": 0.5266
+    },
+    {
+      "episodes": 6250,
+      "minutes": 8.4,
+      "address_top1_recent50": 0.4375,
+      "gate_abs_mean_recent50": 52.2322,
+      "advantage_mean_recent50": 0.5912
+    },
+    {
+      "episodes": 6300,
+      "minutes": 8.47,
+      "address_top1_recent50": 0.4488,
+      "gate_abs_mean_recent50": 50.385,
+      "advantage_mean_recent50": 0.5772
+    },
+    {
+      "episodes": 6350,
+      "minutes": 8.54,
+      "address_top1_recent50": 0.4639,
+      "gate_abs_mean_recent50": 50.636,
+      "advantage_mean_recent50": 0.6165
+    },
+    {
+      "episodes": 6400,
+      "minutes": 8.61,
+      "address_top1_recent50": 0.4102,
+      "gate_abs_mean_recent50": 52.563,
+      "advantage_mean_recent50": 0.5574
+    },
+    {
+      "episodes": 6450,
+      "minutes": 8.68,
+      "address_top1_recent50": 0.3633,
+      "gate_abs_mean_recent50": 53.1959,
+      "advantage_mean_recent50": 0.5355
+    },
+    {
+      "episodes": 6500,
+      "minutes": 8.74,
+      "address_top1_recent50": 0.4022,
+      "gate_abs_mean_recent50": 47.6874,
+      "advantage_mean_recent50": 0.5832
+    },
+    {
+      "episodes": 6550,
+      "minutes": 8.81,
+      "address_top1_recent50": 0.4022,
+      "gate_abs_mean_recent50": 51.5709,
+      "advantage_mean_recent50": 0.5571
+    },
+    {
+      "episodes": 6600,
+      "minutes": 8.88,
+      "address_top1_recent50": 0.4598,
+      "gate_abs_mean_recent50": 49.8827,
+      "advantage_mean_recent50": 0.5971
+    },
+    {
+      "episodes": 6650,
+      "minutes": 8.95,
+      "address_top1_recent50": 0.3975,
+      "gate_abs_mean_recent50": 51.7504,
+      "advantage_mean_recent50": 0.5351
+    },
+    {
+      "episodes": 6700,
+      "minutes": 9.01,
+      "address_top1_recent50": 0.4023,
+      "gate_abs_mean_recent50": 51.0624,
+      "advantage_mean_recent50": 0.5715
+    },
+    {
+      "episodes": 6750,
+      "minutes": 9.08,
+      "address_top1_recent50": 0.3941,
+      "gate_abs_mean_recent50": 54.257,
+      "advantage_mean_recent50": 0.554
+    },
+    {
+      "episodes": 6800,
+      "minutes": 9.15,
+      "address_top1_recent50": 0.434,
+      "gate_abs_mean_recent50": 52.5566,
+      "advantage_mean_recent50": 0.6184
+    },
+    {
+      "episodes": 6850,
+      "minutes": 9.22,
+      "address_top1_recent50": 0.4238,
+      "gate_abs_mean_recent50": 54.2343,
+      "advantage_mean_recent50": 0.6018
+    },
+    {
+      "episodes": 6900,
+      "minutes": 9.28,
+      "address_top1_recent50": 0.4317,
+      "gate_abs_mean_recent50": 52.4353,
+      "advantage_mean_recent50": 0.5815
+    },
+    {
+      "episodes": 6950,
+      "minutes": 9.35,
+      "address_top1_recent50": 0.4075,
+      "gate_abs_mean_recent50": 56.2034,
+      "advantage_mean_recent50": 0.5551
+    },
+    {
+      "episodes": 7000,
+      "minutes": 9.41,
+      "address_top1_recent50": 0.5057,
+      "gate_abs_mean_recent50": 53.689,
+      "advantage_mean_recent50": 0.7059
+    },
+    {
+      "episodes": 7050,
+      "minutes": 9.47,
+      "address_top1_recent50": 0.5037,
+      "gate_abs_mean_recent50": 53.9934,
+      "advantage_mean_recent50": 0.6791
+    },
+    {
+      "episodes": 7100,
+      "minutes": 9.54,
+      "address_top1_recent50": 0.3846,
+      "gate_abs_mean_recent50": 54.2403,
+      "advantage_mean_recent50": 0.54
+    },
+    {
+      "episodes": 7150,
+      "minutes": 9.61,
+      "address_top1_recent50": 0.4454,
+      "gate_abs_mean_recent50": 51.9097,
+      "advantage_mean_recent50": 0.6257
+    },
+    {
+      "episodes": 7200,
+      "minutes": 9.67,
+      "address_top1_recent50": 0.4015,
+      "gate_abs_mean_recent50": 51.4458,
+      "advantage_mean_recent50": 0.5457
+    },
+    {
+      "episodes": 7250,
+      "minutes": 9.73,
+      "address_top1_recent50": 0.4093,
+      "gate_abs_mean_recent50": 52.3891,
+      "advantage_mean_recent50": 0.5592
+    },
+    {
+      "episodes": 7300,
+      "minutes": 9.8,
+      "address_top1_recent50": 0.381,
+      "gate_abs_mean_recent50": 54.1898,
+      "advantage_mean_recent50": 0.5401
+    },
+    {
+      "episodes": 7350,
+      "minutes": 9.87,
+      "address_top1_recent50": 0.428,
+      "gate_abs_mean_recent50": 50.8549,
+      "advantage_mean_recent50": 0.5891
+    },
+    {
+      "episodes": 7400,
+      "minutes": 9.94,
+      "address_top1_recent50": 0.407,
+      "gate_abs_mean_recent50": 54.2641,
+      "advantage_mean_recent50": 0.5547
+    }
+  ],
+  "smoke_criteria": {
+    "address_top1_ge_0.5": false,
+    "gate_abs_mean_gt_0.05": true,
+    "pass": false
+  }
+}

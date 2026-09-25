@@ -106,6 +106,25 @@ def test_store_capacity_and_cosine_match() -> None:
     assert evicted is not None and evicted.content != b"aa"
 
 
+def test_successor_bonus_shifts_copy_mass_to_next_byte() -> None:
+    """rev3：「前一字节＝刚发出的字节」的行加 induce 偏置 ⇒ 复制质量集中到后继位置。"""
+    model = _model()
+    model.mount_copy_circuit()
+    circuit = model.copy_circuit
+    assert circuit is not None
+    cue = torch.zeros(model.config.cortical_context_dim)
+    cue[3] = 1.0
+    circuit.store.record(TELL, cue.clone())
+    f1 = torch.zeros(model.config.motor_context_dim)
+    f1[5] = 0.5
+    before = circuit.addressing(cue=cue, f1_context=f1)["copy_distribution"]
+    circuit.parameters()["copy_induce_bias"].data.fill_(8.0)
+    after = circuit.addressing(cue=cue, f1_context=f1, prev_byte=TELL[0])["copy_distribution"]
+    # TELL[0]＝0xE6（「我」首字节）⇒ 后继位置 1（TELL[1]＝0x88）吸走质量
+    assert float(after[TELL[1]]) > 0.5
+    assert float(after[TELL[1]]) > float(before[TELL[1]])
+
+
 def test_checkpoint_roundtrip_and_legacy_absence() -> None:
     model = _model()
     model.mount_copy_circuit()

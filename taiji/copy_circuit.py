@@ -94,6 +94,10 @@ class ToldContentStore:
     def count(self) -> int:
         return len(self._events)
 
+    def clear(self) -> None:
+        """诊断/训练单事件体制用：清空存储（不回收 event_id 序列）。"""
+        self._events = []
+
     def events(self) -> tuple[ToldEvent, ...]:
         return tuple(self._events)
 
@@ -145,6 +149,9 @@ class CopyCircuit:
         "gate_state",
         "gate_content",
         "gate_bias",
+        # rev3（A2.3 预注册 §6）：后继归纳——前一字节＝刚发出字节的行加分
+        # （D6 语义，数学照抄 sequence_content_workspace._copy_weights）。零初始化。
+        "copy_induce_bias",
     )
 
     def __init__(
@@ -178,6 +185,9 @@ class CopyCircuit:
             "gate_state": torch.zeros(context_dim),
             "gate_content": torch.zeros(width),
             "gate_bias": torch.zeros(1),
+            # rev3: zero-init successor bonus — inert until trained, exactly
+            # like the gate (bit-identical mounting preserved).
+            "copy_induce_bias": torch.zeros(1),
         }
         self._parameters = {
             name: tensor.to(self.device) for name, tensor in self._parameters.items()
@@ -196,7 +206,24 @@ class CopyCircuit:
     def parameter_tensors(self) -> tuple[torch.Tensor, ...]:
         return tuple(self._parameters[name] for name in self.PARAMETER_ORDER)
 
-    def _position_weights(self, event: ToldEvent, f1_context: torch.Tensor) -> torch.Tensor:
+    def _successor_bonus(self, codes: torch.Tensor, prev_byte: int | None) -> torch.Tensor:
+        """rev3 后继归纳（D6 语义，照抄 workspace `_copy_weights`）：「前一字节＝刚
+        发出的字节」的行加 `copy_induce_bias`。零初始化 ⇒ 未训练时逐位无影响。"""
+        bonus = torch.zeros_like(codes, dtype=torch.float32)
+        if prev_byte is None or int(codes.numel()) < 2:
+            return bonus
+        successors = [
+            i for i in range(1, int(codes.numel())) if int(codes[i - 1]) == int(prev_byte)
+        ]
+        if successors:
+            bonus[torch.tensor(successors, device=codes.device)] = self._parameters[
+                "copy_induce_bias"
+            ]
+        return bonus
+
+    def _position_weights(
+        self, event: ToldEvent, f1_context: torch.Tensor, prev_byte: int | None = None
+    ) -> torch.Tensor:
         if self.address_override is not None:
             weights = self.address_override.to(self.device).float()
             if weights.shape != (len(event.content),):
@@ -205,15 +232,16 @@ class CopyCircuit:
             if total <= 0.0 or not math.isfinite(total):
                 raise ValueError("copy address override must be a positive finite weighting")
             return weights / total
-        keys = (
-            self._parameters["content_embed"][torch.tensor(list(event.content), device=self.device)]
-            @ self._parameters["query_content"]
-        )
+        codes = torch.tensor(list(event.content), device=self.device, dtype=torch.long)
+        keys = self._parameters["content_embed"][codes] @ self._parameters["query_content"]
         query = f1_context @ self._parameters["query_state"]
-        scores = query @ keys.T / math.sqrt(float(self.evidence_width))
+        scale = math.sqrt(float(self.evidence_width))
+        scores = query @ keys.T / scale + self._successor_bonus(codes, prev_byte)
         return torch.softmax(scores, dim=0)
 
-    def evidence(self, *, cue: torch.Tensor, f1_context: torch.Tensor) -> torch.Tensor:
+    def evidence(
+        self, *, cue: torch.Tensor, f1_context: torch.Tensor, prev_byte: int | None = None
+    ) -> torch.Tensor:
         """257 维加性 logit 证据。无事件/未开闸时为精确零向量。"""
         distribution = torch.zeros(
             self.config.alphabet_size, dtype=torch.float32, device=self.device
@@ -221,7 +249,7 @@ class CopyCircuit:
         event = self.store.best_match(cue)
         if event is None:
             return distribution
-        weights = self._position_weights(event, f1_context)
+        weights = self._position_weights(event, f1_context, prev_byte)
         codes = torch.tensor(list(event.content), device=self.device, dtype=torch.long)
         distribution = distribution.index_add(0, codes, weights)
         keys = self._parameters["content_embed"][codes] @ self._parameters["query_content"]
@@ -235,7 +263,9 @@ class CopyCircuit:
             gate = torch.full_like(gate, float(self.gate_override))
         return gate * distribution
 
-    def addressing(self, *, cue: torch.Tensor, f1_context: torch.Tensor) -> dict[str, Any] | None:
+    def addressing(
+        self, *, cue: torch.Tensor, f1_context: torch.Tensor, prev_byte: int | None = None
+    ) -> dict[str, Any] | None:
         """训练器用的只读寻址快照（A2.3 预注册 §2）；store 无事件时返回 None。
 
         不消费诊断覆写——生产发射（``evidence``）与训练寻址是两个面。
@@ -248,7 +278,7 @@ class CopyCircuit:
         keys = embed @ self._parameters["query_content"]
         query = f1_context @ self._parameters["query_state"]
         scale = math.sqrt(float(self.evidence_width))
-        scores = query @ keys.T / scale
+        scores = query @ keys.T / scale + self._successor_bonus(codes, prev_byte)
         weights = torch.softmax(scores, dim=0)
         distribution = torch.zeros(
             self.config.alphabet_size, dtype=torch.float32, device=self.device
@@ -262,6 +292,7 @@ class CopyCircuit:
         )
         return {
             "event": event,
+            "prev_byte": prev_byte,
             "codes": codes,
             "embed": embed,
             "keys": keys,
@@ -311,8 +342,28 @@ class CopyCircuit:
         self._parameters["gate_state"].add_(step * f1_context)
         self._parameters["gate_content"].add_(step * state["pooled"])
         self._parameters["gate_bias"].add_(step)
+        # rev3: the successor bonus learns through the same addressing delta —
+        # positions whose predecessor was just emitted get pushed up/down.
+        prev_byte = state.get("prev_byte")
+        if prev_byte is not None and int(codes.numel()) > 1:
+            successors = [
+                i for i in range(1, int(codes.numel())) if int(codes[i - 1]) == int(prev_byte)
+            ]
+            if successors:
+                successor_mask = torch.zeros_like(delta)
+                successor_mask[torch.tensor(successors, device=self.device, dtype=torch.long)] = 1.0
+                self._parameters["copy_induce_bias"].add_(
+                    lr_address * float((delta * successor_mask).sum())
+                )
         bound = float(self.config.max_weight_norm)
-        for name in ("query_state", "query_content", "gate_state", "gate_content", "gate_bias"):
+        for name in (
+            "query_state",
+            "query_content",
+            "gate_state",
+            "gate_content",
+            "gate_bias",
+            "copy_induce_bias",
+        ):
             self._parameters[name].clamp_(-bound, bound)
 
     def to_payload(self) -> dict[str, Any]:
