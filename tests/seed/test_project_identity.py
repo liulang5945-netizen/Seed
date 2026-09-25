@@ -49,6 +49,7 @@ def test_taiji_is_the_cognitive_architecture_and_seed_is_the_runtime() -> None:
     assert not (active / "TAIJI_SUBSTRATE_ARCHITECTURE.md").exists()
     assert {path.name for path in active.glob("*.md")} == {
         "ARCHITECTURE_DIRECTION_2026_08.md",
+        "PLAN_INDEX.md",
         "SEED_ARCHITECTURE.md",
         "SEED_DEVELOPMENT_ROADMAP_2026_08.md",
         "TAIJI_CORE_REQUIREMENTS.md",
