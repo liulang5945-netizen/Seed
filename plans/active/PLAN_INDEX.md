@@ -39,10 +39,11 @@
 ### M6 开放项（2026-09-25 就地修订；细节与读数在 03 §5.7 的 Taiji Harness 活动卡）
 
 1. **G4 判据③**（面板点真训练→进度流→停止→检查点新增复验；再真续训、真激活各一回合）——**按所有者裁定等 R2 窗口收束**再做，恢复条件不由「继续推进」字样自动触发（03 §5.7 两项裁定条）。
-2. ~~**未闭合 I**：模型面板缺 Taiji 组 ⇒ 默认模型不可用、composer 被挡、真机 UI 回合取不到~~ ⇒ **2026-09-25 已定位并修复**：根因是就绪只在 load 与 `loader/volatile-update` 采样一次，运行时冷启动晚于 harness 启动即**永久**不注册（`listProviders()` 只列有 adapter 的 provider，而 `buildModelCatalog` 只读它）；改为按 `readinessPollMs`（默认 5s）在插件存活期内再探测，红绿各跑（详见 03 §5.7）。
-3. **i18n pairing 全仓欠账**（约 252 对 out-of-sync，G2 rename 改了两侧 `.md` 未重录 `.i18n.yaml`）——**处置待所有者裁定**：`--write` 一把刷等于把未逐对核对的译文确认为一致，倾向分批人工核对后重录。
+2. ~~**未闭合 I**：模型面板缺 Taiji 组 ⇒ 默认模型不可用、composer 被挡、真机 UI 回合取不到~~ ⇒ **2026-09-25 已定位、修复并产品级复验**：根因是就绪只在 load 与 `loader/volatile-update` 采样一次，运行时冷启动晚于 harness 启动即**永久**不注册（`listProviders()` 只列有 adapter 的 provider，而 `buildModelCatalog` 只读它）；改为按 `readinessPollMs`（默认 5s）在插件存活期内再探测，单元与真组合红绿各跑。**真机红绿（同一 web 实例、未重启）**：路由指向空端口启动 ⇒ 模型面无 Taiji 组、composer 停在「当前模型不可用」；假运行时就绪 ⇒ `group Taiji（本地运行时）` 自行出现且 radio `checked`。判据⑤ 的另两半（启动即就绪时 `taijiAtBoot=true`、**发一个普通对话回合成功**「已完成工作 用时 11 秒／1 轮 1 步」）同批复验 ⇒ C2 批「真机 UI 回合未取得」补上（详见 03 §5.7）。
+3. **i18n pairing 全仓欠账**（约 252 对 out-of-sync，G2 rename 改了两侧 `.md` 未重录 `.i18n.yaml`）——**所有者 2026-09-25 裁定＝分批人工核对后重录**（不是一把 `--write` 全刷）；第一批＝我方改造过的包族（life 五包／llm-taiji／workspace／session-controller）。
 4. ~~**6 个在飞文件**~~ **已查清为行尾幻影（2026-09-25 实测）**：`life-context` ×4、`session-memory-taiji` ×2 在 `git status` 显示 `M`，而 `git diff HEAD --numstat` 为空 ⇒ 与 HEAD 零内容差（`core.autocrlf=true` 所致）；**无待裁定的在飞改动，升级重放不被它阻塞**（08 §6）。
 5. **既存红门**：~~`verify-concrete-terms` 3 处 `provenance` 命中~~ **2026-09-25 已清、该门转绿**（改为点名实际字段 `count`/`revision`/`source`/`owner`，提交 `9a4be7ab`）；余 `verify-plugin-packages` 1 处（产物在他人包，未处置）。
+6. **J（2026-09-25 新发现，未闭合）**：判据⑤ 那个真回合的答复把 **harness 的运行时上下文快照**当成「你的问题」引用 ⇒ native 链路收到的 `prompt` 不是用户提问。已核两条静态事实：`llm-taiji/src/chat.ts:57-60` 取**最后一条 user-role 消息**作 `prompt`；该快照文本出自 `system-prompt/src/index.ts:307`，同文件 `:251` 自述「动态 runtime-context 快照**进 model history**（默认 true）」。**待一次插桩**钉住它由哪一处发、以什么 role（若为 system-role 就不会成为 prompt）；与 C7 把 life-context/memory-context 改前置同族，但那一轮只改了那两个包。
 
 ### 已作废：M6 desktop 线未闭合五项（2026-09-21 立卡）
 
