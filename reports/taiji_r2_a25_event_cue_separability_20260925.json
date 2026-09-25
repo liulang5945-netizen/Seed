@@ -1,0 +1,514 @@
+{
+  "format": "taiji-r2-a25-event-cue-separability-v1",
+  "prereg": "plans/reference/SPEC-A-17_r2_a2_3b_format_align_prereg_20260925.md §7.3",
+  "reading_rule": "full<0.6 且 region0>=0.8 ⇒ 病因1（键形态，先修键不加参数）；full<0.6 且 region0<0.6 而 oracle 高 ⇒ 病因2（需要可学的事件选择器）；full>=0.8 ⇒ 病因3（本件单点 cue 挑得对，线上失败来自生成期逐步 cue 漂移，下一案改测逐答案步 cue）",
+  "checkpoint": "checkpoints/seed_beta.pt",
+  "base_sha256_unchanged": true,
+  "items": 16,
+  "summary": {
+    "full_key_top1_rate": 0.6875,
+    "region0_key_top1_rate": 0.75,
+    "oracle_key_top1_rate": 0.6875,
+    "margin_median_full": 0.024899,
+    "margin_median_region0": 0.02943,
+    "per_item_margins_full": [
+      null,
+      null,
+      0.036171,
+      null,
+      null,
+      0.07593,
+      0.08137,
+      0.00029,
+      0.002604,
+      0.012565,
+      0.026913,
+      0.058989,
+      0.029852,
+      0.010079,
+      0.019004,
+      0.022886
+    ],
+    "per_item_margins_region0": [
+      null,
+      null,
+      0.046382,
+      null,
+      null,
+      0.075735,
+      0.076725,
+      0.002945,
+      0.01136,
+      0.021206,
+      0.033273,
+      0.071538,
+      0.032025,
+      0.001921,
+      0.018475,
+      0.026835
+    ]
+  },
+  "rows": [
+    {
+      "id": "D01",
+      "n_events": 1,
+      "told": [
+        "我叫阿岩。"
+      ],
+      "ask": "我的名字是什么？",
+      "correct_event_id": 0,
+      "full_key": {
+        "picked_id": 0,
+        "picked_content": "我叫阿岩。",
+        "margin": null,
+        "top_score": 0.151215,
+        "picked_correct": true
+      },
+      "region0_key": {
+        "picked_id": 0,
+        "picked_content": "我叫阿岩。",
+        "margin": null,
+        "top_score": 0.158283,
+        "picked_correct": true
+      },
+      "oracle_key": {
+        "picked_id": 0,
+        "picked_correct": true,
+        "top_overlap": 0.125
+      }
+    },
+    {
+      "id": "D02",
+      "n_events": 1,
+      "told": [
+        "我住在杭州。"
+      ],
+      "ask": "我住哪？",
+      "correct_event_id": 1,
+      "full_key": {
+        "picked_id": 1,
+        "picked_content": "我住在杭州。",
+        "margin": null,
+        "top_score": 0.162374,
+        "picked_correct": true
+      },
+      "region0_key": {
+        "picked_id": 1,
+        "picked_content": "我住在杭州。",
+        "margin": null,
+        "top_score": 0.175047,
+        "picked_correct": true
+      },
+      "oracle_key": {
+        "picked_id": 1,
+        "picked_correct": true,
+        "top_overlap": 0.5
+      }
+    },
+    {
+      "id": "D03",
+      "n_events": 2,
+      "told": [
+        "我偏好简短回答。",
+        "请介绍一下太阳。"
+      ],
+      "ask": "你的回答符合我刚才的偏好吗？",
+      "correct_event_id": 3,
+      "full_key": {
+        "picked_id": 3,
+        "picked_content": "我偏好简短回答。",
+        "margin": 0.036171,
+        "top_score": 0.223852,
+        "picked_correct": true
+      },
+      "region0_key": {
+        "picked_id": 3,
+        "picked_content": "我偏好简短回答。",
+        "margin": 0.046382,
+        "top_score": 0.245961,
+        "picked_correct": true
+      },
+      "oracle_key": {
+        "picked_id": 3,
+        "picked_correct": true,
+        "top_overlap": 0.3846
+      }
+    },
+    {
+      "id": "D04",
+      "n_events": 1,
+      "told": [
+        "我最喜欢的数字是 17。"
+      ],
+      "ask": "记住这个数字了吗？",
+      "correct_event_id": 5,
+      "full_key": {
+        "picked_id": 5,
+        "picked_content": "我最喜欢的数字是 17。",
+        "margin": null,
+        "top_score": 0.178651,
+        "picked_correct": true
+      },
+      "region0_key": {
+        "picked_id": 5,
+        "picked_content": "我最喜欢的数字是 17。",
+        "margin": null,
+        "top_score": 0.197725,
+        "picked_correct": true
+      },
+      "oracle_key": {
+        "picked_id": 5,
+        "picked_correct": true,
+        "top_overlap": 0.2222
+      }
+    },
+    {
+      "id": "D05",
+      "n_events": 1,
+      "told": [
+        "我的项目叫 Seed。"
+      ],
+      "ask": "我的项目叫什么？",
+      "correct_event_id": 6,
+      "full_key": {
+        "picked_id": 6,
+        "picked_content": "我的项目叫 Seed。",
+        "margin": null,
+        "top_score": 0.14551,
+        "picked_correct": true
+      },
+      "region0_key": {
+        "picked_id": 6,
+        "picked_content": "我的项目叫 Seed。",
+        "margin": null,
+        "top_score": 0.157498,
+        "picked_correct": true
+      },
+      "oracle_key": {
+        "picked_id": 6,
+        "picked_correct": true,
+        "top_overlap": 0.625
+      }
+    },
+    {
+      "id": "D06",
+      "n_events": 2,
+      "told": [
+        "我叫阿岩。",
+        "顺便问一下，水沸点是多少？"
+      ],
+      "ask": "我的名字是什么？",
+      "correct_event_id": 8,
+      "full_key": {
+        "picked_id": 9,
+        "picked_content": "顺便问一下，水沸点是多少？",
+        "margin": 0.07593,
+        "top_score": 0.243212,
+        "picked_correct": false
+      },
+      "region0_key": {
+        "picked_id": 9,
+        "picked_content": "顺便问一下，水沸点是多少？",
+        "margin": 0.075735,
+        "top_score": 0.252576,
+        "picked_correct": false
+      },
+      "oracle_key": {
+        "picked_id": 9,
+        "picked_correct": false,
+        "top_overlap": 0.25
+      }
+    },
+    {
+      "id": "D07",
+      "n_events": 2,
+      "told": [
+        "我住在杭州。",
+        "3 乘 4 等于几？"
+      ],
+      "ask": "我住在哪？",
+      "correct_event_id": 11,
+      "full_key": {
+        "picked_id": 12,
+        "picked_content": "3 乘 4 等于几？",
+        "margin": 0.08137,
+        "top_score": 0.270696,
+        "picked_correct": false
+      },
+      "region0_key": {
+        "picked_id": 12,
+        "picked_content": "3 乘 4 等于几？",
+        "margin": 0.076725,
+        "top_score": 0.282871,
+        "picked_correct": false
+      },
+      "oracle_key": {
+        "picked_id": 11,
+        "picked_correct": true,
+        "top_overlap": 0.6
+      }
+    },
+    {
+      "id": "D08",
+      "n_events": 2,
+      "told": [
+        "我喜欢绿茶。",
+        "今天天气不错。"
+      ],
+      "ask": "刚才我喜欢什么？",
+      "correct_event_id": 14,
+      "full_key": {
+        "picked_id": 15,
+        "picked_content": "今天天气不错。",
+        "margin": 0.00029,
+        "top_score": 0.176162,
+        "picked_correct": false
+      },
+      "region0_key": {
+        "picked_id": 14,
+        "picked_content": "我喜欢绿茶。",
+        "margin": 0.002945,
+        "top_score": 0.18659,
+        "picked_correct": true
+      },
+      "oracle_key": {
+        "picked_id": 14,
+        "picked_correct": true,
+        "top_overlap": 0.375
+      }
+    },
+    {
+      "id": "D09",
+      "n_events": 2,
+      "told": [
+        "我的编号是 42。",
+        "说一个水果。"
+      ],
+      "ask": "我的编号是多少？",
+      "correct_event_id": 17,
+      "full_key": {
+        "picked_id": 17,
+        "picked_content": "我的编号是 42。",
+        "margin": 0.002604,
+        "top_score": 0.139429,
+        "picked_correct": true
+      },
+      "region0_key": {
+        "picked_id": 17,
+        "picked_content": "我的编号是 42。",
+        "margin": 0.01136,
+        "top_score": 0.157548,
+        "picked_correct": true
+      },
+      "oracle_key": {
+        "picked_id": 17,
+        "picked_correct": true,
+        "top_overlap": 0.625
+      }
+    },
+    {
+      "id": "D10",
+      "n_events": 2,
+      "told": [
+        "我叫阿岩。",
+        "不对，我叫小林。"
+      ],
+      "ask": "我的名字是什么？",
+      "correct_event_id": 20,
+      "full_key": {
+        "picked_id": 20,
+        "picked_content": "我叫阿岩。",
+        "margin": 0.012565,
+        "top_score": 0.145727,
+        "picked_correct": true
+      },
+      "region0_key": {
+        "picked_id": 20,
+        "picked_content": "我叫阿岩。",
+        "margin": 0.021206,
+        "top_score": 0.157832,
+        "picked_correct": true
+      },
+      "oracle_key": {
+        "picked_id": 21,
+        "picked_correct": false,
+        "top_overlap": 0.125
+      }
+    },
+    {
+      "id": "D11",
+      "n_events": 2,
+      "told": [
+        "我住在杭州。",
+        "我说错了，是南京。"
+      ],
+      "ask": "我住在哪？",
+      "correct_event_id": 23,
+      "full_key": {
+        "picked_id": 23,
+        "picked_content": "我住在杭州。",
+        "margin": 0.026913,
+        "top_score": 0.180991,
+        "picked_correct": true
+      },
+      "region0_key": {
+        "picked_id": 23,
+        "picked_content": "我住在杭州。",
+        "margin": 0.033273,
+        "top_score": 0.197539,
+        "picked_correct": true
+      },
+      "oracle_key": {
+        "picked_id": 23,
+        "picked_correct": true,
+        "top_overlap": 0.6
+      }
+    },
+    {
+      "id": "D12",
+      "n_events": 2,
+      "told": [
+        "我最喜欢的数字是 17。",
+        "更正：是 23。"
+      ],
+      "ask": "我最喜欢的数字是多少？",
+      "correct_event_id": 26,
+      "full_key": {
+        "picked_id": 26,
+        "picked_content": "我最喜欢的数字是 17。",
+        "margin": 0.058989,
+        "top_score": 0.174489,
+        "picked_correct": true
+      },
+      "region0_key": {
+        "picked_id": 26,
+        "picked_content": "我最喜欢的数字是 17。",
+        "margin": 0.071538,
+        "top_score": 0.189539,
+        "picked_correct": true
+      },
+      "oracle_key": {
+        "picked_id": 26,
+        "picked_correct": true,
+        "top_overlap": 0.7273
+      }
+    },
+    {
+      "id": "D13",
+      "n_events": 2,
+      "told": [
+        "我在项目组负责接口。",
+        "其实我负责测试。"
+      ],
+      "ask": "我在项目组负责什么？",
+      "correct_event_id": 29,
+      "full_key": {
+        "picked_id": 29,
+        "picked_content": "我在项目组负责接口。",
+        "margin": 0.029852,
+        "top_score": 0.179214,
+        "picked_correct": true
+      },
+      "region0_key": {
+        "picked_id": 29,
+        "picked_content": "我在项目组负责接口。",
+        "margin": 0.032025,
+        "top_score": 0.191349,
+        "picked_correct": true
+      },
+      "oracle_key": {
+        "picked_id": 29,
+        "picked_correct": true,
+        "top_overlap": 0.7
+      }
+    },
+    {
+      "id": "D18",
+      "n_events": 3,
+      "told": [
+        "我叫阿岩。",
+        "我住在杭州。",
+        "我最喜欢的数字是 17。"
+      ],
+      "ask": "请复述这三点。",
+      "correct_event_id": 34,
+      "full_key": {
+        "picked_id": 35,
+        "picked_content": "我住在杭州。",
+        "margin": 0.010079,
+        "top_score": 0.212273,
+        "picked_correct": false
+      },
+      "region0_key": {
+        "picked_id": 35,
+        "picked_content": "我住在杭州。",
+        "margin": 0.001921,
+        "top_score": 0.223157,
+        "picked_correct": false
+      },
+      "oracle_key": {
+        "picked_id": 36,
+        "picked_correct": false,
+        "top_overlap": 0.1429
+      }
+    },
+    {
+      "id": "D19",
+      "n_events": 2,
+      "told": [
+        "我的项目叫 Seed。",
+        "我在项目组负责接口。"
+      ],
+      "ask": "我的项目和我负责的事分别是什么？",
+      "correct_event_id": 38,
+      "full_key": {
+        "picked_id": 39,
+        "picked_content": "我在项目组负责接口。",
+        "margin": 0.019004,
+        "top_score": 0.165829,
+        "picked_correct": false
+      },
+      "region0_key": {
+        "picked_id": 39,
+        "picked_content": "我在项目组负责接口。",
+        "margin": 0.018475,
+        "top_score": 0.178092,
+        "picked_correct": false
+      },
+      "oracle_key": {
+        "picked_id": 39,
+        "picked_correct": false,
+        "top_overlap": 0.3571
+      }
+    },
+    {
+      "id": "D20",
+      "n_events": 2,
+      "told": [
+        "我说过我喜欢绿茶。",
+        "我还说过我最喜欢的数字是 17。"
+      ],
+      "ask": "这两点分别是什么？",
+      "correct_event_id": 41,
+      "full_key": {
+        "picked_id": 41,
+        "picked_content": "我说过我喜欢绿茶。",
+        "margin": 0.022886,
+        "top_score": 0.178485,
+        "picked_correct": true
+      },
+      "region0_key": {
+        "picked_id": 41,
+        "picked_content": "我说过我喜欢绿茶。",
+        "margin": 0.026835,
+        "top_score": 0.19516,
+        "picked_correct": true
+      },
+      "oracle_key": {
+        "picked_id": 42,
+        "picked_correct": false,
+        "top_overlap": 0.1111
+      }
+    }
+  ]
+}

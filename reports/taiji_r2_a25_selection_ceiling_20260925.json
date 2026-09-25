@@ -1,0 +1,650 @@
+{
+  "format": "taiji-r2-a25-selection-ceiling-v1",
+  "prereg": "plans/reference/SPEC-A-17_r2_a2_3b_format_align_prereg_20260925.md §9",
+  "reading_rule": "oracle_strict - asis_strict >= 3 题 ⇒ 事件选择是瓶颈，A2.5 值得开；差 < 3 ⇒ 选择不是瓶颈，A2.5 不该开",
+  "checkpoint": "checkpoints/seed_beta.pt",
+  "circuit": "output/taiji_r2_copy_circuit_chat/judge/circuit-final.pt",
+  "arms": {
+    "asis_with_circuit": {
+      "items": 16,
+      "correct_loose": 7,
+      "correct_strict": 7,
+      "rows": [
+        {
+          "id": "D01",
+          "history_tells": [
+            "我叫阿岩。"
+          ],
+          "answer": "岩阿岩�����。岩阿岩��������。岩�岩���阿岩�岩������",
+          "hit_loose": true,
+          "hit_strict": true,
+          "copyable_tokens": [
+            "阿岩"
+          ]
+        },
+        {
+          "id": "D02",
+          "history_tells": [
+            "我住在杭州。"
+          ],
+          "answer": "州杭州杭州杭州杭州杭州我住州杭州杭州我住州�",
+          "hit_loose": true,
+          "hit_strict": true,
+          "copyable_tokens": [
+            "杭州"
+          ]
+        },
+        {
+          "id": "D03",
+          "history_tells": [
+            "我偏好简短回答。",
+            "请介绍一下太阳。"
+          ],
+          "answer": "�䥽短�楽绥�绥�绥�绥����奸�绥�太太太太太太太�",
+          "hit_loose": false,
+          "hit_strict": false,
+          "copyable_tokens": [
+            "简短"
+          ]
+        },
+        {
+          "id": "D04",
+          "history_tells": [
+            "我最喜欢的数字是 17。"
+          ],
+          "answer": "777�777�欢欢�欢�欢�欢�欢�是 17�是 17�是是是",
+          "hit_loose": true,
+          "hit_strict": true,
+          "copyable_tokens": [
+            "17"
+          ]
+        },
+        {
+          "id": "D05",
+          "history_tells": [
+            "我的项目叫 Seed。"
+          ],
+          "answer": "� Sed Sed �� Sed Sed �� Sed Sed Sed。�d Sed Sed Sed。�� S",
+          "hit_loose": false,
+          "hit_strict": false,
+          "copyable_tokens": [
+            "Seed"
+          ]
+        },
+        {
+          "id": "D06",
+          "history_tells": [
+            "我叫阿岩。",
+            "顺便问一下，水沸点是多少？"
+          ],
+          "answer": "尴水是��岸��岸��岸��岸��岸��岸��岸��岸��岸��岸���",
+          "hit_loose": false,
+          "hit_strict": false,
+          "copyable_tokens": [
+            "阿岩"
+          ]
+        },
+        {
+          "id": "D07",
+          "history_tells": [
+            "我住在杭州。",
+            "3 乘 4 等于几？"
+          ],
+          "answer": "4 几？住�� � 几？住�� � ��住 � 州� 住州杭州� 州",
+          "hit_loose": true,
+          "hit_strict": true,
+          "copyable_tokens": [
+            "杭州"
+          ]
+        },
+        {
+          "id": "D08",
+          "history_tells": [
+            "我喜欢绿茶。",
+            "今天天气不错。"
+          ],
+          "answer": "夶��詌�。天夶�氿�欢欢一����欢欢欢欢欢欢�欢�",
+          "hit_loose": false,
+          "hit_strict": false,
+          "copyable_tokens": [
+            "绿茶"
+          ]
+        },
+        {
+          "id": "D09",
+          "history_tells": [
+            "我的编号是 42。",
+            "说一个水果。"
+          ],
+          "answer": "222� 4222222222222222是 4222误 422222222222222。22�222222222",
+          "hit_loose": true,
+          "hit_strict": true,
+          "copyable_tokens": [
+            "42"
+          ]
+        },
+        {
+          "id": "D10",
+          "history_tells": [
+            "我叫阿岩。",
+            "不对，我叫小林。"
+          ],
+          "answer": "岩鯘�岩����。对�寿林我�����������林岯���",
+          "hit_loose": false,
+          "hit_strict": false,
+          "copyable_tokens": [
+            "小林"
+          ]
+        },
+        {
+          "id": "D11",
+          "history_tells": [
+            "我住在杭州。",
+            "我说错了，是南京。"
+          ],
+          "answer": "�杭��杯�杭是���杭��杭���杭���杭���杭��杭",
+          "hit_loose": false,
+          "hit_strict": false,
+          "copyable_tokens": [
+            "南京"
+          ]
+        },
+        {
+          "id": "D12",
+          "history_tells": [
+            "我最喜欢的数字是 17。",
+            "更正：是 23。"
+          ],
+          "answer": "77��欢2323是数23是��23�2323是�22323��2232323是数27。2",
+          "hit_loose": true,
+          "hit_strict": true,
+          "copyable_tokens": [
+            "23"
+          ]
+        },
+        {
+          "id": "D13",
+          "history_tells": [
+            "我在项目组负责接口。",
+            "其实我负责测试。"
+          ],
+          "answer": "�负负负负负负负负负负负负负负负负负负责浣�",
+          "hit_loose": false,
+          "hit_strict": false,
+          "copyable_tokens": [
+            "测试"
+          ]
+        },
+        {
+          "id": "D18",
+          "history_tells": [
+            "我叫阿岩。",
+            "我住在杭州。",
+            "我最喜欢的数字是 17。"
+          ],
+          "answer": "州杭州杭州杭州杭州我�77�我��7�我�我���岩�",
+          "hit_loose": true,
+          "hit_strict": true,
+          "copyable_tokens": [
+            "阿岩",
+            "杭州",
+            "17"
+          ]
+        },
+        {
+          "id": "D19",
+          "history_tells": [
+            "我的项目叫 Seed。",
+            "我在项目组负责接口。"
+          ],
+          "answer": "� �d Sed Sed。��d��目组舑��� 负舟���目�目绣我��",
+          "hit_loose": false,
+          "hit_strict": false,
+          "copyable_tokens": [
+            "Seed",
+            "接口"
+          ]
+        },
+        {
+          "id": "D20",
+          "history_tells": [
+            "我说过我喜欢绿茶。",
+            "我还说过我最喜欢的数字是 17。"
+          ],
+          "answer": "过���������说说欢欢欢欢欢�欢过���������说说过欢�",
+          "hit_loose": false,
+          "hit_strict": false,
+          "copyable_tokens": [
+            "绿茶",
+            "17"
+          ]
+        }
+      ],
+      "mounted": true
+    },
+    "oracle_with_circuit": {
+      "items": 16,
+      "correct_loose": 9,
+      "correct_strict": 9,
+      "rows": [
+        {
+          "id": "D01",
+          "history_tells": [
+            "我叫阿岩。"
+          ],
+          "answer": "岩阿岩�����。岩阿岩��������。岩�岩���阿岩�岩������",
+          "hit_loose": true,
+          "hit_strict": true,
+          "copyable_tokens": [
+            "阿岩"
+          ]
+        },
+        {
+          "id": "D02",
+          "history_tells": [
+            "我住在杭州。"
+          ],
+          "answer": "州杭州杭州杭州杭州杭州我住州杭州杭州我住州�",
+          "hit_loose": true,
+          "hit_strict": true,
+          "copyable_tokens": [
+            "杭州"
+          ]
+        },
+        {
+          "id": "D03",
+          "history_tells": [
+            "我偏好简短回答。"
+          ],
+          "answer": "健�短健�短健�短�回短�回短好回我�柭�我�柭�我�",
+          "hit_loose": false,
+          "hit_strict": false,
+          "copyable_tokens": [
+            "简短"
+          ]
+        },
+        {
+          "id": "D04",
+          "history_tells": [
+            "我最喜欢的数字是 17。"
+          ],
+          "answer": "777�777�欢欢�欢�欢�欢�欢�是 17�是 17�是是是",
+          "hit_loose": true,
+          "hit_strict": true,
+          "copyable_tokens": [
+            "17"
+          ]
+        },
+        {
+          "id": "D05",
+          "history_tells": [
+            "我的项目叫 Seed。"
+          ],
+          "answer": "� Sed Sed �� Sed Sed �� Sed Sed Sed。�d Sed Sed Sed。�� S",
+          "hit_loose": false,
+          "hit_strict": false,
+          "copyable_tokens": [
+            "Seed"
+          ]
+        },
+        {
+          "id": "D06",
+          "history_tells": [
+            "我叫阿岩。"
+          ],
+          "answer": "岩阿岩�����。岩阿岩��������。岩�岩���阿岩�岩������",
+          "hit_loose": true,
+          "hit_strict": true,
+          "copyable_tokens": [
+            "阿岩"
+          ]
+        },
+        {
+          "id": "D07",
+          "history_tells": [
+            "我住在杭州。"
+          ],
+          "answer": "州杭州杭州杭州我住州我住州杭州杭州我住州我�",
+          "hit_loose": true,
+          "hit_strict": true,
+          "copyable_tokens": [
+            "杭州"
+          ]
+        },
+        {
+          "id": "D08",
+          "history_tells": [
+            "我喜欢绿茶。"
+          ],
+          "answer": "欢欢欢�欢绿茶。�欢茶。�茶�茶。�茶�茶��。欢�",
+          "hit_loose": true,
+          "hit_strict": true,
+          "copyable_tokens": [
+            "绿茶"
+          ]
+        },
+        {
+          "id": "D09",
+          "history_tells": [
+            "我的编号是 42。"
+          ],
+          "answer": "22 42 42。�2222222�2是 4222222222。2222222222222222222222222",
+          "hit_loose": true,
+          "hit_strict": true,
+          "copyable_tokens": [
+            "42"
+          ]
+        },
+        {
+          "id": "D10",
+          "history_tells": [
+            "不对，我叫小林。"
+          ],
+          "answer": "对，对，对，对，对，对，对，对，对�对，�对",
+          "hit_loose": false,
+          "hit_strict": false,
+          "copyable_tokens": [
+            "小林"
+          ]
+        },
+        {
+          "id": "D11",
+          "history_tells": [
+            "我说错了，是南京。"
+          ],
+          "answer": "南京是�错京是�错京是�错了，南了，�是�错京京�",
+          "hit_loose": true,
+          "hit_strict": true,
+          "copyable_tokens": [
+            "南京"
+          ]
+        },
+        {
+          "id": "D12",
+          "history_tells": [
+            "更正：是 23。"
+          ],
+          "answer": "232323是 2323是 2323是 2323是 2323是 2323是 22323是 22323",
+          "hit_loose": true,
+          "hit_strict": true,
+          "copyable_tokens": [
+            "23"
+          ]
+        },
+        {
+          "id": "D13",
+          "history_tells": [
+            "其实我负责测试。"
+          ],
+          "answer": "负负负负负负负负试试责测责测责�试试负负负�",
+          "hit_loose": false,
+          "hit_strict": false,
+          "copyable_tokens": [
+            "测试"
+          ]
+        },
+        {
+          "id": "D18",
+          "history_tells": [
+            "我叫阿岩。"
+          ],
+          "answer": "岩阿�岩�����。岩�岩���。岩�岩������岩�����岩�岩�����",
+          "hit_loose": false,
+          "hit_strict": false,
+          "copyable_tokens": [
+            "阿岩",
+            "杭州",
+            "17"
+          ]
+        },
+        {
+          "id": "D19",
+          "history_tells": [
+            "我的项目叫 Seed。"
+          ],
+          "answer": "� Sed Sed。�� Sed Sed Sed。�� S Sed Sed Sed。�� S S Sed S",
+          "hit_loose": false,
+          "hit_strict": false,
+          "copyable_tokens": [
+            "Seed",
+            "接口"
+          ]
+        },
+        {
+          "id": "D20",
+          "history_tells": [
+            "我说过我喜欢绿茶。"
+          ],
+          "answer": "说说说说说说说说说说说说说说茶说茶茶茶茶茶�",
+          "hit_loose": false,
+          "hit_strict": false,
+          "copyable_tokens": [
+            "绿茶",
+            "17"
+          ]
+        }
+      ],
+      "mounted": true
+    },
+    "asis_no_circuit": {
+      "items": 16,
+      "correct_loose": 1,
+      "correct_strict": 0,
+      "rows": [
+        {
+          "id": "D01",
+          "history_tells": [
+            "我叫阿岩。"
+          ],
+          "answer": "分��：。\n\n\n\n\n\n\n\n\n\n�（（��）�：������弈个���家",
+          "hit_loose": false,
+          "hit_strict": false,
+          "copyable_tokens": [
+            "阿岩"
+          ]
+        },
+        {
+          "id": "D02",
+          "history_tells": [
+            "我住在杭州。"
+          ],
+          "answer": "����������下����人�����������有�有我�",
+          "hit_loose": false,
+          "hit_strict": false,
+          "copyable_tokens": [
+            "杭州"
+          ]
+        },
+        {
+          "id": "D03",
+          "history_tells": [
+            "我偏好简短回答。",
+            "请介绍一下太阳。"
+          ],
+          "answer": "������人���������有��是����我�为，���",
+          "hit_loose": true,
+          "hit_strict": false,
+          "copyable_tokens": [
+            "简短"
+          ]
+        },
+        {
+          "id": "D04",
+          "history_tells": [
+            "我最喜欢的数字是 17。"
+          ],
+          "answer": "����刑人�����师�君一个�，你一个有君君��为",
+          "hit_loose": false,
+          "hit_strict": false,
+          "copyable_tokens": [
+            "17"
+          ]
+        },
+        {
+          "id": "D05",
+          "history_tells": [
+            "我的项目叫 Seed。"
+          ],
+          "answer": "�������，�����个�（�他�������人�������",
+          "hit_loose": false,
+          "hit_strict": false,
+          "copyable_tokens": [
+            "Seed"
+          ]
+        },
+        {
+          "id": "D06",
+          "history_tells": [
+            "我叫阿岩。",
+            "顺便问一下，水沸点是多少？"
+          ],
+          "answer": "别�：师，�，家��孟����先是��为�，��个�，",
+          "hit_loose": false,
+          "hit_strict": false,
+          "copyable_tokens": [
+            "阿岩"
+          ]
+        },
+        {
+          "id": "D07",
+          "history_tells": [
+            "我住在杭州。",
+            "3 乘 4 等于几？"
+          ],
+          "answer": "����（��家��个�（君，�有��：�师个�（君，�",
+          "hit_loose": false,
+          "hit_strict": false,
+          "copyable_tokens": [
+            "杭州"
+          ]
+        },
+        {
+          "id": "D08",
+          "history_tells": [
+            "我喜欢绿茶。",
+            "今天天气不错。"
+          ],
+          "answer": "�������，����，����个�����人���������",
+          "hit_loose": false,
+          "hit_strict": false,
+          "copyable_tokens": [
+            "绿茶"
+          ]
+        },
+        {
+          "id": "D09",
+          "history_tells": [
+            "我的编号是 42。",
+            "说一个水果。"
+          ],
+          "answer": "����，��个�（�个�君（君家�个�，制之�有�，",
+          "hit_loose": false,
+          "hit_strict": false,
+          "copyable_tokens": [
+            "42"
+          ]
+        },
+        {
+          "id": "D10",
+          "history_tells": [
+            "我叫阿岩。",
+            "不对，我叫小林。"
+          ],
+          "answer": "别���，��个��个�（�人����师伈�个�，�，�",
+          "hit_loose": false,
+          "hit_strict": false,
+          "copyable_tokens": [
+            "小林"
+          ]
+        },
+        {
+          "id": "D11",
+          "history_tells": [
+            "我住在杭州。",
+            "我说错了，是南京。"
+          ],
+          "answer": "��������������下有�，�有有�，�有是�有�，�",
+          "hit_loose": false,
+          "hit_strict": false,
+          "copyable_tokens": [
+            "南京"
+          ]
+        },
+        {
+          "id": "D12",
+          "history_tells": [
+            "我最喜欢的数字是 17。",
+            "更正：是 23。"
+          ],
+          "answer": "刺�����人��������个�（����，制刑们�个是",
+          "hit_loose": false,
+          "hit_strict": false,
+          "copyable_tokens": [
+            "23"
+          ]
+        },
+        {
+          "id": "D13",
+          "history_tells": [
+            "我在项目组负责接口。",
+            "其实我负责测试。"
+          ],
+          "answer": "������弈�，��人��������是���有�我�为，",
+          "hit_loose": false,
+          "hit_strict": false,
+          "copyable_tokens": [
+            "测试"
+          ]
+        },
+        {
+          "id": "D18",
+          "history_tells": [
+            "我叫阿岩。",
+            "我住在杭州。",
+            "我最喜欢的数字是 17。"
+          ],
+          "answer": "有�：有�（一个�（（一个�（（大家��人�����",
+          "hit_loose": false,
+          "hit_strict": false,
+          "copyable_tokens": [
+            "阿岩",
+            "杭州",
+            "17"
+          ]
+        },
+        {
+          "id": "D19",
+          "history_tells": [
+            "我的项目叫 Seed。",
+            "我在项目组负责接口。"
+          ],
+          "answer": "����弈������个是人�������是�是有我���",
+          "hit_loose": false,
+          "hit_strict": false,
+          "copyable_tokens": [
+            "Seed",
+            "接口"
+          ]
+        },
+        {
+          "id": "D20",
+          "history_tells": [
+            "我说过我喜欢绿茶。",
+            "我还说过我最喜欢的数字是 17。"
+          ],
+          "answer": "������孟��个��人�������有��个�，�����",
+          "hit_loose": false,
+          "hit_strict": false,
+          "copyable_tokens": [
+            "绿茶",
+            "17"
+          ]
+        }
+      ],
+      "mounted": false
+    }
+  },
+  "gap_strict_oracle_minus_asis": 2,
+  "verdict": "选择不是当前瓶颈 ⇒ A2.5 不该开（钱在发射/表层那一侧）",
+  "base_sha256_unchanged": true
+}
