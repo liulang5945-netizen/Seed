@@ -72,6 +72,7 @@
 | H3g | 首屏空态（EmptyHero 所在包） | 徽标节点删除 + `.previewBadge/.titleGroup` CSS 移除 | `d4987c05` |
 | H3h | `docs/subsystems/*` + 各包 README | life.md 对新建、workspace 等页随 H3 各条**重生成**（gen 产物，归 M3 校验） | 各片 |
 | H3i | `.gitattributes`/行尾 | fork 仓内 ts 源以 LF 入库（`eol=lf`）；生成器 verbatim 归一（`gen-config-catalog` pasteText）——防 CRLF 进双语门 | `905d29f5` |
+| H3j | **中文镜像工具链**（zh catalog 生成化，2026-09-24） | 新建两文件整拷回：`scripts/gen-config-catalog-zh.ts`（与 en 同源渲染＋en/zh 围栏逐字对拍）＋`scripts/gen-config-catalog-zh.spec.ts`（5 用例）。**改三个上游文件**：`scripts/gen-config-catalog.ts`（导出 `FENCE`/`TypeRef` 两符号，零行为改动）、`scripts/run-gates.ts`（doc-sync 批 +1 门 `config-catalog-zh`）、根 `package.json`（+`gen-config-catalog-zh`/`verify-config-catalog-zh` 两 script 行）。产物连带：`docs/config-catalog.zh.md` 转为生成物（勿手改）、`docs/config-catalog.i18n.yaml` 重录。**登记说明**：审计脚本白名单把整个 `scripts/` 归我方，此改动不产残差但必须有条目——2026-09-25 增量登记时发现并补 | `8f65dfd8` |
 
 ### D 组 · 删除/不落地
 
@@ -105,4 +106,4 @@
 - H3 各条的锚点随上游重构漂移的风险：本清单以"功能点 + 文件族"定位，不背行号；若上游整文件重写对应功能（如 blocks 合同再变），该条**升级重设计**而非硬贴。
 - ~~并行工人在飞文件（system-prompt 回退、host.spec `:225`）~~ **已收敛（2026-09-24 所有者裁定回滚）**：system-prompt 两文件恢复 Taiji 身份句；`:225` 查实是 HEAD 既有类型错（非在飞改动），按仓内惯用法 `failure?.message` 修复——**全量 `tsc -b tsconfig.host.json` 首次 0 错**。仍在飞＝life-context ×4 与 session-memory-taiji ×2（六文件 lint/tsc 零新增，未裁定，升级前仍需收敛）。
 - 本清单随改造增长：**每片合入即追加/修订对应行**（新增 H 条、更新证据哈希）；"清单完整性"就是同步机制的全部安全性所在。
-- **文件级完整性审计已跑（2026-09-24）**：对 `82042a2f6..HEAD -- taiji-harness` 的 5065 个内容差异文件做双规则归并（M 内容模式 ∧ 路径白名单）⇒ 57 残差逐条人工判定：**真清单缺口已全部修条**——H3b 路径勘误（`packages/core/workspace` 不存在）＋ controller 装配面 8 文件、H3c 接口契约与 7 个连带测试桩、M2 缺 `DSH` 缩略语对、M3 缺 `apps/cli/composition.md`、H2g note 纪律未登记、H3f 资产路径与 welcome 版本 bump；余 22 条为 M1 变体形态（独立段/转义正则），已登记进 M1。脚本与输出：`E:\Seed\.dsh-sbx2\audit_fork_diff.py`／`audit-out.txt`（仓外，不入 git）。
+- **文件级完整性审计已跑（2026-09-24，2026-09-25 复跑增量）**：对 `82042a2f6..HEAD -- taiji-harness` 的内容差异文件做双规则归并（M 内容模式 ∧ 路径白名单）⇒ 首轮 5065 文件/57 残差逐条人工判定：**真清单缺口已全部修条**——H3b 路径勘误（`packages/core/workspace` 不存在）＋ controller 装配面 8 文件、H3c 接口契约与 7 个连带测试桩、M2 缺 `DSH` 缩略语对、M3 缺 `apps/cli/composition.md`、H2g note 纪律未登记、H3f 资产路径与 welcome 版本 bump；余 22 条为 M1 变体形态（独立段/转义正则），已登记进 M1。**09-25 复跑**（5068 文件/57 残差，与首轮持平）暴露白名单盲区：`scripts/` 整目录前缀把我方对上游脚本的改动全部吞进 h-whitelist（zh 工具链 3 个上游文件改动不产残差）⇒ 补 **H3j** 登记，且此后**审计绿≠清单全**——凡动 `scripts/`、根 `package.json` 的上游文件改动必须人工对到 H 条目。脚本与输出：`E:\Seed\.dsh-sbx2\audit_fork_diff.py`／`audit-out.txt`（仓外，不入 git）。
