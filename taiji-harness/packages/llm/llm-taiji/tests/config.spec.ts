@@ -1,7 +1,7 @@
 /** Configuration resolution: defaults, bounds, and the provider-owned retry policy. */
 import { describe, expect, it } from 'vitest'
-import { Config, plainOptions, resolveAdapterOptions } from '../src/config.ts'
-import { DEFAULT_BASE_URL, DEFAULT_MODELS } from '../src/defaults.ts'
+import { Config, plainOptions, resolveAdapterOptions, resolveReadinessPollMs } from '../src/config.ts'
+import { DEFAULT_BASE_URL, DEFAULT_MODELS, DEFAULT_READINESS_POLL_MS, MIN_READINESS_POLL_MS } from '../src/defaults.ts'
 
 describe('Taiji configuration resolution', () => {
   it("defaults to the runtime's local address and its single catalog entry", () => {
@@ -57,5 +57,15 @@ describe('Taiji configuration resolution', () => {
 
     expect(resolved.retryPolicy).toMatchObject({ mode: 'normal', maxRetries: 1 })
     expect(resolved.models).toEqual(DEFAULT_MODELS)
+  })
+
+  it('defaults the readiness re-probe cadence and refuses one below the floor', () => {
+    const parsed = Config({ baseURL: 'http://127.0.0.1:8000' })
+
+    expect(resolveReadinessPollMs(plainOptions(parsed))).toBe(DEFAULT_READINESS_POLL_MS)
+    expect(resolveReadinessPollMs({ readinessPollMs: MIN_READINESS_POLL_MS })).toBe(MIN_READINESS_POLL_MS)
+    expect(() => resolveReadinessPollMs({ readinessPollMs: 0 })).toThrow(/readinessPollMs/)
+    expect(() => resolveReadinessPollMs({ readinessPollMs: 1.5 })).toThrow(/readinessPollMs/)
+    expect(() => Config({ baseURL: 'http://127.0.0.1:8000', readinessPollMs: 1 })).toThrow()
   })
 })

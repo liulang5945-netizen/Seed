@@ -160,7 +160,16 @@ class CopyCircuit:
         *,
         max_events: int = 8,
         device: torch.device | str = "cpu",
+        init_seed: int | None = None,
     ) -> None:
+        """`init_seed=None` ⇒ 用 `config.seed`（**今天的行为，逐位不变**）。
+
+        为什么要这个旋钮：A2.3b 之后"第二次独立取数"要求**两个独立训练出来的电路**，
+        而训练器的 `--seed` 只喂语料取样流——电路的随机初始化当时只能跟着基座 config 走，
+        换 `--seed` 重跑得到的是同一套初始 query/key 投影。没有这个参数，
+        "独立电路"四个字在这条线上是造不出来的（`SPEC-A-17` §8）。
+        它**只**影响三个非零初始化的投影张量；门参数仍零初始化 ⇒ 不训练时发射证据仍恒零。
+        """
         self.config = config
         self.device = torch.device(device)
         self.evidence_width = int(config.motor_context_dim)
@@ -168,7 +177,8 @@ class CopyCircuit:
             cue_dim=int(config.cortical_context_dim), max_events=max_events
         )
         generator = torch.Generator(device="cpu")
-        generator.manual_seed(int(config.seed) + COPY_CIRCUIT_SEED_OFFSET)
+        base_seed = int(config.seed) if init_seed is None else int(init_seed)
+        generator.manual_seed(base_seed + COPY_CIRCUIT_SEED_OFFSET)
         width = self.evidence_width
         alphabet = int(config.alphabet_size)
         context_dim = int(config.motor_context_dim)

@@ -339,3 +339,54 @@ def test_wrong_event_steps_are_never_trained_against() -> None:
     assert wrong["steps"] == 0 and wrong["wrong_event"] >= 1 and not wrong["changed"]
     right = _train_with(tell)
     assert right["steps"] > 0 and right["wrong_event"] == 0 and right["changed"]
+
+
+#: 挂载结果的**基线 digest**，在加 `init_seed` 参数**之前**用当时的代码实测钉下
+#: （`Taiji(TaijiConfig(region_sizes=(64,48), synapse_fan_in=16, motor_fan_in=48, seed=S))`
+#: ＋ `mount_copy_circuit(max_events=4)`）。用它证明"加种子旋钮没动默认路径"。
+MOUNT_BASELINE_DIGEST_BY_CONFIG_SEED = {
+    1: "8e0662215c5e61548a4c7f1ea3dbbcb2f68c5325156e520b047be46cc9a7fcba",
+    11: "15d07e262f01fb8a1f758f96e19b6818736ac905b3b535171e75d8e74b70929a",
+    20260925: "a74b4558705d7155f03bb4cc9441bc31c5db7ea811982ee1a104a57f4cfb65e7",
+}
+
+
+def _small_model(seed: int) -> Taiji:
+    return Taiji(TaijiConfig(region_sizes=(64, 48), synapse_fan_in=16, motor_fan_in=48, seed=seed))
+
+
+def test_init_seed_default_leaves_the_mount_bitwise_identical() -> None:
+    """不传 `init_seed` ⇒ 挂载结果逐位等于加参数之前的实测值（三个种子各测一次）。"""
+
+    for config_seed, expected in MOUNT_BASELINE_DIGEST_BY_CONFIG_SEED.items():
+        model = _small_model(config_seed)
+        model.mount_copy_circuit(max_events=4)
+        circuit = model.copy_circuit
+        assert circuit is not None
+        assert _parameters_digest(dict(circuit.parameters())) == expected, config_seed
+
+
+def test_circuit_init_seed_moves_only_the_random_projections() -> None:
+    """换 `init_seed` 只该动三个随机投影张量；四个零初始化参数必须仍恒零，发射证据仍恒零。
+
+    反向断言同样重要：如果种子偷偷进了门参数，"挂载即位级不变"就被绕开了，
+    而这条不变性正是 A2 全部"加性新参数"分账的地基。
+    """
+
+    left, right = _small_model(7), _small_model(7)
+    left.mount_copy_circuit(max_events=4, init_seed=101)
+    right.mount_copy_circuit(max_events=4, init_seed=202)
+    params_left = left.copy_circuit.parameters()
+    params_right = right.copy_circuit.parameters()
+    for name in ("content_embed", "query_state", "query_content"):
+        assert not torch.equal(params_left[name], params_right[name]), name
+    for name in ("gate_state", "gate_content", "gate_bias", "copy_induce_bias"):
+        assert int(torch.count_nonzero(params_left[name])) == 0, name
+        assert int(torch.count_nonzero(params_right[name])) == 0, name
+    cue = torch.zeros(left.config.cortical_context_dim)
+    cue[2] = 1.0
+    f1 = torch.zeros(left.config.motor_context_dim)
+    f1[3] = 0.5
+    left.copy_circuit.store.record(b"abc", cue)
+    evidence = left.copy_circuit.evidence(cue=cue, f1_context=f1)
+    assert torch.equal(evidence, torch.zeros(left.config.alphabet_size))

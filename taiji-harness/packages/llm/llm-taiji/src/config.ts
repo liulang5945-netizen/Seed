@@ -5,7 +5,7 @@ import z from '@taiji/schemastery'
 import { isVolatile } from '@taiji/cosmokit'
 import { resolveRetryPolicy, RetryPolicySchema } from '@taiji/dsh-llm'
 import type { RetryPolicyConfig } from '@taiji/dsh-llm'
-import { DEFAULT_BASE_URL, DEFAULT_MODELS } from './defaults.ts'
+import { DEFAULT_BASE_URL, DEFAULT_MODELS, DEFAULT_READINESS_POLL_MS, MIN_READINESS_POLL_MS } from './defaults.ts'
 import type { TaijiCatalogModel, TaijiConnectionOptions } from './types.ts'
 
 /**
@@ -21,10 +21,15 @@ export interface Config {
   models: Volatile<TaijiCatalogModel[]>
   /** Provider-owned model-request retry policy; omission uses normal mode with five retries. */
   retryPolicy: Volatile<RetryPolicyConfig | undefined>
+  /**
+   * Cadence of the readiness re-probe that keeps route membership current; a
+   * composition choice, so it is not rewritable through the settings section.
+   */
+  readinessPollMs: number
 }
 
 /** Plain options accepted by the provider resolver. */
-export type Options = { [K in keyof Config]?: Config[K] extends Volatile<infer T> ? Exclude<T, undefined> : never }
+export type Options = { [K in keyof Config]?: Config[K] extends Volatile<infer T> ? Exclude<T, undefined> : Config[K] }
 
 /**
  * Read the current value behind every reference of a validated Config.
@@ -46,6 +51,7 @@ export const Config = z.object({
   baseURL: z.string().volatile(),
   models: z.array(catalogModel).default(DEFAULT_MODELS).volatile(),
   retryPolicy: RetryPolicySchema.volatile(),
+  readinessPollMs: z.natural().min(MIN_READINESS_POLL_MS).default(DEFAULT_READINESS_POLL_MS),
 })
 
 /** One resolution's complete request facts for this route. */
@@ -93,4 +99,19 @@ export function resolveAdapterOptions(config: Options): ResolvedTaijiOptions {
     models: resolveModels(config.models),
     retryPolicy: resolveRetryPolicy(config.retryPolicy, 'llm-taiji: retryPolicy'),
   }
+}
+
+/**
+ * Resolve the readiness re-probe cadence. Programmatic construction may bypass
+ * Schemastery normalization, so the floor is re-judged here: a cadence below it
+ * would probe faster than a refused connection is worth reporting.
+ * @param config - raw plugin config.
+ * @returns the interval between readiness probes, in milliseconds.
+ */
+export function resolveReadinessPollMs(config: Options): number {
+  const pollMs = config.readinessPollMs ?? DEFAULT_READINESS_POLL_MS
+  if (!Number.isInteger(pollMs) || pollMs < MIN_READINESS_POLL_MS) {
+    throw new Error(`llm-taiji: readinessPollMs must be an integer of at least ${MIN_READINESS_POLL_MS} milliseconds`)
+  }
+  return pollMs
 }

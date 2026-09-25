@@ -18,10 +18,10 @@ afterEach(async () => {
   await closeMockRuntimes()
 })
 
-async function harness(baseURL: string) {
+async function harness(baseURL: string, readinessPollMs?: number) {
   const ctx = new Context()
   await ctx.plugin(LlmRuntime)
-  await ctx.plugin(LlmTaiji, { baseURL })
+  await ctx.plugin(LlmTaiji, { baseURL, ...(readinessPollMs === undefined ? {} : { readinessPollMs }) })
   return ctx
 }
 
@@ -47,6 +47,9 @@ async function harnessHoldingConfig(baseURL: string): Promise<{ ctx: Context; he
 }
 
 const registered = (ctx: Context): string[] => ctx.llm.listProviders().map(provider => provider.id)
+
+/** Poll-driven changes are observed, not awaited by hand: generous for a loaded worker. */
+const WAIT = { timeout: 5_000, interval: 25 }
 
 describe('Taiji readiness verdicts', () => {
   it('routes every verdict that is not a runtime-reported failure', () => {
@@ -127,6 +130,44 @@ describe('Taiji route membership', () => {
     ctx.emit('loader/volatile-update', [])
     await vi.waitFor(() => { expect(registered(ctx)).toEqual([PROVIDER]) })
     await ctx.fiber.dispose()
+  })
+
+  it('registers the route when a runtime that was down at load comes up', async () => {
+    const runtime = await mockRuntime()
+    await runtime.stop()
+    const ctx = await harness(runtime.url, 250)
+    expect(registered(ctx)).toEqual([])
+
+    // The runtime finishes its own startup on its own schedule; no Loader
+    // update announces it, so the poll is the only thing that can notice.
+    await runtime.restart()
+
+    await vi.waitFor(() => { expect(registered(ctx)).toEqual([PROVIDER]) }, WAIT)
+    await ctx.fiber.dispose()
+  })
+
+  it('withdraws and restores the route on readiness alone, with no Loader update', async () => {
+    const runtime = await mockRuntime()
+    const ctx = await harness(runtime.url, 250)
+    expect(registered(ctx)).toEqual([PROVIDER])
+
+    runtime.healthStatus = 'error'
+    await vi.waitFor(() => { expect(registered(ctx)).toEqual([]) }, WAIT)
+
+    runtime.healthStatus = 'ok'
+    await vi.waitFor(() => { expect(registered(ctx)).toEqual([PROVIDER]) }, WAIT)
+    await ctx.fiber.dispose()
+  })
+
+  it('stops probing once the plugin fiber is disposed', async () => {
+    const runtime = await mockRuntime()
+    const ctx = await harness(runtime.url, 250)
+    await vi.waitFor(() => { expect(registered(ctx)).toEqual([PROVIDER]) }, WAIT)
+
+    await ctx.fiber.dispose()
+    const probes = runtime.health.length
+    await new Promise(resolve => setTimeout(resolve, 600))
+    expect(runtime.health).toHaveLength(probes)
   })
 
   it('keeps the current route when the stored configuration is refused', async () => {

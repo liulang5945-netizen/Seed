@@ -37,6 +37,7 @@ Choose this adapter when the deployment's model is the Taiji runtime this reposi
 - name: '@taiji/dsh-llm-taiji'
   config:
     baseURL: http://127.0.0.1:8000   # optional; this is the default
+    readinessPollMs: 5000            # optional; readiness re-probe cadence
     models:                          # optional; defaults to one entry
       - id: taiji-local
         name: Taiji（本地运行时）
@@ -47,12 +48,13 @@ Choose this adapter when the deployment's model is the Taiji runtime this reposi
 | `baseURL` | `http://127.0.0.1:8000` | Runtime HTTP root; `/api/chat/stream` and `/api/health` are appended. Must be an HTTP(S) root without credentials, query, or fragment |
 | `models` | one entry (`taiji-local`) | Advisory catalog shown by discovery consumers; an unlisted id still routes |
 | `retryPolicy` | normal, 5 retries | Provider-owned retry policy executed by `dsh-llm-retry` |
+| `readinessPollMs` | `5000` | Interval between readiness re-probes, in milliseconds; minimum 250. A composition choice, so the settings section does not rewrite it |
 
 A request selects the route with `provider: taiji-local`. The runtime takes no model id at all, so `model` is a local selector value that never reaches the wire and is never validated against the catalog.
 
 ### Readiness and routing
 
-The route is registered on the LLM service only while the runtime can serve. At plugin load, and again on every `loader/volatile-update`, the adapter probes `GET /api/health` and applies one verdict:
+The route is registered on the LLM service only while the runtime can serve. At plugin load, on every `loader/volatile-update`, and every `readinessPollMs` thereafter, the adapter probes `GET /api/health` and applies one verdict:
 
 | Reported `status` | Route | Why |
 |---|---|---|
@@ -64,7 +66,7 @@ The route is registered on the LLM service only while the runtime can serve. At 
 
 A withdrawn route is the empty route set of an existing registration, not a disposed one, so the provider returns without a gap between two registrations. The provider stays listed in the configurable-provider directory while withdrawn, which is what lets a Models page show and edit its endpoint.
 
-Readiness is sampled only at load and at each volatile update; nothing polls the runtime in the background. A runtime that comes up after load stays unregistered until the next volatile update or profile restart.
+Readiness is the runtime's own process state, and it changes with no Loader update to announce it, so the adapter re-probes on a cadence for as long as the plugin lives: a runtime whose cold start outlasts the harness boot is routed within one `readinessPollMs` of becoming reachable, with no restart. Probes are serialized, so a poll never overlaps a volatile-update probe and two of them cannot both attempt a first registration; the cadence stops when the plugin fiber is disposed.
 
 ### Endpoint and wire format
 
@@ -151,7 +153,7 @@ The second is that routability is the registry's own membership. An adapter cann
 | [`src/sse.ts`](src/sse.ts) | Frame decoding for the runtime's stream |
 | [`src/health.ts`](src/health.ts) | The readiness probe and its routing verdict |
 | [`src/transport.ts`](src/transport.ts) | HTTP failure classification |
-| [`src/config.ts`](src/config.ts) | Config schema and the one resolve step |
+| [`src/config.ts`](src/config.ts) | Config schema and its resolve steps |
 
 ### Wire flow
 
@@ -215,7 +217,7 @@ None; the runtime owns its state.
 - **No tool calls, reasoning, or images cross this route** — the runtime's chat shape carries plain text only, and this adapter performs no translation beyond it. A turn on `taiji-local` therefore cannot invoke a tool; that failure is the intended reading rather than a defect to be papered over.
 - **The whole answer arrives at once** — the runtime's `final` frame carries complete text, so the adapter emits one `text-delta` and the first visible token timestamp equals the answer's arrival.
 - **No token usage is reported** — the runtime discloses no counts, so the token meter falls back to its own estimator for this route.
-- **Routability is sampled, not polled** — the health probe runs at plugin load and on each `loader/volatile-update`; a runtime that becomes ready later stays withdrawn until one of those happens.
+- **Readiness recovery takes up to one poll interval** — the route follows a readiness change at the next `readinessPollMs` probe rather than instantly, so a turn issued inside that window meets the previous verdict.
 - **The catalog is advisory and unverified** — the adapter never asks the runtime which models it serves, because the runtime's endpoint takes no model id.
 - **History outside the paired shape is dropped** — messages after the current user turn, and non-text blocks anywhere, contribute nothing to the request. Nothing is rewritten to compensate, and the Session log keeps the original content.
 - **No replay state is produced** — a `finish` chunk carries none, because the runtime's frame holds no opaque provider metadata to replay.

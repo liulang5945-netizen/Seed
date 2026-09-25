@@ -37,6 +37,7 @@ kind: "package-reference"
 - name: '@taiji/dsh-llm-taiji'
   config:
     baseURL: http://127.0.0.1:8000   # optional; this is the default
+    readinessPollMs: 5000            # optional; readiness re-probe cadence
     models:                          # optional; defaults to one entry
       - id: taiji-local
         name: Taiji（本地运行时）
@@ -47,12 +48,13 @@ kind: "package-reference"
 | `baseURL` | `http://127.0.0.1:8000` | 运行时 HTTP 根；会追加 `/api/chat/stream` 与 `/api/health`。必须是 HTTP(S) 根，且不带凭证、查询串或片段 |
 | `models` | 一条（`taiji-local`） | 供发现类消费者展示的提示性目录；未列出的 id 同样可路由 |
 | `retryPolicy` | normal，5 次重试 | provider 自有的重试策略，由 `dsh-llm-retry` 执行 |
+| `readinessPollMs` | `5000` | 两次就绪再探测之间的间隔（毫秒），下限 250。属装配选择，因此设置分区不改写它 |
 
 请求用 `provider: taiji-local` 选择本路由。运行时完全不接受模型 id，因此 `model` 只是本地选择值：它不上线、也不按目录校验。
 
 ### 就绪与可路由
 
-只有当运行时能够服务请求时，该路由才注册在 LLM 服务上。插件加载时、以及每次 `loader/volatile-update` 时，适配器探测 `GET /api/health` 并套用一个判定：
+只有当运行时能够服务请求时，该路由才注册在 LLM 服务上。插件加载时、每次 `loader/volatile-update` 时、以及此后每满 `readinessPollMs` 时，适配器探测 `GET /api/health` 并套用一个判定：
 
 | 上报的 `status` | 路由 | 原因 |
 |---|---|---|
@@ -64,7 +66,7 @@ kind: "package-reference"
 
 被撤回的路由是既有注册的「空路由集」，而不是被销毁的注册，因此 provider 回归时两次注册之间没有缝隙。撤回期间 provider 仍列在可配置 provider 目录里，这正是 Models 页面能够显示并编辑其端点的原因。
 
-就绪只在加载时与每次 volatile 更新时采样一次；后台不做轮询。加载之后才起来的运行时，要等到下一次 volatile 更新或 profile 重启才会被注册。
+就绪是运行时自身的进程状态，它变化时没有任何 Loader 更新来通告，因此适配器在插件整个存活期内按节奏再探测：冷启动耗时超过 harness 启动的运行时，在变得可达之后的一个 `readinessPollMs` 内即被路由，无需重启。探测是串行化的，因此轮询不会与 volatile 更新的探测重叠、两者也不可能同时尝试首次注册；插件 fiber 被销毁时该节奏停止。
 
 ### 端点与线上格式
 
@@ -151,7 +153,7 @@ data: "生成出错: ..."
 | [`src/sse.ts`](src/sse.ts) | 运行时流的帧解码 |
 | [`src/health.ts`](src/health.ts) | 就绪探测及其路由判定 |
 | [`src/transport.ts`](src/transport.ts) | HTTP 失败分类 |
-| [`src/config.ts`](src/config.ts) | 配置 schema 与那一步显式解析 |
+| [`src/config.ts`](src/config.ts) | 配置 schema 与其各步显式解析 |
 
 ### 线上流程
 
@@ -215,7 +217,7 @@ data: "生成出错: ..."
 - **工具调用、推理与图片不经过本路由**——运行时的聊天形状只承载纯文本，本适配器不做超出它的翻译。因此 `taiji-local` 上的轮次无法调用工具；这是刻意保留的读数，而不是应当掩饰的缺陷。
 - **回答一次性到达**——运行时的 `final` 帧携带完整文本，因此适配器只产出一个 `text-delta`，首个可见 token 的时间戳就等于回答到达的时刻。
 - **不上报 token 用量**——运行时不公开任何计数，因此该路由上的 token meter 回落到它自己的估计器。
-- **可路由性是采样而非轮询**——就绪探测只在插件加载与每次 `loader/volatile-update` 时运行；之后才就绪的运行时在下一次上述时机之前一直处于撤回状态。
+- **就绪恢复最多滞后一个轮询间隔**——路由在下一次 `readinessPollMs` 探测时才跟随就绪变化，而非即时；落在该窗口内的回合遇到的是上一个判定。
 - **目录是提示性的、未经核验**——适配器从不询问运行时提供哪些模型，因为运行时的端点根本不接受模型 id。
 - **配对形状之外的历史被丢弃**——当前用户轮次之后的消息，以及任何位置的非文本块，对请求都没有贡献。不会为补偿而改写任何内容，Session 日志保留原始内容。
 - **不产出重放状态**——`finish` 块不携带它，因为运行时的帧里没有任何可供重放的不透明 provider 元数据。

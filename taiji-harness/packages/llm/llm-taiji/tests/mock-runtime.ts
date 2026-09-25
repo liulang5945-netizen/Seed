@@ -26,6 +26,10 @@ export interface MockRuntime {
   /** HTTP status the readiness endpoint answers with. */
   healthHttpStatus: number
   script: Behavior[]
+  /** Stop listening, so the next probe meets a closed port; the URL stays valid for `restart`. */
+  stop(): Promise<void>
+  /** Listen again on the port the URL names. */
+  restart(): Promise<void>
   close(): Promise<void>
 }
 
@@ -70,6 +74,8 @@ export async function mockRuntime(): Promise<MockRuntime> {
     healthStatus: 'ok',
     healthHttpStatus: 200,
     script: [],
+    stop: () => Promise.resolve(),
+    restart: () => Promise.resolve(),
     close: () => Promise.resolve(),
   }
   const server = createServer((request: IncomingMessage, response: ServerResponse) => {
@@ -105,11 +111,20 @@ export async function mockRuntime(): Promise<MockRuntime> {
   await once(server, 'listening')
   const address = server.address()
   if (address === null || typeof address === 'string') throw new Error('missing loopback port')
-  runtime.url = `http://127.0.0.1:${address.port}`
-  runtime.close = () => new Promise<void>((resolve) => {
+  const port = address.port
+  runtime.url = `http://127.0.0.1:${port}`
+  const stopListening = (): Promise<void> => new Promise<void>((resolve) => {
     server.closeAllConnections()
+    // A second stop meets an already-closed server; its error argument is that
+    // fact, and the caller's intent (nothing is listening) already holds.
     server.close(() => { resolve() })
   })
+  runtime.stop = stopListening
+  runtime.close = stopListening
+  runtime.restart = async () => {
+    server.listen(port, '127.0.0.1')
+    await once(server, 'listening')
+  }
   return runtime
 }
 

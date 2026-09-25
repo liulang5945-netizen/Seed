@@ -4,12 +4,12 @@ import type {} from '@taiji/cordis-plugin-loader'
 import type { Context } from '@taiji/cordis'
 import type { AdapterRegistrationHandle } from '@taiji/dsh-llm'
 import { TaijiAdapter } from './adapter.ts'
-import { Config, plainOptions, resolveAdapterOptions } from './config.ts'
+import { Config, plainOptions, resolveAdapterOptions, resolveReadinessPollMs } from './config.ts'
 import type { ResolvedTaijiOptions } from './config.ts'
 import { RUNTIME_DISPLAY_NAME } from './defaults.ts'
 import { isRoutable, probeReadiness } from './health.ts'
 
-export { Config, plainOptions, resolveAdapterOptions } from './config.ts'
+export { Config, plainOptions, resolveAdapterOptions, resolveReadinessPollMs } from './config.ts'
 export type { Options, ResolvedTaijiOptions } from './config.ts'
 export { TaijiAdapter } from './adapter.ts'
 export type { TaijiAdapterOptions, TaijiCatalogModel, TaijiConnectionOptions } from './types.ts'
@@ -33,7 +33,9 @@ const PROVIDER = 'taiji-local'
  * routable. `GET /api/health` decides that membership: a runtime reporting its
  * own failure, or answering with no health verdict, is withdrawn from the
  * registry, while a runtime that is merely still loading stays registered so
- * the request it receives records the real outcome.
+ * the request it receives records the real outcome. Membership is re-probed
+ * every `readinessPollMs` for as long as the plugin lives, so a runtime that
+ * becomes reachable after load is routed without restarting the harness.
  * @param ctx - host context carrying the LLM service.
  * @param config - plugin config resolved once per operation.
  */
@@ -71,5 +73,35 @@ export async function apply(ctx: Context, config: Config): Promise<void> {
     registration.replace(routable ? [PROVIDER] : [])
   }
   await refreshRoute()
-  ctx.on('loader/volatile-update', () => { void refreshRoute() })
+
+  // One refresh at a time. Two concurrent probes would both find no
+  // registration, and the second `registerAdapter` throws DUPLICATE_ADAPTER.
+  let idle: Promise<void> = Promise.resolve()
+  const scheduleRefresh = (): Promise<void> => {
+    idle = idle.then(() => refreshRoute()).catch((error: unknown) => { ctx.logger.warn(error) })
+    return idle
+  }
+  ctx.on('loader/volatile-update', () => { void scheduleRefresh() })
+
+  // Readiness is the runtime's own process state: it changes with no Loader
+  // update to announce it. A runtime whose cold start outlasts this plugin's
+  // load is unreachable at the one probe membership used to depend on, so the
+  // route is re-probed on a cadence for as long as the plugin lives.
+  const pollMs = resolveReadinessPollMs(plainOptions(config))
+  let timer: ReturnType<typeof setTimeout> | undefined
+  let disposed = false
+  ctx.effect(() => () => {
+    disposed = true
+    if (timer !== undefined) clearTimeout(timer)
+    timer = undefined
+  }, 'llm-taiji.readiness-poll')
+  const poll = async (): Promise<void> => {
+    while (!disposed) {
+      await new Promise<void>((resolve) => { timer = setTimeout(resolve, pollMs) })
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- Disposal can flip while the loop awaits the next tick.
+      if (disposed) return
+      await scheduleRefresh()
+    }
+  }
+  void poll()
 }

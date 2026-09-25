@@ -1937,6 +1937,11 @@ export interface Config {
   models: Volatile<TaijiCatalogModel[]>
   /** Provider-owned model-request retry policy; omission uses normal mode with five retries. */
   retryPolicy: Volatile<RetryPolicyConfig | undefined>
+  /**
+   * Cadence of the readiness re-probe that keeps route membership current; a
+   * composition choice, so it is not rewritable through the settings section.
+   */
+  readinessPollMs: number
 }
 
 /**

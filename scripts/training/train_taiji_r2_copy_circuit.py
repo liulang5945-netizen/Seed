@@ -266,6 +266,9 @@ def main() -> int:
     parser.add_argument("--lr-address", type=float, default=0.05)
     parser.add_argument("--lr-gate", type=float, default=0.02)
     parser.add_argument("--seed", type=int, default=20260925)
+    #: 电路**初始化**种子（与 `--seed` 分开）。`--seed` 只喂语料取样流，
+    #: 而"门的第二次独立取数"要的是两个独立电路 ⇒ 必须能单独换投影初始化（SPEC-A-17 §8）。
+    parser.add_argument("--circuit-seed", type=int, default=None, help="None＝沿用基座 config.seed")
     parser.add_argument("--checkpoint-every", type=int, default=100)
     parser.add_argument(
         "--out-dir",
@@ -317,7 +320,7 @@ def main() -> int:
 
     # ---- S0：checkpoint 存取自检（训练前必查，预注册 §4）----
     if substrate.copy_circuit is None:
-        substrate.mount_copy_circuit(max_events=4)
+        substrate.mount_copy_circuit(max_events=4, init_seed=args.circuit_seed)
     circuit = substrate.copy_circuit
     assert circuit is not None
     circuit.store.record(b"\xe6\xb5\x8b", torch.ones(substrate.config.cortical_context_dim))
@@ -328,7 +331,7 @@ def main() -> int:
     ).hexdigest()
     probe_payload = circuit.to_payload()
     twin = Taiji(substrate.config)
-    twin.mount_copy_circuit(max_events=4)
+    twin.mount_copy_circuit(max_events=4, init_seed=args.circuit_seed)
     twin.copy_circuit.load_payload(probe_payload)
     twin_digest = hashlib.sha256(
         json.dumps(
@@ -443,6 +446,7 @@ def main() -> int:
         "lr_address": args.lr_address,
         "lr_gate": args.lr_gate,
         "seed": args.seed,
+        "circuit_seed": args.circuit_seed,
         "base_checkpoint": str(base_path.relative_to(PROJECT_ROOT)) if base_sha else None,
         "history": history,
         "smoke_criteria": {

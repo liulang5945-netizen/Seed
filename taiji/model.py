@@ -710,12 +710,18 @@ class Taiji:
         return before, after
 
     @torch.no_grad()
-    def mount_copy_circuit(self, *, max_events: int = 8) -> None:
-        """Attach the R2 copy circuit (A2.1+A2.2). Gate zero-init ⇒ predictions unchanged."""
+    def mount_copy_circuit(self, *, max_events: int = 8, init_seed: int | None = None) -> None:
+        """Attach the R2 copy circuit (A2.1+A2.2). Gate zero-init ⇒ predictions unchanged.
+
+        `init_seed=None` 保持既有行为（投影张量跟基座 config 的 seed 走）；给出数值只换
+        随机初始化的三个投影张量，门仍零初始化 ⇒ 挂载位级不变这条纪律不受影响。
+        """
 
         if self._copy_circuit is not None:
             raise RuntimeError("copy circuit is already mounted")
-        self._copy_circuit = CopyCircuit(self.config, max_events=max_events, device=self.device)
+        self._copy_circuit = CopyCircuit(
+            self.config, max_events=max_events, device=self.device, init_seed=init_seed
+        )
 
     @property
     def copy_circuit(self) -> CopyCircuit | None:

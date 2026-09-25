@@ -21,6 +21,17 @@ export const HEALTH_PATH = '/api/health'
  */
 export const HEALTH_PROBE_TIMEOUT_MS = 2_000
 
+/**
+ * Cadence of the readiness re-probe, which is what keeps route membership
+ * current after load: the runtime's readiness is its own process state and
+ * changes without any Loader update, so a runtime that becomes reachable later
+ * — its cold start outlasts a harness boot — is only found by asking again.
+ */
+export const DEFAULT_READINESS_POLL_MS = 5_000
+
+/** Floor for the re-probe cadence: one probe per health timeout is the useful limit. */
+export const MIN_READINESS_POLL_MS = 250
+
 /** Advisory catalog for the runtime's single language organ; no wire model id exists to advertise. */
 export const DEFAULT_MODELS: TaijiCatalogModel[] = [
   { id: 'taiji-local', name: RUNTIME_DISPLAY_NAME },
