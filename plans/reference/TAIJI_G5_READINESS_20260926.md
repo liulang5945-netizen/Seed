@@ -38,7 +38,7 @@
 
 **因此 D3 依赖 D2，三条裁定不是并列的**：Taiji 路由按合同不需要凭据，但它要求本机 8000 端口的 python 运行时在跑（`llm-taiji` 走 HTTP，未就绪时按设计不注册 adapter）。⇒ **在"运行时怎么随包"（D2）定下来之前，把装机默认改成 Taiji 只会把"要 key 才能答"换成"要另起进程才能答"**，两者都不是"装起即用"。所以合理排期是先裁 D2、再随它一起裁 D3，而 D1（打包实跑）可以现在就做以拿最便宜的失败信号。
 
-**仍待做的一次真机复验**（不需裁定）：干净 profile 起一次 web，读 `ctx.agentDefaultModel.currentSelection()` 与 `listProviders()` 的交集，确认上面这条静态结论在真装配里成立（默认=可输入、首轮请求=报缺 key）。
+**仍待做的一次真机复验**（不需裁定，但**需要 pnpm 与一次前端构建**）：干净 profile 起一次 web，读 `ctx.agentDefaultModel.currentSelection()` 与 `listProviders()` 的交集，确认上面这条静态结论在真装配里成立（默认=可输入、首轮请求=报缺 key）。**本轮试过一条捷径并失败**：`vitest.e2e.config.ts` 的 `include` 只有 `packages/*/*/tests/**/*.e2e.ts` 与 `apps/cli/tests/**/*.e2e.ts` ⇒ 直接跑 `apps/web/tests/default-model.e2e.ts` 报 `No test files found`；该文件属 `test:web:built` 那条 lane（要先 `pnpm run build` 出 web dist）⇒ **这条复验并入 §4-R1（在有 pnpm 的机器上做）**，不在本机强跑。因此 §3.5 的结论当前标注为**静态读码所得（行号可查）**，不是真机读数。
 
 ## 4 · 需要所有者拍板的三条（按能声称的最强结论排）
 
