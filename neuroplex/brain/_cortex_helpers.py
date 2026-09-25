@@ -9,7 +9,9 @@ Cortex 纯算法辅助函数（从 neuroplex/brain/cortex.py 抽离，P2 拆分�
 
 import re
 
-__all__ = ["is_degenerate_text", "fuse_leader_quality"]
+import torch
+
+__all__ = ["detect_modality", "fuse_leader_quality", "is_degenerate_text"]
 
 
 def is_degenerate_text(text: str) -> bool:
@@ -31,6 +33,32 @@ def is_degenerate_text(text: str) -> bool:
         return True
     stripped = re.sub(r"[0-9\s,，。.!！?？;；:：、+\-*/=×÷\"\'“”（）()<>]", "", text)
     return bool(stripped) and len(stripped) >= 2 and not re.search(r"[\u4e00-\u9fff\w]", stripped)
+
+
+def detect_modality(input_data: str | torch.Tensor | dict) -> str:
+    """P8: 检测输入数据的模态（从 `cortex.py` 抽离，纯函数、逐位等价）。
+
+    路由顺序：
+    1. 显式 dict {"modality": "image", "data": ...} → 直接取
+    2. torch.Tensor → 根据维度推断（3D float → image/audio 连续特征）
+    3. str → "text"
+
+    Args:
+        input_data: str / torch.Tensor / dict
+
+    Returns:
+        modality name ("text"/"image"/"audio"/"video")
+    """
+    if isinstance(input_data, dict):
+        return input_data.get("modality", "text")
+    if isinstance(input_data, torch.Tensor):
+        # [B, L, raw_dim] float → 连续特征（图像/音频）
+        if input_data.dim() == 3 and input_data.dtype != torch.long:
+            # 默认归为 image，具体模态由调用方通过 dict 指定
+            return "image"
+        # [B, L] long → token id（文本或离散化的多模态）
+        return "text"
+    return "text"
 
 
 def _minmax(values: dict) -> dict:

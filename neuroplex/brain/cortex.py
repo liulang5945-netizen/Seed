@@ -1558,7 +1558,11 @@ class Cortex:
         best_idx = scores.index(max(scores))
         return candidates[best_idx]
 
-    def detect_modality(self, input_data: str | torch.Tensor | dict) -> str:
+    # P2（2026-09-25）：本方法体已抽离至 neuroplex/brain/_cortex_helpers.py
+    # （纯函数、逐位等价），此处仅保留对外的 staticmethod 绑定以兼容
+    # self.detect_modality(...) 调用点。真正逻辑见 _cortex_helpers。
+    @staticmethod
+    def detect_modality(input_data: str | torch.Tensor | dict) -> str:
         """P8: 检测输入数据的模态。
 
         路由顺序：
@@ -1572,16 +1576,7 @@ class Cortex:
         Returns:
             modality name ("text"/"image"/"audio"/"video")
         """
-        if isinstance(input_data, dict):
-            return input_data.get("modality", "text")
-        if isinstance(input_data, torch.Tensor):
-            # [B, L, raw_dim] float → 连续特征（图像/音频）
-            if input_data.dim() == 3 and input_data.dtype != torch.long:
-                # 默认归为 image，具体模态由调用方通过 dict 指定
-                return "image"
-            # [B, L] long → token id（文本或离散化的多模态）
-            return "text"
-        return "text"
+        return _cortex_helpers.detect_modality(input_data)
 
     def _infer_domain(self, text: str) -> str:
         """P7: 从文本内容启发式推断域。
