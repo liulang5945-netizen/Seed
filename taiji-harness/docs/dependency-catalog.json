@@ -373,6 +373,1446 @@
       ]
     },
     {
+      "name": "@earendil-works/pi-ai",
+      "version": "0.85.1",
+      "installations": [
+        {
+          "location": "node_modules/@earendil-works/pi-ai",
+          "direct": false,
+          "optional": false,
+          "peer": false
+        }
+      ]
+    },
+    {
+      "name": "@earendil-works/pi-telemetry",
+      "version": "0.85.1",
+      "installations": [
+        {
+          "location": "node_modules/@earendil-works/pi-telemetry",
+          "direct": false,
+          "optional": false,
+          "peer": false
+        }
+      ]
+    },
+    {
+      "name": "@emnapi/runtime",
+      "version": "1.11.3",
+      "installations": [
+        {
+          "location": "node_modules/@emnapi/runtime",
+          "direct": false,
+          "optional": true,
+          "peer": false
+        }
+      ]
+    },
+    {
+      "name": "@google/genai",
+      "version": "1.52.0",
+      "installations": [
+        {
+          "location": "node_modules/@google/genai",
+          "direct": false,
+          "optional": false,
+          "peer": false
+        }
+      ]
+    },
+    {
+      "name": "@hono/node-server",
+      "version": "2.1.1",
+      "installations": [
+        {
+          "location": "node_modules/@hono/node-server",
+          "direct": false,
+          "optional": false,
+          "peer": false
+        }
+      ]
+    },
+    {
+      "name": "@img/colour",
+      "version": "1.1.0",
+      "installations": [
+        {
+          "location": "node_modules/@img/colour",
+          "direct": false,
+          "optional": false,
+          "peer": false
+        }
+      ]
+    },
+    {
+      "name": "@img/sharp-darwin-arm64",
+      "version": "0.35.4",
+      "installations": [
+        {
+          "location": "node_modules/@img/sharp-darwin-arm64",
+          "direct": false,
+          "optional": true,
+          "peer": false,
+          "os": [
+            "darwin"
+          ],
+          "cpu": [
+            "arm64"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "@img/sharp-darwin-x64",
+      "version": "0.35.4",
+      "installations": [
+        {
+          "location": "node_modules/@img/sharp-darwin-x64",
+          "direct": false,
+          "optional": true,
+          "peer": false,
+          "os": [
+            "darwin"
+          ],
+          "cpu": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "@img/sharp-freebsd-wasm32",
+      "version": "0.35.4",
+      "installations": [
+        {
+          "location": "node_modules/@img/sharp-freebsd-wasm32",
+          "direct": false,
+          "optional": true,
+          "peer": false,
+          "os": [
+            "freebsd"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "@img/sharp-libvips-darwin-arm64",
+      "version": "1.3.3",
+      "installations": [
+        {
+          "location": "node_modules/@img/sharp-libvips-darwin-arm64",
+          "direct": false,
+          "optional": true,
+          "peer": false,
+          "os": [
+            "darwin"
+          ],
+          "cpu": [
+            "arm64"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "@img/sharp-libvips-darwin-x64",
+      "version": "1.3.3",
+      "installations": [
+        {
+          "location": "node_modules/@img/sharp-libvips-darwin-x64",
+          "direct": false,
+          "optional": true,
+          "peer": false,
+          "os": [
+            "darwin"
+          ],
+          "cpu": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "@img/sharp-libvips-linux-arm",
+      "version": "1.3.3",
+      "installations": [
+        {
+          "location": "node_modules/@img/sharp-libvips-linux-arm",
+          "direct": false,
+          "optional": true,
+          "peer": false,
+          "os": [
+            "linux"
+          ],
+          "cpu": [
+            "arm"
+          ],
+          "libc": [
+            "glibc"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "@img/sharp-libvips-linux-arm64",
+      "version": "1.3.3",
+      "installations": [
+        {
+          "location": "node_modules/@img/sharp-libvips-linux-arm64",
+          "direct": false,
+          "optional": true,
+          "peer": false,
+          "os": [
+            "linux"
+          ],
+          "cpu": [
+            "arm64"
+          ],
+          "libc": [
+            "glibc"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "@img/sharp-libvips-linux-ppc64",
+      "version": "1.3.3",
+      "installations": [
+        {
+          "location": "node_modules/@img/sharp-libvips-linux-ppc64",
+          "direct": false,
+          "optional": true,
+          "peer": false,
+          "os": [
+            "linux"
+          ],
+          "cpu": [
+            "ppc64"
+          ],
+          "libc": [
+            "glibc"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "@img/sharp-libvips-linux-riscv64",
+      "version": "1.3.3",
+      "installations": [
+        {
+          "location": "node_modules/@img/sharp-libvips-linux-riscv64",
+          "direct": false,
+          "optional": true,
+          "peer": false,
+          "os": [
+            "linux"
+          ],
+          "cpu": [
+            "riscv64"
+          ],
+          "libc": [
+            "glibc"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "@img/sharp-libvips-linux-s390x",
+      "version": "1.3.3",
+      "installations": [
+        {
+          "location": "node_modules/@img/sharp-libvips-linux-s390x",
+          "direct": false,
+          "optional": true,
+          "peer": false,
+          "os": [
+            "linux"
+          ],
+          "cpu": [
+            "s390x"
+          ],
+          "libc": [
+            "glibc"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "@img/sharp-libvips-linux-x64",
+      "version": "1.3.3",
+      "installations": [
+        {
+          "location": "node_modules/@img/sharp-libvips-linux-x64",
+          "direct": false,
+          "optional": true,
+          "peer": false,
+          "os": [
+            "linux"
+          ],
+          "cpu": [
+            "x64"
+          ],
+          "libc": [
+            "glibc"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "@img/sharp-libvips-linuxmusl-arm64",
+      "version": "1.3.3",
+      "installations": [
+        {
+          "location": "node_modules/@img/sharp-libvips-linuxmusl-arm64",
+          "direct": false,
+          "optional": true,
+          "peer": false,
+          "os": [
+            "linux"
+          ],
+          "cpu": [
+            "arm64"
+          ],
+          "libc": [
+            "musl"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "@img/sharp-libvips-linuxmusl-x64",
+      "version": "1.3.3",
+      "installations": [
+        {
+          "location": "node_modules/@img/sharp-libvips-linuxmusl-x64",
+          "direct": false,
+          "optional": true,
+          "peer": false,
+          "os": [
+            "linux"
+          ],
+          "cpu": [
+            "x64"
+          ],
+          "libc": [
+            "musl"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "@img/sharp-linux-arm",
+      "version": "0.35.4",
+      "installations": [
+        {
+          "location": "node_modules/@img/sharp-linux-arm",
+          "direct": false,
+          "optional": true,
+          "peer": false,
+          "os": [
+            "linux"
+          ],
+          "cpu": [
+            "arm"
+          ],
+          "libc": [
+            "glibc"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "@img/sharp-linux-arm64",
+      "version": "0.35.4",
+      "installations": [
+        {
+          "location": "node_modules/@img/sharp-linux-arm64",
+          "direct": false,
+          "optional": true,
+          "peer": false,
+          "os": [
+            "linux"
+          ],
+          "cpu": [
+            "arm64"
+          ],
+          "libc": [
+            "glibc"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "@img/sharp-linux-ppc64",
+      "version": "0.35.4",
+      "installations": [
+        {
+          "location": "node_modules/@img/sharp-linux-ppc64",
+          "direct": false,
+          "optional": true,
+          "peer": false,
+          "os": [
+            "linux"
+          ],
+          "cpu": [
+            "ppc64"
+          ],
+          "libc": [
+            "glibc"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "@img/sharp-linux-riscv64",
+      "version": "0.35.4",
+      "installations": [
+        {
+          "location": "node_modules/@img/sharp-linux-riscv64",
+          "direct": false,
+          "optional": true,
+          "peer": false,
+          "os": [
+            "linux"
+          ],
+          "cpu": [
+            "riscv64"
+          ],
+          "libc": [
+            "glibc"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "@img/sharp-linux-s390x",
+      "version": "0.35.4",
+      "installations": [
+        {
+          "location": "node_modules/@img/sharp-linux-s390x",
+          "direct": false,
+          "optional": true,
+          "peer": false,
+          "os": [
+            "linux"
+          ],
+          "cpu": [
+            "s390x"
+          ],
+          "libc": [
+            "glibc"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "@img/sharp-linux-x64",
+      "version": "0.35.4",
+      "installations": [
+        {
+          "location": "node_modules/@img/sharp-linux-x64",
+          "direct": false,
+          "optional": true,
+          "peer": false,
+          "os": [
+            "linux"
+          ],
+          "cpu": [
+            "x64"
+          ],
+          "libc": [
+            "glibc"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "@img/sharp-linuxmusl-arm64",
+      "version": "0.35.4",
+      "installations": [
+        {
+          "location": "node_modules/@img/sharp-linuxmusl-arm64",
+          "direct": false,
+          "optional": true,
+          "peer": false,
+          "os": [
+            "linux"
+          ],
+          "cpu": [
+            "arm64"
+          ],
+          "libc": [
+            "musl"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "@img/sharp-linuxmusl-x64",
+      "version": "0.35.4",
+      "installations": [
+        {
+          "location": "node_modules/@img/sharp-linuxmusl-x64",
+          "direct": false,
+          "optional": true,
+          "peer": false,
+          "os": [
+            "linux"
+          ],
+          "cpu": [
+            "x64"
+          ],
+          "libc": [
+            "musl"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "@img/sharp-wasm32",
+      "version": "0.35.4",
+      "installations": [
+        {
+          "location": "node_modules/@img/sharp-wasm32",
+          "direct": false,
+          "optional": true,
+          "peer": false
+        }
+      ]
+    },
+    {
+      "name": "@img/sharp-webcontainers-wasm32",
+      "version": "0.35.4",
+      "installations": [
+        {
+          "location": "node_modules/@img/sharp-webcontainers-wasm32",
+          "direct": false,
+          "optional": true,
+          "peer": false,
+          "cpu": [
+            "wasm32"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "@img/sharp-win32-arm64",
+      "version": "0.35.4",
+      "installations": [
+        {
+          "location": "node_modules/@img/sharp-win32-arm64",
+          "direct": false,
+          "optional": true,
+          "peer": false,
+          "os": [
+            "win32"
+          ],
+          "cpu": [
+            "arm64"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "@img/sharp-win32-ia32",
+      "version": "0.35.4",
+      "installations": [
+        {
+          "location": "node_modules/@img/sharp-win32-ia32",
+          "direct": false,
+          "optional": true,
+          "peer": false,
+          "os": [
+            "win32"
+          ],
+          "cpu": [
+            "ia32"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "@img/sharp-win32-x64",
+      "version": "0.35.4",
+      "installations": [
+        {
+          "location": "node_modules/@img/sharp-win32-x64",
+          "direct": false,
+          "optional": true,
+          "peer": false,
+          "os": [
+            "win32"
+          ],
+          "cpu": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "@joplin/turndown-plugin-gfm",
+      "version": "1.0.68",
+      "installations": [
+        {
+          "location": "node_modules/@joplin/turndown-plugin-gfm",
+          "direct": false,
+          "optional": false,
+          "peer": false
+        }
+      ]
+    },
+    {
+      "name": "@koromix/koffi-android-arm64",
+      "version": "3.2.1",
+      "installations": [
+        {
+          "location": "node_modules/@koromix/koffi-android-arm64",
+          "direct": false,
+          "optional": true,
+          "peer": false,
+          "os": [
+            "android"
+          ],
+          "cpu": [
+            "arm64"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "@koromix/koffi-android-x64",
+      "version": "3.2.1",
+      "installations": [
+        {
+          "location": "node_modules/@koromix/koffi-android-x64",
+          "direct": false,
+          "optional": true,
+          "peer": false,
+          "os": [
+            "android"
+          ],
+          "cpu": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "@koromix/koffi-darwin-arm64",
+      "version": "3.2.1",
+      "installations": [
+        {
+          "location": "node_modules/@koromix/koffi-darwin-arm64",
+          "direct": false,
+          "optional": true,
+          "peer": false,
+          "os": [
+            "darwin"
+          ],
+          "cpu": [
+            "arm64"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "@koromix/koffi-darwin-x64",
+      "version": "3.2.1",
+      "installations": [
+        {
+          "location": "node_modules/@koromix/koffi-darwin-x64",
+          "direct": false,
+          "optional": true,
+          "peer": false,
+          "os": [
+            "darwin"
+          ],
+          "cpu": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "@koromix/koffi-freebsd-arm64",
+      "version": "3.2.1",
+      "installations": [
+        {
+          "location": "node_modules/@koromix/koffi-freebsd-arm64",
+          "direct": false,
+          "optional": true,
+          "peer": false,
+          "os": [
+            "freebsd"
+          ],
+          "cpu": [
+            "arm64"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "@koromix/koffi-freebsd-ia32",
+      "version": "3.2.1",
+      "installations": [
+        {
+          "location": "node_modules/@koromix/koffi-freebsd-ia32",
+          "direct": false,
+          "optional": true,
+          "peer": false,
+          "os": [
+            "freebsd"
+          ],
+          "cpu": [
+            "ia32"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "@koromix/koffi-freebsd-x64",
+      "version": "3.2.1",
+      "installations": [
+        {
+          "location": "node_modules/@koromix/koffi-freebsd-x64",
+          "direct": false,
+          "optional": true,
+          "peer": false,
+          "os": [
+            "freebsd"
+          ],
+          "cpu": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "@koromix/koffi-linux-arm",
+      "version": "3.2.1",
+      "installations": [
+        {
+          "location": "node_modules/@koromix/koffi-linux-arm",
+          "direct": false,
+          "optional": true,
+          "peer": false,
+          "os": [
+            "linux"
+          ],
+          "cpu": [
+            "arm"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "@koromix/koffi-linux-arm64",
+      "version": "3.2.1",
+      "installations": [
+        {
+          "location": "node_modules/@koromix/koffi-linux-arm64",
+          "direct": false,
+          "optional": true,
+          "peer": false,
+          "os": [
+            "linux"
+          ],
+          "cpu": [
+            "arm64"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "@koromix/koffi-linux-ia32",
+      "version": "3.2.1",
+      "installations": [
+        {
+          "location": "node_modules/@koromix/koffi-linux-ia32",
+          "direct": false,
+          "optional": true,
+          "peer": false,
+          "os": [
+            "linux"
+          ],
+          "cpu": [
+            "ia32"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "@koromix/koffi-linux-loong64",
+      "version": "3.2.1",
+      "installations": [
+        {
+          "location": "node_modules/@koromix/koffi-linux-loong64",
+          "direct": false,
+          "optional": true,
+          "peer": false,
+          "os": [
+            "linux"
+          ],
+          "cpu": [
+            "loong64"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "@koromix/koffi-linux-riscv64",
+      "version": "3.2.1",
+      "installations": [
+        {
+          "location": "node_modules/@koromix/koffi-linux-riscv64",
+          "direct": false,
+          "optional": true,
+          "peer": false,
+          "os": [
+            "linux"
+          ],
+          "cpu": [
+            "riscv64"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "@koromix/koffi-linux-x64",
+      "version": "3.2.1",
+      "installations": [
+        {
+          "location": "node_modules/@koromix/koffi-linux-x64",
+          "direct": false,
+          "optional": true,
+          "peer": false,
+          "os": [
+            "linux"
+          ],
+          "cpu": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "@koromix/koffi-openbsd-ia32",
+      "version": "3.2.1",
+      "installations": [
+        {
+          "location": "node_modules/@koromix/koffi-openbsd-ia32",
+          "direct": false,
+          "optional": true,
+          "peer": false,
+          "os": [
+            "openbsd"
+          ],
+          "cpu": [
+            "ia32"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "@koromix/koffi-openbsd-x64",
+      "version": "3.2.1",
+      "installations": [
+        {
+          "location": "node_modules/@koromix/koffi-openbsd-x64",
+          "direct": false,
+          "optional": true,
+          "peer": false,
+          "os": [
+            "openbsd"
+          ],
+          "cpu": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "@koromix/koffi-win32-arm64",
+      "version": "3.2.1",
+      "installations": [
+        {
+          "location": "node_modules/@koromix/koffi-win32-arm64",
+          "direct": false,
+          "optional": true,
+          "peer": false,
+          "os": [
+            "win32"
+          ],
+          "cpu": [
+            "arm64"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "@koromix/koffi-win32-ia32",
+      "version": "3.2.1",
+      "installations": [
+        {
+          "location": "node_modules/@koromix/koffi-win32-ia32",
+          "direct": false,
+          "optional": true,
+          "peer": false,
+          "os": [
+            "win32"
+          ],
+          "cpu": [
+            "ia32"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "@koromix/koffi-win32-x64",
+      "version": "3.2.1",
+      "installations": [
+        {
+          "location": "node_modules/@koromix/koffi-win32-x64",
+          "direct": false,
+          "optional": true,
+          "peer": false,
+          "os": [
+            "win32"
+          ],
+          "cpu": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "@mixmark-io/domino",
+      "version": "2.2.0",
+      "installations": [
+        {
+          "location": "node_modules/@mixmark-io/domino",
+          "direct": false,
+          "optional": false,
+          "peer": false
+        }
+      ]
+    },
+    {
+      "name": "@modelcontextprotocol/sdk",
+      "version": "1.30.0",
+      "installations": [
+        {
+          "location": "node_modules/@modelcontextprotocol/sdk",
+          "direct": false,
+          "optional": false,
+          "peer": false
+        }
+      ]
+    },
+    {
+      "name": "@octokit/openapi-types",
+      "version": "29.0.1",
+      "installations": [
+        {
+          "location": "node_modules/@octokit/openapi-types",
+          "direct": false,
+          "optional": false,
+          "peer": false
+        }
+      ]
+    },
+    {
+      "name": "@octokit/openapi-webhooks-types",
+      "version": "12.1.0",
+      "installations": [
+        {
+          "location": "node_modules/@octokit/openapi-webhooks-types",
+          "direct": false,
+          "optional": false,
+          "peer": false
+        }
+      ]
+    },
+    {
+      "name": "@octokit/request-error",
+      "version": "7.1.2",
+      "installations": [
+        {
+          "location": "node_modules/@octokit/request-error",
+          "direct": false,
+          "optional": false,
+          "peer": false
+        }
+      ]
+    },
+    {
+      "name": "@octokit/types",
+      "version": "18.0.0",
+      "installations": [
+        {
+          "location": "node_modules/@octokit/types",
+          "direct": false,
+          "optional": false,
+          "peer": false
+        }
+      ]
+    },
+    {
+      "name": "@octokit/webhooks",
+      "version": "14.2.0",
+      "installations": [
+        {
+          "location": "node_modules/@octokit/webhooks",
+          "direct": false,
+          "optional": false,
+          "peer": false
+        }
+      ]
+    },
+    {
+      "name": "@octokit/webhooks-methods",
+      "version": "6.0.0",
+      "installations": [
+        {
+          "location": "node_modules/@octokit/webhooks-methods",
+          "direct": false,
+          "optional": false,
+          "peer": false
+        }
+      ]
+    },
+    {
+      "name": "@opentelemetry/api",
+      "version": "1.9.1",
+      "installations": [
+        {
+          "location": "node_modules/@opentelemetry/api",
+          "direct": false,
+          "optional": false,
+          "peer": false
+        }
+      ]
+    },
+    {
+      "name": "@opentelemetry/api-logs",
+      "version": "0.220.0",
+      "installations": [
+        {
+          "location": "node_modules/@opentelemetry/api-logs",
+          "direct": false,
+          "optional": false,
+          "peer": false
+        }
+      ]
+    },
+    {
+      "name": "@opentelemetry/core",
+      "version": "2.11.0",
+      "installations": [
+        {
+          "location": "node_modules/@opentelemetry/resources/node_modules/@opentelemetry/core",
+          "direct": false,
+          "optional": false,
+          "peer": false
+        }
+      ]
+    },
+    {
+      "name": "@opentelemetry/core",
+      "version": "2.9.0",
+      "installations": [
+        {
+          "location": "node_modules/@opentelemetry/core",
+          "direct": false,
+          "optional": false,
+          "peer": false
+        }
+      ]
+    },
+    {
+      "name": "@opentelemetry/exporter-logs-otlp-http",
+      "version": "0.220.0",
+      "installations": [
+        {
+          "location": "node_modules/@opentelemetry/exporter-logs-otlp-http",
+          "direct": false,
+          "optional": false,
+          "peer": false
+        }
+      ]
+    },
+    {
+      "name": "@opentelemetry/otlp-exporter-base",
+      "version": "0.220.0",
+      "installations": [
+        {
+          "location": "node_modules/@opentelemetry/otlp-exporter-base",
+          "direct": false,
+          "optional": false,
+          "peer": false
+        }
+      ]
+    },
+    {
+      "name": "@opentelemetry/otlp-transformer",
+      "version": "0.220.0",
+      "installations": [
+        {
+          "location": "node_modules/@opentelemetry/otlp-transformer",
+          "direct": false,
+          "optional": false,
+          "peer": false
+        }
+      ]
+    },
+    {
+      "name": "@opentelemetry/resources",
+      "version": "2.11.0",
+      "installations": [
+        {
+          "location": "node_modules/@opentelemetry/resources",
+          "direct": false,
+          "optional": false,
+          "peer": false
+        }
+      ]
+    },
+    {
+      "name": "@opentelemetry/resources",
+      "version": "2.9.0",
+      "installations": [
+        {
+          "location": "node_modules/@opentelemetry/otlp-transformer/node_modules/@opentelemetry/resources",
+          "direct": false,
+          "optional": false,
+          "peer": false
+        },
+        {
+          "location": "node_modules/@opentelemetry/sdk-logs/node_modules/@opentelemetry/resources",
+          "direct": false,
+          "optional": false,
+          "peer": false
+        },
+        {
+          "location": "node_modules/@opentelemetry/sdk-metrics/node_modules/@opentelemetry/resources",
+          "direct": false,
+          "optional": false,
+          "peer": false
+        },
+        {
+          "location": "node_modules/@opentelemetry/sdk-trace/node_modules/@opentelemetry/resources",
+          "direct": false,
+          "optional": false,
+          "peer": false
+        }
+      ]
+    },
+    {
+      "name": "@opentelemetry/sdk-logs",
+      "version": "0.220.0",
+      "installations": [
+        {
+          "location": "node_modules/@opentelemetry/sdk-logs",
+          "direct": false,
+          "optional": false,
+          "peer": false
+        }
+      ]
+    },
+    {
+      "name": "@opentelemetry/sdk-metrics",
+      "version": "2.9.0",
+      "installations": [
+        {
+          "location": "node_modules/@opentelemetry/sdk-metrics",
+          "direct": false,
+          "optional": false,
+          "peer": false
+        }
+      ]
+    },
+    {
+      "name": "@opentelemetry/sdk-trace",
+      "version": "2.9.0",
+      "installations": [
+        {
+          "location": "node_modules/@opentelemetry/sdk-trace",
+          "direct": false,
+          "optional": false,
+          "peer": false
+        }
+      ]
+    },
+    {
+      "name": "@opentelemetry/semantic-conventions",
+      "version": "1.43.0",
+      "installations": [
+        {
+          "location": "node_modules/@opentelemetry/semantic-conventions",
+          "direct": false,
+          "optional": false,
+          "peer": false
+        }
+      ]
+    },
+    {
+      "name": "@protobufjs/aspromise",
+      "version": "1.1.2",
+      "installations": [
+        {
+          "location": "node_modules/@protobufjs/aspromise",
+          "direct": false,
+          "optional": false,
+          "peer": false
+        }
+      ]
+    },
+    {
+      "name": "@protobufjs/base64",
+      "version": "1.1.2",
+      "installations": [
+        {
+          "location": "node_modules/@protobufjs/base64",
+          "direct": false,
+          "optional": false,
+          "peer": false
+        }
+      ]
+    },
+    {
+      "name": "@protobufjs/codegen",
+      "version": "2.0.5",
+      "installations": [
+        {
+          "location": "node_modules/@protobufjs/codegen",
+          "direct": false,
+          "optional": false,
+          "peer": false
+        }
+      ]
+    },
+    {
+      "name": "@protobufjs/eventemitter",
+      "version": "1.1.1",
+      "installations": [
+        {
+          "location": "node_modules/@protobufjs/eventemitter",
+          "direct": false,
+          "optional": false,
+          "peer": false
+        }
+      ]
+    },
+    {
+      "name": "@protobufjs/fetch",
+      "version": "1.1.1",
+      "installations": [
+        {
+          "location": "node_modules/@protobufjs/fetch",
+          "direct": false,
+          "optional": false,
+          "peer": false
+        }
+      ]
+    },
+    {
+      "name": "@protobufjs/float",
+      "version": "1.0.2",
+      "installations": [
+        {
+          "location": "node_modules/@protobufjs/float",
+          "direct": false,
+          "optional": false,
+          "peer": false
+        }
+      ]
+    },
+    {
+      "name": "@protobufjs/path",
+      "version": "1.1.2",
+      "installations": [
+        {
+          "location": "node_modules/@protobufjs/path",
+          "direct": false,
+          "optional": false,
+          "peer": false
+        }
+      ]
+    },
+    {
+      "name": "@protobufjs/pool",
+      "version": "1.1.0",
+      "installations": [
+        {
+          "location": "node_modules/@protobufjs/pool",
+          "direct": false,
+          "optional": false,
+          "peer": false
+        }
+      ]
+    },
+    {
+      "name": "@protobufjs/utf8",
+      "version": "1.1.2",
+      "installations": [
+        {
+          "location": "node_modules/@protobufjs/utf8",
+          "direct": false,
+          "optional": false,
+          "peer": false
+        }
+      ]
+    },
+    {
+      "name": "@smithy/core",
+      "version": "3.34.1",
+      "installations": [
+        {
+          "location": "node_modules/@smithy/core",
+          "direct": false,
+          "optional": false,
+          "peer": false
+        }
+      ]
+    },
+    {
+      "name": "@smithy/credential-provider-imds",
+      "version": "4.5.2",
+      "installations": [
+        {
+          "location": "node_modules/@smithy/credential-provider-imds",
+          "direct": false,
+          "optional": false,
+          "peer": false
+        }
+      ]
+    },
+    {
+      "name": "@smithy/fetch-http-handler",
+      "version": "5.8.0",
+      "installations": [
+        {
+          "location": "node_modules/@smithy/fetch-http-handler",
+          "direct": false,
+          "optional": false,
+          "peer": false
+        }
+      ]
+    },
+    {
+      "name": "@smithy/is-array-buffer",
+      "version": "2.2.0",
+      "installations": [
+        {
+          "location": "node_modules/@smithy/is-array-buffer",
+          "direct": false,
+          "optional": false,
+          "peer": false
+        }
+      ]
+    },
+    {
+      "name": "@smithy/node-http-handler",
+      "version": "4.12.1",
+      "installations": [
+        {
+          "location": "node_modules/@aws-sdk/credential-provider-http/node_modules/@smithy/node-http-handler",
+          "direct": false,
+          "optional": false,
+          "peer": false
+        },
+        {
+          "location": "node_modules/@aws-sdk/nested-clients/node_modules/@smithy/node-http-handler",
+          "direct": false,
+          "optional": false,
+          "peer": false
+        }
+      ]
+    },
+    {
+      "name": "@smithy/node-http-handler",
+      "version": "4.7.3",
+      "installations": [
+        {
+          "location": "node_modules/@smithy/node-http-handler",
+          "direct": false,
+          "optional": false,
+          "peer": false
+        }
+      ]
+    },
+    {
+      "name": "@smithy/signature-v4",
+      "version": "5.7.3",
+      "installations": [
+        {
+          "location": "node_modules/@smithy/signature-v4",
+          "direct": false,
+          "optional": false,
+          "peer": false
+        }
+      ]
+    },
+    {
+      "name": "@smithy/types",
+      "version": "4.18.0",
+      "installations": [
+        {
+          "location": "node_modules/@smithy/types",
+          "direct": false,
+          "optional": false,
+          "peer": false
+        }
+      ]
+    },
+    {
+      "name": "@smithy/util-buffer-from",
+      "version": "2.2.0",
+      "installations": [
+        {
+          "location": "node_modules/@smithy/util-buffer-from",
+          "direct": false,
+          "optional": false,
+          "peer": false
+        }
+      ]
+    },
+    {
+      "name": "@smithy/util-utf8",
+      "version": "2.3.0",
+      "installations": [
+        {
+          "location": "node_modules/@smithy/util-utf8",
+          "direct": false,
+          "optional": false,
+          "peer": false
+        }
+      ]
+    },
+    {
+      "name": "@stablelib/base64",
+      "version": "1.0.1",
+      "installations": [
+        {
+          "location": "node_modules/@stablelib/base64",
+          "direct": false,
+          "optional": false,
+          "peer": false
+        }
+      ]
+    },
+    {
+      "name": "@standard-schema/spec",
+      "version": "1.1.0",
+      "installations": [
+        {
+          "location": "node_modules/@standard-schema/spec",
+          "direct": false,
+          "optional": false,
+          "peer": false
+        }
+      ]
+    },
+    {
       "name": "@taiji/cordis",
       "version": "4.0.2",
       "installations": [
@@ -3307,1446 +4747,6 @@
         {
           "location": "node_modules/@taiji/schemastery",
           "direct": true,
-          "optional": false,
-          "peer": false
-        }
-      ]
-    },
-    {
-      "name": "@earendil-works/pi-ai",
-      "version": "0.85.1",
-      "installations": [
-        {
-          "location": "node_modules/@earendil-works/pi-ai",
-          "direct": false,
-          "optional": false,
-          "peer": false
-        }
-      ]
-    },
-    {
-      "name": "@earendil-works/pi-telemetry",
-      "version": "0.85.1",
-      "installations": [
-        {
-          "location": "node_modules/@earendil-works/pi-telemetry",
-          "direct": false,
-          "optional": false,
-          "peer": false
-        }
-      ]
-    },
-    {
-      "name": "@emnapi/runtime",
-      "version": "1.11.3",
-      "installations": [
-        {
-          "location": "node_modules/@emnapi/runtime",
-          "direct": false,
-          "optional": true,
-          "peer": false
-        }
-      ]
-    },
-    {
-      "name": "@google/genai",
-      "version": "1.52.0",
-      "installations": [
-        {
-          "location": "node_modules/@google/genai",
-          "direct": false,
-          "optional": false,
-          "peer": false
-        }
-      ]
-    },
-    {
-      "name": "@hono/node-server",
-      "version": "2.1.1",
-      "installations": [
-        {
-          "location": "node_modules/@hono/node-server",
-          "direct": false,
-          "optional": false,
-          "peer": false
-        }
-      ]
-    },
-    {
-      "name": "@img/colour",
-      "version": "1.1.0",
-      "installations": [
-        {
-          "location": "node_modules/@img/colour",
-          "direct": false,
-          "optional": false,
-          "peer": false
-        }
-      ]
-    },
-    {
-      "name": "@img/sharp-darwin-arm64",
-      "version": "0.35.4",
-      "installations": [
-        {
-          "location": "node_modules/@img/sharp-darwin-arm64",
-          "direct": false,
-          "optional": true,
-          "peer": false,
-          "os": [
-            "darwin"
-          ],
-          "cpu": [
-            "arm64"
-          ]
-        }
-      ]
-    },
-    {
-      "name": "@img/sharp-darwin-x64",
-      "version": "0.35.4",
-      "installations": [
-        {
-          "location": "node_modules/@img/sharp-darwin-x64",
-          "direct": false,
-          "optional": true,
-          "peer": false,
-          "os": [
-            "darwin"
-          ],
-          "cpu": [
-            "x64"
-          ]
-        }
-      ]
-    },
-    {
-      "name": "@img/sharp-freebsd-wasm32",
-      "version": "0.35.4",
-      "installations": [
-        {
-          "location": "node_modules/@img/sharp-freebsd-wasm32",
-          "direct": false,
-          "optional": true,
-          "peer": false,
-          "os": [
-            "freebsd"
-          ]
-        }
-      ]
-    },
-    {
-      "name": "@img/sharp-libvips-darwin-arm64",
-      "version": "1.3.3",
-      "installations": [
-        {
-          "location": "node_modules/@img/sharp-libvips-darwin-arm64",
-          "direct": false,
-          "optional": true,
-          "peer": false,
-          "os": [
-            "darwin"
-          ],
-          "cpu": [
-            "arm64"
-          ]
-        }
-      ]
-    },
-    {
-      "name": "@img/sharp-libvips-darwin-x64",
-      "version": "1.3.3",
-      "installations": [
-        {
-          "location": "node_modules/@img/sharp-libvips-darwin-x64",
-          "direct": false,
-          "optional": true,
-          "peer": false,
-          "os": [
-            "darwin"
-          ],
-          "cpu": [
-            "x64"
-          ]
-        }
-      ]
-    },
-    {
-      "name": "@img/sharp-libvips-linux-arm",
-      "version": "1.3.3",
-      "installations": [
-        {
-          "location": "node_modules/@img/sharp-libvips-linux-arm",
-          "direct": false,
-          "optional": true,
-          "peer": false,
-          "os": [
-            "linux"
-          ],
-          "cpu": [
-            "arm"
-          ],
-          "libc": [
-            "glibc"
-          ]
-        }
-      ]
-    },
-    {
-      "name": "@img/sharp-libvips-linux-arm64",
-      "version": "1.3.3",
-      "installations": [
-        {
-          "location": "node_modules/@img/sharp-libvips-linux-arm64",
-          "direct": false,
-          "optional": true,
-          "peer": false,
-          "os": [
-            "linux"
-          ],
-          "cpu": [
-            "arm64"
-          ],
-          "libc": [
-            "glibc"
-          ]
-        }
-      ]
-    },
-    {
-      "name": "@img/sharp-libvips-linux-ppc64",
-      "version": "1.3.3",
-      "installations": [
-        {
-          "location": "node_modules/@img/sharp-libvips-linux-ppc64",
-          "direct": false,
-          "optional": true,
-          "peer": false,
-          "os": [
-            "linux"
-          ],
-          "cpu": [
-            "ppc64"
-          ],
-          "libc": [
-            "glibc"
-          ]
-        }
-      ]
-    },
-    {
-      "name": "@img/sharp-libvips-linux-riscv64",
-      "version": "1.3.3",
-      "installations": [
-        {
-          "location": "node_modules/@img/sharp-libvips-linux-riscv64",
-          "direct": false,
-          "optional": true,
-          "peer": false,
-          "os": [
-            "linux"
-          ],
-          "cpu": [
-            "riscv64"
-          ],
-          "libc": [
-            "glibc"
-          ]
-        }
-      ]
-    },
-    {
-      "name": "@img/sharp-libvips-linux-s390x",
-      "version": "1.3.3",
-      "installations": [
-        {
-          "location": "node_modules/@img/sharp-libvips-linux-s390x",
-          "direct": false,
-          "optional": true,
-          "peer": false,
-          "os": [
-            "linux"
-          ],
-          "cpu": [
-            "s390x"
-          ],
-          "libc": [
-            "glibc"
-          ]
-        }
-      ]
-    },
-    {
-      "name": "@img/sharp-libvips-linux-x64",
-      "version": "1.3.3",
-      "installations": [
-        {
-          "location": "node_modules/@img/sharp-libvips-linux-x64",
-          "direct": false,
-          "optional": true,
-          "peer": false,
-          "os": [
-            "linux"
-          ],
-          "cpu": [
-            "x64"
-          ],
-          "libc": [
-            "glibc"
-          ]
-        }
-      ]
-    },
-    {
-      "name": "@img/sharp-libvips-linuxmusl-arm64",
-      "version": "1.3.3",
-      "installations": [
-        {
-          "location": "node_modules/@img/sharp-libvips-linuxmusl-arm64",
-          "direct": false,
-          "optional": true,
-          "peer": false,
-          "os": [
-            "linux"
-          ],
-          "cpu": [
-            "arm64"
-          ],
-          "libc": [
-            "musl"
-          ]
-        }
-      ]
-    },
-    {
-      "name": "@img/sharp-libvips-linuxmusl-x64",
-      "version": "1.3.3",
-      "installations": [
-        {
-          "location": "node_modules/@img/sharp-libvips-linuxmusl-x64",
-          "direct": false,
-          "optional": true,
-          "peer": false,
-          "os": [
-            "linux"
-          ],
-          "cpu": [
-            "x64"
-          ],
-          "libc": [
-            "musl"
-          ]
-        }
-      ]
-    },
-    {
-      "name": "@img/sharp-linux-arm",
-      "version": "0.35.4",
-      "installations": [
-        {
-          "location": "node_modules/@img/sharp-linux-arm",
-          "direct": false,
-          "optional": true,
-          "peer": false,
-          "os": [
-            "linux"
-          ],
-          "cpu": [
-            "arm"
-          ],
-          "libc": [
-            "glibc"
-          ]
-        }
-      ]
-    },
-    {
-      "name": "@img/sharp-linux-arm64",
-      "version": "0.35.4",
-      "installations": [
-        {
-          "location": "node_modules/@img/sharp-linux-arm64",
-          "direct": false,
-          "optional": true,
-          "peer": false,
-          "os": [
-            "linux"
-          ],
-          "cpu": [
-            "arm64"
-          ],
-          "libc": [
-            "glibc"
-          ]
-        }
-      ]
-    },
-    {
-      "name": "@img/sharp-linux-ppc64",
-      "version": "0.35.4",
-      "installations": [
-        {
-          "location": "node_modules/@img/sharp-linux-ppc64",
-          "direct": false,
-          "optional": true,
-          "peer": false,
-          "os": [
-            "linux"
-          ],
-          "cpu": [
-            "ppc64"
-          ],
-          "libc": [
-            "glibc"
-          ]
-        }
-      ]
-    },
-    {
-      "name": "@img/sharp-linux-riscv64",
-      "version": "0.35.4",
-      "installations": [
-        {
-          "location": "node_modules/@img/sharp-linux-riscv64",
-          "direct": false,
-          "optional": true,
-          "peer": false,
-          "os": [
-            "linux"
-          ],
-          "cpu": [
-            "riscv64"
-          ],
-          "libc": [
-            "glibc"
-          ]
-        }
-      ]
-    },
-    {
-      "name": "@img/sharp-linux-s390x",
-      "version": "0.35.4",
-      "installations": [
-        {
-          "location": "node_modules/@img/sharp-linux-s390x",
-          "direct": false,
-          "optional": true,
-          "peer": false,
-          "os": [
-            "linux"
-          ],
-          "cpu": [
-            "s390x"
-          ],
-          "libc": [
-            "glibc"
-          ]
-        }
-      ]
-    },
-    {
-      "name": "@img/sharp-linux-x64",
-      "version": "0.35.4",
-      "installations": [
-        {
-          "location": "node_modules/@img/sharp-linux-x64",
-          "direct": false,
-          "optional": true,
-          "peer": false,
-          "os": [
-            "linux"
-          ],
-          "cpu": [
-            "x64"
-          ],
-          "libc": [
-            "glibc"
-          ]
-        }
-      ]
-    },
-    {
-      "name": "@img/sharp-linuxmusl-arm64",
-      "version": "0.35.4",
-      "installations": [
-        {
-          "location": "node_modules/@img/sharp-linuxmusl-arm64",
-          "direct": false,
-          "optional": true,
-          "peer": false,
-          "os": [
-            "linux"
-          ],
-          "cpu": [
-            "arm64"
-          ],
-          "libc": [
-            "musl"
-          ]
-        }
-      ]
-    },
-    {
-      "name": "@img/sharp-linuxmusl-x64",
-      "version": "0.35.4",
-      "installations": [
-        {
-          "location": "node_modules/@img/sharp-linuxmusl-x64",
-          "direct": false,
-          "optional": true,
-          "peer": false,
-          "os": [
-            "linux"
-          ],
-          "cpu": [
-            "x64"
-          ],
-          "libc": [
-            "musl"
-          ]
-        }
-      ]
-    },
-    {
-      "name": "@img/sharp-wasm32",
-      "version": "0.35.4",
-      "installations": [
-        {
-          "location": "node_modules/@img/sharp-wasm32",
-          "direct": false,
-          "optional": true,
-          "peer": false
-        }
-      ]
-    },
-    {
-      "name": "@img/sharp-webcontainers-wasm32",
-      "version": "0.35.4",
-      "installations": [
-        {
-          "location": "node_modules/@img/sharp-webcontainers-wasm32",
-          "direct": false,
-          "optional": true,
-          "peer": false,
-          "cpu": [
-            "wasm32"
-          ]
-        }
-      ]
-    },
-    {
-      "name": "@img/sharp-win32-arm64",
-      "version": "0.35.4",
-      "installations": [
-        {
-          "location": "node_modules/@img/sharp-win32-arm64",
-          "direct": false,
-          "optional": true,
-          "peer": false,
-          "os": [
-            "win32"
-          ],
-          "cpu": [
-            "arm64"
-          ]
-        }
-      ]
-    },
-    {
-      "name": "@img/sharp-win32-ia32",
-      "version": "0.35.4",
-      "installations": [
-        {
-          "location": "node_modules/@img/sharp-win32-ia32",
-          "direct": false,
-          "optional": true,
-          "peer": false,
-          "os": [
-            "win32"
-          ],
-          "cpu": [
-            "ia32"
-          ]
-        }
-      ]
-    },
-    {
-      "name": "@img/sharp-win32-x64",
-      "version": "0.35.4",
-      "installations": [
-        {
-          "location": "node_modules/@img/sharp-win32-x64",
-          "direct": false,
-          "optional": true,
-          "peer": false,
-          "os": [
-            "win32"
-          ],
-          "cpu": [
-            "x64"
-          ]
-        }
-      ]
-    },
-    {
-      "name": "@joplin/turndown-plugin-gfm",
-      "version": "1.0.68",
-      "installations": [
-        {
-          "location": "node_modules/@joplin/turndown-plugin-gfm",
-          "direct": false,
-          "optional": false,
-          "peer": false
-        }
-      ]
-    },
-    {
-      "name": "@koromix/koffi-android-arm64",
-      "version": "3.2.1",
-      "installations": [
-        {
-          "location": "node_modules/@koromix/koffi-android-arm64",
-          "direct": false,
-          "optional": true,
-          "peer": false,
-          "os": [
-            "android"
-          ],
-          "cpu": [
-            "arm64"
-          ]
-        }
-      ]
-    },
-    {
-      "name": "@koromix/koffi-android-x64",
-      "version": "3.2.1",
-      "installations": [
-        {
-          "location": "node_modules/@koromix/koffi-android-x64",
-          "direct": false,
-          "optional": true,
-          "peer": false,
-          "os": [
-            "android"
-          ],
-          "cpu": [
-            "x64"
-          ]
-        }
-      ]
-    },
-    {
-      "name": "@koromix/koffi-darwin-arm64",
-      "version": "3.2.1",
-      "installations": [
-        {
-          "location": "node_modules/@koromix/koffi-darwin-arm64",
-          "direct": false,
-          "optional": true,
-          "peer": false,
-          "os": [
-            "darwin"
-          ],
-          "cpu": [
-            "arm64"
-          ]
-        }
-      ]
-    },
-    {
-      "name": "@koromix/koffi-darwin-x64",
-      "version": "3.2.1",
-      "installations": [
-        {
-          "location": "node_modules/@koromix/koffi-darwin-x64",
-          "direct": false,
-          "optional": true,
-          "peer": false,
-          "os": [
-            "darwin"
-          ],
-          "cpu": [
-            "x64"
-          ]
-        }
-      ]
-    },
-    {
-      "name": "@koromix/koffi-freebsd-arm64",
-      "version": "3.2.1",
-      "installations": [
-        {
-          "location": "node_modules/@koromix/koffi-freebsd-arm64",
-          "direct": false,
-          "optional": true,
-          "peer": false,
-          "os": [
-            "freebsd"
-          ],
-          "cpu": [
-            "arm64"
-          ]
-        }
-      ]
-    },
-    {
-      "name": "@koromix/koffi-freebsd-ia32",
-      "version": "3.2.1",
-      "installations": [
-        {
-          "location": "node_modules/@koromix/koffi-freebsd-ia32",
-          "direct": false,
-          "optional": true,
-          "peer": false,
-          "os": [
-            "freebsd"
-          ],
-          "cpu": [
-            "ia32"
-          ]
-        }
-      ]
-    },
-    {
-      "name": "@koromix/koffi-freebsd-x64",
-      "version": "3.2.1",
-      "installations": [
-        {
-          "location": "node_modules/@koromix/koffi-freebsd-x64",
-          "direct": false,
-          "optional": true,
-          "peer": false,
-          "os": [
-            "freebsd"
-          ],
-          "cpu": [
-            "x64"
-          ]
-        }
-      ]
-    },
-    {
-      "name": "@koromix/koffi-linux-arm",
-      "version": "3.2.1",
-      "installations": [
-        {
-          "location": "node_modules/@koromix/koffi-linux-arm",
-          "direct": false,
-          "optional": true,
-          "peer": false,
-          "os": [
-            "linux"
-          ],
-          "cpu": [
-            "arm"
-          ]
-        }
-      ]
-    },
-    {
-      "name": "@koromix/koffi-linux-arm64",
-      "version": "3.2.1",
-      "installations": [
-        {
-          "location": "node_modules/@koromix/koffi-linux-arm64",
-          "direct": false,
-          "optional": true,
-          "peer": false,
-          "os": [
-            "linux"
-          ],
-          "cpu": [
-            "arm64"
-          ]
-        }
-      ]
-    },
-    {
-      "name": "@koromix/koffi-linux-ia32",
-      "version": "3.2.1",
-      "installations": [
-        {
-          "location": "node_modules/@koromix/koffi-linux-ia32",
-          "direct": false,
-          "optional": true,
-          "peer": false,
-          "os": [
-            "linux"
-          ],
-          "cpu": [
-            "ia32"
-          ]
-        }
-      ]
-    },
-    {
-      "name": "@koromix/koffi-linux-loong64",
-      "version": "3.2.1",
-      "installations": [
-        {
-          "location": "node_modules/@koromix/koffi-linux-loong64",
-          "direct": false,
-          "optional": true,
-          "peer": false,
-          "os": [
-            "linux"
-          ],
-          "cpu": [
-            "loong64"
-          ]
-        }
-      ]
-    },
-    {
-      "name": "@koromix/koffi-linux-riscv64",
-      "version": "3.2.1",
-      "installations": [
-        {
-          "location": "node_modules/@koromix/koffi-linux-riscv64",
-          "direct": false,
-          "optional": true,
-          "peer": false,
-          "os": [
-            "linux"
-          ],
-          "cpu": [
-            "riscv64"
-          ]
-        }
-      ]
-    },
-    {
-      "name": "@koromix/koffi-linux-x64",
-      "version": "3.2.1",
-      "installations": [
-        {
-          "location": "node_modules/@koromix/koffi-linux-x64",
-          "direct": false,
-          "optional": true,
-          "peer": false,
-          "os": [
-            "linux"
-          ],
-          "cpu": [
-            "x64"
-          ]
-        }
-      ]
-    },
-    {
-      "name": "@koromix/koffi-openbsd-ia32",
-      "version": "3.2.1",
-      "installations": [
-        {
-          "location": "node_modules/@koromix/koffi-openbsd-ia32",
-          "direct": false,
-          "optional": true,
-          "peer": false,
-          "os": [
-            "openbsd"
-          ],
-          "cpu": [
-            "ia32"
-          ]
-        }
-      ]
-    },
-    {
-      "name": "@koromix/koffi-openbsd-x64",
-      "version": "3.2.1",
-      "installations": [
-        {
-          "location": "node_modules/@koromix/koffi-openbsd-x64",
-          "direct": false,
-          "optional": true,
-          "peer": false,
-          "os": [
-            "openbsd"
-          ],
-          "cpu": [
-            "x64"
-          ]
-        }
-      ]
-    },
-    {
-      "name": "@koromix/koffi-win32-arm64",
-      "version": "3.2.1",
-      "installations": [
-        {
-          "location": "node_modules/@koromix/koffi-win32-arm64",
-          "direct": false,
-          "optional": true,
-          "peer": false,
-          "os": [
-            "win32"
-          ],
-          "cpu": [
-            "arm64"
-          ]
-        }
-      ]
-    },
-    {
-      "name": "@koromix/koffi-win32-ia32",
-      "version": "3.2.1",
-      "installations": [
-        {
-          "location": "node_modules/@koromix/koffi-win32-ia32",
-          "direct": false,
-          "optional": true,
-          "peer": false,
-          "os": [
-            "win32"
-          ],
-          "cpu": [
-            "ia32"
-          ]
-        }
-      ]
-    },
-    {
-      "name": "@koromix/koffi-win32-x64",
-      "version": "3.2.1",
-      "installations": [
-        {
-          "location": "node_modules/@koromix/koffi-win32-x64",
-          "direct": false,
-          "optional": true,
-          "peer": false,
-          "os": [
-            "win32"
-          ],
-          "cpu": [
-            "x64"
-          ]
-        }
-      ]
-    },
-    {
-      "name": "@mixmark-io/domino",
-      "version": "2.2.0",
-      "installations": [
-        {
-          "location": "node_modules/@mixmark-io/domino",
-          "direct": false,
-          "optional": false,
-          "peer": false
-        }
-      ]
-    },
-    {
-      "name": "@modelcontextprotocol/sdk",
-      "version": "1.30.0",
-      "installations": [
-        {
-          "location": "node_modules/@modelcontextprotocol/sdk",
-          "direct": false,
-          "optional": false,
-          "peer": false
-        }
-      ]
-    },
-    {
-      "name": "@octokit/openapi-types",
-      "version": "29.0.1",
-      "installations": [
-        {
-          "location": "node_modules/@octokit/openapi-types",
-          "direct": false,
-          "optional": false,
-          "peer": false
-        }
-      ]
-    },
-    {
-      "name": "@octokit/openapi-webhooks-types",
-      "version": "12.1.0",
-      "installations": [
-        {
-          "location": "node_modules/@octokit/openapi-webhooks-types",
-          "direct": false,
-          "optional": false,
-          "peer": false
-        }
-      ]
-    },
-    {
-      "name": "@octokit/request-error",
-      "version": "7.1.2",
-      "installations": [
-        {
-          "location": "node_modules/@octokit/request-error",
-          "direct": false,
-          "optional": false,
-          "peer": false
-        }
-      ]
-    },
-    {
-      "name": "@octokit/types",
-      "version": "18.0.0",
-      "installations": [
-        {
-          "location": "node_modules/@octokit/types",
-          "direct": false,
-          "optional": false,
-          "peer": false
-        }
-      ]
-    },
-    {
-      "name": "@octokit/webhooks",
-      "version": "14.2.0",
-      "installations": [
-        {
-          "location": "node_modules/@octokit/webhooks",
-          "direct": false,
-          "optional": false,
-          "peer": false
-        }
-      ]
-    },
-    {
-      "name": "@octokit/webhooks-methods",
-      "version": "6.0.0",
-      "installations": [
-        {
-          "location": "node_modules/@octokit/webhooks-methods",
-          "direct": false,
-          "optional": false,
-          "peer": false
-        }
-      ]
-    },
-    {
-      "name": "@opentelemetry/api",
-      "version": "1.9.1",
-      "installations": [
-        {
-          "location": "node_modules/@opentelemetry/api",
-          "direct": false,
-          "optional": false,
-          "peer": false
-        }
-      ]
-    },
-    {
-      "name": "@opentelemetry/api-logs",
-      "version": "0.220.0",
-      "installations": [
-        {
-          "location": "node_modules/@opentelemetry/api-logs",
-          "direct": false,
-          "optional": false,
-          "peer": false
-        }
-      ]
-    },
-    {
-      "name": "@opentelemetry/core",
-      "version": "2.11.0",
-      "installations": [
-        {
-          "location": "node_modules/@opentelemetry/resources/node_modules/@opentelemetry/core",
-          "direct": false,
-          "optional": false,
-          "peer": false
-        }
-      ]
-    },
-    {
-      "name": "@opentelemetry/core",
-      "version": "2.9.0",
-      "installations": [
-        {
-          "location": "node_modules/@opentelemetry/core",
-          "direct": false,
-          "optional": false,
-          "peer": false
-        }
-      ]
-    },
-    {
-      "name": "@opentelemetry/exporter-logs-otlp-http",
-      "version": "0.220.0",
-      "installations": [
-        {
-          "location": "node_modules/@opentelemetry/exporter-logs-otlp-http",
-          "direct": false,
-          "optional": false,
-          "peer": false
-        }
-      ]
-    },
-    {
-      "name": "@opentelemetry/otlp-exporter-base",
-      "version": "0.220.0",
-      "installations": [
-        {
-          "location": "node_modules/@opentelemetry/otlp-exporter-base",
-          "direct": false,
-          "optional": false,
-          "peer": false
-        }
-      ]
-    },
-    {
-      "name": "@opentelemetry/otlp-transformer",
-      "version": "0.220.0",
-      "installations": [
-        {
-          "location": "node_modules/@opentelemetry/otlp-transformer",
-          "direct": false,
-          "optional": false,
-          "peer": false
-        }
-      ]
-    },
-    {
-      "name": "@opentelemetry/resources",
-      "version": "2.11.0",
-      "installations": [
-        {
-          "location": "node_modules/@opentelemetry/resources",
-          "direct": false,
-          "optional": false,
-          "peer": false
-        }
-      ]
-    },
-    {
-      "name": "@opentelemetry/resources",
-      "version": "2.9.0",
-      "installations": [
-        {
-          "location": "node_modules/@opentelemetry/otlp-transformer/node_modules/@opentelemetry/resources",
-          "direct": false,
-          "optional": false,
-          "peer": false
-        },
-        {
-          "location": "node_modules/@opentelemetry/sdk-logs/node_modules/@opentelemetry/resources",
-          "direct": false,
-          "optional": false,
-          "peer": false
-        },
-        {
-          "location": "node_modules/@opentelemetry/sdk-metrics/node_modules/@opentelemetry/resources",
-          "direct": false,
-          "optional": false,
-          "peer": false
-        },
-        {
-          "location": "node_modules/@opentelemetry/sdk-trace/node_modules/@opentelemetry/resources",
-          "direct": false,
-          "optional": false,
-          "peer": false
-        }
-      ]
-    },
-    {
-      "name": "@opentelemetry/sdk-logs",
-      "version": "0.220.0",
-      "installations": [
-        {
-          "location": "node_modules/@opentelemetry/sdk-logs",
-          "direct": false,
-          "optional": false,
-          "peer": false
-        }
-      ]
-    },
-    {
-      "name": "@opentelemetry/sdk-metrics",
-      "version": "2.9.0",
-      "installations": [
-        {
-          "location": "node_modules/@opentelemetry/sdk-metrics",
-          "direct": false,
-          "optional": false,
-          "peer": false
-        }
-      ]
-    },
-    {
-      "name": "@opentelemetry/sdk-trace",
-      "version": "2.9.0",
-      "installations": [
-        {
-          "location": "node_modules/@opentelemetry/sdk-trace",
-          "direct": false,
-          "optional": false,
-          "peer": false
-        }
-      ]
-    },
-    {
-      "name": "@opentelemetry/semantic-conventions",
-      "version": "1.43.0",
-      "installations": [
-        {
-          "location": "node_modules/@opentelemetry/semantic-conventions",
-          "direct": false,
-          "optional": false,
-          "peer": false
-        }
-      ]
-    },
-    {
-      "name": "@protobufjs/aspromise",
-      "version": "1.1.2",
-      "installations": [
-        {
-          "location": "node_modules/@protobufjs/aspromise",
-          "direct": false,
-          "optional": false,
-          "peer": false
-        }
-      ]
-    },
-    {
-      "name": "@protobufjs/base64",
-      "version": "1.1.2",
-      "installations": [
-        {
-          "location": "node_modules/@protobufjs/base64",
-          "direct": false,
-          "optional": false,
-          "peer": false
-        }
-      ]
-    },
-    {
-      "name": "@protobufjs/codegen",
-      "version": "2.0.5",
-      "installations": [
-        {
-          "location": "node_modules/@protobufjs/codegen",
-          "direct": false,
-          "optional": false,
-          "peer": false
-        }
-      ]
-    },
-    {
-      "name": "@protobufjs/eventemitter",
-      "version": "1.1.1",
-      "installations": [
-        {
-          "location": "node_modules/@protobufjs/eventemitter",
-          "direct": false,
-          "optional": false,
-          "peer": false
-        }
-      ]
-    },
-    {
-      "name": "@protobufjs/fetch",
-      "version": "1.1.1",
-      "installations": [
-        {
-          "location": "node_modules/@protobufjs/fetch",
-          "direct": false,
-          "optional": false,
-          "peer": false
-        }
-      ]
-    },
-    {
-      "name": "@protobufjs/float",
-      "version": "1.0.2",
-      "installations": [
-        {
-          "location": "node_modules/@protobufjs/float",
-          "direct": false,
-          "optional": false,
-          "peer": false
-        }
-      ]
-    },
-    {
-      "name": "@protobufjs/path",
-      "version": "1.1.2",
-      "installations": [
-        {
-          "location": "node_modules/@protobufjs/path",
-          "direct": false,
-          "optional": false,
-          "peer": false
-        }
-      ]
-    },
-    {
-      "name": "@protobufjs/pool",
-      "version": "1.1.0",
-      "installations": [
-        {
-          "location": "node_modules/@protobufjs/pool",
-          "direct": false,
-          "optional": false,
-          "peer": false
-        }
-      ]
-    },
-    {
-      "name": "@protobufjs/utf8",
-      "version": "1.1.2",
-      "installations": [
-        {
-          "location": "node_modules/@protobufjs/utf8",
-          "direct": false,
-          "optional": false,
-          "peer": false
-        }
-      ]
-    },
-    {
-      "name": "@smithy/core",
-      "version": "3.34.1",
-      "installations": [
-        {
-          "location": "node_modules/@smithy/core",
-          "direct": false,
-          "optional": false,
-          "peer": false
-        }
-      ]
-    },
-    {
-      "name": "@smithy/credential-provider-imds",
-      "version": "4.5.2",
-      "installations": [
-        {
-          "location": "node_modules/@smithy/credential-provider-imds",
-          "direct": false,
-          "optional": false,
-          "peer": false
-        }
-      ]
-    },
-    {
-      "name": "@smithy/fetch-http-handler",
-      "version": "5.8.0",
-      "installations": [
-        {
-          "location": "node_modules/@smithy/fetch-http-handler",
-          "direct": false,
-          "optional": false,
-          "peer": false
-        }
-      ]
-    },
-    {
-      "name": "@smithy/is-array-buffer",
-      "version": "2.2.0",
-      "installations": [
-        {
-          "location": "node_modules/@smithy/is-array-buffer",
-          "direct": false,
-          "optional": false,
-          "peer": false
-        }
-      ]
-    },
-    {
-      "name": "@smithy/node-http-handler",
-      "version": "4.12.1",
-      "installations": [
-        {
-          "location": "node_modules/@aws-sdk/credential-provider-http/node_modules/@smithy/node-http-handler",
-          "direct": false,
-          "optional": false,
-          "peer": false
-        },
-        {
-          "location": "node_modules/@aws-sdk/nested-clients/node_modules/@smithy/node-http-handler",
-          "direct": false,
-          "optional": false,
-          "peer": false
-        }
-      ]
-    },
-    {
-      "name": "@smithy/node-http-handler",
-      "version": "4.7.3",
-      "installations": [
-        {
-          "location": "node_modules/@smithy/node-http-handler",
-          "direct": false,
-          "optional": false,
-          "peer": false
-        }
-      ]
-    },
-    {
-      "name": "@smithy/signature-v4",
-      "version": "5.7.3",
-      "installations": [
-        {
-          "location": "node_modules/@smithy/signature-v4",
-          "direct": false,
-          "optional": false,
-          "peer": false
-        }
-      ]
-    },
-    {
-      "name": "@smithy/types",
-      "version": "4.18.0",
-      "installations": [
-        {
-          "location": "node_modules/@smithy/types",
-          "direct": false,
-          "optional": false,
-          "peer": false
-        }
-      ]
-    },
-    {
-      "name": "@smithy/util-buffer-from",
-      "version": "2.2.0",
-      "installations": [
-        {
-          "location": "node_modules/@smithy/util-buffer-from",
-          "direct": false,
-          "optional": false,
-          "peer": false
-        }
-      ]
-    },
-    {
-      "name": "@smithy/util-utf8",
-      "version": "2.3.0",
-      "installations": [
-        {
-          "location": "node_modules/@smithy/util-utf8",
-          "direct": false,
-          "optional": false,
-          "peer": false
-        }
-      ]
-    },
-    {
-      "name": "@stablelib/base64",
-      "version": "1.0.1",
-      "installations": [
-        {
-          "location": "node_modules/@stablelib/base64",
-          "direct": false,
-          "optional": false,
-          "peer": false
-        }
-      ]
-    },
-    {
-      "name": "@standard-schema/spec",
-      "version": "1.1.0",
-      "installations": [
-        {
-          "location": "node_modules/@standard-schema/spec",
-          "direct": false,
           "optional": false,
           "peer": false
         }

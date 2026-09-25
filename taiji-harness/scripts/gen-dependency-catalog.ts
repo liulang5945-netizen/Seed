@@ -15,6 +15,14 @@ const LOCK = 'scripts/dependency-catalog/package-lock.json'
 const METADATA = 'scripts/dependency-catalog/resolution.json'
 const OUT = 'docs/dependency-catalog.json'
 
+/**
+ * Codepoint order: `localeCompare` consults the host ICU, so a catalog committed on one
+ * platform reads as stale on another. Same comparator the persistence catalogs use.
+ */
+function compareText(left: string, right: string): number {
+  return left < right ? -1 : left > right ? 1 : 0
+}
+
 /** npm lockfile fields used to describe an installed package or optional candidate. */
 interface PackageEntry {
   name?: string
@@ -142,8 +150,8 @@ export function collectDependencies(input: unknown): { version: string; rows: De
     })
   }
   if (rows.length === 0) throw new Error('dependency-catalog: empty dependency tree')
-  rows.sort((a, b) => a.name.localeCompare(b.name, 'en')
-    || a.version.localeCompare(b.version, 'en') || a.location.localeCompare(b.location, 'en'))
+  rows.sort((a, b) => compareText(a.name, b.name)
+    || compareText(a.version, b.version) || compareText(a.location, b.location))
   return { version: cli.version, rows }
 }
 
@@ -184,10 +192,10 @@ export function deduplicateDependencies(rows: readonly DependencyRow[]): {
     dependency.installations.push(installation)
     packages.set(key, dependency)
   }
-  const sorted = [...packages.values()].sort((a, b) => a.name.localeCompare(b.name, 'en')
-    || a.version.localeCompare(b.version, 'en'))
+  const sorted = [...packages.values()].sort((a, b) => compareText(a.name, b.name)
+    || compareText(a.version, b.version))
   for (const dependency of sorted) {
-    dependency.installations.sort((a, b) => a.location.localeCompare(b.location, 'en'))
+    dependency.installations.sort((a, b) => compareText(a.location, b.location))
   }
   return sorted
 }
