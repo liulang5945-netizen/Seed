@@ -1,6 +1,9 @@
 {
   "probe": "taiji_c6_workbench_capability_projection",
-  "establishes": "the runtime's declared capabilities can be rendered into the 问/答 shape the native trainer accepts, and that file is judged native_trainable; it establishes no capability, no admission, and no wiring",
+  "establishes": "the runtime's declared capabilities can be rendered into the 问/答 shape the native trainer accepts, how readable each template variant is in Chinese-character share, and that each variant's file is judged native_trainable; it establishes no capability, no admission, and no wiring",
+  "outside_trainer_scan_roots": true,
+  "question": "这个运行环境的工作台现在可以执行哪些操作？",
+  "answer_lead": "当前工作台声明了以下能力。",
   "snapshot": {
     "format": "seed-workbench-contract-v1",
     "version": 1,
@@ -8,20 +11,45 @@
     "snapshot_id": "93bd90dbb765f4cbc7f9d5d15b1533bf13734758c64e32381970880fcac9c850",
     "declared_capabilities": 16
   },
-  "rendered": {
-    "path": "output\\c6_probe\\c6-workbench-capability-probe.jsonl",
-    "outside_trainer_scan_roots": true,
-    "question": "这个运行环境的工作台现在可以执行哪些操作？",
-    "answer_lead": "当前工作台声明了以下能力。",
-    "documents": 16,
-    "invalid_records": 0,
-    "native_trainable": true,
-    "chars_min": 132,
-    "chars_median": 197.0,
-    "chars_max": 473,
-    "cjk_ratio_min": 0.101,
-    "cjk_ratio_median": 0.243,
-    "cjk_ratio_max": 0.344
-  },
-  "sample": "问：这个运行环境的工作台现在可以执行哪些操作？\n答：当前工作台声明了以下能力。workspace.list：List entries in the active workspace.；风险等级 read_only；可逆；类别 workspace；参数 path=relative directory path, default .。"
+  "variants": {
+    "literal": {
+      "path": "output\\c6_probe\\c6-workbench-capability-literal.jsonl",
+      "documents": 16,
+      "invalid_records": 0,
+      "native_trainable": true,
+      "chars_min": 132,
+      "chars_median": 197.0,
+      "chars_max": 473,
+      "cjk_ratio_min": 0.101,
+      "cjk_ratio_median": 0.243,
+      "cjk_ratio_max": 0.344,
+      "sample": "问：这个运行环境的工作台现在可以执行哪些操作？\n答：当前工作台声明了以下能力。workspace.list：List entries in the active workspace.；风险等级 read_only；可逆；类别 workspace；参数 path=relative directory path, default .。"
+    },
+    "no_prose": {
+      "path": "output\\c6_probe\\c6-workbench-capability-no_prose.jsonl",
+      "documents": 16,
+      "invalid_records": 0,
+      "native_trainable": true,
+      "chars_min": 73,
+      "chars_median": 86.5,
+      "chars_max": 108,
+      "cjk_ratio_min": 0.4,
+      "cjk_ratio_median": 0.503,
+      "cjk_ratio_max": 0.6,
+      "sample": "问：这个运行环境的工作台现在可以执行哪些操作？\n答：当前工作台声明了以下能力。workspace.list；风险等级 read_only；可逆；类别 workspace。"
+    },
+    "id_only": {
+      "path": "output\\c6_probe\\c6-workbench-capability-id_only.jsonl",
+      "documents": 16,
+      "invalid_records": 0,
+      "native_trainable": true,
+      "chars_min": 48,
+      "chars_median": 55.0,
+      "chars_max": 78,
+      "cjk_ratio_min": 0.442,
+      "cjk_ratio_median": 0.63,
+      "cjk_ratio_max": 0.723,
+      "sample": "问：这个运行环境的工作台现在可以执行哪些操作？\n答：当前工作台声明了以下能力。workspace.list。"
+    }
+  }
 }

@@ -47,8 +47,23 @@ def _load_snapshot(args: argparse.Namespace) -> dict[str, Any]:
     return parsed
 
 
-def _render(capability: dict[str, Any]) -> str:
-    parts = [f"{capability.get('capability_id', '')}：{capability.get('description', '')}"]
+def _render(capability: dict[str, Any], mode: str) -> str:
+    """Render one capability in one template mode.
+
+    ``literal`` carries the runtime's own (English) description and parameter
+    notes, ``no_prose`` carries only the declared id plus the Chinese labels this
+    probe adds, and ``id_only`` is the floor: the ids alone. The three together
+    measure how much of a rendered line's non-CJK load comes from the runtime's
+    prose rather than from the identifiers, which is what the template decision
+    in PLAN-M6-01 turns on.
+    """
+
+    identifier = str(capability.get("capability_id", ""))
+    if mode == "id_only":
+        return f"{identifier}。"
+    parts = [identifier]
+    if mode == "literal":
+        parts[0] = f"{identifier}：{capability.get('description', '')}"
     risk = capability.get("risk")
     if isinstance(risk, str) and risk:
         parts.append(f"风险等级 {risk}")
@@ -59,7 +74,7 @@ def _render(capability: dict[str, Any]) -> str:
     if isinstance(category, str) and category:
         parts.append(f"类别 {category}")
     parameters = capability.get("parameters")
-    if isinstance(parameters, dict) and parameters:
+    if mode == "literal" and isinstance(parameters, dict) and parameters:
         rendered = "、".join(f"{name}={value}" for name, value in sorted(parameters.items()))
         parts.append(f"参数 {rendered}")
     return "；".join(part for part in parts if part) + "。"
@@ -87,39 +102,22 @@ def main() -> int:
     snapshot = _load_snapshot(args)
     capabilities = [item for item in snapshot.get("capabilities", []) if isinstance(item, dict)]
 
-    lines = []
-    for capability in capabilities:
-        lines.append({"text": f"问：{QUESTION}\n答：{ANSWER_LEAD}{_render(capability)}"})
-
     out_dir = Path(args.out)
     out_dir.mkdir(parents=True, exist_ok=True)
-    corpus_path = out_dir / "c6-workbench-capability-probe.jsonl"
-    body = "".join(f"{json.dumps(line, ensure_ascii=False)}\n" for line in lines)
-    corpus_path.write_text(body, encoding="utf-8")
-
-    inspected = inspect_native_dataset(corpus_path)
-    lengths = [len(str(line["text"])) for line in lines]
-    ratios = [_cjk_ratio(str(line["text"])) for line in lines]
-
-    reading = {
-        "probe": "taiji_c6_workbench_capability_projection",
-        "establishes": (
-            "the runtime's declared capabilities can be rendered into the 问/答 shape the native "
-            "trainer accepts, and that file is judged native_trainable; it establishes no capability, "
-            "no admission, and no wiring"
-        ),
-        "snapshot": {
-            "format": snapshot.get("format"),
-            "version": snapshot.get("version"),
-            "revision": snapshot.get("revision"),
-            "snapshot_id": snapshot.get("snapshot_id"),
-            "declared_capabilities": len(capabilities),
-        },
-        "rendered": {
+    variants: dict[str, dict[str, Any]] = {}
+    for mode in ("literal", "no_prose", "id_only"):
+        lines = [
+            {"text": f"问：{QUESTION}\n答：{ANSWER_LEAD}{_render(capability, mode)}"}
+            for capability in capabilities
+        ]
+        corpus_path = out_dir / f"c6-workbench-capability-{mode}.jsonl"
+        body = "".join(f"{json.dumps(line, ensure_ascii=False)}\n" for line in lines)
+        corpus_path.write_text(body, encoding="utf-8")
+        inspected = inspect_native_dataset(corpus_path)
+        lengths = [len(str(line["text"])) for line in lines]
+        ratios = [_cjk_ratio(str(line["text"])) for line in lines]
+        variants[mode] = {
             "path": str(corpus_path),
-            "outside_trainer_scan_roots": True,
-            "question": QUESTION,
-            "answer_lead": ANSWER_LEAD,
             "documents": inspected.documents,
             "invalid_records": inspected.invalid_records,
             "native_trainable": inspected.native_trainable,
@@ -129,15 +127,45 @@ def main() -> int:
             "cjk_ratio_min": round(min(ratios), 3) if ratios else 0.0,
             "cjk_ratio_median": round(statistics.median(ratios), 3) if ratios else 0.0,
             "cjk_ratio_max": round(max(ratios), 3) if ratios else 0.0,
+            "sample": str(lines[0]["text"]) if lines else "",
+        }
+
+    reading = {
+        "probe": "taiji_c6_workbench_capability_projection",
+        "establishes": (
+            "the runtime's declared capabilities can be rendered into the 问/答 shape the native "
+            "trainer accepts, how readable each template variant is in Chinese-character share, and "
+            "that each variant's file is judged native_trainable; it establishes no capability, no "
+            "admission, and no wiring"
+        ),
+        "outside_trainer_scan_roots": True,
+        "question": QUESTION,
+        "answer_lead": ANSWER_LEAD,
+        "snapshot": {
+            "format": snapshot.get("format"),
+            "version": snapshot.get("version"),
+            "revision": snapshot.get("revision"),
+            "snapshot_id": snapshot.get("snapshot_id"),
+            "declared_capabilities": len(capabilities),
         },
-        "sample": str(lines[0]["text"]) if lines else "",
+        "variants": variants,
     }
     report_path = Path(args.report)
     report_path.parent.mkdir(parents=True, exist_ok=True)
     report_path.write_text(
         json.dumps(reading, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
     )
-    print(json.dumps(reading["rendered"], ensure_ascii=False))
+    summary = {
+        mode: {
+            "documents": item["documents"],
+            "invalid_records": item["invalid_records"],
+            "native_trainable": item["native_trainable"],
+            "cjk_median": item["cjk_ratio_median"],
+            "chars_median": item["chars_median"],
+        }
+        for mode, item in variants.items()
+    }
+    print(json.dumps(summary, ensure_ascii=False))
     return 0
 
 
