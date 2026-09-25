@@ -1,8 +1,32 @@
-# Seed 开发计划索引（2026-09-25 v2，修正层级：主线=M 系列）
+# Seed 开发计划索引（2026-09-25 v3，编号体系规范化）
 
-> 用途：**唯一的计划入口**。修正 v1 的层级错误：**主线是 M 系列（里程碑）**，A/B 是**支线**
-> （欠账修复 / 架构债），与主线**并行、互不阻塞**。历史文档**冻结、不重命名**（改名会断日志与提交的链接），
-> 用 §4 的**别名映射**检索。冻结判据/预注册/冻结证据只追加；本索引随状态**就地修订**。
+> 用途：**唯一的计划入口**。v3 新增**编号体系**（一个前缀一个意义，§0）；
+> v2 修正层级：**主线是 M 系列（里程碑）**，A/B 是**支线**（欠账修复 / 架构债），与主线**并行、互不阻塞**。
+> 历史文档**冻结、不重命名**（改名会断日志与提交的链接），用 §4 的**新编号 ↔ 旧文件名**映射检索。
+> 冻结判据/预注册/冻结证据只追加；本索引随状态**就地修订**。
+
+## 0. 编号体系（**一个前缀一个意义**；新增文档强制，存量不动只映射）
+
+**格式**：`<类别>-<归属>-<序号>[_<主题>][.<日期>]`
+—— **类别**说"这是什么性质的文件"，**归属**说"属于哪条线/哪个里程碑"，**序号**是该归属内的顺序。
+
+| 类别前缀 | 意义（只放这一类东西） | 旧名对应 |
+|---|---|---|
+| `PLAN` | 计划/提案/路线（**非判决**，可修订） | *_PROPOSAL、*_BRIEF、*_MECHANISM_DESIGN |
+| `SPEC` | 判据/预注册/合同（**冻结件，只追加**） | *_PREREG、*_CONTRACT、*_BUDGET |
+| `EXP` | 实验执行与判决（训练臂/评测/计分的**落盘件**） | eval_taiji_*、train_taiji_*、reports/*.json 判决件 |
+| `DIAG` | 诊断与归因（探针/审计，**非判决**） | probe_taiji_*、audit_taiji_*、diag_* |
+| `FIX` | 缺陷修复与守卫 | *_fixes、tests/*_contract |
+| `MS` | 里程碑判定/批准 | M5_EXIT_APPROVAL |
+| `CONV` | 口径/约定 | metrics_conventions、FOLDER_STRUCTURE_RULES、REPO_HYGIENE_RULES |
+
+**里程碑**：`M1..M6` 不变（大阶段主线，见 §1）。
+**归属**：`R2`（M5 排除项调查，已收束）/ `A`（修复线，见 §2）/ `B`（架构债线，见 §3）/ `M6`（产品交付，见 §1）。
+**脚本前缀**（代码件，另有约定）：`train_/eval_/verify_/build_/probe_/diag_/audit_/score_` 说"脚本干什么"，
+与文档类别前缀**互不混用**。
+
+**存量处置**：历史文件**冻结、不重命名**（改名断日志与提交链接）；§4 给**旧名 → 新编号**的映射；
+**新增文档一律按本表**（例：T8 若今天新建应为 `PLAN-A-08_mechanism-design`）。
 
 ## 1. 主线：M 系列（里程碑）
 
@@ -45,21 +69,23 @@
 | **B-3** | Cortex 神对象完整拆分（路由/域推断/生成三簇） | ⏳ **需负责人签字** | 每迁一簇配等价测试；冻结基线，禁静默漂移 |
 | **B-4** | 核心推理路径覆盖率 ≥60% | ⏳ 待 B-3 后 | — |
 
-## 4. 历史文档别名映射（收乱：旧名 → 别名）
+## 4. 存量映射（**新编号 ↔ 旧文件名**；旧文件冻结不改名）
 
-| 别名 | 文件（冻结，不改名） |
+| 新编号 | 旧文件（`plans/reference/` 与 `scripts/training/`） |
 |---|---|
-| A-1.0 读出头归因（三臂重训） | `M5_R2_READOUT_RETRAIN_*`（A/B/C 合同与判决） |
-| A-1.1 组合性/预算提案 | `M5_R2_COMPOSITION_BINDING_BUDGET_PROPOSAL_20260923.md` |
-| A-1.2 退化曲线+写入面消融 | `M5_R2_T1_T2_PREREG_20260923.md` |
-| A-1.3 fabric 写入强度扫描 | `M5_R2_T3_FABRIC_WRITE_PREREG_20260923.md` |
-| A-1.4 四笔一起放慢 | `M5_R2_T4_SLOW_ALL_PREREG_20260924.md` |
-| A-1.5 读出只吃区 0 | `M5_R2_T5_REGION0_CUE_PREREG_20260924.md` |
-| A-1.6 CAP × 四份 checkpoint | `M5_R2_T6_CAP_PREREG_20260924.md` |
-| A-1.7 F1 已训练 × 掩码 cue | `M5_R2_T7_MASKED_A_PREREG_20260924.md` |
-| A-1.8 机制设计（(b)/(c) 分裂） | `M5_R2_T8_MECHANISM_DESIGN_20260925.md` |
-| A-1.9 立项提案（甲/乙/丙） | `M5_R2_ARCH_LEVEL_PROPOSAL_20260925.md` |
-| M6 desktop 决策简报 | `FRONTEND_TS_VS_HARNESS_ADOPTION_DECISION_BRIEF_20260921.md` |
+| `MS-M5-01` | `M5_EXIT_APPROVAL_20260920.md` |
+| `EXP-A-01` | `M5_R2_READOUT_RETRAIN_*`（A/B/C 合同、判决与 runner） |
+| `PLAN-A-02` | `M5_R2_COMPOSITION_BINDING_BUDGET_PROPOSAL_20260923.md` |
+| `SPEC-A-03` / `EXP-A-04` | `M5_R2_T1_T2_PREREG_20260923.md`（预注册）与其轨迹/判决件 |
+| `SPEC-A-05` / `EXP-A-06` | `M5_R2_T3_FABRIC_WRITE_PREREG_20260923.md` |
+| `SPEC-A-07` / `EXP-A-08` | `M5_R2_T4_SLOW_ALL_PREREG_20260924.md` |
+| `SPEC-A-09` / `EXP-A-10` | `M5_R2_T5_REGION0_CUE_PREREG_20260924.md` |
+| `SPEC-A-11` / `EXP-A-12` | `M5_R2_T6_CAP_PREREG_20260924.md`（判决件 `reports/taiji_r2_cap_checkpoint_scores_20260924.json`） |
+| `SPEC-A-13` / `EXP-A-14` | `M5_R2_T7_MASKED_A_PREREG_20260924.md`（判决件 `reports/taiji_r2_masked_arm_a_20260924.json`） |
+| `PLAN-A-15` | `M5_R2_T8_MECHANISM_DESIGN_20260925.md` |
+| `PLAN-A-16` | `M5_R2_ARCH_LEVEL_PROPOSAL_20260925.md` |
+| `FIX-B-01` | `project_audit_fixes_20260823.md` / `project_audit_fixes_p2_20260823.md` |
+| `CONV-B-02` | `docs/metrics_conventions.md` / `docs/REPO_HYGIENE_RULES.md` / `docs/FOLDER_STRUCTURE_RULES.md` |
 
 ## 5. A-3（M-3）详细设计：**问答结构语料 + 召回条件发射训练**
 
@@ -91,3 +117,10 @@
 * **顺序**：B-1 `detect_modality` ✓ → B-2 `_infer_domain` → B-2 `_reencode_domain_generation_context`
   → B-3 完整拆分（路由集群 / 域推断集群 / 生成集群）。
 * **风险**：冻结基线的静默数值漂移 ⇒ **等价测试先立、不绿不迁**；不签字不动。
+
+## 7. 里程碑索引
+
+| M | 名称 | 状态 |
+|---|---|---|
+| M5 | 限定退出 | ✅ 2026-09-20 批准落盘 |
+| M6 | desktop / 产品交付 | 🔄 并行会话推进中 |
