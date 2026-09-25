@@ -301,6 +301,11 @@ def _health_child(payload: dict[str, Any]) -> int:
         return 0
     out["checks"]["A01_new_process_load"] = True
     out["timings"]["H01_cold_start_seconds"] = round(time.perf_counter() - started, 4)
+    if payload.get("copy_circuit"):
+        #: A 维判据要与分数同链（07 §4.1）——治疗臂不能在不带电路的链上取真实性读数。
+        #: 代价如实记：挂载会进 cold-start 计时，而 H 门限本就未标定（只采样不判），
+        #: 因此**不得**把带电路的 H 数字拿去当性能结论。
+        runtime.enable_copy_circuit(Path(payload["copy_circuit"]))
     tick_before = int(runtime.model.tick)
     out["checks"]["A01_load_does_not_advance_tick"] = tick_before == int(runtime.model.tick)
     out["tick_after_load"] = tick_before
@@ -402,10 +407,21 @@ def _run_item_child(payload: dict[str, Any]) -> int:
     out: dict[str, Any] = {"dimension": payload["dimension"], "items": []}
     checkpoint = Path(payload["checkpoint"])
 
+    def _load_runtime() -> Any:
+        """按本臂链路加载 runtime；``copy_circuit`` 未给出时与默认链路逐字节相同。
+
+        每个 item 与每次 RESET_MARKER 都重新 load ⇒ 挂载必须跟着 load 走，
+        否则治疗臂会在会话中途悄悄退回无电路链路。
+        """
+        loaded = SeedRuntime.load(checkpoint)
+        if payload.get("copy_circuit"):
+            loaded.enable_copy_circuit(Path(payload["copy_circuit"]))
+        return loaded
+
     for item in payload["items"]:
         record: dict[str, Any] = {"id": item["id"], "family": item.get("family", ""), "turns": []}
         try:
-            runtime = SeedRuntime.load(checkpoint)
+            runtime = _load_runtime()
         except Exception as exc:  # noqa: BLE001
             record["load_ok"] = False
             record["load_error"] = f"{type(exc).__name__}: {exc}"
@@ -425,7 +441,7 @@ def _run_item_child(payload: dict[str, Any]) -> int:
             if prompt == RESET_MARKER:
                 # 会话重置：新建 runtime 并清空 history（用于检验跨会话不泄漏）。
                 try:
-                    runtime = SeedRuntime.load(checkpoint)
+                    runtime = _load_runtime()
                     record["reset_applied"] = True
                 except Exception as exc:  # noqa: BLE001
                     record["reset_error"] = f"{type(exc).__name__}: {exc}"
@@ -492,12 +508,34 @@ def _tally(items: list[dict[str, Any]]) -> dict[str, Any]:
     }
 
 
+def _chain_disclosure(
+    *,
+    relax_legacy_guard: bool,
+    constrained_decode: bool,
+    copy_circuit: Path | None = None,
+) -> dict[str, Any]:
+    """链路披露。**默认链路必须保持原来那两个键**。
+
+    `check_p3b_criteria`／`run_p3b_campaign` 用 `report["chain"] == REQUIRED_CHAIN` 做精确相等
+    判断（A/H 读数依链路而定，DEBT-I4），所以第三个键只能在真的用到它时才出现——
+    否则那条线的既有报告与将来重跑都会被误判成 `chain_mismatch`。
+    """
+    chain: dict[str, Any] = {
+        "relax_legacy_guard": bool(relax_legacy_guard),
+        "constrained_decode": bool(constrained_decode),
+    }
+    if copy_circuit:
+        chain["copy_circuit"] = str(copy_circuit)
+    return chain
+
+
 def run_baseline(
     checkpoint: Path = DEFAULT_CHECKPOINT,
     dimensions: tuple[str, ...] = DRIVEN_DIMENSIONS,
     *,
     relax_legacy_guard: bool = False,
     constrained_decode: bool = False,
+    copy_circuit: Path | None = None,
 ) -> dict[str, Any]:
     payload_set = _eval_set()
     # 身份绑定（2026-09-17 补）：07 §4.1 与 roadmap 证据表要求基线分数绑定其
@@ -527,10 +565,11 @@ def run_baseline(
         "declared_mode": payload_set["declared_mode"],
         "trained_during_eval": False,
         # 链路必须显式披露：报告读者要能判断分数是在哪条链路上取得的（07 §4.1）。
-        "chain": {
-            "relax_legacy_guard": bool(relax_legacy_guard),
-            "constrained_decode": bool(constrained_decode),
-        },
+        "chain": _chain_disclosure(
+            relax_legacy_guard=relax_legacy_guard,
+            constrained_decode=constrained_decode,
+            copy_circuit=copy_circuit,
+        ),
         "dimensions": {},
     }
 
@@ -544,6 +583,7 @@ def run_baseline(
                 "items": items,
                 "relax_legacy_guard": bool(relax_legacy_guard),
                 "constrained_decode": bool(constrained_decode),
+                "copy_circuit": str(copy_circuit) if copy_circuit else None,
             }
         )
         rows: list[dict[str, Any]] = []
@@ -762,6 +802,7 @@ def run_health(
     relax_legacy_guard: bool = False,
     constrained_decode: bool = False,
     f_live_evidence: bool = False,
+    copy_circuit: Path | None = None,
 ) -> dict[str, Any]:
     """A/H 确定性检查 + F 冻结门复算。H **只采样数值**，门限留待标定后冻结。
 
@@ -789,10 +830,11 @@ def run_health(
             "git_head": git_head,
             "checkpoint_sha256": hashlib.sha256(Path(checkpoint).read_bytes()).hexdigest(),
         },
-        "chain": {
-            "relax_legacy_guard": bool(relax_legacy_guard),
-            "constrained_decode": bool(constrained_decode),
-        },
+        "chain": _chain_disclosure(
+            relax_legacy_guard=relax_legacy_guard,
+            constrained_decode=constrained_decode,
+            copy_circuit=copy_circuit,
+        ),
         "dimensions": {},
     }
 
@@ -806,6 +848,7 @@ def run_health(
             "stability_runs": 30,
             "relax_legacy_guard": bool(relax_legacy_guard),
             "constrained_decode": bool(constrained_decode),
+            "copy_circuit": str(copy_circuit) if copy_circuit else None,
         }
     )
 
@@ -875,18 +918,23 @@ def chain_report_conflict(args: argparse.Namespace) -> str | None:
     revealed that; the campaign's unit tests fake the subprocess.
     """
 
-    off_default_chain = bool(args.relax_legacy_guard or args.constrained_decode)
+    off_default_chain = bool(
+        args.relax_legacy_guard or args.constrained_decode or args.copy_circuit
+    )
     if not off_default_chain:
         return None
     if args.health:
         if args.health_report == DEFAULT_HEALTH_REPORT:
             return (
-                "启用 --relax-legacy-guard / --constrained-decode 时必须显式指定 --health-report"
-                "（A05b 的读数依链路而定，不能把非默认链路的结果写进默认入口那份文件）"
+                "启用 --relax-legacy-guard / --constrained-decode / --copy-circuit 时必须显式指定 "
+                "--health-report（A05b 与能力读数依链路而定，不能把非默认链路的结果写进默认入口那份文件）"
             )
         return None
     if args.report == DEFAULT_REPORT:
-        return "启用 --relax-legacy-guard / --constrained-decode 时必须显式指定 --report"
+        return (
+            "启用 --relax-legacy-guard / --constrained-decode / --copy-circuit 时必须显式指定 "
+            "--report（非默认链路的结果不得写进默认入口那份文件）"
+        )
     return None
 
 
@@ -939,6 +987,13 @@ def main(argv: list[str] | None = None) -> int:
         action="store_true",
         help="进程内启用 UTF-8 约束解码（使字节预测产出可解码文本；源码不动）",
     )
+    parser.add_argument(
+        "--copy-circuit",
+        type=Path,
+        default=None,
+        help="治疗臂：加载该 copy-circuit payload 并挂载后评测（A2 复制回路回归门用；"
+        "不给出＝默认链路，行为逐字节不变）",
+    )
     args = parser.parse_args(argv)
 
     conflict = chain_report_conflict(args)
@@ -978,6 +1033,7 @@ def main(argv: list[str] | None = None) -> int:
             args.checkpoint,
             relax_legacy_guard=bool(args.relax_legacy_guard),
             constrained_decode=bool(args.constrained_decode),
+            copy_circuit=args.copy_circuit,
             f_live_evidence=bool(args.f_live_evidence),
         )
         health_path = (
@@ -1020,6 +1076,7 @@ def main(argv: list[str] | None = None) -> int:
         dimensions,
         relax_legacy_guard=bool(args.relax_legacy_guard),
         constrained_decode=bool(args.constrained_decode),
+        copy_circuit=args.copy_circuit,
     )
     _write_report(report_path, report)
     for key, block in report["dimensions"].items():

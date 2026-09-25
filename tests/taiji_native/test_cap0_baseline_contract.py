@@ -1205,6 +1205,7 @@ def test_the_chain_guard_checks_the_report_path_of_the_mode_actually_run(tmp_pat
         base = {
             "relax_legacy_guard": False,
             "constrained_decode": False,
+            "copy_circuit": None,
             "health": False,
             "report": DEFAULT_REPORT,
             "health_report": DEFAULT_HEALTH_REPORT,
@@ -1244,3 +1245,108 @@ def test_the_sealed_baseline_health_report_declares_the_required_chain() -> None
     assert (
         sealed["checkpoint"] == json.loads(P3A_BASELINE.read_text(encoding="utf-8"))["checkpoint"]
     )
+
+
+# --- A2.3b 回归门的治疗臂（--copy-circuit）合同 -----------------------------
+
+
+def test_chain_disclosure_stays_two_key_for_the_default_chain() -> None:
+    """默认链路的 chain 必须**与 P3b 线的精确相等判断兼容**（它拿 == REQUIRED_CHAIN 做门）。
+
+    第三键只能在真用了它时出现，否则那条线既有报告与将来重跑都被误判成 chain_mismatch。
+    """
+
+    from scripts.training.check_p3b_criteria import REQUIRED_CHAIN
+    from scripts.training.eval_taiji_cap0_baseline import _chain_disclosure
+
+    assert _chain_disclosure(relax_legacy_guard=False, constrained_decode=False) == {
+        "relax_legacy_guard": False,
+        "constrained_decode": False,
+    }
+    assert _chain_disclosure(relax_legacy_guard=True, constrained_decode=True) == REQUIRED_CHAIN
+    treated = _chain_disclosure(
+        relax_legacy_guard=True, constrained_decode=True, copy_circuit=Path("c.pt")
+    )
+    assert set(treated) - set(REQUIRED_CHAIN) == {"copy_circuit"}
+    assert treated["copy_circuit"] == "c.pt"
+
+
+def test_copy_circuit_run_cannot_overwrite_the_default_chain_report() -> None:
+    """非默认链路必须自带报告路径（fail-closed），且默认链路不受这条约束影响。"""
+
+    from argparse import Namespace
+
+    from scripts.training.eval_taiji_cap0_baseline import (
+        DEFAULT_HEALTH_REPORT,
+        DEFAULT_REPORT,
+        chain_report_conflict,
+    )
+
+    def _args(**overrides):
+        base = {
+            "relax_legacy_guard": False,
+            "constrained_decode": False,
+            "copy_circuit": None,
+            "health": False,
+            "report": DEFAULT_REPORT,
+            "health_report": DEFAULT_HEALTH_REPORT,
+        }
+        base.update(overrides)
+        return Namespace(**base)
+
+    assert chain_report_conflict(_args()) is None, "默认链路不该被拦"
+    assert chain_report_conflict(_args(copy_circuit=Path("c.pt"))) is not None
+    assert (
+        chain_report_conflict(_args(copy_circuit=Path("c.pt"), report=Path("reports/x.json")))
+        is None
+    )
+    assert (
+        chain_report_conflict(
+            _args(copy_circuit=Path("c.pt"), health=True, health_report=DEFAULT_HEALTH_REPORT)
+        )
+        is not None
+    )
+
+
+def test_treated_arm_mounts_the_circuit_on_every_load(monkeypatch, capsys) -> None:
+    """治疗臂：每次 load 之后都得挂载——含会话重置后的那次，否则中途悄悄退回无电路链路。
+
+    正反两断言：不传 `copy_circuit` 时一次都不能挂（默认链路逐字节不变）。
+    """
+
+    import types
+
+    import api.seed_runtime as sr
+    from scripts.training.eval_taiji_cap0_baseline import RESET_MARKER, _run_item_child
+
+    mounts: list[str] = []
+
+    class _Runtime:
+        def __init__(self) -> None:
+            self.model = types.SimpleNamespace(tick=7)
+
+        def enable_copy_circuit(self, path) -> None:
+            mounts.append(str(path))
+
+        def chat(self, prompt, *, history=None, learn=True) -> str:
+            return "答：固定表层"
+
+    class _FakeSeedRuntime:
+        @staticmethod
+        def load(_checkpoint):
+            return _Runtime()
+
+    monkeypatch.setattr(sr, "SeedRuntime", _FakeSeedRuntime)
+    payload = {
+        "dimension": "D",
+        "checkpoint": "unused.pt",
+        "items": [{"id": "D01", "turns": ["我叫阿岩。", RESET_MARKER, "我的名字是什么？"]}],
+        "copy_circuit": "circuit-final.pt",
+    }
+    assert _run_item_child(payload) == 0
+    assert mounts == ["circuit-final.pt", "circuit-final.pt"]
+    assert json.loads(capsys.readouterr().out)["items"][0]["reset_applied"] is True
+
+    mounts.clear()
+    assert _run_item_child({**payload, "copy_circuit": None}) == 0
+    assert mounts == []

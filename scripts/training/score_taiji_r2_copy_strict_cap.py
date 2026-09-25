@@ -124,7 +124,11 @@ def recompute(report_path: Path, items: dict[str, dict[str, Any]]) -> dict[str, 
         )
         inactive["strict_hit_not_loose"] = strict_only_right
     return {
-        "source_report": report_path.relative_to(PROJECT_ROOT).as_posix(),
+        "source_report": (
+            report_path.relative_to(PROJECT_ROOT).as_posix()
+            if report_path.is_relative_to(PROJECT_ROOT)
+            else str(report_path)
+        ),
         "source_format": report.get("format"),
         "source_prereg": report.get("prereg"),
         "criterion": report.get("verdict"),
@@ -187,7 +191,11 @@ def main() -> int:
             for entry in report["reports"]
             for arm_name, arm in entry["arms"].items()
         },
-        "out": out.relative_to(PROJECT_ROOT).as_posix(),
+        "out": (
+            out.relative_to(PROJECT_ROOT).as_posix()
+            if out.is_relative_to(PROJECT_ROOT)
+            else str(out)
+        ),
     }
     print(json.dumps(summary, ensure_ascii=False))
     return 0
