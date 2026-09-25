@@ -1,0 +1,100 @@
+{
+  "format": "taiji-r2-copy-circuit-regression-gate-v1",
+  "prereg": "plans/reference/M5_R2_ARCH_COPY_CIRCUIT_PROJECT_20260925.md §4.3",
+  "control_report": "E:\\Seed\\reports\\taiji_cap0_gate_control_20260925.json",
+  "treated_report": "E:\\Seed\\reports\\taiji_cap0_gate_treated_20260925.json",
+  "circuit_payload": "output\\taiji_r2_copy_circuit_chat\\judge\\circuit-final.pt",
+  "comparability": {
+    "comparable": true,
+    "defects": [],
+    "chain_control": {
+      "relax_legacy_guard": true,
+      "constrained_decode": true
+    },
+    "chain_treated": {
+      "relax_legacy_guard": true,
+      "constrained_decode": true,
+      "copy_circuit": "output\\taiji_r2_copy_circuit_chat\\judge\\circuit-final.pt"
+    },
+    "health": {
+      "comparable": true,
+      "defects": [],
+      "chain_control": {
+        "relax_legacy_guard": true,
+        "constrained_decode": true
+      },
+      "chain_treated": {
+        "relax_legacy_guard": true,
+        "constrained_decode": true,
+        "copy_circuit": "output\\taiji_r2_copy_circuit_chat\\judge\\circuit-final.pt"
+      }
+    }
+  },
+  "judged": {
+    "A": {
+      "status": "ok",
+      "control_checks": 9,
+      "lost": [],
+      "gained": [],
+      "counts_as_pass": true
+    },
+    "B": {
+      "status": "unverified",
+      "control": {
+        "machine_scored_items": 0,
+        "machine_scored_correct": 0,
+        "machine_normalised": null,
+        "pending_human_review_items": 20,
+        "untested_items": 0
+      },
+      "treated": {
+        "machine_scored_items": 0,
+        "machine_scored_correct": 0,
+        "machine_normalised": null,
+        "pending_human_review_items": 20,
+        "untested_items": 0
+      },
+      "counts_as_pass": false
+    },
+    "C": {
+      "status": "ok",
+      "control": 0.0,
+      "treated": 0.0714,
+      "counts_as_pass": true,
+      "status_flips": {}
+    }
+  },
+  "surface": {
+    "control": {
+      "texts": 49,
+      "utf8_decodable_rate": 1.0,
+      "replacement_char_rate": 0.0,
+      "well_formed_rate": 0.0612,
+      "cjk_share": 0.8838
+    },
+    "treated": {
+      "texts": 49,
+      "utf8_decodable_rate": 1.0,
+      "replacement_char_rate": 0.0,
+      "well_formed_rate": 0.0408,
+      "cjk_share": 0.7862
+    }
+  },
+  "surface_not_worse": false,
+  "observed_not_judged": {
+    "D": {
+      "control": null,
+      "treated": null
+    },
+    "E": {
+      "control": null,
+      "treated": null
+    },
+    "G": {
+      "control": null,
+      "treated": null
+    }
+  },
+  "learn_bytes_contract": "由 pytest 面判（tests/taiji_native），本件不代判",
+  "verdict": "§4.3 回归门未通过/不可判（如实记录，不解释成通过）"
+}
