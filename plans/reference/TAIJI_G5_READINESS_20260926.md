@@ -49,13 +49,32 @@
 ③ 凭据按请求解析——同文件 `:65-81` 拿不到 key 时抛可操作文案。
 ⇒ "装机默认**可输入、首发报缺 key**"这条判断的证据链是完整的，只差一次真实启动。
 
-**为什么不能拿现有测试 lane 代替真机**：`apps/web/tests/scaffold.ts:459-460` 的
-`launchWebScaffold()` 第一行就 `requireDist()`（要 `pnpm run build:web` 产物），且该 lane 自己
-写明"fixture-less scaffold registers no adapter at all"（见 `apps/web/tests/default-model.e2e.ts`
-顶部注释）——**它按设计不注册任何 adapter**，拿它测"默认路由有没有服务"会得出**假阴性**。
-⇒ 真要验只能起一次带 ship 配置的 `dsh web`（＋浏览器或直连 HTTP 读 `listProviders()` 与
-`agentDefaultModel.currentSelection()` 的交集）。本机 corepack 可用，所以这一步的技术前提已具备，
-剩下的只是要不要在这台机器上起一个长驻服务。**下一轮若继续推进，这就是首选动作**（不需裁定）。
+**（同日更正）上一条里我写的"现有测试 lane 按设计不注册 adapter，拿它测默认路由会得出假阴性"是错的**，那句是从
+`apps/web/tests/default-model.e2e.ts:10` 的注释推广来的，而它只描述 `launchWebScaffold()` 的**默认**配置。同一个
+scaffold 有一个专门的键控参数：`apps/web/tests/scaffold.ts:390-395` 的 `deepSeekMissingCredential?: boolean`，文档
+原文是"**Keep the shipped DeepSeek adapter mounted** while masking the process environment's `DEEPSEEK_API_KEY` for
+this scaffold lifetime. **This is the keyless first-run configuration lane**; the default disables the adapter."；
+再往装配面看，`:752` 加载的是 **`@taiji/dsh-base` ＋ `@taiji/dsh-web-app`**（真实交付链，不是替身），`:866` 的分支
+在 keyless 模式下**跳过**注册假的 `RouteOnlyAdapter`。⇒ **"新装、无凭据、走交付装配"这个场景上游已有 lane 覆盖**，
+用到它的有 5 处（`shipped-composition.e2e.ts:524`、`deepseek-messages-settings.e2e.ts:22`、
+`onboarding-deepseek-config.e2e.ts:36`、`onboarding-native.e2e.ts:24`、`onboarding-usable-provider.e2e.ts:31`）。
+
+**更强的一条：`shipped-composition.e2e.ts:523-527` 断言的正是我要取的那两个读数**——
+`ctx.agentDefaultModel.currentSelection()` **等于** `{ provider: 'deepseek-official', model: 'deepseek-flash' }`，
+并对 `ctx.llm.providerRetryPolicy('deepseek-official')` 取了内联快照（能取到值 ⇒ 该 provider 在这份装配里确有注册）；
+`onboarding-usable-provider.e2e.ts` 头部还写明它让真实 DeepSeek 适配器整程挂在无凭据状态，浏览器断言的是首启动的
+"添加一个 API Key 开始使用"卡片。⇒ **D3 的证据等级从"静态读码"升到"上游自己维护的断言（本 fork 尚未实跑）"**。
+
+**于是"首选动作"换掉**：先前写的是"起一次 ship 配置的 `dsh web` 再读交集"，现在改为**跑已有 lane**——同一目的、
+更便宜、且判据面由上游维护（我另起探针只会造一份要自己养的第二判据）。本机实跑的前提只剩两个：chromium 已在
+（`~/.cache/ms-playwright/chromium-1223`），缺的是 `apps/web/dist`（`apps/web/tests/support.ts:93-97` 的
+`requireDist()` 会拒跑）⇒ `corepack pnpm run build:web` 之后单跑 `shipped-composition.e2e.ts` 那条 `it(...)` 即可
+拿到**本 fork 的真机读数**（顺带覆盖我方六包是否在交付装配里）。
+
+**2026-09-26 同日实跑读数（`build:web` rc=0 ⇒ 该 lane 在本 fork 首次跑通）：D3 不再是静态推断**。跑的是一条已存在的上游 lane，不新立判据：`corepack pnpm exec vitest run --config vitest.web.config.ts apps/web/tests/shipped-composition.e2e.ts -t 'assembles the shipped Web transport'`。它跑到该 `it` 的 **`:603` 才失败**，而**失败点之前的两条 D3 断言都已通过**：① `ctx.agentDefaultModel.currentSelection()` **等于** `{ provider: 'deepseek-official', model: 'deepseek-flash' }`（`:526`）；② `ctx.llm.providerRetryPolicy('deepseek-official')` 取到了内联快照（`:534`）——这条算"有注册"的证据是因为 `packages/llm/llm/src/index.ts:969-973` 的 `registration()` 在未注册时直接抛 `NO_ADAPTER`，**取到值就意味着该路由挂着真适配器**。整条 lane 的装配面＝`launchWebScaffold({ deepSeekMissingCredential: true })`：加载 **`@taiji/dsh-base`＋`@taiji/dsh-web-app`**（`scaffold.ts:752`）、**屏蔽进程环境的 `DEEPSEEK_API_KEY`**（`:390-395`）、且**不**注册假的 `RouteOnlyAdapter`（`:866`）。
+⇒ **口径要分层，不许把这条说成"D3 全验完"**：**已验**＝交付装配里默认路由**有服务**（"composer 拒绝输入"的那个担忧在本 fork 不成立）；**未跑**＝首发请求的实际报错文案与首启动卡片（那是 `onboarding-*.e2e.ts` 那几条浏览器 lane，本轮被 `-t` 过滤掉了）、以及"把默认换成 Taiji"之后的行为（属 §4-D3 的产品意愿，不是未知）。
+**附带读数（对 §6 ⑨ 的锁文件同步门有用）**：`build:web` 触发了一次 pnpm 隐式安装，**`pnpm-lock.yaml` 零漂移**（`git status --porcelain -- pnpm-lock.yaml` 为空）⇒ `bc16104e` 补齐 5 个 importer 之后，先前"每次安装都静默改写锁文件"的现象已消失。
+**同一条 lane 暴露的一处环境性红（登记为 08 §6 ⑩）**：`:603` 的工具花名册内联快照期望含 `bash`、Windows 本机实得 `pwsh` ⇒ 该断言把**宿主 shell** 烤进了快照，与 `project-doc-site.spec` 的 symlink EPERM 同类（环境依赖，非 fork 回归）；本轮未为它改判据，也未跑该文件其余 6 条。
 
 ## 4 · 需要所有者拍板的三条：D3／D2／R4（按能声称的最强结论排；原 R1 已并入 R4）
 
