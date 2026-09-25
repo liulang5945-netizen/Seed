@@ -235,6 +235,86 @@ class CopyCircuit:
             gate = torch.full_like(gate, float(self.gate_override))
         return gate * distribution
 
+    def addressing(self, *, cue: torch.Tensor, f1_context: torch.Tensor) -> dict[str, Any] | None:
+        """训练器用的只读寻址快照（A2.3 预注册 §2）；store 无事件时返回 None。
+
+        不消费诊断覆写——生产发射（``evidence``）与训练寻址是两个面。
+        """
+        event = self.store.best_match(cue)
+        if event is None:
+            return None
+        codes = torch.tensor(list(event.content), dtype=torch.long, device=self.device)
+        embed = self._parameters["content_embed"][codes]
+        keys = embed @ self._parameters["query_content"]
+        query = f1_context @ self._parameters["query_state"]
+        scale = math.sqrt(float(self.evidence_width))
+        scores = query @ keys.T / scale
+        weights = torch.softmax(scores, dim=0)
+        distribution = torch.zeros(
+            self.config.alphabet_size, dtype=torch.float32, device=self.device
+        )
+        distribution = distribution.index_add(0, codes, weights)
+        pooled = weights @ keys
+        gate = (
+            f1_context @ self._parameters["gate_state"]
+            + pooled @ self._parameters["gate_content"]
+            + self._parameters["gate_bias"]
+        )
+        return {
+            "event": event,
+            "codes": codes,
+            "embed": embed,
+            "keys": keys,
+            "query": query,
+            "scores": scores,
+            "pooled": pooled,
+            "copy_distribution": distribution,
+            "gate_value": float(gate),
+        }
+
+    @torch.no_grad()
+    def learn(
+        self,
+        state: Mapping[str, Any],
+        *,
+        f1_context: torch.Tensor,
+        target_position: int,
+        advantage: float,
+        lr_address: float,
+        lr_gate: float,
+    ) -> None:
+        """A2.3 预注册 §2 的局部更新：寻址交叉熵＋反事实优势 gate。无 autograd。
+
+        ``content_embed`` 保持固定随机基（永不更新）；更新后统一 clamp 到
+        ``max_weight_norm``。``advantage`` 由训练器计算并 clamp（±2）。
+        """
+        for name, value in (("lr_address", lr_address), ("lr_gate", lr_gate)):
+            if not math.isfinite(float(value)) or float(value) < 0.0:
+                raise ValueError(f"{name} must be finite and non-negative")
+        codes = state["codes"]
+        if not 0 <= int(target_position) < int(codes.numel()):
+            raise ValueError("copy target position outside the event")
+        scale = math.sqrt(float(self.evidence_width))
+        delta = torch.nn.functional.one_hot(
+            torch.tensor(int(target_position), device=self.device),
+            num_classes=int(codes.numel()),
+        ).float() - torch.softmax(state["scores"], dim=0)
+        grad_query = delta @ state["keys"] / scale
+        self._parameters["query_state"].add_(lr_address * torch.outer(f1_context, grad_query))
+        self._parameters["query_content"].add_(
+            lr_address
+            * (delta[:, None] * state["embed"]).T
+            @ state["query"].expand_as(state["embed"])
+            / scale
+        )
+        step = float(advantage) * lr_gate
+        self._parameters["gate_state"].add_(step * f1_context)
+        self._parameters["gate_content"].add_(step * state["pooled"])
+        self._parameters["gate_bias"].add_(step)
+        bound = float(self.config.max_weight_norm)
+        for name in ("query_state", "query_content", "gate_state", "gate_content", "gate_bias"):
+            self._parameters[name].clamp_(-bound, bound)
+
     def to_payload(self) -> dict[str, Any]:
         return {
             "format": self.PAYLOAD_FORMAT,
