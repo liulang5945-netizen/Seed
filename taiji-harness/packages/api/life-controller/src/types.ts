@@ -60,7 +60,7 @@ export interface LifeWorkbenchView {
   readonly status: string
   /** Offered capabilities; zero is a measured zero. */
   readonly count: number
-  /** Snapshot provenance, e.g. the workbench module that produced it. */
+  /** The snapshot's source module, e.g. the workbench module that produced it. */
   readonly source: string
   /** Who owns the snapshot; empty when the runtime names no owner. */
   readonly owner: string
