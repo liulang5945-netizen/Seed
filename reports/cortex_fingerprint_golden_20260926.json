@@ -1,0 +1,113 @@
+{
+  "format": "cortex-fingerprint-golden-v1",
+  "seed": 20260926,
+  "captured_from": "迁移前的当前实现（assemble_cortex 生产装配，fallback general 神经元）",
+  "coverage": "fallback 神经元无 embed_adapter ⇒ 相似度分支未覆盖；覆盖早退与空 sims 路径",
+  "rows": [
+    {
+      "prompt": "我叫阿岩。我的名字是什么？",
+      "top_k": 1,
+      "out": [
+        "general"
+      ]
+    },
+    {
+      "prompt": "我叫阿岩。我的名字是什么？",
+      "top_k": 2,
+      "out": [
+        "general"
+      ]
+    },
+    {
+      "prompt": "我叫阿岩。我的名字是什么？",
+      "top_k": 5,
+      "out": [
+        "general"
+      ]
+    },
+    {
+      "prompt": "The derivative of sin(x)",
+      "top_k": 1,
+      "out": [
+        "general"
+      ]
+    },
+    {
+      "prompt": "The derivative of sin(x)",
+      "top_k": 2,
+      "out": [
+        "general"
+      ]
+    },
+    {
+      "prompt": "The derivative of sin(x)",
+      "top_k": 5,
+      "out": [
+        "general"
+      ]
+    },
+    {
+      "prompt": "def foo():",
+      "top_k": 1,
+      "out": [
+        "general"
+      ]
+    },
+    {
+      "prompt": "def foo():",
+      "top_k": 2,
+      "out": [
+        "general"
+      ]
+    },
+    {
+      "prompt": "def foo():",
+      "top_k": 5,
+      "out": [
+        "general"
+      ]
+    },
+    {
+      "prompt": "今天天气很好",
+      "top_k": 1,
+      "out": [
+        "general"
+      ]
+    },
+    {
+      "prompt": "今天天气很好",
+      "top_k": 2,
+      "out": [
+        "general"
+      ]
+    },
+    {
+      "prompt": "今天天气很好",
+      "top_k": 5,
+      "out": [
+        "general"
+      ]
+    },
+    {
+      "prompt": "",
+      "top_k": 1,
+      "out": [
+        "general"
+      ]
+    },
+    {
+      "prompt": "",
+      "top_k": 2,
+      "out": [
+        "general"
+      ]
+    },
+    {
+      "prompt": "",
+      "top_k": 5,
+      "out": [
+        "general"
+      ]
+    }
+  ]
+}

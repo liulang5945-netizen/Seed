@@ -36,7 +36,12 @@ import torch.nn.functional as F
 
 # P2（2026-08-23）：纯算法辅助函数抽离，避免 Cortex 神对象继续膨胀。
 # 仅承载无 self 状态的纯函数；保持推理数学逐位等价。
-from neuroplex.brain import _cortex_alignment, _cortex_helpers, _cortex_quality
+from neuroplex.brain import (
+    _cortex_alignment,
+    _cortex_helpers,
+    _cortex_quality,
+    _cortex_routing,
+)
 
 logger = logging.getLogger("Cortex")
 
@@ -1665,78 +1670,12 @@ class Cortex:
         # 未成熟（warmup 内）或 probe 失败 → 纯启发式，quality 不主导（回退安全）
         conf = 0.7 + 0.3 * (quality_weight if per_domain_scores else 0.0)
         return domain, conf, per_domain_scores
-
-    def _fingerprint_route(
-        self,
-        general_ids: list[int],
-        top_k: int = 2,
-    ) -> list[str]:
-        """Level 2 prototype 路由：用 domain_prototype cosine 相似度选 top-k neuron。
-
-        每个 neuron 用自己的 embed_adapter 投影 prompt，再与自己的 domain_prototype
-        做 cosine。每个 neuron 用自己的视角"看"prompt，符合神经元独立性。
-
-        Args:
-            general_ids: prompt 的 general tokenizer id 列表。
-            top_k: 选择的 neuron 数量（不含 general）。
-
-        Returns:
-            active neuron id 列表。
-        """
-        if not self.neurons or self._shared_embedding is None:
-            return list(self.neurons.keys())
-
-        try:
-            ids_tensor = torch.tensor([general_ids], dtype=torch.long, device=self.device)
-            prompt_emb = self._shared_embedding(ids_tensor)  # [1, L, 512]
-            prompt_pooled = prompt_emb.mean(dim=1)  # [1, 512]
-        except Exception:
-            return list(self.neurons.keys())
-
-        # 每个 neuron 用自己的 embed_adapter 投影 prompt，再与 prototype 比较
-        # C5: 多原型模式取 max cosine（与最近原型的相似度）
-        sims = {}
-        for nid, neuron in self.neurons.items():
-            try:
-                if hasattr(neuron, "embed_adapter") and neuron.embed_adapter is not None:
-                    # 用 neuron 自己的 embed_adapter 投影到 768 维
-                    projected = neuron.embed_adapter(prompt_pooled)  # [1, 768]
-                    proj_vec = projected.squeeze(0)  # [768]
-                    proj_norm = proj_vec / (proj_vec.norm() + 1e-8)
-                    # C5: 多原型取 max cosine
-                    if (
-                        getattr(neuron, "num_prototypes", 1) > 1
-                        and neuron.domain_prototypes is not None
-                    ):
-                        # 多原型: [K, 768] → max cosine
-                        protos = neuron.domain_prototypes  # [K, 768]
-                        proto_norms = protos / (protos.norm(dim=-1, keepdim=True) + 1e-8)
-                        sim = float((proj_norm.unsqueeze(0) * proto_norms).sum(dim=-1).max().item())
-                    else:
-                        # 单原型（向后兼容）
-                        proto = neuron.domain_prototype  # [768]
-                        proto_norm = proto / (proto.norm() + 1e-8)
-                        sim = float((proj_norm * proto_norm).sum().item())
-                else:
-                    # fallback: 无 embed_adapter 则跳过
-                    continue
-                sims[nid] = sim
-            except Exception:
-                continue
-
-        if not sims:
-            return list(self.neurons.keys())
-
-        # 按相似度排序，选 top-k（排除 general，单独保证）
-        sorted_nids = sorted(sims, key=sims.get, reverse=True)
-        non_general = [nid for nid in sorted_nids if nid != "general"]
-        selected = non_general[:top_k]
-
-        # general 始终包含
-        if "general" in self.neurons and "general" not in selected:
-            selected.append("general")
-
-        return selected if selected else list(self.neurons.keys())
+    # B-3 C-3（2026-09-26）：本方法体已抽离至 neuroplex/brain/_cortex_routing.py
+    # （neurons/_shared_embedding/device 提升为参数、纯函数、黄金向量逐组复现）。
+    def _fingerprint_route(self, general_ids: list[int], top_k: int = 2) -> list[str]:
+        return _cortex_routing.fingerprint_route(
+            self.neurons, self._shared_embedding, self.device, general_ids, top_k
+        )
 
     def _auto_topk_route(
         self,
