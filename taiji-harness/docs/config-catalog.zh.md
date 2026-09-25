@@ -1457,7 +1457,7 @@ export interface Config {
 }
 ```
 
-来源： [`packages/context/life-context/src/index.ts:34`](../packages/context/life-context/src/index.ts)
+来源： [`packages/context/life-context/src/index.ts:38`](../packages/context/life-context/src/index.ts)
 
 <a id="taijidsh-llm-deepseek"></a>
 
@@ -2104,7 +2104,7 @@ export interface Config {
 }
 ```
 
-来源： [`packages/context/memory-context/src/index.ts:39`](../packages/context/memory-context/src/index.ts)
+来源： [`packages/context/memory-context/src/index.ts:43`](../packages/context/memory-context/src/index.ts)
 
 <a id="taijidsh-message-feedback"></a>
 

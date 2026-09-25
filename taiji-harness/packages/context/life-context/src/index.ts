@@ -23,6 +23,10 @@ export const name = 'life-context'
 
 declare module '@taiji/dsh-llm' {
   interface MessageSourceMap {
+    /** Life-reading attribution; readers preserve the content without this producer.
+     * Its projection uses the kind to avoid repeated injection.
+     * @persistenceAttribution
+     */
     'life-context': { kind: 'life-context' } & ContextFormed
   }
 }

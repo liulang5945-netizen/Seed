@@ -25,6 +25,10 @@ export const name = 'memory-context'
 
 declare module '@taiji/dsh-llm' {
   interface MessageSourceMap {
+    /** Memory-recall attribution; readers preserve the content without this producer.
+     * Its projection uses the kind to avoid repeated injection.
+     * @persistenceAttribution
+     */
     'memory-context': { kind: 'memory-context' } & ContextFormed
   }
 }
