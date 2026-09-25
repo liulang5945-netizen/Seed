@@ -1,0 +1,1508 @@
+{
+  "format": "taiji-r2-copy-strict-cap-recompute-v1",
+  "definition": "hit_strict ⇔ 某期望词既在更早用户轮原文里逐字出现（可复制），又出现在答案里；单轮题与通用词自动排除。",
+  "manifest": "plans/manifests/cap0_eval_set_v2.json",
+  "strict_eligible_by_dimension": {
+    "C": 0,
+    "D": 16,
+    "E": 0
+  },
+  "reports": [
+    {
+      "source_report": "reports/taiji_r2_copy_circuit_cap_spotcheck_20260925.json",
+      "source_format": "taiji-r2-copy-circuit-cap-spotcheck-v1",
+      "source_prereg": "plans/reference/M5_R2_A2_3_PREREG_20260925.md §4-S2②",
+      "criterion": "S2② 通过（D+E>0 且 > 对照）",
+      "arms": {
+        "control_no_circuit": {
+          "items": 36,
+          "correct_loose": 0,
+          "correct_strict": 0,
+          "strict_eligible_items": 16,
+          "rows": [
+            {
+              "id": "D01",
+              "hit": false,
+              "text": "\n\n\n\n�（：�）：��",
+              "dimension": "D",
+              "copyable_tokens": [
+                "阿岩"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D02",
+              "hit": false,
+              "text": "\n\n\n我（（我）：我",
+              "dimension": "D",
+              "copyable_tokens": [
+                "杭州"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D03",
+              "hit": false,
+              "text": "刼�则人��个�，��",
+              "dimension": "D",
+              "copyable_tokens": [
+                "简短"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D04",
+              "hit": false,
+              "text": "\n\n\n\n�（（）：我为",
+              "dimension": "D",
+              "copyable_tokens": [
+                "17"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D05",
+              "hit": false,
+              "text": "\n\n\n\n�（（））））",
+              "dimension": "D",
+              "copyable_tokens": [
+                "Seed"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D06",
+              "hit": false,
+              "text": "\n\n\n\n�（（））））",
+              "dimension": "D",
+              "copyable_tokens": [
+                "阿岩"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D07",
+              "hit": false,
+              "text": "\n\n\n杈（（我下君��",
+              "dimension": "D",
+              "copyable_tokens": [
+                "杭州"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D08",
+              "hit": false,
+              "text": "\n\n\n我（：�）：��",
+              "dimension": "D",
+              "copyable_tokens": [
+                "绿茶"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D09",
+              "hit": false,
+              "text": "\n\n\n戼���）））））",
+              "dimension": "D",
+              "copyable_tokens": [
+                "42"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D10",
+              "hit": false,
+              "text": "\n\n\n\n\n\n\n\n\n（（（）��",
+              "dimension": "D",
+              "copyable_tokens": [
+                "小林"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D11",
+              "hit": false,
+              "text": "\n\n我（：�）：君�",
+              "dimension": "D",
+              "copyable_tokens": [
+                "南京"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D12",
+              "hit": false,
+              "text": "\n\n\n漈（��））））�",
+              "dimension": "D",
+              "copyable_tokens": [
+                "23"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D13",
+              "hit": false,
+              "text": "�则人����������",
+              "dimension": "D",
+              "copyable_tokens": [
+                "测试"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D18",
+              "hit": false,
+              "text": "\n\n\n杈（��）：我君�",
+              "dimension": "D",
+              "copyable_tokens": [
+                "阿岩",
+                "杭州",
+                "17"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D19",
+              "hit": false,
+              "text": "\n\n\n\n\n\n\n\n\n（（（）��",
+              "dimension": "D",
+              "copyable_tokens": [
+                "Seed",
+                "接口"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D20",
+              "hit": false,
+              "text": "\n\n\n\n�（（）：���",
+              "dimension": "D",
+              "copyable_tokens": [
+                "绿茶",
+                "17"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E01",
+              "hit": false,
+              "text": "刺人����个则是�",
+              "dimension": "E",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E02",
+              "hit": false,
+              "text": "有：�则为�����为�",
+              "dimension": "E",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E03",
+              "hit": false,
+              "text": "\n\n\n��（�����人����",
+              "dimension": "E",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E04",
+              "hit": false,
+              "text": "\n\n\n\n戈�）：�����",
+              "dimension": "E",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E05",
+              "hit": false,
+              "text": "\n\n\n杈（（）：我人",
+              "dimension": "E",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E06",
+              "hit": false,
+              "text": "\n\n\n\n戈�（（）：��",
+              "dimension": "E",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E07",
+              "hit": false,
+              "text": "刼����君��个�，�",
+              "dimension": "E",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E08",
+              "hit": false,
+              "text": "我为�����为为分君",
+              "dimension": "E",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E09",
+              "hit": false,
+              "text": "来�������为����君��",
+              "dimension": "E",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E10",
+              "hit": false,
+              "text": "」是文则我了为��",
+              "dimension": "E",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E11",
+              "hit": false,
+              "text": "\n\n\n\n\n\n\n\n\n（（（（��",
+              "dimension": "E",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E12",
+              "hit": false,
+              "text": "\n\n\n杈（（））））",
+              "dimension": "E",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E13",
+              "hit": false,
+              "text": "则为�����为�，为�",
+              "dimension": "E",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E14",
+              "hit": false,
+              "text": "\n\n\n我（））））���",
+              "dimension": "E",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E15",
+              "hit": false,
+              "text": "刑们��了为君吼�刑",
+              "dimension": "E",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E16",
+              "hit": false,
+              "text": "别刑人�������是",
+              "dimension": "E",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E17",
+              "hit": false,
+              "text": "别�刺人��������",
+              "dimension": "E",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E18",
+              "hit": false,
+              "text": "\n\n\n�（（））））�",
+              "dimension": "E",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E19",
+              "hit": false,
+              "text": "\n\n杈（��）：我下�",
+              "dimension": "E",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E20",
+              "hit": false,
+              "text": "\n\n\n杈���）：�����",
+              "dimension": "E",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            }
+          ]
+        },
+        "treated_with_circuit": {
+          "items": 36,
+          "correct_loose": 5,
+          "correct_strict": 4,
+          "strict_eligible_items": 16,
+          "rows": [
+            {
+              "id": "D01",
+              "hit": true,
+              "text": "阿岩�������」��岩��",
+              "dimension": "D",
+              "copyable_tokens": [
+                "阿岩"
+              ],
+              "hit_loose": true,
+              "hit_strict": true
+            },
+            {
+              "id": "D02",
+              "hit": false,
+              "text": "�戝杭�������佝����佝",
+              "dimension": "D",
+              "copyable_tokens": [
+                "杭州"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D03",
+              "hit": false,
+              "text": "囥潮���殮柮���",
+              "dimension": "D",
+              "copyable_tokens": [
+                "简短"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D04",
+              "hit": true,
+              "text": "7 17 学�7777��������7 ",
+              "dimension": "D",
+              "copyable_tokens": [
+                "17"
+              ],
+              "hit_loose": true,
+              "hit_strict": true
+            },
+            {
+              "id": "D05",
+              "hit": false,
+              "text": "� �ddd����皚d ��  ��",
+              "dimension": "D",
+              "copyable_tokens": [
+                "Seed"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D06",
+              "hit": true,
+              "text": "阿岩�阿岩�������利�",
+              "dimension": "D",
+              "copyable_tokens": [
+                "阿岩"
+              ],
+              "hit_loose": true,
+              "hit_strict": true
+            },
+            {
+              "id": "D07",
+              "hit": false,
+              "text": "�戝�潝����������������",
+              "dimension": "D",
+              "copyable_tokens": [
+                "杭州"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D08",
+              "hit": false,
+              "text": "�茶墬���梬梬��",
+              "dimension": "D",
+              "copyable_tokens": [
+                "绿茶"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D09",
+              "hit": true,
+              "text": "242 42����������� 42��",
+              "dimension": "D",
+              "copyable_tokens": [
+                "42"
+              ],
+              "hit_loose": true,
+              "hit_strict": true
+            },
+            {
+              "id": "D10",
+              "hit": false,
+              "text": "阿岩�������家家岿�",
+              "dimension": "D",
+              "copyable_tokens": [
+                "小林"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D11",
+              "hit": false,
+              "text": "�戝歝����������佝����",
+              "dimension": "D",
+              "copyable_tokens": [
+                "南京"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D12",
+              "hit": false,
+              "text": "7777��������欢�777�777",
+              "dimension": "D",
+              "copyable_tokens": [
+                "23"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D13",
+              "hit": false,
+              "text": "�负贵���负舑�负�",
+              "dimension": "D",
+              "copyable_tokens": [
+                "测试"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D18",
+              "hit": false,
+              "text": "岩������丘�岩�������",
+              "dimension": "D",
+              "copyable_tokens": [
+                "阿岩",
+                "杭州",
+                "17"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D19",
+              "hit": false,
+              "text": "雮�d 幈 ��Sed�� �",
+              "dimension": "D",
+              "copyable_tokens": [
+                "Seed",
+                "接口"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D20",
+              "hit": false,
+              "text": "濇��������欢���诬��",
+              "dimension": "D",
+              "copyable_tokens": [
+                "绿茶",
+                "17"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E01",
+              "hit": false,
+              "text": "药�毯�� 4 4 4 4��24 ",
+              "dimension": "E",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E02",
+              "hit": false,
+              "text": "��������“�‒��",
+              "dimension": "E",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E03",
+              "hit": false,
+              "text": "�0 4 �� 4 4 4 ��  4 ",
+              "dimension": "E",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E04",
+              "hit": false,
+              "text": "4 26 庸���,,4 2�4 庸42",
+              "dimension": "E",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E05",
+              "hit": false,
+              "text": "����������������",
+              "dimension": "E",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E06",
+              "hit": false,
+              "text": "� �2 12 �2 ��2 2 ��",
+              "dimension": "E",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E07",
+              "hit": false,
+              "text": "����������������",
+              "dimension": "E",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E08",
+              "hit": false,
+              "text": "�� 2 庚2 2 2 庚2 2 2 ",
+              "dimension": "E",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E09",
+              "hit": true,
+              "text": "�三277���教72��2�2�",
+              "dimension": "E",
+              "copyable_tokens": [],
+              "hit_loose": true,
+              "hit_strict": false
+            },
+            {
+              "id": "E10",
+              "hit": false,
+              "text": "�“�������������",
+              "dimension": "E",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E11",
+              "hit": false,
+              "text": "教镰丅������00 丅���",
+              "dimension": "E",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E12",
+              "hit": false,
+              "text": "庸��数丯�数丽�教�",
+              "dimension": "E",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E13",
+              "hit": false,
+              "text": "��“����������",
+              "dimension": "E",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E14",
+              "hit": false,
+              "text": "庉“‌���丅�����",
+              "dimension": "E",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E15",
+              "hit": false,
+              "text": "��䐟䯯����������",
+              "dimension": "E",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E16",
+              "hit": false,
+              "text": "��丘������������为�",
+              "dimension": "E",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E17",
+              "hit": false,
+              "text": "�  ��   尝  家宯���",
+              "dimension": "E",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E18",
+              "hit": false,
+              "text": " ��胟说�诉三三三",
+              "dimension": "E",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E19",
+              "hit": false,
+              "text": "胪�����說胟��胟胟�",
+              "dimension": "E",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E20",
+              "hit": false,
+              "text": "误��������柩柩�䯩���",
+              "dimension": "E",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            }
+          ]
+        }
+      },
+      "extra": {
+        "identical_answer_arms": 0,
+        "strict_hit_not_loose": 0
+      }
+    },
+    {
+      "source_report": "reports/taiji_r2_copy_circuit_chat_cap_20260925.json",
+      "source_format": "taiji-r2-copy-circuit-chat-cap-v1",
+      "source_prereg": "plans/reference/M5_R2_A2_3_PREREG_20260925.md §4-S2（判据沿用）",
+      "criterion": "A2.4 重测通过（D+E>0 且成句率不塌于对照）",
+      "arms": {
+        "control_no_circuit": {
+          "items": 36,
+          "correct_loose": 2,
+          "correct_strict": 0,
+          "strict_eligible_items": 16,
+          "rows": [
+            {
+              "id": "D01",
+              "dimension": "D",
+              "hit": false,
+              "answer": "分��：。\n\n\n\n\n\n\n\n\n\n�（（��）�：������弈个���家",
+              "copyable_tokens": [
+                "阿岩"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D02",
+              "dimension": "D",
+              "hit": false,
+              "answer": "����������下����人�����������有�有我�",
+              "copyable_tokens": [
+                "杭州"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D03",
+              "dimension": "D",
+              "hit": true,
+              "answer": "������人���������有��是����我�为，���",
+              "copyable_tokens": [
+                "简短"
+              ],
+              "hit_loose": true,
+              "hit_strict": false
+            },
+            {
+              "id": "D04",
+              "dimension": "D",
+              "hit": false,
+              "answer": "����刑人�����师�君一个�，你一个有君君��为",
+              "copyable_tokens": [
+                "17"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D05",
+              "dimension": "D",
+              "hit": false,
+              "answer": "�������，�����个�（�他�������人�������",
+              "copyable_tokens": [
+                "Seed"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D06",
+              "dimension": "D",
+              "hit": false,
+              "answer": "别�：师，�，家��孟����先是��为�，��个�，",
+              "copyable_tokens": [
+                "阿岩"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D07",
+              "dimension": "D",
+              "hit": false,
+              "answer": "����（��家��个�（君，�有��：�师个�（君，�",
+              "copyable_tokens": [
+                "杭州"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D08",
+              "dimension": "D",
+              "hit": false,
+              "answer": "�������，����，����个�����人���������",
+              "copyable_tokens": [
+                "绿茶"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D09",
+              "dimension": "D",
+              "hit": false,
+              "answer": "����，��个�（�个�君（君家�个�，制之�有�，",
+              "copyable_tokens": [
+                "42"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D10",
+              "dimension": "D",
+              "hit": false,
+              "answer": "别���，��个��个�（�人����师伈�个�，�，�",
+              "copyable_tokens": [
+                "小林"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D11",
+              "dimension": "D",
+              "hit": false,
+              "answer": "��������������下有�，�有有�，�有是�有�，�",
+              "copyable_tokens": [
+                "南京"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D12",
+              "dimension": "D",
+              "hit": false,
+              "answer": "刺�����人��������个�（����，制刑们�个是",
+              "copyable_tokens": [
+                "23"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D13",
+              "dimension": "D",
+              "hit": false,
+              "answer": "������弈�，��人��������是���有�我�为，",
+              "copyable_tokens": [
+                "测试"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D18",
+              "dimension": "D",
+              "hit": false,
+              "answer": "有�：有�（一个�（（一个�（（大家��人�����",
+              "copyable_tokens": [
+                "阿岩",
+                "杭州",
+                "17"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D19",
+              "dimension": "D",
+              "hit": false,
+              "answer": "����弈������个是人�������是�是有我���",
+              "copyable_tokens": [
+                "Seed",
+                "接口"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D20",
+              "dimension": "D",
+              "hit": false,
+              "answer": "������孟��个��人�������有��个�，�����",
+              "copyable_tokens": [
+                "绿茶",
+                "17"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E01",
+              "dimension": "E",
+              "hit": false,
+              "answer": "刺�人���个�（�他君则人��������是��为有，��",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E02",
+              "dimension": "E",
+              "hit": false,
+              "answer": "「家则人����一个�则刑孟�君为�为�������是�一",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E03",
+              "dimension": "E",
+              "hit": false,
+              "answer": "刼刺��，下是人���为�为个我他君为为为�，�为�",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E04",
+              "dimension": "E",
+              "hit": false,
+              "answer": "则为�����为�为为有君孟�孟刑他����人���是��",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E05",
+              "dimension": "E",
+              "hit": false,
+              "answer": "我为个�（��则为��������刑会是�为个�君�为��",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E06",
+              "dimension": "E",
+              "hit": false,
+              "answer": "������人���������个刑�一��是是是我�为��",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E07",
+              "dimension": "E",
+              "hit": false,
+              "answer": "「吼�人����为�为吼�会有吼�：是有�）：我他��",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E08",
+              "dimension": "E",
+              "hit": false,
+              "answer": "�师）：刼��人������君�则�个�，你为�个君是",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E09",
+              "dimension": "E",
+              "hit": false,
+              "answer": "我为��为为为为一�我他文师：我他�我他文�尝君�",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E10",
+              "dimension": "E",
+              "hit": false,
+              "answer": "我为����为�为则伈是是���为为为为丈�摰�君孟�",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E11",
+              "dimension": "E",
+              "hit": false,
+              "answer": "我们为师），家则人����个则为君为个则是有�我",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E12",
+              "dimension": "E",
+              "hit": false,
+              "answer": "我�（是�一个师（��为人����是���有�我�，�为�",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E13",
+              "dimension": "E",
+              "hit": false,
+              "answer": "我为丈（���是�文师：我为������师则为君为为君�",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E14",
+              "dimension": "E",
+              "hit": false,
+              "answer": "「师：是为一个到�君�孽师人�����，�为君�孟��",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E15",
+              "dimension": "E",
+              "hit": false,
+              "answer": "则君刺���������为君为个君为为为为��有君是�",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E16",
+              "dimension": "E",
+              "hit": false,
+              "answer": "������人����������个刑��是是������为了",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E17",
+              "dimension": "E",
+              "hit": false,
+              "answer": "�����：刼���������师�君个刑他��孟��人����人",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E18",
+              "dimension": "E",
+              "hit": false,
+              "answer": "尝君则为������个�（��一������为�为人���个",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E19",
+              "dimension": "E",
+              "hit": false,
+              "answer": "����弈�下是人������个吼�是是是是我们为君�",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E20",
+              "dimension": "E",
+              "hit": true,
+              "answer": "则���刼�刺个�个���吼�为�������是�一个�君�为�",
+              "copyable_tokens": [],
+              "hit_loose": true,
+              "hit_strict": false
+            }
+          ]
+        },
+        "treated_with_circuit": {
+          "items": 36,
+          "correct_loose": 3,
+          "correct_strict": 2,
+          "strict_eligible_items": 16,
+          "rows": [
+            {
+              "id": "D01",
+              "dimension": "D",
+              "hit": false,
+              "answer": "�岩阿�婩����」��吿岩����是���������家利�婿岩�岩��",
+              "copyable_tokens": [
+                "阿岩"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D02",
+              "dimension": "D",
+              "hit": false,
+              "answer": "�彞�����彞潞���朽����������佝�������彞�朽���佝�潽�����",
+              "copyable_tokens": [
+                "杭州"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D03",
+              "dimension": "D",
+              "hit": false,
+              "answer": "��実舟��说���云�矽��寽��诔？�我佮毟��诔�寯���",
+              "copyable_tokens": [
+                "简短"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D04",
+              "dimension": "D",
+              "hit": false,
+              "answer": "777�������欢欢欢�77��7�7777���������7777777�77777 尝�77",
+              "copyable_tokens": [
+                "17"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D05",
+              "dimension": "D",
+              "hit": false,
+              "answer": "� 到�我� � �  刚 刚  刚 Sed��ed  刚  �宮�是�   皚",
+              "copyable_tokens": [
+                "Seed"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D06",
+              "dimension": "D",
+              "hit": false,
+              "answer": "��丘��䀂�阿��䀝��岩鯈朩��������������大�����鯯����",
+              "copyable_tokens": [
+                "阿岩"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D07",
+              "dimension": "D",
+              "hit": false,
+              "answer": "�佽 吟�4 4 �佝���柉佟低佝��溽�4 �刟��� � 己�佝",
+              "copyable_tokens": [
+                "杭州"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D08",
+              "dimension": "D",
+              "hit": false,
+              "answer": "��利����丢���一��晔丢�一���则���梢��尐��的尶吿荌",
+              "copyable_tokens": [
+                "绿茶"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D09",
+              "dimension": "D",
+              "hit": true,
+              "answer": "��刯������� 42。��毯��������������������毯�������������� �",
+              "copyable_tokens": [
+                "42"
+              ],
+              "hit_loose": true,
+              "hit_strict": true
+            },
+            {
+              "id": "D10",
+              "dimension": "D",
+              "hit": false,
+              "answer": "��鯘吼�����刑��帘�審������刑�丘�岩�������。同審�毩",
+              "copyable_tokens": [
+                "小林"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D11",
+              "dimension": "D",
+              "hit": false,
+              "answer": "��朽��佞潽��������毯��潙潺佞�������佝�����佝����佝�",
+              "copyable_tokens": [
+                "南京"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D12",
+              "dimension": "D",
+              "hit": true,
+              "answer": "77�������欢23�丯��������23� 別��正毯������23� 別��正�",
+              "copyable_tokens": [
+                "23"
+              ],
+              "hit_loose": true,
+              "hit_strict": true
+            },
+            {
+              "id": "D13",
+              "dimension": "D",
+              "hit": false,
+              "answer": "�耂先���刟�掅�掅��掣掟贀�先���掣掣掟误��试���",
+              "copyable_tokens": [
+                "测试"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D18",
+              "dimension": "D",
+              "hit": false,
+              "answer": "��丯�敞���丯�����欢��䯽�潞潞��戕丘� 彽���鯢�丘��",
+              "copyable_tokens": [
+                "阿岩",
+                "杭州",
+                "17"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D19",
+              "dimension": "D",
+              "hit": false,
+              "answer": "�舟��d�����舟舮��d鄣�刟�帀�皣��蚟��曮� 到��",
+              "copyable_tokens": [
+                "Seed",
+                "接口"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D20",
+              "dimension": "D",
+              "hit": false,
+              "answer": "�误�����7777777丯�毯�������欢���欢�毢���敿迚���诿��",
+              "copyable_tokens": [
+                "绿茶",
+                "17"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E01",
+              "dimension": "E",
+              "hit": false,
+              "answer": "刺�人���个�（�他君则人��������是��为有，��",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E02",
+              "dimension": "E",
+              "hit": false,
+              "answer": "「家则人����一个�则刑孟�君为�为�������是�一",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E03",
+              "dimension": "E",
+              "hit": false,
+              "answer": "刼刺��，下是人���为�为个我他君为为为�，�为�",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E04",
+              "dimension": "E",
+              "hit": false,
+              "answer": "则为�����为�为为有君孟�孟刑他����人���是��",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E05",
+              "dimension": "E",
+              "hit": false,
+              "answer": "我为个�（��则为��������刑会是�为个�君�为��",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E06",
+              "dimension": "E",
+              "hit": false,
+              "answer": "������人���������个刑�一��是是是我�为��",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E07",
+              "dimension": "E",
+              "hit": false,
+              "answer": "「吼�人����为�为吼�会有吼�：是有�）：我他��",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E08",
+              "dimension": "E",
+              "hit": false,
+              "answer": "�师）：刼��人������君�则�个�，你为�个君是",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E09",
+              "dimension": "E",
+              "hit": false,
+              "answer": "我为��为为为为一�我他文师：我他�我他文�尝君�",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E10",
+              "dimension": "E",
+              "hit": false,
+              "answer": "我为����为�为则伈是是���为为为为丈�摰�君孟�",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E11",
+              "dimension": "E",
+              "hit": false,
+              "answer": "我们为师），家则人����个则为君为个则是有�我",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E12",
+              "dimension": "E",
+              "hit": false,
+              "answer": "我�（是�一个师（��为人����是���有�我�，�为�",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E13",
+              "dimension": "E",
+              "hit": false,
+              "answer": "我为丈（���是�文师：我为������师则为君为为君�",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E14",
+              "dimension": "E",
+              "hit": false,
+              "answer": "「师：是为一个到�君�孽师人�����，�为君�孟��",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E15",
+              "dimension": "E",
+              "hit": false,
+              "answer": "则君刺���������为君为个君为为为为��有君是�",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E16",
+              "dimension": "E",
+              "hit": false,
+              "answer": "������人����������个刑��是是������为了",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E17",
+              "dimension": "E",
+              "hit": false,
+              "answer": "�����：刼���������师�君个刑他��孟��人����人",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E18",
+              "dimension": "E",
+              "hit": false,
+              "answer": "尝君则为������个�（��一������为�为人���个",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E19",
+              "dimension": "E",
+              "hit": false,
+              "answer": "����弈�下是人������个吼�是是是是我们为君�",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E20",
+              "dimension": "E",
+              "hit": true,
+              "answer": "则���刼�刺个�个���吼�为�������是�一个�君�为�",
+              "copyable_tokens": [],
+              "hit_loose": true,
+              "hit_strict": false
+            }
+          ]
+        }
+      },
+      "extra": {
+        "identical_answer_arms": 20,
+        "strict_hit_not_loose": 0
+      }
+    }
+  ]
+}

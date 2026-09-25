@@ -61,6 +61,40 @@ def resolve_save_target(
 
 _TURN_MARKERS = ("\n问：", "问：")
 
+
+def record_told_history(
+    substrate: Any,
+    circuit: Any,
+    history: Sequence[tuple[str, str]] | None,
+    *,
+    episode_id: str,
+) -> None:
+    """A2.4 入库原语：把历史用户轮逐条写进剪贴板（cue＝该轮告知段结束时的皮质状态）。
+
+    预喂行只为取 cue；其后的生成以 ``reset=True`` 从头重喂全文，动力学态不受本行影响，
+    而 store 挂在回路上、跨 reset 持久。当前提问轮不入库（它是问，不是被告知内容）。
+
+    产品侧 ``SeedRuntime._record_told_history`` 与 A2.3b 对齐重训臂**共用本函数**——
+    「训练时如何入库」与「产品如何入库」只留一份实现，否则两处语义会各自漂移。
+    """
+    circuit.store.clear()
+    substrate.reset_dynamics(episode_id=episode_id)
+    substrate.observe(
+        int(substrate.config.boundary_symbol),
+        learn=False,
+        readout="predictive",
+        use_memory=False,
+    )
+    for user, assistant in history or []:
+        if not user or not assistant:
+            continue
+        for symbol in f"问：{user}\n".encode():
+            substrate.observe(int(symbol), learn=False, readout="predictive", use_memory=False)
+        circuit.store.record(user.encode("utf-8"), substrate.cortical_cue())
+        for symbol in f"答：{assistant}\n".encode():
+            substrate.observe(int(symbol), learn=False, readout="predictive", use_memory=False)
+
+
 # 输入长度上限（字符）：基底逐字节处理前缀（实测 ≈430 字节/秒），十万级
 # 提示会让单请求阻塞数分钟（压测实测 100K 字符 ≈ 309 秒），构成可用性风险；
 # 2048 字符（约 6KB ≈ 14s 前缀成本）是病态输入的封顶，典型对话消息远低于此，
@@ -307,29 +341,10 @@ class SeedRuntime:
             substrate.copy_circuit.load_payload(payload)
 
     def _record_told_history(self, circuit: Any, history: Sequence[tuple[str, str]] | None) -> None:
-        """A2.4：生成前把历史用户轮写进剪贴板（cue＝该轮告知段末的皮质态，训练语义）。
-
-        预喂行只为取 cue；随后的 ``generate_input(reset=True)`` 从头重喂全文，
-        动力学态不受此行影响，而 store 挂在回路上、跨 reset 持久。当前提问轮
-        不入库（它是问，不是被告知内容）。
-        """
-        substrate = self.model.substrate
-        circuit.store.clear()
-        substrate.reset_dynamics(episode_id=f"chat:{self.model.tick}:told")
-        substrate.observe(
-            int(substrate.config.boundary_symbol),
-            learn=False,
-            readout="predictive",
-            use_memory=False,
+        """A2.4：生成前把历史用户轮写进剪贴板（实现见 ``record_told_history``）。"""
+        record_told_history(
+            self.model.substrate, circuit, history, episode_id=f"chat:{self.model.tick}:told"
         )
-        for user, assistant in history or []:
-            if not user or not assistant:
-                continue
-            for symbol in f"问：{user}\n".encode():
-                substrate.observe(int(symbol), learn=False, readout="predictive", use_memory=False)
-            circuit.store.record(user.encode("utf-8"), substrate.cortical_cue())
-            for symbol in f"答：{assistant}\n".encode():
-                substrate.observe(int(symbol), learn=False, readout="predictive", use_memory=False)
 
     def chat(
         self,

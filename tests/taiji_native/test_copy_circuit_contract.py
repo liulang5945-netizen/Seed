@@ -6,9 +6,19 @@
 2. **oracle 寻址驱动发射**：写入告知字节后，以诊断覆写（one-hot 寻址 + gate 幅度）验证
    「内容 → F1 字节发射」的接线真实存在——这正是 A0 判 (c) 有罪所缺的那条通路；
 3. **持久化**：circuit 随 checkpoint 往返；旧 checkpoint（无键）直载 ⇒ 未挂载。
+
+A2.3b 追加（文件后半段）：格式对齐重训臂的三条守卫——**裸格式臂逐位不变**、
+**对齐臂落在产品生成链上**、**寻址抢错事件时一步都不更新**。
 """
 
 from __future__ import annotations
+
+import hashlib
+import json
+import sys
+from pathlib import Path
+from typing import Any
+from unittest.mock import patch
 
 import pytest
 import torch
@@ -20,6 +30,11 @@ ASK = "我的名字是什么？".encode()
 # 阿 = E9 98 BF；TELL 中首字节位置 6（我E6 88 91｜叫E5 8F AB｜阿…）。
 A_FIRST_BYTE = 0xE9
 A_FIRST_POSITION = 6
+
+REPO_ROOT = Path(__file__).resolve().parents[2]
+for _entry in (REPO_ROOT, REPO_ROOT / "scripts" / "training"):
+    if str(_entry) not in sys.path:
+        sys.path.insert(0, str(_entry))
 
 
 def _model() -> Taiji:
@@ -161,3 +176,166 @@ def test_checkpoint_roundtrip_and_legacy_absence() -> None:
     assert "copy_circuit" not in plain_payload
     plain = Taiji.from_checkpoint(plain_payload)
     assert plain.copy_circuit is None
+
+
+# ---------------------------------------------------------------------------
+# A2.3b：格式对齐重训臂的守卫（预注册 SPEC-A-17 §5）
+# ---------------------------------------------------------------------------
+
+#: A2.3 冻结臂（本次抽取重构**之前**的 `train_taiji_r2_copy_circuit.py`）在
+#: stage=smoke／episodes=5／seed=20260925／lr 默认下的 circuit 参数 sha256，
+#: 用 `git show HEAD:` 取出的未改动副本实测钉下（不是推算值）。
+BARE_ARM_PINNED_DIGEST = "d55bf2ef5f13f998f220d575d6cbe9352d40c4223f11f6f49f102ae2d2e9f48d"
+
+
+def _parameters_digest(parameters: dict[str, Any]) -> str:
+    return hashlib.sha256(
+        json.dumps({k: v.tolist() for k, v in parameters.items()}, sort_keys=True).encode()
+    ).hexdigest()
+
+
+def _run_trainer(tmp_path: Path, protocol: str, episodes: int) -> dict[str, Any]:
+    import train_taiji_r2_copy_circuit as trainer
+
+    argv = [
+        "train_taiji_r2_copy_circuit.py",
+        "--stage",
+        "smoke",
+        "--protocol",
+        protocol,
+        "--episodes",
+        str(episodes),
+        "--max-minutes",
+        "5",
+        "--out-dir",
+        str(tmp_path / "out" / protocol),
+        "--report-dir",
+        str(tmp_path / "rep"),
+    ]
+    with patch.object(sys, "argv", argv):
+        assert trainer.main() == 0
+    return torch.load(
+        tmp_path / "out" / protocol / "smoke" / "circuit-final.pt", weights_only=False
+    )
+
+
+def test_bare_arm_survives_the_extraction_untouched(tmp_path: Path) -> None:
+    """抽取学习规则为共用函数**没有**改动 A2.3 冻结臂：同参数同种子 ⇒ 参数逐位相同。
+
+    这条钉子是 A2.3b 全部结论的前提——两臂必须只差"怎么喂"，否则格式对齐的读数差
+    可能被"顺手改了规则"解释掉。
+    """
+    payload = _run_trainer(tmp_path, "bare", 5)
+    assert payload["protocol"] == "bare"
+    assert payload["prereg"].endswith("M5_R2_A2_3_PREREG_20260925.md")
+    assert _parameters_digest(payload["copy_circuit"]["parameters"]) == BARE_ARM_PINNED_DIGEST
+
+
+def test_record_primitive_keeps_told_turns_unwrapped() -> None:
+    """入库语义＝产品语义：存**用户轮原文**（不套「问：」壳），cue＝「问：轮」读完的皮质态。"""
+    from api.seed_runtime import record_told_history
+
+    model = _model()
+    model.mount_copy_circuit(max_events=4)
+    circuit = model.copy_circuit
+    assert circuit is not None
+    history = [("我叫阿蒙。", "上一轮答复"), ("水沸点是多少？", "另一轮答复")]
+    record_told_history(model, circuit, history, episode_id="contract")
+    events = circuit.store.events()
+    assert [event.content.decode() for event in events] == ["我叫阿蒙。", "水沸点是多少？"]
+
+    # cue 逐位核对：另一台同种子模型独立重放「问：{轮}」，皮质态必须与入库时那条相同。
+    replay = _model()
+    replay.reset_dynamics(episode_id="contract-replay")
+    replay.observe(replay.config.boundary_symbol, learn=False, readout="predictive")
+    for symbol in "问：我叫阿蒙。\n".encode():
+        replay.observe(int(symbol), learn=False, readout="predictive")
+    assert torch.equal(events[0].cue, replay.cortical_cue())
+
+
+def test_chat_arm_reproduces_the_product_conversation() -> None:
+    """对齐臂的历史与提问文本必须**就是**产品协议铺出来的那一份。"""
+    import train_taiji_r2_copy_circuit as trainer
+
+    from api.seed_runtime import SeedRuntime
+
+    model = _model()
+    model.mount_copy_circuit(max_events=4)
+    circuit = model.copy_circuit
+    assert circuit is not None
+    turns = ["我叫阿蒙。", "水沸点是多少？", "我的名字是什么？"]
+    feed = trainer._run_chat_episode(model, circuit, turns, episode_id="contract-chat")
+
+    assert [user for user, _ in feed.history] == turns[:-1]  # 每轮告知都进了历史
+    assert feed.prompt_bytes == SeedRuntime._serialize(turns[-1], list(feed.history)).encode()
+    assert feed.tell_bytes == turns[0].encode("utf-8")
+    assert feed.prev_byte == feed.prompt_bytes[-1]
+    # 提问轮不入库（它是问，不是被告知内容）⇒ 库里的条数＝历史轮数。
+    assert [event.content.decode() for event in circuit.store.events()] == turns[:-1]
+
+
+def test_chat_arm_feed_lands_on_the_generation_chain() -> None:
+    """**链路同一性**：训练侧"喂完提问段"的那个状态，必须就是产品生成时的状态。
+
+    否则训出来的寻址/gate 是在另一条链上——A2.4 把能力压住的正是这类分布差。
+    判据＝喂完 prompt 的末位 argmax 与产品 `generate(prompt, 1)` 实际吐出的首字节相同。
+    """
+    import train_taiji_r2_copy_circuit as trainer
+
+    model = _model()
+    model.mount_copy_circuit(max_events=4)
+    circuit = model.copy_circuit
+    assert circuit is not None
+    turns = ["我叫阿蒙。", "我的名字是什么？"]
+    feed = trainer._run_chat_episode(model, circuit, turns, episode_id="contract-chain")
+    trained_byte = int(feed.prompt_probs.detach().cpu().argmax())
+    product_byte = int(model.generate(feed.prompt_bytes, 1, stop_at_boundary=False)[0])
+    assert trained_byte == product_byte
+
+
+def test_wrong_event_steps_are_never_trained_against() -> None:
+    """多事件库里寻址抢到别条告知 ⇒ **整段不更新**（不喂错标签——rev4 的教训钉成守卫）。
+
+    正反两断言：抢到含答案的那条 ⇒ 必须照常更新（否则这条守卫会变成静默不学习）。
+    """
+    import train_taiji_r2_copy_circuit as trainer
+
+    from taiji.copy_circuit import ToldEvent
+
+    model = _model()
+    model.mount_copy_circuit(max_events=4)
+    circuit = model.copy_circuit
+    assert circuit is not None
+    tell = "我叫阿蒙。".encode()
+    other = "今天天气很好。".encode()
+    cue = torch.zeros(model.config.cortical_context_dim)
+    cue[1] = 1.0
+    circuit.store.record(tell, cue.clone())
+    model.reset_dynamics(episode_id="contract-wrong")
+    model.observe(model.config.boundary_symbol, learn=False, readout="predictive")
+    for symbol in "问：我叫阿蒙。\n答：。\n问：我的名字是什么？\n答：".encode():
+        model.observe(int(symbol), learn=False, readout="predictive")
+
+    def _train_with(matched: bytes) -> dict[str, Any]:
+        win = {"hits": 0, "steps": 0, "gate": [], "adv": [], "wrong_event": 0}
+        fake = ToldEvent(event_id=99, content=matched, cue=cue.clone())
+        circuit.store.best_match = lambda _query: fake  # type: ignore[method-assign]
+        before = _parameters_digest(dict(circuit.parameters()))
+        trainer._train_answer(
+            model,
+            circuit,
+            model.config,
+            tell_bytes=tell,
+            answer="阿蒙",
+            prev_byte=other[-1],
+            lr_address=0.15,
+            lr_gate=0.002,
+            win=win,
+        )
+        win["changed"] = _parameters_digest(dict(circuit.parameters())) != before
+        return win
+
+    wrong = _train_with(other)
+    assert wrong["steps"] == 0 and wrong["wrong_event"] >= 1 and not wrong["changed"]
+    right = _train_with(tell)
+    assert right["steps"] > 0 and right["wrong_event"] == 0 and right["changed"]
