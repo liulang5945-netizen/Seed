@@ -167,6 +167,7 @@ from .contracts import (
     WorldTransition,
 )
 from .contracts import MemoryState as NativeMemoryState
+from .copy_circuit import CopyCircuit, ToldContentStore, ToldEvent
 from .cross_region_learning import (
     CROSS_REGION_LEARNING_CHECKPOINT_FORMAT,
     CrossRegionCooperationLearner,
@@ -1115,6 +1116,7 @@ __all__ = [
     "ExecutiveDecision",
     "ExecutiveTrainingExample",
     "EpisodicField",
+    "CopyCircuit",
     "CueBindingBank",
     "CueBindingResult",
     "CueIdentityOrgan",
@@ -1133,6 +1135,8 @@ __all__ = [
     "StructuredToolCallCodec",
     "TextExpressionCodec",
     "ToolCall",
+    "ToldContentStore",
+    "ToldEvent",
     "GENERATION_CHECKPOINT_FORMAT",
     "TOOL_CALL_CODEC_FORMAT",
     "TEXT_EXPRESSION_CODEC_FORMAT",

@@ -1,6 +1,8 @@
 # R2 架构级立项：**复制回路（copy circuit）——「先告知→后提问」的结构性缺口与最小架构增量**（2026-09-25）
 
-状态：**停在所有者决策点**（§7）。前件：`M5_R2_ARCH_LEVEL_PROPOSAL_20260925.md`（三方案甲/乙/丙）＋
+状态：**A2.1＋A2.2 已实施，§4.1 结构存在性判据已通过**（读数见 §8；实施经所有者 2026-09-25「执行吧」批准）。
+A2.3（召回条件发射训练）与 A2.4（协议开闸）**未启动**——A2.3 需训练窗口（与 R2 排队），A2.4 属产品协议改动待裁。
+前件：`M5_R2_ARCH_LEVEL_PROPOSAL_20260925.md`（三方案甲/乙/丙）＋
 `M5_R2_T8_MECHANISM_DESIGN_20260925.md`（分裂诊断设计）。所有者裁定（2026-09-25）：**「R2 显示架构有问题，
 需要先解决架构的问题」**——本件把该裁定落成可实施的架构设计。
 
@@ -92,3 +94,46 @@ T8 的「(c) 召回后解码有罪」建立在**零向量注入**上（无效判
 
 **批准 A2.1＋A2.2 实施**（零训练、gate init=0 逐位不变、含 §4.1 结构存在性判据）；A2.3/A2.4 在 §4.1 绿后按预注册另行开闸。
 不批＝停在 A0 证据上（架构缺口已钉死，但 CAP D+E 维持 0）。
+→ **2026-09-25 所有者批准并已实施（见 §8）。**
+
+## §8 实施记录（2026-09-25）
+
+**落地面**（全部默认惰性，不挂载＝零行为变化）：
+
+- 新模块 `taiji/copy_circuit.py`——`ToldContentStore`（A2.1：字节序列＋段末皮质 cue，FIFO K 条，余弦 top-1 寻址）＋
+  `CopyCircuit`（A2.2：6 参数张量——`content_embed/query_state/query_content` 随机初始化，
+  `gate_state/gate_content/gate_bias` **零初始化**；`evidence()` 返回 257 维加性 logit 证据；
+  `address_override/gate_override` 为诊断专用显式覆写）。
+- `taiji/model.py`——`mount_copy_circuit()`/`record_told_content()` API；observe 在 `episodic_evidence` 处接线
+  （仅 predictive＋已挂载）；`parameter_tensors`/`parameter_count`/`_checkpoint_core`/`restore`/
+  `_protected_readout_parent_digest` 六面持久化；旧 checkpoint（无键）直载 ⇒ 未挂载。
+- `taiji/__init__.py` 导出三符号。
+
+**§4.1 判据读数**（判决件 `reports/taiji_r2_copy_circuit_existence_20260925.json`，base_16M＝seed_beta.pt）：
+
+- Arm-0 位级惰性：挂载前后 predictive 末位概率 digest **逐位相同**（`8e8727715c12c39d`）✓
+- Arm-1 oracle 发射：写入「我叫阿岩。」＋one-hot 寻址「阿」首字节位＋gate 覆写 20 ⇒
+  末位 argmax＝233（0xE9）✓ 且**冻结 greedy 生成首字节＝0xE9** ✓
+- ⇒ **内容→F1 发射通路存在，A2.3 取得训练资格**（(c) 判定不再翻案）。
+
+**合同测试** `tests/taiji_native/test_copy_circuit_contract.py` **5 绿**：位级惰性／零初始化证据恰零／
+oracle 发射／store 容量与余弦匹配／checkpoint 往返＋**防篡改**（从带 circuit 的 payload 摘键 ⇒
+identity lineage 拒绝，fail-closed）。
+
+**实施中撞出的架构事实（入册）**：copy_circuit 键**必须进 lineage 键集**——identity 的
+`parent_checkpoint_digest` 由 `_checkpoint_core()` 现算，恢复侧以 `_checkpoint_core_keys(...)` 重建；
+新持久器官不进键集＝恢复即红（首跑实测撞出，已双侧接线并钉测试）。
+
+**回归**：`tests/seed`（除 BOM 全仓扫描＝已知沙箱瓶颈）全绿；`tests/taiji_native` 全量 **1494 passed / 2 failed**——
+两条均与复制回路无关：① `test_b0_n2_stop_reason_disposition_contract`（确定性红：R2/collab 线 9/20 后新增
+6 个 stop_reason 消费者未过评审面登记——`run_taiji_collab_handoff_entry_evidence.py`、`run_taiji_unified_entry_evidence.py`、
+`train_taiji_r2_content_binding.py`、`train_taiji_r2_readout_retrain.py`、`taiji/collab_handoff.py`、
+`test_readout_retrain_runner_contract.py`；分类是那些线的决定，不代裁）；② `test_multistep_grounding_recovery`
+（flaky：单跑绿、全量负载下红，不在前两轮名单）。
+**顺带清障两笔（定性于本件）**：
+① 全量首跑 44 红＝**9/20 的 S45 canary 评估残留**（8 个 `s45-*.pt`，4 个已死 PID 写入 `output/manual-r5-canary/`）
+触发 `test_product_store_dir_holds_only_versioned_assets` 连带红——已按仓内惯例归档至
+`output/_archived_manual-r5-canary_20260925/`（gitignored，零提交面）。
+② **旧线退役的回归盲点**（9/23 未跑本套件）：共享夹具读已物理删除的 `frontend/package.json`，
+42 条 lineage/artifact 测试自 9/23 起红——已把 7 处夹具（5 个 eval 脚本＋2 个测试镜像）替换为
+`docs/FOLDER_STRUCTURE_RULES.md`（存在、UTF-8、与同批路径无碰撞），42 条转绿。

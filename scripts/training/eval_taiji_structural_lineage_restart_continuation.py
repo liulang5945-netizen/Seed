@@ -63,7 +63,7 @@ def _record_continuation_evidence(runtime: SeedRuntime) -> tuple[dict[str, objec
             "workbench.docs",
             "docs-continuation-frontend",
             "train",
-            "frontend/package.json",
+            "docs/FOLDER_STRUCTURE_RULES.md",
             0.8,
             0.0,
         ),

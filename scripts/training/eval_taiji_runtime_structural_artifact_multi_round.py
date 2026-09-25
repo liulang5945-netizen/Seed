@@ -77,7 +77,7 @@ def _record_round(
             "workbench.docs",
             f"{round_id}-docs-frontend",
             "train",
-            "frontend/package.json",
+            "docs/FOLDER_STRUCTURE_RULES.md",
             0.8,
             0.0,
         ),

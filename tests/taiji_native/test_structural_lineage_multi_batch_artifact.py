@@ -31,7 +31,7 @@ def _record_second_round(runtime) -> tuple[dict[str, object], ...]:
         (14, "workbench.code", "code-isolation-config", "train", "pyproject.toml"),
         (15, "workbench.code", "code-isolation-holdout", "holdout", "plans/README.md"),
         (16, "workbench.docs", "docs-isolation-roadmap", "train", "plans/README.md"),
-        (17, "workbench.docs", "docs-isolation-frontend", "train", "frontend/package.json"),
+        (17, "workbench.docs", "docs-isolation-frontend", "train", "docs/FOLDER_STRUCTURE_RULES.md"),
         (18, "workbench.docs", "docs-isolation-holdout", "holdout", "README.md"),
     )
     return tuple(

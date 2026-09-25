@@ -26,6 +26,7 @@ from .adaptive_residual_growth import (
 )
 from .adaptive_residual_shadow import AdaptiveResidualShadow
 from .config import TaijiConfig, validate_episodic_learning_target
+from .copy_circuit import CopyCircuit
 from .developmental_synapse import (
     DevelopmentalReplayBuffer,
     DevelopmentalReplayEvent,
@@ -81,6 +82,7 @@ class Taiji:
     LEGACY_STATE_VERSIONS = frozenset({5, 6})
     IDENTITY_GROWTH_FORMAT = "taiji-native-identity-growth-v1"
     GATED_TEMPORAL_CANDIDATE_KEY = "gated_temporal_candidate"
+    COPY_CIRCUIT_KEY = "copy_circuit"
     GATED_TEMPORAL_CANDIDATE_SEED_OFFSET = 5927
     ADAPTIVE_RESIDUAL_BRIDGE_KEY = "adaptive_residual_bridge"
     ADAPTIVE_RESIDUAL_BRIDGE_SEED_OFFSET = 7183
@@ -139,6 +141,11 @@ class Taiji:
         # checkpoints, so the default v10 path retains its original payload
         # and prediction behavior exactly.
         self._gated_temporal_candidate: GatedMultiTimescaleTemporalResidual | None = None
+        # R2 copy circuit (A2.1+A2.2): lazy-mounted, gate zero-initialized.
+        # Mounting moves no logit (bit-identical outputs, pinned by contract
+        # tests) but IS part of checkpoint content addressing, so the circuit
+        # key joins the lineage digest key set below.
+        self._copy_circuit: CopyCircuit | None = None
         self._adaptive_residual_bridge: AdaptiveResidualBridge | None = None
         self._adaptive_residual_growth_trigger: AdaptiveResidualGrowthTrigger | None = None
         self._adaptive_residual_growth_candidate: AdaptiveResidualGrowthCandidate | None = None
@@ -702,6 +709,31 @@ class Taiji:
         after = content_digest(self._gated_temporal_candidate.to_payload())
         return before, after
 
+    @torch.no_grad()
+    def mount_copy_circuit(self, *, max_events: int = 8) -> None:
+        """Attach the R2 copy circuit (A2.1+A2.2). Gate zero-init ⇒ predictions unchanged."""
+
+        if self._copy_circuit is not None:
+            raise RuntimeError("copy circuit is already mounted")
+        self._copy_circuit = CopyCircuit(self.config, max_events=max_events, device=self.device)
+
+    @property
+    def copy_circuit(self) -> CopyCircuit | None:
+        return self._copy_circuit
+
+    @torch.no_grad()
+    def record_told_content(self, content: bytes) -> int:
+        """A2.1 language write gate: store told bytes + the current cortical cue.
+
+        Works in any dynamics state (no act/settle needed, unlike the action-only
+        episodic write path), and never mutates the fabric or readout surfaces.
+        """
+
+        if self._copy_circuit is None:
+            raise RuntimeError("copy circuit is not mounted")
+        cue = self.fabric.cortical_context(self._state.regions)
+        return self._copy_circuit.store.record(bytes(content), cue.detach().cpu().clone())
+
     @property
     def adaptive_residual_bridge_enabled(self) -> bool:
         """Whether the R3 adaptive residual population is attached."""
@@ -1262,6 +1294,8 @@ class Taiji:
         }
         if self._gated_temporal_candidate is not None:
             payload[self.GATED_TEMPORAL_CANDIDATE_KEY] = self._gated_temporal_candidate.to_payload()
+        if self._copy_circuit is not None:
+            payload[self.COPY_CIRCUIT_KEY] = self._copy_circuit.to_payload()
         if self._adaptive_residual_bridge is not None:
             payload[self.ADAPTIVE_RESIDUAL_BRIDGE_KEY] = self._adaptive_residual_bridge.to_payload()
         if self._developmental_f1_bundle is not None:
@@ -2069,6 +2103,15 @@ class Taiji:
         )
         if identity_evidence is not None:
             episodic_evidence = episodic_evidence + identity_evidence
+        if readout == "predictive" and self._copy_circuit is not None:
+            # R2 copy circuit (A2.2): additive content evidence in logit space.
+            # The zero-initialized gate makes this an exact zero vector until
+            # trained, so mounting moves no logit; the store is empty by
+            # default, so the record-gate (A2.1) is inert until used.
+            episodic_evidence = episodic_evidence + self._copy_circuit.evidence(
+                cue=self.fabric.cortical_context(regions),
+                f1_context=context,
+            )
         if readout == "predictive":
             probabilities = predictive_readout.probabilities(
                 context,
@@ -2966,6 +3009,8 @@ class Taiji:
         )
         if self._gated_temporal_candidate is not None:
             tensors += self._gated_temporal_candidate.parameter_tensors()
+        if self._copy_circuit is not None:
+            tensors += self._copy_circuit.parameter_tensors()
         if self._adaptive_residual_bridge is not None:
             tensors += self._adaptive_residual_bridge.parameter_tensors()
         if self._active_predictive_readout is not None:
@@ -3009,6 +3054,8 @@ class Taiji:
             active += sum(
                 tensor.numel() for tensor in self._gated_temporal_candidate.parameter_tensors()
             )
+        if self._copy_circuit is not None:
+            active += sum(tensor.numel() for tensor in self._copy_circuit.parameter_tensors())
         if self._adaptive_residual_bridge is not None:
             active += sum(
                 tensor.numel() for tensor in self._adaptive_residual_bridge.parameter_tensors()
@@ -3100,6 +3147,8 @@ class Taiji:
         }
         if self._gated_temporal_candidate is not None:
             core[self.GATED_TEMPORAL_CANDIDATE_KEY] = self._gated_temporal_candidate.to_payload()
+        if self._copy_circuit is not None:
+            core[self.COPY_CIRCUIT_KEY] = self._copy_circuit.to_payload()
         if self._adaptive_residual_bridge is not None:
             core[self.ADAPTIVE_RESIDUAL_BRIDGE_KEY] = self._adaptive_residual_bridge.to_payload()
         if self._adaptive_residual_growth_trigger is not None:
@@ -3253,6 +3302,19 @@ class Taiji:
             )
             candidate.load_payload(candidate_payload)
             self._gated_temporal_candidate = candidate
+        circuit_payload = checkpoint.get(self.COPY_CIRCUIT_KEY)
+        self._copy_circuit = None
+        if circuit_payload is not None:
+            if is_legacy_checkpoint:
+                raise ValueError("legacy checkpoint cannot contain a copy circuit")
+            if not isinstance(circuit_payload, Mapping):
+                raise ValueError("copy circuit checkpoint payload is invalid")
+            store_payload = circuit_payload.get("store")
+            if not isinstance(store_payload, Mapping):
+                raise ValueError("copy circuit checkpoint store payload is invalid")
+            self.mount_copy_circuit(max_events=int(store_payload["max_events"]))
+            assert self._copy_circuit is not None
+            self._copy_circuit.load_payload(circuit_payload)
         bridge_payload = checkpoint.get(self.ADAPTIVE_RESIDUAL_BRIDGE_KEY)
         self._adaptive_residual_bridge = None
         if bridge_payload is not None:
@@ -3353,6 +3415,7 @@ class Taiji:
                         include_temporal_candidate=(
                             self.GATED_TEMPORAL_CANDIDATE_KEY in checkpoint
                         ),
+                        include_copy_circuit=self.COPY_CIRCUIT_KEY in checkpoint,
                         include_adaptive_residual_bridge=(
                             self.ADAPTIVE_RESIDUAL_BRIDGE_KEY in checkpoint
                         ),
@@ -3486,6 +3549,7 @@ class Taiji:
         include_predictive: bool = True,
         include_predictive_context: bool | None = None,
         include_temporal_candidate: bool = False,
+        include_copy_circuit: bool = False,
         include_adaptive_residual_bridge: bool = False,
         include_adaptive_residual_growth: bool = False,
         include_adaptive_residual_candidate: bool = False,
@@ -3515,6 +3579,8 @@ class Taiji:
             keys += ("predictive_context",)
         if include_temporal_candidate:
             keys += (Taiji.GATED_TEMPORAL_CANDIDATE_KEY,)
+        if include_copy_circuit:
+            keys += (Taiji.COPY_CIRCUIT_KEY,)
         if include_adaptive_residual_bridge:
             keys += (Taiji.ADAPTIVE_RESIDUAL_BRIDGE_KEY,)
         if include_adaptive_residual_growth:

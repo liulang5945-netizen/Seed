@@ -1,0 +1,18 @@
+{
+  "format": "taiji-r2-copy-circuit-existence-v1",
+  "prereg": "plans/reference/M5_R2_ARCH_COPY_CIRCUIT_PROJECT_20260925.md §4.1",
+  "checkpoint": "seed_beta.pt",
+  "arm0_bitwise_inert": {
+    "pass": true,
+    "digest_before": "8e8727715c12c39d",
+    "digest_after_mount": "8e8727715c12c39d"
+  },
+  "arm1_oracle_emission": {
+    "argmax_pass": true,
+    "generation_first_byte_pass": true,
+    "target_byte": 233,
+    "observed_first_byte": 233,
+    "gate_override": 20.0
+  },
+  "verdict": "§4.1 成立：内容→F1 发射通路存在（A2.3 取得训练资格）"
+}

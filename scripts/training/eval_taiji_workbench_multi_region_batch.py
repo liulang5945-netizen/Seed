@@ -186,7 +186,7 @@ def evaluate() -> dict[str, object]:
             region_id="workbench.docs",
             task_slice_id="docs-frontend",
             partition="train",
-            path="frontend/package.json",
+            path="docs/FOLDER_STRUCTURE_RULES.md",
             prediction_error=0.8,
             holdout_transfer=0.0,
         ),
