@@ -1,0 +1,229 @@
+{
+  "format": "taiji-r2-cap-checkpoint-scores-v1",
+  "prereg": "plans/reference/M5_R2_T6_CAP_PREREG_20260924.md",
+  "dimensions": [
+    "D",
+    "E"
+  ],
+  "sanity_base_d_plus_e_zero": true,
+  "scores": {
+    "t5": {
+      "checkpoint": "E:\\Seed\\output\\taiji_r2_t5\\t5_r0_cue\\checkpoint_5000000.pt",
+      "cap_d_plus_e": {
+        "sum_machine_scored_correct": 0,
+        "per_dimension": {
+          "D": {
+            "machine_scored_items": 16,
+            "machine_scored_correct": 0,
+            "machine_normalised": 0.0,
+            "pending_human_review_items": 4,
+            "untested_items": 0
+          },
+          "E": {
+            "machine_scored_items": 20,
+            "machine_scored_correct": 0,
+            "machine_normalised": 0.0,
+            "pending_human_review_items": 0,
+            "untested_items": 0
+          }
+        },
+        "identity": {
+          "git_head": "4c7bf194f18a6661801c277a88a5f6167c33f92f",
+          "checkpoint_sha256": "2be32bf3300dae5858a5e7882ebe3af1650620b1e0a7621e7ba4f1d9d507d80e",
+          "eval_set_sha256": "310b6d642d3937660c1c938ce8bc1b0c5f5b6a80c647ad32a5e371923efcc5f1"
+        }
+      },
+      "m1_sentence_formation": {
+        "n": 43,
+        "well_formed_rate": 0.0465,
+        "prompt_echo_8gram_rate": 0.0,
+        "seconds": 14.4,
+        "samples": [
+          "U؟\\ŤŗѺttGGŴtGź,ҾƄ5AتﱲwxҾ\u0012\u0004Jࠌ\ns\u0013S]E,ҙѣ���♙;9tt\rŴttGG\t,s٥VŸ𰳳Zאּ$F\u0005\u0019``+԰\"",
+          "U\bػt\u0004f쑔٥{{rrʍ(+V+箤7rrr(+V+ؐ~w~+V{rΎ`\u0000\u0019``\u0000gۍ.���\u0014r憉e8Ύttt\n_ƽw`+䚚\u000b%\b\u0019΀+ 2rrrz6Ŵt",
+          "UػtGŤ7rr+灴\u0013++/ܰ/\u0005\u0017E΀2𹊀++納.\u0010\u0012\u0013++箤77rrʢtƐ9\bŰ%%+A\u0017%\u001a쑰%%ʥŲ wS`+ﬔ\u000fҰ/\u0005۰%ʇxҾ\u0012"
+        ],
+        "prompt_meta": {
+          "source": "cap0_eval_set_v2: dimensions B/G",
+          "file": "plans/manifests/cap0_eval_set_v2.json",
+          "count": 43
+        },
+        "controls": {
+          "real_pass_rate": 1.0,
+          "shuffled_fail_rate": 0.9567,
+          "real_median_nll": -6.8136,
+          "shuffled_median_nll": -8.7833,
+          "threshold": -7.8,
+          "n": 300
+        }
+      },
+      "seconds": 133.67
+    },
+    "t1": {
+      "checkpoint": "E:\\Seed\\output\\taiji_r2_t1t2\\t1\\checkpoint_5000000.pt",
+      "cap_d_plus_e": {
+        "sum_machine_scored_correct": 0,
+        "per_dimension": {
+          "D": {
+            "machine_scored_items": 16,
+            "machine_scored_correct": 0,
+            "machine_normalised": 0.0,
+            "pending_human_review_items": 4,
+            "untested_items": 0
+          },
+          "E": {
+            "machine_scored_items": 20,
+            "machine_scored_correct": 0,
+            "machine_normalised": 0.0,
+            "pending_human_review_items": 0,
+            "untested_items": 0
+          }
+        },
+        "identity": {
+          "git_head": "c643ee42092f96180512518aac9c6fc8c29c9537",
+          "checkpoint_sha256": "929c9abb956bce9e4f0baf826db65af57fd521751744e1e869ee5269a8786c31",
+          "eval_set_sha256": "310b6d642d3937660c1c938ce8bc1b0c5f5b6a80c647ad32a5e371923efcc5f1"
+        }
+      },
+      "m1_sentence_formation": {
+        "n": 43,
+        "well_formed_rate": 0.1163,
+        "prompt_echo_8gram_rate": 0.0,
+        "seconds": 14.19,
+        "samples": [
+          "U\b؟\\L숥Ťų\tźTTT\"㲛)\u0005(t!tJJ春V+納\n_bتooooooooooo FF\u0005\u0004fذ%ʇ``+ԫϹ/O,Ҿ\u001e+؟\u0015ۍ.jR\u0002t\n_ƽw`",
+          "U\bػttJJю\u0000ܰō.ࠩ+]]EZt΀++%ػt`+6ŶfQ䀀2rrrr(\f6Ũ\u0001\\LLL\u001f]FF\u0005\u0019``+`+\"FتW_ƽw``+\u0017)``+ḱwa6Ϋ\u0004f",
+          "UػtGGŶfі\tŶfQ!_ƽZ`+m`ߙࠛ`Ύ`ۍ\n5o\u001a\u001ax\u0015 2џ::rz?򪴍tt`GrrzŴ} ź‱اrrrz6箤vtkntJי;9n"
+        ],
+        "prompt_meta": {
+          "source": "cap0_eval_set_v2: dimensions B/G",
+          "file": "plans/manifests/cap0_eval_set_v2.json",
+          "count": 43
+        },
+        "controls": {
+          "real_pass_rate": 1.0,
+          "shuffled_fail_rate": 0.9567,
+          "real_median_nll": -6.8136,
+          "shuffled_median_nll": -8.7833,
+          "threshold": -7.8,
+          "n": 300
+        }
+      },
+      "seconds": 125.5
+    },
+    "abl": {
+      "checkpoint": "E:\\Seed\\output\\taiji_r2_t1t2\\abl_fabric\\checkpoint_5000000.pt",
+      "cap_d_plus_e": {
+        "sum_machine_scored_correct": 0,
+        "per_dimension": {
+          "D": {
+            "machine_scored_items": 16,
+            "machine_scored_correct": 0,
+            "machine_normalised": 0.0,
+            "pending_human_review_items": 4,
+            "untested_items": 0
+          },
+          "E": {
+            "machine_scored_items": 20,
+            "machine_scored_correct": 0,
+            "machine_normalised": 0.0,
+            "pending_human_review_items": 0,
+            "untested_items": 0
+          }
+        },
+        "identity": {
+          "git_head": "c643ee42092f96180512518aac9c6fc8c29c9537",
+          "checkpoint_sha256": "7bf4b406702f5d593f53a2e5bd65b160b86d48018c3307465a7210f5aabc1c00",
+          "eval_set_sha256": "310b6d642d3937660c1c938ce8bc1b0c5f5b6a80c647ad32a5e371923efcc5f1"
+        }
+      },
+      "m1_sentence_formation": {
+        "n": 43,
+        "well_formed_rate": 0.093,
+        "prompt_echo_8gram_rate": 0.0,
+        "seconds": 14.33,
+        "samples": [
+          "ﲻȤϹ\u0016{rrGGGGG\u001fSMt*+ػ7srrG\fǉ۠`+жѸrr(\u000e\u0011rr((+%ػ\u0012\n\u0016{\"7s\u0013T♬t*㸰\"J\u0017j2oooooooo㖛ŶLL!\u001fKGGG",
+          "\r\r,7`+Ԍl\u0010\u0012We󬥥\u0013T\"s\u0013T\"J1`+Ḭrr(((\u000e\u0011rr(((\u000e\u0011rr((\u000e\u0011rnLLLLLLL%%A%A%ت%Aʍ\t,/O,ҾΖ\u0004JέO,ҾΖ\u0004JJ\u0017",
+          "ﲟv+Afؐ簌ौ~\u0005\u001b\u0015(ooooooo㛐mFA]]E,үrr(+ᐃ?\"JJ\u0017\nU\u000b\u0012\u0004f\u001dT㸖7rrzz?Zꢲ쑌`+䥧󎬥{rrr((+䍐+"
+        ],
+        "prompt_meta": {
+          "source": "cap0_eval_set_v2: dimensions B/G",
+          "file": "plans/manifests/cap0_eval_set_v2.json",
+          "count": 43
+        },
+        "controls": {
+          "real_pass_rate": 1.0,
+          "shuffled_fail_rate": 0.9567,
+          "real_median_nll": -6.8136,
+          "shuffled_median_nll": -8.7833,
+          "threshold": -7.8,
+          "n": 300
+        }
+      },
+      "seconds": 127.05
+    },
+    "base": {
+      "checkpoint": "E:\\Seed\\checkpoints\\seed_beta.pt",
+      "cap_d_plus_e": {
+        "sum_machine_scored_correct": 0,
+        "per_dimension": {
+          "D": {
+            "machine_scored_items": 16,
+            "machine_scored_correct": 0,
+            "machine_normalised": 0.0,
+            "pending_human_review_items": 4,
+            "untested_items": 0
+          },
+          "E": {
+            "machine_scored_items": 20,
+            "machine_scored_correct": 0,
+            "machine_normalised": 0.0,
+            "pending_human_review_items": 0,
+            "untested_items": 0
+          }
+        },
+        "identity": {
+          "git_head": "c643ee42092f96180512518aac9c6fc8c29c9537",
+          "checkpoint_sha256": "ad2a06465e0ef78c75aff7302a6f7a2ae11825d2f19361d9d65926006f3bf793",
+          "eval_set_sha256": "310b6d642d3937660c1c938ce8bc1b0c5f5b6a80c647ad32a5e371923efcc5f1"
+        }
+      },
+      "m1_sentence_formation": {
+        "n": 43,
+        "well_formed_rate": 0.2326,
+        "prompt_echo_8gram_rate": 0.0,
+        "seconds": 14.34,
+        "samples": [
+          "我们一一丈（是文君则了了下伈（是文人人人人人五䟰文君则何家则你一",
+          "我为丈（（则为君刺人人人人人人个刑佐为个君吼䚄吼我他吼为吼吼利为",
+          "分君则人个刈（，为个君刺人人人人为人人为予有君人为，你为一䃽吰，"
+        ],
+        "prompt_meta": {
+          "source": "cap0_eval_set_v2: dimensions B/G",
+          "file": "plans/manifests/cap0_eval_set_v2.json",
+          "count": 43
+        },
+        "controls": {
+          "real_pass_rate": 1.0,
+          "shuffled_fail_rate": 0.9567,
+          "real_median_nll": -6.8136,
+          "shuffled_median_nll": -8.7833,
+          "threshold": -7.8,
+          "n": 300
+        }
+      },
+      "seconds": 117.9
+    }
+  },
+  "frozen_summary": {
+    "S_t5": 0,
+    "S_t1": 0,
+    "S_abl": 0,
+    "S_base": 0
+  },
+  "verdict": {
+    "verdict": "SEPARABLE_CUE_DOES_NOT_BUY_ANSWERS",
+    "note": "下一步才轮到稳定性归因"
+  }
+}
