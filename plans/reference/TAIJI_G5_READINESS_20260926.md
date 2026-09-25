@@ -81,6 +81,8 @@ this scaffold lifetime. **This is the keyless first-run configuration lane**; th
 ② **D3 的表层半句验到了**：同一次 diff 里 DeepSeek 行的状态图标从 `API 密钥已配置` 变成 **`API 密钥缺失`**，并且其下 `textbox "API 密钥"`（placeholder 输入 API 密钥）在场 ⇒ 默认路由**可输入、无凭据**这条不再只有 API 层证据。
 ③ **8 条红的共同形态**＝全在等"添加一个 API Key 开始使用"这张首启动卡片或其字段（`locator.waitFor` 15 s／30 s 超时）。与上游设计自洽的解释是：该卡片只在"没有任何可用路由"时出现，而本 fork 在运行时在场时**已经有一条免凭据可用路由**（`onboarding-usable-provider` 这条测试的名字本身就说明"配好另一个可用提供商就会结束 onboarding"）。⇒ **这条因果本轮没有钉死**：判别实验要把 8000 端口的运行时停掉再跑一次，而那是并行会话共用的服务，**停它由所有者排期，我不做**。登记为 08 §6 ⑪。
 
+**判别实验已跑，因果钉死（2026-09-26 同日第三批，本 fork 新增两个文件）**：不改上游任何一条 lane，而是新写一条最小实验（`apps/web/tests/taiji-runtime-absent.e2e.ts` ＋ 同目录 `taiji-runtime-absent.overlay.yml`），走 scaffold 已有的 overlay 入口（`scaffold.ts:554-556`）把 `llm-taiji` 的 `baseURL` 指到死端口 `http://127.0.0.1:9`（**共享运行时一次都没停**）。读数 **1 passed／4.18 s**，三条断言同时成立：`ctx.llm.listProviders()` **不含** `taiji-local`、**含** `deepseek-official`、且首启动的「添加一个 API Key 开始使用」卡片**回来了**（卡内 `API 密钥` 输入框在场）。⇒ 上一批那 8 条红的主因确认：**本地运行时在场时本 fork 多了一条免凭据可用路由，首启动因此不再索要 key**——这条产品行为正面支持 G5 的「装起即用」，也正面解释那 4 条上游 lane 为何在 fork 侧结构性对不上。**留一处边界**：本实验钉的是「路由撤回 ⇒ 要 key 卡片出现」这一对关系，**没有**区分撤回的具体分支（健康探测不通过，还是 overlay 整行替换配置导致该包失效）；钉死只需再加一条 `expect(ctx.llm.listConfigurableProviders())` 的断言（声明面应仍在）——**未做，登记在案**。
+
 ## 4 · 需要所有者拍板的三条：D3／D2／R4（按能声称的最强结论排；原 R1 已并入 R4）
 
 * **R1｜打包实跑在哪台机器**：**这条的前提已被同日实跑否证，实际并入了 R4**。原写法假设"要先装 pnpm 与桌面工具链"；事实是 corepack 无需全局安装即可跑锁定的 pnpm 11.7.0（08 §6 ④），且本机已实跑 `package:desktop:dir` 一次——**它在拉任何二进制之前**先撞 R4 的 `.env.windows`（`build:desktop` 侧 rc=0）。⇒ 真问题不再是"哪台机器能跑"，而是"填不出 R4 那组产品值就一步也往前走"；可做的最强动作相应变为：**R4 落定后在本机跑 `package:desktop:dir` 的 unsigned 变体**，拿到"能出 dir 产物"的证据（不必换机器、不必降级到只跑 `build:desktop`）。
