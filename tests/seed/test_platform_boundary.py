@@ -3,9 +3,101 @@
 from __future__ import annotations
 
 import ast
-from pathlib import Path
+import os
+from pathlib import Path, PurePosixPath
 
 REPO = Path(__file__).resolve().parents[2]
+
+#: 不是源码面的目录名（依赖树、构建产物、本地虚拟环境、CLI/会话临时 worktree）。
+#: 前缀族（`.venv*`、`.dsh-sbx*`）按 R1「规则按命名约定写，不按实例名写」列——
+#: 逐个实例名列举必然被下一个同类目录漏掉（`.gitignore:264` 的 `/.dsh-sbx*/` 是同一条约定的锚）。
+SKIP_PARTS = {".git", "node_modules", "build", "dist", "_libs", ".codex"}
+SKIP_PREFIXES = (".venv", ".dsh-sbx")
+
+
+def _is_skipped_dir(name: str) -> bool:
+    return name in SKIP_PARTS or name.startswith(SKIP_PREFIXES)
+
+
+def _walk_python_sources(root: Path) -> list[Path]:
+    """文件系统遍历（跳过依赖树/构建产物/虚拟环境/会话沙箱）。
+
+    旧守卫写的是 `REPO.rglob("*.py")` 再按 path parts 过滤——**过滤发生在遍历之后**，
+    于是 `taiji-harness/node_modules`（pnpm 符号链接森林，仅前四层就 15862 个目录，
+    而其中 `.py` 命中数为 **0**）仍被完整遍历；两次全量套件都挂在那里
+    （25 秒内 CPU 增量 0.0、无子进程＝阻塞在 reparse-point 的 I/O，不是"慢"）。
+    """
+    found: list[Path] = []
+    stack = [root]
+    while stack:
+        current = stack.pop()
+        try:
+            with os.scandir(current) as entries:
+                listed = list(entries)
+        except OSError:
+            continue
+        for entry in listed:
+            if entry.is_dir(follow_symlinks=False):
+                if _is_skipped_dir(entry.name):
+                    continue
+                stack.append(Path(entry.path))
+            elif entry.name.endswith(".py"):
+                found.append(Path(entry.path))
+    return found
+
+
+def _python_sources(root: Path) -> list[Path]:
+    """守卫的**扫描面＝版本控制认为存在的那份源码**（tracked ＋ 未被忽略的 untracked）。
+
+    为什么不"修修 rglob 继续扫全仓"：实测 `rglob` 口径下有 30061 个 `.py`，其中
+    **28681 个在 `output/`**（训练残留、gitignored）——守卫一直在把非源码当源码扫，
+    既制造上面那个挂死，也让"我们的源码没有 BOM"这句话被 28k 个外来文件稀释。
+    按 git 取面一次性解决两件事：面就是 CI 检出的面（1718 个），且新增同类沙箱目录
+    不需要再往 `_is_skipped_dir` 里补条目（`.gitignore` 才是那条约定的单一出处）。
+    `git` 不可用时退回遍历（守卫不许因环境缺工具而静默不判）。
+    """
+    import subprocess
+
+    try:
+        proc = subprocess.run(
+            ["git", "ls-files", "--cached", "--others", "--exclude-standard", "-z", "--", "*.py"],
+            cwd=str(root),
+            capture_output=True,
+            check=True,
+        )
+    except (OSError, subprocess.CalledProcessError):
+        return _walk_python_sources(root)
+    names = [entry for entry in proc.stdout.decode("utf-8").split("\0") if entry]
+    found = [root / name for name in names]
+    missing = [path for path in found if not path.is_file()]
+    if missing:
+        raise AssertionError(f"git 列出的源码文件不存在（扫描面失真）：{missing[:5]}")
+    return found
+
+
+def test_source_face_is_the_git_face_not_the_whole_disk() -> None:
+    """扫描面必须等于 git 面，且在给定子树里与文件系统遍历**逐集合相等**。
+
+    这条是把"修挂死"与"削弱守卫"分开的凭据：只看 `scanned > 100` 挡不住某一层被悄悄跳过。
+    子树里不许有 gitignored 内容，否则两边天然不等——所以断言同时要求
+    "遍历比 git 多出来的部分只能是本地噪音（沙箱/依赖/构建目录）"。
+    """
+    for sub in ("taiji", "api", "scripts/training", "tests/seed"):
+        root = REPO / sub
+        walked = {p.relative_to(root).as_posix() for p in _walk_python_sources(root)}
+        gitted = {p.relative_to(root).as_posix() for p in _python_sources(root)}
+        assert walked == gitted, (
+            f"{sub}: git 面与遍历面不等（遍历独有 {sorted(walked - gitted)[:5]}，"
+            f"git 独有 {sorted(gitted - walked)[:5]}）"
+        )
+    whole_walked = {p.relative_to(REPO).as_posix() for p in _walk_python_sources(REPO)}
+    whole_git = {p.relative_to(REPO).as_posix() for p in _python_sources(REPO)}
+    assert whole_git <= whole_walked, "git 面里有遍历看不见的文件（扫描面不可能收窄成这样）"
+    extra = sorted(whole_walked - whole_git)
+    assert all(
+        _is_skipped_dir(PurePosixPath(name).parts[0]) or name.startswith("output/")
+        for name in extra
+    ), f"多出来的文件不属于任何本地噪音目录，前 5 个：{extra[:5]}"
 
 
 def _imports(path: Path) -> set[str]:
@@ -153,14 +245,10 @@ def test_python_sources_have_no_utf8_bom() -> None:
     # BOM 是隐形炸弹：black 走 tokenize.open 会静默剥离，CI 因此长绿，
     # 但任何 ast.parse(read_text(encoding="utf-8")) 都会炸 U+FEFF。
     # scripts/archive/ 内的脚本已因历史 mojibake 无法解析，不在守卫范围。
-    # .codex/ 是本地 CLI 的 git worktree/临时文件（已被 .gitignore 忽略，不进 CI，
-    # 但会在本地 rglob 命中）；.venv* 是本地虚拟环境。两者都不是源码守卫对象。
-    skip_parts = {".git", "node_modules", "build", "dist", "_libs", ".venv", ".venv310", ".codex"}
+    # 依赖树/构建产物/本地虚拟环境由 `_python_sources` 在**遍历时**就排除（见其 docstring）。
     scanned = 0
     offenders: list[str] = []
-    for path in REPO.rglob("*.py"):
-        if any(part in skip_parts for part in path.parts):
-            continue
+    for path in _python_sources(REPO):
         relative = path.relative_to(REPO).as_posix()
         if relative.startswith("scripts/archive/"):
             continue
