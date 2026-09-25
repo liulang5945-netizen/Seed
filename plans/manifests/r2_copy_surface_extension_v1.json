@@ -1,0 +1,1319 @@
+{
+  "format": "r2-copy-surface-extension-v1",
+  "frozen_on": "2026-09-25",
+  "frozen_before_any_candidate_score": true,
+  "purpose": "§4.3a 表层子判据的分母扩展（成句率/可解码率）；**不作能力判据**——严格真命中的主分母仍是 CAP D 维 16 题（不变）",
+  "prereg": "plans/reference/SPEC-A-21_r2_surface_extension_prereg_20260925.md",
+  "generator": "scripts/training/build_r2_copy_surface_extension.py",
+  "seed": 20260925,
+  "count": 104,
+  "dimensions": {
+    "X": {
+      "name": "告知→提问（表层扩展集）",
+      "count": 104,
+      "items": [
+        {
+          "id": "X001",
+          "family": "given_then_ask",
+          "kind": "name",
+          "turns": [
+            "我叫明轩。",
+            "我的名字是什么？"
+          ],
+          "expected_contains": [
+            "明轩"
+          ]
+        },
+        {
+          "id": "X002",
+          "family": "with_distractor",
+          "kind": "city",
+          "turns": [
+            "我住在苏州。",
+            "地铁上被人踩了一脚。",
+            "我住哪？"
+          ],
+          "expected_contains": [
+            "苏州"
+          ]
+        },
+        {
+          "id": "X003",
+          "family": "given_then_ask",
+          "kind": "number",
+          "turns": [
+            "我最喜欢的数字是36。",
+            "那个数字是多少？"
+          ],
+          "expected_contains": [
+            "36"
+          ]
+        },
+        {
+          "id": "X004",
+          "family": "with_distractor",
+          "kind": "project",
+          "turns": [
+            "我的项目叫海图。",
+            "简述一下光合作用的过程。",
+            "我的项目叫什么？"
+          ],
+          "expected_contains": [
+            "海图"
+          ]
+        },
+        {
+          "id": "X005",
+          "family": "given_then_ask",
+          "kind": "drink",
+          "turns": [
+            "我平时爱喝乌龙。",
+            "我爱喝什么？"
+          ],
+          "expected_contains": [
+            "乌龙"
+          ]
+        },
+        {
+          "id": "X006",
+          "family": "with_distractor",
+          "kind": "pet",
+          "turns": [
+            "我养了一只雪鸮。",
+            "旧钥匙串找不到了。",
+            "我养的动物是什么？"
+          ],
+          "expected_contains": [
+            "雪鸮"
+          ]
+        },
+        {
+          "id": "X007",
+          "family": "given_then_ask",
+          "kind": "book",
+          "turns": [
+            "我最近在读《海客谈瀛》。",
+            "我最近在读什么书？"
+          ],
+          "expected_contains": [
+            "海客谈瀛"
+          ]
+        },
+        {
+          "id": "X008",
+          "family": "with_distractor",
+          "kind": "dish",
+          "turns": [
+            "我最爱吃小笼包。",
+            "请介绍一下青藏高原。",
+            "我最爱吃什么？"
+          ],
+          "expected_contains": [
+            "小笼包"
+          ]
+        },
+        {
+          "id": "X009",
+          "family": "given_then_ask",
+          "kind": "name",
+          "turns": [
+            "我叫雨桐。",
+            "我的名字是什么？"
+          ],
+          "expected_contains": [
+            "雨桐"
+          ]
+        },
+        {
+          "id": "X010",
+          "family": "with_distractor",
+          "kind": "city",
+          "turns": [
+            "我住在西安。",
+            "楼下新开的面馆排了很长队。",
+            "我住哪？"
+          ],
+          "expected_contains": [
+            "西安"
+          ]
+        },
+        {
+          "id": "X011",
+          "family": "given_then_ask",
+          "kind": "number",
+          "turns": [
+            "我最喜欢的数字是21。",
+            "那个数字是多少？"
+          ],
+          "expected_contains": [
+            "21"
+          ]
+        },
+        {
+          "id": "X012",
+          "family": "with_distractor",
+          "kind": "project",
+          "turns": [
+            "我的项目叫晨星。",
+            "请讲讲活字印刷术的来历。",
+            "我的项目叫什么？"
+          ],
+          "expected_contains": [
+            "晨星"
+          ]
+        },
+        {
+          "id": "X013",
+          "family": "given_then_ask",
+          "kind": "drink",
+          "turns": [
+            "我平时爱喝苏打。",
+            "我爱喝什么？"
+          ],
+          "expected_contains": [
+            "苏打"
+          ]
+        },
+        {
+          "id": "X014",
+          "family": "with_distractor",
+          "kind": "pet",
+          "turns": [
+            "我养了一只浣熊。",
+            "旧钥匙串找不到了。",
+            "我养的动物是什么？"
+          ],
+          "expected_contains": [
+            "浣熊"
+          ]
+        },
+        {
+          "id": "X015",
+          "family": "given_then_ask",
+          "kind": "book",
+          "turns": [
+            "我最近在读《水经注疏》。",
+            "我最近在读什么书？"
+          ],
+          "expected_contains": [
+            "水经注疏"
+          ]
+        },
+        {
+          "id": "X016",
+          "family": "with_distractor",
+          "kind": "dish",
+          "turns": [
+            "我最爱吃辣子鸡。",
+            "简述一下光合作用的过程。",
+            "我最爱吃什么？"
+          ],
+          "expected_contains": [
+            "辣子鸡"
+          ]
+        },
+        {
+          "id": "X017",
+          "family": "given_then_ask",
+          "kind": "name",
+          "turns": [
+            "我叫承泽。",
+            "我的名字是什么？"
+          ],
+          "expected_contains": [
+            "承泽"
+          ]
+        },
+        {
+          "id": "X018",
+          "family": "with_distractor",
+          "kind": "city",
+          "turns": [
+            "我住在青岛。",
+            "旧钥匙串找不到了。",
+            "我住哪？"
+          ],
+          "expected_contains": [
+            "青岛"
+          ]
+        },
+        {
+          "id": "X019",
+          "family": "given_then_ask",
+          "kind": "number",
+          "turns": [
+            "我最喜欢的数字是77。",
+            "那个数字是多少？"
+          ],
+          "expected_contains": [
+            "77"
+          ]
+        },
+        {
+          "id": "X020",
+          "family": "with_distractor",
+          "kind": "project",
+          "turns": [
+            "我的项目叫石径。",
+            "说说潮汐是怎么形成的。",
+            "我的项目叫什么？"
+          ],
+          "expected_contains": [
+            "石径"
+          ]
+        },
+        {
+          "id": "X021",
+          "family": "given_then_ask",
+          "kind": "drink",
+          "turns": [
+            "我平时爱喝桂花酿。",
+            "我爱喝什么？"
+          ],
+          "expected_contains": [
+            "桂花酿"
+          ]
+        },
+        {
+          "id": "X022",
+          "family": "with_distractor",
+          "kind": "pet",
+          "turns": [
+            "我养了一只树袋熊。",
+            "楼下新开的面馆排了很长队。",
+            "我养的动物是什么？"
+          ],
+          "expected_contains": [
+            "树袋熊"
+          ]
+        },
+        {
+          "id": "X023",
+          "family": "given_then_ask",
+          "kind": "book",
+          "turns": [
+            "我最近在读《松窗梦语》。",
+            "我最近在读什么书？"
+          ],
+          "expected_contains": [
+            "松窗梦语"
+          ]
+        },
+        {
+          "id": "X024",
+          "family": "with_distractor",
+          "kind": "dish",
+          "turns": [
+            "我最爱吃羊肉泡馍。",
+            "请介绍一下青藏高原。",
+            "我最爱吃什么？"
+          ],
+          "expected_contains": [
+            "羊肉泡馍"
+          ]
+        },
+        {
+          "id": "X025",
+          "family": "given_then_ask",
+          "kind": "name",
+          "turns": [
+            "我叫思远。",
+            "我的名字是什么？"
+          ],
+          "expected_contains": [
+            "思远"
+          ]
+        },
+        {
+          "id": "X026",
+          "family": "with_distractor",
+          "kind": "city",
+          "turns": [
+            "我住在长沙。",
+            "旧钥匙串找不到了。",
+            "我住哪？"
+          ],
+          "expected_contains": [
+            "长沙"
+          ]
+        },
+        {
+          "id": "X027",
+          "family": "given_then_ask",
+          "kind": "number",
+          "turns": [
+            "我最喜欢的数字是1998。",
+            "那个数字是多少？"
+          ],
+          "expected_contains": [
+            "1998"
+          ]
+        },
+        {
+          "id": "X028",
+          "family": "with_distractor",
+          "kind": "project",
+          "turns": [
+            "我的项目叫归云。",
+            "介绍一下印象派绘画的起源。",
+            "我的项目叫什么？"
+          ],
+          "expected_contains": [
+            "归云"
+          ]
+        },
+        {
+          "id": "X029",
+          "family": "given_then_ask",
+          "kind": "drink",
+          "turns": [
+            "我平时爱喝柠檬水。",
+            "我爱喝什么？"
+          ],
+          "expected_contains": [
+            "柠檬水"
+          ]
+        },
+        {
+          "id": "X030",
+          "family": "with_distractor",
+          "kind": "pet",
+          "turns": [
+            "我养了一只蓝舌蜥。",
+            "冰箱里的牛奶好像过期了。",
+            "我养的动物是什么？"
+          ],
+          "expected_contains": [
+            "蓝舌蜥"
+          ]
+        },
+        {
+          "id": "X031",
+          "family": "given_then_ask",
+          "kind": "book",
+          "turns": [
+            "我最近在读《云笈七签》。",
+            "我最近在读什么书？"
+          ],
+          "expected_contains": [
+            "云笈七签"
+          ]
+        },
+        {
+          "id": "X032",
+          "family": "with_distractor",
+          "kind": "dish",
+          "turns": [
+            "我最爱吃胡辣汤。",
+            "介绍一下印象派绘画的起源。",
+            "我最爱吃什么？"
+          ],
+          "expected_contains": [
+            "胡辣汤"
+          ]
+        },
+        {
+          "id": "X033",
+          "family": "given_then_ask",
+          "kind": "name",
+          "turns": [
+            "我叫慕安。",
+            "我的名字是什么？"
+          ],
+          "expected_contains": [
+            "慕安"
+          ]
+        },
+        {
+          "id": "X034",
+          "family": "with_distractor",
+          "kind": "city",
+          "turns": [
+            "我住在昆明。",
+            "冰箱里的牛奶好像过期了。",
+            "我住哪？"
+          ],
+          "expected_contains": [
+            "昆明"
+          ]
+        },
+        {
+          "id": "X035",
+          "family": "given_then_ask",
+          "kind": "number",
+          "turns": [
+            "我最喜欢的数字是1024。",
+            "那个数字是多少？"
+          ],
+          "expected_contains": [
+            "1024"
+          ]
+        },
+        {
+          "id": "X036",
+          "family": "with_distractor",
+          "kind": "project",
+          "turns": [
+            "我的项目叫听涛。",
+            "介绍一下印象派绘画的起源。",
+            "我的项目叫什么？"
+          ],
+          "expected_contains": [
+            "听涛"
+          ]
+        },
+        {
+          "id": "X037",
+          "family": "given_then_ask",
+          "kind": "drink",
+          "turns": [
+            "我平时爱喝砖茶。",
+            "我爱喝什么？"
+          ],
+          "expected_contains": [
+            "砖茶"
+          ]
+        },
+        {
+          "id": "X038",
+          "family": "with_distractor",
+          "kind": "pet",
+          "turns": [
+            "我养了一只蜜獾。",
+            "阳台上的茉莉今年没开花。",
+            "我养的动物是什么？"
+          ],
+          "expected_contains": [
+            "蜜獾"
+          ]
+        },
+        {
+          "id": "X039",
+          "family": "given_then_ask",
+          "kind": "book",
+          "turns": [
+            "我最近在读《梦溪笔谈》。",
+            "我最近在读什么书？"
+          ],
+          "expected_contains": [
+            "梦溪笔谈"
+          ]
+        },
+        {
+          "id": "X040",
+          "family": "with_distractor",
+          "kind": "dish",
+          "turns": [
+            "我最爱吃臭豆腐。",
+            "请讲讲活字印刷术的来历。",
+            "我最爱吃什么？"
+          ],
+          "expected_contains": [
+            "臭豆腐"
+          ]
+        },
+        {
+          "id": "X041",
+          "family": "given_then_ask",
+          "kind": "name",
+          "turns": [
+            "我叫砚青。",
+            "我的名字是什么？"
+          ],
+          "expected_contains": [
+            "砚青"
+          ]
+        },
+        {
+          "id": "X042",
+          "family": "with_distractor",
+          "kind": "city",
+          "turns": [
+            "我住在兰州。",
+            "旧钥匙串找不到了。",
+            "我住哪？"
+          ],
+          "expected_contains": [
+            "兰州"
+          ]
+        },
+        {
+          "id": "X043",
+          "family": "given_then_ask",
+          "kind": "number",
+          "turns": [
+            "我最喜欢的数字是47。",
+            "那个数字是多少？"
+          ],
+          "expected_contains": [
+            "47"
+          ]
+        },
+        {
+          "id": "X044",
+          "family": "with_distractor",
+          "kind": "project",
+          "turns": [
+            "我的项目叫折柳。",
+            "简述一下光合作用的过程。",
+            "我的项目叫什么？"
+          ],
+          "expected_contains": [
+            "折柳"
+          ]
+        },
+        {
+          "id": "X045",
+          "family": "given_then_ask",
+          "kind": "drink",
+          "turns": [
+            "我平时爱喝普洱。",
+            "我爱喝什么？"
+          ],
+          "expected_contains": [
+            "普洱"
+          ]
+        },
+        {
+          "id": "X046",
+          "family": "with_distractor",
+          "kind": "pet",
+          "turns": [
+            "我养了一只刺猬。",
+            "楼下新开的面馆排了很长队。",
+            "我养的动物是什么？"
+          ],
+          "expected_contains": [
+            "刺猬"
+          ]
+        },
+        {
+          "id": "X047",
+          "family": "given_then_ask",
+          "kind": "book",
+          "turns": [
+            "我最近在读《天工开物》。",
+            "我最近在读什么书？"
+          ],
+          "expected_contains": [
+            "天工开物"
+          ]
+        },
+        {
+          "id": "X048",
+          "family": "with_distractor",
+          "kind": "dish",
+          "turns": [
+            "我最爱吃糖芋苗。",
+            "请讲讲活字印刷术的来历。",
+            "我最爱吃什么？"
+          ],
+          "expected_contains": [
+            "糖芋苗"
+          ]
+        },
+        {
+          "id": "X049",
+          "family": "given_then_ask",
+          "kind": "name",
+          "turns": [
+            "我叫洛宁。",
+            "我的名字是什么？"
+          ],
+          "expected_contains": [
+            "洛宁"
+          ]
+        },
+        {
+          "id": "X050",
+          "family": "with_distractor",
+          "kind": "city",
+          "turns": [
+            "我住在宁波。",
+            "冰箱里的牛奶好像过期了。",
+            "我住哪？"
+          ],
+          "expected_contains": [
+            "宁波"
+          ]
+        },
+        {
+          "id": "X051",
+          "family": "given_then_ask",
+          "kind": "number",
+          "turns": [
+            "我最喜欢的数字是88。",
+            "那个数字是多少？"
+          ],
+          "expected_contains": [
+            "88"
+          ]
+        },
+        {
+          "id": "X052",
+          "family": "with_distractor",
+          "kind": "project",
+          "turns": [
+            "我的项目叫疏影。",
+            "请介绍一下青藏高原。",
+            "我的项目叫什么？"
+          ],
+          "expected_contains": [
+            "疏影"
+          ]
+        },
+        {
+          "id": "X053",
+          "family": "given_then_ask",
+          "kind": "drink",
+          "turns": [
+            "我平时爱喝苦荞茶。",
+            "我爱喝什么？"
+          ],
+          "expected_contains": [
+            "苦荞茶"
+          ]
+        },
+        {
+          "id": "X054",
+          "family": "with_distractor",
+          "kind": "pet",
+          "turns": [
+            "我养了一只鹦鹉。",
+            "阳台上的茉莉今年没开花。",
+            "我养的动物是什么？"
+          ],
+          "expected_contains": [
+            "鹦鹉"
+          ]
+        },
+        {
+          "id": "X055",
+          "family": "given_then_ask",
+          "kind": "book",
+          "turns": [
+            "我最近在读《齐民要术》。",
+            "我最近在读什么书？"
+          ],
+          "expected_contains": [
+            "齐民要术"
+          ]
+        },
+        {
+          "id": "X056",
+          "family": "with_distractor",
+          "kind": "dish",
+          "turns": [
+            "我最爱吃鸭血粉。",
+            "请讲讲活字印刷术的来历。",
+            "我最爱吃什么？"
+          ],
+          "expected_contains": [
+            "鸭血粉"
+          ]
+        },
+        {
+          "id": "X057",
+          "family": "given_then_ask",
+          "kind": "name",
+          "turns": [
+            "我叫时予。",
+            "我的名字是什么？"
+          ],
+          "expected_contains": [
+            "时予"
+          ]
+        },
+        {
+          "id": "X058",
+          "family": "with_distractor",
+          "kind": "city",
+          "turns": [
+            "我住在温州。",
+            "地铁上被人踩了一脚。",
+            "我住哪？"
+          ],
+          "expected_contains": [
+            "温州"
+          ]
+        },
+        {
+          "id": "X059",
+          "family": "given_then_ask",
+          "kind": "number",
+          "turns": [
+            "我最喜欢的数字是121。",
+            "那个数字是多少？"
+          ],
+          "expected_contains": [
+            "121"
+          ]
+        },
+        {
+          "id": "X060",
+          "family": "with_distractor",
+          "kind": "project",
+          "turns": [
+            "我的项目叫临风。",
+            "请讲讲活字印刷术的来历。",
+            "我的项目叫什么？"
+          ],
+          "expected_contains": [
+            "临风"
+          ]
+        },
+        {
+          "id": "X061",
+          "family": "given_then_ask",
+          "kind": "drink",
+          "turns": [
+            "我平时爱喝红枣茶。",
+            "我爱喝什么？"
+          ],
+          "expected_contains": [
+            "红枣茶"
+          ]
+        },
+        {
+          "id": "X062",
+          "family": "with_distractor",
+          "kind": "pet",
+          "turns": [
+            "我养了一只仓鼠。",
+            "楼下新开的面馆排了很长队。",
+            "我养的动物是什么？"
+          ],
+          "expected_contains": [
+            "仓鼠"
+          ]
+        },
+        {
+          "id": "X063",
+          "family": "given_then_ask",
+          "kind": "book",
+          "turns": [
+            "我最近在读《洛阳伽蓝记》。",
+            "我最近在读什么书？"
+          ],
+          "expected_contains": [
+            "洛阳伽蓝记"
+          ]
+        },
+        {
+          "id": "X064",
+          "family": "with_distractor",
+          "kind": "dish",
+          "turns": [
+            "我最爱吃蟹黄汤包。",
+            "介绍一下印象派绘画的起源。",
+            "我最爱吃什么？"
+          ],
+          "expected_contains": [
+            "蟹黄汤包"
+          ]
+        },
+        {
+          "id": "X065",
+          "family": "given_then_ask",
+          "kind": "name",
+          "turns": [
+            "我叫怀砚。",
+            "我的名字是什么？"
+          ],
+          "expected_contains": [
+            "怀砚"
+          ]
+        },
+        {
+          "id": "X066",
+          "family": "with_distractor",
+          "kind": "city",
+          "turns": [
+            "我住在洛阳。",
+            "阳台上的茉莉今年没开花。",
+            "我住哪？"
+          ],
+          "expected_contains": [
+            "洛阳"
+          ]
+        },
+        {
+          "id": "X067",
+          "family": "given_then_ask",
+          "kind": "number",
+          "turns": [
+            "我最喜欢的数字是256。",
+            "那个数字是多少？"
+          ],
+          "expected_contains": [
+            "256"
+          ]
+        },
+        {
+          "id": "X068",
+          "family": "with_distractor",
+          "kind": "project",
+          "turns": [
+            "我的项目叫宿雨。",
+            "简述一下光合作用的过程。",
+            "我的项目叫什么？"
+          ],
+          "expected_contains": [
+            "宿雨"
+          ]
+        },
+        {
+          "id": "X069",
+          "family": "given_then_ask",
+          "kind": "drink",
+          "turns": [
+            "我平时爱喝陈皮水。",
+            "我爱喝什么？"
+          ],
+          "expected_contains": [
+            "陈皮水"
+          ]
+        },
+        {
+          "id": "X070",
+          "family": "with_distractor",
+          "kind": "pet",
+          "turns": [
+            "我养了一只乌龟。",
+            "阳台上的茉莉今年没开花。",
+            "我养的动物是什么？"
+          ],
+          "expected_contains": [
+            "乌龟"
+          ]
+        },
+        {
+          "id": "X071",
+          "family": "given_then_ask",
+          "kind": "book",
+          "turns": [
+            "我最近在读《东京梦华录》。",
+            "我最近在读什么书？"
+          ],
+          "expected_contains": [
+            "东京梦华录"
+          ]
+        },
+        {
+          "id": "X072",
+          "family": "with_distractor",
+          "kind": "dish",
+          "turns": [
+            "我最爱吃牛肉面。",
+            "说说潮汐是怎么形成的。",
+            "我最爱吃什么？"
+          ],
+          "expected_contains": [
+            "牛肉面"
+          ]
+        },
+        {
+          "id": "X073",
+          "family": "given_then_ask",
+          "kind": "name",
+          "turns": [
+            "我叫苏晚。",
+            "我的名字是什么？"
+          ],
+          "expected_contains": [
+            "苏晚"
+          ]
+        },
+        {
+          "id": "X074",
+          "family": "with_distractor",
+          "kind": "city",
+          "turns": [
+            "我住在扬州。",
+            "楼下新开的面馆排了很长队。",
+            "我住哪？"
+          ],
+          "expected_contains": [
+            "扬州"
+          ]
+        },
+        {
+          "id": "X075",
+          "family": "given_then_ask",
+          "kind": "number",
+          "turns": [
+            "我最喜欢的数字是313。",
+            "那个数字是多少？"
+          ],
+          "expected_contains": [
+            "313"
+          ]
+        },
+        {
+          "id": "X076",
+          "family": "with_distractor",
+          "kind": "project",
+          "turns": [
+            "我的项目叫行舟。",
+            "说说潮汐是怎么形成的。",
+            "我的项目叫什么？"
+          ],
+          "expected_contains": [
+            "行舟"
+          ]
+        },
+        {
+          "id": "X077",
+          "family": "given_then_ask",
+          "kind": "drink",
+          "turns": [
+            "我平时爱喝薄荷饮。",
+            "我爱喝什么？"
+          ],
+          "expected_contains": [
+            "薄荷饮"
+          ]
+        },
+        {
+          "id": "X078",
+          "family": "with_distractor",
+          "kind": "pet",
+          "turns": [
+            "我养了一只水獭。",
+            "冰箱里的牛奶好像过期了。",
+            "我养的动物是什么？"
+          ],
+          "expected_contains": [
+            "水獭"
+          ]
+        },
+        {
+          "id": "X079",
+          "family": "given_then_ask",
+          "kind": "book",
+          "turns": [
+            "我最近在读《梦粱录》。",
+            "我最近在读什么书？"
+          ],
+          "expected_contains": [
+            "梦粱录"
+          ]
+        },
+        {
+          "id": "X080",
+          "family": "with_distractor",
+          "kind": "dish",
+          "turns": [
+            "我最爱吃酸菜鱼。",
+            "请介绍一下青藏高原。",
+            "我最爱吃什么？"
+          ],
+          "expected_contains": [
+            "酸菜鱼"
+          ]
+        },
+        {
+          "id": "X081",
+          "family": "given_then_ask",
+          "kind": "name",
+          "turns": [
+            "我叫沈舟。",
+            "我的名字是什么？"
+          ],
+          "expected_contains": [
+            "沈舟"
+          ]
+        },
+        {
+          "id": "X082",
+          "family": "with_distractor",
+          "kind": "city",
+          "turns": [
+            "我住在泉州。",
+            "冰箱里的牛奶好像过期了。",
+            "我住哪？"
+          ],
+          "expected_contains": [
+            "泉州"
+          ]
+        },
+        {
+          "id": "X083",
+          "family": "given_then_ask",
+          "kind": "number",
+          "turns": [
+            "我最喜欢的数字是520。",
+            "那个数字是多少？"
+          ],
+          "expected_contains": [
+            "520"
+          ]
+        },
+        {
+          "id": "X084",
+          "family": "with_distractor",
+          "kind": "project",
+          "turns": [
+            "我的项目叫望舒。",
+            "介绍一下印象派绘画的起源。",
+            "我的项目叫什么？"
+          ],
+          "expected_contains": [
+            "望舒"
+          ]
+        },
+        {
+          "id": "X085",
+          "family": "given_then_ask",
+          "kind": "drink",
+          "turns": [
+            "我平时爱喝山楂水。",
+            "我爱喝什么？"
+          ],
+          "expected_contains": [
+            "山楂水"
+          ]
+        },
+        {
+          "id": "X086",
+          "family": "with_distractor",
+          "kind": "pet",
+          "turns": [
+            "我养了一只狐狸。",
+            "楼下新开的面馆排了很长队。",
+            "我养的动物是什么？"
+          ],
+          "expected_contains": [
+            "狐狸"
+          ]
+        },
+        {
+          "id": "X087",
+          "family": "given_then_ask",
+          "kind": "book",
+          "turns": [
+            "我最近在读《西湖梦寻》。",
+            "我最近在读什么书？"
+          ],
+          "expected_contains": [
+            "西湖梦寻"
+          ]
+        },
+        {
+          "id": "X088",
+          "family": "with_distractor",
+          "kind": "dish",
+          "turns": [
+            "我最爱吃口水鸡。",
+            "简述一下光合作用的过程。",
+            "我最爱吃什么？"
+          ],
+          "expected_contains": [
+            "口水鸡"
+          ]
+        },
+        {
+          "id": "X089",
+          "family": "given_then_ask",
+          "kind": "name",
+          "turns": [
+            "我叫顾昭。",
+            "我的名字是什么？"
+          ],
+          "expected_contains": [
+            "顾昭"
+          ]
+        },
+        {
+          "id": "X090",
+          "family": "with_distractor",
+          "kind": "city",
+          "turns": [
+            "我住在芜湖。",
+            "地铁上被人踩了一脚。",
+            "我住哪？"
+          ],
+          "expected_contains": [
+            "芜湖"
+          ]
+        },
+        {
+          "id": "X091",
+          "family": "given_then_ask",
+          "kind": "number",
+          "turns": [
+            "我最喜欢的数字是618。",
+            "那个数字是多少？"
+          ],
+          "expected_contains": [
+            "618"
+          ]
+        },
+        {
+          "id": "X092",
+          "family": "with_distractor",
+          "kind": "project",
+          "turns": [
+            "我的项目叫未央。",
+            "简述一下光合作用的过程。",
+            "我的项目叫什么？"
+          ],
+          "expected_contains": [
+            "未央"
+          ]
+        },
+        {
+          "id": "X093",
+          "family": "given_then_ask",
+          "kind": "drink",
+          "turns": [
+            "我平时爱喝茉莉茶。",
+            "我爱喝什么？"
+          ],
+          "expected_contains": [
+            "茉莉茶"
+          ]
+        },
+        {
+          "id": "X094",
+          "family": "with_distractor",
+          "kind": "pet",
+          "turns": [
+            "我养了一只蝙蝠。",
+            "楼下新开的面馆排了很长队。",
+            "我养的动物是什么？"
+          ],
+          "expected_contains": [
+            "蝙蝠"
+          ]
+        },
+        {
+          "id": "X095",
+          "family": "given_then_ask",
+          "kind": "book",
+          "turns": [
+            "我最近在读《陶庵梦忆》。",
+            "我最近在读什么书？"
+          ],
+          "expected_contains": [
+            "陶庵梦忆"
+          ]
+        },
+        {
+          "id": "X096",
+          "family": "with_distractor",
+          "kind": "dish",
+          "turns": [
+            "我最爱吃狮子头。",
+            "说说潮汐是怎么形成的。",
+            "我最爱吃什么？"
+          ],
+          "expected_contains": [
+            "狮子头"
+          ]
+        },
+        {
+          "id": "X097",
+          "family": "given_then_ask",
+          "kind": "name",
+          "turns": [
+            "我叫晚吟。",
+            "我的名字是什么？"
+          ],
+          "expected_contains": [
+            "晚吟"
+          ]
+        },
+        {
+          "id": "X098",
+          "family": "with_distractor",
+          "kind": "city",
+          "turns": [
+            "我住在自贡。",
+            "地铁上被人踩了一脚。",
+            "我住哪？"
+          ],
+          "expected_contains": [
+            "自贡"
+          ]
+        },
+        {
+          "id": "X099",
+          "family": "given_then_ask",
+          "kind": "number",
+          "turns": [
+            "我最喜欢的数字是909。",
+            "那个数字是多少？"
+          ],
+          "expected_contains": [
+            "909"
+          ]
+        },
+        {
+          "id": "X100",
+          "family": "with_distractor",
+          "kind": "project",
+          "turns": [
+            "我的项目叫知秋。",
+            "简述一下光合作用的过程。",
+            "我的项目叫什么？"
+          ],
+          "expected_contains": [
+            "知秋"
+          ]
+        },
+        {
+          "id": "X101",
+          "family": "given_then_ask",
+          "kind": "drink",
+          "turns": [
+            "我平时爱喝荷叶茶。",
+            "我爱喝什么？"
+          ],
+          "expected_contains": [
+            "荷叶茶"
+          ]
+        },
+        {
+          "id": "X102",
+          "family": "with_distractor",
+          "kind": "pet",
+          "turns": [
+            "我养了一只松鼠。",
+            "楼下新开的面馆排了很长队。",
+            "我养的动物是什么？"
+          ],
+          "expected_contains": [
+            "松鼠"
+          ]
+        },
+        {
+          "id": "X103",
+          "family": "given_then_ask",
+          "kind": "book",
+          "turns": [
+            "我最近在读《徐霞客游记》。",
+            "我最近在读什么书？"
+          ],
+          "expected_contains": [
+            "徐霞客游记"
+          ]
+        },
+        {
+          "id": "X104",
+          "family": "with_distractor",
+          "kind": "dish",
+          "turns": [
+            "我最爱吃夫妻肺片。",
+            "说说潮汐是怎么形成的。",
+            "我最爱吃什么？"
+          ],
+          "expected_contains": [
+            "夫妻肺片"
+          ]
+        }
+      ]
+    }
+  },
+  "disjointness_note": "实体池与 CAP 评价集、A2.3 训练表两套均不相交；由 tests/taiji_native/test_r2_copy_surface_extension_contract.py 逐条断言"
+}
