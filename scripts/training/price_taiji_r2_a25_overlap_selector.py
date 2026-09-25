@@ -15,6 +15,9 @@ seed-A 23/104、seed-B 22/104、对照 0/104），本件与它同链同底同题
 ——`run_arm` 的题循环、判命中口径与冻结读数一字不动（补丁钉在消费的接口上，不钉实现行）。
 零训练（`learn=False` 由产品链决定）、`checkpoints/` 只读且跑前后 sha256 复核、只写 `reports/` 一份新件。
 
+**两种对照**：跑 v1 用外部冻结读数做对照（并先未打补丁重跑一臂、逐题核对它真的复现了件里的数）；
+跑 **v2（难干扰集）没有冻结读数**，于是 `--paired`：每臂先未打补丁现跑一遍当对照，再跑规则键。
+
 **这把键不是产品机制，读数是"规则基线"**：它按字面共享字符排序，对间接指代天然无效
 （§9 在同一把键上测出 0.583——"我叫阿岩。"→"我的名字是什么？"）。所以本件的值是
 **任何学习式选择器必须先超过的那条线**，不是"选问题已经解决"。
@@ -84,13 +87,26 @@ def _overlap_best_match(self: Any, cue: Any) -> Any:
     return scored[0][2]
 
 
+def _first_event_selection(self: Any, cue: Any) -> Any:
+    """第三档＝**天花板**：两条告知都留在库里，但选择固定取最早入库的那条。
+
+    v1/v2 的题形都是「告知 → 干扰 → 提问」，`record_told_history` 按历史顺序入库，
+    所以"最早那条"就是含答案的告知——这一档与 §13 的 `--store target` 消融同义
+    （那条是把干扰**删掉**，这条是留着但永远不选它），差别是这里不碰库、只碰选择。
+    """
+    events = self.events()
+    if not events:
+        return None
+    return min(events, key=lambda event: int(event.event_id))
+
+
 def _answer_raw_with_query(runtime: Any, prompt: str, history: Any) -> str:
     """把"当前提问"交给规则键，其余原样转给产品那支 `_answer_raw`。"""
     PROBE["query"] = prompt
     return _answer_raw_with_query.original(runtime, prompt, history)  # type: ignore[attr-defined]
 
 
-def _install() -> None:
+def _install(selector: str = "overlap") -> None:
     from score_taiji_r2_copy_circuit_chat_cap import _answer_raw
 
     from taiji.copy_circuit import ToldContentStore
@@ -98,7 +114,9 @@ def _install() -> None:
     _answer_raw_with_query.original = _answer_raw
     sys.modules["score_taiji_r2_copy_circuit_chat_cap"]._answer_raw = _answer_raw_with_query
     _overlap_best_match.original = ToldContentStore.best_match
-    ToldContentStore.best_match = _overlap_best_match
+    ToldContentStore.best_match = (
+        _overlap_best_match if selector == "overlap" else _first_event_selection
+    )
 
 
 def _uninstall() -> None:
@@ -118,10 +136,27 @@ def main() -> int:
         default=",".join([SEED_A_CIRCUIT, SEED_B_CIRCUIT]),
         help="逗号分隔的电路路径（默认两个独立初始化的电路，与冻结读数同一对）",
     )
+    parser.add_argument("--manifest", default=str(MANIFEST), help="题集清单（默认 v1 冻结件）")
+    parser.add_argument(
+        "--baseline-report",
+        default=str(BASELINE_REPORT),
+        help="未打补丁的冻结读数件；传 `none` 表示没有外部对照（新题集），此时必须 `--paired`",
+    )
+    parser.add_argument(
+        "--selector",
+        choices=("overlap", "first"),
+        default="overlap",
+        help="overlap＝与提问共享字符的规则键；first＝天花板（永远选最早入库那条＝§13 的摘干扰消融）",
+    )
+    parser.add_argument(
+        "--paired",
+        action="store_true",
+        help="每臂都先未打补丁跑一遍当对照（没有冻结读数时唯一能给出差值的办法）",
+    )
     parser.add_argument(
         "--verify-arm",
         default=SEED_A_CIRCUIT,
-        help="先把这一臂未打补丁重跑一遍与冻结读数对账；空串跳过（跳过＝对照未经核验，读数要降级）",
+        help="有冻结读数时先把这一臂未打补丁重跑与件里对账；空串跳过（跳过＝对照未核验，读数降级）",
     )
     parser.add_argument("--out-report", default=None)
     args = parser.parse_args()
@@ -130,45 +165,61 @@ def main() -> int:
 
     checkpoint = PROJECT_ROOT / args.checkpoint
     sha_before = _sha256(checkpoint)
-    baseline = json.loads(BASELINE_REPORT.read_text(encoding="utf-8"))
-    manifest_sha = _sha256(MANIFEST)
-    if manifest_sha != str(baseline.get("manifest_sha256")):
-        #: 题集换过，对照读数就不可比——先响，别顺跑出第三份数。
-        print(
-            json.dumps(
-                {
-                    "error": f"题集摘要与冻结读数不符：{manifest_sha[:12]} vs 件里读 {baseline.get('manifest_sha256')[:12]}"
-                }
+    manifest_path = Path(args.manifest)
+    if not manifest_path.is_absolute():
+        manifest_path = PROJECT_ROOT / manifest_path
+    manifest_sha = _sha256(manifest_path)
+
+    baseline: dict[str, Any] | None = None
+    verify_target = ""
+    if args.baseline_report != "none":
+        baseline_path = PROJECT_ROOT / args.baseline_report
+        if not baseline_path.is_absolute():
+            baseline_path = PROJECT_ROOT / args.baseline_report
+        baseline = json.loads(baseline_path.read_text(encoding="utf-8"))
+        if manifest_sha != str(baseline.get("manifest_sha256")):
+            #: 题集换过，对照读数就不可比——先响，别顺跑出第三份数。
+            print(
+                json.dumps(
+                    {
+                        "error": "题集摘要与冻结读数不符",
+                        "manifest": manifest_sha[:12],
+                        "baseline": str(baseline.get("manifest_sha256"))[:12],
+                    }
+                )
             )
-        )
-        return 1
-    if str(baseline.get("checkpoint")) != args.checkpoint:
-        print(json.dumps({"error": "基座与冻结读数不是同一个底，不可比"}))
+            return 1
+        if str(baseline.get("checkpoint")) != args.checkpoint:
+            print(json.dumps({"error": "基座与冻结读数不是同一个底，不可比"}))
+            return 1
+        verify_target = args.verify_arm
+    elif not args.paired:
+        print(json.dumps({"error": "没有外部对照时必须 --paired，否则差值没有对照物"}))
         return 1
 
-    items = load_items(MANIFEST)
+    items = load_items(manifest_path)
     #: 冻结读数里没有电路摘要（`treated_arms[]` 只有 `circuit` 路径），所以"同底同链"不能靠摘要比——
     #: 改成**先把未打补丁的那臂重跑一遍**，要求严格命中与件里逐题相同。不相等就说明现场变了，
     #: 这时"补丁带来的差"没有对照物，直接退出而不是顺跑出第三份数。
     unpatched: dict[str, Any] = {"performed": False}
-    if args.verify_arm:
-        verify_arm = run_arm(items, checkpoint, args.verify_arm)
+    if verify_target and baseline is not None:
+        verify_arm = run_arm(items, checkpoint, verify_target)
         base_match = next(
-            (arm for arm in baseline["treated_arms"] if str(arm.get("circuit")) == args.verify_arm),
+            (arm for arm in baseline["treated_arms"] if str(arm.get("circuit")) == verify_target),
             None,
         )
         if base_match is None:
-            print(json.dumps({"error": f"冻结读数里没有臂 {args.verify_arm}"}))
+            print(json.dumps({"error": f"冻结读数里没有臂 {verify_target}"}))
             return 1
         expected = int(base_match["strict_hits"])
         unpatched = {
             "performed": True,
-            "circuit": args.verify_arm,
+            "circuit": verify_target,
             "strict_hits": verify_arm["strict_hits"],
             "baseline_strict_hits": expected,
             "reproduces": bool(verify_arm["strict_hits"] == expected),
-            "rows_match": [(row["id"], row["hit"]) for row in verify_arm["rows"]]
-            == [(row["id"], bool(row["hit"])) for row in base_match["rows"]],
+            "rows_match": [(str(row["id"]), bool(row["hit"])) for row in verify_arm["rows"]]
+            == [(str(row["id"]), bool(row["hit"])) for row in base_match["rows"]],
         }
         if not unpatched["reproduces"]:
             print(
@@ -176,15 +227,35 @@ def main() -> int:
             )
             return 3
 
+    def _baseline_for(circuit: str) -> dict[str, int]:
+        """取这一臂的未打补丁读数：优先用冻结件，没有就**现跑一遍**（`--paired`）。"""
+        if baseline is not None:
+            found = next(
+                (arm for arm in baseline["treated_arms"] if str(arm.get("circuit")) == circuit),
+                None,
+            )
+            if found is None:
+                raise KeyError(f"冻结读数里没有这一臂，无从比差：{circuit}")
+            return {
+                "strict_hits": int(found["strict_hits"]),
+                "well_formed_texts": int(found["well_formed_texts"]),
+            }
+        control_arm = run_arm(items, checkpoint, circuit)
+        return {
+            "strict_hits": int(control_arm["strict_hits"]),
+            "well_formed_texts": int(control_arm["well_formed_texts"]),
+        }
+
     arms: list[dict[str, Any]] = []
     for circuit in [part.strip() for part in args.arms.split(",") if part.strip()]:
         if not (PROJECT_ROOT / circuit).exists():
             print(json.dumps({"error": f"电路不存在：{circuit}"}))
             return 1
+        base_arm = _baseline_for(circuit)
         PROBE["used"] = 0
         PROBE["no_query"] = 0
         PROBE["empty_store"] = 0
-        _install()
+        _install(args.selector)
         try:
             arm = run_arm(items, checkpoint, circuit)
         finally:
@@ -192,10 +263,6 @@ def main() -> int:
         used = int(PROBE["used"] or 0)
         no_query = int(PROBE["no_query"] or 0)
         empty_store = int(PROBE["empty_store"] or 0)
-        base_arm = next((a for a in baseline["treated_arms"] if str(a["circuit"]) == circuit), None)
-        if base_arm is None:
-            print(json.dumps({"error": f"冻结读数里没有这一臂，无从比差：{circuit}"}))
-            return 1
         arms.append(
             {
                 "circuit": circuit,
@@ -206,10 +273,10 @@ def main() -> int:
                 "items": arm["items"],
                 "texts": arm["texts"],
                 "strict_hits": arm["strict_hits"],
-                "baseline_strict_hits": int(base_arm["strict_hits"]),
+                "baseline_strict_hits": base_arm["strict_hits"],
                 "strict_hits_delta": arm["strict_hits"] - int(base_arm["strict_hits"]),
                 "well_formed_texts": arm["well_formed_texts"],
-                "baseline_well_formed_texts": int(base_arm["well_formed_texts"]),
+                "baseline_well_formed_texts": base_arm["well_formed_texts"],
                 "utf8_decodable_rate": arm["utf8_decodable_rate"],
                 "rows": arm["rows"],
             }
@@ -222,15 +289,24 @@ def main() -> int:
         for arm in arms
     )
     report = {
-        "format": "taiji-r2-a25-overlap-selector-price-v1",
-        "prereg": "plans/reference/SPEC-A-17_r2_a2_3b_format_align_prereg_20260925.md §13",
+        "format": "taiji-r2-a25-overlap-selector-price-v2",
+        "prereg": "plans/reference/SPEC-A-17_r2_a2_3b_format_align_prereg_20260925.md §13/§15",
         "patched": [
             "taiji.copy_circuit.ToldContentStore.best_match（消费点 taiji/copy_circuit.py:259）",
             "score_taiji_r2_copy_circuit_chat_cap._answer_raw（按被 import 的名字包，用来传当前提问）",
         ],
         "checkpoint": args.checkpoint,
+        "manifest": (
+            manifest_path.relative_to(PROJECT_ROOT).as_posix()
+            if manifest_path.is_relative_to(PROJECT_ROOT)
+            else str(manifest_path)
+        ),
         "manifest_sha256": manifest_sha,
-        "baseline_report": BASELINE_REPORT.relative_to(PROJECT_ROOT).as_posix(),
+        "selector": args.selector,
+        "paired": bool(baseline is None),
+        "baseline_report": (
+            "none" if baseline is None else str(args.baseline_report).replace("\\", "/")
+        ),
         "unpatched_reproduction": unpatched,
         "selector_coverage_complete": selector_coverage_complete,
         "arms": arms,
@@ -262,6 +338,9 @@ def main() -> int:
                     }
                     for arm in arms
                 ],
+                "manifest": report["manifest"],
+                "selector": args.selector,
+                "paired": report["paired"],
                 "unpatched_reproduction": unpatched,
                 "coverage_complete": selector_coverage_complete,
                 "base_unchanged": report["base_sha256_unchanged"],
@@ -270,13 +349,16 @@ def main() -> int:
                     if out.is_relative_to(PROJECT_ROOT)
                     else str(out)
                 ),
-            }
+            },
+            ensure_ascii=False,
         )
     )
     if not selector_coverage_complete or not report["base_sha256_unchanged"]:
         return 2
-    #: 没做对账就不许以 0 退出——那等于把"未经核验的对照"读成已核验。
-    return 0 if bool(unpatched.get("performed")) else 2
+    #: 有外部冻结对照时必须真做过对账；`--paired` 时对照就是本次现跑的未打补丁臂，天然成立。
+    if baseline is not None and not bool(unpatched.get("performed")) and args.verify_arm:
+        return 2
+    return 0
 
 
 if __name__ == "__main__":

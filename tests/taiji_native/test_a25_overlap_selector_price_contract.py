@@ -87,6 +87,27 @@ def test_ties_go_to_the_newer_event_matching_the_separability_probe(patched) -> 
     ), "平手必须取 event_id 较大的一条（与 §9 oracle 档同序）"
 
 
+def test_first_event_selector_is_the_ceiling_not_a_lucky_pick(tmp_path) -> None:
+    """天花板档：两条告知都在库里，但永远选**最早**那条＝含答案的告知。
+
+    它与 §13 的 `--store target` 消融同义（那条删干扰，这条不删但永不选它），
+    所以两档读数应当对得上；对不上就说明有一档的构造写错了。
+    """
+    from taiji.copy_circuit import ToldContentStore
+
+    original = ToldContentStore.best_match
+    price._install("first")
+    try:
+        store = ToldContentStore(cue_dim=4, max_events=4)
+        store.record("我住在苏州。".encode(), torch.ones(4))
+        store.record("我表哥住在西安。".encode(), torch.ones(4))
+        picked = store.best_match(torch.zeros(4))
+        assert bytes(picked.content) == "我住在苏州。".encode()
+    finally:
+        price._uninstall()
+        ToldContentStore.best_match = original
+
+
 def test_answer_raw_wrapper_only_stamps_the_query(patched) -> None:
     seen: list[tuple[str, object]] = []
 
