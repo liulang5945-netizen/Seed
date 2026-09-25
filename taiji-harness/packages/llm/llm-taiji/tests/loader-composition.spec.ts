@@ -3,7 +3,7 @@ import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { pathToFileURL } from 'node:url'
-import { afterEach, describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import { Context } from '@taiji/cordis'
 import Loader from '@taiji/cordis-plugin-loader'
 import Include from '@taiji/cordis-plugin-include'
@@ -23,7 +23,7 @@ afterEach(async () => {
 })
 
 /** Boot the shipped row composition over a loopback runtime. */
-async function loadComposition(baseURL: string): Promise<Context> {
+async function loadComposition(baseURL: string, readinessPollMs?: number): Promise<Context> {
   root = await mkdtemp(join(tmpdir(), 'dsh-llm-taiji-composition-'))
   const configPath = join(root, 'cordis.yml')
   await writeFile(configPath, [
@@ -33,6 +33,7 @@ async function loadComposition(baseURL: string): Promise<Context> {
     "  name: '@taiji/dsh-llm-taiji'",
     '  config:',
     `    baseURL: ${JSON.stringify(baseURL)}`,
+    ...(readinessPollMs === undefined ? [] : [`    readinessPollMs: ${readinessPollMs}`]),
     '',
   ].join('\n'))
 
@@ -91,5 +92,29 @@ describe('llm-taiji Loader composition', () => {
     expect(assembler.blocks()).toEqual([{ type: 'text', text: '你好，世界' }])
     expect(assembler.finish).toEqual({ kind: 'stop' })
     expect(runtime.requests[0]?.body).toEqual({ prompt: '你好', history: [] })
+  })
+
+  it('routes a runtime that only becomes reachable after the composition boots', async () => {
+    const runtime = await mockRuntime()
+    await runtime.stop()
+
+    const ctx = await loadComposition(runtime.url, 250)
+    expect(ctx.llm.listProviders()).toEqual([])
+
+    runtime.script.push({ kind: 'frames', frames: [finalFrame('你好，世界'), DONE] })
+    await runtime.restart()
+
+    await vi.waitFor(() => {
+      expect(ctx.llm.listProviders()).toEqual([{ id: 'taiji-local', name: LlmTaiji.RUNTIME_DISPLAY_NAME }])
+    }, { timeout: 5_000, interval: 25 })
+
+    // Listed and usable. The browser catalog is built per read from the live
+    // registry, so the model picker shows this group on its next read.
+    const assembler = new BlockAssembler()
+    const messages = [createUserMessage({ source: { kind: 'user' }, content: [{ type: 'text', text: '你好' }] })]
+    for await (const chunk of ctx.llm.stream({ provider: 'taiji-local', model: 'taiji-local', messages })) {
+      assembler.push(chunk)
+    }
+    expect(assembler.blocks()).toEqual([{ type: 'text', text: '你好，世界' }])
   })
 })
