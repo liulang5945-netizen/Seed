@@ -111,6 +111,22 @@ this scaffold lifetime. **This is the keyless first-run configuration lane**; th
 **收口读数（本轮最后一次全量叶批，2026-09-26 21:13）**：doc-sync 复跑＝**43 叶／唯一红 `docs-site-projection`**（即 `project-doc-site.spec.ts` 需 `symlink()` 而本机 EPERM 那条已登记环境红，见 08 §6 ④）⇒ **今日全部改动**（含 H3o 新增的那条 lane 与它的 overlay 行）**未引入新红**；新增文件另过 oxlint **0 error／0 warning**（90 条规则）。**一处口径提醒**：本仓没有可直接整体调用的聚合入口跑这 43 叶，我用的是仓外批跑脚本，它把嵌套的 `verify-doc-site-fragments` 双计成 44 叶——**以仓库自身聚合报告的 43 为准**。
 **第四批（同日，2026-09-26）：把「无可用路由」写成显式前提，8 条红降到 2 条**：不再让这 4 条 keyless lane 的前提取决于本机恰好有没有跑着运行时。做法是新增 `apps/web/tests/taiji-row-absent.overlay.yml`（内容 `- id: llm-taiji` ＋ `disabled: true`），在 `apps/web/tests/scaffold.ts` 导出 `TAIJI_ROW_ABSENT_OVERLAY`，四条 lane 的 `launchWebScaffold(...)` 统一带上 `extraOverlayPath`（`onboarding-native` 与它原有的 cordis.patch.yml 合并成数组）。**读数**：同 4 文件 `Test Files 2 failed｜2 passed`、`Tests 2 failed｜9 passed（11）`，107 s ⇒ **红从 8 降到 2**，验证了「这些红的前提被运行时会话污染」这一判断。**关键更正**：只把 baseURL 指到死端口时，设置里的 Taiji 行**依然出现**（注册面撤回、声明面仍在），必须 `disabled: true` 才整行消失——第三批我据此写的 D2 口径已在上面就地改掉。**剩余 2 条（未归因）**：`deepseek-messages-settings > offers one DeepSeek card...` 等 `getByRole('textbox',{name:'选择工作区'})` 32 s 超时；`onboarding-deepseek-config > configures arbitrary DeepSeek models...` 33 s 超时（等待对象待取）。这两条不再像是运行时污染，下一条线索是工作区选择与「删掉选中模型后」的表层差异。**同日对照实验把范围改大了（重要）**：跑一条同样调用 `connectFreshWorkspaceZh` 但不带本轮 overlay 的对照 lane （`access-confirmation.e2e.ts`），它在 helper 的**下一步**红——`选择工作区目录` 对话框 10 s 不出现；而 `apps/web/tests/scaffold.ts:660-665` 是**无条件**把页内 browse picker 钉住的（`{ id: directory-picker, disabled: true }` ＋ insert 两行），装配也没报错。⇒ 这不是"某条 lane 忘了带 overlay"，而是**页内目录选择器在本 fork 实际弹不出来**，它横跨 12 条共用该 helper 的 lane。**"剩余 2 条"这个说法要改，但不是我当时写的那个方向**：这条 lane 在 CI 里 0 引用（`.github/workflows/` 中 `test:web`／`run-web-snapshots` 出现 0 次，只 `playwright install chromium` 给别的门用），所以它没有上游拥有的绿色基线 ⇒ 红既不能算 fork 回归也不能算已修；要用它当门，先做一次失败瞬间的 ARIA 判别（08 §6 ⑫ 已按此降级）。**本轮批处理自己的两处缺陷（已修，记法在此）**：统一正则插入造成 `extraOverlayPath` **重复键**（一处文件）与**后写覆盖前写**（`onboarding-native` 里 `...desktop ? {} : { extraOverlayPath }` 会盖掉新键，属会静默丢前提的那一类）；另有一条 max-len 149＞140。跑之前逐文件核对落点形状后才修掉。
 
+
+## 6.5 · 第五批之后的队首（同日收口，接手的人从这里开始）
+
+1. **⑮ 的那半句要一次对照**：`firstUse: true` ＋ 只挂一个工作区时，`seedSession` 播种的会话**标题是否进树**。
+   进＝先前那行显示临时目录名只是"默认工作区多占了一行"的位置副作用；不进＝fork 的会话投影确有缺陷（那才是产品问题）。**一次单跑就够**。
+2. 若 1 判为"位置假设"：把 DONE 一族 6 条 lane（7 条断言）**改成按内容选行**（`getByRole('treeitem', { name: … })`），
+   **不要**改成另一个位置索引——那只是把同一个假设换个写法。**这一步之前不要动那 6 个文件**。
+3. **18 条超时逐条取证**（文件清单：`node .dsh-sbx2/analyze-web-log.mjs .dsh-sbx2/baseline76c.log` 的 `[timeout]` 行）。
+   **自改写 lane 这个解释已排除**（去掉 `hmr-live` 的 A/B 红绿不变）；**负载这个解释仍未排除也未证实**——唯一那次 11 条小批重测被并行的 build 污染而作废（08 §5 第 7 条同日更正）。
+4. **金样这件事已经定价完**（§7／§7.1／§7.2）：refresh 能救的只有 **15 条整棵 ARIA 快照差异**；
+   (乙) 分隔符**已实施为 H3u**；剩下要裁的只有 (甲) 该不该在非本机 refresh、(丙) 时区与 shell 两处在平台条件 skip 还是改断言。
+5. **批跑口径三条**（已写进 08 §5 第 7 条，别再重新发现一遍）：完整 build 必须在跑门**之前**；批内不含 spawn watcher 的 lane；
+   起止 mtime 要存档，且**任何"谁改了产物"的问题必须在下一次 build 之前问**。
+6. 仍卡在所有者手上的：D2（运行时怎么随包）／R4（`.env.windows` 那组产品值）／R5（三处产品身份）／(甲)(丙)／重录回放件（要 `DEEPSEEK_API_KEY`）／符号链接那条测试的处置。**判据③ 等 R2 收束，不因"继续推进"字样自动开跑。**
+
+
 ## 7 · 金样 refresh 会烤进什么（2026-09-26 逐条取证，给"要不要 refresh"这条裁定用）
 
 跑那 10 条红（`smoke-real` 因会另起 CLI 进程未列入本轮），把每条 ARIA 差异归到具体 lane 后，**差异只有四种来源，而其中一种不该进基线**：
