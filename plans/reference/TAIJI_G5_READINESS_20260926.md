@@ -92,6 +92,39 @@ this scaffold lifetime. **This is the keyless first-run configuration lane**; th
 * **D2 运行时怎么随包**：随包附带并拉起／首启动引导用户启动／文档要求自备。**这条决定"一条命令装起即用"能不能声称**，也决定客户端版的工作量排序。**本轮读原文后已把选项收敛**：(a) 扩 `pythonPackages`＝撞发布物体积上限（基本排除），**(b) 给后端开独立分发通道（建议按此估工）**，(c) 要求用户自备并启动（兜底，但要改判据口径）。详见 §1 的 D2 行。
 * **R4｜桌面打包需要一份本地 `.env.windows`，里面是产品决定**（2026-09-26 实跑 `package:desktop:dir` 撞出来的第一道门，在拉任何二进制之前）：`.env.windows.example` 要求填 `DSH_DESKTOP_APP_ID`（**示例默认值是 `com.deepseek.harness`＝上游身份，fork 要用就得改成自己的 app id**）、自动更新环境 `DSH_DESKTOP_AUTO_UPDATE_ENV`、**强制更新端点** `DSH_DESKTOP_MANDATORY_UPDATE_TEST_ORIGIN`／`_PROD_ORIGIN`（现在为空）、更新回退页 JSON（含 `allowedAuthOrigins` 登录白名单）、可选 `DSH_DESKTOP_NPM_REGISTRY`（**"for the bundled dsh runtime install"**），以及签名三件套（`WINDOWS_CER_FILE`／`SIGNTOOL`／`KEY_CONTAINER`，本机构建可走 `:unsigned` 变体）。⇒ **客户端版（G5 后半）真正的前置是三件**：① 定下 Taiji 版的应用身份与更新端点（或明确"客户端不做自动更新"）；② 回答"包怎么到达安装现场"（发布 `@taiji/*`／指镜像／用 packed tarball，`release:pack` 是否喂给这一步尚未查清）；③ 再谈签名链。这三件都不是我能在只读清点里替你定的，但没有它们 `package:desktop:*` 连跑都跑不起来——**这条比"缺 electron"更靠前，也更贵**。
 
+## 4.5 · D2 的估工（同日读码所得；**它推翻了我先前把选项 (a) 判为"基本排除"的依据**）
+
+先前写的是"(a) 扩清单＝基本排除；(b) 独立分发通道（建议按此估工）"。把桌面载荷这条链读完后，**这个排序的前提站不住**：
+
+* **载荷通道是现成的，而且是打包期下载**：`apps/desktop/scripts/prepare-primary-runtime.ts` 调 `scripts/primary-runtime/prepare.ts`，
+  按 target 组装 runtime 目录，**带下载缓存**（`cache: paths.downloads`），产出 `runtime.json`（版本／平台／架构／Python 发行版映射／摘要）。
+* **安装与升级语义也已实现**：`apps/desktop/README.md:35` 写明"匹配的既有安装会被复用；依赖或归档变化时**先完整暂存再整目录替换**，替换失败保留旧安装；
+  Windows 上解释器仍在跑时可能拒绝替换"。⇒ 这不是"塞不进发布物"，而是**一条已经跑通的分发＋替换机制**。
+* **要加包，落点是三处声明面**：`packages/skill/tool-workspace-dependencies/src/index.ts:107` 的 `['numpy','pandas'] as const`、
+  同文件 `:251` 工具描述里那句"Python 含 numpy、pandas、python-docx、…（这是**面向模型的工具说明**，改包必须同步改它）"、
+  以及打包期冒烟 `scripts/primary-runtime/prepare.ts:183`（硬编码 `import … numpy, pandas` 并断言）。
+  外加该包双语 README 与生成目录 ⇒ **属"改上游一处声明面"的 fork 补丁（登记 H 项），不是架构上做不了**。
+
+**我先前当作前提、这次找不到证据的一句话要降级**：**"发布工作流强制 public-index 体积上限"**——我在 `.github/workflows/*.yml` 里按
+`size limit`／`MAX_`／`public-index` 等关键词**没有搜到任何体积上限**（只搜到 `DSH_*_MAX_WORKERS` 这类并发变量）。
+⇒ **这条要么另找出处（ADR／发布文档），要么从 D2 的裁定依据里划掉**；我先前"torch 量级塞不进去"的判断有一半是压在它上面的。
+
+**仍然成立、且是真正成本所在的那半句**：载荷解决的是"**文件在不在盘上**"，而 `taiji-local` 要的是一个**开机即监听 `127.0.0.1:8000` 的常驻进程**
+（默认端口 `packages/llm/llm-taiji/src/defaults.ts:14`）。`apps/desktop/src` 里**没有任何 `python` 字样** ⇒ 载荷里的 Python 现在只被工具按需调用。
+
+**好消息是常驻这块也有现成接缝**：`apps/desktop/src/backend-controller.ts:1-24` 是一个**与具体后端无关的泛型生命周期控制器**
+（`DesktopBackendController<Host extends DesktopBackendHost>`，状态只有 `starting`／`ready`／`error`，`start()` 的契约就是"子进程接受应用请求后的就绪"），
+node 后端就是它的一个实现（`apps/desktop/src/host-process.ts:3,139` 用 `spawn` 起子进程）。
+⇒ **(b′) 的真实工作量＝** 再写一个 `DesktopBackendHost` 实现（用载荷路径起 Python 后端）＋ 接就绪探测 ＋ **补控制器现在没有的东西：崩溃重启／退避与端口占用处置**（该文件里搜不到 `restart`／`backoff`）。
+
+**因此 D2 收成一个二选一，价格已明**：
+* **(b′) 载荷随包＋桌面拉起常驻进程**：三处声明面改动（＋双语 README＋生成目录）＋ 一个 `DesktopBackendHost` 实现 ＋ 重启/退避/端口策略 ＋ 首启时序
+  （`taiji-local` 就绪失败时**静默撤回路由**，见 §3.5 与 H3o——所以"起了但没就绪"在表层是看不见的）。**这是唯一能让"装起即用"与"Taiji 为默认"同时成立的路径。**
+* **(c′) 要求用户自备并启动**：零代码，但**交付判据那句"装起即用"要改写**（装机首启看到的是"存在但不可路由"的 Taiji 行）。
+* 原 (a) 不再单列——它就是 (b′) 的前半段。
+
+**待所有者拍的只剩一句**：**(b′) 还是 (c′)**。若 (b′)，还需要一条产品口径：**后端崩溃/端口被占时桌面表现成什么样**（现在控制器只有 `starting`／`ready`／`error` 三态）。
+
 ## 5 · 我可以在裁定前继续做的（无需批）
 
 * ~~把 `prepare:desktop` / `release:vendor` 的**包来源**查清：本机 gitignored 产物 `apps/desktop/.desktop-build/development/project/desktop-runtime.json` 里出现 `@deepseek-ai/dsh-agent-default-model` 这类**改名前的包名**，而已跟踪文件里 `@deepseek-ai/dsh-` 为 **0 处**（2026-09-26 复算）⇒ 疑点：桌面暂存可能拉的是**已发布上游包**而非本 fork 产物。~~ **【同日已否证】**：该产物的 mtime 是 **09-22 16:26**，而改名提交 `88ad3040e`（G2 rename，5206＋43 文件）落在 **09-22 18:51** ⇒ 产物比改名**早 2.5 小时**，它是**改名前的本机构建残留**，不是"桌面线拉已发布上游包"的证据。副产品事实：这条暂存链在 G1 期就真跑通过一次（`schemaVersion 1`、`release.version 0.1.7-alpha.1`、`nodeVersion 24.18.1`、**`sharedPackages` 1495 项**）⇒ 桌面打包的**起点机制是存在的**，只是这台机器上的产物是旧的。
