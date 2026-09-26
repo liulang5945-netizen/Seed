@@ -247,3 +247,9 @@ scaffold 又**自己关掉了 `session-title-llm`**（`scaffold.ts:630`，理由
 ⇒ 分歧被压缩成一句：**容器里那个 button 的可访问名不是 `Agent Team`**，尽管字典值写着它。三类候选：i18n 未解析（名字回退成 key）、名字被别的可访问性来源覆盖（图标＋`aria-hidden` 的 span）、或那个元素根本不是它。
 **两次想打真实名字的探针都没产出输出**（第二次疑似 `allAccessibleNames()` 在本仓 Playwright 版本上不存在，整条 `console.log` 表达式先抛错——今天第四次因探针自身写法而白跑一次，**探针也要能被验证**）。
 **下一轮的正确一次**：用 `page.locator('[data-team-action] button').first().getAttribute('aria-label')` 与 `.innerText()`，写成**两个独立**的 `console.log`（不要串在一个表达式里），即可判这条 lane 是「上游 lane 期望过期」还是「本 fork 的 client 表层丢了可访问名」。
+
+**`agent-team-panel` 那一层今天判到了底，结论指向我方该报的一个表层问题（探针已撤回、`residue=0`）**：用两个独立 `console.log` 读到 **按钮的 `innerText` = `"Agent Team"`、`aria-label` = `null`**（`atp-p15.log`）。
+再读组件源码：按钮体是 `<IconUserOutlineRegular size={14} />` ＋ `<span>{t('trigger')}</span>`（＋可选的 count span），**没有任何 `aria-hidden`、也没有 `aria-labelledby`**（`TeamAction.tsx:150-153`），字典值两侧都是 `Agent Team`（`locales.ts:8`、`:37`）。
+⇒ 于是三个候选里**排除了两个**：不是"包没装配"、不是"文案被 G2 改名"。剩下的是：**这个按钮在可访问性树里的名字与它的可见文本不一致**（不带 name 的 `getByRole('button')` 能找到它，带 `name: /Agent Team/iu` 找到 0 个）。
+**这条因此不再是"lane 期望过期"**：如果可访问名真的丢了，那是**产品表层的一个可访问性缺陷**（按钮对读屏不成名），lane 只是撞上它的探测器。**下一步（一次读数即可定案）**：打 `getAttribute('aria-labelledby')`、`getAttribute('role')`，以及 `<IconUserOutlineRegular>` 渲染出的 SVG 是否带 `role="img"`／`<title>`——图标若自称一个空 `aria-label`，会把 name-from-content 打断。
+**判成缺陷后的处置**属产品改动（给按钮补 `aria-label` 或修图标），**不在本轮自行做**；判成"图标语义正确、Playwright 计算差异"则归 lane 侧，改 lane 的期望即可。
