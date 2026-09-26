@@ -681,6 +681,12 @@ class Cortex:
         """
         self._neuromodulator = neuromodulator
         self.ensemble.neuromodulator = neuromodulator
+        if neuromodulator is None:
+            # 反注册路径（与 set_working_memory/clear_* 同语义）：旧实现在这里无条件
+            # f-string 取 .dopamine ⇒ None 会 AttributeError，而前两行已经写进去了，
+            # 于是调用方拿到异常却已经处于"半装配"状态。
+            print("[Cortex] NeuromodulatorState disabled (ensemble 退化到默认 1.0)")
+            return
         print(
             f"[Cortex] NeuromodulatorState enabled "
             f"(dopamine={neuromodulator.dopamine:.2f}, "
