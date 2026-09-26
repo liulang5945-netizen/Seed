@@ -46,3 +46,41 @@
 * 迁移中发现任何**无法等价**的成员 ⇒ **停在该簇**，该簇标记"与状态耦合、不可纯迁移"，转下一簇；
 * **不重构生成数学**（`_generate_p7` 的推理逻辑只做位置搬移，不改语句）；
 * 与并行会话（A2/taiji-harness）的文件**零接触**。
+
+## §6 收口判定（2026-09-26 实测；逐成员处置）
+
+| 簇 | 成员 | 处置 | 证据 |
+|---|---|---|---|
+| C-1 | `_nll_quality_from_round1_logits` | ✅ 抽离 + 委托 | `tests/test_cortex_quality_extraction.py::test_nll_quality_delegate_matches_helper`（**原为 skip**，本轮改 neuroplex Cortex 真夹具后真的跑起来） |
+| C-1 | `_rolling_nll_quality` | ✅ 抽离 + 委托（第二刀 `e3a6e0a4`） | 迁移前黄金 `reports/cortex_rolling_nll_golden_20260926.json`（10 格）；否证：改 helper 取位 ⇒ 2 条红 |
+| C-1 | `to_ngrams` / `_select_best_candidate` | ✅ 抽离 | 同上文件，`Cortex.__new__` 活体对照 |
+| C-1 | `_probe_inactive_fused` | ⛔ 留壳 | 依赖 `self.ensemble.forward` + `self._shared_embedding`（前向 = 状态 + 算力） |
+| C-1 | `_capture_field_memory` | ⛔ 留壳 | 读 `self.get_last_field_state()`、写**全局 SleepEngine 单例**（副作用汇，非计算） |
+| C-2 | 5 个 `set_*` / `invalidate_alignment_cache` | ⛔ 留壳 | 公共 API + 缓存失效（§2 第 5 条） |
+| C-2 | `_reencode_domain_generation_context` / `_get_domain_to_general_alignment` | ✅ 抽离 | 黄金 50000 条全量一致 |
+| C-3 | `_fingerprint_route` / `_select_best_candidate` | ✅ 抽离 | 黄金 15 组 |
+| C-3 | `_executive_route` / `_auto_topk_route` / `_instance_route_evolve` | ⛔ 留壳 | 调 `think()` + EMA/streak 状态、依赖 `ensemble` |
+| C-4 | 单步解码算法 `decode_step` | ✅ 抽离 | 黄金 15 组逐位等价（`0ef93b0b`） |
+| C-4 | `think`/`generate`/`generate_task_chain`/`generate_staged`/`_generate_p7`/`generate_multimodal`/`_generate_multimodal_p8` | ⛔ 留壳（**编排即其职责**，§2 第 4 条） | 见 §7 的后续刀清单 |
+| §4 | `_first_domain()` 确定性 | ✅ 落地 `1da2877e` | 改前 21/330 格随哈希种子翻转 ⇒ 改后 0 格；21 格确定值逐格等于原黄金 |
+
+**结论**：§1 表列成员已**逐成员处置**（抽出并配等价守卫，或按 §5 判留壳并写明耦合点），
+§4 唯一声明的行为变更单独入库 ⇒ **B-3 按预注册范围收口**。
+
+## §7 C-4 后续刀清单（**不在 §1 成员表内**，登记不静默丢弃）
+
+2026-09-26 通读 `_generate_p7` / `_generate_multimodal_p8` / `generate_task_chain` / `think` 得到的
+**可抽纯段**（零 self 或依赖可全提升为参数），按性价比排序，逐段仍守"每抽一段配等价测试"：
+
+1. `think` 的 `memory_vectors → seed_memories` 归一（2/3 元组、dict、phase 分支）——最干净的单点；
+2. p8 的 codec 段 logits 采样（mask + top-k + 越界停止）——**RNG 消耗顺序必须逐位一致**，与 `decode_step` 同契约；
+3. p8 的 模态→codec 段解析（只读 `MULTIMODAL_TOKENS` 全局配置）；
+4. `generate_staged` 的 dict→`TaskSet` 升级（整段即纯映射）；
+5. `generate_task_chain` 的阶段 prompt 组装 + `seed_memories` 构造；
+6. `_generate_p7` 的 leader 词表→decode 空间解析、回退 logits 选择、终文本解码三段；
+7. 退化重试温度 `min(t+0.15, 1.2)`（p7 与 task_chain 两处逐字重复）。
+
+⚠️ 内联段**没有独立可调入口** ⇒ 迁移前黄金只能从"外层方法输出"采（采集即一次性锚点，同
+`capture_taiji_cortex_rolling_nll_golden.py` 的教训：迁移后重跑 = 用被测件自采自证）。
+这一段与 B-4（核心推理路径覆盖率）合做最省：抽出的纯函数直接可测，覆盖率与拆分同向。
+
