@@ -746,8 +746,13 @@ class Cortex:
             )
 
         # 1. 生成唯一 neuron ID
+        # ⚠️ 必须同时避开隔离池：被隔离的神经元不在 self.neurons 里，但它的
+        # ckpt（neuron_{nid}.pt）还在盘上。若复用同一个 id，新神经元会**覆盖**那份 ckpt，
+        # 之后 revive 命中"已在运行中"的早退分支 ⇒ 报成功、恢复的却是别人的权重，
+        # 且隔离池里留下永久清不掉的条目（实测 2026-09-26）。
         n = 1
-        while f"{domain}_{n}" in self.neurons:
+        isolated_ids = getattr(self, "_isolated", {})
+        while f"{domain}_{n}" in self.neurons or f"{domain}_{n}" in isolated_ids:
             n += 1
         nid = f"{domain}_{n}"
 
