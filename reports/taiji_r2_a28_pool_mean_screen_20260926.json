@@ -1,0 +1,23 @@
+{
+  "format": "taiji-r2-a28-pool-effect-v1",
+  "prereg": "plans/reference/SPEC-A-17_r2_a2_3b_format_align_prereg_20260925.md §22",
+  "changed": "只有 pool_override（字节聚合 sum→max）；其余链路原样",
+  "circuit": "output/taiji_r2_copy_circuit_chat/judge/circuit-final.pt",
+  "items": 81,
+  "limit": 0,
+  "frozen_surface_hits_for_reference": 23,
+  "screen_by_pool": {
+    "mean": {
+      "steps": 635,
+      "aim_correct": 99,
+      "aim_rate": 0.1559,
+      "emitted_rate": 0.1386,
+      "step0_steps": 81,
+      "step0_aim_rate": 0.2716,
+      "items_fully_emitted": 1
+    }
+  },
+  "price_by_pool": {},
+  "reading_rule": "max 档第 0 步/整体指对率明显高于 sum ⇒ 位置数被当成质量这一假设成立；指对升而表层不升 ⇒ 印证 §20 的'点 vs 串'，问题不在聚合；两者都不动 ⇒ 求和假设被否证，回到查询不分辨那一支",
+  "base_sha256_unchanged": true
+}
