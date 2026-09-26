@@ -105,9 +105,14 @@ def infer_domain(neuron_domains: set[str], text: str) -> str:
         return any(k == prefix or k.startswith(prefix + "_") for k in neuron_domains)
 
     def _first_domain() -> str:
-        """返回第一个 neuron 的纯域前缀（fallback）。"""
-        first_key = next(iter(neuron_domains))
-        return first_key.split("_")[0]
+        """最小前缀域（确定性兜底）。
+
+        PLAN-B-03 §4 声明的行为变更：旧实现取 `next(iter(neuron_domains))`，即 set 迭代序 ⇒
+        同一输入在不同 `PYTHONHASHSEED` 下返回不同域（实测 21/330 格翻转，见
+        `reports/cortex_domain_fallback_{before,after}_20260926.json`）。
+        """
+
+        return min(neuron_domains).split("_")[0]
 
     # 1. 代码检测：强信号关键字（1 个即判定）+ 结构特征
     strong_code = [
@@ -248,9 +253,7 @@ def infer_domain(neuron_domains: set[str], text: str) -> str:
         digit_ratio = digit_ops / max(len(stripped), 1)
 
         # 综合判定（满足任一条件）
-        math_total = (
-            math_sym_count + math_kw_count * 2 + superscript + subscript + greek + fn_call
-        )
+        math_total = math_sym_count + math_kw_count * 2 + superscript + subscript + greek + fn_call
         if math_total >= 1 or digit_ratio > 0.4:
             return "math"
 

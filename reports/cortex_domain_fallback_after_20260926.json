@@ -1,0 +1,13 @@
+{
+  "format": "cortex-domain-fallback-determinism-v1",
+  "implementation_source": "neuroplex/brain/_cortex_helpers.py::infer_domain",
+  "git_rev": "1306a482c9f94d1eb18f9b9dab54ad03909aa3eb",
+  "runs_per_cell": 12,
+  "grid_shape": [
+    10,
+    33
+  ],
+  "cells_measured": 330,
+  "non_deterministic_cells": [],
+  "non_deterministic_count": 0
+}

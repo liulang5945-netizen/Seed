@@ -1,0 +1,226 @@
+{
+  "format": "cortex-domain-fallback-determinism-v1",
+  "implementation_source": "neuroplex/brain/_cortex_helpers.py::infer_domain",
+  "git_rev": "1306a482c9f94d1eb18f9b9dab54ad03909aa3eb",
+  "runs_per_cell": 12,
+  "grid_shape": [
+    10,
+    33
+  ],
+  "cells_measured": 330,
+  "non_deterministic_cells": [
+    {
+      "domain_set": "zh|code",
+      "text": "from 0 to 1",
+      "observed": [
+        "code",
+        "zh"
+      ],
+      "golden": "code",
+      "deterministic_fallback": "code"
+    },
+    {
+      "domain_set": "zh|code",
+      "text": "from the beginning",
+      "observed": [
+        "code",
+        "zh"
+      ],
+      "golden": "code",
+      "deterministic_fallback": "code"
+    },
+    {
+      "domain_set": "zh|code",
+      "text": "print('hello')",
+      "observed": [
+        "code",
+        "zh"
+      ],
+      "golden": "code",
+      "deterministic_fallback": "code"
+    },
+    {
+      "domain_set": "zh|code",
+      "text": "lambda x: x + 1",
+      "observed": [
+        "code",
+        "zh"
+      ],
+      "golden": "code",
+      "deterministic_fallback": "code"
+    },
+    {
+      "domain_set": "zh|code",
+      "text": "std::vector<int> v;",
+      "observed": [
+        "code",
+        "zh"
+      ],
+      "golden": "code",
+      "deterministic_fallback": "code"
+    },
+    {
+      "domain_set": "zh|code",
+      "text": "求 f(x) = x^2 的 derivative",
+      "observed": [
+        "code",
+        "zh"
+      ],
+      "golden": "code",
+      "deterministic_fallback": "code"
+    },
+    {
+      "domain_set": "zh|code",
+      "text": "E = mc^2",
+      "observed": [
+        "code",
+        "zh"
+      ],
+      "golden": "code",
+      "deterministic_fallback": "code"
+    },
+    {
+      "domain_set": "zh|code",
+      "text": "sin(x) + cos(x) = 1",
+      "observed": [
+        "code",
+        "zh"
+      ],
+      "golden": "code",
+      "deterministic_fallback": "code"
+    },
+    {
+      "domain_set": "zh|code",
+      "text": "∫ f(x) dx",
+      "observed": [
+        "code",
+        "zh"
+      ],
+      "golden": "code",
+      "deterministic_fallback": "code"
+    },
+    {
+      "domain_set": "zh|code",
+      "text": "the theorem proves the equation by bayes rule",
+      "observed": [
+        "code",
+        "zh"
+      ],
+      "golden": "code",
+      "deterministic_fallback": "code"
+    },
+    {
+      "domain_set": "zh|code",
+      "text": "x² + y² = r²",
+      "observed": [
+        "code",
+        "zh"
+      ],
+      "golden": "code",
+      "deterministic_fallback": "code"
+    },
+    {
+      "domain_set": "zh|code",
+      "text": "α β γ δ ε",
+      "observed": [
+        "code",
+        "zh"
+      ],
+      "golden": "code",
+      "deterministic_fallback": "code"
+    },
+    {
+      "domain_set": "zh|code",
+      "text": "log(ln(x)) + tan(theta)",
+      "observed": [
+        "code",
+        "zh"
+      ],
+      "golden": "code",
+      "deterministic_fallback": "code"
+    },
+    {
+      "domain_set": "zh|code",
+      "text": "The quick brown fox jumps over the lazy dog.",
+      "observed": [
+        "code",
+        "zh"
+      ],
+      "golden": "code",
+      "deterministic_fallback": "code"
+    },
+    {
+      "domain_set": "zh|code",
+      "text": "hello world 123",
+      "observed": [
+        "code",
+        "zh"
+      ],
+      "golden": "code",
+      "deterministic_fallback": "code"
+    },
+    {
+      "domain_set": "zh|code",
+      "text": "",
+      "observed": [
+        "code",
+        "zh"
+      ],
+      "golden": "code",
+      "deterministic_fallback": "code"
+    },
+    {
+      "domain_set": "zh|code",
+      "text": "   ",
+      "observed": [
+        "code",
+        "zh"
+      ],
+      "golden": "code",
+      "deterministic_fallback": "code"
+    },
+    {
+      "domain_set": "zh|code",
+      "text": "1234567890 + (2*3)/4 = 11",
+      "observed": [
+        "code",
+        "zh"
+      ],
+      "golden": "code",
+      "deterministic_fallback": "code"
+    },
+    {
+      "domain_set": "zh|code",
+      "text": "plain text without domain markers",
+      "observed": [
+        "code",
+        "zh"
+      ],
+      "golden": "code",
+      "deterministic_fallback": "code"
+    },
+    {
+      "domain_set": "en|math",
+      "text": "这是一段中文文本。",
+      "observed": [
+        "!ambiguous",
+        "en",
+        "math"
+      ],
+      "golden": "en",
+      "deterministic_fallback": "en"
+    },
+    {
+      "domain_set": "en|math",
+      "text": "今天天气很好，我们去公园散步。",
+      "observed": [
+        "!ambiguous",
+        "en",
+        "math"
+      ],
+      "golden": "en",
+      "deterministic_fallback": "en"
+    }
+  ],
+  "non_deterministic_count": 21
+}
