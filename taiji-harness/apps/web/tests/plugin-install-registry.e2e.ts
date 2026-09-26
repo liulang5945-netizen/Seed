@@ -3,7 +3,7 @@
 // is unreachable, and an install that loses its registry mid-run moves on to the next.
 import { mkdtemp, readFile, writeFile, rm } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
-import { join } from 'node:path'
+import { join, sep } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { chromium } from 'playwright'
 import { expect, it } from 'vitest'
@@ -94,6 +94,10 @@ it('offers the registries, remembers the one picked, and moves an install on to 
       const installed = (await captureStableAria(page, '[role="dialog"]', scaffold.workspaceCwd))
         .split(process.execPath).join('{{node}}')
         .split(scaffold.harnessHome).join('{{harnessHome}}')
+        // The app joins the install location with native separators while the golden keeps the POSIX
+        // spelling; anchor the tail rather than rewriting every backslash (six committed goldens carry
+        // backslashes that are rendered content, e.g. escaped quotes inside JSON payloads).
+        .split(`${sep}.dsh-home${sep}profiles${sep}scaffold`).join('/.dsh-home/profiles/scaffold')
       await compareOrRefreshGolden(fileURLToPath(new URL('./expected/plugin-install-registry/installed.expected.md', import.meta.url)), installed, webSnapshotMode())
       // The dialog opened again starts from the registry picked for the last install.
       await dialog.getByRole('button', { name: '立即启用', exact: true }).click()
