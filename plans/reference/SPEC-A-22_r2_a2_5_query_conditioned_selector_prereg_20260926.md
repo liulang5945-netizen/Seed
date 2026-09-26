@@ -572,6 +572,28 @@ black/ruff 干净）。全套件 5 条红逐支归因完毕，均非本批（1 �
 
 ---
 
+## 22. §17 的来源污染：已结清（顺带钉下一条方法论事实）
+
+episode 数钉死的重跑（`--episodes 2189 --max-minutes 240`，**新目录**
+`output/taiji_r2_a25_seedA_verify`）跑完：`episodes_done 2189`、`stopped_by: episode-cap`、
+`base_sha256_unchanged: true`、`lock_dropped: 0`，参数摘要
+
+```
+verify      = e186790f7628a853…
+§17 记录的  = e186790f7628a853…      ⇒ 逐位相同
+```
+
+⇒ ① 那枚 payload **不需要知道是哪一个进程写的**：给定（同一命令、同一 `--seed`、同一 episode 数）
+整条 chat 训练链是可复现的，§17 的欠账结清，A2.5 全部表层读数可引用。
+⇒ ② 顺带得到一条对后续所有配对比较都有用的事实：**墙钟不可复现、episode 数可复现**。
+今后任何"两臂只差一个变量"的对照都必须按 episode 数钉（§13 那条不公平项的根治法）。
+⇒ ③ 另一条免费的旁证：这次重跑用的代码已含 丁 臂的 `lr_embed` 分支（默认 0）与
+`bound` 定义位置改动，结果逐位不变 ⇒ 那两处改动**行为中性**，不只在单测里成立，
+在 90 分钟真实训练链上也成立。
+
+
+---
+
 ## 21. 真 oracle 把瓶颈挪了位置：选择不是限制，**第二条告知发不出来**才是
 
 `reports/taiji_r2_a25_true_oracle_v3_{yi,bing}_seedA_20260926.json`
