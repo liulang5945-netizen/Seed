@@ -12,9 +12,9 @@ import type {} from '@taiji/dsh-experimental-agent-team'
 import { createMessage, createUserMessage } from '@taiji/dsh-llm'
 import {
   assertFixtureInventory, captureStableAria, compareOrRefreshGolden,
-  launchWebScaffold, watchConsole, webSnapshotMode, type WebScaffold,
+  launchWebScaffold, watchConsole, webSnapshotMode, connectFreshWorkspaceViaHost, type WebScaffold,
 } from './scaffold.ts'
-import { connectFreshWorkspace, newEnglishPage, saveFailureShot } from './support.ts'
+import { newEnglishPage, saveFailureShot } from './support.ts'
 
 const SNAPSHOT_DIR = fileURLToPath(new URL('./snapshots/agent-team-panel', import.meta.url))
 const PANEL_EXPECTED = join(SNAPSHOT_DIR, 'task.expected.md')
@@ -50,7 +50,7 @@ describe('web e2e: Agent Teams panel', () => {
     tripwire = watchConsole(page)
     await page.goto(scaffold.authenticatedUrl, { waitUntil: 'load' })
     await page.waitForSelector('[class*="frame"]', { timeout: 30_000 })
-    await connectFreshWorkspace(page, scaffold.workspaceCwd)
+    await connectFreshWorkspaceViaHost(scaffold, page, scaffold.workspaceCwd, 'team-workspace')
     const agent = scaffold.ctx.agents.list()[0]
     if (agent === undefined) throw new Error('connected Team workspace did not create an Agent')
     agent.session.append('turn/start', { turn: 1 })

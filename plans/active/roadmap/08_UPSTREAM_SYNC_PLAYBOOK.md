@@ -269,3 +269,7 @@ scaffold 又**自己关掉了 `session-title-llm`**（`scaffold.ts:630`，理由
 ⇒ **双形态因此与"自动打开会话"无关（我先前那个解释是猜的，作废）**：这条 lane 依赖的正是今天定案过的那条**脆弱路径**——旧 helper 的菜单/对话框流程在本 fork 表层上时成时不成（H3t 把触发点从 composer textbox 改成 hero 的 `button[aria-haspopup=menu]` 之后好转但仍非确定）。**`Ready.` 只是这条链最下游的探测器**：helper 走通 ⇒ 页面有会话可渲染 ⇒ `waitFor` 过；走不通 ⇒ setup 卡住、用例全 skip＋文件级红。
 **判别与修法都已现成**：把这条 lane 转成宿主侧 `connectFreshWorkspaceViaHost`（H3q 那条：`ctx.workspaceController.create({path})` ＋ 重载），看 setup 是否从此确定。**转法本身不判可访问名那一步**（那是下一个问题，两次探针都没被执行到，仍未判）。
 **为什么值得做**：这条 lane 的 2 条用例级红**在转换之前不能记成产品缺陷**——它可能一直只是那条脆弱 helper 的下游症状，与今天 H3v 修掉的 6 条同源。
+
+**上一条解释当天就被实验证实，并且撤掉了一个产品缺陷嫌疑（H3v 延伸到 `agent-team-panel`）**：把 `:53` 从旧 helper `connectFreshWorkspace` 换成宿主侧 `connectFreshWorkspaceViaHost(scaffold, page, cwd, 'team-workspace')`（并清掉不再使用的 import）之后，**单跑两次都是 `Test Files 1 passed (1)`、`Tests 4 passed (4)`**（`atp-conv-1/2.log`；oxlint 0／0）。转换前是"两次卡 setup＋两次 2 failed｜2 passed"。
+⇒ **三件事一次结清**：① setup 双形态的因就是那条脆弱 helper，**`Ready.` 只是最下游探测器**；② 那 2 条用例级红**不是产品缺陷**，与 H3v 那 6 条同源；③ **可访问名那个嫌疑撤销**——`[data-team-action]` 里的按钮一点就通，说明它的可访问名本来就对，先前"带 name 解析到 0 个元素"是因为**会话没打开、面板不在可交互状态**，而不是 a11y 缺陷。**这条 lane 从"稳定红"变成"绿且两次一致"。**
+**方法论收获（值得复用）**：当一个表层元素"点不到"时，**先确认它所在的那条会话/视图是否真的处于激活态**，再去怀疑它的可访问性属性——我差点把一次 helper 脆弱性报成产品 a11y 缺陷。
