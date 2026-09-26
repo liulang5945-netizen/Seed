@@ -166,6 +166,18 @@ scaffold 又**自己关掉了 `session-title-llm`**（`scaffold.ts:630`，理由
 **对照修前的同一 75 条（`baseline76c.log`：40 failed｜33 passed、71 failed｜131 passed、1223.51 s）**⇒
 **红文件 40 → 34（−6）、绿 33 → 40（+7）、红用例 71 → 63（−8）**，**降幅逐条可归因**：H3u 修掉 1 个文件、H3v 修掉 5 个文件（第 6 个 `markdown-images` 越过 DONE 后另见新形态）。
 分账器口径：超时 18／整棵快照差异 14／普通断言 19／运行时 4（合计 55，余 8 条错误行形状未识别）。
+**超时的分组读数（同日，先否证我自己那条漂亮结论）**：我第一次用脚本按"等待对象"分组，得到"11 次都在等 `Minimal mode` 菜单项、跨 4 个文件"——**那是脚本缺陷**：
+它用 `t.indexOf(raw)` 在整份日志里找错误行的位置，重复行会跳到别处，于是把不相干的 lane 也归了进来。
+**改成"只在当前 FAIL 块内向后扫"之后（`E:/Seed/.dsh-sbx2/group-timeouts.mjs`），读数是 10 条超时 lane、10 种互不相同的等待对象**：
+`agent-team-panel`→`getByText('Ready.')`；`markdown-wide-table`→`MWT_TABLES_DONE`；`thinking-markdown`→`THINKING_MARKDOWN_DONE`；
+`agent-preset-selection`→`getByRole('button',{name:'Minimal mode'})`（**只有这一条**，且它是 button 不是 menuitem）；`cold-blank-session`→`[data-queue-dock]` 里的一句文案；
+`goal-bar`→`[data-goal-bar]`；`markdown-images`→**我方 H3v 新加的那个 `filter({ hasText: /dsh-web-e2e-ws-/ })`**；`models-settings`→设置对话框里"编辑 Acme 网关"按钮；
+`plugin-manager`→会话层级导航里的一行；`sidebar-right`→`getByRole('treeitem',{name:/Show the right sidebar./})`。
+⇒ **"超时有一个共同因"这个假设被否证**，别再照它排路线；逐条取证才是唯一路径。
+**并且这条读数暴露我方自己的一个欠账**：`markdown-images` 现在红在**我加的那个 locator** 上（`baseline77` 的等待对象就是它）。
+**原因未判**——该文件只有一处选行（`:216-218`），所以"第二个用例容器命名不同"这种说法**是我猜的，不成立**；
+要看的是它点完 `.first()` 之后树里到底剩下什么（同 H3v 的读法，一次插桩就够）。**这条排在下一轮队首**（先前记的"它红在后面的一个点击"不准确，已按此更正）。
+
 **这条面现在的缺口是三堆，各自等不同的东西**：超时 18 条（等逐条取证）、快照差异 14 条（等金样裁定 (甲)）、普通断言 19 条（其中含 `plugin-config` 已定案的默认值过期、`sessionless-header` 的平台仿真假设、`support-timezone` 的 `TZ` 前提——**这三处都不该并进金样**）。
 **DONE 一族按判明的机制修掉，读数 5 文件转绿（同日，登记 H3v）**：改的是行选法（位置 → 按 `cwd` basename 的内容匹配）。
 **6 文件／7 用例 → `Test Files 5 passed｜1 failed`、`Tests 6 passed｜1 failed`、55.75 s**（日志 `E:/Seed/.dsh-sbx2/fix-six.log`）。
