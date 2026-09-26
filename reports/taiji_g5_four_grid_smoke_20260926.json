@@ -1,0 +1,235 @@
+{
+  "format": "taiji-g5-episodic-write-four-grid-v1",
+  "prereg": "plans/reference/M5_R2_A_BRANCH_PLAN_REV2_20260926.md §4 乙-1／§5 A0／§5b G5",
+  "manifest": "E:\\Seed\\plans\\manifests\\r2_copy_surface_extension_v3_position_random.json",
+  "checkpoint": "checkpoints/seed_beta.pt",
+  "items": 8,
+  "write_entrance": {
+    "action_symbol": 49,
+    "reward": 1.0,
+    "timing": "told-turn-end cortical context, before that turn's answer",
+    "clear_between_items": "memory payload round-trip",
+    "read_switch": "Taiji.generate(use_memory=...)"
+  },
+  "arms": {
+    "W0R0": {
+      "write_turns": false,
+      "use_memory": false,
+      "items": 8,
+      "strict_hits": 0,
+      "episodes_written": 0,
+      "write_strength_mean": null,
+      "final_write_count": 0
+    },
+    "W0R1": {
+      "write_turns": false,
+      "use_memory": true,
+      "items": 8,
+      "strict_hits": 0,
+      "episodes_written": 0,
+      "write_strength_mean": null,
+      "final_write_count": 0
+    },
+    "W1R0": {
+      "write_turns": true,
+      "use_memory": false,
+      "items": 8,
+      "strict_hits": 0,
+      "episodes_written": 16,
+      "write_strength_mean": 0.891543,
+      "final_write_count": 2
+    },
+    "W1R1": {
+      "write_turns": true,
+      "use_memory": true,
+      "items": 8,
+      "strict_hits": 0,
+      "episodes_written": 16,
+      "write_strength_mean": 0.887733,
+      "final_write_count": 2
+    }
+  },
+  "gaps_vs_W0R0": {
+    "W0R0": null,
+    "W0R1": 0,
+    "W1R0": 0,
+    "W1R1": 0
+  },
+  "rows": {
+    "W0R0": [
+      {
+        "id": "V001",
+        "hit": false,
+        "answer": "������������：��有���，����人����师�个��个�"
+      },
+      {
+        "id": "V002",
+        "hit": false,
+        "answer": "����������下�（则有��我人��������是���"
+      },
+      {
+        "id": "V003",
+        "hit": false,
+        "answer": "���������人���������来�是有�：我�下�到"
+      },
+      {
+        "id": "V004",
+        "hit": false,
+        "answer": "分���弈�下�个是���我�是我�済我为��������我"
+      },
+      {
+        "id": "V005",
+        "hit": false,
+        "answer": "分���刑�个�（君，�有��：�师师���孟������"
+      },
+      {
+        "id": "V006",
+        "hit": false,
+        "answer": "分�（刑人����师�君刺个�，�个是���我�是我�"
+      },
+      {
+        "id": "V007",
+        "hit": false,
+        "answer": "������（则意��扈有�有�（下师，到�君�孟���"
+      },
+      {
+        "id": "V008",
+        "hit": false,
+        "answer": "��（家��个�，个�），家��孟�����宩人�����"
+      }
+    ],
+    "W0R1": [
+      {
+        "id": "V001",
+        "hit": false,
+        "answer": "������������：��有���，����人����师�个��个�"
+      },
+      {
+        "id": "V002",
+        "hit": false,
+        "answer": "����������下�（则有��我人��������是���"
+      },
+      {
+        "id": "V003",
+        "hit": false,
+        "answer": "���������人���������来�是有�：我�下�到"
+      },
+      {
+        "id": "V004",
+        "hit": false,
+        "answer": "分���弈�下�个是���我�是我�済我为��������我"
+      },
+      {
+        "id": "V005",
+        "hit": false,
+        "answer": "分���刑�个�（君，�有��：�师师���孟������"
+      },
+      {
+        "id": "V006",
+        "hit": false,
+        "answer": "分�（刑人����师�君刺个�，�个是���我�是我�"
+      },
+      {
+        "id": "V007",
+        "hit": false,
+        "answer": "������（则意��扈有�有�（下师，到�君�孟���"
+      },
+      {
+        "id": "V008",
+        "hit": false,
+        "answer": "��（家��个�，个�），家��孟�����宩人�����"
+      }
+    ],
+    "W1R0": [
+      {
+        "id": "V001",
+        "hit": false,
+        "answer": "������������：��有���，����人����师�个��个�"
+      },
+      {
+        "id": "V002",
+        "hit": false,
+        "answer": "����������下�（则有��我人��������是���"
+      },
+      {
+        "id": "V003",
+        "hit": false,
+        "answer": "���������人���������来�是有�：我�下�到"
+      },
+      {
+        "id": "V004",
+        "hit": false,
+        "answer": "分���弈�下�个是���我�是我�済我为��������我"
+      },
+      {
+        "id": "V005",
+        "hit": false,
+        "answer": "分���刑�个�（君，�有��：�师师���孟������"
+      },
+      {
+        "id": "V006",
+        "hit": false,
+        "answer": "分�（刑人����师�君刺个�，�个是���我�是我�"
+      },
+      {
+        "id": "V007",
+        "hit": false,
+        "answer": "������（则意��扈有�有�（下师，到�君�孟���"
+      },
+      {
+        "id": "V008",
+        "hit": false,
+        "answer": "��（家��个�，个�），家��孟�����宩人�����"
+      }
+    ],
+    "W1R1": [
+      {
+        "id": "V001",
+        "hit": false,
+        "answer": "��������������：戈�人�����师�����个�����"
+      },
+      {
+        "id": "V002",
+        "hit": false,
+        "answer": "���������������，���人����������个有�有�"
+      },
+      {
+        "id": "V003",
+        "hit": false,
+        "answer": "��������吆人���������有�我���，������"
+      },
+      {
+        "id": "V004",
+        "hit": false,
+        "answer": "分��，�，家��个人������������孟����是�"
+      },
+      {
+        "id": "V005",
+        "hit": false,
+        "answer": "分��：师，�，��为师，家�孟������有�：�有"
+      },
+      {
+        "id": "V006",
+        "hit": false,
+        "answer": "分�，�，则个是人���������刑���我有�为，�"
+      },
+      {
+        "id": "V007",
+        "hit": false,
+        "answer": "�到��，到：我个是有我为为人�����为我�是�我�"
+      },
+      {
+        "id": "V008",
+        "hit": false,
+        "answer": "��（则�个�（（君�个�（�们一个�（君家��人�"
+      }
+    ]
+  },
+  "base_sha256_unchanged": true,
+  "instrument_guard": {
+    "items_nonzero": true,
+    "w0r0_is_zero_or_reported": true,
+    "write_arms_actually_wrote": true,
+    "base_unchanged": true
+  }
+}
