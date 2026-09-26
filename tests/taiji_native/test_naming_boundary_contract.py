@@ -25,6 +25,12 @@ LEGACY_TRANSFORMER_CONSUMERS = {
     "neuroplex/resonance/neuron.py",
     "scripts/training/train_tinystories.py",
     "scripts/training/train_tinystories_field.py",
+    # B-4（审计 §7-16 核心推理路径覆盖率）2026-09-26：layers.py 是 S3/S9/S11 三条
+    # 架构级发现的所在模块，此前全仓零测试。这条**不是**在被替代的底层上继续加功能，
+    # 而是给已在生产路径上被 cortex/ensemble 调用的代码补正确性守卫（RoPE 相位、
+    # KV cache 增量解码、sink+window 驱逐）。理由同步登记在
+    # plans/active/ARCHITECTURE_DIRECTION_2026_08.md。
+    "tests/test_neuroplex_layers_core_path.py",
 }
 
 

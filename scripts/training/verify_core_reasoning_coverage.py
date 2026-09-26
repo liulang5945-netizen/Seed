@@ -57,7 +57,18 @@ CORE_FACE = (
 
 
 def _norm(path: str) -> str:
-    return path.replace("\\", "/").split("neuroplex/")[-1]
+    """coverage JSON 的键是绝对路径（Windows 还是反斜杠）⇒ 归一成 `neuroplex/...` 相对形式。
+
+    ⚠️ 不能用 `split("neuroplex/")[-1]`：那会把前缀本身切掉，过滤后一个文件都不剩
+    （第一版就是这样，门直接报 0 语句却仍然"跑通了"）。
+    """
+
+    unified = path.replace("\\", "/")
+    marker = "neuroplex/"
+    idx = unified.rfind(marker)
+    if idx < 0:
+        return unified
+    return unified[idx:]
 
 
 def summarize(report: dict, threshold: float) -> dict:
