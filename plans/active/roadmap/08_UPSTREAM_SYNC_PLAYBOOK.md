@@ -241,3 +241,9 @@ scaffold 又**自己关掉了 `session-title-llm`**（`scaffold.ts:630`，理由
 **补：`agent-team-panel` 同日判到第三层（接 §5 第 7 条与 §6 ⑰ 那条线）**：① 用**正确字段**读宿主装配（`entry.options.name`；我先前取的 `e.id ?? e.name` 是错字段，所以那次 `loader={}` 是仪器错误）——`@taiji/dsh-experimental-client-ui-agent-team` **确实挂在装配里**（189 条之一）⇒ **不是"包没装配"**。② DOM 侧读数 `wrapper=1 buttons=1 tree=3` ⇒ **`[data-team-action]` 容器在页面上、里面确实有一个 button**，所以 `agent-team-panel.e2e.ts:85` 那句 `getByRole('button', { name: /Agent Team/iu })` 卡住的**不是元素不存在，而是该按钮的可访问名不匹配这个正则**。③ 再往下"它到底叫什么"那一步**今天没跑成**（探针没产出输出行）。另记一次我自己的操作错：在 `taiji-harness/` 子目录里拿仓根相对 pathspec 去撤回，没撤动，导致 PROBE 行在测试文件里多留了一轮——现按 `git status` 确认已清（`residue=0`、该文件与 HEAD 一致）。
 **落点因此收窄成一次读码，不必再跑批**：看 `packages/experimental/client-ui-agent-team/src/client/TeamAction.tsx` 里那个按钮的 label 取法（i18n key？图标按钮的 `aria-label`？），与 lane 的正则对一下，就能分**上游 lane 的期望过期**与**本 fork G2 改名把文案换掉了**两种结论。
 **这条 lane 的定位不变**：稳定红、与 H3u/H3v 无关，**不进 §5 第 7 条的最小面**。
+
+**再补一层（同日，把 `agent-team-panel` 的边界钉到「只差一个 DOM 读数」）**：读了组件源码——触发按钮的可访问名来自 `t('trigger')`（`packages/experimental/client-ui-agent-team/src/client/TeamAction.tsx:152`），而**两份字典里 `trigger` 的值都是 `Agent Team`**（`locales.ts:8` 与 `:37`）⇒ 文案侧看不出问题，**不是 G2 改名把标签换掉了**。
+**同时确认了失败的性质**：那次点击的 call log **只有一行** `- waiting for locator('[data-team-action]').getByRole('button', { name: /Agent Team/iu })`——Playwright 只在**解析到 0 个元素**时这样收尾（若是元素在但不可点，会接着打 element is not enabled/stable）。而我同一时刻用不带 name 的 `getByRole('button')` 数到 **1 个**。
+⇒ 分歧被压缩成一句：**容器里那个 button 的可访问名不是 `Agent Team`**，尽管字典值写着它。三类候选：i18n 未解析（名字回退成 key）、名字被别的可访问性来源覆盖（图标＋`aria-hidden` 的 span）、或那个元素根本不是它。
+**两次想打真实名字的探针都没产出输出**（第二次疑似 `allAccessibleNames()` 在本仓 Playwright 版本上不存在，整条 `console.log` 表达式先抛错——今天第四次因探针自身写法而白跑一次，**探针也要能被验证**）。
+**下一轮的正确一次**：用 `page.locator('[data-team-action] button').first().getAttribute('aria-label')` 与 `.innerText()`，写成**两个独立**的 `console.log`（不要串在一个表达式里），即可判这条 lane 是「上游 lane 期望过期」还是「本 fork 的 client 表层丢了可访问名」。
