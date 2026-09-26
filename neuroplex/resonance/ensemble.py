@@ -633,6 +633,10 @@ class ResonanceEnsemble:
                 skipped.append(f"field ({e})")
         elif "field" in state and strict:
             raise KeyError("field 状态缺失但 strict=True")
+        elif "field" in state:
+            # docstring 承诺"缺失的键跳过并返回跳过清单"，没场时静默丢掉整节 R1 持久化端
+            # 不算报告（调用方拿到的仍是 []，会把"没恢复"读成"恢复成功"）。
+            skipped.append("field (当前 ensemble 无场)")
         return skipped
 
     # 1) field 属性：推理 forward 期间返回本线程独立共振场（thread-local），
