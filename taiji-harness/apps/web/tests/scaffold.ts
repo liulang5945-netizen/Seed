@@ -22,7 +22,7 @@
 // llm seam post-boot with installLlmReplay on the settled root ctx
 // (the plugin-row path discards the ReplayHandle; the direct install keeps
 // assertConsumed for the teardown fixture-consumption check).
-import { existsSync, readFileSync } from 'node:fs'
+import { existsSync, mkdirSync, readFileSync } from 'node:fs'
 import { createHash } from 'node:crypto'
 import { mkdir, mkdtemp, readFile, readdir, realpath, rm, symlink, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
@@ -462,6 +462,27 @@ async function cleanupScaffoldWorld(ctx: Context, workspaceCwd: string, persiste
  * directory still lists the provider while the row is declared.
  */
 export const TAIJI_ROW_ABSENT_OVERLAY = join(import.meta.dirname, 'taiji-row-absent.overlay.yml')
+
+/**
+ * Bind a fresh Workspace through the product API instead of the directory-picker UI, then
+ * wait for the composer the same way the UI-driven helper does. The shipped trigger opens a
+ * workspace menu before the directory dialog, so driving that path couples every caller to
+ * menu copy and to which surface the composer is mounted on; the controller call is the
+ * fact those scenarios actually need.
+ * @param scaffold - the launched scaffold whose host context owns the Workspace controller.
+ * @param page - the open browser page to refresh after the registration lands.
+ * @param root - workspace parent directory.
+ * @param name - directory created under `root` and connected.
+ * @returns nothing; the composer is ready when it resolves.
+ */
+export async function connectFreshWorkspaceViaHost(
+  scaffold: WebScaffold, page: Page, root: string, name = 'workspace',
+): Promise<void> {
+  mkdirSync(join(root, name), { recursive: true })
+  await scaffold.ctx.workspaceController.create({ path: join(root, name) })
+  await page.reload({ waitUntil: 'load' })
+  await page.locator('[data-composer-input][contenteditable="true"]').waitFor({ timeout: 15_000 })
+}
 
 export async function launchWebScaffold(options: LaunchOptions = {}): Promise<WebScaffold> {
   requireDist()
