@@ -456,6 +456,13 @@ async function cleanupScaffoldWorld(ctx: Context, workspaceCwd: string, persiste
  * @param options - replay fixture selection and pacing.
  * @returns the running scaffold.
  */
+/**
+ * Overlay that disables the `llm-taiji` row for scenarios asserting the shipped
+ * no-usable-route premise. Withdrawing only the route is not enough: the settings
+ * directory still lists the provider while the row is declared.
+ */
+export const TAIJI_ROW_ABSENT_OVERLAY = join(import.meta.dirname, 'taiji-row-absent.overlay.yml')
+
 export async function launchWebScaffold(options: LaunchOptions = {}): Promise<WebScaffold> {
   requireDist()
   const {

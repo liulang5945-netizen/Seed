@@ -4,7 +4,7 @@ import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { chromium, type Browser, type Page } from 'playwright'
 import { afterAll, beforeAll, describe, expect, it, onTestFailed } from 'vitest'
-import {
+import { TAIJI_ROW_ABSENT_OVERLAY,
   acknowledgeReloadConnectionLoss, assertFixtureInventory, captureStableAria, compareOrRefreshGolden,
   launchWebScaffold, watchConsole, webSnapshotMode, WELCOME_NOTICE_COPY, type WebScaffold,
 } from './scaffold.ts'
@@ -23,7 +23,10 @@ describe.skipIf(MODE === 'record').each([false, true])('web e2e: native credenti
     scaffold = await launchWebScaffold({
       deepSeekMissingCredential: true,
       welcomeNoticePending: true,
-      ...desktop ? {} : { extraOverlayPath: fileURLToPath(new URL('./fixtures/onboarding-native/cordis.patch.yml', import.meta.url)) },
+      extraOverlayPath: [
+        TAIJI_ROW_ABSENT_OVERLAY,
+        ...(desktop ? [] : [fileURLToPath(new URL('./fixtures/onboarding-native/cordis.patch.yml', import.meta.url))]),
+      ],
     })
     browser = await chromium.launch()
     page = await browser.newPage({ viewport: { width: 1440, height: 960 }, locale: ZH_BROWSER_LOCALE })

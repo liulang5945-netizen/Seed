@@ -1,0 +1,6 @@
+# Withdraw the Taiji provider completely: disabling the row leaves neither a routable
+# adapter nor a settings-directory entry for `taiji-local`. The keyless first-run lanes
+# own a "no usable route" premise, so they must not inherit it from whatever runtime
+# happens to answer on the host.
+- id: llm-taiji
+  disabled: true
