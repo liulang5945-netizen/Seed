@@ -197,6 +197,7 @@ def trace_item(
     history_mode: str = "oracle",
     store_mode: str = "all",
     runtime: Any = None,
+    feature_sink: list | None = None,
 ) -> dict[str, Any]:
     """对一题做逐步轨迹，并给出分诊类别。
 
@@ -293,6 +294,27 @@ def trace_item(
         )
         argmax_byte = int(with_copy.argmax())
         emitted = argmax_byte == target_byte
+        if feature_sink is not None:
+            #: 特征只在这一档被取（别的档不付这个代价）。**关键是取在这条轨迹上**：
+            #: 轨迹按"模型实际会发的字节"前进（`argmax_byte`），不是按"copy 自己会发什么"——
+            #: 后者是另一条链，在它上面算出来的"上限"描述的是一条从没发生过的路径。
+            codes_list = [int(code) for code in snap["codes"].tolist()]
+            feature_sink.append(
+                {
+                    "step": k,
+                    "f1": [float(value) for value in ctx.tolist()],
+                    "codes": codes_list,
+                    "targets": [
+                        index
+                        for index, code in enumerate(codes_list)
+                        if code == target_byte
+                    ],
+                    "prev_byte": int(prev_byte),
+                    "copy_aimed": bool(copy_top_byte == target_byte),
+                    "emitted": bool(emitted),
+                    "event_is_target": bool(bytes(snap["event"].content) == told_bytes),
+                }
+            )
         emitted_bytes.append(argmax_byte)
         rows.append(
             {
