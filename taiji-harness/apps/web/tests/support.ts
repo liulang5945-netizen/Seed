@@ -139,7 +139,11 @@ export function probeFreePort(): Promise<number> {
  * @returns nothing; the dialog is visible when it resolves.
  */
 async function openWorkspaceDirectoryDialog(page: Page, trigger: string, dialogName: string): Promise<void> {
-  await page.getByRole('textbox', { name: trigger }).click()
+  // The hero workspace trigger is a button; the composer input only carries the same label while
+  // no Workspace is bound, so the button is the element that actually opens the picker menu.
+  const button = page.getByRole('button', { name: trigger })
+  if (await button.count() > 0) await button.click()
+  else await page.getByRole('textbox', { name: trigger }).click()
   const add = page.getByRole('menuitem', { name: /添加工作区|Add workspace/u })
   if (await add.waitFor({ state: 'visible', timeout: 2_000 }).then(() => true).catch(() => false)) await add.click()
   await page.getByRole('dialog', { name: dialogName }).waitFor({ timeout: 10_000 })
