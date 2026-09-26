@@ -1,0 +1,119 @@
+{
+  "format": "taiji-c3-retention-curve-v1",
+  "prereg": "plans/reference/M5_R2_A_BRANCH_PLAN_REV2_20260926.md §2e C3",
+  "checkpoint": "checkpoints/seed_beta.pt",
+  "protocol": {
+    "reused_instrument": "taiji.foundation_tasks.DelayedMemoryTask._write_episode/_recall_accuracy",
+    "bindings": 8,
+    "action_classes": 4,
+    "intervals": [
+      0,
+      16,
+      64,
+      256,
+      1024
+    ],
+    "age_curve": "reset before query (field recall vs episode age via time code)",
+    "lesion_arm": "use_memory=False per interval"
+  },
+  "curve": [
+    {
+      "interval_steps": 0,
+      "write_count": 8,
+      "accuracy_use_memory": 1.0,
+      "accuracy_lesion": 0.25,
+      "field_mean_confidence": 0.690005,
+      "field_confidences": [
+        0.732277,
+        0.704704,
+        0.673441,
+        0.704481,
+        0.64433,
+        0.69298,
+        0.686655,
+        0.681169
+      ],
+      "field_evidence_argmax_in_actions": 8
+    },
+    {
+      "interval_steps": 16,
+      "write_count": 8,
+      "accuracy_use_memory": 1.0,
+      "accuracy_lesion": 0.25,
+      "field_mean_confidence": 0.690005,
+      "field_confidences": [
+        0.732277,
+        0.704704,
+        0.673441,
+        0.704481,
+        0.64433,
+        0.69298,
+        0.686655,
+        0.681169
+      ],
+      "field_evidence_argmax_in_actions": 8
+    },
+    {
+      "interval_steps": 64,
+      "write_count": 8,
+      "accuracy_use_memory": 1.0,
+      "accuracy_lesion": 0.25,
+      "field_mean_confidence": 0.690005,
+      "field_confidences": [
+        0.732277,
+        0.704704,
+        0.673441,
+        0.704481,
+        0.64433,
+        0.69298,
+        0.686655,
+        0.681169
+      ],
+      "field_evidence_argmax_in_actions": 8
+    },
+    {
+      "interval_steps": 256,
+      "write_count": 8,
+      "accuracy_use_memory": 1.0,
+      "accuracy_lesion": 0.25,
+      "field_mean_confidence": 0.690005,
+      "field_confidences": [
+        0.732277,
+        0.704704,
+        0.673441,
+        0.704481,
+        0.64433,
+        0.69298,
+        0.686655,
+        0.681169
+      ],
+      "field_evidence_argmax_in_actions": 8
+    },
+    {
+      "interval_steps": 1024,
+      "write_count": 8,
+      "accuracy_use_memory": 1.0,
+      "accuracy_lesion": 0.25,
+      "field_mean_confidence": 0.690005,
+      "field_confidences": [
+        0.732277,
+        0.704704,
+        0.673441,
+        0.704481,
+        0.64433,
+        0.69298,
+        0.686655,
+        0.681169
+      ],
+      "field_evidence_argmax_in_actions": 8
+    }
+  ],
+  "saturation_interval": null,
+  "what_would_overturn": "N=0 召回低于 chance ⇒ 量具在产品基座上不成立；若曲线在所有间隔都平且高于 N0_MIN ⇒ 时间码错位不是保持瓶颈（瓶颈在别处，如容量或 cue 重合度）",
+  "base_sha256_unchanged": true,
+  "instrument_guard": {
+    "episodes_written": true,
+    "n0_recall_above_half": true,
+    "base_unchanged": true
+  }
+}
