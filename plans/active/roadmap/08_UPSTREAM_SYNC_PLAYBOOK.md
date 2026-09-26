@@ -160,6 +160,12 @@ A/B 会成双变量（本轮就撞上了：76c 起跑前 mtime 已是 19:57:52�
 ⇒ 树只读头记录，标签回退到 `cwd` 的 basename（`ui-workspace` 的三级回退第二格），而 lane 追加的 `session/title` 是**事件不是头字段**；
 scaffold 又**自己关掉了 `session-title-llm`**（`scaffold.ts:630`，理由 `:19`）。⇒ **⑮ 应改述为"行标签的数据源是持久化头记录，而头记录不携带标题"**，与索引时机无关。
 **这条面上没有"曾经绿过"的证据**（CI 不跑），所以既不用 fork 缺陷解释、也不要把上游断言当合同。
+**修完 H3u＋H3v 之后的同面复跑（`E:/Seed/.dsh-sbx2/baseline77.log`，75 条、完整生产 build 20:14:12、批内无 spawn watcher）**：
+`Test Files 34 failed｜40 passed｜1 skipped (75)`、`Tests 63 failed｜138 passed｜33 skipped (234)`、1078.60 s。
+**对照修前的同一 75 条（`baseline76c.log`：40 failed｜33 passed、71 failed｜131 passed、1223.51 s）**⇒
+**红文件 40 → 34（−6）、绿 33 → 40（+7）、红用例 71 → 63（−8）**，**降幅逐条可归因**：H3u 修掉 1 个文件、H3v 修掉 5 个文件（第 6 个 `markdown-images` 越过 DONE 后另见新形态）。
+分账器口径：超时 18／整棵快照差异 14／普通断言 19／运行时 4（合计 55，余 8 条错误行形状未识别）。
+**这条面现在的缺口是三堆，各自等不同的东西**：超时 18 条（等逐条取证）、快照差异 14 条（等金样裁定 (甲)）、普通断言 19 条（其中含 `plugin-config` 已定案的默认值过期、`sessionless-header` 的平台仿真假设、`support-timezone` 的 `TZ` 前提——**这三处都不该并进金样**）。
 **DONE 一族按判明的机制修掉，读数 5 文件转绿（同日，登记 H3v）**：改的是行选法（位置 → 按 `cwd` basename 的内容匹配）。
 **6 文件／7 用例 → `Test Files 5 passed｜1 failed`、`Tests 6 passed｜1 failed`、55.75 s**（日志 `E:/Seed/.dsh-sbx2/fix-six.log`）。
 **残余那一条已经不是同一族**：`markdown-images` 越过了 DONE 断言，红在后面的一个 `locator.click` 超时 ⇒ **单独判，别再并进"点错行"**。
