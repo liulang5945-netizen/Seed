@@ -1,0 +1,2251 @@
+{
+  "format": "taiji-r2-copy-surface-extension-v1",
+  "prereg": "plans/reference/SPEC-A-21_r2_surface_extension_prereg_20260925.md",
+  "judge_prereg": "plans/reference/SPEC-A-22_r2_a2_5_query_conditioned_selector_prereg_20260926.md",
+  "manifest": "plans/manifests/r2_copy_surface_extension_v2.json",
+  "manifest_sha256": "34e6e1753714a2720c76a9b143b4ca930e260fde0ff10c98e6792a4d2c6c65d3",
+  "checkpoint": "checkpoints/seed_beta.pt",
+  "control_no_circuit": {
+    "circuit": null,
+    "items": 104,
+    "texts": 312,
+    "well_formed_texts": 0,
+    "well_formed_rate": 0.0,
+    "utf8_decodable_rate": 0.0,
+    "strict_hits": 0,
+    "rows": [
+      {
+        "id": "V001",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "别���）�：我人�����师�君则�个�（有吲�孟���",
+        "well_formed": false
+      },
+      {
+        "id": "V002",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "����������下�（则有��我人��������是���",
+        "well_formed": false
+      },
+      {
+        "id": "V003",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "���������个�（���为����������孟���刟���",
+        "well_formed": false
+      },
+      {
+        "id": "V004",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "分���弈�下�个是���我�是我�済我为��������我",
+        "well_formed": false
+      },
+      {
+        "id": "V005",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "分���刑�个�（君，�有��：�师师���孟������",
+        "well_formed": false
+      },
+      {
+        "id": "V006",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "分�（刑人����师�君刺个�，�个是���我�是我�",
+        "well_formed": false
+      },
+      {
+        "id": "V007",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "到���，则个�（则为��������������孟�����",
+        "well_formed": false
+      },
+      {
+        "id": "V008",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "��（家��个�，个�），家��孟�����宩人�����",
+        "well_formed": false
+      },
+      {
+        "id": "V009",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "别���，��个是人��������孟���刑�为吟���",
+        "well_formed": false
+      },
+      {
+        "id": "V010",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "分����，制��下师：�古有��：有���：我人�����",
+        "well_formed": false
+      },
+      {
+        "id": "V011",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "则大家�孟�孟�吆人��������是有我�为��君��",
+        "well_formed": false
+      },
+      {
+        "id": "V012",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "分����弈�，�������人����������是��是��",
+        "well_formed": false
+      },
+      {
+        "id": "V013",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "分����，��君�孟�����人���������是���是",
+        "well_formed": false
+      },
+      {
+        "id": "V014",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "到��刑人����师�君刺�个�，�个是有�我们�渥�",
+        "well_formed": false
+      },
+      {
+        "id": "V015",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "分���，��个�（有吲君�，�，�，��个�（���",
+        "well_formed": false
+      },
+      {
+        "id": "V016",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�师�������个�（有��（�个师（有君�为人���",
+        "well_formed": false
+      },
+      {
+        "id": "V017",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "����������������：��有���：有��有���，则人����",
+        "well_formed": false
+      },
+      {
+        "id": "V018",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "������������下是人人������䘯���为�有�",
+        "well_formed": false
+      },
+      {
+        "id": "V019",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "����������个�（��（�们一个�（�他�吝家���",
+        "well_formed": false
+      },
+      {
+        "id": "V020",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "分��，�，�，���个�人���������������",
+        "well_formed": false
+      },
+      {
+        "id": "V021",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "分��刑��������人��������师�有君�是��我�",
+        "well_formed": false
+      },
+      {
+        "id": "V022",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "别�（�他�个�（君�人�������有君���������",
+        "well_formed": false
+      },
+      {
+        "id": "V023",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "到��（则�下师（（（则有吲君师人��������是��",
+        "well_formed": false
+      },
+      {
+        "id": "V024",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "分��孟��，��个�，�，�个�（���个�，�，��",
+        "well_formed": false
+      },
+      {
+        "id": "V025",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "分��，�，��也（则人�个�（�也（则人�������",
+        "well_formed": false
+      },
+      {
+        "id": "V026",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "����������有�，人���������有君�个�，��",
+        "well_formed": false
+      },
+      {
+        "id": "V027",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "���������人��������是��我��是是�我����",
+        "well_formed": false
+      },
+      {
+        "id": "V028",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "分���弈�个�（（君����人��������有�则���",
+        "well_formed": false
+      },
+      {
+        "id": "V029",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "分��：师：�：�：�家�人����������孟�����",
+        "well_formed": false
+      },
+      {
+        "id": "V030",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�（（则人������������，�������有�，���",
+        "well_formed": false
+      },
+      {
+        "id": "V031",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "到��，到）：有�\n\n\n�（（（�实师��个��君����",
+        "well_formed": false
+      },
+      {
+        "id": "V032",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "分����，���������个是人��������是有我�",
+        "well_formed": false
+      },
+      {
+        "id": "V033",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "别���）�：��������个��君家�人����������",
+        "well_formed": false
+      },
+      {
+        "id": "V034",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "����������有��\n\n\n\n\n\n\n\n\n�（（（�����：��有���",
+        "well_formed": false
+      },
+      {
+        "id": "V035",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "���������是�人���������有�为，�个�，制",
+        "well_formed": false
+      },
+      {
+        "id": "V036",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "分���个�（��君��，人������������孟����",
+        "well_formed": false
+      },
+      {
+        "id": "V037",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "到��，�）：有��）（有���为师＀则我为�个�（�",
+        "well_formed": false
+      },
+      {
+        "id": "V038",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "别�（�人�������个有君则何吝君为�为�人人��",
+        "well_formed": false
+      },
+      {
+        "id": "V039",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "����（则我个是有�我人������师�师则�师则为�",
+        "well_formed": false
+      },
+      {
+        "id": "V040",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�������������下有�，���������人���������",
+        "well_formed": false
+      },
+      {
+        "id": "V041",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "别�（�人��������有君君则��有，�个�（��吟�",
+        "well_formed": false
+      },
+      {
+        "id": "V042",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "分���（（�君�下�����，�有��\n\n\n�丈（（（（�",
+        "well_formed": false
+      },
+      {
+        "id": "V043",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "则大家�孟��个�（��，制君学�下�（君家刟���",
+        "well_formed": false
+      },
+      {
+        "id": "V044",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "分���弈下师（有��）（有��个�（君学了��大��",
+        "well_formed": false
+      },
+      {
+        "id": "V045",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "分��刑人������师（有君为（他�������他���",
+        "well_formed": false
+      },
+      {
+        "id": "V046",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "别��刑人����师�君个�（有�，则们个�，家���",
+        "well_formed": false
+      },
+      {
+        "id": "V047",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "则��：是�个�（，�为�君��孟����先人������",
+        "well_formed": false
+      },
+      {
+        "id": "V048",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�����弈�，�����个是人��������有���个�",
+        "well_formed": false
+      },
+      {
+        "id": "V049",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "别�����，制��个是��（别�，��个����人����",
+        "well_formed": false
+      },
+      {
+        "id": "V050",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "��������������������有��，�有有有�，�则人��",
+        "well_formed": false
+      },
+      {
+        "id": "V051",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "则����孟�����有�：是有我人���������我��",
+        "well_formed": false
+      },
+      {
+        "id": "V052",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "分����（（��������孟����有��：�������有",
+        "well_formed": false
+      },
+      {
+        "id": "V053",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "初������，���������个是人��������有��",
+        "well_formed": false
+      },
+      {
+        "id": "V054",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "别���）�：我人����师�个�（有吲君�，�，则意",
+        "well_formed": false
+      },
+      {
+        "id": "V055",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "则��，�，则个�（�人��������，�下�有君亰��",
+        "well_formed": false
+      },
+      {
+        "id": "V056",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�������，�家��个是�我人������是�是有我",
+        "well_formed": false
+      },
+      {
+        "id": "V057",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "别���）�：���������下是人���������个有�",
+        "well_formed": false
+      },
+      {
+        "id": "V058",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "分���弈������人������有��，他�是��我���",
+        "well_formed": false
+      },
+      {
+        "id": "V059",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�����君下帀个�君人�������是有我��我��我��",
+        "well_formed": false
+      },
+      {
+        "id": "V060",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "����（��������个��，�有��：我人����师���",
+        "well_formed": false
+      },
+      {
+        "id": "V061",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "分���（������家��人����师���孟���刟����",
+        "well_formed": false
+      },
+      {
+        "id": "V062",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "分��，�，�，个是人�����是�有，�为君君�宺�",
+        "well_formed": false
+      },
+      {
+        "id": "V063",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "分��，�，�，��个�（有��：�师����孟������",
+        "well_formed": false
+      },
+      {
+        "id": "V064",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "������一个�����人��������是���有我�为",
+        "well_formed": false
+      },
+      {
+        "id": "V065",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "分家��，�，��个�（�们一个�（�们一�君����",
+        "well_formed": false
+      },
+      {
+        "id": "V066",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "������������������������剉\n\n\n戈�（�（��，�吆",
+        "well_formed": false
+      },
+      {
+        "id": "V067",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "���孟������人���������是有我���是��我",
+        "well_formed": false
+      },
+      {
+        "id": "V068",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "分����，��个�（有��）（君��������弈�孟�",
+        "well_formed": false
+      },
+      {
+        "id": "V069",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�����������������家�下是人人�����个有���",
+        "well_formed": false
+      },
+      {
+        "id": "V070",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "别����，人��������是���有我�为，�为为��",
+        "well_formed": false
+      },
+      {
+        "id": "V071",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "则����，�，��个�（有��：���个���，���，�",
+        "well_formed": false
+      },
+      {
+        "id": "V072",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "分���������人�������有��是��我��我�是�",
+        "well_formed": false
+      },
+      {
+        "id": "V073",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "��������������人������������有�有�有�",
+        "well_formed": false
+      },
+      {
+        "id": "V074",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�������������下�，��孟���先�下�，�有�：�",
+        "well_formed": false
+      },
+      {
+        "id": "V075",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "��������有�：有是是我人�����������有�",
+        "well_formed": false
+      },
+      {
+        "id": "V076",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�����（���（���，������有��人���������",
+        "well_formed": false
+      },
+      {
+        "id": "V077",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "分家���，�（�（�（家�下是有�：我人��个��",
+        "well_formed": false
+      },
+      {
+        "id": "V078",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "到��，到：我人�����个�个我�为君�孟������",
+        "well_formed": false
+      },
+      {
+        "id": "V079",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "到��，到：��有���）（下师����君家��为庺�����",
+        "well_formed": false
+      },
+      {
+        "id": "V080",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "分��刑人�������师（么是��个�（君孟�吆先人",
+        "well_formed": false
+      },
+      {
+        "id": "V081",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "别���，����人����师�个�（有�，�个�，则��",
+        "well_formed": false
+      },
+      {
+        "id": "V082",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "初�����个�����人������������有�有我��",
+        "well_formed": false
+      },
+      {
+        "id": "V083",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "����：。\n\n\n\n\n\n\n\n\n\n��（���（��吆庆人������是",
+        "well_formed": false
+      },
+      {
+        "id": "V084",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�����（���（���刌�有��：������人�������",
+        "well_formed": false
+      },
+      {
+        "id": "V085",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "������������������吆��戈是人�����������",
+        "well_formed": false
+      },
+      {
+        "id": "V086",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "到��（则�个�（君�学么有�：我人��个�（君��",
+        "well_formed": false
+      },
+      {
+        "id": "V087",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�（则为�（（则个有�（个�（�他������孟���",
+        "well_formed": false
+      },
+      {
+        "id": "V088",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "分家���，�：�师，�）：��是��是�个师（是有�",
+        "well_formed": false
+      },
+      {
+        "id": "V089",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "别�（则�下师，�，吲�丈是们�（我们一个���",
+        "well_formed": false
+      },
+      {
+        "id": "V090",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "��������有��，�个�（�人��������有君为个�",
+        "well_formed": false
+      },
+      {
+        "id": "V091",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "���������������人������������有�我��我��",
+        "well_formed": false
+      },
+      {
+        "id": "V092",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "分���弈，���个�（�人�����������孟������",
+        "well_formed": false
+      },
+      {
+        "id": "V093",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "��������人�����������有君�是��我��我�是",
+        "well_formed": false
+      },
+      {
+        "id": "V094",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "分�（�人��������（�么有，�君，�����，�，",
+        "well_formed": false
+      },
+      {
+        "id": "V095",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "分�（，���（��下有�，����������人������",
+        "well_formed": false
+      },
+      {
+        "id": "V096",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "则我人�个�（�他君则�个�，家��个�，家�，��",
+        "well_formed": false
+      },
+      {
+        "id": "V097",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "分���，��个��（（������人���������有�",
+        "well_formed": false
+      },
+      {
+        "id": "V098",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "分����刑��，�，�有��，�有��，�有���，�下��",
+        "well_formed": false
+      },
+      {
+        "id": "V099",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "��������下�（�个�����������个�，��为�����",
+        "well_formed": false
+      },
+      {
+        "id": "V100",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "分����，��君�有��，刺���弈�������是有有�",
+        "well_formed": false
+      },
+      {
+        "id": "V101",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "��������������������，���人�����人����是�",
+        "well_formed": false
+      },
+      {
+        "id": "V102",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "别����，�，�：�家��人�������师�是��是有",
+        "well_formed": false
+      },
+      {
+        "id": "V103",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "到��（则人����师��，�大家��个�，�大���人",
+        "well_formed": false
+      },
+      {
+        "id": "V104",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�师（则为师，家�君人������个�，君为为���君�",
+        "well_formed": false
+      }
+    ]
+  },
+  "treated_arms": [
+    {
+      "circuit": "output/taiji_r2_a23_ding2_seedA/judge/circuit-final.pt",
+      "items": 104,
+      "texts": 312,
+      "well_formed_texts": 3,
+      "well_formed_rate": 0.0096,
+      "utf8_decodable_rate": 0.0,
+      "strict_hits": 11,
+      "rows": [
+        {
+          "id": "V001",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "有�������済有��済�为�����������������",
+          "well_formed": false
+        },
+        {
+          "id": "V002",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "�个�������是人����������巈����文己�来��有",
+          "well_formed": false
+        },
+        {
+          "id": "V003",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "26有��有�人��6��6个��6363636��朢有我有�我63636��",
+          "well_formed": false
+        },
+        {
+          "id": "V004",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "户��下��我�为个�我���我�丛��我是�师淮��是�",
+          "well_formed": false
+        },
+        {
+          "id": "V005",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "有��靱下师我䝱��丝一一�刱��吱�人��������有",
+          "well_formed": false
+        },
+        {
+          "id": "V006",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "有�么是有�么��是��是我师骪���骪���遮��我么",
+          "well_formed": false
+        },
+        {
+          "id": "V007",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "������谷�谷�有���是谮有�课��有��谐���谷�有�",
+          "well_formed": false
+        },
+        {
+          "id": "V008",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "我有�我为个���是是我�一个�戈��刱就�東��七�",
+          "well_formed": false
+        },
+        {
+          "id": "V009",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "有���鐲鐲鐲�有�有�䐐是人����木愿刐��������",
+          "well_formed": false
+        },
+        {
+          "id": "V010",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "安木说�说朿��有机自艉艉�艉�艉�艉�说意�意�",
+          "well_formed": false
+        },
+        {
+          "id": "V011",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "7121有�21121有有21121211211下�21数21112112112111����11111",
+          "well_formed": false
+        },
+        {
+          "id": "V012",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "朮我��师戟队有�下个戙我��有�为���������我��",
+          "well_formed": false
+        },
+        {
+          "id": "V013",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "我�觝话���������话�家��������冸���话������",
+          "well_formed": false
+        },
+        {
+          "id": "V014",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "我我�他么是有�我�么摣么��漌我�么�么�他师�我",
+          "well_formed": false
+        },
+        {
+          "id": "V015",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "谝老������胿�访��斸�是��������踈斿������",
+          "well_formed": false
+        },
+        {
+          "id": "V016",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "谝�说���戱�會�戱�戱������诃�戱�戱���踃��",
+          "well_formed": false
+        },
+        {
+          "id": "V017",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "访戉戉戉��戉�常�承昿���戉���戉���师������������������",
+          "well_formed": false
+        },
+        {
+          "id": "V018",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "有青青�师沲青青�青�青��师沲��������咲��������������",
+          "well_formed": false
+        },
+        {
+          "id": "V019",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "77777777777有777777777777777777愄����7777777777777777777777",
+          "well_formed": false
+        },
+        {
+          "id": "V020",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "我��吟�星���师��遮��吟�吮是人������个������",
+          "well_formed": false
+        },
+        {
+          "id": "V021",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "���丝�我��蝱��话�话话文毈���话�蝱话话���斱���",
+          "well_formed": false
+        },
+        {
+          "id": "V022",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "有�戋����������觸��������������询��乺���",
+          "well_formed": false
+        },
+        {
+          "id": "V023",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "谝话�话�话话�有��话袝�话�话���为读��话����",
+          "well_formed": false
+        },
+        {
+          "id": "V024",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "�胉我��我�觉我觉文个舱戱���戱��人���师���",
+          "well_formed": false
+        },
+        {
+          "id": "V025",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "朿�话�朿���朿��话��������������������",
+          "well_formed": false
+        },
+        {
+          "id": "V026",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "有�有�有鐲�有�下���晲��是�了��避��下师�长�",
+          "well_formed": false
+        },
+        {
+          "id": "V027",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "9888有有�9888掋98��朢数9888数988981亚988�88是1�1888愿",
+          "well_formed": false
+        },
+        {
+          "id": "V028",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "有�下���丈�丈�丈�丈�丈�丈�２��吺����了��",
+          "well_formed": false
+        },
+        {
+          "id": "V029",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "我江师�朝�����䰟�一个���東�������吱��有�",
+          "well_formed": false
+        },
+        {
+          "id": "V030",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "����话�话蓥�话�话�话�话�话�话�话�话�话�话�话��",
+          "well_formed": false
+        },
+        {
+          "id": "V031",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "谝���诸���他������戋�他文��访�谖��斸����他�",
+          "well_formed": false
+        },
+        {
+          "id": "V032",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "戱说��������戱�人��辀�说��朱��戱��斱���",
+          "well_formed": false
+        },
+        {
+          "id": "V033",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "��戉戉戉戉�师慕��済戉�済戉�师扉吉�潕叅����惉",
+          "well_formed": false
+        },
+        {
+          "id": "V034",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "有����漌刎�厎厎厎厎厎厎厎厎�厎�厎�厎�厎斀人",
+          "well_formed": false
+        },
+        {
+          "id": "V035",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "404424244244下�4敢44有�240241下2�数2024424242442424424焿4",
+          "well_formed": false
+        },
+        {
+          "id": "V036",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "有���有�下�；�意���涮�朮��是涮�有�师涐�遮���",
+          "well_formed": false
+        },
+        {
+          "id": "V037",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "�胝话舑为丝�有��丝蝱内�话茶����话茶�毖茶��",
+          "well_formed": false
+        },
+        {
+          "id": "V038",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "有的�说�说�有����乺������舸�����乺�文有��",
+          "well_formed": false
+        },
+        {
+          "id": "V039",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "谝老老�����谋��是�亪�����������谦个������",
+          "well_formed": false
+        },
+        {
+          "id": "V040",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "有有的�说刱�����������������������文有�",
+          "well_formed": false
+        },
+        {
+          "id": "V041",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "青划�青�青��撝�帒�青愿����青����青青是昝�",
+          "well_formed": false
+        },
+        {
+          "id": "V042",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "�慅�﷞杅刷�吷�杅有吷�������人�������个�吷�有�",
+          "well_formed": false
+        },
+        {
+          "id": "V043",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "477��4747477�47474747有�47�447有�4747��447474747有斘�4�44",
+          "well_formed": false
+        },
+        {
+          "id": "V044",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "有�有鐟有结吟��有�人����������丈来有�戟",
+          "well_formed": false
+        },
+        {
+          "id": "V045",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "贵我��Ｑ�我��师我�我���溺�������丗��朝��",
+          "well_formed": false
+        },
+        {
+          "id": "V046",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "有�我他师�������他���摺他��他也也我是斌��",
+          "well_formed": false
+        },
+        {
+          "id": "V047",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "�朿���跉跀个�����跱��跱��跱����������",
+          "well_formed": false
+        },
+        {
+          "id": "V048",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "�有皱说�有文师����戱���������������������",
+          "well_formed": false
+        },
+        {
+          "id": "V049",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "朮����朮�师洮�是斁��宁���洮�是斁��宁师���朮����",
+          "well_formed": false
+        },
+        {
+          "id": "V050",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "有�机人�������丈是是戳��为���师��墁��尝��",
+          "well_formed": false
+        },
+        {
+          "id": "V051",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "8888888888888888888888愄���8888888888888�有�8888888888888888",
+          "well_formed": false
+        },
+        {
+          "id": "V052",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "汮��是��个�戱我�丈我有道�（尝师����不是�吮",
+          "well_formed": false
+        },
+        {
+          "id": "V053",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "��荝����话�话�话�话�诈�刱�������话�话�话�话�",
+          "well_formed": false
+        },
+        {
+          "id": "V054",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "有�也是有�戉��么是有�鐉��师���麆�么大���",
+          "well_formed": false
+        },
+        {
+          "id": "V055",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "谝说��耋��要�����愄�是�人������胿�谖見要证����",
+          "well_formed": false
+        },
+        {
+          "id": "V056",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "�汸��说�有�亱老�耱�师���會���郱��郱�斱��斉",
+          "well_formed": false
+        },
+        {
+          "id": "V057",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "�丗时丗�朗�时个�个��冸��时��丗时朗�有�我�丗�",
+          "well_formed": false
+        },
+        {
+          "id": "V058",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "�州有��Ｗ�机人�������������州��州�州���",
+          "well_formed": false
+        },
+        {
+          "id": "V059",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "21212121212121212產1朢��21�11�112�21112112112121文�1212121",
+          "well_formed": false
+        },
+        {
+          "id": "V060",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "有�人����������������������䤧�尝��朣�",
+          "well_formed": false
+        },
+        {
+          "id": "V061",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "有的���戱�帢有�我���个�纱�戱�师����师茶�",
+          "well_formed": false
+        },
+        {
+          "id": "V062",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "有�也是有��有�么��之�么�他么摺到�鼠�尝鼠��",
+          "well_formed": false
+        },
+        {
+          "id": "V063",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "谝������������������思�����记�意有�有��",
+          "well_formed": false
+        },
+        {
+          "id": "V064",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "有有瀱说刱�舟舟�斟�舟�������分������豟",
+          "well_formed": false
+        },
+        {
+          "id": "V065",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "有�有���下个��有��帠����������\n\n\n���戠���",
+          "well_formed": false
+        },
+        {
+          "id": "V066",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "有�下师���是�人��为�个�丽有我��愶吟�丘����",
+          "well_formed": false
+        },
+        {
+          "id": "V067",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "1256有��256256有��252525��55625656525255255���������566��55",
+          "well_formed": true
+        },
+        {
+          "id": "V068",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "朮��师我�鿿吮���冮���鿿吮��是��个个修����吮������",
+          "well_formed": false
+        },
+        {
+          "id": "V069",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "有�有额�分�人����丝�朮意�意�有�一�到�吱刱��",
+          "well_formed": false
+        },
+        {
+          "id": "V070",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "有�么星�也杅��君���佺���帀����也������他��有�",
+          "well_formed": false
+        },
+        {
+          "id": "V071",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "谝�他乎�自�请�也��他有�����荢有��������课�",
+          "well_formed": false
+        },
+        {
+          "id": "V072",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "�谉面��刱�面��蝱��话辝文文意毉额���话�话有�有�",
+          "well_formed": false
+        },
+        {
+          "id": "V073",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "有��说䙚说����说�������个������个������",
+          "well_formed": false
+        },
+        {
+          "id": "V074",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "有�机����争��扉扉���������������������������下扨扉����",
+          "well_formed": false
+        },
+        {
+          "id": "V075",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "21313131斀113131313131�13朢�有�1313131313�愿11311313113131�",
+          "well_formed": false
+        },
+        {
+          "id": "V076",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "有������期��请��耮�朮朮有���星�请��������",
+          "well_formed": false
+        },
+        {
+          "id": "V077",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "�胷�荝�荝��是���刱�话�话�话�话�话�话�话�话�",
+          "well_formed": false
+        },
+        {
+          "id": "V078",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "是�我么��么是有�我�么师����他������也�摺",
+          "well_formed": false
+        },
+        {
+          "id": "V079",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "访�丈是��老����访�����愄�有�戱�����不师�",
+          "well_formed": false
+        },
+        {
+          "id": "V080",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "有��说他了��也��了��我朱�亱��耱����������",
+          "well_formed": false
+        },
+        {
+          "id": "V081",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "期说��说��请��������下蟟沲��蟟������舟���",
+          "well_formed": false
+        },
+        {
+          "id": "V082",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "�巉是��为�个�人人�为是����巉巉巉巉巉巉巉",
+          "well_formed": false
+        },
+        {
+          "id": "V083",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "120205205��525205205252052205525�55555555555555斀520205205225",
+          "well_formed": false
+        },
+        {
+          "id": "V084",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "有�钀下师��有戒�戒�迒����������踒�����斮�",
+          "well_formed": false
+        },
+        {
+          "id": "V085",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "��汥�有��Ｑ���师�是�吱�吱丝�汝���������师我����",
+          "well_formed": false
+        },
+        {
+          "id": "V086",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "我刺�我也是��我君����券�有���也�有���也�",
+          "well_formed": false
+        },
+        {
+          "id": "V087",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "谝������读���踈�有�葢���踀�个����有����",
+          "well_formed": false
+        },
+        {
+          "id": "V088",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "我有郃帱戱�我��我����郃券�有郃券�人������",
+          "well_formed": false
+        },
+        {
+          "id": "V089",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "�戾���下��有��个了��有�有遾��戾有�孭���有",
+          "well_formed": false
+        },
+        {
+          "id": "V090",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "�下��个说有有�为��丈有����芜意意��芊���",
+          "well_formed": false
+        },
+        {
+          "id": "V091",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "188朢�有�18数1861818有�188181818�18818188有�188881881�",
+          "well_formed": false
+        },
+        {
+          "id": "V092",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "有�有鐮有鐲师��是人�����师���是人��为�����",
+          "well_formed": false
+        },
+        {
+          "id": "V093",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "诉茉�我��茉话茉茉茉莋�茉茉�愄�是��茉茉莋��",
+          "well_formed": false
+        },
+        {
+          "id": "V094",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "话�蝙����话�话蝙���话�话�话�话�话�话�话��意��",
+          "well_formed": false
+        },
+        {
+          "id": "V095",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "谝��个��耋�躷������斿������斿����丈�����",
+          "well_formed": false
+        },
+        {
+          "id": "V096",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "则�是是�吮��溺����为��为是�君�师�有�吼��一�",
+          "well_formed": false
+        },
+        {
+          "id": "V097",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "��戟期�我���个我��刟��星�刟�吟�䟟星�刟��我域�",
+          "well_formed": false
+        },
+        {
+          "id": "V098",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "������������个����������意意是���亪臺��",
+          "well_formed": false
+        },
+        {
+          "id": "V099",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "9009090909090909090909����00�0�9009009009090有99090909090�有9",
+          "well_formed": false
+        },
+        {
+          "id": "V100",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "我��查有��我��有���师���春����师����釪春��我����",
+          "well_formed": false
+        },
+        {
+          "id": "V101",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "�胷��话�话茶荝�意�是人�������个��话茡为���",
+          "well_formed": false
+        },
+        {
+          "id": "V102",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "朝有靾不��是��朝有遾么摺��也��朸慻�杅愶师檝",
+          "well_formed": false
+        },
+        {
+          "id": "V103",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "谝����������么��人��常����������有�����文",
+          "well_formed": false
+        },
+        {
+          "id": "V104",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "�胉汉艇吱�说�诉文������������������������",
+          "well_formed": false
+        }
+      ]
+    },
+    {
+      "circuit": "output/taiji_r2_a23_ding2_seedB/judge/circuit-final.pt",
+      "items": 104,
+      "texts": 312,
+      "well_formed_texts": 2,
+      "well_formed_rate": 0.0064,
+      "utf8_decodable_rate": 0.0,
+      "strict_hits": 10,
+      "rows": [
+        {
+          "id": "V001",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "�讽说有�有���谎耎�������������������������������",
+          "well_formed": false
+        },
+        {
+          "id": "V002",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "���老������说有�����个���是有�为������有���",
+          "well_formed": false
+        },
+        {
+          "id": "V003",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "66有有�6�有��6摢�师6�66是�渘�������6��6�666別6636636",
+          "well_formed": false
+        },
+        {
+          "id": "V004",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "浮淮混����������非������������嵷��户�滥�嵷��海�显嵷",
+          "well_formed": false
+        },
+        {
+          "id": "V005",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "有�我�了����下��木愶别�Ｑ��戱��我有�师Ｑ��",
+          "well_formed": false
+        },
+        {
+          "id": "V006",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "有�也�也鸪��有�之��有有��是是������么冐�����",
+          "well_formed": false
+        },
+        {
+          "id": "V007",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "�����为个��海��说海�������������海��������",
+          "well_formed": false
+        },
+        {
+          "id": "V008",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "有我为师我是�师�尝师�尝可斌个是我是我我�为��",
+          "well_formed": false
+        },
+        {
+          "id": "V009",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "有����有鐲鐲鐛�是�是���䐐有�下��木�雰䐐��",
+          "well_formed": false
+        },
+        {
+          "id": "V010",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "����说是��耉�杉�杉��溺������������������",
+          "well_formed": false
+        },
+        {
+          "id": "V011",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "71121有��2111211��21212121212121愄�1121212121212�212121下21",
+          "well_formed": false
+        },
+        {
+          "id": "V012",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "������普晟�戙���������普晟����怙���普晟",
+          "well_formed": false
+        },
+        {
+          "id": "V013",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "谝诉话�话�诉���诉�诉�诉�诉�诉����话����诉����",
+          "well_formed": false
+        },
+        {
+          "id": "V014",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "浣么是浣�是浣么�浣么师浣浣么浣么帵��之这��",
+          "well_formed": false
+        },
+        {
+          "id": "V015",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "有有有的�耋�个����有������记��谖文����谴��",
+          "well_formed": false
+        },
+        {
+          "id": "V016",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "有�说有�有鐲分��耱说戱���谖�人��亾辈������帱��",
+          "well_formed": false
+        },
+        {
+          "id": "V017",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "期机���我�我下��戉戉我个�戉戉��戉���师承���",
+          "well_formed": false
+        },
+        {
+          "id": "V018",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "有�吒�����青青青�意��为��������一��划���",
+          "well_formed": false
+        },
+        {
+          "id": "V019",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "777777777有有�7777�7777777777777家77777777777777777焿777777",
+          "well_formed": false
+        },
+        {
+          "id": "V020",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "有�����������意���星人���侟��师戟�����有",
+          "well_formed": false
+        },
+        {
+          "id": "V021",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "有才惱�师�耂耱话��有�������文下��������话��",
+          "well_formed": false
+        },
+        {
+          "id": "V022",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "有����么也�而��������是�����斢也��也����",
+          "well_formed": false
+        },
+        {
+          "id": "V023",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "有�老�的����胿������请���师����袝�踈文����",
+          "well_formed": false
+        },
+        {
+          "id": "V024",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "有我�说我��辈�戱苾�个���斱����诃����词��戱我",
+          "well_formed": false
+        },
+        {
+          "id": "V025",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "有�愿�觝说朿���文�自��话���������������",
+          "well_formed": false
+        },
+        {
+          "id": "V026",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "有是�戙��下�晿晿����噙�����我过�噙晿�是朿是课�",
+          "well_formed": false
+        },
+        {
+          "id": "V027",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "9818有有�98��1818是��998��998181818朢��188有文�988881",
+          "well_formed": true
+        },
+        {
+          "id": "V028",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "有�下��我�（意有�个是�丽个师�有�王�懪意�",
+          "well_formed": false
+        },
+        {
+          "id": "V029",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "我�江有�我为师�我��有�渥�有��为����������",
+          "well_formed": false
+        },
+        {
+          "id": "V030",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "有����师��话�么话�么话�么�����文�意是����",
+          "well_formed": false
+        },
+        {
+          "id": "V031",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "��有���说有��也�请���有�自冐���许���是��诧��",
+          "well_formed": false
+        },
+        {
+          "id": "V032",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "有戱说戱��������较�较辈�辈����诃����诱�����",
+          "well_formed": false
+        },
+        {
+          "id": "V033",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "我我为师�戉戉戉戉戉�溆���溺��亮����愶为�意��",
+          "well_formed": false
+        },
+        {
+          "id": "V034",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "有�文刎�我�有���厎厎厎�掎��有�人�������",
+          "well_formed": false
+        },
+        {
+          "id": "V035",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "404424424424朢14444414有�444444044444444444444444442����22024",
+          "well_formed": false
+        },
+        {
+          "id": "V036",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "有���朮涐�涐�机���人���涮����涮涐�涐������",
+          "well_formed": false
+        },
+        {
+          "id": "V037",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "我�话话话话有���话�话�话�话�话�话�话�话��话��",
+          "well_formed": false
+        },
+        {
+          "id": "V038",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "有����也�也者����也�么���他有��诈��有���",
+          "well_formed": false
+        },
+        {
+          "id": "V039",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "记��说�葢������胺��诰谖���文������斢��文���",
+          "well_formed": false
+        },
+        {
+          "id": "V040",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "有戱说��������������刱��贱诃�师����师��",
+          "well_formed": false
+        },
+        {
+          "id": "V041",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "非��２����下是人������一�������斠为为���",
+          "well_formed": false
+        },
+        {
+          "id": "V042",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "�刷�杷�帀下个��是�是有人�����户����刷�吷�嚷�",
+          "well_formed": false
+        },
+        {
+          "id": "V043",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "47有是47�47有��47��4747�447474747��4747474747474有�4747",
+          "well_formed": false
+        },
+        {
+          "id": "V044",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "有�戟队�下��杘���眪�������我���下����斟�",
+          "well_formed": false
+        },
+        {
+          "id": "V045",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "�有�我人�丮��汝�师��普是��一人�������我��师",
+          "well_formed": false
+        },
+        {
+          "id": "V046",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "有�他也���是�师（则使�到������有�他也也也",
+          "well_formed": false
+        },
+        {
+          "id": "V047",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "有�胉胷�跀个��跷��跥跥跥�跥�跥�跥�跥�跥��",
+          "well_formed": false
+        },
+        {
+          "id": "V048",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "有的师舑�说�����个�是�����内��师���个��",
+          "well_formed": false
+        },
+        {
+          "id": "V049",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "朮������朮����朮����朮���朮���朮���有扁�����������������",
+          "well_formed": false
+        },
+        {
+          "id": "V050",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "有�机人����������我��戳��戳���惮是�斢���",
+          "well_formed": false
+        },
+        {
+          "id": "V051",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "88888888888888888888愄��有��8888888888888888���������888888",
+          "well_formed": false
+        },
+        {
+          "id": "V052",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "有�有��下��Ｙ我们�别�Ｑ汮我了�鮮�有�不����",
+          "well_formed": false
+        },
+        {
+          "id": "V053",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "戱话话话话话话话话话话话话词�文�合��诱��孱��",
+          "well_formed": false
+        },
+        {
+          "id": "V054",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "木�戉我��使�问�刈���么����鐉�么是�么是贀��",
+          "well_formed": false
+        },
+        {
+          "id": "V055",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "��是�耂师��������斋����要��要��冸���谋�谝��",
+          "well_formed": false
+        },
+        {
+          "id": "V056",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "有有�有�有我�见师�耱耱说����������������",
+          "well_formed": false
+        },
+        {
+          "id": "V057",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "有�有�有�摺常���是��有�下老师�Ｚ����有���",
+          "well_formed": false
+        },
+        {
+          "id": "V058",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "�������������������是�人����������",
+          "well_formed": false
+        },
+        {
+          "id": "V059",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "2121212121文��2212121212121212121愕121212121212112斀212121212",
+          "well_formed": false
+        },
+        {
+          "id": "V060",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "有�人��戣��意有�么�朮�是斸���厸��么么���",
+          "well_formed": false
+        },
+        {
+          "id": "V061",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "戱说�下耣戱我一个��戱戱��文��为帱��戱����",
+          "well_formed": false
+        },
+        {
+          "id": "V062",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "有�也�有�也鼠�鼀�家我们也���也�我有�师我之老",
+          "well_formed": false
+        },
+        {
+          "id": "V063",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "有��有���舋������诰�����诰������文师�����",
+          "well_formed": false
+        },
+        {
+          "id": "V064",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "有有�说戱�请分���诟�诟�诟�诟�诟�诈�����诧�",
+          "well_formed": false
+        },
+        {
+          "id": "V065",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "有�有��君�的帀个�毠�����一一����有�渀����",
+          "well_formed": false
+        },
+        {
+          "id": "V066",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "有有�有鐆�内木�师�来有���������人������",
+          "well_formed": false
+        },
+        {
+          "id": "V067",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "1256有有�56�56有�5625656�55625656565656256�2562565有�25",
+          "well_formed": false
+        },
+        {
+          "id": "V068",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "朮�鿿师��眉���下��是�一��是亮�庫殿鿿师濿���",
+          "well_formed": false
+        },
+        {
+          "id": "V069",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "我�我下师�我�渀���师�我��斝��吱别吱�ﱱ��孟�",
+          "well_formed": false
+        },
+        {
+          "id": "V070",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "有��么是�之���星���是��星���������师戟��",
+          "well_formed": false
+        },
+        {
+          "id": "V071",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "谝耋���������有�������文�意��也����蹟�课���",
+          "well_formed": false
+        },
+        {
+          "id": "V072",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "有���说�����戱�������话��课师��话蝱��文刱��",
+          "well_formed": false
+        },
+        {
+          "id": "V073",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "��一个��戙有������晚���������诈��诀���个",
+          "well_formed": false
+        },
+        {
+          "id": "V074",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "�淉��为�亷���扬巷���������������������下����扬为",
+          "well_formed": false
+        },
+        {
+          "id": "V075",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "1313131来有��1313131��11311313131313131文��13131313131313",
+          "well_formed": false
+        },
+        {
+          "id": "V076",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "���说有������舟�说期����诟�诟�诟�诟�诟�诟��",
+          "well_formed": false
+        },
+        {
+          "id": "V077",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "戱�师�戱话�话�聱请分��话�话�话�请��请��请��请�",
+          "well_formed": false
+        },
+        {
+          "id": "V078",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "有�我）�有��有��之�︈����君��也氝������也",
+          "well_formed": false
+        },
+        {
+          "id": "V079",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "有有戱觉�����个���������讶���个��谝������",
+          "well_formed": false
+        },
+        {
+          "id": "V080",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "有�有��玱见师������蹈��人���������丱�踀亱踈",
+          "well_formed": false
+        },
+        {
+          "id": "V081",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "期��诈��诈���������������诟���舟���诪��",
+          "well_formed": false
+        },
+        {
+          "id": "V082",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "���巉戉是��我人��������一�����巉��户��",
+          "well_formed": false
+        },
+        {
+          "id": "V083",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "20205205205�25�520520520520525205�5520052052052052��52052052",
+          "well_formed": true
+        },
+        {
+          "id": "V084",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "意�有�杒����斈�渥�渥������蒌师�����������",
+          "well_formed": false
+        },
+        {
+          "id": "V085",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "迱我下��有�我为�����������我��我�渱�Ｑ��后�",
+          "well_formed": false
+        },
+        {
+          "id": "V086",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "我�）�们����有��漀�到�，��也�有�����也也���",
+          "well_formed": false
+        },
+        {
+          "id": "V087",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "有有有��个�访��谝��读��读��耋妿���谝�意是人",
+          "well_formed": false
+        },
+        {
+          "id": "V088",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "有我�师�我��人����������������为戈�朣我�",
+          "well_formed": false
+        },
+        {
+          "id": "V089",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "刭�戾戾戾���文师戾戾吘��有遾�����朾�了����朾��",
+          "well_formed": false
+        },
+        {
+          "id": "V090",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "有��说有是����个�����帹芜为人�芜��������",
+          "well_formed": false
+        },
+        {
+          "id": "V091",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "188有有�18皢�师1888�88有有�18�是�済�有�済18机881",
+          "well_formed": false
+        },
+        {
+          "id": "V092",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "有�有鐮有��有�下���是人�亪���是���有��为�朮",
+          "well_formed": false
+        },
+        {
+          "id": "V093",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "有话耱茉�与刱��茉茉茉茉茉茉茉茉茉茉茉茉茉�",
+          "well_formed": false
+        },
+        {
+          "id": "V094",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "�说������话����么���杙有�余说�������师��",
+          "well_formed": false
+        },
+        {
+          "id": "V095",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "�������丈杵有��个���斿������������渵��",
+          "well_formed": false
+        },
+        {
+          "id": "V096",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "我有�我䐱师���有�文师Ｑ吱��内����柮�是�渀��",
+          "well_formed": false
+        },
+        {
+          "id": "V097",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "晟晟�晟����噈��������䙙����䙚����晟�����䙟�晟�",
+          "well_formed": false
+        },
+        {
+          "id": "V098",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "��������诽������诽�诽��������������������",
+          "well_formed": false
+        },
+        {
+          "id": "V099",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "90090909090990909090909斀9090909090909090909090099090909090�9",
+          "well_formed": false
+        },
+        {
+          "id": "V100",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "有��������意���戟�愝师�知������有��我戟��",
+          "well_formed": false
+        },
+        {
+          "id": "V101",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "戱话话话话话话话请�脏��下���是���荷为��请�茽��",
+          "well_formed": false
+        },
+        {
+          "id": "V102",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "有�有鐪师��鼌他也��有靾也也��有����这�我�他",
+          "well_formed": false
+        },
+        {
+          "id": "V103",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "谝而��有记也�������诰�����文����诰��是人�亾",
+          "well_formed": false
+        },
+        {
+          "id": "V104",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "有戱说我������下�斱���舑����躆戱�诪����有�",
+          "well_formed": false
+        }
+      ]
+    }
+  ],
+  "surface_verdict": {
+    "min_gap_texts": 3,
+    "per_circuit": [
+      {
+        "circuit": "output/taiji_r2_a23_ding2_seedA/judge/circuit-final.pt",
+        "gap_texts": 3,
+        "direction": "better",
+        "meets_min_gap": true,
+        "control_rate": 0.0,
+        "treated_rate": 0.0096
+      },
+      {
+        "circuit": "output/taiji_r2_a23_ding2_seedB/judge/circuit-final.pt",
+        "gap_texts": 2,
+        "direction": "better",
+        "meets_min_gap": false,
+        "control_rate": 0.0,
+        "treated_rate": 0.0064
+      }
+    ],
+    "status": "not_resolved",
+    "verdict": "not_resolved（未同时满足『两电路同向』与『差 ≥3 条』）"
+  },
+  "base_sha256_unchanged": true
+}
