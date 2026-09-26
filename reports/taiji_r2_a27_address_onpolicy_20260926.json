@@ -1,0 +1,28 @@
+{
+  "format": "taiji-r2-a27-address-onpolicy-v1",
+  "prereg": "plans/reference/SPEC-A-17_r2_a2_3b_format_align_prereg_20260925.md §19",
+  "chain": "scored + store=target（每步都在正确事件里）",
+  "circuit": "output/taiji_r2_copy_circuit_chat/judge/circuit-final.pt",
+  "items": 81,
+  "off_line_aim_rate": 0.9449,
+  "off_line_aim_note": "在旧轨迹的状态点上量的指对率（§18 那个 94%）",
+  "baseline_on_own_trajectory": {
+    "steps": 635,
+    "aim_correct": 102,
+    "aim_rate": 0.1606,
+    "emitted_rate": 0.1748,
+    "items_fully_emitted": 2
+  },
+  "refit_on_own_trajectory": {
+    "steps": 635,
+    "aim_correct": 151,
+    "aim_rate": 0.2378,
+    "emitted_rate": 0.2346,
+    "items_fully_emitted": 2,
+    "patched_addressing_calls": 635,
+    "patched_diverged_calls": 353
+  },
+  "reading_rule": "refit 在自己轨迹上的 aim_rate 塌回接近 baseline ⇒ (a) 分布位移吃掉全部离线收益，改寻址必须自带 on-policy 评测；仍显著高于 baseline ⇒ (b) 掉分在门/pooled 那道闸上，下一刀测那道闸。calls 或 diverged 为 0 ⇒ 覆写没生效，本件作废",
+  "patch_effective": true,
+  "base_sha256_unchanged": true
+}
