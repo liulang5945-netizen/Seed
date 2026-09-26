@@ -139,10 +139,22 @@ export function probeFreePort(): Promise<number> {
  * @returns nothing; the dialog is visible when it resolves.
  */
 async function openWorkspaceDirectoryDialog(page: Page, trigger: string, dialogName: string): Promise<void> {
-  await page.getByRole('textbox', { name: trigger }).click()
   const add = page.getByRole('menuitem', { name: /添加工作区|Add workspace/u })
-  if (await add.waitFor({ state: 'visible', timeout: 2_000 }).then(() => true).catch(() => false)) await add.click()
-  await page.getByRole('dialog', { name: dialogName }).waitFor({ timeout: 10_000 })
+  const dialog = page.getByRole('dialog', { name: dialogName })
+  await page.getByRole('textbox', { name: trigger }).click()
+  // The shipped trigger opens a menu first while an older surface resolved straight to the dialog, so
+  // wait for whichever arrives rather than probing the menu for a fixed window: under lane concurrency
+  // the menu can land later than any such window and the click would then be lost.
+  await Promise.race([
+    add.waitFor({ state: 'visible', timeout: 15_000 }).catch(() => undefined),
+    dialog.waitFor({ state: 'visible', timeout: 15_000 }).catch(() => undefined),
+  ])
+  if (await add.isVisible()) {
+    await add.click()
+    await dialog.waitFor({ timeout: 15_000 })
+    return
+  }
+  await dialog.waitFor({ timeout: 15_000 })
 }
 
 export async function connectFreshWorkspace(page: Page, root: string, name = 'workspace'): Promise<void> {
