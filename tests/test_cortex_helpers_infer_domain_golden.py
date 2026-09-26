@@ -19,7 +19,6 @@
 from __future__ import annotations
 
 import json
-import os
 import subprocess
 import sys
 from pathlib import Path
@@ -106,10 +105,10 @@ def test_change_moved_no_golden_output() -> None:
     assert after["non_deterministic_count"] == 0
 
 
-def test_fallback_is_invariant_across_hash_seeds() -> None:
+def test_fallback_is_invariant_across_hash_seeds(tmp_path) -> None:
     """复跑探针：330 格在 6 个哈希种子 × 多插入序下**零翻转**（兜底非确定 ⇒ 本条红）。"""
 
-    out = Path(os.environ.get("PYTEST_TMPDIR", ".")) / "cortex_fallback_probe.json"
+    out = tmp_path / "cortex_fallback_probe.json"
     proc = subprocess.run(
         [sys.executable, str(PROBE), "--runs", "6", "--out", str(out)],
         capture_output=True,
