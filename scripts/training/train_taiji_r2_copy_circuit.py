@@ -162,6 +162,7 @@ def _train_answer(
             advantage=advantage,
             lr_address=lr_address,
             lr_gate=lr_gate,
+            lr_embed=lr_embed,
         )
         win["gate"].append(
             abs(
@@ -432,6 +433,8 @@ def main() -> int:
 
     rng = random.Random(args.seed)
     config = substrate.config
+    #: 丁 臂"动过多少行"的对照起点（resume 时取载入后的状态）。
+    _content_embed_at_start = circuit.parameters()["content_embed"].detach().clone()
     lr_selector = 0.0 if args.protocol == "bare" else float(args.lr_selector)
     started = time.monotonic()
     done = 0
@@ -589,13 +592,18 @@ def main() -> int:
         #: SPEC-A-23 丁 臂的账。`content_embed` 一旦可训，它**同时**改动寻址键、`pooled`
         #: 与选择头特征 2 ⇒ 任何读数都不许单因归给"表征"（本件的 §4 限定），
         #: 这里只留一个可核对的位移量：Frobenius 范数与"动过多少行"。
+        #: "动过的行"按**起终点差分**计（随机初始化的行本来就非零，数非零行是假计数——
+        #: 2026-09-26 首跑的教训：调用点漏传 lr_embed、分支没走，假计数却报 257 行"被动过"）。
         "representation": {
             "lr_embed": float(args.lr_embed),
             "content_embed_frobenius_norm": round(
                 float(circuit.parameters()["content_embed"].norm()), 4
             ),
             "content_embed_rows_touched": int(
-                (circuit.parameters()["content_embed"].abs().amax(dim=1) > 0.0).sum()
+                (
+                    (circuit.parameters()["content_embed"] - _content_embed_at_start).abs().amax(dim=1)
+                    > 0.0
+                ).sum()
             ),
         },
         "seed": args.seed,

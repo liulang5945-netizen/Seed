@@ -417,6 +417,56 @@ def test_wrong_event_steps_are_never_trained_against() -> None:
     assert right["steps"] > 0 and right["wrong_event"] == 0 and right["changed"]
 
 
+def test_train_answer_forwards_lr_embed_to_the_circuit() -> None:
+    """丁 臂的调用链守卫：`_train_answer(lr_embed=…)` 必须把参数**传进** `circuit.learn`。
+
+    2026-09-26 首跑事故：`_train_answer` 收下 `lr_embed` 却在调用 `circuit.learn` 时漏传，
+    丁 分支从未点火，训练报告的 `content_embed_rows_touched` 还用"数非零行"谎报 257 行。
+    两条断言：lr_embed>0 走训练器路径 ⇒ `content_embed` 必须动；不传（默认 0）⇒ 必须逐位不动。
+    """
+    import train_taiji_r2_copy_circuit as trainer
+
+    from taiji.copy_circuit import ToldEvent
+
+    model = _model()
+    model.mount_copy_circuit(max_events=4)
+    circuit = model.copy_circuit
+    assert circuit is not None
+    tell = "我叫阿蒙。".encode()
+    cue = torch.zeros(model.config.cortical_context_dim)
+    cue[1] = 1.0
+    circuit.store.record(tell, cue.clone())
+    model.reset_dynamics(episode_id="contract-lr-embed")
+    model.observe(model.config.boundary_symbol, learn=False, readout="predictive")
+    for symbol in "问：我叫阿蒙。\n答：。\n问：我的名字是什么？\n答：".encode():
+        model.observe(int(symbol), learn=False, readout="predictive")
+    fake = ToldEvent(event_id=99, content=tell, cue=cue.clone())
+    circuit.store.best_match = lambda _query: fake  # type: ignore[method-assign]
+
+    def _run(lr_embed: float) -> torch.Tensor:
+        win: dict[str, Any] = {"hits": 0, "steps": 0, "gate": [], "adv": [], "wrong_event": 0}
+        trainer._train_answer(
+            model,
+            circuit,
+            model.config,
+            tell_bytes=tell,
+            answer="阿蒙",
+            prev_byte=tell[-1],
+            lr_address=0.15,
+            lr_gate=0.002,
+            win=win,
+            lr_embed=lr_embed,
+        )
+        assert win["steps"] > 0
+        return circuit.parameters()["content_embed"].detach().clone()
+
+    before = circuit.parameters()["content_embed"].detach().clone()
+    after_zero = _run(0.0)
+    after_nonzero = _run(0.05)
+    assert torch.equal(before, after_zero)
+    assert not torch.equal(after_zero, after_nonzero)
+
+
 #: 挂载结果的**基线 digest**，在加 `init_seed` 参数**之前**用当时的代码实测钉下
 #: （`Taiji(TaijiConfig(region_sizes=(64,48), synapse_fan_in=16, motor_fan_in=48, seed=S))`
 #: ＋ `mount_copy_circuit(max_events=4)`）。用它证明"加种子旋钮没动默认路径"。
