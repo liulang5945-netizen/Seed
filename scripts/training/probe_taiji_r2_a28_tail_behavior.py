@@ -111,6 +111,16 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--checkpoint", default="checkpoints/seed_beta.pt")
     parser.add_argument("--circuit", default=SEED_A_CIRCUIT)
+    parser.add_argument(
+        "--override",
+        choices=("none", "refit"),
+        default="none",
+        help=(
+            "refit＝套上 §19 那档「离线指对 94.5%」的寻址覆写，量它在**自己轨迹**上的尾巴形态"
+            "（§20 的反向读数就是这么来的，基线档看不见）"
+        ),
+    )
+    parser.add_argument("--epochs", type=int, default=2500, help="refit 档求解轮数")
     parser.add_argument("--limit", type=int, default=0)
     parser.add_argument("--out-report", default=None)
     args = parser.parse_args()
@@ -144,6 +154,23 @@ def main() -> int:
     )
     circuit = substrate.copy_circuit
 
+    override_note = "none"
+    handle = None
+    if args.override == "refit":
+        from price_taiji_r2_a27_address_refit import refit_m
+        from probe_taiji_r2_a27_address_onpolicy import AddressingOverride
+
+        features = PROJECT_ROOT / "output/a27_address_features.json"
+        if not features.exists():
+            print(json.dumps({"error": f"refit 档需要 §18 的特征件 {features.name}"}))
+            return 1
+        refit = refit_m(
+            circuit, json.loads(features.read_text(encoding="utf-8")), args.epochs, 1e-2, 0.1
+        )
+        handle = AddressingOverride(refit["m"], refit["lam"] / refit["scale"])
+        handle.install()
+        override_note = f"refit(离线指对 {refit['refit_offline_aim']})"
+
     rows: dict[str, Any] = {}
     replayed_hits: set[str] = set()
     for item_id in ids:
@@ -168,6 +195,8 @@ def main() -> int:
 
     #: 冒烟（`--limit`）时命中集合天然不完整，锚点**不可判** ⇒ 写 null 而不是 true
     #: （把"没证"印成"证过了"是今天第三次撞同一类错，这里提前堵掉）。
+    if handle is not None:
+        handle.uninstall()
     anchor_ok: bool | None = None if args.limit else bool(replayed_hits == recorded_hits)
     counts: dict[str, int] = {}
     for row in rows.values():
@@ -178,6 +207,7 @@ def main() -> int:
         "prereg": "plans/reference/SPEC-A-17_r2_a2_3b_format_align_prereg_20260925.md §20 之后",
         "chain": "scored（逐轮走记分件原语复原真实历史）＋完整 64 字节解码",
         "circuit": args.circuit,
+        "addressing_override": override_note,
         "items": len(rows),
         "anchor_replays_recorded_hits": anchor_ok,  # null＝冒烟跑，不可判
         "anchor_overlap": len(replayed_hits & recorded_hits),
