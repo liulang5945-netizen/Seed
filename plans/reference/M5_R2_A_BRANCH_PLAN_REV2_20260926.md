@@ -313,7 +313,32 @@ A3 随时可插（只读）。
 
 
 
+## 5b. 修复执行方案（详细；本轮讨论定稿，逐项可执行）
+
+读数口径统一：主判据 **v3 严格真命中 /104**，两独立电路同向且 ≥3 才判；
+每条都写明"什么算支持、什么算否证"，否则不进队列。
+
+| 问题 | 修复方案（具体动作） | 落点 | 支持读数 ／ 否证读数 | 成本 | 需签字 |
+|---|---|---|---|---|---|
+| **P1** 存盘全零 vs 运行时非零 | 普查仪器加一栏"载入后运行时"，三态对表（文件／load 后／同种子新建），逐面标出差异发生在 `restore` 的哪一步 | `probe_taiji_substrate_growth_census.py` 加 `--mode {file,runtime,both}`；核对 `taiji/memory.py EpisodicField.load_payload` 与 `taiji/model.py` 的 restore 链 | 支持：某面三态不一致 ⇒ 指到具体载入语句；否证：三态一致 ⇒ §2e 容量账直接可用 | 只读 ≈20min | 否 |
+| **G5／5′** 语言轮不写情节记忆 | 在对话记录处补一次情节写入（把"用户轮文本＋该轮皮质 cue"作为 episode 写入），**先做成显式参数**，探针里开、默认链不开 | `api/seed_runtime.py`（`record_told_history` 旁）、`Taiji.memory.write(...)`（需 `threshold` 与 `pending_experience` 语义） | 支持：A0 四格里"写＋读" > "不写" ≥3 且两电路同向；否证：四格全同 ⇒ 断路在读侧，转 A1/下一行 | 零训练 ≈40min | 否（探针）／是（进默认） |
+| **G3** 选对了也发不出 | 加**复述承诺状态**：选定事件后记 `(event_id, span_start, span_len)`，发射期把 copy 证据约束在该 span 内按序消费（不是每字节自由取 top-1） | `taiji/copy_circuit.py`（新增 program 状态＋在 `evidence()` 内做 span 限定）；勿动 gate 语义 | 支持：v3 中 answer_second 的 52 题命中从 0/1 抬到 **≥15**；否证：仍 <5 ⇒ 症状在出口竞争，转 G2/出口侧 | 训练 2×90min ＋ 评 40min | 否 |
+| **3b-6** 经验流里没有后果 | 给语言轮定义"后果"信号并喂进 `pending_experience`（候选：下一轮用户是否采纳自答／预测意外度），先离线量两种定义的可用性再选 | `taiji/model.py` act/settle 路径；`api/seed_runtime.py` 对话回合边界 | 支持：加了后果后，巩固跑一次即令 `consolidation_decoders` 范数离开 0 且 v3 抬升；否证：范数仍 0 ⇒ 巩固没被触发（查 `write_count` 前置） | 需先做设计裁定 | **是** |
+| **G2／3b-10** 检索是打分、无"不知道" | 唤回侧加**阈值**：低于阈不注入证据（表层即为"答不上来"）；并加竞争抑制（top-2 差小于 δ 时不选） | `taiji/copy_circuit.py`（`_chosen_event`／`select_event`）、`ToldContentStore.best_match`（保持 `W=0` 逐位回退的守卫） | 支持：v3 上"作答子集"准确率显著高于全答口径，且拒答率可报；否证：阈值只能在"少答"上换正确率 ⇒ 是精度问题不是机制 | 零训练 ≈1h | 否 |
+| **G1** 没有"问题"这个对象 | 把提问物化成**持久检索意图**：提问读完时算一次意图向量，整轮持有并用于事件选择与位置寻址（取代"每步用当前皮质态"） | 已在 `Taiji.generate` 落了一半（锁定）；补：意图向量作为 `selection()` 的显式入参并存于本轮 | 支持：A2 探针显示"提问态能线性读出该查哪条"且用上后 v3 抬升；否证：读不出 ⇒ 表征缺，转 G4/丁 | 意图半件零训练 ≈1h | 否 |
+| **G4** 内容表征冻结 | **B1 已就绪**：`--lr-embed`（默认 0，行为中性已证） | `taiji/copy_circuit.py learn()` 的 `lr_embed` 分支 | 支持：v3 对 丙 同向 ≥3；否证：不升 ⇒ 旁路五条修法全否，结案转 owner | 2×90min | 否（旁路内） |
+| **3b-7／3b-8** 无编码门控、淘汰不取舍 | 写入按显著性/新颖度门控；FIFO 淘汰**前**先跑一次"值不值得留／是否巩固" | `ToldContentStore.record` 与 `api/seed_runtime.py` 写入处 | 支持：干扰项从 0→4 时正确率曲线更平（C4）；否证：曲线不变 ⇒ 淘汰不是瓶颈 | 依赖 G5 结果 | 否 |
+| **3b-9** 提取不回馈 | 把 `recall.confidence` 接入写入强度/学习率（提取练习） | `taiji/memory.py`、`train_taiji_r2_copy_circuit.learn*` | 支持：同一事实在第二次遇到时唤回更快/更强（可测的保留曲线斜率变化）；否证：无变化 ⇒ 回馈通道未真正接上 | 零训练起步 | 否 |
+| **G6** 巩固从未运行 | 显式跑 `consolidate(cycles=N)`，前置由 G5 满足；只在评测实例里跑 | `taiji/model.py consolidate`；新评测跑法 | 支持：`consolidation_decoders` 范数离开 0 **且** 跨 `reset_dynamics` 仍能复述；否证：只离开 0 不改行为 ⇒ 巩固目标与语言任务不匹配 | 依赖 3b-6 | **是**（进默认流程） |
+| **C3** 保持时长从未量 | 用**现成**量具 `DelayedMemoryTask`/`ContinualMemoryTask` 在产品基座上跑"间隔 N 步复述"曲线 | `taiji/foundation_tasks.py` ＋ 新跑法脚本 | 产出物：能力—间隔曲线与饱和点；它决定"要不要更多记忆层"（§2e 判断 2） | 零训练 ≈1h | 否 |
+| **G8** 产品默认挂载 | 不动。等 P1／G5／A0 三项出数后一并裁定 | `enable_copy_circuit`；`chat_enabled=False` 下表层被占位句替换那条独立登记 | — | — | **是** |
+
+**执行顺序（写死，防我再次到处开花）**：
+`P1 → G5(A0 四格) → A1/A2 归属 → 按归属取其一（G3 承诺状态 ／ G2 阈值+抑制 ／ G4=B1）→ C3 曲线 →` 之后才回到 3b-6／G6 那条"后果→巩固"的大改（需你裁定语义）。
+**默认挂载 G8 与"后果语义"两项在你签字前不入队。**
+
 ## 6. 判据与题集制度（rev2 起生效）
+
 
 1. **主判据＝v3**（`r2_copy_surface_extension_v3_position_random.json`：均衡牌堆 52/52、
    八个 kind 内部两种落位都有、与 v2 逐题配对）。v1/v2 只作旁证。
