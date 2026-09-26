@@ -281,6 +281,57 @@ black/ruff 干净）。全套件 5 条红逐支归因完毕，均非本批（1 �
 * 这条探针同时回答用户对机制的原始质疑（"像真注意力，还是给自己的索引补精度"），
   且比"再训 90 分钟"便宜：一次评测 ≈40 分钟、零训练。
 
+---
+
+## 13. 交接状态（2026-09-26 08:43Z，会话轮次将尽时写；本文件即权威现场）
+
+**已入库**：`ccaf056b`（器官＋产品链锁定＋训练器接线＋三条守卫，`test_copy_circuit_contract.py` 20 passed）、
+`603259d3`（permuted 探针题集＋§12 判读线＋§10 自我更正）。全量 `taiji_native` 那 5 条红逐支已归因，
+均非本批（见 03 计划册 6i 段与本件 §11 的说明）。
+
+**在跑（五件事，24 核并行；本文件写完时仍未出件）**：
+
+| 档 | 产物路径 | 状态（08:43Z） |
+|---|---|---|
+| 丙 seed-A | `output/taiji_r2_a25_seedA/judge/circuit-final.pt` | 第 600 episode／预算 90 min |
+| 丙 seed-B | `output/taiji_r2_a25_seedB/judge/circuit-final.pt` | 第 400 episode／预算 90 min |
+| 乙 v1 | `reports/taiji_r2_a25_lock_only_surface_v1_20260926.json` | 跑中 |
+| 乙 v2 | `reports/taiji_r2_a25_lock_only_surface_v2_20260926.json` | 跑中 |
+| 乙 探针 | `reports/taiji_r2_a25_lock_only_probe_v2permuted_20260926.json` | 跑中 |
+
+**下一步（顺序照做即可，全部命令已定）**：
+
+1. 丙 两件 `circuit-final.pt` 齐了之后，并行跑三评测＋两回归门（每条 ≈40 min）：
+   ```
+   python scripts/training/score_taiji_r2_copy_surface_extension.py --manifest plans/manifests/r2_copy_surface_extension_v2.json          --circuit output/taiji_r2_a25_seedA/judge/circuit-final.pt --circuit output/taiji_r2_a25_seedB/judge/circuit-final.pt --out-report reports/taiji_r2_a25_selector_surface_v2_20260926.json
+   python scripts/training/score_taiji_r2_copy_surface_extension.py --manifest plans/manifests/r2_copy_surface_extension_v1.json          # … --out-report …_selector_surface_v1_…
+   python scripts/training/score_taiji_r2_copy_surface_extension.py --manifest plans/manifests/r2_copy_surface_extension_v2_permuted.json # … --out-report …_selector_probe_…
+   python scripts/training/score_taiji_r2_copy_circuit_chat_cap.py --circuit output/taiji_r2_a25_seedA/judge/circuit-final.pt --out-report reports/taiji_r2_a25_selector_cap_seedA_20260926.json
+   python scripts/training/score_taiji_r2_copy_circuit_chat_cap.py --circuit output/taiji_r2_a25_seedB/judge/circuit-final.pt --out-report reports/taiji_r2_a25_selector_cap_seedB_20260926.json
+   ```
+   （`score_taiji_r2_copy_circuit_chat_cap.py` 当前工作区有 B 线的**纯排版**改动，语义未变，
+   与昨日 CAP 基线同链，可直接比；跑之前 `git diff` 再确认一次这一条。）
+2. 读每个丙臂 payload 的 `selector_weight` 五个分量（`torch.load(...)['copy_circuit']['parameters']`，
+   零训练、几秒），按 §10 的措辞纪律写进结论。
+3. 判读表（填完即为 §4 的裁定；三处都还没数）：
+
+   | 对比 | v1 | v2 | permuted 探针 |
+   |---|---|---|---|
+   | 甲（不挂电路） | 0 hits（已知） | 待乙件里的 control | 待乙探针里的 control |
+   | 乙（只锁定） | 待填 | 待填 | 待填 |
+   | 丙（学出来的头） | 待填 | 待填 | **待填（本轮未跑）** |
+   | 丙 − 乙（主判据＝v2；两电路同向且 ≥3 才判） | — | 待填 | 待填 |
+
+4. 读法未变：`§4` 三分支 ＋ `§10`（列权重、结论措辞上限）＋ `§11`（丙−乙 是"学头"与"更干净训练信号"
+   的复合效应，不许单写"推理时更会挑"）＋ `§12`（**位置这一维只能靠 permuted 探针打掉**）。
+5. 若 丙 在 v2 上升且探针上也守住 ⇒ 才谈 §7 那条 owner 事项（产品默认挂载）；
+   若 v2 升而探针塌 ⇒ 如实记"位置先验"，并把下一刀指向 `content_embed`（需签字）。
+
+**基座完整性**：训练器 `--stage judge` 自带 sha256 前后复核，读报告里的 `base_sha256_unchanged`
+必须为 `true` 才算数；两件 `checkpoints/*.pt` 全程只读。
+
+
+
 
 
 
