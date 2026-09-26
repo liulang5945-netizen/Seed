@@ -154,6 +154,11 @@ A/B 会成双变量（本轮就撞上了：76c 起跑前 mtime 已是 19:57:52�
 **附带一条复验读数（同日，今日全部改动之后）**：doc-sync 全量叶批复跑＝**唯一红仍是 `docs-site-projection`（符号链接 EPERM，环境类）**，其余全绿
 （我的批跑器报 `leaves 44`，权威口径是仓库自报的 **43 门**——多算那条是 `docs:build` 内嵌的 fragments 步骤，见本条更早的更正）。
 ⇒ **判据②③ 在 H3u 与本轮所有文档改动之后零新增红**（日志 `E:/Seed/.dsh-sbx2/docsyncafter.txt`）。
+**⑮ 的措辞同日按读数更正（读法与数据见 G5 §7.2 末三段）**：先前写的是"工作区索引**启动时建一次**，所以启动后写入的会话进不了树"。
+用 `seeder` 那条正确读法（另开 `Context` 挂 `JsonlSessionPersistence` 调 `sessionPersistence.list()`）实测：**盘上有这条会话，但头记录里没有 `title` 字段**
+⇒ 树只读头记录，标签回退到 `cwd` 的 basename（`ui-workspace` 的三级回退第二格），而 lane 追加的 `session/title` 是**事件不是头字段**；
+scaffold 又**自己关掉了 `session-title-llm`**（`scaffold.ts:630`，理由 `:19`）。⇒ **⑮ 应改述为"行标签的数据源是持久化头记录，而头记录不携带标题"**，与索引时机无关。
+**这条面上没有"曾经绿过"的证据**（CI 不跑），所以既不用 fork 缺陷解释、也不要把上游断言当合同。
 
 **别扩大打击面**：另两条提到 build 的 lane 已逐条核对为**不写产物**——`preview-boot.e2e.ts:114` 只是要求 dist 在场并报错提示去 build，
 `clickable-links-gallery.e2e.ts:268` 里的 `pnpm run build` 是**测试正文的字符串**。

@@ -242,6 +242,19 @@ node 后端就是它的一个实现（`apps/desktop/src/host-process.ts:3,139` �
 `ctx.sessions.list()` 得 **`[]`**、`ctx.workspaceRegistry.list()` 得 **`[]`**，而**同一时刻页面侧边栏显示着两个工作区和一行带 `now` 的会话**。
 ⇒ **但这个读法本身是错的，**我把"对不上"那句收回**：`ctx.sessions` 是**客户端作用域的访问器**（`packages/api/session-controller/src/client/sessions/manager.ts:403` 里它是 `await this.remote.session.list({})`），空数组不证明"宿主没有这些会话"；而 `seedSession` 走的是**另一个独立 `new Context()`**（`scaffold.ts:1486` 的 `seeder`，只为往 `persistenceRoot` 写件）——两者本就不是同一视图。
 ⇒ **⑮ 的层次仍未判，但判它不能靠 `ctx.*`**：要么按 `seeder` 那样另开一个 Context 去 `list`，要么把 `persistenceRoot` 下那份 JSONL 与表层实际取的那条 HTTP 响应对账。**教训（同族第五次）**：`[]` 是一个**访问器的返回值**，不等于"系统里没有"——用它下结论前先读该访问器怎么取数。
+
+**⑮ 的层次同日判完了（改用 `seeder` 那条正确读法；探针已 `git checkout --` 撤回、`git status` 干净）**：另开一个 `Context` 挂 `JsonlSessionPersistence`（root 用 `scaffold.persistenceRoot`）调 `sessionPersistence.list()`——
+盘上**确实有这条会话**，但它的**头记录里没有 title 字段**：
+`header = {version:4, id:"markdown-cjk-strong-web-e2e", createdAt:1768449600000, cwd:"C:\…\dsh-web-e2e-ws-96fxyq", isSeeded:false, delegationDepth:0}`（外加 `revision`、`sizeBytes:797`）。
+⇒ **树只读头记录**，头里没有标题，于是回退到 `cwd` 的 basename（就是 `ui-workspace` 那三级回退里的第二格）。
+lane 追加的那条 `session/title` 是**事件**、不是**头字段**，所以从来没进过行标签。
+**另一处相关事实**：scaffold 自己把 `session-title-llm` 关掉了（`scaffold.ts:630`，理由在 `:19`——它那个 fire-and-forget 的标题调用会与回放游标竞争），
+⇒ **在这条测试面上没有别的机制会把标题写回头记录**。
+**所以 ⑮ 的措辞要换**：从"工作区索引启动时建一次"改成更准的一句——**行标签的数据源是持久化头记录，而头记录不携带标题**。
+**这不需要任何 fork 缺陷来解释**；但也**不能反过来说"上游一定是对的"**——这条面 CI 从不跑，没有"曾经绿过"的证据（同 §6 那条"没有上游绿色基线"的事实）。
+**处置现在可以动了**：那 6 条 lane 的修法＝**先点那唯一一行把树展开、再按 `cwd` 的 basename 选行**（不是按标题）；
+另一种做法是让 `seedSession` 把头记录写成带标题的形状——那动的是测试夹具，影响面更大，**不选**。
+**并且改完要保留一条断言**："行标签当前是 basename"这件事要留在断言里，否则将来标题真的进了头记录，这条 lane 会**静默改变含义**。
 **这与 H3q 的既有结论不冲突**：`connectFreshWorkspaceViaHost` 算"已验证"是因为它的效果**在页面上看得见**（工作区出现、composer 就绪），不是靠 `ctx` 读出来的——
 这条新读数反而说明**当时不该改用 `ctx` 断言**。
 **我自己的两处仪器错误一并记下**：第一次写 `workspaceRegistry.list().then(...)`（它不是 Promise）、第二次把 `existsSync` 的 import 插在该文件不存在的那一行上；
