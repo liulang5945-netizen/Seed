@@ -73,6 +73,8 @@
 **可抽纯段**（零 self 或依赖可全提升为参数），按性价比排序，逐段仍守"每抽一段配等价测试"：
 
 1. `think` 的 `memory_vectors → seed_memories` 归一（2/3 元组、dict、phase 分支）——最干净的单点；
+   **已被 B-4 第七刀（`67e89eec`）直测**（`tests/test_cortex_wiring_and_injection.py`，间谍接
+   `ensemble.forward` 断透传协议）⇒ 抽取不再是当务之急，先抽的收益只剩可读性；真要抽时该件即回归网。
 2. p8 的 codec 段 logits 采样（mask + top-k + 越界停止）——**RNG 消耗顺序必须逐位一致**，与 `decode_step` 同契约；
 3. p8 的 模态→codec 段解析（只读 `MULTIMODAL_TOKENS` 全局配置）；
 4. `generate_staged` 的 dict→`TaskSet` 升级（整段即纯映射）；
