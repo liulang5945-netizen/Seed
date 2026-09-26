@@ -1,0 +1,857 @@
+{
+  "format": "taiji-r2-a28-tail-behavior-v1",
+  "prereg": "plans/reference/SPEC-A-17_r2_a2_3b_format_align_prereg_20260925.md §20 之后",
+  "chain": "scored（逐轮走记分件原语复原真实历史）＋完整 64 字节解码",
+  "circuit": "output/taiji_r2_copy_circuit_chat/judge/circuit-final.pt",
+  "addressing_override": "refit(离线指对 0.9449)",
+  "items": 104,
+  "anchor_replays_recorded_hits": false,
+  "anchor_overlap": 8,
+  "recorded_hits": 23,
+  "verdict_counts": {
+    "clean_hit": 12,
+    "never_emitted": 92
+  },
+  "tail_destroyed_with_loop": 0,
+  "tail_period_median": null,
+  "reading_rule": "tail_destroyed 占未命中的多数 ⇒ 表层失血在尾巴，第一优先改测'解码尾部为什么锁死'（发射门/pooled 自反馈那一族）；never_emitted 占多数 ⇒ 回 §13 那 61 题的键/续接残余",
+  "base_sha256_unchanged": true,
+  "rows": {
+    "X001": {
+      "hit_surface": true,
+      "emitted_early": false,
+      "verdict": "clean_hit",
+      "tail": null,
+      "decoded": "明�明轩。轩�明轩明轩�明轩�明轩�明轩�明轩明轩"
+    },
+    "X002": {
+      "hit_surface": false,
+      "emitted_early": false,
+      "verdict": "never_emitted",
+      "tail": null,
+      "decoded": "����我����庺���������������在��������������"
+    },
+    "X003": {
+      "hit_surface": false,
+      "emitted_early": false,
+      "verdict": "never_emitted",
+      "tail": {
+        "period": 6,
+        "start": 46,
+        "repeats": 3
+      },
+      "decoded": "欢��欢��欢��欢��欢��欢��欢��欢��欢��欢��欢�"
+    },
+    "X004": {
+      "hit_surface": false,
+      "emitted_early": false,
+      "verdict": "never_emitted",
+      "tail": null,
+      "decoded": "帮�图图图图图图图图��攨��海囮的�囀�的�倮的�"
+    },
+    "X005": {
+      "hit_surface": false,
+      "emitted_early": false,
+      "verdict": "never_emitted",
+      "tail": {
+        "period": 3,
+        "start": 55,
+        "repeats": 3
+      },
+      "decoded": "����时爱幌���。��������������幌��平旌龙�爱爱爱�"
+    },
+    "X006": {
+      "hit_surface": false,
+      "emitted_early": false,
+      "verdict": "never_emitted",
+      "tail": null,
+      "decoded": "丮�匙丮��帮����匙�钌只���钀丮����丮��丮丮��"
+    },
+    "X007": {
+      "hit_surface": false,
+      "emitted_early": false,
+      "verdict": "never_emitted",
+      "tail": null,
+      "decoded": "海倛海倛海倂��耂�耂�耂��耛海倂迀�海倂倊海倊"
+    },
+    "X008": {
+      "hit_surface": false,
+      "emitted_early": false,
+      "verdict": "never_emitted",
+      "tail": null,
+      "decoded": "���������������������������笼爱���������"
+    },
+    "X009": {
+      "hit_surface": false,
+      "emitted_early": false,
+      "verdict": "never_emitted",
+      "tail": {
+        "period": 1,
+        "start": 61,
+        "repeats": 3
+      },
+      "decoded": "桐���。桐桐桐。桐桐桐桐桐桐桐。桐四�������������"
+    },
+    "X010": {
+      "hit_surface": false,
+      "emitted_early": false,
+      "verdict": "never_emitted",
+      "tail": null,
+      "decoded": "楼�����安�安安安�安安�安安安安安安��在���圜����"
+    },
+    "X011": {
+      "hit_surface": false,
+      "emitted_early": false,
+      "verdict": "never_emitted",
+      "tail": {
+        "period": 6,
+        "start": 46,
+        "repeats": 3
+      },
+      "decoded": "欢��欢��欢��欢��欢��欢��欢��欢��欢��欢��欢�"
+    },
+    "X012": {
+      "hit_surface": false,
+      "emitted_early": false,
+      "verdict": "never_emitted",
+      "tail": null,
+      "decoded": "卮�星���星星星�星�星��������晨帮������"
+    },
+    "X013": {
+      "hit_surface": false,
+      "emitted_early": false,
+      "verdict": "never_emitted",
+      "tail": null,
+      "decoded": "����时爱平打����打�剓。�������������平打平��平打"
+    },
+    "X014": {
+      "hit_surface": false,
+      "emitted_early": false,
+      "verdict": "never_emitted",
+      "tail": null,
+      "decoded": "��匙丆丆�丆�再匙浍匙��匙个浣庣�串�典浉���"
+    },
+    "X015": {
+      "hit_surface": false,
+      "emitted_early": false,
+      "verdict": "never_emitted",
+      "tail": null,
+      "decoded": "�经����注疏注����尴�����水疏木��注疏����泀泀�"
+    },
+    "X016": {
+      "hit_surface": false,
+      "emitted_early": false,
+      "verdict": "never_emitted",
+      "tail": null,
+      "decoded": "����侣孀�����下�����侣帋�最���侣���侈����"
+    },
+    "X017": {
+      "hit_surface": true,
+      "emitted_early": false,
+      "verdict": "clean_hit",
+      "tail": {
+        "period": 3,
+        "start": 55,
+        "repeats": 3
+      },
+      "decoded": "承����承承泽�����剿承泽承承承承承承承承承�"
+    },
+    "X018": {
+      "hit_surface": false,
+      "emitted_early": false,
+      "verdict": "never_emitted",
+      "tail": {
+        "period": 8,
+        "start": 40,
+        "repeats": 3
+      },
+      "decoded": "岛�旧匛����。���噂���匙我��旧�匙旧�匙旧�匙"
+    },
+    "X019": {
+      "hit_surface": false,
+      "emitted_early": false,
+      "verdict": "never_emitted",
+      "tail": null,
+      "decoded": "欢��欢��欢��欢��欢��欢���欢��欢的是是是是�"
+    },
+    "X020": {
+      "hit_surface": false,
+      "emitted_early": false,
+      "verdict": "never_emitted",
+      "tail": null,
+      "decoded": "��������的���戾�����潢昳�的���潢我盐�����"
+    },
+    "X021": {
+      "hit_surface": false,
+      "emitted_early": false,
+      "verdict": "never_emitted",
+      "tail": null,
+      "decoded": "���桂�酿桂��桂��桂��桂�桂���桂�桂�花平�������"
+    },
+    "X022": {
+      "hit_surface": false,
+      "emitted_early": false,
+      "verdict": "never_emitted",
+      "tail": null,
+      "decoded": "���了�树����下�了������兼�格�只����������"
+    },
+    "X023": {
+      "hit_surface": false,
+      "emitted_early": false,
+      "verdict": "never_emitted",
+      "tail": {
+        "period": 4,
+        "start": 52,
+        "repeats": 3
+      },
+      "decoded": "松�松�松�松�松窗戜�����������������������"
+    },
+    "X024": {
+      "hit_surface": false,
+      "emitted_early": false,
+      "verdict": "never_emitted",
+      "tail": {
+        "period": 2,
+        "start": 58,
+        "repeats": 3
+      },
+      "decoded": "��������侉�����侾�最�����������������"
+    },
+    "X025": {
+      "hit_surface": false,
+      "emitted_early": false,
+      "verdict": "never_emitted",
+      "tail": null,
+      "decoded": "思�怂�远怂��思迀��迀�迀��迀���迀�远戜�����怂��倂�"
+    },
+    "X026": {
+      "hit_surface": false,
+      "emitted_early": false,
+      "verdict": "never_emitted",
+      "tail": null,
+      "decoded": "我��匙住匙住匙住匙使�在�匙���刑匾住�旧匾"
+    },
+    "X027": {
+      "hit_surface": false,
+      "emitted_early": false,
+      "verdict": "never_emitted",
+      "tail": null,
+      "decoded": "欢�欢��欢��欢�欢��欢�欢��欢��欢的是1欢��欢"
+    },
+    "X028": {
+      "hit_surface": true,
+      "emitted_early": false,
+      "verdict": "clean_hit",
+      "tail": null,
+      "decoded": "�帮的�云�帮卮卮卮�����������归云��叫�"
+    },
+    "X029": {
+      "hit_surface": false,
+      "emitted_early": false,
+      "verdict": "never_emitted",
+      "tail": null,
+      "decoded": "�������������柠时水����柠时水����柠�平��"
+    },
+    "X030": {
+      "hit_surface": false,
+      "emitted_early": false,
+      "verdict": "never_emitted",
+      "tail": null,
+      "decoded": "���奀�������好好����期�好冶好其奶����奶好��蜥�"
+    },
+    "X031": {
+      "hit_surface": false,
+      "emitted_early": false,
+      "verdict": "never_emitted",
+      "tail": null,
+      "decoded": "�亾师�����最七��云圀�亾��七��七��云签�七�七���"
+    },
+    "X032": {
+      "hit_surface": false,
+      "emitted_early": false,
+      "verdict": "never_emitted",
+      "tail": null,
+      "decoded": "����派���侣�侣���������侣����������派籱"
+    },
+    "X033": {
+      "hit_surface": true,
+      "emitted_early": false,
+      "verdict": "clean_hit",
+      "tail": null,
+      "decoded": "�宮�安安�安安�安安安�慕慕慕慕慕慕慕慕慕安安�"
+    },
+    "X034": {
+      "hit_surface": false,
+      "emitted_early": false,
+      "verdict": "never_emitted",
+      "tail": null,
+      "decoded": "在在���明��低�明�明昆�圮����在��在�嘎��明��"
+    },
+    "X035": {
+      "hit_surface": false,
+      "emitted_early": false,
+      "verdict": "never_emitted",
+      "tail": null,
+      "decoded": "欢��欢��欢��欢��欢��欢��欢��欢��欢��欀欢���"
+    },
+    "X036": {
+      "hit_surface": false,
+      "emitted_early": false,
+      "verdict": "never_emitted",
+      "tail": {
+        "period": 1,
+        "start": 61,
+        "repeats": 3
+      },
+      "decoded": "卮卮的�����涛������。���帮��听的��的�������"
+    },
+    "X037": {
+      "hit_surface": true,
+      "emitted_early": false,
+      "verdict": "clean_hit",
+      "tail": {
+        "period": 3,
+        "start": 55,
+        "repeats": 3
+      },
+      "decoded": "��堖�����������������喝��时砖茶������砖茶爱爱爱"
+    },
+    "X038": {
+      "hit_surface": false,
+      "emitted_early": false,
+      "verdict": "never_emitted",
+      "tail": null,
+      "decoded": "上��獾�����������开�没��上�不���典�没�上���"
+    },
+    "X039": {
+      "hit_surface": false,
+      "emitted_early": false,
+      "verdict": "never_emitted",
+      "tail": null,
+      "decoded": "���溪�������������迀��迀�����������迀�迀��"
+    },
+    "X040": {
+      "hit_surface": false,
+      "emitted_early": false,
+      "verdict": "never_emitted",
+      "tail": null,
+      "decoded": "�����倮���倮�活�倮���倮�����厀活�活�活���"
+    },
+    "X041": {
+      "hit_surface": true,
+      "emitted_early": false,
+      "verdict": "clean_hit",
+      "tail": null,
+      "decoded": "青。砚青�叫砚青。���叫砚青。��������傂�倂���栠"
+    },
+    "X042": {
+      "hit_surface": false,
+      "emitted_early": false,
+      "verdict": "never_emitted",
+      "tail": null,
+      "decoded": "�������������������免�我�旧������位位��兰���"
+    },
+    "X043": {
+      "hit_surface": false,
+      "emitted_early": false,
+      "verdict": "never_emitted",
+      "tail": {
+        "period": 6,
+        "start": 46,
+        "repeats": 3
+      },
+      "decoded": "欢��欢��欢的是是欢��欢��欢��欢��欢��欢��欢"
+    },
+    "X044": {
+      "hit_surface": false,
+      "emitted_early": false,
+      "verdict": "never_emitted",
+      "tail": null,
+      "decoded": "��������������������的��盛�������柳。����"
+    },
+    "X045": {
+      "hit_surface": false,
+      "emitted_early": false,
+      "verdict": "never_emitted",
+      "tail": {
+        "period": 1,
+        "start": 61,
+        "repeats": 3
+      },
+      "decoded": "�晱�洱�洱�噮��崱��洱崱崱崱崱崱崱崱崱��洱���"
+    },
+    "X046": {
+      "hit_surface": false,
+      "emitted_early": false,
+      "verdict": "never_emitted",
+      "tail": {
+        "period": 2,
+        "start": 58,
+        "repeats": 3
+      },
+      "decoded": "������刑�����只��������养�刺�����������"
+    },
+    "X047": {
+      "hit_surface": false,
+      "emitted_early": false,
+      "verdict": "never_emitted",
+      "tail": null,
+      "decoded": "在����开��开�����倊�木�物�������物�物��诀"
+    },
+    "X048": {
+      "hit_surface": false,
+      "emitted_early": false,
+      "verdict": "never_emitted",
+      "tail": null,
+      "decoded": "�厀�活��������倂�倮�活�活��活�活��术���吃���"
+    },
+    "X049": {
+      "hit_surface": true,
+      "emitted_early": false,
+      "verdict": "clean_hit",
+      "tail": {
+        "period": 2,
+        "start": 58,
+        "repeats": 3
+      },
+      "decoded": "宁宁宁宁宁宁�����������������������洁洛宁�������������"
+    },
+    "X050": {
+      "hit_surface": false,
+      "emitted_early": false,
+      "verdict": "never_emitted",
+      "tail": null,
+      "decoded": "��宁奀��泌奀�期内内������期�奀�波波��波波�"
+    },
+    "X051": {
+      "hit_surface": false,
+      "emitted_early": false,
+      "verdict": "never_emitted",
+      "tail": null,
+      "decoded": "欢��欢��欢��欢��欢��欢��欢��欢��欢��欢的是8"
+    },
+    "X052": {
+      "hit_surface": false,
+      "emitted_early": false,
+      "verdict": "never_emitted",
+      "tail": {
+        "period": 3,
+        "start": 55,
+        "repeats": 3
+      },
+      "decoded": "������������厀����原原原原原�原原原原原原"
+    },
+    "X053": {
+      "hit_surface": false,
+      "emitted_early": false,
+      "verdict": "never_emitted",
+      "tail": null,
+      "decoded": "����������������������平��时�茶爱荞荞茶�时爱荞荞"
+    },
+    "X054": {
+      "hit_surface": false,
+      "emitted_early": false,
+      "verdict": "never_emitted",
+      "tail": null,
+      "decoded": "上上了�����兊�开�开开开开开开兊������鹴上"
+    },
+    "X055": {
+      "hit_surface": false,
+      "emitted_early": false,
+      "verdict": "never_emitted",
+      "tail": null,
+      "decoded": "����术术术术术读最�����最�齐术�民圯术术术术戜��"
+    },
+    "X056": {
+      "hit_surface": false,
+      "emitted_early": false,
+      "verdict": "never_emitted",
+      "tail": null,
+      "decoded": "����活��活��卮��活卮����来��厀���来卮�讲�吭�"
+    },
+    "X057": {
+      "hit_surface": true,
+      "emitted_early": false,
+      "verdict": "clean_hit",
+      "tail": null,
+      "decoded": "����时予����时予���时予��时予���时予���时予�"
+    },
+    "X058": {
+      "hit_surface": false,
+      "emitted_early": false,
+      "verdict": "never_emitted",
+      "tail": {
+        "period": 2,
+        "start": 58,
+        "repeats": 3
+      },
+      "decoded": "������������帊����渊�住帊���渊�住��������"
+    },
+    "X059": {
+      "hit_surface": false,
+      "emitted_early": false,
+      "verdict": "never_emitted",
+      "tail": null,
+      "decoded": "欢��欢��欢��欢��欢��欢的是1欢�欢��欢��欢���"
+    },
+    "X060": {
+      "hit_surface": false,
+      "emitted_early": false,
+      "verdict": "never_emitted",
+      "tail": null,
+      "decoded": "帮��鮲��活�活�活��活�活��活�活�帲�叫��的��"
+    },
+    "X061": {
+      "hit_surface": false,
+      "emitted_early": false,
+      "verdict": "never_emitted",
+      "tail": null,
+      "decoded": "戱��时红枣躢枣�平枣�平���������平���平�平枣�"
+    },
+    "X062": {
+      "hit_surface": false,
+      "emitted_early": false,
+      "verdict": "never_emitted",
+      "tail": null,
+      "decoded": "���鼠�兀���鼠兀了侈��我�新了侈下��鼠������"
+    },
+    "X063": {
+      "hit_surface": false,
+      "emitted_early": false,
+      "verdict": "never_emitted",
+      "tail": null,
+      "decoded": "�记�����迀�����蓝记记记记记���洛阳伋》��蓝��"
+    },
+    "X064": {
+      "hit_surface": false,
+      "emitted_early": false,
+      "verdict": "never_emitted",
+      "tail": null,
+      "decoded": "派��廄�派����������������������汤�汤�"
+    },
+    "X065": {
+      "hit_surface": false,
+      "emitted_early": false,
+      "verdict": "never_emitted",
+      "tail": null,
+      "decoded": "���砚�砚�砚�砚��砚�砚�砚�砚����砚��砚���"
+    },
+    "X066": {
+      "hit_surface": false,
+      "emitted_early": false,
+      "verdict": "never_emitted",
+      "tail": null,
+      "decoded": "贀�没�没�住��开没开�没�没�住���没��没�����"
+    },
+    "X067": {
+      "hit_surface": false,
+      "emitted_early": false,
+      "verdict": "never_emitted",
+      "tail": null,
+      "decoded": "欢��欢��欢��欢��欢��欢��欢��欢��欢��欢的是�"
+    },
+    "X068": {
+      "hit_surface": false,
+      "emitted_early": false,
+      "verdict": "never_emitted",
+      "tail": null,
+      "decoded": "帮�����项���盛��������������帮����项��项生兛���"
+    },
+    "X069": {
+      "hit_surface": false,
+      "emitted_early": false,
+      "verdict": "never_emitted",
+      "tail": null,
+      "decoded": "����时爱��。水�水旈戱戱爱�噈��平水平水旈�爱"
+    },
+    "X070": {
+      "hit_surface": false,
+      "emitted_early": false,
+      "verdict": "never_emitted",
+      "tail": null,
+      "decoded": "乴上乴�����开��开开开开开开开开开年战�今����"
+    },
+    "X071": {
+      "hit_surface": false,
+      "emitted_early": false,
+      "verdict": "never_emitted",
+      "tail": null,
+      "decoded": "����梦�东东�卍梦���������倂���东䍍��梀�录�"
+    },
+    "X072": {
+      "hit_surface": false,
+      "emitted_early": false,
+      "verdict": "never_emitted",
+      "tail": null,
+      "decoded": "�����最�戱�怎���最�戱吴�最�潢��是戱剛是戱��"
+    },
+    "X073": {
+      "hit_surface": false,
+      "emitted_early": false,
+      "verdict": "never_emitted",
+      "tail": {
+        "period": 3,
+        "start": 55,
+        "repeats": 3
+      },
+      "decoded": "���������晚晚。��倂���晚晚晚晚晚晚晚晚晚�"
+    },
+    "X074": {
+      "hit_surface": false,
+      "emitted_early": false,
+      "verdict": "never_emitted",
+      "tail": {
+        "period": 1,
+        "start": 61,
+        "repeats": 3
+      },
+      "decoded": "騉���在扬在�������州巼������巼������楉���巀������"
+    },
+    "X075": {
+      "hit_surface": false,
+      "emitted_early": false,
+      "verdict": "never_emitted",
+      "tail": {
+        "period": 6,
+        "start": 46,
+        "repeats": 3
+      },
+      "decoded": "欢��欢��欢��欢��欢��欢��欢��欢��欢��欢��欢�"
+    },
+    "X076": {
+      "hit_surface": false,
+      "emitted_early": false,
+      "verdict": "never_emitted",
+      "tail": {
+        "period": 1,
+        "start": 61,
+        "repeats": 3
+      },
+      "decoded": "诡�衹的�������我目我�我�潢诡��我的�潢的潢我����"
+    },
+    "X077": {
+      "hit_surface": false,
+      "emitted_early": false,
+      "verdict": "never_emitted",
+      "tail": null,
+      "decoded": "����荳捳捍旳旈�荳戱旈�旈�旈�旈��荳�戱平时�时"
+    },
+    "X078": {
+      "hit_surface": false,
+      "emitted_early": false,
+      "verdict": "never_emitted",
+      "tail": null,
+      "decoded": "�奀��倂������殱獭水�期�好好好好好����捱���"
+    },
+    "X079": {
+      "hit_surface": false,
+      "emitted_early": false,
+      "verdict": "never_emitted",
+      "tail": null,
+      "decoded": "����梦粱圀�����������梦粱耂�迀����梀���梦粱"
+    },
+    "X080": {
+      "hit_surface": false,
+      "emitted_early": false,
+      "verdict": "never_emitted",
+      "tail": null,
+      "decoded": "���������青菜�������厀绍����请�厱���厸��"
+    },
+    "X081": {
+      "hit_surface": true,
+      "emitted_early": true,
+      "verdict": "clean_hit",
+      "tail": {
+        "period": 2,
+        "start": 58,
+        "repeats": 3
+      },
+      "decoded": "沈舟�沈���������������������������"
+    },
+    "X082": {
+      "hit_surface": false,
+      "emitted_early": false,
+      "verdict": "never_emitted",
+      "tail": null,
+      "decoded": "����州�州��������������泂�����泌�奉���期�好�"
+    },
+    "X083": {
+      "hit_surface": true,
+      "emitted_early": false,
+      "verdict": "clean_hit",
+      "tail": null,
+      "decoded": "欢��欢��欢��欢��欢��欢���欢��欢的是是520���"
+    },
+    "X084": {
+      "hit_surface": false,
+      "emitted_early": false,
+      "verdict": "never_emitted",
+      "tail": null,
+      "decoded": "朻朻�����曛������������的��的���溾����"
+    },
+    "X085": {
+      "hit_surface": false,
+      "emitted_early": false,
+      "verdict": "never_emitted",
+      "tail": {
+        "period": 3,
+        "start": 55,
+        "repeats": 3
+      },
+      "decoded": "楂楂楂楂楂楂楂楂楂�山��水�楂�山楂时水楂楂楂�"
+    },
+    "X086": {
+      "hit_surface": false,
+      "emitted_early": false,
+      "verdict": "never_emitted",
+      "tail": null,
+      "decoded": "下�我帀�我帀������狸��我帀�我�����兼�兼���开��"
+    },
+    "X087": {
+      "hit_surface": false,
+      "emitted_early": false,
+      "verdict": "never_emitted",
+      "tail": null,
+      "decoded": "����梦寻�����读梦寻寻�����梦�梦���梦�木��"
+    },
+    "X088": {
+      "hit_surface": false,
+      "emitted_early": false,
+      "verdict": "never_emitted",
+      "tail": null,
+      "decoded": "�����水���最�最�����最������帋���戮����兀��"
+    },
+    "X089": {
+      "hit_surface": false,
+      "emitted_early": false,
+      "verdict": "never_emitted",
+      "tail": null,
+      "decoded": "���昭��昭昭。昭。�昭�昭�昭�昭�昭�昭����昭��"
+    },
+    "X090": {
+      "hit_surface": false,
+      "emitted_early": false,
+      "verdict": "never_emitted",
+      "tail": null,
+      "decoded": "��住�����住�湖住�湖住�湖住�����恜湖住�"
+    },
+    "X091": {
+      "hit_surface": false,
+      "emitted_early": false,
+      "verdict": "never_emitted",
+      "tail": null,
+      "decoded": "欢��欢��欢��欢��欢��欢��欢��欢��欢��欢的是�"
+    },
+    "X092": {
+      "hit_surface": false,
+      "emitted_early": false,
+      "verdict": "never_emitted",
+      "tail": null,
+      "decoded": "�帮目�目�的��的�������帮��的�盛�的�皇��帮�"
+    },
+    "X093": {
+      "hit_surface": false,
+      "emitted_early": false,
+      "verdict": "never_emitted",
+      "tail": null,
+      "decoded": "茉茉茉茶茶茶�茶�茶茶茶茶茶茶茶茶茉茉茉����"
+    },
+    "X094": {
+      "hit_surface": false,
+      "emitted_early": false,
+      "verdict": "never_emitted",
+      "tail": null,
+      "decoded": "�������噼��������了�了����躆���了�����了���"
+    },
+    "X095": {
+      "hit_surface": false,
+      "emitted_early": false,
+      "verdict": "never_emitted",
+      "tail": {
+        "period": 2,
+        "start": 58,
+        "repeats": 3
+      },
+      "decoded": "��������������������������������"
+    },
+    "X096": {
+      "hit_surface": false,
+      "emitted_early": false,
+      "verdict": "never_emitted",
+      "tail": null,
+      "decoded": "�����������������������������������殮��朴最�朴������"
+    },
+    "X097": {
+      "hit_surface": true,
+      "emitted_early": false,
+      "verdict": "clean_hit",
+      "tail": {
+        "period": 3,
+        "start": 55,
+        "repeats": 3
+      },
+      "decoded": "噚���������晚吟吟吟吟吟吟吟吟吟吟吟吟吟�"
+    },
+    "X098": {
+      "hit_surface": false,
+      "emitted_early": false,
+      "verdict": "never_emitted",
+      "tail": null,
+      "decoded": "����自�住�帴���������������������������在��地臡臡�"
+    },
+    "X099": {
+      "hit_surface": false,
+      "emitted_early": false,
+      "verdict": "never_emitted",
+      "tail": {
+        "period": 6,
+        "start": 46,
+        "repeats": 3
+      },
+      "decoded": "欢��欢��欢��欢��欢��欢��欢��欢��欢��欢��欢�"
+    },
+    "X100": {
+      "hit_surface": false,
+      "emitted_early": false,
+      "verdict": "never_emitted",
+      "tail": null,
+      "decoded": "�帮���的��倂��。���倮�兛����倮���目生克〮"
+    },
+    "X101": {
+      "hit_surface": false,
+      "emitted_early": false,
+      "verdict": "never_emitted",
+      "tail": {
+        "period": 3,
+        "start": 55,
+        "repeats": 3
+      },
+      "decoded": "����������������������叶荶茶茶茶茶茶茶茶茶茶茶茶�"
+    },
+    "X102": {
+      "hit_surface": true,
+      "emitted_early": false,
+      "verdict": "clean_hit",
+      "tail": null,
+      "decoded": "������������松�了�鼠�松�松�松鼠��楼下张����"
+    },
+    "X103": {
+      "hit_surface": false,
+      "emitted_early": false,
+      "verdict": "never_emitted",
+      "tail": {
+        "period": 2,
+        "start": 58,
+        "repeats": 3
+      },
+      "decoded": "���������������������游����������������������"
+    },
+    "X104": {
+      "hit_surface": false,
+      "emitted_early": false,
+      "verdict": "never_emitted",
+      "tail": null,
+      "decoded": "��儮是�最�最�朴�������形���������的潢��潢�戱��"
+    }
+  }
+}
