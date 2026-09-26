@@ -264,3 +264,8 @@ scaffold 又**自己关掉了 `session-title-llm`**（`scaffold.ts:630`，理由
 探针已撤回（`git status` 干净、`residue=0`）。
 
 **最小面在 HEAD 上第二次独立验证（同日，`E:/Seed/.dsh-sbx2/keyless-post-h3v.log`）**：4 个 keyless 文件单跑＝**`Test Files 4 passed (4)`、`Tests 11 passed (11)`、27.11 s**，与 H3v 之前小批与全并发里的读数一致。⇒ §5 第 7 条登记的最小面**当前是绿的且可重复**，可当门（前提仍是：先完整 build、批内不含 spawn watcher 的 lane）。
+
+**`agent-team-panel` 的 setup 双形态：读到了有依据的解释（并当场否掉我自己刚写的一个猜测）**——把 `beforeAll` 整段看完（`:46-76`）才发现它**用的是页内目录选择器那条旧 helper**：`await connectFreshWorkspace(page, scaffold.workspaceCwd)`（`:52`），之后才 `scaffold.ctx.agents.list()[0]`、往 `agent.session` 直接追加一轮（含 `assistant/message` 文本 `Ready.`）、`sessions.flush`，再 `page.getByText('Ready.').waitFor({ timeout: 10_000 })`。
+⇒ **双形态因此与"自动打开会话"无关（我先前那个解释是猜的，作废）**：这条 lane 依赖的正是今天定案过的那条**脆弱路径**——旧 helper 的菜单/对话框流程在本 fork 表层上时成时不成（H3t 把触发点从 composer textbox 改成 hero 的 `button[aria-haspopup=menu]` 之后好转但仍非确定）。**`Ready.` 只是这条链最下游的探测器**：helper 走通 ⇒ 页面有会话可渲染 ⇒ `waitFor` 过；走不通 ⇒ setup 卡住、用例全 skip＋文件级红。
+**判别与修法都已现成**：把这条 lane 转成宿主侧 `connectFreshWorkspaceViaHost`（H3q 那条：`ctx.workspaceController.create({path})` ＋ 重载），看 setup 是否从此确定。**转法本身不判可访问名那一步**（那是下一个问题，两次探针都没被执行到，仍未判）。
+**为什么值得做**：这条 lane 的 2 条用例级红**在转换之前不能记成产品缺陷**——它可能一直只是那条脆弱 helper 的下游症状，与今天 H3v 修掉的 6 条同源。
