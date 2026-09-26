@@ -4,9 +4,14 @@
 （S3 生成主循环在 `cortex.py`、KV cache/RoPE 在 `layers.py`；S9 滑窗在 `layers.py`），
 一次 `generate()` 实际穿过的模块即本门度量面：
 
-    brain/cortex.py + brain/_cortex_*.py + brain/working_memory.py   推理主对象与其纯函数分部
-    resonance/ensemble.py / continuous.py / field.py                 前向引擎与共振场
-    layers.py                                                        注意力 / RoPE / KV cache
+    brain/cortex.py + brain/_cortex_*.py                        推理主对象与其纯函数分部
+    resonance/ensemble.py / continuous.py / field.py             前向引擎与共振场
+    layers.py                                                    注意力 / RoPE / KV cache
+
+不在面内（有意排除，避免把死代码算进分母）：`brain/working_memory.py` —— cortex.py:219-223
+自己写明"仅注册未接入"（真正的上下文记忆由 `neuroplex/agent/working_memory` 经 ContextManager
+承担），且实测 `Cortex.generate` 不调它。该模块另有一个 FIFO 丢位后 `round_marks` 整体错位的
+缺陷（见本轮登记），属独立债，不混进覆盖率口径。
 
 ⚠️ 分母只算上面这些文件（coverage 的 `--cov` 面按包取，再按本清单过滤）。
 按 `pyproject.toml` 的既有教训：只跑测试子集或不收窄度量面都会产生**假低/假高**读数。
@@ -44,7 +49,6 @@ CORE_FACE = (
     "neuroplex/brain/_cortex_alignment.py",
     "neuroplex/brain/_cortex_routing.py",
     "neuroplex/brain/_cortex_generation.py",
-    "neuroplex/brain/working_memory.py",
     "neuroplex/resonance/ensemble.py",
     "neuroplex/resonance/continuous.py",
     "neuroplex/resonance/field.py",
