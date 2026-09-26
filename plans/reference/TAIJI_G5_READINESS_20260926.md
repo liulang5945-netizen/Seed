@@ -85,6 +85,8 @@ this scaffold lifetime. **This is the keyless first-run configuration lane**; th
 
 ## 4 · 需要所有者拍板的三条：D3／D2／R4（按能声称的最强结论排；原 R1 已并入 R4）
 
+* **R5｜交付面里剩下的上游品牌名（2026-09-26 新发现，G2 改名的漏网面）**：全仓交付源码里 `deepseek-harness`／`deepseek-ai` 共 **26 处／19 个文件**，但**大部分不能改**——`@deepseek-ai/libreoffice-kit` 是第三方包名（`packages/document/office-to-pdf/src/index.ts:7`、`apps/desktop-host/src/office-engine.ts:27-32`、`webworker-runtime` 的替身表），`x-deepseek-harness-user-id`／`-session-id`／`-compact` 是服务商侧认的 HTTP 头（`packages/llm/llm-deepseek/src/adapter.ts:121-123`）。**真正属于产品身份、且改法需要你点头的只有三处**：① **用户磁盘上的默认工作区目录** `packages/api/workspace-controller/src/default-directory.ts:78` （`~/Documents/deepseek-harness/<名称>`——本轮 `github-ready-review` 的插桩读数里就印着这个路径，是装机后第一眼能看到的东西）；② **ACP 握手里的 agent 名** `packages/acp/acp/src/index.ts:182,378`（`deepseek-harness-acp`，对端可见）；③ **归因元数据** `packages/llm/llm/src/attribution.ts:41,43`（`product: deepseek-harness` ＋ 上游 GitHub URL）。⇒ 三条都是**一行改动**，但 ① 会改变既有安装的工作区落点（涉及迁移/兼容），②③ 会改变对外可见身份。**我不自行改。**
+
 * **R1｜打包实跑在哪台机器**：**这条的前提已被同日实跑否证，实际并入了 R4**。原写法假设"要先装 pnpm 与桌面工具链"；事实是 corepack 无需全局安装即可跑锁定的 pnpm 11.7.0（08 §6 ④），且本机已实跑 `package:desktop:dir` 一次——**它在拉任何二进制之前**先撞 R4 的 `.env.windows`（`build:desktop` 侧 rc=0）。⇒ 真问题不再是"哪台机器能跑"，而是"填不出 R4 那组产品值就一步也往前走"；可做的最强动作相应变为：**R4 落定后在本机跑 `package:desktop:dir` 的 unsigned 变体**，拿到"能出 dir 产物"的证据（不必换机器、不必降级到只跑 `build:desktop`）。
 * **D3 默认 provider 怎么定**：(a) 装机默认＝Taiji（改 profile 配置，产品默认变更）；(b) 默认仍是上游 provider，Taiji 作为可选组（现状）；(c) 首启动做一次引导选择。**这条决定"Taiji provider 为默认"这句话能不能说**，我不自行改。
 * **D2 运行时怎么随包**：随包附带并拉起／首启动引导用户启动／文档要求自备。**这条决定"一条命令装起即用"能不能声称**，也决定客户端版的工作量排序。**本轮读原文后已把选项收敛**：(a) 扩 `pythonPackages`＝撞发布物体积上限（基本排除），**(b) 给后端开独立分发通道（建议按此估工）**，(c) 要求用户自备并启动（兜底，但要改判据口径）。详见 §1 的 D2 行。
