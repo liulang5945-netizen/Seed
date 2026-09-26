@@ -1,0 +1,2251 @@
+{
+  "format": "taiji-r2-copy-surface-extension-v1",
+  "prereg": "plans/reference/SPEC-A-21_r2_surface_extension_prereg_20260925.md",
+  "judge_prereg": "plans/reference/SPEC-A-22_r2_a2_5_query_conditioned_selector_prereg_20260926.md",
+  "manifest": "plans/manifests/r2_copy_surface_extension_v1.json",
+  "manifest_sha256": "4d04d6f48e41a180131e18efaf31634fa4b6147c10aaf5acb1533745e246cf87",
+  "checkpoint": "checkpoints/seed_beta.pt",
+  "control_no_circuit": {
+    "circuit": null,
+    "items": 104,
+    "texts": 260,
+    "well_formed_texts": 0,
+    "well_formed_rate": 0.0,
+    "utf8_decodable_rate": 0.0,
+    "strict_hits": 0,
+    "rows": [
+      {
+        "id": "X001",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "别�：�，�，家�有��：我人�����������孟��",
+        "well_formed": false
+      },
+      {
+        "id": "X002",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "分��������������下是��人���������有��",
+        "well_formed": false
+      },
+      {
+        "id": "X003",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "制������人�����������有�有我�为���我��",
+        "well_formed": false
+      },
+      {
+        "id": "X004",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "分����（������，�有��，�有��，�有����，�下",
+        "well_formed": false
+      },
+      {
+        "id": "X005",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "初��刑�下师（是�人������是�我�为个君君�为",
+        "well_formed": false
+      },
+      {
+        "id": "X006",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "�（则人��������个戈��有，师（（�则为�（�他�",
+        "well_formed": false
+      },
+      {
+        "id": "X007",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "分��：是�个�（君学么��，�，�有�，�有�个",
+        "well_formed": false
+      },
+      {
+        "id": "X008",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "到�����家��个�，�有��：������人��������",
+        "well_formed": false
+      },
+      {
+        "id": "X009",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "分家��，�，��个�（�们一个�（�他�吆君�，制",
+        "well_formed": false
+      },
+      {
+        "id": "X010",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "初�（则个�（则个��，��个�君家�个�庺�����",
+        "well_formed": false
+      },
+      {
+        "id": "X011",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "则君刺学个�（�也�），制刑人�������君�孟��",
+        "well_formed": false
+      },
+      {
+        "id": "X012",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "分君��，制��个�（�们一个�（君家��人�����",
+        "well_formed": false
+      },
+      {
+        "id": "X013",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "分家���，�，�，�是有�我人�����������是",
+        "well_formed": false
+      },
+      {
+        "id": "X014",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "别��刑人����师�君有君个是�一个刈��，�个�（",
+        "well_formed": false
+      },
+      {
+        "id": "X015",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "�则������人��������有���为�，�为，制�为",
+        "well_formed": false
+      },
+      {
+        "id": "X016",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "到���孽�为�人������是���是有我�为为为为�",
+        "well_formed": false
+      },
+      {
+        "id": "X017",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "别��，�，制�，�，个�（�为�������个�，���",
+        "well_formed": false
+      },
+      {
+        "id": "X018",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "����孟���人���������有��有我���我�是��",
+        "well_formed": false
+      },
+      {
+        "id": "X019",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "��������人���������是�有我��我�是��我�",
+        "well_formed": false
+      },
+      {
+        "id": "X020",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "分����，制��个�（君，�有��：�师，家�君为��",
+        "well_formed": false
+      },
+      {
+        "id": "X021",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "初��为�（�为�������个�（����（����（�����",
+        "well_formed": false
+      },
+      {
+        "id": "X022",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "分�（则人����师�君刺�人��人���有君有我���",
+        "well_formed": false
+      },
+      {
+        "id": "X023",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "到��（则�个�（��（�一个�（�为�������文君刺�",
+        "well_formed": false
+      },
+      {
+        "id": "X024",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "分��：。学�一一丈（（有��）（为君君孽孟�，",
+        "well_formed": false
+      },
+      {
+        "id": "X025",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "初�（�他师（是有我人�为�个刺君�师�个君了说�",
+        "well_formed": false
+      },
+      {
+        "id": "X026",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "����������人���人人���������师他������",
+        "well_formed": false
+      },
+      {
+        "id": "X027",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "制����下�����人�����，�为君�吟�\n\n\n\n戈�（（�",
+        "well_formed": false
+      },
+      {
+        "id": "X028",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "分����人����师���个�，�为�有�人����个��",
+        "well_formed": false
+      },
+      {
+        "id": "X029",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "分���弈人�������是�有我�为君君�为人���有",
+        "well_formed": false
+      },
+      {
+        "id": "X030",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "别�（则人����师�君�君�君���有�，�������",
+        "well_formed": false
+      },
+      {
+        "id": "X031",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "到���，则个是人������君则�为��，制则�为�",
+        "well_formed": false
+      },
+      {
+        "id": "X032",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "������（���，��������有��，�有��，�有����",
+        "well_formed": false
+      },
+      {
+        "id": "X033",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "�（则人���������（（则�（君�，制����，�",
+        "well_formed": false
+      },
+      {
+        "id": "X034",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "分君�：刑下有我人�����君�����孟�君么么��",
+        "well_formed": false
+      },
+      {
+        "id": "X035",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "������下�个���������个�（����（���有君����",
+        "well_formed": false
+      },
+      {
+        "id": "X036",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "分���弈人����师����孟������\n\n杈��有：有：",
+        "well_formed": false
+      },
+      {
+        "id": "X037",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "到��（�们一个我有我为为为人��刺�君�师�为�君",
+        "well_formed": false
+      },
+      {
+        "id": "X038",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "�（则人���������有君君�，���������大��",
+        "well_formed": false
+      },
+      {
+        "id": "X039",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "到��（�他个�（�他�君�，�，�，�，人�������",
+        "well_formed": false
+      },
+      {
+        "id": "X040",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "��（则人����师�刈�么�个�（君��孟��������",
+        "well_formed": false
+      },
+      {
+        "id": "X041",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "初�（�个我为丈（����君�为人��������������",
+        "well_formed": false
+      },
+      {
+        "id": "X042",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "�师������孟����我人��������有君为�君为��",
+        "well_formed": false
+      },
+      {
+        "id": "X043",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "则大家��为�������师么��一个则是有�：我���",
+        "well_formed": false
+      },
+      {
+        "id": "X044",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "分��，�，制刑人�����师�君�孟�君�学也�，��",
+        "well_formed": false
+      },
+      {
+        "id": "X045",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "到��，�）：。学为�（�也�）：����个是有�）�",
+        "well_formed": false
+      },
+      {
+        "id": "X046",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "分�（刑人����师��，个�（��一个�（则�为����",
+        "well_formed": false
+      },
+      {
+        "id": "X047",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "到���，到：。。\n\n\n\n\n\n\n\n\n\n（（（（�家��人�����",
+        "well_formed": false
+      },
+      {
+        "id": "X048",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "��（则�下师（（（�人����师则�个�（君学么�",
+        "well_formed": false
+      },
+      {
+        "id": "X049",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "别�，�，�，��个��为�������个�（��一一�君�",
+        "well_formed": false
+      },
+      {
+        "id": "X050",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "����������人����������是���意有�：我他",
+        "well_formed": false
+      },
+      {
+        "id": "X051",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "则大家�君人������������弈他����弌������",
+        "well_formed": false
+      },
+      {
+        "id": "X052",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "分����，���个����个�（���我人��������孟",
+        "well_formed": false
+      },
+      {
+        "id": "X053",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "初��刑人���������������人�，���是���我",
+        "well_formed": false
+      },
+      {
+        "id": "X054",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "别�����������我有��：���个�（��有�：�，人",
+        "well_formed": false
+      },
+      {
+        "id": "X055",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "分����，�，��个是�个�（有�）：���孟����",
+        "well_formed": false
+      },
+      {
+        "id": "X056",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "��（则人��������有君则�为�人�君君则作�尝��",
+        "well_formed": false
+      },
+      {
+        "id": "X057",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "别�（�人�����君�，制也�，�，�，家�有�：��",
+        "well_formed": false
+      },
+      {
+        "id": "X058",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "分����：��君�下个�（君家�个�，制个是����君",
+        "well_formed": false
+      },
+      {
+        "id": "X059",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "则����（��大家��个�，人������个�，君�为�",
+        "well_formed": false
+      },
+      {
+        "id": "X060",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "分����，制�����人�����������有�有我�下�",
+        "well_formed": false
+      },
+      {
+        "id": "X061",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "����刑�个�（�他��，�们个是�为人�������",
+        "well_formed": false
+      },
+      {
+        "id": "X062",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "分家��，�，�，��个�是人������师初君�君��",
+        "well_formed": false
+      },
+      {
+        "id": "X063",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "到���，到：有�：我人�个�（家�君����人�����",
+        "well_formed": false
+      },
+      {
+        "id": "X064",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "�������������人���人人�������有�，����",
+        "well_formed": false
+      },
+      {
+        "id": "X065",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "初则为�（�他君�，�，�，�，个是�为人�����",
+        "well_formed": false
+      },
+      {
+        "id": "X066",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "�����������个�����人�������������，��",
+        "well_formed": false
+      },
+      {
+        "id": "X067",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "制��人�������君刍有君�有，制��也�����弈�",
+        "well_formed": false
+      },
+      {
+        "id": "X068",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "分���弈�下��（有�为�为��个�（����，�，��",
+        "well_formed": false
+      },
+      {
+        "id": "X069",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "分���弈下师（有��）（个��君�家��人�������",
+        "well_formed": false
+      },
+      {
+        "id": "X070",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "���弈�，�君�个是人�������������是�是有�",
+        "well_formed": false
+      },
+      {
+        "id": "X071",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "分��：�，�，�：有��：有有有��下师�（君家�",
+        "well_formed": false
+      },
+      {
+        "id": "X072",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "别����，制则个是有我人��������则�师则为�么",
+        "well_formed": false
+      },
+      {
+        "id": "X073",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "初��，则个是�人�������君则�个�，家则�个��",
+        "well_formed": false
+      },
+      {
+        "id": "X074",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "�师������������下�（，�有���：���孟���人",
+        "well_formed": false
+      },
+      {
+        "id": "X075",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "刑为制则为�������个�（���是有我�有我������",
+        "well_formed": false
+      },
+      {
+        "id": "X076",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "������������个是人�������有��是��个��",
+        "well_formed": false
+      },
+      {
+        "id": "X077",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "�（则为���������（��一个刈��有：我人�，君为",
+        "well_formed": false
+      },
+      {
+        "id": "X078",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "别�（刑人��������个有君则�为�，�为君�吟�",
+        "well_formed": false
+      },
+      {
+        "id": "X079",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "到���，到：。个�（是人�����师，�为君孟���",
+        "well_formed": false
+      },
+      {
+        "id": "X080",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "��（则人���������（么有君，到��个�（（君�",
+        "well_formed": false
+      },
+      {
+        "id": "X081",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "别�：�（�下有：我为������师（是有我为个师�",
+        "well_formed": false
+      },
+      {
+        "id": "X082",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "分��孟�君������人���������个�，��个是�",
+        "well_formed": false
+      },
+      {
+        "id": "X083",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "则��为�（�也（�个我�（有君孟孟�����，刑�",
+        "well_formed": false
+      },
+      {
+        "id": "X084",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "分����，���，�有���：我人������师�个�（有",
+        "well_formed": false
+      },
+      {
+        "id": "X085",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "分����弈�，�君�是�人������师�个�，你�个�",
+        "well_formed": false
+      },
+      {
+        "id": "X086",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "分君，则个是有我�为师（则也）：我个我个我�",
+        "well_formed": false
+      },
+      {
+        "id": "X087",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "分��，�，�，��个�（�人��������������个",
+        "well_formed": false
+      },
+      {
+        "id": "X088",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "�师�君孽�孽师，人����������有�：有�，�我",
+        "well_formed": false
+      },
+      {
+        "id": "X089",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "分�，�（�们�个�有�（我人�����������我�为",
+        "well_formed": false
+      },
+      {
+        "id": "X090",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "分君�，�，��个�（��（君��������人������",
+        "well_formed": false
+      },
+      {
+        "id": "X091",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "制��孟�����我人���������吆君为，�个是有",
+        "well_formed": false
+      },
+      {
+        "id": "X092",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "分君�，则个�（�他��������人���������有�",
+        "well_formed": false
+      },
+      {
+        "id": "X093",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "到���，刽��为���������丈，��有君君�������",
+        "well_formed": false
+      },
+      {
+        "id": "X094",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "分�（刑人��个�（��们一个�有�人�������有我�",
+        "well_formed": false
+      },
+      {
+        "id": "X095",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "到���，到�个是有我人������个�则�师，到��为�",
+        "well_formed": false
+      },
+      {
+        "id": "X096",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "到�������孟�����个是�我人����������是�",
+        "well_formed": false
+      },
+      {
+        "id": "X097",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "别�：�，�），��人����������，�，�个是有",
+        "well_formed": false
+      },
+      {
+        "id": "X098",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "分���弈�学人�����������孟���������是�",
+        "well_formed": false
+      },
+      {
+        "id": "X099",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "刑������是人���������弈��是是是是是是是",
+        "well_formed": false
+      },
+      {
+        "id": "X100",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "分��（则有��：我人�个�（（君���人��������",
+        "well_formed": false
+      },
+      {
+        "id": "X101",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "��（则�下师（（君学丈有��（君孽师，�人����",
+        "well_formed": false
+      },
+      {
+        "id": "X102",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "别���）�（����������孟�����有��，�为�����",
+        "well_formed": false
+      },
+      {
+        "id": "X103",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "分�，�（�个�（�个�（�为�������个�君�君���",
+        "well_formed": false
+      },
+      {
+        "id": "X104",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "��������������������，�有���，�有����有����，�",
+        "well_formed": false
+      }
+    ]
+  },
+  "treated_arms": [
+    {
+      "circuit": "output/taiji_r2_a25_seedA/judge/circuit-final.pt",
+      "items": 104,
+      "texts": 260,
+      "well_formed_texts": 1,
+      "well_formed_rate": 0.0038,
+      "utf8_decodable_rate": 0.0038,
+      "strict_hits": 37,
+      "rows": [
+        {
+          "id": "X001",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "明轩�轩��。明轩轩�轩。�轩轩轩��轩�。�轩轩轩�",
+          "well_formed": false
+        },
+        {
+          "id": "X002",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "苏州苏州苏州苏州苏州苏州苏州苏州苏州苏州苏�",
+          "well_formed": false
+        },
+        {
+          "id": "X003",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "�数�数�数�数�数�数�数�数�数�数�数�数��",
+          "well_formed": false
+        },
+        {
+          "id": "X004",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "海图�图。图图。图图图。图图图。图项皷囮海��",
+          "well_formed": false
+        },
+        {
+          "id": "X005",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "时爱喝乌龙。喝乌龙��喝乌龙。喝乌龙���喝乌龙��",
+          "well_formed": false
+        },
+        {
+          "id": "X006",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "鸮溆丮溆丮溆丮溆丮溆一�丮�雪雪雪鸀养丮溆一�",
+          "well_formed": false
+        },
+        {
+          "id": "X007",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "读读读读读����客���客读读》�读�读�读�读�",
+          "well_formed": false
+        },
+        {
+          "id": "X008",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "謼吃������������最笼吱吃吃吃吃�朌�������最笼�吃��",
+          "well_formed": false
+        },
+        {
+          "id": "X009",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "雨我�雨�雨我成我���雨我我成成我���成我成�",
+          "well_formed": false
+        },
+        {
+          "id": "X010",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "西安西安西安西安西安西安西安西安西安西安西�",
+          "well_formed": false
+        },
+        {
+          "id": "X011",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "212121�212121�212121�212121�212121�21212121212121�21212121",
+          "well_formed": false
+        },
+        {
+          "id": "X012",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "星星星星星星星。�晨晨�星�星星。��星晨�星��",
+          "well_formed": false
+        },
+        {
+          "id": "X013",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "�打打苏打打苏打打苏打苏打打苏打苏打苏打打�",
+          "well_formed": false
+        },
+        {
+          "id": "X014",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "浣浣浣浣浣浣浣浣熊。养一养一养一养一养一养�",
+          "well_formed": false
+        },
+        {
+          "id": "X015",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "读读读读读读���寻�近水�读这�读近������读",
+          "well_formed": false
+        },
+        {
+          "id": "X016",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "辈�子�汣子�最�辣子��子�最爱子��辈�子�最爱",
+          "well_formed": false
+        },
+        {
+          "id": "X017",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "�承�承承承承承承承承承承承承承承承承承承承",
+          "well_formed": false
+        },
+        {
+          "id": "X018",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "青岛青岛青岛青岛青岛青岛青岛青岛青岛青岛青�",
+          "well_formed": false
+        },
+        {
+          "id": "X019",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "777777777777�77777777777777777777777777777777777777777777777",
+          "well_formed": false
+        },
+        {
+          "id": "X020",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "��������径��石�����������径�石徟�徟�径��",
+          "well_formed": false
+        },
+        {
+          "id": "X021",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "时爱酿喝时爱酿喝�酿喝时爱酿喝�酿喝时爱酿喝��",
+          "well_formed": false
+        },
+        {
+          "id": "X022",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "�袋一��栺�一�一��������袋�一�一���袋���",
+          "well_formed": false
+        },
+        {
+          "id": "X023",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "读��读读读读��》读读�����������读读读读读读读读�",
+          "well_formed": false
+        },
+        {
+          "id": "X024",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "������������������肉�������泡馍����",
+          "well_formed": false
+        },
+        {
+          "id": "X025",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "�远远��远��远远远��远远���一���远远远远��远���",
+          "well_formed": false
+        },
+        {
+          "id": "X026",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "沙使沙。沙沙沙沙沙沙沙沙沙沙沙住�沙沙�。沙�",
+          "well_formed": false
+        },
+        {
+          "id": "X027",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "9999999999�999999999999999999999999999999999999999999��19999",
+          "well_formed": false
+        },
+        {
+          "id": "X028",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "�云目溑��溑��溑��溑��溑目溑目溑��溑目溑���",
+          "well_formed": false
+        },
+        {
+          "id": "X029",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "柠�檬柠檬�柠�檬�檬柠�檬�������柠柠檬柠檬�",
+          "well_formed": false
+        },
+        {
+          "id": "X030",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "�蓝蓝舌舌舌舌舌舌舌舌舌舌舌舌舌蓝蓝蓝舌蓝蓝",
+          "well_formed": false
+        },
+        {
+          "id": "X031",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "读读七读读读七读读读近毻�����七读读���亸�近�",
+          "well_formed": false
+        },
+        {
+          "id": "X032",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "�������������������辈��辣最爱������",
+          "well_formed": false
+        },
+        {
+          "id": "X033",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "慕�慕�慕兕�慕�慕�慕兕�慕�慕�慕�兕��慕��兕兕安慕",
+          "well_formed": false
+        },
+        {
+          "id": "X034",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "明。��明�。厎�。佘�明���明�。厎���。佘�明���明�",
+          "well_formed": false
+        },
+        {
+          "id": "X035",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "24024�24。�242424�24�2424数�242424242424数�2424242424242",
+          "well_formed": false
+        },
+        {
+          "id": "X036",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "涛�涛�涛�涛�涛�涛�涛�涛�涛�涛�涛�涛�涛�涛�涛�涛�",
+          "well_formed": false
+        },
+        {
+          "id": "X037",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "时砖茶砖茶砖茶砖茶砖茶砖茶砖茶砖茶砖茶砖茶�",
+          "well_formed": false
+        },
+        {
+          "id": "X038",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "�獾一养一�一养一�溆一一养一�一�一�养��一�",
+          "well_formed": false
+        },
+        {
+          "id": "X039",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "读读读读�读��读�����梦�读读》�读�读�近�",
+          "well_formed": false
+        },
+        {
+          "id": "X040",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "臭臭臭臭臭臭臭�臭������臭�臭�臭豆���臈�",
+          "well_formed": false
+        },
+        {
+          "id": "X041",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "青砚青砚青砚青�������青青。�栚青青砚青青。��",
+          "well_formed": false
+        },
+        {
+          "id": "X042",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "�我住我你�兰兰州兰兰州��兰州我住兰州我住兰",
+          "well_formed": false
+        },
+        {
+          "id": "X043",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "77�777��7777数77数�7777��欢欢�欢��欢��数�777�",
+          "well_formed": false
+        },
+        {
+          "id": "X044",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "柳柳柳�柳柳柳�柳����柳柳����折柳����������柳柳���",
+          "well_formed": false
+        },
+        {
+          "id": "X045",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "普普普普普普普普普普普普普普普普普普普普普�",
+          "well_formed": false
+        },
+        {
+          "id": "X046",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "养一��溆一��一��溆一��一��溆一��一养一��了一��了",
+          "well_formed": false
+        },
+        {
+          "id": "X047",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "读�工读�工�工�工�工�工�工�工�工�工�工�工",
+          "well_formed": false
+        },
+        {
+          "id": "X048",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "���芋��������������������芀糖�����",
+          "well_formed": false
+        },
+        {
+          "id": "X049",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "洛宁��。宁���。宁����。宁�����。宁�������。宁�������",
+          "well_formed": false
+        },
+        {
+          "id": "X050",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "波�波�波�波�波�波�波�波�波波�波�波�波�波�波波波",
+          "well_formed": false
+        },
+        {
+          "id": "X051",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "�88888888888数�8888888888888888888888888888数�欢欢�欢��",
+          "well_formed": false
+        },
+        {
+          "id": "X052",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "�影戱��影��影影影影影影。�影�疏影�影�我��",
+          "well_formed": false
+        },
+        {
+          "id": "X053",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "苦茶�茶�茶�茶�茶�茶荞茶�时�茶茶�茶荞�时�茶茶��",
+          "well_formed": false
+        },
+        {
+          "id": "X054",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "�鹦鹦鹦鹦鹦鹦鹦鹦鹦鹦鹦鹉鹉鹉养三鹉鹉鹉鹉。",
+          "well_formed": false
+        },
+        {
+          "id": "X055",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "读���读读读���读读���������读读读读读读读读读�",
+          "well_formed": false
+        },
+        {
+          "id": "X056",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "�吃鸭舱吃鸭舱吃鸭血粉最粉最粉最粉最粉最粉�",
+          "well_formed": false
+        },
+        {
+          "id": "X057",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "时予时予时予时予时予时予时予时予时予时予时�",
+          "well_formed": false
+        },
+        {
+          "id": "X058",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "踩州温州温州温州温州温州温温州温州温州温州�",
+          "well_formed": false
+        },
+        {
+          "id": "X059",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "212121212121212121212121212121212121212121212121212121212121",
+          "well_formed": false
+        },
+        {
+          "id": "X060",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "风目�磎目风目风目��临风�目风�目��风目��风�风�",
+          "well_formed": false
+        },
+        {
+          "id": "X061",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "时红时红时红时红时红时红时红时红时红时红时�",
+          "well_formed": false
+        },
+        {
+          "id": "X062",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "�溆一�一养一养一养一养一养一养一养�鼠一养��",
+          "well_formed": false
+        },
+        {
+          "id": "X063",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "蓝读读读读读读读读读读》��读�读读》��读读",
+          "well_formed": false
+        },
+        {
+          "id": "X064",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "汤吃�����������������蟱吱蟌��������汤��",
+          "well_formed": false
+        },
+        {
+          "id": "X065",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "栚栚��栚栚��我�我�砚��我�砚���栚��我我我�砚��",
+          "well_formed": false
+        },
+        {
+          "id": "X066",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "賳阳阳洛阳洛阳。��阳洛阳阳阳阳洛阳�阳洛阳�阳",
+          "well_formed": false
+        },
+        {
+          "id": "X067",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "256�256�256数256数�256256数5656���25256256数�2525256256",
+          "well_formed": true
+        },
+        {
+          "id": "X068",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "�雮�雮我��雮��雮我��雮�雮我��雮�雮我��雮�雮�",
+          "well_formed": false
+        },
+        {
+          "id": "X069",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "时爱喝陈�喝陈�喝陈�喝陈�喝陈�喝陈�喝陈�喝陈��",
+          "well_formed": false
+        },
+        {
+          "id": "X070",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "龟一�龟一养一�龟一养一�龟一�一�龟一�一�龟一��",
+          "well_formed": false
+        },
+        {
+          "id": "X071",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "读读一��华读读�读�读�读�读��为��读�华华华华�",
+          "well_formed": false
+        },
+        {
+          "id": "X072",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "�面�面�面�面�面�面�面�面�靼�面�面扛艉面��",
+          "well_formed": false
+        },
+        {
+          "id": "X073",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "晚�苏晚苏晚苏晚苏晚苏晚苏晚苏晚苏晚苏晚苏晚",
+          "well_formed": false
+        },
+        {
+          "id": "X074",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "�扬扬扬扬州扬州��州��州��州��州��州扬����州��州�",
+          "well_formed": false
+        },
+        {
+          "id": "X075",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "13131313131�13131313131313131313131313131数131313131313131313",
+          "well_formed": false
+        },
+        {
+          "id": "X076",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "舟舟舟舟舟舟舟舟舟舟舟舟舟舟舟舟。舟舟舟舟�",
+          "well_formed": false
+        },
+        {
+          "id": "X077",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "荷�时�荷�时�荷�时�荷�时�荷�时�荷�荷�时�荷�",
+          "well_formed": false
+        },
+        {
+          "id": "X078",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "水�水�水�水�水�一养一养一养一养一养一养一�",
+          "well_formed": false
+        },
+        {
+          "id": "X079",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "读读读读读�读读����近梦粱读读》�读��读��",
+          "well_formed": false
+        },
+        {
+          "id": "X080",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "汼汼��汼�����������������������������������������������������",
+          "well_formed": false
+        },
+        {
+          "id": "X081",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "沟舟舟舟舟舟舟舟舟舟舟舟舟舟��舟��沈��舟�舟��",
+          "well_formed": false
+        },
+        {
+          "id": "X082",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "�州��泉州泉州泉州泉州泉泉泉州泉州泉州泉�州泉",
+          "well_formed": false
+        },
+        {
+          "id": "X083",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "202020202020�20202020202020202020�20202020202020202020202020",
+          "well_formed": false
+        },
+        {
+          "id": "X084",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "�舒�舒�舒�舒�舒�舒�目望舒舒�舒�望舒�舒舒�",
+          "well_formed": false
+        },
+        {
+          "id": "X085",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "��������������������������������",
+          "well_formed": false
+        },
+        {
+          "id": "X086",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "一���养一���养一���养一拸�养一养一养一养一养一",
+          "well_formed": false
+        },
+        {
+          "id": "X087",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "读���读读读�读读�梦������》读读��读�寻��寻��",
+          "well_formed": false
+        },
+        {
+          "id": "X088",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "�水��水��水��水��水��水��水�水��水�水���",
+          "well_formed": false
+        },
+        {
+          "id": "X089",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "昭��。昭阭。�昭阭阭阭昭。�昭阭阭昭阭昭。�昭",
+          "well_formed": false
+        },
+        {
+          "id": "X090",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "芜湖芜我住��湖芜�芜湖芜�芜�芜��芜��芜湖�芜��",
+          "well_formed": false
+        },
+        {
+          "id": "X091",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "1818数�1818181818数�181818181818数�1818181818181818数�18",
+          "well_formed": false
+        },
+        {
+          "id": "X092",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "�央�未央�未央�未央�我�����未央我���鮮我���",
+          "well_formed": false
+        },
+        {
+          "id": "X093",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "茉茉茉茉茉茉茉茉茉茉茉茉茉茉茉茉茉茉茉茉茉�",
+          "well_formed": false
+        },
+        {
+          "id": "X094",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "�蝙蝠蝠蝠蝙蝠。�蝙蝙蝙蝙蝙蝙蝙蝙蝙蝠��一�蝙�",
+          "well_formed": false
+        },
+        {
+          "id": "X095",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "读�������庯�读读读��梦��读读�庵��读��读��读",
+          "well_formed": false
+        },
+        {
+          "id": "X096",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "拮戱子��吃�吃�吃�吃�吃子朐��吃爱吃爱吃爱�",
+          "well_formed": false
+        },
+        {
+          "id": "X097",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "吟晚吟晚吟晚吟晚吟晚吟晚吟晚吟晚吟晚吟晚吟�",
+          "well_formed": false
+        },
+        {
+          "id": "X098",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "自自自自自自自自自自自自自自自自自自自自自�",
+          "well_formed": false
+        },
+        {
+          "id": "X099",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "9090909090909090909090909090909090909�9090909090909090990909",
+          "well_formed": false
+        },
+        {
+          "id": "X100",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "拥�戟�知秋。�知��知秋埥知秋埥知秋埥知秋埥知�",
+          "well_formed": false
+        },
+        {
+          "id": "X101",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "荷��茶茶茶茶茶茶茶茶茶茶茶茶茶茶茶茶茶茶茶�",
+          "well_formed": false
+        },
+        {
+          "id": "X102",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "�松鼠一�一养一养一养一养一养一养一养一养一�",
+          "well_formed": false
+        },
+        {
+          "id": "X103",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "读读�读读���读�客�读读���读读���读�客��读�",
+          "well_formed": false
+        },
+        {
+          "id": "X104",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "�吃妻艇吃吃吃�有�����片��吃吃吃吃吃吃吃吃吃�",
+          "well_formed": false
+        }
+      ]
+    },
+    {
+      "circuit": "output/taiji_r2_a25_seedB/judge/circuit-final.pt",
+      "items": 104,
+      "texts": 260,
+      "well_formed_texts": 3,
+      "well_formed_rate": 0.0115,
+      "utf8_decodable_rate": 0.0231,
+      "strict_hits": 38,
+      "rows": [
+        {
+          "id": "X001",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "明轩��轩。�明轩轩明轩轩。���轩�轩轩轩轩�佩明",
+          "well_formed": false
+        },
+        {
+          "id": "X002",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "�������������苏州�����苏州��������",
+          "well_formed": false
+        },
+        {
+          "id": "X003",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "�是36是36是36是是36是是是是是是是是是是是是是",
+          "well_formed": false
+        },
+        {
+          "id": "X004",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "海图图图图图图囮海囮海图海图图囮的项图海图�",
+          "well_formed": false
+        },
+        {
+          "id": "X005",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "时�时爱平时�时爱平时�时爱平时爱平时爱平时�",
+          "well_formed": false
+        },
+        {
+          "id": "X006",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "鸮我充�丮渮雪鸮鸮。��渮鸮我充�丮丮我充�丮一�",
+          "well_formed": false
+        },
+        {
+          "id": "X007",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "读�������������������读�读�读����谈�",
+          "well_formed": false
+        },
+        {
+          "id": "X008",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "�吃尼��朼���尼�尐�尐�尐�尐��尼吃�尼吃�尼吃",
+          "well_formed": false
+        },
+        {
+          "id": "X009",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "桐桐。桐桐雨桐。�桐��桐�桐。�桐雨桐�。�桐���",
+          "well_formed": false
+        },
+        {
+          "id": "X010",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "�安�西安我住�安我�你�安我��住安我�我�我��",
+          "well_formed": false
+        },
+        {
+          "id": "X011",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "2121�是21是21是21是21是2121是2121是21212121是2121212121",
+          "well_formed": false
+        },
+        {
+          "id": "X012",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "星星星星星星星星星。晨星�星星星星�星��队晨�",
+          "well_formed": false
+        },
+        {
+          "id": "X013",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "打打������打�������������打英平�平打�",
+          "well_formed": false
+        },
+        {
+          "id": "X014",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "浣浣浣浣浣浣浣浣熊��一�一养��浣浣浣浣养一养",
+          "well_formed": false
+        },
+        {
+          "id": "X015",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "读������读读��读读读��读读������������",
+          "well_formed": false
+        },
+        {
+          "id": "X016",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "子鸡最爱子鸡朐��戱子鸡最爱子鸡�戱子鸡�朐��",
+          "well_formed": false
+        },
+        {
+          "id": "X017",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "�������������������泽�泽��泽��泽��泽���",
+          "well_formed": false
+        },
+        {
+          "id": "X018",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "岛青岛青岛青岛青�岛青岛青岛岛青岛青岛青岛�",
+          "well_formed": false
+        },
+        {
+          "id": "X019",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "77777777是7777777777是7777777777777777777777777777777777777777",
+          "well_formed": false
+        },
+        {
+          "id": "X020",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "�得��������������径石�径项�亟�径音�我�",
+          "well_formed": false
+        },
+        {
+          "id": "X021",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "时煿花酿花酿花酿花酿花酿�酿花酿�酿�酿花酿�酿",
+          "well_formed": false
+        },
+        {
+          "id": "X022",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "�袋��一�一充���一���一�袋一��袋一��袋一",
+          "well_formed": false
+        },
+        {
+          "id": "X023",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "语�语语语语语语语语语语语语语语语语语语语�",
+          "well_formed": false
+        },
+        {
+          "id": "X024",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "肉��������������������泡馍羊��������",
+          "well_formed": false
+        },
+        {
+          "id": "X025",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "濜�远�������我叫��远�������������我������远远�",
+          "well_formed": false
+        },
+        {
+          "id": "X026",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "沙使沙住�沙�沙住�沙�沙。沙沙长沙沙住忿沙�",
+          "well_formed": false
+        },
+        {
+          "id": "X027",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "9999999999998是199999999999998是1989999998是198是1999999998�",
+          "well_formed": false
+        },
+        {
+          "id": "X028",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "�云的项庑的项云的项庑�顮我�项庑��顒�我。庑�",
+          "well_formed": false
+        },
+        {
+          "id": "X029",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "�柠�����水水。��������柠柠柠柠柠柠水水�",
+          "well_formed": false
+        },
+        {
+          "id": "X030",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "�蓝�舌�蓝蓝舌�蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝舌��",
+          "well_formed": false
+        },
+        {
+          "id": "X031",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "������七�他���木�����一�近木近�七�����",
+          "well_formed": false
+        },
+        {
+          "id": "X032",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "汤���������������������辣�汤辣汤���",
+          "well_formed": false
+        },
+        {
+          "id": "X033",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "慕兕兕兕兕兕兕兕兕兕兕兕兕兕安慕安慕安慕安�",
+          "well_formed": false
+        },
+        {
+          "id": "X034",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "明����������������明����昆昆����住��昆明��昆明��明����",
+          "well_formed": false
+        },
+        {
+          "id": "X035",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "44是1024是1024是10244是10244是10244是10244是10244是10244",
+          "well_formed": true
+        },
+        {
+          "id": "X036",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "涛�听涛�曮曮听涛���曮�我��我我涛�我我我我我",
+          "well_formed": false
+        },
+        {
+          "id": "X037",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "时砖舱平时砖茶砖茶砖茶砖茶砖茶砖茶砖茶砖茶�",
+          "well_formed": false
+        },
+        {
+          "id": "X038",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "捾���我��养一�一养一养一养一养一养一养�我�",
+          "well_formed": false
+        },
+        {
+          "id": "X039",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "���������������������读���溪�����",
+          "well_formed": false
+        },
+        {
+          "id": "X040",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "��臭腐�腐�臭臭臭臭臭腐朇�臭臭臭臭�臭臇�腐�臇�",
+          "well_formed": false
+        },
+        {
+          "id": "X041",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "青砚青。咝�青青青�撝�。咝�青青我坒��������。咝",
+          "well_formed": false
+        },
+        {
+          "id": "X042",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "�慰兰兰兰兰兰兰兰努兰兰兰兰兰兰兰兰兰兰兰兰",
+          "well_formed": false
+        },
+        {
+          "id": "X043",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "4747是47是47是47是47是4747是4747是4747是474747�是474747",
+          "well_formed": false
+        },
+        {
+          "id": "X044",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "柳��柳柳柳柳柳柳柳柳抿折柳柳���柳�折柳���柳��",
+          "well_formed": false
+        },
+        {
+          "id": "X045",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "普普时�平普普时爱平普普普普普普普普时爱平�",
+          "well_formed": false
+        },
+        {
+          "id": "X046",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "养一养一养一养一养一养了一养一养一养一养一�",
+          "well_formed": false
+        },
+        {
+          "id": "X047",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "���������������������诀�读�我木����",
+          "well_formed": false
+        },
+        {
+          "id": "X048",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "��芋�芋��������������芀�����������",
+          "well_formed": false
+        },
+        {
+          "id": "X049",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "宁�洛宁洛�。宁�我宁�。宁�宁洛宁�。宁洛宁�。�",
+          "well_formed": false
+        },
+        {
+          "id": "X050",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "�波�波�波�波�波�波波波波波波波波波波波波波波�",
+          "well_formed": false
+        },
+        {
+          "id": "X051",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "�是88888888888是8888888888888888888888是88888888888888888888",
+          "well_formed": false
+        },
+        {
+          "id": "X052",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "�影顮影��我的顽��影��影影影影影影。影我�影��",
+          "well_formed": false
+        },
+        {
+          "id": "X053",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "�荞荞荞荞荞荞荞荞荞荞荞荞荞荞荞荞���荞荞�",
+          "well_formed": false
+        },
+        {
+          "id": "X054",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "酻一养一养一养一养一养一养一养了一养一养一�",
+          "well_formed": false
+        },
+        {
+          "id": "X055",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "����������������������������读����",
+          "well_formed": false
+        },
+        {
+          "id": "X056",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "戱�衸��戱��吃鸭�戱戱吃鸭�戱戱吃鸭�戱戱��",
+          "well_formed": false
+        },
+        {
+          "id": "X057",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "时予�庈时予时予时予时予时予时予时予时予时予",
+          "well_formed": false
+        },
+        {
+          "id": "X058",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "踩州温州温州温州温州温州温州温州温州温州温�",
+          "well_formed": false
+        },
+        {
+          "id": "X059",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "2121212121212121212121是1212121212121212121212121212121212121",
+          "well_formed": false
+        },
+        {
+          "id": "X060",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "�风风风。风我风风风风。�风我风风风风风���我�",
+          "well_formed": false
+        },
+        {
+          "id": "X061",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "枣舱庢枣�庢枣�庢枣枣枣�平枣�平枣�平枣�平�",
+          "well_formed": false
+        },
+        {
+          "id": "X062",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "养�鼠�我兼����我养一�一养一养一养一养一养一养",
+          "well_formed": false
+        },
+        {
+          "id": "X063",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "��������������������������������",
+          "well_formed": false
+        },
+        {
+          "id": "X064",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "汤吃�汤吃�汤吃��吃�汤吃�汤吃����������",
+          "well_formed": false
+        },
+        {
+          "id": "X065",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "我叫我叫我叚我叫我叫我叫我叫我叫我叫我���我",
+          "well_formed": false
+        },
+        {
+          "id": "X066",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "賘�阳泘���我住峳阳�我住峳阳�我�你�。��我�",
+          "well_formed": false
+        },
+        {
+          "id": "X067",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "256�是256是256是256是256是256是256是256是256256是25625",
+          "well_formed": true
+        },
+        {
+          "id": "X068",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "曮�雮�雮�雮�雮�雮�雮�雮�雨。��雮�雮�雮�雮�雮�雮�",
+          "well_formed": false
+        },
+        {
+          "id": "X069",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "时皮水水水。平水水水。平水水水。平水水水���",
+          "well_formed": false
+        },
+        {
+          "id": "X070",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "养一养一养一�我养一�我养一养一养一养一养一",
+          "well_formed": false
+        },
+        {
+          "id": "X071",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "�����������������������读����梦�梦�",
+          "well_formed": false
+        },
+        {
+          "id": "X072",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "�面戱�舱�戱�有面�戱舱�戱�有面�有面�有面�有",
+          "well_formed": false
+        },
+        {
+          "id": "X073",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "晚������晚�晚�晚�������������晚����",
+          "well_formed": false
+        },
+        {
+          "id": "X074",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "��扬州扬州住����佻住州�扬州扬州扬州扬州州州",
+          "well_formed": false
+        },
+        {
+          "id": "X075",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "131313131是3131是3131是31是313131是31313131是3131313131313",
+          "well_formed": false
+        },
+        {
+          "id": "X076",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "�舟舟舟舟舟舟舟舟。衹舟衹舟舟舟舟舟舟。�舟�",
+          "well_formed": false
+        },
+        {
+          "id": "X077",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "时荷��荷��荷��荷�时荷�时荷�时爱平荷�荷�",
+          "well_formed": false
+        },
+        {
+          "id": "X078",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "养一养一养一养一养一养�水獭�水水皍��水水水",
+          "well_formed": false
+        },
+        {
+          "id": "X079",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "��������������������������������",
+          "well_formed": false
+        },
+        {
+          "id": "X080",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "���汼����������我�酸舱戱����汼��������漱����������",
+          "well_formed": false
+        },
+        {
+          "id": "X081",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "沟�舟沈�沈�舟舟沈�舟�舟舟舟舟。�舟��舟�舟�",
+          "well_formed": false
+        },
+        {
+          "id": "X082",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "�州州泉州泉州泉州泉州泉州泉州泉州�泉州�泉�",
+          "well_formed": false
+        },
+        {
+          "id": "X083",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "202020202020字20202020202020是52020202020202020是520202020202",
+          "well_formed": false
+        },
+        {
+          "id": "X084",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "�舒�舒�舒。舒�舒舒。��舒舒舒。幈��舒舒舒�",
+          "well_formed": false
+        },
+        {
+          "id": "X085",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "旱��������������������������������������山��������������������",
+          "well_formed": false
+        },
+        {
+          "id": "X086",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "养一���养一养一养一养一养一�拐�我养一养一养",
+          "well_formed": false
+        },
+        {
+          "id": "X087",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "��������������������������������",
+          "well_formed": false
+        },
+        {
+          "id": "X088",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "水水鸡水水鸡水鸡水水鸡水鸡水鸡氱吃�水鸡水�",
+          "well_formed": false
+        },
+        {
+          "id": "X089",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "昭���。�昭阭�昭�昭�昭��昭�昭�昭�昭�昭昭�昭��昭",
+          "well_formed": false
+        },
+        {
+          "id": "X090",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "芜�芜�芜�芜�芜��住�芜我��芜��芜��芜��芜我住",
+          "well_formed": false
+        },
+        {
+          "id": "X091",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "18是618是618是618是618是618是618是618是618是618是618�",
+          "well_formed": true
+        },
+        {
+          "id": "X092",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "我未央我未央�我��我未央央�我�我�我�央�未央央�",
+          "well_formed": false
+        },
+        {
+          "id": "X093",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "莉莉莉莉莉莉莉莉莉莉莉莉莉茉茉茉茉茉莉莉莉�",
+          "well_formed": false
+        },
+        {
+          "id": "X094",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "杙蝙蝙蝙蝙蝙蝙蝙蝙蝙蝙蝙蝙蝙蝠��一�蝙蝙蝙蝙�",
+          "well_formed": false
+        },
+        {
+          "id": "X095",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "������梦���梦�梦�梦����������迆�����������",
+          "well_formed": false
+        },
+        {
+          "id": "X096",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "子朋�子子朋�子最狮子我朐�爱子子我朐�爱吃爱吃",
+          "well_formed": false
+        },
+        {
+          "id": "X097",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "吟晚�晚�晚吟晚�晚�晚吟晚�晚��。吟晚吟晚��。吟�",
+          "well_formed": false
+        },
+        {
+          "id": "X098",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "臇�自自臇�自自臇�自自臇�自臇�自自臇�自臇�自自",
+          "well_formed": false
+        },
+        {
+          "id": "X099",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "909090909090909090909090909090909090909090909090909090909009",
+          "well_formed": false
+        },
+        {
+          "id": "X100",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "拥�叫知���我我的�秋。叟�我我�幟�皥我�幟�的��",
+          "well_formed": false
+        },
+        {
+          "id": "X101",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "荷平时荷荷荷荷荷荷荷荷荷荷荷荷平�荷荷荷荷�",
+          "well_formed": false
+        },
+        {
+          "id": "X102",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "松�松�松鼠�松�松�松�松鼠一���松�松�松鼠�松",
+          "well_formed": false
+        },
+        {
+          "id": "X103",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "诸���������������游����������������������������������",
+          "well_formed": false
+        },
+        {
+          "id": "X104",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "����片�����舱吃���片�����片��片��片舱吇�����������片��",
+          "well_formed": false
+        }
+      ]
+    }
+  ],
+  "surface_verdict": {
+    "min_gap_texts": 3,
+    "per_circuit": [
+      {
+        "circuit": "output/taiji_r2_a25_seedA/judge/circuit-final.pt",
+        "gap_texts": 1,
+        "direction": "better",
+        "meets_min_gap": false,
+        "control_rate": 0.0,
+        "treated_rate": 0.0038
+      },
+      {
+        "circuit": "output/taiji_r2_a25_seedB/judge/circuit-final.pt",
+        "gap_texts": 3,
+        "direction": "better",
+        "meets_min_gap": true,
+        "control_rate": 0.0,
+        "treated_rate": 0.0115
+      }
+    ],
+    "status": "not_resolved",
+    "verdict": "not_resolved（未同时满足『两电路同向』与『差 ≥3 条』）"
+  },
+  "base_sha256_unchanged": true
+}

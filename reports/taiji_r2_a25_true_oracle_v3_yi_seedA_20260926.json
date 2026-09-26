@@ -1,0 +1,658 @@
+{
+  "format": "taiji-r2-a25-true-oracle-ceiling-v1",
+  "prereg": "plans/reference/SPEC-A-22_r2_a2_5_query_conditioned_selector_prereg_20260926.md §20",
+  "manifest": "plans/manifests/r2_copy_surface_extension_v3_position_random.json",
+  "manifest_sha256": "b162ff091630f64a8cac986184729ff7894887f4806c923cc12b301ce5ae4fee",
+  "checkpoint": "checkpoints/seed_beta.pt",
+  "circuit": "output/taiji_r2_copy_circuit_chat/judge/circuit-final.pt",
+  "items": 104,
+  "answered": 104,
+  "strict_hits": 21,
+  "hit_rate": 0.2019,
+  "probe": {
+    "selections_used": 59752,
+    "ambiguous_items": 0,
+    "no_matching_event": 19881
+  },
+  "by_position": {
+    "answer_first": {
+      "items": 52,
+      "hits": 20
+    },
+    "answer_second": {
+      "items": 52,
+      "hits": 1
+    }
+  },
+  "instrument_guard": {
+    "patch_effective": true,
+    "reason": "selections_used 必须 ≥ answered：每题至少一次选事件（发射侧每个字节都会问一次库）"
+  },
+  "rows": [
+    {
+      "id": "V001",
+      "kind": "name",
+      "answer_tell_position": 1,
+      "hit": 0
+    },
+    {
+      "id": "V002",
+      "kind": "city",
+      "answer_tell_position": 0,
+      "hit": 1
+    },
+    {
+      "id": "V003",
+      "kind": "number",
+      "answer_tell_position": 1,
+      "hit": 0
+    },
+    {
+      "id": "V004",
+      "kind": "project",
+      "answer_tell_position": 0,
+      "hit": 1
+    },
+    {
+      "id": "V005",
+      "kind": "drink",
+      "answer_tell_position": 0,
+      "hit": 1
+    },
+    {
+      "id": "V006",
+      "kind": "pet",
+      "answer_tell_position": 0,
+      "hit": 1
+    },
+    {
+      "id": "V007",
+      "kind": "book",
+      "answer_tell_position": 1,
+      "hit": 0
+    },
+    {
+      "id": "V008",
+      "kind": "dish",
+      "answer_tell_position": 0,
+      "hit": 0
+    },
+    {
+      "id": "V009",
+      "kind": "name",
+      "answer_tell_position": 0,
+      "hit": 0
+    },
+    {
+      "id": "V010",
+      "kind": "city",
+      "answer_tell_position": 1,
+      "hit": 0
+    },
+    {
+      "id": "V011",
+      "kind": "number",
+      "answer_tell_position": 1,
+      "hit": 0
+    },
+    {
+      "id": "V012",
+      "kind": "project",
+      "answer_tell_position": 1,
+      "hit": 0
+    },
+    {
+      "id": "V013",
+      "kind": "drink",
+      "answer_tell_position": 1,
+      "hit": 0
+    },
+    {
+      "id": "V014",
+      "kind": "pet",
+      "answer_tell_position": 1,
+      "hit": 0
+    },
+    {
+      "id": "V015",
+      "kind": "book",
+      "answer_tell_position": 1,
+      "hit": 0
+    },
+    {
+      "id": "V016",
+      "kind": "dish",
+      "answer_tell_position": 1,
+      "hit": 0
+    },
+    {
+      "id": "V017",
+      "kind": "name",
+      "answer_tell_position": 1,
+      "hit": 0
+    },
+    {
+      "id": "V018",
+      "kind": "city",
+      "answer_tell_position": 0,
+      "hit": 1
+    },
+    {
+      "id": "V019",
+      "kind": "number",
+      "answer_tell_position": 1,
+      "hit": 0
+    },
+    {
+      "id": "V020",
+      "kind": "project",
+      "answer_tell_position": 0,
+      "hit": 0
+    },
+    {
+      "id": "V021",
+      "kind": "drink",
+      "answer_tell_position": 1,
+      "hit": 0
+    },
+    {
+      "id": "V022",
+      "kind": "pet",
+      "answer_tell_position": 1,
+      "hit": 0
+    },
+    {
+      "id": "V023",
+      "kind": "book",
+      "answer_tell_position": 0,
+      "hit": 0
+    },
+    {
+      "id": "V024",
+      "kind": "dish",
+      "answer_tell_position": 0,
+      "hit": 0
+    },
+    {
+      "id": "V025",
+      "kind": "name",
+      "answer_tell_position": 1,
+      "hit": 0
+    },
+    {
+      "id": "V026",
+      "kind": "city",
+      "answer_tell_position": 1,
+      "hit": 0
+    },
+    {
+      "id": "V027",
+      "kind": "number",
+      "answer_tell_position": 0,
+      "hit": 0
+    },
+    {
+      "id": "V028",
+      "kind": "project",
+      "answer_tell_position": 0,
+      "hit": 1
+    },
+    {
+      "id": "V029",
+      "kind": "drink",
+      "answer_tell_position": 1,
+      "hit": 0
+    },
+    {
+      "id": "V030",
+      "kind": "pet",
+      "answer_tell_position": 0,
+      "hit": 0
+    },
+    {
+      "id": "V031",
+      "kind": "book",
+      "answer_tell_position": 1,
+      "hit": 0
+    },
+    {
+      "id": "V032",
+      "kind": "dish",
+      "answer_tell_position": 1,
+      "hit": 0
+    },
+    {
+      "id": "V033",
+      "kind": "name",
+      "answer_tell_position": 0,
+      "hit": 0
+    },
+    {
+      "id": "V034",
+      "kind": "city",
+      "answer_tell_position": 1,
+      "hit": 0
+    },
+    {
+      "id": "V035",
+      "kind": "number",
+      "answer_tell_position": 0,
+      "hit": 0
+    },
+    {
+      "id": "V036",
+      "kind": "project",
+      "answer_tell_position": 0,
+      "hit": 0
+    },
+    {
+      "id": "V037",
+      "kind": "drink",
+      "answer_tell_position": 0,
+      "hit": 1
+    },
+    {
+      "id": "V038",
+      "kind": "pet",
+      "answer_tell_position": 0,
+      "hit": 0
+    },
+    {
+      "id": "V039",
+      "kind": "book",
+      "answer_tell_position": 1,
+      "hit": 0
+    },
+    {
+      "id": "V040",
+      "kind": "dish",
+      "answer_tell_position": 1,
+      "hit": 0
+    },
+    {
+      "id": "V041",
+      "kind": "name",
+      "answer_tell_position": 1,
+      "hit": 0
+    },
+    {
+      "id": "V042",
+      "kind": "city",
+      "answer_tell_position": 1,
+      "hit": 0
+    },
+    {
+      "id": "V043",
+      "kind": "number",
+      "answer_tell_position": 1,
+      "hit": 0
+    },
+    {
+      "id": "V044",
+      "kind": "project",
+      "answer_tell_position": 1,
+      "hit": 0
+    },
+    {
+      "id": "V045",
+      "kind": "drink",
+      "answer_tell_position": 1,
+      "hit": 0
+    },
+    {
+      "id": "V046",
+      "kind": "pet",
+      "answer_tell_position": 0,
+      "hit": 0
+    },
+    {
+      "id": "V047",
+      "kind": "book",
+      "answer_tell_position": 1,
+      "hit": 0
+    },
+    {
+      "id": "V048",
+      "kind": "dish",
+      "answer_tell_position": 0,
+      "hit": 0
+    },
+    {
+      "id": "V049",
+      "kind": "name",
+      "answer_tell_position": 0,
+      "hit": 1
+    },
+    {
+      "id": "V050",
+      "kind": "city",
+      "answer_tell_position": 1,
+      "hit": 0
+    },
+    {
+      "id": "V051",
+      "kind": "number",
+      "answer_tell_position": 1,
+      "hit": 0
+    },
+    {
+      "id": "V052",
+      "kind": "project",
+      "answer_tell_position": 1,
+      "hit": 0
+    },
+    {
+      "id": "V053",
+      "kind": "drink",
+      "answer_tell_position": 1,
+      "hit": 0
+    },
+    {
+      "id": "V054",
+      "kind": "pet",
+      "answer_tell_position": 1,
+      "hit": 0
+    },
+    {
+      "id": "V055",
+      "kind": "book",
+      "answer_tell_position": 0,
+      "hit": 0
+    },
+    {
+      "id": "V056",
+      "kind": "dish",
+      "answer_tell_position": 1,
+      "hit": 1
+    },
+    {
+      "id": "V057",
+      "kind": "name",
+      "answer_tell_position": 0,
+      "hit": 0
+    },
+    {
+      "id": "V058",
+      "kind": "city",
+      "answer_tell_position": 0,
+      "hit": 1
+    },
+    {
+      "id": "V059",
+      "kind": "number",
+      "answer_tell_position": 1,
+      "hit": 0
+    },
+    {
+      "id": "V060",
+      "kind": "project",
+      "answer_tell_position": 1,
+      "hit": 0
+    },
+    {
+      "id": "V061",
+      "kind": "drink",
+      "answer_tell_position": 1,
+      "hit": 0
+    },
+    {
+      "id": "V062",
+      "kind": "pet",
+      "answer_tell_position": 1,
+      "hit": 0
+    },
+    {
+      "id": "V063",
+      "kind": "book",
+      "answer_tell_position": 0,
+      "hit": 0
+    },
+    {
+      "id": "V064",
+      "kind": "dish",
+      "answer_tell_position": 0,
+      "hit": 0
+    },
+    {
+      "id": "V065",
+      "kind": "name",
+      "answer_tell_position": 0,
+      "hit": 0
+    },
+    {
+      "id": "V066",
+      "kind": "city",
+      "answer_tell_position": 0,
+      "hit": 1
+    },
+    {
+      "id": "V067",
+      "kind": "number",
+      "answer_tell_position": 1,
+      "hit": 0
+    },
+    {
+      "id": "V068",
+      "kind": "project",
+      "answer_tell_position": 0,
+      "hit": 0
+    },
+    {
+      "id": "V069",
+      "kind": "drink",
+      "answer_tell_position": 1,
+      "hit": 0
+    },
+    {
+      "id": "V070",
+      "kind": "pet",
+      "answer_tell_position": 0,
+      "hit": 0
+    },
+    {
+      "id": "V071",
+      "kind": "book",
+      "answer_tell_position": 0,
+      "hit": 0
+    },
+    {
+      "id": "V072",
+      "kind": "dish",
+      "answer_tell_position": 0,
+      "hit": 0
+    },
+    {
+      "id": "V073",
+      "kind": "name",
+      "answer_tell_position": 0,
+      "hit": 1
+    },
+    {
+      "id": "V074",
+      "kind": "city",
+      "answer_tell_position": 0,
+      "hit": 1
+    },
+    {
+      "id": "V075",
+      "kind": "number",
+      "answer_tell_position": 0,
+      "hit": 1
+    },
+    {
+      "id": "V076",
+      "kind": "project",
+      "answer_tell_position": 1,
+      "hit": 0
+    },
+    {
+      "id": "V077",
+      "kind": "drink",
+      "answer_tell_position": 0,
+      "hit": 0
+    },
+    {
+      "id": "V078",
+      "kind": "pet",
+      "answer_tell_position": 0,
+      "hit": 1
+    },
+    {
+      "id": "V079",
+      "kind": "book",
+      "answer_tell_position": 0,
+      "hit": 0
+    },
+    {
+      "id": "V080",
+      "kind": "dish",
+      "answer_tell_position": 1,
+      "hit": 0
+    },
+    {
+      "id": "V081",
+      "kind": "name",
+      "answer_tell_position": 1,
+      "hit": 0
+    },
+    {
+      "id": "V082",
+      "kind": "city",
+      "answer_tell_position": 1,
+      "hit": 0
+    },
+    {
+      "id": "V083",
+      "kind": "number",
+      "answer_tell_position": 0,
+      "hit": 1
+    },
+    {
+      "id": "V084",
+      "kind": "project",
+      "answer_tell_position": 1,
+      "hit": 0
+    },
+    {
+      "id": "V085",
+      "kind": "drink",
+      "answer_tell_position": 1,
+      "hit": 0
+    },
+    {
+      "id": "V086",
+      "kind": "pet",
+      "answer_tell_position": 0,
+      "hit": 0
+    },
+    {
+      "id": "V087",
+      "kind": "book",
+      "answer_tell_position": 0,
+      "hit": 0
+    },
+    {
+      "id": "V088",
+      "kind": "dish",
+      "answer_tell_position": 1,
+      "hit": 0
+    },
+    {
+      "id": "V089",
+      "kind": "name",
+      "answer_tell_position": 1,
+      "hit": 0
+    },
+    {
+      "id": "V090",
+      "kind": "city",
+      "answer_tell_position": 0,
+      "hit": 1
+    },
+    {
+      "id": "V091",
+      "kind": "number",
+      "answer_tell_position": 0,
+      "hit": 0
+    },
+    {
+      "id": "V092",
+      "kind": "project",
+      "answer_tell_position": 0,
+      "hit": 1
+    },
+    {
+      "id": "V093",
+      "kind": "drink",
+      "answer_tell_position": 1,
+      "hit": 0
+    },
+    {
+      "id": "V094",
+      "kind": "pet",
+      "answer_tell_position": 0,
+      "hit": 1
+    },
+    {
+      "id": "V095",
+      "kind": "book",
+      "answer_tell_position": 0,
+      "hit": 0
+    },
+    {
+      "id": "V096",
+      "kind": "dish",
+      "answer_tell_position": 0,
+      "hit": 0
+    },
+    {
+      "id": "V097",
+      "kind": "name",
+      "answer_tell_position": 1,
+      "hit": 0
+    },
+    {
+      "id": "V098",
+      "kind": "city",
+      "answer_tell_position": 0,
+      "hit": 0
+    },
+    {
+      "id": "V099",
+      "kind": "number",
+      "answer_tell_position": 1,
+      "hit": 0
+    },
+    {
+      "id": "V100",
+      "kind": "project",
+      "answer_tell_position": 0,
+      "hit": 1
+    },
+    {
+      "id": "V101",
+      "kind": "drink",
+      "answer_tell_position": 1,
+      "hit": 0
+    },
+    {
+      "id": "V102",
+      "kind": "pet",
+      "answer_tell_position": 0,
+      "hit": 1
+    },
+    {
+      "id": "V103",
+      "kind": "book",
+      "answer_tell_position": 0,
+      "hit": 0
+    },
+    {
+      "id": "V104",
+      "kind": "dish",
+      "answer_tell_position": 0,
+      "hit": 0
+    }
+  ],
+  "base_sha256_unchanged": true
+}

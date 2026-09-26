@@ -1,0 +1,134 @@
+{
+  "format": "taiji-memory-wiring-audit-v1",
+  "prereg": "plans/reference/SPEC-A-22_r2_a2_5_query_conditioned_selector_prereg_20260926.md §21",
+  "checkpoint": "checkpoints/seed_beta.pt",
+  "prompts": 6,
+  "inventory": {
+    "parameter_norms": {
+      "motor.synapses.edge_weight": 39.772041,
+      "motor.bias": 8.531609,
+      "predictive_context.recurrent.edge_weight": 0.0,
+      "predictive_readout.synapses.edge_weight": 39.772041,
+      "predictive_readout.bias": 8.531609,
+      "fabric.decoders[0].edge_weight": 6.345601,
+      "fabric.decoders[1].edge_weight": 8.951575,
+      "fabric.decoders[2].edge_weight": 6.603113,
+      "fabric.consolidation_decoders[0].edge_weight": 0.0,
+      "fabric.consolidation_decoders[1].edge_weight": 0.0,
+      "fabric.consolidation_decoders[2].edge_weight": 0.0
+    },
+    "all_zero_surfaces": [
+      "predictive_context.recurrent.edge_weight",
+      "fabric.consolidation_decoders[0].edge_weight",
+      "fabric.consolidation_decoders[1].edge_weight",
+      "fabric.consolidation_decoders[2].edge_weight"
+    ],
+    "memory_write_count": 0,
+    "memory_records": null,
+    "consolidation_read_gain": 1.0,
+    "memory_read_gain": 3.0
+  },
+  "episodic_read_ab": {
+    "pairs": 6,
+    "byte_level": [
+      {
+        "len_left": 32,
+        "len_right": 32,
+        "compared_bytes": 32,
+        "identical_bytes": 32,
+        "differing_bytes": 0
+      },
+      {
+        "len_left": 32,
+        "len_right": 32,
+        "compared_bytes": 32,
+        "identical_bytes": 32,
+        "differing_bytes": 0
+      },
+      {
+        "len_left": 32,
+        "len_right": 32,
+        "compared_bytes": 32,
+        "identical_bytes": 32,
+        "differing_bytes": 0
+      },
+      {
+        "len_left": 32,
+        "len_right": 32,
+        "compared_bytes": 32,
+        "identical_bytes": 32,
+        "differing_bytes": 0
+      },
+      {
+        "len_left": 32,
+        "len_right": 32,
+        "compared_bytes": 32,
+        "identical_bytes": 32,
+        "differing_bytes": 0
+      },
+      {
+        "len_left": 32,
+        "len_right": 32,
+        "compared_bytes": 32,
+        "identical_bytes": 32,
+        "differing_bytes": 0
+      }
+    ],
+    "identical_outputs": 6
+  },
+  "consolidation_probe": {
+    "pairs": 6,
+    "rows": [
+      {
+        "evidence_norm": 0.0,
+        "evidence_abs_max": 0.0,
+        "argmax_changed": 0,
+        "prob_l1_distance": 0.0
+      },
+      {
+        "evidence_norm": 0.0,
+        "evidence_abs_max": 0.0,
+        "argmax_changed": 0,
+        "prob_l1_distance": 0.0
+      },
+      {
+        "evidence_norm": 0.0,
+        "evidence_abs_max": 0.0,
+        "argmax_changed": 0,
+        "prob_l1_distance": 0.0
+      },
+      {
+        "evidence_norm": 0.0,
+        "evidence_abs_max": 0.0,
+        "argmax_changed": 0,
+        "prob_l1_distance": 0.0
+      },
+      {
+        "evidence_norm": 0.0,
+        "evidence_abs_max": 0.0,
+        "argmax_changed": 0,
+        "prob_l1_distance": 0.0
+      },
+      {
+        "evidence_norm": 0.0,
+        "evidence_abs_max": 0.0,
+        "argmax_changed": 0,
+        "prob_l1_distance": 0.0
+      }
+    ],
+    "argmax_changed_count": 0,
+    "mean_evidence_norm": 0.0,
+    "max_prob_l1": 0.0
+  },
+  "write_path": {
+    "write_count_before": 0,
+    "write_count_after": 0
+  },
+  "instrument_guard": {
+    "prompts_nonzero": true,
+    "ab_pairs_measured": true,
+    "consolidation_pairs_measured": true,
+    "config_untouched": true
+  },
+  "base_sha256_unchanged": true
+}
