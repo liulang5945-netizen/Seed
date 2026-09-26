@@ -88,13 +88,22 @@ P1 前不大规模搬动当前源码；先加 v1 合同与 adapter，再决定�
 
 Taiji 不以“逐功能替换 TransformerBlock”为设计主轴。Transformer 仅是一个离线比较对象。
 
-当前被替代的 Legacy `TransformerBlock` live 消费点继续封闭为三处：
+当前被替代的 Legacy `TransformerBlock` live 消费点封闭为四处（2026-09-26 由三处增至四处）：
 
 | 消费点 | 性质 |
 |---|---|
 | `neuroplex/resonance/neuron.py` | Legacy 基线内部 |
 | `scripts/training/train_tinystories.py` | 离线 Transformer 对照 |
 | `scripts/training/train_tinystories_field.py` | 离线 field 对照 |
+| `tests/test_neuroplex_layers_core_path.py` | 正确性守卫，非功能投入 |
+
+第四处的理由：`neuroplex/layers.py` 是产品推理路径实际调用的底层（`Cortex`/`ResonanceEnsemble`
+经由它做注意力与 RoPE），而审计把 S3（主循环未接 KV cache）、S9（滑窗驱逐破坏 RoPE 位置一致性）、
+S11（sink+window）三条架构级发现都定位在它身上，此前**全仓零测试**（只有上面两个离线脚本引用过）。
+B-4（`project_audit_2026-08-23.md` §7 第 16 条）要求核心推理路径有覆盖率，给已在生产链上的代码补
+正确性守卫属于"证明它现在是对的"，不是"把被替代的认知主体重新接回产品"——本件不新增任何调用者、
+不改 `layers.py` 的行为，只钉相位/缓存/驱逐三条不变量。名单同步在
+`tests/taiji_native/test_naming_boundary_contract.py`。
 
 允许研究 attention、embedding 或 optimizer，不允许新增对 `neuroplex/layers.py::TransformerBlock` 的正式消费者。前者是复用成熟算法，后者是把被替代的认知主体重新接回产品。
 

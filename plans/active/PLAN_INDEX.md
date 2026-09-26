@@ -135,8 +135,8 @@
 | **B-0** | P0+P1+P2 三轮修复 | ✅ 完成（116 测试） | `project_audit_fixes{,_p2}_2026-08-23.md` |
 | **B-1** | `detect_modality` 抽为纯函数（无 self） | ✅ 完成 | 等价守卫 3 绿（`a6895b6a`） |
 | **B-2** | `_infer_domain` ✅（黄金 330 格等价）；`_reencode`/`nll_quality` 挂起（需 neuroplex 夹具） | ⏳ 留 B-3 | 见 §6 |
-| **B-3** | Cortex 神对象完整拆分（**签字已下 2026-09-25**）：C-1 质量/评分簇 ✅、C-2 tokenizer/对齐簇 ✅（黄金 50000 条全量一致）、C-3 路由簇第一刀 `_fingerprint_route` ✅（黄金 15 组等价）；C-3 其余三成员**留壳**（状态/编排耦合：调 `think()`+EMA 状态 / 依赖 `ensemble`）；**C-4 生成单步解码簇 ✅**（`decode_step` 抽离至 `_cortex_generation`，黄金 15 组逐位等价，提交 `0ef93b0b`）；**B-3 收口待办**：`_first_domain()` fallback 确定性（`_cortex_helpers.infer_domain` 内 set 迭代序依赖） | 🔄 进行中 | 每迁一簇配等价测试；冻结基线，禁静默漂移 |
-| **B-4** | 核心推理路径覆盖率 ≥60% | ⏳ 待 B-3 后 | — |
+| **B-3** | Cortex 神对象完整拆分（签字 2026-09-25）：**已按预注册范围收口 2026-09-26**。C-1 质量/评分 ✅（含第二刀 `_rolling_nll_quality`，`e3a6e0a4`，迁移前黄金 10 格）、C-2 tokenizer/对齐 ✅（黄金 50000 条）、C-3 路由 ✅第一刀 `_fingerprint_route`＋其余三成员**留壳**（调 `think()`+EMA 状态 / 依赖 `ensemble`）、C-4 单步解码 `decode_step` ✅（`0ef93b0b`）；§4 **唯一声明的行为变更已落地**（`1da2877e`：兜底 `next(iter(set))`→`min()` 前缀，实测 330 格里 21 格随 `PYTHONHASHSEED` 翻转 ⇒ 改后 0 格，且 21 格确定值逐格等于原黄金）；同件结清 **B-2 的黄金守卫空跑**（跳过判据对 330 格恒真 ⇒ 一条等价断言都没执行）。逐成员处置表见 PLAN-B-03 §6，C-4 内联纯段后续刀清单见 §7 | ✅ 收口 | 每迁一簇配等价测试；冻结基线，禁静默漂移 |
+| **B-4** | 核心推理路径覆盖率 ≥60%（审计 §7-16）：**度量面已定、门已接入 CI**，`scripts/training/verify_core_reasoning_coverage.py`（brain + resonance 的 ensemble/continuous/field + layers，按文件过滤分母；面内文件缺席即红）。读数：基线 **45.66%**（1698/3719）→ 本轮七刀后并集 **51.50%**（1918/3724），**距 60% 还差 316 行**，缺口集中在 `ensemble.py`（未覆盖 1075）与 `cortex.py`（615）。本轮新增 7 个测试件共 **71 条**（layers 16／field 11／continuous 9／生命周期 10／持久化 8／装配注入 8／门自身双向验证），顺带修掉三条真实缺陷（隔离池 id 复用覆盖 ckpt、`set_neuromodulator(None)` 半装配异常、聚合加载静默吞掉 field 状态）。⚠️ **读数噪声**：两次全量跑 `ensemble.py` 相差 −203 行（散点行，源于随机初值无全局种子）⇒ 门下限取 45.0 而非贴均值，取读数须按并集或多次 | 🔄 进行中（目标未达） | 阈值只升不降；60% 为 `audit_target` 随读数入册 |
 
 ## 4. 存量映射（**新编号 ↔ 旧文件名**；旧文件冻结不改名）
 

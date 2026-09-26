@@ -1016,3 +1016,37 @@ tests.taiji_native.test_terminal_three_domain_governance::test_terminal_three_do
 
 **禁止**：在未定性前直接放宽 `test_architecture_contract` / `test_naming_boundary_contract` 的断言
 来「让套件变绿」——这两项保护的是原生基底自足性契约。
+
+## B 支线（架构债线）2026-09-26 登记：已量未修
+
+**DEBT-B4-1：B-4 的读数天生带噪，门不能贴均值设阈值。**
+两次全量跑（同一条 `pytest tests --cov`，无并发）之间，`resonance/ensemble.py` 覆盖行数相差 **−203**
+（869 ⇒ 666），丢失的是**散点单行**（645/651/657-660/672/680/719/…）而非整块 lane
+⇒ 判定为随机初值路径（该子系统无全局随机种子），不是"某条测试没跑"。
+后果：面内读数 ±0.5~1 个点抖动。CI 阈值取 **45.0**（低于基线 45.66 与并集 51.50），
+上调前必须先在 CI 里拿到两次同序读数，否则棘轮会自己制造红。
+根治候选（未做）：给走随机装配的 lane 固定种子，或在门里定义"取 N 次并集"。
+
+**DEBT-B4-2：`brain/working_memory.py` 是"仅注册未接入"的死模块，且内部有索引错位缺陷。**
+`cortex.py:219-223` 自己写明它未接入生成路径（真正的上下文记忆走 `agent/working_memory` 经
+ContextManager），但它仍在 `neuroplex/brain/` 里且被算进过覆盖率分母（本已从 B-4 度量面剔除）。
+实测 `append_round` 在 deque 触发 FIFO 丢弃后 `round_marks` 整体错位：`max_tokens=8`，
+依次追加 (1,2,3|4)、(6,7|8)、(9,10,11|12) 后 buffer=[5..12]，标记却是 `(0,5)/(5,8)/(8,8)`
+⇒ **刚写入的一轮记成空区间**，旧轮指向别人的 token；`_first_domain` 式的"簿记漂移"在这里
+不会报错、只会让依赖 importance/轮次范围的逻辑静默读错。修法：按实际丢弃数平移**全部**标记。
+**未修**（改它等于给死代码定行为，需先决定是删是接）。
+
+**DEBT-B4-3：`Cortex.device` 实际是字符串，签名却标 `torch.device`。**
+`cortex.py:114` 直接存传入值（fallback 装配下为 `'cpu'`），而 `_cortex_quality.rolling_nll_quality(device: torch.device, …)`
+等签名标注为 `torch.device`。torch 接受字符串所以能跑，但 `tensor.device == cortex.device` **恒 False**
+（本会话写测试时踩到，断言被迫先 `torch.device(str(...))` 归一）。属类型谎报，不改行为。
+
+**DEBT-B4-4：根目录出现台账外的 `consolidation/`（空目录），使 `test_folder_structure_guard` 红。**
+代码里的落盘位置是 `seed_platform/sleep_pass.py:50` 的 `data/consolidation`，**不是**根目录同名物；
+该目录为空、非 git 跟踪、mtime 早于本会话的首次套件运行 ⇒ 归属未定，本会话**未删除未改名**。
+待处置：由创建者认领后按守卫提示二选一（进台账，或改 `.tmp-<主题>/` 后清理）。
+这是当前 5 条套件红里唯一"环境态"的一条，另外 3 条属 A 支线（artifact_store_scratch /
+cap0_inventory 金样复现 / b0_n2 复核面），1 条（naming_boundary）已由本会话按守卫规定的
+流程结清——**是补登记而非放宽断言**：理由写在
+`plans/active/ARCHITECTURE_DIRECTION_2026_08.md` §6，名单在 `test_naming_boundary_contract.py`。
+
