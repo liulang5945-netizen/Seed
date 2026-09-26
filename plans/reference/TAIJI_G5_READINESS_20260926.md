@@ -207,7 +207,8 @@ this scaffold lifetime. **This is the keyless first-run configuration lane**; th
 
 **想用房侧读法定位 ⑮ 的层次，结果撞出一个新的仪器问题（同日；探针已撤、`git status` 干净）**：在 `beforeAll` 之后直接读 `scaffold.ctx`——
 `ctx.sessions.list()` 得 **`[]`**、`ctx.workspaceRegistry.list()` 得 **`[]`**，而**同一时刻页面侧边栏显示着两个工作区和一行带 `now` 的会话**。
-⇒ **测试进程里的 `ctx` 与页面所见的表层对不上**；"用宿主侧读法分 ⑮ 的层次"这条路**在 seeded 类 lane 里不能照我先前设想直接用**。
+⇒ **但这个读法本身是错的，**我把"对不上"那句收回**：`ctx.sessions` 是**客户端作用域的访问器**（`packages/api/session-controller/src/client/sessions/manager.ts:403` 里它是 `await this.remote.session.list({})`），空数组不证明"宿主没有这些会话"；而 `seedSession` 走的是**另一个独立 `new Context()`**（`scaffold.ts:1486` 的 `seeder`，只为往 `persistenceRoot` 写件）——两者本就不是同一视图。
+⇒ **⑮ 的层次仍未判，但判它不能靠 `ctx.*`**：要么按 `seeder` 那样另开一个 Context 去 `list`，要么把 `persistenceRoot` 下那份 JSONL 与表层实际取的那条 HTTP 响应对账。**教训（同族第五次）**：`[]` 是一个**访问器的返回值**，不等于"系统里没有"——用它下结论前先读该访问器怎么取数。
 **这与 H3q 的既有结论不冲突**：`connectFreshWorkspaceViaHost` 算"已验证"是因为它的效果**在页面上看得见**（工作区出现、composer 就绪），不是靠 `ctx` 读出来的——
 这条新读数反而说明**当时不该改用 `ctx` 断言**。
 **我自己的两处仪器错误一并记下**：第一次写 `workspaceRegistry.list().then(...)`（它不是 Promise）、第二次把 `existsSync` 的 import 插在该文件不存在的那一行上；
