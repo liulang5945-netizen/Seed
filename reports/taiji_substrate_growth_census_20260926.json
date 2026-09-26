@@ -1,0 +1,1488 @@
+{
+  "format": "taiji-substrate-growth-census-v1",
+  "prereg": "plans/reference/M5_R2_A_BRANCH_PLAN_REV2_20260926.md §5 A3",
+  "checkpoint": "checkpoints/seed_beta.pt",
+  "structural": {
+    "tick_metadata": 16000000,
+    "saved_at_utc": "2026-08-24T02:23:26Z",
+    "corpus_fingerprint": "[{\"name\":\"simple_zh_texts.jsonl\",\"bytes\":1394775610}]",
+    "profile": {
+      "region_sizes": [
+        256,
+        192,
+        128
+      ],
+      "memory_units": 384,
+      "alphabet_size": 257
+    },
+    "state_tick": 16000000,
+    "development_ticks": 0,
+    "fabric_structural_events": 0,
+    "memory_write_count": 0,
+    "identity_growth_history_len": 0,
+    "parameter_count_active": 725651,
+    "parameter_count_all": 725651
+  },
+  "summary": {
+    "surfaces_enumerated": 93,
+    "surfaces_all_zero": 13,
+    "surfaces_moved_vs_init": 48,
+    "surfaces_identical_to_init": 45,
+    "surfaces_not_in_twin": 0,
+    "total_numel": 1029828,
+    "moved_numel": 245204
+  },
+  "all_zero_surfaces": [
+    "substrate.fabric.consolidation_decoders[0].edge_weight",
+    "substrate.fabric.consolidation_decoders[1].edge_weight",
+    "substrate.fabric.consolidation_decoders[2].edge_weight",
+    "substrate.memory.action_readout.edge_weight",
+    "substrate.memory.association.edge_weight",
+    "substrate.memory.cortical_readout.edge_weight",
+    "substrate.memory.episode_readout.edge_weight",
+    "substrate.memory.familiarity_readout.edge_weight",
+    "substrate.memory.outcome_readout.edge_weight",
+    "substrate.memory.provenance_readout.edge_weight",
+    "substrate.memory.reward_readout.edge_weight",
+    "substrate.memory.time_readout.edge_weight",
+    "substrate.state.memory.cortical_feedback"
+  ],
+  "top_moved": [
+    {
+      "path": "substrate.memory.cortical_readout.pre_index",
+      "shape": [
+        1152,
+        96
+      ],
+      "numel": 110592,
+      "norm": 18287.03125,
+      "abs_max": 95.0,
+      "all_zero": false,
+      "identical_to_init": false,
+      "delta_norm_vs_init": 13010.324219
+    },
+    {
+      "path": "substrate.memory.outcome_readout.pre_index",
+      "shape": [
+        257,
+        96
+      ],
+      "numel": 24672,
+      "norm": 8637.837891,
+      "abs_max": 95.0,
+      "all_zero": false,
+      "identical_to_init": false,
+      "delta_norm_vs_init": 6155.123535
+    },
+    {
+      "path": "substrate.rng_state",
+      "shape": [
+        5056
+      ],
+      "numel": 5056,
+      "norm": 7298.198242,
+      "abs_max": 255.0,
+      "all_zero": false,
+      "identical_to_init": false,
+      "delta_norm_vs_init": 5145.056641
+    },
+    {
+      "path": "substrate.memory.episode_readout.pre_index",
+      "shape": [
+        16,
+        96
+      ],
+      "numel": 1536,
+      "norm": 2155.25415,
+      "abs_max": 95.0,
+      "all_zero": false,
+      "identical_to_init": false,
+      "delta_norm_vs_init": 1517.679199
+    },
+    {
+      "path": "substrate.memory.time_readout.pre_index",
+      "shape": [
+        8,
+        96
+      ],
+      "numel": 768,
+      "norm": 1523.994751,
+      "abs_max": 95.0,
+      "all_zero": false,
+      "identical_to_init": false,
+      "delta_norm_vs_init": 1093.434082
+    },
+    {
+      "path": "substrate.memory.provenance_readout.pre_index",
+      "shape": [
+        4,
+        96
+      ],
+      "numel": 384,
+      "norm": 1077.627075,
+      "abs_max": 95.0,
+      "all_zero": false,
+      "identical_to_init": false,
+      "delta_norm_vs_init": 818.400879
+    },
+    {
+      "path": "substrate.memory.familiarity_readout.pre_index",
+      "shape": [
+        1,
+        96
+      ],
+      "numel": 96,
+      "norm": 538.813538,
+      "abs_max": 95.0,
+      "all_zero": false,
+      "identical_to_init": false,
+      "delta_norm_vs_init": 401.210663
+    },
+    {
+      "path": "substrate.memory.reward_readout.pre_index",
+      "shape": [
+        1,
+        96
+      ],
+      "numel": 96,
+      "norm": 538.813538,
+      "abs_max": 95.0,
+      "all_zero": false,
+      "identical_to_init": false,
+      "delta_norm_vs_init": 383.624817
+    },
+    {
+      "path": "substrate.fabric.laterals[0].edge_weight",
+      "shape": [
+        256,
+        16
+      ],
+      "numel": 4096,
+      "norm": 144.66333,
+      "abs_max": 9.999999,
+      "all_zero": false,
+      "identical_to_init": false,
+      "delta_norm_vs_init": 133.091537
+    },
+    {
+      "path": "substrate.fabric.laterals[1].edge_weight",
+      "shape": [
+        192,
+        16
+      ],
+      "numel": 3072,
+      "norm": 95.767143,
+      "abs_max": 9.953115,
+      "all_zero": false,
+      "identical_to_init": false,
+      "delta_norm_vs_init": 86.061127
+    },
+    {
+      "path": "substrate.fabric.laterals[2].edge_weight",
+      "shape": [
+        128,
+        16
+      ],
+      "numel": 2048,
+      "norm": 59.512856,
+      "abs_max": 8.214928,
+      "all_zero": false,
+      "identical_to_init": false,
+      "delta_norm_vs_init": 45.104973
+    },
+    {
+      "path": "substrate.motor.synapses.edge_weight",
+      "shape": [
+        257,
+        96
+      ],
+      "numel": 24672,
+      "norm": 39.772041,
+      "abs_max": 1.204619,
+      "all_zero": false,
+      "identical_to_init": false,
+      "delta_norm_vs_init": 40.271866
+    },
+    {
+      "path": "substrate.motor.bias",
+      "shape": [
+        257
+      ],
+      "numel": 257,
+      "norm": 8.531609,
+      "abs_max": 2.484451,
+      "all_zero": false,
+      "identical_to_init": false,
+      "delta_norm_vs_init": 8.531609
+    },
+    {
+      "path": "substrate.state.memory.threshold",
+      "shape": [
+        384
+      ],
+      "numel": 384,
+      "norm": 8.838771,
+      "abs_max": 1.206343,
+      "all_zero": false,
+      "identical_to_init": false,
+      "delta_norm_vs_init": 8.494709
+    },
+    {
+      "path": "substrate.fabric.decoders[0].edge_weight",
+      "shape": [
+        257,
+        48
+      ],
+      "numel": 12336,
+      "norm": 6.345601,
+      "abs_max": 0.464806,
+      "all_zero": false,
+      "identical_to_init": false,
+      "delta_norm_vs_init": 6.768936
+    },
+    {
+      "path": "substrate.fabric.decoders[1].edge_weight",
+      "shape": [
+        256,
+        48
+      ],
+      "numel": 12288,
+      "norm": 8.951575,
+      "abs_max": 0.460853,
+      "all_zero": false,
+      "identical_to_init": false,
+      "delta_norm_vs_init": 5.779058
+    },
+    {
+      "path": "substrate.fabric.transitions[0].edge_weight",
+      "shape": [
+        256,
+        48
+      ],
+      "numel": 12288,
+      "norm": 6.872852,
+      "abs_max": 0.610432,
+      "all_zero": false,
+      "identical_to_init": false,
+      "delta_norm_vs_init": 4.985071
+    },
+    {
+      "path": "substrate.state.motor_context",
+      "shape": [
+        96
+      ],
+      "numel": 96,
+      "norm": 4.0,
+      "abs_max": 1.427412,
+      "all_zero": false,
+      "identical_to_init": false,
+      "delta_norm_vs_init": 4.0
+    },
+    {
+      "path": "substrate.fabric.transitions[1].edge_weight",
+      "shape": [
+        192,
+        48
+      ],
+      "numel": 9216,
+      "norm": 6.056135,
+      "abs_max": 0.307768,
+      "all_zero": false,
+      "identical_to_init": false,
+      "delta_norm_vs_init": 2.193874
+    },
+    {
+      "path": "substrate.fabric.decoders[2].edge_weight",
+      "shape": [
+        192,
+        48
+      ],
+      "numel": 9216,
+      "norm": 6.603113,
+      "abs_max": 0.366299,
+      "all_zero": false,
+      "identical_to_init": false,
+      "delta_norm_vs_init": 2.185869
+    }
+  ],
+  "rows": [
+    {
+      "path": "substrate.fabric.consolidation_decoders[0].edge_weight",
+      "shape": [
+        257,
+        256
+      ],
+      "numel": 65792,
+      "norm": 0.0,
+      "abs_max": 0.0,
+      "all_zero": true,
+      "identical_to_init": true,
+      "delta_norm_vs_init": 0.0
+    },
+    {
+      "path": "substrate.fabric.consolidation_decoders[0].pre_index",
+      "shape": [
+        257,
+        256
+      ],
+      "numel": 65792,
+      "norm": 37799.683594,
+      "abs_max": 255.0,
+      "all_zero": false,
+      "identical_to_init": true,
+      "delta_norm_vs_init": 0.0
+    },
+    {
+      "path": "substrate.fabric.consolidation_decoders[1].edge_weight",
+      "shape": [
+        256,
+        192
+      ],
+      "numel": 49152,
+      "norm": 0.0,
+      "abs_max": 0.0,
+      "all_zero": true,
+      "identical_to_init": true,
+      "delta_norm_vs_init": 0.0
+    },
+    {
+      "path": "substrate.fabric.consolidation_decoders[1].pre_index",
+      "shape": [
+        256,
+        192
+      ],
+      "numel": 49152,
+      "norm": 24479.554688,
+      "abs_max": 191.0,
+      "all_zero": false,
+      "identical_to_init": true,
+      "delta_norm_vs_init": 0.0
+    },
+    {
+      "path": "substrate.fabric.consolidation_decoders[2].edge_weight",
+      "shape": [
+        192,
+        128
+      ],
+      "numel": 24576,
+      "norm": 0.0,
+      "abs_max": 0.0,
+      "all_zero": true,
+      "identical_to_init": true,
+      "delta_norm_vs_init": 0.0
+    },
+    {
+      "path": "substrate.fabric.consolidation_decoders[2].pre_index",
+      "shape": [
+        192,
+        128
+      ],
+      "numel": 24576,
+      "norm": 11517.332031,
+      "abs_max": 127.0,
+      "all_zero": false,
+      "identical_to_init": true,
+      "delta_norm_vs_init": 0.0
+    },
+    {
+      "path": "substrate.fabric.decoders[0].edge_weight",
+      "shape": [
+        257,
+        48
+      ],
+      "numel": 12336,
+      "norm": 6.345601,
+      "abs_max": 0.464806,
+      "all_zero": false,
+      "identical_to_init": false,
+      "delta_norm_vs_init": 6.768936
+    },
+    {
+      "path": "substrate.fabric.decoders[0].pre_index",
+      "shape": [
+        257,
+        48
+      ],
+      "numel": 12336,
+      "norm": 16377.589844,
+      "abs_max": 255.0,
+      "all_zero": false,
+      "identical_to_init": true,
+      "delta_norm_vs_init": 0.0
+    },
+    {
+      "path": "substrate.fabric.decoders[1].edge_weight",
+      "shape": [
+        256,
+        48
+      ],
+      "numel": 12288,
+      "norm": 8.951575,
+      "abs_max": 0.460853,
+      "all_zero": false,
+      "identical_to_init": false,
+      "delta_norm_vs_init": 5.779058
+    },
+    {
+      "path": "substrate.fabric.decoders[1].pre_index",
+      "shape": [
+        256,
+        48
+      ],
+      "numel": 12288,
+      "norm": 12264.525391,
+      "abs_max": 191.0,
+      "all_zero": false,
+      "identical_to_init": true,
+      "delta_norm_vs_init": 0.0
+    },
+    {
+      "path": "substrate.fabric.decoders[2].edge_weight",
+      "shape": [
+        192,
+        48
+      ],
+      "numel": 9216,
+      "norm": 6.603113,
+      "abs_max": 0.366299,
+      "all_zero": false,
+      "identical_to_init": false,
+      "delta_norm_vs_init": 2.185869
+    },
+    {
+      "path": "substrate.fabric.decoders[2].pre_index",
+      "shape": [
+        192,
+        48
+      ],
+      "numel": 9216,
+      "norm": 7069.686035,
+      "abs_max": 127.0,
+      "all_zero": false,
+      "identical_to_init": true,
+      "delta_norm_vs_init": 0.0
+    },
+    {
+      "path": "substrate.fabric.laterals[0].edge_weight",
+      "shape": [
+        256,
+        16
+      ],
+      "numel": 4096,
+      "norm": 144.66333,
+      "abs_max": 9.999999,
+      "all_zero": false,
+      "identical_to_init": false,
+      "delta_norm_vs_init": 133.091537
+    },
+    {
+      "path": "substrate.fabric.laterals[0].pre_index",
+      "shape": [
+        256,
+        16
+      ],
+      "numel": 4096,
+      "norm": 9432.654297,
+      "abs_max": 255.0,
+      "all_zero": false,
+      "identical_to_init": true,
+      "delta_norm_vs_init": 0.0
+    },
+    {
+      "path": "substrate.fabric.laterals[1].edge_weight",
+      "shape": [
+        192,
+        16
+      ],
+      "numel": 3072,
+      "norm": 95.767143,
+      "abs_max": 9.953115,
+      "all_zero": false,
+      "identical_to_init": false,
+      "delta_norm_vs_init": 86.061127
+    },
+    {
+      "path": "substrate.fabric.laterals[1].pre_index",
+      "shape": [
+        192,
+        16
+      ],
+      "numel": 3072,
+      "norm": 6050.916504,
+      "abs_max": 191.0,
+      "all_zero": false,
+      "identical_to_init": true,
+      "delta_norm_vs_init": 0.0
+    },
+    {
+      "path": "substrate.fabric.laterals[2].edge_weight",
+      "shape": [
+        128,
+        16
+      ],
+      "numel": 2048,
+      "norm": 59.512856,
+      "abs_max": 8.214928,
+      "all_zero": false,
+      "identical_to_init": false,
+      "delta_norm_vs_init": 45.104973
+    },
+    {
+      "path": "substrate.fabric.laterals[2].pre_index",
+      "shape": [
+        128,
+        16
+      ],
+      "numel": 2048,
+      "norm": 3291.153809,
+      "abs_max": 127.0,
+      "all_zero": false,
+      "identical_to_init": true,
+      "delta_norm_vs_init": 0.0
+    },
+    {
+      "path": "substrate.fabric.trace_baselines[0]",
+      "shape": [
+        256
+      ],
+      "numel": 256,
+      "norm": 0.069354,
+      "abs_max": 0.009379,
+      "all_zero": false,
+      "identical_to_init": false,
+      "delta_norm_vs_init": 0.069354
+    },
+    {
+      "path": "substrate.fabric.trace_baselines[1]",
+      "shape": [
+        192
+      ],
+      "numel": 192,
+      "norm": 0.026832,
+      "abs_max": 0.004538,
+      "all_zero": false,
+      "identical_to_init": false,
+      "delta_norm_vs_init": 0.026832
+    },
+    {
+      "path": "substrate.fabric.trace_baselines[2]",
+      "shape": [
+        128
+      ],
+      "numel": 128,
+      "norm": 0.010347,
+      "abs_max": 0.002744,
+      "all_zero": false,
+      "identical_to_init": false,
+      "delta_norm_vs_init": 0.010347
+    },
+    {
+      "path": "substrate.fabric.transitions[0].edge_weight",
+      "shape": [
+        256,
+        48
+      ],
+      "numel": 12288,
+      "norm": 6.872852,
+      "abs_max": 0.610432,
+      "all_zero": false,
+      "identical_to_init": false,
+      "delta_norm_vs_init": 4.985071
+    },
+    {
+      "path": "substrate.fabric.transitions[0].pre_index",
+      "shape": [
+        256,
+        48
+      ],
+      "numel": 12288,
+      "norm": 16335.071289,
+      "abs_max": 255.0,
+      "all_zero": false,
+      "identical_to_init": true,
+      "delta_norm_vs_init": 0.0
+    },
+    {
+      "path": "substrate.fabric.transitions[1].edge_weight",
+      "shape": [
+        192,
+        48
+      ],
+      "numel": 9216,
+      "norm": 6.056135,
+      "abs_max": 0.307768,
+      "all_zero": false,
+      "identical_to_init": false,
+      "delta_norm_vs_init": 2.193874
+    },
+    {
+      "path": "substrate.fabric.transitions[1].pre_index",
+      "shape": [
+        192,
+        48
+      ],
+      "numel": 9216,
+      "norm": 10600.958008,
+      "abs_max": 191.0,
+      "all_zero": false,
+      "identical_to_init": true,
+      "delta_norm_vs_init": 0.0
+    },
+    {
+      "path": "substrate.fabric.transitions[2].edge_weight",
+      "shape": [
+        128,
+        48
+      ],
+      "numel": 6144,
+      "norm": 5.054034,
+      "abs_max": 0.250968,
+      "all_zero": false,
+      "identical_to_init": false,
+      "delta_norm_vs_init": 0.966183
+    },
+    {
+      "path": "substrate.fabric.transitions[2].pre_index",
+      "shape": [
+        128,
+        48
+      ],
+      "numel": 6144,
+      "norm": 5769.718262,
+      "abs_max": 127.0,
+      "all_zero": false,
+      "identical_to_init": true,
+      "delta_norm_vs_init": 0.0
+    },
+    {
+      "path": "substrate.memory.action_encoder.edge_weight",
+      "shape": [
+        384,
+        64
+      ],
+      "numel": 24576,
+      "norm": 8.84373,
+      "abs_max": 0.242773,
+      "all_zero": false,
+      "identical_to_init": true,
+      "delta_norm_vs_init": 0.0
+    },
+    {
+      "path": "substrate.memory.action_encoder.pre_index",
+      "shape": [
+        384,
+        64
+      ],
+      "numel": 24576,
+      "norm": 23222.597656,
+      "abs_max": 256.0,
+      "all_zero": false,
+      "identical_to_init": true,
+      "delta_norm_vs_init": 0.0
+    },
+    {
+      "path": "substrate.memory.action_readout.edge_weight",
+      "shape": [
+        257,
+        96
+      ],
+      "numel": 24672,
+      "norm": 0.0,
+      "abs_max": 0.0,
+      "all_zero": true,
+      "identical_to_init": true,
+      "delta_norm_vs_init": 0.0
+    },
+    {
+      "path": "substrate.memory.action_readout.pre_index",
+      "shape": [
+        257,
+        96
+      ],
+      "numel": 24672,
+      "norm": 8637.837891,
+      "abs_max": 95.0,
+      "all_zero": false,
+      "identical_to_init": true,
+      "delta_norm_vs_init": 0.0
+    },
+    {
+      "path": "substrate.memory.association.edge_weight",
+      "shape": [
+        384,
+        64
+      ],
+      "numel": 24576,
+      "norm": 0.0,
+      "abs_max": 0.0,
+      "all_zero": true,
+      "identical_to_init": true,
+      "delta_norm_vs_init": 0.0
+    },
+    {
+      "path": "substrate.memory.association.pre_index",
+      "shape": [
+        384,
+        64
+      ],
+      "numel": 24576,
+      "norm": 34753.050781,
+      "abs_max": 383.0,
+      "all_zero": false,
+      "identical_to_init": true,
+      "delta_norm_vs_init": 0.0
+    },
+    {
+      "path": "substrate.memory.cortical_readout.edge_weight",
+      "shape": [
+        1152,
+        96
+      ],
+      "numel": 110592,
+      "norm": 0.0,
+      "abs_max": 0.0,
+      "all_zero": true,
+      "identical_to_init": true,
+      "delta_norm_vs_init": 0.0
+    },
+    {
+      "path": "substrate.memory.cortical_readout.pre_index",
+      "shape": [
+        1152,
+        96
+      ],
+      "numel": 110592,
+      "norm": 18287.03125,
+      "abs_max": 95.0,
+      "all_zero": false,
+      "identical_to_init": false,
+      "delta_norm_vs_init": 13010.324219
+    },
+    {
+      "path": "substrate.memory.cue_encoder.edge_weight",
+      "shape": [
+        384,
+        64
+      ],
+      "numel": 24576,
+      "norm": 8.769713,
+      "abs_max": 0.225026,
+      "all_zero": false,
+      "identical_to_init": true,
+      "delta_norm_vs_init": 0.0
+    },
+    {
+      "path": "substrate.memory.cue_encoder.pre_index",
+      "shape": [
+        384,
+        64
+      ],
+      "numel": 24576,
+      "norm": 104312.734375,
+      "abs_max": 1151.0,
+      "all_zero": false,
+      "identical_to_init": true,
+      "delta_norm_vs_init": 0.0
+    },
+    {
+      "path": "substrate.memory.episode_encoder.edge_weight",
+      "shape": [
+        384,
+        16
+      ],
+      "numel": 6144,
+      "norm": 8.784263,
+      "abs_max": 0.477067,
+      "all_zero": false,
+      "identical_to_init": true,
+      "delta_norm_vs_init": 0.0
+    },
+    {
+      "path": "substrate.memory.episode_encoder.pre_index",
+      "shape": [
+        384,
+        16
+      ],
+      "numel": 6144,
+      "norm": 690.043457,
+      "abs_max": 15.0,
+      "all_zero": false,
+      "identical_to_init": true,
+      "delta_norm_vs_init": 0.0
+    },
+    {
+      "path": "substrate.memory.episode_readout.edge_weight",
+      "shape": [
+        16,
+        96
+      ],
+      "numel": 1536,
+      "norm": 0.0,
+      "abs_max": 0.0,
+      "all_zero": true,
+      "identical_to_init": true,
+      "delta_norm_vs_init": 0.0
+    },
+    {
+      "path": "substrate.memory.episode_readout.pre_index",
+      "shape": [
+        16,
+        96
+      ],
+      "numel": 1536,
+      "norm": 2155.25415,
+      "abs_max": 95.0,
+      "all_zero": false,
+      "identical_to_init": false,
+      "delta_norm_vs_init": 1517.679199
+    },
+    {
+      "path": "substrate.memory.familiarity_readout.edge_weight",
+      "shape": [
+        1,
+        96
+      ],
+      "numel": 96,
+      "norm": 0.0,
+      "abs_max": 0.0,
+      "all_zero": true,
+      "identical_to_init": true,
+      "delta_norm_vs_init": 0.0
+    },
+    {
+      "path": "substrate.memory.familiarity_readout.pre_index",
+      "shape": [
+        1,
+        96
+      ],
+      "numel": 96,
+      "norm": 538.813538,
+      "abs_max": 95.0,
+      "all_zero": false,
+      "identical_to_init": false,
+      "delta_norm_vs_init": 401.210663
+    },
+    {
+      "path": "substrate.memory.outcome_encoder.edge_weight",
+      "shape": [
+        384,
+        64
+      ],
+      "numel": 24576,
+      "norm": 8.780923,
+      "abs_max": 0.230551,
+      "all_zero": false,
+      "identical_to_init": true,
+      "delta_norm_vs_init": 0.0
+    },
+    {
+      "path": "substrate.memory.outcome_encoder.pre_index",
+      "shape": [
+        384,
+        64
+      ],
+      "numel": 24576,
+      "norm": 23243.757812,
+      "abs_max": 256.0,
+      "all_zero": false,
+      "identical_to_init": true,
+      "delta_norm_vs_init": 0.0
+    },
+    {
+      "path": "substrate.memory.outcome_readout.edge_weight",
+      "shape": [
+        257,
+        96
+      ],
+      "numel": 24672,
+      "norm": 0.0,
+      "abs_max": 0.0,
+      "all_zero": true,
+      "identical_to_init": true,
+      "delta_norm_vs_init": 0.0
+    },
+    {
+      "path": "substrate.memory.outcome_readout.pre_index",
+      "shape": [
+        257,
+        96
+      ],
+      "numel": 24672,
+      "norm": 8637.837891,
+      "abs_max": 95.0,
+      "all_zero": false,
+      "identical_to_init": false,
+      "delta_norm_vs_init": 6155.123535
+    },
+    {
+      "path": "substrate.memory.provenance_encoder.edge_weight",
+      "shape": [
+        384,
+        4
+      ],
+      "numel": 1536,
+      "norm": 8.774038,
+      "abs_max": 0.885238,
+      "all_zero": false,
+      "identical_to_init": true,
+      "delta_norm_vs_init": 0.0
+    },
+    {
+      "path": "substrate.memory.provenance_encoder.pre_index",
+      "shape": [
+        384,
+        4
+      ],
+      "numel": 1536,
+      "norm": 73.321213,
+      "abs_max": 3.0,
+      "all_zero": false,
+      "identical_to_init": true,
+      "delta_norm_vs_init": 0.0
+    },
+    {
+      "path": "substrate.memory.provenance_readout.edge_weight",
+      "shape": [
+        4,
+        96
+      ],
+      "numel": 384,
+      "norm": 0.0,
+      "abs_max": 0.0,
+      "all_zero": true,
+      "identical_to_init": true,
+      "delta_norm_vs_init": 0.0
+    },
+    {
+      "path": "substrate.memory.provenance_readout.pre_index",
+      "shape": [
+        4,
+        96
+      ],
+      "numel": 384,
+      "norm": 1077.627075,
+      "abs_max": 95.0,
+      "all_zero": false,
+      "identical_to_init": false,
+      "delta_norm_vs_init": 818.400879
+    },
+    {
+      "path": "substrate.memory.readout_receptors.channel",
+      "shape": [
+        384
+      ],
+      "numel": 384,
+      "norm": 1077.627075,
+      "abs_max": 95.0,
+      "all_zero": false,
+      "identical_to_init": true,
+      "delta_norm_vs_init": 0.0
+    },
+    {
+      "path": "substrate.memory.readout_receptors.polarity",
+      "shape": [
+        384
+      ],
+      "numel": 384,
+      "norm": 19.595919,
+      "abs_max": 1.0,
+      "all_zero": false,
+      "identical_to_init": true,
+      "delta_norm_vs_init": 0.0
+    },
+    {
+      "path": "substrate.memory.reward_code",
+      "shape": [
+        384
+      ],
+      "numel": 384,
+      "norm": 8.818163,
+      "abs_max": 0.45,
+      "all_zero": false,
+      "identical_to_init": true,
+      "delta_norm_vs_init": 0.0
+    },
+    {
+      "path": "substrate.memory.reward_readout.edge_weight",
+      "shape": [
+        1,
+        96
+      ],
+      "numel": 96,
+      "norm": 0.0,
+      "abs_max": 0.0,
+      "all_zero": true,
+      "identical_to_init": true,
+      "delta_norm_vs_init": 0.0
+    },
+    {
+      "path": "substrate.memory.reward_readout.pre_index",
+      "shape": [
+        1,
+        96
+      ],
+      "numel": 96,
+      "norm": 538.813538,
+      "abs_max": 95.0,
+      "all_zero": false,
+      "identical_to_init": false,
+      "delta_norm_vs_init": 383.624817
+    },
+    {
+      "path": "substrate.memory.time_encoder.edge_weight",
+      "shape": [
+        384,
+        8
+      ],
+      "numel": 3072,
+      "norm": 8.8735,
+      "abs_max": 0.583974,
+      "all_zero": false,
+      "identical_to_init": true,
+      "delta_norm_vs_init": 0.0
+    },
+    {
+      "path": "substrate.memory.time_encoder.pre_index",
+      "shape": [
+        384,
+        8
+      ],
+      "numel": 3072,
+      "norm": 231.86203,
+      "abs_max": 7.0,
+      "all_zero": false,
+      "identical_to_init": true,
+      "delta_norm_vs_init": 0.0
+    },
+    {
+      "path": "substrate.memory.time_readout.edge_weight",
+      "shape": [
+        8,
+        96
+      ],
+      "numel": 768,
+      "norm": 0.0,
+      "abs_max": 0.0,
+      "all_zero": true,
+      "identical_to_init": true,
+      "delta_norm_vs_init": 0.0
+    },
+    {
+      "path": "substrate.memory.time_readout.pre_index",
+      "shape": [
+        8,
+        96
+      ],
+      "numel": 768,
+      "norm": 1523.994751,
+      "abs_max": 95.0,
+      "all_zero": false,
+      "identical_to_init": false,
+      "delta_norm_vs_init": 1093.434082
+    },
+    {
+      "path": "substrate.motor.bias",
+      "shape": [
+        257
+      ],
+      "numel": 257,
+      "norm": 8.531609,
+      "abs_max": 2.484451,
+      "all_zero": false,
+      "identical_to_init": false,
+      "delta_norm_vs_init": 8.531609
+    },
+    {
+      "path": "substrate.motor.receptors.channel",
+      "shape": [
+        1152
+      ],
+      "numel": 1152,
+      "norm": 1866.504761,
+      "abs_max": 95.0,
+      "all_zero": false,
+      "identical_to_init": true,
+      "delta_norm_vs_init": 0.0
+    },
+    {
+      "path": "substrate.motor.receptors.polarity",
+      "shape": [
+        1152
+      ],
+      "numel": 1152,
+      "norm": 33.941124,
+      "abs_max": 1.0,
+      "all_zero": false,
+      "identical_to_init": true,
+      "delta_norm_vs_init": 0.0
+    },
+    {
+      "path": "substrate.motor.synapses.edge_weight",
+      "shape": [
+        257,
+        96
+      ],
+      "numel": 24672,
+      "norm": 39.772041,
+      "abs_max": 1.204619,
+      "all_zero": false,
+      "identical_to_init": false,
+      "delta_norm_vs_init": 40.271866
+    },
+    {
+      "path": "substrate.motor.synapses.pre_index",
+      "shape": [
+        257,
+        96
+      ],
+      "numel": 24672,
+      "norm": 8637.837891,
+      "abs_max": 95.0,
+      "all_zero": false,
+      "identical_to_init": true,
+      "delta_norm_vs_init": 0.0
+    },
+    {
+      "path": "substrate.rng_state",
+      "shape": [
+        5056
+      ],
+      "numel": 5056,
+      "norm": 7298.198242,
+      "abs_max": 255.0,
+      "all_zero": false,
+      "identical_to_init": false,
+      "delta_norm_vs_init": 5145.056641
+    },
+    {
+      "path": "substrate.state.memory.activity",
+      "shape": [
+        384
+      ],
+      "numel": 384,
+      "norm": 1.938028,
+      "abs_max": 0.616961,
+      "all_zero": false,
+      "identical_to_init": false,
+      "delta_norm_vs_init": 1.938028
+    },
+    {
+      "path": "substrate.state.memory.cortical_feedback",
+      "shape": [
+        1152
+      ],
+      "numel": 1152,
+      "norm": 0.0,
+      "abs_max": 0.0,
+      "all_zero": true,
+      "identical_to_init": true,
+      "delta_norm_vs_init": 0.0
+    },
+    {
+      "path": "substrate.state.memory.threshold",
+      "shape": [
+        384
+      ],
+      "numel": 384,
+      "norm": 8.838771,
+      "abs_max": 1.206343,
+      "all_zero": false,
+      "identical_to_init": false,
+      "delta_norm_vs_init": 8.494709
+    },
+    {
+      "path": "substrate.state.memory.trace",
+      "shape": [
+        384
+      ],
+      "numel": 384,
+      "norm": 1.249962,
+      "abs_max": 0.408754,
+      "all_zero": false,
+      "identical_to_init": false,
+      "delta_norm_vs_init": 1.249962
+    },
+    {
+      "path": "substrate.state.motor_context",
+      "shape": [
+        96
+      ],
+      "numel": 96,
+      "norm": 4.0,
+      "abs_max": 1.427412,
+      "all_zero": false,
+      "identical_to_init": false,
+      "delta_norm_vs_init": 4.0
+    },
+    {
+      "path": "substrate.state.motor_probabilities",
+      "shape": [
+        257
+      ],
+      "numel": 257,
+      "norm": 0.296061,
+      "abs_max": 0.193773,
+      "all_zero": false,
+      "identical_to_init": false,
+      "delta_norm_vs_init": 0.289415
+    },
+    {
+      "path": "substrate.state.regions[0].activity",
+      "shape": [
+        256
+      ],
+      "numel": 256,
+      "norm": 0.359122,
+      "abs_max": 0.15301,
+      "all_zero": false,
+      "identical_to_init": false,
+      "delta_norm_vs_init": 0.359122
+    },
+    {
+      "path": "substrate.state.regions[0].error",
+      "shape": [
+        257
+      ],
+      "numel": 257,
+      "norm": 1.002026,
+      "abs_max": 0.985178,
+      "all_zero": false,
+      "identical_to_init": false,
+      "delta_norm_vs_init": 1.002026
+    },
+    {
+      "path": "substrate.state.regions[0].inhibition",
+      "shape": [
+        256
+      ],
+      "numel": 256,
+      "norm": 0.086025,
+      "abs_max": 0.026971,
+      "all_zero": false,
+      "identical_to_init": false,
+      "delta_norm_vs_init": 0.086025
+    },
+    {
+      "path": "substrate.state.regions[0].membrane",
+      "shape": [
+        256
+      ],
+      "numel": 256,
+      "norm": 1.072025,
+      "abs_max": 0.278808,
+      "all_zero": false,
+      "identical_to_init": false,
+      "delta_norm_vs_init": 1.072025
+    },
+    {
+      "path": "substrate.state.regions[0].prediction",
+      "shape": [
+        257
+      ],
+      "numel": 257,
+      "norm": 0.183579,
+      "abs_max": 0.101499,
+      "all_zero": false,
+      "identical_to_init": false,
+      "delta_norm_vs_init": 0.183579
+    },
+    {
+      "path": "substrate.state.regions[0].threshold",
+      "shape": [
+        256
+      ],
+      "numel": 256,
+      "norm": 1.612272,
+      "abs_max": 0.367265,
+      "all_zero": false,
+      "identical_to_init": false,
+      "delta_norm_vs_init": 1.396814
+    },
+    {
+      "path": "substrate.state.regions[0].trace",
+      "shape": [
+        256
+      ],
+      "numel": 256,
+      "norm": 0.171346,
+      "abs_max": 0.077446,
+      "all_zero": false,
+      "identical_to_init": false,
+      "delta_norm_vs_init": 0.171346
+    },
+    {
+      "path": "substrate.state.regions[1].activity",
+      "shape": [
+        192
+      ],
+      "numel": 192,
+      "norm": 0.168294,
+      "abs_max": 0.082929,
+      "all_zero": false,
+      "identical_to_init": false,
+      "delta_norm_vs_init": 0.168294
+    },
+    {
+      "path": "substrate.state.regions[1].error",
+      "shape": [
+        256
+      ],
+      "numel": 256,
+      "norm": 0.331997,
+      "abs_max": 0.132455,
+      "all_zero": false,
+      "identical_to_init": false,
+      "delta_norm_vs_init": 0.331997
+    },
+    {
+      "path": "substrate.state.regions[1].inhibition",
+      "shape": [
+        192
+      ],
+      "numel": 192,
+      "norm": 0.052501,
+      "abs_max": 0.020845,
+      "all_zero": false,
+      "identical_to_init": false,
+      "delta_norm_vs_init": 0.052501
+    },
+    {
+      "path": "substrate.state.regions[1].membrane",
+      "shape": [
+        192
+      ],
+      "numel": 192,
+      "norm": 0.508029,
+      "abs_max": 0.148508,
+      "all_zero": false,
+      "identical_to_init": false,
+      "delta_norm_vs_init": 0.508029
+    },
+    {
+      "path": "substrate.state.regions[1].prediction",
+      "shape": [
+        256
+      ],
+      "numel": 256,
+      "norm": 0.151315,
+      "abs_max": 0.062265,
+      "all_zero": false,
+      "identical_to_init": false,
+      "delta_norm_vs_init": 0.151315
+    },
+    {
+      "path": "substrate.state.regions[1].threshold",
+      "shape": [
+        192
+      ],
+      "numel": 192,
+      "norm": 0.521973,
+      "abs_max": 0.101029,
+      "all_zero": false,
+      "identical_to_init": false,
+      "delta_norm_vs_init": 0.318688
+    },
+    {
+      "path": "substrate.state.regions[1].trace",
+      "shape": [
+        192
+      ],
+      "numel": 192,
+      "norm": 0.114997,
+      "abs_max": 0.044668,
+      "all_zero": false,
+      "identical_to_init": false,
+      "delta_norm_vs_init": 0.114997
+    },
+    {
+      "path": "substrate.state.regions[2].activity",
+      "shape": [
+        128
+      ],
+      "numel": 128,
+      "norm": 0.090941,
+      "abs_max": 0.075711,
+      "all_zero": false,
+      "identical_to_init": false,
+      "delta_norm_vs_init": 0.090941
+    },
+    {
+      "path": "substrate.state.regions[2].error",
+      "shape": [
+        192
+      ],
+      "numel": 192,
+      "norm": 0.143586,
+      "abs_max": 0.078567,
+      "all_zero": false,
+      "identical_to_init": false,
+      "delta_norm_vs_init": 0.143586
+    },
+    {
+      "path": "substrate.state.regions[2].inhibition",
+      "shape": [
+        128
+      ],
+      "numel": 128,
+      "norm": 0.017249,
+      "abs_max": 0.004842,
+      "all_zero": false,
+      "identical_to_init": false,
+      "delta_norm_vs_init": 0.017249
+    },
+    {
+      "path": "substrate.state.regions[2].membrane",
+      "shape": [
+        128
+      ],
+      "numel": 128,
+      "norm": 0.306262,
+      "abs_max": 0.127853,
+      "all_zero": false,
+      "identical_to_init": false,
+      "delta_norm_vs_init": 0.306262
+    },
+    {
+      "path": "substrate.state.regions[2].prediction",
+      "shape": [
+        192
+      ],
+      "numel": 192,
+      "norm": 0.054188,
+      "abs_max": 0.022163,
+      "all_zero": false,
+      "identical_to_init": false,
+      "delta_norm_vs_init": 0.054188
+    },
+    {
+      "path": "substrate.state.regions[2].threshold",
+      "shape": [
+        128
+      ],
+      "numel": 128,
+      "norm": 0.322054,
+      "abs_max": 0.065543,
+      "all_zero": false,
+      "identical_to_init": false,
+      "delta_norm_vs_init": 0.204411
+    },
+    {
+      "path": "substrate.state.regions[2].trace",
+      "shape": [
+        128
+      ],
+      "numel": 128,
+      "norm": 0.061771,
+      "abs_max": 0.049335,
+      "all_zero": false,
+      "identical_to_init": false,
+      "delta_norm_vs_init": 0.061771
+    }
+  ],
+  "base_sha256_unchanged": true,
+  "instrument_guard": {
+    "surfaces_nonzero": true,
+    "twin_covers_checkpoint": true,
+    "base_unchanged": true
+  }
+}

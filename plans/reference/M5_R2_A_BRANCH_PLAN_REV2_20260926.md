@@ -107,7 +107,46 @@ rev2 把目标写成"建立可归因的因果链"——**这是错的**，用户
 架构层的情节写入与巩固通路**从来没被任何一次训练碰过**,所以它们是零——不是坏了,是没人训。
 这也正是 A0 要先验"写＋读"的原因：如果断路只在写入口,那就不需要动训练。
 
+## 2c. "16M 到底增长了什么"——全量普查（rev3 新增，`probe_taiji_substrate_growth_census.py`）
+
+读数件 `reports/taiji_substrate_growth_census_20260926.json`（`guard_ok: true`、
+`surfaces_not_in_twin: 0`、基座 sha 未动；口径＝递归枚举检查点里**全部** 93 张面，
+与"同 config 新建的初始态"逐面对比，不点名抽查）：
+
+| 问的事 | 读数 |
+|---|---|
+| 16M 是什么单位 | `metadata.tick = 16000000`＝**训练步/符号数**（2026-08-24 存，语料 `simple_zh_texts.jsonl` 1.39GB） |
+| 规模有没有长 | **没有**：`fabric_structural_events = 0`、identity 扩容历史 **0 条**、`development_ticks = 0` |
+| 参数量 | 存盘面合计 **1,029,828**；模型自报活跃参数 **725,651** |
+| 16M tick 推动了多少 | 动了 **48/93** 面、**245,204/1,029,828 ≈ 23.8%** 的参数；**45 面逐位等于初始态** |
+| 动的是哪些 | fabric 的 `transitions[0..2]`／`decoders[0..2]`／`laterals[0..2]`／`trace_baselines`、`motor.synapses`＋`motor.bias` ⇒ **"预测下一个字节"那条主干** |
+| 全零面 13 张里 12 张属于记忆 | `fabric.consolidation_decoders[0..2]`、`memory.{action,association,cortical,episode,familiarity,outcome,provenance,reward,time}_readout` 的 `edge_weight`、`state.memory.cortical_feedback` |
+| 记忆有没有被写过 | `memory_write_count = 0` |
+
+**三条结论**
+1. **16M tick 买到的只是语言主干**（fabric＋motor）。记忆那一整套——情节库的 9 个读出、
+   联想、巩固慢通路——**权重全零、写入次数为零**，一次都没进过训练循环。
+2. 唯一"变了"的记忆面是那些 readout 的 `pre_index`（稀疏连接**索引**，不是学到的内容），
+   而且本件的"初始态对照"是同 config 新建、索引由 RNG 抽取顺序决定，
+   版本迁移会让它不同 ⇒ **不得**把它读成"记忆被训练过"。
+3. 所以 A2 那条剪贴板旁路不是"绕开一个能用但没接的模块"，而是**绕开一个从未通电的模块**；
+   这也解释了为什么旁路能有 17–21/104 而架构层是 0。
+
+**普查的局限（诚实登记）**：只覆盖**检查点里存盘的面**。`predictive_readout`／
+`predictive_context` 是运行时重建的（审计读到 readout 范数 39.772041 与 motor **完全相同**，
+与既有登记"读出是 v8 迁移时 motor 的副本"一致），不在这 93 面里 ⇒
+"45 面等于初始态"这句只对存盘面成立。
+
+**由此给 A0 一条跑前预测（先登记，免得事后找解释）**：
+情节库那 9 个 readout 的 `edge_weight` 全零 ⇒ 即使补上写入口、打开 `use_memory=True`，
+`recall.action_evidence` 很可能**恒为零**，四格（写/不写 × 读/不读）**全同**。
+若实测如此，结论不是"乙路线死了"，而是更精确的一句：**断路不止写入口一处，
+读侧的读出权重也从未被训练** ⇒ 乙 的第一步必须是"写入口＋读侧训练"两件一起，
+只接线不训练不会有能力。若四格竟然有差，则说明 `action_evidence` 有非权重来源
+（例如 confidence 或 receptor 项），那要重查这条通路的实现再下结论。
+
 ## 3. 病因陈述（机制层）
+
 
 
 1. **没有"问题"这个对象**：检索查询是"生成到哪一步"的活动状态，不是"在问什么"的持久表征。
