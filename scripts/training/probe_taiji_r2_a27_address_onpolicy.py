@@ -132,6 +132,7 @@ def trace_all(substrate: Any, circuit: Any, runtime: Any, ids: list[str], items:
     from probe_taiji_r2_a26_emission_trace import trace_item
 
     steps = aimed = emitted = 0
+    step0 = step0_aimed = 0
     fully = 0
     for item_id in ids:
         item = items[item_id]
@@ -156,6 +157,11 @@ def trace_all(substrate: Any, circuit: Any, runtime: Any, ids: list[str], items:
             steps += 1
             aimed += int(row["copy_aimed"])
             emitted += int(row["emitted"])
+            if int(row["step"]) == 0:
+                #: §22 量到 56/81 题在**答案第一个字节**就断，所以第 0 步要单列，
+                #: 不能和"整串平均"混成一个数。
+                step0 += 1
+                step0_aimed += int(row["copy_aimed"])
         fully += int(record.get("class") == "emitted")
     if steps == 0:
         raise AssertionError("一个答案步都没取到——链路或题号读错了")
@@ -164,6 +170,8 @@ def trace_all(substrate: Any, circuit: Any, runtime: Any, ids: list[str], items:
         "aim_correct": aimed,
         "aim_rate": round(aimed / steps, 4),
         "emitted_rate": round(emitted / steps, 4),
+        "step0_steps": step0,
+        "step0_aim_rate": round(step0_aimed / step0, 4) if step0 else None,
         "items_fully_emitted": fully,
     }
 

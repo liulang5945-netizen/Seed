@@ -57,6 +57,57 @@ def _feed_predictive(model: Taiji, symbols: bytes) -> torch.Tensor:
     return last.probabilities.detach().cpu().clone()
 
 
+def test_pool_default_is_bitwise_the_existing_sum() -> None:
+    """`pool_override` 不设时，字节聚合必须与直接 `index_add` **逐位相同**。
+
+    这条守卫的意义：器官已经上线过"挂载必须位级不变"的规矩（§4.1），
+    加一个诊断分支不能悄悄改变生产路径。
+    """
+    circuit = CopyCircuit(_model().config, max_events=4)
+    codes = torch.tensor([229, 139, 162, 229, 147, 175], dtype=torch.long)
+    weights = torch.tensor([0.1, 0.2, 0.3, 0.35, 0.02, 0.03])
+    zeros = torch.zeros(int(circuit.config.alphabet_size), dtype=torch.float32)
+    got = circuit._pool_into(zeros.clone(), codes, weights)
+    want = torch.zeros_like(zeros).index_add(0, codes, weights)
+    assert bool(torch.equal(got, want))
+
+
+def test_pool_max_reports_the_strongest_position_not_the_count() -> None:
+    """ "取最大"必须只看最强位置——这正是要检验的那件事（位置数不该变成质量）。"""
+    circuit = CopyCircuit(_model().config, max_events=4)
+    codes = torch.tensor([229, 139, 162, 229, 147, 175], dtype=torch.long)
+    weights = torch.tensor([0.1, 0.2, 0.3, 0.35, 0.02, 0.03])
+    zeros = torch.zeros(int(circuit.config.alphabet_size), dtype=torch.float32)
+    circuit.pool_override = "max"
+    got = circuit._pool_into(zeros.clone(), codes, weights)
+    assert float(got[229]) == pytest.approx(0.35), got[229]  # 位置多但都不是最强
+    assert float(got[162]) == pytest.approx(0.3)
+    summed = torch.zeros_like(zeros).index_add(0, codes, weights)
+    assert float(summed[229]) == pytest.approx(0.45)  # 求和那侧才是"数票"
+
+
+def test_pool_mean_divides_by_position_count_and_keeps_multiplicity() -> None:
+    """ "取平均"是对"数被当成质量"的公平检验：重数保留、计数放大去掉。"""
+    circuit = CopyCircuit(_model().config, max_events=4)
+    codes = torch.tensor([229, 139, 162, 229, 147, 175], dtype=torch.long)
+    weights = torch.tensor([0.1, 0.2, 0.3, 0.35, 0.02, 0.03])
+    zeros = torch.zeros(int(circuit.config.alphabet_size), dtype=torch.float32)
+    circuit.pool_override = "mean"
+    got = circuit._pool_into(zeros.clone(), codes, weights)
+    assert float(got[229]) == pytest.approx(0.45 / 2.0, abs=1e-6), got[229]
+    assert float(got[162]) == pytest.approx(0.3)  # 只出现一次的位置不受影响
+    summed = torch.zeros_like(zeros).index_add(0, codes, weights)
+    assert float(got[229]) < float(summed[229])  # 计数放大被除掉，但质量次序仍留着
+
+
+def test_pool_unknown_mode_is_loud() -> None:
+    circuit = CopyCircuit(_model().config, max_events=4)
+    circuit.pool_override = "median"
+    zeros = torch.zeros(int(circuit.config.alphabet_size), dtype=torch.float32)
+    with pytest.raises(ValueError):
+        circuit._pool_into(zeros, torch.tensor([1, 2]), torch.tensor([0.5, 0.5]))
+
+
 def test_mount_is_bitwise_inert() -> None:
     plain = _model()
     mounted = _model()

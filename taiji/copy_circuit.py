@@ -205,6 +205,10 @@ class CopyCircuit:
         # 诊断专用显式覆写（生产恒 None）。见模块 docstring。
         self.address_override: torch.Tensor | None = None
         self.gate_override: float | None = None
+        #: 诊断专用：字节聚合方式（`"sum"`＝现状＝生产；`"max"` 只在 §22 那类归因实验里显式设）。
+        #: 动机：`index_add` 把同一字节在句中**所有位置**的质量相加，于是"位置多"会被读成"更相关"
+        #: ——实测首字节输家系统性地输给 E5/E6/E8（中文最常见首字节），怀疑就出在这儿。
+        self.pool_override: str = "sum"
 
     @property
     def mounted(self) -> bool:
@@ -249,6 +253,35 @@ class CopyCircuit:
         scores = query @ keys.T / scale + self._successor_bonus(codes, prev_byte)
         return torch.softmax(scores, dim=0)
 
+    def _pool_into(
+        self, distribution: torch.Tensor, codes: torch.Tensor, weights: torch.Tensor
+    ) -> torch.Tensor:
+        """把位置质量聚合成字节质量：默认 `index_add`（现状＝生产路径），诊断可切 `amax`。
+
+        两种聚合的差别只在一个字节**在这条告知里出现几次**：求和会把它的位置数变成质量，
+        取最大只看最强的那个位置。见 `pool_override` 的注释与 `SPEC-A-17` §22。
+        """
+        if self.pool_override == "max":
+            #: 不用 `index_reduce_`（torch 标为 beta、语义将来可能变）：诊断路径每条告知只有几十
+            #: 个位置，显式循环更贵不了多少，但不会因为 torch 升级而静默换语义。
+            pooled = distribution.clone()
+            for code, weight in zip(codes.tolist(), weights.tolist()):
+                if float(weight) > float(pooled[int(code)]):
+                    pooled[int(code)] = float(weight)
+            return pooled
+        if self.pool_override == "mean":
+            #: 这才是"位置数被当成质量"这一假设的**公平检验**：保留重数、只去掉计数放大。
+            #: `max` 把重数整个丢掉（实测指对率 17.8%→8.9%，方向已负），
+            #: 用它否证"求和虚增"会把"重数确实有用"这半边一起切掉。
+            #: 注意这里显式走 `index_add` 而不是 `self._pool_into`——后者会按当前
+            #: `pool_override` 再绕回本分支，变成无限递归。
+            counts = torch.zeros_like(distribution).index_add(0, codes, torch.ones_like(weights))
+            summed = torch.zeros_like(distribution).index_add(0, codes, weights)
+            return summed / counts.clamp(min=1.0)
+        if self.pool_override != "sum":
+            raise ValueError(f"unknown pool_override {self.pool_override!r}")
+        return distribution.index_add(0, codes, weights)
+
     def evidence(
         self, *, cue: torch.Tensor, f1_context: torch.Tensor, prev_byte: int | None = None
     ) -> torch.Tensor:
@@ -261,7 +294,7 @@ class CopyCircuit:
             return distribution
         weights = self._position_weights(event, f1_context, prev_byte)
         codes = torch.tensor(list(event.content), device=self.device, dtype=torch.long)
-        distribution = distribution.index_add(0, codes, weights)
+        distribution = self._pool_into(distribution, codes, weights)
         keys = self._parameters["content_embed"][codes] @ self._parameters["query_content"]
         pooled = weights @ keys
         gate = (
@@ -293,7 +326,7 @@ class CopyCircuit:
         distribution = torch.zeros(
             self.config.alphabet_size, dtype=torch.float32, device=self.device
         )
-        distribution = distribution.index_add(0, codes, weights)
+        distribution = self._pool_into(distribution, codes, weights)
         pooled = weights @ keys
         gate = (
             f1_context @ self._parameters["gate_state"]
