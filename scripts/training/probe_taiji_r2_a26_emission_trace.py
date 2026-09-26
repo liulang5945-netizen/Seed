@@ -330,14 +330,7 @@ def trace_item(
                     ).sum()
                     + 1
                 ),
-                "copy_top5": [
-                    [int(byte), round(float(mass), 6)]
-                    for byte, mass in zip(
-                        *torch.topk(
-                            snap["copy_distribution"], k=min(5, int(circuit.config.alphabet_size))
-                        )
-                    )
-                ],
+                "copy_top5": _top_bytes(snap["copy_distribution"]),
                 "gate_value": round(gate, 4),
                 "p_with_copy": round(float(with_copy[target_byte]), 8),
                 "p_vocab_only": round(float(vocab_only[target_byte]), 8),
@@ -394,6 +387,18 @@ def trace_item(
             #: 看产品解码能不能把答案发出来。`oracle` 档同时改了提示词，定不出这个价。
             record["ablation_hits"] = answer in ablated
     return record
+
+
+def _top_bytes(distribution: Any, k: int = 5) -> list[list[Any]]:
+    """copy 分布里质量最高的 k 个字节，返回 `[[字节, 质量], ...]`（按质量降序）。
+
+    `torch.topk` 返回的是 **(值, 下标)** 两个张量。第一版写成 `zip(*topk(...))`，
+    于是把"值"当成了字节、"下标"当成了质量——所有赢家字节都被记成 `0x00`
+    （值域 [0,1] 取整恒为 0）。名次那一列是独立算的没受影响，但这一列必须重跑。
+    **教训：成对返回的 API 不要靠位置解包。**
+    """
+    values, indices = torch.topk(distribution, k=int(k))
+    return [[int(byte), round(float(mass), 6)] for byte, mass in zip(indices.tolist(), values.tolist())]
 
 
 def _classify(rows: list[dict[str, Any]]) -> str:

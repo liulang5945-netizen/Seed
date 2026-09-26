@@ -13,6 +13,7 @@ import torch
 from scripts.training.probe_taiji_r2_a26_emission_trace import (
     _classify,
     _keep_only_target_events,
+    _top_bytes,
 )
 from taiji.copy_circuit import ToldContentStore
 
@@ -34,6 +35,32 @@ def _row(
         "gate_value": gate,
         "forced_open_would_hit": forced_hit,
     }
+
+
+def test_top_bytes_reports_byte_first_then_mass() -> None:
+    """回归：`torch.topk` 返回 (值, 下标)——按位置解包会把质量当成字节。
+
+    那样所有"赢家字节"都会被记成 0x00（值域 [0,1] 取整恒为 0），
+    而字段名看着完全正常，只有拿真字节去核对才会发现。
+    """
+    distribution = torch.zeros(257)
+    distribution[13] = 0.9
+    distribution[7] = 0.5
+    distribution[200] = 0.1
+    top = _top_bytes(distribution)
+    assert len(top) == 5, top  # 固定返回 k 个：非零项不足时用零质量字节补齐
+    assert [byte for byte, mass in top if mass > 0] == [13, 7, 200], top
+    assert abs(top[0][1] - 0.9) < 1e-6 and isinstance(top[0][0], int), top
+
+
+def test_top_bytes_agree_with_the_recorded_target_mass() -> None:
+    """自洽：目标字节若进前五，它记录的质量必须等于 `copy_mass_on_target` 那一列。"""
+    distribution = torch.zeros(257)
+    distribution[10] = 0.6
+    distribution[77] = 0.4
+    top = _top_bytes(distribution)
+    recorded = next(mass for byte, mass in top if byte == 77)
+    assert abs(float(distribution[77]) - recorded) < 1e-6  # 记的是四舍五入到 6 位的 float32
 
 
 def test_empty_trace_is_not_silently_triaged() -> None:
@@ -60,7 +87,9 @@ def test_suppression_needs_positive_evidence() -> None:
     """
     suppressed = [
         _row(step=0, copy_top=232, target=232, emitted=True),
-        _row(step=1, copy_top=139, target=139, emitted=False),  # 指对目标却没发出（词汇 logits 赢了）
+        _row(
+            step=1, copy_top=139, target=139, emitted=False
+        ),  # 指对目标却没发出（词汇 logits 赢了）
     ]
     assert _classify(suppressed) == "emission_loses"
     slipping = [
