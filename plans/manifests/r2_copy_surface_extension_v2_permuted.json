@@ -1,0 +1,1484 @@
+{
+  "format": "r2-copy-surface-extension-v2-permuted",
+  "frozen_on": "2026-09-26",
+  "frozen_before_any_candidate_score": true,
+  "purpose": "**判别探针**（不是能力题集）：v1/v2 都按机检规定「含答案词的告知排第一」，于是「永远挑最旧」这条纯位置规则在两者上都满分 ⇒ 提问条件化与位置先验在那两份题集上结构上不可分。本件只把前两轮交换，提问与判分词一字不动。",
+  "prereg": "plans/reference/SPEC-A-22_r2_a2_5_query_conditioned_selector_prereg_20260926.md §12",
+  "generator": "scripts/build_r2_copy_surface_extension_v2_permuted.py",
+  "derived_from": "plans/manifests/r2_copy_surface_extension_v2.json",
+  "derived_from_sha256": "34e6e1753714a2720c76a9b143b4ca930e260fde0ff10c98e6792a4d2c6c65d3",
+  "count": 104,
+  "construction_checks": {
+    "all_three_turn": true,
+    "answer_tell_moved_off_turn_zero": true,
+    "question_and_tokens_unchanged": true,
+    "id_set_matches_parent": true,
+    "answer_tell_is_turn_two_by_construction": true
+  },
+  "reading_rule": "只用**学习式选择器**的训练臂（SPEC-A-22 丙）与**未训 cue／只锁定**臂（乙）在同一份题集上比：若 丙 在这里塌回 乙/对照水平 ⇒ 它用的是位置先验，「提问条件化」不成立；若仍守住 ⇒ 才是「由提问决定」的第一份正面证据。",
+  "disjointness_note": "实体池沿用 v1（与 CAP 评价集、A2.3 训练表两条不相交断言由 tests/taiji_native/test_r2_copy_surface_extension_contract.py 逐条断言）",
+  "dimensions": {
+    "X": {
+      "name": "告知→同谓语干扰→提问（难干扰扩展集 v2）",
+      "count": 104,
+      "items": [
+        {
+          "id": "V001",
+          "family": "with_hard_distractor",
+          "flavour": "same_subject_marker",
+          "kind": "name",
+          "turns": [
+            "我表哥叫雨桐。",
+            "我叫明轩。",
+            "我的名字是什么？"
+          ],
+          "expected_contains": [
+            "明轩"
+          ]
+        },
+        {
+          "id": "V002",
+          "family": "with_hard_distractor",
+          "flavour": "same_subject_marker",
+          "kind": "city",
+          "turns": [
+            "我表哥住在西安。",
+            "我住在苏州。",
+            "我住哪？"
+          ],
+          "expected_contains": [
+            "苏州"
+          ]
+        },
+        {
+          "id": "V003",
+          "family": "with_hard_distractor",
+          "flavour": "same_subject_marker",
+          "kind": "number",
+          "turns": [
+            "我妹妹最喜欢的数字是21。",
+            "我最喜欢的数字是36。",
+            "那个数字是多少？"
+          ],
+          "expected_contains": [
+            "36"
+          ]
+        },
+        {
+          "id": "V004",
+          "family": "with_hard_distractor",
+          "flavour": "same_subject_marker",
+          "kind": "project",
+          "turns": [
+            "我同事的项目叫晨星。",
+            "我的项目叫海图。",
+            "我的项目叫什么？"
+          ],
+          "expected_contains": [
+            "海图"
+          ]
+        },
+        {
+          "id": "V005",
+          "family": "with_hard_distractor",
+          "flavour": "same_subject_marker",
+          "kind": "drink",
+          "turns": [
+            "我爱人爱喝苏打。",
+            "我平时爱喝乌龙。",
+            "我爱喝什么？"
+          ],
+          "expected_contains": [
+            "乌龙"
+          ]
+        },
+        {
+          "id": "V006",
+          "family": "with_hard_distractor",
+          "flavour": "same_subject_marker",
+          "kind": "pet",
+          "turns": [
+            "我家邻居养了一只浣熊。",
+            "我养了一只雪鸮。",
+            "我养的动物是什么？"
+          ],
+          "expected_contains": [
+            "雪鸮"
+          ]
+        },
+        {
+          "id": "V007",
+          "family": "with_hard_distractor",
+          "flavour": "same_subject_marker",
+          "kind": "book",
+          "turns": [
+            "我姐姐最近在读《水经注疏》。",
+            "我最近在读《海客谈瀛》。",
+            "我最近在读什么书？"
+          ],
+          "expected_contains": [
+            "海客谈瀛"
+          ]
+        },
+        {
+          "id": "V008",
+          "family": "with_hard_distractor",
+          "flavour": "same_subject_marker",
+          "kind": "dish",
+          "turns": [
+            "我哥哥最爱吃辣子鸡。",
+            "我最爱吃小笼包。",
+            "我最爱吃什么？"
+          ],
+          "expected_contains": [
+            "小笼包"
+          ]
+        },
+        {
+          "id": "V009",
+          "family": "with_hard_distractor",
+          "flavour": "no_subject_marker",
+          "kind": "name",
+          "turns": [
+            "表哥叫承泽。",
+            "我叫雨桐。",
+            "我的名字是什么？"
+          ],
+          "expected_contains": [
+            "雨桐"
+          ]
+        },
+        {
+          "id": "V010",
+          "family": "with_hard_distractor",
+          "flavour": "no_subject_marker",
+          "kind": "city",
+          "turns": [
+            "同事住在青岛。",
+            "我住在西安。",
+            "我住哪？"
+          ],
+          "expected_contains": [
+            "西安"
+          ]
+        },
+        {
+          "id": "V011",
+          "family": "with_hard_distractor",
+          "flavour": "no_subject_marker",
+          "kind": "number",
+          "turns": [
+            "妹妹最喜欢的数字是77。",
+            "我最喜欢的数字是21。",
+            "那个数字是多少？"
+          ],
+          "expected_contains": [
+            "21"
+          ]
+        },
+        {
+          "id": "V012",
+          "family": "with_hard_distractor",
+          "flavour": "no_subject_marker",
+          "kind": "project",
+          "turns": [
+            "朋友的项目叫石径。",
+            "我的项目叫晨星。",
+            "我的项目叫什么？"
+          ],
+          "expected_contains": [
+            "晨星"
+          ]
+        },
+        {
+          "id": "V013",
+          "family": "with_hard_distractor",
+          "flavour": "no_subject_marker",
+          "kind": "drink",
+          "turns": [
+            "爱人爱喝桂花酿。",
+            "我平时爱喝苏打。",
+            "我爱喝什么？"
+          ],
+          "expected_contains": [
+            "苏打"
+          ]
+        },
+        {
+          "id": "V014",
+          "family": "with_hard_distractor",
+          "flavour": "no_subject_marker",
+          "kind": "pet",
+          "turns": [
+            "邻居养了一只树袋熊。",
+            "我养了一只浣熊。",
+            "我养的动物是什么？"
+          ],
+          "expected_contains": [
+            "浣熊"
+          ]
+        },
+        {
+          "id": "V015",
+          "family": "with_hard_distractor",
+          "flavour": "no_subject_marker",
+          "kind": "book",
+          "turns": [
+            "姐姐最近在读《松窗梦语》。",
+            "我最近在读《水经注疏》。",
+            "我最近在读什么书？"
+          ],
+          "expected_contains": [
+            "水经注疏"
+          ]
+        },
+        {
+          "id": "V016",
+          "family": "with_hard_distractor",
+          "flavour": "no_subject_marker",
+          "kind": "dish",
+          "turns": [
+            "哥哥最爱吃羊肉泡馍。",
+            "我最爱吃辣子鸡。",
+            "我最爱吃什么？"
+          ],
+          "expected_contains": [
+            "辣子鸡"
+          ]
+        },
+        {
+          "id": "V017",
+          "family": "with_hard_distractor",
+          "flavour": "same_subject_marker",
+          "kind": "name",
+          "turns": [
+            "我表哥叫思远。",
+            "我叫承泽。",
+            "我的名字是什么？"
+          ],
+          "expected_contains": [
+            "承泽"
+          ]
+        },
+        {
+          "id": "V018",
+          "family": "with_hard_distractor",
+          "flavour": "same_subject_marker",
+          "kind": "city",
+          "turns": [
+            "我表哥住在长沙。",
+            "我住在青岛。",
+            "我住哪？"
+          ],
+          "expected_contains": [
+            "青岛"
+          ]
+        },
+        {
+          "id": "V019",
+          "family": "with_hard_distractor",
+          "flavour": "same_subject_marker",
+          "kind": "number",
+          "turns": [
+            "我妹妹最喜欢的数字是1998。",
+            "我最喜欢的数字是77。",
+            "那个数字是多少？"
+          ],
+          "expected_contains": [
+            "77"
+          ]
+        },
+        {
+          "id": "V020",
+          "family": "with_hard_distractor",
+          "flavour": "same_subject_marker",
+          "kind": "project",
+          "turns": [
+            "我同事的项目叫归云。",
+            "我的项目叫石径。",
+            "我的项目叫什么？"
+          ],
+          "expected_contains": [
+            "石径"
+          ]
+        },
+        {
+          "id": "V021",
+          "family": "with_hard_distractor",
+          "flavour": "same_subject_marker",
+          "kind": "drink",
+          "turns": [
+            "我爱人爱喝柠檬水。",
+            "我平时爱喝桂花酿。",
+            "我爱喝什么？"
+          ],
+          "expected_contains": [
+            "桂花酿"
+          ]
+        },
+        {
+          "id": "V022",
+          "family": "with_hard_distractor",
+          "flavour": "same_subject_marker",
+          "kind": "pet",
+          "turns": [
+            "我家邻居养了一只蓝舌蜥。",
+            "我养了一只树袋熊。",
+            "我养的动物是什么？"
+          ],
+          "expected_contains": [
+            "树袋熊"
+          ]
+        },
+        {
+          "id": "V023",
+          "family": "with_hard_distractor",
+          "flavour": "same_subject_marker",
+          "kind": "book",
+          "turns": [
+            "我姐姐最近在读《云笈七签》。",
+            "我最近在读《松窗梦语》。",
+            "我最近在读什么书？"
+          ],
+          "expected_contains": [
+            "松窗梦语"
+          ]
+        },
+        {
+          "id": "V024",
+          "family": "with_hard_distractor",
+          "flavour": "same_subject_marker",
+          "kind": "dish",
+          "turns": [
+            "我哥哥最爱吃胡辣汤。",
+            "我最爱吃羊肉泡馍。",
+            "我最爱吃什么？"
+          ],
+          "expected_contains": [
+            "羊肉泡馍"
+          ]
+        },
+        {
+          "id": "V025",
+          "family": "with_hard_distractor",
+          "flavour": "no_subject_marker",
+          "kind": "name",
+          "turns": [
+            "表哥叫慕安。",
+            "我叫思远。",
+            "我的名字是什么？"
+          ],
+          "expected_contains": [
+            "思远"
+          ]
+        },
+        {
+          "id": "V026",
+          "family": "with_hard_distractor",
+          "flavour": "no_subject_marker",
+          "kind": "city",
+          "turns": [
+            "同事住在昆明。",
+            "我住在长沙。",
+            "我住哪？"
+          ],
+          "expected_contains": [
+            "长沙"
+          ]
+        },
+        {
+          "id": "V027",
+          "family": "with_hard_distractor",
+          "flavour": "no_subject_marker",
+          "kind": "number",
+          "turns": [
+            "妹妹最喜欢的数字是1024。",
+            "我最喜欢的数字是1998。",
+            "那个数字是多少？"
+          ],
+          "expected_contains": [
+            "1998"
+          ]
+        },
+        {
+          "id": "V028",
+          "family": "with_hard_distractor",
+          "flavour": "no_subject_marker",
+          "kind": "project",
+          "turns": [
+            "朋友的项目叫听涛。",
+            "我的项目叫归云。",
+            "我的项目叫什么？"
+          ],
+          "expected_contains": [
+            "归云"
+          ]
+        },
+        {
+          "id": "V029",
+          "family": "with_hard_distractor",
+          "flavour": "no_subject_marker",
+          "kind": "drink",
+          "turns": [
+            "爱人爱喝砖茶。",
+            "我平时爱喝柠檬水。",
+            "我爱喝什么？"
+          ],
+          "expected_contains": [
+            "柠檬水"
+          ]
+        },
+        {
+          "id": "V030",
+          "family": "with_hard_distractor",
+          "flavour": "no_subject_marker",
+          "kind": "pet",
+          "turns": [
+            "邻居养了一只蜜獾。",
+            "我养了一只蓝舌蜥。",
+            "我养的动物是什么？"
+          ],
+          "expected_contains": [
+            "蓝舌蜥"
+          ]
+        },
+        {
+          "id": "V031",
+          "family": "with_hard_distractor",
+          "flavour": "no_subject_marker",
+          "kind": "book",
+          "turns": [
+            "姐姐最近在读《梦溪笔谈》。",
+            "我最近在读《云笈七签》。",
+            "我最近在读什么书？"
+          ],
+          "expected_contains": [
+            "云笈七签"
+          ]
+        },
+        {
+          "id": "V032",
+          "family": "with_hard_distractor",
+          "flavour": "no_subject_marker",
+          "kind": "dish",
+          "turns": [
+            "哥哥最爱吃臭豆腐。",
+            "我最爱吃胡辣汤。",
+            "我最爱吃什么？"
+          ],
+          "expected_contains": [
+            "胡辣汤"
+          ]
+        },
+        {
+          "id": "V033",
+          "family": "with_hard_distractor",
+          "flavour": "same_subject_marker",
+          "kind": "name",
+          "turns": [
+            "我表哥叫砚青。",
+            "我叫慕安。",
+            "我的名字是什么？"
+          ],
+          "expected_contains": [
+            "慕安"
+          ]
+        },
+        {
+          "id": "V034",
+          "family": "with_hard_distractor",
+          "flavour": "same_subject_marker",
+          "kind": "city",
+          "turns": [
+            "我表哥住在兰州。",
+            "我住在昆明。",
+            "我住哪？"
+          ],
+          "expected_contains": [
+            "昆明"
+          ]
+        },
+        {
+          "id": "V035",
+          "family": "with_hard_distractor",
+          "flavour": "same_subject_marker",
+          "kind": "number",
+          "turns": [
+            "我妹妹最喜欢的数字是47。",
+            "我最喜欢的数字是1024。",
+            "那个数字是多少？"
+          ],
+          "expected_contains": [
+            "1024"
+          ]
+        },
+        {
+          "id": "V036",
+          "family": "with_hard_distractor",
+          "flavour": "same_subject_marker",
+          "kind": "project",
+          "turns": [
+            "我同事的项目叫折柳。",
+            "我的项目叫听涛。",
+            "我的项目叫什么？"
+          ],
+          "expected_contains": [
+            "听涛"
+          ]
+        },
+        {
+          "id": "V037",
+          "family": "with_hard_distractor",
+          "flavour": "same_subject_marker",
+          "kind": "drink",
+          "turns": [
+            "我爱人爱喝普洱。",
+            "我平时爱喝砖茶。",
+            "我爱喝什么？"
+          ],
+          "expected_contains": [
+            "砖茶"
+          ]
+        },
+        {
+          "id": "V038",
+          "family": "with_hard_distractor",
+          "flavour": "same_subject_marker",
+          "kind": "pet",
+          "turns": [
+            "我家邻居养了一只刺猬。",
+            "我养了一只蜜獾。",
+            "我养的动物是什么？"
+          ],
+          "expected_contains": [
+            "蜜獾"
+          ]
+        },
+        {
+          "id": "V039",
+          "family": "with_hard_distractor",
+          "flavour": "same_subject_marker",
+          "kind": "book",
+          "turns": [
+            "我姐姐最近在读《天工开物》。",
+            "我最近在读《梦溪笔谈》。",
+            "我最近在读什么书？"
+          ],
+          "expected_contains": [
+            "梦溪笔谈"
+          ]
+        },
+        {
+          "id": "V040",
+          "family": "with_hard_distractor",
+          "flavour": "same_subject_marker",
+          "kind": "dish",
+          "turns": [
+            "我哥哥最爱吃糖芋苗。",
+            "我最爱吃臭豆腐。",
+            "我最爱吃什么？"
+          ],
+          "expected_contains": [
+            "臭豆腐"
+          ]
+        },
+        {
+          "id": "V041",
+          "family": "with_hard_distractor",
+          "flavour": "no_subject_marker",
+          "kind": "name",
+          "turns": [
+            "表哥叫洛宁。",
+            "我叫砚青。",
+            "我的名字是什么？"
+          ],
+          "expected_contains": [
+            "砚青"
+          ]
+        },
+        {
+          "id": "V042",
+          "family": "with_hard_distractor",
+          "flavour": "no_subject_marker",
+          "kind": "city",
+          "turns": [
+            "同事住在宁波。",
+            "我住在兰州。",
+            "我住哪？"
+          ],
+          "expected_contains": [
+            "兰州"
+          ]
+        },
+        {
+          "id": "V043",
+          "family": "with_hard_distractor",
+          "flavour": "no_subject_marker",
+          "kind": "number",
+          "turns": [
+            "妹妹最喜欢的数字是88。",
+            "我最喜欢的数字是47。",
+            "那个数字是多少？"
+          ],
+          "expected_contains": [
+            "47"
+          ]
+        },
+        {
+          "id": "V044",
+          "family": "with_hard_distractor",
+          "flavour": "no_subject_marker",
+          "kind": "project",
+          "turns": [
+            "朋友的项目叫疏影。",
+            "我的项目叫折柳。",
+            "我的项目叫什么？"
+          ],
+          "expected_contains": [
+            "折柳"
+          ]
+        },
+        {
+          "id": "V045",
+          "family": "with_hard_distractor",
+          "flavour": "no_subject_marker",
+          "kind": "drink",
+          "turns": [
+            "爱人爱喝苦荞茶。",
+            "我平时爱喝普洱。",
+            "我爱喝什么？"
+          ],
+          "expected_contains": [
+            "普洱"
+          ]
+        },
+        {
+          "id": "V046",
+          "family": "with_hard_distractor",
+          "flavour": "no_subject_marker",
+          "kind": "pet",
+          "turns": [
+            "邻居养了一只鹦鹉。",
+            "我养了一只刺猬。",
+            "我养的动物是什么？"
+          ],
+          "expected_contains": [
+            "刺猬"
+          ]
+        },
+        {
+          "id": "V047",
+          "family": "with_hard_distractor",
+          "flavour": "no_subject_marker",
+          "kind": "book",
+          "turns": [
+            "姐姐最近在读《齐民要术》。",
+            "我最近在读《天工开物》。",
+            "我最近在读什么书？"
+          ],
+          "expected_contains": [
+            "天工开物"
+          ]
+        },
+        {
+          "id": "V048",
+          "family": "with_hard_distractor",
+          "flavour": "no_subject_marker",
+          "kind": "dish",
+          "turns": [
+            "哥哥最爱吃鸭血粉。",
+            "我最爱吃糖芋苗。",
+            "我最爱吃什么？"
+          ],
+          "expected_contains": [
+            "糖芋苗"
+          ]
+        },
+        {
+          "id": "V049",
+          "family": "with_hard_distractor",
+          "flavour": "same_subject_marker",
+          "kind": "name",
+          "turns": [
+            "我表哥叫时予。",
+            "我叫洛宁。",
+            "我的名字是什么？"
+          ],
+          "expected_contains": [
+            "洛宁"
+          ]
+        },
+        {
+          "id": "V050",
+          "family": "with_hard_distractor",
+          "flavour": "same_subject_marker",
+          "kind": "city",
+          "turns": [
+            "我表哥住在温州。",
+            "我住在宁波。",
+            "我住哪？"
+          ],
+          "expected_contains": [
+            "宁波"
+          ]
+        },
+        {
+          "id": "V051",
+          "family": "with_hard_distractor",
+          "flavour": "same_subject_marker",
+          "kind": "number",
+          "turns": [
+            "我妹妹最喜欢的数字是121。",
+            "我最喜欢的数字是88。",
+            "那个数字是多少？"
+          ],
+          "expected_contains": [
+            "88"
+          ]
+        },
+        {
+          "id": "V052",
+          "family": "with_hard_distractor",
+          "flavour": "same_subject_marker",
+          "kind": "project",
+          "turns": [
+            "我同事的项目叫临风。",
+            "我的项目叫疏影。",
+            "我的项目叫什么？"
+          ],
+          "expected_contains": [
+            "疏影"
+          ]
+        },
+        {
+          "id": "V053",
+          "family": "with_hard_distractor",
+          "flavour": "same_subject_marker",
+          "kind": "drink",
+          "turns": [
+            "我爱人爱喝红枣茶。",
+            "我平时爱喝苦荞茶。",
+            "我爱喝什么？"
+          ],
+          "expected_contains": [
+            "苦荞茶"
+          ]
+        },
+        {
+          "id": "V054",
+          "family": "with_hard_distractor",
+          "flavour": "same_subject_marker",
+          "kind": "pet",
+          "turns": [
+            "我家邻居养了一只仓鼠。",
+            "我养了一只鹦鹉。",
+            "我养的动物是什么？"
+          ],
+          "expected_contains": [
+            "鹦鹉"
+          ]
+        },
+        {
+          "id": "V055",
+          "family": "with_hard_distractor",
+          "flavour": "same_subject_marker",
+          "kind": "book",
+          "turns": [
+            "我姐姐最近在读《洛阳伽蓝记》。",
+            "我最近在读《齐民要术》。",
+            "我最近在读什么书？"
+          ],
+          "expected_contains": [
+            "齐民要术"
+          ]
+        },
+        {
+          "id": "V056",
+          "family": "with_hard_distractor",
+          "flavour": "same_subject_marker",
+          "kind": "dish",
+          "turns": [
+            "我哥哥最爱吃蟹黄汤包。",
+            "我最爱吃鸭血粉。",
+            "我最爱吃什么？"
+          ],
+          "expected_contains": [
+            "鸭血粉"
+          ]
+        },
+        {
+          "id": "V057",
+          "family": "with_hard_distractor",
+          "flavour": "no_subject_marker",
+          "kind": "name",
+          "turns": [
+            "表哥叫怀砚。",
+            "我叫时予。",
+            "我的名字是什么？"
+          ],
+          "expected_contains": [
+            "时予"
+          ]
+        },
+        {
+          "id": "V058",
+          "family": "with_hard_distractor",
+          "flavour": "no_subject_marker",
+          "kind": "city",
+          "turns": [
+            "同事住在洛阳。",
+            "我住在温州。",
+            "我住哪？"
+          ],
+          "expected_contains": [
+            "温州"
+          ]
+        },
+        {
+          "id": "V059",
+          "family": "with_hard_distractor",
+          "flavour": "no_subject_marker",
+          "kind": "number",
+          "turns": [
+            "妹妹最喜欢的数字是256。",
+            "我最喜欢的数字是121。",
+            "那个数字是多少？"
+          ],
+          "expected_contains": [
+            "121"
+          ]
+        },
+        {
+          "id": "V060",
+          "family": "with_hard_distractor",
+          "flavour": "no_subject_marker",
+          "kind": "project",
+          "turns": [
+            "朋友的项目叫宿雨。",
+            "我的项目叫临风。",
+            "我的项目叫什么？"
+          ],
+          "expected_contains": [
+            "临风"
+          ]
+        },
+        {
+          "id": "V061",
+          "family": "with_hard_distractor",
+          "flavour": "no_subject_marker",
+          "kind": "drink",
+          "turns": [
+            "爱人爱喝陈皮水。",
+            "我平时爱喝红枣茶。",
+            "我爱喝什么？"
+          ],
+          "expected_contains": [
+            "红枣茶"
+          ]
+        },
+        {
+          "id": "V062",
+          "family": "with_hard_distractor",
+          "flavour": "no_subject_marker",
+          "kind": "pet",
+          "turns": [
+            "邻居养了一只乌龟。",
+            "我养了一只仓鼠。",
+            "我养的动物是什么？"
+          ],
+          "expected_contains": [
+            "仓鼠"
+          ]
+        },
+        {
+          "id": "V063",
+          "family": "with_hard_distractor",
+          "flavour": "no_subject_marker",
+          "kind": "book",
+          "turns": [
+            "姐姐最近在读《东京梦华录》。",
+            "我最近在读《洛阳伽蓝记》。",
+            "我最近在读什么书？"
+          ],
+          "expected_contains": [
+            "洛阳伽蓝记"
+          ]
+        },
+        {
+          "id": "V064",
+          "family": "with_hard_distractor",
+          "flavour": "no_subject_marker",
+          "kind": "dish",
+          "turns": [
+            "哥哥最爱吃牛肉面。",
+            "我最爱吃蟹黄汤包。",
+            "我最爱吃什么？"
+          ],
+          "expected_contains": [
+            "蟹黄汤包"
+          ]
+        },
+        {
+          "id": "V065",
+          "family": "with_hard_distractor",
+          "flavour": "same_subject_marker",
+          "kind": "name",
+          "turns": [
+            "我表哥叫苏晚。",
+            "我叫怀砚。",
+            "我的名字是什么？"
+          ],
+          "expected_contains": [
+            "怀砚"
+          ]
+        },
+        {
+          "id": "V066",
+          "family": "with_hard_distractor",
+          "flavour": "same_subject_marker",
+          "kind": "city",
+          "turns": [
+            "我表哥住在扬州。",
+            "我住在洛阳。",
+            "我住哪？"
+          ],
+          "expected_contains": [
+            "洛阳"
+          ]
+        },
+        {
+          "id": "V067",
+          "family": "with_hard_distractor",
+          "flavour": "same_subject_marker",
+          "kind": "number",
+          "turns": [
+            "我妹妹最喜欢的数字是313。",
+            "我最喜欢的数字是256。",
+            "那个数字是多少？"
+          ],
+          "expected_contains": [
+            "256"
+          ]
+        },
+        {
+          "id": "V068",
+          "family": "with_hard_distractor",
+          "flavour": "same_subject_marker",
+          "kind": "project",
+          "turns": [
+            "我同事的项目叫行舟。",
+            "我的项目叫宿雨。",
+            "我的项目叫什么？"
+          ],
+          "expected_contains": [
+            "宿雨"
+          ]
+        },
+        {
+          "id": "V069",
+          "family": "with_hard_distractor",
+          "flavour": "same_subject_marker",
+          "kind": "drink",
+          "turns": [
+            "我爱人爱喝薄荷饮。",
+            "我平时爱喝陈皮水。",
+            "我爱喝什么？"
+          ],
+          "expected_contains": [
+            "陈皮水"
+          ]
+        },
+        {
+          "id": "V070",
+          "family": "with_hard_distractor",
+          "flavour": "same_subject_marker",
+          "kind": "pet",
+          "turns": [
+            "我家邻居养了一只水獭。",
+            "我养了一只乌龟。",
+            "我养的动物是什么？"
+          ],
+          "expected_contains": [
+            "乌龟"
+          ]
+        },
+        {
+          "id": "V071",
+          "family": "with_hard_distractor",
+          "flavour": "same_subject_marker",
+          "kind": "book",
+          "turns": [
+            "我姐姐最近在读《梦粱录》。",
+            "我最近在读《东京梦华录》。",
+            "我最近在读什么书？"
+          ],
+          "expected_contains": [
+            "东京梦华录"
+          ]
+        },
+        {
+          "id": "V072",
+          "family": "with_hard_distractor",
+          "flavour": "same_subject_marker",
+          "kind": "dish",
+          "turns": [
+            "我哥哥最爱吃酸菜鱼。",
+            "我最爱吃牛肉面。",
+            "我最爱吃什么？"
+          ],
+          "expected_contains": [
+            "牛肉面"
+          ]
+        },
+        {
+          "id": "V073",
+          "family": "with_hard_distractor",
+          "flavour": "no_subject_marker",
+          "kind": "name",
+          "turns": [
+            "表哥叫沈舟。",
+            "我叫苏晚。",
+            "我的名字是什么？"
+          ],
+          "expected_contains": [
+            "苏晚"
+          ]
+        },
+        {
+          "id": "V074",
+          "family": "with_hard_distractor",
+          "flavour": "no_subject_marker",
+          "kind": "city",
+          "turns": [
+            "同事住在泉州。",
+            "我住在扬州。",
+            "我住哪？"
+          ],
+          "expected_contains": [
+            "扬州"
+          ]
+        },
+        {
+          "id": "V075",
+          "family": "with_hard_distractor",
+          "flavour": "no_subject_marker",
+          "kind": "number",
+          "turns": [
+            "妹妹最喜欢的数字是520。",
+            "我最喜欢的数字是313。",
+            "那个数字是多少？"
+          ],
+          "expected_contains": [
+            "313"
+          ]
+        },
+        {
+          "id": "V076",
+          "family": "with_hard_distractor",
+          "flavour": "no_subject_marker",
+          "kind": "project",
+          "turns": [
+            "朋友的项目叫望舒。",
+            "我的项目叫行舟。",
+            "我的项目叫什么？"
+          ],
+          "expected_contains": [
+            "行舟"
+          ]
+        },
+        {
+          "id": "V077",
+          "family": "with_hard_distractor",
+          "flavour": "no_subject_marker",
+          "kind": "drink",
+          "turns": [
+            "爱人爱喝山楂水。",
+            "我平时爱喝薄荷饮。",
+            "我爱喝什么？"
+          ],
+          "expected_contains": [
+            "薄荷饮"
+          ]
+        },
+        {
+          "id": "V078",
+          "family": "with_hard_distractor",
+          "flavour": "no_subject_marker",
+          "kind": "pet",
+          "turns": [
+            "邻居养了一只狐狸。",
+            "我养了一只水獭。",
+            "我养的动物是什么？"
+          ],
+          "expected_contains": [
+            "水獭"
+          ]
+        },
+        {
+          "id": "V079",
+          "family": "with_hard_distractor",
+          "flavour": "no_subject_marker",
+          "kind": "book",
+          "turns": [
+            "姐姐最近在读《西湖梦寻》。",
+            "我最近在读《梦粱录》。",
+            "我最近在读什么书？"
+          ],
+          "expected_contains": [
+            "梦粱录"
+          ]
+        },
+        {
+          "id": "V080",
+          "family": "with_hard_distractor",
+          "flavour": "no_subject_marker",
+          "kind": "dish",
+          "turns": [
+            "哥哥最爱吃口水鸡。",
+            "我最爱吃酸菜鱼。",
+            "我最爱吃什么？"
+          ],
+          "expected_contains": [
+            "酸菜鱼"
+          ]
+        },
+        {
+          "id": "V081",
+          "family": "with_hard_distractor",
+          "flavour": "same_subject_marker",
+          "kind": "name",
+          "turns": [
+            "我表哥叫顾昭。",
+            "我叫沈舟。",
+            "我的名字是什么？"
+          ],
+          "expected_contains": [
+            "沈舟"
+          ]
+        },
+        {
+          "id": "V082",
+          "family": "with_hard_distractor",
+          "flavour": "same_subject_marker",
+          "kind": "city",
+          "turns": [
+            "我表哥住在芜湖。",
+            "我住在泉州。",
+            "我住哪？"
+          ],
+          "expected_contains": [
+            "泉州"
+          ]
+        },
+        {
+          "id": "V083",
+          "family": "with_hard_distractor",
+          "flavour": "same_subject_marker",
+          "kind": "number",
+          "turns": [
+            "我妹妹最喜欢的数字是618。",
+            "我最喜欢的数字是520。",
+            "那个数字是多少？"
+          ],
+          "expected_contains": [
+            "520"
+          ]
+        },
+        {
+          "id": "V084",
+          "family": "with_hard_distractor",
+          "flavour": "same_subject_marker",
+          "kind": "project",
+          "turns": [
+            "我同事的项目叫未央。",
+            "我的项目叫望舒。",
+            "我的项目叫什么？"
+          ],
+          "expected_contains": [
+            "望舒"
+          ]
+        },
+        {
+          "id": "V085",
+          "family": "with_hard_distractor",
+          "flavour": "same_subject_marker",
+          "kind": "drink",
+          "turns": [
+            "我爱人爱喝茉莉茶。",
+            "我平时爱喝山楂水。",
+            "我爱喝什么？"
+          ],
+          "expected_contains": [
+            "山楂水"
+          ]
+        },
+        {
+          "id": "V086",
+          "family": "with_hard_distractor",
+          "flavour": "same_subject_marker",
+          "kind": "pet",
+          "turns": [
+            "我家邻居养了一只蝙蝠。",
+            "我养了一只狐狸。",
+            "我养的动物是什么？"
+          ],
+          "expected_contains": [
+            "狐狸"
+          ]
+        },
+        {
+          "id": "V087",
+          "family": "with_hard_distractor",
+          "flavour": "same_subject_marker",
+          "kind": "book",
+          "turns": [
+            "我姐姐最近在读《陶庵梦忆》。",
+            "我最近在读《西湖梦寻》。",
+            "我最近在读什么书？"
+          ],
+          "expected_contains": [
+            "西湖梦寻"
+          ]
+        },
+        {
+          "id": "V088",
+          "family": "with_hard_distractor",
+          "flavour": "same_subject_marker",
+          "kind": "dish",
+          "turns": [
+            "我哥哥最爱吃狮子头。",
+            "我最爱吃口水鸡。",
+            "我最爱吃什么？"
+          ],
+          "expected_contains": [
+            "口水鸡"
+          ]
+        },
+        {
+          "id": "V089",
+          "family": "with_hard_distractor",
+          "flavour": "no_subject_marker",
+          "kind": "name",
+          "turns": [
+            "表哥叫晚吟。",
+            "我叫顾昭。",
+            "我的名字是什么？"
+          ],
+          "expected_contains": [
+            "顾昭"
+          ]
+        },
+        {
+          "id": "V090",
+          "family": "with_hard_distractor",
+          "flavour": "no_subject_marker",
+          "kind": "city",
+          "turns": [
+            "同事住在自贡。",
+            "我住在芜湖。",
+            "我住哪？"
+          ],
+          "expected_contains": [
+            "芜湖"
+          ]
+        },
+        {
+          "id": "V091",
+          "family": "with_hard_distractor",
+          "flavour": "no_subject_marker",
+          "kind": "number",
+          "turns": [
+            "妹妹最喜欢的数字是909。",
+            "我最喜欢的数字是618。",
+            "那个数字是多少？"
+          ],
+          "expected_contains": [
+            "618"
+          ]
+        },
+        {
+          "id": "V092",
+          "family": "with_hard_distractor",
+          "flavour": "no_subject_marker",
+          "kind": "project",
+          "turns": [
+            "朋友的项目叫知秋。",
+            "我的项目叫未央。",
+            "我的项目叫什么？"
+          ],
+          "expected_contains": [
+            "未央"
+          ]
+        },
+        {
+          "id": "V093",
+          "family": "with_hard_distractor",
+          "flavour": "no_subject_marker",
+          "kind": "drink",
+          "turns": [
+            "爱人爱喝荷叶茶。",
+            "我平时爱喝茉莉茶。",
+            "我爱喝什么？"
+          ],
+          "expected_contains": [
+            "茉莉茶"
+          ]
+        },
+        {
+          "id": "V094",
+          "family": "with_hard_distractor",
+          "flavour": "no_subject_marker",
+          "kind": "pet",
+          "turns": [
+            "邻居养了一只松鼠。",
+            "我养了一只蝙蝠。",
+            "我养的动物是什么？"
+          ],
+          "expected_contains": [
+            "蝙蝠"
+          ]
+        },
+        {
+          "id": "V095",
+          "family": "with_hard_distractor",
+          "flavour": "no_subject_marker",
+          "kind": "book",
+          "turns": [
+            "姐姐最近在读《徐霞客游记》。",
+            "我最近在读《陶庵梦忆》。",
+            "我最近在读什么书？"
+          ],
+          "expected_contains": [
+            "陶庵梦忆"
+          ]
+        },
+        {
+          "id": "V096",
+          "family": "with_hard_distractor",
+          "flavour": "no_subject_marker",
+          "kind": "dish",
+          "turns": [
+            "哥哥最爱吃夫妻肺片。",
+            "我最爱吃狮子头。",
+            "我最爱吃什么？"
+          ],
+          "expected_contains": [
+            "狮子头"
+          ]
+        },
+        {
+          "id": "V097",
+          "family": "with_hard_distractor",
+          "flavour": "same_subject_marker",
+          "kind": "name",
+          "turns": [
+            "我表哥叫明轩。",
+            "我叫晚吟。",
+            "我的名字是什么？"
+          ],
+          "expected_contains": [
+            "晚吟"
+          ]
+        },
+        {
+          "id": "V098",
+          "family": "with_hard_distractor",
+          "flavour": "same_subject_marker",
+          "kind": "city",
+          "turns": [
+            "我表哥住在苏州。",
+            "我住在自贡。",
+            "我住哪？"
+          ],
+          "expected_contains": [
+            "自贡"
+          ]
+        },
+        {
+          "id": "V099",
+          "family": "with_hard_distractor",
+          "flavour": "same_subject_marker",
+          "kind": "number",
+          "turns": [
+            "我妹妹最喜欢的数字是36。",
+            "我最喜欢的数字是909。",
+            "那个数字是多少？"
+          ],
+          "expected_contains": [
+            "909"
+          ]
+        },
+        {
+          "id": "V100",
+          "family": "with_hard_distractor",
+          "flavour": "same_subject_marker",
+          "kind": "project",
+          "turns": [
+            "我同事的项目叫海图。",
+            "我的项目叫知秋。",
+            "我的项目叫什么？"
+          ],
+          "expected_contains": [
+            "知秋"
+          ]
+        },
+        {
+          "id": "V101",
+          "family": "with_hard_distractor",
+          "flavour": "same_subject_marker",
+          "kind": "drink",
+          "turns": [
+            "我爱人爱喝乌龙。",
+            "我平时爱喝荷叶茶。",
+            "我爱喝什么？"
+          ],
+          "expected_contains": [
+            "荷叶茶"
+          ]
+        },
+        {
+          "id": "V102",
+          "family": "with_hard_distractor",
+          "flavour": "same_subject_marker",
+          "kind": "pet",
+          "turns": [
+            "我家邻居养了一只雪鸮。",
+            "我养了一只松鼠。",
+            "我养的动物是什么？"
+          ],
+          "expected_contains": [
+            "松鼠"
+          ]
+        },
+        {
+          "id": "V103",
+          "family": "with_hard_distractor",
+          "flavour": "same_subject_marker",
+          "kind": "book",
+          "turns": [
+            "我姐姐最近在读《海客谈瀛》。",
+            "我最近在读《徐霞客游记》。",
+            "我最近在读什么书？"
+          ],
+          "expected_contains": [
+            "徐霞客游记"
+          ]
+        },
+        {
+          "id": "V104",
+          "family": "with_hard_distractor",
+          "flavour": "same_subject_marker",
+          "kind": "dish",
+          "turns": [
+            "我哥哥最爱吃小笼包。",
+            "我最爱吃夫妻肺片。",
+            "我最爱吃什么？"
+          ],
+          "expected_contains": [
+            "夫妻肺片"
+          ]
+        }
+      ]
+    }
+  }
+}
