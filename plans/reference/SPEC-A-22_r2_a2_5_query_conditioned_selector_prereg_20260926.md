@@ -518,6 +518,29 @@ black/ruff 干净）。全套件 5 条红逐支归因完毕，均非本批（1 �
 (b) 造一份"位置与答案无关"的题集（v3：答案告知随机落在第 1／第 2 轮），
 把"锁定"与"先验"的红利从题集里剥掉后再谈机制——**v1/v2 已不适合当这件事的判据**。
 
+---
+
+## 19. 结项后的三项落实（2026-09-26 11:10Z，用户逐项授权"都按次做"）
+
+1. **(b) 位置随机题集已造并入库**：`scripts/build_r2_copy_surface_extension_v3_position_random.py`
+   ＋`plans/manifests/r2_copy_surface_extension_v3_position_random.json`（提交 `712dd97f`：
+   均衡牌堆严格 52/52、八个 kind 内部两种落位都有、与 v2 逐题配对、提问与判分词一字不动），
+   合同 6 条 `tests/taiji_native/test_r2_copy_surface_extension_v3_contract.py` 全绿。
+   过程中机检拦下两个真实缺陷：① 逐题独立抛硬币得 54/50（不是严格对半）⇒ 改牌堆；
+   ② 牌堆标签是字符串，`"second"` 当布尔用恒真 ⇒ 104 题全落第一轮，被"严格对半"断言拦下。
+   **乙／丙 在 v3 上的两跑在跑**（`reports/taiji_r2_a25_{lock_only,selector}_surface_v3_20260926.json`）
+   ——那是"提问条件化到底有没有"的第一份不被位置污染的读数，本件的裁定届时以它复看。
+2. **§17 的来源污染改为可判定的自证**：原写法（同参数重跑比对摘要）在方法论上是错的——
+   训练按墙钟止损，两枚进程本就跑了 2187 与 2189 episode，参数不可能逐位相等。
+   改成**按 episode 数钉死**：`--episodes 2189 --max-minutes 240` 写进**新目录**
+   `output/taiji_r2_a25_seedA_verify`，比对 `circuit-final.pt` 摘要 `e186790f…`；
+   相等 ⇒ 该 payload 与"哪一枚进程写的"无关（整条链按 episode 数可复现），不等 ⇒ 废弃其表层读数。
+3. **(a) 内容表征可训另立新件**：[`SPEC-A-23`](SPEC-A-23_r2_content_embed_trainable_prereg_20260926.md)
+   同日冻结，**主判据换成 v3**，并写死三分支读法与两条自我约束：
+   `content_embed` 一旦可训会同时改动寻址键、`pooled` 与选择头特征 2 ⇒ 读数不许单因归给"表征"；
+   训练一律按 episode 数与 丙 配对，防 §13 那条不公平项复发。
+
+
 
 
 
