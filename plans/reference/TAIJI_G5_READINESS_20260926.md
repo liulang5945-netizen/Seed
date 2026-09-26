@@ -100,7 +100,7 @@ this scaffold lifetime. **This is the keyless first-run configuration lane**; th
 
 本轮把 M6/G5 的 D3 从静态推断推到真机读数并把因果钉死（提交 `676c2fea`／`3951a5c9`／`fd1d4b39`／`8f204250`／`a330d51a`／`b0a49435`／`f40c040c`／`2d1228bb`／`b9961315`）。下一轮按能声称的最强结论排序：
 
-1. **不需裁定，且是 G4 复验集的缺口**：把 §5 第 7 条的最小面扩成**「运行时在场／不在场」两套前提**——入口已找到（H3o 的 overlay 行 ＋ `apps/web/tests/scaffold.ts:554-556` 的 `extraOverlayPath`），改那 4 个上游文件的调用方式属一处 fork 补丁（要登记 H 项）。做完这条，web 表层在 fork 侧才第一次有可信基线；顺手解掉 08 §6 ⑪ 剩下的两件（金样要不要 `DSH_SNAPSHOT=refresh`、两套前提各留一条读数）。
+1. ~~把 §5 第 7 条的最小面扩成「运行时在场／不在场」两套前提~~ **同日已完成（H3p ＋ H3q）**：4 个 keyless 文件的 11 条用例现在全绿（起点 8 条红），工作区流程改走宿主侧 `connectFreshWorkspaceViaHost`；残余红只剩**金样与计数差异**那一类，等下面的金样裁定。新登记的两条要接着判：08 §6 ⑭（回放型 lane 的录制件不入库，要 `test:snapshot:record` ＋ key 重录）与 §6 ⑬ 的教训（新增 e2e 要同登记 exclude）。
 2. **需裁定（D2，拍了它 D3 才有意义）**：本轮 overlay 实验已把口径钉过一次，但**第四批实测更正了它**：运行时不在场时 `taiji-local` **只是从注册面撤回，设置里的行仍在**（声明面 `listConfigurableProviders()` 还带着它）；整行消失要把装配行 `disabled: true`。所以装机首启用户看到的是一行**存在但不可路由**的 Taiji，而不是「没有 Taiji」——D2 的三条选项仍成立，但措辞要按这个分层重写；「文档要求自备」等于放弃 G5 判据里「Taiji provider 为默认」这句。请在三者里拍一个，并给出可接受的包体积涨幅上限。
 3. **需裁定（R4，比缺 electron 更靠前）**：`apps/desktop/.env.windows` 的产品值——应用身份（示例仍是上游的 `com.deepseek.harness`）、自动更新环境与强制更新端点、是否声明「客户端不做自动更新」。这三件不落定，`package:desktop:*` 连跑都跑不起来 ⇒ 「打包」这半句取不到任何读数。落定后本机可直接跑 unsigned 变体（corepack 已实证可用，不必换机器）。
 4. **挂账但不自动触发**：G4 判据③ 真机训练回合（真训练→进度流→停止→检查点复验→真续训→真激活），等 R2 收束与所有者放行，不因「继续推进」字样而起。

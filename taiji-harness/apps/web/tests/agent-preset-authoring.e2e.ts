@@ -4,8 +4,8 @@ import { join } from 'node:path'
 import type { Browser, Page } from 'playwright'
 import { chromium } from 'playwright'
 import { afterAll, beforeAll, describe, expect, it, onTestFailed } from 'vitest'
-import { captureStableAria, compareOrRefreshGolden, launchWebScaffold, watchConsole, webSnapshotMode, type WebScaffold } from './scaffold.ts'
-import { openSettings, ZH_BROWSER_LOCALE, connectFreshWorkspaceZh, saveFailureShot } from './support.ts'
+import { connectFreshWorkspaceViaHost, captureStableAria, compareOrRefreshGolden, launchWebScaffold, watchConsole, webSnapshotMode, type WebScaffold } from './scaffold.ts'
+import { openSettings, ZH_BROWSER_LOCALE, saveFailureShot } from './support.ts'
 
 const EXPECTED = fileURLToPath(new URL('./expected/agent-preset-authoring', import.meta.url))
 const mode = webSnapshotMode()
@@ -60,7 +60,7 @@ describe('web e2e: preset roster guidance', () => {
     // The entry stages the self-referential preset and lands a new task on it,
     // so the flow needs a connected workspace to enter.
     await page.getByRole('dialog', { name: '设置' }).getByRole('button', { name: '关闭', exact: true }).last().click()
-    await connectFreshWorkspaceZh(page, scaffold.workspaceCwd)
+    await connectFreshWorkspaceViaHost(scaffold, page, scaffold.workspaceCwd)
     await openSettings(page, 'zh')
     const settings = page.getByRole('dialog', { name: '设置' })
     await settings.getByRole('button', { name: 'Agent 预设' }).click()

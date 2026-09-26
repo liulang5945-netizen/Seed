@@ -10,11 +10,11 @@ import { FiberState } from '@taiji/cordis'
 import { createUserMessage } from '@taiji/dsh-llm'
 import { afterAll, beforeAll, describe, expect, it, onTestFailed } from 'vitest'
 import { join } from 'node:path'
-import {
+import { connectFreshWorkspaceViaHost,
   SCAFFOLD_DEFAULTS_BUNDLE, assertFixtureInventory, captureStableAria, compareOrRefreshGolden,
   launchWebScaffold, watchConsole, webSnapshotMode, type WebScaffold,
 } from './scaffold.ts'
-import { ZH_BROWSER_LOCALE, connectFreshWorkspaceZh, openSettings, saveFailureShot } from './support.ts'
+import { ZH_BROWSER_LOCALE, openSettings, saveFailureShot } from './support.ts'
 
 const SNAPSHOT_DIR = fileURLToPath(new URL('./expected/plugin-manager', import.meta.url))
 const MANAGER_EXPECTED = join(SNAPSHOT_DIR, 'manager.expected.md')
@@ -258,7 +258,7 @@ describe('web e2e: plugin manager', () => {
     const teamTripwire = watchConsole(teamPage)
     try {
       await teamPage.goto(scaffold.authenticatedUrl, { waitUntil: 'load' })
-      await connectFreshWorkspaceZh(teamPage, scaffold.workspaceCwd)
+      await connectFreshWorkspaceViaHost(scaffold, teamPage, scaffold.workspaceCwd)
       const agent = scaffold.ctx.agents.list()[0]
       if (agent === undefined) throw new Error('connected Team workspace did not create an Agent')
       // Session actions render only after the conversation leaves its blank state.
