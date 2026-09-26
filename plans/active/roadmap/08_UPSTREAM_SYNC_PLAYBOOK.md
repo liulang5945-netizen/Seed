@@ -121,6 +121,30 @@
 
 **判别实验的第一次读数——不合格，已作废重跑（同日第四批，日志 `E:/Seed/.dsh-sbx2/timeouts11.log`）**：把 11 个含超时的文件单独成批，19:07:06 起、`Duration 1004.00 s`、`EXIT=1`，读数是 `Test Files 11 failed (11)`／`Tests 41 failed｜29 passed｜11 skipped (81)`，即**从 76 条并发缩到 11 条并发后 11 个文件仍然全红**（该日志里 `TimeoutError` 26 处、`AssertionError` 16 处）。**但这个数不能用来排除负载解释**：同一区间内我并行跑了根 `pnpm run build`——`build-all.log` 末笔 19:12:44、`apps/web/dist/index.html` mtime **19:12:46**，正落在这批 19:07:06→19:23:50 的运行窗口里 ⇒ **浏览器 lane 加载的客户端产物在跑动中被换掉了**，红/绿都不再对应一个确定版本。 ⇒ **口径（与上一条"跑门先确认 build 新鲜"合成完整前提）**：build 必须在跑门**之前**完成，且**跑门期间不得有任何写 `apps/web/dist` 的命令并行**（本仓 `pnpm run` 还会先做隐式 install，同样会改写 `apps/web/dist`）。重跑已在飞：76 条子集在**完整新鲜 build**（267 项产物指纹、无并发 build）上取一次合格基线，日志 `E:/Seed/.dsh-sbx2/baseline76b.log`。
 
+**合格基线到手，与旧跑的差是 6 条用例、不是形状（同日第五批，`E:/Seed/.dsh-sbx2/baseline76b.log`）**：完整 build（19:12:44，267 项产物指纹）后重跑**同一 76 条**——
+`Test Files 41 failed｜34 passed｜1 skipped (76)`、`Tests 73 failed｜132 passed｜30 skipped (235)`、`Duration 1407.31 s`。
+对照 16:06 那次只在旧产物上跑的 `42｜33｜1`／`79｜124｜30`／2359 s ⇒ **产物新鲜度改判了 6 条用例（−6 红／+8 绿）、把总时长压掉约 40%，但文件级几乎不动（42→41）**。
+"基线须在完整 build 之后重跑"这条口径因此**成立但代价小**——真正影响结论的是下面两条分类修正与那条结构事实。
+**分账口径改用脚本**（`E:/Seed/.dsh-sbx2/analyze-web-log.mjs`：按每个 `FAIL` 块的**第一条错误行**分类，**不读宿主 stderr**，因为 `dsh: skipping profile bundle "@fixture/missing-bundle"` 这类是 lane 故意造的缺失件）：
+本轮＝**超时 19／整棵 ARIA 快照差异 15／普通断言 23／运行时错误 6**（旧跑＝26／17／22／5）。
+**由此更正我今天早些时候写进本条的两个数**：① "金样/ARIA 差异 39 条"是把"快照差异"与"普通断言"并成了一堆，**refresh 能救的只有 15–17 条**；
+② 那 22→23 条普通断言里最大的族（`expected +0 to be 1`，7 条／6 lane）等的是**会话正文的 DONE 哨兵**，两张失败截图同形（临时工作区未登记、会话落 `Ungrouped`、主区仍 hero），
+**归因与处置见 `plans/reference/TAIJI_G5_READINESS_20260926.md` §7.2**。
+
+**一条结构性事实：这条面在全并发下不构成一次有效测量**：`apps/web/tests/hmr-live.e2e.ts:113-118` 会在用例内 spawn
+`pnpm run dev:web --skip-build --no-serve` **监听进程**，而该文件自述它可改写的产物集是 `apps/web/dist/**/*` 与 `packages/*/*/lib/client*.js(.map)`（`:16-22`）
+⇒ **一条 lane 在测量期间换掉所有 lane 共用的被测物**。**实测证据（不是我猜的）**：76b 起跑时 `apps/web/dist/index.html` mtime 是 19:12:46，收数时已是 **19:57:52**，
+期间我没有跑任何 build（起止 mtime 已存档 `E:/Seed/.dsh-sbx2/baseline76b.start-stamp`）。**后果有两层**：
+（一）同批其余 75 条读到的 bundle 不确定；（二）它**留下的 dist 不再是 `pnpm run build` 的产物**——我下一次批跑的起始指纹因此变成"监听进程产出的 dist"，
+A/B 会成双变量（本轮就撞上了：76c 起跑前 mtime 已是 19:57:52，只能先重建再跑）。
+**处置口径**：把 `hmr-live`（以及任何 spawn watcher 的 lane）**单独成批**，或给它一份私有 dist 副本；判任何"全量并发基线"的数之前先查有没有自改写 lane。
+**别扩大打击面**：另两条提到 build 的 lane 已逐条核对为**不写产物**——`preview-boot.e2e.ts:114` 只是要求 dist 在场并报错提示去 build，
+`clickable-links-gallery.e2e.ts:268` 里的 `pnpm run build` 是**测试正文的字符串**。
+
+**正面读数（这条最小面可以当门）**：本轮 76 条**全并发**下，我改造过的 6 条 keyless lane 全部 `failed=0`
+（`onboarding-native`、`onboarding-deepseek-config`、`onboarding-usable-provider`、`deepseek-messages-settings`、`default-model`、`declared-reasoning`）
+⇒ H3q/H3t 的改造不是只在单跑或小批里成立；§5 第 7 条登记的最小面在全量并发下仍绿，**可作为门**（前提：先完整 build、且批内不含自改写 lane）。
+
 ## 6 · 已知薄弱点（诚实登记）
 
 - ~~中文 `config-catalog.zh.md` 是手工镜像~~ **已收敛（2026-09-24）**：`scripts/gen-config-catalog-zh.ts` 与英文侧从**同一份** `collectConfigCatalog` 渲染（锚/标题/逐字围栏/`来源：` 行号结构性一致，翻译骨架内聚为脚本常量），`verify-config-catalog-zh` 已入 doc-sync 门与 §5 判据②；main() 另有 en/zh 围栏逐字对拍，双渲染器一旦漂移即炸。旧的手工镜像叙事（含 `H3i` 之外的“先跑 gen 再手对 zh”流程）全部作废，防重放时误走旧路。
@@ -148,6 +172,6 @@
 
 ⑮ **`cold-blank-session` 的时序假设与"工作区索引在启动时建一次"对不上（2026-09-26 读码定案，非 fork 回归）**：`packages/workspace/workspace/src/index.ts` 的类注释写明 **"Startup waits for `sessionPersistence`, builds one canonical-cwd header index"**，而 `list()` 只按这份索引投影会话行。该 lane 的顺序是 `launchWebScaffold({})` **之后**才用 `sessionPersistence.create` ＋ append 造出"重启前已接受"的那条会话，然后**只重载浏览器页面**（`page.goto`）——宿主没重启，索引里就没有这条会话。存在一条惰性补索引的路径（`readSessionHeader(id)` 在缓存缺失时会 `listStoredHeaders()` 重列并 `indexHeaders`，index.ts:1012-1022），但**侧栏枚举不会按 id 去要头**，所以惰性路径不会被触发。⇒ 两种可能：(a) lane 需要**真的重启宿主**（或在播种后再启动）才符合"cold recovery"的语义；(b) 侧栏枚举应触发那次惰性重列（属产品行为变更）。**这是设计意图问题，不是缺陷证据**，且与"位置定位器"无关（我先前那个归类已被按名定位仍失败的读数否证）。**待判**：读上游同类"cold 恢复"lane 是否有重启宿主的现成入口（`scaffold` 里有 `server-restart`／`connection-recovery` 两条专门做宿主重启的 lane，可作为改法参考）。
 
-⑯ **`pnpm run typecheck` 会把编译产物吐进 `packages/**/src/`，跑完必须清（2026-09-26 实测，我自己造的）**：它一次跑出 **56 个未跟踪的 `.js`/`.d.ts`/`.map` 落在四个包的 `src/` 里**（`llm-replay`、`loader-smoke`、`session-snapshot`、`deepseek-llm-api-extensions`），而 **`.gitignore` 不覆盖它们**（`git check-ignore` 判为未忽略）。这在本仓不是无害噪音：AGENTS.md 规定静态门与测试**按 tsconfig paths 解析到 `src`**，所以 `src/index.js` 与 `src/index.ts` 同处一地，会被任何"按磁盘遍历"的守卫收进扫描面（本仓已经因为同类残留挂死过两次）。⇒ **口径**：跑 `pnpm run typecheck` 之后要么按 `git status --porcelain -uall` 清掉这些未跟踪产物，要么给它们加忽略规则（后者要动上游 `.gitignore`）。本轮已清（56 删、`packages/` 下未跟踪数回到 0）。**踩坑补记**：我第一次用 `Path("packages").rglob("*")` 去找它们，直接撞进 pnpm 的符号链接森林挂死（正是本仓记过的老陷阱）——**要按版本控制面取，不要遍历磁盘**；另外 `git status` 的路径是**相对仓根**打印的，在子目录里解析前必须剥掉前缀，否则 `is_file()` 全 False 会假装"没有残留"。
+⑯ **`pnpm run typecheck` 会把编译产物吐进 `packages/**/src/`，跑完必须清（2026-09-26 实测，我自己造的）**：它一次跑出 **56 个未跟踪的 `.js`/`.d.ts`/`.map` 落在四个包的 `src/` 里**（`llm-replay`、`loader-smoke`、`session-snapshot`、`deepseek-llm-api-extensions`），而 **`.gitignore` 不覆盖它们**（`git check-ignore` 判为未忽略）。这在本仓不是无害噪音：AGENTS.md 规定静态门与测试**按 tsconfig paths 解析到 `src`**，所以 `src/index.js` 与 `src/index.ts` 同处一地，会被任何"按磁盘遍历"的守卫收进扫描面（本仓已经因为同类残留挂死过两次）。⇒ **口径**：跑 `pnpm run typecheck` 之后要么按 `git status --porcelain -uall` 清掉这些未跟踪产物，要么给它们加忽略规则（后者要动上游 `.gitignore`）。本轮已清（56 删、`packages/` 下未跟踪数回到 0）。**踩坑补记**：我第一次用 `Path("packages").rglob("*")` 去找它们，直接撞进 pnpm 的符号链接森林挂死（正是本仓记过的老陷阱）——**要按版本控制面取，不要遍历磁盘**；另外 `git status` 的路径是**相对仓根**打印的，在子目录里解析前必须剥掉前缀，否则 `is_file()` 全 False 会假装"没有残留"。 ⑰ **web 表层 lane 有一条会在测量期间改写共享产物的 lane（2026-09-26 实测）**：`apps/web/tests/hmr-live.e2e.ts` spawn `pnpm run dev:web --skip-build --no-serve` 监听进程，可改写集为 `apps/web/dist/**/*` 与 `packages/*/*/lib/client*.js(.map)`（该文件 `:16-22` 自述）⇒ **全量并发跑时其余 lane 的被测物在跑动中被换掉**，且跑完留下的 dist 不再是 `pnpm run build` 的产物（实测：一批起跑 mtime 19:12:46、收数 19:57:52，期间无人跑 build）。处置＝该 lane 单独成批或给私有 dist；详见 §5 第 7 条的同日读数。
 
 **同日处置（第三批）**：上面那条「因果未钉死」已由一次实验消掉——新增 `apps/web/tests/taiji-runtime-absent.e2e.ts`＋`taiji-runtime-absent.overlay.yml`（overlay 把 `llm-taiji` 的 `baseURL` 指到 127.0.0.1:9，**不动共享运行时**），`vitest run --config vitest.web.config.ts` **1 passed／4.18 s**：死端口下 `listProviders()` 不含 `taiji-local`、含 `deepseek-official`，且首启动「添加一个 API Key 开始使用」卡片重新出现 ⇒ **8 条红的主因＝本 fork 的免凭据路由在场**。**同日第四批已把这条前提写成显式（见 H3p）：同 4 文件的红从 8 降到 2，剩余 2 条是「选择工作区」输入框与「删掉选中模型后」两处表层等待，不再属于运行时污染那一类。****这两个文件是本 fork 新增面（H 项待登记：新 lane ＋ 它依赖的 overlay 行形状）**；剩余待处置两件：① 上游那 4 个文件要不要改成「带运行时／不带运行时」两套前提（现在有了死端口 overlay 这个入口，成本已降）；② 金样 `DSH_SNAPSHOT=refresh` 是否把我方 Taiji 行烤进基线（会动 139 文件／321 用例那套面，未擅自做）。**另一处已钉（同日补断言后复跑，仍 1 passed）**：死端口下声明面仍含 `taiji-local`、注册面不含 ⇒ 撤回发生在就绪探测层（包仍挂载、该路由 dormant）；排除的是「包没挂载／声明被抹掉」那一支。
