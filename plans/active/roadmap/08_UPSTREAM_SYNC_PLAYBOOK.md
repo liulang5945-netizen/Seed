@@ -178,6 +178,13 @@ scaffold 又**自己关掉了 `session-title-llm`**（`scaffold.ts:630`，理由
 **原因未判**——该文件只有一处选行（`:216-218`），所以"第二个用例容器命名不同"这种说法**是我猜的，不成立**；
 要看的是它点完 `.first()` 之后树里到底剩下什么（同 H3v 的读法，一次插桩就够）。**这条排在下一轮队首**（先前记的"它红在后面的一个点击"不准确，已按此更正）。
 
+**再跑一次同一面（`baseline78.log`，75 条、dist mtime 全程 20:14:12 未变）**：`Test Files 32 failed｜42 passed｜1 skipped`、`Tests 65 failed｜141 passed｜28 skipped`、1170 s。
+⇒ **红文件 34 → 32**，正是 H3v 延伸的那两条 lane（`cold-blank-session`、`thinking-markdown`）。
+**但红用例反而 63 → 65**：逐文件对数后差异只有一处——`agent-team-panel.e2e.ts` 从 `failed=0` 翻成 `failed=2`，
+**而这两跑之间该文件与产物都没有变化**（代码只动了我那两条 lane，dist mtime 未变）。
+⇒ **这条面存在真实的跑次间噪声，此前从未被量出来**：单跑读数不能当合同，**任何"某条 lane 修好了/坏了"的结论至少要两跑一致**（我先前多处结论是单跑的）。
+**口径限制**：逐文件对数用的是 reporter 的文件头行，两跑各只解析到 **39/75** 个文件头（其余行形状不同没匹配上），所以"差异只有一处"这个说法**只覆盖这 39 个文件**，不是全量对账。
+
 **这条面现在的缺口是三堆，各自等不同的东西**：超时 18 条（等逐条取证）、快照差异 14 条（等金样裁定 (甲)）、普通断言 19 条（其中含 `plugin-config` 已定案的默认值过期、`sessionless-header` 的平台仿真假设、`support-timezone` 的 `TZ` 前提——**这三处都不该并进金样**）。
 **DONE 一族按判明的机制修掉，读数 5 文件转绿（同日，登记 H3v）**：改的是行选法（位置 → 按 `cwd` basename 的内容匹配）。
 **6 文件／7 用例 → `Test Files 5 passed｜1 failed`、`Tests 6 passed｜1 failed`、55.75 s**（日志 `E:/Seed/.dsh-sbx2/fix-six.log`）。
