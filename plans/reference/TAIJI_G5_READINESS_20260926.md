@@ -128,3 +128,14 @@ this scaffold lifetime. **This is the keyless first-run configuration lane**; th
 
 **给裁定的三句话**：① 前两类**该** refresh，但**不该在本机做**（第 3 类会一起被烤进去），要么在 macOS/Linux 上 refresh，要么先把那两处宿主依赖值 normalize（`{{cwd}}` 已经是占位，分隔符却没有）；② 第 4、5 类要先各判一次，别混进 refresh；③ 第 6 类 refresh 救不了，得改 lane。⇒ **"refresh 与否"不是一个开关，而是三件事**。
 
+
+## 7.1 · "先 normalize 再 refresh" 这条路的价格（同日实测，给 §7 那句"要么先 normalize"定价）
+
+§7 的三句话里第 ① 句留了一个未定价的选项：「先把那两处宿主依赖值 normalize（`{{cwd}}` 已经是占位，分隔符却没有）」。本轮把它的**可行形状与半径**量清了：
+
+* **公共出口只有一处**：`apps/web/tests/scaffold.ts:1540` 的 `normalizeAria(snapshot, workspaceCwd, age)`，被 `captureStableAria`（`:1606`）在套完 lane 自带 `replacements` 之后调用；它现有 **18 条归一规则**（uuid／时长／时钟／日期／`{{workspace}}` 基名／吞吐／tokens／`{{cwd}}` 本身），**没有一条管路径分隔符**。金样比对本身在 `compareOrRefreshGolden`（`:1675`），它是**纯字节比较**、不做二次归一。
+* **通用替换 `\` → `/` 已证不可行**：入库的 **119 份**金样里有 **6 份**的反斜杠是**被展示的内容**而非路径——aria 里的 JSON 负载转义引号（`expected/clickable-links-gallery/ui.expected.md:41` 的 `\"command\"`、`expected/cordis-history/ui.expected.md:27`、`expected/models-settings-recovery/stored-error.expected.md:17`、`expected/plugin-manager/missing-bundle.expected.md:7`、`expected/session-archive-active/dialog.expected.md:7`、`expected/steer-all/replay.override.json`）。在公共出口做 blanket 替换会把这 6 份的内容改坏 ⇒ **这 6 条 lane 在所有平台都会变红**，不是本机问题。⇒ **"一行通用归一"这个便宜选项不存在**，别按它估工。
+* **锚定式的真实半径＝1 份金样／1 行 lane 补丁**：含路径占位的金样只有 4 份（`{{cwd}}` 3 份 ＋ home 令牌 1 份），其中**会因平台翻转的只有 1 份**——`expected/plugin-install-registry/installed.expected.md` 的"安装位置"行（值由 app 自己 `join` 出来）。`markdown-images` 与 `reference-composer` 里的 `/` 分别来自 markdown 源文本与 cwd 本体，不经 join、不翻转。**修法**＝在 `plugin-install-registry.e2e.ts:75-77` 那条链式替换前加一条整串替换（把 `join(workspaceCwd, '.dsh-home', 'profiles', 'scaffold')` 直接映射成 `{{cwd}}/.dsh-home/profiles/scaffold`），**在 darwin/Linux 上是恒等式** ⇒ 不动任何入库金样、不引入跨平台漂移；代价＝1 行 fork 补丁（要登记 H 项）＋ **0 份金样改动**。本轮**未改**，因为该 lane 正在批跑（见下条口径）。
+* **另两处宿主依赖不是 normalize 能覆盖的**，要分开裁：① `support-timezone` 的 2 条断言（`expected 'Asia/Shanghai' to be 'UTC'`／`to be 'America/Los_Angeles'`）前提是「Chromium 认 `TZ` 环境变量」，Windows 上不成立 ⇒ 出路是 `platform` 条件 skip（动上游 spec）**或**把对照页断言改成取宿主真实时区；② `shipped-composition.e2e.ts` 的工具花名册**内联快照**把宿主 shell 烤了进去（本轮该 diff 为 1 行 `+ "pwsh"`，位于字母序 `present` 与 `read` 之间）⇒ 同属 skip-or-normalize，且它和 `plugin-install-registry` 的**归因方法要记清**：我是按"该 diff 之前最近出现的 lane 名"归的，不是按 FAIL 头行（ANSI 色码使头行匹配不上）。
+
+⇒ **对 §7 裁定的净影响**：金样这件事不是"refresh 一刀切"，而是**三个各自独立的小裁定**——（甲）fork 有意变更（品牌字串、Taiji 行、我方 bundle 计数）**该** refresh，且**该**在非本机做；（乙）分隔符按锚定式 1 行 lane 补丁消掉，refresh 不该把它烤进去；（丙）时区／shell 两处属"环境前提在本机不可能成立"，与 `docs-site-projection` 的符号链接 EPERM 同族（08 §6 ⑦），三件可以一次裁定「在本机按平台 skip」。**在（乙）（丙）落定前做任何 refresh，都会把本机指纹固化进基线。**
