@@ -146,12 +146,17 @@ this scaffold lifetime. **This is the keyless first-run configuration lane**; th
 ⇒ 这**不是** markdown 渲染缺陷：DONE 文本来自 lane 自己写进盘上的会话件（`source: {kind:'model', provider:'fixture'}`），
 红的是**那条会话根本没进表层**。也**不是**产物过期：这两张图就是新鲜 build 上取的。
 
-**最好的解释（待判别实验，别当结论用）**：与 H3q/H3t 那条已知阻塞同源——这些 lane 走的是**页内目录选择器**那条旧 helper
-（`connectFreshWorkspace`，现存 56 个调用点），而该选择器在本 fork 的表层开不出菜单 ⇒ **工作区从未被登记**，
-会话因此落进 `Ungrouped`、标题也不来自登记后的头部索引 ⇒ 树里的行序与 lane 预期对不上，正文自然等不到。
-**判别实验（一条就够）**：把 `markdown-cjk-strong` 换成宿主侧 `connectFreshWorkspaceViaHost`（先 `ctx.workspaceController.create({path})` 再重载），
-看 DONE 是否出现。**两种结果都有价值**：出现 ⇒ 这 7 条与 6 条 lane 归到已知阻塞，处置是"把剩下的调用点按同一模式转过去"；
-不出现 ⇒ 登记不是因，得回头查 ⑮（启动期建的头部索引）或 ⑭（校验器拒收播种件）。
+**我给出的第一个解释已被读码否证（同日，记下以免重犯）**：我先前写"这族 lane 走的是页内目录选择器那条旧 helper（`connectFreshWorkspace`，56 个调用点），
+而该选择器在本 fork 开不出菜单 ⇒ 工作区从未被登记"。**打开 `markdown-cjk-strong.e2e.ts` 逐行看，它根本不调任何选择器 helper**——
+`beforeAll` 是 `launchWebScaffold({})` → `seedSession(...)` → 启浏览器 → `goto`（`:95-104`），红的那段是在树里点两行（`:113-119`）。
+⇒ **"未登记"这个说法对它不成立**，我把"截图里工作区没出现"直接接到了一个我没核对过的机制上。**又一次：先读那条 lane 的代码，再谈它的因**（同族第四次）。
+
+**读码后剩下的两个候选（都还没判）**：① **⑮ 那一族**——`seedSession` 发生在宿主 `launchWebScaffold` **之后**，
+而工作区的会话头部索引是**启动时建一次**（08 §6 ⑮），所以树里那行只有目录名、没有播种的标题，点开也就没有正文；
+② **⑭ 那一族**——播种件被会话校验器拒收（`system/message ... must have system-prompt source`，`packages/core/session/src/index.ts:362-364`），
+装载阶段就没东西可渲染。**两者区分办法（下一步做，一条 lane 就够）**：在 `seedSession` 之后**重启一次宿主**（或显式触发 re-index）再 `goto`——
+若 DONE 出现＝⑮；仍不出现＝把当时的宿主 stderr 与 `readSessionHeader` 的返回值取出来，按 ⑭ 查。
+**这条待办比"再跑一次批"更有价值**：它决定的是这 6 条 lane（7 条断言）到底是**索引时序**还是**校验器口径**。
 **其余 15 条普通断言**形状各异（`plugin-config` 三条都是毫秒值对不上：`'120000'` 对 `'12000'` 两条、对 `'60000'` 一条；
 `sessionless-header` 三条是计数对不上：`40` 对 `+0` 两条、`1` 对 `+0` 一条；另有 `'/go' to be '/goal '`、`Asia/Shanghai` 对 `UTC` 等），
 **逐条取证前不要并进"金样"那一堆**。
