@@ -1,0 +1,23 @@
+{
+  "format": "taiji-r2-a27-address-separability-v1",
+  "prereg": "plans/reference/SPEC-A-17_r2_a2_3b_format_align_prereg_20260925.md §17",
+  "chain": "scored + store=target（每步都在正确事件里，只测定位）",
+  "circuit": "output/taiji_r2_copy_circuit_chat/judge/circuit-final.pt",
+  "items": 81,
+  "answer_steps": 635,
+  "observed_aim_rate": 0.1087,
+  "note_units": "分数未除 scale（同除一个正数不改 argmax），故 λ 与 margin 都是 M 空间的量；λ = 活轨迹偏置 × scale = 2.5 × 9.798",
+  "solve": {
+    "anchor_aim_rate": 0.1087,
+    "observed_aim_rate_live": 0.1087,
+    "anchor_ok": true,
+    "trained_lam": 24.4949,
+    "best_lam": 22.2531,
+    "best_aim_rate": 0.222,
+    "best_min_margin": -17.234456,
+    "steps": 635,
+    "constructively_separated": false
+  },
+  "reading_rule": "上限≈observed ⇒ 表征被固定随机基钉死；上限≥0.9 ⇒ 做得到但没学到（训练制度问题）；中间 ⇒ 按 kind 分层报数不裁定。平台值不是不可分证书，只有 constructively_separated=true 才是可分性的正面证据",
+  "base_sha256_unchanged": true
+}

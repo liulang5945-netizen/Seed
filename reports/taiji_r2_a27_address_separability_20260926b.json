@@ -1,0 +1,59 @@
+{
+  "format": "taiji-r2-a27-address-separability-v1",
+  "prereg": "plans/reference/SPEC-A-17_r2_a2_3b_format_align_prereg_20260925.md §17",
+  "chain": "scored + store=target（每步都在正确事件里，只测定位）",
+  "circuit": "output/taiji_r2_copy_circuit_chat/judge/circuit-final.pt",
+  "items": 81,
+  "answer_steps": 635,
+  "observed_aim_rate": 0.1606,
+  "note_units": "分数未除 scale（同除一个正数不改 argmax），故 λ 与 margin 都是 M 空间的量；λ = 活轨迹偏置 × scale = 2.5 × 9.798",
+  "margin_sweep": {
+    "0.02": {
+      "anchor_aim_rate": 0.1606,
+      "observed_aim_rate_live": 0.1606,
+      "anchor_ok": true,
+      "trained_lam": 24.4949,
+      "best_lam": 22.4225,
+      "best_aim_rate": 0.7685,
+      "best_min_margin": -0.638644,
+      "steps": 635,
+      "constructively_separated": false
+    },
+    "0.1": {
+      "anchor_aim_rate": 0.1606,
+      "observed_aim_rate_live": 0.1606,
+      "anchor_ok": true,
+      "trained_lam": 24.4949,
+      "best_lam": 22.4213,
+      "best_aim_rate": 0.9496,
+      "best_min_margin": -0.602039,
+      "steps": 635,
+      "constructively_separated": false,
+      "perceptron": {
+        "aim": 0.15118110236220472,
+        "gap": -59.45369974145636,
+        "passes_used": 300,
+        "converged": false
+      }
+    }
+  },
+  "solve": {
+    "anchor_aim_rate": 0.1606,
+    "observed_aim_rate_live": 0.1606,
+    "anchor_ok": true,
+    "trained_lam": 24.4949,
+    "best_lam": 22.4213,
+    "best_aim_rate": 0.9496,
+    "best_min_margin": -0.602039,
+    "steps": 635,
+    "constructively_separated": false,
+    "perceptron": {
+      "aim": 0.15118110236220472,
+      "gap": -59.45369974145636,
+      "passes_used": 300,
+      "converged": false
+    }
+  },
+  "reading_rule": "**只有正向结果可证**：constructively_separated=true ⇒ 这套参数化做得到、只是没学到（训练制度问题，不动架构）。搜索停在平台 ⇒ **本件无结论**——6144 个自由度对几百条约束，平台不构成「做不到」的证据；要判「表征被钉死」需要线性规划对偶给出的不可行证书，那是下一刀。（§17 预登记时我把「上限≈现状」当成了「表征受限」的证据——判读线本身写错了，就地更正，不改口径。）",
+  "base_sha256_unchanged": true
+}
