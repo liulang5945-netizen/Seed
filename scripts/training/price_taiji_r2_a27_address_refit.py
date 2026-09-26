@@ -120,14 +120,25 @@ def refit_m(circuit: Any, steps: list[dict], epochs: int, lr: float, margin: flo
     }
 
 
-def install(circuit: Any, m: torch.Tensor, lam: torch.Tensor, scale: float) -> dict:
-    """把寻址取法换成 `f1·M·embed[c] + λS`（λ 已换回本件单位＝偏置×scale）。"""
-    original = circuit._position_weights
-    embed = circuit._parameters["content_embed"]
+PROBE: dict[str, int] = {"calls": 0, "diverged": 0}
 
-    def patched(event, f1_context, prev_byte=None):
-        codes = torch.tensor(list(event.content), device=circuit.device, dtype=torch.long)
-        keys = embed[codes].detach().cpu().to(torch.float64)
+
+def install(m: torch.Tensor, lam: torch.Tensor, scale: float) -> Any:
+    """把寻址取法换成 `f1·M·embed[c] + λS`（λ 已换回本件单位＝偏置×scale）。
+
+    **必须打类级补丁**（`CopyCircuit._position_weights`），不能打在某个实例上：
+    第一版打在已加载的 circuit 对象上，而 `run_arm` 自己会 `SeedRuntime.load` 出一个新运行时
+    ⇒ 补丁挂在没人消费的那个旧对象上，跑出来 104/104 答复与基线**逐字节相同**、delta 恰好 0。
+    那是个假阴性，不是"能力不等于增益"的结论。
+    """
+    from taiji.copy_circuit import CopyCircuit
+
+    original = CopyCircuit._position_weights
+    embed_key = "content_embed"
+
+    def patched(self, event, f1_context, prev_byte=None):
+        codes = torch.tensor(list(event.content), device=self.device, dtype=torch.long)
+        keys = self._parameters[embed_key][codes].detach().cpu().to(torch.float64)
         scores = (f1_context.detach().cpu().to(torch.float64) @ m) @ keys.T
         if prev_byte is not None:
             bonus = torch.zeros_like(scores)
@@ -135,13 +146,22 @@ def install(circuit: Any, m: torch.Tensor, lam: torch.Tensor, scale: float) -> d
                 if int(codes[position - 1]) == int(prev_byte):
                     bonus[position] = 1.0
             scores = scores + lam * bonus
-        weights = torch.softmax(scores / scale, dim=0).to(
-            dtype=torch.float32, device=circuit.device
-        )
+        weights = torch.softmax(scores / scale, dim=0).to(dtype=torch.float32, device=self.device)
+        PROBE["calls"] += 1
+        with torch.no_grad():
+            if int(weights.argmax()) != int(original(self, event, f1_context, prev_byte).argmax()):
+                #: 与训练取法**选到不同位置**的次数——为 0 就说明这次重解等于没改。
+                PROBE["diverged"] += 1
         return weights
 
-    circuit._position_weights = patched
-    return {"original": original, "patched": patched}
+    CopyCircuit._position_weights = patched
+    return original
+
+
+def uninstall(original: Any) -> None:
+    from taiji.copy_circuit import CopyCircuit
+
+    CopyCircuit._position_weights = original
 
 
 def main() -> int:
@@ -211,19 +231,23 @@ def main() -> int:
         report_path, pick, manifest = baselines[name]
         data = json.loads(report_path.read_text(encoding="utf-8"))
         baseline_hits = pick(data)
-        handle = install(circuit, m, lam, scale)
+        PROBE["calls"] = 0
+        PROBE["diverged"] = 0
+        original = install(m, lam, scale)
         try:
             items = load_items(PROJECT_ROOT / manifest)
             if args.limit > 0:
                 items = items[: args.limit]
             arm = run_arm(items, checkpoint, args.circuit)
         finally:
-            circuit._position_weights = handle["original"]
+            uninstall(original)
         arms.append(
             {
                 "set": name,
                 "manifest": manifest,
                 "items": arm["items"],
+                "patched_calls": PROBE["calls"],
+                "patched_diverged_calls": PROBE["diverged"],
                 "strict_hits": arm["strict_hits"],
                 "items_scored": len(arm["rows"]),
                 "baseline_strict_hits": baseline_hits,
@@ -255,6 +279,9 @@ def main() -> int:
             "任一集 delta>=3 ⇒ 能力→增益成立，A2.3 寻址训练制度提到第一优先；"
             "都不足 3 ⇒ 指对与发出之间另有一道闸，下一刀测那道闸"
         ),
+        #: 补丁没被走到 / 一次都没改变选择 ⇒ 这一跑是**未生效**，不许读成"没有增益"。
+        "patch_effective": bool(all(int(arm["patched_calls"]) > 0 for arm in arms))
+        and bool(all(int(arm["patched_diverged_calls"]) > 0 for arm in arms)),
         "judged_gain": bool(decided and all(bool(arm["comparable"]) for arm in arms)),
         "base_sha256_unchanged": _sha256(checkpoint) == sha_before,
     }
@@ -275,6 +302,8 @@ def main() -> int:
                         "hits": arm["strict_hits"],
                         "baseline": arm["baseline_strict_hits"],
                         "delta": arm["delta"],
+                        "calls": arm["patched_calls"],
+                        "diverged": arm["patched_diverged_calls"],
                     }
                     for arm in arms
                 ],
@@ -289,7 +318,9 @@ def main() -> int:
             ensure_ascii=False,
         )
     )
-    return 0 if report["base_sha256_unchanged"] else 2
+    if not report["base_sha256_unchanged"] or not report["patch_effective"]:
+        return 2
+    return 0
 
 
 if __name__ == "__main__":
