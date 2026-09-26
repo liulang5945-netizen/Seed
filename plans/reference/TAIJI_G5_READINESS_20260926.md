@@ -108,3 +108,19 @@ this scaffold lifetime. **This is the keyless first-run configuration lane**; th
 
 **收口读数（本轮最后一次全量叶批，2026-09-26 21:13）**：doc-sync 复跑＝**43 叶／唯一红 `docs-site-projection`**（即 `project-doc-site.spec.ts` 需 `symlink()` 而本机 EPERM 那条已登记环境红，见 08 §6 ④）⇒ **今日全部改动**（含 H3o 新增的那条 lane 与它的 overlay 行）**未引入新红**；新增文件另过 oxlint **0 error／0 warning**（90 条规则）。**一处口径提醒**：本仓没有可直接整体调用的聚合入口跑这 43 叶，我用的是仓外批跑脚本，它把嵌套的 `verify-doc-site-fragments` 双计成 44 叶——**以仓库自身聚合报告的 43 为准**。
 **第四批（同日，2026-09-26）：把「无可用路由」写成显式前提，8 条红降到 2 条**：不再让这 4 条 keyless lane 的前提取决于本机恰好有没有跑着运行时。做法是新增 `apps/web/tests/taiji-row-absent.overlay.yml`（内容 `- id: llm-taiji` ＋ `disabled: true`），在 `apps/web/tests/scaffold.ts` 导出 `TAIJI_ROW_ABSENT_OVERLAY`，四条 lane 的 `launchWebScaffold(...)` 统一带上 `extraOverlayPath`（`onboarding-native` 与它原有的 cordis.patch.yml 合并成数组）。**读数**：同 4 文件 `Test Files 2 failed｜2 passed`、`Tests 2 failed｜9 passed（11）`，107 s ⇒ **红从 8 降到 2**，验证了「这些红的前提被运行时会话污染」这一判断。**关键更正**：只把 baseURL 指到死端口时，设置里的 Taiji 行**依然出现**（注册面撤回、声明面仍在），必须 `disabled: true` 才整行消失——第三批我据此写的 D2 口径已在上面就地改掉。**剩余 2 条（未归因）**：`deepseek-messages-settings > offers one DeepSeek card...` 等 `getByRole('textbox',{name:'选择工作区'})` 32 s 超时；`onboarding-deepseek-config > configures arbitrary DeepSeek models...` 33 s 超时（等待对象待取）。这两条不再像是运行时污染，下一条线索是工作区选择与「删掉选中模型后」的表层差异。**同日对照实验把范围改大了（重要）**：跑一条同样调用 `connectFreshWorkspaceZh` 但不带本轮 overlay 的对照 lane （`access-confirmation.e2e.ts`），它在 helper 的**下一步**红——`选择工作区目录` 对话框 10 s 不出现；而 `apps/web/tests/scaffold.ts:660-665` 是**无条件**把页内 browse picker 钉住的（`{ id: directory-picker, disabled: true }` ＋ insert 两行），装配也没报错。⇒ 这不是"某条 lane 忘了带 overlay"，而是**页内目录选择器在本 fork 实际弹不出来**，它横跨 12 条共用该 helper 的 lane。**"剩余 2 条"这个说法要改，但不是我当时写的那个方向**：这条 lane 在 CI 里 0 引用（`.github/workflows/` 中 `test:web`／`run-web-snapshots` 出现 0 次，只 `playwright install chromium` 给别的门用），所以它没有上游拥有的绿色基线 ⇒ 红既不能算 fork 回归也不能算已修；要用它当门，先做一次失败瞬间的 ARIA 判别（08 §6 ⑫ 已按此降级）。**本轮批处理自己的两处缺陷（已修，记法在此）**：统一正则插入造成 `extraOverlayPath` **重复键**（一处文件）与**后写覆盖前写**（`onboarding-native` 里 `...desktop ? {} : { extraOverlayPath }` 会盖掉新键，属会静默丢前提的那一类）；另有一条 max-len 149＞140。跑之前逐文件核对落点形状后才修掉。
+
+## 7 · 金样 refresh 会烤进什么（2026-09-26 逐条取证，给"要不要 refresh"这条裁定用）
+
+跑那 10 条红（`smoke-real` 因会另起 CLI 进程未列入本轮），把每条 ARIA 差异归到具体 lane 后，**差异只有四种来源，而其中一种不该进基线**：
+
+| lane | 差异内容 | 类别 | refresh 的后果 |
+| --- | --- | --- | --- |
+| `agent-preset-authoring` | `扩展 DSH 的能力` → `扩展 Taiji Harness 的能力` | **fork 有意变更**（G2 品牌化） | 烤进去＝正确，且这是唯一让它变绿的做法 |
+| `models-settings-recovery` | 模型列表多出一行 `Taiji（本地运行时）` ＋ 其编辑按钮 | **fork 有意变更**（我方 `llm-taiji` 在装配里） | 烤进去＝正确，但**这台机器上录的会连带下一行的宿主差异** |
+| `plugin-install-registry` | `安装位置：{{cwd}}/.dsh-home/profiles/scaffold` → `{{cwd}}\.dsh-home\profiles\scaffold` | **宿主路径分隔符**（Windows） | **不该烤**：在本机 refresh 会把反斜杠固化进基线，macOS/Linux 上立刻变红 |
+| `github-ready-review` | 计数 `1` → `2` | 未判 | 需要读上下文才能分清是 fork 变更还是行为差异 |
+| `support-timezone` | 2 条用例 **287 ms** 快速失败（不是超时） | 疑似**宿主时区依赖** | 未判；若是，则与 ⑩ 的 bash/pwsh 同类 |
+| `cold-blank-session`／`startup-auto-selection` | 等待对象根本不出现 | **lane 的状态假设与当前表层对不上**（§6 ⑮ 那条） | refresh 无效——它们不是快照差异 |
+
+**给裁定的三句话**：① 前两类**该** refresh，但**不该在本机做**（第 3 类会一起被烤进去），要么在 macOS/Linux 上 refresh，要么先把那两处宿主依赖值 normalize（`{{cwd}}` 已经是占位，分隔符却没有）；② 第 4、5 类要先各判一次，别混进 refresh；③ 第 6 类 refresh 救不了，得改 lane。⇒ **"refresh 与否"不是一个开关，而是三件事**。
+
