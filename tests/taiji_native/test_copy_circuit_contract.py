@@ -245,6 +245,31 @@ def _parameters_digest(parameters: dict[str, Any]) -> str:
     ).hexdigest()
 
 
+#: 这两份 digest 是在 rev5（A2.5 选择头）**之前**按当时的全部 7 个张量实测的。
+#: 加了新参数就不能再拿"整套参数"去比——那会把"新头是零"这个新事实混进"旧张量没动"这个老断言。
+#: 所以：按下面这份字面名单逐个取，名单本身被断言钉住（少一个/多一个都红），
+#: 新增的两项则单独断言"恰好为零"。
+PRE_SELECTOR_PARAMETER_NAMES = (
+    "content_embed",
+    "query_state",
+    "query_content",
+    "gate_state",
+    "gate_content",
+    "gate_bias",
+    "copy_induce_bias",
+)
+
+
+def _pre_selector_digest(parameters: dict[str, Any]) -> str:
+    selected = {name: parameters[name] for name in PRE_SELECTOR_PARAMETER_NAMES}
+    assert set(parameters) - set(selected) == set(
+        CopyCircuit.OPTIONAL_ZERO_PARAMETERS
+    ), "参数面变了：先重推这两份 digest 的口径，别改名单迁就现状"
+    for name in CopyCircuit.OPTIONAL_ZERO_PARAMETERS:
+        assert float(parameters[name].abs().sum()) == 0.0, name
+    return _parameters_digest(selected)
+
+
 def _run_trainer(tmp_path: Path, protocol: str, episodes: int) -> dict[str, Any]:
     import train_taiji_r2_copy_circuit as trainer
 
@@ -279,7 +304,7 @@ def test_bare_arm_survives_the_extraction_untouched(tmp_path: Path) -> None:
     payload = _run_trainer(tmp_path, "bare", 5)
     assert payload["protocol"] == "bare"
     assert payload["prereg"].endswith("M5_R2_A2_3_PREREG_20260925.md")
-    assert _parameters_digest(payload["copy_circuit"]["parameters"]) == BARE_ARM_PINNED_DIGEST
+    assert _pre_selector_digest(payload["copy_circuit"]["parameters"]) == BARE_ARM_PINNED_DIGEST
 
 
 def test_record_primitive_keeps_told_turns_unwrapped() -> None:
@@ -407,14 +432,17 @@ def _small_model(seed: int) -> Taiji:
 
 
 def test_init_seed_default_leaves_the_mount_bitwise_identical() -> None:
-    """不传 `init_seed` ⇒ 挂载结果逐位等于加参数之前的实测值（三个种子各测一次）。"""
+    """不传 `init_seed` ⇒ 挂载结果逐位等于加参数之前的实测值（三个种子各测一次）。
+
+    口径＝rev5 之前的 7 个张量（`_pre_selector_digest`），新头另行断言恒零。
+    """
 
     for config_seed, expected in MOUNT_BASELINE_DIGEST_BY_CONFIG_SEED.items():
         model = _small_model(config_seed)
         model.mount_copy_circuit(max_events=4)
         circuit = model.copy_circuit
         assert circuit is not None
-        assert _parameters_digest(dict(circuit.parameters())) == expected, config_seed
+        assert _pre_selector_digest(dict(circuit.parameters())) == expected, config_seed
 
 
 def test_circuit_init_seed_moves_only_the_random_projections() -> None:
@@ -434,6 +462,9 @@ def test_circuit_init_seed_moves_only_the_random_projections() -> None:
     for name in ("gate_state", "gate_content", "gate_bias", "copy_induce_bias"):
         assert int(torch.count_nonzero(params_left[name])) == 0, name
         assert int(torch.count_nonzero(params_right[name])) == 0, name
+    for name in CopyCircuit.OPTIONAL_ZERO_PARAMETERS:
+        assert int(torch.count_nonzero(params_left[name])) == 0, name
+        assert int(torch.count_nonzero(params_right[name])) == 0, name
     cue = torch.zeros(left.config.cortical_context_dim)
     cue[2] = 1.0
     f1 = torch.zeros(left.config.motor_context_dim)
@@ -441,3 +472,129 @@ def test_circuit_init_seed_moves_only_the_random_projections() -> None:
     left.copy_circuit.store.record(b"abc", cue)
     evidence = left.copy_circuit.evidence(cue=cue, f1_context=f1)
     assert torch.equal(evidence, torch.zeros(left.config.alphabet_size))
+
+
+def _two_event_store(model: Taiji) -> tuple[CopyCircuit, torch.Tensor, torch.Tensor, torch.Tensor]:
+    """挂上电路、喂两段告知＋一个提问，返回 (circuit, cue_第一条, cue_第二条, cue_提问)。"""
+    model.reset_dynamics(episode_id="selector")
+    model.observe(model.config.boundary_symbol, learn=False, readout="predictive")
+    cues: list[torch.Tensor] = []
+    for turn in ("我叫明轩。", "我家住在苏州。"):
+        for symbol in turn.encode():
+            model.observe(int(symbol), learn=False, readout="predictive")
+        cues.append(model.cortical_cue())
+    for symbol in "你住在哪里？".encode():
+        model.observe(int(symbol), learn=False, readout="predictive")
+    model.mount_copy_circuit(max_events=4)
+    circuit = model.copy_circuit
+    assert circuit is not None
+    for turn, cue in zip(("我叫明轩。", "我家住在苏州。"), cues):
+        circuit.store.record(turn.encode(), cue)
+    return circuit, cues[0], cues[1], model.cortical_cue()
+
+
+def test_zero_head_scores_bitwise_equal_the_legacy_cue_cosine() -> None:
+    """§5 守卫②：头零初始化时分数**逐位等于** `best_match` 那条余弦，argmax 同现状。
+
+    这是"挂载不改行为"在选择侧的版本——比 `evidence ≡ 0` 更强：gate 开之后（训练中）
+    仍要能保证"没学到的选择器＝原来的选择器"。
+    """
+    model = _model()
+    circuit, cue_a, _cue_b, query_cue = _two_event_store(model)
+    f1 = model._state.motor_context.detach().cpu().clone()
+    state = circuit.selection(cue=query_cue, f1_context=f1, query_bytes="你住在哪里？".encode())
+    assert state is not None
+    assert torch.equal(state["scores"], state["features"][:, 0])
+    assert float(state["head_values"].abs().sum()) == 0.0
+    assert state["event"].event_id == circuit.store.best_match(query_cue).event_id
+
+    # 平手裁决也必须一致：两条告知挂同一个 cue ⇒ 分数真相同，严格大于才换 ⇒ 取更前面那条。
+    tied = _model()
+    tied.mount_copy_circuit(max_events=4)
+    tied_circuit = tied.copy_circuit
+    shared = torch.zeros(tied.config.cortical_context_dim)
+    shared[1] = 0.7
+    shared[3] = -0.4
+    tied_circuit.store.record(b"first", shared)
+    tied_circuit.store.record(b"second", shared)
+    tie_state = tied_circuit.selection(
+        cue=shared, f1_context=torch.zeros(tied.config.motor_context_dim), query_bytes=b""
+    )
+    assert float(tie_state["scores"][0]) == float(tie_state["scores"][1])
+    assert tie_state["event"].event_id == 0
+    assert tie_state["event"].content == b"first"
+
+
+def test_selection_lock_freezes_the_event_across_steps() -> None:
+    """§5 守卫③：锁上之后换一个偏向另一条告知的 cue，取到的仍是锁住的那一条。
+
+    未锁时同一个换 cue 必须改主意——否则这条守卫是在测一件本来就成立的事。
+    这里用"每条告知自己的段末 cue"造对照：cue_A⇒A、cue_B⇒B 是 §1.2 那种逐步漂移的干净形态。
+    """
+    model = _model()
+    circuit, cue_a, cue_b, query_cue = _two_event_store(model)
+    f1 = model._state.motor_context.detach().cpu().clone()
+    assert circuit.addressing(cue=cue_a, f1_context=f1)["event"].event_id == 0
+    assert circuit.addressing(cue=cue_b, f1_context=f1)["event"].event_id == 1
+
+    lock = circuit.lock_selection(cue=query_cue, f1_context=f1, query_bytes="你住在哪里？".encode())
+    assert lock is not None
+    assert circuit.locked_event_id == lock["event"].event_id
+    frozen = lock["event"].event_id
+    for cue in (cue_a, cue_b, query_cue):
+        assert circuit.addressing(cue=cue, f1_context=f1)["event"].event_id == frozen
+        assert torch.equal(
+            circuit.evidence(cue=cue, f1_context=f1),
+            circuit.evidence(cue=query_cue, f1_context=f1),
+        )
+    assert circuit.selection_lock_dropped == 0
+
+    # 锁指向的事件被淘汰：必须**响亮**地计数并就地弃锁（不静默换路）。
+    circuit.store.clear()
+    circuit.store.record("我叫明轩。".encode(), cue_a)
+    assert circuit.addressing(cue=cue_b, f1_context=f1) is not None
+    assert circuit.selection_lock_dropped == 1
+    assert circuit.locked_event_id is None
+
+
+def test_selector_head_learns_toward_the_told_event_and_loads_legacy_payload() -> None:
+    """标签来自题面那条告知；一步更新后头离开零，旧 payload（无 rev5 两项）仍可载入。"""
+    model = _model()
+    circuit, cue_a, _cue_b, query_cue = _two_event_store(model)
+    f1 = model._state.motor_context.detach().cpu().clone()
+    state = circuit.selection(cue=query_cue, f1_context=f1, query_bytes="你住在哪里？".encode())
+    before = circuit.parameters()["selector_weight"].detach().cpu().clone()
+    target = 1 - int(state["event"].event_id)
+    circuit.learn_selection(state, target_event_id=target, advantage=1.0, lr_selector=0.5)
+    moved = circuit.parameters()["selector_weight"].detach().cpu().clone()
+    assert not torch.equal(before, moved)
+    assert float(moved.abs().sum()) > 0.0
+    # 训练后头必须能把选择翻到标签那条（分数不再逐位等于余弦行）。
+    after = circuit.selection(cue=query_cue, f1_context=f1, query_bytes="你住在哪里？".encode())
+    assert not torch.equal(after["scores"], after["features"][:, 0])
+    assert after["event"].event_id == target
+
+    payload = circuit.to_payload()
+    legacy_parameters = {
+        name: value
+        for name, value in payload["parameters"].items()
+        if name not in CopyCircuit.OPTIONAL_ZERO_PARAMETERS
+    }
+    fresh = _model()
+    fresh.mount_copy_circuit(max_events=4)
+    fresh.copy_circuit.load_payload({**payload, "parameters": legacy_parameters})
+    assert float(fresh.copy_circuit.parameters()["selector_weight"].abs().sum()) == 0.0
+    fresh.copy_circuit.load_payload(payload)
+    assert torch.equal(fresh.copy_circuit.parameters()["selector_weight"], moved)
+    assert fresh.copy_circuit.locked_event_id is None
+    with pytest.raises(ValueError, match="missed parameters"):
+        fresh.copy_circuit.load_payload(
+            {
+                **payload,
+                "parameters": {
+                    name: value
+                    for name, value in payload["parameters"].items()
+                    if name != "query_state"
+                },
+            }
+        )

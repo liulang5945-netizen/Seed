@@ -136,9 +136,10 @@ class ToldContentStore:
 class CopyCircuit:
     """A2.2：F1 的内容直读通道。`evidence(cue, f1_context)` 返回 257 维加性 logit 证据。
 
-    参数面（6 个张量，全部可训练）：
+    参数面（9 个张量，全部可训练）：
     `content_embed (alphabet×ew)`、`query_state (mcd×ew)`、`query_content (ew×ew)` 随机初始化；
-    `gate_state (mcd,)`、`gate_content (ew,)`、`gate_bias (1,)` **零初始化**。
+    `gate_state (mcd,)`、`gate_content (ew,)`、`gate_bias (1,)`、`copy_induce_bias (1,)`、
+    `selector_weight (5,)`、`selector_bias (1,)` **零初始化**。
     """
 
     PAYLOAD_FORMAT = "taiji-copy-circuit-v1"
@@ -152,6 +153,22 @@ class CopyCircuit:
         # rev3（A2.3 预注册 §6）：后继归纳——前一字节＝刚发出字节的行加分
         # （D6 语义，数学照抄 sequence_content_workspace._copy_weights）。零初始化。
         "copy_induce_bias",
+        # rev5（A2.5 预注册 §6）：提问条件化选择头。零初始化 ⇒ 分数退化成第 1 个特征
+        # （皮质 cue 余弦），也就是 `ToldContentStore.best_match` 的原样行为。
+        "selector_weight",
+        "selector_bias",
+    )
+    #: 旧 payload（A2.3/A2.3b 的判决件里那些电路）不含 rev5 的两项：缺它们时按零初始化补，
+    #: 而不是抛错——否则已入判决件再也载不回来，对照就废了。新 payload 仍写全。
+    OPTIONAL_ZERO_PARAMETERS = ("selector_weight", "selector_bias")
+
+    #: 选择头的 5 个特征（`SPEC-A-22` §6 冻结表）：全部无参数可算，头只学权重。
+    SELECTOR_FEATURE_NAMES = (
+        "cue_cosine",
+        "content_cosine",
+        "byte_overlap",
+        "recency",
+        "length_log",
     )
 
     def __init__(
@@ -198,6 +215,9 @@ class CopyCircuit:
             # rev3: zero-init successor bonus — inert until trained, exactly
             # like the gate (bit-identical mounting preserved).
             "copy_induce_bias": torch.zeros(1),
+            # rev5（A2.5 §6）：提问条件化选择头。零初始化 ⇒ 未训时分数＝cue 余弦＝现状。
+            "selector_weight": torch.zeros(len(self.SELECTOR_FEATURE_NAMES)),
+            "selector_bias": torch.zeros(1),
         }
         self._parameters = {
             name: tensor.to(self.device) for name, tensor in self._parameters.items()
@@ -205,6 +225,11 @@ class CopyCircuit:
         # 诊断专用显式覆写（生产恒 None）。见模块 docstring。
         self.address_override: torch.Tensor | None = None
         self.gate_override: float | None = None
+        #: A2.5 §1.2 的漂移消死结：提问喂完时锁定的那条告知（None＝现状，逐步重挑）。
+        self._locked_event_id: int | None = None
+        #: 锁指向的事件被 FIFO 淘汰而退回逐步余弦的次数——**必须恒 0**，
+        #: 否则"整轮固定"这个判据是在另一条路径上量的（同 `_pool_into` 的计数器纪律）。
+        self.selection_lock_dropped: int = 0
         #: 诊断专用：字节聚合方式（`"sum"`＝现状＝生产；`"max"` 只在 §22 那类归因实验里显式设）。
         #: 动机：`index_add` 把同一字节在句中**所有位置**的质量相加，于是"位置多"会被读成"更相关"
         #: ——实测首字节输家系统性地输给 E5/E6/E8（中文最常见首字节），怀疑就出在这儿。
@@ -282,6 +307,120 @@ class CopyCircuit:
             raise ValueError(f"unknown pool_override {self.pool_override!r}")
         return distribution.index_add(0, codes, weights)
 
+    @staticmethod
+    def _cosine(left: torch.Tensor, right: torch.Tensor) -> float:
+        """与 `ToldContentStore.best_match` **同一套算式**（先 detach→cpu→float 再归一化点积）。
+
+        必须逐位相同：选择头零初始化时分数＝本项，argmax 的平手裁决也照搬（严格大于才换，
+        所以同分取库里更前面的那条）——这两点一起构成 §5 守卫②"逐位回退现状"。
+        """
+        query = torch.nn.functional.normalize(left.detach().cpu().float(), dim=0)
+        key = torch.nn.functional.normalize(right.detach().cpu().float(), dim=0)
+        return float(torch.dot(query, key))
+
+    def _content_key(self, codes: torch.Tensor) -> torch.Tensor:
+        """事件的内容表征：固定随机基查表 → `query_content` 投影 → 按位置平均。
+
+        刻意**不新建第二个 embedding 面**，也不问 `content_embed` 可不可训（那是需签字的
+        内容表征案，`SPEC-A-22` §7）。平均而非求和：特征 5 已经单独带了长度，别让长度在这里再混一次。
+        """
+        keys = self._parameters["content_embed"][codes] @ self._parameters["query_content"]
+        return keys.mean(dim=0)
+
+    def selection(
+        self,
+        *,
+        cue: torch.Tensor,
+        f1_context: torch.Tensor,
+        query_bytes: bytes = b"",
+    ) -> Mapping[str, Any] | None:
+        """A2.5 §2/§6 的选择快照：每条告知一行特征＋一个分数，`picked` 是 argmax。
+
+        只读（`@torch.no_grad` 不适用：全程 float 标量与 clone）。无事件时返回 None，
+        与 `evidence()` 的"无事件⇒零向量"同口径。
+        """
+        events = self.store.events()
+        if not events:
+            return None
+        query_chars = {ch for ch in query_bytes.decode("utf-8", "ignore") if not ch.isspace()}
+        longest = max(len(event.content) for event in events)
+        rows: list[dict[str, Any]] = []
+        for index, event in enumerate(events):
+            codes = torch.tensor(list(event.content), dtype=torch.long, device=self.device)
+            content_chars = {
+                ch for ch in event.content.decode("utf-8", "ignore") if not ch.isspace()
+            }
+            overlap = (
+                0.0
+                if not query_chars
+                else len(query_chars & content_chars) / float(len(query_chars))
+            )
+            rows.append(
+                {
+                    "event_id": int(event.event_id),
+                    "features": torch.tensor(
+                        [
+                            self._cosine(cue, event.cue),
+                            self._cosine(f1_context, self._content_key(codes)),
+                            overlap,
+                            (index + 1) / float(len(events)),
+                            math.log1p(float(len(event.content)))
+                            / math.log1p(float(max(longest, 1))),
+                        ],
+                        dtype=torch.float32,
+                        device=self.device,
+                    ),
+                }
+            )
+        matrix = torch.stack([row["features"] for row in rows])
+        head = matrix @ self._parameters["selector_weight"] + self._parameters["selector_bias"][0]
+        scores = matrix[:, 0] + head
+        picked = 0
+        for index in range(1, int(scores.numel())):
+            if float(scores[index]) > float(scores[picked]):
+                picked = index
+        return {
+            "query_bytes": bytes(query_bytes),
+            "event_ids": [row["event_id"] for row in rows],
+            "features": matrix,
+            "head_values": head,
+            "scores": scores,
+            "picked": picked,
+            "event": events[picked],
+        }
+
+    def lock_selection(
+        self,
+        *,
+        cue: torch.Tensor,
+        f1_context: torch.Tensor,
+        query_bytes: bytes = b"",
+    ) -> Mapping[str, Any] | None:
+        """算一次并**锁到本轮生成结束**：之后的发射与训练寻址都用这一条，不再逐步换。"""
+        state = self.selection(cue=cue, f1_context=f1_context, query_bytes=query_bytes)
+        self._locked_event_id = None if state is None else int(state["event"].event_id)
+        return state
+
+    def drop_selection_lock(self) -> None:
+        self._locked_event_id = None
+
+    @property
+    def locked_event_id(self) -> int | None:
+        return self._locked_event_id
+
+    def _chosen_event(self, cue: torch.Tensor) -> ToldEvent | None:
+        """生产发射与训练寻址的**唯一**取事件入口（两处必须同源，否则轨迹件静默走原样）。"""
+        if self._locked_event_id is None:
+            return self.store.best_match(cue)
+        for event in self.store.events():
+            if int(event.event_id) == self._locked_event_id:
+                return event
+        #: 锁指向的事件已被 FIFO 淘汰：计数 + 就地弃锁。静默退回逐步余弦会让
+        #: "整轮固定"那条判据在另一条路径上量（同 `_pool_into` 的"被走到"计数器纪律）。
+        self.selection_lock_dropped += 1
+        self._locked_event_id = None
+        return self.store.best_match(cue)
+
     def evidence(
         self, *, cue: torch.Tensor, f1_context: torch.Tensor, prev_byte: int | None = None
     ) -> torch.Tensor:
@@ -289,7 +428,7 @@ class CopyCircuit:
         distribution = torch.zeros(
             self.config.alphabet_size, dtype=torch.float32, device=self.device
         )
-        event = self.store.best_match(cue)
+        event = self._chosen_event(cue)
         if event is None:
             return distribution
         weights = self._position_weights(event, f1_context, prev_byte)
@@ -311,9 +450,11 @@ class CopyCircuit:
     ) -> dict[str, Any] | None:
         """训练器用的只读寻址快照（A2.3 预注册 §2）；store 无事件时返回 None。
 
-        不消费诊断覆写——生产发射（``evidence``）与训练寻址是两个面。
+        不消费诊断覆写（`address_override`/`gate_override`/`pool_override`）——生产发射
+        （``evidence``）与训练寻址是两个面。**但消费选择锁**：锁是生产语义（整轮固定一条
+        告知），不是诊断开关，两处都走 `_chosen_event` 才能保证"训练学的就是发射用的那条"。
         """
-        event = self.store.best_match(cue)
+        event = self._chosen_event(cue)
         if event is None:
             return None
         codes = torch.tensor(list(event.content), dtype=torch.long, device=self.device)
@@ -409,6 +550,37 @@ class CopyCircuit:
         ):
             self._parameters[name].clamp_(-bound, bound)
 
+    @torch.no_grad()
+    def learn_selection(
+        self,
+        state: Mapping[str, Any],
+        *,
+        target_event_id: int,
+        advantage: float,
+        lr_selector: float,
+    ) -> None:
+        """A2.5 §2 的局部更新：cross-entropy over 该库全部事件，无 autograd。
+
+        标签 `target_event_id` **来自题面**（哪条告知逐字含答案词），不来自模型自己的答复
+        ——否则就把 §13 那种"自己挑错的分布"当成目标写进去。`advantage` 沿用 A2.3 的 ±2 clamp，
+        取 0 即不更新（训练器用它把"已经挑对的那一步"挡在外面）。
+        """
+        if not math.isfinite(float(lr_selector)) or float(lr_selector) < 0.0:
+            raise ValueError("lr_selector must be finite and non-negative")
+        ids = [int(value) for value in state["event_ids"]]
+        if int(target_event_id) not in ids:
+            raise ValueError("selector target event is not in the store snapshot")
+        delta = torch.zeros_like(state["scores"])
+        delta[ids.index(int(target_event_id))] = 1.0
+        delta -= torch.softmax(state["scores"], dim=0)
+        step = float(lr_selector) * max(-2.0, min(2.0, float(advantage)))
+        weight = self._parameters["selector_weight"]
+        weight.add_(step * (delta[:, None] * state["features"]).sum(dim=0))
+        self._parameters["selector_bias"].add_(step * delta.sum())
+        bound = float(self.config.max_weight_norm)
+        weight.clamp_(-bound, bound)
+        self._parameters["selector_bias"].clamp_(-bound, bound)
+
     def to_payload(self) -> dict[str, Any]:
         return {
             "format": self.PAYLOAD_FORMAT,
@@ -425,12 +597,22 @@ class CopyCircuit:
         if int(payload["evidence_width"]) != self.evidence_width:
             raise ValueError("copy circuit evidence_width mismatch")
         values = payload["parameters"]
-        missing = [name for name in self.PARAMETER_ORDER if name not in values]
+        missing = [
+            name
+            for name in self.PARAMETER_ORDER
+            if name not in values and name not in self.OPTIONAL_ZERO_PARAMETERS
+        ]
         if missing:
             raise ValueError(f"copy circuit payload missed parameters: {missing}")
         for name in self.PARAMETER_ORDER:
+            if name not in values:
+                #: rev5 之前的判决电路没有选择头——保留构造时的零初始化，即"逐位回退现状"，
+                #: 而不是抛错把已入判决件变成载不回来的死档。
+                continue
             tensor = values[name]
             if not isinstance(tensor, torch.Tensor):
                 raise ValueError(f"copy circuit parameter {name} must be a tensor")
             self._parameters[name] = tensor.detach().to(self.device).float().clone()
         self.store.load_payload(payload["store"])
+        #: store 整个被换掉，锁指向的 event_id 未必还在——一律清锁，宁可退回现状路径。
+        self._locked_event_id = None

@@ -174,6 +174,80 @@ def _train_answer(
         prev_byte = int(byte)
 
 
+def _train_selection(
+    substrate: Any,
+    circuit: Any,
+    feed: EpisodeFeed,
+    *,
+    answer: str,
+    lr_selector: float,
+    win: dict[str, Any],
+) -> None:
+    """A2.5 §2/§8：提问条件化选择头的更新，并把这条告知**锁到本轮结束**。
+
+    锁定点与产品 `Taiji.generate` 逐字一致（提问喂完那一刻的皮质 cue＋运动语境＋prompt 全文），
+    所以训练看到的选择就是发射用的那一条——`_train_answer` 里每步的 `addressing()` 因此不再
+    逐步换告知（§1.2 的漂移是 32.2% 的来源）。
+
+    标签纪律：标签＝库里**逐字含答案词**的那条告知（题面派生，非模型自答），且必须恰好一条；
+    0 条或 ≥2 条一律跳过并计数——把歧义写进目标＝§13 那种分布差的复发。
+    已经挑对时不更新（advantage=0），梯度只留给真错例。
+    """
+    state = circuit.lock_selection(
+        cue=substrate.cortical_cue(),
+        f1_context=substrate._state.motor_context,
+        query_bytes=feed.prompt_bytes,
+    )
+    win["sel_episodes"] += 1
+    events = circuit.store.events()
+    if len(events) > 1:
+        win["sel_multi_event"] += 1
+    if state is None:
+        win["sel_unlabelable"] += 1
+        return
+    answer_bytes = answer.encode("utf-8")
+    labelled = [event for event in events if answer_bytes in bytes(event.content)]
+    if len(labelled) != 1:
+        win["sel_unlabelable"] += 1
+        return
+    if bytes(labelled[0].content) != feed.tell_bytes:
+        #: §5 的"标签来自题面"断言：题面母本必须就是库里那条；不等＝入库与标签分家了。
+        raise ValueError(
+            "selector label diverged from the episode tell: "
+            f"{labelled[0].content!r} vs {feed.tell_bytes!r}"
+        )
+    target = int(labelled[0].event_id)
+    picked = int(state["event"].event_id)
+    win["sel_picked_correct"] += int(picked == target)
+    if len(events) > 1:
+        win["sel_picked_correct_multi"] += int(picked == target)
+    if picked == target:
+        return
+    if lr_selector <= 0.0:
+        #: 屏幕档：只锁、只测，不学——用来量"未训时这条链上多事件挑对率"的对照。
+        #: （`lr_selector=0` 不能整段跳过，否则连锁都不上，测的就不是同一条链了。）
+        return
+    win["sel_updates"] += 1
+    circuit.learn_selection(state, target_event_id=target, advantage=1.0, lr_selector=lr_selector)
+
+
+def _fresh_window() -> dict[str, Any]:
+    """滚动窗口累加器——**一处定义**。初始化与重置两处各写一遍键名，漏一个就是一半读数在骗人。"""
+    return {
+        "hits": 0,
+        "steps": 0,
+        "gate": [],
+        "adv": [],
+        "wrong_event": 0,
+        "sel_episodes": 0,
+        "sel_multi_event": 0,
+        "sel_picked_correct": 0,
+        "sel_picked_correct_multi": 0,
+        "sel_updates": 0,
+        "sel_unlabelable": 0,
+    }
+
+
 @dataclass(frozen=True)
 class EpisodeFeed:
     """一条 episode 铺到「答案第一个字节之前」的状态摘要（两臂同形）。
@@ -265,6 +339,9 @@ def main() -> int:
     )
     parser.add_argument("--lr-address", type=float, default=0.05)
     parser.add_argument("--lr-gate", type=float, default=0.02)
+    #: A2.5 §2：选择头与 `lr_address` 同档。`bare` 臂**强制为 0**——它的库每 episode 就一条
+    #: 告知（无可学之物），且 A2.3 冻结臂的参数 digest 不许被顺带改动。
+    parser.add_argument("--lr-selector", type=float, default=0.05)
     parser.add_argument("--seed", type=int, default=20260925)
     #: 电路**初始化**种子（与 `--seed` 分开）。`--seed` 只喂语料取样流，
     #: 而"门的第二次独立取数"要的是两个独立电路 ⇒ 必须能单独换投影初始化（SPEC-A-17 §8）。
@@ -351,10 +428,14 @@ def main() -> int:
 
     rng = random.Random(args.seed)
     config = substrate.config
+    lr_selector = 0.0 if args.protocol == "bare" else float(args.lr_selector)
     started = time.monotonic()
     done = 0
-    win: dict[str, Any] = {"hits": 0, "steps": 0, "gate": [], "adv": [], "wrong_event": 0}
+    win: dict[str, Any] = _fresh_window()
     misaddressed_episodes = 0
+    #: 全程累加（不按 50 窗）：窗内取差值累到总量，重置窗口时不会漏掉尾巴那一截。
+    selector_updates_total = 0
+    selector_unlabelable_total = 0
     history: list[dict[str, Any]] = []
     hit_rates: list[float] = []
     gate_means: list[float] = []
@@ -386,6 +467,23 @@ def main() -> int:
             # 单事件训练体制（A2.3 rev4）：每 episode 清库，best_match 必中本条。
             circuit.store.clear()
             feed = _run_bare_episode(substrate, circuit, turns)
+        if args.protocol == "chat":
+            #: 必须排在 `_train_answer` **之前**：这个函数同时负责锁事件。锁了之后
+            #: 每步寻址快照用的才是发射真正用的那条告知（否则选择头与寻址各学各的链）。
+            #: 条件按**协议**而不是按 `lr_selector`——`--lr-selector 0` 是"锁而不学"的屏幕档，
+            #: 用它当对照时链路必须与训练档完全同形。
+            updates_before = win["sel_updates"]
+            unlabelable_before = win["sel_unlabelable"]
+            _train_selection(
+                substrate,
+                circuit,
+                feed,
+                answer=answer,
+                lr_selector=lr_selector,
+                win=win,
+            )
+            selector_updates_total += win["sel_updates"] - updates_before
+            selector_unlabelable_total += win["sel_unlabelable"] - unlabelable_before
         wrong_before = win["wrong_event"]
         _train_answer(
             substrate,
@@ -411,12 +509,24 @@ def main() -> int:
                     "gate_abs_mean_recent50": round(gate_mean, 4),
                     "advantage_mean_recent50": round(sum(win["adv"]) / max(len(win["adv"]), 1), 4),
                     "misaddressed_episodes_recent50": win["wrong_event"],
+                    #: 选择侧**必须分开报**：多数 episode 库里只有一条告知，挑中是必然的；
+                    #: 混在一起报会把"无选择可做"摊进"选择成功"（§9 摊平总分那个老坑）。
+                    "selection_pick_recent50": round(
+                        win["sel_picked_correct"] / max(win["sel_episodes"], 1), 4
+                    ),
+                    "selection_pick_multi_event_recent50": round(
+                        win["sel_picked_correct_multi"] / max(win["sel_multi_event"], 1), 4
+                    ),
+                    "selection_multi_event_recent50": win["sel_multi_event"],
+                    "selection_updates_recent50": win["sel_updates"],
+                    "selection_unlabelable_recent50": win["sel_unlabelable"],
+                    "selection_lock_dropped": circuit.selection_lock_dropped,
                 }
             )
             hit_rates.append(hit_rate)
             gate_means.append(gate_mean)
             print(json.dumps(history[-1]), flush=True)
-            win = {"hits": 0, "steps": 0, "gate": [], "adv": [], "wrong_event": 0}
+            win = _fresh_window()
         if done - last_checkpoint_at >= args.checkpoint_every:
             checkpoint(f"ep{done}")
             last_checkpoint_at = done
@@ -445,6 +555,32 @@ def main() -> int:
         ),
         "lr_address": args.lr_address,
         "lr_gate": args.lr_gate,
+        #: A2.5 §2/§8 的选择头账。`§3` 没给选择器单独设 smoke 判据（只有止损时长），
+        #: 所以这里**不新增通过/失败线**，只把"未训时的第一窗"与"最后一窗"成对报出——
+        #: 抬升与否是一眼可读的事实，判改善仍按 §3（表层严格命中、两电路同向、差 ≥3）。
+        "selector": {
+            "lr_selector": lr_selector,
+            "protocol": args.protocol,
+            "lock_dropped": int(circuit.selection_lock_dropped),
+            "head_abs_max": round(
+                max(
+                    float(circuit.parameters()["selector_weight"].abs().max()),
+                    float(circuit.parameters()["selector_bias"].abs().max()),
+                ),
+                6,
+            ),
+            "multi_event_rate_first_window": (
+                history[0].get("selection_multi_event_recent50") if history else None
+            ),
+            "pick_correct_first_window": (
+                history[0].get("selection_pick_multi_event_recent50") if history else None
+            ),
+            "pick_correct_last_window": (
+                history[-1].get("selection_pick_multi_event_recent50") if history else None
+            ),
+            "updates_total": selector_updates_total,
+            "unlabelable_total": selector_unlabelable_total,
+        },
         "seed": args.seed,
         "circuit_seed": args.circuit_seed,
         "base_checkpoint": str(base_path.relative_to(PROJECT_ROOT)) if base_sha else None,

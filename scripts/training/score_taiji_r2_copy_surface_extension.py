@@ -151,29 +151,43 @@ def main() -> int:
         default=[],
         help="治疗臂电路 payload，可给多次（多次＝多次独立取数）",
     )
+    parser.add_argument(
+        "--manifest",
+        default=None,
+        help="题集 JSON（默认 v1 软干扰）。给 v2 时读数必须与 v1 **分开报**，"
+        "合并总分就是把两个难度档摊平成一个（SPEC-A-21 §6、SPEC-A-22 §3）。",
+    )
     parser.add_argument("--out-report", default=None)
     args = parser.parse_args()
 
     checkpoint = PROJECT_ROOT / args.checkpoint
     sha_before = _sha256(checkpoint)
-    items = load_items()
+    manifest = MANIFEST if not args.manifest else Path(args.manifest)
+    if not manifest.is_absolute():
+        manifest = PROJECT_ROOT / manifest
+    items = load_items(manifest)
     control = run_arm(items, checkpoint, None)
     treated = [run_arm(items, checkpoint, circuit) for circuit in args.circuit]
     report = {
         "format": "taiji-r2-copy-surface-extension-v1",
         "prereg": "plans/reference/SPEC-A-21_r2_surface_extension_prereg_20260925.md",
-        "manifest": MANIFEST.relative_to(PROJECT_ROOT).as_posix(),
-        "manifest_sha256": _sha256(MANIFEST),
+        #: 本轮（A2.5）的判读线与三档归因矩阵钉在 SPEC-A-22 §3/§9；仪器本身仍是 §A-21 那台。
+        "judge_prereg": "plans/reference/SPEC-A-22_r2_a2_5_query_conditioned_selector_prereg_20260926.md",
+        "manifest": manifest.relative_to(PROJECT_ROOT).as_posix(),
+        "manifest_sha256": _sha256(manifest),
         "checkpoint": args.checkpoint,
         "control_no_circuit": control,
         "treated_arms": treated,
         "surface_verdict": rule_verdict(control, treated),
         "base_sha256_unchanged": _sha256(checkpoint) == sha_before,
     }
+    #: 默认名跟着题集走——v2 的读数撞进 v1 那个文件名，比多打一个参数贵得多
+    #: （§3 要求两集**分开报**，文件名是最容易被误读的那一层）。
+    manifest_tag = manifest.stem.rsplit("_", 1)[-1]  # ..._v1 / ..._v2
     out = (
         Path(args.out_report)
         if args.out_report
-        else PROJECT_ROOT / "reports/taiji_r2_copy_surface_extension_20260925.json"
+        else PROJECT_ROOT / f"reports/taiji_r2_copy_surface_extension_{manifest_tag}_20260925.json"
     )
     if not out.is_absolute():
         out = PROJECT_ROOT / out

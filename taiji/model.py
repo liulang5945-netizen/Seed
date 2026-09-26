@@ -1623,6 +1623,10 @@ class Taiji:
             raise RuntimeError("pending experience must observe its outcome before reset")
         self._development_ticks = max(self._development_ticks, int(self._state.tick))
         self.fabric.clear_cue_snapshot()
+        if self._copy_circuit is not None:
+            #: 选锁属于"这一轮"，episode 边界（含 `generate(reset=True)` 自己那次 reset）必须清，
+            #: 否则上一轮挑中的告知会跟进下一轮。
+            self._copy_circuit.drop_selection_lock()
         if self._adaptive_residual_bridge is not None:
             self._adaptive_residual_bridge.reset_dynamics()
         if self._response_plan_readout is not None:
@@ -2974,44 +2978,59 @@ class Taiji:
                 _predictive_readout=predictive_readout,
             )
 
-        generated = bytearray()
-        response_start_pending = bool(response_start)
-        response_phase_readout = self._response_phase_readout if response_phase else None
-        if response_phase:
-            self.begin_response_phase()
-        for _ in range(length):
-            probabilities = (
-                self.response_start_probabilities()
-                if response_start_pending
-                else (
-                    self.response_phase_probabilities().detach().cpu()
-                    if response_phase
-                    else step.probabilities.detach().cpu()
-                )
+        circuit = self._copy_circuit
+        if circuit is not None and circuit.store.count > 0:
+            #: A2.5 §1.2：事件选择只算一次——就在"提问喂完"这一刻的皮质态与运动语境上，
+            #: 整轮固定。逐步重挑实测让 32.2% 的答案步挑到别的告知（`SPEC-A-17` §14）。
+            circuit.lock_selection(
+                cue=self.cortical_cue(),
+                f1_context=self._state.motor_context,
+                query_bytes=bytes(prompt),
             )
-            if sample:
-                next_symbol = int(
-                    torch.multinomial(probabilities.detach().cpu(), 1, generator=self._rng).item()
+        try:
+            generated = bytearray()
+            response_start_pending = bool(response_start)
+            response_phase_readout = self._response_phase_readout if response_phase else None
+            if response_phase:
+                self.begin_response_phase()
+            for _ in range(length):
+                probabilities = (
+                    self.response_start_probabilities()
+                    if response_start_pending
+                    else (
+                        self.response_phase_probabilities().detach().cpu()
+                        if response_phase
+                        else step.probabilities.detach().cpu()
+                    )
                 )
-            else:
-                next_symbol = int(probabilities.argmax().item())
-            if next_symbol == self.config.boundary_symbol and stop_at_boundary:
-                break
-            if not 0 <= next_symbol <= 255:
-                next_symbol = 0
-            generated.append(next_symbol)
-            response_start_pending = False
-            step = self.observe(
-                next_symbol,
-                learn=False,
-                readout="predictive",
-                use_memory=use_memory,
-                use_identity=False,
-                _predictive_readout=(
-                    response_phase_readout if response_phase else predictive_readout
-                ),
-            )
-        return bytes(generated)
+                if sample:
+                    next_symbol = int(
+                        torch.multinomial(
+                            probabilities.detach().cpu(), 1, generator=self._rng
+                        ).item()
+                    )
+                else:
+                    next_symbol = int(probabilities.argmax().item())
+                if next_symbol == self.config.boundary_symbol and stop_at_boundary:
+                    break
+                if not 0 <= next_symbol <= 255:
+                    next_symbol = 0
+                generated.append(next_symbol)
+                response_start_pending = False
+                step = self.observe(
+                    next_symbol,
+                    learn=False,
+                    readout="predictive",
+                    use_memory=use_memory,
+                    use_identity=False,
+                    _predictive_readout=(
+                        response_phase_readout if response_phase else predictive_readout
+                    ),
+                )
+            return bytes(generated)
+        finally:
+            if circuit is not None:
+                circuit.drop_selection_lock()
 
     def parameter_tensors(self) -> tuple[torch.Tensor, ...]:
         tensors = (
