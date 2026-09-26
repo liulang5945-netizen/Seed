@@ -9,6 +9,12 @@
 
 from __future__ import annotations
 
+# B-3 C-3 抽离时（2026-09-26）漏掉的依赖：`torch.tensor/torch.long` 在相似度分支使用。
+# ⚠️ 危害被 `except Exception` 掩盖：缺 import ⇒ NameError 被吞 ⇒ 恒走 fallback
+#    （返回全部 neuron），相似度路由静默失效。由 test_cortex_routing_golden 的合成
+#    embed_adapter 神经元用例钉住（黄金夹具无 embed_adapter ⇒ 该分支原本**未覆盖**）。
+import torch
+
 __all__ = ["fingerprint_route"]
 
 

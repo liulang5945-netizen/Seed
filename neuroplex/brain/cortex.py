@@ -38,6 +38,7 @@ import torch.nn.functional as F
 # 仅承载无 self 状态的纯函数；保持推理数学逐位等价。
 from neuroplex.brain import (
     _cortex_alignment,
+    _cortex_generation,
     _cortex_helpers,
     _cortex_quality,
     _cortex_routing,
@@ -58,10 +59,6 @@ from neuroplex.resonance import (
     ResonanceNeuron,
 )
 from neuroplex.resonance.dialogue_format import dialogue_prompt_requires_guard
-from neuroplex.resonance.translator import (
-    build_position_alignment,
-    tokenizer_fingerprint,
-)
 
 
 @dataclass
@@ -1737,6 +1734,7 @@ class Cortex:
         selected = sorted_nids[:top_k]
 
         return selected if selected else list(self.neurons.keys())
+
     # B-3 C-2（2026-09-25）：本方法体已抽离至 neuroplex/brain/_cortex_alignment.py
     # （self._general_sp 提升为参数、纯函数、黄金向量逐组复现）。真正逻辑见 _cortex_alignment。
     def _reencode_domain_generation_context(
@@ -1748,7 +1746,6 @@ class Cortex:
         return _cortex_alignment.reencode_domain_generation_context(
             self._general_sp, prefix_text, generated_ids, decode_sp
         )
-        return general_ids if general_ids else [0]
     # B-3 C-2（2026-09-25）：本方法体已抽离至 _cortex_alignment.py
     # （self 依赖 _general_sp/_alignment_rules/_domain_to_general_cache 提升为参数，
     #  缓存仍在 self 上、由引用写回）。真正逻辑见 _cortex_alignment。
@@ -1760,7 +1757,6 @@ class Cortex:
             domain,
             domain_sp,
         )
-        return alignment
 
     def set_alignment_rules(self, rules) -> None:
         """注入可编辑词库规则层（AlignmentRules）。
@@ -2474,61 +2470,21 @@ class Cortex:
             else:
                 break
 
-            # Repetition penalty: penalize tokens that have been generated
-            if generated_token_ids and repetition_penalty > 1.0:
-                for tid in generated_token_ids:
-                    if logits[0, tid] > 0:
-                        logits[0, tid] /= repetition_penalty
-                    else:
-                        logits[0, tid] *= repetition_penalty
-
-            # No-repeat-ngram: ban tokens that would complete an existing n-gram
-            if no_repeat_ngram_size > 0 and len(generated_token_list) >= no_repeat_ngram_size - 1:
-                ngram_prefix = tuple(generated_token_list[-(no_repeat_ngram_size - 1) :])
-                # 查找已生成文本中所有匹配前缀的 n-gram 的下一个 token
-                banned_ids = set()
-                for i in range(len(generated_token_list) - no_repeat_ngram_size + 1):
-                    if (
-                        tuple(generated_token_list[i : i + no_repeat_ngram_size - 1])
-                        == ngram_prefix
-                    ):
-                        banned_ids.add(generated_token_list[i + no_repeat_ngram_size - 1])
-                # 将 banned tokens 的 logit 设为 -inf
-                for tid in banned_ids:
-                    logits[0, tid] = float("-inf")
-
-            # P7-修复（2026-08-04）：EOS logit 增强 + 熵停止 + 跑偏截断
-            # 训练数据（alpaca clean）无 EOS 标记，模型从未学会输出 </s>，
-            # 生成永不自然停止 → 一直生成到 max_tokens 导致长序列崩坏。
-            # 1) 每步给 eos_id 加温和 bias，鼓励在自然结束点终止；
-            # 2) 连续 3+ 个非中文字符 token（英文/符号/数字碎片）视为跑偏 → 截断停止。
-            if eos_id is not None:
-                logits[0, eos_id] += 0.5  # 温和 EOS bias（top-k 后可能仍在候选）
-            else:
-                # 无 EOS：softmax 熵 > 阈值时视为跑偏，提前停止
-                # 修复（2026-08-23 审计 M5）：logits 在上方各分支已除以
-                # temperature（2704-2757 行），此处不再二次除温——旧行为
-                # logits/temperature² 会系统性压低熵，使 8.0 阈值几乎不触发。
-                # 注意：阈值语义恢复为单次除温口径，若停止时机变化需重新标定。
-                probs_ent = F.softmax(logits, dim=-1)
-                ent = -(probs_ent * probs_ent.clamp_min(1e-9).log()).sum(-1)
-                if ent[0].item() > 8.0 and len(generated_ids_ordered) >= 8:
-                    break
-
-            # Top-k sampling in domain vocab
-            if top_k > 0:
-                actual_k = min(top_k, logits.shape[-1])
-                top_k_vals, top_k_indices = torch.topk(logits, actual_k)
-                probs = F.softmax(top_k_vals, dim=-1)
-                sampled_idx_in_topk = torch.multinomial(probs, 1)
-                next_token = top_k_indices[0, sampled_idx_in_topk[0]].item()
-            else:
-                probs = F.softmax(logits, dim=-1)
-                next_token = torch.multinomial(probs, 1).item()
-
-            generated_token_ids.add(next_token)
-            generated_token_list.append(next_token)
-            generated_ids_ordered.append(next_token)
+            # B-3 C-4（2026-09-26）：单步解码算法抽离到 `_cortex_generation.decode_step`
+            # （重复惩罚 → no-repeat-ngram 封禁 → EOS bias/熵停止 → top-k 采样 → 追加）；
+            # 生成**编排**仍留在本方法内。返回 None == 熵停止（原 break，先于任何追加）。
+            next_token = _cortex_generation.decode_step(
+                logits=logits,
+                generated_token_ids=generated_token_ids,
+                generated_token_list=generated_token_list,
+                generated_ids_ordered=generated_ids_ordered,
+                repetition_penalty=repetition_penalty,
+                no_repeat_ngram_size=no_repeat_ngram_size,
+                eos_id=eos_id,
+                top_k=top_k,
+            )
+            if next_token is None:
+                break
 
             if self.gamma_oscillator is not None:
                 self.tick_gamma()
