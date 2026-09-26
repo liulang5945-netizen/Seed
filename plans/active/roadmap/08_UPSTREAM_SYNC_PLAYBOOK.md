@@ -108,7 +108,7 @@
 
 7. **web 表层 lane（`vitest.web.config.ts`，2026-09-26 起列入）**：`apps/web/tests/**/*.e2e.ts` 有两个本机前提——`apps/web/dist`（`corepack pnpm run build:web`）与**版本钉住的** chromium headless shell（`corepack pnpm --filter @taiji/dsh-web-frontend exec playwright install chromium-headless-shell`）。二进制版本不匹配时的读数是**用例全 skip ＋ 文件级失败**（2026-09-26 实测：`Test Files 4 failed`／`Tests 11 skipped`，报错原文 `browserType.launch: Executable doesn't exist at …chromium_headless_shell-1228…`），**只看 `Tests` 计数会误以为「已经跑过了」** ⇒ 这条面自 fork 起一直是零覆盖，列进复验集正是为了不再靠看不见来通过。
    **面的大小（2026-09-26 实测）**＝`apps/web/tests/*.e2e.ts` **139 个文件／321 条用例**（显式 skip 0 条）⇒ 全量是几十分钟级
-   的独立批次，不适合作每轮门；本轮只把**四条 keyless（无凭据首启动）文件**列为最小面（≈3 分钟）。
+   的独立批次，不适合作每轮门；本轮只把**四条 keyless（无凭据首启动）文件**列为最小面（≈3 分钟）。**fork 侧基线已量化（2026-09-26 05:31，跑全部 28 条不依赖录制件的 lane）**：**28 文件＝16 绿／11 红／1 全 skip**；`Tests 27 passed｜15 failed｜9 skipped（53）`，186 s。红的种类：**10 条 `AssertionError`（ARIA 金样差异，属"要不要 refresh"那一类）＋ 3 条 `TimeoutError` ＋ 3 条 `missing golden`（该 expected 文件根本不在仓里，要 record）**，**没有一条是 EPERM 或陈旧录制**（那两类已被这层的筛选排除在外）。本 fork 自己新增的 `taiji-runtime-absent.e2e.ts` 在这批里 ✓。⇒ 复验集这条现在有了可引用的口径：**先按种类分账，再谈把这条面当门**——11 条红里 13 条属"金样/录制件缺失"，需要一条 refresh＋record 的裁定；剩下 3 条超时才可能是行为问题。
 
 ## 6 · 已知薄弱点（诚实登记）
 
