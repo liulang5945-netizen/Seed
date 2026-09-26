@@ -94,18 +94,24 @@ def summarize(report: dict, threshold: float) -> dict:
         }
     missing_members = sorted(set(CORE_FACE) - set(per_file))
     pct = 100.0 * covered / total if total else 0.0
+    face_ok = not missing_members
+    target_ok = pct >= threshold
     return {
+        # ⚠️ 必须显式给 status：_verify_emit.normalize 只扫**顶层** *_pass 键，
+        # 判据嵌在 checks 里时它会退回空集合 ⇒ 恒 fail（一条永远红的门）。
+        "status": "pass" if (face_ok and target_ok) else "fail",
         "name": "core_reasoning_coverage",
         "metrics": {
             "core_line_pct": round(pct, 2),
             "threshold": threshold,
+            "audit_target": DEFAULT_THRESHOLD,
             "covered_lines": covered,
             "statements": total,
         },
         "checks": {
             # 面内文件必须在报告里出现，否则"高分"可能只是漏算了难覆盖的文件
-            "core_face_complete_pass": not missing_members,
-            "core_coverage_pass": pct >= threshold,
+            "core_face_complete_pass": face_ok,
+            "core_coverage_pass": target_ok,
         },
         "per_file": per_file,
         "missing_from_report": missing_members,
@@ -144,6 +150,17 @@ def main() -> int:
         report_path = Path(args.from_report)
         if not report_path.is_absolute():
             report_path = PROJECT_ROOT / report_path
+        if not report_path.exists():
+            # 缺席的报告不能读成"覆盖率 0%"——那是插桩没跑成的另一种失败
+            return emit_and_exit(
+                "core_reasoning_coverage",
+                {
+                    "status": "fail",
+                    "metrics": {},
+                    "checks": {"coverage_report_exists_pass": False},
+                    "note": f"--from-report 指向的文件不存在：{report_path}",
+                },
+            )
     else:
         tmp = Path(tempfile.mkdtemp(prefix="corecov_")) / "coverage.json"
         rc = run_pytest(args.tests, tmp)

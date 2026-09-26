@@ -167,7 +167,23 @@ jobs:
 
       - name: Run complete regression suite
         # Legacy real-checkpoint tests skip when local artifacts are absent.
-        run: python -m pytest tests/ -q --cov --junitxml=report.xml --cov-report=xml:coverage.xml
+        # coverage.json 供 B-4 核心推理路径门按文件过滤分母用（同一趟插桩，两张面两个读数）。
+        run: python -m pytest tests/ -q --cov --junitxml=report.xml --cov-report=xml:coverage.xml --cov-report=json:coverage.json
+
+      # B-4（审计 2026-08-23 §7-16"核心推理路径覆盖率 ≥60%"）：全局门 fail_under=21.8 的
+      # 分母掺全仓 0% 遗留代码，读不出核心路径。本步按声明面（brain + resonance 的
+      # ensemble/continuous/field + layers）过滤后单独判，阈值只升不降；60% 是审计目标，
+      # 现值为棘轮下限。面内文件缺席报告会直接判红（防"高分"来自漏算难覆盖文件）。
+      - name: Core reasoning path coverage gate (B-4)
+        if: always()
+        run: python scripts/training/verify_core_reasoning_coverage.py --from-report coverage.json --threshold 45.0 --out reports/core_reasoning_coverage_ci.json
+
+      - name: Upload core coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: core-reasoning-coverage
+          path: reports/core_reasoning_coverage_ci.json
 
       # R4: 覆盖率趋势可见性——把总覆盖率写入 job summary，跨运行可对比；
       # 硬门禁仍由 pyproject.toml fail_under（当前 21%）执行，只升不降。
