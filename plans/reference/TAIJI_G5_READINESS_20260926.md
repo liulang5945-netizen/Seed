@@ -162,6 +162,16 @@ this scaffold lifetime. **This is the keyless first-run configuration lane**; th
 **归因为什么可信**：① 两个 shell 的默认一致 ⇒ **与本机用哪个 shell 无关**，不是宿主类；② `git log -S"60_000"` 在该文件为空、该文件自 fork 导入起只被 G1/G2 两次改名动过 ⇒ **不是我方改的**，是 lane 的期望与上游当前默认脱节。
 **处置**：改 lane 期望属"动上游测试"，与符号链接那条同批裁定；**refresh 对它无效**（不是快照断言）。
 
+**另有 4 条定案为"lane 的平台分支与本装配不符"（`sessionless-header`）**：**先记一次我差点写错的归因**——我第一版把 `expected 40 to be +0` 读成"本机是 win32、lane 假设非 darwin 就 0"，
+读了源文件才知道 `platform` **不是宿主 OS**：该 lane 是 `it.each(['web','win32','linux','darwin'])`（`sessionless-header.e2e.ts:21`），
+用 init script 往 `documentElement` 写 `data-platform` 来**仿真**四个平台（`:24-29`），断言"无选中会话时 `conversation.session.header` 槽位不存在"（`:35`）与"空头部高度＝`platform === 'darwin' ? 40 : 0`"（`:37`、`:44`）。
+**四档全部红，且两两形态不同**（档名就在 FAIL 头行里，`it.each` 的参数是测试名的一部分）：
+`web` 与 `darwin` 报 **`expected 1 to be +0`**＝槽位**在场**（`count()` 实得 1、期望 0）；`win32` 与 `linux` 过了槽位那条、报 **`expected 40 to be +0`**＝空头部**实得 40 px 而期望 0**。
+⇒ 两件事各自成立：**（一）** 那个头部在本装配里**与平台无关地占 40 px**（四档同一浏览器同一宿主，只有注入属性不同），lane 的 `darwin ? 40 : 0` 分支因此只对 `darwin` 那一档"碰巧可能对"；
+**（二）** 无选中会话时槽位**在 `web`／`darwin` 两档里仍然渲染**。**都不是金样**（refresh 无效），也**不是宿主类**（同一浏览器仿真的四档）。
+**未判**：这是"上游 lane 过期"还是"fork 的头部布局变了"——要一次同装配的对照（把 `data-platform` 注入去掉看默认值）才能分，**登记为待办、不在本轮**。
+**顺带一条读法教训**：`it.each` 的参数名在日志的 FAIL 头行里，**先 grep 头行再谈"哪几档红"**；我差点在这条上写出一段"本机 win32"的假归因（同族第三次：错误文本里的数字看着像宿主差异，实际要读断言那段代码）。
+
 **给裁定的影响**：§7 那句"金样差异的真实规模是 39 条"要按 **17 条**引用；refresh 一刀切能救的面比我今天白天说的小一半以上。
 
 ## 7.1 · "先 normalize 再 refresh" 这条路的价格（同日实测，给 §7 那句"要么先 normalize"定价）
