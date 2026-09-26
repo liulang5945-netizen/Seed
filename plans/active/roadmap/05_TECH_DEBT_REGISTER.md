@@ -8,8 +8,9 @@
 - 本轮较大范围pytest在`outputs/pytest_h37b_20260917`遇WinError 5及清理异常；局部18项通过不能替代该套件或当前HEAD全量CI。未删除目录、未批量修改权限。
 - 权威快照见[项目收束记录](../../reference/PROJECT_CONSOLIDATION_20260917.md)；其余条目保留历史范围，不补发绿灯。
 
-**DEBT-I7 的第二实例（2026-09-17 定位，**未修**）**：除 `checkpoints/seed_corpus.pt` 外，
-测试还会往**共享非临时目录** `output/manual-r5-canary/` 写中间产物且**从不清理**。
+**DEBT-I7 的第二实例（2026-09-17 定位；根因已于 09-19 结清，见本条末尾 `8a7966b4`）**：除
+`checkpoints/seed_corpus.pt` 外，测试曾往**共享非临时目录** `output/manual-r5-canary/`
+写中间产物且**从不清理**。
 
 - **实测**：该目录现存 **1054 个残留**（`s29-*` 到 `s51-*`，按 PID 分组；仅 `s45-*` 就有 215 个）。
 - **涉及测试至少 7 个**：`test_runtime_artifact_store_audit_projection` / `..._bridge` /
@@ -1017,7 +1018,7 @@ tests.taiji_native.test_terminal_three_domain_governance::test_terminal_three_do
 **禁止**：在未定性前直接放宽 `test_architecture_contract` / `test_naming_boundary_contract` 的断言
 来「让套件变绿」——这两项保护的是原生基底自足性契约。
 
-## B 支线（架构债线）2026-09-26 登记：已量未修
+## B 支线（架构债线）2026-09-26 登记：已量，本日内除"死模块去留"外全部结清
 
 **DEBT-B4-1（本条前半段的旧结论**作废**，2026-09-26 同日推翻）：B-4 读数并不"天生带噪"。**
 旧结论：两次全量跑之间 `resonance/ensemble.py` 相差 −203 行（869 ⇒ 666），丢失的是散点单行
@@ -1030,36 +1031,76 @@ ensemble 只差 8 行 ⇒ 不是抖动。真正的 −203 那次是**有 lane �
 教训（与既有"别从聚合入口继承跑不了"同源）：**读数异常先问"哪条 lane 没跑完"，再谈随机性**；
 CI 的门因此改成"只在套件步成功时判"，套件红时用跳过而不是叠一条语义错位的覆盖率红。
 
-**DEBT-B4-5（新增，未修）：多个 gate 把临时 checkpoint 写进仓库共享的 `checkpoints/`，并发必撞。**
-`scripts/training/eval_taiji_m3_workbench_readonly.py:185` 一类代码用
-`checkpoints/.<gate>-<pid>.pt` 当scratch，收尾 `unlink(missing_ok=True)`；
-两条套件同时跑（人或 agent 并发）时该文件被另一方持有 ⇒ `WinError 32` 直接把门打断，
-表现为"随机红"，并顺带把覆盖率读数压低（本次误判即源于此）。
-同一目录里还留过 6 个测试残留（`s45-active-<pid>.pt` 等）被
-`test_artifact_store_scratch_contract` 抓到 —— 那是 DEBT-I7 第二实例的又一处表现。
-建议的根治（未做）：这类 scratch 一律改走 `get_external_path()` 数据根或 pytest `tmp_path`，
-命名按 S3 的 `.tmp-<主题>/`；**在改完之前，任何"面内覆盖率"读数都必须先确认套件全绿**。
+**DEBT-B4-5（已修，2026-09-26，`622d6712`）：gate 把临时 checkpoint 以固定名写进仓库共享的 `checkpoints/`，并发必撞。**
+登记时写的是"四条 gate"，**实际同族六条**：`eval_taiji_semantic_grounding`（p2-9）、
+`eval_taiji_multistep_grounding_recovery`（p2-10）、`eval_taiji_natural_language_workbench`（p2-8）、
+`eval_taiji_ide_language_chain`（p2-11）、`eval_taiji_m3_workbench_readonly`（m3）、
+`eval_taiji_terminal_three_domain_governance`（p4-12）。它们用 `checkpoints/.<gate>-<seed>.pt` 当 scratch，
+收尾 `unlink(missing_ok=True)`；两条套件同时跑时该文件被另一方持有 ⇒ `PermissionError [WinError 32]`
+把门打断，表现为"随机红"，并顺带压低覆盖率读数（DEBT-B4-1 那次误判即源于此）。
 
-**DEBT-B4-2：`brain/working_memory.py` 是"仅注册未接入"的死模块，且内部有索引错位缺陷。**
+**修法取 `checkpoints/.scratch/<pid>/<原名>.pt`——按 PID 分目录，而不是给文件名加 PID 后缀。**
+两条理由（后一条是本仓特有的坑）：① p2-8/p2-9/p2-10 的判据里钉的是**字面文件名**
+`restored_checkpoint_name == "seed:.p2-9-semantic-grounding-11.pt"`，把 PID 塞进文件名就等于改动判据
+（`api/seed_runtime.py` 的 `name` 只取 `path.name` ⇒ 换目录不改读数）；②
+`eval_taiji_cap0_inventory.py::_checkpoint_inventory()` 用**非递归** `glob("*.pt")` 盘点该目录，而
+`test_cap0_inventory_contract.py::test_a_fresh_inventory_sample_reproduces_the_sealed_one` 拿现场重采
+与封存样本逐叶比较 ⇒ scratch 平铺在 `checkpoints/` 那一层时，一次并发跑就能把普查的字段面挪红。
+不用 `tempfile`／不用 `tests/_scratch.py` 那条仓库外的路：托管 Windows runner 能在 TemporaryDirectory
+里建目录却拒绝 Python 独占建文件（`eval_taiji_terminal_three_domain_governance.py` 里同一段说明）。
+
+**判别实验（同一台机器、同一批 lane）**：把放置改回旧的"共享目录＋固定名"后 4 进程并发 ⇒ **4/4 红**
+（两条 `WinError 32`，两条整组 5 failed——那是新加的 `fresh_scratch()` 起点删不净就拒跑，不静默跑在
+别人的陈旧状态上）；改回新放置后 6 进程并发（3 对）⇒ **30 次 lane 执行全绿**，收尾 `checkpoints/`
+零 scratch 残留。守卫 `tests/test_scratch_checkpoint_isolation.py` 6 条，四条变异各自会红。
+其中"空 PID 目录要一并收掉"是实测逼出来的两条路：Windows 在删掉目录里最后一个文件时会把该目录 mtime
+顶成当下 ⇒ "空且已久"对本轮刚清空者**永不成立**，所以本轮清空者直接 `rmdir`、别轮弃用者才走时间戳。
+
+**顺带否证本条登记时的两句话**（改台账的理由是重推，不是手抄）：
+① "同一目录里还留过 6 个测试残留（`s45-active-<pid>.pt`）⇒ DEBT-I7 第二实例"这一句**不成立**：
+所有 artifact-store 测试早已改走 `tests/_scratch.py::artifact_scratch_root()`（仓库外），
+`test_artifact_store_scratch_contract.py` 4 条绿，`output/manual-r5-canary/` 盘上只剩它自己的
+`README.md` + `native-canary.pt`（8-29 的原有件），外部 scratch 根当前 0 文件 0 目录。
+② p2-12/p2-13 两条同族 gate 已在 09-14（`f6d9c0cf3`）改走 TemporaryDirectory，不需再动。
+
+**新登记的纠缠（未处置，属所有者裁定）：`checkpoints/.p2-12-conflict.pt` 与
+`.p2-12-natural-language-write.pt` 是 09-13 一次跑的残留（该 lane 09-14 已改道），文件如今仍在盘上，
+而 CAP-0 封存样本 `reports/taiji_cap0_inventory_beta4_20260920.json` 的 `checkpoint_inventory`
+**把这两份残留当成了基线的一部分**（逐叶比较含 filename/bytes/modified_utc）。
+所以"顺手清掉仓根残留"会直接把 `test_a_fresh_inventory_sample_reproduces_the_sealed_one` 弄红；
+要清必须先按本仓"改行为须同批再生报告"的做法重封一份 CAP-0 样本，那是 CAP 面的动作，不在 B 线里自作主张。
+另：`scripts/training/smoke_taiji_r2_h3_6_target_encoder.py` 是同型写法（固定名 + `finally: unlink`），
+但它没接进任何 gate／套件（仓内仅一处归档提及），因此只在"人手动跑"时才会撞——记录不动它。
+
+
+**DEBT-B4-2：`brain/working_memory.py` 是"仅注册未接入"的死模块；其索引错位缺陷已修（2026-09-26，`140f42a6`）。**
 `cortex.py:219-223` 自己写明它未接入生成路径（真正的上下文记忆走 `agent/working_memory` 经
 ContextManager），但它仍在 `neuroplex/brain/` 里且被算进过覆盖率分母（本已从 B-4 度量面剔除）。
 实测 `append_round` 在 deque 触发 FIFO 丢弃后 `round_marks` 整体错位：`max_tokens=8`，
 依次追加 (1,2,3|4)、(6,7|8)、(9,10,11|12) 后 buffer=[5..12]，标记却是 `(0,5)/(5,8)/(8,8)`
 ⇒ **刚写入的一轮记成空区间**，旧轮指向别人的 token；`_first_domain` 式的"簿记漂移"在这里
-不会报错、只会让依赖 importance/轮次范围的逻辑静默读错。修法：按实际丢弃数平移**全部**标记。
-**未修**（改它等于给死代码定行为，需先决定是删是接）。
+不会报错、只会让依赖 importance/轮次范围的逻辑静默读错。
+**已做**：按实际丢弃数平移**全部**标记，另加 `tests/test_working_memory_window.py` 9 条窗口不变量
+（期望值全部手推，变异 `dropped = 0` 时 9 条里红 6 条）。
+**仍未裁定**：这个模块是删还是接——修它等于给死代码定行为，只是把"已经存在的簿记"修对，
+不构成"它该留在生产路径里"的论据。
 
-**DEBT-B4-3：`Cortex.device` 实际是字符串，签名却标 `torch.device`。**
+**DEBT-B4-3（已修，2026-09-26，`8bb0cb4c`）：`Cortex.device` 实际是字符串，签名却标 `torch.device`。**
 `cortex.py:114` 直接存传入值（fallback 装配下为 `'cpu'`），而 `_cortex_quality.rolling_nll_quality(device: torch.device, …)`
 等签名标注为 `torch.device`。torch 接受字符串所以能跑，但 `tensor.device == cortex.device` **恒 False**
 （本会话写测试时踩到，断言被迫先 `torch.device(str(...))` 归一）。属类型谎报，不改行为。
+修法：`Cortex.__init__` 里 `self.device = torch.device(device)`；写测试时那条归一化临时断言已撤。
 
-**DEBT-B4-4：根目录出现台账外的 `consolidation/`（空目录），使 `test_folder_structure_guard` 红。**
-代码里的落盘位置是 `seed_platform/sleep_pass.py:50` 的 `data/consolidation`，**不是**根目录同名物；
-该目录为空、非 git 跟踪、mtime 早于本会话的首次套件运行 ⇒ 归属未定，本会话**未删除未改名**。
-待处置：由创建者认领后按守卫提示二选一（进台账，或改 `.tmp-<主题>/` 后清理）。
-这是当前 5 条套件红里唯一"环境态"的一条，另外 3 条属 A 支线（artifact_store_scratch /
-cap0_inventory 金样复现 / b0_n2 复核面），1 条（naming_boundary）已由本会话按守卫规定的
-流程结清——**是补登记而非放宽断言**：理由写在
-`plans/active/ARCHITECTURE_DIRECTION_2026_08.md` §6，名单在 `test_naming_boundary_contract.py`。
+**DEBT-B4-4：根目录台账外的 `consolidation/`（空目录）——**源头已修，红由一个未重启的旧码 runtime 维持。**
+创建者是 `seed_platform/sleep_pass.py` 的 `_DIR_NAME`，旧值是裸 `"consolidation"`，经
+`get_external_path()` 落在**外部数据根**，而该根默认＝项目根 ⇒ 产品运行时在仓根建了个未登记空目录，
+`test_folder_structure_guard` 自此恒红。00:44 的 `8b52de4f` 已把它并进 `data/consolidation` 族
+（与兄弟 `_CORPUS_DIR = data/consolidated` 一致）并 rmdir 了当时那份。
+本轮（20:5x）复现并核实：`rmdir` 之后**秒级复建**，持有者是 PID 24412 = `python api/main.py`，
+启动于 09-24 23:08 ⇒ 载的是修复前的模块，正是 `8b52de4f` 提交说明里预告的那一支。
+**处置**：不与其抢删（删了只会再多一次红），也不放宽守卫。**重启该 runtime 即彻底消失**，
+重启属所有者动作、本线不代做。命令：停 PID 24412 后重跑 `python api/main.py`。
+
+`8b52de4f` 那条 rmdir＋本次这条"秒级复建"合起来把守卫的红**完整归因**到一个未重启的进程上；
+在它重启前，全量套件的既有红集合里会稳定含这一条，读数时须按"环境态"处理，不要当成新代码的回归。
 
