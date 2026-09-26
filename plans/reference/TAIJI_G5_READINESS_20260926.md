@@ -156,7 +156,16 @@ this scaffold lifetime. **This is the keyless first-run configuration lane**; th
 ② **⑭ 那一族**——播种件被会话校验器拒收（`system/message ... must have system-prompt source`，`packages/core/session/src/index.ts:362-364`），
 装载阶段就没东西可渲染。**两者区分办法（下一步做，一条 lane 就够）**：在 `seedSession` 之后**重启一次宿主**（或显式触发 re-index）再 `goto`——
 若 DONE 出现＝⑮；仍不出现＝把当时的宿主 stderr 与 `readSessionHeader` 的返回值取出来，按 ⑭ 查。
-**这条待办比"再跑一次批"更有价值**：它决定的是这 6 条 lane（7 条断言）到底是**索引时序**还是**校验器口径**。
+**这条探针同日已跑（插桩在 DONE 轮询前打印 `[role=treeitem]` 的全部文本，跑完立刻 `git checkout --` 撤回，`git status` 已确认无残留）。读数把两个候选都替掉了**：
+`rows = ["Default workspace", "New Session", "Ungrouped", "dsh-web-e2e-ws-xGXW9l" + "now"]`（`url` 是该次的随机端口）。
+⇒ **树里有四行，而 lane 点的是 `.first()` 与 `.nth(1)`**——即 `Default workspace` 与 **`New Session`**，
+**播种的那条会话在第 4 行（index 3），从来没被点到**。DONE 不出现不是"渲染不出"，是**点错了行**。
+**两件事因此同时成立**：① **位置假设**（`nth(1)`）在本装配里错位——`Default workspace` 下面多出一个 `New Session` 行（`scaffold.ts:810` 会播种一个默认工作区，除非 `firstUse: true`）；
+② **⑮ 仍然真实**——那行的标签是**临时目录名**而不是播种的标题（`CJK strong emphasis`），说明宿主启动后写入的会话件没有把标题投影进树。
+⇒ **处置不是"改产品"，是给这族 lane 换成按内容选行**（例如 `getByRole('treeitem', { name: <标题或目录名> })`），
+**但先别改**：② 那半句要单独判——"标题没进树"到底是**上游 lane 的既有假设**（它们在本仓从没跑过，CI 也不跑）还是**fork 的会话投影缺陷**，
+需要一次"同样的播种件、在 `firstUse: true` 且只有一个工作区"的对照，**这条排在下一轮队首**。
+**顺带钉一条方法**：这次是一个 `console.log` 加一次单跑（约 20 s）解决的，比我先前设想的"重启宿主／查校验器"两条路都便宜——**红在一句等待上时，先把它等待的那个容器打印出来**。
 **其余 15 条普通断言**形状各异（`plugin-config` 三条都是毫秒值对不上：`'120000'` 对 `'12000'` 两条、对 `'60000'` 一条；
 `sessionless-header` 三条是计数对不上：`40` 对 `+0` 两条、`1` 对 `+0` 一条；另有 `'/go' to be '/goal '`、`Asia/Shanghai` 对 `UTC` 等），
 **逐条取证前不要并进"金样"那一堆**。
