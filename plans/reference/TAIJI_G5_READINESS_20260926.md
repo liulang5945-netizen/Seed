@@ -204,6 +204,16 @@ this scaffold lifetime. **This is the keyless first-run configuration lane**; th
 实得的是 **basename 那一级** ⇒ ⑮ 仍然真实。
 **未判**：标题缺失发生在**宿主索引**还是**前端渲染**（需要一条能列出会话标题的宿主侧读法；我第一次试的 `ctx.workspaceRegistry.list()` 写法没跑通，那是仪器错误、不是产品失败）。
 **处置边界不变**：先定这一层，再决定那 6 条 lane 怎么改——按内容选行能让它们跑绿，但会把 ⑮ 盖住。
+
+**想用房侧读法定位 ⑮ 的层次，结果撞出一个新的仪器问题（同日；探针已撤、`git status` 干净）**：在 `beforeAll` 之后直接读 `scaffold.ctx`——
+`ctx.sessions.list()` 得 **`[]`**、`ctx.workspaceRegistry.list()` 得 **`[]`**，而**同一时刻页面侧边栏显示着两个工作区和一行带 `now` 的会话**。
+⇒ **测试进程里的 `ctx` 与页面所见的表层对不上**；"用宿主侧读法分 ⑮ 的层次"这条路**在 seeded 类 lane 里不能照我先前设想直接用**。
+**这与 H3q 的既有结论不冲突**：`connectFreshWorkspaceViaHost` 算"已验证"是因为它的效果**在页面上看得见**（工作区出现、composer 就绪），不是靠 `ctx` 读出来的——
+这条新读数反而说明**当时不该改用 `ctx` 断言**。
+**我自己的两处仪器错误一并记下**：第一次写 `workspaceRegistry.list().then(...)`（它不是 Promise）、第二次把 `existsSync` 的 import 插在该文件不存在的那一行上；
+**两次都是仪器错误，不是产品失败**。
+**下一步（改法已定，未做）**：先确认 `ctx` 与页面服务是否同一进程（看 `scaffold.ts` 里 host 的启动方式），再选 ⑮ 的读法；
+在此之前 **⑮ 的层次保持"未判"**，而 DONE 一族的机制（**树默认折叠成一行，位置点击却按展开后的行序写**）**已定案**。
 **其余 15 条普通断言**形状各异（`plugin-config` 三条都是毫秒值对不上：`'120000'` 对 `'12000'` 两条、对 `'60000'` 一条；
 `sessionless-header` 三条是计数对不上：`40` 对 `+0` 两条、`1` 对 `+0` 一条；另有 `'/go' to be '/goal '`、`Asia/Shanghai` 对 `UTC` 等），
 **逐条取证前不要并进"金样"那一堆**。
