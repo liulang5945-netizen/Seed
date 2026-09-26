@@ -20,7 +20,7 @@ describe.skipIf(webSnapshotMode() === 'record')('web e2e: DeepSeek Messages sett
   let tripwire: ReturnType<typeof watchConsole>
 
   beforeAll(async () => {
-    scaffold = await launchWebScaffold({ deepSeekMissingCredential: true, extraOverlayPath: TAIJI_ROW_ABSENT_OVERLAY })
+    scaffold = await launchWebScaffold({ deepSeekMissingCredential: true, extraOverlayPath: [TAIJI_ROW_ABSENT_OVERLAY] })
     browser = await chromium.launch()
     page = await browser.newPage({ viewport: { width: 1680, height: 1000 }, locale: ZH_BROWSER_LOCALE })
     tripwire = watchConsole(page)
