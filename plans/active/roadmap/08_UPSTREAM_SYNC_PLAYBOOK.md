@@ -257,3 +257,8 @@ scaffold 又**自己关掉了 `session-title-llm`**（`scaffold.ts:630`，理由
 **再排除一个候选（同日，纯读码）**：图标 `IconUserOutlineRegular` 渲染的是 `aria-hidden="true"` 的 `<svg>`（`packages/client/ui-primitives/src/icons/index.tsx:641` 的 artwork 壳——`:649` 只是 `IconUserOutlineRegular` 的转交层，实测该 artwork 的 `<svg … aria-hidden="true" …>` 确实带 `aria-hidden`）。`aria-hidden` 只把**图标自己**移出命名，**不会**让兄弟 `<span>` 的文本退出 name-from-content；而 `innerText` 读出 `"Agent Team"` 说明那个 span **是被渲染的**（不是 `display:none`，否则 innerText 会为空）。
 ⇒ 到现在为止**四个候选都排除了**：包没装配、文案被改名、图标打断命名、标签被 CSS 藏掉。**剩下的唯一解释空间是 Playwright 的角色引擎算出的可访问名与 DOM 文本不一致**，而这必须用**它自己的算法**去读，不是读 DOM。
 **下一轮那一次该这么做**（我今天试的 `allAccessibleNames()` 在本仓版本上不存在，所以两次白跑）：用 `await expect(page.locator('[data-team-action] button').first()).toHaveAccessibleName('')` **故意断错**，让断言失败信息把**引擎算出的真实名字**打出来；或 `await page.accessibility.snapshot({ interestingOnly: false })` 找那个 button 节点。两条都是一次跑就能定案，**别再用不带兜底的链式表达式写探针**。
+
+**`agent-team-panel` 的"形态差异"同日有了自己的读数，而且它推翻我上一段的措辞**：为拿引擎算出的可访问名，我把一条**故意断错**的 `toHaveAccessibleName('__sentinel_probe__')` 插进用例体，连跑两次单跑——**两次都没走到那行**（`atp-p16.log`、`atp-p16b.log` 里搜不到 sentinel 字样），也就是**两次都卡在 setup 钩子的 `Ready.` 等待**。而更早的两次单跑（`atp-1.log`、`atp-2.log`）是**走过 setup、在体里 2 条用例级失败**的。
+⇒ **同一条 lane 四次单跑呈 2/2 双形态**：一半卡在 setup 钩子（用例全 skip＋文件级红），一半走进体里失败。我上一段写"文件级三跑一致地红"是对的，但**"不是随机噪声"这半句要收窄**：**setup 阶段确实存在跑次间的不确定性**（此前我否证的是"用例级从绿翻红"，那仍然不成立——文件级一直红）。
+**可访问名那一步仍未判**（探针没被执行到，不是探针算不出）。**下一轮的顺序因此要换**：先解决"为什么 setup 的 `Ready.` 有时 10 s 内不来"（那是 `:73-75` 的 `turn/end` ＋ `sessions.flush` 之后等页面文本），再谈按钮的可访问名——**在一条一半概率进不了体的 lane 上测命名，读数会一直缺**。
+探针已撤回（`git status` 干净、`residue=0`）。
