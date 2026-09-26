@@ -68,20 +68,30 @@ class WorkingMemory:
             prompt_ids: 本轮的 prompt token IDs
             generated_ids: 本轮生成的 token IDs
             importance: 重要性权重（1.0=普通，>1.0=重要，<1.0=可遗忘）
+
+        不变量（旧实现守不住，见下）：每条 `round_marks` 的 `(start, end)` 必须满足
+        `get_context_ids()[start:end] == 该轮仍留在窗口里的那些 token`。
         """
-        # 记录本轮的起止位置（在追加前）
-        round_start = len(self.buffer)
-        # 追加 prompt 和 generated
-        self.buffer.extend(prompt_ids)
-        self.buffer.extend(generated_ids)
-        round_end = len(self.buffer)
-        # 调整起始位置（若 deque 满了，旧 token 已被丢弃，索引会偏移）
-        dropped = max(0, round_start - len(self.buffer))
-        round_start -= dropped
-        round_end = min(round_end, len(self.buffer))
-        # 清理无效的旧 round_marks（已被 deque 丢弃的部分）
-        self._cleanup_stale_marks(round_end - round_start)
-        self.round_marks.append((round_start, round_end, importance))
+        appended = list(prompt_ids) + list(generated_ids)
+        before = len(self.buffer)
+        self.buffer.extend(appended)
+        after = len(self.buffer)
+        # deque 从左端挤出去多少个，既有标记就要整体左移多少格。
+        # 旧实现写的是 `dropped = max(0, round_start - len(buffer))`——那**不是**丢弃数：
+        # 实测 max_tokens=8、连追三轮后 buffer=[5..12]，标记却是 (0,5)/(5,8)/(8,8)，
+        # 即刚写入的一轮被记成空区间、旧轮指向别人的 token（簿记静默错，不报错）。
+        dropped = max(0, before + len(appended) - after)
+        shifted: list[tuple] = []
+        for start, end, imp in self.round_marks:
+            new_end = end - dropped
+            if new_end <= 0:
+                continue  # 整轮已被挤出窗口
+            shifted.append((max(0, start - dropped), max(0, new_end), imp))
+        self.round_marks = shifted
+        if appended:
+            self.round_marks.append((max(0, before - dropped), after, importance))
+        self.current_round_start = after
+        self._cleanup_stale_marks(after - max(0, before - dropped))
 
     def _cleanup_stale_marks(self, current_round_size: int) -> None:
         """清理已被 deque 丢弃的旧 round_marks。"""
