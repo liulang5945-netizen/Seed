@@ -114,8 +114,9 @@ this scaffold lifetime. **This is the keyless first-run configuration lane**; th
 
 ## 6.5 · 第五批之后的队首（同日收口，接手的人从这里开始）
 
-1. **⑮ 的那半句要一次对照**：`firstUse: true` ＋ 只挂一个工作区时，`seedSession` 播种的会话**标题是否进树**。
-   进＝先前那行显示临时目录名只是"默认工作区多占了一行"的位置副作用；不进＝fork 的会话投影确有缺陷（那才是产品问题）。**一次单跑就够**。
+1. **⑮ 的对照同日已做完（见 §7.2 末）**：`firstUse: true` 档下树逐字相同、标题两档都不进树 ⇒ **⑮ 是真实的**，
+   "默认工作区多占一行"这个替代解释已被否证。**剩下的那一层未判**：缺失发生在宿主索引还是前端渲染，
+   需要一条**宿主侧列出会话标题**的读法（我第一次试的 `workspaceRegistry.list()` 写法报错，未跑通）。
 2. 若 1 判为"位置假设"：把 DONE 一族 6 条 lane（7 条断言）**改成按内容选行**（`getByRole('treeitem', { name: … })`），
    **不要**改成另一个位置索引——那只是把同一个假设换个写法。**这一步之前不要动那 6 个文件**。
 3. **18 条超时逐条取证**（文件清单：`node .dsh-sbx2/analyze-web-log.mjs .dsh-sbx2/baseline76c.log` 的 `[timeout]` 行）。
@@ -182,6 +183,17 @@ this scaffold lifetime. **This is the keyless first-run configuration lane**; th
 **但先别改**：② 那半句要单独判——"标题没进树"到底是**上游 lane 的既有假设**（它们在本仓从没跑过，CI 也不跑）还是**fork 的会话投影缺陷**，
 需要一次"同样的播种件、在 `firstUse: true` 且只有一个工作区"的对照，**这条排在下一轮队首**。
 **顺带钉一条方法**：这次是一个 `console.log` 加一次单跑（约 20 s）解决的，比我先前设想的"重启宿主／查校验器"两条路都便宜——**红在一句等待上时，先把它等待的那个容器打印出来**。
+
+**对照实验同日跑完（两档单跑，插桩均已 `git checkout --` 撤回、`git status` 干净），队首第 1 项有答案了**：
+① **`launchWebScaffold({ firstUse: true })` 下树逐字相同**（`["Default workspace","New Session","Ungrouped","dsh-web-e2e-ws-…now"]`）
+⇒ `Default workspace`／`New Session` **不是 scaffold 播种出来的**（`scaffold.ts:838` 的播种条件是 `firstUse !== true` 且注册表为空），
+**我上一条写的"默认工作区多占了一行"因此不成立**，位置错位不是 scaffold 造成的（那两行由 scaffold 之外的路径创建，最可能是产品自己的默认工作区初始化，**未核对**）。
+② 改成**按内容选行**（`locator('[role="treeitem"]').filter({ hasText: /dsh-web-e2e-ws-/ })`）后 `waitFor` 超时，错误文本是 **waiting for ... to be visible**
+⇒ **那一行在 DOM 里存在但不可见**（它在未展开的分组下）；而第一次插桩用的 `allTextContents()` **不要求可见**，所以"读得到四行"与"点不到"同时为真。
+③ **两档下播种标题都没进树**（行文本始终是临时目录名，而不是会话件里的 `CJK strong emphasis`）⇒ **⑮ 是真实的**，不再能被当成"位置假设的副作用"打发掉。
+**仍未判**：标题缺失发生在**宿主索引**还是**前端渲染**——我试的 `scaffold.ctx.workspaceRegistry.list()` 探针本身报错（不是产品失败），**下一步要用一条能列出会话标题的宿主侧读法，而不是继续改 lane**。
+**处置边界（据此更新）**：把 6 条 lane 改成"先展开分组、再按内容选行"确实能让它们跑起来，**但那会掩盖 ⑮**；
+⇒ 顺序必须是**先定 ⑮ 的层次，再决定 lane 怎么改**。
 **其余 15 条普通断言**形状各异（`plugin-config` 三条都是毫秒值对不上：`'120000'` 对 `'12000'` 两条、对 `'60000'` 一条；
 `sessionless-header` 三条是计数对不上：`40` 对 `+0` 两条、`1` 对 `+0` 一条；另有 `'/go' to be '/goal '`、`Asia/Shanghai` 对 `UTC` 等），
 **逐条取证前不要并进"金样"那一堆**。
