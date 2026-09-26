@@ -388,6 +388,30 @@ def _classify(rows: list[dict[str, Any]]) -> str:
     return "continuation_slips"
 
 
+def _bias_variant_run(circuit: Any, bias: float | None, body):
+    """把 `copy_induce_bias` 临时覆写成一个诊断值，跑完**必原值复原**。
+
+    这不是训练，是读数：两个电路的这个参数都正好等于 `max_weight_norm=2.5`
+    （＝钳位），所以"前驱约束不够强"到底是机制不行还是幅度被钳住，现在还没人被分开看过。
+    极大值（如 10000）在 softmax 里就等价于硬掩码：只有"前驱＝刚发出的字节"的位置留有质量；
+    若一步都没有匹配位置，全体同加 0，退回原分数——不会出现死路。
+    """
+    import torch
+
+    if bias is None:
+        #: asis 档＝不覆写。
+        return body()
+    parameter = circuit._parameters["copy_induce_bias"]
+    original = parameter.detach().clone()
+    try:
+        with torch.no_grad():
+            parameter.fill_(float(bias))
+        return body()
+    finally:
+        with torch.no_grad():
+            parameter.copy_(original)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--checkpoint", default="checkpoints/seed_beta.pt")
@@ -413,6 +437,12 @@ def main() -> int:
         default="all",
         help="all＝按历史如实入库；target＝库里只留含答案的那条告知（配 scored 即选择的价格）",
     )
+    parser.add_argument("--limit", type=int, default=0, help="只跑前 N 题（冒烟用；0＝全跑）")
+    parser.add_argument(
+        "--bias-sweep",
+        default="asis",
+        help="逗号分隔的 copy_induce_bias 诊断覆写档（asis＝不覆写；数值如 100,10000）",
+    )
     args = parser.parse_args()
     if args.store == "target" and args.history != "scored":
         #: oracle 档本来就只有目标那一条，"摘干扰"是空操作——跑出来的消融数会把空操作读成结论。
@@ -429,6 +459,9 @@ def main() -> int:
         )
         return 1
 
+    if args.limit > 0:
+        ids = ids[: args.limit]
+
     from score_taiji_r2_copy_strict_cap import copyable_tokens, load_items
 
     from api.seed_runtime import SeedRuntime
@@ -444,26 +477,46 @@ def main() -> int:
     payload = torch.load(PROJECT_ROOT / args.circuit, weights_only=False)["copy_circuit"]
     substrate.copy_circuit.load_payload(payload)
 
-    per_item: dict[str, Any] = {}
-    for item_id in ids:
-        item = items[item_id]
-        turns = [str(turn) for turn in item["turns"]]
-        tokens = list(copyable_tokens(item))
-        told = next((turn for turn in turns[:-1] if any(t in turn for t in tokens)), "")
-        if not told:
-            per_item[item_id] = {"class": "no_copyable_answer"}
-            continue
-        per_item[item_id] = trace_item(
-            substrate,
-            substrate.copy_circuit,
-            turns=turns,
-            tokens=tokens,
-            told=told,
-            history_mode=args.history,
-            store_mode=args.store,
-            runtime=runtime,
-        )
-        per_item[item_id]["id"] = item_id
+    raw_biases = [part.strip() for part in args.bias_sweep.split(",") if part.strip()]
+    #: `asis` ＝不覆写（用电路里训练后的原值，本次两电路都是钳位值 2.5）；其余是浮点覆写值。
+    biases: list[float | None] = [None if token == "asis" else float(token) for token in raw_biases]
+    bias_labels = list(zip(raw_biases, biases))
+    per_variant: dict[str, dict[str, Any]] = {}
+    for label, bias in bias_labels:
+        per_item = {}
+        for item_id in ids:
+            item = items[item_id]
+            turns = [str(turn) for turn in item["turns"]]
+            tokens = list(copyable_tokens(item))
+            told = next((turn for turn in turns[:-1] if any(t in turn for t in tokens)), "")
+            if not told:
+                per_item[item_id] = {"class": "no_copyable_answer"}
+                continue
+
+            def _trace(turns=turns, tokens=tokens, told=told):
+                record = trace_item(
+                    substrate,
+                    substrate.copy_circuit,
+                    turns=turns,
+                    tokens=tokens,
+                    told=told,
+                    history_mode=args.history,
+                    store_mode=args.store,
+                    runtime=runtime,
+                )
+                record["bias"] = bias
+                record["bias_label"] = label
+                return record
+
+            per_item[item_id] = _bias_variant_run(substrate.copy_circuit, bias, _trace)
+            per_item[item_id]["id"] = item_id
+            restored = float(substrate.copy_circuit._parameters["copy_induce_bias"].flatten()[0])
+            if restored != float(payload["parameters"]["copy_induce_bias"].flatten()[0]):
+                #: 诊断覆写没复原＝下一档是在上一档的参数上跑的，整份读数作废。
+                raise AssertionError(f"{item_id}: copy_induce_bias 未复原（{restored}）")
+        per_variant[label] = per_item
+    #: 顶层字段沿用**第一档**（默认 asis），使本件与已入库的 scored 读数直接可比。
+    per_item = per_variant[raw_biases[0]]
 
     counts: dict[str, int] = {}
     for record in per_item.values():
@@ -498,6 +551,30 @@ def main() -> int:
         "failing_items": ids,
         "chain_identical_all": chain_all,
         "class_counts": counts,
+        #: 每档只改 `copy_induce_bias`（前驱约束强度），其余同链同底同题——
+        #: "指对步占比"就是这一刀要看的那个数（键侧在**正确事件内**指对目标字节的比例）。
+        "bias_variants": {
+            label: {
+                "steps": sum(len(r.get("trace", [])) for r in records.values()),
+                "aim_correct": sum(
+                    1
+                    for r in records.values()
+                    for row in r.get("trace", [])
+                    if row["copy_top_byte"] == row["target_byte"]
+                ),
+                "steps_emitted": sum(
+                    1 for r in records.values() for row in r.get("trace", []) if row["emitted"]
+                ),
+                "items_fully_emitted": sum(
+                    1 for r in records.values() if r.get("class") == "emitted"
+                ),
+                "class_counts": {
+                    str(c): sum(1 for r in records.values() if r.get("class") == str(c))
+                    for c in {str(r.get("class")) for r in records.values()}
+                },
+            }
+            for label, records in per_variant.items()
+        },
         #: 逐步事件归因：多少步的 `best_match` 落在**别的**告知上（选择侧），多少步落在目标事件内
         #: 却指错位置（键侧）。两者是两笔不同的账，`address_miss` 一个标签混着它们。
         "steps_total": sum(len(record.get("trace", [])) for record in per_item.values()),
@@ -548,6 +625,7 @@ def main() -> int:
                 "store_mode": args.store,
                 "ablation_hits": report["ablation_hits"],
                 "classes": counts,
+                "bias_variants": report["bias_variants"],
                 "reproduces_recorded_miss": report["reproduces_recorded_miss"],
                 "chain_identical_all": chain_all,
                 "base_unchanged": report["base_sha256_unchanged"],
