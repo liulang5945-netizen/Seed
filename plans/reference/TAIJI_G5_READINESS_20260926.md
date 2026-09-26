@@ -118,9 +118,11 @@ this scaffold lifetime. **This is the keyless first-run configuration lane**; th
 | `agent-preset-authoring` | `扩展 DSH 的能力` → `扩展 Taiji Harness 的能力` | **fork 有意变更**（G2 品牌化） | 烤进去＝正确，且这是唯一让它变绿的做法 |
 | `models-settings-recovery` | 模型列表多出一行 `Taiji（本地运行时）` ＋ 其编辑按钮 | **fork 有意变更**（我方 `llm-taiji` 在装配里） | 烤进去＝正确，但**这台机器上录的会连带下一行的宿主差异** |
 | `plugin-install-registry` | `安装位置：{{cwd}}/.dsh-home/profiles/scaffold` → `{{cwd}}\.dsh-home\profiles\scaffold` | **宿主路径分隔符**（Windows） | **不该烤**：在本机 refresh 会把反斜杠固化进基线，macOS/Linux 上立刻变红 |
-| `github-ready-review` | 计数 `1` → `2` | 未判 | 需要读上下文才能分清是 fork 变更还是行为差异 |
-| `support-timezone` | 2 条用例 **287 ms** 快速失败（不是超时） | 疑似**宿主时区依赖** | 未判；若是，则与 ⑩ 的 bash/pwsh 同类 |
+| `github-ready-review` | `expect(ctx.agents.list()).toHaveLength(before + 1)` 实得**多一个 agent**（`e2e.ts:175`） | **唯一仍未归类的一条** | 候选：我方某个包在启动时挂了 agent，或同文件前一条测试的 agent 未释放；要单独判，**refresh 与它无关** |
+| `support-timezone` | `expected 'Asia/Shanghai' to be 'UTC'`（第 9 行的**对照页**断言） | **Windows 不认 `TZ` 环境变量**：lane 用 `chromium.launch({ env: { TZ: hostTimeZone } })` 造"宿主时区"，但本机 Chromium 仍报宿主真实时区 | **前提在本机不可能成立**（与 ⑩ 同类，非 fork 回归）；`newEnglishPage` 那条固定 `Asia/Shanghai` 的断言本身是好的 |
 | `cold-blank-session`／`startup-auto-selection` | 等待对象根本不出现 | **lane 的状态假设与当前表层对不上**（§6 ⑮ 那条） | refresh 无效——它们不是快照差异 |
+
+**（同日补判）**上表最后两行已从"未判"改成定案：`support-timezone` 是 Windows 不认 `TZ`，`github-ready-review` 是多出一个 agent（唯一仍未归类）。⇒ 11 条红的归属现在是：**2 类 fork 有意变更（该 refresh，但不该在本机）＼1 类宿主路径分隔符（该 normalize，不该 refresh）＼1 类宿主时区（本机前提不成立）＼2 条 lane 状态假设（refresh 无效）＼1 条待判＼其余为同类快照差异。**
 
 **给裁定的三句话**：① 前两类**该** refresh，但**不该在本机做**（第 3 类会一起被烤进去），要么在 macOS/Linux 上 refresh，要么先把那两处宿主依赖值 normalize（`{{cwd}}` 已经是占位，分隔符却没有）；② 第 4、5 类要先各判一次，别混进 refresh；③ 第 6 类 refresh 救不了，得改 lane。⇒ **"refresh 与否"不是一个开关，而是三件事**。
 
