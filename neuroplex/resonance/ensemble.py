@@ -758,9 +758,24 @@ class ResonanceEnsemble:
 
         nid 即域名（如 "code"/"math"）时直接用；否则取 domain 前缀
         （如 "zh_aug0_dialogue" → "zh"）。返回 None 表示无法解析。
+
+        ⚠️ 必须先做**成员判定**再退域前缀：`TokenizerHub.get_tokenizer` 对未知键会回退到
+        general（translator.py:113-115），所以旧写法里 `sp is not None` 恒真 ⇒
+        带后缀的 "zh_1" 永远解析成 general 分词器，域前缀那一支是死代码。
+        后果落在唯一消费点 `_project_logits_to_target`：跨词表投影会拿 general 去
+        对齐实际属于 zh 的 logits 列（`source_vocab_size` 与矩阵都不符）。
         """
         if self._tokenizer_hub is None:
             return None
+        tokenizers = getattr(self._tokenizer_hub, "tokenizers", None)
+        if isinstance(tokenizers, dict):
+            if nid in tokenizers:
+                return tokenizers[nid]
+            domain = nid.split("_")[0]
+            if domain in tokenizers:
+                return tokenizers[domain]
+            return None
+        # 鸭子 hub（无 tokenizers 字典）：保持旧语义
         sp = self._tokenizer_hub.get_tokenizer(nid)
         if sp is not None:
             return sp
