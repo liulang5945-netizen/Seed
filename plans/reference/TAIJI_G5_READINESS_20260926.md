@@ -129,6 +129,35 @@ this scaffold lifetime. **This is the keyless first-run configuration lane**; th
 **给裁定的三句话**：① 前两类**该** refresh，但**不该在本机做**（第 3 类会一起被烤进去），要么在 macOS/Linux 上 refresh，要么先把那两处宿主依赖值 normalize（`{{cwd}}` 已经是占位，分隔符却没有）；② 第 4、5 类要先各判一次，别混进 refresh；③ 第 6 类 refresh 救不了，得改 lane。⇒ **"refresh 与否"不是一个开关，而是三件事**。
 
 
+
+## 7.2 · 那 22 条"普通断言红"不是金样差异，其中 7 条（6 条 lane）看着与已知的登记阻塞同源
+
+用分账器（`.dsh-sbx2/analyze-web-log.mjs`，按每个 `FAIL` 块的**第一条错误行**分类，不读宿主 stderr）重算 `baseline76.log`：
+79 条失败用例＝**超时 26 ＋ 快照/ARIA 差异 17 ＋ 普通断言 22 ＋ 运行时错误 5**（合计 70，余 9 条错误行形状未识别）。
+⇒ **更正我今天写进 08 §5 的"金样/ARIA 差异 39 条"**：那 39 是"快照差异 17 ＋ 普通断言 22"的和，**只有 17 条是整棵 ARIA 树的差异、才是 refresh 能救的**；
+22 条普通断言里最大的一族是 **`expected +0 to be 1` 共 7 条，横跨 6 条 lane**
+（`clickable-links-gallery`、`markdown-cjk-strong`、`markdown-images`、`markdown-inline-code-links`、`math-rendering`、`produced-file-mentions`），
+它们的等待对象都是**同一个东西：会话正文里那条 DONE 哨兵文本**（各 lane 自带的 `*_DONE` 字串，15 s `expect.poll`）。
+
+**取证方式与读数（两张失败瞬间截图，非日志相邻文本）**：`markdown-cjk-strong` 与 `markdown-images` 在
+**完整新鲜 build 之后**（`.artifacts/web-e2e-markdown-*.png`，19:51）的红**同形**——
+侧栏 `Workspaces` 下只有 **`Default workspace`**，播了会话的那个临时工作区**没有作为工作区出现**，其会话行落在
+**`Ungrouped`** 下且**行名是临时目录名**（`dsh-web-e2e-ws-XXXX`）而不是 lane 播种的标题；主区仍是 hero（`State at Its Utmost`）。
+⇒ 这**不是** markdown 渲染缺陷：DONE 文本来自 lane 自己写进盘上的会话件（`source: {kind:'model', provider:'fixture'}`），
+红的是**那条会话根本没进表层**。也**不是**产物过期：这两张图就是新鲜 build 上取的。
+
+**最好的解释（待判别实验，别当结论用）**：与 H3q/H3t 那条已知阻塞同源——这些 lane 走的是**页内目录选择器**那条旧 helper
+（`connectFreshWorkspace`，现存 56 个调用点），而该选择器在本 fork 的表层开不出菜单 ⇒ **工作区从未被登记**，
+会话因此落进 `Ungrouped`、标题也不来自登记后的头部索引 ⇒ 树里的行序与 lane 预期对不上，正文自然等不到。
+**判别实验（一条就够）**：把 `markdown-cjk-strong` 换成宿主侧 `connectFreshWorkspaceViaHost`（先 `ctx.workspaceController.create({path})` 再重载），
+看 DONE 是否出现。**两种结果都有价值**：出现 ⇒ 这 7 条与 6 条 lane 归到已知阻塞，处置是"把剩下的调用点按同一模式转过去"；
+不出现 ⇒ 登记不是因，得回头查 ⑮（启动期建的头部索引）或 ⑭（校验器拒收播种件）。
+**其余 15 条普通断言**形状各异（`plugin-config` 三条都是毫秒值对不上：`'120000'` 对 `'12000'` 两条、对 `'60000'` 一条；
+`sessionless-header` 三条是计数对不上：`40` 对 `+0` 两条、`1` 对 `+0` 一条；另有 `'/go' to be '/goal '`、`Asia/Shanghai` 对 `UTC` 等），
+**逐条取证前不要并进"金样"那一堆**。
+
+**给裁定的影响**：§7 那句"金样差异的真实规模是 39 条"要按 **17 条**引用；refresh 一刀切能救的面比我今天白天说的小一半以上。
+
 ## 7.1 · "先 normalize 再 refresh" 这条路的价格（同日实测，给 §7 那句"要么先 normalize"定价）
 
 §7 的三句话里第 ① 句留了一个未定价的选项：「先把那两处宿主依赖值 normalize（`{{cwd}}` 已经是占位，分隔符却没有）」。本轮把它的**可行形状与半径**量清了：
