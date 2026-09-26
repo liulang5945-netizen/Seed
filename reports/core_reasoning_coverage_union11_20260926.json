@@ -1,0 +1,81 @@
+{
+  "status": "pass",
+  "name": "core_reasoning_coverage",
+  "metrics": {
+    "core_line_pct": 60.61,
+    "threshold": 60.0,
+    "audit_target": 60.0,
+    "covered_lines": 2262,
+    "statements": 3732
+  },
+  "checks": {
+    "core_face_complete_pass": true,
+    "core_coverage_pass": true
+  },
+  "per_file": {
+    "neuroplex/brain/_cortex_alignment.py": {
+      "statements": 39,
+      "covered": 30,
+      "pct": 76.92,
+      "missing_ranges": 0
+    },
+    "neuroplex/brain/_cortex_generation.py": {
+      "statements": 35,
+      "covered": 35,
+      "pct": 100.0,
+      "missing_ranges": 0
+    },
+    "neuroplex/brain/_cortex_helpers.py": {
+      "statements": 80,
+      "covered": 68,
+      "pct": 85.0,
+      "missing_ranges": 0
+    },
+    "neuroplex/brain/_cortex_quality.py": {
+      "statements": 119,
+      "covered": 99,
+      "pct": 83.19,
+      "missing_ranges": 0
+    },
+    "neuroplex/brain/_cortex_routing.py": {
+      "statements": 38,
+      "covered": 29,
+      "pct": 76.32,
+      "missing_ranges": 0
+    },
+    "neuroplex/brain/cortex.py": {
+      "statements": 1148,
+      "covered": 750,
+      "pct": 65.33,
+      "missing_ranges": 0
+    },
+    "neuroplex/layers.py": {
+      "statements": 228,
+      "covered": 201,
+      "pct": 88.16,
+      "missing_ranges": 0
+    },
+    "neuroplex/resonance/continuous.py": {
+      "statements": 65,
+      "covered": 65,
+      "pct": 100.0,
+      "missing_ranges": 0
+    },
+    "neuroplex/resonance/ensemble.py": {
+      "statements": 1749,
+      "covered": 793,
+      "pct": 45.34,
+      "missing_ranges": 0
+    },
+    "neuroplex/resonance/field.py": {
+      "statements": 231,
+      "covered": 192,
+      "pct": 83.12,
+      "missing_ranges": 0
+    }
+  },
+  "missing_from_report": [],
+  "threshold_basis": "audit 2026-08-23 §7-16 目标 ≥60%（度量面＝一次 generate() 穿过的模块）",
+  "report_source": "E:\\Seed\\output\\cov_union5.json",
+  "totals_pct_from_runner": 50.32169117647059
+}
