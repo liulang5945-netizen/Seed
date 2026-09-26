@@ -156,6 +156,12 @@ this scaffold lifetime. **This is the keyless first-run configuration lane**; th
 `sessionless-header` 三条是计数对不上：`40` 对 `+0` 两条、`1` 对 `+0` 一条；另有 `'/go' to be '/goal '`、`Asia/Shanghai` 对 `UTC` 等），
 **逐条取证前不要并进"金样"那一堆**。
 
+**其中 3 条已定案（`plugin-config`，同日读码＋历史双向核对）**：该 lane 三条红（`'120000'` 对 `'60000'` 一条、`'120000'` 对 `'12000'` 两条）**是同一个因的级联**——
+产品默认命令超时是 **120_000 ms**（`packages/shell/bash-local/src/index.ts:102` 与 `packages/shell/pwsh-local/src/index.ts:128` 两处默认值相同），
+而 lane 第一句 `expect(timeout.inputValue()).toBe('60000')`（`plugin-config.e2e.ts:211`）就红，后面两条"填 12000 再读回"的用例因此从未持久化过 ⇒ 读回的是默认。
+**归因为什么可信**：① 两个 shell 的默认一致 ⇒ **与本机用哪个 shell 无关**，不是宿主类；② `git log -S"60_000"` 在该文件为空、该文件自 fork 导入起只被 G1/G2 两次改名动过 ⇒ **不是我方改的**，是 lane 的期望与上游当前默认脱节。
+**处置**：改 lane 期望属"动上游测试"，与符号链接那条同批裁定；**refresh 对它无效**（不是快照断言）。
+
 **给裁定的影响**：§7 那句"金样差异的真实规模是 39 条"要按 **17 条**引用；refresh 一刀切能救的面比我今天白天说的小一半以上。
 
 ## 7.1 · "先 normalize 再 refresh" 这条路的价格（同日实测，给 §7 那句"要么先 normalize"定价）
