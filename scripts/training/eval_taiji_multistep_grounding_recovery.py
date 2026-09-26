@@ -11,6 +11,11 @@ from unittest.mock import patch
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
+SCRIPT_DIR = PROJECT_ROOT / "scripts" / "training"
+if str(SCRIPT_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPT_DIR))
+
+from _scratch_ckpt import discard, fresh_scratch, sweep  # noqa: E402
 
 from api.seed_runtime import SeedRuntime  # noqa: E402
 from seed import Seed  # noqa: E402
@@ -19,7 +24,8 @@ from taiji import SemanticEvidenceProposal  # noqa: E402
 
 REPORT_FORMAT = "taiji-w7-p2-10-multistep-grounding-recovery-v1"
 LEARNER_SEEDS = (11, 29, 47)
-CHECKPOINT_DIR = PROJECT_ROOT / "checkpoints"
+# 本轮 gate 的 scratch 前缀，用于开跑前扫掉崩溃/被强杀的运行留下的过期残留
+SCRATCH_STEMS = (".p2-10-multistep-",)
 
 
 def _proposal(
@@ -57,8 +63,7 @@ def _runtime(seed: int, checkpoint_path: Path) -> SeedRuntime:
 
 
 def _run_success(seed: int) -> dict[str, object]:
-    checkpoint_path = CHECKPOINT_DIR / f".p2-10-multistep-grounding-{seed}.pt"
-    checkpoint_path.unlink(missing_ok=True)
+    checkpoint_path = fresh_scratch(f".p2-10-multistep-grounding-{seed}")
     prompt = "请读取并检查 README.md"
     steps = (("read", "README.md"), ("stat", "README.md"))
     with patch(
@@ -79,7 +84,7 @@ def _run_success(seed: int) -> dict[str, object]:
         step_payloads = result["planning"]["steps"]
         restored = SeedRuntime.load(checkpoint_path)
         restored_status = restored.status()
-        checkpoint_path.unlink(missing_ok=True)
+        discard(checkpoint_path)
     return {
         "seed": seed,
         "status": result["status"],
@@ -96,8 +101,7 @@ def _run_success(seed: int) -> dict[str, object]:
 
 
 def _run_failure_and_recovery() -> dict[str, object]:
-    checkpoint_path = CHECKPOINT_DIR / ".p2-10-multistep-recovery.pt"
-    checkpoint_path.unlink(missing_ok=True)
+    checkpoint_path = fresh_scratch(".p2-10-multistep-recovery")
     failed_prompt = "请读取并检查缺失文件"
     failed_steps = (("read", "missing/p2-10.md"), ("stat", "missing/p2-10.md"))
     # The live semantic path intentionally rejects a missing target during
@@ -137,7 +141,7 @@ def _run_failure_and_recovery() -> dict[str, object]:
             max_budget_units=1.0,
             resource_budget=0.8,
         )
-        checkpoint_path.unlink(missing_ok=True)
+        discard(checkpoint_path)
     return {
         "failure_status": failed["execution"]["status"],
         "failure_completed_prefix": failed["execution"]["completed_prefix"],
@@ -150,6 +154,7 @@ def _run_failure_and_recovery() -> dict[str, object]:
 
 
 def evaluate() -> dict[str, object]:
+    sweep(SCRATCH_STEMS)
     runs = [_run_success(seed) for seed in LEARNER_SEEDS]
     recovery = _run_failure_and_recovery()
     metrics = {

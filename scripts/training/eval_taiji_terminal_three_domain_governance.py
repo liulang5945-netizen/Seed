@@ -13,6 +13,11 @@ from unittest.mock import patch
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
+SCRIPT_DIR = PROJECT_ROOT / "scripts" / "training"
+if str(SCRIPT_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPT_DIR))
+
+from _scratch_ckpt import discard, fresh_scratch, sweep  # noqa: E402
 
 from api.seed_runtime import SeedRuntime  # noqa: E402
 from scripts.training.eval_taiji_continuous_structural_growth import (  # noqa: E402
@@ -49,6 +54,8 @@ from taiji import (  # noqa: E402
 REPORT_FORMAT = "taiji-w7-p4-12-terminal-three-domain-governance-v1"
 LEARNER_SEEDS = (11, 29, 47)
 FIT_EPOCHS = 40
+# 本轮 gate 的 scratch 前缀，用于开跑前扫掉崩溃/被强杀的运行留下的过期残留
+SCRATCH_STEMS = (".p4-12-terminal-recovery-",)
 
 
 def _terminal_action(marker: str, *, failing: bool = False) -> tuple[str, dict[str, object]]:
@@ -240,9 +247,10 @@ def _terminal_governance_probe(seed: int) -> dict[str, object]:
     # Python's exclusive file creation inside it.  Keep the probe isolated by
     # using a dot-prefixed checkpoint in the repository's existing writable
     # checkpoint directory; the successful path removes it before returning.
+    # 名字按 PID 唯一（fresh_scratch）：套件与 gate CLI 同时在跑时，两条 lane 的临时件不再互相
+    # 撞上——旧实现用固定名，unlink() 会撞 WinError 32 把整条 lane 炸红。
     with nullcontext():
-        checkpoint_path = PROJECT_ROOT / "checkpoints" / f".p4-12-terminal-recovery-{seed}.pt"
-        checkpoint_path.unlink(missing_ok=True)
+        checkpoint_path = fresh_scratch(f".p4-12-terminal-recovery-{seed}")
         with patch(
             "seed_platform.workbench.get_setting",
             lambda key, default=None: str(PROJECT_ROOT) if key == "workspace_path" else default,
@@ -331,7 +339,7 @@ def _terminal_governance_probe(seed: int) -> dict[str, object]:
                 learn=False,
             )
             checkpoint_saved = checkpoint_path.exists()
-            checkpoint_path.unlink(missing_ok=True)
+            discard(checkpoint_path)
             return {
                 "unapproved_status": unapproved["outcome"]["status"],
                 "unapproved_success": bool(unapproved["outcome"]["success"]),
@@ -350,6 +358,7 @@ def _terminal_governance_probe(seed: int) -> dict[str, object]:
 
 
 def evaluate() -> dict[str, object]:
+    sweep(SCRATCH_STEMS)
     corpus, _ = build_train_corpus()
     train_examples, training_source = _training_examples()
     runs: list[dict[str, object]] = []

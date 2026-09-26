@@ -21,6 +21,11 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 FIXTURE_ROOT = PROJECT_ROOT / "tests" / "fixtures" / "m3_workbench_projects"
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
+SCRIPT_DIR = PROJECT_ROOT / "scripts" / "training"
+if str(SCRIPT_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPT_DIR))
+
+from _scratch_ckpt import discard, fresh_scratch, sweep  # noqa: E402
 
 from api.seed_runtime import SeedRuntime  # noqa: E402
 from seed import Seed  # noqa: E402
@@ -32,6 +37,8 @@ from taiji import ActionIntent, SemanticEvidenceProposal  # noqa: E402
 
 REPORT_FORMAT = "taiji-m3-workbench-readonly-v1"
 REPORT_VERSION = 1
+# 本轮 gate 的 scratch 前缀，用于开跑前扫掉崩溃/被强杀的运行留下的过期残留
+SCRATCH_STEMS = (".m3-workbench-readonly-",)
 
 
 def _workspace_digest(root: Path) -> str:
@@ -132,8 +139,7 @@ def _run_positive_case(
     registry: ProgrammingLanguageRegistry | None = None,
 ) -> dict[str, Any]:
     root = (FIXTURE_ROOT / relative_root).resolve()
-    checkpoint_path = PROJECT_ROOT / "checkpoints" / f".m3-workbench-readonly-{project_id}.pt"
-    checkpoint_path.unlink(missing_ok=True)
+    checkpoint_path = fresh_scratch(f".m3-workbench-readonly-{project_id}")
     prompt = f"请读取 {path}，判断编程语言并形成只读工作台结论"
     before_digest = _workspace_digest(root)
     with patch(
@@ -182,7 +188,7 @@ def _run_positive_case(
             resource_budget=0.8,
         )
     after_digest = _workspace_digest(root)
-    checkpoint_path.unlink(missing_ok=True)
+    discard(checkpoint_path)
     return {
         "project_id": project_id,
         "project_root": relative_root,
@@ -221,8 +227,7 @@ def _run_clarification_case(
     expected_reason: str,
 ) -> dict[str, Any]:
     root = (FIXTURE_ROOT / relative_root).resolve()
-    checkpoint_path = PROJECT_ROOT / "checkpoints" / f".m3-workbench-readonly-{case_id}.pt"
-    checkpoint_path.unlink(missing_ok=True)
+    checkpoint_path = fresh_scratch(f".m3-workbench-readonly-{case_id}")
     prompt = f"请读取 {path} 并判断编程语言"
     before_digest = _workspace_digest(root)
     with patch(
@@ -241,7 +246,7 @@ def _run_clarification_case(
         )
         phases = [event.phase for event in runtime.workbench_audit.events]
     after_digest = _workspace_digest(root)
-    checkpoint_path.unlink(missing_ok=True)
+    discard(checkpoint_path)
     return {
         "case_id": case_id,
         "project_root": relative_root,
@@ -258,10 +263,11 @@ def _run_clarification_case(
 
 def _run_boundary_controls() -> dict[str, Any]:
     root = (FIXTURE_ROOT / "python_app").resolve()
+    checkpoint_path = fresh_scratch(".m3-workbench-readonly-boundary")
     runtime = _runtime(
         "boundary-controls",
         root,
-        PROJECT_ROOT / "checkpoints" / ".m3-workbench-readonly-boundary.pt",
+        checkpoint_path,
     )
     snapshot_id = runtime.workbench_environment.capability_snapshot.snapshot_id
     stale = runtime.execute_workbench_intent(
@@ -287,8 +293,7 @@ def _run_boundary_controls() -> dict[str, Any]:
         learn=False,
     )
     phases = [event.phase for event in runtime.workbench_audit.events]
-    checkpoint_path = PROJECT_ROOT / "checkpoints" / ".m3-workbench-readonly-boundary.pt"
-    checkpoint_path.unlink(missing_ok=True)
+    discard(checkpoint_path)
     return {
         "stale_status": stale["outcome"]["status"],
         "stale_reason": stale["policy"]["reason_code"],
@@ -305,6 +310,7 @@ def _run_boundary_controls() -> dict[str, Any]:
 
 
 def evaluate() -> dict[str, Any]:
+    sweep(SCRATCH_STEMS)
     projects = [
         _run_positive_case(
             "python",

@@ -11,6 +11,11 @@ from unittest.mock import patch
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
+SCRIPT_DIR = PROJECT_ROOT / "scripts" / "training"
+if str(SCRIPT_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPT_DIR))
+
+from _scratch_ckpt import discard, fresh_scratch, sweep  # noqa: E402
 
 from api.seed_runtime import SeedRuntime  # noqa: E402
 from seed import Seed  # noqa: E402
@@ -19,7 +24,8 @@ from taiji import SemanticEvidenceProposal  # noqa: E402
 
 REPORT_FORMAT = "taiji-w7-p2-8-natural-language-workbench-v1"
 LEARNER_SEEDS = (11, 29, 47)
-CHECKPOINT_DIR = PROJECT_ROOT / "checkpoints"
+# 本轮 gate 的 scratch 前缀，用于开跑前扫掉崩溃/被强杀的运行留下的过期残留
+SCRATCH_STEMS = (".p2-8-natural-language-",)
 
 
 def _proposal(
@@ -62,8 +68,7 @@ def _runtime(seed: int, checkpoint_path: Path) -> SeedRuntime:
 
 
 def _run_success(seed: int) -> dict[str, object]:
-    checkpoint_path = CHECKPOINT_DIR / f".p2-8-natural-language-{seed}.pt"
-    checkpoint_path.unlink(missing_ok=True)
+    checkpoint_path = fresh_scratch(f".p2-8-natural-language-{seed}")
     prompt = "请读取 README.md"
     with patch(
         "seed_platform.workbench.get_setting",
@@ -85,7 +90,7 @@ def _run_success(seed: int) -> dict[str, object]:
         restored = SeedRuntime.load(checkpoint_path)
         restored._workbench_environment = WorkbenchEnvironment(PROJECT_ROOT)
         restored_status = restored.status()
-        checkpoint_path.unlink(missing_ok=True)
+        discard(checkpoint_path)
     action_intents = result["planning"]["action_intents"]
     step = result["execution"]["steps"][0]
     return {
@@ -107,9 +112,9 @@ def _run_success(seed: int) -> dict[str, object]:
 
 
 def evaluate() -> dict[str, object]:
+    sweep(SCRATCH_STEMS)
     runs = [_run_success(seed) for seed in LEARNER_SEEDS]
-    low_confidence_path = CHECKPOINT_DIR / ".p2-8-natural-language-low-confidence.pt"
-    low_confidence_path.unlink(missing_ok=True)
+    low_confidence_path = fresh_scratch(".p2-8-natural-language-low-confidence")
     with patch(
         "seed_platform.workbench.get_setting",
         lambda key, default=None: str(PROJECT_ROOT) if key == "workspace_path" else default,
@@ -134,7 +139,7 @@ def evaluate() -> dict[str, object]:
             forbidden_rejected = "execution field" in str(exc)
         else:
             forbidden_rejected = False
-    low_confidence_path.unlink(missing_ok=True)
+    discard(low_confidence_path)
 
     metrics = {
         "three_independent_seeds": len(runs) == len(LEARNER_SEEDS),

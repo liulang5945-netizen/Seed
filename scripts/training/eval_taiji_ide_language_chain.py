@@ -11,6 +11,11 @@ from unittest.mock import patch
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
+SCRIPT_DIR = PROJECT_ROOT / "scripts" / "training"
+if str(SCRIPT_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPT_DIR))
+
+from _scratch_ckpt import discard, fresh_scratch, sweep  # noqa: E402
 
 from api.seed_runtime import SeedRuntime  # noqa: E402
 from seed import Seed  # noqa: E402
@@ -20,6 +25,8 @@ from taiji import ActionIntent, SemanticEvidenceProposal  # noqa: E402
 REPORT_FORMAT = "taiji-w7-p2-11-ide-language-chain-v1"
 TARGET_PATH = "api/app.py"
 AMBIGUOUS_PATH = "direct-workbench-r5b-20260830-b/test-37/shared.h"
+# 本轮 gate 的 scratch 前缀，用于开跑前扫掉崩溃/被强杀的运行留下的过期残留
+SCRATCH_STEMS = (".p2-11-language-chain-", ".p2-11-language-policy", ".p2-11-ambiguous-language")
 
 
 def _runtime(seed: int, checkpoint_path: Path) -> SeedRuntime:
@@ -81,8 +88,7 @@ def _proposal(
 
 
 def _run_success(seed: int) -> dict[str, object]:
-    checkpoint_path = PROJECT_ROOT / "checkpoints" / f".p2-11-language-chain-{seed}.pt"
-    checkpoint_path.unlink(missing_ok=True)
+    checkpoint_path = fresh_scratch(f".p2-11-language-chain-{seed}")
     prompt = "请读取 api/app.py，识别语言并同步编辑器语言"
     with patch(
         "seed_platform.workbench.get_setting",
@@ -123,7 +129,7 @@ def _run_success(seed: int) -> dict[str, object]:
             max_budget_units=1.0,
             resource_budget=0.8,
         )
-        checkpoint_path.unlink(missing_ok=True)
+        discard(checkpoint_path)
 
     planning_steps = result["planning"]["steps"]
     execution_steps = result["execution"]["steps"]
@@ -155,8 +161,7 @@ def _run_success(seed: int) -> dict[str, object]:
 
 
 def _run_user_override_and_ambiguity() -> dict[str, object]:
-    checkpoint_path = PROJECT_ROOT / "checkpoints" / ".p2-11-language-policy.pt"
-    checkpoint_path.unlink(missing_ok=True)
+    checkpoint_path = fresh_scratch(".p2-11-language-policy")
     prompt = "请识别并同步 api/app.py 的编辑器语言"
     with patch(
         "seed_platform.workbench.get_setting",
@@ -188,10 +193,9 @@ def _run_user_override_and_ambiguity() -> dict[str, object]:
             max_budget_units=3.0,
         )
         override_state = runtime.workbench_environment.language_state_checkpoint()["selections"]
-        checkpoint_path.unlink(missing_ok=True)
+        discard(checkpoint_path)
 
-    ambiguous_checkpoint = PROJECT_ROOT / "checkpoints" / ".p2-11-ambiguous-language.pt"
-    ambiguous_checkpoint.unlink(missing_ok=True)
+    ambiguous_checkpoint = fresh_scratch(".p2-11-ambiguous-language")
     with patch(
         "seed_platform.workbench.get_setting",
         lambda key, default=None: str(PROJECT_ROOT) if key == "workspace_path" else default,
@@ -206,7 +210,7 @@ def _run_user_override_and_ambiguity() -> dict[str, object]:
             max_steps=3,
             max_budget_units=3.0,
         )
-    ambiguous_checkpoint.unlink(missing_ok=True)
+    discard(ambiguous_checkpoint)
 
     selected_override = next(item for item in override_state if item.get("path") == TARGET_PATH)
     return {
@@ -223,6 +227,7 @@ def _run_user_override_and_ambiguity() -> dict[str, object]:
 
 
 def evaluate() -> dict[str, object]:
+    sweep(SCRATCH_STEMS)
     runs = [_run_success(seed) for seed in (11, 29, 47)]
     policy = _run_user_override_and_ambiguity()
     metrics = {
