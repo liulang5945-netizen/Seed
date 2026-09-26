@@ -159,6 +159,9 @@ def test_load_state_skips_unknown_neuron_ids_but_still_succeeds(cortex: Cortex, 
     known = dict(state["neurons"])
     assert known, "夹具里至少应有一个带可学习参数的神经元，否则本条是空测"
     first = next(iter(known.values()))
+    assert {"lm_head", "embed_adapter"} & set(
+        first
+    ), f"文件里的神经元条目该带可学习参数，实得 {list(first)}"
     fresh = torch.nn.Linear(4, 4).state_dict()
     state["neurons"] = {**known, "ghost_9": {"lm_head": fresh}}
     torch.save(state, str(path))
