@@ -129,11 +129,26 @@ export function probeFreePort(): Promise<number> {
  * @param root - host directory the workspace folder is staged in (the scaffold's `workspaceCwd`).
  * @param name - folder name staged and adopted as the workspace.
  */
+/**
+ * Open the in-page directory dialog from the composer's workspace trigger. The trigger
+ * declares a menu and the dialog sits behind its add item, while an older surface resolved
+ * the click straight to the dialog, so the menu is followed only when it appears.
+ * @param page - the page whose composer starts the workspace flow.
+ * @param trigger - localized accessible name of the workspace trigger.
+ * @param dialogName - localized accessible name of the directory dialog.
+ * @returns nothing; the dialog is visible when it resolves.
+ */
+async function openWorkspaceDirectoryDialog(page: Page, trigger: string, dialogName: string): Promise<void> {
+  await page.getByRole('textbox', { name: trigger }).click()
+  const add = page.getByRole('menuitem', { name: /添加工作区|Add workspace/u })
+  if (await add.waitFor({ state: 'visible', timeout: 2_000 }).then(() => true).catch(() => false)) await add.click()
+  await page.getByRole('dialog', { name: dialogName }).waitFor({ timeout: 10_000 })
+}
+
 export async function connectFreshWorkspace(page: Page, root: string, name = 'workspace'): Promise<void> {
   mkdirSync(join(root, name), { recursive: true })
-  await page.getByRole('textbox', { name: 'Choose workspace' }).click()
+  await openWorkspaceDirectoryDialog(page, 'Choose workspace', 'Select Workspace Directory')
   const dialog = page.getByRole('dialog', { name: 'Select Workspace Directory' })
-  await dialog.waitFor({ timeout: 10_000 })
   await dialog.getByRole('button', { name: 'Edit path' }).click()
   const pathInput = dialog.getByRole('textbox', { name: 'Edit path' })
   await pathInput.fill(join(root, name))
@@ -156,9 +171,8 @@ export async function connectFreshWorkspace(page: Page, root: string, name = 'wo
  */
 export async function connectFreshWorkspaceZh(page: Page, root: string, name = 'workspace'): Promise<void> {
   mkdirSync(join(root, name), { recursive: true })
-  await page.getByRole('textbox', { name: '选择工作区' }).click()
+  await openWorkspaceDirectoryDialog(page, '选择工作区', '选择工作区目录')
   const dialog = page.getByRole('dialog', { name: '选择工作区目录' })
-  await dialog.waitFor({ timeout: 10_000 })
   await dialog.getByRole('button', { name: '编辑路径' }).click()
   const pathInput = dialog.getByRole('textbox', { name: '编辑路径' })
   await pathInput.fill(join(root, name))
