@@ -57,7 +57,8 @@ describe('web e2e: cold Inbox recovery', () => {
     const group = page.locator('[role="treeitem"]').first()
     await group.waitFor({ timeout: 15_000 })
     await group.click()
-    await page.locator('[role="treeitem"]').nth(1).click()
+    // Select by the workspace basename the tree actually shows (G5 §7.2, H3v).
+    await page.locator('[role="treeitem"]').filter({ hasText: /dsh-web-e2e-ws-/u }).first().click()
     const dock = page.locator('[data-queue-dock]')
     await dock.getByText(PENDING_TEXT, { exact: true }).waitFor({ timeout: 15_000 })
     await compareOrRefreshGolden(EXPECTED,
