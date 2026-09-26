@@ -88,7 +88,35 @@ picked = argmax_e score(e)          # 该轮内不变；W 零初始化
 | `tests/taiji_native/test_copy_circuit_contract.py` | 上面三条守卫 | — |
 | `reports/…a2_5_selector_*` | smoke 与判读件（时间戳防撞，不覆写已入判决件） | 非默认链路必须自带报告路径（既有纪律） |
 
-## 6. 明确不在本件范围内
+## 6. 现成件核查（2026-09-26）：`ContentSelector` **不是**可复用件，只是形状先例
+
+`SPEC-A-17` §7.3 曾记"若要装学习器，现成件见 `ContentSelector`（零初始化 `Linear(6→1)`＋argmax＋
+无图局部更新，已进 checkpoint 面）"。逐行读过之后：它服务的是**另一件事**——
+
+* 特征是 `goal_signal / world_signal / information_gain / confidence / uncertainty / resource_cost`
+  （`taiji/content_selection.py:24-31`），由 `ContentSelectionContext.from_state(goals, world)` 派生；
+* 消费点在语言器官的内容计划路径上（`taiji/adapter.py:7811`，attach 见 P6 那批 eval/test 件）；
+* **它的六个特征里没有一个是"提问与某条告知是否相关"** ⇒ 直接套用会把"选内容计划"当成"选记忆条目"，
+  是类别错误，不是省事。
+
+**能迁移的只有形状**：零初始化 `Linear(k→1)`＋argmax＋无图局部更新＋`to/from_checkpoint` payload 面
+（这套管道可以照抄，参数与特征要新写）。⇒ 本件 §2 的特征表按此**具体化**，实现清单里
+`taiji/content_selection.py` **不改**、不共用；新头放在 `taiji/copy_circuit.py` 内（与复制器官同生命周期）。
+
+**per-event 特征（`k=5`，全部无参数可算，训练时才学权重）**：
+
+| # | 特征 | 为什么需要它 |
+|---|---|---|
+| 1 | `cosine(提问皮质 cue, 事件 cue)` | 现状那条——保留 ⇒ 头零初始化时**逐位等于现状** |
+| 2 | `cosine(提问运动语境 f1, 事件内容池化键)` | 提问条件化的"内容侧"匹配（现状完全缺） |
+| 3 | 提问与事件文本的**共享字符比** | v2 上它单独不够（15<16），但作为**特征**给学习器用是合理的 |
+| 4 | 事件在库中的**相对新度** | §13 的漂移/近因偏置需要一个可学的对抗项 |
+| 5 | 事件长度的 `log`（归一） | 长告知天然占更多位置，与 §23 的聚合发现同源 |
+
+分数 `score(e) = 特征1 + head(全部 5 个特征)`，`head` 零初始化 ⇒ **挂载与未训练时位级不变**；
+选定结果在该轮生成结束前**固定**（消灭 §14 的逐步漂移）。位置寻址（同一条告知内看哪个字节）本件不动。
+
+## 7. 明确不在本件范围内
 
 * **内容表征**（`content_embed` 是否可训／换结构化基）：新机制案，需所有者签字，本件不试；
 * **产品默认挂载**（无人调用 `enable_copy_circuit`）与 `chat_enabled=False` 下表层被占位句替换：
