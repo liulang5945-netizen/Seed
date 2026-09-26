@@ -135,7 +135,7 @@
 |---|---|---|---|
 | **B-0** | P0+P1+P2 三轮修复 | ✅ 完成（116 测试） | `project_audit_fixes{,_p2}_2026-08-23.md` |
 | **B-1** | `detect_modality` 抽为纯函数（无 self） | ✅ 完成 | 等价守卫 3 绿（`a6895b6a`） |
-| **B-2** | `_infer_domain` ✅（黄金 330 格等价）；`_reencode`/`nll_quality` 挂起（需 neuroplex 夹具） | ⏳ 留 B-3 | 见 §6 |
+| **B-2** | `_infer_domain` ✅ 黄金 330 格**真的**等价（该判据当时恒真、一条断言都没跑，2026-09-26 修好并全绿）；`_reencode` ✅ 随 C-2 抽离（黄金全量一致）、`nll_quality` ✅ 随 C-1 抽离并以 neuroplex Cortex 真夹具跑通等价（skip 已结清） | ✅ 完成（挂起项随 B-3 结清） | 见 §6 与 PLAN-B-03 §6 |
 | **B-3** | Cortex 神对象完整拆分（签字 2026-09-25）：**已按预注册范围收口 2026-09-26**。C-1 质量/评分 ✅（含第二刀 `_rolling_nll_quality`，`e3a6e0a4`，迁移前黄金 10 格）、C-2 tokenizer/对齐 ✅（黄金 50000 条）、C-3 路由 ✅第一刀 `_fingerprint_route`＋其余三成员**留壳**（调 `think()`+EMA 状态 / 依赖 `ensemble`）、C-4 单步解码 `decode_step` ✅（`0ef93b0b`）；§4 **唯一声明的行为变更已落地**（`1da2877e`：兜底 `next(iter(set))`→`min()` 前缀，实测 330 格里 21 格随 `PYTHONHASHSEED` 翻转 ⇒ 改后 0 格，且 21 格确定值逐格等于原黄金）；同件结清 **B-2 的黄金守卫空跑**（跳过判据对 330 格恒真 ⇒ 一条等价断言都没执行）。逐成员处置表见 PLAN-B-03 §6，C-4 内联纯段后续刀清单见 §7 | ✅ 收口 | 每迁一簇配等价测试；冻结基线，禁静默漂移 |
 | **B-4** | 核心推理路径覆盖率 ≥60%（审计 §7-16）：**达标**。度量面按审计定位钉死（brain/cortex + `_cortex_*` + resonance 的 ensemble/continuous/field + layers.py；`working_memory` 作为"仅注册未接入"的死模块排除），门 `scripts/training/verify_core_reasoning_coverage.py` 按文件过滤分母、面内文件缺席即红，**已接入 CI 且阈值直接取 60%**（只在套件步成功时判，理由见债册 DEBT-B4-1/5）。读数（全量单次收集、同树两次）：**65.03% / 65.25%**（2427-2435 / 3732）；分文件 cortex.py 20.6→65.7%、ensemble 869→962 行、layers 88%、field 83%、`_cortex_generation`/`continuous` 100%。本轮 B-lane 测试件 **14 个文件 / 113 条**（其中 12 个文件为新建，另 2 个是改写既有守卫），过程中修掉 4 条真实缺陷（隔离池 id 复用覆盖 ckpt／`set_neuromodulator(None)` 半装配异常／聚合加载静默吞 field／`_get_neuron_tokenizer` 对带后缀 nid 的死回退）并结清门自身两处"永远红/读不准" | ✅ 完成 | 门随 CI 常态执行；剩余缺口集中在 ensemble 的前向编排（未覆盖 ~790 行） |
 
