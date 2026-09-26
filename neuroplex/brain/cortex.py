@@ -105,13 +105,17 @@ class Cortex:
     def __init__(
         self,
         neurons_dir: str = "data/neurons",
-        device: str = "cpu",
+        device: str | torch.device = "cpu",
         max_rounds: int = 3,
         shared_embedding: torch.nn.Embedding | None = None,
         general_tokenizer=None,
         neuron_ids: list[str] | None = None,
     ):
-        self.device = device
+        # 归一成真正的 torch.device：旧实现把传进来的字符串原样存下（生产上即 'cpu'），
+        # 而下游签名一律标 `device: torch.device` ⇒ 类型谎报是真的会咬人的：
+        # `tensor.device == cortex.device` 恒 False（torch.device('cpu') != 'cpu'），
+        # 而 field 早在 152 行就从 lm_head 拿到了真 torch.device，同一个对象里两种类型并存。
+        self.device = torch.device(device)
         self.neurons_dir = neurons_dir
         self.max_rounds = max_rounds
         self.is_loaded = False

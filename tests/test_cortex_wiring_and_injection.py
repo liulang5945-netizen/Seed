@@ -117,9 +117,9 @@ def test_think_embedding_priority_and_device_transfer(cortex, spy) -> None:
     kwargs = spy.kwargs
     assert "shared_embeddings" not in kwargs, "neuron_embeddings 优先，二者不该同时透传"
     assert set(kwargs["neuron_embeddings"]) == set(per_neuron)
-    # ⚠️ Cortex.device 是**字符串**（'cpu'），不是 torch.device ⇒ torch 接受它，但比较要先归一
-    target_device = torch.device(str(cortex.device))
-    assert all(t.device == target_device for t in kwargs["neuron_embeddings"].values())
+    # Cortex.device 必须是真 torch.device ⇒ 这个比较才不会恒 False
+    # （旧实现原样存传入的字符串，而下游签名一律标 torch.device；DEBT-B4-3）
+    assert all(t.device == cortex.device for t in kwargs["neuron_embeddings"].values())
 
     cortex.think(shared_embeddings=torch.zeros(1, 9, 8))
     assert spy.continuous.calls == []
@@ -177,6 +177,26 @@ def test_gamma_oscillator_registration_respects_existing_phases(cortex) -> None:
     cortex.set_gamma_oscillator(counting)
     cortex.tick_gamma()
     assert ticks["n"] == 1
+
+
+def test_cortex_device_is_a_real_torch_device(cortex) -> None:
+    """DEBT-B4-3 的守卫：`Cortex.device` 与它喂给 torch 的东西必须是同一种类型。
+
+    旧实现把构造参数原样存下（生产传的是字符串 'cpu'），而 `_cortex_quality` 等下游签名
+    一律标 `device: torch.device` ⇒ torch 能吃字符串所以跑得通，但
+    `tensor.device == cortex.device` 恒 False；而同一对象里 `field` 早在 __init__ 就从
+    lm_head 拿到了真 torch.device，两种类型并存。
+    """
+
+    assert isinstance(cortex.device, torch.device), f"实得 {type(cortex.device)}"
+    moved = torch.zeros(2).to(cortex.device)
+    assert moved.device == cortex.device, "与张量设备直接比较必须成立"
+    assert cortex.field._device.type == cortex.device.type, "场与主对象不能落在不同设备类型上"
+    assert cortex.ensemble.field._device.type == cortex.device.type
+    # 归一后字符串构造参数仍然可用（loader/生产都按字符串传）
+    from neuroplex.brain.cortex import Cortex as _C
+
+    assert _C.__init__.__defaults__[1] == "cpu", "device 形参默认值仍是 'cpu'（构造面不变）"
 
 
 def test_working_memory_and_dialogue_state_registration(cortex, tmp_path) -> None:
