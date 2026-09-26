@@ -1,16 +1,16 @@
 {
-  "status": "fail",
+  "status": "pass",
   "name": "core_reasoning_coverage",
   "metrics": {
-    "core_line_pct": 46.27,
+    "core_line_pct": 65.25,
     "threshold": 60.0,
     "audit_target": 60.0,
-    "covered_lines": 1723,
-    "statements": 3724
+    "covered_lines": 2435,
+    "statements": 3732
   },
   "checks": {
     "core_face_complete_pass": true,
-    "core_coverage_pass": false
+    "core_coverage_pass": true
   },
   "per_file": {
     "neuroplex/brain/_cortex_alignment.py": {
@@ -45,8 +45,8 @@
     },
     "neuroplex/brain/cortex.py": {
       "statements": 1148,
-      "covered": 338,
-      "pct": 29.44,
+      "covered": 754,
+      "pct": 65.68,
       "missing_ranges": 0
     },
     "neuroplex/layers.py": {
@@ -62,9 +62,9 @@
       "missing_ranges": 0
     },
     "neuroplex/resonance/ensemble.py": {
-      "statements": 1741,
-      "covered": 666,
-      "pct": 38.25,
+      "statements": 1749,
+      "covered": 962,
+      "pct": 55.0,
       "missing_ranges": 0
     },
     "neuroplex/resonance/field.py": {
@@ -76,6 +76,6 @@
   },
   "missing_from_report": [],
   "threshold_basis": "audit 2026-08-23 §7-16 目标 ≥60%（度量面＝一次 generate() 穿过的模块）",
-  "report_source": "E:\\Seed\\output\\cov_core_after.json",
-  "totals_pct_from_runner": 40.99693251533742
+  "report_source": "E:\\Seed\\output\\coverage_full.json",
+  "totals_pct_from_runner": 65.08695709939283
 }
