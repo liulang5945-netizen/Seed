@@ -103,6 +103,23 @@ SCAN_EXCLUSIONS: dict[str, str] = {
         "pins the language-alignment generation stop reason (end_marker); "
         "unrelated to the B0 episode stop reason"
     ),
+    # 2026-09-26 补：R2 训练器的"优雅停机"字段与 B0 episode 的 stop reason 同名不同概念。
+    # 三条都是**扫出来的**否证，不是读代码的印象：这三个文件里 all_members_* / goal_reached /
+    # contract_intercepted / rule_revision 各出现 0 次，规则侧的 reason 名根本到不了它们。
+    "scripts/training/train_taiji_r2_content_binding.py": (
+        "its 'stop_reason' is a trainer-termination value this runner writes itself "
+        "('wall_cap', a FloatingPointError string, or None); 'outcome' is derived from "
+        "'status', never from a reason. Zero occurrences of any B0 rule reason token"
+    ),
+    "scripts/training/train_taiji_r2_readout_retrain.py": (
+        "graceful-stop bookkeeping only: 'stopped_by_request' or None written into "
+        "run_report.json. Zero occurrences of any B0 rule reason token"
+    ),
+    "tests/taiji_native/test_readout_retrain_runner_contract.py": (
+        "asserts report['stop_reason'] == 'stopped_by_request', a token the runner above "
+        "produces itself -- the equality is inside the trainer vocabulary. Zero occurrences "
+        "of any B0 rule reason token"
+    ),
 }
 
 CANDIDATES_FOR_REVIEW: dict[str, float] = {

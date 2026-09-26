@@ -1104,7 +1104,7 @@ ContextManager），但它仍在 `neuroplex/brain/` 里且被算进过覆盖率�
 `8b52de4f` 那条 rmdir＋本次这条"秒级复建"合起来把守卫的红**完整归因**到一个未重启的进程上；
 在它重启前，全量套件的既有红集合里会稳定含这一条，读数时须按"环境态"处理，不要当成新代码的回归。
 
-### 本轮（2026-09-26）B 线收口后的全量读数：既有红从 5 条降到 2 条
+### 本轮（2026-09-26）B 线收口后的全量读数：既有红从 5 条降到 2 条，补登记后只剩 1 条环境态
 
 `python -m pytest tests/ -q --cov`（与 CI 同面）：**2 failed / 2185 passed / 6 skipped / 1 xfailed，1800.61s**。
 同一趟的 `output/coverage_full.json` 过 B-4 门：**65.25%（2435/3732）PASS**（阈值 60.0，
@@ -1115,16 +1115,25 @@ ContextManager），但它仍在 `neuroplex/brain/` 里且被算进过覆盖率�
 1. `test_folder_structure_guard::test_every_root_directory_is_listed_in_the_ledger`
    ＝ DEBT-B4-4，**环境态**，唯一动作是重启载着旧码的 `python api/main.py`（PID 24412）。
 2. `test_b0_n2_stop_reason_disposition_contract::test_current_review_surface_is_complete`
-   ＝ **A 支线（B0/N2 复核面），非本轮引入，且本会话未改动过它的任何一个文件**。
-   实测漂移：`EXPECTED_CONSUMERS` 冻结在 19，活扫描 25，新增 6 个读者——
+   ＝ **A 支线（B0/N2 复核面），非本轮引入，且本会话未改动过它的任何一个源文件**。
+   实测漂移：`EXPECTED_CONSUMERS` 冻结在 19，活扫描 25，多出 6 处——
    `run_taiji_collab_handoff_entry_evidence.py`／`run_taiji_unified_entry_evidence.py`／
-   `train_taiji_r2_content_binding.py`（09-19）、`taiji/collab_handoff.py`（09-19）、
-   `train_taiji_r2_readout_retrain.py`／`test_readout_retrain_runner_contract.py`（09-22）。
+   `taiji/collab_handoff.py`（09-19 HANDOFF-M4 与统一入口结案）、
+   `train_taiji_r2_content_binding.py`（09-19）、`train_taiji_r2_readout_retrain.py`／
+   `test_readout_retrain_runner_contract.py`（09-22）。
    即三条特性提交把被审计的面撑大了却没做 disposition，**红了四天**。
-   **本线不代做登记**：该仪器的口径是"新读者必须被**逐一定性**（record-only 还是 judgement）"，
-   而定性会改动 `record_only_files: 9 / judgement_or_mixed_files: 10` 这组被钉住的计数，
-   而它正是 N2 预注册决定（D5=落地）的输入面；改计数属所有者/A 线动作，不是架构债线的收尾。
-   另注：`test_historical_inventory_is_not_rewritten` 明令历史盘点不得重写 ⇒ 补登记只能长在**活**清单上。
+   **已于同日补登记**（见冻结预注册 §9）：3 处真消费者进 `EXPECTED_CONSUMERS`
+   （其中两条 judgement 各配 J11/J12 源内标记），3 处同名字段按 §8 先例进 `SCAN_EXCLUSIONS`
+   ——排除依据是**扫出来的否证**（那三个文件里 `all_members_*`／`goal_reached`／
+   `contract_intercepted`／`rule_revision` 出现 0 次），不是"看着不像消费者"。
+   补登记后 live 22 / 期望 22 / drift 空 / 12 处标记全在，`review_checks_passed=true`，
+   B0 家族 173 条全绿。**没有放宽任何断言**：`test_live_drift_is_a_failing_audit`
+   三种变异（added／removed／missing_marker）仍然各自会红。
+   留给所有者的一条实质观察：`run_taiji_unified_entry_evidence.py` 是规则的**手抄副本**——
+   它自己写死 `all_members_exhausted` 等终值字面量（`success` 独立算、`trace_valid` 只查事件 kind，
+   故新 reason 不会被当成成功）。今天的两支条件互不重叠所以标签正确，
+   **但若哪天真把"无可绑定成员"与"可绑定成员全失败"两支合并，这个 runner 的标签必须重审**（J12 的
+   safe_because 里已写死这句话）。
 
 被消掉的那 3 条（相对本轮开头登记的 5 条红）：
 

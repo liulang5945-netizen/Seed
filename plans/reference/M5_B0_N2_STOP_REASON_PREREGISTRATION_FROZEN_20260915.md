@@ -137,3 +137,39 @@
 ⇒ **冻结时点的"17 个消费文件"表述保持原样**；当前 live 值为 **19 个消费文件**，
 由 N2 处置报告与 `test_b0_n2_stop_reason_disposition_contract` 同步钉住。
 按 §7.2，新增消费者已**全部完成处置**（drift 为空）。
+
+## §9 后续更新（2026-09-26；**只追加，不改上文冻结结论，也不改 §2/§3 的任何语义**）
+
+09-19～09-22 的三条特性提交（HANDOFF-M4 入口证据、统一入口证据 runner、R2 训练器优雅停机）
+把活扫描面从 19 撑到 **25 个含 `stop_reason` 字样的文件**。按 §6.3 与 §7.2 的要求
+「新增消费者 ⇒ 先补处置，不得反过来改判据让扫描通过」，逐条定性如下，**判断点由 10 处变为 12 处**。
+
+真消费者 3 个（进 `EXPECTED_CONSUMERS`）：
+
+- `run_taiji_collab_handoff_entry_evidence.py` —— `judgement`（J11）。它的证据布尔量**同时**要求
+  冻结名与新名各自"被演示出来"（`STOP_ALL_MEMBERS_BLOCKED in stops` / `..._EXHAUSTED in stops`），
+  另有一条 `== "goal_reached"` 相等判断。⇒ 它不把新 reason 读成成功、也不读成安全拦截；
+  但它的成立**依赖 reason 现名**，若日后改名须复核此条。
+- `run_taiji_unified_entry_evidence.py` —— `judgement`（J12）。这个 runner **自己手写规则的终值字面量**
+  （`goal_reached` / `all_members_exhausted` / `contract_intercepted:<code>` / `approval_rejected` /
+  `step_cap`）。`all_members_exhausted` 那条位于 `if not bindable:` 分支，正是**冻结规则**的
+  exhausted 条件；M4 的 blocked 来自"可绑定成员执行失败"这一**另一支**，由 `policy.select` 处理。
+  `success` 由 `_goal_reached` 独立算出，`trace_valid` 只校验事件 `kind` 集合
+  （`taiji/unified_entry.py::validate_trace`），故新 reason 不会被静默当成成功。
+  **残留暴露面如实记下**：它是规则的一份手抄副本，若两支条件将来被合并，这个标签必须重审。
+- `taiji/collab_handoff.py` —— `record_only`。规则侧生产者：把 `decision.stop` 原样抄进 episode
+  与事件，对该值唯一的比较是 `is None`（step_cap 兜底），新 reason 不可能"碰巧"满足。
+
+同名不同概念 3 个（进扫描器的 `SCAN_EXCLUSIONS`，与 §8 里 `taiji/language_alignment.py` 同一处理）：
+`train_taiji_r2_content_binding.py`（只有 `wall_cap`／`FloatingPointError` 文本／`None`，
+`outcome` 取自 `status`）、`train_taiji_r2_readout_retrain.py`（只有 `stopped_by_request`／`None`）、
+`tests/taiji_native/test_readout_retrain_runner_contract.py`（断言的正是上面那个自产 token）。
+三条的排除依据是**扫出来的否证**而非印象：这三个文件里 `all_members_*`／`goal_reached`／
+`contract_intercepted`／`rule_revision` 出现次数均为 **0** ⇒ 规则侧 reason 到不了它们。
+
+⇒ **冻结时点"17 个消费文件 / 10 处判断点"的表述继续保留**；本轮补处置后的当前 live 值为
+**22 个消费文件 / 12 处判断点**（文件面 = 承载判断点的 12 个 ＋ 仅记录聚合的 10 个；
+判断点按站点计为 12），由 N2 处置报告与两个 contract 测试同步钉住。
+`consumer_count_in_hardening_report` 仍为 11（历史 hardening 报告不改写）。
+按 §7.2，本轮新增消费者已**全部完成处置**（`drift.added`/`drift.removed` 均为空，
+12 处判断点标记 `marker_present` 全 True）。

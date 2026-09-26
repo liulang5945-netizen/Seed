@@ -182,6 +182,34 @@ EXPECTED_CONSUMERS: tuple[dict[str, str], ...] = (
         "see the H3.7 attribution ledger",
         "added_after_hardening_report": "yes",
     },
+    # 2026-09-26 补登记：下面六处把被审计面从 19 撑到 25。三条来自 09-19 的
+    # HANDOFF-M4／统一入口结案，三条来自 09-19～09-22 的 R2 训练器（后三类**只共享字段名**，
+    # 词表与规则侧完全不相交——理由逐条写明，不整批豁免）。
+    {
+        "path": "scripts/training/run_taiji_collab_handoff_entry_evidence.py",
+        "class": "judgement (membership on both reason names)",
+        "why": "its evidence booleans key on membership of BOTH the frozen and the new "
+        "name (all_members_blocked_demonstrated / all_members_exhausted_demonstrated) plus "
+        "an equality against goal_reached; see J11 below",
+        "added_after_hardening_report": "yes",
+    },
+    {
+        "path": "scripts/training/run_taiji_unified_entry_evidence.py",
+        "class": "judgement (writes the rule's reason literals itself)",
+        "why": "a hand-rolled replica of the loop: it emits goal_reached / "
+        "all_members_exhausted / contract_intercepted:<code> / approval_rejected / step_cap "
+        "as literals. See J12 below.",
+        "added_after_hardening_report": "yes",
+    },
+    {
+        "path": "taiji/collab_handoff.py",
+        "class": "record_only",
+        "why": "the rule-side producer for the handoff episode: it copies "
+        "`decision.stop` verbatim into the episode payload and events; its only comparison on "
+        "the value is `is None` (the step_cap fallback), which no new reason can satisfy by "
+        "accident",
+        "added_after_hardening_report": "yes",
+    },
 )
 
 #: Every place a stop reason participates in a *decision*.  Each marker must still
@@ -288,6 +316,37 @@ JUDGEMENT_SITES: tuple[dict[str, str], ...] = (
             "field, so 'landing changed no outcome' is checked rather than recited. It reads "
             "reason names only to assert immutability across rule revisions; it is an "
             "evidence-integrity guard, not a runtime gate"
+        ),
+    },
+    {
+        "id": "J11",
+        "path": "scripts/training/run_taiji_collab_handoff_entry_evidence.py",
+        "marker": '"all_members_blocked_demonstrated": STOP_ALL_MEMBERS_BLOCKED in stops',
+        "kind": "membership_predicate",
+        "safe_because": (
+            "the HANDOFF-M4 entry-evidence runner: it treats the new reason as something that "
+            "must be *demonstrated* (membership in the observed stop-reason set), alongside a "
+            "separate exhausted check and a goal_reached equality.  It therefore never reads "
+            "all_members_blocked as success or as an interception; but its gate does require "
+            "the new name to appear, so this file's evidence is only valid post-M4 and must be "
+            "re-read if the reason is ever renamed"
+        ),
+    },
+    {
+        "id": "J12",
+        "path": "scripts/training/run_taiji_unified_entry_evidence.py",
+        "marker": '"stop": "all_members_exhausted"})',
+        "kind": "rule_replica_literal",
+        "safe_because": (
+            "this runner hand-writes the rule's terminal labels instead of reading them from "
+            "the policy. The literal above sits in the `if not bindable:` branch, which is "
+            "exactly the FROZEN rule's exhausted condition, while all_members_blocked arises "
+            "from bindable members whose execution failed -- a different branch handled by "
+            "policy.select below.  success is computed independently via _goal_reached and "
+            "trace_valid only checks event *kinds* (taiji/unified_entry.py), so no new reason "
+            "can be silently counted as a success.  The residual exposure is the replica "
+            "itself: if the two conditions were ever merged here, this label would need "
+            "re-review, and M4's own evidence path does not go through this file"
         ),
     },
 )

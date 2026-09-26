@@ -35,15 +35,19 @@ def test_current_review_surface_is_complete(audit, report):
     expected = {row["path"] for row in audit.EXPECTED_CONSUMERS}
     # 2026-09-17: 9/17 新增两个真消费者（B2v4 gate 统计 stop reasons、H3.7 attribution
     # 断言 aggregate reason），另有 5 个同名/字段名误报改记入 SCAN_EXCLUSIONS。
-    assert len(expected) == 19
+    # 2026-09-26 补登记：09-19～09-22 的三条特性提交把面撑大。其中 3 个是真消费者
+    # （两条 judgement 另配 J11/J12 源内标记），3 个只是同名字段、按 §8 先例记入 SCAN_EXCLUSIONS。
+    # 逐条理由写在 EXPECTED_CONSUMERS / SCAN_EXCLUSIONS 里。**没有放宽任何东西**：
+    # 本断言仍是"冻结名单必须与活扫描逐路径相等"，且 test_live_drift_is_a_failing_audit 仍会红。
+    assert len(expected) == 22
     assert audit.live_consumers() == expected
     current = audit.disposition()
     assert current["review_checks_passed"] is True
     assert current["drift"]["added"] == current["drift"]["removed"] == []
     assert current == report
     assert report["classification_counts"] == {
-        "record_only_files": 9,
-        "judgement_or_mixed_files": 10,
+        "record_only_files": 10,
+        "judgement_or_mixed_files": 12,
     }
 
 
@@ -61,12 +65,12 @@ def test_historical_inventory_is_not_rewritten(report):
         (REPO / "reports/taiji_b0_m4_hardening_20260913.json").read_text(encoding="utf-8")
     )
     assert historic["stop_reason_consumers"]["file_count"] == 11
-    assert report["consumer_count_now"] == 19
-    assert len(report["added_since_hardening_report"]) == 8
+    assert report["consumer_count_now"] == 22
+    assert len(report["added_since_hardening_report"]) == 11
 
 
 def test_all_reviewed_sites_have_markers(audit, report):
-    assert len(audit.JUDGEMENT_SITES) == 10
+    assert len(audit.JUDGEMENT_SITES) == 12
     assert report["judgement_sites_intact"] is True
     assert report["missing_judgement_sites"] == []
     assert all(row["marker_present"] for row in report["judgement_sites"])
@@ -77,6 +81,10 @@ def test_all_reviewed_sites_have_markers(audit, report):
     assert (
         kinds["J4"] == kinds["J6"] == kinds["J7"] == kinds["J9"] == kinds["J10"] == "test_assertion"
     )
+    # 两条 2026-09-26 补登记的 judgement：一个是"必须演示出新 reason"，一个是"自己手写规则字面量"。
+    # 二者都不是把新 reason 当成功／当安全拦截，但都要求 reason 名字保持现名，故各自钉住 kind。
+    assert kinds["J11"] == "membership_predicate"
+    assert kinds["J12"] == "rule_replica_literal"
 
 
 @pytest.mark.parametrize("mutation", ["added", "removed", "missing_marker"])

@@ -40,7 +40,18 @@ GOAL_REASON = "goal_reached"
 POSITIVE_CELLS = ["create__mismatch", "create__observation", "create__override"]
 BLOCKED_BUT_NEUTRAL_CELL = "create__none"
 
-LIVE_JUDGEMENT_KINDS = {"replica_equality", "prefix_predicate", "substring_predicate"}
+#: "Live" kinds are predicates that run against a **live** episode/reason stream.
+#: ``membership_predicate`` (J11: the HANDOFF-M4 evidence gate requires the new name to appear)
+#: and ``rule_replica_literal`` (J12: the unified-entry runner hand-writes the rule's own
+#: terminal literals) joined with the 2026-09-26 re-disposition.  Both read/write reason names on
+#: a live run, so neither may fall into the historical-assertion bucket below.
+LIVE_JUDGEMENT_KINDS = {
+    "replica_equality",
+    "prefix_predicate",
+    "substring_predicate",
+    "membership_predicate",
+    "rule_replica_literal",
+}
 TEST_ASSERTION_KIND = "test_assertion"
 
 #: This file consumes stop reasons and is itself dispositioned as J8 by the scanner.
@@ -303,7 +314,9 @@ def test_every_consumer_carries_a_class_and_a_reason(n2: dict) -> None:
 def test_the_inventory_separates_live_gates_from_test_assertions(n2: dict) -> None:
     live = [s for s in n2["judgement_sites"] if s["kind"] in LIVE_JUDGEMENT_KINDS]
     pinned = [s for s in n2["judgement_sites"] if s["kind"] == TEST_ASSERTION_KIND]
-    assert (len(live), len(pinned)) == (4, 6)
+    # 2026-09-26 补处置后 4→6：J11/J12 两条随 R2/统一入口那批文件进来（见 LIVE_JUDGEMENT_KINDS 上方注释）。
+    # 这条断言防的是"出现第三种未分类 kind"——两边相加必须等于总数，所以新 kind 想混进来会红。
+    assert (len(live), len(pinned)) == (6, 6)
     assert len(live) + len(pinned) == len(n2["judgement_sites"])
     assert all(site["marker_present"] is True for site in n2["judgement_sites"])
 
