@@ -17,13 +17,13 @@ import type { Browser, Page, WebSocketRoute } from 'playwright'
 import { chromium } from 'playwright'
 import { afterAll, beforeAll, describe, expect, it, onTestFailed, onTestFinished } from 'vitest'
 import type { SessionEvent } from '@taiji/dsh-session'
-import {
+import { connectFreshWorkspaceViaHost,
   acknowledgeReloadConnectionLoss, assertFixtureInventory, captureExpandedTurnProcessAria,
   captureStableAria, compareOrRefreshGolden, fixtureUserPrompts,
   launchWebScaffold, recordFixture, watchConsole, webSnapshotMode, type WebScaffold,
 } from './scaffold.ts'
 import {
-  connectFreshWorkspace, connectFreshWorkspaceZh, expandOwningTurnProcess, newEnglishPage, saveFailureShot,
+  connectFreshWorkspace, expandOwningTurnProcess, newEnglishPage, saveFailureShot,
   writeComposerDraft, ZH_BROWSER_LOCALE,
 } from './support.ts'
 
@@ -273,7 +273,7 @@ describe('web e2e: lifecycle & chrome (workspace flow / reload / dark mode)', ()
     try {
       await zhPage.goto(zhScaffold.authenticatedUrl, { waitUntil: 'load' })
       await zhPage.waitForSelector('[class*="frame"]', { timeout: 30_000 })
-      await connectFreshWorkspaceZh(zhPage, zhScaffold.workspaceCwd)
+      await connectFreshWorkspaceViaHost(scaffold, zhPage, zhScaffold.workspaceCwd)
       const input = zhPage.locator('[data-composer-input]').first()
       await zhPage.getByRole('button', { name: '添加文件或调用指令' }).click()
       const menu = zhPage.getByRole('listbox', { name: '触发候选建议' })

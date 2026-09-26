@@ -17,8 +17,8 @@ import type { Browser, Page } from 'playwright'
 import { chromium } from 'playwright'
 import { afterAll, beforeAll, describe, expect, it, onTestFailed } from 'vitest'
 import { SessionId } from '@taiji/dsh-session'
-import { launchWebScaffold, watchConsole, type WebScaffold } from './scaffold.ts'
-import { ZH_BROWSER_LOCALE, connectFreshWorkspaceZh, saveFailureShot } from './support.ts'
+import { connectFreshWorkspaceViaHost, launchWebScaffold, watchConsole, type WebScaffold } from './scaffold.ts'
+import { ZH_BROWSER_LOCALE, saveFailureShot } from './support.ts'
 
 /** Points the shipped shared Agent default at this scenario's own route. */
 const OVERLAY = fileURLToPath(new URL('./default-model.overlay.yml', import.meta.url))
@@ -84,7 +84,7 @@ describe('web e2e: the composer model switch is the default for later sessions',
     await page.waitForSelector('[class*="frame"]', { timeout: 30_000 })
     // The composer's seats only exist once a workspace is connected: without
     // one the input is the locked placeholder and no session scope is open.
-    await connectFreshWorkspaceZh(page, scaffold.workspaceCwd)
+    await connectFreshWorkspaceViaHost(scaffold, page, scaffold.workspaceCwd)
   }, 120_000)
 
   afterAll(async () => {
