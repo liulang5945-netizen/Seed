@@ -1104,3 +1104,36 @@ ContextManager），但它仍在 `neuroplex/brain/` 里且被算进过覆盖率�
 `8b52de4f` 那条 rmdir＋本次这条"秒级复建"合起来把守卫的红**完整归因**到一个未重启的进程上；
 在它重启前，全量套件的既有红集合里会稳定含这一条，读数时须按"环境态"处理，不要当成新代码的回归。
 
+### 本轮（2026-09-26）B 线收口后的全量读数：既有红从 5 条降到 2 条
+
+`python -m pytest tests/ -q --cov`（与 CI 同面）：**2 failed / 2185 passed / 6 skipped / 1 xfailed，1800.61s**。
+同一趟的 `output/coverage_full.json` 过 B-4 门：**65.25%（2435/3732）PASS**（阈值 60.0，
+与本会话早前两次同树读数 65.03/65.25 一致 ⇒ scratch 改道没有挪动度量面）。
+
+剩下的 2 条，逐条对账：
+
+1. `test_folder_structure_guard::test_every_root_directory_is_listed_in_the_ledger`
+   ＝ DEBT-B4-4，**环境态**，唯一动作是重启载着旧码的 `python api/main.py`（PID 24412）。
+2. `test_b0_n2_stop_reason_disposition_contract::test_current_review_surface_is_complete`
+   ＝ **A 支线（B0/N2 复核面），非本轮引入，且本会话未改动过它的任何一个文件**。
+   实测漂移：`EXPECTED_CONSUMERS` 冻结在 19，活扫描 25，新增 6 个读者——
+   `run_taiji_collab_handoff_entry_evidence.py`／`run_taiji_unified_entry_evidence.py`／
+   `train_taiji_r2_content_binding.py`（09-19）、`taiji/collab_handoff.py`（09-19）、
+   `train_taiji_r2_readout_retrain.py`／`test_readout_retrain_runner_contract.py`（09-22）。
+   即三条特性提交把被审计的面撑大了却没做 disposition，**红了四天**。
+   **本线不代做登记**：该仪器的口径是"新读者必须被**逐一定性**（record-only 还是 judgement）"，
+   而定性会改动 `record_only_files: 9 / judgement_or_mixed_files: 10` 这组被钉住的计数，
+   而它正是 N2 预注册决定（D5=落地）的输入面；改计数属所有者/A 线动作，不是架构债线的收尾。
+   另注：`test_historical_inventory_is_not_rewritten` 明令历史盘点不得重写 ⇒ 补登记只能长在**活**清单上。
+
+被消掉的那 3 条（相对本轮开头登记的 5 条红）：
+
+* `naming_boundary`：本会话按守卫规定流程补登记结清（理由入 `ARCHITECTURE_DIRECTION_2026_08.md` §6）。
+* `artifact_store_scratch`：早于本轮就已结清（09-19 `8a7966b4`），本会话实跑其契约守卫 4 条全绿——
+  此前把它列进"当前红"是我手抄旧判断，已在 DEBT-B4-5 里否证。
+* `cap0_inventory 金样复现`：本趟绿。**机制已双向证到**（这是本会话当场跑的探针，不是追认）：
+  往 `checkpoints/` 平铺**一个** `.p2-9-*.pt` ⇒ `test_a_fresh_inventory_sample_reproduces_the_sealed_one`
+  当场红（16.9s），撤掉⇒绿（18.2s）。所以"scratch 收进 `.scratch/` 子目录"这条设计选择不是洁癖。
+  **但历史归因不作断言**：那条红当时为何出现，我手上没有留下当场的字段级证据，只能说机制成立、
+  且现在这一族红在结构上不可能再由 scratch 平铺造成。
+
