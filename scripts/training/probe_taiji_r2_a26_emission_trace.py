@@ -305,9 +305,7 @@ def trace_item(
                     "f1": [float(value) for value in ctx.tolist()],
                     "codes": codes_list,
                     "targets": [
-                        index
-                        for index, code in enumerate(codes_list)
-                        if code == target_byte
+                        index for index, code in enumerate(codes_list) if code == target_byte
                     ],
                     "prev_byte": int(prev_byte),
                     "copy_aimed": bool(copy_top_byte == target_byte),
@@ -323,6 +321,23 @@ def trace_item(
                 "target_byte": target_byte,
                 "copy_top_byte": copy_top_byte,
                 "copy_mass_on_target": round(float(snap["copy_distribution"][target_byte]), 6),
+                #: A2.8-2：**目标字节在 copy 分布里排第几**。只有 top-1 的话，
+                #: "被挤到第 2 名"（打分器分辨率问题）与"根本排不进去"（信息不在里面）
+                #: 会读成同一个 `address_miss`，而这两者的修法完全不同。
+                "target_rank_in_copy": int(
+                    (
+                        snap["copy_distribution"] > float(snap["copy_distribution"][target_byte])
+                    ).sum()
+                    + 1
+                ),
+                "copy_top5": [
+                    [int(byte), round(float(mass), 6)]
+                    for byte, mass in zip(
+                        *torch.topk(
+                            snap["copy_distribution"], k=min(5, int(circuit.config.alphabet_size))
+                        )
+                    )
+                ],
                 "gate_value": round(gate, 4),
                 "p_with_copy": round(float(with_copy[target_byte]), 8),
                 "p_vocab_only": round(float(vocab_only[target_byte]), 8),
