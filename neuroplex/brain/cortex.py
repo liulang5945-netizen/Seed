@@ -1667,6 +1667,7 @@ class Cortex:
         # 未成熟（warmup 内）或 probe 失败 → 纯启发式，quality 不主导（回退安全）
         conf = 0.7 + 0.3 * (quality_weight if per_domain_scores else 0.0)
         return domain, conf, per_domain_scores
+
     # B-3 C-3（2026-09-26）：本方法体已抽离至 neuroplex/brain/_cortex_routing.py
     # （neurons/_shared_embedding/device 提升为参数、纯函数、黄金向量逐组复现）。
     def _fingerprint_route(self, general_ids: list[int], top_k: int = 2) -> list[str]:
@@ -1746,6 +1747,7 @@ class Cortex:
         return _cortex_alignment.reencode_domain_generation_context(
             self._general_sp, prefix_text, generated_ids, decode_sp
         )
+
     # B-3 C-2（2026-09-25）：本方法体已抽离至 _cortex_alignment.py
     # （self 依赖 _general_sp/_alignment_rules/_domain_to_general_cache 提升为参数，
     #  缓存仍在 self 上、由引用写回）。真正逻辑见 _cortex_alignment。
@@ -1815,54 +1817,14 @@ class Cortex:
     ) -> dict:
         """滚动后验（C27 增量一）：对已生成文本窗口的 next-token NLL 质量。
 
-        与 _nll_quality_from_round1_logits（prompt 一次性，C25-E）不同：本函数
-        取 round1_logits 尾部窗口（已生成文本区段），衡量各 neuron 对"最近
-        生成内容"的续写拟合度——随生成演化，捕获实例内漂移。零额外前向
-        （round1_logits 由生成主循环 think 产出）。返回 {nid: -NLL}；失败 {}。
+        B-3 C-1 第二刀（2026-09-26）：方法体已抽离至 _cortex_quality.py
+        （self 依赖 `_tokenizer_hub`/`device` 提升为参数）。真正逻辑见
+        `_cortex_quality.rolling_nll_quality`；迁移前后逐值对照的黄金向量在
+        `reports/cortex_rolling_nll_golden_20260926.json`。
         """
-        r1 = result.get("round1_logits") or {}
-        if not r1:
-            return {}
-        hub = getattr(self, "_tokenizer_hub", None)
-        if hub is None or not hasattr(hub, "get_tokenizer"):
-            return {}
-        try:
-            tok = hub.get_tokenizer(domain) or hub.get_tokenizer("general")
-            if tok is None:
-                return {}
-            zids = torch.tensor([tok.encode(gen_text)], dtype=torch.long, device=self.device)
-        except Exception:
-            return {}
-        if zids.numel() < 1:
-            return {}
-        vocab = int(tok.GetPieceSize()) if hasattr(tok, "GetPieceSize") else None
-        if not vocab:
-            return {}
-        lens = [int(lg.shape[1]) for lg in r1.values() if lg.shape[-1] == vocab]
-        if not lens:
-            return {}
-        # 对齐（与 C25-E 同口径）：round1_logits 位置 t 预测上下文 t+1。
-        # 取 logits 倒数 n+1 个位置中的前 n 个，target = 已生成文本最后 n 个
-        # token（续写 NLL；软信号，尽力对齐即可，不追求逐 token 严格映射）。
-        n = min(int(window), int(zids.numel()), min(lens) - 1)
-        if n < 1:
-            return {}
-        tgt = zids[0][-n:].unsqueeze(0).unsqueeze(-1)  # [1, n, 1]
-        out: dict = {}
-        for nid, lg in r1.items():
-            if lg.shape[-1] != vocab:
-                continue
-            try:
-                lg_win = lg.detach()[:, -(n + 1) : -1, :]  # [1, n, V]
-                logp = torch.log_softmax(lg_win, dim=-1)
-                nll_tok = -logp.gather(-1, tgt).squeeze(-1)  # [1, n]
-                mask = (tgt.squeeze(-1) != 1) & (tgt.squeeze(-1) != 0)
-                if mask.sum() == 0:
-                    continue
-                out[nid] = -float((nll_tok * mask).sum() / mask.sum().float())
-            except Exception:
-                continue
-        return out
+        return _cortex_quality.rolling_nll_quality(
+            self._tokenizer_hub, self.device, result, gen_text, domain, window
+        )
 
     def _probe_inactive_fused(
         self,

@@ -6,10 +6,12 @@
 
 成员：
 * `nll_quality_from_round1_logits`（self 依赖：`_tokenizer_hub`/`_general_sp`/`device` ⇒ 参数）
+* `rolling_nll_quality`（self 依赖：`_tokenizer_hub`/`device` ⇒ 参数；C27 增量一的滚动后验）
 * `to_ngrams` / `select_best_candidate`（原为 `_select_best_candidate` 内的局部闭包+方法体，**无 self 依赖**）
 
-留 Cortex 的成员（状态/编排耦合，见 T8 机制设计 §5 停止线）：
-`_probe_inactive_fused`（依赖 `self.ensemble`）、`_capture_field_memory`（调用生成主路径）。
+留 Cortex 的成员（状态/编排耦合，见 PLAN-B-03 §5 停止线）：
+`_probe_inactive_fused`（依赖 `self.ensemble.forward` + `self._shared_embedding`）、
+`_capture_field_memory`（读 `self.get_last_field_state()` 并写全局 SleepEngine 单例）。
 """
 
 from __future__ import annotations
@@ -18,7 +20,12 @@ import torch
 
 from neuroplex.resonance.translator import build_position_alignment
 
-__all__ = ["nll_quality_from_round1_logits", "select_best_candidate", "to_ngrams"]
+__all__ = [
+    "nll_quality_from_round1_logits",
+    "rolling_nll_quality",
+    "select_best_candidate",
+    "to_ngrams",
+]
 
 
 def to_ngrams(text: str, n: int = 4) -> set:
@@ -147,3 +154,66 @@ def nll_quality_from_round1_logits(
             continue
     return out
 
+
+def rolling_nll_quality(
+    tokenizer_hub: object,
+    device: torch.device,
+    result: dict,
+    gen_text: str,
+    domain: str,
+    window: int,
+) -> dict:
+    """滚动后验（C27 增量一）：对已生成文本窗口的 next-token NLL 质量。
+
+    与 nll_quality_from_round1_logits（prompt 一次性，C25-E）不同：本函数
+    取 round1_logits 尾部窗口（已生成文本区段），衡量各 neuron 对"最近
+    生成内容"的续写拟合度——随生成演化，捕获实例内漂移。零额外前向
+    （round1_logits 由生成主循环 think 产出）。返回 {nid: -NLL}；失败 {}。
+
+    原 `Cortex._rolling_nll_quality`（B-3 C-1 第二刀，2026-09-26 逐行搬移）：
+    `self._tokenizer_hub`/`self.device` 提升为参数，`self._rolling_nll_quality` 留委托。
+    """
+
+    r1 = result.get("round1_logits") or {}
+    if not r1:
+        return {}
+    hub = tokenizer_hub
+    if hub is None or not hasattr(hub, "get_tokenizer"):
+        return {}
+    try:
+        tok = hub.get_tokenizer(domain) or hub.get_tokenizer("general")
+        if tok is None:
+            return {}
+        zids = torch.tensor([tok.encode(gen_text)], dtype=torch.long, device=device)
+    except Exception:
+        return {}
+    if zids.numel() < 1:
+        return {}
+    vocab = int(tok.GetPieceSize()) if hasattr(tok, "GetPieceSize") else None
+    if not vocab:
+        return {}
+    lens = [int(lg.shape[1]) for lg in r1.values() if lg.shape[-1] == vocab]
+    if not lens:
+        return {}
+    # 对齐（与 C25-E 同口径）：round1_logits 位置 t 预测上下文 t+1。
+    # 取 logits 倒数 n+1 个位置中的前 n 个，target = 已生成文本最后 n 个
+    # token（续写 NLL；软信号，尽力对齐即可，不追求逐 token 严格映射）。
+    n = min(int(window), int(zids.numel()), min(lens) - 1)
+    if n < 1:
+        return {}
+    tgt = zids[0][-n:].unsqueeze(0).unsqueeze(-1)  # [1, n, 1]
+    out: dict = {}
+    for nid, lg in r1.items():
+        if lg.shape[-1] != vocab:
+            continue
+        try:
+            lg_win = lg.detach()[:, -(n + 1) : -1, :]  # [1, n, V]
+            logp = torch.log_softmax(lg_win, dim=-1)
+            nll_tok = -logp.gather(-1, tgt).squeeze(-1)  # [1, n]
+            mask = (tgt.squeeze(-1) != 1) & (tgt.squeeze(-1) != 0)
+            if mask.sum() == 0:
+                continue
+            out[nid] = -float((nll_tok * mask).sum() / mask.sum().float())
+        except Exception:
+            continue
+    return out

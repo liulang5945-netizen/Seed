@@ -1,0 +1,85 @@
+{
+  "format": "cortex-rolling-nll-golden-v1",
+  "captured_from": "迁移前的 Cortex._rolling_nll_quality（夹具 create_cortex + 自装 hub，合成 logits 种子 7）",
+  "note": "迁移后 helper 与委托都必须逐值复现本件；float 按 repr 全精度入册",
+  "grid": {
+    "zh_window8": {
+      "gen_text": "阿岩。我的名字是阿岩。",
+      "domain": "zh",
+      "window": 8,
+      "include_short": false,
+      "out": {
+        "zh_unit_a": -11.215173721313477,
+        "zh_unit_b": -10.719132423400879
+      }
+    },
+    "zh_window1": {
+      "gen_text": "阿岩。我的名字是阿岩。",
+      "domain": "zh",
+      "window": 1,
+      "include_short": false,
+      "out": {
+        "zh_unit_a": -10.870595932006836,
+        "zh_unit_b": -10.639570236206055
+      }
+    },
+    "zh_window4": {
+      "gen_text": "阿岩。我的名字是阿岩。今天天气很好。",
+      "domain": "zh",
+      "window": 4,
+      "include_short": false,
+      "out": {
+        "zh_unit_a": -10.745079040527344,
+        "zh_unit_b": -10.854520797729492
+      }
+    },
+    "general_domain_fallback": {
+      "gen_text": "hello world answer",
+      "domain": "nope",
+      "window": 6,
+      "include_short": false,
+      "out": {}
+    },
+    "window0": {
+      "gen_text": "阿岩。",
+      "domain": "zh",
+      "window": 0,
+      "include_short": false,
+      "out": {}
+    },
+    "empty_text": {
+      "gen_text": "",
+      "domain": "zh",
+      "window": 4,
+      "include_short": false,
+      "out": {}
+    },
+    "window_huge": {
+      "gen_text": "阿岩。我的名字是阿岩。今天天气很好。",
+      "domain": "zh",
+      "window": 9999,
+      "include_short": false,
+      "out": {
+        "zh_unit_a": -11.050847053527832,
+        "zh_unit_b": -10.920979499816895
+      }
+    },
+    "length_bound_short_neuron": {
+      "gen_text": "阿岩。我的名字是阿岩。",
+      "domain": "zh",
+      "window": 8,
+      "include_short": true,
+      "out": {
+        "zh_unit_a": -10.870595932006836,
+        "zh_unit_b": -10.639570236206055,
+        "zh_unit_short": -11.990571975708008
+      }
+    },
+    "empty_round1": {
+      "out": {}
+    },
+    "hub_missing": {
+      "out": {}
+    }
+  }
+}
