@@ -1,0 +1,1317 @@
+{
+  "format": "taiji-a1-answer-second-triage-v1",
+  "prereg": "plans/reference/M5_R2_A_BRANCH_PLAN_REV2_20260926.md §5 A1",
+  "manifest": "plans\\manifests\\r2_copy_surface_extension_v3_position_random.json",
+  "surface_report": "reports\\taiji_r2_a25_lock_only_surface_v3_20260926.json",
+  "denominator": "v3 answer_tell_position==1（记分链未命中的那 51/52 与 52/52 题）",
+  "class_to_attribution": {
+    "address_miss": "key_side",
+    "emission_loses": "emission_competition",
+    "continuation_slips": "commitment_missing",
+    "gate_closed": "gate_training"
+  },
+  "arms": [
+    {
+      "circuit": "output/taiji_r2_copy_circuit_chat/judge/circuit-final.pt",
+      "summary": {
+        "class_counts": {
+          "emission_loses": 8,
+          "address_miss": 30,
+          "continuation_slips": 13,
+          "emitted": 1
+        },
+        "diagnostic_counts": {
+          "emission_loses": 8,
+          "address_miss": 30,
+          "continuation_slips": 13
+        },
+        "primary_class": "address_miss",
+        "attribution": "key_side",
+        "contradictions": 1,
+        "chain_mismatches": 0,
+        "mean_steps_on_wrong_event": 3.4423
+      },
+      "rows": [
+        {
+          "id": "V001",
+          "class": "emission_loses",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 5,
+          "reconstructed_answer": "����",
+          "store_contents": [
+            "我表哥叫雨桐。",
+            "我叫明轩。"
+          ]
+        },
+        {
+          "id": "V003",
+          "class": "address_miss",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 2,
+          "reconstructed_answer": "21",
+          "store_contents": [
+            "我妹妹最喜欢的数字是21。",
+            "我最喜欢的数字是36。"
+          ]
+        },
+        {
+          "id": "V007",
+          "class": "address_miss",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 6,
+          "reconstructed_answer": "�读读读�",
+          "store_contents": [
+            "我姐姐最近在读《水经注疏》。",
+            "我最近在读《海客谈瀛》。"
+          ]
+        },
+        {
+          "id": "V010",
+          "class": "address_miss",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 6,
+          "reconstructed_answer": "岛��",
+          "store_contents": [
+            "同事住在青岛。",
+            "我住在西安。"
+          ]
+        },
+        {
+          "id": "V011",
+          "class": "address_miss",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 1,
+          "reconstructed_answer": "72",
+          "store_contents": [
+            "妹妹最喜欢的数字是77。",
+            "我最喜欢的数字是21。"
+          ]
+        },
+        {
+          "id": "V012",
+          "class": "continuation_slips",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 2,
+          "reconstructed_answer": "��晨",
+          "store_contents": [
+            "朋友的项目叫石径。",
+            "我的项目叫晨星。"
+          ]
+        },
+        {
+          "id": "V013",
+          "class": "continuation_slips",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 2,
+          "reconstructed_answer": "苺���",
+          "store_contents": [
+            "爱人爱喝桂花酿。",
+            "我平时爱喝苏打。"
+          ]
+        },
+        {
+          "id": "V014",
+          "class": "address_miss",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 5,
+          "reconstructed_answer": "�一�",
+          "store_contents": [
+            "邻居养了一只树袋熊。",
+            "我养了一只浣熊。"
+          ]
+        },
+        {
+          "id": "V015",
+          "class": "continuation_slips",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 9,
+          "reconstructed_answer": "�读读读�",
+          "store_contents": [
+            "姐姐最近在读《松窗梦语》。",
+            "我最近在读《水经注疏》。"
+          ]
+        },
+        {
+          "id": "V016",
+          "class": "emission_loses",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 1,
+          "reconstructed_answer": "哣���",
+          "store_contents": [
+            "哥哥最爱吃羊肉泡馍。",
+            "我最爱吃辣子鸡。"
+          ]
+        },
+        {
+          "id": "V017",
+          "class": "continuation_slips",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 2,
+          "reconstructed_answer": "�承�",
+          "store_contents": [
+            "我表哥叫思远。",
+            "我叫承泽。"
+          ]
+        },
+        {
+          "id": "V019",
+          "class": "address_miss",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 2,
+          "reconstructed_answer": "99",
+          "store_contents": [
+            "我妹妹最喜欢的数字是1998。",
+            "我最喜欢的数字是77。"
+          ]
+        },
+        {
+          "id": "V021",
+          "class": "continuation_slips",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 8,
+          "reconstructed_answer": "檬柠��",
+          "store_contents": [
+            "我爱人爱喝柠檬水。",
+            "我平时爱喝桂花酿。"
+          ]
+        },
+        {
+          "id": "V022",
+          "class": "emission_loses",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 6,
+          "reconstructed_answer": "��蓝�",
+          "store_contents": [
+            "我家邻居养了一只蓝舌蜥。",
+            "我养了一只树袋熊。"
+          ]
+        },
+        {
+          "id": "V025",
+          "class": "continuation_slips",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 4,
+          "reconstructed_answer": "�慕��",
+          "store_contents": [
+            "表哥叫慕安。",
+            "我叫思远。"
+          ]
+        },
+        {
+          "id": "V026",
+          "class": "address_miss",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 4,
+          "reconstructed_answer": "岙���",
+          "store_contents": [
+            "同事住在昆明。",
+            "我住在长沙。"
+          ]
+        },
+        {
+          "id": "V029",
+          "class": "address_miss",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 2,
+          "reconstructed_answer": "�喝��",
+          "store_contents": [
+            "爱人爱喝砖茶。",
+            "我平时爱喝柠檬水。"
+          ]
+        },
+        {
+          "id": "V031",
+          "class": "address_miss",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 7,
+          "reconstructed_answer": "�读读���",
+          "store_contents": [
+            "姐姐最近在读《梦溪笔谈》。",
+            "我最近在读《云笈七签》。"
+          ]
+        },
+        {
+          "id": "V032",
+          "class": "continuation_slips",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 2,
+          "reconstructed_answer": "�����",
+          "store_contents": [
+            "哥哥最爱吃臭豆腐。",
+            "我最爱吃胡辣汤。"
+          ]
+        },
+        {
+          "id": "V034",
+          "class": "continuation_slips",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 2,
+          "reconstructed_answer": "��明",
+          "store_contents": [
+            "我表哥住在兰州。",
+            "我住在昆明。"
+          ]
+        },
+        {
+          "id": "V039",
+          "class": "address_miss",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 6,
+          "reconstructed_answer": "����读�",
+          "store_contents": [
+            "我姐姐最近在读《天工开物》。",
+            "我最近在读《梦溪笔谈》。"
+          ]
+        },
+        {
+          "id": "V040",
+          "class": "address_miss",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 6,
+          "reconstructed_answer": "��芋�",
+          "store_contents": [
+            "我哥哥最爱吃糖芋苗。",
+            "我最爱吃臭豆腐。"
+          ]
+        },
+        {
+          "id": "V041",
+          "class": "address_miss",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 6,
+          "reconstructed_answer": "�洛�",
+          "store_contents": [
+            "表哥叫洛宁。",
+            "我叫砚青。"
+          ]
+        },
+        {
+          "id": "V042",
+          "class": "continuation_slips",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 1,
+          "reconstructed_answer": "兰兰",
+          "store_contents": [
+            "同事住在宁波。",
+            "我住在兰州。"
+          ]
+        },
+        {
+          "id": "V043",
+          "class": "address_miss",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 1,
+          "reconstructed_answer": "�",
+          "store_contents": [
+            "妹妹最喜欢的数字是88。",
+            "我最喜欢的数字是47。"
+          ]
+        },
+        {
+          "id": "V044",
+          "class": "address_miss",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 2,
+          "reconstructed_answer": "����",
+          "store_contents": [
+            "朋友的项目叫疏影。",
+            "我的项目叫折柳。"
+          ]
+        },
+        {
+          "id": "V045",
+          "class": "address_miss",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 2,
+          "reconstructed_answer": "�喝��",
+          "store_contents": [
+            "爱人爱喝苦荞茶。",
+            "我平时爱喝普洱。"
+          ]
+        },
+        {
+          "id": "V047",
+          "class": "address_miss",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 3,
+          "reconstructed_answer": "读��毻��",
+          "store_contents": [
+            "姐姐最近在读《齐民要术》。",
+            "我最近在读《天工开物》。"
+          ]
+        },
+        {
+          "id": "V050",
+          "class": "emission_loses",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 3,
+          "reconstructed_answer": "����",
+          "store_contents": [
+            "我表哥住在温州。",
+            "我住在宁波。"
+          ]
+        },
+        {
+          "id": "V051",
+          "class": "address_miss",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 2,
+          "reconstructed_answer": "21",
+          "store_contents": [
+            "我妹妹最喜欢的数字是121。",
+            "我最喜欢的数字是88。"
+          ]
+        },
+        {
+          "id": "V052",
+          "class": "address_miss",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 1,
+          "reconstructed_answer": "山。",
+          "store_contents": [
+            "我同事的项目叫临风。",
+            "我的项目叫疏影。"
+          ]
+        },
+        {
+          "id": "V053",
+          "class": "emission_loses",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 3,
+          "reconstructed_answer": "�茶�茶",
+          "store_contents": [
+            "我爱人爱喝红枣茶。",
+            "我平时爱喝苦荞茶。"
+          ]
+        },
+        {
+          "id": "V054",
+          "class": "address_miss",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 4,
+          "reconstructed_answer": "居养",
+          "store_contents": [
+            "我家邻居养了一只仓鼠。",
+            "我养了一只鹦鹉。"
+          ]
+        },
+        {
+          "id": "V056",
+          "class": "address_miss",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 7,
+          "reconstructed_answer": "��包哥",
+          "store_contents": [
+            "我哥哥最爱吃蟹黄汤包。",
+            "我最爱吃鸭血粉。"
+          ]
+        },
+        {
+          "id": "V059",
+          "class": "address_miss",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 1,
+          "reconstructed_answer": "212",
+          "store_contents": [
+            "妹妹最喜欢的数字是256。",
+            "我最喜欢的数字是121。"
+          ]
+        },
+        {
+          "id": "V060",
+          "class": "continuation_slips",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 6,
+          "reconstructed_answer": "宿雮",
+          "store_contents": [
+            "朋友的项目叫宿雨。",
+            "我的项目叫临风。"
+          ]
+        },
+        {
+          "id": "V061",
+          "class": "address_miss",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 3,
+          "reconstructed_answer": "�时红��",
+          "store_contents": [
+            "爱人爱喝陈皮水。",
+            "我平时爱喝红枣茶。"
+          ]
+        },
+        {
+          "id": "V062",
+          "class": "address_miss",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 4,
+          "reconstructed_answer": "居养",
+          "store_contents": [
+            "邻居养了一只乌龟。",
+            "我养了一只仓鼠。"
+          ]
+        },
+        {
+          "id": "V067",
+          "class": "address_miss",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 2,
+          "reconstructed_answer": "�2",
+          "store_contents": [
+            "我妹妹最喜欢的数字是313。",
+            "我最喜欢的数字是256。"
+          ]
+        },
+        {
+          "id": "V069",
+          "class": "emission_loses",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 2,
+          "reconstructed_answer": "舱喝��",
+          "store_contents": [
+            "我爱人爱喝薄荷饮。",
+            "我平时爱喝陈皮水。"
+          ]
+        },
+        {
+          "id": "V076",
+          "class": "address_miss",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 2,
+          "reconstructed_answer": "�舟�",
+          "store_contents": [
+            "朋友的项目叫望舒。",
+            "我的项目叫行舟。"
+          ]
+        },
+        {
+          "id": "V080",
+          "class": "emission_loses",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 1,
+          "reconstructed_answer": "屼汼汼",
+          "store_contents": [
+            "哥哥最爱吃口水鸡。",
+            "我最爱吃酸菜鱼。"
+          ]
+        },
+        {
+          "id": "V081",
+          "class": "continuation_slips",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 1,
+          "reconstructed_answer": "��舟",
+          "store_contents": [
+            "我表哥叫顾昭。",
+            "我叫沈舟。"
+          ]
+        },
+        {
+          "id": "V082",
+          "class": "address_miss",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 1,
+          "reconstructed_answer": "州泉",
+          "store_contents": [
+            "我表哥住在芜湖。",
+            "我住在泉州。"
+          ]
+        },
+        {
+          "id": "V084",
+          "class": "continuation_slips",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 5,
+          "reconstructed_answer": "���",
+          "store_contents": [
+            "我同事的项目叫未央。",
+            "我的项目叫望舒。"
+          ]
+        },
+        {
+          "id": "V085",
+          "class": "emission_loses",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 2,
+          "reconstructed_answer": "�扱����",
+          "store_contents": [
+            "我爱人爱喝茉莉茶。",
+            "我平时爱喝山楂水。"
+          ]
+        },
+        {
+          "id": "V088",
+          "class": "continuation_slips",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 8,
+          "reconstructed_answer": "���最",
+          "store_contents": [
+            "我哥哥最爱吃狮子头。",
+            "我最爱吃口水鸡。"
+          ]
+        },
+        {
+          "id": "V089",
+          "class": "address_miss",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 6,
+          "reconstructed_answer": "�晚�",
+          "store_contents": [
+            "表哥叫晚吟。",
+            "我叫顾昭。"
+          ]
+        },
+        {
+          "id": "V093",
+          "class": "address_miss",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 5,
+          "reconstructed_answer": "�争茶�",
+          "store_contents": [
+            "爱人爱喝荷叶茶。",
+            "我平时爱喝茉莉茶。"
+          ]
+        },
+        {
+          "id": "V097",
+          "class": "emitted",
+          "chain_identical": true,
+          "contradicts_failure_list": true,
+          "steps_on_wrong_event": 1,
+          "reconstructed_answer": "晚吟",
+          "store_contents": [
+            "我表哥叫明轩。",
+            "我叫晚吟。"
+          ]
+        },
+        {
+          "id": "V099",
+          "class": "address_miss",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 1,
+          "reconstructed_answer": "�90",
+          "store_contents": [
+            "我妹妹最喜欢的数字是36。",
+            "我最喜欢的数字是909。"
+          ]
+        },
+        {
+          "id": "V101",
+          "class": "address_miss",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 3,
+          "reconstructed_answer": "�舱喝�",
+          "store_contents": [
+            "我爱人爱喝乌龙。",
+            "我平时爱喝荷叶茶。"
+          ]
+        }
+      ]
+    },
+    {
+      "circuit": "output/taiji_r2_copy_circuit_chat_seedB/judge/circuit-final.pt",
+      "summary": {
+        "class_counts": {
+          "continuation_slips": 14,
+          "address_miss": 31,
+          "emission_loses": 7
+        },
+        "diagnostic_counts": {
+          "continuation_slips": 14,
+          "address_miss": 31,
+          "emission_loses": 7
+        },
+        "primary_class": "address_miss",
+        "attribution": "key_side",
+        "contradictions": 0,
+        "chain_mismatches": 0,
+        "mean_steps_on_wrong_event": 3.6731
+      },
+      "rows": [
+        {
+          "id": "V001",
+          "class": "continuation_slips",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 6,
+          "reconstructed_answer": "桐衐",
+          "store_contents": [
+            "我表哥叫雨桐。",
+            "我叫明轩。"
+          ]
+        },
+        {
+          "id": "V003",
+          "class": "address_miss",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 2,
+          "reconstructed_answer": "21",
+          "store_contents": [
+            "我妹妹最喜欢的数字是21。",
+            "我最喜欢的数字是36。"
+          ]
+        },
+        {
+          "id": "V007",
+          "class": "continuation_slips",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 9,
+          "reconstructed_answer": "������",
+          "store_contents": [
+            "我姐姐最近在读《水经注疏》。",
+            "我最近在读《海客谈瀛》。"
+          ]
+        },
+        {
+          "id": "V010",
+          "class": "address_miss",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 6,
+          "reconstructed_answer": "同事",
+          "store_contents": [
+            "同事住在青岛。",
+            "我住在西安。"
+          ]
+        },
+        {
+          "id": "V011",
+          "class": "address_miss",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 2,
+          "reconstructed_answer": "77",
+          "store_contents": [
+            "妹妹最喜欢的数字是77。",
+            "我最喜欢的数字是21。"
+          ]
+        },
+        {
+          "id": "V012",
+          "class": "continuation_slips",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 2,
+          "reconstructed_answer": "���",
+          "store_contents": [
+            "朋友的项目叫石径。",
+            "我的项目叫晨星。"
+          ]
+        },
+        {
+          "id": "V013",
+          "class": "address_miss",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 0,
+          "reconstructed_answer": "�打�",
+          "store_contents": [
+            "爱人爱喝桂花酿。",
+            "我平时爱喝苏打。"
+          ]
+        },
+        {
+          "id": "V014",
+          "class": "address_miss",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 2,
+          "reconstructed_answer": "�一�",
+          "store_contents": [
+            "邻居养了一只树袋熊。",
+            "我养了一只浣熊。"
+          ]
+        },
+        {
+          "id": "V015",
+          "class": "address_miss",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 7,
+          "reconstructed_answer": "语�语语�",
+          "store_contents": [
+            "姐姐最近在读《松窗梦语》。",
+            "我最近在读《水经注疏》。"
+          ]
+        },
+        {
+          "id": "V016",
+          "class": "emission_loses",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 0,
+          "reconstructed_answer": "朱�鸡�",
+          "store_contents": [
+            "哥哥最爱吃羊肉泡馍。",
+            "我最爱吃辣子鸡。"
+          ]
+        },
+        {
+          "id": "V017",
+          "class": "emission_loses",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 2,
+          "reconstructed_answer": "����",
+          "store_contents": [
+            "我表哥叫思远。",
+            "我叫承泽。"
+          ]
+        },
+        {
+          "id": "V019",
+          "class": "address_miss",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 2,
+          "reconstructed_answer": "99",
+          "store_contents": [
+            "我妹妹最喜欢的数字是1998。",
+            "我最喜欢的数字是77。"
+          ]
+        },
+        {
+          "id": "V021",
+          "class": "continuation_slips",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 9,
+          "reconstructed_answer": "�柠��",
+          "store_contents": [
+            "我爱人爱喝柠檬水。",
+            "我平时爱喝桂花酿。"
+          ]
+        },
+        {
+          "id": "V022",
+          "class": "continuation_slips",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 6,
+          "reconstructed_answer": "�����",
+          "store_contents": [
+            "我家邻居养了一只蓝舌蜥。",
+            "我养了一只树袋熊。"
+          ]
+        },
+        {
+          "id": "V025",
+          "class": "emission_loses",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 4,
+          "reconstructed_answer": "����",
+          "store_contents": [
+            "表哥叫慕安。",
+            "我叫思远。"
+          ]
+        },
+        {
+          "id": "V026",
+          "class": "address_miss",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 6,
+          "reconstructed_answer": "明���",
+          "store_contents": [
+            "同事住在昆明。",
+            "我住在长沙。"
+          ]
+        },
+        {
+          "id": "V029",
+          "class": "continuation_slips",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 2,
+          "reconstructed_answer": "�江柠�",
+          "store_contents": [
+            "爱人爱喝砖茶。",
+            "我平时爱喝柠檬水。"
+          ]
+        },
+        {
+          "id": "V031",
+          "class": "address_miss",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 4,
+          "reconstructed_answer": "������",
+          "store_contents": [
+            "姐姐最近在读《梦溪笔谈》。",
+            "我最近在读《云笈七签》。"
+          ]
+        },
+        {
+          "id": "V032",
+          "class": "address_miss",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 5,
+          "reconstructed_answer": "�臭���",
+          "store_contents": [
+            "哥哥最爱吃臭豆腐。",
+            "我最爱吃胡辣汤。"
+          ]
+        },
+        {
+          "id": "V034",
+          "class": "address_miss",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 2,
+          "reconstructed_answer": "�慘��",
+          "store_contents": [
+            "我表哥住在兰州。",
+            "我住在昆明。"
+          ]
+        },
+        {
+          "id": "V039",
+          "class": "emission_loses",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 9,
+          "reconstructed_answer": "�庼��庼",
+          "store_contents": [
+            "我姐姐最近在读《天工开物》。",
+            "我最近在读《梦溪笔谈》。"
+          ]
+        },
+        {
+          "id": "V040",
+          "class": "address_miss",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 7,
+          "reconstructed_answer": "��芋�",
+          "store_contents": [
+            "我哥哥最爱吃糖芋苗。",
+            "我最爱吃臭豆腐。"
+          ]
+        },
+        {
+          "id": "V041",
+          "class": "address_miss",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 6,
+          "reconstructed_answer": "�洛�",
+          "store_contents": [
+            "表哥叫洛宁。",
+            "我叫砚青。"
+          ]
+        },
+        {
+          "id": "V042",
+          "class": "continuation_slips",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 1,
+          "reconstructed_answer": "兰兰",
+          "store_contents": [
+            "同事住在宁波。",
+            "我住在兰州。"
+          ]
+        },
+        {
+          "id": "V043",
+          "class": "address_miss",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 1,
+          "reconstructed_answer": "��",
+          "store_contents": [
+            "妹妹最喜欢的数字是88。",
+            "我最喜欢的数字是47。"
+          ]
+        },
+        {
+          "id": "V044",
+          "class": "address_miss",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 2,
+          "reconstructed_answer": "阋���",
+          "store_contents": [
+            "朋友的项目叫疏影。",
+            "我的项目叫折柳。"
+          ]
+        },
+        {
+          "id": "V045",
+          "class": "address_miss",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 2,
+          "reconstructed_answer": "�汱�",
+          "store_contents": [
+            "爱人爱喝苦荞茶。",
+            "我平时爱喝普洱。"
+          ]
+        },
+        {
+          "id": "V047",
+          "class": "address_miss",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 5,
+          "reconstructed_answer": "�������",
+          "store_contents": [
+            "姐姐最近在读《齐民要术》。",
+            "我最近在读《天工开物》。"
+          ]
+        },
+        {
+          "id": "V050",
+          "class": "address_miss",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 3,
+          "reconstructed_answer": "巳��",
+          "store_contents": [
+            "我表哥住在温州。",
+            "我住在宁波。"
+          ]
+        },
+        {
+          "id": "V051",
+          "class": "address_miss",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 2,
+          "reconstructed_answer": "21",
+          "store_contents": [
+            "我妹妹最喜欢的数字是121。",
+            "我最喜欢的数字是88。"
+          ]
+        },
+        {
+          "id": "V052",
+          "class": "continuation_slips",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 1,
+          "reconstructed_answer": "�山�",
+          "store_contents": [
+            "我同事的项目叫临风。",
+            "我的项目叫疏影。"
+          ]
+        },
+        {
+          "id": "V053",
+          "class": "address_miss",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 5,
+          "reconstructed_answer": "�躳��",
+          "store_contents": [
+            "我爱人爱喝红枣茶。",
+            "我平时爱喝苦荞茶。"
+          ]
+        },
+        {
+          "id": "V054",
+          "class": "address_miss",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 6,
+          "reconstructed_answer": "���",
+          "store_contents": [
+            "我家邻居养了一只仓鼠。",
+            "我养了一只鹦鹉。"
+          ]
+        },
+        {
+          "id": "V056",
+          "class": "emission_loses",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 1,
+          "reconstructed_answer": "沉朱��",
+          "store_contents": [
+            "我哥哥最爱吃蟹黄汤包。",
+            "我最爱吃鸭血粉。"
+          ]
+        },
+        {
+          "id": "V059",
+          "class": "address_miss",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 1,
+          "reconstructed_answer": "212",
+          "store_contents": [
+            "妹妹最喜欢的数字是256。",
+            "我最喜欢的数字是121。"
+          ]
+        },
+        {
+          "id": "V060",
+          "class": "address_miss",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 4,
+          "reconstructed_answer": "���",
+          "store_contents": [
+            "朋友的项目叫宿雨。",
+            "我的项目叫临风。"
+          ]
+        },
+        {
+          "id": "V061",
+          "class": "address_miss",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 9,
+          "reconstructed_answer": "水�人��",
+          "store_contents": [
+            "爱人爱喝陈皮水。",
+            "我平时爱喝红枣茶。"
+          ]
+        },
+        {
+          "id": "V062",
+          "class": "address_miss",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 3,
+          "reconstructed_answer": "�一�",
+          "store_contents": [
+            "邻居养了一只乌龟。",
+            "我养了一只仓鼠。"
+          ]
+        },
+        {
+          "id": "V067",
+          "class": "address_miss",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 1,
+          "reconstructed_answer": "125",
+          "store_contents": [
+            "我妹妹最喜欢的数字是313。",
+            "我最喜欢的数字是256。"
+          ]
+        },
+        {
+          "id": "V069",
+          "class": "emission_loses",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 1,
+          "reconstructed_answer": "舱平水",
+          "store_contents": [
+            "我爱人爱喝薄荷饮。",
+            "我平时爱喝陈皮水。"
+          ]
+        },
+        {
+          "id": "V076",
+          "class": "address_miss",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 4,
+          "reconstructed_answer": "�舒�",
+          "store_contents": [
+            "朋友的项目叫望舒。",
+            "我的项目叫行舟。"
+          ]
+        },
+        {
+          "id": "V080",
+          "class": "emission_loses",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 3,
+          "reconstructed_answer": "�汼��",
+          "store_contents": [
+            "哥哥最爱吃口水鸡。",
+            "我最爱吃酸菜鱼。"
+          ]
+        },
+        {
+          "id": "V081",
+          "class": "continuation_slips",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 1,
+          "reconstructed_answer": "�舟�",
+          "store_contents": [
+            "我表哥叫顾昭。",
+            "我叫沈舟。"
+          ]
+        },
+        {
+          "id": "V082",
+          "class": "continuation_slips",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 2,
+          "reconstructed_answer": "�賉�",
+          "store_contents": [
+            "我表哥住在芜湖。",
+            "我住在泉州。"
+          ]
+        },
+        {
+          "id": "V084",
+          "class": "continuation_slips",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 3,
+          "reconstructed_answer": "�舒�",
+          "store_contents": [
+            "我同事的项目叫未央。",
+            "我的项目叫望舒。"
+          ]
+        },
+        {
+          "id": "V085",
+          "class": "continuation_slips",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 2,
+          "reconstructed_answer": "汱������",
+          "store_contents": [
+            "我爱人爱喝茉莉茶。",
+            "我平时爱喝山楂水。"
+          ]
+        },
+        {
+          "id": "V088",
+          "class": "address_miss",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 9,
+          "reconstructed_answer": "�戱吃�",
+          "store_contents": [
+            "我哥哥最爱吃狮子头。",
+            "我最爱吃口水鸡。"
+          ]
+        },
+        {
+          "id": "V089",
+          "class": "address_miss",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 5,
+          "reconstructed_answer": "吟舟",
+          "store_contents": [
+            "表哥叫晚吟。",
+            "我叫顾昭。"
+          ]
+        },
+        {
+          "id": "V093",
+          "class": "continuation_slips",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 4,
+          "reconstructed_answer": "��莱��",
+          "store_contents": [
+            "爱人爱喝荷叶茶。",
+            "我平时爱喝茉莉茶。"
+          ]
+        },
+        {
+          "id": "V097",
+          "class": "continuation_slips",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 1,
+          "reconstructed_answer": "晚��",
+          "store_contents": [
+            "我表哥叫明轩。",
+            "我叫晚吟。"
+          ]
+        },
+        {
+          "id": "V099",
+          "class": "address_miss",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 2,
+          "reconstructed_answer": "��",
+          "store_contents": [
+            "我妹妹最喜欢的数字是36。",
+            "我最喜欢的数字是909。"
+          ]
+        },
+        {
+          "id": "V101",
+          "class": "address_miss",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 7,
+          "reconstructed_answer": "�舱亳��",
+          "store_contents": [
+            "我爱人爱喝乌龙。",
+            "我平时爱喝荷叶茶。"
+          ]
+        }
+      ]
+    }
+  ],
+  "verdict": "KEY_SIDE",
+  "what_would_overturn": "两电路主归属不一致 ⇒ not_resolved；emitted 计数非 0 ⇒ 仪器与记分件构造不一致，回炉；chain_identical 为假的题非 0 ⇒ 轨迹取在另一条链上，全件作废",
+  "base_sha256_unchanged": true,
+  "instrument_guard": {
+    "items_nonzero": true,
+    "no_contradictions": false,
+    "all_chains_identical": true,
+    "base_unchanged": true
+  }
+}

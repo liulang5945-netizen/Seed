@@ -1,0 +1,136 @@
+{
+  "format": "taiji-a1-answer-second-triage-v1",
+  "prereg": "plans/reference/M5_R2_A_BRANCH_PLAN_REV2_20260926.md §5 A1",
+  "manifest": "plans\\manifests\\r2_copy_surface_extension_v3_position_random.json",
+  "surface_report": "reports\\taiji_r2_a25_lock_only_surface_v3_20260926.json",
+  "denominator": "v3 answer_tell_position==1（记分链未命中的那 51/52 与 52/52 题）",
+  "class_to_attribution": {
+    "address_miss": "key_side",
+    "emission_loses": "emission_competition",
+    "continuation_slips": "commitment_missing",
+    "gate_closed": "gate_training"
+  },
+  "arms": [
+    {
+      "circuit": "output/taiji_r2_copy_circuit_chat/judge/circuit-final.pt",
+      "summary": {
+        "class_counts": {
+          "emission_loses": 1,
+          "address_miss": 2
+        },
+        "diagnostic_counts": {
+          "emission_loses": 1,
+          "address_miss": 2
+        },
+        "primary_class": "address_miss",
+        "attribution": "key_side",
+        "contradictions": 0,
+        "chain_mismatches": 0,
+        "mean_steps_on_wrong_event": 4.3333
+      },
+      "rows": [
+        {
+          "id": "V001",
+          "class": "emission_loses",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 5,
+          "reconstructed_answer": "����",
+          "store_contents": [
+            "我表哥叫雨桐。",
+            "我叫明轩。"
+          ]
+        },
+        {
+          "id": "V003",
+          "class": "address_miss",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 2,
+          "reconstructed_answer": "21",
+          "store_contents": [
+            "我妹妹最喜欢的数字是21。",
+            "我最喜欢的数字是36。"
+          ]
+        },
+        {
+          "id": "V007",
+          "class": "address_miss",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 6,
+          "reconstructed_answer": "�读读读�",
+          "store_contents": [
+            "我姐姐最近在读《水经注疏》。",
+            "我最近在读《海客谈瀛》。"
+          ]
+        }
+      ]
+    },
+    {
+      "circuit": "output/taiji_r2_copy_circuit_chat_seedB/judge/circuit-final.pt",
+      "summary": {
+        "class_counts": {
+          "continuation_slips": 2,
+          "address_miss": 1
+        },
+        "diagnostic_counts": {
+          "continuation_slips": 2,
+          "address_miss": 1
+        },
+        "primary_class": "continuation_slips",
+        "attribution": "commitment_missing",
+        "contradictions": 0,
+        "chain_mismatches": 0,
+        "mean_steps_on_wrong_event": 5.6667
+      },
+      "rows": [
+        {
+          "id": "V001",
+          "class": "continuation_slips",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 6,
+          "reconstructed_answer": "桐衐",
+          "store_contents": [
+            "我表哥叫雨桐。",
+            "我叫明轩。"
+          ]
+        },
+        {
+          "id": "V003",
+          "class": "address_miss",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 2,
+          "reconstructed_answer": "21",
+          "store_contents": [
+            "我妹妹最喜欢的数字是21。",
+            "我最喜欢的数字是36。"
+          ]
+        },
+        {
+          "id": "V007",
+          "class": "continuation_slips",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "steps_on_wrong_event": 9,
+          "reconstructed_answer": "������",
+          "store_contents": [
+            "我姐姐最近在读《水经注疏》。",
+            "我最近在读《海客谈瀛》。"
+          ]
+        }
+      ]
+    }
+  ],
+  "verdict": "not_resolved",
+  "what_would_overturn": "两电路主归属不一致 ⇒ not_resolved；emitted 计数非 0 ⇒ 仪器与记分件构造不一致，回炉；chain_identical 为假的题非 0 ⇒ 轨迹取在另一条链上，全件作废",
+  "base_sha256_unchanged": true,
+  "instrument_guard": {
+    "items_nonzero": true,
+    "no_contradictions": true,
+    "all_chains_identical": true,
+    "base_unchanged": true
+  }
+}

@@ -1,0 +1,188 @@
+{
+  "format": "taiji-a1-answer-second-triage-v2",
+  "prereg": "plans/reference/M5_R2_A_BRANCH_PLAN_REV2_20260926.md §5 A1",
+  "manifest": "plans\\manifests\\r2_copy_surface_extension_v3_position_random.json",
+  "surface_report": "reports\\taiji_r2_a25_lock_only_surface_v3_20260926.json",
+  "denominator": "v3 answer_tell_position==1 全部 52 题（记分链 seed-A 51/52、seed-B 52/52 未命中）",
+  "class_to_attribution": {
+    "address_miss": "key_side",
+    "emission_loses": "emission_competition",
+    "continuation_slips": "commitment_missing",
+    "gate_closed": "gate_training"
+  },
+  "trace_design": "锁感知：第 0 步发射=喂入末位概率(锁前)、第 1 步起=上锁后 observe 概率、边界符即停；寻址快照只做诊断，链路同一性在锁前/锁后各验一次",
+  "arms": [
+    {
+      "circuit": "output/taiji_r2_copy_circuit_chat/judge/circuit-final.pt",
+      "summary": {
+        "class_counts": {
+          "address_miss": 4
+        },
+        "diagnostic_counts": {
+          "address_miss": 4
+        },
+        "primary_class": "address_miss",
+        "attribution": "key_side",
+        "lock_picked_target_event": "0/4",
+        "contradictions": 0,
+        "chain_mismatches": 0,
+        "boundary_stops": 0,
+        "mean_steps_on_wrong_event": 6.5
+      },
+      "rows": [
+        {
+          "id": "V001",
+          "class": "address_miss",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "locked_event_content": "我表哥叫雨桐。",
+          "store_contents": [
+            "我表哥叫雨桐。",
+            "我叫明轩。"
+          ],
+          "reconstructed_answer": "哥��",
+          "scored_replay_answer": "哥��衐雨我衐�我衐雨��衐衐衐�哥哥��������",
+          "reproduces_recorded_miss": true,
+          "stopped_at_boundary": false
+        },
+        {
+          "id": "V003",
+          "class": "address_miss",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "locked_event_content": "我妹妹最喜欢的数字是21。",
+          "store_contents": [
+            "我妹妹最喜欢的数字是21。",
+            "我最喜欢的数字是36。"
+          ],
+          "reconstructed_answer": "21",
+          "scored_replay_answer": "21�21���妹妹妹妹�欢欢欢�欢�欢�����是21�21�",
+          "reproduces_recorded_miss": true,
+          "stopped_at_boundary": false
+        },
+        {
+          "id": "V007",
+          "class": "address_miss",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "locked_event_content": "我姐姐最近在读《水经注疏》。",
+          "store_contents": [
+            "我姐姐最近在读《水经注疏》。",
+            "我最近在读《海客谈瀛》。"
+          ],
+          "reconstructed_answer": "姐��姐�",
+          "scored_replay_answer": "姐��姐�读姐�读姐��姐水绖姐�读姐水绖姐水��",
+          "reproduces_recorded_miss": true,
+          "stopped_at_boundary": false
+        },
+        {
+          "id": "V010",
+          "class": "address_miss",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "locked_event_content": "同事住在青岛。",
+          "store_contents": [
+            "同事住在青岛。",
+            "我住在西安。"
+          ],
+          "reconstructed_answer": "岛��",
+          "scored_replay_answer": "岛�事事事事事事事事事事佒岛�事事事事事事事�",
+          "reproduces_recorded_miss": true,
+          "stopped_at_boundary": false
+        }
+      ]
+    },
+    {
+      "circuit": "output/taiji_r2_copy_circuit_chat_seedB/judge/circuit-final.pt",
+      "summary": {
+        "class_counts": {
+          "continuation_slips": 2,
+          "address_miss": 2
+        },
+        "diagnostic_counts": {
+          "continuation_slips": 2,
+          "address_miss": 2
+        },
+        "primary_class": "continuation_slips",
+        "attribution": "commitment_missing",
+        "lock_picked_target_event": "1/4",
+        "contradictions": 0,
+        "chain_mismatches": 0,
+        "boundary_stops": 0,
+        "mean_steps_on_wrong_event": 3.5
+      },
+      "rows": [
+        {
+          "id": "V001",
+          "class": "continuation_slips",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "locked_event_content": "我表哥叫雨桐。",
+          "store_contents": [
+            "我表哥叫雨桐。",
+            "我叫明轩。"
+          ],
+          "reconstructed_answer": "桐衐",
+          "scored_replay_answer": "桐衐��桨桐衐衐衐。衐桐衐衐衐衐桐衐衐衐衐衐�",
+          "reproduces_recorded_miss": true,
+          "stopped_at_boundary": false
+        },
+        {
+          "id": "V003",
+          "class": "address_miss",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "locked_event_content": "我妹妹最喜欢的数字是21。",
+          "store_contents": [
+            "我妹妹最喜欢的数字是21。",
+            "我最喜欢的数字是36。"
+          ],
+          "reconstructed_answer": "21",
+          "scored_replay_answer": "21�是21是21是21是21是21是21是21是21是21是21�21��2121",
+          "reproduces_recorded_miss": true,
+          "stopped_at_boundary": false
+        },
+        {
+          "id": "V007",
+          "class": "continuation_slips",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "locked_event_content": "我最近在读《海客谈瀛》。",
+          "store_contents": [
+            "我姐姐最近在读《水经注疏》。",
+            "我最近在读《海客谈瀛》。"
+          ],
+          "reconstructed_answer": "������",
+          "scored_replay_answer": "�������读谈��������������谈�������",
+          "reproduces_recorded_miss": true,
+          "stopped_at_boundary": false
+        },
+        {
+          "id": "V010",
+          "class": "address_miss",
+          "chain_identical": true,
+          "contradicts_failure_list": false,
+          "locked_event_content": "同事住在青岛。",
+          "store_contents": [
+            "同事住在青岛。",
+            "我住在西安。"
+          ],
+          "reconstructed_answer": "同事",
+          "scored_replay_answer": "同事事事事事事事事事事事事事事事事事事事事�",
+          "reproduces_recorded_miss": true,
+          "stopped_at_boundary": false
+        }
+      ]
+    }
+  ],
+  "verdict": "not_resolved",
+  "what_would_overturn": "两电路主归属不一致 ⇒ not_resolved；emitted 计数非 0 ⇒ 仪器与记分件构造不一致，回炉；chain_identical 为假非 0 ⇒ 诊断快照与产品 evidence 路径不同源，全件作废",
+  "base_sha256_unchanged": true,
+  "instrument_guard": {
+    "items_nonzero": true,
+    "no_contradictions": true,
+    "all_chains_identical": true,
+    "replays_reproduce_miss": true,
+    "base_unchanged": true
+  }
+}

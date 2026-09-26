@@ -1,0 +1,385 @@
+{
+  "format": "taiji-a2-question-end-linear-probe-v1",
+  "prereg": "plans/reference/M5_R2_A_BRANCH_PLAN_REV2_20260926.md §2 未测②／§5 A2",
+  "manifest": "plans\\manifests\\r2_copy_surface_extension_v3_position_random.json",
+  "items": 20,
+  "label_balance": {
+    "position_0": 8,
+    "position_1": 12
+  },
+  "cv_protocol": {
+    "folds": 5,
+    "epochs": 400,
+    "lr": 0.05,
+    "weight_decay": 0.001,
+    "seed": 20260926
+  },
+  "reading_lines": {
+    "representation_has": 0.8,
+    "chance_band": 0.6,
+    "control": "shuffled-label same protocol must sit at chance"
+  },
+  "arms": [
+    {
+      "circuit": "output/taiji_r2_copy_circuit_chat/judge/circuit-final.pt",
+      "features": {
+        "cue_full": {
+          "real": {
+            "fold_accuracies": [
+              1.0,
+              0.75,
+              0.75,
+              0.25,
+              0.75
+            ],
+            "mean_accuracy": 0.7
+          },
+          "shuffled_label_control": {
+            "fold_accuracies": [
+              0.5,
+              0.75,
+              1.0,
+              1.0,
+              0.25
+            ],
+            "mean_accuracy": 0.7
+          },
+          "above_chance_margin": 0.0
+        },
+        "f1_context": {
+          "real": {
+            "fold_accuracies": [
+              0.75,
+              0.75,
+              0.75,
+              0.75,
+              1.0
+            ],
+            "mean_accuracy": 0.8
+          },
+          "shuffled_label_control": {
+            "fold_accuracies": [
+              0.5,
+              1.0,
+              0.5,
+              0.75,
+              0.75
+            ],
+            "mean_accuracy": 0.7
+          },
+          "above_chance_margin": 0.1
+        },
+        "region0": {
+          "real": {
+            "fold_accuracies": [
+              1.0,
+              0.75,
+              0.75,
+              0.75,
+              0.75
+            ],
+            "mean_accuracy": 0.8
+          },
+          "shuffled_label_control": {
+            "fold_accuracies": [
+              0.5,
+              0.75,
+              1.0,
+              0.75,
+              0.75
+            ],
+            "mean_accuracy": 0.75
+          },
+          "above_chance_margin": 0.05
+        }
+      },
+      "production_selection_hits_target": "8/20"
+    },
+    {
+      "circuit": "output/taiji_r2_copy_circuit_chat_seedB/judge/circuit-final.pt",
+      "features": {
+        "cue_full": {
+          "real": {
+            "fold_accuracies": [
+              0.75,
+              1.0,
+              0.75,
+              0.0,
+              0.5
+            ],
+            "mean_accuracy": 0.6
+          },
+          "shuffled_label_control": {
+            "fold_accuracies": [
+              0.5,
+              1.0,
+              0.75,
+              0.75,
+              0.5
+            ],
+            "mean_accuracy": 0.7
+          },
+          "above_chance_margin": -0.1
+        },
+        "f1_context": {
+          "real": {
+            "fold_accuracies": [
+              1.0,
+              1.0,
+              0.75,
+              0.25,
+              0.75
+            ],
+            "mean_accuracy": 0.75
+          },
+          "shuffled_label_control": {
+            "fold_accuracies": [
+              0.75,
+              1.0,
+              1.0,
+              0.75,
+              0.5
+            ],
+            "mean_accuracy": 0.8
+          },
+          "above_chance_margin": -0.05
+        },
+        "region0": {
+          "real": {
+            "fold_accuracies": [
+              0.75,
+              0.75,
+              0.75,
+              0.25,
+              0.75
+            ],
+            "mean_accuracy": 0.65
+          },
+          "shuffled_label_control": {
+            "fold_accuracies": [
+              0.5,
+              1.0,
+              0.75,
+              0.75,
+              0.5
+            ],
+            "mean_accuracy": 0.7
+          },
+          "above_chance_margin": -0.05
+        }
+      },
+      "production_selection_hits_target": "8/20"
+    }
+  ],
+  "verdict": "mixed_report_by_feature",
+  "what_would_overturn": "打乱标签对照若明显高于 chance ⇒ 特征泄漏，本件作废；两电路 verdict 方向不一致 ⇒ not_resolved；生产选择挑对率若与本件 CV 同高 ⇒ '有但没被拿去检索'不成立（选择机构本身已够）",
+  "base_sha256_unchanged": true,
+  "instrument_guard": {
+    "items_nonzero": true,
+    "label_balanced": false,
+    "shuffled_controls_at_chance": false,
+    "base_unchanged": true
+  },
+  "rows": [
+    {
+      "id": "V001",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V002",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V003",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V004",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V005",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V006",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V007",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V008",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V009",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V010",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V011",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V012",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V013",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V014",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V015",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V016",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V017",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V018",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V019",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V020",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V001",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V002",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V003",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V004",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V005",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V006",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V007",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V008",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V009",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V010",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V011",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V012",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V013",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V014",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V015",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V016",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V017",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V018",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V019",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V020",
+      "label": 0,
+      "production_selection_hits_target": true
+    }
+  ]
+}

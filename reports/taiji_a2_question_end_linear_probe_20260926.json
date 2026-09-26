@@ -1,0 +1,1225 @@
+{
+  "format": "taiji-a2-question-end-linear-probe-v1",
+  "prereg": "plans/reference/M5_R2_A_BRANCH_PLAN_REV2_20260926.md §2 未测②／§5 A2",
+  "manifest": "plans\\manifests\\r2_copy_surface_extension_v3_position_random.json",
+  "items": 104,
+  "label_balance": {
+    "position_0": 52,
+    "position_1": 52
+  },
+  "cv_protocol": {
+    "folds": 5,
+    "epochs": 400,
+    "lr": 0.05,
+    "weight_decay": 0.001,
+    "seed": 20260926
+  },
+  "reading_lines": {
+    "representation_has": 0.8,
+    "chance_band": 0.6,
+    "control": "shuffled-label same protocol must sit at chance"
+  },
+  "arms": [
+    {
+      "circuit": "output/taiji_r2_copy_circuit_chat/judge/circuit-final.pt",
+      "features": {
+        "cue_full": {
+          "real": {
+            "fold_accuracies": [
+              0.5238,
+              0.619,
+              0.3333,
+              0.5714,
+              0.6
+            ],
+            "mean_accuracy": 0.5295
+          },
+          "shuffled_label_control": {
+            "fold_accuracies": [
+              0.4762,
+              0.5714,
+              0.5714,
+              0.619,
+              0.25
+            ],
+            "mean_accuracy": 0.4976
+          },
+          "above_chance_margin": 0.0319
+        },
+        "f1_context": {
+          "real": {
+            "fold_accuracies": [
+              0.619,
+              0.5238,
+              0.4762,
+              0.4762,
+              0.35
+            ],
+            "mean_accuracy": 0.489
+          },
+          "shuffled_label_control": {
+            "fold_accuracies": [
+              0.4286,
+              0.381,
+              0.5714,
+              0.619,
+              0.55
+            ],
+            "mean_accuracy": 0.51
+          },
+          "above_chance_margin": -0.021
+        },
+        "region0": {
+          "real": {
+            "fold_accuracies": [
+              0.5238,
+              0.619,
+              0.619,
+              0.5714,
+              0.55
+            ],
+            "mean_accuracy": 0.5767
+          },
+          "shuffled_label_control": {
+            "fold_accuracies": [
+              0.5714,
+              0.4286,
+              0.5238,
+              0.7143,
+              0.4
+            ],
+            "mean_accuracy": 0.5276
+          },
+          "above_chance_margin": 0.0491
+        }
+      },
+      "production_selection_hits_target": "52/104"
+    },
+    {
+      "circuit": "output/taiji_r2_copy_circuit_chat_seedB/judge/circuit-final.pt",
+      "features": {
+        "cue_full": {
+          "real": {
+            "fold_accuracies": [
+              0.5714,
+              0.5238,
+              0.4762,
+              0.5714,
+              0.55
+            ],
+            "mean_accuracy": 0.5386
+          },
+          "shuffled_label_control": {
+            "fold_accuracies": [
+              0.6667,
+              0.4286,
+              0.619,
+              0.4762,
+              0.45
+            ],
+            "mean_accuracy": 0.5281
+          },
+          "above_chance_margin": 0.0105
+        },
+        "f1_context": {
+          "real": {
+            "fold_accuracies": [
+              0.619,
+              0.5714,
+              0.4286,
+              0.5714,
+              0.65
+            ],
+            "mean_accuracy": 0.5681
+          },
+          "shuffled_label_control": {
+            "fold_accuracies": [
+              0.4286,
+              0.5714,
+              0.619,
+              0.4286,
+              0.5
+            ],
+            "mean_accuracy": 0.5095
+          },
+          "above_chance_margin": 0.0586
+        },
+        "region0": {
+          "real": {
+            "fold_accuracies": [
+              0.5238,
+              0.619,
+              0.619,
+              0.6667,
+              0.6
+            ],
+            "mean_accuracy": 0.6057
+          },
+          "shuffled_label_control": {
+            "fold_accuracies": [
+              0.619,
+              0.4762,
+              0.5714,
+              0.5714,
+              0.45
+            ],
+            "mean_accuracy": 0.5376
+          },
+          "above_chance_margin": 0.0681
+        }
+      },
+      "production_selection_hits_target": "52/104"
+    }
+  ],
+  "verdict": "mixed_report_by_feature",
+  "what_would_overturn": "打乱标签对照若明显高于 chance ⇒ 特征泄漏，本件作废；两电路 verdict 方向不一致 ⇒ not_resolved；生产选择挑对率若与本件 CV 同高 ⇒ '有但没被拿去检索'不成立（选择机构本身已够）",
+  "base_sha256_unchanged": true,
+  "instrument_guard": {
+    "items_nonzero": true,
+    "label_balanced": true,
+    "shuffled_controls_at_chance": true,
+    "base_unchanged": true
+  },
+  "rows": [
+    {
+      "id": "V001",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V002",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V003",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V004",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V005",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V006",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V007",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V008",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V009",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V010",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V011",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V012",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V013",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V014",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V015",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V016",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V017",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V018",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V019",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V020",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V021",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V022",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V023",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V024",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V025",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V026",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V027",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V028",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V029",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V030",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V031",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V032",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V033",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V034",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V035",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V036",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V037",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V038",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V039",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V040",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V041",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V042",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V043",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V044",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V045",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V046",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V047",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V048",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V049",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V050",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V051",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V052",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V053",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V054",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V055",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V056",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V057",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V058",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V059",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V060",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V061",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V062",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V063",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V064",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V065",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V066",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V067",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V068",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V069",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V070",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V071",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V072",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V073",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V074",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V075",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V076",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V077",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V078",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V079",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V080",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V081",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V082",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V083",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V084",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V085",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V086",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V087",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V088",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V089",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V090",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V091",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V092",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V093",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V094",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V095",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V096",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V097",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V098",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V099",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V100",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V101",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V102",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V103",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V104",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V001",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V002",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V003",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V004",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V005",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V006",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V007",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V008",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V009",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V010",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V011",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V012",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V013",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V014",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V015",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V016",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V017",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V018",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V019",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V020",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V021",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V022",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V023",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V024",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V025",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V026",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V027",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V028",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V029",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V030",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V031",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V032",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V033",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V034",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V035",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V036",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V037",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V038",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V039",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V040",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V041",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V042",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V043",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V044",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V045",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V046",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V047",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V048",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V049",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V050",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V051",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V052",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V053",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V054",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V055",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V056",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V057",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V058",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V059",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V060",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V061",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V062",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V063",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V064",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V065",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V066",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V067",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V068",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V069",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V070",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V071",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V072",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V073",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V074",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V075",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V076",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V077",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V078",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V079",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V080",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V081",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V082",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V083",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V084",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V085",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V086",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V087",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V088",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V089",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V090",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V091",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V092",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V093",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V094",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V095",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V096",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V097",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V098",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V099",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V100",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V101",
+      "label": 1,
+      "production_selection_hits_target": false
+    },
+    {
+      "id": "V102",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V103",
+      "label": 0,
+      "production_selection_hits_target": true
+    },
+    {
+      "id": "V104",
+      "label": 0,
+      "production_selection_hits_target": true
+    }
+  ]
+}
