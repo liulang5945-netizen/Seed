@@ -1019,13 +1019,26 @@ tests.taiji_native.test_terminal_three_domain_governance::test_terminal_three_do
 
 ## B 支线（架构债线）2026-09-26 登记：已量未修
 
-**DEBT-B4-1：B-4 的读数天生带噪，门不能贴均值设阈值。**
-两次全量跑（同一条 `pytest tests --cov`，无并发）之间，`resonance/ensemble.py` 覆盖行数相差 **−203**
-（869 ⇒ 666），丢失的是**散点单行**（645/651/657-660/672/680/719/…）而非整块 lane
-⇒ 判定为随机初值路径（该子系统无全局随机种子），不是"某条测试没跑"。
-后果：面内读数 ±0.5~1 个点抖动。CI 阈值取 **45.0**（低于基线 45.66 与并集 51.50），
-上调前必须先在 CI 里拿到两次同序读数，否则棘轮会自己制造红。
-根治候选（未做）：给走随机装配的 lane 固定种子，或在门里定义"取 N 次并集"。
+**DEBT-B4-1（本条前半段的旧结论**作废**，2026-09-26 同日推翻）：B-4 读数并不"天生带噪"。**
+旧结论：两次全量跑之间 `resonance/ensemble.py` 相差 −203 行（869 ⇒ 666），丢失的是散点单行
+⇒ 判成"随机初值路径无全局种子"，并据此把 CI 阈值压到 45.0。
+**推翻证据**：同一棵树连跑两次（含本轮 12 个测试件）得 65.03% / 65.25%，面内聚合只差 0.22 个点、
+ensemble 只差 8 行 ⇒ 不是抖动。真正的 −203 那次是**有 lane 没跑完**：
+`checkpoints/.p*-*.pt` 被并发进程占用 ⇒ `PermissionError [WinError 32]`，
+`test_m3_workbench_readonly` / `test_semantic_grounding` / `test_terminal_three_domain_governance`
+这些会真跑前向的门当场中断（见 DEBT-B4-5），该面的读数因此低到 46%，被误读成"覆盖率抖动"。
+教训（与既有"别从聚合入口继承跑不了"同源）：**读数异常先问"哪条 lane 没跑完"，再谈随机性**；
+CI 的门因此改成"只在套件步成功时判"，套件红时用跳过而不是叠一条语义错位的覆盖率红。
+
+**DEBT-B4-5（新增，未修）：多个 gate 把临时 checkpoint 写进仓库共享的 `checkpoints/`，并发必撞。**
+`scripts/training/eval_taiji_m3_workbench_readonly.py:185` 一类代码用
+`checkpoints/.<gate>-<pid>.pt` 当scratch，收尾 `unlink(missing_ok=True)`；
+两条套件同时跑（人或 agent 并发）时该文件被另一方持有 ⇒ `WinError 32` 直接把门打断，
+表现为"随机红"，并顺带把覆盖率读数压低（本次误判即源于此）。
+同一目录里还留过 6 个测试残留（`s45-active-<pid>.pt` 等）被
+`test_artifact_store_scratch_contract` 抓到 —— 那是 DEBT-I7 第二实例的又一处表现。
+建议的根治（未做）：这类 scratch 一律改走 `get_external_path()` 数据根或 pytest `tmp_path`，
+命名按 S3 的 `.tmp-<主题>/`；**在改完之前，任何"面内覆盖率"读数都必须先确认套件全绿**。
 
 **DEBT-B4-2：`brain/working_memory.py` 是"仅注册未接入"的死模块，且内部有索引错位缺陷。**
 `cortex.py:219-223` 自己写明它未接入生成路径（真正的上下文记忆走 `agent/working_memory` 经
