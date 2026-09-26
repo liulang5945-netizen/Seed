@@ -497,11 +497,13 @@ class CopyCircuit:
         advantage: float,
         lr_address: float,
         lr_gate: float,
+        lr_embed: float = 0.0,
     ) -> None:
         """A2.3 预注册 §2 的局部更新：寻址交叉熵＋反事实优势 gate。无 autograd。
 
-        ``content_embed`` 保持固定随机基（永不更新）；更新后统一 clamp 到
-        ``max_weight_norm``。``advantage`` 由训练器计算并 clamp（±2）。
+        ``content_embed`` 默认仍是**固定随机基**（永不更新）；``lr_embed>0`` 是 SPEC-A-23 的
+        丁 臂，唯一被允许的例外——见下方分支的注释。更新后统一 clamp 到 ``max_weight_norm``。
+        ``advantage`` 由训练器计算并 clamp（±2）。
         """
         for name, value in (("lr_address", lr_address), ("lr_gate", lr_gate)):
             if not math.isfinite(float(value)) or float(value) < 0.0:
@@ -522,6 +524,20 @@ class CopyCircuit:
             @ state["query"].expand_as(state["embed"])
             / scale
         )
+        bound = float(self.config.max_weight_norm)
+        if lr_embed > 0.0:
+            #: SPEC-A-23（丁 臂）：把字节表征本身交给训练。`score_i = ⟨q, embed[c_i] @ Qc⟩ / scale`
+            #: ⇒ `∂score_i/∂embed[c_i] = Qcᵀ q / scale`，交叉熵给每行的梯度就是
+            #: `delta_i · (Qcᵀ q)/scale`——同一字节在多个位置被指对/指错时按 `index_add_` 累加，
+            #: 与发射侧"重数有用"的实测一致（`SPEC-A-17` §23：`max` 丢掉重数方向为负）。
+            #: 默认 `lr_embed=0` ⇒ 这个分支一次都不走，`content_embed` 与旧 payload 逐位相同；
+            #: clamp 也放在分支内——随机初始化的行本就可能落在 ±2.5 之外，
+            #: 未训练时把它夹一下会**静默改掉键**，那不是"惰性"而是另一份表征。
+            projection = (self._parameters["query_content"].T @ state["query"]) / scale
+            self._parameters["content_embed"].index_add_(
+                0, codes, delta[:, None] * projection.unsqueeze(0)
+            )
+            self._parameters["content_embed"].clamp_(-bound, bound)
         step = float(advantage) * lr_gate
         self._parameters["gate_state"].add_(step * f1_context)
         self._parameters["gate_content"].add_(step * state["pooled"])
@@ -539,7 +555,6 @@ class CopyCircuit:
                 self._parameters["copy_induce_bias"].add_(
                     lr_address * float((delta * successor_mask).sum())
                 )
-        bound = float(self.config.max_weight_norm)
         for name in (
             "query_state",
             "query_content",

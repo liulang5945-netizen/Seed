@@ -598,3 +598,73 @@ def test_selector_head_learns_toward_the_told_event_and_loads_legacy_payload() -
                 },
             }
         )
+
+
+def _embed_state(circuit: CopyCircuit) -> tuple[dict, torch.Tensor]:
+    cue = torch.linspace(-0.4, 0.6, circuit.config.cortical_context_dim)
+    f1 = torch.linspace(0.2, -0.3, circuit.config.motor_context_dim)
+    circuit.store.record("我叫阿蒙。".encode(), cue)
+    return circuit.addressing(cue=cue, f1_context=f1), f1
+
+
+def test_lr_embed_zero_leaves_the_representation_bitwise_frozen() -> None:
+    """SPEC-A-23 守卫①：`lr_embed=0`（默认）⇒ `content_embed` 逐位不动，且其余面与
+    一次同状态的旧调用完全一致——这条是"默认路径零变化"的正面证据。
+    """
+    model = _model()
+    model.mount_copy_circuit(max_events=4)
+    circuit = model.copy_circuit
+    state, f1 = _embed_state(circuit)
+    before = dict(circuit.parameters())
+    snapshot = {name: tensor.detach().cpu().clone() for name, tensor in before.items()}
+    circuit.learn(
+        state, f1_context=f1, target_position=6, advantage=1.0, lr_address=0.15, lr_gate=0.02
+    )
+    assert torch.equal(circuit.parameters()["content_embed"], snapshot["content_embed"])
+    #: 反向断言：其余三面必须**动了**——否则"没动"是因为整条更新没被走到，而不是因为默认惰性。
+    assert not torch.equal(circuit.parameters()["query_state"], snapshot["query_state"])
+    assert not torch.equal(circuit.parameters()["query_content"], snapshot["query_content"])
+
+
+def test_lr_embed_moves_the_bytes_that_were_addressed_and_helps_addressing() -> None:
+    """SPEC-A-23 守卫②：`lr_embed>0` 只动**这条告知里出现过的字节行**，且把同一状态的
+    目标位置分数推高（表征确实往"指得对"的方向挪，不是随机漂移）。
+    """
+    model = _model()
+    model.mount_copy_circuit(max_events=4)
+    circuit = model.copy_circuit
+    state, f1 = _embed_state(circuit)
+    codes = {int(value) for value in state["codes"].tolist()}
+    embed = circuit.parameters()["content_embed"]
+    untouched_rows = [i for i in range(embed.shape[0]) if i not in codes]
+    before_target = float(state["scores"][6])
+    snapshot_embed = embed.detach().cpu().clone()
+    circuit.learn(
+        state,
+        f1_context=f1,
+        target_position=6,
+        advantage=1.0,
+        lr_address=0.15,
+        lr_gate=0.02,
+        lr_embed=0.5,
+    )
+    moved = circuit.parameters()["content_embed"]
+    assert not torch.equal(moved.detach().cpu(), snapshot_embed)
+    for row in untouched_rows[:40]:
+        assert torch.equal(moved[row], snapshot_embed[row]), row
+    after = circuit.addressing(cue=state["event"].cue, f1_context=f1)
+    #: 只断"目标位置的分数被推高"。两条更狠的写法都不成立、已删：
+    #: ①"涨得比最大值多"——更新后最大值常常就是目标本身，断言会自我否定；
+    #: ②"一步就把目标推成 argmax"——单步 lr 0.5 做不到（实测仍在位置 2），
+    #:    把它写成断言等于拿测试去迁就期望。
+    assert float(after["scores"][6]) > before_target
+
+
+def test_content_embed_is_not_in_the_zero_init_lists() -> None:
+    """SPEC-A-23 守卫③：`content_embed` 既不许进"零初始化"名单（它会毁掉随机基），
+    也不许进 `OPTIONAL_ZERO_PARAMETERS`（参数面形状不变 ⇒ 旧 payload 摘要不外扩）。
+    """
+    assert "content_embed" not in CopyCircuit.OPTIONAL_ZERO_PARAMETERS
+    model = _model()
+    model.mount_copy_circuit(max_events=4, init_seed=303)
+    assert int(torch.count_nonzero(model.copy_circuit.parameters()["content_embed"])) > 0

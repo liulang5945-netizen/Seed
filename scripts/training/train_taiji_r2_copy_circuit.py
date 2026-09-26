@@ -110,6 +110,7 @@ def _train_answer(
     lr_address: float,
     lr_gate: float,
     win: dict[str, Any],
+    lr_embed: float = 0.0,
 ) -> None:
     """预注册 §2 的学习规则本体——**两协议臂共用同一实现**。
 
@@ -342,6 +343,9 @@ def main() -> int:
     #: A2.5 §2：选择头与 `lr_address` 同档。`bare` 臂**强制为 0**——它的库每 episode 就一条
     #: 告知（无可学之物），且 A2.3 冻结臂的参数 digest 不许被顺带改动。
     parser.add_argument("--lr-selector", type=float, default=0.05)
+    #: SPEC-A-23（丁 臂）：把 `content_embed` 交给训练。默认 **0**＝现状（固定随机基、永不更新），
+    #: 所以这个参数存在本身不改变任何既有跑法——`learn()` 里那条分支一次都不会走。
+    parser.add_argument("--lr-embed", type=float, default=0.0)
     parser.add_argument("--seed", type=int, default=20260925)
     #: 电路**初始化**种子（与 `--seed` 分开）。`--seed` 只喂语料取样流，
     #: 而"门的第二次独立取数"要的是两个独立电路 ⇒ 必须能单独换投影初始化（SPEC-A-17 §8）。
@@ -495,6 +499,7 @@ def main() -> int:
             lr_address=args.lr_address,
             lr_gate=args.lr_gate,
             win=win,
+            lr_embed=args.lr_embed,
         )
         misaddressed_episodes += int(win["wrong_event"] > wrong_before)
         done += 1
@@ -580,6 +585,18 @@ def main() -> int:
             ),
             "updates_total": selector_updates_total,
             "unlabelable_total": selector_unlabelable_total,
+        },
+        #: SPEC-A-23 丁 臂的账。`content_embed` 一旦可训，它**同时**改动寻址键、`pooled`
+        #: 与选择头特征 2 ⇒ 任何读数都不许单因归给"表征"（本件的 §4 限定），
+        #: 这里只留一个可核对的位移量：Frobenius 范数与"动过多少行"。
+        "representation": {
+            "lr_embed": float(args.lr_embed),
+            "content_embed_frobenius_norm": round(
+                float(circuit.parameters()["content_embed"].norm()), 4
+            ),
+            "content_embed_rows_touched": int(
+                (circuit.parameters()["content_embed"].abs().amax(dim=1) > 0.0).sum()
+            ),
         },
         "seed": args.seed,
         "circuit_seed": args.circuit_seed,
