@@ -83,6 +83,7 @@
 | H3s | `apps/web/tests/startup-auto-selection.e2e.ts:49`（品牌 mark 的 XPath 轴） | 上游按 `getByText(headline)` 的**父节点的前一个 span** 找品牌 hitbox；fork 的品牌改动（44d1d2af5 鱼形→几何太极）把 hitbox 移进了 `.headline` **内部**、排在文案 span 之前（`EmptyHero.tsx:129-145`），所以轴要**从文案 span 起算**、不再 `../`。读数：品牌那条断言**已通过**（原来 30 s 等不到 svg），同一条测试改为在**更后面**一步失败——等 `getByRole(textbox, name: Choose workspace)` 超时，即该状态下 composer 不在工作区触发态（与 §6 ⑮ 同一族：lane 的状态假设与当前表层对不上）。⇒ **这条改动是有效的但不构成转绿**，保留是因为它修掉了一处真实的表层错位；上游同步时必须保留，同时**别把这条 lane 记成"已修好"**。 |
 | H3t | `apps/web/tests/support.ts`（`openWorkspaceDirectoryDialog` 里改为**优先点 button**） | 帮助程序先前点 `getByRole(textbox, name: Choose workspace/选择工作区)`——那是 composer 输入框（`InputBar.tsx:410` 在无工作区态借用了同一个标签），**真正的触发键是 hero 里那个 `<button aria-label=… aria-haspopup="menu">`（`EmptyHero.tsx:44-53`）**；点前者既不开菜单也不开对话框。改成"有 button 就点 button，否则退回 textbox"。**实测**：`reasoning-preview` 由红转绿（4.0 s），且把今天动过的 **9 个文件放在一起跑**（并发）得到 **`Test Files 9 passed`／`Tests 23 passed`**，57 s——这是本轮第一个在合并条件下站得住的 web 表层数字。**同时更正我同日先前的两个说法**：① "scaffold 播种默认工作区导致节点惰性"——`firstUse: true` 试过**不解决问题**；② "并发导致 reasoning-preview 红"——也不是，真因就是元素点错。上游同步时必须保留本条。 **修好后的 28 条基线（同日 07:59 复跑，166 s）**：`Test Files 19 passed｜9 failed`、`Tests 32 passed｜13 failed｜8 skipped`，比修前（17／11）净增 2 个文件转绿；剩余 9 条全部落在已登记类别（金样差异／缺 expected／⑮ 会话投影时序／`github-ready-review` 多 agent），无一条新未知。 |
 | H3u | `apps/web/tests/plugin-install-registry.e2e.ts`（`installed` 捕获链末尾加一条锚定式路径替换，2026-09-26） | **Windows 路径分隔符不进基线**：app 用原生分隔符 join 出「安装位置」，上游金样是 POSIX 拼法 ⇒ 本机红。**只替换 `{{cwd}}` 之后那一段**（`sep` 拼出的 `.dsh-home/profiles/scaffold` → `/.dsh-home/profiles/scaffold`），**不做通用 `\`→`/`**——119 份入库金样里 **6 份**的反斜杠是被展示的内容（aria 里 JSON 负载的转义引号），通用替换会让那 6 条 lane 在**所有平台**红。POSIX 平台上这条替换是**恒等式**，不动任何金样文件。实测：本机该 lane `Tests 1 passed (1)`／15.87 s，oxlint 0 warning 0 error，`git status` 只有该 `.e2e.ts` 改动、`expected/` 未动。上游同步时保留（丢了它，本机这条红会回来，而下一个人很可能去 refresh 基线，把反斜杠烤进去）。 |
+| H3v | `apps/web/tests/{markdown-cjk-strong,clickable-links-gallery,markdown-inline-code-links,math-rendering,produced-file-mentions,markdown-images}.e2e.ts`（6 条 lane 的会话行选法，2026-09-26） | **位置点击改成按内容选行**：树默认折叠成一行，而这些 lane 的 `.nth(1)` 是按**展开后的行序**写的；播种会话的行标签是 **`cwd` 的 basename**（持久头记录不带 title，`session/title` 是事件不是头字段，见 G5 §7.2）。改成 `filter({ hasText: /dsh-web-e2e-ws-/ })` ＋ `waitFor({ state: 'visible' })`。**实测**：6 文件／7 用例 → **5 文件全绿**（含各自后续的 strong/链接/公式/提及断言），`markdown-images` 前进到后面的一个 `locator.click` 才超时（**不再是 DONE 一族**，另判）。oxlint 6 文件 0／0。上游同步时必须保留——**别把这几条改回位置索引**，也别指望按标题选行（标题根本不进树）。 |
 
 ### D 组 · 删除/不落地
 
@@ -159,6 +160,10 @@ A/B 会成双变量（本轮就撞上了：76c 起跑前 mtime 已是 19:57:52�
 ⇒ 树只读头记录，标签回退到 `cwd` 的 basename（`ui-workspace` 的三级回退第二格），而 lane 追加的 `session/title` 是**事件不是头字段**；
 scaffold 又**自己关掉了 `session-title-llm`**（`scaffold.ts:630`，理由 `:19`）。⇒ **⑮ 应改述为"行标签的数据源是持久化头记录，而头记录不携带标题"**，与索引时机无关。
 **这条面上没有"曾经绿过"的证据**（CI 不跑），所以既不用 fork 缺陷解释、也不要把上游断言当合同。
+**DONE 一族按判明的机制修掉，读数 5 文件转绿（同日，登记 H3v）**：改的是行选法（位置 → 按 `cwd` basename 的内容匹配）。
+**6 文件／7 用例 → `Test Files 5 passed｜1 failed`、`Tests 6 passed｜1 failed`、55.75 s**（日志 `E:/Seed/.dsh-sbx2/fix-six.log`）。
+**残余那一条已经不是同一族**：`markdown-images` 越过了 DONE 断言，红在后面的一个 `locator.click` 超时 ⇒ **单独判，别再并进"点错行"**。
+**口径收益**：这一族从"7 条未归因的普通断言红"变成"1 条新形态红"，普通断言那堆的真实缺口收窄到 **超时 18 条 ＋ 这 1 条**。
 
 **别扩大打击面**：另两条提到 build 的 lane 已逐条核对为**不写产物**——`preview-boot.e2e.ts:114` 只是要求 dist 在场并报错提示去 build，
 `clickable-links-gallery.e2e.ts:268` 里的 `pnpm run build` 是**测试正文的字符串**。

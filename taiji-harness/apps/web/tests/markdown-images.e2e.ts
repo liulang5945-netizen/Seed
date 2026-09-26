@@ -214,7 +214,8 @@ describe('web e2e: Markdown image rendering', () => {
   it.skipIf(MODE === 'record')('loads permitted images and shows authored text for failures', async () => {
     onTestFailed(() => saveFailureShot(page, 'web-e2e-markdown-images'))
     await page.getByRole('treeitem').first().click()
-    await page.getByRole('treeitem').nth(1).click()
+    // See G5 §7.2: the seeded session's row is labelled by the workspace basename, not a title.
+    await page.locator('[role="treeitem"]').filter({ hasText: /dsh-web-e2e-ws-/u }).first().click()
     await expect.poll(() => page.getByText('REMOTE_IMAGE_DONE', { exact: true }).count(), {
       timeout: 15_000,
     }).toBe(1)

@@ -139,8 +139,10 @@ describe('web e2e: inline-code mentions of produced files', () => {
     const groupRow = page.locator('[role="treeitem"]').first()
     await groupRow.waitFor({ timeout: 15_000 })
     await groupRow.click()
-    const sessionRow = page.locator('[role="treeitem"]').nth(1)
-    await sessionRow.waitFor({ timeout: 10_000 })
+    // The seeded session is labelled by the workspace basename: the persisted header carries no
+    // title, so the tree's label falls back to basename (see G5 §7.2). Select it by that text.
+    const sessionRow = page.locator('[role="treeitem"]').filter({ hasText: /dsh-web-e2e-ws-/u }).first()
+    await sessionRow.waitFor({ state: 'visible', timeout: 10_000 })
     await sessionRow.click()
     await expect.poll(() => page.getByText(DONE, { exact: true }).count(), { timeout: 15_000 }).toBe(1)
 

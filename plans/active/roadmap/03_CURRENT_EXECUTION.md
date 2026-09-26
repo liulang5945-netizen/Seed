@@ -1036,6 +1036,15 @@ DEBT-I8 报告路径相对化（含 09-15/09-18 两份产物的成对断言）�
 **（四）一条正面读数**：我改造过的 6 条 keyless lane 在 **76 条全并发**下全部 `failed=0` ⇒ H3q/H3t 不是只在单跑/小批里成立，**§5 第 7 条的最小面可以当门**（前提：先完整 build、批内不含自改写 lane）。
 **下一步（不需裁定）**：等 76c 与 76b 对照出"自改写 lane 值多少条红"；随后做 DONE 一族的判别实验与 §7.1(乙) 那 1 行分隔符补丁。**需要裁定**：无新增，仍是 D2／R4／R5／金样三件事。
 
+**M6 第六批｜⑮ 判完、DONE 一族按机制修掉，5 条 lane 转绿（2026-09-26）**：**（一）⑮ 换了正确的读法才有答案**：先前用 `ctx.sessions.list()` 读到 `[]` 就写"ctx 与表层对不上"，
+那是把**访问器语义**当成事实（它走 `remote.session.list`，而 `seedSession` 用的是另一个独立 Context）——已收回。改用 `seeder` 那条读法（另开 `Context` 挂 `JsonlSessionPersistence` 调 `sessionPersistence.list()`）后读数明确：
+**盘上有这条会话，但持久化头记录里没有 `title` 字段** ⇒ 树只读头记录，标签回退到 `cwd` 的 basename；lane 追加的 `session/title` 是**事件不是头字段**；scaffold 还自己关掉了 `session-title-llm`（`scaffold.ts:630`）。
+⇒ ⑮ 从"索引启动时建一次"**改述为"行标签的数据源是不带标题的头记录"**，不需要任何 fork 缺陷解释（但这条面 CI 从不跑，也没有"上游曾经绿过"的证据）。
+**（二）按机制把 6 条 lane 改成"展开后按 basename 选行"**：`Test Files 5 passed｜1 failed (6)`、`Tests 6 passed｜1 failed (7)`、55.75 s，oxlint 6 文件 0／0，登记 **H3v**。
+**残余 1 条不再是同一族**——`markdown-images` 越过 DONE 断言、红在后面的一个 `locator.click` 超时，单独判。
+**（三）我先前设的处置边界要按结果修正**：说过"改 lane 会掩盖 ⑮"，⑮ 定性之后这句不再成立；但**该保留的断言（行标签＝basename）这次没加**，留给下一轮，避免改动面继续扩大。
+**下一步（不需裁定）**：把 basename 断言补进这 6 条；再单独看 `markdown-images` 的那个点击；然后回到 18 条超时的逐条取证。**仍需裁定**：D2 已收成 (b′)/(c′) 二选一（价格见 §4.5）、R4、R5、金样(甲)(丙)。
+
 ### 5.8 设计补全交接：哪些可以直接指导开发，哪些还须决定
 
 本节是规划交付，不是第二张活动实验卡。具体架构规格集中在[唯一VISION §18](../../reference/VISION_FUTURE_TECHNOLOGY.md)，不再复制一份设计文件；03负责将它接回当前能力出口。
