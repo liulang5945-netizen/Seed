@@ -300,3 +300,24 @@ lane 追加的那条 `session/title` 是**事件**、不是**头字段**，所�
 * **另两处宿主依赖不是 normalize 能覆盖的**，要分开裁：① `support-timezone` 的 2 条断言（`expected 'Asia/Shanghai' to be 'UTC'`／`to be 'America/Los_Angeles'`）前提是「Chromium 认 `TZ` 环境变量」，Windows 上不成立 ⇒ 出路是 `platform` 条件 skip（动上游 spec）**或**把对照页断言改成取宿主真实时区；② `shipped-composition.e2e.ts` 的工具花名册**内联快照**把宿主 shell 烤了进去（本轮该 diff 为 1 行 `+ "pwsh"`，位于字母序 `present` 与 `read` 之间）⇒ 同属 skip-or-normalize，且它和 `plugin-install-registry` 的**归因方法要记清**：我是按"该 diff 之前最近出现的 lane 名"归的，不是按 FAIL 头行（ANSI 色码使头行匹配不上）。
 
 ⇒ **对 §7 裁定的净影响**：金样这件事不是"refresh 一刀切"，而是**三个各自独立的小裁定**——（甲）fork 有意变更（品牌字串、Taiji 行、我方 bundle 计数）**该** refresh，且**该**在非本机做；（乙）分隔符按锚定式 1 行 lane 补丁消掉，refresh 不该把它烤进去；（丙）时区／shell 两处属"环境前提在本机不可能成立"，与 `docs-site-projection` 的符号链接 EPERM 同族（08 §6 ⑦），三件可以一次裁定「在本机按平台 skip」。**在（乙）（丙）落定前做任何 refresh，都会把本机指纹固化进基线。**
+
+## 8 · 裁定单（一次性总表；每项都是"问题一句／选项按能声称的最强结论排序／价格／不裁的后果"）
+
+细节与证据在 §3.5／§4／§4.5／§6.5／§7／§7.1／§7.2，这里只收口成可回复的形状。
+
+| # | 问题（平实一句） | 选项（强→弱） | 价格 | 不裁的后果 |
+| --- | --- | --- | --- | --- |
+| **D2** | 训练后端（Python＋torch 量级）怎么到用户机器上 | (b′) 随包并由桌面拉起常驻进程 → (c′) 用户自备并启动 | (b′)＝三处声明面加包（`tool-workspace-dependencies/src/index.ts:107`、`:251`、`prepare.ts:183`）＋一个 `DesktopBackendHost` 实现＋重启/退避/端口策略；(c′)＝零代码但**要改写"装起即用"** | G5 交付判据里"一条命令装起即用"与"Taiji 为默认"**无法同时成立**，桌面装配这条只能停在"存在但不可路由" |
+| **D3** | 装机默认 provider 改不改 Taiji | 改（`bundle/base/cordis.patch.yml` 两行）→ 不改（保持 `deepseek-official`） | 两行配置，但属**产品默认变更**；已真机验过默认不是 Taiji（§3.5） | 不改则 D2 选 (b′) 也拿不到"默认即 Taiji" |
+| **R4** | 桌面打包要的那组产品值 | 给值 → 明确"暂不打包" | `apps/desktop/.env.windows`：App ID（示例值仍是上游 `com.deepseek.harness`）、自动更新环境、强制更新端点、登录源白名单 JSON、npm registry、签名三件套 | `package:desktop:dir` 在下载任何二进制之前就失败，**打包实跑一步也走不了** |
+| **R5** | 交付面上残留的三处产品身份改不改 | 三处都改 → 只改用户看得见的那一处 → 都不改 | ①默认工作区目录名 `packages/api/workspace-controller/src/default-directory.ts:78`（**已核：不需迁移**，只有一个调用点、无路径比较）；②ACP agent 名 `packages/acp/acp/src/index.ts:182,378`；③归因元数据 `packages/llm/llm/src/attribution.ts:41,43`。其余 23 处是第三方包名与服务商认的 HTTP 头，**不能改** | 装机后用户在文件管理器里看到的仍是 `deepseek-harness` 目录名 |
+| **金样(甲)** | 上游那批 ARIA 金样要不要把我方差异烤进基线 | 在 macOS/Linux 上 `DSH_SNAPSHOT=refresh` → 本机 refresh（**会连带烤进宿主依赖值**）→ 不 refresh | 真实规模是 **15 条整棵快照差异**（不是先前说的 39），面是 139 文件／321 用例那套 | 这 15 条会一直红；但**先裁 (丙)**，否则本机 refresh 会把分隔符/时区/shell 固化进基线 |
+| **金样(丙)** | 三处"环境前提在本机不可能成立"的红怎么处置 | 平台条件 skip（动上游 spec）→ 改断言取宿主真实值 → 保持红并标注 | `support-timezone`（Windows 不认 `TZ`）、`shipped-composition`（快照烤进宿主 shell `pwsh`）、`docs-site-projection`（符号链接 EPERM）——**同一族，建议一次裁** | 复验集里永远挂 1–3 条"环境红"，掩盖真信号 |
+| **判据③** | 真机训练回合（真训练→进度→停止→检查点复验→真续训→真激活）何时开跑 | 等 R2 收束 → 现在开 | 需要独占运行时窗口；**已裁定不因"继续推进"字样自动触发** | G4 的复验集里这条一直无读数 |
+| **回放件** | 缺的录制件要不要重录 | 重录（要 `DEEPSEEK_API_KEY` ＋ `test:snapshot:record`）→ 承认回放型 lane 不可当门 | 盘上那份是 09-22 本机录的，`.gitignore` 有 `*.jsonl` ⇒ **干净检出跑不出它们** | 若干 lane 长期"看着像红其实缺证据" |
+
+**最小回复格式（照抄即可）**：
+`D2=b′|c′；D3=改|不改；R4=给值|暂缓；R5=全改|只改①|都不改；金样甲=非本机refresh|本机refresh|不refresh；金样丙=平台skip|改断言|保持红；判据③=等R2|现在开；回放件=重录|承认不可当门`
+
+**不需要裁定、下一轮我按序做的**（§6.5）：`agent-team-panel` 的 setup 双形态（先查 `Ready.` 为何有时 10 s 不来）→ 那条的可访问名判定 → 10 条超时逐条取证 → 把 basename 选行样板补到剩下用例。
+
