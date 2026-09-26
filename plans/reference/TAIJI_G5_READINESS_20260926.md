@@ -194,6 +194,16 @@ this scaffold lifetime. **This is the keyless first-run configuration lane**; th
 **仍未判**：标题缺失发生在**宿主索引**还是**前端渲染**——我试的 `scaffold.ctx.workspaceRegistry.list()` 探针本身报错（不是产品失败），**下一步要用一条能列出会话标题的宿主侧读法，而不是继续改 lane**。
 **处置边界（据此更新）**：把 6 条 lane 改成"先展开分组、再按内容选行"确实能让它们跑起来，**但那会掩盖 ⑮**；
 ⇒ 顺序必须是**先定 ⑮ 的层次，再决定 lane 怎么改**。
+
+**机制的最后一格是插桩换个位置读出来的（同日，两档探针均已 `git checkout --` 撤回、`git status` 无残留）**：上一段"树里四行、`nth(1)` 落在 `New Session`"那个读数是**在两次点击之后**取容器的。
+改成**在点击之前**取，读数是 **`before=["Ungrouped"]`——测试开始时整棵树只有一行**（折叠态分组）；点一下那一行之后才展开成四行。
+⇒ **DONE 一族真正的机制是"树默认折叠成一行，而 lane 的 `.first()`／`.nth(1)` 是按展开后的行序写的"**：`.first()` 点到的就是那唯一一行，`.nth(1)` 命中的是展开后新出现的 `New Session`，
+**播种会话所在的行从头到尾没被点到**。这比"多占了一行"准确，也解释了为什么这些 lane 单跑小跑都同形。
+**另一半仍然成立**：展开后按标题找行（`hasText: /CJK strong emphasis/`）**可见性等待失败**（`titleRow=false`）⇒ 播种件里那条 `session/title` 没有成为行标签；
+`ui-workspace` 自己写明行标题是**三级回退**"持久标题 → 项目 basename → 会话 id"（`packages/client/ui-workspace/src/client/contract/slots.ts:71`、`client/tree.ts:131-134`），
+实得的是 **basename 那一级** ⇒ ⑮ 仍然真实。
+**未判**：标题缺失发生在**宿主索引**还是**前端渲染**（需要一条能列出会话标题的宿主侧读法；我第一次试的 `ctx.workspaceRegistry.list()` 写法没跑通，那是仪器错误、不是产品失败）。
+**处置边界不变**：先定这一层，再决定那 6 条 lane 怎么改——按内容选行能让它们跑绿，但会把 ⑮ 盖住。
 **其余 15 条普通断言**形状各异（`plugin-config` 三条都是毫秒值对不上：`'120000'` 对 `'12000'` 两条、对 `'60000'` 一条；
 `sessionless-header` 三条是计数对不上：`40` 对 `+0` 两条、`1` 对 `+0` 一条；另有 `'/go' to be '/goal '`、`Asia/Shanghai` 对 `UTC` 等），
 **逐条取证前不要并进"金样"那一堆**。
