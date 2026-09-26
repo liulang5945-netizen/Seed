@@ -31,6 +31,17 @@ from taiji import (  # noqa: E402
 )
 from taiji.adapter import _checkpoint_digest  # noqa: E402
 
+
+def _scratch_root() -> Path:
+    """工件写到哪里：默认仍是产品目录（手工 canary 的老用法），
+    但**测试必须用环境变量指到临时目录**——否则每个跑过（或被中断）的测试进程
+    都会在产品工件目录里留下几枚 43 MB 的 `s45-*-<pid>.pt`，
+    把"产品目录只放版本化工件"那道守卫变成顺序相关的红。
+    """
+    override = os.environ.get("R2_RETENTION_SCRATCH_ROOT")
+    return Path(override) if override else PROJECT_ROOT / "output" / "manual-r5-canary"
+
+
 REPORT_FORMAT = "taiji-w7-r5c-s45-runtime-retention-store-separation-v1"
 
 
@@ -64,16 +75,16 @@ def evaluate() -> dict[str, object]:
     first_id, second_id = terminal_batch.selected_candidate_ids
     runtime = _checkpoint(runtime, "terminal-scheduled")
 
-    store_root = PROJECT_ROOT / "output" / "manual-r5-canary" / f"s45-store-{os.getpid()}"
+    store_root = _scratch_root() / f"s45-store-{os.getpid()}"
     store = StructuralValidationArtifactStore(store_root)
     legacy_policy = ArtifactConsumptionPolicy.legacy_compatible(
         reason="historical-s45-retention-canary"
     )
     paths = [
-        PROJECT_ROOT / "output" / "manual-r5-canary" / f"s45-first-{os.getpid()}.pt",
-        PROJECT_ROOT / "output" / "manual-r5-canary" / f"s45-second-{os.getpid()}.pt",
-        PROJECT_ROOT / "output" / "manual-r5-canary" / f"s45-before-retention-{os.getpid()}.pt",
-        PROJECT_ROOT / "output" / "manual-r5-canary" / f"s45-after-retention-{os.getpid()}.pt",
+        _scratch_root() / f"s45-first-{os.getpid()}.pt",
+        _scratch_root() / f"s45-second-{os.getpid()}.pt",
+        _scratch_root() / f"s45-before-retention-{os.getpid()}.pt",
+        _scratch_root() / f"s45-after-retention-{os.getpid()}.pt",
     ]
     try:
         first_artifact, first_replay, _ = _build_artifact(
@@ -206,7 +217,7 @@ def evaluate() -> dict[str, object]:
 
 
 def _checkpoint(runtime: SeedRuntime, name: str, path: Path | None = None) -> SeedRuntime:
-    target = path or (PROJECT_ROOT / "output" / "manual-r5-canary" / f"s45-{name}-{os.getpid()}.pt")
+    target = path or (_scratch_root() / f"s45-{name}-{os.getpid()}.pt")
     runtime.save(target)
     # Restoring must keep the workspace root this canary declared: the reads below
     # are resolved against it, and the loader would otherwise fall back to the
