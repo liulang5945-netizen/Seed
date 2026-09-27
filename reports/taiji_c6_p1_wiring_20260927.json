@@ -1,0 +1,22 @@
+{
+  "probe": "taiji_c6_p1_wiring",
+  "establishes": "the P1 chain works end to end against the live runtime: the snapshot projects through WorkbenchCapabilityAdapter (so the corpus-side workbench_artifact kind is accepted), every declared capability renders one no-prose 问/答 record, and the rendered file is native_trainable with units > 0 -- the Z1 gate, re-judged against the wired implementation",
+  "z1_gate": {
+    "units": 16,
+    "native_trainable": true,
+    "pass": true
+  },
+  "snapshot": {
+    "snapshot_id": "93bd90dbb765f4cbc7f9d5d15b1533bf13734758c64e32381970880fcac9c850",
+    "revision": 6,
+    "declared_capabilities": 16,
+    "projected_units": 16
+  },
+  "render": {
+    "question": "这个运行环境的工作台现在可以执行哪些操作？",
+    "sample": "问：这个运行环境的工作台现在可以执行哪些操作？\n答：当前工作台声明了以下能力。workspace.list；风险等级 read_only；可逆；类别 workspace。",
+    "invalid_records": 0,
+    "documents": 16
+  },
+  "corpus_path": "output\\c6_p1\\c6-p1-workbench-no-prose.jsonl"
+}

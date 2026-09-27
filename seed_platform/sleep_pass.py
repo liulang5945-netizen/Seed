@@ -41,6 +41,11 @@ from hashlib import sha256
 from typing import Any
 
 from seed_platform import memory_store, turn_records
+from seed_platform.evolution_adapters import (
+    WORKBENCH_ANSWER_LEAD,
+    WorkbenchCapabilityAdapter,
+    workbench_training_record,
+)
 from seed_platform.paths import get_external_path
 
 logger = logging.getLogger("SeedPlatform.SleepPass")
@@ -259,13 +264,21 @@ def ready_reason(metrics: dict[str, Any]) -> str:
     return ""
 
 
-def project(state: dict[str, Any], *, max_records: int, pass_id: str) -> dict[str, Any]:
+def project(
+    state: dict[str, Any],
+    *,
+    max_records: int,
+    pass_id: str,
+    workbench_snapshot: dict[str, Any] | None = None,
+) -> dict[str, Any]:
     """Write the rehearsal corpus this pass can justify, and its manifest.
 
     Constraints come first (they are the ones that cannot reach the model any
-    other way), then the journal's interactions.  Nothing already projected is
-    projected again: re-presenting the same text every pass would grow the corpus
-    without adding information, so the corpus is "what is new since last sleep".
+    other way), then the journal's interactions, then the workbench capability
+    snapshot (C6 P1: one 问/答 record per declared capability, no-prose
+    template).  Nothing already projected is projected again: re-presenting the
+    same text every pass would grow the corpus without adding information, so
+    the corpus is "what is new since last sleep".
 
     A pass with nothing new writes no corpus at all: an empty corpus is not a
     dataset, and writing one would both pollute the trainer's file list and
@@ -307,12 +320,53 @@ def project(state: dict[str, Any], *, max_records: int, pass_id: str) -> dict[st
         records.append({"text": text})
         digests.append(digest)
 
+    # C6 P1: the workbench capability snapshot joins the rehearsal corpus.  A
+    # snapshot projects at most once (by snapshot_id) — the capabilities are the
+    # runtime's own declaration, so re-projecting them every pass would only
+    # repeat the model's environment section back to itself.
+    workbench_capabilities = 0
+    workbench_note = ""
+    workbench_snapshot_id = str(workbench_snapshot.get("snapshot_id") or "").strip() if isinstance(
+        workbench_snapshot, dict
+    ) else ""
+    if workbench_snapshot_id:
+        if workbench_snapshot_id == state.get("workbench_snapshot_id"):
+            workbench_note = f"snapshot {workbench_snapshot_id} already projected"
+        else:
+            try:
+                capability_projection = WorkbenchCapabilityAdapter().project(workbench_snapshot)
+            except (TypeError, ValueError) as exc:
+                workbench_note = f"workbench snapshot rejected: {exc}"
+            else:
+                for unit in capability_projection.corpus:
+                    if len(records) >= max_records:
+                        break
+                    record = workbench_training_record(dict(unit.content))
+                    digest = _digest(record["text"])
+                    if digest in projected or digest in digests:
+                        # Already written by an earlier capped pass.
+                        continue
+                    records.append(record)
+                    digests.append(digest)
+                    workbench_capabilities += 1
+                if len(records) < max_records:
+                    # Everything the snapshot declares is now on record (written
+                    # here or by an earlier capped pass): roll the id forward so
+                    # future passes skip re-projection entirely.
+                    state["workbench_snapshot_id"] = workbench_snapshot_id
+                workbench_note = (
+                    f"projected {workbench_capabilities}/"
+                    f"{len(capability_projection.corpus)} capabilities from "
+                    f"snapshot {workbench_snapshot_id}"
+                )
+
     stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
     corpus_name = f"corpus-{stamp}-{pass_id}.jsonl"
     relative = os.path.join("consolidated", corpus_name).replace("\\", "/")
     by_source = {
         "constraints": sum(1 for record in records if CONSTRAINT_QUESTION in record["text"]),
-        "interactions": sum(1 for record in records if CONSTRAINT_QUESTION not in record["text"]),
+        "interactions": sum(1 for record in records if CONSTRAINT_QUESTION not in record["text"] and WORKBENCH_ANSWER_LEAD not in record["text"]),
+        "workbench_capabilities": sum(1 for record in records if WORKBENCH_ANSWER_LEAD in record["text"]),
     }
     if not records:
         # Nothing new: roll the skips forward, and leave every earlier corpus alone.
@@ -324,6 +378,7 @@ def project(state: dict[str, Any], *, max_records: int, pass_id: str) -> dict[st
             "records": 0,
             "by_source": by_source,
             "skipped": {"aborted_interactions": aborted},
+            "workbench_note": workbench_note,
             "digests": digests,
         }
     os.makedirs(_corpus_dir(), exist_ok=True)
@@ -339,8 +394,11 @@ def project(state: dict[str, Any], *, max_records: int, pass_id: str) -> dict[st
         "by_source": by_source,
         "skipped": {"aborted_interactions": aborted, "already_projected": len(projected)},
         "constraint_question": CONSTRAINT_QUESTION,
+        "workbench_snapshot_id": workbench_snapshot_id,
+        "workbench_note": workbench_note,
         "policy": (
             "constraints are projected as one 问/答 record each; interactions replay verbatim; "
+            "workbench capabilities project once per snapshot via the no-prose template; "
             "already-projected text and aborted interactions are skipped"
         ),
     }
@@ -360,6 +418,7 @@ def project(state: dict[str, Any], *, max_records: int, pass_id: str) -> dict[st
         "records": len(records),
         "by_source": manifest["by_source"],
         "skipped": {"aborted_interactions": aborted},
+        "workbench_note": workbench_note,
         "digests": digests,
     }
 
@@ -501,7 +560,21 @@ def run(
         pass_id = uuid.uuid4().hex[:12]
         state = _load_state()
         metrics = analyze(state)
-        projection = project(state, max_records=max(1, int(max_records)), pass_id=pass_id)
+        # C6 P1: the workbench capability snapshot rides the pass when the
+        # runtime can hand it over; anything the pass cannot measure is a note,
+        # never a guess.
+        workbench_snapshot = None
+        workbench_fetch_note = ""
+        try:
+            workbench_snapshot = runtime.workbench_environment.capability_snapshot.to_payload()
+        except Exception as exc:  # noqa: BLE001 - reported, never guessed
+            workbench_fetch_note = f"workbench snapshot unavailable: {exc}"
+        projection = project(
+            state,
+            max_records=max(1, int(max_records)),
+            pass_id=pass_id,
+            workbench_snapshot=workbench_snapshot,
+        )
         reason_ready = ready_reason(metrics)
         spec = _spec_payload(metrics, projection, reason_ready or f"not ready: {reason}")
         _add_recommendations(spec, projection)
@@ -547,6 +620,7 @@ def run(
                 "by_source": projection["by_source"],
                 "skipped": projection["skipped"],
                 "manifest": projection["manifest"],
+                "workbench_note": projection.get("workbench_note") or workbench_fetch_note,
             },
             "spec": {
                 "written": spec_written,

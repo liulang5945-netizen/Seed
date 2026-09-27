@@ -589,10 +589,129 @@ def runtime_event_to_experience(
     )
 
 
+class WorkbenchCapabilityAdapter:
+    """Project the native workbench capability snapshot into corpus units.
+
+    One declared capability becomes one affordance unit; the snapshot itself is
+    the source, so a capability-set change is a new source version.  The corpus
+    content carries the structured declaration — what reaches a training record
+    is decided by :func:`render_workbench_no_prose`, the template PLAN-M6-01
+    approved (C6 P1): the identifier plus the Chinese risk/reversibility/category
+    labels, without the runtime's English prose.
+    """
+
+    source_kind = "workbench"
+
+    def project(
+        self, snapshot: Mapping[str, Any], *, partition: str = "train"
+    ) -> ArtifactCorpusProjection:
+        if not isinstance(snapshot, Mapping):
+            raise TypeError("Workbench capability snapshot must be a mapping")
+        safe, flags = _safe_source(snapshot)
+        if not isinstance(safe, Mapping):
+            raise TypeError("Workbench capability snapshot must be mapping-like")
+        source_id = _required(safe, "snapshot_id")
+        source_version = _required(safe, "revision")
+        scope_id = _optional(safe, "scope_id", "scope")
+        publisher = _optional(safe, "owner", "publisher")
+        source_digest = content_digest(safe)
+        capabilities = [
+            item
+            for item in _entries(safe.get("capabilities"))
+            if isinstance(item, Mapping) and str(item.get("capability_id", "")).strip()
+        ]
+        if not capabilities:
+            raise ValueError("workbench capability snapshot declares no usable capability")
+        units: list[EvolutionCorpusArtifact] = []
+        for item in capabilities:
+            capability_id = str(item.get("capability_id", "")).strip()
+            content = {
+                "capability_id": capability_id,
+                "risk": item.get("risk", ""),
+                "reversible": bool(item.get("reversible", False)),
+                "category": str(item.get("category", "")),
+                "parameters": _content(item.get("parameters")),
+                "description": str(item.get("description", "")),
+            }
+            units.append(
+                _make_unit(
+                    source_kind=self.source_kind,
+                    source_id=source_id,
+                    source_version=source_version,
+                    source_digest=source_digest,
+                    publisher=publisher,
+                    scope_id=scope_id,
+                    unit_kind="affordance",
+                    content=content,
+                    partition=partition,
+                    redaction_flags=flags,
+                )
+            )
+        return ArtifactCorpusProjection(
+            self.source_kind,
+            source_id,
+            source_version,
+            source_digest,
+            scope_id,
+            publisher,
+            tuple(units),
+            tuple(sorted(flags)),
+        )
+
+
+WORKBENCH_QUESTION = "这个运行环境的工作台现在可以执行哪些操作？"
+WORKBENCH_ANSWER_LEAD = "当前工作台声明了以下能力。"
+
+
+def render_workbench_no_prose(capability: Mapping[str, Any]) -> str:
+    """Render one capability in the approved no-prose template.
+
+    The identifier plus the Chinese risk/reversibility/category labels only:
+    the runtime's own English description and parameter notes stay out of the
+    rendered text (PLAN-M6-01 decision 2, Z1b reading — CJK median 0.503 vs
+    0.243 literal).  The result is the answer body after
+    :data:`WORKBENCH_ANSWER_LEAD`.
+    """
+
+    safe, _ = _safe_source(capability)
+    if not isinstance(safe, Mapping):
+        raise TypeError("capability must be a mapping")
+    identifier = str(safe.get("capability_id", "")).strip()
+    if not identifier:
+        raise ValueError("capability render requires a non-empty capability_id")
+    parts = [identifier]
+    risk = safe.get("risk")
+    if isinstance(risk, str) and risk:
+        parts.append(f"风险等级 {risk}")
+    reversible = safe.get("reversible")
+    if isinstance(reversible, bool):
+        parts.append("可逆" if reversible else "不可逆")
+    category = safe.get("category")
+    if isinstance(category, str) and category:
+        parts.append(f"类别 {category}")
+    return "；".join(part for part in parts if part) + "。"
+
+
+def workbench_training_record(capability: Mapping[str, Any]) -> dict[str, str]:
+    """Return the 问/答 dialogue record one capability renders into."""
+
+    return {
+        "text": (
+            f"问：{WORKBENCH_QUESTION}\n"
+            f"答：{WORKBENCH_ANSWER_LEAD}{render_workbench_no_prose(capability)}"
+        )
+    }
+
+
 __all__ = [
     "ArtifactCorpusProjection",
     "ClientPluginArtifactAdapter",
     "McpArtifactAdapter",
     "SkillArtifactAdapter",
+    "WORKBENCH_ANSWER_LEAD",
+    "WORKBENCH_QUESTION",
+    "WorkbenchCapabilityAdapter",
+    "render_workbench_no_prose",
     "runtime_event_to_experience",
+    "workbench_training_record",
 ]

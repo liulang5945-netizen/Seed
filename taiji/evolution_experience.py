@@ -247,6 +247,11 @@ class EvolutionCorpusArtifact:
             "mcp_artifact",
             "client_plugin_artifact",
             "verified_domain_material",
+            # C6 P1 (PLAN-M6-01, owner-approved 2026-09-27): the native workbench
+            # capability snapshot joins the declarative family. Additive kind —
+            # EVOLUTION_CONTRACT_VERSION stays 1; older builds reject this kind
+            # loudly rather than mis-read it.
+            "workbench_artifact",
         }:
             raise ValueError("unsupported evolution corpus source_kind")
         if self.unit_kind not in EVOLUTION_CORPUS_UNIT_KINDS:
