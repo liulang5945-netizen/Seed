@@ -38,9 +38,9 @@
 
 ### M6 开放项（2026-09-26 就地修订；细节与读数在 03 §5.7 的 Taiji Harness 活动卡，交付就绪与裁定单在 [TAIJI_G5_READINESS_20260926](../reference/TAIJI_G5_READINESS_20260926.md)）
 
-> **2026-09-27 裁定状态**：七项 owner 裁定经弹窗全批（回执在 G5 §8 顶部）。执行状态：**D3 已落地**（默认 provider→taiji-local，keyless 四条 overlay 钉回 DeepSeek 前提，13 用例全绿）；**R4 已落值**（`.env.windows`＝com.taiji.harness＋无自动更新声明，unsigned 打包进行中）；**金样 normalize→refresh**、**判据③ 真机回合**、**C6 P1**、**D2 独立通道**＝已批待执行（各自独立成刀）；回放件＝暂缓。
+> **2026-09-27 裁定状态**：七项 owner 裁定经弹窗全批（回执在 G5 §8 顶部）。执行状态：**D3 已落地**（默认 provider→taiji-local，keyless 四条 overlay 钉回 DeepSeek 前提，13 用例全绿）；**R4 已落值**（`.env.windows`＝com.taiji.harness＋无自动更新声明，unsigned 打包推进至外部下载阶段，揪出并修复 ui-life 版本欠账）；**金样 normalize→refresh 已执行**（(丙)三件平台处置＋plugin-manager {{home}} 破案＝ariaSnapshot 反斜杠翻倍；8 金样保留 2 份污染回退；验证批 23 红｜50 过——9 lane 脱红）；**判据③ 已收官**（六步全通，G4 完成）；**C6 P1、D2 独立通道**＝已批待执行（各自独立成刀）；回放件＝暂缓。
 
-1. **G4 判据③**（面板点真训练→进度流→停止→检查点新增复验；再真续训、真激活各一回合）——**按所有者裁定等 R2 窗口收束**再做，恢复条件不由「继续推进」字样自动触发（03 §5.7 两项裁定条）。
+1. ~~**G4 判据③**（面板点真训练→进度流→停止→检查点新增复验；再真续训、真激活各一回合）~~ ⇒ **2026-09-27 真机回合收官（03 §5.7）**：六步全通——启动训练（面板转训练中）→进度流接通→停止（回空闲）→新检查点 `seed_native.pt` 复验→真续训（产物 `resumed_seed_native.pt`）→真激活（「再次点击确认」机制，active 由 seed_beta.pt 翻转）。**G4 六判据①②③④⑤⑥全数有真机读数 ⇒ G4 完成**。
 2. ~~**未闭合 I**：模型面板缺 Taiji 组 ⇒ 默认模型不可用、composer 被挡、真机 UI 回合取不到~~ ⇒ **2026-09-25 已定位、修复并产品级复验**：根因是就绪只在 load 与 `loader/volatile-update` 采样一次，运行时冷启动晚于 harness 启动即**永久**不注册（`listProviders()` 只列有 adapter 的 provider，而 `buildModelCatalog` 只读它）；改为按 `readinessPollMs`（默认 5s）在插件存活期内再探测，单元与真组合红绿各跑。**真机红绿（同一 web 实例、未重启）**：路由指向空端口启动 ⇒ 模型面无 Taiji 组、composer 停在「当前模型不可用」；假运行时就绪 ⇒ `group Taiji（本地运行时）` 自行出现且 radio `checked`。判据⑤ 的另两半（启动即就绪时 `taijiAtBoot=true`、**发一个普通对话回合成功**「已完成工作 用时 11 秒／1 轮 1 步」）同批复验 ⇒ C2 批「真机 UI 回合未取得」补上（详见 03 §5.7）。
 3. ~~**i18n pairing 全仓欠账**（约 252 对 out-of-sync，G2 rename 改了两侧 `.md` 未重录 `.i18n.yaml`）~~ ⇒ **2026-09-25 全部销账**：按裁定分两批「先核对后重录」（第一批 `docs/subsystems` 19 对＝`f6f9eb6a`；第二批余 233 对＝`5d7ed3e4`）。核对判据＝逐对取「该对 `.i18n.yaml` 最后一次被确认的提交」到 HEAD 的**两侧** diff，断言每处改动只是 `@deepseek-ai/`→`@taiji/` 更名、且两侧更名次数逐对相等；**251 对纯机械、1 对（`CONTRIBUTING` 的 slogan 改写）逐字人工读过** ⇒ 零文档正文改动，全仓门转绿（**1099 对全一致**）。
 4. ~~**6 个在飞文件**~~ **已查清为行尾幻影（2026-09-25 实测）**：`life-context` ×4、`session-memory-taiji` ×2 在 `git status` 显示 `M`，而 `git diff HEAD --numstat` 为空 ⇒ 与 HEAD 零内容差（`core.autocrlf=true` 所致）；**无待裁定的在飞改动，升级重放不被它阻塞**（08 §6）。
