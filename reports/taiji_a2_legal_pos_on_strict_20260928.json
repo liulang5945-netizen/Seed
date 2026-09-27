@@ -1,0 +1,760 @@
+{
+  "format": "taiji-r2-copy-strict-cap-recompute-v1",
+  "definition": "hit_strict ⇔ 某期望词既在更早用户轮原文里逐字出现（可复制），又出现在答案里；单轮题与通用词自动排除。",
+  "manifest": "plans/manifests/cap0_eval_set_v2.json",
+  "strict_eligible_by_dimension": {
+    "C": 0,
+    "D": 16,
+    "E": 0
+  },
+  "reports": [
+    {
+      "source_report": "reports\\taiji_a2_legal_pos_on_cap_20260928.json",
+      "source_format": "taiji-r2-copy-circuit-chat-cap-v1",
+      "source_prereg": "plans/reference/M5_R2_A2_3_PREREG_20260925.md §4-S2（判据沿用）",
+      "criterion": "A2.4 重测未通过（如实记录）",
+      "arms": {
+        "control_no_circuit": {
+          "items": 36,
+          "correct_loose": 3,
+          "correct_strict": 0,
+          "strict_eligible_items": 16,
+          "rows": [
+            {
+              "id": "D01",
+              "dimension": "D",
+              "hit": false,
+              "answer": "在市为佹是劀耧成为对为的用程，对产品牌先求�",
+              "copyable_tokens": [
+                "阿岩"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D02",
+              "dimension": "D",
+              "hit": false,
+              "answer": "在和上星是具有具有度，仹是上具有和有具的的�",
+              "copyable_tokens": [
+                "杭州"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D03",
+              "dimension": "D",
+              "hit": true,
+              "answer": "仹是上性有和先搃体徃的的性漌先为年是光入程�",
+              "copyable_tokens": [
+                "简短"
+              ],
+              "hit_loose": true,
+              "hit_strict": false
+            },
+            {
+              "id": "D04",
+              "dimension": "D",
+              "hit": false,
+              "answer": "入程的知对佹是具有具有具照品特徃罿是是一上�",
+              "copyable_tokens": [
+                "17"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D05",
+              "dimension": "D",
+              "hit": false,
+              "answer": "在弌高知名特具照品牌高是上瀧捍算是是具煷有�",
+              "copyable_tokens": [
+                "Seed"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D06",
+              "dimension": "D",
+              "hit": false,
+              "answer": "光的扌入煥牌高瘯上性捍算怂\n为具煥先是上高的",
+              "copyable_tokens": [
+                "阿岩"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D07",
+              "dimension": "D",
+              "hit": false,
+              "answer": "具照品牌需轌丂具眉具的的技耂和成卹之市具算�",
+              "copyable_tokens": [
+                "杭州"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D08",
+              "dimension": "D",
+              "hit": false,
+              "answer": "具煥的的技求在市产品的的理它体得据高是昘瀂",
+              "copyable_tokens": [
+                "绿茶"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D09",
+              "dimension": "D",
+              "hit": false,
+              "answer": "入理丹是具有具有具照品的知彯仹是是一个常具�",
+              "copyable_tokens": [
+                "42"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D10",
+              "dimension": "D",
+              "hit": false,
+              "answer": "具照品牌高知和使电具有具照品牌具煄知彯仹是�",
+              "copyable_tokens": [
+                "小林"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D11",
+              "dimension": "D",
+              "hit": false,
+              "answer": "在和高知彯丂它罓它理的技耧樹是具有入児的的�",
+              "copyable_tokens": [
+                "南京"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D12",
+              "dimension": "D",
+              "hit": false,
+              "answer": "入的知彯丂它体的技有和慍电记怂\n一怂在具程的",
+              "copyable_tokens": [
+                "23"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D13",
+              "dimension": "D",
+              "hit": false,
+              "answer": "对丂\n伌先是是上性捍算求児电而有具煄查的电讃",
+              "copyable_tokens": [
+                "测试"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D18",
+              "dimension": "D",
+              "hit": false,
+              "answer": "对丂上性捍和慍先損弌児的知当对仹是是一性品�",
+              "copyable_tokens": [
+                "阿岩",
+                "杭州",
+                "17"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D19",
+              "dimension": "D",
+              "hit": false,
+              "answer": "在市丂对使是是一性捹具有具有品的的的性的电�",
+              "copyable_tokens": [
+                "Seed",
+                "接口"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D20",
+              "dimension": "D",
+              "hit": false,
+              "answer": "在和高，以的算有是是具照品牌具照品的知彯仹�",
+              "copyable_tokens": [
+                "绿茶",
+                "17"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E01",
+              "dimension": "E",
+              "hit": false,
+              "answer": "在丹狹是丹具有扌具机的的漌先損特它仹是丂在�",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E02",
+              "dimension": "E",
+              "hit": false,
+              "answer": "对丹縺牌先是为具球大的知名理对使电和需覂为�",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E03",
+              "dimension": "E",
+              "hit": false,
+              "answer": "在和丹是具有具有座的的电和高是丂它体它体它�",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E04",
+              "dimension": "E",
+              "hit": false,
+              "answer": "在具的知对是以上光对批批徃內品的的性的电对�",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E05",
+              "dimension": "E",
+              "hit": false,
+              "answer": "先的知彿电入先为具有先是以电具有徃大的的电�",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E06",
+              "dimension": "E",
+              "hit": false,
+              "answer": "对之瀧樋和高电讗有知和对上瀧有和先理具的的�",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E07",
+              "dimension": "E",
+              "hit": false,
+              "answer": "具算有具照和高知彿用名罆它仹是于具有具有具�",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E08",
+              "dimension": "E",
+              "hit": false,
+              "answer": "对丹縂入理它理丸电先是是为体具程的的扌具有�",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E09",
+              "dimension": "E",
+              "hit": false,
+              "answer": "入电的知牌入罓电和高是上瀧捍箃徾得涹是昘是�",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E10",
+              "dimension": "E",
+              "hit": false,
+              "answer": "对丹縂入电名电名电和适\n程和对使用弌对上瀧有",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E11",
+              "dimension": "E",
+              "hit": false,
+              "answer": "对丂入牌先求对佧品的牌先求和免电计的汈是一�",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E12",
+              "dimension": "E",
+              "hit": false,
+              "answer": "对丹是是是和具照的用和先理的的琂场记昘是上�",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E13",
+              "dimension": "E",
+              "hit": false,
+              "answer": "入电入电光大的电电和高是上瀧捍箃具有具照品�",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E14",
+              "dimension": "E",
+              "hit": false,
+              "answer": "对丂入电者对是是是和具程的用和高瘘是具球电�",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E15",
+              "dimension": "E",
+              "hit": false,
+              "answer": "它以的的有具照和高知先理它仹上适\n伌免电和捹",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E16",
+              "dimension": "E",
+              "hit": false,
+              "answer": "入牌光照品特光的特是具有和高的电和高知彯品�",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E17",
+              "dimension": "E",
+              "hit": true,
+              "answer": "它理特的的有牌具煉的用和高瘘是上瀧捍箃兯为�",
+              "copyable_tokens": [],
+              "hit_loose": true,
+              "hit_strict": false
+            },
+            {
+              "id": "E18",
+              "dimension": "E",
+              "hit": false,
+              "answer": "对丹是丹是先琧使用先理的算有先是具照和高瘘�",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E19",
+              "dimension": "E",
+              "hit": false,
+              "answer": "具的知度体电光的技腛先理內的知名算，佹是上�",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E20",
+              "dimension": "E",
+              "hit": true,
+              "answer": "具照的知和高瘘是上瀧捍算批是对为具照和高的�",
+              "copyable_tokens": [],
+              "hit_loose": true,
+              "hit_strict": false
+            }
+          ]
+        },
+        "treated_with_circuit": {
+          "items": 36,
+          "correct_loose": 9,
+          "correct_strict": 7,
+          "strict_eligible_items": 16,
+          "rows": [
+            {
+              "id": "D01",
+              "dimension": "D",
+              "hit": true,
+              "answer": "阿岩阿岩�。岩阿岩��。岩阿岩��。岩��阿岩����。�",
+              "copyable_tokens": [
+                "阿岩"
+              ],
+              "hit_loose": true,
+              "hit_strict": true
+            },
+            {
+              "id": "D02",
+              "dimension": "D",
+              "hit": true,
+              "answer": "杭州杭州杭州我佝��杭州杭州我佝��户��州�������",
+              "copyable_tokens": [
+                "杭州"
+              ],
+              "hit_loose": true,
+              "hit_strict": true
+            },
+            {
+              "id": "D03",
+              "dimension": "D",
+              "hit": false,
+              "answer": "回短��短健�我矁����戟戟戟戟回短健��箮箮短短���",
+              "copyable_tokens": [
+                "简短"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D04",
+              "dimension": "D",
+              "hit": true,
+              "answer": "77777数孯 177777�77777�777777�777777777777�777777777777777",
+              "copyable_tokens": [
+                "17"
+              ],
+              "hit_loose": true,
+              "hit_strict": true
+            },
+            {
+              "id": "D05",
+              "dimension": "D",
+              "hit": false,
+              "answer": "�d � Sed Sed。� S Sed Sed Sed。�� S S Sed S Sed�� S S S S S",
+              "copyable_tokens": [
+                "Seed"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D06",
+              "dimension": "D",
+              "hit": true,
+              "answer": "岩阿�岩�。岩阿岩��。岩��。岩��阿岩����。岩�������",
+              "copyable_tokens": [
+                "阿岩"
+              ],
+              "hit_loose": true,
+              "hit_strict": true
+            },
+            {
+              "id": "D07",
+              "dimension": "D",
+              "hit": true,
+              "answer": "4��住���杭��杭州杭州我佝���杭州杭州杭州杭州�",
+              "copyable_tokens": [
+                "杭州"
+              ],
+              "hit_loose": true,
+              "hit_strict": true
+            },
+            {
+              "id": "D08",
+              "dimension": "D",
+              "hit": true,
+              "answer": "欢欢茶戶䶊欢�欢茶绿茶欢�欢茶。欢欢�欢茶绿�",
+              "copyable_tokens": [
+                "绿茶"
+              ],
+              "hit_loose": true,
+              "hit_strict": true
+            },
+            {
+              "id": "D09",
+              "dimension": "D",
+              "hit": true,
+              "answer": "2242242242242242毯222222222222222毯22222222222222。2222222222",
+              "copyable_tokens": [
+                "42"
+              ],
+              "hit_loose": true,
+              "hit_strict": true
+            },
+            {
+              "id": "D10",
+              "dimension": "D",
+              "hit": false,
+              "answer": "阿岩��。岩阿岩��。岩��。岩��阿岩����。岩����������",
+              "copyable_tokens": [
+                "小林"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D11",
+              "dimension": "D",
+              "hit": false,
+              "answer": "��杭��州杭州我佝��我佝��杭州杭州我佝�杭州杭州",
+              "copyable_tokens": [
+                "南京"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D12",
+              "dimension": "D",
+              "hit": false,
+              "answer": "777777777数�77777777777777777777数7777777777777777数77777777",
+              "copyable_tokens": [
+                "23"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D13",
+              "dimension": "D",
+              "hit": false,
+              "answer": "接责接责接责掌负负负负负负负负负负负负负负�",
+              "copyable_tokens": [
+                "测试"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D18",
+              "dimension": "D",
+              "hit": false,
+              "answer": "阿�岩�。岩阿瀂岩��。岩��。岩���。岩������岩����阿",
+              "copyable_tokens": [
+                "阿岩",
+                "杭州",
+                "17"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D19",
+              "dimension": "D",
+              "hit": false,
+              "answer": "曮 Sed Sed。� S Sed Sed Sed。�� S S Sed S Sed。�� S S S S",
+              "copyable_tokens": [
+                "Seed",
+                "接口"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D20",
+              "dimension": "D",
+              "hit": false,
+              "answer": "�说说说说说说茶说茶。欢�说说说说说说茉欢说",
+              "copyable_tokens": [
+                "绿茶",
+                "17"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E01",
+              "dimension": "E",
+              "hit": false,
+              "answer": "在丹狹是丹具有扌具机的的漌先損特它仹是丂在�",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E02",
+              "dimension": "E",
+              "hit": false,
+              "answer": "对丹縺牌先是为具球大的知名理对使电和需覂为�",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E03",
+              "dimension": "E",
+              "hit": false,
+              "answer": "在和丹是具有具有座的的电和高是丂它体它体它�",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E04",
+              "dimension": "E",
+              "hit": false,
+              "answer": "在具的知对是以上光对批批徃內品的的性的电对�",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E05",
+              "dimension": "E",
+              "hit": false,
+              "answer": "先的知彿电入先为具有先是以电具有徃大的的电�",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E06",
+              "dimension": "E",
+              "hit": false,
+              "answer": "对之瀧樋和高电讗有知和对上瀧有和先理具的的�",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E07",
+              "dimension": "E",
+              "hit": false,
+              "answer": "具算有具照和高知彿用名罆它仹是于具有具有具�",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E08",
+              "dimension": "E",
+              "hit": false,
+              "answer": "对丹縂入理它理丸电先是是为体具程的的扌具有�",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E09",
+              "dimension": "E",
+              "hit": false,
+              "answer": "入电的知牌入罓电和高是上瀧捍箃徾得涹是昘是�",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E10",
+              "dimension": "E",
+              "hit": false,
+              "answer": "对丹縂入电名电名电和适\n程和对使用弌对上瀧有",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E11",
+              "dimension": "E",
+              "hit": false,
+              "answer": "对丂入牌先求对佧品的牌先求和免电计的汈是一�",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E12",
+              "dimension": "E",
+              "hit": false,
+              "answer": "对丹是是是和具照的用和先理的的琂场记昘是上�",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E13",
+              "dimension": "E",
+              "hit": false,
+              "answer": "入电入电光大的电电和高是上瀧捍箃具有具照品�",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E14",
+              "dimension": "E",
+              "hit": false,
+              "answer": "对丂入电者对是是是和具程的用和高瘘是具球电�",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E15",
+              "dimension": "E",
+              "hit": false,
+              "answer": "它以的的有具照和高知先理它仹上适\n伌免电和捹",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E16",
+              "dimension": "E",
+              "hit": false,
+              "answer": "入牌光照品特光的特是具有和高的电和高知彯品�",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E17",
+              "dimension": "E",
+              "hit": true,
+              "answer": "它理特的的有牌具煉的用和高瘘是上瀧捍箃兯为�",
+              "copyable_tokens": [],
+              "hit_loose": true,
+              "hit_strict": false
+            },
+            {
+              "id": "E18",
+              "dimension": "E",
+              "hit": false,
+              "answer": "对丹是丹是先琧使用先理的算有先是具照和高瘘�",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E19",
+              "dimension": "E",
+              "hit": false,
+              "answer": "具的知度体电光的技腛先理內的知名算，佹是上�",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E20",
+              "dimension": "E",
+              "hit": true,
+              "answer": "具照的知和高瘘是上瀧捍算批是对为具照和高的�",
+              "copyable_tokens": [],
+              "hit_loose": true,
+              "hit_strict": false
+            }
+          ]
+        }
+      },
+      "extra": {
+        "identical_answer_arms": 20,
+        "strict_hit_not_loose": 0
+      }
+    }
+  ]
+}
