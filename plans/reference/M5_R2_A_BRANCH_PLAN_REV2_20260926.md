@@ -506,6 +506,27 @@ owner 选"2 之后 3"，SPEC-R2-02 已把解码掩码产品化——产品表层
 
 ## 11. 修订记录
 
+* **rev14（2026-09-28，按 rev13 的结论起"给复述训一条通路"两臂；先补了一处漏接线）**：
+  rev13 的判读是"缺一条被训练过、朝复述方向的通路"，所以下一刀＝**在合法通道上把 A2 电路训起来**
+  （A2 电路是迄今唯一被证明能把实体带到出口的机构）。开跑前被一处漏接线挡下并已修：
+  **A2 电路训练器直接调 `readout.probabilities(ctx, …)` 重算"当前状态"那份分布，却没带位置列**
+  ⇒ 在开启位置输入的基底上被读出自己的守卫当场抛
+  `readout_utf8_position_input is enabled but no utf-8 position state was supplied`（**守卫奏效**）。
+  修法＝两处调用带 `position_state=state.motor_position_class`（提交 `42edda93`）；
+  在 `pos_on` 基底上 6 分钟 judge 探针通过（address_top1 0.7753、gate_abs_mean 25.14、
+  selection_pick 1.0、`criteria_pass=true`，临时产物已清）。
+
+  **两臂设计（同配方、唯一变量＝基底）**：`--stage judge --protocol chat`，各 ≤90 分钟；
+  ① `--base-checkpoint output/taiji_r2_plan01_pos_on/checkpoint.pt`（合法通道）→
+  `output/taiji_a2_base_pos_on`；② `--base-checkpoint output/taiji_r2_plan01_pos_off/checkpoint.pt`
+  （同配方对照）→ `output/taiji_a2_base_pos_off`。**判读前置（写死）**：
+  先用 `score_taiji_r2_copy_circuit_chat_cap.py` 出 CAP 严格命中／v3 严格真命中，
+  与历史 A2.3b（seed_beta 基底、6–7/16）**并列**报出 ⇒ 三点比较可把
+  "读出重训"（seed_beta→pos_off）与"位置输入"（pos_off→pos_on）**分开**。
+  **明确不预设方向**：合法通道未必让命中升高——A2.3b 历史命中本就只要求"实体词出现在串里"，
+  通道变合法后"命中"这个词的含义会变，报告里必须同时给可解码率/成句率三列（§6 制度 7）。
+  状态：**两臂已起跑**（首臂 1 分钟 ≈50 episodes，与探针同轨）。
+
 * **rev12（2026-09-28，F1 问法效应与"语境保持曲线"两支探针**双废**；但给出三条硬读数）**：
   两支零训练探针都**没有产出结论**（各自的正对照/零假设把它挡下），但挡下的理由本身是读数：
 
