@@ -186,6 +186,7 @@ A 支线状态不变：表层判据冻结、L1/L2 诊断可用；G8/后果语义
 | `SPEC-A-21` | `SPEC-A-21_r2_surface_extension_prereg_20260925.md`（**新建即按本表编号**；§4.3a 表层子判据的扩展分母） |
 | `SPEC-A-22` | `SPEC-A-22_r2_a2_5_query_conditioned_selector_prereg_20260926.md`（**新建即按本表编号**；A2.5 开案预注册：判据与评测协议先于代码冻结） |
 | `PLAN-M6-01` | `PLAN-M6-01_experience-projection-producer_20260926.md`（**新建即按本表编号**；C6 经验投影的生产者／消费者／物料／**渲染器**四缺口、`WorkbenchCapabilityAdapter` 与已跑的 Z1／Z1b 前置否证门＋其读数） |
+| `PLAN-A-25` | `PLAN-A-25_copy-evidence-utf8-gate_20260928.md`（**新建即按本表编号**；按 UTF-8 位置状态门控复制回路的加性证据——由来是 rev18 实测"位置输入保住的合法性被电路证据打回去"，默认关、零训练可判） |
 | `FIX-B-01` | `project_audit_fixes_20260823.md` / `project_audit_fixes_p2_20260823.md` |
 | `CONV-B-02` | `docs/metrics_conventions.md` / `docs/REPO_HYGIENE_RULES.md` / `docs/FOLDER_STRUCTURE_RULES.md` |
 
