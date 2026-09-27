@@ -13,8 +13,11 @@
 ## 2 环境硬约束
 
 - Python 用 `C:/Users/23747/AppData/Local/Programs/Python/Python312/python.exe`（managed 3.13 无 torch/ruff）。
-- **bash 无 ls/cat/grep/head/tail/mkdir/rm**：文件用 Read/Write/Edit/Glob/Grep，目录/过滤用 `python -c`
+- **bash 部分命令缺失**：实测**有** `du`/`find`/`ls`（`/usr/bin/`），别再假设全无；仍按缺处理
+  cat/grep/head/tail/mkdir/rm。文件用 Read/Write/Edit/Glob/Grep，目录/过滤用 `python -c`
   或 `| python.exe -c "…"`。**管道里缺失命令会 SIGPIPE 杀掉上游 Python**。
+- **统计大目录体积一律用 `du`，禁用 Python `os.walk`**：harness 的 node_modules 用 Python 遍历
+  36 min 未出结果，`du -d 1` 只用 56 s（差一个数量级以上）。
 - **反引号在任何 shell 引号里都会被命令替换**（同一天内已踩 **8** 次，规则写着照样犯）⇒
   **多行文本一律先 Write 成文件再合并，禁止写进 `python -c` 的字符串**（连"追加一段 Markdown"都会中招：
   标识符被吃空、三引号串被打断）。严禁 heredoc。
@@ -63,3 +66,8 @@
 - **产品侧工程支线**（不入研究主线）：前端 TS 地基 + Electron 壳 + 打包链路，见
   `plans/reference/FRONTEND_TS_VS_HARNESS_ADOPTION_DECISION_BRIEF_20260921.md`。
 - 回退备份 `E:/Seed-backup-{git,secrets}-20260919`；未确认前别跑 `git gc`/`prune`。
+- **仓库体积账（2026-09-27 只读扫描）**：全仓 ~121 GB。零风险可删 1.86 GB（`scripts/clean_worktree.py`
+  dry-run，程序自建）；harness 构建/依赖缓存 7.3 GB（可重建，重编译成本）；实验产物 output+outputs
+  ≈51 GB（**删=重跑 GPU，需 owner 裁决**）；data 60 GB 不删。
+  **git 不需要瘦身**（已入库仅 213.78 MiB、无 .pt）。详见
+  `plans/reference/REPO_CLEANUP_ASSESSMENT_20260927.md`。
