@@ -5,7 +5,7 @@
   --dsh-boot-label-secondary: #61666b;
   --dsh-boot-label-tertiary: #81858c;
   --dsh-boot-border: rgb(0 0 0 / 10%);
-  --dsh-boot-brand: #0f1115;
+  --dsh-boot-brand: #3f8f45;
 
   height: 100%;
   display: grid;
@@ -18,7 +18,7 @@
   --dsh-boot-label-secondary: #cfd3d6;
   --dsh-boot-label-tertiary: #adb2b8;
   --dsh-boot-border: rgb(255 255 255 / 12%);
-  --dsh-boot-brand: #f9fafb;
+  --dsh-boot-brand: #6fb05c;
 }
 
 .card {

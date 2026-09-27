@@ -67,7 +67,7 @@ Every package below exports a Cordis plugin that a bundle patch can name in a Lo
 | `@taiji/dsh-client-ui-agent-preset` | no | Agent-preset surfaces: the default for later sessions, this session's seat, and the composition editor |
 | `@taiji/dsh-client-ui-approval` | no | Approval composer takeover over the scoped Remote Event waterfall |
 | `@taiji/dsh-client-ui-attachment` | no | Dynamic attachment presentation plugin for conversation input, message-image, and trajectory image slots |
-| `@taiji/dsh-client-ui-brand-official` | no | Official DeepSeek Harness brand occupants for the Web client's sidebar slots |
+| `@taiji/dsh-client-ui-brand-official` | no | Official Seed brand occupants for the Web client's sidebar slots |
 | `@taiji/dsh-client-ui-chat` | no | Chat Conversation target, node definitions, renderers, and details surface |
 | `@taiji/dsh-client-ui-commands` | no | Client command surface: global directory cache, '/' source, three command UI kinds, popupSelect registry |
 | `@taiji/dsh-client-ui-conversation` | no | Target-neutral Conversation assembly, shell, composer, queue, and view navigation |
@@ -90,7 +90,6 @@ Every package below exports a Cordis plugin that a bundle patch can name in a Lo
 | `@taiji/dsh-client-ui-schedule` | no | Read-only active Schedule catalog in the Web Session header |
 | `@taiji/dsh-client-ui-session` | no | Session Controller adapter for React and session-scoped slots |
 | `@taiji/dsh-client-ui-settings` | no | Settings domain base plugin: shared configuration forms and the canonical settings slot-type contract |
-| `@taiji/dsh-client-ui-settings-account` | yes | Manage DeepSeek login and open Platform billing pages |
 | `@taiji/dsh-client-ui-settings-agent-loop` | no | Settings page of the agent loop on the dsh web client's Plugins page: the parallel tool-call cap of the agent-loop namespace |
 | `@taiji/dsh-client-ui-settings-general` | no | Settings ownerless-copy and product onboarding plugin: the General section, shell trigger/header chrome content, settings dictionaries, and the versioned welcome notice |
 | `@taiji/dsh-client-ui-settings-models` | yes | Models settings and shared product-onboarding dialogs over existing settings and credential joins |

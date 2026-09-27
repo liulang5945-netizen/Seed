@@ -176,8 +176,7 @@
     "@taiji/schemastery": "workspace:^",
     "commander": "^15.0.0",
     "open": "^11.0.0",
-    "@taiji/dsh-api-account-controller": "workspace:^",
-    "@taiji/dsh-client-ui-settings-account": "workspace:^"
+    "@taiji/dsh-api-account-controller": "workspace:^"
   },
   "peerDependencies": {
     "@taiji/cordis": "workspace:^",

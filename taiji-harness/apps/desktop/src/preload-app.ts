@@ -26,14 +26,6 @@ function createProductApi(): DshDesktopProductApi {
 }
 
 if (location.protocol === `${SCHEME}:` && location.hostname === 'app') {
-  ipcRenderer.on(DESKTOP_IPC.enterWorkspace, () => {
-    const body = document.body
-    const previous = body.getAttribute('tabindex')
-    body.tabIndex = -1
-    body.focus({ preventScroll: true })
-    if (previous === null) body.removeAttribute('tabindex')
-    else body.setAttribute('tabindex', previous)
-  })
   syncWindowsAppearance()
   if (process.platform === 'win32') installMandatoryUpdateOverlay()
   contextBridge.exposeInMainWorld('__DSH_DIRECTORY_PICKER__', {

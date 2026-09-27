@@ -123,7 +123,7 @@ describe('product icon set', () => {
 })
 
 describe('FishLogo', () => {
-  it('renders the Seed tree mark in currentColor on a square canvas', () => {
+  it('renders the Seed mark — a tree knocked out of the seed disc — in currentColor', () => {
     const { container } = render(<primitives.FishLogo />)
     const svg = container.querySelector('svg')!
     expect(svg.getAttribute('width')).toBe('24')
@@ -131,7 +131,7 @@ describe('FishLogo', () => {
     expect(svg.getAttribute('viewBox')).toBe('0 0 24 24')
     expect(container.querySelectorAll('path')).toHaveLength(1)
     expect(container.innerHTML).toContain('currentColor')
-    expect(container.querySelector('path')!.getAttribute('fill-rule')).toBeNull()
+    expect(container.querySelector('path')!.getAttribute('fill-rule')).toBe('evenodd')
   })
 })
 

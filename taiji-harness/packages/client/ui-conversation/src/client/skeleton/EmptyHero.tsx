@@ -97,7 +97,7 @@ function HeroFish({ hovering }: { hovering: boolean }) {
       fill="none"
       aria-hidden="true"
     >
-      <path d={FISH_LOGO_PATH} fill="currentColor">
+      <path d={FISH_LOGO_PATH} fill="currentColor" fillRule="evenodd">
         {hovering && (
           <animateTransform
             attributeName="transform"

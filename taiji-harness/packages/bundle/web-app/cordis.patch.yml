@@ -115,9 +115,6 @@
 
     # Configuration-surface reads and writes over Typert Remote. Each method
     # reports an actionable error when its settings-domain provider is absent.
-    - id: ui-settings-account
-      name: '@taiji/dsh-client-ui-settings-account'
-
     - id: account-controller
       name: '@taiji/dsh-api-account-controller'
 

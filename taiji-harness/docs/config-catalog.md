@@ -505,22 +505,6 @@ export interface Config {
 
 Source: [`packages/client/hmr/src/index.ts:30`](../packages/client/hmr/src/index.ts)
 
-<a id="taijidsh-client-ui-settings-account"></a>
-
-## `@taiji/dsh-client-ui-settings-account`
-
-```ts config-catalog
-/** Questionnaire destination and its supported source option. */
-export interface Config {
-  /** HTTPS questionnaire URL; override for a test form. */
-  contactFormUrl: string
-  /** Questionnaire source option; empty until Harness is supported by the form. */
-  contactSource: string
-}
-```
-
-Source: [`packages/client/ui-settings-account/src/contact-config.ts:5`](../packages/client/ui-settings-account/src/contact-config.ts)
-
 <a id="taijidsh-client-ui-settings-models"></a>
 
 ## `@taiji/dsh-client-ui-settings-models`

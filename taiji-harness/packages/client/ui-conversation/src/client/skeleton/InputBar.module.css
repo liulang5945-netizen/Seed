@@ -366,8 +366,8 @@
   cursor: default;
 }
 
-/* Primary send (figma IconButton 34:10465): 34px circle, #3964FE light /
-   #679EFE dark — the info-fill pair (500→400), NOT button-primary (ink);
+/* Primary send (figma IconButton 34:10465): 34px circle, seed-500 light /
+   seed-400 dark — the info-fill pair (500→400), NOT button-primary (ink);
    white glyph; empty text = 0.4 opacity. */
 .primary {
   display: grid;
