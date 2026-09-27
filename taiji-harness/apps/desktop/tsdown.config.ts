@@ -44,7 +44,13 @@ export default defineConfig([
     fixedExtension: false,
     dts: false,
     clean: false,
-    deps: { neverBundle: ['electron'] },
+    // The main process must be self-contained: electron-builder collects only
+    // `dependencies` (not `peerDependencies`) into the packaged top-level
+    // node_modules, while several `@taiji/*` packages are runtime-imported but
+    // only declared as peers (e.g. `@taiji/cordis` via
+    // `@taiji/dsh-typert-protocol`). Bundling the whole `@taiji/*` closure
+    // removes that class of "ERR_MODULE_NOT_FOUND" at startup.
+    deps: { neverBundle: ['electron'], alwaysBundle: [/^@taiji\//] },
   },
   ...(['preload-app', 'preload-welcome', 'preload-platform-account', 'preload-mandatory', 'preload-update-dialog'] as const).map(name => ({
     // Sandboxed Electron preloads run as CommonJS even though the application package is ESM.

@@ -319,6 +319,7 @@ lane 追加的那条 `session/title` 是**事件**、不是**头字段**，所�
 - **回放件 ＝ 暂缓**，承认回放型 lane 不可当门；红按登记挂着。
 - **R5 ＝ 三处都改**（2026-09-27 补呈弹窗）：①默认工作区目录名 `deepseek-harness`→`taiji-harness`（default-directory.ts，已核不需迁移）②ACP agent 名→`taiji-harness-acp`（acp/src/index.ts 两处）③归因元数据 product→`taiji-harness`（attribution.ts，**url 保留上游**＝诚实溯源）；同批改断言测试×4＋README 中英各一处（pairing 先核对后重录，1100 对一致）。**
 - **D2 设计定稿 ＝ [TAIJI_D2_BACKEND_CHANNEL_DESIGN_20260927](TAIJI_D2_BACKEND_CHANNEL_DESIGN_20260927.md)**（wheelhouse/离线安装器＋DesktopBackendHost 拉起生命周期＋体积/许可账＋P1-①…④分刀）。
+- **R8 ＝ 乙（外壳自带干粮）**（2026-09-27 深夜弹窗裁定）：`apps/desktop/tsdown.config.ts` main 配置加 `deps.alwaysBundle: [/^@taiji\//]`，把 `@taiji/*` 全部打进 `lib/main.js`，一次消掉"打包收不全依赖"这一整类（详 §10）。**已实施＋构建层验证通过；但重打包被环境问题阻断（见 §10）。**
 
 细节与证据在 §3.5／§4／§4.5／§6.5／§7／§7.1／§7.2，这里只收口成可回复的形状。
 
@@ -386,4 +387,27 @@ lane 追加的那条 `session/title` 是**事件**、不是**头字段**，所�
 * **(乙) 让外壳自包含**：把 `@taiji/dsh-api-gateway` 也**打进入 `lib/main.js`**（`apps/desktop/tsdown.config.ts` 加一条 `deps.alwaysBundle: [/^@taiji\//]`），顶层就不需要任何 `@taiji/*`，一次消掉这**一整类**"打包依赖收不全"的问题。**代价**：改的是 fork 的构建配置（要给 08 的上游同步本记一条），且 `lib/main.js` 体积变大。
 
 **在裁定落地前可以零成本先取到系统级读数**：把产物里 `app.asar.unpacked/…`／`dsh/node_modules/@taiji/cordis` 复制进顶层 `node_modules/@taiji/`（或用 asar 重打包），即可先跑一次"后端起没起／默认是不是 Taiji／能不能发一个回合"。**但那只是现场取证，不等于"产物已修"**——真结论要等重打包后的干净产物。
+
+## 10 · R8＝乙 已实施（构建层已验证）＋重打包被环境阻断
+
+**裁定**：owner 裁定 **R8 ＝ 乙（外壳自带干粮）**；完整过程与证据记在 08 §6 ㉒。
+
+**落地（一处改动）**：`apps/desktop/tsdown.config.ts` 的 **main** 配置块——
+
+```ts
+deps: { neverBundle: ['electron'], alwaysBundle: [/^@taiji\//] },
+```
+
+把 `@taiji/*` 整条闭包打进 `lib/main.js`。preload 那 5 个 cjs 配置**未动**（它们对 `@taiji/*` 只有 `import type`）。**这条属对 fork 构建配置的改动，须记进上游同步本**。
+
+**构建层验证（已过，可勾）**：重编译后 `lib/main.js` 372.65 kB，**顶层外部 import 只剩 `node:*` 内置 ＋ `electron`／`semver`／`ws`／`electron-updater`**——**零 `@taiji/*` 外部 import**（`@taiji/` 仅作为字符串字面量出现，如 `@taiji/dsh-desktop-host`）。附带一并消掉了 `dsh-app-boot`／`dsh-home-paths`／`dsh-deepseek-account`／`dsh-client-ui-*` 等同族隐患（它们也是 runtime import 但只声明在 devDependencies）。
+
+**系统级验证（未取到，被环境阻断）**：重跑 `package:win:x64:unsigned` 在 `prepare:dsh` 的 `runtime:smoke` 阶段失败，报 **`Cannot launch conpty`**。**这不是 R8 的问题、也不是代码问题**——
+
+* 该冒烟**今天 16:44／17:01／17:26 三次 `success:true`**（各 ≈8.4 s），19:38 起开始失败 ⇒ 环境在当日晚间变了；
+* 独立探针（普通 node ＋ 新装 `node-pty`，`.dsh-sbx2/pty-probe/probe.cjs`）在 **agent 上下文里直接跑＝`Cannot launch conpty`**，**经 `explorer.exe` 绕出沙箱跑＝成功**（output `pty-probe-ok`）；`Start-Process` 新控制台仍失败 ⇒ **Trae 受管进程上下文创建不了 ConPTY（作业对象级约束），不是"缺控制台"**。
+
+**绕出沙箱的两条路线**（`explorer.exe` 起 cmd／pwsh 跑打包）**都不稳定**：一次在 `runtime:lockfile` 的 pnpm 退出时 abort（`0x80000003`），一次跑到 `release:pack` 被 Ctrl+C 打断（`0xC000013A`）。⇒ **干净新产物未产出。**
+
+**对 M6 收官的影响**：R8 这一勾**只能勾到"构建层"**；清单第 1 刀要的**系统级读数（host 拉起／Taiji 默认／发一回合）仍缺**，须在**不受 Trae 沙箱约束的普通终端**补跑一次 `corepack pnpm run package:win:x64:unsigned`（cwd＝`taiji-harness/apps/desktop`）后，我据 `packaging-runs/*/events.jsonl` 与产物续取。
 
