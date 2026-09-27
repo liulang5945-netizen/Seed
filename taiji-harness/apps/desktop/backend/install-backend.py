@@ -12,7 +12,6 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
-import os
 import subprocess
 import sys
 import time
@@ -42,20 +41,31 @@ def _verify_wheelhouse(wheelhouse: Path, manifest: dict) -> list[Path]:
 
 
 def _venv_satisfies(venv_python: Path, manifest: dict) -> bool:
-    """True when the venv already reports every pinned package at its exact version."""
+    """True when the venv already reports every pinned package at its exact version.
+
+    Asked of the venv's own import metadata (not `pip freeze`): a locally built
+    seed wheel pins as ``name @ file://…`` and an editable install as ``-e``,
+    and freeze's path spellings are separator-unstable on Windows.
+    """
     expected = {wheel["name"]: wheel["version"] for wheel in manifest["wheels"]}
+    script = """import json, sys
+from importlib.metadata import PackageNotFoundError, version
+expected = json.loads(sys.argv[1])
+def _missing(name, want):
+    try:
+        return version(name) != want
+    except PackageNotFoundError:
+        return True
+missing = [name for name, want in expected.items() if _missing(name, want)]
+if missing:
+    print(json.dumps(missing))
+raise SystemExit(1 if missing else 0)
+"""
     result = subprocess.run(
-        [str(venv_python), "-m", "pip", "freeze", "--all"],
+        [str(venv_python), "-I", "-B", "-c", script, json.dumps(expected)],
         capture_output=True, text=True, check=False,
     )
-    if result.returncode != 0:
-        return False
-    installed: dict[str, str] = {}
-    for line in result.stdout.splitlines():
-        if "==" in line:
-            name, version = line.split("==", 1)
-            installed[name.strip().lower()] = version.strip()
-    return all(installed.get(name.lower()) == version for name, version in expected.items())
+    return result.returncode == 0
 
 
 def main() -> int:
