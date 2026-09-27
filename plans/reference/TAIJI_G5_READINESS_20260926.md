@@ -309,6 +309,15 @@ lane 追加的那条 `session/title` 是**事件**、不是**头字段**，所�
 
 ## 8 · 裁定单（一次性总表；每项都是"问题一句／选项按能声称的最强结论排序／价格／不裁的后果"）
 
+**裁定回执（2026-09-27，弹窗逐项批准，全按推荐项）**：
+- **D2 ＝ (b) 独立分发通道**：给后端开 wheelhouse／离线安装器，可复用 `DSH_PRIMARY_RUNTIME` 载体覆盖口子；"装后谁拉起并等就绪"的生命周期（裁定单 (b′) 的常驻进程语义）属实现范围一并落地。体积上限未给数 ⇒ 实现期先报实测增量再定。
+- **D3 ＝ 改**。装机默认 provider/model 改为 Taiji（`bundle/base/cordis.patch.yml:82-86`）。
+- **R4 ＝ fork 身份＋不做自动更新**：App ID 改 taiji 前缀，声明客户端不做自动更新、无强制更新端点；签名与真更新端点后续再补 ⇒ unsigned 变体本机可跑，D1 打包链解锁。
+- **金样(甲)(乙)(丙) ＝ 先 normalize 再本机 refresh**：(乙) 分隔符已实施（H3u 锚定式补丁＋本轮 markdown/树修正沿用其精神）；(丙) 三件环境前提红（support-timezone／shipped-composition 宿主 shell／docs-site-projection symlink）**平台条件 skip** 一次裁；然后本机 `DSH_SNAPSHOT=refresh` 烤入 fork 有意变更。
+- **判据③ ＝ 现在开跑**（真机训练回合，独占运行时窗口由本轮占用）。
+- **C6 P1 ＝ 按推荐组合启动**（适配器＋kind 白名单加 workbench 且 CONTRACT_VERSION 维持 1＋no_prose 渲染起步＋生产者挂 sleep_pass project 段＋消费者同批）。
+- **回放件 ＝ 暂缓**，承认回放型 lane 不可当门；红按登记挂着。
+
 细节与证据在 §3.5／§4／§4.5／§6.5／§7／§7.1／§7.2，这里只收口成可回复的形状。
 
 | # | 问题（平实一句） | 选项（强→弱） | 价格 | 不裁的后果 |

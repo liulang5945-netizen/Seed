@@ -79,11 +79,13 @@
 
     # The transport-independent default for Agents created by entry points.
     # Settings may supply a saved selection; consumers read it at creation time.
+    # Ships on the credential-free Taiji route (G5-D3, owner-approved 2026-09-27):
+    # a fresh profile's first message must be servable without any API key.
     - id: agent-default-model
       name: '@taiji/dsh-agent-default-model'
       config:
-        provider: deepseek-official
-        model: deepseek-flash
+        provider: taiji-local
+        model: taiji-local
 
     - id: jobs
       name: '@taiji/dsh-jobs-local'
