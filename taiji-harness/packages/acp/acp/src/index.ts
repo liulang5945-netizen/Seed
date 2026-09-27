@@ -179,7 +179,7 @@ export function apply(ctx: Context, config: AcpConfig): void {
       imagePromptEnabled = await supportsAcpImagePrompts(ctx, config.provider, config.model)
       return {
         protocolVersion: PROTOCOL_VERSION,
-        agentInfo: { name: 'deepseek-harness-acp', version: '0.0.1' },
+        agentInfo: { name: 'taiji-harness-acp', version: '0.0.1' },
         agentCapabilities: {
           mcpCapabilities: { http: true },
           promptCapabilities: { image: imagePromptEnabled, audio: false, embeddedContext: false },
@@ -375,7 +375,7 @@ export function apply(ctx: Context, config: AcpConfig): void {
     Writable.toWeb(process.stdout) as WritableStream<Uint8Array>,
     Readable.toWeb(process.stdin) as ReadableStream<Uint8Array>,
   )
-  const app = createAcpAgentApp({ name: 'deepseek-harness-acp' })
+  const app = createAcpAgentApp({ name: 'taiji-harness-acp' })
     .onRequest(methods.agent.initialize, ({ params }) => implementation.initialize(params))
     .onRequest(methods.agent.authenticate, async ({ params }) => {
       await implementation.authenticate(params)

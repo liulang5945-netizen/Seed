@@ -317,6 +317,8 @@ lane 追加的那条 `session/title` 是**事件**、不是**头字段**，所�
 - **判据③ ＝ 现在开跑**（真机训练回合，独占运行时窗口由本轮占用）。
 - **C6 P1 ＝ 按推荐组合启动**（适配器＋kind 白名单加 workbench 且 CONTRACT_VERSION 维持 1＋no_prose 渲染起步＋生产者挂 sleep_pass project 段＋消费者同批）。
 - **回放件 ＝ 暂缓**，承认回放型 lane 不可当门；红按登记挂着。
+- **R5 ＝ 三处都改**（2026-09-27 补呈弹窗）：①默认工作区目录名 `deepseek-harness`→`taiji-harness`（default-directory.ts，已核不需迁移）②ACP agent 名→`taiji-harness-acp`（acp/src/index.ts 两处）③归因元数据 product→`taiji-harness`（attribution.ts，**url 保留上游**＝诚实溯源）；同批改断言测试×4＋README 中英各一处（pairing 先核对后重录，1100 对一致）。**
+- **D2 设计定稿 ＝ [TAIJI_D2_BACKEND_CHANNEL_DESIGN_20260927](TAIJI_D2_BACKEND_CHANNEL_DESIGN_20260927.md)**（wheelhouse/离线安装器＋DesktopBackendHost 拉起生命周期＋体积/许可账＋P1-①…④分刀）。
 
 细节与证据在 §3.5／§4／§4.5／§6.5／§7／§7.1／§7.2，这里只收口成可回复的形状。
 

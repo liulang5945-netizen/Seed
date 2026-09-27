@@ -38,7 +38,7 @@ export interface AppIdentity {
  * can suppress attribution entirely.
  */
 export const APP_IDENTITY: AppIdentity = {
-  product: 'deepseek-harness',
+  product: 'taiji-harness',
   version,
   url: 'https://github.com/deepseek-ai/deepseek-harness',
 }

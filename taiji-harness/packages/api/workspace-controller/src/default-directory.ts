@@ -75,5 +75,5 @@ export async function defaultWorkspaceDirectory(
   }
   directory = validateDocumentsDirectory(directory, platform)
   signal.throwIfAborted()
-  return paths.join(directory, 'deepseek-harness', directoryName)
+  return paths.join(directory, 'taiji-harness', directoryName)
 }

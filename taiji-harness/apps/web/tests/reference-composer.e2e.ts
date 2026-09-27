@@ -413,6 +413,9 @@ describe.skipIf(MODE === 'record')('web e2e: file and session references through
 
     const snapshot = (await captureStableAria(page, '[class*="centerCol"]', scaffold.workspaceCwd))
       .split(TARGET_SESSION_ID).join('{{targetId}}')
+      // Session-reference option labels carry the session's absolute cwd; the
+      // menu capture above tokenizes it the same way (G5 §7 (乙) family).
+      .split(scaffold.workspaceCwd).join('{{cwd}}')
     await compareOrRefreshGolden(ORDER_EXPECTED, snapshot, MODE)
     expect(snapshot).toContain('Research notes what changed?')
     expect(snapshot).not.toContain('Session recall Research notes')
