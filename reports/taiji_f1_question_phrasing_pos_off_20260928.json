@@ -1,0 +1,216 @@
+{
+  "format": "taiji-f1-question-phrasing-probe-v1",
+  "prereg": "plans/reference/M5_R2_A_BRANCH_PLAN_REV2_20260926.md §5d 前置阶梯 F1",
+  "checkpoint": "output/taiji_r2_plan01_pos_off/checkpoint.pt",
+  "arm_label": "pos_off",
+  "stimuli": {
+    "tokens": [
+      "天磊",
+      "静怡",
+      "志远",
+      "小雨",
+      "建华",
+      "文博",
+      "海燕",
+      "国强",
+      "明轩",
+      "阿岩",
+      "阿蒙",
+      "秋兰"
+    ],
+    "phrasings": [
+      "你还记得我的名字吗？",
+      "你能说出我的名字吗？",
+      "你再讲一遍我的名字？",
+      "我叫什么名字来着啊？"
+    ],
+    "items": 48,
+    "pattern": "问：我叫{token}。{phrasing}\\n答："
+  },
+  "cv_protocol": {
+    "folds": 4,
+    "epochs": 400,
+    "lr": 0.05,
+    "weight_decay": 0.001,
+    "seed": 20260928,
+    "classifier": "multiclass logistic regression (torch full-batch Adam)"
+  },
+  "reading_lines": {
+    "positive_control_fact_margin": 0.3,
+    "phrasing_high": 0.6,
+    "phrasing_high_margin": 0.25,
+    "phrasing_low_margin": 0.1,
+    "control_slack": 0.05
+  },
+  "null_control": {
+    "identical_across_episodes": true,
+    "detail": "同一条固定题面两个全新 episode 的三把特征逐位相同"
+  },
+  "evaluation": {
+    "features": {
+      "f1_context": {
+        "fact": {
+          "real": {
+            "fold_accuracies": [
+              0.1667,
+              0.4167,
+              0.1667,
+              0.25
+            ],
+            "mean_accuracy": 0.25,
+            "chance": 0.0833
+          },
+          "shuffled_label_control": {
+            "fold_accuracies": [
+              0.0,
+              0.0833,
+              0.0,
+              0.0
+            ],
+            "mean_accuracy": 0.0208,
+            "chance": 0.0833
+          },
+          "above_shuffled_margin": 0.2292
+        },
+        "phrasing": {
+          "real": {
+            "fold_accuracies": [
+              1.0,
+              1.0,
+              1.0,
+              1.0
+            ],
+            "mean_accuracy": 1.0,
+            "chance": 0.25
+          },
+          "shuffled_label_control": {
+            "fold_accuracies": [
+              0.1667,
+              0.1667,
+              0.1667,
+              0.0833
+            ],
+            "mean_accuracy": 0.1458,
+            "chance": 0.25
+          },
+          "above_shuffled_margin": 0.8542
+        }
+      },
+      "cue_full": {
+        "fact": {
+          "real": {
+            "fold_accuracies": [
+              0.3333,
+              0.25,
+              0.3333,
+              0.3333
+            ],
+            "mean_accuracy": 0.3125,
+            "chance": 0.0833
+          },
+          "shuffled_label_control": {
+            "fold_accuracies": [
+              0.1667,
+              0.1667,
+              0.0833,
+              0.1667
+            ],
+            "mean_accuracy": 0.1458,
+            "chance": 0.0833
+          },
+          "above_shuffled_margin": 0.1667
+        },
+        "phrasing": {
+          "real": {
+            "fold_accuracies": [
+              1.0,
+              1.0,
+              1.0,
+              1.0
+            ],
+            "mean_accuracy": 1.0,
+            "chance": 0.25
+          },
+          "shuffled_label_control": {
+            "fold_accuracies": [
+              0.3333,
+              0.0833,
+              0.1667,
+              0.25
+            ],
+            "mean_accuracy": 0.2083,
+            "chance": 0.25
+          },
+          "above_shuffled_margin": 0.7917
+        }
+      },
+      "probs": {
+        "fact": {
+          "real": {
+            "fold_accuracies": [
+              0.4167,
+              0.0833,
+              0.1667,
+              0.0833
+            ],
+            "mean_accuracy": 0.1875,
+            "chance": 0.0833
+          },
+          "shuffled_label_control": {
+            "fold_accuracies": [
+              0.0833,
+              0.0833,
+              0.0,
+              0.0833
+            ],
+            "mean_accuracy": 0.0625,
+            "chance": 0.0833
+          },
+          "above_shuffled_margin": 0.125
+        },
+        "phrasing": {
+          "real": {
+            "fold_accuracies": [
+              1.0,
+              0.9167,
+              1.0,
+              1.0
+            ],
+            "mean_accuracy": 0.9792,
+            "chance": 0.25
+          },
+          "shuffled_label_control": {
+            "fold_accuracies": [
+              0.1667,
+              0.4167,
+              0.4167,
+              0.0833
+            ],
+            "mean_accuracy": 0.2708,
+            "chance": 0.25
+          },
+          "above_shuffled_margin": 0.7084
+        }
+      }
+    },
+    "length_only_control": {
+      "phrasing": 0.1042,
+      "fact": 0.0
+    },
+    "surface_L0": {
+      "note": "只作回归报数，不入机制结论（§5d：L0 不得作能力/机制判据）",
+      "mean_byte_delta_within_fact_across_phrasing": 20.7361,
+      "mean_byte_delta_within_phrasing_across_fact": 16.8598,
+      "exact_match_rate_within_fact_across_phrasing": 0.0
+    }
+  },
+  "verdict": "positive_control_failed_state_unreadable",
+  "what_would_overturn": "零假设对照不在位（同题面两 episode 特征不同）⇒ 整件作废；打乱标签对照高于 chance+0.05 ⇒ 特征泄漏；长度单特征对照 ≥0.60 ⇒ 问法 CV 可被题面长度解释，P-过不成立；阳性对照 fact CV 相对边际 <0.3 ⇒ 该状态整体不可读，结论降级为'探针无区分度'；换更强探针（非线性／更多题面）读出则本条降级为'线性不可读'",
+  "base_sha256_unchanged": true,
+  "instrument_guard": {
+    "items_nonzero": true,
+    "null_control_identical": true,
+    "shuffled_controls_at_chance": false,
+    "base_unchanged": true
+  }
+}
