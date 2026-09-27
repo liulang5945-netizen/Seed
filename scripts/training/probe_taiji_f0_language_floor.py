@@ -38,6 +38,8 @@ for entry in (PROJECT_ROOT, PROJECT_ROOT / "scripts" / "training"):
     if str(entry) not in sys.path:
         sys.path.insert(0, str(entry))
 
+from taiji.utf8_state import trim_partial_tail  # noqa: E402
+
 MAX_ANSWER_BYTES = 64
 #: §5d 冻结的过线：整句可解码率 ≥0.5（T1a 或 T1b 任一）。
 PASS_LINE = 0.5
@@ -127,11 +129,39 @@ def _prefix_decodable(raw: bytes, n: int) -> bool:
         return False
 
 
+def _tail_trimmed_decode(raw: bytes) -> tuple[str, bool]:
+    """丢掉"末尾被截断的多字节序列"之后再解码——把两类失败分开。
+
+    动机（2026-09-27 PLAN-R2-01 两臂实测）：本仪器在 64 字节硬上限处截断，而纯 CJK 输出
+    每 21 个汉字＝63 字节，第 64 字节必然是**下一个汉字的引导字节** ⇒ 整串解码失败。
+    那是"缓冲切在字中间"，不是模型吐了非法字节。`decodable_whole`（§5d 冻结读数）
+    **不改**，本函数只多给一列诊断，让"合法但被切断"与"真非法"分开报。
+    """
+
+    if not raw:
+        return "", True
+    trimmed = trim_partial_tail(raw)
+    if not trimmed:
+        #: 无任何前缀可解码 ⇒ **体内有非法字节**（不是尾部残缺）。此处不许返回空串当"干净"：
+        #: 首版正是这么写的，把 OFF 臂的"整串非法"读成了 `illegal_trim=0.0`，与事实相反。
+        return raw.decode("utf-8", errors="replace"), False
+    try:
+        return trimmed.decode("utf-8"), True
+    except UnicodeDecodeError:
+        return raw.decode("utf-8", errors="replace"), False
+
+
 def _diagnose(raw: bytes) -> dict[str, Any]:
     text = raw.decode("utf-8", errors="replace")
     first_bad = _first_invalid_position(raw)
+    trimmed_text, trimmed_ok = _tail_trimmed_decode(raw)
+    trimmed_clean = trimmed_ok and "\ufffd" not in trimmed_text
     return {
         "decodable_whole": "\ufffd" not in text,
+        #: 诊断列（不入判）：切掉末尾残缺序列后仍非法 ⇒ 模型真的吐过非法字节。
+        "decodable_after_tail_trim": trimmed_clean,
+        "tail_truncated_only": bool(trimmed_clean and "\ufffd" in text),
+        "illegal_chars_after_tail_trim": trimmed_text.count("\ufffd"),
         "prefix8_ok": _prefix_decodable(raw, 8),
         "prefix16_ok": _prefix_decodable(raw, 16),
         "prefix32_ok": _prefix_decodable(raw, 32),
@@ -202,6 +232,11 @@ def _run_task(runtime: Any, task: str, *, utf8_strict: bool = False) -> dict[str
         "task": task,
         "items": len(rows),
         "decodable_whole_rate": _rate("decodable_whole"),
+        #: 诊断列（不入判；见 `_tail_trimmed_decode`）：把"被 64 字节上限切断"与
+        #: "模型真吐非法字节"分开。判据仍只看 `decodable_whole_rate`。
+        "decodable_after_tail_trim_rate": _rate("decodable_after_tail_trim"),
+        "tail_truncated_only_rate": _rate("tail_truncated_only"),
+        "illegal_after_tail_trim_rate": _rate("illegal_chars_after_tail_trim"),
         "prefix8_rate": _rate("prefix8_ok"),
         "prefix16_rate": _rate("prefix16_ok"),
         "prefix32_rate": _rate("prefix32_ok"),
@@ -312,6 +347,9 @@ def main() -> int:
                     {
                         "task": r["task"],
                         "decodable": r["decodable_whole_rate"],
+                        "decodable_trim": r["decodable_after_tail_trim_rate"],
+                        "tail_cut_only": r["tail_truncated_only_rate"],
+                        "illegal_trim": r["illegal_after_tail_trim_rate"],
                         "prefix16": r["prefix16_rate"],
                         "wf": r["well_formed_rate"],
                         "cjk": r["mean_valid_cjk_chars"],
