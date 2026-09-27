@@ -1,0 +1,1505 @@
+{
+  "format": "taiji-r2-copy-surface-extension-v1",
+  "prereg": "plans/reference/SPEC-A-21_r2_surface_extension_prereg_20260925.md",
+  "judge_prereg": "plans/reference/SPEC-A-22_r2_a2_5_query_conditioned_selector_prereg_20260926.md",
+  "manifest": "plans/manifests/r2_copy_surface_extension_v3_position_random.json",
+  "manifest_sha256": "b162ff091630f64a8cac986184729ff7894887f4806c923cc12b301ce5ae4fee",
+  "checkpoint": "output/taiji_r2_plan01_pos_on/checkpoint.pt",
+  "copy_evidence_utf8_gate": true,
+  "control_no_circuit": {
+    "circuit": null,
+    "items": 104,
+    "texts": 312,
+    "well_formed_texts": 68,
+    "well_formed_rate": 0.2179,
+    "utf8_decodable_rate": 0.1026,
+    "strict_hits": 0,
+    "rows": [
+      {
+        "id": "V001",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "具煥先求场讗伌先理知名算，丂具照品牌具照品�",
+        "well_formed": false
+      },
+      {
+        "id": "V002",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "具照品牌高是上怂场具程的的技而佹是具有具程�",
+        "well_formed": false
+      },
+      {
+        "id": "V003",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "关照品牌需要瀧是丹是具有具有度仹是是以电度�",
+        "well_formed": true
+      },
+      {
+        "id": "V004",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "在和高，一有具有具照品牌兹是名特是具有度仹�",
+        "well_formed": true
+      },
+      {
+        "id": "V005",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "在市具照品牌需覂\n一是是是具煥児为大的性的电",
+        "well_formed": true
+      },
+      {
+        "id": "V006",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "在和高照品牌霉，对以的的电记性是具算性的算�",
+        "well_formed": true
+      },
+      {
+        "id": "V007",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "具眨市上是是三具有批慷它的的的扌高瘘是丂上�",
+        "well_formed": false
+      },
+      {
+        "id": "V008",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "以对位它以名电讗性是具照的性的电程进负和先�",
+        "well_formed": false
+      },
+      {
+        "id": "V009",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "以用劀耧拹光煥光的电讌使用具理的的理具籂伌�",
+        "well_formed": false
+      },
+      {
+        "id": "V010",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "在具照品牌需而丂具有具的的算是以是丂在和先�",
+        "well_formed": false
+      },
+      {
+        "id": "V011",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "幌使用具有怂\n丂它体得是丂具有和成卮嚄的的性",
+        "well_formed": false
+      },
+      {
+        "id": "V012",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "在和高，一有具有具照品牌先是丂它的的批是具�",
+        "well_formed": true
+      },
+      {
+        "id": "V013",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "以用具理的知先是上高瘘是为佹怂\n一求具籂具照",
+        "well_formed": false
+      },
+      {
+        "id": "V014",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "在和高，以体它体品牌免算性是丂在具照品的电�",
+        "well_formed": false
+      },
+      {
+        "id": "V015",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "具眀性是具有具有具的知的算是以是丂在和高瀧�",
+        "well_formed": true
+      },
+      {
+        "id": "V016",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "以电讃体瀧有具煷扌高瘘是丂上怂具机体光照和�",
+        "well_formed": false
+      },
+      {
+        "id": "V017",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "对使用和需而使用入理的知和对位箃以瀧有具有�",
+        "well_formed": true
+      },
+      {
+        "id": "V018",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "在和高知座品的知幹是具有具有具児的技最胹潹�",
+        "well_formed": false
+      },
+      {
+        "id": "V019",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "对乹是是是具有入程瀧户机具程的罆用児对佹是�",
+        "well_formed": false
+      },
+      {
+        "id": "V020",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "在品牌需而使用入名理的知座品的怌具机具稁的�",
+        "well_formed": false
+      },
+      {
+        "id": "V021",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "具程的知名级品牌高是是上具照品的知彯伌伌免�",
+        "well_formed": false
+      },
+      {
+        "id": "V022",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "在和高的的算怂丂场大品的电讹是一怂和具有具�",
+        "well_formed": true
+      },
+      {
+        "id": "V023",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "丂在和高，伌伌免理的求在和程的牌成对上性漍�",
+        "well_formed": false
+      },
+      {
+        "id": "V024",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "以光的电讃体瀧有具照先上适\n伌免电记求以是且",
+        "well_formed": false
+      },
+      {
+        "id": "V025",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "具照品牌需能品的理的理牌先是一上怂和成对为�",
+        "well_formed": true
+      },
+      {
+        "id": "V026",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "具照和高，使用具理知度体缌它上怂场讗是上者�",
+        "well_formed": false
+      },
+      {
+        "id": "V027",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "对乹是具有具有市\n一性捹具有具有市\n的的理光�",
+        "well_formed": true
+      },
+      {
+        "id": "V028",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "在和高，一朹是具有具照品的知彯以上适\n伌免具",
+        "well_formed": true
+      },
+      {
+        "id": "V029",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "具照的知名箰是以劀而为具程程程程程程程对是�",
+        "well_formed": false
+      },
+      {
+        "id": "V030",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "在和高瀧有和先伌具电讌以的算性是具煥彯高瘘�",
+        "well_formed": false
+      },
+      {
+        "id": "V031",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "具眨和高知名理以的算有是是丂具煷照的技而使�",
+        "well_formed": false
+      },
+      {
+        "id": "V032",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "具眨和需能知名算是且具有得样有具的的的技耧�",
+        "well_formed": false
+      },
+      {
+        "id": "V033",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "对产品牌需而丂先体它体名电讗求先是丂具有具�",
+        "well_formed": false
+      },
+      {
+        "id": "V034",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "佹扌高瀧据夯以丂在先怌具有具的的理的电讃以�",
+        "well_formed": false
+      },
+      {
+        "id": "V035",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "平的知彯仹是具有市\n上性捹和慍它的的性漌具程",
+        "well_formed": false
+      },
+      {
+        "id": "V036",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "具眀能它罆具眉具照品牌具煍的汈能它于帀耧品�",
+        "well_formed": false
+      },
+      {
+        "id": "V037",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "以上性捹具机讗的的理牌需讌以体对䋹是是丂在�",
+        "well_formed": false
+      },
+      {
+        "id": "V038",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "对以的电讗于而位品牍品特徃罚具照品的知彯以�",
+        "well_formed": false
+      },
+      {
+        "id": "V039",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "具眨和高，对上性拀求具籂先使电名算扌先搃大�",
+        "well_formed": false
+      },
+      {
+        "id": "V040",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "具眨先理先是以名算性有具有具照品的电记高是�",
+        "well_formed": false
+      },
+      {
+        "id": "V041",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "具照品牌需而体知児对位电具有具照品的电光繋�",
+        "well_formed": false
+      },
+      {
+        "id": "V042",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "在和高知名的技有和慍它罓它罓它罓它罔名牌适",
+        "well_formed": false
+      },
+      {
+        "id": "V043",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "平的知对佹是劀有具有入对仹是入牌使上高的性�",
+        "well_formed": false
+      },
+      {
+        "id": "V044",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "在和高，一朹是具照品牌先方得根是平的的理它�",
+        "well_formed": false
+      },
+      {
+        "id": "V045",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "具煥的知牌高是上性捍箃児为具有具有児对为上�",
+        "well_formed": false
+      },
+      {
+        "id": "V046",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "对以程，使用先求上性捹具有具有具照品的电讗�",
+        "well_formed": true
+      },
+      {
+        "id": "V047",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "的算有是具球电讗是丂场体品牍的理牌先是上性�",
+        "well_formed": false
+      },
+      {
+        "id": "V048",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "具眨市对上高是是样有和具照品的电讃仹是样有�",
+        "well_formed": false
+      },
+      {
+        "id": "V049",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "具籂圉先是上高瀧樋和高的的理它位的电讃是是�",
+        "well_formed": false
+      },
+      {
+        "id": "V050",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "在和佹是是具最求\n丂在具机佧品的的性据它体的",
+        "well_formed": false
+      },
+      {
+        "id": "V051",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "佹是上性捍算怂\n为具有具照品的知彯以佹是是于",
+        "well_formed": false
+      },
+      {
+        "id": "V052",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "具眉具有具照和高的知的算乹是是是具煷有具煎�",
+        "well_formed": false
+      },
+      {
+        "id": "V053",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "具照品牌需要瀧的技而丂具眀耂和先伌先伌入名�",
+        "well_formed": false
+      },
+      {
+        "id": "V054",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "平组电和需能对上适\n一性品具籂它罚为幹扌具性",
+        "well_formed": false
+      },
+      {
+        "id": "V055",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "具眀而高，对上瀧捍箃先体具眉具照和需求场的�",
+        "well_formed": false
+      },
+      {
+        "id": "V056",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "具眨和高，以位算有有具煷机大品的知彂丂上怌�",
+        "well_formed": false
+      },
+      {
+        "id": "V057",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "入程的的理光的理它佧品的的求场胃体它位的技�",
+        "well_formed": false
+      },
+      {
+        "id": "V058",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "在市为一性成卹是，免电度体先怌高的的性的算�",
+        "well_formed": true
+      },
+      {
+        "id": "V059",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "具照品牌高知彯仹是具有度体电讌伌伌先方是上�",
+        "well_formed": false
+      },
+      {
+        "id": "V060",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "在和高知名特具有具有徃大的的电讀一怂具有具�",
+        "well_formed": true
+      },
+      {
+        "id": "V061",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "具照品牌需能先一性品竘是是为具程的的扌具有�",
+        "well_formed": false
+      },
+      {
+        "id": "V062",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "具照品牌需而使电具有具煄的算性的算是以是圉�",
+        "well_formed": true
+      },
+      {
+        "id": "V063",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "入籂以的电讃体籂一有具煷有具照和高的的算求�",
+        "well_formed": false
+      },
+      {
+        "id": "V064",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "具眀耧是不算是是具球电讗是丂场大品的扌需腷�",
+        "well_formed": false
+      },
+      {
+        "id": "V065",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "具照品牌高，使用市场讗的知和对体征的性是具�",
+        "well_formed": true
+      },
+      {
+        "id": "V066",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "佹是是上具有和高的的理的用而使电兯是为幹是�",
+        "well_formed": true
+      },
+      {
+        "id": "V067",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "平绹是以名品牌高，仹是上性捍算怂它体名电讌�",
+        "well_formed": false
+      },
+      {
+        "id": "V068",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "在和高，使电讃佻有有具照它罓牌高特有具煥彥�",
+        "well_formed": false
+      },
+      {
+        "id": "V069",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "在和高，上性有具照先搆它以的算是于以入先体�",
+        "well_formed": false
+      },
+      {
+        "id": "V070",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "对以名对于具有具有得座品的的的是一性据它以�",
+        "well_formed": true
+      },
+      {
+        "id": "V071",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "具眨市上是，具照品牌先求为幹是劀耧樋市为大�",
+        "well_formed": false
+      },
+      {
+        "id": "V072",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "以电讃使用和高牌高特有先球罓名箵先理具照品�",
+        "well_formed": false
+      },
+      {
+        "id": "V073",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "具煥程瀧有品煷煥先能一上怂\n伌具有具程，高的",
+        "well_formed": false
+      },
+      {
+        "id": "V074",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "在和上是上性捹是具有具有徃知，佹是以是三具�",
+        "well_formed": false
+      },
+      {
+        "id": "V075",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "平绹有具有具有徃罓徃罚丂上性成卹是以是为佹�",
+        "well_formed": false
+      },
+      {
+        "id": "V076",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "在和高知名特具有具有品的的是丂它体它体它体�",
+        "well_formed": true
+      },
+      {
+        "id": "V077",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "具照品牌需而一是是为幹是具球在常瀧品的扌具�",
+        "well_formed": false
+      },
+      {
+        "id": "V078",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "对以电讗性有和具照的电讌使电和高是上怂\n一怂",
+        "well_formed": false
+      },
+      {
+        "id": "V079",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "在和高瘯上性捍算样有具机大品的电和高是上瀧�",
+        "well_formed": false
+      },
+      {
+        "id": "V080",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "入电苹是上性捍算是是为具煷有得慍的技求在常�",
+        "well_formed": false
+      },
+      {
+        "id": "V081",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "具籂在市丂对是是具煷有得换和児的的的是丂场�",
+        "well_formed": false
+      },
+      {
+        "id": "V082",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "入程的批是是具児品照品的知彯仹佹是是三市在�",
+        "well_formed": false
+      },
+      {
+        "id": "V083",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "平的知名理它仹之的性求场大品牌需进贌一性品�",
+        "well_formed": false
+      },
+      {
+        "id": "V084",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "在和高，位练体对位算有是是具照品的理的琧的�",
+        "well_formed": false
+      },
+      {
+        "id": "V085",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "丂具是是为位品牍和先怂\n丂在和先使是以名位的",
+        "well_formed": false
+      },
+      {
+        "id": "V086",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "对丂上性捍算，戯为乹是入瀧戯怂\n丂具有具照的",
+        "well_formed": false
+      },
+      {
+        "id": "V087",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "丂\n丂对是一性捹具有児对为仹的的琉牌入球以位",
+        "well_formed": false
+      },
+      {
+        "id": "V088",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "具眀耧戯丂具算，具眉度以的的技耧是丂具算是�",
+        "well_formed": false
+      },
+      {
+        "id": "V089",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "对丂上性捍和先搆具的的的扌具煄电讹是丂场大�",
+        "well_formed": false
+      },
+      {
+        "id": "V090",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "佹是上具有和高瀧有具照品的知彯以上适\n伌具有",
+        "well_formed": true
+      },
+      {
+        "id": "V091",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "入对佹是是上性捍算怂\n一怂具有具程，具的理体",
+        "well_formed": false
+      },
+      {
+        "id": "V092",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "在和高，与免瀧有具有具照品牌需进算是昈損特�",
+        "well_formed": false
+      },
+      {
+        "id": "V093",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "在市为佹是是是为位常市具有具有徃的的批扌具�",
+        "well_formed": false
+      },
+      {
+        "id": "V094",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "对以名电讗，一有和具照品的的理和高瘘是上瀧�",
+        "well_formed": false
+      },
+      {
+        "id": "V095",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "对丂\n上是样有具有具有市\n的的技腷最能它以为�",
+        "well_formed": true
+      },
+      {
+        "id": "V096",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "具眨市在具理的的技而之具有具程，以位算怂场�",
+        "well_formed": false
+      },
+      {
+        "id": "V097",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "幹是具有和高的技腷有和高，仹是上具程的的理�",
+        "well_formed": true
+      },
+      {
+        "id": "V098",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "入理知彯丹是是具有得性捹和高的电的理的电具�",
+        "well_formed": true
+      },
+      {
+        "id": "V099",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "具照品的知彯仹是是一上具有具有度仹是具有度�",
+        "well_formed": true
+      },
+      {
+        "id": "V100",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "在和高，使用入先理丂圀求场讗的的技有和成上�",
+        "well_formed": false
+      },
+      {
+        "id": "V101",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "具照品牌需腷是上怂在具程的的技而佹是丂具有�",
+        "well_formed": false
+      },
+      {
+        "id": "V102",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "对以程的所有和先体名算仹是是于市在弌以稉具�",
+        "well_formed": false
+      },
+      {
+        "id": "V103",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "具眀耧戯丂它体竘知名理知对之缌先性性品牌具�",
+        "well_formed": false
+      },
+      {
+        "id": "V104",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "具照和需能电具算性是上适\n伌具有具照的理牌具",
+        "well_formed": false
+      }
+    ]
+  },
+  "treated_arms": [
+    {
+      "circuit": "output/taiji_a2_base_pos_on/judge/circuit-ep3700.pt",
+      "items": 104,
+      "texts": 312,
+      "well_formed_texts": 33,
+      "well_formed_rate": 0.1058,
+      "utf8_decodable_rate": 0.0769,
+      "strict_hits": 18,
+      "rows": [
+        {
+          "id": "V001",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "曨成雞成成成雨戛雸衐雨楐衐衐樨擁雨成衐樋雨�",
+          "well_formed": false
+        },
+        {
+          "id": "V002",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "苋州苏州苏州。戋苏州苏州。戋苏州苽潋苏州苋�",
+          "well_formed": true
+        },
+        {
+          "id": "V003",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "212121212121数2121212121212121212121喯2121212121212121212121�",
+          "well_formed": false
+        },
+        {
+          "id": "V004",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "浮浮浮海皷图巷巷巷巷巷巷巈目雮皷鮛盾。图。�",
+          "well_formed": false
+        },
+        {
+          "id": "V005",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "汙龙爱喝䳾䳾喝乌龙。时爱喝䳾䳾喝乳汌龙。汙�",
+          "well_formed": false
+        },
+        {
+          "id": "V006",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "骪雪雪雪雪雪雪鸀煸鸮溸一誸鸮溸溸煸溸一截鸮�",
+          "well_formed": false
+        },
+        {
+          "id": "V007",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "拀读读读近读读读。泯读读读泯读读疯读读疐泯�",
+          "well_formed": false
+        },
+        {
+          "id": "V008",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "舱吃笼包挅最笼山吃包挅最笼包挅挅最笼山吃吃�",
+          "well_formed": false
+        },
+        {
+          "id": "V009",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "雨成雨成。成雨搨成雨成成成雨成雸雨搛成成成�",
+          "well_formed": false
+        },
+        {
+          "id": "V010",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "青青岛青青岛青青青岛青青青青青青同事事事事�",
+          "well_formed": false
+        },
+        {
+          "id": "V011",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "77777777777777777777777777数777777777777777777777777777777777",
+          "well_formed": false
+        },
+        {
+          "id": "V012",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "鋾埳鋾埳鋾埳鋾埳埳鋾埳石石石石石平石石石石�",
+          "well_formed": false
+        },
+        {
+          "id": "V013",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "汱人花酿花人花人花人爱人花人花人煿花人煿花�",
+          "well_formed": false
+        },
+        {
+          "id": "V014",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "苸酻一袋熊。栅袋熊。充袋袆一熊熊。栢袋袋熊�",
+          "well_formed": false
+        },
+        {
+          "id": "V015",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "梦读读读读读读窗姐梯读读误读读。梯误误误读�",
+          "well_formed": false
+        },
+        {
+          "id": "V016",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "草泱哥泉泾哥泾哥泾哥泥泾哥泾哥泥泾哥泥泾哥�",
+          "well_formed": false
+        },
+        {
+          "id": "V017",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "迥违远远远远远远远远远远远我远远远远违远。�",
+          "well_formed": false
+        },
+        {
+          "id": "V018",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "青青青青青青岛青青青青青青岛青青青青青岛青�",
+          "well_formed": false
+        },
+        {
+          "id": "V019",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "999998数99999999999999999999999999的9999999999999999998数9999",
+          "well_formed": false
+        },
+        {
+          "id": "V020",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "鳾埳鳾埳埳鳾埳埳鳾埳石埳石皳鳾埳石石石石石�",
+          "well_formed": false
+        },
+        {
+          "id": "V021",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "決檬檬柠檬柺檬柺檬柺人爱人人人人爱人爱人人�",
+          "well_formed": false
+        },
+        {
+          "id": "V022",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "蓝蓝蓥腻丅蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝�",
+          "well_formed": false
+        },
+        {
+          "id": "V023",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "近梦读读读读读。梯误读读窗梯误读读䯯误條误�",
+          "well_formed": false
+        },
+        {
+          "id": "V024",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "泱吱艃牌吃特艾吃牳馍泱泱泾泾吱艾吃牳馍泱泱�",
+          "well_formed": false
+        },
+        {
+          "id": "V025",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "艮慕表艮慕哥艮慉哥艮慉哥艮慉哥艥艮慕哥艉慉�",
+          "well_formed": false
+        },
+        {
+          "id": "V026",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "同事事事明。明。同事事事事事明。同事事事事�",
+          "well_formed": false
+        },
+        {
+          "id": "V027",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "9999898数999999999999999999999999998数999999999999999999999999",
+          "well_formed": false
+        },
+        {
+          "id": "V028",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "撮溑纑纑纑纑纑的钒目纑目溺目溺目溑目撌归目�",
+          "well_formed": false
+        },
+        {
+          "id": "V029",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "茶砖茶人砖茶纺爱人砖茶人茶纺砖茶纺砖茶砖茶�",
+          "well_formed": false
+        },
+        {
+          "id": "V030",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "蓝蓥蓝蓥蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝�",
+          "well_formed": false
+        },
+        {
+          "id": "V031",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "近谈姐谈姐梦笔溪读谈姐溪读谈近姐梦笔溪读谈�",
+          "well_formed": false
+        },
+        {
+          "id": "V032",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "臥汆腐腐臅臀煐臐臐臥慐臇臀煐臇臐臇哥臇臐臇�",
+          "well_formed": false
+        },
+        {
+          "id": "V033",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "镕兕光慉慉慉慉慉光光慉慉光牉慉光牉慉光牉慉�",
+          "well_formed": false
+        },
+        {
+          "id": "V034",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "兰表兰行兰兰表兰表兰表兰舐佥慰谷楅跞戥佥体�",
+          "well_formed": false
+        },
+        {
+          "id": "V035",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "242424242424数24024244。数24024024242402424242402424240242424",
+          "well_formed": false
+        },
+        {
+          "id": "V036",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "曮涛皶目涛雮涛雮涛目涛目涛目涛目涛雮涛涛适�",
+          "well_formed": false
+        },
+        {
+          "id": "V037",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "汶砖茶砖茶砖茶砖茶砖茶砖茶砖茶砖茶砖茶砖茶�",
+          "well_formed": false
+        },
+        {
+          "id": "V038",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "蜨蜺一蜺一踀誸誸荺腻一認溆一蜺蜺一踺蜨蜺蜨�",
+          "well_formed": false
+        },
+        {
+          "id": "V039",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "近读读诉毻一物姐毻物姐毻诉毻三毻诀读近姐毻�",
+          "well_formed": false
+        },
+        {
+          "id": "V040",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "若抋芋芋芋芋芋芋芋芋苗。最糖苗。哥汐苗芋芋�",
+          "well_formed": false
+        },
+        {
+          "id": "V041",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "表表哥聥表表哥襁表表哥襁襁蓥表哥襁蓥表哥襁�",
+          "well_formed": false
+        },
+        {
+          "id": "V042",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "同事事事事事事事事事事事事事事事事事事事事�",
+          "well_formed": false
+        },
+        {
+          "id": "V043",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "字88888888888888888888888888数888888888888888888888888篯88888",
+          "well_formed": false
+        },
+        {
+          "id": "V044",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "拀疚影影影。影项疏影顈影项疚山。影鱮朋疽朋�",
+          "well_formed": false
+        },
+        {
+          "id": "V045",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "苦茶人茶〱人茶喱茶茶人茶纺茶纺荺茶苦苦苦茶�",
+          "well_formed": false
+        },
+        {
+          "id": "V046",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "养一兺兺一溆一戺猬溆一养一养一养一养一养一�",
+          "well_formed": false
+        },
+        {
+          "id": "V047",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "要鯻误毯读读读毯读读读篻读篻读篻读篻读读读�",
+          "well_formed": false
+        },
+        {
+          "id": "V048",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "拗芋芀糖苗。拗苗。最糖苗芋芋芋芋芋芋芋芋芋�",
+          "well_formed": false
+        },
+        {
+          "id": "V049",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "洛宁。洛宁。宁宁。宁洛宁。宁洛宁洛宁。宁洛�",
+          "well_formed": false
+        },
+        {
+          "id": "V050",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "蓥佥温哥表温哥表温哥表温哥丩温温哥表温哥丩�",
+          "well_formed": false
+        },
+        {
+          "id": "V051",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "212121212121212121212121212121212121212121212121212121212121",
+          "well_formed": false
+        },
+        {
+          "id": "V052",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "风纋皣溋风纋皣拸风纋皣拣挌临风纋皣拣溋风纋�",
+          "well_formed": false
+        },
+        {
+          "id": "V053",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "決纺茶人茶人茶人纺纺纺纺纺纺纺纺纺纺爱人纺�",
+          "well_formed": false
+        },
+        {
+          "id": "V054",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "鼠鼱一丅溆一鼠汅了一一居了一鼅居了一鼠汅亅�",
+          "well_formed": false
+        },
+        {
+          "id": "V055",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "要鯻读读毯读读读读读毯误读读读读毯误误误读�",
+          "well_formed": false
+        },
+        {
+          "id": "V056",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "江江舱児蟥江蟹黄江江蟅江蟹黄充蟱蟱哥汱哥汌�",
+          "well_formed": false
+        },
+        {
+          "id": "V057",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "时亶亶予时予时予时予时予时予时予时予时予时�",
+          "well_formed": false
+        },
+        {
+          "id": "V058",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "州温州温州温温温温温温温温温州温罏州温州温�",
+          "well_formed": false
+        },
+        {
+          "id": "V059",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "256256数25656。数256256。喯2525252565256。数2525256556。",
+          "well_formed": false
+        },
+        {
+          "id": "V060",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "雮雮雮朋的适宿雮雮雮目的项宮目雮雮雮朋目的�",
+          "well_formed": false
+        },
+        {
+          "id": "V061",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "決纺爱人爱人爱人爱人爱人爱人人爱人爱人爱人�",
+          "well_formed": false
+        },
+        {
+          "id": "V062",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "龟亸一了一龟了一龟了丅居了了一居龟了一居龟�",
+          "well_formed": false
+        },
+        {
+          "id": "V063",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "近读读读近读读读。洯误读读》读读毯读读读毯�",
+          "well_formed": false
+        },
+        {
+          "id": "V064",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "江舱児蟌蟌黄江蟅蟹鱱吱蟌蟌汌蟟蟹黄爱江蟹黄�",
+          "well_formed": false
+        },
+        {
+          "id": "V065",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "我栠砠砠砠砠砠砚倂我我倂倂倂倂倂我倂我倂我�",
+          "well_formed": false
+        },
+        {
+          "id": "V066",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "阳阳阳洛阳。洛阳。佳阳洛阳洛阳。洛阳阳阳阳�",
+          "well_formed": false
+        },
+        {
+          "id": "V067",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "1313131313131313131313131313131313131313131䯯3131313131313131",
+          "well_formed": false
+        },
+        {
+          "id": "V068",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "舿鿛箿雮雨的雮雮戛雮的雮雮戛雮目的隄雮雮戛�",
+          "well_formed": false
+        },
+        {
+          "id": "V069",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "荺荺薝荺薝荺薝荺薝荺溺纺纺荷鱺纺纺荷鱂決荺�",
+          "well_formed": false
+        },
+        {
+          "id": "V070",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "龟一一柺一一养了一一养了一柺一养一养一养一�",
+          "well_formed": false
+        },
+        {
+          "id": "V071",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "近梦纬梦瀋梦华读读读近华读近梦华读近梦丯读�",
+          "well_formed": false
+        },
+        {
+          "id": "V072",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "汉面扛艈面扛艛艛艛艛艛艛艛艛艛艛艛艛艛艛艛�",
+          "well_formed": false
+        },
+        {
+          "id": "V073",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "拙苏晙䙙晋苏晙晚苋苹苏晚苙苏晙䋙晙晚苙苏晙�",
+          "well_formed": false
+        },
+        {
+          "id": "V074",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "欬扬扬州州州扬州扬州扬州扬扬扬巉扬巉牬州扬�",
+          "well_formed": false
+        },
+        {
+          "id": "V075",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "131313131313131313131数1313131313131313131311313数131313131313",
+          "well_formed": false
+        },
+        {
+          "id": "V076",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "舒目雮的钌咋目舒鮛舯勹皋幋咋的钋目咋目朋目�",
+          "well_formed": false
+        },
+        {
+          "id": "V077",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "荷饮时瀂喝荷饮时瀂喝荷饮时瀂喝荷饮时瀂喝荷�",
+          "well_formed": false
+        },
+        {
+          "id": "V078",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "骍水水瀂一养一养一养一养一养一养一养一养一�",
+          "well_formed": false
+        },
+        {
+          "id": "V079",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "近梦瀋读读读近梦粱读读。梦粱读读何读读篻何�",
+          "well_formed": false
+        },
+        {
+          "id": "V080",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "汣水饣水水水水水水水铁爱哥水鸀爱哥水鸓铥水�",
+          "well_formed": false
+        },
+        {
+          "id": "V081",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "表阥春衾哥衾哥衾哥衾哥衾哥衾哥辈丘表春表表�",
+          "well_formed": false
+        },
+        {
+          "id": "V082",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "芥芥芜抜抽抜抽抽芜擥佖芜擥芥佖芜湖哯芥芥芥�",
+          "well_formed": false
+        },
+        {
+          "id": "V083",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "202020202020202020202020数200020020020202020520数2000200202020",
+          "well_formed": false
+        },
+        {
+          "id": "V084",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "拮挌事目溋的纋纋的纋事猌事目拺纋的纋纋的纋�",
+          "well_formed": false
+        },
+        {
+          "id": "V085",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "茉茉茉茉茉茉茉茉茉茉茉茉茉茉茉茉茶人茉茉茉�",
+          "well_formed": false
+        },
+        {
+          "id": "V086",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "拸一狸煸溸狸煸拸狸煻一狐拸狸煻一狐拸狸煻一�",
+          "well_formed": false
+        },
+        {
+          "id": "V087",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "襯读读》耋读》读》读》误读襯读读》读梯误读�",
+          "well_formed": false
+        },
+        {
+          "id": "V088",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "拮楨最狥求哥搃狥最狥汐子汱哥搃哥搃哥搃哥搃�",
+          "well_formed": false
+        },
+        {
+          "id": "V089",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "哥蟙䙓矀表哥蟙䐟表行哥蟙䐟表行哥虨蟙䥙䐟蟥�",
+          "well_formed": false
+        },
+        {
+          "id": "V090",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "或芜潊芜抜抜湖湖喖芜芜湖芜住喖芜湖芜技芜抜�",
+          "well_formed": false
+        },
+        {
+          "id": "V091",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "1861861861861818数1818181818数喯618181818181818数喯61818181",
+          "well_formed": false
+        },
+        {
+          "id": "V092",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "曮未央殮殮未央殮未央殮未央骪央殮我皪央鮮我�",
+          "well_formed": false
+        },
+        {
+          "id": "V093",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "荺茶茶茶茶〱人爱人茶茶荺茶茶荺茶茶荺茶豺茶�",
+          "well_formed": false
+        },
+        {
+          "id": "V094",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "蝙蝙蝙蝙蝙蝙蝙蝙蝙蝙蝙蝙蝙蝙蝙蝙蝙蝙蝙蝠一�",
+          "well_formed": false
+        },
+        {
+          "id": "V095",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "迆读读读读丯读迆读读。梦度读近梦庙误梦度梦�",
+          "well_formed": false
+        },
+        {
+          "id": "V096",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "子拮最狮戱子戱吃爀狮戱子戱子戱子戱子戱子戱�",
+          "well_formed": false
+        },
+        {
+          "id": "V097",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "詥轩轩明轩轩。明轩轩轩轩轩明轩轩轩轩表轩。�",
+          "well_formed": false
+        },
+        {
+          "id": "V098",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "自自自自自自自自贡。自自自自自自自自自自自�",
+          "well_formed": false
+        },
+        {
+          "id": "V099",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "学是36数喯36喯数喦皦数6数喯36数喯36数喯36喘数�",
+          "well_formed": false
+        },
+        {
+          "id": "V100",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "饧戋鮮拥查查構适秋埥秋秋秋适埥知秋秋适埥知�",
+          "well_formed": false
+        },
+        {
+          "id": "V101",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "決纺人爱人爱人爱人爱人爱人爱人爱人爱人爱人�",
+          "well_formed": false
+        },
+        {
+          "id": "V102",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "鼠鼠鼠鼠一杅溆一兺一养一养一养一养一养一养�",
+          "well_formed": false
+        },
+        {
+          "id": "V103",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "近毯读读读读丸读毯读读读读瀋踸读记毯读读读�",
+          "well_formed": false
+        },
+        {
+          "id": "V104",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "汇艇吃片吱庉艇吃庇艇有机艇舱吃片片吃屺艇片�",
+          "well_formed": false
+        }
+      ]
+    }
+  ],
+  "surface_verdict": {
+    "min_gap_texts": 3,
+    "per_circuit": [
+      {
+        "circuit": "output/taiji_a2_base_pos_on/judge/circuit-ep3700.pt",
+        "gap_texts": -35,
+        "direction": "worse",
+        "meets_min_gap": true,
+        "control_rate": 0.2179,
+        "treated_rate": 0.1058
+      }
+    ],
+    "status": "not_resolved",
+    "verdict": "not_resolved（独立取数只有 1 次，判据要求 ≥2 次）"
+  },
+  "base_sha256_unchanged": true
+}
