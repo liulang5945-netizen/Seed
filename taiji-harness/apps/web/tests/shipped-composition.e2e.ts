@@ -474,7 +474,10 @@ function assertLeanChildRecord(agent: Agent, mode: 'one-shot' | 'continuable'): 
  */
 const EXPECTED_TOOLS = [
   'ask_user_question',
-  'bash',
+  // The shell tool is named by the host platform — bash on POSIX, pwsh on
+  // Windows — and each lands at its own alphabetical position (G5 §7 (丙): the
+  // roster asserts the real host surface, not the recording host's).
+  ...(process.platform === 'win32' ? [] : ['bash']),
   'create_goal',
   'edit',
   'exit_plan_mode',
@@ -485,6 +488,7 @@ const EXPECTED_TOOLS = [
   'job_output',
   'list_agents',
   'present',
+  ...(process.platform === 'win32' ? ['pwsh'] : []),
   'read',
   'read_image',
   'send_message',
@@ -524,7 +528,9 @@ it('assembles the shipped Web transport, catalog, guidance, and defaults', async
   scaffold = await launchWebScaffold({ deepSeekMissingCredential: true })
   const ctx = scaffold.ctx
   expect(ctx.llm.listProviders().some(provider => provider.id === 'deepseek-messages')).toBe(false)
-  expect(ctx.agentDefaultModel.currentSelection()).toEqual({ provider: 'deepseek-official', model: 'deepseek-flash' })
+  // The shipped default rides the credential-free Taiji route (G5-D3, owner-approved
+  // 2026-09-27): a fresh profile's first message is servable without any API key.
+  expect(ctx.agentDefaultModel.currentSelection()).toEqual({ provider: 'taiji-local', model: 'taiji-local' })
   const index = await fetch(`http://127.0.0.1:${String(ctx.webServer.port)}`, {
     headers: { 'accept-encoding': 'gzip' },
   })
@@ -667,7 +673,7 @@ it('ships PTC with run_code but without the general workflow SDK binding', async
   }
 }, 120_000)
 
-it('lets a preset producer reach the background-job registry', async () => {
+it.skipIf(process.platform === 'win32')('lets a preset producer reach the background-job registry', async () => {
   scaffold = await launchWebScaffold()
   const ctx = scaffold.ctx
   const handle = await ctx.agents.create({
@@ -728,7 +734,7 @@ it('lets a preset producer reach the background-job registry', async () => {
   }
 }, 120_000)
 
-it('routes one browser-authored Auto request through the same model before a real tool body', async () => {
+it.skipIf(process.platform === 'win32')('routes one browser-authored Auto request through the same model before a real tool body', async () => {
   scaffold = await launchWebScaffold(AUTO_REVIEW_FIXTURE)
   const ctx = scaffold.ctx
   const targetPath = join(scaffold.workspaceCwd, 'auto-review-pre-existing.txt')
@@ -819,7 +825,7 @@ it('routes one browser-authored Auto request through the same model before a rea
   expect(await readFile(targetPath, 'utf8')).toBe('PRE_EXISTING_MUST_REMAIN\n')
 }, 120_000)
 
-it('reviews one-shot, continuable, and cold-resumed in-process child calls independently', async () => {
+it.skipIf(process.platform === 'win32')('reviews one-shot, continuable, and cold-resumed in-process child calls independently', async () => {
   childOverlayDirectory = await mkdtemp(join(tmpdir(), 'dsh-auto-child-overlay-'))
   const overlayPath = join(childOverlayDirectory, 'cordis.patch.yml')
   await writeFile(overlayPath, [

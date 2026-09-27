@@ -2,7 +2,11 @@ import { chromium } from 'playwright'
 import { expect, it } from 'vitest'
 import { newEnglishPage } from './support.ts'
 
-it.each(['UTC', 'America/Los_Angeles'])('isolates the recorded browser timezone from %s', async (hostTimeZone) => {
+// The premise "Chromium honors the TZ environment variable" holds on POSIX only:
+// on Windows the browser always reports the host's real timezone, so this recorded
+// browser/ambient isolation cannot be exercised there (G5 §7 (丙), owner-approved
+// platform skip 2026-09-27).
+it.skipIf(process.platform === 'win32').each(['UTC', 'America/Los_Angeles'])('isolates the recorded browser timezone from %s', async (hostTimeZone) => {
   const browser = await chromium.launch({ env: { ...process.env, TZ: hostTimeZone } })
   try {
     const ambientPage = await browser.newPage()

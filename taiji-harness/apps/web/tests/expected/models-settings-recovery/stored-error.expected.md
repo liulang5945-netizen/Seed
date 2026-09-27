@@ -24,4 +24,7 @@
       - button "编辑 acme-gateway": 编辑
       - button "删除 acme-gateway": 删除
       - alert: "llm-pi-ai: provider \"acme-gateway\" model \"custom-model\" needs an api; the installed catalog does not describe it, so set the route's api to the wire protocol its endpoint speaks"
+    - listitem:
+      - text: Taiji（本地运行时）
+      - button "编辑 Taiji（本地运行时） (taiji-local)": 编辑
   - button "添加模型提供商"

@@ -11,6 +11,9 @@
   - paragraph: 填入各提供商的 API 密钥即可使用其模型。
   - list:
     - listitem:
+      - text: Taiji（本地运行时）
+      - button "编辑 Taiji（本地运行时） (taiji-local)": 编辑
+    - listitem:
       - text: minimax-cn
       - img "API 密钥已配置"
       - button "编辑 minimax-cn": 编辑

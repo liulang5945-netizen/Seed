@@ -150,14 +150,21 @@ describe('publishableImage', () => {
     expect(publishableImage(join(root, 'packages/logo.svg'), realpathSync(root))).toBe(real)
   })
 
-  it('refuses a target whose real path escapes the repository', () => {
+  it('refuses a target whose real path escapes the repository', (context) => {
     // Publication copies the bytes onto the site, so a reference reaching a
     // build-machine file must not be treated as an image the repository owns.
     const { root } = fixture()
     const outside = mkdtempSync(join(tmpdir(), 'dsh-doc-site-outside-'))
     roots.push(outside)
     writeFileSync(join(outside, 'secret.png'), 'not really a png\n')
-    symlinkSync(join(outside, 'secret.png'), join(root, 'packages/linked.png'))
+    try {
+      symlinkSync(join(outside, 'secret.png'), join(root, 'packages/linked.png'))
+    } catch (error) {
+      // Non-privileged Windows cannot create the symlink this refusal needs; the
+      // escape guard remains covered on POSIX (G5 §7 (丙), owner-approved skip).
+      if ((error as NodeJS.ErrnoException).code === 'EPERM') context.skip()
+      throw error
+    }
 
     expect(publishableImage(join(root, 'packages/linked.png'), realpathSync(root))).toBeUndefined()
     expect(publishableImage(join(outside, 'secret.png'), realpathSync(root))).toBeUndefined()

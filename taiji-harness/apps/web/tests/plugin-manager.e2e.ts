@@ -102,9 +102,19 @@ describe('web e2e: plugin manager', () => {
     await panel.getByText(/cannot resolve profile bundle/).waitFor({ timeout: 10_000 })
     expect((await scaffold.ctx.pluginManager.listBundles()).find(row => row.name === '@fixture/missing-bundle'))
       .toMatchObject({ enabled: true, error: { code: 'operation-error' }, rows: [] })
+    // The aria snapshot YAML-escapes backslashes, so on Windows the harness home
+    // appears with doubled separators in the raw snapshot; the POSIX-recorded
+    // golden keeps `{{home}}/profiles/scaffold`. Match the escaped form and fold
+    // the trailing segment back to POSIX spelling (G5 §7 (乙), probe 2026-09-27).
+    // On POSIX both needles are identity/no-ops, so goldens never shift there.
+    console.log('[PROBE] harnessHome=' + JSON.stringify(scaffold.harnessHome))
+    console.log('[PROBE] rawPanel=' + JSON.stringify(await page.locator('[data-plugin-panel]').ariaSnapshot()))
     await compareOrRefreshGolden(join(SNAPSHOT_DIR, 'missing-bundle.expected.md'),
       await captureStableAria(page, '[data-plugin-panel]', scaffold.workspaceCwd, {
-        replacements: [[scaffold.harnessHome, '{{home}}']],
+        replacements: [
+          [scaffold.harnessHome.split('\\').join('\\\\'), '{{home}}'],
+          ['\\\\profiles\\\\scaffold', '/profiles/scaffold'],
+        ],
       }), MODE)
     await toggle.click()
     await expect.poll(async () => (JSON.parse(await homeFile('profiles', 'scaffold', 'package.json')) as {
@@ -268,9 +278,20 @@ describe('web e2e: plugin manager', () => {
       }), { surfaceOp: 'append' })
       agent.session.append('turn/end', { turn: 1, reason: { kind: 'completed' } })
       await scaffold.ctx.sessions.flush(agent.session)
+      // Host-side connect leaves the auto-opened blank session on the surface, and
+      // the seeded session's row sits inside the collapsed default-workspace group
+      // on this zh page (probe 2026-09-27). Expand the group (zh dictionary name),
+      // then open the row — the product title-cases the derived title
+      // ("Lifecycle"), hence the case-insensitive match.
+      const group = teamPage.getByRole('treeitem', { name: /Default workspace|默认工作区/u })
+      await group.waitFor({ timeout: 15_000 })
+      if ((await group.getAttribute('aria-expanded')) === 'false') await group.click()
+      await teamPage.getByRole('treeitem', { name: /Team UI lifecycle/iu }).click()
       // The current crumb renders as plain text inside the zh-labeled hierarchy nav.
+      // The product title-cases the derived session title ("Lifecycle"), so match
+      // the seeded phrase case-insensitively.
       await teamPage.getByRole('navigation', { name: '会话层级' })
-        .getByText('Team UI lifecycle', { exact: true }).waitFor()
+        .getByText(/Team UI lifecycle/iu).waitFor()
       const action = teamPage.locator('[data-team-action]')
       expect(await action.count()).toBe(0)
       await toggle.click()

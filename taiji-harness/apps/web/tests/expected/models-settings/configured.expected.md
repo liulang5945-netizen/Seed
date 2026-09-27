@@ -16,4 +16,7 @@
       - img "API 密钥已配置"
       - button "编辑 minimax-cn": 编辑
       - button "删除 minimax-cn": 删除
+    - listitem:
+      - text: Taiji（本地运行时）
+      - button "编辑 Taiji（本地运行时） (taiji-local)": 编辑
   - button "添加模型提供商"
