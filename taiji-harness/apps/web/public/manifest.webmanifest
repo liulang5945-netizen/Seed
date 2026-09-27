@@ -1,6 +1,6 @@
 {
-  "name": "Taiji Harness",
-  "short_name": "Taiji",
+  "name": "Seed",
+  "short_name": "Seed",
   "start_url": "./",
   "scope": "./",
   "display": "fullscreen",

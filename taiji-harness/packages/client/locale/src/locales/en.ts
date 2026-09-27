@@ -30,7 +30,7 @@ export const en = {
   'collapse': 'Collapse',
   'expand': 'Expand',
   'back': 'Back',
-  'brand.localBuild': 'Taiji Harness Local Build',
+  'brand.localBuild': 'Seed Local Build',
   'unknown': 'Unknown',
   'none': 'None',
   'truncated': 'Truncated',

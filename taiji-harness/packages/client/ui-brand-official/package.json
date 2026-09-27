@@ -1,6 +1,6 @@
 {
   "name": "@taiji/dsh-client-ui-brand-official",
-  "description": "Official DeepSeek Harness brand occupants for the Web client's sidebar slots",
+  "description": "Official Seed brand occupants for the Web client's sidebar slots",
   "version": "0.1.7-alpha.1",
   "publishConfig": {
     "access": "public"

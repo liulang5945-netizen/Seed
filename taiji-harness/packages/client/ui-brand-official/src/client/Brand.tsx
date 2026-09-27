@@ -4,7 +4,7 @@ import type { SidebarBrandMarkOwnerProps } from '@taiji/dsh-client-ui-sidebar/cl
 /**
  * Render the official mark with the presentation requested by its host surface.
  * @param props - Host-supplied mark presentation.
- * @returns the official whale mark.
+ * @returns the official Seed sprout mark.
  */
 export function OfficialBrandMark({ size }: SidebarBrandMarkOwnerProps) {
   return <FishLogo size={size} />

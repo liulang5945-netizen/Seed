@@ -1,11 +1,11 @@
 {
   "en-US": {
     "menu": [
-      { "label": "About Taiji Harness", "role": "about" },
+      { "label": "About Seed", "role": "about" },
       { "type": "separator" }
     ],
     "options": {
-      "applicationName": "Taiji Harness",
+      "applicationName": "Seed",
       "applicationVersion": "1.0.0",
       "version": "",
       "copyright": "",
@@ -14,11 +14,11 @@
   },
   "zh-CN": {
     "menu": [
-      { "label": "关于 Taiji Harness", "role": "about" },
+      { "label": "关于 Seed", "role": "about" },
       { "type": "separator" }
     ],
     "options": {
-      "applicationName": "Taiji Harness",
+      "applicationName": "Seed",
       "applicationVersion": "1.0.0",
       "version": "",
       "copyright": "",

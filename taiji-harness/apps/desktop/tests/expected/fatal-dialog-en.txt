@@ -1,4 +1,4 @@
-Taiji Harness is unavailable
+Seed is unavailable
 The application could not start or stopped unexpectedly.
 Desktop Host failed
 Plugin initialization failed

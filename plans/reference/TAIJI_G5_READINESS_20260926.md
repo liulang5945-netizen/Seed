@@ -320,6 +320,7 @@ lane 追加的那条 `session/title` 是**事件**、不是**头字段**，所�
 - **R5 ＝ 三处都改**（2026-09-27 补呈弹窗）：①默认工作区目录名 `deepseek-harness`→`taiji-harness`（default-directory.ts，已核不需迁移）②ACP agent 名→`taiji-harness-acp`（acp/src/index.ts 两处）③归因元数据 product→`taiji-harness`（attribution.ts，**url 保留上游**＝诚实溯源）；同批改断言测试×4＋README 中英各一处（pairing 先核对后重录，1100 对一致）。**
 - **D2 设计定稿 ＝ [TAIJI_D2_BACKEND_CHANNEL_DESIGN_20260927](TAIJI_D2_BACKEND_CHANNEL_DESIGN_20260927.md)**（wheelhouse/离线安装器＋DesktopBackendHost 拉起生命周期＋体积/许可账＋P1-①…④分刀）。
 - **R8 ＝ 乙（外壳自带干粮）**（2026-09-27 深夜弹窗裁定）：`apps/desktop/tsdown.config.ts` main 配置加 `deps.alwaysBundle: [/^@taiji\//]`，把 `@taiji/*` 全部打进 `lib/main.js`，一次消掉"打包收不全依赖"这一整类（详 §10）。**已实施＋构建层验证通过；沙箱外重打包产出干净新产物后真启动确认崩溃消除＝系统级验证通过（详 §10）。**
+- **品牌收口 ＝ 甲＋改名 Seed＋尽量去 DeepSeek**（2026-09-27 深夜 owner 裁定）：客户端品牌记号统一换成新的**"种子→小苗"**记号（取代此前的太极记号与残留鲸鱼），产品展示名 `Taiji Harness`／`DeepSeek Harness` → **`Seed`**，并剥离 DeepSeek 身份残留（保留模型 provider／第三方包名／上游事实引用）。**已实施**：矢量＋栅格资产全部重出、桌面 locale／打包身份／安装器／官网／web 元数据／客户端 locale 与连带期望同步（详 08 ㉕）。**尚欠**：根快照重录、README 配对指纹重录、agent 身份/system-prompt 那条线未动、产物改名待在非沙箱机复跑验证。
 
 细节与证据在 §3.5／§4／§4.5／§6.5／§7／§7.1／§7.2，这里只收口成可回复的形状。
 
@@ -337,8 +338,10 @@ lane 追加的那条 `session/title` 是**事件**、不是**头字段**，所�
 | **R7（2026-09-27 新增，见 08 §6 ⑲f；同日深夜收窄见 08 ㉓）** | packaged 桌面产物的 office 冒烟（xlsx 转换）失败——`package:desktop:win:x64:unsigned` 最后一步红，要不要处理 | (甲) 查打包 asar 布局下 LibreOffice profile/路径解析并修（真缺陷则改产品/打包链）→ (乙) packaged 冒烟降级 office 转换（保结构/引擎在场断言）→ (丙) 接受"unsigned 产物存在但打包门红"现状进发布评审 | (甲)＝未知深度（首达雷区，prepared 树同函数是绿的）；(乙)＝smoke 脚本一屏；(丙)＝零成本但 D1"打包跑通"半句要加限定 | `package:desktop:*` 的 rc 永不为 0；D2 通道本身已产物级验通（08 ⑲f），红不在后端而在 office。**2026-09-27 深夜收窄：只卡 `xlsx→PDF`（`docx→PDF` 已通过；pptx 未测）** |
 | **R8（2026-09-27 新增，见 §9）** | 打包产物**打不开**（`ERR_MODULE_NOT_FOUND: @taiji/cordis`）——"一条命令装起即用"目前在**系统级**是红的，修法选哪条 | (乙) 外壳自包含：tsdown `deps.alwaysBundle: [/^@taiji\//]` 把 `@taiji/*` 打进 `lib/main.js`（一次消掉"打包收不全依赖"这**一整类**）→ (甲) 给 `apps/desktop` 的 `dependencies` 补 `@taiji/cordis`（＋可能还有 `dsh-client-connection`）一行＋一次 `pnpm install` | 两条都要重跑 `package:win:x64:unsigned`（末步仍是 R7 的 office 冒烟红，**产物在此之前就已产出**，可先启动取读数）；(乙)＝一条构建配置（要记进 08 的上游同步本），(甲)＝一行依赖但可能补第二次 | G5-D1「打包跑通」、D2「装起即用」、D4「桌面可用」在系统级都无法勾掉；M6 手上没有一个能跑起来的产物 |
 
+| **R9（2026-09-27 深夜新发现，见 08 ㉔）** | 全新装机首启动弹「登录/API Key」欢迎窗，而 G5-D3 已把默认路线改成免凭据的 `taiji-local`——两者冲突 | (甲) 默认路线为 taiji-local 时欢迎窗不再拦路（加"直接用本地 Taiji 开始"出口，或直接进工作区）→ (乙) 保留欢迎窗但补上"本地免凭据"选项与文案 → (丙) 不动，接受首启动先要一次账号/Key | (甲)＝`welcome-api.ts:58-60` 判定＋`main.ts:951-963`＋欢迎页一屏；(乙)＝同位置＋文案；(丙)＝零成本但"装起即用"首屏被挡 | 首装机用户看到的第一屏是登录界面，"默认免凭据"名不副实 |
+
 **最小回复格式（照抄即可）**：
-`D2=b′|c′；D3=改|不改；R4=给值|暂缓；R5=全改|只改①|都不改；金样甲=非本机refresh|本机refresh|不refresh；金样丙=平台skip|改断言|保持红；判据③=等R2|现在开；回放件=重录|承认不可当门；R7=甲|乙|丙；R8=乙|甲`
+`D2=b′|c′；D3=改|不改；R4=给值|暂缓；R5=全改|只改①|都不改；金样甲=非本机refresh|本机refresh|不refresh；金样丙=平台skip|改断言|保持红；判据③=等R2|现在开；回放件=重录|承认不可当门；R7=甲|乙|丙；R8=乙|甲；R9=甲|乙|丙`
 
 **不需要裁定、下一轮我按序做的**（§6.5）：`agent-team-panel` 的 setup 双形态（先查 `Ready.` 为何有时 10 s 不来）→ 那条的可访问名判定 → 10 条超时逐条取证 → 把 basename 选行样板补到剩下用例。
 

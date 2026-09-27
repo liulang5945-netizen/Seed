@@ -1,4 +1,4 @@
-/** Official DeepSeek Harness occupants for the generic browser-brand slots. */
+/** Official Seed occupants for the generic browser-brand slots. */
 import type { Context as ClientContext } from '@taiji/cordis'
 import type {} from '@taiji/dsh-client-ui-renderer/client'
 import type {} from '@taiji/dsh-client-ui-sidebar/client'

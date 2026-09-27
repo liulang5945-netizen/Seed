@@ -1,7 +1,7 @@
 [
   {
     "role": "hide",
-    "label": "隐藏 Taiji Harness"
+    "label": "隐藏 Seed"
   },
   {
     "role": "hideOthers",
@@ -13,6 +13,6 @@
   },
   {
     "role": "quit",
-    "label": "退出 Taiji Harness"
+    "label": "退出 Seed"
   }
 ]

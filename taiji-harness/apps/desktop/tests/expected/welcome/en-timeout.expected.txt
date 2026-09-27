@@ -1,5 +1,5 @@
-Taiji Harness
-Taiji Harness
+Seed
+Seed
 Sign in timed out
 Sign in again
 Add API Key

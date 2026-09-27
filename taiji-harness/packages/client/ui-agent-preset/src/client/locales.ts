@@ -56,7 +56,7 @@ export const en: Record<AgentPresetSettingsKey, string> = {
     'The agent works using only a terminal tool. Useful for testing and comparing its basic performance.',
   presetCordisName: 'Creator mode',
   presetCordisDescription:
-    'Customize Taiji Harness through conversation. Let the agent write plugins that add features or UI, or combine tools and prompts to create your own mode.',
+    'Customize Seed through conversation. Let the agent write plugins that add features or UI, or combine tools and prompts to create your own mode.',
 
   inUse: 'New task default',
   selectionOffDefault: 'Application default',
@@ -82,7 +82,7 @@ export const en: Record<AgentPresetSettingsKey, string> = {
 export const zh: Record<AgentPresetSettingsKey, string> = {
   ...guideZh,
   builtInGroup: '内置', customGroup: '自定义',
-  sectionIntro: '选择 Agent 的工具和工作方式。日常任务用「标准模式」，扩展 Taiji Harness 的能力用「创造模式」。',
+  sectionIntro: '选择 Agent 的工具和工作方式。日常任务用「标准模式」，扩展 Seed 的能力用「创造模式」。',
 
   seatHint: '选择新任务使用的 Agent 预设',
   headerHint: '本任务的 Agent 预设，在任务开始时确定',

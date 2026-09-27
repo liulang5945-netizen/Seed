@@ -1,5 +1,5 @@
-Taiji Harness
-Taiji Harness
+Seed
+Seed
 Browser didn’t open automatically?
 Copy sign-in link
 Completing sign in… [disabled]

@@ -71,18 +71,15 @@ export interface HeroShellProps {
   children?: ReactNode
 }
 
-/* The mark is a Taiji disc (viewBox 0 0 24 24, centre 12,12), so it is spun by
-   a rotation about its centre rather than a path morph: the yin-yang is
-   point-symmetric, so a continuous rotate is the only way to "move" it while
-   keeping the geometry intact. The spin runs counter-clockwise — the direction
-   the mark's own S-divider leads, from the upper-left lobe down through the
-   centre and out to the lower-right one. */
+/* The mark is the Seed sprout (viewBox 0 0 24 24, centre 12,12), so it is spun
+   by a rotation about its centre rather than a path morph: the geometry stays
+   intact while the mark "moves". */
 const HERO_MARK_CENTER = 12
 const HERO_MARK_SPIN_DUR = '8s'
 
 /**
- * The hero brand mark (34px square), static at rest. Hovering spins the Taiji
- * slowly about its centre (SMIL `animateTransform` on the same 8s period),
+ * The hero brand mark (34px square), static at rest. Hovering spins the Seed
+ * sprout slowly about its centre (SMIL `animateTransform` on the same 8s period),
  * while the CSS sway on the hitbox adds a gentle tilt. Decorative — hidden from
  * the accessibility tree; reduced motion keeps the static filled mark on hover
  * (sampled at mouseenter; a mid-hover preference change takes effect on the
@@ -100,7 +97,7 @@ function HeroFish({ hovering }: { hovering: boolean }) {
       fill="none"
       aria-hidden="true"
     >
-      <path d={FISH_LOGO_PATH} fill="currentColor" fillRule="evenodd">
+      <path d={FISH_LOGO_PATH} fill="currentColor">
         {hovering && (
           <animateTransform
             attributeName="transform"
