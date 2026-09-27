@@ -842,10 +842,13 @@ describe('web e2e: shipped right Sidebar', () => {
       onTestFailed(() => saveFailureShot(fx, 'web-e2e-sidebar-right-sessions'))
       try {
         await fx.goto(scaffold.authenticatedUrl, { waitUntil: 'load' })
-        // On a freshly loaded page the row's label comes from the persisted header,
-        // which carries no title — it falls back to the workspace basename (G5 §7.2);
-        // accept both that and the user-message title the live page shows.
-        const settled = fx.getByRole('treeitem', { name: /Show the right sidebar\.|dsh-web-e2e-ws-/u }).first()
+        // On a freshly loaded page the settled session's row sits inside the
+        // default-workspace group, which starts collapsed (probe 2026-09-27); the
+        // row keeps its user-message title. Expand the group, then select the row.
+        const group = fx.getByRole('treeitem', { name: /Default workspace|默认工作区/u })
+        await group.waitFor({ timeout: 15_000 })
+        if ((await group.getAttribute('aria-expanded')) === 'false') await group.click()
+        const settled = fx.getByRole('treeitem', { name: /Show the right sidebar\./u }).first()
         await settled.click()
         await expect.poll(async () => await settled.getAttribute('aria-selected')).toBe('true')
         const frame = fx.locator('[class*="frame"]').first()
@@ -1110,11 +1113,14 @@ describe('web e2e: shipped right Sidebar', () => {
         await zhPage.goto(scaffold.authenticatedUrl, { waitUntil: 'load' })
         await zhPage.waitForSelector('[class*="frame"]', { timeout: 30_000 })
         // A fresh page opens the workspace on a blank session's hero, which has
-        // no session header and so no expand button. The settled session's row is
-        // labelled by the workspace basename on a fresh page (persisted header has
-        // no title — G5 §7.2) and by the user-message title on the live page;
-        // accept both and pick it the way a user would.
-        await zhPage.getByRole('treeitem', { name: /Show the right sidebar\.|dsh-web-e2e-ws-/u }).first().click()
+        // no session header and so no expand button. The settled session's row
+        // keeps its user-message title but sits inside the default-workspace
+        // group, which starts collapsed on a fresh page (probe 2026-09-27);
+        // expand it, then pick the row the way a user would.
+        const zhGroup = zhPage.getByRole('treeitem', { name: /Default workspace|默认工作区/u })
+        await zhGroup.waitFor({ timeout: 15_000 })
+        if ((await zhGroup.getAttribute('aria-expanded')) === 'false') await zhGroup.click()
+        await zhPage.getByRole('treeitem', { name: /Show the right sidebar\./u }).first().click()
         const column = zhPage.locator('[data-rightbar-col]')
         await expandOf(zhPage).waitFor({ timeout: 20_000 })
         await expandOf(zhPage).click()
