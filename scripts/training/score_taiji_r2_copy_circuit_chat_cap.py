@@ -44,7 +44,9 @@ def _answer_raw(runtime: Any, prompt: str, history: list[tuple[str, str]]) -> st
         provenance="external",
         confidence=1.0,
     )
-    raw = runtime.model.generate_input(frame, MAX_ANSWER_BYTES, stop_at_boundary=True, sample=False)
+    raw = runtime.model.generate_input(
+        frame, MAX_ANSWER_BYTES, stop_at_boundary=True, sample=False
+    )
     answer = raw.decode("utf-8", errors="replace")
     for marker in _TURN_MARKERS:
         index = answer.find(marker)
@@ -53,14 +55,26 @@ def _answer_raw(runtime: Any, prompt: str, history: list[tuple[str, str]]) -> st
     return answer.strip()
 
 
-def run_arm(checkpoint: Path, circuit_payload: str | None) -> dict[str, Any]:
-    from eval_taiji_r2_readout_retrain import build_ngram_model, well_formed
+def run_arm(
+    checkpoint: Path,
+    circuit_payload: str | None,
+    *,
+    evidence_utf8_gate: bool = False,
+) -> dict[str, Any]:
+    """一臂：CAP 的 D+E 计分（基底原始字节）。
+
+    `evidence_utf8_gate`（PLAN-A-25）：只在评测期把复制回路的加性证据按 UTF-8 位置状态门控
+    ——默认 False ⇒ 与冻结链逐位相同；开启走 `Taiji.set_copy_evidence_utf8_gate` 运行时覆写。
+    """
 
     from api.seed_runtime import SeedRuntime
+    from eval_taiji_r2_readout_retrain import build_ngram_model, well_formed
 
     runtime = SeedRuntime.load(checkpoint)
     if circuit_payload is not None:
         runtime.enable_copy_circuit(PROJECT_ROOT / circuit_payload)
+    if evidence_utf8_gate:
+        runtime.model.substrate.set_copy_evidence_utf8_gate(True)
     manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
     items = [
         {**item, "dimension": dim}
@@ -78,9 +92,7 @@ def run_arm(checkpoint: Path, circuit_payload: str | None) -> dict[str, Any]:
             if index + 1 < len(turns):
                 history.append((turn, answer))
         hit = any(token in answer for token in item["expected_contains"])
-        rows.append(
-            {"id": item["id"], "dimension": item["dimension"], "hit": hit, "answer": answer[:60]}
-        )
+        rows.append({"id": item["id"], "dimension": item["dimension"], "hit": hit, "answer": answer[:60]})
     ngram = build_ngram_model()
     return {
         "items": len(rows),
@@ -97,51 +109,42 @@ def main() -> int:
     parser.add_argument("--checkpoint", default="checkpoints/seed_beta.pt")
     parser.add_argument("--circuit", default="output/taiji_r2_copy_circuit/judge/circuit-final.pt")
     parser.add_argument("--out-report", default=None)
+    parser.add_argument(
+        "--copy-evidence-utf8-gate",
+        action="store_true",
+        help="PLAN-A-25：把复制回路的加性证据按 UTF-8 位置状态门控（默认关 ⇒ 与冻结链逐位相同）",
+    )
     args = parser.parse_args()
 
     checkpoint = PROJECT_ROOT / args.checkpoint
+    gate = bool(args.copy_evidence_utf8_gate)
     control = run_arm(checkpoint, None)
-    treated = run_arm(checkpoint, args.circuit)
-    verdict = (
-        "A2.4 重测通过（D+E>0 且成句率不塌于对照）"
-        if (
-            treated["correct"] > control["correct"]
-            and treated["correct"] > 0
-            and treated["well_formed_rate"] >= control["well_formed_rate"]
-        )
-        else "A2.4 重测未通过（如实记录）"
-    )
+    treated = run_arm(checkpoint, args.circuit, evidence_utf8_gate=gate)
+    verdict = "A2.4 重测通过（D+E>0 且成句率不塌于对照）" if (
+        treated["correct"] > control["correct"] and treated["correct"] > 0
+        and treated["well_formed_rate"] >= control["well_formed_rate"]
+    ) else "A2.4 重测未通过（如实记录）"
     report = {
         "format": "taiji-r2-copy-circuit-chat-cap-v1",
         "prereg": "plans/reference/M5_R2_A2_3_PREREG_20260925.md §4-S2（判据沿用）",
         "checkpoint": args.checkpoint,
         "circuit": args.circuit,
+        #: PLAN-A-25：门开/关必须落在件上，否则两份读数看起来像同一次实验。
+        "copy_evidence_utf8_gate": gate,
         "control_no_circuit": control,
         "treated_with_circuit": treated,
         "verdict": verdict,
     }
-    print(
-        json.dumps(
-            {
-                "control_correct": control["correct"],
-                "treated_correct": treated["correct"],
-                "control_well_formed": control["well_formed_rate"],
-                "treated_well_formed": treated["well_formed_rate"],
-                "items": control["items"],
-                "verdict": verdict,
-            },
-            ensure_ascii=False,
-        ),
-        flush=True,
-    )
-    out = (
-        Path(args.out_report)
-        if args.out_report
-        else (PROJECT_ROOT / "reports" / "taiji_r2_copy_circuit_chat_cap_20260925.json")
-    )
+    print(json.dumps({
+        "control_correct": control["correct"], "treated_correct": treated["correct"],
+        "control_well_formed": control["well_formed_rate"],
+        "treated_well_formed": treated["well_formed_rate"],
+        "items": control["items"], "verdict": verdict,
+    }, ensure_ascii=False), flush=True)
+    out = Path(args.out_report) if args.out_report else (
+        PROJECT_ROOT / "reports" / "taiji_r2_copy_circuit_chat_cap_20260925.json")
     if out.exists():
         from datetime import datetime, timezone
-
         out = out.with_name(f"{out.stem}-{datetime.now(timezone.utc).strftime('%H%M%S')}.json")
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
