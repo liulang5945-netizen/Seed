@@ -147,6 +147,8 @@ node 后端就是它的一个实现（`apps/desktop/src/host-process.ts:3,139` �
 
 ## 6.5 · 第五批之后的队首（同日收口，接手的人从这里开始）
 
+**（2026-09-27 收口）队首四条已全部判读，读数与证据链在 08 §6 ⑱**：① 75 条全并发批（baseline79）补上 agent-team-panel 批内读数＝**4 条全绿**，转换成立；文件计数因两条翻动（access-confirmation 偶发红、sidebar-subagent-activity 翻绿）仍是 32，**总数不是稳定指标**。② markdown-images 两层定案：选行层已修（懒构建树＋Ungrouped 默认折叠＋"New Session" 占位——按名字锚定展开、按 basename 选行，`045be75e` 的"没有会话行"就此更正）；剩余红＝**产品层 Windows 限制**（`ui-chat/AssistantMarkdown.tsx:21` 的 `localPathMediaUrl` 拒绝盘符路径 ⇒ 绝对路径图片不发 /api/file 请求，金样期望 img；preview 侧 `path-images.ts` 已有正确样板）——**转所有者裁定，修法＝聊天侧对齐 preview 侧**。③ 五条超时 lane 逐条归因完成：agent-preset-selection（G2 品牌化金样差异＋级联）、models-settings（Taiji 行金样差异＋级联）、plugin-manager（{{home}} 归一化未命中 ⇒ 错误态 bundle 未清除 ⇒ 三条级联）、goal-bar（helper 连上但主区停在 hero，/goal 进了 hero composer 无效）、sidebar-right（自动建/自动打开的空白 New Session 顶掉 lane 会话）——**每条一个根，全是已登记类别的新实例，无新未知类**。④ basename 样板落 markdown-wide-table（主流程＋hidpi，后者接受 basename/标题双标签）＝**单跑 10/10 全绿**；其余旧 helper lane 全绿，刻意不动。
+
 1. **⑮ 的对照同日已做完（见 §7.2 末）**：`firstUse: true` 档下树逐字相同、标题两档都不进树 ⇒ **⑮ 是真实的**，
    "默认工作区多占一行"这个替代解释已被否证。**剩下的那一层未判**：缺失发生在宿主索引还是前端渲染，
    需要一条**宿主侧列出会话标题**的读法（我第一次试的 `workspaceRegistry.list()` 写法报错，未跑通）。

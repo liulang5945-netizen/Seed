@@ -213,8 +213,18 @@ describe('web e2e: Markdown image rendering', () => {
 
   it.skipIf(MODE === 'record')('loads permitted images and shows authored text for failures', async () => {
     onTestFailed(() => saveFailureShot(page, 'web-e2e-markdown-images'))
-    await page.getByRole('treeitem').first().click()
-    await page.getByRole('treeitem').nth(1).click()
+    // The tree builds lazily and the Ungrouped group — which holds the seeded
+    // session's row — starts collapsed (probe 2026-09-27: the row never appears
+    // passively). Expand it only if collapsed, then select the row by the workspace
+    // basename: the persisted header carries no title, so the tree's label falls back
+    // to basename (see G5 §7.2). Position indexes land on group headers or on the
+    // default workspace's own "New Session" row.
+    const groupRow = page.getByRole('treeitem', { name: 'Ungrouped' })
+    await groupRow.waitFor({ timeout: 15_000 })
+    if ((await groupRow.getAttribute('aria-expanded')) === 'false') await groupRow.click()
+    const sessionRow = page.locator('[role="treeitem"]').filter({ hasText: /dsh-web-e2e-ws-/u }).first()
+    await sessionRow.waitFor({ state: 'visible', timeout: 15_000 })
+    await sessionRow.click()
     await expect.poll(() => page.getByText('REMOTE_IMAGE_DONE', { exact: true }).count(), {
       timeout: 15_000,
     }).toBe(1)

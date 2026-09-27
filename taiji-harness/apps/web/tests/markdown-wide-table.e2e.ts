@@ -271,11 +271,16 @@ describe('web e2e: markdown tables fill the column, wide ones break out and scro
     tripwire = watchConsole(page)
     await page.goto(scaffold.authenticatedUrl, { waitUntil: 'load' })
     await page.waitForSelector('[class*="frame"]', { timeout: 30_000 })
-    const groupRow = page.locator('[role="treeitem"]').first()
+    // The Ungrouped group — which holds the seeded session's row — starts collapsed;
+    // expand it only if collapsed, then select the row by the workspace basename: the
+    // persisted header carries no title, so the tree's label falls back to basename
+    // (see G5 §7.2). A position index can land on the default workspace's own
+    // "New Session" row instead.
+    const groupRow = page.getByRole('treeitem', { name: 'Ungrouped' })
     await groupRow.waitFor({ timeout: 15_000 })
-    await groupRow.click()
-    const sessionRow = page.locator('[role="treeitem"]').nth(1)
-    await sessionRow.waitFor({ timeout: 10_000 })
+    if ((await groupRow.getAttribute('aria-expanded')) === 'false') await groupRow.click()
+    const sessionRow = page.locator('[role="treeitem"]').filter({ hasText: /dsh-web-e2e-ws-/u }).first()
+    await sessionRow.waitFor({ state: 'visible', timeout: 15_000 })
     await sessionRow.click()
     await page.getByText(TAIL_MARKER, { exact: true }).waitFor({ timeout: 15_000 })
     // Collapse the sidebar and keep the right column at its rail for the whole
@@ -496,11 +501,16 @@ describe('web e2e: markdown tables fill the column, wide ones break out and scro
       onTestFailed(() => saveFailureShot(hidpiPage, 'web-e2e-markdown-wide-table-hidpi'))
       await hidpiPage.goto(scaffold.authenticatedUrl, { waitUntil: 'load' })
       await hidpiPage.waitForSelector('[class*="frame"]', { timeout: 30_000 })
-      const groupRow = hidpiPage.locator('[role="treeitem"]').first()
-      await groupRow.waitFor({ timeout: 15_000 })
-      await groupRow.click()
-      const sessionRow = hidpiPage.locator('[role="treeitem"]').nth(1)
-      await sessionRow.waitFor({ timeout: 10_000 })
+      // Same anchored selection as the main body: expand Ungrouped only if collapsed,
+      // then select the row. The label is the workspace basename before the session is
+      // first opened (G5 §7.2) and the seeded title after — the main test opens it, so
+      // accept both here.
+      const hidpiGroup = hidpiPage.getByRole('treeitem', { name: 'Ungrouped' })
+      await hidpiGroup.waitFor({ timeout: 15_000 })
+      if ((await hidpiGroup.getAttribute('aria-expanded')) === 'false') await hidpiGroup.click()
+      const sessionRow = hidpiPage.locator('[role="treeitem"]')
+        .filter({ hasText: /dsh-web-e2e-ws-|Markdown wide tables/u }).first()
+      await sessionRow.waitFor({ state: 'visible', timeout: 15_000 })
       await sessionRow.click()
       await hidpiPage.getByText(TAIL_MARKER, { exact: true }).waitFor({ timeout: 15_000 })
       await hidpiPage.getByRole('button', { name: 'Collapse sidebar', exact: true }).click()
