@@ -1,7 +1,7 @@
 {
   "name": "@taiji/dsh-client-ui-life",
   "description": "The Life panel for the dsh web client: the sidebar Life entry and the global page it opens, reading the Taiji runtime's organs and driving its training and legacy life controls",
-  "version": "0.1.0-alpha.1",
+  "version": "0.1.7-alpha.1",
   "publishConfig": {
     "access": "public"
   },
