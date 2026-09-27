@@ -35,7 +35,7 @@ import { DesktopUpdateCoordinator } from './update-coordinator.ts'
 import { serveWebDocument, authenticateWebHost, forwardWebRequest } from './web-document.ts'
 import { DesktopFatalRecovery } from './fatal-recovery.ts'
 import { openWelcomeWindow } from './welcome-window.ts'
-import { WELCOME_IPC, needsWelcome } from './welcome-api.ts'
+import { WELCOME_IPC } from './welcome-api.ts'
 import { connectDesktopWelcome, type DesktopWelcomeBackend } from './welcome-backend.ts'
 import { DesktopUpdateJournal } from './update-journal.ts'
 import { DesktopUpdatePreparationError } from './update-error.ts'
@@ -955,11 +955,9 @@ async function main(): Promise<void> {
     locale = resolveDesktopStartupLocale(state.localePreference, systemLanguages)
     windowsLanguage = locale.id
     installMenu()
-    if (!enteredWorkspace && needsWelcome({ loggedIn: state.loggedIn, hasApiKey: state.hasApiKey })) {
-      await showWelcome()
-    } else {
-      await enterWorkspace()
-    }
+    // The shipped default route is the credential-free Taiji provider, so a fresh
+    // profile enters the workspace directly; there is no welcome/login gate.
+    await enterWorkspace()
   }
   focusPrimaryWindow = () => {
     if (quitting) return

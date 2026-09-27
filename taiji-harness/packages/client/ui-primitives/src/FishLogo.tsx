@@ -1,5 +1,5 @@
 // Historical `Fish*` names: this module is the shared brand mark, now drawn as
-// the Seed sprout (a seed at the base, one stem, two leaves). The old name is
+// a stylised tree (a three-lobed canopy above a tapered trunk). The old name is
 // kept so the three consumers (sidebar rail, hero, wordmark) and their imports
 // stay stable.
 import type { IconProps } from './icons/props.ts'
@@ -8,13 +8,13 @@ import type { IconProps } from './icons/props.ts'
 export const FISH_LOGO_VIEWBOX = { width: 24, height: 24 }
 
 /**
- * The Seed sprout mark path data (square 24x24 canvas, four closed subpaths:
- * the teardrop seed, the rounded stem, and the left/right leaves). Exported for
- * consumers that compose their own svg (entrance effects, masks) around the
- * same geometry. Render with the default `nonzero` fill rule; the subpaths only
- * touch edge-to-edge, so no lobe cancels.
+ * The Seed tree mark path data (square 24x24 canvas, four closed subpaths: the
+ * centre canopy lobe, the left and right canopy lobes, and the trunk). Exported
+ * for consumers that compose their own svg (entrance effects, masks) around the
+ * same geometry. Render with the default `nonzero` fill rule; every subpath is
+ * wound the same way, so overlapping lobes stay solid.
  */
-export const FISH_LOGO_PATH = 'M15 19.6A3 3 0 0 1 9 19.6C9 18.2 10.1 16.8 12 15.6C13.9 16.8 15 18.2 15 19.6ZM11.4 3.6A0.6 0.6 0 0 1 12.6 3.6V15.8H11.4ZM12.6 10.6C15.4 9.4 17.4 6.6 17.6 3.8C14.8 4.4 12.9 6.4 12.6 8.4ZM11.4 10.6C8.6 9.4 6.6 6.6 6.4 3.8C9.2 4.4 11.1 6.4 11.4 8.4Z'
+export const FISH_LOGO_PATH = 'M17 7.2A5 5 0 1 1 7 7.2A5 5 0 1 1 17 7.2ZM11.3 9.6A3.7 3.7 0 1 1 3.9 9.6A3.7 3.7 0 1 1 11.3 9.6ZM20.1 9.6A3.7 3.7 0 1 1 12.7 9.6A3.7 3.7 0 1 1 20.1 9.6ZM13.3 12C13 15 13.5 17.8 13.8 20.6L10.2 20.6C10.5 17.8 11 15 10.7 12Z'
 
 /**
  * Render the brand mark.

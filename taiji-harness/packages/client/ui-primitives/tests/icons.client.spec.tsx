@@ -123,7 +123,7 @@ describe('product icon set', () => {
 })
 
 describe('FishLogo', () => {
-  it('renders the taiji brand mark in currentColor on a square canvas', () => {
+  it('renders the Seed tree mark in currentColor on a square canvas', () => {
     const { container } = render(<primitives.FishLogo />)
     const svg = container.querySelector('svg')!
     expect(svg.getAttribute('width')).toBe('24')
@@ -131,7 +131,7 @@ describe('FishLogo', () => {
     expect(svg.getAttribute('viewBox')).toBe('0 0 24 24')
     expect(container.querySelectorAll('path')).toHaveLength(1)
     expect(container.innerHTML).toContain('currentColor')
-    expect(container.innerHTML).toContain('evenodd')
+    expect(container.querySelector('path')!.getAttribute('fill-rule')).toBeNull()
   })
 })
 
@@ -139,11 +139,11 @@ describe('BrandWordmark', () => {
   it('can render the name artwork with or without its leading mark', () => {
     const view = render(<primitives.BrandWordmark />)
     const svg = view.container.querySelector('svg')!
-    expect(svg.getAttribute('width')).toBe('182')
-    expect(svg.getAttribute('viewBox')).toBe('0 0 182 24')
+    expect(svg.getAttribute('width')).toBe('70')
+    expect(svg.getAttribute('viewBox')).toBe('0 0 70 24')
 
     view.rerender(<primitives.BrandWordmark includeMark={false} />)
-    expect(svg.getAttribute('width')).toBe('156')
-    expect(svg.getAttribute('viewBox')).toBe('26 0 156 24')
+    expect(svg.getAttribute('width')).toBe('44')
+    expect(svg.getAttribute('viewBox')).toBe('26 0 44 24')
   })
 })

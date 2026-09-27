@@ -1,10 +1,9 @@
 vi.mock('../src/web-document.ts', () => ({ authenticateWebHost: async () => 'test-cookie', serveWebDocument: vi.fn(), forwardWebRequest: vi.fn() }))
-/** Welcome startup uses the Host before transitioning to the workspace. */
+/** Startup enters the workspace directly: the credential-free Taiji default needs no welcome or login gate. */
 
 import { afterEach, expect, it, vi } from 'vitest'
 import type { BrowserWindowConstructorOptions } from 'electron'
 import type { DesktopLocale } from '../src/locale.ts'
-import type { AccountView } from '@taiji/dsh-deepseek-account/types'
 import type { WelcomeOperations } from '../src/welcome-api.ts'
 import { DESKTOP_IPC } from '../src/ipc.ts'
 
@@ -45,6 +44,7 @@ vi.mock('electron', () => ({
     getVersion: () => '1.0.0',
     setAboutPanelOptions: vi.fn(),
     getAppPath: () => '/development-app',
+    getPath: () => '/user-data',
     getPreferredSystemLanguages: () => ['en-US'],
     on: (name: string, callback: (...args: unknown[]) => void) => { state.appListeners.set(name, callback) },
     quit: state.quit,
@@ -134,7 +134,7 @@ afterEach(() => {
   vi.restoreAllMocks()
 })
 
-it('starts the Host for welcome onboarding and opens the workspace on skip without quitting', async () => {
+it('enters the workspace directly without a welcome or login gate', async () => {
   vi.useFakeTimers()
   vi.stubEnv('DSH_DESKTOP_DEV_PROJECT_DIR', '/development-profile')
   vi.stubEnv('DSH_DESKTOP_NODE_BINARY', '/runtime/node')
@@ -158,44 +158,22 @@ it('starts the Host for welcome onboarding and opens the workspace on skip witho
     activate()
     expect(state.showWorkspace).not.toHaveBeenCalled()
     reading.resolve(undefined)
-    await vi.waitFor(() => { expect(state.beforeWelcome).toHaveBeenCalledOnce() })
-    activate()
-    expect(state.showWorkspace).not.toHaveBeenCalled()
+    await vi.waitFor(() => { expect(state.showWorkspace).toHaveBeenCalledOnce() })
   } finally {
     reading.resolve(undefined)
     loading.resolve(undefined)
   }
-  await vi.waitFor(() => { expect(state.operations).toBeDefined() })
+  expect(state.beforeWelcome).not.toHaveBeenCalled()
+  expect(state.operations).toBeUndefined()
   expect(state.startHost).toHaveBeenCalledOnce()
   expect(state.loadWorkspace).toHaveBeenCalledExactlyOnceWith('dsh-app://app/')
-  expect(state.showWorkspace).not.toHaveBeenCalled()
-  state.loadWorkspace.mockClear()
-  expect(state.welcomeLocale).toMatchObject({ id: 'zh-CN' })
   expect(state.dialogLocale!().id).toBe('zh-CN')
-  const attemptId = 'login' as NonNullable<AccountView['attempt']>['id']
-  const account: AccountView = { status: 'signed-out', links: { usageUrl: '', topUpUrl: '' },
-    attempt: { id: attemptId, phase: 'waiting-browser', authorizeUrl: 'https://example.test/login' } }
-  state.accountState.mockResolvedValue(account)
-  await state.operations!.copySignInLink(attemptId)
-  expect(state.copy).toHaveBeenCalledExactlyOnceWith('https://example.test/login')
-  await expect(state.operations!.copySignInLink('stale' as typeof attemptId)).rejects.toThrow('login link is unavailable')
-  state.accountState.mockResolvedValue({ ...account, attempt: { id: attemptId, phase: 'expired' } })
-  await expect(state.operations!.copySignInLink(attemptId)).rejects.toThrow('login link is unavailable')
-  expect(state.copy).toHaveBeenCalledOnce()
-  await state.operations!.skip()
-  expect(state.loadWorkspace).not.toHaveBeenCalled()
-  expect(state.showWorkspace).toHaveBeenCalledOnce()
-  expect(state.windowOptions).toMatchObject({
-    ...(process.platform === 'darwin' ? { titleBarStyle: 'hiddenInset', trafficLightPosition: { x: 16, y: 18 }, vibrancy: 'sidebar' } : {}),
-    webPreferences: { contextIsolation: true, sandbox: true },
-  })
-  expect(state.closeWelcome).toHaveBeenCalledOnce()
-  activate()
-  expect(state.showWorkspace).toHaveBeenCalledTimes(3)
   expect(state.quit).not.toHaveBeenCalled()
   expect(state.stopHost).not.toHaveBeenCalled()
   const contents = state.contents as { mainFrame: { url: string }; send: ReturnType<typeof vi.fn> }
-  expect(contents.send).toHaveBeenCalledWith(DESKTOP_IPC.enterWorkspace)
+  expect(contents.send).not.toHaveBeenCalledWith(DESKTOP_IPC.enterWorkspace)
+  activate()
+  expect(state.showWorkspace).toHaveBeenCalledTimes(3)
   const event = { sender: contents, senderFrame: contents.mainFrame }
   const bootstrap = state.handlers.get(DESKTOP_IPC.localeBootstrap)!
   expect(await bootstrap(event)).toEqual({ languages: ['en-US'], preference: 'zh' })
