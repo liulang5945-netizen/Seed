@@ -506,6 +506,22 @@ owner 选"2 之后 3"，SPEC-R2-02 已把解码掩码产品化——产品表层
 
 ## 11. 修订记录
 
+* **rev15（2026-09-28，两臂在跑；先把跑完后的判读链端到端验通，并取中途件基线）**：
+  趁着训练在跑，把"判定这一步"本身先变成机械动作——**判读链三支全部当场验通**（用中途电路件
+  `output/taiji_a2_base_pos_on/judge/circuit-ep100.pt`，临时产物已清）：
+
+  | 步 | 命令 | 实测（中途件 ep100，非终件） |
+  |---|---|---|
+  | ① CAP chat 松口径 | `score_taiji_r2_copy_circuit_chat_cap.py --checkpoint <基底> --circuit <电路>` | control **3/36**、treated **4/36**、`control_wf 0.3333`／`treated_wf 0.25` |
+  | ② 严格口径复算（**零训练、只读报告**） | `score_taiji_r2_copy_strict_cap.py --report <①的报告>` | 可命中维度 D=16（E=0，与登记一致）⇒ control **strict 0/16**、treated **strict 2/16** |
+  | ③ 表层扩展分母（含可解码率/成句率） | `score_taiji_r2_copy_surface_extension.py --checkpoint <基底> --circuit <电路> --manifest plans/manifests/r2_copy_surface_extension_v3_position_random.json` | 312 条文本、`control_wf 68`、`treated_wf 55`、`status=not_resolved`、`base_unchanged=true` |
+
+  ⇒ **跑完后只需把 ①②③ 在终件上重跑一遍**（三支的接口/前提都已验证，不会现场卡住）。
+  **更重要的是这三条中途读数本身**：即便只训了 100 episodes，合法通道上的
+  `strict 2/16`（严格口径）已与历史 A2.4 的 chat 电路臂同档（2/16），而历史 A2.3b 的两个独立电路是
+  6–7/16——**终件要在同一口径上与这两档并列比较**，才可以谈"合法通道有没有让复述更好"。
+  **未决/不预设**：中途件不是结论，且"可解码率"这一列必须与命中同表报出（通道变合法后命中含义变了）。
+
 * **rev14（2026-09-28，按 rev13 的结论起"给复述训一条通路"两臂；先补了一处漏接线）**：
   rev13 的判读是"缺一条被训练过、朝复述方向的通路"，所以下一刀＝**在合法通道上把 A2 电路训起来**
   （A2 电路是迄今唯一被证明能把实体带到出口的机构）。开跑前被一处漏接线挡下并已修：
