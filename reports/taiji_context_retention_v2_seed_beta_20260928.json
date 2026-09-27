@@ -1,0 +1,173 @@
+{
+  "format": "taiji-context-retention-curve-v2",
+  "prereg": "本文件 docstring（距离口径、仪器有效性两条、研究读数按实测报，随文件一起冻结）",
+  "checkpoint": "checkpoints/seed_beta.pt",
+  "arm_label": "seed_beta_bare",
+  "stimuli": {
+    "tokens": [
+      "天磊",
+      "静怡",
+      "志远",
+      "小雨",
+      "建华",
+      "文博",
+      "海燕",
+      "国强"
+    ],
+    "pattern": "我叫{token}{suffix}；distance_bytes = len(suffix.encode())",
+    "suffixes": [
+      {
+        "suffix": "\n我叫",
+        "distance_bytes": 7
+      },
+      {
+        "suffix": "。我叫",
+        "distance_bytes": 9
+      },
+      {
+        "suffix": "。我的名字是",
+        "distance_bytes": 18
+      },
+      {
+        "suffix": "，我再说一遍，我叫",
+        "distance_bytes": 27
+      },
+      {
+        "suffix": "。我再说一遍我的名字，我叫",
+        "distance_bytes": 39
+      },
+      {
+        "suffix": "。今天天气很好，我再说一遍，我叫",
+        "distance_bytes": 48
+      },
+      {
+        "suffix": "。昨天夜里下了很大的雨，我再说一遍，我叫",
+        "distance_bytes": 60
+      }
+    ],
+    "control": "同一距离上把名字换成另一个 token，量同一个首字节的对数比"
+  },
+  "instrument": {
+    "deterministic": true,
+    "sensitivity_kl": 0.07976,
+    "sensitivity_line": 0.01
+  },
+  "curve": [
+    {
+      "suffix": "\n我叫",
+      "distance_bytes": 7,
+      "items": 8,
+      "mean_log_ratio": -0.042941,
+      "min_log_ratio": -0.363953,
+      "max_log_ratio": 0.416955,
+      "alive_rate": 0.0,
+      "l0_hit_rate": 0.0,
+      "exit_kl_between_tokens": 0.075685,
+      "exit_responds_to_token": true,
+      "cue_rel_l1_between_tokens": 0.355717
+    },
+    {
+      "suffix": "。我叫",
+      "distance_bytes": 9,
+      "items": 8,
+      "mean_log_ratio": -0.004623,
+      "min_log_ratio": -0.325076,
+      "max_log_ratio": 0.448993,
+      "alive_rate": 0.0,
+      "l0_hit_rate": 0.0,
+      "exit_kl_between_tokens": 0.059882,
+      "exit_responds_to_token": true,
+      "cue_rel_l1_between_tokens": 0.312706
+    },
+    {
+      "suffix": "。我的名字是",
+      "distance_bytes": 18,
+      "items": 8,
+      "mean_log_ratio": -0.020941,
+      "min_log_ratio": -0.196248,
+      "max_log_ratio": 0.242564,
+      "alive_rate": 0.0,
+      "l0_hit_rate": 0.0,
+      "exit_kl_between_tokens": 0.029852,
+      "exit_responds_to_token": true,
+      "cue_rel_l1_between_tokens": 0.251014
+    },
+    {
+      "suffix": "，我再说一遍，我叫",
+      "distance_bytes": 27,
+      "items": 8,
+      "mean_log_ratio": -0.023319,
+      "min_log_ratio": -0.285425,
+      "max_log_ratio": 0.158546,
+      "alive_rate": 0.0,
+      "l0_hit_rate": 0.0,
+      "exit_kl_between_tokens": 0.024131,
+      "exit_responds_to_token": true,
+      "cue_rel_l1_between_tokens": 0.220921
+    },
+    {
+      "suffix": "。我再说一遍我的名字，我叫",
+      "distance_bytes": 39,
+      "items": 8,
+      "mean_log_ratio": -0.02099,
+      "min_log_ratio": -0.308506,
+      "max_log_ratio": 0.165122,
+      "alive_rate": 0.0,
+      "l0_hit_rate": 0.0,
+      "exit_kl_between_tokens": 0.018922,
+      "exit_responds_to_token": true,
+      "cue_rel_l1_between_tokens": 0.200865
+    },
+    {
+      "suffix": "。今天天气很好，我再说一遍，我叫",
+      "distance_bytes": 48,
+      "items": 8,
+      "mean_log_ratio": -0.02874,
+      "min_log_ratio": -0.219539,
+      "max_log_ratio": 0.100018,
+      "alive_rate": 0.0,
+      "l0_hit_rate": 0.0,
+      "exit_kl_between_tokens": 0.010271,
+      "exit_responds_to_token": true,
+      "cue_rel_l1_between_tokens": 0.153674
+    },
+    {
+      "suffix": "。昨天夜里下了很大的雨，我再说一遍，我叫",
+      "distance_bytes": 60,
+      "items": 8,
+      "mean_log_ratio": -0.037427,
+      "min_log_ratio": -0.272285,
+      "max_log_ratio": 0.441635,
+      "alive_rate": 0.0,
+      "l0_hit_rate": 0.0,
+      "exit_kl_between_tokens": 0.017352,
+      "exit_responds_to_token": true,
+      "cue_rel_l1_between_tokens": 0.169172
+    }
+  ],
+  "verdict": {
+    "name": "exit_responds_but_no_copy_path",
+    "farthest_alive_distance_bytes": null,
+    "responds_at_distances": [
+      7,
+      9,
+      18,
+      27,
+      39,
+      48,
+      60
+    ],
+    "best_mean_log_ratio": -0.004623,
+    "reading": "出口**对 token 有反应**（不同名字给出不同分布），但**不朝自己的字节去** ⇒ 没有复述通路；配上 F0 的 T3=0/32 与 A2 电路才有命中的事实 ⇒ 复述靠的是电路那条旁路，不是裸读出"
+  },
+  "dropped_measurements": {
+    "token_linear_decodability": "v2 初稿的'从 motor_context 线性读出是哪个 token（8 类）'已删：每类仅 1 个样本、4 折 CV 恒 0（冒烟实测 token_cv = cv_shuffled = 0.0）⇒ 该样本量下不可用；'token 能否被线性读出'因此仍是未决项，需要另一个有幂次的设计"
+  },
+  "what_would_overturn": "确定性或输入敏感性不过 ⇒ 仪器无效、整件作废；换更强探针（非线性／有幂次）读出 token ⇒ 结论要重写；本件只量裸读出这条链（无 copy 电路、无记忆、贪心），与 C3 的情节场保持曲线不是一个东西",
+  "base_sha256_unchanged": true,
+  "instrument_guard": {
+    "items_nonzero": true,
+    "instrument_valid": true,
+    "base_unchanged": true
+  }
+}
