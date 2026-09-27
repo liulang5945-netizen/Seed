@@ -1,0 +1,1509 @@
+{
+  "format": "taiji-r2-copy-surface-extension-v1",
+  "prereg": "plans/reference/SPEC-A-21_r2_surface_extension_prereg_20260925.md",
+  "judge_prereg": "plans/reference/SPEC-A-22_r2_a2_5_query_conditioned_selector_prereg_20260926.md",
+  "manifest": "plans/manifests/r2_copy_surface_extension_v3_position_random.json",
+  "manifest_sha256": "b162ff091630f64a8cac986184729ff7894887f4806c923cc12b301ce5ae4fee",
+  "checkpoint": "output/taiji_r2_plan01_pos_off/checkpoint.pt",
+  "copy_evidence_utf8_gate": false,
+  "control_no_circuit": {
+    "circuit": null,
+    "items": 104,
+    "texts": 312,
+    "well_formed_texts": 0,
+    "well_formed_rate": 0.0,
+    "utf8_decodable_rate": 0.0,
+    "utf8_decodable_trimmed_rate": 0.0032,
+    "illegal_after_tail_trim_rate": 0.9968,
+    "strict_hits": 0,
+    "rows": [
+      {
+        "id": "V001",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�它产品����场���入�入�对充��市\n的所��定��的的技��",
+        "well_formed": false
+      },
+      {
+        "id": "V002",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�入��品��免�僽������充��充��充�����妁�������劀���������",
+        "well_formed": false
+      },
+      {
+        "id": "V003",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "��对有�劀�\n上�����������������入����\n������有�常�常�吀�",
+        "well_formed": false
+      },
+      {
+        "id": "V004",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�入�市�它叐��������������，免�先����������\n市场�品����",
+        "well_formed": false
+      },
+      {
+        "id": "V005",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�������有���充��市场�名它���的牌充����������\n程���全�",
+        "well_formed": false
+      },
+      {
+        "id": "V006",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�入�市�于帊���它��的的有�入��市�充���包充�����\n��",
+        "well_formed": false
+      },
+      {
+        "id": "V007",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�入�名名的有�充�是�充��充��高��充��充���市�����的�",
+        "well_formed": false
+      },
+      {
+        "id": "V008",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "����妸����������������������要��充�����市场�名�化需����",
+        "well_formed": false
+      },
+      {
+        "id": "V009",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�入�市�于市�兞�入������光�充��充��充����的的的的",
+        "well_formed": false
+      },
+      {
+        "id": "V010",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�有��\n市�它�����入������������有��品����免��它���的的�",
+        "well_formed": false
+      },
+      {
+        "id": "V011",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "������������\n上���对有�入�对入��光�光�充���\n的的的�",
+        "well_formed": false
+      },
+      {
+        "id": "V012",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�入�市�它��的有�充��星���光�充��充���庎度������市�",
+        "well_formed": false
+      },
+      {
+        "id": "V013",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�������有�����入�市它入��定�的的有���它�������的特��",
+        "well_formed": false
+      },
+      {
+        "id": "V014",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�具��分�市�于市�����\n- 是����\n的有�具����市市入对�",
+        "well_formed": false
+      },
+      {
+        "id": "V015",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�入����\n上��\n的入�分�品���充��充�����充���\n市在���\n��",
+        "well_formed": false
+      },
+      {
+        "id": "V016",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�������有���充���市�它��的����入�市�化需�����先机名�",
+        "well_formed": false
+      },
+      {
+        "id": "V017",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�入�市�于市�嚄有��先��对充��充��充��充�����座品���",
+        "well_formed": false
+      },
+      {
+        "id": "V018",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�兏�对是��入��品��充��充��充��兽�����牟���度�的有",
+        "well_formed": false
+      },
+      {
+        "id": "V019",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�入��品���光�充���市�����\n�������������品���劀�\n- 最����",
+        "well_formed": false
+      },
+      {
+        "id": "V020",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�有���它����市名的有�免名�是��入�包內�的扌免�幚",
+        "well_formed": false
+      },
+      {
+        "id": "V021",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "���������������������入�����充�������充��充�������场�市��",
+        "well_formed": false
+      },
+      {
+        "id": "V022",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�入�对入�对有�劀�\n为�常�圀�\n���������������������������",
+        "well_formed": false
+      },
+      {
+        "id": "V023",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�入�对入�对入�对有�充������充������品���元������市�",
+        "well_formed": false
+      },
+      {
+        "id": "V024",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�入�市�上����劀��能���名市场�入�匉�充��充���对�徺",
+        "well_formed": false
+      },
+      {
+        "id": "V025",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�光��\n上��\n的入���劀�\n的牌入�对入�对是��是����\n一�",
+        "well_formed": false
+      },
+      {
+        "id": "V026",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�场�品��劀�\n上���入���是��入�入���品������兹���������",
+        "well_formed": false
+      },
+      {
+        "id": "V027",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�入��光�入�����的���光�入��市圀�\n- 是�平的的技�品�",
+        "well_formed": false
+      },
+      {
+        "id": "V028",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�入�对入�对上��������������品��免�入��品��免�对���",
+        "well_formed": false
+      },
+      {
+        "id": "V029",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�������������������它��������入��入��场�名�僽����光�具��",
+        "well_formed": false
+      },
+      {
+        "id": "V030",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�入�名�市场妁���免����，先����光�充��充��充��充���",
+        "well_formed": false
+      },
+      {
+        "id": "V031",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�入�劀�\n丂它入�对上���名�����它���，兮�先����充���",
+        "well_formed": false
+      },
+      {
+        "id": "V032",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�������有������市�于庐�入�市场����有�充����������������",
+        "well_formed": false
+      },
+      {
+        "id": "V033",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "��������������对是�光�入���对充��充��充����劀���有����",
+        "well_formed": false
+      },
+      {
+        "id": "V034",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�有��\n市�它���的牌入��光�入彯��入���对��对��的�",
+        "well_formed": false
+      },
+      {
+        "id": "V035",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "����������市�它���������入��劀�\n上�������������名�入��名",
+        "well_formed": false
+      },
+      {
+        "id": "V036",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�有���它���记������������免���品��入��入��市场大品���",
+        "well_formed": false
+      },
+      {
+        "id": "V037",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "���\n上���对�入�市入�对有�充����充��的����对是�年�",
+        "well_formed": false
+      },
+      {
+        "id": "V038",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�入���劀���劀�\n为�先有�充�是名�它���的的的的的牌",
+        "well_formed": false
+      },
+      {
+        "id": "V039",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�入�名�市它入���定�有�充����充��充��充�����充��充�",
+        "well_formed": false
+      },
+      {
+        "id": "V040",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�入�分児对充��市\n上��\n�免���������������兄����入����",
+        "well_formed": false
+      },
+      {
+        "id": "V041",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�市�品���的����劀���劀���对�座品���具������\n- 是��记�",
+        "well_formed": false
+      },
+      {
+        "id": "V042",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�最���������������它�特��度��入�市圀�\n- 是�名名的有�",
+        "well_formed": false
+      },
+      {
+        "id": "V043",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "���兊��\n上�������������入���光�入��市�定�的有�具������",
+        "well_formed": false
+      },
+      {
+        "id": "V044",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�有���它���讌免�入�市场名名��的����对光�光�充����",
+        "well_formed": false
+      },
+      {
+        "id": "V045",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�������有���入�分��������进��它入�名的����充��充��充�",
+        "well_formed": false
+      },
+      {
+        "id": "V046",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�具���������品�的���市场��品�����充��充��充����劀�\n�",
+        "well_formed": false
+      },
+      {
+        "id": "V047",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�入���入���乘��充�光����入��定�的的的牌劀�在���市�",
+        "well_formed": false
+      },
+      {
+        "id": "V048",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�入�分对充��充��充���充����对��座品����兹���\n.  12.",
+        "well_formed": false
+      },
+      {
+        "id": "V049",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�入�劀�\n丂圀�\n的入����光�充����的����对徃是上����",
+        "well_formed": false
+      },
+      {
+        "id": "V050",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�场��������市�上����劀������\n上���对有��名名�僽�������",
+        "well_formed": false
+      },
+      {
+        "id": "V051",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�对有�入��品����光�入��������\n�����对�是��计��度�的��",
+        "well_formed": false
+      },
+      {
+        "id": "V052",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�对�入�市\n上���������对������品���具�对是��能是����",
+        "well_formed": false
+      },
+      {
+        "id": "V053",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�������有���劀��它児���\n的的���入�对充��对是�年是��",
+        "well_formed": false
+      },
+      {
+        "id": "V054",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�入�����能����场�品���光�充��充��充��充����大������有",
+        "well_formed": false
+      },
+      {
+        "id": "V055",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�入�对入�对有�充��对�的的的的牌上���在�����对���",
+        "well_formed": false
+      },
+      {
+        "id": "V056",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�入�市�于市�入����光�充��充��������度�的的数���\n. �",
+        "well_formed": false
+      },
+      {
+        "id": "V057",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�入�市�于市�兞�入���光�充��充���劀�����充��充���场",
+        "well_formed": false
+      },
+      {
+        "id": "V058",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�最������������������圀�\n等�入�入�市入牌充����市�嚨��",
+        "well_formed": false
+      },
+      {
+        "id": "V059",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "��������有�对光���光�充����充�����劀���有���对��度�的",
+        "well_formed": false
+      },
+      {
+        "id": "V060",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�有���它�����������它������先����入���充��市场�品��充�",
+        "well_formed": false
+      },
+      {
+        "id": "V061",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�充�入������\n上���动�琟���成对为�常�充����������������",
+        "well_formed": false
+      },
+      {
+        "id": "V062",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�入�对光�需�\n上���劀��的扌������是�光児�市�于偁���",
+        "well_formed": false
+      },
+      {
+        "id": "V063",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�入����\n上��\n的的牌光���充���定����充��充���品���劀�",
+        "well_formed": false
+      },
+      {
+        "id": "V064",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�����有���充���入�市�于座�先����有�充������������充���",
+        "well_formed": false
+      },
+      {
+        "id": "V065",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�入�劀�\n上��\n的入�入�对星��扌具�����市场�品�������",
+        "well_formed": false
+      },
+      {
+        "id": "V066",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�有��\n市�������牟���光��品������充�����＀����������������",
+        "well_formed": false
+      },
+      {
+        "id": "V067",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�平特������劀���入������\n上���定�������技��定��的�����",
+        "well_formed": false
+      },
+      {
+        "id": "V068",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "��������������它���������入��市�它��的��技��児���������",
+        "well_formed": false
+      },
+      {
+        "id": "V069",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�����������它�����\n. �有��������������������������������������",
+        "well_formed": false
+      },
+      {
+        "id": "V070",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�具����需�\n程��是�是具��分�它市�于市�元入�����有��",
+        "well_formed": false
+      },
+      {
+        "id": "V071",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�入����\n上������������先��上����品���光�入���������劀���",
+        "well_formed": false
+      },
+      {
+        "id": "V072",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�入�市�上������\n�����������������������：�的特有��品���",
+        "well_formed": false
+      },
+      {
+        "id": "V073",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�光��\n上��\n牌光���充����充��充��充����对����的���",
+        "well_formed": false
+      },
+      {
+        "id": "V074",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�市它度���������座品��免��充������品���市场����\n. �或",
+        "well_formed": false
+      },
+      {
+        "id": "V075",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "��对有�光�充��充��充��充���������对��的的的的的�",
+        "well_formed": false
+      },
+      {
+        "id": "V076",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "��������������有��児�充��的����它���上����它��理定�市�",
+        "well_formed": false
+      },
+      {
+        "id": "V077",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�入�市圀�\n- 是�入�别���是�入入��牌兹���进���品���",
+        "well_formed": false
+      },
+      {
+        "id": "V078",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�入�对入�对有�充��充���的的的的牌丂����������������",
+        "well_formed": false
+      },
+      {
+        "id": "V079",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�入����\n上��\n等�������������������它���的的牺�市�匐�上",
+        "well_formed": false
+      },
+      {
+        "id": "V080",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "����它�劀����入�名牌充��充���市场�品�����������������",
+        "well_formed": false
+      },
+      {
+        "id": "V081",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�入���������劀���劀��讌为�常�场��\n- 扌�����������������",
+        "well_formed": false
+      },
+      {
+        "id": "V082",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�入���劀���充�����充��充���它���的的批���\n一����兀���",
+        "well_formed": false
+      },
+      {
+        "id": "V083",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�对是�光入�����佽���������\n为�常�兀����入��������������",
+        "well_formed": false
+      },
+      {
+        "id": "V084",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�有���它���的牌入��市�市入同寍平��������前市入��",
+        "well_formed": false
+      },
+      {
+        "id": "V085",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�������������它入��入��入���入�������的有��品����充���",
+        "well_formed": false
+      },
+      {
+        "id": "V086",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�入���劀���劀�\n为�常�圀�\n��入����������������\n的特�����",
+        "well_formed": false
+      },
+      {
+        "id": "V087",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�入�名�市它入���定�有�充��最������\n等�入�对是���",
+        "well_formed": false
+      },
+      {
+        "id": "V088",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�有��\n. 或������\n. 成�����������\n的牌児市市入��的扌�",
+        "well_formed": false
+      },
+      {
+        "id": "V089",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�入�劀�\n为��������有�充��市市�的的牌入��对�入�卢",
+        "well_formed": false
+      },
+      {
+        "id": "V090",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�有�������������������������有��常����它���最��它�����完�",
+        "well_formed": false
+      },
+      {
+        "id": "V091",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�对是��児�市\n上��������������������������入���������入�",
+        "well_formed": false
+      },
+      {
+        "id": "V092",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�入�市�它児的有�充��牌充���市场大�品����充��最�\n�",
+        "well_formed": false
+      },
+      {
+        "id": "V093",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "��������������它�����������它琚�������入�名�入�的牌充��",
+        "well_formed": false
+      },
+      {
+        "id": "V094",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�市�于市�它��的��扌具���劀�能�����\n程�����������������",
+        "well_formed": false
+      },
+      {
+        "id": "V095",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�入���入����市\n上���常��兀��名名的����克�入��劀�����",
+        "well_formed": false
+      },
+      {
+        "id": "V096",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�入�对入�市\n上���常�兀��品���充��充���叐的的的批",
+        "well_formed": false
+      },
+      {
+        "id": "V097",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�它产品�����充����充��牟��度�的特����定�����充��对�",
+        "well_formed": false
+      },
+      {
+        "id": "V098",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�最�\n市���\n的最�����������������有�充�児�����最�\n的技�",
+        "well_formed": false
+      },
+      {
+        "id": "V099",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�对有��对児���\n的性�������它�����免��对星�名�僽���",
+        "well_formed": false
+      },
+      {
+        "id": "V100",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�有���它���的的有��������充����充��入�������\n�����定���",
+        "well_formed": false
+      },
+      {
+        "id": "V101",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "������������������������������������������������������������",
+        "well_formed": false
+      },
+      {
+        "id": "V102",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�入�劀�\n上���动��是具��名市�入�的的的扌充�名����",
+        "well_formed": false
+      },
+      {
+        "id": "V103",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�有��\n丂児分����������机�名名�僽����免��入�卐��嚄最",
+        "well_formed": false
+      },
+      {
+        "id": "V104",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "�光��\n上����品����光�入����充��充����市场�品������兹�",
+        "well_formed": false
+      }
+    ]
+  },
+  "treated_arms": [
+    {
+      "circuit": "E:\\Seed\\output\\taiji_a2_base_pos_off\\judge\\circuit-ep2700.pt",
+      "items": 104,
+      "texts": 312,
+      "well_formed_texts": 1,
+      "well_formed_rate": 0.0032,
+      "utf8_decodable_rate": 0.0064,
+      "utf8_decodable_trimmed_rate": 0.0449,
+      "illegal_after_tail_trim_rate": 0.9551,
+      "strict_hits": 17,
+      "rows": [
+        {
+          "id": "V001",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "擥�蓥�雨��蓥擥成�哥哥�哥�衐成我衐衐�哥�衐�哥",
+          "well_formed": false
+        },
+        {
+          "id": "V002",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "�州�州�州�州�州�州�州�州�州�州�州�州�州",
+          "well_formed": false
+        },
+        {
+          "id": "V003",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "212121�21212121212121�2121212121212121���21212121212121�2121",
+          "well_formed": false
+        },
+        {
+          "id": "V004",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "海�图图。�图�����图。图图。图图图。图图�",
+          "well_formed": false
+        },
+        {
+          "id": "V005",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "时爱喝�时爱喝�时爱喝乳时爱喝�喝�喝�喝乳时爱",
+          "well_formed": false
+        },
+        {
+          "id": "V006",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "鸀�养一�鸀�雪雪鸮�雪鸮�鸮�鸮�鸀�一���鸮�鸮�",
+          "well_formed": false
+        },
+        {
+          "id": "V007",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "�读�读������姐�读�进读�进读�进读�近泯������������",
+          "well_formed": false
+        },
+        {
+          "id": "V008",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "山吃吃吃吃吃吃吃吃吃吃吃吃吃包������最笼包����",
+          "well_formed": false
+        },
+        {
+          "id": "V009",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "曨我我成雨成我雨成我�我�成雨我我成成我�成��",
+          "well_formed": false
+        },
+        {
+          "id": "V010",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "岛�事事事事事事事事事事事事事事事事事事事事",
+          "well_formed": false
+        },
+        {
+          "id": "V011",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "777777777777777777777777777777777777777777777�77777777777777",
+          "well_formed": false
+        },
+        {
+          "id": "V012",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "�径�径�径�径��径��径��径�径�径�径��径�",
+          "well_formed": false
+        },
+        {
+          "id": "V013",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "�酿花人����������爱人�������������������������������������",
+          "well_formed": false
+        },
+        {
+          "id": "V014",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "居�一��一��一居�一��一�一��一居�一�一居�一�一�",
+          "well_formed": false
+        },
+        {
+          "id": "V015",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "读读���������������������读读读读读读读读读读读读�",
+          "well_formed": false
+        },
+        {
+          "id": "V016",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "�馍������������������艥�艥�艥�艥�艥",
+          "well_formed": false
+        },
+        {
+          "id": "V017",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "擥�远远�远迌哥��远远迌哥�������������",
+          "well_formed": false
+        },
+        {
+          "id": "V018",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "岛��。�青青�我佽���岛青青�岛青青�我佽�岛青岛",
+          "well_formed": false
+        },
+        {
+          "id": "V019",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "99999999999999999999999999999999999999999999999���9999999999",
+          "well_formed": false
+        },
+        {
+          "id": "V020",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "��������石径鳟��石径项径项石��径石��径�径�",
+          "well_formed": false
+        },
+        {
+          "id": "V021",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "檬檬檬檬檬檬檬檬��������爱人����爱人����������������",
+          "well_formed": false
+        },
+        {
+          "id": "V022",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "蓝舌���舌舌����蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝�",
+          "well_formed": false
+        },
+        {
+          "id": "V023",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "�读�����������������������������������读读���读������������",
+          "well_formed": false
+        },
+        {
+          "id": "V024",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "��馍������馍���馍�������馍���馍��馍��馍",
+          "well_formed": false
+        },
+        {
+          "id": "V025",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "�哥�慕哥�慕哥�慕哥�哥�哥�哥�哥�哥�哥�哥",
+          "well_formed": false
+        },
+        {
+          "id": "V026",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "明�明�事事事事事事事事事事事事事事事事事事�",
+          "well_formed": false
+        },
+        {
+          "id": "V027",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "999999999999999999999999�99999999999999999999999999999999999",
+          "well_formed": false
+        },
+        {
+          "id": "V028",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "溑皺��云纑纑纑�庺�目�溺�目��目�溺�目�溑�庺��",
+          "well_formed": false
+        },
+        {
+          "id": "V029",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "茶�人�������爱人��������������������������������������������",
+          "well_formed": false
+        },
+        {
+          "id": "V030",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "蓝舌舌�体�蓝舌舌�蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝�",
+          "well_formed": false
+        },
+        {
+          "id": "V031",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "�读读������������������������������������������������读�读�",
+          "well_formed": false
+        },
+        {
+          "id": "V032",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "臥汆臥汆腐�腐�臭�哥�哥�臥腐�臭��臭腐��臥臀爱",
+          "well_formed": false
+        },
+        {
+          "id": "V033",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "�兕安慕兕兕安慕安慕�慕�慕�兕�慕�慕�兕�����。���",
+          "well_formed": false
+        },
+        {
+          "id": "V034",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "兰兰兰兰兰兰兰兰兰兰兰兰兰兰兰兰兰兰兰兰表�",
+          "well_formed": false
+        },
+        {
+          "id": "V035",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "2424242424242424。242424242424242424024�10242424242424。242424",
+          "well_formed": false
+        },
+        {
+          "id": "V036",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "涛�涛�涛�涛�涛�涛�涛�涛�涛�涛�涛�涛�涛�涛�涛�涛�",
+          "well_formed": false
+        },
+        {
+          "id": "V037",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "时砖茶爱�茶砖茀��砖茶爱�茶砖茁��砖茶爱�茶砖",
+          "well_formed": false
+        },
+        {
+          "id": "V038",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "�獾养一�养一养一养一养一养一养一养一养一养�",
+          "well_formed": false
+        },
+        {
+          "id": "V039",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "�姐诉�姐毻��姐�姐姐木读�读�毻��姐�姐�读��姐",
+          "well_formed": false
+        },
+        {
+          "id": "V040",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "��芋����������������������芀糖����",
+          "well_formed": false
+        },
+        {
+          "id": "V041",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "洛�表���������哥�哥�哥�哥�哥洛�����哥�哥�哥��哥���",
+          "well_formed": false
+        },
+        {
+          "id": "V042",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "波�波�波�波�波�波�波�波�波�波�波�波�波�波同事事",
+          "well_formed": false
+        },
+        {
+          "id": "V043",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "�888888888888888888888888888����888888888888888888888数�����8",
+          "well_formed": false
+        },
+        {
+          "id": "V044",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "�影�疋影影。影��影影�影。�影�影。影�疏�影���",
+          "well_formed": false
+        },
+        {
+          "id": "V045",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "苦荞茶荞茶茶茶茶茶茶茶茶茶茶茶茶茶茶茶茶��",
+          "well_formed": false
+        },
+        {
+          "id": "V046",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "养一养一养一养一养一养一养一养一养一养一养�",
+          "well_formed": false
+        },
+        {
+          "id": "V047",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "�读������读���������������������误�读读读读读读读读�",
+          "well_formed": false
+        },
+        {
+          "id": "V048",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "��芋�芋��������������������芀糖���",
+          "well_formed": false
+        },
+        {
+          "id": "V049",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "洛�������。宁�������。宁���������。宁��������������。宁",
+          "well_formed": false
+        },
+        {
+          "id": "V050",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "州�佸�温温州州州州州�州表�温州表�温哥温州��",
+          "well_formed": false
+        },
+        {
+          "id": "V051",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "212121212121212121212121�12121212121212121212121212121212121",
+          "well_formed": false
+        },
+        {
+          "id": "V052",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "�风纋同临拣�纋皣��临�纋��纋风纋风��目风目拣�",
+          "well_formed": false
+        },
+        {
+          "id": "V053",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "�亢枣茶��溢�亢溢�亢�亢�亢�亢�亢�亢�亢�亢",
+          "well_formed": false
+        },
+        {
+          "id": "V054",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "��一�����一�����一养一�养一�一居养一��一��",
+          "well_formed": false
+        },
+        {
+          "id": "V055",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "毻�������������������》读读读读读读读读读读读读读",
+          "well_formed": false
+        },
+        {
+          "id": "V056",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "�哥��舱哥�哥江舱哥江舱哥汥汤哥��江�哥�舱",
+          "well_formed": false
+        },
+        {
+          "id": "V057",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "时予时予时予�时予时予时予时予时予予时予�庺��",
+          "well_formed": false
+        },
+        {
+          "id": "V058",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "�温州温州温州温温温温温州温州温�温州温�温�温",
+          "well_formed": false
+        },
+        {
+          "id": "V059",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "256256�256256256数256256256数5625656255656�25252562525256256",
+          "well_formed": false
+        },
+        {
+          "id": "V060",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "��雮�雮�雮�雮�雮�雮�雨���雮�雮�雮�����宿雮�雮�",
+          "well_formed": false
+        },
+        {
+          "id": "V061",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "�人�������爱人����������������������������������������������",
+          "well_formed": false
+        },
+        {
+          "id": "V062",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "龅养一�一�一���养�一���一�一居�一�一�一�一�一",
+          "well_formed": false
+        },
+        {
+          "id": "V063",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "�读���读读��毻����读读读读读��读读读读进读�",
+          "well_formed": false
+        },
+        {
+          "id": "V064",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "�吃舱吃�吃舱吃舱吃舱吃舱吃舱吃舱吃舱吃舱吃",
+          "well_formed": false
+        },
+        {
+          "id": "V065",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "�栠�������栚�����栚�������栚�������栚��������戆������砚�",
+          "well_formed": false
+        },
+        {
+          "id": "V066",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "洛阳阳洛阳阳洛阳阳阳洛阳�阳阳洛阳�阳阳洛阳��",
+          "well_formed": false
+        },
+        {
+          "id": "V067",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "131313131313131313131�喯3131313131313131313131313131313131313",
+          "well_formed": false
+        },
+        {
+          "id": "V068",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "�雮�雮我�雮�雮我��宮我��宿雮�雨。宿雮�雮�雮�",
+          "well_formed": false
+        },
+        {
+          "id": "V069",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "荷�溺��������������������������������������������������������",
+          "well_formed": false
+        },
+        {
+          "id": "V070",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "一�一�一养一养一养一养一养一养一养一养一养�",
+          "well_formed": false
+        },
+        {
+          "id": "V071",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "�读读��录�华读读�读���进读���为�梦��梦��诹��梦��",
+          "well_formed": false
+        },
+        {
+          "id": "V072",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "�面�面扛�面�面扛�面�面扛�面�面扛�面�面扛�",
+          "well_formed": false
+        },
+        {
+          "id": "V073",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "晋�������������������������������",
+          "well_formed": false
+        },
+        {
+          "id": "V074",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "扬扬扬扬州��州��州��扬扬����巉�州��巉�扬����州����",
+          "well_formed": false
+        },
+        {
+          "id": "V075",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "131313131313131313131313131数1313131313131313131313131�313131",
+          "well_formed": false
+        },
+        {
+          "id": "V076",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "��舒��舒���舒雮�舒雮��舒����舒���舒舒雮朋",
+          "well_formed": false
+        },
+        {
+          "id": "V077",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "时�荷�时�荷�时�荷��喝荷�荷�时�荷饮时�荷��",
+          "well_formed": false
+        },
+        {
+          "id": "V078",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "�水獭��一�一养一养一养一养一养一养一养一养一",
+          "well_formed": false
+        },
+        {
+          "id": "V079",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "��读读读����读读������读读���������������������������",
+          "well_formed": false
+        },
+        {
+          "id": "V080",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "�哥水�水�水�水�水�水�水�水�水��哥水鸣水",
+          "well_formed": false
+        },
+        {
+          "id": "V081",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "春春春春春衾哥哥衾哥哥衾哥哥衾哥哥衾哥哥衾�",
+          "well_formed": false
+        },
+        {
+          "id": "V082",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "芜�佥�芜��芜�芜��芜�芜��芜��芜���芜芜���",
+          "well_formed": false
+        },
+        {
+          "id": "V083",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "20202020202020202020202020020202020。202020202020202020202020",
+          "well_formed": false
+        },
+        {
+          "id": "V084",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "�皪同事同事的�事皪同事皪同事皪同事同事��皪",
+          "well_formed": false
+        },
+        {
+          "id": "V085",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "茉茉茉茉茉茉茉茉茉茉茉茉茉茉茉茉茉茉茉茉茉�",
+          "well_formed": false
+        },
+        {
+          "id": "V086",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "拸�������������������������拸������������拸������充�一�����",
+          "well_formed": false
+        },
+        {
+          "id": "V087",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "�读����读读����读读������读读������������������������",
+          "well_formed": false
+        },
+        {
+          "id": "V088",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "�子��子�戱哥戱哥戱哥戱哥最�子�拮�拮戱子��",
+          "well_formed": false
+        },
+        {
+          "id": "V089",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "哥�吟�哥晚哥�表哥晥晨��表哥�哥�哥晚哥�哥��",
+          "well_formed": false
+        },
+        {
+          "id": "V090",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "抜�芜�芜��芜�芜�芜�芜�芜�芜�芜�芜�芜�芜我���",
+          "well_formed": false
+        },
+        {
+          "id": "V091",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "1886188数�18181818181818数�18181818181818181818数喯6181818",
+          "well_formed": false
+        },
+        {
+          "id": "V092",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "�央�央我皪央�央�皪央未��未��未央�成未央央我",
+          "well_formed": false
+        },
+        {
+          "id": "V093",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "荷喝荷喝荷喝荷喝荷喝荷喝荷喝荷喝荷喝荷喝荷�",
+          "well_formed": false
+        },
+        {
+          "id": "V094",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "蝙蝠。�蝙蝙蝙蝙踀��蝙蝙蝙踀��蝙蝙蝙踀�蝙蝙",
+          "well_formed": false
+        },
+        {
+          "id": "V095",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "�读�读����读读������读读�������������������������������",
+          "well_formed": false
+        },
+        {
+          "id": "V096",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "拮拮拮拮拮拮拮拮�子�狮子�狮子��子�子��吃爱吃",
+          "well_formed": false
+        },
+        {
+          "id": "V097",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "轩轩�轩�轩�轩轩�轩轩�轩轩轩�轩轩�轩�轩轩�轩轩�",
+          "well_formed": false
+        },
+        {
+          "id": "V098",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "自自自自自自自自自自自自自自自自自自自自自�",
+          "well_formed": false
+        },
+        {
+          "id": "V099",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "喦��36�数��36�数喦��36�数喦��36数喦��36�数���36��",
+          "well_formed": false
+        },
+        {
+          "id": "V100",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "拥��戟��知秋�������知秋������知秋��秋�秋�知�",
+          "well_formed": false
+        },
+        {
+          "id": "V101",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "�人���������爱人��������������������������������������������",
+          "well_formed": false
+        },
+        {
+          "id": "V102",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "�松鼠�养一养一养一养一养一养一养一养一养一�",
+          "well_formed": false
+        },
+        {
+          "id": "V103",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "�读读��毻���读进读���读读�读���读读�读���读�",
+          "well_formed": false
+        },
+        {
+          "id": "V104",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "懇���片�片�����片������肺������片���������������������",
+          "well_formed": false
+        }
+      ]
+    }
+  ],
+  "surface_verdict": {
+    "min_gap_texts": 3,
+    "per_circuit": [
+      {
+        "circuit": "E:\\Seed\\output\\taiji_a2_base_pos_off\\judge\\circuit-ep2700.pt",
+        "gap_texts": 1,
+        "direction": "better",
+        "meets_min_gap": false,
+        "control_rate": 0.0,
+        "treated_rate": 0.0032
+      }
+    ],
+    "status": "not_resolved",
+    "verdict": "not_resolved（独立取数只有 1 次，判据要求 ≥2 次）"
+  },
+  "base_sha256_unchanged": true
+}

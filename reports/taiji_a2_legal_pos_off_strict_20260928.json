@@ -1,0 +1,760 @@
+{
+  "format": "taiji-r2-copy-strict-cap-recompute-v1",
+  "definition": "hit_strict ⇔ 某期望词既在更早用户轮原文里逐字出现（可复制），又出现在答案里；单轮题与通用词自动排除。",
+  "manifest": "plans/manifests/cap0_eval_set_v2.json",
+  "strict_eligible_by_dimension": {
+    "C": 0,
+    "D": 16,
+    "E": 0
+  },
+  "reports": [
+    {
+      "source_report": "reports\\taiji_a2_legal_pos_off_cap_20260928.json",
+      "source_format": "taiji-r2-copy-circuit-chat-cap-v1",
+      "source_prereg": "plans/reference/M5_R2_A2_3_PREREG_20260925.md §4-S2（判据沿用）",
+      "criterion": "A2.4 重测通过（D+E>0 且成句率不塌于对照）",
+      "arms": {
+        "control_no_circuit": {
+          "items": 36,
+          "correct_loose": 2,
+          "correct_strict": 0,
+          "strict_eligible_items": 16,
+          "rows": [
+            {
+              "id": "D01",
+              "dimension": "D",
+              "hit": false,
+              "answer": "�入�对�入��需�\n的性��劀��对�����免�劀�\n- 有��������",
+              "copyable_tokens": [
+                "阿岩"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D02",
+              "dimension": "D",
+              "hit": false,
+              "answer": "�充���\n市�它���的����兄��入��入��充���它���的的机��",
+              "copyable_tokens": [
+                "杭州"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D03",
+              "dimension": "D",
+              "hit": true,
+              "answer": "�入��市\n上����叐的的扌入����化����\n- 是����\n�常�兀�",
+              "copyable_tokens": [
+                "简短"
+              ],
+              "hit_loose": true,
+              "hit_strict": false
+            },
+            {
+              "id": "D04",
+              "dimension": "D",
+              "hit": false,
+              "answer": "�有���对是入�市市入�包�����的�����入��������\n上������",
+              "copyable_tokens": [
+                "17"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D05",
+              "dimension": "D",
+              "hit": false,
+              "answer": "�入�它它児�充��市\n上��\n����\n�����������������������������",
+              "copyable_tokens": [
+                "Seed"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D06",
+              "dimension": "D",
+              "hit": false,
+              "answer": "�入�对是�光入�市\n上���嚄具�������常�场�品�������免�",
+              "copyable_tokens": [
+                "阿岩"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D07",
+              "dimension": "D",
+              "hit": false,
+              "answer": "�有��\n市�它���的的有�入�卐����兞�市市元���包�的技",
+              "copyable_tokens": [
+                "杭州"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D08",
+              "dimension": "D",
+              "hit": false,
+              "answer": "�有��\n丂����������牚�牓�����������������\n�名�对是是入��",
+              "copyable_tokens": [
+                "绿茶"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D09",
+              "dimension": "D",
+              "hit": false,
+              "answer": "�光��\n上����������������������������������充��充��充���如�",
+              "copyable_tokens": [
+                "42"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D10",
+              "dimension": "D",
+              "hit": false,
+              "answer": "�光��\n上��\n的扌光���市市对是��它�的的扌具���对��",
+              "copyable_tokens": [
+                "小林"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D11",
+              "dimension": "D",
+              "hit": false,
+              "answer": "�入����������技�最��劀���充��市市同兌���机���先�����",
+              "copyable_tokens": [
+                "南京"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D12",
+              "dimension": "D",
+              "hit": false,
+              "answer": "�入��入�对星��是�入�������它��的的有�劀�市�它�����",
+              "copyable_tokens": [
+                "23"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D13",
+              "dimension": "D",
+              "hit": false,
+              "answer": "�最��它������������������它��琽������入�名�児的的机��",
+              "copyable_tokens": [
+                "测试"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D18",
+              "dimension": "D",
+              "hit": false,
+              "answer": "对有��品��特�����，入�的����劀�\n上�����有��大����的�",
+              "copyable_tokens": [
+                "阿岩",
+                "杭州",
+                "17"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D19",
+              "dimension": "D",
+              "hit": false,
+              "answer": "�入�市�于市�上��������有�入��������常�场�品���充�����",
+              "copyable_tokens": [
+                "Seed",
+                "接口"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D20",
+              "dimension": "D",
+              "hit": false,
+              "answer": "�����光�入��������������������������入�����市�入��光�光��",
+              "copyable_tokens": [
+                "绿茶",
+                "17"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E01",
+              "dimension": "E",
+              "hit": false,
+              "answer": "在市对是�光�充��充��充��市市�包���������������������",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E02",
+              "dimension": "E",
+              "hit": false,
+              "answer": "对入�入��寍�品的的技�场�品���对���咸����������常���",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E03",
+              "dimension": "E",
+              "hit": false,
+              "answer": "在市场�品������������������品���的的有品的用市市��",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E04",
+              "dimension": "E",
+              "hit": false,
+              "answer": "在常�在对有�充����������������市场�品��的的新戼�度",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E05",
+              "dimension": "E",
+              "hit": false,
+              "answer": "市完��卮定�����品��免�定�的有�先������座品��卮�����",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E06",
+              "dimension": "E",
+              "hit": false,
+              "answer": "对入������������������有�����品�����对充的的扌入�����",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E07",
+              "dimension": "E",
+              "hit": false,
+              "answer": "在市场�品���������：������名�它����充�����有��度�����",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E08",
+              "dimension": "E",
+              "hit": false,
+              "answer": "对为����\n等�������������常�常��对��的����对品的的�",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E09",
+              "dimension": "E",
+              "hit": false,
+              "answer": "在市场�品的�������������������对����児�����������对����",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E10",
+              "dimension": "E",
+              "hit": false,
+              "answer": "对�入���品����������高����为���������常�圉��充���充���",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E11",
+              "dimension": "E",
+              "hit": false,
+              "answer": "对��统������������������������������常�充�的技������������",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E12",
+              "dimension": "E",
+              "hit": false,
+              "answer": "对为�常�入��������和���������有��品�充�����品��对有��",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E13",
+              "dimension": "E",
+              "hit": false,
+              "answer": "在市对上������圉����对成卮�：�技����������������������",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E14",
+              "dimension": "E",
+              "hit": false,
+              "answer": "对为�光入�对上������在��児的的扌具��劀�能�������",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E15",
+              "dimension": "E",
+              "hit": false,
+              "answer": "�光入��品����充���充��充��充��充���������������������度",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E16",
+              "dimension": "E",
+              "hit": false,
+              "answer": "�光入�市在児������������品��光�充��充�������兽����名�",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E17",
+              "dimension": "E",
+              "hit": false,
+              "answer": "它理特�特������有��������有�������������场名电�和�����",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E18",
+              "dimension": "E",
+              "hit": false,
+              "answer": "���对����������������������������������������������������对���",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E19",
+              "dimension": "E",
+              "hit": false,
+              "answer": "�有�光入��品��������������市在市名的��是��是�光市�",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E20",
+              "dimension": "E",
+              "hit": true,
+              "answer": "圉�具���对有�充�����������������场������������������������",
+              "copyable_tokens": [],
+              "hit_loose": true,
+              "hit_strict": false
+            }
+          ]
+        },
+        "treated_with_circuit": {
+          "items": 36,
+          "correct_loose": 7,
+          "correct_strict": 6,
+          "strict_eligible_items": 16,
+          "rows": [
+            {
+              "id": "D01",
+              "dimension": "D",
+              "hit": true,
+              "answer": "岩阿岩����。岩阿岩�������。岩阿岩����������。��岩��",
+              "copyable_tokens": [
+                "阿岩"
+              ],
+              "hit_loose": true,
+              "hit_strict": true
+            },
+            {
+              "id": "D02",
+              "dimension": "D",
+              "hit": true,
+              "answer": "杭州��州我佽户�户�我佽�州杭州杭州�州我住州��",
+              "copyable_tokens": [
+                "杭州"
+              ],
+              "hit_loose": true,
+              "hit_strict": true
+            },
+            {
+              "id": "D03",
+              "dimension": "D",
+              "hit": false,
+              "answer": "健�短�健�短���健�短�成���短�健�短�����孔����������",
+              "copyable_tokens": [
+                "简短"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D04",
+              "dimension": "D",
+              "hit": true,
+              "answer": "7777��7777� 17�7777777�777777777777�777777777777777�7777777",
+              "copyable_tokens": [
+                "17"
+              ],
+              "hit_loose": true,
+              "hit_strict": true
+            },
+            {
+              "id": "D05",
+              "dimension": "D",
+              "hit": false,
+              "answer": "� S Sed Sed Sed。�� S Sed Sed。��  S Sed Sed Sed。dd Sed S",
+              "copyable_tokens": [
+                "Seed"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D06",
+              "dimension": "D",
+              "hit": true,
+              "answer": "昿�����。岩阿岩���������。岩阿岩����������。岩�������",
+              "copyable_tokens": [
+                "阿岩"
+              ],
+              "hit_loose": true,
+              "hit_strict": true
+            },
+            {
+              "id": "D07",
+              "dimension": "D",
+              "hit": true,
+              "answer": "4州我住州我住州我住州杭州杭州我住州杭州我住",
+              "copyable_tokens": [
+                "杭州"
+              ],
+              "hit_loose": true,
+              "hit_strict": true
+            },
+            {
+              "id": "D08",
+              "dimension": "D",
+              "hit": false,
+              "answer": "欢茶。�茶茶����������欢茶��������欢茶������欢欢茶��",
+              "copyable_tokens": [
+                "绿茶"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D09",
+              "dimension": "D",
+              "hit": true,
+              "answer": "222222222222222222。2222222222222222222222是 42222222222222222",
+              "copyable_tokens": [
+                "42"
+              ],
+              "hit_loose": true,
+              "hit_strict": true
+            },
+            {
+              "id": "D10",
+              "dimension": "D",
+              "hit": false,
+              "answer": "昿���。岩阿岩����。岩阿岩��������。岩��������。岩��",
+              "copyable_tokens": [
+                "小林"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D11",
+              "dimension": "D",
+              "hit": false,
+              "answer": "�杭州我住我住州杭州杭州我住州我住州杭州杭州",
+              "copyable_tokens": [
+                "南京"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D12",
+              "dimension": "D",
+              "hit": false,
+              "answer": "777777777777数77777777777777�数7777777777777777�7777777777777",
+              "copyable_tokens": [
+                "23"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D13",
+              "dimension": "D",
+              "hit": false,
+              "answer": "接接�接�接�接�接�接�接�接�接�接�接�接�接�接负负",
+              "copyable_tokens": [
+                "测试"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D18",
+              "dimension": "D",
+              "hit": false,
+              "answer": "濩������。岩�����������。���岩����������������。���岩����",
+              "copyable_tokens": [
+                "阿岩",
+                "杭州",
+                "17"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D19",
+              "dimension": "D",
+              "hit": false,
+              "answer": "� S Sed Sed。��  S Sed Sed Sed。��  S Sed  Sed Sed。��  S",
+              "copyable_tokens": [
+                "Seed",
+                "接口"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "D20",
+              "dimension": "D",
+              "hit": false,
+              "answer": "欢茶说说欢茶茶过��说欢茶茶过��说欢茶茶�说茶�",
+              "copyable_tokens": [
+                "绿茶",
+                "17"
+              ],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E01",
+              "dimension": "E",
+              "hit": false,
+              "answer": "在市对是�光�充��充��充��市市�包���������������������",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E02",
+              "dimension": "E",
+              "hit": false,
+              "answer": "对入�入��寍�品的的技�场�品���对���咸����������常���",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E03",
+              "dimension": "E",
+              "hit": false,
+              "answer": "在市场�品������������������品���的的有品的用市市��",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E04",
+              "dimension": "E",
+              "hit": false,
+              "answer": "在常�在对有�充����������������市场�品��的的新戼�度",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E05",
+              "dimension": "E",
+              "hit": false,
+              "answer": "市完��卮定�����品��免�定�的有�先������座品��卮�����",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E06",
+              "dimension": "E",
+              "hit": false,
+              "answer": "对入������������������有�����品�����对充的的扌入�����",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E07",
+              "dimension": "E",
+              "hit": false,
+              "answer": "在市场�品���������：������名�它����充�����有��度�����",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E08",
+              "dimension": "E",
+              "hit": false,
+              "answer": "对为����\n等�������������常�常��对��的����对品的的�",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E09",
+              "dimension": "E",
+              "hit": false,
+              "answer": "在市场�品的�������������������对����児�����������对����",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E10",
+              "dimension": "E",
+              "hit": false,
+              "answer": "对�入���品����������高����为���������常�圉��充���充���",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E11",
+              "dimension": "E",
+              "hit": false,
+              "answer": "对��统������������������������������常�充�的技������������",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E12",
+              "dimension": "E",
+              "hit": false,
+              "answer": "对为�常�入��������和���������有��品�充�����品��对有��",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E13",
+              "dimension": "E",
+              "hit": false,
+              "answer": "在市对上������圉����对成卮�：�技����������������������",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E14",
+              "dimension": "E",
+              "hit": false,
+              "answer": "对为�光入�对上������在��児的的扌具��劀�能�������",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E15",
+              "dimension": "E",
+              "hit": false,
+              "answer": "�光入��品����充���充��充��充��充���������������������度",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E16",
+              "dimension": "E",
+              "hit": false,
+              "answer": "�光入�市在児������������品��光�充��充�������兽����名�",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E17",
+              "dimension": "E",
+              "hit": false,
+              "answer": "它理特�特������有��������有�������������场名电�和�����",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E18",
+              "dimension": "E",
+              "hit": false,
+              "answer": "���对����������������������������������������������������对���",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E19",
+              "dimension": "E",
+              "hit": false,
+              "answer": "�有�光入��品��������������市在市名的��是��是�光市�",
+              "copyable_tokens": [],
+              "hit_loose": false,
+              "hit_strict": false
+            },
+            {
+              "id": "E20",
+              "dimension": "E",
+              "hit": true,
+              "answer": "圉�具���对有�充�����������������场������������������������",
+              "copyable_tokens": [],
+              "hit_loose": true,
+              "hit_strict": false
+            }
+          ]
+        }
+      },
+      "extra": {
+        "identical_answer_arms": 20,
+        "strict_hit_not_loose": 0
+      }
+    }
+  ]
+}
