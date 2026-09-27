@@ -1,0 +1,40 @@
+{
+  "format": "taiji-a3-utf8-position-probe-v1",
+  "prereg": "owner 2026-09-27 裁定『2之后3』的第 3 步判决前置；判读线见本文件 docstring",
+  "corpus": "data/simple_zh/dialogue_extended_clean.jsonl",
+  "meta": {
+    "stream_bytes": 20000,
+    "samples": 19983,
+    "illegal_lead_count": 16,
+    "class_distribution": {
+      "ascii": 886,
+      "lead2": 7,
+      "lead3": 6361,
+      "lead4": 0,
+      "cont": 12729
+    }
+  },
+  "majority_baseline": 0.637,
+  "motor_context_cv": [
+    0.7556,
+    0.7581,
+    0.7611,
+    0.7523,
+    0.764
+  ],
+  "motor_context_mean": 0.7582,
+  "prev_byte_onehot_cv_mean": 0.784,
+  "verdict": "information_present_not_used",
+  "reading": {
+    "information_missing": "结构先验必须以输入特征进读出（模型没有原料学这条规则）",
+    "information_present_not_used": "先查读出/学习接线为何没吃到在场信息，不动输入"
+  },
+  "what_would_overturn": "线性探针只测一阶信息；若非线性探针可读而线性不可读，本件判 1 号属过早——但设计选择（把位置喂进输入）在该情形下仍然成立，只是归因不同",
+  "base_sha256_unchanged": true,
+  "instrument_guard": {
+    "samples_nonzero": true,
+    "classes_balanced_enough": false,
+    "illegal_leads_near_zero": true,
+    "base_unchanged": true
+  }
+}
