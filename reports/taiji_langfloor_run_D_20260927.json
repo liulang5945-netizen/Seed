@@ -1,0 +1,43 @@
+{
+  "format": "taiji-langfloor-run-v1",
+  "prereg": "plans/reference/SPEC-R2-01_language_floor_utf8_weighted_readout_prereg_20260927.md",
+  "trainer": "train_taiji_langfloor",
+  "arm": "D",
+  "weight": 4.0,
+  "symbols_consumed": 2000000,
+  "symbols_budget": 2000000,
+  "stopped_by": "episode-cap",
+  "elapsed_seconds": 7638.6,
+  "resumed_from": null,
+  "corpus": "E:\\Seed\\data\\simple_zh\\dialogue_extended_clean.jsonl",
+  "corpus_digest": "[{\"name\":\"dialogue_extended_clean.jsonl\",\"bytes\":108327171}]",
+  "base_checkpoint": "E:\\Seed\\checkpoints\\seed_beta.pt",
+  "base_checkpoint_sha256": "ad2a06465e0ef78c75aff7302a6f7a2ae11825d2f19361d9d65926006f3bf793",
+  "write_surface": {
+    "changed_named_tensors": [
+      "substrate.cognitive_state",
+      "substrate.identity_organ",
+      "substrate.perception",
+      "substrate.predictive_readout",
+      "substrate.state",
+      "taiji.cognitive_state",
+      "taiji.components",
+      "taiji.kernel"
+    ],
+    "expected_only": [
+      "predictive_readout"
+    ]
+  },
+  "write_surface_guard": {
+    "predictive_readout_changed": true,
+    "motor_fabric_memory_unchanged": true
+  },
+  "learning_counters": {
+    "continuation_weighted_steps": 1274951,
+    "plain_steps": 725049,
+    "online_accuracy": 0.2686,
+    "continuation_online_accuracy": 0.3513
+  },
+  "base_sha256_unchanged": true,
+  "written_at_utc": "2026-09-27T08:09:43Z"
+}
