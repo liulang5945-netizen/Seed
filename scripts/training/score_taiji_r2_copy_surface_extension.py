@@ -98,6 +98,11 @@ def run_arm(
         )
     decodable = sum(1 for text in texts if "\ufffd" not in text)
     formed = sum(1 for text in texts if well_formed(text, ngram))
+    #: **切尾感知**的诊断列（不改判定）：固定字节预算会把"缓冲切在字中间"也算成不可解码。
+    #: 去掉末尾连续的 `\ufffd` 后仍含 `\ufffd` 才算**真的吐过非法字节**。
+    #: 本仓已在两处独立踩过同一坑（F0 的 ON 臂 64 字节、本件 24 字节）——
+    #: 只报 `utf8_decodable_rate` 会把度量缺陷读成模型缺陷。
+    trimmed_clean = sum(1 for text in texts if "\ufffd" not in text.rstrip("\ufffd"))
     return {
         "circuit": circuit,
         "items": len(rows),
@@ -105,6 +110,10 @@ def run_arm(
         "well_formed_texts": formed,
         "well_formed_rate": round(formed / max(len(texts), 1), 4),
         "utf8_decodable_rate": round(decodable / max(len(texts), 1), 4),
+        "utf8_decodable_trimmed_rate": round(trimmed_clean / max(len(texts), 1), 4),
+        "illegal_after_tail_trim_rate": round(
+            1.0 - trimmed_clean / max(len(texts), 1), 4
+        ),
         "strict_hits": hits,
         "rows": rows,
     }
