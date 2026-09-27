@@ -319,7 +319,7 @@ lane 追加的那条 `session/title` 是**事件**、不是**头字段**，所�
 - **回放件 ＝ 暂缓**，承认回放型 lane 不可当门；红按登记挂着。
 - **R5 ＝ 三处都改**（2026-09-27 补呈弹窗）：①默认工作区目录名 `deepseek-harness`→`taiji-harness`（default-directory.ts，已核不需迁移）②ACP agent 名→`taiji-harness-acp`（acp/src/index.ts 两处）③归因元数据 product→`taiji-harness`（attribution.ts，**url 保留上游**＝诚实溯源）；同批改断言测试×4＋README 中英各一处（pairing 先核对后重录，1100 对一致）。**
 - **D2 设计定稿 ＝ [TAIJI_D2_BACKEND_CHANNEL_DESIGN_20260927](TAIJI_D2_BACKEND_CHANNEL_DESIGN_20260927.md)**（wheelhouse/离线安装器＋DesktopBackendHost 拉起生命周期＋体积/许可账＋P1-①…④分刀）。
-- **R8 ＝ 乙（外壳自带干粮）**（2026-09-27 深夜弹窗裁定）：`apps/desktop/tsdown.config.ts` main 配置加 `deps.alwaysBundle: [/^@taiji\//]`，把 `@taiji/*` 全部打进 `lib/main.js`，一次消掉"打包收不全依赖"这一整类（详 §10）。**已实施＋构建层验证通过；但重打包被环境问题阻断（见 §10）。**
+- **R8 ＝ 乙（外壳自带干粮）**（2026-09-27 深夜弹窗裁定）：`apps/desktop/tsdown.config.ts` main 配置加 `deps.alwaysBundle: [/^@taiji\//]`，把 `@taiji/*` 全部打进 `lib/main.js`，一次消掉"打包收不全依赖"这一整类（详 §10）。**已实施＋构建层验证通过；沙箱外重打包产出干净新产物后真启动确认崩溃消除＝系统级验证通过（详 §10）。**
 
 细节与证据在 §3.5／§4／§4.5／§6.5／§7／§7.1／§7.2，这里只收口成可回复的形状。
 
@@ -334,7 +334,7 @@ lane 追加的那条 `session/title` 是**事件**、不是**头字段**，所�
 | **判据③** | 真机训练回合（真训练→进度→停止→检查点复验→真续训→真激活）何时开跑 | 等 R2 收束 → 现在开 | 需要独占运行时窗口；**已裁定不因"继续推进"字样自动触发** | G4 的复验集里这条一直无读数 |
 | **回放件** | 缺的录制件要不要重录 | 重录（要 `DEEPSEEK_API_KEY` ＋ `test:snapshot:record`）→ 承认回放型 lane 不可当门 | 盘上那份是 09-22 本机录的，`.gitignore` 有 `*.jsonl` ⇒ **干净检出跑不出它们** | 若干 lane 长期"看着像红其实缺证据" |
 | **R6（2026-09-27 新增，见 08 §6 ⑲e）** | @ 引用下拉列出了客户端自动创建的**空白无标题会话**（无用户消息），要不要出现在引用候选里 | (甲) 产品侧引用枚举过滤空白会话（语义清晰，属产品改动）→ (乙) 烤进金样（该行含平台分隔符形状，须先做第二处 normalize，与 ⑦ 乙 同型）→ 保持红并挂账 | (甲)＝`session-reference` 候选生成处一屏改动＋用例；(乙)＝normalize＋定向 refresh 两文件 | `reference-composer` menu 测试维持一行红；用户可见的"引用列表里混进没内容的会话"若不处理会随装机带走 |
-| **R7（2026-09-27 新增，见 08 §6 ⑲f）** | packaged 桌面产物的 office 冒烟（xlsx 转换）失败——`package:desktop:win:x64:unsigned` 最后一步红，要不要处理 | (甲) 查打包 asar 布局下 LibreOffice profile/路径解析并修（真缺陷则改产品/打包链）→ (乙) packaged 冒烟降级 office 转换（保结构/引擎在场断言）→ (丙) 接受"unsigned 产物存在但打包门红"现状进发布评审 | (甲)＝未知深度（首达雷区，prepared 树同函数是绿的）；(乙)＝smoke 脚本一屏；(丙)＝零成本但 D1"打包跑通"半句要加限定 | `package:desktop:*` 的 rc 永不为 0；D2 通道本身已产物级验通（08 ⑲f），红不在后端而在 office |
+| **R7（2026-09-27 新增，见 08 §6 ⑲f；同日深夜收窄见 08 ㉓）** | packaged 桌面产物的 office 冒烟（xlsx 转换）失败——`package:desktop:win:x64:unsigned` 最后一步红，要不要处理 | (甲) 查打包 asar 布局下 LibreOffice profile/路径解析并修（真缺陷则改产品/打包链）→ (乙) packaged 冒烟降级 office 转换（保结构/引擎在场断言）→ (丙) 接受"unsigned 产物存在但打包门红"现状进发布评审 | (甲)＝未知深度（首达雷区，prepared 树同函数是绿的）；(乙)＝smoke 脚本一屏；(丙)＝零成本但 D1"打包跑通"半句要加限定 | `package:desktop:*` 的 rc 永不为 0；D2 通道本身已产物级验通（08 ⑲f），红不在后端而在 office。**2026-09-27 深夜收窄：只卡 `xlsx→PDF`（`docx→PDF` 已通过；pptx 未测）** |
 | **R8（2026-09-27 新增，见 §9）** | 打包产物**打不开**（`ERR_MODULE_NOT_FOUND: @taiji/cordis`）——"一条命令装起即用"目前在**系统级**是红的，修法选哪条 | (乙) 外壳自包含：tsdown `deps.alwaysBundle: [/^@taiji\//]` 把 `@taiji/*` 打进 `lib/main.js`（一次消掉"打包收不全依赖"这**一整类**）→ (甲) 给 `apps/desktop` 的 `dependencies` 补 `@taiji/cordis`（＋可能还有 `dsh-client-connection`）一行＋一次 `pnpm install` | 两条都要重跑 `package:win:x64:unsigned`（末步仍是 R7 的 office 冒烟红，**产物在此之前就已产出**，可先启动取读数）；(乙)＝一条构建配置（要记进 08 的上游同步本），(甲)＝一行依赖但可能补第二次 | G5-D1「打包跑通」、D2「装起即用」、D4「桌面可用」在系统级都无法勾掉；M6 手上没有一个能跑起来的产物 |
 
 **最小回复格式（照抄即可）**：
@@ -407,7 +407,13 @@ deps: { neverBundle: ['electron'], alwaysBundle: [/^@taiji\//] },
 * 该冒烟**今天 16:44／17:01／17:26 三次 `success:true`**（各 ≈8.4 s），19:38 起开始失败 ⇒ 环境在当日晚间变了；
 * 独立探针（普通 node ＋ 新装 `node-pty`，`.dsh-sbx2/pty-probe/probe.cjs`）在 **agent 上下文里直接跑＝`Cannot launch conpty`**，**经 `explorer.exe` 绕出沙箱跑＝成功**（output `pty-probe-ok`）；`Start-Process` 新控制台仍失败 ⇒ **Trae 受管进程上下文创建不了 ConPTY（作业对象级约束），不是"缺控制台"**。
 
-**绕出沙箱的两条路线**（`explorer.exe` 起 cmd／pwsh 跑打包）**都不稳定**：一次在 `runtime:lockfile` 的 pnpm 退出时 abort（`0x80000003`），一次跑到 `release:pack` 被 Ctrl+C 打断（`0xC000013A`）。⇒ **干净新产物未产出。**
+**绕出沙箱的两条路线**（`explorer.exe` 起 cmd／pwsh 跑打包）当时**都不稳定**：一次在 `runtime:lockfile` 的 pnpm 退出时 abort（`0x80000003`），一次跑到 `release:pack` 被 Ctrl+C 打断（`0xC000013A`）。
 
-**对 M6 收官的影响**：R8 这一勾**只能勾到"构建层"**；清单第 1 刀要的**系统级读数（host 拉起／Taiji 默认／发一回合）仍缺**，须在**不受 Trae 沙箱约束的普通终端**补跑一次 `corepack pnpm run package:win:x64:unsigned`（cwd＝`taiji-harness/apps/desktop`）后，我据 `packaging-runs/*/events.jsonl` 与产物续取。
+**后续（同日深夜）：沙箱外一次运行产出干净新产物，第 1 刀落地**。run `2026-09-27T12-13-23.810Z-GXstl6`（`commit=4241c2b1`，含 R8＝乙）**除最后一步全绿**：`prepare:dsh` 全程 ✓（`runtime:smoke` 8.2 s success）、`electron-builder` ✓（154 s, code 0）⇒ **win-unpacked ＋ NSIS exe 实出**；**只有末步 packaged 冒烟（R7）红**。
+
+* **R8 的真实验证（系统级）**：启动 `win-unpacked\DeepSeek Harness.exe`——**`ERR_MODULE_NOT_FOUND: @taiji/cordis` 的错误框已不再出现**。不重定向家目录时弹的是**应用自己的**框 `Taiji Harness is unavailable`／正文 `EPERM: operation not permitted, mkdir 'C:\Users\23747\.dsh\profiles\desktop'`（**Trae 沙箱不许写工作区外路径＝环境，非产品缺陷**，但它反证主进程已越过 R8 崩溃）；用 `DSH_HOME=<工作区内可写路径>` 重跑则**无任何错误框**：主窗口 `Taiji Harness` visible、应用**亲手拉起打包自带的 `dsh-desktop-host` 子进程**、首启动生命周期走完（建 profile／初始化默认工作区／写凭据）、host 监听 `127.0.0.1:19387` 且 `GET /`＝**401 `dsh web authentication required`**（鉴权门正常）。⇒ **系统级 `装起即用`＝绿（backend host 拉起 ✓）；装机默认 provider＝`taiji-local`（打包 base patch `83-87`）✓。**
+* **仍缺一格**：**"发一个回合"**（需 host 打印的带 token URL 或点 UI；锁屏＋沙箱下未做）。
+* **R7 被收窄**：packaged 冒烟的**载荷层全过、Host 起得来、前端服务得出、外挂插件 peer 解析正常**；office 只错在 **`xlsx→PDF`**（`LibreOffice … loadComponentFromURL returned an empty reference`），**`docx→PDF` 已通过**。
+
+⇒ **对 M6 收官的净影响**：R8 这一勾**已从"构建层"升级为"系统级"**；D2「装起即用」的**系统级读数成立**（只差"发一回合"这一格）；D1「打包跑通」仍被 **R7（且只卡在 xlsx）** 挡最后一步。
 
