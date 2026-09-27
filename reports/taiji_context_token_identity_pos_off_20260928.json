@@ -1,0 +1,105 @@
+{
+  "format": "taiji-context-token-identity-v1",
+  "prereg": "本文件 docstring（配对状态距离 + 置换零假设；判据随文件一起冻结）",
+  "checkpoint": "output/taiji_r2_plan01_pos_off/checkpoint.pt",
+  "arm_label": "pos_off",
+  "stimuli": {
+    "tokens": [
+      "天磊",
+      "静怡",
+      "志远",
+      "小雨",
+      "建华",
+      "文博",
+      "海燕",
+      "国强"
+    ],
+    "carriers": [
+      "我叫",
+      "他叫",
+      "你叫",
+      "她叫",
+      "同学叫",
+      "朋友叫"
+    ],
+    "suffixes": [
+      {
+        "suffix": "\n我叫",
+        "distance_bytes": 7
+      },
+      {
+        "suffix": "。我的名字是",
+        "distance_bytes": 18
+      },
+      {
+        "suffix": "。今天天气很好，我再说一遍，我叫",
+        "distance_bytes": 48
+      }
+    ],
+    "pattern": "{carrier}{token}{suffix}"
+  },
+  "statistic": {
+    "ratio": "mean(同 token 不同载体) / mean(不同 token 同载体)，相对 L1",
+    "null": "token 标签置换 50 次的零分布",
+    "sigma_line": 3.0
+  },
+  "instrument": {
+    "deterministic": true,
+    "carrier_sensitivity_line": 0.01,
+    "carrier_sensitivity_ok": true,
+    "null_live": true
+  },
+  "curve": [
+    {
+      "distance_bytes": 7,
+      "suffix": "\n我叫",
+      "observed_ratio": 0.8554,
+      "null_mean": 0.9983,
+      "null_std": 0.0203,
+      "sigma_below_null": 7.05,
+      "carrier_sensitivity_rel_l1": 0.30604,
+      "same_token_mean_rel_l1": 0.30604,
+      "diff_token_mean_rel_l1": 0.357755
+    },
+    {
+      "distance_bytes": 18,
+      "suffix": "。我的名字是",
+      "observed_ratio": 0.922,
+      "null_mean": 0.9967,
+      "null_std": 0.0176,
+      "sigma_below_null": 4.25,
+      "carrier_sensitivity_rel_l1": 0.231996,
+      "same_token_mean_rel_l1": 0.231996,
+      "diff_token_mean_rel_l1": 0.251624
+    },
+    {
+      "distance_bytes": 48,
+      "suffix": "。今天天气很好，我再说一遍，我叫",
+      "observed_ratio": 1.1567,
+      "null_mean": 0.9974,
+      "null_std": 0.0205,
+      "sigma_below_null": -7.76,
+      "carrier_sensitivity_rel_l1": 0.184599,
+      "same_token_mean_rel_l1": 0.184599,
+      "diff_token_mean_rel_l1": 0.159592
+    }
+  ],
+  "verdict": {
+    "name": "token_identity_encoded",
+    "encoded_at_distances": [
+      7,
+      18
+    ],
+    "best_sigma_below_null": 7.05,
+    "best_ratio": 0.8554,
+    "reading": "状态里带着「是哪个实体」，且这个信息强于载体变异（可在该区间的状态上做线性读出）"
+  },
+  "dropped_or_replaced": "取代 retention 曲线 v2 里被删掉的那格'从 motor_context 线性读出是哪个 token（8 类 CV）'——那格每类仅 1 样本、4 折 CV 恒 0，不可用；本件改用配对距离+置换零假设，样本量由载体变异撑起，且不需要分类器",
+  "what_would_overturn": "确定性或载体敏感性不过 ⇒ 仪器无效、整件作废；标量（线性）不可读不等于非线性不可读 —— 本件只否证'线性/一阶可读'这一档；换载体集合若改变量级，说明读数依赖载体选择（本件只用一套载体集，如实披露）",
+  "base_sha256_unchanged": true,
+  "instrument_guard": {
+    "items_nonzero": true,
+    "instrument_valid": true,
+    "base_unchanged": true
+  }
+}
