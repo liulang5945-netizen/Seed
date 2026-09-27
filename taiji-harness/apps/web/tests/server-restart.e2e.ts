@@ -24,6 +24,7 @@ class RestartableServer {
     const child = spawn(process.execPath, [
       join(REPO_ROOT, 'apps/cli/lib/bin.js'), '--profile', 'web',
       '--patch', fileURLToPath(new URL('./pin-browse-picker.overlay.yml', import.meta.url)),
+      '--patch', fileURLToPath(new URL('./server-restart-model-pin.overlay.yml', import.meta.url)),
       '--no-open', '--port', String(port),
     ], {
       cwd: this.world,

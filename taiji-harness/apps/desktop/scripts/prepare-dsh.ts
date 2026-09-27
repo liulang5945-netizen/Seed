@@ -159,11 +159,10 @@ async function main(): Promise<void> {
     }
     await packagingStep(process.env.DSH_DESKTOP_PACKAGING_RUN_DIR, 'runtime:manifests', () => prepareRuntimeManifests(DSH_OUTPUT_ROOT))
     await packagingStep(process.env.DSH_DESKTOP_PACKAGING_RUN_DIR, 'runtime:primary-smoke', async () => smokePrimaryRuntime(join(RUNTIME_ROOT, 'primary-runtime')))
-    await packagingStep(process.env.DSH_DESKTOP_PACKAGING_RUN_DIR, 'runtime:write-descriptor', async () => writeDesktopRuntime(DSH_OUTPUT_ROOT, release, packageSet.packages.map(entry => entry.name), target))
-    // D2 P1-②: stage the offline backend channel when a wheelhouse was generated
-    // (prepare-backend-wheelhouse.ts). Existence-gated: without a generated
-    // wheelhouse the bundle has no backend-manifest and the DesktopBackendHost
-    // stays structurally off — exactly the pre-D2 behavior.
+    // D2 P1-②: stage the offline backend channel BEFORE the descriptor is
+    // written — verifyDesktopRuntime hashes the whole dsh tree, so anything
+    // added afterwards fails integrity.  Existence-gated: without a generated
+    // wheelhouse nothing is staged and the bundle is byte-for-byte pre-D2.
     await packagingStep(process.env.DSH_DESKTOP_PACKAGING_RUN_DIR, 'backend:stage', async () => {
       const backendBuildRoot = resolve(APP_ROOT, '.desktop-build', 'backend')
       const backendManifest = join(backendBuildRoot, 'backend-manifest.json')
@@ -172,7 +171,10 @@ async function main(): Promise<void> {
         return
       }
       cpSync(resolve(APP_ROOT, 'backend'), join(DSH_OUTPUT_ROOT, 'backend'), { recursive: true })
-      cpSync(backendBuildRoot, join(DSH_OUTPUT_ROOT, 'backend', 'wheelhouse-build'), { recursive: true })
+      // Flatten the generated layout to what DesktopPythonBackendHost reads:
+      // backend/backend-manifest.json + backend/wheelhouse/*.whl.
+      copyFileSync(join(backendBuildRoot, 'backend-manifest.json'), join(DSH_OUTPUT_ROOT, 'backend', 'backend-manifest.json'))
+      cpSync(join(backendBuildRoot, 'wheelhouse'), join(DSH_OUTPUT_ROOT, 'backend', 'wheelhouse'), { recursive: true })
       // The runtime source tree itself (a wheel build over the repo hangs on the
       // data tree) — the venv runs `python -m api.main` with this as its cwd.
       const nativeRoot = resolve(APP_ROOT, '..', '..', '..')
@@ -181,6 +183,7 @@ async function main(): Promise<void> {
       }
       copyFileSync(resolve(nativeRoot, 'requirements.txt'), join(DSH_OUTPUT_ROOT, 'backend', 'code', 'requirements.txt'))
     })
+    await packagingStep(process.env.DSH_DESKTOP_PACKAGING_RUN_DIR, 'runtime:write-descriptor', async () => writeDesktopRuntime(DSH_OUTPUT_ROOT, release, packageSet.packages.map(entry => entry.name), target))
     const descriptor = await packagingStep(process.env.DSH_DESKTOP_PACKAGING_RUN_DIR, 'runtime:verify-before-smoke', () => verifyDesktopRuntime(DSH_OUTPUT_ROOT, release.version, target))
     if (!process.argv.includes('--defer-runtime-smoke')) {
       await packagingStep(process.env.DSH_DESKTOP_PACKAGING_RUN_DIR, 'runtime:smoke', () => smokePreparedRuntime(DSH_OUTPUT_ROOT, NODE, RUNTIME_ROOT, descriptor))

@@ -249,8 +249,11 @@ async function main(): Promise<void> {
     ? join(process.resourcesPath, 'runtime', 'primary-runtime')
     : join(app.getAppPath(), '.desktop-build', 'targets', 'win-x64', 'runtime', 'primary-runtime')
   const backendRoot = app.isPackaged
-    ? join(process.resourcesPath, 'dsh', 'backend')
-    : join(app.getAppPath(), '.desktop-build', 'targets', 'win-x64', 'packed', 'dsh', 'backend')
+    // Physical path: the installer and `python -m api.main` run outside
+    // Electron's asar-patched fs, so the tree is unpacked (config asarUnpack
+    // `**/dsh/backend/**/*`) and addressed under app.asar.unpacked.
+    ? join(app.getAppPath().replace('.asar', '.asar.unpacked'), 'dsh', 'backend')
+    : join(resources.dsh, 'backend')
   const pythonBackendHost = new DesktopPythonBackendHost({
     backendRoot,
     pythonExec: primaryRuntimePython(primaryRuntimeRoot),

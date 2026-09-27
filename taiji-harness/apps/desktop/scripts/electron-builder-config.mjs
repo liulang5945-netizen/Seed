@@ -69,7 +69,11 @@ export function createElectronBuilderConfig(
   let dshDestination
   let windowsCode = []
   const unpack = ['**/*.{node,dylib,dll,so,exe}', '**/*.so.*', '**/spawn-helper', '**/@vscode/ripgrep-*/bin/rg',
-    `**/node_modules/@deepseek-ai/libreoffice-kit-${resolvedPlatform}-${resolvedArch}/**/*`]
+    `**/node_modules/@deepseek-ai/libreoffice-kit-${resolvedPlatform}-${resolvedArch}/**/*`,
+    // D2 P1-②: the backend channel is executed by the bundled Python outside
+    // Electron's patched fs, so its scripts, manifest, wheels, and source tree
+    // must exist as physical files, not asar members.
+    '**/dsh/backend/**/*']
   const windowsSigner = packagesWindows && !unsigned
     ? createWindowsTokenSigner({
         certificateFile: env.DSH_DESKTOP_WINDOWS_CER_FILE,

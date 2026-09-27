@@ -1,0 +1,9 @@
+# The spawned server owns a fake DeepSeek model endpoint (DEEPSEEK_BASE_URL) and
+# the fixture answer only reaches the page through it. The shipped default now
+# rides the Taiji route (G5-D3), which a running local runtime would serve
+# instead — so this lane pins its own default back to the DeepSeek route it
+# fakes (same premise-first pattern as taiji-row-absent.overlay.yml).
+- id: agent-default-model
+  config:
+    provider: deepseek-official
+    model: deepseek-flash

@@ -38,7 +38,11 @@ describe('web e2e: goal bar clear convergence', () => {
     // connectFreshWorkspace selects the blank session but leaves the surface on the
     // hero composer, which does not process slash commands (08 §6 ⑱). Open the
     // session row by name so the in-session composer receives the /goal command.
-    await page.getByRole('treeitem', { name: 'New Session' }).click()
+    // Under batch load the row can take longer than the click's own wait (81:
+    // 30 s click timeout, file-level fail), so anchor and wait visibly first.
+    const sessionRow = page.getByRole('treeitem', { name: /New Session|新会话/u }).first()
+    await sessionRow.waitFor({ state: 'visible', timeout: 30_000 })
+    await sessionRow.click()
   }, 120_000)
 
   afterAll(async () => {

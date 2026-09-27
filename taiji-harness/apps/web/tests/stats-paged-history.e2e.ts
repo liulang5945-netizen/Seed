@@ -109,11 +109,15 @@ describe('web e2e: whole-session stats survive history paging', () => {
 
   it('renders full-session counts on the partial tail page and keeps them across load-older', async () => {
     onTestFailed(() => saveFailureShot(page, 'web-e2e-stats-paged'))
-    const groupRow = page.locator('[role="treeitem"]').first()
+    // Anchored selection (08 §6 ⑱): the tree builds lazily and the seeded row —
+    // labelled by the workspace basename because the persisted header carries no
+    // title (G5 §7.2) — sits inside the collapsed Ungrouped group. Position
+    // indexes land on the group headers or the default workspace's blank session.
+    const groupRow = page.getByRole('treeitem', { name: 'Ungrouped' })
     await groupRow.waitFor({ timeout: 15_000 })
-    await groupRow.click()
-    const sessionRow = page.locator('[role="treeitem"]').nth(1)
-    await sessionRow.waitFor({ timeout: 10_000 })
+    if ((await groupRow.getAttribute('aria-expanded')) === 'false') await groupRow.click()
+    const sessionRow = page.locator('[role="treeitem"]').filter({ hasText: /dsh-web-e2e-ws-/u }).first()
+    await sessionRow.waitFor({ state: 'visible', timeout: 15_000 })
     await sessionRow.click()
     // Settled barrier: the newest recorded reply renders from the tail page.
     await expect.poll(() => page.getByText(`r${TURNS}`, { exact: true }).count(), { timeout: 15_000 }).toBe(1)
