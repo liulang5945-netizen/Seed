@@ -234,6 +234,12 @@ class TaijiState:
     #: intentionally omitted from payloads so switching the position input off keeps
     #: checkpoint bytes exactly as before.
     motor_position_class: int | None = None
+    #: PLAN-A-25: the lead byte of the UTF-8 sequence currently in progress (``0`` at a
+    #: character boundary).  ``remaining`` alone cannot decide legality — the E0/ED and
+    #: F0/F4 second-byte bounds depend on the lead — so the copy-evidence gate needs both.
+    #: Same optional-field discipline: ``None`` is omitted from payloads, so switching the
+    #: gate off keeps checkpoint bytes exactly as before.
+    motor_utf8_lead: int | None = None
 
     def clone(self) -> TaijiState:
         return TaijiState(
@@ -258,6 +264,9 @@ class TaijiState:
             ),
             motor_position_class=(
                 None if self.motor_position_class is None else int(self.motor_position_class)
+            ),
+            motor_utf8_lead=(
+                None if self.motor_utf8_lead is None else int(self.motor_utf8_lead)
             ),
         )
 
@@ -286,6 +295,8 @@ class TaijiState:
             )
         if self.motor_position_class is not None:
             payload["motor_position_class"] = int(self.motor_position_class)
+        if self.motor_utf8_lead is not None:
+            payload["motor_utf8_lead"] = int(self.motor_utf8_lead)
         return payload
 
     @classmethod
@@ -333,6 +344,11 @@ class TaijiState:
                 None
                 if payload.get("motor_position_class") is None
                 else int(payload["motor_position_class"])
+            ),
+            motor_utf8_lead=(
+                None
+                if payload.get("motor_utf8_lead") is None
+                else int(payload["motor_utf8_lead"])
             ),
         )
 

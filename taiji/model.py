@@ -64,7 +64,7 @@ from .workbench_boundary import (
     WorkbenchTaskBoundary,
     select_readout_generation,
 )
-from .utf8_state import advance_utf8, remaining_after, trim_partial_tail, utf8_allowed
+from .utf8_state import advance_utf8, trim_partial_tail, utf8_allowed
 
 
 class Taiji:
@@ -155,6 +155,9 @@ class Taiji:
         # byte-for-byte compatible with the pre-R1 architecture.
         self._developmental_f1_bundle: DevelopmentalSynapseBundle | None = None
         self._developmental_f1_learning_mode = "read_only"
+        #: PLAN-A-25 评测期覆写：`None` ＝ 跟随 config；**不进任何 payload、不改 config**
+        #: （身份器官的 lineage 守卫会拒绝 config 被事后改动的档——见 `set_copy_evidence_utf8_gate`）。
+        self._copy_evidence_utf8_gate_override: bool | None = None
         self._developmental_f1_replay: list[DevelopmentalReplayEvent] = []
         self._developmental_f1_replay_serial = 0
         self._memory_rng = torch.Generator(device="cpu")
@@ -1103,6 +1106,20 @@ class Taiji:
                 "learning path; use the plain predictive-readout learning chain"
             )
 
+    def set_copy_evidence_utf8_gate(self, enabled: bool | None) -> None:
+        """PLAN-A-25 的**评测期开关**：`True/False` 覆写，`None` 跟随 config。
+
+        为什么需要它（而不是"改 config 再另存一份档"）：身份器官的 lineage 守卫会拒绝
+        config 被事后改动的档（实测 `identity organ checkpoint lineage does not match Taiji core`）
+        ——那是对的方向，所以同基底的开/关对照改走这个显式覆写。
+        **它不进任何 payload**（关掉进程即消失），也不会改变已训练权重，因此
+        "唯一变量＝门开/关"这条归因是干净的。
+        """
+
+        if enabled is not None and not isinstance(enabled, bool):
+            raise TypeError("copy-evidence gate override must be a bool or None")
+        self._copy_evidence_utf8_gate_override = enabled
+
     @torch.no_grad()
     def migrate_f1_to_developmental_synapses(self) -> dict[str, Any]:
         """Mount an exact, read-only fast/slow view over the current F1 state.
@@ -1938,12 +1955,27 @@ class Taiji:
         #: 预测下一字节该用的那一列（DFA 余量只按 (余量, 字节) 推进，与 `utf8_state` 同一份）。
         #: 关闭该特性时两者恒为 None ⇒ 逐位不变。
         position_input_enabled = bool(self.config.readout_utf8_position_input)
+        copy_gate_enabled = (
+            self.config.copy_evidence_utf8_gate
+            if self._copy_evidence_utf8_gate_override is None
+            else bool(self._copy_evidence_utf8_gate_override)
+        )
+        utf8_tracking = bool(position_input_enabled or copy_gate_enabled)
         previous_position_class = (
-            int(previous.motor_position_class or 0) if position_input_enabled else None
+            int(previous.motor_position_class or 0) if utf8_tracking else None
         )
-        readout_position_class = (
-            remaining_after(previous_position_class, symbol) if position_input_enabled else None
+        previous_utf8_lead = int(previous.motor_utf8_lead or 0) if utf8_tracking else None
+        #: `advance_utf8` 一次给出 (余量, 首字节) 两件——PLAN-A-25 的门控两件都要
+        #: （E0/ED 与 F0/F4 的第二字节边界由首字节决定），而位置输入只用前一件。
+        utf8_next = (
+            advance_utf8(previous_position_class, previous_utf8_lead, symbol)
+            if utf8_tracking
+            else None
         )
+        stored_remaining = utf8_next[0] if utf8_next is not None else None
+        stored_lead = utf8_next[1] if utf8_next is not None else None
+        readout_position_class = stored_remaining if position_input_enabled else None
+        circuit_utf8_state = utf8_next if copy_gate_enabled else None
 
         prior_prediction: int | None = None
         prior_probability: float | None = None
@@ -2189,6 +2221,8 @@ class Taiji:
                 cue=self.fabric.cortical_context(regions),
                 f1_context=context,
                 prev_byte=int(symbol),
+                #: PLAN-A-25：门控只在开关打开时给状态；关闭 ⇒ None ⇒ 与开案前逐位相同。
+                utf8_state=circuit_utf8_state,
             )
         if readout == "predictive":
             probabilities = predictive_readout.probabilities(
@@ -2265,7 +2299,8 @@ class Taiji:
             pending_action=None,
             pending_experience=None,
             predictive_context_slow_trace=predictive_context_slow_trace,
-            motor_position_class=readout_position_class,
+            motor_position_class=stored_remaining,
+            motor_utf8_lead=stored_lead,
         )
         return TaijiStep(
             tick=previous.tick,

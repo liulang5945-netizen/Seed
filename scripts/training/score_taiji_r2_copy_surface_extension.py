@@ -46,8 +46,20 @@ def load_items(path: Path = MANIFEST) -> list[dict[str, Any]]:
     return list(payload["dimensions"]["X"]["items"])
 
 
-def run_arm(items: list[dict[str, Any]], checkpoint: Path, circuit: str | None) -> dict[str, Any]:
-    """一臂：跑完 104 题，按产品 chat 协议取基底原始答复，统计表层三率。"""
+def run_arm(
+    items: list[dict[str, Any]],
+    checkpoint: Path,
+    circuit: str | None,
+    *,
+    evidence_utf8_gate: bool = False,
+) -> dict[str, Any]:
+    """一臂：跑完 104 题，按产品 chat 协议取基底原始答复，统计表层三率。
+
+    `evidence_utf8_gate`（PLAN-A-25）：只在评测期把复制回路的加性证据按 UTF-8 位置状态门控
+    ——**默认 False ⇒ 与冻结链逐位相同**；开启走 `Taiji.set_copy_evidence_utf8_gate` 的运行时覆写
+    （不改 config、不进 payload，所以"唯一变量＝门开/关"这条归因干净）。
+    """
+
     from eval_taiji_r2_readout_retrain import build_ngram_model, well_formed
     from score_taiji_r2_copy_circuit_chat_cap import _answer_raw
 
@@ -56,6 +68,8 @@ def run_arm(items: list[dict[str, Any]], checkpoint: Path, circuit: str | None) 
     runtime = SeedRuntime.load(checkpoint)
     if circuit:
         runtime.enable_copy_circuit(PROJECT_ROOT / circuit)
+    if evidence_utf8_gate:
+        runtime.model.substrate.set_copy_evidence_utf8_gate(True)
     ngram = build_ngram_model()
 
     texts: list[str] = []
@@ -158,6 +172,11 @@ def main() -> int:
         "合并总分就是把两个难度档摊平成一个（SPEC-A-21 §6、SPEC-A-22 §3）。",
     )
     parser.add_argument("--out-report", default=None)
+    parser.add_argument(
+        "--copy-evidence-utf8-gate",
+        action="store_true",
+        help="PLAN-A-25：把复制回路的加性证据按 UTF-8 位置状态门控（默认关 ⇒ 与冻结链逐位相同）",
+    )
     args = parser.parse_args()
 
     checkpoint = PROJECT_ROOT / args.checkpoint
@@ -167,7 +186,15 @@ def main() -> int:
         manifest = PROJECT_ROOT / manifest
     items = load_items(manifest)
     control = run_arm(items, checkpoint, None)
-    treated = [run_arm(items, checkpoint, circuit) for circuit in args.circuit]
+    treated = [
+        run_arm(
+            items,
+            checkpoint,
+            circuit,
+            evidence_utf8_gate=bool(args.copy_evidence_utf8_gate),
+        )
+        for circuit in args.circuit
+    ]
     report = {
         "format": "taiji-r2-copy-surface-extension-v1",
         "prereg": "plans/reference/SPEC-A-21_r2_surface_extension_prereg_20260925.md",
@@ -176,6 +203,8 @@ def main() -> int:
         "manifest": manifest.relative_to(PROJECT_ROOT).as_posix(),
         "manifest_sha256": _sha256(manifest),
         "checkpoint": args.checkpoint,
+        #: PLAN-A-25：门开/关必须落在件上，否则两份读数看起来像同一次实验。
+        "copy_evidence_utf8_gate": bool(args.copy_evidence_utf8_gate),
         "control_no_circuit": control,
         "treated_arms": treated,
         "surface_verdict": rule_verdict(control, treated),

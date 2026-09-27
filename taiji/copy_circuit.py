@@ -32,6 +32,7 @@ from typing import Any
 import torch
 
 from .config import TaijiConfig
+from .utf8_state import utf8_allowed
 
 #: 与 predictive_readout 同款纪律：独立 generator，器官的引入不得重播既有拓扑的随机流。
 COPY_CIRCUIT_SEED_OFFSET = 0x2C0C_5017
@@ -421,10 +422,36 @@ class CopyCircuit:
         self._locked_event_id = None
         return self.store.best_match(cue)
 
+    def legal_suffix_mask(self, utf8_state: tuple[int, int]) -> torch.Tensor:
+        """当前位置合法后继字节的 0/1 掩码（PLAN-A-25）。
+
+        合法性判定**取自共享状态机** `utf8_allowed`（不另写一份，这是 `taiji/utf8_state.py`
+        的设计纪律）。`alphabet_size` 比 256 多一个边界符，而掩码只覆盖字面字节；
+        内容存储里本来就不会出现边界符，所以掩码对它是零操作、不改变停止语义。
+        """
+
+        remaining, lead = int(utf8_state[0]), int(utf8_state[1])
+        mask = torch.zeros(self.config.alphabet_size, device=self.device)
+        legal = torch.tensor(
+            utf8_allowed(remaining, lead), device=self.device, dtype=torch.long
+        )
+        mask[legal] = 1.0
+        return mask
+
     def evidence(
-        self, *, cue: torch.Tensor, f1_context: torch.Tensor, prev_byte: int | None = None
+        self,
+        *,
+        cue: torch.Tensor,
+        f1_context: torch.Tensor,
+        prev_byte: int | None = None,
+        utf8_state: tuple[int, int] | None = None,
     ) -> torch.Tensor:
-        """257 维加性 logit 证据。无事件/未开闸时为精确零向量。"""
+        """257 维加性 logit 证据。无事件/未开闸时为精确零向量。
+
+        `utf8_state = (remaining, lead)`（PLAN-A-25）：给了就**只提议当前位置合法的后继字节**
+        ——复制的内容本身是合法字节串，逐字复述在语义上就该按位置接得上。不传 ⇒ 逐位不变。
+        """
+
         distribution = torch.zeros(
             self.config.alphabet_size, dtype=torch.float32, device=self.device
         )
@@ -434,6 +461,8 @@ class CopyCircuit:
         weights = self._position_weights(event, f1_context, prev_byte)
         codes = torch.tensor(list(event.content), device=self.device, dtype=torch.long)
         distribution = self._pool_into(distribution, codes, weights)
+        if utf8_state is not None:
+            distribution = distribution * self.legal_suffix_mask(utf8_state)
         keys = self._parameters["content_embed"][codes] @ self._parameters["query_content"]
         pooled = weights @ keys
         gate = (
