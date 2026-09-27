@@ -27,6 +27,7 @@ import { DesktopPlatformView, PLATFORM_IPC, platformBounds } from './platform-vi
 import { installDesktopDirectoryPicker } from './directory-picker.ts'
 import { installMicrophonePermissions } from './microphone-permissions.ts'
 import { DesktopBackendController } from './backend-controller.ts'
+import { DesktopPythonBackendHost, isBackendShipped, primaryRuntimePython } from './python-backend-host.ts'
 import { DESKTOP_IPC, SCHEME, assertDesktopSender, type DesktopUpdateState } from './ipc.ts'
 import { formatDesktopMessage, resolveDesktopLocale, resolveDesktopStartupLocale } from './locale.ts'
 import { claimDesktopSingleInstance } from './single-instance.ts'
@@ -239,6 +240,30 @@ async function main(): Promise<void> {
   const journalDirectory = process.env.DSH_DESKTOP_UPDATE_JOURNAL_DIR
   const updateJournal = journalDirectory === undefined ? undefined : new DesktopUpdateJournal(journalDirectory, app.getVersion())
   const resources = runtimeResources()
+  // D2 P1-③: the shipped Python backend channel (wheelhouse + offline installer
+  // + managed runtime).  Existence-gated — without a staged backend-manifest the
+  // host is off and startup is byte-for-byte the pre-D2 flow.  The shipped
+  // default llm-taiji baseURL is 127.0.0.1:8000, exactly where this host brings
+  // the runtime up, so the Life panel needs no extra wiring (P1-④).
+  const primaryRuntimeRoot = app.isPackaged
+    ? join(process.resourcesPath, 'runtime', 'primary-runtime')
+    : join(app.getAppPath(), '.desktop-build', 'targets', 'win-x64', 'runtime', 'primary-runtime')
+  const backendRoot = app.isPackaged
+    ? join(process.resourcesPath, 'dsh', 'backend')
+    : join(app.getAppPath(), '.desktop-build', 'targets', 'win-x64', 'packed', 'dsh', 'backend')
+  const pythonBackendHost = new DesktopPythonBackendHost({
+    backendRoot,
+    pythonExec: primaryRuntimePython(primaryRuntimeRoot),
+    userDataDir: app.getPath('userData'),
+    log: (line) => {
+      console.log(`[python-backend] ${line}`)
+    },
+  })
+  if (isBackendShipped(backendRoot)) {
+    void pythonBackendHost.start().catch((error: unknown) => {
+      console.error('[python-backend] startup failed:', error)
+    })
+  }
   const paths = resolveDesktopPaths()
   const development = !app.isPackaged
   const activeProject = paths.profile
@@ -729,6 +754,7 @@ async function main(): Promise<void> {
     updateSchedule.dispose()
     powerMonitor.off('resume', automaticCheck)
     updates.dispose()
+    pythonBackendHost.stop()
   })
 
   app.setAboutPanelOptions({

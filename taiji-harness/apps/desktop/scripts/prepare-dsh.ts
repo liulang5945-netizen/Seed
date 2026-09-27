@@ -160,6 +160,27 @@ async function main(): Promise<void> {
     await packagingStep(process.env.DSH_DESKTOP_PACKAGING_RUN_DIR, 'runtime:manifests', () => prepareRuntimeManifests(DSH_OUTPUT_ROOT))
     await packagingStep(process.env.DSH_DESKTOP_PACKAGING_RUN_DIR, 'runtime:primary-smoke', async () => smokePrimaryRuntime(join(RUNTIME_ROOT, 'primary-runtime')))
     await packagingStep(process.env.DSH_DESKTOP_PACKAGING_RUN_DIR, 'runtime:write-descriptor', async () => writeDesktopRuntime(DSH_OUTPUT_ROOT, release, packageSet.packages.map(entry => entry.name), target))
+    // D2 P1-②: stage the offline backend channel when a wheelhouse was generated
+    // (prepare-backend-wheelhouse.ts). Existence-gated: without a generated
+    // wheelhouse the bundle has no backend-manifest and the DesktopBackendHost
+    // stays structurally off — exactly the pre-D2 behavior.
+    await packagingStep(process.env.DSH_DESKTOP_PACKAGING_RUN_DIR, 'backend:stage', async () => {
+      const backendBuildRoot = resolve(APP_ROOT, '.desktop-build', 'backend')
+      const backendManifest = join(backendBuildRoot, 'backend-manifest.json')
+      if (!existsSync(backendManifest)) {
+        console.log('desktop backend: no generated wheelhouse found; shipping without the backend channel')
+        return
+      }
+      cpSync(resolve(APP_ROOT, 'backend'), join(DSH_OUTPUT_ROOT, 'backend'), { recursive: true })
+      cpSync(backendBuildRoot, join(DSH_OUTPUT_ROOT, 'backend', 'wheelhouse-build'), { recursive: true })
+      // The runtime source tree itself (a wheel build over the repo hangs on the
+      // data tree) — the venv runs `python -m api.main` with this as its cwd.
+      const nativeRoot = resolve(APP_ROOT, '..', '..', '..')
+      for (const dir of ['api', 'seed_platform', 'taiji', 'neuroplex', 'instruments']) {
+        cpSync(resolve(nativeRoot, dir), join(DSH_OUTPUT_ROOT, 'backend', 'code', dir), { recursive: true })
+      }
+      copyFileSync(resolve(nativeRoot, 'requirements.txt'), join(DSH_OUTPUT_ROOT, 'backend', 'code', 'requirements.txt'))
+    })
     const descriptor = await packagingStep(process.env.DSH_DESKTOP_PACKAGING_RUN_DIR, 'runtime:verify-before-smoke', () => verifyDesktopRuntime(DSH_OUTPUT_ROOT, release.version, target))
     if (!process.argv.includes('--defer-runtime-smoke')) {
       await packagingStep(process.env.DSH_DESKTOP_PACKAGING_RUN_DIR, 'runtime:smoke', () => smokePreparedRuntime(DSH_OUTPUT_ROOT, NODE, RUNTIME_ROOT, descriptor))

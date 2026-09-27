@@ -54,12 +54,14 @@ macOS/Linux 安装器（win-x64 先行，通道设计保持平台中立）。
 
 ## 5 · 实现分刀（每刀独立可验）
 
-| 刀 | 内容 | 验收 |
-| --- | --- | --- |
-| P1-① | `prepare-backend-wheelhouse.ts`：从后端 lock 生成 wheelhouse（CPU 轮子）＋清单 | 本地产出 wheelhouse；manifest 记录指纹 |
-| P1-② | `install-backend.py`＋staging 拷贝（`prepare-dsh.ts` 加 backend 树） | 干净目录上幂等装通 venv |
-| P1-③ | `backend-host.ts` 生命周期（启/等/退避/退出）＋endpoint 文件 | 无后端产物时零行为变化；有产物时拉起并健康就绪 |
-| P1-④ | 面板「后端启动中」态接线（ui-life 读取 endpoint 文件/健康） | 判据③面在装机产物上可复现 |
+| 刀 | 内容 | 验收 | 状态 |
+| --- | --- | --- | --- |
+| P1-① | `prepare-backend-wheelhouse.ts`：从后端 lock 生成 wheelhouse（CPU 轮子）＋清单 | 本地产出 wheelhouse；manifest 记录指纹 | **✓ 2026-09-27**：真机跑通——lock 来源＝运行中解释器的 `pip freeze`（116 pin，真 lock）；**torch 家族走 CPU 索引、其余走 PyPI 的两段下载**（`--no-deps`，freeze 即全闭包）；**115 wheels／463.6 MB**＋`backend-manifest.json`（逐 wheel sha256/size/source digest）；spec `backend-wheelhouse.spec.ts` 3 条。**修订**：Seed 代码不走 wheel（`pip wheel` 对仓库 data 树挂死实测）——源码树由 staging 拷贝（见下） |
+| P1-② | `install-backend.py`＋staging 拷贝（`prepare-dsh.ts` 加 backend 树） | 干净目录上幂等装通 venv | **✓ 已实现**：`apps/desktop/backend/install-backend.py`（stdlib；wheelhouse sha256 校验＋`--require-hashes` 哈希校验双保险；venv 满足 manifest 即幂等跳过）；staging＝`prepare-dsh.ts` 的 `backend:stage` 步（存在性门：无 wheelhouse 即报「无后端通道」跳过；**Seed 源码树五目录 api/seed_platform/taiji/neuroplex/instruments 拷进 backend/code/**，venv 以该树为 cwd 跑 `python -m api.main`） |
+| P1-③ | `backend-host.ts` 生命周期（启/等/退避/退出）＋endpoint 文件 | 无后端产物时零行为变化；有产物时拉起并健康就绪 | **✓ 已实现**：`apps/desktop/src/python-backend-host.ts`（Electron-free 可测）＋main.ts 接线（`isBackendShipped` 存在性门→start() 非阻塞→will-quit stop()）；端口策略 v1＝8000 上已有健康 Taiji runtime 则**采纳**（共享 runtime 场景），否则拉起自己的；python 路径镜像 workspaceDependencyPaths 布局（`dependencies/python/python.exe`，注释指明真源防漂移） |
+| P1-④ | 面板「后端启动中」态接线（ui-life 读取 endpoint 文件/健康） | 判据③面在装机产物上可复现 | **结构性满足，v1 无需额外接线**：shipped 默认 llm-taiji baseURL＝127.0.0.1:8000＝host 拉起端口 ⇒ 生命面板既有「未连接→已连接」状态即启动信号；endpoint 文件已写（为 P2 端口顺延预留） |
+
+**P2 记录（不在本通道首版）**：`api/main.py` 加 `--port` 旗标以支持多端口顺延；面板专用「后端启动中」态；macOS 安装器。
 
 ## 6 · 风险与既知约束
 
