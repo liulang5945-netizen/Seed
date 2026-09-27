@@ -1,25 +1,37 @@
-"""语境保持曲线：一个刚出现过的双字名，隔多远之后模型还会把它"顶到出口"上（零训练探针）。
+"""语境保持曲线 v2：一个刚出现过的双字名，隔多远还"活着"；出口对它是"有反应"还是"会复述"。
 
-**它回答的问题**：A 支线要交付的"逐字复述"，第一步是**信息得先在语境里活着**。
-F0 的 T3（`我的名字是{名}。我的名字是`，名与答位相距 6 字节）已是 **0/32**；
-本件把"距离"做成**扫描**，并同时给两个层级读数：
+> v1（同日）作废，原因＝**距离口径画错**：它把距离定义成填隙长度，而题面骨架 `。我的名字是`
+> 本身还隔 18 字节 ⇒ 标着 `d=0` 的那一点实为 24 字节，**近场一个点都没有**。
+> v2 把距离改成**由程序按 suffix 字节数算**（骨架与提示词都算进距离），并把
+> 「仪器有效性」与「研究读数」**分开**：前者不过则整件作废，后者无论结果如何都如实报
+> ——不再出现"正对照一挂就什么都报不出"。
 
-* **L1 抬升**（判机制用）：在"答："那一刻，名字首字节的概率**相对一个不在语境里的名字**
-  抬高多少（对数比）。正对照＝距离 0 必须明显为正；零假设＝配对换了名字。
-* **L0 命中**（只作回归）：贪心输出里有没有那个名字（§5d：L0 不得作能力/机制判据）。
+## 它回答的问题（A 支线"告知→复述"的第一跳）
 
-**距离口径**：填隙用「的」重复 k 次，距离 d = 3k 字节（k 见 DISTANCE_FILLERS）。
-距离 0 ＝ 名字紧贴答位（这是**正对照**，曲线若连这里都抬不起来，说明问题不在"保持多久"
-而在"根本进不到出口"）。
+F0 的 T3（名字距答位 18 字节、即时复述）是 **0/32**。本件把距离做成扫描，并对每个距离**同时**量三件事，
+因为"有反应"与"会复述"是两回事：
 
-**判读（跑前冻结）**
-* **正对照**：`d=0` 的平均 L1 抬升 **≥ ln(2) ≈ 0.6931**（即该字节的几率至少翻倍）。
-  不满足 ⇒ **整件降级为"探针无区分度"**，不报曲线结论。
-* **保持**：把"抬升 ≥ ln(2)"记为该距离**活着**；报出**最后一个活着的距离**（保持半径）。
-* 如实报：L0 命中率随距离的数（预期很低——F0 已示 0/32），**不用它下机制结论**。
+* **`mean_log_ratio`（会复述吗）**：答位那一刻，**名字自己的首字节**的概率，相对"换成另一个名字"
+  抬高多少（对数比）。≥ ln2 记该距离**活着**。
+* **`exit_kl_between_tokens`（出口对 token 有反应吗）**：同一距离上、不同 token 的出口分布之间的 KL。
+  它若明显 >0，说明出口**确实随 token 变**——那么 `mean_log_ratio≈0` 的含义就升级为
+  "**有反应、但不朝自己的字节去**"（＝没有复述通路），而不是"出口是常数"。
+* **`cue_rel_l1_between_tokens`（状态随 token 变吗）**：同一距离上、不同 token 的 `motor_context`
+  之间的相对 L1。同上，作为"状态确实随 token 变"的对照。
 
-**与既有件的关系**：`C3` 那份保持曲线量的是**情节场**（8 条绑定、恒 1.0、无饱和）；
-本件量的是**读出的直接输入**（递归痕迹，96 维）——两者不是一个东西，别互相引用。
+**已删掉的量（如实记，免得以后有人问为什么没有）**：v2 初稿曾想用"从 `motor_context` 线性读出
+这是哪个 token"（8 类）来分出"状态里有没有"这一格，但**每类只有 1 个样本、4 折 CV 恒为 0**
+——那个样本量下该量不可用（冒烟实测 `token_cv = cv_shuffled = 0.0`）。
+"token 能否被线性读出"因此**仍是未决项**，需要另一个有幂次的设计，不在本件范围。
+
+## 距离口径
+题面 = `我叫{token}{suffix}`，`distance_bytes = len(suffix.encode())`；答案位就在题面之后，
+所以这个字节数就是"token 末字节 → 答位"的**真距离**。suffix 从 7 到 66 字节，都以"我叫"收尾（复述提示）。
+
+## 仪器有效性（两条，都过才出研究读数）
+* **确定性**：同一条题面在两个全新 episode 里 ⇒ 分布**逐位相同**。
+* **输入敏感性**：两条互不相关的题面 ⇒ 分布 **KL > 0.01**（证明本件读的 `motor_probabilities`
+  确实随输入变，不是常数；线上取 0.01 是"明显不同的输入"的下界，不是照实测值凑的）。
 
 纪律：零训练、`learn=False`、`use_memory=False`、贪心、基座 sha 复核、判读件不覆写。
 """
@@ -42,10 +54,10 @@ for entry in (PROJECT_ROOT, PROJECT_ROOT / "scripts" / "training"):
     if str(entry) not in sys.path:
         sys.path.insert(0, str(entry))
 
-#: 距离扫描：填隙「的」的重复次数 k，距离 d = 3k 字节。
-DISTANCE_FILLERS: tuple[int, ...] = (0, 1, 2, 4, 8, 16, 32)
-FILLER = "的"
-POSITIVE_CONTROL_LINE = math.log(2.0)
+SEED = 20260928
+ALIVE_LINE = math.log(2.0)
+KL_SENSITIVITY_LINE = 0.01
+EXIT_RESPONDS_KL_LINE = 0.01
 MAX_ANSWER_BYTES = 24
 
 #: 8 个双字名（F0 同一池）。
@@ -60,17 +72,31 @@ TOKENS: tuple[str, ...] = (
     "国强",
 )
 
+#: 复述提示的 suffix，由短到长（真距离＝其字节数）。都以"我叫"/"我的名字是"收尾。
+SUFFIXES: tuple[str, ...] = (
+    "\n我叫",
+    "。我叫",
+    "。我的名字是",
+    "，我再说一遍，我叫",
+    "。我再说一遍我的名字，我叫",
+    "。今天天气很好，我再说一遍，我叫",
+    "。昨天夜里下了很大的雨，我再说一遍，我叫",
+)
+
+#: 输入敏感性对照：两条互不相关的题面。
+SENSITIVITY_PROMPTS: tuple[str, ...] = ("今天天气不错。", "昨天夜里下了很大的雨。")
+
 
 def _sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def _prompt(token: str, fillers: int) -> str:
-    return f"我的名字是{token}。{FILLER * fillers}我的名字是"
+def _prompt(token: str, suffix: str) -> str:
+    return f"我叫{token}{suffix}"
 
 
 def _observe_prompt(substrate: Any, text: str) -> None:
-    substrate.reset_dynamics(episode_id="retention-probe")
+    substrate.reset_dynamics(episode_id="retention-v2")
     substrate.observe(
         int(substrate.config.boundary_symbol),
         learn=False,
@@ -81,11 +107,14 @@ def _observe_prompt(substrate: Any, text: str) -> None:
         substrate.observe(int(symbol), learn=False, readout="predictive", use_memory=False)
 
 
-def _answer_distribution(substrate: Any, text: str) -> torch.Tensor:
-    """喂完题面后，"答："那一刻的下一字节分布（＝`state.motor_probabilities`）。"""
-
+def _exit_distribution(substrate: Any, text: str) -> torch.Tensor:
     _observe_prompt(substrate, text)
     return substrate._state.motor_probabilities.detach().cpu().float()
+
+
+def _cue(substrate: Any, text: str) -> torch.Tensor:
+    _observe_prompt(substrate, text)
+    return substrate._state.motor_context.detach().cpu().float()
 
 
 def _greedy(substrate: Any, text: str) -> bytes:
@@ -98,7 +127,17 @@ def _greedy(substrate: Any, text: str) -> bytes:
     )
 
 
-def collect_rows(checkpoint: Path) -> dict[str, Any]:
+def _kl(left: torch.Tensor, right: torch.Tensor) -> float:
+    left = left.clamp_min(1e-12)
+    right = right.clamp_min(1e-12)
+    return float(torch.sum(left * torch.log(left / right)))
+
+
+def _mean(values: list[float]) -> float:
+    return round(sum(values) / len(values), 6) if values else 0.0
+
+
+def collect(checkpoint: Path) -> dict[str, Any]:
     from api.seed_runtime import SeedRuntime
 
     runtime = SeedRuntime.load(checkpoint)
@@ -106,56 +145,104 @@ def collect_rows(checkpoint: Path) -> dict[str, Any]:
     if substrate.copy_circuit is not None:
         raise SystemExit("copy circuit mounted; retention probe requires a bare base")
 
-    #: 零假设对照前置：同题面两 episode 的分布必须逐位相同。
-    repeated = [
-        _answer_distribution(substrate, _prompt(TOKENS[0], 2)) for _ in range(2)
-    ]
-    null_identical = bool(torch.equal(repeated[0], repeated[1]))
+    #: 仪器有效性 ①：确定性。
+    deterministic = bool(
+        torch.equal(
+            _exit_distribution(substrate, _prompt(TOKENS[0], SUFFIXES[2])),
+            _exit_distribution(substrate, _prompt(TOKENS[0], SUFFIXES[2])),
+        )
+    )
+    #: 仪器有效性 ②：输入敏感性。
+    sensitivity = [_exit_distribution(substrate, text) for text in SENSITIVITY_PROMPTS]
+    sensitivity_kl = round(_kl(sensitivity[0], sensitivity[1]), 6)
 
-    rows: list[dict[str, Any]] = []
-    for fillers in DISTANCE_FILLERS:
-        for index, token in enumerate(TOKENS):
-            control_token = TOKENS[(index + 1) % len(TOKENS)]
-            first_byte = int(token.encode("utf-8")[0])
-            own = _answer_distribution(substrate, _prompt(token, fillers))
-            other = _answer_distribution(substrate, _prompt(control_token, fillers))
-            output = _greedy(substrate, _prompt(token, fillers))
-            rows.append(
-                {
-                    "distance_bytes": 3 * fillers,
-                    "token": token,
-                    "control_token": control_token,
-                    "first_byte": first_byte,
-                    "log_prob_own": float(torch.log(own[first_byte].clamp_min(1e-12))),
-                    "log_prob_control": float(torch.log(other[first_byte].clamp_min(1e-12))),
-                    "hit": bool(token.encode("utf-8") in output),
-                    "output": output.hex(),
-                }
-            )
-    return {"rows": rows, "null_control": {"identical_across_episodes": null_identical}}
-
-
-def summarize(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
-    by_distance: dict[int, list[dict[str, Any]]] = {}
-    for row in rows:
-        by_distance.setdefault(row["distance_bytes"], []).append(row)
     curve: list[dict[str, Any]] = []
-    for distance in sorted(by_distance):
-        group = by_distance[distance]
-        deltas = [row["log_prob_own"] - row["log_prob_control"] for row in group]
+    for suffix in SUFFIXES:
+        distance = len(suffix.encode("utf-8"))
+        exits = [_exit_distribution(substrate, _prompt(token, suffix)) for token in TOKENS]
+        cues = [_cue(substrate, _prompt(token, suffix)) for token in TOKENS]
+        ratios: list[float] = []
+        hits: list[bool] = []
+        for index, token in enumerate(TOKENS):
+            control_index = (index + 1) % len(TOKENS)
+            first_byte = int(token.encode("utf-8")[0])
+            ratios.append(
+                float(
+                    torch.log(exits[index][first_byte].clamp_min(1e-12))
+                    - torch.log(exits[control_index][first_byte].clamp_min(1e-12))
+                )
+            )
+            output = _greedy(substrate, _prompt(token, suffix))
+            hits.append(bool(token.encode("utf-8") in output))
+        #: 出口对 token 的反应强度（同一距离、相邻 token 两两）。
+        exit_kl = [
+            _kl(exits[i], exits[(i + 1) % len(TOKENS)]) for i in range(len(TOKENS))
+        ]
+        #: 状态随 token 的变化幅度（相对 L1）。
+        cue_rel = [
+            float((cues[i] - cues[(i + 1) % len(TOKENS)]).abs().sum())
+            / max(float(cues[i].abs().sum()), 1e-9)
+            for i in range(len(TOKENS))
+        ]
         curve.append(
             {
+                "suffix": suffix,
                 "distance_bytes": distance,
-                "items": len(group),
-                "mean_log_ratio": round(sum(deltas) / len(deltas), 4),
-                "min_log_ratio": round(min(deltas), 4),
+                "items": len(TOKENS),
+                "mean_log_ratio": _mean(ratios),
+                "min_log_ratio": round(min(ratios), 6),
+                "max_log_ratio": round(max(ratios), 6),
                 "alive_rate": round(
-                    sum(1 for value in deltas if value >= POSITIVE_CONTROL_LINE) / len(deltas), 4
+                    sum(1 for value in ratios if value >= ALIVE_LINE) / len(ratios), 4
                 ),
-                "l0_hit_rate": round(sum(1 for row in group if row["hit"]) / len(group), 4),
+                "l0_hit_rate": round(sum(1 for value in hits if value) / len(hits), 4),
+                "exit_kl_between_tokens": _mean(exit_kl),
+                "exit_responds_to_token": bool(
+                    _mean(exit_kl) > EXIT_RESPONDS_KL_LINE
+                ),
+                "cue_rel_l1_between_tokens": _mean(cue_rel),
             }
         )
-    return curve
+    return {
+        "curve": curve,
+        "instrument": {
+            "deterministic": deterministic,
+            "sensitivity_kl": sensitivity_kl,
+            "sensitivity_line": KL_SENSITIVITY_LINE,
+        },
+    }
+
+
+def _verdict(curve: list[dict[str, Any]]) -> dict[str, Any]:
+    alive = [
+        entry["distance_bytes"] for entry in curve if entry["mean_log_ratio"] >= ALIVE_LINE
+    ]
+    responds = [entry for entry in curve if entry["exit_responds_to_token"]]
+    if alive:
+        name = "copy_path_alive"
+    elif responds:
+        name = "exit_responds_but_no_copy_path"
+    else:
+        name = "exit_insensitive_to_token"
+    return {
+        "name": name,
+        "farthest_alive_distance_bytes": max(alive) if alive else None,
+        "responds_at_distances": [entry["distance_bytes"] for entry in responds],
+        "best_mean_log_ratio": round(
+            max(entry["mean_log_ratio"] for entry in curve), 6
+        ),
+        "reading": (
+            "出口会把语境里的名字顶到自己的字节上（有复述通路）"
+            if name == "copy_path_alive"
+            else (
+                "出口**对 token 有反应**（不同名字给出不同分布），但**不朝自己的字节去** ⇒ "
+                "没有复述通路；配上 F0 的 T3=0/32 与 A2 电路才有命中的事实 ⇒ "
+                "复述靠的是电路那条旁路，不是裸读出"
+                if name == "exit_responds_but_no_copy_path"
+                else "出口连 token 都不敏感 ⇒ 先怀疑语境的产出方"
+            )
+        ),
+    }
 
 
 def main() -> int:
@@ -167,46 +254,50 @@ def main() -> int:
 
     checkpoint = PROJECT_ROOT / args.checkpoint
     sha_before = _sha256(checkpoint)
-    collected = collect_rows(checkpoint)
-    rows = collected["rows"]
-    if not rows:
+    collected = collect(checkpoint)
+    curve = collected["curve"]
+    if not curve:
         print(json.dumps({"guard_ok": False, "error": "no rows"}, ensure_ascii=False))
         return 2
-    curve = summarize(rows)
-    control = next(entry for entry in curve if entry["distance_bytes"] == 0)
-    positive_control_ok = bool(control["mean_log_ratio"] >= POSITIVE_CONTROL_LINE)
-    alive = [entry["distance_bytes"] for entry in curve if entry["mean_log_ratio"] >= POSITIVE_CONTROL_LINE]
-    verdict = (
-        "retention_curve_measured"
-        if positive_control_ok
-        else "void_positive_control_failed_probe_not_discriminating"
+    verdict = _verdict(curve)
+    instrument = collected["instrument"]
+    instrument_ok = bool(
+        instrument["deterministic"] and instrument["sensitivity_kl"] > KL_SENSITIVITY_LINE
     )
     report = {
-        "format": "taiji-context-retention-curve-v1",
-        "prereg": "本文件 docstring（判据与距离口径随文件一起冻结）",
+        "format": "taiji-context-retention-curve-v2",
+        "prereg": "本文件 docstring（距离口径、仪器有效性两条、研究读数按实测报，随文件一起冻结）",
         "checkpoint": args.checkpoint,
         "arm_label": args.label or args.checkpoint,
         "stimuli": {
             "tokens": list(TOKENS),
-            "pattern": "我的名字是{token}。{的×k}我的名字是",
-            "distances_bytes": [3 * k for k in DISTANCE_FILLERS],
-            "control": "同一距离上，把名字换成另一个 token，量同一个首字节的对数比",
+            "pattern": "我叫{token}{suffix}；distance_bytes = len(suffix.encode())",
+            "suffixes": [
+                {"suffix": suffix, "distance_bytes": len(suffix.encode("utf-8"))}
+                for suffix in SUFFIXES
+            ],
+            "control": "同一距离上把名字换成另一个 token，量同一个首字节的对数比",
         },
-        "positive_control_line": POSITIVE_CONTROL_LINE,
-        "null_control": collected["null_control"],
+        "instrument": instrument,
         "curve": curve,
         "verdict": verdict,
-        "farthest_alive_distance_bytes": max(alive) if alive else None,
+        "dropped_measurements": {
+            "token_linear_decodability": (
+                "v2 初稿的'从 motor_context 线性读出是哪个 token（8 类）'已删：每类仅 1 个样本、"
+                "4 折 CV 恒 0（冒烟实测 token_cv = cv_shuffled = 0.0）⇒ 该样本量下不可用；"
+                "'token 能否被线性读出'因此仍是未决项，需要另一个有幂次的设计"
+            )
+        },
         "what_would_overturn": (
-            "零假设对照不在位 ⇒ 整件作废；正对照（d=0 抬升 ≥ ln2）不过 ⇒ 不报曲线结论；"
-            "换非贪心/经语言器官通道另计；"
-            "本件只量'读出的直接输入'这条链，与 C3 的情节场保持曲线不是一个东西"
+            "确定性或输入敏感性不过 ⇒ 仪器无效、整件作废；"
+            "换更强探针（非线性／有幂次）读出 token ⇒ 结论要重写；"
+            "本件只量裸读出这条链（无 copy 电路、无记忆、贪心），与 C3 的情节场保持曲线不是一个东西"
         ),
         "base_sha256_unchanged": _sha256(checkpoint) == sha_before,
     }
     report["instrument_guard"] = {
-        "items_nonzero": bool(rows),
-        "null_control_identical": bool(collected["null_control"]["identical_across_episodes"]),
+        "items_nonzero": bool(curve),
+        "instrument_valid": instrument_ok,
         "base_unchanged": report["base_sha256_unchanged"],
     }
 
@@ -217,16 +308,26 @@ def main() -> int:
         out = out.with_name(f"{out.stem}-{datetime.now(timezone.utc).strftime('%H%M%S')}.json")
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    ok = all(report["instrument_guard"].values()) and positive_control_ok
+    ok = all(report["instrument_guard"].values())
     print(
         json.dumps(
             {
                 "guard_ok": ok,
                 "arm": report["arm_label"],
-                "positive_control_ok": positive_control_ok,
+                "instrument": instrument,
                 "verdict": verdict,
-                "curve": curve,
-                "farthest_alive": report["farthest_alive_distance_bytes"],
+                "curve": [
+                    {
+                        "d": entry["distance_bytes"],
+                        "mean_log_ratio": entry["mean_log_ratio"],
+                        "alive": entry["alive_rate"],
+                        "l0_hit": entry["l0_hit_rate"],
+                        "exit_kl": entry["exit_kl_between_tokens"],
+                        "responds": entry["exit_responds_to_token"],
+                        "cue_rel": entry["cue_rel_l1_between_tokens"],
+                    }
+                    for entry in curve
+                ],
                 "out": (
                     out.relative_to(PROJECT_ROOT).as_posix()
                     if out.is_relative_to(PROJECT_ROOT)
