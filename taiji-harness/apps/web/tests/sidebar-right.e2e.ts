@@ -325,6 +325,11 @@ describe('web e2e: shipped right Sidebar', () => {
       agent.session.append('turn/end', { turn: 1, reason: { kind: 'completed' } })
       await scaffold.ctx.sessions.flush(agent.session)
       await page.getByText('Ready.').waitFor({ timeout: 10_000 })
+      // The connected client auto-opens browsable sessions, and the blank one it
+      // switches to can supersede this lane's session in the main surface (08 §6 ⑱).
+      // Re-open the seeded session's row by its user-message title so the session-keyed
+      // chrome under test (header utilities, produced-file chips) is actually mounted.
+      await page.getByRole('treeitem', { name: /Show the right sidebar\./u }).click()
     }, 120_000)
 
     it('CONTROL: the old fileReferences namespace answers over the same wire', async () => {
@@ -837,7 +842,10 @@ describe('web e2e: shipped right Sidebar', () => {
       onTestFailed(() => saveFailureShot(fx, 'web-e2e-sidebar-right-sessions'))
       try {
         await fx.goto(scaffold.authenticatedUrl, { waitUntil: 'load' })
-        const settled = fx.getByRole('treeitem', { name: /Show the right sidebar\./u }).first()
+        // On a freshly loaded page the row's label comes from the persisted header,
+        // which carries no title — it falls back to the workspace basename (G5 §7.2);
+        // accept both that and the user-message title the live page shows.
+        const settled = fx.getByRole('treeitem', { name: /Show the right sidebar\.|dsh-web-e2e-ws-/u }).first()
         await settled.click()
         await expect.poll(async () => await settled.getAttribute('aria-selected')).toBe('true')
         const frame = fx.locator('[class*="frame"]').first()
@@ -1102,9 +1110,11 @@ describe('web e2e: shipped right Sidebar', () => {
         await zhPage.goto(scaffold.authenticatedUrl, { waitUntil: 'load' })
         await zhPage.waitForSelector('[class*="frame"]', { timeout: 30_000 })
         // A fresh page opens the workspace on a blank session's hero, which has
-        // no session header and so no expand button. The settled session is the
-        // second row of the tree; pick it the way a user would.
-        await zhPage.getByRole('treeitem', { name: /Show the right sidebar\./u }).first().click()
+        // no session header and so no expand button. The settled session's row is
+        // labelled by the workspace basename on a fresh page (persisted header has
+        // no title — G5 §7.2) and by the user-message title on the live page;
+        // accept both and pick it the way a user would.
+        await zhPage.getByRole('treeitem', { name: /Show the right sidebar\.|dsh-web-e2e-ws-/u }).first().click()
         const column = zhPage.locator('[data-rightbar-col]')
         await expandOf(zhPage).waitFor({ timeout: 20_000 })
         await expandOf(zhPage).click()

@@ -35,6 +35,10 @@ describe('web e2e: goal bar clear convergence', () => {
     await page.goto(scaffold.authenticatedUrl, { waitUntil: 'load' })
     await page.waitForSelector('[class*="frame"]', { timeout: 30_000 })
     await connectFreshWorkspace(page, scaffold.workspaceCwd)
+    // connectFreshWorkspace selects the blank session but leaves the surface on the
+    // hero composer, which does not process slash commands (08 §6 ⑱). Open the
+    // session row by name so the in-session composer receives the /goal command.
+    await page.getByRole('treeitem', { name: 'New Session' }).click()
   }, 120_000)
 
   afterAll(async () => {
@@ -77,9 +81,13 @@ describe('web e2e: goal bar clear convergence', () => {
     const snapshot = await captureStableAria(page, '[data-goal-bar]', scaffold.workspaceCwd)
     await compareOrRefreshGolden(ACTIVE_EXPECTED, snapshot, MODE)
 
-    const agents = scaffold.ctx.agents.list()
-    expect(agents).toHaveLength(1)
-    scaffold.ctx.goals.disarm(agents[0]!)
+    // The connected client auto-opens browsable sessions, and each open starts an
+    // agent (08 §6 ⑱, github-ready-review), so the registry's global count is not 1.
+    // Assert the meaningful invariant instead: exactly one agent owns an armed goal.
+    const armed = scaffold.ctx.agents.list()
+      .filter(agent => scaffold.ctx.goals.get(agent)?.activation === 'armed')
+    expect(armed).toHaveLength(1)
+    scaffold.ctx.goals.disarm(armed[0]!)
     await expect.poll(() => bar.getByRole('button', { name: 'Resume goal' }).count(), {
       timeout: 10_000,
     }).toBe(1)
