@@ -1,0 +1,500 @@
+{
+  "format": "taiji-r202-placeholder-rate-v1",
+  "prereg": "plans/reference/SPEC-R2-02_decode_mask_productization_prereg_20260927.md §2",
+  "checkpoint": "checkpoints/seed_beta.pt",
+  "prompts": 32,
+  "placeholder_before_unmasked": "32/32",
+  "placeholder_after_masked": "0/32",
+  "accepted_surfaces_all_decodable": true,
+  "main_criterion": {
+    "threshold": "<= 16",
+    "verdict": "pass"
+  },
+  "real_chat_checks": [
+    {
+      "prompt": "你叫什么名字？",
+      "answer": "制则人人人人人下尝君刍是他为个刑你为，俙是有扉：我他师师君，刽家",
+      "placeholder": false,
+      "decodable": true
+    },
+    {
+      "prompt": "你今年多大？",
+      "answer": "则人人人人人下有君为为（他君孟则予大家刑他君个是是我他愶刑他君为",
+      "placeholder": false,
+      "decodable": true
+    },
+    {
+      "prompt": "今天天气怎么样？",
+      "answer": "则为个则为为为为丈（有君孟孟到，与君家则为中为君家则人一不有君丼",
+      "placeholder": false,
+      "decodable": true
+    },
+    {
+      "prompt": "你住在哪里？",
+      "answer": "则君刺下（（吼刺人人人人人个有吼则亐听为个刑他吝吼则他吖吼则亰下",
+      "placeholder": false,
+      "decodable": true
+    }
+  ],
+  "real_chat_checks_all_pass": true,
+  "rows_before": [
+    {
+      "prompt": "你叫什么名字？",
+      "surface": "我已收到你的问题：“你叫什么名字？”。当前原生语言表层正在形成稳定表达。",
+      "placeholder": true,
+      "decodable": true,
+      "raw_decodable": false
+    },
+    {
+      "prompt": "你今年多大？",
+      "surface": "我已收到你的问题：“你今年多大？”。当前原生语言表层正在形成稳定表达。",
+      "placeholder": true,
+      "decodable": true,
+      "raw_decodable": false
+    },
+    {
+      "prompt": "今天天气怎么样？",
+      "surface": "我已收到你的问题：“今天天气怎么样？”。当前原生语言表层正在形成稳定表达。",
+      "placeholder": true,
+      "decodable": true,
+      "raw_decodable": false
+    },
+    {
+      "prompt": "你住在哪里？",
+      "surface": "我已收到你的问题：“你住在哪里？”。当前原生语言表层正在形成稳定表达。",
+      "placeholder": true,
+      "decodable": true,
+      "raw_decodable": false
+    },
+    {
+      "prompt": "你喜欢吃什么？",
+      "surface": "我已收到你的问题：“你喜欢吃什么？”。当前原生语言表层正在形成稳定表达。",
+      "placeholder": true,
+      "decodable": true,
+      "raw_decodable": false
+    },
+    {
+      "prompt": "你的爱好是什么？",
+      "surface": "我已收到你的问题：“你的爱好是什么？”。当前原生语言表层正在形成稳定表达。",
+      "placeholder": true,
+      "decodable": true,
+      "raw_decodable": false
+    },
+    {
+      "prompt": "你有几个兄弟姐妹？",
+      "surface": "我已收到你的问题：“你有几个兄弟姐妹？”。当前原生语言表层正在形成稳定表达。",
+      "placeholder": true,
+      "decodable": true,
+      "raw_decodable": false
+    },
+    {
+      "prompt": "你做什么工作？",
+      "surface": "我已收到你的问题：“你做什么工作？”。当前原生语言表层正在形成稳定表达。",
+      "placeholder": true,
+      "decodable": true,
+      "raw_decodable": false
+    },
+    {
+      "prompt": "你平时喜欢做什么？",
+      "surface": "我已收到你的问题：“你平时喜欢做什么？”。当前原生语言表层正在形成稳定表达。",
+      "placeholder": true,
+      "decodable": true,
+      "raw_decodable": false
+    },
+    {
+      "prompt": "你家有几口人？",
+      "surface": "我已收到你的问题：“你家有几口人？”。当前原生语言表层正在形成稳定表达。",
+      "placeholder": true,
+      "decodable": true,
+      "raw_decodable": false
+    },
+    {
+      "prompt": "你几点起床？",
+      "surface": "我已收到你的问题：“你几点起床？”。当前原生语言表层正在形成稳定表达。",
+      "placeholder": true,
+      "decodable": true,
+      "raw_decodable": false
+    },
+    {
+      "prompt": "你去过北京吗？",
+      "surface": "我已收到你的问题：“你去过北京吗？”。当前原生语言表层正在形成稳定表达。",
+      "placeholder": true,
+      "decodable": true,
+      "raw_decodable": false
+    },
+    {
+      "prompt": "你最喜欢的颜色是什么？",
+      "surface": "我已收到你的问题：“你最喜欢的颜色是什么？”。当前原生语言表层正在形成稳定表达。",
+      "placeholder": true,
+      "decodable": true,
+      "raw_decodable": false
+    },
+    {
+      "prompt": "你养宠物吗？",
+      "surface": "我已收到你的问题：“你养宠物吗？”。当前原生语言表层正在形成稳定表达。",
+      "placeholder": true,
+      "decodable": true,
+      "raw_decodable": false
+    },
+    {
+      "prompt": "你会说什么语言？",
+      "surface": "我已收到你的问题：“你会说什么语言？”。当前原生语言表层正在形成稳定表达。",
+      "placeholder": true,
+      "decodable": true,
+      "raw_decodable": false
+    },
+    {
+      "prompt": "你觉得读书有用吗？",
+      "surface": "我已收到你的问题：“你觉得读书有用吗？”。当前原生语言表层正在形成稳定表达。",
+      "placeholder": true,
+      "decodable": true,
+      "raw_decodable": false
+    },
+    {
+      "prompt": "今晚吃什么？",
+      "surface": "我已收到你的问题：“今晚吃什么？”。当前原生语言表层正在形成稳定表达。",
+      "placeholder": true,
+      "decodable": true,
+      "raw_decodable": false
+    },
+    {
+      "prompt": "周末你打算干什么？",
+      "surface": "我已收到你的问题：“周末你打算干什么？”。当前原生语言表层正在形成稳定表达。",
+      "placeholder": true,
+      "decodable": true,
+      "raw_decodable": false
+    },
+    {
+      "prompt": "那条河叫什么名字？",
+      "surface": "我已收到你的问题：“那条河叫什么名字？”。当前原生语言表层正在形成稳定表达。",
+      "placeholder": true,
+      "decodable": true,
+      "raw_decodable": false
+    },
+    {
+      "prompt": "这家店几点开门？",
+      "surface": "我已收到你的问题：“这家店几点开门？”。当前原生语言表层正在形成稳定表达。",
+      "placeholder": true,
+      "decodable": true,
+      "raw_decodable": false
+    },
+    {
+      "prompt": "这个多少钱？",
+      "surface": "我已收到你的问题：“这个多少钱？”。当前原生语言表层正在形成稳定表达。",
+      "placeholder": true,
+      "decodable": true,
+      "raw_decodable": false
+    },
+    {
+      "prompt": "明天会下雨吗？",
+      "surface": "我已收到你的问题：“明天会下雨吗？”。当前原生语言表层正在形成稳定表达。",
+      "placeholder": true,
+      "decodable": true,
+      "raw_decodable": false
+    },
+    {
+      "prompt": "他为什么没来？",
+      "surface": "我已收到你的问题：“他为什么没来？”。当前原生语言表层正在形成稳定表达。",
+      "placeholder": true,
+      "decodable": true,
+      "raw_decodable": false
+    },
+    {
+      "prompt": "你的老师是谁？",
+      "surface": "我已收到你的问题：“你的老师是谁？”。当前原生语言表层正在形成稳定表达。",
+      "placeholder": true,
+      "decodable": true,
+      "raw_decodable": false
+    },
+    {
+      "prompt": "你的家乡在哪里？",
+      "surface": "我已收到你的问题：“你的家乡在哪里？”。当前原生语言表层正在形成稳定表达。",
+      "placeholder": true,
+      "decodable": true,
+      "raw_decodable": false
+    },
+    {
+      "prompt": "你喜欢读书吗？",
+      "surface": "我已收到你的问题：“你喜欢读书吗？”。当前原生语言表层正在形成稳定表达。",
+      "placeholder": true,
+      "decodable": true,
+      "raw_decodable": false
+    },
+    {
+      "prompt": "这道题怎么做？",
+      "surface": "我已收到你的问题：“这道题怎么做？”。当前原生语言表层正在形成稳定表达。",
+      "placeholder": true,
+      "decodable": true,
+      "raw_decodable": false
+    },
+    {
+      "prompt": "那辆车是谁的？",
+      "surface": "我已收到你的问题：“那辆车是谁的？”。当前原生语言表层正在形成稳定表达。",
+      "placeholder": true,
+      "decodable": true,
+      "raw_decodable": false
+    },
+    {
+      "prompt": "你昨晚睡得好吗？",
+      "surface": "我已收到你的问题：“你昨晚睡得好吗？”。当前原生语言表层正在形成稳定表达。",
+      "placeholder": true,
+      "decodable": true,
+      "raw_decodable": false
+    },
+    {
+      "prompt": "今天星期几？",
+      "surface": "我已收到你的问题：“今天星期几？”。当前原生语言表层正在形成稳定表达。",
+      "placeholder": true,
+      "decodable": true,
+      "raw_decodable": false
+    },
+    {
+      "prompt": "我们下一步去哪？",
+      "surface": "我已收到你的问题：“我们下一步去哪？”。当前原生语言表层正在形成稳定表达。",
+      "placeholder": true,
+      "decodable": true,
+      "raw_decodable": false
+    },
+    {
+      "prompt": "这本书讲了什么？",
+      "surface": "我已收到你的问题：“这本书讲了什么？”。当前原生语言表层正在形成稳定表达。",
+      "placeholder": true,
+      "decodable": true,
+      "raw_decodable": false
+    }
+  ],
+  "rows_after": [
+    {
+      "prompt": "你叫什么名字？",
+      "surface": "制则人人人人人下尝君刍是他为个刑你为，俙是有扉：我他师师君，刽家",
+      "placeholder": false,
+      "decodable": true,
+      "raw_decodable": true
+    },
+    {
+      "prompt": "你今年多大？",
+      "surface": "则人人人人人下有君为为（他君孟则予大家刑他君个是是我他愶刑他君为",
+      "placeholder": false,
+      "decodable": true,
+      "raw_decodable": true
+    },
+    {
+      "prompt": "今天天气怎么样？",
+      "surface": "则为个则为为为为丈（有君孟孟到，与君家则为中为君家则人一不有君丼",
+      "placeholder": false,
+      "decodable": true,
+      "raw_decodable": true
+    },
+    {
+      "prompt": "你住在哪里？",
+      "surface": "则君刺下（（吼刺人人人人人个有吼则亐听为个刑他吝吼则他吖吼则亰下",
+      "placeholder": false,
+      "decodable": true,
+      "raw_decodable": true
+    },
+    {
+      "prompt": "你喜欢吃什么？",
+      "surface": "分君刺人人人人人个有君为君吼他吼家刑们个是是是我他为为君亰么是是",
+      "placeholder": false,
+      "decodable": true,
+      "raw_decodable": true
+    },
+    {
+      "prompt": "你的爱好是什么？",
+      "surface": "到：刑人为人人人人人为予（有君为个君君亼意有我他有我他愶君亰么下",
+      "placeholder": false,
+      "decodable": true,
+      "raw_decodable": true
+    },
+    {
+      "prompt": "你有几个兄弟姐妹？",
+      "surface": "有：是下思为为人人人为为为有君为君为君君人吼意是是是摢他为师君伌",
+      "placeholder": false,
+      "decodable": true,
+      "raw_decodable": true
+    },
+    {
+      "prompt": "你做什么工作？",
+      "surface": "则人则人个则人个则人为人人人一䃳有君亻为君亽他君佼愄意是摢䜉，君",
+      "placeholder": false,
+      "decodable": true,
+      "raw_decodable": true
+    },
+    {
+      "prompt": "你平时喜欢做什么？",
+      "surface": "到：则为个则为个则有我们为人人人人人为人为尝君则何家则亽他君二孟",
+      "placeholder": false,
+      "decodable": true,
+      "raw_decodable": true
+    },
+    {
+      "prompt": "你家有几口人？",
+      "surface": "分君，人个则为个是他一一丈（是有扈君人人人人人人为亟有君佐君亻他",
+      "placeholder": false,
+      "decodable": true,
+      "raw_decodable": true
+    },
+    {
+      "prompt": "你几点起床？",
+      "surface": "刺君刺下师（是为为为为为为为丈，君君吼吼吼吼吼吼则他吀吼则他吀下",
+      "placeholder": false,
+      "decodable": true,
+      "raw_decodable": true
+    },
+    {
+      "prompt": "你去过北京吗？",
+      "surface": "则君刺下师（是们一个则我人个则为个则为君人人人人人人个尝君君何家",
+      "placeholder": false,
+      "decodable": true,
+      "raw_decodable": true
+    },
+    {
+      "prompt": "你最喜欢的颜色是什么？",
+      "surface": "到）：则人人人人人个刈（是他为（则何家则人为人为一丈（我䉈君为为",
+      "placeholder": false,
+      "decodable": true,
+      "raw_decodable": true
+    },
+    {
+      "prompt": "你养宠物吗？",
+      "surface": "则君刺人人人人人个是他为我们一个我他我他文人君人人人人为亼我他有",
+      "placeholder": false,
+      "decodable": true,
+      "raw_decodable": true
+    },
+    {
+      "prompt": "你会说什么语言？",
+      "surface": "到：刑人为利（则人个刈（则为，个是有我们为个刺君佐宺人人人人为予",
+      "placeholder": false,
+      "decodable": true,
+      "raw_decodable": true
+    },
+    {
+      "prompt": "你觉得读书有用吗？",
+      "surface": "则君学个刼人人人人人个是有我他愶刑他有我他有我他未帺，则亰为个则",
+      "placeholder": false,
+      "decodable": true,
+      "raw_decodable": true
+    },
+    {
+      "prompt": "今晚吃什么？",
+      "surface": "到）：刑人人人人人个刈（是他为），君君吼吼别同君亰有吼吼则是有所",
+      "placeholder": false,
+      "decodable": true,
+      "raw_decodable": true
+    },
+    {
+      "prompt": "周末你打算干什么？",
+      "surface": "则为师（，为个则是他一个我他我他我为人人人人人人为五䟰\n\n\n戈（（（",
+      "placeholder": false,
+      "decodable": true,
+      "raw_decodable": true
+    },
+    {
+      "prompt": "那条河叫什么名字？",
+      "surface": "则君刺个刼家刑人个刼家刌君个是以为吼有：是是我们个我他君为人人人",
+      "placeholder": false,
+      "decodable": true,
+      "raw_decodable": true
+    },
+    {
+      "prompt": "这家店几点开门？",
+      "surface": "刑人人人人个刑为君君为个吼有吼为吼为吼有吼是是是是是是是摢为为为",
+      "placeholder": false,
+      "decodable": true,
+      "raw_decodable": true
+    },
+    {
+      "prompt": "这个多少钱？",
+      "surface": "刑学人为人人人为人为为有君亼为君君亼意有旀个我他我他我他我他我了",
+      "placeholder": false,
+      "decodable": true,
+      "raw_decodable": true
+    },
+    {
+      "prompt": "明天会下雨吗？",
+      "surface": "则君则个刑人人人人个刑伌为君吼别吼刑他吗君人人人人个是他为我他愶",
+      "placeholder": false,
+      "decodable": true,
+      "raw_decodable": true
+    },
+    {
+      "prompt": "他为什么没来？",
+      "surface": "分君则人个则为个君君人人人人人个有君为君为吼有是有我他愶君亰下下",
+      "placeholder": false,
+      "decodable": true,
+      "raw_decodable": true
+    },
+    {
+      "prompt": "你的老师是谁？",
+      "surface": "则为则为一一丈是是文人人人人人为为尝君䗀宺亚。\n\n\n\n\n\n\n\n\n\n（（（（）",
+      "placeholder": false,
+      "decodable": true,
+      "raw_decodable": true
+    },
+    {
+      "prompt": "你的家乡在哪里？",
+      "surface": "则君刺人人人人个个我他我他我他我为，俙我为（我人为（尝君则人君家",
+      "placeholder": false,
+      "decodable": true,
+      "raw_decodable": true
+    },
+    {
+      "prompt": "你喜欢读书吗？",
+      "surface": "则君刺人人人人人个刑何君为个刑何君为君么是有才我他愶君了为君䌧家",
+      "placeholder": false,
+      "decodable": true,
+      "raw_decodable": true
+    },
+    {
+      "prompt": "这道题怎么做？",
+      "surface": "分君刺人人人人人个有君为君为中，丐有我他君为吼则他师君人吼\n\n\n戈（",
+      "placeholder": false,
+      "decodable": true,
+      "raw_decodable": true
+    },
+    {
+      "prompt": "那辆车是谁的？",
+      "surface": "分家刺人人人人人个则文君说君有才有我他个到，到，他君则人大家刺人",
+      "placeholder": false,
+      "decodable": true,
+      "raw_decodable": true
+    },
+    {
+      "prompt": "你昨晚睡得好吗？",
+      "surface": "则为人人人人个则我他君则为君为一一一丈有吼会我他后君你为吼吼别君",
+      "placeholder": false,
+      "decodable": true,
+      "raw_decodable": true
+    },
+    {
+      "prompt": "今天星期几？",
+      "surface": "刽家刺人人人人个刑为君为个君为君吼意是是是我他为吼则伌师吼家吟弈",
+      "placeholder": false,
+      "decodable": true,
+      "raw_decodable": true
+    },
+    {
+      "prompt": "我们下一步去哪？",
+      "surface": "刐则人人人人人个刑伈有君为，不想有，尐君为吼家则人为吼\n\n\n戈（（）",
+      "placeholder": false,
+      "decodable": true,
+      "raw_decodable": true
+    },
+    {
+      "prompt": "这本书讲了什么？",
+      "surface": "分君则个刑为一个我他我为了为人人人人五他将君你为则佼有君亼有有我",
+      "placeholder": false,
+      "decodable": true,
+      "raw_decodable": true
+    }
+  ],
+  "what_would_overturn": "若 after 占位率超阈值 ⇒ 器官验收还卡掩码管不到的条件（控制符/alnum），按 §3 查因入册不放宽；若真 chat 复核与复刻链定性不一致 ⇒ 复刻链失真，本件读数作废",
+  "base_sha256_unchanged": true,
+  "instrument_guard": {
+    "prompts_nonzero": true,
+    "before_is_all_placeholder_or_reported": true,
+    "real_chat_recheck_agrees": true,
+    "base_unchanged": true
+  }
+}

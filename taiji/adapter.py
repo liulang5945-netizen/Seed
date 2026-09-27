@@ -11106,6 +11106,7 @@ class TSKV8Adapter(Taiji):
         stop_at_boundary: bool = False,
         sample: bool = False,
         reset: bool = True,
+        utf8_strict: bool = False,
     ) -> bytes:
         """Generate from a validated Taiji input frame.
 
@@ -11127,6 +11128,7 @@ class TSKV8Adapter(Taiji):
             stop_at_boundary=stop_at_boundary,
             sample=sample,
             reset=reset,
+            utf8_strict=utf8_strict,
         )
 
     def act(self, available_actions: Any, *args: Any, **kwargs: Any) -> TaijiDecision:

@@ -377,6 +377,11 @@ class SeedRuntime:
                 max_length,
                 stop_at_boundary=True,
                 sample=False,
+                # SPEC-R2-02（owner 2026-09-27 裁定"解码掩码产品化"）：产品链的基底
+                # 输出必须合法 UTF-8，否则表层永远被语言器官拒收为占位句。
+                # 口径如实登记：掩码是"产品替模型写对字节"，不是模型地板变了——
+                # 地板线仍按无掩码 F0 计（`probe_taiji_f0_language_floor.py` 默认位）。
+                utf8_strict=True,
             )
             native_prediction = raw.decode("utf-8", errors="replace")
             for marker in _TURN_MARKERS:

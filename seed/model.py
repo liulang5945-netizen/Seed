@@ -178,6 +178,7 @@ class Seed:
         stop_at_boundary: bool = False,
         sample: bool = False,
         reset: bool = True,
+        utf8_strict: bool = False,
     ) -> bytes:
         """Generate through the versioned Taiji client-input boundary."""
 
@@ -187,6 +188,7 @@ class Seed:
             stop_at_boundary=stop_at_boundary,
             sample=sample,
             reset=reset,
+            utf8_strict=utf8_strict,
         )
 
     def parameter_count(self, *, active_only: bool = True) -> int:

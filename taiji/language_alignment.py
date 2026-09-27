@@ -32,6 +32,7 @@ import torch
 from .internalization import content_digest
 from .model import Taiji
 from .organs import BytePredictiveReadout
+from .utf8_state import advance_utf8, utf8_allowed
 from .response_plan_target import (
     FACTOR_RESPONSE_PLAN_TARGET_PHASE_STRIDE,
     FACTOR_RESPONSE_PLAN_TARGET_SLOTS,
@@ -787,36 +788,17 @@ class LanguageAlignmentTrainer:
 
     @staticmethod
     def _utf8_allowed(remaining: int, lead: int) -> list[int]:
-        """Return the exact legal next-byte set for one UTF-8 code point."""
+        """Return the exact legal next-byte set for one UTF-8 code point.
 
-        if remaining == 0:
-            return list(range(0x00, 0x80)) + list(range(0xC2, 0xF5))
-        low, high = 0x80, 0xBF
-        # A 3-byte sequence has two continuation bytes remaining after its
-        # lead; the first one must enforce the E0/ED scalar-value bounds.
-        if remaining == 2 and lead == 0xE0:
-            low = 0xA0
-        elif remaining == 2 and lead == 0xED:
-            high = 0x9F
-        # A 4-byte sequence has three continuation bytes remaining after its
-        # lead; the first one must enforce the F0/F4 scalar-value bounds.
-        elif remaining == 3 and lead == 0xF0:
-            low = 0x90
-        elif remaining == 3 and lead == 0xF4:
-            high = 0x8F
-        return list(range(low, high + 1))
+        委托到产品唯一一份实现（`taiji.utf8_state`，SPEC-R2-02）——分叉的两份
+        掩码会静默漂移，基底解码链与器官约束解码现在同源。
+        """
+
+        return utf8_allowed(remaining, lead)
 
     @staticmethod
     def _advance_utf8(remaining: int, lead: int, symbol: int) -> tuple[int, int]:
-        if remaining == 0:
-            if symbol < 0x80:
-                return 0, 0
-            if symbol < 0xE0:
-                return 1, symbol
-            if symbol < 0xF0:
-                return 2, symbol
-            return 3, symbol
-        return remaining - 1, lead
+        return advance_utf8(remaining, lead, symbol)
 
     def _constrained_generate(
         self,

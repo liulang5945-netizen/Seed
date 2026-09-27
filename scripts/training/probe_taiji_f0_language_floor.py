@@ -141,8 +141,13 @@ def _diagnose(raw: bytes) -> dict[str, Any]:
     }
 
 
-def _generate_raw(runtime: Any, prompt: str) -> bytes:
-    """与全部既有表层读数同链的原始字节获取（无电路、无记忆、贪心、边界停）。"""
+def _generate_raw(runtime: Any, prompt: str, *, utf8_strict: bool = False) -> bytes:
+    """与全部既有表层读数同链的原始字节获取（无电路、无记忆、贪心、边界停）。
+
+    `utf8_strict=True`（SPEC-R2-02）＝**产品通道线**：解码带 UTF-8 硬约束。
+    两线读数不许互换（§6 制度 4）：默认位＝模型地板；strict 位掩码是构造保证，
+    该位的 verdict 只报"产品通道测量"，不参与地板过/不过的判定。
+    """
     substrate = runtime.model.substrate
     return substrate.generate(
         prompt.encode("utf-8"),
@@ -150,10 +155,11 @@ def _generate_raw(runtime: Any, prompt: str) -> bytes:
         stop_at_boundary=True,
         sample=False,
         use_memory=False,
+        utf8_strict=utf8_strict,
     )
 
 
-def _run_task(runtime: Any, task: str) -> dict[str, Any]:
+def _run_task(runtime: Any, task: str, *, utf8_strict: bool = False) -> dict[str, Any]:
     from eval_taiji_r2_readout_retrain import build_ngram_model, well_formed
 
     ngram = build_ngram_model()
@@ -179,7 +185,7 @@ def _run_task(runtime: Any, task: str) -> dict[str, Any]:
             expected = token
         else:
             raise ValueError(f"unknown task {task}")
-        raw = _generate_raw(runtime, prompt)
+        raw = _generate_raw(runtime, prompt, utf8_strict=utf8_strict)
         answer = raw.decode("utf-8", errors="replace")
         row = {"id": index, "prompt": prompt[:40], "answer": answer[:60]}
         row.update(_diagnose(raw))
@@ -218,6 +224,11 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--checkpoint", default="checkpoints/seed_beta.pt")
     parser.add_argument("--out-report", required=True)
+    parser.add_argument(
+        "--utf8-strict",
+        action="store_true",
+        help="产品通道线（带解码掩码，SPEC-R2-02）：可解码率按构造为 1，verdict 改报产品通道测量",
+    )
     args = parser.parse_args()
 
     from api.seed_runtime import SeedRuntime
@@ -237,7 +248,7 @@ def main() -> int:
         "T3_incontext_immediate",
         "T4_single_turn_qa",
     ]
-    results = [_run_task(runtime, task) for task in tasks]
+    results = [_run_task(runtime, task, utf8_strict=args.utf8_strict) for task in tasks]
     for result in results:
         first_bad = [
             row["first_invalid_position"]
@@ -255,9 +266,20 @@ def main() -> int:
         "format": "taiji-f0-language-floor-v1",
         "prereg": "plans/reference/M5_R2_A_BRANCH_PLAN_REV2_20260926.md §5d（rev7 前置阶梯第 0 阶）",
         "checkpoint": args.checkpoint,
-        "channel": "raw generate_input, no circuit, empty store, learn=False, use_memory=False, greedy, 64 bytes",
+        "channel": (
+            "masked product channel (utf8_strict=True) — 可解码按构造保证，本件 verdict 不是模型地板"
+            if args.utf8_strict
+            else "raw generate_input, no circuit, empty store, learn=False, use_memory=False, greedy, 64 bytes"
+        ),
         "pass_line": {"decodable_whole": PASS_LINE, "scope": "T1a 或 T1b 任一"},
-        "verdict": verdict,
+        "verdict": "product_channel_measurement" if args.utf8_strict else verdict,
+        "masked_channel_note": (
+            "掩码位下 prefix8/16/32 是「在固定字节位截断」的读数——掩码保证整串按字符对齐，"
+            "截断点常落字符中间 ⇒ 前缀率失真为 0；判合法只看 decodable_whole（按构造=1）。"
+            "有意义的增量读数是 wf/真汉字/命中：掩码修合法不修成句。"
+            if args.utf8_strict
+            else None
+        ),
         "what_would_overturn": (
             "换可解码判定口径（如按字节而非整句）会改变过线判定——本件按 §5d 建议的整句口径冻结；"
             "采样换非贪心、或经语言器官通道，结果另计（器官通道当前 chat_enabled=False 替换为占位句，另行登记）"
@@ -284,7 +306,8 @@ def main() -> int:
         json.dumps(
             {
                 "guard_ok": ok,
-                "verdict": verdict,
+                "verdict": report["verdict"],
+                "channel": "masked-product" if args.utf8_strict else "unmasked-model-floor",
                 "tasks": [
                     {
                         "task": r["task"],

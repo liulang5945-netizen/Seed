@@ -64,6 +64,7 @@ from .workbench_boundary import (
     WorkbenchTaskBoundary,
     select_readout_generation,
 )
+from .utf8_state import advance_utf8, trim_partial_tail, utf8_allowed
 
 
 class Taiji:
@@ -2906,12 +2907,19 @@ class Taiji:
         response_phase: bool = False,
         boundary: WorkbenchTaskBoundary | Mapping[str, Any] | None = None,
         authorization: WorkbenchBoundaryAuthorization | None = None,
+        utf8_strict: bool = False,
     ) -> bytes:
         """Generate from the raw-byte predictive path.
 
         As with training and scoring, episodic augmentation is opt-in. The
         default prevents a populated delayed-memory field from hijacking
         native language generation outside an explicit memory-query task.
+
+        ``utf8_strict`` (SPEC-R2-02) 开启后，解码环每一步先把非法字节
+        （不满足当前 UTF-8 序列状态的 0..255）的得分压掉再取 argmax/重归一采样，
+        收尾截掉悬空前缀 ⇒ **输出按构造可解码**。默认 False ⇒ 逐位走现状路径
+        （基底/仪器/全部既有读数的口径不动）。边界符恒合法（停止是停止的权力；
+        停在字符中间则由收尾截断兜底）。
         """
 
         if length < 0:
@@ -2993,6 +3001,7 @@ class Taiji:
             response_phase_readout = self._response_phase_readout if response_phase else None
             if response_phase:
                 self.begin_response_phase()
+            utf8_remaining, utf8_lead = 0, 0
             for _ in range(length):
                 probabilities = (
                     self.response_start_probabilities()
@@ -3003,6 +3012,19 @@ class Taiji:
                         else step.probabilities.detach().cpu()
                     )
                 )
+                if utf8_strict:
+                    legal = torch.tensor(
+                        sorted(set(utf8_allowed(utf8_remaining, utf8_lead)) | {self.config.boundary_symbol}),
+                        dtype=torch.long,
+                        device=probabilities.device,
+                    )
+                    illegal = torch.ones_like(probabilities, dtype=torch.bool)
+                    illegal[legal] = False
+                    if sample:
+                        probabilities = probabilities.masked_fill(illegal, 0.0)
+                        probabilities = probabilities / probabilities.sum().clamp_min(1e-12)
+                    else:
+                        probabilities = probabilities.masked_fill(illegal, float("-inf"))
                 if sample:
                     next_symbol = int(
                         torch.multinomial(
@@ -3016,6 +3038,8 @@ class Taiji:
                 if not 0 <= next_symbol <= 255:
                     next_symbol = 0
                 generated.append(next_symbol)
+                if utf8_strict:
+                    utf8_remaining, utf8_lead = advance_utf8(utf8_remaining, utf8_lead, next_symbol)
                 response_start_pending = False
                 step = self.observe(
                     next_symbol,
@@ -3027,6 +3051,8 @@ class Taiji:
                         response_phase_readout if response_phase else predictive_readout
                     ),
                 )
+            if utf8_strict:
+                return trim_partial_tail(bytes(generated))
             return bytes(generated)
         finally:
             if circuit is not None:
