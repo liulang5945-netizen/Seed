@@ -145,12 +145,21 @@ def _train_answer(
             config.consolidation_read_gain
         ) * substrate.fabric.consolidated_decode(0, state.regions[0].trace)
         readout = substrate.predictive_readout
+        #: PLAN-R2-01：读出若开了位置输入，这里**必须**喂同一列——它重算的正是"当前状态"
+        #: 那份分布，所以用该状态自己记录的位置类（开启时必非 None；未开时读出无位置列，
+        #: 传 None 是无操作）。首跑漏了这一处 ⇒ 被读出自己的守卫当场拦下（这正是该守卫的用途）。
+        position_state = state.motor_position_class
         # rev2（预注册 §2）：反事实固定为"全开"——gate 零初始化下"当前开度"基线恒零锁死。
         p_full = readout.probabilities(
             ctx,
             episodic_evidence=base_evidence + snap["copy_distribution"],
+            position_state=position_state,
         )
-        p_without = readout.probabilities(ctx, episodic_evidence=base_evidence)
+        p_without = readout.probabilities(
+            ctx,
+            episodic_evidence=base_evidence,
+            position_state=position_state,
+        )
         advantage = math.log(max(float(p_full[byte]), 1e-12)) - math.log(
             max(float(p_without[byte]), 1e-12)
         )
