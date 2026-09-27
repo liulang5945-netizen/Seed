@@ -506,6 +506,21 @@ owner 选"2 之后 3"，SPEC-R2-02 已把解码掩码产品化——产品表层
 
 ## 11. 修订记录
 
+* **rev10（2026-09-27，owner 全批 PLAN-R2-01 ⇒ 实现落地、两臂起跑）**：
+  owner 弹窗**全批**架构案三件（①架构改动进主干（默认关）②两臂 2M 符号预算 ③分支 2 一次性追加权）。
+  ① **实现已提交 `c436380a`**（8 文件 +588/−63）：`readout_utf8_position_input`（frozen，默认 False）
+  ＋`BytePredictiveReadout` 独立 4 列位置权重（零初始化、默认不建；**刻意不并进 `SparseSynapses.in_features`**
+  ——固定扇入会按 `in_features` 重抽边，旧 payload 载不回）＋`TaijiState.motor_position_class`
+  可选字段（None 不进 payload）＋`utf8_state.remaining_after`（委托 `advance_utf8`）＋
+  `--readout-position` 旗标与三位"被走到"守卫。**默认关 ⇒ 产品行为逐位不变**。
+  ② **读数**：守卫 11 条全绿；定向回归 58 绿；全量 `tests/taiji_native` 1577 过/2 红，两红经
+  **撤改动复跑同样红**（既存：`checkpoints/` 多两文件 + 09-20 换底）；冒烟"被走到"
+  probability=5000／learn=4999／weight_norm=13.34，不传旗标则三步全 0。
+  ③ **两臂已起跑**（`output/taiji_r2_plan01_pos_on` / `_pos_off`，`--arm D --weight 4.0` 同配方、
+   **唯一变量＝位置输入开/关**、各 2M 符号 ≈ 每臂 100 分钟）。⇒ **A 支线表层判据仍冻结**，
+   F0 不跑，A 支线不加机制；本件是"读出侧最后一块便宜砖"，判读用 F0 探针、
+   **主判据＝无掩码 F0 整句可解码率 ≥0.5**（`PLAN-R2-01` §3）。**A 支线当前状态＝
+  "架构案已落地并在跑，等两臂读数与 F0 复测"**。
 * **rev9（2026-09-27，owner 裁定"2 之后 3"：解码掩码产品化落地 ＋ 架构案判决前置探针）**：
   ① **SPEC-R2-02（解码掩码产品化）已落地**：产品表层占位句率 **修前 32/32 ⇒ 修后 0/32**、
   被接受表层 100% 可解码（真 `chat()` 4 题复核一致）；实现＝共享状态机 `taiji/utf8_state.py`

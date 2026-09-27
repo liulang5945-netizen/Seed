@@ -1,7 +1,9 @@
 # PLAN-R2-01：把 UTF-8 位置状态做成读出的显式输入（架构案，决策就绪提案）
 
-日期：2026-09-27。归属：R2 主线语言能力（M5 退出排除项）。状态：**提案，待 owner 签字**——
-含一处架构改动（默认关，产品行为零变化）与一次训练预算申请。**判据先于代码冻结**。
+日期：2026-09-27。归属：R2 主线语言能力（M5 退出排除项）。
+状态：**已批准并落地**——owner 2026-09-27 弹窗**全批**三件（①架构改动进主干（默认关）
+②两臂训练预算（各 2M 符号）③若走分支 2 的一次性追加权）。实现已提交 `c436380a`
+（默认关 ⇒ 产品行为逐位不变）；两臂训练在跑，配方见 §8。**判据先于代码冻结**（§3）。
 本件是 owner 裁定"2 之后 3"里"3"的落地路径；"2"（解码掩码产品化）已完成，见 `SPEC-R2-02`。
 
 ---
@@ -65,11 +67,23 @@
 | `train_taiji_langfloor.py` | 加 `--readout-position` 旗标（复用现有臂/预算纪律） | 写面守卫沿用（只动 predictive_readout） |
 | `tests/taiji_native/test_readout_utf8_position.py` | 上面三条 | — |
 
+**落地时的两处设计更正（照实记，§8 详述）**：
+* §2 原文写"读出是线性面，加输入维＝加对应权重列"——**照字面做会坏**：`SparseSynapses` 是
+  **固定扇入**（每行只保留 `fan_in` 条边，建库时按 `in_features` 抽），把 4 维并进
+  `in_features` 会重抽每一行已有连接 ⇒ 旧 payload 载不回、`gate` 律失效。
+  实际做法＝**独立的 4 列稠密权重**（零初始化、默认不建），前向加 `W_pos @ one_hot`，
+  完全不碰 `SparseSynapses` 的形状与随机流。
+* §2 写"由上一字节确定性地算出"——位置类需要 DFA 余量（3 字节字的续字节之后，余量仍可能
+  是 1 或 2，**不是**上一字节的单值函数）；实际做法＝把余量作为 `TaijiState` 的**可选字段**
+  `motor_position_class` 存下来，按 `(上一余量, 本字节)` 经 `utf8_state.remaining_after`
+  推进（该函数委托 `advance_utf8`，不另写第二份判定）。
+
 ## 6. 预算与签字申请
 
 * **要 owner 批的三件事**：①架构改动进主干（默认关，但毕竟动了 `BytePredictiveReadout` 形状）；
   ②训练预算：两臂（开/关对照）× `SPEC-R2-01` 同款 2M 符号 ≈ 2×1.5h CPU；
   ③若走分支 2 的一次性追加，需再确认。
+  ⇒ **2026-09-27 弹窗全批**（三项一次批完）。
 * **不批也能做的**（已在做/已做）：A3 探针（零训练，已完成）；实现 + 守卫测试（不动默认，不训）。
 * **明确不做**：不开产品默认（`readout_utf8_position_input` 保持 False 直到主判据过线且 owner 批）；
   不碰睡眠巩固／后果语义／G8 挂载（各系其 owner 条）。
@@ -81,3 +95,47 @@ B1、SPEC-R2-01、A2.5 已四次否证"在现有旁路/读出上再加部件"。
 **合理预期应设低**：它可能第五次不转移。若本件判分支 3，那结论就不再是"再找一块部件"，
 而是"这个量级（~10⁶ 参数、逐字节局部学习）的架构，装不下守住 UTF-8 又成句的自由生成"——
 那是 M5 主线数据/目标/规模级别的裁决，不是 A 支线能收的尾。本件值得跑，正因为**它是这条岔路的最后一块便宜砖**。
+
+---
+
+## 8. 执行记录（2026-09-27；实现已提交，两臂在跑）
+
+### 8a. 落地刀（提交 `c436380a`，8 文件 +588/−63）
+
+| 面 | 实际改动 |
+|---|---|
+| `taiji/utf8_state.py` | 新增 `UTF8_POSITION_DIM = 4` 与 `remaining_after(remaining, symbol)`（**委托** `advance_utf8`，不另写判定） |
+| `taiji/config.py` | 新 frozen 字段 `readout_utf8_position_input: bool = False`；开启时 `planned_active_parameter_count` 计入 `alphabet_size × 4` |
+| `taiji/organs.py` | `BytePredictiveReadout` 新增独立 4 列位置权重 + `position_input_enabled/position_probability_steps/position_learn_steps` + `adopt_position_input`；`probabilities/learn` 收 `position_state`；payload 仅在开启时写 `position_weight`；`ResponsePlanReadout.ablated_probabilities` 同步带上 |
+| `taiji/state.py` | 新增可选 `motor_position_class`（`None` 不进 payload，仿 `predictive_context_slow_trace` 先例） |
+| `taiji/model.py` | `observe` 计算并喂位置类（前向用本步、后向用上一步）；`response_plan/start/phase` 四条重算路径带上；发育 F1 学习链未接该列 ⇒ 组合开启时**响亮拒绝**；参数账三处计入位置列；读出器 fork 时搬位置列 |
+| `taiji/language_alignment.py` | response-plan 分支改走模型包装 `response_plan_probabilities()`（不再直接调 readout，否则会漏位置列） |
+| `scripts/training/train_taiji_langfloor.py` | `--readout-position` 旗标；信封**三处** config 副本同步改写；三位"被走到"守卫（前向步/后向步/权重范数）；续训旗标一致性守卫 |
+| `tests/taiji_native/test_readout_utf8_position.py` | 11 条守卫（新建） |
+
+### 8b. 守卫读数（照 §5 三条 + 端到端）
+
+* **守卫①（关闭＝逐位不变）**：默认 config 下 payload 不含位置键、载回张量逐位相同；
+  `motor_position_class` 不进状态 payload。**守卫②（零初始化惰性）**：开启后位置列全零、
+  `SparseSynapses` 初值逐位等于关闭，`learn=False` 推理逐步逐位相同。
+* **守卫③（被走到）**：`--readout-position` 冒烟 5000 符号 ⇒ `probability=5000 / learn=4999
+  / weight_norm=13.34`；不传旗标 ⇒ 三步全 0。续训（再跑 7000 符号）⇒
+  `probability=7000 / learn=6999 / weight_norm=15.73`；旗标不一致 ⇒ 当场拒绝。
+* **定向回归 58 绿**（utf8 掩码 / response-plan / receptor 分解 / region0 掩码 / 训练档 / golden 路由）。
+* **全量 `tests/taiji_native` 1577 过 / 2 红**：两条红（`test_cap0_inventory_contract`、
+  `test_cap0_legacy_load_contract` 的"当场重采 reproduces sealed"支）**经撤掉本改动后复跑同样红** ⇒
+  既存红，与本件无关。根因：①`checkpoints/` 比封存样本多 `seed_native.pt` / `resumed_seed_native.pt`
+  （2026-09-27 G4 判据③真机回合产出）；②生效日 09-20 的产品默认换底使 legacy-load 封存基线
+  （09-18 那份）过期（同一现象在 inventory 支已按"重基到 09-20 样本"处理过，legacy 支未重基）。
+
+### 8c. 两臂配方（owner 2026-09-27 定：W=4.0）
+
+* **唯一变量＝`--readout-position`**；其余两边逐字相同：`--arm D --weight 4.0`（`SPEC-R2-01` 的
+  处理配方：续字节位置读出更新 ×4）、语料 `dialogue_extended_clean.jsonl`、基底 `seed_beta.pt`、
+  各 2M 符号、`--fresh`。
+* 臂目录：`output/taiji_r2_plan01_pos_on`（位置输入**开**，回读）与
+  `output/taiji_r2_plan01_pos_off`（**关**，同流对照）。两者 `--arm` 同为 `D`，
+  靠 `readout_position` 元数据区分（续训守卫会拒绝不一致的旗标）。
+* 两臂都带 W=4.0 ⇒ 归因判据仍干净（同流同配方，只差位置输入）；代价是结论只能写成
+  "加权＋位置输入这一组"，**位置单独的价值**若要单列须另跑 W=1.0 的两臂（不在本次预算内）。
+* 判读一律事后用 F0 探针（**主判据＝无掩码 F0 整句可解码率 ≥0.5**，§3），本件不做评价。
