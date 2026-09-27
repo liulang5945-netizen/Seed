@@ -11,6 +11,7 @@ import torch
 from .config import TaijiConfig
 from .developmental_synapse import DevelopmentalSynapseBank
 from .sparse import SparseSynapses, bound_norm
+from .utf8_state import UTF8_POSITION_DIM
 
 
 class ByteSensor:
@@ -668,6 +669,8 @@ class BytePredictiveReadout:
     """
 
     PAYLOAD_FORMAT = "taiji-byte-predictive-readout-v1"
+    #: PLAN-R2-01：可选 UTF-8 位置列在 payload 里的键。关闭时不写 ⇒ 旧档逐位可载。
+    POSITION_PAYLOAD_KEY = "position_weight"
 
     def __init__(
         self,
@@ -688,6 +691,69 @@ class BytePredictiveReadout:
             device=self.device,
         )
         self.bias = torch.zeros(config.alphabet_size, device=self.device)
+        #: PLAN-R2-01：一张**独立的 4 列**位置输入权重，而不是把 4 维并进
+        #: `SparseSynapses.in_features` —— 后者的固定扇入会在建库时按 `in_features`
+        #: 重抽边，把已有每一行的连接全部换掉（旧 payload 载不回，`gate` 律也失效）。
+        #: **零初始化** ⇒ 开启但未训时与关闭逐位同；关闭时不建（形状/payload/digest 不动）。
+        self.position_weight = (
+            torch.zeros(
+                config.alphabet_size,
+                UTF8_POSITION_DIM,
+                device=self.device,
+            )
+            if config.readout_utf8_position_input
+            else None
+        )
+        self._position_probability_steps = 0
+        self._position_learn_steps = 0
+
+    @property
+    def position_input_enabled(self) -> bool:
+        return self.position_weight is not None
+
+    @property
+    def position_probability_steps(self) -> int:
+        """读到位置输入的预测步数（'被走到'计数，防静默未接线）。"""
+
+        return int(self._position_probability_steps)
+
+    @property
+    def position_learn_steps(self) -> int:
+        """写到位置列的更新步数（与上一条分开，防只接预测不接学习）。"""
+
+        return int(self._position_learn_steps)
+
+    def _position_one_hot(self, position_state: int) -> torch.Tensor:
+        index = int(position_state)
+        if not 0 <= index < UTF8_POSITION_DIM:
+            raise ValueError("utf-8 position state is outside the 0..3 DFA range")
+        vector = torch.zeros(UTF8_POSITION_DIM, device=self.device)
+        vector[index] = 1.0
+        return vector
+
+    def _require_position_one_hot(self, position_state: int | None) -> torch.Tensor | None:
+        """把调用方给的位置类变成可加的一列；开启却没给 ⇒ 响亮失败。
+
+        这条守卫就是本仓反复付学费的那一类：「训练学的不是发射用的」或"以为接上了"。
+        默认关闭 ⇒ 全部既有调用点行为不变。
+        """
+
+        if self.position_weight is None:
+            return None
+        if position_state is None:
+            raise ValueError(
+                "readout_utf8_position_input is enabled but no utf-8 position state "
+                "was supplied; training and generation must feed the same input"
+            )
+        return self._position_one_hot(position_state)
+
+    @torch.no_grad()
+    def adopt_position_input(self, source: "BytePredictiveReadout") -> None:
+        """把另一个读出器的位置列搬过来（派生读出器 fork 时用）。"""
+
+        if self.position_weight is None or source.position_weight is None:
+            return
+        self.position_weight = source.position_weight.detach().clone()
 
     def probabilities(
         self,
@@ -695,6 +761,7 @@ class BytePredictiveReadout:
         *,
         episodic_evidence: torch.Tensor | None = None,
         synapses_override: DevelopmentalSynapseBank | None = None,
+        position_state: int | None = None,
     ) -> torch.Tensor:
         synapses = (
             self.synapses.forward(context)
@@ -702,6 +769,10 @@ class BytePredictiveReadout:
             else synapses_override.forward(context)
         )
         evidence = synapses + self.bias
+        one_hot = self._require_position_one_hot(position_state)
+        if one_hot is not None:
+            evidence = evidence + self.position_weight @ one_hot
+            self._position_probability_steps += 1
         if episodic_evidence is not None:
             if episodic_evidence.shape != (self.config.alphabet_size,):
                 raise ValueError("episodic evidence dimension mismatch")
@@ -747,6 +818,7 @@ class BytePredictiveReadout:
         preservation_probabilities: torch.Tensor | None = None,
         preservation_strength: float = 0.0,
         learning_rate_scale: float = 1.0,
+        position_state: int | None = None,
     ) -> torch.Tensor:
         learning_rate_scale = float(learning_rate_scale)
         if not math.isfinite(learning_rate_scale) or learning_rate_scale < 0.0:
@@ -779,14 +851,50 @@ class BytePredictiveReadout:
         self.bias.add_(self.config.bias_learning_rate * learning_rate_scale * error)
         self.bias.sub_(self.bias.mean())
         self.bias.clamp_(-self.config.max_weight_norm, self.config.max_weight_norm)
+        self._learn_position(error, learning_rate_scale, position_state)
         return error
 
+    @torch.no_grad()
+    def _learn_position(
+        self,
+        error: torch.Tensor,
+        learning_rate_scale: float,
+        position_state: int | None,
+    ) -> None:
+        """把同一条局部误差写进那 4 列位置输入（PLAN-R2-01）。
+
+        位置输入是**外生的**（由字节流确定，不由读出预测），所以它只进前向证据、
+        不进 `context_feedback` 的语境反投影。规则与 `SparseSynapses.local_update` 同形：
+        被点亮的那一列按 `motor_learning_rate` 收紧，未点亮的列按 `synapse_decay` 松弛
+        （one-hot ⇒ 非零迹数 = 1 ⇒ 缩放因子 1，与稀疏库一致）；越界按 bias 那套
+        逐元素 ±`max_weight_norm` 钳位。**注意调用点顺序**：先取 `one_hot` 再计数，
+        保证"开启却没给"能响亮失败而不是被静默写坏。
+        """
+
+        one_hot = self._require_position_one_hot(position_state)
+        if one_hot is None:
+            return
+        decay = float(self.config.synapse_decay)
+        if decay:
+            silent = (one_hot == 0).to(self.position_weight.dtype)
+            self.position_weight.mul_(1.0 - decay * silent)
+        self.position_weight.add_(
+            float(self.config.motor_learning_rate)
+            * float(learning_rate_scale)
+            * torch.outer(error, one_hot)
+        )
+        self.position_weight.clamp_(-self.config.max_weight_norm, self.config.max_weight_norm)
+        self._position_learn_steps += 1
+
     def to_payload(self) -> dict[str, Any]:
-        return {
+        payload = {
             "format": self.PAYLOAD_FORMAT,
             "synapses": self.synapses.to_payload(),
             "bias": self.bias.detach().cpu().clone(),
         }
+        if self.position_weight is not None:
+            payload[self.POSITION_PAYLOAD_KEY] = self.position_weight.detach().cpu().clone()
+        return payload
 
     def load_payload(self, payload: Mapping[str, Any]) -> None:
         if payload.get("format") != self.PAYLOAD_FORMAT:
@@ -796,6 +904,26 @@ class BytePredictiveReadout:
         if bias.shape != (self.config.alphabet_size,):
             raise ValueError("predictive readout bias shape does not match architecture")
         self.bias = bias
+        self._load_position_weight(payload.get(self.POSITION_PAYLOAD_KEY))
+
+    def _load_position_weight(self, stored: Any) -> None:
+        """载入可选位置列：关闭而不能载 ⇒ 响亮失败；开启而档里没有 ⇒ 保持零。
+
+        「档里没有」= 由未开此特性的基底载入而来，零初始化正是"开启但未训
+        与关闭逐位同"的那条纪律（PLAN-R2-01 §5 守卫②）。
+        """
+
+        if stored is None:
+            return
+        if self.position_weight is None:
+            raise ValueError(
+                "checkpoint carries UTF-8 position columns but "
+                "readout_utf8_position_input is disabled"
+            )
+        value = stored.detach().to(self.device).clone()
+        if value.shape != (self.config.alphabet_size, UTF8_POSITION_DIM):
+            raise ValueError("predictive readout position weight shape does not match architecture")
+        self.position_weight = value
 
     def load_legacy_motor_payload(self, payload: Mapping[str, Any]) -> None:
         """Copy the pre-M2-2f shared decoder into this isolated F1 owner."""
@@ -984,10 +1112,18 @@ class ResponsePlanReadout(BytePredictiveReadout):
     def probabilities(self, context: torch.Tensor, **kwargs: Any) -> torch.Tensor:
         return super().probabilities(self._conditioned_context(context), **kwargs)
 
-    def ablated_probabilities(self, context: torch.Tensor) -> torch.Tensor:
+    def ablated_probabilities(
+        self,
+        context: torch.Tensor,
+        *,
+        position_state: int | None = None,
+    ) -> torch.Tensor:
         """Read the same candidate renderer with the plan bridge removed."""
 
-        return super().probabilities(context.to(self.device))
+        return super().probabilities(
+            context.to(self.device),
+            position_state=position_state,
+        )
 
     def context_feedback(self, error: torch.Tensor, **kwargs: Any) -> torch.Tensor:
         return super().context_feedback(error, **kwargs)
@@ -1066,13 +1202,16 @@ class ResponsePlanReadout(BytePredictiveReadout):
 
     @property
     def active_parameter_count(self) -> int:
-        return int(
+        count = (
             self.synapses.edge_count
             + self.bias.numel()
             + self.planner_weight.numel()
             + self.planner_bias.numel()
             + self.plan_bridge.numel()
         )
+        if self.position_weight is not None:
+            count += self.position_weight.numel()
+        return int(count)
 
     def to_payload(self) -> dict[str, Any]:
         common = {

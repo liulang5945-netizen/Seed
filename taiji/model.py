@@ -64,7 +64,7 @@ from .workbench_boundary import (
     WorkbenchTaskBoundary,
     select_readout_generation,
 )
-from .utf8_state import advance_utf8, trim_partial_tail, utf8_allowed
+from .utf8_state import advance_utf8, remaining_after, trim_partial_tail, utf8_allowed
 
 
 class Taiji:
@@ -351,6 +351,8 @@ class Taiji:
         )
         candidate.synapses.load_payload(self.predictive_readout.synapses.to_payload())
         candidate.bias = self.predictive_readout.bias.detach().clone()
+        # PLAN-R2-01：位置列也必须随读出器一起 fork，否则派生读出的位置输入是零。
+        candidate.adopt_position_input(self.predictive_readout)
         self._response_plan_readout = candidate
         return {
             "owner": "predictive_readout.response_plan",
@@ -366,7 +368,10 @@ class Taiji:
     @torch.no_grad()
     def begin_response_plan(self) -> torch.Tensor:
         plan = self.response_plan_readout.begin_plan(self._state.motor_context)
-        probabilities = self.response_plan_readout.probabilities(self._state.motor_context)
+        probabilities = self.response_plan_readout.probabilities(
+            self._state.motor_context,
+            position_state=self._readout_position_state,
+        )
         state = self._state.clone()
         state.motor_probabilities = probabilities.detach().clone()
         self._state = state
@@ -391,7 +396,10 @@ class Taiji:
 
         readout = self.response_plan_readout
         phase = readout.advance_phase()
-        probabilities = readout.probabilities(self._state.motor_context)
+        probabilities = readout.probabilities(
+            self._state.motor_context,
+            position_state=self._readout_position_state,
+        )
         state = self._state.clone()
         state.motor_probabilities = probabilities.detach().clone()
         self._state = state
@@ -400,8 +408,14 @@ class Taiji:
     def response_plan_probabilities(self, *, ablate_plan: bool = False) -> torch.Tensor:
         readout = self.response_plan_readout
         if ablate_plan:
-            return readout.ablated_probabilities(self._state.motor_context)
-        return readout.probabilities(self._state.motor_context)
+            return readout.ablated_probabilities(
+                self._state.motor_context,
+                position_state=self._readout_position_state,
+            )
+        return readout.probabilities(
+            self._state.motor_context,
+            position_state=self._readout_position_state,
+        )
 
     def clear_response_plan_readout(self) -> None:
         self._response_plan_readout = None
@@ -550,6 +564,7 @@ class Taiji:
         return self._response_phase_readout.probabilities(
             self._state.motor_context,
             episodic_evidence=episodic_evidence,
+            position_state=self._readout_position_state,
         )
 
     @torch.no_grad()
@@ -592,6 +607,7 @@ class Taiji:
         return self._response_start_readout.probabilities(
             self._state.motor_context,
             episodic_evidence=episodic_evidence,
+            position_state=self._readout_position_state,
         )
 
     @torch.no_grad()
@@ -618,6 +634,7 @@ class Taiji:
             predicted,
             observed_symbol,
             learning_rate_scale=learning_rate_scale,
+            position_state=self._readout_position_state,
         )
 
     @property
@@ -1073,6 +1090,19 @@ class Taiji:
             return None
         return self._developmental_f1_bundle.bank(owner_id)
 
+    def _reject_position_input_without_learning_path(self) -> None:
+        """PLAN-R2-01：位置列只在普通读出学习链上接线；发育 F1 的 bank 学习链没有它。
+
+        两者同时开启会得到一个**静默空转**（前向喂零列、后向不更新 ⇒ 看起来装了、
+        其实等于没装）。本仓对这类"以为接上了"的处置是一律响亮失败，不静默降级。
+        """
+
+        if self.config.readout_utf8_position_input:
+            raise ValueError(
+                "readout_utf8_position_input is not wired to the developmental F1 "
+                "learning path; use the plain predictive-readout learning chain"
+            )
+
     @torch.no_grad()
     def migrate_f1_to_developmental_synapses(self) -> dict[str, Any]:
         """Mount an exact, read-only fast/slow view over the current F1 state.
@@ -1087,6 +1117,7 @@ class Taiji:
             raise RuntimeError("developmental F1 state is already mounted")
         if self._state.pending_action is not None or self._state.pending_experience is not None:
             raise RuntimeError("developmental F1 migration requires a settled state")
+        self._reject_position_input_without_learning_path()
         source_checkpoint = self.checkpoint()
         bundle = DevelopmentalSynapseBundle.from_taiji_checkpoint(source_checkpoint)
         expected_config_digest = content_digest(self.config.to_dict())
@@ -1589,6 +1620,18 @@ class Taiji:
     def snapshot(self) -> TaijiState:
         return self._state.clone()
 
+    @property
+    def _readout_position_state(self) -> int | None:
+        """PLAN-R2-01：当前状态自己的位置类（它那份 `motor_probabilities` 用的那一列）。
+
+        关闭该特性时恒为 `None` ⇒ 所有既有读出路径逐位不变；开启时是重算同一份
+        概率所**必须**配上的输入（否则就是"训练学的不是发射用的"）。
+        """
+
+        if not self.config.readout_utf8_position_input:
+            return None
+        return int(self._state.motor_position_class or 0)
+
     @torch.no_grad()
     def restore_dynamics(self, state: TaijiState) -> None:
         """Restore one isolated dynamics branch without changing learned state.
@@ -1890,6 +1933,18 @@ class Taiji:
                         reward=pending_experience.reward,
                     )
 
+        #: PLAN-R2-01：位置输入的两个状态。`previous_*` 是**上一步预测**用它算出的
+        #: 那一列（学习要按"当时真正用过的输入"归因）；`readout_position_class` 是**本步**
+        #: 预测下一字节该用的那一列（DFA 余量只按 (余量, 字节) 推进，与 `utf8_state` 同一份）。
+        #: 关闭该特性时两者恒为 None ⇒ 逐位不变。
+        position_input_enabled = bool(self.config.readout_utf8_position_input)
+        previous_position_class = (
+            int(previous.motor_position_class or 0) if position_input_enabled else None
+        )
+        readout_position_class = (
+            remaining_after(previous_position_class, symbol) if position_input_enabled else None
+        )
+
         prior_prediction: int | None = None
         prior_probability: float | None = None
         surprise: float | None = None
@@ -1994,7 +2049,8 @@ class Taiji:
                         preservation_probabilities = None
                         if _preservation_readout is not None and preservation_strength > 0.0:
                             preservation_probabilities = _preservation_readout.probabilities(
-                                previous.motor_context
+                                previous.motor_context,
+                                position_state=previous_position_class,
                             )
                         predictive_readout.learn(
                             previous.motor_context,
@@ -2003,6 +2059,7 @@ class Taiji:
                             preservation_probabilities=preservation_probabilities,
                             preservation_strength=preservation_strength,
                             learning_rate_scale=predictive_update_scale,
+                            position_state=previous_position_class,
                         )
                     if (
                         predictive_context_learning
@@ -2142,6 +2199,7 @@ class Taiji:
                     if developmental_f1_overlay
                     else None
                 ),
+                position_state=readout_position_class,
             )
             if adaptive_residual_shadow_learning:
                 assert _adaptive_residual_shadow is not None
@@ -2154,6 +2212,7 @@ class Taiji:
                             if developmental_f1_overlay
                             else None
                         ),
+                        position_state=readout_position_class,
                     )
                 )
         elif identity_addressing_used and use_delayed_memory_verdict:
@@ -2206,6 +2265,7 @@ class Taiji:
             pending_action=None,
             pending_experience=None,
             predictive_context_slow_trace=predictive_context_slow_trace,
+            motor_position_class=readout_position_class,
         )
         return TaijiStep(
             tick=previous.tick,
@@ -3058,14 +3118,22 @@ class Taiji:
             if circuit is not None:
                 circuit.drop_selection_lock()
 
+    @staticmethod
+    def _readout_tensors(readout: BytePredictiveReadout) -> tuple[torch.Tensor, ...]:
+        """PLAN-R2-01：一个读出器的可学张量；位置列存在时必须一并计入。"""
+
+        tensors: tuple[torch.Tensor, ...] = (readout.synapses.edge_weight, readout.bias)
+        if readout.position_weight is not None:
+            tensors += (readout.position_weight,)
+        return tensors
+
     def parameter_tensors(self) -> tuple[torch.Tensor, ...]:
         tensors = (
             *self.fabric.parameter_tensors(),
             self.motor.synapses.edge_weight,
             self.motor.bias,
             self.predictive_context.recurrent.edge_weight,
-            self.predictive_readout.synapses.edge_weight,
-            self.predictive_readout.bias,
+            *self._readout_tensors(self.predictive_readout),
             *self.memory.parameter_tensors(),
         )
         if self._gated_temporal_candidate is not None:
@@ -3075,24 +3143,14 @@ class Taiji:
         if self._adaptive_residual_bridge is not None:
             tensors += self._adaptive_residual_bridge.parameter_tensors()
         if self._active_predictive_readout is not None:
-            tensors += (
-                self._active_predictive_readout.synapses.edge_weight,
-                self._active_predictive_readout.bias,
-            )
+            tensors += self._readout_tensors(self._active_predictive_readout)
         if self._response_start_readout is not None:
-            tensors += (
-                self._response_start_readout.synapses.edge_weight,
-                self._response_start_readout.bias,
-            )
+            tensors += self._readout_tensors(self._response_start_readout)
         if self._response_phase_readout is not None:
-            tensors += (
-                self._response_phase_readout.synapses.edge_weight,
-                self._response_phase_readout.bias,
-            )
+            tensors += self._readout_tensors(self._response_phase_readout)
         if self._response_plan_readout is not None:
             tensors += (
-                self._response_plan_readout.synapses.edge_weight,
-                self._response_plan_readout.bias,
+                *self._readout_tensors(self._response_plan_readout),
                 self._response_plan_readout.planner_weight,
                 self._response_plan_readout.planner_bias,
                 self._response_plan_readout.plan_bridge,
@@ -3101,14 +3159,31 @@ class Taiji:
             tensors += self.identity_organ.parameter_tensors()
         return tensors
 
+    @staticmethod
+    def _readout_scalar_count(readout: BytePredictiveReadout) -> int:
+        """PLAN-R2-01：读出器的活跃标量数（含可选位置列）。"""
+
+        scalars = readout.synapses.edge_count + readout.bias.numel()
+        if readout.position_weight is not None:
+            scalars += readout.position_weight.numel()
+        return scalars
+
+    @staticmethod
+    def _readout_dense_equivalent_count(readout: BytePredictiveReadout) -> int:
+        """PLAN-R2-01：读出器的稠密等价标量数（位置列本就是稠密的）。"""
+
+        scalars = readout.synapses.dense_equivalent_count + readout.bias.numel()
+        if readout.position_weight is not None:
+            scalars += readout.position_weight.numel()
+        return scalars
+
     def parameter_count(self, *, active_only: bool = True) -> int:
         active = (
             self.fabric.active_edge_count()
             + self.motor.synapses.edge_count
             + self.motor.bias.numel()
             + self.predictive_context.recurrent.edge_count
-            + self.predictive_readout.synapses.edge_count
-            + self.predictive_readout.bias.numel()
+            + self._readout_scalar_count(self.predictive_readout)
             + self.memory.active_edge_count()
         )
         if self._gated_temporal_candidate is not None:
@@ -3122,20 +3197,11 @@ class Taiji:
                 tensor.numel() for tensor in self._adaptive_residual_bridge.parameter_tensors()
             )
         if self._active_predictive_readout is not None:
-            active += (
-                self._active_predictive_readout.synapses.edge_count
-                + self._active_predictive_readout.bias.numel()
-            )
+            active += self._readout_scalar_count(self._active_predictive_readout)
         if self._response_start_readout is not None:
-            active += (
-                self._response_start_readout.synapses.edge_count
-                + self._response_start_readout.bias.numel()
-            )
+            active += self._readout_scalar_count(self._response_start_readout)
         if self._response_phase_readout is not None:
-            active += (
-                self._response_phase_readout.synapses.edge_count
-                + self._response_phase_readout.bias.numel()
-            )
+            active += self._readout_scalar_count(self._response_phase_readout)
         if self._response_plan_readout is not None:
             active += self._response_plan_readout.active_parameter_count
         if self.identity_organ is not None:
@@ -3152,8 +3218,7 @@ class Taiji:
             + self.motor.synapses.dense_equivalent_count
             + self.motor.bias.numel()
             + self.predictive_context.recurrent.dense_equivalent_count
-            + self.predictive_readout.synapses.dense_equivalent_count
-            + self.predictive_readout.bias.numel()
+            + self._readout_dense_equivalent_count(self.predictive_readout)
             + self.memory.dense_equivalent_edge_count()
         )
         if self._gated_temporal_candidate is not None:
@@ -3166,24 +3231,14 @@ class Taiji:
                 tensor.numel() for tensor in self._adaptive_residual_bridge.parameter_tensors()
             )
         if self._active_predictive_readout is not None:
-            count += (
-                self._active_predictive_readout.synapses.dense_equivalent_count
-                + self._active_predictive_readout.bias.numel()
-            )
+            count += self._readout_dense_equivalent_count(self._active_predictive_readout)
         if self._response_start_readout is not None:
-            count += (
-                self._response_start_readout.synapses.dense_equivalent_count
-                + self._response_start_readout.bias.numel()
-            )
+            count += self._readout_dense_equivalent_count(self._response_start_readout)
         if self._response_phase_readout is not None:
-            count += (
-                self._response_phase_readout.synapses.dense_equivalent_count
-                + self._response_phase_readout.bias.numel()
-            )
+            count += self._readout_dense_equivalent_count(self._response_phase_readout)
         if self._response_plan_readout is not None:
             count += (
-                self._response_plan_readout.synapses.dense_equivalent_count
-                + self._response_plan_readout.bias.numel()
+                self._readout_dense_equivalent_count(self._response_plan_readout)
                 + self._response_plan_readout.planner_weight.numel()
                 + self._response_plan_readout.planner_bias.numel()
                 + self._response_plan_readout.plan_bridge.numel()
@@ -3442,6 +3497,7 @@ class Taiji:
             bundle = DevelopmentalSynapseBundle.from_payload(developmental_payload)
             if bundle.config_digest != content_digest(self.config.to_dict()):
                 raise ValueError("developmental F1 checkpoint configuration does not match")
+            self._reject_position_input_without_learning_path()
             self._developmental_f1_bundle = bundle
         replay_payload = checkpoint.get(self.DEVELOPMENTAL_F1_REPLAY_KEY)
         if replay_payload is not None:

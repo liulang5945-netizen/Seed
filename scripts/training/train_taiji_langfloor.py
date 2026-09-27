@@ -95,6 +95,32 @@ def is_utf8_continuation(symbol: int) -> bool:
     return 0x80 <= symbol <= 0xBF
 
 
+def enable_readout_position_in_envelope(envelope: dict[str, Any]) -> None:
+    """把位置开关写进信封里**每一个** taiji config 副本（PLAN-R2-01）。
+
+    基底档有 2–3 处 config 副本，载入时各自被核对：Seed 信封的 ``config.taiji``、
+    旧格式的 ``substrate.config``、新格式的 ``taiji.kernel.config``。
+    只改一处会在 ``Taiji.restore`` 的"checkpoint configuration does not match
+    architecture"上当场炸（本件首跑即如此），所以三处一起改。
+    """
+
+    def _set(section: Any) -> None:
+        if isinstance(section, dict):
+            section["readout_utf8_position_input"] = True
+
+    envelope.setdefault("config", {}).setdefault("taiji", {})[
+        "readout_utf8_position_input"
+    ] = True
+    substrate = envelope.get("substrate")
+    if isinstance(substrate, dict):
+        _set(substrate.setdefault("config", {}))
+    native = envelope.get("taiji")
+    if isinstance(native, dict):
+        kernel = native.get("kernel")
+        if isinstance(kernel, dict):
+            _set(kernel.setdefault("config", {}))
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--arm", required=True, choices=("D0", "D"))
@@ -107,6 +133,11 @@ def main() -> int:
     parser.add_argument("--out-dir", required=True)
     parser.add_argument("--max-minutes", type=float, default=None, help="保险上限；预算以符号数为准")
     parser.add_argument("--smoke", action="store_true", help="tiny 预算快速端到端")
+    parser.add_argument(
+        "--readout-position",
+        action="store_true",
+        help="PLAN-R2-01：开启读出侧 UTF-8 位置输入（4 维 one-hot，零初始化，默认关）",
+    )
     parser.add_argument("--fresh", action="store_true")
     parser.add_argument("--device", default="cpu")
     args = parser.parse_args()
@@ -151,6 +182,8 @@ def main() -> int:
             raise SystemExit("checkpoint was trained from a different base substrate")
         if float(extra.get("weight", -1)) != float(args.weight):
             raise SystemExit("checkpoint was trained with a different --weight")
+        if bool(extra.get("readout_position", False)) != bool(args.readout_position):
+            raise SystemExit("checkpoint was trained with a different --readout-position")
         consumed = int(extra.get("symbols_consumed", 0))
         if consumed >= args.symbols:
             print(json.dumps({"guard_ok": False, "error": f"arm already complete at {consumed}"}))
@@ -161,6 +194,10 @@ def main() -> int:
         if args.fresh and report_path.is_file():
             report_path.rename(report_path.with_name(f"run_report.prev-{_stamp_for_filename()}.json"))
         base_envelope = torch.load(base_checkpoint, map_location="cpu", weights_only=False)
+        if args.readout_position:
+            # PLAN-R2-01：基底档里的 config 决定读出形状，所以要在建模型**之前**
+            # 把开关写进信封的每一处 config 副本（不改基底文件本身，sha 跑前后照核）。
+            enable_readout_position_in_envelope(base_envelope)
         model = Seed.from_checkpoint(base_envelope, device=args.device)
 
     substrate = model.architecture
@@ -214,6 +251,7 @@ def main() -> int:
                 "trainer": TRAINER_NAME,
                 "arm": args.arm,
                 "weight": float(args.weight),
+                "readout_position": bool(args.readout_position),
                 "observe_kwargs": OBSERVE_KWARGS,
                 "symbols_consumed": consumed,
                 "symbols_budget": args.symbols,
@@ -290,12 +328,38 @@ def main() -> int:
 
     elapsed = round(time.perf_counter() - started, 1)
     base_unchanged = _sha256(base_checkpoint) == base_sha
+    #: PLAN-R2-01 的"被走到"计数：只报了 flag 却一步没喂 ⇒ 这条旗标等于没装。
+    readout = substrate.predictive_readout
+    position_probability_steps = int(readout.position_probability_steps)
+    position_learn_steps = int(readout.position_learn_steps)
+    position_weight_norm = (
+        float(readout.position_weight.norm().item())
+        if readout.position_weight is not None
+        else 0.0
+    )
+    position_guard = {
+        "readout_position_requested": bool(args.readout_position),
+        "predictive_readout_has_position_input": bool(readout.position_input_enabled),
+        "position_probability_steps": position_probability_steps,
+        "position_learn_steps": position_learn_steps,
+        "position_weight_norm": position_weight_norm,
+    }
+    if args.readout_position:
+        #: 三件必须同时真：开关在 config 里生效、前向真喂了、后向真写了。
+        position_guard["wired"] = (
+            bool(readout.position_input_enabled)
+            and position_probability_steps > 0
+            and position_learn_steps > 0
+            and position_weight_norm > 0.0
+        )
     report = {
         "format": "taiji-langfloor-run-v1",
         "prereg": "plans/reference/SPEC-R2-01_language_floor_utf8_weighted_readout_prereg_20260927.md",
         "trainer": TRAINER_NAME,
         "arm": args.arm,
         "weight": float(args.weight),
+        "readout_position": bool(args.readout_position),
+        "position_input": position_guard,
         "symbols_consumed": consumed,
         "symbols_budget": args.symbols,
         "stopped_by": "stop-file" if stopped_by_request else ("time-cap" if consumed < args.symbols else "episode-cap"),
@@ -324,6 +388,8 @@ def main() -> int:
         "write_surface_ok": write_surface_guard["predictive_readout_changed"]
         and write_surface_guard["motor_fabric_memory_unchanged"],
     }
+    if args.readout_position:
+        guard["position_input_wired"] = bool(position_guard.get("wired", False))
     print(
         json.dumps(
             {
@@ -333,6 +399,12 @@ def main() -> int:
                 "symbols": consumed,
                 "online_accuracy": report["learning_counters"]["online_accuracy"],
                 "continuation_online_accuracy": report["learning_counters"]["continuation_online_accuracy"],
+                "readout_position": bool(args.readout_position),
+                "position_steps": {
+                    "probability": position_probability_steps,
+                    "learn": position_learn_steps,
+                    "weight_norm": round(position_weight_norm, 6),
+                },
                 "changed_surfaces": changed,
                 "elapsed_s": elapsed,
             },

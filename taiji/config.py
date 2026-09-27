@@ -6,6 +6,8 @@ import math
 from dataclasses import asdict, dataclass, field
 from typing import Any
 
+from .utf8_state import UTF8_POSITION_DIM
+
 DEFAULT_RECOVERY_INTERACTION_RESIDUAL_TOLERANCE = 1e-7
 DEFAULT_RECOVERY_INTERACTION_ORDER_TOLERANCE = 1e-7
 EPISODIC_EVENT_COMPONENTS = (
@@ -214,6 +216,16 @@ class TaijiConfig:
     #: 会被区1/2 的随机方向稀释（全拼接 0.420 vs 区0 单独 0.729）。
     #: **默认 False ＝ 现行行为，逐位不变**。
     predictive_context_region0_only: bool = False
+    #: PLAN-R2-01（2026-09-27，所有者已签字）：给 F1 读出加一条**显式的 UTF-8 字节位置输入**
+    #: （“还期望几个续字节” remaining∈{0,1,2,3} 的 4 维 one-hot，由上一字节经 `taiji/utf8_state.py`
+    #: 确定性算出）。动机：A3 探针实测 `motor_context` 只能弱弱地线性读出这个位置（75.7%，
+    #: 而该特征的 oracle 上界 96.6%），即模型得自己悟“我正在写一个汉字的第几个字节”，
+    #: 所以把这块零学习成本的确定信息直接告它。
+    #: 实现＝`BytePredictiveReadout` 内一张 4 列的可选权重（**零初始化**，默认不建），
+    #: 不改变 `motor_context` 宽度、不重抽 `SparseSynapses` 拓扑。
+    #: **默认 False ＝ 现行行为，逐位不变**：读出的输入维度、权重形状、payload 与 digest
+    #: 全不动，老 checkpoint 逐位可载。
+    readout_utf8_position_input: bool = False
 
     memory_units: int = 192
     memory_fan_in: int = 32
@@ -812,6 +824,10 @@ class TaijiConfig:
 
         motor = self.alphabet_size * self.motor_context_dim + self.alphabet_size
         predictive_readout = self.alphabet_size * self.motor_context_dim + self.alphabet_size
+        if self.readout_utf8_position_input:
+            # PLAN-R2-01: the optional UTF-8 position columns are real allocated
+            # scalars, so the plan must count them when the branch is on.
+            predictive_readout += self.alphabet_size * UTF8_POSITION_DIM
         predictive_context = self.motor_context_dim * min(
             self.predictive_context_fan_in,
             self.motor_context_dim if self.motor_context_dim <= 1 else self.motor_context_dim - 1,

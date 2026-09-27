@@ -226,6 +226,14 @@ class TaijiState:
     # candidate.  ``None`` is intentionally omitted from legacy payloads so
     # attaching no candidate preserves the v10 checkpoint bytes exactly.
     predictive_context_slow_trace: torch.Tensor | None = None
+    #: PLAN-R2-01: the UTF-8 position class (0..3 continuations still expected) that
+    #: produced this state's ``motor_probabilities``.  It is the byte-stream DFA
+    #: remainder as of ``last_symbol``, computed from the previous class with
+    #: ``taiji.utf8_state.remaining_after`` — never a hidden counter, so a checkpoint
+    #: resumes the byte stream without inventing temporal history.  ``None`` is
+    #: intentionally omitted from payloads so switching the position input off keeps
+    #: checkpoint bytes exactly as before.
+    motor_position_class: int | None = None
 
     def clone(self) -> TaijiState:
         return TaijiState(
@@ -247,6 +255,9 @@ class TaijiState:
                 None
                 if self.predictive_context_slow_trace is None
                 else self.predictive_context_slow_trace.detach().clone()
+            ),
+            motor_position_class=(
+                None if self.motor_position_class is None else int(self.motor_position_class)
             ),
         )
 
@@ -273,6 +284,8 @@ class TaijiState:
             payload["predictive_context_slow_trace"] = (
                 self.predictive_context_slow_trace.detach().cpu().clone()
             )
+        if self.motor_position_class is not None:
+            payload["motor_position_class"] = int(self.motor_position_class)
         return payload
 
     @classmethod
@@ -315,6 +328,11 @@ class TaijiState:
                 None
                 if payload.get("predictive_context_slow_trace") is None
                 else payload["predictive_context_slow_trace"].detach().to(device).clone()
+            ),
+            motor_position_class=(
+                None
+                if payload.get("motor_position_class") is None
+                else int(payload["motor_position_class"])
             ),
         )
 

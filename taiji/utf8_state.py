@@ -15,6 +15,9 @@ SPEC-R2-02（解码掩码产品化）：`Taiji.generate(utf8_strict=True)` 与�
 
 from __future__ import annotations
 
+#: PLAN-R2-01：读出位置输入的维数——“还期望几个续字节”的 one-hot 宽度（0..3）。
+UTF8_POSITION_DIM = 4
+
 
 def utf8_allowed(remaining: int, lead: int) -> list[int]:
     """给定"还期望几个续字节"与当前字符的首字节，返回合法后继字节全集。"""
@@ -49,6 +52,16 @@ def advance_utf8(remaining: int, lead: int, symbol: int) -> tuple[int, int]:
             return 2, symbol
         return 3, symbol
     return remaining - 1, lead
+
+
+def remaining_after(remaining: int, symbol: int) -> int:
+    """只推进 DFA 的 ``remaining`` 分量（``lead`` 只收紧值域界，不参与位置推进）。
+
+    PLAN-R2-01 的读出位置输入就取这个值（0..3 的 one-hot）。它**不另写一份判定**，
+    而是委托给 ``advance_utf8``，保证与解码掩码用的是同一个状态机（本模块的设计纪律）。
+    """
+
+    return advance_utf8(int(remaining), 0, int(symbol))[0]
 
 
 def trim_partial_tail(raw: bytes) -> bytes:

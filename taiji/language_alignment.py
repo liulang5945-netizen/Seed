@@ -839,13 +839,9 @@ class LanguageAlignmentTrainer:
                 )
             )
             if self.config.response_plan_readout:
-                probabilities = (
-                    self.model.response_plan_readout.probabilities(
-                        self.model.snapshot().motor_context
-                    )
-                    .detach()
-                    .cpu()
-                )
+                # PLAN-R2-01：走模型自己的包装，好让它把当前状态的位置输入
+                # （开启时必须有）一并带上；直接调 readout 会漏掉那一列。
+                probabilities = self.model.response_plan_probabilities().detach().cpu()
             mask = torch.zeros_like(probabilities, dtype=torch.bool)
             mask[torch.tensor(allowed, dtype=torch.long)] = True
             masked = probabilities.clone()
