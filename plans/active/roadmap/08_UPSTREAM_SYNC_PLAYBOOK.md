@@ -300,3 +300,23 @@ scaffold 又**自己关掉了 `session-title-llm`**（`scaffold.ts:630`，理由
 
 
 ⑳ **终验批（baseline82，2026-09-27 晚，本段全部 lane/基建改动的合并读数）**：75 条全并发、批内无 watcher、起止 mtime 存档一致 ⇒ `Test Files 20 failed｜53 passed｜2 skipped (75)`、`Tests 32 failed｜178 passed｜24 skipped (234)`，729 s——对 81（23｜50／35｜173）：本段修的 **goal-bar／server-restart／stats-paged-history 三条全部在批内脱红，零新增红**；早段修的 agent-team-panel／sidebar-right／markdown-wide-table／markdown-images 选行层等保持绿。剩余红的**可解析部分（12 文件）逐条都在已登记类别**：github-ready-review＝自动打开、markdown-images＝产品层 Windows 限制（已登记转裁）、reference-composer＝R6（新）、vite-entry＝pnpm 环境、smoke-real＝专用批约束、goal-command-presentation/plugin-config/sessionless-header/运行时错误族＝08 既有账。**golden-diff 类从 15 降到 1**（H3w＋normalize→refresh 两刀的合力）。批内仍有 8 文件 FAIL 块不可解析（ANSI/多行形状，⑰  老口径）⇒ 文件级 20 与可解析 12 的差额按既有登记面理解，不当新未知。**D2 打包门状态**：产物已实出（win-unpacked+NSIS exe，backend 通道物理在包），rc=1 的根＝R7（packaged office 冒烟，首达雷区）——「打包跑通」在本机读数＝**链全绿到最后一步 office 冒烟前**，R7 裁掉后即 rc=0。
+
+
+㉑ **M6 收官第 1 刀（2026-09-27 晚）：真启动那件 unsigned 产物＝打不开（新裁定项 R8）**。目的＝把 G5-D2「装起即用」从**部件级读数**（wheelhouse／离线安装／幂等／host 生命周期都已在 ⑲f 实锤）升到**系统级读数**（产物真起来、backend host 拉起、Taiji 为默认、发一个回合）；不涉裁定，属"agent 可直接跑"的那一条。
+**读数（决定性，非推断）**：用 `--user-data-dir` 强制干净 profile 启动 `win-unpacked\DeepSeek Harness.exe`，主进程弹**原生错误框**（窗口类 `#32770`，标题 `Error`），正文用 UI Automation 读出：
+```
+A JavaScript error occurred in the main process
+Uncaught Exception:
+Error [ERR_MODULE_NOT_FOUND]: Cannot find package '@taiji/cordis' imported from
+…\resources\app.asar\node_modules\@taiji\dsh-typert-protocol\lib\index.js
+```
+⇒ **产物在"能画出界面之前"就崩了**：不是 backend host 起没起、不是 Taiji 是不是默认，而是**外壳自己的模块解析就失败**。⇒ D1「打包跑通」／D2「装起即用」／D4「桌面可用」的**系统级读数当前全红**（部件级读数不受影响）。
+**先排除两个便宜假设**：① **不是锁屏**——启动当刻 `LockApp` 在场只挡画面，挡不住主进程；错误框是进程真的活着弹出来的（`alive=True`）；② **不是缓存/产物陈旧**——userData 目录确实被写入（`Local State`，mtime＝当刻）。
+**根因链（三处行号可查）**：electron-builder 收集生产依赖时**只收 `dependencies`、不收 `peerDependencies`**；而 `@taiji/cordis` 在链上两个包里**只声明为 peer**，却被**运行时真 import**（不是 `import type`）：
+`apps/desktop/src/account-backend.ts:4` →（外部依赖）`@taiji/dsh-api-gateway/stream-protocol` → `packages/api/gateway/src/stream-protocol.ts:4` → `@taiji/dsh-typert-protocol` → `packages/typert/protocol/src/index.ts:8`：`import { Context, Service } from '@taiji/cordis'`（`packages/typert/protocol/package.json` 里 cordis 只在 `peerDependencies`／`devDependencies`）。
+**产物内实测把这一点钉死**：`app.asar/node_modules/@taiji/` 只有 **7 个包**（cosmokit、dsh-api-gateway、dsh-brand、dsh-deque、dsh-timeout、dsh-typert-protocol、schemastery）——**没有 cordis**；而 `app.asar/dsh/node_modules/@taiji/` 有 **282 个包**（含 cordis）。Node ESM 从顶层 `node_modules` 逐级向上找，**不会回落到 `app.asar/dsh/node_modules` 这棵子树** ⇒ 找不到就是找不到。
+**归属（不是 G2 引入）**：`git log` 显示这几个 `package.json` 只被 **G1**（`82042a2f6` 导入整仓）与 **G2**（`88ad3040e` 改名）碰过 ⇒ 这是**上游继承下来的结构**，fork 只是把它带进来了；但**它挡在 fork 的交付路上**，得在 fork 侧解决。
+**与 R7 的关系**：R7（packaged office 冒烟，打包链最后一步）**不是本刀的原因**——崩溃发生在**更早的启动路径**上，R7 那条门根本没走到。⇒ 先解 R8，R7 的现场证据才拿得到。
+**两条修法（价格已明，转裁 R8）**：(乙) `apps/desktop/tsdown.config.ts` 的 main 配置加 `deps.alwaysBundle: [/^@taiji\//]`，让**外壳自包含**（把整类 `@taiji/*` 外部依赖一次收进 bundle，上限更高，不用逐个补依赖）；(甲) 给 `apps/desktop/package.json` 的 `dependencies` 补 `@taiji/cordis`（一行＋一次 `pnpm install`，只解这一条，链上再出现别的 peer-only 运行时依赖还会再撞）。
+**方法记法（复用价值）**：**Windows 原生错误框（`#32770`）读法**——`GetWindowText` 取不到内容（正文在 `DirectUIHWND` 里），要用 UI Automation（`System.Windows.Automation`）读 `MainInstruction`／`ContentText`，**锁屏下仍可读**；现场脚本 `.dsh-sbx2/launch-read.ps1`＋`.dsh-sbx2/read-dialog.ps1`。
+**本轮产物**：`plans/reference/TAIJI_G5_READINESS_20260926.md` §9（完整读数与根因）＋§8 裁定单 R8；`.dsh-sbx2/launch-read-out.txt`、`.dsh-sbx2/read-dialog-out.txt`（原始读数）。

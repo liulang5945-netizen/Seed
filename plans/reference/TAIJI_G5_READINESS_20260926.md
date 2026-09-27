@@ -334,9 +334,56 @@ lane 追加的那条 `session/title` 是**事件**、不是**头字段**，所�
 | **回放件** | 缺的录制件要不要重录 | 重录（要 `DEEPSEEK_API_KEY` ＋ `test:snapshot:record`）→ 承认回放型 lane 不可当门 | 盘上那份是 09-22 本机录的，`.gitignore` 有 `*.jsonl` ⇒ **干净检出跑不出它们** | 若干 lane 长期"看着像红其实缺证据" |
 | **R6（2026-09-27 新增，见 08 §6 ⑲e）** | @ 引用下拉列出了客户端自动创建的**空白无标题会话**（无用户消息），要不要出现在引用候选里 | (甲) 产品侧引用枚举过滤空白会话（语义清晰，属产品改动）→ (乙) 烤进金样（该行含平台分隔符形状，须先做第二处 normalize，与 ⑦ 乙 同型）→ 保持红并挂账 | (甲)＝`session-reference` 候选生成处一屏改动＋用例；(乙)＝normalize＋定向 refresh 两文件 | `reference-composer` menu 测试维持一行红；用户可见的"引用列表里混进没内容的会话"若不处理会随装机带走 |
 | **R7（2026-09-27 新增，见 08 §6 ⑲f）** | packaged 桌面产物的 office 冒烟（xlsx 转换）失败——`package:desktop:win:x64:unsigned` 最后一步红，要不要处理 | (甲) 查打包 asar 布局下 LibreOffice profile/路径解析并修（真缺陷则改产品/打包链）→ (乙) packaged 冒烟降级 office 转换（保结构/引擎在场断言）→ (丙) 接受"unsigned 产物存在但打包门红"现状进发布评审 | (甲)＝未知深度（首达雷区，prepared 树同函数是绿的）；(乙)＝smoke 脚本一屏；(丙)＝零成本但 D1"打包跑通"半句要加限定 | `package:desktop:*` 的 rc 永不为 0；D2 通道本身已产物级验通（08 ⑲f），红不在后端而在 office |
+| **R8（2026-09-27 新增，见 §9）** | 打包产物**打不开**（`ERR_MODULE_NOT_FOUND: @taiji/cordis`）——"一条命令装起即用"目前在**系统级**是红的，修法选哪条 | (乙) 外壳自包含：tsdown `deps.alwaysBundle: [/^@taiji\//]` 把 `@taiji/*` 打进 `lib/main.js`（一次消掉"打包收不全依赖"这**一整类**）→ (甲) 给 `apps/desktop` 的 `dependencies` 补 `@taiji/cordis`（＋可能还有 `dsh-client-connection`）一行＋一次 `pnpm install` | 两条都要重跑 `package:win:x64:unsigned`（末步仍是 R7 的 office 冒烟红，**产物在此之前就已产出**，可先启动取读数）；(乙)＝一条构建配置（要记进 08 的上游同步本），(甲)＝一行依赖但可能补第二次 | G5-D1「打包跑通」、D2「装起即用」、D4「桌面可用」在系统级都无法勾掉；M6 手上没有一个能跑起来的产物 |
 
 **最小回复格式（照抄即可）**：
-`D2=b′|c′；D3=改|不改；R4=给值|暂缓；R5=全改|只改①|都不改；金样甲=非本机refresh|本机refresh|不refresh；金样丙=平台skip|改断言|保持红；判据③=等R2|现在开；回放件=重录|承认不可当门`
+`D2=b′|c′；D3=改|不改；R4=给值|暂缓；R5=全改|只改①|都不改；金样甲=非本机refresh|本机refresh|不refresh；金样丙=平台skip|改断言|保持红；判据③=等R2|现在开；回放件=重录|承认不可当门；R7=甲|乙|丙；R8=乙|甲`
 
 **不需要裁定、下一轮我按序做的**（§6.5）：`agent-team-panel` 的 setup 双形态（先查 `Ready.` 为何有时 10 s 不来）→ 那条的可访问名判定 → 10 条超时逐条取证 → 把 basename 选行样板补到剩下用例。
+
+## 9 · 2026-09-27 真启动读数：打包产物打不开（M6 收官清单第 1 刀的现场证据）
+
+**这一刀要的是什么**：把 G5-D2「装起即用」从**部件级**（wheelhouse／离线安装器／host 生命周期单独都验过）升到**系统级**——真启动一次 unsigned 产物，看后端进程是否被拉起、模型面默认是不是 Taiji、能不能发一个回合。**读数与预期相反：产物在进任何界面之前就崩了。**
+
+**怎么跑、看到什么**（全程留痕，脚本在 `.dsh-sbx2/launch-read.ps1`、`read-dialog.ps1`）：产物＝`apps/desktop/.desktop-build/targets/win-x64/unsigned-artifacts/win-unpacked/DeepSeek Harness.exe`（就是 `package:win:x64:unsigned` 出的那一份）。直接启动后**进程存活、但不进界面、也不写任何日志**；加 `--user-data-dir` 之后才查得到主窗口——标题是 **`Error`**（原生对话框，窗口类 `#32770`、唯一按钮「确定」）。用 UI Automation 读出的正文是：
+
+> A JavaScript error occurred in the main process
+> Uncaught Exception:
+> Error [ERR_MODULE_NOT_FOUND]: Cannot find package '@taiji/cordis' imported from
+> …\resources\app.asar\node_modules\@taiji\dsh-typert-protocol\lib\index.js
+
+**这不是环境问题**：当时桌面处于锁屏（`LockApp` 进程在场），但上面那段正文是在**锁屏下**用 UI Automation 读出来的 ⇒ **锁屏只挡住了画面，不是崩溃的原因**。先前"启动后零文件写入"的困惑，就是从这个看不见的错误框来的。
+
+**根因（一句话）**：打包时收集"运行时要带的依赖"的那一步**只收 `dependencies`、不收 `peerDependencies`**，而 `@taiji/cordis` 在链上两个包里恰恰**只被声明成 peer**：
+
+* `packages/typert/protocol/package.json:37-42`：`@taiji/cordis` 只在 `peerDependencies`（＋`devDependencies`）里；
+* `packages/typert/protocol/src/index.ts:8`：但它**运行时真的 import 它**（`import { Context, Service } from '@taiji/cordis'`，不是 `import type`）；
+* `packages/api/gateway/package.json:64-67`：同类，`@taiji/cordis` 与 `@taiji/dsh-client-connection` 都是 peer。
+
+**触发链**：`apps/desktop/lib/main.js` →（外部依赖）`@taiji/dsh-api-gateway/stream-protocol` → `@taiji/dsh-typert-protocol` → `@taiji/cordis`。
+
+**产物内实测**（用 `@electron/asar` 列出 `app.asar` 的 17734 条）：
+
+| 位置 | `@taiji/*` 包数 | 含 `cordis`？ |
+|---|---|---|
+| 顶层 `app.asar/node_modules/@taiji/` | **7**（cosmokit／dsh-api-gateway／dsh-brand／dsh-deque／dsh-timeout／dsh-typert-protocol／schemastery） | **否** |
+| `app.asar/dsh/node_modules/@taiji/`（完整运行时树） | **282** | **是** |
+
+⇒ 完整的那份在 `dsh/` 子树里，**但 Node 的解析是从顶层 `node_modules` 逐级向上找，不会回落到 `dsh/` 子树**，所以顶层缺了就等于没有。
+
+**归属**：`git log` 显示这几个 `package.json` **只被 G1（导入整仓）与 G2（改名）两次提交碰过** ⇒ 这是**随 fork 继承的上游结构**（上游把这几个包的相互依赖声明成 peer），**不是 G2 改名改坏的**。
+
+**对 M6 四条判据的影响**：`package:win:x64:unsigned` 确实**产出了** win-unpacked＋NSIS exe（产物"存在"），但**产物打不开** ⇒
+
+* **G5-D1**「打包跑通」——包出得来，但产物不可运行，这半句不能不打折扣地勾掉；
+* **G5-D2**「装起即用」——**系统级为红**（此前只有部件级读数）；
+* **G5-D4**「桌面可用」——同 D2；
+* **R7 的现场位置被"前置"了**：R7 记的是打包链**最后一步**的 office 冒烟红，而这次崩溃发生在**更早**的启动路径上。
+
+**两条修法（都需一次重打包，故列裁定 R8）**：
+
+* **(甲) 补声明**：在 `apps/desktop/package.json` 的 `dependencies` 里加上 `@taiji/cordis`（连带 `@taiji/dsh-client-connection`）——语义正确（桌面壳是 gateway 的使用方，本就该提供 peer），改动一行，缺一次 `pnpm install` 生软链。**代价**：再冒出别的 peer 时可能还要补。
+* **(乙) 让外壳自包含**：把 `@taiji/dsh-api-gateway` 也**打进入 `lib/main.js`**（`apps/desktop/tsdown.config.ts` 加一条 `deps.alwaysBundle: [/^@taiji\//]`），顶层就不需要任何 `@taiji/*`，一次消掉这**一整类**"打包依赖收不全"的问题。**代价**：改的是 fork 的构建配置（要给 08 的上游同步本记一条），且 `lib/main.js` 体积变大。
+
+**在裁定落地前可以零成本先取到系统级读数**：把产物里 `app.asar.unpacked/…`／`dsh/node_modules/@taiji/cordis` 复制进顶层 `node_modules/@taiji/`（或用 asar 重打包），即可先跑一次"后端起没起／默认是不是 Taiji／能不能发一个回合"。**但那只是现场取证，不等于"产物已修"**——真结论要等重打包后的干净产物。
 
