@@ -147,14 +147,23 @@ owner 裁 (i)＝**"先压体积，再换出厂基座"**（不接受直接吃 +84
 | 广面 | `tests/taiji_native tests/seed` 全量 | **1793 passed／4 failed**（1069 s） |
 | 4 条红的归因 | 逐条 | ①②`test_cap0_*_contract::reproduces_the_sealed_one`＝本地 `checkpoints/` 多出他人文件（`PLAN-A-26` §6.5 已登记的既有环境红）；③`test_platform_boundary::source_face_is_the_git_face`＝`taiji-harness/.dsh-sbx2/lock-audit/*.py`（他会话在飞的跟踪文件，遍历看不见）；④`test_project_identity::resolvable_links`＝`08_UPSTREAM_SYNC_PLAYBOOK.md` 里一条指向不存在的 harness 笔记（他人文件的坏链）。**②另做了停用复跑**：把我的 `identity_organ.py` 整档退回 HEAD 复跑⇒**照样红**⇒ 与本次改动无关 |
 | 主-3 受检基底只读 | `sha256sum -c`（`seed_beta.pt`／`seed_corpus.pt`／`dist` 内产品件） | 全 **OK**（跑完 1793 条测试后逐位不变） |
+| **守卫-B**（§4 三档读数复跑） | `score_taiji_r2_copy_surface_extension.py` 同命令重跑，件 `taiji_a29_post_truncation_product_face_v3_20260928.json` | **过**：四档（对照＋三治疗档）的 **104 题 `rows` 与改前逐位相同**——命中 0／28／28／30、成句 0／7／7／8、切尾可解码 0.0／0.5256／0.5256／0.1154 全部复现；同一趟里产品信封落盘 **87,919,979 → 12,291,435 字节**（sha `f9343433…`），受检基底 `base_sha256_unchanged: true` |
 | lint | `ruff check`／`black --check`（identity_organ.py＋新测试文件） | 全净（`identity_organ.py` 在 HEAD 上本就是 black 净的，本次未引入脏） |
 
-## 8. 现在欠的两件事（都不该被本件的数字盖掉）
+## 8. 现在欠的四件事（都不该被本件的数字盖掉）
 
 1. **主-2 未达**（12.3 MB vs ≤10 MB）⇒ 要 owner 在"授权丙"与"接受 +8.2 MB 净增"之间选一个；
 2. **运行时那 75.5 MB 的常驻分配没动**（乙只管存档侧）——那正是 §2 的 **甲**，
    它同时还能让每次 load 少开两份 37.75 MB 的零表（本仓所有取数脚本都被它拖大）。
-3. **守卫-B 未取数**：`PLAN-A-28` §4 那三档（28/104、成句 7、切尾可解码 0.5256）在本次改动后
-   **没有复跑**。理论上截断只发生在存档侧、运行时逐位相同 ⇒ 读数不该动，
-   但"读数不该动"必须由读数证明（本仓教训：门的绿不许从聚合入口继承，也不从推理继承）。
+3. ~~**守卫-B 未取数**~~ **已取并过**（§7 表末行）：四档 `rows` 与改前**逐位相同**，
+   同一趟实测产品信封 87,919,979 → **12,291,435 字节**。
+   ⇒ "运行时逐位相同所以读数不该动"这句推理**当时没有拿来顶替实测**，跑完才收口。
+4. **"没有第二块可截"是实测出来的，不是推测**：改后残留全零共 **4.74 MB／56 条**，前几名依次是
+   `identity_organ.bank.prototypes` (128,1152) 0.59 MB×2、`memory.cortical_readout.edge_weight`
+   (1152,96) 0.44 MB×2、`fabric.consolidation_decoders[0].edge_weight` (257,256) 0.26 MB×2、
+   `[1]` (256,192) 0.20 MB×2、`identity_organ.{action,outcome}_synapses.edge_weight` (257,128) 0.13 MB×2……
+   ⇒ 这些是**值本身为零的权重面**（没学到的突触／一个原型都没有的 bank），**档里没有"计数字段"可依**，
+   所以乙档"按结构截"这条路在这里到头；再降只能走丙，而丙要先解决"没存"与"存了零"的语义分离。
+   顺带一条该记账的读数：`bank.prototypes` **整张为零**＝身份 bank 里一个原型都没有
+   ——与零面普查那句"路由键仓从没被写过"是同一件事的另一面。
 
