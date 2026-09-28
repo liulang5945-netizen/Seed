@@ -92,6 +92,7 @@ def run_arm(
     *,
     evidence_utf8_gate: bool = False,
     close_gate_after_load: bool = False,
+    surface: bool = False,
 ) -> dict[str, Any]:
     """一臂：跑完 104 题，按产品 chat 协议取基底原始答复，统计表层三率。
 
@@ -135,7 +136,11 @@ def run_arm(
         turns = [str(turn) for turn in item["turns"]]
         answer = ""
         for index, turn in enumerate(turns):
-            answer = _answer_raw(runtime, turn, history)
+            answer = (
+                runtime.chat(turn, history=history, learn=False)
+                if surface
+                else _answer_raw(runtime, turn, history)
+            )
             texts.append(answer)
             if index + 1 < len(turns):
                 history.append((turn, answer))
@@ -160,6 +165,9 @@ def run_arm(
     trimmed_clean = sum(1 for text in texts if "\ufffd" not in text.rstrip("\ufffd"))
     return {
         "circuit": circuit,
+        #: 两条面**不许互换**（本仓裁定：同一份读数两条量）：原始字节链＝基底直接吐出的字节；
+        #: 表层链＝`SeedRuntime.chat()` 过语言器官后的文本（带 SPEC-R2-02 的 utf8_strict 掩码）。
+        "chain": "product_surface_chat" if surface else "base_raw_bytes",
         #: 挂回路走的是哪条入口，必须落在件上：`enable_copy_circuit` 是探针/评测的显式 opt-in，
         #: `envelope_auto_mount` 才是产品自己那条路（裁定 (b) 的证据门此前只在前者生效）。
         "mount_entry": mount_entry,
@@ -261,7 +269,14 @@ def main() -> int:
         default="output/a28_product_face",
         help="产品信封落点（默认 output/ 下的具名目录；不写 checkpoints/）",
     )
+    parser.add_argument(
+        "--surface-chain",
+        action="store_true",
+        help="PLAN-A-28 §8 的欠账：所有档改走 `SeedRuntime.chat()`（产品表层链，过语言器官＋"
+        "SPEC-R2-02 掩码），与原始字节链**分开报**——两条量不许互换",
+    )
     args = parser.parse_args()
+    surface = bool(args.surface_chain)
 
     checkpoint = PROJECT_ROOT / args.checkpoint
     sha_before = _sha256(checkpoint)
@@ -269,13 +284,14 @@ def main() -> int:
     if not manifest.is_absolute():
         manifest = PROJECT_ROOT / manifest
     items = load_items(manifest)
-    control = run_arm(items, checkpoint, None)
+    control = run_arm(items, checkpoint, None, surface=surface)
     treated = [
         run_arm(
             items,
             checkpoint,
             circuit,
             evidence_utf8_gate=bool(args.copy_evidence_utf8_gate),
+            surface=surface,
         )
         for circuit in args.circuit
     ]
@@ -292,15 +308,23 @@ def main() -> int:
             meta = build_circuit_carried_envelope(checkpoint, circuit, env_path)
             meta["auto_mount_gate_effective"] = True
             envelope_meta.append(meta)
-            treated.append(run_arm(items, env_path, None))
+            treated.append(run_arm(items, env_path, None, surface=surface))
             if args.auto_mount_gate_closed:
-                treated.append(run_arm(items, env_path, None, close_gate_after_load=True))
+                treated.append(
+                    run_arm(items, env_path, None, close_gate_after_load=True, surface=surface)
+                )
     report = {
         "format": "taiji-r2-copy-surface-extension-v1",
         "prereg": "plans/reference/SPEC-A-21_r2_surface_extension_prereg_20260925.md",
         #: 本轮（A2.5）的判读线与三档归因矩阵钉在 SPEC-A-22 §3/§9；仪器本身仍是 §A-21 那台。
         "judge_prereg": "plans/reference/SPEC-A-22_r2_a2_5_query_conditioned_selector_prereg_20260926.md",
-        "manifest": manifest.relative_to(PROJECT_ROOT).as_posix(),
+        "manifest": (
+            manifest.relative_to(PROJECT_ROOT).as_posix()
+            if manifest.is_relative_to(PROJECT_ROOT)
+            else manifest.as_posix()
+        ),
+        #: 文件名容易看不出来，这一列是"哪条链"的唯一自证（两条面不许互换）。
+        "chain": "product_surface_chat" if surface else "base_raw_bytes",
         "manifest_sha256": _sha256(manifest),
         "checkpoint": args.checkpoint,
         #: PLAN-A-25：门开/关必须落在件上，否则两份读数看起来像同一次实验。
@@ -342,7 +366,11 @@ def main() -> int:
                 ],
                 "status": report["surface_verdict"]["status"],
                 "base_unchanged": report["base_sha256_unchanged"],
-                "out": out.relative_to(PROJECT_ROOT).as_posix(),
+                "out": (
+                    out.relative_to(PROJECT_ROOT).as_posix()
+                    if out.is_relative_to(PROJECT_ROOT)
+                    else out.as_posix()
+                ),
             },
             ensure_ascii=False,
         )

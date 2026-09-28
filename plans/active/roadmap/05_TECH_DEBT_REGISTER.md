@@ -1005,6 +1005,10 @@ tests.taiji_native.test_terminal_three_domain_governance::test_terminal_three_do
 | DEBT-G2 | reflog 文本坏行（218 条 `error: invalid reflog entry`），`git fsck` exit 2 | 低 | 仅文本坏，不影响对象与 refs；`HEAD` 可达缺失对象 = 0 |
 | DEBT-G3 | `.git/index.corrupt-backup`、`.git/logs/*.corrupt-backup` 备份文件 | 低 | 内含仅存的历史哈希线索，**不要删** |
 | DEBT-G4 | 全量测试约 15 分钟且会 SIGTERM，需后台运行或分批 | 低 | 采集一律用 `--junitxml` + `run_in_background` |
+| DEBT-G5 | **流程债**（红本身已于 2026-09-28 结清）：裁定 (d) 翻 `lock_selection_rule` 默认后，主干上留着 2 条红守卫（`test_copy_circuit_contract.py` 的两条**旧面**不变量），而那次提交报的是"定向回归 166 条全绿"——**不含它所改模块的既有契约面** | 中 | 任何翻 `TaijiConfig` 默认键的改动，必须连该模块的契约文件一起跑（`-k "copy or circuit or selection"`）；归因与修法见 [PLAN-A-28 §3.1](../../reference/PLAN-A-28_circuit-on-the-product-load-path_20260928.md) |
+| DEBT-G6 | v1 信封**重存成 v10 产品信封不是尺寸中性的**：`seed_beta.pt` 4.14 MB → 87.9 MB，其中 `.taiji.kernel`＋`.substrate` 双镜像各 43.9 MB，最大单块是**身份器官的空路由键仓 38.93 MB**（零面普查那张），复制回路本身只 0.18 MB | 中 | 让回路"随基底出厂"之前须解决（单镜像／全零张量不落盘）或由 owner 明确接受该体积；实测分项见 [PLAN-A-28 §5](../../reference/PLAN-A-28_circuit-on-the-product-load-path_20260928.md) |
+| DEBT-G7 | 门禁**面值**与账不符：本机同版本工具（ruff 0.16.4／black 26.5.1／mypy 2.3.1）复跑，`black --check` 有 2 档脏（含 `taiji/model.py`）、`ruff check` 有 1 处 I001、`mypy --follow-imports=silent taiji` = **13 错／4 文件**，而 CI 的棘轮写的是 `MYPY_CORE_BASELINE=0`；**这些在 HEAD 的副本上同样红**（非任一在飞提交引入） | 中 | 判"是我弄红的"之前先 `git show HEAD:<f>` 复跑比对；修它属门禁面值问题，不属 A 支线范围 |
+| DEBT-G8 | 仪器收尾时才做路径展示 ⇒ 题集／`--out-report` 指到仓库外会**跑完全部计算之后**才在 `relative_to` 上崩（`score_taiji_r2_copy_surface_extension.py` 两处，实测白跑一趟） | 低 | 已改 `is_relative_to` 回退；其余 `probe_/score_/eval_` 仪器按同一形状排查（收尾的展示代码不许持有失败路径） |
 
 ## 8. 处置阶段入口条件
 
