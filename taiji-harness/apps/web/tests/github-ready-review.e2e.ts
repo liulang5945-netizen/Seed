@@ -103,9 +103,6 @@ describe.skipIf(MODE === 'record')('web e2e: GitHub ready-for-review', () => {
     await page.addInitScript(() => { localStorage.setItem('dsh.locale', 'en') })
     tripwire = watchConsole(page)
     await page.goto(scaffold.authenticatedUrl, { waitUntil: 'load' })
-    // The boot-time Hero opens a blank Session on its own, which would add an Agent the ingress
-    // counts here are about isolation; refuse that request so the roster changes only via webhook.
-    await page.route('**/api/session/create', route => route.abort('aborted'))
     await page.waitForSelector('[class*="frame"]', { timeout: 30_000 })
   }, 60_000)
 
