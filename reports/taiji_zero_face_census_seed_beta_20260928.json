@@ -1,0 +1,455 @@
+{
+  "format": "taiji-zero-face-census-v1",
+  "version": 1,
+  "status": "completed",
+  "scope": "不点名地遍历整份检查点载荷，逐个参数面量范数，列出**恰好为零**的面；只读、零训练、不改配置",
+  "does_not_do": [
+    "does not decide why a face is zero (默认关 / 链没被走到 / 更新量归零)",
+    "writes no checkpoint and trains nothing",
+    "does not treat structural index tensors as learnable faces"
+  ],
+  "checkpoint": {
+    "path": "checkpoints\\seed_beta.pt",
+    "bytes": 4143542,
+    "sha256": "ad2a06465e0ef78c75aff7302a6f7a2ae11825d2f19361d9d65926006f3bf793",
+    "tick": 16000000,
+    "payload_format": "seed-native-v1"
+  },
+  "instrument_guard": {
+    "base_sha_unchanged": true,
+    "learnable_faces": 34,
+    "learnable_params": 513041,
+    "denominator_nonzero": true
+  },
+  "summary": {
+    "learnable_faces": 34,
+    "learnable_params": 513041,
+    "zero_faces": 12,
+    "zero_params": 326912,
+    "zero_share_of_learnable": 0.637204,
+    "structural_faces": 32,
+    "structural_params": 509840,
+    "state_faces": 27,
+    "state_params": 6947,
+    "non_finite_faces": []
+  },
+  "zero_face_list": [
+    {
+      "face": "substrate.memory.cortical_readout.edge_weight",
+      "params": 110592,
+      "l2_norm": 0.0,
+      "abs_sum": 0.0,
+      "dtype": "torch.float32",
+      "is_zero": true,
+      "finite": true
+    },
+    {
+      "face": "substrate.fabric.consolidation_decoders[0].edge_weight",
+      "params": 65792,
+      "l2_norm": 0.0,
+      "abs_sum": 0.0,
+      "dtype": "torch.float32",
+      "is_zero": true,
+      "finite": true
+    },
+    {
+      "face": "substrate.fabric.consolidation_decoders[1].edge_weight",
+      "params": 49152,
+      "l2_norm": 0.0,
+      "abs_sum": 0.0,
+      "dtype": "torch.float32",
+      "is_zero": true,
+      "finite": true
+    },
+    {
+      "face": "substrate.memory.action_readout.edge_weight",
+      "params": 24672,
+      "l2_norm": 0.0,
+      "abs_sum": 0.0,
+      "dtype": "torch.float32",
+      "is_zero": true,
+      "finite": true
+    },
+    {
+      "face": "substrate.memory.outcome_readout.edge_weight",
+      "params": 24672,
+      "l2_norm": 0.0,
+      "abs_sum": 0.0,
+      "dtype": "torch.float32",
+      "is_zero": true,
+      "finite": true
+    },
+    {
+      "face": "substrate.fabric.consolidation_decoders[2].edge_weight",
+      "params": 24576,
+      "l2_norm": 0.0,
+      "abs_sum": 0.0,
+      "dtype": "torch.float32",
+      "is_zero": true,
+      "finite": true
+    },
+    {
+      "face": "substrate.memory.association.edge_weight",
+      "params": 24576,
+      "l2_norm": 0.0,
+      "abs_sum": 0.0,
+      "dtype": "torch.float32",
+      "is_zero": true,
+      "finite": true
+    },
+    {
+      "face": "substrate.memory.episode_readout.edge_weight",
+      "params": 1536,
+      "l2_norm": 0.0,
+      "abs_sum": 0.0,
+      "dtype": "torch.float32",
+      "is_zero": true,
+      "finite": true
+    },
+    {
+      "face": "substrate.memory.time_readout.edge_weight",
+      "params": 768,
+      "l2_norm": 0.0,
+      "abs_sum": 0.0,
+      "dtype": "torch.float32",
+      "is_zero": true,
+      "finite": true
+    },
+    {
+      "face": "substrate.memory.provenance_readout.edge_weight",
+      "params": 384,
+      "l2_norm": 0.0,
+      "abs_sum": 0.0,
+      "dtype": "torch.float32",
+      "is_zero": true,
+      "finite": true
+    },
+    {
+      "face": "substrate.memory.reward_readout.edge_weight",
+      "params": 96,
+      "l2_norm": 0.0,
+      "abs_sum": 0.0,
+      "dtype": "torch.float32",
+      "is_zero": true,
+      "finite": true
+    },
+    {
+      "face": "substrate.memory.familiarity_readout.edge_weight",
+      "params": 96,
+      "l2_norm": 0.0,
+      "abs_sum": 0.0,
+      "dtype": "torch.float32",
+      "is_zero": true,
+      "finite": true
+    }
+  ],
+  "faces": [
+    {
+      "face": "substrate.memory.cortical_readout.edge_weight",
+      "params": 110592,
+      "l2_norm": 0.0,
+      "abs_sum": 0.0,
+      "dtype": "torch.float32",
+      "is_zero": true,
+      "finite": true
+    },
+    {
+      "face": "substrate.fabric.consolidation_decoders[0].edge_weight",
+      "params": 65792,
+      "l2_norm": 0.0,
+      "abs_sum": 0.0,
+      "dtype": "torch.float32",
+      "is_zero": true,
+      "finite": true
+    },
+    {
+      "face": "substrate.fabric.consolidation_decoders[1].edge_weight",
+      "params": 49152,
+      "l2_norm": 0.0,
+      "abs_sum": 0.0,
+      "dtype": "torch.float32",
+      "is_zero": true,
+      "finite": true
+    },
+    {
+      "face": "substrate.motor.synapses.edge_weight",
+      "params": 24672,
+      "l2_norm": 39.772037658,
+      "abs_sum": 5076.241025201,
+      "dtype": "torch.float32",
+      "is_zero": false,
+      "finite": true
+    },
+    {
+      "face": "substrate.memory.action_readout.edge_weight",
+      "params": 24672,
+      "l2_norm": 0.0,
+      "abs_sum": 0.0,
+      "dtype": "torch.float32",
+      "is_zero": true,
+      "finite": true
+    },
+    {
+      "face": "substrate.memory.outcome_readout.edge_weight",
+      "params": 24672,
+      "l2_norm": 0.0,
+      "abs_sum": 0.0,
+      "dtype": "torch.float32",
+      "is_zero": true,
+      "finite": true
+    },
+    {
+      "face": "substrate.fabric.consolidation_decoders[2].edge_weight",
+      "params": 24576,
+      "l2_norm": 0.0,
+      "abs_sum": 0.0,
+      "dtype": "torch.float32",
+      "is_zero": true,
+      "finite": true
+    },
+    {
+      "face": "substrate.memory.cue_encoder.edge_weight",
+      "params": 24576,
+      "l2_norm": 8.769711547,
+      "abs_sum": 1099.262792692,
+      "dtype": "torch.float32",
+      "is_zero": false,
+      "finite": true
+    },
+    {
+      "face": "substrate.memory.action_encoder.edge_weight",
+      "params": 24576,
+      "l2_norm": 8.843729421,
+      "abs_sum": 1101.890771577,
+      "dtype": "torch.float32",
+      "is_zero": false,
+      "finite": true
+    },
+    {
+      "face": "substrate.memory.outcome_encoder.edge_weight",
+      "params": 24576,
+      "l2_norm": 8.780924208,
+      "abs_sum": 1098.636192678,
+      "dtype": "torch.float32",
+      "is_zero": false,
+      "finite": true
+    },
+    {
+      "face": "substrate.memory.association.edge_weight",
+      "params": 24576,
+      "l2_norm": 0.0,
+      "abs_sum": 0.0,
+      "dtype": "torch.float32",
+      "is_zero": true,
+      "finite": true
+    },
+    {
+      "face": "substrate.fabric.decoders[0].edge_weight",
+      "params": 12336,
+      "l2_norm": 6.345601924,
+      "abs_sum": 493.348852446,
+      "dtype": "torch.float32",
+      "is_zero": false,
+      "finite": true
+    },
+    {
+      "face": "substrate.fabric.decoders[1].edge_weight",
+      "params": 12288,
+      "l2_norm": 8.951575235,
+      "abs_sum": 759.281170575,
+      "dtype": "torch.float32",
+      "is_zero": false,
+      "finite": true
+    },
+    {
+      "face": "substrate.fabric.transitions[0].edge_weight",
+      "params": 12288,
+      "l2_norm": 6.872852542,
+      "abs_sum": 576.258080919,
+      "dtype": "torch.float32",
+      "is_zero": false,
+      "finite": true
+    },
+    {
+      "face": "substrate.fabric.decoders[2].edge_weight",
+      "params": 9216,
+      "l2_norm": 6.60311378,
+      "abs_sum": 497.948679825,
+      "dtype": "torch.float32",
+      "is_zero": false,
+      "finite": true
+    },
+    {
+      "face": "substrate.fabric.transitions[1].edge_weight",
+      "params": 9216,
+      "l2_norm": 6.056134316,
+      "abs_sum": 461.005255448,
+      "dtype": "torch.float32",
+      "is_zero": false,
+      "finite": true
+    },
+    {
+      "face": "substrate.fabric.transitions[2].edge_weight",
+      "params": 6144,
+      "l2_norm": 5.054034457,
+      "abs_sum": 315.271845418,
+      "dtype": "torch.float32",
+      "is_zero": false,
+      "finite": true
+    },
+    {
+      "face": "substrate.memory.episode_encoder.edge_weight",
+      "params": 6144,
+      "l2_norm": 8.78426285,
+      "abs_sum": 551.47249201,
+      "dtype": "torch.float32",
+      "is_zero": false,
+      "finite": true
+    },
+    {
+      "face": "substrate.rng_state",
+      "params": 5056,
+      "l2_norm": 7298.198270806,
+      "abs_sum": 316660.0,
+      "dtype": "torch.uint8",
+      "is_zero": false,
+      "finite": true
+    },
+    {
+      "face": "substrate.fabric.laterals[0].edge_weight",
+      "params": 4096,
+      "l2_norm": 144.663332758,
+      "abs_sum": 3655.06289596,
+      "dtype": "torch.float32",
+      "is_zero": false,
+      "finite": true
+    },
+    {
+      "face": "substrate.fabric.laterals[1].edge_weight",
+      "params": 3072,
+      "l2_norm": 95.767147769,
+      "abs_sum": 2418.415168465,
+      "dtype": "torch.float32",
+      "is_zero": false,
+      "finite": true
+    },
+    {
+      "face": "substrate.memory.time_encoder.edge_weight",
+      "params": 3072,
+      "l2_norm": 8.873500062,
+      "abs_sum": 393.504436191,
+      "dtype": "torch.float32",
+      "is_zero": false,
+      "finite": true
+    },
+    {
+      "face": "substrate.fabric.laterals[2].edge_weight",
+      "params": 2048,
+      "l2_norm": 59.51285518,
+      "abs_sum": 1777.660602678,
+      "dtype": "torch.float32",
+      "is_zero": false,
+      "finite": true
+    },
+    {
+      "face": "substrate.memory.provenance_encoder.edge_weight",
+      "params": 1536,
+      "l2_norm": 8.774038024,
+      "abs_sum": 274.672787618,
+      "dtype": "torch.float32",
+      "is_zero": false,
+      "finite": true
+    },
+    {
+      "face": "substrate.memory.episode_readout.edge_weight",
+      "params": 1536,
+      "l2_norm": 0.0,
+      "abs_sum": 0.0,
+      "dtype": "torch.float32",
+      "is_zero": true,
+      "finite": true
+    },
+    {
+      "face": "substrate.memory.time_readout.edge_weight",
+      "params": 768,
+      "l2_norm": 0.0,
+      "abs_sum": 0.0,
+      "dtype": "torch.float32",
+      "is_zero": true,
+      "finite": true
+    },
+    {
+      "face": "substrate.memory.reward_code",
+      "params": 384,
+      "l2_norm": 8.81816284,
+      "abs_sum": 172.799995422,
+      "dtype": "torch.float32",
+      "is_zero": false,
+      "finite": true
+    },
+    {
+      "face": "substrate.memory.provenance_readout.edge_weight",
+      "params": 384,
+      "l2_norm": 0.0,
+      "abs_sum": 0.0,
+      "dtype": "torch.float32",
+      "is_zero": true,
+      "finite": true
+    },
+    {
+      "face": "substrate.motor.bias",
+      "params": 257,
+      "l2_norm": 8.531608602,
+      "abs_sum": 72.8512289,
+      "dtype": "torch.float32",
+      "is_zero": false,
+      "finite": true
+    },
+    {
+      "face": "substrate.fabric.trace_baselines[0]",
+      "params": 256,
+      "l2_norm": 0.069353658,
+      "abs_sum": 0.978786469,
+      "dtype": "torch.float32",
+      "is_zero": false,
+      "finite": true
+    },
+    {
+      "face": "substrate.fabric.trace_baselines[1]",
+      "params": 192,
+      "l2_norm": 0.026831874,
+      "abs_sum": 0.34042415,
+      "dtype": "torch.float32",
+      "is_zero": false,
+      "finite": true
+    },
+    {
+      "face": "substrate.fabric.trace_baselines[2]",
+      "params": 128,
+      "l2_norm": 0.010347392,
+      "abs_sum": 0.101071662,
+      "dtype": "torch.float32",
+      "is_zero": false,
+      "finite": true
+    },
+    {
+      "face": "substrate.memory.reward_readout.edge_weight",
+      "params": 96,
+      "l2_norm": 0.0,
+      "abs_sum": 0.0,
+      "dtype": "torch.float32",
+      "is_zero": true,
+      "finite": true
+    },
+    {
+      "face": "substrate.memory.familiarity_readout.edge_weight",
+      "params": 96,
+      "l2_norm": 0.0,
+      "abs_sum": 0.0,
+      "dtype": "torch.float32",
+      "is_zero": true,
+      "finite": true
+    }
+  ],
+  "started_utc": "2026-09-28T03:10:05Z"
+}
