@@ -594,3 +594,12 @@ ode_modulesi…`＝**本仓已登记的 Windows 符号链接权限族**（与 0
 (b) **改法（不动金样、不用拦截）**：`:175` 从"总数 `before + 1`"改成**按来源归因**——`agents.list().filter(a => a.session.snapshotEvents().some(e => e.type === 'user/message' && e.data.source.kind === 'webhook'))` 长度为 1。⇒ **计数断言过了**，lane 往前走。
 (c) **否证我自己**：在**默认装配姿态**（无 `page.route` 拦截）下第一次执行到 `:200` 的金样比对，**照样红**，diff 仍只有 `+ - treeitem "Default workspace" [expanded]` 一行。⇒ ㊆(b) 那句"很可能是我的拦截改变了装配输出"**错**：那行组行是装配本身就有，与拦截无关。同时这也说明 ㊅(c) 的拦截修法只是把同一件事提前撞上了。
 (d) **剩余这一格是什么**：`EXPECTED`＝`apps/web/tests/expected/github-ready-review/conversation.expected.md`，其结构是 `tree` ＋ `---` ＋ `conversation`（`captureStableAria(page, '[role="tree"][aria-label="Sessions"]')` 捕的是**整棵树**），所以启动会话的 "Default workspace" 组行必然进金样。**三条出路**：(甲) 重录这一份金样（新增的是一行稳定的产品组名、非本机路径，噪声风险低）——**刷金样是你的排期动作，我没做**；(乙) 把该 lane 的 tree 捕获范围缩到目标工作区子树——但那等于为过而改断言面，声称强度下降，我不推荐；(丙) 维持红并把它记成"上游金样对 ⑱/㊺ 机制过期"。**面内红文件不变（6），但这条 lane 的形态已从"两处未知"收敛为"一处已知的一行金样差异"**。
+
+㊉ **宽面 65 红的分堆结果：51 个文件是同一个因，且与 H1 是同一机制的两个时刻 ⇒ 两次待办并成一次**（2026-09-28，从 `.dsh-sbx2/web76.log` 按块解析，未新跑）。
+(a) **先对账再分类**：解析到 **97 个 `FAIL` 块、65 个不同文件**，而汇总行是 **65 文件／44 用例**——块数比用例数多，是因为里面含**文件级/钩子级失败**（`beforeAll` 抛出时没有对应失败用例）。⇒ **块不能当用例计数**；分类一律降到**文件级**做（同 [[log-grouping-must-parse-per-block]] 的教训，这次是它的另一半）。
+(b) **分堆（文件级，清单在 `.dsh-sbx2/wide65-files.txt`）**：
+    - **A 族 51 个文件**：`Error: session snapshot line N: seed system/message at index K message must have system-prompt source`——回放校验器（`packages/test-support/llm-replay/src/index.ts:425`）拒绝 seed 里那条 system 消息，因为它与**当前生成的 system prompt 不再等值**；
+    - B 族 1 个＝aria/金样差异；C 族 4 个＝超时/等待；D 组 10 个＝其它，**其中 4 个我没取到断言消息**（文件级失败）⇒ 这 4 个不在本次结论内，要单独看。
+(c) **因果顺序已核**：`web76.log` 写入时间 **22:08:30**，身份句改动提交 **22:46:03** ⇒ **A 族早于我的改动**，不是我造成的；同一句错文在我独立跑 `session-snapshot` 的日志里也出现（`snap-only.log`）⇒ 它是**这个 fork 里既存的结构问题**：录制语料（`snapshots/**` 的 seed system 消息）相对产品当前 prompt（品牌/persona/工具花名册的改动）已过期。
+(d) **把两件事并成一件**：H1（我造成的 3 条 `system-prompt source` 红）与 A 族 51 个文件**是同一谓词的两次触发**——差别只在"谁把 prompt 改了"。⇒ **一次带凭据的 `DSH_SNAPSHOT=record` 全量重录，同时收口 H1 与 A 族 51 个文件**，宽面 65 红随即收敛为"1 个 aria ＋ 4 个超时 ＋ 10 个其它"。这也解释了历史上那个"75 条子集"为什么存在：它绕开的正是这条 seed 路径。
+(e) **代价与边界（不许把结论说过头）**：全量重录会重写整个录制语料面（半径＝`snapshots/**` 全部），把当日的工具花名册/persona/品牌文本一次性固化；这**必须是你的排期动作**，且重录后应做一次"逐文件 diff 审"而不是直接提交（我 ㊂ 那次失败运行已经示范了"半截夹具"长什么样）。**A 族的成因归属"语料过期"这一步是读错文＋谓词位置＋时间戳三件对齐得到的，但"重录后 51 个文件全绿"仍未验证——那是待做的断言，不是结论。**
