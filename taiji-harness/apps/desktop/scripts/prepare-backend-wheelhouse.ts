@@ -197,14 +197,20 @@ if (invokedDirectly) {
     return index === -1 ? undefined : args[index + 1]
   }
   const pythonExec = flag('--python') ?? 'python'
+  const out = flag('--out') ?? join(resolve('apps/desktop/.desktop-build'), 'backend')
+  const requirements = flag('--requirements')
+  const torchIndex = flag('--torch-index')
+  const pypiIndex = flag('--pypi-index')
+  const platformTag = flag('--platform-tag')
+  const pythonVersionTag = flag('--python-version-tag')
   const manifest = await prepareBackendWheelhouse({
-    out: flag('--out') ?? join(resolve('apps/desktop/.desktop-build'), 'backend'),
+    out,
     pythonExec,
-    ...(flag('--requirements') === undefined ? {} : { requirements: flag('--requirements') }),
-    ...(flag('--torch-index') === undefined ? {} : { torchIndex: flag('--torch-index') }),
-    ...(flag('--pypi-index') === undefined ? {} : { pypiIndex: flag('--pypi-index') }),
-    ...(flag('--platform-tag') === undefined ? {} : { platformTag: flag('--platform-tag') }),
-    ...(flag('--python-version-tag') === undefined ? {} : { pythonVersionTag: flag('--python-version-tag') }),
+    ...(requirements === undefined ? {} : { requirements }),
+    ...(torchIndex === undefined ? {} : { torchIndex }),
+    ...(pypiIndex === undefined ? {} : { pypiIndex }),
+    ...(platformTag === undefined ? {} : { platformTag }),
+    ...(pythonVersionTag === undefined ? {} : { pythonVersionTag }),
     force: args.includes('--force'),
   })
   console.log(`desktop backend: wheelhouse ready — ${manifest.totals.count} wheels, ${(manifest.totals.bytes / 1_048_576).toFixed(1)} MB`)
