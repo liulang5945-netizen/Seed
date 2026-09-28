@@ -122,9 +122,13 @@ describe('web e2e: /goal human transcript presentation', () => {
     await expect.poll(() => resultRow.count(), { timeout: 10_000 }).toBe(1)
     await expect.poll(() => page.locator('[data-phase="active"]').count()).toBe(1)
 
-    const sessions = scaffold.ctx.sessions.list()
-    expect(sessions).toHaveLength(1)
-    const persisted = sessions[0]?.snapshotEvents() ?? []
+    // The Hero opens its own blank Session at boot, so the roster size is not this lane's claim.
+    // Proven discriminator: only the Session that ran the command carries its lifecycle events.
+    const commandSessions = scaffold.ctx.sessions.list().filter(row => (
+      row.snapshotEvents().some(event => event.type === 'command/run' || event.type === 'command/done')
+    ))
+    expect(commandSessions).toHaveLength(1)
+    const persisted = commandSessions[0]?.snapshotEvents() ?? []
     expect(persisted.filter(event => event.type === 'command/run' || event.type === 'command/done')
       .map(event => event.type)).toEqual(['command/run', 'command/done'])
     expect(persisted.some(event => event.type === 'user/message')).toBe(false)

@@ -612,3 +612,9 @@ ode_modulesi…`＝**本仓已登记的 Windows 符号链接权限族**（与 0
 ⇒ **宽面 65 的完整账（按文件唯一归类，合计对账＝65；清单 `.dsh-sbx2/wide-mutex.txt`）**：**A 录制语料不符 52**（`system-prompt source` 51 ＋ `fixture not fully consumed 5/14` 1）＝**一次带凭据全量重录的覆盖面**；**B aria/金样 1**（`sidebar-subagent-activity`）；**C 超时/等待 3**（`session-archive-active`/`skill-tool-row`/`tool-details`）；**Y pnpm PATH 1**（`hmr-live`＝W5 同族，但它起 dev watcher 回写 `apps/web/dist`，修法不顺手做）；**D 其它 8**（`chat-scroll-contract`/`github-ready-review`(修前形态)/`goal-command-presentation`/`live-job-stream`/`markdown-images`/`pwa-manifest`(修前形态)/`preview-boot`(前置未跑时)/`reference-composer`）。**我这一格先算错过一次**：首版按"各族自己走去重再相加"得 51＋1＋4＋10＝**66 ≠ 65**，是**跨族重复计数**（同一文件可有不止一种谓词的块），改成按文件优先唯一归类后才闭合 ⇒ **判据：分堆数字发布前必须核 `sum(families)==总文件数`**。
 
 ㊋ **一条流程自计错误（登记，不改结论）**：上一笔 `b60c146e` 的提交信息说"更正 08 ㊊+㊉ 数字对账"，但当时**08 的补丁 python 里一个 assert 抛了、我没看退出码就继续跑了后面的命令**，结果只有 G5 那份真改了、08 里那句话仍是错数——现在用"按索引整行替换"补正（不靠猜字符串匹配）。⇒ 判据：**多步修补链路上，每一步的 rc 都要显式看过再提交**；本次踩的正是我自己那条"门与提交之间不许用 `;` 串"的邻近形态——**rc 被后续命令盖掉**。
+
+㊌ **`goal-command-presentation` 用"先证谓词再改断言"的正规顺序修掉 ⇒ 面内红文件 6→5**（2026-09-28，`Tests 2 passed (2)`、`GCPF_RC=0`）。
+(a) **探针先跑**（吸取 ㊈/㊋ 的教训，这次一步到位、无反斜杠转义）：把两条会话的事件类型打出来——`session-0bfe…：permission/preset,sandbox/mode,approval/policy`；`session-b24c…：同三项 ＋ command/run,command/done`。⇒ **区分谓词成立且唯一**：跑过命令的那条才有命令生命周期事件；另一条就是 Hero 自动开的空白会话（㊺ 同因，本 fork 第 3 条被它撞红的 lane）。
+(b) **改法**：`:126` 的 `sessions.list()).toHaveLength(1)` 改成"过滤出拥有 `command/run`/`command/done` 事件的会话，其数量＝1"，后文的持久化断言改用这条会话。⇒ lane 声称的东西没变（**reload 后命令生命周期被完整持久化、且只有一份**），只是不再把"启动时 roster 总数"当成自己的前提。**没有动金样、没有用拦截式前提**。
+(c) **门**：`run-oxlint .` 见本笔提交信息；`git diff` 只有该 lane 与两份计划文档。
+(d) **可复用的下一步**：D 组里 `chat-scroll-contract`（两处 `expected false to be true`）与 `live-job-stream`（`published no live Agent`）形状不同，**不要照搬这个谓词**——同一顺序：先探针证它自己的区分点，再改断言。
