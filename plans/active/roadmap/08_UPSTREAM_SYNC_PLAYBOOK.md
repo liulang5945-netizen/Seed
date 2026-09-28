@@ -618,3 +618,14 @@ ode_modulesi…`＝**本仓已登记的 Windows 符号链接权限族**（与 0
 (b) **改法**：`:126` 的 `sessions.list()).toHaveLength(1)` 改成"过滤出拥有 `command/run`/`command/done` 事件的会话，其数量＝1"，后文的持久化断言改用这条会话。⇒ lane 声称的东西没变（**reload 后命令生命周期被完整持久化、且只有一份**），只是不再把"启动时 roster 总数"当成自己的前提。**没有动金样、没有用拦截式前提**。
 (c) **门**：`run-oxlint .` 见本笔提交信息；`git diff` 只有该 lane 与两份计划文档。
 (d) **可复用的下一步**：D 组里 `chat-scroll-contract`（两处 `expected false to be true`）与 `live-job-stream`（`published no live Agent`）形状不同，**不要照搬这个谓词**——同一顺序：先探针证它自己的区分点，再改断言。
+
+㊍ **剩余 5 个红的现状重测（修完之后，非修复前批次）＋三条 aria 金样红合并成"一个产品事实"**（2026-09-28，单跑 5 文件：`Tests 5 failed｜6 passed (11)`、55.99 s、`REM5_RC=1`；diff 摘要 `.dsh-sbx2/golden3.txt`）。
+(a) **先更新现状**（此前 G5/08 的读数取自 `web75c`／`web76`，都在本轮多项修复之前）：`reference-composer` 那条 `reference target session is unavailable` **已不在失败集合**（6 tests 只剩 1 红）；`sidebar-subagent-activity` 的 `DomainError: workspace 表无该记录可更新` **也不再复现**，它现在红在金样比对。⇒ 之前登记的两族各少一条，**别再按旧账引用**。
+(b) **合并后的真问题**：三处 aria 金样的 diff 都指向同一件事——**启动时 Hero 自动开的那条 "Default workspace" 会话漏进了用户可见面**：
+    - `github-ready-review`：`+ treeitem "Default workspace" [expanded]`（侧栏 Sessions 树）；
+    - `sidebar-subagent-activity`：同样 `+ treeitem "Default workspace" [expanded]`，并连带改变原有行的嵌套层级；
+    - `reference-composer`：`+ option "session-{{uuid}} C:\…\Documents	aiji-harness\Default workspace …"`（**`@` 引用下拉里出现一条用户从未创建的会话**，且带本机路径，已被 `{{workspace}}`/`{{uuid}}` 归一但条目本身多出来）。
+    ⇒ 这不是"金样该刷"的技术问题，而是一个**产品口径**：首启即存在一条 untitled/Default workspace 空会话，并出现在侧栏与引用候选里。它与 ㊺（`sessionless-header` 前提被吃）、㊈（`github-ready-review` roster 多一个 Agent）、㊌（`goal-command-presentation` roster 多一条会话）**同因**，只是这里露到了 UI 表面上。
+(c) **因此三条金样红的正确处置是同一个决定**，不是三次刷文件：**(问 1)** 首启要不要自动开这条会话？不要 ⇒ 产品侧去掉自动开（或延迟到用户手势），三处金样**自动对上现网**、零金样改动；要 ⇒ 承认它是交付形态，**按 (甲) 重录这三份金样**（每份 diff 就是这一行/一项），并且我登记"引用候选里出现未创建会话"为已知产品形态（它对用户是否可接受需你判断）。**(问 2)** 若保留，是否至少在 `@` 引用候选里**过滤掉空白无标题会话**（这是用户可感知的质量点，不是测试问题）。
+(d) **另外两条各自独立**：`markdown-images:258` `expected undefined to be 200`（图片取回，diff 里 **0 行金样差异** ⇒ 与 (b) 无关，属产品层 Windows 限制的既有登记）；`preview-boot:262` 是 30 s 定位器超时（前置已补，见 ㊜(b)），**需自己的一次探针**才能定是"worker 没起"还是"起了但页面没进可交互"。
+(e) **我不擅自做的事**：不刷这三份金样（金样/夹具刷新是你的排期动作），不改产品自动开会话的行为（那是首启形态的口径，不是 bug 修复）。⇒ 面内红文件维持 **5**，但其中 **3 个已由"未知红"变成"一个待裁决定的三个投影"**。
