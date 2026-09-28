@@ -1,0 +1,1596 @@
+{
+  "format": "taiji-a27-lock-rule-pricing-v1",
+  "prereg": "plans/reference/PLAN-A-27_three-gaps-decision-brief_20260928.md（三线扫完后的下一刀）",
+  "manifest": "plans/manifests/r2_copy_surface_extension_v3_position_random.json",
+  "manifest_sha256": "b162ff091630f64a8cac986184729ff7894887f4806c923cc12b301ce5ae4fee",
+  "checkpoint": "checkpoints/seed_beta.pt",
+  "circuit": "output/taiji_r2_copy_circuit_chat/judge/circuit-final.pt",
+  "circuit_sha256": "1cfe5961c300485dc08078a9deb82d0f31acbb5f8c63d0685d18366832d741a3",
+  "items": 104,
+  "answered": 104,
+  "apply_rule": null,
+  "query_scope": "question",
+  "generated_hits": null,
+  "rules": {
+    "cue_only": {
+      "weights": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "locks": 104,
+      "on_labelled": 52,
+      "pick_rate": 0.5,
+      "by_position": {
+        "answer_first": {
+          "locks": 52,
+          "pick_correct": 47
+        },
+        "answer_second": {
+          "locks": 52,
+          "pick_correct": 5
+        }
+      }
+    },
+    "byte_overlap": {
+      "weights": [
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0
+      ],
+      "locks": 104,
+      "on_labelled": 75,
+      "pick_rate": 0.7212,
+      "by_position": {
+        "answer_first": {
+          "locks": 52,
+          "pick_correct": 52
+        },
+        "answer_second": {
+          "locks": 52,
+          "pick_correct": 23
+        }
+      }
+    },
+    "cue_plus_overlap": {
+      "weights": [
+        1.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0
+      ],
+      "locks": 104,
+      "on_labelled": 74,
+      "pick_rate": 0.7115,
+      "by_position": {
+        "answer_first": {
+          "locks": 52,
+          "pick_correct": 49
+        },
+        "answer_second": {
+          "locks": 52,
+          "pick_correct": 25
+        }
+      }
+    },
+    "overlap_plus_content": {
+      "weights": [
+        0.0,
+        1.0,
+        1.0,
+        0.0,
+        0.0
+      ],
+      "locks": 104,
+      "on_labelled": 87,
+      "pick_rate": 0.8365,
+      "by_position": {
+        "answer_first": {
+          "locks": 52,
+          "pick_correct": 42
+        },
+        "answer_second": {
+          "locks": 52,
+          "pick_correct": 45
+        }
+      }
+    },
+    "recency_only": {
+      "weights": [
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0
+      ],
+      "locks": 104,
+      "on_labelled": 52,
+      "pick_rate": 0.5,
+      "by_position": {
+        "answer_first": {
+          "locks": 52,
+          "pick_correct": 0
+        },
+        "answer_second": {
+          "locks": 52,
+          "pick_correct": 52
+        }
+      }
+    }
+  },
+  "conversion_note": {
+    "conditional_emission_rate": 0.4255,
+    "expected_hits_if_applied_latest_half": 44.26,
+    "caveat": "换算≠实测：真命中要看 `--apply-rule` 那一跑"
+  },
+  "rows": [
+    {
+      "id": "V001",
+      "answer_tell_position": 1,
+      "events": 2,
+      "labelled_index": 1,
+      "production_picked": 0,
+      "picked_by_rule": {
+        "cue_only": 0,
+        "byte_overlap": 0,
+        "cue_plus_overlap": 0,
+        "overlap_plus_content": 1,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V002",
+      "answer_tell_position": 0,
+      "events": 2,
+      "labelled_index": 0,
+      "production_picked": 0,
+      "picked_by_rule": {
+        "cue_only": 0,
+        "byte_overlap": 0,
+        "cue_plus_overlap": 0,
+        "overlap_plus_content": 0,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V003",
+      "answer_tell_position": 1,
+      "events": 2,
+      "labelled_index": 1,
+      "production_picked": 0,
+      "picked_by_rule": {
+        "cue_only": 0,
+        "byte_overlap": 0,
+        "cue_plus_overlap": 0,
+        "overlap_plus_content": 1,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V004",
+      "answer_tell_position": 0,
+      "events": 2,
+      "labelled_index": 0,
+      "production_picked": 0,
+      "picked_by_rule": {
+        "cue_only": 0,
+        "byte_overlap": 0,
+        "cue_plus_overlap": 0,
+        "overlap_plus_content": 1,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V005",
+      "answer_tell_position": 0,
+      "events": 2,
+      "labelled_index": 0,
+      "production_picked": 0,
+      "picked_by_rule": {
+        "cue_only": 0,
+        "byte_overlap": 0,
+        "cue_plus_overlap": 0,
+        "overlap_plus_content": 1,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V006",
+      "answer_tell_position": 0,
+      "events": 2,
+      "labelled_index": 0,
+      "production_picked": 0,
+      "picked_by_rule": {
+        "cue_only": 0,
+        "byte_overlap": 0,
+        "cue_plus_overlap": 0,
+        "overlap_plus_content": 0,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V007",
+      "answer_tell_position": 1,
+      "events": 2,
+      "labelled_index": 1,
+      "production_picked": 0,
+      "picked_by_rule": {
+        "cue_only": 0,
+        "byte_overlap": 0,
+        "cue_plus_overlap": 0,
+        "overlap_plus_content": 1,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V008",
+      "answer_tell_position": 0,
+      "events": 2,
+      "labelled_index": 0,
+      "production_picked": 0,
+      "picked_by_rule": {
+        "cue_only": 0,
+        "byte_overlap": 0,
+        "cue_plus_overlap": 0,
+        "overlap_plus_content": 0,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V009",
+      "answer_tell_position": 0,
+      "events": 2,
+      "labelled_index": 0,
+      "production_picked": 0,
+      "picked_by_rule": {
+        "cue_only": 0,
+        "byte_overlap": 0,
+        "cue_plus_overlap": 0,
+        "overlap_plus_content": 0,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V010",
+      "answer_tell_position": 1,
+      "events": 2,
+      "labelled_index": 1,
+      "production_picked": 0,
+      "picked_by_rule": {
+        "cue_only": 0,
+        "byte_overlap": 1,
+        "cue_plus_overlap": 1,
+        "overlap_plus_content": 1,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V011",
+      "answer_tell_position": 1,
+      "events": 2,
+      "labelled_index": 1,
+      "production_picked": 0,
+      "picked_by_rule": {
+        "cue_only": 0,
+        "byte_overlap": 0,
+        "cue_plus_overlap": 0,
+        "overlap_plus_content": 1,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V012",
+      "answer_tell_position": 1,
+      "events": 2,
+      "labelled_index": 1,
+      "production_picked": 0,
+      "picked_by_rule": {
+        "cue_only": 0,
+        "byte_overlap": 1,
+        "cue_plus_overlap": 1,
+        "overlap_plus_content": 1,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V013",
+      "answer_tell_position": 1,
+      "events": 2,
+      "labelled_index": 1,
+      "production_picked": 0,
+      "picked_by_rule": {
+        "cue_only": 0,
+        "byte_overlap": 1,
+        "cue_plus_overlap": 1,
+        "overlap_plus_content": 1,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V014",
+      "answer_tell_position": 1,
+      "events": 2,
+      "labelled_index": 1,
+      "production_picked": 0,
+      "picked_by_rule": {
+        "cue_only": 0,
+        "byte_overlap": 1,
+        "cue_plus_overlap": 1,
+        "overlap_plus_content": 1,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V015",
+      "answer_tell_position": 1,
+      "events": 2,
+      "labelled_index": 1,
+      "production_picked": 0,
+      "picked_by_rule": {
+        "cue_only": 0,
+        "byte_overlap": 1,
+        "cue_plus_overlap": 1,
+        "overlap_plus_content": 1,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V016",
+      "answer_tell_position": 1,
+      "events": 2,
+      "labelled_index": 1,
+      "production_picked": 1,
+      "picked_by_rule": {
+        "cue_only": 1,
+        "byte_overlap": 1,
+        "cue_plus_overlap": 1,
+        "overlap_plus_content": 1,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V017",
+      "answer_tell_position": 1,
+      "events": 2,
+      "labelled_index": 1,
+      "production_picked": 0,
+      "picked_by_rule": {
+        "cue_only": 0,
+        "byte_overlap": 0,
+        "cue_plus_overlap": 0,
+        "overlap_plus_content": 1,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V018",
+      "answer_tell_position": 0,
+      "events": 2,
+      "labelled_index": 0,
+      "production_picked": 0,
+      "picked_by_rule": {
+        "cue_only": 0,
+        "byte_overlap": 0,
+        "cue_plus_overlap": 0,
+        "overlap_plus_content": 1,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V019",
+      "answer_tell_position": 1,
+      "events": 2,
+      "labelled_index": 1,
+      "production_picked": 0,
+      "picked_by_rule": {
+        "cue_only": 0,
+        "byte_overlap": 0,
+        "cue_plus_overlap": 0,
+        "overlap_plus_content": 1,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V020",
+      "answer_tell_position": 0,
+      "events": 2,
+      "labelled_index": 0,
+      "production_picked": 0,
+      "picked_by_rule": {
+        "cue_only": 0,
+        "byte_overlap": 0,
+        "cue_plus_overlap": 0,
+        "overlap_plus_content": 0,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V021",
+      "answer_tell_position": 1,
+      "events": 2,
+      "labelled_index": 1,
+      "production_picked": 0,
+      "picked_by_rule": {
+        "cue_only": 0,
+        "byte_overlap": 0,
+        "cue_plus_overlap": 0,
+        "overlap_plus_content": 0,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V022",
+      "answer_tell_position": 1,
+      "events": 2,
+      "labelled_index": 1,
+      "production_picked": 0,
+      "picked_by_rule": {
+        "cue_only": 0,
+        "byte_overlap": 0,
+        "cue_plus_overlap": 0,
+        "overlap_plus_content": 1,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V023",
+      "answer_tell_position": 0,
+      "events": 2,
+      "labelled_index": 0,
+      "production_picked": 0,
+      "picked_by_rule": {
+        "cue_only": 0,
+        "byte_overlap": 0,
+        "cue_plus_overlap": 0,
+        "overlap_plus_content": 0,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V024",
+      "answer_tell_position": 0,
+      "events": 2,
+      "labelled_index": 0,
+      "production_picked": 0,
+      "picked_by_rule": {
+        "cue_only": 0,
+        "byte_overlap": 0,
+        "cue_plus_overlap": 0,
+        "overlap_plus_content": 0,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V025",
+      "answer_tell_position": 1,
+      "events": 2,
+      "labelled_index": 1,
+      "production_picked": 0,
+      "picked_by_rule": {
+        "cue_only": 0,
+        "byte_overlap": 1,
+        "cue_plus_overlap": 1,
+        "overlap_plus_content": 1,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V026",
+      "answer_tell_position": 1,
+      "events": 2,
+      "labelled_index": 1,
+      "production_picked": 0,
+      "picked_by_rule": {
+        "cue_only": 0,
+        "byte_overlap": 1,
+        "cue_plus_overlap": 1,
+        "overlap_plus_content": 1,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V027",
+      "answer_tell_position": 0,
+      "events": 2,
+      "labelled_index": 0,
+      "production_picked": 0,
+      "picked_by_rule": {
+        "cue_only": 0,
+        "byte_overlap": 0,
+        "cue_plus_overlap": 0,
+        "overlap_plus_content": 0,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V028",
+      "answer_tell_position": 0,
+      "events": 2,
+      "labelled_index": 0,
+      "production_picked": 0,
+      "picked_by_rule": {
+        "cue_only": 0,
+        "byte_overlap": 0,
+        "cue_plus_overlap": 0,
+        "overlap_plus_content": 0,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V029",
+      "answer_tell_position": 1,
+      "events": 2,
+      "labelled_index": 1,
+      "production_picked": 1,
+      "picked_by_rule": {
+        "cue_only": 1,
+        "byte_overlap": 1,
+        "cue_plus_overlap": 1,
+        "overlap_plus_content": 1,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V030",
+      "answer_tell_position": 0,
+      "events": 2,
+      "labelled_index": 0,
+      "production_picked": 0,
+      "picked_by_rule": {
+        "cue_only": 0,
+        "byte_overlap": 0,
+        "cue_plus_overlap": 0,
+        "overlap_plus_content": 0,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V031",
+      "answer_tell_position": 1,
+      "events": 2,
+      "labelled_index": 1,
+      "production_picked": 0,
+      "picked_by_rule": {
+        "cue_only": 0,
+        "byte_overlap": 1,
+        "cue_plus_overlap": 1,
+        "overlap_plus_content": 1,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V032",
+      "answer_tell_position": 1,
+      "events": 2,
+      "labelled_index": 1,
+      "production_picked": 0,
+      "picked_by_rule": {
+        "cue_only": 0,
+        "byte_overlap": 1,
+        "cue_plus_overlap": 1,
+        "overlap_plus_content": 1,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V033",
+      "answer_tell_position": 0,
+      "events": 2,
+      "labelled_index": 0,
+      "production_picked": 1,
+      "picked_by_rule": {
+        "cue_only": 1,
+        "byte_overlap": 0,
+        "cue_plus_overlap": 1,
+        "overlap_plus_content": 0,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V034",
+      "answer_tell_position": 1,
+      "events": 2,
+      "labelled_index": 1,
+      "production_picked": 0,
+      "picked_by_rule": {
+        "cue_only": 0,
+        "byte_overlap": 0,
+        "cue_plus_overlap": 0,
+        "overlap_plus_content": 1,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V035",
+      "answer_tell_position": 0,
+      "events": 2,
+      "labelled_index": 0,
+      "production_picked": 1,
+      "picked_by_rule": {
+        "cue_only": 1,
+        "byte_overlap": 0,
+        "cue_plus_overlap": 1,
+        "overlap_plus_content": 0,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V036",
+      "answer_tell_position": 0,
+      "events": 2,
+      "labelled_index": 0,
+      "production_picked": 0,
+      "picked_by_rule": {
+        "cue_only": 0,
+        "byte_overlap": 0,
+        "cue_plus_overlap": 0,
+        "overlap_plus_content": 1,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V037",
+      "answer_tell_position": 0,
+      "events": 2,
+      "labelled_index": 0,
+      "production_picked": 0,
+      "picked_by_rule": {
+        "cue_only": 0,
+        "byte_overlap": 0,
+        "cue_plus_overlap": 0,
+        "overlap_plus_content": 1,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V038",
+      "answer_tell_position": 0,
+      "events": 2,
+      "labelled_index": 0,
+      "production_picked": 0,
+      "picked_by_rule": {
+        "cue_only": 0,
+        "byte_overlap": 0,
+        "cue_plus_overlap": 0,
+        "overlap_plus_content": 0,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V039",
+      "answer_tell_position": 1,
+      "events": 2,
+      "labelled_index": 1,
+      "production_picked": 1,
+      "picked_by_rule": {
+        "cue_only": 1,
+        "byte_overlap": 0,
+        "cue_plus_overlap": 1,
+        "overlap_plus_content": 1,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V040",
+      "answer_tell_position": 1,
+      "events": 2,
+      "labelled_index": 1,
+      "production_picked": 0,
+      "picked_by_rule": {
+        "cue_only": 0,
+        "byte_overlap": 0,
+        "cue_plus_overlap": 0,
+        "overlap_plus_content": 1,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V041",
+      "answer_tell_position": 1,
+      "events": 2,
+      "labelled_index": 1,
+      "production_picked": 0,
+      "picked_by_rule": {
+        "cue_only": 0,
+        "byte_overlap": 1,
+        "cue_plus_overlap": 1,
+        "overlap_plus_content": 1,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V042",
+      "answer_tell_position": 1,
+      "events": 2,
+      "labelled_index": 1,
+      "production_picked": 0,
+      "picked_by_rule": {
+        "cue_only": 0,
+        "byte_overlap": 1,
+        "cue_plus_overlap": 1,
+        "overlap_plus_content": 1,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V043",
+      "answer_tell_position": 1,
+      "events": 2,
+      "labelled_index": 1,
+      "production_picked": 0,
+      "picked_by_rule": {
+        "cue_only": 0,
+        "byte_overlap": 0,
+        "cue_plus_overlap": 0,
+        "overlap_plus_content": 1,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V044",
+      "answer_tell_position": 1,
+      "events": 2,
+      "labelled_index": 1,
+      "production_picked": 0,
+      "picked_by_rule": {
+        "cue_only": 0,
+        "byte_overlap": 1,
+        "cue_plus_overlap": 1,
+        "overlap_plus_content": 1,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V045",
+      "answer_tell_position": 1,
+      "events": 2,
+      "labelled_index": 1,
+      "production_picked": 0,
+      "picked_by_rule": {
+        "cue_only": 0,
+        "byte_overlap": 1,
+        "cue_plus_overlap": 1,
+        "overlap_plus_content": 1,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V046",
+      "answer_tell_position": 0,
+      "events": 2,
+      "labelled_index": 0,
+      "production_picked": 0,
+      "picked_by_rule": {
+        "cue_only": 0,
+        "byte_overlap": 0,
+        "cue_plus_overlap": 0,
+        "overlap_plus_content": 0,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V047",
+      "answer_tell_position": 1,
+      "events": 2,
+      "labelled_index": 1,
+      "production_picked": 0,
+      "picked_by_rule": {
+        "cue_only": 0,
+        "byte_overlap": 1,
+        "cue_plus_overlap": 1,
+        "overlap_plus_content": 1,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V048",
+      "answer_tell_position": 0,
+      "events": 2,
+      "labelled_index": 0,
+      "production_picked": 0,
+      "picked_by_rule": {
+        "cue_only": 0,
+        "byte_overlap": 0,
+        "cue_plus_overlap": 0,
+        "overlap_plus_content": 0,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V049",
+      "answer_tell_position": 0,
+      "events": 2,
+      "labelled_index": 0,
+      "production_picked": 0,
+      "picked_by_rule": {
+        "cue_only": 0,
+        "byte_overlap": 0,
+        "cue_plus_overlap": 0,
+        "overlap_plus_content": 0,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V050",
+      "answer_tell_position": 1,
+      "events": 2,
+      "labelled_index": 1,
+      "production_picked": 0,
+      "picked_by_rule": {
+        "cue_only": 0,
+        "byte_overlap": 0,
+        "cue_plus_overlap": 0,
+        "overlap_plus_content": 0,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V051",
+      "answer_tell_position": 1,
+      "events": 2,
+      "labelled_index": 1,
+      "production_picked": 0,
+      "picked_by_rule": {
+        "cue_only": 0,
+        "byte_overlap": 0,
+        "cue_plus_overlap": 0,
+        "overlap_plus_content": 1,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V052",
+      "answer_tell_position": 1,
+      "events": 2,
+      "labelled_index": 1,
+      "production_picked": 0,
+      "picked_by_rule": {
+        "cue_only": 0,
+        "byte_overlap": 0,
+        "cue_plus_overlap": 0,
+        "overlap_plus_content": 0,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V053",
+      "answer_tell_position": 1,
+      "events": 2,
+      "labelled_index": 1,
+      "production_picked": 0,
+      "picked_by_rule": {
+        "cue_only": 0,
+        "byte_overlap": 0,
+        "cue_plus_overlap": 0,
+        "overlap_plus_content": 1,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V054",
+      "answer_tell_position": 1,
+      "events": 2,
+      "labelled_index": 1,
+      "production_picked": 0,
+      "picked_by_rule": {
+        "cue_only": 0,
+        "byte_overlap": 0,
+        "cue_plus_overlap": 0,
+        "overlap_plus_content": 1,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V055",
+      "answer_tell_position": 0,
+      "events": 2,
+      "labelled_index": 0,
+      "production_picked": 0,
+      "picked_by_rule": {
+        "cue_only": 0,
+        "byte_overlap": 0,
+        "cue_plus_overlap": 0,
+        "overlap_plus_content": 0,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V056",
+      "answer_tell_position": 1,
+      "events": 2,
+      "labelled_index": 1,
+      "production_picked": 1,
+      "picked_by_rule": {
+        "cue_only": 1,
+        "byte_overlap": 0,
+        "cue_plus_overlap": 1,
+        "overlap_plus_content": 1,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V057",
+      "answer_tell_position": 0,
+      "events": 2,
+      "labelled_index": 0,
+      "production_picked": 1,
+      "picked_by_rule": {
+        "cue_only": 1,
+        "byte_overlap": 0,
+        "cue_plus_overlap": 0,
+        "overlap_plus_content": 0,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V058",
+      "answer_tell_position": 0,
+      "events": 2,
+      "labelled_index": 0,
+      "production_picked": 0,
+      "picked_by_rule": {
+        "cue_only": 0,
+        "byte_overlap": 0,
+        "cue_plus_overlap": 0,
+        "overlap_plus_content": 0,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V059",
+      "answer_tell_position": 1,
+      "events": 2,
+      "labelled_index": 1,
+      "production_picked": 0,
+      "picked_by_rule": {
+        "cue_only": 0,
+        "byte_overlap": 0,
+        "cue_plus_overlap": 0,
+        "overlap_plus_content": 1,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V060",
+      "answer_tell_position": 1,
+      "events": 2,
+      "labelled_index": 1,
+      "production_picked": 0,
+      "picked_by_rule": {
+        "cue_only": 0,
+        "byte_overlap": 1,
+        "cue_plus_overlap": 1,
+        "overlap_plus_content": 1,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V061",
+      "answer_tell_position": 1,
+      "events": 2,
+      "labelled_index": 1,
+      "production_picked": 0,
+      "picked_by_rule": {
+        "cue_only": 0,
+        "byte_overlap": 1,
+        "cue_plus_overlap": 1,
+        "overlap_plus_content": 1,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V062",
+      "answer_tell_position": 1,
+      "events": 2,
+      "labelled_index": 1,
+      "production_picked": 0,
+      "picked_by_rule": {
+        "cue_only": 0,
+        "byte_overlap": 1,
+        "cue_plus_overlap": 1,
+        "overlap_plus_content": 1,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V063",
+      "answer_tell_position": 0,
+      "events": 2,
+      "labelled_index": 0,
+      "production_picked": 1,
+      "picked_by_rule": {
+        "cue_only": 1,
+        "byte_overlap": 0,
+        "cue_plus_overlap": 0,
+        "overlap_plus_content": 0,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V064",
+      "answer_tell_position": 0,
+      "events": 2,
+      "labelled_index": 0,
+      "production_picked": 0,
+      "picked_by_rule": {
+        "cue_only": 0,
+        "byte_overlap": 0,
+        "cue_plus_overlap": 0,
+        "overlap_plus_content": 0,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V065",
+      "answer_tell_position": 0,
+      "events": 2,
+      "labelled_index": 0,
+      "production_picked": 0,
+      "picked_by_rule": {
+        "cue_only": 0,
+        "byte_overlap": 0,
+        "cue_plus_overlap": 0,
+        "overlap_plus_content": 0,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V066",
+      "answer_tell_position": 0,
+      "events": 2,
+      "labelled_index": 0,
+      "production_picked": 0,
+      "picked_by_rule": {
+        "cue_only": 0,
+        "byte_overlap": 0,
+        "cue_plus_overlap": 0,
+        "overlap_plus_content": 0,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V067",
+      "answer_tell_position": 1,
+      "events": 2,
+      "labelled_index": 1,
+      "production_picked": 0,
+      "picked_by_rule": {
+        "cue_only": 0,
+        "byte_overlap": 0,
+        "cue_plus_overlap": 0,
+        "overlap_plus_content": 1,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V068",
+      "answer_tell_position": 0,
+      "events": 2,
+      "labelled_index": 0,
+      "production_picked": 1,
+      "picked_by_rule": {
+        "cue_only": 1,
+        "byte_overlap": 0,
+        "cue_plus_overlap": 1,
+        "overlap_plus_content": 1,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V069",
+      "answer_tell_position": 1,
+      "events": 2,
+      "labelled_index": 1,
+      "production_picked": 0,
+      "picked_by_rule": {
+        "cue_only": 0,
+        "byte_overlap": 0,
+        "cue_plus_overlap": 0,
+        "overlap_plus_content": 0,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V070",
+      "answer_tell_position": 0,
+      "events": 2,
+      "labelled_index": 0,
+      "production_picked": 0,
+      "picked_by_rule": {
+        "cue_only": 0,
+        "byte_overlap": 0,
+        "cue_plus_overlap": 0,
+        "overlap_plus_content": 1,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V071",
+      "answer_tell_position": 0,
+      "events": 2,
+      "labelled_index": 0,
+      "production_picked": 0,
+      "picked_by_rule": {
+        "cue_only": 0,
+        "byte_overlap": 0,
+        "cue_plus_overlap": 0,
+        "overlap_plus_content": 0,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V072",
+      "answer_tell_position": 0,
+      "events": 2,
+      "labelled_index": 0,
+      "production_picked": 0,
+      "picked_by_rule": {
+        "cue_only": 0,
+        "byte_overlap": 0,
+        "cue_plus_overlap": 0,
+        "overlap_plus_content": 0,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V073",
+      "answer_tell_position": 0,
+      "events": 2,
+      "labelled_index": 0,
+      "production_picked": 0,
+      "picked_by_rule": {
+        "cue_only": 0,
+        "byte_overlap": 0,
+        "cue_plus_overlap": 0,
+        "overlap_plus_content": 0,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V074",
+      "answer_tell_position": 0,
+      "events": 2,
+      "labelled_index": 0,
+      "production_picked": 0,
+      "picked_by_rule": {
+        "cue_only": 0,
+        "byte_overlap": 0,
+        "cue_plus_overlap": 0,
+        "overlap_plus_content": 0,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V075",
+      "answer_tell_position": 0,
+      "events": 2,
+      "labelled_index": 0,
+      "production_picked": 0,
+      "picked_by_rule": {
+        "cue_only": 0,
+        "byte_overlap": 0,
+        "cue_plus_overlap": 0,
+        "overlap_plus_content": 0,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V076",
+      "answer_tell_position": 1,
+      "events": 2,
+      "labelled_index": 1,
+      "production_picked": 1,
+      "picked_by_rule": {
+        "cue_only": 1,
+        "byte_overlap": 1,
+        "cue_plus_overlap": 1,
+        "overlap_plus_content": 1,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V077",
+      "answer_tell_position": 0,
+      "events": 2,
+      "labelled_index": 0,
+      "production_picked": 0,
+      "picked_by_rule": {
+        "cue_only": 0,
+        "byte_overlap": 0,
+        "cue_plus_overlap": 0,
+        "overlap_plus_content": 0,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V078",
+      "answer_tell_position": 0,
+      "events": 2,
+      "labelled_index": 0,
+      "production_picked": 0,
+      "picked_by_rule": {
+        "cue_only": 0,
+        "byte_overlap": 0,
+        "cue_plus_overlap": 0,
+        "overlap_plus_content": 0,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V079",
+      "answer_tell_position": 0,
+      "events": 2,
+      "labelled_index": 0,
+      "production_picked": 0,
+      "picked_by_rule": {
+        "cue_only": 0,
+        "byte_overlap": 0,
+        "cue_plus_overlap": 0,
+        "overlap_plus_content": 0,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V080",
+      "answer_tell_position": 1,
+      "events": 2,
+      "labelled_index": 1,
+      "production_picked": 0,
+      "picked_by_rule": {
+        "cue_only": 0,
+        "byte_overlap": 1,
+        "cue_plus_overlap": 1,
+        "overlap_plus_content": 1,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V081",
+      "answer_tell_position": 1,
+      "events": 2,
+      "labelled_index": 1,
+      "production_picked": 0,
+      "picked_by_rule": {
+        "cue_only": 0,
+        "byte_overlap": 0,
+        "cue_plus_overlap": 0,
+        "overlap_plus_content": 1,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V082",
+      "answer_tell_position": 1,
+      "events": 2,
+      "labelled_index": 1,
+      "production_picked": 0,
+      "picked_by_rule": {
+        "cue_only": 0,
+        "byte_overlap": 0,
+        "cue_plus_overlap": 0,
+        "overlap_plus_content": 0,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V083",
+      "answer_tell_position": 0,
+      "events": 2,
+      "labelled_index": 0,
+      "production_picked": 0,
+      "picked_by_rule": {
+        "cue_only": 0,
+        "byte_overlap": 0,
+        "cue_plus_overlap": 0,
+        "overlap_plus_content": 0,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V084",
+      "answer_tell_position": 1,
+      "events": 2,
+      "labelled_index": 1,
+      "production_picked": 0,
+      "picked_by_rule": {
+        "cue_only": 0,
+        "byte_overlap": 0,
+        "cue_plus_overlap": 0,
+        "overlap_plus_content": 1,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V085",
+      "answer_tell_position": 1,
+      "events": 2,
+      "labelled_index": 1,
+      "production_picked": 0,
+      "picked_by_rule": {
+        "cue_only": 0,
+        "byte_overlap": 0,
+        "cue_plus_overlap": 0,
+        "overlap_plus_content": 0,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V086",
+      "answer_tell_position": 0,
+      "events": 2,
+      "labelled_index": 0,
+      "production_picked": 0,
+      "picked_by_rule": {
+        "cue_only": 0,
+        "byte_overlap": 0,
+        "cue_plus_overlap": 0,
+        "overlap_plus_content": 0,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V087",
+      "answer_tell_position": 0,
+      "events": 2,
+      "labelled_index": 0,
+      "production_picked": 0,
+      "picked_by_rule": {
+        "cue_only": 0,
+        "byte_overlap": 0,
+        "cue_plus_overlap": 0,
+        "overlap_plus_content": 0,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V088",
+      "answer_tell_position": 1,
+      "events": 2,
+      "labelled_index": 1,
+      "production_picked": 0,
+      "picked_by_rule": {
+        "cue_only": 0,
+        "byte_overlap": 0,
+        "cue_plus_overlap": 0,
+        "overlap_plus_content": 1,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V089",
+      "answer_tell_position": 1,
+      "events": 2,
+      "labelled_index": 1,
+      "production_picked": 0,
+      "picked_by_rule": {
+        "cue_only": 0,
+        "byte_overlap": 1,
+        "cue_plus_overlap": 1,
+        "overlap_plus_content": 1,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V090",
+      "answer_tell_position": 0,
+      "events": 2,
+      "labelled_index": 0,
+      "production_picked": 0,
+      "picked_by_rule": {
+        "cue_only": 0,
+        "byte_overlap": 0,
+        "cue_plus_overlap": 0,
+        "overlap_plus_content": 0,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V091",
+      "answer_tell_position": 0,
+      "events": 2,
+      "labelled_index": 0,
+      "production_picked": 0,
+      "picked_by_rule": {
+        "cue_only": 0,
+        "byte_overlap": 0,
+        "cue_plus_overlap": 0,
+        "overlap_plus_content": 0,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V092",
+      "answer_tell_position": 0,
+      "events": 2,
+      "labelled_index": 0,
+      "production_picked": 0,
+      "picked_by_rule": {
+        "cue_only": 0,
+        "byte_overlap": 0,
+        "cue_plus_overlap": 0,
+        "overlap_plus_content": 0,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V093",
+      "answer_tell_position": 1,
+      "events": 2,
+      "labelled_index": 1,
+      "production_picked": 0,
+      "picked_by_rule": {
+        "cue_only": 0,
+        "byte_overlap": 1,
+        "cue_plus_overlap": 1,
+        "overlap_plus_content": 1,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V094",
+      "answer_tell_position": 0,
+      "events": 2,
+      "labelled_index": 0,
+      "production_picked": 0,
+      "picked_by_rule": {
+        "cue_only": 0,
+        "byte_overlap": 0,
+        "cue_plus_overlap": 0,
+        "overlap_plus_content": 0,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V095",
+      "answer_tell_position": 0,
+      "events": 2,
+      "labelled_index": 0,
+      "production_picked": 0,
+      "picked_by_rule": {
+        "cue_only": 0,
+        "byte_overlap": 0,
+        "cue_plus_overlap": 0,
+        "overlap_plus_content": 0,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V096",
+      "answer_tell_position": 0,
+      "events": 2,
+      "labelled_index": 0,
+      "production_picked": 0,
+      "picked_by_rule": {
+        "cue_only": 0,
+        "byte_overlap": 0,
+        "cue_plus_overlap": 0,
+        "overlap_plus_content": 0,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V097",
+      "answer_tell_position": 1,
+      "events": 2,
+      "labelled_index": 1,
+      "production_picked": 0,
+      "picked_by_rule": {
+        "cue_only": 0,
+        "byte_overlap": 0,
+        "cue_plus_overlap": 0,
+        "overlap_plus_content": 0,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V098",
+      "answer_tell_position": 0,
+      "events": 2,
+      "labelled_index": 0,
+      "production_picked": 0,
+      "picked_by_rule": {
+        "cue_only": 0,
+        "byte_overlap": 0,
+        "cue_plus_overlap": 0,
+        "overlap_plus_content": 0,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V099",
+      "answer_tell_position": 1,
+      "events": 2,
+      "labelled_index": 1,
+      "production_picked": 0,
+      "picked_by_rule": {
+        "cue_only": 0,
+        "byte_overlap": 0,
+        "cue_plus_overlap": 0,
+        "overlap_plus_content": 1,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V100",
+      "answer_tell_position": 0,
+      "events": 2,
+      "labelled_index": 0,
+      "production_picked": 0,
+      "picked_by_rule": {
+        "cue_only": 0,
+        "byte_overlap": 0,
+        "cue_plus_overlap": 0,
+        "overlap_plus_content": 1,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V101",
+      "answer_tell_position": 1,
+      "events": 2,
+      "labelled_index": 1,
+      "production_picked": 0,
+      "picked_by_rule": {
+        "cue_only": 0,
+        "byte_overlap": 0,
+        "cue_plus_overlap": 0,
+        "overlap_plus_content": 1,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V102",
+      "answer_tell_position": 0,
+      "events": 2,
+      "labelled_index": 0,
+      "production_picked": 0,
+      "picked_by_rule": {
+        "cue_only": 0,
+        "byte_overlap": 0,
+        "cue_plus_overlap": 0,
+        "overlap_plus_content": 1,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V103",
+      "answer_tell_position": 0,
+      "events": 2,
+      "labelled_index": 0,
+      "production_picked": 0,
+      "picked_by_rule": {
+        "cue_only": 0,
+        "byte_overlap": 0,
+        "cue_plus_overlap": 0,
+        "overlap_plus_content": 1,
+        "recency_only": 1
+      }
+    },
+    {
+      "id": "V104",
+      "answer_tell_position": 0,
+      "events": 2,
+      "labelled_index": 0,
+      "production_picked": 0,
+      "picked_by_rule": {
+        "cue_only": 0,
+        "byte_overlap": 0,
+        "cue_plus_overlap": 0,
+        "overlap_plus_content": 0,
+        "recency_only": 1
+      }
+    }
+  ],
+  "instrument_guard": {
+    "base_sha256_unchanged": true,
+    "product_source_untouched": true,
+    "cue_only_matches_production_pick": true,
+    "every_rule_has_denominator": true
+  },
+  "started_utc": "2026-09-28T05:10:32Z"
+}
