@@ -56,6 +56,17 @@ def _sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def _payload_sha(value) -> str | None:
+    """回路 payload 的摘要：件里只记路径不够（`PLAN-A-24` rev22 那条复现性债）。"""
+
+    if not value:
+        return None
+    path = Path(value)
+    if not path.is_absolute():
+        path = PROJECT_ROOT / path
+    return _sha256(path)
+
+
 def _longest_same_char_run(text: str) -> int:
     best = run = 1
     for a, b in zip(text, text[1:], strict=False):
@@ -152,7 +163,11 @@ def char_membership_of_run(text: str) -> list[bool]:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--checkpoint", default="checkpoints/seed_beta.pt")
-    parser.add_argument("--circuit", required=True)
+    parser.add_argument(
+        "--circuit",
+        default=None,
+        help="不给＝不挂回路，即**今日出厂那面**（丁-2 的判据要用它，不能只在挂回路面上说事）",
+    )
     parser.add_argument("--manifest", default=str(MANIFEST))
     parser.add_argument("--limit", type=int, default=24)
     parser.add_argument(
@@ -186,7 +201,8 @@ def main() -> int:
     from taiji.utf8_state import advance_utf8, trim_partial_tail
 
     runtime = SeedRuntime.load(checkpoint)
-    runtime.enable_copy_circuit(PROJECT_ROOT / args.circuit)
+    if args.circuit:
+        runtime.enable_copy_circuit(PROJECT_ROOT / args.circuit)
     substrate = runtime.model.substrate
     boundary = int(substrate.config.boundary_symbol)
     loop_first, loop_last = generation_loop_span(type(substrate).generate)
@@ -354,6 +370,7 @@ def main() -> int:
         "prereg": "plans/reference/PLAN-A-30_surface_repetition_localization_20260928.md §2f 第 3 条",
         "checkpoint": args.checkpoint,
         "circuit": args.circuit,
+        "circuit_sha256": _payload_sha(args.circuit),
         "repetition_penalty": args.penalty,
         "repetition_window": args.penalty_window,
         "max_length": args.max_length,

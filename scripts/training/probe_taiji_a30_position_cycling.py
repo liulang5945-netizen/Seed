@@ -46,6 +46,17 @@ def _sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def _payload_sha(value) -> str | None:
+    """回路 payload 的摘要：件里只记路径不够（`PLAN-A-24` rev22 那条复现性债）。"""
+
+    if not value:
+        return None
+    path = Path(value)
+    if not path.is_absolute():
+        path = PROJECT_ROOT / path
+    return _sha256(path)
+
+
 def minimal_period(text: str) -> dict[str, Any]:
     """答案是不是"某个单位重复 k 遍"：返回最小周期长度、单位与重复次数。
 
@@ -308,6 +319,7 @@ def main() -> int:
         "prereg": "plans/reference/PLAN-A-30_surface_repetition_localization_20260928.md 判读 2",
         "checkpoint": args.checkpoint,
         "circuit": args.circuit,
+        "circuit_sha256": _payload_sha(args.circuit),
         "items": len(items),
         "texts": len(texts),
         "evidence_calls": len(trace),

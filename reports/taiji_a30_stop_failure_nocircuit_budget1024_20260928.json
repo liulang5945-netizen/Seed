@@ -1,0 +1,343 @@
+{
+  "format": "taiji-a30-stop-failure-v3",
+  "prereg": "plans/reference/PLAN-A-30_surface_repetition_localization_20260928.md §2f 第 3 条",
+  "checkpoint": "checkpoints/seed_beta.pt",
+  "circuit": null,
+  "circuit_sha256": null,
+  "repetition_penalty": 2.0,
+  "repetition_window": 8,
+  "max_length": 1024,
+  "generation_loop_lines": [
+    3119,
+    3178
+  ],
+  "items": 8,
+  "instrument_guard": {
+    "observe_calls_recorded": true,
+    "observe_calls_by_caller": {
+      "generate:3087": 26459,
+      "generate:3163": 24576,
+      "generate:3078": 24
+    },
+    "all_items_reconstructed": true,
+    "items_failing_reconstruction": [],
+    "total_argmax_mismatch_steps": 0,
+    "all_surfaces_are_replayed_raw": true,
+    "items_whose_surface_is_not_model_bytes": [],
+    "total_steps": 24576,
+    "generations": 24,
+    "generations_cut_by_turn_marker": 0,
+    "generations_eating_full_budget": 24,
+    "base_sha256_unchanged": true
+  },
+  "failure_examples": [],
+  "offender_count": 0,
+  "offenders": [],
+  "per_item": [
+    {
+      "id": "V001",
+      "answer_run": 3,
+      "steps": 3072,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 1024,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "则是亸则来了先摢个君我他君的我个君，个君我他启我"
+        },
+        {
+          "fed_bytes": 1024,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "我为君）：我他君则了是君了是胧君，了是能后他来而"
+        },
+        {
+          "fed_bytes": 1024,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "分是人师，你这意个分氖，们个刊了老君，他君则使是"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 5324.252,
+      "run_steps": 13
+    },
+    {
+      "id": "V002",
+      "answer_run": 2,
+      "steps": 3072,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 1024,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "我为别）：我人师，他师，了是）：我他君（是君，了"
+        },
+        {
+          "fed_bytes": 1024,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "「则个是君人済，他君则也是：。君为了老吼䚄是能吼"
+        },
+        {
+          "fed_bytes": 1024,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "君下耂君为，君为先是他吀则也是：。我他君我们的君"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 5850.141,
+      "run_steps": 22
+    },
+    {
+      "id": "V003",
+      "answer_run": 2,
+      "steps": 3072,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 1024,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "分为师，为家则为个则是他君我他师，他大家我们的是"
+        },
+        {
+          "fed_bytes": 1024,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "我下这我为君）：我个君，了其则个是君为了吼\n\n思"
+        },
+        {
+          "fed_bytes": 1024,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "刑了是见师，了是能师，他师，了是胧家我们的君想的"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 5225.788,
+      "run_steps": 22
+    },
+    {
+      "id": "V004",
+      "answer_run": 2,
+      "steps": 3072,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 1024,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "则为利是为则是为，家君为，君为是胧家为，我他君我"
+        },
+        {
+          "fed_bytes": 1024,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "到：是人师，他君我们真君，他君家也。\n\n杈：君为"
+        },
+        {
+          "fed_bytes": 1024,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "分是人师，他君则了是君了是这个我他君我们的君为别"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 5232.333,
+      "run_steps": 30
+    },
+    {
+      "id": "V005",
+      "answer_run": 2,
+      "steps": 3072,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 1024,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "则为师：是为君，为君是为吼我们的君我他师，他君我"
+        },
+        {
+          "fed_bytes": 1024,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "。则为君，为君是以彦了，家则了见家有，则个是君一"
+        },
+        {
+          "fed_bytes": 1024,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "到：我人师，你是君）我们的君我了，君个是合，他师"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 5513.148,
+      "run_steps": 28
+    },
+    {
+      "id": "V006",
+      "answer_run": 2,
+      "steps": 3072,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 1024,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "我为君）：我为吼个是君为个君我他启有，家吟有，下"
+        },
+        {
+          "fed_bytes": 1024,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "「君为，则为个则是他君我他师，他师，他君，了见家"
+        },
+        {
+          "fed_bytes": 1024,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "到：是君了是，了有，他师，他君，们的君是们的故冀"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 5856.577,
+      "run_steps": 24
+    },
+    {
+      "id": "V007",
+      "answer_run": 3,
+      "steps": 3072,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 1024,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "则了是刑们翙我个到，为则是为则是为利是为则是为则"
+        },
+        {
+          "fed_bytes": 1024,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "我为君则为君我他君则了漌则了是君了这是个到，个利"
+        },
+        {
+          "fed_bytes": 1024,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "。\n\n\n我：到文：则是下耂君：我人师，他君则何有"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 6168.3,
+      "run_steps": 21
+    },
+    {
+      "id": "V008",
+      "answer_run": 3,
+      "steps": 3072,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 1024,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "我为家刟有，个我君为个则是为君我他师，他君为是君"
+        },
+        {
+          "fed_bytes": 1024,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "我为吼，为大家我他君，不想生尝君，个刯是人大家有"
+        },
+        {
+          "fed_bytes": 1024,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "则了是君了我这也分我们的古文了君，了是君五，君他"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 5501.74,
+      "run_steps": 23
+    }
+  ],
+  "started_utc": "2026-09-28T17:19:02Z"
+}

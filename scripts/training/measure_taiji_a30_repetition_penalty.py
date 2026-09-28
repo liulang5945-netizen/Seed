@@ -37,6 +37,17 @@ def _sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def _payload_sha(value) -> str | None:
+    """回路 payload 的摘要：件里只记路径不够（`PLAN-A-24` rev22 那条复现性债）。"""
+
+    if not value:
+        return None
+    path = Path(value)
+    if not path.is_absolute():
+        path = PROJECT_ROOT / path
+    return _sha256(path)
+
+
 def run_arm(
     items: list[dict[str, Any]],
     checkpoint: Path,
@@ -157,6 +168,7 @@ def main() -> int:
         "chain": label,
         "checkpoint": args.checkpoint,
         "circuit": circuit,
+        "circuit_sha256": _payload_sha(circuit),
         "items": len(items),
         "item_offset": args.offset,
         "first_item": items[0]["id"] if items else None,

@@ -42,6 +42,17 @@ def _sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def _payload_sha(value) -> str | None:
+    """回路 payload 的摘要：件里只记路径不够（PLAN-A-24 rev22 那条复现性债）。"""
+
+    if not value:
+        return None
+    path = Path(value)
+    if not path.is_absolute():
+        path = PROJECT_ROOT / path
+    return _sha256(path)
+
+
 def _repetition(text: str) -> dict[str, Any]:
     """三个重复度指标：唯一字符比、最长连写段、2-gram 重复率。
 
@@ -209,6 +220,7 @@ def main() -> int:
         "items": len(items),
         "checkpoint": args.checkpoint,
         "circuit": args.circuit,
+        "circuit_sha256": _payload_sha(args.circuit),
         "max_bytes": args.max_bytes,
         "repetition_penalty": args.repetition_penalty,
         "base_sha256_unchanged": _sha256(checkpoint) == sha_before,

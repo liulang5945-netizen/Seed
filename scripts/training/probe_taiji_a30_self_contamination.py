@@ -42,13 +42,26 @@ for entry in (PROJECT_ROOT, PROJECT_ROOT / "scripts" / "training"):
         sys.path.insert(0, str(entry))
 
 MANIFEST = PROJECT_ROOT / "plans/manifests/r2_copy_surface_extension_v3_position_random.json"
-ARMS = ("learn_false", "learn_true")
+ARMS = ("learn_false_a", "learn_false_b", "learn_true")
+#: 装配顺序也是一个变量：汇报里所有臂在**同一进程**里先后载入，
+#: 若首次载入与随后载入的得出不同（torch 线程池冷热度等），那"被测臂总是最后一个"就是混淆。
+#: 两条控制臂只证明第 1、2 次载入相同，证不了第 3 次——故把顺序也做成可交换的档。
+ARM_ORDERS = {
+    "controls_first": ("learn_false_a", "learn_false_b", "learn_true"),
+    "treated_first": ("learn_true", "learn_false_a", "learn_false_b"),
+}
 
 
 def _sha256(path: Path) -> str:
     import hashlib
 
     return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def _answer_sha(text: str) -> str:
+    import hashlib
+
+    return hashlib.sha256(text.encode("utf-8")).hexdigest()[:16]
 
 
 def _longest_same_char_run(text: str) -> int:
@@ -64,6 +77,7 @@ def run_arm(
     checkpoint: Path,
     circuit: str | None,
     *,
+    arm_name: str,
     learn: bool,
     penalty: float,
     max_bytes: int,
@@ -111,6 +125,7 @@ def run_arm(
                     "well_formed": bool(well_formed(answer, ngram)),
                     "longest_run": _longest_same_char_run(answer),
                     "chars": len(answer),
+                    "answer_sha": _answer_sha(answer),
                 }
             )
             history.append((turn, answer))
@@ -126,7 +141,7 @@ def run_arm(
             "texts_with_run_ge_20": sum(1 for row in subset if row["longest_run"] >= 20),
         }
     return {
-        "arm": "learn_true" if learn else "learn_false",
+        "arm": arm_name,
         "learn": learn,
         "learn_bytes_calls": len(learn_calls),
         "learn_applied_ticks_delta": int(runtime.model.tick) - tick_before,
@@ -145,6 +160,12 @@ def main() -> int:
     parser.add_argument("--limit", type=int, default=12)
     parser.add_argument("--repetition-penalty", type=float, default=2.0)
     parser.add_argument("--max-bytes", type=int, default=256)
+    parser.add_argument(
+        "--arm-order",
+        choices=tuple(ARM_ORDERS),
+        default="controls_first",
+        help="装配载入顺序；换一档即是位置对照（汇报里落 arm_order）",
+    )
     parser.add_argument("--out-report", default=None)
     args = parser.parse_args()
 
@@ -162,16 +183,17 @@ def main() -> int:
             items,
             checkpoint,
             args.circuit,
+            arm_name=arm,
             learn=(arm == "learn_true"),
             penalty=args.repetition_penalty,
             max_bytes=args.max_bytes,
         )
-        for arm in ARMS
+        for arm in ARM_ORDERS[args.arm_order]
     ]
     by_name = {arm["arm"]: arm for arm in arms}
     deltas: dict[str, Any] = {}
-    for key in by_name["learn_false"]["per_turn"]:
-        off = by_name["learn_false"]["per_turn"][key]
+    for key in by_name["learn_false_a"]["per_turn"]:
+        off = by_name["learn_false_a"]["per_turn"][key]
         on = by_name["learn_true"]["per_turn"][key]
         deltas[key] = {
             "formed_on_minus_off": on["formed"] - off["formed"],
@@ -187,6 +209,7 @@ def main() -> int:
         "circuit": args.circuit,
         "repetition_penalty": args.repetition_penalty,
         "max_bytes": args.max_bytes,
+        "arm_order": args.arm_order,
         "manifest": manifest.name,
         "items": len(items),
         "pairing": "同题号同轮号配对；两臂各用自载入的 runtime（不共享内存态），各自 history 由本臂答复累积",
@@ -195,9 +218,15 @@ def main() -> int:
         "instrument_guard": {
             "learn_true_ran_learn_bytes_once_per_text": by_name["learn_true"]["learn_bytes_calls"]
             == by_name["learn_true"]["texts"],
-            "learn_false_ran_learn_bytes_zero": by_name["learn_false"]["learn_bytes_calls"] == 0,
-            "both_arms_same_text_count": by_name["learn_true"]["texts"]
-            == by_name["learn_false"]["texts"],
+            "learn_false_ran_learn_bytes_zero": by_name["learn_false_a"]["learn_bytes_calls"] == 0
+            and by_name["learn_false_b"]["learn_bytes_calls"] == 0,
+            #: 同一次跑内的**噪声地板**：两条同装配 `learn=False` 臂必须逐条相同，
+            #: 否则"learn=True 造成的差"里没有一根可参考的零线，本件读数一律作废。
+            "control_arms_bitwise_identical": [
+                row["answer_sha"] for row in by_name["learn_false_a"]["rows"]
+            ]
+            == [row["answer_sha"] for row in by_name["learn_false_b"]["rows"]],
+            "all_arms_same_text_count": len({arm["texts"] for arm in arms}) == 1,
             "base_sha256_unchanged": _sha256(checkpoint) == sha_before,
         },
         "started_utc": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
@@ -226,6 +255,15 @@ def main() -> int:
                     for arm in arms
                 ],
                 "on_minus_off": deltas,
+                "control_a_vs_b": [
+                    {
+                        "turn": row["turn"],
+                        "a": row["answer_sha"],
+                        "b": by_name["learn_false_b"]["rows"][n]["answer_sha"],
+                    }
+                    for n, row in enumerate(by_name["learn_false_a"]["rows"])
+                    if row["answer_sha"] != by_name["learn_false_b"]["rows"][n]["answer_sha"]
+                ][:6],
                 "guard": report["instrument_guard"],
                 "out": out.name,
             },
