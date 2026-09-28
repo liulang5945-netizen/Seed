@@ -77,7 +77,9 @@ async function seedSkills(workspaceCwd: string): Promise<void> {
   }
 }
 
-describe('web e2e: skill invocation policy through the real host', () => {
+// The fixture links a shared skill in with a symlink, which an unprivileged Windows
+// session cannot create (EPERM); the linked-skill arm is covered on Linux CI.
+describe.skipIf(process.platform === 'win32')('web e2e: skill invocation policy through the real host', () => {
   let scaffold: WebScaffold
   let browser: Browser
   let page: Page

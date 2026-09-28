@@ -108,6 +108,16 @@ async function remoteRpc<T>(baseUrl: string, endpoint: string, args: object): Pr
   return body.result.value
 }
 
+/**
+ * These cases drive the DeepSeek wire, so they name that route explicitly instead of
+ * inheriting the deployment default, which ships credential-free on the Taiji route.
+ */
+async function selectDeepSeekRoute(baseUrl: string, sessionId: string): Promise<void> {
+  await remoteRpc(baseUrl, 'session/selectModel', {
+    request: { sessionId, provider: 'deepseek-official', model: 'deepseek-flash' },
+  })
+}
+
 /** Read the explicit page cut from a freshly opened Session follow stream. */
 async function sessionCursor(baseUrl: string, sessionId: string): Promise<number> {
   const authenticated = await authenticatedWeb(baseUrl)
@@ -309,7 +319,7 @@ const notReady = UI_PLUGIN_DIRS.filter((dir) => {
 if (notReady.length > 0) console.warn(`[smoke-real] skipped — client bundles not ready: ${notReady.join(', ')}`)
 
 describe('dsh web keyless CLI smoke', () => {
-  it('serves a usable app from three immutable plugin batches', async () => {
+  it('serves a usable app from immutable plugin batches', async () => {
     requireDist()
     const sessionsDir = mkdtempSync(join(tmpdir(), 'dsh-web-keyless-'))
     const tsxLoader = pathToFileURL(createRequire(join(REPO_ROOT, 'package.json')).resolve('tsx')).href
@@ -356,22 +366,21 @@ describe('dsh web keyless CLI smoke', () => {
       await page.goto(readyUrl)
       await page.getByRole('button', { name: 'New session', exact: true }).first().waitFor({ timeout: 30_000 })
       const batchPaths = [...new Set(pluginScripts)].sort()
-      // The bootstrap phase is the modules package alone; the application phase
-      // spans two combos because its map-form URL is over the 3 KiB combo limit
-      // since the four settings companions joined the composition.
-      expect(batchPaths).toHaveLength(3)
-      expect(batchPaths.filter(path => (
+      // The bootstrap phase is the modules package alone. The application phase takes one
+      // combo per 3 KiB of map-form URL, so its count follows the composition's size: the
+      // guarantees are that it is served, that a multi-module combo exists, and that no
+      // requested URL crosses the combo limit — not a pinned number of requests.
+      const bootstrapCombo = /^\/plugins\/\?\?@taiji\/dsh-client-modules\/client\.js&rev=[a-f\d]{12}$/
+      expect(batchPaths).toContainEqual(expect.stringMatching(bootstrapCombo))
+      const applicationCombos = batchPaths.filter(path => !bootstrapCombo.test(path))
+      expect(applicationCombos.length).toBeGreaterThan(0)
+      expect(applicationCombos.some(path => (
         /^\/plugins\/\?\?.+\/client\.js,.+\/client\.js&rev=[a-f\d]{12}$/.test(path)
-      ))).toHaveLength(2)
-      expect(batchPaths).toContainEqual(expect.stringMatching(
-        /^\/plugins\/\?\?@taiji\/dsh-client-modules\/client\.js&rev=[a-f\d]{12}$/,
-      ))
+      ))).toBe(true)
+      expect(applicationCombos.every(path => path.length <= 3 * 1024)).toBe(true)
       const readyOrigin = new URL(readyUrl).origin
-      expect([...cacheHeaders.values()]).toEqual([
-        'public, max-age=31536000, immutable',
-        'public, max-age=31536000, immutable',
-        'public, max-age=31536000, immutable',
-      ])
+      expect([...new Set(cacheHeaders.values())]).toEqual(['public, max-age=31536000, immutable'])
+      expect(cacheHeaders.size).toBe(batchPaths.length)
       for (const path of batchPaths) {
         const [scriptResponse, mapResponse] = await Promise.all([
           fetch(`${readyOrigin}${path}`),
@@ -454,6 +463,7 @@ describe('dsh web keyless CLI smoke', () => {
     try {
       const baseUrl = await waitForReadyLine(child)
       const created = await remoteRpc<{ sessionId: string }>(baseUrl, 'session/create', { request: {} })
+      await selectDeepSeekRoute(baseUrl, created.sessionId)
       await remoteRpc<{ accepted: true }>(baseUrl, 'session/prompt', { request: {
         requestId: randomUUID(),
         sessionId: created.sessionId,
@@ -558,6 +568,7 @@ describe('dsh web keyless CLI smoke', () => {
     try {
       const baseUrl = await waitForReadyLine(child)
       const created = await remoteRpc<{ sessionId: string }>(baseUrl, 'session/create', { request: {} })
+      await selectDeepSeekRoute(baseUrl, created.sessionId)
       await remoteRpc<{ accepted: true }>(baseUrl, 'session/prompt', { request: {
         requestId: randomUUID(),
         sessionId: created.sessionId,
@@ -640,6 +651,7 @@ describe('dsh web keyless CLI smoke', () => {
     try {
       const baseUrl = await waitForReadyLine(child)
       const created = await remoteRpc<{ sessionId: string }>(baseUrl, 'session/create', { request: {} })
+      await selectDeepSeekRoute(baseUrl, created.sessionId)
       await remoteRpc<{ accepted: true }>(baseUrl, 'session/prompt', { request: {
         requestId: randomUUID(),
         sessionId: created.sessionId,
