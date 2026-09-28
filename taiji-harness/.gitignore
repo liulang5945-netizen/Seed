@@ -6,6 +6,13 @@ apps/desktop/*.p12
 node_modules/
 lib/
 *.tsbuildinfo
+# Composite tsc runs can emit declarations and JS beside the sources they came from; gates and
+# lint read those as second sources (duplicate event declarations, undocumented exports).
+# Package sources are .ts only.
+packages/**/src/*.js
+packages/**/src/*.js.map
+packages/**/src/*.d.ts
+packages/**/src/*.d.ts.map
 pnpm-debug.log
 .pnpm-store/
 .cache/
