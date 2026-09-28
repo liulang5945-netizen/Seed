@@ -65,6 +65,17 @@
   修复需架构级立项（所有者定）。**长跑必须保号存档**；**提>几小时的实验前先过零训练诊断**。见 `M5_R2_*`。
 - **产品侧工程支线**（不入研究主线）：前端 TS 地基 + Electron 壳 + 打包链路，见
   `plans/reference/FRONTEND_TS_VS_HARNESS_ADOPTION_DECISION_BRIEF_20260921.md`。
+- **Seed 品牌 logo 已定稿（2026-09-28，owner 认可）**：AI 原创重绘（水滴壳+满冠树+Seed 衬线署名，
+  构图对齐 owner 参考图），画布 `E:/Seed/seed-logo.miora`，定稿文件
+  `E:/Seed/seed-logo_assets/1044f28f-miora_edit_image-1790567714143-0-bb84fe254933.png`（1024×1024）。
+  色板：深墨绿 #144235 系 / 清新绿 #799D54 系 / 象牙底。**教训：owner 给参考图并反复指向时，直接
+  按参考 AI 生成成品，勿走几何拆解**。后续物料以此为锚点派生。
+  **外壳比例定稿（同日，owner 选方案3）**：原泪滴壳 358×552（宽高比 0.649）装进正方形图标左右留白过多 ⇒
+  **保留树的像素不动**、只按原轮廓同族曲线重画外壳为宽高比 **0.94** 的饱满蛋形（顶部尖头保留）。重生成器
+  `E:/Seed/design/round_shell.py`（实测原轮廓→拟合光滑剖面→等宽描边重画），图标包已按新母版重出
+  `E:/Seed/design/icons/`（`build_icons.py` 输入改为 `design/variants/seed-shell-3-egg-mark.png`）。
+  **尚欠：应用内记号（`ui-primitives/src/FishLogo.tsx` 等 v5「圆＋树」几何记号）与桌面/favicon 资产仍是旧记号，
+  与新锚点不一致，接线未做。**
 - 回退备份 `E:/Seed-backup-{git,secrets}-20260919`；未确认前别跑 `git gc`/`prune`。
 - **仓库体积账（2026-09-27 只读扫描）**：全仓 ~121 GB。零风险可删 1.86 GB（`scripts/clean_worktree.py`
   dry-run，程序自建）；harness 构建/依赖缓存 7.3 GB（可重建，重编译成本）；实验产物 output+outputs
