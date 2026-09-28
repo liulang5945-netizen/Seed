@@ -578,18 +578,12 @@ importers:
       '@taiji/dsh-app-boot':
         specifier: workspace:^
         version: link:../../packages/boot/app-boot
-      '@taiji/dsh-client-ui-primitives':
-        specifier: workspace:^
-        version: link:../../packages/client/ui-primitives
       '@taiji/dsh-client-ui-settings-general':
         specifier: workspace:^
         version: link:../../packages/client/ui-settings-general
       '@taiji/dsh-client-ui-sidebar-browser':
         specifier: workspace:^
         version: link:../../packages/client/ui-sidebar-browser
-      '@taiji/dsh-client-ui-theme':
-        specifier: workspace:^
-        version: link:../../packages/client/ui-theme
       '@taiji/dsh-deepseek-account':
         specifier: workspace:^
         version: link:../../packages/credentials/deepseek-account
@@ -605,12 +599,6 @@ importers:
       '@types/node':
         specifier: ^22.20.0
         version: 22.20.0
-      '@types/react':
-        specifier: ~18.3.1
-        version: 18.3.31
-      '@types/react-dom':
-        specifier: ~18.3.0
-        version: 18.3.7(@types/react@18.3.31)
       '@types/semver':
         specifier: ^7.8.0
         version: 7.8.0
@@ -641,18 +629,9 @@ importers:
       pnpm:
         specifier: 11.7.0
         version: 11.7.0
-      react:
-        specifier: ^18.2.0
-        version: 18.3.1
-      react-dom:
-        specifier: ^18.2.0
-        version: 18.3.1(react@18.3.1)
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
-      vite:
-        specifier: ^6.0.0
-        version: 6.4.3(@types/node@22.20.0)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.22.4)(yaml@2.9.0)
 
   apps/desktop-host:
     dependencies:
@@ -2431,9 +2410,6 @@ importers:
       '@taiji/dsh-client-ui-settings':
         specifier: workspace:^
         version: link:../../client/ui-settings
-      '@taiji/dsh-client-ui-settings-account':
-        specifier: workspace:^
-        version: link:../../client/ui-settings-account
       '@taiji/dsh-client-ui-settings-agent-loop':
         specifier: workspace:^
         version: link:../../client/ui-settings-agent-loop
@@ -4531,67 +4507,6 @@ importers:
       react:
         specifier: ^18.2.0
         version: 18.3.1
-
-  packages/client/ui-settings-account:
-    dependencies:
-      '@taiji/schemastery':
-        specifier: link:../../../vendor/schemastery
-        version: link:../../../vendor/schemastery
-    devDependencies:
-      '@taiji/cordis':
-        specifier: workspace:^
-        version: link:../../../vendor/cordis
-      '@taiji/dsh-api-remotes':
-        specifier: workspace:^
-        version: link:../../api/remotes
-      '@taiji/dsh-client-locale':
-        specifier: workspace:^
-        version: link:../locale
-      '@taiji/dsh-client-test-runtime':
-        specifier: workspace:^
-        version: link:../../test-support/client-runtime
-      '@taiji/dsh-client-ui-primitives':
-        specifier: workspace:^
-        version: link:../ui-primitives
-      '@taiji/dsh-client-ui-renderer':
-        specifier: workspace:^
-        version: link:../ui-renderer
-      '@taiji/dsh-client-ui-settings':
-        specifier: workspace:^
-        version: link:../ui-settings
-      '@taiji/dsh-client-ui-settings-models':
-        specifier: workspace:^
-        version: link:../ui-settings-models
-      '@taiji/dsh-client-ui-slots':
-        specifier: workspace:^
-        version: link:../ui-slots
-      '@taiji/dsh-deepseek-account':
-        specifier: workspace:^
-        version: link:../../credentials/deepseek-account
-      '@taiji/dsh-host-webserver':
-        specifier: workspace:^
-        version: link:../../host/webserver
-      '@testing-library/react':
-        specifier: ^16.1.0
-        version: 16.3.2(@testing-library/dom@10.4.2)(@types/react-dom@18.3.7(@types/react@18.3.31))(@types/react@18.3.31)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@types/big.js':
-        specifier: ^6.2.2
-        version: 6.2.2
-      '@types/react':
-        specifier: ~18.3.1
-        version: 18.3.31
-      '@types/react-dom':
-        specifier: ~18.3.0
-        version: 18.3.7(@types/react@18.3.31)
-      big.js:
-        specifier: ^7.0.1
-        version: 7.0.1
-      react:
-        specifier: ^18.2.0
-        version: 18.3.1
-      react-dom:
-        specifier: ^18.2.0
-        version: 18.3.1(react@18.3.1)
 
   packages/client/ui-settings-agent-loop:
     devDependencies:
@@ -16800,9 +16715,6 @@ packages:
   '@types/babel__traverse@7.28.0':
     resolution: {integrity: sha512-8PvcXf70gTDZBgt9ptxJ8elBeBjcLOAcOtoO/mPJjtji1+CdGbHgm77om1GrsPxsiE+uXIpNSK64UYaIwQXd4Q==}
 
-  '@types/big.js@6.2.2':
-    resolution: {integrity: sha512-e2cOW9YlVzFY2iScnGBBkplKsrn2CsObHQ2Hiw4V1sSyiGbgWL8IyqE3zFi1Pt5o1pdAtYkDAIsF3KKUPjdzaA==}
-
   '@types/body-parser@1.19.6':
     resolution: {integrity: sha512-HLFeCYgz89uk22N5Qg3dvGvsv46B8GLvKKo1zKG4NybA8U2DiEO3w9lqGg29t/tfLRJpJ6iQxnVw4OnB7MoM9g==}
 
@@ -17602,9 +17514,6 @@ packages:
   big-integer@1.6.52:
     resolution: {integrity: sha512-QxD8cf2eVqJOOz63z6JIN9BzvVs/dlySa5HGSBH5xtR8dPteIRQnBxxKqkNTiT6jbDTF6jAfrd4oMcND9RGbQg==}
     engines: {node: '>=0.6'}
-
-  big.js@7.0.1:
-    resolution: {integrity: sha512-iFgV784tD8kq4ccF1xtNMZnXeZzVuXWWM+ERFzKQjv+A5G9HC8CY3DuV45vgzFFcW+u2tIvmF95+AzWgs6BjCg==}
 
   bignumber.js@9.3.1:
     resolution: {integrity: sha512-Ko0uX15oIUS7wJ3Rb30Fs6SkVbLmPBAKdlm7q9+ak9bbIeFf0MwuBsQV6z7+X768/cHsfg+WlysDWJcmthjsjQ==}
@@ -23870,8 +23779,6 @@ snapshots:
     dependencies:
       '@babel/types': 7.29.7
 
-  '@types/big.js@6.2.2': {}
-
   '@types/body-parser@1.19.6':
     dependencies:
       '@types/connect': 3.4.38
@@ -24789,8 +24696,6 @@ snapshots:
       require-from-string: 2.0.2
 
   big-integer@1.6.52: {}
-
-  big.js@7.0.1: {}
 
   bignumber.js@9.3.1: {}
 
