@@ -1021,7 +1021,11 @@ class _FakeRuntime:
         self.model = model
         self.answer_follows_parameters = answer_follows_parameters
 
-    def chat(self, prompt, *, history=None, learn=True) -> str:
+    def chat(
+        self, prompt, *, history=None, learn=True, repetition_penalty: float | None = None
+    ) -> str:
+        #: 签名跟着产品 `SeedRuntime.chat` 走（`repetition_penalty` 2026-09-28 起是产品默认位参数）；
+        #: 本桩件不模拟解码，所以只接不读——但**签名必须齐**，否则仪器一加参数这条契约就红在参数表上。
         if not self.answer_follows_parameters:
             return f"我已收到你的问题：“{prompt}”。当前原生语言表层正在形成稳定表达。"
         return "答：" + self.model.native_bytes().decode()

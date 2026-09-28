@@ -145,7 +145,7 @@ def _probe_child(payload: dict[str, Any]) -> int:
             started = time.perf_counter()
             try:
                 # learn=False: 07 section 4.1 requires no training during evaluation.
-                answer = runtime.chat(prompt, history=history, learn=False)
+                answer = runtime.chat(prompt, history=history, learn=False, repetition_penalty=0.0)
                 turns.append(
                     {
                         "label": label,

@@ -146,7 +146,7 @@ def _run_probe(checkpoint: Path, *, apply_guard: bool) -> dict[str, Any]:
     for prompt in PROBE_PROMPTS:
         try:
             # learn=False: 07 section 4.1 requires no training during evaluation.
-            answer = runtime.chat(prompt, learn=False)
+            answer = runtime.chat(prompt, learn=False, repetition_penalty=0.0)
             turns.append(
                 {
                     "prompt": prompt,

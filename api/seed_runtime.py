@@ -126,6 +126,16 @@ def _workbench_successor_synchronized(method: Callable[..., Any]) -> Callable[..
     return synchronized
 
 
+#: 产品 `chat()` 出口的解码重复惩罚。owner 裁定（2026-09-28）"取 2.0 为产品默认"。
+#: 依据＝`PLAN-A-30` §2f：同尺同链、**两段独立题面**上成句 12/72→71/72 与 7/72→69/72，
+#: 同字节连写均值 5.44→1.00 与 6.19→1.01，命中 0→0（出厂装配本就没挂回路）⇒ 未见代价。
+#: **只落在这一个出口**：`Taiji.generate`／`generate_input` 的默认仍是 0.0 ⇒
+#: 全部既有评测链与封存读数逐位不动（评测要旧面就显式传 0.0——`eval_taiji_cap0_*` 等已就地钉住）。
+#: 尺子限定照抄进代码以免被读歪：`well_formed` 量的是 n-gram 结构，**不量有没有说真话**；
+#: 这条裁定买到的是"不再同字连写"，不是"模型会说话了"。
+PRODUCT_REPETITION_PENALTY = 2.0
+
+
 class SeedRuntime:
     """单个 Seed 有机体 + 字节级对话接口（线程安全）。"""
 
@@ -364,10 +374,16 @@ class SeedRuntime:
     ) -> str:
         """生成回复并经 Taiji 语言器官形成可读表层。
 
-        `repetition_penalty`（PLAN-A-30 乙档，**None ⇒ 逐位走现状路径**）：把解码侧的重复惩罚透传给
-        `generate_input`。加它不是为了改产品默认（默认位仍等 owner 裁），而是因为**表层链才是用户经过的那一面**——
-        定价只量"带掩码的原始字节链"就仍是一句推理，必须能在 `chat()` 上直接取数。
+        `repetition_penalty`：**None ⇒ 用产品默认 `PRODUCT_REPETITION_PENALTY`（2.0，owner 2026-09-28 裁定）**；
+        要旧面（评测/对照）就显式传 `0.0`。加在解码侧的理由与两次独立题面的读数见 `PLAN-A-30` §2f；
+        尺子的限定也在这儿：`well_formed` 量结构不量真话 ⇒ 这一手买到的是"不再同字连写"。
         """
+
+        penalty = (
+            PRODUCT_REPETITION_PENALTY if repetition_penalty is None else float(repetition_penalty)
+        )
+        if penalty < 0.0:
+            raise ValueError("repetition_penalty cannot be negative")
         from taiji import ExpressionPlan
 
         prompt = (prompt or "")[:MAX_PROMPT_CHARS]
@@ -395,7 +411,7 @@ class SeedRuntime:
                 # 口径如实登记：掩码是"产品替模型写对字节"，不是模型地板变了——
                 # 地板线仍按无掩码 F0 计（`probe_taiji_f0_language_floor.py` 默认位）。
                 utf8_strict=True,
-                repetition_penalty=(repetition_penalty or 0.0),
+                repetition_penalty=penalty,
             )
             native_prediction = raw.decode("utf-8", errors="replace")
             for marker in _TURN_MARKERS:

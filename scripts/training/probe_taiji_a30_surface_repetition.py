@@ -8,7 +8,7 @@
 
 四臂设计（不重抄生成链，全部走产品入口 `SeedRuntime`）：
 `raw`＝`_answer_raw`（基底原始字节链，SPEC-A-21 那条冻结链）；
-`surface`＝`runtime.chat(..., learn=False)`（产品表层链，过语言器官＋SPEC-R2-02 掩码）。
+`surface`＝`runtime.chat(..., learn=False, repetition_penalty=0.0)`（产品表层链，过语言器官＋SPEC-R2-02 掩码）。
 每臂一个新载入的 runtime——同一条链上先 `_answer_raw` 再 `chat` 会让表层多走一步生成，
 那不是"两条面的对照"，是第三条面。
 
@@ -92,7 +92,10 @@ def run_arm(items: list[dict[str, Any]], checkpoint: Path, circuit: str | None, 
         answer = ""
         for index, turn in enumerate([str(t) for t in item["turns"]]):
             answer = (
-                runtime.chat(turn, history=history, learn=False)
+                # 钉旧默认位（产品默认 2026-09-28 起 2.0）：本探针的六臂读数全是在 0.0 上取的。
+                runtime.chat(
+                    turn, history=history, learn=False, repetition_penalty=0.0
+                )
                 if chain == "surface"
                 else _answer_raw(runtime, turn, history, utf8_strict=(chain == "raw_masked"))
             )

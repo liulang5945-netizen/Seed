@@ -169,7 +169,7 @@ def evaluate(*, work_dir: Path | None = None) -> dict[str, object]:
                         "semantic_evidence": _proposal(runtime, prompt).to_payload(),
                     },
                 ).json()
-                runtime.chat("推进当前 Taiji tick")
+                runtime.chat("推进当前 Taiji tick", repetition_penalty=0.0)
                 stale_approval = client.post(
                     "/api/chat/workbench/natural-language/approve",
                     json={

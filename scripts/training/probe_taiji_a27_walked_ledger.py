@@ -139,7 +139,7 @@ def _entry_points(substrate: Any, runtime: Any, *, byte: int) -> dict[str, Any]:
         "generate": lambda: substrate.generate(
             b"\xe4\xbd\xa0\xe5\xa5\xbd\xe3\x80\x82", 32, stop_at_boundary=True, sample=False
         ),
-        "chat": lambda: runtime.chat("你好。", learn=False),
+        "chat": lambda: runtime.chat("你好。", learn=False, repetition_penalty=0.0),
         "observe_action": lambda: (
             substrate.reset_dynamics(episode_id="a27-ledger"),
             [

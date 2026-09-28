@@ -137,7 +137,11 @@ def run_arm(
         answer = ""
         for index, turn in enumerate(turns):
             answer = (
-                runtime.chat(turn, history=history, learn=False)
+                # 显式 `repetition_penalty=0.0`：产品默认 2026-09-28 起是 2.0（owner 裁定，
+                # PLAN-A-30 §2f），而本件的表层链读数是在旧默认位上取的——钉住才复现得动。
+                runtime.chat(
+                    turn, history=history, learn=False, repetition_penalty=0.0
+                )
                 if surface
                 else _answer_raw(runtime, turn, history)
             )

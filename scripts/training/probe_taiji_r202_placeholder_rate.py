@@ -118,7 +118,7 @@ def main() -> int:
     # （允许内容不同——真 chat 有写回与 tick 推进；这里只核"不再占位/可解码"的定性）。
     checks = []
     for prompt in PROMPTS[:4]:
-        answer = runtime.chat(prompt, history=[], max_length=96, learn=False)
+        answer = runtime.chat(prompt, history=[], max_length=96, learn=False, repetition_penalty=0.0)
         checks.append(
             {
                 "prompt": prompt,

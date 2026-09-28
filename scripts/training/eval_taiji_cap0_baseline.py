@@ -229,7 +229,7 @@ def _ablation_probe(runtime: Any, prompt: str) -> dict[str, Any]:
     """
 
     baseline_native = _raw_native(runtime, prompt)
-    baseline_answer = runtime.chat(prompt, history=[], learn=False)
+    baseline_answer = runtime.chat(prompt, history=[], learn=False, repetition_penalty=0.0)
     arms: list[dict[str, Any]] = []
     for dotted in A05_ABLATION_TARGETS:
         record: dict[str, Any] = {"target": dotted}
@@ -245,7 +245,7 @@ def _ablation_probe(runtime: Any, prompt: str) -> dict[str, Any]:
         record["informative"] = bool(record["abs_sum_before"] > 0.0)
         leaf.zero_()
         native = _raw_native(runtime, prompt)
-        answer = runtime.chat(prompt, history=[], learn=False)
+        answer = runtime.chat(prompt, history=[], learn=False, repetition_penalty=0.0)
         leaf.copy_(saved)
         record["native_changed"] = native != baseline_native
         record["answer_changed"] = answer != baseline_answer
@@ -321,16 +321,16 @@ def _health_child(payload: dict[str, Any]) -> int:
     alt = payload["probe_prompt_alt"]
 
     first_started = time.perf_counter()
-    first = runtime.chat(prompt, history=[], learn=False)
+    first = runtime.chat(prompt, history=[], learn=False, repetition_penalty=0.0)
     out["timings"]["H02_first_response_seconds"] = round(time.perf_counter() - first_started, 4)
-    second = runtime.chat(prompt, history=[], learn=False)
+    second = runtime.chat(prompt, history=[], learn=False, repetition_penalty=0.0)
     out["checks"]["A03_fixed_input_reproducible"] = first == second
 
-    alt_answer = runtime.chat(alt, history=[], learn=False)
+    alt_answer = runtime.chat(alt, history=[], learn=False, repetition_penalty=0.0)
     out["checks"]["A04_input_changes_output"] = first != alt_answer
 
     tracemalloc.start()
-    runtime.chat(prompt, history=[], learn=False)
+    runtime.chat(prompt, history=[], learn=False, repetition_penalty=0.0)
     _, peak = tracemalloc.get_traced_memory()
     tracemalloc.stop()
     out["memory"]["H04_peak_traced_bytes"] = int(peak)
@@ -340,7 +340,7 @@ def _health_child(payload: dict[str, Any]) -> int:
     total_started = time.perf_counter()
     for index in range(runs):
         try:
-            runtime.chat(prompt if index % 2 else alt, history=[], learn=False)
+            runtime.chat(prompt if index % 2 else alt, history=[], learn=False, repetition_penalty=0.0)
         except Exception:  # noqa: BLE001
             crashes += 1
     out["timings"]["H03_total_seconds_for_runs"] = round(time.perf_counter() - total_started, 4)
@@ -450,7 +450,7 @@ def _run_item_child(payload: dict[str, Any]) -> int:
             started = time.perf_counter()
             try:
                 # learn=False：评测期间不训练（07 §4.1）。
-                answer = runtime.chat(prompt, history=history, learn=False)
+                answer = runtime.chat(prompt, history=history, learn=False, repetition_penalty=0.0)
                 record["turns"].append(
                     {
                         "prompt": prompt,

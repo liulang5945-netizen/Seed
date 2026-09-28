@@ -241,7 +241,7 @@ def main(argv: list[str] | None = None) -> int:
             "longest_valid_utf8_prefix_bytes": prefix,
             "has_replacement_char": "\ufffd" in decoded,
             "readable_surface": _readable_surface(decoded),
-            "chat_output_head": runtime.chat(prompt, learn=False)[:90],
+            "chat_output_head": runtime.chat(prompt, learn=False, repetition_penalty=0.0)[:90],
         }
         if args.constrained:
             taiji = getattr(runtime.model, "substrate", runtime.model)

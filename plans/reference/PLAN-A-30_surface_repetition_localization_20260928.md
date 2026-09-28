@@ -231,6 +231,46 @@
 3. ⚠️ **最坏情况仍未消**：seed-A 两段的 `max_longest_run` 都是 **256**（有一条答复整段同字拖写），
    惩罚把均值与条数拉下来了，但**没有把最长的那种消掉** ⇒ 这条留在 §8 的欠账里，不结。
 
+## 2g. 裁定执行：默认位 2.0 已落在**产品出口这一个入口**，并把 16 处仪器钉回旧面
+
+owner 裁定（2026-09-28）＝**取 2.0 为产品默认**。落法与验证：
+
+* **落点**：`api/seed_runtime.py` 的模块常量 `PRODUCT_REPETITION_PENALTY = 2.0`，
+  `SeedRuntime.chat(..., repetition_penalty=None ⇒ 用该常量)`。
+  **`Taiji.generate`／`generate_input` 的默认仍是 0.0** ——本仓两次教训（`PLAN-A-28` §0 的证据门、
+  `PLAN-A-26` §6.2 的位置输入）都是"裁定只落在一个入口，另一条路静默走旧行为"，
+  所以这次既要把产品面翻过来，又**不能**顺手把评测链一起翻掉。
+* **仪器钉旧面**：`chat()` 有 16 处调用点，其中 8 个文件（`eval_taiji_cap0_baseline/inventory`、
+  `probe_taiji_cap0_legacy_load/byte_output`、`probe_taiji_memory_wiring_audit`、
+  `probe_taiji_a27_walked_ledger`、`probe_taiji_a30_surface_repetition`、
+  `score_taiji_r2_copy_surface_extension`）全部**显式传 `repetition_penalty=0.0`**——
+  它们的封存/已入库读数是在旧默认位上取的，不钉就会出现"读数还在但面已经换了"。
+* **守卫**（`test_product_repetition_penalty_default.py`，5 条）：钉的不是"常量等于 2.0"，
+  而是**产品出口实际交给解码器的参数**（桩件拦 `generate_input` 看 kwargs）：
+  默认 ⇒ 2.0；显式 0.0 仍可达（旧面）；负值响亮拒绝；且 `utf8_strict=True`／`stop_at_boundary=True`／
+  `sample=False` 三件不随默认位改变。
+* **产品面抽点（"被走到"的证据，不是推理）**：同一把 prompt、真实出厂基底 `seed_beta.pt` 上，
+  三条答复长度 86/86/85 字，**最长同字连写 2**（改前 pin：`…君人人人人人人人…`、`是是是是是是…`，
+  改前 `max_longest_run` 见 §2f 表＝9）⇒ 裁定确实作用在用户经过的那一面。
+* **我自己在这一步造成并结清的 5 条红（自计错误，入账）**：
+第一版我把仪器钉旧面时用了一条"带 `learn=` 才算 chat 调用"的正则——**漏掉 4 处**
+（`eval_taiji_natural_language_workbench_api.py`、`probe_taiji_r202_placeholder_rate.py`、
+`probe_taiji_substrate_growth_census.py`、`probe_taiji_a30_position_cycling.py`），
+外加 `test_cap0_baseline_contract.py` 里的 **桩件 `_FakeRuntime.chat()` 签名没跟上**
+⇒ 广面从基线 4 红变 **9 红**：3 条 `TypeError: _FakeRuntime.chat() got an unexpected keyword argument`、
+2 条 natural-language workbench 门（它们跑的就是那个没钉的 eval 脚本）。
+修法＝补齐 4 处钉桩 ＋ 让桩件签名跟着产品走（不模拟解码，但**参数表必须齐**），
+补完 `57 passed`，重跑广面回基线。**教训写死**：默认位这类改动**不能按"调用形状"筛**，
+要按 `grep '\.chat('` 的全量清单逐条判"该跟新默认 / 该钉旧面 / 该拒绝"，
+且**测试桩的签名也是面的一部分**——否则下一次加参数，红的还是别人写的契约。
+
+**门禁**：广面 `tests/taiji_native tests/seed` 第一次跑（未修前）＝9 failed／1799 passed；
+补完钉桩与签名后重跑＝见 §2g 末与提交信息（目标＝回到基线那 4 条同名红）。
+`tests -k chat` 与新增 5 条守卫在补完后一并复跑；ruff／black 净。
+
+**仍未结的（不要被他面的数字盖掉）**：seed-A 两段题面的 `max_longest_run` 都是 **256**
+（有一条答复整段同字拖写）⇒ 默认位买到的是"绝大多数不再退化"，不是"每一条都不退化"。
+
 ## 3. 三条可修路（都不在本件自行执行）
 
 | 路 | 内容 | 上限 | 代价／风险 | 要不要 owner 口径 |

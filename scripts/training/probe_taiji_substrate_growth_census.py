@@ -117,7 +117,7 @@ def _activity_ladder(runtime: Any, rows: list[dict[str, Any]]) -> dict[str, Any]
     snapshot("observe_learn_true_x4", "训练喂法：observe(learn=True)，无动作 ⇒ 无 pending_experience")
 
     substrate.reset_dynamics(episode_id="census-ladder-chat")
-    runtime.chat("我叫阿蒙。", history=[], max_length=32, learn=True)
+    runtime.chat("我叫阿蒙。", history=[], max_length=32, learn=True, repetition_penalty=0.0)
     snapshot("chat_learn_true", "产品语言轮 chat(learn=True)（接线审计同款：预期 write_count 不动）")
 
     substrate.reset_dynamics(episode_id="census-ladder-write")

@@ -241,7 +241,7 @@ def main() -> int:
         marks: list[tuple[int, int]] = []
         for index, turn in enumerate([str(t) for t in item["turns"]]):
             start = len(trace)
-            answer = runtime.chat(turn, history=history, learn=False)
+            answer = runtime.chat(turn, history=history, learn=False, repetition_penalty=0.0)
             marks.append((start, len(trace)))
             texts.append({"item": item["id"], "text": answer, "span": (start, len(trace))})
             if index + 1 < len(item["turns"]):

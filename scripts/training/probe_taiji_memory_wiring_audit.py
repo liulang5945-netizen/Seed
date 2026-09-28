@@ -217,7 +217,7 @@ def main() -> int:
 
     #: A/B 3：产品一轮 chat 之后,情节场有没有被写过。
     before = getattr(substrate.memory, "write_count", None)
-    runtime.chat(prompts[0], history=[], max_length=MAX_ANSWER_BYTES, learn=True)
+    runtime.chat(prompts[0], history=[], max_length=MAX_ANSWER_BYTES, learn=True, repetition_penalty=0.0)
     report["write_path"] = {
         "write_count_before": before,
         "write_count_after": getattr(substrate.memory, "write_count", None),
