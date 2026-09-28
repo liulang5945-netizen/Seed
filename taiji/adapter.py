@@ -11107,6 +11107,8 @@ class TSKV8Adapter(Taiji):
         sample: bool = False,
         reset: bool = True,
         utf8_strict: bool = False,
+        repetition_penalty: float = 0.0,
+        repetition_window: int = 8,
     ) -> bytes:
         """Generate from a validated Taiji input frame.
 
@@ -11129,6 +11131,8 @@ class TSKV8Adapter(Taiji):
             sample=sample,
             reset=reset,
             utf8_strict=utf8_strict,
+            repetition_penalty=repetition_penalty,
+            repetition_window=repetition_window,
         )
 
     def act(self, available_actions: Any, *args: Any, **kwargs: Any) -> TaijiDecision:

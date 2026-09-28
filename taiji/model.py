@@ -3003,6 +3003,8 @@ class Taiji:
         boundary: WorkbenchTaskBoundary | Mapping[str, Any] | None = None,
         authorization: WorkbenchBoundaryAuthorization | None = None,
         utf8_strict: bool = False,
+        repetition_penalty: float = 0.0,
+        repetition_window: int = 8,
     ) -> bytes:
         """Generate from the raw-byte predictive path.
 
@@ -3019,6 +3021,16 @@ class Taiji:
 
         if length < 0:
             raise ValueError("length cannot be negative")
+        #: PLAN-A-30 乙档（默认 0 ⇒ 逐位走现状路径）：把最近 `repetition_window` 个已发字节的质量
+        #: 各除以 `1 + penalty × 出现次数`。对症的是 §2b 量到的"同一个字连发"
+        #: （单位平均 1.4–2.1 字符、重复 5–20 次），**不是**"复述完一遍再从头走"——那条已被
+        #: 位置回绕数低于乱序基线否证。无电路无掩码的贪心同样在拖写单字节，所以这不是电路专属补丁。
+        if repetition_penalty < 0.0:
+            raise ValueError("repetition_penalty cannot be negative")
+        if repetition_window < 0:
+            raise ValueError("repetition_window cannot be negative")
+        if repetition_penalty > 0.0 and repetition_window == 0:
+            raise ValueError("repetition_penalty needs a positive repetition_window")
         if (boundary is None) != (authorization is None):
             raise ValueError("boundary and authorization must be supplied together")
         if not isinstance(response_start, bool):
@@ -3114,6 +3126,11 @@ class Taiji:
                         else step.probabilities.detach().cpu()
                     )
                 )
+                if repetition_penalty > 0.0 and generated:
+                    counts = torch.zeros_like(probabilities)
+                    for _recent in generated[-repetition_window:]:
+                        counts[_recent] += 1.0
+                    probabilities = probabilities / (1.0 + repetition_penalty * counts)
                 if utf8_strict:
                     legal = torch.tensor(
                         sorted(set(utf8_allowed(utf8_remaining, utf8_lead)) | {self.config.boundary_symbol}),

@@ -28,7 +28,12 @@ MAX_ANSWER_BYTES = 64
 
 
 def _answer_raw(
-    runtime: Any, prompt: str, history: list[tuple[str, str]], *, utf8_strict: bool = False
+    runtime: Any,
+    prompt: str,
+    history: list[tuple[str, str]],
+    *,
+    utf8_strict: bool = False,
+    repetition_penalty: float = 0.0,
 ) -> str:
     """产品装配下取基底原始答复（SPEC-A-21 那条冻结链）。
 
@@ -61,6 +66,7 @@ def _answer_raw(
         stop_at_boundary=True,
         sample=False,
         utf8_strict=utf8_strict,
+        repetition_penalty=repetition_penalty,
     )
     answer = raw.decode("utf-8", errors="replace")
     for marker in _TURN_MARKERS:

@@ -181,6 +181,8 @@ class Seed:
         sample: bool = False,
         reset: bool = True,
         utf8_strict: bool = False,
+        repetition_penalty: float = 0.0,
+        repetition_window: int = 8,
     ) -> bytes:
         """Generate through the versioned Taiji client-input boundary."""
 
@@ -191,6 +193,8 @@ class Seed:
             sample=sample,
             reset=reset,
             utf8_strict=utf8_strict,
+            repetition_penalty=repetition_penalty,
+            repetition_window=repetition_window,
         )
 
     def parameter_count(self, *, active_only: bool = True) -> int:
