@@ -607,10 +607,31 @@ class CueIdentityOrgan:
             "punished_write_count": self.punished_write_count,
             "value_router_enabled": self._value_router_enabled,
             "value_router_max_keys": self._value_router_max_keys,
-            "value_keys": self._value_keys.detach().cpu().clone(),
-            "value_actions": self._value_actions.detach().cpu().clone(),
             "value_counts": self._value_counts.detach().cpu().clone(),
         }
+        # 路由键仓是按 `max_keys` **稠密预分配**的零表（产品基底上 128×64×1152 float32 ＝ 37.75 MB，
+        # 而它从来没被写过）。这里只存每槽前 `used = max(value_counts)` 行——第 127-138 行的写入
+        # 不变量保证 `[:, used:]` 一定是空槽（键为 0、动作为 -1；淘汰走 swap-remove，尾行当场 `zero_()`），
+        # 所以整段裁掉是**无损**的；还原见 `load_payload` 的 `value_router_used` 分支。
+        # 不变量一旦不成立就响亮回退到整表存盘（宁可大，不可丢）。
+        keys = self._value_keys.detach().cpu().clone()
+        actions = self._value_actions.detach().cpu().clone()
+        used = int(self._value_counts.max().item()) if self._value_counts.numel() else 0
+        rows = int(keys.shape[1])
+        if (
+            0 <= used < rows
+            and bool((keys[:, used:] == 0).all())
+            and bool((actions[:, used:] == -1).all())
+        ):
+            payload["value_router_used"] = used
+            #: **必须 `clone()`**：切片是**视图**，底层 storage 仍是整张稠密缓冲，
+            #: 而 `torch.save` 序列化的是 storage——不 clone 的话"截断"一位字节都省不下来
+            #: （实测：形状 (128, 0, 1152)、numel 0 的张量仍写出 37.75 MB）。
+            payload["value_keys"] = keys[:, :used].clone()
+            payload["value_actions"] = actions[:, :used].clone()
+        else:
+            payload["value_keys"] = keys
+            payload["value_actions"] = actions
         # Keep pre-generation checkpoints byte-compatible when they are
         # re-serialized.  A non-zero value is the durable marker that this
         # organ has grown and therefore needs generation-aware reads.
@@ -681,26 +702,64 @@ class CueIdentityOrgan:
         self._value_router_max_keys = int(
             payload.get("value_router_max_keys", self._value_router_max_keys)
         )
+        # 路由三件的载入：`value_router_used` 存在＝档里只存了前 `used` 行（见 `to_payload`），
+        # 按稠密形状补回空槽（键 0、动作 -1）；不存在＝旧档存整表，走原来的整表分支。
+        rows = int(self._value_keys.shape[1])
+        used = payload.get("value_router_used")
+        if used is not None:
+            used = int(used)
+            if not 0 <= used <= rows:
+                raise ValueError("identity organ value router used rows outside capacity")
+            if int(payload.get("value_router_max_keys", rows)) != rows:
+                raise ValueError("identity organ value router capacity does not match")
         value_keys = payload.get("value_keys")
         if value_keys is not None:
             restored = value_keys.detach().to(self.device, dtype=torch.float32)
-            if restored.shape != self._value_keys.shape:
+            expected_shape = (
+                (self.capacity, used, self.pattern_dim)
+                if used is not None
+                else self._value_keys.shape
+            )
+            if restored.shape != expected_shape:
                 raise ValueError("identity organ value router keys shape mismatch")
             if not bool(torch.isfinite(restored).all()):
                 raise ValueError("identity organ value router keys non-finite")
-            self._value_keys = restored.clone()
+            if used is None:
+                self._value_keys = restored.clone()
+            else:
+                full = torch.zeros(self._value_keys.shape, device=self.device, dtype=torch.float32)
+                if used:
+                    full[:, :used] = restored
+                self._value_keys = full
         if "value_actions" in payload:
             restored_actions = payload["value_actions"].detach().to(self.device, dtype=torch.long)
-            if restored_actions.shape != self._value_actions.shape:
+            expected_actions_shape = (
+                (self.capacity, used) if used is not None else self._value_actions.shape
+            )
+            if restored_actions.shape != expected_actions_shape:
                 raise ValueError("identity organ value router actions shape mismatch")
-            self._value_actions = restored_actions.clone()
+            if used is None:
+                self._value_actions = restored_actions.clone()
+            else:
+                full_actions = torch.full(
+                    self._value_actions.shape, -1, device=self.device, dtype=torch.long
+                )
+                if used:
+                    full_actions[:, :used] = restored_actions
+                self._value_actions = full_actions
         if "value_counts" in payload:
             restored_counts = payload["value_counts"].detach().to(self.device, dtype=torch.long)
             if restored_counts.shape != self._value_counts.shape:
                 raise ValueError("identity organ value router counts shape mismatch")
             if bool((restored_counts < 0).any()):
                 raise ValueError("identity organ value router counts cannot be negative")
-        self._value_counts = restored_counts.clone()
+            if used is not None and int(restored_counts.max().item()) > used:
+                raise ValueError("identity organ value router counts exceed stored rows")
+            self._value_counts = restored_counts.clone()
+            # 截断档的可逆性靠这条硬前件守住：`used` 必须正好是 counts 的上界，
+            # 否则"没存的那几行"里可能本该有值 ⇒ 响亮拒绝，不静默还原成零。
+            if used is not None and used < rows and int(restored_counts.max().item()) != used:
+                raise ValueError("identity organ value router used rows do not match counts")
         self.active_slot_start = int(payload.get("active_slot_start", 0))
         if not 0 <= self.active_slot_start < self.capacity:
             raise ValueError("identity organ active generation is outside capacity")
