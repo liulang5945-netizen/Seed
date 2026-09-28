@@ -309,6 +309,22 @@ lane 追加的那条 `session/title` 是**事件**、不是**头字段**，所�
 
 ## 8 · 裁定单（一次性总表；每项都是"问题一句／选项按能声称的最强结论排序／价格／不裁的后果"）
 
+### 8.0 · web 表层 lane 的"只能改上游测试"残项（2026-09-28 收口，判据⑦ 用；逐项都给"问题／改法／价格／不裁的后果"）
+
+**共同前提**：下面每一项都**不是产品缺陷**——产品的行为是已裁定并已验证的（D3 默认 provider、G2 改名、⑱ 自动开会话、上游默认超时 120 s），红的形状全部来自**上游 lane 把旧的装配事实钉成了断言**。所以"修"的位置在 lane，而改上游 lane 按本仓纪律需要口径。
+
+| 项 | 问题一句 | 改法（按能声称的最强结论排序） | 价格 | 不裁的后果 |
+| --- | --- | --- | --- | --- |
+| **W1 `smoke-real` :466/:652/:571** | 三条都在等 **DeepSeek mock** 的请求／它的 assistant 标记，而装配默认 provider 已是 `taiji-local`（08 ㊻：落盘 `modelSelection.lastUsed` 自己命名了 taiji-local，mock 计数 0） | **(甲) 给 lane 写显式前提**：在 spawn 的环境里把默认选择钉回 deepseek（或 overlay `agent-default-model` 的 config），三条一次转绿，且"默认是 Taiji／这条 lane 测的是 deepseek 通道"两件事各自可声称；(乙) 承认为 fork 事实、把这三种子改判"请求应到 Taiji 运行时"，则 lane 需要一台真运行时的前提，非本机可稳定 | (甲) 1 个 overlay 文件＋1 处 env；(乙) 需运行时在场，属另一类前提 | 判据⑦ 常驻 3 条红；**并且失去一条本可转正的证据**——(甲) 之后 lane 才第一次真正"测到 deepseek 通道"，现在它测的是默认路由 |
+| **W2 `smoke-real` :362** | 批数钉成 3，实测 2；G2 把每条路径缩 6 字节，应用阶段 map 形态 2903 字节落到 3072 阈值之下 ⇒ 第二条组合消失（08 ㊜） | **(甲) 改期望为 2 并把注释改成"按 3 KiB 阈值随装配规模浮动"**；(乙) 改断言口径为"bootstrap 单独成串 ＋ 应用阶段 ≥1 条"，不钉条数——**推荐 (乙)**，因为 (甲) 会把刀尖值再钉一次，任何加行都重新变红 | (乙) 2 行断言＋1 行注释 | 常驻 1 条红，且**每次增删装配行都可能重新踩**（这条红是可预期的复发性红） |
+| **W3 `sessionless-header` 4 档** | lane 的前提是"无选中会话"，但客户端在文本框就绪后 ~40 ms 内发 `session/create`（08 ㊺），四档红的只是同一竞态在不同断言处落地 | **(甲) 先钉冷启动前提**（断言前显式阻止/等待自动开会话，或改用无工作区的装配），一次消掉 4 条；(乙) 承认"恢复会话"是产品事实、把 lane 目标改成"有会话时头部几何正确"，则与 `default-workspace` 的 `toHaveLength(1)` 合成同一事实；(丙) 平台 skip **不推荐**——本族与平台无关（无注入档同形已证），(丙) 只会掩盖 (d) 那两格 | (甲) 1 处前提；(乙) 整条 lane 重写 | 常驻 4 条红（面上最多的一族），且**断言行号还会漂**，每轮读数都要重新解释一次 |
+| **W4 `plugin-config` 3 条** | lane 第一句期望默认命令超时 `60000`，上游当前默认是 `120_000`（两个 shell 一致，与本机无关；08 ㊷ 已双向核对非我方改） | **(甲) 把 3 条期望改成 120000/12000 的真实默认**；(乙) 不动，转"上游 lane 过期"账 | (甲) 3 个常量 | 常驻 3 条红；refresh 对它无效（不是快照断言） |
+| **W5 `vite-entry` 1 条** | lane 用 `execa('pnpm', …)`，本机子进程 PATH 里没有 `pnpm`（corepack  shim 不在），报的是"不是内部或外部命令" | **(甲) 改走 corepack/绝对路径**；(乙) 无 `pnpm` 时 `context.skip()` | (甲) 1 处；(乙) 1 行 | 常驻 1 条红，形状易被误读成产品拒绝信息变了 |
+| **W6 `skill-invocation-policy`** | symlink EPERM＝本仓已登记的产品层 Windows 限制族（08 §6 ⑦），与 `docs-site-projection` 同因 | **按既有口径平台 skip**（(丙) 类已裁过一次，这是同族的续项） | 1 行 skipIf | 常驻红；但**归因已定**，不影响其他判断 |
+| **W7 类型面缺口（实测 14 个 lane 文件，不是先前的 16）** | 盘面 143 个 lane、`tsconfig.host.json` 已点名 140、`tsconfig.client.json` 点名 0 ⇒ **14 个不在任何面上**，tsc 与 oxlint 双双失效（`taiji-runtime-absent` 那格已补，13→0）。清单：`built-boot.expected`／`command-image-envelope.expected`／`desktop-updates`／`home-path-tilde.expected`／`image-display.expected`／`max-tokens-notice.expected`／`pwa-manifest`／`search-card.expected`／`smoke-real`／`submission-echo`／`support-timezone`／`todo-row.expected`／`trajectory-image-display.expected`／`vite-entry`（`.dsh-sbx2/face-gap.txt`）。**其中 `smoke-real`／`vite-entry`／`pwa-manifest` 本身就在红集合里** ⇒ 补面与消红可能同源，先补面再判红能省一轮读数 | **(甲) 逐档评估后补进 host 面**（跨面 import 的要先定口径）；(乙) 维持"排除＝不检查"的既有事实并登记为已知盲区 | (甲) 每文件 1 行，风险是补进去会立刻报出存量错（先量：上一格补面后是 13 条→0，说明补面本身不必然生红） | 判据⑥ 的"0 新增违规"只在**已覆盖面**成立，覆盖面不扩则这道门对新代码是虚的 |
+
+**给裁定的净影响**：W1–W6 全按推荐项落地后，web 面 12 个红文件的**已知可消项是 4 个文件／11 条用例**（`smoke-real` 4、`sessionless-header` 4、`plugin-config` 3），W5/W6 再消 2 个文件；剩余（`github-ready-review`／`goal-command-presentation`／`markdown-images`／`preview-boot`／`pwa-manifest`／`reference-composer`／`sidebar-subagent-activity`）**本轮仍未逐条取证**，不在这张表里承诺。
+
 **裁定回执（2026-09-27，弹窗逐项批准，全按推荐项）**：
 - **D2 ＝ (b) 独立分发通道**：给后端开 wheelhouse／离线安装器，可复用 `DSH_PRIMARY_RUNTIME` 载体覆盖口子；"装后谁拉起并等就绪"的生命周期（裁定单 (b′) 的常驻进程语义）属实现范围一并落地。体积上限未给数 ⇒ 实现期先报实测增量再定。
 - **D3 ＝ 改**。装机默认 provider/model 改为 Taiji（`bundle/base/cordis.patch.yml:82-86`）。
