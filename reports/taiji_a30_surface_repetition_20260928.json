@@ -1,0 +1,1388 @@
+{
+  "format": "taiji-a30-surface-repetition-v1",
+  "prereg": "PLAN-A-30 战线一（表层成句为何被回路打下去）",
+  "manifest": "r2_copy_surface_extension_v3_position_random.json",
+  "items": 24,
+  "checkpoint": "checkpoints/seed_beta.pt",
+  "circuit": "output/taiji_r2_copy_circuit_chat/judge/circuit-final.pt",
+  "base_sha256_unchanged": true,
+  "arms": [
+    {
+      "chain": "raw",
+      "mount": "enable_copy_circuit",
+      "items": 24,
+      "texts": 72,
+      "strict_hits": 6,
+      "well_formed_texts": 2,
+      "mean_distinct_ratio": 0.2841,
+      "mean_bigram_repeat": 0.5498,
+      "texts_with_run_ge_4": 48
+    },
+    {
+      "chain": "raw_masked",
+      "mount": "enable_copy_circuit",
+      "items": 24,
+      "texts": 72,
+      "strict_hits": 3,
+      "well_formed_texts": 13,
+      "mean_distinct_ratio": 0.3414,
+      "mean_bigram_repeat": 0.4867,
+      "texts_with_run_ge_4": 38
+    },
+    {
+      "chain": "surface",
+      "mount": "enable_copy_circuit",
+      "items": 24,
+      "texts": 72,
+      "strict_hits": 9,
+      "well_formed_texts": 6,
+      "mean_distinct_ratio": 0.1968,
+      "mean_bigram_repeat": 0.6268,
+      "texts_with_run_ge_4": 57
+    },
+    {
+      "chain": "raw",
+      "mount": "none",
+      "items": 24,
+      "texts": 72,
+      "strict_hits": 0,
+      "well_formed_texts": 0,
+      "mean_distinct_ratio": 0.3333,
+      "mean_bigram_repeat": 0.4249,
+      "texts_with_run_ge_4": 66
+    },
+    {
+      "chain": "raw_masked",
+      "mount": "none",
+      "items": 24,
+      "texts": 72,
+      "strict_hits": 0,
+      "well_formed_texts": 34,
+      "mean_distinct_ratio": 0.5995,
+      "mean_bigram_repeat": 0.1648,
+      "texts_with_run_ge_4": 37
+    },
+    {
+      "chain": "surface",
+      "mount": "none",
+      "items": 24,
+      "texts": 72,
+      "strict_hits": 0,
+      "well_formed_texts": 12,
+      "mean_distinct_ratio": 0.4316,
+      "mean_bigram_repeat": 0.2241,
+      "texts_with_run_ge_4": 66
+    }
+  ],
+  "per_arm_rows": {
+    "raw|enable_copy_circuit": [
+      {
+        "id": "V001",
+        "hit": false,
+        "answer": "哥楐我表我衐我衐我衐我衐我衐我衐雨我衐我衐�",
+        "distinct_ratio": 0.3182,
+        "longest_run": 1,
+        "bigram_repeat": 0.5714,
+        "length": 22
+      },
+      {
+        "id": "V002",
+        "hit": true,
+        "answer": "州苏州苏州苏州苏州苏州苏州住州拋州苏州住州�",
+        "distinct_ratio": 0.2273,
+        "longest_run": 1,
+        "bigram_repeat": 0.6667,
+        "length": 22
+      },
+      {
+        "id": "V003",
+        "hit": false,
+        "answer": "21�刑妹妹妹妹妹妹妹妹妹欢数妹字是212121妹是212",
+        "distinct_ratio": 0.3103,
+        "longest_run": 9,
+        "bigram_repeat": 0.5,
+        "length": 29
+      },
+      {
+        "id": "V004",
+        "hit": false,
+        "answer": "图图。图图图图。图图图图图图。图项皷图项目�",
+        "distinct_ratio": 0.2727,
+        "longest_run": 6,
+        "bigram_repeat": 0.619,
+        "length": 22
+      },
+      {
+        "id": "V005",
+        "hit": true,
+        "answer": "喝乌龙。喝乌龙。喝乳时爱喝乳时爱喝乌喝乌龙�",
+        "distinct_ratio": 0.3636,
+        "longest_run": 1,
+        "bigram_repeat": 0.5238,
+        "length": 22
+      },
+      {
+        "id": "V006",
+        "hit": false,
+        "answer": "养丮我�截鸮雪雪雪鸀养丮渮檺养一养一养一养�",
+        "distinct_ratio": 0.5,
+        "longest_run": 3,
+        "bigram_repeat": 0.2857,
+        "length": 22
+      },
+      {
+        "id": "V007",
+        "hit": false,
+        "answer": "姐水绻》姐水绐泧泧水绐泧水绻。姐泐泧水绻》�",
+        "distinct_ratio": 0.4091,
+        "longest_run": 2,
+        "bigram_repeat": 0.381,
+        "length": 22
+      },
+      {
+        "id": "V008",
+        "hit": false,
+        "answer": "山吃吃吃吃吃吃吃吃吃吃吃吃吃吃吃吃吃吃吃吃�",
+        "distinct_ratio": 0.1364,
+        "longest_run": 20,
+        "bigram_repeat": 0.8571,
+        "length": 22
+      },
+      {
+        "id": "V009",
+        "hit": false,
+        "answer": "我君雨我君雨我我我君雨我君雨我君雨我我我君�",
+        "distinct_ratio": 0.1818,
+        "longest_run": 3,
+        "bigram_repeat": 0.7619,
+        "length": 22
+      },
+      {
+        "id": "V010",
+        "hit": true,
+        "answer": "安扥我使安��西安西安安安安安安安安安安安安�",
+        "distinct_ratio": 0.2609,
+        "longest_run": 12,
+        "bigram_repeat": 0.5455,
+        "length": 23
+      },
+      {
+        "id": "V011",
+        "hit": false,
+        "answer": "77777777777数喯77777777777777777777777777777777777777777777777",
+        "distinct_ratio": 0.05,
+        "longest_run": 47,
+        "bigram_repeat": 0.9322,
+        "length": 60
+      },
+      {
+        "id": "V012",
+        "hit": true,
+        "answer": "埘埙目叫�丘晨晨星晨晨星晨星星星星星�亘队。",
+        "distinct_ratio": 0.5,
+        "longest_run": 5,
+        "bigram_repeat": 0.3333,
+        "length": 22
+      },
+      {
+        "id": "V013",
+        "hit": false,
+        "answer": "打打打打打打打打打打打打打打打打打打打打打�",
+        "distinct_ratio": 0.0909,
+        "longest_run": 21,
+        "bigram_repeat": 0.9048,
+        "length": 22
+      },
+      {
+        "id": "V014",
+        "hit": false,
+        "answer": "养一养一养一养一养一养一养一养一养一养一养�",
+        "distinct_ratio": 0.1364,
+        "longest_run": 1,
+        "bigram_repeat": 0.8571,
+        "length": 22
+      },
+      {
+        "id": "V015",
+        "hit": false,
+        "answer": "寻近泻近泻读读近泻近水绻》》》》《泻读读近�",
+        "distinct_ratio": 0.4091,
+        "longest_run": 4,
+        "bigram_repeat": 0.381,
+        "length": 22
+      },
+      {
+        "id": "V016",
+        "hit": false,
+        "answer": "子鸐鸡最爱子鸐鸀爱子鸐鸡最爱子鸐鸀爱子鸐鸀�",
+        "distinct_ratio": 0.3182,
+        "longest_run": 1,
+        "bigram_repeat": 0.619,
+        "length": 22
+      },
+      {
+        "id": "V017",
+        "hit": false,
+        "answer": "迿哥我远远远远远远远远远远远远��远。违违违�",
+        "distinct_ratio": 0.3043,
+        "longest_run": 12,
+        "bigram_repeat": 0.5,
+        "length": 23
+      },
+      {
+        "id": "V018",
+        "hit": true,
+        "answer": "岛青岛青岛青岛青岛青岛青岛青岛青岛青岛青岛�",
+        "distinct_ratio": 0.1364,
+        "longest_run": 1,
+        "bigram_repeat": 0.8571,
+        "length": 22
+      },
+      {
+        "id": "V019",
+        "hit": false,
+        "answer": "9998��9999999999999999999999喯19999999999999999999999999999999",
+        "distinct_ratio": 0.082,
+        "longest_run": 31,
+        "bigram_repeat": 0.8667,
+        "length": 61
+      },
+      {
+        "id": "V020",
+        "hit": true,
+        "answer": "径鳾径项石径项石径鳾很�亳径项石径项石径项石",
+        "distinct_ratio": 0.3182,
+        "longest_run": 1,
+        "bigram_repeat": 0.5714,
+        "length": 22
+      },
+      {
+        "id": "V021",
+        "hit": false,
+        "answer": "檬柠爱人爱人爱人爱人爱人爱人爱人爱人爱人爱�",
+        "distinct_ratio": 0.2273,
+        "longest_run": 1,
+        "bigram_repeat": 0.7619,
+        "length": 22
+      },
+      {
+        "id": "V022",
+        "hit": false,
+        "answer": "居蓝舌舌养一居居养一居居养一居蓝舌舌舌舌舌�",
+        "distinct_ratio": 0.2727,
+        "longest_run": 5,
+        "bigram_repeat": 0.5714,
+        "length": 22
+      },
+      {
+        "id": "V023",
+        "hit": false,
+        "answer": "读读读读》读读》读读》读读》读读》读读》读�",
+        "distinct_ratio": 0.1364,
+        "longest_run": 4,
+        "bigram_repeat": 0.8095,
+        "length": 22
+      },
+      {
+        "id": "V024",
+        "hit": false,
+        "answer": "山吃�刱吃�一羊肉泱泱泾泾吃�一羊肉泾泾吃���",
+        "distinct_ratio": 0.375,
+        "longest_run": 3,
+        "bigram_repeat": 0.3913,
+        "length": 24
+      }
+    ],
+    "raw_masked|enable_copy_circuit": [
+      {
+        "id": "V001",
+        "hit": false,
+        "answer": "哥我衐雨楛衐衐衐衐。哥哥我衐雨楛衐我衐雨楐",
+        "distinct_ratio": 0.3333,
+        "longest_run": 4,
+        "bigram_repeat": 0.45,
+        "length": 21
+      },
+      {
+        "id": "V002",
+        "hit": true,
+        "answer": "州苏州苏州住州苏州苏州苏州住州拋州苏州住州",
+        "distinct_ratio": 0.1905,
+        "longest_run": 1,
+        "bigram_repeat": 0.7,
+        "length": 21
+      },
+      {
+        "id": "V003",
+        "hit": false,
+        "answer": "21喇喦妹妹妹妹欢欢欢欢欢欢欢欢欢欢欢欢欢欢",
+        "distinct_ratio": 0.2727,
+        "longest_run": 14,
+        "bigram_repeat": 0.6667,
+        "length": 22
+      },
+      {
+        "id": "V004",
+        "hit": false,
+        "answer": "图图。图图图图。图图图图图图图囮的项目图盾",
+        "distinct_ratio": 0.3333,
+        "longest_run": 7,
+        "bigram_repeat": 0.55,
+        "length": 21
+      },
+      {
+        "id": "V005",
+        "hit": false,
+        "answer": "喝乳时爱喝乳时爱喝乳时爱喝乳时爱喝乳时爱喝",
+        "distinct_ratio": 0.1905,
+        "longest_run": 1,
+        "bigram_repeat": 0.8,
+        "length": 21
+      },
+      {
+        "id": "V006",
+        "hit": false,
+        "answer": "养一养一养一养一养一养一养一养一养一养一养",
+        "distinct_ratio": 0.0952,
+        "longest_run": 1,
+        "bigram_repeat": 0.9,
+        "length": 21
+      },
+      {
+        "id": "V007",
+        "hit": false,
+        "answer": "近姐水绻》姐水绐泧泧水泧水经泧水绐泧水泧水",
+        "distinct_ratio": 0.381,
+        "longest_run": 2,
+        "bigram_repeat": 0.4,
+        "length": 21
+      },
+      {
+        "id": "V008",
+        "hit": false,
+        "answer": "山吃吃吃吃吃吃吃吃吃吃吃吃吃吃吃吃吃吃吃吃",
+        "distinct_ratio": 0.0952,
+        "longest_run": 20,
+        "bigram_repeat": 0.9,
+        "length": 21
+      },
+      {
+        "id": "V009",
+        "hit": false,
+        "answer": "我雨我我我君雨我君雨我君雨我我我君雨我君雨",
+        "distinct_ratio": 0.1429,
+        "longest_run": 3,
+        "bigram_repeat": 0.75,
+        "length": 21
+      },
+      {
+        "id": "V010",
+        "hit": false,
+        "answer": "安扥扉安扉安安安安安安安安安安安安安安安安",
+        "distinct_ratio": 0.1429,
+        "longest_run": 16,
+        "bigram_repeat": 0.75,
+        "length": 21
+      },
+      {
+        "id": "V011",
+        "hit": false,
+        "answer": "77777777777欢欑欢77777777777777777777777。777777777777777777",
+        "distinct_ratio": 0.0714,
+        "longest_run": 23,
+        "bigram_repeat": 0.8727,
+        "length": 56
+      },
+      {
+        "id": "V012",
+        "hit": false,
+        "answer": "埘埘埙亘目埙丘晨晨晨智的队晟埘埙埙也。域晟",
+        "distinct_ratio": 0.619,
+        "longest_run": 3,
+        "bigram_repeat": 0.1,
+        "length": 21
+      },
+      {
+        "id": "V013",
+        "hit": false,
+        "answer": "打打打打打打打打打打打打打打打打打打打打打",
+        "distinct_ratio": 0.0476,
+        "longest_run": 21,
+        "bigram_repeat": 0.95,
+        "length": 21
+      },
+      {
+        "id": "V014",
+        "hit": false,
+        "answer": "养一养一养一养一养一养一养一养一养一养一养",
+        "distinct_ratio": 0.0952,
+        "longest_run": 1,
+        "bigram_repeat": 0.9,
+        "length": 21
+      },
+      {
+        "id": "V015",
+        "hit": false,
+        "answer": "近水经。泻读泻近水泻近水绻》寻读读近寻近水",
+        "distinct_ratio": 0.4286,
+        "longest_run": 2,
+        "bigram_repeat": 0.2,
+        "length": 21
+      },
+      {
+        "id": "V016",
+        "hit": true,
+        "answer": "子鸐鸡最爱吃辈吃辈吃辈吃辈吃辈吃辣吃辣子鸡",
+        "distinct_ratio": 0.381,
+        "longest_run": 1,
+        "bigram_repeat": 0.45,
+        "length": 21
+      },
+      {
+        "id": "V017",
+        "hit": false,
+        "answer": "濜远远远远远远远远远远远远。违迿哥迿远迿哥",
+        "distinct_ratio": 0.2857,
+        "longest_run": 12,
+        "bigram_repeat": 0.55,
+        "length": 21
+      },
+      {
+        "id": "V018",
+        "hit": false,
+        "answer": "岛岛岛岛岛岛岛岛岛岛岛岛。岛青我住岛我你你",
+        "distinct_ratio": 0.2857,
+        "longest_run": 12,
+        "bigram_repeat": 0.5,
+        "length": 21
+      },
+      {
+        "id": "V019",
+        "hit": false,
+        "answer": "9999999999999999999999999999999999999999999999999999999999999999",
+        "distinct_ratio": 0.0156,
+        "longest_run": 64,
+        "bigram_repeat": 0.9841,
+        "length": 64
+      },
+      {
+        "id": "V020",
+        "hit": true,
+        "answer": "径鳾径项石径项石径项石径项很径项石径项径项",
+        "distinct_ratio": 0.2381,
+        "longest_run": 1,
+        "bigram_repeat": 0.6,
+        "length": 21
+      },
+      {
+        "id": "V021",
+        "hit": false,
+        "answer": "柠檬柠柠柠柠柠柠柠檬柠柠柠柠柠柠柠柠柠柠柠",
+        "distinct_ratio": 0.0952,
+        "longest_run": 11,
+        "bigram_repeat": 0.85,
+        "length": 21
+      },
+      {
+        "id": "V022",
+        "hit": false,
+        "answer": "居养一居养一居养一居舌舌养一居居养一家邻一",
+        "distinct_ratio": 0.2857,
+        "longest_run": 2,
+        "bigram_repeat": 0.5,
+        "length": 21
+      },
+      {
+        "id": "V023",
+        "hit": false,
+        "answer": "寻读读读读读读》读读读》读读读读诀读读读读",
+        "distinct_ratio": 0.1905,
+        "longest_run": 6,
+        "bigram_repeat": 0.7,
+        "length": 21
+      },
+      {
+        "id": "V024",
+        "hit": false,
+        "answer": "泱吃羫泾吃羫泾吃羊贀争泡馍泱泱泾泾泾吱吃羊",
+        "distinct_ratio": 0.4762,
+        "longest_run": 3,
+        "bigram_repeat": 0.25,
+        "length": 21
+      }
+    ],
+    "surface|enable_copy_circuit": [
+      {
+        "id": "V001",
+        "hit": false,
+        "answer": "哥哥哥哥哥哥哥楥楛表我衐我衐我衐我衐我衐我衐衐衐衐衐衐。哥哥哥哥哥哥哥哥哥哥哥哥哥哥哥哥哥哥哥哥哥哥桐。哥哥哥哥表楥衐衐衐衐衐衐衐衐。哥哥哥哥哥哥哥哥哥哥哥哥哥",
+        "distinct_ratio": 0.0941,
+        "longest_run": 22,
+        "bigram_repeat": 0.8214,
+        "length": 85
+      },
+      {
+        "id": "V002",
+        "hit": true,
+        "answer": "州苏州住州拏州拏州拏州拏州拏州拏州拏州拏州拏州我住州我住州我住州我住州我住州我住州我住州我住州我住州我住州我住州我住州我住州我住州我住州我住州我住州我住州我住州",
+        "distinct_ratio": 0.0588,
+        "longest_run": 1,
+        "bigram_repeat": 0.9048,
+        "length": 85
+      },
+      {
+        "id": "V003",
+        "hit": false,
+        "answer": "21喇喯喦妹妹妹妹妹妹欿欢欢欢欢欢是21喜是21喜是21是21喜是21喜是21是21喘21喯喯2121妹妹妹欢欼妹欢欢欢欢欢欢欢欢欢欢欢欢欢欼妹21212121",
+        "distinct_ratio": 0.0952,
+        "longest_run": 13,
+        "bigram_repeat": 0.76,
+        "length": 126
+      },
+      {
+        "id": "V004",
+        "hit": true,
+        "answer": "图图。图图图。图图图图。图图图图图。图项的项目图。图海囮海囮海囮海囮海囮海囮海囮海囮海图的鷷巷图。图图。图图图图图图图图图图。龮海囮海囮海囮海囮海囮图海囮图海囮",
+        "distinct_ratio": 0.1176,
+        "longest_run": 10,
+        "bigram_repeat": 0.7738,
+        "length": 85
+      },
+      {
+        "id": "V005",
+        "hit": true,
+        "answer": "喝乳时爱喝乳时爱喝乳时爱喝乳时爱喝乳时爱喝乳时爱喝乳时爱喝乳时爱喝乌喝乌喝乌喝乌喝乌喝乌喝乌喝乌喝乌喝乌喝乌喝乌喝乌喝乌喝乌龙。喝乌龙。喝乌龙。喝乳时爱喝乳时爱",
+        "distinct_ratio": 0.0824,
+        "longest_run": 1,
+        "bigram_repeat": 0.8929,
+        "length": 85
+      },
+      {
+        "id": "V006",
+        "hit": true,
+        "answer": "养丮我雪鸮雪雪鸮雪雪鸮雪雪雪鸮雪雪鸮丮檮鸮雪雪鸀养丮鸮鸮雪鸮一养丮鸮雪鸮一养丮鸮鸮雪鸮丮檮鸮雪鸮雪鸮雪鸮雪鸮檪鸮雪雪鸮雪鸮檪雪雪雪鸮雪鸮檪鸮雪鸮檪鸮雪鸮檪鸮雪鸮",
+        "distinct_ratio": 0.1059,
+        "longest_run": 3,
+        "bigram_repeat": 0.7738,
+        "length": 85
+      },
+      {
+        "id": "V007",
+        "hit": false,
+        "answer": "近姐水经泧泧泧泧水经泧泧水经泧泧水经泧泧水经泧读》》》《水疐泐泧水绻》姐泧水绐泧水绐泧水绐泻》》》《泐泧水绐泧水绐泧水绐泧水绐泧水绐泧水绐泧水绐泻》》》《泧水绐",
+        "distinct_ratio": 0.1529,
+        "longest_run": 4,
+        "bigram_repeat": 0.7143,
+        "length": 85
+      },
+      {
+        "id": "V008",
+        "hit": false,
+        "answer": "吃吃吃吃吃吃吃吃吃吃吃吃包包包包包包最笼包笼吃吃吃吃吃吃吃包包最笼包笼吃包最笼包最笼包最笼吃吃吃吃吃吃吃吃吃吃吃包包包最笼包最笼包最笼吃吃吃吃吃吃吃吃吃吃吃吃包",
+        "distinct_ratio": 0.0471,
+        "longest_run": 12,
+        "bigram_repeat": 0.9048,
+        "length": 85
+      },
+      {
+        "id": "V009",
+        "hit": false,
+        "answer": "君雨我雨我我我君雨我君雨我君雨我君雨我雨我君雨我君我君雨我君雨我君雨我君雨我君雨我君雨我君雨我君雨我君雨我雨我君雨我君雨我君雨我君雨我君雨我君雨我君雨我君雨我君",
+        "distinct_ratio": 0.0353,
+        "longest_run": 3,
+        "bigram_repeat": 0.9286,
+        "length": 85
+      },
+      {
+        "id": "V010",
+        "hit": true,
+        "answer": "安濥我使安扉安安安安安安安安安安安安安。安西安安安安安。安西安安安西安安西安安安安。安西安西安安安安安西安西安西安西安西安安安安安剉安。安西安西安西安西安西安安",
+        "distinct_ratio": 0.0941,
+        "longest_run": 13,
+        "bigram_repeat": 0.8452,
+        "length": 85
+      },
+      {
+        "id": "V011",
+        "hit": false,
+        "answer": "777777777777777777777777777777777777777777。7777777777777777777777777777777777777",
+        "distinct_ratio": 0.0079,
+        "longest_run": 211,
+        "bigram_repeat": 0.9881,
+        "length": 254
+      },
+      {
+        "id": "V012",
+        "hit": true,
+        "answer": "刟星星星星星星星星星星星星星星星星星星星。皙队晨晽的队晨晰晉晽的队晨晨星星星星星星我的队晨晨晰皙皟晟星星星晨星星。目晨晨晽的队晟星星星晈星晨星星星晗域晨晨星目域",
+        "distinct_ratio": 0.2,
+        "longest_run": 19,
+        "bigram_repeat": 0.619,
+        "length": 85
+      },
+      {
+        "id": "V013",
+        "hit": true,
+        "answer": "苳打打打打打打打打打打打打打打打打打打打打。喝苏打打打打苏打打打苏打打苏打打苏打打打打苏打打打苏打打打苏打打苏打打打苏打打打苏打苏打打打打苏打苏打打苏打打苏打打",
+        "distinct_ratio": 0.0588,
+        "longest_run": 20,
+        "bigram_repeat": 0.9167,
+        "length": 85
+      },
+      {
+        "id": "V014",
+        "hit": false,
+        "answer": "养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一浣浣浣浣浣养一养一养一养一养一养一养一养一养一浣浣浣浣浣浣养一养一养一养一养一养一养",
+        "distinct_ratio": 0.0353,
+        "longest_run": 6,
+        "bigram_repeat": 0.9405,
+        "length": 85
+      },
+      {
+        "id": "V015",
+        "hit": false,
+        "answer": "近泻近泻近泻近泻近泻读泻近泻近泻近寻迿近個近泻读读近寻迿寻近水绻》寻读读近寻近水经注读读近水绻》寻读近泻近泻近水绻》寻读近喻近個近個读读近泻近水绻》近寻迿寻近水",
+        "distinct_ratio": 0.1529,
+        "longest_run": 2,
+        "bigram_repeat": 0.6786,
+        "length": 85
+      },
+      {
+        "id": "V016",
+        "hit": false,
+        "answer": "子鸡最爱吃舱吃舑最爱吃舱吃舑最爱吃舱子鸀爱子鸡最爱子鸀爱子鸡最爱子鸡最爱子鸀爱子鸡最爱子鸐鸡朣最爱子鸡最爱子鸡最爱子鸡最爱子鸡最爱子鸡最爱子鸡最爱子鸡最爱子鸡最",
+        "distinct_ratio": 0.1176,
+        "longest_run": 1,
+        "bigram_repeat": 0.8095,
+        "length": 85
+      },
+      {
+        "id": "V017",
+        "hit": false,
+        "answer": "濿迿哥迿远迿远迿迿远迿迿远迿迿迿远迿迿迿远远远远迼迿迿迿迿迿怂迿迿迿迿迿迿迿迿迿远迿远远远远迼哥迿迿迿迿迿迿迥怂迿迿迿迿迿迿迥思远迿迿迿迿迿迿迿迿迿迿迥思远迿迿",
+        "distinct_ratio": 0.0941,
+        "longest_run": 10,
+        "bigram_repeat": 0.8095,
+        "length": 85
+      },
+      {
+        "id": "V018",
+        "hit": true,
+        "answer": "岛岛岛。岛青岛青我住岛青岛青岛青岛青岛青岛青岛青岛青岛青岛青岛岛岛岛岛岛岛岛岛岛岛岛岛。岛青我住岛我住岛我住岛。岛岛岛岛岛岛岛岛岛岛岛岛岛。岛青青我住岛我你你佼",
+        "distinct_ratio": 0.0824,
+        "longest_run": 13,
+        "bigram_repeat": 0.8333,
+        "length": 85
+      },
+      {
+        "id": "V019",
+        "hit": false,
+        "answer": "79999999999999999999999999999999999999999999999999999999999999999999999999999999",
+        "distinct_ratio": 0.0078,
+        "longest_run": 255,
+        "bigram_repeat": 0.9922,
+        "length": 256
+      },
+      {
+        "id": "V020",
+        "hit": true,
+        "answer": "径鳾径项石径项石径项径项皳径项石径项石径项石径项径项皳径鳾很石径项径项石径项皳徟径项石径项石径项石径项石径项石径项径项皳徟径项径项石径项径项皳徟径项径项石径项径",
+        "distinct_ratio": 0.0824,
+        "longest_run": 1,
+        "bigram_repeat": 0.8571,
+        "length": 85
+      },
+      {
+        "id": "V021",
+        "hit": false,
+        "answer": "檬柠柠柠柠柠柠柠柠柠柠柠柠柠柠柠汱人爱人爱人爱人爱人爱人爱人爱人爱人爱人爱人爱人爱人爱人爱人爱人爱人爱人爱人爱人爱人爱人爱人爱人爱人爱人爱人爱人爱喝柠柠柠柠柠柠",
+        "distinct_ratio": 0.0706,
+        "longest_run": 15,
+        "bigram_repeat": 0.9048,
+        "length": 85
+      },
+      {
+        "id": "V022",
+        "hit": false,
+        "answer": "居居养一居居养一居居居养一居耂居居居养一舌舌耂居居居养一蓝舌舌舌舌舌舌舌舌舌舌舌舌舌舌舌舌舌舌舌舌舌舌蓝蓝蓝茌蓝蓝蓝舌蓝蓝舌蓝蓝舌蓝蓝舌蓝蓝舌舌舌舌舌居蓝蓝蓝蓝",
+        "distinct_ratio": 0.0824,
+        "longest_run": 22,
+        "bigram_repeat": 0.7976,
+        "length": 85
+      },
+      {
+        "id": "V023",
+        "hit": false,
+        "answer": "寻读读读读读读读读近梦读读近梦读读读读读语读近梦读读读读读》读语读读读语梦语语语读读》》》》语语梦语语读读》读读》读读》读读》读读》读读读》读读读》读读读读读读",
+        "distinct_ratio": 0.0706,
+        "longest_run": 8,
+        "bigram_repeat": 0.8333,
+        "length": 85
+      },
+      {
+        "id": "V024",
+        "hit": false,
+        "answer": "泡馍泱泱吃羽结泡馍泱泱吃羽羽绖吃泾吃泾吃羫泾吃羫泉泾泾泾吃羊贵泡泱吃羊肉泾泾泾泾泾泾泾泾泱吱吃羊贀羊肉泉泉泉泡戱吃羔泡泉泱吱吃羪吃羪吃羪泡泱吃羪吃羪吃羪吃吃羽羻",
+        "distinct_ratio": 0.2353,
+        "longest_run": 8,
+        "bigram_repeat": 0.4524,
+        "length": 85
+      }
+    ],
+    "raw|none": [
+      {
+        "id": "V001",
+        "hit": false,
+        "answer": "������������：��有���，����人����师�个��个�",
+        "distinct_ratio": 0.1944,
+        "longest_run": 12,
+        "bigram_repeat": 0.6286,
+        "length": 36
+      },
+      {
+        "id": "V002",
+        "hit": false,
+        "answer": "����������下�（则有��我人��������是���",
+        "distinct_ratio": 0.2581,
+        "longest_run": 10,
+        "bigram_repeat": 0.6,
+        "length": 31
+      },
+      {
+        "id": "V003",
+        "hit": false,
+        "answer": "���������人���������来�是有�：我�下�到",
+        "distinct_ratio": 0.3,
+        "longest_run": 9,
+        "bigram_repeat": 0.5172,
+        "length": 30
+      },
+      {
+        "id": "V004",
+        "hit": false,
+        "answer": "分���弈�下�个是���我�是我�済我为��������我",
+        "distinct_ratio": 0.3,
+        "longest_run": 8,
+        "bigram_repeat": 0.4138,
+        "length": 30
+      },
+      {
+        "id": "V005",
+        "hit": false,
+        "answer": "分���刑�个�（君，�有��：�师师���孟������",
+        "distinct_ratio": 0.3793,
+        "longest_run": 6,
+        "bigram_repeat": 0.3214,
+        "length": 29
+      },
+      {
+        "id": "V006",
+        "hit": false,
+        "answer": "分�（刑人����师�君刺个�，�个是���我�是我�",
+        "distinct_ratio": 0.4444,
+        "longest_run": 4,
+        "bigram_repeat": 0.1923,
+        "length": 27
+      },
+      {
+        "id": "V007",
+        "hit": false,
+        "answer": "������（则意��扈有�有�（下师，到�君�孟���",
+        "distinct_ratio": 0.4286,
+        "longest_run": 6,
+        "bigram_repeat": 0.3333,
+        "length": 28
+      },
+      {
+        "id": "V008",
+        "hit": false,
+        "answer": "��（家��个�，个�），家��孟�����宩人�����",
+        "distinct_ratio": 0.3103,
+        "longest_run": 5,
+        "bigram_repeat": 0.4286,
+        "length": 29
+      },
+      {
+        "id": "V009",
+        "hit": false,
+        "answer": "别���，��个是人��������孟���刑�为吟���",
+        "distinct_ratio": 0.3448,
+        "longest_run": 8,
+        "bigram_repeat": 0.4643,
+        "length": 29
+      },
+      {
+        "id": "V010",
+        "hit": false,
+        "answer": "分家����弈下师（有��：��君�������，��人�",
+        "distinct_ratio": 0.4138,
+        "longest_run": 7,
+        "bigram_repeat": 0.3929,
+        "length": 29
+      },
+      {
+        "id": "V011",
+        "hit": false,
+        "answer": "别�����孟�����下帪�庺������是�个�，�为�",
+        "distinct_ratio": 0.3333,
+        "longest_run": 6,
+        "bigram_repeat": 0.4138,
+        "length": 30
+      },
+      {
+        "id": "V012",
+        "hit": false,
+        "answer": "分君�，制�，�有��，�我人��������是���是�",
+        "distinct_ratio": 0.3103,
+        "longest_run": 8,
+        "bigram_repeat": 0.5,
+        "length": 29
+      },
+      {
+        "id": "V013",
+        "hit": false,
+        "answer": "������，����，��孟�����人���������是��",
+        "distinct_ratio": 0.1515,
+        "longest_run": 9,
+        "bigram_repeat": 0.7188,
+        "length": 33
+      },
+      {
+        "id": "V014",
+        "hit": false,
+        "answer": "分家�：。师：我人����师�是��有我�为�刺��",
+        "distinct_ratio": 0.4615,
+        "longest_run": 4,
+        "bigram_repeat": 0.16,
+        "length": 26
+      },
+      {
+        "id": "V015",
+        "hit": false,
+        "answer": "到��（则�下师（有君�，��孟�����我人�����",
+        "distinct_ratio": 0.4286,
+        "longest_run": 5,
+        "bigram_repeat": 0.3333,
+        "length": 28
+      },
+      {
+        "id": "V016",
+        "hit": false,
+        "answer": "������������人��������个有�，��个�，���",
+        "distinct_ratio": 0.1515,
+        "longest_run": 12,
+        "bigram_repeat": 0.7188,
+        "length": 33
+      },
+      {
+        "id": "V017",
+        "hit": false,
+        "answer": "别���）�：我人�为人�人��是��是有我�为师（�",
+        "distinct_ratio": 0.4074,
+        "longest_run": 3,
+        "bigram_repeat": 0.2692,
+        "length": 27
+      },
+      {
+        "id": "V018",
+        "hit": false,
+        "answer": "������������下是人人������䘯���为�有�",
+        "distinct_ratio": 0.2333,
+        "longest_run": 12,
+        "bigram_repeat": 0.5862,
+        "length": 30
+      },
+      {
+        "id": "V019",
+        "hit": false,
+        "answer": "�����，���个���������人��������弈有��",
+        "distinct_ratio": 0.1875,
+        "longest_run": 9,
+        "bigram_repeat": 0.6774,
+        "length": 32
+      },
+      {
+        "id": "V020",
+        "hit": false,
+        "answer": "分��，�，�，���个�人���������������",
+        "distinct_ratio": 0.2,
+        "longest_run": 15,
+        "bigram_repeat": 0.6897,
+        "length": 30
+      },
+      {
+        "id": "V021",
+        "hit": false,
+        "answer": "分��，�，��个���个���个是���，��们个是",
+        "distinct_ratio": 0.2222,
+        "longest_run": 3,
+        "bigram_repeat": 0.6154,
+        "length": 27
+      },
+      {
+        "id": "V022",
+        "hit": false,
+        "answer": "别����，����人���������有����为��则�",
+        "distinct_ratio": 0.2333,
+        "longest_run": 9,
+        "bigram_repeat": 0.5862,
+        "length": 30
+      },
+      {
+        "id": "V023",
+        "hit": false,
+        "answer": "到��（则�下师（（（则有吲君师人��������是��",
+        "distinct_ratio": 0.3929,
+        "longest_run": 8,
+        "bigram_repeat": 0.3704,
+        "length": 28
+      },
+      {
+        "id": "V024",
+        "hit": false,
+        "answer": "分��孟��，��个�，�，�个�（���个�，�，��",
+        "distinct_ratio": 0.2143,
+        "longest_run": 3,
+        "bigram_repeat": 0.6296,
+        "length": 28
+      }
+    ],
+    "raw_masked|none": [
+      {
+        "id": "V001",
+        "hit": false,
+        "answer": "刑他君则亼，个君家吽吼仓后有吼我们下来人人",
+        "distinct_ratio": 0.8571,
+        "longest_run": 2,
+        "bigram_repeat": 0.0,
+        "length": 21
+      },
+      {
+        "id": "V002",
+        "hit": false,
+        "answer": "刑君则人个刀人个则是有我们一个到：我他君则",
+        "distinct_ratio": 0.6667,
+        "longest_run": 1,
+        "bigram_repeat": 0.1,
+        "length": 21
+      },
+      {
+        "id": "V003",
+        "hit": false,
+        "answer": "刑他君家则了个刑他君个则是有扚我他师，他师",
+        "distinct_ratio": 0.619,
+        "longest_run": 1,
+        "bigram_repeat": 0.15,
+        "length": 21
+      },
+      {
+        "id": "V004",
+        "hit": false,
+        "answer": "刑他君则了个则亡个君有吼他后吼则了人人人人",
+        "distinct_ratio": 0.5238,
+        "longest_run": 4,
+        "bigram_repeat": 0.15,
+        "length": 21
+      },
+      {
+        "id": "V005",
+        "hit": false,
+        "answer": "我他后你为为吼刺同势是想有所个师，家则人了",
+        "distinct_ratio": 0.9524,
+        "longest_run": 2,
+        "bigram_repeat": 0.0,
+        "length": 21
+      },
+      {
+        "id": "V006",
+        "hit": false,
+        "answer": "到：君则人人人人人下有君为个则体有君为，他",
+        "distinct_ratio": 0.5714,
+        "longest_run": 5,
+        "bigram_repeat": 0.25,
+        "length": 21
+      },
+      {
+        "id": "V007",
+        "hit": false,
+        "answer": "。君则人个则䈑他君则何听你不惃吼有：我他下",
+        "distinct_ratio": 0.8095,
+        "longest_run": 1,
+        "bigram_repeat": 0.05,
+        "length": 21
+      },
+      {
+        "id": "V008",
+        "hit": false,
+        "answer": "到：则了为君则了个则伌不想君是有才我他师，",
+        "distinct_ratio": 0.8095,
+        "longest_run": 1,
+        "bigram_repeat": 0.05,
+        "length": 21
+      },
+      {
+        "id": "V009",
+        "hit": false,
+        "answer": "。君家则亂。\n\n\n\n\n\n\n\n\n\n（（（））））））良有",
+        "distinct_ratio": 0.5556,
+        "longest_run": 6,
+        "bigram_repeat": 0.2941,
+        "length": 18
+      },
+      {
+        "id": "V010",
+        "hit": false,
+        "answer": "分君则之能吮为人人人人人人个君君则予有君为",
+        "distinct_ratio": 0.5238,
+        "longest_run": 6,
+        "bigram_repeat": 0.25,
+        "length": 21
+      },
+      {
+        "id": "V011",
+        "hit": false,
+        "answer": "则君学为制则人下弈，下君为一一一一刑你三：",
+        "distinct_ratio": 0.6667,
+        "longest_run": 4,
+        "bigram_repeat": 0.1,
+        "length": 21
+      },
+      {
+        "id": "V012",
+        "hit": false,
+        "answer": "分君则亷君则予他吝君则予他吝君则亴变是是人",
+        "distinct_ratio": 0.5238,
+        "longest_run": 2,
+        "bigram_repeat": 0.35,
+        "length": 21
+      },
+      {
+        "id": "V013",
+        "hit": false,
+        "answer": "到：则亂君则亼，不想有吼为则也是他一个则䈑",
+        "distinct_ratio": 0.8571,
+        "longest_run": 1,
+        "bigram_repeat": 0.0,
+        "length": 21
+      },
+      {
+        "id": "V014",
+        "hit": false,
+        "answer": "到）：我他是有我于思家则亚是是我人下师，尐",
+        "distinct_ratio": 0.8095,
+        "longest_run": 2,
+        "bigram_repeat": 0.0,
+        "length": 21
+      },
+      {
+        "id": "V015",
+        "hit": false,
+        "answer": "。则我们一个则我人君则伌则伌则伌则是是是我",
+        "distinct_ratio": 0.4762,
+        "longest_run": 3,
+        "bigram_repeat": 0.3,
+        "length": 21
+      },
+      {
+        "id": "V016",
+        "hit": false,
+        "answer": "到：君则人人人人人人人人个有君君人下下有我",
+        "distinct_ratio": 0.4286,
+        "longest_run": 8,
+        "bigram_repeat": 0.3,
+        "length": 21
+      },
+      {
+        "id": "V017",
+        "hit": false,
+        "answer": "我们为君君人人人人个君尝君孟制刑何师，下有",
+        "distinct_ratio": 0.7143,
+        "longest_run": 4,
+        "bigram_repeat": 0.1,
+        "length": 21
+      },
+      {
+        "id": "V018",
+        "hit": false,
+        "answer": "刑君则也制刑他不想我我他为师，制则为人人人",
+        "distinct_ratio": 0.619,
+        "longest_run": 3,
+        "bigram_repeat": 0.05,
+        "length": 21
+      },
+      {
+        "id": "V019",
+        "hit": false,
+        "answer": "刑他吆公人人人人人个刊伌下有君为，你胧为，",
+        "distinct_ratio": 0.7143,
+        "longest_run": 5,
+        "bigram_repeat": 0.2,
+        "length": 21
+      },
+      {
+        "id": "V020",
+        "hit": false,
+        "answer": "尝君家则人个刑你为个君是是任为君人人人伌伌",
+        "distinct_ratio": 0.5714,
+        "longest_run": 3,
+        "bigram_repeat": 0.05,
+        "length": 21
+      },
+      {
+        "id": "V021",
+        "hit": false,
+        "answer": "到：君学人下吮人人人人亄君宨你亽为君，佽他",
+        "distinct_ratio": 0.7143,
+        "longest_run": 4,
+        "bigram_repeat": 0.1,
+        "length": 21
+      },
+      {
+        "id": "V022",
+        "hit": false,
+        "answer": "到）：则人师人人人人人人人下有君䐲君亼我他",
+        "distinct_ratio": 0.619,
+        "longest_run": 7,
+        "bigram_repeat": 0.25,
+        "length": 21
+      },
+      {
+        "id": "V023",
+        "hit": false,
+        "answer": "到）：则了了人君则人人人人人五仓有君何宨你",
+        "distinct_ratio": 0.619,
+        "longest_run": 5,
+        "bigram_repeat": 0.15,
+        "length": 21
+      },
+      {
+        "id": "V024",
+        "hit": false,
+        "answer": "则为师，君为师，家则他师，则为师，家则他帀",
+        "distinct_ratio": 0.381,
+        "longest_run": 1,
+        "bigram_repeat": 0.45,
+        "length": 21
+      }
+    ],
+    "surface|none": [
+      {
+        "id": "V001",
+        "hit": false,
+        "answer": "尝君家则人了个刊䀂\n\n\n\n\n\n\n\n\n（（（）：有君，君人人人人人个刍有君君君人不惜同君亐为吼别勻䖇庀先是他为人为伌俙是是是是是是是摢亘毀君则亡为为伌君亼：。师",
+        "distinct_ratio": 0.5,
+        "longest_run": 7,
+        "bigram_repeat": 0.1852,
+        "length": 82
+      },
+      {
+        "id": "V002",
+        "hit": false,
+        "answer": "刑下师：是有扈我人人人人人人人人他君亖君亚。君则何叚有我他下考体我他有，制君则亶君人人人亄君尝君尝君家则亜娉君则亰有，下师，他师尝君刼愿是有扚摢亜扉，䠚尝君了下",
+        "distinct_ratio": 0.4471,
+        "longest_run": 8,
+        "bigram_repeat": 0.2262,
+        "length": 85
+      },
+      {
+        "id": "V003",
+        "hit": false,
+        "answer": "刑人下师，为个刈冺，制刑们一个刈是是想有我他师为了丼\n\n\n\n\n\n\n\n\n（（（（尝君刽家吟刺了人人人人亄心有君亟别尝君亱是他个利是是是是我他为，到会我亰下师，制则",
+        "distinct_ratio": 0.4756,
+        "longest_run": 4,
+        "bigram_repeat": 0.1852,
+        "length": 82
+      },
+      {
+        "id": "V004",
+        "hit": false,
+        "answer": "到：刑他君则了了个刱是任䬻君则使是有扚我们下耂则䢘君䐲则伌则伌则是是是我了了个则伌则为人人人亄尝君䛰下君䲡亱是他师尝君亰么君使是有扚我他师？\n\n\n态刈］：我人下",
+        "distinct_ratio": 0.4405,
+        "longest_run": 4,
+        "bigram_repeat": 0.2169,
+        "length": 84
+      },
+      {
+        "id": "V005",
+        "hit": false,
+        "answer": "到：刑以下孟利刯君刼我他个刑他君人人人人人亄君䲡人争，他君则何叜尝君刍想是是任他利摢们们下来佼我他师，制则使是有扚摽家刟人人人人人亄师则尝君些我他师亂君为，制刑",
+        "distinct_ratio": 0.4824,
+        "longest_run": 5,
+        "bigram_repeat": 0.2143,
+        "length": 85
+      },
+      {
+        "id": "V006",
+        "hit": false,
+        "answer": "到，到，他师，家则人人人人人亄君家则亽下尝䰝一䃚是有我们为，则使是有我他师，则你个到，则你个刑佼\n\n\n戈（））：我人下个君君学佻古文君有君为人人人人人个君则何叜",
+        "distinct_ratio": 0.4524,
+        "longest_run": 5,
+        "bigram_repeat": 0.2289,
+        "length": 84
+      },
+      {
+        "id": "V007",
+        "hit": false,
+        "answer": "我他君则了人人人人人人人人下有我他有我他有我他我也\n\n漈（（（（我他师（君刺吟孟帥到，你个是有才惽我他师，家则人人人人人个则伌为个君尝君孟孟制制刑你能师一个是有",
+        "distinct_ratio": 0.3929,
+        "longest_run": 8,
+        "bigram_repeat": 0.3012,
+        "length": 84
+      },
+      {
+        "id": "V008",
+        "hit": false,
+        "answer": "尝君家则人冼则人人人人人人亄君䰖文君是他为我们为，家君佐弈是是是我亰文君为君则君亰我他君为吼别勻也刑他君个是是是是是是摢了漌君人了伌师，则使师，则为个刈，到：我",
+        "distinct_ratio": 0.4,
+        "longest_run": 6,
+        "bigram_repeat": 0.2143,
+        "length": 85
+      },
+      {
+        "id": "V009",
+        "hit": false,
+        "answer": "分君师，制君为师，刯是是人了下帀䀂刚君则何师一偓君为很是是是是有扚摢为下君为为为为为丟洀君君君使指吟利丌制君君么嶀其则丌制君一一一一剚。\n\n\n\n\n\n\n\n\n\n\n＀",
+        "distinct_ratio": 0.5185,
+        "longest_run": 5,
+        "bigram_repeat": 0.2,
+        "length": 81
+      },
+      {
+        "id": "V010",
+        "hit": false,
+        "answer": "分君则君则吼制刑他凪己有吼别嚄吆寴他凪则是是是人人人人人人人亄君亚。君昘合尝吀弌制刑他帺君个是他师是是是是是是是是摢下怂君为为为伌俙是是文君为君为君伌为君伌尝君",
+        "distinct_ratio": 0.4235,
+        "longest_run": 8,
+        "bigram_repeat": 0.2976,
+        "length": 85
+      },
+      {
+        "id": "V011",
+        "hit": false,
+        "answer": "刑了个利，制则个是有我人人人人人个利是是是我争，下为，伌为君君君子尝君利也。\n\n\n\n\n\n\n\n\n（（（（家刟则个刈刟制则了个刌君人大宁家刺人人人人人人个予有君",
+        "distinct_ratio": 0.4878,
+        "longest_run": 6,
+        "bigram_repeat": 0.2099,
+        "length": 82
+      },
+      {
+        "id": "V012",
+        "hit": false,
+        "answer": "分君则人人人人人亄君亼\n\n杈（是有：我他个到，君亰为君君亼\n\n戈（）：我亯有君个是有我人个师，君为师，尝君家则人得刍想是是有扚摢为人人人亄君䖇君为君亼\n\n\n戈（",
+        "distinct_ratio": 0.3614,
+        "longest_run": 8,
+        "bigram_repeat": 0.3171,
+        "length": 83
+      },
+      {
+        "id": "V013",
+        "hit": false,
+        "answer": "我他为君则亡人君人个君䲡有吼别后吼则是是是我们下帺：我他吆君人大家则人人人人人个是有我他君为予么是有我䉉：我下楞亰为，就君则何可文君愶则亡下有，后君彐弈他度他师",
+        "distinct_ratio": 0.4471,
+        "longest_run": 5,
+        "bigram_repeat": 0.1548,
+        "length": 85
+      },
+      {
+        "id": "V014",
+        "hit": false,
+        "answer": "到，到，他君则亡人人人人亄君尝君亚有君下下木亰，你他君佼\n\n\n戈（）））：有君，君亰最个则是有所人个则么是文君为个君君于吡亚是有我他师，到伌他君则了人人人亄家则",
+        "distinct_ratio": 0.4286,
+        "longest_run": 4,
+        "bigram_repeat": 0.1928,
+        "length": 84
+      },
+      {
+        "id": "V015",
+        "hit": false,
+        "answer": "我他君则了人人人人人亄君则亡人个是他君何家则何刑你下有，俙我䉉：我䈑他师则使想有君为个则我䈑他君䨁师，则我人人人人人个君则何家则佺一个则君子弌制刑他师家刑他师刑",
+        "distinct_ratio": 0.3647,
+        "longest_run": 5,
+        "bigram_repeat": 0.3095,
+        "length": 85
+      },
+      {
+        "id": "V016",
+        "hit": false,
+        "answer": "到：君家则亭一个则有君为君有，他师，家则了个则有君，他师，则个则是是有扚我们下耂师，则为人人人人人亄君君君人个吟尝君家则亜娉君则亰，个制君孟尝君制刑他师他师君刼",
+        "distinct_ratio": 0.3765,
+        "longest_run": 5,
+        "bigram_repeat": 0.2262,
+        "length": 85
+      },
+      {
+        "id": "V017",
+        "hit": false,
+        "answer": "则了是人人人人人人亄君宨人人人人亼有君，他有君，师，君为，君君君孟孟制刑他师，制他师，个是是是我们不怂君则么嶀刑他师，制则为个刈，俙是有所个师，他师内嶀傚弈为人",
+        "distinct_ratio": 0.3412,
+        "longest_run": 6,
+        "bigram_repeat": 0.3095,
+        "length": 85
+      },
+      {
+        "id": "V018",
+        "hit": false,
+        "answer": "分君则了个则伌君了人人人人亄君尝君刍想吟是他个我他君为则使是有我们为师，到：我他君则使是有我他下师，师君使是是我们下君，师君家则了人人人人人亄君家则亽有君，则亶",
+        "distinct_ratio": 0.3176,
+        "longest_run": 5,
+        "bigram_repeat": 0.3095,
+        "length": 85
+      },
+      {
+        "id": "V019",
+        "hit": false,
+        "answer": "刼则为师）：我们一个到）：我他天为君孟别别嶀傫初君为匇吟刟刟前惜威寴刂\n\n\n戈（：我下师：我为大家刟则个刈，为师，个刱是有所个我他师君了人人人人亄君䪺君亟尝君家",
+        "distinct_ratio": 0.5595,
+        "longest_run": 4,
+        "bigram_repeat": 0.1084,
+        "length": 84
+      },
+      {
+        "id": "V020",
+        "hit": false,
+        "answer": "则君则君家则人人人人人人人个有君则予君不惜君是有我他师，到我们一个则我䈑他师，制则使想有，制则有有，制则也。师，到，到，制刑人人人人人人人五仓君刍惜君为别君么是",
+        "distinct_ratio": 0.3529,
+        "longest_run": 7,
+        "bigram_repeat": 0.3571,
+        "length": 85
+      },
+      {
+        "id": "V021",
+        "hit": false,
+        "answer": "分君刼他师，利是有所个我他师，则为人人人人人人亄君君则何叜尝君䲡亱是他下有我们为，制则使想有我他师，则为家刟刑他师，制则个刈君，刈大家刚。\n\n\n\n\n\n\n\n\n（（",
+        "distinct_ratio": 0.4878,
+        "longest_run": 6,
+        "bigram_repeat": 0.2346,
+        "length": 82
+      },
+      {
+        "id": "V022",
+        "hit": false,
+        "answer": "到文君，制则人人人人人人人人个则予君人不惜君䐲吼\n\n\n戈（）：我下下个我亰文君君刍惽吽宺人为人为君䲼氖是有我他为师，制则你下一䀁刑䈘毷君愶到文君为别君了胧家则人",
+        "distinct_ratio": 0.5238,
+        "longest_run": 8,
+        "bigram_repeat": 0.1566,
+        "length": 84
+      },
+      {
+        "id": "V023",
+        "hit": false,
+        "answer": "则君则个则君则了个则伌不想有所个则我他合，个则也是是文我他师，到会。\n\n\n\n\n\n\n\n\n（（（）：君家刟孟刟刑人人人人人人人人人个君君二吽宨人为，亡为人为君有君人",
+        "distinct_ratio": 0.439,
+        "longest_run": 9,
+        "bigram_repeat": 0.2469,
+        "length": 82
+      },
+      {
+        "id": "V024",
+        "hit": false,
+        "answer": "我他君则了个则伌不想有才我们为师，到䈟前君刽叻个刈大家刚。\n\n\n\n\n\n\n\n\n（（（）：刼刺大家刚有君，刽有，刽帺人人人人人下师亨君为为，制他君则亝君是是是是我们",
+        "distinct_ratio": 0.4512,
+        "longest_run": 5,
+        "bigram_repeat": 0.2593,
+        "length": 82
+      }
+    ]
+  },
+  "started_utc": "2026-09-28T12:23:16Z"
+}

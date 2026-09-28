@@ -27,7 +27,17 @@ MANIFEST = PROJECT_ROOT / "plans/manifests/cap0_eval_set_v2.json"
 MAX_ANSWER_BYTES = 64
 
 
-def _answer_raw(runtime: Any, prompt: str, history: list[tuple[str, str]]) -> str:
+def _answer_raw(
+    runtime: Any, prompt: str, history: list[tuple[str, str]], *, utf8_strict: bool = False
+) -> str:
+    """产品装配下取基底原始答复（SPEC-A-21 那条冻结链）。
+
+    `utf8_strict=True`＝把**产品表层链用的同一把解码掩码**（SPEC-R2-02，`SeedRuntime.chat` 里
+    `generate_input(..., utf8_strict=True)`）套到这条评测链上——默认 `False` ⇒ 冻结读数逐位不变。
+    为什么要有这一档：`PLAN-A-30` 要分「是掩码放大了电路的复读，还是语言器官」，
+    而只有把掩码单独加在原始字节链上，才能把"掩码"与"器官"这两手分开量（不然只有两端可比）。
+    """
+
     from api.seed_runtime import _TURN_MARKERS
     from taiji import InputFrame
 
@@ -46,7 +56,11 @@ def _answer_raw(runtime: Any, prompt: str, history: list[tuple[str, str]]) -> st
         confidence=1.0,
     )
     raw = runtime.model.generate_input(
-        frame, MAX_ANSWER_BYTES, stop_at_boundary=True, sample=False
+        frame,
+        MAX_ANSWER_BYTES,
+        stop_at_boundary=True,
+        sample=False,
+        utf8_strict=utf8_strict,
     )
     answer = raw.decode("utf-8", errors="replace")
     for marker in _TURN_MARKERS:
