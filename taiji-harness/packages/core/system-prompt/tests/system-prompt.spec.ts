@@ -12,7 +12,7 @@ import type { PromptContextOrderName, PromptSectionOrderName } from '@taiji/dsh-
  * their own sections; the built-ins' behavior is pinned by its own describe.
  */
 const BUILT_IN = ['harness:identity', 'deployment:persona-prefix', 'deployment:persona-suffix']
-const IDENTITY = 'You are an AI agent powered by Taiji Harness.'
+const IDENTITY = 'You are an AI agent in Seed, powered by the Taiji model.'
 const SECTION_ORDER_NAMES = [
   'HARNESS_IDENTITY', 'DEPLOYMENT_PERSONA_PREFIX',
   'PLAN_POLICY', 'TEAM_POLICY', 'LIFE_POLICY', 'PTC_ONLY', 'FILE_REFERENCE', 'TOOL_BASH',

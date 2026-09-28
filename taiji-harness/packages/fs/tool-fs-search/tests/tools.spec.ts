@@ -1271,5 +1271,5 @@ describe('scope-aware search guidance', () => {
 
 /** Preserve the default persona and exact section separators in the oracle. */
 function withPersona(...sections: string[]): string {
-  return ['You are an AI agent powered by Taiji Harness.', ...sections].join('\n\n')
+  return ['You are an AI agent in Seed, powered by the Taiji model.', ...sections].join('\n\n')
 }
