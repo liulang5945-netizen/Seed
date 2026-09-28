@@ -33,7 +33,7 @@ export function BrandWordmark({ size = 24, className, includeMark = true }: Bran
     >
       {includeMark && (
         <g transform="translate(0 3) scale(0.75)">
-          <path d={FISH_LOGO_PATH} fill="currentColor" />
+          <path d={FISH_LOGO_PATH} fill="currentColor" fillRule="evenodd" />
         </g>
       )}
       <text x="24" y="17.5" fill="currentColor" fontFamily="inherit" fontSize="15" fontWeight="600">
