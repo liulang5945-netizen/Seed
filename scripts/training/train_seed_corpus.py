@@ -101,6 +101,45 @@ def iter_corpus_symbols(
         yield from text.encode("utf-8")
 
 
+def patch_envelope_config_flags(envelope: dict[str, Any], flags: dict[str, bool]) -> int:
+    """把实验开关写进受载档里**每一处** taiji config 副本（PLAN-A-26 的热启动需要它）。
+
+    为什么必须改档而不能只改模型 config：`Taiji.restore` 会拿档里的 config 与架构 config 逐键比，
+    不等就抛 `checkpoint configuration does not match architecture`——**那是对的**，
+    它挡住"悄悄换配方还用别人的权重"。热启动时我们**故意**翻这几个实验键，
+    所以要把档里同名的副本一起翻过来让那次比较通过；**只翻点名的键**、绝不整份替换
+    （整份替换会把这道理序关掉）。返回改到的副本数，便于冒烟核对。
+
+    副本数取决于信封版本：`seed-native-v1`（含 `seed_beta.pt` 这种 P1 之前的旧档）只有
+    `config.taiji` 与 `substrate.config` **两处**；v10 信封还多一处 `taiji.kernel.config`。
+
+    **已知边界**：v10 档若带身份器官，改 config 会让"身份器官血缘"校验 (`identity organ
+    checkpoint lineage does not match Taiji core`) 不通过——血缘把器官绑在它当时的核心上，
+    改配方等于换核心，这是**故意**的。本函数不替它重发血缘；PLAN-A-26 的热启动目标是
+    `seed_beta`（v8/v1、不带身份器官），不受此限。
+    """
+
+    patched = 0
+
+    def _touch(node: Any) -> None:
+        nonlocal patched
+        if isinstance(node, dict):
+            for key, value in flags.items():
+                node[key] = bool(value)
+            patched += 1
+
+    _touch(envelope.setdefault("config", {}).setdefault("taiji", {}))
+    substrate = envelope.get("substrate")
+    if isinstance(substrate, dict):
+        _touch(substrate.setdefault("config", {}))
+    native = envelope.get("taiji")
+    if isinstance(native, dict):
+        kernel = native.get("kernel")
+        if isinstance(kernel, dict):
+            _touch(kernel.setdefault("config", {}))
+    return patched
+
+
 def run_training(
     *,
     corpus_paths: Sequence[Path | str],
@@ -112,15 +151,29 @@ def run_training(
     progress_every: int,
     max_symbols: int | None = None,
     resume_checkpoint: Path | str | None = None,
+    resume_config_overrides: dict[str, bool] | None = None,
+    readout: str = "action",
     device: str | torch.device = "cpu",
     keep_history: Path | str | None = None,
 ) -> dict[str, float]:
-    """Stream the corpus through ``Seed.observe`` with periodic persistence."""
+    """Stream the corpus through ``Seed.observe`` with periodic persistence.
+
+    ``resume_config_overrides`` 只在热启动（``resume_checkpoint`` 非空）时生效：把点名实验键
+    写进受载档里的每一处 config 副本，让 `Seed/Taiji.restore` 的"档配比架构"守卫放行。
+    为 None 时热启动行为与从前逐位相同（缺键按默认值补齐，不会静默改配方）。
+
+    ``readout`` 选 `"action"`（默认，训 F4/运动解码器）或 `"predictive"`（训 F1 预测读出＋
+    私有时间语境，`learn_motor=False`——`observe` 明令预测读出不得训运动器）。**A 支线的
+    所有已证部件（位置输入、复制电路、UTF-8 证据门）都挂在 F1 预测读出的链上**，所以在
+    `"action"` 档跑 `--readout-position` 是**静默空转**；`main` 对此响亮报错。
+    """
 
     if epochs <= 0:
         raise ValueError("epochs must be positive")
     if checkpoint_every <= 0 or progress_every <= 0:
         raise ValueError("checkpoint/progress intervals must be positive")
+    if readout not in {"action", "predictive"}:
+        raise ValueError("readout must be 'action' or 'predictive'")
 
     checkpoint_path = Path(checkpoint_path)
     progress_path = Path(progress_path)
@@ -131,16 +184,43 @@ def run_training(
         keep_history.mkdir(parents=True, exist_ok=True)
 
     model = Seed(config, device=resolve_device(device), episode_id="seed-corpus")
+    tick_offset = 0
     if resume_checkpoint is not None:
-        model.restore(torch.load(resume_checkpoint, weights_only=False))
+        envelope = torch.load(resume_checkpoint, weights_only=False)
+        if resume_config_overrides:
+            patched = patch_envelope_config_flags(envelope, resume_config_overrides)
+            # 任何 Seed 信封都至少有**两处** config 副本：`config.taiji`（Seed 层比对的）与
+            # `substrate.config`（Taiji 层比对的）。v10 信封还多一处 `taiji.kernel.config`。
+            # 少于两处说明信封结构不认识，宁可响亮失败也不要静默少改一处——
+            # 少改一处就会在 restore 里撞"档配比架构"，那时很难判断是哪一处。
+            if patched < 2:
+                raise RuntimeError(
+                    "resume envelope is missing expected config copies: "
+                    f"patched={patched} (want >=2)"
+                )
+        model.restore(envelope)
+    #: 换读出链必须开新情节：`observe` 明令"情节活跃时不许换读出"（
+    #: `readout changed inside an active dynamics episode; reset before switching`），
+    #: 而 `seed_beta` 的最后一步是 `action` 档。`reset_dynamics` 只清活动、保留全部学习到的
+    #: 突触（与 `train_taiji_langfloor.py` 的起手一致）。**同链续训不 reset** ⇒ 既有 `action`
+    #: 档的续训行为逐位不变。
+    #: `reset_dynamics` 清的是**情节局部的** `model.tick`（`_development_ticks` 另留累计值），
+    #: 所以记下偏移，让进度与保号存档名继续读作"从基底那一步起"（同 langfloor 自持
+    #: `absolute_tick` 的做法）。
+    if model.snapshot().readout_kind != readout:
+        tick_offset = int(model.tick)
+        model.reset_dynamics(episode_id="seed-corpus")
     boundary = config.taiji.boundary_symbol
     fingerprint = corpus_fingerprint(corpus_paths)
+    #: 绝对刻度（见上）：换读出链时它是"基底 tick + 本次已走步数"，否则等于 `model.tick`。
+    ticks = tick_offset + int(model.tick)
+    base_ticks = ticks
 
     def _persist() -> None:
         # 2026-08-23 M0：原子落盘 + 信封元数据，崩溃不产生半写文件。
         envelope = attach_metadata(
             model.checkpoint(),
-            tick=model.tick,
+            tick=ticks,
             corpus_fingerprint=fingerprint,
             extra={"trainer": "train_seed_corpus"},
         )
@@ -150,13 +230,9 @@ def run_training(
         # 连事后补算都做不到，只剩首尾两个端点。这里每次落盘**额外**写一份带 tick 的快照；
         # 主路径 `checkpoint_path` 的行为一字不变（兼容既有工具与流程）。
         if keep_history is not None:
-            atomic_save(envelope, keep_history / f"checkpoint_{int(model.tick):012d}.pt")
+            atomic_save(envelope, keep_history / f"checkpoint_{ticks:012d}.pt")
 
     started = time.perf_counter()
-    # 续训时以模型自身 tick 为基线：进度统计与检查点节奏（% checkpoint_every）
-    # 与崩溃前对齐，避免计数器清零导致重复训练段与节奏错位。
-    ticks = int(model.tick)
-    base_ticks = ticks
     window_ticks = 0
     window_correct = 0
     window_surprise = 0.0
@@ -176,9 +252,16 @@ def run_training(
         with progress_path.open("a", encoding="utf-8") as handle:
             handle.write(json.dumps(entry, ensure_ascii=False) + "\n")
 
+    #: A-4／PLAN-A-26：读出模式决定**哪条链**在学。`action`＝既有行为逐位不变；
+    #: `predictive` 把下一字节误差送到 F1 专用读出（＋私有时间语境）——`observe` 明令此时
+    #: 不得同时训运动器，所以 `learn_motor=False`。A 支线的已证部件都在这条链上。
+    observe_kwargs: dict[str, object] = {"learn": True, "readout": readout}
+    if readout == "predictive":
+        observe_kwargs["learn_motor"] = False
+
     for epoch in range(epochs):  # noqa: B007 — epoch 被 _flush 闭包引用（进度日志）
         for symbol in iter_corpus_symbols(corpus_paths, boundary=boundary):
-            step = model.observe(symbol, learn=True)
+            step = model.observe(symbol, **observe_kwargs)
             ticks += 1
             if step.prior_prediction is not None:
                 window_ticks += 1
@@ -230,6 +313,27 @@ def apply_experiment_flags(
     return config if taiji is config.taiji else replace(config, taiji=taiji)
 
 
+def default_output_paths(*, smoke: bool, project_root: Path = PROJECT_ROOT) -> tuple[Path, Path]:
+    """`--checkpoint`／`--progress` 的缺省值：**冒烟绝不落到产品件上**。
+
+    来历（2026-09-28 实测事故）：`--smoke` 只改预算、不改输出路径 ⇒ 它的缺省
+    `--checkpoint` 仍是 `checkpoints/seed_corpus.pt`（`PROTECTED_OUTPUTS` 之一）⇒
+    一次"快速端到端"把产品件覆盖成了 5000-tick 的冒烟模型
+    （靠 `dist/Seed/_internal/checkpoints/` 里的打包副本按 sha256 `c8025db44c65…` 复原）。
+    正式跑缺省写法一字不变；只有 `--smoke` 改走 `output/`。
+    """
+
+    if smoke:
+        return (
+            project_root / "output" / "seed_corpus_smoke.pt",
+            project_root / "reports" / "seed_corpus_smoke_progress.jsonl",
+        )
+    return (
+        project_root / "checkpoints" / "seed_corpus.pt",
+        project_root / "reports" / "seed_corpus_progress.jsonl",
+    )
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
@@ -261,13 +365,21 @@ def main() -> None:
     parser.add_argument("--progress-every", type=int, default=10_000)
     parser.add_argument(
         "--checkpoint",
-        default=str(PROJECT_ROOT / "checkpoints" / "seed_corpus.pt"),
+        default=None,
+        help="落盘路径；缺省见 `default_output_paths`：正式跑＝`checkpoints/seed_corpus.pt`，"
+        "`--smoke`＝`output/seed_corpus_smoke.pt`（**冒烟绝不碰产品件**）",
     )
     parser.add_argument(
         "--progress",
-        default=str(PROJECT_ROOT / "reports" / "seed_corpus_progress.jsonl"),
+        default=None,
+        help="进度流路径；缺省随 `--smoke` 一起改走 `reports/seed_corpus_smoke_progress.jsonl`",
     )
-    parser.add_argument("--resume", default=None)
+    parser.add_argument(
+        "--resume",
+        default=None,
+        help="热启动：从该 Seed 信封继续训练。给了它就用**档里的**架构（忽略 "
+        "--scale/--parameter-budget/--capacity-policy），再在其上应用实验开关。",
+    )
     parser.add_argument(
         "--keep-checkpoints",
         choices=("on", "off"),
@@ -296,6 +408,14 @@ def main() -> None:
         "（守卫 tests/taiji_native/test_predictive_context_region0_mask.py）。",
     )
     parser.add_argument(
+        "--readout",
+        choices=("action", "predictive"),
+        default="action",
+        help="哪条读出链在学：`action`（默认，与既有行为逐位相同，训 F4／运动解码器）或 "
+        "`predictive`（训 F1 预测读出＋私有时间语境）。A 支线的已证部件（位置输入等）"
+        "都挂在 F1 链上，故它们在 `action` 档是静默空转。",
+    )
+    parser.add_argument(
         "--readout-position",
         action="store_true",
         help="PLAN-R2-01：给 F1 读出加一条**显式的 UTF-8 字节位置输入**（4 维 one-hot，"
@@ -310,9 +430,33 @@ def main() -> None:
     )
     args = parser.parse_args()
 
+    #: 响亮失败而不是静默空转：位置输入挂在 F1 预测读出上，`action` 档根本不走那条链，
+    #: 2026-09-28 实测两臂读数**逐位相同**才发现（详见 PLAN-A-26 §6）。
+    if args.readout_position and args.readout != "predictive":
+        parser.error(
+            "--readout-position wires the F1 predictive readout only; with --readout action "
+            "it is a silent no-op. Pass --readout predictive."
+        )
+
+    #: 缺省输出路径：正式跑＝产品件 `checkpoints/seed_corpus.pt`；**冒烟改走 `output/`**
+    #: （2026-09-28 事故：冒烟曾覆盖产品件，见 `default_output_paths`）。
+    default_checkpoint, default_progress = default_output_paths(smoke=bool(args.smoke))
+    checkpoint_path = Path(args.checkpoint) if args.checkpoint else default_checkpoint
+    progress_path = Path(args.progress) if args.progress else default_progress
+
     if args.smoke:
         config = SeedConfig()
         max_symbols = 5_000
+    elif args.resume:
+        # 热启动必须"同底"：架构直接从档里重建，**不**用 --scale/--parameter-budget 的画像——
+        # `seed_beta` 的 config 不等于任何 scale 画像（守卫见 tests/taiji_native/
+        # test_p3b_campaign_contract.py::test_config_must_be_rebuilt_from_the_envelope），
+        # 拿画像重建会在 restore 的"档配比架构"守卫处撞墙。
+        envelope = torch.load(args.resume, weights_only=False)
+        if not isinstance(envelope, dict) or "config" not in envelope:
+            parser.error(f"--resume {args.resume} is not a Seed envelope (no 'config' key)")
+        config = SeedConfig.from_dict(dict(envelope["config"]))
+        max_symbols = args.max_symbols
     else:
         if args.parameter_budget is None:
             if args.capacity_policy is not None:
@@ -335,29 +479,38 @@ def main() -> None:
     history_dir = None
     if args.keep_checkpoints == "on":
         history_dir = Path(args.checkpoint_history_dir) if args.checkpoint_history_dir else (
-            Path(args.checkpoint + ".history")
+            Path(str(checkpoint_path) + ".history")
         )
 
     #: A-4（把 A 支线已证的部件推广到主训练线）：全部开关**默认关**，关着时 config 与
     #: 载荷逐位不变；打开即写进 config（随 checkpoint 一起落盘，所以"这条读数用的是哪套配方"
     #: 永远可从档里查出来，不靠外部记录）。
+    experiment_flags = {
+        "receptors_factored": bool(args.receptors_factored),
+        "predictive_context_region0_only": bool(args.predictive_context_region0_only),
+        "readout_utf8_position_input": bool(args.readout_position),
+    }
     config = apply_experiment_flags(
         config,
-        receptors_factored=bool(args.receptors_factored),
-        predictive_context_region0_only=bool(args.predictive_context_region0_only),
-        readout_position=bool(args.readout_position),
+        receptors_factored=experiment_flags["receptors_factored"],
+        predictive_context_region0_only=experiment_flags["predictive_context_region0_only"],
+        readout_position=experiment_flags["readout_utf8_position_input"],
     )
 
     summary = run_training(
         corpus_paths=args.corpus,
         config=config,
         epochs=args.epochs,
-        checkpoint_path=args.checkpoint,
-        progress_path=args.progress,
+        checkpoint_path=checkpoint_path,
+        progress_path=progress_path,
         checkpoint_every=args.checkpoint_every,
         progress_every=args.progress_every,
         max_symbols=max_symbols,
         resume_checkpoint=args.resume,
+        # PLAN-A-26 热启动：让受载档里这几处 config 副本与本臂架构一致，
+        # 否则 restore 的"档配比架构"守卫会拦下这次有意的配方切换。
+        resume_config_overrides=experiment_flags if args.resume else None,
+        readout=args.readout,
         device=args.device,
         keep_history=history_dir,
     )

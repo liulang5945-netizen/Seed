@@ -19,11 +19,31 @@ v3 严格命中 18/104 对历史 oracle 19–21/104（≈90% 上界）、合法�
 
 | | 臂 P0（对照） | 臂 P1（处理） |
 |---|---|---|
-| 配方 | `train_seed_corpus.py` 主线默认 | 同配方 **＋ `--readout-position`** |
+| 配方 | `train_seed_corpus.py --readout predictive`（fabric＋**F1 预测读出**＋私有时间语境共训；该档明令 `learn_motor=False`） | 同配方 **＋ `--readout-position`** |
+| 起点 | `checkpoints/seed_beta.pt`（16M ticks）**热启动** | 同 |
+| 架构 | 由 `seed_beta` 档里**重建**（`--resume` 语义），除点名开关外逐键等于它 | 同 ＋ 位置输入开 |
 | 语料 | `data/simple_zh/simple_zh_texts.jsonl`（与 `seed_beta` 同源，1.39GB） | 同 |
-| 规模/种子 | 与 `seed_beta` 同 scale（2）／同 `--seed` | 同 |
 | 预算 | 见 §3 | 同 |
 
+* **为什么读出必须是 `predictive`**（本轮第二个设计更正，2026-09-28 实测发现）：`observe` 默认
+  `readout="action"`，**主训练线一直在训 F4／运动解码器**，而 A 支线所有已证部件（位置输入、
+  复制电路、UTF-8 证据门）都挂在 **F1 预测读出**那条链上 ⇒ 只加 `--readout-position` 是
+  **静默空转**（实测两臂读数逐位相同、位置列恒零）。所以两臂都要 `--readout predictive`，
+  唯一变量仍是位置输入。**发现过程与守卫见 §6。**
+* **为什么热启动而不是从头训**（本轮的设计更正，取代早先"从头训 4M"）：从零的 4M 模型远弱于
+  `seed_beta`，地板不过时**说不清**是"没训够"还是"位置输入没用"；从 16M 同底出发、只差一个开关，
+  归因才干净。总预算不变。
+* **热启动为什么必须改档里的 config**：`restore` 有一道**对的**守卫——档里的配方必须等于当前架构，
+  否则拒绝载入（挡住"悄悄换配方还用别人的权重"）。本件**故意**翻 `readout_utf8_position_input`
+  这一键，所以 `train_seed_corpus.py` 把点名的键同时写进受载档的每一处 config 副本，让那次比较通过；
+  **只翻点名的键**、绝不整份替换（见 `patch_envelope_config_flags` 与其守卫）。
+* **热启动为什么必须开新情节**：`observe` 明令"情节活跃时不许换读出"（
+  `readout changed inside an active dynamics episode`），而 `seed_beta` 的最后一步是 `action` 档 ⇒
+  换链前 `reset_dynamics`（只清活动、保留全部学习到的突触，同 `train_taiji_langfloor.py` 起手）。
+  它清的是**情节局部的** `model.tick`，所以训练器自持一个绝对刻度，进度与保号存档名继续读作
+  "从 16,000,000 起"。
+* **架构只能从档里重建**，不能拿 `--scale`/`--parameter-budget` 的画像重建：`seed_beta` 的 config
+  **不等于任何 scale 画像**（守卫 `tests/taiji_native/test_p3b_campaign_contract.py::test_config_must_be_rebuilt_from_the_envelope`）。
 * **两臂同批重跑**（`PLAN-A-24` §6 制度 5：对照不许引用旧件）。
 * 其余一切逐字相同：只差一个布尔开关——所以"读出/合法性"上的任何差异可归因到它。
 * **配方随档可查**：A-4 的开关写进 config 并随 checkpoint 落盘，
@@ -55,11 +75,14 @@ v3 严格命中 18/104 对历史 oracle 19–21/104（≈90% 上界）、合法�
 
 | 阶段 | 两臂各 | 预计墙钟 | 过/不过怎么办 |
 |---|---|---|---|
-| **P-试** | 4M ticks | ≈2×2.3 h | 主-1/主-2 有一条不过 ⇒ **停在试跑**，按 §2 分支 2/3 记录 |
-| **P-全**（仅在 P-试 全过时起） | 16M ticks（`seed_beta` 同档） | ≈2×9 h | 出终判据；两臂同批 |
+| **P-试** | **2M ticks**（在 `seed_beta` 16M 之上） | 见下（实测定） | 主-1/主-2 有一条不过 ⇒ **停在试跑**，按 §2 分支 2/3 记录 |
+| **P-全**（仅在 P-试 全过时起） | 再加 16M ticks/臂 | ≈2×18 h | 出终判据；两臂同批 |
 
-* **为什么分阶段**：主-1 是"合法性"这种**大边际**读数（99% 对 0%），4M 就足以看清方向；
-  而 16M 买的是"成句/命中"，那部分才需要全量预算。⇒ 先花 4.6 h 决定要不要花 18 h。
+* **为什么分阶段**：主-1 是"合法性"这种**大边际**读数（99% 对 0%），2M 就足以看清方向；
+  而 16M 买的是"成句/命中"，那部分才需要全量预算。⇒ 先花几个钟头决定要不要花十几个钟头。
+* **速率口径（诚实）**：P-试的墙钟以 `progress.jsonl` **首个条目实测**（`ticks / elapsed_seconds`）为准。
+  量级锚：同一训练器早前实测 **248 ticks/s**（50k ticks / 202 s）⇒ 2M/臂 ≈ 2.24 h。
+  本轮两臂**并行**跑，会互相争 CPU，故以实测为准，不引用该锚当结论。
 * 记法沿用 `train_seed_corpus.py` 的保号存档（每个落盘点一份 `checkpoint_<tick>.pt`），
   这样"中途取数"随时可做（本轮已多次证明中途读数能提前暴露方向——但**中途件不得当结论**，
   `PLAN-A-24` rev17→rev18 的暂态教训）。
@@ -70,7 +93,81 @@ v3 严格命中 18/104 对历史 oracle 19–21/104（≈90% 上界）、合法�
 不挂 A2 电路（那是另一条链，会把"命中"口径搅进来）；不动记忆/巩固/后果语义；
 不用本件的读数替换任何已冻结判据。
 
-## 5. 起跑前要 owner 批的两件
+## 5. 起跑与 owner 待批的两件
 
-① **预算**：P-试 两臂 ≈4.6 h CPU（外加 3 次 10 分钟级判读）；P-全再 ≈18 h（**仅在试跑全过时才申请**）。
-② **是否允许在跑完后把位置输入设为训练默认**（本件只报读数，不擅自改默认）。
+**已起跑（2026-09-28）**：按现行目标"持续推进 A 支线"执行本件的 P-试两臂
+（配方＝`--resume seed_beta.pt --readout predictive [--readout-position]`，各 2M ticks）。
+第一对（`action` 档）因 6.2 的静默空转缺陷已**停掉并删除产物**，当前这对是更正后的重跑。
+两臂都可随时 `StopCommand` 停掉，已落盘的保号件不丢。
+
+① **预算**：P-试 两臂（并行，2M ticks/臂）＋ 3 次 10 分钟级判读；**P-全 再加 16M/臂，需另行批**。
+② **是否允许在跑完后把位置输入设为训练默认** —— 仍未批（本件只报读数，不擅自改默认）。
+
+## 6. 落地记录（2026-09-28：两处设计更正 + 一个**静默空转**缺陷 + 冒烟证据）
+
+### 6.1 设计更正一：热启动而非从头训
+
+取代本件首版的"从头训 4M"：改为**从 `seed_beta` 热启动 + 2M ticks/臂**，总预算不变；
+理由是 §1 第二条（可解释性）。
+
+**代码落地**（`scripts/training/train_seed_corpus.py`）：
+* `--resume` 现**从档里重建架构**（忽略 `--scale/--parameter-budget/--capacity-policy`）；
+* 新增 `patch_envelope_config_flags`：把点名实验键写进受载档的**每一处** config 副本
+  （v1 信封 2 处／v10 信封 3 处），只翻点名键；
+* `run_training(..., resume_config_overrides=...)` 在 restore 前应用它，且副本数 `<2` 时响亮失败。
+
+### 6.2 设计更正二（实测抓到的**静默空转**缺陷）
+
+**症状**：第一对热启动两臂（各 2M ticks 已起跑）在第一个 25k 窗口的
+`online_accuracy / mean_surprise / holdout_surprise` **逐位相同**（0.32868／
+2.6493767963977515／3.085721622010078）——两个"应该不同"的配方给出同一个 15 位数字。
+
+**根因**：`Taiji.observe` 默认 `readout="action"`，而 `train_seed_corpus.py` 一直用默认值 ⇒
+**主训练线训的是 F4／运动解码器**；`--readout-position` 接的是 F1 预测读出 ⇒ 位置列被建出来
+却从未被走到（实测：400 步后 `position_weight` 绝对值总和 **0.0**，而 `bias` 已学到 72.85）。
+
+**修法**：
+1. `Seed.observe` 增加 `readout` 透传（默认 `"action"`，逐位不变）；
+2. `train_seed_corpus.py` 新增 `--readout {action,predictive}`（默认 `action`）：`predictive` 档
+   训 F1 预测读出＋私有时间语境，并配 `learn_motor=False`（`observe` 明令）；
+3. **响亮失败**：`--readout-position` 配 `--readout action` 直接 `parser.error`，不再静默空转；
+4. 热启动换链前 `reset_dynamics`（`observe` 明令"情节活跃时不许换读出"），并用绝对刻度保住
+   "从 16,000,000 起"的可读性。
+
+**复测证据**：400 步热启动两臂 ——
+`predictive+pos`：`position_weight` 绝对值 28.64、`online_accuracy` 0.22807、`holdout_surprise` 2.79893；
+`predictive 无 pos`：载荷**无** `position_weight`、0.20301／2.98046 ⇒ **两臂读数确实分开**了。
+两臂参数仍差 1028（257×4），与账一致。
+
+### 6.3 守卫（`tests/taiji_native/test_a4_mainline_flags.py`，13 条全过）
+
+* 信封补丁：三处副本都翻且只翻点名键；v1 信封只 2 处；**不加补丁则 restore 必须响亮失败、加了才成功**；
+  v10 档带身份器官时改 config 会撞血缘校验 ⇒ **钉为已知边界**（本件目标 `seed_beta` 不带身份器官）。
+* **读出链**（本次新增 4 条）：`predictive` 档位置列**被走到且非零**；`action` 档位置列**恒零**
+  （缺陷的反面钉）；CLI 对 `--readout-position` ＋ `action` 必须 `SystemExit`。
+
+### 6.4 起跑前的"能否正确保存 checkpoint"预检
+
+* `--resume seed_beta.pt --readout predictive --readout-position --max-symbols 400` ⇒ 跑通，
+  产物档 `config.taiji.readout_utf8_position_input=True`、`substrate.config` 同键 `True`、
+  读出载荷**含非零 `position_weight`**、`metadata.tick=16000400`（绝对刻度生效）；
+* 对照臂同命令去掉 `--readout-position` ⇒ 跑通，载荷**无**该键；
+* 所有诊断件已删（不留在 `output/`）。
+
+### 6.5 已知边界／未决
+
+* v10 档带身份器官时"改 config 热启动"会撞血缘校验：本件不处理（见 6.3 第一条）。
+* `tests/taiji_native/test_cap0_inventory_contract.py::test_a_fresh_inventory_sample_reproduces_the_sealed_one`
+  在本机**预先就红**：它把 `checkpoints/` 的现状与封存样本比对，而该目录是未跟踪的本地产物
+  （多出 9/27 的 `seed_native.pt`/`resumed_seed_native.pt`）。**与本件改动无关**，不在本件范围。
+
+### 6.6 附：一次事故与根因修复（`--smoke` 会覆盖产品件）
+
+验证"默认档行为不变"时跑了 `train_seed_corpus.py --smoke`——它**只改预算、不改输出路径**，
+缺省 `--checkpoint` 仍是产品件 `checkpoints/seed_corpus.pt`（`PROTECTED_OUTPUTS` 之一）
+⇒ **产品件被覆盖成 5000-tick 冒烟模型**（进度流也被追加一行）。
+**已复原**：`dist/Seed/_internal/checkpoints/seed_corpus.pt` 的 sha256＝`C8025DB44C65F9C1…`，
+与账上记录的 `c8025db44c65…` 逐位相同 ⇒ 拷回，现 sha 与大小（43,223,183）都对上；
+追加的那一行与冒烟保号件已删。`checkpoints/`、`reports/` 均未跟踪 ⇒ **无 git 损伤**。
+**根因已修**：新增 `default_output_paths(smoke=…)`，**`--smoke` 的缺省输出改走 `output/`**，
+正式跑缺省一字不变；守卫 `test_smoke_default_output_never_lands_on_the_product_checkpoint`。

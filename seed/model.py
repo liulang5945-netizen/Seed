@@ -77,6 +77,7 @@ class Seed:
         *,
         learn: bool = True,
         learn_motor: bool | None = None,
+        readout: str = "action",
         use_memory: bool = True,
         use_identity: bool | None = None,
     ) -> TaijiStep:
@@ -84,6 +85,7 @@ class Seed:
             symbol,
             learn=learn,
             learn_motor=learn_motor,
+            readout=readout,
             use_memory=use_memory,
             use_identity=use_identity,
         )
