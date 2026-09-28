@@ -1,28 +1,30 @@
-"""Build the Seed app icon resource pack from the rounded-shell master.
+"""Build the Seed app icon resource pack from the final rounded-shell master.
 
-Input : E:/Seed/design/variants/seed-shell-3-egg-mark.png   (1024x1024 RGBA, transparent bg)
+Input : E:/Seed/design/variants/seed-shell-final-mark.png   (1024x1024 RGBA, transparent bg)
 Output: E:/Seed/design/icons/
         - seed-icon.ico                (multi-size: 16/24/32/48/64/128/256)
         - seed-icon-{N}.png            (rounded-square RGBA tiles, N in 16..256)
         - seed-icon-tile-1024.png      (master tile for future derivation)
 
-Rules (unchanged from the original pack): tile background = ivory sampled from the
-brand anchor; corners transparent; mark centered at 72% of the tile; rounded-square
-corner radius 22%.
+Rules: tile background = ivory sampled from the brand anchor; corners transparent;
+rounded-square corner radius 22%.
 
-The shell was plumped from w/h 0.65 to 0.94 (owner pick, 2026-09-28) so the mark
-fills a square icon properly; the tree pixels are unchanged from the anchor.
+Owner-tuned decisions (2026-09-28):
+  - shell plumped to w/h 0.94 (roundness pick #3)
+  - mark fills the tile at 84% (was 72% -> "logo too small in the icon")
+  - tree grown to fill the rounder shell, trunk rooted into the shell stroke
+  - palette refreshed to a young spring green
 """
 import os
 import numpy as np
 from PIL import Image, ImageDraw
 
-MARK = r"E:/Seed/design/variants/seed-shell-3-egg-mark.png"
+MARK = r"E:/Seed/design/variants/seed-shell-final-mark.png"
 ANCHOR = r"E:/Seed/seed-logo_assets/1044f28f-miora_edit_image-1790567714143-0-bb84fe254933.png"
 OUT = r"E:/Seed/design/icons"
 SIZES = [16, 24, 32, 48, 64, 128, 256]
 RADIUS_RATIO = 0.22      # rounded-square corner radius
-MARK_RATIO = 0.72        # mark size relative to tile
+MARK_RATIO = 0.84        # mark size relative to tile
 
 bg = Image.open(ANCHOR).convert("RGB").getpixel((5, 5))
 mark = Image.open(MARK).convert("RGBA")
