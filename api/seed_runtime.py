@@ -360,8 +360,14 @@ class SeedRuntime:
         history: Sequence[tuple[str, str]] | None = None,
         max_length: int = 256,
         learn: bool = True,
+        repetition_penalty: float | None = None,
     ) -> str:
-        """生成回复并经 Taiji 语言器官形成可读表层。"""
+        """生成回复并经 Taiji 语言器官形成可读表层。
+
+        `repetition_penalty`（PLAN-A-30 乙档，**None ⇒ 逐位走现状路径**）：把解码侧的重复惩罚透传给
+        `generate_input`。加它不是为了改产品默认（默认位仍等 owner 裁），而是因为**表层链才是用户经过的那一面**——
+        定价只量"带掩码的原始字节链"就仍是一句推理，必须能在 `chat()` 上直接取数。
+        """
         from taiji import ExpressionPlan
 
         prompt = (prompt or "")[:MAX_PROMPT_CHARS]
@@ -389,6 +395,7 @@ class SeedRuntime:
                 # 口径如实登记：掩码是"产品替模型写对字节"，不是模型地板变了——
                 # 地板线仍按无掩码 F0 计（`probe_taiji_f0_language_floor.py` 默认位）。
                 utf8_strict=True,
+                repetition_penalty=(repetition_penalty or 0.0),
             )
             native_prediction = raw.decode("utf-8", errors="replace")
             for marker in _TURN_MARKERS:

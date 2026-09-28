@@ -42,6 +42,7 @@ def run_arm(
     checkpoint: Path,
     circuit: str,
     penalty: float,
+    chain: str = "raw_masked",
 ) -> dict[str, Any]:
     from eval_taiji_r2_readout_retrain import build_ngram_model, well_formed
     from probe_taiji_a30_position_cycling import best_partial_period
@@ -63,8 +64,12 @@ def run_arm(
         answer = ""
         turn_list = [str(t) for t in item["turns"]]
         for index, turn in enumerate(turn_list):
-            answer = _answer_raw(
-                runtime, turn, history, utf8_strict=True, repetition_penalty=penalty
+            answer = (
+                runtime.chat(turn, history=history, learn=False, repetition_penalty=penalty)
+                if chain == "surface"
+                else _answer_raw(
+                    runtime, turn, history, utf8_strict=True, repetition_penalty=penalty
+                )
             )
             texts.append(answer)
             if index + 1 < len(turn_list):
@@ -106,8 +111,20 @@ def main() -> int:
     parser.add_argument("--circuit", required=True)
     parser.add_argument("--manifest", default=str(MANIFEST))
     parser.add_argument("--limit", type=int, default=24)
+    parser.add_argument(
+        "--chain",
+        choices=("raw_masked", "surface"),
+        default="raw_masked",
+        help="raw_masked＝带产品掩码的基底原始字节链；surface＝`chat()` 过语言器官的用户经过那一面",
+    )
+    parser.add_argument(
+        "--penalties",
+        default=",".join(str(p) for p in PENALTIES),
+        help="要扫的 penalty 档位，逗号分隔（表层链慢，可只跑 0.0,2.0 两端）",
+    )
     parser.add_argument("--out-report", default=None)
     args = parser.parse_args()
+    penalties = [float(value) for value in args.penalties.split(",")]
 
     checkpoint = PROJECT_ROOT / args.checkpoint
     sha_before = _sha256(checkpoint)
@@ -118,12 +135,15 @@ def main() -> int:
         : args.limit
     ]
 
-    arms = [run_arm(items, checkpoint, args.circuit, penalty) for penalty in PENALTIES]
+    arms = [run_arm(items, checkpoint, args.circuit, penalty, args.chain) for penalty in penalties]
+    label = (
+        "product_surface_chat" if args.chain == "surface" else "base_raw_bytes_with_product_mask"
+    )
     base = arms[0]
     report = {
         "format": "taiji-a30-repetition-penalty-v1",
         "prereg": "plans/reference/PLAN-A-30_surface_repetition_localization_20260928.md 乙档",
-        "chain": "base_raw_bytes_with_product_mask",
+        "chain": label,
         "checkpoint": args.checkpoint,
         "circuit": args.circuit,
         "items": len(items),
