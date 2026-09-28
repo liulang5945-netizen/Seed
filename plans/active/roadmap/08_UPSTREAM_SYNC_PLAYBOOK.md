@@ -634,3 +634,13 @@ ode_modulesi…`＝**本仓已登记的 Windows 符号链接权限族**（与 0
 (a) 在测试侧用 `addInitScript` 钩住页面 `fetch`、命中 `/api/session/create` 时抓 `new Error().stack` ⇒ `Tests 1 passed (1)`、**`traces=0`**。
 (b) **这条空读数不能读成"没有调用"**（同 [[probe-output-must-be-verified-present]]）：Playwright 在网络层确实抓到过这发 POST（㊺(b) 的 +394~+450 ms 就是它）。⇒ 结论是**页面级 `fetch` 钩子覆盖面不够**：该请求要么走 `XMLHttpRequest`，要么由 **Web Worker** 内的连接发出（本 fork 的 client 侧确有 worker/module 机制），两种都在我这次钩子之外。
 (c) **要拿调用点该换的手段**（留给下一格，不再顺手试）：worker 侧注入（`page.addInitScript` 触不到 worker scope，需要 CDP `Target.setAutoAttach` attach 到 worker 再打 `Runtime.evaluate`，或直接在 `packages/client/connection`/`ui-workspace` 的源里做一次带一次性日志的构建）。**这不是 lane 修复的前置**——H7 的三条红与 ㊈/㊌ 的修法都只需要"它确实自动开"这一已证事实，不需要知道是谁调的。
+
+㉐ **H7 的执行现场：调用点已定位、补丁已写好并实测过半径，但它被语料过期卡住，我不留半截改动**（2026-09-28）。
+(a) **站点**（`grep initializeDefault` 反查到，不靠猜标签）：`packages/client/ui-workspace/src/client/navigation.ts` 的 boot 恢复序列——`:383-387` 在没有工作区时 `initializeDefaultWorkspace()` 建 "Default workspace"（注释写明"否则首启无可选项"），**紧跟的 `:388` 才是"顺手开一条会话"**：`if (sessionId === undefined && target !== undefined) sessionId = await this.connectWorkspace(target)`。⇒ 要改的是 388，不是 383。
+(b) **补丁（已写过、已回退）**：引入 `provisionedDefault` 标志，只在"这块工作区是客户端自己建的"时**不**开会话，注释写清理由。产品改动幅度＝一处条件＋一个局部变量。
+(c) **半径实测（这是本次真正的信息量）**：
+    - 基线（**没有**我的改动）：`packages/client/ui-workspace`＋`ui-sidebar` 两包 ⇒ **`Tests 1 failed｜1254 passed (1255)`**，且那 1 条已经是 `Error: this.ctx.layout.beginNavigation is not a function`；
+    - 加上补丁：**`Tests 7 failed｜1248 passed`**，新增 6 条**同一句 `beginNavigation is not a function`**。
+    ⇒ 结论不是"补丁错了"，而是**这些 spec 的 `ctx.layout` 桩件缺 `beginNavigation`**：补丁让执行流走进那条本就存在的真实分支，把桩件缺口暴露出来（同 [[errors-in-other-files-prove-nothing]] 的反向用法——**同形错误＝一个根因**，这里是"桩件不完整"这一个根因的 7 次显形）。要落地必须**同批改这 6 处桩件**，而不是回退产品补丁。
+(d) **为什么现在不能收尾（硬阻塞，不是畏难）**：仓库规矩——"每个非平凡的产品/模型可见改动都要更新 keyless recorded-session snapshot"（`AGENTS.md` 的 Testing policy 条）。而**录制语料本身正处于过期状态**：㊉ 的 A 族 52 个文件红在同一句 `seed system/message … must have system-prompt source` 上，重录面 `test:snapshot:record` **需要真模型凭据**（㊰/㊮… 见 ㊉ 与 H1 实测：无 key 时 `Tests 53 failed｜22 passed`）。⇒ 在 H1 的带凭据重录完成之前，**H7 无法满足它的 snapshot 义务**，我不把"改了产品但 snapshot 义务欠着"的状态提交进主线。
+(e) **现场已归零**：补丁用反向 python 精确回退（`revert_rc=0`），复跑回到基线 `1 failed｜1254 passed`；`git status` 里 `packages/client/ui-workspace` 无改动。⇒ 面内红文件仍是 **5**，H7 从"一个待裁问题"变成"**已有站点＋已测补丁＋明确的单一前置依赖（H1）**"。
