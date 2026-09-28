@@ -1,0 +1,758 @@
+{
+  "format": "taiji-r2-copy-surface-extension-v1",
+  "prereg": "plans/reference/SPEC-A-21_r2_surface_extension_prereg_20260925.md",
+  "judge_prereg": "plans/reference/SPEC-A-22_r2_a2_5_query_conditioned_selector_prereg_20260926.md",
+  "manifest": "plans/manifests/r2_copy_surface_extension_v3_position_random.json",
+  "manifest_sha256": "b162ff091630f64a8cac986184729ff7894887f4806c923cc12b301ce5ae4fee",
+  "checkpoint": "output/a26_p0/checkpoint.pt",
+  "copy_evidence_utf8_gate": false,
+  "control_no_circuit": {
+    "circuit": null,
+    "items": 104,
+    "texts": 312,
+    "well_formed_texts": 156,
+    "well_formed_rate": 0.5,
+    "utf8_decodable_rate": 0.0064,
+    "utf8_decodable_trimmed_rate": 0.3205,
+    "illegal_after_tail_trim_rate": 0.6795,
+    "strict_hits": 0,
+    "rows": [
+      {
+        "id": "V001",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同子，一子，个这释诗有共有我志有有有有我们�",
+        "well_formed": true
+      },
+      {
+        "id": "V002",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同学之子，风�大�家��：同如一倂念：忙首诗有��",
+        "well_formed": false
+      },
+      {
+        "id": "V003",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "子，忙首诗有有，忙首诗有有有有有有有有有渭�",
+        "well_formed": false
+      },
+      {
+        "id": "V004",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同学之�，首。中，忙释大家�：师如人倂心�，�",
+        "well_formed": false
+      },
+      {
+        "id": "V005",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同学之诗有倂有，忙释大家如��有有，忙首诗有�",
+        "well_formed": true
+      },
+      {
+        "id": "V006",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同，忙释大家刐有��\n\n\n�否！刑，忙首诗有我我我�",
+        "well_formed": false
+      },
+      {
+        "id": "V007",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同子，心子，忙释大家刟有，忙首诗有有有有有�",
+        "well_formed": true
+      },
+      {
+        "id": "V008",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同学们一师！\n\n\n倂！心���］，忙释大家�吐，忙�",
+        "well_formed": false
+      },
+      {
+        "id": "V009",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同子，一子，个这释大家刟有，忙首诗有有有有�",
+        "well_formed": true
+      },
+      {
+        "id": "V010",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同子，郅有有我有我名。忙首诗有有，忧忙首诗�",
+        "well_formed": true
+      },
+      {
+        "id": "V011",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "子，忙释大家垞：忧家多\n\n\n�学！倂心：弈�，忙�",
+        "well_formed": false
+      },
+      {
+        "id": "V012",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同学何，忙释大家剚\n\n\n�否！忙首诗有�，忙首诗�",
+        "well_formed": false
+      },
+      {
+        "id": "V013",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同子，忙释大家刟忙首风���，妁�大�学，�大�有�",
+        "well_formed": false
+      },
+      {
+        "id": "V014",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同，忙释大家刐有��\n\n\n��！刼：���，如�人��忙��",
+        "well_formed": false
+      },
+      {
+        "id": "V015",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同子，一学义有�，忙释大家刟有��\n\n��！刑！忙�",
+        "well_formed": false
+      },
+      {
+        "id": "V016",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同学之诗有我�，�，忙�。有有有有我好，忙首诗",
+        "well_formed": true
+      },
+      {
+        "id": "V017",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同子，忙释大家刟有：弈，心�。下老师：同学��",
+        "well_formed": true
+      },
+      {
+        "id": "V018",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同学之说�：心���，录，忙释大家剚\n\n\n�否！��！�",
+        "well_formed": false
+      },
+      {
+        "id": "V019",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同学之子，忙释大家刑们一�吂！忙首诗有�，忙�",
+        "well_formed": false
+      },
+      {
+        "id": "V020",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同子，忙释大家刟有：弈，忙首诗有有有有有有�",
+        "well_formed": false
+      },
+      {
+        "id": "V021",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同学你何，忙释大家多�有���\n\n\n�学！忙首诗有�：",
+        "well_formed": false
+      },
+      {
+        "id": "V022",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同，忙释大家刐有，个如何，忙释大家倂\n\n\n��］�",
+        "well_formed": true
+      },
+      {
+        "id": "V023",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同子，心大家倂有有，忙首诗有有有有我？心首�",
+        "well_formed": true
+      },
+      {
+        "id": "V024",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同，忙释大家子，忙首诗有我有有，忙首诗有有�",
+        "well_formed": true
+      },
+      {
+        "id": "V025",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同学之子，飣：心有有我有扉：心首诗有有有有�",
+        "well_formed": true
+      },
+      {
+        "id": "V026",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同学之说如我，忙释大家垞：同学之�子，忙首�",
+        "well_formed": true
+      },
+      {
+        "id": "V027",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "子，大家垞：忙首诗有有有我们�如何？\n\n\n�学��",
+        "well_formed": true
+      },
+      {
+        "id": "V028",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同学之�子，忙释大家�：师如中，忙释大家剚",
+        "well_formed": true
+      },
+      {
+        "id": "V029",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同学何，忙释大家剚\n\n\n�否！刑吳子，郅有有我我",
+        "well_formed": false
+      },
+      {
+        "id": "V030",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同学之�子，忙释大家刑们一倂中，忙首诗有�，�",
+        "well_formed": false
+      },
+      {
+        "id": "V031",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同子，忙释大家刟有，忙首诗有有有有有有有我�",
+        "well_formed": false
+      },
+      {
+        "id": "V032",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同子，不有有有有我大实师？\n\n\n倂如何＼忙释���",
+        "well_formed": false
+      },
+      {
+        "id": "V033",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同子，忙首诗有我有我们��有有�，忙首诗漥��木",
+        "well_formed": true
+      },
+      {
+        "id": "V034",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同子，忙释大家倂一倂一：心�好，录，忙首诗有",
+        "well_formed": false
+      },
+      {
+        "id": "V035",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同学之说有我�我们一�吂俙首诗有有有有有我好�",
+        "well_formed": true
+      },
+      {
+        "id": "V036",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同学之子，忙释大家刟心�，忙首诗有有，忙首诗",
+        "well_formed": true
+      },
+      {
+        "id": "V037",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同子，忙释大家刟有刂下这首诗有有，心有有有�",
+        "well_formed": true
+      },
+      {
+        "id": "V038",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同子，忙释大家刐有��\n\n\n�否！�：忧忙释困有��",
+        "well_formed": false
+      },
+      {
+        "id": "V039",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同学之诗有我有有，郚�有有有有有我们一名：同",
+        "well_formed": false
+      },
+      {
+        "id": "V040",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同学义有有有有有有有我忙释���，�子�吂人回忙�",
+        "well_formed": false
+      },
+      {
+        "id": "V041",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同学何，忙���国彽�，忙首诗有�，忙�。�\n\n忈！�",
+        "well_formed": false
+      },
+      {
+        "id": "V042",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同子，忙释大家刐弚吂中如一赁念，忙������子�",
+        "well_formed": false
+      },
+      {
+        "id": "V043",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同学之说有我有，�大家兞吂\n\n\n倂如何，忙释大�",
+        "well_formed": true
+      },
+      {
+        "id": "V044",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同学何，忙释大家倂有：同子，忙首诗有�，忙首",
+        "well_formed": false
+      },
+      {
+        "id": "V045",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同学何，都子，忙释大家倂有：忧忙首诗有�，忙",
+        "well_formed": false
+      },
+      {
+        "id": "V046",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同学之有我�，�：心�。有有，忙首诗有有我们��",
+        "well_formed": true
+      },
+      {
+        "id": "V047",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同子，子，忙释好，大家剚\n\n\n�学！��！席！忙首",
+        "well_formed": false
+      },
+      {
+        "id": "V048",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同学之子，一学��\n\n\n�学！忙释大家垚师如有�，�",
+        "well_formed": false
+      },
+      {
+        "id": "V049",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同子，忙释大家刟有��\n\n�否，忙释大家多�有我，�",
+        "well_formed": false
+      },
+      {
+        "id": "V050",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同子之解：心�。有有，忙首诗有有有有有有有有",
+        "well_formed": false
+      },
+      {
+        "id": "V051",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "子，忙首诗有有有我们么？心何子，忙释大家垞�",
+        "well_formed": true
+      },
+      {
+        "id": "V052",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同学何，忙释大家剚\n\n\n�学！刑：忧忙释困有��\n\n\n�",
+        "well_formed": false
+      },
+      {
+        "id": "V053",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同学了倂有有，忙首诗有有，忧忙首诗有有我们�",
+        "well_formed": true
+      },
+      {
+        "id": "V054",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同子，一学��\n\n\n��］：心�好�录，释倂有有我我�",
+        "well_formed": false
+      },
+      {
+        "id": "V055",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同子子，一学义有吿忙释大家垚�有有，忙首诗有",
+        "well_formed": false
+      },
+      {
+        "id": "V056",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同子，一子，一说山有有有有有有我忙首首��诗�",
+        "well_formed": true
+      },
+      {
+        "id": "V057",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同学之子，一师：心���］，忙释大家多�有���\n\n\n�",
+        "well_formed": false
+      },
+      {
+        "id": "V058",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同学之�子，忙释大家剚\n\n\n\n�学！刑�：录，忙释�",
+        "well_formed": false
+      },
+      {
+        "id": "V059",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同学之有我心首诗有我们一��：心�大�，忙释大�",
+        "well_formed": false
+      },
+      {
+        "id": "V060",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同子，忙释大家刟有�：心首诗有有有我们一师？",
+        "well_formed": true
+      },
+      {
+        "id": "V061",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同学何，忙释大家刟有��\n\n倁师：弈，忙首诗有有",
+        "well_formed": false
+      },
+      {
+        "id": "V062",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同学之�子，何，忙释大家倂中，忙首诗有�，忙�",
+        "well_formed": true
+      },
+      {
+        "id": "V063",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同学之诗有有，�，心大家子：吂中同学���有有，",
+        "well_formed": true
+      },
+      {
+        "id": "V064",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同学义有有有有有有有我忙���，�子弐��有有，�",
+        "well_formed": false
+      },
+      {
+        "id": "V065",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同学之子，一学��\n\n\n�好�！忙释大家垚�有��\n\n\n\n\n��",
+        "well_formed": false
+      },
+      {
+        "id": "V066",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同子了倂�\n\n在�，忙释大家垞席，忙首诗有�，忙�",
+        "well_formed": false
+      },
+      {
+        "id": "V067",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "子，忙释大家刟有：心首诗有有有有有我们一圂�",
+        "well_formed": true
+      },
+      {
+        "id": "V068",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同学之�子，忙释大家�多吂有��\n\n\n��：��，如一�",
+        "well_formed": false
+      },
+      {
+        "id": "V069",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同学之�子，一在共有有，忙首诗有有有有有有�",
+        "well_formed": false
+      },
+      {
+        "id": "V070",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同学之�子，忙释大家刑们一�吂何，忙释大家剚",
+        "well_formed": false
+      },
+      {
+        "id": "V071",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同子，忙释大家刟有，忙首诗有有有有有有我们�",
+        "well_formed": true
+      },
+      {
+        "id": "V072",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同，忙释大家子，忙首诗有�，忙首诗有有有有我",
+        "well_formed": true
+      },
+      {
+        "id": "V073",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同学何，何天共有有我忙释大家倂\n\n\n��（如何，�",
+        "well_formed": true
+      },
+      {
+        "id": "V074",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同子一倂个心大家�多�有我姉，忙首诗有有有我�",
+        "well_formed": false
+      },
+      {
+        "id": "V075",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "心首诗有有，忙首诗有有有有有有有有渭：同如�",
+        "well_formed": false
+      },
+      {
+        "id": "V076",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同学何，忙释大家倂有：同学之说有，忙首诗有�",
+        "well_formed": true
+      },
+      {
+        "id": "V077",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同子，忙释大家刟有��\n\n倁师：弈，忙首诗有有有",
+        "well_formed": false
+      },
+      {
+        "id": "V078",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同，心有同，一学之说有我好，忙释大家垞席，�",
+        "well_formed": true
+      },
+      {
+        "id": "V079",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同子，一子，中吂有�子，忙釖诗有有，忙首说�",
+        "well_formed": false
+      },
+      {
+        "id": "V080",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同学之说好，忙释大家倂\n\n\n�学！忙首诗有�：同�",
+        "well_formed": false
+      },
+      {
+        "id": "V081",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同子，一子，忙释大家刟有刐弈，忙首诗有有有�",
+        "well_formed": true
+      },
+      {
+        "id": "V082",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同子，一学��\n\n忁好：好，忙释大家垞席！\n\n\n倂四",
+        "well_formed": false
+      },
+      {
+        "id": "V083",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "子，忙释大家垞：同学之老嚄有我有，都：心�。",
+        "well_formed": true
+      },
+      {
+        "id": "V084",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同子，心大家兞忙首诗有我我��如何，忙释大家",
+        "well_formed": true
+      },
+      {
+        "id": "V085",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同学之子，忙释大家垚吂有��\n\n\n��＀�忙首诗有，�",
+        "well_formed": false
+      },
+      {
+        "id": "V086",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同子，一学��\n\n忈：好，忙释大家�多吂\n\n\n\n�否！�",
+        "well_formed": false
+      },
+      {
+        "id": "V087",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同子，子，忙释好，大家剚\n\n�学！�学！�：忧忙�",
+        "well_formed": false
+      },
+      {
+        "id": "V088",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同学何，一学义有有有有有有有有我忙���，忙��",
+        "well_formed": false
+      },
+      {
+        "id": "V089",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同学之子，何，忙释大家刟有，忙首诗有有有有�",
+        "well_formed": true
+      },
+      {
+        "id": "V090",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同子，何大家兞忙释����，�子，忙�。下老忮：�",
+        "well_formed": false
+      },
+      {
+        "id": "V091",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同学之�，忙释大家垞席：弈�：弈有�，学���，忙",
+        "well_formed": false
+      },
+      {
+        "id": "V092",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同子，心我关子，忙首诗有我有有有有有怂何大�",
+        "well_formed": true
+      },
+      {
+        "id": "V093",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同学之说好，忙释大家刟有，都，忙�。如一赁心",
+        "well_formed": true
+      },
+      {
+        "id": "V094",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同学之说有我�，�，忙����，录，忙释大家倂一�",
+        "well_formed": false
+      },
+      {
+        "id": "V095",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同子，忙释大家刟有，忙首诗有有有有我，心�。",
+        "well_formed": true
+      },
+      {
+        "id": "V096",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同子，忙释大家刟有：同学之说有，忙首诗有有�",
+        "well_formed": true
+      },
+      {
+        "id": "V097",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同子，忙释大家刟有：师，忙首诗有有有有有有�",
+        "well_formed": true
+      },
+      {
+        "id": "V098",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同子吂一�何，忙释大家�吂\n\n\n\n�学！��：�好，录",
+        "well_formed": false
+      },
+      {
+        "id": "V099",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "子，忙释大家垞：忧家多\n\n倂压：弈：弈，大家�",
+        "well_formed": false
+      },
+      {
+        "id": "V100",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同学了倂有名。\n\n\n��＼�如有：忧家垞：同如一倂",
+        "well_formed": false
+      },
+      {
+        "id": "V101",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同子，忙释大家子：弈：师，心有有有有有有有�",
+        "well_formed": true
+      },
+      {
+        "id": "V102",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同，心有同，一学之诗有我��有扉：\n\n老师：同�",
+        "well_formed": true
+      },
+      {
+        "id": "V103",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同学义，郅学�中，忙释大家剚\n\n\n\n�学！忙首诗有",
+        "well_formed": false
+      },
+      {
+        "id": "V104",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同子，忙释大家刟有刂有，忙首诗有有有有有我�",
+        "well_formed": false
+      }
+    ]
+  },
+  "treated_arms": [],
+  "surface_verdict": {
+    "min_gap_texts": 3,
+    "per_circuit": [],
+    "status": "not_resolved",
+    "verdict": "not_resolved（独立取数只有 0 次，判据要求 ≥2 次）"
+  },
+  "base_sha256_unchanged": true
+}

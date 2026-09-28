@@ -1,0 +1,758 @@
+{
+  "format": "taiji-r2-copy-surface-extension-v1",
+  "prereg": "plans/reference/SPEC-A-21_r2_surface_extension_prereg_20260925.md",
+  "judge_prereg": "plans/reference/SPEC-A-22_r2_a2_5_query_conditioned_selector_prereg_20260926.md",
+  "manifest": "plans/manifests/r2_copy_surface_extension_v3_position_random.json",
+  "manifest_sha256": "b162ff091630f64a8cac986184729ff7894887f4806c923cc12b301ce5ae4fee",
+  "checkpoint": "output/a26_p1/checkpoint.pt",
+  "copy_evidence_utf8_gate": false,
+  "control_no_circuit": {
+    "circuit": null,
+    "items": 104,
+    "texts": 312,
+    "well_formed_texts": 288,
+    "well_formed_rate": 0.9231,
+    "utf8_decodable_rate": 0.0545,
+    "utf8_decodable_trimmed_rate": 1.0,
+    "illegal_after_tail_trim_rate": 0.0,
+    "strict_hits": 0,
+    "rows": [
+      {
+        "id": "V001",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同，何，何）：诗诗有同子，何，首诗有同子，�",
+        "well_formed": true
+      },
+      {
+        "id": "V002",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "君，大家夂何，忙我们一赁师，何，何，何同，�",
+        "well_formed": true
+      },
+      {
+        "id": "V003",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "好，个如何！\n\n老师：同，中同，一见\n\n\n\n倂！忈�",
+        "well_formed": true
+      },
+      {
+        "id": "V004",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同何，何）：诗诗耂中一老师：同，子何，一个�",
+        "well_formed": true
+      },
+      {
+        "id": "V005",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同，何，心有吂，何，大家ｚ弈大家圉有吂，忙�",
+        "well_formed": false
+      },
+      {
+        "id": "V006",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同何，何，何，何，何同有吂何，何，大家中�",
+        "well_formed": true
+      },
+      {
+        "id": "V007",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同，大家夐：这首诗有我们一个这䦖诗中一老师�",
+        "well_formed": true
+      },
+      {
+        "id": "V008",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同何）：这首觉得忈？一老师：同，大家夐有有�",
+        "well_formed": true
+      },
+      {
+        "id": "V009",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "君，何，何，何）：这首觉得夈！志（这首诗有�",
+        "well_formed": true
+      },
+      {
+        "id": "V010",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同学何，何，大家倂中！\n\n\n老师：同如何，何，�",
+        "well_formed": true
+      },
+      {
+        "id": "V011",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "好，何）：同如何，中如何，何？有同大家倂中�",
+        "well_formed": true
+      },
+      {
+        "id": "V012",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同何！\n\n老师：同，心，一赁师！\n\n\n\n\n\n老倂有倂�",
+        "well_formed": true
+      },
+      {
+        "id": "V013",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同学何，何，何）：诗诗有师！忁师！忙首诗有�",
+        "well_formed": true
+      },
+      {
+        "id": "V014",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同，何，何，首诗诗有吂大家夐，忙我们一起山�",
+        "well_formed": true
+      },
+      {
+        "id": "V015",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同，何，心有有）：同何，何，如何，大家ｚ吂�",
+        "well_formed": true
+      },
+      {
+        "id": "V016",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同何：这首诗有吂有有，一起大实忚？忧一见忈�",
+        "well_formed": false
+      },
+      {
+        "id": "V017",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同，何）：诗大实多，心我觉）：诗诗有同，一�",
+        "well_formed": true
+      },
+      {
+        "id": "V018",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同何，中如何，中）：同子，何，一见师！\n\n\n老�",
+        "well_formed": true
+      },
+      {
+        "id": "V019",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "好，个心有有吂\n\n\n老师：同如有一个这首诗一一�",
+        "well_formed": true
+      },
+      {
+        "id": "V020",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同，何）：诗大家夐：吂中，心，大家有有吂，�",
+        "well_formed": true
+      },
+      {
+        "id": "V021",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同学何，中吂，何，心有有倂\n\n\n老师！忧家中一�",
+        "well_formed": true
+      },
+      {
+        "id": "V022",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同何，何，首诗大家倂中，何，心有有同，大家�",
+        "well_formed": true
+      },
+      {
+        "id": "V023",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同，大家夐有有，一赁师：同何，何，大家何！",
+        "well_formed": true
+      },
+      {
+        "id": "V024",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "吂何，大家倂何，大家有有有有有一赁师？一个�",
+        "well_formed": true
+      },
+      {
+        "id": "V025",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "好，何）：诗大实多，如中，忙首诗诗有同，中�",
+        "well_formed": true
+      },
+      {
+        "id": "V026",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同子何，何，忙何，中吂！\n\n老师：好：同，大�",
+        "well_formed": true
+      },
+      {
+        "id": "V027",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "大家夐：吂\n\n\n老师：吂有吂有，个如何，忙首诗�",
+        "well_formed": false
+      },
+      {
+        "id": "V028",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同学何，何，何同有吂何，大家倂何，忙首诗诗�",
+        "well_formed": true
+      },
+      {
+        "id": "V029",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同，大家夐：\n\n要师：同，大家多有倂有一个这�",
+        "well_formed": true
+      },
+      {
+        "id": "V030",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同，何，心有我们，首诗，心我们一见师！\n\n\n老�",
+        "well_formed": true
+      },
+      {
+        "id": "V031",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同，大家夐：\n\n老师：同，何，心有有吂，何，�",
+        "well_formed": true
+      },
+      {
+        "id": "V032",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同，何，心有有吂，何，忙首诗，大家有有有有�",
+        "well_formed": true
+      },
+      {
+        "id": "V033",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "在实大家夐有，个如何，忙首诗中如何，忙首诗�",
+        "well_formed": true
+      },
+      {
+        "id": "V034",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同学何，何，心有有有有有个说，大家夐？\n\n老�",
+        "well_formed": true
+      },
+      {
+        "id": "V035",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "好，个如何，一见师：同何，何，大家圞吂\n\n\n老�",
+        "well_formed": true
+      },
+      {
+        "id": "V036",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同何，何）：诗得忁师！心，中如何，何，大家�",
+        "well_formed": true
+      },
+      {
+        "id": "V037",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同何！\n\n\n老师：吂！心，何，心有吂，大家何：",
+        "well_formed": true
+      },
+      {
+        "id": "V038",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同，大家夐有吂\n\n如何，忙首诗诗有倂\n\n\n如一老�",
+        "well_formed": true
+      },
+      {
+        "id": "V039",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同，大家夐有吂中，忙首诗中一个个这䦖诗中么�",
+        "well_formed": true
+      },
+      {
+        "id": "V040",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同何，何）：诗诗有吱有我们有有有有有有有我�",
+        "well_formed": false
+      },
+      {
+        "id": "V041",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同何，何）：诗大实夐：同了，大家圉有吂，个�",
+        "well_formed": false
+      },
+      {
+        "id": "V042",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同何，何）：说大实多！忁师！忁师！忁师，何�",
+        "well_formed": false
+      },
+      {
+        "id": "V043",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "好，中如中，忙个见师：同学义，中同，一见忁�",
+        "well_formed": true
+      },
+      {
+        "id": "V044",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同子，中如何，何）：诗忁师！心，何，何，首�",
+        "well_formed": true
+      },
+      {
+        "id": "V045",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同，子，何：这首觉得忈：好，中如何！\n\n老师�",
+        "well_formed": true
+      },
+      {
+        "id": "V046",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同，何）：这首觉大家夐：同中，忙首诗中，心�",
+        "well_formed": true
+      },
+      {
+        "id": "V047",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "君，何：这首诗有吗，心我们一起山有有，中同�",
+        "well_formed": true
+      },
+      {
+        "id": "V048",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同学何，何，忧家何！\n\n老师：弈：弈：这首诗�",
+        "well_formed": true
+      },
+      {
+        "id": "V049",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "君，何）：诗大家夐：吂中，一见师：同，大家�",
+        "well_formed": true
+      },
+      {
+        "id": "V050",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "有吂有中吂何，忙首诗一见师：同，子一个这首�",
+        "well_formed": true
+      },
+      {
+        "id": "V051",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "好，个诗中）：同何，一见师！\n\n\n老师！心？忘�",
+        "well_formed": true
+      },
+      {
+        "id": "V052",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同学何，何，何大家倂何何，心有吂，忙首诗诗�",
+        "well_formed": false
+      },
+      {
+        "id": "V053",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同学何，何，忧家大何！\n\n老师！忁师！心，何�",
+        "well_formed": true
+      },
+      {
+        "id": "V054",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同何，何）：诗大家夐：弈，何，首诗有吂有有�",
+        "well_formed": true
+      },
+      {
+        "id": "V055",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同，大家夐有有，一起大大忁师！\n\n老师（如些�",
+        "well_formed": true
+      },
+      {
+        "id": "V056",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同学何，何，心有有有有有一赁师：好，大家夐�",
+        "well_formed": true
+      },
+      {
+        "id": "V057",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同何，何）：诗大家夐：有吂有，中如何，忙首�",
+        "well_formed": true
+      },
+      {
+        "id": "V058",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同何，何，何吗，何，何，何）：吂何＂中吂！�",
+        "well_formed": false
+      },
+      {
+        "id": "V059",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "好，个诗有吂\n\n\n老师！忧家垞：弈：弈，中如何�",
+        "well_formed": false
+      },
+      {
+        "id": "V060",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同何，何，何同有吂何，大家圂何，忙首诗诗有�",
+        "well_formed": false
+      },
+      {
+        "id": "V061",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同学何，何，忧家垂何，忙首诗诗有弈，忙首诗�",
+        "well_formed": false
+      },
+      {
+        "id": "V062",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同，大家夐有，个说师，何，心有有有有有有有�",
+        "well_formed": false
+      },
+      {
+        "id": "V063",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同，大家夐：这首诗有我们一个这䦖诗中何？\n\n\n�",
+        "well_formed": true
+      },
+      {
+        "id": "V064",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "吂何，何，首诗诗有吂子，何，首诗有吂大家垞�",
+        "well_formed": true
+      },
+      {
+        "id": "V065",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同何，何，何）：诗大家夐：同一见忁师，何，�",
+        "well_formed": true
+      },
+      {
+        "id": "V066",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同学何，何，何大家倂中！\n\n\n老师：同，大家多�",
+        "well_formed": true
+      },
+      {
+        "id": "V067",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "好，中同子，何：这首见师：大家有有，中同，�",
+        "well_formed": true
+      },
+      {
+        "id": "V068",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同，大家圉：这如中如何，忙有同，忙首诗诗有�",
+        "well_formed": true
+      },
+      {
+        "id": "V069",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同学何，何）：诗诗有同子，何，首诗有吂有我�",
+        "well_formed": true
+      },
+      {
+        "id": "V070",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同，何，何，首诗诗有名有同有我们一个这䦖诗�",
+        "well_formed": true
+      },
+      {
+        "id": "V071",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同，大家夐有有，一赁师：同何，何，大家圞吂",
+        "well_formed": true
+      },
+      {
+        "id": "V072",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同，何，何，何）：诗诗有同子，何，首诗有吂�",
+        "well_formed": true
+      },
+      {
+        "id": "V073",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同何，何）：诗大家夐：吂中，心有吂，大家倂�",
+        "well_formed": true
+      },
+      {
+        "id": "V074",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同学义，何，心有有倂\n\n\n老师！忧实忚！忧一个�",
+        "well_formed": true
+      },
+      {
+        "id": "V075",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "好，大家倂\n\n\n\n\n\n\n\n老师！忁！师要师！心，如有�",
+        "well_formed": true
+      },
+      {
+        "id": "V076",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同何，何）：诗诗耂中一老师：同，中同，何，�",
+        "well_formed": true
+      },
+      {
+        "id": "V077",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同，学何，何，大家圉有，中如何，忙首诗诗有�",
+        "well_formed": true
+      },
+      {
+        "id": "V078",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同何，何）：诗大家夐：诗心我们一见师：同，�",
+        "well_formed": true
+      },
+      {
+        "id": "V079",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同，何，心有有，一赁师！心：同，大家何，中�",
+        "well_formed": true
+      },
+      {
+        "id": "V080",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同，何）：诗诗有同子，一见师！\n\n\n老师！心！�",
+        "well_formed": true
+      },
+      {
+        "id": "V081",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同，何）：诗大实多！心（觉），中同，大家中�",
+        "well_formed": true
+      },
+      {
+        "id": "V082",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同何，何，首诗诗有吂有有，一见师：同何，忙�",
+        "well_formed": true
+      },
+      {
+        "id": "V083",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "好：好，中如何！\n\n老师：同学义有倂有有，一�",
+        "well_formed": true
+      },
+      {
+        "id": "V084",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同学何，何，何大家倂中：弈：弈）：说如中一�",
+        "well_formed": false
+      },
+      {
+        "id": "V085",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同学何，何，忧家：\n\n老师：同，如何，忙首诗�",
+        "well_formed": true
+      },
+      {
+        "id": "V086",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同，何，何，何，大家圞吂中，何，忧忂何，大�",
+        "well_formed": true
+      },
+      {
+        "id": "V087",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "好，何）：这䦖诗有同，大家夐：吂一见忁个要�",
+        "well_formed": false
+      },
+      {
+        "id": "V088",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同，何）：同学何，何，何）：诗诗有倂中吂何�",
+        "well_formed": true
+      },
+      {
+        "id": "V089",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同何，何）：诗大家夐：吂中，心大家多！\n\n老�",
+        "well_formed": true
+      },
+      {
+        "id": "V090",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同何，何，首诗诗有吂有我们一个这䦖诗一，何�",
+        "well_formed": true
+      },
+      {
+        "id": "V091",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "好，中如何！\n\n老师：同如中一个个诗一一丈我�",
+        "well_formed": true
+      },
+      {
+        "id": "V092",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同何，何）：诗诗老师：同何，何，首诗有吂有�",
+        "well_formed": true
+      },
+      {
+        "id": "V093",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同学何，何，忧家大何，中如何，忙首诗诗有弈�",
+        "well_formed": true
+      },
+      {
+        "id": "V094",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同何，何）：同子，忙首诗，中，大家夐有吂\n\n�",
+        "well_formed": true
+      },
+      {
+        "id": "V095",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "好，大家夐有有，中如何，忙首诗一见忈么我们�",
+        "well_formed": true
+      },
+      {
+        "id": "V096",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同，大家夐：\n\n要师：这首诗有吂有有，一起大�",
+        "well_formed": true
+      },
+      {
+        "id": "V097",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "在实夂些大家倂中，中同，忙首诗，忙个说有吂�",
+        "well_formed": true
+      },
+      {
+        "id": "V098",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同学何，何，心有有倂\n\n\n老师！忧家垞ￚ弈，一�",
+        "well_formed": true
+      },
+      {
+        "id": "V099",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "好，大家倂\n\n\n\n\n\n\n老师！忁！师：同，如有倂有中",
+        "well_formed": true
+      },
+      {
+        "id": "V100",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同何，何，何）：诗诗老师：同何！\n\n老师！吧�",
+        "well_formed": true
+      },
+      {
+        "id": "V101",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同，何）：这首诗有同，大家夐：这首诗有吂，�",
+        "well_formed": true
+      },
+      {
+        "id": "V102",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同，大家夐有，一起：同，忙首诗有吂，一赁师�",
+        "well_formed": true
+      },
+      {
+        "id": "V103",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同，大家夐有，中如何，忙首诗诗有有，一老师�",
+        "well_formed": true
+      },
+      {
+        "id": "V104",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "同何，何）：同学何，中如何！\n\n老师：同，如�",
+        "well_formed": true
+      }
+    ]
+  },
+  "treated_arms": [],
+  "surface_verdict": {
+    "min_gap_texts": 3,
+    "per_circuit": [],
+    "status": "not_resolved",
+    "verdict": "not_resolved（独立取数只有 0 次，判据要求 ≥2 次）"
+  },
+  "base_sha256_unchanged": true
+}
