@@ -1,0 +1,180 @@
+{
+  "format": "taiji-a30-position-cycling-v1",
+  "prereg": "plans/reference/PLAN-A-30_surface_repetition_localization_20260928.md 判读 2",
+  "checkpoint": "checkpoints/seed_beta.pt",
+  "circuit": "output/taiji_r2_copy_circuit_chat/judge/circuit-final.pt",
+  "items": 24,
+  "texts": 72,
+  "evidence_calls": 63991,
+  "instrument_guard": {
+    "evidence_called": true,
+    "lock_dropped_unchanged": true,
+    "diagnostic_errors": 0,
+    "base_sha256_unchanged": true
+  },
+  "texts_with_cyclic_tail": 31,
+  "cyclic_share": 0.4306,
+  "trace_sample": [
+    {
+      "step": 0,
+      "prev_byte": 256,
+      "event_id": null,
+      "argmax_position": null,
+      "mass_at_argmax": 0.0,
+      "successor_candidates": 0
+    },
+    {
+      "step": 1,
+      "prev_byte": 256,
+      "event_id": null,
+      "argmax_position": null,
+      "mass_at_argmax": 0.0,
+      "successor_candidates": 0
+    },
+    {
+      "step": 2,
+      "prev_byte": 233,
+      "event_id": null,
+      "argmax_position": null,
+      "mass_at_argmax": 0.0,
+      "successor_candidates": 0
+    },
+    {
+      "step": 3,
+      "prev_byte": 151,
+      "event_id": null,
+      "argmax_position": null,
+      "mass_at_argmax": 0.0,
+      "successor_candidates": 0
+    },
+    {
+      "step": 4,
+      "prev_byte": 174,
+      "event_id": null,
+      "argmax_position": null,
+      "mass_at_argmax": 0.0,
+      "successor_candidates": 0
+    },
+    {
+      "step": 5,
+      "prev_byte": 239,
+      "event_id": null,
+      "argmax_position": null,
+      "mass_at_argmax": 0.0,
+      "successor_candidates": 0
+    },
+    {
+      "step": 6,
+      "prev_byte": 188,
+      "event_id": null,
+      "argmax_position": null,
+      "mass_at_argmax": 0.0,
+      "successor_candidates": 0
+    },
+    {
+      "step": 7,
+      "prev_byte": 154,
+      "event_id": null,
+      "argmax_position": null,
+      "mass_at_argmax": 0.0,
+      "successor_candidates": 0
+    },
+    {
+      "step": 8,
+      "prev_byte": 230,
+      "event_id": null,
+      "argmax_position": null,
+      "mass_at_argmax": 0.0,
+      "successor_candidates": 0
+    },
+    {
+      "step": 9,
+      "prev_byte": 136,
+      "event_id": null,
+      "argmax_position": null,
+      "mass_at_argmax": 0.0,
+      "successor_candidates": 0
+    },
+    {
+      "step": 10,
+      "prev_byte": 145,
+      "event_id": null,
+      "argmax_position": null,
+      "mass_at_argmax": 0.0,
+      "successor_candidates": 0
+    },
+    {
+      "step": 11,
+      "prev_byte": 232,
+      "event_id": null,
+      "argmax_position": null,
+      "mass_at_argmax": 0.0,
+      "successor_candidates": 0
+    }
+  ],
+  "group_looped": {
+    "texts": 31,
+    "steps": 34008,
+    "positioned_steps": 32113,
+    "regression_rate": 0.2907,
+    "wrap_events": 1450,
+    "wrap_chance_baseline": 1642.0,
+    "multi_successor_share": 0.3167,
+    "mean_mass_at_argmax": 0.2919,
+    "mean_period": 2.32,
+    "mean_repeats": 13.9,
+    "unit_in_told_content": 2,
+    "unit_in_dialog_text": 11,
+    "unit_nowhere": 20
+  },
+  "group_other": {
+    "texts": 41,
+    "steps": 29983,
+    "positioned_steps": 23022,
+    "regression_rate": 0.3254,
+    "wrap_events": 924,
+    "wrap_chance_baseline": 1245.75,
+    "multi_successor_share": 0.3116,
+    "mean_mass_at_argmax": 0.2677,
+    "mean_period": 0.0,
+    "mean_repeats": 0.0,
+    "unit_in_told_content": 0,
+    "unit_in_dialog_text": 0,
+    "unit_nowhere": 0
+  },
+  "top_periods": [
+    [
+      "7",
+      3
+    ],
+    [
+      "哥",
+      2
+    ],
+    [
+      "州苏州",
+      2
+    ],
+    [
+      "喝乳时爱",
+      2
+    ],
+    [
+      "山",
+      2
+    ],
+    [
+      "分",
+      2
+    ],
+    [
+      "居",
+      2
+    ],
+    [
+      "21喇喯喦",
+      1
+    ]
+  ],
+  "started_utc": "2026-09-28T12:42:28Z"
+}
