@@ -20,8 +20,11 @@ function transport(namespaceValue: unknown): {
     requests,
     fetch: async (input, init) => {
       requests.push({ input, init })
-      expect(String(input)).toBe(`${origin}/api/settings/describe`)
-      const { rpcId, method } = JSON.parse(String(init?.body)) as { rpcId: string; method: string }
+      const requestUrl = input instanceof URL ? input.href : typeof input === 'string' ? input : input.url
+      expect(requestUrl).toBe(`${origin}/api/settings/describe`)
+      const body = init?.body
+      if (typeof body !== 'string') throw new Error('desktop locale: settings request body is not text')
+      const { rpcId, method } = JSON.parse(body) as { rpcId: string; method: string }
       expect(method).toBe('settings/describe')
       return Response.json({
         type: 'server-response', rpcId,

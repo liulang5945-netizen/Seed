@@ -1,5 +1,5 @@
 /** D2 P1-①: wheelhouse generator helpers — freeze split, wheel parsing, manifest build. */
-import { mkdirSync, writeFileSync } from 'node:fs'
+import { mkdirSync, rmSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { tmpdir } from 'node:os'
 import { afterEach, describe, expect, it } from 'vitest'
@@ -42,7 +42,7 @@ describe('buildManifest', () => {
   const wheelsDir = join(root, 'wheelhouse')
 
   afterEach(() => {
-    try { require('node:fs').rmSync(root, { recursive: true, force: true }) } catch { /* temp */ }
+    try { rmSync(root, { recursive: true, force: true }) } catch { /* temp dir may not exist */ }
   })
 
   it('fingerprints wheels with sha256 and totals the bytes', () => {
