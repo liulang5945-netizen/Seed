@@ -1,0 +1,349 @@
+{
+  "format": "taiji-r2-a27-emission-side-v1",
+  "prereg": "plans/reference/PLAN-A-27_three-gaps-decision-brief_20260928.md §2（战线二 乙档）",
+  "manifest": "plans/manifests/r2_copy_surface_extension_v3_position_random.json",
+  "manifest_sha256": "b162ff091630f64a8cac986184729ff7894887f4806c923cc12b301ce5ae4fee",
+  "checkpoint": "checkpoints/seed_beta.pt",
+  "circuit": "output/taiji_r2_copy_circuit_chat/judge/circuit-final.pt",
+  "circuit_sha256": "1cfe5961c300485dc08078a9deb82d0f31acbb5f8c63d0685d18366832d741a3",
+  "position_filter": "latest",
+  "items": 3,
+  "arms": {
+    "natural": {
+      "answered": 3,
+      "hits": 0,
+      "hit_rate": 0.0,
+      "emitted_owner": {
+        "unattributed": 3
+      },
+      "chosen_is_labelled_true": 0,
+      "target_rank_median": 17,
+      "target_rank_top1": 0,
+      "chosen_calls_in_generation": 2110,
+      "lock_path_calls_in_generation": 384,
+      "best_match_calls_in_generation": 1726,
+      "best_match_calls_total": 2890,
+      "copy_evidence_nonzero_steps": 1778,
+      "oracle_label_used": 0,
+      "rows": [
+        {
+          "id": "V001",
+          "kind": "name",
+          "answer_tell_position": 1,
+          "hit": 0,
+          "answer_head": "哥��衐雨我衐�我衐雨��衐衐衐�哥哥�����",
+          "emitted_owner": "unattributed",
+          "chosen_is_labelled": false,
+          "chosen_event_ids": [
+            5872,
+            5872,
+            5872,
+            5872,
+            5872,
+            5872,
+            5872,
+            5872
+          ],
+          "target_rank": 17,
+          "copy_evidence_nonzero_steps": 552
+        },
+        {
+          "id": "V003",
+          "kind": "number",
+          "answer_tell_position": 1,
+          "hit": 0,
+          "answer_head": "21�21���妹妹妹妹�欢欢欢�欢�欢����",
+          "emitted_owner": "unattributed",
+          "chosen_is_labelled": false,
+          "chosen_event_ids": [
+            5875,
+            5875,
+            5875,
+            5875,
+            5875,
+            5875,
+            5875,
+            5875
+          ],
+          "target_rank": 2,
+          "copy_evidence_nonzero_steps": 1151
+        },
+        {
+          "id": "V007",
+          "kind": "book",
+          "answer_tell_position": 1,
+          "hit": 0,
+          "answer_head": "姐��姐�读姐�读姐��姐水绖姐�读姐水绖姐水�",
+          "emitted_owner": "unattributed",
+          "chosen_is_labelled": false,
+          "chosen_event_ids": [
+            5878,
+            5878,
+            5878,
+            5878,
+            5878,
+            5878,
+            5878,
+            5878
+          ],
+          "target_rank": 22,
+          "copy_evidence_nonzero_steps": 1778
+        }
+      ]
+    },
+    "oracle_bestmatch": {
+      "answered": 3,
+      "hits": 0,
+      "hit_rate": 0.0,
+      "emitted_owner": {
+        "unattributed": 3
+      },
+      "chosen_is_labelled_true": 0,
+      "target_rank_median": 14,
+      "target_rank_top1": 0,
+      "chosen_calls_in_generation": 2110,
+      "lock_path_calls_in_generation": 384,
+      "best_match_calls_in_generation": 1726,
+      "best_match_calls_total": 2890,
+      "copy_evidence_nonzero_steps": 1778,
+      "oracle_label_used": 1132,
+      "rows": [
+        {
+          "id": "V001",
+          "kind": "name",
+          "answer_tell_position": 1,
+          "hit": 0,
+          "answer_head": "���衐雨我衐�我衐雨擥��衐雨����衐衐衐衐",
+          "emitted_owner": "unattributed",
+          "chosen_is_labelled": false,
+          "chosen_event_ids": [
+            5872,
+            5872,
+            5872,
+            5872,
+            5872,
+            5872,
+            5872,
+            5872
+          ],
+          "target_rank": 14,
+          "copy_evidence_nonzero_steps": 552
+        },
+        {
+          "id": "V003",
+          "kind": "number",
+          "answer_tell_position": 1,
+          "hit": 0,
+          "answer_head": "�2121�21���妹妹妹�欢欢欢�欢�欢��",
+          "emitted_owner": "unattributed",
+          "chosen_is_labelled": false,
+          "chosen_event_ids": [
+            5875,
+            5875,
+            5875,
+            5875,
+            5875,
+            5875,
+            5875,
+            5875
+          ],
+          "target_rank": 2,
+          "copy_evidence_nonzero_steps": 1151
+        },
+        {
+          "id": "V007",
+          "kind": "book",
+          "answer_tell_position": 1,
+          "hit": 0,
+          "answer_head": "�姐��姐��姐��姐��姐��姐��姐��姐�",
+          "emitted_owner": "unattributed",
+          "chosen_is_labelled": false,
+          "chosen_event_ids": [
+            5878,
+            5878,
+            5878,
+            5878,
+            5878,
+            5878,
+            5878,
+            5878
+          ],
+          "target_rank": 22,
+          "copy_evidence_nonzero_steps": 1778
+        }
+      ]
+    },
+    "oracle_chosen": {
+      "answered": 3,
+      "hits": 2,
+      "hit_rate": 0.6667,
+      "emitted_owner": {
+        "labelled": 2,
+        "unattributed": 1
+      },
+      "chosen_is_labelled_true": 0,
+      "target_rank_median": 14,
+      "target_rank_top1": 0,
+      "chosen_calls_in_generation": 2110,
+      "lock_path_calls_in_generation": 384,
+      "best_match_calls_in_generation": 1726,
+      "best_match_calls_total": 2890,
+      "copy_evidence_nonzero_steps": 1778,
+      "oracle_label_used": 1324,
+      "rows": [
+        {
+          "id": "V001",
+          "kind": "name",
+          "answer_tell_position": 1,
+          "hit": 1,
+          "answer_head": "明轩�轩。�轩轩�轩�轩。�轩轩轩轩。�轩轩轩轩",
+          "emitted_owner": "labelled",
+          "chosen_is_labelled": false,
+          "chosen_event_ids": [
+            5872,
+            5872,
+            5872,
+            5872,
+            5872,
+            5872,
+            5872,
+            5872
+          ],
+          "target_rank": 14,
+          "copy_evidence_nonzero_steps": 552
+        },
+        {
+          "id": "V003",
+          "kind": "number",
+          "answer_tell_position": 1,
+          "hit": 1,
+          "answer_head": "�是36是36是36是36是36是数�欢欢�欢�",
+          "emitted_owner": "labelled",
+          "chosen_is_labelled": false,
+          "chosen_event_ids": [
+            5875,
+            5875,
+            5875,
+            5875,
+            5875,
+            5875,
+            5875,
+            5875
+          ],
+          "target_rank": 2,
+          "copy_evidence_nonzero_steps": 1151
+        },
+        {
+          "id": "V007",
+          "kind": "book",
+          "answer_tell_position": 1,
+          "hit": 0,
+          "answer_head": "�读读�读读》�客�海寻�近海客读谈��读��读",
+          "emitted_owner": "unattributed",
+          "chosen_is_labelled": false,
+          "chosen_event_ids": [
+            5878,
+            5878,
+            5878,
+            5878,
+            5878,
+            5878,
+            5878,
+            5878
+          ],
+          "target_rank": 22,
+          "copy_evidence_nonzero_steps": 1778
+        }
+      ]
+    },
+    "drop_old": {
+      "answered": 3,
+      "hits": 2,
+      "hit_rate": 0.6667,
+      "emitted_owner": {
+        "labelled": 2,
+        "unattributed": 1
+      },
+      "chosen_is_labelled_true": 0,
+      "target_rank_median": 14,
+      "target_rank_top1": 0,
+      "chosen_calls_in_generation": 2110,
+      "lock_path_calls_in_generation": 384,
+      "best_match_calls_in_generation": 1726,
+      "best_match_calls_total": 2890,
+      "copy_evidence_nonzero_steps": 1778,
+      "oracle_label_used": 0,
+      "rows": [
+        {
+          "id": "V001",
+          "kind": "name",
+          "answer_tell_position": 1,
+          "hit": 1,
+          "answer_head": "明轩�轩。�轩轩�轩�轩。�轩轩轩轩。�轩轩轩轩",
+          "emitted_owner": "labelled",
+          "chosen_is_labelled": false,
+          "chosen_event_ids": [
+            5872,
+            5872,
+            5872,
+            5872,
+            5872,
+            5872,
+            5872,
+            5872
+          ],
+          "target_rank": 14,
+          "copy_evidence_nonzero_steps": 552
+        },
+        {
+          "id": "V003",
+          "kind": "number",
+          "answer_tell_position": 1,
+          "hit": 1,
+          "answer_head": "�是36是36是36是36是36是数�欢欢�欢�",
+          "emitted_owner": "labelled",
+          "chosen_is_labelled": false,
+          "chosen_event_ids": [
+            5875,
+            5875,
+            5875,
+            5875,
+            5875,
+            5875,
+            5875,
+            5875
+          ],
+          "target_rank": 2,
+          "copy_evidence_nonzero_steps": 1151
+        },
+        {
+          "id": "V007",
+          "kind": "book",
+          "answer_tell_position": 1,
+          "hit": 0,
+          "answer_head": "�读读�读读》�客�海寻�近海客读谈��读��读",
+          "emitted_owner": "unattributed",
+          "chosen_is_labelled": false,
+          "chosen_event_ids": [
+            5878,
+            5878,
+            5878,
+            5878,
+            5878,
+            5878,
+            5878,
+            5878
+          ],
+          "target_rank": 22,
+          "copy_evidence_nonzero_steps": 1778
+        }
+      ]
+    }
+  },
+  "started_utc": "2026-09-28T03:28:25Z",
+  "instrument_guard": {
+    "base_sha256_unchanged": true,
+    "every_arm_answered": true,
+    "generation_path_observed": true
+  }
+}
