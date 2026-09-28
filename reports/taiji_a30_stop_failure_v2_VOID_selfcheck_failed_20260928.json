@@ -1,0 +1,2378 @@
+{
+  "format": "taiji-a30-stop-failure-v1",
+  "prereg": "plans/reference/PLAN-A-30_surface_repetition_localization_20260928.md §2f 第 3 条",
+  "checkpoint": "checkpoints/seed_beta.pt",
+  "circuit": "output/taiji_r2_copy_circuit_chat/judge/circuit-final.pt",
+  "repetition_penalty": 2.0,
+  "items": 24,
+  "instrument_guard": {
+    "observe_calls_recorded": true,
+    "all_items_reconstructed": false,
+    "total_argmax_mismatch_steps": 1372,
+    "total_steps_zero_boundary_probability": 0,
+    "items_failing_reconstruction": [
+      "V001",
+      "V002",
+      "V003",
+      "V004",
+      "V005",
+      "V006",
+      "V007",
+      "V008",
+      "V009",
+      "V010",
+      "V011",
+      "V012",
+      "V013",
+      "V014",
+      "V015",
+      "V016",
+      "V017",
+      "V018",
+      "V019",
+      "V020",
+      "V021",
+      "V022",
+      "V023",
+      "V024"
+    ],
+    "base_sha256_unchanged": true
+  },
+  "offender_count": 5,
+  "offenders": [
+    {
+      "id": "V001",
+      "answer_run": 27,
+      "steps": 253,
+      "reconstruction_ok": false,
+      "alignments": [
+        {
+          "offset": 36,
+          "matched": 254,
+          "needed": 254,
+          "aligned": true
+        },
+        {
+          "offset": 306,
+          "matched": 1,
+          "needed": 255,
+          "aligned": false
+        },
+        {
+          "offset": 609,
+          "matched": 1,
+          "needed": 255,
+          "aligned": false
+        }
+      ],
+      "mask_argmax_mismatches": 63,
+      "steps_with_zero_boundary_probability": 0,
+      "median_legal_candidates": 64,
+      "steps_with_single_legal_candidate": 0,
+      "median_ratio_over_boundary": 7934.785,
+      "run_steps": 1,
+      "answer_head": "哥哥我表我衐。哥哥哥哥哥哥哥哥哥哥哥哥哥哥哥哥哥哥哥哥哥桐我衐衐衐衐雠一哥楛衐楥",
+      "legal_candidate_hist": {
+        "64": 167,
+        "179": 86
+      },
+      "run_step_hist": {
+        "179": 1
+      },
+      "ratio_min": 137.296,
+      "ratio_median_in_run": 32067.337,
+      "rows_head": [
+        {
+          "step": 1,
+          "emitted": 136,
+          "matches_masked_argmax": false,
+          "p_emitted": 0.358491,
+          "p_boundary": 1e-06,
+          "ratio_emitted_over_boundary": 239513.238,
+          "legal_candidates": 179,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 2,
+          "emitted": 153,
+          "matches_masked_argmax": true,
+          "p_emitted": 0.062984,
+          "p_boundary": 4.3e-05,
+          "ratio_emitted_over_boundary": 1464.333,
+          "legal_candidates": 64,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 3,
+          "emitted": 230,
+          "matches_masked_argmax": false,
+          "p_emitted": 0.222305,
+          "p_boundary": 3.8e-05,
+          "ratio_emitted_over_boundary": 5904.513,
+          "legal_candidates": 179,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 4,
+          "emitted": 152,
+          "matches_masked_argmax": false,
+          "p_emitted": 0.099806,
+          "p_boundary": 1.3e-05,
+          "ratio_emitted_over_boundary": 7784.344,
+          "legal_candidates": 64,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 5,
+          "emitted": 175,
+          "matches_masked_argmax": true,
+          "p_emitted": 0.448807,
+          "p_boundary": 2e-06,
+          "ratio_emitted_over_boundary": 284946.492,
+          "legal_candidates": 64,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 6,
+          "emitted": 228,
+          "matches_masked_argmax": true,
+          "p_emitted": 0.146369,
+          "p_boundary": 6e-06,
+          "ratio_emitted_over_boundary": 23885.483,
+          "legal_candidates": 179,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 7,
+          "emitted": 186,
+          "matches_masked_argmax": true,
+          "p_emitted": 0.340262,
+          "p_boundary": 1e-06,
+          "ratio_emitted_over_boundary": 535196.703,
+          "legal_candidates": 64,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 8,
+          "emitted": 184,
+          "matches_masked_argmax": false,
+          "p_emitted": 0.111668,
+          "p_boundary": 7e-06,
+          "ratio_emitted_over_boundary": 16194.047,
+          "legal_candidates": 64,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 9,
+          "emitted": 229,
+          "matches_masked_argmax": false,
+          "p_emitted": 0.072737,
+          "p_boundary": 7e-06,
+          "ratio_emitted_over_boundary": 10070.482,
+          "legal_candidates": 179,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 10,
+          "emitted": 136,
+          "matches_masked_argmax": true,
+          "p_emitted": 0.57447,
+          "p_boundary": 0.0,
+          "ratio_emitted_over_boundary": 1684544.332,
+          "legal_candidates": 64,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 11,
+          "emitted": 153,
+          "matches_masked_argmax": false,
+          "p_emitted": 0.041297,
+          "p_boundary": 1.8e-05,
+          "ratio_emitted_over_boundary": 2310.911,
+          "legal_candidates": 64,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 12,
+          "emitted": 230,
+          "matches_masked_argmax": false,
+          "p_emitted": 0.183322,
+          "p_boundary": 4e-05,
+          "ratio_emitted_over_boundary": 4601.233,
+          "legal_candidates": 179,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 13,
+          "emitted": 157,
+          "matches_masked_argmax": false,
+          "p_emitted": 0.10177,
+          "p_boundary": 1.2e-05,
+          "ratio_emitted_over_boundary": 8302.263,
+          "legal_candidates": 64,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 14,
+          "emitted": 165,
+          "matches_masked_argmax": true,
+          "p_emitted": 0.141363,
+          "p_boundary": 0.000289,
+          "ratio_emitted_over_boundary": 489.836,
+          "legal_candidates": 64,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 15,
+          "emitted": 228,
+          "matches_masked_argmax": true,
+          "p_emitted": 0.073854,
+          "p_boundary": 3.6e-05,
+          "ratio_emitted_over_boundary": 2060.629,
+          "legal_candidates": 179,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 16,
+          "emitted": 186,
+          "matches_masked_argmax": false,
+          "p_emitted": 0.268351,
+          "p_boundary": 0.0,
+          "ratio_emitted_over_boundary": 551492.316,
+          "legal_candidates": 64,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 17,
+          "emitted": 134,
+          "matches_masked_argmax": false,
+          "p_emitted": 0.132135,
+          "p_boundary": 1.6e-05,
+          "ratio_emitted_over_boundary": 8117.335,
+          "legal_candidates": 64,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 18,
+          "emitted": 229,
+          "matches_masked_argmax": false,
+          "p_emitted": 0.094125,
+          "p_boundary": 9e-06,
+          "ratio_emitted_over_boundary": 10957.064,
+          "legal_candidates": 179,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 19,
+          "emitted": 133,
+          "matches_masked_argmax": true,
+          "p_emitted": 0.189582,
+          "p_boundary": 0.0,
+          "ratio_emitted_over_boundary": 519629.572,
+          "legal_candidates": 64,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 20,
+          "emitted": 136,
+          "matches_masked_argmax": true,
+          "p_emitted": 0.244497,
+          "p_boundary": 6.3e-05,
+          "ratio_emitted_over_boundary": 3896.12,
+          "legal_candidates": 64,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 21,
+          "emitted": 230,
+          "matches_masked_argmax": false,
+          "p_emitted": 0.185626,
+          "p_boundary": 1.6e-05,
+          "ratio_emitted_over_boundary": 11581.406,
+          "legal_candidates": 179,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 22,
+          "emitted": 145,
+          "matches_masked_argmax": true,
+          "p_emitted": 0.191434,
+          "p_boundary": 2e-05,
+          "ratio_emitted_over_boundary": 9782.13,
+          "legal_candidates": 64,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 23,
+          "emitted": 162,
+          "matches_masked_argmax": true,
+          "p_emitted": 0.023628,
+          "p_boundary": 4.1e-05,
+          "ratio_emitted_over_boundary": 578.49,
+          "legal_candidates": 64,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 24,
+          "emitted": 228,
+          "matches_masked_argmax": true,
+          "p_emitted": 0.223265,
+          "p_boundary": 2.7e-05,
+          "ratio_emitted_over_boundary": 8134.489,
+          "legal_candidates": 179,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        }
+      ],
+      "rows_run_sample": [
+        {
+          "step": 88,
+          "emitted": 10,
+          "matches_masked_argmax": true,
+          "p_emitted": 0.751601,
+          "p_boundary": 2.3e-05,
+          "ratio_emitted_over_boundary": 32067.337,
+          "legal_candidates": 179,
+          "in_run": true,
+          "boundary_probability_is_zero": false
+        }
+      ]
+    },
+    {
+      "id": "V010",
+      "answer_run": 27,
+      "steps": 256,
+      "reconstruction_ok": false,
+      "alignments": [
+        {
+          "offset": 36,
+          "matched": 255,
+          "needed": 255,
+          "aligned": true
+        },
+        {
+          "offset": 313,
+          "matched": 3,
+          "needed": 255,
+          "aligned": false
+        },
+        {
+          "offset": 594,
+          "matched": 1,
+          "needed": 255,
+          "aligned": false
+        }
+      ],
+      "mask_argmax_mismatches": 45,
+      "steps_with_zero_boundary_probability": 0,
+      "median_legal_candidates": 64,
+      "steps_with_single_legal_candidate": 0,
+      "median_ratio_over_boundary": 6801.327,
+      "run_steps": 0,
+      "answer_head": "安濥我使安扈安安安安安安安安安。安安安安安。安西安安安安安。安西安安安安安安。西",
+      "legal_candidate_hist": {
+        "64": 170,
+        "179": 86
+      },
+      "run_step_hist": {},
+      "ratio_min": 38.658,
+      "ratio_median_in_run": null,
+      "rows_head": [
+        {
+          "step": 1,
+          "emitted": 136,
+          "matches_masked_argmax": false,
+          "p_emitted": 0.255425,
+          "p_boundary": 3e-06,
+          "ratio_emitted_over_boundary": 84178.149,
+          "legal_candidates": 179,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 2,
+          "emitted": 145,
+          "matches_masked_argmax": true,
+          "p_emitted": 0.488387,
+          "p_boundary": 1.3e-05,
+          "ratio_emitted_over_boundary": 37072.927,
+          "legal_candidates": 64,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 3,
+          "emitted": 228,
+          "matches_masked_argmax": true,
+          "p_emitted": 0.263005,
+          "p_boundary": 3.4e-05,
+          "ratio_emitted_over_boundary": 7723.675,
+          "legal_candidates": 179,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 4,
+          "emitted": 186,
+          "matches_masked_argmax": true,
+          "p_emitted": 0.263674,
+          "p_boundary": 1e-06,
+          "ratio_emitted_over_boundary": 330979.018,
+          "legal_candidates": 64,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 5,
+          "emitted": 134,
+          "matches_masked_argmax": false,
+          "p_emitted": 0.109101,
+          "p_boundary": 1.4e-05,
+          "ratio_emitted_over_boundary": 7848.242,
+          "legal_candidates": 64,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 6,
+          "emitted": 239,
+          "matches_masked_argmax": false,
+          "p_emitted": 0.112687,
+          "p_boundary": 1e-05,
+          "ratio_emitted_over_boundary": 10800.3,
+          "legal_candidates": 179,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 7,
+          "emitted": 188,
+          "matches_masked_argmax": true,
+          "p_emitted": 0.906564,
+          "p_boundary": 4e-06,
+          "ratio_emitted_over_boundary": 207085.819,
+          "legal_candidates": 64,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 8,
+          "emitted": 137,
+          "matches_masked_argmax": true,
+          "p_emitted": 0.361825,
+          "p_boundary": 3.7e-05,
+          "ratio_emitted_over_boundary": 9812.805,
+          "legal_candidates": 64,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 9,
+          "emitted": 239,
+          "matches_masked_argmax": true,
+          "p_emitted": 0.414099,
+          "p_boundary": 0.00211,
+          "ratio_emitted_over_boundary": 196.213,
+          "legal_candidates": 179,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 10,
+          "emitted": 188,
+          "matches_masked_argmax": true,
+          "p_emitted": 0.978103,
+          "p_boundary": 1.2e-05,
+          "ratio_emitted_over_boundary": 80917.286,
+          "legal_candidates": 64,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 11,
+          "emitted": 136,
+          "matches_masked_argmax": true,
+          "p_emitted": 0.372699,
+          "p_boundary": 0.000133,
+          "ratio_emitted_over_boundary": 2794.945,
+          "legal_candidates": 64,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 12,
+          "emitted": 229,
+          "matches_masked_argmax": true,
+          "p_emitted": 0.068989,
+          "p_boundary": 0.000218,
+          "ratio_emitted_over_boundary": 316.667,
+          "legal_candidates": 179,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 13,
+          "emitted": 174,
+          "matches_masked_argmax": true,
+          "p_emitted": 0.125874,
+          "p_boundary": 3e-06,
+          "ratio_emitted_over_boundary": 45202.183,
+          "legal_candidates": 64,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 14,
+          "emitted": 182,
+          "matches_masked_argmax": true,
+          "p_emitted": 0.180755,
+          "p_boundary": 0.000102,
+          "ratio_emitted_over_boundary": 1775.478,
+          "legal_candidates": 64,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 15,
+          "emitted": 229,
+          "matches_masked_argmax": true,
+          "p_emitted": 0.30415,
+          "p_boundary": 0.000238,
+          "ratio_emitted_over_boundary": 1275.758,
+          "legal_candidates": 179,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 16,
+          "emitted": 136,
+          "matches_masked_argmax": true,
+          "p_emitted": 0.288773,
+          "p_boundary": 1.4e-05,
+          "ratio_emitted_over_boundary": 20468.521,
+          "legal_candidates": 64,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 17,
+          "emitted": 186,
+          "matches_masked_argmax": true,
+          "p_emitted": 0.101151,
+          "p_boundary": 8e-05,
+          "ratio_emitted_over_boundary": 1267.202,
+          "legal_candidates": 64,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 18,
+          "emitted": 228,
+          "matches_masked_argmax": true,
+          "p_emitted": 0.199844,
+          "p_boundary": 0.001217,
+          "ratio_emitted_over_boundary": 164.2,
+          "legal_candidates": 179,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 19,
+          "emitted": 184,
+          "matches_masked_argmax": false,
+          "p_emitted": 0.246737,
+          "p_boundary": 1e-06,
+          "ratio_emitted_over_boundary": 417732.252,
+          "legal_candidates": 64,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 20,
+          "emitted": 139,
+          "matches_masked_argmax": true,
+          "p_emitted": 0.124034,
+          "p_boundary": 9e-06,
+          "ratio_emitted_over_boundary": 14360.231,
+          "legal_candidates": 64,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 21,
+          "emitted": 230,
+          "matches_masked_argmax": false,
+          "p_emitted": 0.134149,
+          "p_boundary": 1.5e-05,
+          "ratio_emitted_over_boundary": 8842.244,
+          "legal_candidates": 179,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 22,
+          "emitted": 156,
+          "matches_masked_argmax": true,
+          "p_emitted": 0.15972,
+          "p_boundary": 4e-06,
+          "ratio_emitted_over_boundary": 42570.203,
+          "legal_candidates": 64,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 23,
+          "emitted": 137,
+          "matches_masked_argmax": true,
+          "p_emitted": 0.296373,
+          "p_boundary": 6e-06,
+          "ratio_emitted_over_boundary": 51457.754,
+          "legal_candidates": 64,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 24,
+          "emitted": 229,
+          "matches_masked_argmax": true,
+          "p_emitted": 0.06832,
+          "p_boundary": 6.4e-05,
+          "ratio_emitted_over_boundary": 1072.894,
+          "legal_candidates": 179,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        }
+      ],
+      "rows_run_sample": []
+    },
+    {
+      "id": "V011",
+      "answer_run": 64,
+      "steps": 256,
+      "reconstruction_ok": false,
+      "alignments": [
+        {
+          "offset": 47,
+          "matched": 255,
+          "needed": 255,
+          "aligned": true
+        },
+        {
+          "offset": 336,
+          "matched": 2,
+          "needed": 256,
+          "aligned": false
+        },
+        {
+          "offset": 635,
+          "matched": 2,
+          "needed": 256,
+          "aligned": false
+        }
+      ],
+      "mask_argmax_mismatches": 51,
+      "steps_with_zero_boundary_probability": 0,
+      "median_legal_candidates": 64,
+      "steps_with_single_legal_candidate": 0,
+      "median_ratio_over_boundary": 6989.119,
+      "run_steps": 0,
+      "answer_head": "7777777777777777777777777777777777777777",
+      "legal_candidate_hist": {
+        "64": 169,
+        "179": 87
+      },
+      "run_step_hist": {},
+      "ratio_min": 54.621,
+      "ratio_median_in_run": null,
+      "rows_head": [
+        {
+          "step": 1,
+          "emitted": 136,
+          "matches_masked_argmax": false,
+          "p_emitted": 0.37141,
+          "p_boundary": 3e-06,
+          "ratio_emitted_over_boundary": 126506.468,
+          "legal_candidates": 179,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 2,
+          "emitted": 153,
+          "matches_masked_argmax": true,
+          "p_emitted": 0.086447,
+          "p_boundary": 3.9e-05,
+          "ratio_emitted_over_boundary": 2200.687,
+          "legal_candidates": 64,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 3,
+          "emitted": 228,
+          "matches_masked_argmax": true,
+          "p_emitted": 0.206658,
+          "p_boundary": 8.3e-05,
+          "ratio_emitted_over_boundary": 2486.307,
+          "legal_candidates": 179,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 4,
+          "emitted": 184,
+          "matches_masked_argmax": true,
+          "p_emitted": 0.416206,
+          "p_boundary": 1e-06,
+          "ratio_emitted_over_boundary": 453758.347,
+          "legal_candidates": 64,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 5,
+          "emitted": 186,
+          "matches_masked_argmax": true,
+          "p_emitted": 0.32202,
+          "p_boundary": 1.2e-05,
+          "ratio_emitted_over_boundary": 25828.209,
+          "legal_candidates": 64,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 6,
+          "emitted": 228,
+          "matches_masked_argmax": true,
+          "p_emitted": 0.130126,
+          "p_boundary": 1.9e-05,
+          "ratio_emitted_over_boundary": 6786.373,
+          "legal_candidates": 179,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 7,
+          "emitted": 184,
+          "matches_masked_argmax": true,
+          "p_emitted": 0.400655,
+          "p_boundary": 2e-06,
+          "ratio_emitted_over_boundary": 225080.621,
+          "legal_candidates": 64,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 8,
+          "emitted": 170,
+          "matches_masked_argmax": true,
+          "p_emitted": 0.179127,
+          "p_boundary": 9e-06,
+          "ratio_emitted_over_boundary": 19337.224,
+          "legal_candidates": 64,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 9,
+          "emitted": 229,
+          "matches_masked_argmax": true,
+          "p_emitted": 0.117025,
+          "p_boundary": 2e-05,
+          "ratio_emitted_over_boundary": 5998.31,
+          "legal_candidates": 179,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 10,
+          "emitted": 136,
+          "matches_masked_argmax": true,
+          "p_emitted": 0.442149,
+          "p_boundary": 1e-06,
+          "ratio_emitted_over_boundary": 607266.401,
+          "legal_candidates": 64,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 11,
+          "emitted": 153,
+          "matches_masked_argmax": true,
+          "p_emitted": 0.052693,
+          "p_boundary": 2e-05,
+          "ratio_emitted_over_boundary": 2608.722,
+          "legal_candidates": 64,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 12,
+          "emitted": 230,
+          "matches_masked_argmax": true,
+          "p_emitted": 0.118388,
+          "p_boundary": 3.9e-05,
+          "ratio_emitted_over_boundary": 3061.642,
+          "legal_candidates": 179,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 13,
+          "emitted": 152,
+          "matches_masked_argmax": false,
+          "p_emitted": 0.2174,
+          "p_boundary": 5e-06,
+          "ratio_emitted_over_boundary": 44869.35,
+          "legal_candidates": 64,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 14,
+          "emitted": 175,
+          "matches_masked_argmax": true,
+          "p_emitted": 0.514138,
+          "p_boundary": 3e-06,
+          "ratio_emitted_over_boundary": 204496.042,
+          "legal_candidates": 64,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 15,
+          "emitted": 228,
+          "matches_masked_argmax": false,
+          "p_emitted": 0.07185,
+          "p_boundary": 1.1e-05,
+          "ratio_emitted_over_boundary": 6801.575,
+          "legal_candidates": 179,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 16,
+          "emitted": 184,
+          "matches_masked_argmax": true,
+          "p_emitted": 0.309901,
+          "p_boundary": 1e-06,
+          "ratio_emitted_over_boundary": 293166.003,
+          "legal_candidates": 64,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 17,
+          "emitted": 186,
+          "matches_masked_argmax": true,
+          "p_emitted": 0.179115,
+          "p_boundary": 1e-05,
+          "ratio_emitted_over_boundary": 17729.306,
+          "legal_candidates": 64,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 18,
+          "emitted": 239,
+          "matches_masked_argmax": false,
+          "p_emitted": 0.074408,
+          "p_boundary": 2.7e-05,
+          "ratio_emitted_over_boundary": 2756.22,
+          "legal_candidates": 179,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 19,
+          "emitted": 188,
+          "matches_masked_argmax": true,
+          "p_emitted": 0.992348,
+          "p_boundary": 1e-06,
+          "ratio_emitted_over_boundary": 1251807.604,
+          "legal_candidates": 64,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 20,
+          "emitted": 140,
+          "matches_masked_argmax": true,
+          "p_emitted": 0.347886,
+          "p_boundary": 0.000158,
+          "ratio_emitted_over_boundary": 2204.442,
+          "legal_candidates": 64,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 21,
+          "emitted": 229,
+          "matches_masked_argmax": false,
+          "p_emitted": 0.146527,
+          "p_boundary": 1.2e-05,
+          "ratio_emitted_over_boundary": 12494.199,
+          "legal_candidates": 179,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 22,
+          "emitted": 136,
+          "matches_masked_argmax": true,
+          "p_emitted": 0.211753,
+          "p_boundary": 2e-06,
+          "ratio_emitted_over_boundary": 123817.555,
+          "legal_candidates": 64,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 23,
+          "emitted": 153,
+          "matches_masked_argmax": true,
+          "p_emitted": 0.074083,
+          "p_boundary": 5.3e-05,
+          "ratio_emitted_over_boundary": 1405.758,
+          "legal_candidates": 64,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 24,
+          "emitted": 228,
+          "matches_masked_argmax": true,
+          "p_emitted": 0.259625,
+          "p_boundary": 0.000129,
+          "ratio_emitted_over_boundary": 2017.665,
+          "legal_candidates": 179,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        }
+      ],
+      "rows_run_sample": []
+    },
+    {
+      "id": "V019",
+      "answer_run": 256,
+      "steps": 256,
+      "reconstruction_ok": false,
+      "alignments": [
+        {
+          "offset": 52,
+          "matched": 255,
+          "needed": 255,
+          "aligned": true
+        },
+        {
+          "offset": 345,
+          "matched": 2,
+          "needed": 256,
+          "aligned": false
+        },
+        {
+          "offset": 644,
+          "matched": 2,
+          "needed": 256,
+          "aligned": false
+        }
+      ],
+      "mask_argmax_mismatches": 56,
+      "steps_with_zero_boundary_probability": 0,
+      "median_legal_candidates": 64,
+      "steps_with_single_legal_candidate": 0,
+      "median_ratio_over_boundary": 7065.111,
+      "run_steps": 0,
+      "answer_head": "9999999999999999999999999999999999999999",
+      "legal_candidate_hist": {
+        "64": 169,
+        "179": 87
+      },
+      "run_step_hist": {},
+      "ratio_min": 0.048,
+      "ratio_median_in_run": null,
+      "rows_head": [
+        {
+          "step": 1,
+          "emitted": 136,
+          "matches_masked_argmax": false,
+          "p_emitted": 0.365763,
+          "p_boundary": 2e-06,
+          "ratio_emitted_over_boundary": 166303.104,
+          "legal_candidates": 179,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 2,
+          "emitted": 134,
+          "matches_masked_argmax": true,
+          "p_emitted": 0.068818,
+          "p_boundary": 2.6e-05,
+          "ratio_emitted_over_boundary": 2695.742,
+          "legal_candidates": 64,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 3,
+          "emitted": 228,
+          "matches_masked_argmax": false,
+          "p_emitted": 0.073524,
+          "p_boundary": 7e-06,
+          "ratio_emitted_over_boundary": 10978.038,
+          "legal_candidates": 179,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 4,
+          "emitted": 184,
+          "matches_masked_argmax": true,
+          "p_emitted": 0.442908,
+          "p_boundary": 1e-06,
+          "ratio_emitted_over_boundary": 301161.585,
+          "legal_candidates": 64,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 5,
+          "emitted": 186,
+          "matches_masked_argmax": true,
+          "p_emitted": 0.329479,
+          "p_boundary": 1.4e-05,
+          "ratio_emitted_over_boundary": 22766.746,
+          "legal_candidates": 64,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 6,
+          "emitted": 229,
+          "matches_masked_argmax": true,
+          "p_emitted": 0.204143,
+          "p_boundary": 2.3e-05,
+          "ratio_emitted_over_boundary": 9017.997,
+          "legal_candidates": 179,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 7,
+          "emitted": 136,
+          "matches_masked_argmax": true,
+          "p_emitted": 0.258112,
+          "p_boundary": 3e-06,
+          "ratio_emitted_over_boundary": 91127.716,
+          "legal_candidates": 64,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 8,
+          "emitted": 169,
+          "matches_masked_argmax": true,
+          "p_emitted": 0.055205,
+          "p_boundary": 3.7e-05,
+          "ratio_emitted_over_boundary": 1509.408,
+          "legal_candidates": 64,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 9,
+          "emitted": 230,
+          "matches_masked_argmax": false,
+          "p_emitted": 0.079818,
+          "p_boundary": 2.3e-05,
+          "ratio_emitted_over_boundary": 3519.853,
+          "legal_candidates": 179,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 10,
+          "emitted": 152,
+          "matches_masked_argmax": true,
+          "p_emitted": 0.296806,
+          "p_boundary": 3e-06,
+          "ratio_emitted_over_boundary": 111274.643,
+          "legal_candidates": 64,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 11,
+          "emitted": 175,
+          "matches_masked_argmax": true,
+          "p_emitted": 0.418287,
+          "p_boundary": 3e-06,
+          "ratio_emitted_over_boundary": 166030.379,
+          "legal_candidates": 64,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 12,
+          "emitted": 228,
+          "matches_masked_argmax": true,
+          "p_emitted": 0.07485,
+          "p_boundary": 1.5e-05,
+          "ratio_emitted_over_boundary": 5027.523,
+          "legal_candidates": 179,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 13,
+          "emitted": 184,
+          "matches_masked_argmax": true,
+          "p_emitted": 0.311854,
+          "p_boundary": 1e-06,
+          "ratio_emitted_over_boundary": 357334.461,
+          "legal_candidates": 64,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 14,
+          "emitted": 128,
+          "matches_masked_argmax": true,
+          "p_emitted": 0.102159,
+          "p_boundary": 1.3e-05,
+          "ratio_emitted_over_boundary": 7813.936,
+          "legal_candidates": 64,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 15,
+          "emitted": 228,
+          "matches_masked_argmax": true,
+          "p_emitted": 0.269438,
+          "p_boundary": 9.1e-05,
+          "ratio_emitted_over_boundary": 2954.6,
+          "legal_candidates": 179,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 16,
+          "emitted": 186,
+          "matches_masked_argmax": false,
+          "p_emitted": 0.316825,
+          "p_boundary": 3e-06,
+          "ratio_emitted_over_boundary": 111084.806,
+          "legal_candidates": 64,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 17,
+          "emitted": 134,
+          "matches_masked_argmax": false,
+          "p_emitted": 0.080391,
+          "p_boundary": 4.3e-05,
+          "ratio_emitted_over_boundary": 1848.575,
+          "legal_candidates": 64,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 18,
+          "emitted": 230,
+          "matches_masked_argmax": false,
+          "p_emitted": 0.075742,
+          "p_boundary": 1.8e-05,
+          "ratio_emitted_over_boundary": 4207.488,
+          "legal_candidates": 179,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 19,
+          "emitted": 136,
+          "matches_masked_argmax": true,
+          "p_emitted": 0.154983,
+          "p_boundary": 1.1e-05,
+          "ratio_emitted_over_boundary": 13543.169,
+          "legal_candidates": 64,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 20,
+          "emitted": 145,
+          "matches_masked_argmax": true,
+          "p_emitted": 0.387363,
+          "p_boundary": 1.1e-05,
+          "ratio_emitted_over_boundary": 36548.602,
+          "legal_candidates": 64,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 21,
+          "emitted": 228,
+          "matches_masked_argmax": true,
+          "p_emitted": 0.300531,
+          "p_boundary": 6.6e-05,
+          "ratio_emitted_over_boundary": 4545.392,
+          "legal_candidates": 179,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 22,
+          "emitted": 187,
+          "matches_masked_argmax": true,
+          "p_emitted": 0.207138,
+          "p_boundary": 5e-06,
+          "ratio_emitted_over_boundary": 39507.118,
+          "legal_candidates": 64,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 23,
+          "emitted": 150,
+          "matches_masked_argmax": true,
+          "p_emitted": 0.279015,
+          "p_boundary": 2e-06,
+          "ratio_emitted_over_boundary": 125903.486,
+          "legal_candidates": 64,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 24,
+          "emitted": 229,
+          "matches_masked_argmax": false,
+          "p_emitted": 0.156727,
+          "p_boundary": 4e-06,
+          "ratio_emitted_over_boundary": 42418.798,
+          "legal_candidates": 179,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        }
+      ],
+      "rows_run_sample": []
+    },
+    {
+      "id": "V021",
+      "answer_run": 24,
+      "steps": 257,
+      "reconstruction_ok": false,
+      "alignments": [
+        {
+          "offset": 42,
+          "matched": 255,
+          "needed": 255,
+          "aligned": true
+        },
+        {
+          "offset": 338,
+          "matched": 1,
+          "needed": 255,
+          "aligned": false
+        },
+        {
+          "offset": 615,
+          "matched": 4,
+          "needed": 255,
+          "aligned": false
+        }
+      ],
+      "mask_argmax_mismatches": 56,
+      "steps_with_zero_boundary_probability": 0,
+      "median_legal_candidates": 64,
+      "steps_with_single_legal_candidate": 0,
+      "median_ratio_over_boundary": 6887.342,
+      "run_steps": 1,
+      "answer_head": "柠柠檬柠爱人爱人爱人爱人爱人爱人爱人爱人爱人爱人爱人爱人爑爱人爱人爱人爱人爱人爱",
+      "legal_candidate_hist": {
+        "64": 170,
+        "179": 87
+      },
+      "run_step_hist": {
+        "179": 1
+      },
+      "ratio_min": 54.256,
+      "ratio_median_in_run": 7591.503,
+      "rows_head": [
+        {
+          "step": 1,
+          "emitted": 136,
+          "matches_masked_argmax": false,
+          "p_emitted": 0.347143,
+          "p_boundary": 1e-06,
+          "ratio_emitted_over_boundary": 268773.701,
+          "legal_candidates": 179,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 2,
+          "emitted": 176,
+          "matches_masked_argmax": true,
+          "p_emitted": 0.088611,
+          "p_boundary": 2e-05,
+          "ratio_emitted_over_boundary": 4366.105,
+          "legal_candidates": 64,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 3,
+          "emitted": 239,
+          "matches_masked_argmax": true,
+          "p_emitted": 0.175629,
+          "p_boundary": 2.5e-05,
+          "ratio_emitted_over_boundary": 7015.618,
+          "legal_candidates": 179,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 4,
+          "emitted": 188,
+          "matches_masked_argmax": true,
+          "p_emitted": 0.874409,
+          "p_boundary": 7e-06,
+          "ratio_emitted_over_boundary": 116707.169,
+          "legal_candidates": 64,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 5,
+          "emitted": 154,
+          "matches_masked_argmax": true,
+          "p_emitted": 0.321654,
+          "p_boundary": 6.7e-05,
+          "ratio_emitted_over_boundary": 4774.632,
+          "legal_candidates": 64,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 6,
+          "emitted": 230,
+          "matches_masked_argmax": false,
+          "p_emitted": 0.262631,
+          "p_boundary": 7.5e-05,
+          "ratio_emitted_over_boundary": 3523.109,
+          "legal_candidates": 179,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 7,
+          "emitted": 152,
+          "matches_masked_argmax": false,
+          "p_emitted": 0.160685,
+          "p_boundary": 1.2e-05,
+          "ratio_emitted_over_boundary": 13356.906,
+          "legal_candidates": 64,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 8,
+          "emitted": 175,
+          "matches_masked_argmax": true,
+          "p_emitted": 0.504687,
+          "p_boundary": 3e-06,
+          "ratio_emitted_over_boundary": 158143.2,
+          "legal_candidates": 64,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 9,
+          "emitted": 229,
+          "matches_masked_argmax": true,
+          "p_emitted": 0.132568,
+          "p_boundary": 8e-06,
+          "ratio_emitted_over_boundary": 17623.491,
+          "legal_candidates": 179,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 10,
+          "emitted": 136,
+          "matches_masked_argmax": true,
+          "p_emitted": 0.152519,
+          "p_boundary": 1e-06,
+          "ratio_emitted_over_boundary": 201720.564,
+          "legal_candidates": 64,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 11,
+          "emitted": 186,
+          "matches_masked_argmax": true,
+          "p_emitted": 0.10234,
+          "p_boundary": 2.4e-05,
+          "ratio_emitted_over_boundary": 4335.254,
+          "legal_candidates": 64,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 12,
+          "emitted": 228,
+          "matches_masked_argmax": true,
+          "p_emitted": 0.299475,
+          "p_boundary": 6.4e-05,
+          "ratio_emitted_over_boundary": 4657.276,
+          "legal_candidates": 179,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 13,
+          "emitted": 184,
+          "matches_masked_argmax": false,
+          "p_emitted": 0.331664,
+          "p_boundary": 1e-06,
+          "ratio_emitted_over_boundary": 285949.081,
+          "legal_candidates": 64,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 14,
+          "emitted": 170,
+          "matches_masked_argmax": false,
+          "p_emitted": 0.121139,
+          "p_boundary": 8e-06,
+          "ratio_emitted_over_boundary": 14698.369,
+          "legal_candidates": 64,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 15,
+          "emitted": 230,
+          "matches_masked_argmax": false,
+          "p_emitted": 0.106541,
+          "p_boundary": 1.3e-05,
+          "ratio_emitted_over_boundary": 8297.218,
+          "legal_candidates": 179,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 16,
+          "emitted": 152,
+          "matches_masked_argmax": false,
+          "p_emitted": 0.140729,
+          "p_boundary": 9e-06,
+          "ratio_emitted_over_boundary": 16300.868,
+          "legal_candidates": 64,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 17,
+          "emitted": 175,
+          "matches_masked_argmax": true,
+          "p_emitted": 0.666319,
+          "p_boundary": 2e-06,
+          "ratio_emitted_over_boundary": 431223.768,
+          "legal_candidates": 64,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 18,
+          "emitted": 229,
+          "matches_masked_argmax": false,
+          "p_emitted": 0.072123,
+          "p_boundary": 1.6e-05,
+          "ratio_emitted_over_boundary": 4619.825,
+          "legal_candidates": 179,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 19,
+          "emitted": 136,
+          "matches_masked_argmax": true,
+          "p_emitted": 0.19726,
+          "p_boundary": 1e-06,
+          "ratio_emitted_over_boundary": 389274.436,
+          "legal_candidates": 64,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 20,
+          "emitted": 145,
+          "matches_masked_argmax": true,
+          "p_emitted": 0.084245,
+          "p_boundary": 2e-05,
+          "ratio_emitted_over_boundary": 4284.866,
+          "legal_candidates": 64,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 21,
+          "emitted": 228,
+          "matches_masked_argmax": true,
+          "p_emitted": 0.450804,
+          "p_boundary": 5.3e-05,
+          "ratio_emitted_over_boundary": 8458.9,
+          "legal_candidates": 179,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 22,
+          "emitted": 184,
+          "matches_masked_argmax": true,
+          "p_emitted": 0.320072,
+          "p_boundary": 2e-06,
+          "ratio_emitted_over_boundary": 160929.834,
+          "legal_candidates": 64,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 23,
+          "emitted": 186,
+          "matches_masked_argmax": true,
+          "p_emitted": 0.395051,
+          "p_boundary": 1e-05,
+          "ratio_emitted_over_boundary": 38231.989,
+          "legal_candidates": 64,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        },
+        {
+          "step": 24,
+          "emitted": 239,
+          "matches_masked_argmax": false,
+          "p_emitted": 0.066074,
+          "p_boundary": 4.6e-05,
+          "ratio_emitted_over_boundary": 1446.06,
+          "legal_candidates": 179,
+          "in_run": false,
+          "boundary_probability_is_zero": false
+        }
+      ],
+      "rows_run_sample": [
+        {
+          "step": 3,
+          "emitted": 230,
+          "matches_masked_argmax": true,
+          "p_emitted": 0.202208,
+          "p_boundary": 2.7e-05,
+          "ratio_emitted_over_boundary": 7591.503,
+          "legal_candidates": 179,
+          "in_run": true,
+          "boundary_probability_is_zero": false
+        }
+      ]
+    }
+  ],
+  "per_item": [
+    {
+      "id": "V001",
+      "answer_run": 27,
+      "steps": 253,
+      "reconstruction_ok": false,
+      "alignments": [
+        {
+          "offset": 36,
+          "matched": 254,
+          "needed": 254,
+          "aligned": true
+        },
+        {
+          "offset": 306,
+          "matched": 1,
+          "needed": 255,
+          "aligned": false
+        },
+        {
+          "offset": 609,
+          "matched": 1,
+          "needed": 255,
+          "aligned": false
+        }
+      ],
+      "mask_argmax_mismatches": 63,
+      "steps_with_zero_boundary_probability": 0,
+      "median_legal_candidates": 64,
+      "steps_with_single_legal_candidate": 0,
+      "median_ratio_over_boundary": 7934.785,
+      "run_steps": 1
+    },
+    {
+      "id": "V002",
+      "answer_run": 1,
+      "steps": 256,
+      "reconstruction_ok": false,
+      "alignments": [
+        {
+          "offset": 33,
+          "matched": 255,
+          "needed": 255,
+          "aligned": true
+        },
+        {
+          "offset": 326,
+          "matched": 1,
+          "needed": 255,
+          "aligned": false
+        },
+        {
+          "offset": 600,
+          "matched": 3,
+          "needed": 255,
+          "aligned": false
+        }
+      ],
+      "mask_argmax_mismatches": 59,
+      "steps_with_zero_boundary_probability": 0,
+      "median_legal_candidates": 64,
+      "steps_with_single_legal_candidate": 0,
+      "median_ratio_over_boundary": 12023.898,
+      "run_steps": 0
+    },
+    {
+      "id": "V003",
+      "answer_run": 8,
+      "steps": 257,
+      "reconstruction_ok": false,
+      "alignments": [
+        {
+          "offset": 50,
+          "matched": 256,
+          "needed": 256,
+          "aligned": true
+        },
+        {
+          "offset": 343,
+          "matched": 2,
+          "needed": 256,
+          "aligned": false
+        },
+        {
+          "offset": 642,
+          "matched": 2,
+          "needed": 256,
+          "aligned": false
+        }
+      ],
+      "mask_argmax_mismatches": 52,
+      "steps_with_zero_boundary_probability": 0,
+      "median_legal_candidates": 64,
+      "steps_with_single_legal_candidate": 0,
+      "median_ratio_over_boundary": 6532.051,
+      "run_steps": 0
+    },
+    {
+      "id": "V004",
+      "answer_run": 3,
+      "steps": 256,
+      "reconstruction_ok": false,
+      "alignments": [
+        {
+          "offset": 39,
+          "matched": 255,
+          "needed": 255,
+          "aligned": true
+        },
+        {
+          "offset": 332,
+          "matched": 1,
+          "needed": 255,
+          "aligned": false
+        },
+        {
+          "offset": 618,
+          "matched": 3,
+          "needed": 255,
+          "aligned": false
+        }
+      ],
+      "mask_argmax_mismatches": 56,
+      "steps_with_zero_boundary_probability": 0,
+      "median_legal_candidates": 64,
+      "steps_with_single_legal_candidate": 0,
+      "median_ratio_over_boundary": 7404.161,
+      "run_steps": 3
+    },
+    {
+      "id": "V005",
+      "answer_run": 2,
+      "steps": 253,
+      "reconstruction_ok": false,
+      "alignments": [
+        {
+          "offset": 39,
+          "matched": 254,
+          "needed": 254,
+          "aligned": true
+        },
+        {
+          "offset": 331,
+          "matched": 1,
+          "needed": 255,
+          "aligned": false
+        },
+        {
+          "offset": 605,
+          "matched": 0,
+          "needed": 255,
+          "aligned": false
+        }
+      ],
+      "mask_argmax_mismatches": 55,
+      "steps_with_zero_boundary_probability": 0,
+      "median_legal_candidates": 64,
+      "steps_with_single_legal_candidate": 0,
+      "median_ratio_over_boundary": 6693.736,
+      "run_steps": 1
+    },
+    {
+      "id": "V006",
+      "answer_run": 3,
+      "steps": 253,
+      "reconstruction_ok": false,
+      "alignments": [
+        {
+          "offset": 39,
+          "matched": 254,
+          "needed": 254,
+          "aligned": true
+        },
+        {
+          "offset": 337,
+          "matched": 1,
+          "needed": 255,
+          "aligned": false
+        },
+        {
+          "offset": 639,
+          "matched": 1,
+          "needed": 255,
+          "aligned": false
+        }
+      ],
+      "mask_argmax_mismatches": 45,
+      "steps_with_zero_boundary_probability": 0,
+      "median_legal_candidates": 64,
+      "steps_with_single_legal_candidate": 0,
+      "median_ratio_over_boundary": 7329.216,
+      "run_steps": 1
+    },
+    {
+      "id": "V007",
+      "answer_run": 19,
+      "steps": 254,
+      "reconstruction_ok": false,
+      "alignments": [
+        {
+          "offset": 57,
+          "matched": 255,
+          "needed": 255,
+          "aligned": true
+        },
+        {
+          "offset": 368,
+          "matched": 1,
+          "needed": 255,
+          "aligned": false
+        },
+        {
+          "offset": 645,
+          "matched": 0,
+          "needed": 255,
+          "aligned": false
+        }
+      ],
+      "mask_argmax_mismatches": 78,
+      "steps_with_zero_boundary_probability": 0,
+      "median_legal_candidates": 64,
+      "steps_with_single_legal_candidate": 0,
+      "median_ratio_over_boundary": 9697.381,
+      "run_steps": 0
+    },
+    {
+      "id": "V008",
+      "answer_run": 16,
+      "steps": 253,
+      "reconstruction_ok": false,
+      "alignments": [
+        {
+          "offset": 39,
+          "matched": 254,
+          "needed": 254,
+          "aligned": true
+        },
+        {
+          "offset": 337,
+          "matched": 1,
+          "needed": 255,
+          "aligned": false
+        },
+        {
+          "offset": 617,
+          "matched": 1,
+          "needed": 255,
+          "aligned": false
+        }
+      ],
+      "mask_argmax_mismatches": 50,
+      "steps_with_zero_boundary_probability": 0,
+      "median_legal_candidates": 64,
+      "steps_with_single_legal_candidate": 0,
+      "median_ratio_over_boundary": 7262.13,
+      "run_steps": 1
+    },
+    {
+      "id": "V009",
+      "answer_run": 4,
+      "steps": 253,
+      "reconstruction_ok": false,
+      "alignments": [
+        {
+          "offset": 30,
+          "matched": 254,
+          "needed": 254,
+          "aligned": true
+        },
+        {
+          "offset": 313,
+          "matched": 1,
+          "needed": 255,
+          "aligned": false
+        },
+        {
+          "offset": 600,
+          "matched": 1,
+          "needed": 255,
+          "aligned": false
+        }
+      ],
+      "mask_argmax_mismatches": 58,
+      "steps_with_zero_boundary_probability": 0,
+      "median_legal_candidates": 64,
+      "steps_with_single_legal_candidate": 0,
+      "median_ratio_over_boundary": 7526.832,
+      "run_steps": 1
+    },
+    {
+      "id": "V010",
+      "answer_run": 27,
+      "steps": 256,
+      "reconstruction_ok": false,
+      "alignments": [
+        {
+          "offset": 36,
+          "matched": 255,
+          "needed": 255,
+          "aligned": true
+        },
+        {
+          "offset": 313,
+          "matched": 3,
+          "needed": 255,
+          "aligned": false
+        },
+        {
+          "offset": 594,
+          "matched": 1,
+          "needed": 255,
+          "aligned": false
+        }
+      ],
+      "mask_argmax_mismatches": 45,
+      "steps_with_zero_boundary_probability": 0,
+      "median_legal_candidates": 64,
+      "steps_with_single_legal_candidate": 0,
+      "median_ratio_over_boundary": 6801.327,
+      "run_steps": 0
+    },
+    {
+      "id": "V011",
+      "answer_run": 64,
+      "steps": 256,
+      "reconstruction_ok": false,
+      "alignments": [
+        {
+          "offset": 47,
+          "matched": 255,
+          "needed": 255,
+          "aligned": true
+        },
+        {
+          "offset": 336,
+          "matched": 2,
+          "needed": 256,
+          "aligned": false
+        },
+        {
+          "offset": 635,
+          "matched": 2,
+          "needed": 256,
+          "aligned": false
+        }
+      ],
+      "mask_argmax_mismatches": 51,
+      "steps_with_zero_boundary_probability": 0,
+      "median_legal_candidates": 64,
+      "steps_with_single_legal_candidate": 0,
+      "median_ratio_over_boundary": 6989.119,
+      "run_steps": 0
+    },
+    {
+      "id": "V012",
+      "answer_run": 7,
+      "steps": 255,
+      "reconstruction_ok": false,
+      "alignments": [
+        {
+          "offset": 42,
+          "matched": 254,
+          "needed": 254,
+          "aligned": true
+        },
+        {
+          "offset": 324,
+          "matched": 3,
+          "needed": 255,
+          "aligned": false
+        },
+        {
+          "offset": 617,
+          "matched": 1,
+          "needed": 255,
+          "aligned": false
+        }
+      ],
+      "mask_argmax_mismatches": 56,
+      "steps_with_zero_boundary_probability": 0,
+      "median_legal_candidates": 64,
+      "steps_with_single_legal_candidate": 0,
+      "median_ratio_over_boundary": 7687.086,
+      "run_steps": 1
+    },
+    {
+      "id": "V013",
+      "answer_run": 5,
+      "steps": 254,
+      "reconstruction_ok": false,
+      "alignments": [
+        {
+          "offset": 39,
+          "matched": 255,
+          "needed": 255,
+          "aligned": true
+        },
+        {
+          "offset": 332,
+          "matched": 1,
+          "needed": 255,
+          "aligned": false
+        },
+        {
+          "offset": 606,
+          "matched": 1,
+          "needed": 255,
+          "aligned": false
+        }
+      ],
+      "mask_argmax_mismatches": 48,
+      "steps_with_zero_boundary_probability": 0,
+      "median_legal_candidates": 64,
+      "steps_with_single_legal_candidate": 0,
+      "median_ratio_over_boundary": 8467.908,
+      "run_steps": 0
+    },
+    {
+      "id": "V014",
+      "answer_run": 7,
+      "steps": 253,
+      "reconstruction_ok": false,
+      "alignments": [
+        {
+          "offset": 45,
+          "matched": 254,
+          "needed": 254,
+          "aligned": true
+        },
+        {
+          "offset": 324,
+          "matched": 0,
+          "needed": 255,
+          "aligned": false
+        },
+        {
+          "offset": 642,
+          "matched": 1,
+          "needed": 255,
+          "aligned": false
+        }
+      ],
+      "mask_argmax_mismatches": 58,
+      "steps_with_zero_boundary_probability": 0,
+      "median_legal_candidates": 64,
+      "steps_with_single_legal_candidate": 0,
+      "median_ratio_over_boundary": 6389.377,
+      "run_steps": 1
+    },
+    {
+      "id": "V015",
+      "answer_run": 2,
+      "steps": 254,
+      "reconstruction_ok": false,
+      "alignments": [
+        {
+          "offset": 54,
+          "matched": 255,
+          "needed": 255,
+          "aligned": true
+        },
+        {
+          "offset": 368,
+          "matched": 1,
+          "needed": 255,
+          "aligned": false
+        },
+        {
+          "offset": 642,
+          "matched": 0,
+          "needed": 255,
+          "aligned": false
+        }
+      ],
+      "mask_argmax_mismatches": 50,
+      "steps_with_zero_boundary_probability": 0,
+      "median_legal_candidates": 64,
+      "steps_with_single_legal_candidate": 0,
+      "median_ratio_over_boundary": 6983.91,
+      "run_steps": 0
+    },
+    {
+      "id": "V016",
+      "answer_run": 3,
+      "steps": 254,
+      "reconstruction_ok": false,
+      "alignments": [
+        {
+          "offset": 45,
+          "matched": 255,
+          "needed": 255,
+          "aligned": true
+        },
+        {
+          "offset": 344,
+          "matched": 1,
+          "needed": 255,
+          "aligned": false
+        },
+        {
+          "offset": 637,
+          "matched": 1,
+          "needed": 255,
+          "aligned": false
+        }
+      ],
+      "mask_argmax_mismatches": 56,
+      "steps_with_zero_boundary_probability": 0,
+      "median_legal_candidates": 64,
+      "steps_with_single_legal_candidate": 0,
+      "median_ratio_over_boundary": 6072.444,
+      "run_steps": 0
+    },
+    {
+      "id": "V017",
+      "answer_run": 11,
+      "steps": 253,
+      "reconstruction_ok": false,
+      "alignments": [
+        {
+          "offset": 36,
+          "matched": 254,
+          "needed": 254,
+          "aligned": true
+        },
+        {
+          "offset": 306,
+          "matched": 1,
+          "needed": 255,
+          "aligned": false
+        },
+        {
+          "offset": 612,
+          "matched": 1,
+          "needed": 255,
+          "aligned": false
+        }
+      ],
+      "mask_argmax_mismatches": 80,
+      "steps_with_zero_boundary_probability": 0,
+      "median_legal_candidates": 64,
+      "steps_with_single_legal_candidate": 0,
+      "median_ratio_over_boundary": 5787.72,
+      "run_steps": 1
+    },
+    {
+      "id": "V018",
+      "answer_run": 13,
+      "steps": 256,
+      "reconstruction_ok": false,
+      "alignments": [
+        {
+          "offset": 33,
+          "matched": 255,
+          "needed": 255,
+          "aligned": true
+        },
+        {
+          "offset": 320,
+          "matched": 1,
+          "needed": 255,
+          "aligned": false
+        },
+        {
+          "offset": 600,
+          "matched": 3,
+          "needed": 255,
+          "aligned": false
+        }
+      ],
+      "mask_argmax_mismatches": 53,
+      "steps_with_zero_boundary_probability": 0,
+      "median_legal_candidates": 64,
+      "steps_with_single_legal_candidate": 0,
+      "median_ratio_over_boundary": 6678.054,
+      "run_steps": 0
+    },
+    {
+      "id": "V019",
+      "answer_run": 256,
+      "steps": 256,
+      "reconstruction_ok": false,
+      "alignments": [
+        {
+          "offset": 52,
+          "matched": 255,
+          "needed": 255,
+          "aligned": true
+        },
+        {
+          "offset": 345,
+          "matched": 2,
+          "needed": 256,
+          "aligned": false
+        },
+        {
+          "offset": 644,
+          "matched": 2,
+          "needed": 256,
+          "aligned": false
+        }
+      ],
+      "mask_argmax_mismatches": 56,
+      "steps_with_zero_boundary_probability": 0,
+      "median_legal_candidates": 64,
+      "steps_with_single_legal_candidate": 0,
+      "median_ratio_over_boundary": 7065.111,
+      "run_steps": 0
+    },
+    {
+      "id": "V020",
+      "answer_run": 1,
+      "steps": 256,
+      "reconstruction_ok": false,
+      "alignments": [
+        {
+          "offset": 39,
+          "matched": 255,
+          "needed": 255,
+          "aligned": true
+        },
+        {
+          "offset": 332,
+          "matched": 1,
+          "needed": 255,
+          "aligned": false
+        },
+        {
+          "offset": 618,
+          "matched": 3,
+          "needed": 255,
+          "aligned": false
+        }
+      ],
+      "mask_argmax_mismatches": 57,
+      "steps_with_zero_boundary_probability": 0,
+      "median_legal_candidates": 64,
+      "steps_with_single_legal_candidate": 0,
+      "median_ratio_over_boundary": 7090.759,
+      "run_steps": 0
+    },
+    {
+      "id": "V021",
+      "answer_run": 24,
+      "steps": 257,
+      "reconstruction_ok": false,
+      "alignments": [
+        {
+          "offset": 42,
+          "matched": 255,
+          "needed": 255,
+          "aligned": true
+        },
+        {
+          "offset": 338,
+          "matched": 1,
+          "needed": 255,
+          "aligned": false
+        },
+        {
+          "offset": 615,
+          "matched": 4,
+          "needed": 255,
+          "aligned": false
+        }
+      ],
+      "mask_argmax_mismatches": 56,
+      "steps_with_zero_boundary_probability": 0,
+      "median_legal_candidates": 64,
+      "steps_with_single_legal_candidate": 0,
+      "median_ratio_over_boundary": 6887.342,
+      "run_steps": 1
+    },
+    {
+      "id": "V022",
+      "answer_run": 18,
+      "steps": 259,
+      "reconstruction_ok": false,
+      "alignments": [
+        {
+          "offset": 51,
+          "matched": 254,
+          "needed": 254,
+          "aligned": true
+        },
+        {
+          "offset": 333,
+          "matched": 1,
+          "needed": 255,
+          "aligned": false
+        },
+        {
+          "offset": 632,
+          "matched": 7,
+          "needed": 255,
+          "aligned": false
+        }
+      ],
+      "mask_argmax_mismatches": 73,
+      "steps_with_zero_boundary_probability": 0,
+      "median_legal_candidates": 64,
+      "steps_with_single_legal_candidate": 0,
+      "median_ratio_over_boundary": 6945.432,
+      "run_steps": 2
+    },
+    {
+      "id": "V023",
+      "answer_run": 4,
+      "steps": 257,
+      "reconstruction_ok": false,
+      "alignments": [
+        {
+          "offset": 51,
+          "matched": 254,
+          "needed": 254,
+          "aligned": true
+        },
+        {
+          "offset": 348,
+          "matched": 0,
+          "needed": 255,
+          "aligned": false
+        },
+        {
+          "offset": 647,
+          "matched": 5,
+          "needed": 255,
+          "aligned": false
+        }
+      ],
+      "mask_argmax_mismatches": 61,
+      "steps_with_zero_boundary_probability": 0,
+      "median_legal_candidates": 64,
+      "steps_with_single_legal_candidate": 0,
+      "median_ratio_over_boundary": 7855.969,
+      "run_steps": 1
+    },
+    {
+      "id": "V024",
+      "answer_run": 8,
+      "steps": 253,
+      "reconstruction_ok": false,
+      "alignments": [
+        {
+          "offset": 42,
+          "matched": 254,
+          "needed": 254,
+          "aligned": true
+        },
+        {
+          "offset": 337,
+          "matched": 1,
+          "needed": 255,
+          "aligned": false
+        },
+        {
+          "offset": 636,
+          "matched": 1,
+          "needed": 255,
+          "aligned": false
+        }
+      ],
+      "mask_argmax_mismatches": 56,
+      "steps_with_zero_boundary_probability": 0,
+      "median_legal_candidates": 64,
+      "steps_with_single_legal_candidate": 0,
+      "median_ratio_over_boundary": 9143.844,
+      "run_steps": 1
+    }
+  ],
+  "started_utc": "2026-09-28T15:38:17Z"
+}

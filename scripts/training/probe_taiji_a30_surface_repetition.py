@@ -69,9 +69,17 @@ def _repetition(text: str) -> dict[str, Any]:
     }
 
 
-def run_arm(items: list[dict[str, Any]], checkpoint: Path, circuit: str | None, chain: str) -> dict:
+def run_arm(
+    items: list[dict[str, Any]],
+    checkpoint: Path,
+    circuit: str | None,
+    chain: str,
+    *,
+    max_bytes: int | None = None,
+    penalty: float = 0.0,
+) -> dict:
     from eval_taiji_r2_readout_retrain import build_ngram_model, well_formed
-    from score_taiji_r2_copy_circuit_chat_cap import _answer_raw
+    from score_taiji_r2_copy_circuit_chat_cap import MAX_ANSWER_BYTES, _answer_raw
 
     from api.seed_runtime import SeedRuntime
 
@@ -84,6 +92,13 @@ def run_arm(items: list[dict[str, Any]], checkpoint: Path, circuit: str | None, 
         mount = "envelope_auto_mount"
     ngram = build_ngram_model()
 
+    #: 两条链各自的**历史预算**：原始链 64（SPEC-A-21 冻结面）、表层链 256（`chat()` 默认）。
+    #: §2h 查出的口径缺陷就在这儿——跨链比较时"链"与"预算"两个变量一起动了。
+    #: 给了 `--max-bytes` 就把两条链拨到同一个预算，那才是"只差一条链"的对照。
+    budget = (
+        max_bytes if max_bytes is not None else (256 if chain == "surface" else MAX_ANSWER_BYTES)
+    )
+
     texts: list[str] = []
     rows: list[dict[str, Any]] = []
     hits = 0
@@ -94,10 +109,21 @@ def run_arm(items: list[dict[str, Any]], checkpoint: Path, circuit: str | None, 
             answer = (
                 # 钉旧默认位（产品默认 2026-09-28 起 2.0）：本探针的六臂读数全是在 0.0 上取的。
                 runtime.chat(
-                    turn, history=history, learn=False, repetition_penalty=0.0
+                    turn,
+                    history=history,
+                    learn=False,
+                    repetition_penalty=penalty,
+                    max_length=budget,
                 )
                 if chain == "surface"
-                else _answer_raw(runtime, turn, history, utf8_strict=(chain == "raw_masked"))
+                else _answer_raw(
+                    runtime,
+                    turn,
+                    history,
+                    utf8_strict=(chain == "raw_masked"),
+                    repetition_penalty=penalty,
+                    max_bytes=budget,
+                )
             )
             texts.append(answer)
             if index + 1 < len(item["turns"]):
@@ -111,6 +137,8 @@ def run_arm(items: list[dict[str, Any]], checkpoint: Path, circuit: str | None, 
     return {
         "chain": chain,
         "mount": mount,
+        "max_bytes": budget,
+        "repetition_penalty": penalty,
         "items": len(rows),
         "texts": len(texts),
         "strict_hits": hits,
@@ -128,6 +156,18 @@ def main() -> int:
     parser.add_argument("--circuit", default=None)
     parser.add_argument("--manifest", default=str(MANIFEST))
     parser.add_argument("--limit", type=int, default=24)
+    parser.add_argument(
+        "--max-bytes",
+        type=int,
+        default=None,
+        help="把两条链的生成预算拨成同一个值（不给＝各按历史预算：原始 64／表层 256）",
+    )
+    parser.add_argument(
+        "--repetition-penalty",
+        type=float,
+        default=0.0,
+        help="钉在 0.0 才能复现已入库读数；产品默认位（2.0）要显式点名",
+    )
     parser.add_argument("--out-report", default=None)
     args = parser.parse_args()
 
@@ -140,8 +180,28 @@ def main() -> int:
         : args.limit
     ]
 
-    arms = [run_arm(items, checkpoint, args.circuit, chain) for chain in CHAINS]
-    no_circuit = [run_arm(items, checkpoint, None, chain) for chain in CHAINS]
+    arms = [
+        run_arm(
+            items,
+            checkpoint,
+            args.circuit,
+            chain,
+            max_bytes=args.max_bytes,
+            penalty=args.repetition_penalty,
+        )
+        for chain in CHAINS
+    ]
+    no_circuit = [
+        run_arm(
+            items,
+            checkpoint,
+            None,
+            chain,
+            max_bytes=args.max_bytes,
+            penalty=args.repetition_penalty,
+        )
+        for chain in CHAINS
+    ]
     report = {
         "format": "taiji-a30-surface-repetition-v1",
         "prereg": "PLAN-A-30 战线一（表层成句为何被回路打下去）",
@@ -149,6 +209,8 @@ def main() -> int:
         "items": len(items),
         "checkpoint": args.checkpoint,
         "circuit": args.circuit,
+        "max_bytes": args.max_bytes,
+        "repetition_penalty": args.repetition_penalty,
         "base_sha256_unchanged": _sha256(checkpoint) == sha_before,
         "arms": [{k: v for k, v in arm.items() if k != "rows"} for arm in arms + no_circuit],
         "per_arm_rows": {
@@ -164,7 +226,9 @@ def main() -> int:
     if not out.is_absolute():
         out = PROJECT_ROOT / out
     out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    out.write_text(
+        json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n"
+    )
     print(
         json.dumps(
             {
@@ -173,6 +237,8 @@ def main() -> int:
                     {
                         "chain": a["chain"],
                         "mount": a["mount"],
+                        "budget": a["max_bytes"],
+                        "penalty": a["repetition_penalty"],
                         "hits": a["strict_hits"],
                         "formed": a["well_formed_texts"],
                         "distinct": a["mean_distinct_ratio"],

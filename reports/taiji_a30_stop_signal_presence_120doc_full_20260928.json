@@ -1,0 +1,242 @@
+{
+  "format": "taiji-a30-stop-signal-presence-v1",
+  "prereg": "plans/reference/PLAN-A-30_surface_repetition_localization_20260928.md §3 丁（零训练归属检验）",
+  "question": "(B1) 停止信号没学到 还是 (B2) 学到了但在自身轨迹上失效",
+  "checkpoint": "checkpoints/seed_beta.pt",
+  "corpus": "dialogue_extended_clean.jsonl",
+  "corpus_bytes": 108327171,
+  "documents": 120,
+  "generation_scope": "teacher_forced_on_corpus（不进模型自己的轨迹）",
+  "decision_face": "full_alphabet",
+  "result": {
+    "documents": 120,
+    "stream_symbols": 98300,
+    "faces": {
+      "end": {
+        "n": 120,
+        "p_boundary": {
+          "n": 120,
+          "mean": 0.005547,
+          "p10": 0.000846,
+          "median": 0.00468,
+          "p90": 0.009347,
+          "max": 0.026158
+        },
+        "boundary_rank": {
+          "n": 120,
+          "mean": 39.725,
+          "p10": 12.0,
+          "median": 22.0,
+          "p90": 68.0,
+          "max": 257.0
+        },
+        "boundary_is_argmax_count": 0,
+        "p_next_true": {
+          "n": 120,
+          "mean": 0.005547,
+          "p10": 0.000846,
+          "median": 0.00468,
+          "p90": 0.009347,
+          "max": 0.026158
+        },
+        "next_true_is_argmax_count": 0
+      },
+      "turn_marker": {
+        "n": 3,
+        "p_boundary": {
+          "n": 3,
+          "mean": 0.003485,
+          "p10": 0.002159,
+          "median": 0.002207,
+          "p90": 0.006089,
+          "max": 0.006089
+        },
+        "boundary_rank": {
+          "n": 3,
+          "mean": 39.0,
+          "p10": 14.0,
+          "median": 49.0,
+          "p90": 54.0,
+          "max": 54.0
+        },
+        "boundary_is_argmax_count": 0,
+        "p_next_true": {
+          "n": 3,
+          "mean": 0.108778,
+          "p10": 0.015142,
+          "median": 0.085968,
+          "p90": 0.225225,
+          "max": 0.225225
+        },
+        "next_true_is_argmax_count": 1
+      },
+      "other": {
+        "n": 98057,
+        "p_boundary": {
+          "n": 98057,
+          "mean": 0.000181,
+          "p10": 3e-06,
+          "median": 3.4e-05,
+          "p90": 0.000263,
+          "max": 0.024879
+        },
+        "boundary_rank": {
+          "n": 98057,
+          "mean": 129.573177,
+          "p10": 72.0,
+          "median": 84.0,
+          "p90": 257.0,
+          "max": 257.0
+        },
+        "boundary_is_argmax_count": 0,
+        "p_next_true": {
+          "n": 98057,
+          "mean": 0.112444,
+          "p10": 0.002054,
+          "median": 0.037889,
+          "p90": 0.293973,
+          "max": 0.998296
+        },
+        "next_true_is_argmax_count": 18027
+      }
+    },
+    "mean_document_bytes": 817.17,
+    "turn_markers_observed": 3,
+    "end_positions": 120,
+    "other_positions": 98057,
+    "end_rows_sample": [
+      {
+        "p_boundary": 0.005825,
+        "boundary_rank": 16,
+        "boundary_is_argmax": false,
+        "legal_candidates": 257,
+        "p_next_true": 0.005825,
+        "next_true_is_argmax": false
+      },
+      {
+        "p_boundary": 0.00694749,
+        "boundary_rank": 25,
+        "boundary_is_argmax": false,
+        "legal_candidates": 257,
+        "p_next_true": 0.00694749,
+        "next_true_is_argmax": false
+      },
+      {
+        "p_boundary": 0.00864722,
+        "boundary_rank": 17,
+        "boundary_is_argmax": false,
+        "legal_candidates": 257,
+        "p_next_true": 0.00864722,
+        "next_true_is_argmax": false
+      },
+      {
+        "p_boundary": 0.00386454,
+        "boundary_rank": 25,
+        "boundary_is_argmax": false,
+        "legal_candidates": 257,
+        "p_next_true": 0.00386454,
+        "next_true_is_argmax": false
+      },
+      {
+        "p_boundary": 0.00367468,
+        "boundary_rank": 35,
+        "boundary_is_argmax": false,
+        "legal_candidates": 257,
+        "p_next_true": 0.00367468,
+        "next_true_is_argmax": false
+      },
+      {
+        "p_boundary": 0.00817548,
+        "boundary_rank": 19,
+        "boundary_is_argmax": false,
+        "legal_candidates": 257,
+        "p_next_true": 0.00817548,
+        "next_true_is_argmax": false
+      },
+      {
+        "p_boundary": 0.00012621,
+        "boundary_rank": 250,
+        "boundary_is_argmax": false,
+        "legal_candidates": 257,
+        "p_next_true": 0.00012621,
+        "next_true_is_argmax": false
+      },
+      {
+        "p_boundary": 0.00025585,
+        "boundary_rank": 74,
+        "boundary_is_argmax": false,
+        "legal_candidates": 257,
+        "p_next_true": 0.00025585,
+        "next_true_is_argmax": false
+      },
+      {
+        "p_boundary": 0.00559085,
+        "boundary_rank": 27,
+        "boundary_is_argmax": false,
+        "legal_candidates": 257,
+        "p_next_true": 0.00559085,
+        "next_true_is_argmax": false
+      },
+      {
+        "p_boundary": 0.00405636,
+        "boundary_rank": 24,
+        "boundary_is_argmax": false,
+        "legal_candidates": 257,
+        "p_next_true": 0.00405636,
+        "next_true_is_argmax": false
+      },
+      {
+        "p_boundary": 0.00687436,
+        "boundary_rank": 26,
+        "boundary_is_argmax": false,
+        "legal_candidates": 257,
+        "p_next_true": 0.00687436,
+        "next_true_is_argmax": false
+      },
+      {
+        "p_boundary": 0.00865688,
+        "boundary_rank": 11,
+        "boundary_is_argmax": false,
+        "legal_candidates": 257,
+        "p_next_true": 0.00865688,
+        "next_true_is_argmax": false
+      }
+    ],
+    "turn_marker_rows_sample": [
+      {
+        "p_boundary": 0.00220733,
+        "boundary_rank": 49,
+        "boundary_is_argmax": false,
+        "legal_candidates": 257,
+        "p_next_true": 0.08596796,
+        "next_true_is_argmax": false
+      },
+      {
+        "p_boundary": 0.00215935,
+        "boundary_rank": 54,
+        "boundary_is_argmax": false,
+        "legal_candidates": 257,
+        "p_next_true": 0.01514231,
+        "next_true_is_argmax": false
+      },
+      {
+        "p_boundary": 0.00608941,
+        "boundary_rank": 14,
+        "boundary_is_argmax": false,
+        "legal_candidates": 257,
+        "p_next_true": 0.22522491,
+        "next_true_is_argmax": true
+      }
+    ]
+  },
+  "instrument_guard": {
+    "observe_calls_recorded": true,
+    "boundary_targets_expected": 120,
+    "boundary_targets_observed": 120,
+    "end_position_accounting_ok": true,
+    "turn_marker_bucket_populated": true,
+    "turn_markers_observed": 3,
+    "base_sha256_unchanged": true
+  },
+  "started_utc": "2026-09-28T16:21:43Z"
+}

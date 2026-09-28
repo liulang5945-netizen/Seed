@@ -1,0 +1,2067 @@
+{
+  "format": "taiji-a30-stop-failure-v3",
+  "prereg": "plans/reference/PLAN-A-30_surface_repetition_localization_20260928.md §2f 第 3 条",
+  "checkpoint": "checkpoints/seed_beta.pt",
+  "circuit": "output/taiji_r2_copy_circuit_chat/judge/circuit-final.pt",
+  "repetition_penalty": 2.0,
+  "repetition_window": 8,
+  "max_length": 256,
+  "generation_loop_lines": [
+    3119,
+    3178
+  ],
+  "items": 24,
+  "instrument_guard": {
+    "observe_calls_recorded": true,
+    "observe_calls_by_caller": {
+      "generate:3087": 24070,
+      "record_told_history:95": 18847,
+      "generate:3163": 18432,
+      "record_told_history:92": 2458,
+      "record_told_history:82": 72,
+      "generate:3078": 72
+    },
+    "all_items_reconstructed": true,
+    "items_failing_reconstruction": [],
+    "total_argmax_mismatch_steps": 0,
+    "all_surfaces_are_replayed_raw": true,
+    "items_whose_surface_is_not_model_bytes": [],
+    "total_steps": 18432,
+    "base_sha256_unchanged": true
+  },
+  "failure_examples": [],
+  "offender_count": 5,
+  "offenders": [
+    {
+      "id": "V001",
+      "answer_run": 27,
+      "steps": 768,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "raw_head": "则是亸则来了先摢个君我他君的我个君，个君我他启我",
+          "answer_head": "则是亸则来了先摢个君我他君的我个君，个君我他启我"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "raw_head": "哥我衐衐衐衐衐。哥我衐雨楛衐我衐我衐我衐雨我衐我",
+          "answer_head": "哥我衐衐衐衐衐。哥我衐雨楛衐我衐我衐我衐雨我衐我"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "raw_head": "哥哥我表我衐。哥哥哥哥哥哥哥哥哥哥哥哥哥哥哥哥哥",
+          "answer_head": "哥哥我表我衐。哥哥哥哥哥哥哥哥哥哥哥哥哥哥哥哥哥"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 6099109.929,
+      "run_steps": 305,
+      "run_legal_hist": {
+        "64": 202,
+        "179": 103
+      },
+      "run_boundary_rank_hist": {
+        "10": 2,
+        "11": 8,
+        "12": 7,
+        "13": 14,
+        "14": 31,
+        "15": 11,
+        "16": 8,
+        "17": 4,
+        "18": 5,
+        "19": 3,
+        "20": 3,
+        "21": 1,
+        "23": 1,
+        "25": 1,
+        "27": 1,
+        "28": 1,
+        "34": 1,
+        "41": 1,
+        "44": 1,
+        "48": 1,
+        "49": 1,
+        "55": 1,
+        "56": 2,
+        "57": 4,
+        "58": 1,
+        "59": 3,
+        "60": 5,
+        "61": 4,
+        "62": 4,
+        "63": 20,
+        "64": 18,
+        "65": 136,
+        "83": 1
+      },
+      "run_ratio_min": 230.323,
+      "run_ratio_median": 132376419659.099,
+      "run_rows_sample": [
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.002591,
+          "p_boundary": 1.1e-05,
+          "p_boundary_before_penalty": 1.1e-05,
+          "boundary_rank_in_legal": 13,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 230.323,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 87,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.250534,
+          "p_boundary": 2.3e-05,
+          "p_boundary_before_penalty": 2.3e-05,
+          "boundary_rank_in_legal": 28,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 10689.113,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 88,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 1.0,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 16,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 1.1767194831709738e+36,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 6,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.999862,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 65,
+          "legal_candidates": 64,
+          "ratio_best_over_boundary": 1543228733.967,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 7,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 1.0,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 65,
+          "legal_candidates": 64,
+          "ratio_best_over_boundary": 1617640325400555.5,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 8,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.259963,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 41,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 147770956.332,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 9,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.333304,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 65,
+          "legal_candidates": 64,
+          "ratio_best_over_boundary": 416267842.937,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 10,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.333269,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 65,
+          "legal_candidates": 64,
+          "ratio_best_over_boundary": 325737925708.012,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 11,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.183346,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 25,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 3046245.839,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 12,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.199995,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 65,
+          "legal_candidates": 64,
+          "ratio_best_over_boundary": 1844285409.455,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 13,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.2,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 65,
+          "legal_candidates": 64,
+          "ratio_best_over_boundary": 1258945620524.39,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 14,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.181048,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 16,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 1980110.045,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 15,
+          "in_run": true
+        }
+      ]
+    },
+    {
+      "id": "V010",
+      "answer_run": 27,
+      "steps": 768,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "raw_head": "我了）（家刺下有吼为他君有，个我觉，为君意说君意",
+          "answer_head": "我了）（家刺下有吼为他君有，个我觉，为君意说君意"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "raw_head": "岛岛事事事事事事事事事事事事事事事事事事事事事事",
+          "answer_head": "岛岛事事事事事事事事事事事事事事事事事事事事事事"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "raw_head": "安濥我使安扈安安安安安安安安安。安安安安安。安西",
+          "answer_head": "安濥我使安扈安安安安安安安安安。安安安安安。安西"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 95579165.756,
+      "run_steps": 360,
+      "run_legal_hist": {
+        "64": 240,
+        "179": 120
+      },
+      "run_boundary_rank_hist": {
+        "11": 16,
+        "12": 9,
+        "13": 5,
+        "14": 2,
+        "15": 8,
+        "16": 9,
+        "17": 4,
+        "18": 1,
+        "19": 3,
+        "20": 2,
+        "21": 3,
+        "22": 1,
+        "23": 1,
+        "24": 1,
+        "25": 1,
+        "26": 1,
+        "27": 1,
+        "28": 1,
+        "30": 1,
+        "35": 1,
+        "36": 1,
+        "39": 2,
+        "41": 1,
+        "42": 2,
+        "50": 1,
+        "53": 2,
+        "54": 1,
+        "55": 2,
+        "56": 1,
+        "58": 3,
+        "59": 1,
+        "62": 4,
+        "63": 6,
+        "64": 21,
+        "65": 206,
+        "96": 1,
+        "116": 1,
+        "159": 1,
+        "160": 1,
+        "162": 2,
+        "167": 1,
+        "169": 1,
+        "173": 1,
+        "175": 1,
+        "176": 2,
+        "177": 2,
+        "178": 1,
+        "179": 2,
+        "180": 18
+      },
+      "run_ratio_min": 6487.479,
+      "run_ratio_median": 469621427162.341,
+      "run_rows_sample": [
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 1.0,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 15,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 9.15324078758636e+31,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 0,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 1.0,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 65,
+          "legal_candidates": 64,
+          "ratio_best_over_boundary": 5.748862688392484e+18,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 1,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.967551,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 65,
+          "legal_candidates": 64,
+          "ratio_best_over_boundary": 20704614.992,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 2,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.27211,
+          "p_boundary": 1e-06,
+          "p_boundary_before_penalty": 1e-06,
+          "boundary_rank_in_legal": 17,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 382889.494,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 3,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.331856,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 65,
+          "legal_candidates": 64,
+          "ratio_best_over_boundary": 743010352025966.8,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 4,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.32979,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 65,
+          "legal_candidates": 64,
+          "ratio_best_over_boundary": 18644818.983,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 5,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.193492,
+          "p_boundary": 6e-06,
+          "p_boundary_before_penalty": 6e-06,
+          "boundary_rank_in_legal": 15,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 32394.151,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 6,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.999809,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 65,
+          "legal_candidates": 64,
+          "ratio_best_over_boundary": 98363478087.836,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 7,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 1.0,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 64,
+          "legal_candidates": 64,
+          "ratio_best_over_boundary": 128041994592764.39,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 8,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.333333,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 62,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 4.11315488237927e+16,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 9,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.333221,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 65,
+          "legal_candidates": 64,
+          "ratio_best_over_boundary": 100751382101.884,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 10,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.333333,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 65,
+          "legal_candidates": 64,
+          "ratio_best_over_boundary": 1354848307711778.0,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 11,
+          "in_run": true
+        }
+      ]
+    },
+    {
+      "id": "V011",
+      "answer_run": 64,
+      "steps": 768,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "raw_head": "则为个则是为，则为）：我为君，为君，为君有，君为",
+          "answer_head": "则为个则是为，则为）：我为君，为君，为君有，君为"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "raw_head": "777777777欢欢欢欢欢欢欢欢欢欢欢欢欢欢欢",
+          "answer_head": "777777777欢欢欢欢欢欢欢欢欢欢欢欢欢欢欢"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "raw_head": "777777777777777777777777",
+          "answer_head": "777777777777777777777777"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 4,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 32,
+      "median_ratio_best_over_boundary": 104610766946.822,
+      "run_steps": 473,
+      "run_legal_hist": {
+        "64": 44,
+        "179": 429
+      },
+      "run_boundary_rank_hist": {
+        "12": 4,
+        "13": 11,
+        "14": 52,
+        "15": 28,
+        "16": 22,
+        "17": 19,
+        "18": 22,
+        "19": 22,
+        "20": 9,
+        "21": 8,
+        "22": 15,
+        "23": 16,
+        "24": 5,
+        "25": 5,
+        "26": 10,
+        "27": 7,
+        "28": 13,
+        "29": 10,
+        "30": 9,
+        "31": 8,
+        "32": 11,
+        "33": 11,
+        "34": 2,
+        "35": 4,
+        "36": 1,
+        "37": 5,
+        "38": 4,
+        "39": 1,
+        "40": 3,
+        "41": 1,
+        "42": 3,
+        "43": 4,
+        "44": 1,
+        "45": 1,
+        "46": 2,
+        "47": 1,
+        "48": 2,
+        "50": 1,
+        "53": 1,
+        "55": 1,
+        "56": 1,
+        "61": 1,
+        "62": 2,
+        "64": 9,
+        "65": 34,
+        "66": 1,
+        "68": 1,
+        "69": 1,
+        "71": 1,
+        "72": 2,
+        "75": 1,
+        "77": 2,
+        "85": 1,
+        "94": 1,
+        "115": 1,
+        "123": 1,
+        "157": 1,
+        "162": 1,
+        "166": 2,
+        "168": 2,
+        "172": 1,
+        "173": 1,
+        "174": 1,
+        "175": 5,
+        "176": 7,
+        "177": 8,
+        "178": 1,
+        "179": 14,
+        "180": 14
+      },
+      "run_ratio_min": 3783.381,
+      "run_ratio_median": 2.405431961397488e+18,
+      "run_rows_sample": [
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 1.0,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 16,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 8.107000332016437e+23,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 0,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.333333,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 17,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 2.127230146743499e+25,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 1,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.2,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 30,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 7940844486256128.0,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 2,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.142857,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 43,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 261771659078.182,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 3,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.1111,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 174,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 22031184.532,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 4,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.090839,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 175,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 2163374.298,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 5,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.076748,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 176,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 752659.288,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 6,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.065081,
+          "p_boundary": 1e-06,
+          "p_boundary_before_penalty": 1e-06,
+          "boundary_rank_in_legal": 176,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 68022.09,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 7,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.056878,
+          "p_boundary": 1e-06,
+          "p_boundary_before_penalty": 1e-06,
+          "boundary_rank_in_legal": 177,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 63240.689,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 8,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.294409,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 176,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 4103121.907,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 9,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.958104,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 65,
+          "legal_candidates": 64,
+          "ratio_best_over_boundary": 1458385011.469,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 10,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.983835,
+          "p_boundary": 1e-06,
+          "p_boundary_before_penalty": 1e-06,
+          "boundary_rank_in_legal": 65,
+          "legal_candidates": 64,
+          "ratio_best_over_boundary": 1772415.125,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 11,
+          "in_run": true
+        }
+      ]
+    },
+    {
+      "id": "V019",
+      "answer_run": 256,
+      "steps": 768,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "raw_head": "分为利是一了我他师：是为别君为，家君为，君为个则",
+          "answer_head": "分为利是一了我他师：是为别君为，家君为，君为个则"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "raw_head": "9999999喯1喇喦是199999999999",
+          "answer_head": "9999999喯1喇喦是199999999999"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "raw_head": "999999999999999999999999",
+          "answer_head": "999999999999999999999999"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 25,
+      "median_ratio_best_over_boundary": 66041020617929.86,
+      "run_steps": 491,
+      "run_legal_hist": {
+        "64": 10,
+        "179": 481
+      },
+      "run_boundary_rank_hist": {
+        "12": 1,
+        "13": 5,
+        "14": 19,
+        "15": 30,
+        "16": 37,
+        "17": 57,
+        "18": 32,
+        "19": 34,
+        "20": 13,
+        "21": 14,
+        "22": 8,
+        "23": 20,
+        "24": 22,
+        "25": 22,
+        "26": 15,
+        "27": 6,
+        "28": 9,
+        "29": 8,
+        "30": 14,
+        "31": 14,
+        "32": 16,
+        "33": 8,
+        "34": 9,
+        "35": 1,
+        "36": 1,
+        "37": 1,
+        "38": 2,
+        "39": 3,
+        "40": 4,
+        "41": 3,
+        "42": 5,
+        "43": 3,
+        "44": 2,
+        "45": 3,
+        "47": 4,
+        "49": 1,
+        "50": 1,
+        "51": 3,
+        "52": 3,
+        "53": 2,
+        "60": 1,
+        "65": 10,
+        "66": 1,
+        "75": 1,
+        "91": 1,
+        "92": 1,
+        "115": 1,
+        "123": 1,
+        "158": 1,
+        "160": 1,
+        "166": 1,
+        "167": 1,
+        "168": 2,
+        "170": 1,
+        "171": 2,
+        "172": 1,
+        "175": 2,
+        "177": 4,
+        "178": 2,
+        "180": 1
+      },
+      "run_ratio_min": 585.907,
+      "run_ratio_median": 6.48828437539788e+20,
+      "run_rows_sample": [
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 1.0,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 17,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 1.866630345047379e+24,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 0,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.333333,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 17,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 2.1726537060472678e+23,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 1,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.2,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 17,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 536601578700137.75,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 2,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.142857,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 17,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 30723916561.238,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 3,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.1111,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 15,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 95908335.752,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 4,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.090768,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 15,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 3228266.687,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 5,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.076754,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 15,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 940579.194,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 6,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.98687,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 180,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 74625484.989,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 21,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.333333,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 19,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 49801767270840.42,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 22,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.2,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 17,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 24026049059797.574,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 23,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.142857,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 18,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 801538586840.741,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 24,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.111111,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 17,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 976748797074.368,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 25,
+          "in_run": true
+        }
+      ]
+    },
+    {
+      "id": "V021",
+      "answer_run": 24,
+      "steps": 768,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "raw_head": "到：是刺个是刑为，家则为，家君为得君是个则是为君",
+          "answer_head": "到：是刺个是刑为，家则为，家君为得君是个则是为君"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "raw_head": "山人爱人爱人爱人爱人爱人爱人爱人爱人爱人爱人爱人",
+          "answer_head": "山人爱人爱人爱人爱人爱人爱人爱人爱人爱人爱人爱人"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "raw_head": "柠柠檬柠爱人爱人爱人爱人爱人爱人爱人爱人爱人爱人",
+          "answer_head": "柠柠檬柠爱人爱人爱人爱人爱人爱人爱人爱人爱人爱人"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 1,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 7547498.027,
+      "run_steps": 90,
+      "run_legal_hist": {
+        "64": 60,
+        "179": 30
+      },
+      "run_boundary_rank_hist": {
+        "11": 16,
+        "13": 3,
+        "15": 3,
+        "16": 1,
+        "19": 1,
+        "22": 1,
+        "25": 1,
+        "26": 2,
+        "27": 2,
+        "30": 1,
+        "32": 2,
+        "33": 1,
+        "34": 1,
+        "42": 1,
+        "45": 2,
+        "48": 1,
+        "49": 2,
+        "51": 1,
+        "54": 1,
+        "57": 3,
+        "58": 2,
+        "59": 2,
+        "60": 1,
+        "62": 2,
+        "63": 4,
+        "64": 3,
+        "65": 27,
+        "78": 1,
+        "157": 1,
+        "180": 1
+      },
+      "run_ratio_min": 130330.604,
+      "run_ratio_median": 20045107.427,
+      "run_rows_sample": [
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.2,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 51,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 4.362993903448231e+16,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 93,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.333332,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 65,
+          "legal_candidates": 64,
+          "ratio_best_over_boundary": 249459118473.475,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 94,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.333183,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 59,
+          "legal_candidates": 64,
+          "ratio_best_over_boundary": 4068937.887,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 95,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.199648,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 13,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 6540045.748,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 96,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.257808,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 65,
+          "legal_candidates": 64,
+          "ratio_best_over_boundary": 412191831.545,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 97,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.332873,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 64,
+          "legal_candidates": 64,
+          "ratio_best_over_boundary": 1773137.867,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 98,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.2,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 157,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 1.0613055701360053e+30,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 102,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.333333,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 65,
+          "legal_candidates": 64,
+          "ratio_best_over_boundary": 742524774125.569,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 103,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.332979,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 60,
+          "legal_candidates": 64,
+          "ratio_best_over_boundary": 1210424.512,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 104,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.198417,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 16,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 1988728.487,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 105,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.218146,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 65,
+          "legal_candidates": 64,
+          "ratio_best_over_boundary": 90797817.2,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 106,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.330673,
+          "p_boundary": 3e-06,
+          "p_boundary_before_penalty": 3e-06,
+          "boundary_rank_in_legal": 57,
+          "legal_candidates": 64,
+          "ratio_best_over_boundary": 130330.604,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 107,
+          "in_run": true
+        }
+      ]
+    }
+  ],
+  "per_item": [
+    {
+      "id": "V001",
+      "answer_run": 27,
+      "steps": 768,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "raw_head": "则是亸则来了先摢个君我他君的我个君，个君我他启我",
+          "answer_head": "则是亸则来了先摢个君我他君的我个君，个君我他启我"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "raw_head": "哥我衐衐衐衐衐。哥我衐雨楛衐我衐我衐我衐雨我衐我",
+          "answer_head": "哥我衐衐衐衐衐。哥我衐雨楛衐我衐我衐我衐雨我衐我"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "raw_head": "哥哥我表我衐。哥哥哥哥哥哥哥哥哥哥哥哥哥哥哥哥哥",
+          "answer_head": "哥哥我表我衐。哥哥哥哥哥哥哥哥哥哥哥哥哥哥哥哥哥"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 6099109.929,
+      "run_steps": 305
+    },
+    {
+      "id": "V002",
+      "answer_run": 1,
+      "steps": 768,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "raw_head": "我为别）：我人师，他师，了是）：我他君（是君，了",
+          "answer_head": "我为别）：我人师，他师，了是）：我他君（是君，了"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "raw_head": "州苏州住州我住州我住州我住州我住州我住州我住州我",
+          "answer_head": "州苏州住州我住州我住州我住州我住州我住州我住州我"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "raw_head": "州拏州拏州我住州我住州我住州我住州我住州我住州我",
+          "answer_head": "州拏州拏州我住州我住州我住州我住州我住州我住州我"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 1369869223.337,
+      "run_steps": 0
+    },
+    {
+      "id": "V003",
+      "answer_run": 8,
+      "steps": 768,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "raw_head": "分为师，为家则为个则是他君我他师，他大家我们的是",
+          "answer_head": "分为师，为家则为个则是他君我他师，他大家我们的是"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "raw_head": "2121喇喦是21喐是21喰喦欢欑欢欢是21喰喦",
+          "answer_head": "2121喇喦是21喐是21喰喦欢欑欢欢是21喰喦"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "raw_head": "21学是21是21是21是21是212121字是",
+          "answer_head": "21学是21是21是21是21是212121字是"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 42,
+      "median_ratio_best_over_boundary": 56991635.083,
+      "run_steps": 48
+    },
+    {
+      "id": "V004",
+      "answer_run": 3,
+      "steps": 768,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "raw_head": "则为利是为则是为，家君为，君为是胧家为，我他君我",
+          "answer_head": "则为利是为则是为，家君为，君为是胧家为，我他君我"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "raw_head": "图。图。图图。图图。图图。图图。图图图。图图海囮",
+          "answer_head": "图。图。图图。图图。图图。图图。图图图。图图海囮"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "raw_head": "图海囮海囮海囮海囮海图。图图。图图。图图。图图。",
+          "answer_head": "图海囮海囮海囮海囮海图。图图。图图。图图。图图。"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 26888920.976,
+      "run_steps": 195
+    },
+    {
+      "id": "V005",
+      "answer_run": 2,
+      "steps": 768,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "raw_head": "则为师：是为君，为君是为吼我们的君我他师，他君我",
+          "answer_head": "则为师：是为君，为君是为吼我们的君我他师，他君我"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "raw_head": "喝乳时爱喝乳时爱喝乌喝乌喝乌喝乌喝乌龙。时爱喝乌",
+          "answer_head": "喝乳时爱喝乳时爱喝乌喝乌喝乌喝乌喝乌龙。时爱喝乌"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "raw_head": "賱喝乌喝乳时爱喝乳时爱喝乌喝乌喝乌喝乌龙。时爱喝",
+          "answer_head": "賱喝乌喝乳时爱喝乳时爱喝乌喝乌喝乌喝乌龙。时爱喝"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 99328239.048,
+      "run_steps": 2
+    },
+    {
+      "id": "V006",
+      "answer_run": 3,
+      "steps": 768,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "raw_head": "我为君）：我为吼个是君为个君我他启有，家吟有，下",
+          "answer_head": "我为君）：我为吼个是君为个君我他启有，家吟有，下"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "raw_head": "养一养丮渮雪雪雪鸮雪雪鸮雪雪鸮一养丮渮鸮雪鸀养丮",
+          "answer_head": "养一养丮渮雪雪雪鸮雪雪鸮雪雪鸮一养丮渮鸮雪鸀养丮"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "raw_head": "养丮我雪鸮雪鸮雪鸮。养丮鸮鸮雪鸮丮檮鸮鸮雪鸮鸮。",
+          "answer_head": "养丮我雪鸮雪鸮雪鸮。养丮鸮鸮雪鸮丮檮鸮鸮雪鸮鸮。"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 194007682.062,
+      "run_steps": 65
+    },
+    {
+      "id": "V007",
+      "answer_run": 19,
+      "steps": 768,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "raw_head": "则了是刑们翙我个到，为则是为则是为利是为则是为则",
+          "answer_head": "则了是刑们翙我个到，为则是为则是为利是为则是为则"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "raw_head": "姐水经姐水经姐水经姐水经姐水经姐水经读》姐水经姐",
+          "answer_head": "姐水经姐水经姐水经姐水经姐水经姐水经读》姐水经姐"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "raw_head": "近姐水经姐注读姐泻》姐水经姐水经，姐泻近姐泻》姐",
+          "answer_head": "近姐水经姐注读姐泻》姐水经姐水经，姐泻近姐泻》姐"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 240607.126,
+      "run_steps": 126
+    },
+    {
+      "id": "V008",
+      "answer_run": 16,
+      "steps": 768,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "raw_head": "我为家刟有，个我君为个则是为君我他师，他君为是君",
+          "answer_head": "我为家刟有，个我君为个则是为君我他师，他君为是君"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "raw_head": "山吃包包包包包包包包包包包包包最笼包最笼包最笼包",
+          "answer_head": "山吃包包包包包包包包包包包包包最笼包最笼包最笼包"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "raw_head": "山吃吃吃吃吃吃吃吃吃吃吃吃吃吃包包包包包最笼包笼",
+          "answer_head": "山吃吃吃吃吃吃吃吃吃吃吃吃吃吃包包包包包最笼包笼"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 1,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 40706884.589,
+      "run_steps": 215
+    },
+    {
+      "id": "V009",
+      "answer_run": 4,
+      "steps": 768,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "raw_head": "则为利是一刼：是为君）：我们个君我们的君我了君，",
+          "answer_head": "则为利是一刼：是为君）：我们个君我们的君我了君，"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "raw_head": "君雨我桐雨我我我君雨我君雨我我我我君雨我君雨我君",
+          "answer_head": "君雨我桐雨我我我君雨我君雨我我我我君雨我君雨我君"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "raw_head": "君雨我我我我君雨我君雨我君雨我雨我我我君雨成我君",
+          "answer_head": "君雨我我我我君雨我君雨我君雨我雨我我我君雨成我君"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 4,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 68831272.24,
+      "run_steps": 56
+    },
+    {
+      "id": "V010",
+      "answer_run": 27,
+      "steps": 768,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "raw_head": "我了）（家刺下有吼为他君有，个我觉，为君意说君意",
+          "answer_head": "我了）（家刺下有吼为他君有，个我觉，为君意说君意"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "raw_head": "岛岛事事事事事事事事事事事事事事事事事事事事事事",
+          "answer_head": "岛岛事事事事事事事事事事事事事事事事事事事事事事"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "raw_head": "安濥我使安扈安安安安安安安安安。安安安安安。安西",
+          "answer_head": "安濥我使安扈安安安安安安安安安。安安安安安。安西"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 95579165.756,
+      "run_steps": 360
+    },
+    {
+      "id": "V011",
+      "answer_run": 64,
+      "steps": 768,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "raw_head": "则为个则是为，则为）：我为君，为君，为君有，君为",
+          "answer_head": "则为个则是为，则为）：我为君，为君，为君有，君为"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "raw_head": "777777777欢欢欢欢欢欢欢欢欢欢欢欢欢欢欢",
+          "answer_head": "777777777欢欢欢欢欢欢欢欢欢欢欢欢欢欢欢"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "raw_head": "777777777777777777777777",
+          "answer_head": "777777777777777777777777"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 4,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 32,
+      "median_ratio_best_over_boundary": 104610766946.822,
+      "run_steps": 473
+    },
+    {
+      "id": "V012",
+      "answer_run": 7,
+      "steps": 768,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "raw_head": "则为刼，个刑有，个则是为吼我他君我们的可文了君，",
+          "answer_head": "则为刼，个刑有，个则是为吼我他君我们的可文了君，"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "raw_head": "径鋾径项径项得很友径项往石径鋀石径项石径项石径项",
+          "answer_head": "径鋾径项径项得很友径项往石径鋀石径项石径项石径项"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "raw_head": "埘晨星晨星星星星星星星。队晨星的队晰的队晨星星星",
+          "answer_head": "埘晨星晨星星星星星星星。队晨星的队晰的队晨星星星"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 6,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 395428.524,
+      "run_steps": 80
+    },
+    {
+      "id": "V013",
+      "answer_run": 5,
+      "steps": 768,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "raw_head": "到：是人师，个家则为，家君为得刍来为君是为，家君",
+          "answer_head": "到：是人师，个家则为，家君为得刍来为君是为，家君"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "raw_head": "山人爱人爱人爱人爱人爱人爱人爱人爱人爱人爱人爱人",
+          "answer_head": "山人爱人爱人爱人爱人爱人爱人爱人爱人爱人爱人爱人"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "raw_head": "打打打打苏打打打打打苏打打打苏打打苏打打苏打打苏",
+          "answer_head": "打打打打苏打打打打打苏打打打苏打打苏打打苏打打苏"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 12785259.187,
+      "run_steps": 150
+    },
+    {
+      "id": "V014",
+      "answer_run": 7,
+      "steps": 768,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "raw_head": "我为君）：我下说君为，君为个君是他吰，为君是为君",
+          "answer_head": "我为君）：我下说君为，君为个君是他吰，为君是为君"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "raw_head": "居居养一居养一居居养一居居养一居居居养一居居养一",
+          "answer_head": "居居养一居养一居居养一居居养一居居居养一居居养一"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "raw_head": "养一养一养一养一养一养一养一养一养一养一养一养一",
+          "answer_head": "养一养一养一养一养一养一养一养一养一养一养一养一"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 6437761.804,
+      "run_steps": 134
+    },
+    {
+      "id": "V015",
+      "answer_run": 2,
+      "steps": 768,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "raw_head": "我为君）：我为君）：我下吰（为君，为君我们的君则",
+          "answer_head": "我为君）：我为君）：我下吰（为君，为君我们的君则"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "raw_head": "姐梦读》姐梦读》姐梦读》姐梦读》姐梦读读》姐梦读",
+          "answer_head": "姐梦读》姐梦读》姐梦读》姐梦读》姐梦读读》姐梦读"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "raw_head": "寻近水经寻读》泻近水绻》寻近泻近泻近水经［近寻读",
+          "answer_head": "寻近水经寻读》泻近水绻》寻近泻近泻近水经［近寻读"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 267700.836,
+      "run_steps": 48
+    },
+    {
+      "id": "V016",
+      "answer_run": 3,
+      "steps": 768,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "raw_head": "分为，则个是刑了是，为制是为，我他师，他师，们是",
+          "answer_head": "分为，则个是刑了是，为制是为，我他师，他师，们是"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "raw_head": "哥泱哥泉泥泾哥泥泾哥泥泾哥吃哥吃羪哥泱哥哥泥泱哥",
+          "answer_head": "哥泱哥泉泥泾哥泥泾哥泥泾哥吃哥吃羪哥泱哥哥泥泱哥"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "raw_head": "子鸡最爱吃舱吃舑朸子鸡最爱吃辈子鸡最爱吃辈子鸡最",
+          "answer_head": "子鸡最爱吃舱吃舑朸子鸡最爱吃辈子鸡最爱吃辈子鸡最"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 4,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 678656.118,
+      "run_steps": 33
+    },
+    {
+      "id": "V017",
+      "answer_run": 11,
+      "steps": 768,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "raw_head": "则是为则是为则来为君权他君的是个刊是为吼\n\n杈：",
+          "answer_head": "则是为则是为则来为君权他君的是个刊是为吼\n\n杈："
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "raw_head": "哥我远远远远远远远远远远远哥迿远远远远远哥迿远迿",
+          "answer_head": "哥我远远远远远远远远远远远哥迿远远远远远哥迿远迿"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "raw_head": "濜迿违远远远远远远远远远远〝远远远远远远远迌哥迿",
+          "answer_head": "濜迿违远远远远远远远远远远〝远远远远远远远迌哥迿"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 2150482.873,
+      "run_steps": 326
+    },
+    {
+      "id": "V018",
+      "answer_run": 13,
+      "steps": 768,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "raw_head": "则为利，个刑有：。君为个则是他君我他君意诧吼我他",
+          "answer_head": "则为利，个刑有：。君为个则是他君我他君意诧吼我他"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "raw_head": "岛青岛岛岛岛岛岛岛岛岛。岛青我住岛青岛青岛青岛青",
+          "answer_head": "岛青岛岛岛岛岛岛岛岛岛。岛青我住岛青岛青岛青岛青"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "raw_head": "岛岛。岛青我住岛我你岛。岛青岛青我住岛青岛岛青岛",
+          "answer_head": "岛岛。岛青我住岛我你岛。岛青岛青我住岛青岛岛青岛"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 900057794.462,
+      "run_steps": 153
+    },
+    {
+      "id": "V019",
+      "answer_run": 256,
+      "steps": 768,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "raw_head": "分为利是一了我他师：是为别君为，家君为，君为个则",
+          "answer_head": "分为利是一了我他师：是为别君为，家君为，君为个则"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "raw_head": "9999999喯1喇喦是199999999999",
+          "answer_head": "9999999喯1喇喦是199999999999"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "raw_head": "999999999999999999999999",
+          "answer_head": "999999999999999999999999"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 25,
+      "median_ratio_best_over_boundary": 66041020617929.86,
+      "run_steps": 491
+    },
+    {
+      "id": "V020",
+      "answer_run": 1,
+      "steps": 768,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "raw_head": "则为利是以到，了是，了是，个我他师，他君我们的君",
+          "answer_head": "则为利是以到，了是，了是，个我他师，他君我们的君"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "raw_head": "径项石径项径项石径项很径项石径项很皳径项石径项石",
+          "answer_head": "径项石径项径项石径项很径项石径项很皳径项石径项石"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "raw_head": "径鳾径项石径项石径项很石径项石径项石径项石径项石",
+          "answer_head": "径鳾径项石径项石径项很石径项石径项石径项石径项石"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 2296750.796,
+      "run_steps": 0
+    },
+    {
+      "id": "V021",
+      "answer_run": 24,
+      "steps": 768,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "raw_head": "到：是刺个是刑为，家则为，家君为得君是个则是为君",
+          "answer_head": "到：是刺个是刑为，家则为，家君为得君是个则是为君"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "raw_head": "山人爱人爱人爱人爱人爱人爱人爱人爱人爱人爱人爱人",
+          "answer_head": "山人爱人爱人爱人爱人爱人爱人爱人爱人爱人爱人爱人"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "raw_head": "柠柠檬柠爱人爱人爱人爱人爱人爱人爱人爱人爱人爱人",
+          "answer_head": "柠柠檬柠爱人爱人爱人爱人爱人爱人爱人爱人爱人爱人"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 1,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 7547498.027,
+      "run_steps": 90
+    },
+    {
+      "id": "V022",
+      "answer_run": 18,
+      "steps": 768,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "raw_head": "我为吼我们眽才胧家为了吼\n\n李一刑）：我人君，不",
+          "answer_head": "我为吼我们眽才胧家为了吼\n\n李一刑）：我人君，不"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "raw_head": "居居养一居养一居居舌养一居居养一家邻一居居养一居",
+          "answer_head": "居居养一居养一居居舌养一居居养一家邻一居居养一居"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "raw_head": "蓝舌舌舌舌舌居蓝蓝舌舌舌舌舌舌舌舌舌蓝蓝舌蜥蓝躆",
+          "answer_head": "蓝舌舌舌舌舌居蓝蓝舌舌舌舌舌舌舌舌舌蓝蓝舌蜥蓝躆"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 462026.236,
+      "run_steps": 362
+    },
+    {
+      "id": "V023",
+      "answer_run": 4,
+      "steps": 768,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "raw_head": "分漌为则是为则来而师：是一了我，他来说君分为，君",
+          "answer_head": "分漌为则是为则来而师：是一了我，他来说君分为，君"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "raw_head": "近读》寻读》寻读》寻读读》寻近梦读梦诀读梦诀读读",
+          "answer_head": "近读》寻读》寻读》寻读读》寻近梦读梦诀读梦诀读读"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "raw_head": "梦读读读近梦读近梦读近梦读近梦读读》寭读读近梦读",
+          "answer_head": "梦读读读近梦读近梦读近梦读近梦读读》寭读读近梦读"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 2009561.636,
+      "run_steps": 224
+    },
+    {
+      "id": "V024",
+      "answer_run": 8,
+      "steps": 768,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "raw_head": "分为利，个刑有：。\n\n杈（。有：。有：。有：「师",
+          "answer_head": "分为利，个刑有：。\n\n杈（。有：。有：。有：「师"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "raw_head": "山吃羫吃羽他吃泱泱吃羫泾吃羫泾吃泾泾泾泾泾泾泾泾",
+          "answer_head": "山吃羫吃羽他吃泱泱吃羫泾吃羫泾吃泾泾泾泾泾泾泾泾"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "raw_head": "山吃羫吃美不泱泱泾泾吃羫泡馍泱泱吃羫泡馍泱泾泾吃",
+          "answer_head": "山吃羫吃美不泱泱泾泾吃羫泡馍泱泱吃羫泡馍泱泾泾吃"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 2,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 242395.241,
+      "run_steps": 89
+    }
+  ],
+  "started_utc": "2026-09-28T15:55:08Z"
+}

@@ -34,6 +34,7 @@ def _answer_raw(
     *,
     utf8_strict: bool = False,
     repetition_penalty: float = 0.0,
+    max_bytes: int = MAX_ANSWER_BYTES,
 ) -> str:
     """产品装配下取基底原始答复（SPEC-A-21 那条冻结链）。
 
@@ -41,6 +42,10 @@ def _answer_raw(
     `generate_input(..., utf8_strict=True)`）套到这条评测链上——默认 `False` ⇒ 冻结读数逐位不变。
     为什么要有这一档：`PLAN-A-30` 要分「是掩码放大了电路的复读，还是语言器官」，
     而只有把掩码单独加在原始字节链上，才能把"掩码"与"器官"这两手分开量（不然只有两端可比）。
+    `max_bytes`＝生成预算，默认 64（冻结面逐位不变）。**它是 `PLAN-A-30` §2h 量出来的一个口径缺陷**：
+    产品 `chat()` 的预算是 256，而这条评测链一直是 64 ⇒ 跨链比较"表层比原始链差"时，
+    链与预算两个变量同时动了。要分开就得能把预算拨到 256（`probe_taiji_a30_surface_repetition.py`
+    的 `--max-bytes` 走的就是这一手）。
     """
 
     from api.seed_runtime import _TURN_MARKERS
@@ -62,7 +67,7 @@ def _answer_raw(
     )
     raw = runtime.model.generate_input(
         frame,
-        MAX_ANSWER_BYTES,
+        max_bytes,
         stop_at_boundary=True,
         sample=False,
         utf8_strict=utf8_strict,
@@ -81,15 +86,21 @@ def run_arm(
     circuit_payload: str | None,
     *,
     evidence_utf8_gate: bool = False,
+    max_bytes: int = MAX_ANSWER_BYTES,
+    limit: int | None = None,
 ) -> dict[str, Any]:
     """一臂：CAP 的 D+E 计分（基底原始字节）。
 
     `evidence_utf8_gate`（PLAN-A-25）：只在评测期把复制回路的加性证据按 UTF-8 位置状态门控
     ——默认 False ⇒ 与冻结链逐位相同；开启走 `Taiji.set_copy_evidence_utf8_gate` 运行时覆写。
+    `max_bytes`＝生成预算，默认 64（冻结面逐位不变）；`PLAN-A-30` §2h/§2i 查出预算本身就是
+    一个会动读数的变量（同链同装配把 64 拨到 256，命中 3→9、成句 13→6）⇒ 用它做同装配双预算档。
+    `limit`＝只取前 N 道题（D/E 混排后取前 N，两臂用同一子集 ⇒ 配对成立；默认全量）。
     """
 
-    from api.seed_runtime import SeedRuntime
     from eval_taiji_r2_readout_retrain import build_ngram_model, well_formed
+
+    from api.seed_runtime import SeedRuntime
 
     runtime = SeedRuntime.load(checkpoint)
     if circuit_payload is not None:
@@ -103,17 +114,21 @@ def run_arm(
         for item in manifest["dimensions"][dim]["items"]
         if item.get("expected_contains")
     ]
+    if limit is not None:
+        items = items[:limit]
     rows = []
     for item in items:
         history: list[tuple[str, str]] = []
         turns = list(item["turns"])
         answer = ""
         for index, turn in enumerate(turns):
-            answer = _answer_raw(runtime, turn, history)
+            answer = _answer_raw(runtime, turn, history, max_bytes=max_bytes)
             if index + 1 < len(turns):
                 history.append((turn, answer))
         hit = any(token in answer for token in item["expected_contains"])
-        rows.append({"id": item["id"], "dimension": item["dimension"], "hit": hit, "answer": answer[:60]})
+        rows.append(
+            {"id": item["id"], "dimension": item["dimension"], "hit": hit, "answer": answer[:60]}
+        )
     ngram = build_ngram_model()
     return {
         "items": len(rows),
@@ -135,6 +150,18 @@ def main() -> int:
         action="store_true",
         help="PLAN-A-25：把复制回路的加性证据按 UTF-8 位置状态门控（默认关 ⇒ 与冻结链逐位相同）",
     )
+    parser.add_argument(
+        "--max-bytes",
+        type=int,
+        default=MAX_ANSWER_BYTES,
+        help="生成预算，默认 64＝冻结面；PLAN-A-30 §2h 用它跑同装配的双预算档",
+    )
+    parser.add_argument(
+        "--limit",
+        type=int,
+        default=None,
+        help="只取前 N 道题（D/E 混排后取前 N，两臂同一子集）",
+    )
     args = parser.parse_args()
 
     checkpoint = PROJECT_ROOT / args.checkpoint
@@ -145,12 +172,23 @@ def main() -> int:
         if circuit_path is not None and circuit_path.is_file()
         else None
     )
-    control = run_arm(checkpoint, None)
-    treated = run_arm(checkpoint, args.circuit, evidence_utf8_gate=gate)
-    verdict = "A2.4 重测通过（D+E>0 且成句率不塌于对照）" if (
-        treated["correct"] > control["correct"] and treated["correct"] > 0
-        and treated["well_formed_rate"] >= control["well_formed_rate"]
-    ) else "A2.4 重测未通过（如实记录）"
+    control = run_arm(checkpoint, None, max_bytes=args.max_bytes, limit=args.limit)
+    treated = run_arm(
+        checkpoint,
+        args.circuit,
+        evidence_utf8_gate=gate,
+        max_bytes=args.max_bytes,
+        limit=args.limit,
+    )
+    verdict = (
+        "A2.4 重测通过（D+E>0 且成句率不塌于对照）"
+        if (
+            treated["correct"] > control["correct"]
+            and treated["correct"] > 0
+            and treated["well_formed_rate"] >= control["well_formed_rate"]
+        )
+        else "A2.4 重测未通过（如实记录）"
+    )
     report = {
         "format": "taiji-r2-copy-circuit-chat-cap-v1",
         "prereg": "plans/reference/M5_R2_A2_3_PREREG_20260925.md §4-S2（判据沿用）",
@@ -163,20 +201,39 @@ def main() -> int:
         "circuit_sha256": circuit_sha256,
         #: PLAN-A-25：门开/关必须落在件上，否则两份读数看起来像同一次实验。
         "copy_evidence_utf8_gate": gate,
+        #: 两条口径必须落在件上，否则这份读数会被当成"整条答复、预算 256"的那类去比：
+        #: ①生成预算（`PLAN-A-30` §2h 实测同一链同一装配 64→256 会让命中 3→9、成句 13→6）；
+        #: ②成句率量的是 `answer[:60]` **字符前缀**，不是整条答复（与 `probe_taiji_a30_*` 的
+        #:    全文口径不同 ⇒ 两个"成句"不许互换）。
+        "max_bytes": args.max_bytes,
+        "item_limit": args.limit,
+        "well_formed_scope": "answer[:60] 字符前缀（非整条答复）",
         "control_no_circuit": control,
         "treated_with_circuit": treated,
         "verdict": verdict,
     }
-    print(json.dumps({
-        "control_correct": control["correct"], "treated_correct": treated["correct"],
-        "control_well_formed": control["well_formed_rate"],
-        "treated_well_formed": treated["well_formed_rate"],
-        "items": control["items"], "verdict": verdict,
-    }, ensure_ascii=False), flush=True)
-    out = Path(args.out_report) if args.out_report else (
-        PROJECT_ROOT / "reports" / "taiji_r2_copy_circuit_chat_cap_20260925.json")
+    print(
+        json.dumps(
+            {
+                "control_correct": control["correct"],
+                "treated_correct": treated["correct"],
+                "control_well_formed": control["well_formed_rate"],
+                "treated_well_formed": treated["well_formed_rate"],
+                "items": control["items"],
+                "verdict": verdict,
+            },
+            ensure_ascii=False,
+        ),
+        flush=True,
+    )
+    out = (
+        Path(args.out_report)
+        if args.out_report
+        else (PROJECT_ROOT / "reports" / "taiji_r2_copy_circuit_chat_cap_20260925.json")
+    )
     if out.exists():
         from datetime import datetime, timezone
+
         out = out.with_name(f"{out.stem}-{datetime.now(timezone.utc).strftime('%H%M%S')}.json")
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
