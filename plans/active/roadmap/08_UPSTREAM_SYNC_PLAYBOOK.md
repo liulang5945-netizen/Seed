@@ -650,3 +650,8 @@ ode_modulesi…`＝**本仓已登记的 Windows 符号链接权限族**（与 0
 (b) 它们报错的形态是 `this.ctx.layout.beginNavigation is not a function`（该 spec 第 297-304 行给的是**真 `LayoutController`** 并 `ctx.provide('layout', layout)`，同文件第 989 行还能正常调 `b.layout.beginNavigation()`）⇒ **报错位置与被测行为之间的因果我这一轮没查清**，登记为续做者的第一个问题，不当结论。
 (c) **本轮处理**：补丁精确回退（反向 python，`rc=0`），复跑该 spec 回到 **`Tests 6 failed|59 passed`→（回退后）基线**，`git status -- packages/client/ui-workspace` 空。⇒ 主线不留"产品改一半、6 条规格钉旧行为"的树；面内红文件仍 **5**。
 (d) **给续做者的最短路径**：① 先答 (b) 那个 `beginNavigation` 因何触发（改一处 `navigation.ts:388` 条件即可复现）；② 同批重写上述 6 条到"prepares but does not select"的新契约；③ 重跑 `build:web` 后跑那 3 条 aria lane——**按裁定它们应直接对上、不需要刷金样**（这是本裁定最强的可验证后果）；④ 若 ③ 里有金样仍差行，那说明"默认工作区"还有别的露出面，回到 (a) 的范围重估。
+
+㉒ **单元面一条既存红的定性（不是我的调用方式，也不是我造成的）＋我把两包名写宽了要更正**（2026-09-28）。
+(a) 更正 ㉐/㉑ 的一处口径：我写的"基线 `1 failed｜1254 passed`"来自 `vitest run packages/client/ui-workspace packages/client/ui-sidebar`，而这**匹配到了 `ui-sidebar-documentpreview`／`ui-sidebar-browser` 等兄弟包**（实际 `Test Files 100 / Tests 888`），所以"那 1 条在 ui-sidebar"的说法不准确——它在 **`packages/client/ui-sidebar-documentpreview/tests/document-preview-license-bundle.client.spec.ts > published document preview licenses > keeps bundled licenses in the packed lazy chunks`**。
+(b) **它不是"我 `pnpm exec` 少了 env"**：原文（用 `pnpm exec vitest` 跑）是 `Error: npm_execpath is required to run pnpm on Windows`（该 spec `:38` 自己抛的）。为排除调用口径，我改用**门自己的命令** `corepack pnpm run test -- <该文件>` 复跑，结果仍是 **`(1 test | 1 failed)`** ⇒ 与调用方式无关。
+(c) **但这条红的真因我这次没拿到**：那条命令先跑 `build:native-system`，耗时后我在它打印 `Failed Tests` 明细之前**主动终止了运行**（它同时在跑全套），所以"在门命令下的具体错文"是缺的。**结论只能写到这一层**：这是一条**在两种调用下都失败的既存单元面红**，与本轮改动无关，**其错因待单独取**。⇒ 记为 **U1**，不进 H1/H7 那条链。
