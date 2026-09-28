@@ -172,7 +172,12 @@ describe.skipIf(MODE === 'record')('web e2e: GitHub ready-for-review', () => {
       create.mockRestore()
       off()
     }
-    expect(scaffold.ctx.agents.list()).toHaveLength(before + 1)
+    // The Hero opens its own Session at boot, so total roster growth is not a usable signal;
+    // attribute by provenance instead — exactly one Agent may own webhook input.
+    expect(scaffold.ctx.agents.list().filter(candidate => (
+      candidate.session.snapshotEvents().some(event => (event.type === 'user/message'
+        && event.data.source.kind === 'webhook'))
+    ))).toHaveLength(1)
     expect(adapter.requests).toHaveLength(1)
 
     const agent = scaffold.ctx.agents.list().find(candidate => candidate.session.header.cwd === scaffold.workspaceCwd)

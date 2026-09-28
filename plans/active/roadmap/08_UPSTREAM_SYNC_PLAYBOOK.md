@@ -586,3 +586,11 @@ ode_modulesi…`＝**本仓已登记的 Windows 符号链接权限族**（与 0
 (b) ㊇ 的替代修法（撤拦截，`:175` 改成只数 `!agent.session.blank` 的 Agent，意图"把 Hero 自动开的那条空白会话排除在外"）：**实测失败**——仍是 `expected … length of 1 but got 2`，即**自动开的那条会话在该时刻已经不是 blank**，`blank` 不是可用的身份谓词。⇒ 我的归因（多出一个 Agent ＝ 自动开的空白会话）**方向仍成立**（同 lane 的两条 ingress 隔离断言都过、单跑确定性复现），但**"怎么把它从计数里剔出去"未解**。
 (c) **止损动作**：`git show 60e1c94c:<lane>` 的字节写回工作树并核对（`git status` 该文件在我这次撤回后与 HEAD 差一笔待提交的回退），**撤掉 ㊅ 的拦截与 ㊇ 的 blank 过滤**，lane 回到 `:175` 原始红形态。理由：与其留一个"我造的 diff"或一个不成立的谓词，不如把**已证实的机制**与**未证实的修法**分开登记。⇒ 面内红文件回到 **6**（不变），`github-ready-review` 的 disposition 从"按 W3 口径可修"降级为 **"需要能区分自动会话与 webhook 会话的身份谓词"**（候选：按 `deliveryId`/`ruleId` 归属正向取 webhook 那条、或比 `session.snapshotEvents()` 是否含 webhook 源事件），已按待判入册。
 (d) **给自己立的判据（今天第三次同类）**：谓词要**先证它能区分**再拿去改断言——我这次是"想到一个字段就写进断言"，`blank` 的语义（是否已被首条消息出白）我并未在该时刻验证。下次顺序应是：先探针打印两条 Agent 的候选谓词值，**再**选谓词。
+
+㊈ **H4 落地：`github-ready-review` 的修法用**探针证出来的谓词**，并否证我 ㊆(b) 的怀疑（2026-09-28）**。
+(a) **先证再改**：在失败的 `:175` 前把两条 Agent 的身份字段打出来（第一次尝试因把 `'\n'` 写进 JS 字符串被工具吃掉一层反斜杠 ⇒ `PARSE_ERROR: Unterminated string`、**采集 0 条**——按新判据"能否解析出结构化读数"当场就知道探针没跑到；改走"读数塞进断言消息"后拿到）：
+    - `sid=session-04092301-…`，`cwd=…\Documents	aiji-harness\Default workspace`，`events=3`，**webhook 源事件 0**，status `idle` ⇒ 就是 Hero 自动开的那条（**它已有 3 个事件，所以 ㊇ 的 `blank` 谓词必然失效**，这次算是把失效原因钉死了）；
+    - `sid=webhook-efab5a8c-…`，`cwd` ＝工作区根，**webhook 源事件 1**，status `running` ⇒ ingress 带来的那条。
+(b) **改法（不动金样、不用拦截）**：`:175` 从"总数 `before + 1`"改成**按来源归因**——`agents.list().filter(a => a.session.snapshotEvents().some(e => e.type === 'user/message' && e.data.source.kind === 'webhook'))` 长度为 1。⇒ **计数断言过了**，lane 往前走。
+(c) **否证我自己**：在**默认装配姿态**（无 `page.route` 拦截）下第一次执行到 `:200` 的金样比对，**照样红**，diff 仍只有 `+ - treeitem "Default workspace" [expanded]` 一行。⇒ ㊆(b) 那句"很可能是我的拦截改变了装配输出"**错**：那行组行是装配本身就有，与拦截无关。同时这也说明 ㊅(c) 的拦截修法只是把同一件事提前撞上了。
+(d) **剩余这一格是什么**：`EXPECTED`＝`apps/web/tests/expected/github-ready-review/conversation.expected.md`，其结构是 `tree` ＋ `---` ＋ `conversation`（`captureStableAria(page, '[role="tree"][aria-label="Sessions"]')` 捕的是**整棵树**），所以启动会话的 "Default workspace" 组行必然进金样。**三条出路**：(甲) 重录这一份金样（新增的是一行稳定的产品组名、非本机路径，噪声风险低）——**刷金样是你的排期动作，我没做**；(乙) 把该 lane 的 tree 捕获范围缩到目标工作区子树——但那等于为过而改断言面，声称强度下降，我不推荐；(丙) 维持红并把它记成"上游金样对 ⑱/㊺ 机制过期"。**面内红文件不变（6），但这条 lane 的形态已从"两处未知"收敛为"一处已知的一行金样差异"**。
