@@ -445,3 +445,16 @@ Error [ERR_MODULE_NOT_FOUND]: Cannot find package '@taiji/cordis' imported from
 **(c) 读数**：`vitest run packages/client/ui-sidebar/tests/sidebar-snapshot.client.spec.tsx packages/client/ui-primitives packages/client/ui-brand-official` ⇒ **57 文件／1203 用例全绿**；快照按 `-u` 重录，diff **只 4 行**（四处记号 `d=` 值），`git status` 复确认**没有别的 `.snap`/`expected/` 被顺手改掉**（这条必须查：批量 `-u` 会把别的真实回归一起洗白）。接线前的首跑是 `190 绿／2 红（5 用例）`，5 条红的来源都清楚：4 条＝该快照（预期内），1 条见 (d)。
 **(d) 一条仍未结清的归属问题（别当已验）**：`packages/client/ui-sidebar-documentpreview/tests/document-preview-license-bundle.client.spec.ts` 在**两种直跑方式**下都红，报错是 `npm_execpath is required to run pnpm on Windows`（该 spec 自己 shell out 给 pnpm，`corepack pnpm exec vitest run …` 也没带上这个变量）。⇒ 它要经**该包自己的 `test` 脚本**跑；本轮没跑到那条入口，所以**既不能记成绿、也不记成产品缺陷**，与 08 §6 ⑧"bundle 名册需经 pnpm 入口"同一族。**与本次记号改动无关的证据**：失败发生在测试自己的 `runPnpm` 前置检查（第 38 行），根本没到断言。
 **(e) 栅格资产仍按母版重出，不用 SVG**：`design/build_desktop_icons.py`（㉜）与 `design/icons/build_icons.py` 是产物图标的事实来源；本轮换的是**矢量面**（favicon／wordmark／`resources/icon*.svg`／in-app 记号）。`website` 与 `apps/web` 的 `manifest`/title 文案不受影响。
+㊴ **一条操作教训＋一个不能当基线的数（2026-09-28）**。我想给单条 lane 重录快照，跑的是
+`corepack pnpm exec vitest run -u packages/client/ui-sidebar/tests/sidebar-snapshot.client.spec.tsx`，
+结果它**跑的是整个客户端面**：`Test Files 60 failed｜1589 passed｜15 skipped (1664)`、
+`Tests 342 failed｜32938 passed｜1 expected fail｜141 skipped (33422)`，`UPDATE_RC=1`。
+- **为什么不是基线**：这一跑与 `package:desktop:win:x64:unsigned`、`vitest.web.config` 的 75 条并发批次**同时在跑**
+  （⇒ 超时类红的负载解释成立与否未验），且 `pnpm exec` 自身还带一次隐式 install。⇒ **只登记"发生过"，不登记"面是红的"**；
+  要拿客户端面当判据，必须空机重跑并按 ⑲ 的老规矩**逐条分堆归因**（见 [[log-grouping-must-parse-per-block]]）。
+- **必须报的安心项**：跑完立刻 `git status -uall` 对账，**`.snap`／`expected/`／`__snapshots__`／`.i18n.yaml` 被改动数＝0**
+  ⇒ 这次 `-u` **没有把别的失败顺手写成"新基线"**（这正是批量 `-u` 的固有风险，也是我先在 ㊳(c) 立的那条检查）。
+- **为什么记号改动不可能弄红 60 个文件**：`git grep` 全仓只在我换掉的 8 个持有处里有旧几何字符串，
+  **测试件与金样里 0 命中**；且专门跑 `ui-sidebar` 快照 spec＋`ui-primitives`＋`ui-brand-official`＝**57 文件／1203 用例全绿**（㊳(c)）。
+- **可复用的操作口径**：给单条 lane 重录快照要**用它自己包的 test 入口**（root `vitest run -u <路径>` 在 pnpm 入口下不接位置参数过滤），
+  或先确认汇总行的文件数就是你要的范围再 `-u`；**`-u` 之后无条件 `git status` 对账**。
