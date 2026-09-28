@@ -117,6 +117,7 @@ def main() -> int:
     )
     parser.add_argument("--manifest", default=str(MANIFEST))
     parser.add_argument("--limit", type=int, default=24)
+    parser.add_argument("--offset", type=int, default=0)
     parser.add_argument(
         "--chain",
         choices=("raw_masked", "surface"),
@@ -140,9 +141,10 @@ def main() -> int:
     manifest = Path(args.manifest)
     if not manifest.is_absolute():
         manifest = PROJECT_ROOT / manifest
-    items = json.loads(manifest.read_text(encoding="utf-8"))["dimensions"]["X"]["items"][
-        : args.limit
-    ]
+    all_items = json.loads(manifest.read_text(encoding="utf-8"))["dimensions"]["X"]["items"]
+    #: `--offset` 给"第二次独立取数"用：同一把尺子换一段没量过的题面，
+    #: 才撑得住"默认位"这种要写进产品默认的结论（一次取数只能记指示）。
+    items = all_items[args.offset : args.offset + args.limit]
 
     arms = [run_arm(items, checkpoint, circuit, penalty, args.chain) for penalty in penalties]
     label = (
@@ -156,6 +158,8 @@ def main() -> int:
         "checkpoint": args.checkpoint,
         "circuit": circuit,
         "items": len(items),
+        "item_offset": args.offset,
+        "first_item": items[0]["id"] if items else None,
         "base_sha256_unchanged": _sha256(checkpoint) == sha_before,
         "arms": [{k: v for k, v in arm.items() if k != "per_item"} for arm in arms],
         #: 判读线（先看线再看数）：循环率要降，**且**严格命中不许掉过 ≥3 条的分辨率线；
