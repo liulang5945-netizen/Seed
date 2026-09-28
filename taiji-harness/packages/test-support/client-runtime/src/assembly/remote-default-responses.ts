@@ -50,5 +50,11 @@ export const remoteDefaultResponses: RemoteTable = {
     'account/watch': openStream([{ status: 'signed-out', attempt: null, links: { usageUrl: 'https://platform.deepseek.com/usage', topUpUrl: 'https://platform.deepseek.com/top_up' } }]),
     // api-workspace-controller client `apply`: the follow stream's opening baseline, then open.
     'workspace/follow': openStream([{ type: 'baseline', value: { items: [], archivedSessionIds: [], pinnedSessionIds: [] } }]),
+    // api-life-controller client `createLifeStateStream`: the fork's Life panel opens `life/follow`
+    // at boot and requires a `baseline` frame carrying a LifeSnapshot before any update lands.
+    'life/follow': openStream([{ type: 'baseline', value: {
+      source: 'absent', observedAt: '2026-01-01T00:00:00.000Z', fresh: false, pollIntervalMs: 5000,
+      training: { isTraining: false, pauseRequested: false, stopRequested: false, publishing: false },
+    } }]),
   },
 }
