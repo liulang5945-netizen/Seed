@@ -655,3 +655,11 @@ ode_modulesi…`＝**本仓已登记的 Windows 符号链接权限族**（与 0
 (a) 更正 ㉐/㉑ 的一处口径：我写的"基线 `1 failed｜1254 passed`"来自 `vitest run packages/client/ui-workspace packages/client/ui-sidebar`，而这**匹配到了 `ui-sidebar-documentpreview`／`ui-sidebar-browser` 等兄弟包**（实际 `Test Files 100 / Tests 888`），所以"那 1 条在 ui-sidebar"的说法不准确——它在 **`packages/client/ui-sidebar-documentpreview/tests/document-preview-license-bundle.client.spec.ts > published document preview licenses > keeps bundled licenses in the packed lazy chunks`**。
 (b) **它不是"我 `pnpm exec` 少了 env"**：原文（用 `pnpm exec vitest` 跑）是 `Error: npm_execpath is required to run pnpm on Windows`（该 spec `:38` 自己抛的）。为排除调用口径，我改用**门自己的命令** `corepack pnpm run test -- <该文件>` 复跑，结果仍是 **`(1 test | 1 failed)`** ⇒ 与调用方式无关。
 (c) **但这条红的真因我这次没拿到**：那条命令先跑 `build:native-system`，耗时后我在它打印 `Failed Tests` 明细之前**主动终止了运行**（它同时在跑全套），所以"在门命令下的具体错文"是缺的。**结论只能写到这一层**：这是一条**在两种调用下都失败的既存单元面红**，与本轮改动无关，**其错因待单独取**。⇒ 记为 **U1**，不进 H1/H7 那条链。
+
+㉓ **H7 的范围问题必须先问清：boot 时"替用户开会话"有三条独立路径，我第一版补丁只挡住一条**（2026-09-28，补丁已回退，该 spec 回到 `Tests 65 passed (65)`，`packages/client` 零改动）。
+`packages/client/ui-workspace/src/client/navigation.ts` 的启动恢复序列里：
+- **P1 `:376-379 reuseBlank(...)`**——启动列表里已有一条空白会话且它属于当前工作区时，**直接把它拿回来当当前会话**（不新建，但仍是"替你选中"）；
+- **P2 `:383-387 initializeDefaultWorkspace()` 之后 `:388 connectWorkspace(target)`**——**一个工作区都没有**时，建默认工作区**并立刻在里面开一条新会话**；
+- **P3 `:388` 的另一种进入方式**——工作区**本来就存在**（`recentWorkspace`/上一个会话的工作区），没有当前会话时同样 `connectWorkspace` **新建并打开**一条。
+**关键校正**：㊺/㊈/㊌ 在 e2e 里撞到的那条其实是 **P3**（`launchWebScaffold` 已注册工作区，所以 `target` 来自 recent，不经过 P2 的 provisioning 分支）。⇒ **我第一版补丁（只挡 P2）对 web lane 那三条金样红可能完全无效**，这一点已被"该 spec 里 P3 相关的 3 条也红"间接印证，但**我还没在 web 面上验证过**——不拿它当结论。
+**要请你定的就是范围**：H7 的"首启不自动开"是只管 **P2**（客户端自己建的工作区不顺手开会话），还是 **P2＋P3**（boot 时只要没有当前会话就不新建、交给 Hero 手势），还是 **P1＋P2＋P3**（连"把已存在的空白会话拿回来"也不做，那会改变 reload 后的会话保持行为，牵动更广）。三种范围对应的产品后果不同（尤其 P1 关系到刷新后是否还停在同一条会话上），单元测试要改的条数也不同（P2＝3 条，P3 再＋3 条，P1 另计）。
