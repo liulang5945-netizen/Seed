@@ -62,6 +62,36 @@
    ⇒ 不去重会把占比系统性放大近一倍。**不相等则响亮记冲突**（本件已实现，两臂 `conflicts: []`）。
 5. 丙 的动作**不在本件**：等矩阵出来单独批。
 
+### 1.4 乙档已跑（2026-09-28）＋ 丙档的结论：**没有对象可收敛**
+
+仪器 `scripts/training/probe_taiji_a27_walked_ledger.py`（**不改产品源码**：对**实例**打方法包装、
+`__dict__` 里留痕、跑完删掉）。读数件 `reports/taiji_a27_walked_ledger_20260928.json`；
+守卫全 true：基座 sha 不变、**插桩行为中性**（插桩与不插桩下 `generate` 输出逐字节相同）、每入口有分母。
+
+五种入口 × 26 个可选零件（`seed_beta`，未挂复制回路）：
+
+| 读数 | 值 |
+|---|---|
+| **未装配**的零件 | **19 / 26**（多因默认关：执行器、规划、语言器官、内容选择、程序记忆、稳态、世界动力学、工作区路由、语义记忆、程序序列记忆、可供性、生成控制、可选情节器官，以及 5 个"同活多候选"件） |
+| 装配了的 | `fabric`、`motor`、`predictive_readout`、`predictive_context`、`memory`、`identity_organ`（＋挂载时的 `copy_circuit`） |
+| `memory.write` | **五个入口全 0** ⇒ §23 的"写入口从来没被触发"在**整张入口表**上成立 |
+| `motor` | 只在 `observe_action` 被走到；`generate`／`chat`／`observe_predictive` 全 0 |
+| `consolidate` 入口 | **根本跑不起来**：`RuntimeError: consolidation requires at least one episodic write`（§23 门槛②的直接复现，本表如实记进 `blocked_by_entry`） |
+
+**一条必须带的口径陷阱**：本表记的是各零件**学习/写方向的代表方法**（`methods_by_part` 列了名字）。
+所以在**只读入口**（`generate`／`chat`）上，`learn` 类计数为 0 **不代表该零件没被使用**，
+只代表这一趟没写它。要判"用没用"得看读方向的入口（`probabilities`／`encode`／`recall`）——
+**这是本表的已知局限，未修**（写进 §1.5）。
+
+**⇒ 丙档（收敛）的结论：当前没有可做的收敛动作。**
+我此前担心的"同一件活有好几个候选同时挂着"在**代码里**成立，但在**运行时**不成立：
+那些候选（`gated_temporal_candidate`／`adaptive_residual_bridge`／`adaptive_residual_shadow`／
+`response_plan_readout`／`developmental_f1_bundle`）**全部是"未装配"**，没有任何两套同时在场。
+所以"要不要精简/整合"的正确答复是：
+* **不需要删零件**（未装配的 19 个是**未启用的能力**，属路线图，不是债）；
+* **也没有可合并的重复**（没有两套同时挂着）；
+* 真正该记账的是**两行**：`memory.write` 全 0（写入口不存在）＋ `consolidate` 入口被前置门挡住。
+
 ---
 
 ## 2. 战线二：发射侧诊断——"较新那条告知发不出来"
