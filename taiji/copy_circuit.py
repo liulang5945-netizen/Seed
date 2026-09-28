@@ -37,6 +37,30 @@ from .utf8_state import utf8_allowed
 #: 与 predictive_readout 同款纪律：独立 generator，器官的引入不得重播既有拓扑的随机流。
 COPY_CIRCUIT_SEED_OFFSET = 0x2C0C_5017
 
+#: `_serialize` 的轮次标记（与 `api.seed_runtime` 同一份文本形状；此处不 import api，防环）。
+_QUESTION_MARKER = "问：".encode("utf-8")
+_ANSWER_MARKER = "\n答：".encode("utf-8")
+
+#: 锁规则档（PLAN-A-27 §2.6.5，owner 裁定 (d)）。`cue_only`＝旧缺省；`byte_overlap`＝新默认。
+LOCK_RULES = ("cue_only", "byte_overlap")
+
+
+def last_question_bytes(serialized: bytes) -> bytes:
+    """从 `_serialize` 铺出的整段对话文本里取**最后一个提问轮**的字节。
+
+    PLAN-A-27 §2.6.3 的口径修正：`generate` 原来把**整段序列化文本**当
+    `query_bytes` 传给 `lock_selection`，于是"与提问共享字符"实际是"与整段对话
+    共享字符"——两条告知都在整段里 ⇒ 内容侧特征**无区分度**（定价实测的头号嫌疑）。
+    本函数取最后一个 ``问：`` 之后、其配对 ``答：`` 之前的段（没有标记时原样返回）。
+    """
+
+    cut = serialized.rfind(_QUESTION_MARKER)
+    if cut < 0:
+        return serialized
+    start = cut + len(_QUESTION_MARKER)
+    end = serialized.find(_ANSWER_MARKER, start)
+    return serialized[start:end if end >= 0 else len(serialized)]
+
 
 @dataclass(frozen=True)
 class ToldEvent:
@@ -375,13 +399,25 @@ class CopyCircuit:
             )
         matrix = torch.stack([row["features"] for row in rows])
         head = matrix @ self._parameters["selector_weight"] + self._parameters["selector_bias"][0]
-        scores = matrix[:, 0] + head
+        rule = self.config.lock_selection_rule
+        if rule == "byte_overlap":
+            #: PLAN-A-27 §2.6.5（owner 裁定 (d)）：纯"与提问共享字符"列。无参数、
+            #: 两电路逐位相同；真跑 30/104 对 cue_only 的"位置尺子"形态。
+            scores = matrix[:, 2]
+        elif rule == "cue_only":
+            #: 旧缺省（cue 余弦＋学习头）——实测 ≈90% 选最早那条告知。
+            scores = matrix[:, 0] + head
+        else:
+            raise ValueError(
+                f"unknown lock_selection_rule {rule!r}; known: {LOCK_RULES}"
+            )
         picked = 0
         for index in range(1, int(scores.numel())):
             if float(scores[index]) > float(scores[picked]):
                 picked = index
         return {
             "query_bytes": bytes(query_bytes),
+            "rule": rule,
             "event_ids": [row["event_id"] for row in rows],
             "features": matrix,
             "head_values": head,

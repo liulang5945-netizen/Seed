@@ -46,7 +46,15 @@
 > "模型自己写对字节"首次被证实（SPEC-R2-02 产品掩码保留作兜底）。
 > ②`PLAN-A-27` §2.6.5 apply-rule 真跑：换锁规则 **byte_overlap 30/104／overlap_plus_content 35（A）29（B）**
 > 对 natural 17–21 ＝ **零训练 +9～14**，§2.6.4 的翻转坐实。
-> **owner 裁定项**：(a) 位置输入设主线训练默认；(b) A2.5 证据门同批纳入；(c) P-全 16M/臂；
+> **owner 裁定项**：(a) 位置输入设主线训练默认；(b) A2.5 证据门同批纳入；(c) P-全 16M/臂；(d) 锁规则替换产品化且 `--query-scope question` 口径必须随进。
+>
+> **2026-09-28 rev31 续：owner 四项"一项一项弹窗"全批、当日执行——(a)(b)(d) 已落地、(c) 在跑**：
+> (a) 主线训练缺省 `predictive`＋位置输入（smoke 实测两处 config 副本带键）；(b) `enable_copy_circuit`
+> 挂载即开证据门（False 逃生口）；(d) `config.lock_selection_rule` 默认 `byte_overlap`＋
+> `generate` 按规则把 query 换成提问轮（`cue_only` 档逐位保留）。**(c) 首窗即分开**：
+> P1 准确率 0.3305/困惑 2.450 对 P0 0.3207/2.625（34M 档按 PLAN-A-26 §2 复跑判）。
+> **二次事故已复原**：A-4 守卫旧写法在默认翻转后真训覆盖产品件（sha 已从 dist 副本逐位复原）；
+> 加固＝正式跑不显式 `--checkpoint` 即响亮拒绝。
 > (d) 锁规则替换产品化（byte_overlap 无参数／overlap_plus_content 更强）且 `--query-scope question` 口径必须随进。
 
 **A2.3b 已收口（判据②过）＋§4.3 回归门已取到读数（判"未通过"，但卡的不是能力）⇒ 下一步是所有者的一次判据裁定，不是我又开一条实验**。

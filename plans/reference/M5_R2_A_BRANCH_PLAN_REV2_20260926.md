@@ -947,3 +947,23 @@ owner 选"2 之后 3"，SPEC-R2-02 已把解码掩码产品化——产品表层
   路线甲／乙并列并把"未解释增益不开默认"写成硬要求；方法论纪律 8 条与报数字段清单入册。
 * rev1：`03_CURRENT_EXECUTION.md` §三 6–6j（A2.1→A2.8 执行史）。
 
+* **rev10–rev30 执行期补记（2026-09-27/28，另一会话）**：位置输入经 A-4 进主线（含"静默空转"缺陷修复）、
+  `PLAN-A-25` 证据门、`PLAN-A-26` 两臂、`PLAN-A-27` 三战线与锁规则定价两轮——详见各件与 `PLAN_INDEX` rev14–rev30。
+* **rev31（2026-09-28，owner 四项裁定"一项一项弹窗"全批，当日执行）**：
+  ① **(a) 位置输入设为主线训练默认**：`train_seed_corpus.py` 缺省 `--readout predictive`＋
+  `--readout-position`（提供 `--no-readout-position`/`--readout action` 逃生口；`--smoke` 实测档内
+  两处 config 副本均带该键）。② **(b) 证据门同批纳入**：`SeedRuntime.enable_copy_circuit` 挂载即
+  `set_copy_evidence_utf8_gate(True)`（`utf8_gate=False` 逃生口；门是运行时覆写不进 payload）。
+  ③ **(c) P-全 16M×2 臂已起跑**（`a26full_p0/p1`，18M 档热启动再 16M；首窗即分开：
+  P1 准确率 0.3305／困惑 2.450 对 P0 0.3207／2.625）。④ **(d) 锁规则产品化**：
+  `config.lock_selection_rule`（默认 `byte_overlap`）＋`selection` 分派＋`generate` 按
+  规则把 query 换成**提问轮**（`last_question_bytes`）；`cue_only` 档逐位保留旧路径。
+  ⑤ **二次事故与加固（同日）**：A-4 守卫测试旧写法 `argv=[--readout-position]` 在默认翻转后
+  **真的开训并把产品件 `checkpoints/seed_corpus.pt` 覆盖**（§6.6 同款、同日第二撞）——
+  已从 `dist/Seed/_internal/` 打包副本**逐位复原**（sha `c8025db44c65…` 核对），
+  进度流污染行裁剪（不保证穷尽，该流未入账）；测试改为测"显式 `--readout action` ⇒ parser.error"
+  （训练循环前退出）；**加固旗标**：正式跑不显式给 `--checkpoint` 即响亮拒绝
+  （`--i-accept-default-product-checkpoint` 为显式确认口）。
+  守卫：新增 `test_lock_rule_byte_overlap.py` 5 条、A-4 守卫更新后 14 条、
+  证据门 15 条、utf8-strict 6 条全绿；生成/语言/电路定向回归 166 条绿。
+  **owner 裁定项状态**：(a)(b)(d) 已执行；(c) 在跑；P-全判据＝PLAN-A-26 §2 同款（16M 后复跑 F0/v3）。

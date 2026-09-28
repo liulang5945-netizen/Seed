@@ -325,11 +325,17 @@ class SeedRuntime:
         parts.append(f"问：{prompt}\n答：")
         return "\n".join(parts)
 
-    def enable_copy_circuit(self, payload_path: str | Path, *, max_events: int = 4) -> None:
+    def enable_copy_circuit(
+        self, payload_path: str | Path, *, max_events: int = 4, utf8_gate: bool = True
+    ) -> None:
         """A2.4 协议开闸（显式 opt-in）：挂载复制回路并载入训练后参数。
 
         不默认开启——产品基座加载路径零变化；调用后 ``chat`` 在生成前把
         历史用户轮写入剪贴板（见 ``_record_told_history``）。
+        ``utf8_gate=True``（**2026-09-28 owner 裁定 (b) 起的默认**，PLAN-A-25）：电路的
+        加性证据按 UTF-8 位置状态门控——修掉"电路一挂、合法性就被打回去"的回归
+        （门开实测真非法率 93%→0%）。``utf8_gate=False`` 是显式逃生口（对照/复现用）；
+        门状态是运行时覆写，不进任何 payload。
         """
         import torch
 
@@ -339,6 +345,7 @@ class SeedRuntime:
                 substrate.mount_copy_circuit(max_events=max_events)
             payload = torch.load(payload_path, weights_only=False)["copy_circuit"]
             substrate.copy_circuit.load_payload(payload)
+            substrate.set_copy_evidence_utf8_gate(bool(utf8_gate))
 
     def _record_told_history(self, circuit: Any, history: Sequence[tuple[str, str]] | None) -> None:
         """A2.4：生成前把历史用户轮写进剪贴板（实现见 ``record_told_history``）。"""

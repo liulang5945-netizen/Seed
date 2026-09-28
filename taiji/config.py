@@ -235,6 +235,13 @@ class TaijiConfig:
     #: **默认 False ＝ 现行行为，逐位不变**（不给状态、不掩码、状态 payload 不含 lead 键）。
     copy_evidence_utf8_gate: bool = False
 
+    #: PLAN-A-27 §2.6.5（owner 2026-09-28 裁定 (d)）：`lock_selection` 的事件选择规则。
+    #: * `"cue_only"`＝旧缺省（cue 余弦＋学习头）——实测是一把"位置尺子"（≈90% 选最早那条）；
+    #: * `"byte_overlap"`＝**新默认**：按"与提问轮共享字符"选事件（无参数、两电路逐位相同），
+    #:   真跑 30/104 对 natural 17–21（零训练 +9～13）。
+    #: 配套：`generate` 在此档下把 query 换成**提问那一轮**（整段对话会让内容特征无区分度）。
+    lock_selection_rule: str = "byte_overlap"
+
     memory_units: int = 192
     memory_fan_in: int = 32
     memory_readout_fan_in: int = 48

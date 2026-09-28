@@ -26,7 +26,7 @@ from .adaptive_residual_growth import (
 )
 from .adaptive_residual_shadow import AdaptiveResidualShadow
 from .config import TaijiConfig, validate_episodic_learning_target
-from .copy_circuit import CopyCircuit
+from .copy_circuit import CopyCircuit, last_question_bytes
 from .developmental_synapse import (
     DevelopmentalReplayBuffer,
     DevelopmentalReplayEvent,
@@ -3085,10 +3085,17 @@ class Taiji:
         if circuit is not None and circuit.store.count > 0:
             #: A2.5 §1.2：事件选择只算一次——就在"提问喂完"这一刻的皮质态与运动语境上，
             #: 整轮固定。逐步重挑实测让 32.2% 的答案步挑到别的告知（`SPEC-A-17` §14）。
+            #: query 口径（PLAN-A-27 §2.6.5，owner 裁定 (d)）：内容侧规则（byte_overlap）
+            #: 必须喂**提问那一轮**——整段对话让"与提问共享字符"无区分度；
+            #: cue_only 档保持旧口径（逐位不变）。
+            if self.config.lock_selection_rule == "byte_overlap":
+                lock_query = last_question_bytes(bytes(prompt))
+            else:
+                lock_query = bytes(prompt)
             circuit.lock_selection(
                 cue=self.cortical_cue(),
                 f1_context=self._state.motor_context,
-                query_bytes=bytes(prompt),
+                query_bytes=lock_query,
             )
         try:
             generated = bytearray()

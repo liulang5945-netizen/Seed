@@ -184,3 +184,40 @@ def test_gate_on_keeps_mount_bitwise_inert_when_store_is_empty() -> None:
     gated = _model(copy_evidence_utf8_gate=True)
     gated.mount_copy_circuit()
     assert torch.equal(_feed(plain, ASK), _feed(gated, ASK))
+
+# ---------------------------------------------------------------- 守卫 6：默认纳入（owner 裁定 b，2026-09-28）
+
+
+def test_enable_copy_circuit_turns_the_gate_on_by_default(tmp_path: Path) -> None:
+    """owner 裁定 (b)：`SeedRuntime.enable_copy_circuit` 挂载即开门（PLAN-A-25 收编为默认）。
+
+    门是运行时覆写、不进 payload ⇒ 断言覆写位；逃生口 `utf8_gate=False` 必须真的关掉。
+    """
+
+    import json
+
+    from api.seed_runtime import SeedRuntime
+
+    model = Taiji(_config())
+    # 造一份最小电路 payload（沿用训练器的 to_payload 形状）。
+    model.mount_copy_circuit(max_events=4)
+    payload_path = tmp_path / "circuit_payload.pt"
+    payload_path.write_bytes(
+        json.dumps({"placeholder": True}).encode("utf-8")
+    ) if False else torch.save({"copy_circuit": model.copy_circuit.to_payload()}, payload_path)
+
+    runtime = SeedRuntime.__new__(SeedRuntime)  # 不走完整 provider 装配
+    runtime.model = model
+    runtime._lock = __import__("threading").Lock()
+    model.substrate = model  # Taiji 自身即 substrate（测试桩；产品里是 TSKV8Adapter）
+    runtime.enable_copy_circuit(payload_path)  # 默认 utf8_gate=True
+    assert model._copy_evidence_utf8_gate_override is True
+
+    model2 = Taiji(_config())
+    model2.mount_copy_circuit(max_events=4)
+    runtime2 = SeedRuntime.__new__(SeedRuntime)
+    runtime2.model = model2
+    runtime2._lock = __import__("threading").Lock()
+    model2.substrate = model2
+    runtime2.enable_copy_circuit(payload_path, utf8_gate=False)  # 逃生口
+    assert model2._copy_evidence_utf8_gate_override is False

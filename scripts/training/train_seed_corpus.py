@@ -367,7 +367,13 @@ def main() -> None:
         "--checkpoint",
         default=None,
         help="落盘路径；缺省见 `default_output_paths`：正式跑＝`checkpoints/seed_corpus.pt`，"
-        "`--smoke`＝`output/seed_corpus_smoke.pt`（**冒烟绝不碰产品件**）",
+        "`--smoke`＝`output/seed_corpus_smoke.pt`（**冒烟绝不碰产品件**）。"
+        "2026-09-28 起：正式跑不显式给 `--checkpoint` 会被**响亮拒绝**（防产品件被意外覆盖）。",
+    )
+    parser.add_argument(
+        "--i-accept-default-product-checkpoint",
+        action="store_true",
+        help="显式接受「正式跑缺省写靶＝产品件」这一行为（2026-09-28 加固旗标；日常应改用 --checkpoint）。",
     )
     parser.add_argument(
         "--progress",
@@ -410,18 +416,26 @@ def main() -> None:
     parser.add_argument(
         "--readout",
         choices=("action", "predictive"),
-        default="action",
-        help="哪条读出链在学：`action`（默认，与既有行为逐位相同，训 F4／运动解码器）或 "
-        "`predictive`（训 F1 预测读出＋私有时间语境）。A 支线的已证部件（位置输入等）"
-        "都挂在 F1 链上，故它们在 `action` 档是静默空转。",
+        default="predictive",
+        help="哪条读出链在学：`predictive`（**2026-09-28 owner 裁定 (a) 起的主线默认**，训 F1 预测"
+        "读出＋私有时间语境——A 支线已证部件都挂在这条链上）或 `action`（旧缺省，训 F4／运动"
+        "解码器；与 2026-09-27 前行为逐位相同的显式逃生口）。",
     )
     parser.add_argument(
         "--readout-position",
+        dest="readout_position",
         action="store_true",
+        default=True,
         help="PLAN-R2-01：给 F1 读出加一条**显式的 UTF-8 字节位置输入**（4 维 one-hot，"
         "零初始化）。A 支线两臂实测：它把裸通道的字节合法性从 ~0 抬到 100%"
-        "（真非法率 99.0%→0%）、表层成句 0→68。**默认关，现行行为逐位不变**"
-        "（守卫 tests/taiji_native/test_readout_utf8_position.py）。",
+        "（真非法率 99.0%→0%）、表层成句 0→68。**2026-09-28 owner 裁定 (a) 起为主线"
+        "训练默认**；`--no-readout-position` 是显式逃生口（对照/复现旧配方用）。",
+    )
+    parser.add_argument(
+        "--no-readout-position",
+        dest="readout_position",
+        action="store_false",
+        help="关掉位置输入（P0 对照臂/旧配方复现用）。",
     )
     parser.add_argument(
         "--smoke",
@@ -438,9 +452,16 @@ def main() -> None:
             "it is a silent no-op. Pass --readout predictive."
         )
 
-    #: 缺省输出路径：正式跑＝产品件 `checkpoints/seed_corpus.pt`；**冒烟改走 `output/`**
-    #: （2026-09-28 事故：冒烟曾覆盖产品件，见 `default_output_paths`）。
+    #: 二次事故加固（2026-09-28，同日第二撞）：缺省写靶＝产品件 `checkpoints/seed_corpus.pt`，
+    #: 而缺省 readout 已改 `predictive`＋位置输入 ⇒ 任何"只传一两个旗标"的调用（含测试里
+    #: 的 monkeypatch argv）都会**真训并把产品件覆盖掉**。⇒ 正式跑必须显式给 `--checkpoint`
+    #: （或加 `--i-accept-default-product-checkpoint` 的显式确认旗标）；`--smoke` 走 `output/` 不受影响。
     default_checkpoint, default_progress = default_output_paths(smoke=bool(args.smoke))
+    if not args.smoke and not args.checkpoint and not args.i_accept_default_product_checkpoint:
+        parser.error(
+            "refusing to write the product checkpoint by default. Pass --checkpoint "
+            "(e.g. output/<run>/checkpoint.pt) or --i-accept-default-product-checkpoint."
+        )
     checkpoint_path = Path(args.checkpoint) if args.checkpoint else default_checkpoint
     progress_path = Path(args.progress) if args.progress else default_progress
 

@@ -222,9 +222,15 @@ def test_action_readout_leaves_the_f1_position_columns_at_zero() -> None:
 
 
 def test_cli_refuses_position_flag_on_the_action_readout(trainer, monkeypatch) -> None:
-    """响亮失败而不是静默空转：`--readout-position` 必须配 `--readout predictive`。"""
+    """响亮失败而不是静默空转：位置输入（2026-09-28 起缺省开）必须配 `--readout predictive`。
 
-    monkeypatch.setattr(sys, "argv", ["train_seed_corpus.py", "--readout-position"])
+    2026-09-28 二次事故教训：本测试旧写法 `argv=[--readout-position]` 在默认翻转后
+    **真的开训并把产品件覆盖掉**——现在改测"显式 `--readout action`（位置输入缺省开）
+    ⇒ parser.error"，这条路径在进入训练循环**之前**就退出，不落盘。
+    二次加固：正式跑不显式给 `--checkpoint` 也会被响亮拒绝（双保险）。
+    """
+
+    monkeypatch.setattr(sys, "argv", ["train_seed_corpus.py", "--readout", "action"])
     with pytest.raises(SystemExit):
         trainer.main()
 

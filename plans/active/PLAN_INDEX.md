@@ -112,6 +112,19 @@
 屏幕不动 ⇒ 按约定不花那次表层整跑。**键/寻址那侧今天连排三支**：幅度（§17）、聚合（§23）、
 离线好解 transplant（§19/§20）——只剩"要不要动内容表征"这一条**需要签字**的路。
 
+**队首（2026-09-28 rev31）：owner 四项裁定"一项一项弹窗"全批并当日执行——(a)(b)(d) 已落地、(c) P-全 16M×2 在跑**——
+**裁定与执行**：(a) 位置输入设**主线训练默认**（`train_seed_corpus.py` 缺省 `predictive`＋`--readout-position`，
+`--no-readout-position`／`--readout action` 为逃生口；smoke 实测档内两处 config 副本均带键）；
+(b) 证据门**同批纳入**（`enable_copy_circuit` 挂载即开门，`utf8_gate=False` 逃生口）；
+(c) **P-全 16M×2 臂在跑**（`a26full_p0/p1`，18M 档热启动＋16M；首窗即分开：P1 0.3305/2.450 对 P0 0.3207/2.625，
+完成判据＝PLAN-A-26 §2 同款在 34M 档复跑 F0/v3）；
+(d) **锁规则换 `byte_overlap`**（`config.lock_selection_rule` 默认翻转＋`selection` 分派＋generate 按规则把
+query 换成**提问轮** `last_question_bytes`；`cue_only` 档逐位保留）。守卫：`test_lock_rule_byte_overlap` 5 条、
+A-4 守卫更新 14 条、证据门 15 条、utf8-strict 6 条、定向回归 166 条全绿。
+**二次事故（同日，已复原＋加固）**：A-4 守卫旧写法在默认翻转后真训并覆盖产品件 `checkpoints/seed_corpus.pt`
+（§6.6 同款第二撞）——已从 `dist` 打包副本逐位复原（sha 核对），测试改测"显式 `--readout action` ⇒ parser.error"，
+**加固**：正式跑不显式 `--checkpoint` 即响亮拒绝（`--i-accept-default-product-checkpoint` 显式确认口）。见 PLAN-A-24 §11 rev31。
+
 **队首（2026-09-28 rev30）：两件在飞全部出数 ⇒ ①`PLAN-A-26` 判**分支 1（位置输入是主线配方上的真部件）**；②`PLAN-A-27` §2.6.5 apply-rule 真跑**坐实翻转**（零训练换锁规则 +9～14 命中）——两项各余 owner 裁定**——
 ①**`PLAN-A-26` 判读**（判读件 `taiji_f0_a26_{p0,p1}`／`taiji_a26_{p0,p1}_surface_v3`，判读写入 [PLAN-A-26 §7](../reference/PLAN-A-26_mainline_position_input_pilot_20260928.md)）：
 **主-1**（切尾感知 F0 ≥0.5）：P1 **1.000／1.000**（T1a/T1b，体内非法字符 **0.00**/条）对 P0 0.375（体内 2–5/条）⇒ **过**；
