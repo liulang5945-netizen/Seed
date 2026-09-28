@@ -420,3 +420,21 @@ deps: { neverBundle: ['electron'], alwaysBundle: [/^@taiji\//] },
 
 ⇒ **对 M6 收官的净影响**：R8 这一勾**已从"构建层"升级为"系统级"**；D2「装起即用」的**系统级读数成立**（只差"发一回合"这一格）；D1「打包跑通」仍被 **R7（且只卡在 xlsx）** 挡最后一步。
 
+
+## 11 · 2026-09-28 收官状态表（按 §1 四条判据＋08 §5 复验集口径；逐行带读数与出处）
+
+| 项 | 此刻能否声称 | 证据（日期＝2026-09-28，出处＝08 ㉗㉘㉙㉚㉛㉜㉝㉞） |
+|---|---|---|
+| **D1 打包跑通** | **半句**：`pnpm run build` rc=0，但 `package:win:x64:unsigned` 末步 office 冒烟仍卡 `xlsx→PDF`（R7） | ㉜(a) 修掉品牌轮漏改的 `LINK_BLUE`（此前 `build:lib` 直接 exit 2＝**整条构建红**）；R7 待查 asar 下 LibreOffice profile |
+| **D2 装起即用** | **系统级成立，缺"发一回合"一格** | 09-27 真启动：错误框消失、`dsh-desktop-host` 被应用亲手拉起、host 监听 19387、`GET /` 401；本轮补**冷装**证据：`git archive` 无 node_modules 两棵树各跑 `pnpm install --frozen-lockfile` ⇒ 新锁 rc=0／22.8s／335 包且锁未被改写（㉚(a)） |
+| **D3 默认 provider＝Taiji** | **成立**（装机默认 `taiji-local`，无凭据可路由；首启登录门已按 R9 摘除） | 打包 base patch 83-87；README 欢迎窗段落本轮删净并与代码对齐（㉗(b)） |
+| **D4 桌面装配** | **成立** | 桌面渲染的就是本仓 `apps/web` 装配（§4 的更正维持） |
+| **§5 判据① 四连** | **rc=0** | `corepack pnpm run build` rc=0、日志 `error TS` 计数 0（㉜(d)） |
+| **§5 判据②③ doc-sync** | **43/43 全绿** | `corepack pnpm run doc-sync` ⇒ **`run-gates: 43 passed, 0 failed, 0 skipped in 74.49s`**，rc=0（日志 `taiji-harness/.dsh-sbx2/doc-sync-final.log`）。同轮序列：`40 passed, 3 failed`（残留）→ `42 passed, 1 failed`（catalog）→ **43/43**。**与 09-26 那句"43 门 42 绿／1 红（符号链接叶子）"不同，本轮那条未报红**——变化原因本轮没逐条复核，只登记读数、不声称符号链接前提已解决 |
+| **§5 判据④ 定向 vitest** | **桌面面 99 绿／1 红／4 skip；cordis-client-runner 114 绿；plugin-inventory＋document-conversion 25 绿** | 唯一红＝已登记的 `upload-with-credentials`（Windows 凭据启动器，本轮未碰）；09-27 那两条并发超时本轮未复现 |
+| **§5 判据⑥ lint** | **23 条＝7 基线＋16 已归因** | 13 条在 `apps/web/tests/taiji-runtime-absent.e2e.ts`，根因是该文件被 `apps/web/tsconfig.json:132` 排除在类型程序外（exclude＝tsc 与 lint 同时失效）；3 条 `require()`＋2 条我自己的 `no-base-to-string` 本轮已修 |
+| **§5 判据⑦ web 表层 lane** | **本轮未重取** | 前提未变：先完整 build、批内不含自改写 lane、起止 mtime 存档；最小面 4 个 keyless 文件的历史读数是 11/11 绿 |
+| **品牌收口（裁定①）** | **栅格段完成，矢量段未完成** | 桌面三件 PNG 已按新母版重出（覆盖度 0.958，对照表 `design/logo/desktop-icons-contact-sheet.png`）；`design/logo/*.svg` 经查是**空壳**（RDP 吃到首尾同点闭环，㉛(a)），新仪器 `design/trace_mark2.py` 带 IoU≥0.98 拒绝阈，当前 320 栅格 0.93／512 丢洞 0.568 |
+| **锁与包面一致性** | **成立且有门可查的建议** | 锁重生成（纯删 95 行死条目）＋冷装新旧对照把"漂移会不会让 CI 红"钉死＝**会红**；"锁文件同步门"仍待裁（本轮自查脚本 `.dsh-sbx2/lock-audit/audit_lock_importers.py` 就是该门的雏形） |
+
+**本轮不声称的**：G5 四条判据没有一条被"整句"勾掉；R7、web 表层 lane、真机"发一回合"、快照 refresh、system-prompt 身份、品牌矢量段都还在手上。**A 支线的 P-全 两臂**（`output/a26full_p{0,1}`）实测停在 2.8M/16M ticks、进度流自 16:25 起不再写＝**随上一轮会话掉线，不是跑完**。
