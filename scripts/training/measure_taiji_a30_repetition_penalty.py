@@ -40,7 +40,7 @@ def _sha256(path: Path) -> str:
 def run_arm(
     items: list[dict[str, Any]],
     checkpoint: Path,
-    circuit: str,
+    circuit: str | None,
     penalty: float,
     chain: str = "raw_masked",
 ) -> dict[str, Any]:
@@ -51,7 +51,8 @@ def run_arm(
     from api.seed_runtime import SeedRuntime
 
     runtime = SeedRuntime.load(checkpoint)
-    runtime.enable_copy_circuit(PROJECT_ROOT / circuit)
+    if circuit:
+        runtime.enable_copy_circuit(PROJECT_ROOT / circuit)
     substrate = runtime.model.substrate
     override = getattr(substrate, "_copy_evidence_utf8_gate_override", None)
     ngram = build_ngram_model()
@@ -108,7 +109,12 @@ def run_arm(
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--checkpoint", default="checkpoints/seed_beta.pt")
-    parser.add_argument("--circuit", required=True)
+    parser.add_argument("--circuit", default=None)
+    parser.add_argument(
+        "--no-circuit",
+        action="store_true",
+        help="不挂回路——用来量「今日出厂形态」在同一题面子集上与治疗臂同尺的对照",
+    )
     parser.add_argument("--manifest", default=str(MANIFEST))
     parser.add_argument("--limit", type=int, default=24)
     parser.add_argument(
@@ -125,6 +131,9 @@ def main() -> int:
     parser.add_argument("--out-report", default=None)
     args = parser.parse_args()
     penalties = [float(value) for value in args.penalties.split(",")]
+    if args.no_circuit and args.circuit:
+        raise SystemExit("--no-circuit 与 --circuit 不能同时给（对照臂必须确实没挂回路）")
+    circuit: str | None = None if args.no_circuit else args.circuit
 
     checkpoint = PROJECT_ROOT / args.checkpoint
     sha_before = _sha256(checkpoint)
@@ -135,7 +144,7 @@ def main() -> int:
         : args.limit
     ]
 
-    arms = [run_arm(items, checkpoint, args.circuit, penalty, args.chain) for penalty in penalties]
+    arms = [run_arm(items, checkpoint, circuit, penalty, args.chain) for penalty in penalties]
     label = (
         "product_surface_chat" if args.chain == "surface" else "base_raw_bytes_with_product_mask"
     )
@@ -145,7 +154,7 @@ def main() -> int:
         "prereg": "plans/reference/PLAN-A-30_surface_repetition_localization_20260928.md 乙档",
         "chain": label,
         "checkpoint": args.checkpoint,
-        "circuit": args.circuit,
+        "circuit": circuit,
         "items": len(items),
         "base_sha256_unchanged": _sha256(checkpoint) == sha_before,
         "arms": [{k: v for k, v in arm.items() if k != "per_item"} for arm in arms],

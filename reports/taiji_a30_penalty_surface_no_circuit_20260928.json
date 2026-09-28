@@ -1,0 +1,48 @@
+{
+  "format": "taiji-a30-repetition-penalty-v1",
+  "prereg": "plans/reference/PLAN-A-30_surface_repetition_localization_20260928.md 乙档",
+  "chain": "product_surface_chat",
+  "checkpoint": "checkpoints/seed_beta.pt",
+  "circuit": null,
+  "items": 24,
+  "base_sha256_unchanged": true,
+  "arms": [
+    {
+      "repetition_penalty": 0.0,
+      "gate_effective": false,
+      "items": 24,
+      "texts": 72,
+      "strict_hits": 0,
+      "well_formed_texts": 12,
+      "cyclic_texts": 6,
+      "cyclic_rate": 0.0833,
+      "mean_longest_run": 5.444,
+      "max_longest_run": 9
+    },
+    {
+      "repetition_penalty": 2.0,
+      "gate_effective": false,
+      "items": 24,
+      "texts": 72,
+      "strict_hits": 0,
+      "well_formed_texts": 71,
+      "cyclic_texts": 2,
+      "cyclic_rate": 0.0278,
+      "mean_longest_run": 1.0,
+      "max_longest_run": 1
+    }
+  ],
+  "verdict": {
+    "0.0": {
+      "cyclic_delta_vs_base": 0,
+      "hits_delta_vs_base": 0,
+      "formed_delta_vs_base": 0
+    },
+    "2.0": {
+      "cyclic_delta_vs_base": -4,
+      "hits_delta_vs_base": 0,
+      "formed_delta_vs_base": 59
+    }
+  },
+  "started_utc": "2026-09-28T14:10:32Z"
+}
