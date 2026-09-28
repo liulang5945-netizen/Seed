@@ -7,7 +7,7 @@ const origin = 'http://127.0.0.1:19387'
 /** One request the shell made through the installed fetch stub. */
 interface RecordedRequest {
   readonly input: URL | RequestInfo
-  readonly init?: RequestInit
+  readonly init: RequestInit | undefined
 }
 
 /** A settings/describe transport that only answers the locale namespace. */

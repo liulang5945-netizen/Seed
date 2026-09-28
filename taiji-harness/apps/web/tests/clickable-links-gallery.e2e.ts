@@ -446,7 +446,7 @@ describe('web e2e: clickable links gallery', () => {
     await mentions.first().hover()
     expect(await styleOf(mentions.first(), 'text-decoration-style')).toBe('dotted')
     // The excluded grey affordance: tool-row file links keep their own color.
-    expect(await styleOf(page.locator('button[class*="fileLink"]').first(), 'color')).not.toBe(LINK_BLUE)
+    expect(await styleOf(page.locator('button[class*="fileLink"]').first(), 'color')).not.toBe(LINK_GREEN)
 
     // Ordinary message HTTP(S) links delegate to the right Sidebar Browser.
     await guideLink.click()

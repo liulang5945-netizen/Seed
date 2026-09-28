@@ -408,3 +408,5 @@ node apps/desktop/node_modules/pnpm/bin/pnpm.mjs --dir apps/desktop run test:upd
 ## 开发备注
 
 上线前 CDN 与容量决策见[桌面更新提案](../../.agents/notes/proposed/feature/2026-09-08-desktop-update-policy-and-installation.zh.md#cdn-and-capacity-qualification)。
+
+`resources/icon.png`（1104）与 `resources/icon-windows.png`／`resources/icon-macos.png`（1024）由 Seed 工作区里的 `design/build_desktop_icons.py` 从记号母版重生成；同名 `resources/icon*.svg` 仍是上一版几何，因此栅格要从该脚本导出，不要从这些 SVG 导出。
