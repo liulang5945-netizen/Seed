@@ -12,6 +12,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import sys
 from pathlib import Path
@@ -118,6 +119,12 @@ def main() -> int:
 
     checkpoint = PROJECT_ROOT / args.checkpoint
     gate = bool(args.copy_evidence_utf8_gate)
+    circuit_path = PROJECT_ROOT / args.circuit if args.circuit else None
+    circuit_sha256 = (
+        hashlib.sha256(circuit_path.read_bytes()).hexdigest()
+        if circuit_path is not None and circuit_path.is_file()
+        else None
+    )
     control = run_arm(checkpoint, None)
     treated = run_arm(checkpoint, args.circuit, evidence_utf8_gate=gate)
     verdict = "A2.4 重测通过（D+E>0 且成句率不塌于对照）" if (
@@ -129,6 +136,11 @@ def main() -> int:
         "prereg": "plans/reference/M5_R2_A2_3_PREREG_20260925.md §4-S2（判据沿用）",
         "checkpoint": args.checkpoint,
         "circuit": args.circuit,
+        #: 复现性债的修法（PLAN-A-24 rev22）：光记**路径**不够——同名路径会被后来的长跑覆盖
+        #: （实测：`output/taiji_r2_copy_circuit/judge/circuit-final.pt` 现在跑出 0/16，
+        #: 而登记值是 2/16）。记下 payload 指纹，旧判读件才既验得了"当时用的是哪份权重"、
+        #: 也不至于把覆盖后的新权重当成旧读数。
+        "circuit_sha256": circuit_sha256,
         #: PLAN-A-25：门开/关必须落在件上，否则两份读数看起来像同一次实验。
         "copy_evidence_utf8_gate": gate,
         "control_no_circuit": control,
