@@ -37,15 +37,18 @@ for _entry in (REPO_ROOT, REPO_ROOT / "scripts" / "training"):
         sys.path.insert(0, str(_entry))
 
 
-def _model() -> Taiji:
-    return Taiji(
-        TaijiConfig(
-            region_sizes=(64, 48),
-            synapse_fan_in=16,
-            motor_fan_in=48,
-            seed=11,
-        )
-    )
+def _model(*, lock_selection_rule: str | None = None) -> Taiji:
+    values: dict[str, object] = {
+        "region_sizes": (64, 48),
+        "synapse_fan_in": 16,
+        "motor_fan_in": 48,
+        "seed": 11,
+    }
+    #: owner 裁定 (d)（2026-09-28）把产品默认换成了 `byte_overlap`，所以"锁怎么选"必须**点名**，
+    #: 不能让一条钉旧语义的守卫去继承当时的默认——那正是本文件两条守卫在默认翻转后变红的原因。
+    if lock_selection_rule is not None:
+        values["lock_selection_rule"] = lock_selection_rule
+    return Taiji(TaijiConfig(**values))
 
 
 def _feed_predictive(model: Taiji, symbols: bytes) -> torch.Tensor:
@@ -548,8 +551,12 @@ def test_zero_head_scores_bitwise_equal_the_legacy_cue_cosine() -> None:
 
     这是"挂载不改行为"在选择侧的版本——比 `evidence ≡ 0` 更强：gate 开之后（训练中）
     仍要能保证"没学到的选择器＝原来的选择器"。
+
+    **面＝`cue_only`**：本条钉的是"零初始化的头逐位等于 `best_match` 那条余弦"这条**旧**不变量，
+    而产品默认 2026-09-28 起是 `byte_overlap`（裁定 (d)）——旧不变量在默认面上本就不成立，
+    所以面必须点名。`byte_overlap` 那一面另有 5 条守卫（`test_lock_rule_byte_overlap`）。
     """
-    model = _model()
+    model = _model(lock_selection_rule="cue_only")
     circuit, cue_a, _cue_b, query_cue = _two_event_store(model)
     f1 = model._state.motor_context.detach().cpu().clone()
     state = circuit.selection(cue=query_cue, f1_context=f1, query_bytes="你住在哪里？".encode())
@@ -559,7 +566,7 @@ def test_zero_head_scores_bitwise_equal_the_legacy_cue_cosine() -> None:
     assert state["event"].event_id == circuit.store.best_match(query_cue).event_id
 
     # 平手裁决也必须一致：两条告知挂同一个 cue ⇒ 分数真相同，严格大于才换 ⇒ 取更前面那条。
-    tied = _model()
+    tied = _model(lock_selection_rule="cue_only")
     tied.mount_copy_circuit(max_events=4)
     tied_circuit = tied.copy_circuit
     shared = torch.zeros(tied.config.cortical_context_dim)
@@ -608,8 +615,12 @@ def test_selection_lock_freezes_the_event_across_steps() -> None:
 
 
 def test_selector_head_learns_toward_the_told_event_and_loads_legacy_payload() -> None:
-    """标签来自题面那条告知；一步更新后头离开零，旧 payload（无 rev5 两项）仍可载入。"""
-    model = _model()
+    """标签来自题面那条告知；一步更新后头离开零，旧 payload（无 rev5 两项）仍可载入。
+
+    **面＝`cue_only`**：本条要证的是"学出来的头能把选择翻到标签那条"，即**头决定选择**；
+    默认换成 `byte_overlap` 后决定权在规则手里（裁定 (d)），那条面上这条不变量本就不成立。
+    """
+    model = _model(lock_selection_rule="cue_only")
     circuit, cue_a, _cue_b, query_cue = _two_event_store(model)
     f1 = model._state.motor_context.detach().cpu().clone()
     state = circuit.selection(cue=query_cue, f1_context=f1, query_bytes="你住在哪里？".encode())

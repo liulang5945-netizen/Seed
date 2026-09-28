@@ -46,18 +46,62 @@ def load_items(path: Path = MANIFEST) -> list[dict[str, Any]]:
     return list(payload["dimensions"]["X"]["items"])
 
 
+def build_circuit_carried_envelope(
+    base: Path, circuit: str, out_path: Path, *, max_events: int = 4
+) -> dict[str, Any]:
+    """把已训电路装进**产品信封**（受检基底只读；写盘只落到 `out_path`）。
+
+    为什么要这一档：产品挂载复制回路的**唯一**入口是"档里带回路 ⇒ 恢复时自动挂载"
+    （`SeedRuntime.load` → `Seed.from_checkpoint` → `Taiji.restore`），而 `enable_copy_circuit`
+    是探针/评测专用的显式 opt-in。只量后者，就永远不知道"电路随基底出厂"那一天产品面读到什么
+    ——包括裁定 (b) 的证据门在那条路上有没有真的开。
+    """
+    import torch
+
+    from seed import Seed
+
+    model = Seed.from_checkpoint(torch.load(base, map_location="cpu", weights_only=True))
+    substrate = model.substrate
+    if substrate.copy_circuit is None:
+        substrate.mount_copy_circuit(max_events=max_events)
+    payload = torch.load(PROJECT_ROOT / circuit, map_location="cpu", weights_only=False)[
+        "copy_circuit"
+    ]
+    substrate.copy_circuit.load_payload(payload)
+    envelope = model.checkpoint()
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    torch.save(envelope, out_path)
+    return {
+        "base": base.relative_to(PROJECT_ROOT).as_posix(),
+        "base_sha256": _sha256(base),
+        "circuit": circuit,
+        "envelope": (
+            out_path.relative_to(PROJECT_ROOT).as_posix()
+            if out_path.is_relative_to(PROJECT_ROOT)
+            else out_path.as_posix()
+        ),
+        "envelope_bytes": out_path.stat().st_size,
+        "envelope_sha256": _sha256(out_path),
+    }
+
+
 def run_arm(
     items: list[dict[str, Any]],
     checkpoint: Path,
     circuit: str | None,
     *,
     evidence_utf8_gate: bool = False,
+    close_gate_after_load: bool = False,
 ) -> dict[str, Any]:
     """一臂：跑完 104 题，按产品 chat 协议取基底原始答复，统计表层三率。
 
     `evidence_utf8_gate`（PLAN-A-25）：只在评测期把复制回路的加性证据按 UTF-8 位置状态门控
     ——**默认 False ⇒ 与冻结链逐位相同**；开启走 `Taiji.set_copy_evidence_utf8_gate` 的运行时覆写
     （不改 config、不进 payload，所以"唯一变量＝门开/关"这条归因干净）。
+
+    `circuit=None` 时**不再等于"没有回路"**：档里带回路则产品入口自动挂载
+    （`mount_entry="envelope_auto_mount"`）；那种情况下裁定 (b) 已把门开成 TRUE，
+    `close_gate_after_load=True` 是显式把它关回去的对照档（＝修法之前的产品读数）。
     """
 
     from eval_taiji_r2_readout_retrain import build_ngram_model, well_formed
@@ -66,10 +110,21 @@ def run_arm(
     from api.seed_runtime import SeedRuntime
 
     runtime = SeedRuntime.load(checkpoint)
+    substrate = runtime.model.substrate
+    mount_entry = "none"
     if circuit:
         runtime.enable_copy_circuit(PROJECT_ROOT / circuit)
-    if evidence_utf8_gate:
-        runtime.model.substrate.set_copy_evidence_utf8_gate(True)
+        mount_entry = "enable_copy_circuit"
+        if evidence_utf8_gate:
+            substrate.set_copy_evidence_utf8_gate(True)
+    elif substrate.copy_circuit is not None:
+        mount_entry = "envelope_auto_mount"
+        if close_gate_after_load:
+            substrate.set_copy_evidence_utf8_gate(False)
+    override = getattr(substrate, "_copy_evidence_utf8_gate_override", None)
+    gate_effective = (
+        bool(substrate.config.copy_evidence_utf8_gate) if override is None else bool(override)
+    )
     ngram = build_ngram_model()
 
     texts: list[str] = []
@@ -105,6 +160,10 @@ def run_arm(
     trimmed_clean = sum(1 for text in texts if "\ufffd" not in text.rstrip("\ufffd"))
     return {
         "circuit": circuit,
+        #: 挂回路走的是哪条入口，必须落在件上：`enable_copy_circuit` 是探针/评测的显式 opt-in，
+        #: `envelope_auto_mount` 才是产品自己那条路（裁定 (b) 的证据门此前只在前者生效）。
+        "mount_entry": mount_entry,
+        "gate_effective": gate_effective,
         "items": len(rows),
         "texts": len(texts),
         "well_formed_texts": formed,
@@ -186,6 +245,22 @@ def main() -> int:
         action="store_true",
         help="PLAN-A-25：把复制回路的加性证据按 UTF-8 位置状态门控（默认关 ⇒ 与冻结链逐位相同）",
     )
+    parser.add_argument(
+        "--circuit-in-envelope",
+        action="store_true",
+        help="PLAN-A-28：把 --circuit 的已训回路装进产品信封，再走 SeedRuntime.load 的**自动挂载**"
+        "档取数（产品自己唯一能挂回路的路径）；受检基底仍只读",
+    )
+    parser.add_argument(
+        "--auto-mount-gate-closed",
+        action="store_true",
+        help="在自动挂载档上再补一臂把门显式关回去＝裁定 (b) 未补到产品入口时产品会读到的数",
+    )
+    parser.add_argument(
+        "--envelope-dir",
+        default="output/a28_product_face",
+        help="产品信封落点（默认 output/ 下的具名目录；不写 checkpoints/）",
+    )
     args = parser.parse_args()
 
     checkpoint = PROJECT_ROOT / args.checkpoint
@@ -204,6 +279,22 @@ def main() -> int:
         )
         for circuit in args.circuit
     ]
+    #: PLAN-A-28 档：同一份回路、同一个基底，只换"怎么挂上来"。
+    #: `enable_copy_circuit` 与 `envelope_auto_mount` 若逐位相同 ⇒ 产品入口与探针入口等价；
+    #: 门关档则是裁定 (b) 没补到产品入口时产品会读到的数（合法性代价直接可见）。
+    envelope_meta: list[dict[str, Any]] = []
+    if args.circuit_in_envelope:
+        envelope_dir = Path(args.envelope_dir)
+        if not envelope_dir.is_absolute():
+            envelope_dir = PROJECT_ROOT / envelope_dir
+        for index, circuit in enumerate(args.circuit):
+            env_path = envelope_dir / f"{checkpoint.stem}_with_circuit_{index}.pt"
+            meta = build_circuit_carried_envelope(checkpoint, circuit, env_path)
+            meta["auto_mount_gate_effective"] = True
+            envelope_meta.append(meta)
+            treated.append(run_arm(items, env_path, None))
+            if args.auto_mount_gate_closed:
+                treated.append(run_arm(items, env_path, None, close_gate_after_load=True))
     report = {
         "format": "taiji-r2-copy-surface-extension-v1",
         "prereg": "plans/reference/SPEC-A-21_r2_surface_extension_prereg_20260925.md",
@@ -214,6 +305,7 @@ def main() -> int:
         "checkpoint": args.checkpoint,
         #: PLAN-A-25：门开/关必须落在件上，否则两份读数看起来像同一次实验。
         "copy_evidence_utf8_gate": bool(args.copy_evidence_utf8_gate),
+        "circuit_carried_envelopes": envelope_meta,
         "control_no_circuit": control,
         "treated_arms": treated,
         "surface_verdict": rule_verdict(control, treated),
@@ -238,7 +330,16 @@ def main() -> int:
             {
                 "texts_per_arm": control["texts"],
                 "control_wf": control["well_formed_texts"],
-                "treated": [(arm["circuit"], arm["well_formed_texts"]) for arm in treated],
+                "treated": [
+                    (
+                        arm["mount_entry"],
+                        bool(arm["gate_effective"]),
+                        arm["strict_hits"],
+                        arm["well_formed_texts"],
+                        arm["utf8_decodable_trimmed_rate"],
+                    )
+                    for arm in treated
+                ],
                 "status": report["surface_verdict"]["status"],
                 "base_unchanged": report["base_sha256_unchanged"],
                 "out": out.relative_to(PROJECT_ROOT).as_posix(),

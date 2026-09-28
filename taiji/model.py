@@ -3473,6 +3473,11 @@ class Taiji:
             self.mount_copy_circuit(max_events=int(store_payload["max_events"]))
             assert self._copy_circuit is not None
             self._copy_circuit.load_payload(circuit_payload)
+            # owner 裁定 (b)（2026-09-28，PLAN-A-25）"挂载复制回路即开 UTF-8 证据门"此前只接在
+            # `SeedRuntime.enable_copy_circuit` 上，而产品挂载回路的唯一入口是这条自动挂载分支
+            # ⇒ 带回路的基底一出厂门就是关的，电路的加性证据会把裸读出的合法性打回原形。
+            # 门是运行时覆写、不进 payload；同基底开/关对照请在 restore 后显式 `set_...(False)`。
+            self.set_copy_evidence_utf8_gate(True)
         bridge_payload = checkpoint.get(self.ADAPTIVE_RESIDUAL_BRIDGE_KEY)
         self._adaptive_residual_bridge = None
         if bridge_payload is not None:

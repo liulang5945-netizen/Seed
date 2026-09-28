@@ -1,0 +1,220 @@
+# PLAN-A-28：电路"随基底出厂"那一档的前置缺陷与产品面取证（裁定 (b) 的范围补全）
+
+日期：2026-09-28。归属：A 支线 → **产品默认链**。状态：**修法已落地有守卫，产品面三档读数已出**
+（§4：产品入口与探针入口逐位相同；出厂形态在该链上 0/104）；
+动产品码一处（`Taiji.restore` 的回路自动挂载分支）＋评分器加一档，**不改任何已冻结判据**。
+
+---
+
+## 0. 这份件说一件事
+
+owner 裁定 (b) 的原话是"**挂载复制回路即开 UTF-8 证据门**"。它今天被落成了一个**只在一个入口生效**
+的默认：`api/seed_runtime.py:enable_copy_circuit`——那是探针/评测显式 opt-in 用的入口。
+而**产品自己挂载回路的唯一路径**是"档里带回路 ⇒ 恢复时自动挂载"
+（`SeedRuntime.load` → `Seed.from_checkpoint` → `Seed.restore` → 适配器 → `Taiji.restore`
+的 `COPY_CIRCUIT_KEY` 分支，`model.py:3473`）。2026-09-28 实测：**那条路上门是关的**。
+
+⇒ 后果不是"今天产品坏了"（今天没有任何出厂基底带回路，见 §3 普查），而是：
+**"把已证能力装进产品"这一步一旦执行，就会静默带着一个未裁定的旧行为出厂**——
+电路的加性证据不受当前 UTF-8 位置状态约束，把裸读出保住的合法性打回去
+（`PLAN-A-24` rev18 实测：v3 整句可解码率 **1.0000 → 0.0128**）。
+这条正是本仓反复栽过的同一形状：**"接线"不等于"走到"，"一个入口默认开"不等于"该机制默认开"**
+（`PLAN-A-26` §6.2 的静默空转是第二例）。
+
+---
+
+## 1. 复现（先固定"哪张面、什么命令"）
+
+面＝`Taiji.restore` 的回路分支（产品那条路走的就是这里，§0 的链已逐跳读过）；
+命令＝`python -m pytest tests/taiji_native/test_a25_gate_on_the_load_path.py -q`（修法前）。
+
+| 读数 | 修法前 | 修法后 |
+|---|---|---|
+| 信封是否真的带回路（`COPY_CIRCUIT_KEY` 在场） | **是**（自检条绿） | 是 |
+| restore 后 `copy_circuit` 已挂载 | **是** | 是 |
+| 覆写位 `_copy_evidence_utf8_gate_override` | **`None`** | `True` |
+| config 侧 `copy_evidence_utf8_gate` | **`False`（默认未翻）** | `False`（仍不动，见 §2 第三条） |
+| ⇒ **生效门** | **关** | **开** |
+| 行为面：提问那趟电路收到的 `utf8_state` | **全 `None`**（＝门没被消费） | 全部非 `None` |
+
+修法前该文件 **2 failed / 4 passed**，两条红正落在裁定的断言上（旗标面＋行为面各一条）。
+
+## 2. 修法与守卫
+
+**改点**（`taiji/model.py`，只在"档里带回路"这一支加一行运行时覆写）：自动挂载并 `load_payload`
+之后 `self.set_copy_evidence_utf8_gate(True)`。三点设计说明：
+
+1. **为什么改在 `restore` 而不是再包一个 API**：裁定说的是"挂载即开"，那是**机制不变量**，
+   该住在挂载发生的地方；住在调用方就得每个调用方各写一遍——今天少写的那一处就是产品。
+2. **为什么不翻 `config.copy_evidence_utf8_gate` 的默认**：门是运行时覆写、**不进 payload**
+   这条纪律是 `PLAN-A-25` 定的（身份器官的 lineage 守卫会拒绝 config 被事后改动的档）；
+   翻 config 会把"同基底开/关对照"这条路一起毁掉。
+3. **为什么不改 `mount_copy_circuit` 的默认**：直连挂载是**全部既有探针脚本**用的入口
+   （`scripts/training/*` 里 20+ 处），在那里开门会把已有冻结读数一起挪走。
+   ⇒ 本件只把裁定补到产品那条路，**直连语义逐位不变**，并有一条守卫专门钉住这个边界。
+4. **逃生口**：restore 之后显式 `set_copy_evidence_utf8_gate(False)` 仍能关（守卫第二条），
+   同基底开/关对照照旧可做。
+
+**守卫**（新件 `tests/taiji_native/test_a25_gate_on_the_load_path.py`，6 条）：
+①信封自检（真带回路，否则后面几条在测"没挂载"）；②restore 带回路的档 ⇒ 生效门为真；
+③**行为面** ⇒ 电路真的收到 `utf8_state`（只翻旗标不被消费＝零生效，本仓教训的形状）；
+④逃生口仍能关，且关掉后收到的 `utf8_state` 全 `None`；⑤**不越权**：档里没回路时覆写保持
+`None`（产品当前默认基座就是这一档 ⇒ 今日产品行为零变化）；⑥**边界**：`mount_copy_circuit`
+直连仍跟随 config（既有探针读数不动）。
+
+## 3. 顺带查清的两件事（都不是本件造成的，但必须入册）
+
+### 3.1 裁定 (d) 留下两条红守卫在**主干**上（已结清）
+
+定向回归面 `tests/taiji_native -k "copy or circuit or checkpoint or restore or gate or lock or a25 or a26 or a27"`
+（743 s，600 passed）里有 **2 条红**：
+`test_copy_circuit_contract.py::test_zero_head_scores_bitwise_equal_the_legacy_cue_cosine` 与
+`::test_selector_head_learns_toward_the_told_event_and_loads_legacy_payload`。
+
+**归因过程**（不猜）：先把我这一行修法**整段停用**复跑 ⇒ 两条**照样红**（而同文件的 6 条新守卫
+同时变红，证明停用真的生效）⇒ 与本件无关。根因＝昨天裁定 (d) 把
+`config.lock_selection_rule` 默认翻成 `byte_overlap`，而这两条守卫钉的是**旧面**的不变量
+（"零初始化的头逐位等于 `best_match` 那条余弦"、"学出来的头能把选择翻到标签那条"）——
+在新默认面上这两条本就不成立。修法＝**在测试里点名面**（`_model(lock_selection_rule="cue_only")`），
+而不是改断言迁就新默认；`byte_overlap` 那一面另有 5 条守卫（`test_lock_rule_byte_overlap`）。
+
+**要登记的验证覆盖缺陷**：(d) 落地时报告"定向回归 166 条全绿"，但那 166 条**不含**
+`test_copy_circuit_contract.py`——即"默认翻转"这一刀没有跑过它所改模块的既有契约面。
+
+### 3.2 lint／mypy 几面的既有脏（只登记，本件不动）
+
+按 CI 的**同版本**工具（ruff 0.16.4／black 26.5.1／mypy 2.3.1）逐面复跑，本会话开始前就红着：
+
+* `black --check`：`taiji/model.py` 与 `scripts/training/score_taiji_r2_copy_surface_extension.py`
+  在 **HEAD 的副本**上同样 `would reformat`（用 `git show HEAD:` 复跑确认）；
+* `ruff check`：I001 一处（`taiji/model.py` 的相对导入序），HEAD 副本同红；
+* `ruff check --select B,SIM --ignore B008`：3 条 B905 全在**我没碰的行**上；
+* `mypy --follow-imports=silent taiji`：**13 错／4 文件**，其中 `model.py` 只有 2 条、都在
+  `:1971`（PLAN-A-25 的 UTF-8 跟踪行），而 CI 的棘轮基线写的是 `MYPY_CORE_BASELINE=0`。
+
+⇒ 这几面**本件一条都不修**（修＝把别人的行扫进我的提交，且会重算 lint 基线指纹）；
+本件只保证自己新增/改动的行四面都干净（逐处手工对齐 black 形态，不整文件重排）。
+**该登记的事实是**：核心 mypy／black 面在当前工作树与 HEAD 上都不是 0，"CI 棘轮 baseline 0"
+这句账与本地实测不符——这是**门禁面值**的问题，不属于 A 支线，但必须写在明处。
+
+## 4. 产品面取证（零训练，一档＝312 条文本）
+
+仪器＝既有那台 v3 表层评分器 `scripts/training/score_taiji_r2_copy_surface_extension.py`，
+**新增一档**而不是另造一台（本仓教训：重抄生成链＝换条链）：
+
+* `--circuit-in-envelope`：把已训回路（`output/taiji_r2_copy_circuit_chat/judge/circuit-final.pt`，
+  sha `1cfe5961…`）装进**产品信封**，再走 `SeedRuntime.load` 的**自动挂载**取数——
+  即"电路随基底出厂"那一天产品会读到的数；
+* `--auto-mount-gate-closed`：同一信封、同一基底，把门显式关回去＝**修法之前**产品会读到的数；
+* 每臂自带 `mount_entry` 与 `gate_effective` 两列落件——否则两份读数看起来像同一次实验。
+
+链路口径（必须分层报，不许互换）：本件三臂都在**基底原始字节链**（`_answer_raw`：产品
+`_serialize` ＋ `_record_told_history` ＋ `generate_input`），即裁定 §4.3a 那条"复制回路唯一直接
+作用的链"。**产品表层链**（`chat()` 过语言器官；出厂基底 `config.language_provider.chat_enabled=False`）
+是另一张面，本件**不测**，不得用本件读数声称"App 里用户看到的话变好了"。
+
+| 档 | 挂载入口 | 生效门 | 严格命中 /104 | 成句文本 /312 | 切尾可解码率 |
+|---|---|---|---|---|---|
+| 对照（无回路＝**今日出厂形态**） | `none` | 关 | **0** | **0** | **0.0000** |
+| 探针入口（既有冻结链） | `enable_copy_circuit` | 开 | 28 | 7 | 0.5256 |
+| **产品入口（本件补的那条）** | `envelope_auto_mount` | 开 | **28** | **7** | **0.5256** |
+| 产品入口·门被关回去 | `envelope_auto_mount` | 关 | 30 | 8 | **0.1154** |
+
+**三条判读（都过）**：
+
+1. **两条挂载入口等价**——`enable_copy_circuit` 与 `envelope_auto_mount` 两臂**逐位相同**
+   （104 题的 `rows` 整体相等、答复字符串逐个相等，不是只看汇总列）。
+   ⇒ 裁定 (b) 到此刻才真的"默认开"：产品不必再有人显式调用探针 API 才拿到门。
+2. **这次补全买到的价格＝切尾可解码率 0.1154 → 0.5256（＋41.0 pp，4.6×）**，
+   而门不是免费的：**同一条链上门开把严格命中 30 → 28、成句 8 → 7**（−2／−1，都低于本仓
+   ≥3 的分辨率线 ⇒ 记 `not_resolved`，不许写成"门让能力掉了"）。
+3. **出厂形态在原始字节链上是 0/104、0/312、可解码 0.0000**——即"复述"这项能力今天在
+   产品装配里**不存在**（`checkpoints/seed_beta.pt` 不带回路，`copy_circuit is None` ⇒
+   `chat()` 连告知库都不写）；把已训回路随基底出厂＝**零训练**把这一项从 0 抬到 28/104。
+   该数与裁定 (d) 的 30/104（对 natural 17–21）同一量级，属同一件事实的两次独立取数。
+
+**锚点**：受检基底 sha `ad2a0646…` 跑前后相同（只读）；产品信封
+`output/a28_product_face/seed_beta_with_circuit_0.pt`（sha `63258adf…`，87,919,979 B）由仪器写在
+`output/` 具名目录，**未触碰 `checkpoints/` 任何文件**。
+
+读数件：`reports/taiji_a28_product_face_circuit_v3_20260928.json`（题集
+`plans/manifests/r2_copy_surface_extension_v3_position_random.json`，sha `b162ff09…`）。
+**判读线（先看冻结口径再看数）**：
+①产品入口档与探针入口档**逐位相同** ⇒ 两条挂载入口等价，裁定 (b) 到产品面才算真的"默认开"；
+②产品入口档对"门被关回去"档的**切尾可解码率**差 ⇒ 这次补全买到的合法性价格（rev18 的先验是
+0.0128 对 1.0000 量级）；③**"命中"这一列不许单独当能力卖**：无回路时恒 0 属预期（复述在电路链上），
+而"有回路 ⇒ 命中抬"这条已在 v3 上量过（裁定 (d)：30/104 对 17–21/104）——本件只验**同一份数能否
+不经显式 opt-in 就出现在产品入口上**。
+
+## 5. 一条必须带的成本/形态发现（不在原计划里，实测撞出来的）
+
+受检基底只读（跑前后 sha 相同），但**把 v1 信封重存成产品信封不是尺寸中性的**：
+`checkpoints/seed_beta.pt` 落盘 4.14 MB，而 `model.checkpoint()` 重存后 **87.9 MB**。
+分项实测：电路本身只占 **0.18 MB**（最大张量 `content_embed` 257×96），
+其余全部来自 **v10 信封的双镜像**（`.taiji.kernel` 43.84 MB ＋ `.substrate` 43.91 MB 各存一遍），
+而镜像里最大一块是**身份器官 38.93 MB**——那正是零面普查里"从未被写过的那张路由键仓"。
+⇒ "电路随基底出厂"的真实打包代价几乎全部来自**信封格式**而不是回路；这条要么在出厂前解决
+（单镜像／把身份器官的空仓压掉），要么 owner 明确接受该体积。本件**不自行**改信封格式。
+
+## 6. owner 待裁（一项，本件不代裁）
+
+**要不要让"已训复制回路"随产品基底出厂**——即把 `SeedRuntime.load` 默认装配指向一份**带回路的基底**
+（今天的 `checkpoints/seed_beta.pt` 不带回路，所以复述这项能力在 App 里读数是 0）。
+
+按**能声称的上限**排序（不是按省事排序）：
+
+| 档 | 内容 | 能得到什么 | 代价 |
+|---|---|---|---|
+| **甲（上限最高）** | 造一份带回路的基底换掉 `DEFAULT_CHECKPOINT`，并在**两张面**（原始字节链＋`chat()` 表层链）各取一次数 | 复述/召回在产品装配里从 **0/104 → 28/104**（零训练），且门在这条路上已确认开着（§4 逐位等价） | 信封 **+84 MB**（§5）；表层链未测＝须先补测才算"用户看到的话变好"；属产品默认变更 |
+| **乙** | 只做 §4 的表层链补测，不动出厂装配（回路仍靠显式 opt-in 挂载） | 把"能不能说变好了"这件事先量清，不改发布物 | 用户面读数仍为 0；本件的修法继续处于"landmine 已拆、无人踩"的状态 |
+| **丙** | 什么都不再动 | 今日产品行为逐位不变 | 已证能力不进产品；A 支线全部表层读数继续只存在于探针链上 |
+
+**先决条件本件已结清两处**：门在这条路上真的开（§2），产品入口读数＝探针入口读数（§4 逐位）。
+**仍未解**：§5 的体积（要不要在出厂前压掉双镜像／空身份仓）、表层链的数（§8 第 1 条）。
+
+## 7. 顺带把 (c) 的在飞状态更正成可续跑的形态
+
+`PLAN-A-26` §3 的 **P-全**两臂今天**已不在跑**（本机 `python` 进程只有后端与 multiprocessing 残留）。
+实况（`output/a26full_{p0,p1}/progress.jsonl`，各 8 个 100k 窗）：
+
+| 窗口（ticks） | P0 准确率／困惑 | P1 准确率／困惑 |
+|---|---|---|
+| 2,100,000 | 0.29606／2.7711 | 0.30606／2.5946 |
+| 2,200,000 | 0.30826／2.6721 | 0.31724／2.5035 |
+| 2,300,000 | 0.31761／2.6395 | 0.32420／2.4734 |
+| 2,400,000 | 0.32065／2.6247 | 0.33052／2.4504 |
+| 2,500,000 | 0.31468／2.6665 | 0.32281／2.4907 |
+| 2,600,000 | 0.30646／2.6849 | 0.31496／2.5118 |
+| 2,700,000 | 0.30514／2.6873 | 0.31405／2.5067 |
+| 2,800,000 | 0.31476／2.6741 | 0.32234／2.4931 |
+
+八窗 P1 全同向（准确率 +0.66～+1.00 pp、困惑 −0.166～−0.181）。**按 `PLAN-A-26` §3 的中途件纪律，
+这不作结论**；终判据（§2 主-1/主-2 在 34M 档复跑）需要把两臂各再跑 ≈13.2M ticks
+（实测速率 ≈167 ticks/s/臂、两臂并行争 CPU ⇒ 每臂还要 ≈22 小时墙钟，属**排期**而非本件能结的事）。
+
+续跑命令（今日默认已是 `predictive`＋位置输入，**对照臂必须点逃生口**，否则会把 P0 自己翻成 P1）：
+
+```
+# P1（处理臂：档里已是 position=True，缺省即同）
+python scripts/training/train_seed_corpus.py \
+  --resume output/a26full_p1/checkpoint.pt --readout predictive \
+  --checkpoint output/a26full_p1/checkpoint.pt --progress output/a26full_p1/progress.jsonl \
+  --max-symbols 13200000
+
+# P0（对照臂：必须显式 --no-readout-position）
+python scripts/training/train_seed_corpus.py \
+  --resume output/a26full_p0/checkpoint.pt --readout predictive --no-readout-position \
+  --checkpoint output/a26full_p0/checkpoint.pt --progress output/a26full_p0/progress.jsonl \
+  --max-symbols 13200000
+```
+
+两臂的 `--checkpoint` 都点名在 `output/` 具名目录（§6.6 事故的加固口在这里生效：不点名就响亮拒绝），
+`checkpoints/` 全程只读。
+
+## 8. 这一步之后仍欠的（不粉饰）
+
+1. **表层链未测**：产品 `chat()` 走语言器官（出厂基底 `chat_enabled=False`），本件三臂都在原始字节链上
+   ⇒ "用户在 App 里看到的话变好了"这句话**本件无权说**。
+2. **出厂这一步没做**：把带回路信封换成 `DEFAULT_CHECKPOINT` 是**产品默认变更**，等 owner 裁（§6）。
+3. **§5 的 +84 MB** 未解决（单镜像／空身份仓压缩），且 v1→v10 重存的尺寸差本件只是量了出来。
+4. **速率**：P-全两臂的 22 h/臂是推算自本机实测窗口的 tick 速率，未含磁盘与并发争用。
