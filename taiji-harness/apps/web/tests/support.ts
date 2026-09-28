@@ -244,16 +244,10 @@ export function conversationContextKey(kind: string, id: string): string {
   return `${kind.length}:${kind}${id}`
 }
 
-/** Open Settings through the Web gear or Desktop account menu.
+/** Open Settings through the sidebar settings button.
  * @param page - browser page with the mounted sidebar.
  * @param locale - current UI language.
  */
 export async function openSettings(page: Page, locale: 'en' | 'zh'): Promise<void> {
-  const label = locale === 'zh' ? '设置' : 'Settings'
-  if (await page.evaluate(() => 'dshDesktop' in globalThis)) {
-    await page.getByRole('button', { name: locale === 'zh' ? '账号菜单' : 'Account menu', exact: true }).click()
-    await page.getByRole('menuitem', { name: label, exact: true }).click()
-  } else {
-    await page.getByRole('button', { name: label, exact: true }).click()
-  }
+  await page.getByRole('button', { name: locale === 'zh' ? '设置' : 'Settings', exact: true }).click()
 }
