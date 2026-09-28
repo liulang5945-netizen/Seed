@@ -16,7 +16,7 @@ const FAILURE_EXPECTED = fileURLToPath(new URL('./expected/default-workspace/fai
 const MODE = webSnapshotMode()
 
 describe.skipIf(MODE === 'record')('web e2e: default Workspace', () => {
-  it('prepares a blank Session on startup, reuses it after reload, and sends through the ordinary composer', async () => {
+  it('provisions the default Workspace, starts the first Session from the Hero send, and keeps it across reload', async () => {
     const fixture = await selectedSessionFixture(FIXTURE)
     const scaffold = await launchWebScaffold({
       firstUse: true,
@@ -35,12 +35,12 @@ describe.skipIf(MODE === 'record')('web e2e: default Workspace', () => {
         const input = page.locator('[data-composer-input][contenteditable="true"]').first()
         await input.waitFor()
         expect(scaffold.ctx.workspaceRegistry.list()).toHaveLength(1)
-        const initialSession = scaffold.ctx.sessions.list()[0]!
-        expect(scaffold.ctx.sessions.list()).toHaveLength(1)
-        expect(initialSession.snapshotEvents().some(event => event.type === 'user/message')).toBe(false)
+        // Boot provisions the Workspace but never opens a Session: the Hero's send owns the first one.
+        expect(scaffold.ctx.sessions.list()).toEqual([])
         await page.reload()
         await input.waitFor()
-        expect(scaffold.ctx.sessions.list().map(session => session.id)).toEqual([initialSession.id])
+        expect(scaffold.ctx.workspaceRegistry.list()).toHaveLength(1)
+        expect(scaffold.ctx.sessions.list()).toEqual([])
         const prompt = fixtureUserPrompts(await readFile(fixture, 'utf8'))[0]!
         await input.fill(prompt)
         const settled = scaffold.whenTurnSettled()
@@ -55,6 +55,9 @@ describe.skipIf(MODE === 'record')('web e2e: default Workspace', () => {
         await assertFinalWorkspaceSnapshot(fileURLToPath(new URL('../../../snapshots/web/default-workspace', import.meta.url)), workspace.path)
         await page.getByText('DONE', { exact: true }).waitFor()
         await compareOrRefreshGolden(EXPECTED, await captureStableAria(page, '[class*="centerCol"]', scaffold.workspaceCwd), MODE)
+        await page.reload()
+        await page.getByText('DONE', { exact: true }).waitFor()
+        expect(scaffold.ctx.sessions.list().map(session => session.id)).toEqual([sessionId])
         expect(tripwire.pageErrors).toEqual([])
         expect(tripwire.warnings).toEqual([])
       } catch (error) {

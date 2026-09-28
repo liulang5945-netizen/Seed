@@ -10,7 +10,7 @@ A new installation requires a directory choice before the user can send a first 
 
 ## Decision
 
-Startup waits for complete Workspace and Session baselines. While the Workspace list is empty, the Client asks the Host to prepare the default Workspace, then creates or reuses and selects its blank Session. Input stays unavailable until a Session exists and uses the ordinary composer pipeline thereafter. [Session scope and provisioning](../architecture/2026-07-25-web-client-session-scope-and-provide-channel.md) owns blank-Session reuse and provisioning rationale.
+Startup waits for complete Workspace and Session baselines. While the Workspace list is empty, the Client asks the Host to prepare the default Workspace; it reuses an eligible saved blank Session and otherwise leaves the Workspace closed, so [startup never opens a Session](2026-09-29-startup-never-opens-a-session.md) and the Hero's send owns the first one. Input is the Hero's composer until a Session exists and uses the ordinary composer pipeline thereafter. [Session scope and provisioning](../architecture/2026-07-25-web-client-session-scope-and-provide-channel.md) owns blank-Session reuse and provisioning rationale.
 
 The [Workspace registry](../../../../packages/workspace/workspace/README.md#first-use-workspace) owns eligibility and directory preparation: eligibility is an empty registry, and [Session history no longer vetoes preparation](2026-09-23-first-use-eligibility-ignores-session-history.md). The operation runs inside the registry mutation queue, which serializes every Workspace write.
 
@@ -28,6 +28,6 @@ Ineligible first use returns no Workspace without a failure dialog. Preparation 
 
 ## Consequences
 
-Opening a new installation can create a directory and blank Session before the user sends a message. Directory authorization and preparation failures can appear during startup. Preparation remains a Host responsibility for both Desktop and remote Web clients, so remote users use the Host account's Documents location. Unavailable Documents lookup fails with the same folder-selection recovery as directory creation failure.
+Opening a new installation can create a directory before the user sends a message. Directory authorization and preparation failures can appear during startup. Preparation remains a Host responsibility for both Desktop and remote Web clients, so remote users use the Host account's Documents location. Unavailable Documents lookup fails with the same folder-selection recovery as directory creation failure.
 
 The feature preserves [reference-owned Client Session lifetimes](../architecture/2026-09-15-client-session-references.md) and requires no agent-loop or Session-event change. Registry and client tests cover retries, hidden history, concurrency, and startup cancellation; the [browser scenario](../../../../apps/web/tests/default-workspace.e2e.ts) verifies the assembled startup, reload, first-send, and picker paths with an isolated Documents directory and recorded Session replay.

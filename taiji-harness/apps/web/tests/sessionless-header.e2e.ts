@@ -21,10 +21,6 @@ describe('navigation without a selected Session', () => {
   it.each(['web', 'win32', 'linux', 'darwin'] as const)('%s preserves its empty-header geometry and sidebar access', async (platform) => {
     const page = await newEnglishPage(browser)
     try {
-      // This lane is only meaningful while no Session is current, and an open Session is
-      // created by the client over the wire shortly after the Hero appears. Refusing that
-      // request pins the premise instead of racing it.
-      await page.route('**/api/session/create', route => route.abort('aborted'))
       if (platform !== 'web') {
         await page.addInitScript((value) => {
           const mark = () => { document.documentElement.setAttribute('data-platform', value) }

@@ -10,7 +10,7 @@ Status: implemented
 
 ## Decision
 
-启动时等待完整的 Workspace 和 Session 基线。Workspace 列表为空时，Client 请求 Host 准备默认 Workspace，随后创建或复用并选中其空白 Session。Session 存在前不可输入，之后使用常规 composer 流程。[Session scope 与供给通道](../architecture/2026-07-25-web-client-session-scope-and-provide-channel.zh.md)负责 blank Session 复用与供给通道的理由。
+启动时等待完整的 Workspace 和 Session 基线。Workspace 列表为空时，Client 请求 Host 准备默认 Workspace；它会复用一条仍符合条件的已保存空白 Session，否则让该 Workspace 保持关闭，因此[启动不会打开任何 Session](2026-09-29-startup-never-opens-a-session.zh.md)，第一条 Session 由 Hero 的发送动作拥有。Session 存在前输入框是 Hero 的 composer，之后使用常规 composer 流程。[Session scope 与供给通道](../architecture/2026-07-25-web-client-session-scope-and-provide-channel.zh.md)负责 blank Session 复用与供给通道的理由。
 
 [Workspace registry](../../../../packages/workspace/workspace/README.zh.md#first-use-workspace)负责资格判断和目录准备：资格即注册表为空，且 [Session 历史不再否决准备](2026-09-23-first-use-eligibility-ignores-session-history.zh.md)。操作运行在注册表修改队列内，该队列串行化每一次 Workspace 写入。
 
@@ -28,6 +28,6 @@ Client 在启动时按其语言解析初始目录名和标题。Host 控制器�
 
 ## Consequences
 
-打开新安装的应用即可在用户发送消息前创建目录和空白 Session。目录授权与准备失败提示可能在启动期间出现。Desktop 和远程 Web 客户端均由 Host 准备目录，因此远程用户使用 Host 账户的 Documents 位置。Documents 查询不可用时，采用与目录创建失败相同的文件夹选择恢复路径。
+打开新安装的应用即可在用户发送消息前创建目录。目录授权与准备失败提示可能在启动期间出现。Desktop 和远程 Web 客户端均由 Host 准备目录，因此远程用户使用 Host 账户的 Documents 位置。Documents 查询不可用时，采用与目录创建失败相同的文件夹选择恢复路径。
 
 该功能保留[由引用持有的 Client Session 生命周期](../architecture/2026-09-15-client-session-references.zh.md)，无需修改 agent-loop 或 Session 事件。Registry 和客户端测试覆盖重试、隐藏历史、并发及启动取消；[浏览器场景](../../../../apps/web/tests/default-workspace.e2e.ts)通过隔离的 Documents 目录和已录制 Session 回放验证完整装配下的启动、刷新、首次发送与选择器路径。

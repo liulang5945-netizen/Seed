@@ -377,15 +377,11 @@ class UiWorkspaceService extends Service implements UiWorkspace {
       && !workspaces.archivedSessionIds.includes(summary.id)) {
       sessionId = await this.reuseBlank(workspace.workspaceId, summary.id)
     }
-    let target = workspace?.workspaceId ?? recentWorkspace(workspaces.items, sessions.byId)
     // Session history never vetoes the default Workspace: with no Workspace at
     // all, the client would otherwise open with nothing selectable.
-    if (target === undefined && workspaces.items.length === 0) {
-      const prepared = await this.initializeDefaultWorkspace(navigation)
-      if (navigation.aborted) return
-      target = prepared?.workspaceId
-    }
-    if (sessionId === undefined && target !== undefined) sessionId = await this.connectWorkspace(target)
+    if (workspaces.items.length === 0) await this.initializeDefaultWorkspace(navigation)
+    // Boot never creates a Session: the Hero's gesture owns the first one. A saved blank
+    // Session was already reused above, so restoration still lands on it when one exists.
     if (sessionId !== undefined && !navigation.aborted) {
       this.replaceMain(sessionId, navigation, 'preserve')
     }

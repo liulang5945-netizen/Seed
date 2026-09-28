@@ -172,8 +172,7 @@ describe.skipIf(MODE === 'record')('web e2e: GitHub ready-for-review', () => {
       create.mockRestore()
       off()
     }
-    // The Hero opens its own Session at boot, so total roster growth is not a usable signal;
-    // attribute by provenance instead — exactly one Agent may own webhook input.
+    // Attribute by event source rather than roster size: exactly one Agent may own webhook input.
     expect(scaffold.ctx.agents.list().filter(candidate => (
       candidate.session.snapshotEvents().some(event => (event.type === 'user/message'
         && event.data.source.kind === 'webhook'))
