@@ -100,6 +100,7 @@ def run_arm(runtime: Any, items: list[dict[str, Any]], arm: str) -> list[dict[st
         "chosen_calls_in_generation": 0,
         "chosen_ids_in_generation": [],
         "chosen_texts_in_generation": [],
+        "record_chosen": False,
         "evidence_nonzero_steps": 0,
         "first_step_evidence": None,
         "used_oracle_label": 0,
@@ -138,12 +139,15 @@ def run_arm(runtime: Any, items: list[dict[str, Any]], arm: str) -> list[dict[st
         if state["phase"] == "generation":
             state["chosen_calls_in_generation"] += 1
             state["lock_path"] += int(locked)
-            state["chosen_texts_in_generation"].append(
-                "" if event is None else _text(event.content)
-            )
-            state["chosen_ids_in_generation"].append(
-                None if event is None else int(event.event_id)
-            )
+            #: 只在**最后一轮**（真正的答题轮）记"取到了哪条"——告知轮的生成里标注事件
+            #: 还没入库，把它们算进来会让 `chosen_is_labelled` 对本题集恒假（2026-09-28 登记）。
+            if state["record_chosen"]:
+                state["chosen_texts_in_generation"].append(
+                    "" if event is None else _text(event.content)
+                )
+                state["chosen_ids_in_generation"].append(
+                    None if event is None else int(event.event_id)
+                )
         return event
 
     def evidence(self: Any, **kwargs: Any) -> Any:
@@ -201,6 +205,8 @@ def run_arm(runtime: Any, items: list[dict[str, Any]], arm: str) -> list[dict[st
             state["first_step_evidence"] = None
             answer = ""
             for index, turn in enumerate(turns):
+                #: 只有最后一轮是"答题轮"；告知轮的生成不计入"取到了哪条告知"（见上）。
+                state["record_chosen"] = index == len(turns) - 1
                 answer = _answer_raw(runtime, turn, history)
                 if index + 1 < len(turns):
                     history.append((turn, answer))
@@ -209,6 +215,25 @@ def run_arm(runtime: Any, items: list[dict[str, Any]], arm: str) -> list[dict[st
             other_text = "".join(
                 turn for index, turn in enumerate(told) if index != labelled_index
             )
+            #: 归属改按**字符重叠率**（原判据 `answer[:3] in other_text` 太硬：
+            #: 只要首三字节不是逐字子串就全落进 `unattributed`，看不出"内容来自谁"）。
+            answer_chars = {ch for ch in answer if not ch.isspace()}
+            labelled_chars = {ch for ch in labelled_text if not ch.isspace()}
+            other_chars = {ch for ch in other_text if not ch.isspace()}
+            labelled_overlap = (
+                len(answer_chars & labelled_chars) / len(answer_chars) if answer_chars else 0.0
+            )
+            other_overlap = (
+                len(answer_chars & other_chars) / len(answer_chars) if answer_chars else 0.0
+            )
+            if not answer.strip():
+                owner = "none"
+            elif labelled_overlap >= other_overlap + 0.10:
+                owner = "labelled"
+            elif other_overlap >= labelled_overlap + 0.10:
+                owner = "other"
+            else:
+                owner = "mixed"
             first_byte = tokens[0].encode("utf-8")[0] if tokens else None
             rank = None
             if state["first_step_evidence"] is not None and first_byte is not None:
@@ -225,19 +250,9 @@ def run_arm(runtime: Any, items: list[dict[str, Any]], arm: str) -> list[dict[st
                     "answer_tell_position": item.get("answer_tell_position"),
                     "hit": hit,
                     "answer_head": answer[:24],
-                    "emitted_owner": (
-                        "none"
-                        if not answer.strip()
-                        else (
-                            "labelled"
-                            if any(token in answer for token in tokens)
-                            else (
-                                "other"
-                                if other_text and answer[:3] and answer[:3] in other_text
-                                else "unattributed"
-                            )
-                        )
-                    ),
+                    "emitted_owner": owner,
+                    "labelled_overlap": round(labelled_overlap, 4),
+                    "other_overlap": round(other_overlap, 4),
                     "chosen_is_labelled": (
                         None
                         if labelled_index is None
