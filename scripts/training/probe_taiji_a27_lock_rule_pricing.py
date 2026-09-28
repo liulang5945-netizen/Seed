@@ -98,6 +98,13 @@ def main() -> int:
         choices=sorted(RULES),
         help="把锁的分数整个换成该规则**真跑一遍**（量命中），而不是只算选中率",
     )
+    parser.add_argument(
+        "--query-scope",
+        choices=("whole", "question"),
+        default="whole",
+        help="喂给 `lock_selection` 的 `query_bytes`：`whole`＝现状（产品传的是**整段序列化文本**）；"
+        "`question`＝只传**提问那一轮**（特征 2「与提问共享字符」的原意）",
+    )
     parser.add_argument("--out-report", required=True)
     args = parser.parse_args()
 
@@ -124,12 +131,14 @@ def main() -> int:
     #: 只记**答题轮**那一次锁：告知轮的锁里标注事件还没入库，算进来会把选中率拉偏
     #: （2026-09-28 同型缺陷已在本轮登记过一次）。
     scope: dict[str, bool] = {"record": False}
+    #: 当前提问那一轮的字节（`--query-scope question` 用它替换产品传进去的整段文本）。
+    ask: dict[str, bytes] = {"question": b""}
     tallies: dict[str, dict[str, int]] = {
         rule: {"locks": 0, "on_labelled": 0} for rule in RULES
     }
     disagreements = {"cue_only_vs_production": 0}
     rows: list[dict[str, Any]] = []
-    originals = {"selection": CopyCircuit.selection}
+    originals = {"selection": CopyCircuit.selection, "lock": CopyCircuit.lock_selection}
     weights = {
         rule: torch.tensor(vector, dtype=torch.float32) for rule, vector in RULES.items()
     }
@@ -174,7 +183,17 @@ def main() -> int:
             return {**state, "picked": override, "event": events[override]}
         return state
 
+    def lock_selection(self: Any, *, cue: Any, f1_context: Any, query_bytes: bytes = b"") -> Any:
+        #: 口径开关：产品把**整段序列化文本**当 query（`model.py:3088-3092`），
+        #: 于是特征 2「与提问共享字符」实际算的是"与整段对话共享字符"——对每条告知都接近满分、
+        #: **没有区分度**（这正是本轮定价实测到 `byte_overlap` 两半各 12–13/52 近随机的头号嫌疑）。
+        #: `question` 档只传提问那一轮，用来**定价**"若口径修对，内容侧特征能不能用"。
+        if args.query_scope == "question" and ask["question"]:
+            query_bytes = ask["question"]
+        return originals["lock"](self, cue=cue, f1_context=f1_context, query_bytes=query_bytes)
+
     CopyCircuit.selection = selection
+    CopyCircuit.lock_selection = lock_selection
     hits = 0
     answered = 0
     try:
@@ -184,6 +203,7 @@ def main() -> int:
             labels["item_id"] = item["id"]
             labels["position"] = item.get("answer_tell_position")
             turns = [str(turn) for turn in item["turns"]]
+            ask["question"] = turns[-1].encode("utf-8")
             history: list[tuple[str, str]] = []
             answer = ""
             for index, turn in enumerate(turns):
@@ -195,6 +215,7 @@ def main() -> int:
             hits += int(any(token in answer for token in tokens))
     finally:
         CopyCircuit.selection = originals["selection"]
+        CopyCircuit.lock_selection = originals["lock"]
 
     def _split(rule: str) -> dict[str, Any]:
         out: dict[str, Any] = {}
@@ -220,6 +241,7 @@ def main() -> int:
         "items": len(items),
         "answered": answered,
         "apply_rule": args.apply_rule,
+        "query_scope": args.query_scope,
         "generated_hits": hits if args.apply_rule is not None else None,
         "rules": {
             rule: {
