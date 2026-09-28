@@ -506,6 +506,18 @@ owner 选"2 之后 3"，SPEC-R2-02 已把解码掩码产品化——产品表层
 
 ## 11. 修订记录
 
+* **rev21（2026-09-28，**A-4 首批接线落地**：主线能直接跑"支线已证部件"这一档）**：
+  rev20 的归因把复述的剩余缺口定位到**底座能力**（主线层级），于是按 A-4 的字面走：
+  **把支线已证的部件接给主训练线**。`train_seed_corpus.py` 新增两个默认关开关
+  （`--predictive-context-region0-only`＝A-4 点名的那件、`--readout-position`＝PLAN-R2-01 证过的那件；
+  `--receptors-factored` 沿用），接线抽成纯函数 `apply_experiment_flags` 以便被单测钉住：
+  **全 False ⇒ config 逐键等于入参、单个 True 只翻自己那一键**（新增 21 条守卫全绿）。
+  冒烟：`--smoke --readout-position --predictive-context-region0-only` 跑通 5000 ticks，
+  且**配方随 checkpoint 落盘可查**（实测档里两个键皆为 True、`copy_evidence_utf8_gate` 仍 False）。
+  **明确不做**：不改任何默认；不擅自起主线训练（那是预算项）。
+  ⇒ **A 支线的"分支内机制"这一侧到此收口**：可选的两条路只剩
+  （a）owner 批一次**主线规模训练**（带上已证部件）或（b）**接受当前上界**收尾。
+
 * **rev20（2026-09-28，两臂终件三点归因 ⇒ **复述命中几乎不动；位置输入的贡献集中在"合法性/成句"**）**：
   两臂各跑满预算（`pos_on` 3700 episodes／90 分钟；`pos_off` **2700 episodes／90 分钟**），
   三条判读链全部落盘。**同配方（chat 协议 A2 电路）、唯一变量＝基底**：

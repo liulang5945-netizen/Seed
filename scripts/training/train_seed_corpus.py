@@ -207,6 +207,29 @@ def _summary(model: Seed, ticks: int) -> dict[str, float]:
     }
 
 
+def apply_experiment_flags(
+    config: SeedConfig,
+    *,
+    receptors_factored: bool = False,
+    predictive_context_region0_only: bool = False,
+    readout_position: bool = False,
+) -> SeedConfig:
+    """把各处**默认关**的实验开关一次写进 config（A-4：把 A 支线已证的部件接到主训练线）。
+
+    抽成纯函数是为了可被单测钉住：**全 False 时必须逐键等于入参**（"默认关 ⇒ 行为不变"），
+    单个 True 只许翻自己那一键。守卫见 `tests/taiji_native/test_a4_mainline_flags.py`。
+    """
+
+    taiji = config.taiji
+    if receptors_factored:
+        taiji = replace(taiji, receptors_factored=True)
+    if predictive_context_region0_only:
+        taiji = replace(taiji, predictive_context_region0_only=True)
+    if readout_position:
+        taiji = replace(taiji, readout_utf8_position_input=True)
+    return config if taiji is config.taiji else replace(config, taiji=taiji)
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
@@ -265,6 +288,22 @@ def main() -> None:
         "test_receptor_factorization_contract.py）。",
     )
     parser.add_argument(
+        "--predictive-context-region0-only",
+        action="store_true",
+        help="A-4：把 `predictive_context` 的输入限制在**区 0**（其余区按零掩码、宽度不变）。"
+        "R2 组合绑定线实测：区 0 单独承载槽结构（16M 时 0.729/0.709），三区全拼接会被"
+        "区1/2 的随机方向稀释（0.420）。**默认关，现行行为与载荷逐位不变**"
+        "（守卫 tests/taiji_native/test_predictive_context_region0_mask.py）。",
+    )
+    parser.add_argument(
+        "--readout-position",
+        action="store_true",
+        help="PLAN-R2-01：给 F1 读出加一条**显式的 UTF-8 字节位置输入**（4 维 one-hot，"
+        "零初始化）。A 支线两臂实测：它把裸通道的字节合法性从 ~0 抬到 100%"
+        "（真非法率 99.0%→0%）、表层成句 0→68。**默认关，现行行为逐位不变**"
+        "（守卫 tests/taiji_native/test_readout_utf8_position.py）。",
+    )
+    parser.add_argument(
         "--smoke",
         action="store_true",
         help="tiny default config and budget for a fast end-to-end run",
@@ -299,9 +338,15 @@ def main() -> None:
             Path(args.checkpoint + ".history")
         )
 
-    if args.receptors_factored:
-        # 只在 struct-on 臂上打开。关着的时候连 config 都不多一个键的不同取值（默认 False）。
-        config = replace(config, taiji=replace(config.taiji, receptors_factored=True))
+    #: A-4（把 A 支线已证的部件推广到主训练线）：全部开关**默认关**，关着时 config 与
+    #: 载荷逐位不变；打开即写进 config（随 checkpoint 一起落盘，所以"这条读数用的是哪套配方"
+    #: 永远可从档里查出来，不靠外部记录）。
+    config = apply_experiment_flags(
+        config,
+        receptors_factored=bool(args.receptors_factored),
+        predictive_context_region0_only=bool(args.predictive_context_region0_only),
+        readout_position=bool(args.readout_position),
+    )
 
     summary = run_training(
         corpus_paths=args.corpus,
