@@ -77,7 +77,7 @@ async function mount(config: Config = {}, snapshot: LifeSnapshot = nativeSnapsho
   return { ctx, sections, reads, setSnapshot(next: LifeSnapshot) { current = next } }
 }
 
-const AGENT = { id: 'agent', options: {}, status: 'running', ctx: new Context() } as unknown as Agent
+const AGENT = { id: 'agent', options: {}, status: 'running', ctx: new Context() } as Agent
 
 async function fire(ctx: Context, signal: AbortSignal = SIGNAL): Promise<readonly UserMessage[]> {
   const proposed = createUserMessage({ content: [{ type: 'text', text: 'request' }], source: { kind: 'user' } })

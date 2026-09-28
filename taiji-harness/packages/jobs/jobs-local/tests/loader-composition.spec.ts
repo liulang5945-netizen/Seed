@@ -39,7 +39,7 @@ describe('jobs-local through a real Loader composition', () => {
         if (specifier === '@taiji/dsh-jobs-local') return LocalJobRegistry
         throw new Error(`unexpected Loader import: ${specifier}`)
       },
-    } as unknown as NonNullable<typeof context.loader.internal>
+    } as never
     await context.loader.create({
       name: 'cordis:include',
       config: { path: pathToFileURL(configPath).href },

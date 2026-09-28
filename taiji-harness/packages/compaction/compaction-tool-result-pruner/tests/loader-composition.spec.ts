@@ -47,7 +47,7 @@ describe('compaction-tool-result-pruner real Loader composition', () => {
         if (specifier === '@taiji/dsh-compaction-tool-result-pruner') return ToolResultPruner
         throw new Error(`unexpected Loader import: ${specifier}`)
       },
-    } as unknown as NonNullable<typeof context.loader.internal>
+    } as never
     await context.loader.create({
       name: 'cordis:include',
       config: { path: pathToFileURL(configPath).href },

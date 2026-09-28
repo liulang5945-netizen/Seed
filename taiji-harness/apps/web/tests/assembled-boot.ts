@@ -71,7 +71,7 @@ const workspacePackageManifests = new Map(globSync('packages/*/*/package.json', 
   if (pkg.name === undefined) throw new Error(`assembled boot: workspace package has no name: ${path}`)
   return [pkg.name, path]
 }))
-const appBoot = await import(pathToFileURL(webBundleResolver.resolve('@taiji/dsh-app-boot')).href) as unknown as BootComposition
+const appBoot = await import(pathToFileURL(webBundleResolver.resolve('@taiji/dsh-app-boot')).href) as BootComposition
 
 function resolvePackageManifest(specifier: string): string | undefined {
   return workspacePackageManifests.get(specifier)

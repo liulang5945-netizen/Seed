@@ -94,7 +94,7 @@ const SNAPSHOT = {
     },
     { id: 'shattered', name: '坏预设', isDefault: false, broken: 'the composition file is missing', rows: [] },
   ],
-} as unknown as Snapshot
+} as Snapshot
 
 async function renderReady(snapshot: Snapshot = SNAPSHOT): Promise<ReturnType<typeof render>> {
   const view = render(<PluginInventorySettingsTab {...props(async () => snapshot)} />)
@@ -380,7 +380,7 @@ describe('PluginInventorySettingsTab', () => {
           { entryId: 'preset-running', moduleName: '@fixture/preset-running', enabled: true, fiberPhase: 'active' },
         ],
       }],
-    } as unknown as Snapshot)
+    } as Snapshot)
 
     fireEvent.click(globalToggle())
     fireEvent.click(presetToggle())
@@ -579,7 +579,7 @@ describe('PluginInventorySettingsTab', () => {
         { entryId: 'hmr', moduleName: '@taiji/cordis-plugin-hmr', enabled: true, fiberPhase: 'active' },
         { entryId: 'off', moduleName: '@fixture/off', enabled: false, fiberPhase: null },
       ],
-    } as unknown as Snapshot)
+    } as Snapshot)
 
     expect(screen.queryByRole('button', { name: en.switcherLabel })).toBeNull()
     expect(globalToggle().getAttribute('aria-expanded')).toBe('false')

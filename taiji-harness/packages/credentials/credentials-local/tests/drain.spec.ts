@@ -23,8 +23,10 @@ vi.mock('@taiji/dsh-atomic-write', async (importOriginal) => {
 })
 
 async function setGate(next: Promise<void>): Promise<void> {
-  const mocked = await import('@taiji/dsh-atomic-write') as unknown as { __setGate: (next: Promise<void>) => void }
-  mocked.__setGate(next)
+  const mocked: Record<string, unknown> = await import('@taiji/dsh-atomic-write')
+  const hook = mocked.__setGate as ((next: Promise<void>) => void) | undefined
+  if (hook === undefined) throw new Error('atomic-write test hook __setGate is missing')
+  hook(next)
 }
 
 const KEY = credentialRef('DSH_CRED_DRAIN_A')

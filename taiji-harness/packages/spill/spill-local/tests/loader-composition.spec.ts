@@ -60,7 +60,7 @@ describe('spill-local real Loader composition through cordis.yml', () => {
         if (specifier !== '@taiji/dsh-spill-local') throw new Error(`unexpected Loader import: ${specifier}`)
         return LocalSpillStore
       },
-    } as unknown as NonNullable<typeof context.loader.internal>
+    } as never
     await context.loader.create({
       name: 'cordis:include',
       config: { path: pathToFileURL(configPath).href },

@@ -36,7 +36,7 @@ it('loads one shared conversion row and retains caller-owned PDFs after disposal
       if (specifier !== '@taiji/dsh-office-to-pdf') throw new Error(`Unexpected plugin: ${specifier}`)
       return LibreOfficeProvider
     },
-  } as unknown as NonNullable<typeof ctx.loader.internal>
+  } as never
   await ctx.loader.create({ name: 'cordis:include', config: { path: pathToFileURL(configPath).href } })
   await ctx.loader.await()
   const entry = [...ctx.loader.entries()].find(candidate => candidate.options.id === 'office-to-pdf')!

@@ -90,8 +90,7 @@
   },
   "apps/web/tests/assembled-boot.ts": {
     "203f87d9e4f18ce1f00bf575fe96f724975341cbb67b8c51ea45d4cbb8e60005": 1,
-    "56cede35ce34488cdae4b19aec217c9c939377eb891fe68827fbd64cd019170c": 1,
-    "fda84896a47e7f9d046fcd7e10e9096c8b002bc5f1ea0c7753e57abe87528dea": 1
+    "56cede35ce34488cdae4b19aec217c9c939377eb891fe68827fbd64cd019170c": 1
   },
   "apps/web/tests/onboarding-deepseek-config.e2e.ts": {
     "326597b335539db945b2e3b7c86638d40849d2077c0a5670d064e45486f4e407": 2
@@ -391,9 +390,6 @@
   "packages/bundle/web-app/tests/browser-open.spec.ts": {
     "2e78263d16d54ccfd8d322bcdf1bf738bd8134e15c24063ece9a1d1b52f4ebd9": 1
   },
-  "packages/bundle/web-app/tests/document-conversion.e2e.ts": {
-    "743a7488a765c578e607d08ba6bdcf6f2f2971f67b05a42d5097aad2458134a1": 1
-  },
   "packages/bundle/web-app/tests/document-preview.spec.ts": {
     "154da39139a0074bad3d13a624e5fa62d1f7ce19dc8b9c28a73af3263cd7f10e": 1
   },
@@ -676,11 +672,6 @@
     "04984a2ce1486250236e638e0197da0a1a840855ed3975c59130a85358c7e5fe": 1,
     "85f4d0d762126e709ae2178ca656f586dac1ba425eb1d8dd402cb5577d6e8225": 1
   },
-  "packages/client/ui-settings-plugin-inventory/tests/components.client.spec.tsx": {
-    "0d78ec7c8ca39f70a4033ff4d330f8ef26832bb89932f98d1c87d76b4ce16d00": 1,
-    "79c53da50aa08004e201cebca842267ae2650a543b435a7906960f6492c2398b": 1,
-    "a3c1509d552d0102e118f3071a234002a5c83c30ca6923f8a87e9e3733ce0dcf": 1
-  },
   "packages/client/ui-settings/tests/schema.client.spec.ts": {
     "0584be4cde4cd33049ef7c02e9d1562a30ec48ef2176f2f22b328b5be2903407": 1
   },
@@ -871,9 +862,6 @@
   },
   "packages/compaction/compaction-basic/tests/manual-compaction.spec.ts": {
     "9dae2342b022f2c9c7f61de694191cf5e0be290723a4e1235c603a7a78c6d4ca": 1
-  },
-  "packages/compaction/compaction-tool-result-pruner/tests/loader-composition.spec.ts": {
-    "cf608c9b27ee8323dcd5ca6261251861abf5243d4f61896effb2e7e765d14759": 1
   },
   "packages/compaction/compaction/tests/compaction.spec.ts": {
     "6517a00893f4956fa1670426a26a1e2e6e7fe21136e82bf1b42731394998f221": 1
@@ -1091,9 +1079,6 @@
     "0d733b2c7c458f6a7c4d287ed741c321842339cbe5908a8720660883423474c0": 1,
     "84a5877f154b369cc0528281904d1dc18e20fd3ad74a26c939301ba0db20ae02": 1,
     "d80a3368311f07e812a76ff265125b072175f58b6003d9f96a37d4f3e70e3dec": 1
-  },
-  "packages/credentials/credentials-local/tests/drain.spec.ts": {
-    "a96f4a3497a1c661f76e47ef5fda3c32d2759a7a5f9c519527fa46801a91bf79": 1
   },
   "packages/credentials/credentials-local/tests/watcher.spec.ts": {
     "6dfe702b6cb8848eeb1d56c5af6ff723d84841aaa1d96790295db4ed70616c65": 1
@@ -1405,9 +1390,6 @@
   },
   "packages/jobs/jobs-local/tests/jobs.spec.ts": {
     "52e6bc7e2a6c58a465a5e1c7a1e92caa4f771235b19ebf4642df5c0845de72aa": 1
-  },
-  "packages/jobs/jobs-local/tests/loader-composition.spec.ts": {
-    "6dc45d44a978dd86bb9ac2c9baf5d31aed699055698709e09bb34e99150e239d": 1
   },
   "packages/jobs/tool-jobs/src/index.ts": {
     "64ab5463fdb068e88a33f022baff473b7a0da77854c4ecf8e26412763d6dccf6": 1
@@ -1887,9 +1869,6 @@
   },
   "packages/skill/tool-skill/tests/tool-skill.spec.ts": {
     "52faf4558fcd91bd27dbdfa7e497843e8eeb75ea5f68ee231335018d5b3f2053": 2
-  },
-  "packages/spill/spill-local/tests/loader-composition.spec.ts": {
-    "a1bc71cd51432754ad8ccc5a1d1cb7f764e8e423d46f685bee8715b79bd2df04": 1
   },
   "packages/spill/spill-policy/tests/spill-policy.spec.ts": {
     "454b667cdac6de305d79d51ef853272212a80166952a84385c7c915f595ae0a6": 1
