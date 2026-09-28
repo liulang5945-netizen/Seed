@@ -55,7 +55,13 @@ def components(mask: np.ndarray, connectivity: int) -> list[list[tuple[int, int]
 
 
 def moore_ring(mask: np.ndarray, seed: tuple[int, int]) -> list[tuple[int, int]] | None:
-    """Boundary of the 8-connected component containing seed (crack-following)."""
+    """Boundary of the 8-connected component containing seed (crack-following).
+
+    Termination is by repeated (pixel, incoming direction) state, not by touching
+    the seed pixel: a boundary that self-touches returns to the seed from another
+    direction, and stopping there yields a truncated polygon whose area is far too
+    small (measured: a 24272-px hole traced as 8.3 of 50.7 user units).
+    """
     height, width = mask.shape
 
     def inside(y: int, x: int) -> bool:
