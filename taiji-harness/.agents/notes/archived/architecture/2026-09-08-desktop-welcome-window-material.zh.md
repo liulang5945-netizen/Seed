@@ -1,6 +1,7 @@
 # Agent Note: 桌面欢迎窗口材质
 
 Status: implemented
+Archived: 2026-09-28
 
 [English](2026-09-08-desktop-welcome-window-material.md) | 中文
 

@@ -1,6 +1,7 @@
 # Agent Note: Desktop welcome window material
 
 Status: implemented
+Archived: 2026-09-28
 
 English | [中文](2026-09-08-desktop-welcome-window-material.zh.md)
 
