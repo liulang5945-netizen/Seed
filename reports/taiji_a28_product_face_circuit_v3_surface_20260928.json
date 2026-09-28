@@ -1,0 +1,2279 @@
+{
+  "format": "taiji-r2-copy-surface-extension-v1",
+  "prereg": "plans/reference/SPEC-A-21_r2_surface_extension_prereg_20260925.md",
+  "judge_prereg": "plans/reference/SPEC-A-22_r2_a2_5_query_conditioned_selector_prereg_20260926.md",
+  "manifest": "plans/manifests/r2_copy_surface_extension_v3_position_random.json",
+  "chain": "product_surface_chat",
+  "manifest_sha256": "b162ff091630f64a8cac986184729ff7894887f4806c923cc12b301ce5ae4fee",
+  "checkpoint": "checkpoints/seed_beta.pt",
+  "copy_evidence_utf8_gate": false,
+  "circuit_carried_envelopes": [
+    {
+      "base": "checkpoints/seed_beta.pt",
+      "base_sha256": "ad2a06465e0ef78c75aff7302a6f7a2ae11825d2f19361d9d65926006f3bf793",
+      "circuit": "output/taiji_r2_copy_circuit_chat/judge/circuit-final.pt",
+      "envelope": "output/a28_product_face/seed_beta_with_circuit_0.pt",
+      "envelope_bytes": 87919979,
+      "envelope_sha256": "63258adfaee07855fd5398ec0b1af2fc40dfca36bc82c0eb55e4d25bbc79a2f5",
+      "auto_mount_gate_effective": true
+    }
+  ],
+  "control_no_circuit": {
+    "circuit": null,
+    "chain": "product_surface_chat",
+    "mount_entry": "none",
+    "gate_effective": false,
+    "items": 104,
+    "texts": 312,
+    "well_formed_texts": 48,
+    "well_formed_rate": 0.1538,
+    "utf8_decodable_rate": 1.0,
+    "utf8_decodable_trimmed_rate": 1.0,
+    "illegal_after_tail_trim_rate": 0.0,
+    "strict_hits": 0,
+    "rows": [
+      {
+        "id": "V001",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "尝君家则人了个刊䀂\n\n\n\n\n\n\n\n\n（（（）：有君，君人人人人人个刍有君君君人不惜同君亐为吼别勻䖇庀先是他为人为伌俙是",
+        "well_formed": false
+      },
+      {
+        "id": "V002",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "刑下师：是有扈我人人人人人人人人他君亖君亚。君则何叚有我他下考体我他有，制君则亶君人人人亄君尝君尝君家则亜娉君则亰有，下",
+        "well_formed": false
+      },
+      {
+        "id": "V003",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "刑人下师，为个刈冺，制刑们一个刈是是想有我他师为了丼\n\n\n\n\n\n\n\n\n（（（（尝君刽家吟刺了人人人人亄心有君亟别尝君亱是",
+        "well_formed": false
+      },
+      {
+        "id": "V004",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "到：刑他君则了了个刱是任䬻君则使是有扚我们下耂则䢘君䐲则伌则伌则是是是我了了个则伌则为人人人亄尝君䛰下君䲡亱是他师尝君亰",
+        "well_formed": false
+      },
+      {
+        "id": "V005",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "到：刑以下孟利刯君刼我他个刑他君人人人人人亄君䲡人争，他君则何叜尝君刍想是是任他利摢们们下来佼我他师，制则使是有扚摽家刟",
+        "well_formed": false
+      },
+      {
+        "id": "V006",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "到，到，他师，家则人人人人人亄君家则亽下尝䰝一䃚是有我们为，则使是有我他师，则你个到，则你个刑佼\n\n\n戈（））：我人下个",
+        "well_formed": true
+      },
+      {
+        "id": "V007",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "我他君则了人人人人人人人人下有我他有我他有我他我也\n\n漈（（（（我他师（君刺吟孟帥到，你个是有才惽我他师，家则人人人人人",
+        "well_formed": false
+      },
+      {
+        "id": "V008",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "尝君家则人冼则人人人人人人亄君䰖文君是他为我们为，家君佐弈是是是我亰文君为君则君亰我他君为吼别勻也刑他君个是是是是是是摢",
+        "well_formed": false
+      },
+      {
+        "id": "V009",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "分君师，制君为师，刯是是人了下帀䀂刚君则何师一偓君为很是是是是有扚摢为下君为为为为为丟洀君君君使指吟利丌制君君么嶀其则丌",
+        "well_formed": false
+      },
+      {
+        "id": "V010",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "分君则君则吼制刑他凪己有吼别嚄吆寴他凪则是是是人人人人人人人亄君亚。君昘合尝吀弌制刑他帺君个是他师是是是是是是是是摢下怂",
+        "well_formed": false
+      },
+      {
+        "id": "V011",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "刑了个利，制则个是有我人人人人人个利是是是我争，下为，伌为君君君子尝君利也。\n\n\n\n\n\n\n\n\n（（（（家刟则个刈刟制",
+        "well_formed": false
+      },
+      {
+        "id": "V012",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "分君则人人人人人亄君亼\n\n杈（是有：我他个到，君亰为君君亼\n\n戈（）：我亯有君个是有我人个师，君为师，尝君家则人得刍想是",
+        "well_formed": false
+      },
+      {
+        "id": "V013",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "我他为君则亡人君人个君䲡有吼别后吼则是是是我们下帺：我他吆君人大家则人人人人人个是有我他君为予么是有我䉉：我下楞亰为，就",
+        "well_formed": false
+      },
+      {
+        "id": "V014",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "到，到，他君则亡人人人人亄君尝君亚有君下下木亰，你他君佼\n\n\n戈（）））：有君，君亰最个则是有所人个则么是文君为个君君于",
+        "well_formed": false
+      },
+      {
+        "id": "V015",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "我他君则了人人人人人亄君则亡人个是他君何家则何刑你下有，俙我䉉：我䈑他师则使想有君为个则我䈑他君䨁师，则我人人人人人个君",
+        "well_formed": false
+      },
+      {
+        "id": "V016",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "到：君家则亭一个则有君为君有，他师，家则了个则有君，他师，则个则是是有扚我们下耂师，则为人人人人人亄君君君人个吟尝君家则",
+        "well_formed": false
+      },
+      {
+        "id": "V017",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "则了是人人人人人人亄君宨人人人人亼有君，他有君，师，君为，君君君孟孟制刑他师，制他师，个是是是我们不怂君则么嶀刑他师，制",
+        "well_formed": false
+      },
+      {
+        "id": "V018",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "分君则了个则伌君了人人人人亄君尝君刍想吟是他个我他君为则使是有我们为师，到：我他君则使是有我他下师，师君使是是我们下君，",
+        "well_formed": true
+      },
+      {
+        "id": "V019",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "刼则为师）：我们一个到）：我他天为君孟别别嶀傫初君为匇吟刟刟前惜威寴刂\n\n\n戈（：我下师：我为大家刟则个刈，为师，个刱是",
+        "well_formed": false
+      },
+      {
+        "id": "V020",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "则君则君家则人人人人人人人个有君则予君不惜君是有我他师，到我们一个则我䈑他师，制则使想有，制则有有，制则也。师，到，到，",
+        "well_formed": true
+      },
+      {
+        "id": "V021",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "分君刼他师，利是有所个我他师，则为人人人人人人亄君君则何叜尝君䲡亱是他下有我们为，制则使想有我他师，则为家刟刑他师，制则",
+        "well_formed": false
+      },
+      {
+        "id": "V022",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "到文君，制则人人人人人人人人个则予君人不惜君䐲吼\n\n\n戈（）：我下下个我亰文君君刍惽吽宺人为人为君䲼氖是有我他为师，制则",
+        "well_formed": false
+      },
+      {
+        "id": "V023",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "则君则个则君则了个则伌不想有所个则我他合，个则也是是文我他师，到会。\n\n\n\n\n\n\n\n\n（（（）：君家刟孟刟刑人人人人人人",
+        "well_formed": false
+      },
+      {
+        "id": "V024",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "我他君则了个则伌不想有才我们为师，到䈟前君刽叻个刈大家刚。\n\n\n\n\n\n\n\n\n（（（）：刼刺大家刚有君，刽有，刽帺人人人人",
+        "well_formed": false
+      },
+      {
+        "id": "V025",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "分君则了人人人人人人人人个有君君二吡你他听使是有我他为师，到，到我们一个刈君刽家刽宺人人人人个利有刑君亻他凪则意有我他师",
+        "well_formed": false
+      },
+      {
+        "id": "V026",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "分君则了个则伌个则有君人人人人人亄君君何叜君使是他个是他有我们下这我䉚我他愶别君享君了君了个吼\n\n\n\n\n\n\n\n（（（）：",
+        "well_formed": false
+      },
+      {
+        "id": "V027",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "刑们不想是是我人人人人人为师，制君亟制君为师，为，制君则为吲君家则人下弈，下个刯是是是是是是是是是我们为师师尝君为君么君",
+        "well_formed": false
+      },
+      {
+        "id": "V028",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "分君则人人人人人人人人个君则何宨人个制刑你他凪君有吟活他个则我你为，俙意有扉：我他师，到使想有君，则个刼则刑也。倁刑为刟",
+        "well_formed": false
+      },
+      {
+        "id": "V029",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "我他为君）：我他有君，君为同君人人人人亄君君君家刟庺了吲君宨偓刑亩是有我他下帺，到，制刑他师亀傀刈噽家刽为，下有吼有是是",
+        "well_formed": false
+      },
+      {
+        "id": "V030",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "到）：刑们个师，伌为人人人人亄君孟尝君则亝不是有我们一个则是是我他师，家吟则于君为，家则亜君一个刈，到：。\n\n\n\n\n\n\n",
+        "well_formed": false
+      },
+      {
+        "id": "V031",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "到）：则了为人人人五䟴尝君则何家则使是他一䀝则䡀为，则是有扚我他师（则亶大家刚。忙我人下弈，尊俙为师，尝君则为倂\n\n\n\n",
+        "well_formed": false
+      },
+      {
+        "id": "V032",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "分君师，个师，以为大家则人人人人人个刊䀍宁君则亡为为，制刑䜉君为吼\n\n\n\n\n\n\n\n\n（（（）：愶有所下楽我亰文君，家",
+        "well_formed": false
+      },
+      {
+        "id": "V033",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "刑他君则亂忙有我们一个则君则使有听一个则，则是想有扉：。则为人人人人人个则䘯有我他师，俙我他一个则我䈑们一一䁓我䈑他文尝",
+        "well_formed": false
+      },
+      {
+        "id": "V034",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "我他君分君，制刑他师，制则惜前想有，下下个是想来人人人人人亄师尝君则亝君为，制刑他师刑们一个刈摰，俙我为为，制刑们不想有",
+        "well_formed": false
+      },
+      {
+        "id": "V035",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "刑也制则了人人人人人人亄尝君尝君亚。制则亽有，制刑他师亂君刺吟刺吟刌当君人大宁前有是是是有扚我他师，他君为君，则人人人人",
+        "well_formed": false
+      },
+      {
+        "id": "V036",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "尝君则了个则了个则伌他君孟制刑佻尝君人人人人人亄忙是有扚我他师，亶则亶君亚。则是是是我争，师亲君为，尝君则些则是是是我人",
+        "well_formed": false
+      },
+      {
+        "id": "V037",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "到：君家则人人人人人人人个有君君亼\n\n\n戈（）：我他君则亶吆君亼\n\n我）：我予Ｋ家吆君人人人人亄心君有君二呢以为则亝君为",
+        "well_formed": false
+      },
+      {
+        "id": "V038",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "到，到，他师，家则人人人人人人人人个有君君亼\n\n\n戈（（）：有君，你下个是有我他我他我亀君，则使慶刑你下家君佽为人人人人",
+        "well_formed": false
+      },
+      {
+        "id": "V039",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "到：则了个则了为人人人人亄君䃳他君则何家则你他君䲡亚。么是有我他为，到我䉉：我享下楰佼䠟师，师君家则使是有所个我他师尝君",
+        "well_formed": false
+      },
+      {
+        "id": "V040",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "到：君家则人了个则伌个则是有才惽吼为了为人人人亄尝君孟困你下个是是是是摢䜉所君你为师？\n\n\n\n\n\n\n\n\n（（（）））））",
+        "well_formed": false
+      },
+      {
+        "id": "V041",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "分先尝不惽君为师，制刑他师人夀宁刑人人人人人人个刈尝君䰃姬亚。\n\n\n\n戈（）：我后有君，刽家刟刑他冶则亜君人很君亼\n\n杈",
+        "well_formed": false
+      },
+      {
+        "id": "V042",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "分君则人冼则个刑也刑他君则了人人人人人人亄叜君刟刑你不想有我他愶君你下下为，俙愶愶君䐲君亱是他启君你为人人亄君䌇吼则君刑",
+        "well_formed": false
+      },
+      {
+        "id": "V043",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "刼则前渪刟刑人人人人人人人个有君䐲君亟\n\n戈是是我亀下师，到：我们为君君君了为同君了考师，则有君则个是有我们一个师，君为",
+        "well_formed": true
+      },
+      {
+        "id": "V044",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "分君则人人人人人人人人人下有君人为亡不想有我他师，制君则使想有我他为师，到伌则使是有我他为师，尐弈䌿是想有才桀先当帺了为",
+        "well_formed": false
+      },
+      {
+        "id": "V045",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "到）：刑了为君家则亜君一个则是有我他师，则们一个刈，到，制则他师，制则了人人人人人亄叜君刟刟刑他埈家刚。嚄吟刌亰，他师亲",
+        "well_formed": false
+      },
+      {
+        "id": "V046",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "到：师君，刯是是亰为为为为为为为为一君君君君君亚。\n\n\n\n\n\n\n\n\n\n（（（）（君学君制吽家吽不惜君，刑们一了为君则䈑",
+        "well_formed": false
+      },
+      {
+        "id": "V047",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "。君则为人人人人人为人为君君何吮你为，俙意有我他愶君君何师尝君，亰下个是有我们为，伌君君吼则使是是是我们下师，师君为师君",
+        "well_formed": false
+      },
+      {
+        "id": "V048",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "则我争：我他下君，则使是有我他个则我你个则䃽为人人人人亄尝君则使是下有，家则你个则有我他师，到，则为刟刑们一个刈孟刽家刽",
+        "well_formed": true
+      },
+      {
+        "id": "V049",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "分先，人师，个则是为人人人人人个则何家则你不惜君䲼有我他师，制君为吼\n\n\n戈（）：我亰文君，君为君，家吽孟孟则也刑他内则",
+        "well_formed": false
+      },
+      {
+        "id": "V050",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "则了个师，家君人得同君人人人人人个是有我他师，为，君为君君亼\n\n\n戈（（（）：我产得君君君孟尝同其则亯有君是有我他师，为",
+        "well_formed": true
+      },
+      {
+        "id": "V051",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "则尝君家垺君人人人人个刍是是他为个则是是是是是是是我他师：。则为君为君为为吼\n\n\n\n\n\n\n\n\n（（（）：我下有：我了，吰",
+        "well_formed": false
+      },
+      {
+        "id": "V052",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "刑他君则了人人人人人人亄君君刍情刑你不想有，后吼则他师亂\n\n\n杈（（）：有：我亯有所个师（君家刟师人人人人亄忙文君意有扚",
+        "well_formed": false
+      },
+      {
+        "id": "V053",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "我他君则了人人人人亄君是他个是他我他君为，家吟刟刑你们一䃽我佼我䉉：。\n\n\n\n\n\n\n\n\n\n（（（（）（吆吆君ﺔ，同同同",
+        "well_formed": false
+      },
+      {
+        "id": "V054",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "到，到，他师，制则了人人人人人亄孟尝君刍想嗀先是有扚我他师亂君，到文吟\n漌则为，则为，制则也。\n\n\n\n\n\n\n\n\n（（（（",
+        "well_formed": false
+      },
+      {
+        "id": "V055",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "到：则了个则伌君则个则有君则了人人人人人亄心君何其刟尝君亚」倂我他我他师，制则我他师，到我们一个刀君刽家刽宺人人人伌下弈",
+        "well_formed": false
+      },
+      {
+        "id": "V056",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "到，到，则个刯是有我人人人人人人人五他师，则使是有我他我们为师，就君则你为师，尊䩌庶君孟尝君家则了为人人亄忙是有扚我他师",
+        "well_formed": true
+      },
+      {
+        "id": "V057",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "到：师：则为个师，们一个是有君后吼他吽家吽宺了人人人人人亄忙是有我他师？洀咉君亱我他为君，家则亰有是想来使指君我们下师，",
+        "well_formed": true
+      },
+      {
+        "id": "V058",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "分君则为师，制则为得刈势是有扚惽咺了个刌君伌他师人大宁倂\n\n\n\n戈（（）：我人下师（是有才惽后为人人人人亄君尝君则亝可是",
+        "well_formed": false
+      },
+      {
+        "id": "V059",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "则亡下有我们为个则我他君为君则了为个利是是想有我他师，到伌为师，尝君则了为人人人五他君孟制刑你下有君䏚是想是我他为师，制",
+        "well_formed": false
+      },
+      {
+        "id": "V060",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "分君则亡一个吼则亡为人人人个则有君䐲弈有是有我他师，到伌下个到，到，则你个是是有才来何师师师君人人人人人个君䘯是是是是是",
+        "well_formed": false
+      },
+      {
+        "id": "V061",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "刑家刟刑了，人个刘是他一个刈尝君你为为人人亄君是他为我你我䉉，家则作威家则有君下考亰，他师君弈君家刑他帥下弈，制君人人人",
+        "well_formed": false
+      },
+      {
+        "id": "V062",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "到：分先家刺君人人人人人人人人人个有君䐲弈有我他君下君亰么也。\n\n\n\n戈（（）：我亰文君则个刈，到，到，制则个是有君刼别",
+        "well_formed": false
+      },
+      {
+        "id": "V063",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "。则是个我们一个则我人人人人人人亄君䐲君二吰，他君君孟孟制刑他埰有，制刑他师，制刑他师亀傀\n\n\n\n\n\n\n\n\n（（（：",
+        "well_formed": false
+      },
+      {
+        "id": "V064",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "分君则了个则伌个则是有扈摢人人人人亄君䛰么也。君使是有才惽宺人人人亄君䏚是有我他下怍，俙我们为，就君尝君家则亜君人个则䈑",
+        "well_formed": false
+      },
+      {
+        "id": "V065",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "。君则了为人人人亄君尝君孟制刑你下有吟有我你不惽吼我他师，制则你个刑使是有扚摢有扉：。则下师，到：。则为一个刈）：我他君",
+        "well_formed": false
+      },
+      {
+        "id": "V066",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "刑他师，下有：我他师，家君亰一个则䈘君人为人人亄君君䛰为，你考君则使有合尝君则是有我他下师，则使是有我他师，则他师，则他",
+        "well_formed": true
+      },
+      {
+        "id": "V067",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "刑了下师：是是有才我们为了为人人亄君䐆尝君亰，他师亶君孟制君亰，个制君家制君人人人人个是是是是有扚我他师亶君为，就君家则",
+        "well_formed": false
+      },
+      {
+        "id": "V068",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "我他有，师（君（君君君家则人人人人人亄心君有君亟\n我他师，则亶则亶君一个刈，到：。\n\n\n\n\n\n\n\n\n（（（到有君，刽家",
+        "well_formed": false
+      },
+      {
+        "id": "V069",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "分君家则了人人人人人亄心君你个是仓有我他我他愶君体君了吼别嚄当吼\n\n\n戈（）：我亰文君，制君人大家君人人人人个是他君为是",
+        "well_formed": false
+      },
+      {
+        "id": "V070",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "到，到，他师，家君人人人人人人人事君亼意有才我他有我他帺君则予么君俙是有我他师，则亰下师，尐因个利为，家则你为人人人人个",
+        "well_formed": true
+      },
+      {
+        "id": "V071",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "到：则了人人人人人人人人人人人亖冺君何家则何君亽了有君有我他愶则体我他师，制则亶刟尝君家刚。\n\n\n\n\n\n\n\n（（（（（",
+        "well_formed": false
+      },
+      {
+        "id": "V072",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "则惽吮了为师，尊俙是有才我们为师，到\n\n\n态刈（到）：我人下师，家君人人人人个刍有君君人个别君么是有我他师，到文君为，到",
+        "well_formed": true
+      },
+      {
+        "id": "V073",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "分家则亰：。\n\n\n\n\n\n\n\n\n\n（（（）君，吲了一亀人人亄君则亝一亢君则亡为人人五仓吝君䃽吽宺你为刟尝君制刑佻下刀君佼",
+        "well_formed": false
+      },
+      {
+        "id": "V074",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "我他君则何可文君我他为君，制君则了了下变是他下师：我他君为人人人人人个君䛰伌你耍君则使是他个我他我他我䉉：我你下楰佼我享",
+        "well_formed": false
+      },
+      {
+        "id": "V075",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "刑他君则了个利是是是我们个我们一人人人人亄君䛰为君则何家则你个是有我他师，制则为君为吼\n\n\n\n\n\n\n\n（（（（自君，君",
+        "well_formed": false
+      },
+      {
+        "id": "V076",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "则亴君则亡不想有我他师，则们一个刱是什吼俙他君为人人人人亄君䐲君亚。君实人人人亄扈是是争我他愶君亱是予摢他师，制君为刟尝",
+        "well_formed": false
+      },
+      {
+        "id": "V077",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "到：君则了个则人大家刟刑他吆君人夀䌇吟刟刑他埈君了见勀个是是人人人人人人个是是是是我他为师，君亶君君亟可是是是我他师，到",
+        "well_formed": false
+      },
+      {
+        "id": "V078",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "到）：则了人人人人人人五他君则何其则何叜尝君䲡人一䀂个则䈑你一一丈是有我他有我他我他师，到䈟刑䟰为君刺䌀匽家则你一个刈尝",
+        "well_formed": false
+      },
+      {
+        "id": "V079",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "到文君则了了个则伌他天文君是有扚我们下耂师：。\n\n\n\n\n\n\n\n\n（（（）：君家垺吟孟刟尝吆其则了人人人人人人人个刍有君是",
+        "well_formed": false
+      },
+      {
+        "id": "V080",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "则我他个到：。则是有扉：我他师，人人人人人人亄君䪺君家则人他君人他君䲡人个有吼我他君为吼制刑他师他君个刈君，制刑们一个是",
+        "well_formed": false
+      },
+      {
+        "id": "V081",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "尝君家则人得刍惽宨人人人人个则伌为个则有君为君亼\n\n\n戈（（）：我亰文君则亂孟刍惽宨人为师，制则他师他师，制则人一个刈尝",
+        "well_formed": false
+      },
+      {
+        "id": "V082",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "刑他其则人人人人人个刊䂣么也分君何其则使是有扚我他下师，到我们一个到，到䌰，为为君刺君孟尝君家则了人人人亄忙意有扚我他师",
+        "well_formed": false
+      },
+      {
+        "id": "V083",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "刑人人人人人个刈尝君亗刀君为个刯是是是云他为君䐲弈是是是是是我他师，到会我了为，就君则亡为人人人亄君尝君亚。则予是是是我",
+        "well_formed": false
+      },
+      {
+        "id": "V084",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "刑他君则了人人人人人人人人亄君刍想有我他愶他愶刑他师，制则亶刑他君下有，制刑你下下木君亼\n\n\n\n戈（（）：我亀下君，君了",
+        "well_formed": false
+      },
+      {
+        "id": "V085",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "到）：我他为君，君了了人人人五他君孟孟制刑何师，亶为人人五，䠻䖇君则何叜君有我他有我他师，则使是有我他我他我他师，到文君",
+        "well_formed": false
+      },
+      {
+        "id": "V086",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "则亶则亜君人一个则是是有我们为，就君则亰么是是是我们下师，师人人人人人亄君䐲君二家吟刟尝君家则人很尝君家则人一个刈，伌下",
+        "well_formed": true
+      },
+      {
+        "id": "V087",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "到：则个到：则个则有君则人人人人人人人人人下亀䁓愯有我他我他师，俙我䟥下师，则你为，则使是有才惽有扉：。则为则也\n\n\n态",
+        "well_formed": false
+      },
+      {
+        "id": "V088",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "到：我人人人人人亄君则何师，亶则何家君人个则予君孟制刑你一个刈，伌为，伌为君家吼人人人亄心君有君个则是是亀个师，俙是是是",
+        "well_formed": false
+      },
+      {
+        "id": "V089",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "刑他君则了个则伌个则是是是我们一个师，到会我们万君则使想有，听你个师，君佼他师君，制则使是有我们一个师，到：。\n\n\n\n\n",
+        "well_formed": true
+      },
+      {
+        "id": "V090",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "分君家则人人人人人个刊䩀其则何叚。\n\n\n杈（我予）：我下君为，君为君君为吼家刚是有所个刈冯文吼我他个则我他师，家刟刟刑了",
+        "well_formed": false
+      },
+      {
+        "id": "V091",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "到：则亂\n\n\n\n\n\n\n\n\n（（（下师：君学们不情刯有：有扉：我了漌吲个则也个到，家则人大宁家则人人人人人个刊䀂\n\n\n",
+        "well_formed": false
+      },
+      {
+        "id": "V092",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "分君则亡个则亡个君氖君䌀家则人人人人人人个有君则君则刑䟥下弈是有我他君为刟刑他吆听亼\n\n杈刑）：我是有所个到：。\n\n\n戈",
+        "well_formed": false
+      },
+      {
+        "id": "V093",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "到：君家垺了人人人亄君尝君家则亽亿是是从他下怂则使我你为，家君佐弈他师，制则使是是有扚我他师，则为人人人人人个君䲡为君亚",
+        "well_formed": true
+      },
+      {
+        "id": "V094",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "则是是我人人人人人人人人人人人人下有君人君䡀其则体君不惰，伌他师，家则何当君亼\n\n杈是是我亰文个我亼，则为，则为君则君则",
+        "well_formed": false
+      },
+      {
+        "id": "V095",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "。则为则会我们一个则我䉉：我你为了为人君则佼\n\n\n戈（））））））））有君Ｚ人人亄君君孟孟尝吃亰８利亝君个是有君亰，他师",
+        "well_formed": false
+      },
+      {
+        "id": "V096",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "到：师，到：君家则人个利是他个初君则亡个是有扚我他师，他君为君，则他师人人人人人个君䲡为君二君亚。\n\n\n\n\n\n\n\n\n\n（",
+        "well_formed": false
+      },
+      {
+        "id": "V097",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "则为师，家则人人人人人人人个则君则亡一个则有君䐲弈有吼则亶刑你下师，俙愯有扉：我他师，到会是是是我了，他师尝君则了为人人",
+        "well_formed": false
+      },
+      {
+        "id": "V098",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "分君则人冼则也刟刑他吆家则人冼则剀个刈是是人人人人人人亄叚我䉉：我你下有君亰也则何君你下个是有我他愶君佐弌同君了胀做师是",
+        "well_formed": false
+      },
+      {
+        "id": "V099",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "刑他吆先：。\n\n\n\n\n\n\n\n\n\n（（（）：刑君］不惃吆有）：刑君家刟刑人人人人人人人个有君为君为，不想有君愶君为君，下下",
+        "well_formed": false
+      },
+      {
+        "id": "V100",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "。君则亰：。有合（君则亝不想有扈摢亜扉，则么摢一个刈，到，则为个刈，制则为个师，伌一个师是有吼为了伌师之这意文来何师，师",
+        "well_formed": false
+      },
+      {
+        "id": "V101",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "到：则了个则了，家则人个刊䀂\n\n\n\n\n\n\n\n\n（（（（：君君刍惜吲君人个刀人人人人人为亼\n\n\n\n\n\n\n\n\n（（（（：",
+        "well_formed": false
+      },
+      {
+        "id": "V102",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "到，到，他师），个则是他君则了人人人人人亄君则何叜尝䌟制则亶刑他帥你一个刈是是是我他为，制君亰为为，制君则你为师，制君你",
+        "well_formed": true
+      },
+      {
+        "id": "V103",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "。则为则为人人人亄君则亽他君则使是他有我们下来佼我他有我你下师，尐君佐弈们不情刑体君了为人人人五䟰文君君则君家刑你这是有",
+        "well_formed": false
+      },
+      {
+        "id": "V104",
+        "family": "with_hard_distractor",
+        "hit": false,
+        "answer": "到：则了了个则伌君你他君则使是有扚我他个则䈼（君则使是文君我他个师，到会为人人人人人亄君君刟尝君家则人人人亄有君有我他师",
+        "well_formed": false
+      }
+    ]
+  },
+  "treated_arms": [
+    {
+      "circuit": "output/taiji_r2_copy_circuit_chat/judge/circuit-final.pt",
+      "chain": "product_surface_chat",
+      "mount_entry": "enable_copy_circuit",
+      "gate_effective": true,
+      "items": 104,
+      "texts": 312,
+      "well_formed_texts": 20,
+      "well_formed_rate": 0.0641,
+      "utf8_decodable_rate": 1.0,
+      "utf8_decodable_trimmed_rate": 1.0,
+      "illegal_after_tail_trim_rate": 0.0,
+      "strict_hits": 35,
+      "rows": [
+        {
+          "id": "V001",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "哥哥哥哥哥哥哥楥楛表我衐我衐我衐我衐我衐我衐衐衐衐衐衐。哥哥哥哥哥哥哥哥哥哥哥哥哥哥哥哥哥哥哥哥哥哥桐。哥哥哥哥表楥衐衐",
+          "well_formed": false
+        },
+        {
+          "id": "V002",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "州苏州住州拏州拏州拏州拏州拏州拏州拏州拏州拏州我住州我住州我住州我住州我住州我住州我住州我住州我住州我住州我住州我住州我",
+          "well_formed": false
+        },
+        {
+          "id": "V003",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "21喇喯喦妹妹妹妹妹妹欿欢欢欢欢欢是21喜是21喜是21是21喜是21喜是21是21喘21喯喯2121妹妹妹欢欼妹欢欢欢",
+          "well_formed": true
+        },
+        {
+          "id": "V004",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "图图。图图图。图图图图。图图图图图。图项的项目图。图海囮海囮海囮海囮海囮海囮海囮海囮海图的鷷巷图。图图。图图图图图图图图",
+          "well_formed": false
+        },
+        {
+          "id": "V005",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "喝乳时爱喝乳时爱喝乳时爱喝乳时爱喝乳时爱喝乳时爱喝乳时爱喝乳时爱喝乌喝乌喝乌喝乌喝乌喝乌喝乌喝乌喝乌喝乌喝乌喝乌喝乌喝乌",
+          "well_formed": false
+        },
+        {
+          "id": "V006",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "养丮我雪鸮雪雪鸮雪雪鸮雪雪雪鸮雪雪鸮丮檮鸮雪雪鸀养丮鸮鸮雪鸮一养丮鸮雪鸮一养丮鸮鸮雪鸮丮檮鸮雪鸮雪鸮雪鸮雪鸮檪鸮雪雪鸮雪",
+          "well_formed": false
+        },
+        {
+          "id": "V007",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "近姐水经泧泧泧泧水经泧泧水经泧泧水经泧泧水经泧读》》》《水疐泐泧水绻》姐泧水绐泧水绐泧水绐泻》》》《泐泧水绐泧水绐泧水绐",
+          "well_formed": false
+        },
+        {
+          "id": "V008",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "吃吃吃吃吃吃吃吃吃吃吃吃包包包包包包最笼包笼吃吃吃吃吃吃吃包包最笼包笼吃包最笼包最笼包最笼吃吃吃吃吃吃吃吃吃吃吃包包包最",
+          "well_formed": false
+        },
+        {
+          "id": "V009",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "君雨我雨我我我君雨我君雨我君雨我君雨我雨我君雨我君我君雨我君雨我君雨我君雨我君雨我君雨我君雨我君雨我君雨我雨我君雨我君雨",
+          "well_formed": false
+        },
+        {
+          "id": "V010",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "安濥我使安扉安安安安安安安安安安安安安。安西安安安安安。安西安安安西安安西安安安安。安西安西安安安安安西安西安西安西安西",
+          "well_formed": false
+        },
+        {
+          "id": "V011",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "777777777777777777777777777777777777777777。77777777777777777",
+          "well_formed": false
+        },
+        {
+          "id": "V012",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "刟星星星星星星星星星星星星星星星星星星星。皙队晨晽的队晨晰晉晽的队晨晨星星星星星星我的队晨晨晰皙皟晟星星星晨星星。目晨晨",
+          "well_formed": false
+        },
+        {
+          "id": "V013",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "苳打打打打打打打打打打打打打打打打打打打打。喝苏打打打打苏打打打苏打打苏打打苏打打打打苏打打打苏打打打苏打打苏打打打苏打",
+          "well_formed": false
+        },
+        {
+          "id": "V014",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一浣浣浣浣浣养一养一养一养一养一养一养一养一养",
+          "well_formed": false
+        },
+        {
+          "id": "V015",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "近泻近泻近泻近泻近泻读泻近泻近泻近寻迿近個近泻读读近寻迿寻近水绻》寻读读近寻近水经注读读近水绻》寻读近泻近泻近水绻》寻读",
+          "well_formed": false
+        },
+        {
+          "id": "V016",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "子鸡最爱吃舱吃舑最爱吃舱吃舑最爱吃舱子鸀爱子鸡最爱子鸀爱子鸡最爱子鸡最爱子鸀爱子鸡最爱子鸐鸡朣最爱子鸡最爱子鸡最爱子鸡最",
+          "well_formed": true
+        },
+        {
+          "id": "V017",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "濿迿哥迿远迿远迿迿远迿迿远迿迿迿远迿迿迿远远远远迼迿迿迿迿迿怂迿迿迿迿迿迿迿迿迿远迿远远远远迼哥迿迿迿迿迿迿迥怂迿迿迿迿",
+          "well_formed": false
+        },
+        {
+          "id": "V018",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "岛岛岛。岛青岛青我住岛青岛青岛青岛青岛青岛青岛青岛青岛青岛青岛岛岛岛岛岛岛岛岛岛岛岛岛。岛青我住岛我住岛我住岛。岛岛岛岛",
+          "well_formed": false
+        },
+        {
+          "id": "V019",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "799999999999999999999999999999999999999999999999999999999999",
+          "well_formed": false
+        },
+        {
+          "id": "V020",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "径鳾径项石径项石径项径项皳径项石径项石径项石径项径项皳径鳾很石径项径项石径项皳徟径项石径项石径项石径项石径项石径项径项皳",
+          "well_formed": false
+        },
+        {
+          "id": "V021",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "檬柠柠柠柠柠柠柠柠柠柠柠柠柠柠柠汱人爱人爱人爱人爱人爱人爱人爱人爱人爱人爱人爱人爱人爱人爱人爱人爱人爱人爱人爱人爱人爱人",
+          "well_formed": true
+        },
+        {
+          "id": "V022",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "居居养一居居养一居居居养一居耂居居居养一舌舌耂居居居养一蓝舌舌舌舌舌舌舌舌舌舌舌舌舌舌舌舌舌舌舌舌舌舌蓝蓝蓝茌蓝蓝蓝舌蓝",
+          "well_formed": false
+        },
+        {
+          "id": "V023",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "寻读读读读读读读读近梦读读近梦读读读读读语读近梦读读读读读》读语读读读语梦语语语读读》》》》语语梦语语读读》读读》读读》",
+          "well_formed": false
+        },
+        {
+          "id": "V024",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "泡馍泱泱吃羽结泡馍泱泱吃羽羽绖吃泾吃泾吃羫泾吃羫泉泾泾泾吃羊贵泡泱吃羊肉泾泾泾泾泾泾泾泾泱吱吃羊贀羊肉泉泉泉泡戱吃羔泡泉",
+          "well_formed": false
+        },
+        {
+          "id": "V025",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "坿坝远远远远远远远远远远远远。远远远远远。远远远远远远远。迿远迿坥迿远迿远迿倝迿迿迿迿迿远迿远迿迿我远远远远远远。违迿我",
+          "well_formed": false
+        },
+        {
+          "id": "V026",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "岙使啿岙。沙。使沙。岙长沙住岙使沙。岙长沙长沙长沙长沙长沙长沙长沙长沙长沙长沙长沙住岙住圽沙。岙沙长沙长沙长沙长沙住岙沙",
+          "well_formed": false
+        },
+        {
+          "id": "V027",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "999999999999999999999999999999999999999999999999999999999999",
+          "well_formed": false
+        },
+        {
+          "id": "V028",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "归云目归云目归云目归云目归云目归云目归云目归云目归云目归云目归云目归云目归云目归云目归云目归云目归云目归云目归云目归云目",
+          "well_formed": false
+        },
+        {
+          "id": "V029",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "柠檬柠柠檬柠柠柠檬柠柠柠檬柠柠柠檬柠柠柠檬柠柠柠柠柠檬柠柠柠柠柠柠柠檬柠柠柠柠柠檬柠柠柠柠柠柠檬柠柠柠柠柠檬柠柠柠柠柠柠",
+          "well_formed": false
+        },
+        {
+          "id": "V030",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "蓝舌舌舌舌舌舌舌舌舌舌舌舌舌舌蓝蓝茺养一蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝舌舌舌舌舌舌舌舌养一蓝蓝蓝蓝舌舌舌舌",
+          "well_formed": false
+        },
+        {
+          "id": "V031",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "近笑最读七我我我我我我我我庑庑庑笠云笼七我我毻》》七我我毻七戈云我我我我庑笻近布第们一读最这戈亸这笈七笼七笼寻近庑庑庑庑",
+          "well_formed": false
+        },
+        {
+          "id": "V032",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "山吃胡胡胡胡胡胡胡胡辈胡胡胡胱山吃辣汤胡胡胡胃胱山吃辣汤胣汤胣汣汣汤胡胡胣汣汣汣汣汤。胱吱吃辣汤胡胃胡胱吱辣汱吃辣汤胣汱",
+          "well_formed": false
+        },
+        {
+          "id": "V033",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "安慕安慕安慕安慕安慕安慕安慕安慕安慕安慕安慕安慕安安慕安安慕安安慕安慕安慕安慕慕安慕慕安慕安慕安安慕安安慕安安慕安安慕安",
+          "well_formed": false
+        },
+        {
+          "id": "V034",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "州兰兰州州州州州州兰州州州州州州表州表州表州。州表州表兰兰州州表州表州楰表州表兰兰州州州州州州兰州州表州楰表州表州表州表",
+          "well_formed": false
+        },
+        {
+          "id": "V035",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "242402424喯10242424喯是1024是102424是10242424，喇242424242424喰喯1024",
+          "well_formed": false
+        },
+        {
+          "id": "V036",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "听涛听涛。听涛听涛听涛听涛听涛的项听涛听涛听涛的项听涛听涛听涛听涛听涛听涛听涛的项听涛听涛听涛听涛听涛听涛的项听涛听涛听",
+          "well_formed": false
+        },
+        {
+          "id": "V037",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "时砖茶砖茶砖茶砖茶砖茶砖茶砖茶砖茶砖茶砖茶砖茶砖茶砖茶砖茶砖茈砖茶砖茶砖茶砖茶砖茶砖茶砖茶砖茈时砖茶砖茶砖茶砖茶砖茶砖茶",
+          "well_formed": false
+        },
+        {
+          "id": "V038",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一",
+          "well_formed": false
+        },
+        {
+          "id": "V039",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "近姐我读姐有姐我读姐我有姐我我姐我姐我工姐我最物姐姐我工姐我工姐我工姐我姐最物姐姐我姐姐最物姐姐我姐有姐最物姐姐我姐姐最",
+          "well_formed": false
+        },
+        {
+          "id": "V040",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "哥戱哥戱哥最糖芋芋芋芋芋芋芋苗。哥戱吃糖苗哥最糖苗的哥苗哥最糖苗的哥苗苗哥最糖苗的哥苗苗哥最糖苗的哥苗苗哥最糖苗苗哥苗苗",
+          "well_formed": false
+        },
+        {
+          "id": "V041",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "坒我坒我坒我坒我坒我坒我坒我反我坒。坒青青我坒青青青我坒青我坒青青我坒青青我坒青青我坒青青我坒青青青我坒青青青我坒青青青",
+          "well_formed": false
+        },
+        {
+          "id": "V042",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "兰州州州州州州州州州州州州州州州州州。州州州州州州兰州。州州州州州兰州。州州我住州我住州我住州我住州我住州我住州我住州我",
+          "well_formed": false
+        },
+        {
+          "id": "V043",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "78888888888妹妹妹妹妹妹妹妹数妹数妹数妹数妹数妹字数妹喜数妹妹妹妹妹妹妹数妹妹妹妹妹妹妹妹数妹数妹数妹数妹妹字",
+          "well_formed": false
+        },
+        {
+          "id": "V044",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "埳队柳柳柳柳柳柳柳柳柳柳皘柳柳阘柳柳皳阘柳柳柳阘柳柳的队队柳柳队柳柳队柳柳柳柳柳的队柳队柳柳柳队柳柳。皚埳队埳埳柳柳柳的",
+          "well_formed": false
+        },
+        {
+          "id": "V045",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "豱喝时爱喝时爱喝时爱喝时爱喝普普普普普普普普普普普普普智喝普普普普普普普戱喝普普普普普普戱喝普普普普普普普普时爱喝普普普",
+          "well_formed": false
+        },
+        {
+          "id": "V046",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一",
+          "well_formed": false
+        },
+        {
+          "id": "V047",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "工工工工工工工工工工工工工工工工巌天工工工工最读工工近工工工工工工工工工工工工工工开物开物开物开物开绥工工读》开近工工读",
+          "well_formed": false
+        },
+        {
+          "id": "V048",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "拗苗芀糖苗芀糖苗苗。拗苗苗。苗苗。拗苗芋苗芋苗芋苗拗苗芋芋苗芋苗芋苗。苗苗芋苗芋苗苗。苗苗苗。苗苗苗芋苗苗苗。苗苗苗苗苗",
+          "well_formed": false
+        },
+        {
+          "id": "V049",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "宁洛宁。宁宁宁洛宁洛宁。宁洛宁洛宁。宁洛宁洛宁洛宁洛宁洛宁。宁洛宁洛宁洛宁洛宁洛宁洛宁。宁洛宁洛宁洛宁。宁洛宁洛宁洛宁。",
+          "well_formed": false
+        },
+        {
+          "id": "V050",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "州州温州温州温州温州温温州温州温州温州温州温温州温温温温州温州温州温州温州州温州佸哥温州温州温温州温州温州表州表州表州州",
+          "well_formed": false
+        },
+        {
+          "id": "V051",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "21212121212121212121212121212121212121〦212121212121212121212",
+          "well_formed": false
+        },
+        {
+          "id": "V052",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "同临风目同临风临风皸拀同临风临风皸拣风目同临风临风临风临风临风拣临风风皸同临风风皸同临风风皸风风皸风风临风风临风拣拣临风",
+          "well_formed": false
+        },
+        {
+          "id": "V053",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "茶纺纺喝纺纺纺纺纺纺纺纺纺纺纺人纺纺纺纺汱人纺纺纺纺纺纺纺红汱人纺纺纺纺纺纺纺纺纺纺纺纺汱人纺纺纺纺纺纺纺纺纺纺纺纺喝纺",
+          "well_formed": false
+        },
+        {
+          "id": "V054",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "居养一居养一居养一居养一居养一居养一居养一居养养一居养一居养一居养一居养一居养一居养一家鼠一居养一居养一居养一家鼠一居居",
+          "well_formed": false
+        },
+        {
+          "id": "V055",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "毻读读近氯近近近民近近读读》近读近近读读》近读读读》近读读读》近读读读近近近近读读》迯读读读》读读读》读读读》读近读读读",
+          "well_formed": false
+        },
+        {
+          "id": "V056",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "山吃蟥吃蟥吃蟹黄汤哥汤哥汤哥汤哥汤哥汤哥汥汤哥汤哥汱吃蟹黥哥汤哥汱吱層哥吃蟹黥哥汱哥汤哥汤哥汤哥汱吃蟹黥哥汤哥汤哥汤哥汤",
+          "well_formed": false
+        },
+        {
+          "id": "V057",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "庈庈庈时予。庈时予时予时予时予时予时予时予时予时予时予时予时予时予时予时予时予时予时予。时予时予时予时予时予时予时予时予",
+          "well_formed": false
+        },
+        {
+          "id": "V058",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "州州温州温州温州温温温州温州温州温州温州温州温州温州温州温州温州温州温州温州温州温州温州温州温州温州温州温州温州温州温州",
+          "well_formed": false
+        },
+        {
+          "id": "V059",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "256学数256字欢欢欢欢欢欢欢欢欢欢欢欢欢欢欢欢欢欢欢欼妹256256。喰喦妹妹妹妹妹妹妹是256妹喦妹妹妹妹妹妹妹妹",
+          "well_formed": false
+        },
+        {
+          "id": "V060",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "压风目压风。风风。风风风临风掣掎皸风风风风风风。风风风风风掎皸风风风风风风风。风风风风风风风掎皣风风风风风风风风皸风风风",
+          "well_formed": false
+        },
+        {
+          "id": "V061",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "时红时红时红时红时红时红时红时红时红时红时时红时时红时时红时时红时时红时时红时时红时时红时时红时时红时时红时时红时时红时",
+          "well_formed": false
+        },
+        {
+          "id": "V062",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一我了一一养一养一养一养一养一养一养一",
+          "well_formed": false
+        },
+        {
+          "id": "V063",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "寻还读读近洛阳伽近洛阳伽近洛阳伽近洛阳伽近洛阳伽读》读读读读近洛阳伽近近洛阳伽近近洛阳伽近近洛阳伽近洛阳伽近洛阳伽近洛阳",
+          "well_formed": false
+        },
+        {
+          "id": "V064",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "山吃蟈吃蟹黄汤包蟹黄汤包汱吃蟹黄吃蟹黄汤包汱吃蟹黄汤包汱吃蟹黄汤吃蟹黄汤吱吃蟹黄吃蟹黄汤吃蟹黄汤吱吃蟹黄吃蟹黄汤吱吃蟹黄",
+          "well_formed": false
+        },
+        {
+          "id": "V065",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "刑倂堚我我我我倂倂倀砚堚堚堚我我我可我可我叫我倂倀砚堚刑叫我我我叫我倂倂倀砚堚倀砚堚倀砚堚我叫戈可我叫我叫我可我叫我我我",
+          "well_formed": false
+        },
+        {
+          "id": "V066",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "崛阳阳阳阳阳洛阳洛阳洛阳。阳阳阳阳阳洛阳。崛阳阳阳洛阳阳。阳阳阳阳洛阳阳阳。阳阳阳洛阳阳阳洛阳阳阳洛阳阳阳洛阳阳阳阳阳阳",
+          "well_formed": false
+        },
+        {
+          "id": "V067",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "字妹妹妹妹妹妹妹妹妹妹妹妹妹妹妹妹妹妹妹妹孮数妹是313131313131313131是3131313131313131",
+          "well_formed": false
+        },
+        {
+          "id": "V068",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "迿雮宿雮宿雮宿雮宿雮宿雮宿雨。雮宿雮宿雮宿雮宿雮宿雮宿雮宿雮宿雮宿雮宿雮宿雮宿雮宿俿雮目宿雮宿雮宿雮宿雮宿雮宿雮宿雮宿雮",
+          "well_formed": false
+        },
+        {
+          "id": "V069",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "荷饮汱人爱人爱人爱人爱人爱人爱人爱人爱人爱人爱人爱人爱人爱人爱人喱荷饮汱人荷饮汱人荷饮汱人荷饮汱人荷饮汱人荷饮汱人荷饮。",
+          "well_formed": false
+        },
+        {
+          "id": "V070",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一",
+          "well_formed": false
+        },
+        {
+          "id": "V071",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "华华华华华华华华华华华华华华彠东东东东东东东东东东东东东东东东东为华华华华华华华华华华华华华华华录》华华华华华华录》华华",
+          "well_formed": false
+        },
+        {
+          "id": "V072",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "山吃牛艉面有面有面戱吃牛艉面戱吃牛艉面有面有面戱吃牛艉面有面有面有面扛能牛艛艛艛艛艛艛艛艛艛艛艛艛艛艛艛肉面有面有面有面",
+          "well_formed": false
+        },
+        {
+          "id": "V073",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "晚苏晚苏晚苏晚苏晚苏晚苏晚苏晚苏晚苏晚晚晚晚晚晚晚晚晚晚晚苏晚苏晚苏晚苀䋏晚晚晚晋苏晚晚晚晙晚苏晚苏晚苏晚苏晚晚晚晚晚晚",
+          "well_formed": false
+        },
+        {
+          "id": "V074",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "州扬州扬扬扬州扬州扬州州扬州州扬州州扬州扬州扬州扬州扬州扬扬州扬州扬州住州扬州扬扬州扬州扬州州扬州州扬州州扬州州扬州住州",
+          "well_formed": false
+        },
+        {
+          "id": "V075",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "字是3131313131313131313131313131313131313131的13131313131313131",
+          "well_formed": true
+        },
+        {
+          "id": "V076",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "埌舟舟舟舟舟埈埈埈埈舟叫舟舟舟舟舟舟舟舟舟舟舟。舟舟舟舟舟舟舟。舟舟舟舟舟舟戟议挌舟舟行舟舟舟舟舟舟舟舟戟议挌舟舟行舟舟",
+          "well_formed": false
+        },
+        {
+          "id": "V077",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "荷饮时爱喝荷饮时爱喝荷饮时爱喝荷饮时爱喝荷饮时爱喝荷饮时爱喝荷饮时爱喝荷饮时爱喝荷饮时爱喝荷饮时爱喝荷饮时爱喝荷饮时爱喝",
+          "well_formed": false
+        },
+        {
+          "id": "V078",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一一养了一养一养一养一养一养一养一养一养一养一养一",
+          "well_formed": false
+        },
+        {
+          "id": "V079",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "山录录录。录梦粱录读》》》》》读》近梦粱录近梦粱山录近梦粱录近梦粱山局读》录近梦粱山录近梦粱录近梦粱山录近梦粱读》录近梦",
+          "well_formed": false
+        },
+        {
+          "id": "V080",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "屼舱吃酸舱吃鱼。酸舱吃鱼鱼吃鱼。鱼鱼屼汼胈吃鱼鱼鱼鱼最爱鱼鱼鱼鱼汼汼鱼鱼。鱼鱼鱼汼舱吃鱼鱼鱼鱼山吃鱼舱吃鱼鱼鱼山吃鱼胸舱",
+          "well_formed": false
+        },
+        {
+          "id": "V081",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "哥昭衾哥昭衾哥哥昭衾哥昭。哥昭衾昭。哥哥哥昭衾昭。哥哥哥哥昭表哥衾昭。哥哥哥昭衾昭。哥哥哥昭衾昭衾昭。哥哥哥哥哥哥哥哥哥",
+          "well_formed": false
+        },
+        {
+          "id": "V082",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "哥佥体我芜楽芜楽芜楽芜住哥体芜楽芜楽芜湖哥住哥住哥住哥住哥佼哥住哥住哥住哥住哥住哥住哥住哥住哥住哥住哥住哥住哥住哥住哥住",
+          "well_formed": false
+        },
+        {
+          "id": "V083",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "2020202020202020喯5202020202020202020是52020202020202020是52020",
+          "well_formed": false
+        },
+        {
+          "id": "V084",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "同事同事皪同事皪同事目拮拮拮我我我同事同事目同事的骐我拮我殮我殺同事皪同事皪同事皪同事皪同事皪同事目同事皪同事目未同事皪",
+          "well_formed": false
+        },
+        {
+          "id": "V085",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "茉茉茉茉茉茉茉茉茉茉莉茉茉茉茉莉茉茉茉茉茉茉茉茉茉莉茉茉茉茉茉莉茉茉茉茉茉茉茉莉茉茉茉茉茉茉茉莉茉茉茉莉茉茉茉茉茉茉茉茉",
+          "well_formed": false
+        },
+        {
+          "id": "V086",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一狄一养一养一养一养一养一",
+          "well_formed": false
+        },
+        {
+          "id": "V087",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "寻读》》》》》读读》近梦寻近梦寻近梦梦梦梦梦梦梦梦梦梦梦梦梦梦读近寻迿寻近寻近寻这我梦近梦寻迿梦近寻迿寻近寻这我梦梦梦梦",
+          "well_formed": false
+        },
+        {
+          "id": "V088",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "子朥哥戱吃狥吃子哥哥最狮戱吃爑哥最狥吃子哥哥最狥吃哥最狮最狮最狮最狮最狮最狀狮最窐子哥我哥戱吃哥吃哥哥最狻哥最狀狮戱子子",
+          "well_formed": false
+        },
+        {
+          "id": "V089",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "刑叫阭。叫阭。很孾昭。很孾昭。很孾昭〘昭。很孾昭〘昭。孾昭。孾昭阭。孾昭阭昭阭昭。孾昭阭昭。孾昭阭昭阭昭阭昭。阭昭阭昭。",
+          "well_formed": false
+        },
+        {
+          "id": "V090",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "我佻但湖湖湖湖湖湖湖湖。喖芜湖芜湖芜湖芜湖芜湖芜湖芜湖芜湖芜湖芜湖芜湖芜湖芜湖芜我佽但佼湖。湖湖我佼喖芜湖芜湖芜我佼喖芜",
+          "well_formed": false
+        },
+        {
+          "id": "V091",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "字喜是618是618是618是618是618是618是618是618是数喯618欢欢欢欢欢欢欢欢欢欢欢欢欢欢欢欢是618",
+          "well_formed": true
+        },
+        {
+          "id": "V092",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "央央未央央未央央未央央未央未央项央未央央未宮未央我皪央央我未宮我未央央我未央央殮未央殮未央殮未央项央央央央央央央央央央央",
+          "well_formed": false
+        },
+        {
+          "id": "V093",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "茉茉茉茉茉茉茉茉茉茉茉茉茉茉茉茉茉茉茉茉茉茉茉茉茉茉茉莉茉茉茉茉茉茉茉莉茉茉茉茉茉茉茉莉茉茉茉茉茉茉茉莉茉茉茉茉茉莉茉茉",
+          "well_formed": false
+        },
+        {
+          "id": "V094",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一蝠。一养一养一养一养一蝠。丝蝙蝠蝙蝙蝙蝙蝙蝙蝙蝙蝙蝙",
+          "well_formed": false
+        },
+        {
+          "id": "V095",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "庵梦庿庿庿庿庿庿庿庿庵梦梦梦梦梦梦梦梦梦梦梦梦梦梦梦梦梦我梦庺庿庿庵梦庵梦庵梦庵梦庵梦庵梦庵梦庵梦庵梦庵梦庵梦庵梦庵梦庵",
+          "well_formed": false
+        },
+        {
+          "id": "V096",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "吃狮子吃狮子子最狮狮最狮狮最狮狮最狮子子吃吃吃吃吃狮子子子子吃吃狮子吃狮子吃子子孈吃最狮最狮最狮最狮最狮最狮最狮最狮最狮",
+          "well_formed": false
+        },
+        {
+          "id": "V097",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "明轩轩轩轩轩轩。轩轩轩轩轩轩轩轩。轩轩轩轩轩轩。轩轩轩轩轩轩轩轩轩轩轩明轩轩轩轩轩轩轩轩轩哥轩轩轩轩轩轩轩轩轩。轩轩轩轩",
+          "well_formed": false
+        },
+        {
+          "id": "V098",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "自自自自自自自自自自自自自自自自自自自自自自自自自自自自自自自自自自自自自自自自自自自自自自自自自自自自自自自自自自自自",
+          "well_formed": false
+        },
+        {
+          "id": "V099",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "喦妹妹妹妹妹妹妹妹妹妹妹妹妹妹妹妹妹妹妹妹妹妹妹妹妹妹妹妹妹妼妹数妦的妹妹妹妹妹妹妹妹妹妹妹妹妹数妹数妹数妹妹妹数妹是3",
+          "well_formed": false
+        },
+        {
+          "id": "V100",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "拥拥我知秋。秋。始知秋秋秋秋秋。秋秋埥知知知知秋埥知知秋埥知知知秋埥知知知知知知知知皋埥知知知知秋秋埥知知知知秋秋。知知",
+          "well_formed": false
+        },
+        {
+          "id": "V101",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "汱人喝人喝人喝人爱人爱人爱人爱人人爱人爱人人爱人人爱人人爱人人爱人人爱人人爱人人爱人人爱人人爱人人爱人人爱人人爱人人爱人",
+          "well_formed": false
+        },
+        {
+          "id": "V102",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一",
+          "well_formed": false
+        },
+        {
+          "id": "V103",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "徐霞徐霞徐霞宰近近朞宰近宰近宰近游读》徐鯻读》宰近游记游记游记游近游近游近游近宰近徐近宰徐霞这游读》徐鿸近游记游近游近游",
+          "well_formed": false
+        },
+        {
+          "id": "V104",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "吃吃吃吃吃吃吃吃妻肺妻胈吃吃吃吃吃吃吃吃吃吃妻肺妻自吃妻胉吃妻胉吃吃吃吃吃吃吃妻肺妻自吃妻胈吃吃妻胉吃妻胉吃吃吃妻肺妻自",
+          "well_formed": false
+        }
+      ]
+    },
+    {
+      "circuit": null,
+      "chain": "product_surface_chat",
+      "mount_entry": "envelope_auto_mount",
+      "gate_effective": true,
+      "items": 104,
+      "texts": 312,
+      "well_formed_texts": 20,
+      "well_formed_rate": 0.0641,
+      "utf8_decodable_rate": 1.0,
+      "utf8_decodable_trimmed_rate": 1.0,
+      "illegal_after_tail_trim_rate": 0.0,
+      "strict_hits": 35,
+      "rows": [
+        {
+          "id": "V001",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "哥哥哥哥哥哥哥楥楛表我衐我衐我衐我衐我衐我衐衐衐衐衐衐。哥哥哥哥哥哥哥哥哥哥哥哥哥哥哥哥哥哥哥哥哥哥桐。哥哥哥哥表楥衐衐",
+          "well_formed": false
+        },
+        {
+          "id": "V002",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "州苏州住州拏州拏州拏州拏州拏州拏州拏州拏州拏州我住州我住州我住州我住州我住州我住州我住州我住州我住州我住州我住州我住州我",
+          "well_formed": false
+        },
+        {
+          "id": "V003",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "21喇喯喦妹妹妹妹妹妹欿欢欢欢欢欢是21喜是21喜是21是21喜是21喜是21是21喘21喯喯2121妹妹妹欢欼妹欢欢欢",
+          "well_formed": true
+        },
+        {
+          "id": "V004",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "图图。图图图。图图图图。图图图图图。图项的项目图。图海囮海囮海囮海囮海囮海囮海囮海囮海图的鷷巷图。图图。图图图图图图图图",
+          "well_formed": false
+        },
+        {
+          "id": "V005",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "喝乳时爱喝乳时爱喝乳时爱喝乳时爱喝乳时爱喝乳时爱喝乳时爱喝乳时爱喝乌喝乌喝乌喝乌喝乌喝乌喝乌喝乌喝乌喝乌喝乌喝乌喝乌喝乌",
+          "well_formed": false
+        },
+        {
+          "id": "V006",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "养丮我雪鸮雪雪鸮雪雪鸮雪雪雪鸮雪雪鸮丮檮鸮雪雪鸀养丮鸮鸮雪鸮一养丮鸮雪鸮一养丮鸮鸮雪鸮丮檮鸮雪鸮雪鸮雪鸮雪鸮檪鸮雪雪鸮雪",
+          "well_formed": false
+        },
+        {
+          "id": "V007",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "近姐水经泧泧泧泧水经泧泧水经泧泧水经泧泧水经泧读》》》《水疐泐泧水绻》姐泧水绐泧水绐泧水绐泻》》》《泐泧水绐泧水绐泧水绐",
+          "well_formed": false
+        },
+        {
+          "id": "V008",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "吃吃吃吃吃吃吃吃吃吃吃吃包包包包包包最笼包笼吃吃吃吃吃吃吃包包最笼包笼吃包最笼包最笼包最笼吃吃吃吃吃吃吃吃吃吃吃包包包最",
+          "well_formed": false
+        },
+        {
+          "id": "V009",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "君雨我雨我我我君雨我君雨我君雨我君雨我雨我君雨我君我君雨我君雨我君雨我君雨我君雨我君雨我君雨我君雨我君雨我雨我君雨我君雨",
+          "well_formed": false
+        },
+        {
+          "id": "V010",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "安濥我使安扉安安安安安安安安安安安安安。安西安安安安安。安西安安安西安安西安安安安。安西安西安安安安安西安西安西安西安西",
+          "well_formed": false
+        },
+        {
+          "id": "V011",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "777777777777777777777777777777777777777777。77777777777777777",
+          "well_formed": false
+        },
+        {
+          "id": "V012",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "刟星星星星星星星星星星星星星星星星星星星。皙队晨晽的队晨晰晉晽的队晨晨星星星星星星我的队晨晨晰皙皟晟星星星晨星星。目晨晨",
+          "well_formed": false
+        },
+        {
+          "id": "V013",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "苳打打打打打打打打打打打打打打打打打打打打。喝苏打打打打苏打打打苏打打苏打打苏打打打打苏打打打苏打打打苏打打苏打打打苏打",
+          "well_formed": false
+        },
+        {
+          "id": "V014",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一浣浣浣浣浣养一养一养一养一养一养一养一养一养",
+          "well_formed": false
+        },
+        {
+          "id": "V015",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "近泻近泻近泻近泻近泻读泻近泻近泻近寻迿近個近泻读读近寻迿寻近水绻》寻读读近寻近水经注读读近水绻》寻读近泻近泻近水绻》寻读",
+          "well_formed": false
+        },
+        {
+          "id": "V016",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "子鸡最爱吃舱吃舑最爱吃舱吃舑最爱吃舱子鸀爱子鸡最爱子鸀爱子鸡最爱子鸡最爱子鸀爱子鸡最爱子鸐鸡朣最爱子鸡最爱子鸡最爱子鸡最",
+          "well_formed": true
+        },
+        {
+          "id": "V017",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "濿迿哥迿远迿远迿迿远迿迿远迿迿迿远迿迿迿远远远远迼迿迿迿迿迿怂迿迿迿迿迿迿迿迿迿远迿远远远远迼哥迿迿迿迿迿迿迥怂迿迿迿迿",
+          "well_formed": false
+        },
+        {
+          "id": "V018",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "岛岛岛。岛青岛青我住岛青岛青岛青岛青岛青岛青岛青岛青岛青岛青岛岛岛岛岛岛岛岛岛岛岛岛岛。岛青我住岛我住岛我住岛。岛岛岛岛",
+          "well_formed": false
+        },
+        {
+          "id": "V019",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "799999999999999999999999999999999999999999999999999999999999",
+          "well_formed": false
+        },
+        {
+          "id": "V020",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "径鳾径项石径项石径项径项皳径项石径项石径项石径项径项皳径鳾很石径项径项石径项皳徟径项石径项石径项石径项石径项石径项径项皳",
+          "well_formed": false
+        },
+        {
+          "id": "V021",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "檬柠柠柠柠柠柠柠柠柠柠柠柠柠柠柠汱人爱人爱人爱人爱人爱人爱人爱人爱人爱人爱人爱人爱人爱人爱人爱人爱人爱人爱人爱人爱人爱人",
+          "well_formed": true
+        },
+        {
+          "id": "V022",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "居居养一居居养一居居居养一居耂居居居养一舌舌耂居居居养一蓝舌舌舌舌舌舌舌舌舌舌舌舌舌舌舌舌舌舌舌舌舌舌蓝蓝蓝茌蓝蓝蓝舌蓝",
+          "well_formed": false
+        },
+        {
+          "id": "V023",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "寻读读读读读读读读近梦读读近梦读读读读读语读近梦读读读读读》读语读读读语梦语语语读读》》》》语语梦语语读读》读读》读读》",
+          "well_formed": false
+        },
+        {
+          "id": "V024",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "泡馍泱泱吃羽结泡馍泱泱吃羽羽绖吃泾吃泾吃羫泾吃羫泉泾泾泾吃羊贵泡泱吃羊肉泾泾泾泾泾泾泾泾泱吱吃羊贀羊肉泉泉泉泡戱吃羔泡泉",
+          "well_formed": false
+        },
+        {
+          "id": "V025",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "坿坝远远远远远远远远远远远远。远远远远远。远远远远远远远。迿远迿坥迿远迿远迿倝迿迿迿迿迿远迿远迿迿我远远远远远远。违迿我",
+          "well_formed": false
+        },
+        {
+          "id": "V026",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "岙使啿岙。沙。使沙。岙长沙住岙使沙。岙长沙长沙长沙长沙长沙长沙长沙长沙长沙长沙长沙住岙住圽沙。岙沙长沙长沙长沙长沙住岙沙",
+          "well_formed": false
+        },
+        {
+          "id": "V027",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "999999999999999999999999999999999999999999999999999999999999",
+          "well_formed": false
+        },
+        {
+          "id": "V028",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "归云目归云目归云目归云目归云目归云目归云目归云目归云目归云目归云目归云目归云目归云目归云目归云目归云目归云目归云目归云目",
+          "well_formed": false
+        },
+        {
+          "id": "V029",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "柠檬柠柠檬柠柠柠檬柠柠柠檬柠柠柠檬柠柠柠檬柠柠柠柠柠檬柠柠柠柠柠柠柠檬柠柠柠柠柠檬柠柠柠柠柠柠檬柠柠柠柠柠檬柠柠柠柠柠柠",
+          "well_formed": false
+        },
+        {
+          "id": "V030",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "蓝舌舌舌舌舌舌舌舌舌舌舌舌舌舌蓝蓝茺养一蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝舌舌舌舌舌舌舌舌养一蓝蓝蓝蓝舌舌舌舌",
+          "well_formed": false
+        },
+        {
+          "id": "V031",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "近笑最读七我我我我我我我我庑庑庑笠云笼七我我毻》》七我我毻七戈云我我我我庑笻近布第们一读最这戈亸这笈七笼七笼寻近庑庑庑庑",
+          "well_formed": false
+        },
+        {
+          "id": "V032",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "山吃胡胡胡胡胡胡胡胡辈胡胡胡胱山吃辣汤胡胡胡胃胱山吃辣汤胣汤胣汣汣汤胡胡胣汣汣汣汣汤。胱吱吃辣汤胡胃胡胱吱辣汱吃辣汤胣汱",
+          "well_formed": false
+        },
+        {
+          "id": "V033",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "安慕安慕安慕安慕安慕安慕安慕安慕安慕安慕安慕安慕安安慕安安慕安安慕安慕安慕安慕慕安慕慕安慕安慕安安慕安安慕安安慕安安慕安",
+          "well_formed": false
+        },
+        {
+          "id": "V034",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "州兰兰州州州州州州兰州州州州州州表州表州表州。州表州表兰兰州州表州表州楰表州表兰兰州州州州州州兰州州表州楰表州表州表州表",
+          "well_formed": false
+        },
+        {
+          "id": "V035",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "242402424喯10242424喯是1024是102424是10242424，喇242424242424喰喯1024",
+          "well_formed": false
+        },
+        {
+          "id": "V036",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "听涛听涛。听涛听涛听涛听涛听涛的项听涛听涛听涛的项听涛听涛听涛听涛听涛听涛听涛的项听涛听涛听涛听涛听涛听涛的项听涛听涛听",
+          "well_formed": false
+        },
+        {
+          "id": "V037",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "时砖茶砖茶砖茶砖茶砖茶砖茶砖茶砖茶砖茶砖茶砖茶砖茶砖茶砖茶砖茈砖茶砖茶砖茶砖茶砖茶砖茶砖茶砖茈时砖茶砖茶砖茶砖茶砖茶砖茶",
+          "well_formed": false
+        },
+        {
+          "id": "V038",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一",
+          "well_formed": false
+        },
+        {
+          "id": "V039",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "近姐我读姐有姐我读姐我有姐我我姐我姐我工姐我最物姐姐我工姐我工姐我工姐我姐最物姐姐我姐姐最物姐姐我姐有姐最物姐姐我姐姐最",
+          "well_formed": false
+        },
+        {
+          "id": "V040",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "哥戱哥戱哥最糖芋芋芋芋芋芋芋苗。哥戱吃糖苗哥最糖苗的哥苗哥最糖苗的哥苗苗哥最糖苗的哥苗苗哥最糖苗的哥苗苗哥最糖苗苗哥苗苗",
+          "well_formed": false
+        },
+        {
+          "id": "V041",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "坒我坒我坒我坒我坒我坒我坒我反我坒。坒青青我坒青青青我坒青我坒青青我坒青青我坒青青我坒青青我坒青青青我坒青青青我坒青青青",
+          "well_formed": false
+        },
+        {
+          "id": "V042",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "兰州州州州州州州州州州州州州州州州州。州州州州州州兰州。州州州州州兰州。州州我住州我住州我住州我住州我住州我住州我住州我",
+          "well_formed": false
+        },
+        {
+          "id": "V043",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "78888888888妹妹妹妹妹妹妹妹数妹数妹数妹数妹数妹字数妹喜数妹妹妹妹妹妹妹数妹妹妹妹妹妹妹妹数妹数妹数妹数妹妹字",
+          "well_formed": false
+        },
+        {
+          "id": "V044",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "埳队柳柳柳柳柳柳柳柳柳柳皘柳柳阘柳柳皳阘柳柳柳阘柳柳的队队柳柳队柳柳队柳柳柳柳柳的队柳队柳柳柳队柳柳。皚埳队埳埳柳柳柳的",
+          "well_formed": false
+        },
+        {
+          "id": "V045",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "豱喝时爱喝时爱喝时爱喝时爱喝普普普普普普普普普普普普普智喝普普普普普普普戱喝普普普普普普戱喝普普普普普普普普时爱喝普普普",
+          "well_formed": false
+        },
+        {
+          "id": "V046",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一",
+          "well_formed": false
+        },
+        {
+          "id": "V047",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "工工工工工工工工工工工工工工工工巌天工工工工最读工工近工工工工工工工工工工工工工工开物开物开物开物开绥工工读》开近工工读",
+          "well_formed": false
+        },
+        {
+          "id": "V048",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "拗苗芀糖苗芀糖苗苗。拗苗苗。苗苗。拗苗芋苗芋苗芋苗拗苗芋芋苗芋苗芋苗。苗苗芋苗芋苗苗。苗苗苗。苗苗苗芋苗苗苗。苗苗苗苗苗",
+          "well_formed": false
+        },
+        {
+          "id": "V049",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "宁洛宁。宁宁宁洛宁洛宁。宁洛宁洛宁。宁洛宁洛宁洛宁洛宁洛宁。宁洛宁洛宁洛宁洛宁洛宁洛宁。宁洛宁洛宁洛宁。宁洛宁洛宁洛宁。",
+          "well_formed": false
+        },
+        {
+          "id": "V050",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "州州温州温州温州温州温温州温州温州温州温州温温州温温温温州温州温州温州温州州温州佸哥温州温州温温州温州温州表州表州表州州",
+          "well_formed": false
+        },
+        {
+          "id": "V051",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "21212121212121212121212121212121212121〦212121212121212121212",
+          "well_formed": false
+        },
+        {
+          "id": "V052",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "同临风目同临风临风皸拀同临风临风皸拣风目同临风临风临风临风临风拣临风风皸同临风风皸同临风风皸风风皸风风临风风临风拣拣临风",
+          "well_formed": false
+        },
+        {
+          "id": "V053",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "茶纺纺喝纺纺纺纺纺纺纺纺纺纺纺人纺纺纺纺汱人纺纺纺纺纺纺纺红汱人纺纺纺纺纺纺纺纺纺纺纺纺汱人纺纺纺纺纺纺纺纺纺纺纺纺喝纺",
+          "well_formed": false
+        },
+        {
+          "id": "V054",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "居养一居养一居养一居养一居养一居养一居养一居养养一居养一居养一居养一居养一居养一居养一家鼠一居养一居养一居养一家鼠一居居",
+          "well_formed": false
+        },
+        {
+          "id": "V055",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "毻读读近氯近近近民近近读读》近读近近读读》近读读读》近读读读》近读读读近近近近读读》迯读读读》读读读》读读读》读近读读读",
+          "well_formed": false
+        },
+        {
+          "id": "V056",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "山吃蟥吃蟥吃蟹黄汤哥汤哥汤哥汤哥汤哥汤哥汥汤哥汤哥汱吃蟹黥哥汤哥汱吱層哥吃蟹黥哥汱哥汤哥汤哥汤哥汱吃蟹黥哥汤哥汤哥汤哥汤",
+          "well_formed": false
+        },
+        {
+          "id": "V057",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "庈庈庈时予。庈时予时予时予时予时予时予时予时予时予时予时予时予时予时予时予时予时予时予。时予时予时予时予时予时予时予时予",
+          "well_formed": false
+        },
+        {
+          "id": "V058",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "州州温州温州温州温温温州温州温州温州温州温州温州温州温州温州温州温州温州温州温州温州温州温州温州温州温州温州温州温州温州",
+          "well_formed": false
+        },
+        {
+          "id": "V059",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "256学数256字欢欢欢欢欢欢欢欢欢欢欢欢欢欢欢欢欢欢欢欼妹256256。喰喦妹妹妹妹妹妹妹是256妹喦妹妹妹妹妹妹妹妹",
+          "well_formed": false
+        },
+        {
+          "id": "V060",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "压风目压风。风风。风风风临风掣掎皸风风风风风风。风风风风风掎皸风风风风风风风。风风风风风风风掎皣风风风风风风风风皸风风风",
+          "well_formed": false
+        },
+        {
+          "id": "V061",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "时红时红时红时红时红时红时红时红时红时红时时红时时红时时红时时红时时红时时红时时红时时红时时红时时红时时红时时红时时红时",
+          "well_formed": false
+        },
+        {
+          "id": "V062",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一我了一一养一养一养一养一养一养一养一",
+          "well_formed": false
+        },
+        {
+          "id": "V063",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "寻还读读近洛阳伽近洛阳伽近洛阳伽近洛阳伽近洛阳伽读》读读读读近洛阳伽近近洛阳伽近近洛阳伽近近洛阳伽近洛阳伽近洛阳伽近洛阳",
+          "well_formed": false
+        },
+        {
+          "id": "V064",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "山吃蟈吃蟹黄汤包蟹黄汤包汱吃蟹黄吃蟹黄汤包汱吃蟹黄汤包汱吃蟹黄汤吃蟹黄汤吱吃蟹黄吃蟹黄汤吃蟹黄汤吱吃蟹黄吃蟹黄汤吱吃蟹黄",
+          "well_formed": false
+        },
+        {
+          "id": "V065",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "刑倂堚我我我我倂倂倀砚堚堚堚我我我可我可我叫我倂倀砚堚刑叫我我我叫我倂倂倀砚堚倀砚堚倀砚堚我叫戈可我叫我叫我可我叫我我我",
+          "well_formed": false
+        },
+        {
+          "id": "V066",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "崛阳阳阳阳阳洛阳洛阳洛阳。阳阳阳阳阳洛阳。崛阳阳阳洛阳阳。阳阳阳阳洛阳阳阳。阳阳阳洛阳阳阳洛阳阳阳洛阳阳阳洛阳阳阳阳阳阳",
+          "well_formed": false
+        },
+        {
+          "id": "V067",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "字妹妹妹妹妹妹妹妹妹妹妹妹妹妹妹妹妹妹妹妹孮数妹是313131313131313131是3131313131313131",
+          "well_formed": false
+        },
+        {
+          "id": "V068",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "迿雮宿雮宿雮宿雮宿雮宿雮宿雨。雮宿雮宿雮宿雮宿雮宿雮宿雮宿雮宿雮宿雮宿雮宿雮宿雮宿俿雮目宿雮宿雮宿雮宿雮宿雮宿雮宿雮宿雮",
+          "well_formed": false
+        },
+        {
+          "id": "V069",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "荷饮汱人爱人爱人爱人爱人爱人爱人爱人爱人爱人爱人爱人爱人爱人爱人喱荷饮汱人荷饮汱人荷饮汱人荷饮汱人荷饮汱人荷饮汱人荷饮。",
+          "well_formed": false
+        },
+        {
+          "id": "V070",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一",
+          "well_formed": false
+        },
+        {
+          "id": "V071",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "华华华华华华华华华华华华华华彠东东东东东东东东东东东东东东东东东为华华华华华华华华华华华华华华华录》华华华华华华录》华华",
+          "well_formed": false
+        },
+        {
+          "id": "V072",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "山吃牛艉面有面有面戱吃牛艉面戱吃牛艉面有面有面戱吃牛艉面有面有面有面扛能牛艛艛艛艛艛艛艛艛艛艛艛艛艛艛艛肉面有面有面有面",
+          "well_formed": false
+        },
+        {
+          "id": "V073",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "晚苏晚苏晚苏晚苏晚苏晚苏晚苏晚苏晚苏晚晚晚晚晚晚晚晚晚晚晚苏晚苏晚苏晚苀䋏晚晚晚晋苏晚晚晚晙晚苏晚苏晚苏晚苏晚晚晚晚晚晚",
+          "well_formed": false
+        },
+        {
+          "id": "V074",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "州扬州扬扬扬州扬州扬州州扬州州扬州州扬州扬州扬州扬州扬州扬扬州扬州扬州住州扬州扬扬州扬州扬州州扬州州扬州州扬州州扬州住州",
+          "well_formed": false
+        },
+        {
+          "id": "V075",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "字是3131313131313131313131313131313131313131的13131313131313131",
+          "well_formed": true
+        },
+        {
+          "id": "V076",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "埌舟舟舟舟舟埈埈埈埈舟叫舟舟舟舟舟舟舟舟舟舟舟。舟舟舟舟舟舟舟。舟舟舟舟舟舟戟议挌舟舟行舟舟舟舟舟舟舟舟戟议挌舟舟行舟舟",
+          "well_formed": false
+        },
+        {
+          "id": "V077",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "荷饮时爱喝荷饮时爱喝荷饮时爱喝荷饮时爱喝荷饮时爱喝荷饮时爱喝荷饮时爱喝荷饮时爱喝荷饮时爱喝荷饮时爱喝荷饮时爱喝荷饮时爱喝",
+          "well_formed": false
+        },
+        {
+          "id": "V078",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一一养了一养一养一养一养一养一养一养一养一养一养一",
+          "well_formed": false
+        },
+        {
+          "id": "V079",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "山录录录。录梦粱录读》》》》》读》近梦粱录近梦粱山录近梦粱录近梦粱山局读》录近梦粱山录近梦粱录近梦粱山录近梦粱读》录近梦",
+          "well_formed": false
+        },
+        {
+          "id": "V080",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "屼舱吃酸舱吃鱼。酸舱吃鱼鱼吃鱼。鱼鱼屼汼胈吃鱼鱼鱼鱼最爱鱼鱼鱼鱼汼汼鱼鱼。鱼鱼鱼汼舱吃鱼鱼鱼鱼山吃鱼舱吃鱼鱼鱼山吃鱼胸舱",
+          "well_formed": false
+        },
+        {
+          "id": "V081",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "哥昭衾哥昭衾哥哥昭衾哥昭。哥昭衾昭。哥哥哥昭衾昭。哥哥哥哥昭表哥衾昭。哥哥哥昭衾昭。哥哥哥昭衾昭衾昭。哥哥哥哥哥哥哥哥哥",
+          "well_formed": false
+        },
+        {
+          "id": "V082",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "哥佥体我芜楽芜楽芜楽芜住哥体芜楽芜楽芜湖哥住哥住哥住哥住哥佼哥住哥住哥住哥住哥住哥住哥住哥住哥住哥住哥住哥住哥住哥住哥住",
+          "well_formed": false
+        },
+        {
+          "id": "V083",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "2020202020202020喯5202020202020202020是52020202020202020是52020",
+          "well_formed": false
+        },
+        {
+          "id": "V084",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "同事同事皪同事皪同事目拮拮拮我我我同事同事目同事的骐我拮我殮我殺同事皪同事皪同事皪同事皪同事皪同事目同事皪同事目未同事皪",
+          "well_formed": false
+        },
+        {
+          "id": "V085",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "茉茉茉茉茉茉茉茉茉茉莉茉茉茉茉莉茉茉茉茉茉茉茉茉茉莉茉茉茉茉茉莉茉茉茉茉茉茉茉莉茉茉茉茉茉茉茉莉茉茉茉莉茉茉茉茉茉茉茉茉",
+          "well_formed": false
+        },
+        {
+          "id": "V086",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一狄一养一养一养一养一养一",
+          "well_formed": false
+        },
+        {
+          "id": "V087",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "寻读》》》》》读读》近梦寻近梦寻近梦梦梦梦梦梦梦梦梦梦梦梦梦梦读近寻迿寻近寻近寻这我梦近梦寻迿梦近寻迿寻近寻这我梦梦梦梦",
+          "well_formed": false
+        },
+        {
+          "id": "V088",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "子朥哥戱吃狥吃子哥哥最狮戱吃爑哥最狥吃子哥哥最狥吃哥最狮最狮最狮最狮最狮最狀狮最窐子哥我哥戱吃哥吃哥哥最狻哥最狀狮戱子子",
+          "well_formed": false
+        },
+        {
+          "id": "V089",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "刑叫阭。叫阭。很孾昭。很孾昭。很孾昭〘昭。很孾昭〘昭。孾昭。孾昭阭。孾昭阭昭阭昭。孾昭阭昭。孾昭阭昭阭昭阭昭。阭昭阭昭。",
+          "well_formed": false
+        },
+        {
+          "id": "V090",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "我佻但湖湖湖湖湖湖湖湖。喖芜湖芜湖芜湖芜湖芜湖芜湖芜湖芜湖芜湖芜湖芜湖芜湖芜湖芜我佽但佼湖。湖湖我佼喖芜湖芜湖芜我佼喖芜",
+          "well_formed": false
+        },
+        {
+          "id": "V091",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "字喜是618是618是618是618是618是618是618是618是数喯618欢欢欢欢欢欢欢欢欢欢欢欢欢欢欢欢是618",
+          "well_formed": true
+        },
+        {
+          "id": "V092",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "央央未央央未央央未央央未央未央项央未央央未宮未央我皪央央我未宮我未央央我未央央殮未央殮未央殮未央项央央央央央央央央央央央",
+          "well_formed": false
+        },
+        {
+          "id": "V093",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "茉茉茉茉茉茉茉茉茉茉茉茉茉茉茉茉茉茉茉茉茉茉茉茉茉茉茉莉茉茉茉茉茉茉茉莉茉茉茉茉茉茉茉莉茉茉茉茉茉茉茉莉茉茉茉茉茉莉茉茉",
+          "well_formed": false
+        },
+        {
+          "id": "V094",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一蝠。一养一养一养一养一蝠。丝蝙蝠蝙蝙蝙蝙蝙蝙蝙蝙蝙蝙",
+          "well_formed": false
+        },
+        {
+          "id": "V095",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "庵梦庿庿庿庿庿庿庿庿庵梦梦梦梦梦梦梦梦梦梦梦梦梦梦梦梦梦我梦庺庿庿庵梦庵梦庵梦庵梦庵梦庵梦庵梦庵梦庵梦庵梦庵梦庵梦庵梦庵",
+          "well_formed": false
+        },
+        {
+          "id": "V096",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "吃狮子吃狮子子最狮狮最狮狮最狮狮最狮子子吃吃吃吃吃狮子子子子吃吃狮子吃狮子吃子子孈吃最狮最狮最狮最狮最狮最狮最狮最狮最狮",
+          "well_formed": false
+        },
+        {
+          "id": "V097",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "明轩轩轩轩轩轩。轩轩轩轩轩轩轩轩。轩轩轩轩轩轩。轩轩轩轩轩轩轩轩轩轩轩明轩轩轩轩轩轩轩轩轩哥轩轩轩轩轩轩轩轩轩。轩轩轩轩",
+          "well_formed": false
+        },
+        {
+          "id": "V098",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "自自自自自自自自自自自自自自自自自自自自自自自自自自自自自自自自自自自自自自自自自自自自自自自自自自自自自自自自自自自自",
+          "well_formed": false
+        },
+        {
+          "id": "V099",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "喦妹妹妹妹妹妹妹妹妹妹妹妹妹妹妹妹妹妹妹妹妹妹妹妹妹妹妹妹妹妼妹数妦的妹妹妹妹妹妹妹妹妹妹妹妹妹数妹数妹数妹妹妹数妹是3",
+          "well_formed": false
+        },
+        {
+          "id": "V100",
+          "family": "with_hard_distractor",
+          "hit": true,
+          "answer": "拥拥我知秋。秋。始知秋秋秋秋秋。秋秋埥知知知知秋埥知知秋埥知知知秋埥知知知知知知知知皋埥知知知知秋秋埥知知知知秋秋。知知",
+          "well_formed": false
+        },
+        {
+          "id": "V101",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "汱人喝人喝人喝人爱人爱人爱人爱人人爱人爱人人爱人人爱人人爱人人爱人人爱人人爱人人爱人人爱人人爱人人爱人人爱人人爱人人爱人",
+          "well_formed": false
+        },
+        {
+          "id": "V102",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一养一",
+          "well_formed": false
+        },
+        {
+          "id": "V103",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "徐霞徐霞徐霞宰近近朞宰近宰近宰近游读》徐鯻读》宰近游记游记游记游近游近游近游近宰近徐近宰徐霞这游读》徐鿸近游记游近游近游",
+          "well_formed": false
+        },
+        {
+          "id": "V104",
+          "family": "with_hard_distractor",
+          "hit": false,
+          "answer": "吃吃吃吃吃吃吃吃妻肺妻胈吃吃吃吃吃吃吃吃吃吃妻肺妻自吃妻胉吃妻胉吃吃吃吃吃吃吃妻肺妻自吃妻胈吃吃妻胉吃妻胉吃吃吃妻肺妻自",
+          "well_formed": false
+        }
+      ]
+    }
+  ],
+  "surface_verdict": {
+    "min_gap_texts": 3,
+    "per_circuit": [
+      {
+        "circuit": "output/taiji_r2_copy_circuit_chat/judge/circuit-final.pt",
+        "gap_texts": -28,
+        "direction": "worse",
+        "meets_min_gap": true,
+        "control_rate": 0.1538,
+        "treated_rate": 0.0641
+      },
+      {
+        "circuit": null,
+        "gap_texts": -28,
+        "direction": "worse",
+        "meets_min_gap": true,
+        "control_rate": 0.1538,
+        "treated_rate": 0.0641
+      }
+    ],
+    "status": "degraded",
+    "verdict": "表层劣化成立（两电路同向、每条差 ≥3）"
+  },
+  "base_sha256_unchanged": true
+}
