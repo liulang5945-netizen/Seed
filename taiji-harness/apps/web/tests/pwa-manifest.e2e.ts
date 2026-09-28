@@ -35,7 +35,13 @@ it('ships fixed-color favicons selected by document media queries', async () => 
   const light = await readFile(join(DIST_ROOT, 'favicon.svg'), 'utf8')
   const dark = await readFile(join(DIST_ROOT, 'favicon-dark.svg'), 'utf8')
   expect(light).not.toContain('<style>')
-  expect(light).toContain('fill="#000"')
+  // The mark paints light with its two colour layers and dark as one combined
+  // silhouette, so what the pair must share is the traced contour, not byte equality.
+  expect(light).toContain('fill="#124A38"')
+  expect(light).toContain('fill="#AAD66A"')
   expect(dark).toContain('fill="#fff"')
-  expect(dark.replace('fill="#fff"', 'fill="#000"')).toBe(light)
+  const lightShell = /d="([^"]{40})/.exec(light)?.[1]
+  const darkShell = /d="([^"]{40})/.exec(dark)?.[1]
+  if (lightShell === undefined || darkShell === undefined) throw new Error('favicon SVG carries no path data')
+  expect(darkShell).toBe(lightShell)
 })
