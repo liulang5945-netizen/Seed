@@ -275,11 +275,61 @@ def audit(runtime: Any, chunks: list[list[int]], boundary: int, mask: bool) -> d
             )
         return out
 
+    #: **比较式**停止判据的定价表：规则不是"p 超过绝对阈值"，而是"边界符离第一位只差 K 倍就收笔"。
+    #: §2ak 那档量到自身轨迹上接缝的 `p_argmax/p_boundary` 中位 4.49、正文中间 4419——分离度在**比值**上
+    #: 而不是在绝对值上，所以这张表才是下一档该读的东西（判据先于数写在 PLAN-A-30 §2am）。
+    def _ratio_sweep() -> list[dict[str, Any]]:
+        grid = [1.5, 2.0, 3.0, 5.0, 10.0, 30.0, 100.0]
+
+        def ratio(row: dict[str, Any]) -> float | None:
+            if row["p_boundary"] <= 0:
+                return None
+            return row["p_argmax"] / row["p_boundary"]
+
+        ends = [value for row in rows["end"] if (value := ratio(row)) is not None]
+        others = [
+            (int(row["doc_index"]), int(row["position"]), value)
+            for row in rows["other"]
+            if (value := ratio(row)) is not None
+        ]
+        other_by_doc: dict[int, list[tuple[int, float]]] = {}
+        for doc_index, position, value in others:
+            other_by_doc.setdefault(doc_index, []).append((position, value))
+        out: list[dict[str, Any]] = []
+        for cap in grid:
+            recall = sum(1 for value in ends if value <= cap) / len(ends) if ends else None
+            rate = (
+                sum(1 for _, _, value in others if value <= cap) / len(others) if others else None
+            )
+            fractions: list[float] = []
+            for doc_index, entries in other_by_doc.items():
+                fired = [position for position, value in entries if value <= cap]
+                length = doc_lengths[doc_index] if doc_index < len(doc_lengths) else 0
+                if fired and length:
+                    fractions.append(min(fired) / length)
+            fractions.sort()
+            out.append(
+                {
+                    "ratio_cap": cap,
+                    "seam_hit_rate": round(recall, 4) if recall is not None else None,
+                    "false_rate_per_position": round(rate, 6) if rate is not None else None,
+                    "docs_with_false_fire": len(fractions),
+                    "first_false_fire_fraction_of_doc_median": (
+                        round(fractions[len(fractions) // 2], 4) if fractions else None
+                    ),
+                    "first_false_fire_fraction_of_doc_min": (
+                        round(fractions[0], 4) if fractions else None
+                    ),
+                }
+            )
+        return out
+
     return {
         "documents": len(chunks),
         "stream_symbols": stream_symbols,
         "faces": {kind: _face(bucket) for kind, bucket in rows.items()},
         "threshold_sweep": _sweep(),
+        "ratio_sweep": _ratio_sweep(),
         "mean_document_bytes": (
             round(sum(doc_lengths) / len(doc_lengths), 2) if doc_lengths else None
         ),
@@ -331,7 +381,14 @@ def main() -> int:
     result = audit(runtime, chunks, boundary, mask=args.mask)
 
     report = {
-        "format": "taiji-a30-stop-signal-presence-v5",
+        "format": "taiji-a30-stop-signal-presence-v6",
+        "format_note_v6": (
+            "v6 只加一张**加法**表 `ratio_sweep`：把停止判据从『p_boundary 超绝对阈值』换成『边界符离第一位只差 "
+            "K 倍』（K∈{1.5,2,3,5,10,30,100}，`p_boundary<=0` 的格不入表）。列名换成 `seam_hit_rate` 以点名它量的"
+            "是『接缝被这条比较式收到多少』；`threshold_sweep` 与 `faces` 的算法一字未动 ⇒ 与 v2–v5 同格可比。"
+            "加它的理由见 §2ak：自身轨迹上接缝的 `p_argmax/p_boundary` 中位 4.49、正文中间 4419，"
+            "分离度在比值上而不在绝对值上。"
+        ),
         "format_note_v5": (
             "v5 只加两样且默认面逐位不变：新旗标 `--append-newline`（每篇正文后补一个 `0x0A` 再收尾，"
             "＝主线配方 `end_boundary_after_newline` 训的那张面）与一条自述字段 `documents_face`。"

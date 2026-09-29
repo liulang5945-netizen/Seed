@@ -106,6 +106,32 @@ def priceable_points(sweep: list[dict[str, Any]], positions: int) -> list[float]
     return hit
 
 
+def priceable_ratio_points(sweep: list[dict[str, Any]], positions: int) -> list[float]:
+    """§2am 那一档的**比较式**判据：规则＝"边界符离第一位只差 K 倍就收笔"，K 取网格值。
+
+    冻结线（2026-09-29 写下，先于任何 ratio 读数）：与 §2ak 同形三条，同时满足才算**可比价点**——
+    ① `seam_hit_rate ≥ 0.5`；② `docs_with_false_fire ≤ N//4`；③ 若确有误收，
+    `first_false_fire_fraction_of_doc_median ≥ 0.5`。分支与 §2ak 一致：
+    重训件有、base 没有 ⇒ 比较式停止在自身轨迹上可用且是配方买来的；两枚都有 ⇒ 配方贡献
+    `not_resolved`；两枚都没有 ⇒ 连比较式也判死，停止这条线在产品侧没有未试过的形态了。
+    """
+
+    limit_docs = positions // 4
+    hit: list[float] = []
+    for row in sweep:
+        late_enough = (
+            row["docs_with_false_fire"] == 0
+            or (row["first_false_fire_fraction_of_doc_median"] or 0.0) >= 0.5
+        )
+        if (
+            (row["seam_hit_rate"] or 0.0) >= 0.5
+            and row["docs_with_false_fire"] <= limit_docs
+            and late_enough
+        ):
+            hit.append(float(row["ratio_cap"]))
+    return hit
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--retrain", default="output/a31_ding3_boundary/checkpoint.pt")
@@ -156,7 +182,11 @@ def main() -> int:
             "other_positions": result["other_positions"],
             "faces": {kind: result["faces"][kind] for kind in ("end", "other", "turn_marker")},
             "threshold_sweep": result["threshold_sweep"],
+            "ratio_sweep": result["ratio_sweep"],
             "priceable_thresholds": priceable_points(result["threshold_sweep"], len(prompts)),
+            "priceable_ratio_thresholds": priceable_ratio_points(
+                result["ratio_sweep"], len(prompts)
+            ),
             "document_ledger": ledger,
         }
         del runtime
@@ -179,8 +209,25 @@ def main() -> int:
             "⇒ 停止这条线整体收口，剩下的方向都要 owner 裁"
         )
 
+    retrain_ratio = runs["retrain"]["priceable_ratio_thresholds"]
+    base_ratio = runs["base"]["priceable_ratio_thresholds"]
+    if retrain_ratio and not base_ratio:
+        verdict_ratio = f"可比价点只属于重训件（K∈{retrain_ratio}）⇒ 比较式停止在它自己的轨迹上可用，且是这条配方买来的"
+    elif retrain_ratio and base_ratio:
+        verdict_ratio = f"两枚件都有可比价点（重训 {retrain_ratio}／base {base_ratio}）⇒ 关于配方贡献记 not_resolved"
+    else:
+        verdict_ratio = (
+            "两枚件都没有可比价点 ⇒ 连比较式（离第一位只差 K 倍）也判死，"
+            "停止这条线在产品侧没有未试过的形态了，剩下的方向都要 owner 裁"
+        )
+
     report = {
-        "format": "taiji-a30-ding3-trajectory-threshold-v1",
+        "format": "taiji-a30-ding3-trajectory-threshold-v2",
+        "format_note_v2": (
+            "v2 只在每臂加 `ratio_sweep` 与 `priceable_ratio_thresholds`、并多一条 `verdict_ratio_face`"
+            "（判据＝§2am，写在 `priceable_ratio_points` 的 docstring 里，先于数）；"
+            "v1 的 `threshold_sweep`／`priceable_thresholds`／`verdict` 一字未动 ⇒ 与已入库的 24pos 读数同格可比"
+        ),
         "prereg": "PLAN-A-30 §2ak（判读线先于数写在件 docstring）",
         "question": "边界符的概率在模型自己的正文与真接缝之间分不分得开，且误收砍在第几格（阈值停止可不可用）",
         "retrain_checkpoint": args.retrain,
@@ -195,6 +242,7 @@ def main() -> int:
         "prompts_sha256": prompts_sha,
         "runs": runs,
         "verdict": verdict,
+        "verdict_ratio_face": verdict_ratio,
         "instrument_guard": {
             "same_prompts_both_arms": runs["retrain"]["prompts_sha256"]
             == runs["base"]["prompts_sha256"],
@@ -234,7 +282,10 @@ def main() -> int:
                 "base_end_p_median": runs["base"]["faces"]["end"]["p_boundary"].get("median"),
                 "retrain_priceable": retrain_hits,
                 "base_priceable": base_hits,
+                "retrain_ratio_priceable": retrain_ratio,
+                "base_ratio_priceable": base_ratio,
                 "verdict": verdict,
+                "verdict_ratio_face": verdict_ratio,
                 "guard": report["instrument_guard"],
                 "out": out.name,
             },
