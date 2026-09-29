@@ -1368,6 +1368,12 @@ python scripts/training/train_seed_corpus.py   --resume output/a26_p1/checkpoint
 
 （`--readout predictive --readout-position` 已是默认，显式写出为免歧义；配方旗标默认开。）
 
+**主档（seed_beta）读数已回（2026-09-29，件 `reports/taiji_a30_ding3_stop_target_pilot_100g3x3e_alignment_masked_20260929.json`；
+九条守卫全真，`base_sha256_unchanged`=true）**：`after_newline` 胜出 **231/300**（77%，名次中位 1，`p_boundary` 中位 0.244577）
+对 `current` 0/300、`granularity` 0/300、未训基座 0/300 ⇒ 冻结判据以 **231** 的差距成立。
+**两档决策级（seed_beta 231/300＋出厂 seed_corpus 263/300，对照两臂全部 0/600）全部保持胜出
+⇒ owner 条件授权（§7-3）的触发条件满足，重训按本节预注册发射。**
+
 **判读线（先看规则，后看数；全部先于数写死）**：
 
 1. **教师强制面收口**：重训档在 §2aa 同款测量面（`prefix_chunks(trailing_newline=True)`、masked、
