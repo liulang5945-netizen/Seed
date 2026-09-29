@@ -1,5 +1,6 @@
 /** Cold Session rendering covers exact context and bounded whole-fragment replacements. */
 import { readFile } from 'node:fs/promises'
+import { basename } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { chromium, type Browser, type Page } from 'playwright'
 import { afterAll, beforeAll, describe, expect, it, onTestFailed } from 'vitest'
@@ -42,10 +43,15 @@ describe.skipIf(MODE === 'record').each(CASES)('web e2e: $name', (scenario) => {
 
   it('keeps collapsed and expanded counts consistent with the displayed diff', async () => {
     onTestFailed(() => saveFailureShot(page, `web-e2e-${scenario.name}`))
-    const group = page.locator('[role="treeitem"]').first()
-    await group.waitFor({ timeout: 15_000 })
-    await group.click()
-    await page.locator('[role="treeitem"]').nth(1).click()
+    // Two group rows precede the Session row: the provisioned default Workspace and
+    // "Ungrouped" (the seeded Session's cwd is the temp workspace, not that default).
+    // Clicking a group row toggles it, so the group has to be opened and the Session row
+    // picked by its own title instead of a position index.
+    const ungrouped = page.getByRole('treeitem', { name: /Ungrouped/u })
+    if (await ungrouped.getAttribute('aria-expanded') !== 'true') await ungrouped.click()
+    const sessionRow = page.getByRole('treeitem', { name: new RegExp(basename(scaffold.workspaceCwd), 'u') })
+    await sessionRow.waitFor({ timeout: 15_000 })
+    await sessionRow.click()
     await page.getByText('DONE', { exact: true }).waitFor({ timeout: 15_000 })
     await expandTurnProcesses(page)
     const edit = page.locator('[data-variant="edit"]')
