@@ -293,10 +293,13 @@ def main() -> int:
         "facade_gap": gap,
         "instrument_guard": {
             "base_sha256_unchanged": _sha256(checkpoint) == sha_before,
+            #: 两臂每篇的边沿符数差＝每组 (exchanges−1) 个**多出来的收尾边界**，再乘 epoch 数。
+            #: 10g3x6e 实测 132,522 − 132,402 ＝ 120 ＝ 10×(3−1)×6 ⇒ 配对成立；
+            #: 先前这条界漏乘 `epochs`（写成 10×2＝20），是守卫自己算式错，不是数据不匹配。
             "both_arms_ran_the_same_byte_count": abs(
                 by_arm["granularity"]["trained_symbols"] - by_arm["current"]["trained_symbols"]
             )
-            <= args.groups * (args.exchanges - 1),
+            <= args.groups * (args.exchanges - 1) * args.epochs,
             "boundary_targets_equal_across_arms": (
                 by_arm["granularity"]["boundary_targets"] == by_arm["current"]["boundary_targets"]
             ),
