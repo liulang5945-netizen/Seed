@@ -1358,7 +1358,11 @@ v1 那几档没这几条字段是**字段不存在**，不是算出了 0——�
    （`checkpoints/seed_surface_ngram.lzma`，5,764,420 B、sha `4a40da9c…`，＋5.5 MB owner 同批批准——
    超出 +8.2 MB 账面的部分经弹窗单独批，随包总账 ≈ **+13.7 MB**；构建仪器
    `build_taiji_a30_surface_ngram_artifact.py` 带 40 样本自检）。
-   **守卫**：新件 9 条全绿＋定向回归 44 绿（a25 门路/G13/回路契约/持久化/roundtrip）。
+   **守卫**：新件 9 条全绿＋定向回归 44 绿（a25 门路/G13/回路契约/持久化/roundtrip）；
+   **全量门禁 `tests/taiji_native tests/seed`＝1815 绿／7 红**——其中四条（isolation／provenance／step0／
+   startup smoke）是默认档翻转按设计敲响的契约红，已按"钉新真值＋点名面"对齐（提交 `d4e4f5f1`：
+   来源清单改记裁定装配，厂档全文保留为 factory_face，metadata 级断言点名出厂面）；复跑后余红＝
+   `test_platform_boundary`（并行 M6 会话未跟踪文件的既有环境红，A-29 §7 已登记该类）。
    **两条登记**：①`*.pt` 不进 git（DEBT-I7），信封件钉在 sha＋载入行为上，重建仪器在册但
    torch.save 元数据不逐位（重建件 12,287,435 B ≠ 密封件，已实测登记）；②**dist 内产品件替换＝打包链一步，
    归 M6 R4/prepare 链执行**——M6 web lane 可能见到默认面变化（这是裁决的产品面变更本身），基线刷新归 M6。
