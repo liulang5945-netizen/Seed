@@ -117,6 +117,32 @@
 | `outputs/r2_h3_*` | ≈ 0.71 GB | R2-H3 系列 |
 | `outputs/` 其余 | ≈ 0.34 GB | M1/M2 期小产物 |
 
+### 4.1.1 裁决记录：三个 `_archived_manual-r5-canary_*` 归档（2026-09-29 核查，结论：可删）
+
+对象：`_20260917`（32.1 GB / 1190 文件）+ `_20260925`（744.7 MB / 18 文件）+ `_20260926`（331.0 MB / 8 文件），合计 ≈ **33.2 GB**。
+
+**身份判定：测试中间残留，不是训练产物。** 证据五条：
+
+1. **登记在案**：`05_TECH_DEBT_REGISTER.md` DEBT-I7 第二实例——7 个 artifact-store 测试把
+   `store_root` 指向共享目录 `output/manual-r5-canary/`，中间 `.pt` 按 PID 分组从不清理
+   （实测 1054 个残留，`s29-*` 到 `s51-*`）；2026-09-17 处置＝"归档而非删除"（移入 `_20260917`）。
+   `_20260925`/`_20260926` 是根因修好前又累积的同类残留（`s45-*`，按 PID 命名）的后续归档。
+2. **命名指纹**：全部为 `sNN-*-<pid>.pt/.json`（PID 后缀 21364/21092/32740…），
+   与登记的 `f"sNN-store-{os.getpid()}"` 写法吻合；无任何 `run_report.json`/`checkpoint_NNN` 等
+   训练产物特征。成分：873+18+8 个 `.pt`（≈33.2 GB）+ 317 个小 `.json`（0.5 MB）。
+3. **零代码引用**：`tests/`、`taiji/`、`scripts/`、`seed_platform/` 全部 grep 无
+   `_archived_manual` 引用；`tests/` 仅两处提到 `output/manual-r5-canary`
+   （守卫钉住 `README.md` + `_scratch.py` 的历史教训注释）。
+4. **结论已落账**：DEBT-I7 处置记录完整——根因（7 个测试）、修复（改走
+   `tests/_scratch.py::artifact_scratch_root()` 仓库外 scratch）、验证（8 项相关测试复跑全过、
+   此前"单独过/全量失败"的 5 项假失败消除）。
+5. **入库报告不依赖归档**：`reports/taiji_w7_r5c_s40_runtime_artifact_repeated_retention_20260831.json`
+   只是格式名含 "s40"，未引用归档内任何文件路径。
+
+**附带收益**：这些残留恢复出来只会让全量测试再次假失败（DEBT-I7 的原始病灶），删除反而消除风险。
+**保留物**：`output/manual-r5-canary/README.md`（git 跟踪，守卫钉住）与 `native-canary.pt`
+（2.9 MB，08-29 原有件，登记明言必须保留）。
+
 ### 4.2 checkpoints/（≈ 808 MB）
 
 | 子项 | 体积 | 说明 |
