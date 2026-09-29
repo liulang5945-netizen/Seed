@@ -161,6 +161,13 @@ it('keeps an opened Session and draft when the server restarts on the same port'
   await page.locator('[data-slot="root"]').waitFor({ state: 'attached', timeout: 20_000 })
   const notice = page.getByRole('button', { name: 'Continue', exact: true })
   await notice.click({ timeout: 15_000 })
+  // Startup opens no Session, so the Hero keeps its composer locked until a
+  // Workspace is chosen: pick the one this scenario's Home already registers.
+  const chip = page.getByRole('button', { name: /Choose workspace|选择工作区/u })
+  if (await chip.waitFor({ state: 'visible', timeout: 5_000 }).then(() => true, () => false)) {
+    await chip.click()
+    await page.getByRole('menuitem').first().click()
+  }
   const composer = page.locator('[data-composer-input][contenteditable="true"]')
   await writeComposerDraft(page, composer, 'Create a completed turn for the server restart test.')
   await composer.press('Enter')

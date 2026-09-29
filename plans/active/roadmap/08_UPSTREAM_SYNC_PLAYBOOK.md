@@ -737,3 +737,8 @@ ode_modulesi…`＝**本仓已登记的 Windows 符号链接权限族**（与 0
 ㊦ **㊥(c) 的"2 个未定因"已定因（run2→run3 差集点名）**（2026-09-29）。新红只有 `remote-welcome.e2e.ts`，红在 `TypeError: fetch failed`／`getaddrinfo ENOTFOUND remote.localhost` ⇒ **本机主机名解析失败**，属 E-env 档（与 `npm_execpath`、`EPERM symlink` 同级）；要它绿得给 `remote.localhost` 加解析或让 lane 用 `127.0.0.1`，**这是环境前置改动，需要点头，我没动**。修好 5 条（`built-boot`／`max-tokens-notice`／`search-card`／`todo-row` 四条 `.expected` ＋ `produced-file-mentions`）。
 (a) **同时更正 ㊣(e) 说过头的一句**：`image-display.expected`／`trajectory-image-display.expected` **单跑都绿**（`2 passed`），但两轮整面里都红 ⇒ 批内负载敏感（jsdom 装配面找 `tree` 用的是 10 s 档等待）。所以"6 条在整面里 FAIL 行数＝0"是错的——我的扫描脚本只查了批 1／批 2 的错误行，漏了这两条的失败形状。**"分堆冒充逐条已核"今天第三次踩**，且这次是脚本自证覆盖度不足：以后按块解析的脚本必须先报"我扫了哪几批、抓到多少条 FAIL 块"再报结论。
 (b) **65 这个数的构成因此写清**：A 族 52 ＋ 负载敏感 2 ＋ 环境族（`remote-welcome`、`hmr-live` 等）＋ H8 两文件 ＋ H10 一处 ＋ 超时族若干。真正"产品/测试逻辑待修"的仍是 H8／H10／超时族；其余分别系于 H1 凭据、批负载与本机解析——**判据⑦ 想收口，这三样外部条件缺一不可**。
+
+㊧ **超时族逐条单跑定因：四条都不是负载，`server-restart` 是 H14 家族第五例、已修绿**（2026-09-29）。
+(a) 单跑读数：`server-restart`／`skill-tool-row`／`tool-details`／`session-archive-active` **四条单跑全红** ⇒ ㊦(b) 归给"超时族"的那几个不是负载敏感，各有机制（这条本身就是又一次"分堆当逐条"的纠正）。
+(b) `server-restart` 红在 `writeComposerDraft` 等 `[data-composer-input][contenteditable="true"]` 15 s ⇒ 与 H14 同因（工作区已登记但未选中 ⇒ Hero 输入框锁住）。修法用已验证的手势：`chip.waitFor({state:'visible'})` + 选菜单首项（**不用 `isVisible` 假等待**，见 [[playwright-isvisible-timeout-does-not-wait]]），实测 **`1 passed`、6.3 s**（此前 17 s 超时红）。⇒ H7 连带修绿的文件数从 12 增到 **13**。
+(c) 剩下三条留给下一格，形状已记清：`skill-tool-row` 等 `[data-tool="skill"]`、`tool-details` 等 `[data-tool="create_goal"]`（都是"工具行没渲染"，先证 prompt 到底跑没跑起来再改）；`session-archive-active` 三条红，其中一条 **625 ms 快失败**（`expected false to be true`），快失败最像"没有当前会话"的直接后果，优先它。
