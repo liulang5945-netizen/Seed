@@ -1,6 +1,7 @@
 /** SSH launch behavior over a recorded conversation and the shipped Web plugin rows. */
 import { readFile } from 'node:fs/promises'
 import { join } from 'node:path'
+import { basename } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import type { Browser, Page } from 'playwright'
 import { chromium } from 'playwright'
@@ -51,10 +52,15 @@ describe.skipIf(MODE === 'record')('web e2e: Open In under SSH', () => {
       page.waitForResponse(response => new URL(response.url()).pathname === '/open-in-app/apps'),
       (async () => {
         await page.goto(scaffold.authenticatedUrl, { waitUntil: 'load' })
-        const group = page.getByRole('treeitem').first()
-        await group.waitFor()
-        if (await group.getAttribute('aria-expanded') !== 'true') await group.click()
-        await page.getByRole('treeitem').nth(1).click()
+        // The seeded Session sits under "Ungrouped" (its cwd is the temp workspace, not the
+        // provisioned default), and two group rows precede it, so open that group and pick the
+        // row by its own title instead of a position index.
+        const ungrouped = page.getByRole('treeitem', { name: /Ungrouped/u })
+        await ungrouped.waitFor()
+        if (await ungrouped.getAttribute('aria-expanded') !== 'true') await ungrouped.click()
+        const sessionRow = page.getByRole('treeitem', { name: new RegExp(basename(scaffold.workspaceCwd), 'u') })
+        await sessionRow.waitFor()
+        await sessionRow.click()
         await page.getByText('DONE', { exact: true }).waitFor()
       })(),
     ])
