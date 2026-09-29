@@ -910,8 +910,10 @@ marker 那边走"，不等于它自己写的时候能收口——§2n 已经量�
    不是基底通病**。§2q 已加指回本节的更正句。
 3. 下一步该细分的（不需裁定、但需要新档）：挂回路时退化到底来自**权重回写**（`learn_bytes`）还是
    **prompt 通道**（后续轮的历史里带着上一条退化答复）——注意剪贴板 `store` 只记 user 轮，
-   所以"入库加门槛"这一支候选**不成立**（已在 DEBT-G10 更正）。分法是加一臂：`learn=False`
-   但把历史里的上一条答复换成固定占位（只留 prompt 通道被切断这一变化），在 32 题档上跑。
+   所以"入库加门槛"这一支候选**不成立**（已在 DEBT-G10 更正）。分法是加一臂 `learn_true_scrubbed`
+   （**照做权重回写，但把历史里上一条答复换成固定占位**，只切断 prompt 通道），
+   与 `learn_true`（两条通道都开）和 `learn_false_a`（两条都关）三点对照：
+   `scrubbed − false_a` ＝权重回写的净效应，`true − scrubbed` ＝prompt 通道的净效应。
    这决定修法是"回写加门槛"还是"历史拼装加门槛"。**登记，不猜**。
 
 
@@ -943,6 +945,61 @@ marker 那边走"，不等于它自己写的时候能收口——§2n 已经量�
    **把训练语料改成"多篇同一会话串成一文档、每答完一处放一个结束目标"**，
    让"结束"在训练里既有频次（每答一次一个）又在正确粒度上（答完，而非整篇完）。
    这一笔要排训练机时，本件不自行开工——已写进 §6 与 §3 的丁行。
+
+## 2v. 隔离档的**判读线（规则先于数写下；四臂那版在 1 题冒烟上就被判不合格，已改五臂）**
+
+仪器＝`scripts/training/probe_taiji_a30_self_contamination.py` 五臂，装配＝挂回路
+`output/taiji_r2_copy_circuit_chat/judge/circuit-final.pt`，题面＝X 面前 32 题 × 3 轮，
+预算 256、惩罚 2.0、载入顺序 `treated_first`。件＝
+`reports/taiji_a30_self_contamination_32item_factorial_20260929.json`（format 升 `v2`：
+读数键 `per_turn_on_minus_off` → `per_turn_2x2`，旧键名装不下五臂语义）。
+
+四格＝2×2（回写开关 × 下一轮 prompt 里是否带着上一条自己的答复）：
+
+|  | 回路开（历史带自己的答复） | 回路断（历史答复换占位 `。`） |
+|---|---|---|
+| **不回写** | `learn_false_a`（＋同装配零线 `learn_false_b`） | `learn_false_scrubbed` |
+| **回写** | `learn_true`（＝产品缺省面） | `learn_true_scrubbed` |
+
+四条**单变量**对照（每条只差一个开关）：`writeback_loop_on ＝ true − false_a`、
+`writeback_loop_off ＝ true_scrubbed − false_scrubbed`、`loop_wb_on ＝ true − true_scrubbed`、
+`loop_wb_off ＝ false_a − false_scrubbed`。
+
+**为什么本节改了写法（这条自我更正要留在档上）**：四臂那版把 `scrubbed − false_a` 叫作
+"权重回写的净效应"，那是**错的**——那一格同时动了回写与回路两个开关，是对角线、不是效应量。
+1 题冒烟（`reports/taiji_a30_self_contamination_smoke4_1item_20260929.json`，n=1，不作结论）把这件事照了出来：
+同一轮的均值最长连写 `false_a` 27、`true` 19、`true_scrubbed` 2 ⇒ "断回路"那一手值 −17，
+而"开回写"那一手在回路开着时是 −8（方向还是**变好**）。缺的那格（不回写＋断回路）必须补上，
+才谈得上"回写单独值多少"。四臂的 32 题档在起跑约 4 分钟后被我停掉、**没有产出件**，
+所以本节的数只来自五臂档。
+
+分辨率线：一条差**算成立**当且仅当 `|Δ成句| ≥ 3` 或 `|Δ命中| ≥ 3` 或 `|Δ(run≥20 条数)| ≥ 3`
+或 `|Δ均值最长连写| ≥ 3`（字节）。逐轮（第 0／1／2 轮）分别判，不跨轮合并、不与别的档互顶。
+
+裁定表（先写死，数回来只许查表）：
+
+| 情形 | 结论与落点 |
+|---|---|
+| `loop_*` 成立、`writeback_*` 不成立 | 退化**只需要 prompt 回路**，与训练面回写无关 ⇒ 修法在**历史拼装侧**（坏答复不进历史，或进历史前先过 `well_formed`）；`learn_bytes` 不加门槛，`DEBT-G10` 的候选"只回写通过判据的答复"降级为不作数 |
+| `writeback_*` 成立、`loop_*` 不成立 | 退化来自**权重回写** ⇒ 修法在**回写加门槛**（只回写通过 `well_formed ∧ 长度上限` 的答复），prompt 侧不动 |
+| 两组都成立 | 两处都要门槛，owner 那笔"回路要不要出厂"的账上记**两次**代价 |
+| 都在线下、而 `writeback_loop_on` 复现不出 §2q 的 −23 成句 | 拆分没有分辨率 ⇒ `DEBT-G10` 保持"未细分"，登记为需要更大样本或按题型分层，**不许**写成"回路是主因" |
+| 同一开关在回路开／断两端**读数反向** | 不许合并成一个"效应量"，如实写成"该开关的作用取决于回路状态"，并把这格列进下一次测法 |
+| `writeback_loop_on` 与 §2q 的 −23 对不上 | 先怀疑**五臂装配本身改了逐位性**（§2m 第一条），本件作废、只留作仪器验证记录，并新登记一条仪器债 |
+
+两条附加的生效证据（不看数也必须成立）：
+
+1. 件里 `arms[].learn_bytes_calls`：两条 `learn_true*` 臂都＝96、三条 `learn_false*` 臂都＝0。
+   五臂版已把这条做进 `instrument_guard`（`learn_arms_ran_learn_bytes_once_per_text`／
+   `learn_false_arms_ran_learn_bytes_zero`）——四臂版只钉了 `learn_true` 与两条控制臂、`scrubbed` 臂要人工核对，
+   那是当时记下的仪器缺口。
+2. **与 §2q 的逐位对照**：`learn_true` 在三臂档与五臂档里都是**第 1 个载入**，其后插的都是"断回路／占位"臂 ⇒
+   五臂档 `learn_true` 的 `rows[].answer_sha` 应与
+   `reports/taiji_a30_self_contamination_32item_treatedfirst_20260929.json` 的 `learn_true` **逐条相同**；
+   若不同，两份件不可互顶，必须点名哪一份是权威——"往后插一臂就改了先载入那臂"正是 §2m 说的那类进程内全局态泄漏。
+
+边界说明：1 题冒烟只用来证明仪器被走到、守卫全绿；它的差值 `n=1`，不作任何结论。
+本节判读线是对着 32 题五臂档写的。
 
 ## 6. 交接（本线程预算用尽时的下一步，命令都可直接跑）
 
