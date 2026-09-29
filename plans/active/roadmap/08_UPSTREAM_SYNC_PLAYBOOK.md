@@ -743,3 +743,8 @@ ode_modulesi…`＝**本仓已登记的 Windows 符号链接权限族**（与 0
 (b) `server-restart` 红在 `writeComposerDraft` 等 `[data-composer-input][contenteditable="true"]` 15 s ⇒ 与 H14 同因（工作区已登记但未选中 ⇒ Hero 输入框锁住）。修法用已验证的手势：`chip.waitFor({state:'visible'})` + 选菜单首项（**不用 `isVisible` 假等待**，见 [[playwright-isvisible-timeout-does-not-wait]]），实测 **`1 passed`、6.3 s**（此前 17 s 超时红）。⇒ H7 连带修绿的文件数从 12 增到 **13**。
 (c) 剩下三条留给下一格，形状已记清：`skill-tool-row` 等 `[data-tool="skill"]`、`tool-details` 等 `[data-tool="create_goal"]`（都是"工具行没渲染"，先证 prompt 到底跑没跑起来再改）；`session-archive-active` 三条红，其中一条 **625 ms 快失败**（`expected false to be true`），快失败最像"没有当前会话"的直接后果，优先它。
 (d) **㊧(c) 的猜测被自己的日志否证（当场改正，不留错误线索）**：`session-archive-active` 那条 625 ms 快失败**不是**"没有当前会话"，实际帧是 `session-archive-active.e2e.ts:242` 的 `AssertionError: expected [ 'completed', 'error' ] to deeply equal [ 'aborted', 'completed' ]` ⇒ 属**结果序列/停止原因**一族（多出一个 `error`、少了一个 `aborted`），与 H7 无关。⇒ 下一格查这条时按"为什么会出现 error 事件"走（mock provider 与 `whenTurnSettled` 的时序），别再顺着我上一条错猜。剩下 `skill-tool-row`／`tool-details` 仍是"等 `[data-tool=...]` 行"的形状，未定因。
+
+㊨ **`skill-tool-row`／`tool-details` 定因到"索引式选行"，但第一轮修法没成，改动已回退**（2026-09-29）。
+(a) 探针事实：该 lane 在 `goto` 之后树里只有 **`["Default workspace", "Ungrouped"]` 两个组行、零条会话行** ⇒ 它原来的 `locator('[role="treeitem"]').first()` 当组行、`.nth(1)` 当会话行的**位置索引**在 H7 之后必然错位（旧行为下 boot 会多建一条会话，索引才对得上）。这与 ㊧(c) 的猜测一致，属同一族。
+(b **没成的部分**：我按已验证的形状改成"展开所有折叠组 + 按提示短语 `/editing-cordis-compositions/i` 选行"，实测**仍找不到行**（`waiting for getByRole('treeitem',{name:/editing-cordis-compositions/iu})`）。⇒ 说明**种子会话的渲染标题不等于我猜的短语**（标题派生规则未查），或者它根本不在展开后的树里。**改动已整文件回退**（`git status` 干净），不留半截。
+(c) **下一格的确定做法**：再探一次"展开所有折叠组之后的全部 treeitem 文本"（一行 `allInnerTexts()`，成本一次单跑），拿到真实标题后再决定按文本还是按 `data-*` 选行；`tool-details` 形状相同（等 `[data-tool="create_goal"]`），同一修法可复用。别再用位置索引，也别再猜标题。
