@@ -11,9 +11,7 @@
 
 import { existsSync, readFileSync, writeFileSync } from 'node:fs'
 import { resolve } from 'node:path'
-import { FENCE, type CatalogEntry, type TypeRef, collectConfigCatalog, render } from './gen-config-catalog.ts'
-import { LINK_MAP } from './gen-cordis-catalog.ts'
-import { githubSlug } from './verify-md-links.ts'
+import { FENCE, type CatalogEntry, type ConfigCatalogCopy, collectConfigCatalog, render, renderConfigEntryWith } from './gen-config-catalog.ts'
 
 const root = resolve(import.meta.dirname, '..')
 const OUT = 'docs/config-catalog.zh.md'
@@ -33,11 +31,6 @@ const SEAM_INTRO = '抽象服务类——部署时应改为加载具体的实现
 const LIBRARY_HEADING = '## 库包（无插件入口）'
 const LIBRARY_INTRO = '由其他包作为库导入；`cordis.yml` 无法加载它们。'
 
-/** Render the `需要：` service-key line, or '' when the plugin injects nothing. */
-function requiresLine(inject: string[]): string {
-  return inject.length ? `需要： ${inject.map(k => `\`${k}\``).join(' · ')}` : ''
-}
-
 /** `subsystems/<page>` references point at the zh page when one exists (the
  * pairing gate accepts either target; an existing zh page is the better
  * read). A missing zh side falls back to the English target, never a dead
@@ -47,31 +40,11 @@ function subsystemLink(page: string): string {
   return existsSync(resolve(root, 'docs', localized)) ? localized : `subsystems/${page}`
 }
 
-/** Render one reference as a link — same targets as the English generator,
- * with subsystem pages localized per `subsystemLink`. */
-function refLink(ref: TypeRef, byName: Map<string, CatalogEntry>): string {
-  const target = byName.get(ref.specifier)
-  if (target?.kind === 'config' && ref.imported === target.configTypeName) {
-    return `[\`${ref.alias}\`](#${githubSlug(target.pkg)})`
-  }
-  const page = LINK_MAP[ref.imported]
-  if (page) return `[\`${ref.alias}\`](${subsystemLink(page)})`
-  if (target) return `[\`${ref.alias}\`](../${target.entry})`
-  return `\`${ref.alias}\` (\`${ref.specifier}\`)`
-}
-
-/** Render one configurable plugin's section (mirrors the English renderer). */
-function renderConfigEntry(entry: CatalogEntry, byName: Map<string, CatalogEntry>): string[] {
-  const out = [`<a id="${githubSlug(entry.pkg)}"></a>`, '', `## \`${entry.pkg}\``, '']
-  const requires = requiresLine(entry.inject)
-  if (requires) out.push(requires, '')
-  out.push('```' + FENCE, ...(entry.pastes ?? []).map(p => p.text).join('\n\n').split('\n'), '```', '')
-  if (entry.refs && entry.refs.length > 0) {
-    out.push(`依赖： ${entry.refs.map(r => refLink(r, byName)).join(' · ')}`, '')
-  }
-  const source = entry.pastes?.[0]?.source ?? entry.entry
-  out.push(`来源： [\`${source}\`](../${source.split(':')[0]})`, '')
-  return out
+/** Chinese catalog copy: same mechanical renderers as the English generator,
+ * with the translated labels and the localized subsystem target. */
+const CATALOG_ZH: ConfigCatalogCopy = {
+  requiresLabel: '需要： ', dependsLabel: '依赖： ', sourceLabel: '来源： ',
+  subsystemHref: page => subsystemLink(page),
 }
 
 /** Render one terse list line (the no-config / seam / library sections). */
@@ -100,7 +73,7 @@ export function renderZh(entries: CatalogEntry[]): string {
     '',
   ]
   for (const entry of entries.filter(e => e.kind === 'config')) {
-    lines.push(...renderConfigEntry(entry, byName))
+    lines.push(...renderConfigEntryWith(entry, byName, CATALOG_ZH))
   }
   lines.push(
     NO_CONFIG_HEADING,

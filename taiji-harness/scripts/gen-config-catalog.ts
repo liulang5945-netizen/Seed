@@ -869,37 +869,47 @@ export function collectConfigCatalog(scanRoot: string = root): CatalogEntry[] {
   return entries.sort((a, b) => a.pkg.localeCompare(b.pkg))
 }
 
-/** Render the `Requires:` service-key line, or '' when the plugin injects nothing. */
-function requiresLine(inject: string[]): string {
-  return inject.length ? `Requires: ${inject.map(k => `\`${k}\``).join(' · ')}` : ''
+/** Per-language copy for the shared renderers: the mechanical row shapes live
+ * here once, so the two languages cannot drift apart. */
+export interface ConfigCatalogCopy {
+  readonly requiresLabel: string
+  readonly dependsLabel: string
+  readonly sourceLabel: string
+  readonly subsystemHref: (page: string) => string
 }
 
 /** Render one reference as a link: another plugin's config type → its section,
  * a curated subsystems name → its page, any other workspace type →
  * its source file, an external type → named with its module, unlinked. */
-function refLink(ref: TypeRef, byName: Map<string, CatalogEntry>): string {
+export function refLinkWith(ref: TypeRef, byName: Map<string, CatalogEntry>, copy: ConfigCatalogCopy): string {
   const target = byName.get(ref.specifier)
   if (target?.kind === 'config' && ref.imported === target.configTypeName) {
     return `[\`${ref.alias}\`](#${githubSlug(target.pkg)})`
   }
   const page = LINK_MAP[ref.imported]
-  if (page) return `[\`${ref.alias}\`](subsystems/${page})`
+  if (page) return `[\`${ref.alias}\`](${copy.subsystemHref(page)})`
   if (target) return `[\`${ref.alias}\`](../${target.entry})`
   return `\`${ref.alias}\` (\`${ref.specifier}\`)`
 }
 
 /** Render one configurable plugin's section. */
-function renderConfigEntry(entry: CatalogEntry, byName: Map<string, CatalogEntry>): string[] {
+export function renderConfigEntryWith(entry: CatalogEntry, byName: Map<string, CatalogEntry>, copy: ConfigCatalogCopy): string[] {
   const out = [`<a id="${githubSlug(entry.pkg)}"></a>`, '', `## \`${entry.pkg}\``, '']
-  const requires = requiresLine(entry.inject)
+  const requires = entry.inject.length ? `${copy.requiresLabel}${entry.inject.map(k => `\`${k}\``).join(' · ')}` : ''
   if (requires) out.push(requires, '')
   out.push('```' + FENCE, ...(entry.pastes ?? []).map(p => p.text).join('\n\n').split('\n'), '```', '')
   if (entry.refs && entry.refs.length > 0) {
-    out.push(`Depends on: ${entry.refs.map(r => refLink(r, byName)).join(' · ')}`, '')
+    out.push(`${copy.dependsLabel}${entry.refs.map(r => refLinkWith(r, byName, copy)).join(' · ')}`, '')
   }
   const source = entry.pastes?.[0]?.source ?? entry.entry
-  out.push(`Source: [\`${source}\`](../${source.split(':')[0]})`, '')
+  out.push(`${copy.sourceLabel}[\`${source}\`](../${source.split(':')[0]})`, '')
   return out
+}
+
+/** English catalog copy. */
+const CATALOG_EN: ConfigCatalogCopy = {
+  requiresLabel: 'Requires: ', dependsLabel: 'Depends on: ', sourceLabel: 'Source: ',
+  subsystemHref: page => `subsystems/${page}`,
 }
 
 /** Render one terse list line (the no-config / seam / library sections). */
@@ -925,7 +935,7 @@ export function render(entries: CatalogEntry[]): string {
     '',
   ]
   for (const entry of entries.filter(e => e.kind === 'config')) {
-    lines.push(...renderConfigEntry(entry, byName))
+    lines.push(...renderConfigEntryWith(entry, byName, CATALOG_EN))
   }
   lines.push(
     '## Loadable plugins with no config',
