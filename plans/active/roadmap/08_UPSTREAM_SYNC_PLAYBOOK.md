@@ -761,3 +761,8 @@ ode_modulesi…`＝**本仓已登记的 Windows 符号链接权限族**（与 0
 ㊬ **测试侧的可验证余量已耗尽：还在用位置索引选行的 lane，红的都先死在 A 族夹具校验**（2026-09-29）。静态清点 `[role="treeitem"]` 的 `.first()/.nth()` 用法共 23 个文件，其中 15 个在最新整面里红，但**这些红的错误帧都在 `launchWebScaffold` 的 `parseSessionFixture`（`must have system-prompt source`）**，走不到选行那一步；而 `cold-blank-session`／`clickable-links-gallery`／`markdown-cjk-strong`／`math-rendering`／`schedule-after`／`thinking-markdown` 等**用同一写法却是绿的** ⇒ 索引只在"boot 曾占掉一个行位"的场景里坏，那些场景我已按 ㊩/ 修完（15 个文件）。
 (a) **结论与约束**：**在 H1 落地之前，测试侧没有可验证的活可做了**——继续改 lane 只会写出无法验证的断言（我今天已经为此回退过两次：㊡(d)、㊨(b)）。下一格的顺序因此是硬的：① H1 带凭据全量重录 → ② 空机整面重跑收最终数 → ③ 再按新红集合决定要不要动剩下的索引写法。
 (b) 唯一还能不靠 H1 做的两格，都是**独立族**且各需一次定位：`session-archive-active:242` 的 `[completed, error] vs [aborted, completed]`（㊧(d)），以及 `skill-tool-row` 第三条的**技能正文缺失**（㊩(c)）。两格都不属于 H7，也不属于 A 族，**是本轮之后新开的两条待查线**。
+
+㊭ **`skill-tool-row` 第三条定因到"改名残留"，但源文件还没定位**（2026-09-29）。完整 received 显示技能正文其实**在**（`<skill_instructions>` 段），只是里面写的是 `@deepseek-ai/dsh-agent-preset`／`@deepseek-ai/dsh-web-app`，而期望要的是 `@taiji/dsh-agent-preset` ⇒ ㊩(c) 我写的"正文缺失"是**看截断看错了**（received 被我自己截到 200 字，只看到 `<skill_resources>`），真实分歧是**包名前缀**。
+(a) 定位进度：`git grep editing-cordis-compositions` 只命中 archived notes 与 `apps/cli/tests/web-agent-presets.e2e.ts`，**没有命中技能源文件** ⇒ 该 SKILL.md 是被测试世界复制或生成到 `<home>/.dsh/skills/…` 的，源头在 fixture 目录或某个 bundle 资源里，下一格从 `git grep -l "dsh-agent-preset\` declarations carried by bundle patches"`（正文原句）与 `snapshots/`、`apps/web/tests/fixtures` 两处找。
+(b) **两条候选修法，需要一次定位才能选**：① 技能源里确实还留着 `@deepseek-ai/` ⇒ 是 fork 改名的产品侧残留，改源；② 源已改、金样/期望未跟上 ⇒ 改期望侧。**注意**：`@deepseek-ai/` 在 archived notes 里的命中是**冻结策略允许的**，不能算残留，别顺手批量替换。
+(c) 我在这格还犯了一个方法错：**用自己的截断输出当证据下了结论**（"正文缺失"），与 [[never-report-unobserved-numbers]] 同族——截断＝重跑或放宽截取，不是填空。
