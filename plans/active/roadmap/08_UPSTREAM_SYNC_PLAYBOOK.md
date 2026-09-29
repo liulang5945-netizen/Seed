@@ -824,3 +824,5 @@ ode_modulesi…`＝**本仓已登记的 Windows 符号链接权限族**（与 0
 **欠账（如实登记，下一格第一件）**：`scaffold.ts` 这次改动**还没有 Agent Note**（仓规要求同批）。下一格先补 `aria 转义双形` 的中英三件套＋`verify-translation-pairing --write`，再复跑整面批 2 以更新 50 红的构成（H8 三条应脱红，H10 一条已脱红 ⇒ 预期 50→46 左右，但必须实测）。
 
 **㊵-16（㊵-15 登记的欠账已结）**：`scaffold.ts` 的 aria 双形修复补上判读件三件套（`implemented/process/2026-09-29-aria-path-normalization-admits-both-spellings`，中英＋配对重录），`verify-agent-note-format` 通过。件里写进两条常则：POSIX 侧的"无操作"必须**证成**而非默认；被捕获表示会转义宿主串里真实存在的字符时，同一次记号替换必须同时认两种拼写。
+
+**㊵-17（批 2 三个未归因 lane 已归因：H7/H14 前提族，不是产品缺陷也不是新账）**：单跑 `seeded-history`／`workspace-management`／`turn-tail-actions` ⇒ `Test Files 3 failed`、`Tests 25 failed｜10 passed｜3 skipped (38)`。首句分堆（计数单位＝出现次数，非文件数）：超时 13（`locator.click` 6、`waitFor` 5、`getAttribute` 1、`evaluate` 1）＋ `Error: seeded session is unavailable` 1 ＋ `locator.fill: Element is not an <input>` 1 ＋ `expected +0 to be 1` 1。**两条响亮错才是机制指纹**：前者＝lane 用宿主播种了会话却假定表层在用它（与本轮已修的 15 个文件同因：无当前会话 ⇒ 组保持折叠、行不渲染）；后者＝composer 处于 `contenteditable="false"` 的 H14 已裁形态。⇒ 处置＝**lane 侧补前提**（先做选区手势／先展开组再按标题选行），属仓库面可自办的活；不新建判据、不改产品默认位。
