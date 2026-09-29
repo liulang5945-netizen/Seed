@@ -1,0 +1,458 @@
+{
+  "format": "taiji-r2-copy-circuit-chat-cap-v1",
+  "prereg": "plans/reference/M5_R2_A2_3_PREREG_20260925.md §4-S2（判据沿用）",
+  "checkpoint": "checkpoints/seed_beta.pt",
+  "circuit": "output/taiji_r2_copy_circuit_chat/judge/circuit-final.pt",
+  "circuit_sha256": "1cfe5961c300485dc08078a9deb82d0f31acbb5f8c63d0685d18366832d741a3",
+  "copy_evidence_utf8_gate": false,
+  "max_bytes": 64,
+  "item_limit": null,
+  "well_formed_scope": "answer[:60] 字符前缀（非整条答复）",
+  "control_no_circuit": {
+    "items": 36,
+    "correct": 2,
+    "well_formed_rate": 0.0278,
+    "rows": [
+      {
+        "id": "D01",
+        "dimension": "D",
+        "hit": false,
+        "answer": "分��：。\n\n\n\n\n\n\n\n\n\n�（（��）�：������弈个���家"
+      },
+      {
+        "id": "D02",
+        "dimension": "D",
+        "hit": false,
+        "answer": "����������下����人�����������有�有我�"
+      },
+      {
+        "id": "D03",
+        "dimension": "D",
+        "hit": true,
+        "answer": "������人���������有��是����我�为，���"
+      },
+      {
+        "id": "D04",
+        "dimension": "D",
+        "hit": false,
+        "answer": "����刑人�����师�君一个�，你一个有君君��为"
+      },
+      {
+        "id": "D05",
+        "dimension": "D",
+        "hit": false,
+        "answer": "�������，�����个�（�他�������人�������"
+      },
+      {
+        "id": "D06",
+        "dimension": "D",
+        "hit": false,
+        "answer": "别�：师，�，家��孟����先是��为�，��个�，"
+      },
+      {
+        "id": "D07",
+        "dimension": "D",
+        "hit": false,
+        "answer": "����（��家��个�（君，�有��：�师个�（君，�"
+      },
+      {
+        "id": "D08",
+        "dimension": "D",
+        "hit": false,
+        "answer": "�������，����，����个�����人���������"
+      },
+      {
+        "id": "D09",
+        "dimension": "D",
+        "hit": false,
+        "answer": "����，��个�（�个�君（君家�个�，制之�有�，"
+      },
+      {
+        "id": "D10",
+        "dimension": "D",
+        "hit": false,
+        "answer": "别���，��个��个�（�人����师伈�个�，�，�"
+      },
+      {
+        "id": "D11",
+        "dimension": "D",
+        "hit": false,
+        "answer": "��������������下有�，�有有�，�有是�有�，�"
+      },
+      {
+        "id": "D12",
+        "dimension": "D",
+        "hit": false,
+        "answer": "刺�����人��������个�（����，制刑们�个是"
+      },
+      {
+        "id": "D13",
+        "dimension": "D",
+        "hit": false,
+        "answer": "������弈�，��人��������是���有�我�为，"
+      },
+      {
+        "id": "D18",
+        "dimension": "D",
+        "hit": false,
+        "answer": "有�：有�（一个�（（一个�（（大家��人�����"
+      },
+      {
+        "id": "D19",
+        "dimension": "D",
+        "hit": false,
+        "answer": "����弈������个是人�������是�是有我���"
+      },
+      {
+        "id": "D20",
+        "dimension": "D",
+        "hit": false,
+        "answer": "������孟��个��人�������有��个�，�����"
+      },
+      {
+        "id": "E01",
+        "dimension": "E",
+        "hit": false,
+        "answer": "刺�人���个�（�他君则人��������是��为有，��"
+      },
+      {
+        "id": "E02",
+        "dimension": "E",
+        "hit": false,
+        "answer": "「家则人����一个�则刑孟�君为�为�������是�一"
+      },
+      {
+        "id": "E03",
+        "dimension": "E",
+        "hit": false,
+        "answer": "刼刺��，下是人���为�为个我他君为为为�，�为�"
+      },
+      {
+        "id": "E04",
+        "dimension": "E",
+        "hit": false,
+        "answer": "则为�����为�为为有君孟�孟刑他����人���是��"
+      },
+      {
+        "id": "E05",
+        "dimension": "E",
+        "hit": false,
+        "answer": "我为个�（��则为��������刑会是�为个�君�为��"
+      },
+      {
+        "id": "E06",
+        "dimension": "E",
+        "hit": false,
+        "answer": "������人���������个刑�一��是是是我�为��"
+      },
+      {
+        "id": "E07",
+        "dimension": "E",
+        "hit": false,
+        "answer": "「吼�人����为�为吼�会有吼�：是有�）：我他��"
+      },
+      {
+        "id": "E08",
+        "dimension": "E",
+        "hit": false,
+        "answer": "�师）：刼��人������君�则�个�，你为�个君是"
+      },
+      {
+        "id": "E09",
+        "dimension": "E",
+        "hit": false,
+        "answer": "我为��为为为为一�我他文师：我他�我他文�尝君�"
+      },
+      {
+        "id": "E10",
+        "dimension": "E",
+        "hit": false,
+        "answer": "我为����为�为则伈是是���为为为为丈�摰�君孟�"
+      },
+      {
+        "id": "E11",
+        "dimension": "E",
+        "hit": false,
+        "answer": "我们为师），家则人����个则为君为个则是有�我"
+      },
+      {
+        "id": "E12",
+        "dimension": "E",
+        "hit": false,
+        "answer": "我�（是�一个师（��为人����是���有�我�，�为�"
+      },
+      {
+        "id": "E13",
+        "dimension": "E",
+        "hit": false,
+        "answer": "我为丈（���是�文师：我为������师则为君为为君�"
+      },
+      {
+        "id": "E14",
+        "dimension": "E",
+        "hit": false,
+        "answer": "「师：是为一个到�君�孽师人�����，�为君�孟��"
+      },
+      {
+        "id": "E15",
+        "dimension": "E",
+        "hit": false,
+        "answer": "则君刺���������为君为个君为为为为��有君是�"
+      },
+      {
+        "id": "E16",
+        "dimension": "E",
+        "hit": false,
+        "answer": "������人����������个刑��是是������为了"
+      },
+      {
+        "id": "E17",
+        "dimension": "E",
+        "hit": false,
+        "answer": "�����：刼���������师�君个刑他��孟��人����人"
+      },
+      {
+        "id": "E18",
+        "dimension": "E",
+        "hit": false,
+        "answer": "尝君则为������个�（��一������为�为人���个"
+      },
+      {
+        "id": "E19",
+        "dimension": "E",
+        "hit": false,
+        "answer": "����弈�下是人������个吼�是是是是我们为君�"
+      },
+      {
+        "id": "E20",
+        "dimension": "E",
+        "hit": true,
+        "answer": "则���刼�刺个�个���吼�为�������是�一个�君�为�"
+      }
+    ]
+  },
+  "treated_with_circuit": {
+    "items": 36,
+    "correct": 8,
+    "well_formed_rate": 0.0833,
+    "rows": [
+      {
+        "id": "D01",
+        "dimension": "D",
+        "hit": true,
+        "answer": "岩阿岩阿岩阿岩阿岩阿岩阿岩阿岩阿岩阿岩阿岩�"
+      },
+      {
+        "id": "D02",
+        "dimension": "D",
+        "hit": true,
+        "answer": "州杭州杭州杭州杭州杭州我住州杭州杭州我住州�"
+      },
+      {
+        "id": "D03",
+        "dimension": "D",
+        "hit": true,
+        "answer": "健我柭好简短偟回短�宀短好短偟回短�宀短好好"
+      },
+      {
+        "id": "D04",
+        "dimension": "D",
+        "hit": true,
+        "answer": "777�刑欢欢欢欢欢欢欢欢欢欢欢欢是 17。喯 177喯�"
+      },
+      {
+        "id": "D05",
+        "dimension": "D",
+        "hit": false,
+        "answer": "我的项的项的项的项的项的项的项我目我的项我�"
+      },
+      {
+        "id": "D06",
+        "dimension": "D",
+        "hit": false,
+        "answer": "尴是尴是尴是尴是尴是尴是尴是尴是尴是尴是尴�"
+      },
+      {
+        "id": "D07",
+        "dimension": "D",
+        "hit": true,
+        "answer": "4州我住我住我住我杭州杭州杭州杭州杭州杭州杭"
+      },
+      {
+        "id": "D08",
+        "dimension": "D",
+        "hit": false,
+        "answer": "喿茶喿茶。喿茶。喿茶。喿茶。喿茶。喿茶。喿�"
+      },
+      {
+        "id": "D09",
+        "dimension": "D",
+        "hit": false,
+        "answer": "22222222222222222222222的22222222222222222222222。222222222222"
+      },
+      {
+        "id": "D10",
+        "dimension": "D",
+        "hit": false,
+        "answer": "岩阿岩阿岩。岩阿岩阿岩阿岩。岩阿岩阿岩阿岩�"
+      },
+      {
+        "id": "D11",
+        "dimension": "D",
+        "hit": false,
+        "answer": "州杭州我住州杭州杭州我住州杭州杭州我住州杭�"
+      },
+      {
+        "id": "D12",
+        "dimension": "D",
+        "hit": false,
+        "answer": "777�刑欢欢欢欢欢欢欢欢欢欢欢欢欢欢欢欢欢欢�"
+      },
+      {
+        "id": "D13",
+        "dimension": "D",
+        "hit": false,
+        "answer": "接责接接责接接责接接责接接责接接责接负负负�"
+      },
+      {
+        "id": "D18",
+        "dimension": "D",
+        "hit": true,
+        "answer": "岩阿岩阿岩。岩阿岩阿岩阿岩。岩阿岩濩阿岩阿�"
+      },
+      {
+        "id": "D19",
+        "dimension": "D",
+        "hit": false,
+        "answer": "负负负负负负贂厥责接责接责接接责接接责接接�"
+      },
+      {
+        "id": "D20",
+        "dimension": "D",
+        "hit": true,
+        "answer": "过喇喇�刑过是 17喇喇�我过是 17喇喇�刑过是 17�"
+      },
+      {
+        "id": "E01",
+        "dimension": "E",
+        "hit": false,
+        "answer": "刺�人���个�（�他君则人��������是��为有，��"
+      },
+      {
+        "id": "E02",
+        "dimension": "E",
+        "hit": false,
+        "answer": "「家则人����一个�则刑孟�君为�为�������是�一"
+      },
+      {
+        "id": "E03",
+        "dimension": "E",
+        "hit": false,
+        "answer": "刼刺��，下是人���为�为个我他君为为为�，�为�"
+      },
+      {
+        "id": "E04",
+        "dimension": "E",
+        "hit": false,
+        "answer": "则为�����为�为为有君孟�孟刑他����人���是��"
+      },
+      {
+        "id": "E05",
+        "dimension": "E",
+        "hit": false,
+        "answer": "我为个�（��则为��������刑会是�为个�君�为��"
+      },
+      {
+        "id": "E06",
+        "dimension": "E",
+        "hit": false,
+        "answer": "������人���������个刑�一��是是是我�为��"
+      },
+      {
+        "id": "E07",
+        "dimension": "E",
+        "hit": false,
+        "answer": "「吼�人����为�为吼�会有吼�：是有�）：我他��"
+      },
+      {
+        "id": "E08",
+        "dimension": "E",
+        "hit": false,
+        "answer": "�师）：刼��人������君�则�个�，你为�个君是"
+      },
+      {
+        "id": "E09",
+        "dimension": "E",
+        "hit": false,
+        "answer": "我为��为为为为一�我他文师：我他�我他文�尝君�"
+      },
+      {
+        "id": "E10",
+        "dimension": "E",
+        "hit": false,
+        "answer": "我为����为�为则伈是是���为为为为丈�摰�君孟�"
+      },
+      {
+        "id": "E11",
+        "dimension": "E",
+        "hit": false,
+        "answer": "我们为师），家则人����个则为君为个则是有�我"
+      },
+      {
+        "id": "E12",
+        "dimension": "E",
+        "hit": false,
+        "answer": "我�（是�一个师（��为人����是���有�我�，�为�"
+      },
+      {
+        "id": "E13",
+        "dimension": "E",
+        "hit": false,
+        "answer": "我为丈（���是�文师：我为������师则为君为为君�"
+      },
+      {
+        "id": "E14",
+        "dimension": "E",
+        "hit": false,
+        "answer": "「师：是为一个到�君�孽师人�����，�为君�孟��"
+      },
+      {
+        "id": "E15",
+        "dimension": "E",
+        "hit": false,
+        "answer": "则君刺���������为君为个君为为为为��有君是�"
+      },
+      {
+        "id": "E16",
+        "dimension": "E",
+        "hit": false,
+        "answer": "������人����������个刑��是是������为了"
+      },
+      {
+        "id": "E17",
+        "dimension": "E",
+        "hit": false,
+        "answer": "�����：刼���������师�君个刑他��孟��人����人"
+      },
+      {
+        "id": "E18",
+        "dimension": "E",
+        "hit": false,
+        "answer": "尝君则为������个�（��一������为�为人���个"
+      },
+      {
+        "id": "E19",
+        "dimension": "E",
+        "hit": false,
+        "answer": "����弈�下是人������个吼�是是是是我们为君�"
+      },
+      {
+        "id": "E20",
+        "dimension": "E",
+        "hit": true,
+        "answer": "则���刼�刺个�个���吼�为�������是�一个�君�为�"
+      }
+    ]
+  },
+  "verdict": "A2.4 重测通过（D+E>0 且成句率不塌于对照）"
+}
