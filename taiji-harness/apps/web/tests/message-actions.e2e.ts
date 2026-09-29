@@ -355,6 +355,11 @@ describe('web e2e: message IconActions and clocks on settled history', () => {
 
   it.skipIf(MODE === 'record')('forks through the settled-message and session-row actions', async () => {
     onTestFailed(() => saveFailureShot(page, 'web-e2e-message-fork'))
+    // Group rows carry `aria-expanded` and Session rows do not, so counting `[role="treeitem"]`
+    // would depend on which groups happen to be open. The contract here is that forking adds one
+    // Session row, so measure Session rows and compare against the count taken before the fork.
+    const sessionRows = () => page.locator('[role="treeitem"]:not([aria-expanded])').count()
+    const rowsBeforeFork = await sessionRows()
     // The second answer is followed by another completed user turn in the source.
     await page.getByRole('button', { name: 'Branch into a new conversation' }).nth(1).click()
     await expect.poll(
@@ -367,10 +372,7 @@ describe('web e2e: message IconActions and clocks on settled history', () => {
     expect(child.session.snapshotEvents().some(event => event.type === 'agent/inbox/spliced'
       && event.data.inserted.some(message => message.content.some(part =>
         part.type === 'text' && part.text === NEXT_PROMPT)))).toBe(false)
-    await expect.poll(
-      () => page.locator('[role="treeitem"]').count(),
-      { timeout: 10_000 },
-    ).toBe(3)
+    await expect.poll(sessionRows, { timeout: 10_000 }).toBe(rowsBeforeFork + 1)
     await expect.poll(
       () => page.locator('[role="treeitem"][aria-selected="true"]').count(),
       { timeout: 10_000 },
@@ -395,10 +397,7 @@ describe('web e2e: message IconActions and clocks on settled history', () => {
       () => scaffold.ctx.agents.list().filter(agent => agent.session.header.parentSession !== undefined).length,
       { timeout: 15_000 },
     ).toBe(2)
-    await expect.poll(
-      () => page.locator('[role="treeitem"]').count(),
-      { timeout: 10_000 },
-    ).toBe(4)
+    await expect.poll(sessionRows, { timeout: 10_000 }).toBe(rowsBeforeFork + 2)
     await expect.poll(
       () => page.locator('[role="treeitem"][aria-selected="true"]').count(),
       { timeout: 10_000 },
