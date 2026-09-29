@@ -217,6 +217,8 @@ def run_arm(
         "items": len(items),
         "texts": len(rows),
         "per_turn": per_turn,
+        #: 逐条答复的摘要要留在件里：§2v 那条"与旧档逐位对照"的生效核对，光靠聚合数只能算弱证。
+        "answer_shas": [row["answer_sha"] for row in rows],
         "rows": rows,
     }
 
