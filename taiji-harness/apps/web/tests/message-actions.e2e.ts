@@ -5,6 +5,7 @@
 // (docs/testing.md snapshot rule).
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
+import { basename } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import type { Browser, Page } from 'playwright'
 import { chromium } from 'playwright'
@@ -219,7 +220,12 @@ describe('web e2e: message IconActions and clocks on settled history', () => {
     const groupRow = page.locator('[role="treeitem"]').first()
     await groupRow.waitFor({ timeout: 15_000 })
     await groupRow.click()
-    const sessionRow = page.locator('[role="treeitem"]').nth(1)
+    // Two group rows precede the Session row (provisioned default Workspace and "Ungrouped"),
+    // so open the group and pick the row by its title instead of a position index.
+    const ungrouped = page.getByRole('treeitem', { name: /Ungrouped/u })
+    if (await ungrouped.getAttribute('aria-expanded') !== 'true') await ungrouped.click()
+    const sessionRow = page.getByRole('treeitem', { name: new RegExp(basename(scaffold.workspaceCwd), 'u') })
+    await sessionRow.waitFor({ timeout: 15_000 })
     await sessionRow.waitFor({ timeout: 10_000 })
     await sessionRow.click()
     await expect.poll(() => page.getByText(MID_TURN_TEXT, { exact: true }).count(), { timeout: 15_000 }).toBe(1)

@@ -3,6 +3,7 @@
 // observation stream, and the panel shows the process's real output while it
 // is still running. No model call is involved.
 import { readFile, writeFile } from 'node:fs/promises'
+import { basename } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { join } from 'node:path'
 import type { Browser, Page } from 'playwright'
@@ -66,7 +67,12 @@ describe.skipIf(MODE === 'record')('web e2e: live job stream', () => {
     const groupRow = page.locator('[role="treeitem"]').first()
     await groupRow.waitFor({ timeout: 15_000 })
     await groupRow.click()
-    const sessionRow = page.locator('[role="treeitem"]').nth(1)
+    // Two group rows precede the Session row (provisioned default Workspace and "Ungrouped"),
+    // so open the group and pick the row by its title instead of a position index.
+    const ungrouped = page.getByRole('treeitem', { name: /Ungrouped/u })
+    if (await ungrouped.getAttribute('aria-expanded') !== 'true') await ungrouped.click()
+    const sessionRow = page.getByRole('treeitem', { name: new RegExp(basename(scaffold.workspaceCwd), 'u') })
+    await sessionRow.waitFor({ timeout: 15_000 })
     await sessionRow.waitFor({ timeout: 10_000 })
     await sessionRow.click()
 
