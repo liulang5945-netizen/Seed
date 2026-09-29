@@ -1,0 +1,538 @@
+{
+  "format": "taiji-a30-ding3-transfer-v1",
+  "prereg": "PLAN-A-30 §2ai（判读线先于数写在件 docstring）",
+  "question": "边界符在'模型自己写的答案＋换行'这一格上赢不赢（教师强制 26/30 的收益能否迁移）",
+  "retrain_checkpoint": "output/a31_ding3_boundary/checkpoint.pt",
+  "base_checkpoint": "output/a26_p1/checkpoint.pt",
+  "corpus": "dialogue_extended_clean.jsonl",
+  "mask": true,
+  "decision_face": "utf8_masked_legal_set",
+  "positions": 30,
+  "max_bytes": 256,
+  "repetition_penalty": 2.0,
+  "prompts_sha256": "af1ebc61165ae2528bd2a2e585d113f07a1ff08a06167a9ab51eb6cfeac80206",
+  "runs": {
+    "retrain": {
+      "positions": 30,
+      "max_bytes": 256,
+      "repetition_penalty": 2.0,
+      "boundary_argmax_positions": 0,
+      "answers_stopped_early": 23,
+      "median_rank_over_positions": 7.0,
+      "median_p_boundary_over_positions": 0.057149,
+      "prompts_sha256": "af1ebc61165ae2528bd2a2e585d113f07a1ff08a06167a9ab51eb6cfeac80206",
+      "checkpoint_sha256_before": "79b1a99cedf3e65bc76b0e40f4083f76ced62b4d070d5adb5a7ec2f725579a93"
+    },
+    "base": {
+      "positions": 30,
+      "max_bytes": 256,
+      "repetition_penalty": 2.0,
+      "boundary_argmax_positions": 0,
+      "answers_stopped_early": 19,
+      "median_rank_over_positions": 20.0,
+      "median_p_boundary_over_positions": 0.000145,
+      "prompts_sha256": "af1ebc61165ae2528bd2a2e585d113f07a1ff08a06167a9ab51eb6cfeac80206",
+      "checkpoint_sha256_before": "8b87583713a47a822c2e04f424f0d12388864d2622148049a6248750fa19c5e9"
+    }
+  },
+  "rows": {
+    "retrain": [
+      {
+        "prefix_bytes": 361,
+        "answer_bytes": 255,
+        "answer_stopped_early": true,
+        "boundary_is_argmax": 0,
+        "boundary_rank_median": 8.0,
+        "p_boundary_median": 0.029868
+      },
+      {
+        "prefix_bytes": 138,
+        "answer_bytes": 75,
+        "answer_stopped_early": true,
+        "boundary_is_argmax": 0,
+        "boundary_rank_median": 6.0,
+        "p_boundary_median": 0.065849
+      },
+      {
+        "prefix_bytes": 374,
+        "answer_bytes": 255,
+        "answer_stopped_early": true,
+        "boundary_is_argmax": 0,
+        "boundary_rank_median": 3.0,
+        "p_boundary_median": 0.084217
+      },
+      {
+        "prefix_bytes": 588,
+        "answer_bytes": 255,
+        "answer_stopped_early": true,
+        "boundary_is_argmax": 0,
+        "boundary_rank_median": 6.0,
+        "p_boundary_median": 0.055893
+      },
+      {
+        "prefix_bytes": 515,
+        "answer_bytes": 254,
+        "answer_stopped_early": true,
+        "boundary_is_argmax": 0,
+        "boundary_rank_median": 7.0,
+        "p_boundary_median": 0.047225
+      },
+      {
+        "prefix_bytes": 502,
+        "answer_bytes": 256,
+        "answer_stopped_early": false,
+        "boundary_is_argmax": 0,
+        "boundary_rank_median": 8.0,
+        "p_boundary_median": 0.042295
+      },
+      {
+        "prefix_bytes": 350,
+        "answer_bytes": 255,
+        "answer_stopped_early": true,
+        "boundary_is_argmax": 0,
+        "boundary_rank_median": 7.0,
+        "p_boundary_median": 0.049232
+      },
+      {
+        "prefix_bytes": 316,
+        "answer_bytes": 254,
+        "answer_stopped_early": true,
+        "boundary_is_argmax": 0,
+        "boundary_rank_median": 2.0,
+        "p_boundary_median": 0.100801
+      },
+      {
+        "prefix_bytes": 317,
+        "answer_bytes": 255,
+        "answer_stopped_early": true,
+        "boundary_is_argmax": 0,
+        "boundary_rank_median": 8.0,
+        "p_boundary_median": 0.042948
+      },
+      {
+        "prefix_bytes": 435,
+        "answer_bytes": 255,
+        "answer_stopped_early": true,
+        "boundary_is_argmax": 0,
+        "boundary_rank_median": 7.0,
+        "p_boundary_median": 0.040299
+      },
+      {
+        "prefix_bytes": 489,
+        "answer_bytes": 255,
+        "answer_stopped_early": true,
+        "boundary_is_argmax": 0,
+        "boundary_rank_median": 2.0,
+        "p_boundary_median": 0.145671
+      },
+      {
+        "prefix_bytes": 333,
+        "answer_bytes": 255,
+        "answer_stopped_early": true,
+        "boundary_is_argmax": 0,
+        "boundary_rank_median": 7.0,
+        "p_boundary_median": 0.045505
+      },
+      {
+        "prefix_bytes": 338,
+        "answer_bytes": 256,
+        "answer_stopped_early": false,
+        "boundary_is_argmax": 0,
+        "boundary_rank_median": 11.0,
+        "p_boundary_median": 0.016155
+      },
+      {
+        "prefix_bytes": 405,
+        "answer_bytes": 255,
+        "answer_stopped_early": true,
+        "boundary_is_argmax": 0,
+        "boundary_rank_median": 7.0,
+        "p_boundary_median": 0.053825
+      },
+      {
+        "prefix_bytes": 429,
+        "answer_bytes": 255,
+        "answer_stopped_early": true,
+        "boundary_is_argmax": 0,
+        "boundary_rank_median": 2.0,
+        "p_boundary_median": 0.09926
+      },
+      {
+        "prefix_bytes": 354,
+        "answer_bytes": 256,
+        "answer_stopped_early": false,
+        "boundary_is_argmax": 0,
+        "boundary_rank_median": 6.0,
+        "p_boundary_median": 0.06657
+      },
+      {
+        "prefix_bytes": 411,
+        "answer_bytes": 255,
+        "answer_stopped_early": true,
+        "boundary_is_argmax": 0,
+        "boundary_rank_median": 7.0,
+        "p_boundary_median": 0.060667
+      },
+      {
+        "prefix_bytes": 337,
+        "answer_bytes": 256,
+        "answer_stopped_early": false,
+        "boundary_is_argmax": 0,
+        "boundary_rank_median": 7.0,
+        "p_boundary_median": 0.04334
+      },
+      {
+        "prefix_bytes": 341,
+        "answer_bytes": 255,
+        "answer_stopped_early": true,
+        "boundary_is_argmax": 0,
+        "boundary_rank_median": 9.0,
+        "p_boundary_median": 0.04407
+      },
+      {
+        "prefix_bytes": 347,
+        "answer_bytes": 255,
+        "answer_stopped_early": true,
+        "boundary_is_argmax": 0,
+        "boundary_rank_median": 9.0,
+        "p_boundary_median": 0.023786
+      },
+      {
+        "prefix_bytes": 354,
+        "answer_bytes": 255,
+        "answer_stopped_early": true,
+        "boundary_is_argmax": 0,
+        "boundary_rank_median": 8.0,
+        "p_boundary_median": 0.039255
+      },
+      {
+        "prefix_bytes": 477,
+        "answer_bytes": 255,
+        "answer_stopped_early": true,
+        "boundary_is_argmax": 0,
+        "boundary_rank_median": 6.0,
+        "p_boundary_median": 0.062627
+      },
+      {
+        "prefix_bytes": 333,
+        "answer_bytes": 256,
+        "answer_stopped_early": false,
+        "boundary_is_argmax": 0,
+        "boundary_rank_median": 6.0,
+        "p_boundary_median": 0.040727
+      },
+      {
+        "prefix_bytes": 336,
+        "answer_bytes": 255,
+        "answer_stopped_early": true,
+        "boundary_is_argmax": 0,
+        "boundary_rank_median": 6.0,
+        "p_boundary_median": 0.067292
+      },
+      {
+        "prefix_bytes": 422,
+        "answer_bytes": 254,
+        "answer_stopped_early": true,
+        "boundary_is_argmax": 0,
+        "boundary_rank_median": 8.0,
+        "p_boundary_median": 0.047453
+      },
+      {
+        "prefix_bytes": 321,
+        "answer_bytes": 255,
+        "answer_stopped_early": true,
+        "boundary_is_argmax": 0,
+        "boundary_rank_median": 7.0,
+        "p_boundary_median": 0.045437
+      },
+      {
+        "prefix_bytes": 381,
+        "answer_bytes": 255,
+        "answer_stopped_early": true,
+        "boundary_is_argmax": 0,
+        "boundary_rank_median": 8.0,
+        "p_boundary_median": 0.061345
+      },
+      {
+        "prefix_bytes": 398,
+        "answer_bytes": 256,
+        "answer_stopped_early": false,
+        "boundary_is_argmax": 0,
+        "boundary_rank_median": 3.0,
+        "p_boundary_median": 0.072601
+      },
+      {
+        "prefix_bytes": 373,
+        "answer_bytes": 256,
+        "answer_stopped_early": false,
+        "boundary_is_argmax": 0,
+        "boundary_rank_median": 7.0,
+        "p_boundary_median": 0.044777
+      },
+      {
+        "prefix_bytes": 438,
+        "answer_bytes": 255,
+        "answer_stopped_early": true,
+        "boundary_is_argmax": 0,
+        "boundary_rank_median": 2.0,
+        "p_boundary_median": 0.075486
+      }
+    ],
+    "base": [
+      {
+        "prefix_bytes": 360,
+        "answer_bytes": 254,
+        "answer_stopped_early": true,
+        "boundary_is_argmax": 0,
+        "boundary_rank_median": 20.0,
+        "p_boundary_median": 0.000279
+      },
+      {
+        "prefix_bytes": 318,
+        "answer_bytes": 255,
+        "answer_stopped_early": true,
+        "boundary_is_argmax": 0,
+        "boundary_rank_median": 19.0,
+        "p_boundary_median": 7.7e-05
+      },
+      {
+        "prefix_bytes": 373,
+        "answer_bytes": 254,
+        "answer_stopped_early": true,
+        "boundary_is_argmax": 0,
+        "boundary_rank_median": 18.0,
+        "p_boundary_median": 0.000294
+      },
+      {
+        "prefix_bytes": 587,
+        "answer_bytes": 254,
+        "answer_stopped_early": true,
+        "boundary_is_argmax": 0,
+        "boundary_rank_median": 17.0,
+        "p_boundary_median": 0.000138
+      },
+      {
+        "prefix_bytes": 517,
+        "answer_bytes": 256,
+        "answer_stopped_early": false,
+        "boundary_is_argmax": 0,
+        "boundary_rank_median": 21.0,
+        "p_boundary_median": 0.000117
+      },
+      {
+        "prefix_bytes": 502,
+        "answer_bytes": 256,
+        "answer_stopped_early": false,
+        "boundary_is_argmax": 0,
+        "boundary_rank_median": 15.0,
+        "p_boundary_median": 0.000251
+      },
+      {
+        "prefix_bytes": 350,
+        "answer_bytes": 255,
+        "answer_stopped_early": true,
+        "boundary_is_argmax": 0,
+        "boundary_rank_median": 19.0,
+        "p_boundary_median": 0.000165
+      },
+      {
+        "prefix_bytes": 316,
+        "answer_bytes": 254,
+        "answer_stopped_early": true,
+        "boundary_is_argmax": 0,
+        "boundary_rank_median": 22.0,
+        "p_boundary_median": 0.00022
+      },
+      {
+        "prefix_bytes": 317,
+        "answer_bytes": 255,
+        "answer_stopped_early": true,
+        "boundary_is_argmax": 0,
+        "boundary_rank_median": 23.0,
+        "p_boundary_median": 8.2e-05
+      },
+      {
+        "prefix_bytes": 436,
+        "answer_bytes": 256,
+        "answer_stopped_early": false,
+        "boundary_is_argmax": 0,
+        "boundary_rank_median": 19.0,
+        "p_boundary_median": 0.000493
+      },
+      {
+        "prefix_bytes": 490,
+        "answer_bytes": 256,
+        "answer_stopped_early": false,
+        "boundary_is_argmax": 0,
+        "boundary_rank_median": 17.0,
+        "p_boundary_median": 0.000278
+      },
+      {
+        "prefix_bytes": 334,
+        "answer_bytes": 256,
+        "answer_stopped_early": false,
+        "boundary_is_argmax": 0,
+        "boundary_rank_median": 19.0,
+        "p_boundary_median": 0.000249
+      },
+      {
+        "prefix_bytes": 336,
+        "answer_bytes": 254,
+        "answer_stopped_early": true,
+        "boundary_is_argmax": 0,
+        "boundary_rank_median": 24.0,
+        "p_boundary_median": 7.7e-05
+      },
+      {
+        "prefix_bytes": 405,
+        "answer_bytes": 255,
+        "answer_stopped_early": true,
+        "boundary_is_argmax": 0,
+        "boundary_rank_median": 17.0,
+        "p_boundary_median": 6.1e-05
+      },
+      {
+        "prefix_bytes": 429,
+        "answer_bytes": 255,
+        "answer_stopped_early": true,
+        "boundary_is_argmax": 0,
+        "boundary_rank_median": 19.0,
+        "p_boundary_median": 0.000158
+      },
+      {
+        "prefix_bytes": 353,
+        "answer_bytes": 255,
+        "answer_stopped_early": true,
+        "boundary_is_argmax": 0,
+        "boundary_rank_median": 23.0,
+        "p_boundary_median": 8e-05
+      },
+      {
+        "prefix_bytes": 411,
+        "answer_bytes": 255,
+        "answer_stopped_early": true,
+        "boundary_is_argmax": 0,
+        "boundary_rank_median": 27.0,
+        "p_boundary_median": 7.9e-05
+      },
+      {
+        "prefix_bytes": 335,
+        "answer_bytes": 254,
+        "answer_stopped_early": true,
+        "boundary_is_argmax": 0,
+        "boundary_rank_median": 19.0,
+        "p_boundary_median": 6.6e-05
+      },
+      {
+        "prefix_bytes": 342,
+        "answer_bytes": 256,
+        "answer_stopped_early": false,
+        "boundary_is_argmax": 0,
+        "boundary_rank_median": 21.0,
+        "p_boundary_median": 0.000139
+      },
+      {
+        "prefix_bytes": 345,
+        "answer_bytes": 253,
+        "answer_stopped_early": true,
+        "boundary_is_argmax": 0,
+        "boundary_rank_median": 21.0,
+        "p_boundary_median": 7.8e-05
+      },
+      {
+        "prefix_bytes": 354,
+        "answer_bytes": 255,
+        "answer_stopped_early": true,
+        "boundary_is_argmax": 0,
+        "boundary_rank_median": 21.0,
+        "p_boundary_median": 0.0001
+      },
+      {
+        "prefix_bytes": 478,
+        "answer_bytes": 256,
+        "answer_stopped_early": false,
+        "boundary_is_argmax": 0,
+        "boundary_rank_median": 22.0,
+        "p_boundary_median": 6.9e-05
+      },
+      {
+        "prefix_bytes": 333,
+        "answer_bytes": 256,
+        "answer_stopped_early": false,
+        "boundary_is_argmax": 0,
+        "boundary_rank_median": 19.0,
+        "p_boundary_median": 4.8e-05
+      },
+      {
+        "prefix_bytes": 337,
+        "answer_bytes": 256,
+        "answer_stopped_early": false,
+        "boundary_is_argmax": 0,
+        "boundary_rank_median": 17.0,
+        "p_boundary_median": 0.000152
+      },
+      {
+        "prefix_bytes": 422,
+        "answer_bytes": 254,
+        "answer_stopped_early": true,
+        "boundary_is_argmax": 0,
+        "boundary_rank_median": 26.0,
+        "p_boundary_median": 5.1e-05
+      },
+      {
+        "prefix_bytes": 320,
+        "answer_bytes": 254,
+        "answer_stopped_early": true,
+        "boundary_is_argmax": 0,
+        "boundary_rank_median": 23.0,
+        "p_boundary_median": 0.000105
+      },
+      {
+        "prefix_bytes": 381,
+        "answer_bytes": 255,
+        "answer_stopped_early": true,
+        "boundary_is_argmax": 0,
+        "boundary_rank_median": 14.0,
+        "p_boundary_median": 0.000185
+      },
+      {
+        "prefix_bytes": 398,
+        "answer_bytes": 256,
+        "answer_stopped_early": false,
+        "boundary_is_argmax": 0,
+        "boundary_rank_median": 21.0,
+        "p_boundary_median": 2.7e-05
+      },
+      {
+        "prefix_bytes": 373,
+        "answer_bytes": 256,
+        "answer_stopped_early": false,
+        "boundary_is_argmax": 0,
+        "boundary_rank_median": 21.0,
+        "p_boundary_median": 9.4e-05
+      },
+      {
+        "prefix_bytes": 437,
+        "answer_bytes": 254,
+        "answer_stopped_early": true,
+        "boundary_is_argmax": 0,
+        "boundary_rank_median": 17.0,
+        "p_boundary_median": 0.000123
+      }
+    ]
+  },
+  "delta_retrain_minus_base": {
+    "boundary_argmax_positions": 0,
+    "answers_stopped_early": 4,
+    "median_rank": 13.0
+  },
+  "verdict": "迁移不成立：教师强制 26/30 的收益在模型自己的输出上为零 ⇒ 目标放置这条线到此为止，'停不下来'改登记为分布／轨迹问题",
+  "instrument_guard": {
+    "same_prompts_both_arms": true,
+    "both_arms_same_position_count": true,
+    "retrain_sha256_unchanged": true,
+    "base_sha256_unchanged": true
+  },
+  "operational_definition": "迁移面接缝＝本件在'问：q\\n答：模型自己写的答案'之后补一个换行；接缝不是模型选的，所以这一格量的是'若它此刻该停，边界符赢不赢'，不是'它停没停'（后者见 §2ah 的 raw 计数：两枚件都 0/72 自停）。",
+  "started_utc": "2026-09-29T15:41:01Z"
+}

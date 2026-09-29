@@ -317,6 +317,61 @@ def generation_face(
     }
 
 
+def transfer_face(
+    runtime: Any,
+    prompts: list[str],
+    boundary: int,
+    *,
+    max_bytes: int,
+    penalty: float,
+    mask: bool,
+) -> dict[str, Any]:
+    """**迁移档**：把"该停的那一格"从"语料写的答案之后"换成"**模型自己写的答案之后**"。
+
+    操作定义（接缝是我强加的，不是模型选的——这句必须跟着读数走）：
+    ① 走产品出口 `chat()`（`learn=False`、预算 `max_bytes`、惩罚 `penalty`）拿到它写的答案；
+    ② 拼 `问：{提问}\n答：{它写的}` 再补一个换行 ⇒ 这一格就是"答完了该停"的位置；
+    ③ 在这条流上用同一个 `audit()` 量 `end` 桶（下一步该是边界符）的胜出数／名次／概率。
+
+    与 §2aa/§2ae 那一面的**唯一差别是答案谁写的**。所以两面的差就是"迁移"本身的量：
+    教师强制 26/30 若在这里掉到 ≈0，说明目标学到取不出（轨迹分布问题），不是放置问题。
+    注意一处不对称：`chat()` 会按 marker 截答案，所以它若**自己停了**，前缀就是完整答复；
+    若没停，前缀是"写到预算尽头"的半截答复——两种都算"它自己写的文本"，但件里
+    `answer_stopped_early` 逐条记着是哪种，读数时不许混为一谈。
+    """
+
+    rows: list[dict[str, Any]] = []
+    for prompt in prompts:
+        answer = runtime.chat(
+            prompt, history=[], learn=False, max_length=max_bytes, repetition_penalty=penalty
+        )
+        prefix = f"问：{prompt}\n答：{answer}".encode() + bytes([0x0A])
+        face = measure(runtime, [[boundary, *prefix]], boundary, mask=mask)
+        end = face["faces"]["end"]
+        rows.append(
+            {
+                "prefix_bytes": len(prefix),
+                "answer_bytes": len(answer.encode("utf-8")),
+                "answer_stopped_early": len(answer.encode("utf-8")) < max_bytes,
+                "boundary_is_argmax": end["boundary_is_argmax_count"],
+                "boundary_rank_median": end["boundary_rank"]["median"],
+                "p_boundary_median": end["p_boundary"]["median"],
+            }
+        )
+    ranks = [r["boundary_rank_median"] for r in rows if r["boundary_rank_median"] is not None]
+    probs = [r["p_boundary_median"] for r in rows if r["p_boundary_median"] is not None]
+    return {
+        "positions": len(rows),
+        "max_bytes": max_bytes,
+        "repetition_penalty": penalty,
+        "boundary_argmax_positions": sum(r["boundary_is_argmax"] for r in rows),
+        "answers_stopped_early": sum(1 for r in rows if r["answer_stopped_early"]),
+        "median_rank_over_positions": (sorted(ranks)[len(ranks) // 2] if ranks else None),
+        "median_p_boundary_over_positions": (round(sum(probs) / len(probs), 6) if probs else None),
+        "rows": rows,
+    }
+
+
 def facade_gap(runtime: Any) -> dict[str, Any]:
     """机检"每答一个结束目标"这件事在**产品门面**上到底能不能表达（不靠我读码的口供）。"""
 
