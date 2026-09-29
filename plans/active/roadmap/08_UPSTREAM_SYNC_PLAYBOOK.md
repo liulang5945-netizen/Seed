@@ -770,3 +770,7 @@ ode_modulesi…`＝**本仓已登记的 Windows 符号链接权限族**（与 0
 ㊮ **㊭ 的候选①被否证：产品侧 `SKILL.md` 是干净的，过期文本在 lane 自己内联的夹具里**（2026-09-29）。`grep "@deepseek-ai/" packages/preset/agent-preset/skills/editing-cordis-compositions/SKILL.md` **零命中**，而"正文原句"的三个命中文件是 `apps/web/tests/skill-tool-row.e2e.ts`、`packages/preset/agent-preset/skills/editing-cordis-compositions/SKILL.md`、`snapshots/web/skill-tool-row/ui.expected.md` ⇒ 渲染出 `@deepseek-ai/…` 的那份文本来自 **lane 写进种子 Home 的内联副本**，不是产品资产。
 (a) **精确改点**：把 `apps/web/tests/skill-tool-row.e2e.ts` 里内联的技能正文改成与真实 `SKILL.md` 同源（或直接读该文件写入种子目录，别复制粘贴），金样 `snapshots/web/skill-tool-row/ui.expected.md` 随之核对。**不要**去改 `packages/preset/**`——那里没有残留。
 (b) 这条同时说明：`skill-tool-row` 第三条**不属于 A 族、不属于 H7、也不是产品缺陷**，是测试夹具与产品资产分叉（fork 改名时只改了源文件、没改测试里的副本）。⇒ 与 ㊬ 的"测试侧无可验证活"不冲突：这条**能验**（单跑该 lane），只是本轮没有轮次落地它，下一格按 (a) 改并单跑。
+
+㊯ **㊮(a) 也错了，当场再更正：过期文本不在 lane 内联副本，而在**录制夹具**里 ⇒ `skill-tool-row` 第三条属 A 族（录制语料过期），只是键在技能正文而非 system prompt**（2026-09-29）。证据链：真实 `packages/preset/agent-preset/skills/editing-cordis-compositions/SKILL.md` 写的是 `@taiji/dsh-agent-preset`（与期望一致）；`skill-tool-row.e2e.ts` 里**没有任何内联技能正文**（grep 只命中测试名）；渲染出的 `@deepseek-ai/…` 只能来自 `seedSession` 用的那份已录制会话日志里的 `skill` 工具结果。
+(a) **今天在同一条 lane 上我连错两次**（先"正文缺失"＝拿自己截断的输出当证据，再"内联副本"＝没验证就推断来源）。⇒ 规矩补一条：**归属必须指到"渲染值的字节在哪个文件里"**，用 `grep -c` 在候选文件里数出命中再下结论，不要靠"谁可能写进去"的叙事。
+(b) **归属结论**：`skill-tool-row` 第三条并入 A 族＝系于 H1 的带凭据全量重录（或单独重录该 lane 的会话夹具）。65 红因此实际构成是 **A 族 53**（原 52 ＋ 这条）＋ 负载敏感 2 ＋ 环境族 2 ＋ H8 两文件 ＋ H10 一处 ＋ `tool-details`/`skill-tool-row` 选行已修 ＋ `session-archive-active` 结果序列 1。
