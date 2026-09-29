@@ -727,3 +727,9 @@ ode_modulesi…`＝**本仓已登记的 Windows 符号链接权限族**（与 0
 (a) **修法形状（未落地，留给下一格）**：在 `normalizeAria` 里对 `workspaceCwd` 额外做一次"转义形式"的替换（`.split(workspaceCwd.replaceAll('\', '\\')).join('{{cwd}}')`），Linux 上两种形式相同 ⇒ 对现网金样零影响；同时删掉 `reference-composer:187` 那条 `abbreviateHomePath(workspaceCwd, homedir())` 替换键（客户端用的是 Host 报的 home，web scaffold 下不等于 `os.homedir()`，这个键在 Windows 必然不命中、在 Linux 是恒等 ⇒ 误导性冗余，连带两个 import）。
 (b) **还剩一处未解释**：会话的 `cwd` 是 `<ws>\workspace`，而 Linux 金样那行只显示 `{{cwd}}`（没有子目录后缀）。这两件事不能同时成立，除非 Linux 侧那次替换的键本身覆盖了后缀（`abbreviateHomePath` 在 Linux 是恒等 ⇒ 键＝`<ws>`，替换后应留下 `{{cwd}}/workspace`）。⇒ **落地 (a) 之前先把这一格问清**：读 `reference-composer` 建会话时给的 cwd 与 `scaffold.ts:1310` 的 `{{cwd}}`→`workspaceCwd` 反向替换，确认 Linux 金样那行到底该长什么样；否则容易"修好 Windows 却把 Linux 金样改坏"。
 (c) 探针已回退（`git status` 干净），本轮**没有**动 `scaffold.ts` 或该 lane。
+
+㊥ **整面第三次重跑收口＝65 红文件（81→69→65），㊣(e) 那一族 6 条在整面里也全绿**（2026-09-29 04:31，三批串行、`dist` 起止 mtime 同值）。
+(a) **读数**：批 0 `23 failed｜24 passed (47)`、批 1 `23｜25｜1 skip (49)`、批 2 `19｜26｜3 skip (48)` ⇒ 合计 **`65 failed｜75 passed｜4 skipped (144)`**；`Tests 43 failed｜242 passed｜216 skipped (501)`。
+(b) **我修的 6 条 `.expected` lane 在这次整面里 FAIL 行数＝0**（脚本按文件点名核过 `built-boot`／`image-display`／`trajectory-image-display`／`max-tokens-notice`／`search-card`／`todo-row`）⇒ ㊣(e) 的"先展开折叠组再找行"在批并发下也成立，不是单跑才绿。
+(c) **但净降只有 4（69→65），不是 6**：批 0 −1、批 1 −1、批 2 −2。⇒ **有 2 个别的文件在这轮变红了**，本轮没有轮次逐条定因（候选＝超时族，批 0 的 `default-workspace`／批 2 的 `server-restart`·`session-archive-active`·`skill-tool-row`·`tool-details` 这一档在并发下会漂）。**登记而不粉饰：65 这个数里含 2 个未定因的新红**，下一格先做"批 2 超时四件套"的单跑对照（单跑绿＝负载红）。
+(d) **A 族仍是 52 个文件**（20＋18＋14，与 ㊢(b) 同量级）⇒ H1 一次带凭据全量重录依旧是判据⑦ 的唯一大门槛；实测环境仍无凭据。剩下 13 个非 A 族红里：H8 两文件（`github-ready-review`／`sidebar-subagent-activity`）、H10 一处（`reference-composer`，㊤ 已定案到转义机制但**不能盲修**）、超时族 5 文件、既有登记族（`preview-boot`、`markdown-images`、`live-job-stream`、`chat-scroll-contract`、`chat-continuous-conversation`）。
