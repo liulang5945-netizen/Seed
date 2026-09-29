@@ -14,6 +14,8 @@
     - listitem:
       - button "browse-golden"
     - listitem:
+      - button "Documents"
+    - listitem:
       - button "same-name"
     - listitem:
       - button "workspace"

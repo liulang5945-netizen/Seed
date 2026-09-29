@@ -626,6 +626,16 @@ describe('web e2e: workspace management (create / rename / grouping / hover affo
     await page.waitForSelector('[class*="frame"]', { timeout: 30_000 })
     acknowledgeReloadConnectionLoss(tripwire, warningStart)
     await expect.poll(() => page.getByText('Workspaces', { exact: true }).count(), { timeout: 15_000 }).toBe(1)
+    // Archiving the only restorable Session leaves this reload nothing to
+    // restore: boot lands on the Hero, and the Hero gesture owns the first
+    // selection. Pick the Default Workspace so the navigation barrier below
+    // has a selected treeitem to wait for.
+    const chip = page.getByRole('button', { name: /Choose workspace|选择工作区/u })
+    if (await chip.waitFor({ state: 'visible', timeout: 5_000 }).then(() => true, () => false)) {
+      await chip.click()
+      await page.getByRole('menuitem', { name: 'Default workspace' }).click()
+      await page.locator('[data-composer-input][contenteditable="true"]').waitFor({ timeout: 15_000 })
+    }
     // Initial Workspace reconnection can focus the composer after the tree renders.
     // Finish that navigation before the next test opens a path editor.
     await page.locator('[role="treeitem"][aria-selected="true"]').waitFor({ timeout: 15_000 })
@@ -785,6 +795,14 @@ describe('web e2e: New Session after an outdated blank cache', () => {
       onTestFailed(() => saveFailureShot(page, 'web-e2e-new-session-stale-blank'))
 
       await page.goto(scaffold.authenticatedUrl, { waitUntil: 'load' })
+      // Boot never opens a Session: the Hero gesture owns the first selection,
+      // so pick the registered Workspace before the Chat tab can exist.
+      const chip = page.getByRole('button', { name: /Choose workspace|选择工作区/u })
+      if (await chip.waitFor({ state: 'visible', timeout: 5_000 }).then(() => true, () => false)) {
+        await chip.click()
+        await page.getByRole('menuitem', { name: 'New session regression' }).click()
+        await page.locator('[data-composer-input][contenteditable="true"]').waitFor({ timeout: 15_000 })
+      }
       await page.getByRole('tab', { name: 'Chat', exact: true }).waitFor()
       const selected = page.locator('[role="treeitem"][aria-selected="true"]')
       await expect.poll(() => selected.innerText()).not.toBe('New Session')
