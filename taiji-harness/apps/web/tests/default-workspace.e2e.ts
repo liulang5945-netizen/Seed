@@ -23,7 +23,9 @@ const MODE = webSnapshotMode()
  */
 async function pickDefaultWorkspace(page: Page): Promise<void> {
   const chip = page.getByRole('button', { name: /Choose workspace|选择工作区/u })
-  if (!await chip.isVisible()) return
+  // The chip only renders once the client has its Workspace list, which arrives
+  // after boot's provisioning round-trip.
+  if (!await chip.waitFor({ state: 'visible', timeout: 5_000 }).then(() => true, () => false)) return
   await chip.click()
   await page.getByRole('menuitem', { name: 'Default workspace' }).click()
 }
@@ -45,7 +47,9 @@ describe.skipIf(MODE === 'record')('web e2e: default Workspace', () => {
       const tripwire = watchConsole(page)
       try {
         await page.goto(scaffold.authenticatedUrl)
-        expect(scaffold.ctx.workspaceRegistry.list()).toHaveLength(1)
+        // Boot provisions the default Workspace asynchronously, after the page's
+        // own load settles, so the Host-side count is polled rather than read.
+        await expect.poll(() => scaffold.ctx.workspaceRegistry.list().length, { timeout: 20_000 }).toBe(1)
         // Boot provisions the Workspace but never opens a Session, so the Hero comes
         // up with nothing selected and its composer locked.
         expect(scaffold.ctx.sessions.list()).toEqual([])
@@ -54,7 +58,11 @@ describe.skipIf(MODE === 'record')('web e2e: default Workspace', () => {
         await input.waitFor()
         await page.reload()
         expect(scaffold.ctx.workspaceRegistry.list()).toHaveLength(1)
-        expect(scaffold.ctx.sessions.list()).toEqual([])
+        // Selecting the Workspace is what starts its blank Session, so the restored
+        // Session survives the reload and is still blank before the Hero sends.
+        const restored = scaffold.ctx.sessions.list()
+        expect(restored).toHaveLength(1)
+        expect(restored[0]?.snapshotEvents().some(event => event.type === 'user/message')).toBe(false)
         await pickDefaultWorkspace(page)
         await input.waitFor()
         const prompt = fixtureUserPrompts(await readFile(fixture, 'utf8'))[0]!
@@ -64,7 +72,7 @@ describe.skipIf(MODE === 'record')('web e2e: default Workspace', () => {
         const sessionId = await settled
         const workspace = scaffold.ctx.workspaceRegistry.list()[0]!
         expect(workspace.title).toBe('Default workspace')
-        expect(workspace.path).toBe(join(scaffold.workspaceCwd, 'Documents', 'deepseek-harness', 'Default workspace'))
+        expect(workspace.path).toBe(join(scaffold.workspaceCwd, 'Documents', 'taiji-harness', 'Default workspace'))
         expect((await stat(workspace.path)).isDirectory()).toBe(true)
         expect(workspace.sessionIds).toContain(sessionId)
         expect(scaffold.ctx.sessions.get(sessionId)?.header.cwd).toBe(workspace.path)
@@ -88,7 +96,7 @@ describe.skipIf(MODE === 'record')('web e2e: default Workspace', () => {
   it('reports a startup directory conflict and opens the composed folder picker for recovery', async () => {
     const scaffold = await launchWebScaffold({ firstUse: true })
     onTestFinished(() => scaffold.close())
-    const parent = join(scaffold.workspaceCwd, 'Documents', 'deepseek-harness')
+    const parent = join(scaffold.workspaceCwd, 'Documents', 'taiji-harness')
     await mkdir(parent, { recursive: true })
     await writeFile(join(parent, '默认工作区'), 'occupied')
     const chosen = join(scaffold.workspaceCwd, 'chosen')
