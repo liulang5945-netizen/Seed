@@ -1,0 +1,345 @@
+{
+  "format": "taiji-a30-ding3-stop-target-pilot-v1",
+  "prereg": "PLAN-A-30 §3 丁-3 ＋本件 docstring 的判读线（先于数写下）",
+  "question": "只用现成 learn_bytes 参数面把'结束目标的上下文形状'换掉，结束位上的边界符会不会开始赢",
+  "checkpoint": "checkpoints/seed_beta.pt",
+  "corpus": "dialogue_extended_clean.jsonl",
+  "mask": true,
+  "decision_face": "utf8_masked_legal_set",
+  "groups": 6,
+  "exchanges_per_group": 3,
+  "epochs": 3,
+  "end_positions_measured": 18,
+  "heldout_disjoint_from_trained": true,
+  "lines_read": 36,
+  "pre_pilot": {
+    "end": {
+      "n": 18,
+      "p_boundary": {
+        "n": 18,
+        "mean": 0.005417,
+        "p10": 0.000111,
+        "median": 0.005075,
+        "p90": 0.01074,
+        "max": 0.020648
+      },
+      "boundary_rank": {
+        "n": 18,
+        "mean": 20.222222,
+        "p10": 10.0,
+        "median": 11.0,
+        "p90": 11.0,
+        "max": 180.0
+      },
+      "boundary_is_argmax_count": 0,
+      "p_next_true": {
+        "n": 18,
+        "mean": 0.005417,
+        "p10": 0.000111,
+        "median": 0.005075,
+        "p90": 0.01074,
+        "max": 0.020648
+      },
+      "next_true_is_argmax_count": 0
+    },
+    "other": {
+      "n": 31262,
+      "p_boundary": {
+        "n": 31262,
+        "mean": 0.000194,
+        "p10": 3e-06,
+        "median": 3.4e-05,
+        "p90": 0.000281,
+        "max": 0.022498
+      },
+      "boundary_rank": {
+        "n": 31262,
+        "mean": 59.78661,
+        "p10": 13.0,
+        "median": 65.0,
+        "p90": 65.0,
+        "max": 180.0
+      },
+      "boundary_is_argmax_count": 0,
+      "p_next_true": {
+        "n": 31262,
+        "mean": 0.112703,
+        "p10": 0.002266,
+        "median": 0.036318,
+        "p90": 0.292343,
+        "max": 0.998226
+      },
+      "next_true_is_argmax_count": 6505
+    },
+    "stream_symbols": 31298
+  },
+  "arms": [
+    {
+      "arm": "granularity",
+      "groups": 6,
+      "exchanges_per_group": 3,
+      "epochs": 3,
+      "trained_symbols": 46668,
+      "trained_text_bytes": 46596,
+      "boundary_targets": 54,
+      "learn_observations": 46650,
+      "train_online_accuracy": 0.271147,
+      "train_mean_surprise": 2.938277,
+      "tick_reading_delta": -15996172,
+      "seconds": 184.43,
+      "end": {
+        "n": 18,
+        "p_boundary": {
+          "n": 18,
+          "mean": 0.063351,
+          "p10": 0.000396,
+          "median": 0.071459,
+          "p90": 0.139223,
+          "max": 0.143706
+        },
+        "boundary_rank": {
+          "n": 18,
+          "mean": 15.388889,
+          "p10": 2.0,
+          "median": 5.0,
+          "p90": 14.0,
+          "max": 180.0
+        },
+        "boundary_is_argmax_count": 0,
+        "p_next_true": {
+          "n": 18,
+          "mean": 0.063351,
+          "p10": 0.000396,
+          "median": 0.071459,
+          "p90": 0.139223,
+          "max": 0.143706
+        },
+        "next_true_is_argmax_count": 0
+      },
+      "other": {
+        "n": 31262,
+        "p_boundary": {
+          "n": 31262,
+          "mean": 0.001245,
+          "p10": 1.1e-05,
+          "median": 0.000104,
+          "p90": 0.000789,
+          "max": 0.186426
+        },
+        "boundary_rank": {
+          "n": 31262,
+          "mean": 55.664289,
+          "p10": 16.0,
+          "median": 64.0,
+          "p90": 65.0,
+          "max": 180.0
+        },
+        "boundary_is_argmax_count": 16,
+        "p_next_true": {
+          "n": 31262,
+          "mean": 0.131843,
+          "p10": 0.004248,
+          "median": 0.05077,
+          "p90": 0.351761,
+          "max": 0.992683
+        },
+        "next_true_is_argmax_count": 7831
+      },
+      "stream_symbols": 31298
+    },
+    {
+      "arm": "sparse",
+      "groups": 6,
+      "exchanges_per_group": 3,
+      "epochs": 3,
+      "trained_symbols": 46632,
+      "trained_text_bytes": 46596,
+      "boundary_targets": 54,
+      "learn_observations": 46614,
+      "train_online_accuracy": 0.270541,
+      "train_mean_surprise": 2.936358,
+      "tick_reading_delta": -15996174,
+      "seconds": 190.94,
+      "end": {
+        "n": 18,
+        "p_boundary": {
+          "n": 18,
+          "mean": 0.017475,
+          "p10": 0.000206,
+          "median": 0.019927,
+          "p90": 0.039704,
+          "max": 0.04468
+        },
+        "boundary_rank": {
+          "n": 18,
+          "mean": 17.888889,
+          "p10": 5.0,
+          "median": 7.0,
+          "p90": 17.0,
+          "max": 180.0
+        },
+        "boundary_is_argmax_count": 0,
+        "p_next_true": {
+          "n": 18,
+          "mean": 0.017475,
+          "p10": 0.000206,
+          "median": 0.019927,
+          "p90": 0.039704,
+          "max": 0.04468
+        },
+        "next_true_is_argmax_count": 0
+      },
+      "other": {
+        "n": 31262,
+        "p_boundary": {
+          "n": 31262,
+          "mean": 0.000473,
+          "p10": 7e-06,
+          "median": 6.2e-05,
+          "p90": 0.000499,
+          "max": 0.059203
+        },
+        "boundary_rank": {
+          "n": 31262,
+          "mean": 61.181466,
+          "p10": 20.0,
+          "median": 65.0,
+          "p90": 65.0,
+          "max": 180.0
+        },
+        "boundary_is_argmax_count": 0,
+        "p_next_true": {
+          "n": 31262,
+          "mean": 0.131572,
+          "p10": 0.004186,
+          "median": 0.05082,
+          "p90": 0.346053,
+          "max": 0.992928
+        },
+        "next_true_is_argmax_count": 7851
+      },
+      "stream_symbols": 31298
+    },
+    {
+      "arm": "current",
+      "groups": 6,
+      "exchanges_per_group": 3,
+      "epochs": 3,
+      "trained_symbols": 46704,
+      "trained_text_bytes": 46596,
+      "boundary_targets": 54,
+      "learn_observations": 46650,
+      "train_online_accuracy": 0.271104,
+      "train_mean_surprise": 2.93445,
+      "tick_reading_delta": -15998360,
+      "seconds": 294.9,
+      "end": {
+        "n": 18,
+        "p_boundary": {
+          "n": 18,
+          "mean": 0.068429,
+          "p10": 0.000446,
+          "median": 0.08485,
+          "p90": 0.151823,
+          "max": 0.156761
+        },
+        "boundary_rank": {
+          "n": 18,
+          "mean": 15.277778,
+          "p10": 2.0,
+          "median": 4.0,
+          "p90": 14.0,
+          "max": 180.0
+        },
+        "boundary_is_argmax_count": 0,
+        "p_next_true": {
+          "n": 18,
+          "mean": 0.068429,
+          "p10": 0.000446,
+          "median": 0.08485,
+          "p90": 0.151823,
+          "max": 0.156761
+        },
+        "next_true_is_argmax_count": 0
+      },
+      "other": {
+        "n": 31262,
+        "p_boundary": {
+          "n": 31262,
+          "mean": 0.001316,
+          "p10": 1.1e-05,
+          "median": 0.000105,
+          "p90": 0.000807,
+          "max": 0.193541
+        },
+        "boundary_rank": {
+          "n": 31262,
+          "mean": 55.871601,
+          "p10": 16.0,
+          "median": 64.0,
+          "p90": 65.0,
+          "max": 180.0
+        },
+        "boundary_is_argmax_count": 26,
+        "p_next_true": {
+          "n": 31262,
+          "mean": 0.132895,
+          "p10": 0.004244,
+          "median": 0.050785,
+          "p90": 0.358646,
+          "max": 0.992227
+        },
+        "next_true_is_argmax_count": 7920
+      },
+      "stream_symbols": 31298
+    }
+  ],
+  "delta_vs_current": {
+    "end_argmax_count": 0,
+    "end_rank_median": -1.0,
+    "end_p_boundary_median": -0.013391,
+    "other_p_next_true_median": -1.5e-05
+  },
+  "verdict": "not_resolved（两臂计数差 <3，或都不过 3 格）",
+  "arm_set": "all",
+  "density_verdict": "not_resolved（密度两臂差 <3，或都不过 3 格）",
+  "delta_density": {
+    "end_argmax_count": 0,
+    "end_rank_median": 2.0,
+    "end_p_boundary_median": 0.051532,
+    "targets_granularity": 54,
+    "targets_sparse": 54
+  },
+  "facade_gap": {
+    "facade_class": "Seed",
+    "substrate_class": "TSKV8Adapter",
+    "facade_learn_bytes_params": [
+      "data",
+      "epochs",
+      "include_boundary",
+      "self",
+      "use_memory"
+    ],
+    "edge_split_required": [
+      "include_start_boundary",
+      "include_end_boundary",
+      "reset"
+    ],
+    "edge_split_reachable_from_facade": false,
+    "edge_split_present_on_substrate": true
+  },
+  "instrument_guard": {
+    "base_sha256_unchanged": true,
+    "both_arms_ran_the_same_byte_count": true,
+    "boundary_targets_equal_across_arms": true,
+    "each_arm_actually_learned": true,
+    "end_positions_as_expected": true,
+    "all_arms_same_text_bytes": true,
+    "audit_bucket_accounting_ok": true
+  },
+  "caveats": [
+    "多轮会话是按语料行号分组**合成**的（默认语料每篇只有一组问答），本件只证'结束目标的上下文形状'这一个机理",
+    "n ＝ groups × exchanges 个结束位；决策级规模需要另行排训练机时，本件不动默认入口、不写检查点"
+  ],
+  "started_utc": "2026-09-29T04:59:32Z"
+}
