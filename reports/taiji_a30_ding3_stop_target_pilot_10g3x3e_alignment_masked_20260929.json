@@ -1,0 +1,579 @@
+{
+  "format": "taiji-a30-ding3-stop-target-pilot-v1",
+  "prereg": "PLAN-A-30 §3 丁-3 ＋本件 docstring 的判读线（先于数写下）",
+  "question": "只用现成 learn_bytes 参数面把'结束目标的上下文形状'换掉，结束位上的边界符会不会开始赢",
+  "checkpoint": "checkpoints/seed_beta.pt",
+  "corpus": "dialogue_extended_clean.jsonl",
+  "mask": true,
+  "decision_face": "utf8_masked_legal_set",
+  "groups": 10,
+  "exchanges_per_group": 3,
+  "epochs": 3,
+  "end_positions_measured": 30,
+  "heldout_disjoint_from_trained": true,
+  "lines_read": 60,
+  "pre_pilot": {
+    "end": {
+      "n": 30,
+      "p_boundary": {
+        "n": 30,
+        "mean": 0.000108,
+        "p10": 5e-05,
+        "median": 9.9e-05,
+        "p90": 0.000176,
+        "max": 0.00035
+      },
+      "boundary_rank": {
+        "n": 30,
+        "mean": 23.133333,
+        "p10": 19.0,
+        "median": 22.0,
+        "p90": 35.0,
+        "max": 39.0
+      },
+      "boundary_is_argmax_count": 0,
+      "p_next_true": {
+        "n": 30,
+        "mean": 0.000108,
+        "p10": 5e-05,
+        "median": 9.9e-05,
+        "p90": 0.000176,
+        "max": 0.00035
+      },
+      "next_true_is_argmax_count": 0,
+      "argmax_winners_top5": [
+        {
+          "symbol": 10,
+          "count": 30,
+          "ascii_hint": null
+        }
+      ],
+      "p_argmax": {
+        "n": 30,
+        "mean": 0.585386,
+        "p10": 0.418061,
+        "median": 0.580533,
+        "p90": 0.771463,
+        "max": 0.83241
+      },
+      "median_ratio_argmax_over_boundary": 7532.644511
+    },
+    "other": {
+      "n": 48295,
+      "p_boundary": {
+        "n": 48295,
+        "mean": 0.000191,
+        "p10": 4e-06,
+        "median": 3.4e-05,
+        "p90": 0.000271,
+        "max": 0.022006
+      },
+      "boundary_rank": {
+        "n": 48295,
+        "mean": 60.071643,
+        "p10": 13.0,
+        "median": 65.0,
+        "p90": 65.0,
+        "max": 180.0
+      },
+      "boundary_is_argmax_count": 0,
+      "p_next_true": {
+        "n": 48295,
+        "mean": 0.114902,
+        "p10": 0.002077,
+        "median": 0.037303,
+        "p90": 0.303054,
+        "max": 0.99768
+      },
+      "next_true_is_argmax_count": 10210,
+      "argmax_winners_top5": [
+        {
+          "symbol": 229,
+          "count": 6835,
+          "ascii_hint": null
+        },
+        {
+          "symbol": 228,
+          "count": 4236,
+          "ascii_hint": null
+        },
+        {
+          "symbol": 136,
+          "count": 3359,
+          "ascii_hint": null
+        },
+        {
+          "symbol": 230,
+          "count": 3320,
+          "ascii_hint": null
+        },
+        {
+          "symbol": 239,
+          "count": 1914,
+          "ascii_hint": null
+        }
+      ],
+      "p_argmax": {
+        "n": 48295,
+        "mean": 0.234322,
+        "p10": 0.068409,
+        "median": 0.18807,
+        "p90": 0.437505,
+        "max": 0.99768
+      },
+      "median_ratio_argmax_over_boundary": 4830.655497
+    },
+    "stream_symbols": 48357
+  },
+  "arms": [
+    {
+      "arm": "granularity",
+      "groups": 10,
+      "exchanges_per_group": 3,
+      "epochs": 3,
+      "trained_symbols": 66201,
+      "trained_text_bytes": 66081,
+      "boundary_targets": 90,
+      "expected_end_targets": 90,
+      "learn_observations": 66171,
+      "train_online_accuracy": 0.276254,
+      "train_mean_surprise": 2.901844,
+      "tick_reading_delta": -15996326,
+      "seconds": 279.13,
+      "end": {
+        "n": 30,
+        "p_boundary": {
+          "n": 30,
+          "mean": 0.000656,
+          "p10": 0.000275,
+          "median": 0.00062,
+          "p90": 0.001195,
+          "max": 0.001593
+        },
+        "boundary_rank": {
+          "n": 30,
+          "mean": 26.266667,
+          "p10": 18.0,
+          "median": 23.0,
+          "p90": 40.0,
+          "max": 52.0
+        },
+        "boundary_is_argmax_count": 0,
+        "p_next_true": {
+          "n": 30,
+          "mean": 0.000656,
+          "p10": 0.000275,
+          "median": 0.00062,
+          "p90": 0.001195,
+          "max": 0.001593
+        },
+        "next_true_is_argmax_count": 0,
+        "argmax_winners_top5": [
+          {
+            "symbol": 50,
+            "count": 17,
+            "ascii_hint": "2"
+          },
+          {
+            "symbol": 231,
+            "count": 13,
+            "ascii_hint": null
+          }
+        ],
+        "p_argmax": {
+          "n": 30,
+          "mean": 0.147554,
+          "p10": 0.110705,
+          "median": 0.147251,
+          "p90": 0.195007,
+          "max": 0.236013
+        },
+        "median_ratio_argmax_over_boundary": 235.34281
+      },
+      "other": {
+        "n": 48295,
+        "p_boundary": {
+          "n": 48295,
+          "mean": 0.001227,
+          "p10": 1.3e-05,
+          "median": 0.000133,
+          "p90": 0.000986,
+          "max": 0.200967
+        },
+        "boundary_rank": {
+          "n": 48295,
+          "mean": 53.925603,
+          "p10": 15.0,
+          "median": 63.0,
+          "p90": 65.0,
+          "max": 180.0
+        },
+        "boundary_is_argmax_count": 0,
+        "p_next_true": {
+          "n": 48295,
+          "mean": 0.144778,
+          "p10": 0.003855,
+          "median": 0.05261,
+          "p90": 0.440043,
+          "max": 0.992827
+        },
+        "next_true_is_argmax_count": 13174,
+        "argmax_winners_top5": [
+          {
+            "symbol": 229,
+            "count": 12344,
+            "ascii_hint": null
+          },
+          {
+            "symbol": 143,
+            "count": 3609,
+            "ascii_hint": null
+          },
+          {
+            "symbol": 154,
+            "count": 1940,
+            "ascii_hint": null
+          },
+          {
+            "symbol": 128,
+            "count": 1904,
+            "ascii_hint": null
+          },
+          {
+            "symbol": 140,
+            "count": 1892,
+            "ascii_hint": null
+          }
+        ],
+        "p_argmax": {
+          "n": 48295,
+          "mean": 0.272407,
+          "p10": 0.084143,
+          "median": 0.216514,
+          "p90": 0.549706,
+          "max": 0.992827
+        },
+        "median_ratio_argmax_over_boundary": 1526.33744
+      },
+      "stream_symbols": 48357
+    },
+    {
+      "arm": "after_newline",
+      "groups": 10,
+      "exchanges_per_group": 3,
+      "epochs": 3,
+      "trained_symbols": 66351,
+      "trained_text_bytes": 66081,
+      "boundary_targets": 90,
+      "expected_end_targets": 90,
+      "learn_observations": 66261,
+      "train_online_accuracy": 0.277312,
+      "train_mean_surprise": 2.895546,
+      "tick_reading_delta": -15999344,
+      "seconds": 265.29,
+      "end": {
+        "n": 30,
+        "p_boundary": {
+          "n": 30,
+          "mean": 0.205652,
+          "p10": 0.1441,
+          "median": 0.185103,
+          "p90": 0.286231,
+          "max": 0.381657
+        },
+        "boundary_rank": {
+          "n": 30,
+          "mean": 1.133333,
+          "p10": 1.0,
+          "median": 1.0,
+          "p90": 2.0,
+          "max": 2.0
+        },
+        "boundary_is_argmax_count": 26,
+        "p_next_true": {
+          "n": 30,
+          "mean": 0.205652,
+          "p10": 0.1441,
+          "median": 0.185103,
+          "p90": 0.286231,
+          "max": 0.381657
+        },
+        "next_true_is_argmax_count": 26,
+        "argmax_winners_top5": [
+          {
+            "symbol": 256,
+            "count": 26,
+            "ascii_hint": null
+          },
+          {
+            "symbol": 231,
+            "count": 2,
+            "ascii_hint": null
+          },
+          {
+            "symbol": 50,
+            "count": 2,
+            "ascii_hint": "2"
+          }
+        ],
+        "p_argmax": {
+          "n": 30,
+          "mean": 0.206789,
+          "p10": 0.146459,
+          "median": 0.185103,
+          "p90": 0.286231,
+          "max": 0.381657
+        },
+        "median_ratio_argmax_over_boundary": 1.0
+      },
+      "other": {
+        "n": 48295,
+        "p_boundary": {
+          "n": 48295,
+          "mean": 0.001912,
+          "p10": 1.5e-05,
+          "median": 0.00012,
+          "p90": 0.001176,
+          "max": 0.478072
+        },
+        "boundary_rank": {
+          "n": 48295,
+          "mean": 54.561176,
+          "p10": 14.0,
+          "median": 63.0,
+          "p90": 65.0,
+          "max": 180.0
+        },
+        "boundary_is_argmax_count": 248,
+        "p_next_true": {
+          "n": 48295,
+          "mean": 0.146295,
+          "p10": 0.003851,
+          "median": 0.052527,
+          "p90": 0.448608,
+          "max": 0.993148
+        },
+        "next_true_is_argmax_count": 13202,
+        "argmax_winners_top5": [
+          {
+            "symbol": 229,
+            "count": 12105,
+            "ascii_hint": null
+          },
+          {
+            "symbol": 143,
+            "count": 3294,
+            "ascii_hint": null
+          },
+          {
+            "symbol": 128,
+            "count": 2053,
+            "ascii_hint": null
+          },
+          {
+            "symbol": 140,
+            "count": 1935,
+            "ascii_hint": null
+          },
+          {
+            "symbol": 154,
+            "count": 1895,
+            "ascii_hint": null
+          }
+        ],
+        "p_argmax": {
+          "n": 48295,
+          "mean": 0.273374,
+          "p10": 0.08431,
+          "median": 0.21539,
+          "p90": 0.566393,
+          "max": 0.993148
+        },
+        "median_ratio_argmax_over_boundary": 1696.043304
+      },
+      "stream_symbols": 48357
+    },
+    {
+      "arm": "current",
+      "groups": 10,
+      "exchanges_per_group": 3,
+      "epochs": 3,
+      "trained_symbols": 66261,
+      "trained_text_bytes": 66081,
+      "boundary_targets": 90,
+      "expected_end_targets": 90,
+      "learn_observations": 66171,
+      "train_online_accuracy": 0.276042,
+      "train_mean_surprise": 2.897708,
+      "tick_reading_delta": -15999345,
+      "seconds": 274.74,
+      "end": {
+        "n": 30,
+        "p_boundary": {
+          "n": 30,
+          "mean": 0.000728,
+          "p10": 0.000294,
+          "median": 0.000688,
+          "p90": 0.001125,
+          "max": 0.001929
+        },
+        "boundary_rank": {
+          "n": 30,
+          "mean": 26.266667,
+          "p10": 18.0,
+          "median": 23.0,
+          "p90": 41.0,
+          "max": 50.0
+        },
+        "boundary_is_argmax_count": 0,
+        "p_next_true": {
+          "n": 30,
+          "mean": 0.000728,
+          "p10": 0.000294,
+          "median": 0.000688,
+          "p90": 0.001125,
+          "max": 0.001929
+        },
+        "next_true_is_argmax_count": 0,
+        "argmax_winners_top5": [
+          {
+            "symbol": 50,
+            "count": 18,
+            "ascii_hint": "2"
+          },
+          {
+            "symbol": 231,
+            "count": 12,
+            "ascii_hint": null
+          }
+        ],
+        "p_argmax": {
+          "n": 30,
+          "mean": 0.152734,
+          "p10": 0.106603,
+          "median": 0.152793,
+          "p90": 0.212377,
+          "max": 0.229397
+        },
+        "median_ratio_argmax_over_boundary": 226.646737
+      },
+      "other": {
+        "n": 48295,
+        "p_boundary": {
+          "n": 48295,
+          "mean": 0.001275,
+          "p10": 1.4e-05,
+          "median": 0.000136,
+          "p90": 0.001018,
+          "max": 0.211204
+        },
+        "boundary_rank": {
+          "n": 48295,
+          "mean": 54.237706,
+          "p10": 15.0,
+          "median": 63.0,
+          "p90": 65.0,
+          "max": 180.0
+        },
+        "boundary_is_argmax_count": 0,
+        "p_next_true": {
+          "n": 48295,
+          "mean": 0.145797,
+          "p10": 0.00387,
+          "median": 0.052688,
+          "p90": 0.439308,
+          "max": 0.993111
+        },
+        "next_true_is_argmax_count": 13210,
+        "argmax_winners_top5": [
+          {
+            "symbol": 229,
+            "count": 12158,
+            "ascii_hint": null
+          },
+          {
+            "symbol": 143,
+            "count": 3300,
+            "ascii_hint": null
+          },
+          {
+            "symbol": 128,
+            "count": 2066,
+            "ascii_hint": null
+          },
+          {
+            "symbol": 140,
+            "count": 1913,
+            "ascii_hint": null
+          },
+          {
+            "symbol": 154,
+            "count": 1891,
+            "ascii_hint": null
+          }
+        ],
+        "p_argmax": {
+          "n": 48295,
+          "mean": 0.271951,
+          "p10": 0.084418,
+          "median": 0.214498,
+          "p90": 0.560223,
+          "max": 0.993111
+        },
+        "median_ratio_argmax_over_boundary": 1499.863949
+      },
+      "stream_symbols": 48357
+    }
+  ],
+  "delta_vs_current": {
+    "end_argmax_count": 0,
+    "end_rank_median": 0.0,
+    "end_p_boundary_median": -6.8e-05,
+    "other_p_next_true_median": -7.8e-05
+  },
+  "verdict": "not_resolved（两臂计数差 <3，或都不过 3 格）",
+  "arm_set": "alignment",
+  "density_verdict": null,
+  "delta_density": null,
+  "alignment_verdict": "对齐成立（把结束目标挪到换行之后，边界符在结束位上的胜出数比今天的位置多 ≥3）",
+  "delta_alignment": {
+    "end_argmax_count": 26,
+    "end_rank_median": 22.0,
+    "end_p_boundary_median": 0.184415,
+    "end_p_argmax_median_after_newline": 0.185103
+  },
+  "facade_gap": {
+    "facade_class": "Seed",
+    "substrate_class": "TSKV8Adapter",
+    "facade_learn_bytes_params": [
+      "data",
+      "epochs",
+      "include_boundary",
+      "self",
+      "use_memory"
+    ],
+    "edge_split_required": [
+      "include_start_boundary",
+      "include_end_boundary",
+      "reset"
+    ],
+    "edge_split_reachable_from_facade": false,
+    "edge_split_present_on_substrate": true
+  },
+  "instrument_guard": {
+    "base_sha256_unchanged": true,
+    "both_arms_ran_the_same_byte_count": true,
+    "end_targets_match_feed_plan": true,
+    "shape_pair_end_targets_equal": true,
+    "density_ratio_is_exchanges": true,
+    "each_arm_actually_learned": true,
+    "end_positions_as_expected": true,
+    "all_arms_same_text_bytes": true,
+    "audit_bucket_accounting_ok": true
+  },
+  "caveats": [
+    "多轮会话是按语料行号分组**合成**的（默认语料每篇只有一组问答），本件只证'结束目标的上下文形状'这一个机理",
+    "n ＝ groups × exchanges 个结束位；决策级规模需要另行排训练机时，本件不动默认入口、不写检查点"
+  ],
+  "started_utc": "2026-09-29T06:02:37Z"
+}
