@@ -34,10 +34,15 @@ const WAIT_MS = 60_000
 const HEARTBEAT_MS = 200
 /** The child the Bash call runs: announce, heartbeat, and only finish long after the archive. */
 const WAIT_COMMAND = `node -e "const fs=require('node:fs'); fs.writeFileSync('started.txt', 'started'); setInterval(() => { fs.appendFileSync('heartbeat.txt', '.') }, ${HEARTBEAT_MS}); setTimeout(() => { fs.writeFileSync('finished.txt', 'finished') }, ${WAIT_MS})"`
+// The shipped composition registers the platform's shell tool — bash on
+// POSIX, pwsh on Windows (base cordis.patch.yml) — so the override must call
+// the name this platform actually mounts; the node payload is shell-agnostic
+// (no $ or backtick, so pwsh's double-quoted arg passes it through verbatim).
+const SHELL_TOOL = process.platform === 'win32' ? 'pwsh' : 'bash'
 
 /**
- * First stream: one Bash call whose child announces itself, then beats on a
- * file until it finishes; second stream: the continuation answer. The
+ * First stream: one shell-tool call whose child announces itself, then beats
+ * on a file until it finishes; second stream: the continuation answer. The
  * heartbeat file is the liveness evidence: a pid is not comparable across the
  * Linux sandbox's PID namespace, a growing file is.
  */
@@ -46,8 +51,8 @@ function script(): ReplayEntry[] {
   const callId = ToolCallId('call_wait')
   const first: StreamChunk[] = [
     { type: 'block-start', index: 0, blockType: 'tool-call' },
-    { type: 'tool-call-delta', index: 0, id: callId, name: 'bash', argumentsDelta: args },
-    { type: 'block-end', index: 0, block: { type: 'tool-call', id: callId, name: 'bash', arguments: args } },
+    { type: 'tool-call-delta', index: 0, id: callId, name: SHELL_TOOL, argumentsDelta: args },
+    { type: 'block-end', index: 0, block: { type: 'tool-call', id: callId, name: SHELL_TOOL, arguments: args } },
     { type: 'usage', usage: { inputTokens: 10, outputTokens: 10 } },
     { type: 'finish', reason: { kind: 'tool-calls' } },
   ]
