@@ -748,3 +748,8 @@ ode_modulesi…`＝**本仓已登记的 Windows 符号链接权限族**（与 0
 (a) 探针事实：该 lane 在 `goto` 之后树里只有 **`["Default workspace", "Ungrouped"]` 两个组行、零条会话行** ⇒ 它原来的 `locator('[role="treeitem"]').first()` 当组行、`.nth(1)` 当会话行的**位置索引**在 H7 之后必然错位（旧行为下 boot 会多建一条会话，索引才对得上）。这与 ㊧(c) 的猜测一致，属同一族。
 (b **没成的部分**：我按已验证的形状改成"展开所有折叠组 + 按提示短语 `/editing-cordis-compositions/i` 选行"，实测**仍找不到行**（`waiting for getByRole('treeitem',{name:/editing-cordis-compositions/iu})`）。⇒ 说明**种子会话的渲染标题不等于我猜的短语**（标题派生规则未查），或者它根本不在展开后的树里。**改动已整文件回退**（`git status` 干净），不留半截。
 (c) **下一格的确定做法**：再探一次"展开所有折叠组之后的全部 treeitem 文本"（一行 `allInnerTexts()`，成本一次单跑），拿到真实标题后再决定按文本还是按 `data-*` 选行；`tool-details` 形状相同（等 `[data-tool="create_goal"]`），同一修法可复用。别再用位置索引，也别再猜标题。
+
+㊩ **`skill-tool-row` 的选行修法落地：`beforeAll` 通了、2 条用例转绿；剩下那条是另一个族**（2026-09-29）。
+(a) 探针给出的真实标题＝**种子 Home 的目录名**（`dsh-web-e2e-ws-XXXX`，一条 86 ms 内可见的行文本 `dsh-web-e2e-ws-j0LHWY\n1min`）⇒ 种子出来的是**空白会话**，标题不是从提示语派生。所以 ㊨(b) 那次按提示语猜标题必然失败。修法＝展开所有折叠组 + 按 `scaffold.workspaceCwd` 末段选行（派生自本 lane 自己的世界，不是猜的），**不再用位置索引**。
+(b) 实测：`Tests 1 failed｜2 passed (3)`（此前整文件卡在 `beforeAll` 的 30 s 超时、0 条用例跑成）。⇒ H7 连带修绿的文件数记为 **14（部分：本文件只解锁了 2/3 用例）**。
+(c) **剩下那条不属于 H7**：`expands the loaded skill to its exact recorded instructions` 期望正文含 `Agent presets are ordinary \`@taiji/dsh-agent-preset\` …`，实收只有 `<skill_content>` 包装与 `<skill_resources>`（含 base 目录），**技能正文缺失** ⇒ 新族。下一格两条候选：① 加载器"按需解析资源"把正文省了（产品/渲染侧）；② 夹具里录的正文与当前 `SKILL.md` 不等（A 族近亲，系于 H1）。**先用一次展开内容 dump 分辨，别顺手改断言**。
