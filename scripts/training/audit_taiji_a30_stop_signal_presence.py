@@ -31,6 +31,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import sys
 from datetime import datetime, timezone
@@ -46,8 +47,6 @@ DEFAULT_CORPUS = PROJECT_ROOT / "data" / "simple_zh" / "dialogue_extended_clean.
 
 
 def _sha256(path: Path) -> str:
-    import hashlib
-
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
@@ -294,8 +293,8 @@ def main() -> int:
     result = audit(runtime, chunks, boundary, mask=args.mask)
 
     report = {
-        "format": "taiji-a30-stop-signal-presence-v2",
-        "format_note": "v2 只在每格里**新增** `argmax_winners_top5`／`p_argmax`／`median_ratio_argmax_over_boundary` 三条与每行 `argmax_symbol`/`p_argmax`；旧字段语义与算法未动 ⇒ 与已入库的 v1 读数可直接同格比（v1 件里没有这几条，不是它们算出了 0）",
+        "format": "taiji-a30-stop-signal-presence-v3",
+        "format_note": "v2 只在每格里**新增** `argmax_winners_top5`／`p_argmax`／`median_ratio_argmax_over_boundary` 三条与每行 `argmax_symbol`/`p_argmax`；旧字段语义与算法未动 ⇒ 与已入库的 v1 读数可直接同格比（v1 件里没有这几条，不是它们算出了 0）。v3 只再加一条 `docs_sha256`＝**实际吃进的那批文档字节的指纹**，用来把两枚检查点之间的配对机检起来（原来只能靠 `--docs` 参数相同来保证，那是口供不是检验）",
         "prereg": "plans/reference/PLAN-A-30_surface_repetition_localization_20260928.md §3 丁（零训练归属检验）",
         "question": "(B1) 停止信号没学到 还是 (B2) 学到了但在自身轨迹上失效",
         "checkpoint": args.checkpoint,
@@ -304,6 +303,7 @@ def main() -> int:
         "documents": result["documents"],
         "selection": sample["selection"],
         "lines_read_to_fill_sample": sample["lines_read"],
+        "docs_sha256": hashlib.sha256(b"".join(bytes(chunk) for chunk in chunks)).hexdigest(),
         "generation_scope": "teacher_forced_on_corpus（不进模型自己的轨迹）",
         "decision_face": "utf8_masked_legal_set" if args.mask else "full_alphabet",
         "result": result,
