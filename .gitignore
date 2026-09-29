@@ -262,3 +262,8 @@ focused-before.xml
 # 缓存，全是本机运行态；带前导斜杠锚定仓库根（R2），不波及子目录同名物。
 # 通配后缀：每次验证可能新开一个干净 HOME（.dsh-sbx2、.dsh-sbx3…），逐个列举必漏。
 /.dsh-sbx*/
+
+# H18（2026-09-29 裁定）：fork 的回放语料是仓库资产，需纳入版本控制；
+# 上面第 140 行的 *.jsonl 是为 Seed 训练/运行数据写的，故此处只放行 fork 的快照目录，
+# 不放行 output/、reports/、data/ 等训练数据路径。
+!taiji-harness/snapshots/**/*.jsonl
