@@ -59,6 +59,9 @@ describe('rewritePluginSource', () => {
     expect(rewritePluginSource({ kind: 'plugin', plugin: 'tools-code-mode' }, 1, 'user')).toEqual({ kind: 'ptc-mode' })
     expect(rewritePluginSource({ kind: 'plugin', plugin: '@taiji/dsh-system-prompt' }, 1, 'system')).toEqual({ kind: 'system-prompt' })
     expect(rewritePluginSource({ kind: 'plugin', plugin: '@taiji/dsh-system-prompt' }, 1, 'user')).toEqual({ kind: 'runtime-context' })
+    // Sessions recorded before the brand rename carry the retired specifier; both spellings resolve to one producer.
+    expect(rewritePluginSource({ kind: 'plugin', plugin: '@deepseek-ai/dsh-system-prompt' }, 1, 'system')).toEqual({ kind: 'system-prompt' })
+    expect(rewritePluginSource({ kind: 'plugin', plugin: '@deepseek-ai/dsh-system-prompt' }, 1, 'user')).toEqual({ kind: 'runtime-context' })
     expect(rewritePluginSource({ kind: 'plugin', plugin: 'external', extra: true }, 1, 'user')).toEqual({ kind: 'plugin:external', extra: true })
   })
 

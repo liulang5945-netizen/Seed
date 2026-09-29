@@ -41,8 +41,15 @@ const RENAMED_PRODUCERS: Readonly<Record<string, string>> = Object.freeze({
   'tools-code-mode': 'ptc-mode',
   'tools-ptc': 'ptc-mode',
   'dsh-compaction-basic': 'compact-basic',
+  '@deepseek-ai/dsh-system-prompt': 'runtime-context',
   '@taiji/dsh-system-prompt': 'runtime-context',
 })
+
+/** Both spellings of the system-prompt producer: sessions recorded before the brand rename carry the retired id. */
+const SYSTEM_PROMPT_PLUGIN_IDS: readonly string[] = Object.freeze([
+  '@deepseek-ai/dsh-system-prompt',
+  '@taiji/dsh-system-prompt',
+])
 
 /** First-party V3 plugin identities that intentionally keep their current kind. */
 const RELEASED_SAME_NAME_PRODUCERS: ReadonlySet<string> = new Set([
@@ -57,7 +64,7 @@ const RELEASED_SAME_NAME_PRODUCERS: ReadonlySet<string> = new Set([
 
 /** Resolve the current producer kind for one released V3 plugin string. */
 function producerKind(plugin: string, role: SessionFormatJsonValue | undefined): string {
-  if (plugin === '@taiji/dsh-system-prompt' && role === 'system') return 'system-prompt'
+  if (SYSTEM_PROMPT_PLUGIN_IDS.includes(plugin) && role === 'system') return 'system-prompt'
   const renamed = Object.hasOwn(RENAMED_PRODUCERS, plugin) ? RENAMED_PRODUCERS[plugin] : undefined
   if (renamed !== undefined) return renamed
   if (RELEASED_SAME_NAME_PRODUCERS.has(plugin)) return plugin
