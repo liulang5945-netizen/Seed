@@ -766,3 +766,7 @@ ode_modulesi…`＝**本仓已登记的 Windows 符号链接权限族**（与 0
 (a) 定位进度：`git grep editing-cordis-compositions` 只命中 archived notes 与 `apps/cli/tests/web-agent-presets.e2e.ts`，**没有命中技能源文件** ⇒ 该 SKILL.md 是被测试世界复制或生成到 `<home>/.dsh/skills/…` 的，源头在 fixture 目录或某个 bundle 资源里，下一格从 `git grep -l "dsh-agent-preset\` declarations carried by bundle patches"`（正文原句）与 `snapshots/`、`apps/web/tests/fixtures` 两处找。
 (b) **两条候选修法，需要一次定位才能选**：① 技能源里确实还留着 `@deepseek-ai/` ⇒ 是 fork 改名的产品侧残留，改源；② 源已改、金样/期望未跟上 ⇒ 改期望侧。**注意**：`@deepseek-ai/` 在 archived notes 里的命中是**冻结策略允许的**，不能算残留，别顺手批量替换。
 (c) 我在这格还犯了一个方法错：**用自己的截断输出当证据下了结论**（"正文缺失"），与 [[never-report-unobserved-numbers]] 同族——截断＝重跑或放宽截取，不是填空。
+
+㊮ **㊭ 的候选①被否证：产品侧 `SKILL.md` 是干净的，过期文本在 lane 自己内联的夹具里**（2026-09-29）。`grep "@deepseek-ai/" packages/preset/agent-preset/skills/editing-cordis-compositions/SKILL.md` **零命中**，而"正文原句"的三个命中文件是 `apps/web/tests/skill-tool-row.e2e.ts`、`packages/preset/agent-preset/skills/editing-cordis-compositions/SKILL.md`、`snapshots/web/skill-tool-row/ui.expected.md` ⇒ 渲染出 `@deepseek-ai/…` 的那份文本来自 **lane 写进种子 Home 的内联副本**，不是产品资产。
+(a) **精确改点**：把 `apps/web/tests/skill-tool-row.e2e.ts` 里内联的技能正文改成与真实 `SKILL.md` 同源（或直接读该文件写入种子目录，别复制粘贴），金样 `snapshots/web/skill-tool-row/ui.expected.md` 随之核对。**不要**去改 `packages/preset/**`——那里没有残留。
+(b) 这条同时说明：`skill-tool-row` 第三条**不属于 A 族、不属于 H7、也不是产品缺陷**，是测试夹具与产品资产分叉（fork 改名时只改了源文件、没改测试里的副本）。⇒ 与 ㊬ 的"测试侧无可验证活"不冲突：这条**能验**（单跑该 lane），只是本轮没有轮次落地它，下一格按 (a) 改并单跑。
