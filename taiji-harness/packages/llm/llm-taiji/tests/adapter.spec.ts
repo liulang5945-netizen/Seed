@@ -123,7 +123,7 @@ describe('Taiji chat request', () => {
     expect(runtime.requests[0]?.path).toBe('/api/chat/stream')
     expect(runtime.requests[0]?.headers.accept).toBe('text/event-stream')
     expect(runtime.requests[0]?.headers['content-type']).toBe('application/json')
-    expect(runtime.requests[0]?.headers['user-agent']).toContain('deepseek-harness/')
+    expect(runtime.requests[0]?.headers['user-agent']).toContain('taiji-harness/')
     expect(runtime.requests[0]?.body).toEqual({
       prompt: '第二个问题',
       system_prompt: '你是Seed',
