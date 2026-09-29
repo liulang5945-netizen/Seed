@@ -1,0 +1,951 @@
+{
+  "format": "taiji-a30-stop-failure-v3",
+  "prereg": "plans/reference/PLAN-A-30_surface_repetition_localization_20260928.md §2f 第 3 条",
+  "checkpoint": "output/a31_ding3_boundary/checkpoint.pt",
+  "circuit": null,
+  "circuit_sha256": null,
+  "repetition_penalty": 2.0,
+  "repetition_window": 8,
+  "max_length": 256,
+  "generation_loop_lines": [
+    3119,
+    3178
+  ],
+  "items": 24,
+  "instrument_guard": {
+    "observe_calls_recorded": true,
+    "observe_calls_by_caller": {
+      "generate:3087": 23328,
+      "generate:3163": 18039,
+      "generate:3078": 72
+    },
+    "all_items_reconstructed": true,
+    "items_failing_reconstruction": [],
+    "total_argmax_mismatch_steps": 0,
+    "all_surfaces_are_replayed_raw": true,
+    "items_whose_surface_is_not_model_bytes": [],
+    "total_steps": 18039,
+    "generations": 72,
+    "generations_cut_by_turn_marker": 0,
+    "generations_eating_full_budget": 72,
+    "base_sha256_unchanged": true
+  },
+  "failure_examples": [],
+  "offender_count": 0,
+  "offenders": [],
+  "per_item": [
+    {
+      "id": "V001",
+      "answer_run": 1,
+      "steps": 768,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "文元的中元的中元的中元的中文元个文元个文元中文元"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "中文元的中文元中文元中文元中文元中文册以衙方有元"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "关乚文可以文元中文元中文元中文元中文元中文元中，"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 5577.742,
+      "run_steps": 0
+    },
+    {
+      "id": "V002",
+      "answer_run": 1,
+      "steps": 768,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "方元的中元的中可以胾兏，中方元的中文可以元的中文"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "中文元的中文元个文元个文元中，并中文元以表元中，"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "中文元的中文元个文元中，并中文可以表弌中文元的以"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 4297.376,
+      "run_steps": 0
+    },
+    {
+      "id": "V003",
+      "answer_run": 1,
+      "steps": 768,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "方元的中元的中元的中元的中可以行元个方元个方元个"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "中文元个文元个文元中文元中文元中：\n-. 到乚文"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "中文元个文元个文元中文元中文元中文元中文元中文元"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 6139.549,
+      "run_steps": 0
+    },
+    {
+      "id": "V004",
+      "answer_run": 1,
+      "steps": 768,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "方元组中元硌中可以能兏以到方个元的中文可以元的中"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "方元的中文元个文元个文元个文元个文元中，元中文元"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "方元的中文元中文可以这案中，元中，元中文可以表册"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 4613.987,
+      "run_steps": 0
+    },
+    {
+      "id": "V005",
+      "answer_run": 1,
+      "steps": 768,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "方元的中元用中可以元的中文可以元的中文兏以力文的"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "文元的中元硌中如元习是以元的中文元的中文元个方元"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "关习是以元的中文元中文册以力行以力行以力表个到文"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 3274.498,
+      "run_steps": 0
+    },
+    {
+      "id": "V006",
+      "answer_run": 1,
+      "steps": 768,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "方元的中文元中文可以这文可以元的中文兏中文元中文"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "文可以元的中文元中文元中文元中文元中文元中文元中"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "关以幰文的中文元以力文元中文元中，并中文元以表力"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 6590.934,
+      "run_steps": 0
+    },
+    {
+      "id": "V007",
+      "answer_run": 2,
+      "steps": 768,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "方是中元的中元的中元的中元的中元的中文可以元的中"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "中文元的中文元中是元中是元中是元中是元中是元个文"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "元的以元的以元的中文元个文元中，元中文元中文元中"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 3940.237,
+      "run_steps": 6
+    },
+    {
+      "id": "V008",
+      "answer_run": 1,
+      "steps": 768,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "方元的中元的中元用中可以行元个文可以元的中文可以"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "中文元素批元的中文元以题元个方元个文可以这文元中"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "元的以元的以元的以元的以元的以元的以元的以元的以"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 4479.081,
+      "run_steps": 0
+    },
+    {
+      "id": "V009",
+      "answer_run": 1,
+      "steps": 768,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "文元的中元的中可以元的中可以元的中文可以元的中文"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "中文元的中文元中文元中文元中文元中文元中文元中文"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "关以表序以元的中文元中文元中文元中文元中文动中文"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 7870.679,
+      "run_steps": 0
+    },
+    {
+      "id": "V010",
+      "answer_run": 2,
+      "steps": 768,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "方元的中元的中元的中方元个方元个方元中文可以这方"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "中文元素批元的中文元以这方元个方元中，元中，元中"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "中元的中元的中元成一元的中文可以元的中文元个文元"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 4990.361,
+      "run_steps": 6
+    },
+    {
+      "id": "V011",
+      "answer_run": 2,
+      "steps": 570,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 58,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "方元的中元的中元的中元的中可以元可以幂"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "方元的中文元个文元个文元个文元中文元中文元中文元"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "中文元个文元个文元中文元中文元中文元中文元中文元"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 6028.228,
+      "run_steps": 18
+    },
+    {
+      "id": "V012",
+      "answer_run": 1,
+      "steps": 768,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "文可以元的中元的中文元个文元个方元中文可以这文元"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "全中文元以这文元个文元个文元个文元个文元中文元中"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "兏以案力这个元的中文元中是以元的以元的以元的以元"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 5660.437,
+      "run_steps": 0
+    },
+    {
+      "id": "V013",
+      "answer_run": 1,
+      "steps": 768,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "方元的中元的中可以元的中可以元的中文可以元的中文"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "文元的中元的中元的中文元个方元个文可以这文元中，"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "兏以案力这个元的中文元中是以力桀这个元的中文元中"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 3818.464,
+      "run_steps": 0
+    },
+    {
+      "id": "V014",
+      "answer_run": 1,
+      "steps": 573,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 61,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "方元的中元的中可以元的中可以元的中文兏。"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "方元的中元的中可以元的中元的中文兏个文兏个文兏个"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "关习文元中文元中文元中文元中文元中文元中文元中文"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 4466.089,
+      "run_steps": 0
+    },
+    {
+      "id": "V015",
+      "answer_run": 1,
+      "steps": 768,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "方元的中元的中元的中元的中文可以元的中文兏以力文"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "中文元中文元个文元个文元个文元个文元个文元中文元"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "方元的们元的以元的以元的中元是中元是个元取俛文可"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 5178.97,
+      "run_steps": 0
+    },
+    {
+      "id": "V016",
+      "answer_run": 2,
+      "steps": 768,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "方元的中元的中元的中可以元的中文可以元的中文兏以"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "元的中文元个文元个文元个文元个文元个文元个文元个"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "元以动的以元的以元的以元的以元的以元的伌元是个元"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 5886.633,
+      "run_steps": 6
+    },
+    {
+      "id": "V017",
+      "answer_run": 1,
+      "steps": 768,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "方元的中元的中元的中元的中元的中可以元的中文可以"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "中文元中文元个文元个文元中，并中文元中，元中，元"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "关也是元个文元个文元中文元中文元中是以元的以元是"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 4012.449,
+      "run_steps": 0
+    },
+    {
+      "id": "V018",
+      "answer_run": 1,
+      "steps": 768,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "方元的中元的中元的中可以行元个文可以元的中文可以"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "文元的中文元个方元个文可以这桨分以行元的中，元中"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "中文可以元的习文可以这案个元的中方元个方元中，元"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 4553.94,
+      "run_steps": 0
+    },
+    {
+      "id": "V019",
+      "answer_run": 1,
+      "steps": 768,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "方元的中元的中元的中元的中元的中文可以元的中方元"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "关方是个元的个元的个元的中文可以这案个元的中，元"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "中文元中文元中文元中文元中文元中文元中文元中文元"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 3869.526,
+      "run_steps": 0
+    },
+    {
+      "id": "V020",
+      "answer_run": 1,
+      "steps": 768,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "方元的中元硌中可以行元中文可以元的中文可以元的中"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "文可以题元个文元的中文元个文元个文元个文元中，元"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "关么文可以文元个文元个文元中文元中文元中文元中是"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 4543.381,
+      "run_steps": 0
+    },
+    {
+      "id": "V021",
+      "answer_run": 1,
+      "steps": 768,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "方元的中元的中元的中可以行元中文可以元的中文可以"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "文可以方元的中文元中文可以元的中文元中文元中文元"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "以元的以元的以元的以元的以元的以元的以元的方兏了"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 4828.846,
+      "run_steps": 0
+    },
+    {
+      "id": "V022",
+      "answer_run": 2,
+      "steps": 768,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "我中元的中文可以元的中文可以元的中文兏，中文可以"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "文元的中文元个文元个文元中文元中文元中文元中文元"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "文可以元的中元的中如元习是元以力行中文元个文元个"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 3996.041,
+      "run_steps": 6
+    },
+    {
+      "id": "V023",
+      "answer_run": 1,
+      "steps": 768,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "方有元的中元的中可以元的中可以元的中文可以元的中"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "文元的中元的中文元个文元个文元个文元个文元中，元"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "元以力行中文元的中文元中文可以元的以元的以元的以"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 4825.407,
+      "run_steps": 0
+    },
+    {
+      "id": "V024",
+      "answer_run": 2,
+      "steps": 768,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "方是中元的中元的中可以元的中文可以元的中文可以元"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "中文元的中如元习文元个文元个文元个文元个文元个文"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "关习是以元的中元元中是元中文可以元的中文元中文元"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 3494.548,
+      "run_steps": 6
+    }
+  ],
+  "started_utc": "2026-09-29T15:17:46Z"
+}
