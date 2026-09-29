@@ -1293,8 +1293,13 @@ v1 那几档没这几条字段是**字段不存在**，不是算出了 0——�
 读数件路径 `reports/taiji_a30_ding3_stop_target_pilot_100g3x3e_alignment_masked_20260929.json`。
 下一轮只读这一份：**胜出比例保持两位数档**（n=30 是 26/30）⇒ 本条结论升到决策级，
 丁-3 的"目标编码对齐"配方带着决策级证据进 owner 那笔账；**若塌回 0** ⇒ §2aa 的 26/30 降级为"小样本偶然"，
-照原样记 `not_resolved`，不许挑好看的那份报。第二枚基座（出厂 `seed_corpus.pt`，只读＋sha 守卫）**待本档判读后再起**——
-塌 0 则不起（没有需要泛化的结论）。
+照原样记 `not_resolved`，不许挑好看的那份报。
+**第二枚基座已同批并行起跑（修订）**：原注记写"待本档判读后再起"，起跑前经冒烟（出厂基座 `seed_corpus.pt`，2 组×1 epoch，
+`output/tmp_a30_smoke/smoke_ding3_2g3x1e_alignment_masked_seedcorpus.json`，九条守卫全真、sha 未变、方向同且更强：
+`p_boundary` 中位 0.00413 对 current 0.00114、名次 13 对 35）确认可跑，且机器 24 逻辑核只被主档占约 8.5 核——
+串行要多等一整档时辰而并行无实质争抢，故改为并行（同判据 `d0b3ef56` 未改）：
+读数件 `reports/taiji_a30_ding3_stop_target_pilot_100g3x3e_alignment_masked_seedcorpus_20260929.json`。
+判读分支不变：主档塌 0 ⇒ 两档一并照原样记 `not_resolved`（第二档读数照样如实入库，不许删）；主档成立 ⇒ 第二档回答"是否泛化到出厂基座"。
 
 ## 6. 交接（本线程预算用尽时的下一步，命令都可直接跑）
 

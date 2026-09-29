@@ -121,7 +121,9 @@
 读数件 `reports/taiji_a30_ding3_stop_target_pilot_100g3x3e_alignment_masked_20260929.json`——判读分支写死在
 [PLAN-A-30 §2aa](../reference/PLAN-A-30_surface_repetition_localization_20260928.md)：
 保持胜出 ⇒ 丁-3 的"目标编码对齐"带决策级证据进 owner 那笔账；塌 0 ⇒ 26/30 降级为小样本偶然。
-生成面验证（下一步①）与产品自学习表达仍等 `DEBT-G13` 转发落地（owner 第一笔）；第二枚基座（出厂 `seed_corpus.pt`）待本档判读后定。
+**第二枚基座（出厂 `seed_corpus.pt`）经冒烟后已同批并行起跑**（机器 24 逻辑核有余量；同判据；读数件
+`…_100g3x3e_alignment_masked_seedcorpus_20260929.json`；主档塌 0 则两档一并照原样记 `not_resolved`）。
+生成面验证（下一步①）与产品自学习表达仍等 `DEBT-G13` 转发落地（owner 第一笔）。
 
 **队首（2026-09-29 rev49：把"自我污染"拆成两条通道，把"停不下来"最后一个便宜解释否证；剩下的两笔都要签字）**——
 ① 五臂 2×2（32 题 × 3 轮，挂回路 seed-A）按**先于数写下的裁定表**命中"两组都成立"⇒ `learn=True` 的权重回写
