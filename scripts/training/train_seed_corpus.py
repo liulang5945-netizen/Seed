@@ -87,6 +87,7 @@ def iter_corpus_symbols(
     paths: Sequence[Path | str],
     *,
     boundary: int = TaijiConfig().boundary_symbol,
+    end_boundary_after_newline: bool = False,
 ) -> Iterator[int]:
     """Stream every corpus document as boundary-separated raw UTF-8 bytes.
 
@@ -94,11 +95,20 @@ def iter_corpus_symbols(
     the document's UTF-8 bytes.  The dialogue structure already lives in the
     text (问：/答： markers), so no tokenizer and no structural re-encoding is
     needed -- the model sees exactly the bytes a reader would see.
+
+    ``end_boundary_after_newline``（A30 §2aa 目标编码对齐，PLAN-A-30 §2z/§2aa）：
+    每篇正文之后再补一个换行 ``0x0A``，让"本篇结束"的边界符号落在**模型已经会预测
+    换行的那个位置之后**（§2z：真结束位第一位 66/120=55% 是 ``\\n``）。§2aa/决策级
+    两档（n=30：26/30；出厂基座 n=300：263/300）证明这一落点让边界符在结束位上
+    从"从不胜出"变为绝大多数胜出。**函数级默认 False**（archive 仪器与旧配方复现
+    逐位不变）；主线配方在 CLI 层默认开（2026-09-29 owner 条件授权，§7-3）。
     """
 
     for text in iter_native_documents(paths):
         yield boundary
         yield from text.encode("utf-8")
+        if end_boundary_after_newline:
+            yield 0x0A
 
 
 def patch_envelope_config_flags(envelope: dict[str, Any], flags: dict[str, bool]) -> int:
@@ -155,6 +165,7 @@ def run_training(
     readout: str = "action",
     device: str | torch.device = "cpu",
     keep_history: Path | str | None = None,
+    end_boundary_after_newline: bool = False,
 ) -> dict[str, float]:
     """Stream the corpus through ``Seed.observe`` with periodic persistence.
 
@@ -222,7 +233,12 @@ def run_training(
             model.checkpoint(),
             tick=ticks,
             corpus_fingerprint=fingerprint,
-            extra={"trainer": "train_seed_corpus"},
+            extra={
+                "trainer": "train_seed_corpus",
+                # A30 §2aa：喂入形状（结束边界是否落在换行之后）随档登记——
+                # 配方可从档里查出来，不靠外部记录。
+                "end_boundary_after_newline": bool(end_boundary_after_newline),
+            },
         )
         atomic_save(envelope, checkpoint_path)
         # 2026-09-23：**保号存档**。此前 `--checkpoint-every` 反复覆盖同一个文件，
@@ -260,7 +276,9 @@ def run_training(
         observe_kwargs["learn_motor"] = False
 
     for epoch in range(epochs):  # noqa: B007 — epoch 被 _flush 闭包引用（进度日志）
-        for symbol in iter_corpus_symbols(corpus_paths, boundary=boundary):
+        for symbol in iter_corpus_symbols(
+            corpus_paths, boundary=boundary, end_boundary_after_newline=end_boundary_after_newline
+        ):
             step = model.observe(symbol, **observe_kwargs)
             ticks += 1
             if step.prior_prediction is not None:
@@ -334,7 +352,7 @@ def default_output_paths(*, smoke: bool, project_root: Path = PROJECT_ROOT) -> t
     )
 
 
-def main() -> None:
+def _build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--corpus",
@@ -438,10 +456,23 @@ def main() -> None:
         help="关掉位置输入（P0 对照臂/旧配方复现用）。",
     )
     parser.add_argument(
+        "--no-end-boundary-after-newline",
+        dest="end_boundary_after_newline",
+        action="store_false",
+        help="关掉'每篇正文后补一个换行再落结束边界'（A30 §2aa 目标编码对齐——把结束目标"
+        "放到模型已会预测的换行之后，决策级两档 26/30 与 263/300 对对照 0）。"
+        "2026-09-29 owner 条件授权起为主线配方默认；本旗标是旧形状复现的逃生口。",
+    )
+    parser.add_argument(
         "--smoke",
         action="store_true",
         help="tiny default config and budget for a fast end-to-end run",
     )
+    return parser
+
+
+def main() -> None:
+    parser = _build_parser()
     args = parser.parse_args()
 
     #: 响亮失败而不是静默空转：位置输入挂在 F1 预测读出上，`action` 档根本不走那条链，
@@ -534,6 +565,7 @@ def main() -> None:
         readout=args.readout,
         device=args.device,
         keep_history=history_dir,
+        end_boundary_after_newline=bool(args.end_boundary_after_newline),
     )
     print(json.dumps(summary, ensure_ascii=False))
 
