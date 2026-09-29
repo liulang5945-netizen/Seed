@@ -56,6 +56,20 @@ DEFAULT_CORPUS = PROJECT_ROOT / "data" / "simple_zh" / "dialogue_extended_clean.
 ARM_SETS = {
     "shape": ("granularity", "current"),
     "all": ("granularity", "sparse", "current"),
+    #: **对齐臂（§2z 的 ⑤a）**：`after_newline` 与 `current` 吃同样的正文，唯一差别是
+    #: 收尾边界符落在**哪一个字节之后**——`after_newline` 先补一个换行再收尾，
+    #: 也就是把"结束目标"放到**模型自己已经会预测的那格**（§2z：真结束位第一位是 `\n`，66/120＝55%）。
+    #: 这一档的**测量面也必须带那个换行**（`prefix_chunks(..., trailing_newline=True)`），
+    #: 否则两臂量的不是同一个位置。判据：`after_newline ≥ current + 3` 个胜出。
+    "alignment": ("granularity", "after_newline", "current"),
+}
+#: `alignment` 档里"胜出数能否离开 0"这条判据用在 **after_newline 对 current** 这一对上
+#: （granularity 留在场里是为了让 shape 那两条旧守卫继续可核，不作为本档的主判据）。
+VERDICT_PAIRS = {
+    "shape": ("granularity", "current"),
+    "all": ("granularity", "current"),
+    "alignment": ("after_newline", "current"),
+    "density": ("granularity", "sparse"),
 }
 
 
@@ -99,10 +113,14 @@ def read_groups(path: Path, *, groups: int, exchanges: int) -> dict[str, Any]:
     }
 
 
-def prefix_chunks(groups: list[list[bytes]], boundary: int) -> list[list[int]]:
+def prefix_chunks(
+    groups: list[list[bytes]], boundary: int, *, trailing_newline: bool = False
+) -> list[list[int]]:
     """每组会话展开成 k 条"截到第 j 答末尾"的前缀流（`audit` 的输入形状：`[boundary, *正文]`）。
 
     这样 `audit` 的 `end` 桶里每一格都恰好是"一答刚说完"的那个位置——也就是两臂唯一差别所在。
+    `trailing_newline=True` 是给**对齐臂**（§2z 的 ⑤a）用的：每格再带一个换行，于是"下一步该是边界符"
+    这一格正好落在 §2z 量到的位置上（那里模型的第一位就是 `\n`，66/120）。两臂量的是同一批位置。
     """
 
     chunks: list[list[int]] = []
@@ -110,7 +128,10 @@ def prefix_chunks(groups: list[list[bytes]], boundary: int) -> list[list[int]]:
         joined: list[int] = []
         for exchange in group:
             joined = [*joined, *exchange]
-            chunks.append([boundary, *joined])
+            if trailing_newline:
+                chunks.append([boundary, *joined, 0x0A])
+            else:
+                chunks.append([boundary, *joined])
     return chunks
 
 
@@ -139,6 +160,12 @@ def train_arm(runtime: Any, groups: list[list[bytes]], *, arm: str, epochs: int)
             last = len(group) - 1
             if arm == "current":
                 feeds = [(exchange, {"include_boundary": True}, 2) for exchange in group]
+            elif arm == "after_newline":
+                #: 正文多补一个换行，但 `trained_text_bytes` 仍按**原正文**计——配对口径是
+                #: "同样的正文，结束目标放在不同字节之后"，多出来的换行是治疗的一部分不是噪声。
+                feeds = [
+                    (exchange + bytes([0x0A]), {"include_boundary": True}, 2) for exchange in group
+                ]
             elif arm == "sparse":
                 #: **密度臂**：与 `granularity` 同样的字节、同样的 episode 分组与续喂方式，
                 #: 但**只在最后一答**收尾一个边界符 ⇒ 每组的目标数从 k 降到 1（k＝`exchanges_per_group`）。
@@ -179,7 +206,9 @@ def train_arm(runtime: Any, groups: list[list[bytes]], *, arm: str, epochs: int)
                 accuracy_sum += float(result.get("online_accuracy", 0.0)) * max(1, count)
                 surprise_sum += float(result.get("mean_surprise", 0.0)) * max(1, count)
                 symbols += len(exchange) + edges
-                text_bytes += len(exchange)
+                #: `trained_text_bytes` 的口径＝**原正文**字节数（`after_newline` 多补的那个换行
+                #: 是治疗手段的一部分，不算进"两边吃同样的正文"这条配对证据里）。
+                text_bytes += len(exchange) - (1 if arm == "after_newline" else 0)
                 #: `boundary_targets` 数的是**真带收尾边界的目标数**，不是喂入次数。
                 #: v1 那份件里这一列写成了喂入次数（对 `granularity`／`current` 两臂恰好同值＝180，
                 #: 所以 §2x 引的 180 不用改），但加进 `sparse` 臂之后它会把 60 报成 180——
@@ -266,7 +295,9 @@ def main() -> int:
 
     boundary = int(TaijiConfig().boundary_symbol)
     data = read_groups(corpus, groups=args.groups, exchanges=args.exchanges)
-    chunks = prefix_chunks(data["held_out"], boundary)
+    chunks = prefix_chunks(
+        data["held_out"], boundary, trailing_newline=(args.arm_set == "alignment")
+    )
     expected_end_positions = args.groups * args.exchanges
 
     from api.seed_runtime import SeedRuntime
@@ -323,6 +354,31 @@ def main() -> int:
             if g_end["boundary_is_argmax_count"] >= s_end["boundary_is_argmax_count"] + 3
             else "not_resolved（密度两臂差 <3，或都不过 3 格）"
         )
+    #: **对齐判读（§2z 的 ⑤a，本档的主判据）**：`after_newline`（结束目标放在模型已会预测的换行之后）
+    #: 对 `current`（今天的位置：放在答案最后一个字之后）。测量面两臂相同，都带那个换行。
+    alignment_verdict = None
+    delta_alignment = None
+    if "after_newline" in by_arm:
+        a_end = by_arm["after_newline"]["end"]
+        c_end = by_arm["current"]["end"]
+        delta_alignment = {
+            "end_argmax_count": a_end["boundary_is_argmax_count"]
+            - c_end["boundary_is_argmax_count"],
+            "end_rank_median": round(
+                (c_end["boundary_rank"]["median"] or 0) - (a_end["boundary_rank"]["median"] or 0), 3
+            ),
+            "end_p_boundary_median": round(
+                (a_end["p_boundary"]["median"] or 0) - (c_end["p_boundary"]["median"] or 0), 6
+            ),
+            "end_p_argmax_median_after_newline": (
+                a_end["p_argmax"]["median"] if "p_argmax" in a_end else None
+            ),
+        }
+        alignment_verdict = (
+            "对齐成立（把结束目标挪到换行之后，边界符在结束位上的胜出数比今天的位置多 ≥3）"
+            if a_end["boundary_is_argmax_count"] >= c_end["boundary_is_argmax_count"] + 3
+            else "not_resolved（对齐两臂胜出数差 <3，或都不过 3 格）"
+        )
     report = {
         "format": "taiji-a30-ding3-stop-target-pilot-v1",
         "prereg": "PLAN-A-30 §3 丁-3 ＋本件 docstring 的判读线（先于数写下）",
@@ -366,6 +422,8 @@ def main() -> int:
         "arm_set": args.arm_set,
         "density_verdict": density_verdict,
         "delta_density": delta_density,
+        "alignment_verdict": alignment_verdict,
+        "delta_alignment": delta_alignment,
         "facade_gap": gap,
         "instrument_guard": {
             "base_sha256_unchanged": _sha256(checkpoint) == sha_before,
