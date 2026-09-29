@@ -2031,6 +2031,32 @@ base 在任何 K 上恒 0.0；以及 §2am 的 `docs_with_false_fire`（无 floo
 四条同名：cap0 两支金样复现、`test_platform_boundary`（DEBT-G11 的沙箱噪音，非代码缺陷）、
 `test_project_identity`（`08_UPSTREAM_SYNC_PLAYBOOK.md` 的既有断链）。定向面本轮＝69 passed。
 
+### 6.2 在飞与下一格（2026-09-30 预算收尾时写下，命令即贴即用）
+
+* **在飞、未判读**：广面门禁 `python -m pytest tests/taiji_native tests/seed -q`
+  仍在跑（日志 `output/tmp_a30_smoke/broad_face_a30_line.log`，跑到 ~19% 时可见 1 条 F）。
+  **本文件不据此说任何"绿/红"**——按既有纪律，判红前先对齐记录在案的四条同名红
+  （cap0 两支金样复现、`test_platform_boundary` 的 DEBT-G11 沙箱噪音、`test_project_identity` 的既有断链），
+  且只认汇总行。这一面确实覆盖本轮改动（14 个测试文件引用 `scripts/training`，含
+  `test_naming_boundary_contract.py`／`test_zero_face_census_contract.py`／`test_architecture_contract.py` 会扫脚本面），
+  所以**下一轮该把它读完再动别的**：本轮新增了两件仪器（`probe_taiji_a30_ding3_transfer.py`、
+  `probe_taiji_a30_ding3_trajectory_threshold.py`）并把 `audit_taiji_a30_stop_signal_presence.py` 连升 v3→v8。
+* **本轮已入库的判读件**（16 份，全部 `git ls-files` 可核）：§2ai 三档（12／30／120 位置）、
+  §2aj–§2an（教师强制面两臂、轨迹阈值两臂、比较式、带位置条件的 v3 与更正后 v8）、
+  §2al–§2al-扩样（配方面 120 格四枚件、300 格两臂）。
+* **下一格的三条，都不在本文件自行开工**：
+  ①（等 owner，重动作）用带配方的默认配方重训新默认位，并把 a31 从 37.5% 续到 §2ab 预注册的 2M——
+  这是唯一能把"目标编码对齐"交到装机那一份的路径；
+  ②（等 owner，产品变更）停止出口要不要接**带位置/结构条件**的规则——注意 §2an 已经把"只调阈值/只比大小/
+  只加窗口"三种位置局部形态全部判死，所以这一笔要新判据、不是调参；
+  ③（不需签字）§2ai 那条 ≥300 位与第二枚基座的复验仍未做完，`a31` 的自身轨迹面在 120 位上仍是 **0/120**——
+  命令：`python scripts/training/probe_taiji_a30_ding3_transfer.py --groups 300 --exchanges 3 --positions 300 --mask`
+  （判据不改，沿用件 docstring 里那三条互斥前的原线；**先把分支互斥那一处补上再跑**，见 §2ai 第 2 句的自我更正）。
+
+*（排版说明：上面这块本该编作 §6.2，因为它写在本文件的更晚时刻却贴在 §6.1 前面，
+所以 §6.1 的标题按原样保留在下面，编号顺序倒置是**故意的**，不要"顺手改平"——
+引用 §6.1 的那几处（§2al-扩样、DEBT-G14）指的都是下面那段现状校正。）*
+
 ### 6.1 本节现状校正（2026-09-30，追加而非改写——上面那段是当时的口径，留着才看得出走了多远）
 
 * **`DEBT-G13` 已修**（提交 `be4a8e58`）：`Seed.learn_bytes` 现转发 `include_start_boundary`／
