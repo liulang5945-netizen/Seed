@@ -1,5 +1,6 @@
 /** Historical generated-plugin cards remain readable after their tool APIs are removed. */
 import { readFile } from 'node:fs/promises'
+import { basename } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import type { Browser, Page } from 'playwright'
 import { chromium } from 'playwright'
@@ -30,7 +31,13 @@ describe.skipIf(MODE === 'record')('web e2e: historical Cordis cards', () => {
     tripwire = watchConsole(page)
     await page.goto(scaffold.authenticatedUrl, { waitUntil: 'load' })
     await page.locator('[role="treeitem"]').first().click()
-    await page.locator('[role="treeitem"]').nth(1).click()
+    // Two group rows precede the Session row (provisioned default Workspace and "Ungrouped"),
+    // so open the group and pick the row by its title instead of a position index.
+    const ungrouped = page.getByRole('treeitem', { name: /Ungrouped/u })
+    if (await ungrouped.getAttribute('aria-expanded') !== 'true') await ungrouped.click()
+    const sessionRow = page.getByRole('treeitem', { name: new RegExp(basename(scaffold.workspaceCwd), 'u') })
+    await sessionRow.waitFor({ timeout: 15_000 })
+    await sessionRow.click()
   }, 120_000)
 
   afterAll(async () => {
