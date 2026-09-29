@@ -34,10 +34,12 @@ describe.skipIf(MODE === 'record')('web e2e: compact Tool details', () => {
     await page.goto(scaffold.authenticatedUrl, { waitUntil: 'load' })
     await page.waitForSelector('[class*="frame"]', { timeout: 30_000 })
 
-    const groupRow = page.locator('[role="treeitem"]').first()
-    await groupRow.waitFor({ timeout: 15_000 })
-    await groupRow.click()
-    const sessionRow = page.locator('[role="treeitem"]').nth(1)
+    // Startup opens no Session, so the tree's first rows are both Workspace groups:
+    // expand them, then select the seeded Session by its rendered title (a seeded
+    // blank Session is titled with its Home directory name), never by row position.
+    for (const group of await page.getByRole('treeitem', { expanded: false }).all()) await group.click()
+    const seedTitle = scaffold.workspaceCwd.split(/[\\/]+/u).pop() ?? ''
+    const sessionRow = page.getByRole('treeitem', { name: seedTitle })
     await sessionRow.waitFor({ timeout: 10_000 })
     await sessionRow.click()
     const skillRow = page.locator('[data-tool="create_goal"]')
