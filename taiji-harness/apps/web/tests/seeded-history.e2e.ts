@@ -320,12 +320,20 @@ describe('web e2e: seeded history renders through cold resume', () => {
 
   it.skipIf(MODE === 'record')('lists the seeded session cold and renders its history from the log', async () => {
     onTestFailed(() => saveFailureShot(page, 'web-e2e-seeded-history'))
-    // The sidebar tree collapses workspace groups by default: click the group
+    // The sidebar collapses workspace groups by default: click the group
     // row (treeitem 0) to expand, then the revealed session row.
-    const groupRow = page.locator('[role="treeitem"]').first()
-    await groupRow.waitFor({ timeout: 15_000 })
-    await groupRow.click()
-    const sessionRow = page.locator('[role="treeitem"]').nth(1)
+    const chip = page.getByRole('button', { name: /Choose workspace|选择工作区/u })
+    if (await chip.waitFor({ state: 'visible', timeout: 5_000 }).then(() => true, () => false)) {
+      await chip.click()
+      await page.getByRole('menuitem', { name: /dsh-web-e2e-ws-|workspace/u }).first().click()
+      await page.locator('[data-composer-input][contenteditable="true"]').waitFor({ timeout: 15_000 })
+    }
+    for (const group of await page.getByRole('treeitem', { expanded: false }).all()) {
+      await group.click()
+    }
+    const sessionRow = page.locator('[role="treeitem"]')
+      .filter({ has: page.locator('button[aria-label^="Session actions for "]') })
+      .first()
     await sessionRow.waitFor({ timeout: 10_000 })
     await sessionRow.click()
     // Settled barrier for history: the recorded final assistant text renders.
