@@ -1551,7 +1551,10 @@ function normalizeAria(snapshot: string, workspaceCwd: string, age: boolean): st
   // POSIX-only split left the bare basename untokenized in the banner row
   // (stats-paged-history diff 2026-09-27). POSIX behavior is byte-identical.
   const base = workspaceCwd.split(/[/\\]/u).pop()!
+  // Aria rows escape backslashes, so the separator-native path alone never matches on Windows.
+  const escapedWorkspaceCwd = workspaceCwd.replace(/\\/gu, '\\\\')
   return (age ? snapshot.replace(ARIA_AGE, '{{age}}') : snapshot)
+    .split(escapedWorkspaceCwd).join('{{cwd}}')
     .split(workspaceCwd).join('{{cwd}}')
     .split(base).join('{{workspace}}')
     .replace(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/gi, '{{uuid}}')

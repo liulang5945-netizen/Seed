@@ -816,3 +816,9 @@ ode_modulesi…`＝**本仓已登记的 Windows 符号链接权限族**（与 0
 
 **㊵-13（整面收口：身份表修复后的新总数，㊵-12 的半批读数作废为过程读数）**：三批同一 144 清单、同一次新鲜构建（`rerun-mtime-start.txt`＝`2026-09-29 13:32:23`，批结束 `13:58:12`，`.dsh-build/client-build-environment.json` 起止同值＝批次有效），汇总行原文：批 0 `Test Files 19 failed | 27 passed (47)`；批 1 `21 failed | 27 passed | 1 skipped (49)`；批 2 `10 failed | 34 passed | 3 skipped (48)`（`Duration 870.74s`） ⇒ **合计 `Test Files 50 failed｜88 passed｜4 skipped (144)`**。对照修前基线 **65 红／144** ⇒ **净减 15 个红文件**；批 2 只有 10 红／48（我上一格看到的"10 文件里 8 红"是过程切片，不是批 2 读数，已作废）。**这条净数仍只作趋势、不许单独引用**：结构族 `must have system-prompt source` 在三批逐批为 0（装载期整档红确实被免凭据修掉），而被它掩盖的 lane 现在跑到自身断言后暴露别的红 ⇒ "修一处不会只减不增"，报数按族：仓库面＝H8 三金样＋H10 处方未落码＋H11 未定因＋`session-archive-active` 结果序列；本机面＝语料正文与 `persisted replay` 自校验（需凭据）；环境面＝`spawn pnpm ENOENT`／`remote.localhost`／EPERM／负载敏感超时。下一格分账对象＝`seeded-history`／`workspace-management`／`turn-tail-actions`（三者不在既有仓库面清单内，仍未归因）。
 
+
+**㊵-14（H10 处方落地并验成，H8 按 (甲) 重录完成）**：`normalizeAria` 现在先替转义形再替原生形（`apps/web/tests/scaffold.ts`，加一行注释说明 aria 行会转义反斜杠）。验收＝**金样一字未动**的 `reference-composer` 直接以 replay 模式 `Tests 6 passed (6)`（预注册判据成立，处方无需回退）。
+
+**㊵-15（H8 三条金样已重录，diff 形状只有"侧栏组显式成行"）**：`DSH_SNAPSHOT=refresh` 跑 `sidebar-subagent-activity` 与 `github-ready-review` ⇒ `Test Files 2 passed`；`git diff --stat` ＝ **3 files changed, 3 insertions(+), 0 deletions**，每份只多一行 `- treeitem "Default workspace"`，符合 ㊵-9 预注册的"只许折叠/行序差异"。复验：replay 模式 2/2 绿。回归探针：本轮**未**重录的两条 aria lane（`sessionless-header`＋`sidebar-right`）`Tests 19 passed (19)` ⇒ 新增的第一次替换对 POSIX 路径是无操作，未改动 Linux 形金样的匹配。仪器基线：`oxlint` 0 warning／7 error（不变），`tsc -b tsconfig.host.json` rc=0。
+
+**欠账（如实登记，下一格第一件）**：`scaffold.ts` 这次改动**还没有 Agent Note**（仓规要求同批）。下一格先补 `aria 转义双形` 的中英三件套＋`verify-translation-pairing --write`，再复跑整面批 2 以更新 50 红的构成（H8 三条应脱红，H10 一条已脱红 ⇒ 预期 50→46 左右，但必须实测）。

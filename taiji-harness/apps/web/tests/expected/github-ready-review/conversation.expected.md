@@ -5,6 +5,7 @@
     - button "Session actions for Review deepseek-ai/deepseek-harness#314"
     - button "Archive session"
     - button "Pin session"
+  - treeitem "Default workspace"
 
 ---
 
