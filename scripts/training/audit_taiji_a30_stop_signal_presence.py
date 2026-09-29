@@ -169,6 +169,10 @@ def audit(runtime: Any, chunks: list[list[int]], boundary: int, mask: bool) -> d
             )
             rows[kind].append(
                 {
+                    #: 位置身份：阈值停止**能不能用**取决于"若在 τ 处收笔，那一笔落在正文的第几格"，
+                    #: 只看分离度会把"在答复 20% 处就误收"这种不可用的判成可用。加法字段，旧读数不受影响。
+                    "doc_index": int(doc_index),
+                    "position": int(position),
                     "p_boundary": round(vector[boundary], 8),
                     "boundary_rank": ranked.index(boundary) + 1,
                     "boundary_is_argmax": bool(vector[boundary] >= best - 1e-9),
@@ -227,18 +231,39 @@ def audit(runtime: Any, chunks: list[list[int]], boundary: int, mask: bool) -> d
         grid = [1e-4, 3e-4, 1e-3, 3e-3, 6e-3, 1e-2, 3e-2]
         ends = [row["p_boundary"] for row in rows["end"]]
         others = [row["p_boundary"] for row in rows["other"]]
+        #: "若在 τ 处收笔"这件事光看误率不够：一个分离度漂亮的阈值如果第一次误收就落在
+        #: 正文 20% 处，产品在语义上就废了。这两列把"砍在第几格"量出来（按文档长度归一化）。
+        other_by_doc: dict[int, list[tuple[int, float]]] = {}
+        for row in rows["other"]:
+            other_by_doc.setdefault(int(row["doc_index"]), []).append(
+                (int(row["position"]), float(row["p_boundary"]))
+            )
         out: list[dict[str, Any]] = []
         for threshold in grid:
             recall = sum(1 for value in ends if value >= threshold) / len(ends) if ends else None
             false_rate = (
                 sum(1 for value in others if value >= threshold) / len(others) if others else None
             )
+            fractions: list[float] = []
+            for doc_index, entries in other_by_doc.items():
+                fired = [position for position, value in entries if value >= threshold]
+                length = doc_lengths[doc_index] if doc_index < len(doc_lengths) else 0
+                if fired and length:
+                    fractions.append(min(fired) / length)
+            fractions.sort()
             out.append(
                 {
                     "threshold": threshold,
                     "true_stop_recall": round(recall, 4) if recall is not None else None,
                     "false_stop_rate_per_position": (
                         round(false_rate, 6) if false_rate is not None else None
+                    ),
+                    "docs_with_false_fire": len(fractions),
+                    "first_false_fire_fraction_of_doc_median": (
+                        round(fractions[len(fractions) // 2], 4) if fractions else None
+                    ),
+                    "first_false_fire_fraction_of_doc_min": (
+                        round(fractions[0], 4) if fractions else None
                     ),
                 }
             )
@@ -293,7 +318,17 @@ def main() -> int:
     result = audit(runtime, chunks, boundary, mask=args.mask)
 
     report = {
-        "format": "taiji-a30-stop-signal-presence-v3",
+        "format": "taiji-a30-stop-signal-presence-v4",
+        "format_note_v4": (
+            "v4 再加两处：每行带 `doc_index`/`position`（位置身份），阈值表带 `docs_with_false_fire` 与 "
+            "`first_false_fire_fraction_of_doc_{median,min}`（若在 τ 收笔，第一次误收落在正文第几格）。"
+            "`true_stop_recall` 与 `false_stop_rate_per_position` 两列的算法与语义**未动** "
+            "⇒ v2/v3/v4 的阈值表同格可比。加位置列的理由：只看误率会把「分离度漂亮但第一笔就砍在答复 20% 处」"
+            "的阈值当成可用。**同版修一处 v3 的崩点**：`docs_sha256` 原来对整条 chunk 取 `bytes()`，"
+            "而 chunk 首元素是边界符 256 ⇒ `ValueError: bytes must be in range(0, 256)`，"
+            "两枚件的 v3 读数因此一份都没落盘（这条例子在本件第 160 行的注释里写过，我自己踩了）。"
+            "现改成正文部分 `chunk[1:]` 的指纹——边界符是喂入约定、不是文档内容。"
+        ),
         "format_note": "v2 只在每格里**新增** `argmax_winners_top5`／`p_argmax`／`median_ratio_argmax_over_boundary` 三条与每行 `argmax_symbol`/`p_argmax`；旧字段语义与算法未动 ⇒ 与已入库的 v1 读数可直接同格比（v1 件里没有这几条，不是它们算出了 0）。v3 只再加一条 `docs_sha256`＝**实际吃进的那批文档字节的指纹**，用来把两枚检查点之间的配对机检起来（原来只能靠 `--docs` 参数相同来保证，那是口供不是检验）",
         "prereg": "plans/reference/PLAN-A-30_surface_repetition_localization_20260928.md §3 丁（零训练归属检验）",
         "question": "(B1) 停止信号没学到 还是 (B2) 学到了但在自身轨迹上失效",
@@ -303,7 +338,7 @@ def main() -> int:
         "documents": result["documents"],
         "selection": sample["selection"],
         "lines_read_to_fill_sample": sample["lines_read"],
-        "docs_sha256": hashlib.sha256(b"".join(bytes(chunk) for chunk in chunks)).hexdigest(),
+        "docs_sha256": hashlib.sha256(b"".join(bytes(chunk[1:]) for chunk in chunks)).hexdigest(),
         "generation_scope": "teacher_forced_on_corpus（不进模型自己的轨迹）",
         "decision_face": "utf8_masked_legal_set" if args.mask else "full_alphabet",
         "result": result,
