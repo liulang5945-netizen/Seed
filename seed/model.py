@@ -127,12 +127,18 @@ class Seed:
         *,
         epochs: int = 1,
         include_boundary: bool = True,
+        include_start_boundary: bool | None = None,
+        include_end_boundary: bool | None = None,
+        reset: bool = True,
         use_memory: bool = False,
     ) -> dict[str, float]:
         return self.substrate.learn_bytes(
             data,
             epochs=epochs,
             include_boundary=include_boundary,
+            include_start_boundary=include_start_boundary,
+            include_end_boundary=include_end_boundary,
+            reset=reset,
             use_memory=use_memory,
         )
 
