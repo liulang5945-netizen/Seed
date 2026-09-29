@@ -1354,6 +1354,37 @@ DEBT-G13 已开之后排为下一步①。主档（seed_beta，300 位）仍在�
 四条同名：cap0 两支金样复现、`test_platform_boundary`（DEBT-G11 的沙箱噪音，非代码缺陷）、
 `test_project_identity`（`08_UPSTREAM_SYNC_PLAYBOOK.md` 的既有断链）。定向面本轮＝69 passed。
 
+## 2ab. 丁-3 重训臂预注册（判据先于数冻结；2026-09-29 写下，发射在两档判读之后）
+
+**臂定义（唯一变量＝喂入形状）**：base＝`output/a26_p1/checkpoint.pt`（主线配方态：
+`--readout predictive --readout-position`，18M+2M 档）；配方＝`end_boundary_after_newline`
+（每篇正文后补一个 `0x0A` 再落结束边界，§2z/§2aa）；预算 `--max-symbols 2000000`（热启动续训，
+a26 实测 2.8M ticks≈80 分钟 ⇒ 本臂≈1 小时）；写靶 `output/a31_ding3_boundary/checkpoint.pt`
+（产品件绝不入列——加固守卫在）。命令全文：
+
+```
+python scripts/training/train_seed_corpus.py   --resume output/a26_p1/checkpoint.pt   --checkpoint output/a31_ding3_boundary/checkpoint.pt   --max-symbols 2000000 --readout predictive --readout-position
+```
+
+（`--readout predictive --readout-position` 已是默认，显式写出为免歧义；配方旗标默认开。）
+
+**判读线（先看规则，后看数；全部先于数写死）**：
+
+1. **教师强制面收口**：重训档在 §2aa 同款测量面（`prefix_chunks(trailing_newline=True)`、masked、
+   300 结束位、held-out 与训练语料同源不同段）上，end 桶 `boundary_is_argmax_count ≥ 150/300`。
+   对照＝base（a26_p1，结束位 0/400 类读数 §2w）。**这条量"配方装进主线后模型学了没有"**。
+2. **生成面收口（主判据＝能力提升判据）**：重训档在产品 `chat()` 出口（出厂装配＝挂回路＋惩罚 2.0＋
+   `utf8_strict`，DEBT-G13 已开）24 题档（§2f/§2i 同题面）上，"自然终止"（raw 生成长度 < max_length，
+   即生成环自己停了，而非吃满预算靠 marker 截断）≥ **6/24**。对照＝现状 0/24
+   （§2n：1024 预算 24/24 吃满；§2w：边界符从不胜出）。
+3. **不回退线**：F0 无掩码**切尾感知**整句可解码 ≥ 0.5（PLAN-A-26 主判据-1 同款线；a26_p1 同底
+   实测 1.000 ⇒ 实质是不回退）；v3 表层成句相对 a26_p1 同尺读数下降不超过 10。
+4. **诚实预期（照抄 §7-3 的天花板参照）**：普通位置贪心与语料一致仅 18.4%（§2j）——收口可能治好
+   "停不下来"，不承诺其它能力面同涨；若判据 2 过而判据 3 挂，如实写"用收口换了别的东西"，不许只报好的一半。
+
+**越界禁令**：判据 2 的 24 题面若样本不足判（边界情形 4–8 题），按 `not_resolved` 处理并扩面重测，
+不许在 24 题上反复挑子集；判据 1 不过 ⇒ 重训无效（照原样记），判据 2/3 不再测。
+
 ## 7. owner 裁定回执（2026-09-29，弹窗三项全批；执行状态随行更新）
 
 1. **回路出厂＝装，体积路取「接受 +8.2 MB 净增」——✅ 已执行（提交 `9303c37e`）**。
