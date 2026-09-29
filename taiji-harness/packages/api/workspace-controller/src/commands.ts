@@ -33,6 +33,32 @@ import type {
   WorkspaceValue,
 } from './types.ts'
 
+/**
+ * Run one registry call that can refuse because the Session is unknown or busy,
+ * translating those two failures to their wire codes. Any other error propagates
+ * unchanged so the caller can add its own case.
+ * @param sessionId - Session the request names, reused in every error payload.
+ * @param stopActivity - Whether running work is stopped before the mutation.
+ * @param run - registry mutation receiving the activity option.
+ */
+async function runWithSessionActivityErrors(
+  request: WorkspaceArchiveSessionRequest | WorkspaceDeleteSessionRequest,
+  stopActivity: boolean | undefined,
+  run: (options: { stopActivity?: boolean }) => Promise<unknown>,
+): Promise<void> {
+  try {
+    await run(stopActivity === true ? { stopActivity: true } : {})
+  } catch (error) {
+    if (error instanceof WorkspaceUnknownSessionError) {
+      throw new RemoteError('session/not-found', error.message, { sessionId: request.sessionId }, { cause: error })
+    }
+    if (error instanceof WorkspaceActiveSessionError) {
+      throw new RemoteError('workspace/session-active', error.message, { sessionId: request.sessionId, activity: error.activity }, { cause: error })
+    }
+    throw error
+  }
+}
+
 /** Implements Workspace mutations against the authoritative registry. */
 export class WorkspaceCommands {
   private operationTail = Promise.resolve()
@@ -163,25 +189,8 @@ export class WorkspaceCommands {
    * @returns the complete resulting archive set.
    */
   async archiveSession(request: WorkspaceArchiveSessionRequest): Promise<WorkspaceArchiveValue> {
-    try {
-      await this.ctx.workspaceRegistry.archiveSession(
-        request.sessionId,
-        request.stopActivity === true ? { stopActivity: true } : {},
-      )
-    } catch (error) {
-      if (error instanceof WorkspaceUnknownSessionError) {
-        throw new RemoteError('session/not-found', error.message, { sessionId: request.sessionId }, { cause: error })
-      }
-      if (error instanceof WorkspaceActiveSessionError) {
-        throw new RemoteError(
-          'workspace/session-active',
-          error.message,
-          { sessionId: request.sessionId, activity: error.activity },
-          { cause: error },
-        )
-      }
-      throw error
-    }
+    await runWithSessionActivityErrors(request, request.stopActivity,
+      options => this.ctx.workspaceRegistry.archiveSession(request.sessionId, options))
     return { archivedSessionIds: [...this.ctx.workspaceRegistry.archivedSessionIds] }
   }
 
@@ -207,22 +216,9 @@ export class WorkspaceCommands {
    */
   async deleteSession(request: WorkspaceDeleteSessionRequest): Promise<WorkspaceDeleteSessionValue> {
     try {
-      await this.ctx.workspaceRegistry.deleteSession(
-        request.sessionId,
-        request.stopActivity === true ? { stopActivity: true } : {},
-      )
+      await runWithSessionActivityErrors(request, request.stopActivity,
+        options => this.ctx.workspaceRegistry.deleteSession(request.sessionId, options))
     } catch (error) {
-      if (error instanceof WorkspaceUnknownSessionError) {
-        throw new RemoteError('session/not-found', error.message, { sessionId: request.sessionId }, { cause: error })
-      }
-      if (error instanceof WorkspaceActiveSessionError) {
-        throw new RemoteError(
-          'workspace/session-active',
-          error.message,
-          { sessionId: request.sessionId, activity: error.activity },
-          { cause: error },
-        )
-      }
       if (error instanceof WorkspaceOpenSessionError) {
         throw new RemoteError(
           'workspace/session-open',
