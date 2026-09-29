@@ -59,11 +59,19 @@ def test_the_recorded_path_is_the_product_default(manifest) -> None:
 
 
 def test_the_product_default_is_not_a_test_suite_artifact(manifest) -> None:
-    """默认入口不得再服务套件重初始化的产物——那正是 DEBT-I9 的正题。"""
+    """默认入口不得再服务套件重初始化的产物——那正是 DEBT-I9 的正题。
 
-    assert manifest["envelope_trainer"] != "api_seed_runtime"
-    assert manifest["envelope_trainer"] == "train_seed_corpus"
-    assert int(manifest["envelope_tick"]) > 0
+    2026-09-29 起默认是**裁定装配**（厂档＋seed-A 电路＋乙档零截，PLAN-A-30 §7-1）：
+    信封无自述 metadata 块 ⇒ 登记走构造链＋密封 sha；训练产物的来源登记完整保留在
+    factory_face 里，那条不变形。
+    """
+
+    assert manifest["provenance"] == "ruled_assembly_of_attested_factory_base_plus_seed_a_circuit"
+    assert manifest["envelope_trainer"] is None  # 字段不存在，登记如实写 null
+    factory = manifest["factory_face"]
+    assert factory["envelope_trainer"] != "api_seed_runtime"
+    assert factory["envelope_trainer"] == "train_seed_corpus"
+    assert int(factory["envelope_tick"]) > 0
 
 
 def test_the_default_checkpoint_still_matches_its_recorded_bytes(manifest) -> None:
@@ -84,7 +92,11 @@ def test_the_default_checkpoint_still_matches_its_recorded_bytes(manifest) -> No
 
 
 def test_the_envelope_claims_what_the_manifest_records(manifest) -> None:
-    """清单里那几个字段必须真是信封里的值，不是照抄上一版。"""
+    """清单里那几个字段必须真是信封里的值，不是照抄上一版。
+
+    运行时信封没有自述 metadata 块 ⇒ 默认档只核它**确实自述**的形状字段与回路在场；
+    metadata 级断言移到 factory_face（那份文件有完整自述，且 sha 在册）。
+    """
 
     target = REPO / manifest["path"]
     if not target.is_file():
@@ -92,10 +104,19 @@ def test_the_envelope_claims_what_the_manifest_records(manifest) -> None:
     import torch
 
     blob = torch.load(target, map_location="cpu", weights_only=True)
-    metadata = blob["metadata"]
-    assert metadata["trainer"] == manifest["envelope_trainer"]
-    assert int(metadata["tick"]) == int(manifest["envelope_tick"])
-    assert metadata["saved_at_utc"] == manifest["envelope_saved_at_utc"]
+    assert blob["format"] == manifest["envelope_format"]
+    assert blob["taiji"]["format"] == manifest["substrate_format"]
+    assert "copy_circuit" in blob["substrate"], "默认档必须带复制回路（裁定 §7-1）"
+
+    factory_target = REPO / manifest["factory_face"]["path"]
+    if not factory_target.is_file():
+        pytest.skip("no factory face on this machine")
+    factory_blob = torch.load(factory_target, map_location="cpu", weights_only=True)
+    metadata = factory_blob["metadata"]
+    factory = manifest["factory_face"]
+    assert metadata["trainer"] == factory["envelope_trainer"]
+    assert int(metadata["tick"]) == int(factory["envelope_tick"])
+    assert metadata["saved_at_utc"] == factory["envelope_saved_at_utc"]
     assert json.loads(metadata["corpus_fingerprint"])[0]["bytes"] == int(
         manifest["corpus_fingerprint"][0]["bytes"]
     )

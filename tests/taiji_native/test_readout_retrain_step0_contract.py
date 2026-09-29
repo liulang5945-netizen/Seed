@@ -40,7 +40,11 @@ LINEAGE_MANIFEST = REPO / "plans" / "manifests" / "p3b_all_fresh_manifest.json"
 #: The substrate the calibration must have been taken on.  Taken from the product constant rather
 #: than typed, so changing the default substrate turns this red instead of leaving a stale number
 #: in the contract.
-from api.seed_runtime import DEFAULT_CHECKPOINT as PRODUCT_DEFAULT  # noqa: E402
+#: 2026-09-29 更正（owner 裁定 PLAN-A-30 §7-1 把默认载入源换到带回路信封后本测试转红——那条红
+#: 正是本条设计想要的信号）：标定的对象是**训练基底**，锚定改点名出厂面
+#: ``FACTORY_CHECKPOINT``（seed_beta.pt，标定当时的产品默认、sha 在册不变）；
+#: 默认载入源换到裁定装配不改变"这份标定属于哪块基座"。
+from api.seed_runtime import FACTORY_CHECKPOINT as PRODUCT_DEFAULT  # noqa: E402
 
 
 def _load_module() -> Any:

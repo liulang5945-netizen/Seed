@@ -1,15 +1,24 @@
 {
   "format": "seed-product-default-checkpoint-provenance-v2",
-  "supersedes": "seed-product-default-checkpoint-provenance-v1 (recorded 2026-09-19 for checkpoints/seed_corpus.pt; that file is a test-suite re-initialisation product, envelope trainer=api_seed_runtime, tick=2)",
-  "path": "checkpoints/seed_beta.pt",
-  "sha256": "ad2a06465e0ef78c75aff7302a6f7a2ae11825d2f19361d9d65926006f3bf793",
-  "bytes": 4143542,
+  "supersedes": "v2 登记（2026-09-20）记的是 checkpoints/seed_beta.pt——那份登记全文保留在本件 factory_face 字段里，该文件仍在盘、仍是 FACTORY_CHECKPOINT（对照/复现逃生口）。2026-09-29 owner 裁定（PLAN-A-30 §7-1：回路随出厂基座装）把默认入口换到带复制回路的乙档信封，本件记新默认；两次换底都必须同时改本清单与 test_default_checkpoint_isolation_contract 的 PRODUCT_DEFAULT，否则守卫失明。",
+  "path": "checkpoints/seed_beta_with_circuit.pt",
+  "sha256": "f9343433d519084659926d0bdd689efef96c3bee02e79bc33f441fd177d8baa8",
+  "bytes": 12291435,
   "envelope_format": "seed-native-v1",
-  "substrate_format": "taiji-native-v8",
-  "envelope_tick": 16000000,
-  "envelope_trainer": "train_seed_corpus",
-  "envelope_saved_at_utc": "2026-08-24T02:23:26Z",
-  "file_mtime_local": "2026-08-24T10:23:26",
+  "substrate_format": "taiji-native-v1",
+  "envelope_tick": null,
+  "envelope_trainer": null,
+  "envelope_saved_at_utc": null,
+  "file_mtime_local": "2026-09-29",
+  "provenance": "ruled_assembly_of_attested_factory_base_plus_seed_a_circuit",
+  "provenance_evidence": [
+    "密封件 sha f9343433… 与 plans/reference/PLAN-A-29_shipped-base-size-empty-route-store_20260928.md §7 守卫-B 落盘件逐位相同（同一次跑把产品信封 87,919,979 → 12,291,435 B，读数件 reports/taiji_a29_post_truncation_product_face_v3_20260928.json）",
+    "构造＝score_taiji_r2_copy_surface_extension.build_circuit_carried_envelope：从 factory_face（sha ad2a0646…，其自身来源登记见 factory_face 字段）挂载 seed-A 电路 output/taiji_r2_copy_circuit_chat/judge/circuit-final.pt（出处 PLAN-A-28 §5），唯一写靶是 out_path",
+    "载入行为守卫 tests/taiji_native/test_a30_shipped_base_and_surface_gate.py：默认载入 ⇒ copy_circuit 挂载＋UTF-8 证据门开（A-25/A-28 的 restore 自动挂载路）＋门槛 armed",
+    "乙档零截存盘（taiji/identity_organ.py 的 to_payload/load_payload）经 260 张量逐位回装验证（PLAN-A-29 §7）"
+  ],
+  "provenance_limits": "运行时信封（model.checkpoint() 的 seed-native-v1 形状）没有自述 metadata 块（envelope_trainer/tick/saved_at 均为 null＝字段不存在，不是空值），本件的来源凭据因此不落在信封自述上，而落在：构造链（在册仪器＋只读受检基底＋唯一写靶）、密封 sha（A-29 §7 逐位核对）、载入行为守卫三件上。*.pt 不进 git（DEBT-I7）⇒ 守卫钉的是本机磁盘态；重建虽可由同一仪器完成，但 torch.save 元数据不逐位（重建件 12,287,435 B ≠ 密封件，2026-09-29 实测登记），故逐位权威＝密封件本身。",
+  "corpus_fingerprint_inherited_from_factory_face": true,
   "corpus_fingerprint": [
     {
       "name": "simple_zh_texts.jsonl",
@@ -21,35 +30,39 @@
     "bytes": 1394775610,
     "mtime_local": "2026-08-23 01:11",
     "matches_envelope_fingerprint": true,
-    "meaning": "语料文件仍在盘且字节数与信封自述逐位相等 ⇒ 来源登记的一致性证据多一枚独立核对点；不构成生成性凭据。"
+    "meaning": "派生装配不改语料；语料指纹继承厂档自述（见 factory_face）。语料文件仍在盘且字节数与自述逐位相等 ⇒ 一致性证据多一枚独立核对点；不构成生成性凭据。"
   },
   "profile": {
-    "region_sizes": [
-      256,
-      192,
-      128
-    ],
+    "region_sizes": [256, 192, 128],
     "memory_units": 384,
     "alphabet_size": 257
   },
-  "provenance": "m1_long_run_selfattested_plus_progress_stream",
-  "provenance_evidence": [
-    "envelope.metadata 自述 trainer=train_seed_corpus / tick=16000000 / saved_at_utc=2026-08-24T02:23:26Z / corpus_fingerprint=simple_zh_texts.jsonl(1,394,775,610 B)",
-    "reports/seed_beta_progress.jsonl 记有同一条长训的 tick 流（含 16,800,000 与 elapsed_seconds≈33,306），文件时间 2026-08-24 11:01，落在 16M 存档点之后",
-    "plans/archive/history/SEED_PUBLIC_BETA_ROADMAP.md 记有 2026-08-24 启动该长训的完整命令行（--resume/--checkpoint 均指 checkpoints/seed_beta.pt，--checkpoint-every 2000000）"
-  ],
-  "provenance_limits": [
-    "凭据是**信封自述 + 同期进度流 + 历史执行记录**三者互相吻合，不是可复算的训练日志摘要：日志 logs/long_train_20260824.log 已不在盘上，故'这份权重确实由那条命令产出'只能追认到三元组一致的程度。",
-    "tick=16,000,000 恰在 2,000,000 的存档边界上，与 --checkpoint-every 相符，但这仍是**一致性**证据而非**生成性**证据。",
-    "换底不构成任何语言能力主张：CAP 的语言维度须在新基座上重跑后按实测说话。"
-  ],
   "preflight_v0": {
-    "question": "产品默认 loader 不加任何进程内补丁能否加载这份 v8 旧格式训练态",
+    "question": "产品默认 loader 不加任何进程内补丁能否加载这份带回路乙档信封，且回路/证据门/门槛真的生效",
     "answer": "能",
-    "measured": "SeedRuntime.load 裸跑成功, tick=16000000, chat 返回 41 字符 str, 换题面输出改变; 装 relax_legacy_guard 补丁后读数逐位相同",
-    "meaning": "REQUIRED_CHAIN 里的 relax_legacy_guard 对本文件已是冗余（M2-2i 已把'旧格式缺 organ 载荷'的迁移落进 taiji/model.py 产品源码, 只放宽缺失、载荷在场仍走 lineage 校验）⇒ 换默认基座不需要把测试期 monkeypatch 搬进产品路径。",
-    "contract": "plans/reference/M5_DEFAULT_SUBSTRATE_SWITCH_CONTRACT_20260920.md"
+    "measured": "SeedRuntime.load() 裸跑成功 ⇒ copy_circuit 挂载、_copy_evidence_utf8_gate_override=True（A-28 在挂载点开的运行时覆写）、surface_gate_state=armed（随包 n 元工件在场）；厂档 FACTORY_CHECKPOINT 载入 ⇒ 无回路（出厂面）。守卫：tests/taiji_native/test_a30_shipped_base_and_surface_gate.py（9 条）＋定向回归 44 绿＋全量门禁 1815 绿。",
+    "meaning": "挂载与证据门走 A-25/A-28 已守卫的 restore 自动挂载路，无需把评测期的 enable_copy_circuit 搬进产品路径；REQUIRED_CHAIN 里的 relax_legacy_guard 对本装配同样是冗余（M2-2i 已把'旧格式缺 organ 载荷'的迁移落进 taiji/model.py 产品源码）⇒ 换默认基座不需要把测试期 monkeypatch 搬进产品路径。",
+    "contract": "plans/reference/PLAN-A-30_surface_repetition_localization_20260928.md"
   },
-  "why_recorded": "DEBT-I9 的两半都在此收：可检测性（sha 变了就有测试红）+ 来源（默认入口服务的模型是谁、由什么产出、凭据到哪一层）。v1 只能记 unknown，因为那份文件是套件产物；v2 记的是训练态，故本件同时把 limits 写死，防止'记下来了'被读成'官方可复算了'。",
-  "before_L3_delivery": "H 响应/内存阈值按 (设备,链路,checkpoint) 三元组绑定 ⇒ 换底后必须在新基座重采 5 次再冻结（见 plans/reference/M5_CAP_H_THRESHOLD_FREEZE_20260920.md §3）；CAP 全套须在新基座上重出。"
+  "why_recorded": "DEBT-I9 的两半都在此收：可检测性（sha 变了就有测试红）+ 来源（默认入口服务的模型是谁、由什么产出、凭据到哪一层）。2026-09-29 起默认是裁定装配（厂档＋seed-A 电路＋乙档零截），来源登记改走构造链＋密封 sha＋行为守卫，limits 写死防止'派生件'被读成'独立训练产物'。",
+  "before_L3_delivery": "H 响应/内存阈值按 (设备,链路,checkpoint) 三元组绑定 ⇒ 本默认变更后，凡要在新默认基座上引用 H/CAP 冻结阈值，必须先在新基座重采再冻结（见 plans/reference/M5_CAP_H_THRESHOLD_FREEZE_20260920.md §3）；引用出厂面（factory_face）的既有冻结读数不受影响（点名面即可）。",
+  "surface_gate_artifact": {
+    "path": "checkpoints/seed_surface_ngram.lzma",
+    "sha256": "4a40da9cdd7cc938af326d3e3b4d1055a220b37809a8650ef045e33a96300f17",
+    "bytes": 5764420,
+    "role": "A30 两条污染门槛的判据工件（well_formed 的 NLL 支路；判据逐位拷贝自 diag_taiji_r2_surface_decode，漂移守卫在 test_a30_shipped_base_and_surface_gate）。owner 2026-09-29 单独批 +5.5 MB；构建仪器 build_taiji_a30_surface_ngram_artifact.py 带 40 样本自检。该件在 git（非 *.pt）。"
+  },
+  "factory_face": {
+    "note": "2026-09-20 v2 登记全文保留；该文件仍是 FACTORY_CHECKPOINT（对照/复现逃生口），sha 未变。",
+    "path": "checkpoints/seed_beta.pt",
+    "sha256": "ad2a06465e0ef78c75aff7302a6f7a2ae11825d2f19361d9d65926006f3bf793",
+    "bytes": 4143542,
+    "envelope_format": "seed-native-v1",
+    "substrate_format": "taiji-native-v8",
+    "envelope_tick": 16000000,
+    "envelope_trainer": "train_seed_corpus",
+    "envelope_saved_at_utc": "2026-08-24T02:23:26Z",
+    "provenance": "m1_long_run_selfattested_plus_progress_stream",
+    "provenance_limits": "信封自述＋进度流＋历史命令记录三者吻合；日志已不在盘上 ⇒ 不构成官方可复算，只构成来源登记。"
+  }
 }
