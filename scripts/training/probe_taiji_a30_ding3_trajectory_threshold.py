@@ -132,6 +132,33 @@ def priceable_ratio_points(sweep: list[dict[str, Any]], positions: int) -> list[
     return hit
 
 
+def priceable_ratio_with_floor(
+    sweep: list[dict[str, Any]], positions: int
+) -> list[tuple[float, float]]:
+    """§2an：给比较式规则**加一条位置条件**之后的定价——产品若规定"正文走到 floor 比例之后才允许收笔"，
+    还有哪些 (K, floor) 组合同时过线。
+
+    冻结线（2026-09-30 写下，先于任何 `by_floor` 读数）：floor 网格只取 {0.25, 0.50}
+    （0.00 就是 §2am 本身、已判死；0.75 不许取，因为那等于只允许在答复最后 1/4 收笔＝把结尾硬编码进产品）。
+    称 (K, floor) 为**带条件可价点**，当且仅当同时满足：① `seam_hit_rate ≥ 0.5`；
+    ② 该 floor 下 `docs_with_false_fire_by_floor ≤ N//4`。
+    分支与前面各档同形：重训件有、base 没有 ⇒ 这条配方配一条温和的位置条件就能用（下一档才是产品的事）；
+    两枚都有 ⇒ 位置条件是主角、配方贡献记 `not_resolved`；两枚都没有 ⇒ **"位置局部判据"这一族整族收口**，
+    停止问题只剩两个形态：训练吃过自身轨迹（要机器时间），或者产品把结尾硬编码（那不是模型的能力）。
+    """
+
+    limit_docs = positions // 4
+    hit: list[tuple[float, float]] = []
+    for row in sweep:
+        by_floor = row.get("docs_with_false_fire_by_floor") or {}
+        if (row["seam_hit_rate"] or 0.0) < 0.5:
+            continue
+        for floor in (0.25, 0.50):
+            if by_floor.get(f"{floor:.2f}", 10**9) <= limit_docs:
+                hit.append((float(row["ratio_cap"]), floor))
+    return hit
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--retrain", default="output/a31_ding3_boundary/checkpoint.pt")
@@ -187,6 +214,9 @@ def main() -> int:
             "priceable_ratio_thresholds": priceable_ratio_points(
                 result["ratio_sweep"], len(prompts)
             ),
+            "priceable_ratio_with_floor": priceable_ratio_with_floor(
+                result["ratio_sweep"], len(prompts)
+            ),
             "document_ledger": ledger,
         }
         del runtime
@@ -221,8 +251,31 @@ def main() -> int:
             "停止这条线在产品侧没有未试过的形态了，剩下的方向都要 owner 裁"
         )
 
+    retrain_floor = runs["retrain"]["priceable_ratio_with_floor"]
+    base_floor = runs["base"]["priceable_ratio_with_floor"]
+    if retrain_floor and not base_floor:
+        verdict_floor = (
+            f"带条件可价点只属于重训件（(K,floor)∈{retrain_floor}）⇒ 这条配方配一条不超过半程的位置条件就能用；"
+            "接不接进产品出口是 owner 的事，本件不动产品"
+        )
+    elif retrain_floor and base_floor:
+        verdict_floor = (
+            f"两枚件都有带条件可价点（重训 {retrain_floor}／base {base_floor}）⇒ 主角是那条位置条件，"
+            "关于配方贡献记 not_resolved"
+        )
+    else:
+        verdict_floor = (
+            "两枚件都没有带条件可价点（floor 只允许取 0.25/0.50）⇒ 「位置局部判据」整族收口，"
+            "停止问题只剩两个形态：训练吃过自身轨迹（要机器时间），或者产品把结尾硬编码（那不是模型的能力）"
+        )
+
     report = {
-        "format": "taiji-a30-ding3-trajectory-threshold-v2",
+        "format": "taiji-a30-ding3-trajectory-threshold-v3",
+        "format_note_v3": (
+            "v3 只在每臂加 `priceable_ratio_with_floor` 与一条 `verdict_ratio_with_floor`"
+            "（判据＝§2an，写在 `priceable_ratio_with_floor` 的 docstring 里，先于数）；"
+            "v1/v2 的表与判读字段一字未动 ⇒ 与已入库的 24pos／24pos_v2 读数同格可比"
+        ),
         "format_note_v2": (
             "v2 只在每臂加 `ratio_sweep` 与 `priceable_ratio_thresholds`、并多一条 `verdict_ratio_face`"
             "（判据＝§2am，写在 `priceable_ratio_points` 的 docstring 里，先于数）；"
@@ -243,6 +296,7 @@ def main() -> int:
         "runs": runs,
         "verdict": verdict,
         "verdict_ratio_face": verdict_ratio,
+        "verdict_ratio_with_floor": verdict_floor,
         "instrument_guard": {
             "same_prompts_both_arms": runs["retrain"]["prompts_sha256"]
             == runs["base"]["prompts_sha256"],
@@ -284,6 +338,8 @@ def main() -> int:
                 "base_priceable": base_hits,
                 "retrain_ratio_priceable": retrain_ratio,
                 "base_ratio_priceable": base_ratio,
+                "retrain_ratio_with_floor": retrain_floor,
+                "base_ratio_with_floor": base_floor,
                 "verdict": verdict,
                 "verdict_ratio_face": verdict_ratio,
                 "guard": report["instrument_guard"],

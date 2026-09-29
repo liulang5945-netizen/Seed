@@ -302,11 +302,18 @@ def audit(runtime: Any, chunks: list[list[int]], boundary: int, mask: bool) -> d
                 sum(1 for _, _, value in others if value <= cap) / len(others) if others else None
             )
             fractions: list[float] = []
+            #: 带**位置条件**的误收篇数：产品若规定"正文走到 floor 比例之后才允许收笔"，同一个 K 下
+            #: 还剩几篇会误收。这一列量的是那条规则的**代价**，本件不把它接进产品。
+            floors = (0.0, 0.25, 0.5, 0.75)
+            docs_by_floor = {floor: 0 for floor in floors}
             for doc_index, entries in other_by_doc.items():
                 fired = [position for position, value in entries if value <= cap]
                 length = doc_lengths[doc_index] if doc_index < len(doc_lengths) else 0
                 if fired and length:
                     fractions.append(min(fired) / length)
+                    for floor in floors:
+                        if min(fired) / length >= floor:
+                            docs_by_floor[floor] += 1
             fractions.sort()
             out.append(
                 {
@@ -314,6 +321,9 @@ def audit(runtime: Any, chunks: list[list[int]], boundary: int, mask: bool) -> d
                     "seam_hit_rate": round(recall, 4) if recall is not None else None,
                     "false_rate_per_position": round(rate, 6) if rate is not None else None,
                     "docs_with_false_fire": len(fractions),
+                    "docs_with_false_fire_by_floor": {
+                        f"{floor:.2f}": docs_by_floor[floor] for floor in floors
+                    },
                     "first_false_fire_fraction_of_doc_median": (
                         round(fractions[len(fractions) // 2], 4) if fractions else None
                     ),
@@ -381,7 +391,13 @@ def main() -> int:
     result = audit(runtime, chunks, boundary, mask=args.mask)
 
     report = {
-        "format": "taiji-a30-stop-signal-presence-v6",
+        "format": "taiji-a30-stop-signal-presence-v7",
+        "format_note_v7": (
+            "v7 只在 `ratio_sweep` 每行加一列 `docs_with_false_fire_by_floor`（floor∈{0.00,0.25,0.50,0.75}："
+            "若规定正文走到 floor 比例之后才允许收笔，同一个 K 下还剩几篇误收）。其余各表算法一字未动 "
+            "⇒ 与 v2–v6 同格可比。加它的理由见 PLAN-A-30 §2an：§2am 判死的是「位置局部」规则本身，"
+            "这一列量的是「给规则加一条位置条件要花多少代价」，本件不把它接进产品。"
+        ),
         "format_note_v6": (
             "v6 只加一张**加法**表 `ratio_sweep`：把停止判据从『p_boundary 超绝对阈值』换成『边界符离第一位只差 "
             "K 倍』（K∈{1.5,2,3,5,10,30,100}，`p_boundary<=0` 的格不入表）。列名换成 `seam_hit_rate` 以点名它量的"
