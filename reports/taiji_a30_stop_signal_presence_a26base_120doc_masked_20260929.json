@@ -1,0 +1,463 @@
+{
+  "format": "taiji-a30-stop-signal-presence-v4",
+  "format_note_v4": "v4 再加两处：每行带 `doc_index`/`position`（位置身份），阈值表带 `docs_with_false_fire` 与 `first_false_fire_fraction_of_doc_{median,min}`（若在 τ 收笔，第一次误收落在正文第几格）。`true_stop_recall` 与 `false_stop_rate_per_position` 两列的算法与语义**未动** ⇒ v2/v3/v4 的阈值表同格可比。加位置列的理由：只看误率会把「分离度漂亮但第一笔就砍在答复 20% 处」的阈值当成可用。**同版修一处 v3 的崩点**：`docs_sha256` 原来对整条 chunk 取 `bytes()`，而 chunk 首元素是边界符 256 ⇒ `ValueError: bytes must be in range(0, 256)`，两枚件的 v3 读数因此一份都没落盘（这条例子在本件第 160 行的注释里写过，我自己踩了）。现改成正文部分 `chunk[1:]` 的指纹——边界符是喂入约定、不是文档内容。",
+  "format_note": "v2 只在每格里**新增** `argmax_winners_top5`／`p_argmax`／`median_ratio_argmax_over_boundary` 三条与每行 `argmax_symbol`/`p_argmax`；旧字段语义与算法未动 ⇒ 与已入库的 v1 读数可直接同格比（v1 件里没有这几条，不是它们算出了 0）。v3 只再加一条 `docs_sha256`＝**实际吃进的那批文档字节的指纹**，用来把两枚检查点之间的配对机检起来（原来只能靠 `--docs` 参数相同来保证，那是口供不是检验）",
+  "prereg": "plans/reference/PLAN-A-30_surface_repetition_localization_20260928.md §3 丁（零训练归属检验）",
+  "question": "(B1) 停止信号没学到 还是 (B2) 学到了但在自身轨迹上失效",
+  "checkpoint": "output/a26_p1/checkpoint.pt",
+  "corpus": "dialogue_extended_clean.jsonl",
+  "corpus_bytes": 108327171,
+  "documents": 120,
+  "selection": "first_n_documents",
+  "lines_read_to_fill_sample": 120,
+  "docs_sha256": "025b49ec42e8eedec20fc7b0b3f3bc875897656c60239ef2eb2ddceb41cd9aac",
+  "generation_scope": "teacher_forced_on_corpus（不进模型自己的轨迹）",
+  "decision_face": "utf8_masked_legal_set",
+  "result": {
+    "documents": 120,
+    "stream_symbols": 98300,
+    "faces": {
+      "end": {
+        "n": 120,
+        "p_boundary": {
+          "n": 120,
+          "mean": 0.006595,
+          "p10": 0.000926,
+          "median": 0.005707,
+          "p90": 0.013101,
+          "max": 0.024906
+        },
+        "boundary_rank": {
+          "n": 120,
+          "mean": 10.975,
+          "p10": 8.0,
+          "median": 11.0,
+          "p90": 13.0,
+          "max": 30.0
+        },
+        "boundary_is_argmax_count": 0,
+        "p_next_true": {
+          "n": 120,
+          "mean": 0.006595,
+          "p10": 0.000926,
+          "median": 0.005707,
+          "p90": 0.013101,
+          "max": 0.024906
+        },
+        "next_true_is_argmax_count": 0,
+        "argmax_winners_top5": [
+          {
+            "symbol": 10,
+            "count": 72,
+            "ascii_hint": null
+          },
+          {
+            "symbol": 228,
+            "count": 30,
+            "ascii_hint": null
+          },
+          {
+            "symbol": 229,
+            "count": 7,
+            "ascii_hint": null
+          },
+          {
+            "symbol": 230,
+            "count": 7,
+            "ascii_hint": null
+          },
+          {
+            "symbol": 239,
+            "count": 2,
+            "ascii_hint": null
+          }
+        ],
+        "p_argmax": {
+          "n": 120,
+          "mean": 0.37492,
+          "p10": 0.256846,
+          "median": 0.352337,
+          "p90": 0.523955,
+          "max": 0.75195
+        },
+        "median_ratio_argmax_over_boundary": 66.261653
+      },
+      "turn_marker": {
+        "n": 3,
+        "p_boundary": {
+          "n": 3,
+          "mean": 0.002809,
+          "p10": 0.001247,
+          "median": 0.002296,
+          "p90": 0.004883,
+          "max": 0.004883
+        },
+        "boundary_rank": {
+          "n": 3,
+          "mean": 11.666667,
+          "p10": 11.0,
+          "median": 12.0,
+          "p90": 12.0,
+          "max": 12.0
+        },
+        "boundary_is_argmax_count": 0,
+        "p_next_true": {
+          "n": 3,
+          "mean": 0.173064,
+          "p10": 0.036933,
+          "median": 0.099351,
+          "p90": 0.382907,
+          "max": 0.382907
+        },
+        "next_true_is_argmax_count": 1,
+        "argmax_winners_top5": [
+          {
+            "symbol": 229,
+            "count": 1,
+            "ascii_hint": null
+          },
+          {
+            "symbol": 228,
+            "count": 1,
+            "ascii_hint": null
+          },
+          {
+            "symbol": 10,
+            "count": 1,
+            "ascii_hint": null
+          }
+        ],
+        "p_argmax": {
+          "n": 3,
+          "mean": 0.336234,
+          "p10": 0.311543,
+          "median": 0.314253,
+          "p90": 0.382907,
+          "max": 0.382907
+        },
+        "median_ratio_argmax_over_boundary": 135.685476
+      },
+      "other": {
+        "n": 98057,
+        "p_boundary": {
+          "n": 98057,
+          "mean": 0.000183,
+          "p10": 7e-06,
+          "median": 4.5e-05,
+          "p90": 0.000271,
+          "max": 0.032988
+        },
+        "boundary_rank": {
+          "n": 98057,
+          "mean": 47.445078,
+          "p10": 14.0,
+          "median": 65.0,
+          "p90": 65.0,
+          "max": 180.0
+        },
+        "boundary_is_argmax_count": 0,
+        "p_next_true": {
+          "n": 98057,
+          "mean": 0.144423,
+          "p10": 0.003062,
+          "median": 0.055815,
+          "p90": 0.390731,
+          "max": 0.994864
+        },
+        "next_true_is_argmax_count": 21179,
+        "argmax_winners_top5": [
+          {
+            "symbol": 229,
+            "count": 10127,
+            "ascii_hint": null
+          },
+          {
+            "symbol": 239,
+            "count": 8179,
+            "ascii_hint": null
+          },
+          {
+            "symbol": 228,
+            "count": 6493,
+            "ascii_hint": null
+          },
+          {
+            "symbol": 156,
+            "count": 5600,
+            "ascii_hint": null
+          },
+          {
+            "symbol": 230,
+            "count": 5133,
+            "ascii_hint": null
+          }
+        ],
+        "p_argmax": {
+          "n": 98057,
+          "mean": 0.31812,
+          "p10": 0.12715,
+          "median": 0.277512,
+          "p90": 0.544021,
+          "max": 0.994864
+        },
+        "median_ratio_argmax_over_boundary": 5951.061224
+      }
+    },
+    "threshold_sweep": [
+      {
+        "threshold": 0.0001,
+        "true_stop_recall": 0.9833,
+        "false_stop_rate_per_position": 0.277369,
+        "docs_with_false_fire": 120,
+        "first_false_fire_fraction_of_doc_median": 0.0017,
+        "first_false_fire_fraction_of_doc_min": 0.0004
+      },
+      {
+        "threshold": 0.0003,
+        "true_stop_recall": 0.95,
+        "false_stop_rate_per_position": 0.089193,
+        "docs_with_false_fire": 120,
+        "first_false_fire_fraction_of_doc_median": 0.005,
+        "first_false_fire_fraction_of_doc_min": 0.0011
+      },
+      {
+        "threshold": 0.001,
+        "true_stop_recall": 0.8917,
+        "false_stop_rate_per_position": 0.023425,
+        "docs_with_false_fire": 116,
+        "first_false_fire_fraction_of_doc_median": 0.1092,
+        "first_false_fire_fraction_of_doc_min": 0.0083
+      },
+      {
+        "threshold": 0.003,
+        "true_stop_recall": 0.75,
+        "false_stop_rate_per_position": 0.009882,
+        "docs_with_false_fire": 111,
+        "first_false_fire_fraction_of_doc_median": 0.162,
+        "first_false_fire_fraction_of_doc_min": 0.021
+      },
+      {
+        "threshold": 0.006,
+        "true_stop_recall": 0.4833,
+        "false_stop_rate_per_position": 0.004956,
+        "docs_with_false_fire": 96,
+        "first_false_fire_fraction_of_doc_median": 0.2448,
+        "first_false_fire_fraction_of_doc_min": 0.028
+      },
+      {
+        "threshold": 0.01,
+        "true_stop_recall": 0.2,
+        "false_stop_rate_per_position": 0.001917,
+        "docs_with_false_fire": 65,
+        "first_false_fire_fraction_of_doc_median": 0.2827,
+        "first_false_fire_fraction_of_doc_min": 0.04
+      },
+      {
+        "threshold": 0.03,
+        "true_stop_recall": 0.0,
+        "false_stop_rate_per_position": 1e-05,
+        "docs_with_false_fire": 1,
+        "first_false_fire_fraction_of_doc_median": 0.6151,
+        "first_false_fire_fraction_of_doc_min": 0.6151
+      }
+    ],
+    "mean_document_bytes": 817.17,
+    "turn_markers_observed": 3,
+    "end_positions": 120,
+    "other_positions": 98057,
+    "end_rows_sample": [
+      {
+        "doc_index": 0,
+        "position": 1450,
+        "p_boundary": 0.00760284,
+        "boundary_rank": 10,
+        "boundary_is_argmax": false,
+        "legal_candidates": 180,
+        "p_next_true": 0.00760284,
+        "next_true_is_argmax": false,
+        "argmax_symbol": 228,
+        "p_argmax": 0.32353175
+      },
+      {
+        "doc_index": 1,
+        "position": 221,
+        "p_boundary": 0.01147794,
+        "boundary_rank": 9,
+        "boundary_is_argmax": false,
+        "legal_candidates": 180,
+        "p_next_true": 0.01147794,
+        "next_true_is_argmax": false,
+        "argmax_symbol": 10,
+        "p_argmax": 0.51885575
+      },
+      {
+        "doc_index": 2,
+        "position": 980,
+        "p_boundary": 0.01032864,
+        "boundary_rank": 9,
+        "boundary_is_argmax": false,
+        "legal_candidates": 180,
+        "p_next_true": 0.01032864,
+        "next_true_is_argmax": false,
+        "argmax_symbol": 10,
+        "p_argmax": 0.46215644
+      },
+      {
+        "doc_index": 3,
+        "position": 2641,
+        "p_boundary": 0.01075488,
+        "boundary_rank": 10,
+        "boundary_is_argmax": false,
+        "legal_candidates": 180,
+        "p_next_true": 0.01075488,
+        "next_true_is_argmax": false,
+        "argmax_symbol": 10,
+        "p_argmax": 0.33192104
+      },
+      {
+        "doc_index": 4,
+        "position": 204,
+        "p_boundary": 0.00435975,
+        "boundary_rank": 10,
+        "boundary_is_argmax": false,
+        "legal_candidates": 180,
+        "p_next_true": 0.00435975,
+        "next_true_is_argmax": false,
+        "argmax_symbol": 228,
+        "p_argmax": 0.31134066
+      },
+      {
+        "doc_index": 5,
+        "position": 621,
+        "p_boundary": 0.01004568,
+        "boundary_rank": 8,
+        "boundary_is_argmax": false,
+        "legal_candidates": 180,
+        "p_next_true": 0.01004568,
+        "next_true_is_argmax": false,
+        "argmax_symbol": 10,
+        "p_argmax": 0.47815827
+      },
+      {
+        "doc_index": 6,
+        "position": 112,
+        "p_boundary": 0.00106555,
+        "boundary_rank": 13,
+        "boundary_is_argmax": false,
+        "legal_candidates": 180,
+        "p_next_true": 0.00106555,
+        "next_true_is_argmax": false,
+        "argmax_symbol": 10,
+        "p_argmax": 0.68636644
+      },
+      {
+        "doc_index": 7,
+        "position": 627,
+        "p_boundary": 0.00052756,
+        "boundary_rank": 14,
+        "boundary_is_argmax": false,
+        "legal_candidates": 180,
+        "p_next_true": 0.00052756,
+        "next_true_is_argmax": false,
+        "argmax_symbol": 239,
+        "p_argmax": 0.29560375
+      },
+      {
+        "doc_index": 8,
+        "position": 554,
+        "p_boundary": 0.00528317,
+        "boundary_rank": 12,
+        "boundary_is_argmax": false,
+        "legal_candidates": 180,
+        "p_next_true": 0.00528317,
+        "next_true_is_argmax": false,
+        "argmax_symbol": 10,
+        "p_argmax": 0.40983865
+      },
+      {
+        "doc_index": 9,
+        "position": 761,
+        "p_boundary": 0.00444702,
+        "boundary_rank": 12,
+        "boundary_is_argmax": false,
+        "legal_candidates": 180,
+        "p_next_true": 0.00444702,
+        "next_true_is_argmax": false,
+        "argmax_symbol": 10,
+        "p_argmax": 0.55813426
+      },
+      {
+        "doc_index": 10,
+        "position": 747,
+        "p_boundary": 0.00654322,
+        "boundary_rank": 11,
+        "boundary_is_argmax": false,
+        "legal_candidates": 180,
+        "p_next_true": 0.00654322,
+        "next_true_is_argmax": false,
+        "argmax_symbol": 10,
+        "p_argmax": 0.29829907
+      },
+      {
+        "doc_index": 11,
+        "position": 805,
+        "p_boundary": 0.00785818,
+        "boundary_rank": 9,
+        "boundary_is_argmax": false,
+        "legal_candidates": 180,
+        "p_next_true": 0.00785818,
+        "next_true_is_argmax": false,
+        "argmax_symbol": 228,
+        "p_argmax": 0.34575301
+      }
+    ],
+    "turn_marker_rows_sample": [
+      {
+        "doc_index": 44,
+        "position": 81,
+        "p_boundary": 0.00229607,
+        "boundary_rank": 12,
+        "boundary_is_argmax": false,
+        "legal_candidates": 180,
+        "p_next_true": 0.09935104,
+        "next_true_is_argmax": false,
+        "argmax_symbol": 229,
+        "p_argmax": 0.31154335
+      },
+      {
+        "doc_index": 44,
+        "position": 309,
+        "p_boundary": 0.00124725,
+        "boundary_rank": 12,
+        "boundary_is_argmax": false,
+        "legal_candidates": 180,
+        "p_next_true": 0.03693314,
+        "next_true_is_argmax": false,
+        "argmax_symbol": 228,
+        "p_argmax": 0.31425264
+      },
+      {
+        "doc_index": 65,
+        "position": 287,
+        "p_boundary": 0.00488344,
+        "boundary_rank": 11,
+        "boundary_is_argmax": false,
+        "legal_candidates": 180,
+        "p_next_true": 0.38290736,
+        "next_true_is_argmax": true,
+        "argmax_symbol": 10,
+        "p_argmax": 0.38290736
+      }
+    ]
+  },
+  "instrument_guard": {
+    "observe_calls_recorded": true,
+    "boundary_targets_expected": 120,
+    "boundary_targets_observed": 120,
+    "end_position_accounting_ok": true,
+    "turn_marker_bucket_populated": true,
+    "turn_markers_observed": 3,
+    "base_sha256_unchanged": true
+  },
+  "started_utc": "2026-09-29T16:05:55Z"
+}

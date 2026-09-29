@@ -50,7 +50,9 @@ def _sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def document_symbols(path: Path, docs: int, *, require_seam: bool = False) -> dict[str, Any]:
+def document_symbols(
+    path: Path, docs: int, *, require_seam: bool = False, append_newline: bool = False
+) -> dict[str, Any]:
     """按**训练脚本的口径**取每篇的符号序列（边界符 + 正文 UTF-8 字节）。
 
     `require_seam=True` 是给 §2s 那条新线索用的：默认语料**每篇只有一组问答**，
@@ -78,6 +80,10 @@ def document_symbols(path: Path, docs: int, *, require_seam: bool = False) -> di
             raw = content.encode("utf-8")
             if require_seam and seam not in raw:
                 continue
+            if append_newline:
+                #: 配方（`end_boundary_after_newline`）训的就是"正文后补一个换行再收尾"，
+                #: 不加这一行时测面≠配方面，重训件在这里当然不显形（§2aj 当场发现的口径错配）。
+                raw = raw + bytes([0x0A])
             chunks.append([boundary, *raw])
             if len(chunks) >= docs:
                 break
@@ -301,6 +307,11 @@ def main() -> int:
         help="只取正文里真含 轮接缝（\n问：）的文档——把 marker 桶的样本量抬起来（件里披露 selection）",
     )
     parser.add_argument("--out-report", default=None)
+    parser.add_argument(
+        "--append-newline",
+        action="store_true",
+        help="每篇正文后补一个 0x0A 再收尾——把测面换成主线配方 `end_boundary_after_newline` 训的那张面",
+    )
     args = parser.parse_args()
 
     checkpoint = PROJECT_ROOT / args.checkpoint
@@ -313,12 +324,20 @@ def main() -> int:
 
     runtime = SeedRuntime.load(checkpoint)
     boundary = int(runtime.model.substrate.config.boundary_symbol)
-    sample = document_symbols(corpus, args.docs, require_seam=args.require_seam)
+    sample = document_symbols(
+        corpus, args.docs, require_seam=args.require_seam, append_newline=args.append_newline
+    )
     chunks = sample["chunks"]
     result = audit(runtime, chunks, boundary, mask=args.mask)
 
     report = {
-        "format": "taiji-a30-stop-signal-presence-v4",
+        "format": "taiji-a30-stop-signal-presence-v5",
+        "format_note_v5": (
+            "v5 只加两样且默认面逐位不变：新旗标 `--append-newline`（每篇正文后补一个 `0x0A` 再收尾，"
+            "＝主线配方 `end_boundary_after_newline` 训的那张面）与一条自述字段 `documents_face`。"
+            "加它的理由：§2aj 第一次跑这对读数时测面是『语料正文原样』，而配方改的是『正文后补换行再收尾』"
+            "⇒ 测面≠配方面，重训件在这张面上本就不该显形，这不是模型的读数而是我的口径错配（已在 §2aj 留场）"
+        ),
         "format_note_v4": (
             "v4 再加两处：每行带 `doc_index`/`position`（位置身份），阈值表带 `docs_with_false_fire` 与 "
             "`first_false_fire_fraction_of_doc_{median,min}`（若在 τ 收笔，第一次误收落在正文第几格）。"
@@ -341,6 +360,9 @@ def main() -> int:
         "docs_sha256": hashlib.sha256(b"".join(bytes(chunk[1:]) for chunk in chunks)).hexdigest(),
         "generation_scope": "teacher_forced_on_corpus（不进模型自己的轨迹）",
         "decision_face": "utf8_masked_legal_set" if args.mask else "full_alphabet",
+        "documents_face": (
+            "corpus_body_plus_appended_newline" if args.append_newline else "corpus_body_as_stored"
+        ),
         "result": result,
         "instrument_guard": {
             "observe_calls_recorded": result["end_positions"] + result["other_positions"] > 0,

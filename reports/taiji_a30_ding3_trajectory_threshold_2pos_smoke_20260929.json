@@ -1,0 +1,430 @@
+{
+  "format": "taiji-a30-ding3-trajectory-threshold-v1",
+  "prereg": "PLAN-A-30 §2ak（判读线先于数写在件 docstring）",
+  "question": "边界符的概率在模型自己的正文与真接缝之间分不分得开，且误收砍在第几格（阈值停止可不可用）",
+  "retrain_checkpoint": "output/a31_ding3_boundary/checkpoint.pt",
+  "base_checkpoint": "output/a26_p1/checkpoint.pt",
+  "corpus": "dialogue_extended_clean.jsonl",
+  "mask": true,
+  "decision_face": "utf8_masked_legal_set",
+  "positions": 2,
+  "max_bytes": 256,
+  "repetition_penalty": 2.0,
+  "false_fire_doc_limit": 0,
+  "prompts_sha256": "531c491f90b410b4632b01e5c9cfacc0ac24117d9a9af7b1d708a48b58e79373",
+  "runs": {
+    "retrain": {
+      "checkpoint_sha256_before": "79b1a99cedf3e65bc76b0e40f4083f76ced62b4d070d5adb5a7ec2f725579a93",
+      "prompts_sha256": "531c491f90b410b4632b01e5c9cfacc0ac24117d9a9af7b1d708a48b58e79373",
+      "docs_sha256": "1d31c9da59d67f6beb64777d46df292c8b7948381450b84aecfc4f55c3cd05ea",
+      "positions": 2,
+      "stream_symbols": 503,
+      "end_positions": 2,
+      "other_positions": 499,
+      "faces": {
+        "end": {
+          "n": 2,
+          "p_boundary": {
+            "n": 2,
+            "mean": 0.047858,
+            "p10": 0.029868,
+            "median": 0.065849,
+            "p90": 0.065849,
+            "max": 0.065849
+          },
+          "boundary_rank": {
+            "n": 2,
+            "mean": 7.0,
+            "p10": 6.0,
+            "median": 8.0,
+            "p90": 8.0,
+            "max": 8.0
+          },
+          "boundary_is_argmax_count": 0,
+          "p_next_true": {
+            "n": 2,
+            "mean": 0.047858,
+            "p10": 0.029868,
+            "median": 0.065849,
+            "p90": 0.065849,
+            "max": 0.065849
+          },
+          "next_true_is_argmax_count": 0,
+          "argmax_winners_top5": [
+            {
+              "symbol": 230,
+              "count": 1,
+              "ascii_hint": null
+            },
+            {
+              "symbol": 45,
+              "count": 1,
+              "ascii_hint": "-"
+            }
+          ],
+          "p_argmax": {
+            "n": 2,
+            "mean": 0.187948,
+            "p10": 0.174921,
+            "median": 0.200976,
+            "p90": 0.200976,
+            "max": 0.200976
+          },
+          "median_ratio_argmax_over_boundary": 6.728847
+        },
+        "other": {
+          "n": 499,
+          "p_boundary": {
+            "n": 499,
+            "mean": 0.000614,
+            "p10": 1.4e-05,
+            "median": 6.8e-05,
+            "p90": 0.000333,
+            "max": 0.109621
+          },
+          "boundary_rank": {
+            "n": 499,
+            "mean": 57.92986,
+            "p10": 36.0,
+            "median": 65.0,
+            "p90": 65.0,
+            "max": 177.0
+          },
+          "boundary_is_argmax_count": 0,
+          "p_next_true": {
+            "n": 499,
+            "mean": 0.275453,
+            "p10": 0.037884,
+            "median": 0.233389,
+            "p90": 0.516463,
+            "max": 0.972321
+          },
+          "next_true_is_argmax_count": 351,
+          "argmax_winners_top5": [
+            {
+              "symbol": 229,
+              "count": 81,
+              "ascii_hint": null
+            },
+            {
+              "symbol": 228,
+              "count": 62,
+              "ascii_hint": null
+            },
+            {
+              "symbol": 133,
+              "count": 38,
+              "ascii_hint": null
+            },
+            {
+              "symbol": 131,
+              "count": 29,
+              "ascii_hint": null
+            },
+            {
+              "symbol": 154,
+              "count": 28,
+              "ascii_hint": null
+            }
+          ],
+          "p_argmax": {
+            "n": 499,
+            "mean": 0.329766,
+            "p10": 0.166961,
+            "median": 0.287689,
+            "p90": 0.531027,
+            "max": 0.972321
+          },
+          "median_ratio_argmax_over_boundary": 4226.42278
+        },
+        "turn_marker": {
+          "n": 0
+        }
+      },
+      "threshold_sweep": [
+        {
+          "threshold": 0.0001,
+          "true_stop_recall": 1.0,
+          "false_stop_rate_per_position": 0.346693,
+          "docs_with_false_fire": 2,
+          "first_false_fire_fraction_of_doc_median": 0.0072,
+          "first_false_fire_fraction_of_doc_min": 0.0028
+        },
+        {
+          "threshold": 0.0003,
+          "true_stop_recall": 1.0,
+          "false_stop_rate_per_position": 0.104208,
+          "docs_with_false_fire": 2,
+          "first_false_fire_fraction_of_doc_median": 0.0072,
+          "first_false_fire_fraction_of_doc_min": 0.0028
+        },
+        {
+          "threshold": 0.001,
+          "true_stop_recall": 1.0,
+          "false_stop_rate_per_position": 0.026052,
+          "docs_with_false_fire": 2,
+          "first_false_fire_fraction_of_doc_median": 0.0072,
+          "first_false_fire_fraction_of_doc_min": 0.0028
+        },
+        {
+          "threshold": 0.003,
+          "true_stop_recall": 1.0,
+          "false_stop_rate_per_position": 0.01002,
+          "docs_with_false_fire": 2,
+          "first_false_fire_fraction_of_doc_median": 0.0072,
+          "first_false_fire_fraction_of_doc_min": 0.0028
+        },
+        {
+          "threshold": 0.006,
+          "true_stop_recall": 1.0,
+          "false_stop_rate_per_position": 0.006012,
+          "docs_with_false_fire": 2,
+          "first_false_fire_fraction_of_doc_median": 0.4058,
+          "first_false_fire_fraction_of_doc_min": 0.2742
+        },
+        {
+          "threshold": 0.01,
+          "true_stop_recall": 1.0,
+          "false_stop_rate_per_position": 0.006012,
+          "docs_with_false_fire": 2,
+          "first_false_fire_fraction_of_doc_median": 0.4058,
+          "first_false_fire_fraction_of_doc_min": 0.2742
+        },
+        {
+          "threshold": 0.03,
+          "true_stop_recall": 0.5,
+          "false_stop_rate_per_position": 0.006012,
+          "docs_with_false_fire": 2,
+          "first_false_fire_fraction_of_doc_median": 0.4058,
+          "first_false_fire_fraction_of_doc_min": 0.2742
+        }
+      ],
+      "priceable_thresholds": [],
+      "document_ledger": [
+        {
+          "doc_index": 0,
+          "prompt_bytes": 92,
+          "answer_bytes": 255,
+          "document_bytes": 361,
+          "answer_stopped_early": true
+        },
+        {
+          "doc_index": 1,
+          "prompt_bytes": 49,
+          "answer_bytes": 75,
+          "document_bytes": 138,
+          "answer_stopped_early": true
+        }
+      ]
+    },
+    "base": {
+      "checkpoint_sha256_before": "8b87583713a47a822c2e04f424f0d12388864d2622148049a6248750fa19c5e9",
+      "prompts_sha256": "531c491f90b410b4632b01e5c9cfacc0ac24117d9a9af7b1d708a48b58e79373",
+      "docs_sha256": "9da4a56db43b7ed8cb3c68f5d0a15165c40a244059672b352dc0102c157667c8",
+      "positions": 2,
+      "stream_symbols": 682,
+      "end_positions": 2,
+      "other_positions": 678,
+      "faces": {
+        "end": {
+          "n": 2,
+          "p_boundary": {
+            "n": 2,
+            "mean": 0.000178,
+            "p10": 7.7e-05,
+            "median": 0.000279,
+            "p90": 0.000279,
+            "max": 0.000279
+          },
+          "boundary_rank": {
+            "n": 2,
+            "mean": 19.5,
+            "p10": 19.0,
+            "median": 20.0,
+            "p90": 20.0,
+            "max": 20.0
+          },
+          "boundary_is_argmax_count": 0,
+          "p_next_true": {
+            "n": 2,
+            "mean": 0.000178,
+            "p10": 7.7e-05,
+            "median": 0.000279,
+            "p90": 0.000279,
+            "max": 0.000279
+          },
+          "next_true_is_argmax_count": 0,
+          "argmax_winners_top5": [
+            {
+              "symbol": 10,
+              "count": 2,
+              "ascii_hint": null
+            }
+          ],
+          "p_argmax": {
+            "n": 2,
+            "mean": 0.808065,
+            "p10": 0.711011,
+            "median": 0.90512,
+            "p90": 0.90512,
+            "max": 0.90512
+          },
+          "median_ratio_argmax_over_boundary": 11777.745218
+        },
+        "other": {
+          "n": 678,
+          "p_boundary": {
+            "n": 678,
+            "mean": 0.000128,
+            "p10": 6e-06,
+            "median": 3.5e-05,
+            "p90": 0.000294,
+            "max": 0.007583
+          },
+          "boundary_rank": {
+            "n": 678,
+            "mean": 47.809735,
+            "p10": 14.0,
+            "median": 65.0,
+            "p90": 65.0,
+            "max": 180.0
+          },
+          "boundary_is_argmax_count": 0,
+          "p_next_true": {
+            "n": 678,
+            "mean": 0.311224,
+            "p10": 0.042224,
+            "median": 0.262938,
+            "p90": 0.610861,
+            "max": 0.983993
+          },
+          "next_true_is_argmax_count": 492,
+          "argmax_winners_top5": [
+            {
+              "symbol": 229,
+              "count": 73,
+              "ascii_hint": null
+            },
+            {
+              "symbol": 239,
+              "count": 51,
+              "ascii_hint": null
+            },
+            {
+              "symbol": 188,
+              "count": 45,
+              "ascii_hint": null
+            },
+            {
+              "symbol": 228,
+              "count": 44,
+              "ascii_hint": null
+            },
+            {
+              "symbol": 140,
+              "count": 37,
+              "ascii_hint": null
+            }
+          ],
+          "p_argmax": {
+            "n": 678,
+            "mean": 0.363708,
+            "p10": 0.167786,
+            "median": 0.31178,
+            "p90": 0.622463,
+            "max": 0.983993
+          },
+          "median_ratio_argmax_over_boundary": 9047.766287
+        },
+        "turn_marker": {
+          "n": 0
+        }
+      },
+      "threshold_sweep": [
+        {
+          "threshold": 0.0001,
+          "true_stop_recall": 0.5,
+          "false_stop_rate_per_position": 0.284661,
+          "docs_with_false_fire": 2,
+          "first_false_fire_fraction_of_doc_median": 0.0031,
+          "first_false_fire_fraction_of_doc_min": 0.0028
+        },
+        {
+          "threshold": 0.0003,
+          "true_stop_recall": 0.0,
+          "false_stop_rate_per_position": 0.097345,
+          "docs_with_false_fire": 2,
+          "first_false_fire_fraction_of_doc_median": 0.0094,
+          "first_false_fire_fraction_of_doc_min": 0.0083
+        },
+        {
+          "threshold": 0.001,
+          "true_stop_recall": 0.0,
+          "false_stop_rate_per_position": 0.010324,
+          "docs_with_false_fire": 2,
+          "first_false_fire_fraction_of_doc_median": 0.2722,
+          "first_false_fire_fraction_of_doc_min": 0.0912
+        },
+        {
+          "threshold": 0.003,
+          "true_stop_recall": 0.0,
+          "false_stop_rate_per_position": 0.004425,
+          "docs_with_false_fire": 1,
+          "first_false_fire_fraction_of_doc_median": 0.2138,
+          "first_false_fire_fraction_of_doc_min": 0.2138
+        },
+        {
+          "threshold": 0.006,
+          "true_stop_recall": 0.0,
+          "false_stop_rate_per_position": 0.001475,
+          "docs_with_false_fire": 1,
+          "first_false_fire_fraction_of_doc_median": 0.8208,
+          "first_false_fire_fraction_of_doc_min": 0.8208
+        },
+        {
+          "threshold": 0.01,
+          "true_stop_recall": 0.0,
+          "false_stop_rate_per_position": 0.0,
+          "docs_with_false_fire": 0,
+          "first_false_fire_fraction_of_doc_median": null,
+          "first_false_fire_fraction_of_doc_min": null
+        },
+        {
+          "threshold": 0.03,
+          "true_stop_recall": 0.0,
+          "false_stop_rate_per_position": 0.0,
+          "docs_with_false_fire": 0,
+          "first_false_fire_fraction_of_doc_median": null,
+          "first_false_fire_fraction_of_doc_min": null
+        }
+      ],
+      "priceable_thresholds": [],
+      "document_ledger": [
+        {
+          "doc_index": 0,
+          "prompt_bytes": 92,
+          "answer_bytes": 254,
+          "document_bytes": 360,
+          "answer_stopped_early": true
+        },
+        {
+          "doc_index": 1,
+          "prompt_bytes": 49,
+          "answer_bytes": 255,
+          "document_bytes": 318,
+          "answer_stopped_early": true
+        }
+      ]
+    }
+  },
+  "verdict": "两枚件都没有可用可价点 ⇒ 丁-4 三面判死（教师强制 §2w／生成 argmax §2ah-§2ai／自身轨迹阈值 §2ak）⇒ 停止这条线整体收口，剩下的方向都要 owner 裁",
+  "instrument_guard": {
+    "same_prompts_both_arms": true,
+    "end_bucket_is_the_imposed_seam": true,
+    "other_bucket_populated_on_own_text": true,
+    "retrain_sha256_unchanged": true,
+    "base_sha256_unchanged": true
+  },
+  "operational_definition": "文档＝问：q\\n答：模型自己写的答案＋一个换行；接缝由本件强加，end 桶只有那一格，other 桶是它自己正文的每一格。所以这一格量的是'若它此刻该停，边界符的概率是否高于正文中间'，不是'它停没停'（后者＝§2ah 的 raw 计数，两枚件都 0/72 自停）。",
+  "started_utc": "2026-09-29T16:06:04Z"
+}
