@@ -1138,6 +1138,38 @@ argmax 0/6、名次中位 26、`p_boundary` 中位 0.0060。⇒ 两臂都抬了�
 **不能**再写成"因为形状不对"；引用时必须同带 §2j 那条天花板（普通位置贪心与语料一致仅 18.4%）
 与本档的 15× 强度／0 胜出这一对读数。
 
+## 2y. 丁-3 的第二档：**目标密度**（第三臂 `sparse`）——判读线与已知弱点先于数写下
+
+**要答的问题（§2x 留下的那一个）**：shape 那两臂的结束目标数都是 180、吃的字节完全相同
+⇒ "多放结束目标到底有没有用"这条**从未被变过**。本节把它做成一个单变量对照。
+
+**第三臂 `sparse`**：与 `granularity` 同样的字节、同样的 episode 分组与续喂方式，但**只在最后一答**收尾一个边界符
+⇒ `granularity` 对 `sparse` 只差**目标密度**（每组 k 个 vs 每组 1 个）。仪器＝同一件加 `--arm-set`
+（默认 `shape` 与 §2x 逐位同口径；`all` 才跑三臂），提交 `ab9666ee`。
+
+**计数修正（冒烟当场暴露，不是推理发现的）**：v1 件里 `boundary_targets` 数的是**喂入次数**——
+对 `granularity`／`current` 恰好等于真目标数（180，所以 §2x 引的数不用改），但对 `sparse` 会把 18 报成 54，
+而原先那条 `boundary_targets_equal_across_arms` 因此是**恒真的空守卫**。
+现在按 `include_boundary`／`include_end_boundary` 计**真目标数**，并加两条**能失败**的守卫
+`end_targets_match_feed_plan`、`density_ratio_is_exchanges`。
+提交前实跑的两种验证：① 进程内**假 runtime** 重放喂入计划（不加载 torch、不读基座）
+⇒ 收尾边界数 granularity 6／sparse 2／current 6，`trained_symbols` 与手算逐臂相等（6125／6121／6129），
+`trained_text_bytes` 三臂同为 120；② 修正后的 `--arm-set all` 真冒烟（2 组 × 3 答 × 1 epoch）七条守卫全真。
+
+**判读线（先于数）**：`granularity` 的 `end.boundary_is_argmax_count ≥ sparse 的同名计数 + 3` ⇒ **密度成立**；
+否则记 `not_resolved`，并**不许**写成"密度也没用"以外的结论。副作用照旧看 `other.p_next_true` 中位。
+本档规模＝6 组 × 3 答 × 3 epoch ⇒ **18 个结束位**（n 偏小，先写明，判读只到"有无作用方向"）。
+
+**已知弱点（必须在读数之前写）**：这一档的正式跑在 `ab9666ee` 落地**之前**就启动了，
+所以件里的 `boundary_targets` 列会三臂都报 54（旧口径＝喂入次数）；
+**真目标数应按喂入计划读**：granularity 54／sparse 18／current 54。
+读数本身不受影响——喂入序列与修正后的代码逐臂相同（已用①的重放核对），只是件里那一列要按这条披露来读。
+
+读数件路径：`reports/taiji_a30_ding3_stop_target_pilot_6g3x3e_density_masked_20260929.json`。
+落地后本节只补三件事：① 两臂 `end` 的胜出数／名次中位／`p_boundary` 中位；② `other.p_next_true` 中位的变化；
+③ 按上面那条冻结线查表的结论（成立 ⇒ 丁-3 的机时理由落在"频次"上；不成立 ⇒ 停止侧的两个便宜变量
+（形状、密度）都已定价为无作用，丁-3 只剩"远大规模"这一条贵路，要与 18.4% 天花板一起交给 owner）。
+
 ## 6. 交接（本线程预算用尽时的下一步，命令都可直接跑）
 
 **等 owner 的两笔（我不自行决定）**：
