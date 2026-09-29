@@ -1,6 +1,7 @@
 /** Cold-replayed Markdown references open Session files through the shipped Web composition. */
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
+import { basename } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { chromium, type Browser, type Page } from 'playwright'
 import { afterAll, beforeAll, describe, expect, it, onTestFailed } from 'vitest'
@@ -32,7 +33,13 @@ describe('web e2e: Markdown file links', () => {
     tripwire = watchConsole(page)
     await page.goto(scaffold.authenticatedUrl, { waitUntil: 'load' })
     await page.locator('[role="treeitem"]').first().click()
-    await page.locator('[role="treeitem"]').nth(1).click()
+    // Two group rows precede the Session row (provisioned default Workspace and "Ungrouped"),
+    // so open the group and pick the row by its title instead of a position index.
+    const ungrouped = page.getByRole('treeitem', { name: /Ungrouped/u })
+    if (await ungrouped.getAttribute('aria-expanded') !== 'true') await ungrouped.click()
+    const sessionRow = page.getByRole('treeitem', { name: new RegExp(basename(scaffold.workspaceCwd), 'u') })
+    await sessionRow.waitFor({ timeout: 15_000 })
+    await sessionRow.click()
     await page.getByRole('button', { name: 'src/example.txt:24–30', exact: true }).waitFor()
     await page.getByRole('button', { name: 'Collapse sidebar', exact: true }).click()
   }, 120_000)
