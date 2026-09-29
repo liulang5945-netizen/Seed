@@ -1556,6 +1556,10 @@ function normalizeAria(snapshot: string, workspaceCwd: string, age: boolean): st
   return (age ? snapshot.replace(ARIA_AGE, '{{age}}') : snapshot)
     .split(escapedWorkspaceCwd).join('{{cwd}}')
     .split(workspaceCwd).join('{{cwd}}')
+    // A path under the workspace keeps the host separator after the token, so the
+    // committed (POSIX-recorded) baseline can never match on Windows. Fold the
+    // separator — and its aria-escaped spelling — into `/`; on POSIX a no-op.
+    .replace(/\{\{cwd\}\}\\\\/gu, '{{cwd}}/').replace(/\{\{cwd\}\}\\/gu, '{{cwd}}/')
     .split(base).join('{{workspace}}')
     .replace(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/gi, '{{uuid}}')
     // The optional space in `\d+m ?\d+s` covers both minute spellings: the

@@ -876,3 +876,6 @@ ode_modulesi…`＝**本仓已登记的 Windows 符号链接权限族**（与 0
 **剩 1 条**＝`file-path tool rows rebuilt from the cold log open the right Sidebar`，耗时 **566 ms**（快速失败＝内容/断言族，不是 10-30 s 的等元素族，按已记的"失败耗时是族签名"分档），单列为下一条待归因。**修法的两处弱点如实记**：菜单项名我用的是 `/dsh-web-e2e-ws-|workspace/u` 加 `.first()`，比"精确等于播种工作区名"松，若以后同屏出现多个候选会选错——留作可改进点，不在本次扩大。
 **队列更新**：`workspace-management`／`changed-files-turn`／`clickable-links-gallery` 三条在动手前先做**同一前提检查**（是否只是没选中工作区），而不是先换 locator；`session-archive-active` 仍按 ㊵-30 的宿主探针走（它的头在 `:154` 的 `started.txt`）。
 
+**㊵-39（分隔符折叠落进 `normalizeAria`：`seeded-history` 整档转绿，`plugin-install-registry` 仍红）**：在 `{{cwd}}` 记号之后把宿主分隔符折成 `/`（先折 aria 转义形 `\` 再折原生 `\`；POSIX 下两者都是无操作），**没有重录任何金样**——按已定口径，重录会把反斜杠烤进基线并让别的平台立刻红。读数：`seeded-history` 从 `1 failed｜12 passed｜2 skipped` 变成 **`15 tests｜2 skipped`、0 failed（整档绿）**；回归探针 `sidebar-right` **`15 tests` 全绿** ⇒ 这次改共享归一化没有波及别的金样。**但同族的 `plugin-install-registry` 仍 `1 failed`（`:101`）** ⇒ 它的形状不在我这条折叠覆盖内（此前记的是 `{{cwd}}/.dsh-home/…` 与 `{{cwd}}\.dsh-home\…`，我的折叠只处理紧跟 `{{cwd}}` 的第一个分隔符，未处理记号之后**更深处**的分隔符）。下一格二选一：把折叠改成"记号后整段路径内的分隔符统一"，或对该 lane 单独取失败原文再定；**不许**用重录解决。
+**判据⑦ 的账**：`seeded-history` 与 `github-ready-review`/`reference-composer` 已实际脱红，但整面总数我没有重跑，**不推算**，只报"已确认 4 个文件脱红（含本条）"。
+
