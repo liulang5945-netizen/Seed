@@ -1,0 +1,2723 @@
+{
+  "format": "taiji-a30-stop-failure-v3",
+  "prereg": "plans/reference/PLAN-A-30_surface_repetition_localization_20260928.md §2f 第 3 条",
+  "checkpoint": "output/a26_p1/checkpoint.pt",
+  "circuit": "output/taiji_r2_copy_circuit_chat/judge/circuit-final.pt",
+  "circuit_sha256": "1cfe5961c300485dc08078a9deb82d0f31acbb5f8c63d0685d18366832d741a3",
+  "repetition_penalty": 2.0,
+  "repetition_window": 8,
+  "max_length": 256,
+  "generation_loop_lines": [
+    3119,
+    3178
+  ],
+  "items": 24,
+  "instrument_guard": {
+    "observe_calls_recorded": true,
+    "observe_calls_by_caller": {
+      "generate:3087": 24106,
+      "record_told_history:105": 18883,
+      "generate:3163": 18432,
+      "record_told_history:102": 2458,
+      "record_told_history:92": 72,
+      "generate:3078": 72
+    },
+    "all_items_reconstructed": true,
+    "items_failing_reconstruction": [],
+    "total_argmax_mismatch_steps": 0,
+    "all_surfaces_are_replayed_raw": true,
+    "items_whose_surface_is_not_model_bytes": [],
+    "total_steps": 18432,
+    "generations": 72,
+    "generations_cut_by_turn_marker": 0,
+    "generations_eating_full_budget": 72,
+    "base_sha256_unchanged": true
+  },
+  "failure_examples": [],
+  "offender_count": 8,
+  "offenders": [
+    {
+      "id": "V002",
+      "answer_run": 23,
+      "steps": 768,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "同：诗大家我们，心我们如何，这首诗大中的有同，何"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "州苷苷佋苷拷苷苷佋苷苷苷佋苷苷苷苷州苷苷苷苷苷佋"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "苷苷苷苷苷苷佋苷苷苷苷苷苷苷苷苷苷苷苋苷苷苷佋苷"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 150516548.292,
+      "run_steps": 448,
+      "run_legal_hist": {
+        "64": 296,
+        "179": 152
+      },
+      "run_boundary_rank_hist": {
+        "12": 3,
+        "13": 15,
+        "14": 32,
+        "15": 35,
+        "16": 38,
+        "17": 15,
+        "18": 9,
+        "19": 3,
+        "20": 2,
+        "62": 1,
+        "64": 3,
+        "65": 292
+      },
+      "run_ratio_min": 100.323,
+      "run_ratio_median": 9767375979.353,
+      "run_rows_sample": [
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.288012,
+          "p_boundary": 0.00061,
+          "p_boundary_before_penalty": 0.00061,
+          "boundary_rank_in_legal": 13,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 472.224,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 180,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.277358,
+          "p_boundary": 0.000142,
+          "p_boundary_before_penalty": 0.000142,
+          "boundary_rank_in_legal": 16,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 1959.867,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 181,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.186401,
+          "p_boundary": 0.001858,
+          "p_boundary_before_penalty": 0.001858,
+          "boundary_rank_in_legal": 12,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 100.323,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 212,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.312524,
+          "p_boundary": 5.1e-05,
+          "p_boundary_before_penalty": 5.1e-05,
+          "boundary_rank_in_legal": 17,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 6187.675,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 213,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 1.0,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 15,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 1.1016467536866964e+16,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 3,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 1.0,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 65,
+          "legal_candidates": 64,
+          "ratio_best_over_boundary": 4.819984405564893e+18,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 4,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.328328,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 65,
+          "legal_candidates": 64,
+          "ratio_best_over_boundary": 16740131.019,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 5,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.283901,
+          "p_boundary": 1e-06,
+          "p_boundary_before_penalty": 1e-06,
+          "boundary_rank_in_legal": 13,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 541150.579,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 6,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.333333,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 65,
+          "legal_candidates": 64,
+          "ratio_best_over_boundary": 4.926057006242931e+18,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 7,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.191764,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 65,
+          "legal_candidates": 64,
+          "ratio_best_over_boundary": 6479145.77,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 8,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.33202,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 12,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 9797170.833,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 18,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.142857,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 65,
+          "legal_candidates": 64,
+          "ratio_best_over_boundary": 1.0932988290563247e+21,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 19,
+          "in_run": true
+        }
+      ]
+    },
+    {
+      "id": "V010",
+      "answer_run": 84,
+      "steps": 768,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "吂，何大家：这首诗有吂\n\n王老师：这首诗：同何，"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "岛事事事事事事事事事事事事事事事事事事事事事事事"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "安西安西安西安安西安安西安西安西安西安安西安西安"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 230191564649489.75,
+      "run_steps": 317,
+      "run_legal_hist": {
+        "64": 210,
+        "179": 107
+      },
+      "run_boundary_rank_hist": {
+        "13": 4,
+        "14": 19,
+        "15": 14,
+        "16": 6,
+        "17": 12,
+        "18": 9,
+        "19": 7,
+        "20": 10,
+        "21": 6,
+        "22": 3,
+        "23": 2,
+        "25": 3,
+        "26": 3,
+        "27": 5,
+        "28": 1,
+        "29": 1,
+        "30": 1,
+        "32": 1,
+        "63": 1,
+        "64": 4,
+        "65": 205
+      },
+      "run_ratio_min": 360.994,
+      "run_ratio_median": 6.245770317617564e+17,
+      "run_rows_sample": [
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.170042,
+          "p_boundary": 0.000471,
+          "p_boundary_before_penalty": 0.000471,
+          "boundary_rank_in_legal": 14,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 360.994,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 33,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.283951,
+          "p_boundary": 4.6e-05,
+          "p_boundary_before_penalty": 4.6e-05,
+          "boundary_rank_in_legal": 22,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 6177.675,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 34,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.984317,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 16,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 4718097945.306,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 3,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 1.0,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 65,
+          "legal_candidates": 64,
+          "ratio_best_over_boundary": 2.2605502356032546e+21,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 4,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 1.0,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 65,
+          "legal_candidates": 64,
+          "ratio_best_over_boundary": 1.0234079442833865e+19,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 5,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.333333,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 18,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 5.1845271212003695e+33,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 6,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.333333,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 65,
+          "legal_candidates": 64,
+          "ratio_best_over_boundary": 5.2879151884086895e+19,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 7,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.333333,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 65,
+          "legal_candidates": 64,
+          "ratio_best_over_boundary": 6.184861592578772e+18,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 8,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.2,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 17,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 2.616566940863261e+31,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 9,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.2,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 65,
+          "legal_candidates": 64,
+          "ratio_best_over_boundary": 3.348507996321668e+18,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 10,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.2,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 65,
+          "legal_candidates": 64,
+          "ratio_best_over_boundary": 2.0445663965960156e+16,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 11,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.2,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 17,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 1.2639273662077536e+29,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 12,
+          "in_run": true
+        }
+      ]
+    },
+    {
+      "id": "V011",
+      "answer_run": 256,
+      "steps": 768,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "好，个如：这首诗有子，一起大何，忧何，大何，大何"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "777777777777777777777777"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "777777777777777777777777"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 19,
+      "median_ratio_best_over_boundary": 3.5210958403594014e+26,
+      "run_steps": 514,
+      "run_legal_hist": {
+        "179": 514
+      },
+      "run_boundary_rank_hist": {
+        "11": 1,
+        "15": 5,
+        "16": 49,
+        "17": 72,
+        "18": 132,
+        "19": 98,
+        "20": 68,
+        "21": 41,
+        "22": 13,
+        "23": 14,
+        "24": 4,
+        "25": 3,
+        "26": 1,
+        "27": 3,
+        "28": 8,
+        "29": 2
+      },
+      "run_ratio_min": 95.597,
+      "run_ratio_median": 8.260179937950845e+29,
+      "run_rows_sample": [
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.473899,
+          "p_boundary": 0.004957,
+          "p_boundary_before_penalty": 0.004957,
+          "boundary_rank_in_legal": 11,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 95.597,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 219,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.213899,
+          "p_boundary": 0.000179,
+          "p_boundary_before_penalty": 0.000179,
+          "boundary_rank_in_legal": 19,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 1196.239,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 220,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 1.0,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 15,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 3.818615723225632e+27,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 0,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.333333,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 17,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 1.1996288335331218e+30,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 1,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.2,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 21,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 7.581007480697222e+26,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 2,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.142857,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 23,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 5.182463246405383e+23,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 3,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.111111,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 23,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 5.852756264230492e+21,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 4,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.090909,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 23,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 2.6895847021897636e+20,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 5,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.076923,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 22,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 3.0998956812137366e+19,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 6,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.066667,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 22,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 5.967229666110041e+18,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 7,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.058824,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 22,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 1.158952190473362e+18,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 8,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.058824,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 21,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 3.550808180988635e+17,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 9,
+          "in_run": true
+        }
+      ]
+    },
+    {
+      "id": "V016",
+      "answer_run": 20,
+      "steps": 768,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "好，一觉大家何，忧有，大忙首诗一，大一，大一，大"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "哥泱哥泉泥泥泉泥泥泥泥泥泥泥泥泥泥泥泉泉泥哥泉泥"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "吃辣吃辣吃辣吃辣吃辣吃辣吃辣吃辣吃辣吃辣吃辣吃辣"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 14,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 590829321627.993,
+      "run_steps": 163,
+      "run_legal_hist": {
+        "64": 106,
+        "179": 57
+      },
+      "run_boundary_rank_hist": {
+        "13": 1,
+        "14": 12,
+        "15": 4,
+        "16": 14,
+        "17": 13,
+        "18": 4,
+        "19": 1,
+        "63": 2,
+        "64": 1,
+        "65": 103,
+        "180": 8
+      },
+      "run_ratio_min": 886.718,
+      "run_ratio_median": 5493104152248.192,
+      "run_rows_sample": [
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.441779,
+          "p_boundary": 0.000393,
+          "p_boundary_before_penalty": 0.000393,
+          "boundary_rank_in_legal": 14,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 1124.345,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 153,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.304472,
+          "p_boundary": 0.000166,
+          "p_boundary_before_penalty": 0.000166,
+          "boundary_rank_in_legal": 17,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 1835.255,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 154,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.287808,
+          "p_boundary": 0.000325,
+          "p_boundary_before_penalty": 0.000325,
+          "boundary_rank_in_legal": 14,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 886.718,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 200,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.318372,
+          "p_boundary": 7.5e-05,
+          "p_boundary_before_penalty": 7.5e-05,
+          "boundary_rank_in_legal": 16,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 4270.74,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 201,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.333333,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 14,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 9.659279076159675e+37,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 12,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.333333,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 65,
+          "legal_candidates": 64,
+          "ratio_best_over_boundary": 1.8306194524489256e+16,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 13,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.268381,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 65,
+          "legal_candidates": 64,
+          "ratio_best_over_boundary": 2202605.795,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 14,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.2,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 180,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": null,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": true,
+          "step": 15,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.2,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 65,
+          "legal_candidates": 64,
+          "ratio_best_over_boundary": 2.9674366748557096e+16,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 16,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.235053,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 65,
+          "legal_candidates": 64,
+          "ratio_best_over_boundary": 852981.914,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 17,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.2,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 180,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": null,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": true,
+          "step": 21,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.2,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 65,
+          "legal_candidates": 64,
+          "ratio_best_over_boundary": 63663694036223.6,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 22,
+          "in_run": true
+        }
+      ]
+    },
+    {
+      "id": "V017",
+      "answer_run": 20,
+      "steps": 768,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "同：这首中吂，何大家我们，大家有：同何，大何，大"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "远远远远远远远远远远远远远远远远远远远远迥违违违"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "濿违迿迥迿迿迥迥远违迿迿迥迥违远迿违迿违迿违迥违"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 3,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 2395021.806,
+      "run_steps": 237,
+      "run_legal_hist": {
+        "64": 154,
+        "179": 83
+      },
+      "run_boundary_rank_hist": {
+        "11": 5,
+        "12": 9,
+        "13": 7,
+        "14": 8,
+        "15": 11,
+        "16": 10,
+        "17": 8,
+        "18": 4,
+        "19": 3,
+        "20": 8,
+        "21": 1,
+        "22": 5,
+        "23": 1,
+        "24": 3,
+        "45": 1,
+        "51": 2,
+        "53": 1,
+        "54": 1,
+        "55": 1,
+        "57": 1,
+        "58": 5,
+        "59": 3,
+        "60": 2,
+        "61": 4,
+        "62": 2,
+        "63": 3,
+        "64": 7,
+        "65": 121
+      },
+      "run_ratio_min": 91.043,
+      "run_ratio_median": 1503955006903723.2,
+      "run_rows_sample": [
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.291482,
+          "p_boundary": 0.000535,
+          "p_boundary_before_penalty": 0.000535,
+          "boundary_rank_in_legal": 14,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 545.03,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 123,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.282336,
+          "p_boundary": 0.00017,
+          "p_boundary_before_penalty": 0.00017,
+          "boundary_rank_in_legal": 17,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 1663.69,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 124,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.414988,
+          "p_boundary": 0.004558,
+          "p_boundary_before_penalty": 0.004558,
+          "boundary_rank_in_legal": 11,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 91.043,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 176,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.238028,
+          "p_boundary": 0.00031,
+          "p_boundary_before_penalty": 0.00031,
+          "boundary_rank_in_legal": 16,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 768.78,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 177,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.557547,
+          "p_boundary": 0.006066,
+          "p_boundary_before_penalty": 0.006066,
+          "boundary_rank_in_legal": 11,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 91.92,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 217,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.269455,
+          "p_boundary": 0.000307,
+          "p_boundary_before_penalty": 0.000307,
+          "boundary_rank_in_legal": 16,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 878.1,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 218,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 1.0,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 14,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 3.37183087191511e+26,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 0,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 1.0,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 65,
+          "legal_candidates": 64,
+          "ratio_best_over_boundary": 1.0630846648843466e+27,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 1,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.398838,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 65,
+          "legal_candidates": 64,
+          "ratio_best_over_boundary": 2395021.806,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 2,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.333333,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 22,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 127557099076704.53,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 3,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.333333,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 65,
+          "legal_candidates": 64,
+          "ratio_best_over_boundary": 6.523759823445792e+21,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 4,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.203493,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 65,
+          "legal_candidates": 64,
+          "ratio_best_over_boundary": 523589.009,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 5,
+          "in_run": true
+        }
+      ]
+    },
+    {
+      "id": "V019",
+      "answer_run": 256,
+      "steps": 768,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "好，一念：有同：\n\n这大一这首一，大何：同何，大"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "999999999999999999999999"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "799999999999999999999999"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 19,
+      "median_ratio_best_over_boundary": 1.4886979117597072e+26,
+      "run_steps": 515,
+      "run_legal_hist": {
+        "179": 515
+      },
+      "run_boundary_rank_hist": {
+        "13": 1,
+        "15": 16,
+        "16": 30,
+        "17": 93,
+        "18": 77,
+        "19": 107,
+        "20": 69,
+        "21": 62,
+        "22": 27,
+        "23": 6,
+        "24": 5,
+        "25": 14,
+        "26": 5,
+        "28": 2,
+        "29": 1
+      },
+      "run_ratio_min": 463.811,
+      "run_ratio_median": 1.0937451276355779e+30,
+      "run_rows_sample": [
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.295539,
+          "p_boundary": 0.000637,
+          "p_boundary_before_penalty": 0.000637,
+          "boundary_rank_in_legal": 13,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 463.811,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 24,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.259239,
+          "p_boundary": 7.4e-05,
+          "p_boundary_before_penalty": 7.4e-05,
+          "boundary_rank_in_legal": 23,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 3504.666,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 25,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.236524,
+          "p_boundary": 0.000273,
+          "p_boundary_before_penalty": 0.000273,
+          "boundary_rank_in_legal": 15,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 865.842,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 188,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.261364,
+          "p_boundary": 3.8e-05,
+          "p_boundary_before_penalty": 3.8e-05,
+          "boundary_rank_in_legal": 25,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 6867.04,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 189,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 1.0,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 16,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 7.140021552961922e+27,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 0,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.333333,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 16,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 4.508359552360482e+30,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 1,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.2,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 19,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 1.3046687637848683e+26,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 2,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.142857,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 19,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 3.0721801273752803e+21,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 3,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.111111,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 18,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 9.028745003463525e+18,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 4,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.090909,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 18,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 2.476360526678144e+18,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 5,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.076923,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 17,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 5769723849097041.0,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 6,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.066667,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 17,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 267667748443894.62,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 7,
+          "in_run": true
+        }
+      ]
+    },
+    {
+      "id": "V021",
+      "answer_run": 25,
+      "steps": 768,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "同）：这首诗有同：有一起大何，忧何，大何，大何，"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "喝檬柠檬柠檬柠檬柠檬檬檬檬檬檬檬檬檬檬檬檬檬檬檬"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "柠柠檬柠檬柠檬柠檬柠檬柠檬柠檬柠檬柠檬柠檬柠檬柠"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 9,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 277955968656.78,
+      "run_steps": 241,
+      "run_legal_hist": {
+        "64": 158,
+        "179": 83
+      },
+      "run_boundary_rank_hist": {
+        "11": 1,
+        "13": 2,
+        "14": 7,
+        "15": 28,
+        "16": 23,
+        "17": 4,
+        "18": 3,
+        "19": 2,
+        "20": 4,
+        "21": 3,
+        "62": 1,
+        "63": 2,
+        "64": 20,
+        "65": 135,
+        "180": 6
+      },
+      "run_ratio_min": 74.831,
+      "run_ratio_median": 6037389754091008.0,
+      "run_rows_sample": [
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.227903,
+          "p_boundary": 0.003046,
+          "p_boundary_before_penalty": 0.003046,
+          "boundary_rank_in_legal": 11,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 74.831,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 168,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.20061,
+          "p_boundary": 0.000287,
+          "p_boundary_before_penalty": 0.000287,
+          "boundary_rank_in_legal": 19,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 698.989,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 169,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.437038,
+          "p_boundary": 0.000571,
+          "p_boundary_before_penalty": 0.000571,
+          "boundary_rank_in_legal": 13,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 765.537,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 218,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.309523,
+          "p_boundary": 0.000137,
+          "p_boundary_before_penalty": 0.000137,
+          "boundary_rank_in_legal": 16,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 2267.381,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 219,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.199978,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 16,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 92211007.442,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 27,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.333333,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 65,
+          "legal_candidates": 64,
+          "ratio_best_over_boundary": 2.1269525762589636e+16,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 28,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.333333,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 65,
+          "legal_candidates": 64,
+          "ratio_best_over_boundary": 3.390666740166263e+18,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 29,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.2,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 18,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 1.1716486572631924e+24,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 30,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.310707,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 65,
+          "legal_candidates": 64,
+          "ratio_best_over_boundary": 3754152354734.421,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 31,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.333333,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 65,
+          "legal_candidates": 64,
+          "ratio_best_over_boundary": 2.0552403183037024e+17,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 32,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.2,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 18,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 6.487120691371028e+32,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 33,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.198744,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 65,
+          "legal_candidates": 64,
+          "ratio_best_over_boundary": 12771217493284.299,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 34,
+          "in_run": true
+        }
+      ]
+    },
+    {
+      "id": "V022",
+      "answer_run": 26,
+      "steps": 768,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "同：诗大家我们，心我们吗，何心有，何大家有，个说"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝舌蓝蓝蓝蓝"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 227265231737.01,
+      "run_steps": 481,
+      "run_legal_hist": {
+        "64": 318,
+        "179": 163
+      },
+      "run_boundary_rank_hist": {
+        "11": 4,
+        "12": 21,
+        "13": 3,
+        "14": 18,
+        "15": 24,
+        "16": 32,
+        "17": 27,
+        "18": 16,
+        "22": 1,
+        "23": 3,
+        "24": 1,
+        "25": 2,
+        "26": 4,
+        "27": 4,
+        "28": 2,
+        "32": 1,
+        "62": 2,
+        "63": 3,
+        "64": 29,
+        "65": 284
+      },
+      "run_ratio_min": 123.472,
+      "run_ratio_median": 1.3823466111495182e+16,
+      "run_rows_sample": [
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.225512,
+          "p_boundary": 0.001826,
+          "p_boundary_before_penalty": 0.001826,
+          "boundary_rank_in_legal": 12,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 123.472,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 189,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.313631,
+          "p_boundary": 3.1e-05,
+          "p_boundary_before_penalty": 3.1e-05,
+          "boundary_rank_in_legal": 25,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 10255.696,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 190,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.354337,
+          "p_boundary": 0.000508,
+          "p_boundary_before_penalty": 0.000508,
+          "boundary_rank_in_legal": 14,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 697.692,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 242,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.318264,
+          "p_boundary": 0.000118,
+          "p_boundary_before_penalty": 0.000118,
+          "boundary_rank_in_legal": 14,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 2700.459,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 243,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.999993,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 14,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 2.4497823045795667e+21,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 0,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 1.0,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 65,
+          "legal_candidates": 64,
+          "ratio_best_over_boundary": 1088097485892557.2,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 1,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 1.0,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 65,
+          "legal_candidates": 64,
+          "ratio_best_over_boundary": 161957210496675.7,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 2,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.333333,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 13,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 1.2180234605398652e+38,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 3,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.33332,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 65,
+          "legal_candidates": 64,
+          "ratio_best_over_boundary": 366708809498.743,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 4,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.333333,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 65,
+          "legal_candidates": 64,
+          "ratio_best_over_boundary": 244175354842164.22,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 5,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.2,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 12,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 1.7564289080290236e+35,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 6,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.199962,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 65,
+          "legal_candidates": 64,
+          "ratio_best_over_boundary": 20423307049.412,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 7,
+          "in_run": true
+        }
+      ]
+    }
+  ],
+  "per_item": [
+    {
+      "id": "V001",
+      "answer_run": 15,
+      "steps": 768,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "好，一这首何，大家有：同何：这首诗有同，一起大何"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "哥楐楐衐襥哥楐襐衐襥哥襐衐襥哥襐襥哥襥楥襥衐襥哥"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "楥衐衐襥哥哥哥哥哥哥哥哥哥哥哥衐楥衐衐楥衐楥楥楐"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 30049833230.57,
+      "run_steps": 359
+    },
+    {
+      "id": "V002",
+      "answer_run": 23,
+      "steps": 768,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "同：诗大家我们，心我们如何，这首诗大中的有同，何"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "州苷苷佋苷拷苷苷佋苷苷苷佋苷苷苷苷州苷苷苷苷苷佋"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "苷苷苷苷苷苷佋苷苷苷苷苷苷苷苷苷苷苷苋苷苷苷佋苷"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 150516548.292,
+      "run_steps": 448
+    },
+    {
+      "id": "V003",
+      "answer_run": 2,
+      "steps": 768,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "好，个如何，忧个诗有同，一见志中，如何，忙何，大"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "21212121喦212121212121欢21"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "212121212121212121212121"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 20,
+      "median_ratio_best_over_boundary": 2.61691165482283e+21,
+      "run_steps": 2
+    },
+    {
+      "id": "V004",
+      "answer_run": 17,
+      "steps": 768,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "同：这首诗有同，一起大何，忧何，大何，大何，大何"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "图图图图图图图图图图图图图图图图图海囮海囮海图雮"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "图图图图图图。鷷巷图项盾。图雮海鮮海囮海图项海囮"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 78289492471.626,
+      "run_steps": 220
+    },
+    {
+      "id": "V005",
+      "answer_run": 2,
+      "steps": 768,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "好，一这首诗有吂，何大家有中，大有，大一赁大何，"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "喝乳时爱喝乳时爱喝乳时爱喝乳时爱喝乌龙。喝乳时爱"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "喝乳时爱喝乳时爱喝乳时爱喝乳时爱喝乳时爱喝乳时爱"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 34591584737.62,
+      "run_steps": 4
+    },
+    {
+      "id": "V006",
+      "answer_run": 6,
+      "steps": 768,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "同：这首诗：同何，大家我们如有，忙何，大何，大何"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "养丮檪鸮鸮檪鸮鸮檪鸮鸮檪鸮鸮檪鸮鸮檪鸮鸮檪鸮鸮檪"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "鸮鸀养丮鸮檪鸮鸮檪鸮鸮檪鸮鸮檪鸮鸮檪鸮鸮檺个鸮鸮"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 24184206675.905,
+      "run_steps": 315
+    },
+    {
+      "id": "V007",
+      "answer_run": 13,
+      "steps": 768,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "吂：这首中同：这首诗大家有，一念：好们一这首何，"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "迧读读读读读读读读姐泧泧泧泧泧泧泧泧泧泧泧泧泧读"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "迧运泧泧迧运泧迧泧泧近姐泧迧泧泧运泧近姐泧迧运泧"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 7181283.868,
+      "run_steps": 129
+    },
+    {
+      "id": "V008",
+      "answer_run": 14,
+      "steps": 768,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "同：这首诗：同何：这首诗有同，一起大何，志有，中"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "包包包包包包包包包包包本笼包欼欼包欼包本欼包本欼"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "包挅挅挅挅挅欼包汱吃包笼吃包吃包吃包吃包包包包吃"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 405857108.358,
+      "run_steps": 196
+    },
+    {
+      "id": "V009",
+      "answer_run": 11,
+      "steps": 768,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "同：这首诗：吂中，心有，个如何，忧何，大何，大何"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "君雨我成雨我成雨我成雨我成雨成成成雨成成成雨成雨"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "雨我成雨我成成成成成成雨成雨我成雨成雨成成成成成"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 37,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 372208048074.001,
+      "run_steps": 219
+    },
+    {
+      "id": "V010",
+      "answer_run": 84,
+      "steps": 768,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "吂，何大家：这首诗有吂\n\n王老师：这首诗：同何，"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "岛事事事事事事事事事事事事事事事事事事事事事事事"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "安西安西安西安安西安安西安西安西安西安安西安西安"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 230191564649489.75,
+      "run_steps": 317
+    },
+    {
+      "id": "V011",
+      "answer_run": 256,
+      "steps": 768,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "好，个如：这首诗有子，一起大何，忧何，大何，大何"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "777777777777777777777777"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "777777777777777777777777"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 19,
+      "median_ratio_best_over_boundary": 3.5210958403594014e+26,
+      "run_steps": 514
+    },
+    {
+      "id": "V012",
+      "answer_run": 3,
+      "steps": 768,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "好，一子，何大家：这首诗有吂中，忙个诗有吂\n\n企"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "径鳾径鳟径鋾徳径鋀石律律徳径鳟径鳟径鳟径鳟径鳟径"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "埘晨星队晨星队星星星队星星队星星队星星队星星队晨"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 5669651.184,
+      "run_steps": 85
+    },
+    {
+      "id": "V013",
+      "answer_run": 5,
+      "steps": 768,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "同：这首诗：吂有，一起大家何，忘有，大家有中，大"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "花人爱人爱人爱人爱人爱人爱人爱人爱人人爱人花人籱"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "苉打苉打苉打苉苉打苉苉打苉苉喝英喝苉苉打苉苉打苉"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 85847061.026,
+      "run_steps": 127
+    },
+    {
+      "id": "V014",
+      "answer_run": 6,
+      "steps": 768,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "同）：同有：这首诗有同：有一见大何，大家有一赁大"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "居一居居一居居居养一居袋一居居袋一居袋一居袋一居"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "养一养一养一养一养一养一养一养一养一养一养一养一"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 5822007591.786,
+      "run_steps": 117
+    },
+    {
+      "id": "V015",
+      "answer_run": 14,
+      "steps": 768,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "同：这首中诗有同：有中，大家有一赁大何，大家有一"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "读读读读读读读读读读读读读读语读迪读读读读语读运"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "迳迻迳迳迻读迳泯迯读读迳读读近泯迳读迳读近泯迳迳"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 67437156.586,
+      "run_steps": 259
+    },
+    {
+      "id": "V016",
+      "answer_run": 20,
+      "steps": 768,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "好，一觉大家何，忧有，大忙首诗一，大一，大一，大"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "哥泱哥泉泥泥泉泥泥泥泥泥泥泥泥泥泥泥泉泉泥哥泉泥"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "吃辣吃辣吃辣吃辣吃辣吃辣吃辣吃辣吃辣吃辣吃辣吃辣"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 14,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 590829321627.993,
+      "run_steps": 163
+    },
+    {
+      "id": "V017",
+      "answer_run": 20,
+      "steps": 768,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "同：这首中吂，何大家我们，大家有：同何，大何，大"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "远远远远远远远远远远远远远远远远远远远远迥违违违"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "濿违迿迥迿迿迥迥远违迿迿迥迥违远迿违迿违迿违迥违"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 3,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 2395021.806,
+      "run_steps": 237
+    },
+    {
+      "id": "V018",
+      "answer_run": 2,
+      "steps": 768,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "同：这首诗有吂，一起大何，忧何，大何，大何，大何"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "岛青岛青岛青岛青岛青岛青岛青岛青岛青岛青岛青岛青"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "岛住岛住岛住岛住岛住岛住岛青岛青岛青岛青岛青岛青"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 64,
+      "median_ratio_best_over_boundary": 245923378475661.0,
+      "run_steps": 10
+    },
+    {
+      "id": "V019",
+      "answer_run": 256,
+      "steps": 768,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "好，一念：有同：\n\n这大一这首一，大何：同何，大"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "999999999999999999999999"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "799999999999999999999999"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 19,
+      "median_ratio_best_over_boundary": 1.4886979117597072e+26,
+      "run_steps": 515
+    },
+    {
+      "id": "V020",
+      "answer_run": 6,
+      "steps": 768,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "同：这首诗：吂中，大家我们，大家有，个说大何，忘"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "径鳾径鳟径鳾径鳟泟柳径鳟泟径鳟泟泟音鮟戟石音径鳟"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "徳徳徳径鳟径鳟泟徟鮟泟鮟泟鮟鳟泟鮟鳟泟音鳾石徳徳"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 3089645.054,
+      "run_steps": 136
+    },
+    {
+      "id": "V021",
+      "answer_run": 25,
+      "steps": 768,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "同）：这首诗有同：有一起大何，忧何，大何，大何，"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "喝檬柠檬柠檬柠檬柠檬檬檬檬檬檬檬檬檬檬檬檬檬檬檬"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "柠柠檬柠檬柠檬柠檬柠檬柠檬柠檬柠檬柠檬柠檬柠檬柠"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 9,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 277955968656.78,
+      "run_steps": 241
+    },
+    {
+      "id": "V022",
+      "answer_run": 26,
+      "steps": 768,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "同：诗大家我们，心我们吗，何心有，何大家有，个说"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝舌蓝蓝蓝蓝"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 227265231737.01,
+      "run_steps": 481
+    },
+    {
+      "id": "V023",
+      "answer_run": 13,
+      "steps": 768,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "好，一志有：同何：同何，大家我们，首诗，大家我们"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "读读读读读读读读读读读读读语读近梦读读读读读读读"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "读读读读读读读读读读读语读读迪读读读迯读读读读读"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 2020916326.788,
+      "run_steps": 405
+    },
+    {
+      "id": "V024",
+      "answer_run": 10,
+      "steps": 768,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "好，一这首诗有同：有中，大何，大何，大何，大何，"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "艉泱吃羊艉泱吃羊艉泱吃羊艉泱吃羊艉泱吃羊艉泱吃羊"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "艉泉泱吃羊艉泉泱吃艉泉泱吃羊艉泉泱吃羊艉泱吃羊艉"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 12,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 34285614.72,
+      "run_steps": 103
+    }
+  ],
+  "started_utc": "2026-09-29T15:24:28Z"
+}
