@@ -2,7 +2,7 @@
 import { mkdir, readFile, stat, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { chromium } from 'playwright'
+import { chromium, type Page } from 'playwright'
 import { describe, expect, it, onTestFinished } from 'vitest'
 import {
   assertFinalWorkspaceSnapshot, captureStableAria, compareOrRefreshGolden, fixtureUserPrompts, launchWebScaffold,
@@ -14,6 +14,19 @@ const FIXTURE = fileURLToPath(new URL('../../../snapshots/web/fresh-round-trip/s
 const EXPECTED = fileURLToPath(new URL('../../../snapshots/web/default-workspace/ui.expected.md', import.meta.url))
 const FAILURE_EXPECTED = fileURLToPath(new URL('./expected/default-workspace/failure.expected.md', import.meta.url))
 const MODE = webSnapshotMode()
+
+/**
+ * Select the provisioned Workspace through the Hero's chip, which is what unlocks its
+ * composer: startup prepares the Workspace but never opens a Session, so the Hero can
+ * come up with nothing selected. A no-op once a Session is current.
+ * @param page - the loaded Web page.
+ */
+async function pickDefaultWorkspace(page: Page): Promise<void> {
+  const chip = page.getByRole('button', { name: /Choose workspace|选择工作区/u })
+  if (!await chip.isVisible()) return
+  await chip.click()
+  await page.getByRole('menuitem', { name: 'Default workspace' }).click()
+}
 
 describe.skipIf(MODE === 'record')('web e2e: default Workspace', () => {
   it('provisions the default Workspace, starts the first Session from the Hero send, and keeps it across reload', async () => {
@@ -32,15 +45,18 @@ describe.skipIf(MODE === 'record')('web e2e: default Workspace', () => {
       const tripwire = watchConsole(page)
       try {
         await page.goto(scaffold.authenticatedUrl)
+        expect(scaffold.ctx.workspaceRegistry.list()).toHaveLength(1)
+        // Boot provisions the Workspace but never opens a Session, so the Hero comes
+        // up with nothing selected and its composer locked.
+        expect(scaffold.ctx.sessions.list()).toEqual([])
+        await pickDefaultWorkspace(page)
         const input = page.locator('[data-composer-input][contenteditable="true"]').first()
         await input.waitFor()
-        expect(scaffold.ctx.workspaceRegistry.list()).toHaveLength(1)
-        // Boot provisions the Workspace but never opens a Session: the Hero's send owns the first one.
-        expect(scaffold.ctx.sessions.list()).toEqual([])
         await page.reload()
-        await input.waitFor()
         expect(scaffold.ctx.workspaceRegistry.list()).toHaveLength(1)
         expect(scaffold.ctx.sessions.list()).toEqual([])
+        await pickDefaultWorkspace(page)
+        await input.waitFor()
         const prompt = fixtureUserPrompts(await readFile(fixture, 'utf8'))[0]!
         await input.fill(prompt)
         const settled = scaffold.whenTurnSettled()

@@ -481,6 +481,13 @@ export async function connectFreshWorkspaceViaHost(
   mkdirSync(join(root, name), { recursive: true })
   await scaffold.ctx.workspaceController.create({ path: join(root, name) })
   await page.reload({ waitUntil: 'load' })
+  // Startup no longer opens a Session, so the reloaded Hero offers no current
+  // Workspace and its composer stays locked (`contenteditable="false"`) until one
+  // is picked: select the registered directory through the same chip a user uses.
+  const chip = page.getByRole('button', { name: /Choose workspace|选择工作区/u })
+  await chip.waitFor({ timeout: 15_000 })
+  await chip.click()
+  await page.getByRole('menuitem', { name }).click()
   await page.locator('[data-composer-input][contenteditable="true"]').waitFor({ timeout: 15_000 })
 }
 
