@@ -46,6 +46,15 @@ describe('web e2e: hovering a clipped session title marquees it to its far edge'
 
   it('crawls the clipped title under the pointer and restores its start after', async () => {
     onTestFailed(() => saveFailureShot(page, 'web-e2e-sidebar-title-hover-scroll'))
+    // The Workspace group starts collapsed and clicking its body selects rather than expands it:
+    // the disclosure chevron is revealed only on hover (`Rows.tsx` project header row), so open the
+    // group through that control before selecting the Session row by its renamed title.
+    const groupRow = page.getByRole('treeitem', { name: /dsh-web-e2e-ws-|Workspace|工作区/u }).first()
+    await groupRow.waitFor({ timeout: 20_000 })
+    if (await groupRow.getAttribute('aria-expanded') !== 'true') {
+      await groupRow.hover()
+      await groupRow.locator('[class*="chevron"]').click()
+    }
     const row = page.getByRole('treeitem').filter({ has: page.getByText(TITLE, { exact: true }) })
     await row.waitFor({ timeout: 20_000 })
     const title = row.getByText(TITLE, { exact: true })
