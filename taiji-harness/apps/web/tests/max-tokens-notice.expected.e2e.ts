@@ -35,6 +35,9 @@ describe('assembled max-tokens turn-end notice', () => {
     mountAssembledApp()
 
     const tree = await screen.findByRole('tree', { name: 'Sessions' }, { timeout: 10_000 })
+    // Startup opens no Session, so every Workspace group stays collapsed and its
+    // Sessions are unrendered until a row is expanded by hand.
+    for (const collapsed of screen.queryAllByRole('treeitem', { expanded: false })) fireEvent.click(collapsed)
     fireEvent.click(await within(tree).findByText('Fixture 历史会话'))
     // The truncated answer itself stays in the flow: the notice supplements the
     // partial output, it never replaces it.

@@ -49,6 +49,9 @@ describe('assembled search card', () => {
     mountAssembledApp()
 
     const tree = await screen.findByRole('tree', { name: 'Sessions' }, { timeout: 10_000 })
+    // Startup opens no Session, so every Workspace group stays collapsed and its
+    // Sessions are unrendered until a row is expanded by hand.
+    for (const collapsed of screen.queryAllByRole('treeitem', { expanded: false })) fireEvent.click(collapsed)
     fireEvent.click(await within(tree).findByText('Fixture 历史会话'))
     // Wait for chat content to reach the fixture's later turns (the bash sample
     // is turn 66, the grep card turn 67).

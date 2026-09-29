@@ -45,6 +45,11 @@ describe('assembled todo surfaces', () => {
     mountAssembledApp()
 
     const tree = await screen.findByRole('tree', { name: 'Sessions' }, { timeout: 10_000 })
+    // Startup opens no Session, so no Workspace group is an ancestor of the current view
+    // and every group keeps its Sessions unrendered until it is expanded by hand.
+    for (const collapsed of within(tree).queryAllByRole('treeitem', { expanded: false })) {
+      fireEvent.click(collapsed)
+    }
     fireEvent.click(await within(tree).findByText('Fixture 历史会话'))
     // The todo turn is the fixture's last, so wait for its keyed row rather
     // than for chat content in general.

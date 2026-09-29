@@ -37,6 +37,9 @@ async function openFixtureSession(): Promise<void> {
       expect(group.getAttribute('aria-expanded')).toBe('true')
     })
   }
+  // Startup opens no Session, so every Workspace group stays collapsed and its
+  // Sessions are unrendered until a row is expanded by hand.
+  for (const collapsed of screen.queryAllByRole('treeitem', { expanded: false })) fireEvent.click(collapsed)
   const session = await within(tree).findByText('Fixture 历史会话')
   fireEvent.click(session)
   await waitFor(() => {

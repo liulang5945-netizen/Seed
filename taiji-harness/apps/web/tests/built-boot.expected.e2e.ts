@@ -85,6 +85,9 @@ it('boots the built plugin graph and renders a fixture session end to end', asyn
   // The resident fixture has both a question and an approval; composer routing
   // exposes the question first, and the assembled workspace plugin mirrors that
   // actionable wait instead of the underlying running state.
+  // Startup opens no Session, so every Workspace group stays collapsed and its
+  // Sessions are unrendered until a row is expanded by hand.
+  for (const collapsed of screen.queryAllByRole('treeitem', { expanded: false })) fireEvent.click(collapsed)
   const waitingTitle = await within(tree).findByText('Fixture 历史会话')
   const waitingRow = waitingTitle.closest<HTMLElement>('[role="treeitem"]')
   if (waitingRow === null) throw new Error('fixture Session title must belong to a tree row')
@@ -173,6 +176,9 @@ it('boots without ui-chat and does not select another conversation view implicit
   const tree = await screen.findByRole('tree', { name: 'Sessions' }, { timeout: 10_000 })
   const boot = Reflect.get(window, '__DSH_BOOT__') as { entries: Array<{ id: string }> } | undefined
   expect(boot?.entries.some(entry => entry.id === '@taiji/dsh-client-ui-chat')).toBe(false)
+  // Startup opens no Session, so every Workspace group stays collapsed and its
+  // Sessions are unrendered until a row is expanded by hand.
+  for (const collapsed of screen.queryAllByRole('treeitem', { expanded: false })) fireEvent.click(collapsed)
   const sessionTitle = await within(tree).findByText('Fixture 历史会话')
   fireEvent.click(sessionTitle)
   await waitFor(() => {
