@@ -822,3 +822,5 @@ ode_modulesi…`＝**本仓已登记的 Windows 符号链接权限族**（与 0
 **㊵-15（H8 三条金样已重录，diff 形状只有"侧栏组显式成行"）**：`DSH_SNAPSHOT=refresh` 跑 `sidebar-subagent-activity` 与 `github-ready-review` ⇒ `Test Files 2 passed`；`git diff --stat` ＝ **3 files changed, 3 insertions(+), 0 deletions**，每份只多一行 `- treeitem "Default workspace"`，符合 ㊵-9 预注册的"只许折叠/行序差异"。复验：replay 模式 2/2 绿。回归探针：本轮**未**重录的两条 aria lane（`sessionless-header`＋`sidebar-right`）`Tests 19 passed (19)` ⇒ 新增的第一次替换对 POSIX 路径是无操作，未改动 Linux 形金样的匹配。仪器基线：`oxlint` 0 warning／7 error（不变），`tsc -b tsconfig.host.json` rc=0。
 
 **欠账（如实登记，下一格第一件）**：`scaffold.ts` 这次改动**还没有 Agent Note**（仓规要求同批）。下一格先补 `aria 转义双形` 的中英三件套＋`verify-translation-pairing --write`，再复跑整面批 2 以更新 50 红的构成（H8 三条应脱红，H10 一条已脱红 ⇒ 预期 50→46 左右，但必须实测）。
+
+**㊵-16（㊵-15 登记的欠账已结）**：`scaffold.ts` 的 aria 双形修复补上判读件三件套（`implemented/process/2026-09-29-aria-path-normalization-admits-both-spellings`，中英＋配对重录），`verify-agent-note-format` 通过。件里写进两条常则：POSIX 侧的"无操作"必须**证成**而非默认；被捕获表示会转义宿主串里真实存在的字符时，同一次记号替换必须同时认两种拼写。
