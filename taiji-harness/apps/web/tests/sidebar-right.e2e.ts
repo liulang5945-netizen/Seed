@@ -842,10 +842,11 @@ describe('web e2e: shipped right Sidebar', () => {
       onTestFailed(() => saveFailureShot(fx, 'web-e2e-sidebar-right-sessions'))
       try {
         await fx.goto(scaffold.authenticatedUrl, { waitUntil: 'load' })
-        // On a freshly loaded page the settled session's row sits inside the
-        // default-workspace group, which starts collapsed (probe 2026-09-27); the
-        // row keeps its user-message title. Expand the group, then select the row.
-        const group = fx.getByRole('treeitem', { name: /Default workspace|默认工作区/u })
+        // On a freshly loaded page the settled row sits inside the group of the
+        // Workspace this lane connected — startup no longer opens a Session, so the
+        // Agent the setup appends to is the connect gesture's session. That group
+        // starts collapsed; expand it, then select the row.
+        const group = fx.getByRole('treeitem', { name: /^workspace/u })
         await group.waitFor({ timeout: 15_000 })
         if ((await group.getAttribute('aria-expanded')) === 'false') await group.click()
         const settled = fx.getByRole('treeitem', { name: /Show the right sidebar\./u }).first()
@@ -1113,11 +1114,11 @@ describe('web e2e: shipped right Sidebar', () => {
         await zhPage.goto(scaffold.authenticatedUrl, { waitUntil: 'load' })
         await zhPage.waitForSelector('[class*="frame"]', { timeout: 30_000 })
         // A fresh page opens the workspace on a blank session's hero, which has
-        // no session header and so no expand button. The settled session's row
-        // keeps its user-message title but sits inside the default-workspace
-        // group, which starts collapsed on a fresh page (probe 2026-09-27);
-        // expand it, then pick the row the way a user would.
-        const zhGroup = zhPage.getByRole('treeitem', { name: /Default workspace|默认工作区/u })
+        // no session header and so no expand button. The settled row sits inside the
+        // connected Workspace's group (startup no longer opens a Session), which
+        // starts collapsed on a fresh page; expand it, then pick the row the way a
+        // user would.
+        const zhGroup = zhPage.getByRole('treeitem', { name: /^workspace/u })
         await zhGroup.waitFor({ timeout: 15_000 })
         if ((await zhGroup.getAttribute('aria-expanded')) === 'false') await zhGroup.click()
         await zhPage.getByRole('treeitem', { name: /Show the right sidebar\./u }).first().click()
