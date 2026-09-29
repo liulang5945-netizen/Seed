@@ -143,6 +143,14 @@
 **保留物**：`output/manual-r5-canary/README.md`（git 跟踪，守卫钉住）与 `native-canary.pt`
 （2.9 MB，08-29 原有件，登记明言必须保留）。
 
+**✅ 已执行（2026-09-29 10:31–10:33，owner"删"授权）**：三目录共 **1216 文件 / 33 210.4 MiB** 已删除
+（78.9 s，`CODEBUDDY_SAFE_DELETE_ENABLED=0`）；删前对账、删后验证均通过，两件保留物完好。
+守卫测试首跑 9 过 1 红——红项为**存量问题**（仓库根两个台账外目录，与本次删除无关），已顺带处置：
+① 根级 `consolidation/`（4 个 json）＝ 09-27 一次 sleep pass 从错误工作目录写出的**错位运行残留**，
+正确位置 `data/consolidation/` 有晚 1–2 分钟的同构更新文件（`seed_platform/sleep_pass.py` 以
+`data/consolidation` 相对 cwd 落盘），错位副本已删；② `seed-logo_assets/`（logo 定稿资产，
+路径被记忆锚定）已登记进 S2 台账 B 类。复跑守卫 **10/10 全绿**。
+
 ### 4.2 checkpoints/（≈ 808 MB）
 
 | 子项 | 体积 | 说明 |

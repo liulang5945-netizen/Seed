@@ -39,7 +39,8 @@
 
 ### B 账本与证据（tracked，不可删）
 `plans/`（**只追加**）· `docs/` · `reports/`（注意 `!reports/_gate_*.log` 白名单例外，见 R4）·
-`artifacts/` · `design/` · `eval-r5b-s1-20260830/` · `.playwright-mcp/` · `.workbuddy/`（memory 随仓库保留）
+`artifacts/` · `design/` · `eval-r5b-s1-20260830/` · `.playwright-mcp/` · `.workbuddy/`（memory 随仓库保留）·
+`seed-logo_assets/`（Seed 品牌 logo 定稿资产，2026-09-28 owner 认可；路径已被记忆/物料锚定，不挪动）
 
 ### C 运行时产物（ignored；**可删 ≠ 全都可删**）
 - 随时可删：`logs/` · `rag_data/` · `user_data/` · `agent_workspace/` ·
