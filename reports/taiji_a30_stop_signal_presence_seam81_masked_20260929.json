@@ -1,0 +1,353 @@
+{
+  "format": "taiji-a30-stop-signal-presence-v1",
+  "prereg": "plans/reference/PLAN-A-30_surface_repetition_localization_20260928.md §3 丁（零训练归属检验）",
+  "question": "(B1) 停止信号没学到 还是 (B2) 学到了但在自身轨迹上失效",
+  "checkpoint": "checkpoints/seed_beta.pt",
+  "corpus": "dialogue_extended_clean.jsonl",
+  "corpus_bytes": 108327171,
+  "documents": 39,
+  "selection": "only_documents_with_turn_seam",
+  "lines_read_to_fill_sample": 123090,
+  "generation_scope": "teacher_forced_on_corpus（不进模型自己的轨迹）",
+  "decision_face": "utf8_masked_legal_set",
+  "result": {
+    "documents": 39,
+    "stream_symbols": 43164,
+    "faces": {
+      "end": {
+        "n": 39,
+        "p_boundary": {
+          "n": 39,
+          "mean": 0.006975,
+          "p10": 0.003626,
+          "median": 0.006106,
+          "p90": 0.011158,
+          "max": 0.01881
+        },
+        "boundary_rank": {
+          "n": 39,
+          "mean": 10.692308,
+          "p10": 10.0,
+          "median": 11.0,
+          "p90": 11.0,
+          "max": 12.0
+        },
+        "boundary_is_argmax_count": 0,
+        "p_next_true": {
+          "n": 39,
+          "mean": 0.006975,
+          "p10": 0.003626,
+          "median": 0.006106,
+          "p90": 0.011158,
+          "max": 0.01881
+        },
+        "next_true_is_argmax_count": 0
+      },
+      "turn_marker": {
+        "n": 81,
+        "p_boundary": {
+          "n": 81,
+          "mean": 0.004675,
+          "p10": 0.000267,
+          "median": 0.004871,
+          "p90": 0.008689,
+          "max": 0.015544
+        },
+        "boundary_rank": {
+          "n": 81,
+          "mean": 17.419753,
+          "p10": 10.0,
+          "median": 11.0,
+          "p90": 14.0,
+          "max": 177.0
+        },
+        "boundary_is_argmax_count": 0,
+        "p_next_true": {
+          "n": 81,
+          "mean": 0.160974,
+          "p10": 0.024957,
+          "median": 0.149424,
+          "p90": 0.310925,
+          "max": 0.400259
+        },
+        "next_true_is_argmax_count": 40
+      },
+      "other": {
+        "n": 43005,
+        "p_boundary": {
+          "n": 43005,
+          "mean": 0.000164,
+          "p10": 3e-06,
+          "median": 3.3e-05,
+          "p90": 0.000247,
+          "max": 0.026819
+        },
+        "boundary_rank": {
+          "n": 43005,
+          "mean": 58.908266,
+          "p10": 13.0,
+          "median": 65.0,
+          "p90": 65.0,
+          "max": 180.0
+        },
+        "boundary_is_argmax_count": 0,
+        "p_next_true": {
+          "n": 43005,
+          "mean": 0.114531,
+          "p10": 0.002275,
+          "median": 0.037821,
+          "p90": 0.294799,
+          "max": 0.998674
+        },
+        "next_true_is_argmax_count": 9059
+      }
+    },
+    "threshold_sweep": [
+      {
+        "threshold": 0.0001,
+        "true_stop_recall": 1.0,
+        "false_stop_rate_per_position": 0.24339
+      },
+      {
+        "threshold": 0.0003,
+        "true_stop_recall": 1.0,
+        "false_stop_rate_per_position": 0.080758
+      },
+      {
+        "threshold": 0.001,
+        "true_stop_recall": 0.9744,
+        "false_stop_rate_per_position": 0.025416
+      },
+      {
+        "threshold": 0.003,
+        "true_stop_recall": 0.9487,
+        "false_stop_rate_per_position": 0.009697
+      },
+      {
+        "threshold": 0.006,
+        "true_stop_recall": 0.5128,
+        "false_stop_rate_per_position": 0.004116
+      },
+      {
+        "threshold": 0.01,
+        "true_stop_recall": 0.1282,
+        "false_stop_rate_per_position": 0.000953
+      },
+      {
+        "threshold": 0.03,
+        "true_stop_recall": 0.0,
+        "false_stop_rate_per_position": 0.0
+      }
+    ],
+    "mean_document_bytes": 1104.77,
+    "turn_markers_observed": 81,
+    "end_positions": 39,
+    "other_positions": 43005,
+    "end_rows_sample": [
+      {
+        "p_boundary": 0.00868208,
+        "boundary_rank": 10,
+        "boundary_is_argmax": false,
+        "legal_candidates": 180,
+        "p_next_true": 0.00868208,
+        "next_true_is_argmax": false
+      },
+      {
+        "p_boundary": 0.01517,
+        "boundary_rank": 10,
+        "boundary_is_argmax": false,
+        "legal_candidates": 180,
+        "p_next_true": 0.01517,
+        "next_true_is_argmax": false
+      },
+      {
+        "p_boundary": 0.0082088,
+        "boundary_rank": 11,
+        "boundary_is_argmax": false,
+        "legal_candidates": 180,
+        "p_next_true": 0.0082088,
+        "next_true_is_argmax": false
+      },
+      {
+        "p_boundary": 0.00365748,
+        "boundary_rank": 11,
+        "boundary_is_argmax": false,
+        "legal_candidates": 180,
+        "p_next_true": 0.00365748,
+        "next_true_is_argmax": false
+      },
+      {
+        "p_boundary": 0.00332952,
+        "boundary_rank": 11,
+        "boundary_is_argmax": false,
+        "legal_candidates": 180,
+        "p_next_true": 0.00332952,
+        "next_true_is_argmax": false
+      },
+      {
+        "p_boundary": 0.00477626,
+        "boundary_rank": 11,
+        "boundary_is_argmax": false,
+        "legal_candidates": 180,
+        "p_next_true": 0.00477626,
+        "next_true_is_argmax": false
+      },
+      {
+        "p_boundary": 0.00518599,
+        "boundary_rank": 10,
+        "boundary_is_argmax": false,
+        "legal_candidates": 180,
+        "p_next_true": 0.00518599,
+        "next_true_is_argmax": false
+      },
+      {
+        "p_boundary": 0.00610604,
+        "boundary_rank": 10,
+        "boundary_is_argmax": false,
+        "legal_candidates": 180,
+        "p_next_true": 0.00610604,
+        "next_true_is_argmax": false
+      },
+      {
+        "p_boundary": 0.00537552,
+        "boundary_rank": 11,
+        "boundary_is_argmax": false,
+        "legal_candidates": 180,
+        "p_next_true": 0.00537552,
+        "next_true_is_argmax": false
+      },
+      {
+        "p_boundary": 0.00924345,
+        "boundary_rank": 10,
+        "boundary_is_argmax": false,
+        "legal_candidates": 180,
+        "p_next_true": 0.00924345,
+        "next_true_is_argmax": false
+      },
+      {
+        "p_boundary": 0.00506745,
+        "boundary_rank": 10,
+        "boundary_is_argmax": false,
+        "legal_candidates": 180,
+        "p_next_true": 0.00506745,
+        "next_true_is_argmax": false
+      },
+      {
+        "p_boundary": 0.00561364,
+        "boundary_rank": 10,
+        "boundary_is_argmax": false,
+        "legal_candidates": 180,
+        "p_next_true": 0.00561364,
+        "next_true_is_argmax": false
+      }
+    ],
+    "turn_marker_rows_sample": [
+      {
+        "p_boundary": 0.00988038,
+        "boundary_rank": 11,
+        "boundary_is_argmax": false,
+        "legal_candidates": 180,
+        "p_next_true": 0.18711968,
+        "next_true_is_argmax": true
+      },
+      {
+        "p_boundary": 0.01071883,
+        "boundary_rank": 10,
+        "boundary_is_argmax": false,
+        "legal_candidates": 180,
+        "p_next_true": 0.31074598,
+        "next_true_is_argmax": true
+      },
+      {
+        "p_boundary": 0.00637207,
+        "boundary_rank": 11,
+        "boundary_is_argmax": false,
+        "legal_candidates": 180,
+        "p_next_true": 0.20521533,
+        "next_true_is_argmax": true
+      },
+      {
+        "p_boundary": 0.0053367,
+        "boundary_rank": 11,
+        "boundary_is_argmax": false,
+        "legal_candidates": 180,
+        "p_next_true": 0.11072073,
+        "next_true_is_argmax": false
+      },
+      {
+        "p_boundary": 0.0039752,
+        "boundary_rank": 11,
+        "boundary_is_argmax": false,
+        "legal_candidates": 180,
+        "p_next_true": 0.14942355,
+        "next_true_is_argmax": false
+      },
+      {
+        "p_boundary": 0.00299877,
+        "boundary_rank": 10,
+        "boundary_is_argmax": false,
+        "legal_candidates": 180,
+        "p_next_true": 0.03287819,
+        "next_true_is_argmax": false
+      },
+      {
+        "p_boundary": 0.00300578,
+        "boundary_rank": 11,
+        "boundary_is_argmax": false,
+        "legal_candidates": 180,
+        "p_next_true": 0.20951007,
+        "next_true_is_argmax": true
+      },
+      {
+        "p_boundary": 0.00060483,
+        "boundary_rank": 12,
+        "boundary_is_argmax": false,
+        "legal_candidates": 180,
+        "p_next_true": 0.31092501,
+        "next_true_is_argmax": true
+      },
+      {
+        "p_boundary": 0.00040688,
+        "boundary_rank": 13,
+        "boundary_is_argmax": false,
+        "legal_candidates": 180,
+        "p_next_true": 0.22316131,
+        "next_true_is_argmax": true
+      },
+      {
+        "p_boundary": 0.00637541,
+        "boundary_rank": 11,
+        "boundary_is_argmax": false,
+        "legal_candidates": 180,
+        "p_next_true": 0.15959874,
+        "next_true_is_argmax": true
+      },
+      {
+        "p_boundary": 0.00822926,
+        "boundary_rank": 10,
+        "boundary_is_argmax": false,
+        "legal_candidates": 180,
+        "p_next_true": 0.26087487,
+        "next_true_is_argmax": true
+      },
+      {
+        "p_boundary": 0.00055283,
+        "boundary_rank": 13,
+        "boundary_is_argmax": false,
+        "legal_candidates": 180,
+        "p_next_true": 0.27886871,
+        "next_true_is_argmax": true
+      }
+    ]
+  },
+  "instrument_guard": {
+    "observe_calls_recorded": true,
+    "boundary_targets_expected": 39,
+    "boundary_targets_observed": 39,
+    "end_position_accounting_ok": true,
+    "turn_marker_bucket_populated": true,
+    "turn_markers_observed": 81,
+    "base_sha256_unchanged": true
+  },
+  "started_utc": "2026-09-29T03:05:57Z"
+}
