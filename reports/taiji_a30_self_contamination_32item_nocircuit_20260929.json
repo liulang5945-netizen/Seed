@@ -1,0 +1,145 @@
+{
+  "format": "taiji-a30-self-contamination-v1",
+  "prereg": "plans/reference/PLAN-A-30_surface_repetition_localization_20260928.md §2h 末条＋DEBT-G10",
+  "question": "产品缺省 learn=True 把本轮答复回写训练面，会不会让后续轮更退化",
+  "checkpoint": "checkpoints/seed_beta.pt",
+  "circuit": null,
+  "repetition_penalty": 2.0,
+  "max_bytes": 256,
+  "arm_order": "treated_first",
+  "manifest": "r2_copy_surface_extension_v3_position_random.json",
+  "items": 32,
+  "pairing": "同题号同轮号配对；两臂各用自载入的 runtime（不共享内存态），各自 history 由本臂答复累积",
+  "arms": [
+    {
+      "arm": "learn_true",
+      "learn": true,
+      "learn_bytes_calls": 96,
+      "learn_applied_ticks_delta": -15999120,
+      "items": 32,
+      "texts": 96,
+      "per_turn": {
+        "turn_0": {
+          "texts": 32,
+          "formed": 32,
+          "hits": 0,
+          "mean_longest_run": 1.031,
+          "max_longest_run": 2,
+          "texts_with_run_ge_20": 0
+        },
+        "turn_1": {
+          "texts": 32,
+          "formed": 32,
+          "hits": 0,
+          "mean_longest_run": 1.0,
+          "max_longest_run": 1,
+          "texts_with_run_ge_20": 0
+        },
+        "turn_2": {
+          "texts": 32,
+          "formed": 32,
+          "hits": 0,
+          "mean_longest_run": 1.0,
+          "max_longest_run": 1,
+          "texts_with_run_ge_20": 0
+        }
+      }
+    },
+    {
+      "arm": "learn_false_a",
+      "learn": false,
+      "learn_bytes_calls": 0,
+      "learn_applied_ticks_delta": -15999120,
+      "items": 32,
+      "texts": 96,
+      "per_turn": {
+        "turn_0": {
+          "texts": 32,
+          "formed": 31,
+          "hits": 0,
+          "mean_longest_run": 1.469,
+          "max_longest_run": 2,
+          "texts_with_run_ge_20": 0
+        },
+        "turn_1": {
+          "texts": 32,
+          "formed": 31,
+          "hits": 0,
+          "mean_longest_run": 1.531,
+          "max_longest_run": 3,
+          "texts_with_run_ge_20": 0
+        },
+        "turn_2": {
+          "texts": 32,
+          "formed": 31,
+          "hits": 0,
+          "mean_longest_run": 1.719,
+          "max_longest_run": 3,
+          "texts_with_run_ge_20": 0
+        }
+      }
+    },
+    {
+      "arm": "learn_false_b",
+      "learn": false,
+      "learn_bytes_calls": 0,
+      "learn_applied_ticks_delta": -15999120,
+      "items": 32,
+      "texts": 96,
+      "per_turn": {
+        "turn_0": {
+          "texts": 32,
+          "formed": 31,
+          "hits": 0,
+          "mean_longest_run": 1.469,
+          "max_longest_run": 2,
+          "texts_with_run_ge_20": 0
+        },
+        "turn_1": {
+          "texts": 32,
+          "formed": 31,
+          "hits": 0,
+          "mean_longest_run": 1.531,
+          "max_longest_run": 3,
+          "texts_with_run_ge_20": 0
+        },
+        "turn_2": {
+          "texts": 32,
+          "formed": 31,
+          "hits": 0,
+          "mean_longest_run": 1.719,
+          "max_longest_run": 3,
+          "texts_with_run_ge_20": 0
+        }
+      }
+    }
+  ],
+  "per_turn_on_minus_off": {
+    "turn_0": {
+      "formed_on_minus_off": 1,
+      "hits_on_minus_off": 0,
+      "mean_run_on_minus_off": -0.438,
+      "run_ge_20_on_minus_off": 0
+    },
+    "turn_1": {
+      "formed_on_minus_off": 1,
+      "hits_on_minus_off": 0,
+      "mean_run_on_minus_off": -0.531,
+      "run_ge_20_on_minus_off": 0
+    },
+    "turn_2": {
+      "formed_on_minus_off": 1,
+      "hits_on_minus_off": 0,
+      "mean_run_on_minus_off": -0.719,
+      "run_ge_20_on_minus_off": 0
+    }
+  },
+  "instrument_guard": {
+    "learn_true_ran_learn_bytes_once_per_text": true,
+    "learn_false_ran_learn_bytes_zero": true,
+    "control_arms_bitwise_identical": true,
+    "all_arms_same_text_count": true,
+    "base_sha256_unchanged": true
+  },
+  "started_utc": "2026-09-29T03:02:39Z"
+}

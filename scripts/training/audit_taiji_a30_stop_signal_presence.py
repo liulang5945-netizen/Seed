@@ -51,24 +51,42 @@ def _sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def document_symbols(path: Path, docs: int) -> list[list[int]]:
-    """按**训练脚本的口径**取每篇的符号序列（边界符 + 正文 UTF-8 字节）。"""
+def document_symbols(path: Path, docs: int, *, require_seam: bool = False) -> dict[str, Any]:
+    """按**训练脚本的口径**取每篇的符号序列（边界符 + 正文 UTF-8 字节）。
+
+    `require_seam=True` 是给 §2s 那条新线索用的：默认语料**每篇只有一组问答**，
+    所以"轮结束以 `\n问：` 字节表达"的位置天然稀少（400 篇才捞出 10 处）——
+    直接把 docs 拉到几千要付几十万步的机器时间。改法是**先按文本筛**（读 jsonl 是秒级），
+    只喂真正含轮接缝的那几篇：名次、概率、胜出率都照旧算，只是样本从"随机前 N 篇"
+    变成"前 N 篇含接缝的"，**这一条改变必须在件里披露**（`selection` 字段），
+    否则这就是另一口井里打的水却当成同一条河。
+    """
 
     from taiji import TaijiConfig
 
     boundary = int(TaijiConfig().boundary_symbol)
+    seam = chr(10).encode("utf-8") + "问：".encode()
     chunks: list[list[int]] = []
+    lines_read = 0
     with path.open(encoding="utf-8") as handle:
         for line in handle:
+            lines_read += 1
             text = line.strip()
             if not text:
                 continue
             payload = json.loads(text)
             content = payload["text"] if isinstance(payload, dict) and "text" in payload else text
-            chunks.append([boundary, *content.encode("utf-8")])
+            raw = content.encode("utf-8")
+            if require_seam and seam not in raw:
+                continue
+            chunks.append([boundary, *raw])
             if len(chunks) >= docs:
                 break
-    return chunks
+    return {
+        "chunks": chunks,
+        "lines_read": lines_read,
+        "selection": "only_documents_with_turn_seam" if require_seam else "first_n_documents",
+    }
 
 
 def _quantiles(values: list[float]) -> dict[str, Any]:
@@ -224,6 +242,11 @@ def main() -> int:
         action="store_true",
         help="按产品解码口径只比较 UTF-8 合法候选（不给＝全 257 个符号上直接比，即教师强制面）",
     )
+    parser.add_argument(
+        "--require-seam",
+        action="store_true",
+        help="只取正文里真含 轮接缝（\n问：）的文档——把 marker 桶的样本量抬起来（件里披露 selection）",
+    )
     parser.add_argument("--out-report", default=None)
     args = parser.parse_args()
 
@@ -237,7 +260,8 @@ def main() -> int:
 
     runtime = SeedRuntime.load(checkpoint)
     boundary = int(runtime.model.substrate.config.boundary_symbol)
-    chunks = document_symbols(corpus, args.docs)
+    sample = document_symbols(corpus, args.docs, require_seam=args.require_seam)
+    chunks = sample["chunks"]
     result = audit(runtime, chunks, boundary, mask=args.mask)
 
     report = {
@@ -248,6 +272,8 @@ def main() -> int:
         "corpus": corpus.name,
         "corpus_bytes": corpus.stat().st_size,
         "documents": result["documents"],
+        "selection": sample["selection"],
+        "lines_read_to_fill_sample": sample["lines_read"],
         "generation_scope": "teacher_forced_on_corpus（不进模型自己的轨迹）",
         "decision_face": "utf8_masked_legal_set" if args.mask else "full_alphabet",
         "result": result,
