@@ -881,3 +881,5 @@ ode_modulesi…`＝**本仓已登记的 Windows 符号链接权限族**（与 0
 
 
 **㊵-40（分隔符折叠升级为「记号后整段路径统一」，`plugin-install-registry` 随之脱红）**：㊵-39 的折叠只吃紧跟 `{{cwd}}` 的第一个分隔符，实测该 lane 的形状是 `{{cwd}}/.dsh-home\profiles\scaffold`（深处还有）⇒ 改成对 `{{cwd}}` 起头的整段 run 做 `\`→`/` 与 `\`→`/`。读数：三档合跑 `Test Files 3 passed (3)`、`Tests 29 passed｜2 skipped`——`plugin-install-registry`（1 test）、`seeded-history`（15/2 skip）、`sidebar-right`（15）全绿，**未重录任何金样**；`sidebar-right` 与 `seeded-history` 同时绿是"改共享归一化不波及其他基线"的证据。累计确认脱红的 web 面文件＝5 个（`github-ready-review`、`reference-composer`、`navigation-panes`、`seeded-history`、`plugin-install-registry`）；整面总数仍未重跑，不推算。
+
+**㊵-41（第三次整面复跑已挂后台，勿重复启动）**：`b8k0mb4p5`，三批同 144 清单，日志 `.dsh-sbx2/rerun3-face-{00,01,02}.log`，起止 mtime 存 `rerun3-mtime-{start,end}.txt`。**口径**：本轮改动全在测试侧（`scaffold.ts` 的 `normalizeAria`、`seeded-history` 的选区前提），产物仍是 13:32 那次根构建，所以这次的 delta 可直接归到测试侧修复；**若有人在这期间跑 `pnpm run build` 或改 `lib/`，这批读数就作废**，须重跑。预期看点：`plugin-install-registry`、`seeded-history`、`github-ready-review`、`reference-composer`、`navigation-panes` 五个文件应脱红（前四个已单跑/合跑绿，`navigation-panes` 是上一轮自然脱红，需再确认是否稳定）；总数若未减到预期，按 ㊵-31/㊵-32 的集合差法逐文件读，不看净数。
