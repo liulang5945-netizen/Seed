@@ -1689,6 +1689,13 @@ python scripts/training/audit_taiji_a30_stop_signal_presence.py --checkpoint out
    （`[边界符] + 正文 + [边界符]`），所以召回 1.0 的档全是 120/120 篇误收、第一次误收中位在 **0.17%**。
    **这一条把"要不要接一条全局阈值停止"这个候选彻底关掉了**，与配方是否有效无关。
 
+5. **"这枚件到底是按配方训的吗"——机检成立，不必再靠口供**（2026-09-30 补）：按 zip 条目取出 `data.pkl` 逐字节搜键，
+   a31 的 `data.pkl` 尾部含 **`end_boundary_after_newline`**（偏移 442003／全长 442038），
+   而 a26_p1（配方之前训的）**整檔没有这个键** ⇒ 主线那句"喂入形状随档写进 metadata"实测成立。
+   **但同一趟搜索也确认**：档里**没有** `max_symbols`／起始 ticks／退出原因（搜到的 `provenance_encoder`、
+   `recovery_strategy_memory_budget`、`maturity_ticks` 全是**配置项**不是训练记账）
+   ⇒ "吃满预算没有"仍只能从 `progress.jsonl` 反推，这一小块记在 **DEBT-G14**。
+
 **本件弱点**：①仍是 120 格、不是预注册的 300 格口径；②`--append-newline` 补的那个换行是**仪器加的**
 （它复现的是配方的喂入形状，不是产品出口的真实文本）；③other 桶那 358 处误收 argmax 只是观测，
 要判"配方是否让正文中更容易误停"需要 ≥3 线的计数判据与自身轨迹面（§2am 的 `ratio_sweep` 顺带量同一件事）；
