@@ -3,7 +3,7 @@ import type { Volatile } from '@taiji/cordis'
 
 import z from '@taiji/schemastery'
 import { isVolatile } from '@taiji/cosmokit'
-import { resolveRetryPolicy, RetryPolicySchema } from '@taiji/dsh-llm'
+import { catalogModelBaseFields, requireNewCatalogId, resolveRetryPolicy, RetryPolicySchema } from '@taiji/dsh-llm'
 import type { ModelModality, RetryPolicyConfig } from '@taiji/dsh-llm'
 import { credentialRef } from '@taiji/dsh-credentials'
 import type { LaunchEnvironmentSnapshot } from '@taiji/dsh-launch-environment'
@@ -178,13 +178,9 @@ function resolveModels(models: readonly DeepSeekCatalogModel[] | undefined): Dee
     if (systemPromptUpdate !== undefined && systemPromptUpdate !== 'in-history') {
       throw new Error(`llm-deepseek: catalog model "${model.id}" systemPromptUpdate must be "in-history" when present`)
     }
-    if (seen.has(model.id)) throw new Error(`llm-deepseek: duplicate catalog model "${model.id}"`)
-    seen.add(model.id)
+    requireNewCatalogId('llm-deepseek', model, seen)
     return {
-      id: model.id,
-      ...model.name === undefined ? {} : { name: model.name },
-      ...model.description === undefined ? {} : { description: model.description },
-      ...model.contextWindow === undefined ? {} : { contextWindow: model.contextWindow },
+      ...catalogModelBaseFields(model),
       ...model.maxTokens === undefined ? {} : { maxTokens: model.maxTokens },
       ...model.systemPromptUpdate === undefined ? {} : { systemPromptUpdate: model.systemPromptUpdate },
       inputModalities: [...inputModalities],

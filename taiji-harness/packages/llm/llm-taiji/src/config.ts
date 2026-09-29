@@ -3,7 +3,7 @@ import type { Volatile } from '@taiji/cordis'
 
 import z from '@taiji/schemastery'
 import { isVolatile } from '@taiji/cosmokit'
-import { resolveRetryPolicy, RetryPolicySchema } from '@taiji/dsh-llm'
+import { catalogModelBaseFields, requireNewCatalogId, resolveRetryPolicy, RetryPolicySchema } from '@taiji/dsh-llm'
 import type { RetryPolicyConfig } from '@taiji/dsh-llm'
 import { DEFAULT_BASE_URL, DEFAULT_MODELS, DEFAULT_READINESS_POLL_MS, MIN_READINESS_POLL_MS } from './defaults.ts'
 import type { TaijiCatalogModel, TaijiConnectionOptions } from './types.ts'
@@ -69,14 +69,8 @@ function resolveModels(models: readonly TaijiCatalogModel[] | undefined): TaijiC
       && (!Number.isInteger(model.contextWindow) || model.contextWindow <= 0)) {
       throw new Error(`llm-taiji: catalog model "${model.id}" contextWindow must be a positive integer`)
     }
-    if (seen.has(model.id)) throw new Error(`llm-taiji: duplicate catalog model "${model.id}"`)
-    seen.add(model.id)
-    return {
-      id: model.id,
-      ...model.name === undefined ? {} : { name: model.name },
-      ...model.description === undefined ? {} : { description: model.description },
-      ...model.contextWindow === undefined ? {} : { contextWindow: model.contextWindow },
-    }
+    requireNewCatalogId('llm-taiji', model, seen)
+    return catalogModelBaseFields(model)
   })
 }
 
