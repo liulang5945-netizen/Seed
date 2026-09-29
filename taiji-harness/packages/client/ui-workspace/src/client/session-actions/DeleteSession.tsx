@@ -8,6 +8,7 @@
  * inside the same dialog.
  */
 import { useState } from 'react'
+import { activityLine } from './activity-line.ts'
 // Type-only: the family keys each provider merges; a key this program did not compile takes the generic line.
 import type {} from '@taiji/dsh-agent/types'
 import type {} from '@taiji/dsh-jobs/view'
@@ -169,20 +170,6 @@ function DeleteConfirmForm({ request, deleteSession, onSettle, t }: {
 }
 
 /**
- * One family's line: its count and the items' labels (ids when a family
- * carries no label). A family this dictionary does not know — a provider
- * merged into the kind map — falls through to the generic line.
+ * One family's line lives in `./activity-line.ts`, shared with the archive
+ * confirmation; this dialog keeps the same dictionary keys.
  */
-function activityLine(entry: NonNullable<SessionDeleteConfirmRequest['activity']>[number], t: SessionDeleteConfirmProps['t']): string {
-  const items = entry.items ?? []
-  const n = items.length
-  const names = items.map(item => item.label ?? item.id).join(t('archive.confirm.listSeparator'))
-  const plural = n === 1 ? 'one' : 'other'
-  switch (entry.kind) {
-    case 'turn': return t('archive.confirm.turn')
-    case 'subagent': return t(`archive.confirm.subagents.${plural}`, { n, names })
-    case 'job': return t(`archive.confirm.jobs.${plural}`, { n, names })
-    case 'schedule': return t(`archive.confirm.schedules.${plural}`, { n, names })
-    default: return t(`archive.confirm.other.${plural}`, { kind: entry.kind, n })
-  }
-}
