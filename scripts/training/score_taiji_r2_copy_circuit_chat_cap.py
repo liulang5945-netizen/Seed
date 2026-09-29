@@ -116,6 +116,7 @@ def run_arm(
     ]
     if limit is not None:
         items = items[:limit]
+    ngram = build_ngram_model()
     rows = []
     for item in items:
         history: list[tuple[str, str]] = []
@@ -126,13 +127,23 @@ def run_arm(
             if index + 1 < len(turns):
                 history.append((turn, answer))
         hit = any(token in answer for token in item["expected_contains"])
+        #: `formed_full`＝**整条答复**过 `well_formed`（与下面那把只看 60 字符前缀的尺子不同，
+        #: 见 `well_formed_scope`）。三者合起来才回答"回路买到的到底是词在场，还是一句能看的答案"
+        #: ——`DEBT-G12` 要的那把联合判据。旧字段 `correct`／`well_formed_rate` 语义逐位不变。
         rows.append(
-            {"id": item["id"], "dimension": item["dimension"], "hit": hit, "answer": answer[:60]}
+            {
+                "id": item["id"],
+                "dimension": item["dimension"],
+                "hit": hit,
+                "formed_full": bool(well_formed(answer, ngram)),
+                "answer": answer[:60],
+            }
         )
-    ngram = build_ngram_model()
     return {
         "items": len(rows),
         "correct": sum(1 for row in rows if row["hit"]),
+        "joint_hits": sum(1 for row in rows if row["hit"] and row["formed_full"]),
+        "formed_full_texts": sum(1 for row in rows if row["formed_full"]),
         "well_formed_rate": round(
             sum(1 for row in rows if well_formed(row["answer"], ngram)) / len(rows), 4
         ),
