@@ -311,8 +311,12 @@ def audit(runtime: Any, chunks: list[list[int]], boundary: int, mask: bool) -> d
                 length = doc_lengths[doc_index] if doc_index < len(doc_lengths) else 0
                 if fired and length:
                     fractions.append(min(fired) / length)
+                    #: 位置条件下的误收要按"**有没有允许窗口内的 firing**"数，不是"最早那次 firing 是否晚于窗口"：
+                    #: 一条答复若在第 5% 和第 60% 都会触发，加了 floor=0.50 之后它**仍会在 60% 处被误收**。
+                    #: 写成 `min(fired)/length >= floor` 会把这种条目当成"不误收"，从而**低报代价**（v7 初版即此错，
+                    #: 已在 PLAN-A-30 §2an 留场更正，读数按本版重跑）。
                     for floor in floors:
-                        if min(fired) / length >= floor:
+                        if any(position / length >= floor for position in fired):
                             docs_by_floor[floor] += 1
             fractions.sort()
             out.append(
@@ -391,7 +395,14 @@ def main() -> int:
     result = audit(runtime, chunks, boundary, mask=args.mask)
 
     report = {
-        "format": "taiji-a30-stop-signal-presence-v7",
+        "format": "taiji-a30-stop-signal-presence-v8",
+        "format_note_v8": (
+            "v8 **改语义不改算法**地修掉 v7 的 `docs_with_false_fire_by_floor` 一处低报：v7 数的是"
+            "「最早那次触发是否晚于窗口」，而位置条件的正确问法是「窗口**之内**有没有触发」——"
+            "一条答复若在第 5% 和第 60% 都会触发，加 floor=0.50 之后它仍会在 60% 处被误收，v7 把这种条目当成不误收。"
+            "⇒ **v7 那三列 floor 数字一律低报代价、不可引用**（其余各列：`seam_hit_rate`、`false_rate_per_position`、"
+            "`threshold_sweep`、`faces` 全部未动，与 v2–v7 同格可比）。本版起按 `any(position/length >= floor)` 计。"
+        ),
         "format_note_v7": (
             "v7 只在 `ratio_sweep` 每行加一列 `docs_with_false_fire_by_floor`（floor∈{0.00,0.25,0.50,0.75}："
             "若规定正文走到 floor 比例之后才允许收笔，同一个 K 下还剩几篇误收）。其余各表算法一字未动 "
