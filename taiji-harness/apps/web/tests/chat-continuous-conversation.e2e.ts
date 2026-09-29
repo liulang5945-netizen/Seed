@@ -26,6 +26,10 @@ const MODE = webSnapshotMode()
 const TURN_COUNT = 12
 const TOOL_TURNS = [4, 9] as const
 const STREAM_PACE_MS = 10
+// The shipped composition registers the platform's shell tool — bash on
+// POSIX, pwsh on Windows (base cordis.patch.yml) — so a replay override whose
+// tool calls execute live must call the name this platform actually mounts.
+const SHELL_TOOL = process.platform === 'win32' ? 'pwsh' : 'bash'
 
 interface TurnSpec {
   readonly index: number
@@ -110,7 +114,12 @@ function toolStream(spec: TurnSpec): StreamChunk[] {
     throw new Error(`turn ${String(spec.index)} has no tool identity`)
   }
   const args = JSON.stringify({
-    command: `printf '${spec.toolResultMarker}\\n'`,
+    // pwsh has no printf builtin and the executor passes stdout through raw,
+    // so the Windows arm writes the marker plus an explicit LF via [char]10 —
+    // byte-identical to the POSIX printf's trailing newline.
+    command: process.platform === 'win32'
+      ? `[Console]::Out.Write('${spec.toolResultMarker}' + [char]10)`
+      : `printf '${spec.toolResultMarker}\\n'`,
     description: spec.toolResultMarker,
   })
   return [
@@ -119,13 +128,13 @@ function toolStream(spec: TurnSpec): StreamChunk[] {
       type: 'tool-call-delta',
       index: 0,
       id: spec.callId,
-      name: 'bash',
+      name: SHELL_TOOL,
       argumentsDelta: args,
     },
     {
       type: 'block-end',
       index: 0,
-      block: { type: 'tool-call', id: spec.callId, name: 'bash', arguments: args },
+      block: { type: 'tool-call', id: spec.callId, name: SHELL_TOOL, arguments: args },
     },
     { type: 'usage', usage: { inputTokens: 256, outputTokens: 24 } },
     { type: 'finish', reason: { kind: 'tool-calls' } },
@@ -312,7 +321,7 @@ describe('web e2e: continuous conversation grown through the composer', () => {
       expect(calls[0]?.data).toMatchObject({
         turn: spec.index,
         callId: spec.callId,
-        name: 'bash',
+        name: SHELL_TOOL,
       })
       expect(results[0]?.data.turn).toBe(spec.index)
       expect(results[0]?.data.message.source.callId).toBe(spec.callId)
@@ -323,6 +332,23 @@ describe('web e2e: continuous conversation grown through the composer', () => {
       await expect.poll(() => toolRow.count(), { timeout: 10_000 }).toBe(1)
       expect(await toolRow.textContent()).toContain(spec.toolResultMarker)
       await expandOwningTurnProcess(page, toolRow)
+      if (process.platform === 'win32') {
+        // The call-tree slot answers the bash wire name only (assembly-surfaces
+        // pins pwsh to the generic row), so this pwsh call renders the generic
+        // row: same shell-family variant, and the whole-row expand that swaps
+        // [data-terminal] in — the same collapse/expand semantics the keyed
+        // BashRow disclosure pins on POSIX, under its own selectors.
+        const genericToggle = toolRow.locator('[data-expandable]')
+        await expect.poll(() => toolRow.locator('[data-terminal]').count(), { timeout: 10_000 }).toBe(0)
+        await genericToggle.click()
+        await expect.poll(() => toolRow.locator('[data-terminal]').count(), { timeout: 10_000 }).toBe(1)
+        await toolRow.getByText(spec.toolResultMarker, { exact: true }).last().waitFor({ timeout: 10_000 })
+        await genericToggle.click()
+        await expect.poll(() => toolRow.locator('[data-terminal]').count(), { timeout: 10_000 }).toBe(0)
+        continue
+      }
+      // data-sample is the BashRow family attribute: the POSIX arm pins the
+      // expand/collapse affordance around the terminal output.
       const disclosure = toolRow.locator('[data-sample="bash"]')
       expect(await disclosure.getAttribute('aria-expanded')).toBe('false')
       await disclosure.click()
