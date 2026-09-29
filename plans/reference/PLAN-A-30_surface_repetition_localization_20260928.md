@@ -1783,6 +1783,27 @@ python scripts/training/audit_taiji_a30_stop_signal_presence.py --checkpoint out
 需要 owner 的仍是三笔：a31 续到 2M 预算（重动作）、回路是否随出厂基座装（DEBT-G6）、
 以及"产品出口要不要接一条比较式停止"（接线之前先要有预注册判据）。
 
+## 2al-扩样. 把 §2al 那张面推到 **300 格**口径：一臂已回 **239/300**，另两臂在跑（本节此刻不下判语）
+
+这是 §6.1 里那条"不需签字、可直接跑"的复验：同一台仪器、同一张配方面（`--append-newline`）、同一份语料前 300 篇，
+判据沿用 §2aa 那条**已入库的 ≥3 线**（治疗臂与对照臂的 `boundary_is_argmax_count` 之差 ≥3）——**不改判据、只加样本**。
+
+* **已回（重训件 a31）**：`reports/taiji_a30_stop_signal_presence_a31retrain_300doc_masked_recipeface_20260930.json`
+  ⇒ `end` 桶 **239/300** 格边界符成为 argmax、名次中位 **1**、`p_boundary` 中位 **0.251052**；
+  `other` 桶 238,993 格里 **822** 处误收 argmax；流长 239,601 步、平均文档 796.67 字节，
+  守卫全真（`boundary_targets_observed` 300＝期望 300＝`end` 桶 n，`turn_markers_observed` 8）。
+  件里格式标的是 **v7** ⇒ 它的 `ratio_sweep.docs_with_false_fire_by_floor` 三列**按 §2an 的更正不可引用**；
+  `faces` 与 `threshold_sweep` 未受影响，本件用的就是 `faces` 的计数。
+* **在跑的两臂**（命令即贴即用，出数后本件补判读）：
+  `--checkpoint output/a26_p1/checkpoint.pt --docs 300 --mask --append-newline`（同血缘的配方前基座，配对按 `docs_sha256`）；
+  `--checkpoint checkpoints/seed_beta.pt --docs 120 --mask --append-newline`（**第二枚**配方前基座——它量的是
+  "0 胜出是不是 a26 独有的"，属另一枚件，不能与上面那臂混作同一条配对）。
+
+**先于数写下的一句判读纪律**：这一档只回答"300 格上治疗臂与对照臂的 argmax 计数差有没有 ≥3"。
+它**不是** §2ab 判据第 1 条的本体（那条有它自己的面与 held-out 口径，归主线那档核），
+本件的 239/300 只能作为**同向独立佐证**引用。若两枚对照臂都远小于 239 且差过线，结论升到 300 格口径；
+若某枚对照臂也在 200 上下，那就说明**这张面上的胜出不是配方给的**——那是要照实写出的否定，不是可以略过的分支。
+
 ## 2am. **比较式**停止判据的定价（零训练，同一枚件、同一张自身轨迹面）：分离度买到了，"早位不误收"买不到
 
 判据先于数：`priceable_ratio_points` 的 docstring（提交 `db2a0768`）——规则＝"**边界符离第一位只差 K 倍就收笔**"，
