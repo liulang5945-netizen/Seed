@@ -114,6 +114,15 @@
 屏幕不动 ⇒ 按约定不花那次表层整跑。**键/寻址那侧今天连排三支**：幅度（§17）、聚合（§23）、
 离线好解 transplant（§19/§20）——只剩"要不要动内容表征"这一条**需要签字**的路。
 
+**队首（2026-09-29 rev50：§2aa 对齐档升决策级——300 个结束位在飞；owner 待裁两笔不变）**——
+§2aa 的 `after_newline`（结束目标挪到模型已会预测的换行之后）n=18→30 胜出 10/18→**26/30**（对照两臂 0/30，
+冻结判据 `after_newline ≥ current+3` 仍成立，提交 48b218fe）之后，按 §2aa 下一步②把同一件升到**决策级 300 位**
+（100 组×3 答×3 epoch，同基座 `seed_beta.pt`、同冻结判据 `d0b3ef56`，仪器 `probe_taiji_a30_ding3_stop_target_pilot.py --arm-set alignment --mask`），
+读数件 `reports/taiji_a30_ding3_stop_target_pilot_100g3x3e_alignment_masked_20260929.json`——判读分支写死在
+[PLAN-A-30 §2aa](../reference/PLAN-A-30_surface_repetition_localization_20260928.md)：
+保持胜出 ⇒ 丁-3 的"目标编码对齐"带决策级证据进 owner 那笔账；塌 0 ⇒ 26/30 降级为小样本偶然。
+生成面验证（下一步①）与产品自学习表达仍等 `DEBT-G13` 转发落地（owner 第一笔）；第二枚基座（出厂 `seed_corpus.pt`）待本档判读后定。
+
 **队首（2026-09-29 rev49：把"自我污染"拆成两条通道，把"停不下来"最后一个便宜解释否证；剩下的两笔都要签字）**——
 ① 五臂 2×2（32 题 × 3 轮，挂回路 seed-A）按**先于数写下的裁定表**命中"两组都成立"⇒ `learn=True` 的权重回写
 与下一轮 prompt 里的上一条答复**同向、各自过 ≥3 线**，修法是**两处都要门槛**（回写只收过 `well_formed ∧ 长度上限`
