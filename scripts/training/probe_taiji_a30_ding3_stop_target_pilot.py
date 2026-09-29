@@ -77,6 +77,16 @@ def _sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def longest_same_char_run(text: str) -> int:
+    """一条答复里最长的"同一个字连写"——生成面的副作用尺（停下来了但还在拖写，不算能力）。"""
+
+    best = run = 1
+    for a, b in zip(text, text[1:], strict=False):
+        run = run + 1 if a == b else 1
+        best = max(best, run)
+    return best if text else 0
+
+
 def read_groups(path: Path, *, groups: int, exchanges: int) -> dict[str, Any]:
     """读 `groups` 组训练语料＋同样多组 held-out，每组 `exchanges` 条"问…答"。
 
@@ -246,6 +256,67 @@ def measure(runtime: Any, chunks: list[list[int]], boundary: int, *, mask: bool)
     return audit(runtime, chunks, boundary, mask)
 
 
+def question_of(record: bytes) -> str | None:
+    """把语料一行（`问：…\n答：…`）拆成**产品入口的提问**；拆不出来的返回 None。"""
+
+    text = record.decode("utf-8")
+    marker = "答："
+    if not text.startswith("问：") or marker not in text:
+        return None
+    return text[2 : text.index(marker)].strip()
+
+
+def generation_face(
+    runtime: Any, prompts: list[str], *, max_bytes: int, penalty: float
+) -> dict[str, Any]:
+    """**生成面**：走产品出口 `chat()`，把每条答复分成三类退出方式。
+
+    分类只看 `chat()` 返回的字节数与"文本里有没有轮接缝"：
+    * `ate_full_budget`——把预算吃满（§2h 的 72/72 就是这一类，边界符从没赢过）；
+    * `cut_by_marker`——文本里出现"换行＋`问：`"这类轮接缝，被产品的 `_TURN_MARKERS` 截掉；
+    * `stopped_early_no_marker`——**既没吃满、文本里也没有接缝** ⇒ 唯一能归给"模型自己发边界符停的"那一类。
+    判据（先于数，写在件 docstring 与本函数）：治疗臂的 `stopped_early_no_marker`
+    比对照臂**多 ≥3 条**才算"生成面上第一次因边界符退出环"；同时要求 `well_formed` 与最长连写不恶化。
+
+    注意口径：这是 **256 预算、惩罚 2.0 的产品缺省出口**，与 §2aa 的教师强制面不是同一张面；
+    两面的读数不许互顶（本仓的老规矩：结论依链路，也依预算与分布）。
+    """
+
+    from eval_taiji_r2_readout_retrain import build_ngram_model, well_formed
+
+    ngram = build_ngram_model()
+    rows: list[dict[str, Any]] = []
+    for prompt in prompts:
+        answer = runtime.chat(
+            prompt, history=[], learn=False, max_length=max_bytes, repetition_penalty=penalty
+        )
+        raw = answer.encode("utf-8")
+        ate = len(raw) >= max_bytes
+        has_seam = any(marker in answer for marker in ("\n问：", "\r\n问：", "问："))
+        rows.append(
+            {
+                "bytes": len(raw),
+                "chars": len(answer),
+                "ate_full_budget": bool(ate),
+                "cut_by_marker": bool(has_seam and not ate),
+                "stopped_early_no_marker": bool(not ate and not has_seam),
+                "well_formed": bool(well_formed(answer, ngram)),
+                "longest_run": longest_same_char_run(answer),
+            }
+        )
+    return {
+        "prompts": len(rows),
+        "max_bytes": max_bytes,
+        "repetition_penalty": penalty,
+        "ate_full_budget": sum(1 for r in rows if r["ate_full_budget"]),
+        "cut_by_marker": sum(1 for r in rows if r["cut_by_marker"]),
+        "stopped_early_no_marker": sum(1 for r in rows if r["stopped_early_no_marker"]),
+        "well_formed": sum(1 for r in rows if r["well_formed"]),
+        "mean_longest_run": round(sum(r["longest_run"] for r in rows) / max(1, len(rows)), 3),
+        "rows": rows,
+    }
+
+
 def facade_gap(runtime: Any) -> dict[str, Any]:
     """机检"每答一个结束目标"这件事在**产品门面**上到底能不能表达（不靠我读码的口供）。"""
 
@@ -282,6 +353,14 @@ def main() -> int:
     parser.add_argument(
         "--mask", action="store_true", help="在 UTF-8 合法集上量（默认关＝全字母表）"
     )
+    parser.add_argument(
+        "--gen-prompts",
+        type=int,
+        default=0,
+        help="额外跑生成面：这么多条 held-out 提问走产品出口 `chat()`（0＝不跑，保持旧档语义）",
+    )
+    parser.add_argument("--gen-max-bytes", type=int, default=256, help="生成面预算（产品缺省 256）")
+    parser.add_argument("--gen-penalty", type=float, default=2.0, help="生成面惩罚（产品缺省 2.0）")
     parser.add_argument("--out-report", default=None)
     args = parser.parse_args()
 
@@ -307,7 +386,20 @@ def main() -> int:
 
     runtime = fresh()
     gap = facade_gap(runtime)
+    prompts: list[str] = []
+    for group in data["held_out"]:
+        if len(prompts) >= max(0, args.gen_prompts):
+            break
+        question = question_of(group[0])
+        if question:
+            prompts.append(question)
     before = measure(runtime, chunks, boundary, mask=args.mask)
+    #: **训练前的生成面基线**：冒烟发现"没吃满预算且文本无接缝"这类退位在未对齐臂上也会出现，
+    #: 所以那一类不能直接归给"边界符赢了"。同一批提问在训练前先量一遍，才有一个可减的零线。
+    if prompts:
+        before["generation"] = generation_face(
+            runtime, prompts, max_bytes=args.gen_max_bytes, penalty=args.gen_penalty
+        )
     del runtime
 
     arms: list[dict[str, Any]] = []
@@ -318,6 +410,11 @@ def main() -> int:
         note["end"] = face["faces"]["end"]
         note["other"] = face["faces"]["other"]
         note["stream_symbols"] = face["stream_symbols"]
+        if prompts:
+            #: 生成面**在同一臂训完之后**跑：训练顺序与本件规则一致，两臂量的是同一批提问。
+            note["generation"] = generation_face(
+                runtime, prompts, max_bytes=args.gen_max_bytes, penalty=args.gen_penalty
+            )
         arms.append(note)
         del runtime
 
@@ -379,8 +476,30 @@ def main() -> int:
             if a_end["boundary_is_argmax_count"] >= c_end["boundary_is_argmax_count"] + 3
             else "not_resolved（对齐两臂胜出数差 <3，或都不过 3 格）"
         )
+    #: **生成面判读（先于数）**：`VERDICT_PAIRS` 那一对里，治疗臂"没吃满预算、文本里也没有接缝"的
+    #: 退出条数比对照臂多 ≥3 才算"生成面上因边界符退出环"。同时看两件副作用：`well_formed` 与
+    #: 均值最长连写——若"停下来了但说的话更烂"，那不算能力提升，算换了个坏法。
+    generation_verdict = None
+    delta_generation = None
+    if prompts and all("generation" in arm for arm in arms):
+        t_name, c_name = VERDICT_PAIRS[args.arm_set]
+        g_t = by_arm[t_name]["generation"]
+        g_c = by_arm[c_name]["generation"]
+        delta_generation = {
+            "stopped_early_no_marker": g_t["stopped_early_no_marker"]
+            - g_c["stopped_early_no_marker"],
+            "cut_by_marker": g_t["cut_by_marker"] - g_c["cut_by_marker"],
+            "ate_full_budget": g_t["ate_full_budget"] - g_c["ate_full_budget"],
+            "well_formed": g_t["well_formed"] - g_c["well_formed"],
+            "mean_longest_run": round(g_t["mean_longest_run"] - g_c["mean_longest_run"], 3),
+        }
+        generation_verdict = (
+            f"生成面成立（{t_name} 比 {c_name} 多 ≥3 条『没吃满预算且文本无接缝』的退出）"
+            if delta_generation["stopped_early_no_marker"] >= 3
+            else "not_resolved（生成面两臂『早停无接缝』之差 <3）"
+        )
     report = {
-        "format": "taiji-a30-ding3-stop-target-pilot-v1",
+        "format": "taiji-a30-ding3-stop-target-pilot-v2",
         "prereg": "PLAN-A-30 §3 丁-3 ＋本件 docstring 的判读线（先于数写下）",
         "question": "只用现成 learn_bytes 参数面把'结束目标的上下文形状'换掉，结束位上的边界符会不会开始赢",
         "checkpoint": args.checkpoint,
@@ -424,6 +543,14 @@ def main() -> int:
         "delta_density": delta_density,
         "alignment_verdict": alignment_verdict,
         "delta_alignment": delta_alignment,
+        "gen_prompts": len(prompts),
+        "pre_generation": (
+            {k: v for k, v in before["generation"].items() if k != "rows"}
+            if "generation" in before
+            else None
+        ),
+        "generation_verdict": generation_verdict,
+        "delta_generation": delta_generation,
         "facade_gap": gap,
         "instrument_guard": {
             "base_sha256_unchanged": _sha256(checkpoint) == sha_before,
@@ -453,6 +580,10 @@ def main() -> int:
             #: 三臂必须吃同样多的**正文字节**（边沿边界符允许差几十个）——这是 shape/density 两套
             #: 对照共同的配对前提；上一条 `both_arms_ran_the_same_byte_count` 只钉 granularity 与 current。
             "all_arms_same_text_bytes": len({arm["trained_text_bytes"] for arm in arms}) == 1,
+            #: 生成面的"被走到"证据：跑过就必须每臂都有 N 条，且条数与请求数一致。
+            "generation_ran_on_all_arms": (
+                not prompts or all(arm["generation"]["prompts"] == len(prompts) for arm in arms)
+            ),
             "audit_bucket_accounting_ok": all(
                 arm["end"]["n"] + arm["other"]["n"] > 0 for arm in arms
             ),
@@ -494,6 +625,16 @@ def main() -> int:
                 ],
                 "delta_vs_current": report["delta_vs_current"],
                 "verdict": verdict,
+                "generation_verdict": generation_verdict,
+                "delta_generation": delta_generation,
+                "per_arms_generation": {
+                    arm["arm"]: {
+                        k: v
+                        for k, v in arm.get("generation", {}).items()
+                        if k != "rows" and k not in ("max_bytes", "repetition_penalty")
+                    }
+                    for arm in arms
+                },
                 "density_verdict": density_verdict,
                 "delta_density": delta_density,
                 "guard": report["instrument_guard"],
