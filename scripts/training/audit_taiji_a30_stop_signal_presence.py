@@ -176,6 +176,11 @@ def audit(runtime: Any, chunks: list[list[int]], boundary: int, mask: bool) -> d
                     "legal_candidates": len(legal),
                     "p_next_true": round(vector[following], 8),
                     "next_true_is_argmax": bool(vector[following] >= best - 1e-9),
+                    #: **"是谁压过了边界符"——0/400 从不胜出这条已经量到，但胜者是谁没人记过。
+                    #: 这一列把"停止没学会"与"停止学会了但被某个具体符号压制"分开，
+                    #: 后者是有主人的（那个符号的训练分布），而丁-1..丁-4 都没碰过它。
+                    "argmax_symbol": int(ranked[0]),
+                    "p_argmax": round(vector[ranked[0]], 8),
                 }
             )
     doc_lengths = [len(chunk) - 1 for chunk in chunks]
@@ -183,6 +188,18 @@ def audit(runtime: Any, chunks: list[list[int]], boundary: int, mask: bool) -> d
     def _face(bucket: list[dict[str, Any]]) -> dict[str, Any]:
         if not bucket:
             return {"n": 0}
+        #: 胜者 tally：只问"这些位置上谁在第一位"。ASCII 字节给字面提示，
+        #: ≥128 的是 UTF-8 首字节（一个字节解不出一个汉字，件里就不假装解得出）。
+        tally: dict[int, int] = {}
+        for row in bucket:
+            symbol = int(row.get("argmax_symbol", -1))
+            tally[symbol] = tally.get(symbol, 0) + 1
+        top = sorted(tally.items(), key=lambda item: -item[1])[:5]
+        ratios = [
+            row["p_argmax"] / row["p_boundary"]
+            for row in bucket
+            if row["p_boundary"] > 0 and "p_argmax" in row
+        ]
         return {
             "n": len(bucket),
             "p_boundary": _quantiles([row["p_boundary"] for row in bucket]),
@@ -190,6 +207,18 @@ def audit(runtime: Any, chunks: list[list[int]], boundary: int, mask: bool) -> d
             "boundary_is_argmax_count": sum(1 for row in bucket if row["boundary_is_argmax"]),
             "p_next_true": _quantiles([row["p_next_true"] for row in bucket]),
             "next_true_is_argmax_count": sum(1 for row in bucket if row["next_true_is_argmax"]),
+            "argmax_winners_top5": [
+                {
+                    "symbol": symbol,
+                    "count": count,
+                    "ascii_hint": chr(symbol) if 32 <= symbol < 127 else None,
+                }
+                for symbol, count in top
+            ],
+            "p_argmax": _quantiles([row.get("p_argmax", 0.0) for row in bucket]),
+            "median_ratio_argmax_over_boundary": (
+                _quantiles([float(value) for value in ratios])["median"] if ratios else None
+            ),
         }
 
     #: 停止判据**不必是 argmax**。既然边界符在真结束位有名次/概率上的分离（只是从不胜出），
@@ -265,7 +294,8 @@ def main() -> int:
     result = audit(runtime, chunks, boundary, mask=args.mask)
 
     report = {
-        "format": "taiji-a30-stop-signal-presence-v1",
+        "format": "taiji-a30-stop-signal-presence-v2",
+        "format_note": "v2 只在每格里**新增** `argmax_winners_top5`／`p_argmax`／`median_ratio_argmax_over_boundary` 三条与每行 `argmax_symbol`/`p_argmax`；旧字段语义与算法未动 ⇒ 与已入库的 v1 读数可直接同格比（v1 件里没有这几条，不是它们算出了 0）",
         "prereg": "plans/reference/PLAN-A-30_surface_repetition_localization_20260928.md §3 丁（零训练归属检验）",
         "question": "(B1) 停止信号没学到 还是 (B2) 学到了但在自身轨迹上失效",
         "checkpoint": args.checkpoint,
