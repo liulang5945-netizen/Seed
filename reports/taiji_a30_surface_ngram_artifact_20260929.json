@@ -1,0 +1,20 @@
+{
+  "format": "taiji-a30-surface-ngram-artifact-v1",
+  "started_utc": "2026-09-29T07:28:16.387596+00:00",
+  "corpus_limit_lines": 200000,
+  "uni_entries": 8899,
+  "bi_entries": 1274697,
+  "vocab": 8899,
+  "total_counted": 117379360,
+  "build_seconds": 47.3,
+  "artifact": "checkpoints/seed_surface_ngram.lzma",
+  "artifact_bytes": 5764420,
+  "artifact_sha256": "4a40da9cdd7cc938af326d3e3b4d1055a220b37809a8650ef045e33a96300f17",
+  "self_check": {
+    "sample_size": 40,
+    "verdicts_match_direct_model": true
+  },
+  "guard": {
+    "artifact_self_check_passed": true
+  }
+}

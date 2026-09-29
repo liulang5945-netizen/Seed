@@ -32,7 +32,17 @@ logger = logging.getLogger("ApiServer.SeedRuntime")
 #: 换底前置实测：裸 `SeedRuntime.load` 无需任何进程内补丁即可加载并作答
 #: （见 plans/reference/M5_DEFAULT_SUBSTRATE_SWITCH_CONTRACT_20260920.md §1 与
 #: plans/reference/M5_CAP_FH_CLOSEOUT_20260920.md §3.2）。**这不构成任何语言能力主张。**
-DEFAULT_CHECKPOINT = Path(__file__).resolve().parent.parent / "checkpoints" / "seed_beta.pt"
+#:
+#: 2026-09-29 owner 裁定（PLAN-A-30 §7-1）：**回路随出厂基座装**——默认加载源换成
+#: 带复制回路的乙档信封（PLAN-A-29 §7：12.3 MB、sha `f9343433…`、由
+#: `build_circuit_carried_envelope` 从厂档＋seed-A 电路烤成；+8.2 MB 体积路）。
+#: 挂载与证据门走 A-25/A-28 已守卫的 restore 自动挂载路；命中/可读性的交换比见 §2i/§2l。
+DEFAULT_CHECKPOINT = (
+    Path(__file__).resolve().parent.parent / "checkpoints" / "seed_beta_with_circuit.pt"
+)
+
+#: 出厂面（无回路）基底：对照/复现用的显式逃生口（§2t 的那一面），不再是默认加载源。
+FACTORY_CHECKPOINT = Path(__file__).resolve().parent.parent / "checkpoints" / "seed_beta.pt"
 
 #: Where an unqualified ``save()`` lands.  This is deliberately a **separate name** from
 #: DEFAULT_CHECKPOINT (the product's default *load* source): the two used to be one constant, so a
@@ -154,6 +164,13 @@ class SeedRuntime:
     ) -> None:
         self.model = model
         self.checkpoint_path = checkpoint_path
+        # A30 出厂污染门槛（owner 2026-09-29 裁定，PLAN-A-30 §7-1）：状态在 load() 解析、
+        # 工件懒加载；只在电路挂载的装配上生效（出厂面行为不变，§2t）。
+        self.surface_gate_state = "not_applicable"
+        self._surface_ngram_artifact: Path | None = None
+        self._surface_ngram: Any | None = None
+        self._surface_ngram_loaded = False
+        self.last_write_back_gate: tuple[bool, str] | None = None
         from taiji import LanguageOrgan, NativeReadableTextLanguageOrgan
 
         self.model.architecture.ensure_native_executive()
@@ -309,6 +326,7 @@ class SeedRuntime:
             semantic_provider,
             workspace_root=workspace_root,
         )
+        runtime._resolve_surface_gate_state()
         metadata = checkpoint.get("metadata")
         if isinstance(metadata, Mapping):
             runtime._restore_workbench_metadata(metadata.get("workbench"))
@@ -357,6 +375,32 @@ class SeedRuntime:
             substrate.copy_circuit.load_payload(payload)
             substrate.set_copy_evidence_utf8_gate(bool(utf8_gate))
 
+    def _resolve_surface_gate_state(self) -> None:
+        """门槛工件随检查点同目录解析（A30 owner 裁定 §7-1）。
+
+        在场＝``armed``；缺席＝``disarmed:artifact_absent``（响亮记录的状态，不是静默降级：
+        门槛只在电路挂载的装配上生效，出厂面本就不挂）。
+        """
+
+        from seed import surface_gate
+
+        artifact = surface_gate.find_artifact(self.checkpoint_path)
+        self._surface_ngram_artifact = artifact
+        self.surface_gate_state = "armed" if artifact is not None else "disarmed:artifact_absent"
+
+    def _surface_ngram_if_armed(self) -> tuple | None:
+        """武装时返回 n 元模型（懒加载一次），否则 None。"""
+
+        from seed import surface_gate
+
+        if not self._surface_ngram_loaded:
+            self._surface_ngram_loaded = True
+            if self.surface_gate_state == "armed" and self._surface_ngram_artifact is not None:
+                self._surface_ngram = surface_gate.load_surface_ngram(
+                    self._surface_ngram_artifact
+                )
+        return self._surface_ngram
+
     def _record_told_history(self, circuit: Any, history: Sequence[tuple[str, str]] | None) -> None:
         """A2.4：生成前把历史用户轮写进剪贴板（实现见 ``record_told_history``）。"""
         record_told_history(
@@ -384,14 +428,21 @@ class SeedRuntime:
         )
         if penalty < 0.0:
             raise ValueError("repetition_penalty cannot be negative")
+        from seed import surface_gate
         from taiji import ExpressionPlan
 
         prompt = (prompt or "")[:MAX_PROMPT_CHARS]
-        text = self._serialize(prompt, history)
         with self._lock:
             circuit = self.model.substrate.copy_circuit
+            gate_model = self._surface_ngram_if_armed() if circuit is not None else None
             if circuit is not None:
                 self._record_told_history(circuit, history)
+            if gate_model is not None:
+                # 门槛②（owner 2026-09-29 裁定，PLAN-A-30 §7-1）：坏答复不进下一轮 prompt
+                # 历史（§2v 通道二）。剪贴板记录仍吃原始 history——store 记的是用户轮 cue，
+                # 语义与既有读数一致；过滤只作用在铺进 prompt 的文本上。
+                history = surface_gate.filter_history(history, gate_model)
+            text = self._serialize(prompt, history)
             frame = InputFrame(
                 input_id=f"chat:{self.model.tick}",
                 modality="text",
@@ -446,10 +497,21 @@ class SeedRuntime:
             if learn:
                 # 多轮上下文由基底持久状态天然承担：整段会话文本一次写回，
                 # 与 learn_bytes 的训练语义完全一致。
-                self.model.learn_bytes(
-                    (text + answer).encode("utf-8"),
-                    include_boundary=True,
-                )
+                # 门槛①（owner 2026-09-29 裁定，PLAN-A-30 §7-1）：电路挂载且门槛武装时，
+                # 只回写通过 `well_formed ∧ 预算内自然收口` 的答复（§2v 通道一——
+                # 模型把自己的退化答复当训练语料再喂一遍＝会话间自我污染）；
+                # 出厂面（不挂回路）与门槛缺席（disarmed）都保持原行为，按 §2t 不退化。
+                allowed, reason = True, "factory_face_or_gate_disarmed"
+                if gate_model is not None:
+                    allowed, reason = surface_gate.write_back_allowed(
+                        answer, raw, gate_model, turn_markers=_TURN_MARKERS, budget=max_length
+                    )
+                self.last_write_back_gate = (allowed, reason)
+                if allowed:
+                    self.model.learn_bytes(
+                        (text + answer).encode("utf-8"),
+                        include_boundary=True,
+                    )
         for marker in _TURN_MARKERS:
             index = answer.find(marker)
             if index >= 0:
