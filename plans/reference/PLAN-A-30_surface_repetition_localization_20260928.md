@@ -2805,6 +2805,11 @@ v1 那三条臂**没锁住长度**，所以真正该定价的是"单位字节里
 所以修回放时要把"哪一类不等"分开报（回放缺陷 vs 真面不一致），否则以后任何一次首轮回放错都会误杀整批读数。
 **下一步（不需签字）**：修 `probe_taiji_a30_stop_failure.py` 首轮回放——按产品 `_serialize` 的实际字节重建首轮 prompt，
 并加一条守卫断言"首轮 `fed_bytes` 等于 `chat()` 铺进模型的字节数"，然后把 `quarter` 与 `sized` 两臂的 L2 各复测一次。
+**停靠补充（05:54，写给下一轮）**：**无在飞读数**，工作树 0 条未提交（HEAD＝`stop_failure` v5）。
+两处 scratch 训练臂**故意保留不删**（修完回放就要拿它们复测）：`output/tmp_a30_smoke/onpolicy_arms/`(35 MB)
+与 `onpolicy_arms_q/`(47 MB)，**不入 git**（`reports/` 里已有对应行为件）；日后做仓库清洁前请先确认 L2 复测已完成。
+下一格不需签字：修首轮符号归类/回放 ⇒ `V019` 的 `all_surfaces_are_replayed_raw` 转 true 且 `replay_suspect_generations` 归零
+⇒ 再复测两臂 L2 ⇒ 那之后才允许落 `SPEC-A-24` §8 的三分支；在那之前**一律不落**。
 
 
 ## 8. 一页决策单（2026-09-30，A 支线；每条都带"已量到的数"和"批完之后拿什么核"）
