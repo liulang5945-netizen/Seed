@@ -1,0 +1,1517 @@
+{
+  "format": "taiji-r2-copy-surface-extension-v1",
+  "prereg": "plans/reference/SPEC-A-21_r2_surface_extension_prereg_20260925.md",
+  "judge_prereg": "plans/reference/SPEC-A-22_r2_a2_5_query_conditioned_selector_prereg_20260926.md",
+  "manifest": "plans/manifests/r2_copy_surface_extension_v1.json",
+  "chain": "base_raw_bytes",
+  "manifest_sha256": "4d04d6f48e41a180131e18efaf31634fa4b6147c10aaf5acb1533745e246cf87",
+  "checkpoint": "output/a31_chunked_short/checkpoint.pt",
+  "copy_evidence_utf8_gate": false,
+  "circuit_carried_envelopes": [],
+  "control_no_circuit": {
+    "circuit": null,
+    "chain": "base_raw_bytes",
+    "mount_entry": "none",
+    "gate_effective": false,
+    "items": 104,
+    "texts": 260,
+    "well_formed_texts": 14,
+    "well_formed_rate": 0.0538,
+    "utf8_decodable_rate": 0.4654,
+    "utf8_decodable_trimmed_rate": 1.0,
+    "illegal_after_tail_trim_rate": 0.0,
+    "strict_hits": 0,
+    "rows": [
+      {
+        "id": "X001",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "有在在容家有庺庺庺倂\n倂\n答：宨家家其家其家�",
+        "well_formed": false
+      },
+      {
+        "id": "X002",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "有刑人庺工庙它家刑以下嗶倂\n倂\n答：宨家我人�",
+        "well_formed": false
+      },
+      {
+        "id": "X003",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "有在庺庺庙器它彚家以下帋庥庺奨庌其有人得刑�",
+        "well_formed": false
+      },
+      {
+        "id": "X004",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "最人工子人庻下嗶人名人工子，家于家家家其家",
+        "well_formed": false
+      },
+      {
+        "id": "X005",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "有在在容家人庻家倂\n答：有在家制人庻家倂\n答�",
+        "well_formed": false
+      },
+      {
+        "id": "X006",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "有在在家我人庻家利人好，家制家倂",
+        "well_formed": true
+      },
+      {
+        "id": "X007",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "家人工子家人庻宗家利倂\n家人庻请我我时倂\n答�",
+        "well_formed": false
+      },
+      {
+        "id": "X008",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "在在在家我人庻家別孔：嗮，家家家家倂\n答：朰",
+        "well_formed": false
+      },
+      {
+        "id": "X009",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "有人工子，家其家关问，家关家关",
+        "well_formed": true
+      },
+      {
+        "id": "X010",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "有在在家家我下帋孔：有刑家其倂\n答：最人庺庻",
+        "well_formed": false
+      },
+      {
+        "id": "X011",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "有在庺庺庙器它彚家以下席时倂\n家我人庻定关家",
+        "well_formed": false
+      },
+      {
+        "id": "X012",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "有人工子，其有在在度妁时倂",
+        "well_formed": true
+      },
+      {
+        "id": "X013",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "有在在在容家有倂\n答：我人庺好它其其倂\n答：�",
+        "well_formed": false
+      },
+      {
+        "id": "X014",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "有在在家人庺庻定嗮，家其家倂\n答：木度庺庺工",
+        "well_formed": false
+      },
+      {
+        "id": "X015",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "家家家其家关家的文最，家其句庺庺庙器庺庺工�",
+        "well_formed": false
+      },
+      {
+        "id": "X016",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "我人庻它家刹人工庀人廥孔：家亻下家在庨家我�",
+        "well_formed": false
+      },
+      {
+        "id": "X017",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "有人工子，家在在在匨家有倂\n答：我人庺好家倂",
+        "well_formed": false
+      },
+      {
+        "id": "X018",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "有在在庺庺庺庺庻下嗶倂\n倂\n答：宇本人庻家其�",
+        "well_formed": false
+      },
+      {
+        "id": "X019",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "有人庻家其家其其倂\n答：家关本人庺庻庺奥帋嗶",
+        "well_formed": false
+      },
+      {
+        "id": "X020",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "有人工家利人工家利人工孔：容木人奻讶，其有�",
+        "well_formed": false
+      },
+      {
+        "id": "X021",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "有在庺庺庻器它家其其倂\n答：朰庺庻下嗶庋奘，",
+        "well_formed": false
+      },
+      {
+        "id": "X022",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "我人庺工庀在在庺人庻家其倂",
+        "well_formed": false
+      },
+      {
+        "id": "X023",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "我家人工子，家人工子，家其家关问，家关家关�",
+        "well_formed": false
+      },
+      {
+        "id": "X024",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "有在在在家我人庻家利人好，家制倂\n答：机座刨",
+        "well_formed": true
+      },
+      {
+        "id": "X025",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "有人庻它家其其其其其有，家人工庙家关家，家�",
+        "well_formed": false
+      },
+      {
+        "id": "X026",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "有人工子，家在家家其家座",
+        "well_formed": true
+      },
+      {
+        "id": "X027",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "有在在庺庺庙器家刭：家其木家其句庺庺庻下帋�",
+        "well_formed": false
+      },
+      {
+        "id": "X028",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "最人工庺工子，容家制人工庀在在庌匶时倂\n答：",
+        "well_formed": false
+      },
+      {
+        "id": "X029",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "最人庺庻它其其叭，家人庻下席，家我人庻家刑�",
+        "well_formed": false
+      },
+      {
+        "id": "X030",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "有在在庺庺庺庺倂\n答：家家家家家人廥帋席，彆",
+        "well_formed": false
+      },
+      {
+        "id": "X031",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "家朰人工子，家家家家家",
+        "well_formed": false
+      },
+      {
+        "id": "X032",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "有在在容家我人庻它家利人工庀人廥家倂\n答：宨",
+        "well_formed": false
+      },
+      {
+        "id": "X033",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "有在在庺庺庺庙僽家倂\n答：家木家木家木家制家",
+        "well_formed": false
+      },
+      {
+        "id": "X034",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "最人庻它家其倂\n答：我人庻关叶关家家刭：家其",
+        "well_formed": false
+      },
+      {
+        "id": "X035",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "有在在匶有倂",
+        "well_formed": false
+      },
+      {
+        "id": "X036",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "我人庺庻庺庻它家刭：嗮，家制人奥帋席，倂\n容",
+        "well_formed": false
+      },
+      {
+        "id": "X037",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "我宨家句子，容家关",
+        "well_formed": false
+      },
+      {
+        "id": "X038",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "有在在家我人庺庻家倂\n答：有在家刭子，家木家",
+        "well_formed": false
+      },
+      {
+        "id": "X039",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "有在在家问，其句子，家其家倂",
+        "well_formed": true
+      },
+      {
+        "id": "X040",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "有在在庺庺庻噺其倂\n答：家家家倂\n家人庻庀人�",
+        "well_formed": false
+      },
+      {
+        "id": "X041",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "有人工庺工子，容家家倂\n答：宨家家倂\n家人庺�",
+        "well_formed": false
+      },
+      {
+        "id": "X042",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "有刑人庺工彚家其其倂\n答：有座动在度帪座庺庺",
+        "well_formed": false
+      },
+      {
+        "id": "X043",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "有在庺庺庙器它彚家以下帋庥庺奨庌其有人得刑�",
+        "well_formed": false
+      },
+      {
+        "id": "X044",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "家朰人庺工子，家机在在家我以下席时倂\n家我人",
+        "well_formed": false
+      },
+      {
+        "id": "X045",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "宨家句子人庺庻嗶倂\n答：宨家家其家倂\n家下帪�",
+        "well_formed": false
+      },
+      {
+        "id": "X046",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "家朰人工子，家家家家家",
+        "well_formed": false
+      },
+      {
+        "id": "X047",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "有在在家人庺工孔：倂\n答：家家家其其叭，容家",
+        "well_formed": false
+      },
+      {
+        "id": "X048",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "有在庺庺庻噺其倂\n答：家人廥子，家人廥子，家",
+        "well_formed": true
+      },
+      {
+        "id": "X049",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "有在在家我人庻家倂\n答：木家制制倂\n家：家其�",
+        "well_formed": false
+      },
+      {
+        "id": "X050",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "有在座制人庺工帋嗶倂\n答：客讶，其家其家家关",
+        "well_formed": false
+      },
+      {
+        "id": "X051",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "有在在庺庺庻下嗶倂\n倂\n答：家家家关家关家关�",
+        "well_formed": false
+      },
+      {
+        "id": "X052",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "有人工子，家人工子，家在人工子，家木人工子�",
+        "well_formed": false
+      },
+      {
+        "id": "X053",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "有人工子人工子，家人工子亻下家其家关家：家�",
+        "well_formed": false
+      },
+      {
+        "id": "X054",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "在在在家我人庻它家利人工庀人廥孔：容家木人�",
+        "well_formed": false
+      },
+      {
+        "id": "X055",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "家句子，容家其句子人庺庻嗶倂\n答：宨家家倂\n�",
+        "well_formed": false
+      },
+      {
+        "id": "X056",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "家人工子，家人工子，家人工子亻下席我小周家�",
+        "well_formed": false
+      },
+      {
+        "id": "X057",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "有在在家我人庺好家倂\n答：家机庺工木匨家倂\n�",
+        "well_formed": false
+      },
+      {
+        "id": "X058",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "有庺庺庙它家倂\n倂\n答：家本人庻庻译，家最，�",
+        "well_formed": false
+      },
+      {
+        "id": "X059",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "有在庺庺庻下嗶倂\n答：有人奻家刑家刑家倂\n家�",
+        "well_formed": false
+      },
+      {
+        "id": "X060",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "家人工座在在度傶人庻请我倂\n孔：家本人庻家家",
+        "well_formed": false
+      },
+      {
+        "id": "X061",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "有在在宨句子人庺庻它关家倂\n答：宨家木人庻宨",
+        "well_formed": false
+      },
+      {
+        "id": "X062",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "有在在家其有倂\n答：我有倂\n在庺庺庙庺庺好，�",
+        "well_formed": false
+      },
+      {
+        "id": "X063",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "家人工子，家人工子：家木家有在家有倂\n答：朻",
+        "well_formed": true
+      },
+      {
+        "id": "X064",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "有在在家人庺奥子，其最在家家家其家度傶以下�",
+        "well_formed": false
+      },
+      {
+        "id": "X065",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "机庺工庙人奻定家倂\n家人奻家倂\n答：宨家木人�",
+        "well_formed": false
+      },
+      {
+        "id": "X066",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "家人工子人庻译，家在庌家本人庻下席，容，家�",
+        "well_formed": false
+      },
+      {
+        "id": "X067",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "有在制人庺庙它其刑将家倂\n答：家最人庻庻译，",
+        "well_formed": false
+      },
+      {
+        "id": "X068",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "我人庺工庩人工子，容亻下嗶制刐人工刨名人庺�",
+        "well_formed": false
+      },
+      {
+        "id": "X069",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "有在家人庻家其其倂\n答：朰庨庺工庀在匨匨匨匨",
+        "well_formed": false
+      },
+      {
+        "id": "X070",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "家人工子，家制倂",
+        "well_formed": true
+      },
+      {
+        "id": "X071",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "家人工子，家人工子，家在在度傶以下帪庺工我�",
+        "well_formed": false
+      },
+      {
+        "id": "X072",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "我人庺工庽它其其倂\n答：家关本，家人庻庻译，",
+        "well_formed": false
+      },
+      {
+        "id": "X073",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "有在在宨家我人庻家倂\n答：宨家木家有庺庺庻庺",
+        "well_formed": false
+      },
+      {
+        "id": "X074",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "有在在家句子，影在家倂",
+        "well_formed": true
+      },
+      {
+        "id": "X075",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "有庺庺庙器它彚家机庻下帋庥庺她刑廙家机庻下�",
+        "well_formed": false
+      },
+      {
+        "id": "X076",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "在人庺工学妁人奨在在庺庺奘，其有倂\n答：家家",
+        "well_formed": false
+      },
+      {
+        "id": "X077",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "有在在庺庺庺庙僽家其其倂\n讶，家其家庆噶座人",
+        "well_formed": false
+      },
+      {
+        "id": "X078",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "在家句子，容家我人庺庻它关家倂\n答：我有庀人",
+        "well_formed": false
+      },
+      {
+        "id": "X079",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "家人工子，家其家其家关问，家其家庺庺庻奥帋�",
+        "well_formed": false
+      },
+      {
+        "id": "X080",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "有在家句子人庺奥庀在在庌家倂\n家最人庻家倂\n�",
+        "well_formed": false
+      },
+      {
+        "id": "X081",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "有人工子，家人工子，家其家家家在度傶人庻请�",
+        "well_formed": false
+      },
+      {
+        "id": "X082",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "有在在庺庺庻下嗶倂\n答，家家家倂\n倂",
+        "well_formed": false
+      },
+      {
+        "id": "X083",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "有关家其其其其其机庺庻庺庻嗶庀人廥帋嗶倂\n答",
+        "well_formed": false
+      },
+      {
+        "id": "X084",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "在人庺奌其倂\n答：家人工子亀个庨家家其倂\n倂\n�",
+        "well_formed": false
+      },
+      {
+        "id": "X085",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "有在在庺庺庻嗶倂\n答：家家家家倂\n家下席，彻�",
+        "well_formed": false
+      },
+      {
+        "id": "X086",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "有人工子人工子，家最，家家家家家",
+        "well_formed": false
+      },
+      {
+        "id": "X087",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "家人工子，家其句子人庺庻它关家倂\n答：宨家其",
+        "well_formed": false
+      },
+      {
+        "id": "X088",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "最人工庺工子，容家利人工庀人奻议，家在人庻�",
+        "well_formed": false
+      },
+      {
+        "id": "X089",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "木在庺庺庻器它家利人奨家倂\n家木，其家家家家",
+        "well_formed": false
+      },
+      {
+        "id": "X090",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "有在座制人庻下嗶倂\n答：容家家其家关家关用宮",
+        "well_formed": false
+      },
+      {
+        "id": "X091",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "有在庺庺庻庺好家倂\n答：家家倂\n家下席文本，�",
+        "well_formed": false
+      },
+      {
+        "id": "X092",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "最人工它家利人工子，家木人巨它其家倂\n答：我",
+        "well_formed": false
+      },
+      {
+        "id": "X093",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "有人工子人奥子，家其家关家家关家座",
+        "well_formed": false
+      },
+      {
+        "id": "X094",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "有在在容家有庺庺庙庺奥庀弌其机庌其家倂\n答：",
+        "well_formed": false
+      },
+      {
+        "id": "X095",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "家人工子家倂\n答：宨家句子人庺庻嗶倂\n答：宨�",
+        "well_formed": false
+      },
+      {
+        "id": "X096",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "家最，家句子，容在家倂\n答：我最倂\n在庺庺庺�",
+        "well_formed": false
+      },
+      {
+        "id": "X097",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "有在在庺庺庺庙僽家刑人奻庋嗶倂\n答：客计家在",
+        "well_formed": false
+      },
+      {
+        "id": "X098",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "有在在容有庺庺庙它它定庨庺工影廥下席，容：�",
+        "well_formed": false
+      },
+      {
+        "id": "X099",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "有在家人庺庻噺其有庂\n答：家家家关家关家关问",
+        "well_formed": true
+      },
+      {
+        "id": "X100",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "在在度傗家朰人庻家倂\n答：家家家家倂\n家下帋�",
+        "well_formed": false
+      },
+      {
+        "id": "X101",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "有在在庺庺庻庀在家其其倂\n家人廥帋嗶倂\n答：�",
+        "well_formed": false
+      },
+      {
+        "id": "X102",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "有在在家家我人庻它家家倂",
+        "well_formed": false
+      },
+      {
+        "id": "X103",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "家人工子，家其家关",
+        "well_formed": true
+      },
+      {
+        "id": "X104",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "宨在容家人庻它別子，容在在庌匶旯：宨家机庺�",
+        "well_formed": false
+      }
+    ]
+  },
+  "treated_arms": [
+    {
+      "circuit": "output/taiji_r2_copy_circuit_chat/judge/circuit-final.pt",
+      "chain": "base_raw_bytes",
+      "mount_entry": "enable_copy_circuit",
+      "gate_effective": true,
+      "items": 104,
+      "texts": 260,
+      "well_formed_texts": 2,
+      "well_formed_rate": 0.0077,
+      "utf8_decodable_rate": 0.1538,
+      "utf8_decodable_trimmed_rate": 1.0,
+      "illegal_after_tail_trim_rate": 0.0,
+      "strict_hits": 31,
+      "rows": [
+        {
+          "id": "X001",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "厩轩轩轩明轩轩轩轩轩轩轩轩轩轩轩轩轩轩轩轩�",
+          "well_formed": false
+        },
+        {
+          "id": "X002",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "苷苷苷州苷苷苷苷苷苷州苷苷苷苷苷苷苷苋苷苷�",
+          "well_formed": false
+        },
+        {
+          "id": "X003",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "喘欢欢欢欢欢欢是36是36是36是36是36是36是36是36是",
+          "well_formed": true
+        },
+        {
+          "id": "X004",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "跷图图图图图图图图图图图图海囮囮囮海囮囮囮�",
+          "well_formed": false
+        },
+        {
+          "id": "X005",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "喝乳时籝乳时爱喝乳时爱喝乳时时爱喝乳时爱喝�",
+          "well_formed": false
+        },
+        {
+          "id": "X006",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "养一养丮鸮鸮鸮鸮雪雪鸮鸮雪鸮鸮鸮雪鸮鸮鸮鸮�",
+          "well_formed": false
+        },
+        {
+          "id": "X007",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "近海近海客读读读读读读近客迿近海迯读迿读读�",
+          "well_formed": false
+        },
+        {
+          "id": "X008",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "吃包吃包包吃包吃包吃包吃包吃包吃包欼包汌包�",
+          "well_formed": false
+        },
+        {
+          "id": "X009",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "吐成吐成吐成吐成雨我成雨我曐雨我曐雨我曐雨�",
+          "well_formed": false
+        },
+        {
+          "id": "X010",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "鿿安西安安西安西安西安西安西安安安西安西安�",
+          "well_formed": false
+        },
+        {
+          "id": "X011",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "21212121212121212121欢212121212121212121212121212121212121212",
+          "well_formed": false
+        },
+        {
+          "id": "X012",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "星星星星星星星星星晘域晘器星星星星星晨星队�",
+          "well_formed": false
+        },
+        {
+          "id": "X013",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "喝苉打打苉打苉打苉打苉苉打苉苉苉苉英喝英喝�",
+          "well_formed": false
+        },
+        {
+          "id": "X014",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "养一养一养一养一养一养一养一浣浣浣了一养一�",
+          "well_formed": false
+        },
+        {
+          "id": "X015",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "近泻迻读读读读读近泯迻近泻迻迻读读迻读读近�",
+          "well_formed": false
+        },
+        {
+          "id": "X016",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "吃辣吃辣吃辣吃辣吃辣吃辣吃辣吃辣吃辣吃辣吃�",
+          "well_formed": false
+        },
+        {
+          "id": "X017",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "承承承承承承承承承承承承承承承承承承承承承�",
+          "well_formed": false
+        },
+        {
+          "id": "X018",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "佝沛青岛佝沛青岛岛岛岛岛岛岛岛岛岛岛岛岛戲�",
+          "well_formed": false
+        },
+        {
+          "id": "X019",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "777777777777777777777777777777777777777777777777777777777777",
+          "well_formed": false
+        },
+        {
+          "id": "X020",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "賾径鳳徟徳徳徳徳徳径鳟徟泟泟鳟柳径鳟鳟泟泟�",
+          "well_formed": false
+        },
+        {
+          "id": "X021",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "喝汱酿喝时籱酿花酿花酿花喝时籱酿花酿花酿花�",
+          "well_formed": false
+        },
+        {
+          "id": "X022",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "养一养一养一养一养一养一养一养一养一养一养�",
+          "well_formed": false
+        },
+        {
+          "id": "X023",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "读读读读读读读读读读读读读读近梦读读读读读�",
+          "well_formed": false
+        },
+        {
+          "id": "X024",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "艾吃艳艾吃艳艾吃艳艾吃泱吃艉泱吃艱吃艱吃艱�",
+          "well_formed": false
+        },
+        {
+          "id": "X025",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "远远远远远远远远远远远远迿远迿远迿远迿远迿�",
+          "well_formed": false
+        },
+        {
+          "id": "X026",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "噿沙使沙沙使沙沙何沙沙何沙沙何沙沙何沙沙何�",
+          "well_formed": false
+        },
+        {
+          "id": "X027",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "999999999999999999999999999999999999999999999999999999999999",
+          "well_formed": false
+        },
+        {
+          "id": "X028",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "归人归人归人归人归人归人归人归人归人归人归�",
+          "well_formed": false
+        },
+        {
+          "id": "X029",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "喝檬柠檬柠檬柠檬檬柠檬檬柠檬柠檬柠檬柠檬柠�",
+          "well_formed": false
+        },
+        {
+          "id": "X030",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "养一蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝�",
+          "well_formed": false
+        },
+        {
+          "id": "X031",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "近庺近近毻读读读读读近毻读读读近庺近近毻读�",
+          "well_formed": false
+        },
+        {
+          "id": "X032",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "胣汣汣汣汣汣汣汣汣汣胡胡胡胱吱汱胱吃胱吃胱�",
+          "well_formed": false
+        },
+        {
+          "id": "X033",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "安安慕安慕安慕安慕安慕安慕安慕安慕安慕安慕�",
+          "well_formed": false
+        },
+        {
+          "id": "X034",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "厎佘明明明明明明明明明明明明明明明明明明明�",
+          "well_formed": false
+        },
+        {
+          "id": "X035",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "24242424欢2424242424数24242424242424242424欢24242424242424242",
+          "well_formed": false
+        },
+        {
+          "id": "X036",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "趛听涛听涛听涛听涛听涛听涛听涛听涛听涛听涛�",
+          "well_formed": false
+        },
+        {
+          "id": "X037",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "喝茶砖茶砖茶砖茶砖茶砖茶砖茶砖茶砖茶砖茶砖�",
+          "well_formed": false
+        },
+        {
+          "id": "X038",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "养一养一养一养一养一养一养一养一养一养一养�",
+          "well_formed": false
+        },
+        {
+          "id": "X039",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "近近溪近溪近溪近读读迿读近近溪迬近溪迬近迿�",
+          "well_formed": false
+        },
+        {
+          "id": "X040",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "臇臇臇臇臭臇臇臇臭臇臇臱吱臭臇臇臇臭臇臇臱�",
+          "well_formed": false
+        },
+        {
+          "id": "X041",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "青青青青青栚青青青青青青青坒青青青青青青栚�",
+          "well_formed": false
+        },
+        {
+          "id": "X042",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "佷州淞淞淞淞淞佷淞户州佷淞淞淞佷淞淞佷我住�",
+          "well_formed": false
+        },
+        {
+          "id": "X043",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "7777777777欢7欢欢欢欢欢是4777777777777777777777777747777�",
+          "well_formed": false
+        },
+        {
+          "id": "X044",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "賳柳柳柳柳柳柳阘柳柳柳柳柳阘柳柳柳柳阘柳柳�",
+          "well_formed": false
+        },
+        {
+          "id": "X045",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "喝普普普普普普普普普普普普普普普普时普普普�",
+          "well_formed": false
+        },
+        {
+          "id": "X046",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "麆了一养一养一养一养一养一养一养一养一养一�",
+          "well_formed": false
+        },
+        {
+          "id": "X047",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "工工工工工工工工工工工工工工工工工工工工工�",
+          "well_formed": false
+        },
+        {
+          "id": "X048",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "苗苗苗苗苗苗苗苗苗苗苗苗苗苗苗苗苗苗苗苗苗�",
+          "well_formed": false
+        },
+        {
+          "id": "X049",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "宁宁洛宁洛宁洛宁洛宁洛宁洛宁洛宁洛宁洛宁洛�",
+          "well_formed": false
+        },
+        {
+          "id": "X050",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "宁波波波波波波波波波波波波波波波宁波波波波�",
+          "well_formed": false
+        },
+        {
+          "id": "X051",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "喘欢欢欢欢欢欢是888欢是888888888888888是8888888888888",
+          "well_formed": false
+        },
+        {
+          "id": "X052",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "薽影影影影影影汱鱮影汱项疱项疱项疱影影影影�",
+          "well_formed": false
+        },
+        {
+          "id": "X053",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "荞荞荞荞荞荞荞荞荞荞荞时茶茶茶茶荞荞荞茶荞�",
+          "well_formed": false
+        },
+        {
+          "id": "X054",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "养一养一养一养一养一养一养一养一养一养一养�",
+          "well_formed": false
+        },
+        {
+          "id": "X055",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "近近近读读读迯读近近近迯读读读读读读读读读�",
+          "well_formed": false
+        },
+        {
+          "id": "X056",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "色色血粉汉色血粉色血粉艱吃鸭豱吃鸭艱扱吃鸭�",
+          "well_formed": false
+        },
+        {
+          "id": "X057",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "时人人予予。时予予时予予时予予时人人予时予�",
+          "well_formed": false
+        },
+        {
+          "id": "X058",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "跞州州州州州州州州州州州州温州温州温州温温�",
+          "well_formed": false
+        },
+        {
+          "id": "X059",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "212121212121212121212121212121212121212121212121212121212121",
+          "well_formed": false
+        },
+        {
+          "id": "X060",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "风风风风风风风临风风风风风风风风风风风风风�",
+          "well_formed": false
+        },
+        {
+          "id": "X061",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "喝茶红时红时红时红时茶红时茶红时茶红时茶红�",
+          "well_formed": false
+        },
+        {
+          "id": "X062",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "鼠一养一养一养一养一养一养一养一养一养一养�",
+          "well_formed": false
+        },
+        {
+          "id": "X063",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "近近近洛阳近读读迿读近近洛阳读迻近近洛阳读�",
+          "well_formed": false
+        },
+        {
+          "id": "X064",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "蟹黱山吃蟹黄汱包蟹黱包蟹黱汱包蟹黱汱包蟹黱�",
+          "well_formed": false
+        },
+        {
+          "id": "X065",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "倀砚堚堚堚堚堚堚堚堚堚堚堚堚堚堚堚堚堚戠栚�",
+          "well_formed": false
+        },
+        {
+          "id": "X066",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "崛阳阳洛阳洛阳洛阳阳洛阳洛阳阳洛阳洛阳阳洛�",
+          "well_formed": false
+        },
+        {
+          "id": "X067",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "2525625625625625252525252525252525252525252525252525256欢2525",
+          "well_formed": false
+        },
+        {
+          "id": "X068",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "宿雮宿雮宿雮宿雮宿雮宿雮宿雮宿雮宿雮宿雮宿�",
+          "well_formed": false
+        },
+        {
+          "id": "X069",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "喝陈皮时皮时水时皮时时皮时时时时时时皮水水�",
+          "well_formed": false
+        },
+        {
+          "id": "X070",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "了一养一养一养一养一养一养一养一养一养一养�",
+          "well_formed": false
+        },
+        {
+          "id": "X071",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "近梦近梦华华华华华华华梦读华华华梦近梦近梦�",
+          "well_formed": false
+        },
+        {
+          "id": "X072",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "艛艛艛艛艛艛艛艛艛艛艉面汱艛艛艛艛艛艛艉面�",
+          "well_formed": false
+        },
+        {
+          "id": "X073",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "苙苙苙苙苙苙苙苙苙苙苙苙苙苙苙苙苙苙苙苙晚�",
+          "well_formed": false
+        },
+        {
+          "id": "X074",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "鷞扬州扬州佉扬州扬州佉扬州扬扬扬扬州扬州扬�",
+          "well_formed": false
+        },
+        {
+          "id": "X075",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "13131313131313131313131313131313131欢欢欢欢欢欢欢欢是31",
+          "well_formed": false
+        },
+        {
+          "id": "X076",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "挌舟舟舟舟舟舟舟舟舟舟舟舟舟舟舟茌舟舟舟舟�",
+          "well_formed": false
+        },
+        {
+          "id": "X077",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "荷饮荷饮荷饮荷饮荷饮荷饮荷饮荷饮荷饮荷饮荷�",
+          "well_formed": false
+        },
+        {
+          "id": "X078",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "养一养一养一养一养一养一养一养一养一养一养�",
+          "well_formed": false
+        },
+        {
+          "id": "X079",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "近录近梦近梦近梦近录近录近录近梦近梦近梦读�",
+          "well_formed": false
+        },
+        {
+          "id": "X080",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "一籼汼鱼胅胸豼鱼胸輱吱吃鱼豼汼豼鱼輸輱吃鱼�",
+          "well_formed": false
+        },
+        {
+          "id": "X081",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "舟舟舟舟舟舟舟舟岲舟舟舟沟蟟舟舟舟舟舟舟舟�",
+          "well_formed": false
+        },
+        {
+          "id": "X082",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "州泉州泉州泉州泉州泉州泉州泉州泉州泉州泉州�",
+          "well_formed": false
+        },
+        {
+          "id": "X083",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "2020202020202020202020是5202020202020202020202020202020202020",
+          "well_formed": false
+        },
+        {
+          "id": "X084",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "舒舒舒项目咛舒舒舒舒舒舒望舒舒舒舒舒舒舒舒�",
+          "well_formed": false
+        },
+        {
+          "id": "X085",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "山楱楱楱楱楱楱楱楱楱楱楱楱楱楱楱楱楱楱楱山�",
+          "well_formed": false
+        },
+        {
+          "id": "X086",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "骪养一养一养一养一养一养一养一养一养一养一�",
+          "well_formed": false
+        },
+        {
+          "id": "X087",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "迿迿读读读读读读读近梦迿读读迿读读迿读读迿�",
+          "well_formed": false
+        },
+        {
+          "id": "X088",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "吃吃吃吃吃吃吃吃吃吃吃吃吃吃吃吃吃吃吃吃吃�",
+          "well_formed": false
+        },
+        {
+          "id": "X089",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "孾昭阭阭阭阭阭阭阭阭阭昭阭阭阭阭昭阭阭阭昭�",
+          "well_formed": false
+        },
+        {
+          "id": "X090",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "芜湖芜湖芜湖湖湖湖湖湖湖湖芜湖芜湖芜湖芜湖�",
+          "well_formed": false
+        },
+        {
+          "id": "X091",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "181818181818欢欢欢欢欢欢是618是61818是欢18181818181818",
+          "well_formed": false
+        },
+        {
+          "id": "X092",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "說央央央央央央央央央央央央檪央檪央央央央央�",
+          "well_formed": false
+        },
+        {
+          "id": "X093",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "茉茉茉茉茉茉茉茉茉茉茉茉茉茉茉莉茉茉茉茉茉�",
+          "well_formed": false
+        },
+        {
+          "id": "X094",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "静蝙蝙蝙蝙蝙蝙蝙蝙蝙蝙蝙蝙蝙蝙蝙蝙蝙蝙蝙蝙�",
+          "well_formed": false
+        },
+        {
+          "id": "X095",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "庿庵梦迆读迆迆迆迆迆迆迆迆迆迆读迆迆迆迆迆�",
+          "well_formed": false
+        },
+        {
+          "id": "X096",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "萃吃吃吃吃吃吃吃狮吃汱吃狮吃汱吃狮吃汱吃汐�",
+          "well_formed": false
+        },
+        {
+          "id": "X097",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "吟晚吟晚吟晚吟晚吟晚吟晚吟晚吟晚吟晚吟晚吟�",
+          "well_formed": false
+        },
+        {
+          "id": "X098",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "自自自自自自自自自自自自自自自自自自自自自�",
+          "well_formed": false
+        },
+        {
+          "id": "X099",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "909090909090909090909090909090909090909090909090909090909090",
+          "well_formed": false
+        },
+        {
+          "id": "X100",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "襥秋埥秋埥秋埥秋埥秋埥秋埥秋埥秋埥秋埥秋埥�",
+          "well_formed": false
+        },
+        {
+          "id": "X101",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "喝荷喝荷喝荷喝荷喝荷喝荷喝荷喝荷喝荷喝荷喝�",
+          "well_formed": false
+        },
+        {
+          "id": "X102",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "养一养一松鼠了一养一养一养一养一养一养一养�",
+          "well_formed": false
+        },
+        {
+          "id": "X103",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "近渮迻读读读读近游读游订游订渮近游迿读读迸�",
+          "well_formed": false
+        },
+        {
+          "id": "X104",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "臉吃吃吃吃吃吃吃吃吇妻艇妻艇妻艇。妻臇。妻�",
+          "well_formed": false
+        }
+      ]
+    }
+  ],
+  "surface_verdict": {
+    "min_gap_texts": 3,
+    "per_circuit": [
+      {
+        "circuit": "output/taiji_r2_copy_circuit_chat/judge/circuit-final.pt",
+        "gap_texts": -12,
+        "direction": "worse",
+        "meets_min_gap": true,
+        "control_rate": 0.0538,
+        "treated_rate": 0.0077
+      }
+    ],
+    "status": "not_resolved",
+    "verdict": "not_resolved（独立取数只有 1 次，判据要求 ≥2 次）"
+  },
+  "base_sha256_unchanged": true
+}

@@ -3070,7 +3070,18 @@ L3 补测＝`audit_taiji_a30_stop_signal_presence.py --docs 300 --mask --append-
 | **(a) 主线 recipe 连续流**（a31 满额 +2M） | **90 / 33** 过 | **3** 不过 | **257** 过 | L2 卡 ⇒ 不换 |
 | **(b) 分块 short＝formal self**（48g3x6e，每答一块＋换行后落边界＋`self` 短答） | **60 / 16** 过 | **24** 过 | **16** 过 | **三线全过** |
 | (b′) 分块 sized（同形、语料短答） | 24 / **2**（挂回路一格不过） | **47** 过 | **38** 过 | L1 挂回路卡 |
+| **(c) 主线分块短答**（`a31_chunked_short`：主线分块喂法＋语料短答 ≤32 字符、+2M） | 14 / **2**（挂回路一格不过） | **23** 过 | **186** 过 | L1 挂回路卡 |
 | 现默认档（seed_beta 装备件） | 参考 | 0 | 0 | 基准 |
+
+**(c) 档读数（2026-10-01，三件入库）**：L1＝14/2（`reports/taiji_f0_chunked_short_surface_g17_20261001.json`）、
+L2＝**23/72**（`reports/taiji_a30_stop_failure_chunked_short_20261001.json`，四守卫全真）、
+L3＝**186/300**（`reports/taiji_a30_stop_signal_presence_chunked_short_300doc_masked_recipeface_20261001.json`）。
+⇒ **主线分块喂法本身确实买得到真自停（23/72 对装机件 0/72）**——①的验证目标达成；
+卡点只剩 L1 挂回路那一格（2 对参考 5）。
+
+**新的分布规律（三档同面）」**：**L1 挂回路那一格随"答案作者"分**——自写答案的臂过（formal self 16/260），
+语料侧答案的两档都读到 2/260（sized 与 (c)）。这与 L2 侧 §2bc 的"形状随规模翻转"是两件事：
+L1-挂 这一格在已有样本里只跟着作者走，不跟喂法/长度/规模走（三种语料侧形状都恰读 2）。
 
 件：`reports/taiji_a30_stop_signal_presence_{self,sized,a31full}_300doc_masked_recipeface_20260930.json`；
 L1 四件见 §2bd/§2be；L2 见 §2bc 与 `reports/taiji_a30_stop_failure_a31_full2m_20260930.json`。
