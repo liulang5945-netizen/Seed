@@ -1114,3 +1114,13 @@ owner 已裁定 18 行那枚走"批准新增分类条目"（人工评审＝本�
 
 给下一格的硬事实：这枚克隆的消法已经有过**一次四门同绿**的读数，所以路径是对的；未解的只剩我最后一次编辑为什么把构建从 0 条 `error TS` 变成脚本崩溃——最可能是我写入 JSON 的文本形式（`files` 清单那条 replace）在某处不合法或被某个读取方按另一种结构解析。核查顺序建议：先 `python -m json.tool` 逐份验 JSON，再单跑 `build` 看栈顶是哪个脚本，最后才改结构。**判据⑥ 本轮仍未满足**，我不把"曾经 0 clones"当作满足。
 
+**㊵-128（抓到 ㊵-127 那次崩溃的真因＝我自己的 references 写入产生非法 JSON；修好后四道门里三道复现绿，测试面一处读数我没能归因，故本轮仍不提交）**
+
+这次给每一步加了独立 JSON 校验器（`.dsh-sbx2/validate.py`，逐份读回并 `json.loads`），它当场指认：`land3.py` 的 `add_ref` 往两个消费者项目的 `references` 数组里插的是**裸的 path 字符串而不是对象**，于是 `life-controller/tsconfig.host.json` 与 `workspace-controller/tsconfig.host.json` 双双 `Expecting , delimiter`（invalid=2）——㊵-127 我把崩溃归给"最后一次 gateway files 编辑"是**归错了**，真因在我这个插入函数，而且同一个 bug 在 ㊵-127 里我已手工补过一次、重跑脚本又把它带了回来（**教训：改数据要修生成它的那个函数，不是修它这一次的产物**）。
+
+把 `add_ref` 改成写对象形式并复跑整串后：`pnpm install` rc=0、`build` **rc=0 且 error TS 计数 0**、`duplication` **rc=0、Found 0 clones**、`verify-package-dependencies` **rc=0**、五个改动文件 `oxlint` **0 warnings 0 errors**；`validate.py` 报 invalid=0。
+
+唯一没归因的是 vitest：rc=1，而我按 `Test Files ` 与 `Tests ` 抓的两行汇总（20 passed (21)／471 passed (474)）在同一份日志里用 `failed`、`skipped`、`Error:` 三种模式**一条都搜不到**——这自证我那两行是从**多项目分段汇总**里 tail 出来的、不代表顶层结论，rc=1 的真实原因还没指到具体用例。⇒ 我不在这种读数下提交代码，按 pathspec 整件撤回（11 个跟踪路径含锁与两份 tsconfig.base，2 个新文件删除），复测 `duplication` 回到 Found 1 clones。
+
+给下一格的确定性：脚本已修好，落地只需**一条命令**（`land2.py` ＋ 移动 import ＋ `land3.py` ＋ paths ＋ gateway files ＋ install ＋ build），然后**只欠一件事**＝把 vitest 那份日志按顶层汇总读、定位 rc=1 的具体用例（要么是我这次改宽后 `close()` 唤醒语义的行为差，要么是本就存在的红）。三处绿（build／duplication 0 枚／deps）已两次复现，这枚克隆的消法不再是未知。
+
