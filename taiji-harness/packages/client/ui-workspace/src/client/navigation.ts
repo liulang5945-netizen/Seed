@@ -67,6 +67,12 @@ export interface UiWorkspace {
    * @param sessionId - Session to archive.
    * @param options - `stopActivity` asks the Host to stop the Session's running work instead of refusing.
    */
+  // Duplicate by design, not by accident: these five Session operations are declared both in the Host
+  // service definition and in the Client navigation contract, and the two planes must not import each
+  // other (AGENTS.md: a capability seam is Service Definition / Provider / Consumer). The reason and
+  // its residual risk -- no executed gate currently pins drift between these two declarations -- are
+  // recorded in 08 ㊵-102 of the roadmap ledger.
+  /* jscpd:ignore-start */
   archiveSession(sessionId: SessionId, options?: { readonly stopActivity?: boolean }): Promise<void>
   /**
    * Unarchive a Session, restoring it to its recorded Workspace position.
@@ -94,6 +100,7 @@ export interface UiWorkspace {
    * @param sessionId - Session to unpin.
    */
   unpinSession(sessionId: SessionId): Promise<void>
+  /* jscpd:ignore-end */
   /**
    * Open the Host-native directory picker.
    * @returns the selected directory, or null when cancelled.

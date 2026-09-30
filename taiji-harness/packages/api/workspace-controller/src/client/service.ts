@@ -100,6 +100,12 @@ export interface IWorkspaces {
    * @throws {WorkspaceArchiveError} when the Host refuses; without `stopActivity` a Session with
    *   running work fails as `workspace/session-active`, its details naming what runs.
    */
+  // Duplicate by design, not by accident: these five Session operations are declared both in the Host
+  // service definition and in the Client navigation contract, and the two planes must not import each
+  // other (AGENTS.md: a capability seam is Service Definition / Provider / Consumer). The reason and
+  // its residual risk -- no executed gate currently pins drift between these two declarations -- are
+  // recorded in 08 ㊵-102 of the roadmap ledger.
+  /* jscpd:ignore-start */
   archiveSession(sessionId: SessionId, options?: { readonly stopActivity?: boolean }): Promise<void>
   /**
    * Unarchive a Session from the archived Session list.
@@ -127,6 +133,7 @@ export interface IWorkspaces {
    * @param sessionId - Session to unpin.
    */
   unpinSession(sessionId: SessionId): Promise<void>
+  /* jscpd:ignore-end */
   /**
    * Move a Session within one Workspace account.
    * @param workspaceId - owning Workspace.
