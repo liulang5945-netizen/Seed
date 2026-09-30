@@ -110,12 +110,16 @@ it('hot-reloads a real client-plugin source edit without refreshing the page', a
     subprocessFiber = await subprocessCtx.plugin(LocalSubprocessRuntime)
     // Watchers only: the built `dsh web` below is the server under test, and the
     // built tree is this lane's precondition rather than something to rebuild.
+    // The watcher is started through the tsx entry that the `dev:web` alias runs, not
+    // through the package manager: a `.cmd` shim cannot be spawned without a shell on
+    // Windows, and going through `pnpm run` would also let its implicit install rewrite
+    // the tracked workspace lockfile while the face is running.
     watcher = subprocessCtx.subprocess.spawn(spawnSpec(
-      ['pnpm', 'run', 'dev:web', '--skip-build', '--no-serve'],
+      [process.execPath, join(REPO_ROOT, 'node_modules', 'tsx', 'dist', 'cli.mjs'), 'scripts/dev-web.ts', '--poll', '--skip-build', '--no-serve'],
       REPO_ROOT,
       { ...clientBuildEnvironment },
     ))
-    await waitForOutput(watcher, /dev-web: watching/, 'pnpm run dev:web --skip-build --no-serve')
+    await waitForOutput(watcher, /dev-web: watching/, 'tsx scripts/dev-web.ts --poll --skip-build --no-serve')
     host = subprocessCtx.subprocess.spawn(spawnSpec(
       [process.execPath, binPath, 'web', '--no-open', '--port', '0'],
       world,
