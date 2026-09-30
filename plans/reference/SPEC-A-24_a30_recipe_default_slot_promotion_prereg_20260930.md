@@ -82,6 +82,12 @@
   `copy_evidence_utf8_gate_effective=true`（`config=false`／`override=true`）、24 题 × 3 轮＝72 次生成
   ——**`generations_cut_by_turn_marker = 0`、`generations_eating_full_budget = 72`**，四条守卫全真。
   ⇒ **L2 的对照基线定在这里：现状装机件 0/72 ⇒ 晋升判定要求新件 ≥6/72**（这条线不是本件新加的，是 §2af 冻结下来的）。
+  **L3 的对照也已钉到装机件（2026-09-30 续跑落地）**：件
+  `reports/taiji_a30_ding3_transfer_300pos_defaultload_vs_a26_20260930.json`——
+  装机件 `seed_beta_with_circuit` **0/300** 对 血缘基座 `a26_p1` **0/300**，两臂 `prompts_sha256` 相同（配对成立），
+  仪器自己的互斥分支落在"两臂都零 ⇒ 不成立"那一支。
+  ⇒ 按 §8① 事先写死的规矩：**此后 L3 的对照引装机件 0/300，不再引 a26**（"用户今天加载的那一枚"才是晋升判定的对手）。
+  **发表条件**：同参数的一次重复任务当时也在写同一件 ⇒ 读数按"两份逐位相同"才发表（同参数幂等，若不同要按取数面重查）。
   同件另有 `offender_count = 5`（同字拖写），**只作描述**：§2ah 那两个数（8／10）是另两枚件在同一仪器同参数下的读数，
   比较线 ≥3 只对本件预注册的那一对（新件 对 对照件）生效，**不许**拿 5 去和 8/10 讲"变好了"。
 * **L3**：`python scripts/training/probe_taiji_a30_ding3_transfer.py --retrain <新件> --base <对照件> --positions 300 --mask --out-report <新名>`

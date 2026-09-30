@@ -2171,6 +2171,19 @@ base 在任何 K 上恒 0.0；以及 §2am 的 `docs_with_false_fire`（无 floo
   ＋语料 `data/simple_zh/dialogue_extended_clean.jsonl`（不是默认语料）；第二次发射按这组参数走，
   **对照要同参数才叫对照**——参数不同的两次读数不能拿来算 ≥3 那条线。
   **停靠指令（预算用尽时写给下一个接手的人，包括我自己的下一轮）**：
+  **已出数（同日第七次停靠）**：装机件 `seed_beta_with_circuit` **0/300** 对 血缘基座 `a26_p1` **0/300**，
+  两臂 `prompts_sha256` 相同、`mask=true`，仪器的互斥分支落在"两臂都零 ⇒ 不成立"那一支
+  ⇒ 按事先冻结的规矩，**L3 的对照从今往后引装机件 0/300，不再引 a26**（`SPEC-A-24` §5 已同步）。
+  这条同时给"乙"划了前置事实：**装机件在自己写的正文里，接缝处一次都没让边界符胜出**——
+  与它是不是默认加载的那枚无关，两枚件形状相同。
+  **一条更正（我的记录过期了，按当前树为准）**：`DEBT-G13`（门面不转发 `include_start/end_boundary`、`reset`）
+  **已于 2026-09-29 由 `be4a8e58` 修掉**，台账第 1018 行标 ✅，本轮实测守卫
+  `tests/taiji_native/test_g13_learn_bytes_edge_forwarding.py` **5 passed**。
+  ⇒ 所以"乙 需要 owner 先认门面出口"这笔账**已经结清**，乙 的下一步是纯训练档（不需再等我请示接口）。
+  **仍要留神的一处过期文字**：`probe_taiji_a30_ding3_stop_target_pilot.py` 的 docstring 第 152-153 行
+  还写着"门面只转发 epochs/include_boundary/use_memory"——那是 G13 修之前的口径；
+  该文件不在我这一路的改动面上，**我没动它**，引用其读数时按 `facade_gap()` 的**当轮实测值**为准。
+  **下面三条原本是写给"还没出数"时的停靠指令，现改为同类档重跑的通用规矩**：
   ①先看件在不在（`ls reports/taiji_a30_ding3_transfer_300pos_defaultload_vs_a26_20260930.json`）
   ＋日志尾有没有 `rc_transfer_default2=0` —— **两个都有**才算出数；只有日志没有件＝没跑完，按未跑处理；
   ②件不在就照 §6.3 上面那条命令重跑（该仪器**幂等**：只写自己那份新件，不动任何既有件）；
