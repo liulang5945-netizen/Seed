@@ -2041,6 +2041,26 @@ base 在任何 K 上恒 0.0；以及 §2am 的 `docs_with_false_fire`（无 floo
   `test_naming_boundary_contract.py`／`test_zero_face_census_contract.py`／`test_architecture_contract.py` 会扫脚本面），
   所以**下一轮该把它读完再动别的**：本轮新增了两件仪器（`probe_taiji_a30_ding3_transfer.py`、
   `probe_taiji_a30_ding3_trajectory_threshold.py`）并把 `audit_taiji_a30_stop_signal_presence.py` 连升 v3→v8。
+  **已跑完并判读（2026-09-30，汇总行原文：`5 failed, 1821 passed, 1 skipped, 1 xfailed, 2 warnings in 1143.38s`，
+  `rc_broad=1`）——归属按"能不能指到文件"分层，不含糊**：
+  ①**与记录同名的 3 条**＝`test_platform_boundary::test_source_face_is_the_git_face_not_the_whole_disk`（DEBT-G11）＋
+  cap0 两支金样复现（`test_cap0_inventory_contract::…reproduces_the_sealed_one`、
+  `test_cap0_legacy_load_contract::…reproduces_the_sealed_one`）；记录里的第 4 条
+  `test_project_identity` 这次**不红了**（别会话已修，本会话每提交都跑它 4/4）。
+  ②**两条不在我这份基线里**，且**都不是本会话造成的**——三条证据：
+  (a) 两条**单跑也红**（`-q` 两支 18.45s，`2 failed`），不是聚合或并发造成的假红；
+  (b) 涉及的源文件最后被提交的时间是 **09-14／09-20**
+  （`scripts/training/eval_taiji_continuous_structural_growth.py`、
+  `tests/taiji_native/test_cap0_f_dimension_contract.py`），本会话一行未碰；
+  (c) 本会话改过的路径（两件新仪器＋presence 审计 v3→v8）在这两支测试及其仪器的
+  引用面里 **grep 命中 0**。
+  失败原文两条：`AssertionError: second-cycle online feedback was not admitted: online-de-next`
+  （`eval_taiji_continuous_structural_growth.py:153`，归在 `taiji/interaction_group_online` 的**准入规则**那一侧）；
+  以及 F04 的 `stale_reference` 时效守卫（`d5c2829bf` 09-20 那次评价集 v2 改引用时加的门）。
+  **处置**：这两条属**别的线的在飞改动**（默认基座换底／评价集 v2 都动过那两片），我不替它们重生成入库件、
+  也不在本会话改准入规则；下一轮若要判"是不是新的产品退化"，先按 `red-attribution-needs-a-fixed-face` 那条
+  对齐到**具体失败帧**再看提交，别拿总红数增减当结论。**A 支线自己的读数是绿的这一侧**：
+  本轮所有提交前的定向面 `tests/seed/test_project_identity.py`＝4 passed。
 * **本轮已入库的判读件**（16 份，全部 `git ls-files` 可核）：§2ai 三档（12／30／120 位置）、
   §2aj–§2an（教师强制面两臂、轨迹阈值两臂、比较式、带位置条件的 v3 与更正后 v8）、
   §2al–§2al-扩样（配方面 120 格四枚件、300 格两臂）。
