@@ -2182,6 +2182,16 @@ base 在任何 K 上恒 0.0；以及 §2am 的 `docs_with_false_fire`（无 floo
   ⇒ 这条守卫**当场证明了自己能为 false**（已改正该行），不许把它当成"跑通了的证据"。
   **引用规矩**：冒烟 n=4 的 `gate_blocks_majority` **不作结论**，只作仪器可用性证据；
   正式档只报"拦了多少／原因分布"，**不许**由此推"回写通道因此安全了"——它与 §2v 那两笔（权重回写／prompt 回路）是三条不同的量。
+  **该档已结清（同日，正式读数）**：件 `reports/taiji_a30_writeback_gate_on_shipping_face_20260930.json`
+  （`rc_wb_full=0`，`surface_gate_state=armed`、`circuit_present=true`、`checkpoint_untouched=true`、无 `no_gate_state` 行）：
+  **60 次调用里放行 24、拦下 36 ⇒ `allowed_rate=0.4` ⇒ 判读落在 `gate_blocks_majority`**；
+  原因直方图 `not_well_formed:33 ／ passed:24 ／ not_ended_naturally:3`
+  ⇒ **门槛① 在装机面确实在拦，而且拦掉多数**（这修正了"门只是纸面承诺"的怀疑方向，但**不**等于回写通道没问题：
+  §2v 那两笔是另外的量，本件没测）。被拦样例问句：`我的名字是什么？`、`我住哪？`（＝最需要被记住的那类告知）。
+  **一处守卫算式错，已改正并留场**：`expected_calls` 我写成 `items × rounds`（期望 72），
+  而这份 manifest 的 2 轮题与 3 轮题相间（前 24 条轮数分布 `2,3,2,3,…`）⇒ 真实期望 **60**，
+  于是件里报 `calls_match_expected=false`（**数据没错，是界算错**——同族错：那次"漏乘 `epochs`"）。
+  改正为 `sum(len([t for t in item.turns[:rounds]]))`，并按题面离线复核：**60 与实际 calls 60 相符**。
 
 * **§2ab 三条判据 ↔ 本会话已有读数（把"谁能判、判成什么"对号入座，别让主线重跑我已跑过的面）**：
   **第 1 条（教师强制面 ≥150/300）＝同向成立但不由我宣布**——我在**已有检查点**上用配方面读到

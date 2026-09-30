@@ -122,7 +122,9 @@ def main() -> int:
         },
         "instrument_guard": {
             "checkpoint_untouched": sha_before == sha_after,
-            "expected_calls": len(items) * rounds,
+            # 期望值要按**题面真实轮数**算：这份 manifest 里 2 轮题与 3 轮题各半，
+            # 拿 `items × rounds` 当期望是我原来写错的那条界（同族错见记忆里"漏乘 epochs"那条）。
+            "expected_calls": sum(len([t for t in item["turns"][:rounds]]) for item in items),
             "calls_match_expected": calls == len(items) * rounds,
             "no_gate_state_rows": reasons.get("no_gate_state", 0) == 0,
         },
