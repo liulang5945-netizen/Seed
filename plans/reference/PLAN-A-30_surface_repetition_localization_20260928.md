@@ -2110,6 +2110,17 @@ base 在任何 K 上恒 0.0；以及 §2am 的 `docs_with_false_fire`（无 floo
   也不在本会话改准入规则；下一轮若要判"是不是新的产品退化"，先按 `red-attribution-needs-a-fixed-face` 那条
   对齐到**具体失败帧**再看提交，别拿总红数增减当结论。**A 支线自己的读数是绿的这一侧**：
   本轮所有提交前的定向面 `tests/seed/test_project_identity.py`＝4 passed。
+
+### 6.3 交接（2026-09-30 第二次停靠）：三条在飞的读数与它们各自的判法
+
+| 在飞 | 命令（已在跑，勿重复起） | 落盘件 | 判法 |
+|---|---|---|---|
+| 假说④逐题相关 | `python scripts/training/probe_taiji_a30_recipe_surface_tradeoff.py --mask` | `reports/taiji_a30_recipe_surface_tradeoff_104item_20260930.json` | §2ar 的四支互斥线（治疗臂 ≤−0.3 且 base 臂 >−0.1 才算④成立；两臂都 \|ρ\|<0.1 即否证） |
+| 挂回路装配的表层成句（两枚件） | `score_taiji_r2_copy_surface_extension.py --checkpoint <件> --circuit output/taiji_r2_copy_circuit_chat/judge/circuit-final.pt --out-report <新名>` | `reports/taiji_f0_a31retrain_surface_circuit_20260930.json`、`reports/taiji_f0_a26p1_surface_circuit_20260930.json` | **描述性**（不是判据）：看 §2ap 那个成句退化在**装机形态**（默认载入＝带电路）下是否也在——若也在，§8①的代价写在装配层；若消失，要说明是电路补回来的而不是配方无害 |
+
+**停靠时状态**：本轮已入库的提交到 `8388b8ab`；这三条读数出数前，`§2ar` 与 `§8①` 都**只有判据/待补标注，没有结论**——
+不要从日志的空大小推"跑完了"，要看件里有没有 `rc_*=0` 那行与 JSON 是否可解析。
+判完之后要做的事就两件：把数写进 §2ar（连同四分位交叉表）与 §8①，然后回到 §8 的三笔等 owner 的裁定。
 * **§2ab 三条判据 ↔ 本会话已有读数（把"谁能判、判成什么"对号入座，别让主线重跑我已跑过的面）**：
   **第 1 条（教师强制面 ≥150/300）＝同向成立但不由我宣布**——我在**已有检查点**上用配方面读到
   **239/300**（§2al-扩样，对照 `a26_p1` 同面 **0/300**），口径不同（我：语料正文＋仪器补一个换行；
