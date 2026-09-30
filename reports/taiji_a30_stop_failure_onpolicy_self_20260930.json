@@ -1,0 +1,2138 @@
+{
+  "format": "taiji-a30-stop-failure-v4",
+  "format_note_v4": "v4 **加性**多存三条装配自述（`mount_route`／`copy_circuit_present_after_load`／`copy_evidence_utf8_gate`），其余字段与算法一字未动 ⇒ 与 v3 同格可比。加它的理由：`--circuit` 不给 **不等于**\"出厂无回路面\"——带回路的信封在 `SeedRuntime.load` 里会自动挂载，所以这张面是按命令行猜出来的。",
+  "prereg": "plans/reference/PLAN-A-30_surface_repetition_localization_20260928.md §2f 第 3 条",
+  "checkpoint": "output/tmp_a30_smoke/onpolicy_arms/a30_onpolicy_self.pt",
+  "circuit": "output/taiji_r2_copy_circuit_chat/judge/circuit-final.pt",
+  "circuit_sha256": "1cfe5961c300485dc08078a9deb82d0f31acbb5f8c63d0685d18366832d741a3",
+  "mount_route": "enable_copy_circuit",
+  "copy_circuit_present_after_load": true,
+  "copy_evidence_utf8_gate_effective": true,
+  "copy_evidence_utf8_gate_config": false,
+  "copy_evidence_utf8_gate_override": true,
+  "repetition_penalty": 2.0,
+  "repetition_window": 8,
+  "max_length": 256,
+  "generation_loop_lines": [
+    3119,
+    3178
+  ],
+  "items": 24,
+  "instrument_guard": {
+    "observe_calls_recorded": true,
+    "observe_calls_by_caller": {
+      "generate:3087": 20086,
+      "generate:3163": 16429,
+      "record_told_history:105": 14863,
+      "record_told_history:102": 2458,
+      "record_told_history:92": 72,
+      "generate:3078": 72
+    },
+    "all_items_reconstructed": true,
+    "items_failing_reconstruction": [],
+    "total_argmax_mismatch_steps": 0,
+    "all_surfaces_are_replayed_raw": true,
+    "items_whose_surface_is_not_model_bytes": [],
+    "total_steps": 16429,
+    "generations": 72,
+    "generations_cut_by_turn_marker": 0,
+    "generations_eating_full_budget": 72,
+    "base_sha256_unchanged": true
+  },
+  "failure_examples": [],
+  "offender_count": 5,
+  "offenders": [
+    {
+      "id": "V001",
+      "answer_run": 24,
+      "steps": 768,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "同：这首诗有吂，一起大何，忙何，忙首诗有，大何，"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "哥楐楐衐衐襥哥楐衐襥哥楐襥楐衐襥哥哥哥哥哥哥哥哥"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "衐衐衐衐衐衐襓襛襐衐襓衐衐楥襐襓衐襥楥襐襥衐襥襥"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 63,
+      "median_ratio_best_over_boundary": 5931796997.777,
+      "run_steps": 378,
+      "run_legal_hist": {
+        "64": 252,
+        "179": 126
+      },
+      "run_boundary_rank_hist": {
+        "7": 1,
+        "10": 27,
+        "11": 26,
+        "12": 27,
+        "13": 16,
+        "14": 8,
+        "15": 4,
+        "16": 3,
+        "17": 2,
+        "18": 1,
+        "19": 1,
+        "21": 1,
+        "22": 1,
+        "23": 1,
+        "24": 1,
+        "26": 1,
+        "29": 3,
+        "32": 1,
+        "35": 1,
+        "54": 2,
+        "55": 1,
+        "56": 5,
+        "57": 1,
+        "58": 5,
+        "59": 5,
+        "60": 9,
+        "61": 11,
+        "62": 11,
+        "63": 19,
+        "64": 47,
+        "65": 136
+      },
+      "run_ratio_min": 1570.961,
+      "run_ratio_median": 6.1375232882796904e+16,
+      "run_rows_sample": [
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 1.0,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 11,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 9.6531529713766e+23,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 3,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.309323,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 65,
+          "legal_candidates": 64,
+          "ratio_best_over_boundary": 118196791.608,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 4,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.960842,
+          "p_boundary": 4e-06,
+          "p_boundary_before_penalty": 4e-06,
+          "boundary_rank_in_legal": 65,
+          "legal_candidates": 64,
+          "ratio_best_over_boundary": 234340.304,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 5,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.333333,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 12,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 3.1591174200188687e+22,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 6,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.197788,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 65,
+          "legal_candidates": 64,
+          "ratio_best_over_boundary": 104031978.234,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 7,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.30886,
+          "p_boundary": 1.1e-05,
+          "p_boundary_before_penalty": 1.1e-05,
+          "boundary_rank_in_legal": 65,
+          "legal_candidates": 64,
+          "ratio_best_over_boundary": 27452.314,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 8,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.996061,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 13,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 475906112915565.4,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 9,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.963384,
+          "p_boundary": 1e-06,
+          "p_boundary_before_penalty": 1e-06,
+          "boundary_rank_in_legal": 65,
+          "legal_candidates": 64,
+          "ratio_best_over_boundary": 1053145.935,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 10,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.2,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 64,
+          "legal_candidates": 64,
+          "ratio_best_over_boundary": 2.274407963393054e+18,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 11,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.329015,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 11,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 1.9282235132265304e+16,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 12,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.310729,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 65,
+          "legal_candidates": 64,
+          "ratio_best_over_boundary": 12060430.088,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 13,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.2,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 65,
+          "legal_candidates": 64,
+          "ratio_best_over_boundary": 3.804166510555507e+17,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 14,
+          "in_run": true
+        }
+      ]
+    },
+    {
+      "id": "V010",
+      "answer_run": 84,
+      "steps": 579,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 67,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "同：这首诗有吂，一起大家有，忙有，忙首诗有吂"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "岛事事事事事事事事事事事事事事事事事事事事事事事"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "安扉西安西安西安西安安西安安安安安西安西安安西安"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 64,
+      "median_ratio_best_over_boundary": 1222846649324423.2,
+      "run_steps": 348,
+      "run_legal_hist": {
+        "64": 232,
+        "179": 116
+      },
+      "run_boundary_rank_hist": {
+        "9": 7,
+        "10": 14,
+        "11": 6,
+        "12": 7,
+        "13": 14,
+        "14": 9,
+        "15": 13,
+        "16": 7,
+        "17": 4,
+        "18": 1,
+        "19": 2,
+        "20": 7,
+        "21": 4,
+        "22": 2,
+        "23": 4,
+        "24": 1,
+        "25": 3,
+        "26": 2,
+        "28": 2,
+        "29": 4,
+        "32": 3,
+        "53": 1,
+        "57": 1,
+        "60": 2,
+        "61": 5,
+        "62": 8,
+        "63": 18,
+        "64": 57,
+        "65": 140
+      },
+      "run_ratio_min": 1800690.644,
+      "run_ratio_median": 2432616685492319.5,
+      "run_rows_sample": [
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.991859,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 24,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 299008237.283,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 3,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 1.0,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 64,
+          "legal_candidates": 64,
+          "ratio_best_over_boundary": 1.465404373378768e+18,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 4,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 1.0,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 65,
+          "legal_candidates": 64,
+          "ratio_best_over_boundary": 3.90839131900663e+17,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 5,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.333333,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 13,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 3.799226152367127e+28,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 6,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.333333,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 65,
+          "legal_candidates": 64,
+          "ratio_best_over_boundary": 2.2222712824241636e+18,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 7,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.333333,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 65,
+          "legal_candidates": 64,
+          "ratio_best_over_boundary": 2.1895118948017658e+17,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 8,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.2,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 13,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 4.135112917489659e+28,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 9,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.2,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 65,
+          "legal_candidates": 64,
+          "ratio_best_over_boundary": 9.200131790110186e+16,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 10,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.2,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 65,
+          "legal_candidates": 64,
+          "ratio_best_over_boundary": 2432616685492319.5,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 11,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.2,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 13,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 5.8006182085494345e+25,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 12,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.2,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 65,
+          "legal_candidates": 64,
+          "ratio_best_over_boundary": 3.6979987735794515e+17,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 13,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.2,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 65,
+          "legal_candidates": 64,
+          "ratio_best_over_boundary": 556763272185014.44,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 14,
+          "in_run": true
+        }
+      ]
+    },
+    {
+      "id": "V011",
+      "answer_run": 256,
+      "steps": 603,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 91,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "好，个这首一这首何，忧何，忧何，忙何，忙何，忙何"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "7777777777777777777欢欢欢欢欢"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "777777777777777777777777"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 20,
+      "median_ratio_best_over_boundary": 2.599929177951522e+25,
+      "run_steps": 512,
+      "run_legal_hist": {
+        "64": 24,
+        "179": 488
+      },
+      "run_boundary_rank_hist": {
+        "8": 1,
+        "10": 2,
+        "11": 4,
+        "12": 5,
+        "13": 46,
+        "14": 53,
+        "15": 61,
+        "16": 32,
+        "17": 33,
+        "18": 22,
+        "19": 15,
+        "20": 7,
+        "21": 6,
+        "22": 5,
+        "23": 8,
+        "24": 11,
+        "25": 30,
+        "26": 23,
+        "27": 12,
+        "28": 10,
+        "29": 15,
+        "30": 12,
+        "31": 9,
+        "32": 12,
+        "33": 13,
+        "34": 4,
+        "35": 5,
+        "36": 10,
+        "37": 3,
+        "38": 3,
+        "39": 8,
+        "40": 3,
+        "41": 2,
+        "45": 1,
+        "47": 1,
+        "48": 1,
+        "63": 3,
+        "64": 6,
+        "65": 15
+      },
+      "run_ratio_min": 93612753.737,
+      "run_ratio_median": 6.51225742085926e+26,
+      "run_rows_sample": [
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 1.0,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 14,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 6.149350828801282e+25,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 0,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.333333,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 13,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 3.620370132001672e+29,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 1,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.2,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 14,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 1.750674756299352e+26,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 2,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.142857,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 18,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 4.134119881250317e+22,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 3,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.111111,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 19,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 4.064923880807088e+20,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 4,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.090909,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 19,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 9.425527526772523e+18,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 5,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.076923,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 19,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 7.700896818698373e+17,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 6,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.066667,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 25,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 6.811092268647717e+16,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 7,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.058824,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 25,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 3.2038750984173184e+16,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 8,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.058824,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 21,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 7.716399603750959e+17,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 9,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.058824,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 22,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 1.2501521930999288e+19,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 10,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.058824,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 25,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 1.8245341094705486e+19,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 11,
+          "in_run": true
+        }
+      ]
+    },
+    {
+      "id": "V019",
+      "answer_run": 256,
+      "steps": 768,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "好，个这首一这首一这首一这首家有：同何，忧何，忧"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "999999999999999999999999"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "799999999999999999999999"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 20,
+      "median_ratio_best_over_boundary": 1.3564252632636524e+24,
+      "run_steps": 511,
+      "run_legal_hist": {
+        "179": 511
+      },
+      "run_boundary_rank_hist": {
+        "11": 2,
+        "12": 7,
+        "13": 42,
+        "14": 64,
+        "15": 38,
+        "16": 52,
+        "17": 34,
+        "18": 27,
+        "19": 35,
+        "20": 24,
+        "21": 9,
+        "22": 16,
+        "23": 13,
+        "24": 7,
+        "25": 17,
+        "26": 14,
+        "27": 11,
+        "28": 22,
+        "29": 24,
+        "30": 14,
+        "31": 14,
+        "32": 6,
+        "33": 5,
+        "34": 11,
+        "36": 2,
+        "37": 1
+      },
+      "run_ratio_min": 16094443836.525,
+      "run_ratio_median": 6.279576699858234e+28,
+      "run_rows_sample": [
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 1.0,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 13,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 3.634877645203565e+27,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 0,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.333333,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 13,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 4.061415779309414e+28,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 1,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.2,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 16,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 4.741137844448876e+24,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 2,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.142857,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 17,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 4.488753246653281e+19,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 3,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.111111,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 17,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 1.4130640569569048e+17,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 4,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.090909,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 17,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 4063136557251909.5,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 5,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.076923,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 16,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 197463746832014.47,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 6,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.066667,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 15,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 19979583353367.42,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 7,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.058824,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 14,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 4474441440856.99,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 8,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.058824,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 14,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 468871586427.59,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 9,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.058824,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 14,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 54787239941.154,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 10,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.058824,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 14,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 16094443836.525,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 11,
+          "in_run": true
+        }
+      ]
+    },
+    {
+      "id": "V022",
+      "answer_run": 34,
+      "steps": 603,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 91,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "同何，忙首诗有，忙一起大何，忧何，忙首诗有，忙何"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝舌蓝蓝蓝蓝蓝蓝蓝"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 63,
+      "median_ratio_best_over_boundary": 3888580280382.91,
+      "run_steps": 486,
+      "run_legal_hist": {
+        "64": 324,
+        "179": 162
+      },
+      "run_boundary_rank_hist": {
+        "9": 1,
+        "10": 23,
+        "11": 34,
+        "12": 21,
+        "13": 17,
+        "14": 8,
+        "15": 1,
+        "16": 13,
+        "17": 9,
+        "18": 5,
+        "19": 2,
+        "20": 1,
+        "21": 3,
+        "22": 1,
+        "23": 2,
+        "26": 1,
+        "27": 1,
+        "28": 1,
+        "29": 1,
+        "30": 9,
+        "31": 4,
+        "32": 2,
+        "33": 2,
+        "55": 1,
+        "57": 1,
+        "58": 3,
+        "59": 4,
+        "60": 10,
+        "61": 14,
+        "62": 20,
+        "63": 20,
+        "64": 37,
+        "65": 214
+      },
+      "run_ratio_min": 4263212.258,
+      "run_ratio_median": 202406185863779.22,
+      "run_rows_sample": [
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.966581,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 15,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 2.85672833692252e+19,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 0,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 1.0,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 58,
+          "legal_candidates": 64,
+          "ratio_best_over_boundary": 13013000005614.955,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 1,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 1.0,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 63,
+          "legal_candidates": 64,
+          "ratio_best_over_boundary": 110065849857537.2,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 2,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.333333,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 11,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 2.9500485727301844e+35,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 3,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.333313,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 65,
+          "legal_candidates": 64,
+          "ratio_best_over_boundary": 12937195811.343,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 4,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.333333,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 62,
+          "legal_candidates": 64,
+          "ratio_best_over_boundary": 228432336871347.5,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 5,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.2,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 10,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 1.0466727961861842e+34,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 6,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.199988,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 65,
+          "legal_candidates": 64,
+          "ratio_best_over_boundary": 3804404671.539,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 7,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.2,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 62,
+          "legal_candidates": 64,
+          "ratio_best_over_boundary": 21815964393299.895,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 8,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.2,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 10,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 4.0922187045719494e+32,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 9,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.199996,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 65,
+          "legal_candidates": 64,
+          "ratio_best_over_boundary": 4360789881.085,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 10,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.2,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 61,
+          "legal_candidates": 64,
+          "ratio_best_over_boundary": 6736199840658.003,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 11,
+          "in_run": true
+        }
+      ]
+    }
+  ],
+  "per_item": [
+    {
+      "id": "V001",
+      "answer_run": 24,
+      "steps": 768,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "同：这首诗有吂，一起大何，忙何，忙首诗有，大何，"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "哥楐楐衐衐襥哥楐衐襥哥楐襥楐衐襥哥哥哥哥哥哥哥哥"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "衐衐衐衐衐衐襓襛襐衐襓衐衐楥襐襓衐襥楥襐襥衐襥襥"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 63,
+      "median_ratio_best_over_boundary": 5931796997.777,
+      "run_steps": 378
+    },
+    {
+      "id": "V002",
+      "answer_run": 13,
+      "steps": 705,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 193,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "同：这首诗有吂，一起大何，忙首诗有，大何，忙有，"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "州苷住州苷住州苷住州苷住州苷住州苷住州苷住州苷住"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "拋苷苷苷苷苷州苷苷苷苷苷苷苷苷苷苷州苷苷苷苷苷苷"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 64,
+      "median_ratio_best_over_boundary": 60578594.425,
+      "run_steps": 336
+    },
+    {
+      "id": "V003",
+      "answer_run": 15,
+      "steps": 734,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 222,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "好，个这首一这首何，忧何，忙何，忙何，忙一起山有"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "2121212121喦2121212121欢欢欢"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "212121喦欢2121212121212121"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 17,
+      "median_ratio_best_over_boundary": 5.048288312935109e+17,
+      "run_steps": 47
+    },
+    {
+      "id": "V004",
+      "answer_run": 16,
+      "steps": 768,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "同：这首诗有吂，一起大何，忧何，忙首诗有吂，一这"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "图图图图图图图图图图图图图图图图囮图海囮海图项海"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "图海图项海图项海图项海图项海图项海图项海图项海图"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 64,
+      "median_ratio_best_over_boundary": 2866434515.606,
+      "run_steps": 129
+    },
+    {
+      "id": "V005",
+      "answer_run": 3,
+      "steps": 664,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 152,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "好，忙首诗有吂\n答：同个这首一这首同：这首吗有，"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "喝乌龙时爱喝乌龙乌龙龙乌龙龙乌龙龙乌龙龙乌龙时爱"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "豙龙龙乌龙时爱喝乌龙龙乌龙龙乌龙时爱喝乌龙龙龙乌"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 64,
+      "median_ratio_best_over_boundary": 67343012868.974,
+      "run_steps": 165
+    },
+    {
+      "id": "V006",
+      "answer_run": 4,
+      "steps": 684,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 172,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "同：这首诗有吂，一这首何，忧何，忙何，忙有，大何"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "养丮渮檪鸮鸮鸮檪鸮鸮檪鸮鸮檺丮鸮鸮檪鸮鸮檺丮鸮鸮"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "养丮渮檪鸮鸮檺丮鸮鸮檪鸮鸮檺丮鸮鸮檪鸮鸮檺丮鸮鸮"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 64,
+      "median_ratio_best_over_boundary": 9909610777.115,
+      "run_steps": 324
+    },
+    {
+      "id": "V007",
+      "answer_run": 2,
+      "steps": 741,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 229,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "同：这首一诗有同：这首一这首何，忧何，大何，大何"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "姐泧泧泐泧泧水注读迧泧近姐泧近姐泧近姐泧近姐泧近"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "迧泐泧泧泐泧泧泐泧泧泿读迧泧近姐泧近姐泧近姐泧近"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 64,
+      "median_ratio_best_over_boundary": 1027108.408,
+      "run_steps": 48
+    },
+    {
+      "id": "V008",
+      "answer_run": 11,
+      "steps": 576,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 64,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "好，忙首诗有，忙一起大何，忧何，忙首诗有吂"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "包包包包包包包包包包包本笼包欼欼包欼包本本戱吃包"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "包汱吃包吃包吃包吃包包包本，包本本包挅欼吃包欼吃"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 64,
+      "median_ratio_best_over_boundary": 47042890480.801,
+      "run_steps": 159
+    },
+    {
+      "id": "V009",
+      "answer_run": 7,
+      "steps": 748,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 236,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "同：这首诗有吂，一起大何，忧何，忙有，大何，大何"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "君雨我成雨成雨我成雨我成雨成成成雨成成成成成我成"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "君雨我我成成我成雨我成成成我吐成雨我吐成我成雨成"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 35,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 64,
+      "median_ratio_best_over_boundary": 13282628155.791,
+      "run_steps": 177
+    },
+    {
+      "id": "V010",
+      "answer_run": 84,
+      "steps": 579,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 67,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "同：这首诗有吂，一起大家有，忙有，忙首诗有吂"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "岛事事事事事事事事事事事事事事事事事事事事事事事"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "安扉西安西安西安西安安西安安安安安西安西安安西安"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 64,
+      "median_ratio_best_over_boundary": 1222846649324423.2,
+      "run_steps": 348
+    },
+    {
+      "id": "V011",
+      "answer_run": 256,
+      "steps": 603,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 91,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "好，个这首一这首何，忧何，忧何，忙何，忙何，忙何"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "7777777777777777777欢欢欢欢欢"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "777777777777777777777777"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 20,
+      "median_ratio_best_over_boundary": 2.599929177951522e+25,
+      "run_steps": 512
+    },
+    {
+      "id": "V012",
+      "answer_run": 10,
+      "steps": 591,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 79,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "好，忙首诗有，大一起大何，忙首诗有，大何，忙首诗"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "径鳾径鳟径鳾径龄鋖徳径龄鋾径龄鮟径鋾径龄鮟径鋾徳"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "吟星星星星队星星队星星队星星队星星队星星队星星星"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 2,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 63,
+      "median_ratio_best_over_boundary": 11187078438.971,
+      "run_steps": 129
+    },
+    {
+      "id": "V013",
+      "answer_run": 4,
+      "steps": 768,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "同：这首诗有同，一这首何，忧何，忧何，忙有，大何"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "花人爱人爱人爱人爱人爱人爱人爱人爱人爱人爱人爱人"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "苉打打苉打打苳打打打苳打打打打苳打打打苳打打打打"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 64,
+      "median_ratio_best_over_boundary": 1981454101.896,
+      "run_steps": 183
+    },
+    {
+      "id": "V014",
+      "answer_run": 17,
+      "steps": 733,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 221,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "同：这首诗有吂，一起大何，忙何，忙首诗有，大何，"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "居居居养一居居养一居居居居居居居一袋一居居一居居"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "养一养一养一养一养一养一养一养一养一养一浣浣一养"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 63,
+      "median_ratio_best_over_boundary": 1264363009.832,
+      "run_steps": 210
+    },
+    {
+      "id": "V015",
+      "answer_run": 17,
+      "steps": 696,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 184,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "同：这首中有同，一这首何，志有，忙何，忙有，忙首"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "迧读读读读读读读䯻读读读读读语梦语读近梦读读语读"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "迻这泯迻迻迻近泯迿迻迳迻迻迻迯泯迯迿读读迿读迿读"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 64,
+      "median_ratio_best_over_boundary": 21790353.37,
+      "run_steps": 231
+    },
+    {
+      "id": "V016",
+      "answer_run": 8,
+      "steps": 646,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 134,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "同：这首诗有同，一起大何，忧何，忙首诗有，大何，"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "哥泱哥泉泥泥泉泥泥泉泥泥泉泥泥泥泥泥泉泥哥泉泥泱"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "子鸣吃辣吃辣吃辣吃辣吃辣吃辣吃辣吃辣吃辣吃辣吃辣"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 15,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 64,
+      "median_ratio_best_over_boundary": 177501034724.65,
+      "run_steps": 126
+    },
+    {
+      "id": "V017",
+      "answer_run": 19,
+      "steps": 636,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 124,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "同：这首一起大家有，忙一起大何，忧一起大何，忙首"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "远远远远远远远远远远远远远远远远远远远迥违违远违"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "濿违远迿哥迿迿迥哥迿迿迿迥迿迿迥迥远迿迿迿迥迥违"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 62,
+      "median_ratio_best_over_boundary": 19217307755.373,
+      "run_steps": 243
+    },
+    {
+      "id": "V018",
+      "answer_run": 8,
+      "steps": 768,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "同：这首诗有吂\n答：同个这首一这首吂何，忧何，大"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "岛青岛青岛青岛青岛青岛岛岛住岛青岛青岛青岛青岛青"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "岛岛岛岛岛岛岛岛住岛我住岛青岛青岛青岛青岛我住岛"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 60,
+      "median_ratio_best_over_boundary": 16833161671730.875,
+      "run_steps": 69
+    },
+    {
+      "id": "V019",
+      "answer_run": 256,
+      "steps": 768,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "好，个这首一这首一这首一这首家有：同何，忧何，忧"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "999999999999999999999999"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "799999999999999999999999"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 20,
+      "median_ratio_best_over_boundary": 1.3564252632636524e+24,
+      "run_steps": 511
+    },
+    {
+      "id": "V020",
+      "answer_run": 2,
+      "steps": 619,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 107,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "同：这首诗有吂\n答：这首有同，一起大何，忧何，忙"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "径鳾径项石径项石径鳾径鳾径鳟戟径鳟鮖径项石径鳾径"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "径鳾径鳟径鳾径鳟径鳾径鳟戟泟鮮戟泟龄项石径鳟鮟泟"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 63,
+      "median_ratio_best_over_boundary": 7360292.815,
+      "run_steps": 12
+    },
+    {
+      "id": "V021",
+      "answer_run": 15,
+      "steps": 747,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 235,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "同：这首诗有同：这首一起大何，忧何，忙何，忙有，"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "喝檬柠檬柠檬柠檬柠檬柠檬柠檬柠檬檬柠檬檬檬檬檬檬"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "柠檬柠檬柠檬柠檬柠檬柠檬柠檬柠檬柠檬柠檬檬柠檬檬"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 28,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 63,
+      "median_ratio_best_over_boundary": 2816289398.648,
+      "run_steps": 171
+    },
+    {
+      "id": "V022",
+      "answer_run": 34,
+      "steps": 603,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 91,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "同何，忙首诗有，忙一起大何，忧何，忙首诗有，忙何"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝舌蓝蓝蓝蓝蓝蓝蓝"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 63,
+      "median_ratio_best_over_boundary": 3888580280382.91,
+      "run_steps": 486
+    },
+    {
+      "id": "V023",
+      "answer_run": 16,
+      "steps": 714,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 202,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "同：这首中有同，一这首一这首家有：同，一这首何，"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "近梦读读读读读读读读读读䯻读读读读读读读读读读语"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "读读读违读读读读读读读读迗梦语读读近梦读读读读读"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 1,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 378832770.732,
+      "run_steps": 351
+    },
+    {
+      "id": "V024",
+      "answer_run": 5,
+      "steps": 570,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 58,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "同：这首诗有同，一这首一这首同：这首吂"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "艾吃羊艉泱吃羊艱吃羊艉泱吃羊艱吃羊艱吃羊艱吃羊艱"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "泱吃羊艉泉泾）泱吃羊艉泉泱吃羊艉泉泱吃羊艉泱吃羊"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 11,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 64,
+      "median_ratio_best_over_boundary": 4308774506.118,
+      "run_steps": 81
+    }
+  ],
+  "started_utc": "2026-09-30T05:19:36Z"
+}
