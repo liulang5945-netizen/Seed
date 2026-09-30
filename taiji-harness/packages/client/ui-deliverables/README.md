@@ -106,7 +106,7 @@ The section is static at first-party order 9000 for the lifetime of the package 
 
 These limits define the current deliverables vocabulary. They are current package constraints, not a general file-linking comparison or a task backlog.
 
-- **Inline local images require HTTP(S) and POSIX absolute paths**: Desktop’s `dsh-app:` pages and Windows drive-letter paths do not support inline local images. The guidance retains a Markdown file link so users can open the Sidebar preview.
+- **Inline local images require an HTTP(S) page**: Desktop’s `dsh-app:` pages stay inert, and an absolute destination is forwarded in either spelling — POSIX or a Windows drive — for the Host to accept or reject, so a drive path on a POSIX Host now returns 400 instead of never being requested. The guidance retains a Markdown file link so users can open the Sidebar preview.
 - **Mention matching is exact path or unique basename only** — a suffix mention stays inert; widening the matcher is deferred until a real closing-message shape needs it.
 - **Terminal-created files require explicit delivery** — the card lists them once git records the change, but delivery cards and inline-code references require `present`; explicit Markdown links can reference existing files directly.
 - **Declarations do not preserve file contents** — reopening or transferring a Session requires source files accessible through the viewed Session’s filesystem. Missing files, directories, and final symbolic links return 404.
