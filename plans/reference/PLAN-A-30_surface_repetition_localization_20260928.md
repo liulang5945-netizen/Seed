@@ -2055,8 +2055,13 @@ base 在任何 K 上恒 0.0；以及 §2am 的 `docs_with_false_fire`（无 floo
   （另一处记录在同册失败形态表里）。⇒ 它**不是新的、也不是本会话造成的**，
   而我刚才把它写成"新增到我基线上的红"——**错在只比对自己带的那句四红清单，没比整本台账**。
   **(b) 另一支才真的无册可查**：`test_cap0_f_dimension_contract::test_f04_on_the_current_eval_set_is_not_flagged_stale`
-  在 roadmap 四份文档里 grep **零命中**；它也单跑也红。这一支**待归属**（下一步先读它的断言原文与
-  `stale_reference` 门的来路 `d5c2829bf`，别急着修，更别拿它当"A 支线退化"——它与停止信号链路无关）。
+  在 roadmap 四份文档里 grep **零命中**；它也单跑也红。**已归属完成（同一轮内）**：跑 F04 的判定拿到失败子句原文
+  ——"封存 inventory 里 `default_checkpoint='seed_beta.pt'`，而现行产品默认＝`seed_beta_with_circuit.pt`"，
+  即 **rev51 把默认位换成带电路那件之后，CAP0 的封存清单描述错了基座**，时效守卫据此判 `stale_reference`
+  （守卫是**对的**，红是产品变更的记账后果）。处置＝重封一份 inventory，那要动封存金样、归产品默认位那条线，
+  不由 A 支线单方面刷绿。**但这条对 A 支线有一处必须留住的副作用**：§2ab 判据第 3 条（F0 不回退 ≥0.5）
+  读的就是这套 F 维判定 ⇒ **默认位一换，F0 的读数面就跟着换**，引用旧 F0 数必须点名是哪枚默认件。
+  归属全文记在 05 台账的失败形态表（本次提交同步入库）。
   (c) 两条涉及的源文件最后被提交的时间是 **09-14／09-20**
   （`scripts/training/eval_taiji_continuous_structural_growth.py`、
   `tests/taiji_native/test_cap0_f_dimension_contract.py`），本会话一行未碰；

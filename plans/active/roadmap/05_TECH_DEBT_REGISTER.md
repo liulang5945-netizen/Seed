@@ -836,6 +836,7 @@ gone = load("baseline.xml") - load("now.xml")  # 记录，用于识别抖动
 | 用例 | 失败形态 |
 |---|---|
 | `test_continuous_structural_growth::test_continuous_structural_growth_gate` | `AssertionError: second-cycle online feedback was not admitted: online-de-next` |
+| `test_cap0_f_dimension_contract::test_f04_on_the_current_eval_set_is_not_flagged_stale` | **2026-09-30 归属完成（守卫是对的，红是产品变更的记账后果）**：F04 的时效子句 `sealed inventory 描述的是当前产品默认基座` held=False，原文是"封存 inventory 里 `default_checkpoint='seed_beta.pt'`，而现行产品默认＝`seed_beta_with_circuit.pt`"⇒ **rev51 那次"电路随出厂基座装"把 `DEFAULT_CHECKPOINT` 换到 with_circuit 件（`api/seed_runtime.py:40-45`）之后，CAP0 的封存清单就描述错了基座**，门据此判 `stale_reference`（同一条目另有 `templated=True` 那条 held=False 是 F04 本来就是 `fail`，与此次红无关）。**处置＝重封一份指向新默认件的 inventory**——那会动到封存金样，属**产品默认位那条线**的动作，不由 A 支线单方面刷绿；A 支线这边要留住的是它的**副作用**：§2ab 判据第 3 条（F0 不回退 ≥0.5）读的正是这套 F 维判定，**默认位一换，F0 的读数面就跟着换**，引用旧 F0 数必须点名是哪枚默认件。 |
 | `test_interaction_group_multifamily::test_interaction_group_multifamily_leave_one_out_gate` | `AssertionError: selector did not choose a group for held-out complementary-alpha`（`eval_taiji_interaction_group_multifamily.py:159`，即 `InteractionGroupUtilityLearner.select(resource_budget=2.0)` 返回 `None`） |
 
 **性质**：**既有**——3.10 腿此前一直被 black / verify 网关 / timeout 挡在步骤 24 之前，从未执行到。
