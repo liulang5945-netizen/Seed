@@ -1,0 +1,1153 @@
+{
+  "format": 3,
+  "format_note_v3": "v3 **加性**：新增 `--arms`（默认 corpus,self,sized；跑密度阶梯加 half,quarter）、`decide_ladder` 这条先冻线与其结果 `verdict_length_ladder`、`bytes_by_arm`/`wins_by_arm` 扩到所有在跑的臂、以及 `--save-arms` 拒绝写进 checkpoints/ 的守卫。v1/v2 的喂入形状、主判据与测量函数一字未动 ⇒ 同格可比。",
+  "format_note_v2": "v2 **加性**多存 `verdict_matched_volume`／`bytes_by_arm`／`wins_by_arm` 三条，并把体积配平对照冻成第二线；主判据 `decide`、喂入形状、测量函数一字未动 ⇒ 与 v1 同格可比。",
+  "question": "乙：训练吃过模型自己写的答案，能否让自身轨迹接缝上的胜出离开零（唯一变量＝答案作者）",
+  "prereg_criterion": "self − corpus ≥ 3 ⇒ 成立；两臂都 0 ⇒ 形状不是瓶颈；两臂都 ≤1 且有 1 ⇒ not_resolved",
+  "base": "output/a26_p1/checkpoint.pt",
+  "base_sha256": "8b87583713a47a82",
+  "corpus": "data\\simple_zh\\dialogue_extended_clean.jsonl",
+  "groups": 8,
+  "exchanges": 3,
+  "epochs": 3,
+  "positions": 24,
+  "question_fingerprint": "9796f36139d3cdf0",
+  "runs": {
+    "corpus": {
+      "train": {
+        "feeds": 72,
+        "trained_text_bytes": 51282,
+        "feed_fingerprint": "5a193425fbb1653a",
+        "fed_question_fingerprint": "4298c9397740c023",
+        "fed_answer_fingerprint": "6a290bbd68e344de"
+      },
+      "transfer": {
+        "positions": 24,
+        "max_bytes": 128,
+        "repetition_penalty": 2.0,
+        "boundary_argmax_positions": 6,
+        "answers_stopped_early": 20,
+        "median_rank_over_positions": 4.0,
+        "median_p_boundary_over_positions": 0.12885,
+        "rows": [
+          {
+            "prefix_bytes": 236,
+            "answer_bytes": 127,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 0,
+            "boundary_rank_median": 6.0,
+            "p_boundary_median": 0.057171
+          },
+          {
+            "prefix_bytes": 208,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 0,
+            "boundary_rank_median": 3.0,
+            "p_boundary_median": 0.083818
+          },
+          {
+            "prefix_bytes": 255,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 0,
+            "boundary_rank_median": 2.0,
+            "p_boundary_median": 0.126641
+          },
+          {
+            "prefix_bytes": 199,
+            "answer_bytes": 128,
+            "answer_stopped_early": false,
+            "boundary_is_argmax": 0,
+            "boundary_rank_median": 9.0,
+            "p_boundary_median": 0.031617
+          },
+          {
+            "prefix_bytes": 220,
+            "answer_bytes": 128,
+            "answer_stopped_early": false,
+            "boundary_is_argmax": 0,
+            "boundary_rank_median": 6.0,
+            "p_boundary_median": 0.083144
+          },
+          {
+            "prefix_bytes": 270,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 0,
+            "boundary_rank_median": 2.0,
+            "p_boundary_median": 0.094368
+          },
+          {
+            "prefix_bytes": 210,
+            "answer_bytes": 109,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.110673
+          },
+          {
+            "prefix_bytes": 219,
+            "answer_bytes": 127,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 0,
+            "boundary_rank_median": 4.0,
+            "p_boundary_median": 0.082845
+          },
+          {
+            "prefix_bytes": 350,
+            "answer_bytes": 127,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 0,
+            "boundary_rank_median": 5.0,
+            "p_boundary_median": 0.081959
+          },
+          {
+            "prefix_bytes": 197,
+            "answer_bytes": 111,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.417699
+          },
+          {
+            "prefix_bytes": 336,
+            "answer_bytes": 36,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.423521
+          },
+          {
+            "prefix_bytes": 245,
+            "answer_bytes": 83,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.317449
+          },
+          {
+            "prefix_bytes": 232,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 0,
+            "boundary_rank_median": 6.0,
+            "p_boundary_median": 0.063049
+          },
+          {
+            "prefix_bytes": 255,
+            "answer_bytes": 127,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 0,
+            "boundary_rank_median": 2.0,
+            "p_boundary_median": 0.119839
+          },
+          {
+            "prefix_bytes": 226,
+            "answer_bytes": 127,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 0,
+            "boundary_rank_median": 10.0,
+            "p_boundary_median": 0.029993
+          },
+          {
+            "prefix_bytes": 231,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 0,
+            "boundary_rank_median": 9.0,
+            "p_boundary_median": 0.044066
+          },
+          {
+            "prefix_bytes": 271,
+            "answer_bytes": 127,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 0,
+            "boundary_rank_median": 5.0,
+            "p_boundary_median": 0.078541
+          },
+          {
+            "prefix_bytes": 270,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 0,
+            "boundary_rank_median": 7.0,
+            "p_boundary_median": 0.058426
+          },
+          {
+            "prefix_bytes": 268,
+            "answer_bytes": 115,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.343708
+          },
+          {
+            "prefix_bytes": 220,
+            "answer_bytes": 127,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 0,
+            "boundary_rank_median": 3.0,
+            "p_boundary_median": 0.097737
+          },
+          {
+            "prefix_bytes": 382,
+            "answer_bytes": 128,
+            "answer_stopped_early": false,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.129211
+          },
+          {
+            "prefix_bytes": 238,
+            "answer_bytes": 128,
+            "answer_stopped_early": false,
+            "boundary_is_argmax": 0,
+            "boundary_rank_median": 5.0,
+            "p_boundary_median": 0.066142
+          },
+          {
+            "prefix_bytes": 203,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 0,
+            "boundary_rank_median": 3.0,
+            "p_boundary_median": 0.089804
+          },
+          {
+            "prefix_bytes": 223,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 0,
+            "boundary_rank_median": 7.0,
+            "p_boundary_median": 0.060968
+          }
+        ]
+      },
+      "facade_reachable": true,
+      "facade_gap": {
+        "facade_class": "Seed",
+        "substrate_class": "TSKV8Adapter",
+        "edge_split_reachable_from_facade": true,
+        "edge_split_present_on_substrate": true
+      },
+      "base_sha": "8b87583713a47a82",
+      "saved_checkpoint": null
+    },
+    "self": {
+      "train": {
+        "feeds": 72,
+        "trained_text_bytes": 16242,
+        "feed_fingerprint": "38085fc48957921b",
+        "fed_question_fingerprint": "4298c9397740c023",
+        "fed_answer_fingerprint": "435f7a447937fd8f"
+      },
+      "transfer": {
+        "positions": 24,
+        "max_bytes": 128,
+        "repetition_penalty": 2.0,
+        "boundary_argmax_positions": 14,
+        "answers_stopped_early": 24,
+        "median_rank_over_positions": 1.0,
+        "median_p_boundary_over_positions": 0.23874,
+        "rows": [
+          {
+            "prefix_bytes": 235,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.264291
+          },
+          {
+            "prefix_bytes": 208,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.281731
+          },
+          {
+            "prefix_bytes": 255,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 0,
+            "boundary_rank_median": 2.0,
+            "p_boundary_median": 0.279129
+          },
+          {
+            "prefix_bytes": 197,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.299993
+          },
+          {
+            "prefix_bytes": 218,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 0,
+            "boundary_rank_median": 2.0,
+            "p_boundary_median": 0.130211
+          },
+          {
+            "prefix_bytes": 270,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 0,
+            "boundary_rank_median": 2.0,
+            "p_boundary_median": 0.208744
+          },
+          {
+            "prefix_bytes": 227,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.269507
+          },
+          {
+            "prefix_bytes": 110,
+            "answer_bytes": 18,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 0,
+            "boundary_rank_median": 2.0,
+            "p_boundary_median": 0.19707
+          },
+          {
+            "prefix_bytes": 349,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.287869
+          },
+          {
+            "prefix_bytes": 212,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.242974
+          },
+          {
+            "prefix_bytes": 426,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 0,
+            "boundary_rank_median": 3.0,
+            "p_boundary_median": 0.133042
+          },
+          {
+            "prefix_bytes": 216,
+            "answer_bytes": 54,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 0,
+            "boundary_rank_median": 2.0,
+            "p_boundary_median": 0.243234
+          },
+          {
+            "prefix_bytes": 232,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.361524
+          },
+          {
+            "prefix_bytes": 140,
+            "answer_bytes": 12,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.265291
+          },
+          {
+            "prefix_bytes": 225,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.275736
+          },
+          {
+            "prefix_bytes": 231,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 0,
+            "boundary_rank_median": 2.0,
+            "p_boundary_median": 0.258556
+          },
+          {
+            "prefix_bytes": 270,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.228149
+          },
+          {
+            "prefix_bytes": 270,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 0,
+            "boundary_rank_median": 3.0,
+            "p_boundary_median": 0.135218
+          },
+          {
+            "prefix_bytes": 279,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 0,
+            "boundary_rank_median": 3.0,
+            "p_boundary_median": 0.105532
+          },
+          {
+            "prefix_bytes": 219,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.245937
+          },
+          {
+            "prefix_bytes": 380,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.326263
+          },
+          {
+            "prefix_bytes": 236,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.256458
+          },
+          {
+            "prefix_bytes": 203,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 0,
+            "boundary_rank_median": 2.0,
+            "p_boundary_median": 0.153574
+          },
+          {
+            "prefix_bytes": 223,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.279718
+          }
+        ]
+      },
+      "facade_reachable": true,
+      "facade_gap": {
+        "facade_class": "Seed",
+        "substrate_class": "TSKV8Adapter",
+        "edge_split_reachable_from_facade": true,
+        "edge_split_present_on_substrate": true
+      },
+      "base_sha": "8b87583713a47a82",
+      "saved_checkpoint": null
+    },
+    "sized": {
+      "train": {
+        "feeds": 72,
+        "trained_text_bytes": 15069,
+        "feed_fingerprint": "d111f38ec900d5bb",
+        "fed_question_fingerprint": "4298c9397740c023",
+        "fed_answer_fingerprint": "d218196c98e5cd77"
+      },
+      "transfer": {
+        "positions": 24,
+        "max_bytes": 128,
+        "repetition_penalty": 2.0,
+        "boundary_argmax_positions": 20,
+        "answers_stopped_early": 24,
+        "median_rank_over_positions": 1.0,
+        "median_p_boundary_over_positions": 0.315479,
+        "rows": [
+          {
+            "prefix_bytes": 236,
+            "answer_bytes": 127,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.365978
+          },
+          {
+            "prefix_bytes": 208,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.229856
+          },
+          {
+            "prefix_bytes": 183,
+            "answer_bytes": 54,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.321366
+          },
+          {
+            "prefix_bytes": 197,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 0,
+            "boundary_rank_median": 2.0,
+            "p_boundary_median": 0.11398
+          },
+          {
+            "prefix_bytes": 110,
+            "answer_bytes": 18,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.335983
+          },
+          {
+            "prefix_bytes": 201,
+            "answer_bytes": 57,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.396688
+          },
+          {
+            "prefix_bytes": 227,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.481006
+          },
+          {
+            "prefix_bytes": 176,
+            "answer_bytes": 84,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.316108
+          },
+          {
+            "prefix_bytes": 247,
+            "answer_bytes": 24,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.442146
+          },
+          {
+            "prefix_bytes": 122,
+            "answer_bytes": 36,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.25506
+          },
+          {
+            "prefix_bytes": 315,
+            "answer_bytes": 15,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.407827
+          },
+          {
+            "prefix_bytes": 289,
+            "answer_bytes": 127,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.434767
+          },
+          {
+            "prefix_bytes": 232,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 0,
+            "boundary_rank_median": 3.0,
+            "p_boundary_median": 0.085623
+          },
+          {
+            "prefix_bytes": 224,
+            "answer_bytes": 96,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.290498
+          },
+          {
+            "prefix_bytes": 225,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.397878
+          },
+          {
+            "prefix_bytes": 117,
+            "answer_bytes": 12,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.32876
+          },
+          {
+            "prefix_bytes": 162,
+            "answer_bytes": 18,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.1963
+          },
+          {
+            "prefix_bytes": 165,
+            "answer_bytes": 21,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 0,
+            "boundary_rank_median": 2.0,
+            "p_boundary_median": 0.261541
+          },
+          {
+            "prefix_bytes": 180,
+            "answer_bytes": 27,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 0,
+            "boundary_rank_median": 2.0,
+            "p_boundary_median": 0.259103
+          },
+          {
+            "prefix_bytes": 219,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.263072
+          },
+          {
+            "prefix_bytes": 296,
+            "answer_bytes": 42,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.306343
+          },
+          {
+            "prefix_bytes": 174,
+            "answer_bytes": 64,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.378054
+          },
+          {
+            "prefix_bytes": 116,
+            "answer_bytes": 39,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.329383
+          },
+          {
+            "prefix_bytes": 211,
+            "answer_bytes": 114,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.374165
+          }
+        ]
+      },
+      "facade_reachable": true,
+      "facade_gap": {
+        "facade_class": "Seed",
+        "substrate_class": "TSKV8Adapter",
+        "edge_split_reachable_from_facade": true,
+        "edge_split_present_on_substrate": true
+      },
+      "base_sha": "8b87583713a47a82",
+      "saved_checkpoint": null
+    },
+    "half": {
+      "train": {
+        "feeds": 72,
+        "trained_text_bytes": 30054,
+        "feed_fingerprint": "cd2cb57348472c3f",
+        "fed_question_fingerprint": "4298c9397740c023",
+        "fed_answer_fingerprint": "41fac5c5692f56d6"
+      },
+      "transfer": {
+        "positions": 24,
+        "max_bytes": 128,
+        "repetition_penalty": 2.0,
+        "boundary_argmax_positions": 17,
+        "answers_stopped_early": 24,
+        "median_rank_over_positions": 1.0,
+        "median_p_boundary_over_positions": 0.236195,
+        "rows": [
+          {
+            "prefix_bytes": 235,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.223148
+          },
+          {
+            "prefix_bytes": 208,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.458087
+          },
+          {
+            "prefix_bytes": 255,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 0,
+            "boundary_rank_median": 3.0,
+            "p_boundary_median": 0.159725
+          },
+          {
+            "prefix_bytes": 197,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.313978
+          },
+          {
+            "prefix_bytes": 218,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.27119
+          },
+          {
+            "prefix_bytes": 258,
+            "answer_bytes": 114,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.321098
+          },
+          {
+            "prefix_bytes": 227,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.39286
+          },
+          {
+            "prefix_bytes": 119,
+            "answer_bytes": 27,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.23082
+          },
+          {
+            "prefix_bytes": 349,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.241606
+          },
+          {
+            "prefix_bytes": 212,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 0,
+            "boundary_rank_median": 2.0,
+            "p_boundary_median": 0.145306
+          },
+          {
+            "prefix_bytes": 411,
+            "answer_bytes": 111,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.26732
+          },
+          {
+            "prefix_bytes": 288,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 0,
+            "boundary_rank_median": 2.0,
+            "p_boundary_median": 0.144877
+          },
+          {
+            "prefix_bytes": 190,
+            "answer_bytes": 84,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.202941
+          },
+          {
+            "prefix_bytes": 254,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 0,
+            "boundary_rank_median": 3.0,
+            "p_boundary_median": 0.125556
+          },
+          {
+            "prefix_bytes": 225,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 0,
+            "boundary_rank_median": 3.0,
+            "p_boundary_median": 0.106355
+          },
+          {
+            "prefix_bytes": 231,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 0,
+            "boundary_rank_median": 3.0,
+            "p_boundary_median": 0.11807
+          },
+          {
+            "prefix_bytes": 270,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.198786
+          },
+          {
+            "prefix_bytes": 171,
+            "answer_bytes": 27,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.329902
+          },
+          {
+            "prefix_bytes": 279,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.276211
+          },
+          {
+            "prefix_bytes": 219,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.298434
+          },
+          {
+            "prefix_bytes": 281,
+            "answer_bytes": 27,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.264684
+          },
+          {
+            "prefix_bytes": 236,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.221589
+          },
+          {
+            "prefix_bytes": 203,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.191666
+          },
+          {
+            "prefix_bytes": 224,
+            "answer_bytes": 127,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 0,
+            "boundary_rank_median": 2.0,
+            "p_boundary_median": 0.164473
+          }
+        ]
+      },
+      "facade_reachable": true,
+      "facade_gap": {
+        "facade_class": "Seed",
+        "substrate_class": "TSKV8Adapter",
+        "edge_split_reachable_from_facade": true,
+        "edge_split_present_on_substrate": true
+      },
+      "base_sha": "8b87583713a47a82",
+      "saved_checkpoint": null
+    },
+    "quarter": {
+      "train": {
+        "feeds": 72,
+        "trained_text_bytes": 19821,
+        "feed_fingerprint": "46c6d834ffd33815",
+        "fed_question_fingerprint": "4298c9397740c023",
+        "fed_answer_fingerprint": "27c707804eae6a16"
+      },
+      "transfer": {
+        "positions": 24,
+        "max_bytes": 128,
+        "repetition_penalty": 2.0,
+        "boundary_argmax_positions": 17,
+        "answers_stopped_early": 24,
+        "median_rank_over_positions": 1.0,
+        "median_p_boundary_over_positions": 0.269086,
+        "rows": [
+          {
+            "prefix_bytes": 235,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 0,
+            "boundary_rank_median": 2.0,
+            "p_boundary_median": 0.199841
+          },
+          {
+            "prefix_bytes": 208,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.207495
+          },
+          {
+            "prefix_bytes": 255,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 0,
+            "boundary_rank_median": 2.0,
+            "p_boundary_median": 0.211751
+          },
+          {
+            "prefix_bytes": 101,
+            "answer_bytes": 30,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.305947
+          },
+          {
+            "prefix_bytes": 116,
+            "answer_bytes": 24,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.320413
+          },
+          {
+            "prefix_bytes": 204,
+            "answer_bytes": 60,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.376981
+          },
+          {
+            "prefix_bytes": 194,
+            "answer_bytes": 93,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.394428
+          },
+          {
+            "prefix_bytes": 161,
+            "answer_bytes": 69,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.28681
+          },
+          {
+            "prefix_bytes": 319,
+            "answer_bytes": 96,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.259396
+          },
+          {
+            "prefix_bytes": 212,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 0,
+            "boundary_rank_median": 2.0,
+            "p_boundary_median": 0.165304
+          },
+          {
+            "prefix_bytes": 315,
+            "answer_bytes": 15,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.323233
+          },
+          {
+            "prefix_bytes": 177,
+            "answer_bytes": 15,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 0,
+            "boundary_rank_median": 2.0,
+            "p_boundary_median": 0.133092
+          },
+          {
+            "prefix_bytes": 157,
+            "answer_bytes": 51,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.280815
+          },
+          {
+            "prefix_bytes": 143,
+            "answer_bytes": 15,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.437018
+          },
+          {
+            "prefix_bytes": 132,
+            "answer_bytes": 33,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.273531
+          },
+          {
+            "prefix_bytes": 231,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 0,
+            "boundary_rank_median": 2.0,
+            "p_boundary_median": 0.124576
+          },
+          {
+            "prefix_bytes": 270,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.234564
+          },
+          {
+            "prefix_bytes": 270,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.293738
+          },
+          {
+            "prefix_bytes": 279,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 0,
+            "boundary_rank_median": 4.0,
+            "p_boundary_median": 0.09382
+          },
+          {
+            "prefix_bytes": 219,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 0,
+            "boundary_rank_median": 2.0,
+            "p_boundary_median": 0.211923
+          },
+          {
+            "prefix_bytes": 357,
+            "answer_bytes": 103,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.34204
+          },
+          {
+            "prefix_bytes": 236,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.228109
+          },
+          {
+            "prefix_bytes": 203,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.448026
+          },
+          {
+            "prefix_bytes": 224,
+            "answer_bytes": 127,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.305205
+          }
+        ]
+      },
+      "facade_reachable": true,
+      "facade_gap": {
+        "facade_class": "Seed",
+        "substrate_class": "TSKV8Adapter",
+        "edge_split_reachable_from_facade": true,
+        "edge_split_present_on_substrate": true
+      },
+      "base_sha": "8b87583713a47a82",
+      "saved_checkpoint": null
+    }
+  },
+  "instrument_guard": {
+    "arms_share_the_same_questions": true,
+    "arms_differ_only_in_answer_author": true,
+    "facade_reachable_both_arms": true,
+    "both_arms_same_base_sha": true,
+    "base_untouched_after_run": true,
+    "heldout_disjoint_from_trained": true
+  },
+  "unlocked_variable_disclosed": {
+    "note": "两臂喂入字节数不等（自己写的答案长短不一）——这是本档唯一没锁住的量，逐臂见 trained_text_bytes",
+    "corpus_bytes": 51282,
+    "self_bytes": 16242
+  },
+  "verdict": "shape_holds（吃过自己写的文本 ⇒ 胜出离开零）",
+  "verdict_matched_volume": "author_negative（同体积下自写答案差 ≥3 ⇒ 乙 的方向被这条对照顶回来）",
+  "verdict_length_ladder": "length_holds（full≤half≤quarter 且两端差 ≥3）",
+  "bytes_by_arm": {
+    "corpus": 51282,
+    "self": 16242,
+    "sized": 15069,
+    "half": 30054,
+    "quarter": 19821
+  },
+  "wins_by_arm": {
+    "corpus": 6,
+    "self": 14,
+    "sized": 20,
+    "half": 17,
+    "quarter": 17
+  },
+  "started_utc": "2026-09-30T05:11:42.264335+00:00"
+}
