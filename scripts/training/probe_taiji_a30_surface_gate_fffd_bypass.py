@@ -64,6 +64,8 @@ def _count(path: Path, model: tuple) -> dict[str, int]:
         "preview_contains_fffd": len(fffd),
         "well_formed_and_contains_fffd": len(both),
         "recomputed_pass_on_preview": len(recomputed),
+        # 存三条原文样例：后来者要能自己看"过门的文本长什么样"，不能只信一个比率。
+        "samples": [str(r.get("answer", ""))[:40] for r in both[:3]],
     }
 
 
@@ -99,7 +101,9 @@ def main() -> int:
     bypass_rows = sum(v["well_formed_and_contains_fffd"] for v in per_artifact.values())
 
     report = {
-        "format": 1,
+        "format": 2,
+        "format_note_v2": "v2 只在每臂**加性**多存三条 `samples`（过门且含 U+FFFD 的预览前 40 字），"
+        "计数列与判读算法一字未动 ⇒ 与 v1 同格可比。加它的理由：单看比率会让人以为 0.9269 那侧是通顺文本。",
         "question": "产品门槛①/② 的 well_formed 第一道条件（UTF-8 合法）在 str 上是否恒真",
         "type_level": {
             "roundtrip_raises_for_fffd_string": not type_vacuous,

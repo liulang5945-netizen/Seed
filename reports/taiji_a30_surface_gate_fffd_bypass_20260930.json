@@ -1,5 +1,6 @@
 {
-  "format": 1,
+  "format": 2,
+  "format_note_v2": "v2 只在每臂**加性**多存三条 `samples`（过门且含 U+FFFD 的预览前 40 字），计数列与判读算法一字未动 ⇒ 与 v1 同格可比。加它的理由：单看比率会让人以为 0.9269 那侧是通顺文本。",
   "question": "产品门槛①/② 的 well_formed 第一道条件（UTF-8 合法）在 str 上是否恒真",
   "type_level": {
     "roundtrip_raises_for_fffd_string": false,
@@ -16,14 +17,24 @@
       "well_formed_true": 93,
       "preview_contains_fffd": 99,
       "well_formed_and_contains_fffd": 88,
-      "recomputed_pass_on_preview": 88
+      "recomputed_pass_on_preview": 88,
+      "samples": [
+        "同，何）：吂何，大家夐：这首诗有吂有，一老�",
+        "好，个诗有吂中，个诗有有，何，大家夐：说大�",
+        "同学何，何，忧家大家夂何，忙首诗诗有弈，如�"
+      ]
     },
     "taiji_f0_a31retrain_surface_20260930.json": {
       "rows": 104,
       "well_formed_true": 9,
       "preview_contains_fffd": 103,
       "well_formed_and_contains_fffd": 9,
-      "recomputed_pass_on_preview": 9
+      "recomputed_pass_on_preview": 9,
+      "samples": [
+        "关方文元的中中中中中中可以元中元的元元的元�",
+        "方文可以元个个元元中中如兹成中中文可以元的�",
+        "方文元的中中中元元元元元的兹是以幹是一个入�"
+      ]
     }
   },
   "artifact_sha256": {
