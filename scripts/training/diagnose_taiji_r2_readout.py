@@ -49,7 +49,7 @@ def _load_split(split: str) -> tuple[tuple[bytes, bytes], ...]:
 
 
 def _first_divergence(a: bytes, b: bytes) -> int | None:
-    for index, (x, y) in enumerate(zip(a, b)):
+    for index, (x, y) in enumerate(zip(a, b, strict=False)):
         if x != y:
             return index
     if len(a) != len(b):
@@ -71,7 +71,7 @@ def diagnose(
             logits = prototype.teacher_forced_logits(prefix, response)
             targets = [int(s) for s in response] + [BOUNDARY]
             argmaxes = [int(row.argmax(dim=0)) for row in logits]
-            tf_hits = sum(int(a == t) for a, t in zip(argmaxes, targets))
+            tf_hits = sum(int(a == t) for a, t in zip(argmaxes, targets, strict=False))
             tf_positions += len(targets)
             tf_hit_total += tf_hits
 
@@ -80,7 +80,7 @@ def diagnose(
             gen_div = _first_divergence(produced, response)
 
             tf_err = None
-            for index, (a, t) in enumerate(zip(argmaxes, targets)):
+            for index, (a, t) in enumerate(zip(argmaxes, targets, strict=False)):
                 if a != t:
                     tf_err = index
                     break

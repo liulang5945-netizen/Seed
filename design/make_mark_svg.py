@@ -45,7 +45,7 @@ def trace(m):
     inside = pad
     segs = {}  # start point -> end point
     ys, xs = np.where(inside)
-    for y, x in zip(ys, xs):
+    for y, x in zip(ys, xs, strict=False):
         if not inside[y - 1, x]:
             segs[(x, y)] = (x + 1, y)
         if not inside[y, x + 1]:

@@ -265,13 +265,13 @@ def evaluate(arm: dict[str, Any]) -> dict[str, Any]:
     outputs = [bytes.fromhex(row["output"]) for row in rows]
     by_fact: dict[int, list[bytes]] = {}
     by_phrasing: dict[int, list[bytes]] = {}
-    for row, output in zip(rows, outputs):
+    for row, output in zip(rows, outputs, strict=False):
         by_fact.setdefault(row["fact"], []).append(output)
         by_phrasing.setdefault(row["phrasing"], []).append(output)
 
     def _pairs(values: list[bytes]) -> list[int]:
         return [
-            sum(a != b for a, b in zip(values[i], values[j]))
+            sum(a != b for a, b in zip(values[i], values[j], strict=False))
             for i in range(len(values))
             for j in range(i + 1, len(values))
         ]

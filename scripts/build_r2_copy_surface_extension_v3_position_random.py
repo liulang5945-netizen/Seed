@@ -48,7 +48,7 @@ def build(source: Path, out: Path, seed: int = SEED) -> dict:
         raise ValueError("position randomisation needs an even item count for a balanced deck")
     deck = ["first"] * (len(items) // 2) + ["second"] * (len(items) // 2)
     rng.shuffle(deck)
-    for item, side in zip(items, deck):
+    for item, side in zip(items, deck, strict=False):
         #: `side` 是字符串标签（"first"/"second"），非布尔——上一版把它直接当条件用，
         #: 于是 "second" 也为真、104 题全落第一轮，被"严格对半"那条机检拦下。
         first = side == "first"
@@ -74,7 +74,7 @@ def build(source: Path, out: Path, seed: int = SEED) -> dict:
     if counts["first"] != counts["second"]:
         raise ValueError(f"落位不是严格对半：{dict(counts)}")
     by_kind: dict[str, Counter] = {}
-    for row, side in zip(rows, placement):
+    for row, side in zip(rows, placement, strict=False):
         by_kind.setdefault(str(row["kind"]), Counter())[side] += 1
     for kind, counter in by_kind.items():
         if not counter["first"] or not counter["second"]:

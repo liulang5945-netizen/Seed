@@ -47,8 +47,15 @@ from pathlib import Path
 from typing import Any
 
 import black
-import tomllib
 from black.files import path_is_excluded
+
+# Python 3.10 has no stdlib tomllib; tomli is its upstream implementation.  CI runs a
+# 3.10 leg, and this script became a CI step, so an unguarded ``import tomllib`` here
+# would crash the gate it is supposed to run.
+if sys.version_info >= (3, 11):
+    import tomllib
+else:
+    import tomli as tomllib
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_OUTPUT = PROJECT_ROOT / "reports" / "taiji_frozen_marker_formatter_conflict.json"

@@ -390,12 +390,12 @@ def main() -> int:
     control_by_seed: dict[int, dict[str, Any]] = {}
     treatment_by_seed: dict[int, dict[str, Any]] = {}
     treatment_checkpoints: dict[int, dict[str, Any]] = {}
-    for expected_seed, path in zip(EXPECTED_SEEDS, control_paths):
+    for expected_seed, path in zip(EXPECTED_SEEDS, control_paths, strict=False):
         summary, _, _ = _validate_common_run(
             _load_json(path), path, arm="control", expected_seed=expected_seed
         )
         control_by_seed[expected_seed] = summary
-    for expected_seed, path in zip(EXPECTED_SEEDS, treatment_paths):
+    for expected_seed, path in zip(EXPECTED_SEEDS, treatment_paths, strict=False):
         summary, _, checkpoint = _validate_common_run(
             _load_json(path), path, arm="treatment", expected_seed=expected_seed
         )
@@ -405,7 +405,7 @@ def main() -> int:
     _require(set(treatment_by_seed) == set(EXPECTED_SEEDS), "treatment seed set mismatch")
 
     ablation_by_seed: dict[int, dict[str, Any]] = {}
-    for expected_seed, path in zip(EXPECTED_SEEDS, ablation_paths):
+    for expected_seed, path in zip(EXPECTED_SEEDS, ablation_paths, strict=False):
         report = _load_json(path)
         ablation_by_seed[expected_seed] = _validate_ablation(
             report,
@@ -459,19 +459,24 @@ def main() -> int:
     ]
 
     sequence_deltas = [
-        treatment - control for treatment, control in zip(treatment_sequence, control_sequence)
+        treatment - control
+        for treatment, control in zip(treatment_sequence, control_sequence, strict=False)
     ]
     exact_deltas = [
-        treatment - control for treatment, control in zip(treatment_exact, control_exact)
+        treatment - control
+        for treatment, control in zip(treatment_exact, control_exact, strict=False)
     ]
     term_deltas = [
-        treatment - control for treatment, control in zip(treatment_terms, control_terms)
+        treatment - control
+        for treatment, control in zip(treatment_terms, control_terms, strict=False)
     ]
     surprise_deltas = [
-        treatment - control for treatment, control in zip(treatment_surprise, control_surprise)
+        treatment - control
+        for treatment, control in zip(treatment_surprise, control_surprise, strict=False)
     ]
     ablation_sequence_deltas = [
-        ablated - normal for ablated, normal in zip(ablated_sequence, normal_ablation_sequence)
+        ablated - normal
+        for ablated, normal in zip(ablated_sequence, normal_ablation_sequence, strict=False)
     ]
     ablation_collision_deltas = [
         float(row["ablation"]["ablated"]["generated_text_collision_rate"])
@@ -509,15 +514,19 @@ def main() -> int:
         "non_proxy_required_term_improvement": _mean(treatment_terms) > _mean(control_terms),
         "paired_sensitivity_not_degraded": all(
             treatment >= control
-            for treatment, control in zip(treatment_sensitivity, control_sensitivity)
+            for treatment, control in zip(treatment_sensitivity, control_sensitivity, strict=False)
         ),
         "bridge_effect_present": any(
             delta != 0.0 for delta in ablation_sequence_deltas + ablation_collision_deltas
         ),
         "bridge_ablation_removes_core_treatment_gain": all(
-            ablated <= normal for ablated, normal in zip(ablated_sequence, treatment_sequence)
+            ablated <= normal
+            for ablated, normal in zip(ablated_sequence, treatment_sequence, strict=False)
         )
-        and any(ablated < normal for ablated, normal in zip(ablated_sequence, treatment_sequence)),
+        and any(
+            ablated < normal
+            for ablated, normal in zip(ablated_sequence, treatment_sequence, strict=False)
+        ),
     }
     required_gates = {
         **machine_gates,

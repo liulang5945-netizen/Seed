@@ -199,8 +199,8 @@ def main() -> int:
     on = _run(prompts, substrate, use_memory=True)
     report["episodic_read_ab"] = {
         "pairs": len(prompts),
-        "byte_level": [_compare(a, b) for a, b in zip(off, on)],
-        "identical_outputs": sum(1 for a, b in zip(off, on) if a == b),
+        "byte_level": [_compare(a, b) for a, b in zip(off, on, strict=False)],
+        "identical_outputs": sum(1 for a, b in zip(off, on, strict=False) if a == b),
     }
 
     #: A/B 2：睡眠巩固出来的**慢通路**——不改配置,同状态两次读数对比。

@@ -26,8 +26,15 @@ from __future__ import annotations
 import fnmatch
 import re
 import subprocess
-import tomllib
+import sys
 from pathlib import Path
+
+# Python 3.10 has no stdlib tomllib; tomli is its upstream implementation.  The lint
+# job runs a 3.10 leg, so a bare ``import tomllib`` here fails at collection time.
+if sys.version_info >= (3, 11):
+    import tomllib
+else:
+    import tomli as tomllib
 
 REPO = Path(__file__).resolve().parents[2]
 

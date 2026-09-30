@@ -204,8 +204,14 @@ def rule_verdict(control: dict[str, Any], treated: list[dict[str, Any]]) -> dict
                 "treated_rate": arm["well_formed_rate"],
             }
         )
-    worse = [row for row, direction in zip(per_circuit, directions) if direction == "worse"]
-    better = [row for row, direction in zip(per_circuit, directions) if direction == "better"]
+    worse = [
+        row for row, direction in zip(per_circuit, directions, strict=False) if direction == "worse"
+    ]
+    better = [
+        row
+        for row, direction in zip(per_circuit, directions, strict=False)
+        if direction == "better"
+    ]
     if len(per_circuit) < 2:
         # "两电路同向"在只有一个电路时会**空洞地成立**（len(worse)==len(per_circuit)==1），
         # 那就等于用一次取数下判据——正是 §3 禁止的事，这里显式堵住。

@@ -62,11 +62,42 @@ jobs:
       - name: Lint with ruff
         run: ruff check .
 
-      # R6: B（bugbear）/ SIM（simplify）已转正为 blocking——存量 202 → 32（<50），
-      # B008 为 FastAPI Depends/File 惯用法显式忽略，冻结模块经 pyproject
+      # R6: B008 为 FastAPI Depends/File 惯用法显式忽略，冻结模块经 pyproject
       # per-file-ignores 排除（名单与 mypy overrides 一致，解冻时同步移除）。
-      - name: Lint with ruff bugbear/simplify rules (blocking)
-        run: ruff check . --select B,SIM --ignore B008
+      #
+      # H19b（2026-09-30）为什么从「裸 blocking」改成棘轮：R6 注释声称存量 32（<50），
+      #   实测 62——本步自 H19 起每次都红，而 pyproject 第 118 行同时把这批登记为
+      #   「全部为 advisory」，两处文档互相矛盾地共存。登记值 59 还漏计了 3 处 SIM114
+      #   （正是 H19 自己回退自动修复重新引入的）。常红的门禁和没有门禁一样，
+      #   因为它教会所有人的是「忽略 CI」——这与 470f2af 那次「pin 失效导致门禁
+      #   从未执行、注释里全是未验证期望值」是同一类故障，只是换了成因。
+      # 处置：H19b 先用 ruff 自动修复清掉 B905 全部 27 处（只追加 strict=False，
+      #   即 Python 默认值，word-diff 逐 token 验证零行为变更），再按 mypy 同款
+      #   棘轮把余下 35 处钉住——只许降不许升，解析失败必须报错而不是静默放行。
+      - name: Lint with ruff bugbear/simplify rules (ratchet, baseline 35)
+        env:
+          RUFF_BSIM_BASELINE: "35"
+        run: |
+          set -o pipefail
+          ruff check . --select B,SIM --ignore B008 | tee ruff-bsim.log || true
+          if grep -q "^All checks passed" ruff-bsim.log; then
+            errors=0
+          else
+            errors=$(grep -oE "^Found [0-9]+ error" ruff-bsim.log | grep -oE "[0-9]+" | head -n1)
+          fi
+          if [ -z "$errors" ]; then
+            echo "::error::无法从 ruff 输出解析违规数——门禁不能在解析失败时静默放行"
+            tail -n 20 ruff-bsim.log
+            exit 1
+          fi
+          echo "ruff B/SIM violations: $errors (baseline $RUFF_BSIM_BASELINE)"
+          if [ "$errors" -gt "$RUFF_BSIM_BASELINE" ]; then
+            echo "::error::B/SIM 违规 $errors 超过基线 $RUFF_BSIM_BASELINE，存在新增退化"
+            exit 1
+          fi
+          if [ "$errors" -lt "$RUFF_BSIM_BASELINE" ]; then
+            echo "::notice::B/SIM 违规已降至 $errors，请把 RUFF_BSIM_BASELINE 下调至该值以单向收紧棘轮"
+          fi
 
       - name: Format check with black
         run: black --check .

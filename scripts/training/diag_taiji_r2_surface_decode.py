@@ -58,7 +58,7 @@ def build_ngram_model(limit: int = 200000) -> tuple[dict, dict, int, int]:
             except ValueError:
                 continue
             uni.update(text)
-            bi.update(zip(text, text[1:]))
+            bi.update(zip(text, text[1:], strict=False))
     return uni, bi, len(uni), sum(uni.values())
 
 
@@ -71,7 +71,7 @@ def mean_nll(text: str, model: tuple) -> float:
 
     alpha = 1.0
     score = 0.0
-    for a, b in zip(s, s[1:]):
+    for a, b in zip(s, s[1:], strict=False):
         p = (bi.get((a, b), 0) + alpha) / (uni.get(a, 0) + alpha * (vocab + 1))
         score += _m.log(max(p, 1e-12))
     return score / (len(s) - 1)

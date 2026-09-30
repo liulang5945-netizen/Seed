@@ -399,7 +399,8 @@ def _top_bytes(distribution: Any, k: int = 5) -> list[list[Any]]:
     """
     values, indices = torch.topk(distribution, k=int(k))
     return [
-        [int(byte), round(float(mass), 6)] for byte, mass in zip(indices.tolist(), values.tolist())
+        [int(byte), round(float(mass), 6)]
+        for byte, mass in zip(indices.tolist(), values.tolist(), strict=False)
     ]
 
 
@@ -521,7 +522,7 @@ def main() -> int:
     raw_biases = [part.strip() for part in args.bias_sweep.split(",") if part.strip()]
     #: `asis` ＝不覆写（用电路里训练后的原值，本次两电路都是钳位值 2.5）；其余是浮点覆写值。
     biases: list[float | None] = [None if token == "asis" else float(token) for token in raw_biases]
-    bias_labels = list(zip(raw_biases, biases))
+    bias_labels = list(zip(raw_biases, biases, strict=False))
     per_variant: dict[str, dict[str, Any]] = {}
     for label, bias in bias_labels:
         per_item = {}

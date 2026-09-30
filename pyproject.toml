@@ -92,6 +92,11 @@ exclude = [
     "__pycache__",
     "scripts/archive",
     "direct-*",
+    # H19b (2026-09-30): `output/` is scratch/evidence drop space, not authored
+    # source -- 23 tracked files under it are README/PNG/TXT and zero are `.py`.
+    # It is NOT gitignored, so a temporary `.py` probe parked here is picked up by
+    # `ruff check .` and counted as real debt; that already miscounted one session.
+    "output",
     # H19 (2026-09-30): `taiji-harness/` is a whole-repository fork of the upstream
     # `dsh` project (commit 82042a2f6, "G1 fork 落地"), not Seed-authored code.  It ships
     # no ruff/black configuration of its own, so our rules were being applied to 13k
@@ -115,8 +120,12 @@ exclude = [
 # 其中 6 处是真 bug 不是风格——`F821 Undefined name 'Any'/'Path'`（4 个 scripts/training 探针 +
 # 1 个测试），因 `from __future__ import annotations` 让注解不求值，只在真跑到那一行才炸；
 # 已补 import。这类错误 ruff 报的是"名字没定义"，读代码时极容易滑过去，故登记在此。
-# B,SIM 自有树实测 59 处未清（B905 27 / B023 18 / B007 10 / SIM105 3 / SIM108 1），
-# 全部为 advisory；B023（闭包晚绑定）与 SIM105 需逐个判语义，不做批量自动改。
+# B,SIM 自有树：H19 登记的「59 处未清」漏计 3 处 SIM114（H19 回退自动修复时重新
+# 引入的），实测 62。H19b 用 ruff 自动修复清零 B905 全部 27 处——只追加
+# strict=False（即 Python 默认值），word-diff 逐 token 验证零行为变更；余 35 处
+# （B023 18 / B007 10 / SIM105 3 / SIM114 3 / SIM108 1）。B023（闭包晚绑定）与
+# SIM105 需逐个判语义，不做批量自动改；该批由 ci.yml「ratchet, baseline 35」
+# 步骤钉住，只许降不许升——它不再是「advisory」，也不再是常红的裸 blocking。
 select = ["E", "F", "W", "I", "UP"]
 ignore = ["E501", "E402", "E741", "B008"]
 
@@ -157,7 +166,7 @@ target-version = ["py310"]
 # un-excludes the fixtures.  Verified with
 # `scripts/training/audit_frozen_marker_formatter_conflict.py`, which fails if this
 # exclusion stops applying.
-extend-exclude = "/(_libs|build|dist|node_modules|scripts/archive|taiji-harness|direct-[^/]+)/|/scripts/training/run_taiji_unified_entry_evidence\\.py$"
+extend-exclude = "/(_libs|build|dist|node_modules|scripts/archive|taiji-harness|output|direct-[^/]+)/|/scripts/training/run_taiji_unified_entry_evidence\\.py$"
 
 [tool.coverage.run]
 source = ["seed", "taiji", "seed_platform", "neuroplex", "api"]
