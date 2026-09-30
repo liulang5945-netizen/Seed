@@ -2170,6 +2170,18 @@ base 在任何 K 上恒 0.0；以及 §2am 的 `docs_with_false_fire`（无 floo
   与 §2aq 同面的参数是那档原文钉着的 `--groups 300 --exchanges 3 --positions 300 --mask`
   ＋语料 `data/simple_zh/dialogue_extended_clean.jsonl`（不是默认语料）；第二次发射按这组参数走，
   **对照要同参数才叫对照**——参数不同的两次读数不能拿来算 ≥3 那条线。
+* **第二条在飞（同轮登记）**：门槛① 在**装机形态真实 `chat(learn=True)` 链**上的实际拦截率
+  （仪器 `scripts/training/probe_taiji_a30_writeback_gate_shipping_face.py`，24 题 × 3 轮＝72 次调用，
+  件＝`reports/taiji_a30_writeback_gate_on_shipping_face_20260930.json`，日志尾 `rc_wb_full=` 才算完）。
+  判定**直接读产品自己的披露字段** `last_write_back_gate`，不在探针里重算放行逻辑；题面沿用同一份 manifest。
+  **判读线（四支互斥，先于数冻结）**：未武装 ⇒ `not_measurable`；`allowed_rate==1.0` ⇒ `gate_never_blocks_on_this_face`；
+  `≤0.5` ⇒ `gate_blocks_majority`；其余 ⇒ `gate_blocks_some`。
+  **冒烟已经抓到一处我自己的守卫错**（n=2×2，件在 `output/tmp_a30_smoke/wb_smoke.json`）：
+  `surface_gate_state=armed`、reason 直方图 `not_well_formed:2 ／ passed:2`、`checkpoint_untouched=true`，
+  但 `calls_match_expected` 报 **false**——因为那行还乘的是常量 `ROUNDS_PER_ITEM`（3）而我传了 `--rounds 2`（期望 4 实得 4）。
+  ⇒ 这条守卫**当场证明了自己能为 false**（已改正该行），不许把它当成"跑通了的证据"。
+  **引用规矩**：冒烟 n=4 的 `gate_blocks_majority` **不作结论**，只作仪器可用性证据；
+  正式档只报"拦了多少／原因分布"，**不许**由此推"回写通道因此安全了"——它与 §2v 那两笔（权重回写／prompt 回路）是三条不同的量。
 
 * **§2ab 三条判据 ↔ 本会话已有读数（把"谁能判、判成什么"对号入座，别让主线重跑我已跑过的面）**：
   **第 1 条（教师强制面 ≥150/300）＝同向成立但不由我宣布**——我在**已有检查点**上用配方面读到
