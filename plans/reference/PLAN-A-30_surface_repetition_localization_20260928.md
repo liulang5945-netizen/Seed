@@ -3020,6 +3020,14 @@ L2 复测＝stop_failure **v6** 同参数（挂 seed-A 回路、惩罚 2.0、预
   四臂 corpus/self/sized/quarter、`--save-arms output/tmp_a30_smoke/formal_arms`），
   出数后按 §8 冻结主列（L2 主列＝`72 − generations_eating_full_budget` 的真自停口径，
   v6 修正后）在 stop_failure v6 上复测；判据不动。
-* **② 对照件＝训练中**：`--no-end-boundary-after-newline` 下 a26_p1＋2M ticks（其余与 a31 逐同），
-  写靶 `output/a31_control_norecipe/`；出数后同仪器（`score_taiji_r2_copy_surface_extension.py`，
-  104 题）与 a31 同面比对，把 rev59 未拆的"配方 vs 中途态/语料窄化"拆干净。
+* **② 对照件＝已出数；预算匹配更正后正在补全 a31（2026-09-30 晚）**：对照件按 `--no-end-boundary-after-newline`
+  训满 **+2M ticks**（写靶 `output/a31_control_norecipe/`，checkpoint metadata tick=4,000,000）。
+  **一处必须当场更正的配对错误**：被引用的 a31 态其实是 **+740k＝37.5% 中途态**（rev59 原文就点名
+  "配方 vs 37.5% 中途态未拆"）——第一版对照件按 `--max-symbols 2000000` 跑，与它**不同预算**，
+  不是"同预算不带配方"。处置：a31 从 2.85M 补训到 **4.01M（+2M 满额）**，之后用
+  **同预算三点**（base a26_p1／control +2M 无配方／a31 +2M 配方）在同判据下拆账。
+  **教训登记**：引用臂的"预算"必须从 `progress.jsonl` 与信封 `metadata.tick` 实读，
+  不许按命令行 `--max-symbols` 推断（同"计数名与计数物要对得上"族）。
+  G17 判据下的中间件读数（三件已入库，等 a31 满额后并入 §2bd 总表）：base a26_p1 不挂/挂＝**12/5**；
+  control(+2M 无配方)＝**7/0**；a31@+740k(配方)＝**0/0**（每格分母 260；旧判据下同一批件是 241/100、40/24，
+  两代判据不可直比）。
