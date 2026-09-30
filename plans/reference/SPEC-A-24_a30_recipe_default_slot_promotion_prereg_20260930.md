@@ -77,6 +77,13 @@
   `test_the_gate_is_live_after_restore_not_just_flagged`）钉着"restore 自动挂载 ⇒ 门是开的不只是标了旗"，
   实测这六支 2026-09-30 全绿 ⇒ **缺口在仪器侧（报错了列），不在产品侧**，不要为这条去动产品码。
   **L2 在产品默认件（自动挂回路那面）上的基线读数尚未取**：在飞那次用的是修字段前的仪器，其 gate 列不作证据。
+  ⇒ **2026-09-30 已用 v4 取到**（件 `reports/taiji_a30_stop_failure_defaultload_20260930.json`，`rc_stop_default_v4=0`）：
+  `mount_route=envelope_auto_mount`、`copy_circuit_present_after_load=true`、
+  `copy_evidence_utf8_gate_effective=true`（`config=false`／`override=true`）、24 题 × 3 轮＝72 次生成
+  ——**`generations_cut_by_turn_marker = 0`、`generations_eating_full_budget = 72`**，四条守卫全真。
+  ⇒ **L2 的对照基线定在这里：现状装机件 0/72 ⇒ 晋升判定要求新件 ≥6/72**（这条线不是本件新加的，是 §2af 冻结下来的）。
+  同件另有 `offender_count = 5`（同字拖写），**只作描述**：§2ah 那两个数（8／10）是另两枚件在同一仪器同参数下的读数，
+  比较线 ≥3 只对本件预注册的那一对（新件 对 对照件）生效，**不许**拿 5 去和 8/10 讲"变好了"。
 * **L3**：`python scripts/training/probe_taiji_a30_ding3_transfer.py --retrain <新件> --base <对照件> --positions 300 --mask --out-report <新名>`
   ⇒ 键 `boundary_argmax_positions`，线＝两臂之差 ≥3；配对守卫 `prompts_sha256` 两边必须相等，
   件里 `format` 必须是 **v2**（互斥四支）；v1 件缺胜者列，属"字段不存在"而不是"算出了 0"。

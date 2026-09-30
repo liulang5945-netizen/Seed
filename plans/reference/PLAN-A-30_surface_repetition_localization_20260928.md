@@ -2148,7 +2148,15 @@ base 在任何 K 上恒 0.0；以及 §2am 的 `docs_with_false_fire`（无 floo
   预期 `generations_cut_by_turn_marker` 仍是 0／72（与 §2ah 两枚件同形）；
   **引用时必须同带件里的 `mount_route` 与 `copy_evidence_utf8_gate_effective`**（v4 起才有这两列；
   按命令行猜面是我这一轮已经改掉的那条错，见 `SPEC-A-24` §5）。
-  若读数是**非零**：先别当进展——按 ≥6/72 那条线核，并检查它是不是 `envelope_auto_mount` 之外的装配差异带来的。
+  若读数数是**非零**：先别当进展——按 ≥6/72 那条线核，并检查它是不是 `envelope_auto_mount` 之外的装配差异带来的。
+  **该档已结清（同日）**：读数落在预期的"现状"那一支——`generations_cut_by_turn_marker = 0`／72，
+  `generations_eating_full_budget = 72`，件里自述 `mount_route=envelope_auto_mount`、
+  `copy_evidence_utf8_gate_effective=true`（`config=false`／`override=true`），四条守卫全真
+  ⇒ **L2 的对照基线钉在 0/72（现状装机件）**，晋升判定要新件 ≥6/72。
+  同件 `offender_count=5` 只作描述（比较线 ≥3 只对本件预注册那一对生效，不许拿它和 §2ah 的 8／10 讲"变好"）。
+  **顺手把这条口径钉成守卫**：`tests/taiji_native/test_a30_instrument_face_disclosure.py` 四支（源码级、秒级），
+  要求仪器自述那三列、有效值必须由 override 算出、且**禁止**回到只报 `config` 的旧键名；
+  第四支用改前的码（`72d81faf^`）演示谓词为 False ⇒ 守卫能为 false，不是恒真式。
 
 * **§2ab 三条判据 ↔ 本会话已有读数（把"谁能判、判成什么"对号入座，别让主线重跑我已跑过的面）**：
   **第 1 条（教师强制面 ≥150/300）＝同向成立但不由我宣布**——我在**已有检查点**上用配方面读到
