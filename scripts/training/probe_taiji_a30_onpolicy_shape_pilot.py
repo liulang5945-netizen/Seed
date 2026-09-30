@@ -220,6 +220,13 @@ def main() -> int:
         help="逗号分隔的臂列表；跑密度阶梯档时加 half,quarter（`corpus` 充当 full 那一档）",
     )
     parser.add_argument(
+        "--natural-max-bytes",
+        type=int,
+        default=0,
+        help="戊 的正确形态：>0 时只保留**语料答案本身 ≤ 该字节数**的样本（自然短答，不截断正文）。"
+        '语料里 ≤32B 只占 4.8%（§2ay）⇒ 这一档量的是"合法分布内的密度提升"，与 quarter/sized 的人造截断不同',
+    )
+    parser.add_argument(
         "--save-arms",
         default=None,
         help="给了就把每臂训后的检查点存到这个目录（供 L2/L3 用**已有仪器**复测，不重抄生成链）",
@@ -243,6 +250,18 @@ def main() -> int:
             pairs.append((question.removeprefix("问：").strip(), answer.strip()))
     if not pairs:
         raise RuntimeError("读不到 (问句, 语料答案) 对——本档的配对前提不成立，拒绝跑")
+
+    # 戊 的形态：只在**自然短答子集**上训（不截断），分布合法 ⇒ 但样本量会掉一个数量级，
+    # 所以这里必须机检"剩多少"和"最长多少"，不允许悄悄拿一个小子集当全量跑。
+    natural_max = args.natural_max_bytes
+    n_pairs_before_filter = len(pairs)
+    if natural_max:
+        pairs = [(q, a) for q, a in pairs if len(a.encode("utf-8")) <= natural_max]
+        if len(pairs) < 4:
+            raise SystemExit(
+                f"自然短答只剩 {len(pairs)} 条（阈值 {natural_max}B，过滤前 {n_pairs_before_filter} 条）"
+                "——不足 4 条，这一档没有可比性，拒绝跑（改阈值或加大 --groups）"
+            )
 
     held_out = [
         record.decode("utf-8").partition(marker)[0].removeprefix("问：").strip()
@@ -337,6 +356,19 @@ def main() -> int:
                 hashlib.sha256(base_path.read_bytes()).hexdigest() == sha_base
             ),
             "heldout_disjoint_from_trained": bool(groups["heldout_disjoint_from_trained"]),
+            # 自然短答子集的两条自证：阈值真的守住了，且样本量是被如实报出的（不是悄悄降档）。
+            "natural_selection_respects_threshold": (
+                natural_max == 0 or max(len(a.encode("utf-8")) for _, a in pairs) <= natural_max
+            ),
+            "natural_selection_shrank_the_sample": (
+                natural_max == 0 or len(pairs) < n_pairs_before_filter
+            ),
+        },
+        "natural_subset": {
+            "max_bytes": natural_max,
+            "pairs_before": n_pairs_before_filter,
+            "pairs_after": len(pairs),
+            "fraction_kept": round(len(pairs) / max(n_pairs_before_filter, 1), 4),
         },
         "unlocked_variable_disclosed": {
             "note": "两臂喂入字节数不等（自己写的答案长短不一）——这是本档唯一没锁住的量，逐臂见 trained_text_bytes",
