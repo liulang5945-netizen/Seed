@@ -1087,3 +1087,14 @@ owner 已裁定 18 行那枚走"批准新增分类条目"（人工评审＝本�
 撤回后工作树＝只有别人那份四行空行的 life-controller/package.json（我没碰）；四个改动文件已按 pathspec 逐个 git checkout 还原，两个新文件删除，duplication 回到 1 枚。测试面这次未收口：`vitest run` 的 7 个 Failed Suites 全部是上述 3 条编译错误引起的 transform 失败，**不是行为红**（唯一成功跑起来的那批里 Tests 64 passed）。下一格从"清过期产物＋补 tsconfig 登记"这两条接着做，然后才是重跑 build／duplication／三包测试／verify-package-dependencies。
 
 补一句自证范围的更正：上面写"两个新文件删除"时实际只删了 spec，模块 `packages/api/gateway/src/feed-waiter.ts` 当时仍在磁盘上（它会被 build 编到、还会引来"该文件要 100% 覆盖"的门），现已一并删除。工作树最终状态＝`git status --porcelain -- packages/api scripts/package-dependency-policy.ts` 只余别人那份四行空行的 `life-controller/package.json`。那组过期产物（`src/feed-waiter.d.ts`／`.js`／`.map` 与 `lib/types/feed-waiter.d.ts`）**我没有动**——它们不是我这轮造的，删除它们属另一条线的在飞面，下一格要先确认归属再清。
+
+
+**㊵-125（第三次尝试：三条第一次同时成立；两个残留红其实是同一个根因；仍未提交，已按 pathspec 逐文件撤回）**
+
+这次把 ㊵-124 的两条新前置都解掉了：一是把新源文件登记进 packages/api/gateway/tsconfig.host.json 的显式 files 清单（该项目用 files 不用 include，所以不登记就没进类型程序，这正是上一轮 TS6307 的成因）；二是清掉 packages/api/gateway/src/feed-waiter.d.ts/.d.ts.map/.js/.js.map 与 lib/types/feed-waiter.d.ts 这组过期产物——git log --all -S FeedWaiter -- packages/api/gateway 命中 0 条，即它们没有任何 git 对应物、是被放弃的本地尝试留下的编译残渣，也正是上一轮 Expected 3 arguments but got 2 的来源。
+
+撤回前实测同时成立三条：corepack pnpm run build rc=0（不再有任何 error TS）；corepack pnpm run duplication rc=0、Found 0 clones（这枚克隆真被消掉，不是走豁免）；oxlint 对全部五个改动文件（含新 spec）0 warnings 0 errors。
+
+剩下两个红是同一个根因＝manifest 字段，不是两个独立缺陷：verify-package-dependencies 报 packages/api/life-controller/package.json 的 @taiji/dsh-api-gateway 必须声明（它现在只在 devDependencies），而 7 个 Failed Suites 的首条错就是 Cannot find package 该子路径、imported from 同一处 src/feed.ts——同一处运行时导入没被清单承认。⇒ ㊵-115 关于要动 manifest 字段并同提交 pnpm install 重写锁的价格是对的，我上一轮 ㊵-124 里"可能不用动清单"的猜测被否证。第四步（两包 devDependencies 移入 dependencies ＋ 同提交 pnpm install ＋ 复测 deps 与三包测试）会动锁文件，本轮预算内跑不完这一整串，所以我选择整件撤回而不是留下半绿：撤回后实测 duplication 回到 Found 1 clones、rc=1，与 ㊵-117／㊵-124 一致；五个文件逐个 git checkout 还原、两个新文件删除，工作树只剩别人那份四行空行的 package.json。
+
+一处要如实登记的残留影响：那组过期产物这次删了，撤回不会把它们带回来（无 git 对应物，且本会由新模块构建重新生成；留着反而继续用旧签名遮蔽新源码）。下一格的入口是明确的四步同批：模块＋出口＋files 登记＋分类条目＋两包四处唤醒与两处 wait 方法＋spec＋manifest 移项＋pnpm install，然后 build／duplication 预期 0 枚／deps 一叶／三包测试／doc-sync 余支。
