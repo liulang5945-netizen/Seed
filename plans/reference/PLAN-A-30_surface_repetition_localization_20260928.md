@@ -2157,6 +2157,19 @@ base 在任何 K 上恒 0.0；以及 §2am 的 `docs_with_false_fire`（无 floo
   **顺手把这条口径钉成守卫**：`tests/taiji_native/test_a30_instrument_face_disclosure.py` 四支（源码级、秒级），
   要求仪器自述那三列、有效值必须由 override 算出、且**禁止**回到只报 `config` 的旧键名；
   第四支用改前的码（`72d81faf^`）演示谓词为 False ⇒ 守卫能为 false，不是恒真式。
+* **此刻在飞（第六次停靠登记）**：L3 那张面上**装机件自己的对照值**还没取过（现在手里只有血缘基座 `a26_p1` 0/300 与配方件 `a31` 239/300）。
+  这一枪同时量两臂：`--retrain checkpoints/seed_beta_with_circuit.pt --base output/a26_p1/checkpoint.pt --positions 300 --mask`，
+  件＝`reports/taiji_a30_ding3_transfer_300pos_defaultload_vs_a26_20260930.json`，
+  日志＝`output/tmp_a30_smoke/transfer_300_default.log`（看到 `rc_transfer_default=0` 才算完）。
+  **判法先于数**：这是**控制测量**，不是晋升判定——预期两臂都在零侧且大致相等；
+  ①若装机件比血缘基座高 ≥3，先查 `prompts_sha256` 配对与 `format` 是否 v2，再谈"默认件本来就会停一点"；
+  ②若两臂都 0，则 L3 的对照基线钉在装机件上，晋升判定此后拿"新件 对 装机件"这条线读，**不许**再引 a26 当对照；
+  ③任何一支单独引用一个非零数都不算能力证据（§2aq：1/300 只是偶然）。
+  **第一次发射的命令是错的，已按仪器的响亮失败改正**：只给了 `--positions 300` 而没给 `--groups/--exchanges/--corpus`，
+  仪器在**写盘之前**就报"held-out 只拆出 6 条提问，不足 300"（`rc_transfer_default=1`、无件落盘 ⇒ fail-closed 有效）。
+  与 §2aq 同面的参数是那档原文钉着的 `--groups 300 --exchanges 3 --positions 300 --mask`
+  ＋语料 `data/simple_zh/dialogue_extended_clean.jsonl`（不是默认语料）；第二次发射按这组参数走，
+  **对照要同参数才叫对照**——参数不同的两次读数不能拿来算 ≥3 那条线。
 
 * **§2ab 三条判据 ↔ 本会话已有读数（把"谁能判、判成什么"对号入座，别让主线重跑我已跑过的面）**：
   **第 1 条（教师强制面 ≥150/300）＝同向成立但不由我宣布**——我在**已有检查点**上用配方面读到
