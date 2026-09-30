@@ -2140,6 +2140,15 @@ base 在任何 K 上恒 0.0；以及 §2am 的 `docs_with_false_fire`（无 floo
   `boundary_targets_observed=300`、`end_position_accounting_ok=true`、`base_sha256_unchanged=true`）
   ⇒ §8① 的范围限制已按此解除，"目标编码对齐是带配方的训练产出件特有"这句现在**三枚件、两个样本档都同向**
   （`a31` 239/300 对 `a26_p1` 0/300 对 出厂默认 `seed_beta_with_circuit` 0/300）。
+* **此刻在飞（第五次停靠登记）**：`SPEC-A-24` L2 在**产品默认件自动挂回路那面**上的基线
+  （命令＝`probe_taiji_a30_stop_failure.py --checkpoint checkpoints/seed_beta_with_circuit.pt --limit 24`，
+  件＝`reports/taiji_a30_stop_failure_defaultload_20260930.json`，日志＝`output/tmp_a30_smoke/stop_default24_v4.log`，
+  看到 `rc_stop_default_v4=0` 才算完）。
+  **判法（先于数写好）**：这一档**只是基线，不是判据**——量的是"现状件在装机面上会不会自己停"。
+  预期 `generations_cut_by_turn_marker` 仍是 0／72（与 §2ah 两枚件同形）；
+  **引用时必须同带件里的 `mount_route` 与 `copy_evidence_utf8_gate_effective`**（v4 起才有这两列；
+  按命令行猜面是我这一轮已经改掉的那条错，见 `SPEC-A-24` §5）。
+  若读数是**非零**：先别当进展——按 ≥6/72 那条线核，并检查它是不是 `envelope_auto_mount` 之外的装配差异带来的。
 
 * **§2ab 三条判据 ↔ 本会话已有读数（把"谁能判、判成什么"对号入座，别让主线重跑我已跑过的面）**：
   **第 1 条（教师强制面 ≥150/300）＝同向成立但不由我宣布**——我在**已有检查点**上用配方面读到

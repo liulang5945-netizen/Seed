@@ -72,6 +72,10 @@
   **另记一条我自己差点写错的口径**：证据门的**有效值不等于 `config` 那一位**——`taiji/config.py:236` 默认 `False`，
   而 restore 的自动挂载分支会 `set_copy_evidence_utf8_gate(True)`（owner 裁定 (b)，`taiji/model.py:3497`）；
   我第一版把 `config` 当成了有效值报出来（会读成"门是关的"），已就地改成报有效值并同带 `config`/`override` 两个成分。
+  **归属要点**：这条事实本身**产品侧已有守卫**——`tests/taiji_native/test_a25_gate_on_the_load_path.py`
+  六支用例（含 `test_restoring_a_saved_circuit_opens_the_evidence_gate`、
+  `test_the_gate_is_live_after_restore_not_just_flagged`）钉着"restore 自动挂载 ⇒ 门是开的不只是标了旗"，
+  实测这六支 2026-09-30 全绿 ⇒ **缺口在仪器侧（报错了列），不在产品侧**，不要为这条去动产品码。
   **L2 在产品默认件（自动挂回路那面）上的基线读数尚未取**：在飞那次用的是修字段前的仪器，其 gate 列不作证据。
 * **L3**：`python scripts/training/probe_taiji_a30_ding3_transfer.py --retrain <新件> --base <对照件> --positions 300 --mask --out-report <新名>`
   ⇒ 键 `boundary_argmax_positions`，线＝两臂之差 ≥3；配对守卫 `prompts_sha256` 两边必须相等，
