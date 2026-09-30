@@ -50,3 +50,21 @@
 * 只有 L2/L3 过、L1 不过 ⇒ **不换默认位**，配方留给后续训练（§8① 的丙），并把退化单独登记成债务。
 * 只有 L1 过、L2/L3 不过 ⇒ 这是"没代价但也没得到"，**不许**据此说配方有效。
 * 三条都不过 ⇒ 记 `not_resolved`，本支线在此收口等裁定，**不许**改线再跑（换次要指标是本项目明令禁止的那类动作）。
+
+## §5 命令面补全（2026-09-30 同日追加；**不改任何线，只把"照抄就能跑"写全**）
+
+冻结件里最容易失效的一类是"命令面只写了仪器名"。逐条核实过参数名后补全（三个仪器的键名与默认值都是从源码里读的，
+不是凭记忆）：
+
+* **L1**（两种装配各跑一次，只换 `--checkpoint`）：
+  `python scripts/training/score_taiji_r2_copy_surface_extension.py --checkpoint <新件> --out-report <新名>`（不挂回路侧）
+  与 `... --checkpoint <新件> --circuit output/taiji_r2_copy_circuit_chat/judge/circuit-final.pt --out-report <新名>`（挂回路侧）。
+  键：`well_formed_texts`（分母 260）。参考值：241／100（见 §1 那两张件）。
+* **L2**：`python scripts/training/probe_taiji_a30_stop_failure.py --checkpoint <新件> --circuit <回路> --limit 24 --max-length 256 --penalty 2.0 --out-report <新名>`
+  ⇒ 分母是 `--limit 24` 题 × 3 轮＝**72 次生成**；线＝`generations_cut_by_turn_marker ≥ 6`；
+  守卫键 `all_surfaces_are_replayed_raw` 必须为 `true`，否则这张面读的是截断层、不算。
+  **`--circuit` 不给＝出厂那面（无回路）**，那是另一张面：**不许**拿无回路面去比 §2ah 的 0/72（那是挂回路面）。
+* **L3**：`python scripts/training/probe_taiji_a30_ding3_transfer.py --retrain <新件> --base <对照件> --positions 300 --mask --out-report <新名>`
+  ⇒ 键 `boundary_argmax_positions`，线＝两臂之差 ≥3；配对守卫 `prompts_sha256` 两边必须相等，
+  件里 `format` 必须是 **v2**（互斥四支）；v1 件缺胜者列，属"字段不存在"而不是"算出了 0"。
+
