@@ -145,6 +145,12 @@ def _workbench_successor_synchronized(method: Callable[..., Any]) -> Callable[..
 #: 这条裁定买到的是"不再同字连写"，不是"模型会说话了"。
 PRODUCT_REPETITION_PENALTY = 2.0
 
+#: 结构条件收笔（owner 裁定 2026-09-30，PLAN-A-30 §7b-3）：**实现但默认关**。
+#: 开启后产品认"答案已成形＋模型发换行"为收笔（§2z 候选2：真结束位第一位 55–66% 是换行）。
+#: 代价照登记：这是**产品的判据不是模型的判断**——装机基座真自停 0/72 时它给答复一个出口，
+#: 但**不许记进模型能力**（§2k 两症状一起进账）。逃生口＝`chat(structural_closure=True/False)`。
+STRUCTURAL_CLOSURE_DEFAULT = False
+
 
 class SeedRuntime:
     """单个 Seed 有机体 + 字节级对话接口（线程安全）。"""
@@ -171,6 +177,8 @@ class SeedRuntime:
         self._surface_ngram: Any | None = None
         self._surface_ngram_loaded = False
         self.last_write_back_gate: tuple[bool, str] | None = None
+        #: 加性观测：最近一次 chat() 是否由结构条件收笔（默认关 ⇒ 恒 False，只记录不改行为）。
+        self.last_structural_closure_cut: bool = False
         from taiji import LanguageOrgan, NativeReadableTextLanguageOrgan
 
         self.model.architecture.ensure_native_executive()
@@ -415,14 +423,22 @@ class SeedRuntime:
         max_length: int = 256,
         learn: bool = True,
         repetition_penalty: float | None = None,
+        structural_closure: bool | None = None,
     ) -> str:
         """生成回复并经 Taiji 语言器官形成可读表层。
 
         `repetition_penalty`：**None ⇒ 用产品默认 `PRODUCT_REPETITION_PENALTY`（2.0，owner 2026-09-28 裁定）**；
         要旧面（评测/对照）就显式传 `0.0`。加在解码侧的理由与两次独立题面的读数见 `PLAN-A-30` §2f；
         尺子的限定也在这儿：`well_formed` 量结构不量真话 ⇒ 这一手买到的是"不再同字连写"。
+
+        `structural_closure`：**None ⇒ 用产品默认 `STRUCTURAL_CLOSURE_DEFAULT`（False，owner
+        2026-09-30 裁定"实现但默认关"）**。开启＝产品把"答案已成形＋模型发换行"当收笔
+        （§2z 候选2）——这是**产品的判据不是模型的判断**，不许记进模型能力。
         """
 
+        structural_closure_enabled = (
+            STRUCTURAL_CLOSURE_DEFAULT if structural_closure is None else bool(structural_closure)
+        )
         penalty = (
             PRODUCT_REPETITION_PENALTY if repetition_penalty is None else float(repetition_penalty)
         )
@@ -469,6 +485,15 @@ class SeedRuntime:
                 index = native_prediction.find(marker)
                 if index >= 0:
                     native_prediction = native_prediction[:index]
+            closed_by_structure = False
+            if structural_closure:
+                # 结构条件收笔（owner 裁定 §7b-3，2026-09-30，**默认关**）：认"答案已成形
+                # 且模型发换行"为收笔（§2z 候选2）。代价照登记：这是**产品的判据不是模型
+                # 的判断**，不许记进模型能力；与 §2k 两症状一起进账。
+                native_prediction, closed_by_structure = surface_gate.structural_closure_cut(
+                    native_prediction
+                )
+            self.last_structural_closure_cut = closed_by_structure
             history_payload = [
                 {"user": user, "assistant": assistant}
                 for user, assistant in (history or [])
@@ -504,7 +529,12 @@ class SeedRuntime:
                 allowed, reason = True, "factory_face_or_gate_disarmed"
                 if gate_model is not None:
                     allowed, reason = surface_gate.write_back_allowed(
-                        answer, raw, gate_model, turn_markers=_TURN_MARKERS, budget=max_length
+                        answer,
+                        raw,
+                        gate_model,
+                        turn_markers=_TURN_MARKERS,
+                        budget=max_length,
+                        structural_newline=structural_closure_enabled,
                     )
                 self.last_write_back_gate = (allowed, reason)
                 if allowed:
@@ -516,6 +546,8 @@ class SeedRuntime:
             index = answer.find(marker)
             if index >= 0:
                 answer = answer[:index]
+        if structural_closure_enabled:
+            answer, _ = surface_gate.structural_closure_cut(answer)
         return answer.strip()
 
     @staticmethod

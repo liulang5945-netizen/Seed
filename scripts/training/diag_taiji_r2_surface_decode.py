@@ -79,8 +79,15 @@ def mean_nll(text: str, model: tuple) -> float:
 
 def well_formed(text: str, model: tuple | None = None) -> bool:
     try:
-        text.encode("utf-8").decode("utf-8")
-    except UnicodeDecodeError:
+        text.encode("utf-8")
+    except UnicodeEncodeError:
+        # DEBT-G17 落地（owner 裁定 §7b-4，2026-09-30）：lone surrogate 在 encode 时才抛，
+        # 旧写法只接 UnicodeDecodeError ⇒ 这条检查在 str 上从未拒过任何输入。
+        return False
+    if "\ufffd" in text:
+        # DEBT-G17：decode 替换字符＝上游已有断字——与本法 `utf8_decodable` 的口径同源。
+        # 注意：本更正改变 well_formed 的判定集合 ⇒ 2026-09-30 之前入库的 well_formed_texts
+        # 是"不查字节合法"定义下的读数，跨更正不可直比（L1 参考值已按上限 12/15 重录，§2at）。
         return False
     stripped = "".join(text.split())
     if len(stripped) < MIN_LEN:

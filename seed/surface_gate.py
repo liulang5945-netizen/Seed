@@ -42,7 +42,7 @@ def mean_nll(text: str, model: tuple) -> float:
 
     alpha = 1.0
     score = 0.0
-    for a, b in zip(s, s[1:]):
+    for a, b in zip(s, s[1:], strict=False):
         p = (bi.get((a, b), 0) + alpha) / (uni.get(a, 0) + alpha * (vocab + 1))
         score += _m.log(max(p, 1e-12))
     return score / (len(s) - 1)
@@ -50,8 +50,14 @@ def mean_nll(text: str, model: tuple) -> float:
 
 def well_formed(text: str, model: tuple | None = None) -> bool:
     try:
-        text.encode("utf-8").decode("utf-8")
-    except UnicodeDecodeError:
+        text.encode("utf-8")
+    except UnicodeEncodeError:
+        # DEBT-G17 落地（owner 裁定 §7b-4，2026-09-30）：lone surrogate 在 encode 时才抛，
+        # 旧写法只接 UnicodeDecodeError ⇒ 这条检查在 str 上从未拒过任何输入。
+        return False
+    if "\ufffd" in text:
+        # DEBT-G17：decode 替换字符（U+FFFD）＝上游已有断字——文本不是完整合法 UTF-8 的重写。
+        # 口径与评分仪器的 `utf8_decodable`（"\ufffd" not in text）同源。
         return False
     stripped = "".join(text.split())
     if len(stripped) < MIN_LEN:
@@ -88,29 +94,57 @@ def filter_history(
     return kept
 
 
-def ended_naturally(raw: bytes, *, turn_markers: Sequence[str], budget: int) -> bool:
+def ended_naturally(
+    raw: bytes, *, turn_markers: Sequence[str], budget: int, structural_newline: bool = False
+) -> bool:
     """门槛①的"长度上限"支路：答复须在预算内自然收口。
 
     自然收口＝模型自己发出了轮界标记（下一轮的开头），或没吃满预算就停了
     （边界符胜出／任何其它停止条件）。被预算硬截＝未收口＝这条答复是"停不下来"
     的产物，不回写也不进历史。
+    ``structural_newline``（owner 裁定 §7b-3，2026-09-30，产品出口默认关）：结构条件收笔
+    开启时，产品会把"答案成形后的换行"当收笔——此时 raw 里的换行也算收口的一种。
     """
 
     if len(raw) < budget:
         return True
-    return any(marker.encode("utf-8") in raw for marker in turn_markers)
+    if any(marker.encode("utf-8") in raw for marker in turn_markers):
+        return True
+    return bool(structural_newline and b"\n" in raw)
 
 
 def write_back_allowed(
-    answer: str, raw: bytes, model: tuple, *, turn_markers: Sequence[str], budget: int
+    answer: str,
+    raw: bytes,
+    model: tuple,
+    *,
+    turn_markers: Sequence[str],
+    budget: int,
+    structural_newline: bool = False,
 ) -> tuple[bool, str]:
     """门槛①完整判定：``well_formed ∧ 长度上限``。返回 (是否放行, 原因码)。"""
 
-    if not ended_naturally(raw, turn_markers=turn_markers, budget=budget):
+    if not ended_naturally(
+        raw, turn_markers=turn_markers, budget=budget, structural_newline=structural_newline
+    ):
         return False, "not_ended_naturally"
     if not well_formed(answer, model):
         return False, "not_well_formed"
     return True, "passed"
+
+
+def structural_closure_cut(native_prediction: str) -> tuple[str, bool]:
+    """结构条件收笔（§2z 候选2，产品出口默认关）：把"答案成形后的换行"当轮界。
+
+    返回 (切割后的 native_prediction, 是否发生切割)。只在**已有轮界切割之后**的残余里
+    找第一个 ``\\n``——轮内 marker（``\\n问：``）已由调用方先切，这里接的是
+    "单个换行不构成停止"的那一半卡住行为。
+    """
+
+    index = native_prediction.find("\n")
+    if index < 0:
+        return native_prediction, False
+    return native_prediction[:index], True
 
 
 def find_artifact(checkpoint_path: Path | str | None) -> Path | None:
