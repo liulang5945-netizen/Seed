@@ -2047,17 +2047,26 @@ base 在任何 K 上恒 0.0；以及 §2am 的 `docs_with_false_fire`（无 floo
   cap0 两支金样复现（`test_cap0_inventory_contract::…reproduces_the_sealed_one`、
   `test_cap0_legacy_load_contract::…reproduces_the_sealed_one`）；记录里的第 4 条
   `test_project_identity` 这次**不红了**（别会话已修，本会话每提交都跑它 4/4）。
-  ②**两条不在我这份基线里**，且**都不是本会话造成的**——三条证据：
-  (a) 两条**单跑也红**（`-q` 两支 18.45s，`2 failed`），不是聚合或并发造成的假红；
-  (b) 涉及的源文件最后被提交的时间是 **09-14／09-20**
+  ②**上面这句"两条都不在册"我先写错了，就地更正（这一条比红数本身重要）**：
+  **(a) 其中一支是既有在册的红**——`test_continuous_structural_growth_gate` 就是本册 §
+  "换底前的收口套状态"那段登记的**五支结构性增长门**之一（W7-p4-10b 增长线自身，
+  当时逐支单跑全红、并写明"本轮未处置，只把它红在 HEAD 钉下来"），
+  连失败原文 `second-cycle online feedback was not admitted: online-de-next` 都**与册内记录逐字相同**
+  （另一处记录在同册失败形态表里）。⇒ 它**不是新的、也不是本会话造成的**，
+  而我刚才把它写成"新增到我基线上的红"——**错在只比对自己带的那句四红清单，没比整本台账**。
+  **(b) 另一支才真的无册可查**：`test_cap0_f_dimension_contract::test_f04_on_the_current_eval_set_is_not_flagged_stale`
+  在 roadmap 四份文档里 grep **零命中**；它也单跑也红。这一支**待归属**（下一步先读它的断言原文与
+  `stale_reference` 门的来路 `d5c2829bf`，别急着修，更别拿它当"A 支线退化"——它与停止信号链路无关）。
+  (c) 两条涉及的源文件最后被提交的时间是 **09-14／09-20**
   （`scripts/training/eval_taiji_continuous_structural_growth.py`、
   `tests/taiji_native/test_cap0_f_dimension_contract.py`），本会话一行未碰；
-  (c) 本会话改过的路径（两件新仪器＋presence 审计 v3→v8）在这两支测试及其仪器的
+  (d) 本会话改过的路径（两件新仪器＋presence 审计 v3→v8）在这两支测试及其仪器的
   引用面里 **grep 命中 0**。
   失败原文两条：`AssertionError: second-cycle online feedback was not admitted: online-de-next`
   （`eval_taiji_continuous_structural_growth.py:153`，归在 `taiji/interaction_group_online` 的**准入规则**那一侧）；
   以及 F04 的 `stale_reference` 时效守卫（`d5c2829bf` 09-20 那次评价集 v2 改引用时加的门）。
-  **处置**：这两条属**别的线的在飞改动**（默认基座换底／评价集 v2 都动过那两片），我不替它们重生成入库件、
+  **处置**：一条是**台账在案的既有红**（增长线自己钉下来的，非新增），一条是**未在册、待归属**的；
+  两者都不在本会话的链路上，我不替它们重生成入库件、
   也不在本会话改准入规则；下一轮若要判"是不是新的产品退化"，先按 `red-attribution-needs-a-fixed-face` 那条
   对齐到**具体失败帧**再看提交，别拿总红数增减当结论。**A 支线自己的读数是绿的这一侧**：
   本轮所有提交前的定向面 `tests/seed/test_project_identity.py`＝4 passed。
