@@ -113,6 +113,26 @@
   ⇒ 键 `boundary_argmax_positions`，线＝两臂之差 ≥3；配对守卫 `prompts_sha256` 两边必须相等，
   件里 `format` 必须是 **v2**（互斥四支）；v1 件缺胜者列，属"字段不存在"而不是"算出了 0"。
 
+## §7 在飞两档的**发表前置**（2026-09-30 追加，同样先于数）
+
+读数之前先核这几条，任何一条不成立 ⇒ **不发表结论**，只发表"这档没做成对照"：
+
+1. **配对三件**（`probe_taiji_a30_onpolicy_shape_pilot.py`）：`instrument_guard` 里
+   `arms_share_the_same_questions`／`arms_differ_only_in_answer_author`／`base_untouched_after_run` 必须全为 `true`；
+   `heldout_disjoint_from_trained` 必须为 `true`（held-out 与训练集相交则任何"学会"都是背题）。
+2. **密度阶梯的单调体积**：`bytes_by_arm` 必须满足 `corpus > half > quarter`。
+   若不满足（短答案本来就短、截了也没变），三臂就**不是**只差密度 ⇒ `verdict_length_ladder` 不发表。
+3. **作者对照的体积配平质量**：`self` 与 `sized` 的字节差**不得超过 15%**（v1 实测 7%，通过）。
+   超了就要写明"体积未配平"，`verdict_matched_volume` 只能作描述。
+4. **位置数与件内 `positions` 一致**（v1 主档 18、v2 36、阶梯档 24），且引用时必须带分母。
+5. **两臂/多臂之间除了名义变量，不许有第二处不同**：引用前先复看 `facade_reachable_both_arms`
+   与三臂 `base_sha` 是否同源（这条就是 v1 那处 `expected_calls` 界错的教训的正面形态——**界要看它是否真的能拦住**）。
+
+**判读线（不动）**：作者线 `self − sized ≥ 3 ⇒ author_holds`／`≤ −3 ⇒ author_negative`；
+密度线 `quarter − corpus ≥ 3` 且单调 `⇒ length_holds`；主判据 `self − corpus ≥ 3 ⇒ shape_holds`；其余 `not_resolved`。
+**三条线互不替换**：哪条读平就写哪条读平，不许拿另一条的动静冒充进展。
+
+
 ## §6 L1 的判别范围已被就地收窄（2026-09-30 追加；**线本身不动**）
 
 `well_formed` 的第一道条件（UTF-8 合法）**在 `str` 上恒真**，且实测有带 U+FFFD 的答复被放行
