@@ -61,12 +61,15 @@ def test_the_recorded_path_is_the_product_default(manifest) -> None:
 def test_the_product_default_is_not_a_test_suite_artifact(manifest) -> None:
     """默认入口不得再服务套件重初始化的产物——那正是 DEBT-I9 的正题。
 
-    2026-09-29 起默认是**裁定装配**（厂档＋seed-A 电路＋乙档零截，PLAN-A-30 §7-1）：
-    信封无自述 metadata 块 ⇒ 登记走构造链＋密封 sha；训练产物的来源登记完整保留在
-    factory_face 里，那条不变形。
+    预期来源串随裁定换底而变（2026-09-29 乙档信封 / 2026-10-01 自写档候选信封）：
+    信封无自述 metadata 块 ⇒ 登记走构造链＋密封 sha；训练产物的来源登记（厂档/候选基底）
+    完整保留在 factory_face 与 candidate_base/prev_defaults 里，那些字段不变形。
     """
 
-    assert manifest["provenance"] == "ruled_assembly_of_attested_factory_base_plus_seed_a_circuit"
+    assert manifest["provenance"] in {
+        "ruled_assembly_of_attested_factory_base_plus_seed_a_circuit",
+        "ruled_assembly_of_selfauthored_candidate_plus_seed_a_circuit",
+    }
     assert manifest["envelope_trainer"] is None  # 字段不存在，登记如实写 null
     factory = manifest["factory_face"]
     assert factory["envelope_trainer"] != "api_seed_runtime"

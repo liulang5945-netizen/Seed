@@ -32,9 +32,12 @@ for entry in (PROJECT_ROOT, PROJECT_ROOT / "scripts" / "training"):
 
 from score_taiji_r2_copy_surface_extension import load_items  # noqa: E402
 
-from api.seed_runtime import SeedRuntime  # noqa: E402
+from api.seed_runtime import DEFAULT_CHECKPOINT, SeedRuntime  # noqa: E402
 
-CHECKPOINT = PROJECT_ROOT / "checkpoints/seed_beta_with_circuit.pt"
+#: 装机面＝**跟随产品默认常量**（2026-10-01 重出后指向 seed_a31self_with_circuit.pt；
+#: 更早的读数在件里自述 `checkpoint=`，点名了当时的旧件 seed_beta_with_circuit.pt——
+#: 跨换底引用本仪器的读数必须按件里那个字段点名面）。
+CHECKPOINT = DEFAULT_CHECKPOINT
 ROUNDS_PER_ITEM = 3
 ITEM_LIMIT = 24
 OUT = PROJECT_ROOT / "reports/taiji_a30_writeback_gate_on_shipping_face_20260930.json"

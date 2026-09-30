@@ -30,11 +30,12 @@ import pytest
 REPO = Path(__file__).resolve().parents[2]
 #: 产品默认**读**源。2026-09-20 所有者裁决由 seed_corpus.pt（套件重初始化产物）换到
 #: 16M-tick 训练态（seed_beta.pt）；2026-09-29 owner 裁定（PLAN-A-30 §7-1：回路随出厂基座装）
-#: 再换到带复制回路的乙档信封 seed_beta_with_circuit.pt（厂档降为 FACTORY_CHECKPOINT 逃生口）。
+#: 再换到带复制回路的乙档信封 seed_beta_with_circuit.pt（厂档降为 FACTORY_CHECKPOINT 逃生口）；
+#: 2026-10-01 owner 裁定『重出基座』再换到自写档候选烤成的 seed_a31self_with_circuit.pt（旧件留作回滚点）。
 #: 换底必须同时改这里与来源清单
 #: （plans/manifests/product_default_checkpoint_provenance.json），否则本文件失去它要防的那个漂移。
 #: 不写死路径，直接跟随产品常量——写死两处正是本轮清掉的"两份手抄"漂移的同型问题。
-PRODUCT_DEFAULT = REPO / "checkpoints" / "seed_beta_with_circuit.pt"
+PRODUCT_DEFAULT = REPO / "checkpoints" / "seed_a31self_with_circuit.pt"
 CHECKPOINTS_DIR = REPO / "checkpoints"
 
 

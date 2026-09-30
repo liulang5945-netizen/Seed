@@ -37,8 +37,15 @@ logger = logging.getLogger("ApiServer.SeedRuntime")
 #: 带复制回路的乙档信封（PLAN-A-29 §7：12.3 MB、sha `f9343433…`、由
 #: `build_circuit_carried_envelope` 从厂档＋seed-A 电路烤成；+8.2 MB 体积路）。
 #: 挂载与证据门走 A-25/A-28 已守卫的 restore 自动挂载路；命中/可读性的交换比见 §2i/§2l。
+#:
+#: 2026-10-01 owner 裁定（"未及时决策按推荐推进"，PLAN-A-30 §2bh/§7c）：**重出基座**——
+#: 默认源换到自写档候选 `a31_chunked_self`（a26_p1 起、分块喂法＋自写短答表、+2M）烤成的
+#: 带回路上信封：它在 SPEC-A-24 三线上**全过**（L1 39/6、L2 13/72、L3 18/300）
+#: 且 F0 严格整句口径 `floor_pass`（T1b 0.812；旧默认与 formal self 均 floor_fail）。
+#: **回滚点＝`checkpoints/seed_beta_with_circuit.pt`（sha f9343433…，原默认件，未删）**——
+#: 把下面一行指回它即可整档回滚；FACTORY_CHECKPOINT（厂档 seed_beta.pt）一字未动。
 DEFAULT_CHECKPOINT = (
-    Path(__file__).resolve().parent.parent / "checkpoints" / "seed_beta_with_circuit.pt"
+    Path(__file__).resolve().parent.parent / "checkpoints" / "seed_a31self_with_circuit.pt"
 )
 
 #: 出厂面（无回路）基底：对照/复现用的显式逃生口（§2t 的那一面），不再是默认加载源。

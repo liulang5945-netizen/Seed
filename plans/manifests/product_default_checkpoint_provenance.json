@@ -1,23 +1,24 @@
 {
   "format": "seed-product-default-checkpoint-provenance-v2",
-  "supersedes": "v2 登记（2026-09-20）记的是 checkpoints/seed_beta.pt——那份登记全文保留在本件 factory_face 字段里，该文件仍在盘、仍是 FACTORY_CHECKPOINT（对照/复现逃生口）。2026-09-29 owner 裁定（PLAN-A-30 §7-1：回路随出厂基座装）把默认入口换到带复制回路的乙档信封，本件记新默认；两次换底都必须同时改本清单与 test_default_checkpoint_isolation_contract 的 PRODUCT_DEFAULT，否则守卫失明。",
-  "path": "checkpoints/seed_beta_with_circuit.pt",
-  "sha256": "f9343433d519084659926d0bdd689efef96c3bee02e79bc33f441fd177d8baa8",
-  "bytes": 12291435,
+  "supersedes": "2026-10-01 owner 裁定『重出基座』（未及时决策按推荐推进；PLAN-A-30 §2bh/§7c）：默认换到自写档候选 cook 成的信封。此前的两条登记全文保留在 prev_defaults 字段（2026-09-20 的厂档登记、2026-09-29 的 seed_beta_with_circuit 登记）。",
+  "path": "checkpoints/seed_a31self_with_circuit.pt",
+  "sha256": "d6169a358eaee6d194d4795e3167a7bcbb42dfde57b92aa1199bcebbed89699b",
+  "bytes": 12627371,
   "envelope_format": "seed-native-v1",
   "substrate_format": "taiji-native-v1",
   "envelope_tick": null,
   "envelope_trainer": null,
   "envelope_saved_at_utc": null,
-  "file_mtime_local": "2026-09-29",
-  "provenance": "ruled_assembly_of_attested_factory_base_plus_seed_a_circuit",
+  "file_mtime_local": "2026-10-01",
+  "provenance": "ruled_assembly_of_selfauthored_candidate_plus_seed_a_circuit",
   "provenance_evidence": [
-    "密封件 sha f9343433… 与 plans/reference/PLAN-A-29_shipped-base-size-empty-route-store_20260928.md §7 守卫-B 落盘件逐位相同（同一次跑把产品信封 87,919,979 → 12,291,435 B，读数件 reports/taiji_a29_post_truncation_product_face_v3_20260928.json）",
-    "构造＝score_taiji_r2_copy_surface_extension.build_circuit_carried_envelope：从 factory_face（sha ad2a0646…，其自身来源登记见 factory_face 字段）挂载 seed-A 电路 output/taiji_r2_copy_circuit_chat/judge/circuit-final.pt（出处 PLAN-A-28 §5），唯一写靶是 out_path",
-    "载入行为守卫 tests/taiji_native/test_a30_shipped_base_and_surface_gate.py：默认载入 ⇒ copy_circuit 挂载＋UTF-8 证据门开（A-25/A-28 的 restore 自动挂载路）＋门槛 armed",
-    "乙档零截存盘（taiji/identity_organ.py 的 to_payload/load_payload）经 260 张量逐位回装验证（PLAN-A-29 §7）"
+    "候选基底＝output/a31_chunked_self/checkpoint.pt（sha ca262807…，12,253,423 B）：a26_p1 起、分块喂法（--answer-chunking per-answer）＋自写短答表（14,000 条，build_taiji_a30_self_answers.py 产物）＋≈+2M ticks（progress 末行 4,000,101；表单遍跑尽）",
+    "SPEC-A-24 三线全过：L1 表层 39/260（不挂）与 6/260（挂，线 0.9×[12,5]）——reports/taiji_f0_chunked_self_surface_g17_20261001.json；L2 真自停 13/72——reports/taiji_a30_stop_failure_chunked_self_20261001.json；L3 决策面 18/300——reports/taiji_a30_stop_signal_presence_chunked_self_300doc_masked_recipeface_20261001.json",
+    "回退检查：F0 语言地板 floor_pass（严格整句口径 T1b 0.812；尾部感知五项全 1.000；旧默认与 formal self 在该口径均 floor_fail）——reports/taiji_f0_chunked_self_20261001.json",
+    "装配＝build_circuit_carried_envelope（唯一写靶 out_path；受检基底只读）：从候选挂 seed-A 电路 output/taiji_r2_copy_circuit_chat/judge/circuit-final.pt 烤成",
+    "载入行为守卫 tests/taiji_native/test_a30_shipped_base_and_surface_gate.py：默认载入 ⇒ copy_circuit 挂载＋门开＋surface_gate_state=armed；回滚点与候选基底 sha 同文件钉死"
   ],
-  "provenance_limits": "运行时信封（model.checkpoint() 的 seed-native-v1 形状）没有自述 metadata 块（envelope_trainer/tick/saved_at 均为 null＝字段不存在，不是空值），本件的来源凭据因此不落在信封自述上，而落在：构造链（在册仪器＋只读受检基底＋唯一写靶）、密封 sha（A-29 §7 逐位核对）、载入行为守卫三件上。*.pt 不进 git（DEBT-I7）⇒ 守卫钉的是本机磁盘态；重建虽可由同一仪器完成，但 torch.save 元数据不逐位（重建件 12,287,435 B ≠ 密封件，2026-09-29 实测登记），故逐位权威＝密封件本身。",
+  "provenance_limits": "运行时信封（model.checkpoint() 的 seed-native-v1 形状）没有自述 metadata 块 ⇒ 来源凭据落在构造链、候选基底 sha、三线件与行为守卫四件上；*.pt 不进 git（DEBT-I7）⇒ 钉的是本机磁盘态。回滚路径：把 api/seed_runtime.DEFAULT_CHECKPOINT 指回 checkpoints/seed_beta_with_circuit.pt（sha f9343433…，仍在盘、在本清单 prev_defaults 中登记在册）。",
   "corpus_fingerprint_inherited_from_factory_face": true,
   "corpus_fingerprint": [
     {
@@ -33,15 +34,19 @@
     "meaning": "派生装配不改语料；语料指纹继承厂档自述（见 factory_face）。语料文件仍在盘且字节数与自述逐位相等 ⇒ 一致性证据多一枚独立核对点；不构成生成性凭据。"
   },
   "profile": {
-    "region_sizes": [256, 192, 128],
+    "region_sizes": [
+      256,
+      192,
+      128
+    ],
     "memory_units": 384,
     "alphabet_size": 257
   },
   "preflight_v0": {
-    "question": "产品默认 loader 不加任何进程内补丁能否加载这份带回路乙档信封，且回路/证据门/门槛真的生效",
+    "question": "产品默认 loader 加载新信封后，回路/证据门/门槛都生效、chat 可用",
     "answer": "能",
-    "measured": "SeedRuntime.load() 裸跑成功 ⇒ copy_circuit 挂载、_copy_evidence_utf8_gate_override=True（A-28 在挂载点开的运行时覆写）、surface_gate_state=armed（随包 n 元工件在场）；厂档 FACTORY_CHECKPOINT 载入 ⇒ 无回路（出厂面）。守卫：tests/taiji_native/test_a30_shipped_base_and_surface_gate.py（9 条）＋定向回归 44 绿＋全量门禁 1815 绿。",
-    "meaning": "挂载与证据门走 A-25/A-28 已守卫的 restore 自动挂载路，无需把评测期的 enable_copy_circuit 搬进产品路径；REQUIRED_CHAIN 里的 relax_legacy_guard 对本装配同样是冗余（M2-2i 已把'旧格式缺 organ 载荷'的迁移落进 taiji/model.py 产品源码）⇒ 换默认基座不需要把测试期 monkeypatch 搬进产品路径。",
+    "measured": "SeedRuntime.load（默认）⇒ copy_circuit 挂载、_copy_evidence_utf8_gate_override=True、surface_gate_state=armed；chat 冒烟出字（'这首诗有吂何，大何，'）；守卫 test_a30_shipped_base_and_surface_gate 全绿。",
+    "meaning": "挂载与证据门走 A-25/A-28 已守卫的 restore 自动挂载路；REQUIRED_CHAIN 里的 relax_legacy_guard 对本装配同样是冗余（M2-2i 已把'旧格式缺 organ 载荷'的迁移落进 taiji/model.py 产品源码）；换底不动任何加载机制。",
     "contract": "plans/reference/PLAN-A-30_surface_repetition_localization_20260928.md"
   },
   "why_recorded": "DEBT-I9 的两半都在此收：可检测性（sha 变了就有测试红）+ 来源（默认入口服务的模型是谁、由什么产出、凭据到哪一层）。2026-09-29 起默认是裁定装配（厂档＋seed-A 电路＋乙档零截），来源登记改走构造链＋密封 sha＋行为守卫，limits 写死防止'派生件'被读成'独立训练产物'。",
@@ -64,5 +69,26 @@
     "envelope_saved_at_utc": "2026-08-24T02:23:26Z",
     "provenance": "m1_long_run_selfattested_plus_progress_stream",
     "provenance_limits": "信封自述＋进度流＋历史命令记录三者吻合；日志已不在盘上 ⇒ 不构成官方可复算，只构成来源登记。"
+  },
+  "candidate_base": {
+    "path": "output/a31_chunked_self/checkpoint.pt",
+    "sha256": "ca2628077b21bc4c9a6f2fc06ff410d70311b1218a30b8794ecfd7e5a027d8bb",
+    "bytes": 12253423,
+    "assembly": "chunked(per-answer) + self-authored short answers + ~2M ticks from output/a26_p1/checkpoint.pt"
+  },
+  "prev_defaults": {
+    "seed_beta_with_circuit": {
+      "path": "checkpoints/seed_beta_with_circuit.pt",
+      "sha256": "f9343433d519084659926d0bdd689efef96c3bee02e79bc33f441fd177d8baa8",
+      "bytes": 12291435,
+      "recorded": "2026-09-29（owner 裁定 §7-1：回路随出厂装）",
+      "role": "rollback point（回滚时把 DEFAULT_CHECKPOINT 指回本件）"
+    },
+    "factory_seed_beta": {
+      "path": "checkpoints/seed_beta.pt",
+      "sha256": "ad2a06465e0ef78c75aff7302a6f7a2ae11825d2f19361d9d65926006f3bf793",
+      "recorded": "2026-09-20（16M 训练态换底）",
+      "role": "FACTORY_CHECKPOINT（对照/复现逃生口，未动）"
+    }
   }
 }

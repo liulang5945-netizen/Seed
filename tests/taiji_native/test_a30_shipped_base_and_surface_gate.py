@@ -27,7 +27,12 @@ for entry in (PROJECT_ROOT, PROJECT_ROOT / "scripts" / "training"):
 #: A-29 §7 守卫-B 落盘件（output/a28_product_face/seed_beta_with_circuit_0.pt）的 sha——
 #: 出厂信封是它的逐位拷贝。*.pt 不进 git（DEBT-I7），所以这条钉的是**本机磁盘态**；
 #: 重建用 build_circuit_carried_envelope（torch.save 元数据不逐位，重建件 sha 会不同——已登记）。
-SEALED_ENVELOPE_SHA256 = "f9343433d519084659926d0bdd689efef96c3bee02e79bc33f441fd177d8baa8"
+#: 2026-10-01 重出（owner 裁定 §7c，PLAN-A-30 §2bh）：默认换成自写档候选 `a31_chunked_self`
+#: 烤成的信封（三线全过＋F0 floor_pass）。旧件 `seed_beta_with_circuit.pt`（sha f9343433…）
+#: 仍留在盘上＝回滚点，一并钉死以便回滚路径可验证。
+SEALED_ENVELOPE_SHA256 = "d6169a358eaee6d194d4795e3167a7bcbb42dfde57b92aa1199bcebbed89699b"
+ROLLBACK_ENVELOPE_SHA256 = "f9343433d519084659926d0bdd689efef96c3bee02e79bc33f441fd177d8baa8"
+CANDIDATE_BASE_SHA256 = "ca2628077b21bc4c9a6f2fc06ff410d70311b1218a30b8794ecfd7e5a027d8bb"
 FACTORY_BASE_SHA256 = "ad2a06465e0ef78c75aff7302a6f7a2ae11825d2f19361d9d65926006f3bf793"
 NGRAM_ARTIFACT_SHA256 = "4a40da9cdd7cc938af326d3e3b4d1055a220b37809a8650ef045e33a96300f17"
 
@@ -39,7 +44,7 @@ def _sha256(path: Path) -> str:
 def test_default_checkpoint_points_at_circuit_envelope_and_files_are_pinned() -> None:
     from api.seed_runtime import DEFAULT_CHECKPOINT, FACTORY_CHECKPOINT
 
-    assert DEFAULT_CHECKPOINT.name == "seed_beta_with_circuit.pt"
+    assert DEFAULT_CHECKPOINT.name == "seed_a31self_with_circuit.pt"
     assert DEFAULT_CHECKPOINT.is_file()
     assert _sha256(DEFAULT_CHECKPOINT) == SEALED_ENVELOPE_SHA256
     assert FACTORY_CHECKPOINT.name == "seed_beta.pt"
@@ -48,6 +53,19 @@ def test_default_checkpoint_points_at_circuit_envelope_and_files_are_pinned() ->
     artifact = DEFAULT_CHECKPOINT.parent / "seed_surface_ngram.lzma"
     assert artifact.is_file()
     assert _sha256(artifact) == NGRAM_ARTIFACT_SHA256
+
+
+def test_rollback_point_and_candidate_base_are_pinned() -> None:
+    """重出不是单程票：旧默认件与候选基底都要在盘且逐位在册（回滚/重建可核）。"""
+
+    checkpoints = Path(__file__).resolve().parents[2] / "checkpoints"
+    rollback = checkpoints / "seed_beta_with_circuit.pt"
+    assert rollback.is_file()
+    assert _sha256(rollback) == ROLLBACK_ENVELOPE_SHA256
+
+    candidate = Path(__file__).resolve().parents[2] / "output" / "a31_chunked_self" / "checkpoint.pt"
+    assert candidate.is_file()
+    assert _sha256(candidate) == CANDIDATE_BASE_SHA256
 
 
 def test_default_load_mounts_circuit_and_arms_surface_gate() -> None:

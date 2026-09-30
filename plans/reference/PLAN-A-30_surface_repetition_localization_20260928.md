@@ -3143,6 +3143,32 @@ L1 四件见 §2bd/§2be；L2 见 §2bc 与 `reports/taiji_a30_stop_failure_a31_
 （`build_circuit_carried_envelope` 从自写档烤，产品默认面需要）；③默认位切换本身（含来源清单/
 守卫/回归）——按 owner 裁定执行或不执行。
 
+## 7c. owner 裁定回执（2026-10-01，重出基座＝**已执行**；候选＝自写档）
+
+裁决途径照 owner 2026-09-30 的"未及时决策按推荐推进"授权：弹窗两问（默认位走哪条／候选二选一）
+未获及时答复 ⇒ 按推荐执行——**以自写档 `a31_chunked_self` 重出产品默认基座**。执行记录：
+
+1. **信封**：`build_circuit_carried_envelope`（候选基底只读）从 `output/a31_chunked_self/checkpoint.pt`
+   （sha `ca262807…`）＋seed-A 电路烤出 `checkpoints/seed_a31self_with_circuit.pt`
+   （**12,627,371 B、sha `d6169a35…`**）。
+2. **默认位翻转**：`api/seed_runtime.DEFAULT_CHECKPOINT` → 新件；注释写明**回滚点**
+   （`checkpoints/seed_beta_with_circuit.pt`，sha `f9343433…`，仍在盘）；`FACTORY_CHECKPOINT` 未动。
+3. **载入自检**：默认载入 ⇒ 回路挂载 ✓／证据门 override=True ✓／`surface_gate_state=armed` ✓／
+   chat 冒烟出字（"这首诗有吂何，大何，"）。
+4. **来源清单**：`plans/manifests/product_default_checkpoint_provenance.json` 重写为新装配
+   （候选基底 sha＋三线件＋F0 件＋行为守卫四件凭据；两条历史登记全文保留在 `prev_defaults`）。
+5. **守卫与契约对齐**：`test_a30_shipped_base_and_surface_gate`（新 sha 钉＋**回滚点与候选基底同钉**）、
+   `test_default_checkpoint_isolation_contract`（PRODUCT_DEFAULT 指向新件）、
+   `test_product_default_checkpoint_provenance_contract`（来源串集合扩为两代）、
+   `test_readout_retrain_step0_contract` 与 `test_no_legacy_startup_smoke` 自动跟随，全绿（23 条）。
+6. **摸到的两处旧钉子**：`probe_taiji_a30_writeback_gate_shipping_face.py` 的 `CHECKPOINT` 改
+   **跟随产品常量**（它量的是"装机面"；历史读数在件内自述 `checkpoint=`，跨换底引用须按该字段点名面）；
+   `test_a30_instrument_face_disclosure` 的 docstring 举例仍指旧件（该件仍在盘，注释不构成钉子）。
+
+**该换底的产品面含义（不许含糊）**：默认答复模型自此＝a26_p1 谱系＋分块自写短答训练+2M 的档，
+它在 SPEC-A-24 三线与 F0 严格整句口径上都优于旧默认（旧默认：L2 0/72、L3 0/300、F0 floor_fail）。
+**回滚＝一行**（把 `DEFAULT_CHECKPOINT` 指回 `seed_beta_with_circuit.pt`）。
+
 ## 7b. owner 裁定回执（2026-09-30 第二批，弹窗打包全批＝四项按各自 Recommended 执行）
 
 1. **正式训练档机时＝批**：同手法（高密度收尾目标）扩训练量训正式档，L2 同仪器（stop_failure v6）复测，**不改产品默认位、不改判据**；探测臂只答方向，正式档验效应在更大训练量下保持与否。
