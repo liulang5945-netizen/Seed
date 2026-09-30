@@ -112,6 +112,40 @@ def iter_corpus_symbols(
             yield 0x0A
 
 
+def iter_answer_chunks(
+    paths: Sequence[Path | str],
+    *,
+    max_answer_chars: int = 0,
+) -> Iterator[bytes]:
+    """A30 §2bf：**每答一块**喂法（分块短答形状进主线的正题）。
+
+    与 `iter_corpus_symbols`（连续流）并列的一条喂法：把每篇文档拆成 (问句, 答案)，
+    产出 ``问：{q}\\n答：{a}\\n`` 的**单块**；调用方按 `learn_bytes(..., include_start_boundary=True,
+    include_end_boundary=True, reset=True)` 逐块喂 ⇒ 每块一轮 episode、起沿/收沿各一个边界符，
+    且**收沿边界落在换行之后**（块自身以 ``\\n`` 结尾，`organs._edge_split` 把边界追加在其后）
+    ——与 `end_boundary_after_newline` 的落点性质相同（字节级实证见 PLAN-A-30 §2be）。
+
+    ``max_answer_chars > 0`` 时按**字符**截断答案（与 on-policy 仪器的 `sized` 臂同口径：
+    ``corpus_answer[:target]``）；截断只动答案，不动问句。拆不开 ``\\n答：`` 的行走响亮失败——
+    不许静默少喂或把整行当答案。
+
+    为什么要有这一条：正式档四臂里 `sized`（语料短答）L2 真自停 47/72、`self` 24/72，
+    而同预算的连续流主线配方（a31 满额）只有 3/72 ⇒ "分块短答形状能不能搬进主线配方"
+    是 owner 2026-09-30 裁定①要求训一档验证的问题。
+    """
+
+    marker = "\n答："
+    for text in iter_native_documents(paths):
+        question, sep, answer = text.partition(marker)
+        if not sep:
+            raise RuntimeError(f"语料行里没有 {marker!r} 这个接缝，拆不出答案：{text[:24]!r}")
+        question = question.removeprefix("问：").strip()
+        answer = answer.strip()
+        if max_answer_chars > 0:
+            answer = answer[:max_answer_chars]
+        yield f"问：{question}\n答：{answer}\n".encode()
+
+
 def patch_envelope_config_flags(envelope: dict[str, Any], flags: dict[str, bool]) -> int:
     """把实验开关写进受载档里**每一处** taiji config 副本（PLAN-A-26 的热启动需要它）。
 
@@ -167,6 +201,8 @@ def run_training(
     device: str | torch.device = "cpu",
     keep_history: Path | str | None = None,
     end_boundary_after_newline: bool = False,
+    answer_chunking: str = "stream",
+    answer_max_chars: int = 0,
 ) -> dict[str, float]:
     """Stream the corpus through ``Seed.observe`` with periodic persistence.
 
@@ -239,6 +275,9 @@ def run_training(
                 # A30 §2aa：喂入形状（结束边界是否落在换行之后）随档登记——
                 # 配方可从档里查出来，不靠外部记录。
                 "end_boundary_after_newline": bool(end_boundary_after_newline),
+                # A30 §2bf：分块喂法（每答一块、可选短答截断）同样随档登记。
+                "answer_chunking": str(answer_chunking),
+                "answer_max_chars": int(answer_max_chars),
             },
         )
         atomic_save(envelope, checkpoint_path)
@@ -277,6 +316,49 @@ def run_training(
         observe_kwargs["learn_motor"] = False
 
     for epoch in range(epochs):  # noqa: B007 — epoch 被 _flush 闭包引用（进度日志）
+        if answer_chunking == "per-answer":
+            # A30 §2bf：分块喂法。每块一轮 episode（起沿+收沿边界），喂法经产品门面
+            # `learn_bytes`（DEBT-G13 已开的口）。窗口统计用 learn_bytes 返回的聚合值，
+            # 与连续流路径的"逐符号 prior_prediction"口径不同——进度日志两档都是窗口均值，
+            # 不跨档比数值（件里用 answer_chunking 点名面）。
+            #: 节奏用**阈值式**（`ticks - last_* >= every`）而不是连续流那支的 `ticks % every == 0`：
+            #: 分块档每步跳 len(chunk)+2（约百字节级），取模几乎永不落在 0 上 ⇒
+            #: 第一版实测进度与检查点都不落盘（进程在算、磁盘静默）。这是本档第一个自伤，
+            #: 守卫 `test_per_answer_progress_and_checkpoint_cadence` 钉住。
+            last_progress = base_ticks
+            last_checkpoint = base_ticks
+            for chunk in iter_answer_chunks(corpus_paths, max_answer_chars=answer_max_chars):
+                result = model.learn_bytes(
+                    chunk,
+                    epochs=1,
+                    include_boundary=False,
+                    include_start_boundary=True,
+                    include_end_boundary=True,
+                    reset=True,
+                )
+                observations = int(result.get("observations", 0))
+                ticks += len(chunk) + 2  # 起沿/收沿各一个边界符
+                window_ticks += max(1, observations)
+                window_correct += float(result.get("online_accuracy", 0.0)) * max(
+                    1, observations
+                )
+                window_surprise += float(result.get("mean_surprise", 0.0)) * max(
+                    1, observations
+                )
+                if ticks - last_progress >= progress_every:
+                    _flush(final=False)
+                    window_ticks = 0
+                    window_correct = 0
+                    window_surprise = 0.0
+                    last_progress = ticks
+                if ticks - last_checkpoint >= checkpoint_every:
+                    _persist()
+                    last_checkpoint = ticks
+                if max_symbols is not None and ticks >= base_ticks + max_symbols:
+                    _flush(final=True)
+                    _persist()
+                    return _summary(model, ticks)
+            continue
         for symbol in iter_corpus_symbols(
             corpus_paths, boundary=boundary, end_boundary_after_newline=end_boundary_after_newline
         ):
@@ -465,6 +547,22 @@ def _build_parser() -> argparse.ArgumentParser:
         "2026-09-29 owner 条件授权起为主线配方默认；本旗标是旧形状复现的逃生口。",
     )
     parser.add_argument(
+        "--answer-chunking",
+        choices=("stream", "per-answer"),
+        default="stream",
+        help="A30 §2bf（owner 2026-09-30 裁定①）：喂法。`stream`（默认，逐位不变）＝连续流"
+        "（每篇文档一个边界符）；`per-answer`＝每答一块（问句+答案+换行，起沿/收沿各一边界、"
+        "每块一轮 episode）——把正式档里买到真自停的分块短答形状搬进主线。",
+    )
+    parser.add_argument(
+        "--answer-max-chars",
+        type=int,
+        default=0,
+        dest="answer_max_chars",
+        help="仅 `--answer-chunking per-answer` 生效：答案按**字符**截到此上限（0＝不截断）。"
+        "截断只动答案不动问句；与 on-policy 仪器 `sized` 臂同口径。与 stream 档组合会响亮拒绝。",
+    )
+    parser.add_argument(
         "--smoke",
         action="store_true",
         help="tiny default config and budget for a fast end-to-end run",
@@ -482,6 +580,13 @@ def main() -> None:
         parser.error(
             "--readout-position wires the F1 predictive readout only; with --readout action "
             "it is a silent no-op. Pass --readout predictive."
+        )
+
+    #: A30 §2bf：截断只在分块喂法里有对象；与连续流组合是静默空转 ⇒ 响亮拒绝。
+    if args.answer_max_chars and args.answer_chunking != "per-answer":
+        parser.error(
+            "--answer-max-chars only applies to --answer-chunking per-answer; with the "
+            "stream feed it is a silent no-op."
         )
 
     #: 二次事故加固（2026-09-28，同日第二撞）：缺省写靶＝产品件 `checkpoints/seed_corpus.pt`，
@@ -569,6 +674,8 @@ def main() -> None:
         device=args.device,
         keep_history=history_dir,
         end_boundary_after_newline=bool(args.end_boundary_after_newline),
+        answer_chunking=str(args.answer_chunking),
+        answer_max_chars=int(args.answer_max_chars),
     )
     print(json.dumps(summary, ensure_ascii=False))
 
