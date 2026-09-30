@@ -1,8 +1,8 @@
-# Seed — runtime for the Taiji Native Cognitive Architecture
+# Seed — Runtime for the Taiji Native Cognitive Architecture
 
-Research evidence: [Current results and conclusions (Chinese)](plans/reference/PROJECT_RESULTS_AND_CONCLUSIONS_20260917.md), separating validated mechanisms, negative results, actual outputs, and unresolved capability gaps.
+Research evidence & ledger: [Current results and conclusions](plans/reference/PROJECT_RESULTS_AND_CONCLUSIONS_20260917.md), separating validated mechanisms, negative results, actual outputs, and unresolved capability gaps.
 
-Development guide (2026-09-19): M5/R2 remains the research focus. D8/v3 passed the multi-character copying gate but not binding, with substantial seed variation; v4's fixed-recipe stability gate failed in all three seeds, so matched evaluation is blocked. The [next-step plan](plans/reference/M5_R2_D8_CLOSEOUT_NEXT_PLAN_20260919.md) records closure of this fixed-recipe scaling series; the content-binding direction has advanced to an [implementation contract draft](plans/reference/M5_R2_CONTENT_BINDING_CONTRACT_DRAFT_20260919.md). Static data and computation/checkpoint implementation checks come next; training remains unapproved. This is not a proven learning-rate diagnosis or permanent scale limit. [03](plans/active/roadmap/03_CURRENT_EXECUTION.md) remains the sole active queue; [VISION §19.12](plans/reference/VISION_FUTURE_TECHNOLOGY.md#1912-d8-a2后的推荐候选从发射延续转向可学习内容绑定) records the proposed computation and learning design. The [phase map](plans/active/roadmap/01_SCOPE_AND_PHASES.md) and [delivery criteria](plans/active/roadmap/07_MINI_MODEL_DELIVERY.md) retain the larger milestones. These plans do not authorize training, grant L2/L3 promotion or trigger Mini delivery; bounded experiments still require their scoped authorization.
+Milestone update (2026-09-28): **M5 bounded exit has been formally ratified** ([Exit Approval](plans/reference/M5_EXIT_APPROVAL_20260920.md)); project mainline is currently in **M6 Product Delivery** alongside the **R2/A-branch native language and inductive circuit investigations**. TSK-v8 serves as the native substrate kernel; the native predictive readout now incorporates positional input and UTF-8 evidence gating (`PLAN-A-26`), while the product copy circuit (`PLAN-A-28`) and identity router truncation (`PLAN-A-29`, reducing payload envelope 87.9 MB → 12.3 MB) have landed. The product shell has converged onto **Taiji Harness** with `taiji-local` zero-credential routing. See [03 Current Execution](plans/active/roadmap/03_CURRENT_EXECUTION.md) and [Plan Index](plans/active/PLAN_INDEX.md) for authoritative execution items.
 
 Seed provides the project, product and runtime that trains, evaluates, deploys and hosts **Taiji** —
 a native cognitive architecture being built from online predictive-coding mechanisms, not from
@@ -13,10 +13,7 @@ while deliberately reusing mature algorithms (embeddings, SSMs, MoE-style routin
 
 For the non-hype picture: the repository contains both the **Seed product shell** and the
 **Taiji research runtime**. The lowest-level executable substrate is the **Taiji Substrate
-Kernel v8 (TSK-v8)**, while the current M5 work focuses on R2 native language capability;
-the K-axis learning and selection results remain separate, limited evidence. These are working research
-systems, not a completed cognitive architecture or a released general-purpose model (see
-[Status](#status)).
+Kernel v8 (TSK-v8)**. While M5 bounded components are validated, general language dialog capability remains an active research challenge; model behavior is strictly separated from rule scaffolds (see [Status](#status)).
 
 ## Language / 语言
 
@@ -25,7 +22,7 @@ systems, not a completed cognitive architecture or a released general-purpose mo
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
-[![tests](https://img.shields.io/badge/Python%20tests-1%2C194-green.svg)](.github/workflows/ci.yml)
+[![tests](https://img.shields.io/badge/Python%20tests-2%2C270-green.svg)](.github/workflows/ci.yml)
 
 ## The architecture
 
@@ -190,60 +187,33 @@ These M0–M2 results remain the historical foundation baseline. The active exec
 moved to the M5 K-axis track below; the full chronology and evidence links are maintained in
 [the single execution plan](plans/active/roadmap/03_CURRENT_EXECUTION.md).
 
-### Current research track: R2 native language capability
+### Current research track: Native language capability & Inductive copy circuit
 
-The current mainline is the R2 structured-language path: Taiji remains the native owner,
-responses are trained through the native predictive readout, and every candidate is isolated,
-checkpointable and evaluated on family-disjoint train/dev/final episodes. The repository has
-not yet produced an L2 conversational model; the work below is the path toward one.
+The current research mainline addresses the structural discrepancy between predictive coding and inductive copying/retrieval in multi-turn dialogues:
 
-| Stage | Result |
+| Phase / Item | Core Finding & Validated Result |
 |---|---|
-| R2-D0/P0 | Structured episode boundaries, response-only native readout, atomic checkpointing and fresh-restore preflight are implemented |
-| R2-H3.4 | UTF-8 and end-marker credit are stable, but unseen conditional response starts and continuations do not yet transfer |
-| R2-H3.5-A | The signed-hash response-plan candidate was stopped before final: its target geometry did not transfer and the plan bridge could interfere with rendering |
-| R2-H3.6 geometry | A no-training, three-seed audit selected train-whitened native response state + compositional character n-grams; this is a target-design result, not language ability |
-| R2-H3.6-A | Versioned train-only target encoder, trainer integration and save/restore smoke passed on the 12/8/4 fixture; no capability training was performed |
-| H3.6-B preflight | Control and treatment zero-step preflights passed at 276,610≤300,000 with parent/restore/target-lineage checks; `training_performed=false` |
-| H3.6-B result | Six matched dev runs and three read-only bridge ablations completed; seed direction and non-proxy sequence gates failed, so final was not read and no more epochs are allowed |
-| R2-H3.7 contract | Frozen 4-slot/48-wide/16-byte-phase factorized response workspace; byte error updates the bridge and current-slot credit |
-| R2-H3.7 preflight | Control (273,890) and treatment (277,970) both passed committed-code preflight; `training_performed=false`, three-seed dev is now authorized |
-| R2-H3.7 seed 20260917 | First matched dev pair completed; dev sequence criterion is 0.25/0.25 (control/treatment), and read-only ablation is 0.25/0.125/0.0 (normal/bridge/slot-credit); three-seed gate remains open |
-| R2-H3.7 seed 20260918 | Second matched dev pair completed; dev sequence criterion remains 0.25/0.25 and read-only ablation is 0.25/0.25/0.25; aggregate remains pending the final seed |
-| R2-H3.7 aggregate | [Three matched seeds and three read-only ablations](reports/taiji_r2_h3_7_matched_dev_result_20260917.json) completed; aggregate stopped before final because non-proxy direction was 0/0/0 and boundary/causal-ablation gates failed |
-| R2-H3.7 attribution audit | [Bounded read-only audit](reports/taiji_r2_h3_7_attribution_audit_20260917.json) found nonzero but uneven target alignment and active phase surfaces, without a transferable content/readout gain |
+| **M5 Bounded Exit** | Formally ratified on 2026-09-20. Four component axes (knowledge internalization, collaboration, somatic online loop, unified entry gate) passed. R2 conversational capability explicitly recorded as excluded debt. |
+| **A2 Copy Circuit (A-Branch)** | Verified that raw predictive representations lack one-shot induction. Built dedicated copy circuit (`A2.1` write gate, `A2.2` content direct read, `A2.3` recall-conditioned emission, `A2.4` protocol gating). |
+| **A2.5 UTF-8 Evidence Gating** | Added UTF-8 DFA positional gating to the copy circuit additive evidence (`PLAN-A-25`), eliminating out-of-boundary corruption and lifting product-entry recall to 28/104. |
+| **PLAN-A-26 Positional Readout** | Integrated positional encoding into mainline training (`predictive + position`). Proved model learns valid byte sequences on its own (tail-cut readability F0 P1=1.000 vs P0=0.375, v3 sentence success 288 vs 156 / 312). |
+| **Lock Selection Rules (A-27)** | Tested query-conditioned zero-training event selection rules (`byte_overlap` / `overlap_plus_content`), improving strict hit rate from natural 17–21 up to 30–35 / 104 (+9~14). |
+| **PLAN-A-29 Envelope Truncation** | Truncated unused identity organ key-store slots based on recorded `value_counts`. Product checkpoint envelope dropped from 87.9 MB to 12.3 MB (86% reduction) while bitwise output tensors remain 100% identical. |
 
-The authoritative execution order is the [current plan](plans/active/roadmap/03_CURRENT_EXECUTION.md),
-with the H3.6 target contract in [M5_R2_H3_6_PLAN_TARGET_GEOMETRY_CONTRACT_20260916.md](plans/reference/M5_R2_H3_6_PLAN_TARGET_GEOMETRY_CONTRACT_20260916.md),
-the matched-run preregistration in [M5_R2_H3_6B_MATCHED_RUN_PREREGISTRATION_20260916.md](plans/reference/M5_R2_H3_6B_MATCHED_RUN_PREREGISTRATION_20260916.md),
-the latest plumbing evidence in [taiji_r2_h3_6_target_encoder_smoke_20260916.json](reports/taiji_r2_h3_6_target_encoder_smoke_20260916.json),
-and the zero-step control/treatment evidence in [taiji_r2_h3_6b_control_preflight_20260916.json](reports/taiji_r2_h3_6b_control_preflight_20260916.json) and [taiji_r2_h3_6b_treatment_preflight_20260916.json](reports/taiji_r2_h3_6b_treatment_preflight_20260916.json). The H3.7 execution contract is [M5_R2_H3_7_FACTORIZED_RESPONSE_WORKSPACE_CONTRACT_20260917.md](plans/reference/M5_R2_H3_7_FACTORIZED_RESPONSE_WORKSPACE_CONTRACT_20260917.md), with committed-code preflight evidence in [taiji_r2_h3_7_control_preflight_20260917.json](reports/taiji_r2_h3_7_control_preflight_20260917.json) and [taiji_r2_h3_7_treatment_preflight_20260917.json](reports/taiji_r2_h3_7_treatment_preflight_20260917.json).
-
-The M5 K-axis scorecard remains valid as a parallel, limited mechanism result; it is not the
-current R2 language mainline and does not imply a default-runtime promotion.
+The authoritative execution order is maintained in [03 Current Execution](plans/active/roadmap/03_CURRENT_EXECUTION.md) and [Plan Index](plans/active/PLAN_INDEX.md).
 
 ## Status
 
-- Completed and committed: the TSK-v8 substrate and regression chain, structural-growth
-  mechanism gates, the M0–M2 foundation evidence, the limited M5 K-axis scorecard evidence,
-  the R2-H3.6-A target-plumbing implementation, and the completed H3.7
-  three-seed development/aggregate evidence described above.
-- Current boundary: the native language route has structured training and recovery evidence,
-  but no S2/L2 conversational capability has been established. `promotion_gate=false`,
-  `can_promote=false`, and `growth_admitted=false` remain the honest K-axis boundary; no
-  default-runtime owner or product rollout is implied.
-- Research status: the [consolidation record](plans/reference/PROJECT_CONSOLIDATION_20260917.md) is historical; subsequent work is recorded in the [results ledger](plans/reference/PROJECT_RESULTS_AND_CONCLUSIONS_20260917.md). Use [03](plans/active/roadmap/03_CURRENT_EXECUTION.md) for the current package, stop conditions and next decision, not older experiment descriptions on this page. Training fit, held-out behavior, integrated capability and product adoption are separate claims.
-- Honest boundary: this is a learning-mechanism research prototype, **not** a completed
-  cognitive architecture, not yet a general-purpose language model, and not a claim about AGI.
-  The current R2 work explicitly treats unreadable or non-transferring responses as failures to
-  resolve, not as completed model capability.
+- **Completed & committed**: TSK-v8 substrate regression chain; M5 bounded component exit; A2 inductive copy circuit; UTF-8 position-conditioned readout (`PLAN-A-26`); router envelope truncation (`PLAN-A-29`); Seed unified visual identity system; and Taiji Harness product shell integration.
+- **Current boundary**: The native language path has verified structural inductive mechanisms and valid byte decoding, but does **not** yet constitute a general-purpose conversational dialogue model. Held-out responses that are unreadable, repetitive, or non-transferring are classified as failures under investigation, not masked as capability.
+- **Honest boundary**: This is an active learning-mechanism research prototype, **not** an off-the-shelf general LLM, and makes no claims regarding AGI.
 
 ## Quick start
 
 ```bash
 python -m pip install -e ".[dev]"
 python scripts/training/verify_taiji_native_v7.py        # substrate regression chain
-python -m pytest tests -q                                # 1,194 Python tests currently collected
+python -m pytest tests -q                                # 2,270 Python tests currently collected
 ```
 
 Seed runtime compatibility API:
@@ -264,33 +234,30 @@ restored = Seed.from_checkpoint(checkpoint)
 Historical foundation training entry points (CPU): `scripts/training/train_taiji_foundation.py`,
 `train_taiji_memory.py`, `train_taiji_world_action.py`, `train_taiji_joint.py`.
 
-The current M5 evidence runners live in `scripts/training/`: `eval_taiji_m5_k_p4_7_capacity_clean_test.py`
-through `eval_taiji_m5_k_p4_13_promotion_course.py`. The read-only scorecard reducer is
-`audit_taiji_m5_k_axis_scorecard_v4.py`; it writes a report only when given an explicit
-`--report` path.
+Active training, evaluation and diagnostic probes live in `scripts/training/` (e.g. `probe_taiji_a27_*.py`, `train_taiji_langfloor.py`, `verify_taiji_native_v7.py`).
 
-## Product shell
+## Product shell: Taiji Harness
 
-The product UI is **Taiji Harness** (`taiji-harness/`, a fork of DeepSeek Harness kept in this
-repository). The Python side of this repository is the **local runtime** it talks to: start it
-with `python -m uvicorn api.app:app --host 127.0.0.1 --port 8000` after
-`python -m pip install -e ".[dev,legacy]"`, and Taiji Harness reaches it through its
-`taiji-local` provider route. See `taiji-harness/CONTRIBUTING.md` for the workspace's own
-build and start commands.
+The primary client UI is **Taiji Harness** (`taiji-harness/`, a dedicated repository fork built on modern TypeScript and Cordis/Electron architecture).
+
+The Python backend in this repository acts as its local AI runtime:
 
 ```bash
-python -m uvicorn api.app:app --host 127.0.0.1 --port 8000   # backend runtime
+# 1. Install dependencies
+python -m pip install -e ".[dev,legacy]"
+
+# 2. Launch FastAPI backend runtime
+python -m uvicorn api.app:app --host 127.0.0.1 --port 8000
 ```
 
-Environment knobs: `SEED_PORT` (default 8000), `SEED_HOST` (default 127.0.0.1),
-`SEED_RUNTIME=1` (activate the Seed native runtime on startup). Docker users can run
-`docker compose up --build`.
+Environment knobs:
+- `SEED_PORT`: default `8000`
+- `SEED_HOST`: default `127.0.0.1`
+- `SEED_RUNTIME=1`: activates the Seed native runtime on launch
 
-The product UI is **Taiji Harness** (`taiji-harness/`, a fork of DeepSeek Harness living in
-this repository). It runs as its own pnpm workspace and talks to this backend as its local
-model route (`taiji-local` → `http://127.0.0.1:8000/api/chat/stream`); see
-`taiji-harness/CONTRIBUTING.md` for its build and start commands. Historical beta evidence is
-in `reports/seed_public_beta_release_20260823.md`.
+Taiji Harness connects automatically to the local runtime via the `taiji-local` provider route (`http://127.0.0.1:8000/api/chat/stream`). To run the web client or desktop shell, refer to `taiji-harness/CONTRIBUTING.md`.
+
+Docker users can run `docker compose up --build`.
 
 ## Source layout
 
@@ -298,10 +265,11 @@ in `reports/seed_public_beta_release_20260823.md`.
 taiji/                  native architecture, organs, memory, K workers and G selection/solver
 seed/                   Seed compatibility API and runtime-facing model boundary
 seed_platform/          checkpoint, lineage, workbench and product runtime services
-api/                    FastAPI backend and training/workbench routes
-taiji-harness/          Taiji Harness (dsh fork): product UI, agent shell and packaging
-scripts/training/       verification, foundation training and M5 evidence runners
-tests/                  Python regression, API, runtime and ownership-contract tests
+api/                    FastAPI backend, streaming chat and workbench routes
+taiji-harness/          Taiji Harness: product UI, agent shell, desktop package (Cordis/Electron)
+design/                 visual identity assets, brand generators, icons and SVG pipelines
+scripts/training/       verification, foundation training and research probes
+tests/                  Python regression, API, runtime and ownership-contract tests (2,270 tests)
 reports/                committed, machine-readable evidence per milestone
 plans/                  active plan, frozen manifests and preregistered research contracts
 ```

@@ -231,6 +231,17 @@ output/manual-r5-canary/
 # 2026-09-17：manual-r5-canary 的历史测试残留（1052 项 / 31.4 GiB，DEBT-I7 第二实例）
 # 已归档至此目录（移动而非删除，可恢复）。属运行产物，不入库。
 output/_archived_manual-r5-canary_*/
+# H19 (2026-09-30): fork 子目录里的本机运行产物 —— 上面 `/.dsh-sbx*/` 带前导斜杠，
+# 按 R2「目录规则不覆盖子目录」只锚定仓库根，所以 `taiji-harness/.dsh-sbx2/` 一类会漏网。
+# 改为不带前导斜杠的通配，覆盖任意深度；同理 `undefined/temp/`：
+# 实测其下是 `temp/tsx-<uid>/<sha>` 结构，**目录名里带 Windows 用户 ID**（R3 机器指纹泄漏族）。
+taiji-harness/**/.dsh-sbx*/
+taiji-harness/undefined/
+
+# H19 (2026-09-30): `.zcodeignore` 是某编码工具照 `.gitignore` 复制的本地副本，
+# 与 `.gitignore` 重复且会各自漂移。工具若需要，应由 pre-commit 从 `.gitignore` 生成，
+# 不手工维护两份（同 `taiji-harness/THIRD_PARTY_NOTICES.md` 的「生成物不手改」原则）。
+.zcodeignore
 
 # Per-run diagnostics; retained locally, not research source or frozen evidence.
 outputs/project-audit-*/
@@ -253,6 +264,11 @@ focused-before.xml
 # 实验遗留的同族目录。带前导斜杠锚定在仓库根（R2），不会波及子目录里的同名物。
 # 四者在本仓库均无 tracked 文件（R4 反向检查通过）。工具缓存两枚此前漏网，按工具名写。
 /.tmp-*/
+# H19 (2026-09-30): 上面那条只写了 `.tmp-<主题>/`（**连字符**），而实际产出的临时文件用的是
+# `.tmp_<name>.<ext>`（**下划线**，如 `.tmp_ruff.json`、`.tmp_test_native.log`）—— 两者不是同一个 glob，
+# 于是这族文件全部漏网进了 git status。这正是 R1 说的"按实例名写"：规则作者以为自己覆盖了 `.tmp*`。
+# 这里补的是**命名约定**（`.tmp` 前缀的任意文件），不是逐个实例名。
+/.tmp_*
 /.m0-checkpoint-*/
 .mypy_cache/
 .ruff_cache/

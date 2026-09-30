@@ -1,24 +1,21 @@
 # Seed — Taiji 原生认知架构的运行时
 
-开发指导（2026-09-19）：主线仍是M5/R2。D8/v3多字值复制主门通过，但绑定未过、seed差异仍大；v4固定配方稳定门3/3失败，matched不放行。[下一步详案](plans/reference/M5_R2_D8_CLOSEOUT_NEXT_PLAN_20260919.md)记录这轮固定配方尺度系列收束；内容绑定方向已进入[实施合同草案](plans/reference/M5_R2_CONTENT_BINDING_CONTRACT_DRAFT_20260919.md)，下一步是静态数据与计算图/恢复实现门，训练尚未批准；尚未证明学习率是唯一原因或存在永久规模上限。[03](plans/active/roadmap/03_CURRENT_EXECUTION.md)仍是唯一活动队列，[VISION §19.12](plans/reference/VISION_FUTURE_TECHNOLOGY.md#1912-d8-a2后的推荐候选从发射延续转向可学习内容绑定)记录计算/学习方案，[阶段地图](plans/active/roadmap/01_SCOPE_AND_PHASES.md)与[交付标准](plans/active/roadmap/07_MINI_MODEL_DELIVERY.md)保留大阶段出口。计划不授权训练、不补发L2/L3或触发Mini交付；必要局部实验仍须限定范围授权。
+研究进展入口：[当前结果与结论总览](plans/reference/PROJECT_RESULTS_AND_CONCLUSIONS_20260917.md)（已验证成果、负结果、真实输出、证据边界与未完成项）。
+
+里程碑演进（2026-09-28）：**M5 限定退出已由项目所有者签署批准落盘**（[批准书](plans/reference/M5_EXIT_APPROVAL_20260920.md)）；当前大阶段主线推进至 **M6 产品交付**，并并行推进 **R2 / A 支线原生语言与归纳机制攻坚**。最低层可执行基座为 TSK-v8；原生预测读出已接入位置输入与 UTF-8 证据门控（`PLAN-A-26`）；产品复制回路（`PLAN-A-28`）与路由信封截断存储（`PLAN-A-29`，将出厂产品信封从 87.9 MB 缩减至 12.3 MB）均已闭环落地。产品外壳已全面聚焦至 **Taiji Harness**，打通 `taiji-local` 免密本地路由。权威执行项以 [03 当前执行](plans/active/roadmap/03_CURRENT_EXECUTION.md) 与 [开发计划索引](plans/active/PLAN_INDEX.md) 为准。
 
 Seed 是训练、评估、部署并托管 **Taiji** 的项目、产品与运行时。Taiji 是一个**原生认知架构**——从在线预测编码机制构建，而不是 Transformer 的包装。内核从**局部预测误差**中学习（无反向传播、无注意力矩阵、无上下文窗口、运行时无教师模型）；在内核之上，Taiji 拥有自己的表征、持续状态、记忆、目标、规划与行动选择，同时在合适处刻意复用成熟算法（embedding、SSM、MoE 式路由、优化器、检索）。Taiji 为之设计的一项关键能力，是**自我进化**——在学习中修订、生长并重组自己的结构（见[结构成长与协作](#结构成长与协作自我进化能力)）。
 
-不吹不黑：仓库同时包含 **Seed 产品外壳**与 **Taiji 研究运行时**。最低层可执行基座是
-**Taiji Substrate Kernel v8（TSK-v8）**；当前M5工作主线是R2原生语言能力，
-K轴学习与选择成果保留为独立的限定证据。这些都是正在工作的研究系统，不是已经发布的通用模型，
-也不是完整认知架构（见[现状](#现状)）。
+不吹不黑：仓库同时包含 **Seed 产品外壳**与 **Taiji 研究运行时**。最低层可执行基座是 **Taiji Substrate Kernel v8（TSK-v8）**。M5 四轴组件级证据已获验证，但通用语言对话能力仍处于攻坚阶段，模型行为与规则兜底严格分离记账（见[现状](#现状)）。
 
 ## 语言 / Language
-
-研究进展入口：[当前结果与结论总览](plans/reference/PROJECT_RESULTS_AND_CONCLUSIONS_20260917.md)（已验证成果、负结果、真实输出、证据边界与未完成项）。
 
 - **简体中文**：本页为中文项目介绍
 - **English version**: [README.md](README.md)
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
-[![tests](https://img.shields.io/badge/Python%20tests-1%2C194-green.svg)](.github/workflows/ci.yml)
+[![tests](https://img.shields.io/badge/Python%20tests-2%2C270-green.svg)](.github/workflows/ci.yml)
 
 ## 架构
 
@@ -135,53 +132,33 @@ M1 随后在 CPU 上训练这个闭环（课程 F1→F5、三个固定种子、�
 
 M2-0 完成三 seed 的首轮真实 F1→F4：延迟记忆召回达到 `0.87/0.85/0.87`，世界误差降到约 `3.5e-08`，目标行动成功率达到 `1.0`。M2-1 随后纠正了一项关键测量误区：F2 后看似 F1 崩塌的主因是长期情景记忆反馈泄漏进原始 byte 语言评分，而不是 F2 覆盖了 F1 权重。现在 raw-byte 学习、评分和 native generation 默认隔离长期记忆；将既有三个 child checkpoint 放入全新进程恢复后，F1 holdout 分别为 `4.826/4.931/4.805 BPB`，均优于 `5.942` unigram 基线，B2/B3/B4 同时保持不变。上述结果仍是历史基础基线；完整时间线与证据链接由[唯一执行计划](plans/active/roadmap/03_CURRENT_EXECUTION.md)维护。
 
-### 当前研究路线：R2 原生语言能力主线
+### 当前研究路线：原生语言能力与归纳复制回路
 
-当前主线是 R2 结构化语言路径：Taiji 仍是原生认知与输出 owner，回答通过原生 predictive
-readout 学习；每个候选都隔离、可保存恢复，并在 family-disjoint 的 train/dev/final episode
-上评价。仓库目前还没有形成 L2 对话模型，下面记录的是通向该目标的真实推进，而不是能力宣传。
+当前研究主线直面多轮对话中“预测编码动力学”与“归纳复制/检索”之间的结构性张力：
 
-| 阶段 | 结果 |
+| 阶段 / 事项 | 核心发现与验证结论 |
 |---|---|
-| R2-D0/P0 | 结构化 episode 边界、response-only 原生读出、原子 checkpoint 与全新恢复前置已落地 |
-| R2-H3.4 | UTF-8 与 end-marker 信用稳定，但未见条件回答的起点和 continuation 尚未迁移 |
-| R2-H3.5-A | signed-hash 回答计划候选在 final 前停止：目标几何不迁移，plan bridge 还可能干扰 renderer |
-| R2-H3.6 几何 | 三 seed 无训练审计选择 train-whitened native response state + compositional 字符 n-gram；这是目标设计结果，不是语言能力结果 |
-| R2-H3.6-A | 版本化 train-only target encoder、训练器接线与保存恢复 smoke 已在 12/8/4 fixture 通过；没有进行能力训练 |
-| H3.6-B 前置 | control/treatment 零步前置均通过，effective=276,610≤300,000，parent/恢复/target 血缘检查成立；`training_performed=false` |
-| H3.6-B 结果 | 六个 matched dev run 与三组只读 bridge ablation 已完成；seed 方向与非代理序列门失败，final 未读，不追加 epoch |
-| R2-H3.7 合同 | 已冻结 4-slot/48维/16-byte phase 分解式回答 workspace；byte error 显式更新 bridge 与当前 slot credit |
-| R2-H3.7 前置 | control (273,890) 与 treatment (277,970) 均已通过提交版本的 preflight；`training_performed=false`，三 seed dev 已获准进入 |
-| R2-H3.7 seed 20260917 | 首组 matched dev 已完成；dev sequence criterion 为 control/treatment=`0.25/0.25`，只读消融 normal/bridge/slot-credit=`0.25/0.125/0.0`；三 seed gate 尚未判定 |
-| R2-H3.7 seed 20260918 | 第二组 matched dev 已完成；dev sequence criterion 仍为 control/treatment=`0.25/0.25`，只读消融为`0.25/0.25/0.25`；等待最后一个 seed 后 aggregate |
-| R2-H3.7 aggregate | [三组 matched dev 与三组只读消融](reports/taiji_r2_h3_7_matched_dev_result_20260917.json) 已完成；aggregate 在 final 前停止，非代理方向为`0/0/0`，boundary 与因果消融门失败 |
-| R2-H3.7 attribution audit | [有界只读归因审计](reports/taiji_r2_h3_7_attribution_audit_20260917.json) 发现 target 对齐非零但不均匀、phase 概率面确实变化，但没有可迁移内容/readout收益 |
+| **M5 限定退出批准** | 2026-09-20 正式批准落盘。四轴（知识内化、协作、躯体在线循环、统一入口门）组件级证据通过；R2 对话能力明确记为已排除债务。 |
+| **A2 复制回路（A 支线）** | 验证纯预测表征缺乏单次归纳能力；建立专用归纳复制回路（`A2.1` 写入门控、`A2.2` 内容直读、`A2.3` 召回条件发射、`A2.4` 协议门控）。 |
+| **A2.5 UTF-8 证据门控** | 将 UTF-8 DFA 状态位置门控接入复制回路相加证据（`PLAN-A-25`），彻底消除越界乱码，产品入口召回率跃升至 28/104。 |
+| **PLAN-A-26 位置读出训练** | 将位置编码深度整合至主线训练（`predictive + position`）。证实模型无需外挂规则即可学会有效字节序列解码（截断可读率 F0 P1=1.000 vs P0=0.375，v3 整句成功数 288 vs 156 / 312）。 |
+| **锁定选择规则 (A-27)** | 实验验证了零训练的查询条件事件选择规则（`byte_overlap` / `overlap_plus_content`），严格命中数从原生 17–21 显著提升至 30–35 / 104 (+9~14)。 |
+| **PLAN-A-29 路由信封截断** | 根据真实运行记录的 `value_counts` 截断身份器官未使用的键槽。出厂模型信封体积从 87.9 MB 骤降至 12.3 MB（缩减 86%），逐位输出张量 100% 恒等。 |
 
-权威执行顺序见[当前推进计划](plans/active/roadmap/03_CURRENT_EXECUTION.md)；H3.6 目标合同见
-[M5_R2_H3_6_PLAN_TARGET_GEOMETRY_CONTRACT_20260916.md](plans/reference/M5_R2_H3_6_PLAN_TARGET_GEOMETRY_CONTRACT_20260916.md)，
-matched 预注册见[M5_R2_H3_6B_MATCHED_RUN_PREREGISTRATION_20260916.md](plans/reference/M5_R2_H3_6B_MATCHED_RUN_PREREGISTRATION_20260916.md)，
-最新 plumbing 证据见[taiji_r2_h3_6_target_encoder_smoke_20260916.json](reports/taiji_r2_h3_6_target_encoder_smoke_20260916.json)，
-control/treatment 零步证据见[taiji_r2_h3_6b_control_preflight_20260916.json](reports/taiji_r2_h3_6b_control_preflight_20260916.json)与[taiji_r2_h3_6b_treatment_preflight_20260916.json](reports/taiji_r2_h3_6b_treatment_preflight_20260916.json)；H3.7执行合同见[M5_R2_H3_7_FACTORIZED_RESPONSE_WORKSPACE_CONTRACT_20260917.md](plans/reference/M5_R2_H3_7_FACTORIZED_RESPONSE_WORKSPACE_CONTRACT_20260917.md)，提交版本的前置证据见[taiji_r2_h3_7_control_preflight_20260917.json](reports/taiji_r2_h3_7_control_preflight_20260917.json)与[taiji_r2_h3_7_treatment_preflight_20260917.json](reports/taiji_r2_h3_7_treatment_preflight_20260917.json)。
-
-M5 K 轴 scorecard 仍是有效的并行、限定范围机制结果；它不是当前 R2 语言主线，也不代表默认 runtime 晋级。
+权威执行顺序由 [03 当前执行](plans/active/roadmap/03_CURRENT_EXECUTION.md) 与 [开发计划索引](plans/active/PLAN_INDEX.md) 维护。
 
 ## 现状
 
-- 已完成并提交：TSK-v8 基座与回归链、结构成长机制 Gate、M0–M2 基础证据、限定范围的 M5
-  K 轴 scorecard、上文所述的 R2-H3.6-A 目标 plumbing，以及已完成的 H3.7
-  三 seed dev/aggregate 证据。
-- 当前边界：原生语言路线已有结构化训练与恢复证据，但尚未建立 S2/L2 对话能力。K 轴的
-  `promotion_gate=false`、`can_promote=false`、`growth_admitted=false` 仍保持诚实边界；不代表默认
-  runtime 已挂接 owner，也不代表产品 rollout 已发生。
-- 研究状态：[收束记录](plans/reference/PROJECT_CONSOLIDATION_20260917.md)保留历史范围，后继进展见[结果总览](plans/reference/PROJECT_RESULTS_AND_CONCLUSIONS_20260917.md)。当前包、停止条件与下一裁决以[03](plans/active/roadmap/03_CURRENT_EXECUTION.md)为准，不从本页旧实验介绍推导执行指令。训练拟合、未见实例行为、集成能力与产品采用分别记账。
-- 诚实边界：这是一个训练中的学习机制原型，**不是**完整的认知架构，尚不是通用语言模型，也不构成任何 AGI 主张。当前 R2 将不可读或不可迁移的回答视为待解决失败，不包装成模型能力。
+- **已完成并提交**：TSK-v8 基座与回归链；M5 限定组件退出；A2 归纳复制回路；UTF-8 位置感知读出（`PLAN-A-26`）；路由信封截断（`PLAN-A-29`）；Seed 统一视觉识别系统规范；Taiji Harness 桌面外壳与本地运行时打通。
+- **当前边界**：原生语言路线已证实结构化归纳机制与有效字节解码，但**尚未**构成通用端到端对话大模型。评估中不可读、复读或不可迁移的回答均作为待攻坚缺陷严格记账，不掩盖为完成态。
+- **诚实边界**：这是处于活跃研究中的自主学习机制原型，**不是**现成的商业通用大模型，亦不包含任何 AGI 夸大宣传。
 
 ## 快速开始
 
 ```bash
 python -m pip install -e ".[dev]"
 python scripts/training/verify_taiji_native_v7.py        # 基座回归链
-python -m pytest tests -q                                # 当前收集到 1,194 个 Python 测试
+python -m pytest tests -q                                # 当前收集到 2,270 个 Python 测试
 ```
 
 Seed 运行时兼容 API：
@@ -202,20 +179,30 @@ restored = Seed.from_checkpoint(checkpoint)
 历史 foundation 训练入口（CPU）：`scripts/training/train_taiji_foundation.py`、
 `train_taiji_memory.py`、`train_taiji_world_action.py`、`train_taiji_joint.py`。
 
-当前 M5 证据 runner 位于 `scripts/training/`：从
-`eval_taiji_m5_k_p4_7_capacity_clean_test.py` 到
-`eval_taiji_m5_k_p4_13_promotion_course.py`。只读 scorecard reducer 是
-`audit_taiji_m5_k_axis_scorecard_v4.py`；运行时必须显式传入 `--report` 输出路径。
+活跃的训练、评估与诊断探针位于 `scripts/training/`（如 `probe_taiji_a27_*.py`、`train_taiji_langfloor.py`、`verify_taiji_native_v7.py`）。
 
-## 产品外壳
+## 产品外壳：Taiji Harness
 
-产品界面是 **Taiji Harness**（`taiji-harness/`，本仓内保留的 DeepSeek Harness fork）。本仓 Python 侧是它对接的**本地运行时**：`python -m pip install -e ".[dev,legacy]"` 安装后以 `python -m uvicorn api.app:app --host 127.0.0.1 --port 8000` 起服务，Taiji Harness 经 `taiji-local` provider 路由直连它；workspace 自身的构建与启动命令见 `taiji-harness/CONTRIBUTING.zh.md`。
+首要客户端界面为 **Taiji Harness**（`taiji-harness/`，基于现代化 TypeScript 与 Cordis/Electron 桌面架构的独立专属 fork）。
+
+本仓库的 Python 后端作为其本地 AI 运行时：
 
 ```bash
-python -m uvicorn api.app:app --host 127.0.0.1 --port 8000   # 后端运行时
+# 1. 安装依赖
+python -m pip install -e ".[dev,legacy]"
+
+# 2. 启动 FastAPI 本地运行时
+python -m uvicorn api.app:app --host 127.0.0.1 --port 8000
 ```
 
-环境开关：`SEED_PORT`（默认 8000）、`SEED_HOST`（默认 127.0.0.1）、`SEED_RUNTIME=1`（启动时激活 Seed 原生运行时）。Docker 用户可执行 `docker compose up --build`；产品界面在 `taiji-harness/`（自带 pnpm workspace，构建与启动命令见 `taiji-harness/CONTRIBUTING.zh.md`）。历史 beta 证据见 `reports/seed_public_beta_release_20260823.md`。
+环境配置：
+- `SEED_PORT`：默认 `8000`
+- `SEED_HOST`：默认 `127.0.0.1`
+- `SEED_RUNTIME=1`：启动时激活 Seed 原生运行时
+
+Taiji Harness 通过 `taiji-local` 免密本地路由自动连接本地运行时（`http://127.0.0.1:8000/api/chat/stream`）。Web 界面或桌面客户端的构建与启动命令详见 `taiji-harness/CONTRIBUTING.zh.md`。
+
+Docker 用户可执行 `docker compose up --build`。
 
 ## 源码结构
 
@@ -223,10 +210,11 @@ python -m uvicorn api.app:app --host 127.0.0.1 --port 8000   # 后端运行时
 taiji/                  原生架构、器官、记忆、K worker 与 G 选择/求解器
 seed/                   Seed 兼容 API 与面向运行时的模型边界
 seed_platform/          checkpoint、谱系、Workbench 与产品运行时服务
-api/                    FastAPI 后端、训练与 Workbench 路由
-taiji-harness/          Taiji Harness（dsh fork）：产品界面、agent 外壳与打包
-scripts/training/       验证、foundation 训练与 M5 证据 runner
-tests/                  Python 回归、API、运行时与所有权合同测试
+api/                    FastAPI 后端、流式对话与 Workbench 路由
+taiji-harness/          Taiji Harness：产品界面、智能体外壳与桌面应用打包 (Cordis/Electron)
+design/                 视觉规范系统设计资产、品牌图标生成脚本与 SVG 管线
+scripts/training/       验证、基座训练与专项研究探针
+tests/                  Python 回归、API、运行时与所有权合同测试 (2,270 项测试)
 reports/                每个里程碑的机器可读、已提交证据
 plans/                  active 计划、冻结 manifest 与预注册研究合同
 ```

@@ -98,7 +98,15 @@ exclude = [
 # R4: I（isort）与 UP（pyupgrade）已从 advisory 转正为 blocking——
 # 存量 1922 处已清零（1761 自动修 + 275 废弃导入移除 + 10 处手工），随主门禁强制执行。
 # R6: B（bugbear）/ SIM（simplify）仍在 advisory（CI --select B,SIM 棘轮追踪）；
-# B008 为 FastAPI Depends/File 惯用法忽略；存量降至 <50 后评估并入主 select。
+# B008 为 FastAPI Depends/File 惯用法忽略。
+#
+# H19（2026-09-30）本仓自有树实测基线（ruff 0.16.4，`design/ scripts/ tests/ taiji/ seed/
+# seed_platform/ api/ neuroplex/ instruments/`）：**0 error**。
+# 其中 6 处是真 bug 不是风格——`F821 Undefined name 'Any'/'Path'`（4 个 scripts/training 探针 +
+# 1 个测试），因 `from __future__ import annotations` 让注解不求值，只在真跑到那一行才炸；
+# 已补 import。这类错误 ruff 报的是"名字没定义"，读代码时极容易滑过去，故登记在此。
+# B,SIM 自有树实测 59 处未清（B905 27 / B023 18 / B007 10 / SIM105 3 / SIM108 1），
+# 全部为 advisory；B023（闭包晚绑定）与 SIM105 需逐个判语义，不做批量自动改。
 select = ["E", "F", "W", "I", "UP"]
 ignore = ["E501", "E402", "E741", "B008"]
 
@@ -124,7 +132,18 @@ target-version = ["py310"]
 # Workbench direct-* trees are tracked fixtures, not Python source.  They
 # intentionally contain cross-language and malformed-language samples for the
 # IDE/language-boundary gates, so formatting must not rewrite or parse them.
-extend-exclude = "/(_libs|build|dist|node_modules|scripts/archive|direct-[^/]+)/"
+# H19 (2026-09-30): `run_taiji_unified_entry_evidence.py` is excluded for a
+# *semantic* reason, not a fixture one.  `audit_taiji_b0_n2_stop_reason_disposition.py`
+# freezes judgement site **J12** as the literal `"stop": "all_members_exhausted"})`
+# and `test_b0_n2_stop_reason_disposition_contract.py` asserts that literal is still
+# present as contiguous text.  Black reflows that call across many lines, which makes
+# J12 undetectable and flips `review_checks_passed` to False — the formatter and the
+# audit guard are in direct conflict.  Reformatting this file therefore requires first
+# updating the frozen J12 marker; until then formatting must not touch it.
+extend-exclude = """
+/(_libs|build|dist|node_modules|scripts/archive|direct-[^/]+)/
+^/scripts/training/run_taiji_unified_entry_evidence\\.py$
+"""
 
 [tool.coverage.run]
 source = ["seed", "taiji", "seed_platform", "neuroplex", "api"]
