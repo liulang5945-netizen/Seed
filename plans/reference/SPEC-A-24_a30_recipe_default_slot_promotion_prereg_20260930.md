@@ -64,6 +64,15 @@
   ⇒ 分母是 `--limit 24` 题 × 3 轮＝**72 次生成**；线＝`generations_cut_by_turn_marker ≥ 6`；
   守卫键 `all_surfaces_are_replayed_raw` 必须为 `true`，否则这张面读的是截断层、不算。
   **`--circuit` 不给＝出厂那面（无回路）**，那是另一张面：**不许**拿无回路面去比 §2ah 的 0/72（那是挂回路面）。
+  ⇒ **本件 2026-09-30 补一条实测更正**：`--circuit` 不给 **也不等于**"无回路面"——
+  `checkpoints/seed_beta_with_circuit.pt` 这类**带回路的信封在 `SeedRuntime.load` 里就自动挂载**
+  （冒烟读数：`mount_route=envelope_auto_mount`、`copy_circuit_present_after_load=true`）。
+  所以 L2 的取数面**按件里的 `mount_route` 判，不按命令行猜**；仪器自 v4 起加性存这三条
+  （`mount_route`／`copy_circuit_present_after_load`／`copy_evidence_utf8_gate_effective`）。
+  **另记一条我自己差点写错的口径**：证据门的**有效值不等于 `config` 那一位**——`taiji/config.py:236` 默认 `False`，
+  而 restore 的自动挂载分支会 `set_copy_evidence_utf8_gate(True)`（owner 裁定 (b)，`taiji/model.py:3497`）；
+  我第一版把 `config` 当成了有效值报出来（会读成"门是关的"），已就地改成报有效值并同带 `config`/`override` 两个成分。
+  **L2 在产品默认件（自动挂回路那面）上的基线读数尚未取**：在飞那次用的是修字段前的仪器，其 gate 列不作证据。
 * **L3**：`python scripts/training/probe_taiji_a30_ding3_transfer.py --retrain <新件> --base <对照件> --positions 300 --mask --out-report <新名>`
   ⇒ 键 `boundary_argmax_positions`，线＝两臂之差 ≥3；配对守卫 `prompts_sha256` 两边必须相等，
   件里 `format` 必须是 **v2**（互斥四支）；v1 件缺胜者列，属"字段不存在"而不是"算出了 0"。

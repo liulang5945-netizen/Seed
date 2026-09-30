@@ -366,11 +366,44 @@ def main() -> int:
 
     substrate.observe = original_observe  # type: ignore[method-assign]
     report = {
-        "format": "taiji-a30-stop-failure-v3",
+        "format": "taiji-a30-stop-failure-v4",
+        "format_note_v4": "v4 **加性**多存三条装配自述（`mount_route`／`copy_circuit_present_after_load`／"
+        "`copy_evidence_utf8_gate`），其余字段与算法一字未动 ⇒ 与 v3 同格可比。加它的理由：`--circuit` 不给 **不等于**"
+        '"出厂无回路面"——带回路的信封在 `SeedRuntime.load` 里会自动挂载，所以这张面是按命令行猜出来的。',
         "prereg": "plans/reference/PLAN-A-30_surface_repetition_localization_20260928.md §2f 第 3 条",
         "checkpoint": args.checkpoint,
         "circuit": args.circuit,
         "circuit_sha256": _payload_sha(args.circuit),
+        # 取数面按这三条判，不按命令行猜（v4）。
+        "mount_route": (
+            "enable_copy_circuit"
+            if args.circuit
+            else (
+                "envelope_auto_mount"
+                if getattr(runtime.model.substrate, "copy_circuit", None) is not None
+                else "none"
+            )
+        ),
+        "copy_circuit_present_after_load": (
+            getattr(runtime.model.substrate, "copy_circuit", None) is not None
+        ),
+        # 有效值不是 config 那一位：`taiji/config.py:236` 默认 False，而 restore 的自动挂载分支
+        # 会 `set_copy_evidence_utf8_gate(True)`（owner 裁定 (b)，见 `taiji/model.py:3497` 那段注释）。
+        # 只报 config 会把"门是开的"读成"门是关的"，故这里报**有效值**并同带两个成分。
+        "copy_evidence_utf8_gate_effective": bool(
+            (
+                runtime.model.substrate.config.copy_evidence_utf8_gate
+                if getattr(runtime.model.substrate, "_copy_evidence_utf8_gate_override", None)
+                is None
+                else bool(runtime.model.substrate._copy_evidence_utf8_gate_override)
+            )
+        ),
+        "copy_evidence_utf8_gate_config": bool(
+            runtime.model.substrate.config.copy_evidence_utf8_gate
+        ),
+        "copy_evidence_utf8_gate_override": getattr(
+            runtime.model.substrate, "_copy_evidence_utf8_gate_override", None
+        ),
         "repetition_penalty": args.penalty,
         "repetition_window": args.penalty_window,
         "max_length": args.max_length,
