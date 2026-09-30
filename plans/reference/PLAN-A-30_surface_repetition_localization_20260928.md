@@ -2087,7 +2087,19 @@ base 在任何 K 上恒 0.0；以及 §2am 的 `docs_with_false_fire`（无 floo
   0 对 6 的差距不是样本量问题；
   这一条要在 owner 的决策包里写成"未满足"，不能因为第 1 条成立而含糊过去。**第 3 条（F0 切尾感知 ≥0.5）＝尚未测**，
   命令就位且不需裁定：`python scripts/training/score_taiji_r2_copy_surface_extension.py --checkpoint output/a31_ding3_boundary/checkpoint.pt --out-report reports/taiji_f0_a31retrain_<日期>.json`
-  （同尺对照＝`--checkpoint output/a26_p1/checkpoint.pt`，那份同底读数 1.000 已在 §2ab 记录里）；
+  （同尺对照＝`--checkpoint output/a26_p1/checkpoint.pt`，那份同底读数 1.000 已在 §2ab 记录里）。
+  **但这一条预注册本身有个必须先修的歧义（登记，不改主线的判据文字）**：
+  "F0 无掩码切尾感知"这六个字**混指两台方向相反的仪器**——
+  (i) `probe_taiji_f0_language_floor.py`（件 `reports/taiji_f0_a26_p1_20260928.json`，尚未入库）
+  的 pass_line 是 `decodable_whole ≥ 0.5`、a26_p1 的 verdict 实测 **`floor_fail`**；
+  (ii) `score_taiji_r2_copy_surface_extension.py` 的"切尾感知"口径在两份文档里语义打架：
+  PLAN-A-25:113 写"一条非法字节都没有（切尾感知 **1.0000**）"（越高越好），
+  而 M5_R2:630 的表头是"切尾感知（**真非法率，越低越好**）"却把 1.0000 放在基座列。
+  ⇒ §2ab 引的那句"a26_p1 同底 1.000"**没有点名是哪台仪器**，而两台的判读方向不同：
+  按 (i) 判则 a26_p1 本身就没过线（"不回退"这个说法失去参照），按 (ii) 判则要先钉死方向。
+  **这条不修好，第 3 条无法诚实地判**——我已按 (ii) 同尺跑 a31 与 a26_p1 两档（件在跑，
+  `reports/taiji_f0_a31retrain_surface_20260930.json`／`..._a26p1_surface_recheck_...`），
+  但**点名仪器与方向**这件事属主线判据文字，我不在此单方面改写 §2ab。
   `--out-report` 必须显式给新名，别裸跑覆写封存件（DEBT 里那条"默认名会覆写封存报告"的教训）。
 * **本轮已入库的判读件**（16 份，全部 `git ls-files` 可核）：§2ai 三档（12／30／120 位置）、
   §2aj–§2an（教师强制面两臂、轨迹阈值两臂、比较式、带位置条件的 v3 与更正后 v8）、
