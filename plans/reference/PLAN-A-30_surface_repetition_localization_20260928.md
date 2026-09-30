@@ -2573,6 +2573,16 @@ python scripts/training/train_seed_corpus.py   --resume output/a26_p1/checkpoint
 乙 这条路要按"吃自己的输出在这一手是有害的"重开，剩下的候选只有①把自身轨迹**混进**语料分布（比例档）
 或②丙（产品在出口写死结构条件）——这两条都不该我自行选。
 
+**同轮追加的一档（判据先于数，写在仪器 `decide_ladder` 里，2026-09-30）**：
+v1 那三条臂**没锁住长度**，所以真正该定价的是"单位字节里有几个结束目标"这一维（§2y 当年漏掉的那一个）。
+新臂 `half`／`quarter`＝语料答案按自身长度 1/2、1/4 截短，**作者固定是语料、每答仍只收一次尾**，
+于是三档只差密度。判读线：`quarter − corpus ≥ 3` **且** `corpus ≤ half ≤ quarter`（单调）⇒ `length_holds`；
+`≤ −3` ⇒ `length_negative`；两端够但不单调 ⇒ `not_resolved_nonmonotone`；其余 ⇒ `not_resolved`。
+四支已在进程内逐一点过（`(2,5,8)→length_holds`、`(8,5,2)→length_negative`、`(2,8,5)→nonmonotone`、`(3,4,5)→not_resolved`），
+端到端冒烟（5 臂，n=4 提问）也跑通——**那条小档读数全为零、只作仪器可用性证据，不作结论**。
+`--save-arms` 现会把训后检查点落盘，因此这档一旦成立，可以接着用**已有仪器** `probe_taiji_a30_stop_failure.py`
+在 L2 那张面（真自停）上复测，而不是再造一条链。
+
 
 ## 8. 一页决策单（2026-09-30，A 支线；每条都带"已量到的数"和"批完之后拿什么核"）
 

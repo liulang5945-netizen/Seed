@@ -85,6 +85,9 @@ def _answer_stream(
     * `sized`＝语料答案按 `self` 的**字符长度**截短 ⇒ 体积与 `self` 同档、作者仍是语料。
       加这一档的理由：`self` 对 `corpus` 同时动了两个变量（作者＋喂入体积），
       而 `self` 对 `sized` 只差作者——没有中间档，读出任何方向都是对角线（本仓已有这条规矩）。
+    * `half`／`quarter`＝语料答案按**自身长度**的 1/2、1/4 截短 ⇒ 作者固定是语料、每答仍只收一次尾，
+      唯一变的是"单位字节里有几个结束目标"（＝§2y 那个没被定价的密度维）。
+      v1 里 `sized(8) > corpus(2)` 提示这一维可能在起作用，所以把它做成可单独检验的臂。
     """
 
     chunks: list[bytes] = []
@@ -94,10 +97,34 @@ def _answer_stream(
         elif mode == "sized":
             target = len(self_answers[question])
             answer = corpus_answer[:target] if target else corpus_answer
+        elif mode in ("half", "quarter"):
+            divisor = 2 if mode == "half" else 4
+            answer = corpus_answer[: max(1, len(corpus_answer) // divisor)]
         else:
             answer = corpus_answer
         chunks.append(f"问：{question}\n答：{answer}\n".encode("utf-8"))
     return chunks
+
+
+def decide_ladder(full_wins: int, half_wins: int, quarter_wins: int) -> str:
+    """长度／目标密度这条线（**先于数冻结**，作者固定在语料侧）：
+
+    * `quarter − full ≥ 3` 且 `full ≤ half ≤ quarter`（单调）⇒ `length_holds`
+      ——单位字节里结束目标越多，越容易在自身轨迹上胜出；
+    * `quarter − full ≤ −3` ⇒ `length_negative`；
+    * 两端差够但**不单调** ⇒ `not_resolved_nonmonotone`（中段不配合就不算剂量关系）；
+    * 其余 ⇒ `not_resolved`。
+    """
+
+    delta = quarter_wins - full_wins
+    monotone = full_wins <= half_wins <= quarter_wins
+    if delta >= 3 and monotone:
+        return "length_holds（full≤half≤quarter 且两端差 ≥3）"
+    if delta <= -3:
+        return "length_negative"
+    if delta >= 3:
+        return "not_resolved_nonmonotone（两端差够，但中段不单调）"
+    return "not_resolved"
 
 
 def train_arm(runtime: Any, chunks: list[bytes], *, epochs: int) -> dict[str, Any]:
@@ -188,6 +215,11 @@ def main() -> int:
     parser.add_argument("--mask", action="store_true", default=True)
     parser.add_argument("--out-report", required=True)
     parser.add_argument(
+        "--arms",
+        default="corpus,self,sized",
+        help="逗号分隔的臂列表；跑密度阶梯档时加 half,quarter（`corpus` 充当 full 那一档）",
+    )
+    parser.add_argument(
         "--save-arms",
         default=None,
         help="给了就把每臂训后的检查点存到这个目录（供 L2/L3 用**已有仪器**复测，不重抄生成链）",
@@ -222,13 +254,24 @@ def main() -> int:
             f"held-out 只拆出 {len(held_out)} 条提问，不足 {args.positions}（拒绝把样本量降下来悄悄跑）"
         )
 
+    arm_list = [a.strip() for a in args.arms.split(",") if a.strip()]
+    for required in ("corpus", "self", "sized"):
+        if required not in arm_list:
+            raise RuntimeError(
+                f"--arms 缺 {required} 臂 ⇒ 两条已冻判据算不出来，拒绝跑（不许静默降档）"
+            )
+    if args.save_arms and "checkpoints" in Path(args.save_arms).parts:
+        raise RuntimeError(
+            f"--save-arms 不许写进 checkpoints/（产品入口会枚举那目录，`DEBT-G15` 就是这么来的）：{args.save_arms}"
+        )
+
     # 生成一次，三臂共用同一份"自己写的答案"（`sized` 只用它的**长度**，不用它的内容）
     seed_runtime = SeedRuntime.load(base_path)
     self_answers = generate_self_answers(seed_runtime, pairs, gen_max=args.gen_max)
     del seed_runtime
 
     runs: dict[str, Any] = {}
-    for arm in ("corpus", "self", "sized"):
+    for arm in arm_list:
         runtime = SeedRuntime.load(base_path)
         sha_at_load = hashlib.sha256(base_path.read_bytes()).hexdigest()[:16]
         gap = facade_gap(runtime)
@@ -268,7 +311,10 @@ def main() -> int:
     )
 
     report = {
-        "format": 2,
+        "format": 3,
+        "format_note_v3": "v3 **加性**：新增 `--arms`（默认 corpus,self,sized；跑密度阶梯加 half,quarter）、"
+        "`decide_ladder` 这条先冻线与其结果 `verdict_length_ladder`、`bytes_by_arm`/`wins_by_arm` 扩到所有在跑的臂、"
+        "以及 `--save-arms` 拒绝写进 checkpoints/ 的守卫。v1/v2 的喂入形状、主判据与测量函数一字未动 ⇒ 同格可比。",
         "format_note_v2": "v2 **加性**多存 `verdict_matched_volume`／`bytes_by_arm`／`wins_by_arm` 三条，"
         "并把体积配平对照冻成第二线；主判据 `decide`、喂入形状、测量函数一字未动 ⇒ 与 v1 同格可比。",
         "question": "乙：训练吃过模型自己写的答案，能否让自身轨迹接缝上的胜出离开零（唯一变量＝答案作者）",
@@ -300,12 +346,19 @@ def main() -> int:
         "verdict": decide(self_wins, corpus_wins),
         # v2 加性两条：体积配平后的作者对照，与三臂字节数（v1 的 note 只点了两臂）。
         "verdict_matched_volume": decide_matched(self_wins, sized_wins),
-        "bytes_by_arm": {
-            arm: runs[arm]["train"]["trained_text_bytes"] for arm in ("corpus", "self", "sized")
-        },
+        # 密度阶梯档：只有跑了 half/quarter 才有这条（作者固定语料，变的是单位字节里的目标数）
+        "verdict_length_ladder": (
+            decide_ladder(
+                corpus_wins,
+                runs["half"]["transfer"]["boundary_argmax_positions"],
+                runs["quarter"]["transfer"]["boundary_argmax_positions"],
+            )
+            if ("half" in runs and "quarter" in runs)
+            else "not_run（--arms 没带 half,quarter）"
+        ),
+        "bytes_by_arm": {arm: runs[arm]["train"]["trained_text_bytes"] for arm in arm_list},
         "wins_by_arm": {
-            arm: runs[arm]["transfer"]["boundary_argmax_positions"]
-            for arm in ("corpus", "self", "sized")
+            arm: runs[arm]["transfer"]["boundary_argmax_positions"] for arm in arm_list
         },
         "started_utc": datetime.now(timezone.utc).isoformat(),
     }
