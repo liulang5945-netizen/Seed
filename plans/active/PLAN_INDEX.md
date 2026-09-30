@@ -114,6 +114,15 @@
 屏幕不动 ⇒ 按约定不花那次表层整跑。**键/寻址那侧今天连排三支**：幅度（§17）、聚合（§23）、
 离线好解 transplant（§19/§20）——只剩"要不要动内容表征"这一条**需要签字**的路。
 
+**队首（2026-10-01 rev67：自写档三线全过 ⇒ 重出默认基座已执行）**——
+自写档 `a31_chunked_self`（a26_p1 起、分块喂法＋自答表 14k＋≈+2M）**三线全过**：L1 **39/6**、L2 **13/72**、L3 **18/300**，
+且 F0 严格整句口径 **`floor_pass`**（T1b 0.812；基座与 formal self 均 floor_fail）——件见
+[PLAN-A-30 §2bh/§7c](../reference/PLAN-A-30_surface_repetition_localization_20260928.md)。
+按 owner"未及时决策按推荐推进"授权**已执行重出**（`e91fc1a3`）：默认换到
+`checkpoints/seed_a31self_with_circuit.pt`（12,627,371 B、sha `d6169a35…`）；**回滚点**＝旧件
+`seed_beta_with_circuit.pt`（sha `f9343433…`，在盘、清单在册）；来源清单/隔离契约/守卫（23 绿）全对齐；
+全量门禁复跑在飞。**作者规律**：L1 挂回路格跟"答案作者"走（自写过、语料侧卡）。
+
 **队首（2026-09-30 rev66：owner 裁定①批（分块喂法进主线）＋②先补 L3；L3 已齐，候选档案出）**——
 ①**分块喂法已进主线**（`d7e3bcc9`：`--answer-chunking per-answer`＋`--answer-max-chars`，守卫 6 含节奏守卫），
 确认档 `output/a31_chunked_short/` 在跑（分块短答 ≤32 字符、+2M，约 3 小时）。
