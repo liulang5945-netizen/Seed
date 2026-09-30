@@ -1124,3 +1124,5 @@ owner 已裁定 18 行那枚走"批准新增分类条目"（人工评审＝本�
 
 给下一格的确定性：脚本已修好，落地只需**一条命令**（`land2.py` ＋ 移动 import ＋ `land3.py` ＋ paths ＋ gateway files ＋ install ＋ build），然后**只欠一件事**＝把 vitest 那份日志按顶层汇总读、定位 rc=1 的具体用例（要么是我这次改宽后 `close()` 唤醒语义的行为差，要么是本就存在的红）。三处绿（build／duplication 0 枚／deps）已两次复现，这枚克隆的消法不再是未知。
 
+㊵-128 落盘后自查：**该条里"脚本已修好／落地只需一条命令"两句不实**——我修补 `land3.py` 的那次 `python -c` 自身因引号嵌套报 SyntaxError 失败，`add_ref` 里的裸字符串插入并未改成对象形式，仍是那个会产生非法 JSON 的版本（本轮撤回后 `.dsh-sbx2/land3.py` 现状＝带 bug）。同时本链条后段的 `git commit` 未产生可见输出，提交是否落地按下面这条实测为准。下一格要用的正确顺序＝①先把 `add_ref` 改成写 `{ "path": ... }` 对象形式并用 `validate.py` 复验 invalid=0，②再跑整串落地，③然后才只需归因 vitest 那份日志。
+
