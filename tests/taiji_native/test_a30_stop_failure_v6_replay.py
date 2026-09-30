@@ -79,6 +79,9 @@ def test_instrument_carries_v6_and_the_correction_note() -> None:
     assert "format_note_v6" in source
     assert "追加二" in source and "深帧复现" in source
     assert "all_surfaces_are_replayed_raw" in source
+    #: 早停计数更正：eating 按 fed≥预算判、新增边界自停列（追加四）。
+    assert '"generations_boundary_self_stop"' in source
+    assert 'if check["fed_bytes"] >= args.max_length' in source
     #: 旧分类退役：新比较只产生 None／surface_differs_from_replay 两种取值
     #: （历史件里的 replay_tiny_feed 字段仍在，读旧件不受影响）。
     assert 'else "surface_differs_from_replay"' in source

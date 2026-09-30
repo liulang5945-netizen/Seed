@@ -390,6 +390,15 @@ def main() -> int:
             "generations_cut_by_turn_marker": sum(
                 1 for check in surface_checks if check["turn_marker_fired"]
             ),
+            # v6 更正（第三处仪器缺陷，§2bb-追加四）：`eating_full_budget` 的旧定义
+            # （非 marker 切割数）把**边界符自停**（fed < 预算＝生成环唯一的提前出口，
+            # `break` 在 observe 之前）全数误标成"吃满预算"。真终止的两种形态都必须点数：
+            "generations_boundary_self_stop": sum(
+                1 for check in surface_checks if check["fed_bytes"] < args.max_length
+            ),
+            "generations_eating_full_budget": sum(
+                1 for check in surface_checks if check["fed_bytes"] >= args.max_length
+            ),
             "argmax_mismatch_steps": sum(1 for row in item_rows if not row["emitted_is_argmax"]),
             "surface_matches_replayed_raw": all(
                 check["surface_is_replayed_raw"] for check in surface_checks
@@ -438,15 +447,19 @@ def main() -> int:
     substrate.observe = original_observe  # type: ignore[method-assign]
     report = {
         "format": "taiji-a30-stop-failure-v6",
-        "format_note_v6": "v6 **换比较的表示层**（诊断更正，见 §2bb-追加三）：v5 的逐位比较是"
-        "『raw 重放 vs `chat()` 返回值』，而早停样本（边界符胜出即 break，fed 极短）的返回值是"
+        "format_note_v6": "v6 **换比较的表示层＋更正早停计数**（诊断更正，见 §2bb-追加三/追加四）："
+        "（一）v5 的逐位比较是『raw 重放 vs `chat()` 返回值』，而早停样本（边界符胜出即 break，fed 极短）的返回值是"
         "**器官占位句**（`NativeReadableTextLanguageOrgan._fallback_text`）——V019 首轮 1 字节生成"
         "对应 44 字占位句，逐位比较必然不等，L2 要测的成功被记成面违规。v6 的重放改走"
         "**完整产品面链**（`replay_surface_from_fed`：decode → marker 切割 → **同一个器官实例** emit）"
         "再与返回值比较；`replay_tiny_feed` 这一分类随之退役（深帧复现证明 prompt 的 50 字节全部在案，"
-        "追加二『没复现 prompt』的误诊被纠正）。`all_surfaces_are_replayed_raw` 与"
-        " `replay_suspect_generations` 的**公式不变**（后者改数 `surface_differs_from_replay`），"
-        "严格性不降：真正被产品链改过的面仍然红。",
+        "追加二『没复现 prompt』的误诊被纠正）。"
+        "（二）`generations_eating_full_budget` 的旧定义（`generations − marker 切割数`）把**边界符自停**"
+        "（fed < 预算＝生成环唯一提前出口）误标成吃满预算——v4/v5 的『早停 1/72、5/72』数的其实是"
+        "marker 切割；真正的边界自停（对照件 0/72、self/quarter 各 19/72）从未被点数。v6 起"
+        " `eating_full_budget` 按 `fed ≥ max_length` 判，新增 `generations_boundary_self_stop`。"
+        "`all_surfaces_are_replayed_raw` 与 `replay_suspect_generations` 的**公式不变**"
+        "（后者改数 `surface_differs_from_replay`），严格性不降：真正被产品链改过的面仍然红。",
         "format_note_v5": "v5 **加性**：每条 `surface_checks` 多一列 `mismatch_reason`"
         "（`replay_tiny_feed`＝回放侧只归到 <8 个符号，属**仪器归类缺陷**；`surface_differs_from_replay`＝真的面不一致），"
         "聚合里多一条 `replay_suspect_generations`。**严格守卫 `all_surfaces_are_replayed_raw` 一字未动**"
@@ -519,8 +532,12 @@ def main() -> int:
             "generations_cut_by_turn_marker": sum(
                 row["generations_cut_by_turn_marker"] for row in per_item
             ),
+            # v6 更正：两列都改由 fed 字节直接判定（见 per_item 同名字段的注释）。
+            "generations_boundary_self_stop": sum(
+                row["generations_boundary_self_stop"] for row in per_item
+            ),
             "generations_eating_full_budget": sum(
-                row["generations"] - row["generations_cut_by_turn_marker"] for row in per_item
+                row["generations_eating_full_budget"] for row in per_item
             ),
             "base_sha256_unchanged": _sha256(checkpoint) == sha_before,
         },

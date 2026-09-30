@@ -2811,6 +2811,45 @@ v1 那三条臂**没锁住长度**，所以真正该定价的是"单位字节里
 下一格不需签字：修首轮符号归类/回放 ⇒ `V019` 的 `all_surfaces_are_replayed_raw` 转 true 且 `replay_suspect_generations` 归零
 ⇒ 再复测两臂 L2 ⇒ 那之后才允许落 `SPEC-A-24` §8 的三分支；在那之前**一律不落**。
 
+**§2bb-追加三（深帧复现纠正追加二的误诊；v6 面比较放到同一表示层）**：
+把 `substrate.observe` 的包装器换成抓**全帧链**的版本只跑 `V019` 首轮一次，53 次 observe 的构成实测＝
+**1 告知（`record_told_history:92`）＋1 边界（`generate:3078`）＋50 prompt（`generate:3087`）＋1 生成（`generate:3163`）**
+⇒ 追加二"首轮只喂 1 字节、没复现 prompt"**不成立**——prompt 的 50 字节全部在案，1 字节是**生成环的真实产量**：
+模型吐 1 字节后边界符即胜 argmax，`break` 在 observe 之前 ⇒ 这是**真早停**，正是 L2 要测的成功。
+追加二读到的那张"完整成句"答复头（`我已收到你的问题："…`）是**器官占位句模板**
+（`NativeReadableTextLanguageOrgan._fallback_text`：1 字节 raw 经 `trim_partial_tail`/decode 不可读 ⇒ 整句替换），
+不是模型输出；4f19a660 的"表示层差异"假设由此恢复成立。
+⇒ 修法＝`replay_surface_from_fed`：重放走**完整产品面链**（decode → marker 切割 → **同一个器官实例** emit）
+再与 `chat()` 返回值比较；`replay_tiny_feed` 分类退役。守卫 9 条（`test_a30_stop_failure_v6_replay.py`）。
+复跑 `V019`：`all_surfaces_are_replayed_raw` **转 true**、`replay_suspect_generations` **归零**
+（件 `reports/taiji_a30_stop_failure_v019_only_v6_20260930.json`；gen 0 fed=1 match=true，gen 1-2 的 256 字吃满照旧是真行为）。
+
+**§2bb-追加四（第三处仪器缺陷：`eating_full_budget` 把边界自停误标成吃满预算；L2 主列全线更正）**：
+按修正后的逐条数据复核全部 stop_failure 件，发现 v3-v5 的聚合定义
+`eating = generations − marker 切割数` **把边界符自停（fed < 预算＝生成环唯一提前出口，码上事实：
+环内唯一 `break` 就是边界条件，`stop_at_boundary=True` 恒由 `chat()` 传入）全数标成"吃满预算"**。
+逐件修正读数（fed<256 计边界自停、fed=256 才是吃满）：
+
+| 件（臂/面） | 边界自停 | marker 切割 | 真吃满 256 | 守卫 |
+|---|---|---|---|---|
+| 同底对照 a26_p1（挂/不挂回路，09-29 两件） | **0**/72 | 0 | 72 | true |
+| 装机件 defaultload（09-30） | **0**/72 | 0 | 72 | true |
+| a31 配方臂（挂/不挂回路，09-29 两件） | **2**/72 | 0 | 70 | true |
+| **self 臂** | **19**/72 | 0 | 53 | true |
+| **quarter 臂**（v4 守卫 false 的那份同数据） | **19**/72 | 1 | 53 | v6 转 true |
+| **sized 臂**（v4 守卫本 true，复测确认） | **1**/72 | 5 | 71 | true |
+
+⇒ 此前"早停 1/72、5/72"数的全是 marker 切割；真正的边界自停从未被点数。
+**§8 三分支（按 quarter 臂冻结）落地＝≥6 分支命中**：quarter 19/72（对照同底件 0/72、装机件 0/72，Δ=+19）
+⇒ **密度可买到真自停，该臂有资格提正式训练档**（训练机时的 owner 项照旧，不改产品默认位、不改判据）。
+三条诚实边界照记：①L2 量的是轨迹终止，**早停答案的内容质量是词汤**（L1 的职责，两条不相顶）；
+②19 次自停**全部发生在第 0 轮（无历史）**，带历史的第 1/2 轮 72 次全吃满——停止行为还没活过轮次History；
+③密度归因不干净：self（作者答案）与 quarter（1/4 短答）同为 19/72，而 sized（更短）反读 1/72——
+"越密越会停"的剂量故事不成立，能写的只是"两种密度设置买到了自停、一种没买到"。
+仪器 v6（提交 `d25d2acf`＋本次聚合更正）守卫 9 绿；修正后件：
+`reports/taiji_a30_stop_failure_onpolicy_quarter_v6_20260930.json`、
+`reports/taiji_a30_stop_failure_onpolicy_sized_v6_20260930.json`。
+
 
 ## 8. 一页决策单（2026-09-30，A 支线；每条都带"已量到的数"和"批完之后拿什么核"）
 
