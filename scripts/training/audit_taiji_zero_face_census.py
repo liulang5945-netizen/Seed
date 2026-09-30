@@ -212,9 +212,7 @@ def census(checkpoint: Path) -> dict[str, Any]:
             "zero_share_of_learnable": (
                 round(zero_params / total_params, 6) if total_params else None
             ),
-            "identity_organ_faces": sum(
-                1 for face in faces if "identity_organ" in face["face"]
-            ),
+            "identity_organ_faces": sum(1 for face in faces if "identity_organ" in face["face"]),
             "identity_organ_params": identity_total,
             "identity_organ_zero_params": identity_zero_params,
             "zero_params_excluding_identity_organ": zero_params - identity_zero_params,
@@ -257,7 +255,9 @@ def main(argv: list[str] | None = None) -> int:
     )
     args = parser.parse_args(argv)
 
-    checkpoint = args.checkpoint if args.checkpoint.is_absolute() else PROJECT_ROOT / args.checkpoint
+    checkpoint = (
+        args.checkpoint if args.checkpoint.is_absolute() else PROJECT_ROOT / args.checkpoint
+    )
     if not checkpoint.exists():
         raise SystemExit(f"checkpoint missing: {checkpoint}")
     report = args.report

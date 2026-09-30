@@ -34,7 +34,7 @@ OBSERVE_KWARGS = {
 }
 
 #: 一段含 1/2/3 字节 UTF-8 序列与 ASCII 的字节流（覆盖 remaining 的四种取值）。
-SAMPLE = "a中bé€c".encode("utf-8")
+SAMPLE = "a中bé€c".encode()
 
 
 def _config(*, position: bool = False) -> TaijiConfig:
@@ -60,6 +60,7 @@ def _feed(model: Taiji, data: bytes) -> None:
 
 
 # ---------------------------------------------------------------- 守卫 1：默认关
+
 
 def test_default_config_keeps_payload_and_shape_unchanged() -> None:
     config = _config()
@@ -91,6 +92,7 @@ def test_disabled_readout_ignores_position_state() -> None:
 
 # ---------------------------------------------------------------- 守卫 2：零初始化惰性
 
+
 def test_enabled_position_input_is_bit_inert_until_trained() -> None:
     plain = _model(_config())
     enabled = _model(_config(position=True))
@@ -104,8 +106,10 @@ def test_enabled_position_input_is_bit_inert_until_trained() -> None:
     #: 位置列零初始化：权重全零，且不改变 `SparseSynapses` 的拓扑与初值。
     assert float(enabled_readout.position_weight.abs().sum().item()) == 0.0
     torch.testing.assert_close(
-        enabled_readout.synapses.edge_weight, plain.predictive_readout.synapses.edge_weight,
-        rtol=0, atol=0,
+        enabled_readout.synapses.edge_weight,
+        plain.predictive_readout.synapses.edge_weight,
+        rtol=0,
+        atol=0,
     )
     #: 只读推理（learn=False）下，开启与关闭必须逐位同 —— 零列不移动任何 logit。
     for symbol in SAMPLE:
@@ -115,6 +119,7 @@ def test_enabled_position_input_is_bit_inert_until_trained() -> None:
 
 
 # ---------------------------------------------------------------- 守卫 3：被走到
+
 
 def test_enabled_position_input_is_wired_for_prediction_and_learning() -> None:
     model = _model(_config(position=True))
@@ -139,14 +144,13 @@ def test_enabled_readout_refuses_missing_position_state() -> None:
 
 def test_position_state_outside_dfa_range_is_rejected() -> None:
     readout = _readout(_config(position=True))
-    context = torch.randn(
-        _config().motor_context_dim, generator=torch.Generator().manual_seed(13)
-    )
+    context = torch.randn(_config().motor_context_dim, generator=torch.Generator().manual_seed(13))
     with pytest.raises(ValueError, match="outside the 0..3"):
         readout.probabilities(context, position_state=UTF8_POSITION_DIM)
 
 
 # ---------------------------------------------------------------- 语义钉
+
 
 def test_position_class_tracks_the_shared_utf8_state_machine() -> None:
     model = _model(_config(position=True))
@@ -174,6 +178,7 @@ def test_disabled_config_leaves_state_payload_without_position_key() -> None:
 
 # ---------------------------------------------------------------- payload 往返
 
+
 def test_position_columns_round_trip_and_refuse_cross_config_load() -> None:
     enabled = _readout(_config(position=True))
     with torch.no_grad():
@@ -182,9 +187,7 @@ def test_position_columns_round_trip_and_refuse_cross_config_load() -> None:
     assert BytePredictiveReadout.POSITION_PAYLOAD_KEY in payload
     restored = _readout(_config(position=True), seed=2)
     restored.load_payload(payload)
-    torch.testing.assert_close(
-        restored.position_weight, enabled.position_weight, rtol=0, atol=0
-    )
+    torch.testing.assert_close(restored.position_weight, enabled.position_weight, rtol=0, atol=0)
     #: 开启的档载进关闭的读出器 ⇒ 响亮失败（不许静默丢列）。
     disabled = _readout(_config())
     with pytest.raises(ValueError, match="position columns"):

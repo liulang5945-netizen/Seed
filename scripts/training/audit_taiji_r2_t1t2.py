@@ -70,9 +70,9 @@ def main() -> int:
     from taiji import TaijiConfig
 
     values = dict(
-        torch.load(PROJECT_ROOT / "checkpoints" / "seed_beta.pt", map_location="cpu", weights_only=False)[
-            "config"
-        ]["taiji"]
+        torch.load(
+            PROJECT_ROOT / "checkpoints" / "seed_beta.pt", map_location="cpu", weights_only=False
+        )["config"]["taiji"]
     )
     values.pop("receptors_factored", None)
     config = SeedConfig(taiji=TaijiConfig.from_dict(values))
@@ -90,7 +90,9 @@ def main() -> int:
     # ---- B. f6 敏感性 ----
     tick0 = Seed(config, episode_id="audit-tick0")
     trained = Seed.from_checkpoint(
-        torch.load(PROJECT_ROOT / "checkpoints" / "seed_beta.pt", map_location="cpu", weights_only=False)
+        torch.load(
+            PROJECT_ROOT / "checkpoints" / "seed_beta.pt", map_location="cpu", weights_only=False
+        )
     )
     sensitivity = {}
     for name, families in (("six_families", FAMILIES), ("five_families_no_f6", CLEAN)):
@@ -112,7 +114,11 @@ def main() -> int:
             )
     out = PROJECT_ROOT / "reports" / "taiji_r2_t1t2_second_audit_20260923.json"
     out.write_text(
-        json.dumps({"determinism": determinism, "f6_sensitivity": sensitivity}, ensure_ascii=False, indent=2)
+        json.dumps(
+            {"determinism": determinism, "f6_sensitivity": sensitivity},
+            ensure_ascii=False,
+            indent=2,
+        )
         + "\n",
         encoding="utf-8",
     )

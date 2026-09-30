@@ -666,8 +666,7 @@ class ArtifactInternalizationTrainer:
             replay_records = tuple(
                 record
                 for record in procedural_retention
-                if record.action_intent is not None
-                and record.action_intent.kind in train_kinds
+                if record.action_intent is not None and record.action_intent.kind in train_kinds
             )
             if replay_records:
                 procedural_trial.consolidate(

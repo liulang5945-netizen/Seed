@@ -45,8 +45,18 @@ FAMILIES: list[dict[str, Any]] = [
     {"id": "f2", "skeleton": "{a}的时候我常常{b}", "a": ["早上", "晚上"], "b": ["读书", "写字"]},
     {"id": "f3", "skeleton": "他喜欢{a}还是{b}", "a": ["春天", "冬天"], "b": ["音乐", "美术"]},
     {"id": "f4", "skeleton": "{a}的味道和{b}很像", "a": ["苹果", "香蕉"], "b": ["蜂蜜", "柠檬"]},
-    {"id": "f5", "skeleton": "请你告诉我{a}和{b}的区别", "a": ["学习", "工作"], "b": ["时间", "空间"]},
-    {"id": "f6", "skeleton": "我昨天{a}所以今天{b}", "a": ["熬夜", "早起"], "b": ["很累", "很精神"]},
+    {
+        "id": "f5",
+        "skeleton": "请你告诉我{a}和{b}的区别",
+        "a": ["学习", "工作"],
+        "b": ["时间", "空间"],
+    },
+    {
+        "id": "f6",
+        "skeleton": "我昨天{a}所以今天{b}",
+        "a": ["熬夜", "早起"],
+        "b": ["很累", "很精神"],
+    },
 ]
 
 
@@ -102,7 +112,9 @@ def probe_checkpoint(label: str, checkpoint: Path, runtime_cls: Any) -> dict[str
                 "kl_a_to_a1": round(kl_a, 8),
                 "kl_b_to_b1": round(kl_b, 8),
                 "kl_both": round(kl_ab, 8),
-                "kl_interaction_ratio": round(kl_ab / (kl_a + kl_b), 6) if (kl_a + kl_b) > 0 else None,
+                "kl_interaction_ratio": (
+                    round(kl_ab / (kl_a + kl_b), 6) if (kl_a + kl_b) > 0 else None
+                ),
                 "prompts": {k: cells[k]["prompt"] for k in ("00", "10", "01", "11")},
             }
         )
@@ -160,9 +172,7 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument(
         "--arm-a",
-        default=str(
-            PROJECT_ROOT / "output" / "taiji_r2_readout_retrain" / "A" / "checkpoint.pt"
-        ),
+        default=str(PROJECT_ROOT / "output" / "taiji_r2_readout_retrain" / "A" / "checkpoint.pt"),
     )
     parser.add_argument("--out-report", default=None)
     parser.add_argument("--dry-run", action="store_true", help="只跑基座，验证管线")
@@ -214,7 +224,9 @@ def main() -> int:
         "checkpoints": results,
     }
     report_path.parent.mkdir(parents=True, exist_ok=True)
-    report_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    report_path.write_text(
+        json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print(json.dumps({"status": payload["status"], "report": str(report_path)}))
     for label, entry in results.items():
         s = entry["summary"]

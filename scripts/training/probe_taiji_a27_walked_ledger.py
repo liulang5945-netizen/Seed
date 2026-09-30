@@ -117,7 +117,9 @@ def _install(root: Any, counter: dict[str, int], installed: list[tuple[Any, str]
             continue
         target, original = found
 
-        def wrapped(*args: Any, _label: str = label, _original: Any = original, **kwargs: Any) -> Any:
+        def wrapped(
+            *args: Any, _label: str = label, _original: Any = original, **kwargs: Any
+        ) -> Any:
             counter[_label] += 1
             return _original(*args, **kwargs)
 
@@ -164,9 +166,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--checkpoint", default="checkpoints/seed_beta.pt")
     parser.add_argument("--circuit", default=None, help="可选：装上复制回路再普查")
-    parser.add_argument(
-        "--out-report", default="reports/taiji_a27_walked_ledger_20260928.json"
-    )
+    parser.add_argument("--out-report", default="reports/taiji_a27_walked_ledger_20260928.json")
     args = parser.parse_args()
 
     from api.seed_runtime import SeedRuntime
@@ -245,7 +245,8 @@ def main() -> int:
     report["instrument_guard"] = {
         "base_sha256_unchanged": _sha256(checkpoint) == sha_before,
         "instrumentation_is_behavior_neutral": (
-            output_under_instrumentation.get("generate") == hashlib.sha256(baseline_output).hexdigest()
+            output_under_instrumentation.get("generate")
+            == hashlib.sha256(baseline_output).hexdigest()
         ),
         "every_entry_has_denominator": all(coverage[entry]["calls"] > 0 for entry in entries),
     }
@@ -267,7 +268,9 @@ def main() -> int:
         print(label.ljust(28) + "".join(cells))
     print()
     for entry in entries:
-        print(f"{entry}: 未装配 {len(coverage[entry]['absent'])} 个零件；被走到 {len(walked[entry])} 个")
+        print(
+            f"{entry}: 未装配 {len(coverage[entry]['absent'])} 个零件；被走到 {len(walked[entry])} 个"
+        )
     print(json.dumps({"guard": report["instrument_guard"], "out": out.name}, ensure_ascii=False))
     return 0 if all(report["instrument_guard"].values()) else 2
 

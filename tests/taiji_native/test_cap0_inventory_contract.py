@@ -116,7 +116,7 @@ def test_model_format_is_read_from_the_substrate_key(report):
     from taiji.model import Taiji
 
     assert {"taiji-native-v8", "taiji-native-v9"} <= set(Taiji.LEGACY_CHECKPOINT_FORMATS)
-    assert Taiji.CHECKPOINT_FORMAT == reality["default_model_format"]
+    assert reality["default_model_format"] == Taiji.CHECKPOINT_FORMAT
 
     inventory = {row["filename"]: row for row in report["checkpoint_inventory"]}
     for name in ("seed_beta.pt", "resumed_seed_corpus.pt", "seed_corpus_prev_20260823.pt"):

@@ -52,7 +52,9 @@ def main() -> int:
     values.pop("receptors_factored", None)
 
     current = Seed.from_checkpoint(envelope)
-    cfg_on = SeedConfig(taiji=TaijiConfig.from_dict({**values, "predictive_context_region0_only": True}))
+    cfg_on = SeedConfig(
+        taiji=TaijiConfig.from_dict({**values, "predictive_context_region0_only": True})
+    )
     masked = Seed.from_checkpoint(envelope)
     # `Seed.restore` 校验配置一致（不能把不同 config 的状态塞进来），而测量需要**同一个已训练模型**
     # 在两种读法下各量一遍 ⇒ 读回后在**活对象**上翻转这一个布尔（不改任何张量、不落盘）。
@@ -79,7 +81,9 @@ def main() -> int:
         "region0_only_readout": measure(masked.architecture, "region0"),
     }
     # 确认集（先封后看的那一套）也要量：T4 的教训是只报一个集会被质疑挑集
-    manifest = PROJECT_ROOT / "plans" / "manifests" / "r2_separability_confirmation_families_20260923.json"
+    manifest = (
+        PROJECT_ROOT / "plans" / "manifests" / "r2_separability_confirmation_families_20260923.json"
+    )
     confirm_families = json.loads(manifest.read_text(encoding="utf-8"))["families"]
     results["current_readout_confirmation"] = measure(
         current.architecture, "current-conf", confirm_families
@@ -106,8 +110,10 @@ def main() -> int:
         "delta_region0_minus_current": delta,
         "note": "零训练、只读既有 checkpoint；若拉不回来 ⇒ '只吃区0'当场否掉，不跑训练",
     }
-    out = Path(args.out_report) if args.out_report else (
-        PROJECT_ROOT / "reports" / "taiji_r2_region0_cue_precheck_20260924.json"
+    out = (
+        Path(args.out_report)
+        if args.out_report
+        else (PROJECT_ROOT / "reports" / "taiji_r2_region0_cue_precheck_20260924.json")
     )
     if out.exists():
         parser.error(f"{out} already exists; 判决件不覆写")

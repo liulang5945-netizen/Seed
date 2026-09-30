@@ -201,8 +201,13 @@ def probe_checkpoint(label: str, checkpoint: Path, runtime_cls: Any) -> dict[str
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--base-checkpoint", default=str(PROJECT_ROOT / "checkpoints" / "seed_beta.pt"))
-    parser.add_argument("--arm-a", default=str(PROJECT_ROOT / "output" / "taiji_r2_readout_retrain" / "A" / "checkpoint.pt"))
+    parser.add_argument(
+        "--base-checkpoint", default=str(PROJECT_ROOT / "checkpoints" / "seed_beta.pt")
+    )
+    parser.add_argument(
+        "--arm-a",
+        default=str(PROJECT_ROOT / "output" / "taiji_r2_readout_retrain" / "A" / "checkpoint.pt"),
+    )
     parser.add_argument("--out-report", default=None)
     parser.add_argument("--dry-run", action="store_true", help="只跑基座，验证管线")
     return parser
@@ -213,7 +218,10 @@ def main() -> int:
     args = parser.parse_args()
     from api.seed_runtime import SeedRuntime
 
-    report_path = Path(args.out_report or PROJECT_ROOT / "reports" / "taiji_r2_p3_readout_conditionality_20260923.json")
+    report_path = Path(
+        args.out_report
+        or PROJECT_ROOT / "reports" / "taiji_r2_p3_readout_conditionality_20260923.json"
+    )
     if report_path.exists():
         parser.error(f"{report_path} already exists; 判决件不覆写")
 
@@ -263,7 +271,9 @@ def main() -> int:
         ),
     }
     report_path.parent.mkdir(parents=True, exist_ok=True)
-    report_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    report_path.write_text(
+        json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print(json.dumps({"status": payload_status, "report": str(report_path)}))
     for label, entry in results.items():
         print(

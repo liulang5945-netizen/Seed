@@ -27,6 +27,7 @@ import argparse
 import json
 import sys
 from pathlib import Path
+from typing import Any
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 if str(PROJECT_ROOT) not in sys.path:
@@ -94,9 +95,7 @@ def main() -> int:
                     substrate, learn=False, use_memory=True, use_identity=True
                 )
             else:  # write_then_recall
-                original = _force_observe(
-                    substrate, learn=True, use_memory=True, use_identity=True
-                )
+                original = _force_observe(substrate, learn=True, use_memory=True, use_identity=True)
             hits = 0
             samples: list[str] = []
             for item in items:
@@ -132,8 +131,10 @@ def main() -> int:
         "manifest": str(MANIFEST),
         "rows": rows,
     }
-    out = Path(args.out_report) if args.out_report else (
-        PROJECT_ROOT / "reports" / "taiji_r2_cap_d_protocol_probe_20260924.json"
+    out = (
+        Path(args.out_report)
+        if args.out_report
+        else (PROJECT_ROOT / "reports" / "taiji_r2_cap_d_protocol_probe_20260924.json")
     )
     if out.exists():
         parser.error(f"{out} already exists; 判决件不覆写")

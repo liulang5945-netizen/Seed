@@ -59,12 +59,12 @@ from .state import (
     TaijiState,
     TaijiStep,
 )
+from .utf8_state import advance_utf8, trim_partial_tail, utf8_allowed
 from .workbench_boundary import (
     WorkbenchBoundaryAuthorization,
     WorkbenchTaskBoundary,
     select_readout_generation,
 )
-from .utf8_state import advance_utf8, trim_partial_tail, utf8_allowed
 
 
 class Taiji:
@@ -1961,9 +1961,7 @@ class Taiji:
             else bool(self._copy_evidence_utf8_gate_override)
         )
         utf8_tracking = bool(position_input_enabled or copy_gate_enabled)
-        previous_position_class = (
-            int(previous.motor_position_class or 0) if utf8_tracking else None
-        )
+        previous_position_class = int(previous.motor_position_class or 0) if utf8_tracking else None
         previous_utf8_lead = int(previous.motor_utf8_lead or 0) if utf8_tracking else None
         #: `advance_utf8` 一次给出 (余量, 首字节) 两件——PLAN-A-25 的门控两件都要
         #: （E0/ED 与 F0/F4 的第二字节边界由首字节决定），而位置输入只用前一件。
@@ -3133,7 +3131,10 @@ class Taiji:
                     probabilities = probabilities / (1.0 + repetition_penalty * counts)
                 if utf8_strict:
                     legal = torch.tensor(
-                        sorted(set(utf8_allowed(utf8_remaining, utf8_lead)) | {self.config.boundary_symbol}),
+                        sorted(
+                            set(utf8_allowed(utf8_remaining, utf8_lead))
+                            | {self.config.boundary_symbol}
+                        ),
                         dtype=torch.long,
                         device=probabilities.device,
                     )

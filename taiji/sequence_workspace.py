@@ -857,9 +857,7 @@ class SequenceWorkspacePrototype:
                 scores[:, int(persist_target)] + self._parameters["copy_persist_bias"]
             )
         if induce_active:
-            scores[:, match_index] = scores[:, match_index] + self._parameters[
-                "copy_induce_bias"
-            ]
+            scores[:, match_index] = scores[:, match_index] + self._parameters["copy_induce_bias"]
         return torch.softmax(scores, dim=-1)
 
     def _content_read(
@@ -946,9 +944,7 @@ class SequenceWorkspacePrototype:
         p_vocab = torch.softmax(vocab_logits, dim=0)
         if zero_read or new_state.entry_bytes is None:
             return new_state, p_vocab, None
-        weights = self.addressing_weights(
-            new_state, detach=False, induce_byte=int(previous_symbol)
-        )
+        weights = self.addressing_weights(new_state, detach=False, induce_byte=int(previous_symbol))
         p_copy = self._copy_distribution(new_state, weights)
         renderer_state = new_state.renderer_state
         gate = torch.sigmoid(
@@ -1460,9 +1456,7 @@ class SequenceWorkspaceTrainer:
             "generation_state_ratio": ratio,
             "contrastive_margin_gap": sum(margin_gaps) / max(1, len(margin_gaps)),
             "copy_value_prob_mean": (
-                sum(copy_value_probs) / max(1, len(copy_value_probs))
-                if copy_value_probs
-                else 0.0
+                sum(copy_value_probs) / max(1, len(copy_value_probs)) if copy_value_probs else 0.0
             ),
         }
 

@@ -25,7 +25,9 @@ from neuroplex.brain._cortex_generation import decode_step
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 GOLDEN = json.loads(
-    (PROJECT_ROOT / "reports" / "cortex_generation_golden_20260926.json").read_text(encoding="utf-8")
+    (PROJECT_ROOT / "reports" / "cortex_generation_golden_20260926.json").read_text(
+        encoding="utf-8"
+    )
 )
 FIX_SEED = int(GOLDEN["seed"])
 
@@ -60,7 +62,9 @@ def test_generate_reproduces_golden() -> None:
     """主契约：迁移后 `Cortex.generate()` 逐组等于迁移前黄金（证明 decode_step 抽离逐位等价）。"""
     for row in GOLDEN["rows"]:
         assert not row["is_error"], f"黄金用例本身为错误串：{row['case']} / {row['prompt']!r}"
-        assert row["deterministic"], f"黄金用例非确定，不可作基准：{row['case']} / {row['prompt']!r}"
+        assert row[
+            "deterministic"
+        ], f"黄金用例非确定，不可作基准：{row['case']} / {row['prompt']!r}"
         got = _reproduce(row["prompt"], CASE_KWARGS[row["case"]])
         assert got == row["out"], (
             f"case={row['case']} prompt={row['prompt']!r}\n"

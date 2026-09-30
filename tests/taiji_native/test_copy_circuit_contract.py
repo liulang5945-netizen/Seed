@@ -541,7 +541,7 @@ def _two_event_store(model: Taiji) -> tuple[CopyCircuit, torch.Tensor, torch.Ten
     model.mount_copy_circuit(max_events=4)
     circuit = model.copy_circuit
     assert circuit is not None
-    for turn, cue in zip(("我叫明轩。", "我家住在苏州。"), cues):
+    for turn, cue in zip(("我叫明轩。", "我家住在苏州。"), cues, strict=False):
         circuit.store.record(turn.encode(), cue)
     return circuit, cues[0], cues[1], model.cortical_cue()
 

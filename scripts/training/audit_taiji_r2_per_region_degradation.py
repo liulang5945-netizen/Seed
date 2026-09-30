@@ -115,8 +115,10 @@ def main() -> int:
         "curves": curves,
         "note": "零训练、只读既有存档；判读线见模块文档（某区先破 ⇒ 有空间结构；三区同步 ⇒ 指向共享机制）",
     }
-    out = Path(args.out_report) if args.out_report else (
-        PROJECT_ROOT / "reports" / "taiji_r2_per_region_degradation_20260924.json"
+    out = (
+        Path(args.out_report)
+        if args.out_report
+        else (PROJECT_ROOT / "reports" / "taiji_r2_per_region_degradation_20260924.json")
     )
     if out.exists():
         parser.error(f"{out} already exists; 判决件不覆写")

@@ -71,9 +71,9 @@ def test_the_flag_survives_config_and_checkpoint_round_trips() -> None:
     assert TaijiConfig.from_dict(config.to_dict()).predictive_context_region0_only is True
     legacy = config.to_dict()
     del legacy["predictive_context_region0_only"]
-    assert TaijiConfig.from_dict(legacy).predictive_context_region0_only is False, (
-        "老 config 没有这个键 ⇒ 必须取默认 False（向后兼容）"
-    )
+    assert (
+        TaijiConfig.from_dict(legacy).predictive_context_region0_only is False
+    ), "老 config 没有这个键 ⇒ 必须取默认 False（向后兼容）"
 
     model = Seed(_config(region0=True), episode_id="r0-mask-ckpt")
     for symbol in DATA[:32]:
@@ -91,6 +91,6 @@ def test_masked_checkpoint_round_trips_and_reproduces_its_reading() -> None:
     for symbol in DATA[:16]:
         model.substrate.observe(int(symbol), readout="action", learn=False)
         restored.substrate.observe(int(symbol), readout="action", learn=False)
-    assert torch.equal(model.snapshot().motor_context, restored.snapshot().motor_context), (
-        "掩码模型存档往返后，同一输入必须给出同样的 context"
-    )
+    assert torch.equal(
+        model.snapshot().motor_context, restored.snapshot().motor_context
+    ), "掩码模型存档往返后，同一输入必须给出同样的 context"

@@ -326,9 +326,11 @@ def project(
     # repeat the model's environment section back to itself.
     workbench_capabilities = 0
     workbench_note = ""
-    workbench_snapshot_id = str(workbench_snapshot.get("snapshot_id") or "").strip() if isinstance(
-        workbench_snapshot, dict
-    ) else ""
+    workbench_snapshot_id = (
+        str(workbench_snapshot.get("snapshot_id") or "").strip()
+        if isinstance(workbench_snapshot, dict)
+        else ""
+    )
     if workbench_snapshot_id:
         if workbench_snapshot_id == state.get("workbench_snapshot_id"):
             workbench_note = f"snapshot {workbench_snapshot_id} already projected"
@@ -365,8 +367,15 @@ def project(
     relative = os.path.join("consolidated", corpus_name).replace("\\", "/")
     by_source = {
         "constraints": sum(1 for record in records if CONSTRAINT_QUESTION in record["text"]),
-        "interactions": sum(1 for record in records if CONSTRAINT_QUESTION not in record["text"] and WORKBENCH_ANSWER_LEAD not in record["text"]),
-        "workbench_capabilities": sum(1 for record in records if WORKBENCH_ANSWER_LEAD in record["text"]),
+        "interactions": sum(
+            1
+            for record in records
+            if CONSTRAINT_QUESTION not in record["text"]
+            and WORKBENCH_ANSWER_LEAD not in record["text"]
+        ),
+        "workbench_capabilities": sum(
+            1 for record in records if WORKBENCH_ANSWER_LEAD in record["text"]
+        ),
     }
     if not records:
         # Nothing new: roll the skips forward, and leave every earlier corpus alone.

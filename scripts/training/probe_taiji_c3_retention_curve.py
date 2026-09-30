@@ -57,7 +57,7 @@ def _build_corpus(k: int) -> tuple[list[Any], list[Any], tuple[int, ...]]:
     episodes: list[Any] = []
     queries: list[Any] = []
     for index in range(k):
-        context = tuple(f"背景{index}号。".encode("utf-8"))
+        context = tuple(f"背景{index}号。".encode())
         cue = 200 + index
         action = actions[index % len(actions)]
         episodes.append(
@@ -85,7 +85,9 @@ def _interference(n: int) -> tuple[int, ...]:
     return tuple(int(value) for value in torch.randint(0, 256, (n,), generator=generator).tolist())
 
 
-def _field_recall(substrate: Any, context: tuple[int, ...], cue: int, actions: tuple[int, ...]) -> dict[str, Any]:
+def _field_recall(
+    substrate: Any, context: tuple[int, ...], cue: int, actions: tuple[int, ...]
+) -> dict[str, Any]:
     """直接读字段：喂 context+cue（learn=False, use_memory=True），记 confidence 与证据指向。"""
     substrate.reset_dynamics(episode_id="c3-field-recall")
     substrate.observe(
@@ -103,16 +105,17 @@ def _field_recall(substrate: Any, context: tuple[int, ...], cue: int, actions: t
     evidence = recall.action_evidence
     return {
         "confidence": round(float(recall.confidence), 6),
-        "evidence_argmax_is_action": bool(int(evidence.argmax()) in actions) if evidence.numel() else False,
+        "evidence_argmax_is_action": (
+            bool(int(evidence.argmax()) in actions) if evidence.numel() else False
+        ),
     }
 
 
 def run_interval(
     checkpoint: Path, episodes: list[Any], queries: list[Any], actions: tuple[int, ...], n: int
 ) -> dict[str, Any]:
-    from taiji.foundation_tasks import DelayedMemoryTask
-
     from api.seed_runtime import SeedRuntime
+    from taiji.foundation_tasks import DelayedMemoryTask
 
     runtime = SeedRuntime.load(checkpoint)
     substrate = runtime.model.substrate
@@ -124,9 +127,7 @@ def run_interval(
     for symbol in interference:
         substrate.observe(symbol, learn=False, learn_motor=False)
 
-    accuracy_mem = DelayedMemoryTask._recall_accuracy(
-        substrate, queries, actions, use_memory=True
-    )
+    accuracy_mem = DelayedMemoryTask._recall_accuracy(substrate, queries, actions, use_memory=True)
     accuracy_lesion = DelayedMemoryTask._recall_accuracy(
         substrate, queries, actions, use_memory=False
     )
@@ -161,11 +162,7 @@ def main() -> int:
 
     curve = [run_interval(checkpoint, episodes, queries, actions, n) for n in INTERVALS]
     saturation = next(
-        (
-            row["interval_steps"]
-            for row in curve
-            if row["accuracy_use_memory"] <= CHANCE + 0.05
-        ),
+        (row["interval_steps"] for row in curve if row["accuracy_use_memory"] <= CHANCE + 0.05),
         None,
     )
     report = {

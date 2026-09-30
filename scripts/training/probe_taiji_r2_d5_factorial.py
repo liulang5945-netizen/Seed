@@ -188,7 +188,9 @@ def _evaluate(prototype: SequenceWorkspacePrototype, rows: list[dict[str, Any]])
     return measured
 
 
-def _group_exact(prototype: SequenceWorkspacePrototype, rows: list[dict[str, Any]]) -> dict[str, Any]:
+def _group_exact(
+    prototype: SequenceWorkspacePrototype, rows: list[dict[str, Any]]
+) -> dict[str, Any]:
     """Split copy-supported episodes by answer value length (v2 arms)."""
 
     groups: dict[str, list[dict[str, Any]]] = {"multibyte": [], "singlebyte": []}
@@ -388,9 +390,7 @@ def main() -> int:
                 "per_shape": {k: round(v, 3) for k, v in per_shape_final.items()},
                 "value_length_groups": groups,
                 "copy_value_prob_intact": round(float(copy_intact["mean_copy_value_prob"]), 4),
-                "copy_value_prob_misbound": round(
-                    float(copy_misbound["mean_copy_value_prob"]), 4
-                ),
+                "copy_value_prob_misbound": round(float(copy_misbound["mean_copy_value_prob"]), 4),
                 "bias_end": bias_end,
                 "loss_trajectory": [item["mean_sequence_loss"] for item in trajectory],
                 "gate": gate,

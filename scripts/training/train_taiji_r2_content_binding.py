@@ -96,9 +96,7 @@ def load_train_fixture(path: Path | None = None) -> list[dict[str, Any]]:
 
     source = PROJECT_ROOT / (TRAIN_FIXTURE if path is None else path)
     rows = [
-        json.loads(line)
-        for line in source.read_text(encoding="utf-8").splitlines()
-        if line.strip()
+        json.loads(line) for line in source.read_text(encoding="utf-8").splitlines() if line.strip()
     ]
     foreign = sorted({row["split"] for row in rows} - {"train"})
     if foreign:
@@ -112,9 +110,7 @@ def load_train_fixture(path: Path | None = None) -> list[dict[str, Any]]:
 def load_calibration_fixture() -> list[dict[str, Any]]:
     source = PROJECT_ROOT / CALIBRATION_FIXTURE
     rows = [
-        json.loads(line)
-        for line in source.read_text(encoding="utf-8").splitlines()
-        if line.strip()
+        json.loads(line) for line in source.read_text(encoding="utf-8").splitlines() if line.strip()
     ]
     if any(row["split"] != "calibration" for row in rows):
         raise ValueError("calibration fixture carries a foreign split row")
@@ -204,12 +200,8 @@ def train_pair_margin_diagnostic(
             s_yy, _ = workspace.sequence_loglik(b["question"], b["material"], b["response"])
             s_yx, _ = workspace.sequence_loglik(a["question"], a["material"], b["response"])
             s_xy, _ = workspace.sequence_loglik(b["question"], b["material"], a["response"])
-            per_class[cls].append(
-                float(torch.nn.functional.softplus(s_yx - s_xx + gamma))
-            )
-            hinge_b[cls].append(
-                float(torch.nn.functional.softplus(s_xy - s_yy + gamma))
-            )
+            per_class[cls].append(float(torch.nn.functional.softplus(s_yx - s_xx + gamma)))
+            hinge_b[cls].append(float(torch.nn.functional.softplus(s_xy - s_yy + gamma)))
     return {
         cls: {
             "mean_hinge_a": sum(per_class[cls]) / len(per_class[cls]) if per_class[cls] else None,
@@ -259,7 +251,9 @@ def evaluate_flip_scores(
         )
         by_class[cls] = {
             "items": len(members),
-            "item_exact": sum(1 for m in members if m["correct"]) / len(members) if members else None,
+            "item_exact": (
+                sum(1 for m in members if m["correct"]) / len(members) if members else None
+            ),
             "groups": len(groups),
             "pair_rate": pair_hits / len(groups) if groups else None,
         }
@@ -277,9 +271,7 @@ def evaluate_flip_scores(
         "per_class": by_class,
         "flip_pairwise_macro": sum(flip_values) / len(flip_values) if flip_values else None,
         "copy_rate": (
-            sum(1 for row in copyable if row["correct"]) / len(copyable)
-            if copyable
-            else None
+            sum(1 for row in copyable if row["correct"]) / len(copyable) if copyable else None
         ),
         "unknown_rate": (
             sum(1 for row in unknown_items if row["correct"]) / len(unknown_items)
@@ -312,9 +304,7 @@ def select_recipe_candidate(
     ]
     if not eligible:
         return None
-    eligible.sort(
-        key=lambda e: (-e["flip_pairwise_macro"], e["learning_rate"], e["update"])
-    )
+    eligible.sort(key=lambda e: (-e["flip_pairwise_macro"], e["learning_rate"], e["update"]))
     return eligible[0]
 
 
@@ -549,10 +539,7 @@ def main() -> int:
     else:
         total = CALIBRATION_MAX_UPDATES if args.mode == "calibration" else FORMAL_MAX_UPDATES
 
-    if args.mode == "smoke":
-        output_root = args.output_root / "_smoke"
-    else:
-        output_root = args.output_root
+    output_root = args.output_root / "_smoke" if args.mode == "smoke" else args.output_root
 
     report = run(
         arm=args.arm,
@@ -565,9 +552,7 @@ def main() -> int:
         trainer_revision=args.trainer_revision,
         question_hidden_width=args.question_hidden_width,
         relation_hidden=args.relation_hidden,
-        calibration_points=tuple(
-            int(item) for item in args.calibration_points.split(",")
-        ),
+        calibration_points=tuple(int(item) for item in args.calibration_points.split(",")),
         pair_schedule=(
             (args.pair_hold, args.pair_anneal)
             if args.pair_hold is not None and args.pair_anneal is not None

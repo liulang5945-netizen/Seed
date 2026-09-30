@@ -77,7 +77,10 @@ def test_gate1_v3_shapes_and_counts(vocab) -> None:
     rows = _rows()
     item = next(r for r in rows if r["group_class"] == "fact_flip")
     loss, metrics = v3.episode_loss(
-        item["question"], item["material"], item["response"], item["copy_mask"],
+        item["question"],
+        item["material"],
+        item["response"],
+        item["copy_mask"],
         copy_value_weight=1.0,
     )
     assert torch.isfinite(loss)
@@ -103,9 +106,7 @@ def test_gate2_margin_diagnostic_on_v2_checkpoint() -> None:
     object/relation/negation near softplus(gamma)) from the committed v2
     checkpoint, proving the diagnostic measures the same quantity."""
 
-    checkpoint = (
-        PROJECT_ROOT / "reports/r2_content_binding_v2/B/20260920/cal_lr1/update_002000.pt"
-    )
+    checkpoint = PROJECT_ROOT / "reports/r2_content_binding_v2/B/20260920/cal_lr1/update_002000.pt"
     if not checkpoint.is_file():
         pytest.skip("v2 checkpoint not present on this machine")
     payload = torch.load(checkpoint, map_location="cpu", weights_only=False)
@@ -117,7 +118,9 @@ def test_gate2_margin_diagnostic_on_v2_checkpoint() -> None:
     assert diagnostic["fact_flip"]["mean_hinge_a"] < 0.01
     assert diagnostic["missing_to_filled"]["mean_hinge_b"] < 0.01
     # structural constants on equal-answer classes
-    assert diagnostic["distractor_invariant"]["mean_hinge_a"] == pytest.approx(softplus_gamma, abs=1e-5)
+    assert diagnostic["distractor_invariant"]["mean_hinge_a"] == pytest.approx(
+        softplus_gamma, abs=1e-5
+    )
     # the failing classes sit near the untouched margin
     assert diagnostic["object_swap"]["mean_hinge_a"] == pytest.approx(softplus_gamma, abs=0.05)
     for cls in GROUP_CLASSES:
@@ -129,9 +132,7 @@ def test_gate2_margins_finite_on_v3_workspace(vocab) -> None:
         vocab,
         SequenceContentConfig(arm="B", seed=5, question_hidden_width=128, relation_hidden=128),
     )
-    diagnostic = train_pair_margin_diagnostic(
-        v3, load_train_fixture(), per_class_limit=4
-    )
+    diagnostic = train_pair_margin_diagnostic(v3, load_train_fixture(), per_class_limit=4)
     for cls in GROUP_CLASSES:
         for key in ("mean_hinge_a", "mean_hinge_b"):
             value = diagnostic[cls][key]

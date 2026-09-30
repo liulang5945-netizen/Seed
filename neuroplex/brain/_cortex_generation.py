@@ -50,10 +50,7 @@ def decode_step(
         # 查找已生成文本中所有匹配前缀的 n-gram 的下一个 token
         banned_ids = set()
         for i in range(len(generated_token_list) - no_repeat_ngram_size + 1):
-            if (
-                tuple(generated_token_list[i : i + no_repeat_ngram_size - 1])
-                == ngram_prefix
-            ):
+            if tuple(generated_token_list[i : i + no_repeat_ngram_size - 1]) == ngram_prefix:
                 banned_ids.add(generated_token_list[i + no_repeat_ngram_size - 1])
         # 将 banned tokens 的 logit 设为 -inf
         for tid in banned_ids:

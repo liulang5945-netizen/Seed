@@ -121,9 +121,7 @@ class SequenceContentConfig:
         if self.arm not in ARMS:
             raise ValueError(f"arm must be one of {ARMS}: {self.arm}")
         if int(self.question_hidden_width) == 0:
-            object.__setattr__(
-                self, "question_hidden_width", int(self.hidden_width)
-            )
+            object.__setattr__(self, "question_hidden_width", int(self.hidden_width))
         for name in (
             "prefix_width",
             "hidden_width",
@@ -234,11 +232,15 @@ def arm_parameter_order(arm: str, slot_count: int = 6) -> tuple[str, ...]:
     if arm == "B":
         return _COMMON_ORDER + _ARM_B_ORDER
     heads = tuple(f"head_query_{index}" for index in range(1, slot_count + 1))
-    return _COMMON_ORDER + heads + (
-        "a_content_mlp_input",
-        "a_content_mlp_bias",
-        "a_content_mlp_output",
-        "a_content_mlp_output_bias",
+    return (
+        _COMMON_ORDER
+        + heads
+        + (
+            "a_content_mlp_input",
+            "a_content_mlp_bias",
+            "a_content_mlp_output",
+            "a_content_mlp_output_bias",
+        )
     )
 
 
@@ -360,8 +362,10 @@ class SequenceContentWorkspace:
             int(self.config.renderer_width),
         )
         length = 32
-        common_mac = length * (pw * hw) + 2 * length * (hw * ew) + 32 * (
-            (pw + cw + ew) * rw + rw * rw + (rw + cw) * int(self.vocab.size)
+        common_mac = (
+            length * (pw * hw)
+            + 2 * length * (hw * ew)
+            + 32 * ((pw + cw + ew) * rw + rw * rw + (rw + cw) * int(self.vocab.size))
         )
         if self.arm == "B":
             rounds = int(self.config.binding_rounds)
@@ -408,8 +412,7 @@ class SequenceContentWorkspace:
 
         byte_tensor = self._byte_features(character)
         projected = (
-            byte_tensor @ self._parameters["byte_proj"].T
-            + self._parameters["byte_proj_bias"]
+            byte_tensor @ self._parameters["byte_proj"].T + self._parameters["byte_proj_bias"]
         )
         return self._parameters["char_embedding"][slot] + projected
 
@@ -421,9 +424,7 @@ class SequenceContentWorkspace:
 
     # ------------------------------------------------------------- tokenizing
 
-    def _episode_candidates(
-        self, material: str
-    ) -> tuple[dict[str, int], dict[int, int]]:
+    def _episode_candidates(self, material: str) -> tuple[dict[str, int], dict[int, int]]:
         char2slot: dict[str, int] = {}
         extra_slot_codepoints: dict[int, int] = {}
         next_extra = int(self.vocab.size)
@@ -464,11 +465,7 @@ class SequenceContentWorkspace:
                 + self._parameters[bias_name]
             )
             steps.append(hidden)
-        rows = (
-            torch.stack(steps, dim=0)
-            if steps
-            else torch.zeros(0, int(self.config.hidden_width))
-        )
+        rows = torch.stack(steps, dim=0) if steps else torch.zeros(0, int(self.config.hidden_width))
         return rows, hidden
 
     # -------------------------------------------------------- content modules
@@ -483,14 +480,11 @@ class SequenceContentWorkspace:
         r = torch.sigmoid(gates[:ew])
         z = torch.sigmoid(gates[ew : 2 * ew])
         n = torch.tanh(
-            gates[2 * ew :]
-            + r * (h @ weight_hidden[2 * ew :].T + bias_hidden[2 * ew :])
+            gates[2 * ew :] + r * (h @ weight_hidden[2 * ew :].T + bias_hidden[2 * ew :])
         )
         return (1.0 - z) * n + z * h
 
-    def _content_b(
-        self, values: torch.Tensor, question_vec: torch.Tensor
-    ) -> torch.Tensor:
+    def _content_b(self, values: torch.Tensor, question_vec: torch.Tensor) -> torch.Tensor:
         sc = int(self.config.slot_count)
         ew = int(self.config.evidence_width)
         slots = self._parameters["slot_init"]
@@ -508,31 +502,28 @@ class SequenceContentWorkspace:
                 [self._gru_cell(slot_inputs[i], slots[i]) for i in range(sc)], dim=0
             )
         pairs = torch.stack(
-            [
-                torch.cat((slots[i], slots[j], question_vec))
-                for i in range(sc)
-                for j in range(sc)
-            ],
+            [torch.cat((slots[i], slots[j], question_vec)) for i in range(sc) for j in range(sc)],
             dim=0,
         )
-        hidden = torch.tanh(pairs @ self._parameters["relation_mlp_input"] + self._parameters["relation_mlp_bias"])
-        relations = hidden @ self._parameters["relation_mlp_output"] + self._parameters["relation_mlp_output_bias"]
+        hidden = torch.tanh(
+            pairs @ self._parameters["relation_mlp_input"] + self._parameters["relation_mlp_bias"]
+        )
+        relations = (
+            hidden @ self._parameters["relation_mlp_output"]
+            + self._parameters["relation_mlp_output_bias"]
+        )
         slot_query = question_vec @ self._parameters["slot_pool_query"]
         slot_weights = torch.softmax(slots @ slot_query / math.sqrt(float(ew)), dim=0)
         pooled_slots = slot_weights @ slots
         relation_query = question_vec @ self._parameters["relation_pool_query"]
-        relation_weights = torch.softmax(
-            relations @ relation_query / math.sqrt(float(ew)), dim=0
-        )
+        relation_weights = torch.softmax(relations @ relation_query / math.sqrt(float(ew)), dim=0)
         pooled_relations = relation_weights @ relations
         return torch.tanh(
             torch.cat((pooled_slots, pooled_relations)) @ self._parameters["content_proj"]
             + self._parameters["content_proj_bias"]
         )
 
-    def _content_a(
-        self, values: torch.Tensor, question_vec: torch.Tensor
-    ) -> torch.Tensor:
+    def _content_a(self, values: torch.Tensor, question_vec: torch.Tensor) -> torch.Tensor:
         ew = int(self.config.evidence_width)
         length = int(values.shape[0])
         reads = []
@@ -559,12 +550,8 @@ class SequenceContentWorkspace:
         """Build the per-episode state from ONLY the question and material."""
 
         if len(question) + len(material) > int(self.config.max_input_chars):
-            raise ValueError(
-                f"input exceeds max_input_chars={int(self.config.max_input_chars)}"
-            )
-        keys_rows, _ = self._scan(
-            material, "material_input", "material_recur", "material_bias"
-        )
+            raise ValueError(f"input exceeds max_input_chars={int(self.config.max_input_chars)}")
+        keys_rows, _ = self._scan(material, "material_input", "material_recur", "material_bias")
         _question_rows, question_vec = self._scan(
             question,
             "question_input",
@@ -619,9 +606,13 @@ class SequenceContentWorkspace:
         if not length:
             return None
         scores = (
-            state.renderer_state @ self._parameters["copy_query_state"]
-            + state.content @ self._parameters["copy_query_content"]
-        ) @ state.material_keys.T / math.sqrt(float(self.config.evidence_width))
+            (
+                state.renderer_state @ self._parameters["copy_query_state"]
+                + state.content @ self._parameters["copy_query_content"]
+            )
+            @ state.material_keys.T
+            / math.sqrt(float(self.config.evidence_width))
+        )
         if _EMISSION_SUCCESSOR and previous_char is not None:
             successors = [
                 position
@@ -630,9 +621,7 @@ class SequenceContentWorkspace:
             ]
             if successors:
                 scores = scores.clone()
-                scores[successors] = (
-                    scores[successors] + self._parameters["copy_induce_bias"]
-                )
+                scores[successors] = scores[successors] + self._parameters["copy_induce_bias"]
         return torch.softmax(scores, dim=0)
 
     def _copy_distribution(
@@ -719,9 +708,7 @@ class SequenceContentWorkspace:
         """(mixture, copy) rows for positions 0..len(response); the last row is
         the EOS (boundary) position.  Shares ``step`` with free generation."""
 
-        return self._teacher_forced_from_state(
-            self.begin_episode(question, material), response
-        )
+        return self._teacher_forced_from_state(self.begin_episode(question, material), response)
 
     def loss_components(
         self,
@@ -771,7 +758,7 @@ class SequenceContentWorkspace:
                             f"copy-masked character {character!r} is not in the material"
                         )
                 hits = copies[:-1][mask].gather(1, targets[:-1][mask].unsqueeze(1)).squeeze(1)
-                copy_nll = (-hits.clamp_min(1e-12).log().mean())
+                copy_nll = -hits.clamp_min(1e-12).log().mean()
                 copy_prob_mean = float(hits.detach().mean())
         with torch.no_grad():
             predictions = mixtures.argmax(dim=1)
@@ -832,9 +819,7 @@ class SequenceContentWorkspace:
     def generate(
         self, question: str, material: str, *, max_chars: int | None = None
     ) -> ContentGenerationResult:
-        limit = int(
-            max_chars if max_chars is not None else self.config.max_output_chars
-        )
+        limit = int(max_chars if max_chars is not None else self.config.max_output_chars)
         state = self.begin_episode(question, material)
         previous_char: str | None = None
         produced: list[str] = []
@@ -860,9 +845,7 @@ class SequenceContentWorkspace:
 
         if content.shape != (int(self.config.content_width),):
             raise ValueError("swapped content must match content_width")
-        limit = int(
-            max_chars if max_chars is not None else self.config.max_output_chars
-        )
+        limit = int(max_chars if max_chars is not None else self.config.max_output_chars)
         state = replace(self.begin_episode(question, material), content=content)
         previous_char: str | None = None
         produced: list[str] = []
@@ -949,9 +932,7 @@ class SequenceContentTrainer:
         progress = (step - warmup_steps) / max(1, self.total_updates - warmup_steps)
         progress = min(1.0, max(0.0, progress))
         final = self.learning_rate * self.final_lr_fraction
-        return final + (self.learning_rate - final) * 0.5 * (
-            1.0 + math.cos(math.pi * progress)
-        )
+        return final + (self.learning_rate - final) * 0.5 * (1.0 + math.cos(math.pi * progress))
 
     def _apply_schedule(self) -> None:
         for group in self.optimizer.param_groups:
@@ -999,17 +980,13 @@ class SequenceContentTrainer:
         for item in batch:
             group_id = item.get("group_id")
             if group_id is None:
-                raise ValueError(
-                    "pair-contrastive batches must carry group_id on every item"
-                )
+                raise ValueError("pair-contrastive batches must carry group_id on every item")
             groups.setdefault(str(group_id), []).append(item)
         terms = []
         for group_id, members in groups.items():
             if len(members) != 2:
-                raise ValueError(
-                    f"group {group_id} has {len(members)} members; exactly 2 required"
-                )
-            (item_a, item_b) = members
+                raise ValueError(f"group {group_id} has {len(members)} members; exactly 2 required")
+            item_a, item_b = members
             qa, ma, ra = (
                 str(item_a["question"]),
                 str(item_a["material"]),
@@ -1067,9 +1044,7 @@ class SequenceContentTrainer:
             raise FloatingPointError(f"non-finite loss at step {self.global_step}")
         total.backward()
         parameters = [p for p in self.workspace.parameters() if p.requires_grad]
-        grad_norm = float(
-            torch.nn.utils.clip_grad_norm_(parameters, self.grad_clip)
-        )
+        grad_norm = float(torch.nn.utils.clip_grad_norm_(parameters, self.grad_clip))
         if not math.isfinite(grad_norm):
             raise FloatingPointError(f"non-finite gradient at step {self.global_step}")
         self.optimizer.step()

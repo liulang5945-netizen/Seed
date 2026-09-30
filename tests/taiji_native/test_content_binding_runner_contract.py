@@ -42,9 +42,7 @@ SEALED_FIXTURE = PROJECT_ROOT / "tests/fixtures/r2_content_binding_v1_sealed.jso
 
 def _rows(path: Path) -> list[dict]:
     return [
-        json.loads(line)
-        for line in path.read_text(encoding="utf-8").splitlines()
-        if line.strip()
+        json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line.strip()
     ]
 
 
@@ -58,8 +56,7 @@ def test_loader_rejects_foreign_splits(tmp_path: Path) -> None:
     foreign = _rows(CALIBRATION_FIXTURE)[:2] + _rows(SEALED_FIXTURE)[:2]
     poisoned = tmp_path / "poisoned.jsonl"
     poisoned.write_text(
-        "\n".join(json.dumps(row, ensure_ascii=False) for row in train_rows[:5] + foreign)
-        + "\n",
+        "\n".join(json.dumps(row, ensure_ascii=False) for row in train_rows[:5] + foreign) + "\n",
         encoding="utf-8",
     )
     with pytest.raises(ValueError, match="non-train splits"):
@@ -118,7 +115,7 @@ def test_sampler_deterministic_for_seed() -> None:
     rows = _rows(TRAIN_FIXTURE)
     first = [GroupSampler(rows, seed=7).next_batch() for _ in range(5)]
     second = [GroupSampler(rows, seed=7).next_batch() for _ in range(5)]
-    for batch_a, batch_b in zip(first, second):
+    for batch_a, batch_b in zip(first, second, strict=False):
         assert [r["id"] for r in batch_a] == [r["id"] for r in batch_b]
 
 
@@ -174,7 +171,7 @@ def test_non_finite_loss_stops(tmp_path: Path) -> None:
     ]
     stats = trainer.train_step(batch)
     assert stats["loss"] > 0.0
-    assert 0.0 < stats["grad_norm"]
+    assert stats["grad_norm"] > 0.0
     with torch.no_grad():
         workspace._parameters["char_embedding"].fill_(float("nan"))
     with pytest.raises(FloatingPointError):

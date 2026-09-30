@@ -24,15 +24,15 @@ import json
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 for entry in (PROJECT_ROOT, PROJECT_ROOT / "scripts" / "training"):
     if str(entry) not in sys.path:
         sys.path.insert(0, str(entry))
 
-from api.seed_runtime import SeedRuntime  # noqa: E402
 from score_taiji_r2_copy_surface_extension import load_items  # noqa: E402
+
+from api.seed_runtime import SeedRuntime  # noqa: E402
 
 CHECKPOINT = PROJECT_ROOT / "checkpoints/seed_beta_with_circuit.pt"
 ROUNDS_PER_ITEM = 3

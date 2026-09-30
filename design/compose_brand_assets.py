@@ -7,6 +7,7 @@ owner's drawing instead of a substitute font.
 
 Outputs design/brand-candidates/*.png plus one contact sheet.
 """
+
 from __future__ import annotations
 
 import glob
@@ -22,7 +23,7 @@ MARK_ROWS = (158, 727)
 MARK_COLS = (333, 692)
 WORD_ROWS = (798, 906)
 WORD_COLS = (375, 666)
-GAP_RATIO = 0.22          # gap between mark and wordmark, as a share of canvas height
+GAP_RATIO = 0.22  # gap between mark and wordmark, as a share of canvas height
 MARK_HEIGHT_RATIO = 0.82  # mark height as a share of canvas height
 
 os.makedirs(OUT, exist_ok=True)
@@ -32,7 +33,7 @@ background = anchor[5, 5]
 
 def cut(rows: tuple[int, int], cols: tuple[int, int]) -> Image.Image:
     """Crop and knock out the ivory board so the artwork sits on transparency."""
-    box = anchor[rows[0]:rows[1], cols[0]:cols[1]]
+    box = anchor[rows[0] : rows[1], cols[0] : cols[1]]
     alpha = (np.abs(box - background).max(axis=2) > 24).astype(np.uint8) * 255
     rgba = np.dstack([box.astype(np.uint8), alpha])
     return Image.fromarray(rgba, "RGBA")
@@ -52,17 +53,23 @@ def banner(width: int, height: int, light: bool) -> Image.Image:
     symbol, word = (mark, wordmark) if light else (dark_mark, white_wordmark)
     mark_h = max(8, round(height * MARK_HEIGHT_RATIO))
     gap = round(height * GAP_RATIO)
-    scaled_mark = symbol.resize((round(mark_h * symbol.width / symbol.height), mark_h), Image.LANCZOS)
+    scaled_mark = symbol.resize(
+        (round(mark_h * symbol.width / symbol.height), mark_h), Image.LANCZOS
+    )
     word_h = round(height * 0.30)
     scaled_word = word.resize((round(word_h * word.width / word.height), word_h), Image.LANCZOS)
     total = scaled_mark.width + gap + scaled_word.width
     left = max(0, round((width - total) / 2))
     canvas.paste(scaled_mark, (left, round((height - scaled_mark.height) / 2)), scaled_mark)
-    canvas.paste(scaled_word, (left + scaled_mark.width + gap, round((height - scaled_word.height) / 2)), scaled_word)
+    canvas.paste(
+        scaled_word,
+        (left + scaled_mark.width + gap, round((height - scaled_word.height) / 2)),
+        scaled_word,
+    )
     return canvas
 
 
-for (name, size, light) in (
+for name, size, light in (
     ("brand", (600, 196), True),
     ("brand-2x", (1200, 392), True),
     ("brand-dark", (600, 196), False),
@@ -84,25 +91,35 @@ side_word_h = 34
 side_gap = 16
 side_mark_h = 314 - 2 * 24 - side_word_h - side_gap
 side_mark = mark.resize((round(side_mark_h * mark.width / mark.height), side_mark_h), Image.LANCZOS)
-word_side = wordmark.resize((round(side_word_h * wordmark.width / wordmark.height), side_word_h), Image.LANCZOS)
+word_side = wordmark.resize(
+    (round(side_word_h * wordmark.width / wordmark.height), side_word_h), Image.LANCZOS
+)
 if side_mark.width > 164 - 2 * 8:
-    side_mark = mark.resize((164 - 2 * 8, round((164 - 2 * 8) * mark.height / mark.width)), Image.LANCZOS)
+    side_mark = mark.resize(
+        (164 - 2 * 8, round((164 - 2 * 8) * mark.height / mark.width)), Image.LANCZOS
+    )
 stack_h = side_mark.height + side_gap + side_word_h
 top = round((314 - stack_h) / 2)
 side.paste(side_mark, (round((164 - side_mark.width) / 2), top), side_mark)
-side.paste(word_side, (round((164 - word_side.width) / 2), top + side_mark.height + side_gap), word_side)
+side.paste(
+    word_side, (round((164 - word_side.width) / 2), top + side_mark.height + side_gap), word_side
+)
 side = Image.new("RGBA", side.size, (255, 255, 255, 255)).convert("RGBA") if False else side
 # the shipped sidebar and badge sit on an opaque white board (NSIS converts to BMP)
 side_board = Image.new("RGBA", side.size, (255, 255, 255, 255))
 side_board.alpha_composite(side)
 side_board.save(os.path.join(OUT, "uninstaller-sidebar.png"))
-print(f"uninstaller-sidebar: {side.size} mark={side_mark.size} word={word_side.size} stack={stack_h} top={top}")
+print(
+    f"uninstaller-sidebar: {side.size} mark={side_mark.size} word={word_side.size} stack={stack_h} top={top}"
+)
 
-tiles = [("light 600x196", os.path.join(OUT, "brand.png")),
-         ("dark 600x196", os.path.join(OUT, "brand-dark.png")),
-         ("badge 726x120", os.path.join(OUT, "badge.png")),
-         ("sidebar 164x314", os.path.join(OUT, "uninstaller-sidebar.png")),
-         ("anchor", ANCHOR)]
+tiles = [
+    ("light 600x196", os.path.join(OUT, "brand.png")),
+    ("dark 600x196", os.path.join(OUT, "brand-dark.png")),
+    ("badge 726x120", os.path.join(OUT, "badge.png")),
+    ("sidebar 164x314", os.path.join(OUT, "uninstaller-sidebar.png")),
+    ("anchor", ANCHOR),
+]
 cells = []
 for label, path in tiles:
     art = Image.open(path).convert("RGBA")
@@ -115,6 +132,7 @@ for label, path in tiles:
     checker = Image.fromarray(d, "RGBA")
     checker.alpha_composite(art, (max(0, (320 - art.width) // 2), max(0, (340 - art.height) // 2)))
     from PIL import ImageDraw
+
     ImageDraw.Draw(checker).text((8, 6), label, fill=(30, 30, 30))
     cells.append(checker)
 sheet = Image.new("RGBA", (320 * len(cells), 340), (255, 255, 255, 255))

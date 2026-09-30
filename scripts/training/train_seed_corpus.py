@@ -28,6 +28,7 @@ import time
 from collections.abc import Iterator, Sequence
 from dataclasses import replace
 from pathlib import Path
+from typing import Any
 
 import torch
 
@@ -530,8 +531,10 @@ def main() -> None:
 
     history_dir = None
     if args.keep_checkpoints == "on":
-        history_dir = Path(args.checkpoint_history_dir) if args.checkpoint_history_dir else (
-            Path(str(checkpoint_path) + ".history")
+        history_dir = (
+            Path(args.checkpoint_history_dir)
+            if args.checkpoint_history_dir
+            else (Path(str(checkpoint_path) + ".history"))
         )
 
     #: A-4（把 A 支线已证的部件推广到主训练线）：全部开关**默认关**，关着时 config 与

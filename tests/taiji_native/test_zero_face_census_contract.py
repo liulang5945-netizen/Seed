@@ -15,7 +15,9 @@ from pathlib import Path
 import pytest
 import torch
 
-SCRIPT = Path(__file__).resolve().parents[2] / "scripts" / "training" / "audit_taiji_zero_face_census.py"
+SCRIPT = (
+    Path(__file__).resolve().parents[2] / "scripts" / "training" / "audit_taiji_zero_face_census.py"
+)
 
 
 @pytest.fixture(scope="module")
@@ -107,4 +109,6 @@ def test_empty_payload_refuses_to_conclude(tmp_path, census_module) -> None:
     path = _write(tmp_path, {"format": "seed-native-v1"})
     report = census_module.census(path)
     assert report["instrument_guard"]["denominator_nonzero"] is False
-    assert census_module.main(["--checkpoint", str(path), "--report", str(tmp_path / "r.json")]) == 2
+    assert (
+        census_module.main(["--checkpoint", str(path), "--report", str(tmp_path / "r.json")]) == 2
+    )

@@ -9,6 +9,7 @@ silently ship as artwork.
 
 Only numpy and Pillow are used (no cv2 / scikit-image / shapely on this host).
 """
+
 from __future__ import annotations
 
 import os
@@ -19,7 +20,6 @@ from PIL import Image
 
 SRC = r"E:/Seed/design/variants/seed-shell-final-mark.png"
 OUT = r"E:/Seed/design/logo"
-import sys
 RDP_TOL = float(os.environ.get("RDP_TOL", "0.9"))
 GRID = int(os.environ.get("GRID", "320"))
 MIN_IOU = 0.98
@@ -83,14 +83,14 @@ def moore_ring(mask: np.ndarray, seed: tuple[int, int]) -> list[tuple[int, int]]
                 nxt = (cand[1], cand[0])
                 chosen = direction
                 break
-        if nxt is None:                      # isolated pixel
+        if nxt is None:  # isolated pixel
             return ring if len(ring) >= 4 else None
         if nxt == start:
             return ring if len(ring) >= 4 else None
         ring.append(nxt)
         back = (chosen + 4) % 8
         current = nxt
-    return None                              # budget exhausted: do not trust it
+    return None  # budget exhausted: do not trust it
 
 
 def rings_of(mask: np.ndarray) -> list[list[tuple[int, int]]]:
@@ -105,7 +105,9 @@ def rings_of(mask: np.ndarray) -> list[list[tuple[int, int]]]:
             rings.append(ring)
     background = ~mask
     for pixels in components(background, 4):
-        touches_border = any(y in (0, mask.shape[0] - 1) or x in (0, mask.shape[1] - 1) for x, y in pixels)
+        touches_border = any(
+            y in (0, mask.shape[0] - 1) or x in (0, mask.shape[1] - 1) for x, y in pixels
+        )
         if touches_border:
             continue
         sub = np.zeros_like(mask)
@@ -126,7 +128,7 @@ def rdp(points: list[tuple[float, float]], eps: float) -> list[tuple[float, floa
     deviations = [abs((y1 - y0) * (x - x0) - (x1 - x0) * (y - y0)) / base for x, y in points[1:-1]]
     index = int(np.argmax(deviations))
     if deviations[index] > eps:
-        return rdp(points[:index + 2], eps)[:-1] + rdp(points[index + 1:], eps)
+        return rdp(points[: index + 2], eps)[:-1] + rdp(points[index + 1 :], eps)
     return [points[0], points[-1]]
 
 
@@ -152,7 +154,7 @@ def simplify(mask: np.ndarray, size: int) -> list[np.ndarray]:
         far = int(np.argmax(distances[1:])) + 1
         if far == 0:
             continue
-        chain_a = [tuple(p) for p in pts[:far + 1]]
+        chain_a = [tuple(p) for p in pts[: far + 1]]
         chain_b = [tuple(p) for p in pts[far:]] + [tuple(pts[0])]
         simple = rdp(chain_a, RDP_TOL)[:-1] + rdp(chain_b, RDP_TOL)[:-1]
         if len(simple) < 4:
@@ -191,7 +193,7 @@ def render(rings: list[np.ndarray], size: int) -> np.ndarray:
             left = max(int(np.ceil(xs[k] - 0.5)), 0)
             right = min(int(np.floor(xs[k + 1] - 0.5)), size - 1)
             if right >= left:
-                covered[row, left:right + 1] = True
+                covered[row, left : right + 1] = True
     return covered
 
 
@@ -219,8 +221,10 @@ def main() -> int:
         drawn = render(rings, GRID)
         union = int((drawn | grid_mask).sum())
         iou = int((drawn & grid_mask).sum()) / union if union else 0.0
-        print(f"layer={name:8s} mask_px={int(grid_mask.sum()):6d} rings={len(rings):3d} "
-              f"vertices={int(sum(len(r) for r in rings)):5d} IoU={iou:.4f}")
+        print(
+            f"layer={name:8s} mask_px={int(grid_mask.sum()):6d} rings={len(rings):3d} "
+            f"vertices={int(sum(len(r) for r in rings)):5d} IoU={iou:.4f}"
+        )
         if iou < MIN_IOU:
             print(f"REJECTED: layer {name} IoU {iou:.4f} < {MIN_IOU}")
             return 1
@@ -229,21 +233,32 @@ def main() -> int:
     mono_d = path_data(results["mono"])
     struct_d = path_data(results["struct"])
     foliage_d = path_data(results["foliage"])
-    with open(os.path.join(OUT, "seed-mark-mono.svg"), "w", encoding="utf-8", newline="\n") as handle:
-        handle.write('<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">\n'
-                     f'  <path d="{mono_d}" fill="currentColor" fill-rule="evenodd"/>\n</svg>\n')
-    with open(os.path.join(OUT, "seed-mark-color.svg"), "w", encoding="utf-8", newline="\n") as handle:
-        handle.write('<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">\n'
-                     f'  <path d="{struct_d}" fill="#124A38" fill-rule="evenodd"/>\n'
-                     f'  <path d="{foliage_d}" fill="#AAD66A" fill-rule="evenodd"/>\n</svg>\n')
-    with open(os.path.join(OUT, "seed-mark-mono.path.txt"), "w", encoding="utf-8", newline="\n") as handle:
+    with open(
+        os.path.join(OUT, "seed-mark-mono.svg"), "w", encoding="utf-8", newline="\n"
+    ) as handle:
+        handle.write(
+            '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">\n'
+            f'  <path d="{mono_d}" fill="currentColor" fill-rule="evenodd"/>\n</svg>\n'
+        )
+    with open(
+        os.path.join(OUT, "seed-mark-color.svg"), "w", encoding="utf-8", newline="\n"
+    ) as handle:
+        handle.write(
+            '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">\n'
+            f'  <path d="{struct_d}" fill="#124A38" fill-rule="evenodd"/>\n'
+            f'  <path d="{foliage_d}" fill="#AAD66A" fill-rule="evenodd"/>\n</svg>\n'
+        )
+    with open(
+        os.path.join(OUT, "seed-mark-mono.path.txt"), "w", encoding="utf-8", newline="\n"
+    ) as handle:
         handle.write(mono_d)
     for size in (24, 64, 128):
         drawn = render(results["mono"], size)
-        Image.fromarray(np.where(drawn, 0, 255).astype(np.uint8), "L").resize((size * 4, size * 4), Image.NEAREST).save(
-            os.path.join(OUT, f"preview-mono-{size}.png"))
+        Image.fromarray(np.where(drawn, 0, 255).astype(np.uint8), "L").resize(
+            (size * 4, size * 4), Image.NEAREST
+        ).save(os.path.join(OUT, f"preview-mono-{size}.png"))
     for poly in results["mono"]:
-        print("  mono ring verts=%d area=%.1f" % (len(poly), abs(signed_area(poly))))
+        print(f"  mono ring verts={len(poly)} area={abs(signed_area(poly)):.1f}")
     print(f"path_chars mono={len(mono_d)} struct={len(struct_d)} foliage={len(foliage_d)}")
     print("written ->", OUT)
     return 0

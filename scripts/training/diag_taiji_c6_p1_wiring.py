@@ -51,7 +51,9 @@ def main() -> int:
     parser.add_argument("--snapshot", help="path to a captured snapshot instead of reading it")
     parser.add_argument("--out", default="output/c6_p1", help="where to write the rendered corpus")
     parser.add_argument("--report", required=True, help="where to write the JSON reading")
-    parser.add_argument("--timeout", type=float, default=10.0, help="seconds to wait for the endpoint")
+    parser.add_argument(
+        "--timeout", type=float, default=10.0, help="seconds to wait for the endpoint"
+    )
     args = parser.parse_args()
 
     snapshot = _load_snapshot(args)
@@ -78,7 +80,11 @@ def main() -> int:
             "the rendered file is native_trainable with units > 0 -- the Z1 gate, re-judged "
             "against the wired implementation"
         ),
-        "z1_gate": {"units": len(records), "native_trainable": inspected.native_trainable, "pass": len(records) > 0 and inspected.native_trainable},
+        "z1_gate": {
+            "units": len(records),
+            "native_trainable": inspected.native_trainable,
+            "pass": len(records) > 0 and inspected.native_trainable,
+        },
         "snapshot": {
             "snapshot_id": snapshot.get("snapshot_id"),
             "revision": snapshot.get("revision"),
@@ -95,7 +101,9 @@ def main() -> int:
     }
     report_path = Path(args.report)
     report_path.parent.mkdir(parents=True, exist_ok=True)
-    report_path.write_text(json.dumps(reading, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    report_path.write_text(
+        json.dumps(reading, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print(json.dumps(reading["z1_gate"], ensure_ascii=False))
     return 0 if reading["z1_gate"]["pass"] else 1
 

@@ -253,9 +253,7 @@ def evaluate(arm: dict[str, Any]) -> dict[str, Any]:
             entry[label] = {
                 "real": real,
                 "shuffled_label_control": control,
-                "above_shuffled_margin": round(
-                    real["mean_accuracy"] - control["mean_accuracy"], 4
-                ),
+                "above_shuffled_margin": round(real["mean_accuracy"] - control["mean_accuracy"], 4),
             }
         features[name] = entry
     #: 长度单特征对照：若光凭题面字节数就能把问法分出来，phrasing CV 要打折。
@@ -299,7 +297,15 @@ def evaluate(arm: dict[str, Any]) -> dict[str, Any]:
                     for j in range(i + 1, len(group))
                     if group[i] == group[j]
                 )
-                / max(sum(1 for group in by_fact.values() for i in range(len(group)) for j in range(i + 1, len(group))), 1),
+                / max(
+                    sum(
+                        1
+                        for group in by_fact.values()
+                        for i in range(len(group))
+                        for j in range(i + 1, len(group))
+                    ),
+                    1,
+                ),
                 4,
             ),
         },
@@ -312,9 +318,7 @@ def _best(evaluation: dict[str, Any], label: str, key: str) -> float:
     values: list[float] = []
     for result in evaluation["features"].values():
         entry = result[label]
-        values.append(
-            float(entry["real"]["mean_accuracy"]) if key == "real" else float(entry[key])
-        )
+        values.append(float(entry["real"]["mean_accuracy"]) if key == "real" else float(entry[key]))
     return max(values)
 
 

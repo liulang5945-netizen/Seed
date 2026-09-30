@@ -273,13 +273,15 @@ def main() -> int:
             {
                 "mode": label,
                 "outcome": report["outcome"],
-                "train_flip_macros": {
-                    name: round(payload["train"]["flip_pairwise_macro"], 4)
-                    for name, payload in results.items()
-                    if name != "reference_key"
-                }
-                if label == "policies"
-                else None,
+                "train_flip_macros": (
+                    {
+                        name: round(payload["train"]["flip_pairwise_macro"], 4)
+                        for name, payload in results.items()
+                        if name != "reference_key"
+                    }
+                    if label == "policies"
+                    else None
+                ),
                 "reference_train_macro": (
                     results["reference_key"]["train"]["flip_pairwise_macro"]
                     if label == "policies"

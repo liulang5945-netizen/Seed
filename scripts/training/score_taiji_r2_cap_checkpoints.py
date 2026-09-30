@@ -60,9 +60,11 @@ def _m1_sentence_formation(checkpoint: Path) -> dict[str, Any]:
     from eval_taiji_r2_readout_retrain import (
         assert_criterion_discriminates,
         build_ngram_model,
+        generate,
         m1_tasks,
+        well_formed,
     )
-    from eval_taiji_r2_readout_retrain import generate, well_formed
+
     from api.seed_runtime import SeedRuntime
 
     runtime = SeedRuntime.load(checkpoint)
@@ -125,7 +127,9 @@ def main() -> int:
                 {
                     "name": name,
                     "cap_d_plus_e": scores[name]["cap_d_plus_e"]["sum_machine_scored_correct"],
-                    "m1_well_formed_rate": scores[name]["m1_sentence_formation"]["well_formed_rate"],
+                    "m1_well_formed_rate": scores[name]["m1_sentence_formation"][
+                        "well_formed_rate"
+                    ],
                     "seconds": scores[name]["seconds"],
                 },
                 ensure_ascii=False,
@@ -148,7 +152,10 @@ def main() -> int:
     elif s_t5 >= 2 and s_t5 > max(s_t1, s_abl, s_base):
         verdict = {"verdict": "SEPARABLE_CUE_BUYS_ANSWERS", "note": "端到端信号成立"}
     elif s_t5 == 0:
-        verdict = {"verdict": "SEPARABLE_CUE_DOES_NOT_BUY_ANSWERS", "note": "下一步才轮到稳定性归因"}
+        verdict = {
+            "verdict": "SEPARABLE_CUE_DOES_NOT_BUY_ANSWERS",
+            "note": "下一步才轮到稳定性归因",
+        }
     else:
         verdict = {
             "verdict": "SIGNAL_BELOW_MARGIN",
@@ -165,8 +172,10 @@ def main() -> int:
         "frozen_summary": {"S_t5": s_t5, "S_t1": s_t1, "S_abl": s_abl, "S_base": s_base},
         "verdict": verdict,
     }
-    out = Path(args.out_report) if args.out_report else (
-        PROJECT_ROOT / "reports" / "taiji_r2_cap_checkpoint_scores_20260924.json"
+    out = (
+        Path(args.out_report)
+        if args.out_report
+        else (PROJECT_ROOT / "reports" / "taiji_r2_cap_checkpoint_scores_20260924.json")
     )
     if out.exists():
         parser.error(f"{out} already exists; 判决件不覆写")

@@ -32,7 +32,6 @@ import torch
 from .internalization import content_digest
 from .model import Taiji
 from .organs import BytePredictiveReadout
-from .utf8_state import advance_utf8, utf8_allowed
 from .response_plan_target import (
     FACTOR_RESPONSE_PLAN_TARGET_PHASE_STRIDE,
     FACTOR_RESPONSE_PLAN_TARGET_SLOTS,
@@ -40,6 +39,7 @@ from .response_plan_target import (
     FactorizedResponsePlanTargetEncoder,
     ResponsePlanTargetEncoder,
 )
+from .utf8_state import advance_utf8, utf8_allowed
 
 #: The trainer accepts either encoder lineage: the H3.6 base encoder and the
 #: H3.7/H3.7B factorized family are parallel classes sharing the consumed
@@ -586,7 +586,7 @@ class LanguageAlignmentTrainer:
                 if geometry == LANGUAGE_RESPONSE_PLAN_TARGET_H37B
                 else FactorizedResponsePlanTargetEncoder.FORMAT
             )
-            if self.response_plan_target_encoder.FORMAT != expected_format:
+            if expected_format != self.response_plan_target_encoder.FORMAT:
                 raise ValueError("response-plan target encoder format does not match geometry")
             if (
                 self.response_plan_target_encoder.slots != self.config.response_plan_slots
@@ -1185,7 +1185,7 @@ class LanguageAlignmentTrainer:
 
         perturbation_context_l2: list[float] = []
         perturbation_probability_l1: list[float] = []
-        for episode, original in zip(episodes, snapshots):
+        for episode, original in zip(episodes, snapshots, strict=False):
             perturbed = replace(
                 episode,
                 episode_id=f"{episode.episode_id}:input-perturbed",
@@ -1514,7 +1514,7 @@ class LanguageAlignmentTrainer:
 
         def longest_common_prefix(left: bytes, right: bytes) -> int:
             count = 0
-            for first, second in zip(left, right):
+            for first, second in zip(left, right, strict=False):
                 if first != second:
                     break
                 count += 1

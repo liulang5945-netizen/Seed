@@ -38,8 +38,8 @@ from .utf8_state import utf8_allowed
 COPY_CIRCUIT_SEED_OFFSET = 0x2C0C_5017
 
 #: `_serialize` 的轮次标记（与 `api.seed_runtime` 同一份文本形状；此处不 import api，防环）。
-_QUESTION_MARKER = "问：".encode("utf-8")
-_ANSWER_MARKER = "\n答：".encode("utf-8")
+_QUESTION_MARKER = "问：".encode()
+_ANSWER_MARKER = "\n答：".encode()
 
 #: 锁规则档（PLAN-A-27 §2.6.5，owner 裁定 (d)）。`cue_only`＝旧缺省；`byte_overlap`＝新默认。
 LOCK_RULES = ("cue_only", "byte_overlap")
@@ -59,7 +59,7 @@ def last_question_bytes(serialized: bytes) -> bytes:
         return serialized
     start = cut + len(_QUESTION_MARKER)
     end = serialized.find(_ANSWER_MARKER, start)
-    return serialized[start:end if end >= 0 else len(serialized)]
+    return serialized[start : end if end >= 0 else len(serialized)]
 
 
 @dataclass(frozen=True)
@@ -315,7 +315,7 @@ class CopyCircuit:
             #: 不用 `index_reduce_`（torch 标为 beta、语义将来可能变）：诊断路径每条告知只有几十
             #: 个位置，显式循环更贵不了多少，但不会因为 torch 升级而静默换语义。
             pooled = distribution.clone()
-            for code, weight in zip(codes.tolist(), weights.tolist()):
+            for code, weight in zip(codes.tolist(), weights.tolist(), strict=False):
                 if float(weight) > float(pooled[int(code)]):
                     pooled[int(code)] = float(weight)
             return pooled
@@ -408,9 +408,7 @@ class CopyCircuit:
             #: 旧缺省（cue 余弦＋学习头）——实测 ≈90% 选最早那条告知。
             scores = matrix[:, 0] + head
         else:
-            raise ValueError(
-                f"unknown lock_selection_rule {rule!r}; known: {LOCK_RULES}"
-            )
+            raise ValueError(f"unknown lock_selection_rule {rule!r}; known: {LOCK_RULES}")
         picked = 0
         for index in range(1, int(scores.numel())):
             if float(scores[index]) > float(scores[picked]):
@@ -468,9 +466,7 @@ class CopyCircuit:
 
         remaining, lead = int(utf8_state[0]), int(utf8_state[1])
         mask = torch.zeros(self.config.alphabet_size, device=self.device)
-        legal = torch.tensor(
-            utf8_allowed(remaining, lead), device=self.device, dtype=torch.long
-        )
+        legal = torch.tensor(utf8_allowed(remaining, lead), device=self.device, dtype=torch.long)
         mask[legal] = 1.0
         return mask
 

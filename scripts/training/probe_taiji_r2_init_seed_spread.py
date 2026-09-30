@@ -38,7 +38,16 @@ from probe_taiji_r2_compositionality import FAMILIES  # noqa: E402
 from probe_taiji_r2_separability_before_training import measure  # noqa: E402
 
 #: 预注册的种子集合（先定后跑）
-SEEDS: tuple[int, ...] = (20260822, 20260823, 20260824, 20260825, 20260826, 20260827, 20260828, 20260901)
+SEEDS: tuple[int, ...] = (
+    20260822,
+    20260823,
+    20260824,
+    20260825,
+    20260826,
+    20260827,
+    20260828,
+    20260901,
+)
 #: 训练后（`seed_beta.pt`，16M）的读数，取自冻结的 Step 0 分块剖面
 TRAINED = {"1_activity_block": 0.4586, "2_trace_block": 0.5766, "3_context": 0.4197}
 
@@ -116,16 +125,19 @@ def main() -> int:
         "summary": summary,
     }
     report_path = Path(
-        args.out_report
-        or PROJECT_ROOT / "reports" / "taiji_r2_init_seed_spread_20260923.json"
+        args.out_report or PROJECT_ROOT / "reports" / "taiji_r2_init_seed_spread_20260923.json"
     )
     if report_path.exists():
         parser.error(f"{report_path} already exists; 判决件不覆写")
     report_path.parent.mkdir(parents=True, exist_ok=True)
-    report_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    report_path.write_text(
+        json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
 
     print(json.dumps({"report": str(report_path)}))
-    print(f"  {'stage':20} {'init min':>9} {'median':>9} {'max':>9} {'trained':>9} {'z':>7}  verdict")
+    print(
+        f"  {'stage':20} {'init min':>9} {'median':>9} {'max':>9} {'trained':>9} {'z':>7}  verdict"
+    )
     for stage in stages:
         row = summary[stage]
         stats = row["init_stats"]

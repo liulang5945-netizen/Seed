@@ -13,6 +13,7 @@
 
 from __future__ import annotations
 
+from pathlib import Path
 from typing import Any
 
 import pytest
@@ -50,6 +51,7 @@ def _feed(model: Taiji, symbols: bytes) -> torch.Tensor:
 
 
 # ---------------------------------------------------------------- 守卫 1：默认关
+
 
 def test_default_gate_is_off_and_state_payload_has_no_new_keys() -> None:
     config = _config()
@@ -124,6 +126,7 @@ def test_utf8_tracking_stays_off_when_both_switches_are_off() -> None:
 
 # ---------------------------------------------------------------- 守卫 2：掩码来自共享状态机
 
+
 @pytest.mark.parametrize(
     "utf8_state",
     [(0, 0), (1, 0xE4), (2, 0xE0), (2, 0xED), (3, 0xF0), (3, 0xF4)],
@@ -143,6 +146,7 @@ def test_position_class_dimension_is_still_four() -> None:
 
 
 # ---------------------------------------------------------------- 守卫 3：门开只滤非法字节
+
 
 def _populated_circuit(model: Taiji) -> CopyCircuit:
     model.mount_copy_circuit()
@@ -185,6 +189,7 @@ def test_gate_on_keeps_mount_bitwise_inert_when_store_is_empty() -> None:
     gated.mount_copy_circuit()
     assert torch.equal(_feed(plain, ASK), _feed(gated, ASK))
 
+
 # ---------------------------------------------------------------- 守卫 6：默认纳入（owner 裁定 b，2026-09-28）
 
 
@@ -202,9 +207,11 @@ def test_enable_copy_circuit_turns_the_gate_on_by_default(tmp_path: Path) -> Non
     # 造一份最小电路 payload（沿用训练器的 to_payload 形状）。
     model.mount_copy_circuit(max_events=4)
     payload_path = tmp_path / "circuit_payload.pt"
-    payload_path.write_bytes(
-        json.dumps({"placeholder": True}).encode("utf-8")
-    ) if False else torch.save({"copy_circuit": model.copy_circuit.to_payload()}, payload_path)
+    (
+        payload_path.write_bytes(json.dumps({"placeholder": True}).encode("utf-8"))
+        if False
+        else torch.save({"copy_circuit": model.copy_circuit.to_payload()}, payload_path)
+    )
 
     runtime = SeedRuntime.__new__(SeedRuntime)  # 不走完整 provider 装配
     runtime.model = model

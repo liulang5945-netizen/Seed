@@ -161,7 +161,7 @@ def test_the_gate_ships_exactly_one_composition_rule(gate: Any) -> None:
     revision_0 = "chosen = bindable[0]" in body
     revision_1 = 'return finish("all_members_blocked")' in body
     assert revision_0 != revision_1, "exactly one composition rule may be in the body"
-    assert gate.RULE_REVISION == (0 if revision_0 else 1)
+    assert (0 if revision_0 else 1) == gate.RULE_REVISION
     assert getattr(gate, "COMPOSITION_RULE", None) == (
         "priority_fallback" if revision_0 else "m4_failure_handoff"
     )

@@ -404,9 +404,7 @@ class SeedRuntime:
         if not self._surface_ngram_loaded:
             self._surface_ngram_loaded = True
             if self.surface_gate_state == "armed" and self._surface_ngram_artifact is not None:
-                self._surface_ngram = surface_gate.load_surface_ngram(
-                    self._surface_ngram_artifact
-                )
+                self._surface_ngram = surface_gate.load_surface_ngram(self._surface_ngram_artifact)
         return self._surface_ngram
 
     def _record_told_history(self, circuit: Any, history: Sequence[tuple[str, str]] | None) -> None:

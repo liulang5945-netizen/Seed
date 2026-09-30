@@ -47,9 +47,7 @@ def trainer():
 
 
 def _small_config() -> SeedConfig:
-    return SeedConfig(
-        taiji=TaijiConfig(region_sizes=(16,), synapse_fan_in=4, motor_fan_in=8)
-    )
+    return SeedConfig(taiji=TaijiConfig(region_sizes=(16,), synapse_fan_in=4, motor_fan_in=8))
 
 
 def test_source_fields_default_to_false() -> None:
@@ -103,9 +101,7 @@ def test_patch_touches_all_three_config_copies_and_only_named_keys(trainer) -> N
         "substrate": dict(envelope["substrate"]["config"]),
         "kernel": dict(envelope["taiji"]["kernel"]["config"]),
     }
-    patched = trainer.patch_envelope_config_flags(
-        envelope, {"readout_utf8_position_input": True}
-    )
+    patched = trainer.patch_envelope_config_flags(envelope, {"readout_utf8_position_input": True})
     assert patched == 3
     for label, node in (
         ("seed", envelope["config"]["taiji"]),
@@ -140,9 +136,7 @@ def _v1_envelope() -> dict:
 
 def test_patch_covers_v1_envelope_two_copies(trainer) -> None:
     envelope = _v1_envelope()
-    assert trainer.patch_envelope_config_flags(
-        envelope, {"readout_utf8_position_input": True}
-    ) == 2
+    assert trainer.patch_envelope_config_flags(envelope, {"readout_utf8_position_input": True}) == 2
     assert envelope["config"]["taiji"]["readout_utf8_position_input"] is True
     assert envelope["substrate"]["config"]["readout_utf8_position_input"] is True
 
@@ -150,9 +144,7 @@ def test_patch_covers_v1_envelope_two_copies(trainer) -> None:
 def test_hot_start_restore_needs_the_patch_and_then_succeeds(trainer) -> None:
     """补丁是解锁那次有意配方切换的**唯一**手段：不加 ⇒ 守卫拦下；加了 ⇒ 载入成功。"""
 
-    target_config = trainer.apply_experiment_flags(
-        _hotstart_config(), readout_position=True
-    )
+    target_config = trainer.apply_experiment_flags(_hotstart_config(), readout_position=True)
 
     # 不加补丁：档里的配置仍是关着的，与开启位置输入的架构不符 ⇒ 必须响亮失败。
     with pytest.raises(ValueError):

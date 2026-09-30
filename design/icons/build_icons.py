@@ -15,16 +15,17 @@ Owner-tuned decisions (2026-09-28):
   - tree grown to fill the rounder shell, trunk rooted into the shell stroke
   - palette refreshed to a young spring green
 """
+
 import os
-import numpy as np
+
 from PIL import Image, ImageDraw
 
 MARK = r"E:/Seed/design/variants/seed-shell-final-mark.png"
 ANCHOR = r"E:/Seed/seed-logo_assets/1044f28f-miora_edit_image-1790567714143-0-bb84fe254933.png"
 OUT = r"E:/Seed/design/icons"
 SIZES = [16, 24, 32, 48, 64, 128, 256]
-RADIUS_RATIO = 0.22      # rounded-square corner radius
-MARK_RATIO = 0.84        # mark size relative to tile
+RADIUS_RATIO = 0.22  # rounded-square corner radius
+MARK_RATIO = 0.84  # mark size relative to tile
 
 bg = Image.open(ANCHOR).convert("RGB").getpixel((5, 5))
 mark = Image.open(MARK).convert("RGBA")
@@ -39,20 +40,22 @@ print("mark bbox:", bbox, "-> square crop:", square.size)
 
 os.makedirs(OUT, exist_ok=True)
 
+
 def make_tile(size):
-    tile = Image.new("RGBA", (size, size), bg + (255,))
     mask = Image.new("L", (size, size), 0)
     ImageDraw.Draw(mask).rounded_rectangle(
-        [0, 0, size - 1, size - 1], radius=max(2, round(size * RADIUS_RATIO)), fill=255)
+        [0, 0, size - 1, size - 1], radius=max(2, round(size * RADIUS_RATIO)), fill=255
+    )
     inner = Image.new("RGBA", (size, size), bg + (255,))
     side = int(round(size * MARK_RATIO))
     m = square.resize((side, side), Image.LANCZOS)
     inner.alpha_composite(m, ((size - side) // 2, (size - side) // 2))
     return Image.composite(inner, Image.new("RGBA", (size, size), (0, 0, 0, 0)), mask)
 
+
 make_tile(1024).save(os.path.join(OUT, "seed-icon-tile-1024.png"))
 for s in SIZES:
-    make_tile(s).save(os.path.join(OUT, "seed-icon-%d.png" % s))
+    make_tile(s).save(os.path.join(OUT, f"seed-icon-{s}.png"))
 
 make_tile(256).save(os.path.join(OUT, "seed-icon.ico"), sizes=[(s, s) for s in SIZES])
 print("done ->", OUT)

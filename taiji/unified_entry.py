@@ -117,16 +117,12 @@ def assemble_bundle(
         sha = hashlib.sha256(file_path.read_bytes()).hexdigest()
         expected = (expected_sha256 or {}).get(name)
         if expected is not None and sha != expected:
-            raise ValueError(
-                f"bundle component {name!r} sha256 mismatch: {sha} != {expected}"
-            )
+            raise ValueError(f"bundle component {name!r} sha256 mismatch: {sha} != {expected}")
         refs.append(ComponentRef(name=name, kind=kind, path=str(path), sha256=sha))
     digest = content_digest(
         {
             "task_id": task_id,
-            "components": [
-                {"name": r.name, "kind": r.kind, "sha256": r.sha256} for r in refs
-            ],
+            "components": [{"name": r.name, "kind": r.kind, "sha256": r.sha256} for r in refs],
         }
     )
     return UnifiedBundle(task_id=task_id, components=tuple(refs), digest=digest)
@@ -147,15 +143,45 @@ def arm_config(name: str) -> ArmConfig:
     """The pre-registered ablation arms (contract section 3.4)."""
 
     if name == "full":
-        return ArmConfig(name, rule_revision=RULE_REVISION, memory_enabled=True, writeback_enabled=True, simple_strategy=False)
+        return ArmConfig(
+            name,
+            rule_revision=RULE_REVISION,
+            memory_enabled=True,
+            writeback_enabled=True,
+            simple_strategy=False,
+        )
     if name == "simple_strategy":
-        return ArmConfig(name, rule_revision=0, memory_enabled=False, writeback_enabled=False, simple_strategy=True)
+        return ArmConfig(
+            name,
+            rule_revision=0,
+            memory_enabled=False,
+            writeback_enabled=False,
+            simple_strategy=True,
+        )
     if name == "disable_memory":
-        return ArmConfig(name, rule_revision=RULE_REVISION, memory_enabled=False, writeback_enabled=True, simple_strategy=False)
+        return ArmConfig(
+            name,
+            rule_revision=RULE_REVISION,
+            memory_enabled=False,
+            writeback_enabled=True,
+            simple_strategy=False,
+        )
     if name == "disable_selection":
-        return ArmConfig(name, rule_revision=0, memory_enabled=True, writeback_enabled=True, simple_strategy=False)
+        return ArmConfig(
+            name,
+            rule_revision=0,
+            memory_enabled=True,
+            writeback_enabled=True,
+            simple_strategy=False,
+        )
     if name == "disable_writeback":
-        return ArmConfig(name, rule_revision=RULE_REVISION, memory_enabled=True, writeback_enabled=False, simple_strategy=False)
+        return ArmConfig(
+            name,
+            rule_revision=RULE_REVISION,
+            memory_enabled=True,
+            writeback_enabled=False,
+            simple_strategy=False,
+        )
     raise ValueError(f"unknown ablation arm: {name}")
 
 

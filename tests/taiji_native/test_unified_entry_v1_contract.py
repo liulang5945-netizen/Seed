@@ -48,7 +48,9 @@ def test_gate1_bundle_assembly_verifies_real_p51h_child(tmp_path: Path) -> None:
     else:
         knowledge_path = _write_component(tmp_path, "child.pt", b"synthetic-child")
         expected = {}
-    policy = _write_component(tmp_path, "policy.json", b'{"composition_rule": "m4_failure_handoff"}')
+    policy = _write_component(
+        tmp_path, "policy.json", b'{"composition_rule": "m4_failure_handoff"}'
+    )
     bundle = assemble_bundle(
         "p52-family-task",
         (
@@ -109,8 +111,11 @@ def test_gate2_ablation_arms() -> None:
     )
     full = arm_config("full")
     assert full == ArmConfig(
-        name="full", rule_revision=RULE_REVISION, memory_enabled=True,
-        writeback_enabled=True, simple_strategy=False,
+        name="full",
+        rule_revision=RULE_REVISION,
+        memory_enabled=True,
+        writeback_enabled=True,
+        simple_strategy=False,
     )
     # each non-full arm differs from full in exactly one field
     for name in ("simple_strategy", "disable_memory", "disable_selection", "disable_writeback"):
@@ -121,7 +126,12 @@ def test_gate2_ablation_arms() -> None:
             if getattr(arm, field) != getattr(full, field)
         ]
         if name == "simple_strategy":
-            assert set(diffs) == {"rule_revision", "memory_enabled", "writeback_enabled", "simple_strategy"}
+            assert set(diffs) == {
+                "rule_revision",
+                "memory_enabled",
+                "writeback_enabled",
+                "simple_strategy",
+            }
         else:
             assert len(diffs) == 1, (name, diffs)
     with pytest.raises(ValueError, match="unknown ablation arm"):
@@ -136,11 +146,22 @@ def test_gate2_ablation_arms() -> None:
 def test_gate3_trace_schema() -> None:
     good = [
         {"tick": 1, "kind": "member_called", "rule_revision": 1, "bundle_digest": "abc"},
-        {"tick": 1, "kind": "stop", "rule_revision": 1, "bundle_digest": "abc", "stop": "goal_reached"},
+        {
+            "tick": 1,
+            "kind": "stop",
+            "rule_revision": 1,
+            "bundle_digest": "abc",
+            "stop": "goal_reached",
+        },
     ]
     assert validate_trace(good) is True
     assert validate_trace([]) is True
     assert validate_trace([{"tick": 1, "kind": "member_called", "rule_revision": 1}]) is False
-    assert validate_trace([{"tick": 1, "kind": "unknown_kind", "rule_revision": 1, "bundle_digest": "abc"}]) is False
+    assert (
+        validate_trace(
+            [{"tick": 1, "kind": "unknown_kind", "rule_revision": 1, "bundle_digest": "abc"}]
+        )
+        is False
+    )
     assert "consequence_predicted" in TRACE_EVENT_KINDS
     assert "writeback_applied" in TRACE_EVENT_KINDS

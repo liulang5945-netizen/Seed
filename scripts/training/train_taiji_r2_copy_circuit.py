@@ -610,7 +610,9 @@ def main() -> int:
             ),
             "content_embed_rows_touched": int(
                 (
-                    (circuit.parameters()["content_embed"] - _content_embed_at_start).abs().amax(dim=1)
+                    (circuit.parameters()["content_embed"] - _content_embed_at_start)
+                    .abs()
+                    .amax(dim=1)
                     > 0.0
                 ).sum()
             ),

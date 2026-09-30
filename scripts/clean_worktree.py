@@ -12,6 +12,7 @@
 from __future__ import annotations
 
 import argparse
+import contextlib
 import os
 import subprocess
 
@@ -58,6 +59,15 @@ DELETABLE_DIRS = [
 # 前缀族：.tmp-<主题>/（S3 命名约定）；.m0-checkpoint-*/ 在 EXEMPT 中保守保留
 DELETABLE_PREFIXES = (".tmp-",)
 
+# 子树内的本机运行产物（2026-09-30，H19）。上一版只扫仓库根，而按 R2「目录规则不覆盖子目录」，
+# `.gitignore` 的 `/.dsh-sbx*/` 锚在根、对 `taiji-harness/.dsh-sbx2/` 不生效——于是 fork 子目录里的
+# 沙盒既进了 git status，也进了 ruff 度量面（实测伪造了 130 个 lint error）。
+# 这些是**相对仓库根**的路径，逐个仍要过 git_ignored() 才判「删除」，保持 fail-closed。
+NESTED_DELETABLE = (
+    "taiji-harness/.dsh-sbx",
+    "taiji-harness/undefined",
+)
+
 # 只报告、永不删除：体积大或语义特殊，删不删由所有者决定
 OWNER_DECISION = ["data", ".codex", "taiji_data", ".local", "checkpoints", "security"]
 
@@ -76,10 +86,8 @@ def tree_count(path: str) -> tuple[int, float]:
     for dp, _, fs in os.walk(path):
         for f in fs:
             n += 1
-            try:
+            with contextlib.suppress(OSError):
                 total += os.path.getsize(os.path.join(dp, f))
-            except OSError:
-                pass
     return n, total / 1e6
 
 
@@ -87,9 +95,7 @@ def exempt(rel: str) -> bool:
     normalized = rel.replace("\\", "/")
     if normalized in {e.replace("\\", "/") for e in EXEMPT}:
         return True
-    if normalized.startswith(HUMAN_ONLY_PREFIXES):
-        return True
-    return False
+    return bool(normalized.startswith(HUMAN_ONLY_PREFIXES))
 
 
 def plan_dirs() -> list[tuple[str, int, float, str]]:
@@ -115,6 +121,22 @@ def plan_dirs() -> list[tuple[str, int, float, str]]:
             plan.append((entry, *tree_count(full), "非 git-ignored，跳过"))
             continue
         plan.append((entry, *tree_count(full), "删除"))
+    # 子树内的沙盒目录（按前缀匹配，故 .dsh-sbx2/.dsh-sbx3 都被覆盖）
+    for parent, prefix in (("taiji-harness", ".dsh-sbx"), ("taiji-harness", "undefined")):
+        parent_full = os.path.join(ROOT, parent)
+        if not os.path.isdir(parent_full):
+            continue
+        for entry in sorted(os.listdir(parent_full)):
+            if entry != prefix and not entry.startswith(prefix):
+                continue
+            rel = f"{parent}/{entry}"
+            full = os.path.join(parent_full, entry)
+            if not os.path.isdir(full) or exempt(rel):
+                continue
+            if not git_ignored(rel):
+                plan.append((rel, *tree_count(full), "非 git-ignored，跳过"))
+                continue
+            plan.append((rel, *tree_count(full), "删除"))
     return plan
 
 

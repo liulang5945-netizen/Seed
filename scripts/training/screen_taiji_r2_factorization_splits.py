@@ -62,9 +62,7 @@ def measure(substrate: Any, label: str) -> dict[str, float]:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument(
-        "--config-from", default=str(PROJECT_ROOT / "checkpoints" / "seed_beta.pt")
-    )
+    parser.add_argument("--config-from", default=str(PROJECT_ROOT / "checkpoints" / "seed_beta.pt"))
     parser.add_argument("--out-report", default=None)
     args = parser.parse_args()
     from taiji import Taiji, TaijiConfig
@@ -130,7 +128,9 @@ def main() -> int:
     if report_path.exists():
         parser.error(f"{report_path} already exists; 判决件不覆写")
     report_path.parent.mkdir(parents=True, exist_ok=True)
-    report_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    report_path.write_text(
+        json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
 
     print(json.dumps({"report": str(report_path)}))
     print(f"  {'k_act':>6} {'k_trace':>8} {'2_trace':>10} {'3_context':>11} {'5_readout':>11}")

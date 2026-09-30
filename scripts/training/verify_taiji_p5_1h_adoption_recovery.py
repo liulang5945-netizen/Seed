@@ -63,7 +63,9 @@ def main() -> int:
         for name in trajectory.tool_calls
     )
     p51g_agate = _sample_agate(sourced_path, train_vocabulary, after_line=sourced_sample.last_line)
-    independent = _independent_slice(sourced_path, train_vocabulary, after_line=p51g_agate.last_line)
+    independent = _independent_slice(
+        sourced_path, train_vocabulary, after_line=p51g_agate.last_line
+    )
 
     embedder = _MemoizedEmbedder(DocumentEmbedder())
     payload = torch.load(args.checkpoint, map_location="cpu", weights_only=False)

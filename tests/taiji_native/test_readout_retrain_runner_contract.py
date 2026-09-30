@@ -315,7 +315,10 @@ def test_a_final_progress_entry_never_reports_a_fake_zero(
     )
     rows = [
         json.loads(line)
-        for line in (out_dir / "A" / "progress.jsonl").read_text(encoding="utf-8").strip().splitlines()
+        for line in (out_dir / "A" / "progress.jsonl")
+        .read_text(encoding="utf-8")
+        .strip()
+        .splitlines()
     ]
     final = rows[-1]
     assert final["final"] is True

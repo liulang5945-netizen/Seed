@@ -15,11 +15,10 @@ from __future__ import annotations
 import inspect
 from typing import Any
 
+from seed.config import SeedConfig
+from seed.model import Seed
 from taiji import TaijiConfig
 from taiji.internalization import content_digest
-
-from seed.model import Seed
-from seed.config import SeedConfig
 
 EDGE_PARAMS = ("include_start_boundary", "include_end_boundary", "reset")
 

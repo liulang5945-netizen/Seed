@@ -66,7 +66,9 @@ from taiji.artifact_internalization import SemanticArtifactKnowledgeEncoder  # n
 REPORT_FORMAT = "taiji-p5-1h-admission-recipe-report-v1"
 VERSION = 1
 CONTRACT = "plans/reference/M5_P5_1H_ADMISSION_PACKAGE_DRAFT_20260919.md"
-P51G_PREREGISTRATION = "plans/reference/M5_P5_1G_REAL_CORPUS_QUOTA_BUDGET_PREREGISTRATION_20260912.md"
+P51G_PREREGISTRATION = (
+    "plans/reference/M5_P5_1G_REAL_CORPUS_QUOTA_BUDGET_PREREGISTRATION_20260912.md"
+)
 DEFAULT_REPORT = PROJECT_ROOT / "reports" / "taiji_p5_1h_admission_recipe_20260919.json"
 
 #: Pre-registered lines (contract section 6 -- frozen 2026-09-19).
@@ -93,7 +95,12 @@ def evaluate_lines(
     l2 = (independent_accuracy - FROZEN_TICK_MAJORITY) >= INDEPENDENT_MARGIN
     l3 = semantic_retention_after <= semantic_retention_before
     l4 = lesion_accuracy <= LESION_CEILING and bool(roundtrip_preserved)
-    lines = {"L1_retention": l1, "L2_independent_transfer": l2, "L3_semantic_retention": l3, "L4_lesion_roundtrip": l4}
+    lines = {
+        "L1_retention": l1,
+        "L2_independent_transfer": l2,
+        "L3_semantic_retention": l3,
+        "L4_lesion_roundtrip": l4,
+    }
     return {
         "lines": lines,
         "all_pass": all(lines.values()),
@@ -156,7 +163,9 @@ def run_sweep(
         f"tool.{name}" for trajectory in train_sourced for name in trajectory.tool_calls
     )
     p51g_agate = _sample_agate(sourced_path, train_vocabulary, after_line=sourced_sample.last_line)
-    independent = _independent_slice(sourced_path, train_vocabulary, after_line=p51g_agate.last_line)
+    independent = _independent_slice(
+        sourced_path, train_vocabulary, after_line=p51g_agate.last_line
+    )
     if set(t.line_index for t in p51g_agate.trajectories) & set(
         t.line_index for t in independent.trajectories
     ):
@@ -283,12 +292,18 @@ def run_adoption(
         "retention": sourced_sample.trajectories[TRAIN_COUNT + HOLDOUT_COUNT : ARM_COUNT],
     }
     train_vocabulary = frozenset(
-        f"tool.{name}" for trajectory in sourced_partitions["train"] for name in trajectory.tool_calls
+        f"tool.{name}"
+        for trajectory in sourced_partitions["train"]
+        for name in trajectory.tool_calls
     )
     p51g_agate = _sample_agate(sourced_path, train_vocabulary, after_line=sourced_sample.last_line)
-    independent = _independent_slice(sourced_path, train_vocabulary, after_line=p51g_agate.last_line)
+    independent = _independent_slice(
+        sourced_path, train_vocabulary, after_line=p51g_agate.last_line
+    )
 
-    encoder = SemanticArtifactKnowledgeEncoder(embedder=shared_embedder_for_adoption(use_memoization))
+    encoder = SemanticArtifactKnowledgeEncoder(
+        embedder=shared_embedder_for_adoption(use_memoization)
+    )
     trainer = ArtifactInternalizationTrainer(**_trainer_kwargs(encoder))
     arm = _build_arm_from_partitions(sourced_partitions)
     pairs = _ranking_pairs(trainer._examples(*arm["train"]))

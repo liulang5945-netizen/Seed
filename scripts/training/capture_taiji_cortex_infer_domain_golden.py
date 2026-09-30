@@ -73,9 +73,7 @@ def main() -> int:
         key = "|".join(domains) if domains else "(empty)"
         # 该方法只读 self.neurons.keys() ⇒ 用最小替身当 self（不实例化 Cortex）
         fake = SimpleNamespace(neurons={f"{d}_unit": object() for d in domains})
-        grid[key] = {
-            text: Cortex._infer_domain(fake, text) for text in TEXTS
-        }
+        grid[key] = {text: Cortex._infer_domain(fake, text) for text in TEXTS}
 
     out = PROJECT_ROOT / "reports" / "cortex_infer_domain_golden_20260925.json"
     payload = {

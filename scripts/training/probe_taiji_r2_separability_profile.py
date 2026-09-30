@@ -258,7 +258,9 @@ def _localize(entry: dict[str, Any]) -> dict[str, Any]:
 
     p = entry["profile"]
     #: 无权重级（拼接块）的**上界**：任何一个 block 自己有多可分离。
-    upstream = max(p["1_activity_block"]["consistency_median"], p["2_trace_block"]["consistency_median"])
+    upstream = max(
+        p["1_activity_block"]["consistency_median"], p["2_trace_block"]["consistency_median"]
+    )
     learned = p["3_context"]["consistency_median"]
     late = p["5_readout_dist"]["consistency_median"]
     drop = round(upstream - learned, 6)
@@ -277,8 +279,7 @@ def _localize(entry: dict[str, Any]) -> dict[str, Any]:
     else:
         level = "upstream_of_any_map"
         note = (
-            "块本身就不分离（学习映射没有显著再损失）⇒ 缺口在**区域动力学**，"
-            "不在任何学习映射上"
+            "块本身就不分离（学习映射没有显著再损失）⇒ 缺口在**区域动力学**，" "不在任何学习映射上"
         )
     return {
         "named_level": level,
@@ -307,8 +308,10 @@ def main() -> int:
     # 就等于把真判决挡在门外（本仓在判决器上已经踩过一次）。
     if DRY_RUN_REPORT == VERDICT_REPORT:  # pragma: no cover - 防的是以后有人把两者改成同一个
         parser.error("internal: dry-run 与正式判决不得共用同一路径")
-    report_path = Path(args.out_report) if args.out_report else (
-        DRY_RUN_REPORT if args.dry_run else VERDICT_REPORT
+    report_path = (
+        Path(args.out_report)
+        if args.out_report
+        else (DRY_RUN_REPORT if args.dry_run else VERDICT_REPORT)
     )
     if report_path.exists():
         parser.error(f"{report_path} already exists; 判决件不覆写")
@@ -348,7 +351,9 @@ def main() -> int:
         "checkpoints": results,
     }
     report_path.parent.mkdir(parents=True, exist_ok=True)
-    report_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    report_path.write_text(
+        json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print(json.dumps({"status": payload["status"], "report": str(report_path)}))
     for label, entry in results.items():
         print(f"  === {label} (null_ok={entry['null_control']['ok']}) ===")

@@ -17,7 +17,9 @@ from neuroplex.brain import _cortex_routing
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 GOLDEN = json.loads(
-    (PROJECT_ROOT / "reports" / "cortex_fingerprint_golden_20260926.json").read_text(encoding="utf-8")
+    (PROJECT_ROOT / "reports" / "cortex_fingerprint_golden_20260926.json").read_text(
+        encoding="utf-8"
+    )
 )
 FIX_SEED = int(GOLDEN["seed"])
 

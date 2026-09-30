@@ -67,7 +67,7 @@ def test_the_start_row_is_derived_from_the_arm_manifests_not_typed(
         int(json.loads(path.read_text(encoding="utf-8"))["last_emitted_row"])
         for path in ARM_MANIFESTS
     )
-    assert instrument.MIN_START_ROW == expected, "the arms moved their window; so must the holdout"
+    assert expected == instrument.MIN_START_ROW, "the arms moved their window; so must the holdout"
     assert instrument.EVAL_BYTES == 65_536
 
 

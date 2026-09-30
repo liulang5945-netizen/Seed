@@ -155,9 +155,7 @@ def test_value_length_and_position_balance(fixtures) -> None:
         singles = set(POOLS[split]["values_single"])
         for cls in VALUE_CLASSES:
             groups = [
-                members
-                for members in _groups(records).values()
-                if members[0]["group_class"] == cls
+                members for members in _groups(records).values() if members[0]["group_class"] == cls
             ]
             single = 0
             double = 0
@@ -176,7 +174,8 @@ def test_value_length_and_position_balance(fixtures) -> None:
             assert single == double, (split, cls, single, double)
         # negation queried-object balance and distractor position balance
         negation = [
-            members for members in _groups(records).values()
+            members
+            for members in _groups(records).values()
             if members[0]["group_class"] == "negation_scope"
         ]
         queried_first = 0
@@ -197,15 +196,14 @@ def test_value_length_and_position_balance(fixtures) -> None:
                 queried_first += 1
         assert queried_first == len(negation) - queried_first
         distractor = [
-            members for members in _groups(records).values()
+            members
+            for members in _groups(records).values()
             if members[0]["group_class"] == "distractor_invariant"
         ]
         before = 0
         for members in distractor:
             body = split_material_body(split, members[1]["material"])
-            first_object = next(
-                obj for obj in POOLS[split]["objects"] if body.startswith(obj)
-            )
+            first_object = next(obj for obj in POOLS[split]["objects"] if body.startswith(obj))
             question_object = next(
                 obj
                 for obj in POOLS[split]["objects"]
@@ -229,16 +227,12 @@ def test_length_bounds(fixtures) -> None:
 
 
 def test_sealed_slice_denominators(fixtures) -> None:
-    train_text = "".join(
-        r["question"] + r["material"] + r["response"] for r in fixtures["train"]
-    )
+    train_text = "".join(r["question"] + r["material"] + r["response"] for r in fixtures["train"])
     train_values = set(POOLS["train"]["values_single"]) | set(POOLS["train"]["values_double"])
     for split in ("calibration", "sealed"):
         copyable = [r for r in fixtures[split] if r["copyable"]]
         unseen_value = [r for r in copyable if r["response"] not in train_values]
-        unseen_char = [
-            r for r in copyable if any(ch not in train_text for ch in r["response"])
-        ]
+        unseen_char = [r for r in copyable if any(ch not in train_text for ch in r["response"])]
         assert len(unseen_value) >= 64, (split, len(unseen_value))
         assert len(unseen_char) >= 64, (split, len(unseen_char))
     sealed = json.loads(DATA_REPORT.read_text(encoding="utf-8"))

@@ -398,7 +398,9 @@ def _top_bytes(distribution: Any, k: int = 5) -> list[list[Any]]:
     **教训：成对返回的 API 不要靠位置解包。**
     """
     values, indices = torch.topk(distribution, k=int(k))
-    return [[int(byte), round(float(mass), 6)] for byte, mass in zip(indices.tolist(), values.tolist())]
+    return [
+        [int(byte), round(float(mass), 6)] for byte, mass in zip(indices.tolist(), values.tolist())
+    ]
 
 
 def _classify(rows: list[dict[str, Any]]) -> str:
@@ -491,10 +493,7 @@ def main() -> int:
         print(json.dumps({"error": "--store target 只在 --history scored 下有意义"}))
         return 1
 
-    if args.source == "extension":
-        ids = failing_item_ids_extension()
-    else:
-        ids = failing_item_ids()
+    ids = failing_item_ids_extension() if args.source == "extension" else failing_item_ids()
     if not ids:
         print(
             json.dumps({"error": f"{args.source} 读数里没找到失败题（读数变了就先查仪器，别硬跑）"})

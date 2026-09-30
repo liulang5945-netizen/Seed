@@ -265,9 +265,7 @@ class TaijiState:
             motor_position_class=(
                 None if self.motor_position_class is None else int(self.motor_position_class)
             ),
-            motor_utf8_lead=(
-                None if self.motor_utf8_lead is None else int(self.motor_utf8_lead)
-            ),
+            motor_utf8_lead=(None if self.motor_utf8_lead is None else int(self.motor_utf8_lead)),
         )
 
     def to_payload(self) -> dict[str, Any]:
@@ -346,9 +344,7 @@ class TaijiState:
                 else int(payload["motor_position_class"])
             ),
             motor_utf8_lead=(
-                None
-                if payload.get("motor_utf8_lead") is None
-                else int(payload["motor_utf8_lead"])
+                None if payload.get("motor_utf8_lead") is None else int(payload["motor_utf8_lead"])
             ),
         )
 

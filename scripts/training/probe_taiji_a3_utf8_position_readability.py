@@ -92,7 +92,9 @@ def stream_bytes(corpus: Path, budget: int, rng: random.Random) -> list[int]:
     return flat[:budget]
 
 
-def collect(corpus: Path, budget: int) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor, dict[str, Any]]:
+def collect(
+    corpus: Path, budget: int
+) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor, dict[str, Any]]:
     from api.seed_runtime import SeedRuntime
 
     rng = random.Random(SEED)
@@ -106,8 +108,8 @@ def collect(corpus: Path, budget: int) -> tuple[torch.Tensor, torch.Tensor, torc
 
     rem, lead = 0, 0
     for index, symbol in enumerate(stream):
-        # 先观察当前字节 ⇒ step 的状态正是"下一个字节要由它预测"的那一步。
-        step = substrate.observe(
+        # 先观察当前字节 ⇒ 这一步的状态正是"下一个字节要由它预测"的那一步。
+        substrate.observe(
             symbol, learn=False, readout="predictive", use_memory=False, use_identity=False
         )
         # 记录观察 symbol 之后的 DFA 状态（决定 nxt 是否被迫为 cont）。
@@ -184,7 +186,9 @@ def _cv(features: torch.Tensor, labels: torch.Tensor, classes: int) -> float:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--corpus", default="data/simple_zh/dialogue_extended_clean.jsonl")
-    parser.add_argument("--budget", type=int, default=60_000, help="观察字节数（逐字节 observe≈430B/s）")
+    parser.add_argument(
+        "--budget", type=int, default=60_000, help="观察字节数（逐字节 observe≈430B/s）"
+    )
     parser.add_argument("--out-report", required=True)
     args = parser.parse_args()
 

@@ -136,9 +136,7 @@ def load_lineage_skip(manifest_path: Path, corpus_path: Path) -> dict[str, Any]:
     }
 
 
-def iter_corpus_window(
-    corpus_paths: Sequence[Path], skip_symbols: int
-) -> Iterator[int]:
+def iter_corpus_window(corpus_paths: Sequence[Path], skip_symbols: int) -> Iterator[int]:
     """Stream the corpus from *after* the already-consumed prefix.
 
     A generator on purpose: the formal arms take 16M symbols, and materialising that as a list

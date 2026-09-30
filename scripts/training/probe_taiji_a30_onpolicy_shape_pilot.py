@@ -39,13 +39,14 @@ for entry in (PROJECT_ROOT, PROJECT_ROOT / "scripts" / "training"):
     if str(entry) not in sys.path:
         sys.path.insert(0, str(entry))
 
-from api.seed_runtime import SeedRuntime  # noqa: E402
 from probe_taiji_a30_ding3_stop_target_pilot import (  # noqa: E402
     DEFAULT_CORPUS,
     facade_gap,
     read_groups,
     transfer_face,
 )
+
+from api.seed_runtime import SeedRuntime  # noqa: E402
 
 BOUNDARY = 256
 
@@ -102,7 +103,7 @@ def _answer_stream(
             answer = corpus_answer[: max(1, len(corpus_answer) // divisor)]
         else:
             answer = corpus_answer
-        chunks.append(f"问：{question}\n答：{answer}\n".encode("utf-8"))
+        chunks.append(f"问：{question}\n答：{answer}\n".encode())
     return chunks
 
 

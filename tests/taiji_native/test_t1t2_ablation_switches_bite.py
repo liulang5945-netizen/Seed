@@ -117,9 +117,9 @@ def test_use_identity_false_does_not_freeze_the_identity_organ() -> None:
     """
 
     result = _run(learn=True, use_identity=False)
-    assert result["identity_organ"] == "changed", (
-        "use_identity=False 竟然冻住了 identity_organ——坑 #4 的结论要重写"
-    )
+    assert (
+        result["identity_organ"] == "changed"
+    ), "use_identity=False 竟然冻住了 identity_organ——坑 #4 的结论要重写"
 
 
 def test_the_predictive_organs_are_untouched_under_the_action_readout() -> None:

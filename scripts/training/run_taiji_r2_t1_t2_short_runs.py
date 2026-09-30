@@ -39,7 +39,9 @@ if str(PROJECT_ROOT / "scripts" / "training") not in sys.path:
 from probe_taiji_r2_compositionality import FAMILIES  # noqa: E402
 from probe_taiji_r2_separability_profile import _cells, _cos, _median  # noqa: E402
 
-CONFIRMATION = PROJECT_ROOT / "plans" / "manifests" / "r2_separability_confirmation_families_20260923.json"
+CONFIRMATION = (
+    PROJECT_ROOT / "plans" / "manifests" / "r2_separability_confirmation_families_20260923.json"
+)
 
 #: 只量这两级：`context` 是受改动影响的那级，`trace` 块是上游天花板
 STAGES = ("2_trace_block", "3_context")
@@ -79,7 +81,9 @@ def main() -> int:
         help="覆盖 config 里的标量（可多次）。例：--set synapse_decay=1e-3。"
         "键不存在即报错，不做静默忽略。",
     )
-    parser.add_argument("--learn", choices=("on", "off"), default="on", help="总闸；off = 正对照臂（什么都不学）")
+    parser.add_argument(
+        "--learn", choices=("on", "off"), default="on", help="总闸；off = 正对照臂（什么都不学）"
+    )
     parser.add_argument("--learn-fabric", choices=("on", "off"), default="on")
     parser.add_argument("--learn-motor", choices=("on", "off"), default="on")
     # 下面两个在**这条配方里**是空操作（守卫生效：`tests/taiji_native/test_t1t2_ablation_switches_bite.py`）
@@ -91,7 +95,7 @@ def main() -> int:
     # （"关掉它结构却没变"），而且从读数上看不出来。
     if args.learn_readout == "off":
         parser.error(
-            "--learn-readout off 在本配方里是空操作：readout=\"action\" 下 predictive_context/"
+            '--learn-readout off 在本配方里是空操作：readout="action" 下 predictive_context/'
             "predictive_readout 根本不参与前向（tests/taiji_native/test_t1t2_ablation_switches_bite.py 钉住）"
         )
     if args.use_memory == "off":
@@ -110,11 +114,17 @@ def main() -> int:
     if not out_dir.is_absolute():
         out_dir = PROJECT_ROOT / out_dir
     if (out_dir / "trajectory.jsonl").exists() and not args.resume_from:
-        parser.error(f"{out_dir}/trajectory.jsonl already exists; 不覆写（换目录、换臂名，或用 --resume-from 接着跑）")
+        parser.error(
+            f"{out_dir}/trajectory.jsonl already exists; 不覆写（换目录、换臂名，或用 --resume-from 接着跑）"
+        )
     out_dir.mkdir(parents=True, exist_ok=True)
 
     confirm_families = json.loads(CONFIRMATION.read_text(encoding="utf-8"))["families"]
-    values = dict(torch.load(PROJECT_ROOT / "checkpoints" / "seed_beta.pt", map_location="cpu", weights_only=False)["config"]["taiji"])
+    values = dict(
+        torch.load(
+            PROJECT_ROOT / "checkpoints" / "seed_beta.pt", map_location="cpu", weights_only=False
+        )["config"]["taiji"]
+    )
     values.pop("receptors_factored", None)
     config = SeedConfig(taiji=TaijiConfig.from_dict({**values, "seed": args.seed}))
 

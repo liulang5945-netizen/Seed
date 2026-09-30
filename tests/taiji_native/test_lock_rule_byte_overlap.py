@@ -36,13 +36,13 @@ def _two_event_model(rule: str | None) -> Taiji:
     cue[1] = 1.0
     #: 两条告知：旧的那条含"雨桐"，新的那条含"明轩"——提问"我叫明轩"按 byte_overlap
     #: 必须选中新的（与提问共享字符多），按 cue_only 的位置尺子倾向选旧的。
-    model.copy_circuit.store.record("我表哥叫雨桐。".encode("utf-8"), cue.clone())
-    model.copy_circuit.store.record("我叫明轩。".encode("utf-8"), cue.clone())
+    model.copy_circuit.store.record("我表哥叫雨桐。".encode(), cue.clone())
+    model.copy_circuit.store.record("我叫明轩。".encode(), cue.clone())
     return model
 
 
 ASK = "我叫明轩。我的名字是什么？"
-SERIALIZED = f"问：我表哥叫雨桐。\n答：我表哥叫雨桐。\n问：{ASK}\n答：".encode("utf-8")
+SERIALIZED = f"问：我表哥叫雨桐。\n答：我表哥叫雨桐。\n问：{ASK}\n答：".encode()
 
 
 def _observe_then_select(model: Taiji, prompt: bytes):
@@ -95,7 +95,7 @@ def test_unknown_rule_fails_loudly() -> None:
 def test_last_question_bytes_extracts_the_final_question_turn() -> None:
     assert last_question_bytes(SERIALIZED) == ASK.encode("utf-8")
     #: 单轮
-    assert last_question_bytes("问：你好？\n答：".encode("utf-8")) == "你好？".encode("utf-8")
+    assert last_question_bytes("问：你好？\n答：".encode()) == "你好？".encode()
     #: 无标记（旧调用方直喂原文）⇒ 原样返回
-    assert last_question_bytes("就叫明轩".encode("utf-8")) == "就叫明轩".encode("utf-8")
+    assert last_question_bytes("就叫明轩".encode()) == "就叫明轩".encode()
     assert last_question_bytes(b"") == b""

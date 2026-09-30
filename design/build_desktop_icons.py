@@ -9,6 +9,7 @@ rounded board for legacy ICNS).
 Emitted PNGs are only written when their size matches the file they replace, and a
 side-by-side contact sheet is produced for visual sign-off.
 """
+
 from __future__ import annotations
 
 import os
@@ -35,13 +36,15 @@ print(f"mark={mark.size} bbox={bbox} board={bg}")
 
 
 def make_tile(size: int) -> Image.Image:
-    tile = Image.new("RGBA", (size, size), bg + (255,))
     mask = Image.new("L", (size, size), 0)
     ImageDraw.Draw(mask).rounded_rectangle(
-        [0, 0, size - 1, size - 1], radius=max(2, round(size * RADIUS_RATIO)), fill=255)
+        [0, 0, size - 1, size - 1], radius=max(2, round(size * RADIUS_RATIO)), fill=255
+    )
     inner = Image.new("RGBA", (size, size), bg + (255,))
     side = int(round(size * MARK_RATIO))
-    inner.alpha_composite(square.resize((side, side), Image.LANCZOS), ((size - side) // 2, (size - side) // 2))
+    inner.alpha_composite(
+        square.resize((side, side), Image.LANCZOS), ((size - side) // 2, (size - side) // 2)
+    )
     return Image.composite(inner, Image.new("RGBA", (size, size), (0, 0, 0, 0)), mask)
 
 
@@ -55,9 +58,13 @@ for name, size in TARGETS.items():
     tiles = np.asarray(tile)[..., 3]
     coverage = float((tiles > 128).mean())
     before_rgba = np.asarray(before.convert("RGBA"))[..., 3]
-    print(f"{name}: size={tile.size} coverage={coverage:.3f} previous_coverage={(before_rgba > 128).mean():.3f}")
+    print(
+        f"{name}: size={tile.size} coverage={coverage:.3f} previous_coverage={(before_rgba > 128).mean():.3f}"
+    )
     if not 0.9 < coverage < 1.0:
-        raise SystemExit(f"REFUSE: {name} tile coverage {coverage:.3f} is not a full rounded square")
+        raise SystemExit(
+            f"REFUSE: {name} tile coverage {coverage:.3f} is not a full rounded square"
+        )
     tile.save(path)
 
 cells = []

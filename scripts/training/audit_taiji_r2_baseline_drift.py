@@ -60,6 +60,7 @@ def main() -> int:
     arm_dir = Path(args.arm_dir)
     if not arm_dir.is_absolute():
         arm_dir = PROJECT_ROOT / arm_dir
+
     # ⚠️ 按 **tick 数值** 排序，不能按文件名——驱动写的是**不补零**的 `checkpoint_<ticks>.pt`，
     # 字典序会把 `250000` 排到 `2500000` 后面（我首版就是这么错的，"位移"整列成了跟错前驱的差）。
     def _tick_of(path: Path) -> int:
@@ -86,11 +87,15 @@ def main() -> int:
     for path in snapshots:
         envelope = torch.load(path, map_location="cpu", weights_only=False)
         tick = int(envelope["metadata"]["tick"])
-        baselines = [b.detach().double() for b in envelope["substrate"]["fabric"]["trace_baselines"]]
+        baselines = [
+            b.detach().double() for b in envelope["substrate"]["fabric"]["trace_baselines"]
+        ]
         norms = [round(float(b.norm()), 6) for b in baselines]
         shift = None
         if previous is not None:
-            shift = round(sum(float((a - b).norm()) for a, b in zip(baselines, previous, strict=True)), 6)
+            shift = round(
+                sum(float((a - b).norm()) for a, b in zip(baselines, previous, strict=True)), 6
+            )
         rows.append(
             {
                 "tick": tick,
@@ -113,8 +118,10 @@ def main() -> int:
         "readings": rows,
         "note": "零训练、只读既有存档；本件只给相关性，因果要靠 adapt_homeostasis=False 的判别臂",
     }
-    out = Path(args.out_report) if args.out_report else (
-        PROJECT_ROOT / "reports" / "taiji_r2_baseline_drift_audit_20260924.json"
+    out = (
+        Path(args.out_report)
+        if args.out_report
+        else (PROJECT_ROOT / "reports" / "taiji_r2_baseline_drift_audit_20260924.json")
     )
     if out.exists():
         parser.error(f"{out} already exists; 判决件不覆写")

@@ -109,7 +109,7 @@ def _native_teacher_raw(model: Any, episode: Any) -> torch.Tensor:
 
 
 def _corpus_digest(corpus: Any) -> str:
-    return _required_digest(getattr(corpus, "digest"), "corpus_digest")
+    return _required_digest(corpus.digest, "corpus_digest")
 
 
 def _episodes_for_split(corpus: Any, split: str) -> tuple[Any, ...]:
@@ -244,7 +244,7 @@ class ResponsePlanTargetEncoder:
         )
         # Fail at fit time if a training example would produce an unusable
         # native component.  This keeps invalid target geometry out of a run.
-        for episode, native in zip(train, raw):
+        for episode, native in zip(train, raw, strict=False):
             encoder.apply_native_state(native, episode)
         return encoder
 

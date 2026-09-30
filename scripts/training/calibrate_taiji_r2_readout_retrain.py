@@ -109,7 +109,9 @@ def peak_working_set_bytes() -> int | None:
 def surface_digests(substrate: Any) -> dict[str, str]:
     """Fingerprints of the two weight surfaces this experiment may touch."""
 
-    return {surface: content_digest(getattr(substrate, surface).to_payload()) for surface in SURFACES}
+    return {
+        surface: content_digest(getattr(substrate, surface).to_payload()) for surface in SURFACES
+    }
 
 
 def run_arm(
@@ -258,9 +260,11 @@ def main() -> int:
             "path": str(checkpoint_path),
             "sha256": sha_before,
             "bytes": checkpoint_path.stat().st_size,
-            "envelope_tick": envelope.get("metadata", {}).get("tick")
-            if isinstance(envelope.get("metadata"), dict)
-            else None,
+            "envelope_tick": (
+                envelope.get("metadata", {}).get("tick")
+                if isinstance(envelope.get("metadata"), dict)
+                else None
+            ),
         },
         "corpus": {
             "paths": [str(path) for path in corpus_paths],
@@ -293,7 +297,9 @@ def main() -> int:
         return 1
 
     report_path.parent.mkdir(parents=True, exist_ok=True)
-    report_path.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    report_path.write_text(
+        json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print(json.dumps({name: entry["seconds_per_tick"] for name, entry in arms_report.items()}))
     print(f"report: {report_path}")
     return 0

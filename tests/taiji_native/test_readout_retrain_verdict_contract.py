@@ -130,7 +130,15 @@ def test_a_missing_arm_is_refused(
     monkeypatch.setattr(
         sys,
         "argv",
-        ["verdict", "--run-dir", str(run_dir), "--symbols", "40", "--out-report", str(tmp_path / "v.json")],
+        [
+            "verdict",
+            "--run-dir",
+            str(run_dir),
+            "--symbols",
+            "40",
+            "--out-report",
+            str(tmp_path / "v.json"),
+        ],
     )
     _expect_refusal(verdict, capsys, "缺臂即作废配对")
     assert not (tmp_path / "v.json").exists()

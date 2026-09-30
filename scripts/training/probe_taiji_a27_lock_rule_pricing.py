@@ -133,15 +133,11 @@ def main() -> int:
     scope: dict[str, bool] = {"record": False}
     #: 当前提问那一轮的字节（`--query-scope question` 用它替换产品传进去的整段文本）。
     ask: dict[str, bytes] = {"question": b""}
-    tallies: dict[str, dict[str, int]] = {
-        rule: {"locks": 0, "on_labelled": 0} for rule in RULES
-    }
+    tallies: dict[str, dict[str, int]] = {rule: {"locks": 0, "on_labelled": 0} for rule in RULES}
     disagreements = {"cue_only_vs_production": 0}
     rows: list[dict[str, Any]] = []
     originals = {"selection": CopyCircuit.selection, "lock": CopyCircuit.lock_selection}
-    weights = {
-        rule: torch.tensor(vector, dtype=torch.float32) for rule, vector in RULES.items()
-    }
+    weights = {rule: torch.tensor(vector, dtype=torch.float32) for rule, vector in RULES.items()}
 
     def selection(self: Any, **kwargs: Any) -> Any:
         state = originals["selection"](self, **kwargs)
@@ -159,13 +155,14 @@ def main() -> int:
         labelled = [
             index
             for index, event in enumerate(events)
-            if any(token in bytes(event.content).decode("utf-8", "ignore") for token in labels["tokens"])
+            if any(
+                token in bytes(event.content).decode("utf-8", "ignore")
+                for token in labels["tokens"]
+            )
         ]
         if scope["record"]:
             for rule, picked in picked_by_rule.items():
-                tallies[rule]["on_labelled"] += int(
-                    len(labelled) == 1 and picked == labelled[0]
-                )
+                tallies[rule]["on_labelled"] += int(len(labelled) == 1 and picked == labelled[0])
             if picked_by_rule["cue_only"] != int(state["picked"]):
                 disagreements["cue_only_vs_production"] += 1
             rows.append(
@@ -266,9 +263,7 @@ def main() -> int:
             "base_sha256_unchanged": _sha256(checkpoint) == sha_before,
             "product_source_untouched": _source_fingerprint() == source_before,
             "cue_only_matches_production_pick": disagreements["cue_only_vs_production"] == 0,
-            "every_rule_has_denominator": all(
-                tallies[rule]["locks"] > 0 for rule in RULES
-            ),
+            "every_rule_has_denominator": all(tallies[rule]["locks"] > 0 for rule in RULES),
         },
         "started_utc": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
     }
@@ -286,7 +281,16 @@ def main() -> int:
             f"最新 {entry['by_position']['answer_second']['pick_correct']}"
             f"/{entry['by_position']['answer_second']['locks']}）"
         )
-    print(json.dumps({"guard": report["instrument_guard"], "hits": report["generated_hits"], "out": out.name}, ensure_ascii=False))
+    print(
+        json.dumps(
+            {
+                "guard": report["instrument_guard"],
+                "hits": report["generated_hits"],
+                "out": out.name,
+            },
+            ensure_ascii=False,
+        )
+    )
     return 0 if all(report["instrument_guard"].values()) else 2
 
 

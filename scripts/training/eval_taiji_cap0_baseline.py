@@ -340,7 +340,9 @@ def _health_child(payload: dict[str, Any]) -> int:
     total_started = time.perf_counter()
     for index in range(runs):
         try:
-            runtime.chat(prompt if index % 2 else alt, history=[], learn=False, repetition_penalty=0.0)
+            runtime.chat(
+                prompt if index % 2 else alt, history=[], learn=False, repetition_penalty=0.0
+            )
         except Exception:  # noqa: BLE001
             crashes += 1
     out["timings"]["H03_total_seconds_for_runs"] = round(time.perf_counter() - total_started, 4)

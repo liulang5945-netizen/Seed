@@ -103,7 +103,9 @@ def main() -> int:
         stage: {
             "before_tick0": before[stage]["consistency_median"],
             "after_16m": after[stage]["consistency_median"],
-            "delta": round(after[stage]["consistency_median"] - before[stage]["consistency_median"], 6),
+            "delta": round(
+                after[stage]["consistency_median"] - before[stage]["consistency_median"], 6
+            ),
         }
         for stage in STAGES
     }
@@ -125,13 +127,17 @@ def main() -> int:
         "per_stage_delta": delta,
     }
     report_path.parent.mkdir(parents=True, exist_ok=True)
-    report_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    report_path.write_text(
+        json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
 
     print(json.dumps({"report": str(report_path)}))
     print(f"  {'stage':22} {'tick0':>10} {'16M':>10} {'delta':>10}")
     for stage in STAGES:
         row = delta[stage]
-        print(f"  {stage:22} {row['before_tick0']:+10.4f} {row['after_16m']:+10.4f} {row['delta']:+10.4f}")
+        print(
+            f"  {stage:22} {row['before_tick0']:+10.4f} {row['after_16m']:+10.4f} {row['delta']:+10.4f}"
+        )
     return 0
 
 

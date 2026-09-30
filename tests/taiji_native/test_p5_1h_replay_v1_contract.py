@@ -39,14 +39,40 @@ def _record(memory_id: str, episode_id: str, tick: int, cue: torch.Tensor, kind:
     )
 
 
-def _task_episodes(task_prefix: str, patterns: tuple[int, int], kinds: tuple[str, str], noise: float, seed: int):
+def _task_episodes(
+    task_prefix: str, patterns: tuple[int, int], kinds: tuple[str, str], noise: float, seed: int
+):
     """Two episodes, one per (pattern, kind) association."""
 
     return (
-        _record(f"{task_prefix}-p0-1", f"{task_prefix}-ep-p0", 1, _cue(patterns[0], noise, seed), kinds[0]),
-        _record(f"{task_prefix}-p0-2", f"{task_prefix}-ep-p0", 2, _cue(patterns[0], noise, seed + 1), kinds[0]),
-        _record(f"{task_prefix}-p1-1", f"{task_prefix}-ep-p1", 1, _cue(patterns[1], noise, seed + 2), kinds[1]),
-        _record(f"{task_prefix}-p1-2", f"{task_prefix}-ep-p1", 2, _cue(patterns[1], noise, seed + 3), kinds[1]),
+        _record(
+            f"{task_prefix}-p0-1",
+            f"{task_prefix}-ep-p0",
+            1,
+            _cue(patterns[0], noise, seed),
+            kinds[0],
+        ),
+        _record(
+            f"{task_prefix}-p0-2",
+            f"{task_prefix}-ep-p0",
+            2,
+            _cue(patterns[0], noise, seed + 1),
+            kinds[0],
+        ),
+        _record(
+            f"{task_prefix}-p1-1",
+            f"{task_prefix}-ep-p1",
+            1,
+            _cue(patterns[1], noise, seed + 2),
+            kinds[1],
+        ),
+        _record(
+            f"{task_prefix}-p1-2",
+            f"{task_prefix}-ep-p1",
+            2,
+            _cue(patterns[1], noise, seed + 3),
+            kinds[1],
+        ),
     )
 
 
@@ -74,9 +100,11 @@ def test_gate1_default_off_bitwise_identical() -> None:
     baseline = _fresh()
     baseline.consolidate(train, epochs=6, learning_rate=0.05)
     neutral = _fresh()
-    neutral.consolidate(train, epochs=6, learning_rate=0.05, replay_source=replay, replay_weight=0.0)
+    neutral.consolidate(
+        train, epochs=6, learning_rate=0.05, replay_source=replay, replay_weight=0.0
+    )
     for (name, parameter), (_, parameter2) in zip(
-        baseline.named_parameters(), neutral.named_parameters()
+        baseline.named_parameters(), neutral.named_parameters(), strict=False
     ):
         assert torch.equal(parameter, parameter2), name
 
@@ -92,10 +120,14 @@ def test_gate2_positive_weight_changes_training_and_unknown_kind_raises() -> Non
     baseline = _fresh()
     baseline.consolidate(train, epochs=6, learning_rate=0.05)
     with_replay = _fresh()
-    with_replay.consolidate(train, epochs=6, learning_rate=0.05, replay_source=replay, replay_weight=1.0)
+    with_replay.consolidate(
+        train, epochs=6, learning_rate=0.05, replay_source=replay, replay_weight=1.0
+    )
     changed = any(
         not torch.equal(p1, p2)
-        for (_, p1), (_, p2) in zip(baseline.named_parameters(), with_replay.named_parameters())
+        for (_, p1), (_, p2) in zip(
+            baseline.named_parameters(), with_replay.named_parameters(), strict=False
+        )
     )
     assert changed
     stranger = [_record("x1", "x-ep", 1, _cue(0, 0.0, 1), "unknown.kind")]

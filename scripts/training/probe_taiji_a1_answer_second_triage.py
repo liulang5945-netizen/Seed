@@ -80,9 +80,9 @@ def _trace_locked(
     item_id: str,
 ) -> dict[str, Any]:
     """锁感知的单题轨迹：发射走产品 observe 链，寻址快照只做诊断。"""
-    from probe_taiji_r2_a26_emission_trace import _classify, _reply_clean, _scored_history
+    from probe_taiji_r2_a26_emission_trace import _classify, _scored_history
 
-    from api.seed_runtime import SeedRuntime, _TURN_MARKERS, record_told_history
+    from api.seed_runtime import SeedRuntime, record_told_history
 
     substrate = runtime.model.substrate
     circuit = substrate.copy_circuit
@@ -117,7 +117,9 @@ def _trace_locked(
             prev_byte=prev_byte,
         )
 
-    def _diag_row(snap: dict[str, Any], k: int, target_byte: int, argmax_byte: int) -> dict[str, Any]:
+    def _diag_row(
+        snap: dict[str, Any], k: int, target_byte: int, argmax_byte: int
+    ) -> dict[str, Any]:
         distribution = snap["copy_distribution"]
         return {
             "step": k,
@@ -125,9 +127,7 @@ def _trace_locked(
             "target_byte": target_byte,
             "copy_top_byte": int(distribution.argmax()),
             "copy_mass_on_target": round(float(distribution[target_byte]), 6),
-            "target_rank_in_copy": int(
-                (distribution > float(distribution[target_byte])).sum() + 1
-            ),
+            "target_rank_in_copy": int((distribution > float(distribution[target_byte])).sum() + 1),
             "gate_value": round(float(snap["gate_value"]), 4),
             "on_target_event": bytes(snap["event"].content) == told.encode("utf-8"),
             "emitted": argmax_byte == target_byte,
@@ -139,11 +139,13 @@ def _trace_locked(
     readout = substrate.predictive_readout
     if pre_snap is not None:
         state = substrate._state
-        base_evidence = float(config.consolidation_read_gain) * substrate.fabric.consolidated_decode(
-            0, state.regions[0].trace
-        )
+        base_evidence = float(
+            config.consolidation_read_gain
+        ) * substrate.fabric.consolidated_decode(0, state.regions[0].trace)
         with_copy = readout.probabilities(
-            state.motor_context, episodic_evidence=base_evidence + pre_snap["gate_value"] * pre_snap["copy_distribution"]
+            state.motor_context,
+            episodic_evidence=base_evidence
+            + pre_snap["gate_value"] * pre_snap["copy_distribution"],
         )
         chain_ok = bool(torch.equal(with_copy, feed_probs))
 
@@ -359,9 +361,7 @@ def main() -> int:
         "no_contradictions": all(summary["contradictions"] == 0 for summary in summaries),
         "all_chains_identical": all(summary["chain_mismatches"] == 0 for summary in summaries),
         "replays_reproduce_miss": all(
-            row.get("reproduces_recorded_miss", True)
-            for arm in arms
-            for row in arm["rows"]
+            row.get("reproduces_recorded_miss", True) for arm in arms for row in arm["rows"]
         ),
         "base_unchanged": report["base_sha256_unchanged"],
     }
@@ -382,7 +382,12 @@ def main() -> int:
                 "summaries": [
                     {
                         key: summary[key]
-                        for key in ("class_counts", "primary_class", "attribution", "lock_picked_target_event")
+                        for key in (
+                            "class_counts",
+                            "primary_class",
+                            "attribution",
+                            "lock_picked_target_event",
+                        )
                     }
                     for summary in summaries
                 ],

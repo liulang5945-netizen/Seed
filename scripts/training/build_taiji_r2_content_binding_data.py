@@ -105,25 +105,70 @@ MAX_MATERIAL_OBJECTS = 3
 POOLS: dict[str, dict[str, tuple[str, ...]]] = {
     "train": {
         "objects": (
-            "山峰", "河流", "湖泊", "森林", "草原", "沙漠", "海湾", "岛屿",
-            "峡谷", "平原", "火山", "冰川", "沼泽", "丘陵", "瀑布", "溪流",
-            "洞穴", "田野", "星辰", "云层", "海洋", "草地", "岩石", "泉水",
+            "山峰",
+            "河流",
+            "湖泊",
+            "森林",
+            "草原",
+            "沙漠",
+            "海湾",
+            "岛屿",
+            "峡谷",
+            "平原",
+            "火山",
+            "冰川",
+            "沼泽",
+            "丘陵",
+            "瀑布",
+            "溪流",
+            "洞穴",
+            "田野",
+            "星辰",
+            "云层",
+            "海洋",
+            "草地",
+            "岩石",
+            "泉水",
         ),
         "values_single": ("红", "蓝", "绿", "黄", "紫", "灰", "黑", "白"),
         "values_double": ("琥珀", "珊瑚", "翡翠", "玛瑙", "琉璃", "玳瑁", "鎏金", "霜缟"),
     },
     "calibration": {
         "objects": (
-            "苔原", "峡湾", "荷塘", "竹林", "盐湖", "芦荡",
-            "陡崖", "荒漠", "桦林", "雪原", "礁群", "溶洞",
+            "苔原",
+            "峡湾",
+            "荷塘",
+            "竹林",
+            "盐湖",
+            "芦荡",
+            "陡崖",
+            "荒漠",
+            "桦林",
+            "雪原",
+            "礁群",
+            "溶洞",
         ),
         "values_single": ("青", "棕", "绯", "黛"),
         "values_double": ("缥缈", "磬玉", "琅玕", "翠微"),
     },
     "sealed": {
         "objects": (
-            "冰原", "花海", "松林", "断崖", "海沟", "绿洲", "星云", "幽谷",
-            "枫林", "沙洲", "翠竹", "玉兰", "陡坡", "荷叶", "泉潭", "岚峰",
+            "冰原",
+            "花海",
+            "松林",
+            "断崖",
+            "海沟",
+            "绿洲",
+            "星云",
+            "幽谷",
+            "枫林",
+            "沙洲",
+            "翠竹",
+            "玉兰",
+            "陡坡",
+            "荷叶",
+            "泉潭",
+            "岚峰",
         ),
         # 墨/银/朱/碧 and one character of 绛霞/黛蓝/绯雪/素缟 are absent from
         # the train text: they feed the sealed unseen-character slice, while
@@ -161,9 +206,16 @@ NEGATION_STEMS = {
 #: Unknown-class question stems: the split's own fact stem plus five shared
 #: variants rendered under the split head (six stems x four phrasings per
 #: object = 24 prefixes, enough for the group quota with pair discipline).
-_SHARED_UNKNOWN_TAILS = ("{X}的颜色？", "请说出{X}的颜色。", "{X}的颜色是什么？", "{X}呈现什么颜色？", "请回答{X}的颜色。")
+_SHARED_UNKNOWN_TAILS = (
+    "{X}的颜色？",
+    "请说出{X}的颜色。",
+    "{X}的颜色是什么？",
+    "{X}呈现什么颜色？",
+    "请回答{X}的颜色。",
+)
 UNKNOWN_STEMS = {
-    split: (FACT_STEMS[split],) + tuple(f"{MARKERS[split]['head']}{tail}" for tail in _SHARED_UNKNOWN_TAILS)
+    split: (FACT_STEMS[split],)
+    + tuple(f"{MARKERS[split]['head']}{tail}" for tail in _SHARED_UNKNOWN_TAILS)
     for split in MARKERS
 }
 MISSING_CLAUSE = "没有关于{X}的信息"
@@ -361,7 +413,9 @@ def _gen_negation_scope(
     objects = POOLS[split]["objects"]
     groups: list[list[dict[str, Any]]] = []
     for queried_first in (True, False):
-        rng = _rng(split, cls, f"{half}:" + ("queried_first" if queried_first else "queried_second"))
+        rng = _rng(
+            split, cls, f"{half}:" + ("queried_first" if queried_first else "queried_second")
+        )
         quota = count // 2
         made = 0
         attempts = 0
@@ -400,7 +454,11 @@ def _gen_distractor_invariant(
     objects = POOLS[split]["objects"]
     groups: list[list[dict[str, Any]]] = []
     for distractor_first in (False, True):
-        rng = _rng(split, cls, f"{half}:" + ("distractor_after" if not distractor_first else "distractor_before"))
+        rng = _rng(
+            split,
+            cls,
+            f"{half}:" + ("distractor_after" if not distractor_first else "distractor_before"),
+        )
         quota = count // 2
         made = 0
         attempts = 0
@@ -534,9 +592,7 @@ def _generate_split(split: str) -> list[dict[str, Any]]:
                     "distractor_invariant": _gen_distractor_invariant,
                     "missing_to_filled": _gen_missing_to_filled,
                 }[cls]
-                halves[half_name] = generator(
-                    split, cls, values, count // 2, used, half=half_name
-                )
+                halves[half_name] = generator(split, cls, values, count // 2, used, half=half_name)
         # Interleave the value-length halves so single/double groups alternate
         # along the file; valueless classes emit their single list directly.
         single, double = halves["single"], halves["double"]
@@ -818,9 +874,7 @@ def _run_checks(all_records: dict[str, list[dict[str, Any]]]) -> tuple[dict[str,
             a, b = group
             expected = EXPECTED_IN_GROUP[a["group_class"]]
             same = a["response"] == b["response"]
-            relation_ok &= (same and expected == "equal") or (
-                not same and expected == "differ"
-            )
+            relation_ok &= (same and expected == "equal") or (not same and expected == "differ")
             for record, copyable in zip(group, CLASS_VALUE_RESPONSE[a["group_class"]], strict=True):
                 mask_ok &= record["copyable"] == copyable
                 mask_ok &= len(record["copy_mask"]) == len(record["response"])
@@ -844,11 +898,13 @@ def _run_checks(all_records: dict[str, list[dict[str, Any]]]) -> tuple[dict[str,
             groups = [g for g in _groups(all_records[split]) if g[0]["group_class"] == cls]
             singles = set(POOLS[split]["values_single"])
             doubles = set(POOLS[split]["values_double"])
+
             # length class is a property of the VALUES IN THE MATERIAL, not of
             # the response string (relation/negation answers are closed-class).
             def _is_single(group: list[dict[str, Any]]) -> bool:
                 words = _value_words_of_group(group) or frozenset()
                 return bool(words & singles)
+
             single = sum(1 for g in groups if _is_single(g))
             double = sum(
                 1 for g in groups if (g2 := _value_words_of_group(g)) and (set(g2) & doubles)
@@ -910,12 +966,8 @@ def _run_checks(all_records: dict[str, list[dict[str, Any]]]) -> tuple[dict[str,
     train_value_words = set(POOLS["train"]["values_single"]) | set(POOLS["train"]["values_double"])
     for split in ("calibration", "sealed"):
         copyable = [r for r in all_records[split] if r["copyable"]]
-        unseen_value = [
-            r for r in copyable if r["response"] not in train_value_words
-        ]
-        unseen_char = [
-            r for r in copyable if any(ch not in train_text for ch in r["response"])
-        ]
+        unseen_value = [r for r in copyable if r["response"] not in train_value_words]
+        unseen_char = [r for r in copyable if any(ch not in train_text for ch in r["response"])]
         check(
             f"copyable_slice_denominators_{split}",
             len(copyable) > 0 and len(unseen_value) >= 64 and len(unseen_char) >= 64,
@@ -1032,9 +1084,7 @@ def main() -> int:
                 "items": len(all_records[split]),
                 "groups": len({r["group_id"] for r in all_records[split]}),
                 "groups_per_class": {
-                    cls: len(
-                        {r["group_id"] for r in all_records[split] if r["group_class"] == cls}
-                    )
+                    cls: len({r["group_id"] for r in all_records[split] if r["group_class"] == cls})
                     for cls in GROUP_CLASSES
                 },
             }
@@ -1046,7 +1096,9 @@ def main() -> int:
     }
     report_path = PROJECT_ROOT / args.report
     report_path.parent.mkdir(parents=True, exist_ok=True)
-    report_path.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    report_path.write_text(
+        json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print(
         json.dumps(
             {

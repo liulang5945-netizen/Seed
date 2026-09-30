@@ -175,9 +175,7 @@ def collect(checkpoint: Path) -> dict[str, Any]:
             output = _greedy(substrate, _prompt(token, suffix))
             hits.append(bool(token.encode("utf-8") in output))
         #: 出口对 token 的反应强度（同一距离、相邻 token 两两）。
-        exit_kl = [
-            _kl(exits[i], exits[(i + 1) % len(TOKENS)]) for i in range(len(TOKENS))
-        ]
+        exit_kl = [_kl(exits[i], exits[(i + 1) % len(TOKENS)]) for i in range(len(TOKENS))]
         #: 状态随 token 的变化幅度（相对 L1）。
         cue_rel = [
             float((cues[i] - cues[(i + 1) % len(TOKENS)]).abs().sum())
@@ -197,9 +195,7 @@ def collect(checkpoint: Path) -> dict[str, Any]:
                 ),
                 "l0_hit_rate": round(sum(1 for value in hits if value) / len(hits), 4),
                 "exit_kl_between_tokens": _mean(exit_kl),
-                "exit_responds_to_token": bool(
-                    _mean(exit_kl) > EXIT_RESPONDS_KL_LINE
-                ),
+                "exit_responds_to_token": bool(_mean(exit_kl) > EXIT_RESPONDS_KL_LINE),
                 "cue_rel_l1_between_tokens": _mean(cue_rel),
             }
         )
@@ -214,9 +210,7 @@ def collect(checkpoint: Path) -> dict[str, Any]:
 
 
 def _verdict(curve: list[dict[str, Any]]) -> dict[str, Any]:
-    alive = [
-        entry["distance_bytes"] for entry in curve if entry["mean_log_ratio"] >= ALIVE_LINE
-    ]
+    alive = [entry["distance_bytes"] for entry in curve if entry["mean_log_ratio"] >= ALIVE_LINE]
     responds = [entry for entry in curve if entry["exit_responds_to_token"]]
     if alive:
         name = "copy_path_alive"
@@ -228,9 +222,7 @@ def _verdict(curve: list[dict[str, Any]]) -> dict[str, Any]:
         "name": name,
         "farthest_alive_distance_bytes": max(alive) if alive else None,
         "responds_at_distances": [entry["distance_bytes"] for entry in responds],
-        "best_mean_log_ratio": round(
-            max(entry["mean_log_ratio"] for entry in curve), 6
-        ),
+        "best_mean_log_ratio": round(max(entry["mean_log_ratio"] for entry in curve), 6),
         "reading": (
             "出口会把语境里的名字顶到自己的字节上（有复述通路）"
             if name == "copy_path_alive"

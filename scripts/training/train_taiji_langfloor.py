@@ -30,9 +30,10 @@ import io
 import json
 import sys
 import time
+from collections.abc import Iterator
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Iterator
+from typing import Any
 
 import torch
 
@@ -40,7 +41,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-from seed import Seed, iter_native_documents  # noqa: E402
+from seed import Seed  # noqa: E402
 from seed.persistence import atomic_save, attach_metadata, corpus_fingerprint  # noqa: E402
 from taiji import TaijiConfig  # noqa: E402
 
@@ -85,9 +86,10 @@ def iter_dialogue_symbols(paths: list[Path]) -> Iterator[int]:
                 # jsonl 行本身带 {"text": ...} 信封；喂信封内的 text（与 train_seed_corpus
                 # 的 iter_native_documents 同口径，避免把 JSON 语法喂进模型）。
                 payload = json.loads(text)
-                content = payload["text"] if isinstance(payload, dict) and "text" in payload else text
-                for symbol in content.encode("utf-8"):
-                    yield symbol
+                content = (
+                    payload["text"] if isinstance(payload, dict) and "text" in payload else text
+                )
+                yield from content.encode("utf-8")
 
 
 def is_utf8_continuation(symbol: int) -> bool:
@@ -108,9 +110,7 @@ def enable_readout_position_in_envelope(envelope: dict[str, Any]) -> None:
         if isinstance(section, dict):
             section["readout_utf8_position_input"] = True
 
-    envelope.setdefault("config", {}).setdefault("taiji", {})[
-        "readout_utf8_position_input"
-    ] = True
+    envelope.setdefault("config", {}).setdefault("taiji", {})["readout_utf8_position_input"] = True
     substrate = envelope.get("substrate")
     if isinstance(substrate, dict):
         _set(substrate.setdefault("config", {}))
@@ -124,14 +124,18 @@ def enable_readout_position_in_envelope(envelope: dict[str, Any]) -> None:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--arm", required=True, choices=("D0", "D"))
-    parser.add_argument("--weight", type=float, required=True, help="续字节位置的读出更新倍数（D0=1.0，D=4.0）")
+    parser.add_argument(
+        "--weight", type=float, required=True, help="续字节位置的读出更新倍数（D0=1.0，D=4.0）"
+    )
     parser.add_argument("--base-checkpoint", default=str(DEFAULT_BASE))
     parser.add_argument("--corpus", default=str(DEFAULT_CORPUS))
     parser.add_argument("--symbols", type=int, default=2_000_000)
     parser.add_argument("--checkpoint-every", type=int, default=250_000)
     parser.add_argument("--progress-every", type=int, default=50_000)
     parser.add_argument("--out-dir", required=True)
-    parser.add_argument("--max-minutes", type=float, default=None, help="保险上限；预算以符号数为准")
+    parser.add_argument(
+        "--max-minutes", type=float, default=None, help="保险上限；预算以符号数为准"
+    )
     parser.add_argument("--smoke", action="store_true", help="tiny 预算快速端到端")
     parser.add_argument(
         "--readout-position",
@@ -177,7 +181,9 @@ def main() -> int:
         meta = previous.get("metadata", {})
         extra = meta.get("extra", meta)
         if extra.get("arm") != args.arm:
-            raise SystemExit(f"{checkpoint_path} belongs to arm {extra.get('arm')!r}, not {args.arm!r}")
+            raise SystemExit(
+                f"{checkpoint_path} belongs to arm {extra.get('arm')!r}, not {args.arm!r}"
+            )
         if extra.get("base_checkpoint_sha256") != base_sha:
             raise SystemExit("checkpoint was trained from a different base substrate")
         if float(extra.get("weight", -1)) != float(args.weight):
@@ -192,7 +198,9 @@ def main() -> int:
         model = Seed.from_checkpoint(previous, device=args.device)
     else:
         if args.fresh and report_path.is_file():
-            report_path.rename(report_path.with_name(f"run_report.prev-{_stamp_for_filename()}.json"))
+            report_path.rename(
+                report_path.with_name(f"run_report.prev-{_stamp_for_filename()}.json")
+            )
         base_envelope = torch.load(base_checkpoint, map_location="cpu", weights_only=False)
         if args.readout_position:
             # PLAN-R2-01：基底档里的 config 决定读出形状，所以要在建模型**之前**
@@ -302,10 +310,7 @@ def main() -> int:
             _write_progress(final=False)
         if consumed % args.checkpoint_every == 0:
             _persist()
-        if (
-            stop_file.exists()
-            and consumed % 10_000 == 0
-        ):
+        if stop_file.exists() and consumed % 10_000 == 0:
             stop_file.unlink()
             stopped_by_request = True
             break
@@ -315,14 +320,15 @@ def main() -> int:
     _persist()
     _write_progress(final=True)
     after_digests = _section_digests()
-    changed = sorted(name for name in after_digests if before_digests.get(name) != after_digests[name])
+    changed = sorted(
+        name for name in after_digests if before_digests.get(name) != after_digests[name]
+    )
     #: 声明式写面守卫：读出必须变；motor/fabric/memory（快通路主干与记忆）必须不变。
     #: 其余段（cognitive_state/state/perception 等）是运行时状态流，随观察演化属预期，只报不 gate。
     write_surface_guard = {
         "predictive_readout_changed": any("predictive_readout" in name for name in changed),
         "motor_fabric_memory_unchanged": not any(
-            any(part in name for part in (".motor", ".fabric", ".memory"))
-            for name in changed
+            any(part in name for part in (".motor", ".fabric", ".memory")) for name in changed
         ),
     }
 
@@ -333,9 +339,7 @@ def main() -> int:
     position_probability_steps = int(readout.position_probability_steps)
     position_learn_steps = int(readout.position_learn_steps)
     position_weight_norm = (
-        float(readout.position_weight.norm().item())
-        if readout.position_weight is not None
-        else 0.0
+        float(readout.position_weight.norm().item()) if readout.position_weight is not None else 0.0
     )
     position_guard = {
         "readout_position_requested": bool(args.readout_position),
@@ -362,25 +366,36 @@ def main() -> int:
         "position_input": position_guard,
         "symbols_consumed": consumed,
         "symbols_budget": args.symbols,
-        "stopped_by": "stop-file" if stopped_by_request else ("time-cap" if consumed < args.symbols else "episode-cap"),
+        "stopped_by": (
+            "stop-file"
+            if stopped_by_request
+            else ("time-cap" if consumed < args.symbols else "episode-cap")
+        ),
         "elapsed_seconds": elapsed,
         "resumed_from": resumed_from,
         "corpus": str(corpus_path),
         "corpus_digest": corpus_digest,
         "base_checkpoint": str(base_checkpoint),
         "base_checkpoint_sha256": base_sha,
-        "write_surface": {"changed_named_tensors": changed, "expected_only": ["predictive_readout"]},
+        "write_surface": {
+            "changed_named_tensors": changed,
+            "expected_only": ["predictive_readout"],
+        },
         "write_surface_guard": write_surface_guard,
         "learning_counters": {
             "continuation_weighted_steps": cont_steps,
             "plain_steps": plain_steps,
             "online_accuracy": round(correct / seen, 4) if seen else None,
-            "continuation_online_accuracy": round(cont_correct / cont_seen, 4) if cont_seen else None,
+            "continuation_online_accuracy": (
+                round(cont_correct / cont_seen, 4) if cont_seen else None
+            ),
         },
         "base_sha256_unchanged": base_unchanged,
         "written_at_utc": _utc_now(),
     }
-    report_path.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    report_path.write_text(
+        json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     guard = {
         "symbols_consumed": consumed > 0,
         "continuation_steps_ran": cont_steps > 0,
@@ -398,7 +413,9 @@ def main() -> int:
                 "weight": args.weight,
                 "symbols": consumed,
                 "online_accuracy": report["learning_counters"]["online_accuracy"],
-                "continuation_online_accuracy": report["learning_counters"]["continuation_online_accuracy"],
+                "continuation_online_accuracy": report["learning_counters"][
+                    "continuation_online_accuracy"
+                ],
                 "readout_position": bool(args.readout_position),
                 "position_steps": {
                     "probability": position_probability_steps,

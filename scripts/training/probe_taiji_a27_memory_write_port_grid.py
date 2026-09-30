@@ -52,7 +52,6 @@ for entry in (PROJECT_ROOT, PROJECT_ROOT / "scripts" / "training"):
 
 #: 不重抄链路：四格里的"读"直接复用既有记忆审计探针的产品调用（`substrate.generate`）。
 from probe_taiji_memory_wiring_audit import (  # noqa: E402
-    MAX_ANSWER_BYTES,
     _compare,
     _inventory,
     _run,
@@ -219,8 +218,10 @@ def main() -> int:
     def _identical(rows_subset: list[dict[str, Any]], key: str) -> int:
         return sum(1 for row in rows_subset if row[key]["differing_bytes"] == 0)
 
-    write_cands = {cand: rows[len(questions) * (i + 1) : len(questions) * (i + 2)]
-                   for i, cand in enumerate(CANDS)}
+    write_cands = {
+        cand: rows[len(questions) * (i + 1) : len(questions) * (i + 2)]
+        for i, cand in enumerate(CANDS)
+    }
     base_rows = rows[: len(questions)]
     report: dict[str, Any] = {
         "format": "taiji-a27-memory-write-port-grid-v1",
@@ -248,9 +249,15 @@ def main() -> int:
             },
             **{
                 cand: {
-                    "read_on_vs_read_off_identical": _identical(write_cands[cand], "read_on_vs_read_off"),
-                    "read_on_vs_baseline_on_identical": _identical(write_cands[cand], "read_on_vs_baseline_on"),
-                    "read_off_vs_baseline_off_identical": _identical(write_cands[cand], "read_off_vs_baseline_off"),
+                    "read_on_vs_read_off_identical": _identical(
+                        write_cands[cand], "read_on_vs_read_off"
+                    ),
+                    "read_on_vs_baseline_on_identical": _identical(
+                        write_cands[cand], "read_on_vs_baseline_on"
+                    ),
+                    "read_off_vs_baseline_off_identical": _identical(
+                        write_cands[cand], "read_off_vs_baseline_off"
+                    ),
                     #: "变没变"只说明**通路活着**；"往哪边变"要看命中——三候选靠这一列分。
                     "read_off_hits": _hits(grid[cand]["read_off"], items),
                     "read_on_hits": _hits(grid[cand]["read_on"], items),
@@ -282,7 +289,13 @@ def main() -> int:
         out = out.with_name(f"{out.stem}-{datetime.now(timezone.utc).strftime('%H%M%S')}.json")
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    print(json.dumps({"summary": report["summary"], "guard": report["instrument_guard"]}, ensure_ascii=False, indent=1))
+    print(
+        json.dumps(
+            {"summary": report["summary"], "guard": report["instrument_guard"]},
+            ensure_ascii=False,
+            indent=1,
+        )
+    )
     print(f"out: {out.name}")
     return 0 if all(report["instrument_guard"].values()) else 2
 

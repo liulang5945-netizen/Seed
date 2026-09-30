@@ -28,9 +28,7 @@ from seed import surface_gate  # noqa: E402
 
 
 def _model() -> tuple:
-    return surface_gate.load_surface_ngram(
-        PROJECT_ROOT / "checkpoints" / "seed_surface_ngram.lzma"
-    )
+    return surface_gate.load_surface_ngram(PROJECT_ROOT / "checkpoints" / "seed_surface_ngram.lzma")
 
 
 def test_lone_surrogate_is_rejected_not_raised() -> None:
@@ -61,6 +59,6 @@ def test_product_and_instrument_copies_still_agree_bitwise() -> None:
         "ab",
     ]
     for text in pool:
-        assert surface_gate.well_formed(text, _model()) == instrument.well_formed(text, _model()), (
-            text
-        )
+        assert surface_gate.well_formed(text, _model()) == instrument.well_formed(
+            text, _model()
+        ), text

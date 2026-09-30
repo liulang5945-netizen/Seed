@@ -111,8 +111,7 @@ def main() -> int:
 
     results = {"off_at_init": measure("off", plain), "on_at_init": measure("on", factored)}
     report_path = Path(
-        args.out_report
-        or PROJECT_ROOT / "reports" / "taiji_r2_factorization_at_init_20260923.json"
+        args.out_report or PROJECT_ROOT / "reports" / "taiji_r2_factorization_at_init_20260923.json"
     )
     if report_path.exists():
         parser.error(f"{report_path} already exists; 判决件不覆写")
@@ -139,7 +138,9 @@ def main() -> int:
         "per_stage_delta": verdict,
     }
     report_path.parent.mkdir(parents=True, exist_ok=True)
-    report_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    report_path.write_text(
+        json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
 
     print(json.dumps({"report": str(report_path)}))
     print(f"  {'stage':22} {'off':>10} {'on':>10} {'delta':>10}  verdict(off -> on)")

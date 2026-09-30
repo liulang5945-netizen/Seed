@@ -41,7 +41,9 @@ OUT_REPORT = Path("reports/r2_d4_matched_dev_20260918.json")
 CHECKPOINT_ROOT = Path("reports/r2_d4_checkpoints/matched")
 D3_REPORT = Path("reports/r2_d3_matched_dev_20260918.json")
 D3_H4_ARM = "H4_per_position_multih_pe"
-D3_PROBE_CHECKPOINT = Path("reports/r2_d3_checkpoints/multihead_probe/hg_h4_seed20260917_epoch30.pt")
+D3_PROBE_CHECKPOINT = Path(
+    "reports/r2_d3_checkpoints/multihead_probe/hg_h4_seed20260917_epoch30.pt"
+)
 SEEDS = (20260917, 20260918, 20260919)
 EPOCHS = 30
 LR = 0.01
@@ -118,11 +120,7 @@ def _pair_type_rates(scored: list[dict[str, Any]]) -> dict[str, dict[str, Any]]:
             if row["correct"]:
                 hits.setdefault(str(row["pair_id"]), set()).add(row["id"])
         complete_pairs = {pid for pid, ids in members_by_pair.items() if len(ids) == 2}
-        pair_hits = sum(
-            1
-            for pid in complete_pairs
-            if hits.get(pid, set()) == members_by_pair[pid]
-        )
+        pair_hits = sum(1 for pid in complete_pairs if hits.get(pid, set()) == members_by_pair[pid])
         out[pair_type] = {
             "pair_hits": pair_hits,
             "denominator": len(complete_pairs),
@@ -274,7 +272,9 @@ def main() -> int:
     t2_m3_nc = v("M3_content_exact", "no_context")
     t2_m1_nc = v("M1_exact", "no_context")
     t2_m4_misbind = v("M4_flip_pair", "copy_misbind")
-    base_m3 = [float(d3_baseline[seed]["eval"]["full"]["M3_content_exact"]["value"]) for seed in SEEDS]
+    base_m3 = [
+        float(d3_baseline[seed]["eval"]["full"]["M3_content_exact"]["value"]) for seed in SEEDS
+    ]
     base_m4 = [float(d3_baseline[seed]["eval"]["full"]["M4_flip_pair"]["value"]) for seed in SEEDS]
     delta_m3 = [a - b for a, b in zip(t2_m3, base_m3, strict=True)]
     delta_m4 = [a - b for a, b in zip(t2_m4, base_m4, strict=True)]
@@ -291,9 +291,7 @@ def main() -> int:
             "delta_m3_mean_vs_d3h4": mean(delta_m3),
         },
         "G2_m4_flip_fact_subset": {
-            "passed": (
-                mean(t2_m4) >= 0.50 and mean(delta_m4) >= 0.25 and mean(fact_flip) >= 2 / 6
-            ),
+            "passed": (mean(t2_m4) >= 0.50 and mean(delta_m4) >= 0.25 and mean(fact_flip) >= 2 / 6),
             "t2_m4_mean": mean(t2_m4),
             "delta_m4_mean_vs_d3h4": mean(delta_m4),
             "fact_flip_mean": mean(fact_flip),

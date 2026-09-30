@@ -26,22 +26,23 @@ CASES = [
     {"name": "zh_empty_gen", "prefix": "我叫阿岩。", "generated_text": ""},
     {"name": "en_hello", "prefix": "Hello world. ", "generated_text": "你好"},
     {"name": "empty_prefix", "prefix": "", "generated_text": "回答内容"},
-    {"name": "long_prefix", "prefix": "第一段话。第二段话说了很多内容，包括一些细节描述。", "generated_text": "这是续写"},
+    {
+        "name": "long_prefix",
+        "prefix": "第一段话。第二段话说了很多内容，包括一些细节描述。",
+        "generated_text": "这是续写",
+    },
 ]
 
 
 def main() -> int:
     runtime = SeedRuntime.load(CHECKPOINT)
     taiji = runtime.model.substrate
-    general_sp = taiji._general_sp
     zh_sp = taiji._tokenizer_hub.get_tokenizer("zh")
 
     rows = []
     for case in CASES:
         generated_ids = list(zh_sp.encode(case["generated_text"])) if case["generated_text"] else []
-        out = taiji._reencode_domain_generation_context(
-            case["prefix"], generated_ids, zh_sp
-        )
+        out = taiji._reencode_domain_generation_context(case["prefix"], generated_ids, zh_sp)
         rows.append(
             {
                 "name": case["name"],
@@ -50,7 +51,9 @@ def main() -> int:
                 "output_general_ids": list(out),
             }
         )
-        print(json.dumps({"name": case["name"], "out_len": len(out)}, ensure_ascii=False), flush=True)
+        print(
+            json.dumps({"name": case["name"], "out_len": len(out)}, ensure_ascii=False), flush=True
+        )
 
     payload = {
         "format": "cortex-reencode-golden-v1",

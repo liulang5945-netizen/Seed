@@ -89,7 +89,6 @@ def collect_features(
     rows: list[dict[str, Any]] = []
     for item in items:
         turns = [str(turn) for turn in item["turns"]]
-        tokens = [str(token) for token in item["expected_contains"]]
         told = turns[int(item["answer_tell_position"])]
         told_bytes = told.encode("utf-8")
         history = _scored_history(runtime, turns)
@@ -202,11 +201,7 @@ def main() -> int:
         half = max(args.limit // 2, 1)
         stratified: list[dict[str, Any]] = []
         for position in (0, 1):
-            subset = [
-                item
-                for item in eligible
-                if int(item["answer_tell_position"]) == position
-            ]
+            subset = [item for item in eligible if int(item["answer_tell_position"]) == position]
             stratified.extend(subset[:half])
         items = stratified
     else:
@@ -226,9 +221,7 @@ def main() -> int:
     evaluations = [evaluate_arm(arm) for arm in arms]
 
     def best_real(evaluation: dict[str, Any]) -> float:
-        return max(
-            result["real"]["mean_accuracy"] for result in evaluation["features"].values()
-        )
+        return max(result["real"]["mean_accuracy"] for result in evaluation["features"].values())
 
     all_above = all(best_real(evaluation) >= HIGH_LINE for evaluation in evaluations)
     all_below = all(best_real(evaluation) <= CHANCE_LINE for evaluation in evaluations)
@@ -277,7 +270,8 @@ def main() -> int:
     }
     report["instrument_guard"] = {
         "items_nonzero": bool(items),
-        "label_balanced": report["label_balance"]["position_0"] == report["label_balance"]["position_1"],
+        "label_balanced": report["label_balance"]["position_0"]
+        == report["label_balance"]["position_1"],
         "shuffled_controls_at_chance": all(
             result["shuffled_label_control"]["mean_accuracy"] <= CHANCE_LINE + 0.05
             for evaluation in evaluations
@@ -295,7 +289,9 @@ def main() -> int:
     report_payload = dict(report)
     report_payload.pop("rows_minimal", None)
     report_payload["rows"] = report.pop("rows_minimal")
-    out.write_text(json.dumps(report_payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    out.write_text(
+        json.dumps(report_payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     ok = all(report["instrument_guard"].values())
     print(
         json.dumps(

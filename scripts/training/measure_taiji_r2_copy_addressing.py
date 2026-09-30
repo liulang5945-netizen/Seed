@@ -29,7 +29,9 @@ def main() -> int:
         PROJECT_ROOT / "output/taiji_r2_copy_circuit/smoke/circuit-final.pt", weights_only=False
     )["copy_circuit"]
 
-    substrate = Taiji(TaijiConfig(region_sizes=(64, 48), synapse_fan_in=16, motor_fan_in=48, seed=20260925))
+    substrate = Taiji(
+        TaijiConfig(region_sizes=(64, 48), synapse_fan_in=16, motor_fan_in=48, seed=20260925)
+    )
     substrate.mount_copy_circuit(max_events=4)
     substrate.copy_circuit.load_payload(circuit_payload)
     circuit = substrate.copy_circuit
@@ -40,11 +42,18 @@ def main() -> int:
     for _ in range(300):
         turns, answer = make_episode(rng)
         substrate.reset_dynamics(episode_id="rev2b-measure")
-        substrate.observe(int(substrate.config.boundary_symbol), learn=False, readout="predictive", use_memory=False)
+        substrate.observe(
+            int(substrate.config.boundary_symbol),
+            learn=False,
+            readout="predictive",
+            use_memory=False,
+        )
         for symbol in turns[0].encode("utf-8"):
             substrate.observe(int(symbol), learn=False, readout="predictive", use_memory=False)
-        circuit.store.record(turns[0].encode("utf-8"),
-                             substrate.fabric.cortical_context(substrate._state.regions).detach().cpu().clone())
+        circuit.store.record(
+            turns[0].encode("utf-8"),
+            substrate.fabric.cortical_context(substrate._state.regions).detach().cpu().clone(),
+        )
         for turn in turns[1:]:
             for symbol in turn.encode("utf-8"):
                 substrate.observe(int(symbol), learn=False, readout="predictive", use_memory=False)

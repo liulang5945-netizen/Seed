@@ -92,8 +92,12 @@ class CharVocab:
 
     def __init__(self, train_text: str) -> None:
         seen = sorted({character for character in train_text if character != "\x00"})
-        self.char_to_slot: dict[str, int] = {character: index + 2 for index, character in enumerate(seen)}
-        self.slot_to_char: dict[int, str] = {slot: character for character, slot in self.char_to_slot.items()}
+        self.char_to_slot: dict[str, int] = {
+            character: index + 2 for index, character in enumerate(seen)
+        }
+        self.slot_to_char: dict[int, str] = {
+            slot: character for character, slot in self.char_to_slot.items()
+        }
         self.size = len(seen) + 2  # boundary + unk + characters
 
     def encode(self, text: str) -> list[int]:
@@ -316,9 +320,7 @@ class SequenceCharWorkspace:
         # v5 rule at the character unit: the scan state right before the
         # material marker ("背景" / "线索" / "已知") projects the answer start.
         marker_starts = [
-            index
-            for marker in ("背景", "线索", "已知")
-            for index in _find_all(prefix, marker)
+            index for marker in ("背景", "线索", "已知") for index in _find_all(prefix, marker)
         ]
         question_position = min(marker_starts) if marker_starts else len(prefix)
         question_hidden = hidden
@@ -334,8 +336,8 @@ class SequenceCharWorkspace:
             if position + 1 == question_position:
                 question_hidden = hidden
         key_rows = torch.stack(keys, dim=0) if keys else torch.zeros(0, int(self.config.slot_width))
-        value_rows = torch.stack(values, dim=0) if values else torch.zeros(
-            0, int(self.config.slot_width)
+        value_rows = (
+            torch.stack(values, dim=0) if values else torch.zeros(0, int(self.config.slot_width))
         )
         # Fixed sinusoidal positional keys (v6 rule): added AFTER projection.
         if key_rows.shape[0]:
@@ -388,9 +390,9 @@ class SequenceCharWorkspace:
             ]
             if match_index:
                 scores = scores.clone()
-                scores[:, match_index] = scores[:, match_index] + self._parameters[
-                    "copy_induce_bias"
-                ]
+                scores[:, match_index] = (
+                    scores[:, match_index] + self._parameters["copy_induce_bias"]
+                )
         return torch.softmax(scores, dim=-1)
 
     def _read(self, state: SequenceCharWorkspaceState) -> torch.Tensor:
@@ -409,9 +411,7 @@ class SequenceCharWorkspace:
         """
 
         vocab_size = int(self.vocab.size)
-        embedding_slot = (
-            previous_slot if previous_slot < vocab_size else CHAR_UNK_SLOT
-        )
+        embedding_slot = previous_slot if previous_slot < vocab_size else CHAR_UNK_SLOT
         renderer_state = torch.tanh(
             self._parameters["renderer_embedding"][embedding_slot]
             @ self._parameters["renderer_input"]
@@ -525,7 +525,11 @@ class SequenceCharWorkspace:
             if slot == CHAR_BOUNDARY_SLOT:
                 stopped = True
                 break
-            produced.append(self.vocab.glyph_of(slot) if slot < int(self.vocab.size) else chr(int(state.extra_slot_codepoints[slot])))
+            produced.append(
+                self.vocab.glyph_of(slot)
+                if slot < int(self.vocab.size)
+                else chr(int(state.extra_slot_codepoints[slot]))
+            )
             state = self._advance_pointer(state, slot)
             previous_slot = slot
         return CharGenerationResult("".join(produced), stopped, steps)
@@ -584,7 +588,10 @@ class SequenceCharWorkspace:
         state0 = self.begin_episode(prefix)
         boundary = float(CHAR_BOUNDARY_SLOT)
         targets = torch.tensor(
-            [state0.char2slot.get(character, self.vocab.slot_of(character)) for character in response]
+            [
+                state0.char2slot.get(character, self.vocab.slot_of(character))
+                for character in response
+            ]
             + [int(boundary)],
             dtype=torch.long,
         )
@@ -602,9 +609,7 @@ class SequenceCharWorkspace:
             if mask.numel() != len(response):
                 raise ValueError("value_mask must align with the response characters")
             if mask.any():
-                hits = copies[:-1][mask].gather(
-                    1, targets[:-1][mask].unsqueeze(1)
-                ).squeeze(1)
+                hits = copies[:-1][mask].gather(1, targets[:-1][mask].unsqueeze(1)).squeeze(1)
                 loss = loss + weight * (-hits.clamp_min(1e-12).log().mean())
                 value_prob_mean = float(hits.detach().mean())
         with torch.no_grad():
@@ -742,9 +747,9 @@ class SequenceCharTrainer:
                 parameter.copy_(tensor)
         trainer = cls(
             workspace,
-            learning_rate=float(payload.get("learning_rate", 0.01))
-            if "learning_rate" in payload
-            else 0.01,
+            learning_rate=(
+                float(payload.get("learning_rate", 0.01)) if "learning_rate" in payload else 0.01
+            ),
             code_revision=str(payload.get("code_revision", "")),
         )
         try:
@@ -753,9 +758,7 @@ class SequenceCharTrainer:
             pass  # fresh optimizer state when param identity differs
         trainer.global_step = int(payload.get("global_step", 0))
         episodes = payload.get("episodes", [])
-        trainer.episodes = tuple(
-            (str(item["prefix"]), str(item["response"])) for item in episodes
-        )
+        trainer.episodes = tuple((str(item["prefix"]), str(item["response"])) for item in episodes)
         state = payload.get("rng_state")
         if isinstance(state, torch.Tensor):
             torch.set_rng_state(state)

@@ -9,7 +9,9 @@ Owner feedback (2026-09-28, round 2):
 
 The tree is still the anchor's own artwork: only scaled and recoloured (luminance remap).
 """
+
 import os
+
 import numpy as np
 from PIL import Image, ImageDraw
 
@@ -21,39 +23,51 @@ CX = 512
 STROKE = 13
 SS = 4
 T_M = 0.54
-STRUCT = (18, 74, 56)        # #124A38  shell stroke + trunk + branches
-LEAF_HI = (170, 214, 106)    # #AAD66A  young-leaf highlight
+STRUCT = (18, 74, 56)  # #124A38  shell stroke + trunk + branches
+LEAF_HI = (170, 214, 106)  # #AAD66A  young-leaf highlight
 
 im = Image.open(SRC).convert("RGB")
 a = np.asarray(im).astype(np.int16)
 bg = tuple(int(v) for v in a[5, 5])
 mask = np.abs(a - np.array(bg)).max(axis=2) > 18
-band = np.zeros_like(mask); band[150:740, :] = True
+band = np.zeros_like(mask)
+band[150:740, :] = True
 mask &= band
+
 
 def _shift(m, dy, dx):
     out = np.zeros_like(m)
-    ys = slice(max(0, dy), m.shape[0] + min(0, dy)); yd = slice(max(0, -dy), m.shape[0] + min(0, -dy))
-    xs = slice(max(0, dx), m.shape[1] + min(0, dx)); xd = slice(max(0, -dx), m.shape[1] + min(0, -dx))
+    ys = slice(max(0, dy), m.shape[0] + min(0, dy))
+    yd = slice(max(0, -dy), m.shape[0] + min(0, -dy))
+    xs = slice(max(0, dx), m.shape[1] + min(0, dx))
+    xd = slice(max(0, -dx), m.shape[1] + min(0, -dx))
     out[yd, xd] = m[ys, xs]
     return out
 
-def dilate(m): return m | _shift(m,1,0) | _shift(m,-1,0) | _shift(m,0,1) | _shift(m,0,-1)
+
+def dilate(m):
+    return m | _shift(m, 1, 0) | _shift(m, -1, 0) | _shift(m, 0, 1) | _shift(m, 0, -1)
+
 
 def erode(m, it):
     for _ in range(it):
-        m = m & _shift(m,1,0) & _shift(m,-1,0) & _shift(m,0,1) & _shift(m,0,-1)
+        m = m & _shift(m, 1, 0) & _shift(m, -1, 0) & _shift(m, 0, 1) & _shift(m, 0, -1)
     return m
+
 
 def fill_holes(m):
     outside = ~m
     outside[1:-1, 1:-1] = False
-    outside[0, :] = ~m[0, :]; outside[-1, :] = ~m[-1, :]
-    outside[:, 0] = ~m[:, 0]; outside[:, -1] = ~m[:, -1]
+    outside[0, :] = ~m[0, :]
+    outside[-1, :] = ~m[-1, :]
+    outside[:, 0] = ~m[:, 0]
+    outside[:, -1] = ~m[:, -1]
     while True:
         nxt = dilate(outside) & ~m
-        if nxt.sum() == outside.sum(): return ~outside
+        if nxt.sum() == outside.sum():
+            return ~outside
         outside = nxt
+
 
 filled = fill_holes(mask)
 tree_mask = mask & erode(filled, 9)
@@ -65,7 +79,7 @@ H = Y_BOT - TIP
 # ---------- tree layer: crop + recolour ----------
 tys, txs = np.where(tree_mask)
 TX0, TX1, TY0 = int(txs.min()), int(txs.max()), int(tys.min())
-lum = (0.299 * a[..., 0] + 0.587 * a[..., 1] + 0.114 * a[..., 2])
+lum = 0.299 * a[..., 0] + 0.587 * a[..., 1] + 0.114 * a[..., 2]
 tl = lum[tree_mask]
 Ld, Ll = float(np.percentile(tl, 3)), float(np.percentile(tl, 97))
 t = np.clip((lum - Ld) / max(1.0, Ll - Ld), 0, 1) ** 0.85
@@ -77,14 +91,17 @@ tree_crop = Image.fromarray(rgb, "RGBA").crop((TX0, TY0, TX1 + 1, int(tys.max())
 cw, ch = tree_crop.size
 print(f"shell {TIP}..{Y_BOT} H={H} | tree crop {tree_crop.size} | lum {Ld:.0f}..{Ll:.0f}")
 
+
 def shell_hw(tt, ratio, p_top):
     M = ratio * H / 2.0
-    if tt < 0 or tt > 1: return -1.0
+    if tt < 0 or tt > 1:
+        return -1.0
     if tt < T_M:
         u = (T_M - tt) / T_M
         return M * (1 - u * u) ** p_top
     v = (tt - T_M) / (1 - T_M)
     return M * (1 - v * v) ** 0.5
+
 
 def fits(scale, stretch_x, ratio, p_top, margin):
     """True if the scaled tree stays inside the shell's inner edge (margin = clearance)."""
@@ -94,11 +111,15 @@ def fits(scale, stretch_x, ratio, p_top, margin):
     y0 = (Y_BOT - STROKE + 2) - h
     for j in range(h):
         idx = np.where(al[j])[0]
-        if len(idx) == 0: continue
+        if len(idx) == 0:
+            continue
         hw = shell_hw((y0 + j - TIP) / H, ratio, p_top) - STROKE / 2.0 - margin
-        if hw <= 0: return False
-        if (x0 + idx.min()) < CX - hw or (x0 + idx.max()) > CX + hw: return False
+        if hw <= 0:
+            return False
+        if (x0 + idx.min()) < CX - hw or (x0 + idx.max()) > CX + hw:
+            return False
     return True
+
 
 def best_fit(ratio, p_top, margin):
     best = None
@@ -110,6 +131,7 @@ def best_fit(ratio, p_top, margin):
                 break
     return best
 
+
 def build(ratio, p_top, scale, stretch_x, tag, marker_ratio=0.84):
     S = 1024 * SS
     canvas = Image.new("RGBA", (S, S), (0, 0, 0, 0))
@@ -119,7 +141,8 @@ def build(ratio, p_top, scale, stretch_x, tag, marker_ratio=0.84):
         tt = i / H
         y = (TIP + tt * H) * SS
         hc = max(0.0, shell_hw(tt, ratio, p_top) - STROKE / 2.0)
-        rr.append((CX * SS + hc * SS, y)); ll.append((CX * SS - hc * SS, y))
+        rr.append((CX * SS + hc * SS, y))
+        ll.append((CX * SS - hc * SS, y))
     poly = rr + ll[::-1]
     d.line(poly + [poly[0]], fill=STRUCT + (255,), width=max(1, int(STROKE * SS)), joint="curve")
     out = canvas.resize((1024, 1024), Image.LANCZOS)
@@ -137,9 +160,14 @@ def build(ratio, p_top, scale, stretch_x, tag, marker_ratio=0.84):
         conn = Image.new("RGBA", (S, S), (0, 0, 0, 0))
         A, B = x0 + int(nz.min()), x0 + int(nz.max())
         ImageDraw.Draw(conn).polygon(
-            [(A * SS, (y0 + h - 3) * SS), (B * SS, (y0 + h - 3) * SS),
-             ((B + 4) * SS, (Y_BOT - 4) * SS), ((A - 4) * SS, (Y_BOT - 4) * SS)],
-            fill=STRUCT + (255,))
+            [
+                (A * SS, (y0 + h - 3) * SS),
+                (B * SS, (y0 + h - 3) * SS),
+                ((B + 4) * SS, (Y_BOT - 4) * SS),
+                ((A - 4) * SS, (Y_BOT - 4) * SS),
+            ],
+            fill=STRUCT + (255,),
+        )
         out = Image.alpha_composite(out, conn.resize((1024, 1024), Image.LANCZOS))
 
     # stem hook at the tip
@@ -147,8 +175,13 @@ def build(ratio, p_top, scale, stretch_x, tag, marker_ratio=0.84):
     hd = ImageDraw.Draw(hook)
     lw = int(3.4 * SS)
     hd.line([(CX * SS, (TIP + 8) * SS), (CX * SS, (TIP - 16) * SS)], fill=STRUCT + (255,), width=lw)
-    hd.arc([CX * SS - 3 * SS, (TIP - 30) * SS, CX * SS + 15 * SS, (TIP - 12) * SS],
-           195, 350, fill=STRUCT + (255,), width=lw)
+    hd.arc(
+        [CX * SS - 3 * SS, (TIP - 30) * SS, CX * SS + 15 * SS, (TIP - 12) * SS],
+        195,
+        350,
+        fill=STRUCT + (255,),
+        width=lw,
+    )
     out = Image.alpha_composite(out, hook.resize((1024, 1024), Image.LANCZOS))
     out.save(os.path.join(OUT, f"seed-shell-{tag}-mark.png"))
 
@@ -164,13 +197,16 @@ def build(ratio, p_top, scale, stretch_x, tag, marker_ratio=0.84):
     lay.alpha_composite(mm, ((TILE - side) // 2, (TILE - side) // 2))
     tile = Image.alpha_composite(tile, lay)
     mk = Image.new("L", (TILE, TILE), 0)
-    ImageDraw.Draw(mk).rounded_rectangle([0, 0, TILE - 1, TILE - 1], radius=int(TILE * 0.22), fill=255)
+    ImageDraw.Draw(mk).rounded_rectangle(
+        [0, 0, TILE - 1, TILE - 1], radius=int(TILE * 0.22), fill=255
+    )
     tile = Image.composite(tile, Image.new("RGBA", (TILE, TILE), (0, 0, 0, 0)), mk)
     tile.resize((512, 512), Image.LANCZOS).save(os.path.join(OUT, f"icon-{tag}.png"))
     prev = Image.new("RGB", (1024, 1024), bg)
     prev.paste(out, (0, 0), out)
     print(f"  {tag}: scale={scale:.2f} stretchX={stretch_x:.2f} treebox={w}x{h}")
     return prev, tile
+
 
 o = Image.open(SRC).convert("RGB").crop((196, 76, 828, 820)).resize((440, 519), Image.LANCZOS)
 tiles = []

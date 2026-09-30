@@ -26,6 +26,7 @@ import argparse
 import json
 import sys
 from pathlib import Path
+from typing import Any
 
 import torch
 
@@ -76,7 +77,7 @@ def main() -> int:
         substrate.reset_dynamics(episode_id=f"t8-exp1-{name}")
         fb_norms: list[float] = []
         fb_vectors: list[torch.Tensor] = []
-        step = substrate.observe(
+        substrate.observe(
             substrate.config.boundary_symbol,
             learn=True,
             readout="predictive",
@@ -86,7 +87,7 @@ def main() -> int:
         fb_norms.append(round(float(_feedback(substrate).norm()), 4))
         fb_vectors.append(_feedback(substrate))
         for symbol in _serialize_prompt(runtime, prompt="".join(ITEM["turns"])):
-            step = substrate.observe(
+            substrate.observe(
                 int(symbol),
                 learn=True,
                 readout="predictive",
@@ -150,7 +151,11 @@ def main() -> int:
         verdict = (
             "(b) 召回匹配是元凶（强制反馈能解码出答案）"
             if forced_res["hit"] and not zero_res["hit"]
-            else ("(c) 召回后解码有罪（强制反馈也解不出）" if not forced_res["hit"] else "两者都不缺，须重审")
+            else (
+                "(c) 召回后解码有罪（强制反馈也解不出）"
+                if not forced_res["hit"]
+                else "两者都不缺，须重审"
+            )
         )
         rows.append(
             {
@@ -183,8 +188,10 @@ def main() -> int:
         "rows": rows,
         "note": "零 taiji/ 改动：状态外读 + fabric.step/reset 实例级包装；forced=强制告知段反馈",
     }
-    out = Path(args.out_report) if args.out_report else (
-        PROJECT_ROOT / "reports" / "taiji_r2_recall_split_20260925.json"
+    out = (
+        Path(args.out_report)
+        if args.out_report
+        else (PROJECT_ROOT / "reports" / "taiji_r2_recall_split_20260925.json")
     )
     if out.exists():
         parser.error(f"{out} already exists; 判决件不覆写")

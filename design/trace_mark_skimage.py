@@ -11,6 +11,7 @@ Emits mono (currentColor, even-odd) and colour (two layers) SVG at 24x24 user
 units, then rasterises each layer back with an even-odd scanline fill and
 compares against the source mask; nothing is written below MIN_IOU.
 """
+
 from __future__ import annotations
 
 import os
@@ -22,14 +23,14 @@ from skimage import measure
 
 SRC = r"E:/Seed/design/variants/seed-shell-final-mark.png"
 OUT = r"E:/Seed/design/logo"
-WORK = 512                 # field resolution for contouring and scoring
-SIGMA = 1.3                # blur in WORK pixels
-RDP_TOL = 1.2              # simplification tolerance in WORK pixels
-MIN_IOU = 0.98            # reported, not the gate: see score() for why IoU cannot clear ~0.95 here
-BAND_RADIUS = 2           # edge band width in work pixels used by the acceptance test
-MIN_INSIDE_BAND = 0.99    # share of disagreeing cells that sits inside that band
-MAX_DEVIATION_PX = 3.0    # worst straggle outside that band, in work pixels
-MAX_AREA_DIFF = 0.015     # signed area difference against the binarised mask
+WORK = 512  # field resolution for contouring and scoring
+SIGMA = 1.3  # blur in WORK pixels
+RDP_TOL = 1.2  # simplification tolerance in WORK pixels
+MIN_IOU = 0.98  # reported, not the gate: see score() for why IoU cannot clear ~0.95 here
+BAND_RADIUS = 2  # edge band width in work pixels used by the acceptance test
+MIN_INSIDE_BAND = 0.99  # share of disagreeing cells that sits inside that band
+MAX_DEVIATION_PX = 3.0  # worst straggle outside that band, in work pixels
+MAX_AREA_DIFF = 0.015  # signed area difference against the binarised mask
 STRUCT_RGB = np.array([18, 74, 56])
 LAYERS = (
     ("mono", "solid", (18, 74, 56)),
@@ -83,7 +84,7 @@ def rdp(points: list[tuple[float, float]], eps: float) -> list[tuple[float, floa
     deviations = [abs((y1 - y0) * (x - x0) - (x1 - x0) * (y - y0)) / base for x, y in points[1:-1]]
     index = int(np.argmax(deviations))
     if deviations[index] > eps:
-        return rdp(points[:index + 2], eps)[:-1] + rdp(points[index + 1:], eps)
+        return rdp(points[: index + 2], eps)[:-1] + rdp(points[index + 1 :], eps)
     return [points[0], points[-1]]
 
 
@@ -99,10 +100,7 @@ def shift_cells(mask: np.ndarray, radius: int, dilate: bool) -> np.ndarray:
         for step in range(1, radius + 1):
             for sign in (1, -1):
                 rolled = np.roll(mask, sign * step, axis=axis)
-                if dilate:
-                    out = out | rolled
-                else:
-                    out = out & rolled
+                out = out | rolled if dilate else out & rolled
     return out
 
 
@@ -121,6 +119,7 @@ def score(drawn: np.ndarray, truth: np.ndarray) -> tuple[float, float, float, in
     The acceptance test is therefore "disagreement stays inside the edge band".
     """
     from scipy.ndimage import distance_transform_edt
+
     union = int((drawn | truth).sum())
     iou = int((drawn & truth).sum()) / union if union else 0.0
     mismatch = drawn ^ truth
@@ -145,7 +144,7 @@ def simplify_rings(points: list[np.ndarray], size: int) -> list[np.ndarray]:
         far = int(np.argmax(distances[1:])) + 1
         if far <= 0 or far >= len(ring):
             continue
-        chain_a = [tuple(p) for p in ring[:far + 1]]
+        chain_a = [tuple(p) for p in ring[: far + 1]]
         chain_b = [tuple(p) for p in ring[far:]] + [tuple(ring[0])]
         simple = rdp(chain_a, RDP_TOL)[:-1] + rdp(chain_b, RDP_TOL)[:-1]
         arr = np.array(simple, dtype=float)
@@ -174,13 +173,15 @@ def render(rings: list[np.ndarray], size: int) -> np.ndarray:
         hits = table[(table[:, 4] <= gy) & (gy < table[:, 5])]
         if len(hits) == 0:
             continue
-        x_at = hits[:, 0] + (gy - hits[:, 1]) * (hits[:, 2] - hits[:, 0]) / (hits[:, 3] - hits[:, 1])
+        x_at = hits[:, 0] + (gy - hits[:, 1]) * (hits[:, 2] - hits[:, 0]) / (
+            hits[:, 3] - hits[:, 1]
+        )
         xs = np.sort(x_at)
         for k in range(0, len(xs) - 1, 2):
             left = max(int(np.ceil(xs[k] - 0.5)), 0)
             right = min(int(np.floor(xs[k + 1] - 0.5)), size - 1)
             if right >= left:
-                covered[row, left:right + 1] = True
+                covered[row, left : right + 1] = True
     return covered
 
 
@@ -211,12 +212,19 @@ def main() -> int:
         drawn = render(rings, WORK)
         iou, inside_band, worst_px, area_difference, mean_px = score(drawn, truth)
         vertices = int(sum(len(ring) for ring in rings))
-        print(f"layer={name:8s} rings={len(rings):3d} vertices={vertices:5d} IoU={iou:.4f} "
-              f"inside_1px_band={inside_band:.4f} worst_px={worst_px:.1f} mean_px={mean_px:.2f} "
-              f"area_diff={area_difference:+.4f} mask_px={int(truth.sum())}")
-        if not (inside_band >= MIN_INSIDE_BAND and worst_px <= MAX_DEVIATION_PX
-                and abs(area_difference) <= MAX_AREA_DIFF):
-            failures.append(f"{name} band={inside_band:.4f} worst={worst_px:.1f}px area={area_difference:+.4f}")
+        print(
+            f"layer={name:8s} rings={len(rings):3d} vertices={vertices:5d} IoU={iou:.4f} "
+            f"inside_1px_band={inside_band:.4f} worst_px={worst_px:.1f} mean_px={mean_px:.2f} "
+            f"area_diff={area_difference:+.4f} mask_px={int(truth.sum())}"
+        )
+        if not (
+            inside_band >= MIN_INSIDE_BAND
+            and worst_px <= MAX_DEVIATION_PX
+            and abs(area_difference) <= MAX_AREA_DIFF
+        ):
+            failures.append(
+                f"{name} band={inside_band:.4f} worst={worst_px:.1f}px area={area_difference:+.4f}"
+            )
         rings_by_layer[name] = rings
     if failures:
         print("REJECTED (nothing written): " + "; ".join(failures))
@@ -225,14 +233,24 @@ def main() -> int:
     mono_d = path_data(rings_by_layer["mono"])
     struct_d = path_data(rings_by_layer["struct"])
     foliage_d = path_data(rings_by_layer["foliage"])
-    with open(os.path.join(OUT, "seed-mark-mono.svg"), "w", encoding="utf-8", newline="\n") as handle:
-        handle.write('<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">\n'
-                     f'  <path d="{mono_d}" fill="currentColor" fill-rule="evenodd"/>\n</svg>\n')
-    with open(os.path.join(OUT, "seed-mark-color.svg"), "w", encoding="utf-8", newline="\n") as handle:
-        handle.write('<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">\n'
-                     f'  <path d="{struct_d}" fill="#124A38" fill-rule="evenodd"/>\n'
-                     f'  <path d="{foliage_d}" fill="#AAD66A" fill-rule="evenodd"/>\n</svg>\n')
-    with open(os.path.join(OUT, "seed-mark-mono.path.txt"), "w", encoding="utf-8", newline="\n") as handle:
+    with open(
+        os.path.join(OUT, "seed-mark-mono.svg"), "w", encoding="utf-8", newline="\n"
+    ) as handle:
+        handle.write(
+            '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">\n'
+            f'  <path d="{mono_d}" fill="currentColor" fill-rule="evenodd"/>\n</svg>\n'
+        )
+    with open(
+        os.path.join(OUT, "seed-mark-color.svg"), "w", encoding="utf-8", newline="\n"
+    ) as handle:
+        handle.write(
+            '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">\n'
+            f'  <path d="{struct_d}" fill="#124A38" fill-rule="evenodd"/>\n'
+            f'  <path d="{foliage_d}" fill="#AAD66A" fill-rule="evenodd"/>\n</svg>\n'
+        )
+    with open(
+        os.path.join(OUT, "seed-mark-mono.path.txt"), "w", encoding="utf-8", newline="\n"
+    ) as handle:
         handle.write(mono_d)
     for size in (24, 48, 128, 512):
         composite = np.zeros((size, size, 4), np.uint8)

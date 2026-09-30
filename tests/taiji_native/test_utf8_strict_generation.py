@@ -15,8 +15,6 @@ from __future__ import annotations
 import hashlib
 import random
 
-import torch
-
 from taiji import Taiji, TaijiConfig
 from taiji.language_alignment import LanguageAlignmentTrainer
 from taiji.utf8_state import advance_utf8, trim_partial_tail, utf8_allowed
@@ -48,14 +46,13 @@ def test_shared_state_machine_matches_delegate_exhaustively() -> None:
 
     for remaining in range(4):
         for lead in range(256):
-            assert (
-                LanguageAlignmentTrainer._utf8_allowed(remaining, lead)
-                == utf8_allowed(remaining, lead)
+            assert LanguageAlignmentTrainer._utf8_allowed(remaining, lead) == utf8_allowed(
+                remaining, lead
             ), (remaining, lead)
             for symbol in range(256):
-                assert LanguageAlignmentTrainer._advance_utf8(remaining, lead, symbol) == advance_utf8(
+                assert LanguageAlignmentTrainer._advance_utf8(
                     remaining, lead, symbol
-                )
+                ) == advance_utf8(remaining, lead, symbol)
 
 
 def test_utf8_state_matches_instrument_probe_copy() -> None:
@@ -64,7 +61,12 @@ def test_utf8_state_matches_instrument_probe_copy() -> None:
     import importlib.util
     from pathlib import Path
 
-    path = Path(__file__).resolve().parents[2] / "scripts" / "training" / "probe_taiji_cap0_byte_output.py"
+    path = (
+        Path(__file__).resolve().parents[2]
+        / "scripts"
+        / "training"
+        / "probe_taiji_cap0_byte_output.py"
+    )
     spec = importlib.util.spec_from_file_location("probe_cap0", path)
     probe = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(probe)
@@ -134,7 +136,7 @@ def test_on_path_outputs_are_valid_utf8_sampling() -> None:
 
 
 def test_trim_partial_tail_semantics() -> None:
-    assert trim_partial_tail("你好".encode("utf-8")) == "你好".encode("utf-8")
+    assert trim_partial_tail("你好".encode()) == "你好".encode()
     assert trim_partial_tail(b"a\xc3") == b"a"
     assert trim_partial_tail(b"a\xe6\x88") == b"a"
     assert trim_partial_tail(b"\xc3\x28") == b""  # 非法且截无可截⇒交空串，不交非法串

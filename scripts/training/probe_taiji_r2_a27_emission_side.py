@@ -85,6 +85,7 @@ def run_arm(runtime: Any, items: list[dict[str, Any]], arm: str) -> list[dict[st
     """一臂：逐题走产品链（`_answer_raw`），只在"取事件"那一维上打补丁。"""
 
     from score_taiji_r2_copy_circuit_chat_cap import _answer_raw
+
     from taiji.copy_circuit import CopyCircuit, ToldContentStore
 
     circuit = runtime.model.substrate.copy_circuit
@@ -212,9 +213,7 @@ def run_arm(runtime: Any, items: list[dict[str, Any]], arm: str) -> list[dict[st
                     history.append((turn, answer))
             hit = int(any(token in answer for token in tokens))
             labelled_text = "" if labelled_index is None else told[labelled_index]
-            other_text = "".join(
-                turn for index, turn in enumerate(told) if index != labelled_index
-            )
+            other_text = "".join(turn for index, turn in enumerate(told) if index != labelled_index)
             #: 归属改按**字符重叠率**（原判据 `answer[:3] in other_text` 太硬：
             #: 只要首三字节不是逐字子串就全落进 `unattributed`，看不出"内容来自谁"）。
             answer_chars = {ch for ch in answer if not ch.isspace()}
@@ -257,9 +256,7 @@ def run_arm(runtime: Any, items: list[dict[str, Any]], arm: str) -> list[dict[st
                         None
                         if labelled_index is None
                         else bool(chosen_texts)
-                        and all(
-                            any(token in text for token in tokens) for text in chosen_texts
-                        )
+                        and all(any(token in text for token in tokens) for text in chosen_texts)
                     ),
                     "chosen_event_ids": chosen_ids[:8],
                     "target_rank": rank,
@@ -334,9 +331,7 @@ def main() -> int:
             "hits": hits,
             "hit_rate": round(hits / max(len(rows), 1), 4),
             "emitted_owner": owners,
-            "chosen_is_labelled_true": sum(
-                1 for row in rows if row["chosen_is_labelled"] is True
-            ),
+            "chosen_is_labelled_true": sum(1 for row in rows if row["chosen_is_labelled"] is True),
             "target_rank_median": (sorted(ranks)[len(ranks) // 2] if ranks else None),
             "target_rank_top1": sum(1 for value in ranks if value == 1),
             "chosen_calls_in_generation": state["chosen_calls_in_generation"],

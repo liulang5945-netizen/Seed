@@ -79,7 +79,9 @@ class ArmAlreadyComplete(RuntimeError):
 def surface_digests(substrate: Any) -> dict[str, str]:
     """Fingerprints of the two weight surfaces this experiment may touch."""
 
-    return {surface: content_digest(getattr(substrate, surface).to_payload()) for surface in SURFACES}
+    return {
+        surface: content_digest(getattr(substrate, surface).to_payload()) for surface in SURFACES
+    }
 
 
 def _utc_now() -> str:
@@ -319,7 +321,9 @@ def run_arm(
         "checkpoint_sha256": sha256_of(checkpoint_path),
         "report_path": str(report_path),
     }
-    report_path.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    report_path.write_text(
+        json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     return report
 
 
@@ -467,11 +471,13 @@ def main() -> int:
         "arms_status": status_by_arm,
         "arms_pending": pending,
         "resume_command": (
-            f"--arms {','.join(pending)} --symbols {args.symbols} "
-            f"--checkpoint-every {args.checkpoint_every} --progress-every {args.progress_every}"
-        )
-        if pending
-        else None,
+            (
+                f"--arms {','.join(pending)} --symbols {args.symbols} "
+                f"--checkpoint-every {args.checkpoint_every} --progress-every {args.progress_every}"
+            )
+            if pending
+            else None
+        ),
         "symbols_budget": args.symbols,
         "skip_symbols": skip_symbols,
         "base_checkpoint": str(base_checkpoint),

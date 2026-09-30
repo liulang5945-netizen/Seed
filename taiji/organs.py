@@ -748,7 +748,7 @@ class BytePredictiveReadout:
         return self._position_one_hot(position_state)
 
     @torch.no_grad()
-    def adopt_position_input(self, source: "BytePredictiveReadout") -> None:
+    def adopt_position_input(self, source: BytePredictiveReadout) -> None:
         """把另一个读出器的位置列搬过来（派生读出器 fork 时用）。"""
 
         if self.position_weight is None or source.position_weight is None:

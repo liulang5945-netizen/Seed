@@ -227,7 +227,9 @@ def _run_task(runtime: Any, task: str, *, utf8_strict: bool = False) -> dict[str
         values = [row[key] for row in rows if row.get(key) is not None]
         return round(sum(1 for value in values if value) / max(len(values), 1), 4)
 
-    first_bad_positions = [row["first_invalid_position"] for row in rows if row["first_invalid_position"] is not None]
+    first_bad_positions = [
+        row["first_invalid_position"] for row in rows if row["first_invalid_position"] is not None
+    ]
     return {
         "task": task,
         "items": len(rows),
@@ -250,7 +252,9 @@ def _run_task(runtime: Any, task: str, *, utf8_strict: bool = False) -> dict[str
             else None
         ),
         "fully_valid_count": sum(1 for row in rows if row["decodable_whole"]),
-        "expected_hit_rate": _rate("expected_hit") if rows[0].get("expected_hit") is not None else None,
+        "expected_hit_rate": (
+            _rate("expected_hit") if rows[0].get("expected_hit") is not None else None
+        ),
         "rows": rows,
     }
 
@@ -273,7 +277,12 @@ def main() -> int:
     runtime = SeedRuntime.load(checkpoint)
     substrate = runtime.model.substrate
     if substrate.copy_circuit is not None:
-        print(json.dumps({"guard_ok": False, "error": "copy circuit mounted; F0 requires bare base"}, ensure_ascii=False))
+        print(
+            json.dumps(
+                {"guard_ok": False, "error": "copy circuit mounted; F0 requires bare base"},
+                ensure_ascii=False,
+            )
+        )
         return 2
 
     tasks = [

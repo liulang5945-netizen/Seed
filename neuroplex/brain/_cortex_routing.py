@@ -18,7 +18,6 @@ import torch
 __all__ = ["fingerprint_route"]
 
 
-
 def fingerprint_route(
     neurons: dict,
     shared_embedding,

@@ -58,9 +58,7 @@ DEFAULT_RUN_DIR = PROJECT_ROOT / "output" / "taiji_r2_readout_retrain"
 DEFAULT_REPORT = PROJECT_ROOT / "reports" / "taiji_r2_readout_retrain_verdict_20260920.json"
 #: dry-run 的落盘路径**必须与正式判决不同**：判决报告"已存在即拒跑"，一次自检若占了正式路径，
 #: 就等于把真判决挡在门外。
-DRY_RUN_REPORT = (
-    PROJECT_ROOT / "reports" / "taiji_r2_readout_retrain_pipeline_check_20260920.json"
-)
+DRY_RUN_REPORT = PROJECT_ROOT / "reports" / "taiji_r2_readout_retrain_pipeline_check_20260920.json"
 #: M1 的题面集：与已 FROZEN 的 P1/P2 仪器同源（CAP 现行集合的 B/G 两维，逐轮取题面）。
 M1_DIMENSIONS = ("B", "G")
 #: M2 的维度与增量。
@@ -170,9 +168,7 @@ def _prompt_echo_rate(text: str, prompt: str, width: int = 8) -> int:
     return int(any(text[i : i + width] in prompt for i in range(len(text) - width + 1)))
 
 
-def run_m1(
-    run_dir: Path, dry_run: bool, prompts_file: Path | None = None
-) -> dict[str, Any]:
+def run_m1(run_dir: Path, dry_run: bool, prompts_file: Path | None = None) -> dict[str, Any]:
     from diag_taiji_r2_surface_decode import _serialize_prompt  # noqa: PLC2701
 
     from api.seed_runtime import SeedRuntime
@@ -308,9 +304,7 @@ def run_m2(run_dir: Path, dry_run: bool) -> dict[str, Any]:
                 int(report["dimensions"][key]["tally"]["machine_scored_correct"] or 0)
                 for key in M2_DIMENSIONS
             ),
-            "per_dimension": {
-                key: report["dimensions"][key]["tally"] for key in M2_DIMENSIONS
-            },
+            "per_dimension": {key: report["dimensions"][key]["tally"] for key in M2_DIMENSIONS},
             "identity": report.get("identity"),
             "chain": report.get("chain"),
         }
@@ -429,7 +423,9 @@ def main() -> int:
         )
 
     report_path.parent.mkdir(parents=True, exist_ok=True)
-    report_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    report_path.write_text(
+        json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print(json.dumps({"dry_run": payload["dry_run"], "report": str(report_path)}))
     return 0
 

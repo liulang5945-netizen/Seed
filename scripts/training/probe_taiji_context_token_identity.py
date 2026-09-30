@@ -124,10 +124,7 @@ def collect(checkpoint: Path) -> dict[str, Any]:
     per_distance: list[dict[str, Any]] = []
     for suffix in SUFFIXES:
         states = [
-            [
-                _cue(substrate, _prompt(carrier, token, suffix))
-                for carrier in CARRIERS
-            ]
+            [_cue(substrate, _prompt(carrier, token, suffix)) for carrier in CARRIERS]
             for token in TOKENS
         ]
         token_axis = len(TOKENS)
@@ -204,8 +201,7 @@ def _verdict(curve: list[dict[str, Any]]) -> dict[str, Any]:
         "best_sigma_below_null": best["sigma_below_null"],
         "best_ratio": best["observed_ratio"],
         "reading": (
-            "状态里带着「是哪个实体」，且这个信息强于载体变异"
-            "（可在该区间的状态上做线性读出）"
+            "状态里带着「是哪个实体」，且这个信息强于载体变异" "（可在该区间的状态上做线性读出）"
             if encoded
             else "状态只反映「输入串不同」：实体身份并不比载体变异更强"
             " ⇒ 不要把「状态变了」读成「实体可读」"

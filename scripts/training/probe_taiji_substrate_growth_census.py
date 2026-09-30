@@ -112,13 +112,17 @@ def _activity_ladder(runtime: Any, rows: list[dict[str, Any]]) -> dict[str, Any]
     snapshot("after_load_clean", "载入后、任何活动步之前（三态对表的运行时态即取于此）")
 
     substrate.reset_dynamics(episode_id="census-ladder-observe")
-    for symbol in "我叫阿蒙".encode("utf-8")[:4]:
+    for symbol in "我叫阿蒙".encode()[:4]:
         substrate.observe(int(symbol), learn=True, readout="predictive")
-    snapshot("observe_learn_true_x4", "训练喂法：observe(learn=True)，无动作 ⇒ 无 pending_experience")
+    snapshot(
+        "observe_learn_true_x4", "训练喂法：observe(learn=True)，无动作 ⇒ 无 pending_experience"
+    )
 
     substrate.reset_dynamics(episode_id="census-ladder-chat")
     runtime.chat("我叫阿蒙。", history=[], max_length=32, learn=True, repetition_penalty=0.0)
-    snapshot("chat_learn_true", "产品语言轮 chat(learn=True)（接线审计同款：预期 write_count 不动）")
+    snapshot(
+        "chat_learn_true", "产品语言轮 chat(learn=True)（接线审计同款：预期 write_count 不动）"
+    )
 
     substrate.reset_dynamics(episode_id="census-ladder-write")
     substrate.observe(256, learn=False)
@@ -291,11 +295,7 @@ def main() -> int:
         "p1_verdict": (
             "not_applicable_mode_without_file_or_runtime"
             if args.mode != "both"
-            else (
-                "three_state_identical"
-                if not load_diffs and not uncovered
-                else "load_differs"
-            )
+            else ("three_state_identical" if not load_diffs and not uncovered else "load_differs")
         ),
         "p1_load_diff_rows": [
             {key: row[key] for key in ("path", "norm", "runtime_norm", "restore_step")}
@@ -320,7 +320,9 @@ def main() -> int:
         "base_unchanged": report["base_sha256_unchanged"],
         "runtime_covers_file": args.mode != "both" or not uncovered,
         "activity_ladder_ran": (
-            args.mode not in ("runtime", "both") or args.skip_activity or "activity_ladder" in report
+            args.mode not in ("runtime", "both")
+            or args.skip_activity
+            or "activity_ladder" in report
         ),
     }
 

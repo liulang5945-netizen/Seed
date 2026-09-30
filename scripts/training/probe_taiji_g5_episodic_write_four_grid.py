@@ -102,7 +102,10 @@ def _write_told_turn(runtime: Any, episode_id: str) -> dict[str, Any]:
         provenance="experienced",
         threshold=state.memory.threshold,
     )
-    return {"strength": round(float(write.strength), 6), "write_count": substrate.memory.write_count}
+    return {
+        "strength": round(float(write.strength), 6),
+        "write_count": substrate.memory.write_count,
+    }
 
 
 def run_arm(
@@ -180,7 +183,9 @@ def main() -> int:
     arms: dict[str, dict[str, Any]] = {}
     for name in wanted:
         if name not in arm_specs:
-            print(json.dumps({"guard_ok": False, "error": f"unknown arm {name}"}, ensure_ascii=False))
+            print(
+                json.dumps({"guard_ok": False, "error": f"unknown arm {name}"}, ensure_ascii=False)
+            )
             return 2
         arms[name] = run_arm(items, checkpoint, **arm_specs[name])
 
@@ -206,7 +211,10 @@ def main() -> int:
             "clear_between_items": "memory payload round-trip",
             "read_switch": "Taiji.generate(use_memory=...)",
         },
-        "arms": {name: {key: value for key, value in arm.items() if key != "rows"} for name, arm in arms.items()},
+        "arms": {
+            name: {key: value for key, value in arm.items() if key != "rows"}
+            for name, arm in arms.items()
+        },
         "gaps_vs_W0R0": gaps,
         "rows": {name: arm["rows"] for name, arm in arms.items()},
         "base_sha256_unchanged": _sha256(checkpoint) == sha_before,
@@ -236,9 +244,7 @@ def main() -> int:
                 "guard_ok": ok,
                 "items": len(items),
                 "strict_hits": {name: arm["strict_hits"] for name, arm in arms.items()},
-                "episodes_written": {
-                    name: arm["episodes_written"] for name, arm in arms.items()
-                },
+                "episodes_written": {name: arm["episodes_written"] for name, arm in arms.items()},
                 "gaps": gaps,
                 "out": (
                     out.relative_to(PROJECT_ROOT).as_posix()

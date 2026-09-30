@@ -102,15 +102,19 @@ def test_factoring_leaves_every_other_organ_bit_identical() -> None:
     right_lineage = dict(right_identity.pop("lineage"))
     assert _digest(left_identity) == _digest(right_identity), "identity_organ 的拓扑不该有差别"
     assert set(left_lineage) == set(right_lineage)
-    assert {
-        key for key in left_lineage if left_lineage[key] != right_lineage[key]
-    } == {"parent_checkpoint_digest"}, "lineage 只该差那枚派生指纹"
+    assert {key for key in left_lineage if left_lineage[key] != right_lineage[key]} == {
+        "parent_checkpoint_digest"
+    }, "lineage 只该差那枚派生指纹"
 
     # config 只允许差 `receptors_factored` 这一格——多差一格就说明改动溢出了
     differing = {
-        key for key in set(left["config"]) | set(right["config"]) if left["config"].get(key) != right["config"].get(key)
+        key
+        for key in set(left["config"]) | set(right["config"])
+        if left["config"].get(key) != right["config"].get(key)
     }
-    assert differing == {"receptors_factored"}, f"config 只该差开关本身，实际差: {sorted(differing)}"
+    assert differing == {
+        "receptors_factored"
+    }, f"config 只该差开关本身，实际差: {sorted(differing)}"
 
     # 反过来：`predictive_context` 必须**不同**，否则"改动生效"是空话
     assert _digest(left["predictive_context"]) != _digest(right["predictive_context"])

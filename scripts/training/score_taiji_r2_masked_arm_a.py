@@ -15,6 +15,7 @@ import argparse
 import json
 import sys
 from pathlib import Path
+from typing import Any
 
 import torch
 
@@ -114,7 +115,11 @@ def main() -> int:
             "note": "F1 已训练 + 可分离 cue 仍 0 ⇒ 问题在更深处；先读逐题生成样本",
         }
     else:
-        verdict = {"verdict": "SIGNAL_BELOW_MARGIN", "note": "有信号未过 2 题门槛", "S_A_masked": s_m}
+        verdict = {
+            "verdict": "SIGNAL_BELOW_MARGIN",
+            "note": "有信号未过 2 题门槛",
+            "S_A_masked": s_m,
+        }
 
     payload_out = {
         "format": "taiji-r2-masked-arm-a-v1",
@@ -124,8 +129,10 @@ def main() -> int:
         "sanity_S_A_zero": sanity_ok,
         "verdict": verdict,
     }
-    out = Path(args.out_report) if args.out_report else (
-        PROJECT_ROOT / "reports" / "taiji_r2_masked_arm_a_20260924.json"
+    out = (
+        Path(args.out_report)
+        if args.out_report
+        else (PROJECT_ROOT / "reports" / "taiji_r2_masked_arm_a_20260924.json")
     )
     if out.exists():
         parser.error(f"{out} already exists; 判决件不覆写")

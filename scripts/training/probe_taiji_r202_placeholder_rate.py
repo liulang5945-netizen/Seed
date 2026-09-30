@@ -29,14 +29,38 @@ for entry in (PROJECT_ROOT, PROJECT_ROOT / "scripts" / "training"):
         sys.path.insert(0, str(entry))
 
 PROMPTS = [
-    "你叫什么名字？", "你今年多大？", "今天天气怎么样？", "你住在哪里？",
-    "你喜欢吃什么？", "你的爱好是什么？", "你有几个兄弟姐妹？", "你做什么工作？",
-    "你平时喜欢做什么？", "你家有几口人？", "你几点起床？", "你去过北京吗？",
-    "你最喜欢的颜色是什么？", "你养宠物吗？", "你会说什么语言？", "你觉得读书有用吗？",
-    "今晚吃什么？", "周末你打算干什么？", "那条河叫什么名字？", "这家店几点开门？",
-    "这个多少钱？", "明天会下雨吗？", "他为什么没来？", "你的老师是谁？",
-    "你的家乡在哪里？", "你喜欢读书吗？", "这道题怎么做？", "那辆车是谁的？",
-    "你昨晚睡得好吗？", "今天星期几？", "我们下一步去哪？", "这本书讲了什么？",
+    "你叫什么名字？",
+    "你今年多大？",
+    "今天天气怎么样？",
+    "你住在哪里？",
+    "你喜欢吃什么？",
+    "你的爱好是什么？",
+    "你有几个兄弟姐妹？",
+    "你做什么工作？",
+    "你平时喜欢做什么？",
+    "你家有几口人？",
+    "你几点起床？",
+    "你去过北京吗？",
+    "你最喜欢的颜色是什么？",
+    "你养宠物吗？",
+    "你会说什么语言？",
+    "你觉得读书有用吗？",
+    "今晚吃什么？",
+    "周末你打算干什么？",
+    "那条河叫什么名字？",
+    "这家店几点开门？",
+    "这个多少钱？",
+    "明天会下雨吗？",
+    "他为什么没来？",
+    "你的老师是谁？",
+    "你的家乡在哪里？",
+    "你喜欢读书吗？",
+    "这道题怎么做？",
+    "那辆车是谁的？",
+    "你昨晚睡得好吗？",
+    "今天星期几？",
+    "我们下一步去哪？",
+    "这本书讲了什么？",
 ]
 
 FALLBACK_MARKERS = (
@@ -118,7 +142,9 @@ def main() -> int:
     # （允许内容不同——真 chat 有写回与 tick 推进；这里只核"不再占位/可解码"的定性）。
     checks = []
     for prompt in PROMPTS[:4]:
-        answer = runtime.chat(prompt, history=[], max_length=96, learn=False, repetition_penalty=0.0)
+        answer = runtime.chat(
+            prompt, history=[], max_length=96, learn=False, repetition_penalty=0.0
+        )
         checks.append(
             {
                 "prompt": prompt,
@@ -132,9 +158,7 @@ def main() -> int:
     after_ph = sum(1 for row in after if row["placeholder"])
     after_all_decodable = all(row["decodable"] for row in after)
     product_checks_ok = all(row["decodable"] and not row["placeholder"] for row in checks)
-    verdict = (
-        "pass" if after_ph <= len(PROMPTS) // 2 and after_all_decodable else "fail"
-    )
+    verdict = "pass" if after_ph <= len(PROMPTS) // 2 and after_all_decodable else "fail"
     report = {
         "format": "taiji-r202-placeholder-rate-v1",
         "prereg": "plans/reference/SPEC-R2-02_decode_mask_productization_prereg_20260927.md §2",

@@ -44,7 +44,11 @@ def main() -> int:
     reencode_cases = [
         {"name": "zh_name", "prefix": "我叫阿岩。", "generated_ids": list(zh_sp.encode("阿岩"))},
         {"name": "zh_empty_gen", "prefix": "我叫阿岩。", "generated_ids": []},
-        {"name": "en_hello", "prefix": "Hello world. ", "generated_ids": list(zh_sp.encode("你好"))},
+        {
+            "name": "en_hello",
+            "prefix": "Hello world. ",
+            "generated_ids": list(zh_sp.encode("你好")),
+        },
         {"name": "empty_prefix", "prefix": "", "generated_ids": list(zh_sp.encode("回答内容"))},
     ]
 
@@ -61,7 +65,10 @@ def main() -> int:
                 "output_general_ids": list(out),
             }
         )
-        print(json.dumps({"reencode": case["name"], "out_len": len(out)}, ensure_ascii=False), flush=True)
+        print(
+            json.dumps({"reencode": case["name"], "out_len": len(out)}, ensure_ascii=False),
+            flush=True,
+        )
 
     alignment = cortex._get_domain_to_general_alignment("zh", zh_sp)
     alignment_summary = {

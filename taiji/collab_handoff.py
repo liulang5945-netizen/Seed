@@ -121,7 +121,11 @@ class FailureHandoffPolicy:
             if call.member not in self.active_members:
                 raise ValueError(f"call from non-active member: {call.member}")
             by_member[call.member] = call
-        bindable = [by_member[member] for member in self.active_members if member in by_member and by_member[member].bind_failure is None]
+        bindable = [
+            by_member[member]
+            for member in self.active_members
+            if member in by_member and by_member[member].bind_failure is None
+        ]
 
         if not bindable:
             return HandoffDecision(chosen=None, stop=STOP_ALL_MEMBERS_EXHAUSTED)
@@ -183,7 +187,9 @@ def execute_group_episode(
         if goal_reached():
             success = True
             stop_reason = "goal_reached"
-            events.append({"tick": tick, "kind": "goal_reached", "rule_revision": policy.rule_revision})
+            events.append(
+                {"tick": tick, "kind": "goal_reached", "rule_revision": policy.rule_revision}
+            )
             break
         calls: list[MemberCall] = []
         for member in policy.active_members:
@@ -203,7 +209,14 @@ def execute_group_episode(
         decision = policy.select(calls, steps)
         if decision.stop is not None:
             stop_reason = decision.stop
-            events.append({"tick": tick, "kind": "stop", "stop": stop_reason, "rule_revision": policy.rule_revision})
+            events.append(
+                {
+                    "tick": tick,
+                    "kind": "stop",
+                    "stop": stop_reason,
+                    "rule_revision": policy.rule_revision,
+                }
+            )
             break
         executed = bool(execute_chosen(decision.chosen.member))
         steps.append(ExecutionStep(chosen=decision.chosen.member, executed=executed))
@@ -227,7 +240,14 @@ def execute_group_episode(
             )
     if stop_reason is None and success is False:
         stop_reason = "step_cap"
-        events.append({"tick": max_steps, "kind": "stop", "stop": stop_reason, "rule_revision": policy.rule_revision})
+        events.append(
+            {
+                "tick": max_steps,
+                "kind": "stop",
+                "stop": stop_reason,
+                "rule_revision": policy.rule_revision,
+            }
+        )
     return {
         "format": "taiji-collab-handoff-episode-v1",
         "episode_id": str(episode_id),

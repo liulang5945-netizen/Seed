@@ -127,7 +127,11 @@ def test_projection_writes_constraint_and_interaction_records(workspace: Path) -
     report = sleep_pass.run(reason="test")
 
     assert report["projection"]["records"] == 2
-    assert report["projection"]["by_source"] == {"constraints": 1, "interactions": 1, "workbench_capabilities": 0}  # C6 P1: the source is always reported, even at zero
+    assert report["projection"]["by_source"] == {
+        "constraints": 1,
+        "interactions": 1,
+        "workbench_capabilities": 0,
+    }  # C6 P1: the source is always reported, even at zero
     records = _corpus_records(workspace, report["projection"]["corpus"])
     assert (
         records[0]["text"]

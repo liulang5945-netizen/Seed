@@ -139,9 +139,7 @@ def run_arm(
             answer = (
                 # 显式 `repetition_penalty=0.0`：产品默认 2026-09-28 起是 2.0（owner 裁定，
                 # PLAN-A-30 §2f），而本件的表层链读数是在旧默认位上取的——钉住才复现得动。
-                runtime.chat(
-                    turn, history=history, learn=False, repetition_penalty=0.0
-                )
+                runtime.chat(turn, history=history, learn=False, repetition_penalty=0.0)
                 if surface
                 else _answer_raw(runtime, turn, history)
             )
@@ -182,9 +180,7 @@ def run_arm(
         "well_formed_rate": round(formed / max(len(texts), 1), 4),
         "utf8_decodable_rate": round(decodable / max(len(texts), 1), 4),
         "utf8_decodable_trimmed_rate": round(trimmed_clean / max(len(texts), 1), 4),
-        "illegal_after_tail_trim_rate": round(
-            1.0 - trimmed_clean / max(len(texts), 1), 4
-        ),
+        "illegal_after_tail_trim_rate": round(1.0 - trimmed_clean / max(len(texts), 1), 4),
         "strict_hits": hits,
         "rows": rows,
     }

@@ -59,7 +59,9 @@ def _fact_item(rows: list[dict]) -> dict:
     return next(r for r in rows if r["group_class"] == "fact_flip" and r["copyable"])
 
 
-def _workspaces(vocab: CharVocab, seed: int = 7) -> tuple[SequenceContentWorkspace, SequenceContentWorkspace]:
+def _workspaces(
+    vocab: CharVocab, seed: int = 7
+) -> tuple[SequenceContentWorkspace, SequenceContentWorkspace]:
     return (
         SequenceContentWorkspace(vocab, SequenceContentConfig(arm="A", seed=seed)),
         SequenceContentWorkspace(vocab, SequenceContentConfig(arm="B", seed=seed)),
@@ -79,7 +81,7 @@ def test_gate1_byte_features_uniform_and_padding_distinct(vocab) -> None:
         padding = ws._byte_features(None)
         assert not torch.equal(byte_zero, padding)
         assert byte_zero[-1] == 0.0 and byte_zero[0] == 0.0
-        assert padding[-5:] .argmax() == 4
+        assert padding[-5:].argmax() == 4
         # every character goes through the SAME byte channel; two unseen
         # characters produce different projections
         f1 = ws._char_input_feature("\u9f8c", CONTENT_UNK := 1)
@@ -87,7 +89,7 @@ def test_gate1_byte_features_uniform_and_padding_distinct(vocab) -> None:
         assert not torch.equal(f1, f2)
         # 5-byte characters are an explicit error
         with pytest.raises(ValueError):
-            ws._byte_features("\U0001F600" + "x")[:0] if False else ws._byte_features("𝄞𝄞")
+            ws._byte_features("\U0001f600" + "x")[:0] if False else ws._byte_features("𝄞𝄞")
         del f1, f2
 
 
@@ -145,22 +147,16 @@ def test_gate2_runtime_api_carries_no_labels(vocab, rows) -> None:
 def test_gate3_shared_parameters_bitwise_identical(vocab) -> None:
     arm_a, arm_b = _workspaces(vocab)
     common_names = [
-        name
-        for name in arm_parameter_order("A")
-        if name in set(arm_parameter_order("B"))
+        name for name in arm_parameter_order("A") if name in set(arm_parameter_order("B"))
     ]
     assert len(common_names) == 23  # the shared front end; the rest is arm-specific
     for name in common_names:
-        assert torch.equal(
-            arm_a._parameters[name].detach(), arm_b._parameters[name].detach()
-        ), name
+        assert torch.equal(arm_a._parameters[name].detach(), arm_b._parameters[name].detach()), name
     # creation order cannot move values: build in the opposite order
     ws_b2 = SequenceContentWorkspace(vocab, SequenceContentConfig(arm="B", seed=7))
     ws_a2 = SequenceContentWorkspace(vocab, SequenceContentConfig(arm="A", seed=7))
     for name in common_names:
-        assert torch.equal(
-            ws_b2._parameters[name].detach(), ws_a2._parameters[name].detach()
-        ), name
+        assert torch.equal(ws_b2._parameters[name].detach(), ws_a2._parameters[name].detach()), name
     # the induction bonus starts at exactly zero in both arms
     assert float(arm_a._parameters["copy_induce_bias"].item()) == 0.0
     assert float(arm_b._parameters["copy_induce_bias"].item()) == 0.0
@@ -175,7 +171,10 @@ def test_gate4_gradients_reach_both_content_modules(vocab, rows) -> None:
     arm_a, arm_b = _workspaces(vocab)
     item = _fact_item(rows)
     loss_a, _ = arm_a.episode_loss(
-        item["question"], item["material"], item["response"], item["copy_mask"],
+        item["question"],
+        item["material"],
+        item["response"],
+        item["copy_mask"],
         copy_value_weight=1.0,
     )
     grads_a = torch.autograd.grad(
@@ -186,7 +185,10 @@ def test_gate4_gradients_reach_both_content_modules(vocab, rows) -> None:
     assert grads_a[0] is not None and torch.isfinite(grads_a[0]).all()
     assert grads_a[1] is not None and torch.isfinite(grads_a[1]).all()
     loss_b, _ = arm_b.episode_loss(
-        item["question"], item["material"], item["response"], item["copy_mask"],
+        item["question"],
+        item["material"],
+        item["response"],
+        item["copy_mask"],
         copy_value_weight=1.0,
     )
     grads_b = torch.autograd.grad(
@@ -224,9 +226,7 @@ def test_gate5_mixture_normalisation_with_and_without_material(vocab, rows) -> N
         sums = mixture.sum(dim=1)
         assert torch.allclose(sums, torch.ones_like(sums), atol=1e-5)
         # empty material: copy off, still finite and normalised
-        empty_mixture, empty_copies = ws.teacher_forced_distributions(
-            item["question"], "", "未知"
-        )
+        empty_mixture, empty_copies = ws.teacher_forced_distributions(item["question"], "", "未知")
         sums_empty = empty_mixture.sum(dim=1)
         assert torch.allclose(sums_empty, torch.ones_like(sums_empty), atol=1e-5)
         assert torch.isfinite(empty_mixture).all()
@@ -265,8 +265,7 @@ def test_gate6_successor_bonus_targets_following_rows(vocab) -> None:
         state = ws.begin_episode(question, material)
         weights = ws._copy_weights(state, "琥")
         rows_with_predecessor = [
-            j for j in range(1, len(state.material_chars))
-            if state.material_chars[j - 1] == "琥"
+            j for j in range(1, len(state.material_chars)) if state.material_chars[j - 1] == "琥"
         ]
         assert int(weights.argmax()) in rows_with_predecessor
         # no previous char -> no bonus anywhere
@@ -289,9 +288,7 @@ def test_gate7_input_and_output_limits(vocab, rows) -> None:
         with pytest.raises(ValueError):
             ws.begin_episode("问：" + "山" * 300, "")
         with pytest.raises(ValueError):
-            ws.episode_loss(
-                item["question"], item["material"], "长" * 33, [True] * 33
-            )
+            ws.episode_loss(item["question"], item["material"], "长" * 33, [True] * 33)
         # generation beyond the cap records a range error, no silent truncation
         with torch.no_grad():
             ws._parameters["decoder"].zero_()
@@ -357,7 +354,9 @@ def test_gate9_roundtrip_and_tamper_rejection(vocab, rows, tmp_path) -> None:
         SequenceContentTrainer.from_checkpoint(payload)
     # foreign (char-graph) checkpoints are rejected
     with pytest.raises(ValueError):
-        SequenceContentTrainer.from_checkpoint({"format": "taiji-sequence-char-workspace-trainer-v1"})
+        SequenceContentTrainer.from_checkpoint(
+            {"format": "taiji-sequence-char-workspace-trainer-v1"}
+        )
 
 
 def test_gate9_fresh_process_restore_continues_identically(vocab, rows, tmp_path) -> None:

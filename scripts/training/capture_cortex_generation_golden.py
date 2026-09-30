@@ -65,7 +65,9 @@ def main() -> None:
                     "is_error": out1.startswith("__ERROR__"),
                 }
             )
-            print(f"{case['tag']:<10} det={out1 == out2} err={out1.startswith('__ERROR__')} len={len(out1)}")
+            print(
+                f"{case['tag']:<10} det={out1 == out2} err={out1.startswith('__ERROR__')} len={len(out1)}"
+            )
 
     payload = {
         "seed": SEED,

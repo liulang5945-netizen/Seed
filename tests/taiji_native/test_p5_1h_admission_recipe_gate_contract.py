@@ -61,9 +61,7 @@ def test_line_evaluation_each_failure_is_detected() -> None:
         evaluate_lines(**_metrics(semantic_retention_after=1.1))["lines"]["L3_semantic_retention"]
         is False
     )
-    assert (
-        evaluate_lines(**_metrics(lesion_accuracy=0.2))["lines"]["L4_lesion_roundtrip"] is False
-    )
+    assert evaluate_lines(**_metrics(lesion_accuracy=0.2))["lines"]["L4_lesion_roundtrip"] is False
     assert (
         evaluate_lines(**_metrics(roundtrip_preserved=False))["lines"]["L4_lesion_roundtrip"]
         is False
@@ -86,7 +84,9 @@ def test_budget_gate_refuses_without_approval() -> None:
 
 
 def test_independent_slice_chains_after_p51g_agate() -> None:
-    data_file = PROJECT_ROOT / "data/ultradata/SFT-Agent-2609/data/Tool_Use/Tool_Use_part-1-of-9.jsonl"
+    data_file = (
+        PROJECT_ROOT / "data/ultradata/SFT-Agent-2609/data/Tool_Use/Tool_Use_part-1-of-9.jsonl"
+    )
     if not data_file.is_file():
         pytest.skip("P5.1g corpus file not present on this machine")
     from eval_taiji_p5_1g_real_corpus_quota_budget_gate import (

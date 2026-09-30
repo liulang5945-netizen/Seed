@@ -86,9 +86,7 @@ def test_gate1_margin_math_on_floats() -> None:
     softplus(gamma) residual, violated margins grow linearly."""
 
     def hinge(s_own: float, s_crossed: float, gamma: float = 1.0) -> float:
-        return float(
-            torch.nn.functional.softplus(torch.tensor(s_crossed - s_own + gamma))
-        )
+        return float(torch.nn.functional.softplus(torch.tensor(s_crossed - s_own + gamma)))
 
     assert hinge(-0.5, -2.5) == pytest.approx(0.313262)  # softplus(-1): margin partly kept
     assert hinge(0.0, -5.0) == pytest.approx(0.018149927)  # softplus(-4): own wins big
@@ -114,9 +112,7 @@ def test_gate1_equal_answer_group_degenerates_to_constant(vocab) -> None:
         assert torch.allclose(s_yx, s_xx, atol=1e-6)
         pair_term, groups = trainer._pair_contrastive_term(batch)
         assert groups == 1
-        grads = torch.autograd.grad(
-            pair_term, trainer.workspace.parameters(), allow_unused=True
-        )
+        grads = torch.autograd.grad(pair_term, trainer.workspace.parameters(), allow_unused=True)
         for grad in grads:
             if grad is not None:
                 # two identical graphs cancel; float noise stays below 1e-4
@@ -146,7 +142,7 @@ def test_gate2_pair_gradients_reach_content_modules(vocab) -> None:
             [trainer.workspace._parameters[name] for name in names],
             allow_unused=True,
         )
-        for name, grad in zip(names, grads):
+        for name, grad in zip(names, grads, strict=False):
             assert grad is not None, (arm, name)
             assert torch.isfinite(grad).all(), (arm, name)
 
@@ -227,7 +223,8 @@ def test_gate4_v1_payload_still_loads(vocab, tmp_path) -> None:
     legacy = {
         k: v
         for k, v in payload.items()
-        if k not in (
+        if k
+        not in (
             "trainer_revision",
             "pair_contrastive_weight",
             "pair_contrastive_margin",

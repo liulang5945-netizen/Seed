@@ -83,16 +83,18 @@ def main() -> int:
         selected = select_recipe_candidate(candidates)
         per_arm[arm] = {
             "runs": {
-                config: None
-                if report is None
-                else {
-                    "status": report["status"],
-                    "updates_done": report["updates_done"],
-                    "elapsed_seconds": report["elapsed_seconds"],
-                    "final_health": report["health"][-1] if report["health"] else None,
-                    "calibration_evaluations": report.get("calibration_evaluations", []),
-                    "group_exposure_per_class": report.get("group_exposure_per_class"),
-                }
+                config: (
+                    None
+                    if report is None
+                    else {
+                        "status": report["status"],
+                        "updates_done": report["updates_done"],
+                        "elapsed_seconds": report["elapsed_seconds"],
+                        "final_health": report["health"][-1] if report["health"] else None,
+                        "calibration_evaluations": report.get("calibration_evaluations", []),
+                        "group_exposure_per_class": report.get("group_exposure_per_class"),
+                    }
+                )
                 for config, report in runs.items()
             },
             "eligible_candidates": [
@@ -110,17 +112,19 @@ def main() -> int:
                 and c["unknown_rate"] >= SELECTION_UNKNOWN_MIN
                 and c["finite_parameters"]
             ],
-            "selected": None
-            if selected is None
-            else {
-                "config": selected["config"],
-                "update": selected["update"],
-                "learning_rate": selected["learning_rate"],
-                "flip_pairwise_macro": selected["flip_pairwise_macro"],
-                "copy_rate": selected["copy_rate"],
-                "unknown_rate": selected["unknown_rate"],
-                "checkpoint": selected["checkpoint"],
-            },
+            "selected": (
+                None
+                if selected is None
+                else {
+                    "config": selected["config"],
+                    "update": selected["update"],
+                    "learning_rate": selected["learning_rate"],
+                    "flip_pairwise_macro": selected["flip_pairwise_macro"],
+                    "copy_rate": selected["copy_rate"],
+                    "unknown_rate": selected["unknown_rate"],
+                    "checkpoint": selected["checkpoint"],
+                }
+            ),
             "arm_status": "selected" if selected is not None else "stopped_no_qualified_candidate",
         }
 
