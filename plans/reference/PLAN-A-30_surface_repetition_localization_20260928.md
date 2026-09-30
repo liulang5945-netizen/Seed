@@ -2744,6 +2744,35 @@ v1 那三条臂**没锁住长度**，所以真正该定价的是"单位字节里
 能力结论只由 L2 那条线给。
 
 
+## 2bb. `quarter` 臂的 L2 **被自家守卫拦下**：早停读到 1/72，但 `all_surfaces_are_replayed_raw=false` ⇒ 不发表，这条线仍未定
+
+件 `reports/taiji_a30_stop_failure_onpolicy_quarter_20260930.json`（v4，`rc_stop_quarter=0`；
+被检的是 §2ba 存下的 `output/tmp_a30_smoke/onpolicy_arms_q/a30_onpolicy_quarter.pt`；
+自述 `mount_route=enable_copy_circuit`、证据门 `effective=true`；24 题 × 3 轮＝72 次生成、预算 256、惩罚 2.0）。
+
+| 读数 | 值 |
+|---|---|
+| `generations_eating_full_budget` | 71 ⇒ 主列**早停 1/72** |
+| `generations_cut_by_turn_marker`（旁列） | 1 |
+| `offender_count`（同字拖写） | **9**（同底件对照是 5） |
+| **守卫 `all_surfaces_are_replayed_raw`** | **false** ← 这一条为假，整份读数不作证据 |
+| 其余三条守卫 | 全真（`observe_calls_recorded`／`all_items_reconstructed`／`base_sha256_unchanged`） |
+
+**处置（按本支线一直执行的纪律）**：这条守卫的含义是"存在条目，其 `chat()` 返回值与 raw 面重放不逐位相同"，
+而 L2 的判据**定义在 raw 面上**（§2ae 那次更正换来的规矩）⇒ 面不成立时，
+**既不落 `SPEC-A-24` §8 的 `≤2` 分支，也不拿它反证"密度买不到真自停"**。
+同理**不许**用 §2ba 的 `12/12` 接缝读数替代 L2 —— 那正是这条线要防的替换。
+
+**下一步是先定位、不是再跑一遍**：查这份件里逐条的 `surface_matches_replayed_raw`／`failure_examples`，
+找出是哪几条、以何种方式不逐位相同。两条**未验**候选成因（只作排查方向，不写进结论）：
+①该臂生成的答复里出现 `_TURN_MARKERS`，`chat()` 把接缝之后截掉 ⇒ 返回面天然短于 raw 面；
+②这枚臂是 12.2 MB 的**派生 save 形状**（非出厂 88 MB 信封），载入路径不同可能连带改变解码侧行为面。
+定位到成因之后再决定是"换判据面"还是"换存盘形状重跑"——**这两步都不改动 ≥6 那条线**。
+
+**能力状态（本轮结束时）**：仍未定。已证的是接缝级胜出可被密度买到（`length_holds`，17/24）；
+环内真自停最强的一条是 `sized` 臂 **5/72**（同底件对照 0/72，**未过 ≥6**），`quarter` 臂那条本可更 decisive，但被自家守卫作废。
+
+
 ## 8. 一页决策单（2026-09-30，A 支线；每条都带"已量到的数"和"批完之后拿什么核"）
 
 **先说白一句话**：这一支现在有一件**真的做成了**的事（训练目标放对了格子），一件**没做成**的事
