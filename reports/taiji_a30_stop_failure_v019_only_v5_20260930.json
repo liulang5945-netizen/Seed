@@ -1,0 +1,325 @@
+{
+  "format": "taiji-a30-stop-failure-v5",
+  "format_note_v5": "v5 **加性**：每条 `surface_checks` 多一列 `mismatch_reason`（`replay_tiny_feed`＝回放侧只归到 <8 个符号，属**仪器归类缺陷**；`surface_differs_from_replay`＝真的面不一致），聚合里多一条 `replay_suspect_generations`。**严格守卫 `all_surfaces_are_replayed_raw` 一字未动**——放宽它等于挪门柱；加这一列只是为了让'仪器坏了'与'被测量不符'能被分开读（§2bb-追加二 复现 `V019` 得到的就是前者）。其余各表算法与语义未动 ⇒ 与 v4 同格可比。",
+  "format_note_v4": "v4 **加性**多存三条装配自述（`mount_route`／`copy_circuit_present_after_load`／`copy_evidence_utf8_gate`），其余字段与算法一字未动 ⇒ 与 v3 同格可比。加它的理由：`--circuit` 不给 **不等于**\"出厂无回路面\"——带回路的信封在 `SeedRuntime.load` 里会自动挂载，所以这张面是按命令行猜出来的。",
+  "prereg": "plans/reference/PLAN-A-30_surface_repetition_localization_20260928.md §2f 第 3 条",
+  "checkpoint": "output/tmp_a30_smoke/onpolicy_arms_q/a30_onpolicy_quarter.pt",
+  "circuit": "output/taiji_r2_copy_circuit_chat/judge/circuit-final.pt",
+  "circuit_sha256": "1cfe5961c300485dc08078a9deb82d0f31acbb5f8c63d0685d18366832d741a3",
+  "mount_route": "enable_copy_circuit",
+  "copy_circuit_present_after_load": true,
+  "copy_evidence_utf8_gate_effective": true,
+  "copy_evidence_utf8_gate_config": false,
+  "copy_evidence_utf8_gate_override": true,
+  "repetition_penalty": 2.0,
+  "repetition_window": 8,
+  "max_length": 256,
+  "generation_loop_lines": [
+    3119,
+    3178
+  ],
+  "items": 1,
+  "instrument_guard": {
+    "observe_calls_recorded": true,
+    "observe_calls_by_caller": {
+      "generate:3087": 778,
+      "record_told_history:105": 525,
+      "generate:3163": 513,
+      "record_told_history:102": 124,
+      "record_told_history:92": 3,
+      "generate:3078": 3
+    },
+    "all_items_reconstructed": true,
+    "items_failing_reconstruction": [],
+    "total_argmax_mismatch_steps": 0,
+    "all_surfaces_are_replayed_raw": false,
+    "replay_suspect_generations": 1,
+    "items_whose_surface_is_not_model_bytes": [
+      "V019"
+    ],
+    "total_steps": 513,
+    "generations": 3,
+    "generations_cut_by_turn_marker": 0,
+    "generations_eating_full_budget": 3,
+    "base_sha256_unchanged": true
+  },
+  "failure_examples": [],
+  "offender_count": 1,
+  "offenders": [
+    {
+      "id": "V019",
+      "answer_run": 256,
+      "steps": 513,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": false,
+      "surface_checks": [
+        {
+          "fed_bytes": 1,
+          "surface_is_replayed_raw": false,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "我已收到你的问题：“我妹妹最喜欢的数字是1998",
+          "mismatch_reason": "replay_tiny_feed"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "999999999999999999999999",
+          "mismatch_reason": null
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "999999999999999999999999",
+          "mismatch_reason": null
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 17,
+      "median_ratio_best_over_boundary": 1.5971483005192566e+29,
+      "run_steps": 512,
+      "run_legal_hist": {
+        "179": 512
+      },
+      "run_boundary_rank_hist": {
+        "10": 2,
+        "11": 7,
+        "12": 49,
+        "13": 66,
+        "14": 45,
+        "15": 52,
+        "16": 25,
+        "17": 38,
+        "18": 35,
+        "19": 8,
+        "20": 12,
+        "21": 11,
+        "22": 7,
+        "23": 16,
+        "24": 12,
+        "25": 26,
+        "26": 13,
+        "27": 29,
+        "28": 20,
+        "29": 10,
+        "30": 16,
+        "31": 8,
+        "32": 1,
+        "33": 2,
+        "35": 2
+      },
+      "run_ratio_min": 7640883991.713,
+      "run_ratio_median": 1.751209212088212e+29,
+      "run_rows_sample": [
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 1.0,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 12,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 8.094462429865506e+25,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 0,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.333333,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 13,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 2.29787532742511e+26,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 1,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.2,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 20,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 3.4574448157961916e+22,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 2,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.142857,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 22,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 7.959867048520519e+18,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 3,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.111111,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 21,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 9.5080220147166e+16,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 4,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.090909,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 20,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 474174001003789.56,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 5,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.076923,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 17,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 15957638195803.61,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 6,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.066667,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 15,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 1141767963542.841,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 7,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.058824,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 15,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 150203467920.469,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 8,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.058824,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 15,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 38987522463.797,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 9,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.058824,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 15,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 40103084253.288,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 10,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.058824,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 17,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 7640883991.713,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 11,
+          "in_run": true
+        }
+      ]
+    }
+  ],
+  "per_item": [
+    {
+      "id": "V019",
+      "answer_run": 256,
+      "steps": 513,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": false,
+      "surface_checks": [
+        {
+          "fed_bytes": 1,
+          "surface_is_replayed_raw": false,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "我已收到你的问题：“我妹妹最喜欢的数字是1998",
+          "mismatch_reason": "replay_tiny_feed"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "999999999999999999999999",
+          "mismatch_reason": null
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "999999999999999999999999",
+          "mismatch_reason": null
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 17,
+      "median_ratio_best_over_boundary": 1.5971483005192566e+29,
+      "run_steps": 512
+    }
+  ],
+  "started_utc": "2026-09-30T05:54:12Z"
+}

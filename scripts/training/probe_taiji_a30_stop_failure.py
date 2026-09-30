@@ -272,6 +272,14 @@ def main() -> int:
                     "turn_marker_fired": marker_at is not None,
                     "cut_by_marker_bytes": marker_at,
                     "answer_head": answer[:24],
+                    # v5 加性诊断：不等的原因分类，**不改那条严格守卫**（削弱它等于挪门柱）。
+                    # 依据 §2bb-追加二 的复现：`V019` 首轮只有 1 个符号被归进生成环，
+                    # 而答复完整成句 ⇒ 那是**回放/归类缺陷**，不是"面不一致"。两者必须能分开读。
+                    "mismatch_reason": (
+                        None
+                        if raw == answer
+                        else ("replay_tiny_feed" if len(fed) < 8 else "surface_differs_from_replay")
+                    ),
                 }
             )
             if not pre_records or not fed:
@@ -366,7 +374,12 @@ def main() -> int:
 
     substrate.observe = original_observe  # type: ignore[method-assign]
     report = {
-        "format": "taiji-a30-stop-failure-v4",
+        "format": "taiji-a30-stop-failure-v5",
+        "format_note_v5": "v5 **加性**：每条 `surface_checks` 多一列 `mismatch_reason`"
+        "（`replay_tiny_feed`＝回放侧只归到 <8 个符号，属**仪器归类缺陷**；`surface_differs_from_replay`＝真的面不一致），"
+        "聚合里多一条 `replay_suspect_generations`。**严格守卫 `all_surfaces_are_replayed_raw` 一字未动**"
+        "——放宽它等于挪门柱；加这一列只是为了让'仪器坏了'与'被测量不符'能被分开读"
+        "（§2bb-追加二 复现 `V019` 得到的就是前者）。其余各表算法与语义未动 ⇒ 与 v4 同格可比。",
         "format_note_v4": "v4 **加性**多存三条装配自述（`mount_route`／`copy_circuit_present_after_load`／"
         "`copy_evidence_utf8_gate`），其余字段与算法一字未动 ⇒ 与 v3 同格可比。加它的理由：`--circuit` 不给 **不等于**"
         '"出厂无回路面"——带回路的信封在 `SeedRuntime.load` 里会自动挂载，所以这张面是按命令行猜出来的。',
@@ -421,6 +434,13 @@ def main() -> int:
             "total_argmax_mismatch_steps": sum(row["argmax_mismatch_steps"] for row in per_item),
             "all_surfaces_are_replayed_raw": all(
                 row["surface_matches_replayed_raw"] for row in per_item
+            ),
+            # v5 加性：把"回放归类可疑"的次数单独报出（严格守卫保持原样，不因这条放宽）。
+            "replay_suspect_generations": sum(
+                1
+                for row in per_item
+                for check in row["surface_checks"]
+                if check.get("mismatch_reason") == "replay_tiny_feed"
             ),
             "items_whose_surface_is_not_model_bytes": [
                 row["id"] for row in per_item if not row["surface_matches_replayed_raw"]
