@@ -2170,6 +2170,12 @@ base 在任何 K 上恒 0.0；以及 §2am 的 `docs_with_false_fire`（无 floo
   与 §2aq 同面的参数是那档原文钉着的 `--groups 300 --exchanges 3 --positions 300 --mask`
   ＋语料 `data/simple_zh/dialogue_extended_clean.jsonl`（不是默认语料）；第二次发射按这组参数走，
   **对照要同参数才叫对照**——参数不同的两次读数不能拿来算 ≥3 那条线。
+  **停靠指令（预算用尽时写给下一个接手的人，包括我自己的下一轮）**：
+  ①先看件在不在（`ls reports/taiji_a30_ding3_transfer_300pos_defaultload_vs_a26_20260930.json`）
+  ＋日志尾有没有 `rc_transfer_default2=0` —— **两个都有**才算出数；只有日志没有件＝没跑完，按未跑处理；
+  ②件不在就照 §6.3 上面那条命令重跑（该仪器**幂等**：只写自己那份新件，不动任何既有件）；
+  ③出数后**只按上面三条判读取数**，不许临场改线、不许把 `median_rank` 或 `p_boundary` 的提升当"会停"来报
+  （那是本项目明令禁止的"换次要指标"）。
 * **第二条在飞（同轮登记）**：门槛① 在**装机形态真实 `chat(learn=True)` 链**上的实际拦截率
   （仪器 `scripts/training/probe_taiji_a30_writeback_gate_shipping_face.py`，24 题 × 3 轮＝72 次调用，
   件＝`reports/taiji_a30_writeback_gate_on_shipping_face_20260930.json`，日志尾 `rc_wb_full=` 才算完）。
