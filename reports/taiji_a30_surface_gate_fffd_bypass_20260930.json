@@ -1,0 +1,41 @@
+{
+  "format": 1,
+  "question": "产品门槛①/② 的 well_formed 第一道条件（UTF-8 合法）在 str 上是否恒真",
+  "type_level": {
+    "roundtrip_raises_for_fffd_string": false,
+    "probes": [
+      "'中中中中中中�'",
+      "'��������'",
+      "'你好'"
+    ],
+    "error": null
+  },
+  "per_artifact": {
+    "taiji_f0_a26p1_surface_recheck_20260930.json": {
+      "rows": 104,
+      "well_formed_true": 93,
+      "preview_contains_fffd": 99,
+      "well_formed_and_contains_fffd": 88,
+      "recomputed_pass_on_preview": 88
+    },
+    "taiji_f0_a31retrain_surface_20260930.json": {
+      "rows": 104,
+      "well_formed_true": 9,
+      "preview_contains_fffd": 103,
+      "well_formed_and_contains_fffd": 9,
+      "recomputed_pass_on_preview": 9
+    }
+  },
+  "artifact_sha256": {
+    "taiji_f0_a26p1_surface_recheck_20260930.json": "9f08fc18307d8d20",
+    "taiji_f0_a31retrain_surface_20260930.json": "32e0e5d391036b9f"
+  },
+  "guards": {
+    "ngram_artifact_is_the_product_one": true,
+    "ngram_vocab_positive": true,
+    "both_artifacts_exist": true,
+    "rows_parsed_equal_manifest_item_count": true
+  },
+  "verdict": "bypass_confirmed（有答复带 U+FFFD 被 well_formed 放行；同面重算见 recomputed 列）",
+  "scope_note": "预览按 answer[:60] 存；③ 对预览重算 ⇒ 比原串更保守。U+FFFD 不可能由 str 切片造出。"
+}
