@@ -1,4 +1,5 @@
 - tree "Sessions":
+  - treeitem "Default workspace"
   - treeitem "Ungrouped" [expanded]
   - treeitem "Use the read tool twice (2) now"
   - treeitem "Use the read tool twice (1) now" [selected]
