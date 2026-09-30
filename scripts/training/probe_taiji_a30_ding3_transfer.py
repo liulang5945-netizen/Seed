@@ -82,6 +82,28 @@ def run_one(
     return moved
 
 
+def decide(retrain_hits: int, base_hits: int) -> str:
+    """**互斥的四支**（§2ai 第 2 句那条重叠就在这里消掉；分支判的是同一对计数，不会两读）。
+
+    线本身没改：迁移成立仍是 `重训 − base ≥ 3`。改的是"为零"那句的**触发条件**——
+    原来写成"两臂都 ≤1"，于是 (1, 0) 这种数据会被 `if/elif` 的顺序判成比数据更硬的结论。
+    """
+
+    if retrain_hits - base_hits >= 3:
+        return "迁移成立（重训件在自己写的答案之后能让边界符胜出，比 base 多 ≥3 格）"
+    if retrain_hits == 0 and base_hits == 0:
+        return (
+            "迁移不成立：两枚件在自身轨迹上都是零胜出 ⇒ 目标放置这条线到此为止，"
+            "'停不下来'改登记为分布／轨迹问题"
+        )
+    if retrain_hits <= 1 and base_hits <= 1:
+        return (
+            "not_resolved（两臂都 ≤1 但有一臂出过 1 次胜出：'为零'这句本档撑不起，"
+            "要么扩样要么按 §2ai 第 2 句改判据——不再让 if/elif 顺序替我下更重的结论）"
+        )
+    return "not_resolved（差 1–2 格，不过 ≥3 线）"
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--retrain", default="output/a31_ding3_boundary/checkpoint.pt")
@@ -127,21 +149,20 @@ def main() -> int:
     moved_diff = (
         runs["retrain"]["boundary_argmax_positions"] - runs["base"]["boundary_argmax_positions"]
     )
-    if moved_diff >= 3:
-        verdict = "迁移成立（重训件在自己写的答案之后能让边界符胜出，比 base 多 ≥3 格）"
-    elif (
-        runs["retrain"]["boundary_argmax_positions"] <= 1
-        and runs["base"]["boundary_argmax_positions"] <= 1
-    ):
-        verdict = (
-            "迁移不成立：教师强制 26/30 的收益在模型自己的输出上为零 ⇒ 目标放置这条线到此为止，"
-            "'停不下来'改登记为分布／轨迹问题"
-        )
-    else:
-        verdict = "not_resolved（差 1–2 格，不过 ≥3 线）"
+    verdict = decide(
+        runs["retrain"]["boundary_argmax_positions"],
+        runs["base"]["boundary_argmax_positions"],
+    )
 
     report = {
-        "format": "taiji-a30-ding3-transfer-v1",
+        "format": "taiji-a30-ding3-transfer-v2",
+        "format_note_v2": (
+            "v2 只改**判读的分支结构**（消掉 §2ai 第 2 句登记的重叠：原来分支 2 写的是『两臂都 ≤1』，"
+            "于是 (1, 0) 会被 if/elif 顺序判成『迁移不成立／收益为零』这种比数据更硬的结论）。"
+            "四支现互斥：差 ≥3 ⇒ 成立；两臂都 0 ⇒ 不成立（双臂零胜出）；两臂都 ≤1 且有一臂 1 ⇒ not_resolved；"
+            "其余 ⇒ not_resolved（差 1–2）。**线本身一字未动**，所以 v1 的三档读数（12/30/120 位置）"
+            "仍可比——只是 (1, 0) 那种组合的标签会不同。"
+        ),
         "prereg": "PLAN-A-30 §2ai（判读线先于数写在件 docstring）",
         "question": "边界符在'模型自己写的答案＋换行'这一格上赢不赢（教师强制 26/30 的收益能否迁移）",
         "retrain_checkpoint": args.retrain,
