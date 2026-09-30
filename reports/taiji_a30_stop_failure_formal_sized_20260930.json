@@ -1,0 +1,1408 @@
+{
+  "format": "taiji-a30-stop-failure-v6",
+  "format_note_v6": "v6 **换比较的表示层＋更正早停计数**（诊断更正，见 §2bb-追加三/追加四）：（一）v5 的逐位比较是『raw 重放 vs `chat()` 返回值』，而早停样本（边界符胜出即 break，fed 极短）的返回值是**器官占位句**（`NativeReadableTextLanguageOrgan._fallback_text`）——V019 首轮 1 字节生成对应 44 字占位句，逐位比较必然不等，L2 要测的成功被记成面违规。v6 的重放改走**完整产品面链**（`replay_surface_from_fed`：decode → marker 切割 → **同一个器官实例** emit）再与返回值比较；`replay_tiny_feed` 这一分类随之退役（深帧复现证明 prompt 的 50 字节全部在案，追加二『没复现 prompt』的误诊被纠正）。（二）`generations_eating_full_budget` 的旧定义（`generations − marker 切割数`）把**边界符自停**（fed < 预算＝生成环唯一提前出口）误标成吃满预算——v4/v5 的『早停 1/72、5/72』数的其实是marker 切割；真正的边界自停（对照件 0/72、self/quarter 各 19/72）从未被点数。v6 起 `eating_full_budget` 按 `fed ≥ max_length` 判，新增 `generations_boundary_self_stop`。`all_surfaces_are_replayed_raw` 与 `replay_suspect_generations` 的**公式不变**（后者改数 `surface_differs_from_replay`），严格性不降：真正被产品链改过的面仍然红。",
+  "format_note_v5": "v5 **加性**：每条 `surface_checks` 多一列 `mismatch_reason`（`replay_tiny_feed`＝回放侧只归到 <8 个符号，属**仪器归类缺陷**；`surface_differs_from_replay`＝真的面不一致），聚合里多一条 `replay_suspect_generations`。**严格守卫 `all_surfaces_are_replayed_raw` 一字未动**——放宽它等于挪门柱；加这一列只是为了让'仪器坏了'与'被测量不符'能被分开读（§2bb-追加二 复现 `V019` 得到的就是前者）。其余各表算法与语义未动 ⇒ 与 v4 同格可比。",
+  "format_note_v4": "v4 **加性**多存三条装配自述（`mount_route`／`copy_circuit_present_after_load`／`copy_evidence_utf8_gate`），其余字段与算法一字未动 ⇒ 与 v3 同格可比。加它的理由：`--circuit` 不给 **不等于**\"出厂无回路面\"——带回路的信封在 `SeedRuntime.load` 里会自动挂载，所以这张面是按命令行猜出来的。",
+  "prereg": "plans/reference/PLAN-A-30_surface_repetition_localization_20260928.md §2f 第 3 条",
+  "checkpoint": "output/tmp_a30_smoke/formal_arms/a30_onpolicy_sized.pt",
+  "circuit": "output/taiji_r2_copy_circuit_chat/judge/circuit-final.pt",
+  "circuit_sha256": "1cfe5961c300485dc08078a9deb82d0f31acbb5f8c63d0685d18366832d741a3",
+  "mount_route": "enable_copy_circuit",
+  "copy_circuit_present_after_load": true,
+  "copy_evidence_utf8_gate_effective": true,
+  "copy_evidence_utf8_gate_config": false,
+  "copy_evidence_utf8_gate_override": true,
+  "repetition_penalty": 2.0,
+  "repetition_window": 8,
+  "max_length": 256,
+  "generation_loop_lines": [
+    3117,
+    3179
+  ],
+  "items": 24,
+  "instrument_guard": {
+    "observe_calls_recorded": true,
+    "observe_calls_by_caller": {
+      "generate:3164": 13571,
+      "generate:3085": 8611,
+      "record_told_history:105": 5068,
+      "record_told_history:102": 778,
+      "record_told_history:92": 72,
+      "generate:3076": 72
+    },
+    "all_items_reconstructed": true,
+    "items_failing_reconstruction": [],
+    "total_argmax_mismatch_steps": 0,
+    "all_surfaces_are_replayed_raw": true,
+    "replay_suspect_generations": 0,
+    "items_whose_surface_is_not_model_bytes": [],
+    "total_steps": 13571,
+    "generations": 72,
+    "generations_cut_by_turn_marker": 43,
+    "generations_boundary_self_stop": 47,
+    "generations_eating_full_budget": 25,
+    "base_sha256_unchanged": true
+  },
+  "failure_examples": [],
+  "offender_count": 1,
+  "offenders": [
+    {
+      "id": "V010",
+      "answer_run": 84,
+      "steps": 595,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "generations_boundary_self_stop": 1,
+      "generations_eating_full_budget": 2,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 83,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "在的是一种和是一的叐关队的在了的在于的在于瀂\n答",
+          "mismatch_reason": null,
+          "replay_surface_head": "在的是一种和是一的叐关队的在了的在于的在于瀂\n答"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "岛事事事事事事事事事事事事事事事事事事事事事事事",
+          "mismatch_reason": null,
+          "replay_surface_head": "岛事事事事事事事事事事事事事事事事事事事事事事事"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "安扉安西安西安西安西安西安西安西安西安西安安西安",
+          "mismatch_reason": null,
+          "replay_surface_head": "安扉安西安西安西安西安西安西安西安西安西安安西安"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 384319293372767.9,
+      "run_steps": 324,
+      "run_legal_hist": {
+        "64": 216,
+        "179": 108
+      },
+      "run_boundary_rank_hist": {
+        "11": 8,
+        "12": 8,
+        "13": 7,
+        "14": 1,
+        "15": 4,
+        "16": 6,
+        "17": 8,
+        "18": 5,
+        "19": 8,
+        "20": 3,
+        "21": 3,
+        "22": 3,
+        "24": 1,
+        "26": 4,
+        "27": 4,
+        "28": 4,
+        "30": 2,
+        "31": 1,
+        "32": 1,
+        "33": 3,
+        "34": 2,
+        "35": 1,
+        "37": 2,
+        "40": 1,
+        "41": 1,
+        "42": 1,
+        "45": 1,
+        "46": 3,
+        "49": 2,
+        "54": 2,
+        "55": 1,
+        "59": 6,
+        "60": 5,
+        "62": 3,
+        "63": 3,
+        "64": 33,
+        "65": 170,
+        "69": 2,
+        "71": 1
+      },
+      "run_ratio_min": 247115.042,
+      "run_ratio_median": 2025198108525525.2,
+      "run_rows_sample": [
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.937687,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 40,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 2155419022.566,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 3,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 1.0,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 64,
+          "legal_candidates": 64,
+          "ratio_best_over_boundary": 2.45065473109302e+16,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 4,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 1.0,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 65,
+          "legal_candidates": 64,
+          "ratio_best_over_boundary": 1.5572259351382288e+16,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 5,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.333333,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 22,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 6.185161986969285e+31,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 6,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.333333,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 65,
+          "legal_candidates": 64,
+          "ratio_best_over_boundary": 1.9817060359311508e+16,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 7,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.333333,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 65,
+          "legal_candidates": 64,
+          "ratio_best_over_boundary": 1.0726660286116618e+17,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 8,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.2,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 13,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 3.275667231489821e+30,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 9,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.2,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 65,
+          "legal_candidates": 64,
+          "ratio_best_over_boundary": 6.035366409548085e+16,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 10,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.2,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 65,
+          "legal_candidates": 64,
+          "ratio_best_over_boundary": 3073157526827915.5,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 11,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.2,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 11,
+          "legal_candidates": 179,
+          "ratio_best_over_boundary": 2.4409245010381453e+28,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 12,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.2,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 65,
+          "legal_candidates": 64,
+          "ratio_best_over_boundary": 3.738363573684206e+16,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 13,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.2,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 65,
+          "legal_candidates": 64,
+          "ratio_best_over_boundary": 151082564059166.2,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 14,
+          "in_run": true
+        }
+      ]
+    }
+  ],
+  "per_item": [
+    {
+      "id": "V001",
+      "answer_run": 1,
+      "steps": 630,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 3,
+      "generations_boundary_self_stop": 1,
+      "generations_eating_full_budget": 2,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 118,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 5,
+          "answer_head": "句的文和生",
+          "mismatch_reason": null,
+          "replay_surface_head": "句的文和生"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 19,
+          "answer_head": "在的文章叐和的题和是一种是句子的是和生",
+          "mismatch_reason": null,
+          "replay_surface_head": "在的文章叐和的题和是一种是句子的是和生"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 8,
+          "answer_head": "在的是叐的是叐的",
+          "mismatch_reason": null,
+          "replay_surface_head": "在的是叐的是叐的"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 63,
+      "median_ratio_best_over_boundary": 1422.294,
+      "run_steps": 0
+    },
+    {
+      "id": "V002",
+      "answer_run": 13,
+      "steps": 632,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "generations_boundary_self_stop": 1,
+      "generations_eating_full_budget": 2,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 120,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "在的是一种叐关生题和期的将取给下句子的是于瀂\n答",
+          "mismatch_reason": null,
+          "replay_surface_head": "在的是一种叐关生题和期的将取给下句子的是于瀂\n答"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "州苷州苷佋州苷拷苷苷佋苏州苷苷苷佋苷拷苷苷苷苷苷",
+          "mismatch_reason": null,
+          "replay_surface_head": "州苷州苷佋州苷拷苷苷佋苏州苷苷苷佋苷拷苷苷苷苷苷"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "拷苷苷苷苷佋苷拷苷苷苷苷苷苷苷苷苷苷苷州苷苷苷苷",
+          "mismatch_reason": null,
+          "replay_surface_head": "拷苷苷苷苷佋苷拷苷苷苷苷苷苷苷苷苷苷苷州苷苷苷苷"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 64,
+      "median_ratio_best_over_boundary": 274087268.429,
+      "run_steps": 417
+    },
+    {
+      "id": "V003",
+      "answer_run": 1,
+      "steps": 562,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 3,
+      "generations_boundary_self_stop": 3,
+      "generations_eating_full_budget": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 131,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 2,
+          "answer_head": "在的",
+          "mismatch_reason": null,
+          "replay_surface_head": "在的"
+        },
+        {
+          "fed_bytes": 197,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 18,
+          "answer_head": "将的文将的是一种子：的妁是一种是叐的",
+          "mismatch_reason": null,
+          "replay_surface_head": "将的文将的是一种子：的妁是一种是叐的"
+        },
+        {
+          "fed_bytes": 234,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 20,
+          "answer_head": "在的文地生面句词给和是一种是句子的是和生",
+          "mismatch_reason": null,
+          "replay_surface_head": "在的文地生面句词给和是一种是句子的是和生"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 64,
+      "median_ratio_best_over_boundary": 1213.481,
+      "run_steps": 0
+    },
+    {
+      "id": "V004",
+      "answer_run": 17,
+      "steps": 721,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "generations_boundary_self_stop": 1,
+      "generations_eating_full_budget": 2,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 209,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "在的是一种是叐的是句迡的叐一眪取燍和是一种和星的",
+          "mismatch_reason": null,
+          "replay_surface_head": "在的是一种是叐的是句迡的叐一眪取燍和是一种和星的"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "图图图图图图图图图图图图图图图图皷巷巷巷巷巷图海",
+          "mismatch_reason": null,
+          "replay_surface_head": "图图图图图图图图图图图图图图图图皷巷巷巷巷巷图海"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "图图图图图图图图图图图图图图图图图海囮海囮海囮海",
+          "mismatch_reason": null,
+          "replay_surface_head": "图图图图图图图图图图图图图图图图图海囮海囮海囮海"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 52465288160.371,
+      "run_steps": 285
+    },
+    {
+      "id": "V005",
+      "answer_run": 1,
+      "steps": 490,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 3,
+      "generations_boundary_self_stop": 3,
+      "generations_eating_full_budget": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 85,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 26,
+          "answer_head": "在的是一种和是的将叐的是一种和本的将叐的是一种是",
+          "mismatch_reason": null,
+          "replay_surface_head": "在的是一种和是的将叐的是一种和本的将叐的是一种是"
+        },
+        {
+          "fed_bytes": 191,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 21,
+          "answer_head": "在的是一种是和生题，在的是和生题句请星和生",
+          "mismatch_reason": null,
+          "replay_surface_head": "在的是一种是和生题，在的是和生题句请星和生"
+        },
+        {
+          "fed_bytes": 214,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 8,
+          "answer_head": "在的是一种是和生",
+          "mismatch_reason": null,
+          "replay_surface_head": "在的是一种是和生"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 64,
+      "median_ratio_best_over_boundary": 1307.175,
+      "run_steps": 0
+    },
+    {
+      "id": "V006",
+      "answer_run": 7,
+      "steps": 664,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "generations_boundary_self_stop": 1,
+      "generations_eating_full_budget": 2,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 152,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "在的是和生道在的是一种是和生题：在生题：将生题，",
+          "mismatch_reason": null,
+          "replay_surface_head": "在的是和生道在的是一种是和生题：在生题：将生题，"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "养丮檪鸮鸮檺养一养一养一养一养一养一养一养一养一",
+          "mismatch_reason": null,
+          "replay_surface_head": "养丮檪鸮鸮檺养一养一养一养一养一养一养一养一养一"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "养丮檪鸮鸮檺丮鸮鸮鸮檪鸮鸮鸮檪鸮鸮檺丮鸮鸮鸮鸮檪",
+          "mismatch_reason": null,
+          "replay_surface_head": "养丮檪鸮鸮檺丮鸮鸮鸮檪鸮鸮鸮檪鸮鸮檺丮鸮鸮鸮鸮檪"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 64,
+      "median_ratio_best_over_boundary": 54974979772.178,
+      "run_steps": 279
+    },
+    {
+      "id": "V007",
+      "answer_run": 1,
+      "steps": 615,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 3,
+      "generations_boundary_self_stop": 1,
+      "generations_eating_full_budget": 2,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 5,
+          "answer_head": "在的是和生",
+          "mismatch_reason": null,
+          "replay_surface_head": "在的是和生"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 5,
+          "answer_head": "在的是和生",
+          "mismatch_reason": null,
+          "replay_surface_head": "在的是和生"
+        },
+        {
+          "fed_bytes": 103,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 5,
+          "answer_head": "在的是和生",
+          "mismatch_reason": null,
+          "replay_surface_head": "在的是和生"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 63,
+      "median_ratio_best_over_boundary": 1274.669,
+      "run_steps": 0
+    },
+    {
+      "id": "V008",
+      "answer_run": 9,
+      "steps": 763,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "generations_boundary_self_stop": 1,
+      "generations_eating_full_budget": 2,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 251,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "在的是一种是句子的问题：句词给和是一种和是一的将",
+          "mismatch_reason": null,
+          "replay_surface_head": "在的是一种是句子的问题：句词给和是一种和是一的将"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "包包包包包包包包包欼包欼包欼包欼包欼包欼包吃包吃",
+          "mismatch_reason": null,
+          "replay_surface_head": "包包包包包包包包包欼包欼包欼包欼包欼包欼包吃包吃"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "包汼包吃包吃包吃包吃包包包包包包包欼包笼包欼包欼",
+          "mismatch_reason": null,
+          "replay_surface_head": "包汼包吃包吃包吃包吃包包包包包包包欼包笼包欼包欼"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 1,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 64,
+      "median_ratio_best_over_boundary": 440387407.553,
+      "run_steps": 129
+    },
+    {
+      "id": "V009",
+      "answer_run": 12,
+      "steps": 667,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 1,
+      "generations_boundary_self_stop": 1,
+      "generations_eating_full_budget": 2,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 5,
+          "answer_head": "句的文和生",
+          "mismatch_reason": null,
+          "replay_surface_head": "句的文和生"
+        },
+        {
+          "fed_bytes": 155,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "将的文和的是一种和是一的小是一的将在的是一种和星",
+          "mismatch_reason": null,
+          "replay_surface_head": "将的文和的是一种和是一的小是一的将在的是一种和星"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "哥承承承承承承承承承承哥艿承哥承泽表泽艿哥哥承泽",
+          "mismatch_reason": null,
+          "replay_surface_head": "哥承承承承承承承承承承哥艿承哥承泽表泽艿哥哥承泽"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 8,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 64,
+      "median_ratio_best_over_boundary": 4902.673,
+      "run_steps": 147
+    },
+    {
+      "id": "V010",
+      "answer_run": 84,
+      "steps": 595,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "generations_boundary_self_stop": 1,
+      "generations_eating_full_budget": 2,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 83,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "在的是一种和是一的叐关队的在了的在于的在于瀂\n答",
+          "mismatch_reason": null,
+          "replay_surface_head": "在的是一种和是一的叐关队的在了的在于的在于瀂\n答"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "岛事事事事事事事事事事事事事事事事事事事事事事事",
+          "mismatch_reason": null,
+          "replay_surface_head": "岛事事事事事事事事事事事事事事事事事事事事事事事"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "安扉安西安西安西安西安西安西安西安西安西安安西安",
+          "mismatch_reason": null,
+          "replay_surface_head": "安扉安西安西安西安西安西安西安西安西安西安安西安"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 384319293372767.9,
+      "run_steps": 324
+    },
+    {
+      "id": "V011",
+      "answer_run": 1,
+      "steps": 465,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 3,
+      "generations_boundary_self_stop": 3,
+      "generations_eating_full_budget": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 173,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 2,
+          "answer_head": "在的",
+          "mismatch_reason": null,
+          "replay_surface_head": "在的"
+        },
+        {
+          "fed_bytes": 58,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 2,
+          "answer_head": "在的",
+          "mismatch_reason": null,
+          "replay_surface_head": "在的"
+        },
+        {
+          "fed_bytes": 234,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 20,
+          "answer_head": "在的文地生面句词给和是一种是句子的是和生",
+          "mismatch_reason": null,
+          "replay_surface_head": "在的文地生面句词给和是一种是句子的是和生"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 64,
+      "median_ratio_best_over_boundary": 1251.221,
+      "run_steps": 0
+    },
+    {
+      "id": "V012",
+      "answer_run": 3,
+      "steps": 583,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 1,
+      "generations_boundary_self_stop": 2,
+      "generations_eating_full_budget": 1,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 91,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 11,
+          "answer_head": "在的是一种是叐的是叐的",
+          "mismatch_reason": null,
+          "replay_surface_head": "在的是一种是叐的是叐的"
+        },
+        {
+          "fed_bytes": 236,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "在的是一种是叐的是叐的是句迡的叐一眪台球是一种和",
+          "mismatch_reason": null,
+          "replay_surface_head": "在的是一种是叐的是叐的是句迡的叐一眪台球是一种和"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "星晟星晨星队晨星队晙皘队队晙星队星星队晙皙队队晙",
+          "mismatch_reason": null,
+          "replay_surface_head": "星晟星晨星队晨星队晙皘队队晙星队星星队晙皙队队晙"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 2,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 64,
+      "median_ratio_best_over_boundary": 9401.741,
+      "run_steps": 84
+    },
+    {
+      "id": "V013",
+      "answer_run": 1,
+      "steps": 375,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 3,
+      "generations_boundary_self_stop": 3,
+      "generations_eating_full_budget": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 94,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 9,
+          "answer_head": "在的是一种是句子的",
+          "mismatch_reason": null,
+          "replay_surface_head": "在的是一种是句子的"
+        },
+        {
+          "fed_bytes": 67,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 20,
+          "answer_head": "将的文叐的是一种子，的将叐的是一种是和生",
+          "mismatch_reason": null,
+          "replay_surface_head": "将的文叐的是一种子，的将叐的是一种是和生"
+        },
+        {
+          "fed_bytes": 214,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 8,
+          "answer_head": "在的是一种是和生",
+          "mismatch_reason": null,
+          "replay_surface_head": "在的是一种是和生"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 64,
+      "median_ratio_best_over_boundary": 1365.734,
+      "run_steps": 0
+    },
+    {
+      "id": "V014",
+      "answer_run": 1,
+      "steps": 442,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 3,
+      "generations_boundary_self_stop": 3,
+      "generations_eating_full_budget": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 226,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 16,
+          "answer_head": "在的是和生题句词的和是一种是和生",
+          "mismatch_reason": null,
+          "replay_surface_head": "在的是和生题句词的和是一种是和生"
+        },
+        {
+          "fed_bytes": 85,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 17,
+          "answer_head": "在的是和生题和的文在的是一种是和的",
+          "mismatch_reason": null,
+          "replay_surface_head": "在的是和生题和的文在的是一种是和的"
+        },
+        {
+          "fed_bytes": 131,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 5,
+          "answer_head": "在的是和生",
+          "mismatch_reason": null,
+          "replay_surface_head": "在的是和生"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 63,
+      "median_ratio_best_over_boundary": 1110.199,
+      "run_steps": 0
+    },
+    {
+      "id": "V015",
+      "answer_run": 1,
+      "steps": 324,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 3,
+      "generations_boundary_self_stop": 3,
+      "generations_eating_full_budget": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 85,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 26,
+          "answer_head": "在的文将纻请叐的文叐的是一种和星的将叐的是一种是",
+          "mismatch_reason": null,
+          "replay_surface_head": "在的文将纻请叐的文叐的是一种和星的将叐的是一种是"
+        },
+        {
+          "fed_bytes": 136,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 8,
+          "answer_head": "将的是和生是和的",
+          "mismatch_reason": null,
+          "replay_surface_head": "将的是和生是和的"
+        },
+        {
+          "fed_bytes": 103,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 5,
+          "answer_head": "在的是和生",
+          "mismatch_reason": null,
+          "replay_surface_head": "在的是和生"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 64,
+      "median_ratio_best_over_boundary": 1253.71,
+      "run_steps": 0
+    },
+    {
+      "id": "V016",
+      "answer_run": 15,
+      "steps": 707,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "generations_boundary_self_stop": 1,
+      "generations_eating_full_budget": 2,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 195,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "在的是一种叐和生题和是一种和是一的是和的是和的是",
+          "mismatch_reason": null,
+          "replay_surface_head": "在的是一种叐和生题和是一种和是一的是和的是和的是"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "哥泱哥泾哥泥泾哥泥泾哥泥泥泾哥泥泥泥泉泾哥泉泉泥",
+          "mismatch_reason": null,
+          "replay_surface_head": "哥泱哥泾哥泥泾哥泥泾哥泥泥泾哥泥泥泥泉泾哥泉泉泥"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "子鸣吃辣吃辣吃辣吃辣吃辣吃辣吃辣吃辣吃辣吃辣吃辣",
+          "mismatch_reason": null,
+          "replay_surface_head": "子鸣吃辣吃辣吃辣吃辣吃辣吃辣吃辣吃辣吃辣吃辣吃辣"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 9,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 64,
+      "median_ratio_best_over_boundary": 19362896518.641,
+      "run_steps": 141
+    },
+    {
+      "id": "V017",
+      "answer_run": 1,
+      "steps": 411,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 3,
+      "generations_boundary_self_stop": 2,
+      "generations_eating_full_budget": 1,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 64,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 8,
+          "answer_head": "在的是一种叐关生",
+          "mismatch_reason": null,
+          "replay_surface_head": "在的是一种叐关生"
+        },
+        {
+          "fed_bytes": 91,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 11,
+          "answer_head": "在的是一种是叐的是叐的",
+          "mismatch_reason": null,
+          "replay_surface_head": "在的是一种是叐的是叐的"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 8,
+          "answer_head": "在的是叐的是叐的",
+          "mismatch_reason": null,
+          "replay_surface_head": "在的是叐的是叐的"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 64,
+      "median_ratio_best_over_boundary": 1390.94,
+      "run_steps": 0
+    },
+    {
+      "id": "V018",
+      "answer_run": 10,
+      "steps": 735,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "generations_boundary_self_stop": 1,
+      "generations_eating_full_budget": 2,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 223,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "在的是一种叐和生题和本的小是一种和是一种和星的将",
+          "mismatch_reason": null,
+          "replay_surface_head": "在的是一种叐和生题和本的小是一种和是一种和星的将"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "岛青岛青岛青岛岛岛岛岛岛岛岛岛岛青岛戲青岛我住岛",
+          "mismatch_reason": null,
+          "replay_surface_head": "岛青岛青岛青岛岛岛岛岛岛岛岛岛岛青岛戲青岛我住岛"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "岛岛岛岛岛岛岛岛青岛青岛青岛青岛青岛青岛青岛青岛",
+          "mismatch_reason": null,
+          "replay_surface_head": "岛岛岛岛岛岛岛岛青岛青岛青岛青岛青岛青岛青岛青岛"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 64,
+      "median_ratio_best_over_boundary": 314230200840998.5,
+      "run_steps": 138
+    },
+    {
+      "id": "V019",
+      "answer_run": 1,
+      "steps": 402,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 3,
+      "generations_boundary_self_stop": 3,
+      "generations_eating_full_budget": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 61,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 2,
+          "answer_head": "在的",
+          "mismatch_reason": null,
+          "replay_surface_head": "在的"
+        },
+        {
+          "fed_bytes": 107,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 2,
+          "answer_head": "在的",
+          "mismatch_reason": null,
+          "replay_surface_head": "在的"
+        },
+        {
+          "fed_bytes": 234,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 20,
+          "answer_head": "在的文地生面句词给和是一种是句子的是和生",
+          "mismatch_reason": null,
+          "replay_surface_head": "在的文地生面句词给和是一种是句子的是和生"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 64,
+      "median_ratio_best_over_boundary": 1230.374,
+      "run_steps": 0
+    },
+    {
+      "id": "V020",
+      "answer_run": 3,
+      "steps": 675,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 1,
+      "generations_boundary_self_stop": 2,
+      "generations_eating_full_budget": 1,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 220,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 29,
+          "answer_head": "在的是一种是叐的是句这了的在星的叐地生一种定是一",
+          "mismatch_reason": null,
+          "replay_surface_head": "在的是一种是叐的是句这了的在星的叐地生一种定是一"
+        },
+        {
+          "fed_bytes": 199,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "在的是一种是叐的是和生题和有的将叐的是一种和星的",
+          "mismatch_reason": null,
+          "replay_surface_head": "在的是一种是叐的是和生题和有的将叐的是一种和星的"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "同事同事同事事皺事事皺事事皺事事事皺事事皺事事皺",
+          "mismatch_reason": null,
+          "replay_surface_head": "同事同事同事事皺事事皺事事皺事事事皺事事皺事事皺"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 64,
+      "median_ratio_best_over_boundary": 4401.896,
+      "run_steps": 123
+    },
+    {
+      "id": "V021",
+      "answer_run": 1,
+      "steps": 552,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 3,
+      "generations_boundary_self_stop": 2,
+      "generations_eating_full_budget": 1,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 9,
+          "answer_head": "在的是一种是句子的",
+          "mismatch_reason": null,
+          "replay_surface_head": "在的是一种是句子的"
+        },
+        {
+          "fed_bytes": 82,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 8,
+          "answer_head": "在的是一种是叐的",
+          "mismatch_reason": null,
+          "replay_surface_head": "在的是一种是叐的"
+        },
+        {
+          "fed_bytes": 214,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 8,
+          "answer_head": "在的是一种是和生",
+          "mismatch_reason": null,
+          "replay_surface_head": "在的是一种是和生"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 64,
+      "median_ratio_best_over_boundary": 1365.734,
+      "run_steps": 0
+    },
+    {
+      "id": "V022",
+      "answer_run": 1,
+      "steps": 612,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 3,
+      "generations_boundary_self_stop": 3,
+      "generations_eating_full_budget": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 227,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 8,
+          "answer_head": "在的是一种是和生",
+          "mismatch_reason": null,
+          "replay_surface_head": "在的是一种是和生"
+        },
+        {
+          "fed_bytes": 254,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 8,
+          "answer_head": "在的是和的是和生",
+          "mismatch_reason": null,
+          "replay_surface_head": "在的是和的是和生"
+        },
+        {
+          "fed_bytes": 131,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 5,
+          "answer_head": "在的是和生",
+          "mismatch_reason": null,
+          "replay_surface_head": "在的是和生"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 63,
+      "median_ratio_best_over_boundary": 1220.873,
+      "run_steps": 0
+    },
+    {
+      "id": "V023",
+      "answer_run": 1,
+      "steps": 399,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 3,
+      "generations_boundary_self_stop": 3,
+      "generations_eating_full_budget": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 154,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 8,
+          "answer_head": "在的文叐的文叐的",
+          "mismatch_reason": null,
+          "replay_surface_head": "在的文叐的文叐的"
+        },
+        {
+          "fed_bytes": 142,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 11,
+          "answer_head": "在的是和生题和的有努灋",
+          "mismatch_reason": null,
+          "replay_surface_head": "在的是和生题和的有努灋"
+        },
+        {
+          "fed_bytes": 103,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 5,
+          "answer_head": "在的是和生",
+          "mismatch_reason": null,
+          "replay_surface_head": "在的是和生"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 64,
+      "median_ratio_best_over_boundary": 1024.621,
+      "run_steps": 0
+    },
+    {
+      "id": "V024",
+      "answer_run": 9,
+      "steps": 550,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 1,
+      "generations_boundary_self_stop": 2,
+      "generations_eating_full_budget": 1,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 224,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 32,
+          "answer_head": "在的是一种和是一种句子的问题：句词给和是一种子：",
+          "mismatch_reason": null,
+          "replay_surface_head": "在的是一种和是一种句子的问题：句词给和是一种子："
+        },
+        {
+          "fed_bytes": 70,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "在的是一种叐关生问题：在章是一种是句子生问题：",
+          "mismatch_reason": null,
+          "replay_surface_head": "在的是一种叐关生问题：在章是一种是句子生问题："
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "屣汤胃胡胥汣汣汤胣汣汣汤胡胥汣汣汣汤胥汣汣汣汣汤",
+          "mismatch_reason": null,
+          "replay_surface_head": "屣汤胃胡胥汣汣汤胣汣汣汤胡胥汣汣汣汤胥汣汣汣汣汤"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 1,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 11352.08,
+      "run_steps": 159
+    }
+  ],
+  "started_utc": "2026-09-30T11:48:35Z"
+}

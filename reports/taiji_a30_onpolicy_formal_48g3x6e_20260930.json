@@ -1,0 +1,750 @@
+{
+  "format": 3,
+  "format_note_v3": "v3 **加性**：新增 `--arms`（默认 corpus,self,sized；跑密度阶梯加 half,quarter）、`decide_ladder` 这条先冻线与其结果 `verdict_length_ladder`、`bytes_by_arm`/`wins_by_arm` 扩到所有在跑的臂、以及 `--save-arms` 拒绝写进 checkpoints/ 的守卫。v1/v2 的喂入形状、主判据与测量函数一字未动 ⇒ 同格可比。",
+  "format_note_v2": "v2 **加性**多存 `verdict_matched_volume`／`bytes_by_arm`／`wins_by_arm` 三条，并把体积配平对照冻成第二线；主判据 `decide`、喂入形状、测量函数一字未动 ⇒ 与 v1 同格可比。",
+  "question": "乙：训练吃过模型自己写的答案，能否让自身轨迹接缝上的胜出离开零（唯一变量＝答案作者）",
+  "prereg_criterion": "self − corpus ≥ 3 ⇒ 成立；两臂都 0 ⇒ 形状不是瓶颈；两臂都 ≤1 且有 1 ⇒ not_resolved",
+  "base": "output/a26_p1/checkpoint.pt",
+  "base_sha256": "8b87583713a47a82",
+  "corpus": "data\\simple_zh\\dialogue_extended_clean.jsonl",
+  "groups": 48,
+  "exchanges": 3,
+  "epochs": 6,
+  "positions": 18,
+  "question_fingerprint": "80395c0c0ff1ab41",
+  "runs": {
+    "corpus": {
+      "train": {
+        "feeds": 864,
+        "trained_text_bytes": 688104,
+        "feed_fingerprint": "774dc834431f0264",
+        "fed_question_fingerprint": "1bd56a732d132f5d",
+        "fed_answer_fingerprint": "90950feb3482bf7a"
+      },
+      "transfer": {
+        "positions": 18,
+        "max_bytes": 128,
+        "repetition_penalty": 2.0,
+        "boundary_argmax_positions": 2,
+        "answers_stopped_early": 18,
+        "median_rank_over_positions": 6.0,
+        "median_p_boundary_over_positions": 0.081715,
+        "rows": [
+          {
+            "prefix_bytes": 212,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 0,
+            "boundary_rank_median": 7.0,
+            "p_boundary_median": 0.016399
+          },
+          {
+            "prefix_bytes": 264,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 0,
+            "boundary_rank_median": 4.0,
+            "p_boundary_median": 0.079606
+          },
+          {
+            "prefix_bytes": 191,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 0,
+            "boundary_rank_median": 6.0,
+            "p_boundary_median": 0.020317
+          },
+          {
+            "prefix_bytes": 218,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 0,
+            "boundary_rank_median": 3.0,
+            "p_boundary_median": 0.110777
+          },
+          {
+            "prefix_bytes": 191,
+            "answer_bytes": 123,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.285573
+          },
+          {
+            "prefix_bytes": 294,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 0,
+            "boundary_rank_median": 6.0,
+            "p_boundary_median": 0.03279
+          },
+          {
+            "prefix_bytes": 225,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 0,
+            "boundary_rank_median": 3.0,
+            "p_boundary_median": 0.098323
+          },
+          {
+            "prefix_bytes": 684,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 0,
+            "boundary_rank_median": 2.0,
+            "p_boundary_median": 0.20649
+          },
+          {
+            "prefix_bytes": 261,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 0,
+            "boundary_rank_median": 6.0,
+            "p_boundary_median": 0.024682
+          },
+          {
+            "prefix_bytes": 342,
+            "answer_bytes": 120,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.221124
+          },
+          {
+            "prefix_bytes": 306,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 0,
+            "boundary_rank_median": 3.0,
+            "p_boundary_median": 0.065136
+          },
+          {
+            "prefix_bytes": 204,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 0,
+            "boundary_rank_median": 12.0,
+            "p_boundary_median": 0.007275
+          },
+          {
+            "prefix_bytes": 203,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 0,
+            "boundary_rank_median": 6.0,
+            "p_boundary_median": 0.049641
+          },
+          {
+            "prefix_bytes": 311,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 0,
+            "boundary_rank_median": 10.0,
+            "p_boundary_median": 0.01301
+          },
+          {
+            "prefix_bytes": 209,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 0,
+            "boundary_rank_median": 9.0,
+            "p_boundary_median": 0.019013
+          },
+          {
+            "prefix_bytes": 207,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 0,
+            "boundary_rank_median": 7.0,
+            "p_boundary_median": 0.033026
+          },
+          {
+            "prefix_bytes": 197,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 0,
+            "boundary_rank_median": 3.0,
+            "p_boundary_median": 0.160593
+          },
+          {
+            "prefix_bytes": 233,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 0,
+            "boundary_rank_median": 7.0,
+            "p_boundary_median": 0.027092
+          }
+        ]
+      },
+      "facade_reachable": true,
+      "facade_gap": {
+        "facade_class": "Seed",
+        "substrate_class": "TSKV8Adapter",
+        "edge_split_reachable_from_facade": true,
+        "edge_split_present_on_substrate": true
+      },
+      "base_sha": "8b87583713a47a82",
+      "saved_checkpoint": "output\\tmp_a30_smoke\\formal_arms\\a30_onpolicy_corpus.pt",
+      "saved_sha256_16": "4801db4ec40fa1f6"
+    },
+    "self": {
+      "train": {
+        "feeds": 864,
+        "trained_text_bytes": 194652,
+        "feed_fingerprint": "4b0dddba5bb47c45",
+        "fed_question_fingerprint": "1bd56a732d132f5d",
+        "fed_answer_fingerprint": "8b1f1f22f3a3ab49"
+      },
+      "transfer": {
+        "positions": 18,
+        "max_bytes": 128,
+        "repetition_penalty": 2.0,
+        "boundary_argmax_positions": 8,
+        "answers_stopped_early": 17,
+        "median_rank_over_positions": 2.0,
+        "median_p_boundary_over_positions": 0.328901,
+        "rows": [
+          {
+            "prefix_bytes": 110,
+            "answer_bytes": 24,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 0,
+            "boundary_rank_median": 2.0,
+            "p_boundary_median": 0.220331
+          },
+          {
+            "prefix_bytes": 171,
+            "answer_bytes": 33,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.246906
+          },
+          {
+            "prefix_bytes": 131,
+            "answer_bytes": 66,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 0,
+            "boundary_rank_median": 2.0,
+            "p_boundary_median": 0.205934
+          },
+          {
+            "prefix_bytes": 134,
+            "answer_bytes": 42,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 0,
+            "boundary_rank_median": 2.0,
+            "p_boundary_median": 0.227956
+          },
+          {
+            "prefix_bytes": 101,
+            "answer_bytes": 33,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 0,
+            "boundary_rank_median": 2.0,
+            "p_boundary_median": 0.164168
+          },
+          {
+            "prefix_bytes": 243,
+            "answer_bytes": 75,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 0,
+            "boundary_rank_median": 2.0,
+            "p_boundary_median": 0.219679
+          },
+          {
+            "prefix_bytes": 138,
+            "answer_bytes": 39,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 0,
+            "boundary_rank_median": 2.0,
+            "p_boundary_median": 0.166894
+          },
+          {
+            "prefix_bytes": 582,
+            "answer_bytes": 24,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 0,
+            "boundary_rank_median": 2.0,
+            "p_boundary_median": 0.214576
+          },
+          {
+            "prefix_bytes": 168,
+            "answer_bytes": 33,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 0,
+            "boundary_rank_median": 2.0,
+            "p_boundary_median": 0.136336
+          },
+          {
+            "prefix_bytes": 350,
+            "answer_bytes": 128,
+            "answer_stopped_early": false,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.674164
+          },
+          {
+            "prefix_bytes": 306,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.581061
+          },
+          {
+            "prefix_bytes": 204,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.563214
+          },
+          {
+            "prefix_bytes": 203,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.562534
+          },
+          {
+            "prefix_bytes": 281,
+            "answer_bytes": 96,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.240866
+          },
+          {
+            "prefix_bytes": 209,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.52107
+          },
+          {
+            "prefix_bytes": 105,
+            "answer_bytes": 24,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 0,
+            "boundary_rank_median": 2.0,
+            "p_boundary_median": 0.171684
+          },
+          {
+            "prefix_bytes": 104,
+            "answer_bytes": 33,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 0,
+            "boundary_rank_median": 2.0,
+            "p_boundary_median": 0.195355
+          },
+          {
+            "prefix_bytes": 233,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.607496
+          }
+        ]
+      },
+      "facade_reachable": true,
+      "facade_gap": {
+        "facade_class": "Seed",
+        "substrate_class": "TSKV8Adapter",
+        "edge_split_reachable_from_facade": true,
+        "edge_split_present_on_substrate": true
+      },
+      "base_sha": "8b87583713a47a82",
+      "saved_checkpoint": "output\\tmp_a30_smoke\\formal_arms\\a30_onpolicy_self.pt",
+      "saved_sha256_16": "ca8726489d2c988a"
+    },
+    "sized": {
+      "train": {
+        "feeds": 864,
+        "trained_text_bytes": 180702,
+        "feed_fingerprint": "ffac7ad3ca72d392",
+        "fed_question_fingerprint": "1bd56a732d132f5d",
+        "fed_answer_fingerprint": "0ff8c0ac7105e0ca"
+      },
+      "transfer": {
+        "positions": 18,
+        "max_bytes": 128,
+        "repetition_penalty": 2.0,
+        "boundary_argmax_positions": 9,
+        "answers_stopped_early": 18,
+        "median_rank_over_positions": 2.0,
+        "median_p_boundary_over_positions": 0.373549,
+        "rows": [
+          {
+            "prefix_bytes": 212,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.391455
+          },
+          {
+            "prefix_bytes": 208,
+            "answer_bytes": 70,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 0,
+            "boundary_rank_median": 2.0,
+            "p_boundary_median": 0.181825
+          },
+          {
+            "prefix_bytes": 191,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.694445
+          },
+          {
+            "prefix_bytes": 173,
+            "answer_bytes": 81,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.354073
+          },
+          {
+            "prefix_bytes": 194,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.662964
+          },
+          {
+            "prefix_bytes": 192,
+            "answer_bytes": 24,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.447477
+          },
+          {
+            "prefix_bytes": 195,
+            "answer_bytes": 96,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.430554
+          },
+          {
+            "prefix_bytes": 591,
+            "answer_bytes": 33,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.51125
+          },
+          {
+            "prefix_bytes": 261,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 0,
+            "boundary_rank_median": 2.0,
+            "p_boundary_median": 0.407834
+          },
+          {
+            "prefix_bytes": 322,
+            "answer_bytes": 100,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 0,
+            "boundary_rank_median": 2.0,
+            "p_boundary_median": 0.262844
+          },
+          {
+            "prefix_bytes": 216,
+            "answer_bytes": 36,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 0,
+            "boundary_rank_median": 2.0,
+            "p_boundary_median": 0.167719
+          },
+          {
+            "prefix_bytes": 177,
+            "answer_bytes": 99,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 0,
+            "boundary_rank_median": 2.0,
+            "p_boundary_median": 0.221673
+          },
+          {
+            "prefix_bytes": 92,
+            "answer_bytes": 15,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 0,
+            "boundary_rank_median": 2.0,
+            "p_boundary_median": 0.376051
+          },
+          {
+            "prefix_bytes": 283,
+            "answer_bytes": 98,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 0,
+            "boundary_rank_median": 2.0,
+            "p_boundary_median": 0.271128
+          },
+          {
+            "prefix_bytes": 210,
+            "answer_bytes": 127,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 0,
+            "boundary_rank_median": 2.0,
+            "p_boundary_median": 0.231473
+          },
+          {
+            "prefix_bytes": 126,
+            "answer_bytes": 45,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.374599
+          },
+          {
+            "prefix_bytes": 122,
+            "answer_bytes": 51,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 0,
+            "boundary_rank_median": 2.0,
+            "p_boundary_median": 0.224292
+          },
+          {
+            "prefix_bytes": 158,
+            "answer_bytes": 51,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.512224
+          }
+        ]
+      },
+      "facade_reachable": true,
+      "facade_gap": {
+        "facade_class": "Seed",
+        "substrate_class": "TSKV8Adapter",
+        "edge_split_reachable_from_facade": true,
+        "edge_split_present_on_substrate": true
+      },
+      "base_sha": "8b87583713a47a82",
+      "saved_checkpoint": "output\\tmp_a30_smoke\\formal_arms\\a30_onpolicy_sized.pt",
+      "saved_sha256_16": "38a62539b3b13508"
+    },
+    "quarter": {
+      "train": {
+        "feeds": 864,
+        "trained_text_bytes": 255288,
+        "feed_fingerprint": "19d3115b3b2bfbed",
+        "fed_question_fingerprint": "1bd56a732d132f5d",
+        "fed_answer_fingerprint": "d0f3c12224e1b0ee"
+      },
+      "transfer": {
+        "positions": 18,
+        "max_bytes": 128,
+        "repetition_penalty": 2.0,
+        "boundary_argmax_positions": 16,
+        "answers_stopped_early": 18,
+        "median_rank_over_positions": 1.0,
+        "median_p_boundary_over_positions": 0.496622,
+        "rows": [
+          {
+            "prefix_bytes": 212,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 0,
+            "boundary_rank_median": 7.0,
+            "p_boundary_median": 0.037144
+          },
+          {
+            "prefix_bytes": 264,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.423761
+          },
+          {
+            "prefix_bytes": 191,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.589205
+          },
+          {
+            "prefix_bytes": 218,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.558082
+          },
+          {
+            "prefix_bytes": 194,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.605681
+          },
+          {
+            "prefix_bytes": 294,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.595273
+          },
+          {
+            "prefix_bytes": 225,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.494634
+          },
+          {
+            "prefix_bytes": 685,
+            "answer_bytes": 127,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.541351
+          },
+          {
+            "prefix_bytes": 261,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 0,
+            "boundary_rank_median": 2.0,
+            "p_boundary_median": 0.210458
+          },
+          {
+            "prefix_bytes": 348,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.561673
+          },
+          {
+            "prefix_bytes": 306,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.501554
+          },
+          {
+            "prefix_bytes": 204,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.636056
+          },
+          {
+            "prefix_bytes": 203,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.393567
+          },
+          {
+            "prefix_bytes": 311,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.530201
+          },
+          {
+            "prefix_bytes": 209,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.56952
+          },
+          {
+            "prefix_bytes": 207,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.581823
+          },
+          {
+            "prefix_bytes": 197,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.507243
+          },
+          {
+            "prefix_bytes": 233,
+            "answer_bytes": 126,
+            "answer_stopped_early": true,
+            "boundary_is_argmax": 1,
+            "boundary_rank_median": 1.0,
+            "p_boundary_median": 0.601967
+          }
+        ]
+      },
+      "facade_reachable": true,
+      "facade_gap": {
+        "facade_class": "Seed",
+        "substrate_class": "TSKV8Adapter",
+        "edge_split_reachable_from_facade": true,
+        "edge_split_present_on_substrate": true
+      },
+      "base_sha": "8b87583713a47a82",
+      "saved_checkpoint": "output\\tmp_a30_smoke\\formal_arms\\a30_onpolicy_quarter.pt",
+      "saved_sha256_16": "1ce0007d45049ab4"
+    }
+  },
+  "instrument_guard": {
+    "arms_share_the_same_questions": true,
+    "arms_differ_only_in_answer_author": true,
+    "facade_reachable_both_arms": true,
+    "both_arms_same_base_sha": true,
+    "base_untouched_after_run": true,
+    "heldout_disjoint_from_trained": true,
+    "natural_selection_respects_threshold": true,
+    "natural_selection_shrank_the_sample": true
+  },
+  "natural_subset": {
+    "max_bytes": 0,
+    "pairs_before": 144,
+    "pairs_after": 144,
+    "fraction_kept": 1.0
+  },
+  "unlocked_variable_disclosed": {
+    "note": "两臂喂入字节数不等（自己写的答案长短不一）——这是本档唯一没锁住的量，逐臂见 trained_text_bytes",
+    "corpus_bytes": 688104,
+    "self_bytes": 194652
+  },
+  "verdict": "shape_holds（吃过自己写的文本 ⇒ 胜出离开零）",
+  "verdict_matched_volume": "not_resolved（|self − sized| < 3）",
+  "verdict_length_ladder": "not_run（--arms 没带 half,quarter）",
+  "bytes_by_arm": {
+    "corpus": 688104,
+    "self": 194652,
+    "sized": 180702,
+    "quarter": 255288
+  },
+  "wins_by_arm": {
+    "corpus": 2,
+    "self": 8,
+    "sized": 9,
+    "quarter": 16
+  },
+  "started_utc": "2026-09-30T11:40:09.876699+00:00"
+}
