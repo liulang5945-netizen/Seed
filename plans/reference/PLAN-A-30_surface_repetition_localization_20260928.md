@@ -2075,6 +2075,20 @@ base 在任何 K 上恒 0.0；以及 §2am 的 `docs_with_false_fire`（无 floo
   也不在本会话改准入规则；下一轮若要判"是不是新的产品退化"，先按 `red-attribution-needs-a-fixed-face` 那条
   对齐到**具体失败帧**再看提交，别拿总红数增减当结论。**A 支线自己的读数是绿的这一侧**：
   本轮所有提交前的定向面 `tests/seed/test_project_identity.py`＝4 passed。
+* **§2ab 三条判据 ↔ 本会话已有读数（把"谁能判、判成什么"对号入座，别让主线重跑我已跑过的面）**：
+  **第 1 条（教师强制面 ≥150/300）＝同向成立但不由我宣布**——我在**已有检查点**上用配方面读到
+  **239/300**（§2al-扩样，对照 `a26_p1` 同面 **0/300**），口径不同（我：语料正文＋仪器补一个换行；
+  预注册：`prefix_chunks(trailing_newline=True)` 的 held-out），所以这句只能当**独立佐证**，
+  本体判读仍归主线那一档；**第 2 条（生成面自然终止 ≥6/24，他们标为"主判据＝能力提升判据"）＝按 §2ah 已判不满足**——
+  §2af/§2ag/§2ah 用的**推断上是最终件**（`checkpoint.pt` 与 `progress.jsonl` 同时停在 mtime 22:29:05，
+  而那两次跑档写报告是 23:17/23:20，且此后文件未再变动——§2ai 里钉到的 sha `79b1a99cedf3…` 就是这枚未变的件），
+  **但那三份件本身没有记 `checkpoint_sha256_before`**（我核过：件里只有 `circuit_sha256`）⇒ 这条绑定是**按 mtime 推定**，
+  不是件内机检。这正是 DEBT-G14 第③条修法（凡引用检查点做判据的读数件须自带 sha）要收的债；
+  0 对 6 的差距不是样本量问题；
+  这一条要在 owner 的决策包里写成"未满足"，不能因为第 1 条成立而含糊过去。**第 3 条（F0 切尾感知 ≥0.5）＝尚未测**，
+  命令就位且不需裁定：`python scripts/training/score_taiji_r2_copy_surface_extension.py --checkpoint output/a31_ding3_boundary/checkpoint.pt --out-report reports/taiji_f0_a31retrain_<日期>.json`
+  （同尺对照＝`--checkpoint output/a26_p1/checkpoint.pt`，那份同底读数 1.000 已在 §2ab 记录里）；
+  `--out-report` 必须显式给新名，别裸跑覆写封存件（DEBT 里那条"默认名会覆写封存报告"的教训）。
 * **本轮已入库的判读件**（16 份，全部 `git ls-files` 可核）：§2ai 三档（12／30／120 位置）、
   §2aj–§2an（教师强制面两臂、轨迹阈值两臂、比较式、带位置条件的 v3 与更正后 v8）、
   §2al–§2al-扩样（配方面 120 格四枚件、300 格两臂）。
