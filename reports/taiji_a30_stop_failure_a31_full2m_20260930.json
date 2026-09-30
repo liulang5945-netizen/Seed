@@ -1,0 +1,1154 @@
+{
+  "format": "taiji-a30-stop-failure-v6",
+  "format_note_v6": "v6 **换比较的表示层＋更正早停计数**（诊断更正，见 §2bb-追加三/追加四）：（一）v5 的逐位比较是『raw 重放 vs `chat()` 返回值』，而早停样本（边界符胜出即 break，fed 极短）的返回值是**器官占位句**（`NativeReadableTextLanguageOrgan._fallback_text`）——V019 首轮 1 字节生成对应 44 字占位句，逐位比较必然不等，L2 要测的成功被记成面违规。v6 的重放改走**完整产品面链**（`replay_surface_from_fed`：decode → marker 切割 → **同一个器官实例** emit）再与返回值比较；`replay_tiny_feed` 这一分类随之退役（深帧复现证明 prompt 的 50 字节全部在案，追加二『没复现 prompt』的误诊被纠正）。（二）`generations_eating_full_budget` 的旧定义（`generations − marker 切割数`）把**边界符自停**（fed < 预算＝生成环唯一提前出口）误标成吃满预算——v4/v5 的『早停 1/72、5/72』数的其实是marker 切割；真正的边界自停（对照件 0/72、self/quarter 各 19/72）从未被点数。v6 起 `eating_full_budget` 按 `fed ≥ max_length` 判，新增 `generations_boundary_self_stop`。`all_surfaces_are_replayed_raw` 与 `replay_suspect_generations` 的**公式不变**（后者改数 `surface_differs_from_replay`），严格性不降：真正被产品链改过的面仍然红。",
+  "format_note_v5": "v5 **加性**：每条 `surface_checks` 多一列 `mismatch_reason`（`replay_tiny_feed`＝回放侧只归到 <8 个符号，属**仪器归类缺陷**；`surface_differs_from_replay`＝真的面不一致），聚合里多一条 `replay_suspect_generations`。**严格守卫 `all_surfaces_are_replayed_raw` 一字未动**——放宽它等于挪门柱；加这一列只是为了让'仪器坏了'与'被测量不符'能被分开读（§2bb-追加二 复现 `V019` 得到的就是前者）。其余各表算法与语义未动 ⇒ 与 v4 同格可比。",
+  "format_note_v4": "v4 **加性**多存三条装配自述（`mount_route`／`copy_circuit_present_after_load`／`copy_evidence_utf8_gate`），其余字段与算法一字未动 ⇒ 与 v3 同格可比。加它的理由：`--circuit` 不给 **不等于**\"出厂无回路面\"——带回路的信封在 `SeedRuntime.load` 里会自动挂载，所以这张面是按命令行猜出来的。",
+  "prereg": "plans/reference/PLAN-A-30_surface_repetition_localization_20260928.md §2f 第 3 条",
+  "checkpoint": "output/a31_ding3_boundary/checkpoint.pt",
+  "circuit": "output/taiji_r2_copy_circuit_chat/judge/circuit-final.pt",
+  "circuit_sha256": "1cfe5961c300485dc08078a9deb82d0f31acbb5f8c63d0685d18366832d741a3",
+  "mount_route": "enable_copy_circuit",
+  "copy_circuit_present_after_load": true,
+  "copy_evidence_utf8_gate_effective": true,
+  "copy_evidence_utf8_gate_config": false,
+  "copy_evidence_utf8_gate_override": true,
+  "repetition_penalty": 2.0,
+  "repetition_window": 8,
+  "max_length": 256,
+  "generation_loop_lines": [
+    3117,
+    3179
+  ],
+  "items": 24,
+  "instrument_guard": {
+    "observe_calls_recorded": true,
+    "observe_calls_by_caller": {
+      "generate:3164": 18315,
+      "generate:3085": 2765,
+      "record_told_history:92": 72,
+      "generate:3076": 72
+    },
+    "all_items_reconstructed": true,
+    "items_failing_reconstruction": [],
+    "total_argmax_mismatch_steps": 0,
+    "all_surfaces_are_replayed_raw": true,
+    "replay_suspect_generations": 0,
+    "items_whose_surface_is_not_model_bytes": [],
+    "total_steps": 18315,
+    "generations": 72,
+    "generations_cut_by_turn_marker": 69,
+    "generations_boundary_self_stop": 3,
+    "generations_eating_full_budget": 69,
+    "base_sha256_unchanged": true
+  },
+  "failure_examples": [],
+  "offender_count": 0,
+  "offenders": [],
+  "per_item": [
+    {
+      "id": "V001",
+      "answer_run": 1,
+      "steps": 768,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 3,
+      "generations_boundary_self_stop": 0,
+      "generations_eating_full_budget": 3,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 22,
+          "answer_head": "月的动月的这个是的太月的动月的动本的这个是的",
+          "mismatch_reason": null,
+          "replay_surface_head": "月的动月的这个是的太月的动月的动本的这个是的"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 43,
+          "answer_head": "月的这个是的孽，这个月的孽有的动本的这个是的孈，",
+          "mismatch_reason": null,
+          "replay_surface_head": "月的这个是的孽，这个月的孽有的动本的这个是的孈，"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 49,
+          "answer_head": "木的这个是的动本的这个月的孽日，分的这个是的孽日",
+          "mismatch_reason": null,
+          "replay_surface_head": "木的这个是的动本的这个月的孽日，分的这个是的孽日"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 2269.717,
+      "run_steps": 0
+    },
+    {
+      "id": "V002",
+      "answer_run": 1,
+      "steps": 768,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 3,
+      "generations_boundary_self_stop": 0,
+      "generations_eating_full_budget": 3,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 33,
+          "answer_head": "月的这个是的孈个是的孈，这个月的学，这个月的学，",
+          "mismatch_reason": null,
+          "replay_surface_head": "月的这个是的孈个是的孈，这个月的学，这个月的学，"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 26,
+          "answer_head": "月的这个是的孽，这个月的学，这中月的太月的可这个",
+          "mismatch_reason": null,
+          "replay_surface_head": "月的这个是的孽，这个月的学，这中月的太月的可这个"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 36,
+          "answer_head": "月的这个月的动本的这中月的太月的动本的这个是的孈",
+          "mismatch_reason": null,
+          "replay_surface_head": "月的这个月的动本的这中月的太月的动本的这个是的孈"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 2061.618,
+      "run_steps": 0
+    },
+    {
+      "id": "V003",
+      "answer_run": 1,
+      "steps": 768,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 3,
+      "generations_boundary_self_stop": 0,
+      "generations_eating_full_budget": 3,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 53,
+          "answer_head": "木的这个是的孽日霚孈绥旮：的本子的这个是的孽日，",
+          "mismatch_reason": null,
+          "replay_surface_head": "木的这个是的孽日霚孈绥旮：的本子的这个是的孽日，"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 14,
+          "answer_head": "月的这个是的孽日需的这个是的",
+          "mismatch_reason": null,
+          "replay_surface_head": "月的这个是的孽日需的这个是的"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 34,
+          "answer_head": "木的这个是的孽日霨这个是的孽日，多中统动朂这个是",
+          "mismatch_reason": null,
+          "replay_surface_head": "木的这个是的孽日霨这个是的孽日，多中统动朂这个是"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 2156.94,
+      "run_steps": 0
+    },
+    {
+      "id": "V004",
+      "answer_run": 1,
+      "steps": 768,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 3,
+      "generations_boundary_self_stop": 0,
+      "generations_eating_full_budget": 3,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 20,
+          "answer_head": "月的这个是的孽日霈的学月的学月的这个是的",
+          "mismatch_reason": null,
+          "replay_surface_head": "月的这个是的孽日霈的学月的学月的这个是的"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 9,
+          "answer_head": "月盽动本的这个是的",
+          "mismatch_reason": null,
+          "replay_surface_head": "月盽动本的这个是的"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 17,
+          "answer_head": "月的这个月盽学中的这日孈的这中月的",
+          "mismatch_reason": null,
+          "replay_surface_head": "月的这个月盽学中的这日孈的这中月的"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 2084.101,
+      "run_steps": 0
+    },
+    {
+      "id": "V005",
+      "answer_run": 1,
+      "steps": 729,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 3,
+      "generations_boundary_self_stop": 1,
+      "generations_eating_full_budget": 2,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 19,
+          "answer_head": "月的动本的这个是的外有的动本的这个是的",
+          "mismatch_reason": null,
+          "replay_surface_head": "月的动本的这个是的外有的动本的这个是的"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 10,
+          "answer_head": "月的这个月的这个月的",
+          "mismatch_reason": null,
+          "replay_surface_head": "月的这个月的这个月的"
+        },
+        {
+          "fed_bytes": 217,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 24,
+          "answer_head": "月的动本的这个是的孽日霚的日孽的问，夆的这个是的",
+          "mismatch_reason": null,
+          "replay_surface_head": "月的动本的这个是的孽日霚的日孽的问，夆的这个是的"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 1914.592,
+      "run_steps": 0
+    },
+    {
+      "id": "V006",
+      "answer_run": 1,
+      "steps": 768,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 3,
+      "generations_boundary_self_stop": 0,
+      "generations_eating_full_budget": 3,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 31,
+          "answer_head": "月的学，这个月的学，这中月的太月的可这个是的句是",
+          "mismatch_reason": null,
+          "replay_surface_head": "月的学，这个月的学，这中月的太月的可这个是的句是"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 77,
+          "answer_head": "月的学，这个月的学，这中月的动本的这个是的孈，这",
+          "mismatch_reason": null,
+          "replay_surface_head": "月的学，这个月的学，这中月的动本的这个是的孈，这"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 17,
+          "answer_head": "月的这个是的孈中的这中月的这中月的",
+          "mismatch_reason": null,
+          "replay_surface_head": "月的这个是的孈中的这中月的这中月的"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 2106.79,
+      "run_steps": 0
+    },
+    {
+      "id": "V007",
+      "answer_run": 1,
+      "steps": 768,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 2,
+      "generations_boundary_self_stop": 0,
+      "generations_eating_full_budget": 3,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 6,
+          "answer_head": "月的这个是的",
+          "mismatch_reason": null,
+          "replay_surface_head": "月的这个是的"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 2,
+          "answer_head": "月的",
+          "mismatch_reason": null,
+          "replay_surface_head": "月的"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "月的动本的这个月的学，这个月的学月的动本的这个月",
+          "mismatch_reason": null,
+          "replay_surface_head": "月的动本的这个月的学，这个月的学月的动本的这个月"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 2007.419,
+      "run_steps": 0
+    },
+    {
+      "id": "V008",
+      "answer_run": 2,
+      "steps": 768,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 3,
+      "generations_boundary_self_stop": 0,
+      "generations_eating_full_budget": 3,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 91,
+          "answer_head": "月的这个是的孽日需的这个是的孽日霈的学，这个是的",
+          "mismatch_reason": null,
+          "replay_surface_head": "月的这个是的孽日需的这个是的孽日霈的学，这个是的"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 20,
+          "answer_head": "月的动本的这个是的句是中的这月的这个是的",
+          "mismatch_reason": null,
+          "replay_surface_head": "月的动本的这个是的句是中的这月的这个是的"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 80,
+          "answer_head": "月的动本的这个月的太月的动月的动这个是在的这个是",
+          "mismatch_reason": null,
+          "replay_surface_head": "月的动本的这个月的太月的动月的动这个是在的这个是"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 1853.261,
+      "run_steps": 6
+    },
+    {
+      "id": "V009",
+      "answer_run": 1,
+      "steps": 768,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 3,
+      "generations_boundary_self_stop": 0,
+      "generations_eating_full_budget": 3,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 6,
+          "answer_head": "月的这个月的",
+          "mismatch_reason": null,
+          "replay_surface_head": "月的这个月的"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 23,
+          "answer_head": "月的这个是的孽日霈的学月的动有盭动月的这个是的",
+          "mismatch_reason": null,
+          "replay_surface_head": "月的这个是的孽日霈的学月的动有盭动月的这个是的"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 49,
+          "answer_head": "木的这个是的动本的这个月的孽日，分的这个是的孽日",
+          "mismatch_reason": null,
+          "replay_surface_head": "木的这个是的动本的这个月的孽日，分的这个是的孽日"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 2135.504,
+      "run_steps": 0
+    },
+    {
+      "id": "V010",
+      "answer_run": 1,
+      "steps": 768,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 3,
+      "generations_boundary_self_stop": 0,
+      "generations_eating_full_budget": 3,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 59,
+          "answer_head": "月的学，这个月的学，这本的孽本的这个是的孽，这个",
+          "mismatch_reason": null,
+          "replay_surface_head": "月的学，这个月的学，这本的孽本的这个是的孽，这个"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 14,
+          "answer_head": "月的这中月的这中日分的这中的",
+          "mismatch_reason": null,
+          "replay_surface_head": "月的这中月的这中日分的这中的"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 36,
+          "answer_head": "月的这个月的动本的这中月的太月的动本的这个是的孈",
+          "mismatch_reason": null,
+          "replay_surface_head": "月的这个月的动本的这中月的太月的动本的这个是的孈"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 1968.055,
+      "run_steps": 0
+    },
+    {
+      "id": "V011",
+      "answer_run": 1,
+      "steps": 768,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 3,
+      "generations_boundary_self_stop": 0,
+      "generations_eating_full_budget": 3,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 42,
+          "answer_head": "月动的这个是的孽月这个是的孽日，这个是的孽，这个",
+          "mismatch_reason": null,
+          "replay_surface_head": "月动的这个是的孽月这个是的孽日，这个是的孽，这个"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 27,
+          "answer_head": "月动的这个是的太日，多中生日可以日可以的有动的这",
+          "mismatch_reason": null,
+          "replay_surface_head": "月动的这个是的太日，多中生日可以日可以的有动的这"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 34,
+          "answer_head": "木的这个是的孽日霨这个是的孽日，多中统动朂这个是",
+          "mismatch_reason": null,
+          "replay_surface_head": "木的这个是的孽日霨这个是的孽日，多中统动朂这个是"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 2128.866,
+      "run_steps": 0
+    },
+    {
+      "id": "V012",
+      "answer_run": 1,
+      "steps": 768,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 3,
+      "generations_boundary_self_stop": 0,
+      "generations_eating_full_budget": 3,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 33,
+          "answer_head": "月的学月的这个是的孽日霈的学月的学月的可中的问，",
+          "mismatch_reason": null,
+          "replay_surface_head": "月的学月的这个是的孽日霈的学月的学月的可中的问，"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 22,
+          "answer_head": "月的这个月盽学个痥孽有盥孽，这个月盯中月的太",
+          "mismatch_reason": null,
+          "replay_surface_head": "月的这个月盽学个痥孽有盥孽，这个月盯中月的太"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 17,
+          "answer_head": "月的这个月盽学中的这日孈的这中月的",
+          "mismatch_reason": null,
+          "replay_surface_head": "月的这个月盽学中的这日孈的这中月的"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 1921.737,
+      "run_steps": 0
+    },
+    {
+      "id": "V013",
+      "answer_run": 1,
+      "steps": 729,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 3,
+      "generations_boundary_self_stop": 1,
+      "generations_eating_full_budget": 2,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 16,
+          "answer_head": "月的这个是的孈个是的动月这个月的",
+          "mismatch_reason": null,
+          "replay_surface_head": "月的这个是的孈个是的动月这个月的"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 17,
+          "answer_head": "月的这个是的孽日需的日孽的这个是的",
+          "mismatch_reason": null,
+          "replay_surface_head": "月的这个是的孽日需的日孽的这个是的"
+        },
+        {
+          "fed_bytes": 217,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 24,
+          "answer_head": "月的动本的这个是的孽日霚的日孽的问，夆的这个是的",
+          "mismatch_reason": null,
+          "replay_surface_head": "月的动本的这个是的孽日霚的日孽的问，夆的这个是的"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 1902.192,
+      "run_steps": 2
+    },
+    {
+      "id": "V014",
+      "answer_run": 1,
+      "steps": 768,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 3,
+      "generations_boundary_self_stop": 0,
+      "generations_eating_full_budget": 3,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 11,
+          "answer_head": "月的劭月这个月的可中的",
+          "mismatch_reason": null,
+          "replay_surface_head": "月的劭月这个月的可中的"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 16,
+          "answer_head": "月的学日需的日孽的有动的这个是的",
+          "mismatch_reason": null,
+          "replay_surface_head": "月的学日需的日孽的有动的这个是的"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 17,
+          "answer_head": "月的这个是的孈中的这中月的这中月的",
+          "mismatch_reason": null,
+          "replay_surface_head": "月的这个是的孈中的这中月的这中月的"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 2105.687,
+      "run_steps": 0
+    },
+    {
+      "id": "V015",
+      "answer_run": 1,
+      "steps": 768,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 2,
+      "generations_boundary_self_stop": 0,
+      "generations_eating_full_budget": 3,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 2,
+          "answer_head": "月的",
+          "mismatch_reason": null,
+          "replay_surface_head": "月的"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 6,
+          "answer_head": "月的这个是的",
+          "mismatch_reason": null,
+          "replay_surface_head": "月的这个是的"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "月的动本的这个月的学，这个月的学月的动本的这个月",
+          "mismatch_reason": null,
+          "replay_surface_head": "月的动本的这个月的学，这个月的学月的动本的这个月"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 1972.837,
+      "run_steps": 0
+    },
+    {
+      "id": "V016",
+      "answer_run": 1,
+      "steps": 768,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 3,
+      "generations_boundary_self_stop": 0,
+      "generations_eating_full_budget": 3,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 9,
+          "answer_head": "月的动月的这个是的",
+          "mismatch_reason": null,
+          "replay_surface_head": "月的动月的这个是的"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 20,
+          "answer_head": "本的这个是的太日霬的日孽的日子的这个是的",
+          "mismatch_reason": null,
+          "replay_surface_head": "本的这个是的太日霬的日孽的日子的这个是的"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 80,
+          "answer_head": "月的动本的这个月的太月的动月的动这个是在的这个是",
+          "mismatch_reason": null,
+          "replay_surface_head": "月的动本的这个月的太月的动月的动这个是在的这个是"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 2118.974,
+      "run_steps": 2
+    },
+    {
+      "id": "V017",
+      "answer_run": 1,
+      "steps": 768,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 3,
+      "generations_boundary_self_stop": 0,
+      "generations_eating_full_budget": 3,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 6,
+          "answer_head": "月的这中月的",
+          "mismatch_reason": null,
+          "replay_surface_head": "月的这中月的"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 50,
+          "answer_head": "木的这个是的孽日，学的这个是的孽日，多中生日可以",
+          "mismatch_reason": null,
+          "replay_surface_head": "木的这个是的孽日，学的这个是的孽日，多中生日可以"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 49,
+          "answer_head": "木的这个是的动本的这个月的孽日，分的这个是的孽日",
+          "mismatch_reason": null,
+          "replay_surface_head": "木的这个是的动本的这个月的孽日，分的这个是的孽日"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 2062.254,
+      "run_steps": 0
+    },
+    {
+      "id": "V018",
+      "answer_run": 1,
+      "steps": 768,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 3,
+      "generations_boundary_self_stop": 0,
+      "generations_eating_full_budget": 3,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 27,
+          "answer_head": "月的孽，这个月的学，这个月的学，这中月的力本的这",
+          "mismatch_reason": null,
+          "replay_surface_head": "月的孽，这个月的学，这个月的学，这中月的力本的这"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 21,
+          "answer_head": "月的这个是的分这中的月动的这中月的这中月的",
+          "mismatch_reason": null,
+          "replay_surface_head": "月的这个是的分这中的月动的这中月的这中月的"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 36,
+          "answer_head": "月的这个月的动本的这中月的太月的动本的这个是的孈",
+          "mismatch_reason": null,
+          "replay_surface_head": "月的这个月的动本的这中月的太月的动本的这个是的孈"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 1992.037,
+      "run_steps": 0
+    },
+    {
+      "id": "V019",
+      "answer_run": 1,
+      "steps": 768,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 3,
+      "generations_boundary_self_stop": 0,
+      "generations_eating_full_budget": 3,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 15,
+          "answer_head": "月动的这个是的动日需的这个是的",
+          "mismatch_reason": null,
+          "replay_surface_head": "月动的这个是的动日需的这个是的"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 51,
+          "answer_head": "月的这个是的动日，这个是的孽日，多中生朂力这个是",
+          "mismatch_reason": null,
+          "replay_surface_head": "月的这个是的动日，这个是的孽日，多中生朂力这个是"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 34,
+          "answer_head": "木的这个是的孽日霨这个是的孽日，多中统动朂这个是",
+          "mismatch_reason": null,
+          "replay_surface_head": "木的这个是的孽日霨这个是的孽日，多中统动朂这个是"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 2017.507,
+      "run_steps": 0
+    },
+    {
+      "id": "V020",
+      "answer_run": 1,
+      "steps": 768,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 3,
+      "generations_boundary_self_stop": 0,
+      "generations_eating_full_budget": 3,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 22,
+          "answer_head": "月盽学月的这个是的孈，这个月的学月的这中月的",
+          "mismatch_reason": null,
+          "replay_surface_head": "月盽学月的这个是的孈，这个月的学月的这中月的"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 26,
+          "answer_head": "月的可这个是的学，这个月的学月的可以是的句是的这",
+          "mismatch_reason": null,
+          "replay_surface_head": "月的可这个是的学，这个月的学月的可以是的句是的这"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 17,
+          "answer_head": "月的这个月盽学中的这日孈的这中月的",
+          "mismatch_reason": null,
+          "replay_surface_head": "月的这个月盽学中的这日孈的这中月的"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 2059.08,
+      "run_steps": 0
+    },
+    {
+      "id": "V021",
+      "answer_run": 1,
+      "steps": 729,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 3,
+      "generations_boundary_self_stop": 1,
+      "generations_eating_full_budget": 2,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 6,
+          "answer_head": "月的这个是的",
+          "mismatch_reason": null,
+          "replay_surface_head": "月的这个是的"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 9,
+          "answer_head": "月的动月的这个是的",
+          "mismatch_reason": null,
+          "replay_surface_head": "月的动月的这个是的"
+        },
+        {
+          "fed_bytes": 217,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 24,
+          "answer_head": "月的动本的这个是的孽日霚的日孽的问，夆的这个是的",
+          "mismatch_reason": null,
+          "replay_surface_head": "月的动本的这个是的孽日霚的日孽的问，夆的这个是的"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 2092.992,
+      "run_steps": 0
+    },
+    {
+      "id": "V022",
+      "answer_run": 1,
+      "steps": 768,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 3,
+      "generations_boundary_self_stop": 0,
+      "generations_eating_full_budget": 3,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 34,
+          "answer_head": "月的学，这个是的孽，这个月的学，这中本的国有的可",
+          "mismatch_reason": null,
+          "replay_surface_head": "月的学，这个是的孽，这个月的学，这中本的国有的可"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 52,
+          "answer_head": "月的学日需的日孽的这个是的孽日的动有这个是的孽日",
+          "mismatch_reason": null,
+          "replay_surface_head": "月的学日需的日孽的这个是的孽日的动有这个是的孽日"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 17,
+          "answer_head": "月的这个是的孈中的这中月的这中月的",
+          "mismatch_reason": null,
+          "replay_surface_head": "月的这个是的孈中的这中月的这中月的"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 2086.672,
+      "run_steps": 0
+    },
+    {
+      "id": "V023",
+      "answer_run": 1,
+      "steps": 768,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 2,
+      "generations_boundary_self_stop": 0,
+      "generations_eating_full_budget": 3,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 2,
+          "answer_head": "月的",
+          "mismatch_reason": null,
+          "replay_surface_head": "月的"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 9,
+          "answer_head": "月的力月的这个月的",
+          "mismatch_reason": null,
+          "replay_surface_head": "月的力月的这个月的"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "月的动本的这个月的学，这个月的学月的动本的这个月",
+          "mismatch_reason": null,
+          "replay_surface_head": "月的动本的这个月的学，这个月的学月的动本的这个月"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 1898.659,
+      "run_steps": 0
+    },
+    {
+      "id": "V024",
+      "answer_run": 1,
+      "steps": 768,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 3,
+      "generations_boundary_self_stop": 0,
+      "generations_eating_full_budget": 3,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 9,
+          "answer_head": "月的动月的这个是的",
+          "mismatch_reason": null,
+          "replay_surface_head": "月的动月的这个是的"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 27,
+          "answer_head": "月的这个是的动日需的这个是的孈，这个是的孈文的这",
+          "mismatch_reason": null,
+          "replay_surface_head": "月的这个是的动日需的这个是的孈，这个是的孈文的这"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 80,
+          "answer_head": "月的动本的这个月的太月的动月的动这个是在的这个是",
+          "mismatch_reason": null,
+          "replay_surface_head": "月的动本的这个月的太月的动月的动这个是在的这个是"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 2141.623,
+      "run_steps": 2
+    }
+  ],
+  "started_utc": "2026-09-30T14:20:50Z"
+}

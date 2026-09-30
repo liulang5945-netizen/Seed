@@ -1,0 +1,1517 @@
+{
+  "format": "taiji-r2-copy-surface-extension-v1",
+  "prereg": "plans/reference/SPEC-A-21_r2_surface_extension_prereg_20260925.md",
+  "judge_prereg": "plans/reference/SPEC-A-22_r2_a2_5_query_conditioned_selector_prereg_20260926.md",
+  "manifest": "plans/manifests/r2_copy_surface_extension_v1.json",
+  "chain": "base_raw_bytes",
+  "manifest_sha256": "4d04d6f48e41a180131e18efaf31634fa4b6147c10aaf5acb1533745e246cf87",
+  "checkpoint": "output/a31_ding3_boundary/checkpoint.pt.history/checkpoint_000003200000.pt",
+  "copy_evidence_utf8_gate": false,
+  "circuit_carried_envelopes": [],
+  "control_no_circuit": {
+    "circuit": null,
+    "chain": "base_raw_bytes",
+    "mount_entry": "none",
+    "gate_effective": false,
+    "items": 104,
+    "texts": 260,
+    "well_formed_texts": 32,
+    "well_formed_rate": 0.1231,
+    "utf8_decodable_rate": 0.35,
+    "utf8_decodable_trimmed_rate": 1.0,
+    "illegal_after_tail_trim_rate": 0.0,
+    "strict_hits": 0,
+    "rows": [
+      {
+        "id": "X001",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "到受个志列列成刚\n1. \n1. 列\n- 1, 1, 2,2,2,2,2,2,2,2,21�",
+        "well_formed": false
+      },
+      {
+        "id": "X002",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "到列列下个列列列的过双语物刽列列列中列列的�",
+        "well_formed": false
+      },
+      {
+        "id": "X003",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "到受个志列列列成刚\n1. \n列列列掰列列的过偁过�",
+        "well_formed": false
+      },
+      {
+        "id": "X004",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "到受一个列列列一个列列的过展。\n3. 列\n- 1, 1, 2,2",
+        "well_formed": true
+      },
+      {
+        "id": "X005",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "到列列列中个列列列的列列列。\n的列列列列戰叐",
+        "well_formed": false
+      },
+      {
+        "id": "X006",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "到受中吗列列中列列列中列列列的吗刚这个志列�",
+        "well_formed": false
+      },
+      {
+        "id": "X007",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "1. 到列列列一个个列的吗的吗的过受。\n2. \n1. \n1.",
+        "well_formed": true
+      },
+      {
+        "id": "X008",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "到受中列列列中个忁列列列成刚\n1. \n1. 嗶吗列\n- 12",
+        "well_formed": true
+      },
+      {
+        "id": "X009",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "到受个列列列的语刽。\n这列成到列的吗列成列的",
+        "well_formed": true
+      },
+      {
+        "id": "X010",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "到受个名列列列中列列一个列列的列列列。\n戰列",
+        "well_formed": false
+      },
+      {
+        "id": "X011",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "到受个志列列一个列列个列的列列列列。\n我到列",
+        "well_formed": false
+      },
+      {
+        "id": "X012",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "到受吗。\n3. \n1. \n1. \n1. \n1, 1\n, 1, 1,2,2,2,2,2,2,2,1主下�",
+        "well_formed": false
+      },
+      {
+        "id": "X013",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "到受以列列列个忝列列的列列列成刚\n1. 倂\n\n的列�",
+        "well_formed": false
+      },
+      {
+        "id": "X014",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "1. 列列列列下个个列列列的过展。\n的列列列列�",
+        "well_formed": false
+      },
+      {
+        "id": "X015",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "1. 到列列列一个个列的吗的列中列列列一个列的",
+        "well_formed": false
+      },
+      {
+        "id": "X016",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "到受个列列个的吗的过可以个列列列一个刚\n1. \n1.",
+        "well_formed": true
+      },
+      {
+        "id": "X017",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "到受列列个个列列列的列列列成刚\n1. \n列\n- 12, 1, 1",
+        "well_formed": false
+      },
+      {
+        "id": "X018",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "刻个志列列个忁成刚\n1. 倁\n的列列列下个忇在的�",
+        "well_formed": false
+      },
+      {
+        "id": "X019",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "到受个志列受个忛列的吗列受个忝嗗我一个列列�",
+        "well_formed": false
+      },
+      {
+        "id": "X020",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "到列列列一个个列列成刚\n1. \n1. \n1. \n- 1\n- 1, 1,吗的�",
+        "well_formed": false
+      },
+      {
+        "id": "X021",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "到受以下帪列列列一个列列的列列个列列的列列�",
+        "well_formed": false
+      },
+      {
+        "id": "X022",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "到到冗。\n3. 列列列列列的过和列列列掰列列成刚",
+        "well_formed": false
+      },
+      {
+        "id": "X023",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "1. 列列列列列的过发语物刽。\n2. 列列列列的过�",
+        "well_formed": false
+      },
+      {
+        "id": "X024",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "到受中吗列列一个忿列的吗列列一个忁成到冚\n1.",
+        "well_formed": false
+      },
+      {
+        "id": "X025",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "到列列列一个个列列成列的吗列成刚\n1. 列, 12,\n- 1",
+        "well_formed": true
+      },
+      {
+        "id": "X026",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "到受个个志列列列中列列中列列中列列中列列刑�",
+        "well_formed": false
+      },
+      {
+        "id": "X027",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "到受个志列受个忿的吗列列一个志列列一的嗗列�",
+        "well_formed": false
+      },
+      {
+        "id": "X028",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "到列。\n3. 列列列列下个列列的过刚过列。\n3. \n1. �",
+        "well_formed": false
+      },
+      {
+        "id": "X029",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "到受一个列列列一个列的吗列列一的列列列的列�",
+        "well_formed": false
+      },
+      {
+        "id": "X030",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "到受个忇受列列一个忁列列我一、偁列列列、我�",
+        "well_formed": false
+      },
+      {
+        "id": "X031",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "1. 到列列列一个列的吗的过受列列一个列列的列",
+        "well_formed": false
+      },
+      {
+        "id": "X032",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "到受会发列是以列成刚\n1. \n1. \n- 1, 2, 2,2,2,2,2,2,2,21�",
+        "well_formed": false
+      },
+      {
+        "id": "X033",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "到受吗列列中个志列列的吗刚这得语刨列列列中�",
+        "well_formed": false
+      },
+      {
+        "id": "X034",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "刽的列列列列。\n\n等列列列列。\n3旯一个忿列列列",
+        "well_formed": false
+      },
+      {
+        "id": "X035",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "到受个忇受列列一个帋的列列中列列列中列列的�",
+        "well_formed": false
+      },
+      {
+        "id": "X036",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "到受列。\n3. 列\n- 1, 2, 2,2,2,2,2,2,2,2122,12,19\n的列列�",
+        "well_formed": false
+      },
+      {
+        "id": "X037",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "到受以帋列列列中列列列的过凪刌成刚\n1. \n1. \n1.",
+        "well_formed": true
+      },
+      {
+        "id": "X038",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "1. 列列列列下个个名列的过发个进语刽的列列列",
+        "well_formed": false
+      },
+      {
+        "id": "X039",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "到列列列。\n3. 列\n- 12, 2, 1, 1, 1, 1,2,2,2,2,2,2,2,21中�",
+        "well_formed": false
+      },
+      {
+        "id": "X040",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "1. 列列列一个个列列列的过偁过列。\n2. \n1. \n1. \n1.",
+        "well_formed": true
+      },
+      {
+        "id": "X041",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "到列列列个个列列的列列成刚这吗成刚\n1. 列\n- 13,",
+        "well_formed": true
+      },
+      {
+        "id": "X042",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "到列一个个列列列列中列列列的裗割。\n3戰受列�",
+        "well_formed": false
+      },
+      {
+        "id": "X043",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "到受个志列列一个列列个列的列列列列。\n我到列",
+        "well_formed": false
+      },
+      {
+        "id": "X044",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "到受列。\n3. 列\n- 1, 1, 1, 2,2,2,2,2,112,12,112中列列列�",
+        "well_formed": false
+      },
+      {
+        "id": "X045",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "到受吗。\n3. 列吗列列下个忇受列的过双自弌列列",
+        "well_formed": false
+      },
+      {
+        "id": "X046",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "到列列列一个个列列列的语刽刻这凪列的过弌这�",
+        "well_formed": false
+      },
+      {
+        "id": "X047",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "1. 到列列列下个吗的吗的吗的吗的列中列列列一",
+        "well_formed": false
+      },
+      {
+        "id": "X048",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "1. 到列一个志列列一个同的列列列一个列列的列",
+        "well_formed": false
+      },
+      {
+        "id": "X049",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "到列列列个个列列的列列成刚这吗成刚\n1. \n1. \n- 2,",
+        "well_formed": true
+      },
+      {
+        "id": "X050",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "刽列个个列列列列中、偁列列列、\n的嗗列列是中",
+        "well_formed": false
+      },
+      {
+        "id": "X051",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "列受个志列受个忇受列的嗗刽、\n等、弚\n1. 倗\n- 1,",
+        "well_formed": false
+      },
+      {
+        "id": "X052",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "列列列。\n2. \n1. \n1. \n1.\n. \n1.\n\n- 1:列下个列列列、\n这",
+        "well_formed": true
+      },
+      {
+        "id": "X053",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "到列列列一个个列列的列列中列列的过双以个列�",
+        "well_formed": false
+      },
+      {
+        "id": "X054",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "1. 列列列一个忁列的语刨刌这吗。\n3. \n1. \n1. \n1. \n1",
+        "well_formed": true
+      },
+      {
+        "id": "X055",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "到受个列列列个列的吗列的列列一个个列列的列�",
+        "well_formed": false
+      },
+      {
+        "id": "X056",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "1. 列列列列列下个个列列列的过偁过列列。\n3. �",
+        "well_formed": false
+      },
+      {
+        "id": "X057",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "到受个志列列个列的列列列的列列列是以別成的�",
+        "well_formed": false
+      },
+      {
+        "id": "X058",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "刽的吗列列个个志列列个列的列列列列。\n这得列",
+        "well_formed": false
+      },
+      {
+        "id": "X059",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "到受个志列受个名刚我一个列列列一的列列列一�",
+        "well_formed": false
+      },
+      {
+        "id": "X060",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "到受列。\n3. 列列列列掰列列的过凪列的刽的列列",
+        "well_formed": false
+      },
+      {
+        "id": "X061",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "到列列列。\n3. 列\n- 12, 2, 1, 1,,2,2,2,2,2,2,2,接下列列",
+        "well_formed": true
+      },
+      {
+        "id": "X062",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "1. 列列列列下个个列列的过双自弌这列成到列是",
+        "well_formed": false
+      },
+      {
+        "id": "X063",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "到列列列一个个列列的吗列的列列一个列的列列�",
+        "well_formed": false
+      },
+      {
+        "id": "X064",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "到受个志列列中列列成刚\n1. \n1. \n- 1, 2,2,2,2,2,2,2,2,�",
+        "well_formed": false
+      },
+      {
+        "id": "X065",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "到受个志列列个列列列的吗刚\n1. \n1. \n- 1, 2,2,2,2,2,2",
+        "well_formed": true
+      },
+      {
+        "id": "X066",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "到受个志列列一个列列列中列列列。\n3. 嗗\n- 1,凪�",
+        "well_formed": false
+      },
+      {
+        "id": "X067",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "列受个志成列成刚\n1. 列\n- 13, 2,2,2,2,2,2,2,2,2,以下�",
+        "well_formed": false
+      },
+      {
+        "id": "X068",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "到列。\n3. 列列列列。\n3旗列。\n2. 列列列的合列列",
+        "well_formed": false
+      },
+      {
+        "id": "X069",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "到列列列下个列列的列列列成刚\n1. \n列列列列的�",
+        "well_formed": false
+      },
+      {
+        "id": "X070",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "到受个志列列个忙列成到这和列列成刚\n1. 倂\n3. �",
+        "well_formed": false
+      },
+      {
+        "id": "X071",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "1. 列列列列中个列列的过叐个列的过叐列的吗的",
+        "well_formed": false
+      },
+      {
+        "id": "X072",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "到受个志列列一个忿列的列列一有语刽的列列成�",
+        "well_formed": false
+      },
+      {
+        "id": "X073",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "到受个列列列中列列的列列列的列列的列列的列�",
+        "well_formed": false
+      },
+      {
+        "id": "X074",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "到冨的过凪列列列个列列的语刽刌一个个志列列�",
+        "well_formed": false
+      },
+      {
+        "id": "X075",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "到受个志列受个忿成刚\n1. 倁\n的列列列列下个忿�",
+        "well_formed": false
+      },
+      {
+        "id": "X076",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "到列。\n3. 列\n- 1, 1, 2,2,2,2,2,2,12,12,12,2, 1,, 1,, 2,,\n答",
+        "well_formed": false
+      },
+      {
+        "id": "X077",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "到列列一个个列列列的过双以个列列列的列列中�",
+        "well_formed": false
+      },
+      {
+        "id": "X078",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "1. 列列列列一个个忿列的凪列列一个列列列一的",
+        "well_formed": false
+      },
+      {
+        "id": "X079",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "1. 到列列列列下个个列列的列列成刚\n1. \n1. \n- 1, 1",
+        "well_formed": true
+      },
+      {
+        "id": "X080",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "到受个忇受列列个列列的列列列列。\n这得列。\n3.",
+        "well_formed": false
+      },
+      {
+        "id": "X081",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "到列列列个个列列的列列列的列列列成刚\n1. \n嗗\n-",
+        "well_formed": false
+      },
+      {
+        "id": "X082",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "刽刚名学、这凪凪列列语语彿刽的廥个志列列中�",
+        "well_formed": false
+      },
+      {
+        "id": "X083",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "到受个志列受个忇受列个忁列列一个帪列列刑一�",
+        "well_formed": false
+      },
+      {
+        "id": "X084",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "到受列。\n3. 列\n- 1, 2, 2,,2,2,2,2,2,2,2,2,任下列列列�",
+        "well_formed": false
+      },
+      {
+        "id": "X085",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "到受中列列列中列列成刚\n1. \n1. \n- 1, 2,2,2,2,2,2,2,2,�",
+        "well_formed": false
+      },
+      {
+        "id": "X086",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "到受吗。\n3. 嗗列列列列列列列刑任以列合列成弚",
+        "well_formed": false
+      },
+      {
+        "id": "X087",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "到受以吗成列个列受列列的吗刚这凪受列列掰列�",
+        "well_formed": false
+      },
+      {
+        "id": "X088",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "1. 列列列一个个列列成列受个的列列成刚\n1. \n1.",
+        "well_formed": true
+      },
+      {
+        "id": "X089",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "到受个列列列列的列列的列列的列列成刚列成的�",
+        "well_formed": false
+      },
+      {
+        "id": "X090",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "到列个个列列列的语该诽的刽列列刚这个列列成�",
+        "well_formed": false
+      },
+      {
+        "id": "X091",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "到受个志列列个忇受列的彿刚这得语刨列列列中�",
+        "well_formed": false
+      },
+      {
+        "id": "X092",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "到受列。\n3. 列\n- 1, 2, 2,2,2,2,2,2,2,2122,12,19\n答：到�",
+        "well_formed": false
+      },
+      {
+        "id": "X093",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "到受吗的过发个列列列个列列的列列列。\n等、过",
+        "well_formed": false
+      },
+      {
+        "id": "X094",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "到列列列一个忁列的吗列列中列列一个忁列的过�",
+        "well_formed": false
+      },
+      {
+        "id": "X095",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "1. 列列列列下个个吗的吗列列一个的吗列列一是",
+        "well_formed": false
+      },
+      {
+        "id": "X096",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "到受中吗列列一个忁列成到冗的凪列列成刚\n1. 倁",
+        "well_formed": false
+      },
+      {
+        "id": "X097",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "到受个列列列个列列的列列列成刚\n1. \n列\n- 12, 1, 1",
+        "well_formed": false
+      },
+      {
+        "id": "X098",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "到列列列这个个列列的列列列的这列列成刚这吗�",
+        "well_formed": false
+      },
+      {
+        "id": "X099",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "到受个志列列个忇受列的彿刚这得语刨列列列个�",
+        "well_formed": false
+      },
+      {
+        "id": "X100",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "到列。\n3成列。\n3我下列列列、\n的列列列。\n\n3. 列",
+        "well_formed": false
+      },
+      {
+        "id": "X101",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "到受以列列列一个个列列列的列列列成刚\n1. \n1. \n1",
+        "well_formed": false
+      },
+      {
+        "id": "X102",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "到列列列一个个忿列的列列一、这得列。\n1. 列\n-",
+        "well_formed": false
+      },
+      {
+        "id": "X103",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "1. 到列列列一个个列列的过双以中成列列列一个",
+        "well_formed": false
+      },
+      {
+        "id": "X104",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "到受个忇受列列一个忁列列列一个列列列的弌列�",
+        "well_formed": false
+      }
+    ]
+  },
+  "treated_arms": [
+    {
+      "circuit": "output/taiji_r2_copy_circuit_chat/judge/circuit-final.pt",
+      "chain": "base_raw_bytes",
+      "mount_entry": "enable_copy_circuit",
+      "gate_effective": true,
+      "items": 104,
+      "texts": 260,
+      "well_formed_texts": 4,
+      "well_formed_rate": 0.0154,
+      "utf8_decodable_rate": 0.0731,
+      "utf8_decodable_trimmed_rate": 1.0,
+      "illegal_after_tail_trim_rate": 0.0,
+      "strict_hits": 26,
+      "rows": [
+        {
+          "id": "X001",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "轩轩轩轩轩轩轩轩明轩轩轩轩轩轩明轩轩轩轩轩�",
+          "well_formed": false
+        },
+        {
+          "id": "X002",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "苷苷苷苷苷苷苷苷苷苷苷苷苷苷苷苷苷苷苷苷苷�",
+          "well_formed": false
+        },
+        {
+          "id": "X003",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "喘喘欢欢欢欢欢欢欢欢欢欢欢欢欢欢欢欢欢欢欢�",
+          "well_formed": false
+        },
+        {
+          "id": "X004",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "跷图图图图图图图图图图图图图雮图海囮龷巷图�",
+          "well_formed": false
+        },
+        {
+          "id": "X005",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "喝乳时时爱喝乳时爱喝乳时龙乳时时爱喝乳时龙�",
+          "well_formed": false
+        },
+        {
+          "id": "X006",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "鸮鸮檪鸮鸮鸮檪鸮鸮鸮檪鸮鸮鸮鸮檪鸮鸮鸮鸮鸮�",
+          "well_formed": false
+        },
+        {
+          "id": "X007",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "迿读迿读读迿读读迿读迿读迿读读迿读迿读迿读�",
+          "well_formed": false
+        },
+        {
+          "id": "X008",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "似包汱包包吃包吃包吃包吃包包包包包汌汌包包�",
+          "well_formed": false
+        },
+        {
+          "id": "X009",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "雐雐雐成雐雨搐成雐雨搐成雐雐成雐成雐成雐雨�",
+          "well_formed": false
+        },
+        {
+          "id": "X010",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "安西安西安西安西安西安西安西安西安西安西安�",
+          "well_formed": false
+        },
+        {
+          "id": "X011",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "212121212121212121欢21212121212121212121212121212121212121212",
+          "well_formed": false
+        },
+        {
+          "id": "X012",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "星晟晙队晟晙星队晙星队晟晙星队晙星队晙星队�",
+          "well_formed": false
+        },
+        {
+          "id": "X013",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "苉打打苉打苉打苉打苉打苉打苉苉苉打英喝苉苉�",
+          "well_formed": false
+        },
+        {
+          "id": "X014",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "养一养一养一养一养一养一养一养一养一养一养�",
+          "well_formed": false
+        },
+        {
+          "id": "X015",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "迿读迿读读迿读迿读迿读迿读迿读读迿读迿读迿�",
+          "well_formed": false
+        },
+        {
+          "id": "X016",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "辣吃辣吃辣吃辣吃辣吃辣吃辣吃辣吃辣吃辣吃辣�",
+          "well_formed": false
+        },
+        {
+          "id": "X017",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "泽承承承承承承承承承承承承承承承承承承承承�",
+          "well_formed": false
+        },
+        {
+          "id": "X018",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "岛岛青岛青岛青岛青岛青岛青岛青岛青岛青岛青�",
+          "well_formed": false
+        },
+        {
+          "id": "X019",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "777777777777777777777777777777777777777777777777777777777777",
+          "well_formed": false
+        },
+        {
+          "id": "X020",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "賾徳徳徳徳徳徳徳徟径鳳徟泟鮳鮮径鳟音徟径鳟�",
+          "well_formed": false
+        },
+        {
+          "id": "X021",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "汱酿花酿花酿花酿花酿花酿花酿花酿花酿花酿花�",
+          "well_formed": false
+        },
+        {
+          "id": "X022",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "一养一养一养一养一养一养一养一养一养一养一�",
+          "well_formed": false
+        },
+        {
+          "id": "X023",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "读读读读读读读读读读读读读读读读读语读违读�",
+          "well_formed": false
+        },
+        {
+          "id": "X024",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "艉泱吃艉泾艉泱吃艉泱吃艉泱吃艱吃泾艉泱吃泾�",
+          "well_formed": false
+        },
+        {
+          "id": "X025",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "迿违迿迿迿迿迿迿迿迿迿迿迿迿迿迿迿迿迿迿迿�",
+          "well_formed": false
+        },
+        {
+          "id": "X026",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "使沙长沙长沙长沙长沙长沙长沙长沙长沙长沙长�",
+          "well_formed": false
+        },
+        {
+          "id": "X027",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "999999999999999999999999999999999999999999999999999999999999",
+          "well_formed": false
+        },
+        {
+          "id": "X028",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "归人归人归人归人归人归人归人归人归人归人归�",
+          "well_formed": false
+        },
+        {
+          "id": "X029",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "柠檬柠檬柠檬柠檬柠檬柠檬柠檬柠檬柠檬柠檬柠�",
+          "well_formed": false
+        },
+        {
+          "id": "X030",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝�",
+          "well_formed": false
+        },
+        {
+          "id": "X031",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "迿迿读迿读迿读迿读迿读迿读迿读迿读读七读读�",
+          "well_formed": false
+        },
+        {
+          "id": "X032",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "胣汣汣汣汣汣汣汣汣汣汣汣汱吱胣胣汱吱能胱吃�",
+          "well_formed": false
+        },
+        {
+          "id": "X033",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "安慕安慕安慕安慕安慕安慕安慕安慕安慕安慕安�",
+          "well_formed": false
+        },
+        {
+          "id": "X034",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "明明明佘明明明明明明明明明明明明明明明明明�",
+          "well_formed": false
+        },
+        {
+          "id": "X035",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "24242424是1024242424是102424242424是1024242424242424242424242",
+          "well_formed": false
+        },
+        {
+          "id": "X036",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "涛听涛鬬涛鬬涛鬶涛鬬涛鬬涛鬶涛鬬涛鬬涛听涛�",
+          "well_formed": false
+        },
+        {
+          "id": "X037",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "茶砖茶砖茶砖茶砖茶砖茶砖茶砖茶砖茶砖茶砖茶�",
+          "well_formed": false
+        },
+        {
+          "id": "X038",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "說說說荾蜺个躆一荾了一荾了一荾了一荾一养一�",
+          "well_formed": false
+        },
+        {
+          "id": "X039",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "迪迪迪迿读读迿读迿读迿读迿读迿读迿读迿读迿�",
+          "well_formed": false
+        },
+        {
+          "id": "X040",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "臇臇臇臇臇臱臇臐臇臇臇臇臇臇臇臇臇臇臇臇臇�",
+          "well_formed": false
+        },
+        {
+          "id": "X041",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "青青青青青青青青青青青青青青青青青青青青青�",
+          "well_formed": false
+        },
+        {
+          "id": "X042",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "佷州淞淞淞淞淞淞佷淞淞淞佷淞淞淞佷淞淞淞淞�",
+          "well_formed": false
+        },
+        {
+          "id": "X043",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "7777777777欢欢欢欢欢欢欢欢欢欢欢欢欢欢欢欢欢7�",
+          "well_formed": false
+        },
+        {
+          "id": "X044",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "柳阳柳队柳柳队柳柳阳柳队柳柳队柳柳阳柳队柳�",
+          "well_formed": false
+        },
+        {
+          "id": "X045",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "普普普普普普普普普普普普普普普普普普普普普�",
+          "well_formed": false
+        },
+        {
+          "id": "X046",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "养了了了了了了了了了了为养了了了了了了了了�",
+          "well_formed": false
+        },
+        {
+          "id": "X047",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "迿工迿工工工工工工工读读读迩工迉工迿工迿工�",
+          "well_formed": false
+        },
+        {
+          "id": "X048",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "苗苗苗苗苗苗苗苗苗苗苗苗苗苗苗苗苗苗苗苗苗�",
+          "well_formed": false
+        },
+        {
+          "id": "X049",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "宁宁洛宁洛宁洛宁洛宁洛宁洛宁洛宁洛宁洛宁洛�",
+          "well_formed": false
+        },
+        {
+          "id": "X050",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "宁波波波波波波波波波波波波波波波波波波波波�",
+          "well_formed": false
+        },
+        {
+          "id": "X051",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "喘88888888888888888888888888欢欢欢欢欢欢欢欢欢欢欢�",
+          "well_formed": false
+        },
+        {
+          "id": "X052",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "豱山鱱鱱鱱鱱鱱鱽疱疱疱疱疱山鱱鱱鱱鱱鱱鱱鱱�",
+          "well_formed": false
+        },
+        {
+          "id": "X053",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "荞荞荞荞荞荞荞荞荞荞荞茶荞茶茶茶茶荞茶茶茶�",
+          "well_formed": false
+        },
+        {
+          "id": "X054",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "鹉鹉鹉鹉鹉鹉鹉鹉鹉鹉鹉鹉鹉鹉三鹉鹉鹉鹉鹉鹉�",
+          "well_formed": false
+        },
+        {
+          "id": "X055",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "迁读迁读读迁毻读读读读读迯读迁毻读读迁迯读�",
+          "well_formed": false
+        },
+        {
+          "id": "X056",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "色色艱吱吃鸭艱吃鸭艱吃鸭艱吃鸭艱吃鸭色色色�",
+          "well_formed": false
+        },
+        {
+          "id": "X057",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "时人人人予予。予予时人人人人人人人人人人人�",
+          "well_formed": false
+        },
+        {
+          "id": "X058",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "州温州温州温州温州温州温州温州温州温州温州�",
+          "well_formed": false
+        },
+        {
+          "id": "X059",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "212121212121212121212121212121212121212121212121212121212121",
+          "well_formed": false
+        },
+        {
+          "id": "X060",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "风风风风风风风风风风风风风风风风风风风风风�",
+          "well_formed": false
+        },
+        {
+          "id": "X061",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "时枣茶红时红时红时茶红时茶红时茶红时茶红时�",
+          "well_formed": false
+        },
+        {
+          "id": "X062",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "一养一养一养一养一养一养一养一养一养一养一�",
+          "well_formed": false
+        },
+        {
+          "id": "X063",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "迿违迿读迿读迿读迿读迿读迿读迿读读迿读迿读�",
+          "well_formed": false
+        },
+        {
+          "id": "X064",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "蟹黱吱包蟹黱吃蟹黱吱山吃蟹黄汱包蟹黱蟹黱吱�",
+          "well_formed": false
+        },
+        {
+          "id": "X065",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "堚栚堚堚堚堚堚堚堚堚堚堚堚堚栚栚栚栚栚栚栚�",
+          "well_formed": false
+        },
+        {
+          "id": "X066",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "佳阳阳洛阳阳阳阳洛阳阳阳阳洛阳阳阳阳洛阳阳�",
+          "well_formed": false
+        },
+        {
+          "id": "X067",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "2525256欢2525252525252525欢25252525252525252525252525252525252",
+          "well_formed": false
+        },
+        {
+          "id": "X068",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "雮宿雮宿雮宿雮宿雮宿雮宿雮宿雮宿雮宿雮宿雮�",
+          "well_formed": false
+        },
+        {
+          "id": "X069",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "水水水水水水水水水水水水水水水水水水水水水�",
+          "well_formed": false
+        },
+        {
+          "id": "X070",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "一养一养一养一养一养一养一养一养一养一养一�",
+          "well_formed": false
+        },
+        {
+          "id": "X071",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "迿华迿读迿读迿华迿读迿读迿读迺读迿读迺读迿�",
+          "well_formed": false
+        },
+        {
+          "id": "X072",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "艉面艉面汉面汉面汉面汉面汉面汉面汉面汉面汉�",
+          "well_formed": false
+        },
+        {
+          "id": "X073",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "苙苙苙苙苙苙苙晚苙苙苙苙晙苙苙苙苙苙苙苙苙�",
+          "well_formed": false
+        },
+        {
+          "id": "X074",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "鬷扬扬州扬州扬州扬州扬州扬州扬州扬州扬州佉�",
+          "well_formed": false
+        },
+        {
+          "id": "X075",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "13131313131313131313131313131313131313131313131313131313131欢",
+          "well_formed": false
+        },
+        {
+          "id": "X076",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "舟舟舟舟舟舟舟舟舟舟舟舟舟舟舟舟舟舟舟茌舟�",
+          "well_formed": false
+        },
+        {
+          "id": "X077",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "荷饮时荷饮时荷饮时荷饮时荷饮时荷饮荷饮荷饮�",
+          "well_formed": false
+        },
+        {
+          "id": "X078",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "一养一养一养一养一养一养一养一养一养一养一�",
+          "well_formed": false
+        },
+        {
+          "id": "X079",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "迿读迿读读迿读迿读迿读迿读迿读读迿读迿读迿�",
+          "well_formed": false
+        },
+        {
+          "id": "X080",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "豼鱼輱屼豼輱吃鱼輱吃鱼豼鱼汼豼豼踱吱鱼豼鱼�",
+          "well_formed": false
+        },
+        {
+          "id": "X081",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "舟舟舟舟舟舟舟舟舟舟舟舟舟沟蟟舟舟舟舟舟舟�",
+          "well_formed": false
+        },
+        {
+          "id": "X082",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "州泉州泉州泉州泉州泉州泉州泉州泉州泉州泉州�",
+          "well_formed": false
+        },
+        {
+          "id": "X083",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "202020202020202020202020202020202020202020202020202020202020",
+          "well_formed": false
+        },
+        {
+          "id": "X084",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "曮咛舒舒舒舒雮望舒舒舒舒舒舒舒舒戒议撮曮舒�",
+          "well_formed": false
+        },
+        {
+          "id": "X085",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "楱楱楱楱楱楱楱楱楱楱楱楱楱楱楱楱楱楱楱楱楱�",
+          "well_formed": false
+        },
+        {
+          "id": "X086",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "养一养一养一养一养一养一养一养一养一养一养�",
+          "well_formed": false
+        },
+        {
+          "id": "X087",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "迿迿迿读迿读迿读迿读迿读迿读迿读迿读迿读迿�",
+          "well_formed": false
+        },
+        {
+          "id": "X088",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "吃吃吃吃吃吃吃吃吃吃吃吃吃吃吃吃吃吃吃吃吃�",
+          "well_formed": false
+        },
+        {
+          "id": "X089",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "昭阭阭阭阭阭阭阭阭阭龘阭龘阭龘阭龘顾昭阭阭�",
+          "well_formed": false
+        },
+        {
+          "id": "X090",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "芜湖芜湖芜湖芜湖芜湖芜湖芜湖芜湖芜湖芜湖芜�",
+          "well_formed": false
+        },
+        {
+          "id": "X091",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "181818欢欢欢欢欢欢欢欢欢欢欢欢欢欢欢欢欢欢欢�",
+          "well_formed": false
+        },
+        {
+          "id": "X092",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "央央央央央央央央央央央央央央央央央央央央央�",
+          "well_formed": false
+        },
+        {
+          "id": "X093",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "茉茉茉茉茉茉茉茉茉茉茉茉茉茉茉茉茉茉茉茉茉�",
+          "well_formed": false
+        },
+        {
+          "id": "X094",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "蝙蝙蝙蝙蝙蝙蝙蝙蝙蝙蝙蝙蝙蝠蝙蝙蝙蝙蝙蝙蝙�",
+          "well_formed": false
+        },
+        {
+          "id": "X095",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "迆迆迆迆迆读迆迆迆迆迆迆迆迆迆迆迆读迆迆迆�",
+          "well_formed": false
+        },
+        {
+          "id": "X096",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "萃吃吃汐吃狮吃汐吃狮吃汐吃狮吃汐吃汐吃狮吃�",
+          "well_formed": false
+        },
+        {
+          "id": "X097",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "吟晚吟晚吟晚吟晚吟晚吟晚吟晚吟晚吟晚吟晚吟�",
+          "well_formed": false
+        },
+        {
+          "id": "X098",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "自自自自自自自自自自自自自自自自自自自自自�",
+          "well_formed": false
+        },
+        {
+          "id": "X099",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "909090909090909090909090909090909090909090909090909099090909",
+          "well_formed": false
+        },
+        {
+          "id": "X100",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "饧拥拥駋饧拟拟韥秋駋駋駋駋駋駋駋韥秋韥拟韥�",
+          "well_formed": false
+        },
+        {
+          "id": "X101",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "荷喝荷茶茶茶茶荷喝茶茶茶荷喝茶茶荷荷荷荷茶�",
+          "well_formed": false
+        },
+        {
+          "id": "X102",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "一养一养一养一养一养一养一养一养一养一养一�",
+          "well_formed": false
+        },
+        {
+          "id": "X103",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "迿迸迸迸读迿读迸读迸迸迿读迸迸迸迸迸读迸迸�",
+          "well_formed": false
+        },
+        {
+          "id": "X104",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "吇臇臇艇臇臇臇臇臇臇臇臇臇臇臇臇艇吱吃吃吃�",
+          "well_formed": false
+        }
+      ]
+    }
+  ],
+  "surface_verdict": {
+    "min_gap_texts": 3,
+    "per_circuit": [
+      {
+        "circuit": "output/taiji_r2_copy_circuit_chat/judge/circuit-final.pt",
+        "gap_texts": -28,
+        "direction": "worse",
+        "meets_min_gap": true,
+        "control_rate": 0.1231,
+        "treated_rate": 0.0154
+      }
+    ],
+    "status": "not_resolved",
+    "verdict": "not_resolved（独立取数只有 1 次，判据要求 ≥2 次）"
+  },
+  "base_sha256_unchanged": true
+}

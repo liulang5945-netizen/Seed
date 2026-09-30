@@ -1,0 +1,1517 @@
+{
+  "format": "taiji-r2-copy-surface-extension-v1",
+  "prereg": "plans/reference/SPEC-A-21_r2_surface_extension_prereg_20260925.md",
+  "judge_prereg": "plans/reference/SPEC-A-22_r2_a2_5_query_conditioned_selector_prereg_20260926.md",
+  "manifest": "plans/manifests/r2_copy_surface_extension_v1.json",
+  "chain": "base_raw_bytes",
+  "manifest_sha256": "4d04d6f48e41a180131e18efaf31634fa4b6147c10aaf5acb1533745e246cf87",
+  "checkpoint": "output/a31_ding3_boundary/checkpoint.pt",
+  "copy_evidence_utf8_gate": false,
+  "circuit_carried_envelopes": [],
+  "control_no_circuit": {
+    "circuit": null,
+    "chain": "base_raw_bytes",
+    "mount_entry": "none",
+    "gate_effective": false,
+    "items": 104,
+    "texts": 260,
+    "well_formed_texts": 90,
+    "well_formed_rate": 0.3462,
+    "utf8_decodable_rate": 0.45,
+    "utf8_decodable_trimmed_rate": 1.0,
+    "illegal_after_tail_trim_rate": 0.0,
+    "strict_hits": 0,
+    "rows": [
+      {
+        "id": "X001",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "木的这个是的动是的这个是的",
+        "well_formed": true
+      },
+      {
+        "id": "X002",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "月的这个月的有月的这个是的",
+        "well_formed": true
+      },
+      {
+        "id": "X003",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "有月是这个是日，孽的席的这个是的子日，学：",
+        "well_formed": true
+      },
+      {
+        "id": "X004",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "月月盽。\n2. 是日本孽的这个是日孥孥孥孥的这个",
+        "well_formed": true
+      },
+      {
+        "id": "X005",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "月的这个是的本子朂子的这个是的",
+        "well_formed": true
+      },
+      {
+        "id": "X006",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "期的这个是日子中的这个是的文本孈的的这中是�",
+        "well_formed": false
+      },
+      {
+        "id": "X007",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "月月的这中月的这中月的本可中的这个是的有月�",
+        "well_formed": false
+      },
+      {
+        "id": "X008",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "木本子木的这个是日孽的这个是：\n1. 日本孭的这",
+        "well_formed": true
+      },
+      {
+        "id": "X009",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "木未是筈夯月是中的这期期期木的期木的这个是�",
+        "well_formed": false
+      },
+      {
+        "id": "X010",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "期期的这个是日孈的这个是的",
+        "well_formed": true
+      },
+      {
+        "id": "X011",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "有月的这个是日孽的这个是的文本子的的日，孽�",
+        "well_formed": false
+      },
+      {
+        "id": "X012",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "月月答：木本孽的这个是日孥孥孥的筯这个是的�",
+        "well_formed": false
+      },
+      {
+        "id": "X013",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "木的这个是的多中的这个是的有孈的的旮：木是�",
+        "well_formed": false
+      },
+      {
+        "id": "X014",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "木月是这个是月孈的这中日，这个月的有本孯这�",
+        "well_formed": false
+      },
+      {
+        "id": "X015",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "期的期的这个是的这中月的有国孈的的这中是的�",
+        "well_formed": false
+      },
+      {
+        "id": "X016",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "月的衦。",
+        "well_formed": false
+      },
+      {
+        "id": "X017",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "木月的这个是的有孈答：的有本可中的这期本的�",
+        "well_formed": false
+      },
+      {
+        "id": "X018",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "期的有动的这个是的孈绥日，多有的有的学，这�",
+        "well_formed": false
+      },
+      {
+        "id": "X019",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "有月的这个是的动渭的这个是的旮：木我中的问�",
+        "well_formed": false
+      },
+      {
+        "id": "X020",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "月月盽的这个月盽有月答，这个月答，太月答：�",
+        "well_formed": false
+      },
+      {
+        "id": "X021",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "木的有动渭的这个是绥孽有月有的有孈的这个是�",
+        "well_formed": false
+      },
+      {
+        "id": "X022",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "期期的这个是，这个有孈的这中是中的期答：木�",
+        "well_formed": false
+      },
+      {
+        "id": "X023",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "期期的期答，月有劥孽的这个是的本孽的这个是�",
+        "well_formed": false
+      },
+      {
+        "id": "X024",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "木本太这个是日孽的日孽子的这个是的子的这个�",
+        "well_formed": false
+      },
+      {
+        "id": "X025",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "木的这个是的动是的这个是的",
+        "well_formed": true
+      },
+      {
+        "id": "X026",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "木本子朂\n2. 是 是是个渪的日，孈日，这个是朂�",
+        "well_formed": false
+      },
+      {
+        "id": "X027",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "有月的这个是的文本孈的的这个是的子日，多中�",
+        "well_formed": false
+      },
+      {
+        "id": "X028",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "期期的这个是日孥孥孥的的这个是的",
+        "well_formed": true
+      },
+      {
+        "id": "X029",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "月月盽的这个是日孥孥孥孥的这个是的有月的有�",
+        "well_formed": false
+      },
+      {
+        "id": "X030",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "月月盽有本可这个是月中的这中月文本的本孈中�",
+        "well_formed": false
+      },
+      {
+        "id": "X031",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "期期的期筈，夆的这个是的孥孥孥別是的动的这�",
+        "well_formed": false
+      },
+      {
+        "id": "X032",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "木的有本孽的这个是是答：木本子朂力最的这个�",
+        "well_formed": false
+      },
+      {
+        "id": "X033",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "木的这个是的动是中的这个月月盽太的",
+        "well_formed": true
+      },
+      {
+        "id": "X034",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "有的这个是的孽：的这个是的",
+        "well_formed": true
+      },
+      {
+        "id": "X035",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "有月的这个是的有孈的这个是的孈的这中是的问�",
+        "well_formed": false
+      },
+      {
+        "id": "X036",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "月月盽的这个月盥孽有月答，这个是月答：木本�",
+        "well_formed": false
+      },
+      {
+        "id": "X037",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "月的这个是的孽日孥孥孥的这个是的有月答：\n1.",
+        "well_formed": true
+      },
+      {
+        "id": "X038",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "木月答，这个是月答：木木的期是这个是的这中�",
+        "well_formed": false
+      },
+      {
+        "id": "X039",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "期期的这个是的文本的这中月的",
+        "well_formed": true
+      },
+      {
+        "id": "X040",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "有本孈的这个是的有月学中的这日，多中的",
+        "well_formed": true
+      },
+      {
+        "id": "X041",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "木的这个是的外孽的这个是的",
+        "well_formed": true
+      },
+      {
+        "id": "X042",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "有答：木本可这个是日，这个是日答：木本子的�",
+        "well_formed": false
+      },
+      {
+        "id": "X043",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "有月的这个是的动渭的这个是的旮：木月的这个�",
+        "well_formed": false
+      },
+      {
+        "id": "X044",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "月盽的这个月盥孽分的这个是的",
+        "well_formed": true
+      },
+      {
+        "id": "X045",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "月月的这个是的有孈答：有本可这个是日，这个�",
+        "well_formed": false
+      },
+      {
+        "id": "X046",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "期期的这个是，这个有孈的这个是，孈中的日，�",
+        "well_formed": false
+      },
+      {
+        "id": "X047",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "期期的本可这中月月的这中月的",
+        "well_formed": true
+      },
+      {
+        "id": "X048",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "木的这中月盽有月答，这个是的有孽孈的这个是�",
+        "well_formed": false
+      },
+      {
+        "id": "X049",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "木月是筈，这个是的有孈答：木本可中的这朂子�",
+        "well_formed": false
+      },
+      {
+        "id": "X050",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "月月的这个是日孽的这个是的有月孈的这个是的�",
+        "well_formed": false
+      },
+      {
+        "id": "X051",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "有的有动的这个是的",
+        "well_formed": true
+      },
+      {
+        "id": "X052",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "月月盽的这个月盽有的有孥孥孥別的这个是的问�",
+        "well_formed": false
+      },
+      {
+        "id": "X053",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "木的有动的这个是中的",
+        "well_formed": true
+      },
+      {
+        "id": "X054",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "木月盽有这个是月盽有月答，这个是答：木本可�",
+        "well_formed": false
+      },
+      {
+        "id": "X055",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "期期的本的这个是的有孈答：有本可以孽的这个�",
+        "well_formed": false
+      },
+      {
+        "id": "X056",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "木的这中月文未月答，太日是答：可这个是月的�",
+        "well_formed": false
+      },
+      {
+        "id": "X057",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "木本动的这个是的动的这个是的",
+        "well_formed": true
+      },
+      {
+        "id": "X058",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "木的这个是的这个是的",
+        "well_formed": true
+      },
+      {
+        "id": "X059",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "有的有动的这个是个的",
+        "well_formed": true
+      },
+      {
+        "id": "X060",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "月月盽的这个月盽有盭的这中月盽有盭学，这个�",
+        "well_formed": false
+      },
+      {
+        "id": "X061",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "木的有动的这个是的孽日月的这个是的",
+        "well_formed": true
+      },
+      {
+        "id": "X062",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "期月的这个是日孈的这个是的",
+        "well_formed": true
+      },
+      {
+        "id": "X063",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "月有动的这个是的",
+        "well_formed": true
+      },
+      {
+        "id": "X064",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "木的有动渭的这日是中的这个是的有月旮：木木�",
+        "well_formed": false
+      },
+      {
+        "id": "X065",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "月月的这个是日孥孥孥的这个是的",
+        "well_formed": true
+      },
+      {
+        "id": "X066",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "木本可这个是日孽的的日孥日是筈学：\n1. 是 ong o",
+        "well_formed": true
+      },
+      {
+        "id": "X067",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "有月的这个是的动是的这中是中的",
+        "well_formed": true
+      },
+      {
+        "id": "X068",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "月月盽的这个月盽有的本孥孥孥別的答：木的这�",
+        "well_formed": false
+      },
+      {
+        "id": "X069",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "木月筈孽月是中月的这个是的期朂孈答：木的本�",
+        "well_formed": false
+      },
+      {
+        "id": "X070",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "木的这个是日孥孥孥的这个是：\n1. 是 ong ongerange",
+        "well_formed": true
+      },
+      {
+        "id": "X071",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "木本的期有月文本可这个是日孥：日：木本的渭�",
+        "well_formed": false
+      },
+      {
+        "id": "X072",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "木的这个是的文本孈的的文朂孈的的文有月是这�",
+        "well_formed": false
+      },
+      {
+        "id": "X073",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "木月的这个是日孽的这个是的旮霚木我的这个是�",
+        "well_formed": false
+      },
+      {
+        "id": "X074",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "期月的这个是日孽的",
+        "well_formed": true
+      },
+      {
+        "id": "X075",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "有月的有动的这个是的动的这个是的旮：月是的�",
+        "well_formed": false
+      },
+      {
+        "id": "X076",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "月盽的这个是的",
+        "well_formed": false
+      },
+      {
+        "id": "X077",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "月的这个是的月答，太有月的动的这个是的",
+        "well_formed": true
+      },
+      {
+        "id": "X078",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "期的这个是的孽日子的这个是的",
+        "well_formed": true
+      },
+      {
+        "id": "X079",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "期期的期筭，这个月的孈绥孽的这个是的有月的�",
+        "well_formed": false
+      },
+      {
+        "id": "X080",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "木的这中月答，这个是的",
+        "well_formed": true
+      },
+      {
+        "id": "X081",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "木月筈，这个是日孥孥孥孥的日",
+        "well_formed": true
+      },
+      {
+        "id": "X082",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "木的这个是的孽孈的这个是的",
+        "well_formed": true
+      },
+      {
+        "id": "X083",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "有月的这个是的动是有的这个是的",
+        "well_formed": true
+      },
+      {
+        "id": "X084",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "月月答：木木的这个朥孥孥孥孥孥的这个是的国�",
+        "well_formed": false
+      },
+      {
+        "id": "X085",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "木的有动的这个是的孈绥孽的这个是的有月的有�",
+        "well_formed": false
+      },
+      {
+        "id": "X086",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "期期的这个是月的这个是的有月孽渭的答：木木�",
+        "well_formed": false
+      },
+      {
+        "id": "X087",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "期期的期筈，夆的表。",
+        "well_formed": false
+      },
+      {
+        "id": "X088",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "月月答：木本孽的这个是日，这个是的有孭孽，�",
+        "well_formed": false
+      },
+      {
+        "id": "X089",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "木未是筈动孽的这个是的孈的这个是的旮：木木�",
+        "well_formed": false
+      },
+      {
+        "id": "X090",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "有的这个未月盽月的这个月的",
+        "well_formed": true
+      },
+      {
+        "id": "X091",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "有月文的这个是日孽的的日孽日子的这个是的问�",
+        "well_formed": false
+      },
+      {
+        "id": "X092",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "月月盽的这个月盽有月答，太",
+        "well_formed": true
+      },
+      {
+        "id": "X093",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "月的这个是的有月答，太",
+        "well_formed": true
+      },
+      {
+        "id": "X094",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "期期的这个是日",
+        "well_formed": false
+      },
+      {
+        "id": "X095",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "期期的期筈学日是是的这个是的这中月的这中是�",
+        "well_formed": false
+      },
+      {
+        "id": "X096",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "木本可这个是日孽的日有月的这个是的",
+        "well_formed": true
+      },
+      {
+        "id": "X097",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "木的这个是的动是中的的有这月是中的",
+        "well_formed": true
+      },
+      {
+        "id": "X098",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "月月盽有动木的这个是的这个月是答：这个是答�",
+        "well_formed": false
+      },
+      {
+        "id": "X099",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "有月月的这个是的月孽月是的可这个是日：木的�",
+        "well_formed": false
+      },
+      {
+        "id": "X100",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "月月盽的这个月盽有的本孥孥孥別的的这朂\n答：",
+        "well_formed": false
+      },
+      {
+        "id": "X101",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "木的这中是日孽的这个是的有孭孽，这个是的有�",
+        "well_formed": false
+      },
+      {
+        "id": "X102",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "期期的这个是这个是的有月子中的这个是的文本�",
+        "well_formed": false
+      },
+      {
+        "id": "X103",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "期的期的这个是的这个月的有我中的这朂孈日，�",
+        "well_formed": false
+      },
+      {
+        "id": "X104",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "木的这个是的文本可这中是日师的的这中是这中�",
+        "well_formed": false
+      }
+    ]
+  },
+  "treated_arms": [
+    {
+      "circuit": "output/taiji_r2_copy_circuit_chat/judge/circuit-final.pt",
+      "chain": "base_raw_bytes",
+      "mount_entry": "enable_copy_circuit",
+      "gate_effective": true,
+      "items": 104,
+      "texts": 260,
+      "well_formed_texts": 33,
+      "well_formed_rate": 0.1269,
+      "utf8_decodable_rate": 0.1962,
+      "utf8_decodable_trimmed_rate": 1.0,
+      "illegal_after_tail_trim_rate": 0.0,
+      "strict_hits": 27,
+      "rows": [
+        {
+          "id": "X001",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "轩轩明轩轩明轩轩明轩轩轩轩明轩轩轩轩轩明轩�",
+          "well_formed": false
+        },
+        {
+          "id": "X002",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "苷苷苷苷苷苷苷苷苷苋苷苷苷苷苷苷苷苷苷苷苷�",
+          "well_formed": false
+        },
+        {
+          "id": "X003",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "喯3是3欢欢欢欢欢欢欢欢欢欢欢欢欢欢欢欢欢欢�",
+          "well_formed": false
+        },
+        {
+          "id": "X004",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "图图图图图图图图图图图图海囮囮囮囮囮囮囮囮�",
+          "well_formed": false
+        },
+        {
+          "id": "X005",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "时籱喝乳时爱喝乳时籱喝乳时爱喝乳时爱喝乳时�",
+          "well_formed": false
+        },
+        {
+          "id": "X006",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "鸮鸮檪鸮鸮鸮檪鸮鸮鸮檪鸮鸮鸮鸮鸮雪鸮鸮鸮鸮�",
+          "well_formed": false
+        },
+        {
+          "id": "X007",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "迿迷读迿读读迿读迿读迿读读迿读迿读迿读读迿�",
+          "well_formed": false
+        },
+        {
+          "id": "X008",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "吃包吃包吃包吃包欼包汬欼包汱吃包吃包吃包包�",
+          "well_formed": false
+        },
+        {
+          "id": "X009",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "搐成成成成成成成成成成成成成成成成成成成成�",
+          "well_formed": false
+        },
+        {
+          "id": "X010",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "西安西安西安西安西安西安西安西安西安西安西�",
+          "well_formed": false
+        },
+        {
+          "id": "X011",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "212121212121212121欢21212121212121212121212121212121212121212",
+          "well_formed": false
+        },
+        {
+          "id": "X012",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "星晟晟晟星晟晙星晟晙星晟晙星晟晙星晟晙星晟�",
+          "well_formed": false
+        },
+        {
+          "id": "X013",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "打打苉打苳打打苉打苉打苳打英喝苉苳打英喝英�",
+          "well_formed": false
+        },
+        {
+          "id": "X014",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "一养一养一养一养一养一养一养一养一养一养一�",
+          "well_formed": false
+        },
+        {
+          "id": "X015",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "迿读迻迿读读迿读迿读迿读迿读读迿读迿读迿读�",
+          "well_formed": false
+        },
+        {
+          "id": "X016",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "子鸣吃辣吃辣吃辣吃辣吃辣吃辣吃辣吃辣吃辣吃�",
+          "well_formed": false
+        },
+        {
+          "id": "X017",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "承承承承承承承承承承承承承承承承承承承承承�",
+          "well_formed": false
+        },
+        {
+          "id": "X018",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "岛青岛青岛青岛青岛青岛青岛青岛青岛青岛青岛�",
+          "well_formed": false
+        },
+        {
+          "id": "X019",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "777777777777777777777777777777777777777777777777777777777777",
+          "well_formed": false
+        },
+        {
+          "id": "X020",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "徟鳟音徟音徳徳径鳟音徟音徳徳徳径鳟音徟徳徳�",
+          "well_formed": false
+        },
+        {
+          "id": "X021",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "汱酿花酿花酿花酿花酿花酿花酿花酿花酿花酿花�",
+          "well_formed": false
+        },
+        {
+          "id": "X022",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "栆了了了了了了了了了了了了了了了了丆了了了�",
+          "well_formed": false
+        },
+        {
+          "id": "X023",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "读读读读读读读读读读读读读读读读读读读读读�",
+          "well_formed": false
+        },
+        {
+          "id": "X024",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "艉泱吃艱吃艱吃艱吃艱吃泱艱吃艱吃泱艱吃泱艱�",
+          "well_formed": false
+        },
+        {
+          "id": "X025",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "迿违迿迿迿迿迿迿迿迿迿迿迿迿迿迿迿迿迿迿迿�",
+          "well_formed": false
+        },
+        {
+          "id": "X026",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "长沙长沙长沙长沙长沙长沙长沙长沙长沙长沙长�",
+          "well_formed": false
+        },
+        {
+          "id": "X027",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "999999999999999999999999999999999999999999999999999999999999",
+          "well_formed": false
+        },
+        {
+          "id": "X028",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "归人麺归人麺人人麺麺麺麺麺麺麺麺麺麺麺麺麺�",
+          "well_formed": false
+        },
+        {
+          "id": "X029",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "柠檬柠檬柠檬柠檬柠檬柠檬柠檬柠檬柠檬柠檬柠�",
+          "well_formed": false
+        },
+        {
+          "id": "X030",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝�",
+          "well_formed": false
+        },
+        {
+          "id": "X031",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "迿读迿读读迿读迿读迿读迿读读迺读迬迬迿读读�",
+          "well_formed": false
+        },
+        {
+          "id": "X032",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "胣汣汣汣汣汣汣汣汣汣胱吱能能胱吱辣汱吱胱能�",
+          "well_formed": false
+        },
+        {
+          "id": "X033",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "慕安慕安慕安慕安慕安慕安慕安慕安慕安慕安慕�",
+          "well_formed": false
+        },
+        {
+          "id": "X034",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "明明明明明明明明明明明明明明明明明明明明明�",
+          "well_formed": false
+        },
+        {
+          "id": "X035",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "24242424是102424242424是10242424242424242424242424242424242424",
+          "well_formed": false
+        },
+        {
+          "id": "X036",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "涛鬬涛鬬涛鬬涛鬬涛听涛鬬涛鬬涛鬬涛听涛鬬涛�",
+          "well_formed": false
+        },
+        {
+          "id": "X037",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "时砖茶砖茶砖茶砖茶砖茶砖茶砖茶砖茶砖茶砖茶�",
+          "well_formed": false
+        },
+        {
+          "id": "X038",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "一养一荾了了了了了了了了了了了了了了了了了�",
+          "well_formed": false
+        },
+        {
+          "id": "X039",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "迪迪迪迪迿读读迺读迿迪迪迪迬读迺读迿迪迪迬�",
+          "well_formed": false
+        },
+        {
+          "id": "X040",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "臇臇臇臇臇臇臇臱臇臭臇臇臇臇臇臱臇臇臇臇臇�",
+          "well_formed": false
+        },
+        {
+          "id": "X041",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "青青青青青青青青青青栚青青青青青青青青青青�",
+          "well_formed": false
+        },
+        {
+          "id": "X042",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "州州州州州州州州佷州淞淞淞淞淞佷淞淞淞淞佷�",
+          "well_formed": false
+        },
+        {
+          "id": "X043",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "7777777777欢欢欢欢欢欢欢欢欢欢欢欢欢欢欢7欢77777",
+          "well_formed": false
+        },
+        {
+          "id": "X044",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "柳柳柳柳柳柳柳柳柳柳柳阘柳柳柳柳柳柳柳阘柳�",
+          "well_formed": false
+        },
+        {
+          "id": "X045",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "普普普普普普普普普普普普普普普普普普普普普�",
+          "well_formed": false
+        },
+        {
+          "id": "X046",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "养了了了了了了了了了了了了了了了了了了了了�",
+          "well_formed": false
+        },
+        {
+          "id": "X047",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "迿读迩工工工工工工工迿工迩工迩工迩工迩工迩�",
+          "well_formed": false
+        },
+        {
+          "id": "X048",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "苗苗苗苗苗苗苗苗苗苗苗苗苗苗苗苗苗苗苗苗苗�",
+          "well_formed": false
+        },
+        {
+          "id": "X049",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "洛宁洛宁洛宁洛宁洛宁洛宁洛宁洛宁洛宁洛宁洛�",
+          "well_formed": false
+        },
+        {
+          "id": "X050",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "宁波波波波波波波波波波波波波波波波波波波波�",
+          "well_formed": false
+        },
+        {
+          "id": "X051",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "喯888888888欢欢欢欢欢欢欢欢欢欢欢欢欢欢欢欢欢�",
+          "well_formed": false
+        },
+        {
+          "id": "X052",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "山鱱鱱鱱鱱鱱鱱鱱鱽疱疱疱鱱鱱鱱鱱鱽疱鱱鱱汱�",
+          "well_formed": false
+        },
+        {
+          "id": "X053",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "荞荞荞荞荞荞荞荞荞荞荞茶荞茶茶茶茶茶茶茶茶�",
+          "well_formed": false
+        },
+        {
+          "id": "X054",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "鹉鹉鹉鹉鹉鹉鹉鹉鹉鹉鹉鹦鹉鹉鹉个鹉鹉鹉鹉鹉�",
+          "well_formed": false
+        },
+        {
+          "id": "X055",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "迁毻迁毻读读读迁毻迯读迁毻迯读迁毻迯读迁毻�",
+          "well_formed": false
+        },
+        {
+          "id": "X056",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "色色色色艱吱艱吃鸭艱吃鸭艱扱艱色艱吱豱吃鸭�",
+          "well_formed": false
+        },
+        {
+          "id": "X057",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "时人人人予时予时予时予时人人人人人人人人人�",
+          "well_formed": false
+        },
+        {
+          "id": "X058",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "州温州温州温州温州温州温州温州温州温州温州�",
+          "well_formed": false
+        },
+        {
+          "id": "X059",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "212121212121212121212121212121212121212121212121212121212121",
+          "well_formed": false
+        },
+        {
+          "id": "X060",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "风风风风风风风风风风风风风风风风风风风风风�",
+          "well_formed": false
+        },
+        {
+          "id": "X061",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "时红时红时红时红时时红时时时时时时时时时时�",
+          "well_formed": false
+        },
+        {
+          "id": "X062",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "一养一养一养一养一养一养一养一养一养一养一�",
+          "well_formed": false
+        },
+        {
+          "id": "X063",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "违违读读违读读违读读违读读违读读违读读违读�",
+          "well_formed": false
+        },
+        {
+          "id": "X064",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "蟹黱山吃蟹黱包蟹黱汱包蟹黱蟹黱蟹黱蟹黱山吃�",
+          "well_formed": false
+        },
+        {
+          "id": "X065",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "栚栚栚栚栚怂怀砚怠怠怀砚怀砚堚怀砚堚怀砚堚�",
+          "well_formed": false
+        },
+        {
+          "id": "X066",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "阳阳阳洛阳阳阳洛阳阳阳洛阳阳阳阳洛阳阳阳洛�",
+          "well_formed": false
+        },
+        {
+          "id": "X067",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "25252525256欢252525252525252525252525252525252525252525252525",
+          "well_formed": false
+        },
+        {
+          "id": "X068",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "雮宿雮宿雮宿雮宿雮宿雮宿雮宿雮宿雮宿雮宿雮�",
+          "well_formed": false
+        },
+        {
+          "id": "X069",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "时皮水水水水水水水水水水水水水水水水水水时�",
+          "well_formed": false
+        },
+        {
+          "id": "X070",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "一养一养一养一养一养一养一养一养一养一养一�",
+          "well_formed": false
+        },
+        {
+          "id": "X071",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "迿读迿读读迿华迿迿读读迺读迿读迿读迎华迎迎�",
+          "well_formed": false
+        },
+        {
+          "id": "X072",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "艉面汉面汉面汉面汉面汉面汉面汉面汉面汉面汉�",
+          "well_formed": false
+        },
+        {
+          "id": "X073",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "苙苙苙苙苙苙苙晚苙苙苙苙苙苙苙苙晚苙苙苙苙�",
+          "well_formed": false
+        },
+        {
+          "id": "X074",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "州扬扬扬扬扬州扬州扬州扬州扬州扬州扬州扬扬�",
+          "well_formed": false
+        },
+        {
+          "id": "X075",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "131313131313131313131313131313131313131欢欢欢欢欢欢欢欢�",
+          "well_formed": false
+        },
+        {
+          "id": "X076",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "挌舟舟舟舟舟舟舟舟舟舟舟舟舟舟茌舟蟟舟蟟舟�",
+          "well_formed": false
+        },
+        {
+          "id": "X077",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "荷饮时荷饮时荷饮时荷饮时荷饮时荷饮时荷饮时�",
+          "well_formed": false
+        },
+        {
+          "id": "X078",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "一养一养一养一养一养一养一养一养一养一养一�",
+          "well_formed": false
+        },
+        {
+          "id": "X079",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "读迿读读迿读读迿读读迿读迿读读迿读读迿读读�",
+          "well_formed": false
+        },
+        {
+          "id": "X080",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "豼鱼輱山吃鱼豼鱼豼鱼豼鱼豼鱼豼鱼豼鱼鱼豼鱼�",
+          "well_formed": false
+        },
+        {
+          "id": "X081",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "沟舟舟舟舟舟舟舟舟舟舟沟蟲舟舟舟舟舟沟蟟舟�",
+          "well_formed": false
+        },
+        {
+          "id": "X082",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "州泉州泉州泉州泉州泉州泉州泉州泉州泉州泉州�",
+          "well_formed": false
+        },
+        {
+          "id": "X083",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "202020202020202020202020202020202020202020202020202020202020",
+          "well_formed": false
+        },
+        {
+          "id": "X084",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "曮咛舒舒舒舒舒舒舒舒舒曮议舒曮舒舒舒舒舒舒�",
+          "well_formed": false
+        },
+        {
+          "id": "X085",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "楱楱楱楱楱楱楱楱楱楱楱楱楱楱楱楱楱楱楱楱楱�",
+          "well_formed": false
+        },
+        {
+          "id": "X086",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "一养一养一养一养一养一养一养一养一养一养一�",
+          "well_formed": false
+        },
+        {
+          "id": "X087",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "迿读迿读迿读迿读读迿读迿读迿读迿读迿读迿读�",
+          "well_formed": false
+        },
+        {
+          "id": "X088",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "吱吃吃吃吃吃吃吃吃吃吃吃吃水鸣水鸣水鸣水鸣�",
+          "well_formed": false
+        },
+        {
+          "id": "X089",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "昭阭阭阭阭阭阭阭阭阭阭阭阭阭昭阭阭阭昭龘阭�",
+          "well_formed": false
+        },
+        {
+          "id": "X090",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "芜湖芜湖芜湖芜湖芜湖芜湖芜湖芜湖芜湖芜湖芜�",
+          "well_formed": false
+        },
+        {
+          "id": "X091",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "1818欢欢欢欢欢欢欢欢欢欢欢欢欢欢欢欢欢欢欢欢",
+          "well_formed": false
+        },
+        {
+          "id": "X092",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "央央央央央央央央央央央央央央央央央央檪央殮�",
+          "well_formed": false
+        },
+        {
+          "id": "X093",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "茉茉茉茉茉茉茉茉茉茉茉茉茉茉茉茉茉茉茉茉茉�",
+          "well_formed": false
+        },
+        {
+          "id": "X094",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "蝙蝙蝙蝙蝙蝙蝙蝙蝙蝙蝙蝙蝙蝙蝙蝙蝙蝙蝙蝙蝙�",
+          "well_formed": false
+        },
+        {
+          "id": "X095",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "迆迆迆迆迆迆迆迆迆迆迆迆迆迆迆迆读迆迆迆读�",
+          "well_formed": false
+        },
+        {
+          "id": "X096",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "子汱吃狮吃汐吃狮吃汐吃狮吃汐吃狮吃汐拮汐拮�",
+          "well_formed": false
+        },
+        {
+          "id": "X097",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "吟晚吟晚吟晚吟晚吟晚吟晚吟晚吟晚吟晚吟晚吟�",
+          "well_formed": false
+        },
+        {
+          "id": "X098",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "自自自自自自自自自自自自自自自自自自自自自�",
+          "well_formed": false
+        },
+        {
+          "id": "X099",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "909090909090909090909090909090909090909090909090909090990909",
+          "well_formed": false
+        },
+        {
+          "id": "X100",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "饧查拟駋饟拟拟拟韥秋駋饟拟韥秋駋饟拟韥秋韥�",
+          "well_formed": false
+        },
+        {
+          "id": "X101",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "荷喝荷荷喝荷荷喝荷荷荷荷荷荷荷荷荷时茶茶茶�",
+          "well_formed": false
+        },
+        {
+          "id": "X102",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "一养一养一养一养一养一养一养一养一养一养一�",
+          "well_formed": false
+        },
+        {
+          "id": "X103",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "迿读迸读迸读迿读迸读迿读读迸迸迸迸迸读迸读�",
+          "well_formed": false
+        },
+        {
+          "id": "X104",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "吱吃吃吃吃吃吃吃吃吃吃吃吃吃吃吃吃吃吃吃吃�",
+          "well_formed": false
+        }
+      ]
+    }
+  ],
+  "surface_verdict": {
+    "min_gap_texts": 3,
+    "per_circuit": [
+      {
+        "circuit": "output/taiji_r2_copy_circuit_chat/judge/circuit-final.pt",
+        "gap_texts": -57,
+        "direction": "worse",
+        "meets_min_gap": true,
+        "control_rate": 0.3462,
+        "treated_rate": 0.1269
+      }
+    ],
+    "status": "not_resolved",
+    "verdict": "not_resolved（独立取数只有 1 次，判据要求 ≥2 次）"
+  },
+  "base_sha256_unchanged": true
+}
