@@ -139,6 +139,60 @@ def replay_step(
     }
 
 
+def replay_surface_from_fed(
+    fed: list[int],
+    *,
+    turn: str,
+    history: list[tuple[str, str]],
+    organ: Any,
+    turn_markers: tuple[str, ...],
+) -> dict[str, Any]:
+    """从被拦截的生成字节重放**完整产品面链**：decode → marker 切割 → **同一个器官** emit。
+
+    v5 及以前拿 raw 字节直接对比 `chat()` 返回值——当模型真早停（边界符胜出、`break` 在
+    observe 之前）而 raw 短到器官拒收（decode 出 U+FFFD／不可读）时，产品会把占位句
+    （`NativeReadableTextLanguageOrgan._fallback_text`）当作答复，逐位比较必然不等，
+    早停这个 L2 要测的成功被记成面违规。深帧复现（§2bb-追加三）纠正了追加二的误诊：
+    `V019` 首轮的 53 次 observe＝1 告知＋1 边界＋50 prompt＋**1 生成**——prompt 全部在案，
+    1 字节是生成环的真实产量，而那张"完整成句"的答复头是器官模板，不是模型输出。
+    ⇒ v6 把比较放到**同一表示层**：重放也走产品链的器官这一步。
+    """
+
+    from taiji import ExpressionPlan
+    from taiji.utf8_state import trim_partial_tail
+
+    native = trim_partial_tail(bytes(fed)).decode("utf-8", errors="replace")
+    marker_at = min(
+        (index for marker in turn_markers if (index := native.find(marker)) >= 0),
+        default=None,
+    )
+    if marker_at is not None:
+        native = native[:marker_at]
+    history_payload = [
+        {"user": user, "assistant": assistant} for user, assistant in history if user and assistant
+    ]
+    expression = ExpressionPlan(
+        expression_id="chat:replay:expression",
+        content_id="chat:replay:content",
+        modality="text",
+        channel="message",
+        fields={
+            "intent_kind": "chat_answer",
+            "semantic_slots": {"prompt": turn, "history": history_payload},
+            "native_prediction": native,
+            "expected_outcome": "answer user in readable language",
+        },
+        provenance="seed.client.chat",
+        tick=0,
+    )
+    emission = organ.emit(expression)
+    return {
+        "native_replay": native,
+        "marker_at": marker_at,
+        "replay_surface": emission.text_bytes.decode("utf-8", errors="strict"),
+    }
+
+
 def char_membership_of_run(text: str) -> list[bool]:
     """逐**字节**标出"这个字节所属的汉字处在一段同字连写里"。
 
@@ -265,21 +319,30 @@ def main() -> int:
                 default=None,
             )
             raw = (raw[:marker_at] if marker_at is not None else raw).strip()
+            #: v6：重放走**完整产品面链**（同一个器官实例），与 `chat()` 返回值在同一表示层比较。
+            replay = replay_surface_from_fed(
+                fed,
+                turn=turn,
+                history=history,
+                organ=runtime._chat_organ,
+                turn_markers=_TURN_MARKERS,
+            )
             surface_checks.append(
                 {
                     "fed_bytes": len(fed),
-                    "surface_is_replayed_raw": bool(raw == answer),
+                    "surface_is_replayed_raw": bool(replay["replay_surface"] == answer),
                     "turn_marker_fired": marker_at is not None,
                     "cut_by_marker_bytes": marker_at,
                     "answer_head": answer[:24],
-                    # v5 加性诊断：不等的原因分类，**不改那条严格守卫**（削弱它等于挪门柱）。
-                    # 依据 §2bb-追加二 的复现：`V019` 首轮只有 1 个符号被归进生成环，
-                    # 而答复完整成句 ⇒ 那是**回放/归类缺陷**，不是"面不一致"。两者必须能分开读。
+                    # v6：早停样本（fed 极短）经器官重放后与答复逐位相等，不再记成面违规。
+                    # 深帧复现纠正追加二：prompt 的 50 字节全部在案，1 字节是生成环的真实产量
+                    # （边界符胜出后 break），那张"完整成句"答复是器官占位句模板。
                     "mismatch_reason": (
                         None
-                        if raw == answer
-                        else ("replay_tiny_feed" if len(fed) < 8 else "surface_differs_from_replay")
+                        if replay["replay_surface"] == answer
+                        else "surface_differs_from_replay"
                     ),
+                    "replay_surface_head": replay["replay_surface"][:24],
                 }
             )
             if not pre_records or not fed:
@@ -374,7 +437,16 @@ def main() -> int:
 
     substrate.observe = original_observe  # type: ignore[method-assign]
     report = {
-        "format": "taiji-a30-stop-failure-v5",
+        "format": "taiji-a30-stop-failure-v6",
+        "format_note_v6": "v6 **换比较的表示层**（诊断更正，见 §2bb-追加三）：v5 的逐位比较是"
+        "『raw 重放 vs `chat()` 返回值』，而早停样本（边界符胜出即 break，fed 极短）的返回值是"
+        "**器官占位句**（`NativeReadableTextLanguageOrgan._fallback_text`）——V019 首轮 1 字节生成"
+        "对应 44 字占位句，逐位比较必然不等，L2 要测的成功被记成面违规。v6 的重放改走"
+        "**完整产品面链**（`replay_surface_from_fed`：decode → marker 切割 → **同一个器官实例** emit）"
+        "再与返回值比较；`replay_tiny_feed` 这一分类随之退役（深帧复现证明 prompt 的 50 字节全部在案，"
+        "追加二『没复现 prompt』的误诊被纠正）。`all_surfaces_are_replayed_raw` 与"
+        " `replay_suspect_generations` 的**公式不变**（后者改数 `surface_differs_from_replay`），"
+        "严格性不降：真正被产品链改过的面仍然红。",
         "format_note_v5": "v5 **加性**：每条 `surface_checks` 多一列 `mismatch_reason`"
         "（`replay_tiny_feed`＝回放侧只归到 <8 个符号，属**仪器归类缺陷**；`surface_differs_from_replay`＝真的面不一致），"
         "聚合里多一条 `replay_suspect_generations`。**严格守卫 `all_surfaces_are_replayed_raw` 一字未动**"
@@ -404,12 +476,9 @@ def main() -> int:
         # 会 `set_copy_evidence_utf8_gate(True)`（owner 裁定 (b)，见 `taiji/model.py:3497` 那段注释）。
         # 只报 config 会把"门是开的"读成"门是关的"，故这里报**有效值**并同带两个成分。
         "copy_evidence_utf8_gate_effective": bool(
-            (
-                runtime.model.substrate.config.copy_evidence_utf8_gate
-                if getattr(runtime.model.substrate, "_copy_evidence_utf8_gate_override", None)
-                is None
-                else bool(runtime.model.substrate._copy_evidence_utf8_gate_override)
-            )
+            runtime.model.substrate.config.copy_evidence_utf8_gate
+            if getattr(runtime.model.substrate, "_copy_evidence_utf8_gate_override", None) is None
+            else bool(runtime.model.substrate._copy_evidence_utf8_gate_override)
         ),
         "copy_evidence_utf8_gate_config": bool(
             runtime.model.substrate.config.copy_evidence_utf8_gate
@@ -435,12 +504,12 @@ def main() -> int:
             "all_surfaces_are_replayed_raw": all(
                 row["surface_matches_replayed_raw"] for row in per_item
             ),
-            # v5 加性：把"回放归类可疑"的次数单独报出（严格守卫保持原样，不因这条放宽）。
+            # v6：`replay_tiny_feed` 退役（见 format_note_v6）——可疑生成改数真面不一致。
             "replay_suspect_generations": sum(
                 1
                 for row in per_item
                 for check in row["surface_checks"]
-                if check.get("mismatch_reason") == "replay_tiny_feed"
+                if check.get("mismatch_reason") == "surface_differs_from_replay"
             ),
             "items_whose_surface_is_not_model_bytes": [
                 row["id"] for row in per_item if not row["surface_matches_replayed_raw"]
