@@ -1,0 +1,20 @@
+{
+  "format": "taiji-a30-self-answers-v1",
+  "base": "output/a26_p1/checkpoint.pt",
+  "base_sha256": "8b87583713a47a822c2e04f424f0d12388864d2622148049a6248750fa19c5e9",
+  "base_sha256_unchanged": true,
+  "corpus": "dialogue_extended_clean.jsonl",
+  "pairs_requested": 14000,
+  "lines_total": 14000,
+  "lines_written_this_run": 14000,
+  "empty_answers": 0,
+  "gen_max": 96,
+  "penalty": 2.0,
+  "out": "output/a31_chunked_self/self_answers.jsonl",
+  "out_sha256_16": "f04b36253eaa749c",
+  "started_utc": "2026-09-30T20:46:52Z",
+  "guard": {
+    "base_sha256_unchanged": true,
+    "question_count_matches": true
+  }
+}

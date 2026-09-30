@@ -3098,9 +3098,16 @@ L1 四件见 §2bd/§2be；L2 见 §2bc 与 `reports/taiji_a30_stop_failure_a31_
 3. **L3 的量级差不是判据**：a31 的 257/300 与 self 的 16/300 都过 ≥3 线；L3 是"停止信号在序列上的可读性"，
    不是生成面行为（§2bc 已证 teacher-forced 与真自停可脱钩：a31 L3 257 但 L2 3）。
 
-**对②的执行建议（按 owner "未及时决策按推荐推进"）**：等确认档出数后，若它过 L2 ⇒ 以"主线分块 short 配方"
-重出正式基座候选（一次 2M 训练），三线全表判过后再执行默认位切换（那一刀是产品行为变更，单独呈报）；
-若它不过 L2 ⇒ 走"吃自身短答"那一档再验。
+**对②的执行进展（按 owner "未及时决策按推荐推进"，2026-10-01）**：
+
+1. 确认档 (c) 出数后（L2 23 过、L1-挂卡）已按推荐转入**自写形状档**：`build_taiji_a30_self_answers.py`
+   生成 14,000 条模型自答缓存（`output/a31_chunked_self/self_answers.jsonl`，0 空答、基座 sha 未变，
+   自述件 `reports/taiji_a30_self_answers_build_20261001.json`）；自写档训练（分块喂法＋
+   `--answer-source self`，+2M）已发射，出数后跑三线。
+2. **回退检查（F0 语言地板，切尾感知口径）**：formal self 档与基座 a26_p1 五项**全 1.000**；
+   整句口径上 formal self 反而略好（T1a 0→0.312、T1b 0.125→0.438、T2 0.125→0.625）
+   ——件 `reports/taiji_f0_formal_self_20261001.json`（`instrument_guard` 四条全真）。
+   ⇒ 候选件在"字节合法性"这条既有地板线上无回退。
 
 ## 7b. owner 裁定回执（2026-09-30 第二批，弹窗打包全批＝四项按各自 Recommended 执行）
 
