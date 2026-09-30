@@ -2682,6 +2682,17 @@ v1 那三条臂**没锁住长度**，所以真正该定价的是"单位字节里
 **这条线的下一步只有一格是缺的**：把同一手法扩到更大训练量（`戊`），用同一仪器复测 L2；
 若从 5 涨到 ≥6，就是本支线第一个"能力提升成立"的读数。**阈值不动**（5 与 6 差一次要靠加样本解决，不靠改线）。
 
+**第八次停靠登记（写给下一轮的我或接手人）**：探针件
+`reports/taiji_a30_onpolicy_quarter_probe_8g3x6e_20260930.json`（4 臂 `corpus/self/sized/quarter`，
+`--groups 8 --exchanges 3 --epochs 6 --gen-max 64 --positions 12 --save-arms output/tmp_a30_smoke/onpolicy_arms_q`），
+日志尾 `rc_quarter_probe=0` 才算完。**落盘后顺序固定的两件事**：
+① 复测 `quarter` 臂的 L2——
+`python scripts/training/probe_taiji_a30_stop_failure.py --checkpoint output/tmp_a30_smoke/onpolicy_arms_q/a30_onpolicy_quarter.pt --circuit output/taiji_r2_copy_circuit_chat/judge/circuit-final.pt --limit 24 --max-length 256 --penalty 2.0 --out-report reports/taiji_a30_stop_failure_onpolicy_quarter_20260930.json`；
+② 按 `SPEC-A-24` §8 三条先冻分支读数（≥6 ⇒ 密度能买到真自停、才有资格提正式训练档；3–5 ⇒ 只写单调趋势；
+≤2 ⇒ 写"接缝可买、环内自停买不到"并把 §2aw 正向读数降级为代理读数）。
+三条不许掉：探针训练量极小、只答"有没有方向"；`quarter` 是人造 1/4 短答（合法训练分布这一问没答）；不得为让数好看下调 ≥6。
+臂件是 scratch，不入 git。
+
 
 ## 8. 一页决策单（2026-09-30，A 支线；每条都带"已量到的数"和"批完之后拿什么核"）
 
