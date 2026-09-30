@@ -129,6 +129,23 @@ a26_p1 由 241（0.9269）→ **100（0.3846）**，a31 由 40（0.1538）→ **
 **下一步仍是等裁定**：①要不要用带配方的训练重出默认基座（现在判据已冻结好，跑一次即可判）；②要不要让训练吃过自身轨迹；
 ③要不要在产品出口写死结构条件收笔。三笔都不该由我自行启动。
 
+**队首（2026-09-30 rev61：门槛① 的实测拦截率与 L2 基线都出档；决策卡 §8b 压成一页）**——
+两把"装机面上读得到的数"（同一份题面前 24 条，真实轮数合计 **60 次调用**）：
+①**门槛① 真在拦**：放行 24／拦下 36 ⇒ `allowed_rate=0.4`（预注册第 3 支 `gate_blocks_majority`），
+直方图 `not_well_formed:33／passed:24／not_ended_naturally:3`，`surface_gate_state=armed`＋`circuit_present=true`＋`checkpoint_untouched=true`；
+被拦样例恰是最该被记住的告知类问句（`我的名字是什么？`／`我住哪？`）。
+**这条率有两次独立取数、逐位相同**（v1 与复跑 v2），但**不许**据此说"回写通道没问题"——§2v 那两笔是另外的量。
+②**L2 基线钉死**：现状装机件 `generations_cut_by_turn_marker=0`／`generations_eating_full_budget=72`，
+件里自述 `mount_route=envelope_auto_mount`、证据门 `effective=true`（`config=false`／`override=true`）
+⇒ §8② 那条判据**不再写"≥6/24"**（分母歧义），改读作"新件同仪器同参数下 ≥6／72"。
+**两次当场暴露我自己的错并修对（错件都留场不删）**：一次是守卫期望值那行仍按 `items×rounds`（72）而题面是 2 轮与 3 轮相间
+（真实期望 60），现改为"期望值只算一次、显示列与断言共用同一个量"，并用非默认参数冒烟（`--items 2 --rounds 1` ⇒ 2/2、守卫 true）实证；
+一次是新增源码级守卫 `tests/taiji_native/test_a30_instrument_face_disclosure.py`（4 支，含拿改前码 `72d81faf^` 演示谓词为 False）。
+**在飞（出数前不许引用）**：L3 装机件同面对照 `reports/taiji_a30_ding3_transfer_300pos_defaultload_vs_a26_20260930.json`
+（命令与判法见 §6.3 第六次停靠；第一次发射漏参数、写盘前 rc=1 已记）。
+**等 owner 的四笔压成一页**：`PLAN-A-30` §8b——甲 重训换默认位／乙 训练吃过自身轨迹（前置 `DEBT-G13` 门面出口）／
+丙 产品出口结构条件（是产品在决定，不许记进模型能力）／丁 `DEBT-G17` 那道检查要不要真跑（补上后 L1 参考值按上限 12／15 重录）。
+
 **队首（2026-09-30 rev60：判据自证抓到一条产品级缺口 DEBT-G17——表层门槛的"UTF-8 合法"这一道从来没跑过）**——
 `seed/surface_gate.py:52-55` 对 **`str`** 做 `encode("utf-8").decode("utf-8")`，这条永不抛 ⇒ **不可能返回 False**
 （三条探针实测都不抛，含 8 个连续 U+FFFD）。产品两处用它：`api/seed_runtime.py:444`（坏答复不进下一轮 prompt）与
