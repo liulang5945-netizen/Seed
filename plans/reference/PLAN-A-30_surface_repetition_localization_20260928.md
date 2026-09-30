@@ -2192,6 +2192,11 @@ base 在任何 K 上恒 0.0；以及 §2am 的 `docs_with_false_fire`（无 floo
   而这份 manifest 的 2 轮题与 3 轮题相间（前 24 条轮数分布 `2,3,2,3,…`）⇒ 真实期望 **60**，
   于是件里报 `calls_match_expected=false`（**数据没错，是界算错**——同族错：那次"漏乘 `epochs`"）。
   改正为 `sum(len([t for t in item.turns[:rounds]]))`，并按题面离线复核：**60 与实际 calls 60 相符**。
+  **复跑件（`reports/taiji_a30_writeback_gate_on_shipping_face_v2_20260930.json`，`rc_wb_full_v2=0`）暴露我第一版只修了一半**：
+  显示列 `expected_calls` 已是 60，但断言那一行仍写 `calls == len(items) * rounds`（＝72）⇒ 件里继续报 false。
+  ⇒ 现改为**期望值只算一次、显示列与断言共用同一个量**（这正是本文件反复记的那条：改数要整条链重推，不要在错值上打补丁）。
+  **顺带拿到一件好事**：两次独立取数的读数**逐位相同**（60 次调用／放行 24／拦下 36／直方图 `not_well_formed:33／passed:24／not_ended_naturally:3`）
+  ⇒ 门槛①这条 `allowed_rate=0.4` 现在**有两次独立取数**，不再是单次读数；仍**不许**据此推"回写通道没问题"。
 
 * **§2ab 三条判据 ↔ 本会话已有读数（把"谁能判、判成什么"对号入座，别让主线重跑我已跑过的面）**：
   **第 1 条（教师强制面 ≥150/300）＝同向成立但不由我宣布**——我在**已有检查点**上用配方面读到

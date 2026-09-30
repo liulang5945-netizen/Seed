@@ -97,6 +97,8 @@ def main() -> int:
     sha_after = hashlib.sha256(CHECKPOINT.read_bytes()).hexdigest()
     circuit_present = getattr(runtime.model.substrate, "copy_circuit", None) is not None
     gate_armed = runtime.surface_gate_state == "armed"
+    # 期望值只算一次，显示列与断言共用同一个量（v1 的错就是显示改了、断言还乘常量）。
+    expected_calls = sum(len([t for t in item["turns"][:rounds]]) for item in items)
 
     report = {
         "format": 1,
@@ -124,8 +126,8 @@ def main() -> int:
             "checkpoint_untouched": sha_before == sha_after,
             # 期望值要按**题面真实轮数**算：这份 manifest 里 2 轮题与 3 轮题各半，
             # 拿 `items × rounds` 当期望是我原来写错的那条界（同族错见记忆里"漏乘 epochs"那条）。
-            "expected_calls": sum(len([t for t in item["turns"][:rounds]]) for item in items),
-            "calls_match_expected": calls == len(items) * rounds,
+            "expected_calls": expected_calls,
+            "calls_match_expected": calls == expected_calls,
             "no_gate_state_rows": reasons.get("no_gate_state", 0) == 0,
         },
         "sha256_before": sha_before[:16],
