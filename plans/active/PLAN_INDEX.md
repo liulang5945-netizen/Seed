@@ -114,6 +114,14 @@
 屏幕不动 ⇒ 按约定不花那次表层整跑。**键/寻址那侧今天连排三支**：幅度（§17）、聚合（§23）、
 离线好解 transplant（§19/§20）——只剩"要不要动内容表征"这一条**需要签字**的路。
 
+**队首（2026-09-30 rev66：owner 裁定①批（分块喂法进主线）＋②先补 L3；L3 已齐，候选档案出）**——
+①**分块喂法已进主线**（`d7e3bcc9`：`--answer-chunking per-answer`＋`--answer-max-chars`，守卫 6 含节奏守卫），
+确认档 `output/a31_chunked_short/` 在跑（分块短答 ≤32 字符、+2M，约 3 小时）。
+②**L3 补测已回**（recipe 面 300 位）：a31 满额 **257/300**、formal self **16/300**、sized **38/300** ⇒
+[PLAN-A-30 §2bg](../reference/PLAN-A-30_surface_repetition_localization_20260928.md) 三线全表：
+**分块 short（formal self）三线全过**（L1 60/16、L2 24/72、L3 16/300）；主线 recipe a31 卡 L2（3/72）；sized 卡 L1 挂回路（2/260）。
+待 owner：是否以该形状重出默认基座（按"未及时决策按推荐推进"＝等确认档过 L2 后再呈报默认位那一刀）。
+
 **队首（2026-09-30 rev65：②拆账收口＝§8①「配方带退化」系 37.5% 中途态假象；四项执行全部收口）**——
 同预算三点拆账（[PLAN-A-30 §2bd](../reference/PLAN-A-30_surface_repetition_localization_20260928.md)）：
 把 a31 补训到满额 +2M 后，**不挂回路 wf：配方 90/260 ＞ base 12 ＞ 无配方对照 7**（挂回路 33/5/0），
