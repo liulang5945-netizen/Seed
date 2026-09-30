@@ -154,8 +154,11 @@ try {
   console.log(`verify-node-next-types: ${packages.length} workspace package declaration API(s) compile under NodeNext.`)
 } catch (error: unknown) {
   failed = true
-  const output = error as { stdout?: Buffer; stderr?: Buffer }
+  const output = error as { message?: string; code?: string; stdout?: Buffer; stderr?: Buffer }
   console.error('verify-node-next-types: NodeNext consumer typecheck failed.\n')
+  // A spawn- or filesystem-level throw carries no child output, so the only reportable fact is the
+  // throw itself; without this the run prints an empty tail and the failure is unattributable.
+  console.error(`${output.message ?? ''} ${output.code ?? ''}`.trim())
   console.error(`${output.stdout?.toString() ?? ''}${output.stderr?.toString() ?? ''}`)
 } finally {
   rmSync(tmp, { recursive: true, force: true })
