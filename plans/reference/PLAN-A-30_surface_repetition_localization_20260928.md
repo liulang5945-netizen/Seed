@@ -3109,6 +3109,40 @@ L1 四件见 §2bd/§2be；L2 见 §2bc 与 `reports/taiji_a30_stop_failure_a31_
    ——件 `reports/taiji_f0_formal_self_20261001.json`（`instrument_guard` 四条全真）。
    ⇒ 候选件在"字节合法性"这条既有地板线上无回退。
 
+## 2bh. 自写档（`a31_chunked_self`）三线全过＝**主线规模上的重出候选成立**（2026-10-01）
+
+档：`output/a31_chunked_self/checkpoint.pt`（a26_p1 起，分块喂法＋`--answer-source self`＋
+14,000 条自答表，训满 ≈+2M ticks；表 14k 块单遍跑完、末次 progress ticks 4,000,101）。
+
+| 线 | 读数 | 线 | 判定 |
+|---|---|---|---|
+| L1 表层 `well_formed_texts` 不挂/挂 | **39 / 6**（/260） | ≥0.9×(12/5) ⇒ ≥11 / ≥5 | **两格全过** |
+| L2 真自停（stop_failure v6） | **13/72** | ≥6/72 | **过** |
+| L3 决策面（300 位、recipe 面、masked） | **18/300** | ≥3/300 | **过** |
+
+件：`reports/taiji_f0_chunked_self_surface_g17_20261001.json`、
+`reports/taiji_a30_stop_failure_chunked_self_20261001.json`（四守卫全真）、
+`reports/taiji_a30_stop_signal_presence_chunked_self_300doc_masked_recipeface_20261001.json`
+（`end_positions=300`）。
+
+**"答案作者"规律第三次复现**：语料侧形状（sized 2、主线分块语料 (c) 2）在 L1 挂回路格都读到 2，
+自写侧（formal self 16、本档 6）都过线 ⇒ 就已有样本看，**L1-挂 那一格跟作者走**，
+不跟喂法/长度/规模走（两档自写之间差在 16 与 6——规模/喂法仍影响幅度）。
+
+**候选档案（更新版，含回退检查）**：
+
+| 候选 | L1 不挂/挂 | L2 | L3 | F0（切尾口径） | 判定 |
+|---|---|---|---|---|---|
+| **自写档 `a31_chunked_self`（主线规模 +2M）** | **39 / 6** | **13** | **18** | 待测（下一步） | **三线全过＝重出候选** |
+| formal self（48g3x6e 小档） | 60 / 16 | 24 | 16 | **五项全 1.000**（件在册） | 三线全过 |
+| 主线 recipe 连续流 a31 满额 | 90 / 33 | 3 | 257 | — | L2 卡 |
+| 分块语料 (c) | 14 / 2 | 23 | 186 | — | L1-挂卡 |
+| 分块 sized | 24 / 2 | 47 | 38 | — | L1-挂卡 |
+
+**待办（重出工单的前置）**：①自写档的 F0 回退检查（同 formal self 那套）；②带回路信封重建
+（`build_circuit_carried_envelope` 从自写档烤，产品默认面需要）；③默认位切换本身（含来源清单/
+守卫/回归）——按 owner 裁定执行或不执行。
+
 ## 7b. owner 裁定回执（2026-09-30 第二批，弹窗打包全批＝四项按各自 Recommended 执行）
 
 1. **正式训练档机时＝批**：同手法（高密度收尾目标）扩训练量训正式档，L2 同仪器（stop_failure v6）复测，**不改产品默认位、不改判据**；探测臂只答方向，正式档验效应在更大训练量下保持与否。
