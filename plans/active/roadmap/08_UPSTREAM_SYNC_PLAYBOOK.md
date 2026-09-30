@@ -1126,3 +1126,5 @@ owner 已裁定 18 行那枚走"批准新增分类条目"（人工评审＝本�
 
 ㊵-128 落盘后自查：**该条里"脚本已修好／落地只需一条命令"两句不实**——我修补 `land3.py` 的那次 `python -c` 自身因引号嵌套报 SyntaxError 失败，`add_ref` 里的裸字符串插入并未改成对象形式，仍是那个会产生非法 JSON 的版本（本轮撤回后 `.dsh-sbx2/land3.py` 现状＝带 bug）。同时本链条后段的 `git commit` 未产生可见输出，提交是否落地按下面这条实测为准。下一格要用的正确顺序＝①先把 `add_ref` 改成写 `{ "path": ... }` 对象形式并用 `validate.py` 复验 invalid=0，②再跑整串落地，③然后才只需归因 vitest 那份日志。
 
+㊵-128 的**收尾**（本轮最后一格做的两件小事，均已实测）：①`.dsh-sbx2/land3.py` 的 `add_ref` 已按 ㊵-128 更正段的要求改成写对象形式（补丁脚本 `.dsh-sbx2/fix_addref.py` 先断言锚点唯一再改写，输出 `add_ref now inserts the object form`）；②**在仓外的一份副本上做了干跑**：把 `life-controller/tsconfig.host.json` 复制出去、只调用修好的 `add_ref`、再 `json.loads` 结果——通过，插入行现为 `{"path": "../gateway/tsconfig.host.json"},`（首字符是左花括号）。⇒ 上一轮那个"会产生非法 JSON 的插入函数"已被修在**生成它的那一处**，不再是修它这一次的产物。下一格跑整串落地时，仍应在每一步后用 `.dsh-sbx2/validate.py` 复验 `invalid=0`，并且**唯一还需人做的判断**是把 vitest 顶层汇总读准（上次我从多项目分段汇总 tail 出了两行，那种取法不能作结论）。代码面本轮零改动：工作树里我名的路径为空，`duplication` 复测 Found 1 clones、rc=1，判据⑥ 仍记未满足。
+
