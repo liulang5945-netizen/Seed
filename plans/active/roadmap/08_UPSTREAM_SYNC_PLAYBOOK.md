@@ -1065,3 +1065,14 @@ owner 已裁定 18 行那枚走"批准新增分类条目"（人工评审＝本�
 **㊵-122（把"无法归因"这条门缺陷就地修掉：`verify-node-next-types` 现在会报抛错本身）**：㊵-120 说清了缺口＝catch 只打子进程输出、非子进程类抛错的 `message`／`code` 一字未打。本轮按最小改动落地（`scripts/verify-node-next-types.ts` 的 catch：把 `output` 的形状补上 `message?: string; code?: string`，并多打一行 `message + code`；注释写明"为什么这行不能省"＝spawn／文件系统类抛错没有子进程输出）。**改后端到端复跑同一入口**：`corepack pnpm run verify-node-next-types` 仍 rc=1，但输出里现在直接是 `EPERM: operation not permitted, symlink 'E:\Seed\taiji-harness\vendor\cordis' -> '...\.node-next-types-<随机段>\node_modules\@taiji\cordis' EPERM` ⇒ 任何一次红都不再需要我这轮那种"临时造副本"的取证绕路。
 
 ** lint 面按"基线只许减"复核过，本轮不违反它，但整面仍红**：官方入口 `corepack pnpm run lint`（＝先 `build:lib:host` 再 `run-oxlint.ts .`）rc=1、`Found 0 warnings and 8 errors`。八条按规则分列＝**1 条 `no-unnecessary-condition` ＋ 6 条 `no-base-to-string`（全部落在 `details.status`／`details.reason`／`details.field` 那批文件，不是我这个文件）**＝本仓已登记的 7 条基线；第 8 条＝`typescript(tsconfig-error): Invalid tsconfig`，报的是 `Cannot read file 'E:/Seed/tsconfig.base.json'`——**这条是本检出嵌在 `E:\Seed` 之下造成的路径形状产物，不是我引入的代码错误**（证据：我编辑的那一个文件单独跑 `oxlint scripts/verify-node-next-types.ts` ＝ `0 warnings / 0 errors`）。⇒ 我不据此声称 lint 绿；**登记一条待归案项**：那第 8 条要不要在本工作区形状下豁免、或把引用改成仓内可达路径，属门的形状问题，下一格单独立项，别混进 7 条基线里当旧债。
+
+**㊵-123（18 行那枚试到中途整件撤回；撤回原因是新的实测事实，它把我此前的价格与"一处唤醒"的理解一起推翻）**：本轮按 owner 已裁的"批准新增分类条目"开工，做了四件事的前三件就**主动停手并撤回**：新模块 `packages/api/gateway/src/feed-waiter.ts` 与其 `tests/feed-waiter.host.spec.ts` 落盘、`packages/api/gateway/package.json` 加 `./feed-waiter` 子路径出口、`scripts/package-dependency-policy.ts` 的 `SAFE_HOST_DEPENDENCY_EXPORTS` 加 `'@taiji/dsh-api-gateway/feed-waiter': ['FeedWaiter']`（这就是你批的那条例外），然后打补丁脚本改两个 `feed.ts` 时**在第一处锚点就 `count==2` 响亮拒绝、一个字节都没改**（fail-closed 有效）。撤回后工作树＝只有别人那份四行空行的 `life-controller/package.json`，我没碰它，两个新文件已删。
+
+**推翻点一（价格）：`this.waiting` 在两个文件里各出现 4 次**，其中 `packages/api/life-controller/src/feed.ts` 的 `:174` 与 `:180` 是**两个不同方法各自唤醒一次**（`push` 之外还有一处发布路径）。⇒ 这枚克隆的真实改动面＝**每包 1 个字段 + 2 个唤醒点 + 1 个 wait 方法**，不是我一直记的"1 字段 + 1 唤醒 + 1 方法"；jscpd 报的那 18 行只是**其中一对**，我之前把它当成了整枚的价格（08 ㊵-107／㊵-112／㊵-115 三条里的"18 行"都按本条更正为"18 行是成对计数，不是改动面"）。
+
+**推翻点二（顺序敏感性，实测）：模块先落地、调用方后接，会让 `duplication` 从 1 枚升到 2 枚**（新模块与两个原始块各成一枚）。⇒ 落地必须"模块 + 两个调用方 + 分类条目"**同一批**，分两次提交会让中间那次比现状更红；这条决定下一格的执行形状，不许再拆步。
+
+**我自己这轮的一个口径错误要记账**：那次链条写成 `pnpm run build | tail -3; echo RC_BUILD=$?`，`$?` 数的是 `tail` 的 rc ⇒ 打印出来的 `RC_BUILD=0` **不构成 build 通过的任何证据**（同族第四次，见"门与提交之间不许用 `;` 串"那条的管道变体）。本条里的 `duplication` 计数因此改成**由本件自己解析、不手带**：撤回后实测＝**1 枚**（脚本 `parse_duplication_rc=` 同批打印 rc）。
+
+下一格的入口没变（还是这枚），但形状按上面两条改：一个提交里同时做"模块 + 出口 + 分类条目 + 两包四处唤醒点与两处 wait 方法 + 两包各自的 spec"，跑 `build`（rc 必须由落盘文件读，不用管道）、`duplication` 预期 0 枚、两包与 gateway 测试、`verify-package-dependencies`；manifest 字段是否要动仍**未验**（本轮没跑到那一叶，因为补丁在第一处就停了）。
+
