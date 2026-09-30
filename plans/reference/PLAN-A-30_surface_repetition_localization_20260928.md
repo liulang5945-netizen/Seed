@@ -2326,6 +2326,11 @@ python scripts/training/train_seed_corpus.py   --resume output/a26_p1/checkpoint
 **读数（104 题全量档：等 `reports/taiji_a30_recipe_surface_tradeoff_104item_20260930.json` 落盘后补在本段之下；
 在那之前本节只有判据，没有结论）**
 
+**统计机器先于读数验过**（进程内，不占模型）：`spearman` 对完全正相关＝`1.0`、完全负相关＝`-1.0`、
+含并列的单调味＝`-1.0`（平均秩生效）、n<3＝`None`、一列全平手＝`None`——两个 `None` 都会走
+`verdict = not_resolved（相关算不出来…）` 那条 fail-closed 支，**不会假装过线**；
+`quartile_table` 在"全部相等"的退化输入下给出 `p_1_nll_1: 2`（中位取上侧，两组不空），正常输入给四格分布。
+
 ## 8. 一页决策单（2026-09-30，A 支线；每条都带"已量到的数"和"批完之后拿什么核"）
 
 **先说白一句话**：这一支现在有一件**真的做成了**的事（训练目标放对了格子），一件**没做成**的事
