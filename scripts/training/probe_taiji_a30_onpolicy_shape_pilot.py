@@ -145,6 +145,24 @@ def decide(self_wins: int, corpus_wins: int) -> str:
     return "not_resolved（差在 1–2 之间或非零但不足线）"
 
 
+def decide_matched(self_wins: int, sized_wins: int) -> str:
+    """**体积配平后的"作者"对照**（v2 新增，先于下一次读数冻结）。
+
+    第一条线（`decide`，self − corpus）读的是"换分布能不能离开零"，但它同时动了作者＋体积两个变量。
+    `sized` 臂把语料答案截到与自写答案同长度 ⇒ `self − sized` 只差作者一件事。
+    * `self − sized ≥ 3` ⇒ **author_holds**（吃过自己写的确实更好）；
+    * `self − sized ≤ −3` ⇒ **author_negative**（同长度下，吃自己的输出比吃语料更差）；
+    * 其余 ⇒ `not_resolved`。
+    """
+
+    delta = self_wins - sized_wins
+    if delta >= 3:
+        return "author_holds（同体积下自写答案赢 ≥3）"
+    if delta <= -3:
+        return "author_negative（同体积下自写答案差 ≥3 ⇒ 乙 的方向被这条对照顶回来）"
+    return "not_resolved（|self − sized| < 3）"
+
+
 def read_volume_control(self_wins: int, corpus_wins: int, sized_wins: int) -> str:
     """体积对照的读法（**同样先于数冻结**）：主判据成立时，用它分清是"作者"还是"喂入体积"。"""
 
@@ -169,6 +187,11 @@ def main() -> int:
     parser.add_argument("--positions", type=int, default=18, help="迁移档跑多少提问")
     parser.add_argument("--mask", action="store_true", default=True)
     parser.add_argument("--out-report", required=True)
+    parser.add_argument(
+        "--save-arms",
+        default=None,
+        help="给了就把每臂训后的检查点存到这个目录（供 L2/L3 用**已有仪器**复测，不重抄生成链）",
+    )
     args = parser.parse_args()
 
     corpus = Path(args.corpus)
@@ -222,7 +245,15 @@ def main() -> int:
             "facade_reachable": bool(gap.get("edge_split_reachable_from_facade", False)),
             "facade_gap": {k: v for k, v in gap.items() if isinstance(v, (bool, str, int))},
             "base_sha": sha_at_load,
+            "saved_checkpoint": None,
         }
+        if args.save_arms:
+            from seed.persistence import atomic_save
+
+            target = PROJECT_ROOT / args.save_arms / f"a30_onpolicy_{arm}.pt"
+            atomic_save(runtime.model.checkpoint(), target)
+            runs[arm]["saved_checkpoint"] = str(target.relative_to(PROJECT_ROOT))
+            runs[arm]["saved_sha256_16"] = hashlib.sha256(target.read_bytes()).hexdigest()[:16]
 
     self_wins = runs["self"]["transfer"]["boundary_argmax_positions"]
     corpus_wins = runs["corpus"]["transfer"]["boundary_argmax_positions"]
@@ -237,7 +268,9 @@ def main() -> int:
     )
 
     report = {
-        "format": 1,
+        "format": 2,
+        "format_note_v2": "v2 **加性**多存 `verdict_matched_volume`／`bytes_by_arm`／`wins_by_arm` 三条，"
+        "并把体积配平对照冻成第二线；主判据 `decide`、喂入形状、测量函数一字未动 ⇒ 与 v1 同格可比。",
         "question": "乙：训练吃过模型自己写的答案，能否让自身轨迹接缝上的胜出离开零（唯一变量＝答案作者）",
         "prereg_criterion": "self − corpus ≥ 3 ⇒ 成立；两臂都 0 ⇒ 形状不是瓶颈；两臂都 ≤1 且有 1 ⇒ not_resolved",
         "base": args.base,
@@ -265,6 +298,15 @@ def main() -> int:
             "self_bytes": runs["self"]["train"]["trained_text_bytes"],
         },
         "verdict": decide(self_wins, corpus_wins),
+        # v2 加性两条：体积配平后的作者对照，与三臂字节数（v1 的 note 只点了两臂）。
+        "verdict_matched_volume": decide_matched(self_wins, sized_wins),
+        "bytes_by_arm": {
+            arm: runs[arm]["train"]["trained_text_bytes"] for arm in ("corpus", "self", "sized")
+        },
+        "wins_by_arm": {
+            arm: runs[arm]["transfer"]["boundary_argmax_positions"]
+            for arm in ("corpus", "self", "sized")
+        },
         "started_utc": datetime.now(timezone.utc).isoformat(),
     }
     out = PROJECT_ROOT / args.out_report
