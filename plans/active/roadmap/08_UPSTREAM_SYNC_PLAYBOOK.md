@@ -1076,3 +1076,14 @@ owner 已裁定 18 行那枚走"批准新增分类条目"（人工评审＝本�
 
 下一格的入口没变（还是这枚），但形状按上面两条改：一个提交里同时做"模块 + 出口 + 分类条目 + 两包四处唤醒点与两处 wait 方法 + 两包各自的 spec"，跑 `build`（rc 必须由落盘文件读，不用管道）、`duplication` 预期 0 枚、两包与 gateway 测试、`verify-package-dependencies`；manifest 字段是否要动仍**未验**（本轮没跑到那一叶，因为补丁在第一处就停了）。
 
+**㊵-124（18 行那枚第二次尝试：跑到"重复真被消掉"这一步，但撞出两个此前没登记过的阻塞，仍整件撤回）**
+
+这次按 ㊵-123 的"不可拆步"形状一次性落地（模块＋./feed-waiter 出口＋分类条目＋两包各 2 处唤醒与 1 处 wait 方法＋spec），全部改动由脚本锚点计数守卫写入。读数：duplication rc=0、**Found 0 clones**（这枚克隆确实被消掉了，不是豁免出来的）；oxlint 对四个改动文件＝0 warnings 0 errors。但 build rc=1、剩 3 条 error TS，两条是**新的、此前未登记**的阻塞：
+
+①`packages/api/life-controller/src/feed.ts:192` 与 `workspace-controller/src/feed.ts:176` 报 `Expected 3 arguments, but got 2`——我写的 `waiter.wait(signal, isReady)` 只两参，而解析到的 FeedWaiter 声明**有三个参数**。来源不是我的源码：磁盘上那份 09-29 留下的过期产物 `packages/api/gateway/src/feed-waiter.d.ts`（以及 `lib/types/feed-waiter.d.ts`，条目名 FeedWaiter 见 ㊵-113）比我的新 `src/feed-waiter.ts` 先被解析到。⇒ 落地这枚的**第四个前置**＝先清掉那组过期产物（或让 build 重新生成后再比），否则会拿一个不存在的旧签名判我的新模块错。
+
+②`packages/api/gateway/tests/feed-waiter.host.spec.ts:2` 报 `TS6307: File ... is not listed within the file list of project tsconfig.host.json`——新增的 spec **必须登记进某个 tsconfig 项目**才在类型程序内（与"新增 web e2e 要同登记进 apps/web/tsconfig.json 的 exclude"同一族，方向相反：这里是缺登记所以整条 lane/spec 没有类型门可跑）。⇒ **第五个前置**＝查 gateway 既有 spec 是怎么进项目清单的，照抄那一行。
+
+撤回后工作树＝只有别人那份四行空行的 life-controller/package.json（我没碰）；四个改动文件已按 pathspec 逐个 git checkout 还原，两个新文件删除，duplication 回到 1 枚。测试面这次未收口：`vitest run` 的 7 个 Failed Suites 全部是上述 3 条编译错误引起的 transform 失败，**不是行为红**（唯一成功跑起来的那批里 Tests 64 passed）。下一格从"清过期产物＋补 tsconfig 登记"这两条接着做，然后才是重跑 build／duplication／三包测试／verify-package-dependencies。
+
+补一句自证范围的更正：上面写"两个新文件删除"时实际只删了 spec，模块 `packages/api/gateway/src/feed-waiter.ts` 当时仍在磁盘上（它会被 build 编到、还会引来"该文件要 100% 覆盖"的门），现已一并删除。工作树最终状态＝`git status --porcelain -- packages/api scripts/package-dependency-policy.ts` 只余别人那份四行空行的 `life-controller/package.json`。那组过期产物（`src/feed-waiter.d.ts`／`.js`／`.map` 与 `lib/types/feed-waiter.d.ts`）**我没有动**——它们不是我这轮造的，删除它们属另一条线的在飞面，下一格要先确认归属再清。
