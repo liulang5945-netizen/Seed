@@ -98,6 +98,17 @@
   拿它当门槛只会逼人发表"一次"读数而丢掉这次这种"两次独立跑同值"的加强证据。
   同件另有 `offender_count = 5`（同字拖写），**只作描述**：§2ah 那两个数（8／10）是另两枚件在同一仪器同参数下的读数，
   比较线 ≥3 只对本件预注册的那一对（新件 对 对照件）生效，**不许**拿 5 去和 8/10 讲"变好了"。
+  ⇒ **L2 的"指向哪一列"就地改正（数值线一字未动，且改在任何新件读数之前）**：
+  读产品码见 `api/seed_runtime.py:455-459` 生成环是 **`stop_at_boundary=True`**
+  ——模型在自己写的答案里让**边界符**成为 argmax 时，`chat()` 是**直接退出**，答复里并**不会**出现 `\n问：` 这个接缝。
+  所以"自然终止"在件里对应的列是 `generations_eating_full_budget`（应当**下降**）与 `boundary_argmax_steps`（应当 **>0**），
+  而我原先写的 `generations_cut_by_turn_marker` 只量 **marker 截断**那一类退出。
+  **改正后的 L2 读法**：新件在同一仪器、同参数（24 项 × 3 轮＝72 次生成、预算 256、惩罚 2.0、`all_surfaces_are_replayed_raw=true`）下
+  **`72 − generations_eating_full_budget ≥ 6`**（＝至少 6 次因边界符退出环，对照现状 0），
+  `generations_cut_by_turn_marker` 保留为**旁列**（它仍在 §2ah 那两张件上可读，但配方效应不走这条路）。
+  原句留在上面不删——这条改正本身就是要留下的教训：**判据冻结时要点名"哪一列、朝哪个方向"，
+  只写现象名（"自然终止"）会让我自己指着错的列读平一条本来能动的线。**
+
 * **L3**：`python scripts/training/probe_taiji_a30_ding3_transfer.py --retrain <新件> --base <对照件> --positions 300 --mask --out-report <新名>`
   ⇒ 键 `boundary_argmax_positions`，线＝两臂之差 ≥3；配对守卫 `prompts_sha256` 两边必须相等，
   件里 `format` 必须是 **v2**（互斥四支）；v1 件缺胜者列，属"字段不存在"而不是"算出了 0"。

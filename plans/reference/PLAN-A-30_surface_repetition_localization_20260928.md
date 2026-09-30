@@ -2644,6 +2644,12 @@ v1 那三条臂**没锁住长度**，所以真正该定价的是"单位字节里
 - 批完之后拿什么核：**单位按已钉的基线写死**——§2af 原文"≥6/24"的分母是题数，而计数单位是生成次数（24 题 × 3 轮＝**72 次**）；
   现状装机件的对照已实测钉在 **0/72**（`reports/taiji_a30_stop_failure_defaultload_20260930.json`，
   `mount_route=envelope_auto_mount`、证据门 effective=true、四条守卫全真），
+  **但主列已在 2026-09-30 改正**：产品生成环是 `stop_at_boundary=True`（`api/seed_runtime.py:455-459`），
+  边界符胜出时 `chat()` 直接退出、答复里不会出现 `\n问：` ⇒
+  **主列是 `72 − generations_eating_full_budget ≥ 6`（现状 0）与 `boundary_argmax_steps > 0`**，
+  `generations_cut_by_turn_marker` 降为旁列——数值线一字未动，只改正指向的列，
+  且改在任何新件读数之前（详见 `SPEC-A-24` §5）。教训：**冻结判据要点名"哪一列、朝哪个方向"**，
+  只写现象名会让我指着错的列读平一条本来能动的线。
   ⇒ **判据读作"新件在同一仪器同参数下 `generations_cut_by_turn_marker` ≥6（分母 72）"**，
   或 §2ai 那张决策面（自身轨迹接缝 argmax）过 ≥3 线。**引用时不要再写"6/24"**——那会被读成 25% 的通过率（口径歧义已登记在 `SPEC-A-24` §1）。
 
