@@ -71,6 +71,16 @@ jobs:
       - name: Format check with black
         run: black --check .
 
+      # Frozen source markers are an implicit API: an audit script asserts that a
+      # literal still appears as contiguous text in another file, and black reflows
+      # that file until the marker is no longer findable.  This happened to judgement
+      # site J12 on 2026-09-30, and the extend-exclude written to stop it was itself
+      # malformed for a round, so CI would have re-broken the audit.  The guard asks
+      # black, in memory, whether every frozen marker survives formatting and whether
+      # any file that needs protecting is actually excluded.
+      - name: Audit frozen markers against the formatter
+        run: python scripts/training/audit_frozen_marker_formatter_conflict.py --no-write
+
       # R7: mypy 双层门禁——核心层已由 advisory 升为「棘轮 blocking」，遗留层维持观测。
       # 历史：470f2af 同时引入了幻觉版本 pin（black==24.12.0）与 blocking 门禁及
       #   「0 错误 / 基线 212」注释；pin 使 Install 步骤直接失败，门禁自引入起从未

@@ -120,6 +120,16 @@ SCAN_EXCLUSIONS: dict[str, str] = {
         "produces itself -- the equality is inside the trainer vocabulary. Zero occurrences "
         "of any B0 rule reason token"
     ),
+    # 2026-09-30 补：H19 新增的格式化/冻结标记守卫。它是**扫出来的**否证：全文 'stop_reason'
+    # 只出现 1 次，且落在那条对 audit_taiji_b0_n2_stop_reason_disposition.py 的**路径引用**里，
+    # 不是字段读取；all_members_blocked / goal_reached / contract_intercepted / rule_revision
+    # 各 0 次；all_members_exhausted 恰好 1 次，即它正在守护的 J12 字面量本身。
+    "tests/taiji_native/test_frozen_marker_formatter_conflict_contract.py": (
+        "guards the J12 marker against the formatter: its single 'stop_reason' occurrence is "
+        "inside the *filename* of the audit it protects, not a field read, and it embeds "
+        "all_members_exhausted once as the literal under test. It never observes an episode "
+        "and never compares a stop reason; every other B0 rule reason token occurs 0 times"
+    ),
 }
 
 CANDIDATES_FOR_REVIEW: dict[str, float] = {

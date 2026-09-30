@@ -1,0 +1,123 @@
+{
+  "black_line_length": 100,
+  "black_version": "26.5.1",
+  "counts": {
+    "fragile_but_excluded": 1,
+    "ok": 11
+  },
+  "exclude_pattern_count": 1,
+  "failures": [],
+  "format": "taiji-frozen-marker-formatter-conflict-v1",
+  "passed": true,
+  "records": [
+    {
+      "declared_in": "scripts/training/audit_taiji_b0_n2_stop_reason_disposition.py",
+      "excluded_from_black": false,
+      "marker": "item[\"stop_reason\"],",
+      "marker_survives_formatting": true,
+      "status": "ok",
+      "table": "JUDGEMENT_SITES",
+      "target": "scripts/training/eval_taiji_p5_2a_predictive_execution_gate.py"
+    },
+    {
+      "declared_in": "scripts/training/audit_taiji_b0_n2_stop_reason_disposition.py",
+      "excluded_from_black": false,
+      "marker": "startswith(\"contract_intercepted\")",
+      "marker_survives_formatting": true,
+      "status": "ok",
+      "table": "JUDGEMENT_SITES",
+      "target": "scripts/training/eval_taiji_p5_2a_predictive_execution_gate.py"
+    },
+    {
+      "declared_in": "scripts/training/audit_taiji_b0_n2_stop_reason_disposition.py",
+      "excluded_from_black": false,
+      "marker": "(item[\"episode_id\"], item[\"success\"], item[\"stop_reason\"], item[\"resource_cost\"])",
+      "marker_survives_formatting": true,
+      "status": "ok",
+      "table": "JUDGEMENT_SITES",
+      "target": "scripts/training/eval_taiji_p5_2b_group_causal_corpora_gate.py"
+    },
+    {
+      "declared_in": "scripts/training/audit_taiji_b0_n2_stop_reason_disposition.py",
+      "excluded_from_black": false,
+      "marker": "baseline[\"stop_reason\"] == \"all_members_exhausted\"",
+      "marker_survives_formatting": true,
+      "status": "ok",
+      "table": "JUDGEMENT_SITES",
+      "target": "tests/taiji_native/test_b0_m4_artifact_audit_contract.py"
+    },
+    {
+      "declared_in": "scripts/training/audit_taiji_b0_n2_stop_reason_disposition.py",
+      "excluded_from_black": false,
+      "marker": "CONTRACT_INTERCEPT_TOKEN in reason",
+      "marker_survives_formatting": true,
+      "status": "ok",
+      "table": "JUDGEMENT_SITES",
+      "target": "scripts/training/audit_taiji_b0_m4_hardening.py"
+    },
+    {
+      "declared_in": "scripts/training/audit_taiji_b0_n2_stop_reason_disposition.py",
+      "excluded_from_black": false,
+      "marker": "assert \"all_members_blocked\" not in baseline",
+      "marker_survives_formatting": true,
+      "status": "ok",
+      "table": "JUDGEMENT_SITES",
+      "target": "tests/taiji_native/test_b0_m4_hardening_contract.py"
+    },
+    {
+      "declared_in": "scripts/training/audit_taiji_b0_n2_stop_reason_disposition.py",
+      "excluded_from_black": false,
+      "marker": "assert \"all_members_blocked\" not in rows[cell][\"stop_reasons_frozen\"]",
+      "marker_survives_formatting": true,
+      "status": "ok",
+      "table": "JUDGEMENT_SITES",
+      "target": "tests/taiji_native/test_b0_structure_space_contract.py"
+    },
+    {
+      "declared_in": "scripts/training/audit_taiji_b0_n2_stop_reason_disposition.py",
+      "excluded_from_black": false,
+      "marker": "assert GOAL_REASON not in block",
+      "marker_survives_formatting": true,
+      "status": "ok",
+      "table": "JUDGEMENT_SITES",
+      "target": "tests/taiji_native/test_b0_n2_stop_reason_semantics_contract.py"
+    },
+    {
+      "declared_in": "scripts/training/audit_taiji_b0_n2_stop_reason_disposition.py",
+      "excluded_from_black": false,
+      "marker": "assert delta[\"variant_is_identity\"] is True",
+      "marker_survives_formatting": true,
+      "status": "ok",
+      "table": "JUDGEMENT_SITES",
+      "target": "tests/taiji_native/test_b0_rule_revision_seal_contract.py"
+    },
+    {
+      "declared_in": "scripts/training/audit_taiji_b0_n2_stop_reason_disposition.py",
+      "excluded_from_black": false,
+      "marker": "\"interleaved_contexts\", \"best_pair\", \"best_pair_gain\", \"stop_reasons\"",
+      "marker_survives_formatting": true,
+      "status": "ok",
+      "table": "JUDGEMENT_SITES",
+      "target": "tests/taiji_native/test_b0_m1_counterfactual_contract.py"
+    },
+    {
+      "declared_in": "scripts/training/audit_taiji_b0_n2_stop_reason_disposition.py",
+      "excluded_from_black": false,
+      "marker": "\"all_members_blocked_demonstrated\": STOP_ALL_MEMBERS_BLOCKED in stops",
+      "marker_survives_formatting": true,
+      "status": "ok",
+      "table": "JUDGEMENT_SITES",
+      "target": "scripts/training/run_taiji_collab_handoff_entry_evidence.py"
+    },
+    {
+      "declared_in": "scripts/training/audit_taiji_b0_n2_stop_reason_disposition.py",
+      "excluded_from_black": true,
+      "marker": "\"stop\": \"all_members_exhausted\"})",
+      "marker_survives_formatting": false,
+      "status": "fragile_but_excluded",
+      "table": "JUDGEMENT_SITES",
+      "target": "scripts/training/run_taiji_unified_entry_evidence.py"
+    }
+  ],
+  "total_markers": 12
+}

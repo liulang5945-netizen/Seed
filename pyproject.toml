@@ -92,6 +92,16 @@ exclude = [
     "__pycache__",
     "scripts/archive",
     "direct-*",
+    # H19 (2026-09-30): `taiji-harness/` is a whole-repository fork of the upstream
+    # `dsh` project (commit 82042a2f6, "G1 fork 落地"), not Seed-authored code.  It ships
+    # no ruff/black configuration of its own, so our rules were being applied to 13k
+    # vendored files and `ruff check .` reported 50 errors -- every single one inside the
+    # fork, zero in our own tree.  Reformatting or rewriting a fork we intend to keep
+    # syncing with upstream (see docs/08_UPSTREAM_SYNC_PLAYBOOK) would make every future
+    # merge conflict; vendored code is excluded from our style gates, exactly as
+    # `_libs` and `scripts/archive` already are.  It stays inside review, not inside
+    # our formatter's reach.
+    "taiji-harness",
 ]
 
 [tool.ruff.lint]
@@ -140,10 +150,14 @@ target-version = ["py310"]
 # J12 undetectable and flips `review_checks_passed` to False — the formatter and the
 # audit guard are in direct conflict.  Reformatting this file therefore requires first
 # updating the frozen J12 marker; until then formatting must not touch it.
-extend-exclude = """
-/(_libs|build|dist|node_modules|scripts/archive|direct-[^/]+)/
-^/scripts/training/run_taiji_unified_entry_evidence\\.py$
-"""
+#
+# The pattern MUST stay on one line as a single alternation.  `extend-exclude` is one
+# regex, not a list: writing the two alternatives on separate lines makes the first
+# branch require a trailing newline, so it stops matching real paths and silently
+# un-excludes the fixtures.  Verified with
+# `scripts/training/audit_frozen_marker_formatter_conflict.py`, which fails if this
+# exclusion stops applying.
+extend-exclude = "/(_libs|build|dist|node_modules|scripts/archive|taiji-harness|direct-[^/]+)/|/scripts/training/run_taiji_unified_entry_evidence\\.py$"
 
 [tool.coverage.run]
 source = ["seed", "taiji", "seed_platform", "neuroplex", "api"]
