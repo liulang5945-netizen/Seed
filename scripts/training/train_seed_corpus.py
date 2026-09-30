@@ -25,7 +25,7 @@ import argparse
 import json
 import sys
 import time
-from collections.abc import Iterator, Sequence
+from collections.abc import Iterator, Mapping, Sequence
 from dataclasses import replace
 from pathlib import Path
 from typing import Any
@@ -116,6 +116,7 @@ def iter_answer_chunks(
     paths: Sequence[Path | str],
     *,
     max_answer_chars: int = 0,
+    self_answers: Mapping[str, str] | None = None,
 ) -> Iterator[bytes]:
     """A30 §2bf：**每答一块**喂法（分块短答形状进主线的正题）。
 
@@ -129,9 +130,14 @@ def iter_answer_chunks(
     ``corpus_answer[:target]``）；截断只动答案，不动问句。拆不开 ``\\n答：`` 的行走响亮失败——
     不许静默少喂或把整行当答案。
 
+    ``self_answers``（A30 §2bg：自写形状档）给了就用表里的答案替换语料答案；表由
+    `build_taiji_a30_self_answers.py` 生成（问句→模型自答）。**查不到问句时响亮失败**——
+    语料与缓存必须同源同序，缺一条就是配对坏了，不许拿别的答案顶上。
+
     为什么要有这一条：正式档四臂里 `sized`（语料短答）L2 真自停 47/72、`self` 24/72，
     而同预算的连续流主线配方（a31 满额）只有 3/72 ⇒ "分块短答形状能不能搬进主线配方"
-    是 owner 2026-09-30 裁定①要求训一档验证的问题。
+    是 owner 2026-09-30 裁定①要求训一档验证的问题；§2bg 又证 L1 挂回路格随**答案作者**分
+    （自写过、语料侧不过）⇒ 自写档是重出基座的候选。
     """
 
     marker = "\n答："
@@ -140,7 +146,14 @@ def iter_answer_chunks(
         if not sep:
             raise RuntimeError(f"语料行里没有 {marker!r} 这个接缝，拆不出答案：{text[:24]!r}")
         question = question.removeprefix("问：").strip()
-        answer = answer.strip()
+        if self_answers is not None:
+            if question not in self_answers:
+                raise RuntimeError(
+                    f"自写答案表里没有这个问句（下表与语料不同源）：{question[:24]!r}"
+                )
+            answer = self_answers[question]
+        else:
+            answer = answer.strip()
         if max_answer_chars > 0:
             answer = answer[:max_answer_chars]
         yield f"问：{question}\n答：{answer}\n".encode()
@@ -203,6 +216,8 @@ def run_training(
     end_boundary_after_newline: bool = False,
     answer_chunking: str = "stream",
     answer_max_chars: int = 0,
+    answer_source: str = "corpus",
+    self_answers_path: Path | str | None = None,
 ) -> dict[str, float]:
     """Stream the corpus through ``Seed.observe`` with periodic persistence.
 
@@ -278,6 +293,10 @@ def run_training(
                 # A30 §2bf：分块喂法（每答一块、可选短答截断）同样随档登记。
                 "answer_chunking": str(answer_chunking),
                 "answer_max_chars": int(answer_max_chars),
+                "answer_source": str(answer_source),
+                "self_answers_path": (
+                    str(self_answers_path) if self_answers_path is not None else None
+                ),
             },
         )
         atomic_save(envelope, checkpoint_path)
@@ -327,7 +346,21 @@ def run_training(
             #: 守卫 `test_per_answer_progress_and_checkpoint_cadence` 钉住。
             last_progress = base_ticks
             last_checkpoint = base_ticks
-            for chunk in iter_answer_chunks(corpus_paths, max_answer_chars=answer_max_chars):
+            self_answers: Mapping[str, str] | None = None
+            if answer_source == "self":
+                if not self_answers_path:
+                    raise RuntimeError("answer_source=self needs self_answers_path")
+                table_path = Path(self_answers_path)
+                self_answers = {}
+                for line in table_path.read_text(encoding="utf-8").splitlines():
+                    if line.strip():
+                        row = json.loads(line)
+                        self_answers[str(row["question"])] = str(row["answer"])
+                if not self_answers:
+                    raise RuntimeError(f"self answer table is empty: {table_path}")
+            for chunk in iter_answer_chunks(
+                corpus_paths, max_answer_chars=answer_max_chars, self_answers=self_answers
+            ):
                 result = model.learn_bytes(
                     chunk,
                     epochs=1,
@@ -563,6 +596,21 @@ def _build_parser() -> argparse.ArgumentParser:
         "截断只动答案不动问句；与 on-policy 仪器 `sized` 臂同口径。与 stream 档组合会响亮拒绝。",
     )
     parser.add_argument(
+        "--answer-source",
+        choices=("corpus", "self"),
+        default="corpus",
+        help="A30 §2bg：答案从哪来。`corpus`（默认，逐位不变）＝语料答案；`self`＝模型自写的"
+        "短答表（`build_taiji_a30_self_answers.py` 产物，`--self-answers` 给路径）——§2bg 三线表里"
+        "唯一三线全过的是自写答案形状。仅 `per-answer` 档生效，与 stream 组合会响亮拒绝。",
+    )
+    parser.add_argument(
+        "--self-answers",
+        default=None,
+        dest="self_answers_path",
+        help="`--answer-source self` 的表路径（jsonl：{question, answer}）。查不到问句时响亮失败"
+        "（语料与缓存必须同源同序）。",
+    )
+    parser.add_argument(
         "--smoke",
         action="store_true",
         help="tiny default config and budget for a fast end-to-end run",
@@ -588,6 +636,16 @@ def main() -> None:
             "--answer-max-chars only applies to --answer-chunking per-answer; with the "
             "stream feed it is a silent no-op."
         )
+    #: A30 §2bg：自写答案同样只在分块喂法里有对象；且必须给表路径。
+    if args.answer_source == "self" and args.answer_chunking != "per-answer":
+        parser.error(
+            "--answer-source self only applies to --answer-chunking per-answer; with the "
+            "stream feed it is a silent no-op."
+        )
+    if args.answer_source == "self" and not args.self_answers_path:
+        parser.error("--answer-source self requires --self-answers <path>.")
+    if args.answer_source == "corpus" and args.self_answers_path:
+        parser.error("--self-answers given without --answer-source self.")
 
     #: 二次事故加固（2026-09-28，同日第二撞）：缺省写靶＝产品件 `checkpoints/seed_corpus.pt`，
     #: 而缺省 readout 已改 `predictive`＋位置输入 ⇒ 任何"只传一两个旗标"的调用（含测试里
@@ -676,6 +734,8 @@ def main() -> None:
         end_boundary_after_newline=bool(args.end_boundary_after_newline),
         answer_chunking=str(args.answer_chunking),
         answer_max_chars=int(args.answer_max_chars),
+        answer_source=str(args.answer_source),
+        self_answers_path=args.self_answers_path,
     )
     print(json.dumps(summary, ensure_ascii=False))
 

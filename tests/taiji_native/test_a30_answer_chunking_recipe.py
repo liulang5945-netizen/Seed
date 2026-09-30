@@ -153,3 +153,25 @@ def test_per_answer_progress_and_checkpoint_cadence(tmp_path: Path) -> None:
     #: 单调不减即可：终场 `_flush(final=True)` 与上一行的 ticks 相同是既有行为（连续流档同款）。
     assert ticks == sorted(ticks)
     assert len(lines) >= 3, f"进度行太少（{len(lines)}）——节奏没按阈值落盘"
+
+
+def test_self_answer_source_uses_table_and_fails_loud_when_missing(tmp_path: Path) -> None:
+    """§2bg 自写档：`self_answers` 表替换答案；缺问句响亮失败。"""
+
+    corpus = _corpus(tmp_path)
+    table = {"你好": "自答：还不错", "数字": "自答：四十二"}
+    chunks = [c.decode("utf-8") for c in iter_answer_chunks([corpus], self_answers=table)]
+    assert chunks[0] == "问：你好\n答：自答：还不错\n"
+    assert chunks[1] == "问：数字\n答：自答：四十二\n"
+
+    with pytest.raises(RuntimeError, match="不同源"):
+        list(iter_answer_chunks([corpus], self_answers={"你好": "只有一条"}))
+
+
+def test_self_answer_source_cli_validation() -> None:
+    import train_seed_corpus as module
+
+    parser = module._build_parser()
+    default_args = parser.parse_args(["--checkpoint", "output/x/checkpoint.pt"])
+    assert default_args.answer_source == "corpus"
+    assert default_args.self_answers_path is None
