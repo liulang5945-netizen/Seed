@@ -39,11 +39,18 @@ describe('localPathMediaUrl', () => {
     expect(localPathMediaUrl('ws://127.0.0.1:3080/', '/tmp/graph.png')).toBeUndefined()
   })
 
-  it('keeps destinations that cannot be Host-served local files inert', () => {
+  it('keeps destinations that are not absolute Workspace paths inert', () => {
     expect(localPathMediaUrl(BASE, '')).toBeUndefined()
     expect(localPathMediaUrl(BASE, '//cdn.example.com/x.png')).toBeUndefined()
     expect(localPathMediaUrl(BASE, 'relative.png')).toBeUndefined()
-    expect(localPathMediaUrl(BASE, 'C:\\tmp\\x.png')).toBeUndefined()
+  })
+
+  it('maps an authored Windows drive path to the file route of the document', () => {
+    expect(localPathMediaUrl(BASE, 'C:\\tmp\\x.png'))
+      .toBe(`${BASE}api/file?path=${encodeURIComponent('C:\\tmp\\x.png')}`)
+    expect(localPathMediaUrl(MOUNTED_BASE, 'C:\\tmp\\x.png'))
+      .toBe(`${MOUNTED_BASE}api/file?path=${encodeURIComponent('C:\\tmp\\x.png')}`)
+    expect(localPathMediaUrl(BASE, '\\server\\share\\x.png')).toBeUndefined()
   })
 
   it('encodes the full path including spaces', () => {

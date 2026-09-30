@@ -1,6 +1,7 @@
 import { Fragment, memo, useMemo } from 'react'
 import type { ReactNode } from 'react'
 import { JsonBlock, MarkdownText } from '@taiji/dsh-client-ui-primitives'
+import { isAbsoluteWorkspacePath } from '@taiji/dsh-util-workspace-path'
 import type { MarkdownFileMentions, MarkdownPathImages } from '@taiji/dsh-client-ui-primitives'
 import type { ChatNodeOwnerProps, ChatViewSlotProps, UseDisclosure, UsePresentation } from '../contract/slots.ts'
 import type { AssistantBlock } from '../contract/snapshot.ts'
@@ -10,14 +11,19 @@ import { useSearchableHidden } from './searchable-hidden.ts'
 import css from './AssistantMarkdown.module.css'
 
 /**
- * Resolve an authored POSIX image path against the document's file API.
+ * Resolve an authored absolute image path - POSIX or Windows drive spelling - against
+ * the document's file API. The renderer cannot know the Host's platform, so both spellings
+ * are forwarded and the Host decides: `/api/file` accepts a drive path only on a Windows
+ * Host and answers 400 elsewhere. UNC destinations stay out of scope, matching
+ * `markdownImageUrl` in `path-images.ts`.
  * @param base - canonical `document.baseURI` at render time.
  * @param value - authored markdown destination.
- * @returns an absolute HTTP(S) file-API URL, or undefined for unsupported
- * protocols and non-local paths.
+ * @returns an absolute HTTP(S) file-API URL, or undefined for unsupported protocols,
+ * empty values, and paths that are not absolute in either spelling.
  */
 export function localPathMediaUrl(base: string, value: string): string | undefined {
-  if (!value.startsWith('/') || value.startsWith('//')) return undefined
+  if (value.length === 0 || value.includes('\0') || /^[/\\]{2}/u.test(value)) return undefined
+  if (!isAbsoluteWorkspacePath(value)) return undefined
   if (!base.startsWith('http:') && !base.startsWith('https:')) return undefined
   return new URL(`api/file?path=${encodeURIComponent(value)}`, base).href
 }
