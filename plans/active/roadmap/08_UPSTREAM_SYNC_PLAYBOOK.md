@@ -1106,3 +1106,11 @@ owner 已裁定 18 行那枚走"批准新增分类条目"（人工评审＝本�
 
 撤回是整件的：6 个跟踪文件按 pathspec 逐个 git checkout（含 pnpm-lock.yaml 与 tsconfig.base.json）、2 个新文件删除；`git status --porcelain` 在我名的这些路径上为空，`duplication` 复测回到 Found 1 clones。一处残留与 ㊵-125 同：gateway 那组无 git 对应物的过期产物本轮再次被清除，且 build 绿过一次说明它可再生。判据⑥ 仍未满足，但**四次尝试已经把"还差什么"从猜测变成一份带文件行号的清单**：manifest（含 workspace-controller 的双锚点）＋paths 目标选择＋消费方项目登记面，三处齐了这枚就消。
 
+**㊵-127（第五次尝试：一度把四道门同时推到绿，最后一步把构建搞崩，未诊断即整件撤回；这枚克隆仍差同一处）**
+
+本轮补齐了 ㊵-126 缺的两处登记——两个消费者项目的 `references` 各加一条指向 `../gateway/tsconfig.host.json`，以及把 gateway 从两包的 devDependencies 移入 `dependencies` 并同提交 `pnpm install`（workspace-controller 那条同文本双锚点按 ㊵-126 的提示改成只删 devDependencies 那一处，peer 声明保留）。中途我自己写坏过一次 `references` 条目（插成了裸的 path 字符串而不是对象，报 TS5024），改成对象后有一组读数同时成立：`duplication` rc=0、Found 0 clones；`verify-package-dependencies` rc=0；三包 vitest `Test Files 21 passed`、`Tests 474 passed`；五个改动文件 oxlint 0 warnings 0 errors；`build` 的 `error TS` 计数为 0。
+
+随后我把 `src/feed-waiter.ts` 补进 gateway 自己的 `tsconfig.host.json` files 清单（这是 ㊵-124 里证明必要的第②项，本轮前一次漏了它），`build` 反而 rc=1，但**一条 `error TS` 都没有**——尾部是 Node 的 ESM 加载栈，即某个脚本在读取我写的 JSON 时直接崩了；同一时刻 `doc-sync` 从 2 支红涨到 8 支红、vitest 从全绿退到 11 个文件失败，这个形状与某份 tsconfig 或 package.json 被我写坏一致。诊断没做完，预算已尽，所以我选择整件撤回而不是留下面向下一格的坏树：11 个跟踪路径（含 `tsconfig.base.json`、`pnpm-lock.yaml`、两包 manifest、两包 `tsconfig.host.json`、gateway 的 `tsconfig.host.json` 与 `package.json`、分类清单、两包 `src/feed.ts`）按 pathspec 逐个 `git checkout`，2 个新文件删除；撤回后 `git status --porcelain` 在我名的这些路径上为空，`duplication` 复测回到 Found 1 clones、rc=1。
+
+给下一格的硬事实：这枚克隆的消法已经有过**一次四门同绿**的读数，所以路径是对的；未解的只剩我最后一次编辑为什么把构建从 0 条 `error TS` 变成脚本崩溃——最可能是我写入 JSON 的文本形式（`files` 清单那条 replace）在某处不合法或被某个读取方按另一种结构解析。核查顺序建议：先 `python -m json.tool` 逐份验 JSON，再单跑 `build` 看栈顶是哪个脚本，最后才改结构。**判据⑥ 本轮仍未满足**，我不把"曾经 0 clones"当作满足。
+
