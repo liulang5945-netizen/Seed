@@ -2961,4 +2961,26 @@ v1 那三条臂**没锁住长度**，所以真正该定价的是"单位字节里
 2. **重出默认基座＝先拆退化来源**：补"同预算不带配方"对照件（a26_p1 + 2M ticks、`--no-end-boundary-after-newline`，其余与 a31 逐同），把 rev59 未拆的"配方 vs 中途态/语料窄化"拆干净后再定是否重出；本轮不动默认位。
 3. **产品出口结构条件收笔＝实现但默认关**：`chat()` 认"答案已成形＋模型发换行"为收笔信号，模块常量默认 False＋显式开启口；行为改动入账，**登记"这是产品的判据不是模型的判断"，不许记进模型能力**。
 4. **DEBT-G17 检查落地＋L1 参考值按上限 12/15 重录**：`well_formed` 的"UTF-8 合法"检查修到能真拒（lone surrogate／U+FFFD），产品副本与仪器副本同改（漂移守卫保持逐位同）；SPEC-A-24 的 L1 参考值重录为 12（a26_p1 不挂回路）／15（a26_p1 挂回路）——**口径＝上限**（§2at：由已入库件的 `utf8_decodable_rate` 反推，精确回整）。
-四项执行状态随各自提交更新；判读全部入库后方为交付。
+四项执行状态（随各自提交更新；判读全部入库后方为交付）：
+
+* **③ 出口收笔＝✅ 已落地（`d22e3033`，默认关）**：`seed/surface_gate.py` 新增 `structural_closure_cut`，
+  `api/seed_runtime.py` 新增 `STRUCTURAL_CLOSURE_DEFAULT=False`＋`chat(structural_closure=None)` 逃生口＋
+  `last_structural_closure_cut` 观测位；门槛①的 `ended_naturally` 增 `structural_newline` 支路。
+  守卫 `test_a30_structural_closure_switch.py` 5 条：默认位 False＋doc 明写"产品的判据不是模型的判断"／
+  切割取第一个换行／开关在门槛与解码两侧同口径／不传参时观测位恒 False。
+* **④ DEBT-G17＝✅ 已落地（`d22e3033`）**：两副本（`seed/surface_gate.py` 与
+  `scripts/training/diag_taiji_r2_surface_decode.py`）的"UTF-8 合法"检查改到真能拒——
+  lone surrogate 经 `UnicodeEncodeError` 拒、含 U+FFFD 拒（与评分仪器的 `utf8_decodable` 同口径）；
+  守卫 `test_g17_utf8_gate_lands.py` 4 条（含两副本逐位同判）。**L1 参考值按上限口径重录**：
+  不挂回路 12、挂回路 15（SPEC-A-24 §7；a31 侧 2／9），旧 241／100 是旧定义读数、不可直比。
+  门槛①②自此实际拦截变更严——U+FFFD 类答复不再过门（owner 批，入账）。
+  涟漪面实测：`test_a30_shipped_base_and_surface_gate`／`test_memory_learning_example`／
+  `test_p3b_campaign_contract`／`test_readout_retrain_verdict_contract`／
+  `test_r2_copy_surface_extension_contract` 合计 70 passed。
+* **① 正式档＝训练中**：on-policy 仪器同手法（每答收尾）扩训练量发跑（48 组×3 答×6 epoch、
+  四臂 corpus/self/sized/quarter、`--save-arms output/tmp_a30_smoke/formal_arms`），
+  出数后按 §8 冻结主列（L2 主列＝`72 − generations_eating_full_budget` 的真自停口径，
+  v6 修正后）在 stop_failure v6 上复测；判据不动。
+* **② 对照件＝训练中**：`--no-end-boundary-after-newline` 下 a26_p1＋2M ticks（其余与 a31 逐同），
+  写靶 `output/a31_control_norecipe/`；出数后同仪器（`score_taiji_r2_copy_surface_extension.py`，
+  104 题）与 a31 同面比对，把 rev59 未拆的"配方 vs 中途态/语料窄化"拆干净。
