@@ -269,6 +269,12 @@ focused-before.xml
 # 实验遗留的同族目录。带前导斜杠锚定在仓库根（R2），不会波及子目录里的同名物。
 # 四者在本仓库均无 tracked 文件（R4 反向检查通过）。工具缓存两枚此前漏网，按工具名写。
 /.tmp-*/
+# H19q (2026-09-30): the underscore sibling of the rule above.  `/ .tmp-*/` only matches
+# directories, so ~36 scratch files this repo accumulates at the root (.tmp_pyfiles.txt,
+# .tmp_ruff.json, .tmp_*.err, ...) stayed visible to `git status` forever.  Only the
+# underscore form is added: `.tmp-p4-9-run.txt` is tracked, and the dash form is the
+# directory family's business.  Verified no tracked path matches this pattern.
+.tmp_*
 # H19 (2026-09-30): 上面那条只写了 `.tmp-<主题>/`（**连字符**），而实际产出的临时文件用的是
 # `.tmp_<name>.<ext>`（**下划线**，如 `.tmp_ruff.json`、`.tmp_test_native.log`）—— 两者不是同一个 glob，
 # 于是这族文件全部漏网进了 git status。这正是 R1 说的"按实例名写"：规则作者以为自己覆盖了 `.tmp*`。
