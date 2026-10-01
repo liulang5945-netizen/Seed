@@ -229,6 +229,13 @@ def main() -> int:
         default=None,
         help="只跑题面里这些 id（逗号分隔）——长预算档用它点住最坏那几条，不必整批重跑",
     )
+    parser.add_argument(
+        "--no-copy-evidence-gate",
+        action="store_true",
+        help="v8：挂上回路之后把**那条加性证据的 UTF-8 位置门**显式关掉——用来拆'挂载回路'这一个动作里"
+        "捆绑着的两样东西（回路的 prompt／证据通道 vs 那条门）。它与**回写门槛①**无关：后者按'工件与"
+        "检查点同目录'解析，而本仪器走 `learn=False`，那张面上根本不跑。",
+    )
     parser.add_argument("--penalty", type=float, default=2.0)
     parser.add_argument("--penalty-window", type=int, default=8)
     parser.add_argument("--max-length", type=int, default=256)
@@ -258,6 +265,9 @@ def main() -> int:
     if args.circuit:
         runtime.enable_copy_circuit(PROJECT_ROOT / args.circuit)
     substrate = runtime.model.substrate
+    if args.no_copy_evidence_gate:
+        # v8：显式置 False ⇒ `copy_evidence_utf8_gate_effective` 应随之为 False（守卫会抓"没走到"那种）。
+        substrate.set_copy_evidence_utf8_gate(False)
     boundary = int(substrate.config.boundary_symbol)
     loop_first, loop_last = generation_loop_span(type(substrate).generate)
 
@@ -446,7 +456,11 @@ def main() -> int:
 
     substrate.observe = original_observe  # type: ignore[method-assign]
     report = {
-        "format": "taiji-a30-stop-failure-v7",
+        "format": "taiji-a30-stop-failure-v8",
+        "format_note_v8": "v8 **加性**多一个旗标 `--no-copy-evidence-gate`（挂完回路后把那条加性证据的 UTF-8 "
+        "位置门显式关掉）与两条自述（`copy_evidence_gate_off_requested`／守卫 `evidence_gate_flag_honored`），"
+        "其余字段与算法一字未动 ⇒ 与 v4–v7 同格可比。加它的理由：v7 之前把'挂载回路'当成一个变量，其实它一次"
+        "开两样东西（回路的 prompt／证据通道 ＋ 那条门），拆开来才允许写'是回路的通道造成'。",
         "format_note_v7": "v7 **加性**多存两条回写门槛自述（`surface_gate_state`／`write_back_gate_last_reason`），"
         "其余字段与算法一字未动 ⇒ 与 v4–v6 同格可比。加它的理由：门槛①（回写放行）**不是**由挂载回路武装的——"
         "它按`seed/surface_gate.py:150-156` 的'工件与检查点同目录'规则在 `load()` 里解析，"
@@ -506,6 +520,7 @@ def main() -> int:
             runtime.model.substrate, "_copy_evidence_utf8_gate_override", None
         ),
         # v7：门槛①（回写放行）与上面那条"证据 UTF-8 位置门"是**两条不同的门**，一起报才不会互相顶名。
+        "copy_evidence_gate_off_requested": bool(args.no_copy_evidence_gate),
         "surface_gate_state": runtime.surface_gate_state,
         "write_back_gate_last_reason": (
             str(runtime.last_write_back_gate[1]) if runtime.last_write_back_gate else None
@@ -519,6 +534,13 @@ def main() -> int:
             "observe_calls_recorded": bool(records),
             # v7 自述守卫：这条面必须**报出**回写门槛状态（ None／缺键都算仪器没走到，红）。
             "surface_gate_state_reported": runtime.surface_gate_state is not None,
+            # v8：旗标必须**被走到**——传了 `--no-copy-evidence-gate` 却仍报出有效值为真，就是仪器没生效。
+            "evidence_gate_flag_honored": (not args.no_copy_evidence_gate)
+            or not bool(
+                substrate.config.copy_evidence_utf8_gate
+                if getattr(substrate, "_copy_evidence_utf8_gate_override", None) is None
+                else substrate._copy_evidence_utf8_gate_override
+            ),
             "observe_calls_by_caller": dict(
                 sorted(caller_totals.items(), key=lambda pair: -pair[1])[:12]
             ),

@@ -70,17 +70,18 @@ def test_empty_generation_takes_the_fallback_too() -> None:
 
 
 def test_instrument_carries_v6_and_the_correction_note() -> None:
-    """格式面：v7 在案（v6 的语义逐条仍在）、更正说明点名追加二的误诊与深帧证据，严格守卫公式未动。
+    """格式面：v8 在案（v6/v7 的语义逐条仍在）、更正说明点名追加二的误诊与深帧证据，严格守卫公式未动。
 
-    2026-10-02 该仪器升 **v7**（加性自述 `surface_gate_state`／`write_back_gate_last_reason`），
+    2026-10-02 该仪器先升 **v7**（加性自述 `surface_gate_state`／`write_back_gate_last_reason`），
+    同日再升 **v8**（加性旗标 `--no-copy-evidence-gate` ＋守卫 `evidence_gate_flag_honored`），
     v6 的每一条判据**原样保留在下面**——升版改的是这一行的版本号，不改任何比较公式与计数列。
     """
 
     source = (PROJECT_ROOT / "scripts" / "training" / "probe_taiji_a30_stop_failure.py").read_text(
         encoding="utf-8"
     )
-    assert '"format": "taiji-a30-stop-failure-v7"' in source
-    assert "format_note_v7" in source and "format_note_v6" in source
+    assert '"format": "taiji-a30-stop-failure-v8"' in source
+    assert "format_note_v8" in source and "format_note_v7" in source and "format_note_v6" in source
     assert "format_note_v6" in source
     assert "追加二" in source and "深帧复现" in source
     assert "all_surfaces_are_replayed_raw" in source
@@ -89,6 +90,9 @@ def test_instrument_carries_v6_and_the_correction_note() -> None:
     assert 'if check["fed_bytes"] >= args.max_length' in source
     #: v7 的两位自述必须真的在报（回写门槛状态与最近一次回写判决）。
     assert '"surface_gate_state": runtime.surface_gate_state' in source
+    #: v8 的旗标与"被走到"守卫（拆"挂载回路"里捆绑的两样东西；行为面另有真实测试）。
+    assert '"--no-copy-evidence-gate"' in source
+    assert "evidence_gate_flag_honored" in source
     assert '"write_back_gate_last_reason"' in source
     #: 旧分类退役：新比较只产生 None／surface_differs_from_replay 两种取值
     #: （历史件里的 replay_tiny_feed 字段仍在，读旧件不受影响）。
