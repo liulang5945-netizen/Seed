@@ -141,6 +141,9 @@ def install_constrained_decode() -> dict[str, object]:
         response_phase: bool = False,
         boundary: object = None,
         authorization: object = None,
+        utf8_strict: bool = False,
+        repetition_penalty: float = 0.0,
+        repetition_window: int = 8,
     ) -> bytes:
         if boundary is not None or authorization is not None:
             raise RuntimeError("约束解码包装不支持带 boundary/authorization 的调用")
@@ -148,6 +151,20 @@ def install_constrained_decode() -> dict[str, object]:
             raise RuntimeError(
                 "约束解码包装不支持 response_start / response_phase 读出"
                 "（会静默丢掉 R2 的响应通道语义）"
+            )
+        #: 2026-10-01（第一次全量 H 标定撞出来的缺陷）：本包装的签名停在 SPEC-R2-02 之前，
+        #: 而产品 `chat()` 现在总带 `utf8_strict=True` ⇒ 任何 constrained_decode 链路一律
+        #: `TypeError: generate() got an unexpected keyword argument 'utf8_strict'`。
+        #: 处置按本仓纪律——**能对齐的就对齐，对齐不了的就响亮拒绝**：
+        #:  * `utf8_strict`：本包装**按构造**就只发合法 UTF-8（`_constrained_generate` 的职责）
+        #:    且返回前裁到完整字符 ⇒ `True/False` 都被它满足，接受即可（注明：不是"忽略"，
+        #:    是约束解码本来就严于掩码解码）；
+        #:  * `repetition_penalty` / `repetition_window`：本包装的贪心环**不实现**惩罚 ⇒
+        #:    非默认值一律响亮拒绝，绝不静默丢掉调用方要的解码语义（与 boundary 同一处置）。
+        if float(repetition_penalty) != 0.0 or int(repetition_window) != 8:
+            raise RuntimeError(
+                "约束解码包装不支持 repetition_penalty/repetition_window 非默认值"
+                "（它不实现惩罚；静默忽略会改变被测量链路的语义）"
             )
         # 注意：``boundary_symbol`` 是符号空间的特殊值（不保证落在 0..255 内），
         # 不能直接 ``bytes([...])``；"遇 boundary 即停"已由 _constrained_generate 处理。
@@ -167,7 +184,9 @@ def install_constrained_decode() -> dict[str, object]:
         "patched": True,
         "anchor_present": True,
         "dependencies_verified": list(_PATCH_DEPENDENCIES),
-        "ignored_kwargs": ["stop_at_boundary", "sample", "reset", "use_memory"],
+        "ignored_kwargs": ["stop_at_boundary", "sample", "reset", "use_memory", "utf8_strict"],
+        "utf8_strict_note": "约束解码按构造只发合法 UTF-8 ⇒ utf8_strict=True/False 均被满足"
+        "（严于掩码解码），非'静默忽略'；repetition_penalty 非 0 则响亮拒绝。",
         "original": f"{original.__module__}.{original.__qualname__}",
     }
 

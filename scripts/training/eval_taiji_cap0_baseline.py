@@ -42,7 +42,10 @@ HEALTH_REPORT_FORMAT = "taiji-cap0-health-v3"
 DEFAULT_REPORT = PROJECT_ROOT / "reports" / "taiji_cap0_baseline_v1_20260915.json"
 DEFAULT_HEALTH_REPORT = PROJECT_ROOT / "reports" / "taiji_cap0_health_v5_default_20260918.json"
 DEFAULT_ADJUDICATION_REPORT = PROJECT_ROOT / "reports" / "taiji_cap0_adjudication_v1_20260915.json"
-DEFAULT_CHECKPOINT = PROJECT_ROOT / "checkpoints" / "seed_corpus.pt"
+#: 2026-10-01 修正（换底时发现的 stale 钉子）：本常量自 09-20 换底起就落后于产品默认，
+#: 导致"不带参数的评测/健康跑"量的是旧件。改为**跟随产品常量**——装机面改动自动流到这里。
+from api.seed_runtime import DEFAULT_CHECKPOINT  # noqa: E402
+
 #: 现行评价集。v1（frozen 2026-09-15）不覆写、仍由 `test_cap0_eval_set_contract.py` 按历史钉住；
 #: v2 的唯一实质改动是 F04 的 `reference`（默认基座换底，见其 `change_log`），门文本与题面零改动。
 EVAL_SET_PATH = PROJECT_ROOT / "plans" / "manifests" / "cap0_eval_set_v2.json"

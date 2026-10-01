@@ -43,6 +43,29 @@
   约 30% 的真实性能劣化**。这就是 §1 把阈值绑到三元组的原因，也是它不能靠"顺手沿用"过去的地方。
 - git head：见本节提交。
 
+## §4b 生效记录（换底到自写档候选，2026-10-01；**§4 那组作废**）
+
+- 换底：owner 授权『未及时决策按推荐推进』⇒ 按推荐重出默认基座（PLAN-A-30 §7c）：默认由
+  `seed_beta_with_circuit.pt` 换到 `seed_a31self_with_circuit.pt`（sha `d6169a35…`）。
+  按 §1 的**(设备, 链路, checkpoint) 三元组**绑定，§4（2026-09-20 在 `seed_beta.pt` 上取的）作废。
+- 新标定件（本组生效）：`reports/taiji_cap0_h_calibration_a31self_20261001.json`
+  （`checkpoint=checkpoints/seed_a31self_with_circuit.pt`，`chain={relax_legacy_guard, constrained_decode}`，
+  5 次重复、每次新进程、机器空闲）。
+- **生效阈值（max×2）**：H01 **0.841 s**；H02 **3.231 s**；H03 **1.7944 s/次**；H04 **417,034 B**；
+  H05 150 次零崩溃（`stability_runs=30`×5）。
+- **对照（归因用，不另立阈值）**：同一候选档**不挂回路**的 5 次重采
+  （`reports/taiji_cap0_h_calibration_a31self_nocircuit_20261001.json`）：
+  H01 0.811／H02 **1.493**／H03 1.624／H04 416,918。⇒ 首响应从 ≈0.73 s 抬到 ≈1.50 s
+  **是回路随出厂信封挂载的代价**（挂载＋每轮告知写入），每轮 chat 只多 ≈0.04 s、内存不变；
+  §1 的口径不变（阈值绑三元组），此对照只作金额说明。
+- **一处必须先修的断档（本件第一次跑撞出来的真缺陷）**：`constrained_decode` 的进程内包装
+  （`scripts/training/probe_taiji_cap0_byte_output.py::install_constrained_decode`）签名停在 SPEC-R2-02 之前，
+  而产品 `chat()` 自 2026-09-27 起总带 `utf8_strict=True` ⇒ **任何 required 链（含 constrained_decode）
+  的健康读数自 09-27 起就取不出来**（仪器把空读数记成 `n=0` 静默过去）。已修：包装签名补齐产品链的
+  keyword 面（`utf8_strict` 按构造即满足、`repetition_penalty`/`window` 非默认**响亮拒绝**），
+  并加签名守卫 `tests/taiji_native/test_constrained_decode_signature_guard.py`（2 条）。
+  修复提交见 git head。
+
 ## §5 未随本件处置的 H 缺口
 
 H06（中断后恢复）仍 `not_executed` —— 需要专门的恢复流程，标定不覆盖它；响应/内存门冻结也不能代替它。
