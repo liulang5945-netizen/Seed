@@ -13,8 +13,50 @@ from __future__ import annotations
 
 import logging
 from dataclasses import fields
+from pathlib import Path
 
 import pytest
+
+REPO_ROOT = Path(__file__).resolve().parents[1]
+
+
+def pytest_collection_modifyitems(config, items):
+    """Skip tests whose module declares local-only artifacts this checkout lacks.
+
+    Several contracts legitimately depend on artifacts the repository deliberately does
+    not version: ``.gitignore`` carries ``*.pt`` (line 50) and ``*.jsonl`` (line 140),
+    with the rationale spelled out at line 165 ("Checkpoint directories (large model
+    files)").  A fresh checkout -- which is exactly what CI runs -- therefore cannot
+    satisfy them.  Before this hook those tests failed with FileNotFoundError from deep
+    inside a subprocess or a torch load, naming neither the missing artifact nor the
+    fact that it is missing by design.
+
+    A module opts in by declaring, at module level::
+
+        LOCAL_ONLY_ARTIFACTS = ("checkpoints/seed_beta.pt",)
+
+    Paths are relative to the repository root.  This is a deliberate, stated policy
+    rather than a way to hide failures: the reason string names every missing path and
+    says it is gitignored by design, so a reviewer reading the log can tell a skipped
+    contract from a passing one.  Note the hook is module-granular -- a file that mixes
+    artifact-dependent and self-contained tests will skip all of them, so files with
+    mixed needs should guard the individual tests instead (see
+    tests/taiji_native/test_language_alignment.py).
+    """
+    for item in items:
+        declared = getattr(item.module, "LOCAL_ONLY_ARTIFACTS", ())
+        if not declared:
+            continue
+        missing = [rel for rel in declared if not (REPO_ROOT / rel).is_file()]
+        if missing:
+            item.add_marker(
+                pytest.mark.skip(
+                    reason=(
+                        "local-only artifact(s) absent from this checkout "
+                        f"(gitignored by policy): {', '.join(missing)}"
+                    )
+                )
+            )
 
 
 def pytest_addoption(parser):

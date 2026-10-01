@@ -19,6 +19,20 @@ from taiji import (
     paired_checkpoint_diagnostic,
 )
 
+# H19j (2026-09-30): the smoke corpus below is a local-only artifact -- `.gitignore:140`
+# ignores every `*.jsonl`, so a fresh checkout (which is exactly what CI runs) has no
+# copy.  These eight tests were failing there with FileNotFoundError rather than saying
+# what was actually missing.  Resolve through a guard so the reason is explicit, and so
+# only the tests that truly need the corpus skip -- the ones that build their episodes
+# inline keep running.
+SMOKE_CORPUS = Path("tests/fixtures/r2_language_alignment_smoke.jsonl")
+
+
+def _smoke_corpus() -> Path:
+    if not SMOKE_CORPUS.is_file():
+        pytest.skip(f"local-only smoke corpus absent (gitignored *.jsonl): {SMOKE_CORPUS}")
+    return SMOKE_CORPUS
+
 
 def _corpus(tmp_path: Path) -> LanguageEpisodeCorpus:
     episodes = (
@@ -179,9 +193,7 @@ def test_sequence_criteria_keep_required_forbidden_and_unknown_rules_separate() 
 
 
 def test_fast_slow_developmental_mode_replays_and_preserves_paired_readout() -> None:
-    corpus = LanguageEpisodeCorpus.from_jsonl(
-        [Path("tests/fixtures/r2_language_alignment_smoke.jsonl")]
-    )
+    corpus = LanguageEpisodeCorpus.from_jsonl([_smoke_corpus()])
     trainer = LanguageAlignmentTrainer(
         Taiji(episode_id="r2-fast-slow"),
         corpus,
@@ -206,9 +218,7 @@ def test_fast_slow_developmental_mode_replays_and_preserves_paired_readout() -> 
 
 
 def test_condition_route_diagnostic_is_read_only_and_not_label_routed() -> None:
-    corpus = LanguageEpisodeCorpus.from_jsonl(
-        [Path("tests/fixtures/r2_language_alignment_smoke.jsonl")]
-    )
+    corpus = LanguageEpisodeCorpus.from_jsonl([_smoke_corpus()])
     trainer = LanguageAlignmentTrainer(Taiji(episode_id="r2-route"), corpus)
     before = trainer.checkpoint()["checkpoint_digest"]
 
@@ -223,9 +233,7 @@ def test_condition_route_diagnostic_is_read_only_and_not_label_routed() -> None:
 
 
 def test_sequence_decode_diagnostic_keeps_native_owner_and_restore_boundary() -> None:
-    corpus = LanguageEpisodeCorpus.from_jsonl(
-        [Path("tests/fixtures/r2_language_alignment_smoke.jsonl")]
-    )
+    corpus = LanguageEpisodeCorpus.from_jsonl([_smoke_corpus()])
     trainer = LanguageAlignmentTrainer(Taiji(episode_id="r2-sequence-route"), corpus)
     before = trainer.checkpoint()["checkpoint_digest"]
 
@@ -247,9 +255,7 @@ def test_sequence_decode_diagnostic_keeps_native_owner_and_restore_boundary() ->
 
 
 def test_response_start_readout_isolated_and_checkpointable() -> None:
-    corpus = LanguageEpisodeCorpus.from_jsonl(
-        [Path("tests/fixtures/r2_language_alignment_smoke.jsonl")]
-    )
+    corpus = LanguageEpisodeCorpus.from_jsonl([_smoke_corpus()])
     trainer = LanguageAlignmentTrainer(
         Taiji(episode_id="r2-response-start"),
         corpus,
@@ -287,9 +293,7 @@ def test_response_start_readout_isolated_and_checkpointable() -> None:
 
 
 def test_response_phase_readout_isolated_and_checkpointable() -> None:
-    corpus = LanguageEpisodeCorpus.from_jsonl(
-        [Path("tests/fixtures/r2_language_alignment_smoke.jsonl")]
-    )
+    corpus = LanguageEpisodeCorpus.from_jsonl([_smoke_corpus()])
     trainer = LanguageAlignmentTrainer(
         Taiji(episode_id="r2-response-phase"),
         corpus,
@@ -339,9 +343,7 @@ def test_response_start_and_phase_candidates_are_exclusive() -> None:
 
 
 def test_response_plan_candidate_isolated_checkpointable_and_ablated() -> None:
-    corpus = LanguageEpisodeCorpus.from_jsonl(
-        [Path("tests/fixtures/r2_language_alignment_smoke.jsonl")]
-    )
+    corpus = LanguageEpisodeCorpus.from_jsonl([_smoke_corpus()])
     trainer = LanguageAlignmentTrainer(
         Taiji(
             config=TaijiConfig.capacity_profile(
@@ -421,9 +423,7 @@ def test_h3_5a_v3_fixture_is_family_and_response_disjoint() -> None:
 
 
 def test_generalization_diagnostic_is_read_only_and_reports_transfer_surface() -> None:
-    corpus = LanguageEpisodeCorpus.from_jsonl(
-        [Path("tests/fixtures/r2_language_alignment_smoke.jsonl")]
-    )
+    corpus = LanguageEpisodeCorpus.from_jsonl([_smoke_corpus()])
     trainer = LanguageAlignmentTrainer(
         Taiji(episode_id="r2-generalization"),
         corpus,
@@ -445,9 +445,7 @@ def test_generalization_diagnostic_is_read_only_and_reports_transfer_surface() -
 
 
 def test_conditional_credit_diagnostic_is_positionwise_and_read_only() -> None:
-    corpus = LanguageEpisodeCorpus.from_jsonl(
-        [Path("tests/fixtures/r2_language_alignment_smoke.jsonl")]
-    )
+    corpus = LanguageEpisodeCorpus.from_jsonl([_smoke_corpus()])
     trainer = LanguageAlignmentTrainer(
         Taiji(episode_id="r2-credit-profile"),
         corpus,

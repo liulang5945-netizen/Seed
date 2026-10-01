@@ -34,6 +34,13 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 FIXTURE = PROJECT_ROOT / "tests/fixtures/r2_d1_measurement_v2.jsonl"
 
 
+# H19j (2026-09-30): the frozen checkpoint this contract replays is gitignored by policy
+# (`.gitignore` carries `*.pt`), so a fresh checkout -- exactly what CI runs -- has no
+# copy and these tests failed with a bare torch FileNotFoundError.  Declaring the
+# dependency lets the conftest hook skip with a reason naming what is missing and why.
+LOCAL_ONLY_ARTIFACTS = ("reports/r2_d4_checkpoints/matched/20260917/epoch30.pt",)
+
+
 def _rows() -> list[dict]:
     return [
         json.loads(line)

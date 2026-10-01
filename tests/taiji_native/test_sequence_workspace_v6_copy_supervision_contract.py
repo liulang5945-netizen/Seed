@@ -39,6 +39,13 @@ NO_VALUE_SHAPES = ("unknown", "same_opening_unknown", "combination_same", "combi
 sys_path_scripts = str(PROJECT_ROOT)
 
 
+# H19j (2026-09-30): the frozen checkpoint this contract replays is gitignored by policy
+# (`.gitignore` carries `*.pt`), so a fresh checkout -- exactly what CI runs -- has no
+# copy and these tests failed with a bare torch FileNotFoundError.  Declaring the
+# dependency lets the conftest hook skip with a reason naming what is missing and why.
+LOCAL_ONLY_ARTIFACTS = ("reports/r2_d3_checkpoints/multihead_probe/hg_h4_seed20260917_epoch30.pt",)
+
+
 def _prototype(seed: int = 20260917) -> SequenceWorkspacePrototype:
     return SequenceWorkspacePrototype(
         SequenceWorkspaceConfig(

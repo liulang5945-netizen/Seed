@@ -32,6 +32,13 @@ D4_PROBE_CHECKPOINT = PROJECT_ROOT / "reports/r2_d4_checkpoints/copy_supervision
 D4_PROBE_REPORT = PROJECT_ROOT / "reports/r2_d4_copy_supervision_probe_20260918.json"
 
 
+# H19j (2026-09-30): the frozen checkpoint this contract replays is gitignored by policy
+# (`.gitignore` carries `*.pt`), so a fresh checkout -- exactly what CI runs -- has no
+# copy and these tests failed with a bare torch FileNotFoundError.  Declaring the
+# dependency lets the conftest hook skip with a reason naming what is missing and why.
+LOCAL_ONLY_ARTIFACTS = ("reports/r2_d4_checkpoints/copy_supervision_probe/epoch30.pt",)
+
+
 def _config(**extra) -> SequenceWorkspaceConfig:
     base = dict(
         seed=20260917,
