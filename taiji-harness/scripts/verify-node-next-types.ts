@@ -107,6 +107,7 @@ if (missingOutputs.length > 0) {
 
 const tmp = mkdtempSync(resolve(root, '.node-next-types-'))
 let failed = false
+let skippedCause: string | undefined
 
 try {
   const nodeModules = resolve(tmp, 'node_modules')
@@ -153,15 +154,30 @@ try {
   })
   console.log(`verify-node-next-types: ${packages.length} workspace package declaration API(s) compile under NodeNext.`)
 } catch (error: unknown) {
-  failed = true
   const output = error as { message?: string; code?: string; stdout?: Buffer; stderr?: Buffer }
-  console.error('verify-node-next-types: NodeNext consumer typecheck failed.\n')
-  // A spawn- or filesystem-level throw carries no child output, so the only reportable fact is the
-  // throw itself; without this the run prints an empty tail and the failure is unattributable.
-  console.error(`${output.message ?? ''} ${output.code ?? ''}`.trim())
-  console.error(`${output.stdout?.toString() ?? ''}${output.stderr?.toString() ?? ''}`)
+  const detail = `${output.message ?? ''} ${output.code ?? ''}`.trim()
+  // Owner ruling 2026-10-01 (hygiene gate semantics, 甲): a host without
+  // directory-symlink privilege cannot run this leaf at all — creating the
+  // temp node_modules requires developer mode or admin on Windows. A symlink
+  // EPERM is therefore a structural skip, not a regression signal; the
+  // NodeNext regression lives in the explicit scan above (which already ran)
+  // and in CI/POSIX runs of this same entry. Every other failure stays red.
+  if (output.code === 'EPERM' && output.message?.includes('symlink')) {
+    skippedCause = detail
+  } else {
+    failed = true
+    console.error('verify-node-next-types: NodeNext consumer typecheck failed.\n')
+    // A spawn- or filesystem-level throw carries no child output, so the only reportable fact is the
+    // throw itself; without this the run prints an empty tail and the failure is unattributable.
+    console.error(detail)
+    console.error(`${output.stdout?.toString() ?? ''}${output.stderr?.toString() ?? ''}`)
+  }
 } finally {
   rmSync(tmp, { recursive: true, force: true })
 }
 
-if (failed) process.exit(1)
+if (skippedCause !== undefined) {
+  console.log('verify-node-next-types: skipped: symlink privilege unavailable on this host (needs developer mode or admin).')
+  console.log('verify-node-next-types: the NodeNext regression signal lives in the extension scan above and in CI/POSIX runs.')
+  console.log(`verify-node-next-types: skip cause: ${skippedCause}`)
+} else if (failed) process.exit(1)
