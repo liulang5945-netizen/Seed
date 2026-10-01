@@ -14,6 +14,7 @@
     "src/default-directory.ts"
   ],
   "references": [
+    { "path": "../gateway/tsconfig.host.json" },
     { "path": "../../../vendor/cordis" },
     { "path": "../../../vendor/schemastery" },
     { "path": "../../core/session" },

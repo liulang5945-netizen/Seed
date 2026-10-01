@@ -65,6 +65,7 @@
   ],
   "license": "MIT",
   "dependencies": {
+    "@taiji/dsh-api-gateway": "workspace:^",
     "@taiji/dsh-typert-protocol": "workspace:^",
     "@taiji/schemastery": "workspace:^",
     "zod": "^4.4.3"
@@ -74,7 +75,6 @@
   },
   "devDependencies": {
     "@taiji/cordis": "workspace:^",
-    "@taiji/dsh-api-gateway": "workspace:^",
     "@taiji/dsh-client-connection": "workspace:^"
   }
 }

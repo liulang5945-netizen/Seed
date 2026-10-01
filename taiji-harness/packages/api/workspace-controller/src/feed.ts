@@ -1,6 +1,7 @@
 /** Reconnect-safe Workspace baseline and increment producer. */
 
 import type { Context } from '@taiji/cordis'
+import { FeedWaiter } from '@taiji/dsh-api-gateway/feed-waiter'
 import { Deque } from '@taiji/dsh-deque'
 import type { DomainChanged } from '@taiji/dsh-storage-domain'
 import type { Workspace, WorkspaceRecord } from '@taiji/dsh-workspace'
@@ -149,20 +150,20 @@ function sameStrings(left: readonly string[], right: readonly string[]): boolean
 
 class WorkspaceFollower {
   private readonly frames = new Deque<WorkspaceFollowFrame>()
-  private waiting: (() => void) | undefined
+  private readonly waiter = new FeedWaiter()
   private closed = false
 
   push(frame: WorkspaceFollowFrame): void {
     /* v8 ignore next -- closed followers are removed before later publication can reach them. */
     if (this.closed) return
     this.frames.pushBack(frame)
-    this.waiting?.()
+    this.waiter.wake()
   }
 
   close(): void {
     if (this.closed) return
     this.closed = true
-    this.waiting?.()
+    this.waiter.wake()
   }
 
   async *read(signal: AbortSignal): AsyncIterable<WorkspaceFollowFrame> {
@@ -177,17 +178,6 @@ class WorkspaceFollower {
   }
 
   private wait(signal: AbortSignal): Promise<void> {
-    return new Promise((resolve) => {
-      const finish = (): void => {
-        signal.removeEventListener('abort', finish)
-        /* v8 ignore next -- one read owns the sole installed wait callback. */
-        if (this.waiting === finish) this.waiting = undefined
-        resolve()
-      }
-      this.waiting = finish
-      signal.addEventListener('abort', finish, { once: true })
-      /* v8 ignore next -- native signals and the private queue cannot change during this synchronous setup. */
-      if (signal.aborted || this.closed || this.frames.size > 0) finish()
-    })
+    return this.waiter.wait(signal, () => this.frames.size > 0, () => this.closed)
   }
 }

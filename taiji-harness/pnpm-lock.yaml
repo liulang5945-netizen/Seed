@@ -1067,6 +1067,9 @@ importers:
 
   packages/api/life-controller:
     dependencies:
+      '@taiji/dsh-api-gateway':
+        specifier: workspace:^
+        version: link:../gateway
       '@taiji/dsh-typert-protocol':
         specifier: workspace:^
         version: link:../../typert/protocol
@@ -1080,9 +1083,6 @@ importers:
       '@taiji/cordis':
         specifier: workspace:^
         version: link:../../../vendor/cordis
-      '@taiji/dsh-api-gateway':
-        specifier: workspace:^
-        version: link:../gateway
       '@taiji/dsh-client-connection':
         specifier: workspace:^
         version: link:../../client/connection
@@ -1441,6 +1441,9 @@ importers:
 
   packages/api/workspace-controller:
     dependencies:
+      '@taiji/dsh-api-gateway':
+        specifier: workspace:^
+        version: link:../gateway
       '@taiji/dsh-deque':
         specifier: workspace:^
         version: link:../../util/deque
@@ -1457,9 +1460,6 @@ importers:
       '@taiji/cordis':
         specifier: workspace:^
         version: link:../../../vendor/cordis
-      '@taiji/dsh-api-gateway':
-        specifier: workspace:^
-        version: link:../gateway
       '@taiji/dsh-client-connection':
         specifier: workspace:^
         version: link:../../client/connection

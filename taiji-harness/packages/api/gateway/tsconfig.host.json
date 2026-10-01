@@ -10,6 +10,7 @@
     "src/remote-error-codes.ts",
     "src/stream-protocol.ts",
     "src/stream-server.ts",
+    "src/feed-waiter.ts",
     "src/types.ts"
   ],
   "references": [

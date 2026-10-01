@@ -47,6 +47,7 @@ const DUPLICATE_SAFE_PACKAGES: readonly string[] = [
 const SAFE_HOST_DEPENDENCY_EXPORTS = {
   '@taiji/dsh-credentials': ['credentialKey'],
   '@taiji/dsh-deque': ['Deque'],
+  '@taiji/dsh-api-gateway/feed-waiter': ['FeedWaiter'],
   '@taiji/dsh-llm': ['callConfigEquals'],
   '@taiji/dsh-session-format': ['sessionFormatLogFilename'],
   '@taiji/dsh-timeout': ['MAX_TIMER_DELAY_MS'],

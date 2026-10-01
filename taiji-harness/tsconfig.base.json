@@ -29,6 +29,7 @@
     // under its own tsconfig boundary.
     "paths": {
       "@taiji/dsh-api-gateway/stream-protocol": ["./packages/api/gateway/src/stream-protocol.ts"],
+      "@taiji/dsh-api-gateway/feed-waiter": ["./packages/api/gateway/src/feed-waiter.ts"],
       "@taiji/dsh-api-account-controller": ["./packages/api/account-controller/src/index.ts"],
       "@taiji/dsh-api-account-controller/types": ["./packages/api/account-controller/src/types.ts"],
       "@taiji/dsh-deepseek-account-platform": ["./packages/credentials/deepseek-account-platform/src/index.ts"],

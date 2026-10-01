@@ -31,6 +31,10 @@
     "./stream-protocol": {
       "types": "./lib/types/stream-protocol.d.ts",
       "default": "./lib/types/stream-protocol.js"
+    },
+    "./feed-waiter": {
+      "types": "./lib/types/feed-waiter.d.ts",
+      "default": "./lib/types/feed-waiter.js"
     }
   },
   "dsh": {

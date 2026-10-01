@@ -6,6 +6,7 @@
  */
 
 import type { Context } from '@taiji/cordis'
+import { FeedWaiter } from '@taiji/dsh-api-gateway/feed-waiter'
 import type { LifeRuntimeClient } from './runtime-client.ts'
 import type {
   LifeFollowFrame,
@@ -165,19 +166,19 @@ export class LifeFeed {
 /** One generation's latest-wins snapshot queue. */
 class LifeFollower {
   private pending: LifeSnapshot | undefined
-  private waiting: (() => void) | undefined
+  private readonly waiter = new FeedWaiter()
   private closed = false
 
   push(snapshot: LifeSnapshot): void {
     if (this.closed) return
     this.pending = snapshot
-    this.waiting?.()
+    this.waiter.wake()
   }
 
   close(): void {
     if (this.closed) return
     this.closed = true
-    this.waiting?.()
+    this.waiter.wake()
   }
 
   async *read(signal: AbortSignal): AsyncIterable<LifeSnapshot> {
@@ -193,17 +194,6 @@ class LifeFollower {
   }
 
   private wait(signal: AbortSignal): Promise<void> {
-    return new Promise((resolve) => {
-      const finish = (): void => {
-        signal.removeEventListener('abort', finish)
-        /* v8 ignore next -- one read owns the sole installed wait callback. */
-        if (this.waiting === finish) this.waiting = undefined
-        resolve()
-      }
-      this.waiting = finish
-      signal.addEventListener('abort', finish, { once: true })
-      /* v8 ignore next -- native signals and the private queue cannot change during this synchronous setup. */
-      if (signal.aborted || this.closed || this.pending !== undefined) finish()
-    })
+    return this.waiter.wait(signal, () => this.pending !== undefined, () => this.closed)
   }
 }

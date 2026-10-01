@@ -12,6 +12,7 @@
     "src/feed.ts"
   ],
   "references": [
+    { "path": "../gateway/tsconfig.host.json" },
     { "path": "../../../vendor/cordis" },
     { "path": "../../../vendor/schemastery" },
     { "path": "../../typert/protocol" }

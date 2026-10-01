@@ -82,7 +82,6 @@
   },
   "devDependencies": {
     "@taiji/cordis": "workspace:^",
-    "@taiji/dsh-api-gateway": "workspace:^",
     "@taiji/dsh-client-connection": "workspace:^",
     "@taiji/dsh-client-store": "workspace:^",
     "@taiji/dsh-client-test-runtime": "workspace:^",
