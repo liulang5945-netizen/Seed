@@ -1,46 +1,55 @@
-- text: 简单画一个 SVG 表示冯诺依曼架构, 保存为 von-neumann.svg {{clock}}
+- text: 简单画一个 SVG 表示冯诺依曼架构，保存为 von-neumann.svg，并提供独立文件卡片，方便打开。 {{clock}}
 - button "复制"
 - status: 已完成工作
 - button "用时 {{duration}}" [expanded]
 - button "已完成分析" [expanded]
 - button "思考"
-- paragraph: 我来创建一个冯诺依曼架构的 SVG 示意图。
+- paragraph: I'll create the SVG diagram and then present it as a file card.
 - button "修改了文件并已调用工具" [expanded]
-- button "写入 von-neumann.svg +83 -0":
+- button "写入 von-neumann.svg +81 -0":
   - text: 写入
   - button "von-neumann.svg"
-  - text: +83 -0
+  - text: +81 -0
 - button "思考"
-- button "交付文件 已交付 von-neumann.svg"
+- button "交付文件 已交付 {{cwd}}/workspace/von-neumann.svg"
 - paragraph:
-  - text: 已创建
-  - code:
-    - button "在侧边栏打开 von-neumann.svg": von-neumann.svg
-  - text: ，一个简洁的冯诺依曼架构示意图，包含：
+  - text: 已生成并保存为
+  - button "von-neumann.svg"
+  - text: ，上方文件卡片可直接打开。
+- paragraph:
+  - strong: 图的结构（760×520，纯矢量、无外部依赖）：
 - list:
   - listitem:
-    - strong: CPU（中央处理器）
-    - text: ：内含控制单元 CU、算术逻辑单元 ALU 和寄存器组
+    - strong: CPU 中央处理器
+    - text: （蓝色块）内含两个子单元：
+    - list:
+      - listitem: 控制单元 —— 取指 / 译码 / 发令
+      - listitem: 算术逻辑单元 ALU —— 运算 / 逻辑
   - listitem:
-    - strong: 内存储器 Memory
-    - text: ：标注"指令和数据统一存放"（存储程序思想）
+    - strong: 系统总线
+    - text: （中间虚线带）—— 数据总线 · 地址总线 · 控制总线
   - listitem:
-    - strong: 输入设备 / 输出设备
-    - text: ：分别用绿色和粉色表示数据流向
+    - strong: 存储器 Memory
+    - text: （绿色块）—— 存放指令与数据，统一编址
   - listitem:
-    - strong: 总线连接
-    - text: ：CPU 与内存间的地址总线，以及 CPU 与 I/O 设备间的数据/控制线，箭头标明数据流向
-- paragraph: 下方附一行核心思想说明：指令与数据以二进制统一存储在存储器中。用浏览器打开该 SVG 文件即可查看。
-- button "在侧边栏查看本轮改动": 已编辑 1 个文件 +83 -0
+    - strong: 输入 / 输出设备
+    - text: （橙色块）—— 键盘 · 显示 · 磁盘 · 网络
+  - listitem: 箭头连接：CPU ↔ 总线（指令/数据），总线 ↔ 存储器、总线 ↔ I/O（读/写）
+- paragraph:
+  - text: 底部标注了核心要点：程序与数据同存于存储器，CPU 按地址顺序取指执行，即“存储程序”原理；存储器处也标出了经典的
+  - strong: 冯·诺依曼瓶颈
+  - text: 。
+- paragraph: 如需调整，常见的小改动我可以直接改：换成英文标注、改为深色背景、加大 I/O 或增加“缓存/寄存器”层，或导出 PNG。
+- button "在侧边栏查看本轮改动": 已编辑 1 个文件 +81 -0
 - list:
   - listitem:
-    - button "查看 von-neumann.svg 的改动": von-neumann.svg +83 -0
+    - button "查看 von-neumann.svg 的改动": von-neumann.svg +81 -0
 - text: 此主机没有可用的桌面，无法使用外部程序打开文件或文件夹；文件仍可在侧边栏预览
-- button "在侧边栏预览 von-neumann.svg"
-- text: von-neumann.svg 冯诺依曼架构示意图 SVG
+- button "在侧边栏预览 {{cwd}}/workspace/von-neumann.svg"
+- text: von-neumann.svg 冯·诺依曼架构示意图
 - button "复制"
 - button "好的回答"
 - button "有问题的回答"
 - button "在新对话中分支"
-- button "用量 32K tok"
+- button "用量 33K tok"
 - text: {{clock}}

@@ -531,6 +531,7 @@ const REPLAY_CHUNK_TYPES = new Set<StreamChunk['type']>([
 ])
 
 const FROM_REQUEST_OPEN = '{{fromRequest:'
+const FROM_REQUEST_JSON_OPEN = '{{fromRequestJson:'
 const FROM_REQUEST_CLOSE = '}}'
 
 /** Collect every string leaf of one JSON-compatible value, in traversal order. */
@@ -548,8 +549,15 @@ function collectStrings(value: unknown, out: string[]): void {
   }
 }
 
-/** Resolve one placeholder pattern against the request corpus; the LAST match wins. */
-function resolveFromRequest(pattern: string, corpus: string): string {
+/**
+ * Resolve one placeholder pattern against the request corpus; the LAST match wins.
+ *
+ * With `jsonEscape`, the captured value is embedded as JSON string content (its
+ * quotes, backslashes, and control characters escaped), so a scripted tool-call
+ * argument can splice a platform-native path into a JSON `arguments` string
+ * without producing an invalid document.
+ */
+function resolveFromRequest(pattern: string, corpus: string, jsonEscape: boolean): string {
   let regex: RegExp
   try {
     regex = new RegExp(pattern, 'g')
@@ -562,25 +570,36 @@ function resolveFromRequest(pattern: string, corpus: string): string {
   if (last === undefined) {
     throw new Error(`llm-replay: fromRequest pattern ${JSON.stringify(pattern)} matched nothing in the request`)
   }
-  return last[1] ?? last[0]
+  const value = last[1] ?? last[0]
+  return jsonEscape ? JSON.stringify(value).slice(1, -1) : value
 }
 
-/** Replace every `{{fromRequest:<pattern>}}` occurrence in one scripted string. */
+/** Replace every `{{fromRequest:<pattern>}}`/`{{fromRequestJson:<pattern>}}` occurrence in one scripted string. */
 function substituteString(text: string, corpus: string): string {
   let result = ''
   let cursor = 0
   while (true) {
-    const open = text.indexOf(FROM_REQUEST_OPEN, cursor)
+    const plain = text.indexOf(FROM_REQUEST_OPEN, cursor)
+    const json = text.indexOf(FROM_REQUEST_JSON_OPEN, cursor)
+    let open = -1
+    let jsonEscape = false
+    if (plain !== -1 && (json === -1 || plain < json)) {
+      open = plain
+    } else if (json !== -1) {
+      open = json
+      jsonEscape = true
+    }
     if (open === -1) return result + text.slice(cursor)
-    let close = text.indexOf(FROM_REQUEST_CLOSE, open + FROM_REQUEST_OPEN.length)
+    const tokenLength = jsonEscape ? FROM_REQUEST_JSON_OPEN.length : FROM_REQUEST_OPEN.length
+    let close = text.indexOf(FROM_REQUEST_CLOSE, open + tokenLength)
     if (close === -1) {
       throw new Error(`llm-replay: fromRequest placeholder is unterminated in ${JSON.stringify(text)}`)
     }
     // The last two braces of a consecutive `}` run terminate the placeholder,
     // so a pattern may end with a brace quantifier like `[0-9a-f]{4}`.
     while (text[close + FROM_REQUEST_CLOSE.length] === '}') close += 1
-    const pattern = text.slice(open + FROM_REQUEST_OPEN.length, close)
-    result += text.slice(cursor, open) + resolveFromRequest(pattern, corpus)
+    const pattern = text.slice(open + tokenLength, close)
+    result += text.slice(cursor, open) + resolveFromRequest(pattern, corpus, jsonEscape)
     cursor = close + FROM_REQUEST_CLOSE.length
   }
 }
@@ -588,7 +607,9 @@ function substituteString(text: string, corpus: string): string {
 /** Deep-copy one JSON-compatible value with scripted placeholders resolved. */
 function substituteValue(value: unknown, corpus: string): unknown {
   if (typeof value === 'string') {
-    return value.includes(FROM_REQUEST_OPEN) ? substituteString(value, corpus) : value
+    return value.includes(FROM_REQUEST_OPEN) || value.includes(FROM_REQUEST_JSON_OPEN)
+      ? substituteString(value, corpus)
+      : value
   }
   if (Array.isArray(value)) return value.map(item => substituteValue(item, corpus))
   if (value !== null && typeof value === 'object') {
@@ -614,7 +635,8 @@ function substituteValue(value: unknown, corpus: string): unknown {
  * @returns the entry itself when no placeholder appears, else a resolved deep copy.
  */
 export function resolveScriptedEntry(entry: ReplayEntry, messages: GenerateOptions['messages']): ReplayEntry {
-  if (!JSON.stringify(entry).includes(FROM_REQUEST_OPEN)) return entry
+  const serialized = JSON.stringify(entry)
+  if (!serialized.includes(FROM_REQUEST_OPEN) && !serialized.includes(FROM_REQUEST_JSON_OPEN)) return entry
   const leaves: string[] = []
   collectStrings(messages, leaves)
   return substituteValue(entry, leaves.join('\n')) as ReplayEntry

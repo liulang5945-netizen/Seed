@@ -224,6 +224,27 @@ const REPLAY_PROVIDERS = [{
   ],
 }]
 
+// Record mode routes the live DeepSeek adapter through the same model id the
+// replay catalog exposes, so the model-selection surfaces (and the recorded
+// assistant sources) stay identical between record and replay. The extra id
+// rides the real adapter's uncatalogued fallback path and the provider accepts
+// it at the wire; the catalog entry only supplies the display name and window.
+const RECORD_DEEPSEEK_MODELS = [
+  {
+    id: 'deepseek-flash',
+    name: 'DeepSeek-V41-Flash',
+    contextWindow: 1_000_000,
+    inputModalities: ['text', 'image'],
+    systemPromptUpdate: 'in-history',
+  },
+  {
+    id: 'deepseek-v4-pro',
+    name: 'DeepSeek-V4-Pro',
+    contextWindow: 1_000_000,
+  },
+  { id: 'deepseek-v4-flash', name: 'DeepSeek-V4-Flash', contextWindow: 128_000 },
+]
+
 /**
  * The routes a shipped composition always has, with no ability to stream.
  * A fixture-less keyless scenario issues no model calls, but its tree must
@@ -600,7 +621,7 @@ export async function launchWebScaffold(options: LaunchOptions = {}): Promise<We
     // Without HMR the profile applies configuration changes at its next start.
     ...options.profile?.hmr === false ? [{ id: 'hmr', disabled: true }] : [],
     { id: 'session-log-deepseek', config: { enabled: false } },
-    ...mode === 'record' || options.deepSeekMissingCredential === true
+    ...options.deepSeekMissingCredential === true
       ? []
       : [{ id: 'agent-default-model', config: { provider: 'deepseek-official', model: 'deepseek-v4-flash' } }],
     ...extraOverlayPatches,
@@ -708,7 +729,13 @@ export async function launchWebScaffold(options: LaunchOptions = {}): Promise<We
           baseURL: options.deepSeekSearch.baseURL,
         },
       }],
-    { id: 'llm-deepseek', disabled: mode !== 'record' && !maskDeepSeekCredential },
+    {
+      id: 'llm-deepseek',
+      disabled: mode !== 'record' && !maskDeepSeekCredential,
+      ...mode === 'record'
+        ? { config: { models: RECORD_DEEPSEEK_MODELS } }
+        : {},
+    },
   ]
 
   // Live fields use a shared deployment layer; process-specific ports and roots stay in CLI overlays.
@@ -1160,6 +1187,11 @@ export function normalizeWebSessionVolatiles(log: string, workspaceCwd?: string)
       let normalized = value
         .replace(/Anonymous user: [0-9a-f-]{36}(?=\.$)/gi, 'Anonymous user: {{anonymousUserId}}')
       for (const cwd of cwdSpellings) normalized = replaceWebCwd(normalized, cwd)
+      // The token covers the cwd only, so the separator after it keeps the
+      // recording host's spelling; a scripted path argument replays as a live
+      // filesystem path, and `\` there leaves the workspace on POSIX. Spell it
+      // portably so one committed generation replays on every platform.
+      normalized = normalized.replaceAll('{{cwd}}\\', '{{cwd}}/')
       for (const fold of prefixFolds) normalized = normalized.split(fold.spelling).join(fold.token)
       return normalized
     })) as {

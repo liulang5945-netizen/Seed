@@ -9,7 +9,7 @@ import type {} from '@taiji/dsh-tool-present/types'
 import { deriveReplayScript, parseSessionLog } from '@taiji/dsh-llm-replay'
 import { connectFreshWorkspaceViaHost,
   assertFinalWorkspaceSnapshot, captureExpandedTurnProcessAria, compareOrRefreshGolden,
-  fixtureUserPrompts, launchWebScaffold, recordFixture, watchConsole,
+  fixtureUserPrompts, launchWebScaffold, recordFixture, selectedSessionFixture, watchConsole,
   webSnapshotMode, type WebScaffold,
 } from './scaffold.ts'
 import { ZH_BROWSER_LOCALE } from './support.ts'
@@ -27,22 +27,26 @@ describe('web e2e: requested SVG is explicitly delivered', () => {
   let tripwire: ReturnType<typeof watchConsole>
   let cwd: string
   let replayRoot: string | undefined
+  let replayFixture: string
   const connectionDiagnostics: string[] = []
 
   beforeAll(async () => {
     let replayOverride: string | undefined
     if (MODE !== 'record') {
+      replayFixture = await selectedSessionFixture(FIXTURE, false)
       replayRoot = await mkdtemp(join(tmpdir(), 'dsh-present-svg-replay-'))
       replayOverride = join(replayRoot, 'replay.override.json')
-      const script = deriveReplayScript(parseSessionLog(await readFile(FIXTURE, 'utf8')))
+      const script = deriveReplayScript(parseSessionLog(await readFile(replayFixture, 'utf8')))
       // Recorded absolute paths must follow each isolated Session's working directory.
-      const cwdToken = '{{fromRequest:Your working directory is ([^\\n]+)\\.}}'
+      // `{{fromRequestJson:` JSON-escapes the captured path, so a Windows-style cwd
+      // (backslashes) stays valid JSON inside the scripted write arguments.
+      const cwdToken = '{{fromRequestJson:Your working directory is ([^\\n]+)\\.}}'
       await writeFile(replayOverride, JSON.stringify(script).replaceAll('{{cwd}}', JSON.stringify(cwdToken).slice(1, -1)))
     }
     scaffold = await launchWebScaffold({
       compareReplaySession: true,
       extraOverlayPath: fileURLToPath(new URL('./present-svg.overlay.yml', import.meta.url)),
-      ...(replayOverride === undefined ? {} : { replayFixture: FIXTURE, replayOverride }),
+      ...(replayOverride === undefined ? {} : { replayFixture, replayOverride }),
     })
     browser = await chromium.launch()
     page = await browser.newPage({
@@ -79,7 +83,7 @@ describe('web e2e: requested SVG is explicitly delivered', () => {
   })
 
   it('writes valid SVG and provides the requested file card before the final reply', async () => {
-    const prompts = MODE === 'record' ? [RECORD_PROMPT] : fixtureUserPrompts(await readFile(FIXTURE, 'utf8'))
+    const prompts = MODE === 'record' ? [RECORD_PROMPT] : fixtureUserPrompts(await readFile(replayFixture, 'utf8'))
     expect(prompts).toHaveLength(1)
     const settled = scaffold.whenTurnSettled()
     const input = page.locator('[data-composer-input]').first()

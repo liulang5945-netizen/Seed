@@ -1390,6 +1390,28 @@ describe('installLlmReplay (through the real LlmRuntime)', () => {
       if (resolved.kind !== 'chunks') throw new Error('expected chunks entry')
       expect(resolved.chunks[1]).toMatchObject({ argumentsDelta: '{"goal_id":"goal-42ab"}' })
     })
+
+    it('JSON-escapes the captured value with {{fromRequestJson:}} so platform-native paths stay valid JSON', () => {
+      const messages = [createUserMessage({
+        content: [{ type: 'text' as const, text: 'Your working directory is C:\\Users\\23747\\workspace.' }],
+        source: { kind: 'user' as const },
+      })]
+      const entry: ReplayEntry = {
+        kind: 'chunks',
+        chunks: scriptedCall('{"file_path":"{{fromRequestJson:Your working directory is ([^\\n]+)\\.}}/von-neumann.svg"}'),
+      }
+      const resolved = resolveScriptedEntry(entry, messages)
+      if (resolved.kind !== 'chunks') throw new Error('expected chunks entry')
+      expect(resolved.chunks[1]).toMatchObject({
+        argumentsDelta: '{"file_path":"C:\\\\Users\\\\23747\\\\workspace/von-neumann.svg"}',
+      })
+      expect(resolved.chunks[2]).toMatchObject({
+        block: { arguments: '{"file_path":"C:\\\\Users\\\\23747\\\\workspace/von-neumann.svg"}' },
+      })
+      const block = resolved.chunks[2]?.type === 'block-end' ? resolved.chunks[2].block : undefined
+      if (block?.type !== 'tool-call') throw new Error('expected tool-call block')
+      expect(JSON.parse(block.arguments)).toEqual({ file_path: 'C:\\Users\\23747\\workspace/von-neumann.svg' })
+    })
   })
 
   it('registers a replay-only provider catalog when configured', async () => {
