@@ -52,7 +52,18 @@ it.each([false, true])('retains the mounted application across WebSocket recover
   await page.goto(scaffold.authenticatedUrl, { waitUntil: 'load' })
   const composer = page.locator('[data-composer-input][contenteditable="true"]')
   if (activeSession) {
-    await page.getByRole('treeitem').filter({ has: page.getByText(title, { exact: true }) }).click({ timeout: 20_000 })
+    // The sidebar renders workspace groups collapsed and the tree arrives after
+    // the load event, so expand whatever is collapsed on every poll until the
+    // seeded row exists. Clicking only collapsed groups makes the pass
+    // idempotent: an expanded group is left alone.
+    const sessionRow = page.getByRole('treeitem').filter({ has: page.getByText(title, { exact: true }) })
+    await expect.poll(async () => {
+      for (const group of await page.getByRole('treeitem', { expanded: false }).all()) {
+        await group.click()
+      }
+      return sessionRow.count()
+    }, { timeout: 20_000 }).toBeGreaterThan(0)
+    await sessionRow.click({ timeout: 20_000 })
     await writeComposerDraft(page, composer, draft)
     await expect.poll(() => sessionBaselines).toBeGreaterThan(0)
   } else {
