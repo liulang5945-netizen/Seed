@@ -439,7 +439,14 @@ jobs:
         run: pip install torch --index-url https://download.pytorch.org/whl/cpu
 
       - name: Install test dependencies
-        run: pip install sentencepiece pytest pytest-cov httpx fastapi python-multipart pydantic anyio cryptography numpy
+        # H19s (2026-09-30): black is required here, not optional.  The frozen-marker
+        # contract test imports scripts/training/audit_frozen_marker_formatter_conflict.py,
+        # which imports black; without it this leg died with
+        # `ModuleNotFoundError: No module named 'black'` during collection.  Pinned to match
+        # the lint job so both legs agree on formatter behaviour.  Skipping the test was the
+        # alternative and the worse one: line-ending handling is exactly where a frozen
+        # marker breaks, so this is the leg that should run it.
+        run: pip install sentencepiece pytest pytest-cov httpx fastapi python-multipart pydantic anyio cryptography numpy black==26.5.1
 
       - name: Install package (editable)
         run: pip install -e . --no-deps
