@@ -1,0 +1,22 @@
+# Byte-exact evidence must not depend on who checks it out.
+#
+# This repo had no .gitattributes at all, and `core.autocrlf = true` on the Windows
+# maintainer machine therefore rewrote every tracked `reports/*.json` to CRLF on
+# checkout.  The seal contract in tests/taiji_native/test_b0_rule_revision_seal_contract.py
+# compares `sha256(path.read_bytes())` against digests that were all recorded from that
+# CRLF working tree -- all 8 of them.  On CI (Linux, LF checkout) the same commit produced
+# different bytes and every one of those assertions failed:
+#
+#   assert _digest(path) == expected
+#   AssertionError: taiji_p5_2b_group_causal_corpora_20260913.json was rewritten after the
+#   seal was taken
+#   assert 'bcc72d366889...5c9e1cd81c6eb' == '531cf6efedb0...b44a065f5939e'
+#
+# The green side of this was an accident of the maintainer's platform, not a property of
+# the evidence.  `text eol=lf` makes the checkout match the blob everywhere, so a sealed
+# digest means the same thing on every platform; the stored expectations were then
+# re-taken from the blob rather than from a platform-specific working copy.
+#
+# Scoped to reports/*.json because that is where the byte-exact seals live.  The blobs
+# are already LF, so this introduces no content change -- only reproducibility.
+reports/*.json text eol=lf

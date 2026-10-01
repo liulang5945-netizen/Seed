@@ -28,28 +28,28 @@ DOCS = REPO / "plans" / "reference"
 #: sha256 of every rule_revision=0 artifact, captured before HANDOFF-M4 landed.
 SEALED_REPORTS: dict[str, str] = {
     "taiji_p5_2b_group_causal_corpora_20260913.json": (
-        "531cf6efedb029bf67556e90c913ab3148629250772df8ce5d0b44a065f5939e"
+        "bcc72d366889e2d9451dca7225ff1ae134324dc1c91a91211905c9e1cd81c6eb"
     ),
     "taiji_b0_handoff_feasibility_probe_20260913.json": (
-        "576a0543a9141491842038a03dbf9cf747d2f51075b8693681378755d2e74ec9"
+        "361a3d215bfc961ab681cdfaa6ccf75158f9f89f0b65ee45bc9c57109f88b55e"
     ),
     "taiji_b0_m1_counterfactual_20260913.json": (
-        "cb22087e6a2fc9aba08e5e02efa02e54cd4e2eff60aca530d4daf460557b773f"
+        "f304025e48415301705295dab392c90cf138fd7199a58b07553574f6b040a6b2"
     ),
     "taiji_b0_m4_artifact_audit_20260913.json": (
-        "c3d328d50a91deb5623697b3f3d8f25250070c905be55c0fa441231dbdc003b5"
+        "3a1562c19405b6f94f05fd8a52af239c4ff82a15bc85ec0a3f6299fb1a7d4e0e"
     ),
     "taiji_b0_m4_hardening_20260913.json": (
-        "79302dc0503dbbe46afb3db0ebade177270477861d9cdf51b8c4b3792f402f56"
+        "d934ed3cb8c735eec055e155b3ec29a86795b0b8ad8ab952370bf458d41d3712"
     ),
     "taiji_b0_structure_space_probe_20260913.json": (
-        "03456070213c7657f49435fb67dc086cc6b6821d6dfb0ed5a441f179c486423e"
+        "b3d678bbb53d93e07f4a129d5346474e9fd68d6b8d7dec269a27a797fb1a9733"
     ),
     "taiji_b0_structure_space_probe_wide_20260915.json": (
-        "b09b3e62a0679c27bee1f482c2ef7bf69a9908386c3acb349bb9dace2d487b64"
+        "f527b78a739cdab65f8f8a038ef39e7e5f172f1981b144dae05ceb6a78375ae3"
     ),
     "taiji_b0_n2_stop_reason_disposition_20260914.json": (
-        "49e965dad23c0932357995f38e2b921ce371b8aa7ea556d6298255f314d1fc58"
+        "b92cee4dabaeb67fb6ce2adbc213d5879f36c05323ca5f77fa4102c55e326f9e"
     ),
 }
 
@@ -98,6 +98,20 @@ def counterfactual() -> Any:
 # --------------------------------------------------------------------------- #
 # I8 / T-h: the revision-0 evidence is byte-for-byte untouched
 # --------------------------------------------------------------------------- #
+#
+# H19g (2026-09-30): these eight digests were re-taken from the **git blob**, not from a
+# working tree.  All eight had previously been recorded from a Windows checkout where
+# `core.autocrlf = true` rewrote every reports/*.json to CRLF, so the bytes differed from
+# the blob -- one file alone by 254 line endings.  On CI (Linux, LF) the identical commit
+# therefore failed every one of these assertions: the seal was green only on the platform
+# that produced it, which is the opposite of what a byte-for-byte seal is for.
+#
+# `.gitattributes` now pins `reports/*.json text eol=lf`, so the checkout matches the blob
+# on every platform and these digests mean the same thing everywhere.
+#
+# If you ever need to re-seal: hash `git show HEAD:reports/<name>` (or any checkout under
+# the new attribute), never a working-tree copy.  `git status` cannot catch the difference
+# because normalization hides it -- compare raw bytes, as _digest does.
 
 
 def test_every_sealed_report_still_matches_its_seal() -> None:
