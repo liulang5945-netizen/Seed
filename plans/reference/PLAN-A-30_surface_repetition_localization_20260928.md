@@ -3174,6 +3174,13 @@ L1 四件见 §2bd/§2be；L2 见 §2bc 与 `reports/taiji_a30_stop_failure_a31_
 它在 SPEC-A-24 三线与 F0 严格整句口径上都优于旧默认（旧默认：L2 0/72、L3 0/300、F0 floor_fail）。
 **回滚＝一行**（把 `DEFAULT_CHECKPOINT` 指回 `seed_beta_with_circuit.pt`）。
 
+**换底后全量门禁终值**（`tests/taiji_native tests/seed`，2026-10-01）：**1862 passed／2 failed**；
+两条余红＝点名过的**既有漂移**（cap0 inventory/legacy 的 fresh-sample 契约：面板封存于 09-18/09-20，
+其后码面演进 + 本地 checkpoints/ 多出文件；legacy 那件三条臂全用显式档、与本次换底无关）
+⇒ **本次换底零新增红**；platform_boundary 本轮随并行会话文件状态转绿。
+换底自身面：F04 引用重指后门五条子句全真（gate_verdict=pass、行 partial）、eval-set 契约 15 绿、
+F04 契约 22 绿、默认位守卫 23 绿。
+
 ## 7b. owner 裁定回执（2026-09-30 第二批，弹窗打包全批＝四项按各自 Recommended 执行）
 
 1. **正式训练档机时＝批**：同手法（高密度收尾目标）扩训练量训正式档，L2 同仪器（stop_failure v6）复测，**不改产品默认位、不改判据**；探测臂只答方向，正式档验效应在更大训练量下保持与否。
