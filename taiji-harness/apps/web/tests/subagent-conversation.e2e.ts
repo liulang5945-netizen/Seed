@@ -591,10 +591,12 @@ describe('web e2e: persisted subagent conversation and human continuation', () =
     await page.getByRole('button', { name: 'Branch into a new conversation' }).last().click()
     const forkReceipt = await (await forkResponse).json() as { result: { ok: boolean } }
     expect(forkReceipt.result).toMatchObject({ ok: true })
+    // Four rows: the connected workspace group, the provisioned default
+    // workspace, the parent session, and the fork beside it.
     await expect.poll(
       () => page.getByRole('tree', { name: 'Sessions' }).getByRole('treeitem').count(),
       { timeout: 15_000 },
-    ).toBe(3)
+    ).toBe(4)
     expect(await page.getByRole('tree', { name: 'Sessions' })
       .getByRole('treeitem', { name: 'Ungrouped', exact: true }).count()).toBe(0)
     const hierarchy = page.getByRole('navigation', { name: 'Session hierarchy' })

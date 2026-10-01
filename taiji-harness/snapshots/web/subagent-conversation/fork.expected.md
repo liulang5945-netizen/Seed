@@ -2,3 +2,4 @@
   - treeitem "workspace" [expanded]
   - treeitem "Explain event sourcing in one (1) now" [selected]
   - treeitem "Ask a research subagent to now"
+  - treeitem "Default workspace"
