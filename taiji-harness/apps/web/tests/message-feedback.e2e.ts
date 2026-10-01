@@ -43,18 +43,22 @@ describe('web e2e: durable per-message feedback', () => {
   })
 
   /**
-   * Open the seeded transcript. The first treeitem is the collapsible group
-   * row; the session itself is the row beneath it. The group is already
-   * expanded on a fresh load, so clicking it unconditionally would collapse it
-   * and hide the session row.
+   * Open the seeded transcript. Boot provisions the empty Default workspace
+   * group row ahead of Ungrouped, so a positional nth(1) lands on a group row,
+   * not the session; expand every collapsed group (only collapsed rows match,
+   * keeping the poll idempotent) and then open the single session row, which
+   * is the treeitem without aria-expanded.
    */
   async function openSeededSession(): Promise<void> {
     const groupRow = page.locator('[role="treeitem"]').first()
     await groupRow.waitFor({ timeout: 15_000 })
-    if (await groupRow.getAttribute('aria-expanded') !== 'true') await groupRow.click()
-    const sessionRow = page.locator('[role="treeitem"]').nth(1)
-    await sessionRow.waitFor({ timeout: 15_000 })
-    await sessionRow.click()
+    await expect.poll(async () => {
+      for (const group of await page.locator('[role="treeitem"][aria-expanded="false"]').all()) {
+        await group.click()
+      }
+      return page.locator('[role="treeitem"]:not([aria-expanded])').count()
+    }, { timeout: 15_000 }).toBe(1)
+    await page.locator('[role="treeitem"]:not([aria-expanded])').first().click()
   }
 
   it.skipIf(MODE === 'record')('submits both ratings through the dialog, persists the Dislike, then retracts it', async () => {
