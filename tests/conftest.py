@@ -38,14 +38,19 @@ def pytest_collection_modifyitems(config, items):
     Paths are relative to the repository root.  This is a deliberate, stated policy
     rather than a way to hide failures: the reason string names every missing path and
     says it is gitignored by design, so a reviewer reading the log can tell a skipped
-    contract from a passing one.  Note the hook is module-granular -- a file that mixes
-    artifact-dependent and self-contained tests will skip all of them, so files with
-    mixed needs should guard the individual tests instead (see
-    tests/taiji_native/test_language_alignment.py).
+    contract from a passing one.
+
+    A module whose *most* tests need the artifact declares it once; an individual test
+    that does not opt out with ``@pytest.mark.no_local_artifacts``.  Prefer that over
+    guarding each dependent test individually when the majority depends -- the
+    declaration stays the single source of truth for *which* artifacts are involved, and
+    the opt-out is visible right above the test that needs it.
     """
     for item in items:
         declared = getattr(item.module, "LOCAL_ONLY_ARTIFACTS", ())
         if not declared:
+            continue
+        if item.get_closest_marker("no_local_artifacts") is not None:
             continue
         missing = [rel for rel in declared if not (REPO_ROOT / rel).is_file()]
         if missing:

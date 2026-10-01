@@ -41,11 +41,25 @@ VOLATILE_SAMPLE_FIELDS = frozenset({"seconds", "elapsed_seconds"})
 VOLATILE_SAMPLE_PATHS = frozenset({"record.commit"})
 
 
+# H19n (2026-09-30): gitignored by policy (`.gitignore` `*.pt` / `*.jsonl`), so a fresh
+# checkout -- exactly what CI runs -- cannot satisfy the tests below.  Declared once; the
+# tests that need none of it opt out and keep running there.
+LOCAL_ONLY_ARTIFACTS = ("checkpoints/seed_a31self_with_circuit.pt",)
+
+
+# H19n (2026-09-30): gitignored by policy (`.gitignore` `*.pt` / `*.jsonl`), so a fresh
+# checkout -- exactly what CI runs -- cannot satisfy the tests below.  Declared once; the
+# tests that need none of it opt out and keep running there.
+LOCAL_ONLY_ARTIFACTS = ("checkpoints/seed_a31self_with_circuit.pt",)
+
+
 @pytest.fixture(scope="module")
 def report() -> dict:
     return json.loads(REPORT.read_text(encoding="utf-8"))
 
 
+@pytest.mark.no_local_artifacts
+@pytest.mark.no_local_artifacts
 def test_probe_completed_and_edited_no_source(report):
     assert RUNNER.is_file()
     assert report["status"] == "completed"
@@ -57,6 +71,8 @@ def test_probe_completed_and_edited_no_source(report):
     assert "writes no checkpoint" in joined
 
 
+@pytest.mark.no_local_artifacts
+@pytest.mark.no_local_artifacts
 def test_the_source_edited_flag_can_actually_say_true(tmp_path: Path) -> None:
     """Audit item B4: a flag that can only ever read False is not a measurement.
 
@@ -95,6 +111,8 @@ def test_the_source_edited_flag_can_actually_say_true(tmp_path: Path) -> None:
     assert probe.source_fingerprint(repo) != before, "an added file must be visible too"
 
 
+@pytest.mark.no_local_artifacts
+@pytest.mark.no_local_artifacts
 def test_current_guard_loads_the_trained_checkpoint_after_the_migration(report):
     """M2-2i landed: the product entry point loads the trained v8 file without the guard patch.
 
@@ -114,6 +132,8 @@ def test_current_guard_loads_the_trained_checkpoint_after_the_migration(report):
     ), "a successful load must never be readable as a recovered language ability"
 
 
+@pytest.mark.no_local_artifacts
+@pytest.mark.no_local_artifacts
 def test_relaxed_guard_recovers_the_trained_state(report):
     arm = report["arms"]["trained_relaxed_guard"]
     assert arm["load_ok"] is True
@@ -124,6 +144,8 @@ def test_relaxed_guard_recovers_the_trained_state(report):
     assert arm["guard_relaxed"] is True
 
 
+@pytest.mark.no_local_artifacts
+@pytest.mark.no_local_artifacts
 def test_recovered_state_is_not_more_conversational(report):
     """The decisive negative half: same template at tick 16M as at tick 2."""
 
@@ -142,6 +164,8 @@ def test_recovered_state_is_not_more_conversational(report):
     assert "will not produce conversation" in verdict["reading"]
 
 
+@pytest.mark.no_local_artifacts
+@pytest.mark.no_local_artifacts
 def test_arms_are_verbatim_and_prompt_echoing(report):
     for name in ("trained_relaxed_guard", "default_control_current_guard"):
         turns = report["arms"][name]["turns"]
@@ -152,6 +176,8 @@ def test_arms_are_verbatim_and_prompt_echoing(report):
             assert turn["output_bytes"] > 0
 
 
+@pytest.mark.no_local_artifacts
+@pytest.mark.no_local_artifacts
 def test_probe_states_its_own_limits(report):
     limits = report["limits"]
     assert "does not make the fix safe" in limits

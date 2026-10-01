@@ -28,6 +28,12 @@ ARM_MANIFESTS = (
 )
 
 
+# H19n (2026-09-30): gitignored by policy (`.gitignore` `*.pt` / `*.jsonl`), so a fresh
+# checkout -- exactly what CI runs -- cannot satisfy the tests below.  Declared once; the
+# tests that need none of it opt out and keep running there.
+LOCAL_ONLY_ARTIFACTS = ("data/simple_zh/simple_zh_texts.jsonl",)
+
+
 def _load(name: str, path: Path) -> Any:
     if name in sys.modules:
         return sys.modules[name]
@@ -60,6 +66,7 @@ def _state(whole: float, first: float, second: float) -> dict[str, float]:
 # --------------------------------------------------------------------------- #
 
 
+@pytest.mark.no_local_artifacts
 def test_the_start_row_is_derived_from_the_arm_manifests_not_typed(
     instrument: Any,
 ) -> None:
@@ -85,6 +92,7 @@ def test_the_derived_bytes_are_stable_bounded_and_recorded(instrument: Any) -> N
     assert len(joined) == len(joined.decode("utf-8").encode("utf-8")), "UTF-8 end to end"
 
 
+@pytest.mark.no_local_artifacts
 def test_a_heldout_set_that_overlaps_the_arms_is_refused(instrument: Any) -> None:
     with pytest.raises(SystemExit, match="overlaps the arms"):
         instrument.derive_eval_rows(instrument.MIN_START_ROW)
@@ -112,6 +120,7 @@ def test_a_moved_evaluation_set_is_refused_before_any_model_loads(
 # --------------------------------------------------------------------------- #
 
 
+@pytest.mark.no_local_artifacts
 def test_a_difference_smaller_than_the_split_half_noise_is_not_resolved(
     instrument: Any,
 ) -> None:
@@ -126,6 +135,7 @@ def test_a_difference_smaller_than_the_split_half_noise_is_not_resolved(
     assert verdict["verdict_label"] == "not_resolved"
 
 
+@pytest.mark.no_local_artifacts
 def test_a_difference_beyond_the_noise_with_both_halves_agreeing_is_resolved(
     instrument: Any,
 ) -> None:
@@ -141,6 +151,7 @@ def test_a_difference_beyond_the_noise_with_both_halves_agreeing_is_resolved(
     assert verdict["treatment_minus_control_whole"] < 0, "treatment is the lower-surprise arm here"
 
 
+@pytest.mark.no_local_artifacts
 def test_a_difference_that_flips_between_halves_is_not_resolved_even_if_large(
     instrument: Any,
 ) -> None:
@@ -154,6 +165,7 @@ def test_a_difference_that_flips_between_halves_is_not_resolved_even_if_large(
     assert verdict["verdict_label"] == "not_resolved"
 
 
+@pytest.mark.no_local_artifacts
 def test_not_resolved_is_never_worded_as_no_effect(instrument: Any) -> None:
     per_state = {
         "start": _state(3.0, 3.0, 3.0),

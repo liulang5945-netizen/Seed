@@ -26,6 +26,11 @@ for entry in (PROJECT_ROOT, PROJECT_ROOT / "scripts" / "training"):
 
 from train_seed_corpus import iter_answer_chunks  # noqa: E402
 
+# H19n (2026-09-30): gitignored by policy (`.gitignore` `*.pt` / `*.jsonl`), so a fresh
+# checkout -- exactly what CI runs -- cannot satisfy the tests below.  Declared once; the
+# tests that need none of it opt out and keep running there.
+LOCAL_ONLY_ARTIFACTS = ("data/simple_zh/dialogue_extended_clean.jsonl",)
+
 
 def _corpus(tmp_path: Path) -> Path:
     path = tmp_path / "corpus.jsonl"
@@ -39,6 +44,7 @@ def _corpus(tmp_path: Path) -> Path:
     return path
 
 
+@pytest.mark.no_local_artifacts
 def test_chunks_end_with_newline_and_reassemble_the_pair(tmp_path: Path) -> None:
     chunks = list(iter_answer_chunks([_corpus(tmp_path)]))
     assert len(chunks) == 2
@@ -48,6 +54,7 @@ def test_chunks_end_with_newline_and_reassemble_the_pair(tmp_path: Path) -> None
     assert first == "问：你好\n答：你好，今天天气不错，我们出去走走吧。\n"
 
 
+@pytest.mark.no_local_artifacts
 def test_truncation_touches_only_the_answer(tmp_path: Path) -> None:
     chunks = list(iter_answer_chunks([_corpus(tmp_path)], max_answer_chars=4))
     first, second = (c.decode("utf-8") for c in chunks)
@@ -55,6 +62,7 @@ def test_truncation_touches_only_the_answer(tmp_path: Path) -> None:
     assert second == "问：数字\n答：四十二\n"  # 4 字以内，不动
 
 
+@pytest.mark.no_local_artifacts
 def test_missing_seam_is_loud(tmp_path: Path) -> None:
     path = tmp_path / "bad.jsonl"
     path.write_text(
@@ -64,6 +72,7 @@ def test_missing_seam_is_loud(tmp_path: Path) -> None:
         list(iter_answer_chunks([path]))
 
 
+@pytest.mark.no_local_artifacts
 def test_cli_defaults_and_loud_rejection() -> None:
     import train_seed_corpus as module
 
@@ -157,6 +166,7 @@ def test_per_answer_progress_and_checkpoint_cadence(tmp_path: Path) -> None:
     assert len(lines) >= 3, f"进度行太少（{len(lines)}）——节奏没按阈值落盘"
 
 
+@pytest.mark.no_local_artifacts
 def test_self_answer_source_uses_table_and_fails_loud_when_missing(tmp_path: Path) -> None:
     """§2bg 自写档：`self_answers` 表替换答案；缺问句响亮失败。"""
 
@@ -170,6 +180,7 @@ def test_self_answer_source_uses_table_and_fails_loud_when_missing(tmp_path: Pat
         list(iter_answer_chunks([corpus], self_answers={"你好": "只有一条"}))
 
 
+@pytest.mark.no_local_artifacts
 def test_self_answer_source_cli_validation() -> None:
     import train_seed_corpus as module
 

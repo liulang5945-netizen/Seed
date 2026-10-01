@@ -69,6 +69,7 @@ markers = [
     "slow: long-running integration tests",
     "reset_state: reset app_state singleton before/after each test function",
     "benchmark: performance baseline tests (latency/throughput regression guards)",
+    "no_local_artifacts: this test needs none of its module's LOCAL_ONLY_ARTIFACTS",
 ]
 norecursedirs = [
     ".git",

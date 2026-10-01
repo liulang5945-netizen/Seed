@@ -19,6 +19,8 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
+import pytest
+
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 for entry in (PROJECT_ROOT, PROJECT_ROOT / "scripts" / "training"):
     if str(entry) not in sys.path:
@@ -27,6 +29,12 @@ for entry in (PROJECT_ROOT, PROJECT_ROOT / "scripts" / "training"):
 from train_seed_corpus import iter_corpus_symbols  # noqa: E402
 
 BOUNDARY = 256  # TaijiConfig().boundary_symbol
+
+
+# H19n (2026-09-30): gitignored by policy (`.gitignore` `*.pt` / `*.jsonl`), so a fresh
+# checkout -- exactly what CI runs -- cannot satisfy the tests below.  Declared once; the
+# tests that need none of it opt out and keep running there.
+LOCAL_ONLY_ARTIFACTS = ("data/simple_zh/dialogue_extended_clean.jsonl",)
 
 
 def _corpus(tmp_path: Path) -> Path:
@@ -54,6 +62,7 @@ def _text_symbols(path: Path) -> list[list[int]]:
     return docs
 
 
+@pytest.mark.no_local_artifacts
 def test_recipe_on_yields_newline_before_each_end_boundary(tmp_path: Path) -> None:
     corpus = _corpus(tmp_path)
     docs = _text_symbols(corpus)
@@ -64,6 +73,7 @@ def test_recipe_on_yields_newline_before_each_end_boundary(tmp_path: Path) -> No
     assert stream == expected
 
 
+@pytest.mark.no_local_artifacts
 def test_recipe_off_is_bit_identical_to_the_legacy_shape(tmp_path: Path) -> None:
     corpus = _corpus(tmp_path)
     docs = _text_symbols(corpus)
@@ -76,6 +86,7 @@ def test_recipe_off_is_bit_identical_to_the_legacy_shape(tmp_path: Path) -> None
     assert list(iter_corpus_symbols([corpus])) == stream
 
 
+@pytest.mark.no_local_artifacts
 def test_cli_default_is_on_with_explicit_escape() -> None:
     """主线配方默认＝开；逃生口显式关。parser 从 main 抽出的 _build_parser 直接解析。"""
 

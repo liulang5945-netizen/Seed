@@ -39,6 +39,12 @@ PRODUCT_DEFAULT = REPO / "checkpoints" / "seed_a31self_with_circuit.pt"
 CHECKPOINTS_DIR = REPO / "checkpoints"
 
 
+# H19n (2026-09-30): gitignored by policy (`.gitignore` `*.pt` / `*.jsonl`), so a fresh
+# checkout -- exactly what CI runs -- cannot satisfy the tests below.  Declared once; the
+# tests that need none of it opt out and keep running there.
+LOCAL_ONLY_ARTIFACTS = ("checkpoints/seed_a31self_with_circuit.pt",)
+
+
 @pytest.fixture(scope="module")
 def seed_runtime() -> object:
     from api import seed_runtime as module
@@ -50,6 +56,7 @@ def _sha(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+@pytest.mark.no_local_artifacts
 def test_an_unqualified_save_does_not_target_the_product_file(seed_runtime) -> None:
     target = seed_runtime.resolve_save_target()
     assert target != seed_runtime.DEFAULT_CHECKPOINT
@@ -57,6 +64,7 @@ def test_an_unqualified_save_does_not_target_the_product_file(seed_runtime) -> N
     assert not str(target).startswith(str(CHECKPOINTS_DIR))
 
 
+@pytest.mark.no_local_artifacts
 def test_explicit_and_source_paths_still_beat_the_redirected_default(
     tmp_path, seed_runtime
 ) -> None:

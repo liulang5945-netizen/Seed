@@ -37,6 +37,17 @@ FACTORY_BASE_SHA256 = "ad2a06465e0ef78c75aff7302a6f7a2ae11825d2f19361d9d65926006
 NGRAM_ARTIFACT_SHA256 = "4a40da9cdd7cc938af326d3e3b4d1055a220b37809a8650ef045e33a96300f17"
 
 
+# H19n (2026-09-30): eight of the ten tests here load the shipped checkpoints or the
+# zh corpus, all gitignored by policy (`.gitignore` `*.pt` / `*.jsonl`), so a fresh
+# checkout -- exactly what CI runs -- failed them with a bare torch FileNotFoundError.
+# Declared once; the two self-contained tests opt out below so they keep running there.
+LOCAL_ONLY_ARTIFACTS = (
+    "checkpoints/seed_a31self_with_circuit.pt",
+    "checkpoints/seed_beta.pt",
+    "data/simple_zh/simple_zh_texts.jsonl",
+)
+
+
 def _sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
@@ -128,6 +139,8 @@ def test_surface_gate_criterion_matches_instrument_bitwise() -> None:
             assert surface_gate.mean_nll(text, model) == instrument.mean_nll(text, model), text
 
 
+# Runs entirely on values constructed in this file -- no checkpoint or corpus needed.
+@pytest.mark.no_local_artifacts
 def test_write_back_gate_units() -> None:
     from seed import surface_gate
 
@@ -164,6 +177,8 @@ def test_write_back_gate_units() -> None:
     assert (ok, reason) == (False, "not_ended_naturally")
 
 
+# Runs entirely on values constructed in this file -- no checkpoint or corpus needed.
+@pytest.mark.no_local_artifacts
 def test_history_filter_drops_bad_replies() -> None:
     from seed import surface_gate
 

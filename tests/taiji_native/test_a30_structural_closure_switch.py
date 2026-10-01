@@ -12,6 +12,8 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
+import pytest
+
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 for entry in (PROJECT_ROOT, PROJECT_ROOT / "scripts" / "training"):
     if str(entry) not in sys.path:
@@ -19,7 +21,13 @@ for entry in (PROJECT_ROOT, PROJECT_ROOT / "scripts" / "training"):
 
 from seed import surface_gate  # noqa: E402
 
+# H19n (2026-09-30): gitignored by policy (`.gitignore` `*.pt` / `*.jsonl`), so a fresh
+# checkout -- exactly what CI runs -- cannot satisfy the tests below.  Declared once; the
+# tests that need none of it opt out and keep running there.
+LOCAL_ONLY_ARTIFACTS = ("checkpoints/seed_beta.pt",)
 
+
+@pytest.mark.no_local_artifacts
 def test_default_is_off_and_documented_as_product_judgement() -> None:
     from api import seed_runtime
 
@@ -28,6 +36,7 @@ def test_default_is_off_and_documented_as_product_judgement() -> None:
     assert "产品的判据不是模型的判断" in doc
 
 
+@pytest.mark.no_local_artifacts
 def test_structural_cut_takes_the_first_newline() -> None:
     cut, fired = surface_gate.structural_closure_cut("答案是四十二。\n后面还有废话")
     assert (cut, fired) == ("答案是四十二。", True)
@@ -35,6 +44,7 @@ def test_structural_cut_takes_the_first_newline() -> None:
     assert (kept, fired2) == ("没有换行的答复", False)
 
 
+@pytest.mark.no_local_artifacts
 def test_ended_naturally_honours_the_switch() -> None:
     raw = ("这一句够长，然后把预算吃满。" * 30).encode("utf-8") + b"\n"
     markers = ("\n问：", "问：")
@@ -48,6 +58,7 @@ def test_ended_naturally_honours_the_switch() -> None:
     )
 
 
+@pytest.mark.no_local_artifacts
 def test_write_back_switch_passes_through() -> None:
     model = surface_gate.load_surface_ngram(
         PROJECT_ROOT / "checkpoints" / "seed_surface_ngram.lzma"

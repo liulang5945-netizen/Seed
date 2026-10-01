@@ -39,6 +39,12 @@ CALIBRATION = REPO / "reports" / "taiji_p3b_throughput_calibration_20260915.json
 START_CHECKPOINT = REPO / "checkpoints" / "seed_beta.pt"
 
 
+# H19n (2026-09-30): gitignored by policy (`.gitignore` `*.pt` / `*.jsonl`), so a fresh
+# checkout -- exactly what CI runs -- cannot satisfy the tests below.  Declared once; the
+# tests that need none of it opt out and keep running there.
+LOCAL_ONLY_ARTIFACTS = ("checkpoints/seed_beta.pt",)
+
+
 def _load(name: str, path: Path) -> Any:
     if name in sys.modules:
         return sys.modules[name]
@@ -101,6 +107,7 @@ def _report(c: float | None, d: float | None, e: float | None, pending: int = 0)
 # --------------------------------------------------------------------------- #
 
 
+@pytest.mark.no_local_artifacts
 def test_budget_tiers_stay_tied_to_the_frozen_calibration(trainer: Any) -> None:
     calibration = json.loads(CALIBRATION.read_text(encoding="utf-8"))
     measured = float(calibration.get("steps_per_second", calibration.get("throughput", 0.0)))
@@ -117,6 +124,7 @@ def test_budget_tiers_stay_tied_to_the_frozen_calibration(trainer: Any) -> None:
             assert symbols < emitted, (tier, manifest.name, emitted)
 
 
+@pytest.mark.no_local_artifacts
 def test_protected_checkpoints_cannot_be_run_targets(trainer: Any, campaign: Any) -> None:
     """Membership first, behaviour second.
 
@@ -137,6 +145,7 @@ def test_protected_checkpoints_cannot_be_run_targets(trainer: Any, campaign: Any
     assert trainer._refuse_protected(trainer.arm_paths("control")[0]) != checkpoint.resolve()
 
 
+@pytest.mark.no_local_artifacts
 def test_no_default_output_path_points_at_a_protected_checkpoint(
     trainer: Any, campaign: Any
 ) -> None:
@@ -161,6 +170,7 @@ def test_config_must_be_rebuilt_from_the_envelope(trainer: Any) -> None:
         assert profile != config.taiji, f"scale {scale} now matches; the CLI path may be usable"
 
 
+@pytest.mark.no_local_artifacts
 def test_both_arm_corpora_are_manifest_bound(
     trainer: Any, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
@@ -187,6 +197,7 @@ def test_both_arm_corpora_are_manifest_bound(
         assert bound["manifest_binding"].endswith(manifest_path.name)
 
 
+@pytest.mark.no_local_artifacts
 def test_missing_corpus_fails_closed(trainer: Any, tmp_path: Path) -> None:
     with pytest.raises(SystemExit, match="missing"):
         trainer._guard_data_provenance(tmp_path / "absent.jsonl")
@@ -197,12 +208,14 @@ def test_missing_corpus_fails_closed(trainer: Any, tmp_path: Path) -> None:
 # --------------------------------------------------------------------------- #
 
 
+@pytest.mark.no_local_artifacts
 def test_arms_own_disjoint_files(campaign: Any) -> None:
     treatment = campaign.campaign_paths("treatment")
     control = campaign.campaign_paths("control")
     assert set(map(str, treatment)).isdisjoint(set(map(str, control)))
 
 
+@pytest.mark.no_local_artifacts
 def test_the_driver_and_the_trainer_agree_on_the_arm_path(trainer: Any, campaign: Any) -> None:
     """``campaign_paths()[0]`` is ``arm_paths()[0]``, not a lookalike recomputed in the driver.
 
@@ -215,6 +228,7 @@ def test_the_driver_and_the_trainer_agree_on_the_arm_path(trainer: Any, campaign
         assert campaign.campaign_paths(arm)[0] == trainer.arm_paths(arm)[0], arm
 
 
+@pytest.mark.no_local_artifacts
 def test_the_campaign_cannot_point_an_arm_at_a_stray_corpus() -> None:
     """The trainer resolves its corpus from ``--arm``, and both arms are manifest-bound.
 
@@ -229,6 +243,7 @@ def test_the_campaign_cannot_point_an_arm_at_a_stray_corpus() -> None:
     assert '"--budget-tier"' in source, "the tier guard, not an ad-hoc symbol count, sizes the run"
 
 
+@pytest.mark.no_local_artifacts
 def test_the_trainer_refuses_to_guess_which_arm_it_is(trainer: Any) -> None:
     """No default for ``--arm``: a defaulted arm resolves to treatment's live files.
 
@@ -243,6 +258,7 @@ def test_the_trainer_refuses_to_guess_which_arm_it_is(trainer: Any) -> None:
     assert "--arm control --budget-tier" in source
 
 
+@pytest.mark.no_local_artifacts
 def test_stage_integrity_accepts_whole_reports_and_flags_broken_ones(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
@@ -277,6 +293,7 @@ def test_stage_integrity_accepts_whole_reports_and_flags_broken_ones(
     assert summarize.stage_integrity("treatment", {"report": "gone.json"}) == ["missing_report"]
 
 
+@pytest.mark.no_local_artifacts
 def test_stage_row_marks_improvement_only_when_a_score_moves(campaign: Any) -> None:
     baseline = _report(0.0, 0.0625, 0.15, pending=20)  # P3a: B and G fully pending
     flat = campaign._stage_row(1, _report(0.0, 0.0625, 0.15), baseline, "flat.json")
@@ -294,6 +311,7 @@ def test_stage_row_marks_improvement_only_when_a_score_moves(campaign: Any) -> N
     assert pending["pending_grew"] is True and pending["pending_delta_vs_p3a"]["B"] == 1
 
 
+@pytest.mark.no_local_artifacts
 def test_stall_streak_counts_consecutive_non_improvement(campaign: Any) -> None:
     baseline = _report(0.0, 0.0625, 0.15)
     flat = campaign._stage_row(1, _report(0.0, 0.0625, 0.15), baseline, "a.json")
@@ -304,6 +322,7 @@ def test_stall_streak_counts_consecutive_non_improvement(campaign: Any) -> None:
     assert campaign._stall_streak([flat, flat, good, flat]) == 1
 
 
+@pytest.mark.no_local_artifacts
 def test_campaign_requires_the_p3a_chain(campaign: Any, criteria: Any) -> None:
     baseline = _report(0.0, 0.0625, 0.15)
     row = campaign._stage_row(1, _report(0.1, 0.1, 0.1), baseline, "ok.json")
@@ -316,6 +335,7 @@ def test_campaign_requires_the_p3a_chain(campaign: Any, criteria: Any) -> None:
     assert off["chain_matches_p3a"] is False
 
 
+@pytest.mark.no_local_artifacts
 def test_stop_definitions_are_recorded_in_every_report(campaign: Any) -> None:
     """A stop rule that exists only in prose gets re-interpreted under pressure.
 
@@ -346,6 +366,7 @@ def test_stop_definitions_are_recorded_in_every_report(campaign: Any) -> None:
     assert "snapshots" in definitions["stage_scoring"]
 
 
+@pytest.mark.no_local_artifacts
 def test_one_item_wobble_is_not_a_regression(campaign: Any) -> None:
     """A 48-hour campaign must not be killed by a single flipped eval item."""
 
@@ -371,6 +392,7 @@ def _envelope(path: Path, tick: int) -> Path:
     return path
 
 
+@pytest.mark.no_local_artifacts
 def test_scoring_freezes_the_checkpoint_before_reading_it(campaign: Any, tmp_path: Path) -> None:
     """The trainer overwrites its checkpoint while a ~205 s stage is running.
 
@@ -391,6 +413,7 @@ def test_scoring_freezes_the_checkpoint_before_reading_it(campaign: Any, tmp_pat
     assert again == frozen and again_tick == 17_000_000, "existing snapshot is reused, not recopied"
 
 
+@pytest.mark.no_local_artifacts
 def test_a_snapshot_is_never_labelled_with_a_tick_it_does_not_hold(
     campaign: Any, tmp_path: Path
 ) -> None:
@@ -403,6 +426,7 @@ def test_a_snapshot_is_never_labelled_with_a_tick_it_does_not_hold(
     assert not (tmp_path / "snapshots" / "seed_aligned_tick_17000000.pt").exists()
 
 
+@pytest.mark.no_local_artifacts
 def test_a_snapshot_without_a_readable_tick_is_refused(campaign: Any, tmp_path: Path) -> None:
     live = tmp_path / "seed_aligned.pt"
     live.write_bytes(b"\x00\x01 truncated mid-write")
@@ -424,6 +448,7 @@ def _stage(tick: int, scores: dict[str, float | None]) -> dict[str, Any]:
     }
 
 
+@pytest.mark.no_local_artifacts
 def test_arm_difference_is_matched_by_tick_not_by_order() -> None:
     """Pairing must follow the tick, not the position in each arm's stage list.
 
@@ -469,6 +494,7 @@ def test_arm_difference_is_matched_by_tick_not_by_order() -> None:
     assert rows[2]["chain_ok"] is False, "flagged as not chain-matched"
 
 
+@pytest.mark.no_local_artifacts
 def test_missing_arm_reads_as_missing_not_zero() -> None:
     summarize = _load("_p3b_summarize_under_test", SUMMARIZER)
     report = summarize.load_arm("control", root=Path(tempfile.mkdtemp()))
@@ -477,6 +503,7 @@ def test_missing_arm_reads_as_missing_not_zero() -> None:
     assert headline["latest_scores"] is None and headline["criteria_verdict"] is None
 
 
+@pytest.mark.no_local_artifacts
 def test_headline_only_carries_recorded_fields() -> None:
     """The summariser holds no **criterion** judgement -- J1-J5 stay in check_p3b_criteria.
 
@@ -505,6 +532,7 @@ def _all(delta: float) -> dict[str, Any]:
     return {"C": delta, "D": delta, "E": delta}
 
 
+@pytest.mark.no_local_artifacts
 def test_one_item_of_twenty_is_not_an_effect() -> None:
     summarize = _load("_p3b_summarize_under_test", SUMMARIZER)
     assert summarize.MAIN_EFFECT_RESOLUTION == 0.15  # three items, not one flipped answer
@@ -516,6 +544,7 @@ def test_one_item_of_twenty_is_not_an_effect() -> None:
     assert one_point["C"]["verdict"] == "above_resolution_single_point"
 
 
+@pytest.mark.no_local_artifacts
 def test_two_consecutive_same_direction_points_are_an_effect() -> None:
     summarize = _load("_p3b_summarize_under_test", SUMMARIZER)
     twice = summarize.main_effect_verdict(
@@ -530,6 +559,7 @@ def test_two_consecutive_same_direction_points_are_an_effect() -> None:
     assert negative["D"]["verdict"] == "effect_negative"
 
 
+@pytest.mark.no_local_artifacts
 def test_a_direction_flip_resets_the_run_and_noise_cannot_undo_it() -> None:
     summarize = _load("_p3b_summarize_under_test", SUMMARIZER)
     flipped = summarize.main_effect_verdict(
@@ -549,6 +579,7 @@ def test_a_direction_flip_resets_the_run_and_noise_cannot_undo_it() -> None:
     assert faded["C"]["matched_ticks"] == 3
 
 
+@pytest.mark.no_local_artifacts
 def test_ticks_without_both_arms_are_no_data_not_zero() -> None:
     summarize = _load("_p3b_summarize_under_test", SUMMARIZER)
     rows = [
@@ -564,6 +595,7 @@ def test_ticks_without_both_arms_are_no_data_not_zero() -> None:
     assert out["E"]["latest_delta"] is None
 
 
+@pytest.mark.no_local_artifacts
 def test_the_summariser_says_what_it_cannot_judge() -> None:
     summarize = _load("_p3b_summarize_under_test", SUMMARIZER)
     unjudged = summarize.main_effect_verdict([])["unjudged"]
@@ -590,6 +622,7 @@ def _surface(items: list[str]) -> dict[str, Any]:
     return report
 
 
+@pytest.mark.no_local_artifacts
 def test_identical_eval_surface_reports_no_drift(campaign: Any) -> None:
     items = [f"{key}-{index}" for key in ("C", "D", "E") for index in range(20)]
     stage = _surface([])
@@ -600,6 +633,7 @@ def test_identical_eval_surface_reports_no_drift(campaign: Any) -> None:
     assert campaign._surface_drift(stage, base) == []
 
 
+@pytest.mark.no_local_artifacts
 def test_swapped_eval_surface_or_item_order_is_drift(campaign: Any) -> None:
     items = [{"id": f"C{i}"} for i in range(3)]
     stage = _surface([])
@@ -668,6 +702,7 @@ def _write(path: Path, payload: Any) -> Path:
     return path
 
 
+@pytest.mark.no_local_artifacts
 def test_a_valid_stage_report_is_reused_without_rescoring(tmp_path, campaign, monkeypatch) -> None:
     """正向：合格报告照旧复用。缺了这条，"每次都重评"的实现也能骗过下面几条。"""
 
@@ -681,6 +716,7 @@ def test_a_valid_stage_report_is_reused_without_rescoring(tmp_path, campaign, mo
     assert evaluator.calls == []
 
 
+@pytest.mark.no_local_artifacts
 def test_a_torn_stage_report_is_replaced_and_kept(tmp_path, campaign, monkeypatch) -> None:
     """写一半的报告：不许消费，重评后要留作物证（它是"上次被杀"的唯一痕迹）。"""
 
@@ -700,6 +736,7 @@ def test_a_torn_stage_report_is_replaced_and_kept(tmp_path, campaign, monkeypatc
     assert kept.read_text(encoding="utf-8") == torn
 
 
+@pytest.mark.no_local_artifacts
 def test_a_well_formed_but_wrong_stage_report_is_not_reused(campaign) -> None:
     """能解析、字段齐、语义不对的报告同样要拦——只查"能否 json.loads"会放过这一整类。"""
 
@@ -717,6 +754,7 @@ def test_a_well_formed_but_wrong_stage_report_is_not_reused(campaign) -> None:
     assert campaign._reuse_defects(untouched, baseline) == []
 
 
+@pytest.mark.no_local_artifacts
 def test_reuse_is_refused_when_the_snapshot_is_gone(tmp_path, campaign, monkeypatch) -> None:
     """快照已失 ⇒ 拒绝续跑。重评会打分一个**更晚**的状态却贴着这个 tick 的标签。"""
 
@@ -731,6 +769,7 @@ def test_reuse_is_refused_when_the_snapshot_is_gone(tmp_path, campaign, monkeypa
     assert "arm_tick_17000000.pt" in str(caught.value)
 
 
+@pytest.mark.no_local_artifacts
 def test_criteria_report_paths_are_repo_relative(tmp_path, criteria) -> None:
     """DEBT-I8：报告里的路径不能带盘符，否则同一份快照的两次打分无法逐字节比对。"""
 
@@ -752,6 +791,7 @@ def test_criteria_report_paths_are_repo_relative(tmp_path, criteria) -> None:
 # --------------------------------------------------------------------------- #
 
 
+@pytest.mark.no_local_artifacts
 def test_the_p3a_health_sample_pairs_with_the_p3a_baseline(campaign: Any) -> None:
     """判据按"健康报告 ↔ 它旁边那份评价报告"配对；这两份必须指同一个检查点。
 
@@ -789,6 +829,7 @@ class _HealthRun:
         return _Done()
 
 
+@pytest.mark.no_local_artifacts
 def test_the_health_probe_runs_a_fresh_process_and_refuses_to_hide_failure(
     tmp_path, campaign: Any, monkeypatch
 ) -> None:
@@ -836,6 +877,7 @@ def test_the_health_probe_runs_a_fresh_process_and_refuses_to_hide_failure(
 # --------------------------------------------------------------------------- #
 
 
+@pytest.mark.no_local_artifacts
 def test_waiter_reads_only_the_current_stop_key() -> None:
     waiter = _load("_p3b_waiter_under_test", WAITER)
     assert waiter.stop_of({"campaign_stop": "stalled"}) == "stalled"
@@ -852,6 +894,7 @@ def test_waiter_reads_only_the_current_stop_key() -> None:
     assert waiter.STOP_KEY == "campaign_stop"
 
 
+@pytest.mark.no_local_artifacts
 def test_waiter_needs_a_real_stage_count() -> None:
     waiter = _load("_p3b_waiter_under_test", WAITER)
     assert waiter.reached({}, 1) is False
@@ -861,6 +904,7 @@ def test_waiter_needs_a_real_stage_count() -> None:
     assert waiter.reached({"treatment": {"stages": [{"tick": 1}]}, "control": {}}, 1) is True
 
 
+@pytest.mark.no_local_artifacts
 def test_checkpoints_owed_arithmetic(waiter: Any) -> None:
     assert waiter.STALL_THRESHOLD == 2, "one pending checkpoint is normal scoring lag"
     assert waiter.unscored_checkpoints(18_000_000, 17_000_000, 1_000_000) == 1
@@ -876,6 +920,7 @@ def test_checkpoints_owed_arithmetic(waiter: Any) -> None:
         assert waiter.unscored_checkpoints(*unknown) == 0, unknown
 
 
+@pytest.mark.no_local_artifacts
 def test_an_orphaned_trainer_is_reported_as_a_stall(
     waiter: Any, monkeypatch: pytest.MonkeyPatch
 ) -> None:
@@ -897,6 +942,7 @@ def test_an_orphaned_trainer_is_reported_as_a_stall(
     assert empty["driver_stalled"] is False and empty["stages"] == 0
 
 
+@pytest.mark.no_local_artifacts
 def test_a_stopped_arm_cannot_satisfy_a_wait_on_the_live_one(
     waiter: Any, monkeypatch: pytest.MonkeyPatch
 ) -> None:
@@ -947,6 +993,7 @@ def _wait_stub(reason: str) -> Any:
     return _stub
 
 
+@pytest.mark.no_local_artifacts
 def test_an_unwatchable_wait_and_a_typo_arm_both_fail_loudly(
     waiter: Any, monkeypatch: pytest.MonkeyPatch
 ) -> None:

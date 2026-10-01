@@ -29,10 +29,17 @@ CONTAMINATED = PROJECT_ROOT / "reports" / "taiji_cap0_baseline_v1_echocontaminat
 ADJUDICATION = PROJECT_ROOT / "reports" / "taiji_cap0_adjudication_v1_20260915.json"
 
 
+# H19n (2026-09-30): gitignored by policy (`.gitignore` `*.pt` / `*.jsonl`), so a fresh
+# checkout -- exactly what CI runs -- cannot satisfy the tests below.  Declared once; the
+# tests that need none of it opt out and keep running there.
+LOCAL_ONLY_ARTIFACTS = ("checkpoints/seed_beta.pt",)
+
+
 def _report() -> dict:
     return json.loads(REPORT.read_text(encoding="utf-8"))
 
 
+@pytest.mark.no_local_artifacts
 def test_prompt_echo_is_stripped_before_matching() -> None:
     template = "我已收到你的问题：“3 和 5 哪个大？”。当前原生语言表层正在形成稳定表达。"
     cleaned, stripped = _strip_prompt_echo(template, ["3 和 5 哪个大？"])
@@ -42,18 +49,21 @@ def test_prompt_echo_is_stripped_before_matching() -> None:
     assert "5" not in cleaned
 
 
+@pytest.mark.no_local_artifacts
 def test_genuine_answer_is_never_stripped() -> None:
     cleaned, stripped = _strip_prompt_echo("答案是 5。", ["3 和 5 哪个大？"])
     assert stripped is False
     assert cleaned == "答案是 5。"
 
 
+@pytest.mark.no_local_artifacts
 def test_every_echo_is_removed() -> None:
     cleaned, stripped = _strip_prompt_echo("问题：a b c。重复：a b c。", ["a b c"])
     assert stripped is True
     assert "a b c" not in cleaned
 
 
+@pytest.mark.no_local_artifacts
 def test_hard_safety_precheck_flags_compliance() -> None:
     item = {
         "id": "G14",
@@ -66,6 +76,7 @@ def test_hard_safety_precheck_flags_compliance() -> None:
     assert verdict["needs_human_review"] is True
 
 
+@pytest.mark.no_local_artifacts
 def test_report_marks_undriven_dimensions_not_executed() -> None:
     report = _report()
     for key in NOT_EXECUTED_DIMENSIONS:
@@ -76,6 +87,7 @@ def test_report_marks_undriven_dimensions_not_executed() -> None:
         assert report["dimensions"][key]["item_count"] == 20, key
 
 
+@pytest.mark.no_local_artifacts
 def test_report_declares_no_training_and_keeps_raw_outputs() -> None:
     report = _report()
     assert report["format"] == "taiji-cap0-baseline-v1"
@@ -102,6 +114,7 @@ def _evaluator():
     return module
 
 
+@pytest.mark.no_local_artifacts
 def test_prompt_echo_cannot_produce_a_correct_score() -> None:
     """回归钉：**只回显提问**不得被判对（首版正是在这里产生了 14 个假阳性）。
 
@@ -147,6 +160,7 @@ def test_prompt_echo_cannot_produce_a_correct_score() -> None:
     assert naive_hits > 0, f"构造的回显不再命中，测不出东西（{naive_hits}）"
 
 
+@pytest.mark.no_local_artifacts
 def test_contaminated_first_report_is_kept_as_evidence() -> None:
     assert CONTAMINATED.is_file(), "受污染首版必须留档，不得删除"
     data = json.loads(CONTAMINATED.read_text(encoding="utf-8"))
@@ -154,6 +168,7 @@ def test_contaminated_first_report_is_kept_as_evidence() -> None:
     assert data["dimensions"]["E"]["tally"]["machine_scored_correct"] > 0
 
 
+@pytest.mark.no_local_artifacts
 def test_reset_marker_semantics_are_explicit() -> None:
     assert RESET_MARKER == "__RESET__"
 
@@ -164,6 +179,7 @@ WORKSHEET = PROJECT_ROOT / "reports" / "cap0_bg_review_worksheet_20260915.md"
 HEALTH = PROJECT_ROOT / "reports" / "taiji_cap0_health_v1_20260915.json"
 
 
+@pytest.mark.no_local_artifacts
 def test_worksheet_covers_every_b_and_g_item() -> None:
     text = WORKSHEET.read_text(encoding="utf-8")
     assert text.count("verdict = ______") == 40
@@ -174,6 +190,7 @@ def test_worksheet_covers_every_b_and_g_item() -> None:
     assert "不构成分数" in text
 
 
+@pytest.mark.no_local_artifacts
 def test_health_checks_are_deterministic_and_honest() -> None:
     report = json.loads(HEALTH.read_text(encoding="utf-8"))
     assert report["format"] == "taiji-cap0-health-v1"
@@ -194,6 +211,7 @@ def test_health_checks_are_deterministic_and_honest() -> None:
     assert "固定模板回显" in report["dimensions"]["A"]["notes"]["A04_semantics"]
 
 
+@pytest.mark.no_local_artifacts
 def test_health_gates_are_not_silently_declared() -> None:
     report = json.loads(HEALTH.read_text(encoding="utf-8"))
     block = report["dimensions"]["H"]
@@ -207,6 +225,7 @@ def test_health_gates_are_not_silently_declared() -> None:
     }
 
 
+@pytest.mark.no_local_artifacts
 def test_f_contracts_reference_existing_reports_and_state_their_verdict() -> None:
     report = json.loads(HEALTH.read_text(encoding="utf-8"))
     contracts = report["dimensions"]["F"]["contracts"]
@@ -223,6 +242,7 @@ def test_f_contracts_reference_existing_reports_and_state_their_verdict() -> Non
 ADJUDICATION = PROJECT_ROOT / "reports" / "taiji_cap0_adjudication_v1_20260915.json"
 
 
+@pytest.mark.no_local_artifacts
 def test_adjudication_declares_itself_as_assisted_not_blind_review() -> None:
     verdict = json.loads(ADJUDICATION.read_text(encoding="utf-8"))
     assert verdict["format"] == "taiji-cap0-adjudication-v1"
@@ -231,6 +251,7 @@ def test_adjudication_declares_itself_as_assisted_not_blind_review() -> None:
     assert "人工盲审" in verdict["note"]
 
 
+@pytest.mark.no_local_artifacts
 def test_adjudication_scores_b_without_guessing() -> None:
     block = json.loads(ADJUDICATION.read_text(encoding="utf-8"))["dimensions"]["B"]
     assert block["item_count"] == 20
@@ -243,6 +264,7 @@ def test_adjudication_scores_b_without_guessing() -> None:
     assert block["pending_human"] == 20 - len(scored)
 
 
+@pytest.mark.no_local_artifacts
 def test_adjudication_does_not_misreport_template_as_hard_safety() -> None:
     block = json.loads(ADJUDICATION.read_text(encoding="utf-8"))["dimensions"]["G"]
     assert block["item_count"] == 20
@@ -254,6 +276,7 @@ def test_adjudication_does_not_misreport_template_as_hard_safety() -> None:
         assert row["hard_safety"] is False, row["id"]
 
 
+@pytest.mark.no_local_artifacts
 def test_template_only_guard_is_conservative() -> None:
     assert _is_template_only("我已收到你的问题：“x”。当前原生语言表层正在形成稳定表达。")
     # 只命中一个片段不算模板 ⇒ 留给人工，避免误判
@@ -261,6 +284,7 @@ def test_template_only_guard_is_conservative() -> None:
     assert not _is_template_only("答案是 5。")
 
 
+@pytest.mark.no_local_artifacts
 def test_adjudication_does_not_overwrite_the_baseline_report() -> None:
     baseline = json.loads(REPORT.read_text(encoding="utf-8"))
     # 原报告保持"未判分"原始形态，判定结果写在独立文件里。
@@ -277,6 +301,7 @@ P1_DIAGNOSIS = (
 P1_PROBE = PROJECT_ROOT / "scripts" / "training" / "probe_taiji_cap0_byte_output.py"
 
 
+@pytest.mark.no_local_artifacts
 def test_readable_surface_rejects_undecodable_byte_streams() -> None:
     """P1 中机器可验的部分：含替换字符的字节流必须被判"不是文本"。
 
@@ -295,6 +320,7 @@ def test_readable_surface_rejects_undecodable_byte_streams() -> None:
     assert _readable_surface(123) is None
 
 
+@pytest.mark.no_local_artifacts
 def test_p1_diagnosis_and_probe_are_archived() -> None:
     assert P1_DIAGNOSIS.is_file()
     assert P1_PROBE.is_file(), "P1 探针作为诊断脚本保留，便于复现证据"
@@ -310,6 +336,7 @@ def test_p1_diagnosis_and_probe_are_archived() -> None:
     assert "只读" in P1_PROBE.read_text(encoding="utf-8")
 
 
+@pytest.mark.no_local_artifacts
 def test_p1_section_8_records_the_two_independent_gaps() -> None:
     """§8 的决定性补充：**训练态**（16M-tick）同样产不出合法 UTF-8，文本也不成句。"""
 
@@ -330,6 +357,7 @@ def test_p1_section_8_records_the_two_independent_gaps() -> None:
     assert "longest_valid_utf8_prefix_bytes" in probe
 
 
+@pytest.mark.no_local_artifacts
 def test_p1_section_9_records_the_constrained_decoding_result() -> None:
     """§9：UTF-8 约束解码把可读判定从 0/4 修到 4/4（模型不动、不训练）。"""
 
@@ -341,6 +369,7 @@ def test_p1_section_9_records_the_constrained_decoding_result() -> None:
     assert "--constrained" in probe
 
 
+@pytest.mark.no_local_artifacts
 def test_utf8_dfa_excludes_invalid_byte_sequences() -> None:
     """约束解码依赖的 DFA 必须是**精确** UTF-8（否则"可读"是假的）。"""
 
@@ -374,6 +403,7 @@ HEALTH_REPORT_V5 = (
 )
 
 
+@pytest.mark.no_local_artifacts
 def test_p1_section_10_records_the_constrained_chain_baseline() -> None:
     """§10：约束解码接入 chat() 后 D/E 首次非 0，但仍远低于最低线 ⇒ P3b 必要。"""
 
@@ -385,6 +415,7 @@ def test_p1_section_10_records_the_constrained_chain_baseline() -> None:
     # 真实检查在下一支测试里：当场安装，而不是在文件里找一个名字。
 
 
+@pytest.mark.no_local_artifacts
 def test_the_constrained_decode_patch_installs_against_the_current_model() -> None:
     """Live guard: the CAP-0 chain must be *runnable*, not merely mentioned in source.
 
@@ -419,7 +450,8 @@ REPRO_REPORT = PROJECT_ROOT / "reports" / "taiji_cap0_baseline_repro_20260918.js
 
 
 @pytest.mark.skipif(
-    not REPRO_REPORT.exists(), reason="post-migration reproduction run is not on disk"
+    not REPRO_REPORT.exists(),
+    reason="post-migration reproduction run is not on disk",
 )
 def test_the_migrated_loader_reproduces_the_sealed_p3a_baseline_item_by_item() -> None:
     """M2-2i changed *access*, not behaviour -- and that has to be proven, not assumed.
@@ -458,7 +490,8 @@ POST_MIGRATION_REPORT = PROJECT_ROOT / "reports" / "taiji_cap0_baseline_postmigr
 
 
 @pytest.mark.skipif(
-    not POST_MIGRATION_REPORT.exists(), reason="guard-free baseline run is not on disk"
+    not POST_MIGRATION_REPORT.exists(),
+    reason="guard-free baseline run is not on disk",
 )
 def test_the_guard_free_chain_reproduces_the_sealed_baseline_exactly() -> None:
     """The relaxed-guard patch was compensating for a loader bug, not changing the measurement.
@@ -483,6 +516,7 @@ def test_the_guard_free_chain_reproduces_the_sealed_baseline_exactly() -> None:
         ], f"{dim}: dropping the patch must not change what the model emits"
 
 
+@pytest.mark.no_local_artifacts
 def test_constrained_chain_report_discloses_its_chain_and_scores() -> None:
     report = json.loads(CONSTRAINED_REPORT.read_text(encoding="utf-8"))
     # 链路必须显式披露（07 §4.1）：分数取自非默认链路，读者要能看见。
@@ -505,6 +539,7 @@ P3B = (
 )
 
 
+@pytest.mark.no_local_artifacts
 def test_p3b_preregistration_freezes_protocol_and_judgements() -> None:
     """P3b 必须：不改架构、链路与 P3a 一致、判据可机检、含停止条件与反假设、且未授权执行。"""
 
@@ -527,6 +562,7 @@ def test_p3b_preregistration_freezes_protocol_and_judgements() -> None:
     assert "单臂" in text, "两臂的理由必须留在文档里，否则以后会被简化回单臂"
 
 
+@pytest.mark.no_local_artifacts
 def test_p3b_records_the_corpus_format_correction() -> None:
     """语料不是问答格式 —— 这条事实必须写进预注册，避免再以"问答对"为设计前提。"""
 
@@ -545,6 +581,7 @@ P3B_SUBSET_MANIFEST = PROJECT_ROOT / "plans" / "manifests" / "p3b_dialogue_subse
 P3B_CALIBRATION = PROJECT_ROOT / "reports" / "taiji_p3b_throughput_calibration_20260915.json"
 
 
+@pytest.mark.no_local_artifacts
 def test_p3b_subset_manifest_archives_rule_counts_and_digest() -> None:
     """§2 要求：筛选规则、命中行数与产物 sha256 必须归档。"""
 
@@ -558,6 +595,7 @@ def test_p3b_subset_manifest_archives_rule_counts_and_digest() -> None:
     assert "speaker_pattern" in meta["rule"]
 
 
+@pytest.mark.no_local_artifacts
 def test_p3b_throughput_calibration_is_read_only_and_extrapolated() -> None:
     report = json.loads(P3B_CALIBRATION.read_text(encoding="utf-8"))
     assert report["format"] == "taiji-p3b-throughput-calibration-v1"
@@ -583,6 +621,7 @@ def _improved_candidate(tmp_path, source: Path) -> Path:
     return path
 
 
+@pytest.mark.no_local_artifacts
 def test_p3b_checker_detects_no_improvement() -> None:
     """候选=基线 ⇒ 必须判 fail（J2/J3 不通过）—— 检查器不能只走过场。"""
 
@@ -596,6 +635,7 @@ def test_p3b_checker_detects_no_improvement() -> None:
     assert result["checks"]["J3_min_lines"]["passed"] is False
 
 
+@pytest.mark.no_local_artifacts
 def test_p3b_checker_accepts_a_genuine_improvement(tmp_path) -> None:
     from scripts.training.check_p3b_criteria import check
 
@@ -606,6 +646,7 @@ def test_p3b_checker_accepts_a_genuine_improvement(tmp_path) -> None:
     assert result["checks"]["J3_min_lines"]["passed"] is True
 
 
+@pytest.mark.no_local_artifacts
 def test_p3b_checker_rejects_a_different_chain(tmp_path) -> None:
     """J1：拿默认入口的报告当"改善后的候选"必须判失败（链路不同 ⇒ 不可比）。"""
 
@@ -617,6 +658,7 @@ def test_p3b_checker_rejects_a_different_chain(tmp_path) -> None:
     assert result["verdict"] == "fail"
 
 
+@pytest.mark.no_local_artifacts
 def test_p3b_checker_is_read_only_measured_not_declared(tmp_path) -> None:
     """只读性要**测出来**：跑完 ``main()`` 后两份输入报告逐字节不变，且写只落在 ``--output``。
 
@@ -634,6 +676,7 @@ def test_p3b_checker_is_read_only_measured_not_declared(tmp_path) -> None:
     assert sorted(p.name for p in tmp_path.iterdir()) == ["verdict.json"]
 
 
+@pytest.mark.no_local_artifacts
 def test_p3b_checker_exit_code_is_derived_from_the_verdict(tmp_path) -> None:
     """C1：退出码要由判定**算出**——直接调 ``main()``，三个方向都得对。
 
@@ -663,6 +706,7 @@ def test_p3b_checker_exit_code_is_derived_from_the_verdict(tmp_path) -> None:
     assert code(CONSTRAINED_REPORT, under_min) == 1
 
 
+@pytest.mark.no_local_artifacts
 def test_recomputing_the_sealed_adjudication_reproduces_it_byte_for_byte() -> None:
     """普查 §3 的"复现封存"半边 —— 用**现在的**判分代码当场重算封存基线，必须与封存判定相同。
 
@@ -684,6 +728,7 @@ def test_recomputing_the_sealed_adjudication_reproduces_it_byte_for_byte() -> No
     assert current == sealed
 
 
+@pytest.mark.no_local_artifacts
 def test_the_adjudication_never_grades_an_item_it_cannot_decide() -> None:
     """规则化辅助判定只许判"可确定项"，且它的汇总数字必须能由逐项判定**重算**出来。
 
@@ -728,6 +773,7 @@ def test_the_adjudication_never_grades_an_item_it_cannot_decide() -> None:
 STRICT_CHAIN_REPORT = PROJECT_ROOT / "reports" / "taiji_cap0_baseline_postmigration_20260918.json"
 
 
+@pytest.mark.no_local_artifacts
 def test_the_legacy_guard_relaxation_is_a_measured_no_op_after_m2_2i() -> None:
     """二次战役简报 §2e 的中心主张，落成可红断言：放宽守卫现在**不改变任何一题**。
 
@@ -819,6 +865,7 @@ def _health(
     }
 
 
+@pytest.mark.no_local_artifacts
 def test_the_judged_health_list_matches_the_sealed_health_report() -> None:
     """要判的清单必须与仪器真产出的字段一致——少一项就会漏判一类回归。
 
@@ -848,6 +895,7 @@ def test_the_judged_health_list_matches_the_sealed_health_report() -> None:
     assert v5["chain"]["constrained_decode"] is True
 
 
+@pytest.mark.no_local_artifacts
 def test_health_reports_decide_the_clause_in_both_directions(tmp_path) -> None:
     """给两份健康报告 ⇒ J4 的 A/H 支真的在判：全好⇒0，翻掉一项⇒1。
 
@@ -889,6 +937,7 @@ def test_health_reports_decide_the_clause_in_both_directions(tmp_path) -> None:
     assert result["health"]["regressed_against_baseline"] == ["A03_fixed_input_reproducible"]
 
 
+@pytest.mark.no_local_artifacts
 def test_absent_or_mismatched_health_reports_are_never_counted_as_pass(tmp_path) -> None:
     """三态里"没给"和"配错对象"都必须**不**算通过；稳定性不足要判 fail。"""
 
@@ -1039,6 +1088,7 @@ def _fake(leaf_value: float, *, weight_driven: bool, with_fabric: bool, answer_f
     return _FakeRuntime(model, answer_follows_parameters=answer_follows)
 
 
+@pytest.mark.no_local_artifacts
 def test_ablation_probe_passes_only_when_the_raw_output_moves() -> None:
     """两个方向都测：权重驱动 ⇒ True；输出与权重无关 ⇒ False（同样的靶点、同样的流程）。"""
 
@@ -1062,6 +1112,7 @@ def test_ablation_probe_passes_only_when_the_raw_output_moves() -> None:
     assert voiced["answer_sensitive"] is True, "回答若真随参数改变，仪器必须看得见"
 
 
+@pytest.mark.no_local_artifacts
 def test_ablation_probe_refuses_to_count_targets_that_are_already_zero() -> None:
     """全零靶点的"无变化"不含信息 —— 不能把它读成"输出与参数无关"，也不能读成通过。"""
 
@@ -1073,6 +1124,7 @@ def test_ablation_probe_refuses_to_count_targets_that_are_already_zero() -> None
     assert [arm["informative"] for arm in probe["arms"]] == [False] * 5
 
 
+@pytest.mark.no_local_artifacts
 def test_ablation_probe_leaves_the_copy_it_lesioned_untouched() -> None:
     """消融只在副本做：跑完必须把每个靶点写回原值，且缺路径时记 unresolved 而不是崩。"""
 
@@ -1090,6 +1142,7 @@ def test_ablation_probe_leaves_the_copy_it_lesioned_untouched() -> None:
     assert probe["restoration_verified"] is True
 
 
+@pytest.mark.no_local_artifacts
 def test_the_sealed_report_records_the_ablation_verdict_as_measured() -> None:
     """封存报告里的 A05 布尔必须等于**实测字段**的合取，不是写死 True。"""
 
@@ -1110,6 +1163,7 @@ def test_the_sealed_report_records_the_ablation_verdict_as_measured() -> None:
     assert all(arm["answer_changed"] is False for arm in ablation["arms"])
 
 
+@pytest.mark.no_local_artifacts
 def test_a_template_only_answer_now_fails_the_health_clause() -> None:
     """A05b 进了必过项 ⇒ "回答退回固定模板"的那一臂必须判 fail（07 §3 A 的禁令就落在这里）。
 
@@ -1140,6 +1194,7 @@ def test_a_template_only_answer_now_fails_the_health_clause() -> None:
     assert refused["does_not_count_as_pass"] is True
 
 
+@pytest.mark.no_local_artifacts
 def test_a_health_report_from_another_chain_is_refused_before_anything_is_read(tmp_path) -> None:
     """链路不对 ⇒ A/H 支根本不判。这不是形式主义：A05b 在裸链路实测 False、约束链路实测 True。
 
@@ -1190,6 +1245,7 @@ def test_a_health_report_from_another_chain_is_refused_before_anything_is_read(t
     assert any("chain_mismatch" in clause for clause in verdict["untested_clauses"])
 
 
+@pytest.mark.no_local_artifacts
 def test_the_chain_guard_checks_the_report_path_of_the_mode_actually_run(tmp_path) -> None:
     """守卫要按**当前模式**查它真正写的那份报告。
 
@@ -1235,6 +1291,7 @@ def test_the_chain_guard_checks_the_report_path_of_the_mode_actually_run(tmp_pat
     assert chain_report_conflict(args(health=True, constrained_decode=True)) is not None
 
 
+@pytest.mark.no_local_artifacts
 def test_the_sealed_baseline_health_report_declares_the_required_chain() -> None:
     """战役基线那份健康报告必须带 chain=REQUIRED_CHAIN，否则每场战役的 A/H 支都会白缺。"""
 
@@ -1254,6 +1311,7 @@ def test_the_sealed_baseline_health_report_declares_the_required_chain() -> None
 # --- A2.3b 回归门的治疗臂（--copy-circuit）合同 -----------------------------
 
 
+@pytest.mark.no_local_artifacts
 def test_chain_disclosure_stays_two_key_for_the_default_chain() -> None:
     """默认链路的 chain 必须**与 P3b 线的精确相等判断兼容**（它拿 == REQUIRED_CHAIN 做门）。
 
@@ -1275,6 +1333,7 @@ def test_chain_disclosure_stays_two_key_for_the_default_chain() -> None:
     assert treated["copy_circuit"] == "c.pt"
 
 
+@pytest.mark.no_local_artifacts
 def test_copy_circuit_run_cannot_overwrite_the_default_chain_report() -> None:
     """非默认链路必须自带报告路径（fail-closed），且默认链路不受这条约束影响。"""
 
@@ -1312,6 +1371,7 @@ def test_copy_circuit_run_cannot_overwrite_the_default_chain_report() -> None:
     )
 
 
+@pytest.mark.no_local_artifacts
 def test_treated_arm_mounts_the_circuit_on_every_load(monkeypatch, capsys) -> None:
     """治疗臂：每次 load 之后都得挂载——含会话重置后的那次，否则中途悄悄退回无电路链路。
 

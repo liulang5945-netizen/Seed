@@ -46,6 +46,11 @@ LINEAGE_MANIFEST = REPO / "plans" / "manifests" / "p3b_all_fresh_manifest.json"
 #: 默认载入源换到裁定装配不改变"这份标定属于哪块基座"。
 from api.seed_runtime import FACTORY_CHECKPOINT as PRODUCT_DEFAULT  # noqa: E402
 
+# H19n (2026-09-30): gitignored by policy (`.gitignore` `*.pt` / `*.jsonl`), so a fresh
+# checkout -- exactly what CI runs -- cannot satisfy the tests below.  Declared once; the
+# tests that need none of it opt out and keep running there.
+LOCAL_ONLY_ARTIFACTS = ("checkpoints/seed_beta.pt",)
+
 
 def _load_module() -> Any:
     name = "_readout_retrain_step0_under_test"
@@ -147,6 +152,7 @@ def test_arm_c_trains_nothing(instrument: Any) -> None:
     assert flags == {"motor": False, "predictive_readout": False}
 
 
+@pytest.mark.no_local_artifacts
 def test_the_arm_specs_and_their_expected_surfaces_agree(instrument: Any) -> None:
     """The declared expectation must be the one the run checks against."""
 
@@ -180,6 +186,7 @@ def _expect_refusal(instrument: Any, capsys: Any, phrase: str) -> None:
     assert phrase in stderr, stderr
 
 
+@pytest.mark.no_local_artifacts
 def test_tick_ceiling_refuses_a_training_sized_run(
     instrument: Any, monkeypatch: Any, capsys: Any
 ) -> None:
@@ -191,6 +198,7 @@ def test_tick_ceiling_refuses_a_training_sized_run(
     _expect_refusal(instrument, capsys, "--ticks must be within")
 
 
+@pytest.mark.no_local_artifacts
 def test_refuses_to_overwrite_an_existing_report(
     instrument: Any, tmp_path: Path, monkeypatch: Any, capsys: Any
 ) -> None:
@@ -201,6 +209,7 @@ def test_refuses_to_overwrite_an_existing_report(
     assert existing.read_text(encoding="utf-8") == "{}"
 
 
+@pytest.mark.no_local_artifacts
 def test_refuses_a_report_path_under_the_weights_directory(
     instrument: Any, monkeypatch: Any, capsys: Any
 ) -> None:
@@ -208,11 +217,13 @@ def test_refuses_a_report_path_under_the_weights_directory(
     _expect_refusal(instrument, capsys, "must not live under")
 
 
+@pytest.mark.no_local_artifacts
 def test_unknown_arm_fails_closed(instrument: Any, monkeypatch: Any, capsys: Any) -> None:
     monkeypatch.setattr(sys, "argv", ["calibrate", "--arms", "A,Z"])
     _expect_refusal(instrument, capsys, "unknown arm")
 
 
+@pytest.mark.no_local_artifacts
 def test_refuses_a_corpus_with_no_lineage_derived_skip_point(
     instrument: Any, tmp_path: Path
 ) -> None:
@@ -311,6 +322,7 @@ def test_end_to_end_run_leaves_the_substrate_byte_identical(
 # --------------------------------------------------------------------------- #
 
 
+@pytest.mark.no_local_artifacts
 def test_the_shipped_calibration_is_internally_consistent() -> None:
     payload = json.loads(REPORT.read_text(encoding="utf-8"))
     assert payload["status"] == "completed"
@@ -333,6 +345,7 @@ def test_the_shipped_calibration_was_taken_on_the_current_default_substrate() ->
     assert payload["checkpoint"]["sha256"] == _sha256(PRODUCT_DEFAULT)
 
 
+@pytest.mark.no_local_artifacts
 def test_the_shipped_calibration_used_the_lineage_derived_skip() -> None:
     payload = json.loads(REPORT.read_text(encoding="utf-8"))
     manifest = json.loads(LINEAGE_MANIFEST.read_text(encoding="utf-8"))
