@@ -634,7 +634,8 @@ D/E 面（真实问答）同子集 64→256 是 7→8（未超线）。
 
 ### 2m 的数（8 题 × 3 轮，挂回路 seed-A，penalty 2.0，预算 256）
 
-件：`reports/taiji_a30_self_contamination_8item_3arm_20260928.json`
+件：`reports/taiji_a30_self_contamination_8item_controls_first_20260928.json`（＋顺序对照那份 `..._8item_treatedfirst_20260928.json`；两件的 `arms` 都是 `learn_false_a`／`learn_false_b`／`learn_true` 三臂）
+**引用勘误（2026-10-02，机检发现的悬空引用）**：这里原来写的是 `..._8item_3arm_20260928.json`——**那个文件名从未存在过**（盘上与 git 里都没有），真件就是上面两个按载入顺序命名的档 ⇒ 本节读数不受影响，但引用必须按真实文件名点。
 （守卫四条全真：`learn_true` 臂 `learn_bytes` 调用数＝24＝文本条数、两条 `learn=False` 臂＝0、
 `control_arms_bitwise_identical=true`、`base_sha256_unchanged=true`）。
 
