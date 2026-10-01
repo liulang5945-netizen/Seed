@@ -3178,6 +3178,13 @@ L1 四件见 §2bd/§2be；L2 见 §2bc 与 `reports/taiji_a30_stop_failure_a31_
 两条余红＝点名过的**既有漂移**（cap0 inventory/legacy 的 fresh-sample 契约：面板封存于 09-18/09-20，
 其后码面演进 + 本地 checkpoints/ 多出文件；legacy 那件三条臂全用显式档、与本次换底无关）
 ⇒ **本次换底零新增红**；platform_boundary 本轮随并行会话文件状态转绿。
+**两条面板已按同一纪律重基**（2026-10-01，owner 令「先做 1 和 2」）：
+  * inventory：`RESAMPLE` 指到 `reports/taiji_cap0_inventory_a31self_20261001.json`（现行默认）；
+    09-20 那份转 `RESAMPLE_AFTER_BETA4_SWITCH`，并新增 10-01 事实测试（默认换件＋模板回显消失＋
+    最训练档被单独探针）；
+  * legacy：`RESAMPLE` 指到 `reports/taiji_cap0_legacy_load_probe_a31self_20261001.json`；
+    09-18 那份转 `RESAMPLE_BEFORE_UTF8_MASK`（09-27 掩码产品化是这批漂移的真因——trained 臂
+    不再落回模板）。历史件的断言**原位保留**（读历史报告的测试仍钉旧世界），新事实由新样本承担。
 换底自身面：F04 引用重指后门五条子句全真（gate_verdict=pass、行 partial）、eval-set 契约 15 绿、
 F04 契约 22 绿、默认位守卫 23 绿。
 

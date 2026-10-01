@@ -122,6 +122,12 @@
 `checkpoints/seed_a31self_with_circuit.pt`（12,627,371 B、sha `d6169a35…`）；**回滚点**＝旧件
 `seed_beta_with_circuit.pt`（sha `f9343433…`，在盘、清单在册）；来源清单/隔离契约/守卫（23 绿）全对齐；
 全量门禁终值：**1862 绿／2 红**——余红为点名过的既有漂移（cap0 两件 fresh-sample 面板），换底零新增红；F04 引用重指后 gate_verdict=pass。**作者规律**：L1 挂回路格跟"答案作者"走（自写过、语料侧卡）。
+**[owner 令"先做 1、2"当日完成]** ①**H/CAP 阈值重采生效**（新默认 5 次：H01 0.841／H02 3.231／H03 1.794／H04 417,034，
+H05 150 次零崩溃；不挂回路对照归因首响应 0.73→1.50 s＝回路进场代价）＋**先修断档**（constrained_decode 包装签名停在 09-27 前、
+产品 chat 总带 utf8_strict ⇒ required 链健康读数自 09-27 起静默取不出；已补签名＋守卫 2 条）＋修 `eval_taiji_cap0_baseline`
+自 09-20 起落后的 DEFAULT_CHECKPOINT stale 钉子（改跟随产品常量）（`56e9e61a`）；②**两条 cap0 面板重基**
+（inventory→`..._a31self_20261001.json`＋09-20 转历史常量＋新增 10-01 事实测试；legacy→`..._a31self_20261001.json`＋
+09-18 转 `RESAMPLE_BEFORE_UTF8_MASK`；历史件断言原位保留）。
 
 **队首（2026-09-30 rev66：owner 裁定①批（分块喂法进主线）＋②先补 L3；L3 已齐，候选档案出）**——
 ①**分块喂法已进主线**（`d7e3bcc9`：`--answer-chunking per-answer`＋`--answer-max-chars`，守卫 6 含节奏守卫），

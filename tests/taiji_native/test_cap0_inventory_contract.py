@@ -33,7 +33,12 @@ REPORT = REPO / "reports" / "taiji_cap0_inventory_20260915.json"
 #: 比较基线。2026-09-20 默认基座换底（所有者裁决）之后，09-18 那份样本描述的是**另一个产品事实**
 #: （默认=未训练底、单独探针过最训练的那份），继续拿它比会把一次有意的换底读成仪器漂移。
 #: 按本仓"改行为须同批再生报告"的既有做法**重基**到新底样本；旧件不覆写、原样留作历史。
-RESAMPLE = REPO / "reports" / "taiji_cap0_inventory_beta4_20260920.json"
+#:
+#: 2026-10-01 第三次换底（重出到自写档候选，PLAN-A-30 §7c）：同上做法再重基一次——
+#: `RESAMPLE` 指到 10-01 样本（现行默认＝`seed_a31self_with_circuit.pt`），
+#: 09-20 那份转入 `RESAMPLE_AFTER_BETA4_SWITCH`（历史事实仍可核对）。
+RESAMPLE = REPO / "reports" / "taiji_cap0_inventory_a31self_20261001.json"
+RESAMPLE_AFTER_BETA4_SWITCH = REPO / "reports" / "taiji_cap0_inventory_beta4_20260920.json"
 RESAMPLE_BEFORE_SUBSTRATE_SWITCH = REPO / "reports" / "taiji_cap0_inventory_20260918.json"
 DELIVERY_PLAN = REPO / "plans" / "active" / "roadmap" / "07_MINI_MODEL_DELIVERY.md"
 RUNNER = REPO / "scripts" / "training" / "eval_taiji_cap0_inventory.py"
@@ -274,7 +279,7 @@ def test_the_rebase_records_what_the_substrate_change_actually_changed() -> None
     """
 
     before = json.loads(RESAMPLE_BEFORE_SUBSTRATE_SWITCH.read_text(encoding="utf-8"))
-    after = json.loads(RESAMPLE.read_text(encoding="utf-8"))
+    after = json.loads(RESAMPLE_AFTER_BETA4_SWITCH.read_text(encoding="utf-8"))
     old_reality = before["model_reality"]
     new_reality = after["model_reality"]
     assert old_reality["default_checkpoint"] == "seed_corpus.pt"
@@ -282,9 +287,28 @@ def test_the_rebase_records_what_the_substrate_change_actually_changed() -> None
     assert new_reality["default_checkpoint"] == "seed_beta.pt"
     assert int(new_reality["default_tick"]) == 16000000
     assert new_reality["wiring_defect"] is False
-    #: 换底没有把模板回显这件事改掉——训练态经入口仍是固定模板（这是 F04 与 A05b 的分界）。
+    #: 09-20 那次换底没有把模板回显这件事改掉——训练态经入口仍是固定模板（这是 F04 与 A05b 的分界）。
     assert new_reality["default_checkpoint"] == new_reality["most_trained_checkpoint"]
     assert after["raw_output_inventory"]["default_entry"]["template_signature"]["templated"] is True
+
+
+def test_the_2026_10_01_rebake_records_what_it_changed() -> None:
+    """10-01 重出（PLAN-A-30 §7c）的两处产品事实：默认换件、模板回显消失。
+
+    与 09-20 那次不同：这次默认档本身**不再是**"最训练的那份"（那份是 seed_beta.pt 16M），
+    且其经入口的输出**不再塌成模板**（与 F0 的 floor_pass、F04 的 gate 转 pass 同一事实）。
+    """
+
+    after = json.loads(RESAMPLE.read_text(encoding="utf-8"))
+    reality = after["model_reality"]
+    assert reality["default_checkpoint"] == "seed_a31self_with_circuit.pt"
+    assert reality["wiring_defect"] is False
+    assert reality["most_trained_checkpoint"] == "seed_beta.pt"
+    assert reality["default_checkpoint"] != reality["most_trained_checkpoint"], (
+        "新版默认不是'最训练'那份 ⇒ 最训练档会被单独探针（历史缺行那一支不再触发）"
+    )
+    assert after["raw_output_inventory"]["default_entry"]["template_signature"]["templated"] is False
+    assert after["raw_output_inventory"]["most_trained_entry"]["probed"] is True
 
 
 def test_a_fresh_inventory_sample_reproduces_the_sealed_one(tmp_path) -> None:

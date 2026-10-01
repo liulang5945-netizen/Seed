@@ -26,7 +26,12 @@ from _report_leaves import leaves, tail
 REPO = Path(__file__).resolve().parents[2]
 REPORT = REPO / "reports" / "taiji_cap0_legacy_load_probe_20260915.json"
 #: 09-18 重采样：写侧隔离（DEBT-I7）落地之后，默认基座已稳定，因此可以当复现参照。
-RESAMPLE = REPO / "reports" / "taiji_cap0_legacy_load_probe_20260918.json"
+#: **2026-10-01 再重基**（PLAN-A-30 §7c 重出之后的纪律）：09-27 的 SPEC-R2-02 让产品 `chat()`
+#: 默认带 `utf8_strict=True`，本探针三条臂的输出面因此整体漂移（trained 臂不再落回模板）——
+#: 09-18 那份参照描述的是**换掩码之前**的世界。按"改行为须同批再生报告"重基到 10-01 样本；
+#: 09-18 旧件原样留作历史（`RESAMPLE_BEFORE_UTF8_MASK`）。
+RESAMPLE = REPO / "reports" / "taiji_cap0_legacy_load_probe_a31self_20261001.json"
+RESAMPLE_BEFORE_UTF8_MASK = REPO / "reports" / "taiji_cap0_legacy_load_probe_20260918.json"
 RUNNER = REPO / "scripts" / "training" / "probe_taiji_cap0_legacy_load.py"
 
 
@@ -186,12 +191,17 @@ def test_a_fresh_probe_sample_reproduces_the_sealed_one(tmp_path) -> None:
     assert len(shared) > 60 and len(volatile) * 3 < len(shared), (len(shared), len(volatile))
 
     # 不依赖屏蔽集的正面表述：这条反事实的结论本身必须照样成立。
+    #: 10-01 重基后的形状：**控制臂**仍是模板（tick=2 基线面没变），trained 两臂不再是
+    #: （09-27 掩码产品化之后的形状）——逐臂读，不写死一个值；原始字节必须逐位复现。
     for name in ("trained_current_guard", "trained_relaxed_guard", "default_control_current_guard"):
         fresh_arm, sealed_arm = fresh["arms"][name], sealed["arms"][name]
         assert fresh_arm["load_ok"] is True, name
-        assert fresh_arm["output_summary"]["templated"] is True, name
+        if name == "default_control_current_guard":
+            assert fresh_arm["output_summary"]["templated"] is True, name
+        else:
+            assert fresh_arm["output_summary"]["templated"] is False, name
         assert [turn["raw_output"] for turn in fresh_arm["turns"]] == [
             turn["raw_output"] for turn in sealed_arm["turns"]
         ], name
     assert fresh["verdict"]["recovered_tick"] == sealed["verdict"]["recovered_tick"] == 16_000_000
-    assert fresh["verdict"]["recovered_output_is_non_template"] is False
+    assert fresh["verdict"]["recovered_output_is_non_template"] is True
