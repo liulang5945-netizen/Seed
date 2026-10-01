@@ -5,4 +5,5 @@
   - menuitem "Archive session"
   - separator
   - menuitem "Export session"
+  - menuitem "Delete session"
   - menuitem "Copy session ID"

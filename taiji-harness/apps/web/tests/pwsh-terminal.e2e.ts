@@ -79,8 +79,10 @@ describe.skipIf(MODE === 'record' || !HAS_PWSH)('web e2e: pwsh calls use the bas
     await result.click()
     await page.getByRole('tab', { name: 'Chat', exact: true }).waitFor({ timeout: 15_000 })
     // The tool row is expand-gated: the settled row uses the bash layout and carries the
-    // shell-family variant, and the terminal card lives in the expanded body.
-    const row = page.locator('[data-tool="pwsh"]').first()
+    // shell-family variant, and the terminal card lives in the expanded body. The
+    // shell-family card (R-pwsh-row: pwsh routes to the bash row family) emits
+    // data-sample="bash" and no data-tool attribute, so anchor on the family marker.
+    const row = page.locator('[data-sample="bash"]').first()
     await expandOwningTurnProcess(page, row)
     await row.waitFor({ timeout: 15_000 })
     if (await row.getAttribute('aria-expanded') !== 'true') await row.click()

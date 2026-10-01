@@ -1,7 +1,6 @@
 - list "Background jobs":
   - listitem:
-    - button "Hide live output of printf 'streamed-%s\\n' marker-line; for _ in $(seq 1 3000); do [ -e .live-job-stream.release ] && break; sleep 0.2; done" [expanded]: printf 'streamed-%s\n' marker-line; for _ in $(seq 1 3000); do [ -e .live-job-stream.release ] && break; sleep 0.2; done bash {{duration}}
-    - button "Stop task printf 'streamed-%s\\n' marker-line; for _ in $(seq 1 3000); do [ -e .live-job-stream.release ] && break; sleep 0.2; done"
-    - text: $ printf 'streamed-%s\n' marker-line; for _ in $(seq 1 3000); do [ -e .live-job-stream.release ] && break; sleep 0.2; done
+    - 'button "Hide live output of Write-Output ''streamed-marker-line''; for ($i = 0; $i -lt 3000; $i++) { if (Test-Path -LiteralPath ''.live-job-stream.release'') { break }; Start-Sleep -Milliseconds 200 }" [expanded]': "Write-Output 'streamed-marker-line'; for ($i = 0; $i -lt 3000; $i++) { if (Test-Path -LiteralPath '.live-job-stream.release') { break }; Start-Sleep -Milliseconds 200 } pwsh {{duration}}"
+    - 'button "Stop task Write-Output ''streamed-marker-line''; for ($i = 0; $i -lt 3000; $i++) { if (Test-Path -LiteralPath ''.live-job-stream.release'') { break }; Start-Sleep -Milliseconds 200 }"'
+    - text: "$ Write-Output 'streamed-marker-line'; for ($i = 0; $i -lt 3000; $i++) { if (Test-Path -LiteralPath '.live-job-stream.release') { break }; Start-Sleep -Milliseconds 200 }"
     - button "Copy"
-    - text: streamed-marker-line

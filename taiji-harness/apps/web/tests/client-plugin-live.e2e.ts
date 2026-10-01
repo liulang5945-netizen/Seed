@@ -40,6 +40,16 @@ it('places dynamic Session menu rows by order among the shipped ones and removes
     const console = watchConsole(page)
     onTestFailed(() => saveFailureShot(page, 'web-e2e-session-menu-actions'))
     await page.goto(scaffold.authenticatedUrl, { waitUntil: 'load' })
+    // Sidebar groups render collapsed (and boot provisions the empty Default
+    // workspace group first), so the session row stays unreachable until every
+    // collapsed group is expanded; only collapsed rows match, keeping the poll
+    // idempotent.
+    await expect.poll(async () => {
+      for (const group of await page.locator('[role="treeitem"][aria-expanded="false"]').all()) {
+        await group.click()
+      }
+      return page.locator('[role="treeitem"]').count()
+    }, { timeout: 20_000 }).toBeGreaterThanOrEqual(2)
     const row = page.getByRole('treeitem').filter({ has: page.getByText(SESSION_TITLE, { exact: true }) })
     await row.waitFor({ timeout: 20_000 })
     const trigger = row.getByRole('button', { name: `Session actions for ${SESSION_TITLE}` })
@@ -50,7 +60,7 @@ it('places dynamic Session menu rows by order among the shipped ones and removes
     const menu = page.getByRole('menu')
     await menu.waitFor()
     expect(await menu.getByRole('menuitem').allTextContents()).toEqual([
-      'Pin session', 'Rename', 'Fork session', 'Archive session', 'Export session', 'Copy session ID',
+      'Pin session', 'Rename', 'Fork session', 'Archive session', 'Export session', 'Delete session', 'Copy session ID',
     ])
     expect(await menu.getByRole('separator').count()).toBe(1)
     await compareOrRefreshGolden(
@@ -75,7 +85,7 @@ it('places dynamic Session menu rows by order among the shipped ones and removes
     await trigger.click()
     await menu.waitFor()
     expect(await menu.getByRole('menuitem').allTextContents()).toEqual([
-      'Pin session', 'Rename', 'Fork session', 'Archive session',
+      'Pin session', 'Rename', 'Fork session', 'Archive session', 'Delete session',
     ])
     expect(await menu.getByRole('separator').count()).toBe(0)
     expect(console.pageErrors).toEqual([])

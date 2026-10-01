@@ -139,9 +139,18 @@ describe('web e2e: exact-boundary fork seeds branch closers and continues', () =
     // below proves the prompt really ran on the child.
     const groupRow = page.locator('[role="treeitem"]').first()
     await groupRow.waitFor({ timeout: 15_000 })
-    await groupRow.click()
-    await expect.poll(() => page.locator('[role="treeitem"]').count(), { timeout: 15_000 }).toBe(3)
-    await page.locator('[role="treeitem"]').nth(1).click()
+    // Boot provisions the empty Default workspace group ahead of Ungrouped, so
+    // BOTH group rows must be expanded before the session rows reach the tree
+    // (a one-shot expand of the first row opens the wrong, empty group). Only
+    // collapsed groups match, which keeps the poll idempotent; session rows
+    // carry no aria-expanded, and the forked child sorts first by recency.
+    await expect.poll(async () => {
+      for (const group of await page.locator('[role="treeitem"][aria-expanded="false"]').all()) {
+        await group.click()
+      }
+      return page.locator('[role="treeitem"]:not([aria-expanded])').count()
+    }, { timeout: 15_000 }).toBe(2)
+    await page.locator('[role="treeitem"]:not([aria-expanded])').first().click()
     // The child renders the inherited prefix up to the cut.
     await expect.poll(() => page.getByText('Use the read tool twice', { exact: false }).count(), { timeout: 15_000 })
       .toBeGreaterThanOrEqual(1)
