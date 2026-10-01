@@ -376,6 +376,12 @@ def main() -> int:
         action="store_true",
         help="每篇正文后补一个 0x0A 再收尾——把测面换成主线配方 `end_boundary_after_newline` 训的那张面",
     )
+    parser.add_argument(
+        "--circuit",
+        default=None,
+        help="v9：显式挂一条复制回路（做装配隔离用）。不给 ≠ 无回路面——带回路的信封会在 load 里自动挂载，"
+        "所以本件自述 `assembly.mount_route`，不按命令行猜面",
+    )
     args = parser.parse_args()
 
     checkpoint = PROJECT_ROOT / args.checkpoint
@@ -387,6 +393,19 @@ def main() -> int:
     from api.seed_runtime import SeedRuntime
 
     runtime = SeedRuntime.load(checkpoint)
+    substrate = runtime.model.substrate
+    mount_route = "none"
+    if args.circuit:
+        runtime.enable_copy_circuit(PROJECT_ROOT / args.circuit)
+        mount_route = "enable_copy_circuit"
+    elif getattr(substrate, "copy_circuit", None) is not None:
+        mount_route = "envelope_auto_mount"
+    gate_override = getattr(substrate, "_copy_evidence_utf8_gate_override", None)
+    gate_effective = (
+        bool(substrate.config.copy_evidence_utf8_gate)
+        if gate_override is None
+        else bool(gate_override)
+    )
     boundary = int(runtime.model.substrate.config.boundary_symbol)
     sample = document_symbols(
         corpus, args.docs, require_seam=args.require_seam, append_newline=args.append_newline
@@ -395,7 +414,23 @@ def main() -> int:
     result = audit(runtime, chunks, boundary, mask=args.mask)
 
     report = {
-        "format": "taiji-a30-stop-signal-presence-v8",
+        "format": "taiji-a30-stop-signal-presence-v9",
+        "format_note_v9": "v9 **加性**：新旗标 `--circuit`（装配隔离用）与 `assembly` 自述块"
+        "（`mount_route`／`copy_circuit_present`／证据门 effective·config·override 三件一起报）。"
+        "加它的理由：候选基底 18/300 与出厂信封 0/300 之差同时动了「回路在不在」与「save 形状」两件事"
+        "（§2bi/§2bii），不做单变量隔离就只能记成相关，不能记成机制；而 `--circuit` 不给 **不等于**无回路"
+        "（带回路的信封在 load 里自动挂载），所以面必须自述、不按命令行猜。"
+        "审计算法、`faces`／`threshold_sweep`／`ratio_sweep` 各表一字未动 ⇒ 与 v8 同格可比。",
+        "assembly": {
+            "circuit_arg": args.circuit,
+            "mount_route": mount_route,
+            "copy_circuit_present": getattr(substrate, "copy_circuit", None) is not None,
+            "copy_evidence_utf8_gate_effective": gate_effective,
+            "copy_evidence_utf8_gate_config": bool(substrate.config.copy_evidence_utf8_gate),
+            "copy_evidence_utf8_gate_override": (
+                None if gate_override is None else bool(gate_override)
+            ),
+        },
         "format_note_v8": (
             "v8 **改语义不改算法**地修掉 v7 的 `docs_with_false_fire_by_floor` 一处低报：v7 数的是"
             "「最早那次触发是否晚于窗口」，而位置条件的正确问法是「窗口**之内**有没有触发」——"
