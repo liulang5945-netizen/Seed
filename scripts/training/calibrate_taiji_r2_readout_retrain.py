@@ -33,7 +33,7 @@ import json
 import sys
 import time
 from collections.abc import Sequence
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -253,7 +253,7 @@ def main() -> int:
     peak = peak_working_set_bytes()
     report = {
         "status": "completed",
-        "generated_at_utc": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "generated_at_utc": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "contract": "plans/reference/M5_R2_READOUT_RETRAIN_CONTRACT_DRAFT_20260920.md",
         "step": "step-0 cost calibration (wall/tick + peak working set)",
         "checkpoint": {

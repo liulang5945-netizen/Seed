@@ -22,7 +22,7 @@ import argparse
 import json
 import sys
 import unicodedata
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -280,7 +280,7 @@ def main() -> int:
     if not out.is_absolute():
         out = PROJECT_ROOT / out
     if out.exists():
-        out = out.with_name(f"{out.stem}-{datetime.now(timezone.utc).strftime('%H%M%S')}.json")
+        out = out.with_name(f"{out.stem}-{datetime.now(UTC).strftime('%H%M%S')}.json")
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     #: 报告写在仓库外（自检/回归跑）时也要能打印路径，不能让 relative_to 把整条门跑崩。

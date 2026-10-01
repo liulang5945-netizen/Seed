@@ -17,7 +17,7 @@ import argparse
 import json
 import sys
 import time
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -206,7 +206,7 @@ def main() -> int:
     payload = {
         "format": "taiji-r2-compositionality-probe-v1",
         "status": "completed" if clean else "failed",
-        "written_at_utc": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "written_at_utc": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "contract": CONTRACT,
         "question": "换一个槽的效应，是否跨另一个槽保持一致（表征可否按槽分解）",
         "preregistered_thresholds": {

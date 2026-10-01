@@ -26,7 +26,7 @@ import hashlib
 import json
 import sys
 import time
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
@@ -154,7 +154,7 @@ def main() -> int:
         "penalty": args.penalty,
         "out": out.relative_to(PROJECT_ROOT).as_posix(),
         "out_sha256_16": hashlib.sha256(out.read_bytes()).hexdigest()[:16],
-        "started_utc": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "started_utc": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "guard": {
             "base_sha256_unchanged": _sha256(base) == sha_base,
             "question_count_matches": len(existing) + written <= args.pairs,

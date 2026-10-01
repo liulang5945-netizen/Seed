@@ -23,7 +23,7 @@ import argparse
 import hashlib
 import json
 import sys
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -93,7 +93,7 @@ def extract(offset_within_stride: int = 0) -> dict[str, Any]:
     ]
     return {
         "format": "r2-readout-m1-v3-prompts-v1",
-        "built_at_utc": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "built_at_utc": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "purpose": "M1 未见题面集（机械抽取，无人工挑选）；相位 0 为主集，stride//2 为复制集",
         "source": {
             "corpus": str(CORPUS.relative_to(PROJECT_ROOT).as_posix()),

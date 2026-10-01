@@ -15,7 +15,7 @@ import argparse
 import json
 import sys
 from collections.abc import Mapping
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -165,7 +165,7 @@ def main(argv: list[str] | None = None) -> int:
         type=Path,
         default=PROJECT_ROOT
         / "reports"
-        / f"taiji_m2_r0_checkpoint_inventory_{datetime.now(timezone.utc):%Y%m%d}.json",
+        / f"taiji_m2_r0_checkpoint_inventory_{datetime.now(UTC):%Y%m%d}.json",
     )
     args = parser.parse_args(argv)
 

@@ -20,7 +20,7 @@ from __future__ import annotations
 import argparse
 import json
 import sys
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -111,7 +111,7 @@ def main() -> int:
     }
     payload = {
         "format": "taiji-r2-separability-before-vs-after-training-v1",
-        "written_at_utc": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "written_at_utc": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "question": "同一构造路径、同一把尺子：训练 16M 让各级可分离性变了多少",
         "comparability": (
             "两端都走 `Seed(SeedConfig(...))` 这条训练器路径；前端是同一 config 的第 0 tick，"

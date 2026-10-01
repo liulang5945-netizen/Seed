@@ -32,7 +32,7 @@ import json
 import sys
 import time
 from collections.abc import Sequence
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -85,7 +85,7 @@ def surface_digests(substrate: Any) -> dict[str, str]:
 
 
 def _utc_now() -> str:
-    return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    return datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
 def _stamp_for_filename() -> str:
@@ -96,7 +96,7 @@ def _stamp_for_filename() -> str:
     (caught by ``test_fresh_is_the_only_way_to_redo_a_finished_arm``, 2026-09-22).
     """
 
-    return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H-%M-%SZ")
+    return datetime.now(UTC).strftime("%Y-%m-%dT%H-%M-%SZ")
 
 
 def _envelope_metadata(envelope: dict[str, Any]) -> dict[str, Any]:

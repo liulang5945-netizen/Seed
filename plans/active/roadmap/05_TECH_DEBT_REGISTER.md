@@ -901,6 +901,46 @@ tie-break 顺序确定（utility → cost → group_id）；并**复述诊断报
 仍然有效的既有保障：上面那条边界语义契约测试（12 passed）钉住了 `margin == 0` 必须被选中，
 所以风险形态是「浮点噪声下静默改变 tie-break」，而不是「行为未定义」。
 
+**✅ §4.2 的修法已实施（H19d，2026-09-30）——但不是本节原先提议的那个**
+
+本节上面「修法建议 A」写的是「给 `select` 的两个比较加显式容差 `eps = 1e-9`」。**该方案被
+否决**，理由是它会打破当时已存在的两条边界契约 pin（`utility = -1e-18` 必须不选、
+`cost = 2.0 + 1e-12` 必须不选）——即 tripwire 按设计发挥了作用，而不是被绕过。
+
+改为先读诊断产物再定方案。`reports/taiji_p3b_s42_boundary_diagnosis_20260915.json`
+的 9 个 case 实际是：
+
+| group | utility | utility_margin | resource_cost | cost_margin |
+|---|---|---|---|---|
+| `group:3960…` | -1.0 | **-1.0** | 2.0 | **0.0** |
+| `group:cd7b…` | 0.5 | **0.5** | 2.0 | **0.0** |
+
+即**压线的是 cost 侧**（`resource_cost == budget` 恰好相等），utility 侧最近的候选距 0.0
+阈值还有 0.5 —— 两处比较并不对称，`1e-9` 是按「对称地加在两处」这个错误前提选的。
+
+实施（`taiji/interaction_group_learning.py`）：
+
+- **cost 侧**吸收 `_BUDGET_ULP_TOLERANCE = 8.0` 个 ULP，用 `math.ulp(budget)` 缩放，
+  故对任意预算量级都成立（固定 `1e-9` 在 budget=1e6 时毫无意义）。
+- **utility 侧刻意保持精确比较**：`interaction` 是 `_estimate_pair` 里
+  `m_TT − m_TF − m_FT + m_FF` 的四项交替求和，抵消误差约 1e-15，而契约测试钉的是
+  1e-18 —— 那是一个比被测量本身分辨率还细的区分，放宽它等于用一个有文档的语义换零收益。
+- `select` 是只读查询，不写 checkpoint，故此改动**不触及任何 checkpoint digest / 封存件**。
+
+新增两条 pin（`test_interaction_group_learner_boundary_contract.py`，现 14 passed）：
+
+1. `test_cost_one_ulp_over_budget_is_still_selected` —— 直接钉住那条红的形态：
+   `cost == budget + math.ulp(budget)` 必须被选中。
+2. `test_cost_tolerance_does_not_swallow_a_real_overage` —— 防回潮：`budget + 1e-9`
+   仍必须被拒，即明确拒绝本节原先提议的那个尺度。
+
+**本节第 2 条「铁证仍需在 3.10 腿补一次带该探针的 job」就此作废**：该修复现在由上面第 1 条
+pin 直接在进程内钉住（`budget + 1 ULP` 即失败形态），不再需要跨解释器复跑来取证。
+
+**仍遗留**：若将来某个 case 把 **utility** 顶到 0.0 阈值上（当前 9/9 都不在），utility 侧
+仍会因四项抵消而抖动；那时需要的是在上游 `_estimate_pair` 量化取值，而不是继续放宽比较——
+那会改动记录进 checkpoint 的数值，属另一条线。
+
 **处置约束（重要）**：这 2 项触及 `InteractionGroupUtilityLearner`——**被多个既有报告依赖的
 冻结机制**；任何阈值或 tie-break 改动都会影响与既有报告的可比性，须先定性再动手，
 并遵守 §8「不得放宽断言凑绿」的纪律。

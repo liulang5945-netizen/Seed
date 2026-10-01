@@ -1,12 +1,20 @@
 """契约测试：`InteractionGroupUtilityLearner.select` 的**边界语义**。
 
 存在理由（技术债册 §4.2 / [诊断](../../plans/reference/M5_S42_BOUNDARY_DIAGNOSIS_20260915.md)）：
-CI 的 `test (3.10)` 腿报 `selector did not choose a group`，实测根因是候选
-**恰好压在阈值上**（`closest_boundary_margin = 0.0`，±1e-12 即翻转），
-而 `select` 用的是**无容差**的浮点比较：
+CI 曾报 `selector did not choose a group`，诊断产物给出的压线位置是
+`resource_cost == budget` **恰好相等**（9/9 case 的 `cost_margin = 0.0`），而不是
+`utility`——诊断里最近的 utility 距 0.0 阈值还有 0.5。而当时的 `select` 用的是
+**无容差**的浮点比较：
 
-    item.utility >= self.minimum_utility                    # 0.0
+    item.utility >= self.minimum_utility                    # 0.0  ← 保持精确
     and (resource_budget is None or item.resource_cost <= float(resource_budget))   # 2.0
+
+`sum(costs) / len(costs)` 落在 2.0 还是 2.0 + 1 ULP 依解释器而定，这正是那条红的成因。
+
+H19d（2026-09-30）现状：**cost 侧**吸收 `_BUDGET_ULP_TOLERANCE` 个 ULP，
+**utility 侧刻意保持精确**。注意登记册 §4.2 当初提议的是"两处都加 eps = 1e-9"——
+那会打破本文件下面两条 pin（`utility = -1e-18` 与 `cost = 2.0 + 1e-12` 都必须**不选**），
+因此没有采纳；下面的 `test_cost_tolerance_does_not_swallow_a_real_overage` 就是防它回潮的。
 
 本文件把"恰好压线时**必须**被选中"这一事实钉住 —— 任何对阈值、比较符或排序的改动
 都会在这里显式失败，而不是静默改变被测机制的含义。
@@ -91,6 +99,32 @@ def test_just_over_the_cost_boundary_is_rejected() -> None:
     """阈值另一侧：刚过界即不选（用**可表示**的增量 1e-12）。"""
 
     learner = _learner(utilities={"g": 1.0}, costs={"g": RESOURCE_BUDGET + 1e-12})
+    assert learner.select(resource_budget=RESOURCE_BUDGET) is None
+
+
+def test_cost_one_ulp_over_budget_is_still_selected() -> None:
+    """§4.2 那条红的真实形态：均值落在 `budget + 1 ULP` 时**必须**被选中。
+
+    `math.ulp(2.0)` ≈ 4.44e-16。H19d 之前此处无容差，于是同一份数据在一个解释器上落到
+    2.0 + 4.44e-16、在另一个上落到 2.0，`select` 在前者返回 None —— 即那条
+    "selector did not choose a group"。本条把修复后的行为钉住。
+    """
+
+    one_ulp = math.ulp(RESOURCE_BUDGET)
+    assert one_ulp > 0.0
+    learner = _learner(utilities={"g": 1.0}, costs={"g": RESOURCE_BUDGET + one_ulp})
+    selected = learner.select(resource_budget=RESOURCE_BUDGET)
+    assert selected is not None and selected.group_id == "g"
+
+
+def test_cost_tolerance_does_not_swallow_a_real_overage() -> None:
+    """防回潮：容差只吃几个 ULP，1e-9 量级的真实超支仍必须被拒。
+
+    技术债册 §4.2 当初提议的是 eps = 1e-9；本条明确拒绝那个尺度——它同时会打破上面
+    `cost = 2.0 + 1e-12` 那条 pin。
+    """
+
+    learner = _learner(utilities={"g": 1.0}, costs={"g": RESOURCE_BUDGET + 1e-9})
     assert learner.select(resource_budget=RESOURCE_BUDGET) is None
 
 

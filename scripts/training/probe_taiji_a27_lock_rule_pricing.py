@@ -46,7 +46,7 @@ import argparse
 import hashlib
 import json
 import sys
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -265,7 +265,7 @@ def main() -> int:
             "cue_only_matches_production_pick": disagreements["cue_only_vs_production"] == 0,
             "every_rule_has_denominator": all(tallies[rule]["locks"] > 0 for rule in RULES),
         },
-        "started_utc": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "started_utc": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
     }
     out = Path(args.out_report)
     if not out.is_absolute():

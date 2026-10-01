@@ -30,7 +30,7 @@ import argparse
 import hashlib
 import json
 import sys
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -393,7 +393,7 @@ def main() -> int:
         "wins_by_arm": {
             arm: runs[arm]["transfer"]["boundary_argmax_positions"] for arm in arm_list
         },
-        "started_utc": datetime.now(timezone.utc).isoformat(),
+        "started_utc": datetime.now(UTC).isoformat(),
     }
     out = PROJECT_ROOT / args.out_report
     out.parent.mkdir(parents=True, exist_ok=True)

@@ -22,7 +22,7 @@ from __future__ import annotations
 import hashlib
 import json
 import sys
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
@@ -135,7 +135,7 @@ def main() -> int:
         },
         "sha256_before": sha_before[:16],
         "verdict": decide(gate_armed, circuit_present, calls, allowed),
-        "started_utc": datetime.now(timezone.utc).isoformat(),
+        "started_utc": datetime.now(UTC).isoformat(),
     }
     out.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8", newline="\n")
     print(json.dumps(report, ensure_ascii=False, sort_keys=True)[:900])

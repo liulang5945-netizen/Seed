@@ -57,7 +57,9 @@ def test_truncation_touches_only_the_answer(tmp_path: Path) -> None:
 
 def test_missing_seam_is_loud(tmp_path: Path) -> None:
     path = tmp_path / "bad.jsonl"
-    path.write_text(json.dumps({"text": "没有接缝的一行"}, ensure_ascii=False) + "\n", encoding="utf-8")
+    path.write_text(
+        json.dumps({"text": "没有接缝的一行"}, ensure_ascii=False) + "\n", encoding="utf-8"
+    )
     with pytest.raises(RuntimeError, match="拆不出答案"):
         list(iter_answer_chunks([path]))
 

@@ -38,7 +38,7 @@ import hashlib
 import json
 import sys
 import time
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -647,7 +647,7 @@ def main() -> int:
             "多轮会话是按语料行号分组**合成**的（默认语料每篇只有一组问答），本件只证'结束目标的上下文形状'这一个机理",
             "n ＝ groups × exchanges 个结束位；决策级规模需要另行排训练机时，本件不动默认入口、不写检查点",
         ],
-        "started_utc": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "started_utc": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
     }
     out = (
         Path(args.out_report)

@@ -42,21 +42,13 @@ import ast
 import json
 import re
 import sys
+import tomllib
 from collections.abc import Iterable, Iterator
 from pathlib import Path
 from typing import Any
 
 import black
 from black.files import path_is_excluded
-
-# Python 3.10 has no stdlib tomllib; tomli is its upstream implementation.  pyproject
-# still declares requires-python >=3.10, so this script must keep running on 3.10 --
-# but H19c (2026-09-30) dropped the CI 3.10 leg, so that path is no longer exercised by
-# the gate this script backs.  Do not read a green run as proof the 3.10 branch works.
-if sys.version_info >= (3, 11):
-    import tomllib
-else:
-    import tomli as tomllib
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_OUTPUT = PROJECT_ROOT / "reports" / "taiji_frozen_marker_formatter_conflict.json"

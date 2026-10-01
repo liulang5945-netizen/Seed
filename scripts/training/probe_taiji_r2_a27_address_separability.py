@@ -38,6 +38,7 @@ import hashlib
 import json
 import math
 import sys
+from datetime import UTC
 from pathlib import Path
 from typing import Any
 
@@ -390,11 +391,9 @@ def main() -> int:
     if not out.is_absolute():
         out = PROJECT_ROOT / out
     if out.exists():
-        from datetime import datetime, timezone
+        from datetime import datetime
 
-        out = out.with_name(
-            f"{out.stem}-{datetime.now(timezone.utc).strftime('%H%M%S')}{out.suffix}"
-        )
+        out = out.with_name(f"{out.stem}-{datetime.now(UTC).strftime('%H%M%S')}{out.suffix}")
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(report, ensure_ascii=False, default=str)[:1200])

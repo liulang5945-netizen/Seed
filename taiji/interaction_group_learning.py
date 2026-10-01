@@ -13,6 +13,27 @@ from .interaction_groups import InteractionGroupRecord
 
 INTERACTION_GROUP_LEARNING_CHECKPOINT_FORMAT = "taiji-interaction-group-learning-v1"
 
+# H19d (2026-09-30): how many ULPs the *resource budget* comparison may absorb.
+#
+# Tech-debt register section 4.2 recorded this as "±1e-12 flips select", and proposed an
+# eps of 1e-9 on **both** comparisons.  The diagnosis artifact itself says otherwise, and
+# the two differ in a way that matters:
+#   reports/taiji_p3b_s42_boundary_diagnosis_20260915.json, all 9 cases:
+#     group:3960...  utility=-1.0  utility_margin=-1.0  resource_cost=2.0  cost_margin=0.0
+#     group:cd7b...  utility= 0.5  utility_margin= 0.5  resource_cost=2.0  cost_margin=0.0
+#   The knife-edge is `resource_cost == budget` exactly; the utility threshold (0.0) is
+#   nowhere near -- the nearest utility is 0.5 away.  A budget exactly spent is a normal
+#   outcome, and whether `sum(costs) / len(costs)` lands at 2.0 or at 2.0 + 1 ULP is
+#   interpreter-dependent, which is what produced "selector did not choose a group".
+#
+# So: tolerance on the **cost** side only, and only a few ULPs.  `math.ulp` keeps it
+# scale-correct for any budget magnitude (a fixed 1e-9 would be meaningless at 1e6).
+# The utility side stays an exact comparison on purpose -- test_interaction_group_learner
+# _boundary_contract pins that a utility of -1e-18 must be rejected, which is a
+# distinction finer than the 4-term cancellation in `_estimate_pair` can deliver, so
+# loosening it would trade a documented semantic for nothing.
+_BUDGET_ULP_TOLERANCE = 8.0
+
 
 def _digest(payload: Mapping[str, Any]) -> str:
     encoded = json.dumps(payload, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
@@ -174,11 +195,17 @@ class InteractionGroupUtilityLearner:
 
         if resource_budget is not None and float(resource_budget) < 0.0:
             raise ValueError("interaction group resource_budget cannot be negative")
+        # The utility threshold stays an exact comparison; only the budget absorbs ULPs.
+        limit = (
+            None
+            if resource_budget is None
+            else float(resource_budget) + _BUDGET_ULP_TOLERANCE * math.ulp(float(resource_budget))
+        )
         candidates = [
             item
             for item in self.groups
             if item.utility >= self.minimum_utility
-            and (resource_budget is None or item.resource_cost <= float(resource_budget))
+            and (limit is None or item.resource_cost <= limit)
         ]
         if not candidates:
             return None

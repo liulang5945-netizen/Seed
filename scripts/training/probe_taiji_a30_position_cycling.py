@@ -26,7 +26,7 @@ import argparse
 import json
 import sys
 from collections import Counter
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -339,7 +339,7 @@ def main() -> int:
         "top_periods": Counter(best_partial_period(t["text"])["unit"] for t in looped).most_common(
             8
         ),
-        "started_utc": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "started_utc": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
     }
     out = (
         Path(args.out_report)

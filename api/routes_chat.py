@@ -177,7 +177,7 @@ def _seed_event_generator(request, seed_runtime, *, workbench=False):
                 while not task.done() or not event_queue.empty():
                     try:
                         event = await asyncio.wait_for(event_queue.get(), timeout=0.05)
-                    except asyncio.TimeoutError:
+                    except TimeoutError:
                         continue
                     yield f"data: {json.dumps(_workbench_event(event), ensure_ascii=False)}\n\n"
                 workbench_result = await task

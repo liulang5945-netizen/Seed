@@ -36,7 +36,7 @@ import argparse
 import hashlib
 import json
 import sys
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -240,7 +240,7 @@ def main() -> int:
             "本支不下'该不该收敛'的结论（丙档）；它只给分母与清单",
         ],
         "methods_by_part": {label: method for label, _, method in PARTS},
-        "started_utc": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "started_utc": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
     }
     report["instrument_guard"] = {
         "base_sha256_unchanged": _sha256(checkpoint) == sha_before,

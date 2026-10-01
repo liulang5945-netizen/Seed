@@ -21,7 +21,7 @@ Kernel v8 (TSK-v8)**. While M5 bounded components are validated, general languag
 - **English**: continue below
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
-[![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
+[![Python 3.12+](https://img.shields.io/badge/Python-3.12%2B-blue.svg)](https://www.python.org/)
 [![tests](https://img.shields.io/badge/Python%20tests-2%2C270-green.svg)](.github/workflows/ci.yml)
 
 ## The architecture

@@ -27,7 +27,7 @@ from __future__ import annotations
 import argparse
 import json
 import sys
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -123,7 +123,7 @@ def main() -> int:
         verdict[stage] = {"off": left, "on": right, "delta": round(right - left, 6)}
     payload = {
         "format": "taiji-r2-factorization-at-init-v1",
-        "written_at_utc": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "written_at_utc": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "contract": PROPOSAL,
         "question": "分块受力面在**初始化**时是否已经提高最终 cue 的可分离性",
         "why_this_is_valid": (

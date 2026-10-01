@@ -24,7 +24,7 @@ import json
 import sys
 import time
 from dataclasses import replace
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -247,7 +247,7 @@ def main() -> int:
     summary = {
         "format": "taiji-r2-t1t2-trajectory-v1",
         "arm": args.arm_name,
-        "written_at_utc": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "written_at_utc": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "prereg": "plans/reference/M5_R2_T1_T2_PREREG_20260923.md",
         "budget": args.budget,
         "observe_kwargs": observe_kwargs,

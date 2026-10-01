@@ -372,12 +372,8 @@ def run_training(
                 observations = int(result.get("observations", 0))
                 ticks += len(chunk) + 2  # 起沿/收沿各一个边界符
                 window_ticks += max(1, observations)
-                window_correct += float(result.get("online_accuracy", 0.0)) * max(
-                    1, observations
-                )
-                window_surprise += float(result.get("mean_surprise", 0.0)) * max(
-                    1, observations
-                )
+                window_correct += float(result.get("online_accuracy", 0.0)) * max(1, observations)
+                window_surprise += float(result.get("mean_surprise", 0.0)) * max(1, observations)
                 if ticks - last_progress >= progress_every:
                     _flush(final=False)
                     window_ticks = 0

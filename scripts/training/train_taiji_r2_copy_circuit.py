@@ -28,7 +28,7 @@ import random
 import sys
 import time
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -639,7 +639,7 @@ def main() -> int:
     report_dir.mkdir(parents=True, exist_ok=True)
     out = report_dir / f"{stem}.json"
     if out.exists():
-        out = out.with_name(out.stem + f"-{datetime.now(timezone.utc).strftime('%H%M%S')}.json")
+        out = out.with_name(out.stem + f"-{datetime.now(UTC).strftime('%H%M%S')}.json")
     out.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(json.dumps({"report": str(out), "criteria_pass": verdict_pass}), flush=True)
     return 0

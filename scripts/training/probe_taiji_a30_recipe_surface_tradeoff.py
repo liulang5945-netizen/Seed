@@ -42,7 +42,7 @@ import hashlib
 import json
 import math
 import sys
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -250,7 +250,7 @@ def main() -> int:
             "接缝由本件强加（问：q\\n答：模型自己写的答案 + 一个换行）；质量侧用与 §2ap 同一个 n 元判据的"
             "mean_nll（越低越不像语料）。相关只回答同不同向，不回答因果。"
         ),
-        "started_utc": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "started_utc": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
     }
     out = (
         Path(args.out_report)

@@ -14,7 +14,7 @@ import json
 import random
 import sys
 import time
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
@@ -49,7 +49,7 @@ def main() -> int:
             f"refusing to overwrite existing artifact {out}; pass --overwrite explicitly"
         )
 
-    started = datetime.now(timezone.utc).isoformat()
+    started = datetime.now(UTC).isoformat()
     t0 = time.perf_counter()
     uni, bi, vocab, total = build_ngram_model(limit=args.limit)
     build_seconds = round(time.perf_counter() - t0, 1)

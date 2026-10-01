@@ -34,7 +34,7 @@ import argparse
 import hashlib
 import json
 import sys
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -457,7 +457,7 @@ def main() -> int:
             "turn_markers_observed": result["turn_markers_observed"],
             "base_sha256_unchanged": _sha256(checkpoint) == sha_before,
         },
-        "started_utc": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "started_utc": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
     }
     out = (
         Path(args.out_report)

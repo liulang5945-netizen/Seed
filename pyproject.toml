@@ -8,13 +8,13 @@ version = "1.6.0"
 description = "Seed product runtime for the Taiji native cognitive architecture"
 readme = "README.md"
 license = {text = "Apache-2.0"}
-requires-python = ">=3.10"
+requires-python = ">=3.12"
 dependencies = [
     "torch>=2.0.0,<3.0.0",
 ]
 
 [project.optional-dependencies]
-dev = ["pytest", "pytest-cov", "httpx", "black", "ruff", "tomli>=2.0.0; python_version < '3.11'"]
+dev = ["pytest", "pytest-cov", "httpx", "black", "ruff"]
 legacy = [
     "transformers>=4.40.0,<5.0.0",
     "safetensors>=0.4.0,<1.0.0",
@@ -82,7 +82,7 @@ norecursedirs = [
 
 [tool.ruff]
 line-length = 100
-target-version = "py310"
+target-version = "py312"
 exclude = [
     "_libs",
     "build",
@@ -147,7 +147,7 @@ ignore = ["E501", "E402", "E741", "B008"]
 
 [tool.black]
 line-length = 100
-target-version = ["py310"]
+target-version = ["py312"]
 # Workbench direct-* trees are tracked fixtures, not Python source.  They
 # intentionally contain cross-language and malformed-language samples for the
 # IDE/language-boundary gates, so formatting must not rewrite or parse them.
@@ -184,8 +184,12 @@ fail_under = 21.8
 
 [tool.mypy]
 # R4: 目标设为 3.12——numpy 2.x 存根使用 3.12+ 语法（type 语句），
-# 低版本目标下解析即报致命 syntax 错误。代码的 3.10 运行时兼容性由
-# CI 的 Python 3.10 矩阵（实际导入+跑测试）与 ruff target-version=py310 把关。
+# 低版本目标下解析即报致命 syntax 错误。
+# H19d（2026-09-30）：旧版此处写的是「代码的 3.10 运行时兼容性由 CI 的 Python 3.10
+# 矩阵与 ruff target-version=py310 把关」。两者已分别随 H19c（矩阵只留 3.12）与
+# H19d（requires-python 提到 >=3.12、ruff/black target 同步到 py312）消失——现在
+# mypy/ruff/black 三者口径一致，都是 3.12，且**不再存在任何低版本护栏**：
+# 代码若误用 3.11/3.12 独有语法，mypy 不会报，只会在 3.12 runner 上正常通过。
 #
 # R4 建立基线，R5 消减，R6 冻结边界分治（2026-08-24，总 212 错误）：
 #   seed/taiji/seed_platform/api 全部 0；neuroplex 冻结模块已移出度量面（见下），

@@ -14,7 +14,7 @@ import argparse
 import json
 import sys
 from collections.abc import Sequence
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -193,7 +193,7 @@ def aggregate_reports(reports: Sequence[dict[str, Any]]) -> dict[str, Any]:
     return {
         "format": AGG_FORMAT,
         "version": AGG_VERSION,
-        "generated_at": datetime.now(timezone.utc).isoformat(),
+        "generated_at": datetime.now(UTC).isoformat(),
         "status": "passed",
         "can_promote": False,
         "seeds": entries,

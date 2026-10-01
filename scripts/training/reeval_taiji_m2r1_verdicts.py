@@ -18,7 +18,7 @@ from __future__ import annotations
 import argparse
 import json
 import sys
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -169,7 +169,7 @@ def main(argv: list[str] | None = None) -> int:
         type=Path,
         default=PROJECT_ROOT
         / "reports"
-        / f"taiji_m2r_verdict_aggregation_{datetime.now(timezone.utc):%Y%m%d}.json",
+        / f"taiji_m2r_verdict_aggregation_{datetime.now(UTC):%Y%m%d}.json",
     )
     args = parser.parse_args(argv)
 

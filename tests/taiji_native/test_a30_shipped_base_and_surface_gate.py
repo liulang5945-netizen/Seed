@@ -63,7 +63,9 @@ def test_rollback_point_and_candidate_base_are_pinned() -> None:
     assert rollback.is_file()
     assert _sha256(rollback) == ROLLBACK_ENVELOPE_SHA256
 
-    candidate = Path(__file__).resolve().parents[2] / "output" / "a31_chunked_self" / "checkpoint.pt"
+    candidate = (
+        Path(__file__).resolve().parents[2] / "output" / "a31_chunked_self" / "checkpoint.pt"
+    )
     assert candidate.is_file()
     assert _sha256(candidate) == CANDIDATE_BASE_SHA256
 

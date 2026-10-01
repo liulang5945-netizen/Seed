@@ -43,7 +43,7 @@ import argparse
 import json
 import sys
 import time
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -249,7 +249,7 @@ def main() -> int:
     payload = {
         "format": "taiji-r2-p3-readout-conditionality-v1",
         "status": payload_status,
-        "written_at_utc": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "written_at_utc": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "contract": CONTRACT,
         "probe": "P3 读出器的条件性（cue 是否随提问改变 + 读出分布 KL）",
         "preregistered_thresholds": {

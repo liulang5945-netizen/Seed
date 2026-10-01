@@ -39,7 +39,7 @@ import argparse
 import hashlib
 import json
 import sys
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -314,7 +314,7 @@ def main() -> int:
             "other 桶是它自己正文的每一格。所以这一格量的是'若它此刻该停，边界符的概率是否高于正文中间'，"
             "不是'它停没停'（后者＝§2ah 的 raw 计数，两枚件都 0/72 自停）。"
         ),
-        "started_utc": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "started_utc": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
     }
     out = (
         Path(args.out_report)

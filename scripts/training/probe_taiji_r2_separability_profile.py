@@ -36,7 +36,7 @@ from __future__ import annotations
 import argparse
 import json
 import sys
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -334,7 +334,7 @@ def main() -> int:
     payload = {
         "format": "taiji-r2-separability-profile-v1",
         "status": "completed" if clean else "failed",
-        "written_at_utc": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "written_at_utc": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "authorised_by": f"{PROPOSAL} §3（所有者 2026-09-23 批 Step 0）",
         "question": "可分离性是在链路的哪一级丢的",
         "preregistered_ladder": {

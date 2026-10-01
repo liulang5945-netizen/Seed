@@ -353,7 +353,7 @@ async def terminal_websocket(ws: WebSocket):
             while True:
                 try:
                     raw = await asyncio.wait_for(ws.receive_text(), timeout=IDLE_TIMEOUT_SECONDS)
-                except asyncio.TimeoutError:
+                except TimeoutError:
                     logger.info(f"终端[PID={_pid}] 空闲 {IDLE_TIMEOUT_SECONDS}s，自动断开")
                     try:
                         await ws.send_text(

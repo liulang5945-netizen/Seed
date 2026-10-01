@@ -22,7 +22,7 @@ import argparse
 import json
 import sys
 from dataclasses import replace
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -112,7 +112,7 @@ def main() -> int:
 
     payload = {
         "format": "taiji-r2-init-seed-spread-v1",
-        "written_at_utc": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "written_at_utc": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "question": "训练后 16M 的可分离性是否落在初始化（跨 seed）分布之外——即'训练把它花掉了'是否成立",
         "preregistered_seeds": list(SEEDS),
         "preregistered_rule": "训练值 < init min 或 > init max ⇒ beyond_init_range；否则 within_init_range",

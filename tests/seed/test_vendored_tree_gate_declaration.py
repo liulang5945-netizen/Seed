@@ -26,19 +26,8 @@ from __future__ import annotations
 import fnmatch
 import re
 import subprocess
-import sys
+import tomllib
 from pathlib import Path
-
-# Python 3.10 has no stdlib tomllib; tomli is its upstream implementation.  Two things
-# need this guard.  (1) Import placement: pyproject sets ruff target-version = "py310",
-# so ruff classifies tomllib as third-party and an unguarded `import tomllib` inside the
-# stdlib block trips I001 -- that alone made this file fail `ruff check .`.  (2) Runtime:
-# requires-python is still >=3.10, so collection would ImportError there.  H19c
-# (2026-09-30) dropped the CI 3.10 leg, so (2) is no longer covered by CI.
-if sys.version_info >= (3, 11):
-    import tomllib
-else:
-    import tomli as tomllib
 
 REPO = Path(__file__).resolve().parents[2]
 

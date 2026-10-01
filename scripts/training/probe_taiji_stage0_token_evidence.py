@@ -24,7 +24,7 @@ import json
 import re
 import sys
 from collections import Counter
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 # ASCII 词 / 连续 CJK 簇 / 其余单符号。显式代理 token 化，不引入 BPE 或分词器。
@@ -129,7 +129,7 @@ def _capacity_curve(tokens: list[str]) -> dict[str, object]:
 def _report(
     text: str, tokens: list[str], compression: dict[str, float], curve: dict[str, object]
 ) -> dict[str, object]:
-    now = datetime.now(timezone.utc).astimezone().isoformat(timespec="seconds")
+    now = datetime.now(UTC).astimezone().isoformat(timespec="seconds")
     return {
         "probe": "stage0_token_evidence",
         "created_at": now,

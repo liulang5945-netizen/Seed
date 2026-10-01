@@ -31,7 +31,7 @@ import argparse
 import hashlib
 import json
 import sys
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -284,7 +284,7 @@ def main() -> int:
     if not out.is_absolute():
         out = PROJECT_ROOT / out
     if out.exists():
-        out = out.with_name(f"{out.stem}-{datetime.now(timezone.utc).strftime('%H%M%S')}.json")
+        out = out.with_name(f"{out.stem}-{datetime.now(UTC).strftime('%H%M%S')}.json")
     out.parent.mkdir(parents=True, exist_ok=True)
     report_payload = dict(report)
     report_payload.pop("rows_minimal", None)

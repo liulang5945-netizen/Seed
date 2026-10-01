@@ -45,9 +45,9 @@ jobs:
         #
         # 保留 matrix 键（哪怕只剩一个值）是刻意的：本文件两处 artifact 名
         # （verify-reports-* / test-results-*）插值了 matrix.python-version，删键会连带
-        # 改 check 名与 artifact 取名路径。同时注意 3.10 **支持**并未撤销
-        # （pyproject 仍 requires-python >=3.10），故 tomllib/tomli shim 必须保留，
-        # 但它们从此**不再被 CI 覆盖**——这是删腿的真实代价，已在两处 shim 注释注明。
+        # 改 check 名与 artifact 取名路径。H19d（2026-09-30）随后把支持底线也提到
+        # 3.12（requires-python >=3.12、ruff/black target-version=py312），两处
+        # tomllib/tomli shim 随之删除——所以本仓库现在**没有任何低版本护栏**。
         python-version: ["3.12"]
     steps:
       - uses: actions/checkout@v4
@@ -65,9 +65,8 @@ jobs:
       - name: Install test dependencies
         # FastAPI 可选依赖：python-multipart（form/File）—— test_api_health 触发 Form 中间件
         # 另带 pydantic+anyio（FastAPI 内部用）确保类型解析工作正常
-        # tomli 仅 3.10 需要：tomllib 自 3.11 才进标准库，环境标记让 3.12 自动跳过。
-        # H19c（2026-09-30）起矩阵只留 3.12，故该标记在 CI 里恒不生效（保留是为了
-        # 一旦回加 3.10 腿无需改此处）；注意这同时意味着 3.10 的安装路径**不再被验证**。
+        # H19d（2026-09-30）：此处原有 `tomli>=2.0.0; python_version < '3.11'`（3.10 缺 stdlib
+        # tomllib 的补丁）与随之两处 sys.version_info shim。随支持底线提到 3.12 一并删除。
         # cryptography：SecureStorage 的 Fernet 加密后端，缺失会让 AuthManager 构造失败 → 中间件 503
         # F08: 锁定 ruff/black 版本与 .pre-commit-config.yaml 一致，避免本地/CI lint 结果不一致
         # 版本必须真实存在：曾误钉 black==24.12.0（PyPI 无此版本，24.10.0 之后直接是 25.1.0），
@@ -76,7 +75,7 @@ jobs:
         #   是某一版检查器的产物，检查器静默升级（新增检查项）会让阈值凭空失效，
         #   表现为无人改代码而门禁数字自己变（实测 47→63、259→281 即由此产生）。
         #   凡「拿输出数字当阈值」的工具都必须钉版本，否则棘轮基线没有意义。
-        run: pip install sentencepiece pytest pytest-cov httpx fastapi python-multipart pydantic anyio cryptography ruff==0.16.4 black==26.5.1 mypy==2.3.1 pip-audit==2.10.1 "tomli>=2.0.0; python_version < '3.11'"
+        run: pip install sentencepiece pytest pytest-cov httpx fastapi python-multipart pydantic anyio cryptography ruff==0.16.4 black==26.5.1 mypy==2.3.1 pip-audit==2.10.1
 
       - name: Install package (editable)
         run: pip install -e . --no-deps
@@ -409,7 +408,7 @@ jobs:
         run: pip install torch --index-url https://download.pytorch.org/whl/cpu
 
       - name: Install test dependencies
-        run: pip install sentencepiece pytest pytest-cov httpx fastapi python-multipart pydantic anyio cryptography "tomli>=2.0.0; python_version < '3.11'"
+        run: pip install sentencepiece pytest pytest-cov httpx fastapi python-multipart pydantic anyio cryptography
 
       - name: Install package (editable)
         run: pip install -e . --no-deps

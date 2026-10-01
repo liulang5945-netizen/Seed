@@ -1,14 +1,8 @@
 from __future__ import annotations
 
 import re
-import sys
+import tomllib
 from pathlib import Path
-
-if sys.version_info >= (3, 11):
-    import tomllib
-else:  # Python 3.10 has no stdlib tomllib; tomli is its upstream implementation.
-    import tomli as tomllib
-
 
 REPO = Path(__file__).resolve().parents[2]
 

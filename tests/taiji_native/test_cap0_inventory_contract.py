@@ -304,10 +304,12 @@ def test_the_2026_10_01_rebake_records_what_it_changed() -> None:
     assert reality["default_checkpoint"] == "seed_a31self_with_circuit.pt"
     assert reality["wiring_defect"] is False
     assert reality["most_trained_checkpoint"] == "seed_beta.pt"
-    assert reality["default_checkpoint"] != reality["most_trained_checkpoint"], (
-        "新版默认不是'最训练'那份 ⇒ 最训练档会被单独探针（历史缺行那一支不再触发）"
+    assert (
+        reality["default_checkpoint"] != reality["most_trained_checkpoint"]
+    ), "新版默认不是'最训练'那份 ⇒ 最训练档会被单独探针（历史缺行那一支不再触发）"
+    assert (
+        after["raw_output_inventory"]["default_entry"]["template_signature"]["templated"] is False
     )
-    assert after["raw_output_inventory"]["default_entry"]["template_signature"]["templated"] is False
     assert after["raw_output_inventory"]["most_trained_entry"]["probed"] is True
 
 

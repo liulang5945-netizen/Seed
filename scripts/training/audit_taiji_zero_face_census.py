@@ -31,7 +31,7 @@ import argparse
 import hashlib
 import json
 import sys
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -133,7 +133,7 @@ def iter_tensors(node: Any, prefix: str = "") -> list[tuple[str, torch.Tensor]]:
 
 
 def census(checkpoint: Path) -> dict[str, Any]:
-    started = datetime.now(timezone.utc)
+    started = datetime.now(UTC)
     digest_before = _sha256(checkpoint)
     envelope = torch.load(checkpoint, map_location="cpu", weights_only=False)
     if not isinstance(envelope, dict):
@@ -262,7 +262,7 @@ def main(argv: list[str] | None = None) -> int:
         raise SystemExit(f"checkpoint missing: {checkpoint}")
     report = args.report
     if report is None:
-        stamp = datetime.now(timezone.utc).strftime("%Y%m%d")
+        stamp = datetime.now(UTC).strftime("%Y%m%d")
         report = PROJECT_ROOT / "reports" / f"taiji_zero_face_census_{checkpoint.stem}_{stamp}.json"
     elif not report.is_absolute():
         report = PROJECT_ROOT / report

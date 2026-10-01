@@ -26,7 +26,7 @@ from __future__ import annotations
 import argparse
 import json
 import sys
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -108,7 +108,7 @@ def main() -> int:
     ranked = sorted(rows, key=lambda row: row["3_context"], reverse=True)
     payload = {
         "format": "taiji-r2-factorization-split-screen-v1",
-        "written_at_utc": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "written_at_utc": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "question": "1152 的两半各分多少通道，能把最终 cue 的可分离性抬得最高（初始化口径）",
         "preregistered_splits": list(SPLITS),
         "ladder": {"separable_floor": SEPARABLE_FLOOR, "not_separable_below": ENTANGLED_CEILING},

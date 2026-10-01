@@ -36,7 +36,7 @@ import os
 import threading
 import time
 import uuid
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from hashlib import sha256
 from typing import Any
 
@@ -362,7 +362,7 @@ def project(
                     f"snapshot {workbench_snapshot_id}"
                 )
 
-    stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+    stamp = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
     corpus_name = f"corpus-{stamp}-{pass_id}.jsonl"
     relative = os.path.join("consolidated", corpus_name).replace("\\", "/")
     by_source = {
@@ -439,7 +439,7 @@ def _spec_payload(
 
     datasets = [projection["corpus"]] if projection.get("records") else []
     return {
-        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "timestamp": datetime.now(UTC).isoformat(),
         "reason": reason,
         "metrics": metrics,
         "weaknesses": weaknesses_of(metrics),
