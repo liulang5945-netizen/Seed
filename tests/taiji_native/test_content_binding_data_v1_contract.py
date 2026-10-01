@@ -86,7 +86,7 @@ def test_quotas_and_pair_structure(fixtures) -> None:
             assert len(members) == 2
             assert {m["member"] for m in members} == {"a", "b"}
         counts = {cls: 0 for cls in GROUP_CLASSES}
-        for group_id, members in groups.items():
+        for _, members in groups.items():
             counts[members[0]["group_class"]] += 1
         assert all(count == quota for count in counts.values())
 
@@ -137,7 +137,7 @@ def test_in_group_answer_relations(fixtures) -> None:
 
 
 def test_copy_mask_semantics(fixtures) -> None:
-    for split, records in fixtures.items():
+    for _, records in fixtures.items():
         for record in records:
             mask = record["copy_mask"]
             assert len(mask) == len(record["response"])
@@ -215,7 +215,7 @@ def test_value_length_and_position_balance(fixtures) -> None:
 
 
 def test_length_bounds(fixtures) -> None:
-    for split, records in fixtures.items():
+    for _, records in fixtures.items():
         assert max(len(r["prefix"]) for r in records) <= MAX_PREFIX_CHARS
         assert max(len(r["response"]) for r in records) <= MAX_RESPONSE_CHARS
         assert all(r["prefix"] == r["question"] + r["material"] for r in records)
@@ -248,7 +248,7 @@ def test_sealed_slice_denominators(fixtures) -> None:
 
 
 def test_reference_key_solves_every_item(fixtures) -> None:
-    for split, records in fixtures.items():
+    for _, records in fixtures.items():
         for record in records:
             assert reference_answer(record) == record["response"], record["id"]
 

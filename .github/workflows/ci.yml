@@ -94,12 +94,18 @@ jobs:
       #   （正是 H19 自己回退自动修复重新引入的）。常红的门禁和没有门禁一样，
       #   因为它教会所有人的是「忽略 CI」——这与 470f2af 那次「pin 失效导致门禁
       #   从未执行、注释里全是未验证期望值」是同一类故障，只是换了成因。
-      # 处置：H19b 先用 ruff 自动修复清掉 B905 全部 27 处（只追加 strict=False，
-      #   即 Python 默认值，word-diff 逐 token 验证零行为变更），再按 mypy 同款
-      #   棘轮把余下 35 处钉住——只许降不许升，解析失败必须报错而不是静默放行。
-      - name: Lint with ruff bugbear/simplify rules (ratchet, baseline 35)
+      # H19b 先用 ruff 自动修复清掉 B905 全部 27 处（只追加 strict=False，即 Python
+      #   默认值，word-diff 逐 token 验证零行为变更）。
+      # H19e（2026-09-30）再清 B007 10 处（循环变量改 `_`，逐站点核实变量在循环后
+      #   未被使用——ruff 只检查循环体，故其修复被标 unsafe）、SIM108 1 处（三元化时
+      #   把两句领域注释合并保留），以及 3 处 SIM114 加带理由的 noqa（两条分支是不同
+      #   的失败原因/门族，合并会掩盖判据）。基线随之 35 → 21。
+      #
+      # 余下 21 处 = B023 18（闭包晚绑定，唯一真 bug 类，需逐点判语义）
+      #            + SIM105 3（contextlib.suppress，需逐点判语义）——刻意不做批量自动改。
+      - name: Lint with ruff bugbear/simplify rules (ratchet, baseline 21)
         env:
-          RUFF_BSIM_BASELINE: "35"
+          RUFF_BSIM_BASELINE: "21"
         run: |
           set -o pipefail
           ruff check . --select B,SIM --ignore B008 | tee ruff-bsim.log || true

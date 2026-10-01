@@ -403,7 +403,9 @@ def run_gate() -> dict[str, Any]:
         rotated_selected = tuple(sorted(rotation[name] for name in selected_pair))
         original_candidate = learner.candidate(selected_pair, allow_observed=True)
         rotated_candidate = rotated_learner.candidate(rotated_selected, allow_observed=True)
-        if original_candidate is None or rotated_candidate is None:
+        # 两条分支是两种不同的失败原因（候选缺失 vs 数值漂移），赋值虽相同但判据不同，
+        # 合并会掩盖是哪一条触发——故保留原形状。
+        if original_candidate is None or rotated_candidate is None:  # noqa: SIM114
             renaming_stable = False
         elif (
             abs(original_candidate.predicted_interaction - rotated_candidate.predicted_interaction)

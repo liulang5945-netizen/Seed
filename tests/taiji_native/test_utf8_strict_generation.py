@@ -112,7 +112,7 @@ def test_on_path_outputs_are_valid_utf8_greedy() -> None:
         b"\xed\xa0",  # 代理区被掩码禁止
         b"\xf4\x90",  # 超范围被掩码禁止
     ]
-    for trial in range(40):
+    for _ in range(40):
         adversarial.append(bytes(rng.randrange(256) for _ in range(rng.randrange(1, 24))))
     model = _model()
     for prompt in adversarial:

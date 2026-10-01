@@ -29,7 +29,7 @@ from pathlib import Path
 import pytest
 
 from taiji.interaction_group_learning import InteractionGroupUtilityLearner
-from taiji.interaction_groups import InteractionGroupRecord
+from taiji.interaction_groups import InteractionGroupRecord, _snap_cancel_residual
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 DIGEST = "0" * 64
@@ -126,6 +126,40 @@ def test_cost_tolerance_does_not_swallow_a_real_overage() -> None:
 
     learner = _learner(utilities={"g": 1.0}, costs={"g": RESOURCE_BUDGET + 1e-9})
     assert learner.select(resource_budget=RESOURCE_BUDGET) is None
+
+
+# --- 上游：`_estimate_pair` 的抵消残差规范化 -----------------------------------
+#
+# cost 侧的容差解决的是「预算被精确用满」；utility 侧的抖动来自另一处：
+# `interaction = m_TT - m_TF - m_FT + m_FF` 是四项交替求和，真值为 0 时结果就是抵消
+# 剩下的那点噪声（±几个 ULP，且依解释器而定）。`_snap_cancel_residual` 把这个模糊
+# 情形规范成精确 0.0，而**有意义的非零值原样不动**——分层职责是：
+# 计算层负责把自己的噪声归位，选择层保持精确比较。
+
+
+def test_cancel_residual_within_ulps_snaps_to_exact_zero() -> None:
+    """真值为 0 时，两种符号的噪声残差都必须变成精确 0.0。"""
+
+    for residual in (1e-16, -1e-16):
+        assert _snap_cancel_residual(residual, 1.0, 1.0, 1.0, 1.0) == 0.0
+
+
+def test_meaningful_interaction_is_never_snapped() -> None:
+    """有意义的取值必须原样通过——规范化只能动噪声。"""
+
+    for value in (0.5, -0.5, 1e-12, -1e-12):
+        assert _snap_cancel_residual(value, 1.0, 1.0, 1.0, 1.0) == value
+
+
+def test_snap_tolerance_scales_with_operand_magnitude() -> None:
+    """容差按**操作数**量级缩放（不是按结果——近零结果的 ULP 没有意义）。
+
+    量级 1e6 时 8 ULP ≈ 9.3e-10，所以 1e-9 的残差在那才是噪声；而在量级 1.0 时
+    1e-9 远大于容差，必须原样保留。
+    """
+
+    assert _snap_cancel_residual(1e-6, 1e6, 1e6) == 1e-6
+    assert _snap_cancel_residual(1e-9, 1.0, 1.0, 1.0, 1.0) == 1e-9
 
 
 def test_epsilon_below_float_resolution_is_absorbed() -> None:

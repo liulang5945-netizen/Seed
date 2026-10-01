@@ -1475,7 +1475,7 @@ class SequenceWorkspaceTrainer:
         else:
             order = list(self.data_order)
         records: list[dict[str, Any]] = []
-        for step_index in range(limit):
+        for _ in range(limit):
             index = order[self.cursor % len(order)]
             # Deterministic shuffle source for the H-OBJ term: the **next** episode in
             # the (possibly shuffled) order — no extra random source.

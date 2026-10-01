@@ -588,7 +588,9 @@ def run_gate() -> dict[str, Any]:
             "g6_budget": g6,
             **acceptance,
         }
-        if any(
+        # 两个失败判据分属不同门族（四个具名 gate vs 全部 mechanism class），落到同一个
+        # outcome 但来源不同；合并会掩盖是哪一族失败。
+        if any(  # noqa: SIM114
             not gates[name]
             for name in (
                 "static_checks",

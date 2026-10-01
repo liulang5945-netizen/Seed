@@ -123,9 +123,10 @@ exclude = [
 # B,SIM 自有树：H19 登记的「59 处未清」漏计 3 处 SIM114（H19 回退自动修复时重新
 # 引入的），实测 62。H19b 用 ruff 自动修复清零 B905 全部 27 处——只追加
 # strict=False（即 Python 默认值），word-diff 逐 token 验证零行为变更；余 35 处
-# （B023 18 / B007 10 / SIM105 3 / SIM114 3 / SIM108 1）。B023（闭包晚绑定）与
-# SIM105 需逐个判语义，不做批量自动改；该批由 ci.yml「ratchet, baseline 35」
-# 步骤钉住，只许降不许升——它不再是「advisory」，也不再是常红的裸 blocking。
+# （B023 18 / B007 10 / SIM105 3 / SIM114 3 / SIM108 1）。H19e 再清 B007 10、SIM108 1、
+# SIM114 3（带理由的 noqa），**余 21 处**（B023 18 / SIM105 3）——两者都需逐点判语义，
+# 不做批量自动改。该批由 ci.yml「ratchet, baseline 21」步骤钉住，只许降不许升——
+# 它不再是「advisory」，也不再是常红的裸 blocking。
 select = ["E", "F", "W", "I", "UP"]
 ignore = ["E501", "E402", "E741", "B008"]
 

@@ -609,7 +609,9 @@ def run_baseline(
                 "raw_last_output": last,
                 "prompt_echo_stripped": echo_stripped,
             }
-            if source.get("scoring") in {"exact", "rule_any_of"} and source.get(
+            # 两个入参条件是不同的受理判据（打分制式 vs 开放题特定选项），动作相同但语义来源
+            # 不同；合并成一条会掩盖「为什么这题被判为可自动打分」。
+            if source.get("scoring") in {"exact", "rule_any_of"} and source.get(  # noqa: SIM114
                 "expected_contains"
             ):
                 row.update(_score_closed(source, verdict_text))

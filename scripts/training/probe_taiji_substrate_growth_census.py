@@ -217,12 +217,9 @@ def main() -> int:
         identical_to_init = (
             None if init is None or init.shape != tensor.shape else bool(torch.equal(tensor, init))
         )
-        if args.mode == "runtime":
-            #: 锚＝运行时面，对照＝存盘同路径面（形状不兼容时如实记 None）。
-            other = file_t
-        else:
-            #: 锚＝存盘面，对照＝载入后运行时同路径面。
-            other = loaded
+        #: 锚/对照的取向随 mode 翻转——`runtime`：锚＝运行时面，对照＝存盘同路径面；
+        #: 否则锚＝存盘面，对照＝载入后运行时同路径面（形状不兼容时如实记 None）。
+        other = file_t if args.mode == "runtime" else loaded
         comparable = other is not None and other.shape == tensor.shape
         identical_other = None if not comparable else bool(torch.equal(tensor, other))
         rows.append(

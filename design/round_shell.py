@@ -226,7 +226,7 @@ for tag, margin in (("final", 16),):
     zz.convert("RGB").save(os.path.join(OUT, f"small-{tag}.png"))
 
 sheet = Image.new("RGBA", (len(tiles) * 520 + 40, 620), bg + (255,))
-for i, (tag, t) in enumerate(tiles):
+for i, (_, t) in enumerate(tiles):
     tt = t.resize((512, 512), Image.LANCZOS)
     sheet.paste(tt, (20 + i * 520, 54), tt)
 sheet.convert("RGB").save(os.path.join(OUT, "sheet-final.png"))

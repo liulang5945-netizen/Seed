@@ -81,7 +81,7 @@ def main() -> int:
     digests = []
     for run in (1, 2):
         model = Seed(config, episode_id=f"audit-det-{run}")
-        for index, symbol in enumerate(b"abcdefgh" * 40):
+        for _, symbol in enumerate(b"abcdefgh" * 40):
             model.substrate.observe(int(symbol), readout="action", learn=True)
         digests.append({key: _digest(val) for key, val in model.substrate.checkpoint().items()})
     differing = sorted(key for key in digests[0] if digests[0][key] != digests[1][key])

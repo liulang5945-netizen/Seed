@@ -106,7 +106,7 @@ def assert_criterion_discriminates(model: tuple) -> dict:
 
     good: list[str] = []
     with CORPUS.open("r", encoding="utf-8", errors="replace") as handle:
-        for index, raw in enumerate(handle):
+        for _, raw in enumerate(handle):
             if len(good) >= 300:
                 break
             try:

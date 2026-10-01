@@ -198,7 +198,7 @@ def main() -> int:
 
     rows = []
     for name, cell in grid.items():
-        for index, question in enumerate(questions):
+        for index, _ in enumerate(questions):
             rows.append(
                 {
                     "grid": name,

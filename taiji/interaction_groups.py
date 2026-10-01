@@ -23,6 +23,35 @@ INTERACTION_TRACE_FORMAT = "taiji-interaction-trace-v1"
 INTERACTION_GROUP_CHECKPOINT_FORMAT = "taiji-interaction-group-v1"
 INTERACTION_GROUP_ESTIMATOR_REVISION = 1
 
+# H19d (2026-09-30): how many ULPs of residual cancellation to snap to an exact zero.
+# See `_snap_cancel_residual` for why this exists and why the tolerance is derived from
+# the operands rather than from the result.
+_CANCEL_RESIDUAL_ULPS = 8.0
+
+
+def _snap_cancel_residual(value: float, *operands: float) -> float:
+    """Canonicalize a cancelling sum's residual to exactly 0.0 when it is noise.
+
+    `_estimate_pair` builds `interaction` as a 4-term alternating sum,
+    `m_TT - m_TF - m_FT + m_FF`.  When the quantity being measured is truly zero the
+    float result is whatever the cancellation happened to leave -- positive or negative,
+    and differing between interpreters.  That is the recorded `utility`, and a utility
+    of -1e-16 against a threshold of 0.0 is rejected while +1e-16 is accepted, which is
+    how tech-debt register 4.2's "selector did not choose a group" arose.
+
+    Snapping the ambiguous case to an exact 0.0 makes it canonical instead of
+    interpreter-dependent.  Values that are meaningfully non-zero are returned untouched:
+    the tolerance is a few ULPs, i.e. ~1e-15 at unit scale, so this cannot move a real
+    decision except exactly at a zero threshold, which is the point.
+
+    The tolerance is derived from the magnitude of the *operands*.  Deriving it from the
+    result would be useless: a residual near zero has a denormal-scale ULP of its own.
+    """
+    scale = max((abs(float(item)) for item in operands), default=0.0)
+    if scale <= 0.0:
+        return float(value)
+    return 0.0 if abs(float(value)) <= _CANCEL_RESIDUAL_ULPS * math.ulp(scale) else float(value)
+
 
 def _text(value: str, name: str) -> str:
     value = str(value)
@@ -949,12 +978,18 @@ class InteractionGroupEvaluator:
             first = means[(True, False)] - baseline
             second = means[(False, True)] - baseline
             pair = means[(True, True)] - baseline
-            interaction = pair - first - second
-            recovery_interaction = (
+            interaction = _snap_cancel_residual(
+                pair - first - second, baseline, first, second, pair
+            )
+            recovery_interaction = _snap_cancel_residual(
                 recovery_means[(True, True)]
                 - recovery_means[(False, False)]
                 - (recovery_means[(True, False)] - recovery_means[(False, False)])
-                - (recovery_means[(False, True)] - recovery_means[(False, False)])
+                - (recovery_means[(False, True)] - recovery_means[(False, False)]),
+                recovery_means[(True, True)],
+                recovery_means[(False, False)],
+                recovery_means[(True, False)],
+                recovery_means[(False, True)],
             )
             pair_episodes = cells[(True, True)]
             estimates.append(

@@ -937,9 +937,25 @@ tie-break 顺序确定（utility → cost → group_id）；并**复述诊断报
 **本节第 2 条「铁证仍需在 3.10 腿补一次带该探针的 job」就此作废**：该修复现在由上面第 1 条
 pin 直接在进程内钉住（`budget + 1 ULP` 即失败形态），不再需要跨解释器复跑来取证。
 
-**仍遗留**：若将来某个 case 把 **utility** 顶到 0.0 阈值上（当前 9/9 都不在），utility 侧
-仍会因四项抵消而抖动；那时需要的是在上游 `_estimate_pair` 量化取值，而不是继续放宽比较——
-那会改动记录进 checkpoint 的数值，属另一条线。
+**✅ utility 侧的上游归位也已实施（H19e）**：`_estimate_pair` 新增 `_snap_cancel_residual`，
+对 `interaction` 与 `recovery_interaction` 两个四项交替求和的结果做规范化——**当残差落在
+操作数量级的几个 ULP 之内时归为精确 0.0**，否则原样返回。
+
+- 容差由**操作数**量级推出（`_CANCEL_RESIDUAL_ULPS * math.ulp(scale)`），不是由结果推出：
+  近零结果自身的 ULP 是非规格数级的，据此算容差等于没有容差。
+- 只动噪声：~1e-15（单位量级）的容差无法搬动任何有意义的取值，只有恰好压在 0.0 阈值上
+  的判定会变——而那正是要消除的模糊性。
+- 分层职责由此清晰：**计算层把自己的抵消噪声归位，选择层保持精确比较**。契约测试里
+  `utility = -1e-18` 必须被拒那条依然成立且未被放宽（它走直接构造 record 的路径，
+  不经过 `_estimate_pair`）。
+- 新增 3 条 pin（同一文件，现 17 passed）：残差 ±1e-16 都必须变成精确 0.0；有意义的取值
+  （0.5 / -0.5 / ±1e-12）必须原样通过；容差随操作数量级缩放（量级 1e6 时 8 ULP ≈ 9.3e-10，
+  故 1e-9 在那才是噪声，而在量级 1.0 时 1e-9 远大于容差必须保留）。
+
+**注意这是会改变记录值的改动**：`interaction` / `recovery_interaction` 会原样进入
+`InteractionGroupRecord`（`interaction`、`recovery_effect`、`holdout_*`）并进入 learner 的
+checkpoint 载荷。全量回归 2335 passed / 0 failed 作为该改动的验收证据；若将来出现依赖旧
+数值的历史封存件，那是预期的口径变化，不是回归。
 
 **处置约束（重要）**：这 2 项触及 `InteractionGroupUtilityLearner`——**被多个既有报告依赖的
 冻结机制**；任何阈值或 tie-break 改动都会影响与既有报告的可比性，须先定性再动手，
