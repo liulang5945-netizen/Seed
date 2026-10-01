@@ -41,6 +41,10 @@ FAMILY_PREFIXES = (
     "direct-",
     ".dsh-sbx",
     ".electron-cache",
+    # H19m (2026-09-30): the setuptools metadata directory `pip install -e .` writes at the
+    # repository root.  It is a regenerable build artifact, so it belongs to the naming
+    # family rather than the S2 ledger, and `.gitignore` now carries `*.egg-info/` for it.
+    "seed.egg-info",
 )
 
 #: 反向钉住：这些模块是仓库的骨架，台账**必须**始终列有它们 ——
@@ -142,6 +146,8 @@ def test_scratch_family_ignore_rules_bite_on_hypothetical_names():
         "_pytest_future/probe.txt",
         ".mypy_cache/probe.bin",
         ".ruff_cache/probe.bin",
+        # H19m (2026-09-30): the egg-info family, whose rule was added alongside this entry.
+        "seed.egg-info/probe.txt",
     )
     misses = []
     for rel in hypothetical:

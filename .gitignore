@@ -10,6 +10,11 @@ dist/
 downloads/
 eggs/
 .eggs/
+# H19m (2026-09-30): `pip install -e .` writes `<package>.egg-info/` at the repository
+# root on every CI runner, and the folder-structure guard flagged it as an unaccounted
+# directory -- a build artifact tripping a governance rule.  The eggs/ family above covers
+# setuptools' egg *stores* but not the egg-info metadata directory, which was an oversight.
+*.egg-info/
 lib/
 lib64/
 parts/
