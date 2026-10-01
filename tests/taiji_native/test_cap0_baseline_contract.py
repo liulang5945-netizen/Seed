@@ -449,6 +449,7 @@ def test_the_constrained_decode_patch_installs_against_the_current_model() -> No
 REPRO_REPORT = PROJECT_ROOT / "reports" / "taiji_cap0_baseline_repro_20260918.json"
 
 
+@pytest.mark.no_local_artifacts
 @pytest.mark.skipif(
     not REPRO_REPORT.exists(),
     reason="post-migration reproduction run is not on disk",
@@ -489,6 +490,7 @@ def test_the_migrated_loader_reproduces_the_sealed_p3a_baseline_item_by_item() -
 POST_MIGRATION_REPORT = PROJECT_ROOT / "reports" / "taiji_cap0_baseline_postmigration_20260918.json"
 
 
+@pytest.mark.no_local_artifacts
 @pytest.mark.skipif(
     not POST_MIGRATION_REPORT.exists(),
     reason="guard-free baseline run is not on disk",
