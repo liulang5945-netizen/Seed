@@ -14,6 +14,7 @@
   "provenance_evidence": [
     "候选基底＝output/a31_chunked_self/checkpoint.pt（sha ca262807…，12,253,423 B）：a26_p1 起、分块喂法（--answer-chunking per-answer）＋自写短答表（14,000 条，build_taiji_a30_self_answers.py 产物）＋≈+2M ticks（progress 末行 4,000,101；表单遍跑尽）",
     "SPEC-A-24 三线全过：L1 表层 39/260（不挂）与 6/260（挂，线 0.9×[12,5]）——reports/taiji_f0_chunked_self_surface_g17_20261001.json；L2 真自停 13/72——reports/taiji_a30_stop_failure_chunked_self_20261001.json；L3 决策面 18/300——reports/taiji_a30_stop_signal_presence_chunked_self_300doc_masked_recipeface_20261001.json",
+    "L2 在**出厂面**重述并判过（不是候选基底）：本信封不给 --circuit、走默认载入自动挂载（件内自述 mount_route=envelope_auto_mount、copy_evidence_utf8_gate_effective=true），stop_failure v6 量到 generations_boundary_self_stop=13/72（线 ≥6）——reports/taiji_a30_stop_failure_newdefault_envelope_20261001.json；同仪器同列的旧默认回滚点为 0/72——reports/taiji_a30_stop_failure_olddefault_v6_20261001.json。两侧守卫均全真、replay_suspect_generations=0。边界：v4/v5 的 eating/cut_by_turn_marker 列测不到边界自停（早停样本的 chat 返回值是器官占位句），故本条只引 v6 列。",
     "回退检查：F0 语言地板 floor_pass（严格整句口径 T1b 0.812；尾部感知五项全 1.000；旧默认与 formal self 在该口径均 floor_fail）——reports/taiji_f0_chunked_self_20261001.json",
     "装配＝build_circuit_carried_envelope（唯一写靶 out_path；受检基底只读）：从候选挂 seed-A 电路 output/taiji_r2_copy_circuit_chat/judge/circuit-final.pt 烤成",
     "载入行为守卫 tests/taiji_native/test_a30_shipped_base_and_surface_gate.py：默认载入 ⇒ copy_circuit 挂载＋门开＋surface_gate_state=armed；回滚点与候选基底 sha 同文件钉死"
