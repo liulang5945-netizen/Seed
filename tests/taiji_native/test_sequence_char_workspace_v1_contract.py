@@ -34,12 +34,6 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 FIXTURE = PROJECT_ROOT / "tests/fixtures/r2_d1_measurement_v2.jsonl"
 
 
-# H19j (2026-09-30): the frozen checkpoint this contract replays is gitignored by policy
-# (`.gitignore` carries `*.pt`), so a fresh checkout -- exactly what CI runs -- has no
-# copy and these tests failed with a bare torch FileNotFoundError.  Declaring the
-# dependency lets the conftest hook skip with a reason naming what is missing and why.
-LOCAL_ONLY_ARTIFACTS = ("reports/r2_d4_checkpoints/matched/20260917/epoch30.pt",)
-
 
 def _rows() -> list[dict]:
     return [
@@ -249,6 +243,19 @@ def test_gate5_self_consistent_preflight(tmp_path: Path) -> None:
     assert observed["sum"] == pytest.approx(float(local_mixed.sum()), abs=1e-5)
 
 
+# H19j (2026-09-30): only this test needs the frozen replay checkpoint, which is
+# gitignored by policy (`.gitignore` carries `*.pt`), so a fresh checkout -- exactly
+# what CI runs -- has no copy.  Guarding this one test rather than the module keeps the
+# other eight in this file running there.
+_FROZEN_REPLAY_CHECKPOINT = (
+    Path(__file__).resolve().parents[2] / "reports/r2_d4_checkpoints/matched/20260917/epoch30.pt"
+)
+
+
+@pytest.mark.skipif(
+    not _FROZEN_REPLAY_CHECKPOINT.is_file(),
+    reason="frozen replay checkpoint absent (gitignored *.pt): reports/r2_d4_checkpoints/matched/20260917/epoch30.pt",
+)
 def test_gate5_roundtrip_and_byte_payload_rejected(tmp_path: Path) -> None:
     workspace, _ = _workspace()
     sample = _sample_fact_multibyte()

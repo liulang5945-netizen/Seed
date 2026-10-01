@@ -39,12 +39,6 @@ NO_VALUE_SHAPES = ("unknown", "same_opening_unknown", "combination_same", "combi
 sys_path_scripts = str(PROJECT_ROOT)
 
 
-# H19j (2026-09-30): the frozen checkpoint this contract replays is gitignored by policy
-# (`.gitignore` carries `*.pt`), so a fresh checkout -- exactly what CI runs -- has no
-# copy and these tests failed with a bare torch FileNotFoundError.  Declaring the
-# dependency lets the conftest hook skip with a reason naming what is missing and why.
-LOCAL_ONLY_ARTIFACTS = ("reports/r2_d3_checkpoints/multihead_probe/hg_h4_seed20260917_epoch30.pt",)
-
 
 def _prototype(seed: int = 20260917) -> SequenceWorkspacePrototype:
     return SequenceWorkspacePrototype(
@@ -104,6 +98,19 @@ def test_gate1_zero_weight_loss_identity() -> None:
     assert torch.allclose(plain, per_position.mean(), rtol=1e-6, atol=1e-7)
 
 
+# H19j (2026-09-30): only this test needs the frozen replay checkpoint, which is
+# gitignored by policy (`.gitignore` carries `*.pt`), so a fresh checkout -- exactly
+# what CI runs -- has no copy.  Guarding this one test rather than the module keeps the
+# other eight in this file running there.
+_FROZEN_REPLAY_CHECKPOINT = (
+    Path(__file__).resolve().parents[2] / "reports/r2_d3_checkpoints/multihead_probe/hg_h4_seed20260917_epoch30.pt"
+)
+
+
+@pytest.mark.skipif(
+    not _FROZEN_REPLAY_CHECKPOINT.is_file(),
+    reason="frozen replay checkpoint absent (gitignored *.pt): reports/r2_d3_checkpoints/multihead_probe/hg_h4_seed20260917_epoch30.pt",
+)
 def test_gate1_frozen_d3_checkpoint_replays_recorded_loss() -> None:
     """The lambda=0 path must reproduce the D3 probe's recorded final loss."""
 
