@@ -3568,3 +3568,37 @@ A-30 族现在没有一枚（`stop_failure` 与 `audit_presence` 的默认名都
 以及 `all_surfaces_are_replayed_raw=true`／`replay_suspect_generations=0`／`base_sha256_unchanged=true` 三条照旧。
 行为面另有真实测试（`tests/taiji_native/test_a30_copy_evidence_gate_flag.py`：挂回路⇒门武装为真，置 False⇒读回为假），
 它证明的是**旗标算式**有效，不是这一档的结论。
+
+### 第十一次停靠·出数（2026-10-02，`rc_l2_egateoff=0`）：落第一支 ≈13——**那条证据门在这一面无可检出贡献，−39 整笔归"回路在载"**
+
+件 `reports/taiji_a30_stop_failure_a31self_circuit_evidencegateoff_20261002.json`（v8；
+`copy_evidence_gate_off_requested=true`、`copy_evidence_utf8_gate_effective=false`、`override=false`、
+守卫 `evidence_gate_flag_honored=true` ⇒ 旗标**确实被走到**；`all_surfaces_are_replayed_raw=true`／
+`replay_suspect_generations=0`／`base_sha256_unchanged=true`；`surface_gate_state=disarmed:artifact_absent`）。
+
+三档并排（同一枚候选基底、同 24 题、同 `penalty=2.0/window=8/max_length=256`）：
+
+| 装配（按件内 `mount_route` 与门自述点名） | 证据门 | `boundary_self_stop` | `eating_full_budget` | `total_steps` | 拖写者 |
+| --- | --- | --- | --- | --- | --- |
+| 候选基底不挂回路（`none`） | 无从武装 | **52/72** | 20 | 10474 | **0** |
+| 候选基底＋挂 seed-A（v7，`enable_copy_circuit`） | 开（true） | 13/72 | 59 | 17827 | 6 |
+| **候选基底＋挂 seed-A＋旗标关门（本档，v8）** | **关（false）** | **13/72** | 59 | 17827 | 6 |
+
+**按先于数写死的第一支取数**：本档与"挂回路＋门开"那档**逐字段相同**（13／59／17827／6 一字不差）
+⇒ 那条按 UTF-8 位置状态门控加性证据的门，**在这张面上没有可检出的贡献**；
+52 → 13 这一笔 **−39 次真自停**与**拖写者 0 → 6**整笔归给**"挂载 seed-A 回路"这一动作本身**
+（它的 prompt／加性证据通道），而不是归给"随挂载一起被打开的那条门"。
+
+**三条必须同带的边界**：
+① "门在这张面上无贡献"**不等于**"门无用"——它管的是回路加性证据落在**不完整 UTF-8 位置**时的情形，
+本面的 24 道告知题大概根本没有触发那种位置（`override=false` 时轨迹与 `true` 时逐字相同就是这件事的实物）。
+DEBT-G10 那两笔（权重回写／prompt 通道）与 §2v 的门槛代价仍是各自独立的量。
+② ⇒ 因此**"保留回路、只改那条门"这条候选写法在本面上不成立**，不许再作为缓解方向提出；
+要减轻这 −39，动的是**回路本身**（挂载范围／证据注入的形状），不是那条门。
+③ 本档仍是**教师强制之外的自身轨迹面**（`chat(..., learn=False)`，不回写），
+所以它不回答"长期自学习会怎样"，那一格由 `learn=True` 的写回探针那两档负责（已入库，`allowed_rate=0.4`）。
+
+**到这里，owner 那笔"回路随出厂装"的两面已经齐了（全部同基底、同仪器、只差挂载这一个变量）**：
+收益＝D 维严格命中 **0 → 7**（`..._cap_dual_arm_a31self_budget256_20261002.json`，该仪器自己的 A2.4 判据给
+`verdict="A2.4 重测未通过（如实记录）"`，因成句 17 → 6 塌陷）；
+代价＝自身轨迹真自停 **52 → 13**、拖写者 **0 → 6**、语料接缝决策面 **18/300 → 0/300**、首答耗时中位 **0.7286 → 1.4987 秒**（绑设备链路）。
