@@ -3,6 +3,7 @@
 - button "New session": New Session
 - navigation "Global panels":
   - button "Plugins"
+  - button "Life"
 - text: Workspaces
 - button "Search sessions"
 - textbox "Search session names"
@@ -11,6 +12,7 @@
 - tree "Sessions":
   - treeitem "workspace" [expanded]
   - treeitem "New Session" [selected]
+  - treeitem "Default workspace"
 - button "Settings"
 - banner:
   - button "Open right sidebar"

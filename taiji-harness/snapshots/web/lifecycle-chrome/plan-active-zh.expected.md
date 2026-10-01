@@ -3,6 +3,7 @@
 - button "新建会话": 新会话
 - navigation "全局面板":
   - button "插件"
+  - button "生命"
 - text: 工作区
 - button "搜索会话"
 - textbox "搜索会话名称"
@@ -11,6 +12,7 @@
 - tree "会话":
   - treeitem "workspace" [expanded]
   - treeitem "新会话" [selected]
+  - treeitem "默认工作区"
 - button "设置"
 - banner:
   - button "打开右侧边栏"

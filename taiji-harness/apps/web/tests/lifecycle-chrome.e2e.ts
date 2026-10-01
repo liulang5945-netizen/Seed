@@ -46,6 +46,22 @@ const MODE = webSnapshotMode()
 const PROMPT = 'Reply with the single word LIGHTHOUSE and stop.'
 const REPLAY_PACE_MS = 100
 
+/**
+ * Select the scaffold's registered workspace on a fresh browser context. The
+ * Hero chip owns the first selection (H14 decision), and until it happens
+ * every composer on that context stays disabled; the main page connects its
+ * own workspace, so only the secondary pages need this.
+ * @param target - the page that must reach an editable composer.
+ */
+async function selectRegisteredWorkspace(target: Page): Promise<void> {
+  const chip = target.getByRole('button', { name: /Choose workspace|选择工作区/u })
+  if (await chip.waitFor({ state: 'visible', timeout: 5_000 }).then(() => true, () => false)) {
+    await chip.click()
+    await target.getByRole('menuitem', { name: /dsh-web-e2e-ws-|workspace|工作区/u }).first().click()
+  }
+  await target.locator('[data-composer-input][contenteditable="true"]').waitFor({ timeout: 15_000 })
+}
+
 describe('web e2e: lifecycle & chrome (workspace flow / reload / dark mode)', () => {
   let scaffold: WebScaffold
   let browser: Browser
@@ -121,6 +137,7 @@ describe('web e2e: lifecycle & chrome (workspace flow / reload / dark mode)', ()
     try {
       await zhPage.goto(scaffold.authenticatedUrl, { waitUntil: 'load' })
       await zhPage.waitForSelector('[class*="frame"]', { timeout: 30_000 })
+      await selectRegisteredWorkspace(zhPage)
       const launcher = zhPage.getByRole('button', { name: '添加文件或调用指令' })
       await launcher.click()
       const menu = zhPage.getByRole('listbox', { name: '触发候选建议' })
@@ -147,6 +164,7 @@ describe('web e2e: lifecycle & chrome (workspace flow / reload / dark mode)', ()
     try {
       await inputPage.goto(scaffold.authenticatedUrl, { waitUntil: 'load' })
       await inputPage.waitForSelector('[class*="frame"]', { timeout: 30_000 })
+      await selectRegisteredWorkspace(inputPage)
       const input = inputPage.locator('[data-composer-input]').first()
       await writeComposerDraft(inputPage, input, '/')
       await inputPage.getByRole('listbox').getByRole('option', { name: row, exact: true }).click()
@@ -273,7 +291,7 @@ describe('web e2e: lifecycle & chrome (workspace flow / reload / dark mode)', ()
     try {
       await zhPage.goto(zhScaffold.authenticatedUrl, { waitUntil: 'load' })
       await zhPage.waitForSelector('[class*="frame"]', { timeout: 30_000 })
-      await connectFreshWorkspaceViaHost(scaffold, zhPage, zhScaffold.workspaceCwd)
+      await connectFreshWorkspaceViaHost(zhScaffold, zhPage, zhScaffold.workspaceCwd)
       const input = zhPage.locator('[data-composer-input]').first()
       await zhPage.getByRole('button', { name: '添加文件或调用指令' }).click()
       const menu = zhPage.getByRole('listbox', { name: '触发候选建议' })
