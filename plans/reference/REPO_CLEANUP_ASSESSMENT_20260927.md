@@ -295,3 +295,13 @@
 
 - 上限高于"逐个删散落文件"：后者只清表象，前者断源，且直接封住密钥事故的复发路径。
 - 先行动作纯只读，不动任何文件；定位后才是"在出口加 CI/pre-commit 守卫，任何工作树根级散落即失败"的改造。
+
+### 9.2 执行记录：§9.1 只读根因排查（2026-10-01，本轮执行，仍未改动任何文件）
+
+**结论一（污染来源）：不是任何脚本或测试。** 全仓检索 `.tmp_*`／`report.xml`／`build-host.log` 等名字，命中只在两份文档里（`docs/REPO_HYGIENE_RULES.md`、`plans/reference/REPO_SECRET_REMEDIATION_20260919.md`）；`pyproject.toml` 里没有 `junitxml`／`log_file`／`log_cli` 任何设置。逐件读仓根残留文件的首行，全部是 **agent 所跑命令的 shell 重定向**产物：`.tmp_ruff.json`＝`ruff --output-format json`、`.tmp_black.err`＝`black --check`、`.tmp_alldiff.txt`＝`git diff`、`.tmp_pyfiles.txt`／`.tmp_tracked_py.txt`＝`git ls-files`、`.h19_final.log`＝`pytest`、`report.xml`＝`pytest --junitxml=report.xml`、`build-host.log`／`brand-test.log`／`ui-life-build.log`／`turn.log`／`probe.log`／`web.log`＝构建与探针的 stdout 重定向；mtime 聚在 2026-09-30 18:22–18:38 一次会话的爆发里。⇒ §9.1 假设的"由某个脚本/测试写到工作树根"**不成立**，"在出口加 CI/pre-commit 守卫"这条对策要改靶：它管的是**人与 agent 在仓根执行的命令**，不是仓库代码。
+
+**结论二（现在还被 git 看见多少，实测）。** 仓根残留**已全部被忽略**：`.tmp_*` 由 `.gitignore:282`（H19q 新增）、`report.xml` 由 `:262`、`*.log` 由 `:88` 覆盖（`git check-ignore -v` 逐条取到出处）。今天 `git status` 里可见的未跟踪项只剩三处：`output/` 23 条（本仓训练/实验产物目录，按 §4 裁决第二档、故意不入库）、`reports/` 6 条、以及 `taiji-harness/snapshots/web/**` 6 份（Windows 录制语料，等"重录平台"裁定）。⇒ 今天"污染"的形态是**可见的未跟踪项**，不是"进了历史"；2026-09-19 那条是后者，两者不是同一件事。
+
+**结论三（密钥那一半：跑守卫，不读叙述）。** `python -m pytest tests/test_repo_secret_guard.py -q` ＝ **6 passed**，其中的 `test_live_credentials_do_not_match_any_historical_blob` 正是 CONTRIBUTING 要求的那一条两面向守卫——它拿**在用的**凭据值去比历史 blob。旁证两条：当前历史里没有任何匹配 `*jwt_secret*` 的路径增删事件（`git log --all --diff-filter=AD -- '*jwt_secret*'` 为空）；`.gitignore:82-83` 已经是按命名约定的 `**/security/.jwt_secret`／`**/security/.storage_salt`。轮换的**执行记录**在 `plans/reference/REPO_SECRET_REMEDIATION_20260919.md` §2A／§6.6（2026-09-19 已执行）。**边界（不声称）**：远端是否另有副本、旧 token 是否已在服务端作废，不在本机可测范围。
+
+**本轮未做（并说明理由）**：没有删除仓根残留（那只是清表象，且结论一判定源头在命令侧）；没有改 `.gitignore`（现有规则已覆盖本次发现的全部项）；没有动 `output/`／`reports/`（属 §4 第二档裁决范围）。
