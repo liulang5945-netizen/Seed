@@ -2,4 +2,4 @@
   - listitem:
     - button "Finished 1" [expanded]
     - button "Clear"
-  - listitem: "bash for _ in $(seq 1 3000); do [ -e .background-job-list.release ] && break; sleep 0.2; done signal: SIGTERM; cancelled by the user {{duration}}"
+  - listitem: "pwsh for ($i = 0; $i -lt 3000; $i++) { if (Test-Path -LiteralPath '.background-job-list.release') { break }; Start-Sleep -Milliseconds 200 } killed before exit; cancelled by the user {{duration}}"

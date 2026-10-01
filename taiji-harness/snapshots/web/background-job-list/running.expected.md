@@ -1,4 +1,4 @@
 - list "Background jobs":
   - listitem:
-    - button "Show live output of for _ in $(seq 1 3000); do [ -e .background-job-list.release ] && break; sleep 0.2; done": for _ in $(seq 1 3000); do [ -e .background-job-list.release ] && break; sleep 0.2; done bash {{duration}}
-    - button "Stop task for _ in $(seq 1 3000); do [ -e .background-job-list.release ] && break; sleep 0.2; done"
+    - 'button "Show live output of for ($i = 0; $i -lt 3000; $i++) { if (Test-Path -LiteralPath ''.background-job-list.release'') { break }; Start-Sleep -Milliseconds 200 }"': "for ($i = 0; $i -lt 3000; $i++) { if (Test-Path -LiteralPath '.background-job-list.release') { break }; Start-Sleep -Milliseconds 200 } pwsh {{duration}}"
+    - 'button "Stop task for ($i = 0; $i -lt 3000; $i++) { if (Test-Path -LiteralPath ''.background-job-list.release'') { break }; Start-Sleep -Milliseconds 200 }"'

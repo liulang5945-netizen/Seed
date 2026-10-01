@@ -8,12 +8,17 @@ import { expect, it, onTestFinished, vi } from 'vitest'
 import type { SpeechInput, SpeechProviderId } from '@taiji/dsh-experimental-speech-to-text/types'
 import type {} from '@taiji/dsh-experimental-speech-to-text'
 import {
-  captureStableAria, compareOrRefreshGolden, fixtureUserPrompts, launchWebScaffold, webSnapshotMode, watchConsole,
+  captureStableAria, compareOrRefreshGolden, fixtureUserPrompts, launchWebScaffold, selectedSessionFixture,
+  webSnapshotMode, watchConsole,
   type WebScaffold,
 } from './scaffold.ts'
 import { connectFreshWorkspace, newEnglishPage } from './support.ts'
 
-const fixture = fileURLToPath(new URL('../../../snapshots/web/fresh-round-trip/session.v3.jsonl', import.meta.url))
+// Resolve the highest committed generation of the shared fresh-round-trip corpus:
+// the recorded prompt follows the recording platform's shell tool (pwsh on
+// Windows), so the dictation prefix below must track the same generation.
+const FIXTURE = fileURLToPath(new URL('../../../snapshots/web/fresh-round-trip/session.v3.jsonl', import.meta.url))
+const fixture = await selectedSessionFixture(FIXTURE, false)
 const expected = fileURLToPath(new URL('../../../snapshots/web/voice-input/ui.expected.md', import.meta.url))
 const interruptedExpected = fileURLToPath(new URL('../../../snapshots/web/voice-input/interrupted.expected.md', import.meta.url))
 const recordingExpected = fileURLToPath(new URL('../../../snapshots/web/voice-input/recording.expected.md', import.meta.url))
@@ -30,7 +35,8 @@ it.skipIf(webSnapshotMode() === 'record')('records from cached standby and submi
   const overlay = join(scratch, 'voice.patch.yml')
   await writeFile(overlay, '- id: speech-to-text-sensevoice\n  disabled: true\n')
   const prompt = fixtureUserPrompts(await readFile(fixture, 'utf8'))[0]!
-  const prefix = 'Use the bash tool to '
+  const SHELL_TOOL = process.platform === 'win32' ? 'pwsh' : 'bash'
+  const prefix = `Use the ${SHELL_TOOL} tool to `
   const scaffold = await launchWebScaffold({ profile: { packages: [{ dir: bundle, enabled: true }] },
     extraOverlayPath: overlay, replayFixture: fixture, compareReplaySession: 'read-only',
   })

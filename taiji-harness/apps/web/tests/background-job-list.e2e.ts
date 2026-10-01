@@ -28,7 +28,12 @@ const SEED_ID = 'background-job-list-web-e2e'
 // The bounded loop only caps an orphan's lifetime if the runner dies before
 // `afterAll` releases the barrier.
 const RELEASE = '.background-job-list.release'
-const COMMAND = `for _ in $(seq 1 3000); do [ -e ${RELEASE} ] && break; sleep 0.2; done`
+// The shipped composition exposes one shell tool per platform (bash outside
+// Windows, pwsh on Windows); the job id prefix follows the tool name.
+const SHELL_TOOL = process.platform === 'win32' ? 'pwsh' : 'bash'
+const COMMAND = process.platform === 'win32'
+  ? `for ($i = 0; $i -lt 3000; $i++) { if (Test-Path -LiteralPath '${RELEASE}') { break }; Start-Sleep -Milliseconds 200 }`
+  : `for _ in $(seq 1 3000); do [ -e ${RELEASE} ] && break; sleep 0.2; done`
 
 /**
  * Wait for opening a session to publish its live Agent.
@@ -96,13 +101,13 @@ describe.skipIf(MODE === 'record')('web e2e: background job list', () => {
     const started = await scaffold.ctx.tools.execute({
       signal: new AbortController().signal,
       callId: ToolCallId('background-job-list-e2e'),
-      name: 'bash',
+      name: SHELL_TOOL,
       arguments: { command: COMMAND, description: 'Hold a background slot open', run_in_background: true },
       agent,
     })
     const reported = started.content.map(block => block.type === 'text' ? block.text : '').join('')
-    const matched = /\bbash-\d+\b/.exec(reported)
-    if (matched === null) throw new Error(`background bash reported no job id: ${reported}`)
+    const matched = new RegExp(`\\b${SHELL_TOOL}-\\d+\\b`).exec(reported)
+    if (matched === null) throw new Error(`background ${SHELL_TOOL} reported no job id: ${reported}`)
     const jobId = JobId(matched[0])
 
     await trigger.waitFor({ timeout: 15_000 })

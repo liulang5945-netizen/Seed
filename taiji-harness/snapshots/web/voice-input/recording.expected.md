@@ -1,5 +1,5 @@
 - textbox "Describe what you want to build, / commands, @ files or sessions":
-  - paragraph: Use the bash tool to
+  - paragraph: Use the pwsh tool to
 - button "Cancel"
 - img "Recording…"
 - button "Stop and transcribe"
