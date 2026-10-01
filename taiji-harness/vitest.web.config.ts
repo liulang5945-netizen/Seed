@@ -7,11 +7,15 @@ import { standardDecoratorPlugin, vitestExecArgv } from './vitest.shared.ts'
 // and replayed keyless e2e scenarios outside the unit/e2e includes. Linux PR CI
 // pins DSH_SNAPSHOT=replay and compares committed goldens; record/refresh remain
 // explicit local workflows. Real-model cases self-skip without DEEPSEEK_API_KEY.
-try {
-  // Node >= 21.7 native; throws when the file does not exist.
-  process.loadEnvFile(fileURLToPath(new URL('.env', import.meta.url)))
-} catch {
-  // No .env — fine, the environment may already carry the variables.
+// Only record reads a key: loading the gitignored .env on every run would
+// switch whole real-model describe blocks on for ordinary replay lanes.
+if (process.env.DSH_SNAPSHOT === 'record') {
+  try {
+    // Node >= 21.7 native; throws when the file does not exist.
+    process.loadEnvFile(fileURLToPath(new URL('.env', import.meta.url)))
+  } catch {
+    // No .env - fine, the environment may already carry the variables.
+  }
 }
 
 export default defineConfig({
