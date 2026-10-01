@@ -1,3 +1,4 @@
+import { fileURLToPath } from 'node:url'
 import tsconfigPaths from 'vite-tsconfig-paths'
 import { defineConfig } from 'vitest/config'
 import { standardDecoratorPlugin, vitestExecArgv } from './vitest.shared.ts'
@@ -8,7 +9,7 @@ import { standardDecoratorPlugin, vitestExecArgv } from './vitest.shared.ts'
 // explicit local workflows. Real-model cases self-skip without DEEPSEEK_API_KEY.
 try {
   // Node >= 21.7 native; throws when the file does not exist.
-  process.loadEnvFile(new URL('.env', import.meta.url).pathname)
+  process.loadEnvFile(fileURLToPath(new URL('.env', import.meta.url)))
 } catch {
   // No .env — fine, the environment may already carry the variables.
 }

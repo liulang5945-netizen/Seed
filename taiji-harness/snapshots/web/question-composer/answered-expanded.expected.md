@@ -10,8 +10,8 @@
 - button "Copy"
 - status: Worked
 - button "Took {{duration}}" [expanded]
+- paragraph: I'll ask that question now.
 - button "Asked questions" [expanded]
-- button "Think"
 - button "Ask question 1/1 answered" [expanded]
 - term: Which color do you prefer?
 - definition: Blue Include accessibility notes
@@ -22,6 +22,7 @@
 - button "Good response"
 - button "Bad response"
 - button "Branch into a new conversation"
+- button "Usage 19K tok"
 - text: {{clock}}
 - textbox "Message or run a task, / commands, @ files or sessions"
 - button "Add files or run commands"
@@ -29,5 +30,5 @@
 - button "Select model, current DeepSeek-V4-Flash": DeepSeek-V4-Flash
 - button "Send message" [disabled]
 - button "1 turns 2 steps · {{throughput}} tok/s": 1 turns 2 steps{{throughput}} tok/s
-- button "8.8K tok · Cache hit 95%": 8.8K tokCache hit 95%
-- button "3% of context used": 3%
+- button "19K tok · Cache hit 56%": 19K tokCache hit 56%
+- button "8% of context used": 8%

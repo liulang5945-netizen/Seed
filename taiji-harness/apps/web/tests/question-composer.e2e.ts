@@ -376,10 +376,22 @@ describe.skipIf(MODE === 'record')('web e2e: cancelled question transcript', () 
     await cancelledPage.goto(cancelledScaffold.authenticatedUrl, { waitUntil: 'load' })
     await cancelledPage.waitForSelector('[class*="frame"]', { timeout: 30_000 })
 
-    const groupRow = cancelledPage.locator('[role="treeitem"]').first()
-    await groupRow.waitFor({ timeout: 15_000 })
-    await groupRow.click()
-    const sessionRow = cancelledPage.locator('[role="treeitem"]').nth(1)
+    // The Hero chip owns the first workspace selection (H14) and the sidebar
+    // collapses workspace groups, so without both gestures no session row
+    // exists at all: the row this lane used to click by index was the group
+    // header, and clicking it collapsed the only group holding the session.
+    const chip = cancelledPage.getByRole('button', { name: /Choose workspace|选择工作区/u })
+    if (await chip.waitFor({ state: 'visible', timeout: 5_000 }).then(() => true, () => false)) {
+      await chip.click()
+      await cancelledPage.getByRole('menuitem', { name: /dsh-web-e2e-ws-|workspace/u }).first().click()
+      await cancelledPage.locator('[data-composer-input][contenteditable="true"]').waitFor({ timeout: 15_000 })
+    }
+    for (const group of await cancelledPage.getByRole('treeitem', { expanded: false }).all()) {
+      await group.click()
+    }
+    const sessionRow = cancelledPage.locator('[role="treeitem"]')
+      .filter({ has: cancelledPage.locator('button[aria-label^="Session actions for "]') })
+      .first()
     await sessionRow.waitFor({ timeout: 10_000 })
     await sessionRow.click()
   }, 120_000)

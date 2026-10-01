@@ -1143,6 +1143,28 @@ function replaceWebCwd(value: string, cwd: string): string {
   return normalized
 }
 
+const REPLAY_SIGNATURE_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+
+/**
+ * Fold every reasoning-response signature in one parsed record to one token.
+ * A replayed DeepSeek Messages response carries an opaque per-response
+ * signature that replay re-derives, so a committed value names nothing a
+ * scenario asserts and could never match its own replay.
+ * @param value - one parsed Session log record, folded in place.
+ */
+function foldReplaySignatures(value: unknown): void {
+  if (Array.isArray(value)) {
+    for (const entry of value) foldReplaySignatures(entry)
+    return
+  }
+  if (value === null || typeof value !== 'object') return
+  const record = value as Record<string, unknown>
+  if (typeof record.signature === 'string' && REPLAY_SIGNATURE_RE.test(record.signature)) {
+    record.signature = '{{signature}}'
+  }
+  for (const entry of Object.values(record)) foldReplaySignatures(entry)
+}
+
 /**
  * Normalize Web-only volatile strings while preserving JSON structure and row framing.
  * @param log - raw Session JSONL.
@@ -1196,7 +1218,12 @@ export function normalizeWebSessionVolatiles(log: string, workspaceCwd?: string)
       return normalized
     })) as {
       type?: unknown
-      data?: { endpoint?: unknown; content?: Array<{ text?: unknown }>; source?: { kind?: unknown; sections?: Array<{ text?: unknown }> } }
+      data?: {
+        endpoint?: unknown
+        content?: Array<{ text?: unknown }>
+        source?: { kind?: unknown; sections?: Array<{ text?: unknown }> }
+        header?: { config?: Record<string, unknown>; adapterDefaults?: Record<string, unknown> }
+      }
     }
     if (record.type === 'web/deepseek-search-llm-request' && typeof record.data?.endpoint === 'string') {
       record.data.endpoint = '{{webSearchEndpoint}}'
@@ -1217,6 +1244,20 @@ export function normalizeWebSessionVolatiles(log: string, workspaceCwd?: string)
         if (typeof section.text === 'string') section.text = token
       }
     }
+    // A request/header marks the values its adapter supplied from deployment
+    // configuration (its connection defaults) instead of from the session. The
+    // replay catalog is a test stand-in whose connection limits differ from the
+    // shipped provider's, so a flagged value would make every recording
+    // disagree with its own replay. Drop the flagged pair; an explicit choice
+    // carries no flag and still compares.
+    const header = record.data?.header
+    if (header?.adapterDefaults !== undefined) {
+      for (const [key, flagged] of Object.entries(header.adapterDefaults)) {
+        if (flagged === true) delete header.config?.[key]
+      }
+      delete header.adapterDefaults
+    }
+    foldReplaySignatures(record)
     return JSON.stringify(record)
   }).join('\n')
 }
