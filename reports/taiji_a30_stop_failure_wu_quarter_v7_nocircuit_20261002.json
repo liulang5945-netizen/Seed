@@ -1,0 +1,1157 @@
+{
+  "format": "taiji-a30-stop-failure-v7",
+  "format_note_v7": "v7 **加性**多存两条回写门槛自述（`surface_gate_state`／`write_back_gate_last_reason`），其余字段与算法一字未动 ⇒ 与 v4–v6 同格可比。加它的理由：门槛①（回写放行）**不是**由挂载回路武装的——它按`seed/surface_gate.py:150-156` 的'工件与检查点同目录'规则在 `load()` 里解析，`enable_copy_circuit` 之后仍是 `disarmed:artifact_absent`（2026-10-02 运行时实测：候选基底挂上 seed-A 后 `last_write_back_gate=(True, 'factory_face_or_gate_disarmed')`）。不报这一位，就会把'挂上回路'误读成'同时把回写门槛也开上了'——我 2026-10-02 早上就按那个误读写过一句保守的错账（PLAN-A-30 第九次停靠·更正）。",
+  "format_note_v6": "v6 **换比较的表示层＋更正早停计数**（诊断更正，见 §2bb-追加三/追加四）：（一）v5 的逐位比较是『raw 重放 vs `chat()` 返回值』，而早停样本（边界符胜出即 break，fed 极短）的返回值是**器官占位句**（`NativeReadableTextLanguageOrgan._fallback_text`）——V019 首轮 1 字节生成对应 44 字占位句，逐位比较必然不等，L2 要测的成功被记成面违规。v6 的重放改走**完整产品面链**（`replay_surface_from_fed`：decode → marker 切割 → **同一个器官实例** emit）再与返回值比较；`replay_tiny_feed` 这一分类随之退役（深帧复现证明 prompt 的 50 字节全部在案，追加二『没复现 prompt』的误诊被纠正）。（二）`generations_eating_full_budget` 的旧定义（`generations − marker 切割数`）把**边界符自停**（fed < 预算＝生成环唯一提前出口）误标成吃满预算——v4/v5 的『早停 1/72、5/72』数的其实是marker 切割；真正的边界自停（对照件 0/72、self/quarter 各 19/72）从未被点数。v6 起 `eating_full_budget` 按 `fed ≥ max_length` 判，新增 `generations_boundary_self_stop`。`all_surfaces_are_replayed_raw` 与 `replay_suspect_generations` 的**公式不变**（后者改数 `surface_differs_from_replay`），严格性不降：真正被产品链改过的面仍然红。",
+  "format_note_v5": "v5 **加性**：每条 `surface_checks` 多一列 `mismatch_reason`（`replay_tiny_feed`＝回放侧只归到 <8 个符号，属**仪器归类缺陷**；`surface_differs_from_replay`＝真的面不一致），聚合里多一条 `replay_suspect_generations`。**严格守卫 `all_surfaces_are_replayed_raw` 一字未动**——放宽它等于挪门柱；加这一列只是为了让'仪器坏了'与'被测量不符'能被分开读（§2bb-追加二 复现 `V019` 得到的就是前者）。其余各表算法与语义未动 ⇒ 与 v4 同格可比。",
+  "format_note_v4": "v4 **加性**多存三条装配自述（`mount_route`／`copy_circuit_present_after_load`／`copy_evidence_utf8_gate`），其余字段与算法一字未动 ⇒ 与 v3 同格可比。加它的理由：`--circuit` 不给 **不等于**\"出厂无回路面\"——带回路的信封在 `SeedRuntime.load` 里会自动挂载，所以这张面是按命令行猜出来的。",
+  "prereg": "plans/reference/PLAN-A-30_surface_repetition_localization_20260928.md §2f 第 3 条",
+  "checkpoint": "output/tmp_a30_smoke/onpolicy_arms_q/a30_onpolicy_quarter.pt",
+  "circuit": null,
+  "circuit_sha256": null,
+  "mount_route": "none",
+  "copy_circuit_present_after_load": false,
+  "copy_evidence_utf8_gate_effective": false,
+  "copy_evidence_utf8_gate_config": false,
+  "copy_evidence_utf8_gate_override": null,
+  "surface_gate_state": "disarmed:artifact_absent",
+  "write_back_gate_last_reason": null,
+  "repetition_penalty": 2.0,
+  "repetition_window": 8,
+  "max_length": 256,
+  "generation_loop_lines": [
+    3121,
+    3183
+  ],
+  "items": 24,
+  "instrument_guard": {
+    "observe_calls_recorded": true,
+    "surface_gate_state_reported": true,
+    "observe_calls_by_caller": {
+      "generate:3089": 16233,
+      "generate:3168": 10035,
+      "generate:3080": 72
+    },
+    "all_items_reconstructed": true,
+    "items_failing_reconstruction": [],
+    "total_argmax_mismatch_steps": 0,
+    "all_surfaces_are_replayed_raw": true,
+    "replay_suspect_generations": 0,
+    "items_whose_surface_is_not_model_bytes": [],
+    "total_steps": 10035,
+    "generations": 72,
+    "generations_cut_by_turn_marker": 3,
+    "generations_boundary_self_stop": 54,
+    "generations_eating_full_budget": 18,
+    "base_sha256_unchanged": true
+  },
+  "failure_examples": [],
+  "offender_count": 0,
+  "offenders": [],
+  "per_item": [
+    {
+      "id": "V001",
+      "answer_run": 1,
+      "steps": 325,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "generations_boundary_self_stop": 3,
+      "generations_eating_full_budget": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 37,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "这一文词类一词文本安语：",
+          "mismatch_reason": null,
+          "replay_surface_head": "这一文词类一词文本安语："
+        },
+        {
+          "fed_bytes": 34,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "这一文词类一词文本其适",
+          "mismatch_reason": null,
+          "replay_surface_head": "这一文词类一词文本其适"
+        },
+        {
+          "fed_bytes": 254,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "词类一词类一是光子一是句词类其成一这是句一词的汇",
+          "mismatch_reason": null,
+          "replay_surface_head": "词类一词类一是光子一是句词类其成一这是句一词的汇"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 64,
+      "median_ratio_best_over_boundary": 1139.135,
+      "run_steps": 0
+    },
+    {
+      "id": "V002",
+      "answer_run": 1,
+      "steps": 418,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "generations_boundary_self_stop": 3,
+      "generations_eating_full_budget": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 134,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "词文本词称并泉，轢种文词类一诪文是边句下怂\n答：",
+          "mismatch_reason": null,
+          "replay_surface_head": "词文本词称并泉，轢种文词类一诪文是边句下怂\n答："
+        },
+        {
+          "fed_bytes": 133,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "这个是光学的旮，形这个是光词，文词，文词，文词，",
+          "mismatch_reason": null,
+          "replay_surface_head": "这个是光学的旮，形这个是光词，文词，文词，文词，"
+        },
+        {
+          "fed_bytes": 151,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "这么，文词，文词，文词，文词，文词，文词，文词的",
+          "mismatch_reason": null,
+          "replay_surface_head": "这么，文词，文词，文词，文词，文词，文词，文词的"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 64,
+      "median_ratio_best_over_boundary": 1059.74,
+      "run_steps": 0
+    },
+    {
+      "id": "V003",
+      "answer_run": 1,
+      "steps": 298,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "generations_boundary_self_stop": 3,
+      "generations_eating_full_budget": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 142,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "这一文词类一词文本光学一来词类一文词类回这一文词",
+          "mismatch_reason": null,
+          "replay_surface_head": "这一文词类一词文本光学一来词类一文词类回这一文词"
+        },
+        {
+          "fed_bytes": 73,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "词称屨词称屨词称屨词称并是这一文词类一诪文有其适",
+          "mismatch_reason": null,
+          "replay_surface_head": "词称屨词称屨词称屨词称并是这一文词类一诪文有其适"
+        },
+        {
+          "fed_bytes": 83,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "词称文词，来词称并成一起汻一词文本词的汇词，形这",
+          "mismatch_reason": null,
+          "replay_surface_head": "词称文词，来词称并成一起汻一词文本词的汇词，形这"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 64,
+      "median_ratio_best_over_boundary": 1047.103,
+      "run_steps": 0
+    },
+    {
+      "id": "V004",
+      "answer_run": 1,
+      "steps": 340,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "generations_boundary_self_stop": 3,
+      "generations_eating_full_budget": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 85,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "这一文词类一文词类一文词类一文词类一文词类一文词",
+          "mismatch_reason": null,
+          "replay_surface_head": "这一文词类一文词类一文词类一文词类一文词类一文词"
+        },
+        {
+          "fed_bytes": 215,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "这一文词类一词文我并佢的柳词的文有其适\n答：词类",
+          "mismatch_reason": null,
+          "replay_surface_head": "这一文词类一词文我并佢的柳词的文有其适\n答：词类"
+        },
+        {
+          "fed_bytes": 40,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "词称本词类一杢词，有关答：",
+          "mismatch_reason": null,
+          "replay_surface_head": "词称本词类一杢词，有关答："
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 64,
+      "median_ratio_best_over_boundary": 1088.61,
+      "run_steps": 0
+    },
+    {
+      "id": "V005",
+      "answer_run": 1,
+      "steps": 636,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "generations_boundary_self_stop": 1,
+      "generations_eating_full_budget": 2,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "这其文词类一词文本词的文本容词的文本容词的文词的",
+          "mismatch_reason": null,
+          "replay_surface_head": "这其文词类一词文本词的文本容词的文本容词的文词的"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "词称本，彦有是并答，有文词称本学耂\n答，有其泔，",
+          "mismatch_reason": null,
+          "replay_surface_head": "词称本，彦有是并答，有文词称本学耂\n答，有其泔，"
+        },
+        {
+          "fed_bytes": 124,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "词的文我光并潢词的文词类一杢这一文词类一有児语：",
+          "mismatch_reason": null,
+          "replay_surface_head": "词的文我光并潢词的文词类一杢这一文词类一有児语："
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 64,
+      "median_ratio_best_over_boundary": 887.566,
+      "run_steps": 0
+    },
+    {
+      "id": "V006",
+      "answer_run": 1,
+      "steps": 315,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "generations_boundary_self_stop": 2,
+      "generations_eating_full_budget": 1,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 58,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "词类一文词类一文词类一文词类文本，答：",
+          "mismatch_reason": null,
+          "replay_surface_head": "词类一文词类一文词类一文词类文本，答："
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "这为曖词，有其答，这个是其泉学的旮题，有其类词是",
+          "mismatch_reason": null,
+          "replay_surface_head": "这为曖词，有其答，这个是其泉学的旮题，有其类词是"
+        },
+        {
+          "fed_bytes": 1,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "我已收到你的问题：“我养的动物是什么？”。当前原",
+          "mismatch_reason": null,
+          "replay_surface_head": "我已收到你的问题：“我养的动物是什么？”。当前原"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 64,
+      "median_ratio_best_over_boundary": 954.803,
+      "run_steps": 0
+    },
+    {
+      "id": "V007",
+      "answer_run": 1,
+      "steps": 213,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "generations_boundary_self_stop": 3,
+      "generations_eating_full_budget": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 112,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "这一文词类有关类词文本家一杢词的文本它这一杢词，",
+          "mismatch_reason": null,
+          "replay_surface_head": "这一文词类有关类词文本家一杢词的文本它这一杢词，"
+        },
+        {
+          "fed_bytes": 100,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "这一文本词筦，濇词，文毥譽，并泉语，濇一词汻一词",
+          "mismatch_reason": null,
+          "replay_surface_head": "这一文本词筦，濇词，文毥譽，并泉语，濇一词汻一词"
+        },
+        {
+          "fed_bytes": 1,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "我已收到你的问题：“我最近在读什么书？”。当前原",
+          "mismatch_reason": null,
+          "replay_surface_head": "我已收到你的问题：“我最近在读什么书？”。当前原"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 64,
+      "median_ratio_best_over_boundary": 1099.209,
+      "run_steps": 0
+    },
+    {
+      "id": "V008",
+      "answer_run": 2,
+      "steps": 250,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "generations_boundary_self_stop": 3,
+      "generations_eating_full_budget": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 79,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "这是其泉文词类一词文本学的文本学一杢词类一过文本",
+          "mismatch_reason": null,
+          "replay_surface_head": "这是其泉文词类一词文本学的文本学一杢词类一过文本"
+        },
+        {
+          "fed_bytes": 1,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "我已收到你的问题：“我哥哥最爱吃辣子鸡。”。当前",
+          "mismatch_reason": null,
+          "replay_surface_head": "我已收到你的问题：“我哥哥最爱吃辣子鸡。”。当前"
+        },
+        {
+          "fed_bytes": 170,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "词箉文词，濇一起汻一词的文我关适\n答：词类一起汇",
+          "mismatch_reason": null,
+          "replay_surface_head": "词箉文词，濇一起汻一词的文我关适\n答：词类一起汇"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 64,
+      "median_ratio_best_over_boundary": 1135.666,
+      "run_steps": 0
+    },
+    {
+      "id": "V009",
+      "answer_run": 1,
+      "steps": 540,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "generations_boundary_self_stop": 2,
+      "generations_eating_full_budget": 1,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 232,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "词文本光其波的问，文本学词称本学一杢词类一词文本",
+          "mismatch_reason": null,
+          "replay_surface_head": "词文本光其波的问，文本学词称本学一杢词类一词文本"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "词称文词，濙一诪文汻词的汇词的文有关适\n答：词类",
+          "mismatch_reason": null,
+          "replay_surface_head": "词称文词，濙一诪文汻词的汇词的文有关适\n答：词类"
+        },
+        {
+          "fed_bytes": 52,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "词类一起类一词类一是关血，并泉语：",
+          "mismatch_reason": null,
+          "replay_surface_head": "词类一起类一词类一是关血，并泉语："
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 64,
+      "median_ratio_best_over_boundary": 962.971,
+      "run_steps": 0
+    },
+    {
+      "id": "V010",
+      "answer_run": 1,
+      "steps": 447,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "generations_boundary_self_stop": 2,
+      "generations_eating_full_budget": 1,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 190,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "过文本词称本容，有其一积过文本学一来词类一文词类",
+          "mismatch_reason": null,
+          "replay_surface_head": "过文本词称本容，有其一积过文本学一来词类一文词类"
+        },
+        {
+          "fed_bytes": 1,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "我已收到你的问题：“我住在西安。”。当前原生语言",
+          "mismatch_reason": null,
+          "replay_surface_head": "我已收到你的问题：“我住在西安。”。当前原生语言"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "词称本语形籛词，有文词，有喹诽，来词的文词，文词",
+          "mismatch_reason": null,
+          "replay_surface_head": "词称本语形籛词，有文词，有喹诽，来词的文词，文词"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 64,
+      "median_ratio_best_over_boundary": 1290.186,
+      "run_steps": 0
+    },
+    {
+      "id": "V011",
+      "answer_run": 1,
+      "steps": 312,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "generations_boundary_self_stop": 2,
+      "generations_eating_full_budget": 1,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 55,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "这一文词类一词文本子一来词的文本其适",
+          "mismatch_reason": null,
+          "replay_surface_head": "这一文词类一词文本子一来词的文本其适"
+        },
+        {
+          "fed_bytes": 1,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "我已收到你的问题：“我最喜欢的数字是21。”。当",
+          "mismatch_reason": null,
+          "replay_surface_head": "我已收到你的问题：“我最喜欢的数字是21。”。当"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "词称屨成词称屨词称屨成一起汇词的文词类下是其泉，",
+          "mismatch_reason": null,
+          "replay_surface_head": "词称屨成词称屨词称屨成一起汇词的文词类下是其泉，"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 64,
+      "median_ratio_best_over_boundary": 1023.898,
+      "run_steps": 0
+    },
+    {
+      "id": "V012",
+      "answer_run": 1,
+      "steps": 726,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "generations_boundary_self_stop": 3,
+      "generations_eating_full_budget": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 245,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "这一文词类一词文本词的文本关适\n答：词类下是其泉",
+          "mismatch_reason": null,
+          "replay_surface_head": "这一文词类一词文本词的文本关适\n答：词类下是其泉"
+        },
+        {
+          "fed_bytes": 227,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "词称本，形绖词，有其罢词，文词称彦耂\n答，文词，",
+          "mismatch_reason": null,
+          "replay_surface_head": "词称本，形绖词，有其罢词，文词称彦耂\n答，文词，"
+        },
+        {
+          "fed_bytes": 254,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "词答，有是其泉，这一杢这兆盱文词的文成词的汇词的",
+          "mismatch_reason": null,
+          "replay_surface_head": "词答，有是其泉，这一杢这兆盱文词的文成词的汇词的"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 64,
+      "median_ratio_best_over_boundary": 1063.506,
+      "run_steps": 0
+    },
+    {
+      "id": "V013",
+      "answer_run": 1,
+      "steps": 373,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "generations_boundary_self_stop": 3,
+      "generations_eating_full_budget": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 103,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "这一文词类一文词类一文词类一文词类一文词类并文词",
+          "mismatch_reason": null,
+          "replay_surface_head": "这一文词类一文词类一文词类一文词类一文词类并文词"
+        },
+        {
+          "fed_bytes": 248,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "词称屨词称学是词，有怂\n答：这一文词类一词文本子",
+          "mismatch_reason": null,
+          "replay_surface_head": "词称屨词称学是词，有怂\n答：这一文词类一词文本子"
+        },
+        {
+          "fed_bytes": 22,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "词的文本词结。",
+          "mismatch_reason": null,
+          "replay_surface_head": "词的文本词结。"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 64,
+      "median_ratio_best_over_boundary": 1004.259,
+      "run_steps": 0
+    },
+    {
+      "id": "V014",
+      "answer_run": 1,
+      "steps": 178,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "generations_boundary_self_stop": 3,
+      "generations_eating_full_budget": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 55,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "这个文词类一词文本子一来词的文本其适",
+          "mismatch_reason": null,
+          "replay_surface_head": "这个文词类一词文本子一来词的文本其适"
+        },
+        {
+          "fed_bytes": 122,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "这一文词，濹可轢类一词类有其适\n答：这一文词类有",
+          "mismatch_reason": null,
+          "replay_surface_head": "这一文词，濹可轢类一词类有其适\n答：这一文词类有"
+        },
+        {
+          "fed_bytes": 1,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "我已收到你的问题：“我养的动物是什么？”。当前原",
+          "mismatch_reason": null,
+          "replay_surface_head": "我已收到你的问题：“我养的动物是什么？”。当前原"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 1135.036,
+      "run_steps": 0
+    },
+    {
+      "id": "V015",
+      "answer_run": 1,
+      "steps": 768,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "generations_boundary_self_stop": 0,
+      "generations_eating_full_budget": 3,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "过文本光其波词的文有其波词的文本其渀个英文本共渌",
+          "mismatch_reason": null,
+          "replay_surface_head": "过文本光其波词的文有其波词的文本其渀个英文本共渌"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "词称本，光渀起类下是并泉，这个是并泉邢\n答：词类",
+          "mismatch_reason": null,
+          "replay_surface_head": "词称本，光渀起类下是并泉，这个是并泉邢\n答：词类"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "词的文本词的文本安语，有形这一拱文词，濙一词汻一",
+          "mismatch_reason": null,
+          "replay_surface_head": "词的文本词的文本安语，有形这一拱文词，濙一词汻一"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 64,
+      "median_ratio_best_over_boundary": 992.409,
+      "run_steps": 0
+    },
+    {
+      "id": "V016",
+      "answer_run": 1,
+      "steps": 251,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "generations_boundary_self_stop": 3,
+      "generations_eating_full_budget": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 73,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "这一文词类一文词类一文词类一文词类一文词类文是。",
+          "mismatch_reason": null,
+          "replay_surface_head": "这一文词类一文词类一文词类一文词类一文词类文是。"
+        },
+        {
+          "fed_bytes": 109,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "词称形这个是关老文我其法，形这一拯句词漌家一词汻",
+          "mismatch_reason": null,
+          "replay_surface_head": "词称形这个是关老文我其法，形这一拯句词漌家一词汻"
+        },
+        {
+          "fed_bytes": 69,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "1. 是词类怂\n答：词类一起类戯这习潢这一拯并答",
+          "mismatch_reason": null,
+          "replay_surface_head": "1. 是词类怂\n答：词类一起类戯这习潢这一拯并答"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 64,
+      "median_ratio_best_over_boundary": 1069.412,
+      "run_steps": 0
+    },
+    {
+      "id": "V017",
+      "answer_run": 1,
+      "steps": 574,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "generations_boundary_self_stop": 2,
+      "generations_eating_full_budget": 1,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 194,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "这文毥譽，它词的文词类一诪文汀词的汇词的文有关适",
+          "mismatch_reason": null,
+          "replay_surface_head": "这文毥譽，它词的文词类一诪文汀词的汇词的文有关适"
+        },
+        {
+          "fed_bytes": 124,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "词类一起汻一词类一词类一文词类一文词类文有并煳诽",
+          "mismatch_reason": null,
+          "replay_surface_head": "词类一起汻一词类一词类一文词类一文词类文有并煳诽"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "词类一词类一有其鹢，家是一起类一词的文本其适\n答",
+          "mismatch_reason": null,
+          "replay_surface_head": "词类一词类一有其鹢，家是一起类一词的文本其适\n答"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 64,
+      "median_ratio_best_over_boundary": 994.209,
+      "run_steps": 0
+    },
+    {
+      "id": "V018",
+      "answer_run": 1,
+      "steps": 294,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "generations_boundary_self_stop": 2,
+      "generations_eating_full_budget": 1,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "词称文词类一词文我词的文本安语，有其类词文本家词",
+          "mismatch_reason": null,
+          "replay_surface_head": "词称文词类一词文我词的文本安语，有其类词文本家词"
+        },
+        {
+          "fed_bytes": 37,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "词汻一起汻一词文本安语：",
+          "mismatch_reason": null,
+          "replay_surface_head": "词汻一起汻一词文本安语："
+        },
+        {
+          "fed_bytes": 1,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "我已收到你的问题：“我住哪？”。当前原生语言表层",
+          "mismatch_reason": null,
+          "replay_surface_head": "我已收到你的问题：“我住哪？”。当前原生语言表层"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 64,
+      "median_ratio_best_over_boundary": 894.98,
+      "run_steps": 0
+    },
+    {
+      "id": "V019",
+      "answer_run": 2,
+      "steps": 445,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "generations_boundary_self_stop": 2,
+      "generations_eating_full_budget": 1,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 1,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "我已收到你的问题：“我妹妹最喜欢的数字是1998",
+          "mismatch_reason": null,
+          "replay_surface_head": "我已收到你的问题：“我妹妹最喜欢的数字是1998"
+        },
+        {
+          "fed_bytes": 188,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "这一文词类一词类一文词类一文词类成词的文诹，濳诹",
+          "mismatch_reason": null,
+          "replay_surface_head": "这一文词类一词类一文词类一文词类成词的文诹，濳诹"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "词称屨诽的它词称屨词称屨文词称文词称形词称学诹是",
+          "mismatch_reason": null,
+          "replay_surface_head": "词称屨诽的它词称屨词称屨文词称文词称形词称学诹是"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 64,
+      "median_ratio_best_over_boundary": 861.141,
+      "run_steps": 0
+    },
+    {
+      "id": "V020",
+      "answer_run": 1,
+      "steps": 579,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "generations_boundary_self_stop": 1,
+      "generations_eating_full_budget": 2,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "这一文词类一文词类一文词类一文词类一文词类一文词",
+          "mismatch_reason": null,
+          "replay_surface_head": "这一文词类一文词类一文词类一文词类一文词类一文词"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "这个是光并潢词的文词类一词文本一词类一有其鹢，有",
+          "mismatch_reason": null,
+          "replay_surface_head": "这个是光并潢词的文词类一词文本一词类一有其鹢，有"
+        },
+        {
+          "fed_bytes": 67,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "词称屌有词称并成一起汻一词类一有其鹢，有其适",
+          "mismatch_reason": null,
+          "replay_surface_head": "词称屌有词称并成一起汻一词类一有其鹢，有其适"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 64,
+      "median_ratio_best_over_boundary": 1020.976,
+      "run_steps": 0
+    },
+    {
+      "id": "V021",
+      "answer_run": 1,
+      "steps": 237,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "generations_boundary_self_stop": 3,
+      "generations_eating_full_budget": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 163,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "词称本学词称文词类下诪文词类一文词类一文词类一文",
+          "mismatch_reason": null,
+          "replay_surface_head": "词称本学词称文词类下诪文词类一文词类一文词类一文"
+        },
+        {
+          "fed_bytes": 73,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "这一文词类一文词类一文词类一文词类一文词的文是。",
+          "mismatch_reason": null,
+          "replay_surface_head": "这一文词类一文词类一文词类一文词类一文词的文是。"
+        },
+        {
+          "fed_bytes": 1,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "我已收到你的问题：“我爱喝什么？”。当前原生语言",
+          "mismatch_reason": null,
+          "replay_surface_head": "我已收到你的问题：“我爱喝什么？”。当前原生语言"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 64,
+      "median_ratio_best_over_boundary": 1080.657,
+      "run_steps": 0
+    },
+    {
+      "id": "V022",
+      "answer_run": 1,
+      "steps": 568,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 2,
+      "generations_boundary_self_stop": 2,
+      "generations_eating_full_budget": 1,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 157,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 50,
+          "answer_head": "过本容词，文词，文词，文词，文词，文词，文词，文",
+          "mismatch_reason": null,
+          "replay_surface_head": "过本容词，文词，文词，文词，文词，文词，文词，文"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "过本文杢的词汇类词文本关的文本其一拪学词类一词文",
+          "mismatch_reason": null,
+          "replay_surface_head": "过本文杢的词汇类词文本关的文本其一拪学词类一词文"
+        },
+        {
+          "fed_bytes": 155,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 50,
+          "answer_head": "词的文本词类一杢诪类文本，其泔，这习潢词，濹句词",
+          "mismatch_reason": null,
+          "replay_surface_head": "词的文本词类一杢诪类文本，其泔，这习潢词，濹句词"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 64,
+      "median_ratio_best_over_boundary": 1121.62,
+      "run_steps": 0
+    },
+    {
+      "id": "V023",
+      "answer_run": 1,
+      "steps": 600,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 1,
+      "generations_boundary_self_stop": 1,
+      "generations_eating_full_budget": 2,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "过文本容轢的文本容词的文本容词的文本容词的文本它",
+          "mismatch_reason": null,
+          "replay_surface_head": "过文本容轢的文本容词的文本容词的文本容词的文本它"
+        },
+        {
+          "fed_bytes": 88,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 27,
+          "answer_head": "词称有关词，杉可词类一词文本诪类一来诹叐一来诹叐",
+          "mismatch_reason": null,
+          "replay_surface_head": "词称有关词，杉可词类一词文本诪类一来诹叐一来诹叐"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "词是光学的旮题，有其答：词是光类一起文本词的文词",
+          "mismatch_reason": null,
+          "replay_surface_head": "词是光学的旮题，有其答：词是光类一起文本词的文词"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 64,
+      "median_ratio_best_over_boundary": 1072.269,
+      "run_steps": 0
+    },
+    {
+      "id": "V024",
+      "answer_run": 1,
+      "steps": 348,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "generations_boundary_self_stop": 2,
+      "generations_eating_full_budget": 1,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 91,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "词文本光学词的文词类下是其泉这个是词的文词类一词",
+          "mismatch_reason": null,
+          "replay_surface_head": "词文本光学词的文词类下是其泉这个是词的文词类一词"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "词的文词，家枿的词，文词类一苪文汯边句下怂\n答：",
+          "mismatch_reason": null,
+          "replay_surface_head": "词的文词，家枿的词，文词类一苪文汯边句下怂\n答："
+        },
+        {
+          "fed_bytes": 1,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "我已收到你的问题：“我最爱吃什么？”。当前原生语",
+          "mismatch_reason": null,
+          "replay_surface_head": "我已收到你的问题：“我最爱吃什么？”。当前原生语"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 64,
+      "median_ratio_best_over_boundary": 852.218,
+      "run_steps": 0
+    }
+  ],
+  "started_utc": "2026-10-01T16:54:13Z"
+}

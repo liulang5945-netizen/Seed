@@ -446,7 +446,13 @@ def main() -> int:
 
     substrate.observe = original_observe  # type: ignore[method-assign]
     report = {
-        "format": "taiji-a30-stop-failure-v6",
+        "format": "taiji-a30-stop-failure-v7",
+        "format_note_v7": "v7 **加性**多存两条回写门槛自述（`surface_gate_state`／`write_back_gate_last_reason`），"
+        "其余字段与算法一字未动 ⇒ 与 v4–v6 同格可比。加它的理由：门槛①（回写放行）**不是**由挂载回路武装的——"
+        "它按`seed/surface_gate.py:150-156` 的'工件与检查点同目录'规则在 `load()` 里解析，"
+        "`enable_copy_circuit` 之后仍是 `disarmed:artifact_absent`（2026-10-02 运行时实测：候选基底挂上 seed-A 后 "
+        "`last_write_back_gate=(True, 'factory_face_or_gate_disarmed')`）。不报这一位，就会把'挂上回路'误读成'同时"
+        "把回写门槛也开上了'——我 2026-10-02 早上就按那个误读写过一句保守的错账（PLAN-A-30 第九次停靠·更正）。",
         "format_note_v6": "v6 **换比较的表示层＋更正早停计数**（诊断更正，见 §2bb-追加三/追加四）："
         "（一）v5 的逐位比较是『raw 重放 vs `chat()` 返回值』，而早停样本（边界符胜出即 break，fed 极短）的返回值是"
         "**器官占位句**（`NativeReadableTextLanguageOrgan._fallback_text`）——V019 首轮 1 字节生成"
@@ -499,6 +505,11 @@ def main() -> int:
         "copy_evidence_utf8_gate_override": getattr(
             runtime.model.substrate, "_copy_evidence_utf8_gate_override", None
         ),
+        # v7：门槛①（回写放行）与上面那条"证据 UTF-8 位置门"是**两条不同的门**，一起报才不会互相顶名。
+        "surface_gate_state": runtime.surface_gate_state,
+        "write_back_gate_last_reason": (
+            str(runtime.last_write_back_gate[1]) if runtime.last_write_back_gate else None
+        ),
         "repetition_penalty": args.penalty,
         "repetition_window": args.penalty_window,
         "max_length": args.max_length,
@@ -506,6 +517,8 @@ def main() -> int:
         "items": len(items),
         "instrument_guard": {
             "observe_calls_recorded": bool(records),
+            # v7 自述守卫：这条面必须**报出**回写门槛状态（ None／缺键都算仪器没走到，红）。
+            "surface_gate_state_reported": runtime.surface_gate_state is not None,
             "observe_calls_by_caller": dict(
                 sorted(caller_totals.items(), key=lambda pair: -pair[1])[:12]
             ),

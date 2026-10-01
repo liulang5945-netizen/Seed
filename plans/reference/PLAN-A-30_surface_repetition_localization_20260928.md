@@ -3465,3 +3465,78 @@ A-30 族现在没有一枚（`stop_failure` 与 `audit_presence` 的默认名都
 ④ 所有行都**绑在候选基底上**，与厂档上 09-28 那对（1 → 8，+7）只是同向、不是同一枚件。
 **交给 owner 的一句话（不改数、不替裁）**：按 A2.4 自己的判据，回路在今天的基底上是**未通过**；
 按"D 维命中有没有"这一条，它是**唯一来源**（0 → 7）。这两句都成立，取舍是产品决定，不是测量决定。
+
+### 第九次停靠·更正（同夜）：那条"两个变量同动"的保守边界**被运行时读数撤掉**——−39 可以单独归给回路
+
+上面（二）与"补"两节里我都写了同一句免责：*"不挂回路那一档一次动了两个变量（回路不在载，且回路不在 ⇒ 证据门
+`disarmed:artifact_absent` ⇒ `chat(learn=True)` 的回写通道没有门槛①② 在拦）⇒ 不许把 −39 写成回路单独造成"*。
+**这句免责是错的**（错在保守侧，但仍是错），撤掉它的是一条运行时读数而不是推理：
+
+| 装配（同一枚候选基底） | `surface_gate_state`（＝回写门槛①是否在拦） | 一次 `chat(learn=True)` 的 `last_write_back_gate` |
+| --- | --- | --- |
+| load 后不挂回路 | `disarmed:artifact_absent` | 回路不在场 ⇒ 门槛代码本就不跑（`api/seed_runtime.py:458` `gate_model = ... if circuit is not None else None`） |
+| **load 后再 `enable_copy_circuit(seed-A)`** | **仍是 `disarmed:artifact_absent`** | `(True, 'factory_face_or_gate_disarmed')` ⇒ **回写没有被门槛拦** |
+| 出厂信封 `seed_a31self_with_circuit.pt` | `armed` | `(True, 'passed')` |
+
+成因是**两条门不是一条**：门槛①（回写放行）由"`seed_surface_ngram.lzma` 与检查点**同目录**"解析
+（`seed/surface_gate.py:150-156`），而 `output/a31_chunked_self/` 里没有那枚工件（目录清单只有
+`checkpoint.pt`／`self_answers.jsonl`／日志），所以**挂回路并不会把它武装**；被 `enable_copy_circuit` 打开的是
+**另一条**门（回路的加性证据 UTF-8 位置门，`copy_evidence_utf8_gate_effective` 由 `None`→`True`）。
+
+⇒ 于是这三行读数可以这样归：
+1. 候选基底**不挂回路 52/72** 对 候选基底**挂回路 13/72**——两档的**回写门槛状态相同（都没在拦）**，
+   唯一差别＝回路在不在 ⇒ **−39 次真自停与拖写者 0→6 归给"回路在载"本身**，不再是"出厂装配"这笔混账。
+   （**还要再深一层，见"第十次停靠"那条自报**：这台 L2 仪器走的是 `chat(..., learn=False)` ⇒ 这张面**从不发生回写**，
+   所以"回写门槛在不在拦"本来就不在该面的变量集里——我那句免责错得比需要的更保守。）
+2. 挂回路的候选基底（门槛**不拦**）与出厂信封（门槛**在拦**）读数**逐字段相同**（13/72、59、6、`total_steps` 17827）
+   ⇒ **回写门槛①开不开，在这张 L2 面上无可检出影响**（这条是新增排除证据，不解释成"门槛无用"——它拦的是**回写字节**，
+   §2v/DEBT-G10 那两笔仍要单独量）。
+3. 还剩的**唯一**真中间档：回路在载、但把**那条证据门**（`copy_evidence_utf8_gate`）显式置 False。
+   这一档仍未测——它需要运行时一次 `substrate.set_copy_evidence_utf8_gate(False)`，不是命令行旋钮。
+
+**仪器随这次更正升 v7（加性）**：`probe_taiji_a30_stop_failure.py` 的件里自此自述
+`surface_gate_state` 与 `write_back_gate_last_reason`，并在 `instrument_guard` 里加一条
+`surface_gate_state_reported`（报不出＝仪器没走到，红）。升版的理由就是把这次这句错账变成**机器能拦的**东西：
+以前 v4–v6 只自述"回路在不在／证据门开没开"，**不自述回写门槛在不在拦** ⇒ 读 L2 面时只能靠猜，我就是那么猜错的。
+其余字段与算法一字未动 ⇒ 与 v4–v6 同格可比。
+
+### 第十次停靠（2026-10-02）：**戊 探针的已冻面第一次越过 §8 那条 ≥6 线**，而这条线只能在"人造短答"上说
+
+两档同一枚臂文件（`output/tmp_a30_smoke/onpolicy_arms_q/a30_onpolicy_quarter.pt`，8 组 × 3 答 × 6 epoch 的探针档）、
+同一台 v7 仪器、同 24 题、同 `penalty=2.0/window=8/max_length=256`，唯一差别＝是否 `--circuit`：
+
+| 面（按件里 `mount_route` 点名） | `72 − generations_eating_full_budget` | `generations_boundary_self_stop` | `cut_by_turn_marker` | `total_steps` | 拖写者 |
+| --- | --- | --- | --- | --- | --- |
+| 已冻面＝带 seed-A（`enable_copy_circuit`） | **19/72** | 19 | 1 | 15774 | 9 |
+| 同伴档＝不带回路（`none`） | **54/72** | 54 | 3 | 10035 | **0** |
+
+两件的守卫全真：`all_surfaces_are_replayed_raw=true`／`replay_suspect_generations=0`／`all_items_reconstructed=true`／
+`base_sha256_unchanged=true`／v7 新加的 `surface_gate_state_reported=true`；两件自述 `surface_gate_state` 都是
+`disarmed:artifact_absent`（臂目录里没有门槛工件），带回路那件 `copy_evidence_utf8_gate_effective=true`、不带那件 `false`。
+
+**判读（只按 SPEC-A-24 §8 那三条互斥线，一字不挪）**：已冻面 `19 ≥ 6` ⇒ **密度可买到真自停** ⇒
+按 §8 原文"**才有资格提请正式训练档**（规模、时长、验收同带）"。
+这是这条线**第一次被越过**——此前 `sized` 是 5/72（未达线）、`quarter` 那枪 v4 读 1/72 又被自家守卫作废。
+
+三条硬边界必须同带（§8 原文，不是我新加的）：①这一档训练量极小（8×3×6），**只回答"这一手有没有方向"，不构成任何能力主张**；
+②`quarter` 臂是把语料答案截到 1/4 的**人造短答**，真实对话的答案长度不由我们指定 ⇒ 成立也要先答"多短的收尾目标才算合法训练分布"；
+③本探针**不**改动也不替换 §1 那三条晋升线。
+
+**顺手把计数争议钉死了**：本次带回路档的 `total_steps=15774` 与被作废那次 v4 读数**逐字相同** ⇒ 生成轨迹完全一样，
+差的只是计数口径（v4 的 `eating_full_budget=71` 是旧定义把边界符自停误标成吃满；v6/v7 修正后是 53 吃满／**19 自停**）。
+⇒ "同一份现场、换一列就能翻结论"这件事现在有实物对照，引用 §8 早期那两个数（5/72、1/72）必须按 v6 之后的列重述。
+
+**一条必须当场自报的归因错账（这次错得更彻底，两层）**：我在"第九次停靠·补"里给 52/72 那档写的免责是
+*"该档一次动了两个变量：回路不在载，且回写通道没有门槛①在拦"*。查仪器自己后发现**这句在 L2 面上根本不成立**：
+`probe_taiji_a30_stop_failure.py:294-297` 走的是 **`runtime.chat(..., learn=False)`** ⇒ **这张面从头到尾不发生回写**，
+回写门槛压根不在变量集里；而我另跑的那一次 `learn=True` 产品路径探针又单独证明，即使在真正回写的面（写回探针那档）上，
+`enable_copy_circuit` 也**不武装**回写门槛（同目录解析）。两层都拆掉之后：
+**−39（候选基底 52→13）与 −35（戊臂 54→19）这两笔在 L2 面上可以归给"回路在载"这一个变量**——
+它们与候选基底那两档同形（一负于自停、一负于拖写者）。
+仍在同一变量名里**捆绑**着的只剩一条：回路自己的加性证据门（`copy_evidence_utf8_gate_effective` 随挂载 False→True）。
+拆它需要运行时 `set_copy_evidence_utf8_gate(False)` 那一格（仪器现在没有这个旗标）⇒ 登记为下一个动作，
+在拆掉之前**不许**写"是回路的 prompt 通道造成"，只写"是挂载回路这一装配动作造成，含它自带的证据门"。
+
+**配对水平要点名（不许含糊）**：与 09-30 那枚被作废的 v4 件之间，臂文件是**同路径＋mtime 早于那次跑**（Sep 30 13:40）这一级证据，
+**不是 sha 级**——这台仪器至今只记 `circuit_sha256`（本次 `1cfe5961…` 与旧件一致，这一条是 sha 级）而不记检查点 sha。
+⇒ 已在待办里登记"补 `checkpoint_sha256` 自述"。
