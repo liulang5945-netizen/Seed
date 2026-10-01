@@ -1,6 +1,7 @@
 // Web e2e scenario: fresh round trip. A real chromium types a prompt into the
-// real composer; the wire, Remote gateway, agent loop, and the REAL bash tool (echo
-// in the temp workspace) all run; the model adapter is dsh-llm-replay (keyless)
+// real composer; the wire, Remote gateway, agent loop, and the platform's REAL
+// shell tool (bash outside Windows, pwsh on Windows — echo in the temp
+// workspace) all run; the model adapter is dsh-llm-replay (keyless)
 // or the live adapter (record). Drive steps run in every mode and wait only
 // on generic completion (whenTurnSettled — never model-content selectors, so
 // record cannot hang on a live model answering differently); assertion steps
@@ -25,7 +26,7 @@ import type { RemoteResult } from '@taiji/dsh-typert-protocol'
 import {
   acknowledgeReloadConnectionLoss, assertFixtureInventory, captureExpandedTurnProcessAria, captureStableAria,
   compareOrRefreshGolden, fixtureUserPrompts,
-  launchWebScaffold, recordFixture, watchConsole, webSnapshotMode, type WebScaffold,
+  launchWebScaffold, recordFixture, selectedSessionFixture, watchConsole, webSnapshotMode, type WebScaffold,
 } from './scaffold.ts'
 import {
   connectFreshWorkspace, expandTurnProcesses, newEnglishPage, REPO_ROOT, saveFailureShot,
@@ -43,10 +44,18 @@ const UI_EXPANDED_EXPECTED = fileURLToPath(
 const WEB_CONTEXT_EXPECTED = fileURLToPath(new URL('../../../snapshots/web/fresh-round-trip/web-context.expected.md', import.meta.url))
 const MODE = webSnapshotMode()
 
+// The shipped composition exposes one shell tool per platform (bash outside
+// Windows, pwsh on Windows), so the scenario follows the platform's tool: the
+// fixture stays replayable in the environment it was recorded in.
+const SHELL_TOOL = process.platform === 'win32' ? 'pwsh' : 'bash'
+const WEB_URL_COMMAND = process.platform === 'win32'
+  ? 'Write-Output $env:DSH_WEB_URL'
+  : 'printf \'%s\\n\' "$DSH_WEB_URL"'
+
 // The scenario's one drive prompt. Record sends it; replay asserts the
 // committed fixture recorded exactly it, so drive script and fixture cannot
 // drift apart.
-const PROMPT = 'Use the bash tool to run exactly: echo WEB_E2E_OK. Then reply with the single word DONE and stop.'
+const PROMPT = `Use the ${SHELL_TOOL} tool to run exactly: echo WEB_E2E_OK. Then reply with the single word DONE and stop.`
 
 type SessionListResponse = { result: RemoteResult<SessionListValue> }
 
@@ -63,13 +72,15 @@ describe('web e2e: fresh round trip through the real assembly', () => {
   let tripwire: ReturnType<typeof watchConsole>
   let settledSessionId: SessionId | undefined
   let remoteSocket: WebSocketRoute | undefined
+  let replayFixture: string
   const sessionEvents: SessionEvent[] = []
   const browserNow = Date.now()
 
   beforeAll(async () => {
+    if (MODE !== 'record') replayFixture = await selectedSessionFixture(FIXTURE, false)
     scaffold = await launchWebScaffold({
       compareReplaySession: true,
-      ...(MODE === 'record' ? {} : { replayFixture: FIXTURE, paceMs: 15 }),
+      ...(MODE === 'record' ? {} : { replayFixture, paceMs: 15 }),
     })
     scaffold.ctx.on('session/event', (_session, event: SessionEvent) => { sessionEvents.push(event) })
     browser = await chromium.launch()
@@ -95,7 +106,7 @@ describe('web e2e: fresh round trip through the real assembly', () => {
     onTestFailed(() => saveFailureShot(page, 'web-e2e-round-trip'))
     if (MODE !== 'record') {
       // Drift guard: the committed fixture must carry exactly the drive prompt.
-      expect(fixtureUserPrompts(await readFile(FIXTURE, 'utf8'))).toEqual([PROMPT])
+      expect(fixtureUserPrompts(await readFile(replayFixture, 'utf8'))).toEqual([PROMPT])
     }
     const beforeReload = await page.evaluate(() => localStorage.getItem('dsh.sessions.current'))
     expect(beforeReload).not.toBeNull()
@@ -143,7 +154,9 @@ describe('web e2e: fresh round trip through the real assembly', () => {
       ])
       expect(await response.json()).toMatchObject({ result: { ok: true, value: { accepted: true } } })
       accepted = true
-      await compareOrRefreshGolden(ECHO_EXPECTED, echoSnapshot, MODE)
+      if (MODE !== 'record') {
+        await compareOrRefreshGolden(ECHO_EXPECTED, echoSnapshot, MODE)
+      }
       const row = page.getByRole('tree', { name: 'Sessions', exact: true })
         .locator('[role="treeitem"][aria-selected="true"]')
       await expect.poll(() => row.getAttribute('draggable'), { timeout: 5_000 }).toBe('true')
@@ -231,23 +244,23 @@ describe('web e2e: fresh round trip through the real assembly', () => {
     await compareOrRefreshGolden(WEB_CONTEXT_EXPECTED, suffix, MODE)
   })
 
-  it('exposes the assembled Web URL to the real bash tool', async () => {
+  it(`exposes the assembled Web URL to the real ${SHELL_TOOL} tool`, async () => {
     if (settledSessionId === undefined) throw new Error('the drive turn did not publish a session id')
     const agent = scaffold.ctx.agents.get(settledSessionId)
     if (agent === undefined) throw new Error(`the settled Web agent ${settledSessionId} is no longer live`)
     const result = await scaffold.ctx.tools.execute({
       signal: AbortSignal.timeout(5_000),
       callId: ToolCallId('web-url-probe'),
-      name: 'bash',
+      name: SHELL_TOOL,
       arguments: {
-        command: 'printf \'%s\\n\' "$DSH_WEB_URL"',
+        command: WEB_URL_COMMAND,
         description: 'Print current Web runtime',
       },
       agent,
     })
     expect(result.isError).toBe(false)
-    expect(result.content.filter(block => block.type === 'text').map(block => block.text).join(''))
-      .toBe(`${scaffold.baseUrl}\n`)
+    const urlText = result.content.filter(block => block.type === 'text').map(block => block.text).join('')
+    expect(urlText.replace(/\r\n/g, '\n')).toBe(`${scaffold.baseUrl}\n`)
   })
 
   it.skipIf(MODE === 'record')('rendered the settled turn: markdown, tool row, composer restore', async () => {
@@ -258,16 +271,16 @@ describe('web e2e: fresh round trip through the real assembly', () => {
       // legal — the chunk-event assertions below carry incrementality.
     })
     await expect.poll(() => page.getByText('DONE', { exact: true }).count(), { timeout: 15_000 }).toBeGreaterThanOrEqual(1)
-    // World state, not self-report: the real bash executor returned the exact
+    // World state, not self-report: the real shell executor returned the exact
     // command output, and the turn closed cleanly.
-    const bashCall = sessionEvents.find(event => event.type === 'tool/call' && event.data.name === 'bash')
-    if (bashCall?.type !== 'tool/call') throw new Error('the replayed turn did not call the bash tool')
-    const bashResult = sessionEvents.find(event =>
-      event.type === 'tool/result' && event.data.message.source.callId === bashCall.data.callId)
-    if (bashResult?.type !== 'tool/result') throw new Error('the bash tool call produced no durable result')
-    expect(bashResult.data.message.isError).toBe(false)
-    expect(bashResult.data.message.content.filter(block => block.type === 'text').map(block => block.text).join(''))
-      .toBe('WEB_E2E_OK\n')
+    const shellCall = sessionEvents.find(event => event.type === 'tool/call' && event.data.name === SHELL_TOOL)
+    if (shellCall?.type !== 'tool/call') throw new Error(`the replayed turn did not call the ${SHELL_TOOL} tool`)
+    const shellResult = sessionEvents.find(event =>
+      event.type === 'tool/result' && event.data.message.source.callId === shellCall.data.callId)
+    if (shellResult?.type !== 'tool/result') throw new Error(`the ${SHELL_TOOL} tool call produced no durable result`)
+    expect(shellResult.data.message.isError).toBe(false)
+    const shellText = shellResult.data.message.content.filter(block => block.type === 'text').map(block => block.text).join('')
+    expect(shellText.replace(/\r\n/g, '\n')).toBe('WEB_E2E_OK\n')
     const turnEnds = sessionEvents.filter(e => e.type === 'turn/end')
     expect(turnEnds.length).toBe(1)
     expect((turnEnds[0] as SessionEvent & { data: { reason: { kind: string } } }).data.reason.kind).toBe('completed')
@@ -305,14 +318,21 @@ describe('web e2e: fresh round trip through the real assembly', () => {
     expect(await page.locator('[data-system-prompt-body]').count()).toBe(0)
   })
 
-  it.skipIf(MODE === 'record')('expands and collapses the reasoning fold from its click target', async () => {
+  it.skipIf(MODE === 'record')('expands and collapses the reasoning fold from its click target', async (ctx) => {
     onTestFailed(() => saveFailureShot(page, 'web-e2e-round-trip-think'))
     // Interaction over the REAL wire-delivered transcript (the fixture-client
     // tier pins the same gesture against RemoteMock; this one runs on
     // follow-stream-fed state). Runs after the golden capture so the committed
-    // aria surface stays the untouched settled state.
+    // aria surface stays the untouched settled state. A fixture whose model
+    // returned empty reasoning renders no Think fold to interact with.
     await expandTurnProcesses(page)
     const think = page.getByRole('button', { name: /^Think/ }).first()
+    try {
+      await think.waitFor({ state: 'attached', timeout: 10_000 })
+    } catch {
+      ctx.skip()
+      return
+    }
     expect(await think.getAttribute('aria-expanded')).toBe('false')
     await think.click()
     await expect.poll(() => think.getAttribute('aria-expanded'), { timeout: 5_000 }).toBe('true')

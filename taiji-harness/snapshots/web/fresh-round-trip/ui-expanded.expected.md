@@ -1,24 +1,24 @@
 - banner:
-  - navigation "Session hierarchy": Use the bash tool to
+  - navigation "Session hierarchy": Use the pwsh tool to
   - text: Standard mode
   - button "More actions"
   - button "Open right sidebar"
   - tablist:
     - tab "Chat" [selected]
     - tab "Trajectory"
-- text: "Use the bash tool to run exactly: echo WEB_E2E_OK. Then reply with the single word DONE and stop. {{clock}}"
+- text: "Use the pwsh tool to run exactly: echo WEB_E2E_OK. Then reply with the single word DONE and stop. {{clock}}"
 - button "Copy"
 - status: Worked
 - button "Took {{duration}}" [expanded]
+- paragraph: I'll run the exact command requested.
 - button "Ran commands" [expanded]
-- button "Think"
-- button "Bash Echo the test string"
-- button "Think"
+- button "Pwsh Echo the test string"
 - paragraph: DONE
 - button "Copy"
 - button "Good response"
 - button "Bad response"
 - button "Branch into a new conversation"
+- button "Usage 18.2K tok"
 - text: {{clock}}
 - textbox "Message or run a task, / commands, @ files or sessions"
 - button "Add files or run commands"
@@ -26,5 +26,5 @@
 - button "Select model, current DeepSeek-V4-Flash": DeepSeek-V4-Flash
 - button "Send message" [disabled]
 - button "1 turns 2 steps · {{throughput}} tok/s": 1 turns 2 steps{{throughput}} tok/s
-- button "15.8K tok · Cache hit 99%": 15.8K tokCache hit 99%
-- button "6% of context used": 6%
+- button "18.2K tok · Cache hit 57%": 18.2K tokCache hit 57%
+- button "7% of context used": 7%

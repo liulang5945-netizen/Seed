@@ -18,7 +18,7 @@ import type { ReplayOverrideDoc } from '@taiji/dsh-llm-replay'
 import type { SessionEvent } from '@taiji/dsh-session'
 import {
   acknowledgeReloadConnectionLoss, assertFixtureInventory, captureStableAria, compareOrRefreshGolden, fixtureUserPrompts,
-  launchWebScaffold, recordFixture, watchConsole, webSnapshotMode, type WebScaffold,
+  launchWebScaffold, recordFixture, selectedSessionFixture, watchConsole, webSnapshotMode, type WebScaffold,
 } from './scaffold.ts'
 import { openSettings, connectFreshWorkspace, expandOwningTurnProcess, newEnglishPage, saveFailureShot, WEB_FIXTURE_TIME } from './support.ts'
 
@@ -45,6 +45,7 @@ describe('web e2e: assistant IconActions wait for the turn to end', () => {
   let tripwire: ReturnType<typeof watchConsole>
   let sessionEvents: SessionEvent[]
   let sidecarDir: string | undefined
+  let replayFixture: string
 
   afterEach(async () => {
     // close() carries the fixture-consumption tripwire, so its failure is the
@@ -69,6 +70,7 @@ describe('web e2e: assistant IconActions wait for the turn to end', () => {
     paceMs = 1,
   ): Promise<void> {
     sessionEvents = []
+    if (MODE !== 'record') replayFixture = await selectedSessionFixture(FIXTURE, false)
     browser = await chromium.launch()
     page = await newEnglishPage(browser)
     if (MODE !== 'record') {
@@ -88,7 +90,7 @@ describe('web e2e: assistant IconActions wait for the turn to end', () => {
       MODE === 'record'
         ? {}
         : {
-          replayFixture: FIXTURE,
+          replayFixture,
           ...(overridePath === undefined ? {} : { replayOverride: overridePath }),
           compareReplaySession: overridePath === undefined,
           paceMs,
@@ -126,7 +128,7 @@ describe('web e2e: assistant IconActions wait for the turn to end', () => {
   })
 
   it.skipIf(MODE === 'record')('withholds the footer while the turn runs and grants it at turn/end', async () => {
-    expect(fixtureUserPrompts(await readFile(FIXTURE, 'utf8'))).toEqual([PROMPT])
+    expect(fixtureUserPrompts(await readFile(replayFixture, 'utf8'))).toEqual([PROMPT])
     let marker = ''
     // Patch the SECOND call: the first one delivers the narration and the tool
     // call as recorded, so the park happens with a durable mid-turn message.
@@ -185,10 +187,10 @@ describe('web e2e: assistant IconActions wait for the turn to end', () => {
     const { settled } = await sendPrompt(120_000)
     await settled
 
-    const trigger = page.getByRole('button', { name: /Usage 15\.8K tok/ })
+    const trigger = page.getByRole('button', { name: /Usage 18\.5K tok/ })
     await expect.poll(() => trigger.count(), { timeout: 10_000 }).toBe(1)
     expect(await trigger.getAttribute('aria-expanded')).toBe('false')
-    expect(await trigger.textContent()).toBe('Usage 15.8K tok')
+    expect(await trigger.textContent()).toBe('Usage 18.5K tok')
     const timeTrigger = page.getByRole('button', { name: /^Ran for \S+$/ })
     expect(await timeTrigger.count()).toBe(0)
     expect(await page.locator('[data-turn-tail]').getByText(/tok\/s|TTFT/).count()).toBe(0)
@@ -199,11 +201,11 @@ describe('web e2e: assistant IconActions wait for the turn to end', () => {
     const dialog = page.getByRole('dialog', { name: 'Turn usage' })
     expect(await dialog.count()).toBe(1)
     expect(await dialog.getByText('deepseek-official/deepseek-v4-flash', { exact: true }).count()).toBe(1)
-    expect(await dialog.getByText('49.7%', { exact: true }).count()).toBe(1)
-    expect(await dialog.getByText('7,891 tok', { exact: true }).count()).toBe(1)
-    expect(await dialog.getByText('7,808 tok', { exact: true }).count()).toBe(1)
-    expect(await dialog.getByText('112 tok (42 tok reasoning)', { exact: true }).count()).toBe(1)
-    expect(await dialog.getByText('15,811 tok', { exact: true }).count()).toBe(1)
+    expect(await dialog.getByText('56.5%', { exact: true }).count()).toBe(1)
+    expect(await dialog.getByText('7,997 tok', { exact: true }).count()).toBe(1)
+    expect(await dialog.getByText('10,368 tok', { exact: true }).count()).toBe(1)
+    expect(await dialog.getByText('165 tok', { exact: true }).count()).toBe(1)
+    expect(await dialog.getByText('18,530 tok', { exact: true }).count()).toBe(1)
     await page.keyboard.press('Escape')
     expect(await page.getByRole('dialog').count()).toBe(0)
 
@@ -251,7 +253,7 @@ describe('web e2e: assistant IconActions wait for the turn to end', () => {
     const { settled } = await sendPrompt()
     await settled
     const process = page.locator('[data-turn-process]')
-    const tool = page.getByRole('button', { name: 'Bash Print alpha to stdout' })
+    const tool = page.getByRole('button', { name: 'Pwsh Echo alpha to stdout' })
     await process.waitFor({ timeout: 10_000 })
     expect(await process.getAttribute('aria-expanded')).toBe('false')
     expect(await tool.isVisible()).toBe(false)
@@ -296,7 +298,7 @@ describe('web e2e: assistant IconActions wait for the turn to end', () => {
     await launch(undefined, 200)
     onTestFailed(() => saveFailureShot(page, 'web-e2e-turn-tail-actions-focused'))
     const { settled } = await sendPrompt()
-    const tool = page.getByRole('button', { name: 'Bash Print alpha to stdout' })
+    const tool = page.getByRole('button', { name: 'Pwsh Echo alpha to stdout' })
     await expandOwningTurnProcess(page, page.locator('[data-sample="bash"]').first())
     await tool.waitFor({ timeout: 30_000 })
     await tool.focus()

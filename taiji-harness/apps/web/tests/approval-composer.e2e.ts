@@ -12,7 +12,7 @@ import type { SessionEvent } from '@taiji/dsh-session'
 import type {} from '@taiji/dsh-user-approval'
 import {
   assertFinalWorkspaceSnapshot, assertFixtureInventory, captureStableAria, compareOrRefreshGolden, fixtureUserPrompts,
-  launchWebScaffold, recordFixture, watchConsole, webSnapshotMode, type WebScaffold,
+  launchWebScaffold, recordFixture, selectedSessionFixture, watchConsole, webSnapshotMode, type WebScaffold,
 } from './scaffold.ts'
 import { connectFreshWorkspace, newEnglishPage, saveFailureShot } from './support.ts'
 
@@ -35,10 +35,12 @@ describe('web e2e: approval takeover keeps its actions reachable', () => {
   let browser: Browser
   let page: Page
   let tripwire: ReturnType<typeof watchConsole>
+  let replayFixture: string
   const sessionEvents: SessionEvent[] = []
 
   beforeAll(async () => {
-    scaffold = await launchWebScaffold(MODE === 'record' ? {} : { replayFixture: FIXTURE, paceMs: 15, compareReplaySession: true })
+    if (MODE !== 'record') replayFixture = await selectedSessionFixture(FIXTURE, false)
+    scaffold = await launchWebScaffold(MODE === 'record' ? {} : { replayFixture, paceMs: 15, compareReplaySession: true })
     scaffold.ctx.on('session/event', (_session, event: SessionEvent) => { sessionEvents.push(event) })
     browser = await chromium.launch()
     page = await newEnglishPage(browser)
@@ -56,7 +58,7 @@ describe('web e2e: approval takeover keeps its actions reachable', () => {
   it('caps the long command, answers through the panel, and runs the escalated command', async () => {
     onTestFailed(() => saveFailureShot(page, 'web-e2e-approval'))
     if (MODE !== 'record') {
-      expect(fixtureUserPrompts(await readFile(FIXTURE, 'utf8'))).toEqual([PROMPT])
+      expect(fixtureUserPrompts(await readFile(replayFixture, 'utf8'))).toEqual([PROMPT])
     }
     const input = page.locator('[data-composer-input]').first()
     await input.waitFor({ timeout: 10_000 })

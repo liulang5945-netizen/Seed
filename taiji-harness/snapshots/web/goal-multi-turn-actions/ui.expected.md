@@ -17,84 +17,121 @@
 - status: Worked
 - button "Took {{duration}}"
 - paragraph:
-  - strong: Turn 1 / 2
-  - text: — 随机选中的包：
-  - code: packages/context/session-reference
-  - text: 📦
+  - strong:
+    - text: Turn 1 — 随机抽中的包：
+    - code: "@dsh/client-ui-conversation"
+  - text: （工作区里真实存在的包，下面是实测文件结构）
 - button "Copy"
-- code: session-reference ├── README.md ├── package.json ├── src │ ├── index.ts │ └── uri.ts └── tests └── session-reference.spec.ts
+- code: workspace/ ├─ packages/ │ ├─ client/ │ │ ├─ ui-chat/ │ │ │ └─ tests/ │ │ │ └─ chat-view.client.spec.ts │ │ └─ ui-conversation/ ← 本次抽中的包 │ │ ├─ package.json │ │ ├─ README.md │ │ └─ src/ │ │ └─ client.ts │ ├─ context/ │ │ └─ session-reference/ │ │ ├─ package.json │ │ ├─ README.md │ │ ├─ src/ │ │ │ ├─ index.ts │ │ │ └─ uri.ts │ │ └─ tests/ │ │ └─ session-reference.spec.ts │ ├─ llm/ │ │ └─ token-meter/ │ │ ├─ package.json │ │ ├─ README.md │ │ ├─ src/ │ │ │ └─ index.ts │ │ └─ tests/ │ │ └─ token-meter.spec.ts │ └─ skill/ │ └─ skill-filesystem/ │ ├─ package.json │ ├─ README.md │ ├─ src/ │ │ ├─ index.ts │ │ └─ invariant.ts │ └─ tests/ │ └─ skill-filesystem.spec.ts
+- paragraph:
+  - strong:
+    - text: 抽中包
+    - code: ui-conversation
+    - text: 的结构（只看它自己）
 - button "Copy"
-- code: "session-reference/ ├── README.md # 包说明文档 ├── package.json # 包元数据与依赖声明 ├── src/ │ ├── index.ts # 入口，导出公共 API │ └── uri.ts # 会话引用 URI 相关实现 └── tests/ └── session-reference.spec.ts # 单元测试"
-- paragraph: 这是一个很典型的轻量 TypeScript 包结构：入口 + 实现 + 测试。这一轮到此结束，等系统开启下一个 turn。
+- code: packages/client/ui-conversation/ ├─ package.json ├─ README.md └─ src/ └─ client.ts
+- list:
+  - listitem:
+    - text: 类别：
+    - code: client/*
+    - text: （Web 客户端插件包）
+  - listitem: 文件数：3（1 个源文件、1 个清单、1 个说明）
+  - listitem:
+    - text: 特征：结构最精简的一类包——单入口
+    - code: src/client.ts
+    - text: ，无
+    - code: tests/
+    - text: 目录，和同级的
+    - code: ui-chat
+    - text: （只有
+    - code: tests/
+    - text: 、没有
+    - code: src/
+    - text: ）形成互补
+- paragraph: Turn 1 结束，输出完毕，停止。
 - button "Copy"
 - button "Good response"
 - button "Bad response"
 - button "Branch into a new conversation"
+- button "Usage 41.6K tok"
 - text: {{clock}}
 - button "Continuing goal {{clock}}":
   - text: Continuing goal
   - time: {{clock}}
 - status: Worked
 - button "Took {{duration}}"
-- paragraph: 两个 turn 都完成了 ✅
+- paragraph: 目标已完成：两个 turn 各输出一个随机抽中的包的文件结构。
 - paragraph:
-  - strong: 总结：
+  - strong:
+    - text: Turn 1 — 抽中
+    - code: ui-conversation
+  - text: （从候选池中随机抽取）
+- button "Copy"
+- code: packages/client/ui-conversation/ ├─ package.json ├─ README.md └─ src/ └─ client.ts
+- paragraph:
+  - text: 同时输出了整个
+  - code: workspace/packages/
+  - text: 的完整树，作为结构参照。
+- paragraph:
+  - strong:
+    - text: Turn 2 — 抽中
+    - code: skill-filesystem
+  - text: （从剩余候选中随机抽取，避免与 Turn 1 重复）
+- button "Copy"
+- code: packages/skill/skill-filesystem/ ├─ package.json ├─ README.md ├─ src/ │ ├─ index.ts │ └─ invariant.ts └─ tests/ └─ skill-filesystem.spec.ts
+- paragraph:
+  - strong: 验证方式
 - list:
   - listitem:
-    - strong: Turn 1
-    - text: — 随机选中
-    - code: packages/context/session-reference
-    - text: ，输出了文件结构：
-    - button "Copy"
-    - code: session-reference/ ├── README.md ├── package.json ├── src/ │ ├── index.ts │ └── uri.ts └── tests/ └── session-reference.spec.ts
+    - text: 先
+    - code: Get-ChildItem -Recurse -Force packages
+    - text: 确认工作区真实结构，候选包池来自实际存在的目录，不是凭空编造。
   - listitem:
-    - strong: Turn 2
-    - text: — 随机选中
-    - code: packages/llm/token-meter
-    - text: ，输出了文件结构：
-    - button "Copy"
-    - code: token-meter/ ├── README.md ├── package.json ├── src/ │ └── index.ts └── tests/ └── token-meter.spec.ts
+    - text: 每轮的“随机”都由
+    - code: python -c "random.choice(...)"
+    - text: 实际执行产生，Turn 1 结果是
+    - code: ui-conversation
+    - text: ，Turn 2 结果是
+    - code: skill-filesystem
+    - text: 。
+  - listitem:
+    - text: Turn 2 的结构用
+    - code: Get-ChildItem -Recurse
+    - text: 对
+    - code: packages\skill\skill-filesystem
+    - text: 单独复查，输出的 7 个条目与上面的树一致。
+  - listitem:
+    - text: 目标状态经
+    - code: get_goal
+    - text: 读取（revision 1，roundsStarted 2，phase active），随后标记为 complete（revision 2）。
 - paragraph:
-  - strong: 验证方式：
-  - text: 两个包的随机选择都通过
-  - code: python3 random.choice
-  - text: 从工作区的
+  - strong: 产物
+  - text: ：本轮没有创建或修改任何文件——两个 turn 都只做了结构输出，工作区内容保持原样（
   - code: packages/
-  - text: 目录下实际枚举的 4 个候选包中抽取（
-  - code: ui-conversation
-  - text: 、
-  - code: session-reference
-  - text: 、
-  - code: token-meter
-  - text: 、
-  - code: skill-filesystem
-  - text: ），文件结构则用
-  - code: find
-  - text: 实际列出文件后整理输出，均已排除
-  - code: node_modules
-  - text: 和
-  - code: .git
-  - text: 。第二次随机抽到了与 turn 1 相同的包，为避免重复换抽了另一个。
+  - text: 下原有文件未变动）。
 - paragraph:
-  - strong: 说明：
-  - text: 本轮没有产生任何文件修改或提交——任务本身就是"输出文件结构"，所有产物都在上面的消息文本里。
-- paragraph:
-  - text: 如果你还想看剩下两个包（
-  - code: ui-conversation
-  - text: 、
-  - code: skill-filesystem
-  - text: ）的结构，或者其他格式的输出（比如带文件大小的树形图），随时告诉我。
+  - strong: 需要你注意的
+  - text: ：这次任务完全没有落盘，所以没有可打开的文件卡片。如果你希望把这两棵结构树保存成文件（比如
+  - code: structures.md
+  - text: 或
+  - code: .txt
+  - text: ），或者调整抽取范围（只抽
+  - code: client/*
+  - text: 、或包含
+  - code: apps/
+  - text: 等其它目录），告诉我一声即可继续。
 - button "Copy"
 - button "Good response"
 - button "Bad response"
 - button "Branch into a new conversation"
 - tooltip "Branch into a new conversation"
+- button "Usage 62.5K tok"
 - text: {{clock}}
 - textbox "Message or run a task, / commands, @ files or sessions"
 - button "Add files or run commands"
 - 'button "Access mode, current: Workspace Write"': Workspace Write
 - button "Select model, current DeepSeek-V4-Flash": DeepSeek-V4-Flash
 - button "Send message" [disabled]
-- button "2 turns 12 steps · {{throughput}} tok/s": 2 turns 12 steps{{throughput}} tok/s
-- button "115K tok · Cache hit 91%": 115K tokCache hit 91%
-- button "9% of context used": 9%
+- button "2 turns 9 steps · {{throughput}} tok/s": 2 turns 9 steps{{throughput}} tok/s
+- button "104K tok · Cache hit 89%": 104K tokCache hit 89%
+- button "10% of context used": 10%

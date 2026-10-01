@@ -13,13 +13,13 @@
 - button "Analysis completed"
 - paragraph: Reading the workspace now.
 - button "Ran commands" [expanded]
-- button "Bash Print alpha to stdout"
+- button "Pwsh Echo alpha to stdout"
 - paragraph: DONE
 - button "Copy"
 - button "Good response"
 - button "Bad response"
 - button "Branch into a new conversation"
-- button "Usage 15.8K tok"
+- button "Usage 18.5K tok"
 - text: {{clock}}
 - textbox "Message or run a task, / commands, @ files or sessions"
 - button "Add files or run commands"
@@ -27,5 +27,5 @@
 - button "Select model, current DeepSeek-V4-Flash": DeepSeek-V4-Flash
 - button "Send message" [disabled]
 - button "1 turns 2 steps · {{throughput}} tok/s": 1 turns 2 steps{{throughput}} tok/s
-- button "15.8K tok · Cache hit 50%": 15.8K tokCache hit 50%
-- button "6% of context used": 6%
+- button "18.5K tok · Cache hit 56%": 18.5K tokCache hit 56%
+- button "7% of context used": 7%

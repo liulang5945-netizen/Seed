@@ -3,14 +3,8 @@
   - text: typescript
   - button "Wrap lines"
   - button "Copy code"
-- code: "const bashResult = await tools.bash({ command: \"echo CODE_ROUND_OK\", description: \"Echo CODE_ROUND_OK\" }); let readError = null; try { await tools.read({ file_path: \"missing.txt\" }); } catch (e) { readError = { toolName: e.toolName, message: e.message }; } return { bash: bashResult.stdout.text.trim(), readError };"
+- code: "const result: Record<string, unknown> = {}; const shell = await tools.pwsh({ command: \"echo CODE_ROUND_OK\", description: \"Echo CODE_ROUND_OK marker\" }); result.echo = shell.kind === \"foreground\" ? { exitCode: shell.exitCode, stdout: shell.stdout.text.trim(), stderr: shell.stderr.text.trim() } : shell; try { const r = await tools.read({ file_path: \"missing.txt\" }); result.read = { ok: true, lines: r.lines.map((l) => l.text) }; } catch (err) { result.read = { ok: false, errorName: err instanceof Error ? err.name : typeof err, message: err instanceof Error ? err.message : String(err), }; } console.log(JSON.stringify(result, null, 2)); return result;"
 - heading "Output Copy output" [level=3]:
   - button "Output"
   - button "Copy output"
-- text: "{"
-- tree "Result JSON":
-  - treeitem "bash:\"CODE_ROUND_OK\","
-  - 'treeitem "Expand readError:{toolName: \"read\", message: \"cannot read \\\"{{cwd}}/workspace/missing.txt\\\": not found\"}"':
-    - button "Expand"
-    - text: "readError:{toolName: \"read\", message: \"cannot read \\\"{{cwd}}/workspace/missing.txt\\\": not found\"}"
-- text: "}"
+- text: "{ \"echo\": { \"exitCode\": 0, \"stdout\": \"CODE_ROUND_OK\", \"stderr\": \"\" }, \"read\": { \"ok\": false, \"errorName\": \"ToolCallError\", \"message\": \"cannot read \\\"C:\\\\Users\\\\23747\\\\AppData\\\\Local\\\\Temp\\\\{{workspace}}\\\\workspace\\\\missing.txt\\\": not found\" } } { \"echo\": { \"exitCode\": 0, \"stdout\": \"CODE_ROUND_OK\", \"stderr\": \"\" }, \"read\": { \"ok\": false, \"errorName\": \"ToolCallError\", \"message\": \"cannot read \\\"C:\\\\Users\\\\23747\\\\AppData\\\\Local\\\\Temp\\\\{{workspace}}\\\\workspace\\\\missing.txt\\\": not found\" } } File sandbox enforcement is partial on this host."

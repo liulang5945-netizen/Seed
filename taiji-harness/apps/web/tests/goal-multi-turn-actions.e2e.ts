@@ -12,7 +12,7 @@ import type { SessionEvent, SessionId } from '@taiji/dsh-session'
 import type {} from '@taiji/dsh-goal'
 import {
   assertFixtureInventory, captureExpandedTurnProcessAria, captureStableAria, compareOrRefreshGolden,
-  launchWebScaffold, recordFixture, watchConsole, webSnapshotMode, type WebScaffold,
+  launchWebScaffold, recordFixture, selectedSessionFixture, watchConsole, webSnapshotMode, type WebScaffold,
 } from './scaffold.ts'
 import { connectFreshWorkspace, newEnglishPage, saveFailureShot } from './support.ts'
 
@@ -95,6 +95,7 @@ describe('web e2e: Goal keeps one assistant action row per completed turn', () =
   let page: Page
   let tripwire: ReturnType<typeof watchConsole>
   let sessionEvents: SessionEvent[]
+  let replayFixture: string
 
   afterEach(async () => {
     const failures: unknown[] = []
@@ -110,8 +111,9 @@ describe('web e2e: Goal keeps one assistant action row per completed turn', () =
   /** Boot the real Web composition and connect a fresh package fixture workspace. */
   async function launch(): Promise<void> {
     sessionEvents = []
+    if (MODE !== 'record') replayFixture = await selectedSessionFixture(FIXTURE, false)
     scaffold = await launchWebScaffold(
-      MODE === 'record' ? {} : { replayFixture: FIXTURE, replayOverride: OVERRIDE },
+      MODE === 'record' ? {} : { replayFixture, replayOverride: OVERRIDE },
     )
     await seedPackageInventory(scaffold.workspaceCwd)
     scaffold.ctx.on('session/event', (_session, event: SessionEvent) => { sessionEvents.push(event) })
@@ -141,7 +143,8 @@ describe('web e2e: Goal keeps one assistant action row per completed turn', () =
   }, 380_000)
 
   it.skipIf(MODE === 'record')('keeps actions on both completed Goal turn tails', async () => {
-    const fixtureEvents = parseSessionLog(await readFile(FIXTURE, 'utf8'))
+    replayFixture = await selectedSessionFixture(FIXTURE, false)
+    const fixtureEvents = parseSessionLog(await readFile(replayFixture, 'utf8'))
     expect(createdObjectives(fixtureEvents)).toEqual([PROMPT])
     expect(goalRounds(fixtureEvents)).toEqual([1, 2])
 

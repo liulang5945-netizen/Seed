@@ -17,7 +17,7 @@ import type { SessionEvent } from '@taiji/dsh-session'
 import type { SessionId } from '@taiji/dsh-session/types'
 import {
   assertFixtureInventory, captureStableAria, compareOrRefreshGolden, fixtureUserPrompts,
-  launchWebScaffold, recordFixture, seedSession, watchConsole, webSnapshotMode, type WebScaffold,
+  launchWebScaffold, recordFixture, seedSession, selectedSessionFixture, watchConsole, webSnapshotMode, type WebScaffold,
 } from './scaffold.ts'
 import {
   connectFreshWorkspace, expandTurnProcesses, newEnglishPage, saveFailureShot,
@@ -104,7 +104,10 @@ function cancelledFixture(fixture: string): string {
       type: 'text',
       text: 'Error: the user cancelled ask_user_question',
     }]
-    message.content[0].isError = true
+    // v4 carries isError on the tool message itself (the content block has no
+    // such field), and the format validator rejects error metadata unless the
+    // message-level isError is true.
+    message.isError = true
     data.error = {
       name: 'UserQuestionError',
       code: 'ASK_CANCELLED',
@@ -123,9 +126,11 @@ describe('web e2e: resident question composer round trip', () => {
   let tripwire: ReturnType<typeof watchConsole>
   const sessionEvents: SessionEvent[] = []
   let answeredSession: SessionId | undefined
+  let replayFixture: string
 
   beforeAll(async () => {
-    scaffold = await launchWebScaffold(MODE === 'record' ? {} : { replayFixture: FIXTURE, paceMs: 15, compareReplaySession: true })
+    if (MODE !== 'record') replayFixture = await selectedSessionFixture(FIXTURE, false)
+    scaffold = await launchWebScaffold(MODE === 'record' ? {} : { replayFixture, paceMs: 15, compareReplaySession: true })
     scaffold.ctx.on('session/event', (_session, event: SessionEvent) => { sessionEvents.push(event) })
     browser = await chromium.launch()
     page = await newEnglishPage(browser)
@@ -144,7 +149,7 @@ describe('web e2e: resident question composer round trip', () => {
   it('asks through the composer, answers, and completes with the answer logged', async () => {
     onTestFailed(() => saveFailureShot(page, 'web-e2e-question'))
     if (MODE !== 'record') {
-      expect(fixtureUserPrompts(await readFile(FIXTURE, 'utf8'))).toEqual([PROMPT])
+      expect(fixtureUserPrompts(await readFile(replayFixture, 'utf8'))).toEqual([PROMPT])
     }
     const input = page.locator('[data-composer-input]').first()
     await input.waitFor({ timeout: 10_000 })
@@ -364,10 +369,11 @@ describe.skipIf(MODE === 'record')('web e2e: cancelled question transcript', () 
   let cancelledTripwire: ReturnType<typeof watchConsole>
 
   beforeAll(async () => {
+    const cancelledFixturePath = await selectedSessionFixture(FIXTURE, false)
     cancelledScaffold = await launchWebScaffold({})
     await seedSession(
       cancelledScaffold,
-      cancelledFixture(await readFile(FIXTURE, 'utf8')),
+      cancelledFixture(await readFile(cancelledFixturePath, 'utf8')),
       CANCELLED_SEED_ID,
     )
     cancelledBrowser = await chromium.launch()

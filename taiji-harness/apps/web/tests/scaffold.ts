@@ -39,6 +39,7 @@ import {
   captureExpectedWorkspaceSnapshot,
   captureWorkspaceSnapshot,
   type CaptureWorkspaceSnapshotOptions,
+  type WorkspaceSnapshotEntry,
   assertSessionFixtureVersion,
   formatSystemPromptSnapshot,
   formatToolSchemasSnapshot,
@@ -151,7 +152,11 @@ export async function assertFinalWorkspaceSnapshot(
     .toBe(true)
   const actual = await captureWorkspaceSnapshot(workspaceRoot, options)
   const expected = await captureExpectedWorkspaceSnapshot(join(scenarioDir, 'workspace.expected'))
-  expect(actual, `${manifest.scenario ?? scenarioDir}: complete final workspace`).toEqual(expected)
+  // Windows shell tools terminate lines with CRLF; workspace text snapshots
+  // compare semantic content, so fold CRLF to LF on both sides before matching.
+  const foldLineEndings = (entries: WorkspaceSnapshotEntry[]): WorkspaceSnapshotEntry[] =>
+    entries.map(entry => entry.kind === 'text' ? { ...entry, content: entry.content.replace(/\r\n/g, '\n') } : entry)
+  expect(foldLineEndings(actual), `${manifest.scenario ?? scenarioDir}: complete final workspace`).toEqual(foldLineEndings(expected))
 }
 
 async function ownsReplayFixture(replayFixture: string | undefined): Promise<boolean> {
@@ -1223,6 +1228,8 @@ export function normalizeWebSessionVolatiles(log: string, workspaceCwd?: string)
         content?: Array<{ text?: unknown }>
         source?: { kind?: unknown; sections?: Array<{ text?: unknown }> }
         header?: { config?: Record<string, unknown>; adapterDefaults?: Record<string, unknown> }
+        meta?: { shape?: unknown; paths?: unknown }
+        message?: { content?: Array<{ type?: unknown; text?: unknown }> }
       }
     }
     if (record.type === 'web/deepseek-search-llm-request' && typeof record.data?.endpoint === 'string') {
@@ -1256,6 +1263,22 @@ export function normalizeWebSessionVolatiles(log: string, workspaceCwd?: string)
         if (flagged === true) delete header.config?.[key]
       }
       delete header.adapterDefaults
+    }
+    // The glob tool promises modification-time order, but files created in
+    // the same tick tie, and ripgrep's tie order follows the platform's
+    // directory-read order — unstable on NTFS between record and replay. The
+    // returned path SET is the tool contract; the tie order is not. Sort the
+    // paths and rejoin the plain-text rendering so a recorded result compares
+    // equal to its own replay on every platform.
+    const meta = record.data?.meta
+    if (record.type === 'tool/result' && meta?.shape === 'paths' && Array.isArray(meta.paths)) {
+      const paths = meta.paths.filter((path): path is string => typeof path === 'string')
+      const recordedText = paths.join('\n')
+      const sorted = [...paths].sort()
+      meta.paths = sorted
+      for (const block of record.data?.message?.content ?? []) {
+        if (typeof block.text === 'string' && block.text === recordedText) block.text = sorted.join('\n')
+      }
     }
     foldReplaySignatures(record)
     return JSON.stringify(record)

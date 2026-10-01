@@ -11,7 +11,7 @@ import type { ChangesSummary } from '@taiji/dsh-client-ui-deliverables/src/chang
 import { deriveReplayScript, parseSessionLog } from '@taiji/dsh-llm-replay'
 import { connectFreshWorkspaceViaHost,
   assertFinalWorkspaceSnapshot, captureExpandedTurnProcessAria, compareOrRefreshGolden,
-  fixtureUserPrompts, launchWebScaffold, recordFixture, watchConsole,
+  fixtureUserPrompts, launchWebScaffold, recordFixture, selectedSessionFixture, watchConsole,
   webSnapshotMode, type WebScaffold,
 } from './scaffold.ts'
 import { openSettings, ZH_BROWSER_LOCALE } from './support.ts'
@@ -61,23 +61,28 @@ describe('web e2e: a git workspace turn ends with its changed files', () => {
   let page: Page
   let tripwire: ReturnType<typeof watchConsole>
   let cwd: string
+  let replayFixture: string
   let replayRoot: string | undefined
 
   beforeAll(async () => {
     let replayOverride: string | undefined
     if (MODE !== 'record') {
+      replayFixture = await selectedSessionFixture(FIXTURE)
       replayRoot = await mkdtemp(join(tmpdir(), 'dsh-changed-files-turn-replay-'))
       replayOverride = join(replayRoot, 'replay.override.json')
-      const script = deriveReplayScript(parseSessionLog(await readFile(FIXTURE, 'utf8')))
-      // Recorded absolute paths must follow each isolated Session's working directory.
-      const cwdToken = '{{fromRequest:Your working directory is ([^\\n]+)\\.}}'
+      const script = deriveReplayScript(parseSessionLog(await readFile(replayFixture, 'utf8')))
+      // `{{fromRequestJson:` JSON-escapes the captured path, so a Windows-style cwd
+      // (backslashes) stays valid JSON inside the scripted working-directory values.
+      const cwdToken = '{{fromRequestJson:Your working directory is ([^\\n]+)\\.}}'
       await writeFile(replayOverride, JSON.stringify(script).replaceAll('{{cwd}}', JSON.stringify(cwdToken).slice(1, -1)))
+    } else {
+      replayFixture = FIXTURE
     }
     scaffold = await launchWebScaffold({
       developerTools: false,
       compareReplaySession: true,
       extraOverlayPath: fileURLToPath(new URL('./changed-files-turn.overlay.yml', import.meta.url)),
-      ...(replayOverride === undefined ? {} : { replayFixture: FIXTURE, replayOverride }),
+      ...(replayOverride === undefined ? {} : { replayFixture, replayOverride }),
     })
     await seedRepository(join(scaffold.workspaceCwd, 'workspace'))
     browser = await chromium.launch()
@@ -104,7 +109,7 @@ describe('web e2e: a git workspace turn ends with its changed files', () => {
   })
 
   it('records the edited, created, and shell-appended files with their line counts', async () => {
-    if (MODE !== 'record') expect(fixtureUserPrompts(await readFile(FIXTURE, 'utf8'))).toEqual([PROMPT])
+    if (MODE !== 'record') expect(fixtureUserPrompts(await readFile(replayFixture, 'utf8'))).toEqual([PROMPT])
     const settled = scaffold.whenTurnSettled()
     const input = page.locator('[data-composer-input]').first()
     await input.fill(PROMPT)
@@ -128,7 +133,9 @@ describe('web e2e: a git workspace turn ends with its changed files', () => {
     for (const file of summary.files) expect(file.added).toBeGreaterThan(0)
     expect(summary.files[0]).toMatchObject({ path: 'app.local', added: 1, deleted: 0 })
     expect(summary.files[2]).toMatchObject({ path: 'notes.txt', added: 1, deleted: 0 })
-    expect(await readFile(join(cwd, 'notes.txt'), 'utf8')).toBe('start\ndone\n')
+    // PowerShell's Add-Content terminates lines with CRLF on Windows; compare
+    // line contents so the recorded shell append matches on both platforms.
+    expect((await readFile(join(cwd, 'notes.txt'), 'utf8')).replace(/\r\n/g, '\n')).toBe('start\ndone\n')
 
     const card = page.locator('[data-changed-files]')
     expect(await card.count()).toBe(0)
@@ -277,8 +284,10 @@ describe('web e2e: a git workspace turn ends with its changed files', () => {
   it('reviews a shell-appended file from the snapshots and an ignored file from its captured copies in one tab', async () => {
     const card = page.locator('[data-changed-files]')
     const column = page.locator('[data-rightbar-col]')
+    // PowerShell appends leave CR in the diff line text on Windows; the
+    // rendered content comparison must ignore the line-ending artifact.
     const drawn = (root: ReturnType<typeof column.locator>) =>
-      root.locator('[data-diff-line]').evaluateAll(lines => lines.map(line => `${line.getAttribute('data-diff-line')}:${line.textContent}`))
+      root.locator('[data-diff-line]').evaluateAll(lines => lines.map(line => `${line.getAttribute('data-diff-line')}:${(line.textContent ?? '').replace(/\r/g, '')}`))
     const review = column.locator('[data-changes-review]')
     // The header lands on the first listed file; a row lands on its own.
     await card.getByRole('button', { name: '在侧边栏查看本轮改动' }).click()

@@ -3,4 +3,4 @@
   - button "Wrap lines" [pressed]
   - button "Original JSON"
   - button "Copy code"
-  - code: "const bashResult = await tools.bash({ command: \"echo CODE_ROUND_OK\", description: \"Echo CODE_ROUND_OK\" }); let readError = null; try { await tools.read({ file_path: \"missing.txt\" }); } catch (e) { readError = { toolName: e.toolName, message: e.message }; } return { bash: bashResult.stdout.text.trim(), readError };"
+  - code: "const result: Record<string, unknown> = {}; const shell = await tools.pwsh({ command: \"echo CODE_ROUND_OK\", description: \"Echo CODE_ROUND_OK marker\" }); result.echo = shell.kind === \"foreground\" ? { exitCode: shell.exitCode, stdout: shell.stdout.text.trim(), stderr: shell.stderr.text.trim() } : shell; try { const r = await tools.read({ file_path: \"missing.txt\" }); result.read = { ok: true, lines: r.lines.map((l) => l.text) }; } catch (err) { result.read = { ok: false, errorName: err instanceof Error ? err.name : typeof err, message: err instanceof Error ? err.message : String(err), }; } console.log(JSON.stringify(result, null, 2)); return result;"

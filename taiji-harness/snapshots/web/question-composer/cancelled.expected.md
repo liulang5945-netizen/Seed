@@ -9,18 +9,25 @@
 - button "Copy"
 - status: Worked
 - button "Took {{duration}}" [expanded]
+- paragraph: I'll ask that question now.
 - button "Asked questions" [expanded]
-- button "Think"
 - button "Ask question cancelled" [expanded]
 - paragraph: This question set was cancelled before answers were submitted.
 - list:
   - listitem: Which color do you prefer?
 - button "Inspect"
+- button "Copy"
+- button "Good response"
+- button "Bad response"
+- button "Branch into a new conversation" [disabled]
+- text: Available only on the last message of a completed turn
+- button "Usage 9.3K tok"
+- text: {{clock}}
 - textbox "Message or run a task, / commands, @ files or sessions"
 - button "Add files or run commands"
 - 'button "Access mode, current: Workspace Write"': Workspace Write
 - button "Select model, current DeepSeek-V4-Flash": DeepSeek-V4-Flash
 - button "Send message" [disabled]
 - button "1 turns 1 steps · {{throughput}} tok/s": 1 turns 1 steps{{throughput}} tok/s
-- button "4.4K tok · Cache hit 97%": 4.4K tokCache hit 97%
-- button "3% of context used": 3%
+- button "9.3K tok · Cache hit 14%": 9.3K tokCache hit 14%
+- button "7% of context used": 7%

@@ -9,7 +9,7 @@ import { afterAll, beforeAll, describe, expect, it, onTestFailed } from 'vitest'
 import type { SessionEvent } from '@taiji/dsh-session'
 import {
   acknowledgeReloadConnectionLoss, captureExpandedTurnProcessAria, captureStableAria, compareOrRefreshGolden, fixtureUserPrompts,
-  launchWebScaffold, recordFixture, watchConsole, webSnapshotMode, type WebScaffold,
+  launchWebScaffold, recordFixture, selectedSessionFixture, watchConsole, webSnapshotMode, type WebScaffold,
 } from './scaffold.ts'
 import { connectFreshWorkspace, expandOwningTurnProcess, newEnglishPage, saveFailureShot } from './support.ts'
 
@@ -28,13 +28,15 @@ describe('web e2e: PTC mode round renders nested sub-calls', () => {
   let browser: Browser
   let page: Page
   let tripwire: ReturnType<typeof watchConsole>
+  let replayFixture: string
   const sessionEvents: SessionEvent[] = []
 
   beforeAll(async () => {
+    if (MODE !== 'record') replayFixture = await selectedSessionFixture(FIXTURE, false)
     scaffold = await launchWebScaffold({
       agentPresets: { default: 'ptc' },
       compareReplaySession: true,
-      ...(MODE === 'record' ? {} : { replayFixture: FIXTURE, paceMs: 15 }),
+      ...(MODE === 'record' ? {} : { replayFixture, paceMs: 15 }),
     })
     scaffold.ctx.on('session/event', (_session, event: SessionEvent) => { sessionEvents.push(event) })
     browser = await chromium.launch()
@@ -53,7 +55,7 @@ describe('web e2e: PTC mode round renders nested sub-calls', () => {
   it('drives the recorded prompt to a settled turn (all modes)', async () => {
     onTestFailed(() => saveFailureShot(page, 'web-e2e-ptc-drive'))
     if (MODE !== 'record') {
-      expect(fixtureUserPrompts(await readFile(FIXTURE, 'utf8'))).toEqual([PROMPT])
+      expect(fixtureUserPrompts(await readFile(replayFixture, 'utf8'))).toEqual([PROMPT])
     }
     const input = page.locator('[data-composer-input]').first()
     await input.waitFor({ timeout: 10_000 })
@@ -89,7 +91,9 @@ describe('web e2e: PTC mode round renders nested sub-calls', () => {
       expect(Array.isArray(data.content)).toBe(true)
       expect(typeof data.isError).toBe('boolean')
     }
-    const bash = dispatches.find(dispatch => (dispatch.data as { name: string }).name === 'bash')
+    // The sub-dispatch follows the platform's shell tool: pwsh on Windows, bash elsewhere.
+    const shellTool = process.platform === 'win32' ? 'pwsh' : 'bash'
+    const bash = dispatches.find(dispatch => (dispatch.data as { name: string }).name === shellTool)
     expect(bash).toBeDefined()
     const bashContent = (bash!.data as { content: { type: string; text?: string }[] }).content
     expect(bashContent.filter(block => block.type === 'text').map(block => block.text).join('')).toContain('CODE_ROUND_OK')

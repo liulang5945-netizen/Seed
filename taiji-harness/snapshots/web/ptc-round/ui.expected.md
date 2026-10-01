@@ -12,20 +12,35 @@
 - button "Took {{duration}}" [expanded]
 - button "Ran code, ran commands, read files" [expanded]
 - button "Think"
-- button "Code Run bash echo and catch missing file read"
-- button "Bash Echo CODE_ROUND_OK" [expanded]
+- button "Code Run echo command and catch missing file read"
+- button "Pwsh Echo CODE_ROUND_OK marker" [expanded]
 - text: Done workspace echo CODE_ROUND_OK
 - button "Copy"
 - text: CODE_ROUND_OK
 - button "Inspect"
 - text: Failed
-- 'button "Read Error: cannot read \"{{cwd}}/workspace/missing.txt\": not found"'
-- button "Think"
+- 'button "Read Error: cannot read \"{{cwd}}/workspace/missing.txt/": not found"'
 - paragraph: DONE
+- list:
+  - listitem:
+    - code: echo CODE_ROUND_OK
+    - text: → exit code 0, stdout
+    - code: CODE_ROUND_OK
+  - listitem:
+    - text: reading
+    - code: missing.txt
+    - text: → caught
+    - code: ToolCallError
+    - text: ":"
+    - code: "cannot read \"...\\workspace\\missing.txt\": not found"
+    - text: (
+    - code: read.ok = false
+    - text: )
 - button "Copy"
 - button "Good response"
 - button "Bad response"
 - button "Branch into a new conversation"
+- button "Usage 19.7K tok"
 - text: {{clock}}
 - textbox "Message or run a task, / commands, @ files or sessions"
 - button "Add files or run commands"
@@ -33,5 +48,5 @@
 - button "Select model, current DeepSeek-V4-Flash": DeepSeek-V4-Flash
 - button "Send message" [disabled]
 - button "1 turns 2 steps · {{throughput}} tok/s": 1 turns 2 steps{{throughput}} tok/s
-- button "17.5K tok · Cache hit 52%": 17.5K tokCache hit 52%
-- button "7% of context used": 7%
+- button "19.7K tok · Cache hit 50%": 19.7K tokCache hit 50%
+- button "8% of context used": 8%
