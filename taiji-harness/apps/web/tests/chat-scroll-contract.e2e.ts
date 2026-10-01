@@ -706,13 +706,7 @@ describe('web e2e: long Chat scroll contract', () => {
     })
   }, 180_000)
 
-  // The two live-tool tests pin geometry around the keyed BashRow disclosure
-  // (data-sample chrome, its expand affordance, and the anchoring measured
-  // against it). Windows mounts the pwsh tool, whose calls render the generic
-  // row (assembly-surfaces pins that routing) with a different affordance —
-  // so the BashRow geometry pins are POSIX-only until the owner rules whether
-  // pwsh rows join the BashRow family card.
-  it.skipIf(MODE === 'record' || process.platform === 'win32')('keeps streaming ownership and tool disclosure state across a long scroll-away cycle', async () => {
+  it.skipIf(MODE === 'record')('keeps streaming ownership and tool disclosure state across a long scroll-away cycle', async () => {
     await withScrollWorld({
       failureShot: 'web-e2e-chat-scroll-live-tool',
       replay: [
@@ -943,7 +937,7 @@ describe('web e2e: long Chat scroll contract', () => {
     })
   }, 180_000)
 
-  it.skipIf(MODE === 'record' || process.platform === 'win32')('touch-style fling scrolling owns streaming bottom-follow without wheel input', async () => {
+  it.skipIf(MODE === 'record')('touch-style fling scrolling owns streaming bottom-follow without wheel input', async () => {
     await withScrollWorld({
       failureShot: 'web-e2e-chat-scroll-fling-stream',
       paceMs: 0,

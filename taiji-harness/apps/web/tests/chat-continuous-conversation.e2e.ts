@@ -332,23 +332,9 @@ describe('web e2e: continuous conversation grown through the composer', () => {
       await expect.poll(() => toolRow.count(), { timeout: 10_000 }).toBe(1)
       expect(await toolRow.textContent()).toContain(spec.toolResultMarker)
       await expandOwningTurnProcess(page, toolRow)
-      if (process.platform === 'win32') {
-        // The call-tree slot answers the bash wire name only (assembly-surfaces
-        // pins pwsh to the generic row), so this pwsh call renders the generic
-        // row: same shell-family variant, and the whole-row expand that swaps
-        // [data-terminal] in — the same collapse/expand semantics the keyed
-        // BashRow disclosure pins on POSIX, under its own selectors.
-        const genericToggle = toolRow.locator('[data-expandable]')
-        await expect.poll(() => toolRow.locator('[data-terminal]').count(), { timeout: 10_000 }).toBe(0)
-        await genericToggle.click()
-        await expect.poll(() => toolRow.locator('[data-terminal]').count(), { timeout: 10_000 }).toBe(1)
-        await toolRow.getByText(spec.toolResultMarker, { exact: true }).last().waitFor({ timeout: 10_000 })
-        await genericToggle.click()
-        await expect.poll(() => toolRow.locator('[data-terminal]').count(), { timeout: 10_000 }).toBe(0)
-        continue
-      }
-      // data-sample is the BashRow family attribute: the POSIX arm pins the
-      // expand/collapse affordance around the terminal output.
+      // data-sample is the BashRow family attribute: the owner ruling (pwsh
+      // row rendering, 甲) routes pwsh calls to the same keyed shell card, so
+      // the disclosure affordance is identical on both platforms.
       const disclosure = toolRow.locator('[data-sample="bash"]')
       expect(await disclosure.getAttribute('aria-expanded')).toBe('false')
       await disclosure.click()

@@ -161,7 +161,13 @@ export const bashToolviewSample = {
   name: 'bash-toolview-sample',
   inject: ['slots'],
   apply(ctx: Context): void {
-    ctx.slots.inject('tool.call.toolview', () =>
-      ctx.slots.register({ name: 'tool.call.toolview', key: 'bash', locale: NS }, BashRow))
+    // The PowerShell twin renders the same shell row (owner ruling 2026-10-01,
+    // R-pwsh-row: 甲): TOOL_VARIANTS routes pwsh to the bash row family, and
+    // the call-tree slot resolves by wire tool name, so this view must answer
+    // both — otherwise every pwsh call falls back to the generic card.
+    ctx.slots.inject('tool.call.toolview', function* () {
+      yield ctx.slots.register({ name: 'tool.call.toolview', key: 'bash', locale: NS }, BashRow)
+      yield ctx.slots.register({ name: 'tool.call.toolview', key: 'pwsh', locale: NS }, BashRow)
+    })
   },
 }

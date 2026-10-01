@@ -145,33 +145,34 @@ describe('todo_write assembly (product registrations, no outlet twins)', () => {
 })
 
 describe('terminal card assembly', () => {
-  it('both the keyed bash row and the fallback row reach the terminal card through the whole-row expand', async () => {
+  it('the bash and pwsh rows both render the keyed shell family card with the whole-row expand', async () => {
     const runtime = await bench([
       bashResult(3, 'c-keyed'),
-      // pwsh has no package-local keyed row, so GenericToolCard owns its raw terminal card.
-      bashResult(4, 'c-fallback', {
+      // Owner ruling 2026-10-01 (pwsh row rendering, 甲): pwsh joins the bash
+      // row family — the same keyed BashRow with its terminal disclosure, not
+      // the generic card the pre-ruling fallback pinned.
+      bashResult(4, 'c-pwsh', {
         call: { name: 'pwsh', argsRaw: '{"command":"ls -la","description":"List files"}' },
       }),
     ])
     const view = runtime.renderRoot()
 
-    // Keyed BashRow: collapsed by default, the whole summary row is the toggle.
-    const keyedRow = view.container.querySelector('[data-sample="bash"]')
-    const keyed = keyedRow?.parentElement
-    expect(keyed?.querySelector('[data-terminal]')).toBeNull()
-    fireEvent.click(keyedRow!)
-    await waitFor(() => {
-      expect(keyed!.querySelector('[data-terminal]')).not.toBeNull()
-    })
+    // Both calls render the keyed shell family card, collapsed by default with
+    // the whole summary row as the toggle.
+    const rows = [...view.container.querySelectorAll('[data-sample="bash"]')]
+    expect(rows).toHaveLength(2)
+    for (const row of rows) {
+      const card = row.parentElement!
+      expect(card.querySelector('[data-terminal]')).toBeNull()
+      fireEvent.click(row)
+      await waitFor(() => {
+        expect(card.querySelector('[data-terminal]')).not.toBeNull()
+      })
+    }
 
-    // Fallback row: same unified expand interaction.
-    const fallback = view.container.querySelector('[data-tool="pwsh"]')
-    expect(fallback).not.toBeNull()
-    expect(fallback!.querySelector('[data-terminal]')).toBeNull()
-    fireEvent.click(fallback!.querySelector('[data-expandable]')!)
-    await waitFor(() => {
-      expect(fallback!.querySelector('[data-terminal]')).not.toBeNull()
-    })
+    // The generic row no longer answers shell calls: the keyed slot resolves
+    // both wire names, so nothing falls back to ToolRow.
+    expect(view.container.querySelector('[data-tool="pwsh"]')).toBeNull()
     await runtime.dispose()
   })
 })
