@@ -3148,6 +3148,36 @@ L1 四件见 §2bd/§2be；L2 见 §2bc 与 `reports/taiji_a30_stop_failure_a31_
 （`build_circuit_carried_envelope` 从自写档烤，产品默认面需要）；③默认位切换本身（含来源清单/
 守卫/回归）——按 owner 裁定执行或不执行。
 
+## 2bi. 出厂**信封自身面**的复测（换底之后才存在的缺口）：L2 真自停 **13/72**，守卫全绿
+
+换底把能力主张落在候选基底上（§2bh：L1 39/6、L2 13/72、L3 18/300），但**用户加载的是带回路信封**
+`checkpoints/seed_a31self_with_circuit.pt`——此前所有 `defaultload` 件量的都是**旧**默认件，
+新默认件在 L2/L3 面上没人量过。本轮补 L2：件
+`reports/taiji_a30_stop_failure_newdefault_envelope_20261001.json`（`stop_failure` **v6**，
+**不给 `--circuit`** ⇒ 走默认载入的自动挂载；自述 `mount_route=envelope_auto_mount`、
+`copy_circuit_present_after_load=true`、证据门 `effective=true`；24 项 × 3 轮＝72 次生成、预算 256、惩罚 2.0）。
+
+| 列 | 新默认信封 |
+|---|---|
+| **`generations_boundary_self_stop`（v6 真边界自停）** | **13／72** |
+| `generations_eating_full_budget` | 59 |
+| `generations_cut_by_turn_marker`（旧口径旁列） | **0** |
+| `replay_suspect_generations` / `all_surfaces_are_replayed_raw` | 0 / **true** |
+| 其余三条守卫 | 全真 |
+| `offender_count` | 6（描述性；旧默认同仪器是 5，差 1 **不过 ≥3 线** ⇒ 不判好坏） |
+
+**三句能引的**：
+① 换底后的**出厂面**第一次量到 **13/72** 真自停，与候选基底同值 ⇒ §2bh 那三线不是"只在烤信封之前成立"；
+② 旁列 `cut_by_turn_marker=0` 与主列 13 的落差，就是 v6 那次计数更正的实物证据——**旧口径会把 13 次自停读成 0**；
+③ 这一面有 13 个早停样本而 `all_surfaces_are_replayed_raw` 仍为 `true` ⇒ **v6 的换表示层修法可信**
+（既没像 v5 那样把成功样本记成面违规，也没为变绿放宽守卫——两式的公式都未改）。
+
+**同轮在跑的两枪（出数前不引用）**：新默认信封的 L3
+（`reports/taiji_a30_stop_signal_presence_newdefault_envelope_300doc_masked_recipeface_20261001.json`）；
+以及**旧默认件在同一 v6 列下的对照**（`reports/taiji_a30_stop_failure_olddefault_v6_20261001.json`）——
+"对照件 0/72"那句是旧列口径，v6 换了定义 ⇒ 不补这一枪，`13 对 0` 就不是同列比较。
+日志 `…/Local/Temp/a30/newdefault_l3.log`、`…/a30/olddefault_l2.log`，各自尾行 `rc_*=0` 才算完。
+
 ## 7c. owner 裁定回执（2026-10-01，重出基座＝**已执行**；候选＝自写档）
 
 裁决途径照 owner 2026-09-30 的"未及时决策按推荐推进"授权：弹窗两问（默认位走哪条／候选二选一）
