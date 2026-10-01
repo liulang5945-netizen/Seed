@@ -3178,6 +3178,23 @@ L1 四件见 §2bd/§2be；L2 见 §2bc 与 `reports/taiji_a30_stop_failure_a31_
 "对照件 0/72"那句是旧列口径，v6 换了定义 ⇒ 不补这一枪，`13 对 0` 就不是同列比较。
 日志 `…/Local/Temp/a30/newdefault_l3.log`、`…/a30/olddefault_l2.log`，各自尾行 `rc_*=0` 才算完。
 
+**同列对照已补上（旧默认件在 v6 下重测，`rc_olddefault_l2=0`）** ⇒ 上面那句"13 对 0"从此是**同列比较**：
+件 `reports/taiji_a30_stop_failure_olddefault_v6_20261001.json` 与 `..._newdefault_envelope_20261001.json`
+——同仪器（v6）、同面（**都不给 `--circuit`**，两枚件自述均 `mount_route=envelope_auto_mount`、
+证据门 `effective=true`）、同 24 项 × 3 轮＝72 次生成、同预算 256／惩罚 2.0：
+
+| | 旧默认 `seed_beta_with_circuit` | 新默认 `seed_a31self_with_circuit` |
+|---|---|---|
+| **`generations_boundary_self_stop`** | **0／72** | **13／72** |
+| `generations_eating_full_budget` | 72 | 59 |
+| `replay_suspect_generations` / `all_surfaces_are_replayed_raw` | 0 / true | 0 / true |
+| `offender_count` | 5 | 6（差 1，不过 ≥3 线 ⇒ 不判好坏） |
+
+⇒ **L2 在出厂面上第一次判过**（冻线 ≥6、实测量 13，且是换过定义之后的列）；
+这条是 §2bi 那句"能力提升"从主张变成读数的地方——**它量的是用户真正加载的那一枚**，不是候选基底。
+新默认件的 L3（300 篇、recipe 面、masked）仍在跑，出数前不引用；它只补"三线都在出厂面重述一遍"这一格，
+不影响 L2 这条已经成立。
+
 ## 7c. owner 裁定回执（2026-10-01，重出基座＝**已执行**；候选＝自写档）
 
 裁决途径照 owner 2026-09-30 的"未及时决策按推荐推进"授权：弹窗两问（默认位走哪条／候选二选一）
