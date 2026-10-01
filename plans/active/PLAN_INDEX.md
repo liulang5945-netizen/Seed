@@ -127,7 +127,7 @@ H05 150 次零崩溃；不挂回路对照归因首响应 0.73→1.50 s＝回路�
 产品 chat 总带 utf8_strict ⇒ required 链健康读数自 09-27 起静默取不出；已补签名＋守卫 2 条）＋修 `eval_taiji_cap0_baseline`
 自 09-20 起落后的 DEFAULT_CHECKPOINT stale 钉子（改跟随产品常量）（`56e9e61a`）；②**两条 cap0 面板重基**
 （inventory→`..._a31self_20261001.json`＋09-20 转历史常量＋新增 10-01 事实测试；legacy→`..._a31self_20261001.json`＋
-09-18 转 `RESAMPLE_BEFORE_UTF8_MASK`；历史件断言原位保留）。
+09-18 转 `RESAMPLE_BEFORE_UTF8_MASK`；历史件断言原位保留）。 **重基后全量：1867 passed／0 failed（本支线首次全绿）**。
 
 **队首（2026-09-30 rev66：owner 裁定①批（分块喂法进主线）＋②先补 L3；L3 已齐，候选档案出）**——
 ①**分块喂法已进主线**（`d7e3bcc9`：`--answer-chunking per-answer`＋`--answer-max-chars`，守卫 6 含节奏守卫），

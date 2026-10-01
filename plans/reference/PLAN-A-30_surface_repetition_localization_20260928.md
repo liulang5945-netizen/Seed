@@ -3185,6 +3185,8 @@ L1 四件见 §2bd/§2be；L2 见 §2bc 与 `reports/taiji_a30_stop_failure_a31_
   * legacy：`RESAMPLE` 指到 `reports/taiji_cap0_legacy_load_probe_a31self_20261001.json`；
     09-18 那份转 `RESAMPLE_BEFORE_UTF8_MASK`（09-27 掩码产品化是这批漂移的真因——trained 臂
     不再落回模板）。历史件的断言**原位保留**（读历史报告的测试仍钉旧世界），新事实由新样本承担。
+**重基后全量门禁（2026-10-01，当日第二次全量）：`tests/taiji_native tests/seed` = 1867 passed／0 failed**
+（1 skipped、1 xfailed＝DEBT-I9 那条有意 xfail）——本支线工作树**首次全绿**；两条面板红自此结清。
 换底自身面：F04 引用重指后门五条子句全真（gate_verdict=pass、行 partial）、eval-set 契约 15 绿、
 F04 契约 22 绿、默认位守卫 23 绿。
 
