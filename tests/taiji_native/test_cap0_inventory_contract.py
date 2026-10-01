@@ -217,6 +217,18 @@ def test_gap_statement_separates_the_three_facts(report):
 DRIVE_LETTER = re.compile(r"[A-Za-z]:[\\/]")
 
 
+# H19k (2026-09-30): this assertion deliberately resolves the inventory's recorded
+# relative path back to a real file, and the file it names is a *.pt -- gitignored by
+# policy (`.gitignore:50`), so a fresh checkout cannot satisfy it.  That is a property of
+# the assertion, not of the inventory, so guard the test rather than weaken the check.
+_SEALED_DEFAULT_CHECKPOINT = REPO / "checkpoints" / "seed_a31self_with_circuit.pt"
+
+
+@pytest.mark.skipif(
+    not _SEALED_DEFAULT_CHECKPOINT.is_file(),
+    reason="inventory records a gitignored *.pt default checkpoint, absent here: "
+    + str(_SEALED_DEFAULT_CHECKPOINT.relative_to(REPO)),
+)
 def test_sample_path_fields_are_relative_but_exception_text_is_not() -> None:
     """DEBT-I8 的**产物级**验证，成对断言 ⇒ 单向的"报告里没有盘符"那种写法骗不过来。
 
@@ -313,6 +325,15 @@ def test_the_2026_10_01_rebake_records_what_it_changed() -> None:
     assert after["raw_output_inventory"]["most_trained_entry"]["probed"] is True
 
 
+# H19k (2026-09-30): re-running the instrument needs the same gitignored checkpoints as
+# the assertion above.  Without them `run_inventory` takes its degraded branch and emits
+# an extra `raw_output_inventory.most_trained_turns` leaf, so the comparison reported
+# schema drift that does not exist -- this passes wherever the checkpoints are present.
+@pytest.mark.skipif(
+    not _SEALED_DEFAULT_CHECKPOINT.is_file(),
+    reason="run_inventory needs a gitignored *.pt checkpoint, absent here: "
+    + str(_SEALED_DEFAULT_CHECKPOINT.relative_to(REPO)),
+)
 def test_a_fresh_inventory_sample_reproduces_the_sealed_one(tmp_path) -> None:
     """普查 §3 的"复现封存"半边（第二支）：**当场重跑盘点**，与 09-18 那份逐叶比较。
 
