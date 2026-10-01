@@ -1264,8 +1264,20 @@ H19h 曾按「应当入库」的思路提议过，已在 H19j 更正。
 `LOCAL_ONLY_ARTIFACTS = (...)`，缺产物时跳过，跳过原因里点名每个缺失路径并说明它是被 ignore 的。
 个别测试可用 `@pytest.mark.no_local_artifacts` 豁免——用于「多数测试需产物、少数不需」的模块。
 
-**使整件事可验证的关键事实**：`git worktree add` 产出的 checkout 只有受跟踪文件，**就是 CI 的
-环境**。H19j 之前以「守卫本地验证不了」为由拒绝做守卫，那个理由是可以拆掉的。
+**使整件事可验证的关键事实**：`git worktree add` 产出的 checkout 只有受跟踪文件。H19j 之前
+以「守卫本地验证不了」为由拒绝做守卫，那个理由是可以拆掉的。
+
+> **H19w 更正（2026-09-30）：上面原文写的是「**就是 CI 的环境**」，这个推辑**过了头**。
+> worktree 只等价于 CI 的**「产物缺失」这一维**，不等价于其他维度，已被两个反例打脱：
+>
+> - **git 历史深度**：`actions/checkout@v4` 默认 `depth: 1`，CI 是浅克隆，worktree 是本地完整历史。
+>   `test_the_guard_rejects_the_pre_v4_instrument` 跑 `git show 72d81faf^:...`，本地通过、CI 报
+>   `CalledProcessError`。已给 `test` / `test-windows` 的 checkout 加 `fetch-depth: 0`。
+> - **依赖版本**：CI 装 `torch` **不锁版本**，本机是 2.13.0+cpu、CI 是 2.14.0+cpu。
+>   `test_copy_circuit_contract` 断言的是**bitwise identical**（哈希 `json.dumps(tensor.tolist())`），浮点核不同就是不同摘要。
+>
+> 对续作的启示：**验证保卫可行性时必须声明变量是哪些**；本轮我说过「worktree 就是 CI」，而它在
+> 依赖版本这一维上从来不成立。
 
 **测量轨迹**（`tests/taiji_native`，fresh checkout）：
 

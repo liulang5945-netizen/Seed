@@ -51,6 +51,15 @@ jobs:
         python-version: ["3.12"]
     steps:
       - uses: actions/checkout@v4
+        # H19w (2026-09-30): full history, not the default depth=1.
+        # tests/taiji_native/test_copy_circuit_contract.py runs
+        # `git show 72d81faf^:scripts/training/probe_taiji_a30_stop_failure...`, which a shallow
+        # checkout cannot resolve -- it failed with
+        # `CalledProcessError: ['git', 'show', '72d81faf^:...']` while passing locally, where the
+        # history is complete.  The checkout steps in docker-build / startup-smoke are left
+        # shallow: nothing there reads history.
+        with:
+          fetch-depth: 0
 
       - uses: actions/setup-python@v5
         with:
@@ -429,6 +438,15 @@ jobs:
     timeout-minutes: 90
     steps:
       - uses: actions/checkout@v4
+        # H19w (2026-09-30): full history, not the default depth=1.
+        # tests/taiji_native/test_copy_circuit_contract.py runs
+        # `git show 72d81faf^:scripts/training/probe_taiji_a30_stop_failure...`, which a shallow
+        # checkout cannot resolve -- it failed with
+        # `CalledProcessError: ['git', 'show', '72d81faf^:...']` while passing locally, where the
+        # history is complete.  The checkout steps in docker-build / startup-smoke are left
+        # shallow: nothing there reads history.
+        with:
+          fetch-depth: 0
 
       - uses: actions/setup-python@v5
         with:
