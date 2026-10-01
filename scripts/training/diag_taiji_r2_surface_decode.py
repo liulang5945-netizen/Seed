@@ -17,7 +17,11 @@ import sys
 from collections import Counter
 from pathlib import Path
 
-ROOT = Path(r"E:\Seed")
+# H19g (2026-09-30): was a hardcoded `Path(r"E:\Seed")`, which made every test that
+# imports this module fail on CI with
+#   FileNotFoundError: 'E:\Seed/data/simple_zh/simple_zh_texts.jsonl'
+# regardless of where the repository actually lives.  Derive it from this file instead.
+ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
 import torch  # noqa: E402

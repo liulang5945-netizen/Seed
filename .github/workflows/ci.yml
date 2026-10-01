@@ -75,7 +75,7 @@ jobs:
         #   是某一版检查器的产物，检查器静默升级（新增检查项）会让阈值凭空失效，
         #   表现为无人改代码而门禁数字自己变（实测 47→63、259→281 即由此产生）。
         #   凡「拿输出数字当阈值」的工具都必须钉版本，否则棘轮基线没有意义。
-        run: pip install sentencepiece pytest pytest-cov httpx fastapi python-multipart pydantic anyio cryptography ruff==0.16.4 black==26.5.1 mypy==2.3.1 pip-audit==2.10.1
+        run: pip install sentencepiece pytest pytest-cov httpx fastapi python-multipart pydantic anyio cryptography numpy ruff==0.16.4 black==26.5.1 mypy==2.3.1 pip-audit==2.10.1
 
       - name: Install package (editable)
         run: pip install -e . --no-deps
@@ -426,7 +426,7 @@ jobs:
         run: pip install torch --index-url https://download.pytorch.org/whl/cpu
 
       - name: Install test dependencies
-        run: pip install sentencepiece pytest pytest-cov httpx fastapi python-multipart pydantic anyio cryptography
+        run: pip install sentencepiece pytest pytest-cov httpx fastapi python-multipart pydantic anyio cryptography numpy
 
       - name: Install package (editable)
         run: pip install -e . --no-deps
