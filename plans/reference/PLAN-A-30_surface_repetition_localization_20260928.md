@@ -2338,8 +2338,13 @@ python scripts/training/train_seed_corpus.py   --resume output/a26_p1/checkpoint
    **守卫**：新件 9 条全绿＋定向回归 44 绿（a25 门路/G13/回路契约/持久化/roundtrip）；
    **全量门禁 `tests/taiji_native tests/seed`＝1815 绿／7 红**——其中四条（isolation／provenance／step0／
    startup smoke）是默认档翻转按设计敲响的契约红，已按"钉新真值＋点名面"对齐（提交 `d4e4f5f1`：
-   来源清单改记裁定装配，厂档全文保留为 factory_face，metadata 级断言点名出厂面）；复跑后余红＝
-   `test_platform_boundary`（并行 M6 会话未跟踪文件的既有环境红，A-29 §7 已登记该类）。
+   来源清单改记裁定装配，厂档全文保留为 factory_face，metadata 级断言点名出厂面）；复跑后我把余红记成 1（platform_boundary）——**这条表述不成立，2026-10-01 更正**：当时只跑了定向批、
+   没有重跑全量；2026-10-01 的全量实测是 3 红，即 platform_boundary 之外还有两条 cap0 面板红
+   （`test_cap0_inventory_contract::test_a_fresh_inventory_sample_reproduces_the_sealed_one`、
+   `test_cap0_legacy_load_contract::test_a_fresh_probe_sample_reproduces_the_sealed_one`）。
+   两条都是**既有漂移**（面板封存于 09-18/09-20，其后码面演进——penalty 2.0、产品 utf8_strict、G17 等；
+   legacy 那件的三条臂全用显式档、与默认换底无关；inventory 那条的额外飘移类＝本地 checkpoints/ 多出文件，
+   A-29 §7 已登记）⇒ 与重出无关，本轮按不动处置并在此点名。
    **两条登记**：①`*.pt` 不进 git（DEBT-I7），信封件钉在 sha＋载入行为上，重建仪器在册但
    torch.save 元数据不逐位（重建件 12,287,435 B ≠ 密封件，已实测登记）；②**dist 内产品件替换＝打包链一步，
    归 M6 R4/prepare 链执行**——M6 web lane 可能见到默认面变化（这是裁决的产品面变更本身），基线刷新归 M6。
