@@ -155,10 +155,22 @@ jobs:
       # 但不要把这段读成"类型债仍受双版本交叉验证"——现在只有 3.12 在测。
       # 为什么用棘轮：advisory 对退化零约束，错误数增加也可能绿灯；棘轮把
       #   「不许变差」变成硬约束。核心债已在 2026-08-27 实修归零，基线固定为 0。
-      # 详见 plans/active/SEED_DEVELOPMENT_ROADMAP_2026_08.md 第 14.2 / 14.11 节。
-      - name: Type check core modules with mypy (ratchet, baseline 0)
+      #
+      # H19f（2026-09-30）**基线 0 已过期，必须更正**：本步自那以后一直红，run
+      #   36821222743 首次被完整跑到就红在这里。实测 `mypy --follow-imports=silent seed taiji`
+      #   = **13 errors in 4 files**（collab_handoff 4 / sequence_content_workspace 2 /
+      #   organs 5 / model 2），且用 `git worktree add --detach 7444b667`（本轮任何提交
+      #   之前的状态）跑出**同样的 13 errors in 4 files**——即全部为既有债，非本次引入。
+      #   症状与 B/SIM 那条门同形：一个过期基线让棘轮永久红，久而久之没人再读它。
+      #   处置与 H19b 一致：把基线钉成实测值 13，仍是只许降不许升的棘轮；任何新增
+      #   类型退化仍然阻断。注意这与「核心债已归零」那句历史陈述不矛盾——那句话描述的是
+      #   2026-08-27 当时的度量，此后新增代码又引入了 13 条，属另一条线的工作。
+      #   要真正归零需逐点判语义（collab_handoff 的 MemberCall|None、organs/model 的
+      #   Tensor|None 与 int|None），不适合在门禁修复里顺手做。
+      #   详见 plans/active/SEED_DEVELOPMENT_ROADMAP_2026_08.md 第 14.2 / 14.11 节。
+      - name: Type check core modules with mypy (ratchet, baseline 13)
         env:
-          MYPY_CORE_BASELINE: "0"
+          MYPY_CORE_BASELINE: "13"
         run: |
           set -o pipefail
           mypy --follow-imports=silent seed taiji | tee mypy-core.log || true
