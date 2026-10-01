@@ -3327,3 +3327,82 @@ F04 契约 22 绿、默认位守卫 23 绿。
   G17 判据下的中间件读数（三件已入库，等 a31 满额后并入 §2bd 总表）：base a26_p1 不挂/挂＝**12/5**；
   control(+2M 无配方)＝**7/0**；a31@+740k(配方)＝**0/0**（每格分母 260；旧判据下同一批件是 241/100、40/24，
   两代判据不可直比）。
+
+### 第九次停靠登记（2026-10-01，换底之后）
+
+**本轮抓到并堵掉的一处仪器设计缺陷（不是这一枪的错，是枪的默认值错）**：
+`scripts/training/probe_taiji_a30_writeback_gate_shipping_face.py` 原来把模块级默认
+`OUT` 硬钉在 `reports/taiji_a30_writeback_gate_on_shipping_face_20260930.json`——**一份已入库、被 git 跟踪的读数件**。
+换底（10-01）之后按"装机面＝跟随 `DEFAULT_CHECKPOINT`"的语义重跑而不带 `--out-report`，跑完那一刻就会把
+旧默认面上那**唯一一次**门槛① 实测（60 次／放行 24／`allowed_rate=0.4`）无声覆盖掉。发现时机＝写盘前，停枪；
+被跟踪件当场复核未被改动（`git status --short` 对那一路径为空，worktree sha16 与 HEAD sha16 同为 `bb8de3c61198f222`）。
+**修法修的是生成器**：`--out-report` 改为**必给**，且目标已存在 ⇒ 打 `[拒绝落盘]` 到 stderr 并 `return 2`（重取必须换新文件名，让两件并存可比）。
+两条拒绝路当场实测：缺 `--out-report` ⇒ rc=**2**（argparse 的 required 报错），指向已存在件 ⇒ rc=**2**＋`[拒绝落盘]` 行——
+即这条守卫**已证明自己能为 false**，不是"加了个默认值"。
+
+**此刻在飞（两条，都不许在出数前发表任何读数）**：
+1. **L3 装配隔离**：`audit_taiji_a30_stop_signal_presence.py` v9 的 `--circuit` 路，面＝**候选基底**
+   `output/a31_chunked_self/checkpoint.pt`（烤电路之前的那份）＋运行时显式挂 `output/taiji_r2_copy_circuit_chat/judge/circuit-final.pt`，
+   300 文档／`--mask`／`--append-newline`（＝主线配方那张面），件＝
+   `reports/taiji_a30_stop_signal_presence_chunked_self_pluscircuit_300doc_masked_recipeface_20261001.json`，
+   日志尾标记 `rc_l3_isolation=0` 才算完。**已冻的两支判读（先于数写死）**：
+   * 落在 **≈0** ⇒ 装机面 L3 从 18/300 掉到 0/300 的机制＝**挂载的复制回路本身**（不是烤权重的差别）
+     ⇒ 进"回路的代价清单"第 4 项（§2v 那三条之外），且装机件的 L3 归因写成**装配**；
+   * 落在 **≈18** ⇒ 挂载路不是变量 ⇒ 改查**烤后权重**的差别，比对按 zip 条目名逐条来
+     （`torch.save` 存 storage 不存视图，且省零信封与带电路派生信封条目会错位——见记忆里那条"条目名不可跨保存形态移植"），**不**用 `state_dict()` 遍历。
+2. **门槛① 在新默认面重取**：同一仪器、同一题集 manifest，落新名
+   `reports/taiji_a30_writeback_gate_on_shipping_face_newdefault_20261001.json`，日志尾 `rc_wb_newdefault=0`。
+   **只按 §6.3 那四条已冻判读取数**（未武装／=1.0／≤0.5／其余），与旧默认那次是**两个面**，
+   引用时必须点名各自件里的 `checkpoint=` 字段；旧件保持原位、不删不改。
+
+### 第九次停靠·出数与判读（2026-10-02 凌晨，两条在飞都已落盘；另有一格免费中间档自己冒出来了）
+
+**（一）L3 装配隔离 ⇒ 落在第一支：抹掉接缝停止信号的是**挂载的复制回路本身**，不是烤权重那一步。**
+
+* 三面层自述相同，先排掉口径漂移：`decision_face=utf8_masked_legal_set`／`documents_face=corpus_body_plus_appended_newline`／
+  `generation_scope=teacher_forced_on_corpus`，且 `docs_sha256` 三件都是 `ecbfd8709904d824…`（同一批 300 篇字节的指纹）。
+* 隔离件（候选基底＋运行时 `enable_copy_circuit`，自述 `mount_route=enable_copy_circuit`、`copy_circuit_present=true`）
+  与出厂信封件**逐字段相同**：`end` 面 `boundary_is_argmax_count` **0 vs 0**、`p_boundary.mean` **0.001585 vs 0.001585**、
+  `boundary_rank.mean` **6.603333 vs 6.603333**；`other` 面 238,993 行上 `boundary_is_argmax_count` **1 vs 1**、
+  `next_true_is_argmax_count` **22432 vs 22432**；`argmax_winners_top5` 两串完全一样 `(230,240)(229,32)(32,19)(231,6)(52,3)`。
+  ⇒ 第二支（"仍≈18 就改查烤后权重"）**不需要走了**：若烤后的权重有任何差别，238,993 个位置上的六位均值不可能逐位相同。
+* 挂载态**两个独立信号**，不按命令行猜：① 进程内实读 load ⇒ 候选基底 `copy_circuit_present=False`＋`surface_gate_state=disarmed:artifact_absent`，
+  出厂信封 `True`＋`armed`＋override `True`；② 机检 18/300 那件所用的脚本版本（`git show d12fdf8a:`，件内 `format=v8`、
+  `started_utc=2026-09-30T23:33:42Z`）里 `--circuit` 与 `enable_copy_circuit` 各出现 **0 次** ⇒ 那一次跑**物理上挂不了回路**。
+* **登记面**：§2v 那份"回路的代价清单"自此加第 4 项——装机件的 L3 从 18/300 掉到 0/300 归因＝**装配（回路在载）**，
+  与 `build_circuit_carried_envelope` 这一步无关；"三线全过"那句里 L3 那一行的正确写法是
+  **「候选基底 18/300（≥150 的判据本来就没过）／同一基底挂上回路后 0/300」**。
+
+**（二）补那一格免费中间档冒出来一条更重的读数：回路在 L2 上也不是免费的。**
+
+同一台 v6 仪器、同一份 24 题 manifest、同一 `penalty=2.0/window=8/max_length=256`，三档并排（件都已在库）：
+
+| 装配 | `mount_route` | 门 effective | 真自停 `generations_boundary_self_stop` | `eating_full_budget` | `total_steps` | `offender_count` |
+| --- | --- | --- | --- | --- | --- | --- |
+| 候选基底**不挂回路**（新落盘 `..._chunked_self_nocircuit_20261002.json`） | `none` | **False** | **52/72** | 20 | 10474 | **0** |
+| 候选基底＋显式挂 seed-A 回路 | `enable_copy_circuit` | True | 13/72 | 59 | 17827 | 6 |
+| 出厂信封（自动挂载＝装机面） | `envelope_auto_mount` | True | 13/72 | 59 | 17827 | 6 |
+| 旧默认 `seed_beta_with_circuit`（对照，另一条权重） | `envelope_auto_mount` | True | 0/72 | 72 | 18432 | 5 |
+
+四行全部 `all_surfaces_are_replayed_raw=true`／`replay_suspect_generations=0`／`total_argmax_mismatch_steps=0`／
+`base_sha256_unchanged=true` ⇒ v6 的表示层重放在这三档上都没造假。
+**读法边界（不许越过）**：不挂回路那一档一次动了**两个变量**——回路不在载，且回路不在 ⇒ 证据门 `disarmed:artifact_absent`
+⇒ `chat(learn=True)` 的回写通道没有门槛①② 在拦。所以这句只能是：**"当前出厂装配把 52 次自身轨迹真自停压到 13 次、
+把 0 个拖写者压出 6 个"**，还**不能**写成"回路单独造成 −39"。要拆这一刀需要中间档（挂回路但把门的 override 置 False、
+或不挂回路但关掉回写），仪器现在**没有**这个旋钮 ⇒ 需要一次加性改动＋自带"能被走到"的守卫，不是一句命令行。
+但方向已经变了：**"回路随出厂装"（owner 2026-09-29 裁定 §7-1）当初没有这三行对照**，现在有了，它需要被重新看一眼。
+
+**（三）门槛① 在新默认面重取（落新名，旧件原位未动）**：`reports/taiji_a30_writeback_gate_on_shipping_face_newdefault_20261001.json`
+（`rc_wb_newdefault=0`；件内自述 `checkpoint=checkpoints\seed_a31self_with_circuit.pt`、`surface_gate_state=armed`、`circuit_present=true`、
+三条守卫全 true、`no_gate_state_rows=true`）：**60 次调用／放行 24／拦下 36 ⇒ `allowed_rate=0.4` ⇒ 已冻四支线的 `gate_blocks_majority`**；
+直方图 `not_well_formed:33／passed:24／not_ended_naturally:3`；被拦问句样例 `我的名字是什么？`、`地铁上被人踩了一脚。`、`我住哪？`。
+**一处不许读成"门与基座无关"的巧合**：这组数与旧默认面（`..._on_shipping_face_20260930.json`）**逐字段相同**，
+而两件的表层读数其实不同（L1 那批 12/2 与 9/15）。更可能是这条门的判决被 `not_well_formed` 一项主导（33/60），
+而不是两面的答复分布真的相同——**本件没测 `well_formed` 哪一条子判据在拦**，引用"回写通道因此安全"之前要先补那一格。
+
+**（四）仪器缺陷的修法与一处登记缺口**：`--out-report` 改必给＋拒绝覆盖已存在件，两条拒绝路各实测 rc=**2**（当场证明能为 false）。
+顺带机检来源清单引用的件是否真在库：`reports/taiji_f0_chunked_self_20261001.json` **盘上存在（103,220 B、件内
+`checkpoint=output/a31_chunked_self/checkpoint.pt`、`verdict="floor_pass"`）但一直没入库** ⇒ 本停靠补入（其余五件已 TRACKED）。
+同类缺陷的**存量**也量了一下（不在这轮改）：`scripts/training/` 里另有 **9** 个 r2 族仪器的默认输出指向**已入库**的读数件
+（`eval_taiji_r2_d1..d7`、`probe_taiji_r2_d4_copy_supervision`、`aggregate/eval_taiji_r2_content_binding`），
+A-30 族现在没有一枚（`stop_failure` 与 `audit_presence` 的默认名都不在盘上）。

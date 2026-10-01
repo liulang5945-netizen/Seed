@@ -15,6 +15,10 @@
 * 其余 ⇒ `gate_blocks_some`。
 
 写盘前后各取一次检查点 sha：本件只读，**落盘守卫必须为 true**（`chat(learn=True)` 只动内存态）。
+
+**落盘规矩（2026-10-01 加的）**：`--out-report` 必给，且拒绝落在已存在的件上。原来那个模块级默认
+`OUT` 硬钉在一份**已入库**的读数文件上——换底后重跑会在跑完那一刻无声覆盖掉旧默认面上那唯一一次
+门槛① 实测（2026-10-01 差点发生，停在写盘前）。重取要换新文件名，让两件并存可比。
 """
 
 from __future__ import annotations
@@ -40,7 +44,6 @@ from api.seed_runtime import DEFAULT_CHECKPOINT, SeedRuntime  # noqa: E402
 CHECKPOINT = DEFAULT_CHECKPOINT
 ROUNDS_PER_ITEM = 3
 ITEM_LIMIT = 24
-OUT = PROJECT_ROOT / "reports/taiji_a30_writeback_gate_on_shipping_face_20260930.json"
 
 
 def decide(gate_armed: bool, circuit_present: bool, calls: int, allowed: int) -> str:
@@ -67,10 +70,24 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--items", type=int, default=ITEM_LIMIT, help="取题集前 N 条（冒烟用小值）")
     parser.add_argument("--rounds", type=int, default=ROUNDS_PER_ITEM, help="每条题面走几轮")
-    parser.add_argument("--out-report", default=None)
+    parser.add_argument(
+        "--out-report",
+        required=True,
+        help="落盘路径，必须显式给：本件的每一次读数都是证据件，默认路径会静默覆盖已入库的那份",
+    )
     args = parser.parse_args()
     item_limit, rounds = args.items, args.rounds
-    out = Path(args.out_report) if args.out_report else OUT
+    out = Path(args.out_report)
+    if not out.is_absolute():
+        out = PROJECT_ROOT / out
+    # 已存在＝那是一次已有的取数（多数还在 git 里）。要重取就换个名字，让两件并存可比；
+    # 覆盖必须是一次刻意的删除，不是这个默认值替你做掉的决定。
+    if out.exists():
+        print(
+            f"[拒绝落盘] {out} 已存在 ⇒ 不许覆盖既有证据件，换个文件名再跑",
+            file=sys.stderr,
+        )
+        return 2
 
     sha_before = hashlib.sha256(CHECKPOINT.read_bytes()).hexdigest()
     runtime = SeedRuntime.load(CHECKPOINT)

@@ -1,0 +1,39 @@
+{
+  "format": 1,
+  "question": "装机形态（默认件自动挂回路）下，门槛① 在真实 chat 链上拦下多少答复",
+  "checkpoint": "checkpoints\\seed_a31self_with_circuit.pt",
+  "manifest": "plans/manifests/r2_copy_surface_extension_v1.json（同表层件那份）",
+  "chain": "SeedRuntime.chat(learn=True)，判定读产品披露字段 last_write_back_gate",
+  "items": 24,
+  "calls": 60,
+  "allowed": 24,
+  "blocked": 36,
+  "allowed_rate": 0.4,
+  "reason_histogram": {
+    "not_well_formed": 33,
+    "passed": 24,
+    "not_ended_naturally": 3
+  },
+  "blocked_question_samples": [
+    "我的名字是什么？",
+    "地铁上被人踩了一脚。",
+    "我住哪？"
+  ],
+  "assembly": {
+    "surface_gate_state": "armed",
+    "circuit_present": true,
+    "write_back_gate_last": [
+      false,
+      "not_well_formed"
+    ]
+  },
+  "instrument_guard": {
+    "checkpoint_untouched": true,
+    "expected_calls": 60,
+    "calls_match_expected": true,
+    "no_gate_state_rows": true
+  },
+  "sha256_before": "d6169a358eaee6d1",
+  "verdict": "gate_blocks_majority",
+  "started_utc": "2026-10-01T16:01:14.064218+00:00"
+}

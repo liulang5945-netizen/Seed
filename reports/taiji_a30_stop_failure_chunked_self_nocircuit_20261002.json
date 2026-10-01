@@ -1,0 +1,1153 @@
+{
+  "format": "taiji-a30-stop-failure-v6",
+  "format_note_v6": "v6 **换比较的表示层＋更正早停计数**（诊断更正，见 §2bb-追加三/追加四）：（一）v5 的逐位比较是『raw 重放 vs `chat()` 返回值』，而早停样本（边界符胜出即 break，fed 极短）的返回值是**器官占位句**（`NativeReadableTextLanguageOrgan._fallback_text`）——V019 首轮 1 字节生成对应 44 字占位句，逐位比较必然不等，L2 要测的成功被记成面违规。v6 的重放改走**完整产品面链**（`replay_surface_from_fed`：decode → marker 切割 → **同一个器官实例** emit）再与返回值比较；`replay_tiny_feed` 这一分类随之退役（深帧复现证明 prompt 的 50 字节全部在案，追加二『没复现 prompt』的误诊被纠正）。（二）`generations_eating_full_budget` 的旧定义（`generations − marker 切割数`）把**边界符自停**（fed < 预算＝生成环唯一提前出口）误标成吃满预算——v4/v5 的『早停 1/72、5/72』数的其实是marker 切割；真正的边界自停（对照件 0/72、self/quarter 各 19/72）从未被点数。v6 起 `eating_full_budget` 按 `fed ≥ max_length` 判，新增 `generations_boundary_self_stop`。`all_surfaces_are_replayed_raw` 与 `replay_suspect_generations` 的**公式不变**（后者改数 `surface_differs_from_replay`），严格性不降：真正被产品链改过的面仍然红。",
+  "format_note_v5": "v5 **加性**：每条 `surface_checks` 多一列 `mismatch_reason`（`replay_tiny_feed`＝回放侧只归到 <8 个符号，属**仪器归类缺陷**；`surface_differs_from_replay`＝真的面不一致），聚合里多一条 `replay_suspect_generations`。**严格守卫 `all_surfaces_are_replayed_raw` 一字未动**——放宽它等于挪门柱；加这一列只是为了让'仪器坏了'与'被测量不符'能被分开读（§2bb-追加二 复现 `V019` 得到的就是前者）。其余各表算法与语义未动 ⇒ 与 v4 同格可比。",
+  "format_note_v4": "v4 **加性**多存三条装配自述（`mount_route`／`copy_circuit_present_after_load`／`copy_evidence_utf8_gate`），其余字段与算法一字未动 ⇒ 与 v3 同格可比。加它的理由：`--circuit` 不给 **不等于**\"出厂无回路面\"——带回路的信封在 `SeedRuntime.load` 里会自动挂载，所以这张面是按命令行猜出来的。",
+  "prereg": "plans/reference/PLAN-A-30_surface_repetition_localization_20260928.md §2f 第 3 条",
+  "checkpoint": "output/a31_chunked_self/checkpoint.pt",
+  "circuit": null,
+  "circuit_sha256": null,
+  "mount_route": "none",
+  "copy_circuit_present_after_load": false,
+  "copy_evidence_utf8_gate_effective": false,
+  "copy_evidence_utf8_gate_config": false,
+  "copy_evidence_utf8_gate_override": null,
+  "repetition_penalty": 2.0,
+  "repetition_window": 8,
+  "max_length": 256,
+  "generation_loop_lines": [
+    3121,
+    3183
+  ],
+  "items": 24,
+  "instrument_guard": {
+    "observe_calls_recorded": true,
+    "observe_calls_by_caller": {
+      "generate:3089": 18984,
+      "generate:3168": 10474,
+      "generate:3080": 72
+    },
+    "all_items_reconstructed": true,
+    "items_failing_reconstruction": [],
+    "total_argmax_mismatch_steps": 0,
+    "all_surfaces_are_replayed_raw": true,
+    "replay_suspect_generations": 0,
+    "items_whose_surface_is_not_model_bytes": [],
+    "total_steps": 10474,
+    "generations": 72,
+    "generations_cut_by_turn_marker": 0,
+    "generations_boundary_self_stop": 52,
+    "generations_eating_full_budget": 20,
+    "base_sha256_unchanged": true
+  },
+  "failure_examples": [],
+  "offender_count": 0,
+  "offenders": [],
+  "per_item": [
+    {
+      "id": "V001",
+      "answer_run": 2,
+      "steps": 756,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "generations_boundary_self_stop": 1,
+      "generations_eating_full_budget": 2,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 244,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "同何：这首诗有吂何，大家有一起大何，大何，大何，",
+          "mismatch_reason": null,
+          "replay_surface_head": "同何：这首诗有吂何，大家有一起大何，大何，大何，"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "诗有吂\n\n老师：这首诗有吂\n耂\n答：这首诗有吂，",
+          "mismatch_reason": null,
+          "replay_surface_head": "诗有吂\n\n老师：这首诗有吂\n耂\n答：这首诗有吂，"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "诗有吂\n的有吂\n答：这首诗有吂\n\n老师，何大家有",
+          "mismatch_reason": null,
+          "replay_surface_head": "诗有吂\n的有吂\n答：这首诗有吂\n\n老师，何大家有"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 64,
+      "median_ratio_best_over_boundary": 16225.876,
+      "run_steps": 4
+    },
+    {
+      "id": "V002",
+      "answer_run": 2,
+      "steps": 539,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "generations_boundary_self_stop": 1,
+      "generations_eating_full_budget": 2,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "吂何，大何，大何，大何，大何，大何，大何，大何，",
+          "mismatch_reason": null,
+          "replay_surface_head": "吂何，大何，大何，大何，大何，大何，大何，大何，"
+        },
+        {
+          "fed_bytes": 27,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "这首诗有吂\n\n老师，",
+          "mismatch_reason": null,
+          "replay_surface_head": "这首诗有吂\n\n老师，"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "这首诗有吂，何大家有：这首一起大何，大何，大何，",
+          "mismatch_reason": null,
+          "replay_surface_head": "这首诗有吂，何大家有：这首一起大何，大何，大何，"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 64,
+      "median_ratio_best_over_boundary": 14883.427,
+      "run_steps": 2
+    },
+    {
+      "id": "V003",
+      "answer_run": 1,
+      "steps": 522,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "generations_boundary_self_stop": 1,
+      "generations_eating_full_budget": 2,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "好：这首诗有吂何，大何，大何，大何，大何，大何，",
+          "mismatch_reason": null,
+          "replay_surface_head": "好：这首诗有吂何，大何，大何，大何，大何，大何，"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "诗有吂\n译有，大何，大何，大何，大何，大何，大何",
+          "mismatch_reason": null,
+          "replay_surface_head": "诗有吂\n译有，大何，大何，大何，大何，大何，大何"
+        },
+        {
+          "fed_bytes": 10,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "诗中吂",
+          "mismatch_reason": null,
+          "replay_surface_head": "诗中吂"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 64,
+      "median_ratio_best_over_boundary": 16854.134,
+      "run_steps": 0
+    },
+    {
+      "id": "V004",
+      "answer_run": 2,
+      "steps": 315,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "generations_boundary_self_stop": 3,
+      "generations_eating_full_budget": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 224,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "同一起大何，大何，大何，大何，大何，大何，大何，",
+          "mismatch_reason": null,
+          "replay_surface_head": "同一起大何，大何，大何，大何，大何，大何，大何，"
+        },
+        {
+          "fed_bytes": 42,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "这首诗有吂\n\n老师：这首诗有吂",
+          "mismatch_reason": null,
+          "replay_surface_head": "这首诗有吂\n\n老师：这首诗有吂"
+        },
+        {
+          "fed_bytes": 49,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "这首诗有吂，何大家有，忙首诗有吂",
+          "mismatch_reason": null,
+          "replay_surface_head": "这首诗有吂，何大家有，忙首诗有吂"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 64,
+      "median_ratio_best_over_boundary": 14562.645,
+      "run_steps": 2
+    },
+    {
+      "id": "V005",
+      "answer_run": 1,
+      "steps": 423,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "generations_boundary_self_stop": 3,
+      "generations_eating_full_budget": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 241,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "同：这首诗有吂何，大家有一起大何，大何，大何，大",
+          "mismatch_reason": null,
+          "replay_surface_head": "同：这首诗有吂何，大家有一起大何，大何，大何，大"
+        },
+        {
+          "fed_bytes": 19,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "这首诗有吂，",
+          "mismatch_reason": null,
+          "replay_surface_head": "这首诗有吂，"
+        },
+        {
+          "fed_bytes": 163,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "这首诗有吂，何大家有一起大何，大何，大何，大何，",
+          "mismatch_reason": null,
+          "replay_surface_head": "这首诗有吂，何大家有一起大何，大何，大何，大何，"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 64,
+      "median_ratio_best_over_boundary": 15150.975,
+      "run_steps": 0
+    },
+    {
+      "id": "V006",
+      "answer_run": 2,
+      "steps": 479,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "generations_boundary_self_stop": 3,
+      "generations_eating_full_budget": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 208,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "好：这首诗有吂何，大何，大何，大何，大何，大何，",
+          "mismatch_reason": null,
+          "replay_surface_head": "好：这首诗有吂何，大何，大何，大何，大何，大何，"
+        },
+        {
+          "fed_bytes": 212,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "这首诗有吂\n\n老师：这首诗有吂\n耂\n答：这首诗有",
+          "mismatch_reason": null,
+          "replay_surface_head": "这首诗有吂\n\n老师：这首诗有吂\n耂\n答：这首诗有"
+        },
+        {
+          "fed_bytes": 59,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "这首诗有吂，\n答：这首诗有吂，何大家有，",
+          "mismatch_reason": null,
+          "replay_surface_head": "这首诗有吂，\n答：这首诗有吂，何大家有，"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 64,
+      "median_ratio_best_over_boundary": 14683.919,
+      "run_steps": 2
+    },
+    {
+      "id": "V007",
+      "answer_run": 2,
+      "steps": 535,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "generations_boundary_self_stop": 2,
+      "generations_eating_full_budget": 1,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "好，个如有，忙首诗有吂\n答：这首诗有吂\n答，心有",
+          "mismatch_reason": null,
+          "replay_surface_head": "好，个如有，忙首诗有吂\n答：这首诗有吂\n答，心有"
+        },
+        {
+          "fed_bytes": 79,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "诗，大何，大何，大何，大何，大何，大何，大何，吂",
+          "mismatch_reason": null,
+          "replay_surface_head": "诗，大何，大何，大何，大何，大何，大何，大何，吂"
+        },
+        {
+          "fed_bytes": 200,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "诗有吂\n\n老师：这首诗有吂\n\n老师，何大家有一起",
+          "mismatch_reason": null,
+          "replay_surface_head": "诗有吂\n\n老师：这首诗有吂\n\n老师，何大家有一起"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 64,
+      "median_ratio_best_over_boundary": 13839.171,
+      "run_steps": 4
+    },
+    {
+      "id": "V008",
+      "answer_run": 1,
+      "steps": 358,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "generations_boundary_self_stop": 3,
+      "generations_eating_full_budget": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 224,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "同：这首诗有吂何，大何，大何，大何，大何，大何，",
+          "mismatch_reason": null,
+          "replay_surface_head": "同：这首诗有吂何，大何，大何，大何，大何，大何，"
+        },
+        {
+          "fed_bytes": 124,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "这首诗有吂，一起大何，大何，大何，大何，大何，大",
+          "mismatch_reason": null,
+          "replay_surface_head": "这首诗有吂，一起大何，大何，大何，大何，大何，大"
+        },
+        {
+          "fed_bytes": 10,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "诗有吂",
+          "mismatch_reason": null,
+          "replay_surface_head": "诗有吂"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 64,
+      "median_ratio_best_over_boundary": 18201.849,
+      "run_steps": 0
+    },
+    {
+      "id": "V009",
+      "answer_run": 2,
+      "steps": 301,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "generations_boundary_self_stop": 3,
+      "generations_eating_full_budget": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 233,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "同一起大何，大何，大何，大何，大何，大何，大何，",
+          "mismatch_reason": null,
+          "replay_surface_head": "同一起大何，大何，大何，大何，大何，大何，大何，"
+        },
+        {
+          "fed_bytes": 27,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "这首诗有吂\n\n老师，",
+          "mismatch_reason": null,
+          "replay_surface_head": "这首诗有吂\n\n老师，"
+        },
+        {
+          "fed_bytes": 41,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "这首诗有吂\n老师：这首诗有吂",
+          "mismatch_reason": null,
+          "replay_surface_head": "这首诗有吂\n老师：这首诗有吂"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 64,
+      "median_ratio_best_over_boundary": 13189.168,
+      "run_steps": 2
+    },
+    {
+      "id": "V010",
+      "answer_run": 1,
+      "steps": 300,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "generations_boundary_self_stop": 2,
+      "generations_eating_full_budget": 1,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "吂何，大何，大何，大何，大何，大何，大何，大何，",
+          "mismatch_reason": null,
+          "replay_surface_head": "吂何，大何，大何，大何，大何，大何，大何，大何，"
+        },
+        {
+          "fed_bytes": 10,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "诗有吂",
+          "mismatch_reason": null,
+          "replay_surface_head": "诗有吂"
+        },
+        {
+          "fed_bytes": 34,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "这首诗有吂，何大家有，",
+          "mismatch_reason": null,
+          "replay_surface_head": "这首诗有吂，何大家有，"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 64,
+      "median_ratio_best_over_boundary": 16411.352,
+      "run_steps": 0
+    },
+    {
+      "id": "V011",
+      "answer_run": 1,
+      "steps": 357,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "generations_boundary_self_stop": 3,
+      "generations_eating_full_budget": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 184,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "好，一起大何，大何，大何，大何，大何，大何，大何",
+          "mismatch_reason": null,
+          "replay_surface_head": "好，一起大何，大何，大何，大何，大何，大何，大何"
+        },
+        {
+          "fed_bytes": 157,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "这首诗有吂，何大家有一起大何，忚有一起大何，大何",
+          "mismatch_reason": null,
+          "replay_surface_head": "这首诗有吂，何大家有一起大何，忚有一起大何，大何"
+        },
+        {
+          "fed_bytes": 16,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "这首诗有吂",
+          "mismatch_reason": null,
+          "replay_surface_head": "这首诗有吂"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 64,
+      "median_ratio_best_over_boundary": 16248.454,
+      "run_steps": 0
+    },
+    {
+      "id": "V012",
+      "answer_run": 1,
+      "steps": 454,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "generations_boundary_self_stop": 2,
+      "generations_eating_full_budget": 1,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "同一起大何，大何，大何，大何，大何，大何，大何，",
+          "mismatch_reason": null,
+          "replay_surface_head": "同一起大何，大何，大何，大何，大何，大何，大何，"
+        },
+        {
+          "fed_bytes": 41,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "这首诗有吂，\n答：这首诗有吂",
+          "mismatch_reason": null,
+          "replay_surface_head": "这首诗有吂，\n答：这首诗有吂"
+        },
+        {
+          "fed_bytes": 157,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "吂，一起大何，大何，大何，大何，大何，大何，大何",
+          "mismatch_reason": null,
+          "replay_surface_head": "吂，一起大何，大何，大何，大何，大何，大何，大何"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 64,
+      "median_ratio_best_over_boundary": 14286.742,
+      "run_steps": 0
+    },
+    {
+      "id": "V013",
+      "answer_run": 2,
+      "steps": 357,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "generations_boundary_self_stop": 2,
+      "generations_eating_full_budget": 1,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "同：这首诗有同：这首诗有吂何，大家有一起大何，大",
+          "mismatch_reason": null,
+          "replay_surface_head": "同：这首诗有同：这首诗有吂何，大家有一起大何，大"
+        },
+        {
+          "fed_bytes": 59,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "这首诗有吂，\n答：这首诗有吂，何大家有，",
+          "mismatch_reason": null,
+          "replay_surface_head": "这首诗有吂，\n答：这首诗有吂，何大家有，"
+        },
+        {
+          "fed_bytes": 42,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "这首诗有吂\n\n老师：这首诗有吂",
+          "mismatch_reason": null,
+          "replay_surface_head": "这首诗有吂\n\n老师：这首诗有吂"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 64,
+      "median_ratio_best_over_boundary": 12737.902,
+      "run_steps": 2
+    },
+    {
+      "id": "V014",
+      "answer_run": 1,
+      "steps": 300,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "generations_boundary_self_stop": 2,
+      "generations_eating_full_budget": 1,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 34,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "好，个如有，忙首诗有吂",
+          "mismatch_reason": null,
+          "replay_surface_head": "好，个如有，忙首诗有吂"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "这首诗有吂，一起大何，大何，大何，大何，大何，大",
+          "mismatch_reason": null,
+          "replay_surface_head": "这首诗有吂，一起大何，大何，大何，大何，大何，大"
+        },
+        {
+          "fed_bytes": 10,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "诗有吂",
+          "mismatch_reason": null,
+          "replay_surface_head": "诗有吂"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 64,
+      "median_ratio_best_over_boundary": 13949.708,
+      "run_steps": 0
+    },
+    {
+      "id": "V015",
+      "answer_run": 1,
+      "steps": 462,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "generations_boundary_self_stop": 2,
+      "generations_eating_full_budget": 1,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "同何：这首诗有吂，一起大何，大何，大何，大何，大",
+          "mismatch_reason": null,
+          "replay_surface_head": "同何：这首诗有吂，一起大何，大何，大何，大何，大"
+        },
+        {
+          "fed_bytes": 34,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "这首诗有吂，何大家有，",
+          "mismatch_reason": null,
+          "replay_surface_head": "这首诗有吂，何大家有，"
+        },
+        {
+          "fed_bytes": 172,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "这首诗有吂，何大家有一起大何，大何，大何，大何，",
+          "mismatch_reason": null,
+          "replay_surface_head": "这首诗有吂，何大家有一起大何，大何，大何，大何，"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 64,
+      "median_ratio_best_over_boundary": 14541.759,
+      "run_steps": 0
+    },
+    {
+      "id": "V016",
+      "answer_run": 1,
+      "steps": 323,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "generations_boundary_self_stop": 2,
+      "generations_eating_full_budget": 1,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "好，个大家有一起大何，大何，大何，大何，大何，大",
+          "mismatch_reason": null,
+          "replay_surface_head": "好，个大家有一起大何，大何，大何，大何，大何，大"
+        },
+        {
+          "fed_bytes": 26,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "这首诗有吂\n老师，",
+          "mismatch_reason": null,
+          "replay_surface_head": "这首诗有吂\n老师，"
+        },
+        {
+          "fed_bytes": 41,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "这首诗有吂\n老师：这首诗有吂",
+          "mismatch_reason": null,
+          "replay_surface_head": "这首诗有吂\n老师：这首诗有吂"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 64,
+      "median_ratio_best_over_boundary": 13144.378,
+      "run_steps": 0
+    },
+    {
+      "id": "V017",
+      "answer_run": 2,
+      "steps": 327,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "generations_boundary_self_stop": 3,
+      "generations_eating_full_budget": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 244,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "同何：这首诗有吂何，大家有一起大何，大何，大何，",
+          "mismatch_reason": null,
+          "replay_surface_head": "同何：这首诗有吂何，大家有一起大何，大何，大何，"
+        },
+        {
+          "fed_bytes": 27,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "这首诗有吂\n\n老师，",
+          "mismatch_reason": null,
+          "replay_surface_head": "这首诗有吂\n\n老师，"
+        },
+        {
+          "fed_bytes": 56,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "这首诗有吂\n老师，何大家有一这首诗有吂",
+          "mismatch_reason": null,
+          "replay_surface_head": "这首诗有吂\n老师，何大家有一这首诗有吂"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 64,
+      "median_ratio_best_over_boundary": 14031.002,
+      "run_steps": 2
+    },
+    {
+      "id": "V018",
+      "answer_run": 2,
+      "steps": 339,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "generations_boundary_self_stop": 2,
+      "generations_eating_full_budget": 1,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "吂何，大何，大何，大何，大何，大何，大何，大何，",
+          "mismatch_reason": null,
+          "replay_surface_head": "吂何，大何，大何，大何，大何，大何，大何，大何，"
+        },
+        {
+          "fed_bytes": 34,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "诗有吂\n\n老师，\n的有吂，",
+          "mismatch_reason": null,
+          "replay_surface_head": "诗有吂\n\n老师，\n的有吂，"
+        },
+        {
+          "fed_bytes": 49,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "这首诗有吂，何大家有：这首诗有吂",
+          "mismatch_reason": null,
+          "replay_surface_head": "这首诗有吂，何大家有：这首诗有吂"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 64,
+      "median_ratio_best_over_boundary": 14436.66,
+      "run_steps": 2
+    },
+    {
+      "id": "V019",
+      "answer_run": 2,
+      "steps": 495,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "generations_boundary_self_stop": 2,
+      "generations_eating_full_budget": 1,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 220,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "好，个如有：这首诗有吂一起大何，大何，大何，大何",
+          "mismatch_reason": null,
+          "replay_surface_head": "好，个如有：这首诗有吂一起大何，大何，大何，大何"
+        },
+        {
+          "fed_bytes": 19,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "这首诗有吂，",
+          "mismatch_reason": null,
+          "replay_surface_head": "这首诗有吂，"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "这首诗有吂\n\n老师：这首诗有吂\n\n老师，何大家有",
+          "mismatch_reason": null,
+          "replay_surface_head": "这首诗有吂\n\n老师：这首诗有吂\n\n老师，何大家有"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 64,
+      "median_ratio_best_over_boundary": 15054.948,
+      "run_steps": 4
+    },
+    {
+      "id": "V020",
+      "answer_run": 1,
+      "steps": 307,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "generations_boundary_self_stop": 3,
+      "generations_eating_full_budget": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 224,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "好，个如有，大何，大何，大何，大何，大何，大何，",
+          "mismatch_reason": null,
+          "replay_surface_head": "好，个如有，大何，大何，大何，大何，大何，大何，"
+        },
+        {
+          "fed_bytes": 34,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "这首诗有吂，何大家有，",
+          "mismatch_reason": null,
+          "replay_surface_head": "这首诗有吂，何大家有，"
+        },
+        {
+          "fed_bytes": 49,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "这首诗有吂，何大家有，忙首诗有吂",
+          "mismatch_reason": null,
+          "replay_surface_head": "这首诗有吂，何大家有，忙首诗有吂"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 64,
+      "median_ratio_best_over_boundary": 15442.112,
+      "run_steps": 0
+    },
+    {
+      "id": "V021",
+      "answer_run": 2,
+      "steps": 768,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "generations_boundary_self_stop": 0,
+      "generations_eating_full_budget": 3,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "好，一起大何，大何，大何，大何，大何，大何，大何",
+          "mismatch_reason": null,
+          "replay_surface_head": "好，一起大何，大何，大何，大何，大何，大何，大何"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "这首诗有吂，\n答：这首诗有吂，一起大何，大何，大",
+          "mismatch_reason": null,
+          "replay_surface_head": "这首诗有吂，\n答：这首诗有吂，一起大何，大何，大"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "这首诗有吂\n\n老师：这首诗有吂\n\n老师：这首一起",
+          "mismatch_reason": null,
+          "replay_surface_head": "这首诗有吂\n\n老师：这首诗有吂\n\n老师：这首一起"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 64,
+      "median_ratio_best_over_boundary": 15751.171,
+      "run_steps": 4
+    },
+    {
+      "id": "V022",
+      "answer_run": 1,
+      "steps": 474,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "generations_boundary_self_stop": 2,
+      "generations_eating_full_budget": 1,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 205,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "同何：这首诗有吂，一起大何，大何，大何，大何，大",
+          "mismatch_reason": null,
+          "replay_surface_head": "同何：这首诗有吂，一起大何，大何，大何，大何，大"
+        },
+        {
+          "fed_bytes": 13,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "诗中吂，",
+          "mismatch_reason": null,
+          "replay_surface_head": "诗中吂，"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "这首诗有吂，何大家有一起大何，大何，大何，大何，",
+          "mismatch_reason": null,
+          "replay_surface_head": "这首诗有吂，何大家有一起大何，大何，大何，大何，"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 64,
+      "median_ratio_best_over_boundary": 13751.995,
+      "run_steps": 0
+    },
+    {
+      "id": "V023",
+      "answer_run": 1,
+      "steps": 474,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "generations_boundary_self_stop": 3,
+      "generations_eating_full_budget": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 238,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "好，一这首诗有吂何，大何，大何，大何，大何，大何",
+          "mismatch_reason": null,
+          "replay_surface_head": "好，一这首诗有吂何，大何，大何，大何，大何，大何"
+        },
+        {
+          "fed_bytes": 34,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "这首诗有吂，何大家有，",
+          "mismatch_reason": null,
+          "replay_surface_head": "这首诗有吂，何大家有，"
+        },
+        {
+          "fed_bytes": 202,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "这首诗有吂，何大家有，一起大何，大何，大何，大何",
+          "mismatch_reason": null,
+          "replay_surface_head": "这首诗有吂，何大家有，一起大何，大何，大何，大何"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 64,
+      "median_ratio_best_over_boundary": 14486.365,
+      "run_steps": 0
+    },
+    {
+      "id": "V024",
+      "answer_run": 2,
+      "steps": 509,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "generations_boundary_self_stop": 2,
+      "generations_eating_full_budget": 1,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "好，个大家有一起大何，大何，大何，大何，大何，大",
+          "mismatch_reason": null,
+          "replay_surface_head": "好，个大家有一起大何，大何，大何，大何，大何，大"
+        },
+        {
+          "fed_bytes": 206,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "这首诗有吂\n老师，大何，大何，大何，大何，大何，",
+          "mismatch_reason": null,
+          "replay_surface_head": "这首诗有吂\n老师，大何，大何，大何，大何，大何，"
+        },
+        {
+          "fed_bytes": 47,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "诗有吂\n\n老师：这首诗有吂\n\n老师，",
+          "mismatch_reason": null,
+          "replay_surface_head": "诗有吂\n\n老师：这首诗有吂\n\n老师，"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 64,
+      "median_ratio_best_over_boundary": 15378.431,
+      "run_steps": 4
+    }
+  ],
+  "started_utc": "2026-10-01T16:07:17Z"
+}
