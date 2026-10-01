@@ -172,7 +172,8 @@ def main(argv: list[str] | None = None) -> int:
     files: list[Path] = []
     for candidate in args.checkpoints:
         if candidate.is_dir():
-            files.extend(sorted(candidate.glob("*.pt")))
+            # DEBT-G15：目录枚举跳过点前缀临时件；显式点名的路径仍按原样接受（下面 is_file 那一支）
+            files.extend(sorted(p for p in candidate.glob("*.pt") if not p.name.startswith(".")))
         elif candidate.is_file():
             files.append(candidate)
         else:

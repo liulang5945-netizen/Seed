@@ -973,7 +973,7 @@
         {
           "id": "F04",
           "capability": "整模型加载链（CAP-0）",
-          "reference": "reports/taiji_cap0_inventory_a31self_20261001.json",
+          "reference": "reports/taiji_cap0_inventory_a31self_g15_20261002.json",
           "gate": "默认入口可加载并产出原始输出",
           "must_show": "现状：默认入口 metadata.tick=2（刚初始化基底）；最训练过的 16M-tick 状态被身份器官守卫挡住 ⇒ 如实记为缺口"
         }
@@ -1248,7 +1248,7 @@
       {
         "path": "dimensions.F.items[F04].reference",
         "old": "reports/taiji_cap0_inventory_20260915.json（v1 原文）",
-        "new": "reports/taiji_cap0_inventory_a31self_20261001.json（2026-10-01 重出后的现行盘点；两段换底历史见 history）",
+        "new": "reports/taiji_cap0_inventory_a31self_g15_20261002.json（现行盘点：默认基座仍是 10-01 重出那份，但 checkpoint_inventory 已不含两枚点前缀隐藏临时件＝DEBT-G15 枚举过滤落地；换底与重基历史见 history）",
         "why": "默认基座两次换底（09-20 到 16M 训练态；10-01 到自写档候选 a31_chunked_self 的带回路信封）。被引盘点必须描述**现行**默认基座，否则 F04 会拿旧产品事实出今天的结论。"
       }
     ],
@@ -1271,6 +1271,13 @@
         "authority": "owner 授权『未及时决策按推荐推进』⇒ 按推荐执行重出默认基座（PLAN-A-30 §7c）",
         "reference_before": "reports/taiji_cap0_inventory_beta4_20260920.json",
         "reference_after": "reports/taiji_cap0_inventory_a31self_20261001.json"
+      },
+      {
+        "date": "2026-10-02",
+        "authority": "owner 弹窗授权 DEBT-G15 动手＋『长时间未决策按推荐推进』（重基盘点面板）",
+        "reference_before": "reports/taiji_cap0_inventory_a31self_20261001.json",
+        "reference_after": "reports/taiji_cap0_inventory_a31self_g15_20261002.json",
+        "not_a_substrate_change": "默认基座一字未动（仍是 seed_a31self_with_circuit.pt）；这次只因为四处枚举加了点前缀过滤，面板少两行隐藏临时件 ⇒ 记为重基不是换底，10-01 那笔产品事实仍由旧件钉着"
       }
     ]
   }

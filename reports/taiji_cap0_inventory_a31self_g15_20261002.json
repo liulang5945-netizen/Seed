@@ -1,0 +1,293 @@
+{
+  "format": "taiji-cap0-inventory-report-v1",
+  "version": 1,
+  "status": "completed",
+  "delivery_plan": "plans/active/roadmap/07_MINI_MODEL_DELIVERY.md",
+  "scope": "CAP-0 inventory: what model actually runs, through which chain, and what it emits today.  Diagnostic probe only; the frozen B-H baseline is NOT produced here",
+  "does_not_do": [
+    "trains nothing and writes no checkpoint",
+    "does not freeze or score the official B/C/D/E/G sets (that freeze is a decision)",
+    "does not switch product behaviour or external providers",
+    "reports 'untested' rather than 0 or pass for unmeasured dimensions"
+  ],
+  "record": {
+    "commit": "cbbb473934c4e1c339338968cc55292fc7226343",
+    "default_checkpoint": "checkpoints\\seed_a31self_with_circuit.pt"
+  },
+  "checkpoint_inventory": [
+    {
+      "filename": "resumed_seed_corpus.pt",
+      "bytes": 4144660,
+      "modified_utc": "2026-08-23T12:57:03Z",
+      "is_default": false,
+      "readable": true,
+      "tick": 4800200,
+      "trainer": "resume_checkpoint",
+      "saved_at_utc": "2026-08-23T12:57:03Z",
+      "has_metadata": true,
+      "model_format": "taiji-native-v8",
+      "has_taiji_adapter_block": false
+    },
+    {
+      "filename": "resumed_seed_native.pt",
+      "bytes": 39165343,
+      "modified_utc": "2026-09-27T06:09:26Z",
+      "is_default": false,
+      "readable": true,
+      "tick": 4120,
+      "trainer": "resume_checkpoint",
+      "saved_at_utc": "2026-09-27T06:09:26Z",
+      "has_metadata": true,
+      "model_format": "taiji-native-v10",
+      "has_taiji_adapter_block": true
+    },
+    {
+      "filename": "seed_a31self_with_circuit.pt",
+      "bytes": 12627371,
+      "modified_utc": "2026-09-30T23:44:07Z",
+      "is_default": true,
+      "readable": true,
+      "tick": null,
+      "trainer": null,
+      "saved_at_utc": null,
+      "has_metadata": false,
+      "model_format": "taiji-native-v10",
+      "has_taiji_adapter_block": true
+    },
+    {
+      "filename": "seed_beta.pt",
+      "bytes": 4143542,
+      "modified_utc": "2026-08-24T02:23:26Z",
+      "is_default": false,
+      "readable": true,
+      "tick": 16000000,
+      "trainer": "train_seed_corpus",
+      "saved_at_utc": "2026-08-24T02:23:26Z",
+      "has_metadata": true,
+      "model_format": "taiji-native-v8",
+      "has_taiji_adapter_block": false
+    },
+    {
+      "filename": "seed_beta_with_circuit.pt",
+      "bytes": 12291435,
+      "modified_utc": "2026-09-29T07:33:23Z",
+      "is_default": false,
+      "readable": true,
+      "tick": null,
+      "trainer": null,
+      "saved_at_utc": null,
+      "has_metadata": false,
+      "model_format": "taiji-native-v10",
+      "has_taiji_adapter_block": true
+    },
+    {
+      "filename": "seed_corpus.pt",
+      "bytes": 43223183,
+      "modified_utc": "2026-09-28T08:37:38Z",
+      "is_default": false,
+      "readable": true,
+      "tick": 2,
+      "trainer": "api_seed_runtime",
+      "saved_at_utc": "2026-09-18T14:18:32Z",
+      "has_metadata": true,
+      "model_format": "taiji-native-v10",
+      "has_taiji_adapter_block": true
+    },
+    {
+      "filename": "seed_corpus_prev_20260823.pt",
+      "bytes": 4142296,
+      "modified_utc": "2026-08-22T18:28:18Z",
+      "is_default": false,
+      "readable": true,
+      "tick": null,
+      "trainer": null,
+      "saved_at_utc": null,
+      "has_metadata": false,
+      "model_format": "taiji-native-v8",
+      "has_taiji_adapter_block": false
+    },
+    {
+      "filename": "seed_native.pt",
+      "bytes": 38933083,
+      "modified_utc": "2026-09-27T06:06:41Z",
+      "is_default": false,
+      "readable": true,
+      "tick": 2102,
+      "trainer": "resume_checkpoint",
+      "saved_at_utc": "2026-09-27T06:06:41Z",
+      "has_metadata": true,
+      "model_format": "taiji-native-v10",
+      "has_taiji_adapter_block": true
+    }
+  ],
+  "model_reality": {
+    "checkpoint_exists": true,
+    "default_checkpoint": "seed_a31self_with_circuit.pt",
+    "load_ok": true,
+    "load_error": null,
+    "default_tick": null,
+    "most_trained_checkpoint": "seed_beta.pt",
+    "most_trained_tick": 16000000,
+    "wiring_defect": false,
+    "wiring_defect_statement": null,
+    "default_model_format": "taiji-native-v10",
+    "most_trained_model_format": "taiji-native-v8",
+    "stranded_is_legacy_format": true,
+    "stranded_defect_diagnosis": "restore() supports the legacy formats it declares (LEGACY_CHECKPOINT_FORMATS = v8/v9). The identity-organ branch now applies the same 'payload absent in a legacy format' migration the predictive context already used (M2-2h -> M2-2i), so a v8 file that predates the organ loads and keeps its freshly initialised organ. The remaining refusal is 'enabled identity organ checkpoint payload is missing', which now applies only to current-format checkpoints; organ lineage validation is unchanged and still fails closed on a payload from a different core",
+    "missing_checkpoint_rejected": true,
+    "missing_checkpoint_error": "FileNotFoundError: [Errno 2] No such file or directory: 'E:\\\\Seed\\\\checkpoints\\\\.cap0-does-not-exist.pt'",
+    "fresh_process": true,
+    "external_provider_used": false
+  },
+  "raw_output_inventory": {
+    "probe_kind": "diagnostic, not the frozen B-H evaluation set",
+    "default_entry": {
+      "probed": true,
+      "load_ok": true,
+      "load_error": null,
+      "tick": 273,
+      "chat_organ_backend": "native-readable",
+      "turns_answered": 7,
+      "turns_errored": 0,
+      "total_output_bytes": 1785,
+      "template_signature": {
+        "turns_considered": 7,
+        "distinct_signatures": 7,
+        "templated": false,
+        "signature": null
+      }
+    },
+    "most_trained_entry": {
+      "probed": true,
+      "load_ok": true,
+      "load_error": null,
+      "tick": 16000000,
+      "chat_organ_backend": "native-readable",
+      "turns_answered": 7,
+      "turns_errored": 0,
+      "total_output_bytes": 1785,
+      "template_signature": {
+        "turns_considered": 7,
+        "distinct_signatures": 7,
+        "templated": false,
+        "signature": null
+      }
+    },
+    "default_turns": [
+      {
+        "label": "identity",
+        "prompt": "请用一句话说明你是谁、由什么运行。",
+        "raw_output": "诗有吂何，大家有一起大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，",
+        "output_bytes": 255,
+        "seconds": 1.897
+      },
+      {
+        "label": "greeting",
+        "prompt": "你好。",
+        "raw_output": "请请请请请一请请请一请请请请一请话请请一请话请请一请话请请请一请话话话请由一请请请请请请话误请请请话误请请请请话误请请请由一话话话请话请话话误请请请请话误请请请请由请请请",
+        "output_bytes": 255,
+        "seconds": 2.878
+      },
+      {
+        "label": "knowledge_short",
+        "prompt": "水的沸点在标准大气压下是多少摄氏度？",
+        "raw_output": "误请请请请请请一话请请请一请话请请一请话请话请请一请话话请请请请话说请话说话话话话请话请请请丯话话话请话请请说是请请请请话话话请由一请话话请请话请话话话话请话请由一请话请",
+        "output_bytes": 255,
+        "seconds": 4.001
+      },
+      {
+        "label": "context_a",
+        "prompt": "请记住这个名称：项目内部代号是「星桥」。",
+        "raw_output": "请请请请请请一请请请一请话请一请话话请请请一请话请话话话请说是请请请请请请请话话话话误请请请请话说话话说话说是话请请请请由一话话话话话请请话请话话说话请由一话话话请话请请",
+        "output_bytes": 255,
+        "seconds": 4.754
+      },
+      {
+        "label": "context_b",
+        "prompt": "我刚才说的内部代号是什么？",
+        "raw_output": "郘请请请请请请请请请请请请请请请请请请请诀名请请请请请请请请请请请请这个请请请请请请这个请请请请这个内郘请请请这个内郘请请这个内请请这个内请请这个内请这个内这个内郘请这个",
+        "output_bytes": 255,
+        "seconds": 5.888
+      },
+      {
+        "label": "unknown_boundary",
+        "prompt": "请举一个你确实无法回答的问题，并说明为什么无法回答。",
+        "raw_output": "郣内郣内郣内郣内郯代内郣内郣内郯代内郣内郣内郣内郣内郯代内郣内郣内郯代内郣内郉才说皉代内郣内郣内郣内郣内郣内郣内郣内郯代内郣内郣内郣内郣内郯代内郣内郣内郣内郣内郯代内郣内",
+        "output_bytes": 255,
+        "seconds": 6.949
+      },
+      {
+        "label": "material_qa",
+        "prompt": "材料：星桥项目在 2026 年 9 月完成 B2 选择门，结果是负结果。问题：B2 的结果是什么？",
+        "raw_output": "名这个名请请这个名请这个名请这个名请这个名请这个名这个名请这个名请这个名请请这个名这个名请这个名请请这个名请请这个名这个名请这个名这个名请这个名这个名请这个名这个名请这个",
+        "output_bytes": 255,
+        "seconds": 8.164
+      }
+    ],
+    "most_trained_turns": [
+      {
+        "label": "identity",
+        "prompt": "请用一句话说明你是谁、由什么运行。",
+        "raw_output": "则则为一一一一一丈（我䉉：我他有）（君孟孟到，大家刟则人人人人人人人人五仓有君人他君则何家则你他君䲡人君䌫家则人下个是有我他师，制刑们一个刈君，刈摢䟥下有，制刑们不想有我",
+        "output_bytes": 255,
+        "seconds": 0.98
+      },
+      {
+        "label": "greeting",
+        "prompt": "你好。",
+        "raw_output": "「君分君家则么君人人人人人人人人人下君䨁家则有君为，他师，制刑们不想是有我他师，制则亯有我们一个刈尝君人人人人个刈尝君䃽宨尝君亚。\n\n\n\n\n\n\n\n\n（（（）：有君刺学他寴刍想有所个我",
+        "output_bytes": 255,
+        "seconds": 1.716
+      },
+      {
+        "label": "knowledge_short",
+        "prompt": "水的沸点在标准大气压下是多少摄氏度？",
+        "raw_output": "制则么嶈摢个是是我人人人人人人人他师，制则予君一个刈尝君亼\n\n\n戈（我们下好家刺君人大家刚。\n\n\n\n\n\n\n\n\n（（）：有君，当君，刍有君，则有是人了下个刈摢他吆则们一个刟刑䧁倂\n\n\n\n\n\n\n\n\n\n（（",
+        "output_bytes": 256,
+        "seconds": 2.565
+      },
+      {
+        "label": "context_a",
+        "prompt": "请记住这个名称：项目内部代号是「星桥」。",
+        "raw_output": "我人人人人人人人人个刍，到：我们一个我䈑以诇文文文愶别则体君人为，则使是有才我他师（则人下师，到会我亰下个君刺君刟刑你个刈君使是有扚我他个师，制君家刟刑了人人人人人人个君",
+        "output_bytes": 255,
+        "seconds": 3.449
+      },
+      {
+        "label": "context_b",
+        "prompt": "我刚才说的内部代号是什么？",
+        "raw_output": "到：君家则亐个是有才我他师，到，则了了个刘君刟刑你这我个是有我他君为人人人人个君䘯是他君为则你为，尝君则使其则亂\n\n杈，到：有君，下帀个则，为君孟孟制刑他埶则为一一一一一刑",
+        "output_bytes": 254,
+        "seconds": 4.331
+      },
+      {
+        "label": "unknown_boundary",
+        "prompt": "请举一个你确实无法回答的问题，并说明为什么无法回答。",
+        "raw_output": "我他师，到）：我人人人人人人人人不想有君尝君尝君家则人吟。\n\n\n戈（（（我亰：有君为到，到，到，家刽宺人人人个利是君刍想有我他师亂很听弈为，利是想有所先常楼刽家刟。\n\n\n戈摈：我",
+        "output_bytes": 255,
+        "seconds": 5.286
+      },
+      {
+        "label": "material_qa",
+        "prompt": "材料：星桥项目在 2026 年 9 月完成 B2 选择门，结果是负结果。问题：B2 的结果是什么？",
+        "raw_output": "分则人师，则个刈）：我人个刈（君为师，为君君刺人人人人人个君宨君人个利有君后吟别制刑他帥不惰是有扚我他师，俙我他个我他君则体家则人人人人人亄忙我䟥下有，俙我他师则尝君则亶",
+        "output_bytes": 255,
+        "seconds": 6.209
+      }
+    ]
+  },
+  "dimensions": {
+    "A_model_reality": "measured (load chain, mode, missing-checkpoint rejection, tick provenance)",
+    "B_basic_dialogue": "untested (frozen set not yet frozen)",
+    "C_basic_qa": "untested (frozen set not yet frozen)",
+    "D_context": "untested (frozen set not yet frozen)",
+    "E_instruction_reasoning": "untested (frozen set not yet frozen)",
+    "F_representative_capability": "partial: B1/B2 gates exist and are green/negative respectively, but they are selector-surface results, not whole-model conversation ability",
+    "G_uncertainty_safety": "untested (frozen set not yet frozen)",
+    "H_performance_stability": "untested (no calibrated caps yet)",
+    "I_continual_adaptation": "untested (not required for a first L3 delivery)"
+  },
+  "gap_statement": "no trained checkpoint was found on record, so the default chain's lack of content ability cannot be separated from a wiring defect",
+  "next_decision": "two things, in order: (a) decide the correct default checkpoint / loading policy (a defect fix, not a research question); (b) freeze the CAP evaluation set (07 section 4.1: B/C/D/E 20 items each, G >= 20, A/H deterministic, F via the existing capability contracts) BEFORE any candidate score is seen, so the first scored B-H baseline is legitimate",
+  "elapsed_seconds": 63.602
+}

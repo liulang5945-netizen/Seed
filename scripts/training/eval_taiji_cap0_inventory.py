@@ -102,7 +102,8 @@ def _checkpoint_metadata(path: Path) -> dict[str, Any]:
 
 def _checkpoint_inventory() -> list[dict[str, Any]]:
     rows: list[dict[str, Any]] = []
-    for path in sorted(CHECKPOINT_DIR.glob("*.pt")):
+    # DEBT-G15：`pathlib.glob` **会**匹配点前缀文件 ⇒ 隐藏临时件不得进面板枚举（与两处产品入口同规则）
+    for path in sorted(p for p in CHECKPOINT_DIR.glob("*.pt") if not p.name.startswith(".")):
         stat = path.stat()
         rows.append(
             {

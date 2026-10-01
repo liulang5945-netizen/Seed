@@ -37,7 +37,14 @@ REPORT = REPO / "reports" / "taiji_cap0_inventory_20260915.json"
 #: 2026-10-01 第三次换底（重出到自写档候选，PLAN-A-30 §7c）：同上做法再重基一次——
 #: `RESAMPLE` 指到 10-01 样本（现行默认＝`seed_a31self_with_circuit.pt`），
 #: 09-20 那份转入 `RESAMPLE_AFTER_BETA4_SWITCH`（历史事实仍可核对）。
-RESAMPLE = REPO / "reports" / "taiji_cap0_inventory_a31self_20261001.json"
+#:
+#: 2026-10-02 第四次重基（**不是换底**，是 DEBT-G15 的枚举过滤落地）：`pathlib.glob("*.pt")` 会连
+#: 点前缀临时件一起返回 ⇒ 10-01 那枚封存面板的 `checkpoint_inventory` 第 0/1 行就是两枚 43 MB 隐藏残件
+#: （`.p2-12-conflict.pt`／`.p2-12-natural-language-write.pt`），也就是把该债的暴露面焙进了封存件。
+#: 四处枚举一起加同族过滤后面板少两行 ⇒ 按同一纪律重基；旧件原位保留，10-01 那笔产品事实仍由
+#: `RESAMPLE_BEFORE_G15_FILTER` 上的断言钉着。
+RESAMPLE = REPO / "reports" / "taiji_cap0_inventory_a31self_g15_20261002.json"
+RESAMPLE_BEFORE_G15_FILTER = REPO / "reports" / "taiji_cap0_inventory_a31self_20261001.json"
 RESAMPLE_AFTER_BETA4_SWITCH = REPO / "reports" / "taiji_cap0_inventory_beta4_20260920.json"
 RESAMPLE_BEFORE_SUBSTRATE_SWITCH = REPO / "reports" / "taiji_cap0_inventory_20260918.json"
 DELIVERY_PLAN = REPO / "plans" / "active" / "roadmap" / "07_MINI_MODEL_DELIVERY.md"
@@ -311,7 +318,9 @@ def test_the_2026_10_01_rebake_records_what_it_changed() -> None:
     且其经入口的输出**不再塌成模板**（与 F0 的 floor_pass、F04 的 gate 转 pass 同一事实）。
     """
 
-    after = json.loads(RESAMPLE.read_text(encoding="utf-8"))
+    # 这一支钉的是 **10-01 那次重出**的产品事实 ⇒ 读 10-01 那枚封存件本身（10-02 的枚举过滤不改这两条
+    # 事实，但历史断言不许挪到当代样本上——见上面第四次重基那段）。
+    after = json.loads(RESAMPLE_BEFORE_G15_FILTER.read_text(encoding="utf-8"))
     reality = after["model_reality"]
     assert reality["default_checkpoint"] == "seed_a31self_with_circuit.pt"
     assert reality["wiring_defect"] is False
@@ -323,6 +332,29 @@ def test_the_2026_10_01_rebake_records_what_it_changed() -> None:
         after["raw_output_inventory"]["default_entry"]["template_signature"]["templated"] is False
     )
     assert after["raw_output_inventory"]["most_trained_entry"]["probed"] is True
+
+
+def test_the_g15_enumeration_filter_drops_hidden_checkpoints() -> None:
+    """DEBT-G15：面板枚举不再把点前缀临时件当可用基座，而且**只少这两行**。
+
+    旧件（10-01 封存）里 `checkpoint_inventory` 的头两行就是那两枚隐藏残件 ⇒ 本支同时钉住
+    "债的暴露面曾经真实存在"与"现在没了"。行数与集合都钉：其余各行必须原样在，
+    否则这条过滤就会被读成"顺手藏掉别的东西"。
+    """
+
+    hidden = {".p2-12-conflict.pt", ".p2-12-natural-language-write.pt"}
+    before_rows = json.loads(RESAMPLE_BEFORE_G15_FILTER.read_text(encoding="utf-8"))[
+        "checkpoint_inventory"
+    ]
+    after_rows = json.loads(RESAMPLE.read_text(encoding="utf-8"))["checkpoint_inventory"]
+    before_names = [row["filename"] for row in before_rows]
+    after_names = [row["filename"] for row in after_rows]
+
+    assert hidden <= set(before_names), "旧面板里那两枚隐藏件不见了 ⇒ 本支钉的前提没了，先复核成因"
+    assert not (hidden & set(after_names)), f"点前缀临时件又被列成可用基座：{after_names}"
+    assert len(before_rows) - len(after_rows) == 2
+    assert after_names == [name for name in before_names if name not in hidden]
+    assert all(not name.startswith(".") for name in after_names)
 
 
 # H19k (2026-09-30): re-running the instrument needs the same gitignored checkpoints as

@@ -55,8 +55,10 @@ def list_checkpoints():
     try:
         if not _CHECKPOINT_DIR.is_dir():
             return {"status": "ok", "checkpoints": []}
+        # DEBT-G15：`pathlib.glob("*.pt")` **会**匹配点前缀文件（`glob.glob` 才不匹配，实测见
+        # 登记处），所以崩溃/中断留下的 `.xxx.pt` 临时件曾被当成可用基座暴露给训练面板。
         paths = sorted(
-            _CHECKPOINT_DIR.glob("*.pt"),
+            (p for p in _CHECKPOINT_DIR.glob("*.pt") if not p.name.startswith(".")),
             key=lambda p: p.stat().st_mtime,
             reverse=True,
         )

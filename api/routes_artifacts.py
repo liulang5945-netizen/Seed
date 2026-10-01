@@ -29,7 +29,8 @@ def list_artifacts():
     checkpoint_root = Path(get_external_path("checkpoints"))
     checkpoints = []
     if checkpoint_root.is_dir():
-        for path in sorted(checkpoint_root.glob("*.pt")):
+        # DEBT-G15：`pathlib.glob` 匹配点前缀文件 ⇒ 隐藏临时件不得作为工件暴露（两处枚举同规则）
+        for path in sorted(p for p in checkpoint_root.glob("*.pt") if not p.name.startswith(".")):
             checkpoints.append(
                 {
                     "artifact_type": "taiji_checkpoint",
