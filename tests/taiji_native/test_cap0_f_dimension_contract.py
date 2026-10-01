@@ -221,9 +221,14 @@ def _live_executed() -> dict[str, object]:
 
 
 def test_dimension_gate_requires_the_passing_item_to_show_its_own_chain() -> None:
+    """2026-10-01 事实更新（换底重出，PLAN-A-30 §7c）：F04 的门第一次真过——
+    新默认入口可加载、产出非模板输出、且服务的确实是训练态 ⇒ `items_passing_frozen_gate`
+    由 ["F01"] 变 ["F01","F04"]（这是产品事实变化，门文本一字未动）。
+    must_show 那一列**仍是 ["F01"]**：F04 的 must_show 尚未机检 ⇒ 行停在 partial（本仓既有约定）。"""
+
     rows = adjudicate_f_items(_f_items())
     gate = f_dimension_gate(rows, _live_executed())
-    assert gate["items_passing_frozen_gate"] == ["F01"]
+    assert gate["items_passing_frozen_gate"] == ["F01", "F04"]
     assert gate["items_passing_gate_and_must_show"] == ["F01"]
     assert gate["verdict"] == "pass"
     assert gate["end_to_end_demonstration"]["counts_as_item_chain"] is False
@@ -264,8 +269,11 @@ def test_f04_on_the_current_eval_set_is_not_flagged_stale() -> None:
     staleness = [c for c in row["clauses"] if "当前产品默认基座" in c["clause"]]
     assert staleness and staleness[0]["held"] is True
     assert row["verdict"] != "stale_reference"
-    #: 换底没有把模板回显改掉，所以 F04 仍不是 pass —— 引用换了不等于门过了。
-    assert row["verdict"] == "fail"
+    #: 2026-10-01 事实更新（换底重出，PLAN-A-30 §7c）：旧底经入口是固定模板回显（⇒ fail）；
+    #: 新默认（自写档候选信封）不再回显模板（templated=False、distinct_signatures=7），
+    #: 门五条子句全真 ⇒ 行转为 partial（五项过、must_show 未机检），gate_verdict=pass。
+    assert row["gate_verdict"] == "pass"
+    assert row["verdict"] == "partial"
 
 
 def test_a_reference_describing_another_substrate_reads_stale_not_failed(tmp_path) -> None:

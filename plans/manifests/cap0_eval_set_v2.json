@@ -973,7 +973,7 @@
         {
           "id": "F04",
           "capability": "整模型加载链（CAP-0）",
-          "reference": "reports/taiji_cap0_inventory_beta4_20260920.json",
+          "reference": "reports/taiji_cap0_inventory_a31self_20261001.json",
           "gate": "默认入口可加载并产出原始输出",
           "must_show": "现状：默认入口 metadata.tick=2（刚初始化基底）；最训练过的 16M-tick 状态被身份器官守卫挡住 ⇒ 如实记为缺口"
         }
@@ -1247,9 +1247,9 @@
     "substantive_changes": [
       {
         "path": "dimensions.F.items[F04].reference",
-        "old": "reports/taiji_cap0_inventory_20260915.json",
-        "new": "reports/taiji_cap0_inventory_beta4_20260920.json",
-        "why": "默认基座已换到 16M-tick 训练态；09-15 那份盘点描述的是换底前的产品事实，F04 据它复算会把'默认入口服务的不是训练态'当成当前结论。"
+        "old": "reports/taiji_cap0_inventory_20260915.json（v1 原文）",
+        "new": "reports/taiji_cap0_inventory_a31self_20261001.json（2026-10-01 重出后的现行盘点；两段换底历史见 history）",
+        "why": "默认基座两次换底（09-20 到 16M 训练态；10-01 到自写档候选 a31_chunked_self 的带回路信封）。被引盘点必须描述**现行**默认基座，否则 F04 会拿旧产品事实出今天的结论。"
       }
     ],
     "explicitly_unchanged": [
@@ -1258,6 +1258,20 @@
       "dimension_gates 的每条判据文字",
       "scoring_discipline 与 controls"
     ],
-    "not_a_relining": "本次没有放宽任何门；F04 换引用后预期仍不是 pass（新底仍记 templated=true）。"
+    "not_a_relining": "本次没有放宽任何门；F04 换引用后按新盘重复算的结论变化（模板回显消失 ⇒ F04 转 pass）是产品事实变化，不是判据变化——门文本与题面一字未动。",
+    "history": [
+      {
+        "date": "2026-09-20",
+        "authority": "项目所有者弹窗裁决：评价集升 v2，F04 改读新底 inventory（上限最高项）",
+        "reference_before": "reports/taiji_cap0_inventory_20260915.json",
+        "reference_after": "reports/taiji_cap0_inventory_beta4_20260920.json"
+      },
+      {
+        "date": "2026-10-01",
+        "authority": "owner 授权『未及时决策按推荐推进』⇒ 按推荐执行重出默认基座（PLAN-A-30 §7c）",
+        "reference_before": "reports/taiji_cap0_inventory_beta4_20260920.json",
+        "reference_after": "reports/taiji_cap0_inventory_a31self_20261001.json"
+      }
+    ]
   }
 }
