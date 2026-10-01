@@ -3406,3 +3406,24 @@ F04 契约 22 绿、默认位守卫 23 绿。
 同类缺陷的**存量**也量了一下（不在这轮改）：`scripts/training/` 里另有 **9** 个 r2 族仪器的默认输出指向**已入库**的读数件
 （`eval_taiji_r2_d1..d7`、`probe_taiji_r2_d4_copy_supervision`、`aggregate/eval_taiji_r2_content_binding`），
 A-30 族现在没有一枚（`stop_failure` 与 `audit_presence` 的默认名都不在盘上）。
+
+### 第九次停靠·补（同夜）：那一格 52/72 的**形状**必须先剥掉，否则会被读成"不挂回路就答得好"
+
+`answer_run` 在 v6 仪器里是 **`_longest_same_char_run(answer)`＝最长同字连写**（`probe_taiji_a30_stop_failure.py:377/387`），
+**不是答复长度**——这一点先写死，因为下面两组数很容易被读反。不挂回路那档与挂回路那档的逐题分布（同一台仪器、同 24 题、同预算 256）：
+
+* 最长同字连写：不挂回路 **min 1／中位 1.5／max 2** 对 挂回路 **min 1／中位 7／max 256**；`offender_count` **0 对 6**。
+* 每题步数：中位 **438.5 对 756.0**（总量 10474 对 17827）⇒ 不挂回路那档**整体更早退出**，52 次自停不是空答复凑出来的
+  （`surface_checks` 里 `fed_bytes` 短的那些正是早停样本，长的仍在 244/256）。
+* 但 `answer_head` 抽样**不给"答得好"这个结论**：`V002` 的一条 27 字节答复是 `吂何，大何，大何，大何，…`、
+  `V003` 的一条 10 字节答复是 `诗中吂` ⇒ **不挂回路买到的是"更早收笔"，收出来的仍是同一族表层重复文本**；
+  本仪器**不测成句**（`well_formed` 不在它的面里），所以"52 对 13"只能读成**停止侧**的差，
+  Quality 侧要等两臂同基底的 `correct`/`well_formed_rate`（在飞那档，见下）。
+
+**在飞（本停靠登记，判读先写死）**：`score_taiji_r2_copy_circuit_chat_cap.py` 两臂同基底档
+（control 不挂／treated 挂 seed-A，`gate=False`、`limit=24`、`max_bytes=256`＝照 09-28 那对件的面，只换基底为
+`output/a31_chunked_self/checkpoint.pt`），目标件 `reports/taiji_a30_cap_dual_arm_a31self_budget256_20261002.json`
+（**该仪器在目标已存在时会自动加时间戳后缀** ⇒ 真件名以日志最后一行 `{"report": ...}` 为准），日志尾 `rc_cap_dualarm=0` 才算完。
+**判读只允许这样用**：09-28 那对件的收益是**在厂档 `seed_beta.pt` 上**量到的（control `correct=1` 对 treated `correct=8`，
+即 +7；成句率 0.0 对 0.0833）。今天这档出来之前，"回路买到命中"在**现行候选基底上没有读数** ⇒
+上面那张代价表（52→13、0→6、18→0、首答 0.7286s→1.4987s）目前是**单边账**，不许据此判"回路随出厂装"该撤。
