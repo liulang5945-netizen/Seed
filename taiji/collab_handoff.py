@@ -218,6 +218,12 @@ def execute_group_episode(
                 }
             )
             break
+        # `select` pairs the two fields: every return path sets stop=... with chosen=None,
+        # or stop=None with a concrete MemberCall (see HandoffDecision.stop's own comment).
+        # Reaching here means stop is None, hence chosen is not None -- but mypy cannot
+        # reason across the two fields, so the invariant is asserted rather than assumed.
+        # This turns what would be an AttributeError deep in execution into a named breach.
+        assert decision.chosen is not None, "select() must pair chosen with stop=None"
         executed = bool(execute_chosen(decision.chosen.member))
         steps.append(ExecutionStep(chosen=decision.chosen.member, executed=executed))
         events.append(

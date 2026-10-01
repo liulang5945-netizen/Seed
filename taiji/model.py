@@ -1961,15 +1961,19 @@ class Taiji:
             else bool(self._copy_evidence_utf8_gate_override)
         )
         utf8_tracking = bool(position_input_enabled or copy_gate_enabled)
-        previous_position_class = int(previous.motor_position_class or 0) if utf8_tracking else None
-        previous_utf8_lead = int(previous.motor_utf8_lead or 0) if utf8_tracking else None
-        #: `advance_utf8` 一次给出 (余量, 首字节) 两件——PLAN-A-25 的门控两件都要
-        #: （E0/ED 与 F0/F4 的第二字节边界由首字节决定），而位置输入只用前一件。
-        utf8_next = (
-            advance_utf8(previous_position_class, previous_utf8_lead, symbol)
-            if utf8_tracking
-            else None
-        )
+        # Declared up front so the tracking branch can narrow them to `int` at the
+        # `advance_utf8` call.  Previously each was a `... if utf8_tracking else None`
+        # ternary, so mypy typed them `int | None` and could not see that the call only
+        # happens in the branch where both are the `int(...)` coercion.
+        # `advance_utf8` 一次给出 (余量, 首字节) 两件——PLAN-A-25 的门控两件都要
+        # （E0/ED 与 F0/F4 的第二字节边界由首字节决定），而位置输入只用前一件。
+        previous_position_class: int | None = None
+        previous_utf8_lead: int | None = None
+        utf8_next: tuple[int, int] | None = None
+        if utf8_tracking:
+            previous_position_class = int(previous.motor_position_class or 0)
+            previous_utf8_lead = int(previous.motor_utf8_lead or 0)
+            utf8_next = advance_utf8(previous_position_class, previous_utf8_lead, symbol)
         stored_remaining = utf8_next[0] if utf8_next is not None else None
         stored_lead = utf8_next[1] if utf8_next is not None else None
         readout_position_class = stored_remaining if position_input_enabled else None

@@ -156,21 +156,26 @@ jobs:
       # 为什么用棘轮：advisory 对退化零约束，错误数增加也可能绿灯；棘轮把
       #   「不许变差」变成硬约束。核心债已在 2026-08-27 实修归零，基线固定为 0。
       #
-      # H19f（2026-09-30）**基线 0 已过期，必须更正**：本步自那以后一直红，run
-      #   36821222743 首次被完整跑到就红在这里。实测 `mypy --follow-imports=silent seed taiji`
-      #   = **13 errors in 4 files**（collab_handoff 4 / sequence_content_workspace 2 /
-      #   organs 5 / model 2），且用 `git worktree add --detach 7444b667`（本轮任何提交
-      #   之前的状态）跑出**同样的 13 errors in 4 files**——即全部为既有债，非本次引入。
-      #   症状与 B/SIM 那条门同形：一个过期基线让棘轮永久红，久而久之没人再读它。
-      #   处置与 H19b 一致：把基线钉成实测值 13，仍是只许降不许升的棘轮；任何新增
-      #   类型退化仍然阻断。注意这与「核心债已归零」那句历史陈述不矛盾——那句话描述的是
-      #   2026-08-27 当时的度量，此后新增代码又引入了 13 条，属另一条线的工作。
-      #   要真正归零需逐点判语义（collab_handoff 的 MemberCall|None、organs/model 的
-      #   Tensor|None 与 int|None），不适合在门禁修复里顺手做。
+      # H19f（2026-09-30）曾把基线从 0 改成 13：该步自 2026-08-27 起一直红，run
+      #   36821222743 首次被完整跑到就红在这里，实测 13 errors in 4 files；用
+      #   `git worktree add --detach 7444b667`（本轮任何提交之前的状态）跑出同样的 13，
+      #   即全部为既有债——症状与 B/SIM 那条门同形：过期基线让棘轮永久红。
+      # H19i（2026-09-30）**这 13 条已实修归零，基线收回 0**。四处都不是加忽略，而是把
+      #   代码本该说清的不变量写明（详见各文件注释）：
+      #   - collab_handoff：`select` 的每个 return 都把 `chosen` 与 `stop` 成对，故
+      #     `stop is None` ⇒ `chosen` 非 None；mypy 无法跨字段推理，加断言显式收窄。
+      #   - organs：`_require_position_one_hot` 返回 None 当且仅当 `position_weight`
+      #     为 None，故 `one_hot` 非 None 即证明权重存在；两处使用点各加一条断言。
+      #   - sequence_content_workspace：`slots` 先取 `nn.Parameter` 再在循环里被重绑为
+      #     普通 Tensor（真正的类型混淆），改为显式注解 + 改名 `slot_states`；
+      #     `pair_term` 标注为 `torch.Tensor | float`（两个分支的真实类型）。
+      #   - model：`previous_position_class` / `previous_utf8_lead` 原为
+      #     `... if utf8_tracking else None` 三元，mypy 只能定为 `int | None`；改为
+      #     前置声明 + if/else 收窄，语义不变。
       #   详见 plans/active/SEED_DEVELOPMENT_ROADMAP_2026_08.md 第 14.2 / 14.11 节。
-      - name: Type check core modules with mypy (ratchet, baseline 13)
+      - name: Type check core modules with mypy (ratchet, baseline 0)
         env:
-          MYPY_CORE_BASELINE: "13"
+          MYPY_CORE_BASELINE: "0"
         run: |
           set -o pipefail
           mypy --follow-imports=silent seed taiji | tee mypy-core.log || true

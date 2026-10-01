@@ -487,22 +487,30 @@ class SequenceContentWorkspace:
     def _content_b(self, values: torch.Tensor, question_vec: torch.Tensor) -> torch.Tensor:
         sc = int(self.config.slot_count)
         ew = int(self.config.evidence_width)
-        slots = self._parameters["slot_init"]
+        # Annotated as Tensor and renamed per round: `slot_init` is an nn.Parameter, and
+        # the loop then rebinds the same name to a plain stacked Tensor.  Without the
+        # annotation mypy fixed the variable's type at the Parameter and rejected the
+        # rebind.  Parameter subclasses Tensor, so both assignments are legitimate.
+        slot_states: torch.Tensor = self._parameters["slot_init"]
         length = int(values.shape[0])
         for _round in range(int(self.config.binding_rounds)):
             if length:
-                scores = values @ slots.T / math.sqrt(float(ew))
+                scores = values @ slot_states.T / math.sqrt(float(ew))
                 assignment = torch.softmax(scores, dim=1)  # softmax over slots
                 column = assignment.sum(dim=0).clamp_min(1e-8)  # per-slot normaliser
                 weights = assignment / column.unsqueeze(0)  # positions per slot
                 slot_inputs = weights.T @ values
             else:
                 slot_inputs = torch.zeros(sc, ew)
-            slots = torch.stack(
-                [self._gru_cell(slot_inputs[i], slots[i]) for i in range(sc)], dim=0
+            slot_states = torch.stack(
+                [self._gru_cell(slot_inputs[i], slot_states[i]) for i in range(sc)], dim=0
             )
         pairs = torch.stack(
-            [torch.cat((slots[i], slots[j], question_vec)) for i in range(sc) for j in range(sc)],
+            [
+                torch.cat((slot_states[i], slot_states[j], question_vec))
+                for i in range(sc)
+                for j in range(sc)
+            ],
             dim=0,
         )
         hidden = torch.tanh(
@@ -513,8 +521,8 @@ class SequenceContentWorkspace:
             + self._parameters["relation_mlp_output_bias"]
         )
         slot_query = question_vec @ self._parameters["slot_pool_query"]
-        slot_weights = torch.softmax(slots @ slot_query / math.sqrt(float(ew)), dim=0)
-        pooled_slots = slot_weights @ slots
+        slot_weights = torch.softmax(slot_states @ slot_query / math.sqrt(float(ew)), dim=0)
+        pooled_slots = slot_weights @ slot_states
         relation_query = question_vec @ self._parameters["relation_pool_query"]
         relation_weights = torch.softmax(relations @ relation_query / math.sqrt(float(ew)), dim=0)
         pooled_relations = relation_weights @ relations
@@ -1036,7 +1044,10 @@ class SequenceContentTrainer:
             ce_values.append(metrics["ce"])
             copy_values.append(metrics["copy_nll"])
         total = torch.stack(composites).mean()
-        pair_term = 0.0
+        # Either a real scalar (torch) when the pair term runs, or the float 0.0 when it
+        # does not -- `_pair_contrastive_term` returns a Tensor, so the union is the real
+        # type here and `total + weight * pair_term` is valid for both members.
+        pair_term: torch.Tensor | float = 0.0
         if self.pair_contrastive_weight > 0.0:
             pair_term, pair_groups = self._pair_contrastive_term(batch)
             total = total + self._pair_weight_now() * pair_term

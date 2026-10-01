@@ -771,6 +771,10 @@ class BytePredictiveReadout:
         evidence = synapses + self.bias
         one_hot = self._require_position_one_hot(position_state)
         if one_hot is not None:
+            # _require_position_one_hot returns None exactly when position_weight is None,
+            # so a non-None one_hot proves the weights exist.  mypy cannot carry that
+            # across the helper call, so narrow it here rather than assume it.
+            assert self.position_weight is not None, "one_hot implies position_weight"
             evidence = evidence + self.position_weight @ one_hot
             self._position_probability_steps += 1
         if episodic_evidence is not None:
@@ -874,6 +878,8 @@ class BytePredictiveReadout:
         one_hot = self._require_position_one_hot(position_state)
         if one_hot is None:
             return
+        # Same invariant as in `probability`: one_hot exists only if the weights do.
+        assert self.position_weight is not None, "one_hot implies position_weight"
         decay = float(self.config.synapse_decay)
         if decay:
             silent = (one_hot == 0).to(self.position_weight.dtype)
