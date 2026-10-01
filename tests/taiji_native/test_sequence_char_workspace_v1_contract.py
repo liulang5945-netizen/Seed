@@ -34,7 +34,6 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 FIXTURE = PROJECT_ROOT / "tests/fixtures/r2_d1_measurement_v2.jsonl"
 
 
-
 def _rows() -> list[dict]:
     return [
         json.loads(line)

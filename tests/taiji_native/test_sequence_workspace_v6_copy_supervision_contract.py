@@ -39,7 +39,6 @@ NO_VALUE_SHAPES = ("unknown", "same_opening_unknown", "combination_same", "combi
 sys_path_scripts = str(PROJECT_ROOT)
 
 
-
 def _prototype(seed: int = 20260917) -> SequenceWorkspacePrototype:
     return SequenceWorkspacePrototype(
         SequenceWorkspaceConfig(
@@ -103,7 +102,8 @@ def test_gate1_zero_weight_loss_identity() -> None:
 # what CI runs -- has no copy.  Guarding this one test rather than the module keeps the
 # other eight in this file running there.
 _FROZEN_REPLAY_CHECKPOINT = (
-    Path(__file__).resolve().parents[2] / "reports/r2_d3_checkpoints/multihead_probe/hg_h4_seed20260917_epoch30.pt"
+    Path(__file__).resolve().parents[2]
+    / "reports/r2_d3_checkpoints/multihead_probe/hg_h4_seed20260917_epoch30.pt"
 )
 
 
