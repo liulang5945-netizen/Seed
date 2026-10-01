@@ -40,3 +40,20 @@ expected 两侧同用）增加一条**逐行 JSON 折叠**规则：
 
 - 不动产品注入行为；不动语料的非注入行；不声称"注入族 25 文件全部由此转绿"——逐 lane 实测为准。
 - aria 面若受注入行可见性影响（会话 UI 渲染注入消息），由同一 refresh 批次顺带重写，diff 审查同 §3.3。
+
+## 5. 附录（2026-10-01 验收期发现，同日追加；记录最终实现形状）
+
+验收过程暴露两处叠加的规范化缺口（与注入行无关但同属"宿主波动值不得进语料"），最终实现比 §2 多一层：
+
+1. **值层世界根折叠**：临时世界内的一切路径都随 `dsh-web-e2e-ws-<随机段>` 逐次漂移，且同一路径以
+   不同转义深度出现（tool arguments 是 JSON 套 JSON）、不同分隔符拼法（tool result 文本用正斜杠）。
+   在 `normalizeWebSessionVolatiles` 的**值层**（字符串尚未 JSON 序列化处）折叠：`harnessHome`
+   ＝`<世界根>\.dsh-home` → `{{harnessHome}}`、世界根 → `{{tempWorld}}`（原生＋正斜杠两种拼法，最长
+   优先；会话 cwd 的 `{{cwd}}` 形状由既有 cwdSpellings 先行折叠）。值层折叠一次性覆盖所有嵌套深度。
+2. **绝对路径守卫**：expected 侧语料 header 的 cwd 已是令牌（`{{cwd}}`），`dirname(令牌)`＝`.`——
+   不加守卫会把整个文件里的句点全折成 `{{tempWorld}}`（实测发生过并已修）。仅当 session cwd 为
+   绝对路径时才推导世界根。
+
+行层 `{{harnessHome}}` split 链保留为冗余防线。验收：12 条纯注入 lane refresh 后 8 条转绿并在 replay
+复验通过（file-upload-round 经附录补丁后 refresh＋replay 双绿）；4 条仍红（lifecycle-chrome／ptc-round／
+present-svg／question-composer）＝另有其因，按 §3 如实归因不硬凑，其 refresh 产物已回退不提交。

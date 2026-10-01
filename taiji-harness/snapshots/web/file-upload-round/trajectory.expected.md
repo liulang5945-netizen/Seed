@@ -1,7 +1,7 @@
 # Ledger
 
 - row "USER, Images ×1 · Files ×1 · Read the attached file with the read tool, reply with exactly the single word it contains, and stop.":
-  - cell "Turn 1 USER": USER
+  - cell "USER"
   - cell "Images ×1 · Files ×1 · Read the attached file with the read tool, reply with exactly the single word it contains, and stop."
 
 # Summary attachments

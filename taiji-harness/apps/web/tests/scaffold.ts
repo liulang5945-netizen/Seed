@@ -1133,16 +1133,57 @@ export function normalizeWebSessionVolatiles(log: string, workspaceCwd?: string)
       const native = /^[A-Za-z]:[\\/]/.test(value) ? forward.replaceAll('/', '\\') : value
       return [value, value.replaceAll('\\', '\\\\'), forward, native]
     }))].sort((left, right) => right.length - left.length)
+  // SPEC-M6-01 §5 addendum: every path inside the per-run temp world is
+  // volatile — the mkdtemp suffix changes each run, and the same path reaches
+  // fixture rows at different JSON nesting depths (tool arguments are
+  // JSON-inside-JSON) and separator spellings. Fold the harness home and the
+  // world root at the value level — where strings are still unescaped — so one
+  // pass covers every depth and spelling. The session cwd keeps its existing
+  // {{cwd}} shape via cwdSpellings above; longest prefix folds first. The
+  // world root derives only from an ABSOLUTE session cwd: the expected side's
+  // header carries the tokenized cwd, and dirname of a token is '.', which
+  // would fold every '.' in the payload.
+  const sessionCwdAbsolute = sessionCwd !== undefined
+    && (sessionCwd.startsWith('/') || /^[A-Za-z]:[\\/]/.test(sessionCwd))
+  const worldRoot = sessionCwdAbsolute ? dirname(sessionCwd) : undefined
+  const spellingsOf = (value: string): string[] => [...new Set([
+    value, value.replaceAll('\\', '\\\\'), value.replaceAll('\\', '/'),
+  ])].filter(spelling => spelling.length > 0)
+  const prefixFolds = (worldRoot === undefined ? [] : [
+    { token: '{{harnessHome}}', spellings: spellingsOf(join(worldRoot, '.dsh-home')) },
+    { token: '{{tempWorld}}', spellings: spellingsOf(worldRoot) },
+  ]).flatMap(entry => entry.spellings.map(spelling => ({ token: entry.token, spelling })))
+    .sort((left, right) => right.spelling.length - left.spelling.length)
   return log.split(/\r?\n/).map((line) => {
     if (line.trim() === '') return line
     const record = normalizeClientTimeZones(mapJsonStringValues(JSON.parse(line), (value) => {
       let normalized = value
         .replace(/Anonymous user: [0-9a-f-]{36}(?=\.$)/gi, 'Anonymous user: {{anonymousUserId}}')
       for (const cwd of cwdSpellings) normalized = replaceWebCwd(normalized, cwd)
+      for (const fold of prefixFolds) normalized = normalized.split(fold.spelling).join(fold.token)
       return normalized
-    })) as { type?: unknown; data?: { endpoint?: unknown } }
+    })) as {
+      type?: unknown
+      data?: { endpoint?: unknown; content?: Array<{ text?: unknown }>; source?: { kind?: unknown; sections?: Array<{ text?: unknown }> } }
+    }
     if (record.type === 'web/deepseek-search-llm-request' && typeof record.data?.endpoint === 'string') {
       record.data.endpoint = '{{webSearchEndpoint}}'
+    }
+    // SPEC-M6-01: the product injects life-state and memory-recall context as
+    // user messages whose payloads carry per-run volatile values (tick
+    // counters, ages, host paths inside recalled text). Both comparison sides
+    // fold that payload text to a stable token, so the replay comparison pins
+    // the injection's presence, position, and structure without baking the
+    // volatile values into the corpus.
+    const source = record.data?.source
+    if (record.type === 'user/message' && (source?.kind === 'life-context' || source?.kind === 'memory-context')) {
+      const token = source.kind === 'life-context' ? '{{lifeContext}}' : '{{memoryContext}}'
+      for (const block of record.data?.content ?? []) {
+        if (typeof block.text === 'string') block.text = token
+      }
+      for (const section of source.sections ?? []) {
+        if (typeof section.text === 'string') section.text = token
+      }
     }
     return JSON.stringify(record)
   }).join('\n')
@@ -1165,7 +1206,13 @@ function stableSessionFixture(
     })
   const fresh = scrubSessionSnapshot(stabilized)
     .split(session.id).join('{{session:1}}')
+    // SPEC-M6-01 §5 addendum: the harness home reaches the fixtures in three
+    // spellings — native, JSON-escaped (the serialized lines double the
+    // backslashes), and forward-slashed (tool result text) — tokenize all
+    // three, mirroring the cwdSpellings treatment.
     .split(harnessHome).join('{{harnessHome}}')
+    .split(harnessHome.replaceAll('\\', '\\\\')).join('{{harnessHome}}')
+    .split(harnessHome.replaceAll('\\', '/')).join('{{harnessHome}}')
   const stable = redactSessionSnapshotIds(stabilizeFixtureMessageIds([fresh], [existing]))[0]
   if (stable === undefined) throw new Error('session harvest produced no stabilized fixture')
   return stable
@@ -1212,10 +1259,23 @@ async function assertReplaySession(
     sessionIds: typeof expectedHeader.id === 'string' ? [expectedHeader.id] : [],
     cwd: typeof expectedHeader.cwd === 'string' ? expectedHeader.cwd : '\0no-cwd\0',
   }
-  const actualSnapshot = normalizeSessionSnapshots([normalizeWebSessionVolatiles(actual)], actualContext)[0]
+  // Both spellings, native and JSON-escaped: the serialized lines carry
+  // doubled backslashes on Windows, which the native-form split misses
+  // (SPEC-M6-01 §5 addendum). The value-level fold inside
+  // normalizeWebSessionVolatiles already covers every nesting depth; these
+  // row-level splits stay as belt-and-suspenders.
+  const actualSnapshot = normalizeSessionSnapshots(
+    [normalizeWebSessionVolatiles(actual)], actualContext,
+  )[0]
     ?.split(harnessHome).join('{{harnessHome}}')
-  const expectedSnapshot = normalizeSessionSnapshots([normalizeWebSessionVolatiles(expected)], expectedContext)[0]
+    .split(harnessHome.replaceAll('\\', '\\\\')).join('{{harnessHome}}')
+    .split(harnessHome.replaceAll('\\', '/')).join('{{harnessHome}}')
+  const expectedSnapshot = normalizeSessionSnapshots(
+    [normalizeWebSessionVolatiles(expected)], expectedContext,
+  )[0]
     ?.split(harnessHome).join('{{harnessHome}}')
+    .split(harnessHome.replaceAll('\\', '\\\\')).join('{{harnessHome}}')
+    .split(harnessHome.replaceAll('\\', '/')).join('{{harnessHome}}')
   expect(actualSnapshot, `${fixturePath}: persisted replay`).toBe(expectedSnapshot)
 
   if (manifest.header?.pin !== true) return
