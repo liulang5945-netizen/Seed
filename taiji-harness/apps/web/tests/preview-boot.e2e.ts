@@ -191,7 +191,13 @@ async function respond(
   overrides: ReadonlyMap<string, string>,
 ): Promise<void> {
   const path = new URL(request.url ?? '/', 'http://127.0.0.1').pathname
-  const relative = normalize(decodeURIComponent(path)).replace(/^\/+/, '')
+  const relative = normalize(decodeURIComponent(path))
+    // Windows normalize() flips separators to backslashes, which both dodges
+    // the leading-slash strip and misses the forward-slash override keys —
+    // every generated asset would 404 while the dist fallback kept working.
+    // Fold both spellings back to the forward-slash form the keys use.
+    .replace(/\\/g, '/')
+    .replace(/^\/+/, '')
   try {
     const body = await readFile(overrides.get(relative) ?? join(DIST_ROOT, relative))
     response.writeHead(200, { 'content-type': MIME[extname(relative)] ?? 'application/octet-stream' })
@@ -319,7 +325,10 @@ async function bootPreview(origin: string, browser: Browser): Promise<void> {
     const configureLater = page.getByRole('button', { name: 'Configure later' })
     await configureLater.waitFor({ timeout: 30_000 })
     await configureLater.click()
-    await page.locator('[data-composer-input][data-placeholder="Describe what you want to build, / commands, @ files or sessions"]')
+    // The interactive-page milestone is the Hero composer itself. Boot never
+    // opens a Session (H14), so the composer renders in its workspace-gated
+    // variant ("Choose a workspace to start") — not yet contenteditable.
+    await page.locator('[data-composer-input]').first()
       .waitFor({ timeout: 30_000 })
 
     const exercised = await page.evaluate(async ({ seededSessionId, seededSessionTitle }) => {
@@ -435,8 +444,17 @@ async function bootPreview(origin: string, browser: Browser): Promise<void> {
     expect(exercised.credentialConfigured).toBe(true)
 
     const sessions = page.getByRole('tree', { name: 'Sessions' })
+    // Sidebar groups render collapsed (and boot provisions the Default
+    // workspace group first), so the showcase row stays hidden until every
+    // collapsed group in the tree is expanded; only collapsed rows match,
+    // keeping the poll idempotent.
     const showcase = sessions.getByRole('treeitem').filter({ hasText: SHOWCASE_TITLE })
-    await expect.poll(() => showcase.count(), { timeout: 15_000 }).toBe(1)
+    await expect.poll(async () => {
+      for (const group of await sessions.locator('[role="treeitem"][aria-expanded="false"]').all()) {
+        await group.click()
+      }
+      return showcase.count()
+    }, { timeout: 15_000 }).toBe(1)
     await showcase.click()
     await page.getByText(SHOWCASE_TAIL, { exact: true }).waitFor({ timeout: 30_000 })
 
