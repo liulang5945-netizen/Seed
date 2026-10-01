@@ -260,10 +260,18 @@ jobs:
         # coverage.json 供 B-4 核心推理路径门按文件过滤分母用（同一趟插桩，两张面两个读数）。
         run: python -m pytest tests/ -q --cov --junitxml=report.xml --cov-report=xml:coverage.xml --cov-report=json:coverage.json
 
-      # B-4（审计 2026-08-23 §7-16"核心推理路径覆盖率 ≥60%"）：全局门 fail_under=21.8 的
-      # 分母掺全仓 0% 遗留代码，读不出核心路径。本步按声明面（brain + resonance 的
+      # B-4（审计 2026-08-23 §7-16"核心推理路径覆盖率 ≥60%"）：本步按声明面（brain + resonance 的
       # ensemble/continuous/field + layers）过滤后单独判；面内文件缺席报告直接判红
-      # （防"高分"来自漏算难覆盖文件）。阈值即审计目标 60%：本机两次全量读数 65.03 / 65.25。
+      # （防"高分"来自漏算难覆盖文件）。阈值即审计目标 60%。
+      #
+      # H19r（2026-09-30）：本步存在的原因正是全局门的分母掺全仓遗留代码，
+      # 全局数字读不出核心路径。但那时全局门本身已经失效：它写着 21.8，
+      # 而实测总计已是 65 上下（本轮实测 65.23%；本步注释里当时也记了 65.03 / 65.25，
+      # 两组读数独立互相印证）——全局门允许 43 个百分点的静默侵蚀。
+      # 因此全局门一并提到 60，与本步的审计目标对齐。
+      #
+      # 分模块读数（本轮实测，本机）：taiji 84.9% / seed_platform 84.4% / seed 77.0%
+      # / api 50.4% / neuroplex 26.1%（冻结遗留，已决定不管）。活跃面里最弱的一环是 api。
       # 只在套件步成功时判——某条 lane 因并发抢 checkpoints/ 文件锁没跑完时该面会掉到 46%，
       # 那时该报的是"套件红了"，不该再叠一条语义错位的"覆盖率不足"。
       - name: Core reasoning path coverage gate (B-4)
@@ -292,7 +300,7 @@ jobs:
           PY
           )
           echo "### Coverage trend" >> "$GITHUB_STEP_SUMMARY"
-          echo "Total line coverage: **${total}%** (gate: fail_under=21.8%)" >> "$GITHUB_STEP_SUMMARY"
+          echo "Total line coverage: **${total}%** (gate: fail_under=60%)" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload test results
         if: always()
