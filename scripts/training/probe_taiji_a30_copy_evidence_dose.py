@@ -150,6 +150,37 @@ def _make_store_scoped_arm(store: Any) -> tuple[Any, list[int], set[int]]:
     return reset, counters, stale_ids
 
 
+def _make_oracle_selector_arm(store: Any) -> tuple[Any, dict[str, Any], Any]:
+    """**检索侧 oracle 档**：把 `best_match` 换成"选对的那一条"——返回内容含本题标签的第一条事件，
+    库里没有匹配项时**透传**给原实现（不静默返回 None）。
+
+    为什么现在做：X 面 104 题 **100% 自带 `expected_contains`**（2026-10-02 机检），
+    而 §第二十九次停靠 只证明了"内容身份"这一维对停止面无感——"选对了还拖不拖写"是**另一问**，
+    必须在停止面上单独可装。只用公开接口 `events()` 与原 `best_match(cue)`。
+    """
+
+    state: dict[str, Any] = {"tokens": [], "calls": 0, "found": 0, "fell_through": 0}
+    original_best_match = store.best_match
+
+    def oracle_best_match(cue: Any) -> Any:
+        tokens = state["tokens"]
+        if not tokens:
+            return original_best_match(cue)
+        state["calls"] += 1
+        for event in store.events():
+            blob = bytes(event.content)
+            if any(token in blob for token in tokens):
+                state["found"] += 1
+                return event
+        state["fell_through"] += 1
+        return original_best_match(cue)
+
+    def set_tokens(tokens: list[bytes]) -> None:
+        state["tokens"] = [bytes(token) for token in tokens]
+
+    return oracle_best_match, state, set_tokens
+
+
 def _make_window_armed_evidence(original: Any, window: int, position: Any) -> tuple[Any, list[int]]:
     """**资格档**：只在答复的前 `window` 步发证据，之后把这条通道静音（PLAN-A-30 §第三十次停靠）。
 

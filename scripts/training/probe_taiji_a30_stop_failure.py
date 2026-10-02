@@ -290,6 +290,13 @@ def main() -> int:
         help="置换档的固定种子（写进件里，可复现）",
     )
     parser.add_argument(
+        "--oracle-selector",
+        action="store_true",
+        help="v19 检索侧 oracle 档：把 `store.best_match` 换成'内容含本题 expected_contains 的第一条事件'，"
+        "找不到则透传原实现。用来把'选对了还拖不拖写'从'内容身份/发射时刻'里单独摘出来。"
+        "X 面 104 题全部自带标签（机检 100%），故这档在停止面可构造；默认关 ⇒ 与 v18 逐位可比。",
+    )
+    parser.add_argument(
         "--store-scope-conversation",
         action="store_true",
         help="v18 资格档（检索侧）：每题开头把**装载信封里带来的陈旧事件**请出候选集，只留本次对话被告知的内容可被取到。动的是候选集，不是发射时刻——与窗口档是两条独立的形状。",
@@ -418,6 +425,18 @@ def main() -> int:
     #: 刻度由本仪器自己声明：`loop_steps` 是**环内 observe 的序位**，1 步＝1 字节。
     #: v18：检索侧资格档装在**存储**上（与发射侧包装器正交），只用公开接口 `events()/clear()/record()`；
     #: `reset` 在每题开头调一次。代价：保留事件的 `event_id` 会重新编号（件里披露）。
+    oracle_state = {"tokens": [], "calls": 0, "found": 0, "fell_through": 0}
+    oracle_set_tokens = None
+    if args.oracle_selector:
+        if substrate.copy_circuit is None:
+            raise RuntimeError("要求 oracle 选择档但回路不在场 ⇒ 没有可替换的 best_match")
+        from probe_taiji_a30_copy_evidence_dose import _make_oracle_selector_arm
+
+        oracle_fn, oracle_state, oracle_set_tokens = _make_oracle_selector_arm(
+            substrate.copy_circuit.store
+        )
+        substrate.copy_circuit.store.best_match = oracle_fn  # type: ignore[method-assign]
+
     store_reset = None
     store_counters = [0, 0, 0]
     if args.store_scope_conversation:
@@ -445,6 +464,12 @@ def main() -> int:
     caller_totals: dict[str, int] = {}
     for item in items:
         history: list[tuple[str, str]] = []
+        if oracle_set_tokens is not None:
+            #: 标签来自题面本身；缺标签**响亮停下**，不许静默透传成"现状选择器"那样伪装成生效。
+            expected = [str(tok) for tok in item.get("expected_contains") or []]
+            if not expected:
+                raise RuntimeError(f"{item['id']} 没有 expected_contains ⇒ oracle 档无标签可用")
+            oracle_set_tokens([tok.encode("utf-8") for tok in expected])
         if store_reset is not None:
             store_reset()
         item_rows: list[dict[str, Any]] = []
@@ -619,7 +644,8 @@ def main() -> int:
 
     substrate.observe = original_observe  # type: ignore[method-assign]
     report = {
-        "format": "taiji-a30-stop-failure-v18",
+        "format": "taiji-a30-stop-failure-v19",
+        "format_note_v19": "v19 加性多一条检索侧 **oracle** 档：`--oracle-selector` 把 `store.best_match` 换成『内容含本题 `expected_contains` 的第一条事件』，找不到则透传原实现，用来把『选对了还拖不拖写』从『内容身份』与『发射时刻』里单独摘出来验。缺标签时响亮停下而非静默透传（那会伪装成生效）；自述 `oracle_calls`／`oracle_found`／`oracle_fell_through`。默认关 ⇒ 与 v18 逐位可比。",
         "format_note_v18": "v18 **加性**多一条**检索侧**资格档：`--store-scope-conversation` 在每题开头把装载信封带来的陈旧事件请出候选集，只留本次对话被告知的内容可被 `best_match` 取到（只用公开接口 `events()/clear()/record()`；代价是 `event_id` 重新编号，已在件里披露）。它与窗口档正交：一个动候选集、一个动发射时刻。默认关 ⇒ 与 v17 逐位可比。",
         "format_note_v17": "v17 两件事：① 加**资格档** `--evidence-window-steps`（前 K 步发、之后静音；档本身住在剂量探针里与复述面共用，刻度由本仪器声明为环内步数，守卫 `window_both_sides_seen` 要求两侧都出现过）；② 修 v16 那列结构上恒为 0 的 `run_boundary_win_positions`——边界符胜出那一步 `break` 在 `observe` 之前、不入案，正确刻度是自停生成的 `fed_bytes`（已在件里，无需重跑即可读出）。其余字段与判据一字未动。",
         "format_note_v16": "v16 加性只多两列**停止决定的位置**信息：每题 `run_boundary_win_positions` 与件级 `boundary_win_position_hist`。用途是给『只在前 K 步发证据』这一族资格档**定价**——设计预备第 2 条要求 K 只能从链上先量到的分布里取，不许事后挑刚好过线的那个。判据、计数与生成路径一字未动，故与 v13/v15 同格可比（锚点 23/49/6 与 total_steps 就是这条可比性的检验）。",
@@ -725,6 +751,7 @@ def main() -> int:
         #: v13 自述：这一档替换的是**内容身份**，硬度分布由守卫逐项验，不是靠注释声明。
         "evidence_window_steps": args.evidence_window_steps,
         "store_scope_conversation": bool(args.store_scope_conversation),
+        "oracle_selector": bool(args.oracle_selector),
         "evidence_content_arm": args.evidence_content_arm,
         "perm_seed": args.perm_seed if args.evidence_content_arm == "permutation" else None,
         "surface_gate_state": runtime.surface_gate_state,
@@ -764,6 +791,11 @@ def main() -> int:
             "window_arm_consumed": args.evidence_window_steps is None or window_counters[0] > 0,
             #: v18：检索侧档必须**被走到**（清掉的陈旧条数 > 0），并把重置后的候选集大小上下界存进件里。
             "store_scope_consumed": (not args.store_scope_conversation) or store_counters[0] > 0,
+            #: v19：oracle 档必须被走到，且"选对率"如实披露（fell_through 高 ⇒ 库里根本没有正确事件）。
+            "oracle_consumed": (not args.oracle_selector) or oracle_state["calls"] > 0,
+            "oracle_calls": oracle_state["calls"],
+            "oracle_found": oracle_state["found"],
+            "oracle_fell_through": oracle_state["fell_through"],
             "store_scope_stale_removed": store_counters[0],
             "store_scope_events_min": store_counters[1],
             "store_scope_events_max": store_counters[2],
