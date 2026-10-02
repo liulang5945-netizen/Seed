@@ -155,6 +155,13 @@ def run_arm(
         runtime.enable_copy_circuit(PROJECT_ROOT / circuit_payload)
     if evidence_utf8_gate:
         runtime.model.substrate.set_copy_evidence_utf8_gate(True)
+    #: v2 产品档：门开在**产品代码**里，不是本仪器的替身包装器（与替身档互斥）。
+    if args.product_window_steps is not None:
+        if args.evidence_window_steps is not None:
+            raise SystemExit("v2：产品门与本仪器替身档不能同开——同开就分不出读数来自哪条路径")
+        if args.product_window_steps <= 0:
+            raise SystemExit("v2：产品门的 K 必须是正整数")
+        runtime.model.substrate.set_copy_evidence_window_steps(args.product_window_steps)
     calls = [0]
     scores: list[float] = []
     if (
@@ -641,6 +648,13 @@ def main() -> int:
         "--probe-label",
         default=None,
         help="只测不装：统计该标签在答复里出现的题数，作为污染测试的**基线件**（没有基线，decoy 件里的出现不算证据）。",
+    )
+    parser.add_argument(
+        "--product-window-steps",
+        type=int,
+        default=None,
+        help="v2 产品档：调产品侧原生生命周期门（`Taiji.set_copy_evidence_window_steps`），"
+        "而不是本仪器的 monkeypatch 替身。默认 None ⇒ 逐位不变；与 --evidence-window-steps 互斥。",
     )
     args = parser.parse_args()
 

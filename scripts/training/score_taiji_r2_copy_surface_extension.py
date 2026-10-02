@@ -113,6 +113,13 @@ def run_arm(
 
     runtime = SeedRuntime.load(checkpoint)
     substrate = runtime.model.substrate
+    #: v2 产品档（与 L2 探针 v20/v21 同名旗标）：门开在产品代码里；复位与计步基都在 `Taiji.generate()` 内。
+    if args.product_window_steps is not None:
+        if args.evidence_window_steps is not None:
+            raise SystemExit("v2：产品门与替身档不能同开")
+        if args.product_window_steps <= 0:
+            raise SystemExit("v2：产品门的 K 必须是正整数")
+        substrate.set_copy_evidence_window_steps(args.product_window_steps)
     mount_entry = "none"
     if circuit:
         runtime.enable_copy_circuit(PROJECT_ROOT / circuit)
@@ -323,6 +330,13 @@ def main() -> int:
         default=None,
         help="第四十九次停靠：只在答复的前 K 步发复制回路证据，之后静音（与 L2/cap 共用同一副档与同一把步刻度）。"
         "默认关 ⇒ 与冻结链逐位相同。",
+    )
+    parser.add_argument(
+        "--product-window-steps",
+        type=int,
+        default=None,
+        help="v2 产品档：调产品侧原生生命周期门（`Taiji.set_copy_evidence_window_steps`），"
+        "而不是本仪器的替身档。默认 None ⇒ 逐位不变；与 --evidence-window-steps 互斥。",
     )
     args = parser.parse_args()
     surface = bool(args.surface_chain)
