@@ -1,0 +1,79 @@
+{
+  "format": "taiji-a30-copy-evidence-dose-v1",
+  "question": "把复制回路的加性证据按 α 缩放／按相似度下限截断，语料接缝上的停止信号能不能回来",
+  "relevance_floor_tau": null,
+  "checkpoint": "output/a31_chunked_short/checkpoint.pt",
+  "circuit": "output/taiji_r2_copy_circuit_chat/judge/circuit-final.pt",
+  "circuit_sha256": "1cfe5961c300485d",
+  "docs": 1,
+  "documents_face": "corpus_body_plus_appended_newline",
+  "decision_face": "utf8_masked_legal_set",
+  "anchors_on_record": {
+    "circuit_absent_same_checkpoint": "186/300（档 (c) 不挂回路，docs_sha256 同批）",
+    "circuit_mounted_full_dose": "0/300（档 (c)＋seed-A）"
+  },
+  "unpatched_end_face": {
+    "n": 1,
+    "boundary_is_argmax_count": 0,
+    "p_boundary_median": 3e-06,
+    "p_boundary_mean": 3e-06,
+    "p_boundary_max": 3e-06,
+    "boundary_rank_median": 4.0,
+    "argmax_winners_top5": [
+      [
+        229,
+        1
+      ]
+    ],
+    "other_n": 1451,
+    "other_boundary_is_argmax_count": 0,
+    "other_p_boundary_median": 0.0
+  },
+  "doses": {
+    "1.0": {
+      "n": 1,
+      "boundary_is_argmax_count": 0,
+      "p_boundary_median": 3e-06,
+      "p_boundary_mean": 3e-06,
+      "p_boundary_max": 3e-06,
+      "boundary_rank_median": 4.0,
+      "argmax_winners_top5": [
+        [
+          229,
+          1
+        ]
+      ],
+      "other_n": 1451,
+      "other_boundary_is_argmax_count": 0,
+      "other_p_boundary_median": 0.0,
+      "evidence_calls": 1453,
+      "picked_cosine": {
+        "median": 0.1161,
+        "p10": 0.067,
+        "p25": 0.0874,
+        "p75": 0.1558,
+        "p90": 0.2312,
+        "max": 0.6505,
+        "share_below_0p3": 0.947,
+        "share_no_event": 0.0
+      },
+      "picked_cosine_tail": [
+        0.1128,
+        0.1274,
+        0.1648,
+        0.2944,
+        0.6505,
+        0.4332
+      ]
+    }
+  },
+  "instrument_guard": {
+    "unit_dose_bitwise_identical": true,
+    "wrapper_consumed_on_every_dose": true,
+    "evidence_calls_by_dose": {
+      "1.0": 1453
+    },
+    "checkpoint_untouched": true
+  },
+  "started_utc": "2026-10-02T05:20:27Z"
+}

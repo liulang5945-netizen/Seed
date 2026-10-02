@@ -122,6 +122,13 @@ def main() -> int:
     )
     parser.add_argument("--out-report", required=True)
     parser.add_argument(
+        "--tail-scores",
+        type=int,
+        default=0,
+        help="按调用顺序留下最后 N 个相似度。**`--docs 1` 时最后一次调用就是那篇文档的接缝位置**"
+        " ⇒ 用它把'接缝落在高相似度段'从推论升级成直接量到的数。",
+    )
+    parser.add_argument(
         "--record-scores",
         action="store_true",
         help="记录每一步被挑中告知的余弦相似度（τ 从这个分布里取，不拍脑袋定）",
@@ -207,6 +214,8 @@ def main() -> int:
                 "share_below_0p3": round(sum(1 for x in ordered if 0 <= x < 0.3) / len(ordered), 4),
                 "share_no_event": round(sum(1 for x in ordered if x < 0) / len(ordered), 4),
             }
+            if args.tail_scores:
+                row["picked_cosine_tail"] = [round(x, 4) for x in scores[-args.tail_scores :]]
             scores.clear()
         if magnitudes:
             row["injected_logit_max"] = {
