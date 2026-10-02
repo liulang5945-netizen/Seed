@@ -133,17 +133,16 @@ def _make_store_scoped_arm(store: Any) -> tuple[Any, list[int], set[int]]:
     """
 
     counters = [0, 0, 0]
+    #: 装载信封里带来的那批 id 仍存下来，只为在件里说清"这一档第一次清掉的是什么"。
     stale_ids = {int(event.event_id) for event in store.events()}
-    stale = [event for event in store.events()]
 
     def reset() -> None:
-        kept_live = [event for event in store.events() if int(event.event_id) not in stale_ids]
+        #: **修正（第三十五次停靠·读数）**：意图是"只留本题被告知的内容"，所以这里必须清空**全部**
+        #: 而不是只清装载期那批 id——上一题新记的事件不在那份 id 名单里，按旧写法会跨题留在候选集里
+        #: （现场证据：全量跑 `events_min/max = 2/2`，1 题冒烟却是 `0/0`）。
+        #: 本题的事件由被测链自己写入（`record_told_history`），所以清空之后照常长出来。
+        counters[0] = max(counters[0], int(store.count))
         store.clear()
-        for event in kept_live:
-            store.record(event.content, event.cue)
-        # 陈旧那几条此刻已不在库里：把它们重新登记为"下一次要清掉的对象"没有意义
-        # （reset 的语义＝每题开头只留本题被告知的内容），故这里只记本次清掉了几条。
-        counters[0] = max(counters[0], len(stale))
         live = int(store.count)
         counters[1] = live if counters[1] == 0 else min(counters[1], live)
         counters[2] = max(counters[2], live)
