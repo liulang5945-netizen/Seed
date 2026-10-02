@@ -296,6 +296,35 @@
 - 上限高于"逐个删散落文件"：后者只清表象，前者断源，且直接封住密钥事故的复发路径。
 - 先行动作纯只读，不动任何文件；定位后才是"在出口加 CI/pre-commit 守卫，任何工作树根级散落即失败"的改造。
 
+### 9.2 排查结果（2026-10-02，已执行只读排查 + 一处 gitignore 修复）
+
+**① 旧污染模式已自愈（2026-09-30 的 .gitignore 已覆盖）**。`git check-ignore -v` 实测：
+`.tmp_*`→`.gitignore:282`、所有 `*.log`→`:88`、`report.xml`→`:262` 全部命中。
+owner 观察到的散落文件是**修复前的残留**；新运行不再进 `git status`，磁盘上的是无害 stale 文件。
+
+**② 密钥已轮换（实测温控）**。仅比对 sha256 前 16 位（不打印密钥内容）：
+- `.jwt_secret` 在盘 `4ad8fa880932b952` ≠ 历史泄漏指纹 `e6401f86c1313d6d` ⇒ 已轮换/重建；
+  且 `REPO_SECRET_REMEDIATION_20260919.md` 记其"历史 0 blob"——本就未泄漏。
+- `.storage_salt` 在盘 `f75efc8df6516828` ≠ 历史泄漏 blob 指纹 `5bfda9cd` ⇒ 已轮换。
+  （2026-09-19 真正泄漏的是 `.storage_salt`， remediation 当时结论"应当轮换"，现已落实。）
+  ⇒ **2026-09-19 密钥事故从"当前暴露"角度已关闭**（历史 blob 不可变，但存活密钥已非旧值）。
+
+**③ 发现新的活跃污染源（本次排查的核心产出）**：`.mimosa/`（根 5061 文件）+
+`taiji-harness/.mimosa/`（6324 文件）**未被 ignore、未跟踪**，持续往 `git status` 灌 1.1 万+ 派生文件。
+内容为 `finding-ledger/history/hook-state/hook-status/reports`，是工具运行时缓存，与已忽略的
+`.mimocode/` 同族（改名 `.mimosa/` 后漏网）。`taiji-harness/.npmrc` 仅含 `registry` URL（无 token，良性）
+但 `.npmrc` 惯例可携认证 token，防御性忽略。
+
+**④ 已执行修复**（提交 `85dfe4f5`）：`.gitignore` 新增 `.mimosa/`、`taiji-harness/.mimosa/`、`taiji-harness/.npmrc`；
+`git status` 中 mimosa 条目已清零。
+
+**⑤ 残留未跟踪项判级**：`ci.yml`(WIP)、`taiji-harness/*`(fork 改动，S8 不越界)、`reports/taiji_*`(新评估产物)
+属预期/并行会话产物，**非污染模式**；剩余最大一项仍是 `output/*`（52GB 清理，独立追踪，§4）。
+
+**⑥ 下一步走向**：当前活跃污染已封口。后续若要进一步收紧，可把"任何工作树根级散落即失败"做进
+pre-commit/CI 守卫（防御 .mimosa 这类改名漏网），但属增强项，非紧急。
+
+
 ### 9.2 执行记录：§9.1 只读根因排查（2026-10-01，本轮执行，仍未改动任何文件）
 
 **结论一（污染来源）：不是任何脚本或测试。** 全仓检索 `.tmp_*`／`report.xml`／`build-host.log` 等名字，命中只在两份文档里（`docs/REPO_HYGIENE_RULES.md`、`plans/reference/REPO_SECRET_REMEDIATION_20260919.md`）；`pyproject.toml` 里没有 `junitxml`／`log_file`／`log_cli` 任何设置。逐件读仓根残留文件的首行，全部是 **agent 所跑命令的 shell 重定向**产物：`.tmp_ruff.json`＝`ruff --output-format json`、`.tmp_black.err`＝`black --check`、`.tmp_alldiff.txt`＝`git diff`、`.tmp_pyfiles.txt`／`.tmp_tracked_py.txt`＝`git ls-files`、`.h19_final.log`＝`pytest`、`report.xml`＝`pytest --junitxml=report.xml`、`build-host.log`／`brand-test.log`／`ui-life-build.log`／`turn.log`／`probe.log`／`web.log`＝构建与探针的 stdout 重定向；mtime 聚在 2026-09-30 18:22–18:38 一次会话的爆发里。⇒ §9.1 假设的"由某个脚本/测试写到工作树根"**不成立**，"在出口加 CI/pre-commit 守卫"这条对策要改靶：它管的是**人与 agent 在仓根执行的命令**，不是仓库代码。
