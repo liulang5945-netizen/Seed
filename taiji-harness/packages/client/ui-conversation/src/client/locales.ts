@@ -70,7 +70,9 @@ export const zh = {
   'settings.enter.description': '智能体运行时 Enter 键和发送按钮的行为；Cmd/Ctrl+Enter 使用另一行为',
   'settings.enter.queue': '排队发送',
   'settings.enter.steer': '插话发送',
-  'hero.headline': '态之极境',
+  // The hero headline stays English on both locales by owner decision
+  // (2026-10-02): the Chinese rendering read worse than the English line.
+  'hero.headline': 'State at Its Utmost',
   'hero.chooseWorkspace': '选择工作区',
   'session.hierarchy': '会话层级',
   'todo.title': '任务',

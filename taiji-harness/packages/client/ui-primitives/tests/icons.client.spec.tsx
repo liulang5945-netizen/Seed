@@ -123,15 +123,19 @@ describe('product icon set', () => {
 })
 
 describe('FishLogo', () => {
-  it('renders the Seed mark — the shell ring with the tree growing inside — in currentColor', () => {
+  it('renders the Seed mark — the shell ring with the tree growing inside — in the brand colours', () => {
     const { container } = render(<primitives.FishLogo />)
     const svg = container.querySelector('svg')!
     expect(svg.getAttribute('width')).toBe('24')
     expect(Number(svg.getAttribute('height'))).toBeCloseTo(24, 1)
     expect(svg.getAttribute('viewBox')).toBe('0 0 24 24')
-    expect(container.querySelectorAll('path')).toHaveLength(1)
-    expect(container.innerHTML).toContain('currentColor')
-    expect(container.querySelector('path')!.getAttribute('fill-rule')).toBe('evenodd')
+    // The coloured pair: structural layer (shell/branches/trunk) then canopy.
+    expect(container.querySelectorAll('path')).toHaveLength(2)
+    expect(container.innerHTML).toContain('--dsw-specific-brand-mark-struct')
+    expect(container.innerHTML).toContain('--dsw-specific-brand-mark-foliage')
+    for (const path of container.querySelectorAll('path')) {
+      expect(path.getAttribute('fill-rule')).toBe('evenodd')
+    }
   })
 })
 

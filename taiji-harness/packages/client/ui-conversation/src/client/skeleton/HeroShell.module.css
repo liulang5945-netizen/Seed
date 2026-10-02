@@ -44,8 +44,8 @@
   color: var(--dsw-alias-label-primary);
 }
 
-/* Keep hover detection on a stationary box while the mark moves within it;
-   hover rules target the hitbox so a slot-occupant mark spins too. */
+/* Keep hover detection on a stationary box while the mark sits within it; the
+   hitbox is also the seat a slot-occupant mark renders into. */
 .fishHitbox {
   display: inline-flex;
   flex: none;
@@ -53,38 +53,13 @@
   justify-content: center;
 }
 
-/* The hover spin is a SMIL rotate on the mark's own path; the sway below shifts
-   the svg a hair off centre, so overflow stays visible to avoid clipping the
-   disc edge. The hero mark inherits its headline's primary ink. */
+/* The hero mark is the coloured Seed mark and stays static: the old hover spin
+   (a SMIL rotate on the path plus this CSS sway) is gone by owner decision
+   (2026-10-02) — a seed grows, it does not spin. Overflow stays visible so the
+   svg's antialiased edge never clips. */
 .fish {
   display: block;
   overflow: visible;
-  transform-origin: 50% 60%;
-  color: var(--dsw-alias-label-primary);
-}
-
-/* Hover sway: a slow continuous tilt about the mark centre — the disc leans a
-   few degrees one way, then settles back with a small counter-tilt. This rides
-   on top of the path's own rotation for a lively but restrained motion. */
-@keyframes hero-fish-swim {
-  0%,
-  100% {
-    transform: none;
-  }
-
-  35% {
-    transform: rotate(-4deg) translate(-0.4px, -0.9px);
-  }
-
-  70% {
-    transform: rotate(1.6deg) translate(0.3px, 0.2px);
-  }
-}
-
-@media (hover: hover) and (prefers-reduced-motion: no-preference) {
-  .fishHitbox:hover .fish {
-    animation: hero-fish-swim 1.6s ease-in-out infinite;
-  }
 }
 
 /* Workspace row sits 12px above the input card (figma y80 → y112). */

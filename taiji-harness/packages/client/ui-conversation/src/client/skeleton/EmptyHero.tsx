@@ -1,10 +1,9 @@
 // The composer remains in ConversationRoot so switching out of the blank-draft
 // phase does not remount its textarea.
 
-import { useState } from 'react'
 import type { ReactNode, RefObject } from 'react'
 import {
-  FISH_LOGO_PATH, FISH_LOGO_VIEWBOX, IconChevronDownOutlineRegular, IconFolderCloseRegular, IconFolderOpenRegular,
+  FishLogo, IconChevronDownOutlineRegular, IconFolderCloseRegular, IconFolderOpenRegular,
 } from '@taiji/dsh-client-ui-primitives'
 import { workspaceTitleOf } from '@taiji/dsh-util-workspace-path'
 import type { ConversationContentProps } from '../contract/slots.ts'
@@ -71,47 +70,10 @@ export interface HeroShellProps {
   children?: ReactNode
 }
 
-/* The mark is the Seed sprout (viewBox 0 0 24 24, centre 12,12), so it is spun
-   by a rotation about its centre rather than a path morph: the geometry stays
-   intact while the mark "moves". */
-const HERO_MARK_CENTER = 12
-const HERO_MARK_SPIN_DUR = '8s'
-
-/**
- * The hero brand mark (34px square), static at rest. Hovering spins the Seed
- * sprout slowly about its centre (SMIL `animateTransform` on the same 8s period),
- * while the CSS sway on the hitbox adds a gentle tilt. Decorative — hidden from
- * the accessibility tree; reduced motion keeps the static filled mark on hover
- * (sampled at mouseenter; a mid-hover preference change takes effect on the
- * next enter).
- * @param props.hovering - driven by the hitbox parent's pointer state.
- * @returns the brand-mark svg element.
- */
-function HeroFish({ hovering }: { hovering: boolean }) {
-  return (
-    <svg
-      className={css.fish}
-      width={34}
-      height={(34 * FISH_LOGO_VIEWBOX.height) / FISH_LOGO_VIEWBOX.width}
-      viewBox={`0 0 ${FISH_LOGO_VIEWBOX.width} ${FISH_LOGO_VIEWBOX.height}`}
-      fill="none"
-      aria-hidden="true"
-    >
-      <path d={FISH_LOGO_PATH} fill="currentColor" fillRule="evenodd">
-        {hovering && (
-          <animateTransform
-            attributeName="transform"
-            type="rotate"
-            from={`360 ${HERO_MARK_CENTER} ${HERO_MARK_CENTER}`}
-            to={`0 ${HERO_MARK_CENTER} ${HERO_MARK_CENTER}`}
-            dur={HERO_MARK_SPIN_DUR}
-            repeatCount="indefinite"
-          />
-        )}
-      </path>
-    </svg>
-  )
-}
+/* The hero mark is the coloured Seed mark, static at rest: the old hover spin
+   (SMIL rotate on the path plus a CSS sway on the hitbox) is gone by owner
+   decision (2026-10-02) — a seed grows, it does not spin. The hitbox stays so
+   the slot seat and layout are unchanged. */
 
 /**
  * Render the hero chrome (headline only; no composer, no workspace row).
@@ -119,23 +81,14 @@ function HeroFish({ hovering }: { hovering: boolean }) {
  * @returns the centered hero element tree.
  */
 export function HeroShell({ t, renderSlot, children }: HeroShellProps) {
-  const [hovering, setHovering] = useState(false)
   return (
     <div className={css.root}>
       <div className={css.stack}>
         <div className={css.headline}>
           {/* figma 34:10412: mark 34 leading the headline, gap 10. */}
-          <span
-            className={css.fishHitbox}
-            onMouseEnter={() => {
-              if (window.matchMedia('(hover: hover) and (prefers-reduced-motion: no-preference)').matches) {
-                setHovering(true)
-              }
-            }}
-            onMouseLeave={() => { setHovering(false) }}
-          >
+          <span className={css.fishHitbox}>
             {renderSlot('conversation.hero.brand.mark', { size: 34, className: css.fish }, {
-              fallback: <HeroFish hovering={hovering} />,
+              fallback: <FishLogo size={34} className={css.fish} />,
             })}
           </span>
           <span>{t('hero.headline')}</span>

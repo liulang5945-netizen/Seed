@@ -43,13 +43,10 @@ describe('web e2e: startup auto-selection', () => {
     await page.locator(`${ROOT_PHASE}[data-phase="hero"]`).waitFor({ timeout: 15_000 })
     const headline = page.getByText('State at Its Utmost', { exact: true })
     // The shipped hero keeps the brand hitbox inside the headline group (it leads the text),
-    // so the axis starts at the text span rather than at its parent.
+    // so the axis starts at the text span rather than at its parent. The mark is the coloured
+    // Seed mark and stays static (owner decision 2026-10-02): no hover spin to assert here.
     const fishHitbox = headline.locator('xpath=preceding-sibling::span[1]')
-    const fish = fishHitbox.locator('svg')
-    expect(await fish.evaluate(node => getComputedStyle(node).color))
-      .toBe(await headline.evaluate(node => getComputedStyle(node).color))
-    await fishHitbox.hover()
-    expect(await fish.evaluate(node => getComputedStyle(node).animationName)).not.toBe('none')
+    expect(await fishHitbox.locator('svg').count()).toBe(1)
     await page.evaluate(() => {
       const refs = {
         root: document.querySelector('div[data-phase="hero"]'),

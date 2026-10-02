@@ -1,4 +1,8 @@
-/* Life panel layout: stacked sections of fact rows, meters, and action rows. */
+/* Life panel layout: stacked sections of fact rows, meters, and action rows.
+   Colours come from the shared theme aliases only (design-platform.css):
+   label-tertiary / label-secondary for muted copy, state-business-primary for
+   the meters and progress, state-error/warn for the refusal lines, border-l4
+   for hairlines — so the panel follows light and dark like the rest of the app. */
 
 .page {
   display: flex;
@@ -22,7 +26,7 @@
 
 .subtitle {
   margin: 0;
-  color: var(--dsw-alias-text-tertiary, var(--dsw-alias-text-secondary, inherit));
+  color: var(--dsw-alias-label-tertiary, inherit);
   font-size: 13px;
 }
 
@@ -42,7 +46,7 @@
   margin: 0;
   font-size: 13px;
   font-weight: 600;
-  color: var(--dsw-alias-text-secondary, inherit);
+  color: var(--dsw-alias-label-secondary, inherit);
 }
 
 .organ {
@@ -65,7 +69,7 @@
 }
 
 .factLabel {
-  color: var(--dsw-alias-text-tertiary, var(--dsw-alias-text-secondary, inherit));
+  color: var(--dsw-alias-label-tertiary, inherit);
   font-size: 12px;
   flex-shrink: 0;
 }
@@ -83,7 +87,7 @@
 .groupLabel {
   margin: 0;
   font-size: 12px;
-  color: var(--dsw-alias-text-tertiary, var(--dsw-alias-text-secondary, inherit));
+  color: var(--dsw-alias-label-tertiary, inherit);
 }
 
 .meters {
@@ -110,7 +114,7 @@
   display: block;
   height: 6px;
   border-radius: 3px;
-  background: var(--dsw-alias-fill-secondary, rgba(127, 127, 127, 0.2));
+  background: var(--dsw-alias-interactive-bg-active, rgba(127, 127, 127, 0.2));
   overflow: hidden;
 }
 
@@ -118,7 +122,7 @@
   display: block;
   height: 100%;
   border-radius: 3px;
-  background: var(--dsw-alias-fill-accent, currentColor);
+  background: var(--dsw-alias-state-business-primary, currentColor);
 }
 
 .meterValue {
@@ -135,7 +139,7 @@
 .muted {
   margin: 0;
   font-size: 13px;
-  color: var(--dsw-alias-text-tertiary, var(--dsw-alias-text-secondary, inherit));
+  color: var(--dsw-alias-label-tertiary, inherit);
 }
 
 .datasetList {
@@ -171,7 +175,7 @@
 .datasetSize {
   flex-shrink: 0;
   font-variant-numeric: tabular-nums;
-  color: var(--dsw-alias-text-tertiary, var(--dsw-alias-text-secondary, inherit));
+  color: var(--dsw-alias-label-tertiary, inherit);
 }
 
 .unavailable {
@@ -184,7 +188,7 @@
   margin: 0;
   padding-left: 18px;
   font-size: 12px;
-  color: var(--dsw-alias-text-secondary, inherit);
+  color: var(--dsw-alias-label-secondary, inherit);
 }
 
 .trainingBadges {
@@ -204,7 +208,7 @@
   display: block;
   height: 8px;
   border-radius: 4px;
-  background: var(--dsw-alias-fill-secondary, rgba(127, 127, 127, 0.2));
+  background: var(--dsw-alias-interactive-bg-active, rgba(127, 127, 127, 0.2));
   overflow: hidden;
 }
 
@@ -212,7 +216,7 @@
   display: block;
   height: 100%;
   border-radius: 4px;
-  background: var(--dsw-alias-fill-accent, currentColor);
+  background: var(--dsw-alias-state-business-primary, currentColor);
   transition: width 0.3s ease;
 }
 
@@ -233,13 +237,13 @@
 .errorLine {
   margin: 0;
   font-size: 12px;
-  color: var(--dsw-alias-text-danger, #c0392b);
+  color: var(--dsw-alias-state-error-primary, #c0392b);
 }
 
 .confirmLine {
   margin: 0;
   font-size: 12px;
-  color: var(--dsw-alias-text-warning, #b26a00);
+  color: var(--dsw-alias-state-warn-primary, #b26a00);
 }
 
 .table {
@@ -252,16 +256,16 @@
 .table td {
   text-align: left;
   padding: 4px 8px;
-  border-bottom: 1px solid var(--dsw-alias-border-secondary, rgba(127, 127, 127, 0.25));
+  border-bottom: 1px solid var(--dsw-alias-border-l4, rgba(127, 127, 127, 0.25));
   font-weight: inherit;
 }
 
 .table th {
-  color: var(--dsw-alias-text-tertiary, var(--dsw-alias-text-secondary, inherit));
+  color: var(--dsw-alias-label-tertiary, inherit);
   font-size: 11px;
 }
 
 .loading {
   margin: 0;
-  color: var(--dsw-alias-text-tertiary, var(--dsw-alias-text-secondary, inherit));
+  color: var(--dsw-alias-label-tertiary, inherit);
 }
