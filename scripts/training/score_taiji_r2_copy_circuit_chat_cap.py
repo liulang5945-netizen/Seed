@@ -82,6 +82,14 @@ def _answer_raw(
     return answer.strip()
 
 
+def _quantiles_or_none(values: list[float]) -> dict[str, Any]:
+    """`_quantiles` 的空输入版本：**没有样本要如实记 `n=0`**，不许让统计函数替仪器抛异常。"""
+
+    if not values:
+        return {"n": 0, "note": "no hits on this arm"}
+    return _quantiles(values)
+
+
 def _quantiles(values: list[float]) -> dict[str, Any]:
     """分位数摘要——用来让每条链报**自己**的相似度分布，而不是复用别条链的 τ。"""
 
@@ -194,6 +202,16 @@ def run_arm(
             if index + 1 < len(turns):
                 history.append((turn, answer))
         hit = any(token in answer for token in item["expected_contains"])
+        #: K-定价档（PLAN-A-30 第三十次停靠·设计预备第 2 条）：**命中发生在答复的第几个字节**必须先量出来，
+        #: 才谈得上"只在前 K 步发证据"这种资格档；`answer[:60]` 那个截断字段量不到这件事，故另存整条的长度
+        #: 与首次命中的字节偏移。无命中时偏移记 `None`（不许记 0——0 会被读成"命中在开头"）。
+        offsets = [
+            answer.encode("utf-8").find(token.encode("utf-8"))
+            for token in item["expected_contains"]
+            if token.encode("utf-8") in answer.encode("utf-8")
+        ]
+        first_hit_offset = min(offsets) if offsets else None
+        answer_bytes = len(answer.encode("utf-8"))
         #: `formed_full`＝**整条答复**过 `well_formed`（与下面那把只看 60 字符前缀的尺子不同，
         #: 见 `well_formed_scope`）。三者合起来才回答"回路买到的到底是词在场，还是一句能看的答案"
         #: ——`DEBT-G12` 要的那把联合判据。旧字段 `correct`／`well_formed_rate` 语义逐位不变。
@@ -202,6 +220,8 @@ def run_arm(
                 "id": item["id"],
                 "dimension": item["dimension"],
                 "hit": hit,
+                "first_hit_offset_bytes": first_hit_offset,
+                "answer_bytes": answer_bytes,
                 "formed_full": bool(well_formed(answer, ngram)),
                 "answer": answer[:60],
             }
@@ -215,6 +235,19 @@ def run_arm(
             sum(1 for row in rows if well_formed(row["answer"], ngram)) / len(rows), 4
         ),
         "rows": rows,
+        #: 命中偏移的分位数与"答复长度"并排存 ⇒ 一眼看得出前 K 步这类窗口能不能同时盖住复述。
+        #: 空命中要显式记 `n=0` 而不是把空列表交给 `_quantiles`——对照臂**结构性没有命中**，
+        #: 那不是数据错误（本档第一次跑就红在 `no median for empty data`，是仪器的事不是被测的事）。
+        "hit_offsets": _quantiles_or_none(
+            [
+                float(row["first_hit_offset_bytes"])
+                for row in rows
+                if row["first_hit_offset_bytes"] is not None
+            ]
+        ),
+        "answer_bytes_quantiles": _quantiles_or_none(
+            [float(row["answer_bytes"]) for row in rows if row["hit"]]
+        ),
         #: 剂量档的"被走到"计数（`_make_scaled_evidence` 实际消费了几次）。
         "evidence_calls": calls[0],
         "picked_cosine": _quantiles(scores) if record_scores and scores else None,

@@ -70,7 +70,7 @@ def test_empty_generation_takes_the_fallback_too() -> None:
 
 
 def test_instrument_carries_v6_and_the_correction_note() -> None:
-    """格式面：v15 在案（v6–v14 的语义逐条仍在）、更正说明点名追加二的误诊与深帧证据，严格守卫公式未动。
+    """格式面：v16 在案（v6–v15 的语义逐条仍在）、更正说明点名追加二的误诊与深帧证据，严格守卫公式未动。
 
     2026-10-02 该仪器先升 **v7**（加性自述 `surface_gate_state`／`write_back_gate_last_reason`），
     同日再升 **v8**（加性旗标 `--no-copy-evidence-gate` ＋守卫 `evidence_gate_flag_honored`），
@@ -80,8 +80,8 @@ def test_instrument_carries_v6_and_the_correction_note() -> None:
     source = (PROJECT_ROOT / "scripts" / "training" / "probe_taiji_a30_stop_failure.py").read_text(
         encoding="utf-8"
     )
-    assert '"format": "taiji-a30-stop-failure-v15"' in source
-    assert all(f"format_note_v{v}" in source for v in (6, 7, 8, 9, 10, 11, 12, 13, 14, 15)), (
+    assert '"format": "taiji-a30-stop-failure-v16"' in source
+    assert all(f"format_note_v{v}" in source for v in (6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16)), (
         "升版只许加列，历史说明必须逐版留在件里"
     )
     assert "format_note_v6" in source

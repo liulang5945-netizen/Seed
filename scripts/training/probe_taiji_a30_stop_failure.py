@@ -214,6 +214,28 @@ def char_membership_of_run(text: str) -> list[bool]:
     return membership
 
 
+def _position_histogram(positions: list[int]) -> dict[str, int]:
+    """把"边界符胜出所在的步序"分堆——给资格档定价用：**停止决定落在答复的哪一段**。
+
+    堆界取 2 的幂（16/32/64/128）是刻意的：窗口 K 只能落在这些刻度上，才不会出现"事后挑一个刚好过线的 K"。
+    """
+
+    buckets = {"0-15": 0, "16-31": 0, "32-63": 0, "64-127": 0, "128+": 0}
+    for position in positions:
+        if position < 16:
+            buckets["0-15"] += 1
+        elif position < 32:
+            buckets["16-31"] += 1
+        elif position < 64:
+            buckets["32-63"] += 1
+        elif position < 128:
+            buckets["64-127"] += 1
+        else:
+            buckets["128+"] += 1
+    buckets["total"] = len(positions)
+    return buckets
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--checkpoint", default="checkpoints/seed_beta.pt")
@@ -506,6 +528,14 @@ def main() -> int:
                 sorted(ratios)[len(ratios) // 2] if ratios else None
             ),
             "run_steps": sum(1 for row in item_rows if row["in_run"]),
+            #: v16（第三十次停靠·设计预备第 2 条）：**边界符胜出发生在答复的第几步**——
+            #: "只在前 K 步发证据"这种资格档必须先量出停止决定落在哪一段，才谈得上选 K；
+            #: 量不到就那一档不跑。位置按**在环内的序位**数（0 起），跨轮不累加。
+            "run_boundary_win_positions": [
+                position
+                for position, row in enumerate([row for row in item_rows if row["in_run"]])
+                if row["boundary_is_argmax"]
+            ],
         }
         per_item.append(summary)
         if worst_run >= 20 and item_rows:
@@ -538,7 +568,8 @@ def main() -> int:
 
     substrate.observe = original_observe  # type: ignore[method-assign]
     report = {
-        "format": "taiji-a30-stop-failure-v15",
+        "format": "taiji-a30-stop-failure-v16",
+        "format_note_v16": "v16 加性只多两列**停止决定的位置**信息：每题 `run_boundary_win_positions` 与件级 `boundary_win_position_hist`。用途是给『只在前 K 步发证据』这一族资格档**定价**——设计预备第 2 条要求 K 只能从链上先量到的分布里取，不许事后挑刚好过线的那个。判据、计数与生成路径一字未动，故与 v13/v15 同格可比（锚点 23/49/6 与 total_steps 就是这条可比性的检验）。",
         "format_note_v15": "v15 **只是把 v13/v14 那副内容档搬到剂量探针里与复述面共用**（`_make_content_armed_evidence`）：轨迹面与复述面必须做**同一个**置换／冻结操作，各写一份就是两把尺子。字段、算法、默认关闭时的逐位行为一字未动 ⇒ 与 v13/v14 同格可比（锚点档的 23/49/6 就是这条可比性的检验）。",
         "format_note_v14": "v14 **只修 `frozen` 档的冻结源**（仪器缺陷，不是新测量）：v13 取'第一次调用'，而第一次调用时 store 仍为空 ⇒ 冻结到的是**精确零向量**，那一档实际测的是'把通道永久关掉'（现场证据：自停 66/72 与不挂回路那件同值、`content_arm_max_rel_l1_diff=1.0`）。现冻结到**第一条非零**证据并披露冻结点与它的 L1。`permutation` 档与其余字段一字未动 ⇒ v13 的置换档读数继续可比。",
         "format_note_v13": "v13 **加性**多一格 owner 裁定后要的那把分离尺：`--evidence-content-arm` "
@@ -650,6 +681,10 @@ def main() -> int:
         "max_length": args.max_length,
         "generation_loop_lines": [loop_first, loop_last],
         "items": len(items),
+        #: v16 聚合：全部在案步里边界符胜出的位置分布（按 0–15／16–31／32–63／64–127／128＋ 分堆）。
+        "boundary_win_position_hist": _position_histogram(
+            [pos for row in per_item for pos in row["run_boundary_win_positions"]]
+        ),
         "instrument_guard": {
             "observe_calls_recorded": bool(records),
             # v7 自述守卫：这条面必须**报出**回写门槛状态（ None／缺键都算仪器没走到，红）。
