@@ -55,7 +55,7 @@
 
 ## §7 产物
 
-`reports/r2_d2_copy_implementation_gates_20260918.json`、`reports/r2_d2_copy_learnability_probe_20260918.json`、`reports/r2_d2_matched_dev_20260918.json`（format 升级含 copy 字段与三臂）；checkpoint 仍写隔离目录、digest 入报告；`growth_admitted=false`、`can_promote=false`。
+`reports/r2_d2_copy_implementation_gates_20260918.json`、`reports/r2_d2_copy_learnability_probe_20260918.json`、`reports/r2_d2_matched_dev_20260918.json`（format 升级含 copy 字段与三臂）**【2026-10-02 交付状态核：三个名字里只有中间那个产出过**（`r2_d2_copy_learnability_probe_20260918.json` 在库）；`..._copy_implementation_gates_...` 与 `..._matched_dev_...` **从未落盘**——同名但少 `copy_` 前缀的 `r2_d2_implementation_gates_20260918.json` 是另一件东西（件内无 copy 字段、内容是 static_checks/pytest/gates，且 `growth_admitted=false`、`can_promote=false`），而 `r2_d3..d7_matched_dev_2026091x.json` 那一族里也确实没有 d2 那一枚。**本行只加状态标注、不改任何判据**；若将来要补这两档，按本节判据跑并另起件名。**】**；checkpoint 仍写隔离目录、digest 入报告；`growth_admitted=false`、`can_promote=false`。
 
 ## §8 不得主张
 
