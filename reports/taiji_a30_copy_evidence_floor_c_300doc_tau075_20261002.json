@@ -1,0 +1,96 @@
+{
+  "format": "taiji-a30-copy-evidence-dose-v1",
+  "question": "把复制回路的加性证据按 α 缩放／按相似度下限截断，语料接缝上的停止信号能不能回来",
+  "relevance_floor_tau": 0.75,
+  "checkpoint": "output/a31_chunked_short/checkpoint.pt",
+  "circuit": "output/taiji_r2_copy_circuit_chat/judge/circuit-final.pt",
+  "circuit_sha256": "1cfe5961c300485d",
+  "docs": 300,
+  "documents_face": "corpus_body_plus_appended_newline",
+  "decision_face": "utf8_masked_legal_set",
+  "anchors_on_record": {
+    "circuit_absent_same_checkpoint": "186/300（档 (c) 不挂回路，docs_sha256 同批）",
+    "circuit_mounted_full_dose": "0/300（档 (c)＋seed-A）"
+  },
+  "unpatched_end_face": {
+    "n": 300,
+    "boundary_is_argmax_count": 0,
+    "p_boundary_median": 3.1e-05,
+    "p_boundary_mean": 0.00395,
+    "p_boundary_max": 0.172976,
+    "boundary_rank_median": 3.0,
+    "argmax_winners_top5": [
+      [
+        230,
+        165
+      ],
+      [
+        229,
+        113
+      ],
+      [
+        32,
+        21
+      ],
+      [
+        52,
+        1
+      ]
+    ],
+    "other_n": 238993,
+    "other_boundary_is_argmax_count": 0,
+    "other_p_boundary_median": 0.0
+  },
+  "doses": {
+    "1.0": {
+      "n": 300,
+      "boundary_is_argmax_count": 186,
+      "p_boundary_median": 0.258243,
+      "p_boundary_mean": 0.268176,
+      "p_boundary_max": 0.716289,
+      "boundary_rank_median": 1.0,
+      "argmax_winners_top5": [
+        [
+          256,
+          186
+        ],
+        [
+          231,
+          103
+        ],
+        [
+          229,
+          10
+        ],
+        [
+          10,
+          1
+        ]
+      ],
+      "other_n": 238993,
+      "other_boundary_is_argmax_count": 943,
+      "other_p_boundary_median": 0.000185,
+      "anchor_not_applicable_reason": "floor is active ⇒ two passes should differ",
+      "evidence_calls": 239601,
+      "picked_cosine": {
+        "median": 0.1231,
+        "p10": 0.0721,
+        "p25": 0.0926,
+        "p75": 0.1672,
+        "p90": 0.2358,
+        "max": 0.7261,
+        "share_below_0p3": 0.9561,
+        "share_no_event": 0.0
+      }
+    }
+  },
+  "instrument_guard": {
+    "unit_dose_bitwise_identical": null,
+    "wrapper_consumed_on_every_dose": true,
+    "evidence_calls_by_dose": {
+      "1.0": 239601
+    },
+    "checkpoint_untouched": true
+  },
+  "started_utc": "2026-10-02T05:43:36Z"
+}
