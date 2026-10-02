@@ -1,0 +1,82 @@
+{
+  "format": "taiji-a30-copy-evidence-dose-v1",
+  "question": "把复制回路的加性证据按 α 缩放，语料接缝上的停止信号能不能回来、回来多少",
+  "checkpoint": "output/a31_chunked_short/checkpoint.pt",
+  "circuit": "output/taiji_r2_copy_circuit_chat/judge/circuit-final.pt",
+  "circuit_sha256": "1cfe5961c300485d",
+  "docs": 300,
+  "documents_face": "corpus_body_plus_appended_newline",
+  "decision_face": "utf8_masked_legal_set",
+  "anchors_on_record": {
+    "circuit_absent_same_checkpoint": "186/300（档 (c) 不挂回路，docs_sha256 同批）",
+    "circuit_mounted_full_dose": "0/300（档 (c)＋seed-A）"
+  },
+  "unpatched_end_face": {
+    "n": 300,
+    "boundary_is_argmax_count": 0,
+    "p_boundary_median": 3.1e-05,
+    "p_boundary_mean": 0.00395,
+    "p_boundary_max": 0.172976,
+    "boundary_rank_median": 3.0,
+    "argmax_winners_top5": [
+      [
+        230,
+        165
+      ],
+      [
+        229,
+        113
+      ],
+      [
+        32,
+        21
+      ],
+      [
+        52,
+        1
+      ]
+    ]
+  },
+  "doses": {
+    "0.25": {
+      "n": 300,
+      "boundary_is_argmax_count": 27,
+      "p_boundary_median": 0.074903,
+      "p_boundary_mean": 0.111702,
+      "p_boundary_max": 0.574205,
+      "boundary_rank_median": 3.0,
+      "argmax_winners_top5": [
+        [
+          229,
+          137
+        ],
+        [
+          230,
+          121
+        ],
+        [
+          256,
+          27
+        ],
+        [
+          32,
+          8
+        ],
+        [
+          231,
+          7
+        ]
+      ],
+      "evidence_calls": 239601
+    }
+  },
+  "instrument_guard": {
+    "unit_dose_bitwise_identical": null,
+    "wrapper_consumed_on_every_dose": true,
+    "evidence_calls_by_dose": {
+      "0.25": 239601
+    },
+    "checkpoint_untouched": true
+  },
+  "started_utc": "2026-10-02T03:27:45Z"
+}

@@ -87,6 +87,7 @@ def run_arm(
     circuit_payload: str | None,
     *,
     evidence_utf8_gate: bool = False,
+    evidence_alpha: float = 1.0,
     max_bytes: int = MAX_ANSWER_BYTES,
     limit: int | None = None,
 ) -> dict[str, Any]:
@@ -108,6 +109,16 @@ def run_arm(
         runtime.enable_copy_circuit(PROJECT_ROOT / circuit_payload)
     if evidence_utf8_gate:
         runtime.model.substrate.set_copy_evidence_utf8_gate(True)
+    calls = [0]
+    if evidence_alpha != 1.0:
+        # PLAN-A-30 §DEBT-G19 的剂量档：复用剂量探针那个接口级包装（不另写一份缩放）。
+        from probe_taiji_a30_copy_evidence_dose import _make_scaled_evidence
+
+        circuit = runtime.model.substrate.copy_circuit
+        if circuit is None:
+            raise RuntimeError("要求缩放证据但回路不在场 ⇒ 这一臂没有可缩放的通道")
+        scaled, calls = _make_scaled_evidence(circuit.evidence, evidence_alpha)
+        circuit.evidence = scaled
     manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
     items = [
         {**item, "dimension": dim}
@@ -149,6 +160,8 @@ def run_arm(
             sum(1 for row in rows if well_formed(row["answer"], ngram)) / len(rows), 4
         ),
         "rows": rows,
+        #: 剂量档的"被走到"计数（`_make_scaled_evidence` 实际消费了几次）。
+        "evidence_calls": calls[0],
     }
 
 
@@ -167,6 +180,12 @@ def main() -> int:
         type=int,
         default=MAX_ANSWER_BYTES,
         help="生成预算，默认 64＝冻结面；PLAN-A-30 §2h 用它跑同装配的双预算档",
+    )
+    parser.add_argument(
+        "--copy-evidence-alpha",
+        type=float,
+        default=1.0,
+        help="DEBT-G19 剂量档：治疗臂把回路加性证据乘 α（默认 1.0 ⇒ 与已入库两臂档逐位可比）",
     )
     parser.add_argument(
         "--limit",
@@ -189,6 +208,7 @@ def main() -> int:
         checkpoint,
         args.circuit,
         evidence_utf8_gate=gate,
+        evidence_alpha=args.copy_evidence_alpha,
         max_bytes=args.max_bytes,
         limit=args.limit,
     )
@@ -213,6 +233,8 @@ def main() -> int:
         "circuit_sha256": circuit_sha256,
         #: PLAN-A-25：门开/关必须落在件上，否则两份读数看起来像同一次实验。
         "copy_evidence_utf8_gate": gate,
+        #: DEBT-G19 剂量档：治疗臂的证据乘数（1.0 ⇒ 与已入库两臂档逐位可比）。
+        "copy_evidence_alpha": args.copy_evidence_alpha,
         #: 两条口径必须落在件上，否则这份读数会被当成"整条答复、预算 256"的那类去比：
         #: ①生成预算（`PLAN-A-30` §2h 实测同一链同一装配 64→256 会让命中 3→9、成句 13→6）；
         #: ②成句率量的是 `answer[:60]` **字符前缀**，不是整条答复（与 `probe_taiji_a30_*` 的
@@ -222,6 +244,14 @@ def main() -> int:
         "well_formed_scope": "answer[:60] 字符前缀（非整条答复）",
         "control_no_circuit": control,
         "treated_with_circuit": treated,
+        "dose_guard": {
+            "treated_consumed_scaler": bool(treated.get("evidence_calls")),
+            "control_consumed_scaler": bool(control.get("evidence_calls")),
+            "evidence_calls_by_arm": {
+                "control": control.get("evidence_calls"),
+                "treated": treated.get("evidence_calls"),
+            },
+        },
         "verdict": verdict,
     }
     print(
