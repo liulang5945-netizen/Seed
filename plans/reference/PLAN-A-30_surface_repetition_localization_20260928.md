@@ -5354,3 +5354,13 @@ seed-A 窗口 15 对对照 13（差 2 < 分辨率 ≥3 ⇒ 相当），seed-B �
   但它同时牵动停止面那条解释：seed-B 的 Δ+35 就与"复述供给"无关，"早段供给、晚段伤害"这句要降为仅 seed-A 的机制读法。
 
 **不许顺手做的事**：不在这格上跑第三个 c／τ／α（已定价）；不重标 K；不把 cap 面读数搬到原始字节链或表层链上说事（三把尺）。
+
+
+**前置①的当场更正（数尚未落地，先改文而不是事后找补）**：本格开档时写的"两件 `checkpoint_sha256` 相同且等于 `ae51700e881f757a`"
+**在这台仪器上无法机检**——cap 仪器（`taiji-r2-copy-circuit-chat-cap-v1` 信封）的顶层键里**没有** `checkpoint_sha256`（只有 `checkpoint` 路径与 `circuit_sha256`；
+带 `checkpoint_sha256` 的是 L2 探针那台）。⇒ ①降级为两半：**`checkpoint` 路径等值且等于 `output/a31_chunked_short/checkpoint.pt`**（可机检，已验）
+＋ **`circuit_sha256` 等于 seed-B `3cfb02c2…`**（可机检，已验）；sha 那半**记为 unverified**，不静默丢弃也不冒充。
+**同一轮把判读器的成功路径也验了**（这是上一格欠的一课：只验 fail-closed 分支等于没验）：拿 seed-A 已知那对
+（`reports/taiji_a30_cap_dual_arm_chunked_short_budget256_20261002.json` 全剂量 D **6**／`reports/taiji_a30_cap_dual_arm_chunked_short_window64_20261002.json` 窗口 D **7**）
+喂进同一个脚本，抽出 6／7、对照 0、24 题、D 维 id 集 `D01…` 可机检且相等、窗口件 `emitted=27,672／silenced=7,863` 两侧非零；
+而 `circuit_is_seedB` 在这一对上正确判 **False** ⇒ 守卫既能为真也能为假。
