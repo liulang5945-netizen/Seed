@@ -69,6 +69,7 @@ def _make_scaled_evidence(
     circuit: Any | None = None,
     scores: list[float] | None = None,
     floor_tau: float | None = None,
+    ceiling_c: float | None = None,
 ) -> tuple[Any, list[int]]:
     """接口级包装：把 `evidence(**kwargs)` 的返回值乘 α，并数它**被消费**了几次。
 
@@ -85,12 +86,18 @@ def _make_scaled_evidence(
         #: 相似度走**产品自己的那条算式**（`CopyCircuit._cosine` 的 docstring 明写它与 `best_match`
         #: 同一套），所以这里不另实现一份打分。但"算完再丢"与"根本不发"在**计数器副作用**上不等价
         #: （`_chosen_event` 的锁丢弃计数照旧会走），件里如实披露这一条。
-        if (scores is not None or floor_tau is not None) and circuit is not None:
+        if (
+            scores is not None or floor_tau is not None or ceiling_c is not None
+        ) and circuit is not None:
             event = circuit.store.best_match(kwargs["cue"])
             score = None if event is None else float(circuit._cosine(kwargs["cue"], event.cue))
             if scores is not None:
                 scores.append(-1.0 if score is None else score)
             if floor_tau is not None and (score is None or score < floor_tau):
+                return out_tensor * 0.0
+            #: 上限档（DEBT-G19 的第二种形状）：**越自信越要收着**——相似度高于 c 的步不发。
+            #: 本轮读数显示有害的接缝步在 0.4332、有用的复述步在 0.1~0.3 ⇒ 只有这个方向可能两全。
+            if ceiling_c is not None and score is not None and score > ceiling_c:
                 return out_tensor * 0.0
         if record is not None:
             with torch.no_grad():
@@ -127,6 +134,12 @@ def main() -> int:
         default=0,
         help="按调用顺序留下最后 N 个相似度。**`--docs 1` 时最后一次调用就是那篇文档的接缝位置**"
         " ⇒ 用它把'接缝落在高相似度段'从推论升级成直接量到的数。",
+    )
+    parser.add_argument(
+        "--relevance-ceiling-c",
+        type=float,
+        default=None,
+        help="DEBT-G19 上限档：相似度**高于** c 的步把证据归零（与下限共用同一条 `_cosine` 与同一个包装器）",
     )
     parser.add_argument(
         "--record-scores",
@@ -185,6 +198,7 @@ def main() -> int:
             circuit=circuit,
             scores=scores,
             floor_tau=args.relevance_floor_tau,
+            ceiling_c=args.relevance_ceiling_c,
         )
         circuit.evidence = scaled
         try:
@@ -196,10 +210,11 @@ def main() -> int:
             #: 逐位锚点**只在下限关闭时**才是"包层不扰动"的检验；下限开着时两趟**本就该不同**
             #: （接缝与 other 的差别正是那一枪的内容），所以那时把这条读成 false 是误读。
             #: 于是下限开着时报 `None`（不适用），而不是报 false。
-            unit_dose_identical = (
-                None if args.relevance_floor_tau is not None else (row == unpatched)
+            any_filter = (
+                args.relevance_floor_tau is not None or args.relevance_ceiling_c is not None
             )
-            if args.relevance_floor_tau is not None:
+            unit_dose_identical = None if any_filter else row == unpatched
+            if any_filter:
                 row["anchor_not_applicable_reason"] = "floor is active ⇒ two passes should differ"
         row["evidence_calls"] = calls[0]
         if scores:
@@ -236,6 +251,7 @@ def main() -> int:
         "format": "taiji-a30-copy-evidence-dose-v1",
         "question": "把复制回路的加性证据按 α 缩放／按相似度下限截断，语料接缝上的停止信号能不能回来",
         "relevance_floor_tau": args.relevance_floor_tau,
+        "relevance_ceiling_c": args.relevance_ceiling_c,
         "checkpoint": args.checkpoint,
         "circuit": args.circuit,
         "circuit_sha256": hashlib.sha256((PROJECT_ROOT / args.circuit).read_bytes()).hexdigest()[

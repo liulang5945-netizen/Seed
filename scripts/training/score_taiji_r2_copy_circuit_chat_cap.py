@@ -113,6 +113,7 @@ def run_arm(
     evidence_utf8_gate: bool = False,
     evidence_alpha: float = 1.0,
     evidence_floor_tau: float | None = None,
+    evidence_ceiling_c: float | None = None,
     record_scores: bool = False,
     max_bytes: int = MAX_ANSWER_BYTES,
     limit: int | None = None,
@@ -137,7 +138,12 @@ def run_arm(
         runtime.model.substrate.set_copy_evidence_utf8_gate(True)
     calls = [0]
     scores: list[float] = []
-    if evidence_alpha != 1.0 or evidence_floor_tau is not None or record_scores:
+    if (
+        evidence_alpha != 1.0
+        or evidence_floor_tau is not None
+        or evidence_ceiling_c is not None
+        or record_scores
+    ):
         # PLAN-A-30 §DEBT-G19 的剂量档：复用剂量探针那个接口级包装（不另写一份缩放）。
         from probe_taiji_a30_copy_evidence_dose import _make_scaled_evidence
 
@@ -150,6 +156,7 @@ def run_arm(
             circuit=circuit,
             scores=scores if record_scores else None,
             floor_tau=evidence_floor_tau,
+            ceiling_c=evidence_ceiling_c,
         )
         circuit.evidence = scaled
     manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
@@ -216,6 +223,12 @@ def main() -> int:
         help="生成预算，默认 64＝冻结面；PLAN-A-30 §2h 用它跑同装配的双预算档",
     )
     parser.add_argument(
+        "--relevance-ceiling-c",
+        type=float,
+        default=None,
+        help="DEBT-G19 上限档：相似度**高于** c 的步不发（越自信越收着）；与接缝档共用同一个包装器与同一条 `_cosine`",
+    )
+    parser.add_argument(
         "--relevance-floor-tau",
         type=float,
         default=None,
@@ -255,6 +268,7 @@ def main() -> int:
         evidence_utf8_gate=gate,
         evidence_alpha=args.copy_evidence_alpha,
         evidence_floor_tau=args.relevance_floor_tau,
+        evidence_ceiling_c=args.relevance_ceiling_c,
         record_scores=args.record_scores,
         max_bytes=args.max_bytes,
         limit=args.limit,
@@ -283,6 +297,7 @@ def main() -> int:
         #: DEBT-G19 剂量档：治疗臂的证据乘数（1.0 ⇒ 与已入库两臂档逐位可比）。
         "copy_evidence_alpha": args.copy_evidence_alpha,
         "relevance_floor_tau": args.relevance_floor_tau,
+        "relevance_ceiling_c": args.relevance_ceiling_c,
         #: 两条口径必须落在件上，否则这份读数会被当成"整条答复、预算 256"的那类去比：
         #: ①生成预算（`PLAN-A-30` §2h 实测同一链同一装配 64→256 会让命中 3→9、成句 13→6）；
         #: ②成句率量的是 `answer[:60]` **字符前缀**，不是整条答复（与 `probe_taiji_a30_*` 的
