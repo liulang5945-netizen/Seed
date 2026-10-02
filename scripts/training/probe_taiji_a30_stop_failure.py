@@ -223,10 +223,12 @@ def _group_rows_by_generation(rows: list[dict]) -> list[list[dict]]:
     这就是它对"基底为什么不停"没有判别力的原因（§第五十九次停靠）。`step == 0` 即一代的开始。
     """
 
+    #: v23 更正：v22 在这里用 `in_run` 过滤，而该字段是"该步是否落在**同字重复段**内"
+    #: （由 `char_membership_of_run(answer)` 得出，见本文件 line 561/579），不是"是否在生成环内"。
+    #: 后果实测过一次：72 次生成只剩 12／0 条，`ate_full_budget` 恒假（§第六十次停靠·资格前置判定）。
+    #: `in_run` 仍保留，但作为第二维 `steps_in_repeat_run` 报告。
     groups: list[list[dict]] = []
     for row in rows:
-        if not row.get("in_run"):
-            continue
         if not groups or row.get("step") == 0:
             groups.append([])
         groups[-1].append(row)
@@ -245,13 +247,14 @@ def _endstep_probe_per_generation(rows: list[dict], max_length: int) -> list[dic
         out.append(
             {
                 "generation_steps": len(group),
+                "steps_in_repeat_run": sum(1 for row in group if row.get("in_run")),
                 "last_step": int(last_step),
                 "p_boundary_max": round(float(peak["p_boundary"]), 6),
                 "p_boundary_argmax_step": int(peak["step"]),
                 "boundary_rank_at_peak_step": int(peak["boundary_rank_in_legal"]),
                 "legal_candidates_at_peak_step": int(peak["legal_candidates"]),
                 "peak_is_last_step": bool(peak["step"] == last_step),
-                "ate_full_budget": bool(last_step + 1 >= max_length),
+                "ate_full_budget": bool(len(group) >= max_length),
             }
         )
     return out
@@ -708,9 +711,12 @@ def main() -> int:
 
     substrate.observe = original_observe  # type: ignore[method-assign]
     report = {
-        "format": "taiji-a30-stop-failure-v22",
+        "format": "taiji-a30-stop-failure-v23",
         "format_note_v19": "v19 加性多一条检索侧 **oracle** 档：`--oracle-selector` 把 `store.best_match` 换成『内容含本题 `expected_contains` 的第一条事件』，找不到则透传原实现，用来把『选对了还拖不拖写』从『内容身份』与『发射时刻』里单独摘出来验。缺标签时响亮停下而非静默透传（那会伪装成生效）；自述 `oracle_calls`／`oracle_found`／`oracle_fell_through`。默认关 ⇒ 与 v18 逐位可比。",
         "format_note_v18": "v18 **加性**多一条**检索侧**资格档：`--store-scope-conversation` 在每题开头把装载信封带来的陈旧事件请出候选集，只留本次对话被告知的内容可被 `best_match` 取到（只用公开接口 `events()/clear()/record()`；代价是 `event_id` 重新编号，已在件里披露）。它与窗口档正交：一个动候选集、一个动发射时刻。默认关 ⇒ 与 v17 逐位可比。",
+        "format_note_v23": "v23（2026-10-02）：`endstep_probe_v22` 的分组改用全部逐步行（`step` 归零即换代），"
+        "并把'是否吃满预算'的定义收到 `generation_steps >= max_length`；"
+        "`in_run` 降级为第二维 `steps_in_repeat_run`。v22 那两件因分组误用不发表，见 §第六十次停靠。",
         "format_note_v22": "v22（2026-10-02）：§第五十九次停靠的四个标量按**每次生成**入案 `endstep_probe_v22`——"
         "核实过 item_rows 是把一个 item 的 3 次生成串接后再取中位数，故现成 median_* 列跨代混算、"
         "对'基底为什么不停'没有判别力。四标量不依赖外部真值：p_boundary 峰值与其步位、该步的边界名次与合法候选数、"

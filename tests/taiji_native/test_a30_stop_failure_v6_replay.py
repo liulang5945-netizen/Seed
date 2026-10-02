@@ -81,9 +81,9 @@ def test_instrument_carries_v6_and_the_correction_note() -> None:
     source = (PROJECT_ROOT / "scripts" / "training" / "probe_taiji_a30_stop_failure.py").read_text(
         encoding="utf-8"
     )
-    assert '"format": "taiji-a30-stop-failure-v22"' in source
+    assert '"format": "taiji-a30-stop-failure-v23"' in source
     assert all(
-        f"format_note_v{v}" in source for v in (6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22)
+        f"format_note_v{v}" in source for v in (6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23)
     ), "升版只许加列，历史说明必须逐版留在件里"
     assert "format_note_v6" in source
     assert "追加二" in source and "深帧复现" in source
@@ -322,10 +322,12 @@ def test_the_endstep_probe_groups_by_generation_not_by_item() -> None:
 
     rows = [row(0, 0.1, 9), row(1, 0.4, 3), row(2, 0.2, 7), row(0, 0.9, 1), row(1, 0.5, 2), row(3, 0.7, 5, in_run=False)]
     groups = _group_rows_by_generation(rows)
-    assert [len(g) for g in groups] == [3, 2], groups          # 两代，被排除的那行不参与
+    #: v23：全部行都参与换代分组（v22 误把 `in_run` 当"在生成内"用 ⇒ 72 代只剩 12／0）。
+    assert [len(g) for g in groups] == [3, 3], groups
     probe = _endstep_probe_per_generation(rows, max_length=256)
     assert len(probe) == 2, probe
     assert probe[0]["p_boundary_max"] == 0.4 and probe[0]["p_boundary_argmax_step"] == 1, probe[0]
+    assert probe[0]["steps_in_repeat_run"] == 3 and probe[1]["steps_in_repeat_run"] == 2, probe
     assert probe[0]["boundary_rank_at_peak_step"] == 3, probe[0]
     assert probe[0]["peak_is_last_step"] is False, probe[0]      # 峰值在 step 1，该代最后一步是 step 2 ⇒ 看到了还在走
     assert probe[1]["p_boundary_max"] == 0.9 and probe[1]["boundary_rank_at_peak_step"] == 1, probe[1]
