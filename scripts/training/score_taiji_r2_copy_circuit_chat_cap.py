@@ -652,6 +652,9 @@ def main() -> int:
         if circuit_path is not None and circuit_path.is_file()
         else None
     )
+    #: DEBT-G21：与上面 `circuit_sha256` 同一个理由——同名路径会被后来的长跑覆盖，
+    #: 所以底座也要按**内容**钉住，跨工件配对不能只比 `checkpoint` 这一列路径。
+    checkpoint_sha256 = hashlib.sha256(checkpoint.read_bytes()).hexdigest()[:16]
     manifest_raw = json.loads(MANIFEST.read_text(encoding="utf-8"))
     probe_checks = {
         "label_in_manifest_texts": 0,
@@ -744,6 +747,7 @@ def main() -> int:
         "format": "taiji-r2-copy-circuit-chat-cap-v1",
         "prereg": "plans/reference/M5_R2_A2_3_PREREG_20260925.md §4-S2（判据沿用）",
         "checkpoint": args.checkpoint,
+        "checkpoint_sha256": checkpoint_sha256,
         "circuit": args.circuit,
         #: 复现性债的修法（PLAN-A-24 rev22）：光记**路径**不够——同名路径会被后来的长跑覆盖
         #: （实测：`output/taiji_r2_copy_circuit/judge/circuit-final.pt` 现在跑出 0/16，

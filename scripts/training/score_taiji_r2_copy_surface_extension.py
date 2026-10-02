@@ -377,6 +377,9 @@ def main() -> int:
         "chain": "product_surface_chat" if surface else "base_raw_bytes",
         "manifest_sha256": _sha256(manifest),
         "checkpoint": args.checkpoint,
+        #: DEBT-G21：表层这台的信封此前只有 `manifest_sha256` 与 `base_sha256_unchanged`，
+        #: 底座是按**路径**认的；跨工件配对（§第五十次停靠）因此只能比路径。补上跑前那一次读盘的哈希。
+        "checkpoint_sha256": sha_before[:16],
         #: PLAN-A-25：门开/关必须落在件上，否则两份读数看起来像同一次实验。
         "copy_evidence_utf8_gate": bool(args.copy_evidence_utf8_gate),
         "circuit_carried_envelopes": envelope_meta,
