@@ -1,0 +1,378 @@
+{
+  "format": "taiji-r2-copy-circuit-chat-cap-v1",
+  "prereg": "plans/reference/M5_R2_A2_3_PREREG_20260925.md §4-S2（判据沿用）",
+  "checkpoint": "output/a31_chunked_short/checkpoint.pt",
+  "circuit": "output/taiji_r2_copy_circuit_chat/judge/circuit-final.pt",
+  "circuit_sha256": "1cfe5961c300485dc08078a9deb82d0f31acbb5f8c63d0685d18366832d741a3",
+  "copy_evidence_utf8_gate": false,
+  "copy_evidence_alpha": 1.0,
+  "relevance_floor_tau": 0.3,
+  "max_bytes": 256,
+  "item_limit": 24,
+  "well_formed_scope": "answer[:60] 字符前缀（非整条答复）",
+  "control_no_circuit": {
+    "items": 24,
+    "correct": 0,
+    "joint_hits": 0,
+    "formed_full_texts": 2,
+    "well_formed_rate": 0.0833,
+    "rows": [
+      {
+        "id": "D01",
+        "dimension": "D",
+        "hit": false,
+        "formed_full": false,
+        "answer": "木在庺巨和家刭：家关木人庺庻家倂\n答：宨家家木人庻庻译，家有在庺庺工庋嗶倂\n答：家家家家倂\n家下嗶庺工抨有庀人廥帋嗶倂\n"
+      },
+      {
+        "id": "D02",
+        "dimension": "D",
+        "hit": false,
+        "formed_full": false,
+        "answer": "有在在家我人庺好家利人奥庋奥有有庋孔：家有在家刑家倂\n家文最，家其家倂\n答：我家家其句庺庺庙器庺工彋本人廥席文最圂\n答："
+      },
+      {
+        "id": "D03",
+        "dimension": "D",
+        "hit": false,
+        "formed_full": false,
+        "answer": "有人庺巨它匶其有，倂"
+      },
+      {
+        "id": "D04",
+        "dimension": "D",
+        "hit": false,
+        "formed_full": false,
+        "answer": "容木在在度妁时倂"
+      },
+      {
+        "id": "D05",
+        "dimension": "D",
+        "hit": false,
+        "formed_full": false,
+        "answer": "有在在在家人庻家倂\n答：朰家人工子，家最，家制家倂\n家人庻庀弌家其家倂\n答：木庀宨度庺工抨本人庻语，家其家关问，家其家倂"
+      },
+      {
+        "id": "D06",
+        "dimension": "D",
+        "hit": false,
+        "formed_full": false,
+        "answer": "有在在庺庺庺庺倂\n倂\n答：家家家家关家家人廥庋庋庋庋嗶庥接有倂\n答：宨家家倂"
+      },
+      {
+        "id": "D07",
+        "dimension": "D",
+        "hit": false,
+        "formed_full": true,
+        "answer": "有有座制人庻下嗶句子，容，家家刹"
+      },
+      {
+        "id": "D08",
+        "dimension": "D",
+        "hit": false,
+        "formed_full": false,
+        "answer": "有在庺庺庺倂\n答：家家家家家人奥庋嗶倂\n答：有在在庺庺奥帋庋嗶倂\n家家家家倂\n家亻下帋嗶倂\n答：宨工我文本，倂\n答：我人"
+      },
+      {
+        "id": "D09",
+        "dimension": "D",
+        "hit": false,
+        "formed_full": false,
+        "answer": "有人庺庙它关容家人人廥庋嗶亻下嗶倂\n答：容木庨巨家我人庻家制倂\n答：家最，将家家倂"
+      },
+      {
+        "id": "D10",
+        "dimension": "D",
+        "hit": false,
+        "formed_full": false,
+        "answer": "有在在巽有庺工庺庺工孔：嗮，家以下家在在度偶倂\n答：我人庺工庀在匨家倂\n家朰人庻家倂\n答：宨家家倂\n家人庻译廥我我庘制制"
+      },
+      {
+        "id": "D11",
+        "dimension": "D",
+        "hit": false,
+        "formed_full": false,
+        "answer": "有在座制人庻家其其倂\n答：客讶，家其家关攔：宨巽家人庻庺庻译，家我人廥庋嗶倂\n答：宨家家家倂\n家人庻庻译我我人往它语，家"
+      },
+      {
+        "id": "D12",
+        "dimension": "D",
+        "hit": false,
+        "formed_full": false,
+        "answer": "有在容其本人庺庻庺庻庀家刭：容家倂\n答：朰庨容家制倂\n家人庻庀家倂\n答：宨在容家时人庺工录，家倂\n答：有本人庻请，家有在"
+      },
+      {
+        "id": "D13",
+        "dimension": "D",
+        "hit": false,
+        "formed_full": true,
+        "answer": "有在庺庺庺倂\n答：家人名家关法，倂\n答：我人工庋学，录，家在度偶家倂"
+      },
+      {
+        "id": "D18",
+        "dimension": "D",
+        "hit": false,
+        "formed_full": false,
+        "answer": "家人庺奻庀在庺庻下嗶倂\n倂\n孔：容人工刑定家倂\n圬人庻请彻译我我庘制制倂\n答：家家家家倂\n答：宨家其句庺庺庻下帋嗶倂\n家"
+      },
+      {
+        "id": "D19",
+        "dimension": "D",
+        "hit": false,
+        "formed_full": false,
+        "answer": "在在在庺庺庺倂\n倂\n答：家人廥子，容家家倂\n家人庻请我我射有庌家利人好它其家倂\n答：宨家最，容其容：家木庺庺庻下嗥孔：在"
+      },
+      {
+        "id": "D20",
+        "dimension": "D",
+        "hit": false,
+        "formed_full": false,
+        "answer": "定家机庆关关句子，容这人庻它关家倂\n答：我人庺工帋嗶倂\n家机人庻庻语，家其家家家家：宨家家其家庆定支下帋帋庺庺奘倂\n答："
+      },
+      {
+        "id": "E01",
+        "dimension": "E",
+        "hit": false,
+        "formed_full": false,
+        "answer": "有家我人工子，家木家句子，家家家家其家其句庺庺庙器庺工彚支以下帪庥庺工席：宔：容家倂\n家人庻译廥嗶倂\n答：容本人庻它语，"
+      },
+      {
+        "id": "E02",
+        "dimension": "E",
+        "hit": false,
+        "formed_full": false,
+        "answer": "家文下家制其其其文，家其家其家家在庺庺庻庀倂\n家人廥帋嗶倂\n答：宨家家家在人廥席文本人庻庻译，家其家倂\n答：宨家关旮，家"
+      },
+      {
+        "id": "E03",
+        "dimension": "E",
+        "hit": false,
+        "formed_full": false,
+        "answer": "家有人庻家其家其家其其时倂\n答：有庺庺庙器勱嗶庺人廥帋嗶倂\n家人廥子，家家家倂\n家人廥帋嗶倂\n家人廥席旯人廥庀在勱我人奻"
+      },
+      {
+        "id": "E04",
+        "dimension": "E",
+        "hit": false,
+        "formed_full": false,
+        "answer": "家机关其家有人庻家家家家家家家"
+      },
+      {
+        "id": "E05",
+        "dimension": "E",
+        "hit": false,
+        "formed_full": false,
+        "answer": "家我我文本，家句子，家家家家其家其家关"
+      },
+      {
+        "id": "E06",
+        "dimension": "E",
+        "hit": false,
+        "formed_full": false,
+        "answer": "家最人工学役有在制制庺庺庻嗶倂\n答：家家家家倂\n答：家本人庻庺好，彫家人奥帋席，倂\n家人奻译，廄本人庻它家家倂\n答：宨家"
+      },
+      {
+        "id": "E07",
+        "dimension": "E",
+        "hit": false,
+        "formed_full": false,
+        "answer": "家朰人工家家在家其家家在家中文最倂\n答：宨家我人庻器家制囨家其家关"
+      },
+      {
+        "id": "E08",
+        "dimension": "E",
+        "hit": false,
+        "formed_full": false,
+        "answer": "家人工家其其其家其家的文本，家人庻家其家家庺人廥庥庀人廥帋嗶倂\n答：容木庨巨匨家倂"
+      }
+    ],
+    "evidence_calls": 0
+  },
+  "treated_with_circuit": {
+    "items": 24,
+    "correct": 0,
+    "joint_hits": 0,
+    "formed_full_texts": 0,
+    "well_formed_rate": 0.0417,
+    "rows": [
+      {
+        "id": "D01",
+        "dimension": "D",
+        "hit": false,
+        "formed_full": false,
+        "answer": "木在庺巨和家刭问，家朰人庻家利庨家倂岩时倂岩木座刪庺工报文本，家制家倂岩在家家家：家家家其家刑定文本倂岩制庺庺庺倂岥庽的"
+      },
+      {
+        "id": "D02",
+        "dimension": "D",
+        "hit": false,
+        "formed_full": false,
+        "answer": "有在在家我人庺好家利人奥庋奥有有庋孔：家有在家刑家倂工\n工授下帪庺庺奻嗶倂巽的旮家家倂木家倂家家其家其家其宗家倂工授下帪"
+      },
+      {
+        "id": "D03",
+        "dimension": "D",
+        "hit": false,
+        "formed_full": false,
+        "answer": "有，家人工庺庺工孔：容家家倂\n短，家其家倂\n偔：宨家关容：家关文，刑人庺庻庀在庌家倂偔：家倂\n偔：宮：宮，家在亻下帋嗶宗"
+      },
+      {
+        "id": "D04",
+        "dimension": "D",
+        "hit": false,
+        "formed_full": false,
+        "answer": "容木在在度妁时倂77家有刑以人庻它家在家倂时倂有庺庺好其倂7，彿家家家倂文，刑家家倂7：宨家家幹人廻下嗶庺工我人奻庀人廥"
+      },
+      {
+        "id": "D05",
+        "dimension": "D",
+        "hit": false,
+        "formed_full": false,
+        "answer": "有在在在家人庻家倂时倂d 嗶 brownge lang ang ane lae lae lae logn ae lae "
+      },
+      {
+        "id": "D06",
+        "dimension": "D",
+        "hit": false,
+        "formed_full": false,
+        "answer": "家在在度傹有倂人庺庻家倂人好，家家家倂旯，家其家庨庺工抨本中文最，倂人巽家其家庨庌家关问，家家家倂人廥帋席我文本，容家在"
+      },
+      {
+        "id": "D07",
+        "dimension": "D",
+        "hit": false,
+        "formed_full": false,
+        "answer": "最人庻它其倂州倂工座我我庀人庻家其倂工\n工技有庨庌其其倂工技本人庻家倂我家：家家家家家家：宨容家家其宨讨我文本倂巋庺庺庺"
+      },
+      {
+        "id": "D08",
+        "dimension": "D",
+        "hit": false,
+        "formed_full": false,
+        "answer": "有在庺庺庺庺倂\n茨茨语，家亻下家家家家家刨\n茨我文最，家其家家关"
+      },
+      {
+        "id": "D09",
+        "dimension": "D",
+        "hit": false,
+        "formed_full": false,
+        "answer": "有人巨它家制人工子，容家机人庻它关峕，容家刑以下席2，倂22：在度偔：家木人庻下嗶倂22：家其家关家：少推我人庻家其家倂"
+      },
+      {
+        "id": "D10",
+        "dimension": "D",
+        "hit": false,
+        "formed_full": false,
+        "answer": "家在容家朰，容家刑以人庻庻它关家倂旯人庻庀在还岡我亀弌家家家倂岩家家其家倂岩时人庻庺庻嗶倂岰庨讻译我我我人庻它其家倂岩在"
+      },
+      {
+        "id": "D11",
+        "dimension": "D",
+        "hit": false,
+        "formed_full": false,
+        "answer": "有在在度傷家有倂巽家其家倂家其家关文，家家家家刑人庻庻庀傝朰庌宇家倂巽家其宮：宨容人廥席文，倂巽宇本人庻廙它刑将宔：应我"
+      },
+      {
+        "id": "D12",
+        "dimension": "D",
+        "hit": false,
+        "formed_full": false,
+        "answer": "有在庺庺庙庺庻下嗶倂我将家关家家：家关家家关宔：宨容家人庻下嗶庥我我我射怂机庺庻将定少容在容人廥帋嗶倂旯：宨家家倂晑家倂"
+      },
+      {
+        "id": "D13",
+        "dimension": "D",
+        "hit": false,
+        "formed_full": false,
+        "answer": "有在庺庺庺倂\n贁晑家关家庅子：家关本，家人庻庀在庽它其倂壟我文本，家人工庺庻语：宨家我人庻家家利庨家其家倂迣塌我文最，它"
+      },
+      {
+        "id": "D18",
+        "dimension": "D",
+        "hit": false,
+        "formed_full": false,
+        "answer": "容本，将定将人庺庻庀在庺庻译：容木庛人她刑家最，家囶家家关问，容文本在度帺人庻嗮题，家国家倂岩庑定庨庻下嗶倂岇，家围\n阂"
+      },
+      {
+        "id": "D19",
+        "dimension": "D",
+        "hit": false,
+        "formed_full": false,
+        "answer": "在家句子，家有，其句子，家木在庺庺庙器在庺她刑旯，家家家家家家\n责本，完家其家庺庻下席文机倂责审文：宨家其容人廥庻贁晑审"
+      },
+      {
+        "id": "D20",
+        "dimension": "D",
+        "hit": false,
+        "formed_full": false,
+        "answer": "家机庺工庀人工子，家家家倂\n这我人庻庀家倂朰，家其家倂木庌家其家庨，家在家幹人廥席文最，容家家家倂时家庺庺庻庀弌宇家在宮"
+      },
+      {
+        "id": "E01",
+        "dimension": "E",
+        "hit": false,
+        "formed_full": false,
+        "answer": "有家我人工子，家木家句子，家家家家其家其句庺庺庙器庺工彚支以下帪庥庺工席：宔：容家倂\n家人庻译廥嗶倂\n答：容本人庻它语，"
+      },
+      {
+        "id": "E02",
+        "dimension": "E",
+        "hit": false,
+        "formed_full": false,
+        "answer": "家文下家制其其其文，家其家其家家在庺庺庻庀倂\n家人廥帋嗶倂\n答：宨家家家在人廥席文本人庻庻译，家其家倂\n答：宨家关旮，家"
+      },
+      {
+        "id": "E03",
+        "dimension": "E",
+        "hit": false,
+        "formed_full": false,
+        "answer": "家有人庻家其家其家其其时倂\n答：有庺庺庙器勱嗶庺人廥帋嗶倂\n家人廥子，家家家倂\n家人廥帋嗶倂\n家人廥席旯人廥庀在勱我人奻"
+      },
+      {
+        "id": "E04",
+        "dimension": "E",
+        "hit": false,
+        "formed_full": false,
+        "answer": "家机关其家有人庻家家家家家家家"
+      },
+      {
+        "id": "E05",
+        "dimension": "E",
+        "hit": false,
+        "formed_full": false,
+        "answer": "家我我文本，家句子，家家家家其家其家关"
+      },
+      {
+        "id": "E06",
+        "dimension": "E",
+        "hit": false,
+        "formed_full": false,
+        "answer": "家最人工学役有在制制庺庺庻嗶倂\n答：家家家家倂\n答：家本人庻庺好，彫家人奥帋席，倂\n家人奻译，廄本人庻它家家倂\n答：宨家"
+      },
+      {
+        "id": "E07",
+        "dimension": "E",
+        "hit": false,
+        "formed_full": false,
+        "answer": "家朰人工家家在家其家家在家中文最倂\n答：宨家我人庻器家制囨家其家关"
+      },
+      {
+        "id": "E08",
+        "dimension": "E",
+        "hit": false,
+        "formed_full": false,
+        "answer": "家人工家其其其家其家的文本，家人庻家其家家庺人廥庥庀人廥帋嗶倂\n答：容木庨巨匨家倂"
+      }
+    ],
+    "evidence_calls": 38006
+  },
+  "dose_guard": {
+    "treated_consumed_scaler": true,
+    "control_consumed_scaler": false,
+    "evidence_calls_by_arm": {
+      "control": 0,
+      "treated": 38006
+    }
+  },
+  "verdict": "A2.4 重测未通过（如实记录）"
+}
