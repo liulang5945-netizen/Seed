@@ -69,7 +69,18 @@ jobs:
       # Seed/Taiji only require torch. sentencepiece/FastAPI are installed
       # below solely so the frozen Legacy NeuroPlex regressions remain runnable.
       - name: Install torch (CPU)
-        run: pip install torch --index-url https://download.pytorch.org/whl/cpu
+        # H19x (2026-09-30): torch is pinned, deliberately, on every leg that installs it.
+        # tests/taiji_native/test_copy_circuit_contract.py asserts *bitwise* identity and
+        # hashes the literal float text of the tensors, so it has a premise - one float kernel.
+        # Unpinned, CI resolved 2.14.0+cpu while the pinned digests were recorded on
+        # 2.13.0+cpu, and two tests failed on a digest mismatch that was not drift: both
+        # independent tests agreed on the new value.  Pinning to the version the evidence was
+        # recorded on keeps those digests valid; re-recording them for a newer patch is the
+        # "the seal drifted so re-seal it" move this repo refuses everywhere else.
+        # pyproject stays at torch>=2.0.0,<3.0.0 on purpose - a library should not force a
+        # version on its consumers.  Known remaining axis: CPU model and BLAS build still
+        # differ between this runner and a developer machine, which no pin can close.
+        run: pip install torch==2.13.0+cpu --index-url https://download.pytorch.org/whl/cpu
 
       - name: Install test dependencies
         # FastAPI 可选依赖：python-multipart（form/File）—— test_api_health 触发 Form 中间件
@@ -407,7 +418,7 @@ jobs:
           cache: pip
 
       - name: Install torch (CPU)
-        run: pip install torch --index-url https://download.pytorch.org/whl/cpu
+        run: pip install torch==2.13.0+cpu --index-url https://download.pytorch.org/whl/cpu
 
       - name: Install test runner
         run: pip install pytest
@@ -454,7 +465,7 @@ jobs:
           cache: pip
 
       - name: Install torch (CPU)
-        run: pip install torch --index-url https://download.pytorch.org/whl/cpu
+        run: pip install torch==2.13.0+cpu --index-url https://download.pytorch.org/whl/cpu
 
       - name: Install test dependencies
         # H19s (2026-09-30): black is required here, not optional.  The frozen-marker
