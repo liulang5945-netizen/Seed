@@ -130,6 +130,7 @@ def run_arm(
     oracle_selector: bool = False,
     probe_store: bool = False,
     empty_store: bool = False,
+    decoy: tuple[str, bytes, str] | None = None,
     max_bytes: int = MAX_ANSWER_BYTES,
     limit: int | None = None,
 ) -> dict[str, Any]:
@@ -245,6 +246,16 @@ def run_arm(
     #: 第四十次停靠·下一格：**挂回路但让库恒空**（把 `store.record` 换成 no-op）。
     #: 分开两件事——{q}回路在不在{Q}与{q}内容有没有进库{Q}。prompt 通道不受这档影响（告知文本本来就在提示里）。
     empty_state = {"calls": 0, "count_at_install": None, "store_obj": None}
+    decoy_state = {"calls": 0, "swaps": 0, "no_event": 0}
+    if decoy is not None:
+        dy_circuit = runtime.model.substrate.copy_circuit
+        if dy_circuit is None:
+            raise RuntimeError("要求外来内容档但回路不在场 ⇒ 没有 best_match 可换")
+        from probe_taiji_a30_copy_evidence_dose import _make_decoy_content_arm
+
+        dy_fn, decoy_state = _make_decoy_content_arm(dy_circuit.store, decoy[1])
+        dy_circuit.store.best_match = dy_fn  # type: ignore[method-assign]
+
     if empty_store:
         es_circuit = runtime.model.substrate.copy_circuit
         if es_circuit is None:
@@ -266,6 +277,12 @@ def run_arm(
         for item in manifest["dimensions"][dim]["items"]
         if item.get("expected_contains")
     ]
+    decoy_item = None
+    if decoy is not None:
+        by_id = {str(item.get("id")): item for item in items}
+        decoy_item = by_id.get(decoy[0])
+        if decoy_item is None:
+            raise RuntimeError(f"decoy id {decoy[0]!r} 不在题面里 ⇒ 外来内容无从取")
     if limit is not None:
         items = items[:limit]
     ngram = build_ngram_model()
@@ -319,6 +336,12 @@ def run_arm(
             }
             probe_evicted = len(probe_seen - probe_still)
             probe_live_now = len(probe_still)
+        decoy_label_in_answer = (
+            decoy is not None
+            and decoy_item is not None
+            and str(decoy[2]) in answer
+            and str(item["id"]) != decoy[0]
+        )
         hit = any(token in answer for token in item["expected_contains"])
         #: K-定价档（PLAN-A-30 第三十次停靠·设计预备第 2 条）：**命中发生在答复的第几个字节**必须先量出来，
         #: 才谈得上"只在前 K 步发证据"这种资格档；`answer[:60]` 那个截断字段量不到这件事，故另存整条的长度
@@ -340,6 +363,8 @@ def run_arm(
                 "hit": hit,
                 "first_hit_offset_bytes": first_hit_offset,
                 "answer_bytes": answer_bytes,
+                #: 第四十三次停靠：外来标签出现在本题答复里 ⇒ 通道把本轮没被告知的内容写了进去。
+                "decoy_label_in_answer": decoy_label_in_answer if decoy is not None else None,
                 #: 第四十次停靠的三量（`None` ⇒ 本题没开读数，不是"假"）。
                 "label_in_store_at_answer": (
                     probe_present_at_answer if probe_store_obj is not None else None
@@ -395,6 +420,21 @@ def run_arm(
             else None
         ),
         #: 库恒空档自述：`record` 被叫了几次（应为 >0）、结束时库里有几条（应为 0）。两数都能为假。
+        "decoy_arm": (
+            {
+                "source_id": decoy[0],
+                "source_turn": decoy_item["turns"][0] if decoy_item else None,
+                "probe_label": decoy[2],
+                "calls": decoy_state["calls"],
+                "swaps": decoy_state["swaps"],
+                "no_event": decoy_state["no_event"],
+                "decoy_label_seen_in_other_answers": sum(
+                    1 for row in rows if row["decoy_label_in_answer"]
+                ),
+            }
+            if decoy is not None
+            else None
+        ),
         "empty_store_arm": (
             {
                 "requested": True,
@@ -525,6 +565,12 @@ def main() -> int:
         help="第四十次停靠·下一格：挂回路但把 `store.record` 换成 no-op，让库恒空——"
         "用来把『回路在不在』与『内容有没有进库』分开。prompt 通道不受影响。",
     )
+    parser.add_argument(
+        "--decoy-item",
+        default=None,
+        help="第四十三次停靠·外来内容档：指定题面里某个 ID，把它的**第一条用户轮原文**当作被取到的事件内容"
+        "（cue 沿用真实事件 ⇒ 寻址面不动），再看它的 `expected_contains[0]` 是否出现在别的题的答复里。",
+    )
     args = parser.parse_args()
 
     checkpoint = PROJECT_ROOT / args.checkpoint
@@ -535,6 +581,26 @@ def main() -> int:
         if circuit_path is not None and circuit_path.is_file()
         else None
     )
+    manifest_raw = json.loads(MANIFEST.read_text(encoding="utf-8"))
+    decoy = None
+    if args.decoy_item:
+        pool = [
+            it
+            for dim in ("D", "E")
+            for it in manifest_raw["dimensions"][dim]["items"]
+            if it.get("expected_contains")
+        ]
+        src = next((it for it in pool if str(it.get("id")) == args.decoy_item), None)
+        if src is None:
+            raise SystemExit(f"--decoy-item {args.decoy_item} 不在 manifest 里 ⇒ 响亮停")
+        decoy = (
+            args.decoy_item,
+            str(src["turns"][0]).encode("utf-8"),
+            str(src["expected_contains"][0]),
+        )
+        print(
+            f"[decoy] 外来内容取自 {args.decoy_item}：{str(src['turns'][0])[:24]!r} 探针标签={src['expected_contains'][0]!r}"
+        )
     control = run_arm(checkpoint, None, max_bytes=args.max_bytes, limit=args.limit)
     treated = run_arm(
         checkpoint,
@@ -549,6 +615,7 @@ def main() -> int:
         oracle_selector=args.oracle_selector,
         probe_store=args.probe_store,
         empty_store=args.empty_store,
+        decoy=decoy,
         evidence_content_arm=args.evidence_content_arm,
         perm_seed=args.perm_seed,
         max_bytes=args.max_bytes,
@@ -584,6 +651,7 @@ def main() -> int:
         "store_scope_conversation": bool(args.store_scope_conversation),
         "oracle_selector": bool(args.oracle_selector),
         "probe_store": bool(args.probe_store),
+        "decoy_item": args.decoy_item,
         "empty_store": bool(args.empty_store),
         "content_arm_note": "v1 加性字段：`content_arm` 逐臂自述被走到次数／守恒偏差／冻结点。"
         "格式串不动 ⇒ 与已入库各档同格可比（默认 None ⇒ 一次替换都没发生）。",

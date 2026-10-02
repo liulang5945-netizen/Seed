@@ -188,6 +188,8 @@ def test_the_content_arm_has_exactly_one_implementation_across_instruments() -> 
         assert "import _make_content_armed_evidence" in src, name
         #: 反面：这两台仪器里不得再出现自己的置换／冻结机械（`index_select` 只在共用实现里有）。
         assert "index_select" not in src, name
+        #: 第四十三次停靠的 decoy 档同理：换内容的动作只许住在共用 helper 里。
+        assert "replace(base, content=" not in src, name
         assert "rng.shuffle" not in src, name
         #: v19 的 oracle 档同理：`best_match` 的替身只许住在共用 helper 里。
         assert "def oracle_best_match" not in src, name

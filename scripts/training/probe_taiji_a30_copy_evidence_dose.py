@@ -150,6 +150,36 @@ def _make_store_scoped_arm(store: Any) -> tuple[Any, list[int], set[int]]:
     return reset, counters, stale_ids
 
 
+def _make_decoy_content_arm(store: Any, decoy_bytes: bytes) -> tuple[Any, dict[str, int]]:
+    """**换内容、不换寻址**（第四十三次停靠）：把被取到的事件换成"另一题的真实告知文本"，
+    但**沿用原事件的 cue** ⇒ 余弦自洽、寻址那一面完全不动，只有喂给 `evidence()` 的字节变了
+    （`taiji/copy_circuit.py:494` 把 `event.content` 直接池化成 logits，所以换字节＝换内容）。
+
+    计数：`{"calls": 被问次数, "swaps": 成功换成外来内容的次数, "no_event": 原实现返回 None 的次数}`——
+    `swaps` 为 0 ⇒ 这一档根本没生效，整件不发表。
+    """
+
+    from dataclasses import replace
+
+    state = {"calls": 0, "swaps": 0, "no_event": 0}
+    original_best_match = store.best_match
+
+    def decoy_best_match(cue: Any) -> Any:
+        state["calls"] += 1
+        base = original_best_match(cue)
+        if base is None:
+            state["no_event"] += 1
+            return None
+        try:
+            swapped = replace(base, content=bytes(decoy_bytes))
+        except (TypeError, ValueError):
+            return base
+        state["swaps"] += 1
+        return swapped
+
+    return decoy_best_match, state
+
+
 def _make_oracle_selector_arm(store: Any) -> tuple[Any, dict[str, Any], Any]:
     """**检索侧 oracle 档**：把 `best_match` 换成"选对的那一条"——返回内容含本题标签的第一条事件，
     库里没有匹配项时**透传**给原实现（不静默返回 None）。

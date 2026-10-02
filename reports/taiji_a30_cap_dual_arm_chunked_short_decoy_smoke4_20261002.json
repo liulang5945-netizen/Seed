@@ -1,0 +1,259 @@
+{
+  "format": "taiji-r2-copy-circuit-chat-cap-v1",
+  "prereg": "plans/reference/M5_R2_A2_3_PREREG_20260925.md §4-S2（判据沿用）",
+  "checkpoint": "output/a31_chunked_short/checkpoint.pt",
+  "circuit": "output/taiji_r2_copy_circuit_chat/judge/circuit-final.pt",
+  "circuit_sha256": "1cfe5961c300485dc08078a9deb82d0f31acbb5f8c63d0685d18366832d741a3",
+  "copy_evidence_utf8_gate": false,
+  "copy_evidence_alpha": 1.0,
+  "relevance_floor_tau": null,
+  "relevance_ceiling_c": null,
+  "evidence_content_arm": null,
+  "evidence_window_steps": null,
+  "store_scope_conversation": false,
+  "oracle_selector": false,
+  "probe_store": false,
+  "decoy_item": "D04",
+  "empty_store": false,
+  "content_arm_note": "v1 加性字段：`content_arm` 逐臂自述被走到次数／守恒偏差／冻结点。格式串不动 ⇒ 与已入库各档同格可比（默认 None ⇒ 一次替换都没发生）。",
+  "max_bytes": 256,
+  "item_limit": 4,
+  "well_formed_scope": "answer[:60] 字符前缀（非整条答复）",
+  "control_no_circuit": {
+    "items": 4,
+    "correct": 0,
+    "joint_hits": 0,
+    "formed_full_texts": 0,
+    "well_formed_rate": 0.0,
+    "rows": [
+      {
+        "id": "D01",
+        "dimension": "D",
+        "hit": false,
+        "first_hit_offset_bytes": null,
+        "answer_bytes": 257,
+        "decoy_label_in_answer": null,
+        "label_in_store_at_answer": null,
+        "correct_events_seen": null,
+        "correct_events_evicted": null,
+        "store_events_at_answer": null,
+        "formed_full": false,
+        "answer": "木在庺巨和家刭：家关木人庺庻家倂\n答：宨家家木人庻庻译，家有在庺庺工庋嗶倂\n答：家家家家倂\n家下嗶庺工抨有庀人廥帋嗶倂\n"
+      },
+      {
+        "id": "D02",
+        "dimension": "D",
+        "hit": false,
+        "first_hit_offset_bytes": null,
+        "answer_bytes": 258,
+        "decoy_label_in_answer": null,
+        "label_in_store_at_answer": null,
+        "correct_events_seen": null,
+        "correct_events_evicted": null,
+        "store_events_at_answer": null,
+        "formed_full": false,
+        "answer": "有在在家我人庺好家利人奥庋奥有有庋孔：家有在家刑家倂\n家文最，家其家倂\n答：我家家其句庺庺庙器庺工彋本人廥席文最圂\n答："
+      },
+      {
+        "id": "D03",
+        "dimension": "D",
+        "hit": false,
+        "first_hit_offset_bytes": null,
+        "answer_bytes": 30,
+        "decoy_label_in_answer": null,
+        "label_in_store_at_answer": null,
+        "correct_events_seen": null,
+        "correct_events_evicted": null,
+        "store_events_at_answer": null,
+        "formed_full": false,
+        "answer": "有人庺巨它匶其有，倂"
+      },
+      {
+        "id": "D04",
+        "dimension": "D",
+        "hit": false,
+        "first_hit_offset_bytes": null,
+        "answer_bytes": 24,
+        "decoy_label_in_answer": null,
+        "label_in_store_at_answer": null,
+        "correct_events_seen": null,
+        "correct_events_evicted": null,
+        "store_events_at_answer": null,
+        "formed_full": false,
+        "answer": "容木在在度妁时倂"
+      }
+    ],
+    "hit_offsets": {
+      "n": 0,
+      "note": "no hits on this arm"
+    },
+    "answer_bytes_quantiles": {
+      "n": 0,
+      "note": "no hits on this arm"
+    },
+    "evidence_calls": 0,
+    "picked_cosine": null,
+    "store_probe": null,
+    "decoy_arm": null,
+    "empty_store_arm": null,
+    "oracle_arm": {
+      "requested": false,
+      "calls": 0,
+      "found": 0,
+      "fell_through": 0
+    },
+    "store_scope_arm": {
+      "requested": false,
+      "stale_removed": 0,
+      "events_min": 0,
+      "events_max": 0
+    },
+    "window_arm": {
+      "steps": null,
+      "calls": 0,
+      "emitted": 0,
+      "silenced": 0
+    },
+    "content_arm": {
+      "kind": null,
+      "calls": 0,
+      "max_rel_l1_diff": 0.0,
+      "frozen_at_call": null,
+      "frozen_l1": null
+    }
+  },
+  "treated_with_circuit": {
+    "items": 4,
+    "correct": 3,
+    "joint_hits": 0,
+    "formed_full_texts": 0,
+    "well_formed_rate": 0.0,
+    "rows": [
+      {
+        "id": "D01",
+        "dimension": "D",
+        "hit": true,
+        "first_hit_offset_bytes": 34,
+        "answer_bytes": 256,
+        "decoy_label_in_answer": false,
+        "label_in_store_at_answer": null,
+        "correct_events_seen": null,
+        "correct_events_evicted": null,
+        "store_events_at_answer": null,
+        "formed_full": false,
+        "answer": "7岩岩岩岩岩岩岩岩岩。岩阿岩岩岩岩岩岩岩岩岩岩岩岩濿岩阿岩阿岩岩岩岩岩岩阿岩阿岩阿岩岩岩岩岩岩岩岩阿岩濿岩阿岩昿岩阿岩阿"
+      },
+      {
+        "id": "D02",
+        "dimension": "D",
+        "hit": true,
+        "first_hit_offset_bytes": 4,
+        "answer_bytes": 256,
+        "decoy_label_in_answer": false,
+        "label_in_store_at_answer": null,
+        "correct_events_seen": null,
+        "correct_events_evicted": null,
+        "store_events_at_answer": null,
+        "formed_full": false,
+        "answer": "7州杭州杭州杭州杭州杭州杭州杭州杭州杭州杭州杭州杭州杭州杭州杭州杭州杭州杭州杭州杭州杭州杭州杭州杭州杭州杭州杭州杭州杭州"
+      },
+      {
+        "id": "D03",
+        "dimension": "D",
+        "hit": false,
+        "first_hit_offset_bytes": null,
+        "answer_bytes": 256,
+        "decoy_label_in_answer": false,
+        "label_in_store_at_answer": null,
+        "correct_events_seen": null,
+        "correct_events_evicted": null,
+        "store_events_at_answer": null,
+        "formed_full": false,
+        "answer": "7偁健偁健偁偁健偁偁健偁偁好短偁楽短偁楽偁偁偁健偁偁偁好短偁楽偁偁偁楽短偁楽偁偁偁偁好偁偁偁好短偁偁楽偁偁偁偁偁偁好短偁"
+      },
+      {
+        "id": "D04",
+        "dimension": "D",
+        "hit": true,
+        "first_hit_offset_bytes": 60,
+        "answer_bytes": 256,
+        "decoy_label_in_answer": false,
+        "label_in_store_at_answer": null,
+        "correct_events_seen": null,
+        "correct_events_evicted": null,
+        "store_events_at_answer": null,
+        "formed_full": false,
+        "answer": "7777777777777777777777777777777欢7欢欢欢欢欢欢欢是 1777777777是 177777"
+      }
+    ],
+    "hit_offsets": {
+      "n": 3,
+      "median": 34.0,
+      "p25": 4.0,
+      "p75": 34.0,
+      "p90": 34.0,
+      "p95": 34.0,
+      "max": 60.0,
+      "share_below_0p3": 0.0,
+      "share_no_event": 0.0
+    },
+    "answer_bytes_quantiles": {
+      "n": 3,
+      "median": 256.0,
+      "p25": 256.0,
+      "p75": 256.0,
+      "p90": 256.0,
+      "p95": 256.0,
+      "max": 256.0,
+      "share_below_0p3": 0.0,
+      "share_no_event": 0.0
+    },
+    "evidence_calls": 0,
+    "picked_cosine": null,
+    "store_probe": null,
+    "decoy_arm": {
+      "source_id": "D04",
+      "source_turn": "我最喜欢的数字是 17。",
+      "probe_label": "17",
+      "calls": 3717,
+      "swaps": 2629,
+      "no_event": 1088,
+      "decoy_label_seen_in_other_answers": 0
+    },
+    "empty_store_arm": null,
+    "oracle_arm": {
+      "requested": false,
+      "calls": 0,
+      "found": 0,
+      "fell_through": 0
+    },
+    "store_scope_arm": {
+      "requested": false,
+      "stale_removed": 0,
+      "events_min": 0,
+      "events_max": 0
+    },
+    "window_arm": {
+      "steps": null,
+      "calls": 0,
+      "emitted": 0,
+      "silenced": 0
+    },
+    "content_arm": {
+      "kind": null,
+      "calls": 0,
+      "max_rel_l1_diff": 0.0,
+      "frozen_at_call": null,
+      "frozen_l1": null
+    }
+  },
+  "dose_guard": {
+    "treated_consumed_scaler": false,
+    "control_consumed_scaler": false,
+    "evidence_calls_by_arm": {
+      "control": 0,
+      "treated": 0
+    }
+  },
+  "verdict": "A2.4 重测通过（D+E>0 且成句率不塌于对照）"
+}
