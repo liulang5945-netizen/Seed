@@ -119,6 +119,31 @@ def _make_scaled_evidence(
     return scaled, calls
 
 
+def _make_window_armed_evidence(
+    original: Any, window: int, position: Any
+) -> tuple[Any, list[int]]:
+    """**资格档**：只在答复的前 `window` 步发证据，之后把这条通道静音（PLAN-A-30 §第三十次停靠）。
+
+    `position()` 由**调用方**给出"现在走到答复的第几步"——这条实现刻意不知道各链怎么数步：
+    L2 仪器用生成环内的 observe 序位（1 步＝1 字节），复述面用它自己的口径。
+    这样两半共用同一副档（同一个静音规则），但刻度各自如实声明；各写一份就是两把尺子。
+    计数器＝`[总调用, 窗内发出, 窗外静音]`。
+    """
+
+    counters = [0, 0, 0]
+
+    def armed(**kwargs: Any) -> Any:
+        out = original(**kwargs)
+        counters[0] += 1
+        if int(position()) >= window:
+            counters[2] += 1
+            return out * 0.0
+        counters[1] += 1
+        return out
+
+    return armed, counters
+
+
 def _make_content_armed_evidence(
     original: Any, kind: str, seed: int = 20261002
 ) -> tuple[Any, list[float]]:

@@ -70,7 +70,7 @@ def test_empty_generation_takes_the_fallback_too() -> None:
 
 
 def test_instrument_carries_v6_and_the_correction_note() -> None:
-    """格式面：v16 在案（v6–v15 的语义逐条仍在）、更正说明点名追加二的误诊与深帧证据，严格守卫公式未动。
+    """格式面：v17 在案（v6–v16 的语义逐条仍在）、更正说明点名追加二的误诊与深帧证据，严格守卫公式未动。
 
     2026-10-02 该仪器先升 **v7**（加性自述 `surface_gate_state`／`write_back_gate_last_reason`），
     同日再升 **v8**（加性旗标 `--no-copy-evidence-gate` ＋守卫 `evidence_gate_flag_honored`），
@@ -80,10 +80,10 @@ def test_instrument_carries_v6_and_the_correction_note() -> None:
     source = (PROJECT_ROOT / "scripts" / "training" / "probe_taiji_a30_stop_failure.py").read_text(
         encoding="utf-8"
     )
-    assert '"format": "taiji-a30-stop-failure-v16"' in source
-    assert all(f"format_note_v{v}" in source for v in (6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16)), (
-        "升版只许加列，历史说明必须逐版留在件里"
-    )
+    assert '"format": "taiji-a30-stop-failure-v17"' in source
+    assert all(
+        f"format_note_v{v}" in source for v in (6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17)
+    ), "升版只许加列，历史说明必须逐版留在件里"
     assert "format_note_v6" in source
     assert "追加二" in source and "深帧复现" in source
     assert "all_surfaces_are_replayed_raw" in source
@@ -125,6 +125,20 @@ def test_instrument_carries_v6_and_the_correction_note() -> None:
     #: v13（2026-10-02，owner 裁"不立项、先追轨迹面由什么在管"）：内容／硬度分离档必须自带**硬度守恒**这道
     #: 前提守卫——守恒不成立时两个臂差的不止内容，整档作废。钉的是"逐次相对差最大值"这一式，不是注释。
     assert '"content_arm_magnitude_preserved"' in source
+
+    #: v16/v17 的式子级断言（先前一次提交误记为"已加"——那次脚本里写了 `if False`，实为 no-op；
+    #: 这次补上并在台账里更正）。钉三件事：
+    #: ① 停止位置的**正确刻度**：自停生成的 `fed_bytes`，不得再按"在案行的 boundary_is_argmax"数
+    #:    （边界符胜出那一步 `break` 在 `observe` 之前、根本不入案，那个取法结构上恒为 0）。
+    #: ② 资格档必须**两侧都出现过**（只发不静音＝没这档；只静音不发＝恒零档）。
+    #: ③ 分堆函数与件级聚合必须在场（K 只能落在 2 的幂刻度上，杜绝事后挑刚好过线的 K）。
+    assert 'if check["fed_bytes"] < args.max_length' in source
+    #: （反面只钉"按 enumerate 数位置"那个取法本身；`boundary_is_argmax` 这个键在
+    #: `steps_boundary_is_argmax` 那一列还在用，那是合法的另一种统计，不该被这条断言误伤。）
+    assert "for position, row in enumerate(" not in source
+    assert '"window_both_sides_seen"' in source
+    assert "def _position_histogram(positions: list[int]) -> dict[str, int]:" in source
+    assert '"boundary_win_position_hist": _position_histogram(' in source
     #: v15：内容档**搬到剂量探针里与复述面共用** ⇒ 那两条"式子级"断言跟着搬走（不是删掉）：
     #: 守恒用的是逐次相对差最大值，冻结源必须是"通道真的在发"的那一次。
     dose = (

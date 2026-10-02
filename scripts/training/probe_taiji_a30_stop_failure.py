@@ -289,6 +289,14 @@ def main() -> int:
         default=20261002,
         help="置换档的固定种子（写进件里，可复现）",
     )
+    parser.add_argument(
+        "--evidence-window-steps",
+        type=int,
+        default=None,
+        help="v17 资格档：只在答复的前 K 步发复制回路证据，之后把这条通道静音。"
+        "K 由 §第三十次停靠·定价档按先写死的规则取（最小的 2 的幂、覆盖 ≥90%% 命中偏移 ⇒ K=64），"
+        "不许事后挑。刻度＝本条链的环内步数（1 步＝1 字节），每轮换答复即清零。",
+    )
     args = parser.parse_args()
 
     checkpoint = PROJECT_ROOT / args.checkpoint
@@ -316,6 +324,9 @@ def main() -> int:
     substrate = runtime.model.substrate
     #: 三位一体来自剂量探针那一个包装器：[被走到, 被下限静音, 被上限静音]（全链，含 prompt 侧）。
     alpha_calls = [0, 0, 0]
+    #: 资格档的刻度：本条生成链已经走过的**环内步数**（1 步＝喂进 1 字节），每轮清零。
+    loop_steps = [0]
+    window_counters = [0, 0, 0]
     #: v12：只在**生成环内**归因的那一对计数；没装过滤器时保持 [0, 0]。
     loop_silenced = [0, 0]
     if args.copy_evidence_alpha != 1.0 or args.relevance_ceiling_c is not None:
@@ -353,6 +364,9 @@ def main() -> int:
                 "in_generation_loop": in_loop,
             }
         )
+        #: 资格档的刻度：只在**生成环内**数步（1 步＝喂进 1 字节），prompt 侧与回写侧不计。
+        if in_loop:
+            loop_steps[0] += 1
         return step
 
     substrate.observe = observing  # type: ignore[method-assign]
@@ -394,6 +408,19 @@ def main() -> int:
         )
         substrate.copy_circuit.evidence = armed  # type: ignore[method-assign]
 
+    #: v17 **资格档**：只在答复的前 K 步发证据，之后把这条通道静音。K 不是挑出来的——
+    #: 由 §第三十次停靠·定价档按先写死的规则取（最小的 2 的幂、覆盖 ≥90% 命中偏移 ⇒ K=64）。
+    #: 刻度由本仪器自己声明：`loop_steps` 是**环内 observe 的序位**，1 步＝1 字节。
+    if args.evidence_window_steps is not None:
+        if substrate.copy_circuit is None:
+            raise RuntimeError("要求资格档但回路不在场 ⇒ 没有可静音的证据通道")
+        from probe_taiji_a30_copy_evidence_dose import _make_window_armed_evidence
+
+        armed_window, window_counters = _make_window_armed_evidence(
+            substrate.copy_circuit.evidence, args.evidence_window_steps, lambda: loop_steps[0]
+        )
+        substrate.copy_circuit.evidence = armed_window  # type: ignore[method-assign]
+
     per_item: list[dict[str, Any]] = []
     offenders: list[dict[str, Any]] = []
     failure_examples: list[dict[str, Any]] = []
@@ -404,7 +431,8 @@ def main() -> int:
         surface_checks: list[dict[str, Any]] = []
         worst_run = 0
         for index, turn in enumerate([str(t) for t in item["turns"]]):
-            records.clear()
+            records.clear()  # 换一条答复：在案帧与资格档的步数都从 0 重数
+            loop_steps[0] = 0
             answer = runtime.chat(
                 turn,
                 history=history,
@@ -531,10 +559,13 @@ def main() -> int:
             #: v16（第三十次停靠·设计预备第 2 条）：**边界符胜出发生在答复的第几步**——
             #: "只在前 K 步发证据"这种资格档必须先量出停止决定落在哪一段，才谈得上选 K；
             #: 量不到就那一档不跑。位置按**在环内的序位**数（0 起），跨轮不累加。
+            #: v17：**改成从 `fed_bytes` 取**。v16 按"在案行的 `boundary_is_argmax`"数位置，
+            #: 恒等于 0——边界符胜出那一步 `break` 发生在 `observe` 之前（这条就写在本文件 v6 说明里），
+            #: 那一步根本不入案。自停的生成其 `fed_bytes` 就是停止发生的字节位置，是同一件事的正确刻度。
             "run_boundary_win_positions": [
-                position
-                for position, row in enumerate([row for row in item_rows if row["in_run"]])
-                if row["boundary_is_argmax"]
+                int(check["fed_bytes"])
+                for check in surface_checks
+                if check["fed_bytes"] < args.max_length
             ],
         }
         per_item.append(summary)
@@ -568,7 +599,8 @@ def main() -> int:
 
     substrate.observe = original_observe  # type: ignore[method-assign]
     report = {
-        "format": "taiji-a30-stop-failure-v16",
+        "format": "taiji-a30-stop-failure-v17",
+        "format_note_v17": "v17 两件事：① 加**资格档** `--evidence-window-steps`（前 K 步发、之后静音；档本身住在剂量探针里与复述面共用，刻度由本仪器声明为环内步数，守卫 `window_both_sides_seen` 要求两侧都出现过）；② 修 v16 那列结构上恒为 0 的 `run_boundary_win_positions`——边界符胜出那一步 `break` 在 `observe` 之前、不入案，正确刻度是自停生成的 `fed_bytes`（已在件里，无需重跑即可读出）。其余字段与判据一字未动。",
         "format_note_v16": "v16 加性只多两列**停止决定的位置**信息：每题 `run_boundary_win_positions` 与件级 `boundary_win_position_hist`。用途是给『只在前 K 步发证据』这一族资格档**定价**——设计预备第 2 条要求 K 只能从链上先量到的分布里取，不许事后挑刚好过线的那个。判据、计数与生成路径一字未动，故与 v13/v15 同格可比（锚点 23/49/6 与 total_steps 就是这条可比性的检验）。",
         "format_note_v15": "v15 **只是把 v13/v14 那副内容档搬到剂量探针里与复述面共用**（`_make_content_armed_evidence`）：轨迹面与复述面必须做**同一个**置换／冻结操作，各写一份就是两把尺子。字段、算法、默认关闭时的逐位行为一字未动 ⇒ 与 v13/v14 同格可比（锚点档的 23/49/6 就是这条可比性的检验）。",
         "format_note_v14": "v14 **只修 `frozen` 档的冻结源**（仪器缺陷，不是新测量）：v13 取'第一次调用'，而第一次调用时 store 仍为空 ⇒ 冻结到的是**精确零向量**，那一档实际测的是'把通道永久关掉'（现场证据：自停 66/72 与不挂回路那件同值、`content_arm_max_rel_l1_diff=1.0`）。现冻结到**第一条非零**证据并披露冻结点与它的 L1。`permutation` 档与其余字段一字未动 ⇒ v13 的置换档读数继续可比。",
@@ -670,6 +702,7 @@ def main() -> int:
         "copy_evidence_alpha": args.copy_evidence_alpha,
         "relevance_ceiling_c": args.relevance_ceiling_c,
         #: v13 自述：这一档替换的是**内容身份**，硬度分布由守卫逐项验，不是靠注释声明。
+        "evidence_window_steps": args.evidence_window_steps,
         "evidence_content_arm": args.evidence_content_arm,
         "perm_seed": args.perm_seed if args.evidence_content_arm == "permutation" else None,
         "surface_gate_state": runtime.surface_gate_state,
@@ -704,6 +737,13 @@ def main() -> int:
             #: v13：内容档必须**被走到**；置换档的硬度守恒是这一档的**前提**——不守恒时两个臂差的
             #: 就不只是"内容"，整档作废。`frozen` 档是故意换掉内容的分布 ⇒ 守恒项对它不作判，报 `null`。
             "content_arm_consumed": args.evidence_content_arm is None or content_guard[0] > 0,
+            #: v17：资格档必须**既发过也静音过**——静音数为 0 说明窗口没起作用（等于没这档），
+            #: 发出数为 0 说明窗口关得太早（整条通道恒零，那是另一档的读数，不是资格档）。
+            "window_arm_consumed": args.evidence_window_steps is None or window_counters[0] > 0,
+            "window_emitted_calls": window_counters[1],
+            "window_silenced_calls": window_counters[2],
+            "window_both_sides_seen": args.evidence_window_steps is None
+            or (window_counters[1] > 0 and window_counters[2] > 0),
             "content_arm_magnitude_preserved": (
                 None if args.evidence_content_arm != "permutation" else content_guard[3] <= 1e-5
             ),
