@@ -9,6 +9,7 @@ v6 的重放走完整产品面链（decode → marker 切割 → 同一个器官
 
 from __future__ import annotations
 
+import re
 import sys
 from pathlib import Path
 
@@ -193,3 +194,38 @@ def test_the_content_arm_has_exactly_one_implementation_across_instruments() -> 
         assert "rng.shuffle" not in src, name
         #: v19 的 oracle 档同理：`best_match` 的替身只许住在共用 helper 里。
         assert "def oracle_best_match" not in src, name
+
+
+def test_the_three_a30_instruments_self_describe_checkpoint_sha() -> None:
+    #: DEBT-G21（已修，提交 1049b25b）：跨工件配对必须按**内容**钉底座——只记 `checkpoint` 路径会被
+    #: 后来的长跑覆盖（cap 仪器自己注释里就写着这条，理由同样适用于回路）。字段退回去 ⇒ 红。
+    for name in (
+        "probe_taiji_a30_stop_failure.py",
+        "score_taiji_r2_copy_circuit_chat_cap.py",
+        "score_taiji_r2_copy_surface_extension.py",
+    ):
+        source = (PROJECT_ROOT / "scripts" / "training" / name).read_text(encoding="utf-8")
+        assert '"checkpoint_sha256":' in source, name
+
+
+def test_recall_numbers_after_docking50_name_the_circuit() -> None:
+    #: §第五十/五十一 那两格立的规矩：**「两全」必须带枚数说**——同一个 D 读数在 seed-A 上是 6→7、
+    #: 在 seed-B 上是 3→3，所以不点名回路的 `N/16` 句子会造出假事实。本文件从"第五十次停靠"起逐行扫，
+    #: 任何含 `N/16` 的行必须同时出现 seed-A／seed-B／circuit／枚 之一。写这条时它先抓到了我自己两行。
+    plan = (
+        PROJECT_ROOT
+        / "plans"
+        / "reference"
+        / "PLAN-A-30_surface_repetition_localization_20260928.md"
+    ).read_text(encoding="utf-8")
+    lines = plan.splitlines()
+    starts = [i for i, line in enumerate(lines) if line.startswith("### 第五十")]
+    assert starts, "docking 50 heading missing"
+    section = lines[min(starts):]
+    offenders = [
+        line
+        for line in section
+        if re.search(r"\d+/16", line)
+        and not any(token in line for token in ("seed-A", "seed-B", "circuit", "枚"))
+    ]
+    assert not offenders, offenders[:3]

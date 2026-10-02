@@ -5331,7 +5331,7 @@ seed-A 窗口 15 对对照 13（差 2 < 分辨率 ≥3 ⇒ 相当），seed-B �
 
 **为什么是这一格**：§第五十次停靠刚把表层列升级成跨工件，而"两全"三面里复述列的全部件名都是 `..._cap_dual_arm_chunked_short_*`（回路 seed-A `1cfe5961c300485d…`）；
 盘上**没有任何** `cap_dual_arm...seedB` 件（本轮 `ls` 实测：24 枚今日 cap 件全部同底同 seed-A）。⇒ 在补这一格之前，
-"窗口保留逐字命中（6→7/16）"这句只能算**单工件观察**，与表层列当时的处境一模一样。
+"窗口保留逐字命中（seed-A 6→7/16）"这句只能算**单枚工件的观察**，与表层列当时的处境一模一样。
 
 **两件（同刻度，不许换尺）**：底 (c) `output/a31_chunked_short/checkpoint.pt`（`checkpoint_sha256 ae51700e881f757a`）、
 回路 seed-B `output/taiji_r2_a23_ding2_seedB/judge/circuit-final.pt`（`circuit_sha256 3cfb02c2a88d2bd9…`）、
@@ -5378,7 +5378,7 @@ seed-A 窗口 15 对对照 13（差 2 < 分辨率 ≥3 ⇒ 相当），seed-B �
 
 **守卫逐条**（七条里六条为真，一条无法机检）：`checkpoint` 路径两件相同且为 `output/a31_chunked_short/checkpoint.pt` ✅；
 `circuit_sha256` 两件相同且为 seed-B `3cfb02c2a88d…` ✅（对 seed-A 那对跑同一脚本时它正确判 False ⇒ 守卫能为假）；
-对照 D=0/16 ✅；窗口臂 `evidence_window_steps=64`、锚点臂 `None` ✅；两臂 `items=24` ✅；
+seed-B 对照 D=0/16 ✅；窗口臂 `evidence_window_steps=64`、锚点臂 `None` ✅；两臂 `items=24` ✅；
 **D 维 16 题 id 集与 seed-A 那对逐 id 相等** ✅（不是按计数比，是按 id）；窗口件两侧非零 ✅；
 `checkpoint_sha256` **这台仪器没有这个字段** ⇒ 记 **unverified**（已登记 DEBT-G21，不静默丢弃）。
 
