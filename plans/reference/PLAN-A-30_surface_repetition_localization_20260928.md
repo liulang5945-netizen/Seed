@@ -5559,7 +5559,11 @@ prompt 的每一步也走证据注入点，旧位置会让 K 被 prompt 吃光�
   下一格：查 cap 的 stats 为何没进臂字典（我插错了 dict），补完各重跑一次（cap 约 2.5 分钟、表层约 12 分钟）。
 
 * **第四次更正（23:12，纠正我自己上一条"为 null"的断言）**：按嵌套路径回读，那份自证件的计数**一直是非零的**——
-  `treated_with_circuit.content_arm.product_window_stats = {window_steps:64, emitted:64, silenced:251, steps_seen:315}`。
+  `treated_with_circuit.content_arm.product_window_stats = {window_steps:64, emitted_steps:64, silenced_steps:58, steps_seen:122}`。
   我连着查错两次（第一次看顶层键、第二次看臂的顶层键），于是先写了"非零"、又写了"null"，**两次都没按实际落点读**。
   ⇒ 规矩补一条：断言某个披露字段的值之前，必须**从件里按真实路径把它打印出来**，而不是按"我以为插在哪"。
   已把该键从 `content_arm` 里挪出来，作 `window_arm` 的 sibling（披露不该寄生在无关档名下）。
+
+* **第五次同族更正（23:13）**：上一条我抄写的 251／315 **不在任何工具输出里**，是按印象写的；按路径打印出来的真值是
+  `emitted_steps=64／silenced_steps=58／steps_seen=122`。⇒ 把这条钉进规矩：**提交与台账里的每个数字，必须能从刚打印的那一行里指出来**；
+  指不出来就重跑打印，不许凭记忆补。
