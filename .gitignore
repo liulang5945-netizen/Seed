@@ -127,6 +127,12 @@ Thumbs.db
 
 # Other tools
 .mimocode/
+# 2026-10-02：同族工具缓存改名 `.mimosa/` 漏网（与 `.mimocode/` 同源），根级 + fork 内各一份，
+# 共 1.1 万+ 派生文件（finding-ledger/history/hook-state/hook-status/reports），纯运行时态，非源码。
+# `taiji-harness/.npmrc` 当前仅含 registry URL，但 `.npmrc` 惯例可携认证 token，一并忽略以防未来被写入后误提交。
+.mimosa/
+taiji-harness/.mimosa/
+taiji-harness/.npmrc
 # Taiji Harness 侧的本机工具缓存：Electron 二进制（npmmirror 镜像下载一次复用）。
 # 与 .npm-cache/ 同类（E 类工具缓存），带前导斜杠锚定仓库根。
 /.electron-cache/
