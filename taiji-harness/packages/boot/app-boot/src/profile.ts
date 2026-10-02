@@ -186,8 +186,10 @@ export const DEFAULT_PROFILE_BUNDLES: readonly string[] = ['@taiji/dsh-base']
  * manager ([rationale](../../../../.agents/notes/implemented/process/2026-09-15-shipped-optional-bundles.md)).
  */
 export const OPTIONAL_BUNDLES: readonly string[] = [
-  '@taiji/dsh-experimental-voice-input-bundle',
   '@taiji/dsh-experimental-agent-team-profile',
+  '@taiji/dsh-experimental-voice-input-bundle',
+  '@taiji/dsh-experimental-auto-review',
+  '@taiji/dsh-experimental-schedule-bundle',
 ]
 
 const PROFILE_PATCH_TEMPLATE = `# Your patch layer for this dsh profile, applied after every bundle layer:

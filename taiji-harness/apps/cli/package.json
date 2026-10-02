@@ -39,6 +39,7 @@
     "@taiji/dsh-compaction-tool-result-pruner": "workspace:^",
     "@taiji/dsh-cordis-client-runner": "workspace:^",
     "@taiji/dsh-experimental-agent-team-profile": "workspace:^",
+    "@taiji/dsh-experimental-auto-review": "workspace:^",
     "@taiji/dsh-fs-local": "workspace:^",
     "@taiji/dsh-goal": "workspace:^",
     "@taiji/dsh-goal-round-driver": "workspace:^",
@@ -99,7 +100,8 @@
     "@taiji/dsh-plugin-manager": "workspace:^",
     "@taiji/dsh-atomic-write": "workspace:^",
     "@taiji/dsh-agent-preset": "workspace:^",
-    "@taiji/dsh-experimental-voice-input-bundle": "workspace:^"
+    "@taiji/dsh-experimental-voice-input-bundle": "workspace:^",
+    "@taiji/dsh-experimental-schedule-bundle": "workspace:^"
   },
   "devDependencies": {
     "@agentclientprotocol/sdk": "1.4.0",

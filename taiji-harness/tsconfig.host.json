@@ -185,6 +185,7 @@
     { "path": "./packages/experimental/speech-to-text-sensevoice" },
     { "path": "./packages/experimental/api-speech-to-text" },
     { "path": "./packages/experimental/voice-input-bundle" },
+    { "path": "./packages/experimental/schedule-bundle" },
     { "path": "./packages/client/locale/tsconfig.host.json" },
     { "path": "./packages/client/ui-theme/tsconfig.host.json" },
     { "path": "./packages/client/ui-chat/tsconfig.host.json" },

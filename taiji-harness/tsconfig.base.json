@@ -41,6 +41,8 @@
       "@taiji/dsh-experimental-api-speech-to-text": ["./packages/experimental/api-speech-to-text/src/index.ts"],
       "@taiji/dsh-experimental-client-ui-voice-input": ["./packages/experimental/client-ui-voice-input/src/index.ts"],
       "@taiji/dsh-experimental-voice-input-bundle": ["./packages/experimental/voice-input-bundle/src/index.ts"],
+      "@taiji/dsh-experimental-auto-review": ["./packages/experimental/auto-review/src/index.ts"],
+      "@taiji/dsh-experimental-schedule-bundle": ["./packages/experimental/schedule-bundle/src/index.ts"],
       "@taiji/dsh-experimental-speech-to-text/wave": ["./packages/experimental/speech-to-text/src/wave.ts"],
       "@taiji/dsh-experimental-speech-to-text/types": ["./packages/experimental/speech-to-text/src/types.ts"],
       "@taiji/dsh-experimental-api-speech-to-text/types": ["./packages/experimental/api-speech-to-text/src/types.ts"],
