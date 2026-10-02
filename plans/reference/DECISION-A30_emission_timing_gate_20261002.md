@@ -47,6 +47,12 @@ K 的来历：由定价档按**开档前写死的规则**得出（命中偏移 m
   **已知误报源**：跨**仪器版本**整块比会把 schema 差异当成行为差异
   （实测第一处差异是 `treated_with_circuit.answer_bytes_quantiles` 一边 `None` 一边 `dict`）。
   ⇒ 验收必须**同版本**比，或只比行为子集（逐 item 的字节序列与 argmax 序列）。
+  **比较器已落仓内**（不再依赖仓外临时脚本）：`scripts/training/compare_taiji_a30_report_identity.py`
+  ＋守卫 `tests/taiji_native/test_a30_report_identity_comparator.py`（4 passed）。用法
+  `python scripts/training/compare_taiji_a30_report_identity.py --left <件A> --right <件B> [--subtree <键>] [--strict]`，
+  **rc 就是结论**（0 ⇒ 逐位相同，1 ⇒ 不同），可直接挂门。它把差异分成两堆：
+  `behavior`（两边都有值而不同）与 `schema`（一侧缺键，或一侧 `None` 一侧有值——即"旧件按零补"的指纹），
+  默认只按 `behavior` 判，`--strict` 时两堆都算 ⇒ 守卫同时钉住了"能为真""能为假""strict 一开会翻"。
 * **乙·开启后的能力线**：L2 相对同底同题面的"不挂回路"上界的差距按 §1 三线判（≥3 才算位移），
   复述 D 与表层 `well_formed_texts` 各按其链现取参考值，**禁止跨链搬阈值**（τ=0.3 跨链那一枪已付过学费）。
   开关字段与既有两通道同族（默认 1.0/关闭 ⇒ 逐位不变），并自带"被走到"计数（`emitted`／`silenced` 两侧非零），
