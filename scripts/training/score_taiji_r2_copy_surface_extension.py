@@ -132,6 +132,7 @@ def run_arm(
         if product_window_steps <= 0:
             raise SystemExit("产品档的 K 必须是正整数")
         substrate.set_copy_evidence_window_steps(product_window_steps)
+    product_window_stats = substrate.copy_evidence_window_stats()
     override = getattr(substrate, "_copy_evidence_utf8_gate_override", None)
     gate_effective = (
         bool(substrate.config.copy_evidence_utf8_gate) if override is None else bool(override)
@@ -213,6 +214,7 @@ def run_arm(
         "mount_entry": mount_entry,
         #: 窗口档自述：K 与"发出／静音"两侧计数（两侧都非零才算这档真的在窗内发过、窗外拦过）。
         "evidence_window_steps": window_steps,
+            "product_window_steps": product_window_steps,
         "window_arm": {
             "calls": window_counters[0],
             "emitted": window_counters[1],
@@ -228,6 +230,7 @@ def run_arm(
         "illegal_after_tail_trim_rate": round(1.0 - trimmed_clean / max(len(texts), 1), 4),
         "strict_hits": hits,
         "rows": rows,
+            "product_window_stats": product_window_stats,
     }
 
 

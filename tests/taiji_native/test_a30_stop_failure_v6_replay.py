@@ -268,3 +268,21 @@ def test_the_product_window_resets_after_the_prompt_feed_not_before_it() -> None
     first_reset = model_source.index("        self.reset_copy_evidence_window()", feed)
     answer_loop = model_source.index("            for _ in range(length):", first_reset)
     assert feed < first_reset < answer_loop
+
+
+def test_every_a30_face_discloses_which_window_path_produced_it() -> None:
+    #: DEBT-G23：表层那两件产品档读数当时**件里说不出自己来自哪条路径**（只有 cap 自述了旗标），
+    #: 而同一个信封里 `window_arm` 在替身档未开时恒为 0 ⇒ 光看件分不开"产品门"与"替身档"。
+    #: 钉三台仪器都必须自述旗标与被走到计数。
+    holders = {
+        "probe_taiji_a30_stop_failure.py": ('"product_window_steps": args.product_window_steps',
+                                            '"product_window_stats"'),
+        "score_taiji_r2_copy_circuit_chat_cap.py": ('"product_window_steps": args.product_window_steps',
+                                                    '"product_window_stats": product_window_stats'),
+        "score_taiji_r2_copy_surface_extension.py": ('"product_window_steps": product_window_steps',
+                                                     '"product_window_stats": product_window_stats'),
+    }
+    for name, needles in holders.items():
+        source = (PROJECT_ROOT / "scripts" / "training" / name).read_text(encoding="utf-8")
+        for needle in needles:
+            assert needle and needle in source, (name, needle)

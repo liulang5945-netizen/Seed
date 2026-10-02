@@ -413,6 +413,7 @@ def run_arm(
                 "answer": answer[:60],
             }
         )
+    product_window_stats = runtime.model.substrate.copy_evidence_window_stats()
     return {
         "items": len(rows),
         "correct": sum(1 for row in rows if row["hit"]),
@@ -525,6 +526,7 @@ def run_arm(
             "silenced": window_counters[2],
         },
         "content_arm": {
+            "product_window_stats": product_window_stats,
             "kind": evidence_content_arm,
             "calls": content_counters[0],
             "max_rel_l1_diff": content_counters[3],
