@@ -1,4 +1,4 @@
-.card {
+﻿.card {
   position: relative;
   display: inline-flex;
   align-items: center;
@@ -145,7 +145,7 @@
   width: 35%;
   height: 100%;
   border-radius: inherit;
-  background: var(--dsw-alias-brand-primary-new-colorprimary-new-color, #3f8f45);
+  background: var(--dsw-alias-brand-primary-new-colorprimary-new-color, #569e58);
   animation: file-card-progress 1.2s ease-in-out infinite alternate;
 }
 

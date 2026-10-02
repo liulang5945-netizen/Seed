@@ -1,11 +1,11 @@
-/* The framework-free boot page cannot depend on theme delivery succeeding. */
+﻿/* The framework-free boot page cannot depend on theme delivery succeeding. */
 
 .boot {
   --dsh-boot-label-primary: #0f1115;
   --dsh-boot-label-secondary: #61666b;
   --dsh-boot-label-tertiary: #81858c;
   --dsh-boot-border: rgb(0 0 0 / 10%);
-  --dsh-boot-brand: #3f8f45;
+  --dsh-boot-brand: #569e58;
 
   height: 100%;
   display: grid;

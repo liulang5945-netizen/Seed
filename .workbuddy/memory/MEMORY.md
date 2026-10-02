@@ -77,7 +77,7 @@
   （原来树干平截、与壳底留白缝）；**树自动适配放大**到"不碰壳的最大尺寸"（scale 1.24／横向 1.18，实测
   越界 0px、最小间隙 23px）；**配色按亮度重映射变嫩**（结构深绿 `#124A38`＋嫩叶高光 `#AAD66A`）。重生成器
   `E:/Seed/design/round_shell.py`；图标包 `E:/Seed/design/icons/` 按新母版重出（`build_icons.py`）。
-  **尚欠：应用内记号（`ui-primitives/src/FishLogo.tsx` 等 v5「圆＋树」几何记号）与桌面/favicon/安装器资产仍是旧记号，
+  **应用内接线已收官（2026-10-02）**：记号像素迹线矢量化（欧拉边消费＋闭合环 RDP 最远点拆分，彩色层必须 evenodd）换入 FishLogo／BrandWordmark／web 与官网 favicon／wordmark／桌面三套 icon.svg；主题 `--dsw-static-seed-*` 色阶重锚（300=#AAD66A、800=#124A38，amber 删）；安装器横幅／卸载器侧栏／skill 徽章／icon*.png 由母版合成（`design/build_brand_assets.py`）；身份句按「Seed=客户端、Taiji=模型」落地（700cee0da）。读数：primitives+brand-official 56 文件 1198 绿；sidebar 快照重录 5/5；app-boot+ui-conversation 5928 过/1 环境红。原尚欠行作废：应用内记号（`ui-primitives/src/FishLogo.tsx` 等 v5「圆＋树」几何记号）与桌面/favicon/安装器资产曾是旧记号，
   与新锚点不一致，接线未做。**
 - 回退备份 `E:/Seed-backup-{git,secrets}-20260919`；未确认前别跑 `git gc`/`prune`。
 - **仓库体积账（2026-09-27 只读扫描）**：全仓 ~121 GB。零风险可删 1.86 GB（`scripts/clean_worktree.py`

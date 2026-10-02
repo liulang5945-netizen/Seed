@@ -1,4 +1,4 @@
-import { createPortal } from 'react-dom'
+﻿import { createPortal } from 'react-dom'
 import css from './DropOverlay.module.css'
 
 /** Drop-overlay strings the owner resolves from its own locale namespace. */
@@ -49,7 +49,7 @@ const UploadIllustration = () => (
       <path d="M77.5088 26.3047L101.057 33.7966" stroke="white" strokeWidth="3" />
       <path d="M72.2646 42.7871L86.3938 47.2823" stroke="white" strokeWidth="3" />
       <path d="M74.8867 34.5469L98.4353 42.0388" stroke="white" strokeWidth="3" />
-      <rect x="31.583" y="38.6641" width="44.9157" height="44.3666" rx="12" transform="rotate(-0.134233 31.583 38.6641)" fill="#3F8F45" />
+      <rect x="31.583" y="38.6641" width="44.9157" height="44.3666" rx="12" transform="rotate(-0.134233 31.583 38.6641)" fill="#569e58" />
       <path d="M38.9521 73.0337C39.6129 71.7086 41.7113 66.0937 43.5113 61.1663C44.1607 59.3885 46.7484 59.3923 47.4591 61.1465C48.9728 64.8828 50.7969 68.6922 51.9988 69.1925C54.2946 70.1482 57.9854 59.3573 68.0064 70.1801" stroke="white" strokeWidth="3" />
       <circle cx="60.6157" cy="52.247" r="4.38794" transform="rotate(22.5996 60.6157 52.247)" fill="white" />
     </g>

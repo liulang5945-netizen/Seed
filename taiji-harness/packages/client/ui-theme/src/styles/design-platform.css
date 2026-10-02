@@ -64,20 +64,16 @@ body {
   --dsw-static-red-50: rgb(254, 242, 242);
   --dsw-static-red-600: rgb(236, 19, 19);
   --dsw-static-red-900: rgb(87, 12, 12);
-  --dsw-static-seed-50: rgb(244, 250, 240);
-  --dsw-static-seed-100: rgb(224, 242, 214);
-  --dsw-static-seed-200: rgb(200, 232, 186);
-  --dsw-static-seed-300: rgb(168, 214, 148);
-  --dsw-static-seed-400: rgb(111, 176, 92);
-  --dsw-static-seed-500: rgb(63, 143, 69);
-  --dsw-static-seed-600: rgb(47, 112, 54);
-  --dsw-static-seed-700: rgb(38, 92, 44);
-  --dsw-static-seed-800: rgb(31, 74, 37);
-  --dsw-static-seed-900: rgb(22, 52, 27);
-  --dsw-static-seed-amber-100: rgb(253, 243, 224);
-  --dsw-static-seed-amber-400: rgb(239, 185, 96);
-  --dsw-static-seed-amber-500: rgb(232, 163, 60);
-  --dsw-static-seed-amber-600: rgb(206, 138, 45);
+  --dsw-static-seed-50: rgb(244, 249, 239);
+  --dsw-static-seed-100: rgb(228, 241, 214);
+  --dsw-static-seed-200: rgb(201, 230, 177);
+  --dsw-static-seed-300: rgb(170, 214, 106);
+  --dsw-static-seed-400: rgb(124, 187, 103);
+  --dsw-static-seed-500: rgb(86, 158, 88);
+  --dsw-static-seed-600: rgb(66, 129, 77);
+  --dsw-static-seed-700: rgb(49, 102, 68);
+  --dsw-static-seed-800: rgb(18, 74, 56);
+  --dsw-static-seed-900: rgb(13, 54, 40);
 }
 
 body[data-ds-dark-theme] {
@@ -143,20 +139,16 @@ body[data-ds-dark-theme] {
   --dsw-static-red-50: rgb(254, 242, 242);
   --dsw-static-red-600: rgb(236, 19, 19);
   --dsw-static-red-900: rgb(87, 12, 12);
-  --dsw-static-seed-50: rgb(244, 250, 240);
-  --dsw-static-seed-100: rgb(224, 242, 214);
-  --dsw-static-seed-200: rgb(200, 232, 186);
-  --dsw-static-seed-300: rgb(168, 214, 148);
-  --dsw-static-seed-400: rgb(111, 176, 92);
-  --dsw-static-seed-500: rgb(63, 143, 69);
-  --dsw-static-seed-600: rgb(47, 112, 54);
-  --dsw-static-seed-700: rgb(38, 92, 44);
-  --dsw-static-seed-800: rgb(31, 74, 37);
-  --dsw-static-seed-900: rgb(22, 52, 27);
-  --dsw-static-seed-amber-100: rgb(253, 243, 224);
-  --dsw-static-seed-amber-400: rgb(239, 185, 96);
-  --dsw-static-seed-amber-500: rgb(232, 163, 60);
-  --dsw-static-seed-amber-600: rgb(206, 138, 45);
+  --dsw-static-seed-50: rgb(244, 249, 239);
+  --dsw-static-seed-100: rgb(228, 241, 214);
+  --dsw-static-seed-200: rgb(201, 230, 177);
+  --dsw-static-seed-300: rgb(170, 214, 106);
+  --dsw-static-seed-400: rgb(124, 187, 103);
+  --dsw-static-seed-500: rgb(86, 158, 88);
+  --dsw-static-seed-600: rgb(66, 129, 77);
+  --dsw-static-seed-700: rgb(49, 102, 68);
+  --dsw-static-seed-800: rgb(18, 74, 56);
+  --dsw-static-seed-900: rgb(13, 54, 40);
 }
 
 body {

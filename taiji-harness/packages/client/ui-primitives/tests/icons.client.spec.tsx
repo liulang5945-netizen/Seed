@@ -123,7 +123,7 @@ describe('product icon set', () => {
 })
 
 describe('FishLogo', () => {
-  it('renders the Seed mark — a tree knocked out of the seed disc — in currentColor', () => {
+  it('renders the Seed mark — the shell ring with the tree growing inside — in currentColor', () => {
     const { container } = render(<primitives.FishLogo />)
     const svg = container.querySelector('svg')!
     expect(svg.getAttribute('width')).toBe('24')
