@@ -5812,7 +5812,7 @@ prompt 的每一步也走证据注入点，旧位置会让 K 被 prompt 吃光�
 
 判据沿用 §第六十三次停靠开档前写死的三条，**未新增第四条**。两趟不挂回路、各 24 题×3 轮＝**72 条生成**，
 上界核对通过（出货底 52/72、(c) 底 66/72）；每底**各自独立**判。
-件：`reports/taiji_a30_stop_failure_self_v24_fixedstep_nocircuit_20261003.json` 的**同日实际名**为
+件（跑的时候已过零点，但文件名沿用当日日期串 `20261002`，所以别按 1003 去找）：
 `reports/taiji_a30_stop_failure_self_v24_fixedstep_nocircuit_20261002.json`、
 `reports/taiji_a30_stop_failure_c_v24_fixedstep_nocircuit_20261002.json`。
 
