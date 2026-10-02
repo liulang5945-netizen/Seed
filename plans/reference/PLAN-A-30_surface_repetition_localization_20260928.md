@@ -4327,9 +4327,9 @@ prompt 侧，生成环内一步都没切到。（这是 n=1，只用来证明"�
   改成"逐次相对差最大值 ≤1e-5"后同一档 true。**修的是守卫的式子，不是把界放大。**
 * **`frozen` 档作废并升 v14 重跑**：v13 把冻结源取在"第一次调用"，而那时 store 还是空的 ⇒ 冻到的是
   **精确零向量**，那一档实际测的是"通道永久关闭"（指纹就是件里 `content_arm_max_rel_l1_diff=1.0`）。
-  v14 改成冻结到**第一条非零**证据并披露冻结点与它的 L1；重跑件 `..._c_contentfrozen_v14_20261002.json`。
+  v14 改成冻结到**第一条非零**证据并披露冻结点与它的 L1；重跑件 `reports/taiji_a30_stop_failure_c_contentfrozen_v14_20261002.json`。
 * **那次失败白得的对照（这一条是有用的，不是残渣）**：v13 冻结档恰好就是"挂着回路＋证据通道恒零"这一格，
-  它给出 **66/72、吃满 6、越界 0**——与"不挂回路"那件（`..._chunked_short_nocircuit_20261002.json`）**逐项同值**
+  它给出 **66/72、吃满 6、越界 0**——与"不挂回路"那件（`reports/taiji_a30_stop_failure_chunked_short_nocircuit_20261002.json`）**逐项同值**
   ⇒ **"挂载"这个动作本身（prompt 通道、store、记录门）在这条面上不做任何事，全部作用都走那条加性证据**。
   这也解释了为什么上限档切掉 8.25% 的生成步会没用：那一档改的是"发哪几条"，而这条面听的是"发不发、发多重"。
 ### 第二十八次停靠·补读数（2026-10-02）：v14 修正后的冻结档触发**第三支**——管的是"证据跟着 cue 走"这件事本身
@@ -4359,7 +4359,7 @@ prompt 侧，生成环内一步都没切到。（这是 n=1，只用来证明"�
 
 仪器先补一件事再谈读数：内容档**搬进剂量探针共用**（`_make_content_armed_evidence`，L2 仪器升 v15），
 轨迹面与复述面做的是**同一个**置换／冻结操作；各写一份就是两把尺子。
-**可比性检验**：v15 锚点档必须逐位复现 v13/v14 锚点的 23／49／6 三列（`..._c_anchor_v15_20261002.json`）；
+**可比性检验**：v15 锚点档必须逐位复现 v13/v14 锚点的 23／49／6 三列（`reports/taiji_a30_stop_failure_c_anchor_v15_20261002.json`）；
 不复现 ⇒ 搬动扰动了路径，两半都作废。
 
 **两半的件名**（同底 `output/a31_chunked_short`、同 24 题面、`--max-bytes 256`、同一条 `--limit 24` 口径）：
@@ -4457,7 +4457,7 @@ prompt 侧，生成环内一步都没切到。（这是 n=1，只用来证明"�
 正确刻度是每条生成的 `fed_bytes`（自停的生成其 `fed_bytes` 就是停止发生的字节位置），
 它已经在件里存着，不必重跑；v17 要把 `boundary_win_position_hist` 改从 `fed_bytes` 取。
 
-按下表读数（由 `..._c_nocircuit_positions_v16_20261002.json` 与 `..._c_circuit_positions_v16_20261002.json`
+按下表读数（由 `reports/taiji_a30_stop_failure_c_nocircuit_positions_v16_20261002.json` 与 `reports/taiji_a30_stop_failure_c_circuit_positions_v16_20261002.json`
 的 `per_item[].surface_checks[].fed_bytes` 现算，`max_length=256`）：
 
 | 姿态 | 自停次数 | 停止字节位置 p25／p50／p75 | min | 落在前 16 字节的停止次数 |
@@ -4469,7 +4469,7 @@ prompt 侧，生成环内一步都没切到。（这是 n=1，只用来证明"�
 按冻好的规则（无回路臂 ≥50% 的停止位置落在 K 之后）K=16 时是 **66/66＝100%** 满足。
 **剩下的一半由命中偏移决定**：K 必须同时覆盖 ≥90% 的 `first_hit_offset_bytes`——
 若命中普遍出现在 ~80 字节之后（与停止中位 79 同段），那两个条件就**互斥** ⇒ "前 K 步发证据"这一族自动结案。
-复述偏移那件（`..._kpricing_offsets_20261002.json`）在写这段时**尚未落盘**，故这里不下结论；
+复述偏移那件（`reports/taiji_a30_cap_dual_arm_chunked_short_kpricing_offsets_20261002.json`）在写这段时**尚未落盘**，故这里不下结论；
 **在它落盘之前，本节任何一半都不许被单独引用**（同 §第二十二次停靠 的成对规矩）。
 ### 第三十次停靠·定价读数（第二半）：**两个条件不互斥——K 定在 64，窗口档该跑**
 
@@ -4581,9 +4581,9 @@ D 的分母仍是同一组 16 个 id ⇒ 与今天各件的 D 列可比。通过
 | **批②：现默认基底 `a31_chunked_self`、72 次** | **13/72** | **31/72** | **+18** | **+25.0 pp** | 6 → 5 | **未测**（我没为这批判复述面） |
 
 件名（成对引）：`reports/taiji_a30_stop_failure_c48_anchor_v17_20261002.json` ＋
-`..._c48_window64_v17_20261002.json`；`..._self_anchor_v17_20261002.json` ＋ `..._self_window64_v17_20261002.json`；
+`reports/taiji_a30_stop_failure_c48_window64_v17_20261002.json`；`reports/taiji_a30_stop_failure_self_anchor_v17_20261002.json` ＋ `reports/taiji_a30_stop_failure_self_window64_v17_20261002.json`；
 复述面 `reports/taiji_a30_cap_dual_arm_chunked_short_anchor48_20261002.json`（实为 36 题面，见上节命名更正）＋
-`..._cap_dual_arm_chunked_short_window64_48item_20261002.json`。
+`reports/taiji_a30_cap_dual_arm_chunked_short_window64_48item_20261002.json`。
 
 **按先写死的线取数**：批① 过（Δ+80 ≥ 线，且窗口 D 7 ≥ 锚点 D 6 − 1）；
 批② **不过**（Δ+18 < +20），而且它的 D 半我**根本没测** ⇒ 即使 Δ 够也仍不满足"每批两条"。
@@ -4628,7 +4628,7 @@ D 的分母仍是同一组 16 个 id ⇒ 与今天各件的 D 列可比。通过
 
 现默认底 `a31_chunked_self`、24 题面、同一副档同一 K=64
 （`reports/taiji_a30_cap_dual_arm_chunked_self_anchor_20261002.json` ＋
-`..._chunked_self_window64_20261002.json`；对照臂两趟逐列相同：D 0/16、`formed` 17、rate 1.0）：
+`reports/taiji_a30_cap_dual_arm_chunked_self_window64_20261002.json`；对照臂两趟逐列相同：D 0/16、`formed` 17、rate 1.0）：
 
 | 治疗臂姿态（现默认底） | D 命中 | `formed_full` | 成句率 | **联合判据 `joint_hits`** | 档生效 |
 | --- | --- | --- | --- | --- | --- |
