@@ -1,0 +1,536 @@
+{
+  "format": "taiji-r2-copy-circuit-chat-cap-v1",
+  "prereg": "plans/reference/M5_R2_A2_3_PREREG_20260925.md §4-S2（判据沿用）",
+  "checkpoint": "output/a31_chunked_self/checkpoint.pt",
+  "circuit": "output/taiji_r2_copy_circuit_chat/judge/circuit-final.pt",
+  "circuit_sha256": "1cfe5961c300485dc08078a9deb82d0f31acbb5f8c63d0685d18366832d741a3",
+  "copy_evidence_utf8_gate": false,
+  "copy_evidence_alpha": 1.0,
+  "relevance_floor_tau": null,
+  "relevance_ceiling_c": null,
+  "evidence_content_arm": null,
+  "evidence_window_steps": 64,
+  "content_arm_note": "v1 加性字段：`content_arm` 逐臂自述被走到次数／守恒偏差／冻结点。格式串不动 ⇒ 与已入库各档同格可比（默认 None ⇒ 一次替换都没发生）。",
+  "max_bytes": 256,
+  "item_limit": 24,
+  "well_formed_scope": "answer[:60] 字符前缀（非整条答复）",
+  "control_no_circuit": {
+    "items": 24,
+    "correct": 0,
+    "joint_hits": 0,
+    "formed_full_texts": 17,
+    "well_formed_rate": 1.0,
+    "rows": [
+      {
+        "id": "D01",
+        "dimension": "D",
+        "hit": false,
+        "first_hit_offset_bytes": null,
+        "answer_bytes": 134,
+        "formed_full": true,
+        "answer": "诗有吂\n\n耂\n答：诗有吂\n\n的有吂，何，大家有一起大何，大何，大何，大何，大何，大家有中，彚有吂"
+      },
+      {
+        "id": "D02",
+        "dimension": "D",
+        "hit": false,
+        "first_hit_offset_bytes": null,
+        "answer_bytes": 147,
+        "formed_full": true,
+        "answer": "这首诗有吂\n\n老师：这首诗有吂\n\n耂\n\n的有吂，何，大何，大何，大何，大何，大何，大何，大何，大何，大何，"
+      },
+      {
+        "id": "D03",
+        "dimension": "D",
+        "hit": false,
+        "first_hit_offset_bytes": null,
+        "answer_bytes": 255,
+        "formed_full": true,
+        "answer": "这首诗有吂\n\n老师，心有一起大家有一这首诗有吂\n\n老师：这首诗有吂\n\n耂\n的有吂，一起大家有一这首诗有吂\n\n老师：这首诗"
+      },
+      {
+        "id": "D04",
+        "dimension": "D",
+        "hit": false,
+        "first_hit_offset_bytes": null,
+        "answer_bytes": 257,
+        "formed_full": false,
+        "answer": "诗中吂，关大家有：这首诗有吂\n\n老师：这首诗有吂\n\n耂\n\n耂\n耂\n的有吂，一起大家有一这首诗有吂\n\n耂\n耂\n耂\n的有吂，"
+      },
+      {
+        "id": "D05",
+        "dimension": "D",
+        "hit": false,
+        "first_hit_offset_bytes": null,
+        "answer_bytes": 195,
+        "formed_full": true,
+        "answer": "这首诗有吂，何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大"
+      },
+      {
+        "id": "D06",
+        "dimension": "D",
+        "hit": false,
+        "first_hit_offset_bytes": null,
+        "answer_bytes": 258,
+        "formed_full": false,
+        "answer": "这首诗有吂\n\n耂\n的有吂，何，大家有一起大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大"
+      },
+      {
+        "id": "D07",
+        "dimension": "D",
+        "hit": false,
+        "first_hit_offset_bytes": null,
+        "answer_bytes": 258,
+        "formed_full": false,
+        "answer": "这首诗有吂\n\n耂\n答：这首诗有吂\n\n耂\n的有吂，何大家有一起大家有：这首诗有吂\n\n耂\n答：这首诗有吂\n\n耂\n答：这首诗有"
+      },
+      {
+        "id": "D08",
+        "dimension": "D",
+        "hit": false,
+        "first_hit_offset_bytes": null,
+        "answer_bytes": 186,
+        "formed_full": true,
+        "answer": "这首诗有吂\n\n耂\n答：这首诗有吂，何大家有，忙一起大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何"
+      },
+      {
+        "id": "D09",
+        "dimension": "D",
+        "hit": false,
+        "first_hit_offset_bytes": null,
+        "answer_bytes": 256,
+        "formed_full": true,
+        "answer": "这首诗有吂\n\n老师：这首诗有吂\n\n耂\n\n耂\n的有吂，大何，大何，大何，大何，大家有：这首诗有吂\n\n老师：这首诗有吂\n\n耂"
+      },
+      {
+        "id": "D10",
+        "dimension": "D",
+        "hit": false,
+        "first_hit_offset_bytes": null,
+        "answer_bytes": 226,
+        "formed_full": true,
+        "answer": "诗有吂\n\n耂\n的有吂，何大家有一起大何，大何，大何，大何，大家有：这首诗有吂\n\n老师：这首诗有吂\n\n老师，大何，大何，大"
+      },
+      {
+        "id": "D11",
+        "dimension": "D",
+        "hit": false,
+        "first_hit_offset_bytes": null,
+        "answer_bytes": 248,
+        "formed_full": true,
+        "answer": "这首诗有吂\n\n老师：这首诗有吂\n\n耂\n\n答：这首诗有吂，心有吂\n\n耂\n\n答：这首诗有吂\n耂\n\n的有吂，何大家有一起大何，"
+      },
+      {
+        "id": "D12",
+        "dimension": "D",
+        "hit": false,
+        "first_hit_offset_bytes": null,
+        "answer_bytes": 258,
+        "formed_full": false,
+        "answer": "这首诗有吂\n\n耂\n答：这首诗有吂\n\n耂\n答：这首诗有吂，一起大家有，一起大何，大何，大何，大何，大何，大何，大何，大何，"
+      },
+      {
+        "id": "D13",
+        "dimension": "D",
+        "hit": false,
+        "first_hit_offset_bytes": null,
+        "answer_bytes": 63,
+        "formed_full": true,
+        "answer": "诗有吂\n\n耂\n的有吂，大何，大家有一起大家有，"
+      },
+      {
+        "id": "D18",
+        "dimension": "D",
+        "hit": false,
+        "first_hit_offset_bytes": null,
+        "answer_bytes": 72,
+        "formed_full": true,
+        "answer": "萂佋诗有吂，大何，大何，大何，大家有：这首诗有吂"
+      },
+      {
+        "id": "D19",
+        "dimension": "D",
+        "hit": false,
+        "first_hit_offset_bytes": null,
+        "answer_bytes": 186,
+        "formed_full": true,
+        "answer": "这首诗有吂，何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大"
+      },
+      {
+        "id": "D20",
+        "dimension": "D",
+        "hit": false,
+        "first_hit_offset_bytes": null,
+        "answer_bytes": 255,
+        "formed_full": true,
+        "answer": "这首诗有吂\n\n耂\n答：这首诗有吂\n\n耂\n的有吂，一起大家有一这首诗有吂\n\n老师：这首诗有吂\n\n耂\n的有吂，一起大家有一这"
+      },
+      {
+        "id": "E01",
+        "dimension": "E",
+        "hit": false,
+        "first_hit_offset_bytes": null,
+        "answer_bytes": 258,
+        "formed_full": false,
+        "answer": "这首诗有吂何，大家有一起大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，"
+      },
+      {
+        "id": "E02",
+        "dimension": "E",
+        "hit": false,
+        "first_hit_offset_bytes": null,
+        "answer_bytes": 256,
+        "formed_full": true,
+        "answer": "同何一这首诗有吂何，大家有一这首诗有吂\n\n老师：这首诗有吂\n\n老师：这首诗有吂\n\n耂\n答：这首诗有吂\n耂\n答：这首诗有吂"
+      },
+      {
+        "id": "E03",
+        "dimension": "E",
+        "hit": false,
+        "first_hit_offset_bytes": null,
+        "answer_bytes": 256,
+        "formed_full": true,
+        "answer": "这首诗有吂\n\n老师：这首诗有吂\n\n耂\n\n老师：这首诗有吂\n\n耂\n答：这首诗有吂，一起大家有，一这首诗有吂\n\n老师：这首诗"
+      },
+      {
+        "id": "E04",
+        "dimension": "E",
+        "hit": false,
+        "first_hit_offset_bytes": null,
+        "answer_bytes": 225,
+        "formed_full": true,
+        "answer": "这首诗有吂何，大家有一起大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，"
+      },
+      {
+        "id": "E05",
+        "dimension": "E",
+        "hit": false,
+        "first_hit_offset_bytes": null,
+        "answer_bytes": 256,
+        "formed_full": true,
+        "answer": "这首诗有吂\n\n老师：这首诗有吂\n\n老师：这首诗有吂\n\n老忈：这首诗有吂\n\n耂\n耂\n答：这首诗有吂，一大家有一这首诗有吂\n"
+      },
+      {
+        "id": "E06",
+        "dimension": "E",
+        "hit": false,
+        "first_hit_offset_bytes": null,
+        "answer_bytes": 257,
+        "formed_full": false,
+        "answer": "这首诗有吂\n\n耂\n答：这首诗有吂，一起大家有一这首诗有吂\n\n老师：这首诗有吂\n\n老师：这首诗有吂\n\n耂\n答：这首诗有吂\n"
+      },
+      {
+        "id": "E07",
+        "dimension": "E",
+        "hit": false,
+        "first_hit_offset_bytes": null,
+        "answer_bytes": 258,
+        "formed_full": false,
+        "answer": "吂何，大家有一起大何，大何，大何，大家有，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，"
+      },
+      {
+        "id": "E08",
+        "dimension": "E",
+        "hit": false,
+        "first_hit_offset_bytes": null,
+        "answer_bytes": 72,
+        "formed_full": true,
+        "answer": "好，一起大家有一这首诗有吂何，大家有一这首诗有吂"
+      }
+    ],
+    "hit_offsets": {
+      "n": 0,
+      "note": "no hits on this arm"
+    },
+    "answer_bytes_quantiles": {
+      "n": 0,
+      "note": "no hits on this arm"
+    },
+    "evidence_calls": 0,
+    "picked_cosine": null,
+    "window_arm": {
+      "steps": null,
+      "calls": 0,
+      "emitted": 0,
+      "silenced": 0
+    },
+    "content_arm": {
+      "kind": null,
+      "calls": 0,
+      "max_rel_l1_diff": 0.0,
+      "frozen_at_call": null,
+      "frozen_l1": null
+    }
+  },
+  "treated_with_circuit": {
+    "items": 24,
+    "correct": 8,
+    "joint_hits": 3,
+    "formed_full_texts": 10,
+    "well_formed_rate": 0.625,
+    "rows": [
+      {
+        "id": "D01",
+        "dimension": "D",
+        "hit": true,
+        "first_hit_offset_bytes": 3,
+        "answer_bytes": 256,
+        "formed_full": false,
+        "answer": "岩阿岩阿岩阿岩阿岩阿岩阿岩阿岩阿岩。岩阿岩阯，大家有，忙首诗有吂\n答，忙一起大家有，忙一起大何，大何，大何，大何，大何，"
+      },
+      {
+        "id": "D02",
+        "dimension": "D",
+        "hit": true,
+        "first_hit_offset_bytes": 3,
+        "answer_bytes": 250,
+        "formed_full": true,
+        "answer": "州杭州杭州杭州杭州杭州杭州杭州杭州杭州杭州来诗：诗有一起大家有一起大何，忙首诗有吂\n\n老师：这首诗有吂\n\n老师，大何，大"
+      },
+      {
+        "id": "D03",
+        "dimension": "D",
+        "hit": false,
+        "first_hit_offset_bytes": null,
+        "answer_bytes": 256,
+        "formed_full": true,
+        "answer": "健好短健好短短短好短好短健我健健好短健好短矀起大家有一起弌大何，忙首诗有吂\n答，忙首诗有吂\n答，忙首诗有吂\n\n这首诗有吂"
+      },
+      {
+        "id": "D04",
+        "dimension": "D",
+        "hit": true,
+        "first_hit_offset_bytes": 63,
+        "answer_bytes": 257,
+        "formed_full": false,
+        "answer": "7777777777777777777777777777777777777欢7欢欢欢欢欢欢是 17own fox jum"
+      },
+      {
+        "id": "D05",
+        "dimension": "D",
+        "hit": false,
+        "first_hit_offset_bytes": null,
+        "answer_bytes": 258,
+        "formed_full": false,
+        "answer": "幙 Sed Sed Sed Sedc Sedc Sedt Sedow Sed年 Sed Sed Sed Sed Sed："
+      },
+      {
+        "id": "D06",
+        "dimension": "D",
+        "hit": false,
+        "first_hit_offset_bytes": null,
+        "answer_bytes": 201,
+        "formed_full": false,
+        "answer": "尴下问下问下问下问下下是尴下下问下是尴下下下同：有吂何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何"
+      },
+      {
+        "id": "D07",
+        "dimension": "D",
+        "hit": true,
+        "first_hit_offset_bytes": 4,
+        "answer_bytes": 255,
+        "formed_full": true,
+        "answer": "4州杭州杭州杭州杭州杭州杭州杭州杭州杭州杭州有：这首诗有吂\n答：这首诗有吂\n\n老师：同一起大何，大家有一起大何，忙首诗有"
+      },
+      {
+        "id": "D08",
+        "dimension": "D",
+        "hit": true,
+        "first_hit_offset_bytes": 12,
+        "answer_bytes": 256,
+        "formed_full": true,
+        "answer": "茶欢茶欢绿茶欢茶欢欢欢欢欢欢欢欢欢欢欢欢茶茗漟\n答：这首诗有吂，一起大何，大何，大何，大何，大何，大何，大何，大何，大何"
+      },
+      {
+        "id": "D09",
+        "dimension": "D",
+        "hit": true,
+        "first_hit_offset_bytes": 17,
+        "answer_bytes": 257,
+        "formed_full": false,
+        "answer": "222222。2。是 422222222222。是222222222222222222222222222222：诗有吂何"
+      },
+      {
+        "id": "D10",
+        "dimension": "D",
+        "hit": false,
+        "first_hit_offset_bytes": null,
+        "answer_bytes": 168,
+        "formed_full": false,
+        "answer": "岩阿岩阿岩岩阿岩阿岩岩阿岩阿岩阿岩阿岩阿岩岂\n答：这首诗有吂\n\n老师，忚有一起大何，大何，大何，大何，大何，大家有，"
+      },
+      {
+        "id": "D11",
+        "dimension": "D",
+        "hit": false,
+        "first_hit_offset_bytes": null,
+        "answer_bytes": 257,
+        "formed_full": false,
+        "answer": "州杭州杭州杭州杭州杭州杭州杭州杭州杭州杭州来诗有吂\n答：话大家有一起大家有一这首诗有吂\n\n老师：这首诗有吂\n\n老师：这首"
+      },
+      {
+        "id": "D12",
+        "dimension": "D",
+        "hit": false,
+        "first_hit_offset_bytes": null,
+        "answer_bytes": 257,
+        "formed_full": false,
+        "answer": "7777777777777777777777777777777777777777777777：7777777777777"
+      },
+      {
+        "id": "D13",
+        "dimension": "D",
+        "hit": false,
+        "first_hit_offset_bytes": null,
+        "answer_bytes": 258,
+        "formed_full": false,
+        "answer": "责接责接壣接责接壣接壣接责接负负负负负负责掰吂\n答：话吂\n的有吂\n答：这首诗有吂\n\n耂\n答：这首诗有吂，一起大家有，一起"
+      },
+      {
+        "id": "D18",
+        "dimension": "D",
+        "hit": true,
+        "first_hit_offset_bytes": 3,
+        "answer_bytes": 178,
+        "formed_full": false,
+        "answer": "岩阿岩阿岩阿岩阿岩。岩阿岩阿岩阿岩阿岩阿岩阯年刑诗有吂\n答，忚有一起大何，忚有一起大何，大何，大何，大何，大何，大家有，"
+      },
+      {
+        "id": "D19",
+        "dimension": "D",
+        "hit": false,
+        "first_hit_offset_bytes": null,
+        "answer_bytes": 255,
+        "formed_full": true,
+        "answer": "责接壣接壣接壣接壣接壣接壣接壣接壣接壣接壣掉吂\n答：这首诗有吂\n答：这首诗有吂\n\n耂\n答：这首诗有吂\n\n耂\n答：这首诗有"
+      },
+      {
+        "id": "D20",
+        "dimension": "D",
+        "hit": true,
+        "first_hit_offset_bytes": 10,
+        "answer_bytes": 257,
+        "formed_full": false,
+        "answer": "过过是 17777777是 177777喇77777777777777过过过是 1777777吂，大何，大何，大何，大何"
+      },
+      {
+        "id": "E01",
+        "dimension": "E",
+        "hit": false,
+        "first_hit_offset_bytes": null,
+        "answer_bytes": 258,
+        "formed_full": false,
+        "answer": "这首诗有吂何，大家有一起大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，"
+      },
+      {
+        "id": "E02",
+        "dimension": "E",
+        "hit": false,
+        "first_hit_offset_bytes": null,
+        "answer_bytes": 256,
+        "formed_full": true,
+        "answer": "同何一这首诗有吂何，大家有一这首诗有吂\n\n老师：这首诗有吂\n\n老师：这首诗有吂\n\n耂\n答：这首诗有吂\n耂\n答：这首诗有吂"
+      },
+      {
+        "id": "E03",
+        "dimension": "E",
+        "hit": false,
+        "first_hit_offset_bytes": null,
+        "answer_bytes": 256,
+        "formed_full": true,
+        "answer": "这首诗有吂\n\n老师：这首诗有吂\n\n耂\n\n老师：这首诗有吂\n\n耂\n答：这首诗有吂，一起大家有，一这首诗有吂\n\n老师：这首诗"
+      },
+      {
+        "id": "E04",
+        "dimension": "E",
+        "hit": false,
+        "first_hit_offset_bytes": null,
+        "answer_bytes": 225,
+        "formed_full": true,
+        "answer": "这首诗有吂何，大家有一起大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，"
+      },
+      {
+        "id": "E05",
+        "dimension": "E",
+        "hit": false,
+        "first_hit_offset_bytes": null,
+        "answer_bytes": 256,
+        "formed_full": true,
+        "answer": "这首诗有吂\n\n老师：这首诗有吂\n\n老师：这首诗有吂\n\n老忈：这首诗有吂\n\n耂\n耂\n答：这首诗有吂，一大家有一这首诗有吂\n"
+      },
+      {
+        "id": "E06",
+        "dimension": "E",
+        "hit": false,
+        "first_hit_offset_bytes": null,
+        "answer_bytes": 257,
+        "formed_full": false,
+        "answer": "这首诗有吂\n\n耂\n答：这首诗有吂，一起大家有一这首诗有吂\n\n老师：这首诗有吂\n\n老师：这首诗有吂\n\n耂\n答：这首诗有吂\n"
+      },
+      {
+        "id": "E07",
+        "dimension": "E",
+        "hit": false,
+        "first_hit_offset_bytes": null,
+        "answer_bytes": 258,
+        "formed_full": false,
+        "answer": "吂何，大家有一起大何，大何，大何，大家有，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，大何，"
+      },
+      {
+        "id": "E08",
+        "dimension": "E",
+        "hit": false,
+        "first_hit_offset_bytes": null,
+        "answer_bytes": 72,
+        "formed_full": true,
+        "answer": "好，一起大家有一这首诗有吂何，大家有一这首诗有吂"
+      }
+    ],
+    "hit_offsets": {
+      "n": 8,
+      "median": 7.0,
+      "p25": 3.0,
+      "p75": 12.0,
+      "p90": 17.0,
+      "p95": 17.0,
+      "max": 63.0,
+      "share_below_0p3": 0.0,
+      "share_no_event": 0.0
+    },
+    "answer_bytes_quantiles": {
+      "n": 8,
+      "median": 256.0,
+      "p25": 250.0,
+      "p75": 257.0,
+      "p90": 257.0,
+      "p95": 257.0,
+      "max": 257.0,
+      "share_below_0p3": 0.0,
+      "share_no_event": 0.0
+    },
+    "evidence_calls": 0,
+    "picked_cosine": null,
+    "window_arm": {
+      "steps": 64,
+      "calls": 39207,
+      "emitted": 29882,
+      "silenced": 9325
+    },
+    "content_arm": {
+      "kind": null,
+      "calls": 0,
+      "max_rel_l1_diff": 0.0,
+      "frozen_at_call": null,
+      "frozen_l1": null
+    }
+  },
+  "dose_guard": {
+    "treated_consumed_scaler": false,
+    "control_consumed_scaler": false,
+    "evidence_calls_by_arm": {
+      "control": 0,
+      "treated": 0
+    }
+  },
+  "verdict": "A2.4 重测未通过（如实记录）"
+}
