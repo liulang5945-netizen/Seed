@@ -280,9 +280,30 @@ def test_every_a30_face_discloses_which_window_path_produced_it() -> None:
         "score_taiji_r2_copy_circuit_chat_cap.py": ('"product_window_steps": args.product_window_steps',
                                                     '"product_window_stats": product_window_stats'),
         "score_taiji_r2_copy_surface_extension.py": ('"product_window_steps": product_window_steps',
-                                                     '"product_window_stats": product_window_stats'),
+                                                     '"product_window_stats": substrate.copy_evidence_window_stats()'),
     }
     for name, needles in holders.items():
         source = (PROJECT_ROOT / "scripts" / "training" / name).read_text(encoding="utf-8")
         for needle in needles:
             assert needle and needle in source, (name, needle)
+
+
+def test_the_window_counters_are_read_after_the_run_not_before_it() -> None:
+    #: 实测踩过的披露陷阱：把 `copy_evidence_window_stats()` 取在生成之前 ⇒ 件里永远是全零快照，
+    #: 而全零恰好会"证明门没开过枪"——一个会把成功读数说成空档的自证。两台仪器都必须在返回时才取。
+    from pathlib import Path
+    import ast as _ast
+    for name, needle in (
+        ("score_taiji_r2_copy_surface_extension.py", "copy_evidence_window_stats"),
+        ("score_taiji_r2_copy_circuit_chat_cap.py", "copy_evidence_window_stats"),
+    ):
+        source = (PROJECT_ROOT / "scripts" / "training" / name).read_text(encoding="utf-8")
+        tree = _ast.parse(source)
+        fn = next(n for n in _ast.walk(tree) if isinstance(n, _ast.FunctionDef) and n.name == "run_arm")
+        lines = [n.lineno for n in _ast.walk(fn) if isinstance(n, _ast.Call)
+                 and isinstance(n.func, _ast.Attribute) and n.func.attr == needle]
+        assert lines, name
+        starts = [x.lineno for x in _ast.walk(fn) if isinstance(x, _ast.Return)]
+        assert starts, name
+        # 计数必须在**返回那一刻或更晚**取（离 return 起始行不超过 3 行），否则就是跑前快照。
+        assert max(lines) >= min(starts) - 3, (name, lines, min(starts))
