@@ -81,9 +81,9 @@ def test_instrument_carries_v6_and_the_correction_note() -> None:
     source = (PROJECT_ROOT / "scripts" / "training" / "probe_taiji_a30_stop_failure.py").read_text(
         encoding="utf-8"
     )
-    assert '"format": "taiji-a30-stop-failure-v20"' in source
+    assert '"format": "taiji-a30-stop-failure-v21"' in source
     assert all(
-        f"format_note_v{v}" in source for v in (6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20)
+        f"format_note_v{v}" in source for v in (6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21)
     ), "升版只许加列，历史说明必须逐版留在件里"
     assert "format_note_v6" in source
     assert "追加二" in source and "深帧复现" in source
@@ -258,3 +258,13 @@ def test_the_stand_alone_loop_caller_must_reset_the_product_window() -> None:
     source = (PROJECT_ROOT / "scripts" / "training" / "probe_taiji_a30_stop_failure.py").read_text(encoding="utf-8")
     assert "substrate.reset_copy_evidence_window()" in source
     assert source.count("if args.product_window_steps is not None:") >= 2
+
+
+def test_the_product_window_resets_after_the_prompt_feed_not_before_it() -> None:
+    #: DEBT-G22 的静态那半：答复相计步的前提是"prompt 喂完就复位"。
+    #: 复位早于 prompt 环 ⇒ K 被 prompt 吃掉（实测过），所以这里钉**次序**而不只是钉存在。
+    model_source = (PROJECT_ROOT / "taiji" / "model.py").read_text(encoding="utf-8")
+    feed = model_source.index("        for symbol in prompt:")
+    first_reset = model_source.index("        self.reset_copy_evidence_window()", feed)
+    answer_loop = model_source.index("            for _ in range(length):", first_reset)
+    assert feed < first_reset < answer_loop

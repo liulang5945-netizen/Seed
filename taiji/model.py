@@ -3157,6 +3157,10 @@ class Taiji:
                 _predictive_readout=predictive_readout,
             )
 
+        #: PLAN-A30 / DEBT-G22：**答复相从这一刻才开始数**。prompt 的每一步也走证据注入点，
+        #: 不在这里复位的话 K 会被 prompt 段吃光、整条答复反而静音
+        #: （2026-10-02 实测：`emitted=64／silenced=276`＝`84 prompt＋256 答复`，读数 66/72 只是"等于不挂回路"）。
+        self.reset_copy_evidence_window()
         circuit = self._copy_circuit
         if circuit is not None and circuit.store.count > 0:
             #: A2.5 §1.2：事件选择只算一次——就在"提问喂完"这一刻的皮质态与运动语境上，
