@@ -126,6 +126,7 @@ def run_arm(
     evidence_content_arm: str | None = None,
     perm_seed: int = 20261002,
     evidence_window_steps: int | None = None,
+    store_scope_conversation: bool = False,
     max_bytes: int = MAX_ANSWER_BYTES,
     limit: int | None = None,
 ) -> dict[str, Any]:
@@ -185,6 +186,17 @@ def run_arm(
         circuit.evidence = armed
     #: v17 资格档接到复述链：**用与 L2 仪器同一个 `generation_loop_span`** 数环内步（1 步＝1 字节），
     #: 这样两半是同一把刻度、同一副档；不是把 K 换算成"多少次调用"那种近似。
+    #: v18 检索侧资格档（与 L2 仪器共用同一份实现，别写第二把尺子）。
+    store_counters = [0, 0, 0]
+    store_reset = None
+    if store_scope_conversation:
+        from probe_taiji_a30_copy_evidence_dose import _make_store_scoped_arm
+
+        scoped = runtime.model.substrate
+        if scoped.copy_circuit is None:
+            raise RuntimeError("要求检索侧资格档但回路不在场 ⇒ 没有可缩范围的存储")
+        store_reset, store_counters, _stale = _make_store_scoped_arm(scoped.copy_circuit.store)
+
     window_counters = [0, 0, 0]
     loop_steps = [0]
     if evidence_window_steps is not None:
@@ -225,6 +237,8 @@ def run_arm(
     rows = []
     for item in items:
         history: list[tuple[str, str]] = []
+        if store_reset is not None:
+            store_reset()  # 每题开头：只留本题被告知的内容可被取到
         turns = list(item["turns"])
         answer = ""
         for index, turn in enumerate(turns):
@@ -283,6 +297,12 @@ def run_arm(
         "evidence_calls": calls[0],
         "picked_cosine": _quantiles(scores) if record_scores and scores else None,
         #: 内容档自述：被走到几次、硬度守恒到哪、冻结落在第几次调用（守恒只对置换档有意义）。
+        "store_scope_arm": {
+            "requested": bool(store_scope_conversation),
+            "stale_removed": store_counters[0],
+            "events_min": store_counters[1],
+            "events_max": store_counters[2],
+        },
         "window_arm": {
             "steps": evidence_window_steps,
             "calls": window_counters[0],
@@ -364,6 +384,11 @@ def main() -> int:
         default=None,
         help="v17 资格档：只在答复的前 K 步发回路证据，之后静音。刻度与 L2 仪器同源（同一个 `generation_loop_span`、1 步＝1 字节），故两半可用同一个 K。",
     )
+    parser.add_argument(
+        "--store-scope-conversation",
+        action="store_true",
+        help="v18 检索侧资格档：每题开头把装载信封里的陈旧事件请出候选集，与 L2 仪器共用同一份实现。",
+    )
     args = parser.parse_args()
 
     checkpoint = PROJECT_ROOT / args.checkpoint
@@ -384,6 +409,7 @@ def main() -> int:
         evidence_ceiling_c=args.relevance_ceiling_c,
         record_scores=args.record_scores,
         evidence_window_steps=args.evidence_window_steps,
+        store_scope_conversation=args.store_scope_conversation,
         evidence_content_arm=args.evidence_content_arm,
         perm_seed=args.perm_seed,
         max_bytes=args.max_bytes,
@@ -416,6 +442,7 @@ def main() -> int:
         "relevance_ceiling_c": args.relevance_ceiling_c,
         "evidence_content_arm": args.evidence_content_arm,
         "evidence_window_steps": args.evidence_window_steps,
+        "store_scope_conversation": bool(args.store_scope_conversation),
         "content_arm_note": "v1 加性字段：`content_arm` 逐臂自述被走到次数／守恒偏差／冻结点。"
         "格式串不动 ⇒ 与已入库各档同格可比（默认 None ⇒ 一次替换都没发生）。",
         #: 两条口径必须落在件上，否则这份读数会被当成"整条答复、预算 256"的那类去比：

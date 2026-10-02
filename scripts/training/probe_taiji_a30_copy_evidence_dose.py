@@ -119,9 +119,39 @@ def _make_scaled_evidence(
     return scaled, calls
 
 
-def _make_window_armed_evidence(
-    original: Any, window: int, position: Any
-) -> tuple[Any, list[int]]:
+def _make_store_scoped_arm(store: Any) -> tuple[Any, list[int], set[int]]:
+    """**资格档（检索侧）**：只让"本次对话里被告知的内容"有资格被取到。
+
+    与 §第二十九/三十次停靠 的区别要说清：那两档动的是**发射时刻**（发不发、什么时候发），
+    这一档动的是**候选集**（谁有资格被 `best_match` 取到）——DEBT-G19 早已量到整条通道的注入
+    全由装载信封里残留的少量**跨题陈旧事件**驱动，所以"把陈旧事件请出候选集"是另一条独立的形状。
+
+    只用公开接口：`events()` 读、`clear()` 清空、`record()` 把**保留**的事件写回
+    （代价是 `event_id` 会重新编号，这一点必须在件里披露，不许假装没发生）。
+    返回 `(reset 函数, 计数器 [清掉的陈旧条数, 重置后在库条数最小值, 最大值], 陈旧 id 集合)`。
+    计数器第 2/3 位在 reset 之前先按"全部"算，重置后才反映真实候选数。
+    """
+
+    counters = [0, 0, 0]
+    stale_ids = {int(event.event_id) for event in store.events()}
+    stale = [event for event in store.events()]
+
+    def reset() -> None:
+        kept_live = [event for event in store.events() if int(event.event_id) not in stale_ids]
+        store.clear()
+        for event in kept_live:
+            store.record(event.content, event.cue)
+        # 陈旧那几条此刻已不在库里：把它们重新登记为"下一次要清掉的对象"没有意义
+        # （reset 的语义＝每题开头只留本题被告知的内容），故这里只记本次清掉了几条。
+        counters[0] = max(counters[0], len(stale))
+        live = int(store.count)
+        counters[1] = live if counters[1] == 0 else min(counters[1], live)
+        counters[2] = max(counters[2], live)
+
+    return reset, counters, stale_ids
+
+
+def _make_window_armed_evidence(original: Any, window: int, position: Any) -> tuple[Any, list[int]]:
     """**资格档**：只在答复的前 `window` 步发证据，之后把这条通道静音（PLAN-A-30 §第三十次停靠）。
 
     `position()` 由**调用方**给出"现在走到答复的第几步"——这条实现刻意不知道各链怎么数步：

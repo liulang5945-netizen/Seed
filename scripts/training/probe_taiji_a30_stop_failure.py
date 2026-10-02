@@ -290,6 +290,11 @@ def main() -> int:
         help="置换档的固定种子（写进件里，可复现）",
     )
     parser.add_argument(
+        "--store-scope-conversation",
+        action="store_true",
+        help="v18 资格档（检索侧）：每题开头把**装载信封里带来的陈旧事件**请出候选集，只留本次对话被告知的内容可被取到。动的是候选集，不是发射时刻——与窗口档是两条独立的形状。",
+    )
+    parser.add_argument(
         "--evidence-window-steps",
         type=int,
         default=None,
@@ -411,6 +416,19 @@ def main() -> int:
     #: v17 **资格档**：只在答复的前 K 步发证据，之后把这条通道静音。K 不是挑出来的——
     #: 由 §第三十次停靠·定价档按先写死的规则取（最小的 2 的幂、覆盖 ≥90% 命中偏移 ⇒ K=64）。
     #: 刻度由本仪器自己声明：`loop_steps` 是**环内 observe 的序位**，1 步＝1 字节。
+    #: v18：检索侧资格档装在**存储**上（与发射侧包装器正交），只用公开接口 `events()/clear()/record()`；
+    #: `reset` 在每题开头调一次。代价：保留事件的 `event_id` 会重新编号（件里披露）。
+    store_reset = None
+    store_counters = [0, 0, 0]
+    if args.store_scope_conversation:
+        if substrate.copy_circuit is None:
+            raise RuntimeError("要求检索侧资格档但回路不在场 ⇒ 没有可缩范围的存储")
+        from probe_taiji_a30_copy_evidence_dose import _make_store_scoped_arm
+
+        store_reset, store_counters, _stale_ids = _make_store_scoped_arm(
+            substrate.copy_circuit.store
+        )
+
     if args.evidence_window_steps is not None:
         if substrate.copy_circuit is None:
             raise RuntimeError("要求资格档但回路不在场 ⇒ 没有可静音的证据通道")
@@ -427,6 +445,8 @@ def main() -> int:
     caller_totals: dict[str, int] = {}
     for item in items:
         history: list[tuple[str, str]] = []
+        if store_reset is not None:
+            store_reset()
         item_rows: list[dict[str, Any]] = []
         surface_checks: list[dict[str, Any]] = []
         worst_run = 0
@@ -599,7 +619,8 @@ def main() -> int:
 
     substrate.observe = original_observe  # type: ignore[method-assign]
     report = {
-        "format": "taiji-a30-stop-failure-v17",
+        "format": "taiji-a30-stop-failure-v18",
+        "format_note_v18": "v18 **加性**多一条**检索侧**资格档：`--store-scope-conversation` 在每题开头把装载信封带来的陈旧事件请出候选集，只留本次对话被告知的内容可被 `best_match` 取到（只用公开接口 `events()/clear()/record()`；代价是 `event_id` 重新编号，已在件里披露）。它与窗口档正交：一个动候选集、一个动发射时刻。默认关 ⇒ 与 v17 逐位可比。",
         "format_note_v17": "v17 两件事：① 加**资格档** `--evidence-window-steps`（前 K 步发、之后静音；档本身住在剂量探针里与复述面共用，刻度由本仪器声明为环内步数，守卫 `window_both_sides_seen` 要求两侧都出现过）；② 修 v16 那列结构上恒为 0 的 `run_boundary_win_positions`——边界符胜出那一步 `break` 在 `observe` 之前、不入案，正确刻度是自停生成的 `fed_bytes`（已在件里，无需重跑即可读出）。其余字段与判据一字未动。",
         "format_note_v16": "v16 加性只多两列**停止决定的位置**信息：每题 `run_boundary_win_positions` 与件级 `boundary_win_position_hist`。用途是给『只在前 K 步发证据』这一族资格档**定价**——设计预备第 2 条要求 K 只能从链上先量到的分布里取，不许事后挑刚好过线的那个。判据、计数与生成路径一字未动，故与 v13/v15 同格可比（锚点 23/49/6 与 total_steps 就是这条可比性的检验）。",
         "format_note_v15": "v15 **只是把 v13/v14 那副内容档搬到剂量探针里与复述面共用**（`_make_content_armed_evidence`）：轨迹面与复述面必须做**同一个**置换／冻结操作，各写一份就是两把尺子。字段、算法、默认关闭时的逐位行为一字未动 ⇒ 与 v13/v14 同格可比（锚点档的 23/49/6 就是这条可比性的检验）。",
@@ -703,6 +724,7 @@ def main() -> int:
         "relevance_ceiling_c": args.relevance_ceiling_c,
         #: v13 自述：这一档替换的是**内容身份**，硬度分布由守卫逐项验，不是靠注释声明。
         "evidence_window_steps": args.evidence_window_steps,
+        "store_scope_conversation": bool(args.store_scope_conversation),
         "evidence_content_arm": args.evidence_content_arm,
         "perm_seed": args.perm_seed if args.evidence_content_arm == "permutation" else None,
         "surface_gate_state": runtime.surface_gate_state,
@@ -740,6 +762,11 @@ def main() -> int:
             #: v17：资格档必须**既发过也静音过**——静音数为 0 说明窗口没起作用（等于没这档），
             #: 发出数为 0 说明窗口关得太早（整条通道恒零，那是另一档的读数，不是资格档）。
             "window_arm_consumed": args.evidence_window_steps is None or window_counters[0] > 0,
+            #: v18：检索侧档必须**被走到**（清掉的陈旧条数 > 0），并把重置后的候选集大小上下界存进件里。
+            "store_scope_consumed": (not args.store_scope_conversation) or store_counters[0] > 0,
+            "store_scope_stale_removed": store_counters[0],
+            "store_scope_events_min": store_counters[1],
+            "store_scope_events_max": store_counters[2],
             "window_emitted_calls": window_counters[1],
             "window_silenced_calls": window_counters[2],
             "window_both_sides_seen": args.evidence_window_steps is None
