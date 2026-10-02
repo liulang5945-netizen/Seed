@@ -309,6 +309,14 @@ def main() -> int:
         "K 由 §第三十次停靠·定价档按先写死的规则取（最小的 2 的幂、覆盖 ≥90%% 命中偏移 ⇒ K=64），"
         "不许事后挑。刻度＝本条链的环内步数（1 步＝1 字节），每轮换答复即清零。",
     )
+    parser.add_argument(
+        "--product-window-steps",
+        type=int,
+        default=None,
+        help="v20 产品档：不开仪器替身，直接调产品侧的原生生命周期门 "
+        "`Taiji.set_copy_evidence_window_steps(K)`。owner 2026-10-02 裁「立项进产品」后的验收面——"
+        "这一档测的是产品代码里的门，不是本仪器 monkeypatch 出来的等价物。与 --evidence-window-steps 互斥。",
+    )
     args = parser.parse_args()
 
     checkpoint = PROJECT_ROOT / args.checkpoint
@@ -448,6 +456,13 @@ def main() -> int:
             substrate.copy_circuit.store
         )
 
+    if args.product_window_steps is not None and args.evidence_window_steps is not None:
+        raise SystemExit("v20：产品门与仪器替身档不能同开——同开就分不出读数是哪条路径给的")
+    if args.product_window_steps is not None:
+        if args.product_window_steps <= 0:
+            raise SystemExit("v20：产品门的 K 必须是正整数")
+        #: 走**产品原生门**（不是本仪器的替身包装器）：这是 owner 立项后的验收面。
+        substrate.set_copy_evidence_window_steps(args.product_window_steps)
     if args.evidence_window_steps is not None:
         if substrate.copy_circuit is None:
             raise RuntimeError("要求资格档但回路不在场 ⇒ 没有可静音的证据通道")
@@ -644,9 +659,13 @@ def main() -> int:
 
     substrate.observe = original_observe  # type: ignore[method-assign]
     report = {
-        "format": "taiji-a30-stop-failure-v19",
+        "format": "taiji-a30-stop-failure-v20",
         "format_note_v19": "v19 加性多一条检索侧 **oracle** 档：`--oracle-selector` 把 `store.best_match` 换成『内容含本题 `expected_contains` 的第一条事件』，找不到则透传原实现，用来把『选对了还拖不拖写』从『内容身份』与『发射时刻』里单独摘出来验。缺标签时响亮停下而非静默透传（那会伪装成生效）；自述 `oracle_calls`／`oracle_found`／`oracle_fell_through`。默认关 ⇒ 与 v18 逐位可比。",
         "format_note_v18": "v18 **加性**多一条**检索侧**资格档：`--store-scope-conversation` 在每题开头把装载信封带来的陈旧事件请出候选集，只留本次对话被告知的内容可被 `best_match` 取到（只用公开接口 `events()/clear()/record()`；代价是 `event_id` 重新编号，已在件里披露）。它与窗口档正交：一个动候选集、一个动发射时刻。默认关 ⇒ 与 v17 逐位可比。",
+        "format_note_v20": "v20（2026-10-02）：owner 裁「立项进产品」后加**产品档** `--product-window-steps`——"
+        "它调的是产品侧原生生命周期门（`Taiji.set_copy_evidence_window_steps`，默认 None ⇒ 逐位不变），"
+        "与本仪器 v17 那副 monkeypatch 替身互斥；件里新增 `product_window_steps`／`product_window_stats` "
+        "与两条守卫（fired／两侧都报）。加字段不动既有键 ⇒ 与 v17–v19 各档同格可比。",
         "format_note_v17": "v17 两件事：① 加**资格档** `--evidence-window-steps`（前 K 步发、之后静音；档本身住在剂量探针里与复述面共用，刻度由本仪器声明为环内步数，守卫 `window_both_sides_seen` 要求两侧都出现过）；② 修 v16 那列结构上恒为 0 的 `run_boundary_win_positions`——边界符胜出那一步 `break` 在 `observe` 之前、不入案，正确刻度是自停生成的 `fed_bytes`（已在件里，无需重跑即可读出）。其余字段与判据一字未动。",
         "format_note_v16": "v16 加性只多两列**停止决定的位置**信息：每题 `run_boundary_win_positions` 与件级 `boundary_win_position_hist`。用途是给『只在前 K 步发证据』这一族资格档**定价**——设计预备第 2 条要求 K 只能从链上先量到的分布里取，不许事后挑刚好过线的那个。判据、计数与生成路径一字未动，故与 v13/v15 同格可比（锚点 23/49/6 与 total_steps 就是这条可比性的检验）。",
         "format_note_v15": "v15 **只是把 v13/v14 那副内容档搬到剂量探针里与复述面共用**（`_make_content_armed_evidence`）：轨迹面与复述面必须做**同一个**置换／冻结操作，各写一份就是两把尺子。字段、算法、默认关闭时的逐位行为一字未动 ⇒ 与 v13/v14 同格可比（锚点档的 23/49/6 就是这条可比性的检验）。",
@@ -750,6 +769,9 @@ def main() -> int:
         "relevance_ceiling_c": args.relevance_ceiling_c,
         #: v13 自述：这一档替换的是**内容身份**，硬度分布由守卫逐项验，不是靠注释声明。
         "evidence_window_steps": args.evidence_window_steps,
+        #: v20：产品原生门的自述（None ⇒ 这条面从未被走）。
+        "product_window_steps": args.product_window_steps,
+        "product_window_stats": substrate.copy_evidence_window_stats(),
         "store_scope_conversation": bool(args.store_scope_conversation),
         "oracle_selector": bool(args.oracle_selector),
         "evidence_content_arm": args.evidence_content_arm,
@@ -789,6 +811,14 @@ def main() -> int:
             #: v17：资格档必须**既发过也静音过**——静音数为 0 说明窗口没起作用（等于没这档），
             #: 发出数为 0 说明窗口关得太早（整条通道恒零，那是另一档的读数，不是资格档）。
             "window_arm_consumed": args.evidence_window_steps is None or window_counters[0] > 0,
+            #: v20：产品门也必须**自证开过枪**——steps_seen=0 ⇒ 门根本没被走到（假档）。
+            "product_window_fired": args.product_window_steps is None
+            or substrate.copy_evidence_window_stats()["steps_seen"] > 0,
+            "product_window_emitted_and_silenced_reported": args.product_window_steps is None
+            or all(
+                key in substrate.copy_evidence_window_stats()
+                for key in ("emitted_steps", "silenced_steps")
+            ),
             #: v18：检索侧档必须**被走到**（清掉的陈旧条数 > 0），并把重置后的候选集大小上下界存进件里。
             "store_scope_consumed": (not args.store_scope_conversation) or store_counters[0] > 0,
             #: v19：oracle 档必须被走到，且"选对率"如实披露（fell_through 高 ⇒ 库里根本没有正确事件）。

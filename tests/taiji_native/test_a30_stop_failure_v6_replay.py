@@ -81,9 +81,9 @@ def test_instrument_carries_v6_and_the_correction_note() -> None:
     source = (PROJECT_ROOT / "scripts" / "training" / "probe_taiji_a30_stop_failure.py").read_text(
         encoding="utf-8"
     )
-    assert '"format": "taiji-a30-stop-failure-v19"' in source
+    assert '"format": "taiji-a30-stop-failure-v20"' in source
     assert all(
-        f"format_note_v{v}" in source for v in (6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19)
+        f"format_note_v{v}" in source for v in (6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20)
     ), "升版只许加列，历史说明必须逐版留在件里"
     assert "format_note_v6" in source
     assert "追加二" in source and "深帧复现" in source
@@ -229,3 +229,23 @@ def test_recall_numbers_after_docking50_name_the_circuit() -> None:
         and not any(token in line for token in ("seed-A", "seed-B", "circuit", "枚"))
     ]
     assert not offenders, offenders[:3]
+
+
+def test_the_product_gate_arm_is_distinct_from_the_instrument_stand_in() -> None:
+    #: v20（owner 2026-10-02 裁「立项进产品」）：验收面必须走**产品原生门**，
+    #: 不能拿本仪器 v17 那副 monkeypatch 替身当代答——替身证的是"这样修有用"，不是"产品里就是这么修的"。
+    #: 三样钉住：旗标存在且调产品 setter、两档互斥、门开过枪要自证（`steps_seen=0` ⇒ 假档）。
+    source = (PROJECT_ROOT / "scripts" / "training" / "probe_taiji_a30_stop_failure.py").read_text(encoding="utf-8")
+    assert '"--product-window-steps"' in source
+    assert "substrate.set_copy_evidence_window_steps(args.product_window_steps)" in source
+    assert "产品门与仪器替身档不能同开" in source
+    assert '"product_window_fired"' in source
+    #: 产品侧的门：默认必须关闭（None），否则就不是"逐位不变"的立项形状。
+    from taiji.config import TaijiConfig
+
+    assert TaijiConfig().copy_evidence_window_steps is None
+    #: 门的"前 K 步发、之后静音"必须真的分两堆计数——只报 emitted 会看不见它从未静音过。
+    model_source = (PROJECT_ROOT / "taiji" / "model.py").read_text(encoding="utf-8")
+    assert "within_window = self._copy_evidence_step < window" in model_source
+    assert '"silenced_steps": self._copy_evidence_window_silenced' in model_source
+    assert "_reset_copy_evidence_window()" in model_source

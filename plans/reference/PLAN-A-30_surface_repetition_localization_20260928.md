@@ -5409,3 +5409,30 @@ seed-B 上是"3→3 且停止 29→64"。**任何"窗口后仍有 7/16 逐字命
   但收益水平依工件不同、且低于甲支的 `anchor ≥ 4` 门槛 ⇒ **既不许写"跨工件复现"，也不许写"没丢"**；
   引用时必须**同时给出两枚的绝对值**（本轮：seed-A 6→7、seed-B 3→3），并按 60fbf91c 那条守卫点名回路。
   这一支比甲弱是故意的：空隙只能以**更弱**的说法补上，不能反过来把没过门槛的 anchor 追认成复现。
+
+
+### 第五十二次停靠·**判读先于数**（2026-10-02 21:35）：产品原生生命周期门落地，验收跑"开/关双趟"
+
+owner 已裁"**立项进产品**"并批准这次取数。已落地形状（默认 ⇒ **逐位不变**）：
+`taiji/config.py` 新增 `copy_evidence_window_steps: int | None = None`；`taiji/model.py` 在证据注入点
+（`episodic_evidence = episodic_evidence + self._copy_circuit.evidence(...)`）之前算一次门：`window is None` ⇒
+**连步计数器都不动**；设了 K 才数步、才分"发／静音"，且每趟 `generate()` 开头复位。仪器侧加**产品档**
+`--product-window-steps`（v20，与 v17 的 monkeypatch 替身档**互斥**——同开就分不出读数来自哪条路径），
+件里自述 `product_window_steps`／`product_window_stats`，守卫 `product_window_fired`（`steps_seen=0` ⇒ 假档）。
+
+**两件**（同底 (c)、同回路 seed-A、同 24 题×3 轮、同 `max_length=256`、同 v20 仪器）：
+`reports/taiji_a30_stop_failure_c_v20_product_off_20261002.json`（门关）与
+`reports/taiji_a30_stop_failure_c_v20_product_on64_20261002.json`（门开、K=64）。
+
+**判读线（先写死，互斥）**：
+* **甲·默认关闭必须真的不动**：关档与**改源码之前**的全剂量件比行为子集（逐 item 列表与 `instrument_guard` 里的三枚计数），
+  必须相同；不同 ⇒ 我的编辑动了默认路径，**立刻回退这次产品改动**并登记为"默认位不中性"。
+* **乙·产品门须复现仪器替身**：开档的 `generations_boundary_self_stop` 对仪器替身档的 **63/72** 比：
+  `|Δ| ≤ 3` ⇒ 产品里的门与今晚三面结论同源，"这样修有用"第一次有**产品路径**上的证据；
+  `Δ ≤ −4`（更差）⇒ **步计数口径与替身不同**（最可能：产品在 prompt 段也计步，或 `generate()` 复位点不对），
+  这一支不许写成"门无效"，只能写成"仪器结论不可直接搬进产品"，并把计数基当作下一格；
+  `Δ ≥ +4`（更好）⇒ 同样可疑——先查是不是门在替身没覆盖的地方多静音了，不许直接报增益。
+* **丙·门没开过枪就不发表**：开档件 `product_window_fired=false` 或 `silenced_steps=0` ⇒ 这一档是空的，
+  两件事都不判（v12"被走到 ≠ 开过枪"那条教训）。
+
+**这格不判的事**：要不要改产品默认值（`copy_evidence_window_steps` 仍留 `None`）、要不要换底——那是另一格，且要另外的证据。

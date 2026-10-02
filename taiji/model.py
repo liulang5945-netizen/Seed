@@ -158,6 +158,13 @@ class Taiji:
         #: PLAN-A-25 评测期覆写：`None` ＝ 跟随 config；**不进任何 payload、不改 config**
         #: （身份器官的 lineage 守卫会拒绝 config 被事后改动的档——见 `set_copy_evidence_utf8_gate`）。
         self._copy_evidence_utf8_gate_override: bool | None = None
+        #: PLAN-A30 生命周期门控的运行时状态（`copy_evidence_window_steps=None` ⇒ 三者都不被读）：
+        #: `_copy_evidence_step` 是本趟答复已计到的步，另两枚是"被走到"计数——
+        #: 没有它们，一个从未开过枪的门会给出与真生效完全相同的读数（v12 那把松尺子的教训）。
+        self._copy_evidence_window_steps_override: int | None = None
+        self._copy_evidence_step = 0
+        self._copy_evidence_window_emitted = 0
+        self._copy_evidence_window_silenced = 0
         self._developmental_f1_replay: list[DevelopmentalReplayEvent] = []
         self._developmental_f1_replay_serial = 0
         self._memory_rng = torch.Generator(device="cpu")
@@ -1105,6 +1112,41 @@ class Taiji:
                 "readout_utf8_position_input is not wired to the developmental F1 "
                 "learning path; use the plain predictive-readout learning chain"
             )
+
+    def set_copy_evidence_window_steps(self, steps: int | None) -> None:
+        """PLAN-A30：按**内容**开一条复制回路证据的生命周期门控（`None` ⇒ 关闭 ⇒ 逐位不变）。
+
+        `steps` 是"一次答复的前多少步允许发射证据"。K 不该跨链搬：它由那条链自己的
+        命中分布定价（(c) 面给 64、现默认底给 128），所以这里只接显式值、不给默认。
+        """
+
+        if steps is not None:
+            if isinstance(steps, bool) or not isinstance(steps, int):
+                raise TypeError("copy-evidence window must be an int or None")
+            if steps <= 0:
+                raise ValueError("copy-evidence window needs a positive step count")
+        self._copy_evidence_window_steps_override = steps
+
+    def copy_evidence_window_stats(self) -> dict[str, int | None]:
+        """"门有没有开过枪"的自证：一个从未命中的档位会给出与全剂量同值的读数却看不见自己是空的。"""
+
+        return {
+            "window_steps": (
+                self.config.copy_evidence_window_steps
+                if self._copy_evidence_window_steps_override is None
+                else self._copy_evidence_window_steps_override
+            ),
+            "emitted_steps": self._copy_evidence_window_emitted,
+            "silenced_steps": self._copy_evidence_window_silenced,
+            "steps_seen": self._copy_evidence_step,
+        }
+
+    def _reset_copy_evidence_window(self) -> None:
+        """一趟一计数：每次 `generate()` 从头数自己的答复步。"""
+
+        self._copy_evidence_step = 0
+        self._copy_evidence_window_emitted = 0
+        self._copy_evidence_window_silenced = 0
 
     def set_copy_evidence_utf8_gate(self, enabled: bool | None) -> None:
         """PLAN-A-25 的**评测期开关**：`True/False` 覆写，`None` 跟随 config。
@@ -2219,13 +2261,30 @@ class Taiji:
             # The zero-initialized gate makes this an exact zero vector until
             # trained, so mounting moves no logit; the store is empty by
             # default, so the record-gate (A2.1) is inert until used.
-            episodic_evidence = episodic_evidence + self._copy_circuit.evidence(
-                cue=self.fabric.cortical_context(regions),
-                f1_context=context,
-                prev_byte=int(symbol),
-                #: PLAN-A-25：门控只在开关打开时给状态；关闭 ⇒ None ⇒ 与开案前逐位相同。
-                utf8_state=circuit_utf8_state,
+            #: PLAN-A30 生命周期门控：`window=None` ⇒ 连计数都不动 ⇒ 与现状逐位相同；
+            #: 设了 K 才数步、才分"发/静音"。判据来自 (c) 面：早段的 cue-following 是逐字复述的供给，
+            #: 晚段是同一条通道在压接缝上的边界信号（拖写）。
+            window = (
+                self.config.copy_evidence_window_steps
+                if self._copy_evidence_window_steps_override is None
+                else self._copy_evidence_window_steps_override
             )
+            within_window = True
+            if window is not None:
+                within_window = self._copy_evidence_step < window
+                self._copy_evidence_step += 1
+                if within_window:
+                    self._copy_evidence_window_emitted += 1
+                else:
+                    self._copy_evidence_window_silenced += 1
+            if within_window:
+                episodic_evidence = episodic_evidence + self._copy_circuit.evidence(
+                    cue=self.fabric.cortical_context(regions),
+                    f1_context=context,
+                    prev_byte=int(symbol),
+                    #: PLAN-A-25：门控只在开关打开时给状态；关闭 ⇒ None ⇒ 与开案前逐位相同。
+                    utf8_state=circuit_utf8_state,
+                )
         if readout == "predictive":
             probabilities = predictive_readout.probabilities(
                 context,
@@ -3041,6 +3100,9 @@ class Taiji:
             raise TypeError("response_phase must be a bool")
         if response_start and response_phase:
             raise ValueError("response_start and response_phase cannot both be enabled")
+        #: PLAN-A30：一趟一计数——门控的 K 是"这次答复的前 K 步"，所以每趟从头数。
+        #: 复位本身不动任何数值（`window=None` 时这三个计数器根本不被读）。
+        self._reset_copy_evidence_window()
         predictive_readout: BytePredictiveReadout | None = None
         if boundary is not None and authorization is not None:
             resolved_boundary = (
