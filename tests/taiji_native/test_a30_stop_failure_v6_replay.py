@@ -248,4 +248,13 @@ def test_the_product_gate_arm_is_distinct_from_the_instrument_stand_in() -> None
     model_source = (PROJECT_ROOT / "taiji" / "model.py").read_text(encoding="utf-8")
     assert "within_window = self._copy_evidence_step < window" in model_source
     assert '"silenced_steps": self._copy_evidence_window_silenced' in model_source
-    assert "_reset_copy_evidence_window()" in model_source
+    assert "reset_copy_evidence_window()" in model_source
+
+
+def test_the_stand_alone_loop_caller_must_reset_the_product_window() -> None:
+    #: 2026-10-02 实测踩到：L2 仪器自己驱动生成环，产品门在 `generate()` 里的复位对它不生效，
+    #: 于是 K=64 变成"整批只发前 64 步"，读数与不挂回路同值却被当成增益。
+    #: 钉住调用方必须显式复位（且只在产品档下）。
+    source = (PROJECT_ROOT / "scripts" / "training" / "probe_taiji_a30_stop_failure.py").read_text(encoding="utf-8")
+    assert "substrate.reset_copy_evidence_window()" in source
+    assert source.count("if args.product_window_steps is not None:") >= 2

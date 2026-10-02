@@ -1141,7 +1141,7 @@ class Taiji:
             "steps_seen": self._copy_evidence_step,
         }
 
-    def _reset_copy_evidence_window(self) -> None:
+    def reset_copy_evidence_window(self) -> None:
         """一趟一计数：每次 `generate()` 从头数自己的答复步。"""
 
         self._copy_evidence_step = 0
@@ -3102,7 +3102,7 @@ class Taiji:
             raise ValueError("response_start and response_phase cannot both be enabled")
         #: PLAN-A30：一趟一计数——门控的 K 是"这次答复的前 K 步"，所以每趟从头数。
         #: 复位本身不动任何数值（`window=None` 时这三个计数器根本不被读）。
-        self._reset_copy_evidence_window()
+        self.reset_copy_evidence_window()
         predictive_readout: BytePredictiveReadout | None = None
         if boundary is not None and authorization is not None:
             resolved_boundary = (

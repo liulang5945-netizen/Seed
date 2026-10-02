@@ -493,6 +493,11 @@ def main() -> int:
         for index, turn in enumerate([str(t) for t in item["turns"]]):
             records.clear()  # 换一条答复：在案帧与资格档的步数都从 0 重数
             loop_steps[0] = 0
+            if args.product_window_steps is not None:
+                #: v20 修：这台仪器**自己驱动生成环**（不走 `Taiji.generate()`），所以产品门的
+                #: "一趟一复位"必须由调用方在换答复处显式做。漏掉它的后果实测过：K 在第一趟之后
+                #: 永久静音，`emitted=64／silenced=276`，读数 66/72 只是"等于不挂回路"而不是增益。
+                substrate.reset_copy_evidence_window()
             answer = runtime.chat(
                 turn,
                 history=history,

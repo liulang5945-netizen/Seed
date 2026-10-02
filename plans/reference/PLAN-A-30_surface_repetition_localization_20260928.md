@@ -5436,3 +5436,33 @@ owner 已裁"**立项进产品**"并批准这次取数。已落地形状（默�
   两件事都不判（v12"被走到 ≠ 开过枪"那条教训）。
 
 **这格不判的事**：要不要改产品默认值（`copy_evidence_window_steps` 仍留 `None`）、要不要换底——那是另一格，且要另外的证据。
+
+
+### 第五十二次停靠·读数（2026-10-02）：**甲通过；乙抓到产品门的计数基含 prompt 段 ⇒ 66/72 不是增益**
+
+两件（v20 修过调用方复位后的重跑，件名带 `_r2`）：
+`reports/taiji_a30_stop_failure_c_v20_product_off_r2_20261002.json`（门关）＝真自停 **23/72**、吃满预算 **49**；
+`reports/taiji_a30_stop_failure_c_v20_product_on64_r2_20261002.json`（门开 K=64）＝**66/72**、吃满预算 **6**，
+自述 `product_window_stats={emitted:64, silenced:276, steps_seen:340}`。
+
+**甲·默认关闭 ⇒ 逐位不变：通过（实测）**。关档与**改源码之前**的全剂量件
+（`reports/taiji_a30_stop_failure_c_anchor_v15_20261002.json`）用仓内比较器比行为子集 `per_item` ⇒
+`identical=true`、rc=0（`scripts/training/compare_taiji_a30_report_identity.py`）。⇒ 这次产品改动在未开启时不动任何读数。
+
+**乙·判读：不成立，且原因查明**。开档的 66/72 与"不挂回路"上界（66/72、吃满预算 6）**逐列同值**，
+而它的"被走到"计数暴露了口径差：`steps_seen=340` 对应最后一趟 `≈84 个 prompt 步 + 256 个答复步`。
+⇒ **产品门把 prompt 段也计进了 K**，而仪器替身档（v17）数的是**环内答复步**（`loop_steps` 只在生成环内自增）。
+K=64 在答复开始前就被 prompt 吃光 ⇒ 整条答复静音 ⇒ 读数等价于"没有回路"。
+按开档前写死的话：**这一支不许写成"门无效"，也不许把 66/72 报成增益**——它是"仪器结论不可直接搬进产品"的证据，
+且**产品路径上目前没有任何能力增益的读数**。
+
+**过程中另修掉一处真缺陷**（不是本次判读的主因，但同一族）：仪器自己驱动生成环、不走 `Taiji.generate()`，
+所以产品门"每趟答复复位"对它不生效 ⇒ 加了调用方复位 `substrate.reset_copy_evidence_window()`
+并把 setter 改为公开 `reset_copy_evidence_window()`，守卫 `test_the_stand_alone_loop_caller_must_reset_the_product_window`。
+修完读数没变（23／66 与 64/276/340 同值）⇒ 印证主因是**计数基**而不是复位。
+
+**修法（登记为 DEBT-G22，下一格做）**：门控只数**答复相的步**。可机检的形式已写出——
+产品档的 `steps_seen` 必须等于该件 `per_item` 里答复步之和（不含 prompt 段），不等就红。
+修好再重跑这一对，才谈"能力提升进产品"。
+
+**丙·门确实开过枪**：`product_window_fired=true`，`emitted`／`silenced` 两侧都非零 ⇒ 两档都不是空档，判读资格成立。
