@@ -5085,7 +5085,7 @@ DEBT-G20 的修法必须是一个**能在同一台仪器上自证**的档，不�
 * **不通过（门无效）**：外来标签仍 ≥1/16 ⇒ 说明外来内容是通过**别的通道**进来的（prompt 或权重侧），
   那 G20 的定位要改写——这一条本身也值钱，须如实登记。
 **必须同件里报**：放行/拦截次数、拦截时事件内容与本轮提问的重叠情况（至少一例可复核）、
-以及 decoy 基线两件的件名（`..._decoy_20261002.json`、`..._decoy_name_20261002.json`）——**成对引用**。
+以及 decoy 基线两件的件名（`reports/taiji_a30_cap_dual_arm_chunked_short_decoy_20261002.json`、`reports/taiji_a30_cap_dual_arm_chunked_short_decoy_name_20261002.json`）——**成对引用**。
 **边界**：这一格仍是**仪器侧**证据。产品改动（`taiji/model.py` 那条注入路上加门、config 默认值、默认基底）
 一律需 owner 认，本段不代答。
 ### 第四十五次停靠·**撤回我自己两小时前的结论**（2026-10-02）：decoy 的"外来标签 2/16"两例都是假阳性
@@ -5144,9 +5144,9 @@ G20 已改写为“检测器不干净、污染问题未验”，不再是缺陷�
 
 | 件 | 治 D | 对照 D／formed | 档生效 | **探针标签出现在答复里的题数** |
 | --- | --- | --- | --- | --- |
-| 基线（只测不装）`..._decoybaseline_20261002.json` | 6/16，formed 1 | 0／2 | — | **0/24** |
-| 合成 decoy `..._decoysyn_20261002.json` | 6/16，formed 1 | 0／2 | `swaps 23,825／calls 30,968／no_event 7,143` | **0/24** |
-| decoy＋相关性门 `..._decoysyn_gate_20261002.json` | 6/16，formed 0 | 0／2 | 同上；门 `blocked 23,239／passed 586` | **0/24** |
+| 基线（只测不装）`reports/taiji_a30_cap_dual_arm_chunked_short_decoybaseline_20261002.json` | 6/16，formed 1 | 0／2 | — | **0/24** |
+| 合成 decoy `reports/taiji_a30_cap_dual_arm_chunked_short_decoysyn_20261002.json` | 6/16，formed 1 | 0／2 | `swaps 23,825／calls 30,968／no_event 7,143` | **0/24** |
+| decoy＋相关性门 `reports/taiji_a30_cap_dual_arm_chunked_short_decoysyn_gate_20261002.json` | 6/16，formed 0 | 0／2 | 同上；门 `blocked 23,239／passed 586` | **0/24** |
 
 ⇒ 按 §第四十六次停靠 先写死的**第二支**取数：**基线 0 且 decoy 0 ⇒ 无可复现的污染**。
 三件一起说的完整一句：
