@@ -129,6 +129,7 @@ def run_arm(
     store_scope_conversation: bool = False,
     oracle_selector: bool = False,
     probe_store: bool = False,
+    empty_store: bool = False,
     max_bytes: int = MAX_ANSWER_BYTES,
     limit: int | None = None,
 ) -> dict[str, Any]:
@@ -240,6 +241,23 @@ def run_arm(
             oracle_substrate.copy_circuit.store
         )
         oracle_substrate.copy_circuit.store.best_match = oracle_fn  # type: ignore[method-assign]
+
+    #: 第四十次停靠·下一格：**挂回路但让库恒空**（把 `store.record` 换成 no-op）。
+    #: 分开两件事——{q}回路在不在{Q}与{q}内容有没有进库{Q}。prompt 通道不受这档影响（告知文本本来就在提示里）。
+    empty_state = {"calls": 0, "count_at_install": None, "store_obj": None}
+    if empty_store:
+        es_circuit = runtime.model.substrate.copy_circuit
+        if es_circuit is None:
+            raise RuntimeError("要求库恒空档但回路不在场 ⇒ 没有可空着的库")
+
+        def no_record(*args: Any, **kwargs: Any) -> int:
+            empty_state["calls"] += 1
+            return 0
+
+        es_circuit.store.record = no_record  # type: ignore[method-assign]
+        #: 这里取的是**装机瞬间**的库内条数；答复时的条数由 `--probe-store` 那列独立给（别混成一列）。
+        empty_state["count_at_install"] = int(es_circuit.store.count)
+        empty_state["store_obj"] = es_circuit.store
 
     manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
     items = [
@@ -376,6 +394,21 @@ def run_arm(
             if probe_store
             else None
         ),
+        #: 库恒空档自述：`record` 被叫了几次（应为 >0）、结束时库里有几条（应为 0）。两数都能为假。
+        "empty_store_arm": (
+            {
+                "requested": True,
+                "record_calls": empty_state["calls"],
+                "store_count_at_install": empty_state["count_at_install"],
+                "store_count_at_end": (
+                    int(empty_state["store_obj"].count)
+                    if empty_state["store_obj"] is not None
+                    else None
+                ),
+            }
+            if empty_store
+            else None
+        ),
         "oracle_arm": {
             "requested": bool(oracle_selector),
             "calls": oracle_state["calls"],
@@ -486,6 +519,12 @@ def main() -> int:
         help="第四十次停靠·纯读数：每题每轮答复前拍一次库内快照，跟踪『内容含本题标签的事件』"
         "何时进库、是否被 FIFO 挤掉。不改任何行为；D 命中必须仍与不开读数那趟相同（锚点检验）。",
     )
+    parser.add_argument(
+        "--empty-store",
+        action="store_true",
+        help="第四十次停靠·下一格：挂回路但把 `store.record` 换成 no-op，让库恒空——"
+        "用来把『回路在不在』与『内容有没有进库』分开。prompt 通道不受影响。",
+    )
     args = parser.parse_args()
 
     checkpoint = PROJECT_ROOT / args.checkpoint
@@ -509,6 +548,7 @@ def main() -> int:
         store_scope_conversation=args.store_scope_conversation,
         oracle_selector=args.oracle_selector,
         probe_store=args.probe_store,
+        empty_store=args.empty_store,
         evidence_content_arm=args.evidence_content_arm,
         perm_seed=args.perm_seed,
         max_bytes=args.max_bytes,
@@ -544,6 +584,7 @@ def main() -> int:
         "store_scope_conversation": bool(args.store_scope_conversation),
         "oracle_selector": bool(args.oracle_selector),
         "probe_store": bool(args.probe_store),
+        "empty_store": bool(args.empty_store),
         "content_arm_note": "v1 加性字段：`content_arm` 逐臂自述被走到次数／守恒偏差／冻结点。"
         "格式串不动 ⇒ 与已入库各档同格可比（默认 None ⇒ 一次替换都没发生）。",
         #: 两条口径必须落在件上，否则这份读数会被当成"整条答复、预算 256"的那类去比：
