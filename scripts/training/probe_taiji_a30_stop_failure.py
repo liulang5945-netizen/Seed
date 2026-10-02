@@ -215,6 +215,9 @@ def char_membership_of_run(text: str) -> list[bool]:
 
 
 
+_FIXED_STEPS = (8, 16, 32, 64, 128)
+
+
 def _group_rows_by_generation(rows: list[dict]) -> list[list[dict]]:
     """把 item 内串接的逐步行按**每次生成**切开。
 
@@ -244,6 +247,7 @@ def _endstep_probe_per_generation(rows: list[dict], max_length: int) -> list[dic
             continue
         peak = max(group, key=lambda row: row["p_boundary"])
         last_step = max(row["step"] for row in group)
+        by_step = {int(row["step"]): row for row in group}
         out.append(
             {
                 "generation_steps": len(group),
@@ -255,6 +259,17 @@ def _endstep_probe_per_generation(rows: list[dict], max_length: int) -> list[dic
                 "legal_candidates_at_peak_step": int(peak["legal_candidates"]),
                 "peak_is_last_step": bool(peak["step"] == last_step),
                 "ate_full_budget": bool(len(group) >= max_length),
+                #: §第六十三次停靠·固定步位：长度只决定"能否走到那一步"，避开 §62 的存活偏置。
+                "at_steps": [
+                    {
+                        "step": step_at,
+                        "p_boundary": round(float(by_step[step_at]["p_boundary"]), 6),
+                        "boundary_rank_in_legal": int(by_step[step_at]["boundary_rank_in_legal"]),
+                        "legal_candidates": int(by_step[step_at]["legal_candidates"]),
+                    }
+                    for step_at in _FIXED_STEPS
+                    if step_at in by_step
+                ],
             }
         )
     return out
@@ -711,9 +726,12 @@ def main() -> int:
 
     substrate.observe = original_observe  # type: ignore[method-assign]
     report = {
-        "format": "taiji-a30-stop-failure-v23",
+        "format": "taiji-a30-stop-failure-v24",
         "format_note_v19": "v19 加性多一条检索侧 **oracle** 档：`--oracle-selector` 把 `store.best_match` 换成『内容含本题 `expected_contains` 的第一条事件』，找不到则透传原实现，用来把『选对了还拖不拖写』从『内容身份』与『发射时刻』里单独摘出来验。缺标签时响亮停下而非静默透传（那会伪装成生效）；自述 `oracle_calls`／`oracle_found`／`oracle_fell_through`。默认关 ⇒ 与 v18 逐位可比。",
         "format_note_v18": "v18 **加性**多一条**检索侧**资格档：`--store-scope-conversation` 在每题开头把装载信封带来的陈旧事件请出候选集，只留本次对话被告知的内容可被 `best_match` 取到（只用公开接口 `events()/clear()/record()`；代价是 `event_id` 重新编号，已在件里披露）。它与窗口档正交：一个动候选集、一个动发射时刻。默认关 ⇒ 与 v17 逐位可比。",
+        "format_note_v24": "v24（2026-10-03）：按 §第六十三次停靠的预注册加 `endstep_probe_v22[*].at_steps`——"
+        "固定步位 8/16/32/64/128 上各记 p_boundary 与边界名次与合法候选数（只存 5 个点，不存整条序列）。"
+        "动机：§62 证明'按生成长度分组比峰值'条件在存活上（早停必然短），固定步位才把长度变成'能否走到'而非分组变量。",
         "format_note_v23": "v23（2026-10-02）：`endstep_probe_v22` 的分组改用全部逐步行（`step` 归零即换代），"
         "并把'是否吃满预算'的定义收到 `generation_steps >= max_length`；"
         "`in_run` 降级为第二维 `steps_in_repeat_run`。v22 那两件因分组误用不发表，见 §第六十次停靠。",

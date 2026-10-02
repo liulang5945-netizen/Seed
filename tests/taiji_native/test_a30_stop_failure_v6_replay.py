@@ -81,9 +81,9 @@ def test_instrument_carries_v6_and_the_correction_note() -> None:
     source = (PROJECT_ROOT / "scripts" / "training" / "probe_taiji_a30_stop_failure.py").read_text(
         encoding="utf-8"
     )
-    assert '"format": "taiji-a30-stop-failure-v23"' in source
+    assert '"format": "taiji-a30-stop-failure-v24"' in source
     assert all(
-        f"format_note_v{v}" in source for v in (6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23)
+        f"format_note_v{v}" in source for v in (6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24)
     ), "升版只许加列，历史说明必须逐版留在件里"
     assert "format_note_v6" in source
     assert "追加二" in source and "深帧复现" in source
@@ -225,7 +225,7 @@ def test_recall_numbers_after_docking50_name_the_circuit() -> None:
     offenders = [
         line
         for line in section
-        if re.search(r"\d+/16", line)
+        if re.search(r"(?<!\d)\d+/16(?!\d)(?!/)", line)
         and not any(token in line for token in ("seed-A", "seed-B", "circuit", "枚"))
     ]
     assert not offenders, offenders[:3]
@@ -340,3 +340,18 @@ def test_the_endstep_probe_groups_by_generation_not_by_item() -> None:
     # 吃满预算的判据：末步 +1 >= max_length（不依赖外部真值）
     long_run = _endstep_probe_per_generation([row(0, .1, 9), row(1, .2, 8)], max_length=2)
     assert long_run[0]["ate_full_budget"] is True, long_run
+
+
+def test_the_fixed_step_probe_records_only_reached_steps() -> None:
+    """§63 的固定步位：只记"走得到的"步，且必须带上分母可核的三个量。"""
+    from probe_taiji_a30_stop_failure import _FIXED_STEPS, _endstep_probe_per_generation
+
+    def row(step, p, rank, legal=40):
+        return {"step": step, "p_boundary": p, "boundary_rank_in_legal": rank,
+                "legal_candidates": legal, "in_run": True}
+
+    short = _endstep_probe_per_generation([row(s, 0.01, 9) for s in range(10)], max_length=256)
+    assert [entry["step"] for entry in short[0]["at_steps"]] == [8], short[0]["at_steps"]
+    long = _endstep_probe_per_generation([row(s, 0.02, 7) for s in range(200)], max_length=256)
+    assert [entry["step"] for entry in long[0]["at_steps"]] == list(_FIXED_STEPS), long[0]["at_steps"]
+    assert all({"p_boundary", "boundary_rank_in_legal", "legal_candidates"} <= set(entry) for entry in long[0]["at_steps"])
