@@ -359,63 +359,17 @@ def main() -> int:
         substrate.copy_circuit.evidence = scaled  # type: ignore[method-assign]
 
     #: v13（owner 2026-10-02 裁："不立项产品改动，先追轨迹面由什么在管"）：**内容档 vs 硬度档**。
-    #: 装在**最外层**——它要替换的是最终进 logits 的那个向量，不是通道内部的中间量。
-    #: `permutation` 只打乱位置 ⇒ 多重集与 L1/max 逐位不变，唯一被毁掉的是"哪一维对应哪个符号"；
-    #: 若自停因此回到 66 量级 ⇒ 轨迹面听的是**内容**；若仍 23–25 ⇒ 它听的是"有一条非零向量在加"这件事。
-    content_guard = [
-        0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-    ]  # 前四位同 v13；后两位：冻结源出现在第几次调用、它的 L1
+    #: v15 起这副档**搬到剂量探针里共用**（`_make_content_armed_evidence`）——自身轨迹面与复述命中面
+    #: 必须做同一个操作，否则两半读的不是同一件事。装在**最外层**：替换的是最终进 logits 的那个向量。
+    content_guard = [0, 0.0, 0.0, 0.0, 0.0, 0.0]
     if args.evidence_content_arm is not None:
         if substrate.copy_circuit is None:
             raise RuntimeError("要求内容分离档但回路不在场 ⇒ 没有可替换的证据通道")
-        import random
+        from probe_taiji_a30_copy_evidence_dose import _make_content_armed_evidence
 
-        import torch
-
-        rng = random.Random(args.perm_seed)
-        perm_cache: dict[int, Any] = {}
-        frozen: list[Any] = []
-        inner_evidence = substrate.copy_circuit.evidence
-
-        def armed(**kwargs: Any) -> Any:
-            out = inner_evidence(**kwargs)
-            content_guard[0] += 1
-            content_guard[1] += float(out.abs().sum())
-            if args.evidence_content_arm == "permutation":
-                #: 置换表按**实际元素数**现取（不在件里硬写词表尺寸；尺寸一变就响亮地重新洗牌而不是错位）。
-                n = int(out.numel())
-                if n not in perm_cache:
-                    order = list(range(n))
-                    rng.shuffle(order)
-                    perm_cache[n] = torch.tensor(order, dtype=torch.long)
-                flat = out.reshape(-1)
-                swapped = flat.index_select(0, perm_cache[n].to(flat.device)).reshape(out.shape)
-            else:
-                #: **冻结源必须是"那条通道真的在发"的那一次**。v13 第一跑取的是"第一次调用"，而第一次调用
-                #: 时 store 还空着 ⇒ 返回的是精确零向量，整档实际测的是"把通道永久关掉"
-                #: （读数 66/72 与不挂回路那件逐位同值，`max_rel_l1_diff=1.0` 就是它的指纹）。
-                #: 现改为冻结到**第一条非零**证据，并把冻结发生在第几次调用、它的 L1 一起存进件里。
-                if not frozen and float(out.abs().sum()) > 0.0:
-                    frozen.append(out.clone())
-                    content_guard[4] = float(content_guard[0])
-                    content_guard[5] = float(out.abs().sum())
-                swapped = frozen[0] if frozen else out
-            content_guard[2] += float(swapped.abs().sum())
-            #: 硬度守恒按**逐次相对差的最大值**判（界 1e-5：float32 对 257 项求和本身就有 ~1e-7 级抖动，
-            #: n=1 冒烟实测 1.9e-07，界留一个量级余量），不按两趟累加之差：置换只改求和顺序，
-            #: float32 下 1,881 次累加能差出 1e-4（冒烟实测），那是表示层的噪声而不是"硬度变了"。
-            single = float(out.abs().sum())
-            if single > 0.0:
-                content_guard[3] = max(
-                    content_guard[3], abs(float(swapped.abs().sum()) - single) / single
-                )
-            return swapped
-
+        armed, content_guard = _make_content_armed_evidence(
+            substrate.copy_circuit.evidence, args.evidence_content_arm, args.perm_seed
+        )
         substrate.copy_circuit.evidence = armed  # type: ignore[method-assign]
 
     per_item: list[dict[str, Any]] = []
@@ -584,7 +538,8 @@ def main() -> int:
 
     substrate.observe = original_observe  # type: ignore[method-assign]
     report = {
-        "format": "taiji-a30-stop-failure-v14",
+        "format": "taiji-a30-stop-failure-v15",
+        "format_note_v15": "v15 **只是把 v13/v14 那副内容档搬到剂量探针里与复述面共用**（`_make_content_armed_evidence`）：轨迹面与复述面必须做**同一个**置换／冻结操作，各写一份就是两把尺子。字段、算法、默认关闭时的逐位行为一字未动 ⇒ 与 v13/v14 同格可比（锚点档的 23/49/6 就是这条可比性的检验）。",
         "format_note_v14": "v14 **只修 `frozen` 档的冻结源**（仪器缺陷，不是新测量）：v13 取'第一次调用'，而第一次调用时 store 仍为空 ⇒ 冻结到的是**精确零向量**，那一档实际测的是'把通道永久关掉'（现场证据：自停 66/72 与不挂回路那件同值、`content_arm_max_rel_l1_diff=1.0`）。现冻结到**第一条非零**证据并披露冻结点与它的 L1。`permutation` 档与其余字段一字未动 ⇒ v13 的置换档读数继续可比。",
         "format_note_v13": "v13 **加性**多一格 owner 裁定后要的那把分离尺：`--evidence-content-arm` "
         "（`permutation`＝把证据向量按固定种子置换，多重集与 L1/max 逐位不变，只毁掉"

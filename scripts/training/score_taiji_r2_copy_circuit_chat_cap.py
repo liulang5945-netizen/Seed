@@ -115,6 +115,8 @@ def run_arm(
     evidence_floor_tau: float | None = None,
     evidence_ceiling_c: float | None = None,
     record_scores: bool = False,
+    evidence_content_arm: str | None = None,
+    perm_seed: int = 20261002,
     max_bytes: int = MAX_ANSWER_BYTES,
     limit: int | None = None,
 ) -> dict[str, Any]:
@@ -159,6 +161,19 @@ def run_arm(
             ceiling_c=evidence_ceiling_c,
         )
         circuit.evidence = scaled
+    #: v13/v14 那副内容档（PLAN-A-30 §第二十八次停靠）搬到剂量探针里**共用**：
+    #: 轨迹面与复述面必须做同一个置换／冻结操作，否则两半读的不是同一件事。
+    content_counters = [0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    if evidence_content_arm is not None:
+        from probe_taiji_a30_copy_evidence_dose import _make_content_armed_evidence
+
+        circuit = runtime.model.substrate.copy_circuit
+        if circuit is None:
+            raise RuntimeError("要求内容分离档但回路不在场 ⇒ 没有可替换的证据通道")
+        armed, content_counters = _make_content_armed_evidence(
+            circuit.evidence, evidence_content_arm, perm_seed
+        )
+        circuit.evidence = armed
     manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
     items = [
         {**item, "dimension": dim}
@@ -203,6 +218,14 @@ def run_arm(
         #: 剂量档的"被走到"计数（`_make_scaled_evidence` 实际消费了几次）。
         "evidence_calls": calls[0],
         "picked_cosine": _quantiles(scores) if record_scores and scores else None,
+        #: 内容档自述：被走到几次、硬度守恒到哪、冻结落在第几次调用（守恒只对置换档有意义）。
+        "content_arm": {
+            "kind": evidence_content_arm,
+            "calls": content_counters[0],
+            "max_rel_l1_diff": content_counters[3],
+            "frozen_at_call": content_counters[4] or None,
+            "frozen_l1": content_counters[5] or None,
+        },
     }
 
 
@@ -251,6 +274,20 @@ def main() -> int:
         default=None,
         help="只取前 N 道题（D/E 混排后取前 N，两臂同一子集）",
     )
+    parser.add_argument(
+        "--evidence-content-arm",
+        choices=("permutation", "frozen"),
+        default=None,
+        help="内容档：与自身轨迹面共用剂量探针里那副 `_make_content_armed_evidence`"
+        "（`permutation`＝整根置换、硬度逐位守恒；`frozen`＝冻结到第一条非零证据）。"
+        "默认关 ⇒ 与已入库各档逐位可比。",
+    )
+    parser.add_argument(
+        "--perm-seed",
+        type=int,
+        default=20261002,
+        help="置换档的固定种子（写进件里，可复现）",
+    )
     args = parser.parse_args()
 
     checkpoint = PROJECT_ROOT / args.checkpoint
@@ -270,6 +307,8 @@ def main() -> int:
         evidence_floor_tau=args.relevance_floor_tau,
         evidence_ceiling_c=args.relevance_ceiling_c,
         record_scores=args.record_scores,
+        evidence_content_arm=args.evidence_content_arm,
+        perm_seed=args.perm_seed,
         max_bytes=args.max_bytes,
         limit=args.limit,
     )
@@ -298,6 +337,9 @@ def main() -> int:
         "copy_evidence_alpha": args.copy_evidence_alpha,
         "relevance_floor_tau": args.relevance_floor_tau,
         "relevance_ceiling_c": args.relevance_ceiling_c,
+        "evidence_content_arm": args.evidence_content_arm,
+        "content_arm_note": "v1 加性字段：`content_arm` 逐臂自述被走到次数／守恒偏差／冻结点。"
+        "格式串不动 ⇒ 与已入库各档同格可比（默认 None ⇒ 一次替换都没发生）。",
         #: 两条口径必须落在件上，否则这份读数会被当成"整条答复、预算 256"的那类去比：
         #: ①生成预算（`PLAN-A-30` §2h 实测同一链同一装配 64→256 会让命中 3→9、成句 13→6）；
         #: ②成句率量的是 `answer[:60]` **字符前缀**，不是整条答复（与 `probe_taiji_a30_*` 的

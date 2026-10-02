@@ -23,6 +23,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import random
 import statistics
 import sys
 from datetime import UTC, datetime
@@ -116,6 +117,59 @@ def _make_scaled_evidence(
         return out_tensor * alpha
 
     return scaled, calls
+
+
+def _make_content_armed_evidence(
+    original: Any, kind: str, seed: int = 20261002
+) -> tuple[Any, list[float]]:
+    """**内容档 vs 硬度档**（PLAN-A-30 §第二十八次停靠）：接口级替换最终进 logits 的那个向量。
+
+    * `permutation`：按固定种子置换元素位置 ⇒ 多重集与 L1/max 逐位守恒，唯一被毁掉的是
+      "哪一维对应哪个符号"；
+    * `frozen`：冻结到**第一条非零**证据。v13 曾把冻结源取在"第一次调用"，而那时 store 还是空的
+      ⇒ 整档实为"把通道永久关闭"（自停 66/72 与不挂回路同值、`max_rel_l1_diff=1.0` 是指纹）——
+      这一坑记在这儿，别再踩。
+
+    返回 `(替换后的 callable, 计数器)`，计数器＝`[被走到, 原 L1 累加, 替换后 L1 累加,
+    单次相对差最大值, 冻结发生在第几次调用, 冻结源自己的 L1]`。
+    **这台仪器只有一副内容档**：`probe_taiji_a30_stop_failure.py`（自身轨迹面）与
+    `score_taiji_r2_copy_circuit_chat_cap.py`（复述命中面）都从这里取，否则两半读的不是同一个操作。
+    """
+
+    counters = [0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    rng = random.Random(seed)
+    perm_cache: dict[int, Any] = {}
+    frozen: list[Any] = []
+
+    def armed(**kwargs: Any) -> Any:
+        out = original(**kwargs)
+        counters[0] += 1
+        single = float(out.abs().sum())
+        counters[1] += single
+        if kind == "permutation":
+            #: 置换表按**实际元素数**现取（不硬写词表尺寸；尺寸一变就响亮地重新洗牌而不是错位）。
+            n = int(out.numel())
+            if n not in perm_cache:
+                order = list(range(n))
+                rng.shuffle(order)
+                perm_cache[n] = torch.tensor(order, dtype=torch.long)
+            flat = out.reshape(-1)
+            swapped = flat.index_select(0, perm_cache[n].to(flat.device)).reshape(out.shape)
+        else:
+            if not frozen and single > 0.0:
+                frozen.append(out.clone())
+                counters[4] = float(counters[0])
+                counters[5] = single
+            swapped = frozen[0] if frozen else out
+        new = float(swapped.abs().sum())
+        counters[2] += new
+        #: 硬度守恒按**逐次相对差最大值**判，不按两趟累加之差：置换只改求和顺序，
+        #: float32 下 1,881 次累加能差出 1e-4（n=1 冒烟实测），那是表示层噪声而不是"硬度变了"。
+        if kind == "permutation" and single > 0.0:
+            counters[3] = max(counters[3], abs(new - single) / single)
+        return swapped
+
+    return armed, counters
 
 
 def main() -> int:

@@ -70,7 +70,7 @@ def test_empty_generation_takes_the_fallback_too() -> None:
 
 
 def test_instrument_carries_v6_and_the_correction_note() -> None:
-    """格式面：v14 在案（v6–v13 的语义逐条仍在）、更正说明点名追加二的误诊与深帧证据，严格守卫公式未动。
+    """格式面：v15 在案（v6–v14 的语义逐条仍在）、更正说明点名追加二的误诊与深帧证据，严格守卫公式未动。
 
     2026-10-02 该仪器先升 **v7**（加性自述 `surface_gate_state`／`write_back_gate_last_reason`），
     同日再升 **v8**（加性旗标 `--no-copy-evidence-gate` ＋守卫 `evidence_gate_flag_honored`），
@@ -80,8 +80,8 @@ def test_instrument_carries_v6_and_the_correction_note() -> None:
     source = (PROJECT_ROOT / "scripts" / "training" / "probe_taiji_a30_stop_failure.py").read_text(
         encoding="utf-8"
     )
-    assert '"format": "taiji-a30-stop-failure-v14"' in source
-    assert all(f"format_note_v{v}" in source for v in (6, 7, 8, 9, 10, 11)), (
+    assert '"format": "taiji-a30-stop-failure-v15"' in source
+    assert all(f"format_note_v{v}" in source for v in (6, 7, 8, 9, 10, 11, 12, 13, 14, 15)), (
         "升版只许加列，历史说明必须逐版留在件里"
     )
     assert "format_note_v6" in source
@@ -125,7 +125,15 @@ def test_instrument_carries_v6_and_the_correction_note() -> None:
     #: v13（2026-10-02，owner 裁"不立项、先追轨迹面由什么在管"）：内容／硬度分离档必须自带**硬度守恒**这道
     #: 前提守卫——守恒不成立时两个臂差的不止内容，整档作废。钉的是"逐次相对差最大值"这一式，不是注释。
     assert '"content_arm_magnitude_preserved"' in source
-    assert "content_guard[3] = max(" in source
+    #: v15：内容档**搬到剂量探针里与复述面共用** ⇒ 那两条"式子级"断言跟着搬走（不是删掉）：
+    #: 守恒用的是逐次相对差最大值，冻结源必须是"通道真的在发"的那一次。
+    dose = (
+        PROJECT_ROOT / "scripts" / "training" / "probe_taiji_a30_copy_evidence_dose.py"
+    ).read_text(encoding="utf-8")
+    assert "counters[3] = max(counters[3], abs(new - single) / single)" in dose
+    assert "if not frozen and single > 0.0:" in dose
+    #: 反面：轨迹面仪器里不得再留一份自己的内容档实现（两把尺子的老坑）。
+    assert "perm_cache" not in source
     assert 'choices=("permutation", "frozen")' in source
     #: 反面：不得用"两趟累加之差"当守恒判据（n=1 冒烟证明那量的是求和顺序的表示层噪声，1e-4 级）。
     assert "abs(content_guard[1] - content_guard[2])" not in source
@@ -133,6 +141,24 @@ def test_instrument_carries_v6_and_the_correction_note() -> None:
     #: v14：**冻结源必须是"通道真的在发"的那一次**——v13 的 `frozen` 冻结到第一条调用，而那时 store 还空，
     #: 于是整档测的是"永久关掉通道"（66/72 对不挂回路的 66/72，`max_rel_l1_diff=1.0` 是指纹）。
     #: 钉的是"非零才算冻结源"这一式，以及冻结点必须被披露。
-    assert "if not frozen and float(out.abs().sum()) > 0.0:" in source
     assert '"content_arm_frozen_at_call"' in source and '"content_arm_frozen_l1"' in source
     assert '"relevance_ceiling_consumed"' not in source
+
+
+def test_the_content_arm_has_exactly_one_implementation_across_instruments() -> None:
+    """两半必须做**同一个**置换／冻结操作：内容档只许住在剂量探针里，别处只许 import。
+
+    复述面与轨迹面各写一份，就是两把尺子量同一件事——本项目已经为此废过读数。
+    """
+
+    shared = (
+        PROJECT_ROOT / "scripts" / "training" / "probe_taiji_a30_copy_evidence_dose.py"
+    ).read_text(encoding="utf-8")
+    assert shared.count("def _make_content_armed_evidence") == 1
+
+    for name in ("probe_taiji_a30_stop_failure.py", "score_taiji_r2_copy_circuit_chat_cap.py"):
+        src = (PROJECT_ROOT / "scripts" / "training" / name).read_text(encoding="utf-8")
+        assert "import _make_content_armed_evidence" in src, name
+        #: 反面：这两台仪器里不得再出现自己的置换／冻结机械（`index_select` 只在共用实现里有）。
+        assert "index_select" not in src, name
+        assert "rng.shuffle" not in src, name
