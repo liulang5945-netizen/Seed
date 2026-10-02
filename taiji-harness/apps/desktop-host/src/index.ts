@@ -24,7 +24,11 @@ async function main(): Promise<void> {
     profile: 'desktop',
     resolvedProfile: { profile, installAnchor },
     patchFiles: [],
-    args: ['--no-open', '--port', '19387'],
+    // Port 0: the OS picks a free loopback port and `ctx.webServer.port` reports
+    // it, so Electron reads the authenticated URL from the ready event. A fixed
+    // port (upstream used 19387) makes this application collide with any other
+    // installation of the same family — the second one fails to listen.
+    args: ['--no-open', '--port', '0'],
     ...(process.argv[5] === undefined ? {} : {
       packageManager: {
         command: process.execPath,
