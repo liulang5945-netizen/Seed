@@ -131,6 +131,7 @@ def run_arm(
     probe_store: bool = False,
     empty_store: bool = False,
     decoy: tuple[str, bytes, str] | None = None,
+    relevance_gate: bool = False,
     max_bytes: int = MAX_ANSWER_BYTES,
     limit: int | None = None,
 ) -> dict[str, Any]:
@@ -270,6 +271,19 @@ def run_arm(
         empty_state["count_at_install"] = int(es_circuit.store.count)
         empty_state["store_obj"] = es_circuit.store
 
+    #: 第四十四次停靠：**装在最后一层**的相关性门——判的是"当下将被取到的那条内容有没有资格被说出来"，
+    #: 所以必须盖在 decoy／oracle 之上，否则判的不是同一个事件。
+    gate_box = {"q": ""}
+    gate_state = {"asks": 0, "passed": 0, "blocked": 0, "no_event": 0}
+    if relevance_gate:
+        gated_circuit = runtime.model.substrate.copy_circuit
+        if gated_circuit is None:
+            raise RuntimeError("要求相关性门但回路不在场 ⇒ 没有可判定的事件")
+        from probe_taiji_a30_copy_evidence_dose import _make_relevance_gate_arm
+
+        gate_fn, gate_state = _make_relevance_gate_arm(gated_circuit.store, lambda: gate_box["q"])
+        gated_circuit.store.best_match = gate_fn  # type: ignore[method-assign]
+
     manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
     items = [
         {**item, "dimension": dim}
@@ -316,6 +330,7 @@ def run_arm(
         turns = list(item["turns"])
         answer = ""
         for index, turn in enumerate(turns):
+            gate_box["q"] = str(turn)  # 本轮提问原文：门的判据来源（词法重叠，不是语义）
             loop_steps[0] = 0  # 换一轮答复：步刻度从 0 重数（与 L2 仪器同一条规矩）
             if probe_store_obj is not None:
                 probe_live = {
@@ -420,6 +435,8 @@ def run_arm(
             else None
         ),
         #: 库恒空档自述：`record` 被叫了几次（应为 >0）、结束时库里有几条（应为 0）。两数都能为假。
+        #: 相关性门自述：判定次数、放行/拦截、库里本来没事件的次数（三者都能为假）。
+        "relevance_gate": {"requested": bool(relevance_gate), **gate_state},
         "decoy_arm": (
             {
                 "source_id": decoy[0],
@@ -571,6 +588,12 @@ def main() -> int:
         help="第四十三次停靠·外来内容档：指定题面里某个 ID，把它的**第一条用户轮原文**当作被取到的事件内容"
         "（cue 沿用真实事件 ⇒ 寻址面不动），再看它的 `expected_contains[0]` 是否出现在别的题的答复里。",
     )
+    parser.add_argument(
+        "--relevance-gate",
+        action="store_true",
+        help="第四十四次停靠：在 best_match 外面再加一层最小相关性门——被取到的事件内容"
+        "与本轮提问共享 ≥2 字连续片段才放行，否则返回 None（evidence 遇 None 即精确零向量）。",
+    )
     args = parser.parse_args()
 
     checkpoint = PROJECT_ROOT / args.checkpoint
@@ -616,6 +639,7 @@ def main() -> int:
         probe_store=args.probe_store,
         empty_store=args.empty_store,
         decoy=decoy,
+        relevance_gate=args.relevance_gate,
         evidence_content_arm=args.evidence_content_arm,
         perm_seed=args.perm_seed,
         max_bytes=args.max_bytes,
@@ -652,6 +676,7 @@ def main() -> int:
         "oracle_selector": bool(args.oracle_selector),
         "probe_store": bool(args.probe_store),
         "decoy_item": args.decoy_item,
+        "relevance_gate": bool(args.relevance_gate),
         "empty_store": bool(args.empty_store),
         "content_arm_note": "v1 加性字段：`content_arm` 逐臂自述被走到次数／守恒偏差／冻结点。"
         "格式串不动 ⇒ 与已入库各档同格可比（默认 None ⇒ 一次替换都没发生）。",

@@ -150,6 +150,40 @@ def _make_store_scoped_arm(store: Any) -> tuple[Any, list[int], set[int]]:
     return reset, counters, stale_ids
 
 
+def _make_relevance_gate_arm(
+    store: Any, get_question: Any, *, min_len: int = 2
+) -> tuple[Any, dict[str, int]]:
+    """读出侧最小**相关性门**（第四十四次停靠）：只有当被取到事件的内容与**当前这一轮提问**
+    共享至少一段 `min_len` 长度的连续字符片段时才放行，否则返回 `None`
+    ——`evidence()` 遇 `None` 返回**精确零向量**（`taiji/copy_circuit.py:491-492`），
+    与“没开闸”同口径，所以这不是新机制，只是给已存在的通道加一道资格判据。
+
+    `get_question()` 由调用方给（仪器知道本轮提问原文）。
+    计数：`{"asks": 判定次数, "passed": 放行, "blocked": 拦截, "no_event": 库里没事件}`。
+    判据是**词法**的（连续片段重叠），不是语义的——它误伤真复述也算一个读数，照实报。
+    """
+
+    state = {"asks": 0, "passed": 0, "blocked": 0, "no_event": 0}
+    original_best_match = store.best_match
+
+    def gated_best_match(cue: Any) -> Any:
+        event = original_best_match(cue)
+        if event is None:
+            state["no_event"] += 1
+            return None
+        state["asks"] += 1
+        question = str(get_question() or "")
+        content = bytes(event.content).decode("utf-8", errors="replace")
+        grams = {question[i : i + min_len] for i in range(0, max(0, len(question) - min_len + 1))}
+        if any(gram in content for gram in grams):
+            state["passed"] += 1
+            return event
+        state["blocked"] += 1
+        return None
+
+    return gated_best_match, state
+
+
 def _make_decoy_content_arm(store: Any, decoy_bytes: bytes) -> tuple[Any, dict[str, int]]:
     """**换内容、不换寻址**（第四十三次停靠）：把被取到的事件换成"另一题的真实告知文本"，
     但**沿用原事件的 cue** ⇒ 余弦自洽、寻址那一面完全不动，只有喂给 `evidence()` 的字节变了
