@@ -5624,3 +5624,7 @@ prompt 的每一步也走证据注入点，旧位置会让 K 被 prompt 吃光�
 * **同轮的自我更正**：`a13c18ad` 的提交消息写"共 24 passed"，而提交那一轮实际打印是 **34 passed／rc=0**。
   这次的错法比"凭印象编数"更隐蔽——**数是从上一轮的真实输出里抄来的**，但样本集不同（这次多带了 v6 回放 pin）。
   ⇒ 规矩收紧：引用测试计数必须**用同一条命令的输出**，不能引用"刚才那次类似命令"的数。
+
+* **入口改动之后的广面实跑（23:44）**：`python -m pytest tests/taiji_native -q -k "a30 or cap or surface or copy or runtime or chat"`
+  ⇒ **396 passed、1 xfailed、1328 deselected、rc=0**。
+  注明：本文件里此前那句"333 passed"描述的是**改 `api/seed_runtime.py` 之前**的树——旧数不删，但引用当前状态时要用这条 396。
