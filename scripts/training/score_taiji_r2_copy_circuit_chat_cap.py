@@ -125,6 +125,7 @@ def run_arm(
     record_scores: bool = False,
     evidence_content_arm: str | None = None,
     perm_seed: int = 20261002,
+    evidence_window_steps: int | None = None,
     max_bytes: int = MAX_ANSWER_BYTES,
     limit: int | None = None,
 ) -> dict[str, Any]:
@@ -182,6 +183,35 @@ def run_arm(
             circuit.evidence, evidence_content_arm, perm_seed
         )
         circuit.evidence = armed
+    #: v17 资格档接到复述链：**用与 L2 仪器同一个 `generation_loop_span`** 数环内步（1 步＝1 字节），
+    #: 这样两半是同一把刻度、同一副档；不是把 K 换算成"多少次调用"那种近似。
+    window_counters = [0, 0, 0]
+    loop_steps = [0]
+    if evidence_window_steps is not None:
+        import sys
+
+        from probe_taiji_a30_copy_evidence_dose import _make_window_armed_evidence
+        from probe_taiji_a30_stop_failure import generation_loop_span
+
+        substrate = runtime.model.substrate
+        if substrate.copy_circuit is None:
+            raise RuntimeError("要求资格档但回路不在场 ⇒ 没有可静音的证据通道")
+        loop_first, loop_last = generation_loop_span(type(substrate).generate)
+        original_observe = substrate.observe
+
+        def observing(symbol: Any, **kwargs: Any) -> Any:
+            frame = sys._getframe(1)
+            step = original_observe(symbol, **kwargs)
+            if frame.f_code.co_name == "generate" and loop_first <= frame.f_lineno <= loop_last:
+                loop_steps[0] += 1
+            return step
+
+        substrate.observe = observing  # type: ignore[method-assign]
+        armed_window, window_counters = _make_window_armed_evidence(
+            substrate.copy_circuit.evidence, evidence_window_steps, lambda: loop_steps[0]
+        )
+        substrate.copy_circuit.evidence = armed_window  # type: ignore[method-assign]
+
     manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
     items = [
         {**item, "dimension": dim}
@@ -198,6 +228,7 @@ def run_arm(
         turns = list(item["turns"])
         answer = ""
         for index, turn in enumerate(turns):
+            loop_steps[0] = 0  # 换一轮答复：步刻度从 0 重数（与 L2 仪器同一条规矩）
             answer = _answer_raw(runtime, turn, history, max_bytes=max_bytes)
             if index + 1 < len(turns):
                 history.append((turn, answer))
@@ -252,6 +283,12 @@ def run_arm(
         "evidence_calls": calls[0],
         "picked_cosine": _quantiles(scores) if record_scores and scores else None,
         #: 内容档自述：被走到几次、硬度守恒到哪、冻结落在第几次调用（守恒只对置换档有意义）。
+        "window_arm": {
+            "steps": evidence_window_steps,
+            "calls": window_counters[0],
+            "emitted": window_counters[1],
+            "silenced": window_counters[2],
+        },
         "content_arm": {
             "kind": evidence_content_arm,
             "calls": content_counters[0],
@@ -321,6 +358,12 @@ def main() -> int:
         default=20261002,
         help="置换档的固定种子（写进件里，可复现）",
     )
+    parser.add_argument(
+        "--evidence-window-steps",
+        type=int,
+        default=None,
+        help="v17 资格档：只在答复的前 K 步发回路证据，之后静音。刻度与 L2 仪器同源（同一个 `generation_loop_span`、1 步＝1 字节），故两半可用同一个 K。",
+    )
     args = parser.parse_args()
 
     checkpoint = PROJECT_ROOT / args.checkpoint
@@ -340,6 +383,7 @@ def main() -> int:
         evidence_floor_tau=args.relevance_floor_tau,
         evidence_ceiling_c=args.relevance_ceiling_c,
         record_scores=args.record_scores,
+        evidence_window_steps=args.evidence_window_steps,
         evidence_content_arm=args.evidence_content_arm,
         perm_seed=args.perm_seed,
         max_bytes=args.max_bytes,
@@ -371,6 +415,7 @@ def main() -> int:
         "relevance_floor_tau": args.relevance_floor_tau,
         "relevance_ceiling_c": args.relevance_ceiling_c,
         "evidence_content_arm": args.evidence_content_arm,
+        "evidence_window_steps": args.evidence_window_steps,
         "content_arm_note": "v1 加性字段：`content_arm` 逐臂自述被走到次数／守恒偏差／冻结点。"
         "格式串不动 ⇒ 与已入库各档同格可比（默认 None ⇒ 一次替换都没发生）。",
         #: 两条口径必须落在件上，否则这份读数会被当成"整条答复、预算 256"的那类去比：
