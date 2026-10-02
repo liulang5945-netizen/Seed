@@ -70,7 +70,7 @@ def test_empty_generation_takes_the_fallback_too() -> None:
 
 
 def test_instrument_carries_v6_and_the_correction_note() -> None:
-    """格式面：v8 在案（v6/v7 的语义逐条仍在）、更正说明点名追加二的误诊与深帧证据，严格守卫公式未动。
+    """格式面：v9 在案（v6/v7/v8 的语义逐条仍在）、更正说明点名追加二的误诊与深帧证据，严格守卫公式未动。
 
     2026-10-02 该仪器先升 **v7**（加性自述 `surface_gate_state`／`write_back_gate_last_reason`），
     同日再升 **v8**（加性旗标 `--no-copy-evidence-gate` ＋守卫 `evidence_gate_flag_honored`），
@@ -80,8 +80,10 @@ def test_instrument_carries_v6_and_the_correction_note() -> None:
     source = (PROJECT_ROOT / "scripts" / "training" / "probe_taiji_a30_stop_failure.py").read_text(
         encoding="utf-8"
     )
-    assert '"format": "taiji-a30-stop-failure-v8"' in source
-    assert "format_note_v8" in source and "format_note_v7" in source and "format_note_v6" in source
+    assert '"format": "taiji-a30-stop-failure-v9"' in source
+    assert all(
+        f"format_note_v{v}" in source for v in (6, 7, 8, 9)
+    ), "升版只许加列，历史说明必须逐版留在件里"
     assert "format_note_v6" in source
     assert "追加二" in source and "深帧复现" in source
     assert "all_surfaces_are_replayed_raw" in source
@@ -93,6 +95,9 @@ def test_instrument_carries_v6_and_the_correction_note() -> None:
     #: v8 的旗标与"被走到"守卫（拆"挂载回路"里捆绑的两样东西；行为面另有真实测试）。
     assert '"--no-copy-evidence-gate"' in source
     assert "evidence_gate_flag_honored" in source
+    #: v9 的剂量乘数与"被消费"守卫。
+    assert '"--copy-evidence-alpha"' in source
+    assert "evidence_alpha_consumed" in source
     assert '"write_back_gate_last_reason"' in source
     #: 旧分类退役：新比较只产生 None／surface_differs_from_replay 两种取值
     #: （历史件里的 replay_tiny_feed 字段仍在，读旧件不受影响）。

@@ -230,6 +230,12 @@ def main() -> int:
         help="只跑题面里这些 id（逗号分隔）——长预算档用它点住最坏那几条，不必整批重跑",
     )
     parser.add_argument(
+        "--copy-evidence-alpha",
+        type=float,
+        default=1.0,
+        help="v9：把回路加性证据整体乘 α（DEBT-G19 剂量档；1.0 ⇒ 与 v4–v8 逐位可比）",
+    )
+    parser.add_argument(
         "--no-copy-evidence-gate",
         action="store_true",
         help="v8：挂上回路之后把**那条加性证据的 UTF-8 位置门**显式关掉——用来拆'挂载回路'这一个动作里"
@@ -265,6 +271,17 @@ def main() -> int:
     if args.circuit:
         runtime.enable_copy_circuit(PROJECT_ROOT / args.circuit)
     substrate = runtime.model.substrate
+    alpha_calls = [0]
+    if args.copy_evidence_alpha != 1.0:
+        # v9：接口级缩放，复用剂量探针里那一个包装器（不另写一份 ⇒ 两处实验量的是同一个乘数）。
+        from probe_taiji_a30_copy_evidence_dose import _make_scaled_evidence
+
+        if substrate.copy_circuit is None:
+            raise RuntimeError("要求缩放证据但回路不在场 ⇒ 没有可缩放的通道")
+        scaled, alpha_calls = _make_scaled_evidence(
+            substrate.copy_circuit.evidence, args.copy_evidence_alpha
+        )
+        substrate.copy_circuit.evidence = scaled
     if args.no_copy_evidence_gate:
         # v8：显式置 False ⇒ `copy_evidence_utf8_gate_effective` 应随之为 False（守卫会抓"没走到"那种）。
         substrate.set_copy_evidence_utf8_gate(False)
@@ -456,7 +473,11 @@ def main() -> int:
 
     substrate.observe = original_observe  # type: ignore[method-assign]
     report = {
-        "format": "taiji-a30-stop-failure-v8",
+        "format": "taiji-a30-stop-failure-v9",
+        "format_note_v9": "v9 **加性**多一个旗标 `--copy-evidence-alpha`（把回路的加性证据整体乘 α）与两条自述"
+        "（`copy_evidence_alpha`／守卫 `evidence_alpha_consumed`），其余字段与算法一字未动 ⇒ 与 v4–v8 同格可比。"
+        "加它的理由：DEBT-G19 查出这条通道是三条加性证据里唯一没有强度系数的那一条；剂量档要与 v8 的"
+        "'门开关'档用**同一台仪器、同一个乘数来源**，否则又是一口井里的水。",
         "format_note_v8": "v8 **加性**多一个旗标 `--no-copy-evidence-gate`（挂完回路后把那条加性证据的 UTF-8 "
         "位置门显式关掉）与两条自述（`copy_evidence_gate_off_requested`／守卫 `evidence_gate_flag_honored`），"
         "其余字段与算法一字未动 ⇒ 与 v4–v7 同格可比。加它的理由：v7 之前把'挂载回路'当成一个变量，其实它一次"
@@ -521,6 +542,7 @@ def main() -> int:
         ),
         # v7：门槛①（回写放行）与上面那条"证据 UTF-8 位置门"是**两条不同的门**，一起报才不会互相顶名。
         "copy_evidence_gate_off_requested": bool(args.no_copy_evidence_gate),
+        "copy_evidence_alpha": args.copy_evidence_alpha,
         "surface_gate_state": runtime.surface_gate_state,
         "write_back_gate_last_reason": (
             str(runtime.last_write_back_gate[1]) if runtime.last_write_back_gate else None
@@ -534,6 +556,9 @@ def main() -> int:
             "observe_calls_recorded": bool(records),
             # v7 自述守卫：这条面必须**报出**回写门槛状态（ None／缺键都算仪器没走到，红）。
             "surface_gate_state_reported": runtime.surface_gate_state is not None,
+            # v9：乘数必须**被消费**——传了非 1.0 的 α 而计数为 0，就是补丁没走到（假档）。
+            "evidence_alpha_consumed": (args.copy_evidence_alpha == 1.0) or alpha_calls[0] > 0,
+            "evidence_alpha_calls": alpha_calls[0],
             # v8：旗标必须**被走到**——传了 `--no-copy-evidence-gate` 却仍报出有效值为真，就是仪器没生效。
             "evidence_gate_flag_honored": (not args.no_copy_evidence_gate)
             or not bool(
