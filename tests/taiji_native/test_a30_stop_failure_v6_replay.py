@@ -70,7 +70,7 @@ def test_empty_generation_takes_the_fallback_too() -> None:
 
 
 def test_instrument_carries_v6_and_the_correction_note() -> None:
-    """格式面：v13 在案（v6–v12 的语义逐条仍在）、更正说明点名追加二的误诊与深帧证据，严格守卫公式未动。
+    """格式面：v14 在案（v6–v13 的语义逐条仍在）、更正说明点名追加二的误诊与深帧证据，严格守卫公式未动。
 
     2026-10-02 该仪器先升 **v7**（加性自述 `surface_gate_state`／`write_back_gate_last_reason`），
     同日再升 **v8**（加性旗标 `--no-copy-evidence-gate` ＋守卫 `evidence_gate_flag_honored`），
@@ -80,7 +80,7 @@ def test_instrument_carries_v6_and_the_correction_note() -> None:
     source = (PROJECT_ROOT / "scripts" / "training" / "probe_taiji_a30_stop_failure.py").read_text(
         encoding="utf-8"
     )
-    assert '"format": "taiji-a30-stop-failure-v13"' in source
+    assert '"format": "taiji-a30-stop-failure-v14"' in source
     assert all(f"format_note_v{v}" in source for v in (6, 7, 8, 9, 10, 11)), (
         "升版只许加列，历史说明必须逐版留在件里"
     )
@@ -129,4 +129,10 @@ def test_instrument_carries_v6_and_the_correction_note() -> None:
     assert 'choices=("permutation", "frozen")' in source
     #: 反面：不得用"两趟累加之差"当守恒判据（n=1 冒烟证明那量的是求和顺序的表示层噪声，1e-4 级）。
     assert "abs(content_guard[1] - content_guard[2])" not in source
+
+    #: v14：**冻结源必须是"通道真的在发"的那一次**——v13 的 `frozen` 冻结到第一条调用，而那时 store 还空，
+    #: 于是整档测的是"永久关掉通道"（66/72 对不挂回路的 66/72，`max_rel_l1_diff=1.0` 是指纹）。
+    #: 钉的是"非零才算冻结源"这一式，以及冻结点必须被披露。
+    assert "if not frozen and float(out.abs().sum()) > 0.0:" in source
+    assert '"content_arm_frozen_at_call"' in source and '"content_arm_frozen_l1"' in source
     assert '"relevance_ceiling_consumed"' not in source

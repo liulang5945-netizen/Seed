@@ -362,7 +362,14 @@ def main() -> int:
     #: 装在**最外层**——它要替换的是最终进 logits 的那个向量，不是通道内部的中间量。
     #: `permutation` 只打乱位置 ⇒ 多重集与 L1/max 逐位不变，唯一被毁掉的是"哪一维对应哪个符号"；
     #: 若自停因此回到 66 量级 ⇒ 轨迹面听的是**内容**；若仍 23–25 ⇒ 它听的是"有一条非零向量在加"这件事。
-    content_guard = [0, 0.0, 0.0, 0.0]  # [被走到, 原 L1 累加, 替换后 L1 累加, 单次相对差最大值]
+    content_guard = [
+        0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+    ]  # 前四位同 v13；后两位：冻结源出现在第几次调用、它的 L1
     if args.evidence_content_arm is not None:
         if substrate.copy_circuit is None:
             raise RuntimeError("要求内容分离档但回路不在场 ⇒ 没有可替换的证据通道")
@@ -389,9 +396,15 @@ def main() -> int:
                 flat = out.reshape(-1)
                 swapped = flat.index_select(0, perm_cache[n].to(flat.device)).reshape(out.shape)
             else:
-                if not frozen:
+                #: **冻结源必须是"那条通道真的在发"的那一次**。v13 第一跑取的是"第一次调用"，而第一次调用
+                #: 时 store 还空着 ⇒ 返回的是精确零向量，整档实际测的是"把通道永久关掉"
+                #: （读数 66/72 与不挂回路那件逐位同值，`max_rel_l1_diff=1.0` 就是它的指纹）。
+                #: 现改为冻结到**第一条非零**证据，并把冻结发生在第几次调用、它的 L1 一起存进件里。
+                if not frozen and float(out.abs().sum()) > 0.0:
                     frozen.append(out.clone())
-                swapped = frozen[0]
+                    content_guard[4] = float(content_guard[0])
+                    content_guard[5] = float(out.abs().sum())
+                swapped = frozen[0] if frozen else out
             content_guard[2] += float(swapped.abs().sum())
             #: 硬度守恒按**逐次相对差的最大值**判（界 1e-5：float32 对 257 项求和本身就有 ~1e-7 级抖动，
             #: n=1 冒烟实测 1.9e-07，界留一个量级余量），不按两趟累加之差：置换只改求和顺序，
@@ -571,7 +584,8 @@ def main() -> int:
 
     substrate.observe = original_observe  # type: ignore[method-assign]
     report = {
-        "format": "taiji-a30-stop-failure-v13",
+        "format": "taiji-a30-stop-failure-v14",
+        "format_note_v14": "v14 **只修 `frozen` 档的冻结源**（仪器缺陷，不是新测量）：v13 取'第一次调用'，而第一次调用时 store 仍为空 ⇒ 冻结到的是**精确零向量**，那一档实际测的是'把通道永久关掉'（现场证据：自停 66/72 与不挂回路那件同值、`content_arm_max_rel_l1_diff=1.0`）。现冻结到**第一条非零**证据并披露冻结点与它的 L1。`permutation` 档与其余字段一字未动 ⇒ v13 的置换档读数继续可比。",
         "format_note_v13": "v13 **加性**多一格 owner 裁定后要的那把分离尺：`--evidence-content-arm` "
         "（`permutation`＝把证据向量按固定种子置换，多重集与 L1/max 逐位不变，只毁掉"
         "'哪一维对应哪个符号'；`frozen`＝每次返回第一次那一条，内容不再跟着 cue 走），"
@@ -704,6 +718,8 @@ def main() -> int:
                 None if args.evidence_content_arm != "permutation" else content_guard[3] <= 1e-5
             ),
             "content_arm_max_rel_l1_diff": content_guard[3],
+            "content_arm_frozen_at_call": content_guard[4] or None,
+            "content_arm_frozen_l1": content_guard[5] or None,
             "content_arm_calls": content_guard[0],
             "content_arm_l1_original_sum": round(content_guard[1], 6),
             "content_arm_l1_replaced_sum": round(content_guard[2], 6),
