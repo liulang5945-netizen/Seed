@@ -256,7 +256,7 @@
 .table td {
   text-align: left;
   padding: 4px 8px;
-  border-bottom: 1px solid var(--dsw-alias-border-l4, rgba(127, 127, 127, 0.25));
+  border-bottom: 0.5px solid var(--dsw-alias-border-l4, rgba(127, 127, 127, 0.25));
   font-weight: inherit;
 }
 
