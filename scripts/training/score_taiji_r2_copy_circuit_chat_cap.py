@@ -132,6 +132,8 @@ def run_arm(
     empty_store: bool = False,
     decoy: tuple[str, bytes, str] | None = None,
     relevance_gate: bool = False,
+    probe_label_only: str | None = None,
+    probe_checks: dict[str, int] | None = None,
     max_bytes: int = MAX_ANSWER_BYTES,
     limit: int | None = None,
 ) -> dict[str, Any]:
@@ -292,7 +294,8 @@ def run_arm(
         if item.get("expected_contains")
     ]
     decoy_item = None
-    if decoy is not None:
+    if decoy is not None and decoy[0] != "SYNTH":
+        #: 合成探针（`SYNTH`）**故意不在题面里**——那正是它成立的前提（机检已在 main 里做完并拒过counter例）。
         by_id = {str(item.get("id")): item for item in items}
         decoy_item = by_id.get(decoy[0])
         if decoy_item is None:
@@ -351,11 +354,18 @@ def run_arm(
             }
             probe_evicted = len(probe_seen - probe_still)
             probe_live_now = len(probe_still)
+        own_labels = [str(tok) for tok in (item.get("expected_contains") or [])]
         decoy_label_in_answer = (
             decoy is not None
-            and decoy_item is not None
             and str(decoy[2]) in answer
+            #: 排除集扩全：来源题 + **本题自身标签里含探针标签的**（上一格就栽在只排来源题）
             and str(item["id"]) != decoy[0]
+            and not any(str(decoy[2]) in own for own in own_labels)
+            and probe_label_only is None
+        ) or (
+            probe_label_only is not None
+            and str(probe_label_only) in answer
+            and not any(str(probe_label_only) in own for own in own_labels)
         )
         hit = any(token in answer for token in item["expected_contains"])
         #: K-定价档（PLAN-A-30 第三十次停靠·设计预备第 2 条）：**命中发生在答复的第几个字节**必须先量出来，
@@ -379,7 +389,11 @@ def run_arm(
                 "first_hit_offset_bytes": first_hit_offset,
                 "answer_bytes": answer_bytes,
                 #: 第四十三次停靠：外来标签出现在本题答复里 ⇒ 通道把本轮没被告知的内容写了进去。
-                "decoy_label_in_answer": decoy_label_in_answer if decoy is not None else None,
+                "decoy_label_in_answer": (
+                    decoy_label_in_answer
+                    if (decoy is not None or probe_label_only is not None)
+                    else None
+                ),
                 #: 第四十次停靠的三量（`None` ⇒ 本题没开读数，不是"假"）。
                 "label_in_store_at_answer": (
                     probe_present_at_answer if probe_store_obj is not None else None
@@ -436,6 +450,24 @@ def run_arm(
         ),
         #: 库恒空档自述：`record` 被叫了几次（应为 >0）、结束时库里有几条（应为 0）。两数都能为假。
         #: 相关性门自述：判定次数、放行/拦截、库里本来没事件的次数（三者都能为假）。
+        "label_probe": (
+            {
+                "probe_label": probe_label_only,
+                "items_with_probe_label_in_answer": sum(
+                    1 for row in rows if row["decoy_label_in_answer"]
+                ),
+                "items_total": len(rows),
+                "manifest_occurrences_of_label": (probe_checks or {}).get(
+                    "label_in_manifest_texts"
+                ),
+                "manifest_occurrences_of_sentence": (probe_checks or {}).get(
+                    "sentence_in_manifest_texts"
+                ),
+                "items_owning_probe_label": (probe_checks or {}).get("items_owning_label"),
+            }
+            if probe_label_only is not None
+            else None
+        ),
         "relevance_gate": {"requested": bool(relevance_gate), **gate_state},
         "decoy_arm": (
             {
@@ -594,6 +626,22 @@ def main() -> int:
         help="第四十四次停靠：在 best_match 外面再加一层最小相关性门——被取到的事件内容"
         "与本轮提问共享 ≥2 字连续片段才放行，否则返回 None（evidence 遇 None 即精确零向量）。",
     )
+    parser.add_argument(
+        "--synthetic-decoy",
+        default=None,
+        help="第四十六次停靠：用**任何题面都不出现的合成句**当被取到的事件内容（配合 --synthetic-label）。"
+        "机检不通过（该句或该标签在题面里出现过）就直接拒绝跑档。",
+    )
+    parser.add_argument(
+        "--synthetic-label",
+        default=None,
+        help="合成 decoy 的探针标签（用于在答复里查外来内容是否被说出来）",
+    )
+    parser.add_argument(
+        "--probe-label",
+        default=None,
+        help="只测不装：统计该标签在答复里出现的题数，作为污染测试的**基线件**（没有基线，decoy 件里的出现不算证据）。",
+    )
     args = parser.parse_args()
 
     checkpoint = PROJECT_ROOT / args.checkpoint
@@ -605,7 +653,43 @@ def main() -> int:
         else None
     )
     manifest_raw = json.loads(MANIFEST.read_text(encoding="utf-8"))
+    probe_checks = {
+        "label_in_manifest_texts": 0,
+        "sentence_in_manifest_texts": 0,
+        "items_owning_label": 0,
+    }
+    pool_all = [
+        it
+        for dim in ("D", "E")
+        for it in manifest_raw["dimensions"][dim]["items"]
+        if it.get("expected_contains")
+    ]
+    probe = args.probe_label or args.synthetic_label
+    if probe:
+        all_text = "".join("".join(str(turn) for turn in it.get("turns", [])) for it in pool_all)
+        probe_checks["label_in_manifest_texts"] = all_text.count(str(probe))
+        probe_checks["items_owning_label"] = sum(
+            1 for it in pool_all if any(str(probe) in str(tok) for tok in it["expected_contains"])
+        )
+        if args.synthetic_decoy:
+            probe_checks["sentence_in_manifest_texts"] = all_text.count(str(args.synthetic_decoy))
     decoy = None
+    if args.synthetic_decoy:
+        if not args.synthetic_label:
+            raise SystemExit("--synthetic-decoy 需要同时给 --synthetic-label ⇒ 否则无从检测")
+        if probe_checks["label_in_manifest_texts"] or probe_checks["items_owning_label"]:
+            raise SystemExit(
+                f"机检失败：探针标签在题面里出现 {probe_checks['label_in_manifest_texts']} 次、"
+                f"被 {probe_checks['items_owning_label']} 题当作自身标签 ⇒ 这一对读数量不出污染，换探针"
+            )
+        if probe_checks["sentence_in_manifest_texts"]:
+            raise SystemExit("机检失败：合成句本身在题面里出现过 ⇒ 不是外来内容")
+        decoy = (
+            "SYNTH",
+            str(args.synthetic_decoy).encode("utf-8"),
+            str(args.synthetic_label),
+        )
+        print("[decoy-syn] 机检通过：探针标签与合成句在全部题面里 0 次、无题以该标签为自身标签")
     if args.decoy_item:
         pool = [
             it
@@ -639,6 +723,8 @@ def main() -> int:
         probe_store=args.probe_store,
         empty_store=args.empty_store,
         decoy=decoy,
+        probe_label_only=args.probe_label,
+        probe_checks=probe_checks,
         relevance_gate=args.relevance_gate,
         evidence_content_arm=args.evidence_content_arm,
         perm_seed=args.perm_seed,
@@ -677,6 +763,9 @@ def main() -> int:
         "probe_store": bool(args.probe_store),
         "decoy_item": args.decoy_item,
         "relevance_gate": bool(args.relevance_gate),
+        "synthetic_decoy": args.synthetic_decoy,
+        "synthetic_label": args.synthetic_label,
+        "probe_label": args.probe_label,
         "empty_store": bool(args.empty_store),
         "content_arm_note": "v1 加性字段：`content_arm` 逐臂自述被走到次数／守恒偏差／冻结点。"
         "格式串不动 ⇒ 与已入库各档同格可比（默认 None ⇒ 一次替换都没发生）。",
