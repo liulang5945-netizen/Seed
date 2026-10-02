@@ -5832,3 +5832,8 @@ prompt 的每一步也走证据注入点，旧位置会让 K 被 prompt 吃光�
 **同一件里查出的仪器缺陷（已登记 DEBT-G24）**：`boundary_rank_in_legal` 出现 **65**，而 `legal_candidates` 是 **64**
 ⇒ 两列不是同一集合算出来的（名次分母比候选数大 1）。所以本节**只用 `p_boundary` 一支**做判据，
 名次列只作描述、不参与甲/乙判定；修法是统一集合或改报"去掉边界符后的名次"。
+
+**§64 的底座复核（2026-10-03 00:20，按件不做新判据）**：本节结论依赖**重放**出来的 `p_boundary`，所以核了 faithfulness——
+`v21/v23/v24` 共 6 件（两底×各档）：`argmax_mismatch_steps` 合计 **0**、`all_items_reconstructed` 全 **True**、
+表层 `surface_is_replayed_raw` 不一致 **0** ⇒ "幅度不足"不是重放器的产物。
+（顺带一条：`p_boundary_before_penalty` 与本列并存，说明惩罚顺序也在件里可查。）
