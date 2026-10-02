@@ -473,7 +473,11 @@ def main() -> int:
 
     substrate.observe = original_observe  # type: ignore[method-assign]
     report = {
-        "format": "taiji-a30-stop-failure-v9",
+        "format": "taiji-a30-stop-failure-v10",
+        "format_note_v10": "v10 **加性**只补一条被点名过两次的缺口：件里此前只记 `circuit_sha256`、不记**检查点自身**的 sha ⇒ "
+        "与旧档（如 09-30 那枚被作废的 quarter v4 件）只能按'同路径＋mtime 早于那次跑'配对，那是**路径级**不是 sha 级。"
+        "现补 `checkpoint_sha256`（跑前那一次读盘，与 `base_sha256_unchanged` 共用同一趟哈希，不多读一遍 12MB）"
+        "＋守卫 `checkpoint_sha_recorded`。其余字段与算法一字未动 ⇒ 与 v4–v9 同格可比。",
         "format_note_v9": "v9 **加性**多一个旗标 `--copy-evidence-alpha`（把回路的加性证据整体乘 α）与两条自述"
         "（`copy_evidence_alpha`／守卫 `evidence_alpha_consumed`），其余字段与算法一字未动 ⇒ 与 v4–v8 同格可比。"
         "加它的理由：DEBT-G19 查出这条通道是三条加性证据里唯一没有强度系数的那一条；剂量档要与 v8 的"
@@ -513,6 +517,8 @@ def main() -> int:
         "checkpoint": args.checkpoint,
         "circuit": args.circuit,
         "circuit_sha256": _payload_sha(args.circuit),
+        #: v10：跨档配对应到 sha 级（见 format_note_v10）。
+        "checkpoint_sha256": sha_before[:16],
         # 取数面按这三条判，不按命令行猜（v4）。
         "mount_route": (
             "enable_copy_circuit"
@@ -600,6 +606,8 @@ def main() -> int:
                 row["generations_eating_full_budget"] for row in per_item
             ),
             "base_sha256_unchanged": _sha256(checkpoint) == sha_before,
+            #: v10 守卫：这个字段必须真的报出来（空串/缺哈希都算仪器没走到）。
+            "checkpoint_sha_recorded": bool(sha_before) and len(sha_before) == 64,
         },
         "failure_examples": failure_examples[:5],
         "offender_count": len(offenders),

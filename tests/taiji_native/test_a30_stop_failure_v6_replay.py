@@ -70,7 +70,7 @@ def test_empty_generation_takes_the_fallback_too() -> None:
 
 
 def test_instrument_carries_v6_and_the_correction_note() -> None:
-    """格式面：v9 在案（v6/v7/v8 的语义逐条仍在）、更正说明点名追加二的误诊与深帧证据，严格守卫公式未动。
+    """格式面：v10 在案（v6–v9 的语义逐条仍在）、更正说明点名追加二的误诊与深帧证据，严格守卫公式未动。
 
     2026-10-02 该仪器先升 **v7**（加性自述 `surface_gate_state`／`write_back_gate_last_reason`），
     同日再升 **v8**（加性旗标 `--no-copy-evidence-gate` ＋守卫 `evidence_gate_flag_honored`），
@@ -80,9 +80,9 @@ def test_instrument_carries_v6_and_the_correction_note() -> None:
     source = (PROJECT_ROOT / "scripts" / "training" / "probe_taiji_a30_stop_failure.py").read_text(
         encoding="utf-8"
     )
-    assert '"format": "taiji-a30-stop-failure-v9"' in source
+    assert '"format": "taiji-a30-stop-failure-v10"' in source
     assert all(
-        f"format_note_v{v}" in source for v in (6, 7, 8, 9)
+        f"format_note_v{v}" in source for v in (6, 7, 8, 9, 10)
     ), "升版只许加列，历史说明必须逐版留在件里"
     assert "format_note_v6" in source
     assert "追加二" in source and "深帧复现" in source
@@ -98,6 +98,9 @@ def test_instrument_carries_v6_and_the_correction_note() -> None:
     #: v9 的剂量乘数与"被消费"守卫。
     assert '"--copy-evidence-alpha"' in source
     assert "evidence_alpha_consumed" in source
+    #: v10 的 sha 级配对：字段与"必须报出来"的守卫都在。
+    assert '"checkpoint_sha256": sha_before[:16]' in source
+    assert "checkpoint_sha_recorded" in source
     assert '"write_back_gate_last_reason"' in source
     #: 旧分类退役：新比较只产生 None／surface_differs_from_replay 两种取值
     #: （历史件里的 replay_tiny_feed 字段仍在，读旧件不受影响）。
