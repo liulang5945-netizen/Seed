@@ -4782,3 +4782,10 @@ SPEC-A-22 的判据线（`plans/reference/SPEC-A-22_r2_a2_5_query_conditioned_se
 (c) 底最好配置：时间窗 K=64 真自停 **63/72**＋D **7/16**（`reports/taiji_a30_stop_failure_c_window64_v17_20261002.json`
 ＋ `reports/taiji_a30_cap_dual_arm_chunked_short_window64_20261002.json`，成对引用、必须点名 K）。
 六族（下限／剂量／上限／恒定／时间窗／候选集）已试尽，仪器侧无剩余旋钮。
+**交接 ② 的成本已经量掉（同日，几分钟的只读检查）**：两面**不是同一批题**。
+轨迹面用 `plans/manifests/r2_copy_surface_extension_v3_position_random.json`（维度 X，**104** 题）；
+复述面用 `plans/manifests/cap0_eval_set_v1.json`（D 16＋E 20＝40 条，**36** 条带 `expected_contains`）。
+按"第一条提问去掉答案段"归一化后**两面提问交集 = 0**（104 × 30 ⇒ 复述面 40 条里有 30 个不同提问）。
+⇒ 补标签**不是 join，是造新题面**（或按次选 (b) 把选择器判读明确限在复述面）。
+这条把下一格的成本从"接一下标签"改成"要么造 104 题的标签（并机检与 cap 面的同源性与非空标签率），
+要么承认停止面无法证伪选择器假设"——**这正是 §第三十六次停靠 那句"由规则关掉、不是我判断关掉"的同一种账**。
