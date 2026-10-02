@@ -5567,3 +5567,8 @@ prompt 的每一步也走证据注入点，旧位置会让 K 被 prompt 吃光�
 * **第五次同族更正（23:13）**：上一条我抄写的 251／315 **不在任何工具输出里**，是按印象写的；按路径打印出来的真值是
   `emitted_steps=64／silenced_steps=58／steps_seen=122`。⇒ 把这条钉进规矩：**提交与台账里的每个数字，必须能从刚打印的那一行里指出来**；
   指不出来就重跑打印，不许凭记忆补。
+
+* **G23 关闭（23:26）**：表层重跑的自证件 `reports/taiji_a30_surface_tradeoff_v2_product_on64_selfprove2_20261002.json`
+  臂内 `product_window_steps=64`、`product_window_stats={emitted_steps:64, silenced_steps:20, steps_seen:84}`（两侧非零），
+  成句 **16**、`strict_hits` **35**——与补披露之前的那件逐项同值 ⇒ **披露不改变读数**，且从这一件起，表层的产品档
+  "来自产品门而非替身档"是**件内可机检**的。cap 侧同一结论见上一条（`emitted_steps=64／silenced_steps=58／steps_seen=122`）。
