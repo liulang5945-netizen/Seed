@@ -52,6 +52,12 @@ def _end_face_scalars(result: dict[str, Any]) -> dict[str, Any]:
         "argmax_winners_top5": [
             (int(row["symbol"]), int(row["count"])) for row in end["argmax_winners_top5"]
         ],
+        #: v1 加性：并取 `other` 面三条。理由见 `p_boundary_median_other` 的用途——它用来**独立证明**
+        #: "下限确实改变了轨迹上的打分"。若接缝面不动而 other 面也不动，那说明下限根本没生效，
+        #: 此时"接缝位置自己落在高相似度那一段"这条推论就不成立（这是那条推论的否证检验）。
+        "other_n": result["faces"]["other"]["n"],
+        "other_boundary_is_argmax_count": result["faces"]["other"]["boundary_is_argmax_count"],
+        "other_p_boundary_median": result["faces"]["other"]["p_boundary"]["median"],
     }
 
 
@@ -180,8 +186,14 @@ def main() -> int:
             del circuit.evidence  # 撤实例属性 ⇒ 下一档拿到的仍是类上的绑定方法
         assert circuit.evidence == original_bound, "补丁没撤干净 ⇒ 后面的档会叠乘"
         if alpha == 1.0:
-            #: 逐位锚点在**加调用计数之前**比，两边形状才一致。
-            unit_dose_identical = row == unpatched
+            #: 逐位锚点**只在下限关闭时**才是"包层不扰动"的检验；下限开着时两趟**本就该不同**
+            #: （接缝与 other 的差别正是那一枪的内容），所以那时把这条读成 false 是误读。
+            #: 于是下限开着时报 `None`（不适用），而不是报 false。
+            unit_dose_identical = (
+                None if args.relevance_floor_tau is not None else (row == unpatched)
+            )
+            if args.relevance_floor_tau is not None:
+                row["anchor_not_applicable_reason"] = "floor is active ⇒ two passes should differ"
         row["evidence_calls"] = calls[0]
         if scores:
             ordered = sorted(scores)
