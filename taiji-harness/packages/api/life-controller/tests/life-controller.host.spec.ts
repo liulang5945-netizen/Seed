@@ -61,6 +61,10 @@ describe('LifeController snapshot', () => {
       status: 200,
       body: { status: 'ok', doc_count: 12, chunk_count: 340, has_embeddings: true, embed_dim: 384 },
     }
+    runtime.knowledgeFilesReply = {
+      status: 200,
+      body: { files: [{ name: 'handbook.md', size: 4096, mtime: 1_760_000_000, status: 'indexed' }] },
+    }
 
     const { snapshot } = await controller.snapshot(new AbortController().signal)
 
@@ -83,7 +87,13 @@ describe('LifeController snapshot', () => {
         numEpochs: 1,
       },
     ])
-    expect(snapshot.knowledge).toEqual({ docCount: 12, chunkCount: 340, hasEmbeddings: true, embedDim: 384 })
+    expect(snapshot.knowledge).toEqual({
+      docCount: 12,
+      chunkCount: 340,
+      hasEmbeddings: true,
+      embedDim: 384,
+      files: [{ name: 'handbook.md', sizeBytes: 4096, status: 'indexed' }],
+    })
     // The Legacy life surface answered 404 by default: that is "not mounted", not "broken".
     expect(snapshot.availability).toEqual({
       runtime: 'ok',

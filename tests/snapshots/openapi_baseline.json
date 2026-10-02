@@ -4927,6 +4927,44 @@
         "summary": "Get System Version"
       }
     },
+    "/api/train/checkpoint/{filename}": {
+      "delete": {
+        "description": "按名删除一枚检查点；活跃或已配置（下次启动加载）的检查点拒绝删除。",
+        "operationId": "delete_checkpoint_api_train_checkpoint__filename__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "filename",
+            "required": true,
+            "schema": {
+              "title": "Filename",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Delete Checkpoint"
+      }
+    },
     "/api/train/checkpoints": {
       "get": {
         "description": "列出 checkpoints/ 目录下的可用检查点（按修改时间倒序）。",

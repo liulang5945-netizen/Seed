@@ -16,12 +16,16 @@ import type {
   LifeActivateRequest,
   LifeConsolidateRequest,
   LifeControlValue,
+  LifeDeleteCheckpointRequest,
+  LifeDeleteDatasetRequest,
+  LifeDeleteKnowledgeRequest,
   LifeFollowFrame,
   LifeProgressView,
   LifeResumeCheckpointRequest,
   LifeSnapshotValue,
   LifeTrainStartRequest,
   LifeUploadDatasetRequest,
+  LifeUploadKnowledgeRequest,
 } from './types.ts'
 
 export type * from './types.ts'
@@ -247,6 +251,62 @@ export class LifeController extends TypertRemoteService {
   }
 
   /**
+   * Delete one dataset file the roster lists. The path is checked to stay a
+   * relative roster path with a trainable suffix before the runtime is asked;
+   * the runtime's data directories are the only places it may resolve.
+   * @param request - POSIX path relative to the runtime's data directory.
+   * @param signal - caller lifetime.
+   * @returns the runtime's acknowledgement.
+   */
+  @Remote
+  async deleteDataset(request: LifeDeleteDatasetRequest, signal: AbortSignal): Promise<LifeControlValue> {
+    const path = datasetPath(request.path)
+    return await this.command(() => this.client.deleteDataset({ path }, signal))
+  }
+
+  /**
+   * Delete one checkpoint; the runtime refuses the active and the configured
+   * checkpoint with its own conflict, because removing either breaks the
+   * answering model or the next start.
+   * @param request - file name inside the runtime's checkpoint directory.
+   * @param signal - caller lifetime.
+   * @returns the runtime's message naming the deleted checkpoint.
+   */
+  @Remote
+  async deleteCheckpoint(request: LifeDeleteCheckpointRequest, signal: AbortSignal): Promise<LifeControlValue> {
+    const filename = checkpointFileName(request.filename)
+    return await this.command(() => this.client.deleteCheckpoint({ filename }, signal))
+  }
+
+  /**
+   * Upload one knowledge document into the runtime's document directory; the
+   * name is reduced to its basename and checked before any bytes leave the
+   * Host, and the runtime vectorizes the file in the background.
+   * @param request - picked file name and the file's bytes as base64.
+   * @param signal - caller lifetime.
+   * @returns the runtime's message naming the uploaded document.
+   */
+  @Remote
+  async uploadKnowledge(request: LifeUploadKnowledgeRequest, signal: AbortSignal): Promise<LifeControlValue> {
+    const name = usableFileName(request.name, 'name')
+    assertUploadBytes(request.data)
+    return await this.command(() => this.client.uploadKnowledge({ name, data: request.data }, signal))
+  }
+
+  /**
+   * Delete one knowledge document the file list shows; the runtime removes it
+   * from the index as well.
+   * @param request - file name inside the runtime's document directory.
+   * @param signal - caller lifetime.
+   * @returns the runtime's acknowledgement.
+   */
+  @Remote
+  async deleteKnowledge(request: LifeDeleteKnowledgeRequest, signal: AbortSignal): Promise<LifeControlValue> {
+    const name = flatFileName(request.name, 'name')
+    return await this.command(() => this.client.deleteKnowledge({ name }, signal))
+  }
+
+  /**
    * Run one native sleep consolidation pass.
    * @param request - pass parameters; omitted fields keep the runtime's defaults.
    * @param signal - caller lifetime.
@@ -336,29 +396,108 @@ function describe(error: unknown): string {
 
 /**
  * Reduce one picked file name to the basename the runtime stores, refusing
- * names the runtime's roster could never show or the file system cannot hold.
+ * names the file system cannot hold.
  * @param raw - name exactly as the picker reported it.
+ * @param field - request field the refusal names.
  * @returns the usable basename.
  */
-function datasetFileName(raw: string): string {
+function usableFileName(raw: string, field: string): string {
   const name = raw.split(/[\\/]/u).pop() ?? ''
   if (name === '' || name === '.' || name === '..') {
-    throw new RemoteError('life/bad-request', `dataset name "${raw}" has no usable file name`, {
-      field: 'name',
+    throw new RemoteError('life/bad-request', `name "${raw}" has no usable file name`, {
+      field,
       reason: 'a file name that is not empty',
     })
   }
   if (INVALID_FILE_NAME.test(name) || /[. ]$/u.test(name)) {
-    throw new RemoteError('life/bad-request', `dataset name "${name}" is not usable on Windows`, {
-      field: 'name',
+    throw new RemoteError('life/bad-request', `name "${name}" is not usable on Windows`, {
+      field,
       reason: 'a file name without < > : " | ? * and without a trailing dot or space',
     })
   }
+  return name
+}
+
+/**
+ * Check a name a delete names: a flat file name, never a path or a drive
+ * letter. An upload may reduce a picked path to its basename, but a delete
+ * must act on exactly the file it names.
+ * @param raw - file name exactly as the runtime listed it.
+ * @param field - request field the refusal names.
+ * @returns the usable flat file name.
+ */
+function flatFileName(raw: string, field: string): string {
+  if (/[\\/:]/u.test(raw)) {
+    throw new RemoteError('life/bad-request', `name "${raw}" is not a flat file name`, {
+      field,
+      reason: 'a flat file name without path separators',
+    })
+  }
+  return usableFileName(raw, field)
+}
+
+/**
+ * Reduce one picked file name to the dataset basename the runtime stores,
+ * refusing names the runtime's roster could never show.
+ * @param raw - name exactly as the picker reported it.
+ * @returns the usable dataset basename.
+ */
+function datasetFileName(raw: string): string {
+  const name = usableFileName(raw, 'name')
   const suffix = name.slice(name.lastIndexOf('.')).toLowerCase()
   if (!NATIVE_DATASET_SUFFIXES.includes(suffix)) {
     throw new RemoteError('life/bad-request', `dataset name "${name}" has no trainable suffix`, {
       field: 'name',
       reason: `one of ${NATIVE_DATASET_SUFFIXES.join(', ')}`,
+    })
+  }
+  return name
+}
+
+/**
+ * Check one dataset path a delete names: it must stay a relative roster path
+ * with a trainable suffix, so no absolute path, drive letter, or `..` segment
+ * ever reaches the runtime's file resolution.
+ * @param raw - path exactly as the roster listed it.
+ * @returns the normalized relative path.
+ */
+function datasetPath(raw: string): string {
+  const path = raw.replace(/\\/gu, '/').replace(/^\.\//u, '')
+  const segments = path.split('/')
+  if (
+    path === ''
+    || path.startsWith('/')
+    || /^[A-Za-z]:/u.test(path)
+    || segments.some(segment => segment === '' || segment === '.' || segment === '..')
+  ) {
+    throw new RemoteError('life/bad-request', `dataset path "${raw}" is not a roster path`, {
+      field: 'path',
+      reason: 'a relative path inside the runtime data directory',
+    })
+  }
+  const suffix = path.slice(path.lastIndexOf('.')).toLowerCase()
+  if (!NATIVE_DATASET_SUFFIXES.includes(suffix)) {
+    throw new RemoteError('life/bad-request', `dataset path "${path}" has no trainable suffix`, {
+      field: 'path',
+      reason: `one of ${NATIVE_DATASET_SUFFIXES.join(', ')}`,
+    })
+  }
+  return path
+}
+
+/**
+ * Check one checkpoint name a delete names: a flat `*.pt` file name, never a
+ * path, a drive letter, or one of the dot-prefixed temporary files the roster
+ * itself hides.
+ * @param raw - file name exactly as the roster listed it.
+ * @returns the usable checkpoint file name.
+ */
+function checkpointFileName(raw: string): string {
+  const name = flatFileName(raw, 'filename')
+  if (!name.toLowerCase().endsWith('.pt') || name.startsWith('.')) {
+    throw new RemoteError('life/bad-request', `checkpoint name "${name}" is not a checkpoint file name`, {
+      field: 'filename',
+      reason: 'a *.pt file name without a leading dot',
     })
   }
   return name

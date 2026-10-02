@@ -27,6 +27,8 @@ export interface MockLifeRuntime {
   legacyReply: { status: number; body?: unknown }
   /** Reply `GET /api/rag/status` gives; 404 models a runtime without the knowledge surface. */
   knowledgeReply: { status: number; body?: unknown }
+  /** Reply `GET /api/rag/files` gives; read only while the knowledge status answered. */
+  knowledgeFilesReply: { status: number; body?: unknown }
   /** Rows `GET /api/train/checkpoints` answers with. */
   checkpoints: unknown[]
   /** Payload `GET /api/artifacts` answers with. */
@@ -112,6 +114,7 @@ export async function mockLifeRuntime(): Promise<MockLifeRuntime> {
     runtimeStatus: defaultStatus(),
     legacyReply: { status: 404 },
     knowledgeReply: { status: 404 },
+    knowledgeFilesReply: { status: 404 },
     checkpoints: [],
     artifacts: {
       status: 'ok',
@@ -169,6 +172,10 @@ async function handle(
   }
   if (request.method === 'GET' && path === '/api/rag/status') {
     await json(response, runtime.knowledgeReply.status, runtime.knowledgeReply.body)
+    return
+  }
+  if (request.method === 'GET' && path === '/api/rag/files') {
+    await json(response, runtime.knowledgeFilesReply.status, runtime.knowledgeFilesReply.body)
     return
   }
   if (request.method === 'GET' && path === '/api/train/checkpoints') {

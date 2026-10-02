@@ -13,6 +13,7 @@ import { useCallback, useEffect, useRef, useSyncExternalStore, useState, type Ch
 import type { ILife, LifeSnapshotState } from '@taiji/dsh-api-life-controller/client'
 import type {
   LifeCheckpointView,
+  LifeDatasetView,
   LifeLegacyView,
   LifeNativeView,
   LifeProgressView,
@@ -37,13 +38,27 @@ export type LifePanelProps =
   & InjectFace<LifePanelInjected>
 
 /** A control the panel is waiting on, or one awaiting its confirming click. */
-type PendingVerb = 'lifeStart' | 'lifeStop' | 'feed' | 'sleep' | 'play' | 'trainStart' | 'trainResumeCheckpoint' | 'trainPause' | 'trainResume' | 'trainStop' | 'trainReset' | 'consolidate' | 'activateCheckpoint' | 'uploadDataset'
+type PendingVerb = 'lifeStart' | 'lifeStop' | 'feed' | 'sleep' | 'play' | 'trainStart' | 'trainResumeCheckpoint' | 'trainPause' | 'trainResume' | 'trainStop' | 'trainReset' | 'consolidate' | 'activateCheckpoint' | 'uploadDataset' | 'deleteDataset' | 'deleteCheckpoint' | 'uploadKnowledge' | 'deleteKnowledge'
 
 /** The verbs a confirming second click protects. */
-const CONFIRMED: ReadonlySet<PendingVerb> = new Set(['trainStop', 'trainReset', 'activateCheckpoint'])
+const CONFIRMED: ReadonlySet<PendingVerb> = new Set(['trainStop', 'trainReset', 'activateCheckpoint', 'deleteDataset', 'deleteCheckpoint', 'deleteKnowledge'])
+
+/**
+ * The verbs whose confirmation reads as one line under the page. The delete
+ * verbs are not here: their own button carries the confirming label, so the
+ * operator sees the second click where the first one happened.
+ */
+const CONFIRM_COPY: Partial<Record<PendingVerb, LifeLocaleKey>> = {
+  trainStop: 'confirmStop',
+  trainReset: 'confirmReset',
+  activateCheckpoint: 'confirmActivate',
+}
 
 /** Suffixes the runtime's dataset roster trains on; the picker also filters by them. */
 const DATASET_ACCEPT = '.jsonl,.ndjson,.json,.txt,.text,.md,.csv'
+
+/** Document suffixes the runtime's parser reads; other names fall back to plain text. */
+const KNOWLEDGE_ACCEPT = '.txt,.md,.json,.jsonl,.log,.yaml,.yml,.py,.js,.ts,.java,.c,.cpp,.h,.hpp,.sh,.bat,.ps1,.sql,.go,.rs,.swift,.csv,.pdf,.docx,.doc,.html,.htm,.epub,.xlsx,.xls,.pptx,.rtf,.xml,.png,.jpg,.jpeg,.webp,.bmp'
 
 /** Bytes one upload may carry; the Host enforces the same budget before forwarding. */
 const UPLOAD_MAX_BYTES = 200 * 1024 * 1024
@@ -107,7 +122,7 @@ function refusalOf(error: unknown): RemoteFailure | undefined {
 function errorText(rpc: RemoteFailure, t: LifePanelProps['t']): string {
   switch (rpc.code) {
     case 'life/runtime-error':
-      return t('errRuntimeError', { status: String(rpc.details.status) })
+      return t('errRuntimeError', { status: String(rpc.details.status), detail: rpc.details.detail })
     case 'life/runtime-unreachable':
       return t('errUnreachable', { reason: rpc.details.reason })
     case 'life/unavailable':
@@ -178,37 +193,38 @@ export function LifePanel({ t, life }: LifePanelProps): ReactNode {
   }
 
   const snapshot = state.snapshot
-  const shared = { t, snapshot, pending, run, life }
+  const shared = { t, snapshot, pending, confirming, run, life }
+  const confirmKey = confirming === null ? undefined : CONFIRM_COPY[confirming]
 
   return (
     <div className={css.page}>
-      <header className={css.header}>
-        <h2 className={css.title}>{t('title')}</h2>
-        <p className={css.subtitle}>{t('subtitle')}</p>
-      </header>
+      <div className={css.content}>
+        <header className={css.header}>
+          <h2 className={css.title}>{t('title')}</h2>
+          <p className={css.subtitle}>{t('subtitle')}</p>
+        </header>
 
-      <SourceSection t={t} snapshot={snapshot} />
-      <LifeSection {...shared} />
-      <TrainingSection {...shared} />
-      <KnowledgeSection t={t} snapshot={snapshot} />
-      <ConsolidationSection {...shared} />
-      <HostSection t={t} snapshot={snapshot} />
+        <SourceSection t={t} snapshot={snapshot} />
+        <LifeSection {...shared} />
+        <TrainingSection {...shared} />
+        <KnowledgeSection {...shared} />
+        <ConsolidationSection {...shared} />
+        <HostSection t={t} snapshot={snapshot} />
 
-      {failureText !== null && <p className={css.errorLine} role="alert">{failureText}</p>}
-      {confirming !== null && (
-        <p className={css.confirmLine}>
-          {t(confirming === 'trainStop' ? 'confirmStop' : confirming === 'trainReset' ? 'confirmReset' : 'confirmActivate')}
-        </p>
-      )}
+        {failureText !== null && <p className={css.errorLine} role="alert">{failureText}</p>}
+        {confirmKey !== undefined && <p className={css.confirmLine}>{t(confirmKey)}</p>}
+      </div>
     </div>
   )
 }
 
-/** Shared props of the two control-carrying sections. */
+/** Shared props of the control-carrying sections. */
 interface SectionControlProps {
   readonly t: LifePanelProps['t']
   readonly snapshot: LifeSnapshot
   readonly pending: PendingVerb | null
+  /** The verb awaiting its confirming second click, when one is armed. */
+  readonly confirming: PendingVerb | null
   readonly run: (verb: PendingVerb, invoke: () => Promise<unknown>) => void
   readonly life: ILife
 }
@@ -228,7 +244,7 @@ function useDatasetSelection(
   specDatasets: readonly string[] | undefined,
   roster: readonly { path: string }[] | undefined,
   autoSelect: string | null,
-): { selected: ReadonlySet<string>; toggle: (path: string) => void } {
+): { selected: ReadonlySet<string>; toggle: (path: string) => void; remove: (paths: readonly string[]) => void } {
   const specKey = specDatasets?.join('\n') ?? null
   const [selected, setSelected] = useState<ReadonlySet<string>>(() => new Set())
   const [appliedKey, setAppliedKey] = useState<string | null>(null)
@@ -255,7 +271,33 @@ function useDatasetSelection(
       return next
     })
   }
-  return { selected, toggle }
+  /** Drop entries that no longer exist after a delete. */
+  const remove = (paths: readonly string[]): void => {
+    setSelected((current) => {
+      const next = new Set(current)
+      for (const path of paths) next.delete(path)
+      return next
+    })
+  }
+  return { selected, toggle, remove }
+}
+
+/**
+ * Group the roster by its directory so one long flat list becomes a handful of
+ * foldable blocks; root-level files form their own group under an empty name.
+ * @param datasets - the roster the runtime listed.
+ * @returns the groups in first-seen directory order.
+ */
+function groupDatasets(datasets: readonly LifeDatasetView[]): { dir: string; entries: LifeDatasetView[] }[] {
+  const groups = new Map<string, LifeDatasetView[]>()
+  for (const entry of datasets) {
+    const cut = entry.path.lastIndexOf('/')
+    const dir = cut === -1 ? '' : entry.path.slice(0, cut)
+    const bucket = groups.get(dir)
+    if (bucket === undefined) groups.set(dir, [entry])
+    else bucket.push(entry)
+  }
+  return [...groups].map(([dir, entries]) => ({ dir, entries }))
 }
 
 /** One labeled fact row. */
@@ -389,12 +431,14 @@ function LifeSection({ t, snapshot, pending, run, life }: SectionControlProps): 
   )
 }
 
-/** The checkpoint roster table, each row offering a resumed run and an activation. */
-function Checkpoints({ t, checkpoints, artifacts, busy, onActivate, onResume }: {
+/** The checkpoint roster table: selection, resume, and activation per row. */
+function Checkpoints({ t, checkpoints, artifacts, busy, selected, onToggleSelect, onActivate, onResume }: {
   t: LifePanelProps['t']
   checkpoints: readonly LifeCheckpointView[]
   artifacts: LifeSnapshot['artifacts']
   busy: boolean
+  selected: ReadonlySet<string>
+  onToggleSelect: (filename: string) => void
   onActivate: (filename: string) => void
   onResume: (filename: string) => void
 }): ReactNode {
@@ -403,6 +447,7 @@ function Checkpoints({ t, checkpoints, artifacts, busy, onActivate, onResume }: 
     <table className={css.table}>
       <thead>
         <tr>
+          <th scope="col">{t('colSelect')}</th>
           <th scope="col">{t('colName')}</th>
           <th scope="col">{t('colStep')}</th>
           <th scope="col">{t('colSize')}</th>
@@ -411,31 +456,47 @@ function Checkpoints({ t, checkpoints, artifacts, busy, onActivate, onResume }: 
         </tr>
       </thead>
       <tbody>
-        {checkpoints.map(cp => (
-          <tr key={cp.filename}>
-            <td>
-              {cp.filename}
-              {artifacts?.activeId === cp.filename && <Tag tone="solid">{t('artifactsActiveBadge')}</Tag>}
-              {artifacts !== undefined && artifacts.configuredId === cp.filename && artifacts.configuredId !== artifacts.activeId && (
-                <Tag tone="info">{t('artifactsConfiguredBadge')}</Tag>
-              )}
-            </td>
-            <td>{cp.step}</td>
-            <td>{formatBytes(cp.bytes)}</td>
-            <td>{cp.savedAtUtc !== '' ? formatInstant(cp.savedAtUtc) : formatInstant(cp.modifiedUtc)}</td>
-            <td>
-              <div className={css.actions}>
-                <Button disabled={busy} onClick={() => { onResume(cp.filename) }}>{t('resumeFrom')}</Button>
-                <Button
-                  disabled={busy || artifacts?.activeId === cp.filename}
-                  onClick={() => { onActivate(cp.filename) }}
-                >
-                  {t('activateRow')}
-                </Button>
-              </div>
-            </td>
-          </tr>
-        ))}
+        {checkpoints.map((cp) => {
+          // The two checkpoints the runtime refuses to delete stay unticked by
+          // construction: the answering model and the next start both live on
+          // one of them.
+          const locked = artifacts?.activeId === cp.filename || artifacts?.configuredId === cp.filename
+          return (
+            <tr key={cp.filename}>
+              <td>
+                <input
+                  type="checkbox"
+                  checked={selected.has(cp.filename)}
+                  disabled={busy || locked}
+                  aria-label={`${t('colSelect')} ${cp.filename}`}
+                  title={locked ? t('checkpointLocked') : undefined}
+                  onChange={() => { onToggleSelect(cp.filename) }}
+                />
+              </td>
+              <td>
+                {cp.filename}
+                {artifacts?.activeId === cp.filename && <Tag tone="solid">{t('artifactsActiveBadge')}</Tag>}
+                {artifacts !== undefined && artifacts.configuredId === cp.filename && artifacts.configuredId !== artifacts.activeId && (
+                  <Tag tone="info">{t('artifactsConfiguredBadge')}</Tag>
+                )}
+              </td>
+              <td>{cp.step}</td>
+              <td>{formatBytes(cp.bytes)}</td>
+              <td>{cp.savedAtUtc !== '' ? formatInstant(cp.savedAtUtc) : formatInstant(cp.modifiedUtc)}</td>
+              <td>
+                <div className={css.actions}>
+                  <Button disabled={busy} onClick={() => { onResume(cp.filename) }}>{t('resumeFrom')}</Button>
+                  <Button
+                    disabled={busy || artifacts?.activeId === cp.filename}
+                    onClick={() => { onActivate(cp.filename) }}
+                  >
+                    {t('activateRow')}
+                  </Button>
+                </div>
+              </td>
+            </tr>
+          )
+        })}
       </tbody>
     </table>
   )
@@ -468,8 +529,8 @@ function Progress({ t, progress }: { t: LifePanelProps['t']; progress: LifeProgr
   )
 }
 
-/** Section 3: training state badges, progress, controls, and the roster. */
-function TrainingSection({ t, snapshot, pending, run, life }: SectionControlProps): ReactNode {
+/** Section 3: training state badges, progress, controls, and the rosters. */
+function TrainingSection({ t, snapshot, pending, confirming, run, life }: SectionControlProps): ReactNode {
   const training = snapshot.training
   const streamKey: LifeLocaleKey = snapshot.availability.trainingStream === 'streaming'
     ? 'streamStreaming'
@@ -488,8 +549,13 @@ function TrainingSection({ t, snapshot, pending, run, life }: SectionControlProp
   const [uploadedName, setUploadedName] = useState<string | null>(null)
   const [uploadMessage, setUploadMessage] = useState<string | null>(null)
   const [uploadError, setUploadError] = useState<string | null>(null)
+  const [datasetAck, setDatasetAck] = useState<string | null>(null)
+  const [foldedGroups, setFoldedGroups] = useState<ReadonlySet<string>>(() => new Set())
+  const [checkpointsFolded, setCheckpointsFolded] = useState(false)
+  const [checkpointSelection, setCheckpointSelection] = useState<ReadonlySet<string>>(() => new Set())
+  const [checkpointAck, setCheckpointAck] = useState<string | null>(null)
   const fileInput = useRef<HTMLInputElement>(null)
-  const { selected, toggle } = useDatasetSelection(specDatasets, datasets, uploadedName)
+  const { selected, toggle, remove } = useDatasetSelection(specDatasets, datasets, uploadedName)
 
   /** Remember the picked file, refusing one the Host would only reject after the transfer. */
   const pickFile = (event: ChangeEvent<HTMLInputElement>): void => {
@@ -521,6 +587,72 @@ function TrainingSection({ t, snapshot, pending, run, life }: SectionControlProp
     })
   }
 
+  /** Fold or unfold one dataset directory block. */
+  const toggleGroup = (dir: string): void => {
+    setFoldedGroups((current) => {
+      const next = new Set(current)
+      if (next.has(dir)) next.delete(dir)
+      else next.add(dir)
+      return next
+    })
+  }
+
+  /**
+   * Delete every ticked dataset, one runtime call per file so a refusal names
+   * the file it stopped on. The rows that really went drop from the selection
+   * and the roster is read again; a partial delete keeps the rest ticked.
+   */
+  const deleteDatasets = async (): Promise<void> => {
+    const targets = [...selected]
+    let removed = 0
+    setDatasetAck(null)
+    try {
+      for (const path of targets) {
+        await life.deleteDataset({ path })
+        removed += 1
+      }
+    } finally {
+      if (removed > 0) {
+        remove(targets.slice(0, removed))
+        setDatasetAck(t('deleteDone', { count: String(removed) }))
+        await life.refresh().catch(() => undefined)
+      }
+    }
+  }
+
+  /** Tick one checkpoint row for deletion. */
+  const toggleCheckpoint = (filename: string): void => {
+    setCheckpointSelection((current) => {
+      const next = new Set(current)
+      if (next.has(filename)) next.delete(filename)
+      else next.add(filename)
+      return next
+    })
+  }
+
+  /** Delete every ticked checkpoint, one runtime call per name, pruning what went. */
+  const deleteCheckpoints = async (): Promise<void> => {
+    const targets = [...checkpointSelection]
+    let removed = 0
+    setCheckpointAck(null)
+    try {
+      for (const filename of targets) {
+        await life.deleteCheckpoint({ filename })
+        removed += 1
+      }
+    } finally {
+      if (removed > 0) {
+        setCheckpointSelection((current) => {
+          const next = new Set(current)
+          for (const filename of targets.slice(0, removed)) next.delete(filename)
+          return next
+        })
+        setCheckpointAck(t('deleteDone', { count: String(removed) }))
+        await life.refresh().catch(() => undefined)
+      }
+    }
+  }
+
   return (
     <section className={css.section} aria-label={t('sectionTraining')}>
       <h3 className={css.sectionTitle}>{t('sectionTraining')}</h3>
@@ -543,44 +675,67 @@ function TrainingSection({ t, snapshot, pending, run, life }: SectionControlProp
         </p>
       ))}
       <h4 className={css.organTitle}>{t('datasetsTitle')}</h4>
-      <div className={css.actions} role="group" aria-label={t('uploadTitle')}>
-        <input
-          ref={fileInput}
-          className={css.fileInput}
-          type="file"
-          accept={DATASET_ACCEPT}
-          onChange={pickFile}
-        />
-        <Button disabled={busy || active} onClick={() => { fileInput.current?.click() }}>{t('uploadPick')}</Button>
-        {picked !== null && <Button disabled={busy || active} onClick={uploadFile}>{t('uploadSend')}</Button>}
+      <div className={css.uploadBlock}>
+        <div className={css.actions} role="group" aria-label={t('uploadTitle')}>
+          <input
+            ref={fileInput}
+            className={css.fileInput}
+            type="file"
+            accept={DATASET_ACCEPT}
+            onChange={pickFile}
+          />
+          <Button disabled={busy || active} onClick={() => { fileInput.current?.click() }}>{t('uploadPick')}</Button>
+          {picked !== null && <Button disabled={busy || active} onClick={uploadFile}>{t('uploadSend')}</Button>}
+          {picked !== null && (
+            <Button disabled={busy || active} onClick={() => { setPicked(null) }}>{t('uploadCancel')}</Button>
+          )}
+        </div>
+        <p className={css.muted}>{t('uploadHint', { limit: `${String(UPLOAD_MAX_BYTES / (1024 * 1024))} MB` })}</p>
       </div>
       {picked !== null && (
         <p className={css.muted}>{t('uploadReady', { name: picked.name, size: formatBytes(picked.size) })}</p>
       )}
       {uploadError !== null && <p className={css.errorLine} role="alert">{uploadError}</p>}
       {uploadMessage !== null && <p className={css.successLine}>{t('actionDone', { message: uploadMessage })}</p>}
+      {datasetAck !== null && <p className={css.successLine}>{datasetAck}</p>}
       {datasets === undefined
         ? <p className={css.muted}>{t('datasetsUnavailable')}</p>
         : datasets.length === 0
           ? <p className={css.muted}>{t('datasetsEmpty')}</p>
           : (
             <>
-              <ul className={css.datasetList}>
-                {datasets.map(dataset => (
-                  <li key={dataset.path} className={css.datasetRow}>
-                    <label>
-                      <input
-                        type="checkbox"
-                        checked={selected.has(dataset.path)}
-                        disabled={busy || active}
-                        onChange={() => { toggle(dataset.path) }}
-                      />
-                      <span className={css.datasetPath}>{dataset.path}</span>
-                    </label>
-                    <span className={css.datasetSize}>{formatBytes(dataset.sizeBytes)}</span>
-                  </li>
-                ))}
-              </ul>
+              {groupDatasets(datasets).map(group => (
+                <div key={group.dir} className={css.datasetGroup}>
+                  <button
+                    type="button"
+                    className={css.groupToggle}
+                    aria-expanded={!foldedGroups.has(group.dir)}
+                    onClick={() => { toggleGroup(group.dir) }}
+                  >
+                    <span className={css.groupChevron}>{foldedGroups.has(group.dir) ? '▸' : '▾'}</span>
+                    <span className={css.datasetPath}>{group.dir === '' ? t('datasetRootGroup') : group.dir}</span>
+                    <span className={css.datasetSize}>{group.entries.length}</span>
+                  </button>
+                  {!foldedGroups.has(group.dir) && (
+                    <ul className={css.datasetList}>
+                      {group.entries.map(dataset => (
+                        <li key={dataset.path} className={css.datasetRow}>
+                          <label>
+                            <input
+                              type="checkbox"
+                              checked={selected.has(dataset.path)}
+                              disabled={busy || active}
+                              onChange={() => { toggle(dataset.path) }}
+                            />
+                            <span className={css.datasetPath}>{dataset.path}</span>
+                          </label>
+                          <span className={css.datasetSize}>{formatBytes(dataset.sizeBytes)}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              ))}
               <p className={css.muted}>
                 {t('datasetsSelected', { count: String(selected.size) })}
                 {specDatasets === undefined ? '' : ` · ${t('specNames', { count: String(specDatasets.length) })}`}
@@ -591,6 +746,16 @@ function TrainingSection({ t, snapshot, pending, run, life }: SectionControlProp
               {selected.size === 0 && <p className={css.muted}>{t('datasetsDefaultHint')}</p>}
             </>
           )}
+      <div className={css.actions} role="group" aria-label={t('datasetsTitle')}>
+        <Button
+          disabled={busy || active || selected.size === 0}
+          onClick={() => { run('deleteDataset', deleteDatasets) }}
+        >
+          {confirming === 'deleteDataset'
+            ? t('confirmDeleteDatasets', { count: String(selected.size) })
+            : t('deletePickedDatasets')}
+        </Button>
+      </div>
       <div className={css.actions} role="group" aria-label={t('sectionTraining')}>
         <Button
           disabled={busy || active}
@@ -603,61 +768,210 @@ function TrainingSection({ t, snapshot, pending, run, life }: SectionControlProp
         <Button disabled={busy || !active} onClick={() =>{  run('trainStop', () => life.trainStop()) }}>{t('trainStop')}</Button>
         <Button disabled={busy || !active} onClick={() =>{  run('trainReset', () => life.trainReset()) }}>{t('trainReset')}</Button>
       </div>
-      <h4 className={css.organTitle}>{t('checkpointsTitle')}</h4>
-      {snapshot.artifacts === undefined
-        ? <p className={css.muted}>{t('artifactsUnavailable')}</p>
-        : (
-          <div className={css.facts}>
-            <Fact label={t('activeCheckpointLabel')}>
-              {snapshot.artifacts.activeId === '' ? t('builtInModel') : snapshot.artifacts.activeId}
-            </Fact>
-            {snapshot.artifacts.configuredId !== snapshot.artifacts.activeId && (
-              <Fact label={t('configuredCheckpointLabel')}>
-                {snapshot.artifacts.configuredId === '' ? t('builtInModel') : snapshot.artifacts.configuredId}
-              </Fact>
+      <div className={css.subHeader}>
+        <h4 className={css.organTitle}>{t('checkpointsTitle')}</h4>
+        <Button onClick={() => { setCheckpointsFolded(current => !current) }}>
+          {checkpointsFolded ? t('checkpointsUnfold', { count: String(training.checkpoints.length) }) : t('checkpointsFold')}
+        </Button>
+      </div>
+      {!checkpointsFolded && (
+        <>
+          {snapshot.artifacts === undefined
+            ? <p className={css.muted}>{t('artifactsUnavailable')}</p>
+            : (
+              <div className={css.facts}>
+                <Fact label={t('activeCheckpointLabel')}>
+                  {snapshot.artifacts.activeId === '' ? t('builtInModel') : snapshot.artifacts.activeId}
+                </Fact>
+                {snapshot.artifacts.configuredId !== snapshot.artifacts.activeId && (
+                  <Fact label={t('configuredCheckpointLabel')}>
+                    {snapshot.artifacts.configuredId === '' ? t('builtInModel') : snapshot.artifacts.configuredId}
+                  </Fact>
+                )}
+                <div className={css.actions}>
+                  <Button
+                    disabled={busy || snapshot.artifacts.activeId === ''}
+                    onClick={() => { run('activateCheckpoint', () => life.activateCheckpoint({ checkpointId: '' })) }}
+                  >
+                    {t('activateBuiltin')}
+                  </Button>
+                </div>
+              </div>
             )}
-            <div className={css.actions}>
+          <Checkpoints
+            t={t}
+            checkpoints={training.checkpoints}
+            artifacts={snapshot.artifacts}
+            busy={busy}
+            selected={checkpointSelection}
+            onToggleSelect={toggleCheckpoint}
+            onActivate={(filename) => { run('activateCheckpoint', () => life.activateCheckpoint({ checkpointId: filename })) }}
+            onResume={(filename) => {
+              run('trainResumeCheckpoint', () => life.trainResumeCheckpoint({
+                checkpoint: filename,
+                ...(selected.size > 0 ? { datasets: [...selected] } : {}),
+              }))
+            }}
+          />
+          {training.checkpoints.length > 0 && (
+            <div className={css.actions} role="group" aria-label={t('checkpointsTitle')}>
               <Button
-                disabled={busy || snapshot.artifacts.activeId === ''}
-                onClick={() => { run('activateCheckpoint', () => life.activateCheckpoint({ checkpointId: '' })) }}
+                disabled={busy || checkpointSelection.size === 0}
+                onClick={() => { run('deleteCheckpoint', deleteCheckpoints) }}
               >
-                {t('activateBuiltin')}
+                {confirming === 'deleteCheckpoint'
+                  ? t('confirmDeleteCheckpoints', { count: String(checkpointSelection.size) })
+                  : t('deletePickedCheckpoints')}
               </Button>
             </div>
-          </div>
-        )}
-      <Checkpoints
-        t={t}
-        checkpoints={training.checkpoints}
-        artifacts={snapshot.artifacts}
-        busy={busy}
-        onActivate={(filename) => { run('activateCheckpoint', () => life.activateCheckpoint({ checkpointId: filename })) }}
-        onResume={(filename) => {
-          run('trainResumeCheckpoint', () => life.trainResumeCheckpoint({
-            checkpoint: filename,
-            ...(selected.size > 0 ? { datasets: [...selected] } : {}),
-          }))
-        }}
-      />
+          )}
+          {checkpointAck !== null && <p className={css.successLine}>{checkpointAck}</p>}
+        </>
+      )}
     </section>
   )
 }
 
-/** Section 4: the knowledge base size, or its unavailability. */
-function KnowledgeSection({ t, snapshot }: { t: LifePanelProps['t']; snapshot: LifeSnapshot }): ReactNode {
+/** Section 4: the knowledge base size, its mounted files, and their controls. */
+function KnowledgeSection({ t, snapshot, pending, confirming, run, life }: SectionControlProps): ReactNode {
   const knowledge = snapshot.availability.knowledge === 'ok' ? snapshot.knowledge : undefined
+  const busy = pending !== null
+  const [picked, setPicked] = useState<File | null>(null)
+  const [note, setNote] = useState<string | null>(null)
+  const [pickError, setPickError] = useState<string | null>(null)
+  const [ack, setAck] = useState<string | null>(null)
+  const [selected, setSelected] = useState<ReadonlySet<string>>(() => new Set())
+  const fileInput = useRef<HTMLInputElement>(null)
+
+  /** Remember the picked document, refusing one past the budget before any transfer. */
+  const pickFile = (event: ChangeEvent<HTMLInputElement>): void => {
+    const file = event.target.files?.[0] ?? null
+    event.target.value = ''
+    setNote(null)
+    setPickError(null)
+    if (file === null) return
+    if (file.size > UPLOAD_MAX_BYTES) {
+      setPicked(null)
+      setPickError(t('uploadTooLarge', { limit: `${String(UPLOAD_MAX_BYTES / (1024 * 1024))} MB` }))
+      return
+    }
+    setPicked(file)
+  }
+
+  /** Send the picked document, then read the file list again so its row appears. */
+  const uploadFile = (): void => {
+    const file = picked
+    if (file === null) return
+    setPickError(null)
+    run('uploadKnowledge', async () => {
+      const value = await life.uploadKnowledge({ name: file.name, data: await readBase64(file) })
+      setNote(value.message)
+      setPicked(null)
+      await life.refresh().catch(() => undefined)
+    })
+  }
+
+  /** Tick one mounted file for deletion. */
+  const toggleFile = (name: string): void => {
+    setSelected((current) => {
+      const next = new Set(current)
+      if (next.has(name)) next.delete(name)
+      else next.add(name)
+      return next
+    })
+  }
+
+  /** Delete every ticked knowledge file, one runtime call per name. */
+  const deleteFiles = async (): Promise<void> => {
+    const targets = [...selected]
+    let removed = 0
+    setAck(null)
+    try {
+      for (const name of targets) {
+        await life.deleteKnowledge({ name })
+        removed += 1
+      }
+    } finally {
+      if (removed > 0) {
+        setSelected((current) => {
+          const next = new Set(current)
+          for (const name of targets.slice(0, removed)) next.delete(name)
+          return next
+        })
+        setAck(t('deleteDone', { count: String(removed) }))
+        await life.refresh().catch(() => undefined)
+      }
+    }
+  }
+
   return (
     <section className={css.section} aria-label={t('sectionKnowledge')}>
       <h3 className={css.sectionTitle}>{t('sectionKnowledge')}</h3>
       {knowledge === undefined
         ? <p className={css.muted}>{t('knowledgeUnavailable')}</p>
         : (
-          <div className={css.facts}>
-            <Fact label={t('docsLabel')}>{knowledge.docCount}</Fact>
-            <Fact label={t('chunksLabel')}>{knowledge.chunkCount}</Fact>
-            <Fact label={t('embedDimLabel')}>{knowledge.embedDim > 0 ? knowledge.embedDim : t('embeddingsNo')}</Fact>
-            <Fact label={t('embeddingsYes')}><StateDot state={knowledge.hasEmbeddings ? 'done' : 'idle'} /></Fact>
-          </div>
+          <>
+            <div className={css.facts}>
+              <Fact label={t('docsLabel')}>{knowledge.docCount}</Fact>
+              <Fact label={t('chunksLabel')}>{knowledge.chunkCount}</Fact>
+              <Fact label={t('embedDimLabel')}>{knowledge.embedDim > 0 ? knowledge.embedDim : t('embeddingsNo')}</Fact>
+              <Fact label={t('embeddingsYes')}><StateDot state={knowledge.hasEmbeddings ? 'done' : 'idle'} /></Fact>
+            </div>
+            <div className={css.uploadBlock}>
+              <div className={css.actions} role="group" aria-label={t('knowledgeUpload')}>
+                <input
+                  ref={fileInput}
+                  className={css.fileInput}
+                  type="file"
+                  accept={KNOWLEDGE_ACCEPT}
+                  onChange={pickFile}
+                />
+                <Button disabled={busy} onClick={() => { fileInput.current?.click() }}>{t('knowledgeUpload')}</Button>
+                {picked !== null && <Button disabled={busy} onClick={uploadFile}>{t('uploadSend')}</Button>}
+                {picked !== null && (
+                  <Button disabled={busy} onClick={() => { setPicked(null) }}>{t('uploadCancel')}</Button>
+                )}
+              </div>
+              <p className={css.muted}>{t('knowledgeUploadHint', { limit: `${String(UPLOAD_MAX_BYTES / (1024 * 1024))} MB` })}</p>
+            </div>
+            {picked !== null && (
+              <p className={css.muted}>{t('uploadReady', { name: picked.name, size: formatBytes(picked.size) })}</p>
+            )}
+            {pickError !== null && <p className={css.errorLine} role="alert">{pickError}</p>}
+            {note !== null && <p className={css.successLine}>{t('actionDone', { message: note })}</p>}
+            {ack !== null && <p className={css.successLine}>{ack}</p>}
+            <h4 className={css.organTitle}>{t('knowledgeFilesTitle')}</h4>
+            {knowledge.files === undefined
+              ? <p className={css.muted}>{t('knowledgeFilesUnavailable')}</p>
+              : knowledge.files.length === 0
+                ? <p className={css.muted}>{t('knowledgeEmpty')}</p>
+                : (
+                  <ul className={css.datasetList}>
+                    {knowledge.files.map(file => (
+                      <li key={file.name} className={css.datasetRow}>
+                        <label>
+                          <input
+                            type="checkbox"
+                            checked={selected.has(file.name)}
+                            disabled={busy}
+                            onChange={() => { toggleFile(file.name) }}
+                          />
+                          <span className={css.datasetPath}>{file.name}</span>
+                        </label>
+                        {file.status !== 'indexed' && <Tag tone="warning">{t('knowledgePending')}</Tag>}
+                        {file.sizeBytes !== undefined && <span className={css.datasetSize}>{formatBytes(file.sizeBytes)}</span>}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+            <div className={css.actions} role="group" aria-label={t('knowledgeFilesTitle')}>
+              <Button disabled={busy || selected.size === 0} onClick={() => { run('deleteKnowledge', deleteFiles) }}>
+                {confirming === 'deleteKnowledge'
+                  ? t('confirmDeleteKnowledge', { count: String(selected.size) })
+                  : t('deletePickedKnowledge')}
+              </Button>
+            </div>
+          </>
         )}
     </section>
   )

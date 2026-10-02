@@ -202,6 +202,16 @@ export interface LifeTrainingView {
   readonly warnings?: readonly string[]
 }
 
+/** One knowledge-base file as `GET /api/rag/files` lists it. */
+export interface LifeKnowledgeFileView {
+  /** File name inside the runtime's document directory. */
+  readonly name: string
+  /** File size in bytes, absent when the runtime could not stat the file. */
+  readonly sizeBytes?: number
+  /** `indexed` once the index holds the file, `pending` while only the file is on disk. */
+  readonly status: string
+}
+
 /** Knowledge base size, present only when the gated surface answered. */
 export interface LifeKnowledgeView {
   /** Indexed documents. */
@@ -212,6 +222,8 @@ export interface LifeKnowledgeView {
   readonly hasEmbeddings: boolean
   /** Embedding dimension, zero when the runtime reports none. */
   readonly embedDim: number
+  /** Mounted files, absent when the file list read did not answer. */
+  readonly files?: readonly LifeKnowledgeFileView[]
 }
 
 /** Memory journal counts, as the consolidation status reports them. */
@@ -386,6 +398,35 @@ export interface LifeUploadDatasetRequest {
   readonly name: string
   /** The file's bytes as base64. */
   readonly data: string
+}
+
+/** Request to delete one dataset file from the runtime's data directory. */
+export interface LifeDeleteDatasetRequest {
+  /** POSIX path relative to the runtime's data directory, as the roster lists it. */
+  readonly path: string
+}
+
+/** Request to delete one checkpoint from the runtime's checkpoint directory. */
+export interface LifeDeleteCheckpointRequest {
+  /** File name inside the runtime's checkpoint directory, as the roster lists it. */
+  readonly filename: string
+}
+
+/**
+ * Request to upload one knowledge document into the runtime's document
+ * directory. The bytes travel as canonical base64 like the dataset upload.
+ */
+export interface LifeUploadKnowledgeRequest {
+  /** File name the operator picked; the Host keeps only its basename. */
+  readonly name: string
+  /** The file's bytes as base64. */
+  readonly data: string
+}
+
+/** Request to delete one knowledge document. */
+export interface LifeDeleteKnowledgeRequest {
+  /** File name inside the runtime's document directory, as the file list shows it. */
+  readonly name: string
 }
 
 /** Request to force one Legacy life activity. */

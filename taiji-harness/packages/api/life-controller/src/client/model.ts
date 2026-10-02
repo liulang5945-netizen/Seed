@@ -7,10 +7,14 @@ import type {
   LifeActivateRequest,
   LifeConsolidateRequest,
   LifeControlValue,
+  LifeDeleteCheckpointRequest,
+  LifeDeleteDatasetRequest,
+  LifeDeleteKnowledgeRequest,
   LifeResumeCheckpointRequest,
   LifeSnapshot,
   LifeTrainStartRequest,
   LifeUploadDatasetRequest,
+  LifeUploadKnowledgeRequest,
 } from '../types.ts'
 
 /** Complete generated `ctx.remote.life` namespace. */
@@ -158,6 +162,46 @@ export class ClientLifeModel implements LifeStreamSink {
    */
   uploadDataset(request: LifeUploadDatasetRequest, signal?: AbortSignal): Promise<RemoteResult<LifeControlValue>> {
     return this.remote.uploadDataset(request, signal)
+  }
+
+  /**
+   * Delete one dataset file from the runtime's data directory.
+   * @param request - POSIX path relative to the data directory.
+   * @param signal - caller lifetime.
+   * @returns the runtime's acknowledgement or the Host failure.
+   */
+  deleteDataset(request: LifeDeleteDatasetRequest, signal?: AbortSignal): Promise<RemoteResult<LifeControlValue>> {
+    return this.remote.deleteDataset(request, signal)
+  }
+
+  /**
+   * Delete one checkpoint; the runtime refuses the active and configured ones.
+   * @param request - file name inside the checkpoint directory.
+   * @param signal - caller lifetime.
+   * @returns the runtime's message or the Host failure.
+   */
+  deleteCheckpoint(request: LifeDeleteCheckpointRequest, signal?: AbortSignal): Promise<RemoteResult<LifeControlValue>> {
+    return this.remote.deleteCheckpoint(request, signal)
+  }
+
+  /**
+   * Upload one knowledge document into the runtime's document directory.
+   * @param request - file name and the file's bytes as base64.
+   * @param signal - caller lifetime.
+   * @returns the runtime's message or the Host failure.
+   */
+  uploadKnowledge(request: LifeUploadKnowledgeRequest, signal?: AbortSignal): Promise<RemoteResult<LifeControlValue>> {
+    return this.remote.uploadKnowledge(request, signal)
+  }
+
+  /**
+   * Delete one knowledge document.
+   * @param request - file name inside the document directory.
+   * @param signal - caller lifetime.
+   * @returns the runtime's acknowledgement or the Host failure.
+   */
+  deleteKnowledge(request: LifeDeleteKnowledgeRequest, signal?: AbortSignal): Promise<RemoteResult<LifeControlValue>> {
+    return this.remote.deleteKnowledge(request, signal)
   }
 
   /**

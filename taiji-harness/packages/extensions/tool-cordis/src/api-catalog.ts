@@ -1391,6 +1391,36 @@ export const SERVICE_API: readonly ServiceApiEntry[] = [
         returns: 'the runtime\'s message.',
       },
       {
+        signature: '@Remote async uploadDataset(request: LifeUploadDatasetRequest, signal: AbortSignal): Promise<LifeControlValue>',
+        description: 'Upload one dataset file into the runtime\'s data directory. The name is reduced to its basename and checked against the runtime\'s trainable suffixes before any bytes leave the Host; the runtime stays the final authority on what it stores.',
+        parameters: [{ name: 'request', description: 'picked file name and the file\'s bytes as base64.' }, { name: 'signal', description: 'caller lifetime.' }],
+        returns: 'the runtime\'s message naming the uploaded dataset.',
+      },
+      {
+        signature: '@Remote async deleteDataset(request: LifeDeleteDatasetRequest, signal: AbortSignal): Promise<LifeControlValue>',
+        description: 'Delete one dataset file the roster lists. The path is checked to stay a relative roster path with a trainable suffix before the runtime is asked; the runtime\'s data directories are the only places it may resolve.',
+        parameters: [{ name: 'request', description: 'POSIX path relative to the runtime\'s data directory.' }, { name: 'signal', description: 'caller lifetime.' }],
+        returns: 'the runtime\'s acknowledgement.',
+      },
+      {
+        signature: '@Remote async deleteCheckpoint(request: LifeDeleteCheckpointRequest, signal: AbortSignal): Promise<LifeControlValue>',
+        description: 'Delete one checkpoint; the runtime refuses the active and the configured checkpoint with its own conflict, because removing either breaks the answering model or the next start.',
+        parameters: [{ name: 'request', description: 'file name inside the runtime\'s checkpoint directory.' }, { name: 'signal', description: 'caller lifetime.' }],
+        returns: 'the runtime\'s message naming the deleted checkpoint.',
+      },
+      {
+        signature: '@Remote async uploadKnowledge(request: LifeUploadKnowledgeRequest, signal: AbortSignal): Promise<LifeControlValue>',
+        description: 'Upload one knowledge document into the runtime\'s document directory; the name is reduced to its basename and checked before any bytes leave the Host, and the runtime vectorizes the file in the background.',
+        parameters: [{ name: 'request', description: 'picked file name and the file\'s bytes as base64.' }, { name: 'signal', description: 'caller lifetime.' }],
+        returns: 'the runtime\'s message naming the uploaded document.',
+      },
+      {
+        signature: '@Remote async deleteKnowledge(request: LifeDeleteKnowledgeRequest, signal: AbortSignal): Promise<LifeControlValue>',
+        description: 'Delete one knowledge document the file list shows; the runtime removes it from the index as well.',
+        parameters: [{ name: 'request', description: 'file name inside the runtime\'s document directory.' }, { name: 'signal', description: 'caller lifetime.' }],
+        returns: 'the runtime\'s acknowledgement.',
+      },
+      {
         signature: '@Remote async consolidate(request: LifeConsolidateRequest, signal: AbortSignal): Promise<LifeControlValue>',
         description: 'Run one native sleep consolidation pass.',
         parameters: [{ name: 'request', description: 'pass parameters; omitted fields keep the runtime\'s defaults.' }, { name: 'signal', description: 'caller lifetime.' }],
@@ -5435,6 +5465,18 @@ export const TYPE_API: readonly TypeApiEntry[] = [
     declaration: 'export interface LifeDatasetView {\n    readonly path: string;\n    readonly sizeBytes: number;\n}',
   },
   {
+    name: 'LifeDeleteCheckpointRequest',
+    declaration: 'export interface LifeDeleteCheckpointRequest {\n    readonly filename: string;\n}',
+  },
+  {
+    name: 'LifeDeleteDatasetRequest',
+    declaration: 'export interface LifeDeleteDatasetRequest {\n    readonly path: string;\n}',
+  },
+  {
+    name: 'LifeDeleteKnowledgeRequest',
+    declaration: 'export interface LifeDeleteKnowledgeRequest {\n    readonly name: string;\n}',
+  },
+  {
     name: 'LifeFollowFrame',
     declaration: 'export type LifeFollowFrame = {\n    readonly type: \'baseline\';\n    readonly value: LifeSnapshot;\n} | {\n    readonly type: \'snapshot\';\n    readonly value: LifeSnapshot;\n};',
   },
@@ -5447,12 +5489,16 @@ export const TYPE_API: readonly TypeApiEntry[] = [
     declaration: 'export interface LifeJournalView {\n    readonly entries: number;\n    readonly byKind: Readonly<Record<string, number>>;\n    readonly sessions: number;\n    readonly lastRecordedAt: number;\n}',
   },
   {
+    name: 'LifeKnowledgeFileView',
+    declaration: 'export interface LifeKnowledgeFileView {\n    readonly name: string;\n    readonly sizeBytes?: number;\n    readonly status: string;\n}',
+  },
+  {
     name: 'LifeKnowledgeState',
     declaration: 'export type LifeKnowledgeState = \'ok\' | \'disabled\' | \'down\';',
   },
   {
     name: 'LifeKnowledgeView',
-    declaration: 'export interface LifeKnowledgeView {\n    readonly docCount: number;\n    readonly chunkCount: number;\n    readonly hasEmbeddings: boolean;\n    readonly embedDim: number;\n}',
+    declaration: 'export interface LifeKnowledgeView {\n    readonly docCount: number;\n    readonly chunkCount: number;\n    readonly hasEmbeddings: boolean;\n    readonly embedDim: number;\n    readonly files?: readonly LifeKnowledgeFileView[];\n}',
   },
   {
     name: 'LifeLegacyState',
@@ -5517,6 +5563,14 @@ export const TYPE_API: readonly TypeApiEntry[] = [
   {
     name: 'LifeTrainStartRequest',
     declaration: 'export interface LifeTrainStartRequest {\n    readonly datasets?: readonly string[];\n    readonly parameterBudget?: number;\n    readonly seed?: number;\n    readonly maxSymbols?: number;\n}',
+  },
+  {
+    name: 'LifeUploadDatasetRequest',
+    declaration: 'export interface LifeUploadDatasetRequest {\n    readonly name: string;\n    readonly data: string;\n}',
+  },
+  {
+    name: 'LifeUploadKnowledgeRequest',
+    declaration: 'export interface LifeUploadKnowledgeRequest {\n    readonly name: string;\n    readonly data: string;\n}',
   },
   {
     name: 'LifeWorkbenchView',

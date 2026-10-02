@@ -7,10 +7,14 @@ import type {
   LifeActivateRequest,
   LifeConsolidateRequest,
   LifeControlValue,
+  LifeDeleteCheckpointRequest,
+  LifeDeleteDatasetRequest,
+  LifeDeleteKnowledgeRequest,
   LifeResumeCheckpointRequest,
   LifeSnapshot,
   LifeTrainStartRequest,
   LifeUploadDatasetRequest,
+  LifeUploadKnowledgeRequest,
 } from '../types.ts'
 import type { ClientLifeModel, LifeSnapshotState } from './model.ts'
 
@@ -88,6 +92,39 @@ export interface ILife {
    * @returns the runtime's message naming the uploaded dataset.
    */
   uploadDataset(request: LifeUploadDatasetRequest, signal?: AbortSignal): Promise<LifeControlValue>
+  /**
+   * Delete one dataset file from the runtime's data directory. The Host checks
+   * the path to stay a relative roster path before the runtime is asked.
+   * @param request - POSIX path relative to the data directory.
+   * @param signal - caller lifetime.
+   * @returns the runtime's acknowledgement.
+   */
+  deleteDataset(request: LifeDeleteDatasetRequest, signal?: AbortSignal): Promise<LifeControlValue>
+  /**
+   * Delete one checkpoint; the runtime refuses the active and the configured
+   * checkpoint, because removing either breaks the answering model or the
+   * next start.
+   * @param request - file name inside the checkpoint directory.
+   * @param signal - caller lifetime.
+   * @returns the runtime's message naming the deleted checkpoint.
+   */
+  deleteCheckpoint(request: LifeDeleteCheckpointRequest, signal?: AbortSignal): Promise<LifeControlValue>
+  /**
+   * Upload one knowledge document into the runtime's document directory; the
+   * Host reduces the name to its basename and the runtime vectorizes the
+   * document in the background.
+   * @param request - file name and the file's bytes as base64.
+   * @param signal - caller lifetime.
+   * @returns the runtime's message naming the uploaded document.
+   */
+  uploadKnowledge(request: LifeUploadKnowledgeRequest, signal?: AbortSignal): Promise<LifeControlValue>
+  /**
+   * Delete one knowledge document; the runtime removes it from the index too.
+   * @param request - file name inside the document directory.
+   * @param signal - caller lifetime.
+   * @returns the runtime's acknowledgement.
+   */
+  deleteKnowledge(request: LifeDeleteKnowledgeRequest, signal?: AbortSignal): Promise<LifeControlValue>
   /**
    * Run one native sleep consolidation pass.
    * @param request - pass parameters; omitted fields keep the runtime's defaults.
@@ -174,6 +211,22 @@ export class LifeClient extends Service implements ILife {
 
   async uploadDataset(request: LifeUploadDatasetRequest, signal?: AbortSignal): Promise<LifeControlValue> {
     return await this.unwrap(this.model.uploadDataset(request, signal))
+  }
+
+  async deleteDataset(request: LifeDeleteDatasetRequest, signal?: AbortSignal): Promise<LifeControlValue> {
+    return await this.unwrap(this.model.deleteDataset(request, signal))
+  }
+
+  async deleteCheckpoint(request: LifeDeleteCheckpointRequest, signal?: AbortSignal): Promise<LifeControlValue> {
+    return await this.unwrap(this.model.deleteCheckpoint(request, signal))
+  }
+
+  async uploadKnowledge(request: LifeUploadKnowledgeRequest, signal?: AbortSignal): Promise<LifeControlValue> {
+    return await this.unwrap(this.model.uploadKnowledge(request, signal))
+  }
+
+  async deleteKnowledge(request: LifeDeleteKnowledgeRequest, signal?: AbortSignal): Promise<LifeControlValue> {
+    return await this.unwrap(this.model.deleteKnowledge(request, signal))
   }
 
   async consolidate(request: LifeConsolidateRequest = {}, signal?: AbortSignal): Promise<LifeControlValue> {

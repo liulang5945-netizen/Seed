@@ -17,7 +17,11 @@ import type {
   LifeConsolidationView,
   LifeControlValue,
   LifeDatasetView,
+  LifeDeleteCheckpointRequest,
+  LifeDeleteDatasetRequest,
+  LifeDeleteKnowledgeRequest,
   LifeHealthView,
+  LifeKnowledgeFileView,
   LifeKnowledgeView,
   LifeLegacyView,
   LifeLifeView,
@@ -32,6 +36,7 @@ import type {
   LifeTrainingView,
   LifeTrainStartRequest,
   LifeUploadDatasetRequest,
+  LifeUploadKnowledgeRequest,
   LifeWorkbenchView,
 } from './types.ts'
 
@@ -41,12 +46,17 @@ const CHECKPOINTS_PATH = '/api/train/checkpoints'
 const TRAIN_FILES_PATH = '/api/train/files'
 const LEGACY_LIFE_PATH = '/api/life/status'
 const KNOWLEDGE_PATH = '/api/rag/status'
+const KNOWLEDGE_FILES_PATH = '/api/rag/files'
 const CONSOLIDATION_PATH = '/api/consolidation/status'
 const ARTIFACTS_PATH = '/api/artifacts'
 const RUNTIME_ACTIVATE_PATH = '/api/runtime/activate'
 const TRAIN_NATIVE_PATH = '/api/train/native'
 const RESUME_CHECKPOINT_PATH = '/api/train/resume_checkpoint'
 const UPLOAD_DATASET_PATH = '/api/train/upload_dataset'
+const DATASET_FILE_PATH = '/api/train/file'
+const CHECKPOINT_FILE_PATH = '/api/train/checkpoint'
+const UPLOAD_KNOWLEDGE_PATH = '/api/rag/upload'
+const KNOWLEDGE_FILE_PATH = '/api/rag/file'
 const LEGACY_LIFE_START_PATH = '/api/taiji/life/start'
 const LEGACY_LIFE_STOP_PATH = '/api/taiji/life/stop'
 const LEGACY_LIFE_ACTION_PATH = '/api/taiji/life/action'
@@ -137,7 +147,13 @@ export class LifeRuntimeClient {
     // duplicate them or let two sources disagree inside one snapshot.
     const legacy = await this.readGated(LEGACY_LIFE_PATH, signal, 'legacy', unavailable)
     const knowledge = await this.readGated(KNOWLEDGE_PATH, signal, 'knowledge', unavailable)
-    const knowledgeReading = knowledge.state === 'ok' ? knowledgeView(knowledge.body) : undefined
+    // The mounted document list rides the knowledge surface: it is read only
+    // while that surface answered, so a disabled knowledge base stays one
+    // `disabled` fact instead of a second missing-source line.
+    const knowledgeFiles = knowledge.state === 'ok'
+      ? await this.readKnowledgeFiles(signal, unavailable)
+      : undefined
+    const knowledgeReading = knowledge.state === 'ok' ? knowledgeView(knowledge.body, knowledgeFiles) : undefined
     const checkpoints = training === undefined || runtime === 'down'
       ? undefined
       : await this.readCheckpoints(signal, unavailable)
@@ -334,6 +350,75 @@ export class LifeRuntimeClient {
   }
 
   /**
+   * Delete one dataset file from the runtime's data directory.
+   * @param request - POSIX path relative to the data directory, as the roster lists it.
+   * @param signal - caller lifetime.
+   * @returns the runtime's acknowledgement.
+   */
+  async deleteDataset(request: LifeDeleteDatasetRequest, signal: AbortSignal): Promise<LifeControlValue> {
+    return await this.deleteAck(`${DATASET_FILE_PATH}/${encodeRoutePath(request.path)}`, signal)
+  }
+
+  /**
+   * Delete one checkpoint from the runtime's checkpoint directory. The runtime
+   * refuses the active and the configured checkpoint with its own conflict.
+   * @param request - file name inside the checkpoint directory.
+   * @param signal - caller lifetime.
+   * @returns the runtime's message naming the deleted checkpoint.
+   */
+  async deleteCheckpoint(request: LifeDeleteCheckpointRequest, signal: AbortSignal): Promise<LifeControlValue> {
+    return await this.deleteAck(`${CHECKPOINT_FILE_PATH}/${encodeRoutePath(request.filename)}`, signal)
+  }
+
+  /**
+   * Upload one knowledge document into the runtime's document directory; the
+   * bytes are sent as multipart/form-data, the shape `POST /api/rag/upload`
+   * accepts, and the runtime vectorizes the file in the background.
+   * @param request - sanitized file name and the file's bytes as base64.
+   * @param signal - caller lifetime.
+   * @returns the runtime's message naming the uploaded document.
+   */
+  async uploadKnowledge(request: LifeUploadKnowledgeRequest, signal: AbortSignal): Promise<LifeControlValue> {
+    const form = new FormData()
+    form.append('file', new Blob([Buffer.from(request.data, 'base64')]), request.name)
+    const reply = await this.open(UPLOAD_KNOWLEDGE_PATH, {
+      method: 'POST',
+      headers: { accept: 'application/json' },
+      body: form,
+    }, signal)
+    return controlValue({ status: reply.status, body: await parseJson(reply) })
+  }
+
+  /**
+   * Delete one knowledge document, both from the document directory and from
+   * the index the runtime rebuilds.
+   * @param request - file name inside the document directory.
+   * @param signal - caller lifetime.
+   * @returns the runtime's acknowledgement.
+   */
+  async deleteKnowledge(request: LifeDeleteKnowledgeRequest, signal: AbortSignal): Promise<LifeControlValue> {
+    return await this.deleteAck(`${KNOWLEDGE_FILE_PATH}/${encodeRoutePath(request.name)}`, signal)
+  }
+
+  /**
+   * Send one DELETE and read its verdict. The runtime's dataset route answers a
+   * vanished file with HTTP 200 while its own body says `error`, so a body that
+   * refuses the verb is raised as the runtime's own failure instead of being
+   * reported as a success.
+   * @param path - the runtime path to delete, already encoded.
+   * @param signal - caller lifetime.
+   * @returns the runtime's acknowledgement.
+   */
+  private async deleteAck(path: string, signal: AbortSignal): Promise<LifeControlValue> {
+    const reply = await this.open(path, { method: 'DELETE', headers: { accept: 'application/json' } }, signal)
+    const body = await parseJson(reply)
+    if (reply.status >= 200 && reply.status < 300 && text(body, 'status') === 'error') {
+      throw runtimeError(reply.status, body)
+    }
+    return controlValue({ status: reply.status, body })
+  }
+
+  /**
    * Start the Legacy life scheduler.
    * @param signal - caller lifetime.
    * @returns the runtime's message.
@@ -415,6 +500,22 @@ export class LifeRuntimeClient {
         return undefined
       }
       return reply.body
+    } catch (error) {
+      unavailable.push(describeFailure(error))
+      return undefined
+    }
+  }
+
+  private async readKnowledgeFiles(signal: AbortSignal, unavailable: string[]): Promise<readonly LifeKnowledgeFileView[] | undefined> {
+    try {
+      const reply = await this.read(KNOWLEDGE_FILES_PATH, signal)
+      if (reply.status !== 200) {
+        unavailable.push(`knowledge-files: HTTP ${String(reply.status)}`)
+        return undefined
+      }
+      const rows = value(reply.body, 'files')
+      if (!Array.isArray(rows)) return undefined
+      return rows.map(knowledgeFileView)
     } catch (error) {
       unavailable.push(describeFailure(error))
       return undefined
@@ -600,13 +701,24 @@ function trainingView(body: unknown, carry: LifeTrainingCarry): LifeTrainingView
   }
 }
 
-/** Knowledge projection from `GET /api/rag/status`. */
-function knowledgeView(body: unknown): LifeKnowledgeView {
+/** Knowledge projection from `GET /api/rag/status` plus `GET /api/rag/files`. */
+function knowledgeView(body: unknown, files: readonly LifeKnowledgeFileView[] | undefined): LifeKnowledgeView {
   return {
     docCount: number(body, 'doc_count'),
     chunkCount: number(body, 'chunk_count'),
     hasEmbeddings: flag(body, 'has_embeddings'),
     embedDim: number(body, 'embed_dim'),
+    ...(files === undefined ? {} : { files }),
+  }
+}
+
+/** One mounted knowledge file from `GET /api/rag/files`. */
+function knowledgeFileView(row: unknown): LifeKnowledgeFileView {
+  const sizeBytes = optionalNumber(row, 'size')
+  return {
+    name: text(row, 'name'),
+    ...(sizeBytes === undefined ? {} : { sizeBytes }),
+    status: text(row, 'status'),
   }
 }
 
@@ -851,6 +963,17 @@ function numericMap(raw: unknown): Readonly<Record<string, number>> {
 function stringList(raw: unknown): readonly string[] {
   if (!Array.isArray(raw)) return []
   return raw.filter((entry): entry is string => typeof entry === 'string')
+}
+
+/**
+ * Encode one runtime route suffix: each `/`-separated segment is percent
+ * encoded on its own, so a nested dataset path keeps its separators while the
+ * runtime still reads the exact names the roster listed.
+ * @param relative - a POSIX relative path or a flat file name.
+ * @returns the path safe to append to a route prefix.
+ */
+function encodeRoutePath(relative: string): string {
+  return relative.split('/').map(segment => encodeURIComponent(segment)).join('/')
 }
 
 /** Operator-readable one-liner for a failed read. */

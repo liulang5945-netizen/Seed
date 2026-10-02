@@ -58,7 +58,16 @@ function nativeSnapshot(overrides: Partial<LifeSnapshot> = {}): LifeSnapshot {
         { path: 'simple_zh/dialogue_extended_clean.jsonl', sizeBytes: 108_327_171 },
       ],
     },
-    knowledge: { docCount: 12, chunkCount: 340, hasEmbeddings: true, embedDim: 768 },
+    knowledge: {
+      docCount: 12,
+      chunkCount: 340,
+      hasEmbeddings: true,
+      embedDim: 768,
+      files: [
+        { name: 'handbook.md', sizeBytes: 2048, status: 'indexed' },
+        { name: 'loose.txt', status: 'pending' },
+      ],
+    },
     consolidation: {
       passes: 2,
       lastPassAt: 1_760_000_100,
@@ -132,6 +141,10 @@ function stubLife(snapshot: LifeSnapshot | undefined, state: LifeSnapshotState['
     trainStop: vi.fn(accept),
     trainReset: vi.fn(accept),
     uploadDataset: vi.fn(async (_request: { name: string; data: string }) => ({ message: 'uploaded' })),
+    deleteDataset: vi.fn(accept),
+    deleteCheckpoint: vi.fn(accept),
+    uploadKnowledge: vi.fn(async (_request: { name: string; data: string }) => ({ message: 'knowledge uploaded' })),
+    deleteKnowledge: vi.fn(accept),
     consolidate: vi.fn(accept),
     activateCheckpoint: vi.fn(accept),
     lifeStart: vi.fn(accept),
@@ -161,11 +174,26 @@ function mountPanel(life: ILife): void {
   render(<LifePanel {...standard} t={t} life={life} />)
 }
 
-/** The panel's one hidden dataset picker. */
+/** Every file picker the panel rendered, in document order. */
+function filePickers(): HTMLInputElement[] {
+  return [...document.querySelectorAll('input[type="file"]')].map((input) => {
+    if (!(input instanceof HTMLInputElement)) throw new Error('expected a file input')
+    return input
+  })
+}
+
+/** The panel's training dataset picker, rendered before the knowledge one. */
 function filePicker(): HTMLInputElement {
-  const input = document.querySelector('input[type="file"]')
-  if (!(input instanceof HTMLInputElement)) throw new Error('the panel must render one file picker')
-  return input
+  const [first] = filePickers()
+  if (first === undefined) throw new Error('the panel must render the dataset picker')
+  return first
+}
+
+/** The knowledge section's picker, rendered after the training one. */
+function knowledgePicker(): HTMLInputElement {
+  const [, second] = filePickers()
+  if (second === undefined) throw new Error('the panel must render the knowledge picker')
+  return second
 }
 
 /** One snapshot whose roster carries an extra (just uploaded) file. */
@@ -377,6 +405,141 @@ describe('LifePanel', () => {
     // The missing entry cannot be ticked; the present one still preselects.
     expect(screen.getByText(/1 selected/)).not.toBeNull()
     expect(screen.queryByRole('checkbox', { name: /consolidated\/gone\.jsonl/ })).toBeNull()
+  })
+
+  it('able to fold a dataset directory away and back', () => {
+    const { life } = stubLife(nativeSnapshot())
+    mountPanel(life)
+
+    const toggle = screen.getByRole('button', { name: /consolidated/ })
+    expect(toggle.getAttribute('aria-expanded')).toBe('true')
+    fireEvent.click(toggle)
+    expect(toggle.getAttribute('aria-expanded')).toBe('false')
+    expect(screen.queryByRole('checkbox', { name: /consolidated\/night-1\.jsonl/ })).toBeNull()
+    // The other directory's rows stay; folding one group never folds the rest.
+    expect(screen.getByRole('checkbox', { name: /dialogue_extended_clean/ })).not.toBeNull()
+
+    fireEvent.click(toggle)
+    expect(screen.getByRole('checkbox', { name: /consolidated\/night-1\.jsonl/ })).not.toBeNull()
+  })
+
+  it('deletes the ticked datasets after a confirming click and prunes the selection', async () => {
+    const { life, mocks } = stubLife(nativeSnapshot())
+    mountPanel(life)
+
+    fireEvent.click(screen.getByRole('checkbox', { name: /dialogue_extended_clean/ }))
+    expect(screen.getByText(/2 selected/)).not.toBeNull()
+    fireEvent.click(screen.getByRole('button', { name: en.deletePickedDatasets }))
+    // The armed button counts what would go, and nothing has left yet.
+    const confirmCopy = t('confirmDeleteDatasets', { count: '2' })
+    expect(screen.getByRole('button', { name: confirmCopy })).not.toBeNull()
+    expect(mocks.deleteDataset).not.toHaveBeenCalled()
+
+    fireEvent.click(screen.getByRole('button', { name: confirmCopy }))
+    await waitFor(() => { expect(mocks.deleteDataset).toHaveBeenCalledTimes(2) })
+    expect(mocks.deleteDataset).toHaveBeenCalledWith({ path: 'consolidated/night-1.jsonl' })
+    expect(mocks.deleteDataset).toHaveBeenCalledWith({ path: 'simple_zh/dialogue_extended_clean.jsonl' })
+    // The rows that went drop from the selection, the ack names the count, and
+    // the roster is read again.
+    await waitFor(() => { expect(screen.getByText(/0 selected/)).not.toBeNull() })
+    expect(screen.getByText(t('deleteDone', { count: '2' }))).not.toBeNull()
+    await waitFor(() => { expect(mocks.refresh).toHaveBeenCalled() })
+  })
+
+  it('deletes the ticked checkpoints after a confirming click and refuses the in-use rows', async () => {
+    const { life, mocks } = stubLife(nativeSnapshot({
+      artifacts: { activeId: 'seed_beta.pt', configuredId: '' },
+      training: {
+        isTraining: false,
+        pauseRequested: false,
+        stopRequested: false,
+        publishing: false,
+        checkpoints: [
+          { filename: 'seed_beta.pt', step: 10, bytes: 2048, modifiedUtc: '2026-09-23T08:00:00.000Z', savedAtUtc: '2026-09-23T08:00:00.000Z', numEpochs: 1 },
+          { filename: 'old_run.pt', step: 20, bytes: 4096, modifiedUtc: '2026-09-23T09:00:00.000Z', savedAtUtc: '2026-09-23T09:00:00.000Z', numEpochs: 1 },
+        ],
+      },
+    }))
+    mountPanel(life)
+
+    // The answering checkpoint cannot even be ticked; an old one can.
+    const activeBox = screen.getByRole('checkbox', { name: `${en.colSelect} seed_beta.pt` }) as HTMLInputElement
+    expect(activeBox.disabled).toBe(true)
+    fireEvent.click(screen.getByRole('checkbox', { name: `${en.colSelect} old_run.pt` }))
+    fireEvent.click(screen.getByRole('button', { name: en.deletePickedCheckpoints }))
+    const confirmCopy = t('confirmDeleteCheckpoints', { count: '1' })
+    expect(mocks.deleteCheckpoint).not.toHaveBeenCalled()
+
+    fireEvent.click(screen.getByRole('button', { name: confirmCopy }))
+    await waitFor(() => { expect(mocks.deleteCheckpoint).toHaveBeenCalledTimes(1) })
+    expect(mocks.deleteCheckpoint).toHaveBeenCalledWith({ filename: 'old_run.pt' })
+    expect(screen.getByText(t('deleteDone', { count: '1' }))).not.toBeNull()
+  })
+
+  it('folds the checkpoint block away and back', () => {
+    const { life } = stubLife(nativeSnapshot({
+      training: {
+        isTraining: false,
+        pauseRequested: false,
+        stopRequested: false,
+        publishing: false,
+        checkpoints: [
+          { filename: 'old_run.pt', step: 20, bytes: 4096, modifiedUtc: '2026-09-23T09:00:00.000Z', savedAtUtc: '2026-09-23T09:00:00.000Z', numEpochs: 1 },
+        ],
+      },
+    }))
+    mountPanel(life)
+
+    expect(screen.getByRole('button', { name: en.resumeFrom })).not.toBeNull()
+    fireEvent.click(screen.getByRole('button', { name: en.checkpointsFold }))
+    expect(screen.queryByRole('button', { name: en.resumeFrom })).toBeNull()
+    expect(screen.queryByText(en.activeCheckpointLabel)).toBeNull()
+
+    fireEvent.click(screen.getByRole('button', { name: t('checkpointsUnfold', { count: '1' }) }))
+    expect(screen.getByRole('button', { name: en.resumeFrom })).not.toBeNull()
+    expect(screen.getByText(en.activeCheckpointLabel)).not.toBeNull()
+  })
+
+  it('uploads a knowledge document and deletes the ticked files after confirmation', async () => {
+    const { life, mocks } = stubLife(nativeSnapshot())
+    mountPanel(life)
+
+    // The mounted files render with their index state; a pending file says so.
+    expect(screen.getByText('handbook.md')).not.toBeNull()
+    expect(screen.getByText(en.knowledgePending)).not.toBeNull()
+    expect(screen.getByText('2.0 KB')).not.toBeNull()
+
+    const file = new File(['# notes\n'], 'notes.md', { type: 'text/markdown' })
+    fireEvent.change(knowledgePicker(), { target: { files: [file] } })
+    expect(screen.getByText('Selected notes.md (8 B)')).not.toBeNull()
+    fireEvent.click(screen.getByRole('button', { name: en.uploadSend }))
+    await waitFor(() => { expect(mocks.uploadKnowledge).toHaveBeenCalledTimes(1) })
+    const request = mocks.uploadKnowledge.mock.calls[0]![0]
+    expect(request.name).toBe('notes.md')
+    expect(atob(request.data)).toBe('# notes\n')
+    expect(await screen.findByText('knowledge uploaded')).not.toBeNull()
+
+    fireEvent.click(screen.getByRole('checkbox', { name: 'loose.txt' }))
+    fireEvent.click(screen.getByRole('button', { name: en.deletePickedKnowledge }))
+    const confirmCopy = t('confirmDeleteKnowledge', { count: '1' })
+    expect(mocks.deleteKnowledge).not.toHaveBeenCalled()
+
+    fireEvent.click(screen.getByRole('button', { name: confirmCopy }))
+    await waitFor(() => { expect(mocks.deleteKnowledge).toHaveBeenCalledTimes(1) })
+    expect(mocks.deleteKnowledge).toHaveBeenCalledWith({ name: 'loose.txt' })
+    expect(screen.getByText(t('deleteDone', { count: '1' }))).not.toBeNull()
+  })
+
+  it('says honestly when the knowledge file list did not answer', () => {
+    const fixture = nativeSnapshot().knowledge
+    if (fixture === undefined) throw new Error('fixture must carry a knowledge reading')
+    const { files: omitted, ...withoutFiles } = fixture
+    expect(omitted).toBeDefined()
+    const { life } = stubLife(nativeSnapshot({ knowledge: withoutFiles }))
+    mountPanel(life)
+
+    expect(screen.getByText(en.knowledgeFilesUnavailable)).not.toBeNull()
+    expect(screen.queryByRole('checkbox', { name: 'handbook.md' })).toBeNull()
   })
 
   it('resumes a training run from a checkpoint row with the selected datasets', async () => {
