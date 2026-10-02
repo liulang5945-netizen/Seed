@@ -71,3 +71,18 @@ def test_cli_exit_code_is_the_verdict(tmp_path: Path) -> None:
     other.write_text(json.dumps({'control_no_circuit': {'correct': 7}}), encoding='utf-8')
     assert main(['--left', str(same_a), '--right', str(same_b), '--subtree', 'control_no_circuit']) == 0
     assert main(['--left', str(same_a), '--right', str(other), '--subtree', 'control_no_circuit']) == 1
+
+
+def test_two_none_values_are_equality_not_a_schema_difference(tmp_path: Path) -> None:
+    #: 实测踩到的 bug：旧写法 `left is None or right is None` 把两边同为 `None` 的字段
+    #: （如 `control_no_circuit.circuit`）报成 schema 差异 ⇒ `--strict` 会把两份**完全相同**的件判成不相同。
+    both_none = {'circuit': None, 'picked_cosine': None, 'correct': 0}
+    left = tmp_path / 'l.json'
+    right = tmp_path / 'r.json'
+    left.write_text(json.dumps(both_none), encoding='utf-8')
+    right.write_text(json.dumps(both_none), encoding='utf-8')
+    behavior, schema = diff_reports(both_none, dict(both_none))
+    assert behavior == [] and schema == [], (behavior, schema)
+    assert compare_files(left, right, strict=True)['identical'] is True
+    #: 而"一边 None 一边有值"仍必须归进 schema（这条式子两方向都要成立）。
+    assert diff_reports({'x': None}, {'x': 1})[1] == [('x', 'null_filled_other_side_has_value')]

@@ -53,8 +53,10 @@ def diff_reports(
             schema.extend(s)
         return behavior, schema
 
-    if left is None or right is None:
-        # 一边为空、一边有值：这是"旧件按零补"的指纹，属信封形状而不是模型行为。
+    if (left is None) != (right is None):
+        # 只有一边为空、另一边有值才算：这是"旧件按零补"的指纹，属信封形状而不是模型行为。
+        # （两边同为 None 是相等——实测踩过：`control_no_circuit.circuit` 两枚件都是 None，
+        #   旧写法把它报成 schema 差异，导致 --strict 会把两份完全相同的件判成不相同。）
         schema.append((trail or '<root>', 'null_filled_other_side_has_value'))
         return behavior, schema
 
