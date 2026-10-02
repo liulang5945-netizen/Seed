@@ -81,9 +81,9 @@ def test_instrument_carries_v6_and_the_correction_note() -> None:
     source = (PROJECT_ROOT / "scripts" / "training" / "probe_taiji_a30_stop_failure.py").read_text(
         encoding="utf-8"
     )
-    assert '"format": "taiji-a30-stop-failure-v24"' in source
+    assert '"format": "taiji-a30-stop-failure-v25"' in source
     assert all(
-        f"format_note_v{v}" in source for v in (6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24)
+        f"format_note_v{v}" in source for v in (6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25)
     ), "升版只许加列，历史说明必须逐版留在件里"
     assert "format_note_v6" in source
     assert "追加二" in source and "深帧复现" in source
@@ -348,10 +348,37 @@ def test_the_fixed_step_probe_records_only_reached_steps() -> None:
 
     def row(step, p, rank, legal=40):
         return {"step": step, "p_boundary": p, "boundary_rank_in_legal": rank,
-                "legal_candidates": legal, "in_run": True}
+                "legal_candidates": legal, "legal_candidates_including_boundary": legal + 1,
+                "in_run": True}
 
     short = _endstep_probe_per_generation([row(s, 0.01, 9) for s in range(10)], max_length=256)
     assert [entry["step"] for entry in short[0]["at_steps"]] == [8], short[0]["at_steps"]
     long = _endstep_probe_per_generation([row(s, 0.02, 7) for s in range(200)], max_length=256)
     assert [entry["step"] for entry in long[0]["at_steps"]] == list(_FIXED_STEPS), long[0]["at_steps"]
-    assert all({"p_boundary", "boundary_rank_in_legal", "legal_candidates"} <= set(entry) for entry in long[0]["at_steps"])
+    assert all({"p_boundary", "boundary_rank_in_legal", "legal_candidates",
+                "legal_candidates_including_boundary"} <= set(entry) for entry in long[0]["at_steps"])
+    #: DEBT-G24：名次必须被**含边界符**那一列界定
+    assert all(entry["boundary_rank_in_legal"] <= entry["legal_candidates_including_boundary"]
+               for entry in long[0]["at_steps"]), long[0]["at_steps"]
+
+
+def test_boundary_rank_is_bounded_by_the_denominator_it_belongs_to() -> None:
+    """DEBT-G24：`legal_candidates` 少算边界符，名次可比它大 1 ⇒ 钉住两条口径不等式。
+
+    旧列不动（历史件同格可比），但从此任何"名次／候选数"的比值都必须用**含边界符**那一列。
+    """
+    from probe_taiji_a30_stop_failure import replay_step
+
+    import torch
+
+    for legal_size in (2, 5, 40):
+        probs = torch.zeros(257)
+        boundary, emitted = 256, 65
+        probs[boundary] = 0.01
+        for index in range(legal_size):
+            probs[100 + index] = 0.5 + 0.001 * index
+        probs[emitted] = 0.5005
+        row = replay_step(probs, emitted, boundary, (0, 0), b"", 0.0, 8)
+        assert row["boundary_rank_in_legal"] <= row["legal_candidates_including_boundary"], row
+        assert row["boundary_rank_in_legal"] <= row["legal_candidates"] + 1, row
+        assert row["legal_candidates_including_boundary"] == row["legal_candidates"] + 1, row

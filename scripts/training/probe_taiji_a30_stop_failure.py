@@ -130,7 +130,10 @@ def replay_step(
         "p_boundary": round(vector[boundary], 6),
         "p_boundary_before_penalty": round(boundary_before_penalty, 6),
         "boundary_rank_in_legal": legal_ranked.index(boundary) + 1,
+        #: DEBT-G24：这一列**故意不含边界符**，而 `boundary_rank_in_legal` 是在含边界符的集合里排名
+        #: ⇒ 名次可比它大 1。旧列不动（与 v6–v24 各件同格可比），补一列无歧义的分母。
         "legal_candidates": len(legal) - 1,
+        "legal_candidates_including_boundary": len(legal),
         "ratio_best_over_boundary": (
             round(best / vector[boundary], 3) if vector[boundary] > 0 else None
         ),
@@ -266,6 +269,9 @@ def _endstep_probe_per_generation(rows: list[dict], max_length: int) -> list[dic
                         "p_boundary": round(float(by_step[step_at]["p_boundary"]), 6),
                         "boundary_rank_in_legal": int(by_step[step_at]["boundary_rank_in_legal"]),
                         "legal_candidates": int(by_step[step_at]["legal_candidates"]),
+                        "legal_candidates_including_boundary": int(
+                            by_step[step_at]["legal_candidates_including_boundary"]
+                        ),
                     }
                     for step_at in _FIXED_STEPS
                     if step_at in by_step
@@ -726,9 +732,12 @@ def main() -> int:
 
     substrate.observe = original_observe  # type: ignore[method-assign]
     report = {
-        "format": "taiji-a30-stop-failure-v24",
+        "format": "taiji-a30-stop-failure-v25",
         "format_note_v19": "v19 加性多一条检索侧 **oracle** 档：`--oracle-selector` 把 `store.best_match` 换成『内容含本题 `expected_contains` 的第一条事件』，找不到则透传原实现，用来把『选对了还拖不拖写』从『内容身份』与『发射时刻』里单独摘出来验。缺标签时响亮停下而非静默透传（那会伪装成生效）；自述 `oracle_calls`／`oracle_found`／`oracle_fell_through`。默认关 ⇒ 与 v18 逐位可比。",
         "format_note_v18": "v18 **加性**多一条**检索侧**资格档：`--store-scope-conversation` 在每题开头把装载信封带来的陈旧事件请出候选集，只留本次对话被告知的内容可被 `best_match` 取到（只用公开接口 `events()/clear()/record()`；代价是 `event_id` 重新编号，已在件里披露）。它与窗口档正交：一个动候选集、一个动发射时刻。默认关 ⇒ 与 v17 逐位可比。",
+        "format_note_v25": "v25（2026-10-03）：DEBT-G24——`legal_candidates` 不含边界符而 `boundary_rank_in_legal` 在含边界符的集合里排名，"
+        "两者放在一起会让名次比分母大 1（§64 实测到）。旧列保留以便与历史件同格比较，"
+        "新增 `legal_candidates_including_boundary` 作无歧义分母；守卫钉住两条不等式。",
         "format_note_v24": "v24（2026-10-03）：按 §第六十三次停靠的预注册加 `endstep_probe_v22[*].at_steps`——"
         "固定步位 8/16/32/64/128 上各记 p_boundary 与边界名次与合法候选数（只存 5 个点，不存整条序列）。"
         "动机：§62 证明'按生成长度分组比峰值'条件在存活上（早停必然短），固定步位才把长度变成'能否走到'而非分组变量。",
