@@ -128,6 +128,7 @@ def run_arm(
     evidence_window_steps: int | None = None,
     store_scope_conversation: bool = False,
     oracle_selector: bool = False,
+    probe_store: bool = False,
     max_bytes: int = MAX_ANSWER_BYTES,
     limit: int | None = None,
 ) -> dict[str, Any]:
@@ -253,6 +254,21 @@ def run_arm(
     rows = []
     for item in items:
         history: list[tuple[str, str]] = []
+        #: 第四十次停靠·**纯读数**（不改任何行为）：跟踪"内容含本题标签的事件"何时进库、是否被 FIFO 挤掉。
+        probe_store_obj = None
+        if probe_store:
+            probed = runtime.model.substrate
+            if probed.copy_circuit is None:
+                raise RuntimeError("要求库内快照读数但回路不在场 ⇒ 没有 store 可看")
+            probe_store_obj = probed.copy_circuit.store
+            probe_label_bytes = [
+                str(token).encode("utf-8") for token in (item.get("expected_contains") or [])
+            ]
+            if not probe_label_bytes:
+                raise RuntimeError(f"{item['id']} 没有 expected_contains ⇒ 库内快照无标签可找")
+            probe_seen: set[int] = set()
+            probe_present_at_answer = False
+            probe_capacity = int(probe_store_obj.max_events)
         if store_reset is not None:
             store_reset()  # 每题开头：只留本题被告知的内容可被取到
         if oracle_set_tokens is not None:
@@ -266,9 +282,25 @@ def run_arm(
         answer = ""
         for index, turn in enumerate(turns):
             loop_steps[0] = 0  # 换一轮答复：步刻度从 0 重数（与 L2 仪器同一条规矩）
+            if probe_store_obj is not None:
+                probe_live = {
+                    int(event.event_id)
+                    for event in probe_store_obj.events()
+                    if any(token in bytes(event.content) for token in probe_label_bytes)
+                }
+                probe_seen |= probe_live
+                probe_present_at_answer = bool(probe_live)
             answer = _answer_raw(runtime, turn, history, max_bytes=max_bytes)
             if index + 1 < len(turns):
                 history.append((turn, answer))
+        if probe_store_obj is not None:
+            probe_still = {
+                int(event.event_id)
+                for event in probe_store_obj.events()
+                if any(token in bytes(event.content) for token in probe_label_bytes)
+            }
+            probe_evicted = len(probe_seen - probe_still)
+            probe_live_now = len(probe_still)
         hit = any(token in answer for token in item["expected_contains"])
         #: K-定价档（PLAN-A-30 第三十次停靠·设计预备第 2 条）：**命中发生在答复的第几个字节**必须先量出来，
         #: 才谈得上"只在前 K 步发证据"这种资格档；`answer[:60]` 那个截断字段量不到这件事，故另存整条的长度
@@ -290,6 +322,13 @@ def run_arm(
                 "hit": hit,
                 "first_hit_offset_bytes": first_hit_offset,
                 "answer_bytes": answer_bytes,
+                #: 第四十次停靠的三量（`None` ⇒ 本题没开读数，不是"假"）。
+                "label_in_store_at_answer": (
+                    probe_present_at_answer if probe_store_obj is not None else None
+                ),
+                "correct_events_seen": len(probe_seen) if probe_store_obj is not None else None,
+                "correct_events_evicted": (probe_evicted if probe_store_obj is not None else None),
+                "store_events_at_answer": (probe_live_now if probe_store_obj is not None else None),
                 "formed_full": bool(well_formed(answer, ngram)),
                 "answer": answer[:60],
             }
@@ -321,6 +360,22 @@ def run_arm(
         "picked_cosine": _quantiles(scores) if record_scores and scores else None,
         #: 内容档自述：被走到几次、硬度守恒到哪、冻结落在第几次调用（守恒只对置换档有意义）。
         #: oracle 档自述：被走到几次、其中多少次真找到了含标签的事件（选对率）、多少次透传。
+        #: 库内快照的聚合：容量、"答复时库里有含标签事件"的题数、被 FIFO 挤掉的正确事件总数。
+        "store_probe": (
+            {
+                "capacity": probe_capacity,
+                "items_with_label_in_store": sum(
+                    1 for row in rows if row["label_in_store_at_answer"]
+                ),
+                "items_total": len(rows),
+                "correct_events_seen": sum(int(row["correct_events_seen"] or 0) for row in rows),
+                "correct_events_evicted": sum(
+                    int(row["correct_events_evicted"] or 0) for row in rows
+                ),
+            }
+            if probe_store
+            else None
+        ),
         "oracle_arm": {
             "requested": bool(oracle_selector),
             "calls": oracle_state["calls"],
@@ -425,6 +480,12 @@ def main() -> int:
         help="v19 检索侧 oracle 档：每题把 `best_match` 换成'内容含本题 expected_contains 的第一条事件'。"
         "与 L2 仪器共用同一份实现；停止面已实测 Δ=0，这档用在复述面验'选对能买多少'。",
     )
+    parser.add_argument(
+        "--probe-store",
+        action="store_true",
+        help="第四十次停靠·纯读数：每题每轮答复前拍一次库内快照，跟踪『内容含本题标签的事件』"
+        "何时进库、是否被 FIFO 挤掉。不改任何行为；D 命中必须仍与不开读数那趟相同（锚点检验）。",
+    )
     args = parser.parse_args()
 
     checkpoint = PROJECT_ROOT / args.checkpoint
@@ -447,6 +508,7 @@ def main() -> int:
         evidence_window_steps=args.evidence_window_steps,
         store_scope_conversation=args.store_scope_conversation,
         oracle_selector=args.oracle_selector,
+        probe_store=args.probe_store,
         evidence_content_arm=args.evidence_content_arm,
         perm_seed=args.perm_seed,
         max_bytes=args.max_bytes,
@@ -481,6 +543,7 @@ def main() -> int:
         "evidence_window_steps": args.evidence_window_steps,
         "store_scope_conversation": bool(args.store_scope_conversation),
         "oracle_selector": bool(args.oracle_selector),
+        "probe_store": bool(args.probe_store),
         "content_arm_note": "v1 加性字段：`content_arm` 逐臂自述被走到次数／守恒偏差／冻结点。"
         "格式串不动 ⇒ 与已入库各档同格可比（默认 None ⇒ 一次替换都没发生）。",
         #: 两条口径必须落在件上，否则这份读数会被当成"整条答复、预算 256"的那类去比：
