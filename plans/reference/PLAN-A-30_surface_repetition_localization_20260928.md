@@ -3704,3 +3704,42 @@ SPEC-A-24 §5 的参考值写的是 **241/100**（G17 前定义），§7b 按 §
 届时"给复制回路加一条 `copy_evidence_read_gain`（默认 1.00 ⇒ 逐位不变）"才有资格作为产品改动提请；
 若 α 降到 0.25 仍是 0/300 而 D 维命中也没保住 ⇒ 结论改为"回路的证据形状本身与逐字节预测冲突，剂量救不了"，
 那才是该转向 SPEC-A-22 那条 query-conditioned selector（只在被引用时进入）的理由。**两种结果都不许回头改 §1 三线与 §8 那条 ≥6 线。**
+
+### 第十三次停靠（2026-10-02）：owner 那句"回路其实是硬值"被**读到行号并量出数**——它是"恒开＋量级压过读出"的效果性硬截断
+
+先说结论的形状：**代码里没有 `max`／clamp 式的硬截断**（`evidence()` 返回 `gate * distribution`，
+`gate` 是学出来的标量、`distribution` 是池化进 257 维的软权重），但**效果上确实当硬值在用**，
+而且成因是两处缺位叠加——①**发射无相关性下限**、②**这条通道没有强度系数**：
+
+* `taiji/copy_circuit.py:129-134` `best_match()`：`if not self._events: return None` 之后**直接返回 argmax 余弦那条**，
+  没有任何"够不像就不发"的下限 ⇒ 只要 store 非空，**每一格解码都有证据**；
+* `taiji/model.py:2217-2228`：三条加性证据通道里 consolidated 前有 `consolidation_read_gain`(1.00)、
+  memory 前有 `memory_read_gain`(3.00)、身份证据带 `identity_organ_evidence_gain`(16.00)，
+  **只有复制回路是 `episodic_evidence + copy_circuit.evidence(...)`，乘数是隐式的 1**。
+
+实测硬度（新建探针 `scripts/training/probe_taiji_a30_copy_evidence_dose.py`，档 (c)＋seed-A、12 篇、`--record-magnitudes`；
+件 `output/tmp_a30_smoke/dose_magnitudes12.json`；守卫 `unit_dose_bitwise_identical=true`／`wrapper_consumed_on_every_dose=true`／
+`checkpoint_untouched=true`，α=1 与"完全不包层"逐位相同 ⇒ 量的就是生产那条值）：
+
+| 量 | 实测 |
+| --- | --- |
+| 证据被消费的解码步 | 9,759 |
+| 其中**非零**证据占比 | **100%**（`empty_evidence_share=0.0`） |
+| 注入 logit 最大值（每步 257 维里那一格） | **中位 +14.7／p90 +36.1／max +124.2** |
+| 注入向量 L1 | 中位 33.4；非零维数中位 **9** |
+| 驱动这一切的 store 内容 | **2 条陈旧告知**（15B 与 20B；容量 4，随回路档一起被载入） |
+| 学出来的闸 | `gate_bias` 顶在参数钳位 **±2.5 的上限**（`copy_circuit.py:627` 的 `clamp_`）⇒ 它还想要更开 |
+
+⇒ 这把前面三条各自独立的读数**串成一件事**了：
+接缝 `p_boundary` 中位 0.258243 → **3.1e-05**（约 8,300 倍）而名次中位只从 1 到 3 ⇒ **不是"边界符被谁赢走"，
+是它自己的 logit 被两条无关陈旧记忆稀释掉**；L2 拖写者 0→6、表层成句 17→6、D 维 0→7／0→6 也同源——
+"能一字不差复述"与"把复述内容混进每一格决策"在实现上是**同一行加法**。
+登记为 **DEBT-G19（高）**。
+
+**由此，可动作的候选从"拆/留"变成三个不同的改动点**（都要 owner 认这条能力面，本档只登记＋定价，不动产品源码）：
+①**下限**：`best_match` 在 cosine 低于阈时返回 `None` ⇒ 走"`evidence()` 未开闸时为精确零向量"那条既有口径
+（改动最小、语义最像"联想要够像才唤起"）；②**剂量**：加 `copy_evidence_read_gain`（默认 1.00 ⇒ 逐位不变，
+与 `memory_read_gain` 同族），其可行性由在跑的剂量—响应档给；③**形状**：SPEC-A-22 的 query-conditioned selector
+（只在被提问引用时进入读出）。
+**owner 想要的那件事已经有读数支持**：不挂回路的 (c) 自己就学到 186/300 与 66/72 ⇒ "模型自己学会断句"不是待验证的假设，
+是已成立的事实；现在的问题收窄成"怎样让一条复述通道不去淹没它"。
