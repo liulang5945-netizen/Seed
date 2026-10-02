@@ -519,6 +519,7 @@ def run_arm(
             "events_min": store_counters[1],
             "events_max": store_counters[2],
         },
+        "product_window_stats": product_window_stats,
         "window_arm": {
             "steps": evidence_window_steps,
             "calls": window_counters[0],
@@ -526,7 +527,6 @@ def run_arm(
             "silenced": window_counters[2],
         },
         "content_arm": {
-            "product_window_stats": product_window_stats,
             "kind": evidence_content_arm,
             "calls": content_counters[0],
             "max_rel_l1_diff": content_counters[3],
