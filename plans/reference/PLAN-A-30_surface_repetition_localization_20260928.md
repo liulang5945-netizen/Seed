@@ -3633,3 +3633,36 @@ owner 点「按 C 来」之后我先去核对队首，而不是直接排机时�
 `docs_sha256` 与上表那枚 **逐位相同**（同一批 300 篇）、`decision_face=utf8_masked_legal_set`、`documents_face=corpus_body_plus_appended_newline`；
 L2 那格照旧要 `all_surfaces_are_replayed_raw=true`／`replay_suspect_generations=0`／`evidence_gate_flag_honored`（用过旗标才核）。
 **并写一句防误读**：这一格若成立与否，都**不**改变 §1 三条晋升线与 §8 那条 ≥6 线——它只回答"压制是不是普适"。
+
+### 第十二次停靠·出数（一）：档 (c) 的两格已落，"拆回路＝零损失"与"(c) 全面更好"两句都不许写
+
+新落两格（L3 挂回路那格仍在跑，件名见"第十二次停靠·判读先于数"）：
+
+| 格 | 件内自述 | 读数 |
+| --- | --- | --- |
+| (c) L2 **不挂回路** | `mount_route=none`、`copy_circuit_present_after_load=false`、`surface_gate_state=disarmed:artifact_absent`、`all_surfaces_are_replayed_raw=true`、`replay_suspect_generations=0`、`base_sha256_unchanged=true` | **`generations_boundary_self_stop = 66/72`**（`eating=6` ⇒ 主列 `72−6=66` 同值）、`total_steps=7393`、拖写者 **0** |
+| (c) 两臂 CAP（同 a31_self 那档的面：`gate=false`、`limit=24`、`max_bytes=256`） | `checkpoint=output/a31_chunked_short/checkpoint.pt`；control `correct=0`、`formed_full_texts=2`；treated `correct=6`（全在 D 维，E 维两臂都 0）、`formed_full_texts=1` | **D 维 0 → 6**；仪器自己的 `verdict="A2.4 重测未通过（如实记录）"` |
+
+**(c) 与出厂基座 a31_self 并排（每格都点名装配；两枚是**不同训练分布**的件，不可互推）**：
+
+| 量 | a31_self（现出厂基座） | 档 (c) `a31_chunked_short` |
+| --- | --- | --- |
+| L2 真自停，**不挂回路** | 52/72、拖写者 0 | **66/72**、拖写者 0 |
+| L2 真自停，**挂回路** | 13/72、拖写者 6 | **23/72**、拖写者 6 |
+| L3 接缝 argmax，**不挂回路** | 18/300 | **186/300**（名次中位 1、`p_boundary` 中位 0.258243） |
+| 表层成句（CAP 链 24 题，不挂／挂） | 17 → 6 | **2 → 1** |
+| 表层成句（L1 仪器 260 文本，不挂） | 39 | 14 |
+| D 维严格命中（不挂／挂） | 0 → 7 | 0 → 6 |
+
+⇒ **能写的三句**：①收尾目标密度这一手在**自身轨迹面**上也成立（52→66 是同面无回路姿态下的对比，(c) 更高）；
+②回路对停止的压制在 (c) 上**同样存在**（66→23，与 a31_self 的 52→13 同向同量级）⇒ 上一轮那句"普适还是件特有"的前半已经有旁证；
+③**拆回路不是零损失**：(c) 上回路的 D 维收益 0→6 与 a31_self 的 0→7 同量级，逐字复述这件事仍只有回路给得出。
+⇒ **不许写的两句**：不许写"(c) 全面更好"（它的表层成句是 a31_self 的 1/8：2 对 17、14 对 39）；
+不许写"换到 (c) 再拆回路就两全"（拆了就丢 D 维命中）。
+
+**顺带查出一处必须钉死的判据矛盾（登记为 DEBT-G18，未修）**：L1 这条晋升线现在**不能安全使用**——
+SPEC-A-24 §5 的参考值写的是 **241/100**（G17 前定义），§7b 按 §2at 的**上限口径**重录成 **12/15**（a26 侧）与 **2/9**（a31 侧），
+而现行仪器在**同一枚件、同一张装配**上实测到 **39/260**（a31_self 不挂回路，件 `taiji_f0_chunked_self_surface_g17_20261001.json`）——
+**实测值高于同名件同装配的"上限"12** ⇒ 两套数之中必有一套不是它声称在量的那个判据（G17 修补后的产品副本判据 ≠ §2at 反推时用的判据，
+或"上限"算式本身取错了列）。在钉死之前：**任何"过 L1／不过 L1"的结论都只作描述，不作晋升依据**——
+这条正是记忆里"两套数不许互换"那一族的复发，只是这次复发的位置在**默认位裁定的入口**上。
