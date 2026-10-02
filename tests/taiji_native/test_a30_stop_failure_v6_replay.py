@@ -70,7 +70,7 @@ def test_empty_generation_takes_the_fallback_too() -> None:
 
 
 def test_instrument_carries_v6_and_the_correction_note() -> None:
-    """格式面：v10 在案（v6–v9 的语义逐条仍在）、更正说明点名追加二的误诊与深帧证据，严格守卫公式未动。
+    """格式面：v12 在案（v6–v11 的语义逐条仍在）、更正说明点名追加二的误诊与深帧证据，严格守卫公式未动。
 
     2026-10-02 该仪器先升 **v7**（加性自述 `surface_gate_state`／`write_back_gate_last_reason`），
     同日再升 **v8**（加性旗标 `--no-copy-evidence-gate` ＋守卫 `evidence_gate_flag_honored`），
@@ -80,10 +80,10 @@ def test_instrument_carries_v6_and_the_correction_note() -> None:
     source = (PROJECT_ROOT / "scripts" / "training" / "probe_taiji_a30_stop_failure.py").read_text(
         encoding="utf-8"
     )
-    assert '"format": "taiji-a30-stop-failure-v10"' in source
-    assert all(
-        f"format_note_v{v}" in source for v in (6, 7, 8, 9, 10)
-    ), "升版只许加列，历史说明必须逐版留在件里"
+    assert '"format": "taiji-a30-stop-failure-v12"' in source
+    assert all(f"format_note_v{v}" in source for v in (6, 7, 8, 9, 10, 11)), (
+        "升版只许加列，历史说明必须逐版留在件里"
+    )
     assert "format_note_v6" in source
     assert "追加二" in source and "深帧复现" in source
     assert "all_surfaces_are_replayed_raw" in source
@@ -101,7 +101,24 @@ def test_instrument_carries_v6_and_the_correction_note() -> None:
     #: v10 的 sha 级配对：字段与"必须报出来"的守卫都在。
     assert '"checkpoint_sha256": sha_before[:16]' in source
     assert "checkpoint_sha_recorded" in source
+    #: v11 的自信度衰减旗标与"被消费"守卫。
+    assert '"--relevance-ceiling-c"' in source
+    assert "relevance_ceiling_consumed" in source
     assert '"write_back_gate_last_reason"' in source
     #: 旧分类退役：新比较只产生 None／surface_differs_from_replay 两种取值
     #: （历史件里的 replay_tiny_feed 字段仍在，读旧件不受影响）。
     assert 'else "surface_differs_from_replay"' in source
+
+    #: v12（2026-10-02）：**"包装器被走到"与"过滤器开过枪"是两件事**——前者只数调用次数，
+    #: 一个从未命中的 c 会给出与全剂量同值的读数却看不见自己是空的。钉三样：更严的守卫、
+    #: 每档的静音计数、以及静音计数必须**穿过真正的生成循环**（挂在 priming 上不算）。
+    assert (
+        '"relevance_ceiling_fired": (args.relevance_ceiling_c is None or loop_silenced[1] > 0)'
+        in source
+    )
+    assert '"relevance_ceiling_silenced_calls": loop_silenced[1]' in source
+    assert "scaled, loop_silenced = _observe_silencing(" in source
+    #: 环内归因的判据：取调用**之前**最后一条在案帧的 `in_generation_loop`（`records` 每轮清空）。
+    assert 'if prev is not None and prev["in_generation_loop"]:' in source
+    #: 退役：只证明"被消费"的那一把不得留下——它是 v12 要替换掉的那把松尺子。
+    assert '"relevance_ceiling_consumed"' not in source

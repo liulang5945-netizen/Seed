@@ -230,6 +230,13 @@ def main() -> int:
         help="只跑题面里这些 id（逗号分隔）——长预算档用它点住最坏那几条，不必整批重跑",
     )
     parser.add_argument(
+        "--relevance-ceiling-c",
+        type=float,
+        default=None,
+        help="v11：相似度高于 c 的步把回路证据归零（自信度衰减档）；与接缝／复述两档共用同一个包装器"
+        "与同一条 `_cosine`，所以三半里的 c 是同一个定义",
+    )
+    parser.add_argument(
         "--copy-evidence-alpha",
         type=float,
         default=1.0,
@@ -271,15 +278,22 @@ def main() -> int:
     if args.circuit:
         runtime.enable_copy_circuit(PROJECT_ROOT / args.circuit)
     substrate = runtime.model.substrate
-    alpha_calls = [0]
-    if args.copy_evidence_alpha != 1.0:
-        # v9：接口级缩放，复用剂量探针里那一个包装器（不另写一份 ⇒ 两处实验量的是同一个乘数）。
+    #: 三位一体来自剂量探针那一个包装器：[被走到, 被下限静音, 被上限静音]（全链，含 prompt 侧）。
+    alpha_calls = [0, 0, 0]
+    #: v12：只在**生成环内**归因的那一对计数；没装过滤器时保持 [0, 0]。
+    loop_silenced = [0, 0]
+    if args.copy_evidence_alpha != 1.0 or args.relevance_ceiling_c is not None:
+        # v9／v11：接口级包装，复用剂量探针里那一个包装器 ⇒ 三半（接缝／复述／自停）量的是同一个乘数、
+        # 同一条 `_cosine`、同一个 c 定义，不是三口各自造的尺子。
         from probe_taiji_a30_copy_evidence_dose import _make_scaled_evidence
 
         if substrate.copy_circuit is None:
-            raise RuntimeError("要求缩放证据但回路不在场 ⇒ 没有可缩放的通道")
+            raise RuntimeError("要求缩放或按相似度截断证据，但回路不在场 ⇒ 没有可包装的通道")
         scaled, alpha_calls = _make_scaled_evidence(
-            substrate.copy_circuit.evidence, args.copy_evidence_alpha
+            substrate.copy_circuit.evidence,
+            args.copy_evidence_alpha,
+            circuit=substrate.copy_circuit,
+            ceiling_c=args.relevance_ceiling_c,
         )
         substrate.copy_circuit.evidence = scaled
     if args.no_copy_evidence_gate:
@@ -306,6 +320,29 @@ def main() -> int:
         return step
 
     substrate.observe = observing  # type: ignore[method-assign]
+
+    #: v12：**"包装器被走到"（`alpha_calls[0]`）与"过滤器在 L2 这条链上开过枪"是两件事**——
+    #: 全链计数把 prompt 侧（`record_told_history`）的调用一起算了，而那一边不改写自身轨迹那一列。
+    #: 归因法＝取这次调用**之前**最后一条在案帧的 `in_generation_loop`（`records` 每轮清空，
+    #: 所以"上一帧在环内"＝正走在生成环的两步之间）；每轮第一步的前一帧是 prompt ⇒ 不算，属**少计**。
+    def _observe_silencing(inner: Any) -> tuple[Any, list[int]]:
+        counters = [0, 0]  # [环内的 evidence 调用数, 其中被上限静音的数]
+
+        def wrapped(**kwargs: Any) -> Any:
+            prev = records[-1] if records else None
+            silenced_before = alpha_calls[2]
+            out = inner(**kwargs)
+            if prev is not None and prev["in_generation_loop"]:
+                counters[0] += 1
+                if alpha_calls[2] > silenced_before:
+                    counters[1] += 1
+            return out
+
+        return wrapped, counters
+
+    if args.copy_evidence_alpha != 1.0 or args.relevance_ceiling_c is not None:
+        scaled, loop_silenced = _observe_silencing(substrate.copy_circuit.evidence)
+        substrate.copy_circuit.evidence = scaled  # type: ignore[method-assign]
 
     per_item: list[dict[str, Any]] = []
     offenders: list[dict[str, Any]] = []
@@ -473,7 +510,20 @@ def main() -> int:
 
     substrate.observe = original_observe  # type: ignore[method-assign]
     report = {
-        "format": "taiji-a30-stop-failure-v10",
+        "format": "taiji-a30-stop-failure-v12",
+        "format_note_v12": "v12 **加性**只补一位被 v11 现场暴露出来的空档：`evidence_alpha_calls`／"
+        "`relevance_ceiling_consumed` 数的是'包装器被走到'，不是'过滤器开过枪'——一个从未命中的 c "
+        "会给出与全剂量同值的读数却看不见自己是空的，而全链计数还把 prompt 侧（"
+        "`record_told_history`）一起算了，那一边不改写自身轨迹那一列。现按**生成环内**归因，件里存 "
+        "`relevance_ceiling_silenced_calls`／`_share`／`evidence_calls_in_generation_loop`，"
+        "守卫 `relevance_ceiling_fired`＋`ceiling_fire_count_reported`；v11 那把松尺子 "
+        "`relevance_ceiling_consumed` **退役**（它能在'一次都没命中'时报 true）。"
+        "其余字段与算法一字未动 ⇒ 与 v4–v11 同格可比；包装器与 `_cosine` 仍复用剂量探针那一份，"
+        "c 的定义不变。",
+        "format_note_v11": "v11 **加性**多一个旗标 `--relevance-ceiling-c`（自信度衰减：相似度高于 c 的步不发）"
+        "与两条自述（`relevance_ceiling_c`／守卫 `relevance_ceiling_consumed`），其余字段与算法一字未动"
+        " ⇒ 与 v4–v10 同格可比。加它的理由：DEBT-G19 三条修法里只有上限这条还没在**自身轨迹面**上被测过，"
+        "而 L2 才是晋升判据用的那一列；包装器与 `_cosine` 都复用剂量探针那一份，三半里的 c 是同一个定义。",
         "format_note_v10": "v10 **加性**只补一条被点名过两次的缺口：件里此前只记 `circuit_sha256`、不记**检查点自身**的 sha ⇒ "
         "与旧档（如 09-30 那枚被作废的 quarter v4 件）只能按'同路径＋mtime 早于那次跑'配对，那是**路径级**不是 sha 级。"
         "现补 `checkpoint_sha256`（跑前那一次读盘，与 `base_sha256_unchanged` 共用同一趟哈希，不多读一遍 12MB）"
@@ -549,6 +599,7 @@ def main() -> int:
         # v7：门槛①（回写放行）与上面那条"证据 UTF-8 位置门"是**两条不同的门**，一起报才不会互相顶名。
         "copy_evidence_gate_off_requested": bool(args.no_copy_evidence_gate),
         "copy_evidence_alpha": args.copy_evidence_alpha,
+        "relevance_ceiling_c": args.relevance_ceiling_c,
         "surface_gate_state": runtime.surface_gate_state,
         "write_back_gate_last_reason": (
             str(runtime.last_write_back_gate[1]) if runtime.last_write_back_gate else None
@@ -565,6 +616,17 @@ def main() -> int:
             # v9：乘数必须**被消费**——传了非 1.0 的 α 而计数为 0，就是补丁没走到（假档）。
             "evidence_alpha_consumed": (args.copy_evidence_alpha == 1.0) or alpha_calls[0] > 0,
             "evidence_alpha_calls": alpha_calls[0],
+            #: v12：退役 v11 那把松尺子（`relevance_ceiling_consumed` 只看全链调用数 ⇒ 一个从未命中
+            #: 的 c 也能报 true）。换成**在生成环内**归因的一对：开过几枪、占环内调用的多少。
+            "relevance_ceiling_fired": (args.relevance_ceiling_c is None or loop_silenced[1] > 0),
+            "relevance_ceiling_silenced_calls": loop_silenced[1],
+            "relevance_ceiling_silenced_share": (
+                round(loop_silenced[1] / loop_silenced[0], 6) if loop_silenced[0] else None
+            ),
+            "evidence_calls_in_generation_loop": loop_silenced[0],
+            "ceiling_fire_count_reported": args.relevance_ceiling_c is None or loop_silenced[0] > 0,
+            #: 全链总量留在件里，与环内量并排——两数之比就是"prompt 侧占了多少"。
+            "relevance_ceiling_silenced_calls_all_chains": alpha_calls[2],
             # v8：旗标必须**被走到**——传了 `--no-copy-evidence-gate` 却仍报出有效值为真，就是仪器没生效。
             "evidence_gate_flag_honored": (not args.no_copy_evidence_gate)
             or not bool(

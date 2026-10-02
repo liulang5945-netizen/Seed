@@ -78,7 +78,10 @@ def _make_scaled_evidence(
     `(最大值, L1 和, 非零个数)`——用来判"加性证据"实际是不是当成硬值在用。
     """
 
-    calls = [0]
+    #: `calls` 三位：[被消费的调用数, 被**下限**静音的调用数, 被**上限**静音的调用数]。
+    #: 后两位是 v12 补的——光有"包装器被走到"证明不了"过滤器开过枪"，
+    #: 一个从未命中的 c 会给出与全剂量同值的读数却看不见自己是空的。
+    calls = [0, 0, 0]
 
     def scaled(**kwargs: Any) -> Any:
         out_tensor = original(**kwargs)
@@ -94,10 +97,12 @@ def _make_scaled_evidence(
             if scores is not None:
                 scores.append(-1.0 if score is None else score)
             if floor_tau is not None and (score is None or score < floor_tau):
+                calls[1] += 1
                 return out_tensor * 0.0
             #: 上限档（DEBT-G19 的第二种形状）：**越自信越要收着**——相似度高于 c 的步不发。
             #: 本轮读数显示有害的接缝步在 0.4332、有用的复述步在 0.1~0.3 ⇒ 只有这个方向可能两全。
             if ceiling_c is not None and score is not None and score > ceiling_c:
+                calls[2] += 1
                 return out_tensor * 0.0
         if record is not None:
             with torch.no_grad():
@@ -217,6 +222,10 @@ def main() -> int:
             if any_filter:
                 row["anchor_not_applicable_reason"] = "floor is active ⇒ two passes should differ"
         row["evidence_calls"] = calls[0]
+        #: "过滤器开过几枪"与"包装器被走到"是两件事：前者才支持"这一档确实动过路径"。
+        row["silenced_by_floor_calls"] = calls[1]
+        row["silenced_by_ceiling_calls"] = calls[2]
+        row["silenced_share"] = round((calls[1] + calls[2]) / calls[0], 6) if calls[0] else None
         if scores:
             ordered = sorted(scores)
             row["picked_cosine"] = {
