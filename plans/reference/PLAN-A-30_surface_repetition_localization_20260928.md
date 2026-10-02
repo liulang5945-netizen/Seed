@@ -4287,7 +4287,7 @@ prompt 侧，生成环内一步都没切到。（这是 n=1，只用来证明"�
 
 三档同 v13、同 `checkpoint_sha256 ae51700e881f757a`、同 24 题×3 轮：
 `reports/taiji_a30_stop_failure_c_anchor_v13_20261002.json`（不给内容档＝锚点）、
-`..._c_contentperm_v13_20261002.json`、`..._c_contentfrozen_v13_20261002.json`。
+`reports/taiji_a30_stop_failure_c_contentperm_v13_20261002.json`、`reports/taiji_a30_stop_failure_c_contentfrozen_v13_20261002.json`。
 
 **先立两条"不作数"的条件，再谈分支**：
 ① **锚点必须先过**——锚点档的测量列必须与 v12 无档件逐位同值（真自停 23、吃满预算 49、越界 6）；
@@ -5236,6 +5236,7 @@ G20 已改写为“检测器不干净、污染问题未验”，不再是缺陷�
 | 不挂回路（这条面的上界） | 66/72 | 6 | 0 | — |
 
 **判读资格先过**：seed-B 锚点 29/72 < 50/72 ⇒ 对照空间充足，本格具备判读资格（这条线是开档前写的）。
+**成对件名（此前只在 DEBT-G19 里以全文出现，这里补上，两处引用同一对）**：`reports/taiji_a30_stop_failure_c_seedB_anchor_20261002.json`（锚点 29/72）＋ `reports/taiji_a30_stop_failure_c_seedB_window64_20261002.json`（窗口 64/72）；两件同 `checkpoint_sha256 ae51700e881f757a`、`circuit_sha256` 不同 ⇒ 本格要的自证在件里。
 ⇒ 取先写死的**第一支**（`Δ = +35 ≥ +20`）：**时间窗的增益不依赖具体一枚回路**，它是**这条通道发射时序**的性质。
 档生效自述：`发出 30,074／静音 5,400`、`window_both_sides_seen=true`，四把严格守卫全真。
 
