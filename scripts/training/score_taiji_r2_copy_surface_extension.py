@@ -94,6 +94,7 @@ def run_arm(
     close_gate_after_load: bool = False,
     surface: bool = False,
     window_steps: int | None = None,
+    product_window_steps: int | None = None,
 ) -> dict[str, Any]:
     """一臂：跑完 104 题，按产品 chat 协议取基底原始答复，统计表层三率。
 
@@ -123,6 +124,14 @@ def run_arm(
         mount_entry = "envelope_auto_mount"
         if close_gate_after_load:
             substrate.set_copy_evidence_utf8_gate(False)
+    #: 产品档（与 L2 探针 v20/v21、cap 仪器同名旗标）：门开在产品代码里，
+    #: 计步基与每趟复位都在 `Taiji.generate()` 内 ⇒ 这台仪器不需要自己数步。
+    if product_window_steps is not None:
+        if window_steps is not None:
+            raise SystemExit("产品档与替身档不能同开——同开就分不出读数来自哪条路径")
+        if product_window_steps <= 0:
+            raise SystemExit("产品档的 K 必须是正整数")
+        substrate.set_copy_evidence_window_steps(product_window_steps)
     override = getattr(substrate, "_copy_evidence_utf8_gate_override", None)
     gate_effective = (
         bool(substrate.config.copy_evidence_utf8_gate) if override is None else bool(override)
@@ -324,6 +333,13 @@ def main() -> int:
         help="第四十九次停靠：只在答复的前 K 步发复制回路证据，之后静音（与 L2/cap 共用同一副档与同一把步刻度）。"
         "默认关 ⇒ 与冻结链逐位相同。",
     )
+    parser.add_argument(
+        "--product-window-steps",
+        type=int,
+        default=None,
+        help="产品档：调产品侧原生生命周期门（`Taiji.set_copy_evidence_window_steps`），不是本仪器的替身档。"
+        "默认 None ⇒ 逐位不变；与 --evidence-window-steps 互斥。",
+    )
     args = parser.parse_args()
     surface = bool(args.surface_chain)
 
@@ -342,6 +358,7 @@ def main() -> int:
             evidence_utf8_gate=bool(args.copy_evidence_utf8_gate),
             surface=surface,
             window_steps=args.evidence_window_steps,
+            product_window_steps=args.product_window_steps,
         )
         for circuit in args.circuit
     ]
