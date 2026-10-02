@@ -70,7 +70,7 @@ def test_empty_generation_takes_the_fallback_too() -> None:
 
 
 def test_instrument_carries_v6_and_the_correction_note() -> None:
-    """格式面：v18 在案（v6–v17 的语义逐条仍在）、更正说明点名追加二的误诊与深帧证据，严格守卫公式未动。
+    """格式面：v19 在案（v6–v18 的语义逐条仍在）、更正说明点名追加二的误诊与深帧证据，严格守卫公式未动。
 
     2026-10-02 该仪器先升 **v7**（加性自述 `surface_gate_state`／`write_back_gate_last_reason`），
     同日再升 **v8**（加性旗标 `--no-copy-evidence-gate` ＋守卫 `evidence_gate_flag_honored`），
@@ -80,9 +80,9 @@ def test_instrument_carries_v6_and_the_correction_note() -> None:
     source = (PROJECT_ROOT / "scripts" / "training" / "probe_taiji_a30_stop_failure.py").read_text(
         encoding="utf-8"
     )
-    assert '"format": "taiji-a30-stop-failure-v18"' in source
+    assert '"format": "taiji-a30-stop-failure-v19"' in source
     assert all(
-        f"format_note_v{v}" in source for v in (6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18)
+        f"format_note_v{v}" in source for v in (6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19)
     ), "升版只许加列，历史说明必须逐版留在件里"
     assert "format_note_v6" in source
     assert "追加二" in source and "深帧复现" in source
@@ -145,6 +145,13 @@ def test_instrument_carries_v6_and_the_correction_note() -> None:
     assert "= _make_store_scoped_arm(" in source
     #: 反面：仪器侧不得自带一份 store 操作（clear/record 只许出现在共用实现里）。
     assert "store.clear()" not in source and "store.record(" not in source
+
+    #: v19：oracle 选择档必须被走到并披露"选对率"（found／fell_through）——
+    #: 只有 calls 而没有 found，就分不清"选对了"与"库里根本没有正确事件"。
+    assert '"oracle_found": oracle_state["found"]' in source
+    assert '"oracle_fell_through": oracle_state["fell_through"]' in source
+    #: 反面：oracle 的实现只许住在共用 helper 里，仪器侧不得自带一份 `best_match` 逻辑。
+    assert "def oracle_best_match" not in source
     #: v15：内容档**搬到剂量探针里与复述面共用** ⇒ 那两条"式子级"断言跟着搬走（不是删掉）：
     #: 守恒用的是逐次相对差最大值，冻结源必须是"通道真的在发"的那一次。
     dose = (
