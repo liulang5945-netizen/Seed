@@ -5613,10 +5613,14 @@ prompt 的每一步也走证据注入点，旧位置会让 K 被 prompt 吃光�
 `tests/taiji_native/test_a30_product_entry_window_steps_forwarding.py`：签名是 kw-only 且默认 `None`、
 转发确在 `if window_steps is not None:` 块内、以及一条**反例自检**（把转发行删掉后该断言必须为假）。
 真正调用该入口的三支旧测试（`test_a30_copy_evidence_gate_flag`／`test_a25_gate_on_the_load_path`／
-`test_a30_shipped_base_and_surface_gate`）与守卫同跑 **24 passed／rc=0** ⇒ 签名改动没弄坏挂载路径。
+`test_a30_shipped_base_and_surface_gate`）与守卫同跑 **34 passed／rc=0**（提交消息里我一度写成 24——那是上一轮少跑一支时的数，已按当轮打印更正）⇒ 签名改动没弄坏挂载路径。
 
 **写这条守卫时我自己又红了一次**（不是代码红）：转发语句与 `if` 之间夹了三行注释，而我只往前看了 2 行 ⇒
 守卫误判"转发不在块内"。⇒ 按行偏移找代码是脆的；**已改成块内扫描**，并把这次误判留在注释里。
 
 **这格仍未结的事**：入口通了不等于默认开着——`copy_evidence_window_steps` 的默认值仍是 `None`，
 开不开、以及在出货底上认不认 +10 这个量级，都是 owner 那一格（队首 ②）。
+
+* **同轮的自我更正**：`a13c18ad` 的提交消息写"共 24 passed"，而提交那一轮实际打印是 **34 passed／rc=0**。
+  这次的错法比"凭印象编数"更隐蔽——**数是从上一轮的真实输出里抄来的**，但样本集不同（这次多带了 v6 回放 pin）。
+  ⇒ 规矩收紧：引用测试计数必须**用同一条命令的输出**，不能引用"刚才那次类似命令"的数。
