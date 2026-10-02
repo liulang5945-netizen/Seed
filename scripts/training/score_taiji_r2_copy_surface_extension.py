@@ -93,6 +93,7 @@ def run_arm(
     evidence_utf8_gate: bool = False,
     close_gate_after_load: bool = False,
     surface: bool = False,
+    window_steps: int | None = None,
 ) -> dict[str, Any]:
     """一臂：跑完 104 题，按产品 chat 协议取基底原始答复，统计表层三率。
 
@@ -127,6 +128,33 @@ def run_arm(
         bool(substrate.config.copy_evidence_utf8_gate) if override is None else bool(override)
     )
     ngram = build_ngram_model()
+    #: 第四十九次停靠：**发射时序档**，与 L2／cap 两台仪器共用 `_make_window_armed_evidence`，
+    #: 步刻度也用同一个 `generation_loop_span`（1 步＝喂进 1 字节），换一轮生成即清零。
+    window_counters = [0, 0, 0]
+    loop_steps = [0]
+    if window_steps is not None:
+        import sys
+
+        from probe_taiji_a30_copy_evidence_dose import _make_window_armed_evidence
+        from probe_taiji_a30_stop_failure import generation_loop_span
+
+        if substrate.copy_circuit is None:
+            raise RuntimeError("要求窗口档但回路不在场 ⇒ 没有可门控的证据通道")
+        wf_first, wf_last = generation_loop_span(type(substrate).generate)
+        w_original_observe = substrate.observe
+
+        def w_observing(symbol: Any, **kwargs: Any) -> Any:
+            frame = sys._getframe(1)
+            step = w_original_observe(symbol, **kwargs)
+            if frame.f_code.co_name == "generate" and wf_first <= frame.f_lineno <= wf_last:
+                loop_steps[0] += 1
+            return step
+
+        substrate.observe = w_observing  # type: ignore[method-assign]
+        armed_window, window_counters = _make_window_armed_evidence(
+            substrate.copy_circuit.evidence, int(window_steps), lambda: loop_steps[0]
+        )
+        substrate.copy_circuit.evidence = armed_window  # type: ignore[method-assign]
 
     texts: list[str] = []
     hits = 0
@@ -136,6 +164,7 @@ def run_arm(
         turns = [str(turn) for turn in item["turns"]]
         answer = ""
         for index, turn in enumerate(turns):
+            loop_steps[0] = 0  # 换一轮生成：窗口步刻度从 0 重数
             answer = (
                 # 显式 `repetition_penalty=0.0`：产品默认 2026-09-28 起是 2.0（owner 裁定，
                 # PLAN-A-30 §2f），而本件的表层链读数是在旧默认位上取的——钉住才复现得动。
@@ -173,6 +202,13 @@ def run_arm(
         #: 挂回路走的是哪条入口，必须落在件上：`enable_copy_circuit` 是探针/评测的显式 opt-in，
         #: `envelope_auto_mount` 才是产品自己那条路（裁定 (b) 的证据门此前只在前者生效）。
         "mount_entry": mount_entry,
+        #: 窗口档自述：K 与"发出／静音"两侧计数（两侧都非零才算这档真的在窗内发过、窗外拦过）。
+        "evidence_window_steps": window_steps,
+        "window_arm": {
+            "calls": window_counters[0],
+            "emitted": window_counters[1],
+            "silenced": window_counters[2],
+        },
         "gate_effective": gate_effective,
         "items": len(rows),
         "texts": len(texts),
@@ -281,6 +317,13 @@ def main() -> int:
         help="PLAN-A-28 §8 的欠账：所有档改走 `SeedRuntime.chat()`（产品表层链，过语言器官＋"
         "SPEC-R2-02 掩码），与原始字节链**分开报**——两条量不许互换",
     )
+    parser.add_argument(
+        "--evidence-window-steps",
+        type=int,
+        default=None,
+        help="第四十九次停靠：只在答复的前 K 步发复制回路证据，之后静音（与 L2/cap 共用同一副档与同一把步刻度）。"
+        "默认关 ⇒ 与冻结链逐位相同。",
+    )
     args = parser.parse_args()
     surface = bool(args.surface_chain)
 
@@ -298,6 +341,7 @@ def main() -> int:
             circuit,
             evidence_utf8_gate=bool(args.copy_evidence_utf8_gate),
             surface=surface,
+            window_steps=args.evidence_window_steps,
         )
         for circuit in args.circuit
     ]
