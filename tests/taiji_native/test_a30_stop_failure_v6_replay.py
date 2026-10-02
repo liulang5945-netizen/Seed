@@ -70,7 +70,7 @@ def test_empty_generation_takes_the_fallback_too() -> None:
 
 
 def test_instrument_carries_v6_and_the_correction_note() -> None:
-    """格式面：v12 在案（v6–v11 的语义逐条仍在）、更正说明点名追加二的误诊与深帧证据，严格守卫公式未动。
+    """格式面：v13 在案（v6–v12 的语义逐条仍在）、更正说明点名追加二的误诊与深帧证据，严格守卫公式未动。
 
     2026-10-02 该仪器先升 **v7**（加性自述 `surface_gate_state`／`write_back_gate_last_reason`），
     同日再升 **v8**（加性旗标 `--no-copy-evidence-gate` ＋守卫 `evidence_gate_flag_honored`），
@@ -80,7 +80,7 @@ def test_instrument_carries_v6_and_the_correction_note() -> None:
     source = (PROJECT_ROOT / "scripts" / "training" / "probe_taiji_a30_stop_failure.py").read_text(
         encoding="utf-8"
     )
-    assert '"format": "taiji-a30-stop-failure-v12"' in source
+    assert '"format": "taiji-a30-stop-failure-v13"' in source
     assert all(f"format_note_v{v}" in source for v in (6, 7, 8, 9, 10, 11)), (
         "升版只许加列，历史说明必须逐版留在件里"
     )
@@ -121,4 +121,12 @@ def test_instrument_carries_v6_and_the_correction_note() -> None:
     #: 环内归因的判据：取调用**之前**最后一条在案帧的 `in_generation_loop`（`records` 每轮清空）。
     assert 'if prev is not None and prev["in_generation_loop"]:' in source
     #: 退役：只证明"被消费"的那一把不得留下——它是 v12 要替换掉的那把松尺子。
+
+    #: v13（2026-10-02，owner 裁"不立项、先追轨迹面由什么在管"）：内容／硬度分离档必须自带**硬度守恒**这道
+    #: 前提守卫——守恒不成立时两个臂差的不止内容，整档作废。钉的是"逐次相对差最大值"这一式，不是注释。
+    assert '"content_arm_magnitude_preserved"' in source
+    assert "content_guard[3] = max(" in source
+    assert 'choices=("permutation", "frozen")' in source
+    #: 反面：不得用"两趟累加之差"当守恒判据（n=1 冒烟证明那量的是求和顺序的表示层噪声，1e-4 级）。
+    assert "abs(content_guard[1] - content_guard[2])" not in source
     assert '"relevance_ceiling_consumed"' not in source

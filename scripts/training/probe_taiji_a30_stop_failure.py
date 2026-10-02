@@ -253,6 +253,20 @@ def main() -> int:
     parser.add_argument("--penalty-window", type=int, default=8)
     parser.add_argument("--max-length", type=int, default=256)
     parser.add_argument("--out-report", default=None)
+    parser.add_argument(
+        "--evidence-content-arm",
+        choices=("permutation", "frozen"),
+        default=None,
+        help="v13 **内容／硬度的分离档**（owner 2026-10-02 裁：先追'轨迹面由什么在管'，不立项产品改动）："
+        "`permutation`＝把证据向量的 257 维按固定种子**置换**（多重集不变 ⇒ 硬度逐位相同、内容身份毁掉）；"
+        "`frozen`＝每次调用都返回**第一次**那一条（硬度同分布、内容不再跟着 cue 走）。默认关 ⇒ 与 v12 逐位可比。",
+    )
+    parser.add_argument(
+        "--perm-seed",
+        type=int,
+        default=20261002,
+        help="置换档的固定种子（写进件里，可复现）",
+    )
     args = parser.parse_args()
 
     checkpoint = PROJECT_ROOT / args.checkpoint
@@ -343,6 +357,53 @@ def main() -> int:
     if args.copy_evidence_alpha != 1.0 or args.relevance_ceiling_c is not None:
         scaled, loop_silenced = _observe_silencing(substrate.copy_circuit.evidence)
         substrate.copy_circuit.evidence = scaled  # type: ignore[method-assign]
+
+    #: v13（owner 2026-10-02 裁："不立项产品改动，先追轨迹面由什么在管"）：**内容档 vs 硬度档**。
+    #: 装在**最外层**——它要替换的是最终进 logits 的那个向量，不是通道内部的中间量。
+    #: `permutation` 只打乱位置 ⇒ 多重集与 L1/max 逐位不变，唯一被毁掉的是"哪一维对应哪个符号"；
+    #: 若自停因此回到 66 量级 ⇒ 轨迹面听的是**内容**；若仍 23–25 ⇒ 它听的是"有一条非零向量在加"这件事。
+    content_guard = [0, 0.0, 0.0, 0.0]  # [被走到, 原 L1 累加, 替换后 L1 累加, 单次相对差最大值]
+    if args.evidence_content_arm is not None:
+        if substrate.copy_circuit is None:
+            raise RuntimeError("要求内容分离档但回路不在场 ⇒ 没有可替换的证据通道")
+        import random
+
+        import torch
+
+        rng = random.Random(args.perm_seed)
+        perm_cache: dict[int, Any] = {}
+        frozen: list[Any] = []
+        inner_evidence = substrate.copy_circuit.evidence
+
+        def armed(**kwargs: Any) -> Any:
+            out = inner_evidence(**kwargs)
+            content_guard[0] += 1
+            content_guard[1] += float(out.abs().sum())
+            if args.evidence_content_arm == "permutation":
+                #: 置换表按**实际元素数**现取（不在件里硬写词表尺寸；尺寸一变就响亮地重新洗牌而不是错位）。
+                n = int(out.numel())
+                if n not in perm_cache:
+                    order = list(range(n))
+                    rng.shuffle(order)
+                    perm_cache[n] = torch.tensor(order, dtype=torch.long)
+                flat = out.reshape(-1)
+                swapped = flat.index_select(0, perm_cache[n].to(flat.device)).reshape(out.shape)
+            else:
+                if not frozen:
+                    frozen.append(out.clone())
+                swapped = frozen[0]
+            content_guard[2] += float(swapped.abs().sum())
+            #: 硬度守恒按**逐次相对差的最大值**判（界 1e-5：float32 对 257 项求和本身就有 ~1e-7 级抖动，
+            #: n=1 冒烟实测 1.9e-07，界留一个量级余量），不按两趟累加之差：置换只改求和顺序，
+            #: float32 下 1,881 次累加能差出 1e-4（冒烟实测），那是表示层的噪声而不是"硬度变了"。
+            single = float(out.abs().sum())
+            if single > 0.0:
+                content_guard[3] = max(
+                    content_guard[3], abs(float(swapped.abs().sum()) - single) / single
+                )
+            return swapped
+
+        substrate.copy_circuit.evidence = armed  # type: ignore[method-assign]
 
     per_item: list[dict[str, Any]] = []
     offenders: list[dict[str, Any]] = []
@@ -510,7 +571,15 @@ def main() -> int:
 
     substrate.observe = original_observe  # type: ignore[method-assign]
     report = {
-        "format": "taiji-a30-stop-failure-v12",
+        "format": "taiji-a30-stop-failure-v13",
+        "format_note_v13": "v13 **加性**多一格 owner 裁定后要的那把分离尺：`--evidence-content-arm` "
+        "（`permutation`＝把证据向量按固定种子置换，多重集与 L1/max 逐位不变，只毁掉"
+        "'哪一维对应哪个符号'；`frozen`＝每次返回第一次那一条，内容不再跟着 cue 走），"
+        "配自述 `evidence_content_arm`／`perm_seed` 与守卫 `content_arm_consumed`／"
+        "`content_arm_magnitude_preserved`（置换档的**前提**：硬度不守恒整档作废，因为那时两个臂"
+        "差的不止内容）。默认关 ⇒ 与 v12 逐位可比；其余字段与算法一字未动。"
+        "加它的理由：上限档把环内静音推到 8.25% 之后真自停仍 23→25，'相似度轴'这一族在轨迹面上"
+        "已经排除得差不多了 ⇒ 下一个要分开的是'听内容'还是'只要有一条非零向量在加'。",
         "format_note_v12": "v12 **加性**只补一位被 v11 现场暴露出来的空档：`evidence_alpha_calls`／"
         "`relevance_ceiling_consumed` 数的是'包装器被走到'，不是'过滤器开过枪'——一个从未命中的 c "
         "会给出与全剂量同值的读数却看不见自己是空的，而全链计数还把 prompt 侧（"
@@ -600,6 +669,9 @@ def main() -> int:
         "copy_evidence_gate_off_requested": bool(args.no_copy_evidence_gate),
         "copy_evidence_alpha": args.copy_evidence_alpha,
         "relevance_ceiling_c": args.relevance_ceiling_c,
+        #: v13 自述：这一档替换的是**内容身份**，硬度分布由守卫逐项验，不是靠注释声明。
+        "evidence_content_arm": args.evidence_content_arm,
+        "perm_seed": args.perm_seed if args.evidence_content_arm == "permutation" else None,
         "surface_gate_state": runtime.surface_gate_state,
         "write_back_gate_last_reason": (
             str(runtime.last_write_back_gate[1]) if runtime.last_write_back_gate else None
@@ -625,6 +697,16 @@ def main() -> int:
             ),
             "evidence_calls_in_generation_loop": loop_silenced[0],
             "ceiling_fire_count_reported": args.relevance_ceiling_c is None or loop_silenced[0] > 0,
+            #: v13：内容档必须**被走到**；置换档的硬度守恒是这一档的**前提**——不守恒时两个臂差的
+            #: 就不只是"内容"，整档作废。`frozen` 档是故意换掉内容的分布 ⇒ 守恒项对它不作判，报 `null`。
+            "content_arm_consumed": args.evidence_content_arm is None or content_guard[0] > 0,
+            "content_arm_magnitude_preserved": (
+                None if args.evidence_content_arm != "permutation" else content_guard[3] <= 1e-5
+            ),
+            "content_arm_max_rel_l1_diff": content_guard[3],
+            "content_arm_calls": content_guard[0],
+            "content_arm_l1_original_sum": round(content_guard[1], 6),
+            "content_arm_l1_replaced_sum": round(content_guard[2], 6),
             #: 全链总量留在件里，与环内量并排——两数之比就是"prompt 侧占了多少"。
             "relevance_ceiling_silenced_calls_all_chains": alpha_calls[2],
             # v8：旗标必须**被走到**——传了 `--no-copy-evidence-gate` 却仍报出有效值为真，就是仪器没生效。
