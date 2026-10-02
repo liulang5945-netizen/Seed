@@ -10,11 +10,13 @@ import {
   dialog,
   ipcMain,
   Menu,
+  nativeImage,
   powerMonitor,
   nativeTheme,
   protocol,
   session,
   shell,
+  Tray,
   type IpcMainInvokeEvent,
   type MenuItemConstructorOptions,
 } from 'electron'
@@ -44,11 +46,17 @@ import { DesktopPolicyTestAuth } from './policy-test-auth.ts'
 import { DesktopUpdateDialog, type UpdateDialogOptions } from './update-dialog.ts'
 import { readDesktopRuntime } from './runtime-tree.ts'
 import { DesktopBrowserGuests } from './browser-guests.ts'
+import { DesktopTray } from './tray.ts'
+import { DesktopBackgroundNotice } from './background-notice.ts'
 
 let focusPrimaryWindow = (): void => {}
 let stopForRecovery = async (): Promise<void> => {}
 let shuttingDown = false
 let windowsLanguage: string | undefined
+/** The run's tray icon, present on Windows only; relabelled with the shell menu. */
+let tray: DesktopTray | undefined
+/** Set by the OS when the session is ending, so the close-to-tray interception steps aside. */
+let sessionEnding = false
 
 function currentDesktopLocale(): ReturnType<typeof resolveDesktopLocale> {
   return resolveDesktopLocale(windowsLanguage ?? app.getLocale())
@@ -774,8 +782,52 @@ async function main(): Promise<void> {
       label: darwin ? app.name : currentDesktopLocale().messages.application,
       submenu: [...applicationItems(), ...devToolsItems],
     }, ...platformMenus]))
+    tray?.relabel()
   }
   installMenu()
+
+  // The tray is the always-present way back to a hidden window (Windows only,
+  // matching the platform's background-application convention). Creating it can
+  // legitimately fail — a locked-down shell without a notification area — and a
+  // missing icon must not stop startup: the window's close then simply hides.
+  const trayIconPath = development
+    ? join(app.getAppPath(), 'resources', 'tray-windows.ico')
+    : join(process.resourcesPath, 'tray.ico')
+  if (process.platform === 'win32') {
+    try {
+      tray = new DesktopTray({
+        create: () => {
+          const icon = new Tray(nativeImage.createFromPath(trayIconPath))
+          return {
+            onClick: (listener) => { icon.on('click', listener) },
+            setToolTip: (text) => { icon.setToolTip(text) },
+            setMenu: (items) => {
+              icon.setContextMenu(Menu.buildFromTemplate(items.map(item => 'type' in item
+                ? { type: 'separator' as const }
+                : { label: item.label, click: item.click })))
+            },
+            destroy: () => { icon.destroy() },
+          }
+        },
+        locale: currentDesktopLocale,
+        open: () => { focusPrimaryWindow() },
+        quit: () => { app.quit() },
+      })
+    } catch (error) {
+      console.warn('desktop tray: unavailable', error)
+    }
+  }
+  // The first close-to-tray asks once, then records the answer; a cancelled
+  // prompt stays eligible on the next close.
+  const backgroundNotice = process.platform === 'win32'
+    ? new DesktopBackgroundNotice({
+      markerPath: join(app.getPath('userData'), 'background-close-confirmed'),
+      locale: currentDesktopLocale,
+      // Electron's own options type wants a mutable array; the notice reads readonly.
+      show: options => dialog.showMessageBox({ ...options, buttons: [...options.buttons] }),
+      focus: () => { updateDialog.focus() },
+    })
+    : undefined
 
   if (process.platform === 'win32') {
     ipcMain.handle(DESKTOP_IPC.windowsMenu, (event, name: unknown, x: unknown, y: unknown) => {
@@ -826,11 +878,39 @@ async function main(): Promise<void> {
     })
   }
 
+  /** Hide a window, leaving full screen first when the platform cannot hide one that is. */
+  const hideMainWindow = (window: BrowserWindow): void => {
+    if (process.platform === 'darwin' && window.isFullScreen()) {
+      window.once('leave-full-screen', () => { if (!window.isDestroyed()) window.hide() })
+      window.setFullScreen(false)
+    } else window.hide()
+  }
   const createMainWindow = (): BrowserWindow => {
     const window = createWindow(appPreload, false, true)
     mainWindow = window
     browserGuests.bind(window)
     window.on('focus', automaticCheck)
+    // Closing the window backgrounds the application instead of quitting: the
+    // Host keeps running its tasks and the tray icon brings the window back.
+    // Quit stays on the explicit entries (tray menu, application menu). The
+    // interception steps aside during shutdown, an installer handoff, and an
+    // OS session end, so logoff and updates are never blocked.
+    window.on('close', (event) => {
+      if (quitting || shellInstallerOwnsQuit || sessionEnding) return
+      event.preventDefault()
+      if (updateDialog.isOpen) { updateDialog.focus(); return }
+      const hide = (): void => {
+        if (!quitting && !shellInstallerOwnsQuit && !sessionEnding && !window.isDestroyed()) hideMainWindow(window)
+      }
+      if (backgroundNotice === undefined) hide()
+      else backgroundNotice.close(hide)
+    })
+    if (process.platform === 'win32') {
+      window.on('session-end', () => { sessionEnding = true })
+    } else {
+      window.on('focus', () => { sessionEnding = false })
+      window.on('show', () => { sessionEnding = false })
+    }
     window.on('closed', () => { if (mainWindow === window) mainWindow = undefined })
     window.webContents.on('did-fail-load', (_event, code, description, url, isMainFrame) => {
       if (isMainFrame && code !== -3 && !quitting && !window.isDestroyed()) {
@@ -898,10 +978,15 @@ async function main(): Promise<void> {
   app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') app.quit()
   })
+  // Non-Windows platforms report an OS shutdown through powerMonitor instead of
+  // the window's session-end event; both must let the close proceed.
+  if (process.platform !== 'win32') powerMonitor.on('shutdown', () => { sessionEnding = true })
   app.on('before-quit', (event) => {
     shuttingDown = true
     updateJournal?.action('quit-requested')
     if (shellInstallerOwnsQuit) {
+      tray?.dispose()
+      backgroundNotice?.dispose()
       updateDialog.dispose()
       mandatoryUI?.dispose()
       return
@@ -909,6 +994,9 @@ async function main(): Promise<void> {
     if (quitting) return
     event.preventDefault()
     quitting = true
+    // The tray icon must not outlive the window it leads back to.
+    tray?.dispose()
+    backgroundNotice?.dispose()
     if (mainWindow !== undefined && !mainWindow.isDestroyed()) mainWindow.hide()
     updateSchedule.dispose()
     updateDialog.dispose()

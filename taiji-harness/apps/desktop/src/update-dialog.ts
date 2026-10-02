@@ -48,6 +48,9 @@ export class DesktopUpdateDialog {
   /** Focus the current explanation or confirmation without replacing it or granting permission. */
   focus(): void { this.active?.window.focus() }
 
+  /** Whether a confirmation is displayed and still awaiting a response. */
+  get isOpen(): boolean { return this.active !== undefined }
+
   /**
    * @param preload - Bundled isolated preload.
    * @param locale - Shell-owned copy or a reader of the current UI language.

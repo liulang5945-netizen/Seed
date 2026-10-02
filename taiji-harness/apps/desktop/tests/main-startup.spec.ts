@@ -2,7 +2,7 @@ import { WINDOWS_TITLEBAR_HEIGHT } from '../src/windows-layout.ts'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import type { IpcMainInvokeEvent } from 'electron'
 import { join } from 'node:path'
-import { mkdtempSync, readFileSync, readdirSync, rmSync } from 'node:fs'
+import { existsSync, mkdtempSync, readFileSync, readdirSync, rmSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import type { MenuItemConstructorOptions, MessageBoxOptions } from 'electron'
 import { DESKTOP_IPC, type DesktopUpdateState } from '../src/ipc.ts'
@@ -25,6 +25,14 @@ const harness = await vi.hoisted(async () => {
     return { promise, resolve, reject }
   }
   const windows: FakeWindow[] = []
+  const trays: FakeTray[] = []
+  // A real temp directory: the background notice writes its marker under userData.
+  // The static imports are not initialized inside vi.hoisted, so reach for the
+  // module namespaces dynamically (a destructured method would be unbound).
+  const fsModule = await import('node:fs')
+  const pathModule = await import('node:path')
+  const osModule = await import('node:os')
+  const userDataDir = fsModule.mkdtempSync(pathModule.join(osModule.tmpdir(), 'desktop-main-user-data-'))
   let windowFailure: Error | undefined
   const powerMonitor = new EventEmitter()
   const hosts: FakeHost[] = []
@@ -102,6 +110,12 @@ const harness = await vi.hoisted(async () => {
       if (event.preventDefault.mock.calls.length === 0) this.destroy()
     }
   }
+  class FakeTray extends EventEmitter {
+    readonly setToolTip = vi.fn()
+    readonly setContextMenu = vi.fn()
+    readonly destroy = vi.fn()
+    constructor(readonly icon: unknown) { super(); trays.push(this) }
+  }
   class FakeHost {
     readonly updateTasks = vi.fn(async (_action: 'inspect' | 'lock' | 'unlock') => false)
     url = 'http://127.0.0.1:3080/?token=test'
@@ -129,7 +143,7 @@ const harness = await vi.hoisted(async () => {
     getPreferredSystemLanguages: () => ['en-US'],
     getVersion: () => '1.0.0',
     getAppPath: (): string => 'desktop-test-app',
-    getPath: (): string => 'desktop-test-user-data',
+    getPath: (): string => userDataDir,
     setAboutPanelOptions: vi.fn<(options: Electron.AboutPanelOptionsOptions) => void>(),
     requestSingleInstanceLock: () => true,
     setAsDefaultProtocolClient: vi.fn(),
@@ -148,7 +162,7 @@ const harness = await vi.hoisted(async () => {
   const readLocalePreference = vi.fn<() => Promise<string | null>>(async () => null)
   return {
     failWindow(error: Error) { windowFailure = error },
-    windows, hosts, handlers, app, FakeWindow, FakeHost, powerMonitor, nativeTheme,
+    windows, trays, hosts, handlers, app, FakeWindow, FakeHost, FakeTray, powerMonitor, nativeTheme,
     menu, popup, socketHeaders: vi.fn(), updateCheck, updateDownload, updateInstall,
     readLocalePreference,
 
@@ -179,7 +193,7 @@ const harness = await vi.hoisted(async () => {
     set pluginsEnabled(value: boolean) { pluginsEnabled = value },
     set closeWindowsOnQuit(value: boolean) { closeWindowsOnQuit = value },
     reset() {
-      windows.length = 0; hosts.length = 0; handlers.clear(); app.removeAllListeners()
+      windows.length = 0; trays.length = 0; hosts.length = 0; handlers.clear(); app.removeAllListeners()
       powerMonitor.removeAllListeners()
       app.isPackaged = true
       windowFailure = undefined
@@ -231,6 +245,8 @@ vi.mock('electron', () => ({
   } },
   protocol: { registerSchemesAsPrivileged: vi.fn(), handle: harness.protocolHandle },
   powerMonitor: harness.powerMonitor,
+  Tray: harness.FakeTray,
+  nativeImage: { createFromPath: vi.fn(() => ({ path: 'desktop-test-tray.ico' })) },
 }))
 vi.mock('node:fs/promises', async (importOriginal) => {
   const original = await importOriginal<typeof import('node:fs/promises')>()
@@ -1443,9 +1459,49 @@ describe('desktop main startup', () => {
     await harness.preparing.promise
     const window = harness.windows[0]!
     window.webContents.emit('render-process-gone', {}, { reason: 'clean-exit' })
-    window.close()
+    // Closing the window now backgrounds it (the tray keeps it alive), so a
+    // truly closed window is simulated the way shutdown leaves one: destroyed.
+    window.destroy()
     window.webContents.emit('render-process-gone', {}, { reason: 'crashed' })
     expect(harness.dialog.showMessageBox).not.toHaveBeenCalled()
+  })
+
+  it('keeps the run in the tray: closing hides the window, and the tray carries the way back and out', async () => {
+    harness.dialog.showMessageBox.mockImplementation(() => Promise.resolve({ response: 0, checkboxChecked: false }))
+    await import('../src/main.ts')
+    await harness.preparing.promise
+    harness.prepared.resolve()
+    await harness.hostStarted.promise
+    harness.hosts[0]!.ready.resolve()
+    await vi.advanceTimersByTimeAsync(0)
+    const window = harness.windows[0]!
+    const tray = harness.trays[0]!
+    expect(harness.trays).toHaveLength(1)
+    expect(tray.setToolTip).toHaveBeenCalledWith(en.productName)
+    expect(tray.setContextMenu).toHaveBeenCalled()
+
+    window.close()
+    await vi.advanceTimersByTimeAsync(0)
+    expect(window.isDestroyed()).toBe(false)
+    expect(window.hide).toHaveBeenCalledOnce()
+    expect(harness.app.quit).not.toHaveBeenCalled()
+    // The one-time confirmation explains what hiding does and is remembered.
+    expect(harness.dialog.showMessageBox.mock.calls[0]?.[0]).toMatchObject({
+      type: 'info', title: en.productName, message: en.backgroundNoticeBody, buttons: [en.backgroundNoticeConfirm],
+    })
+    expect(existsSync(join(harness.app.getPath(), 'background-close-confirmed'))).toBe(true)
+
+    // The tray menu entries route to the window and to the ordinary quit.
+    const template = harness.menu.mock.calls.at(-1)?.[0] as MenuItemConstructorOptions[]
+    const open = template.find(item => item.label === en.openApplication)
+    const quit = template.find(item => item.label === en.quitApplication)
+    window.show.mockClear()
+    window.focus.mockClear()
+    ;(open?.click as (() => void) | undefined)?.()
+    expect(window.show).toHaveBeenCalled()
+    expect(window.focus).toHaveBeenCalled()
+    ;(quit?.click as (() => void) | undefined)?.()
+    expect(harness.app.quit).toHaveBeenCalled()
   })
 
   it('reports a rejected document load without navigating to a recovery page', async () => {

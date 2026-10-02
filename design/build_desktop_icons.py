@@ -3,8 +3,9 @@
 Same composition rules as design/icons/build_icons.py (ivory board sampled from the
 brand anchor, rounded-square radius 22%, mark 84%), written at the exact sizes the
 desktop packaging consumes: resources/icon.png (1104, electron-builder base),
-icon-windows.png (1024, copied to the app icon) and icon-macos.png (1024, inset
-rounded board for legacy ICNS).
+icon-windows.png (1024, copied to the app icon), icon-macos.png (1024, inset
+rounded board for legacy ICNS), and tray-windows.ico — the notification-area icon,
+the same board+mark composition so it stays legible on light and dark taskbars.
 
 Emitted PNGs are only written when their size matches the file they replace, and a
 side-by-side contact sheet is produced for visual sign-off.
@@ -25,6 +26,8 @@ SHEET = r"E:/Seed/design/logo/desktop-icons-contact-sheet.png"
 RADIUS_RATIO = 0.22
 MARK_RATIO = 0.84
 TARGETS = {"icon.png": 1104, "icon-windows.png": 1024, "icon-macos.png": 1024}
+TRAY_ICO = os.path.join(RESOURCES, "tray-windows.ico")
+TRAY_SIZES = [(16, 16), (20, 20), (24, 24), (32, 32), (48, 48), (64, 64)]
 
 bg = Image.open(ANCHOR).convert("RGB").getpixel((5, 5))
 mark = Image.open(MARK).convert("RGBA")
@@ -66,6 +69,12 @@ for name, size in TARGETS.items():
             f"REFUSE: {name} tile coverage {coverage:.3f} is not a full rounded square"
         )
     tile.save(path)
+
+# Notification-area icon: one 256 master downsampled by PIL into every Windows
+# tray size, so the small frames are proper resamples of the same artwork.
+tray_master = make_tile(256)
+tray_master.save(TRAY_ICO, format="ICO", sizes=TRAY_SIZES)
+print(f"tray-windows.ico -> {TRAY_ICO} sizes={TRAY_SIZES}")
 
 cells = []
 for name, size in TARGETS.items():
