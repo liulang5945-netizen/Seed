@@ -56,7 +56,13 @@ def _end_face_scalars(result: dict[str, Any]) -> dict[str, Any]:
 
 
 def _make_scaled_evidence(
-    original: Any, alpha: float, record: list[Any] | None = None
+    original: Any,
+    alpha: float,
+    record: list[Any] | None = None,
+    *,
+    circuit: Any | None = None,
+    scores: list[float] | None = None,
+    floor_tau: float | None = None,
 ) -> tuple[Any, list[int]]:
     """接口级包装：把 `evidence(**kwargs)` 的返回值乘 α，并数它**被消费**了几次。
 
@@ -70,6 +76,16 @@ def _make_scaled_evidence(
     def scaled(**kwargs: Any) -> Any:
         out_tensor = original(**kwargs)
         calls[0] += 1
+        #: 相似度走**产品自己的那条算式**（`CopyCircuit._cosine` 的 docstring 明写它与 `best_match`
+        #: 同一套），所以这里不另实现一份打分。但"算完再丢"与"根本不发"在**计数器副作用**上不等价
+        #: （`_chosen_event` 的锁丢弃计数照旧会走），件里如实披露这一条。
+        if (scores is not None or floor_tau is not None) and circuit is not None:
+            event = circuit.store.best_match(kwargs["cue"])
+            score = None if event is None else float(circuit._cosine(kwargs["cue"], event.cue))
+            if scores is not None:
+                scores.append(-1.0 if score is None else score)
+            if floor_tau is not None and (score is None or score < floor_tau):
+                return out_tensor * 0.0
         if record is not None:
             with torch.no_grad():
                 record.append(
@@ -99,6 +115,17 @@ def main() -> int:
         "--doses", default="0.25,0.50,1.0", help="逗号分隔的 α；含 1.0 时自动做逐位锚点复检"
     )
     parser.add_argument("--out-report", required=True)
+    parser.add_argument(
+        "--record-scores",
+        action="store_true",
+        help="记录每一步被挑中告知的余弦相似度（τ 从这个分布里取，不拍脑袋定）",
+    )
+    parser.add_argument(
+        "--relevance-floor-tau",
+        type=float,
+        default=None,
+        help="DEBT-G19 修法①的模拟：相似度低于 τ ⇒ 证据归零（模拟 best_match 返回 None）",
+    )
     parser.add_argument(
         "--record-magnitudes",
         action="store_true",
@@ -137,7 +164,15 @@ def main() -> int:
         circuit = substrate.copy_circuit
         original_bound = circuit.evidence
         magnitudes: list[Any] | None = [] if args.record_magnitudes else None
-        scaled, calls = _make_scaled_evidence(original_bound, alpha, record=magnitudes)
+        scores: list[float] | None = [] if args.record_scores else None
+        scaled, calls = _make_scaled_evidence(
+            original_bound,
+            alpha,
+            record=magnitudes,
+            circuit=circuit,
+            scores=scores,
+            floor_tau=args.relevance_floor_tau,
+        )
         circuit.evidence = scaled
         try:
             row = _end_face_scalars(audit(runtime, chunks, boundary, mask=args.mask))
@@ -148,6 +183,19 @@ def main() -> int:
             #: 逐位锚点在**加调用计数之前**比，两边形状才一致。
             unit_dose_identical = row == unpatched
         row["evidence_calls"] = calls[0]
+        if scores:
+            ordered = sorted(scores)
+            row["picked_cosine"] = {
+                "median": round(statistics.median(ordered), 4),
+                "p10": round(ordered[int(0.10 * (len(ordered) - 1))], 4),
+                "p25": round(ordered[int(0.25 * (len(ordered) - 1))], 4),
+                "p75": round(ordered[int(0.75 * (len(ordered) - 1))], 4),
+                "p90": round(ordered[int(0.90 * (len(ordered) - 1))], 4),
+                "max": round(ordered[-1], 4),
+                "share_below_0p3": round(sum(1 for x in ordered if 0 <= x < 0.3) / len(ordered), 4),
+                "share_no_event": round(sum(1 for x in ordered if x < 0) / len(ordered), 4),
+            }
+            scores.clear()
         if magnitudes:
             row["injected_logit_max"] = {
                 "median": round(statistics.median([m[0] for m in magnitudes]), 4),
@@ -160,13 +208,13 @@ def main() -> int:
                 sum(1 for m in magnitudes if m[2] == 0) / len(magnitudes), 4
             )
             magnitudes.clear()
-        row["evidence_calls"] = calls[0]
         doses[str(alpha)] = row
 
     sha_after = hashlib.sha256(checkpoint.read_bytes()).hexdigest()
     report = {
         "format": "taiji-a30-copy-evidence-dose-v1",
-        "question": "把复制回路的加性证据按 α 缩放，语料接缝上的停止信号能不能回来、回来多少",
+        "question": "把复制回路的加性证据按 α 缩放／按相似度下限截断，语料接缝上的停止信号能不能回来",
+        "relevance_floor_tau": args.relevance_floor_tau,
         "checkpoint": args.checkpoint,
         "circuit": args.circuit,
         "circuit_sha256": hashlib.sha256((PROJECT_ROOT / args.circuit).read_bytes()).hexdigest()[
