@@ -369,7 +369,8 @@ class SeedRuntime:
         return "\n".join(parts)
 
     def enable_copy_circuit(
-        self, payload_path: str | Path, *, max_events: int = 4, utf8_gate: bool = True
+        self, payload_path: str | Path, *, max_events: int = 4, utf8_gate: bool = True,
+        window_steps: int | None = None
     ) -> None:
         """A2.4 协议开闸（显式 opt-in）：挂载复制回路并载入训练后参数。
 
@@ -379,6 +380,8 @@ class SeedRuntime:
         加性证据按 UTF-8 位置状态门控——修掉"电路一挂、合法性就被打回去"的回归
         （门开实测真非法率 93%→0%）。``utf8_gate=False`` 是显式逃生口（对照/复现用）；
         门状态是运行时覆写，不进任何 payload。
+        ``window_steps``（PLAN-A30，默认 ``None``）：复制回路证据只在**答复的前 K 步**发射，之后静音。
+        传 `None` ⇒ 不调用运行时覆写 ⇒ 与现状逐位相同；K 必须按它要用的那条链现取，不许跨链搬。
         """
         import torch
 
@@ -389,6 +392,11 @@ class SeedRuntime:
             payload = torch.load(payload_path, weights_only=False)["copy_circuit"]
             substrate.copy_circuit.load_payload(payload)
             substrate.set_copy_evidence_utf8_gate(bool(utf8_gate))
+            if window_steps is not None:
+                #: PLAN-A30（owner 2026-10-02 裁「立项进产品」）：产品入口也得能把生命周期门传进去，
+                #: 否则就是"进了代码、没进产品"——只有直接调 `Taiji.set_copy_evidence_window_steps` 才够得到。
+                #: `None` ⇒ 根本不调用 ⇒ 逐位不变（这条已由出货底逐 item 机检钉住）。
+                substrate.set_copy_evidence_window_steps(window_steps)
 
     def _resolve_surface_gate_state(self) -> None:
         """门槛工件随检查点同目录解析（A30 owner 裁定 §7-1）。
