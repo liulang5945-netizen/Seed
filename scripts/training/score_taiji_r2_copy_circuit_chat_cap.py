@@ -82,6 +82,30 @@ def _answer_raw(
     return answer.strip()
 
 
+def _quantiles(values: list[float]) -> dict[str, Any]:
+    """分位数摘要——用来让每条链报**自己**的相似度分布，而不是复用别条链的 τ。"""
+
+    import statistics
+
+    ordered = sorted(values)
+    n = len(ordered)
+
+    def at(q: float) -> float:
+        return round(ordered[min(n - 1, int(q * (n - 1)))], 4)
+
+    return {
+        "n": n,
+        "median": round(statistics.median(ordered), 4),
+        "p25": at(0.25),
+        "p75": at(0.75),
+        "p90": at(0.90),
+        "p95": at(0.95),
+        "max": round(ordered[-1], 4),
+        "share_below_0p3": round(sum(1 for x in ordered if x < 0.3) / n, 4),
+        "share_no_event": round(sum(1 for x in ordered if x < 0) / n, 4),
+    }
+
+
 def run_arm(
     checkpoint: Path,
     circuit_payload: str | None,
@@ -89,6 +113,7 @@ def run_arm(
     evidence_utf8_gate: bool = False,
     evidence_alpha: float = 1.0,
     evidence_floor_tau: float | None = None,
+    record_scores: bool = False,
     max_bytes: int = MAX_ANSWER_BYTES,
     limit: int | None = None,
 ) -> dict[str, Any]:
@@ -111,7 +136,8 @@ def run_arm(
     if evidence_utf8_gate:
         runtime.model.substrate.set_copy_evidence_utf8_gate(True)
     calls = [0]
-    if evidence_alpha != 1.0 or evidence_floor_tau is not None:
+    scores: list[float] = []
+    if evidence_alpha != 1.0 or evidence_floor_tau is not None or record_scores:
         # PLAN-A-30 §DEBT-G19 的剂量档：复用剂量探针那个接口级包装（不另写一份缩放）。
         from probe_taiji_a30_copy_evidence_dose import _make_scaled_evidence
 
@@ -122,6 +148,7 @@ def run_arm(
             circuit.evidence,
             evidence_alpha,
             circuit=circuit,
+            scores=scores if record_scores else None,
             floor_tau=evidence_floor_tau,
         )
         circuit.evidence = scaled
@@ -168,6 +195,7 @@ def run_arm(
         "rows": rows,
         #: 剂量档的"被走到"计数（`_make_scaled_evidence` 实际消费了几次）。
         "evidence_calls": calls[0],
+        "picked_cosine": _quantiles(scores) if record_scores and scores else None,
     }
 
 
@@ -200,6 +228,11 @@ def main() -> int:
         help="DEBT-G19 剂量档：治疗臂把回路加性证据乘 α（默认 1.0 ⇒ 与已入库两臂档逐位可比）",
     )
     parser.add_argument(
+        "--record-scores",
+        action="store_true",
+        help="量这条链**自己的**被挑中告知相似度分布（τ 必须按链路各取，跨链套用的后果见 PLAN-A-30 第十八次停靠）",
+    )
+    parser.add_argument(
         "--limit",
         type=int,
         default=None,
@@ -222,6 +255,7 @@ def main() -> int:
         evidence_utf8_gate=gate,
         evidence_alpha=args.copy_evidence_alpha,
         evidence_floor_tau=args.relevance_floor_tau,
+        record_scores=args.record_scores,
         max_bytes=args.max_bytes,
         limit=args.limit,
     )
