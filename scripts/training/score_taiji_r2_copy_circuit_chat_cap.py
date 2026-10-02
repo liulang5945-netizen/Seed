@@ -127,6 +127,7 @@ def run_arm(
     perm_seed: int = 20261002,
     evidence_window_steps: int | None = None,
     store_scope_conversation: bool = False,
+    oracle_selector: bool = False,
     max_bytes: int = MAX_ANSWER_BYTES,
     limit: int | None = None,
 ) -> dict[str, Any]:
@@ -224,6 +225,21 @@ def run_arm(
         )
         substrate.copy_circuit.evidence = armed_window  # type: ignore[method-assign]
 
+    #: v19 检索侧 **oracle** 档（与 L2 仪器共用 `_make_oracle_selector_arm`，别写第二把尺子）：
+    #: 把 `store.best_match` 换成"内容含本题 `expected_contains` 的第一条事件"，找不到透传原实现。
+    oracle_state = {"tokens": [], "calls": 0, "found": 0, "fell_through": 0}
+    oracle_set_tokens = None
+    if oracle_selector:
+        from probe_taiji_a30_copy_evidence_dose import _make_oracle_selector_arm
+
+        oracle_substrate = runtime.model.substrate
+        if oracle_substrate.copy_circuit is None:
+            raise RuntimeError("要求 oracle 选择档但回路不在场 ⇒ 没有可替换的 best_match")
+        oracle_fn, oracle_state, oracle_set_tokens = _make_oracle_selector_arm(
+            oracle_substrate.copy_circuit.store
+        )
+        oracle_substrate.copy_circuit.store.best_match = oracle_fn  # type: ignore[method-assign]
+
     manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
     items = [
         {**item, "dimension": dim}
@@ -239,6 +255,13 @@ def run_arm(
         history: list[tuple[str, str]] = []
         if store_reset is not None:
             store_reset()  # 每题开头：只留本题被告知的内容可被取到
+        if oracle_set_tokens is not None:
+            #: 标签来自题面（cap 面 40 条里 36 条带 `expected_contains`）；缺标签**响亮停下**，
+            #: 不许静默透传成"现状选择器"再假装这一档生效了。
+            expected = [str(tok) for tok in item.get("expected_contains") or []]
+            if not expected:
+                raise RuntimeError(f"{item['id']} 没有 expected_contains ⇒ oracle 档无标签可用")
+            oracle_set_tokens([tok.encode("utf-8") for tok in expected])
         turns = list(item["turns"])
         answer = ""
         for index, turn in enumerate(turns):
@@ -297,6 +320,13 @@ def run_arm(
         "evidence_calls": calls[0],
         "picked_cosine": _quantiles(scores) if record_scores and scores else None,
         #: 内容档自述：被走到几次、硬度守恒到哪、冻结落在第几次调用（守恒只对置换档有意义）。
+        #: oracle 档自述：被走到几次、其中多少次真找到了含标签的事件（选对率）、多少次透传。
+        "oracle_arm": {
+            "requested": bool(oracle_selector),
+            "calls": oracle_state["calls"],
+            "found": oracle_state["found"],
+            "fell_through": oracle_state["fell_through"],
+        },
         "store_scope_arm": {
             "requested": bool(store_scope_conversation),
             "stale_removed": store_counters[0],
@@ -389,6 +419,12 @@ def main() -> int:
         action="store_true",
         help="v18 检索侧资格档：每题开头把装载信封里的陈旧事件请出候选集，与 L2 仪器共用同一份实现。",
     )
+    parser.add_argument(
+        "--oracle-selector",
+        action="store_true",
+        help="v19 检索侧 oracle 档：每题把 `best_match` 换成'内容含本题 expected_contains 的第一条事件'。"
+        "与 L2 仪器共用同一份实现；停止面已实测 Δ=0，这档用在复述面验'选对能买多少'。",
+    )
     args = parser.parse_args()
 
     checkpoint = PROJECT_ROOT / args.checkpoint
@@ -410,6 +446,7 @@ def main() -> int:
         record_scores=args.record_scores,
         evidence_window_steps=args.evidence_window_steps,
         store_scope_conversation=args.store_scope_conversation,
+        oracle_selector=args.oracle_selector,
         evidence_content_arm=args.evidence_content_arm,
         perm_seed=args.perm_seed,
         max_bytes=args.max_bytes,
@@ -443,6 +480,7 @@ def main() -> int:
         "evidence_content_arm": args.evidence_content_arm,
         "evidence_window_steps": args.evidence_window_steps,
         "store_scope_conversation": bool(args.store_scope_conversation),
+        "oracle_selector": bool(args.oracle_selector),
         "content_arm_note": "v1 加性字段：`content_arm` 逐臂自述被走到次数／守恒偏差／冻结点。"
         "格式串不动 ⇒ 与已入库各档同格可比（默认 None ⇒ 一次替换都没发生）。",
         #: 两条口径必须落在件上，否则这份读数会被当成"整条答复、预算 256"的那类去比：
