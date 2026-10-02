@@ -5517,3 +5517,33 @@ prompt 的每一步也走证据注入点，旧位置会让 K 被 prompt 吃光�
 
 **三面当前状态一句话**：停止列产品档 **23/72 → 60/72**（替身 63/72，Δ=−3 过线，§第五十三次停靠）；
 复述列产品档 **D 6 保持、成句率买回到对照位**；表层列待数。默认位仍是 `None` ⇒ 装机那份仍 13/72。
+
+
+### 第五十五次停靠·读数（2026-10-02）：**产品门在出货底与表层列都复现了替身档；出货底净增益 +10**
+
+判读线沿用已冻的两条：§第五十二/五十三次停靠的"产品档须复现替身档（`|Δ| ≤ 3`）"，与 §第三十三次停靠的
+"跨底复现须 Δ ≥ +20 才算买到能力"。**没有在看到数之后改线。**
+
+**一、出货底 `output/a31_chunked_self/checkpoint.pt`（`checkpoint_sha256 ca2628077b21bc4c`，回路 seed-A `1cfe5961c300…`）**
+* 关档 `reports/taiji_a30_stop_failure_self_v21_product_off_20261002.json`：真自停 **13/72**、吃满预算 59
+  ⇒ 与今天改源码之前的锚点件 `reports/taiji_a30_stop_failure_self_anchor_v17_20261002.json`（13/59）**同值** ⇒ 甲在出货底成立。
+* 开档（K=128，该底本底定价档）`reports/taiji_a30_stop_failure_self_v21_product_k128_20261002.json`：
+  真自停 **23/72**、吃满预算 49，自述 `product_window_stats={window:128, emitted:128, silenced:128, steps_seen:256}`
+  ⇒ 计数基正确（末趟一条 256 步答复：前 128 发、后 128 静音）。
+* 判读：对替身档 `reports/taiji_a30_stop_failure_self_window128_v18_20261002.json`（21/72）Δ=**+2**，`|Δ| ≤ 3` ⇒
+  **产品路径复现仪器替身**；对关档净增益 = **+10**（13→23），**低于当初那条 +20 的跨底复现线**。
+  ⇒ 所以：修法在产品代码里是**真的在起作用**，但在出货底上买到的幅度不足以说"能力已达当初立项判据"。
+
+**二、表层列（(c) 底、seed-A、`chain=product_surface_chat`、104 题）**
+* 关档 `reports/taiji_a30_surface_tradeoff_v2_product_off_20261002.json`：不挂回路 13｜治疗臂 **3**｜`strict_hits` **40**
+  ⇒ 与改源码前的全剂量件 `reports/taiji_a30_surface_tradeoff_window_anchor_20261002.json`（13／3／40）同值 ⇒ 甲成立。
+* 开档 `reports/taiji_a30_surface_tradeoff_v2_product_on64_20261002.json`：治疗臂成句 **16**、`strict_hits` **35**。
+* 判读：对替身档（`reports/taiji_a30_surface_tradeoff_window64_20261002.json`：15／35）Δ=**+1** ⇒ 复现；
+  对不挂回路 13 差 **3＝恰好等于分辨率** ⇒ 只说"相当"，**不许**说"窗口胜过不挂回路"（沿用 §第四十九次停靠的边界）。
+
+**三、这轮的自我更正（两件，都必须留在案上）**
+* 我一度报"台账 399 行的 31/72 与件不符"。直读该件后**收回**：
+  `reports/taiji_a30_stop_failure_self_window64_v17_20261002.json` 明写 31/72、eating 41、window 64 ⇒ 台账有件可依；
+  错在我第一次扫描时把行与列对错位。**教训**：跨件核对要用单件直读定列，多件并排打印极易错配。
+* 表层那两件**没有自述 `product_window_steps`**（我加报告字段时锚点计数为 0，脚本里根本没有那一行，我却只跑了 cap 的自述检查）
+  ⇒ 读数来自哪条路径目前只能靠文件名与运行命令。登记为 **DEBT-G23**，一行修法＝表层仪器把该旗标写进信封。
