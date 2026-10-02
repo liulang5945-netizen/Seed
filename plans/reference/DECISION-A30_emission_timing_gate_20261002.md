@@ -9,7 +9,7 @@
 
 | 面（判据） | seed-A | seed-B | 读法 |
 | --- | --- | --- | --- |
-| 自身轨迹真自停 L2（/72） | 不挂 66｜全剂量 23｜窗口 **63**（Δ+40） | 全剂量 29｜窗口 **64**（Δ+35）；**这一枚的"不挂回路"上界本轮未复核**（66/72 是 seed-A 那趟的对照，不随回路换） | 窗口把停止买回，跨两枚复现 ⇒ 通道性质 |
+| 自身轨迹真自停 L2（/72） | 不挂 66｜全剂量 23｜窗口 **63**（Δ+40） | 全剂量 29｜窗口 **64**（Δ+35）；不挂回路上界 **66/72**——**已复核**：这台 L2 仪器一趟一配置（`copy_circuit_present_after_load=true`），未挂回路臂住在**单独件**里，两件独立运行同值 66/72（`reports/taiji_a30_stop_failure_c_nocircuit_positions_v16_20261002.json`、`reports/taiji_a30_stop_failure_chunked_short_nocircuit_20261002.json`，同 `checkpoint=output/a31_chunked_short/checkpoint.pt`、同 24 题、同 `max_length=256`） | 窗口把停止买回，跨两枚复现 ⇒ 通道性质 |
 | 表层成句 `well_formed_texts`（104 题，`product_surface_chat`） | 不挂 13｜全剂量 3｜窗口 **15**（Δ+12） | 不挂 13｜全剂量 6｜窗口 **13**（Δ+7） | 同上；两枚各读作"窗口后与不挂回路相当"，**不是**"胜过不挂回路" |
 | 复述 D 命中（24 题，cap 面） | 不挂 0｜全剂量 6｜窗口 **7**（Δ+1） | 不挂 0｜全剂量 3｜窗口 **3**（Δ0） | 方向不否证，但**水平依枚减半** ⇒ "两全"必须带枚数说 |
 
@@ -24,7 +24,9 @@
 `reports/taiji_a30_cap_dual_arm_chunked_short_budget256_20261002.json`、
 `reports/taiji_a30_cap_dual_arm_chunked_short_window64_20261002.json`、
 `reports/taiji_a30_cap_dual_arm_chunked_short_seedB_anchor_20261002.json`、
-`reports/taiji_a30_cap_dual_arm_chunked_short_seedB_window64_20261002.json`。
+`reports/taiji_a30_cap_dual_arm_chunked_short_seedB_window64_20261002.json`、
+`reports/taiji_a30_stop_failure_c_nocircuit_positions_v16_20261002.json`、
+`reports/taiji_a30_stop_failure_chunked_short_nocircuit_20261002.json`。
 
 K 的来历：由定价档按**开档前写死的规则**得出（命中偏移 max=60、停止决定 0 次落在前 16 字节 ⇒ K=64），
 不是从网格里挑的；**K 不因工件重标**（它由 (c) 面命中分布定价）。
