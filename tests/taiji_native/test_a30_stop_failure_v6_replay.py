@@ -81,9 +81,9 @@ def test_instrument_carries_v6_and_the_correction_note() -> None:
     source = (PROJECT_ROOT / "scripts" / "training" / "probe_taiji_a30_stop_failure.py").read_text(
         encoding="utf-8"
     )
-    assert '"format": "taiji-a30-stop-failure-v21"' in source
+    assert '"format": "taiji-a30-stop-failure-v22"' in source
     assert all(
-        f"format_note_v{v}" in source for v in (6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21)
+        f"format_note_v{v}" in source for v in (6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22)
     ), "升版只许加列，历史说明必须逐版留在件里"
     assert "format_note_v6" in source
     assert "追加二" in source and "深帧复现" in source
@@ -307,3 +307,34 @@ def test_the_window_counters_are_read_after_the_run_not_before_it() -> None:
         assert starts, name
         # 计数必须在**返回那一刻或更晚**取（离 return 起始行不超过 3 行），否则就是跑前快照。
         assert max(lines) >= min(starts) - 3, (name, lines, min(starts))
+
+
+def test_the_endstep_probe_groups_by_generation_not_by_item() -> None:
+    """§59 的四标量必须**按生成**算——按 item 串接算就退回"跨代混算的中位数"那把没判别力的尺子。
+
+    用合成行钉两件事：① `step` 归零即换代；② `in_run` 为假的行不参与。
+    """
+    from probe_taiji_a30_stop_failure import _endstep_probe_per_generation, _group_rows_by_generation
+
+    def row(step, p, rank, in_run=True):
+        return {"step": step, "p_boundary": p, "boundary_rank_in_legal": rank,
+                "legal_candidates": 40, "in_run": in_run}
+
+    rows = [row(0, 0.1, 9), row(1, 0.4, 3), row(2, 0.2, 7), row(0, 0.9, 1), row(1, 0.5, 2), row(3, 0.7, 5, in_run=False)]
+    groups = _group_rows_by_generation(rows)
+    assert [len(g) for g in groups] == [3, 2], groups          # 两代，被排除的那行不参与
+    probe = _endstep_probe_per_generation(rows, max_length=256)
+    assert len(probe) == 2, probe
+    assert probe[0]["p_boundary_max"] == 0.4 and probe[0]["p_boundary_argmax_step"] == 1, probe[0]
+    assert probe[0]["boundary_rank_at_peak_step"] == 3, probe[0]
+    assert probe[0]["peak_is_last_step"] is False, probe[0]      # 峰值在 step 1，该代最后一步是 step 2 ⇒ 看到了还在走
+    assert probe[1]["p_boundary_max"] == 0.9 and probe[1]["boundary_rank_at_peak_step"] == 1, probe[1]
+    assert probe[1]["peak_is_last_step"] is False, probe[1]
+    assert all(entry["ate_full_budget"] is False for entry in probe), probe
+    # 第三代的真值样例：峰值就落在最后一步（"看到即停下"那一型），必须被正确认出
+    last_step_peak = _endstep_probe_per_generation([row(0, .1, 9), row(1, .3, 4), row(2, .8, 1)], max_length=256)
+    assert last_step_peak[0]["peak_is_last_step"] is True, last_step_peak
+    assert last_step_peak[0]["boundary_rank_at_peak_step"] == 1, last_step_peak
+    # 吃满预算的判据：末步 +1 >= max_length（不依赖外部真值）
+    long_run = _endstep_probe_per_generation([row(0, .1, 9), row(1, .2, 8)], max_length=2)
+    assert long_run[0]["ate_full_budget"] is True, long_run

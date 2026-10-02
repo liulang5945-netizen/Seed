@@ -214,6 +214,49 @@ def char_membership_of_run(text: str) -> list[bool]:
     return membership
 
 
+
+def _group_rows_by_generation(rows: list[dict]) -> list[list[dict]]:
+    """把 item 内串接的逐步行按**每次生成**切开。
+
+    核实依据（本文件 line ~562-582）：每次生成的行都带 `step`，且 `step` 在换答复时从 0 重数，
+    而 `item_rows` 是把该 item 的 3 次生成**串接**后一起聚合的 ⇒ 现成的 `median_*` 列跨代混算，
+    这就是它对"基底为什么不停"没有判别力的原因（§第五十九次停靠）。`step == 0` 即一代的开始。
+    """
+
+    groups: list[list[dict]] = []
+    for row in rows:
+        if not row.get("in_run"):
+            continue
+        if not groups or row.get("step") == 0:
+            groups.append([])
+        groups[-1].append(row)
+    return groups
+
+
+def _endstep_probe_per_generation(rows: list[dict], max_length: int) -> list[dict]:
+    """四个无外部真值依赖的标量，按每次生成一条（§59 更正版；不存逐步大数组）。"""
+
+    out = []
+    for group in _group_rows_by_generation(rows):
+        if not group:
+            continue
+        peak = max(group, key=lambda row: row["p_boundary"])
+        last_step = max(row["step"] for row in group)
+        out.append(
+            {
+                "generation_steps": len(group),
+                "last_step": int(last_step),
+                "p_boundary_max": round(float(peak["p_boundary"]), 6),
+                "p_boundary_argmax_step": int(peak["step"]),
+                "boundary_rank_at_peak_step": int(peak["boundary_rank_in_legal"]),
+                "legal_candidates_at_peak_step": int(peak["legal_candidates"]),
+                "peak_is_last_step": bool(peak["step"] == last_step),
+                "ate_full_budget": bool(last_step + 1 >= max_length),
+            }
+        )
+    return out
+
+
 def _position_histogram(positions: list[int]) -> dict[str, int]:
     """把"边界符胜出所在的步序"分堆——给资格档定价用：**停止决定落在答复的哪一段**。
 
@@ -627,6 +670,7 @@ def main() -> int:
             #: v17：**改成从 `fed_bytes` 取**。v16 按"在案行的 `boundary_is_argmax`"数位置，
             #: 恒等于 0——边界符胜出那一步 `break` 发生在 `observe` 之前（这条就写在本文件 v6 说明里），
             #: 那一步根本不入案。自停的生成其 `fed_bytes` 就是停止发生的字节位置，是同一件事的正确刻度。
+            "endstep_probe_v22": _endstep_probe_per_generation(item_rows, args.max_length),
             "run_boundary_win_positions": [
                 int(check["fed_bytes"])
                 for check in surface_checks
@@ -664,9 +708,13 @@ def main() -> int:
 
     substrate.observe = original_observe  # type: ignore[method-assign]
     report = {
-        "format": "taiji-a30-stop-failure-v21",
+        "format": "taiji-a30-stop-failure-v22",
         "format_note_v19": "v19 加性多一条检索侧 **oracle** 档：`--oracle-selector` 把 `store.best_match` 换成『内容含本题 `expected_contains` 的第一条事件』，找不到则透传原实现，用来把『选对了还拖不拖写』从『内容身份』与『发射时刻』里单独摘出来验。缺标签时响亮停下而非静默透传（那会伪装成生效）；自述 `oracle_calls`／`oracle_found`／`oracle_fell_through`。默认关 ⇒ 与 v18 逐位可比。",
         "format_note_v18": "v18 **加性**多一条**检索侧**资格档：`--store-scope-conversation` 在每题开头把装载信封带来的陈旧事件请出候选集，只留本次对话被告知的内容可被 `best_match` 取到（只用公开接口 `events()/clear()/record()`；代价是 `event_id` 重新编号，已在件里披露）。它与窗口档正交：一个动候选集、一个动发射时刻。默认关 ⇒ 与 v17 逐位可比。",
+        "format_note_v22": "v22（2026-10-02）：§第五十九次停靠的四个标量按**每次生成**入案 `endstep_probe_v22`——"
+        "核实过 item_rows 是把一个 item 的 3 次生成串接后再取中位数，故现成 median_* 列跨代混算、"
+        "对'基底为什么不停'没有判别力。四标量不依赖外部真值：p_boundary 峰值与其步位、该步的边界名次与合法候选数、"
+        "峰值是否落在该代最后一步、该代是否吃满预算。既有键不动 ⇒ 与 v17–v21 各档同格可比。",
         "format_note_v21": "v21（2026-10-02）：产品门的计步基改成**只数答复相**——`Taiji.generate()` 在 prompt 喂完后"
         "复位计数器。v20 那一版的 K 会被 prompt 段吃光（`emitted=64／silenced=276`＝`84＋256`），"
         "读数 66/72 与不挂回路逐列同值却不是增益。产品档与替身档仍互斥；默认 None ⇒ 逐位不变。",
