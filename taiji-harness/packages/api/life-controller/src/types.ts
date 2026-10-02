@@ -374,6 +374,20 @@ export interface LifeActivateRequest {
   readonly checkpointId: string
 }
 
+/**
+ * Request to upload one dataset file into the runtime's data directory.
+ *
+ * The Client-to-Host channel is a JSON string body, so the bytes travel as
+ * canonical base64 — the same encoding the attachment admission uses for
+ * browser-picked files.
+ */
+export interface LifeUploadDatasetRequest {
+  /** File name the operator picked; the Host keeps only its basename. */
+  readonly name: string
+  /** The file's bytes as base64. */
+  readonly data: string
+}
+
 /** Request to force one Legacy life activity. */
 export interface LifeActionRequest {
   /** Activity to force. */

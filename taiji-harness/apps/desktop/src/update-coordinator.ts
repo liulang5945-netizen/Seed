@@ -8,8 +8,22 @@ import { gt, valid } from 'semver'
 import type { DesktopUpdateState } from './ipc.ts'
 import { DesktopUpdateHttpExecutor } from './update-http-executor.ts'
 import { DesktopUpdatePreparationError } from './update-error.ts'
+import { DESKTOP_UPDATE_CHANNEL } from './update-channel.ts'
 
 const { autoUpdater } = electronUpdater
+
+/**
+ * Point the process-owned updater at one provider configuration file. An
+ * unsigned install has no packaged `app-update.yml`; its local channel writes
+ * this file instead, and the updater reads the feed URL from it.
+ * @param configPath - Absolute path of the runtime-written provider configuration.
+ */
+export function useLocalUpdateConfig(configPath: string): void {
+  // electron-updater declares this setter test-only while it writes the same
+  // field the app adapter normally feeds; an unsigned install has no packaged
+  // app-update.yml for the adapter to name.
+  autoUpdater.updateConfigPath = configPath
+}
 
 /** Owns one updater target until its download and installation settle. */
 export class DesktopUpdateCoordinator {
@@ -64,7 +78,7 @@ export class DesktopUpdateCoordinator {
     }
     this.updater.autoDownload = false
     this.updater.autoInstallOnAppQuit = false
-    this.updater.channel = 'nightly'
+    this.updater.channel = DESKTOP_UPDATE_CHANNEL
     this.updater.allowPrerelease = true
     // Selecting a channel can enable downgrade in electron-updater.
     this.updater.allowDowngrade = false

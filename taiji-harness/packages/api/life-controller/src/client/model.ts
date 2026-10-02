@@ -10,6 +10,7 @@ import type {
   LifeResumeCheckpointRequest,
   LifeSnapshot,
   LifeTrainStartRequest,
+  LifeUploadDatasetRequest,
 } from '../types.ts'
 
 /** Complete generated `ctx.remote.life` namespace. */
@@ -147,6 +148,16 @@ export class ClientLifeModel implements LifeStreamSink {
    */
   trainReset(signal?: AbortSignal): Promise<RemoteResult<LifeControlValue>> {
     return this.remote.trainReset(signal)
+  }
+
+  /**
+   * Upload one dataset file into the runtime's data directory.
+   * @param request - file name and the file's bytes as base64.
+   * @param signal - caller lifetime.
+   * @returns the runtime's message or the Host failure.
+   */
+  uploadDataset(request: LifeUploadDatasetRequest, signal?: AbortSignal): Promise<RemoteResult<LifeControlValue>> {
+    return this.remote.uploadDataset(request, signal)
   }
 
   /**

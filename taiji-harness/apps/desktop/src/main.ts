@@ -1,6 +1,7 @@
 import { WINDOWS_TITLEBAR_HEIGHT } from './windows-layout.ts'
 /** Electron shell: desktop project ownership, custom protocol, windows, and lifecycle. */
 
+import { existsSync } from 'node:fs'
 import { readFile, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -31,7 +32,8 @@ import { DesktopPythonBackendHost, isBackendShipped, primaryRuntimePython } from
 import { DESKTOP_IPC, SCHEME, assertDesktopSender, type DesktopUpdateState } from './ipc.ts'
 import { formatDesktopMessage, resolveDesktopLocale, resolveDesktopStartupLocale } from './locale.ts'
 import { claimDesktopSingleInstance } from './single-instance.ts'
-import { DesktopUpdateCoordinator } from './update-coordinator.ts'
+import { DesktopUpdateCoordinator, useLocalUpdateConfig } from './update-coordinator.ts'
+import { desktopChannelFile } from './update-channel.ts'
 import { serveWebDocument, authenticateWebHost, forwardWebRequest } from './web-document.ts'
 import { DesktopFatalRecovery } from './fatal-recovery.ts'
 import { readHostLocalePreference } from './host-locale.ts'
@@ -47,7 +49,7 @@ import { DesktopUpdateDialog, type UpdateDialogOptions } from './update-dialog.t
 import { readDesktopRuntime } from './runtime-tree.ts'
 import { DesktopBrowserGuests } from './browser-guests.ts'
 import { DesktopTray } from './tray.ts'
-import { DesktopBackgroundNotice } from './background-notice.ts'
+import { LOCAL_UPDATE_CONFIG_FILE, startLocalUpdateSource, type LocalUpdateSource } from './local-update-source.ts'
 
 let focusPrimaryWindow = (): void => {}
 let stopForRecovery = async (): Promise<void> => {}
@@ -437,6 +439,28 @@ async function main(): Promise<void> {
     return startup
   }
 
+  // An unsigned install ships no `app-update.yml`, so its update feed is the
+  // updates folder under the Harness home, served by this process: release
+  // tooling drops one channel file and its installer there, and the panel's
+  // "check for updates" reads that folder exactly like a remote feed. The
+  // channel answers whether or not a release has been dropped in, so the
+  // update entry reports "up to date" instead of a transport failure.
+  const packagedUpdateConfig = join(process.resourcesPath, 'app-update.yml')
+  const localUpdate: LocalUpdateSource | undefined = app.isPackaged && !existsSync(packagedUpdateConfig)
+    ? await startLocalUpdateSource({
+      directory: paths.updates,
+      configPath: join(app.getPath('userData'), LOCAL_UPDATE_CONFIG_FILE),
+      channelFile: desktopChannelFile(process.platform),
+      version: app.getVersion(),
+    }).then((source) => {
+      useLocalUpdateConfig(join(app.getPath('userData'), LOCAL_UPDATE_CONFIG_FILE))
+      return source
+    }).catch((error: unknown) => {
+      console.warn('desktop update: local channel unavailable', error)
+      return undefined
+    })
+    : undefined
+
   const updates = new DesktopUpdateCoordinator(
     publishUpdate,
     async () => {
@@ -483,6 +507,10 @@ async function main(): Promise<void> {
       }
       return true
     },
+    // Keep the process-owned updater, then gate the source: a packaged feed or
+    // the local channel counts as one; neither exists in an un-packaged run.
+    undefined,
+    () => app.isPackaged && (localUpdate !== undefined || existsSync(packagedUpdateConfig)),
   )
 
   const updateSchedule = new DesktopUpdateSchedule(updates, resolveDesktopUpdateScheduleConfig(process.env))
@@ -817,18 +845,6 @@ async function main(): Promise<void> {
       console.warn('desktop tray: unavailable', error)
     }
   }
-  // The first close-to-tray asks once, then records the answer; a cancelled
-  // prompt stays eligible on the next close.
-  const backgroundNotice = process.platform === 'win32'
-    ? new DesktopBackgroundNotice({
-      markerPath: join(app.getPath('userData'), 'background-close-confirmed'),
-      locale: currentDesktopLocale,
-      // Electron's own options type wants a mutable array; the notice reads readonly.
-      show: options => dialog.showMessageBox({ ...options, buttons: [...options.buttons] }),
-      focus: () => { updateDialog.focus() },
-    })
-    : undefined
-
   if (process.platform === 'win32') {
     ipcMain.handle(DESKTOP_IPC.windowsMenu, (event, name: unknown, x: unknown, y: unknown) => {
       assertDesktopSender(event, ['app'])
@@ -894,16 +910,15 @@ async function main(): Promise<void> {
     // Host keeps running its tasks and the tray icon brings the window back.
     // Quit stays on the explicit entries (tray menu, application menu). The
     // interception steps aside during shutdown, an installer handoff, and an
-    // OS session end, so logoff and updates are never blocked.
+    // OS session end, so logoff and updates are never blocked. Unlike upstream
+    // the first close does not ask for confirmation: the window simply hides.
     window.on('close', (event) => {
       if (quitting || shellInstallerOwnsQuit || sessionEnding) return
       event.preventDefault()
       if (updateDialog.isOpen) { updateDialog.focus(); return }
-      const hide = (): void => {
-        if (!quitting && !shellInstallerOwnsQuit && !sessionEnding && !window.isDestroyed()) hideMainWindow(window)
-      }
-      if (backgroundNotice === undefined) hide()
-      else backgroundNotice.close(hide)
+      // The guards above already held for this synchronous path; only a window
+      // that is still alive may hide.
+      if (!window.isDestroyed()) hideMainWindow(window)
     })
     if (process.platform === 'win32') {
       window.on('session-end', () => { sessionEnding = true })
@@ -986,7 +1001,7 @@ async function main(): Promise<void> {
     updateJournal?.action('quit-requested')
     if (shellInstallerOwnsQuit) {
       tray?.dispose()
-      backgroundNotice?.dispose()
+      void localUpdate?.close()
       updateDialog.dispose()
       mandatoryUI?.dispose()
       return
@@ -994,9 +1009,10 @@ async function main(): Promise<void> {
     if (quitting) return
     event.preventDefault()
     quitting = true
-    // The tray icon must not outlive the window it leads back to.
+    // The tray icon must not outlive the window it leads back to, and the local
+    // update listener is closed in passing: neither one may delay the quit.
     tray?.dispose()
-    backgroundNotice?.dispose()
+    void localUpdate?.close()
     if (mainWindow !== undefined && !mainWindow.isDestroyed()) mainWindow.hide()
     updateSchedule.dispose()
     updateDialog.dispose()

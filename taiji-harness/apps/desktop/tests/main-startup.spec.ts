@@ -33,6 +33,10 @@ const harness = await vi.hoisted(async () => {
   const pathModule = await import('node:path')
   const osModule = await import('node:os')
   const userDataDir = fsModule.mkdtempSync(pathModule.join(osModule.tmpdir(), 'desktop-main-user-data-'))
+  // The local update channel serves this folder; a temp root keeps the test
+  // from writing outside it.
+  const paths = { profile: 'desktop-test-profile', lock: `${userDataDir}/lock`, updates: `${userDataDir}/updates` }
+  const useLocalUpdateConfig = vi.fn<(configPath: string) => void>()
   let windowFailure: Error | undefined
   const powerMonitor = new EventEmitter()
   const hosts: FakeHost[] = []
@@ -40,6 +44,7 @@ const harness = await vi.hoisted(async () => {
   let pluginsEnabled = false
   let prepareUpdate: (() => Promise<boolean>) | undefined
   let publishUpdate: ((state: DesktopUpdateState) => DesktopUpdateState) | undefined
+  let updateEnabled: (() => boolean) | undefined
   let preparing = deferred()
   let prepared = deferred()
   let hostStarted = deferred()
@@ -164,7 +169,7 @@ const harness = await vi.hoisted(async () => {
     failWindow(error: Error) { windowFailure = error },
     windows, trays, hosts, handlers, app, FakeWindow, FakeHost, FakeTray, powerMonitor, nativeTheme,
     menu, popup, socketHeaders: vi.fn(), updateCheck, updateDownload, updateInstall,
-    readLocalePreference,
+    readLocalePreference, paths, useLocalUpdateConfig,
 
     ipcOn: vi.fn<(channel: string, listener: (event: { sender: unknown; senderFrame: unknown }, ...args: unknown[]) => void) => void>(),
     get updateState() { return updateState },
@@ -173,6 +178,8 @@ const harness = await vi.hoisted(async () => {
     set prepareUpdate(value: () => Promise<boolean>) { prepareUpdate = value },
     get publishUpdate() { return publishUpdate! },
     set publishUpdate(value: (state: DesktopUpdateState) => DesktopUpdateState) { publishUpdate = value },
+    get updateEnabled() { return updateEnabled },
+    set updateEnabled(value: (() => boolean) | undefined) { updateEnabled = value },
     dialog: { showOpenDialog: vi.fn(), showErrorBox: vi.fn(), showMessageBox: vi.fn() },
     openExternal: vi.fn(),
     protocolHandle: vi.fn<(scheme: string, handler: (request: Request) => Response | Promise<Response>) => void>(),
@@ -201,6 +208,8 @@ const harness = await vi.hoisted(async () => {
       closeWindowsOnQuit = false
       prepareUpdate = undefined
       publishUpdate = undefined
+      updateEnabled = undefined
+      useLocalUpdateConfig.mockClear()
       updateState = { phase: 'idle' }
       updateCheck.mockReset().mockImplementation(async () => updateState)
       updateDownload.mockReset().mockImplementation(async () => updateState)
@@ -258,7 +267,7 @@ vi.mock('node:fs/promises', async (importOriginal) => {
   }) }
 })
 vi.mock('../src/runtime-tree.ts', () => ({ readDesktopRuntime: () => ({ release: { version: '1.0.0' } }) }))
-vi.mock('../src/paths.ts', () => ({ resolveDesktopPaths: () => ({ profile: 'desktop-test-profile' }) }))
+vi.mock('../src/paths.ts', () => ({ resolveDesktopPaths: () => harness.paths }))
 vi.mock('../src/project-manager.ts', () => ({
   DesktopProjectManager: class {
     readonly applyRelease = harness.applyRelease
@@ -278,17 +287,26 @@ vi.mock('../src/update-dialog.ts', () => ({ DesktopUpdateDialog: class {
   focus() {}
   dispose() {}
 } }))
-vi.mock('../src/update-coordinator.ts', () => ({ DesktopUpdateCoordinator: class {
-  constructor(publish: (state: DesktopUpdateState) => DesktopUpdateState, beforeRestart: () => Promise<boolean>) {
-    harness.prepareUpdate = beforeRestart
-    harness.publishUpdate = publish
-  }
-  get state() { return harness.updateState }
-  readonly check = harness.updateCheck
-  readonly download = harness.updateDownload
-  readonly install = harness.updateInstall
-  readonly dispose = vi.fn()
-} }))
+vi.mock('../src/update-coordinator.ts', () => ({
+  useLocalUpdateConfig: harness.useLocalUpdateConfig,
+  DesktopUpdateCoordinator: class {
+    constructor(
+      publish: (state: DesktopUpdateState) => DesktopUpdateState,
+      beforeRestart: () => Promise<boolean>,
+      _updater?: unknown,
+      enabled?: () => boolean,
+    ) {
+      harness.prepareUpdate = beforeRestart
+      harness.publishUpdate = publish
+      harness.updateEnabled = enabled
+    }
+    get state() { return harness.updateState }
+    readonly check = harness.updateCheck
+    readonly download = harness.updateDownload
+    readonly install = harness.updateInstall
+    readonly dispose = vi.fn()
+  },
+}))
 vi.mock('../src/host-locale.ts', () => ({
   readHostLocalePreference: () => harness.readLocalePreference(),
 }))
@@ -1467,7 +1485,6 @@ describe('desktop main startup', () => {
   })
 
   it('keeps the run in the tray: closing hides the window, and the tray carries the way back and out', async () => {
-    harness.dialog.showMessageBox.mockImplementation(() => Promise.resolve({ response: 0, checkboxChecked: false }))
     await import('../src/main.ts')
     await harness.preparing.promise
     harness.prepared.resolve()
@@ -1485,11 +1502,9 @@ describe('desktop main startup', () => {
     expect(window.isDestroyed()).toBe(false)
     expect(window.hide).toHaveBeenCalledOnce()
     expect(harness.app.quit).not.toHaveBeenCalled()
-    // The one-time confirmation explains what hiding does and is remembered.
-    expect(harness.dialog.showMessageBox.mock.calls[0]?.[0]).toMatchObject({
-      type: 'info', title: en.productName, message: en.backgroundNoticeBody, buttons: [en.backgroundNoticeConfirm],
-    })
-    expect(existsSync(join(harness.app.getPath(), 'background-close-confirmed'))).toBe(true)
+    // Closing hides immediately: no confirmation prompt stands between the
+    // close button and the background run.
+    expect(harness.dialog.showMessageBox).not.toHaveBeenCalled()
 
     // The tray menu entries route to the window and to the ordinary quit.
     const template = harness.menu.mock.calls.at(-1)?.[0] as MenuItemConstructorOptions[]
@@ -1502,6 +1517,23 @@ describe('desktop main startup', () => {
     expect(window.focus).toHaveBeenCalled()
     ;(quit?.click as (() => void) | undefined)?.()
     expect(harness.app.quit).toHaveBeenCalled()
+  })
+
+  it('opens the local update channel for an install without a packaged feed', async () => {
+    await import('../src/main.ts')
+    await harness.preparing.promise
+    // The local channel replaces the packaged app-update.yml an unsigned build cannot have.
+    expect(harness.useLocalUpdateConfig).toHaveBeenCalledOnce()
+    expect(harness.updateEnabled?.()).toBe(true)
+    const configPath = harness.useLocalUpdateConfig.mock.calls[0]![0]
+    const config = readFileSync(configPath, 'utf8')
+    // The provider configuration points the updater at this process's channel.
+    expect(config).toContain('provider: generic')
+    expect(config).toContain('updaterCacheDirName: seed-desktop-updater')
+    expect(config).toMatch(/^url: http:\/\/127\.0\.0\.1:\d+\/$/mu)
+    // The folder release tooling fills exists; its HTTP answers are covered by
+    // the local-update-source spec, which runs outside this fake-timer harness.
+    expect(existsSync(harness.paths.updates)).toBe(true)
   })
 
   it('reports a rejected document load without navigating to a recovery page', async () => {

@@ -10,6 +10,7 @@ import type {
   LifeResumeCheckpointRequest,
   LifeSnapshot,
   LifeTrainStartRequest,
+  LifeUploadDatasetRequest,
 } from '../types.ts'
 import type { ClientLifeModel, LifeSnapshotState } from './model.ts'
 
@@ -79,6 +80,14 @@ export interface ILife {
    * @returns the runtime's message.
    */
   trainReset(signal?: AbortSignal): Promise<LifeControlValue>
+  /**
+   * Upload one dataset file into the runtime's data directory. The Host
+   * reduces the name to its basename and forwards the bytes to the runtime.
+   * @param request - file name and the file's bytes as base64.
+   * @param signal - caller lifetime.
+   * @returns the runtime's message naming the uploaded dataset.
+   */
+  uploadDataset(request: LifeUploadDatasetRequest, signal?: AbortSignal): Promise<LifeControlValue>
   /**
    * Run one native sleep consolidation pass.
    * @param request - pass parameters; omitted fields keep the runtime's defaults.
@@ -161,6 +170,10 @@ export class LifeClient extends Service implements ILife {
 
   async trainReset(signal?: AbortSignal): Promise<LifeControlValue> {
     return await this.unwrap(this.model.trainReset(signal))
+  }
+
+  async uploadDataset(request: LifeUploadDatasetRequest, signal?: AbortSignal): Promise<LifeControlValue> {
+    return await this.unwrap(this.model.uploadDataset(request, signal))
   }
 
   async consolidate(request: LifeConsolidateRequest = {}, signal?: AbortSignal): Promise<LifeControlValue> {

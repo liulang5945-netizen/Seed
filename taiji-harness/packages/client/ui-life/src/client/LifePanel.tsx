@@ -9,7 +9,7 @@
  * local state write.
  */
 
-import { useCallback, useEffect, useSyncExternalStore, useState, type ReactNode } from 'react'
+import { useCallback, useEffect, useRef, useSyncExternalStore, useState, type ChangeEvent, type ReactNode } from 'react'
 import type { ILife, LifeSnapshotState } from '@taiji/dsh-api-life-controller/client'
 import type {
   LifeCheckpointView,
@@ -37,10 +37,37 @@ export type LifePanelProps =
   & InjectFace<LifePanelInjected>
 
 /** A control the panel is waiting on, or one awaiting its confirming click. */
-type PendingVerb = 'lifeStart' | 'lifeStop' | 'feed' | 'sleep' | 'play' | 'trainStart' | 'trainResumeCheckpoint' | 'trainPause' | 'trainResume' | 'trainStop' | 'trainReset' | 'consolidate' | 'activateCheckpoint'
+type PendingVerb = 'lifeStart' | 'lifeStop' | 'feed' | 'sleep' | 'play' | 'trainStart' | 'trainResumeCheckpoint' | 'trainPause' | 'trainResume' | 'trainStop' | 'trainReset' | 'consolidate' | 'activateCheckpoint' | 'uploadDataset'
 
 /** The verbs a confirming second click protects. */
 const CONFIRMED: ReadonlySet<PendingVerb> = new Set(['trainStop', 'trainReset', 'activateCheckpoint'])
+
+/** Suffixes the runtime's dataset roster trains on; the picker also filters by them. */
+const DATASET_ACCEPT = '.jsonl,.ndjson,.json,.txt,.text,.md,.csv'
+
+/** Bytes one upload may carry; the Host enforces the same budget before forwarding. */
+const UPLOAD_MAX_BYTES = 200 * 1024 * 1024
+
+/**
+ * Read one picked file as canonical base64. The Client-to-Host channel is a
+ * JSON string body, so the bytes travel encoded — the same shape attachment
+ * admission uses for browser-picked files.
+ */
+async function readBase64(file: File): Promise<string> {
+  const dataUrl = await new Promise<string>((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onerror = () => { reject(reader.error ?? new Error('the file could not be read')) }
+    reader.onload = () => { resolve(typeof reader.result === 'string' ? reader.result : '') }
+    reader.readAsDataURL(file)
+  })
+  const comma = dataUrl.indexOf(',')
+  return comma === -1 ? '' : dataUrl.slice(comma + 1)
+}
+
+/** Basename of one roster path or picked name, for matching an upload against the roster. */
+function basenameOf(path: string): string {
+  return path.split(/[\\/]/u).pop() ?? path
+}
 
 /** Format one ISO instant for a fact row; an unparseable value passes through. */
 function formatInstant(iso: string): string {
@@ -76,20 +103,19 @@ function refusalOf(error: unknown): RemoteFailure | undefined {
     : undefined
 }
 
-/** Resolve the panel copy for one Host failure. */
+/** Resolve the panel copy for one Host failure, from the failure's own typed details. */
 function errorText(rpc: RemoteFailure, t: LifePanelProps['t']): string {
-  const details = (typeof rpc.details === 'object' && rpc.details !== null ? rpc.details : {}) as Record<string, unknown>
   switch (rpc.code) {
     case 'life/runtime-error':
-      return t('errRuntimeError', { status: String(details.status ?? '') })
+      return t('errRuntimeError', { status: String(rpc.details.status) })
     case 'life/runtime-unreachable':
-      return t('errUnreachable', { reason: String(details.reason ?? '') })
+      return t('errUnreachable', { reason: rpc.details.reason })
     case 'life/unavailable':
-      return t('errUnavailable', { reason: String(details.reason ?? '') })
+      return t('errUnavailable', { reason: rpc.details.reason })
     case 'life/conflict':
-      return t('errConflict', { reason: String(details.reason ?? '') })
+      return t('errConflict', { reason: rpc.details.reason })
     case 'life/bad-request':
-      return t('errBadRequest', { field: String(details.field ?? ''), reason: String(details.reason ?? '') })
+      return t('errBadRequest', { field: rpc.details.field, reason: rpc.details.reason })
     case 'life/stream-failed':
       return t('errStreamFailed')
     default:
@@ -192,23 +218,34 @@ interface SectionControlProps {
  * list applies itself whenever that list changes (including the first poll
  * that brings the roster in), while a manual choice survives later roster
  * refreshes — the poll replaces the array identity, never the user's ticks.
+ * One upload also ticks its row once, when the refreshed roster first shows it.
  * @param specDatasets - dataset paths the spec names, absent without a spec.
  * @param roster - the trainable roster, absent when the read did not answer.
+ * @param autoSelect - basename of the dataset an upload just landed, or null.
  * @returns the current selection and the toggle for one roster entry.
  */
 function useDatasetSelection(
   specDatasets: readonly string[] | undefined,
   roster: readonly { path: string }[] | undefined,
+  autoSelect: string | null,
 ): { selected: ReadonlySet<string>; toggle: (path: string) => void } {
   const specKey = specDatasets?.join('\n') ?? null
   const [selected, setSelected] = useState<ReadonlySet<string>>(() => new Set())
   const [appliedKey, setAppliedKey] = useState<string | null>(null)
+  const [appliedAuto, setAppliedAuto] = useState<string | null>(null)
   useEffect(() => {
     if (specKey === null || roster === undefined || appliedKey === specKey) return
     const paths = new Set(roster.map(entry => entry.path))
     setSelected(new Set(specKey.split('\n').filter(path => path !== '' && paths.has(path))))
     setAppliedKey(specKey)
   }, [specKey, roster, appliedKey])
+  useEffect(() => {
+    if (autoSelect === null || appliedAuto === autoSelect || roster === undefined) return
+    const match = roster.find(entry => basenameOf(entry.path) === autoSelect)
+    if (match === undefined) return
+    setSelected(current => (current.has(match.path) ? current : new Set(current).add(match.path)))
+    setAppliedAuto(autoSelect)
+  }, [autoSelect, appliedAuto, roster])
   /** Tick one roster entry without disturbing the rest of the selection. */
   const toggle = (path: string): void => {
     setSelected((current) => {
@@ -447,7 +484,42 @@ function TrainingSection({ t, snapshot, pending, run, life }: SectionControlProp
   const specMissing = rosterPaths === undefined || specDatasets === undefined
     ? []
     : specDatasets.filter(path => !rosterPaths.has(path))
-  const { selected, toggle } = useDatasetSelection(specDatasets, datasets)
+  const [picked, setPicked] = useState<File | null>(null)
+  const [uploadedName, setUploadedName] = useState<string | null>(null)
+  const [uploadMessage, setUploadMessage] = useState<string | null>(null)
+  const [uploadError, setUploadError] = useState<string | null>(null)
+  const fileInput = useRef<HTMLInputElement>(null)
+  const { selected, toggle } = useDatasetSelection(specDatasets, datasets, uploadedName)
+
+  /** Remember the picked file, refusing one the Host would only reject after the transfer. */
+  const pickFile = (event: ChangeEvent<HTMLInputElement>): void => {
+    const file = event.target.files?.[0] ?? null
+    // Clearing the value lets the same file be picked again after a refusal.
+    event.target.value = ''
+    setUploadMessage(null)
+    setUploadError(null)
+    if (file === null) return
+    if (file.size > UPLOAD_MAX_BYTES) {
+      setPicked(null)
+      setUploadError(t('uploadTooLarge', { limit: `${String(UPLOAD_MAX_BYTES / (1024 * 1024))} MB` }))
+      return
+    }
+    setPicked(file)
+  }
+
+  /** Send the picked file, then read the roster again so its new row appears. */
+  const uploadFile = (): void => {
+    const file = picked
+    if (file === null) return
+    setUploadError(null)
+    run('uploadDataset', async () => {
+      const value = await life.uploadDataset({ name: file.name, data: await readBase64(file) })
+      setUploadMessage(value.message)
+      setPicked(null)
+      setUploadedName(basenameOf(file.name))
+      await life.refresh().catch(() => undefined)
+    })
+  }
 
   return (
     <section className={css.section} aria-label={t('sectionTraining')}>
@@ -471,6 +543,22 @@ function TrainingSection({ t, snapshot, pending, run, life }: SectionControlProp
         </p>
       ))}
       <h4 className={css.organTitle}>{t('datasetsTitle')}</h4>
+      <div className={css.actions} role="group" aria-label={t('uploadTitle')}>
+        <input
+          ref={fileInput}
+          className={css.fileInput}
+          type="file"
+          accept={DATASET_ACCEPT}
+          onChange={pickFile}
+        />
+        <Button disabled={busy || active} onClick={() => { fileInput.current?.click() }}>{t('uploadPick')}</Button>
+        {picked !== null && <Button disabled={busy || active} onClick={uploadFile}>{t('uploadSend')}</Button>}
+      </div>
+      {picked !== null && (
+        <p className={css.muted}>{t('uploadReady', { name: picked.name, size: formatBytes(picked.size) })}</p>
+      )}
+      {uploadError !== null && <p className={css.errorLine} role="alert">{uploadError}</p>}
+      {uploadMessage !== null && <p className={css.successLine}>{t('actionDone', { message: uploadMessage })}</p>}
       {datasets === undefined
         ? <p className={css.muted}>{t('datasetsUnavailable')}</p>
         : datasets.length === 0

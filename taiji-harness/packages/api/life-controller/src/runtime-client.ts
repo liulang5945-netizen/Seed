@@ -31,6 +31,7 @@ import type {
   LifeSource,
   LifeTrainingView,
   LifeTrainStartRequest,
+  LifeUploadDatasetRequest,
   LifeWorkbenchView,
 } from './types.ts'
 
@@ -45,6 +46,7 @@ const ARTIFACTS_PATH = '/api/artifacts'
 const RUNTIME_ACTIVATE_PATH = '/api/runtime/activate'
 const TRAIN_NATIVE_PATH = '/api/train/native'
 const RESUME_CHECKPOINT_PATH = '/api/train/resume_checkpoint'
+const UPLOAD_DATASET_PATH = '/api/train/upload_dataset'
 const LEGACY_LIFE_START_PATH = '/api/taiji/life/start'
 const LEGACY_LIFE_STOP_PATH = '/api/taiji/life/stop'
 const LEGACY_LIFE_ACTION_PATH = '/api/taiji/life/action'
@@ -310,6 +312,25 @@ export class LifeRuntimeClient {
     // built-in request ('') from an omission the runtime would default-fill.
     const reply = await this.send(RUNTIME_ACTIVATE_PATH, { checkpoint_id: request.checkpointId }, signal)
     return controlValue(reply)
+  }
+
+  /**
+   * Upload one dataset file into the runtime's data directory. The bytes are
+   * sent as multipart/form-data, the shape `POST /api/train/upload_dataset`
+   * accepts; the runtime answers with the dataset's new relative path.
+   * @param request - sanitized file name and the file's bytes as base64.
+   * @param signal - caller lifetime.
+   * @returns the runtime's message naming the uploaded dataset.
+   */
+  async uploadDataset(request: LifeUploadDatasetRequest, signal: AbortSignal): Promise<LifeControlValue> {
+    const form = new FormData()
+    form.append('file', new Blob([Buffer.from(request.data, 'base64')]), request.name)
+    const reply = await this.open(UPLOAD_DATASET_PATH, {
+      method: 'POST',
+      headers: { accept: 'application/json' },
+      body: form,
+    }, signal)
+    return controlValue({ status: reply.status, body: await parseJson(reply) })
   }
 
   /**

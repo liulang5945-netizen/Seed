@@ -21,9 +21,19 @@ import type {
   LifeResumeCheckpointRequest,
   LifeSnapshotValue,
   LifeTrainStartRequest,
+  LifeUploadDatasetRequest,
 } from './types.ts'
 
 export type * from './types.ts'
+
+/** Suffixes the runtime's dataset roster scans, mirrored from `api/training/datasets.py`. */
+export const NATIVE_DATASET_SUFFIXES: readonly string[] = ['.jsonl', '.ndjson', '.json', '.txt', '.text', '.md', '.csv']
+
+/** Bytes one uploaded dataset may carry; the panel pre-checks the same budget. */
+export const UPLOAD_MAX_BYTES = 200 * 1024 * 1024
+
+/** Characters Windows file names cannot hold, refused before the runtime fails on `open`. */
+const INVALID_FILE_NAME = /[<>:"|?*\u0000-\u001f]/u
 
 /** Runtime address, timeouts, and polling cadence. */
 export interface Config {
@@ -221,6 +231,22 @@ export class LifeController extends TypertRemoteService {
   }
 
   /**
+   * Upload one dataset file into the runtime's data directory. The name is
+   * reduced to its basename and checked against the runtime's trainable
+   * suffixes before any bytes leave the Host; the runtime stays the final
+   * authority on what it stores.
+   * @param request - picked file name and the file's bytes as base64.
+   * @param signal - caller lifetime.
+   * @returns the runtime's message naming the uploaded dataset.
+   */
+  @Remote
+  async uploadDataset(request: LifeUploadDatasetRequest, signal: AbortSignal): Promise<LifeControlValue> {
+    const name = datasetFileName(request.name)
+    assertUploadBytes(request.data)
+    return await this.command(() => this.client.uploadDataset({ name, data: request.data }, signal))
+  }
+
+  /**
    * Run one native sleep consolidation pass.
    * @param request - pass parameters; omitted fields keep the runtime's defaults.
    * @param signal - caller lifetime.
@@ -306,6 +332,51 @@ export class LifeController extends TypertRemoteService {
 function describe(error: unknown): string {
   if (error instanceof RemoteError) return `${error.code}: ${error.message}`
   return error instanceof Error ? error.message : String(error)
+}
+
+/**
+ * Reduce one picked file name to the basename the runtime stores, refusing
+ * names the runtime's roster could never show or the file system cannot hold.
+ * @param raw - name exactly as the picker reported it.
+ * @returns the usable basename.
+ */
+function datasetFileName(raw: string): string {
+  const name = raw.split(/[\\/]/u).pop() ?? ''
+  if (name === '' || name === '.' || name === '..') {
+    throw new RemoteError('life/bad-request', `dataset name "${raw}" has no usable file name`, {
+      field: 'name',
+      reason: 'a file name that is not empty',
+    })
+  }
+  if (INVALID_FILE_NAME.test(name) || /[. ]$/u.test(name)) {
+    throw new RemoteError('life/bad-request', `dataset name "${name}" is not usable on Windows`, {
+      field: 'name',
+      reason: 'a file name without < > : " | ? * and without a trailing dot or space',
+    })
+  }
+  const suffix = name.slice(name.lastIndexOf('.')).toLowerCase()
+  if (!NATIVE_DATASET_SUFFIXES.includes(suffix)) {
+    throw new RemoteError('life/bad-request', `dataset name "${name}" has no trainable suffix`, {
+      field: 'name',
+      reason: `one of ${NATIVE_DATASET_SUFFIXES.join(', ')}`,
+    })
+  }
+  return name
+}
+
+/**
+ * Refuse a payload larger than the upload budget, before it travels as an
+ * oversized JSON body the connection bridge would reject without detail.
+ * @param data - base64 bytes the caller sent.
+ */
+function assertUploadBytes(data: string): void {
+  // base64 carries 3 bytes per 4 characters; the ceiling matches the panel's own check.
+  if (data.length > Math.ceil(UPLOAD_MAX_BYTES / 3) * 4) {
+    throw new RemoteError('life/bad-request', 'dataset upload exceeds the size budget', {
+      field: 'data',
+      reason: `at most ${String(UPLOAD_MAX_BYTES / (1024 * 1024))} MB`,
+    })
+  }
 }
 
 export default LifeController

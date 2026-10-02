@@ -131,6 +131,7 @@ function stubLife(snapshot: LifeSnapshot | undefined, state: LifeSnapshotState['
     trainResume: vi.fn(accept),
     trainStop: vi.fn(accept),
     trainReset: vi.fn(accept),
+    uploadDataset: vi.fn(async (_request: { name: string; data: string }) => ({ message: 'uploaded' })),
     consolidate: vi.fn(accept),
     activateCheckpoint: vi.fn(accept),
     lifeStart: vi.fn(accept),
@@ -158,6 +159,21 @@ function stubLife(snapshot: LifeSnapshot | undefined, state: LifeSnapshotState['
 /** Render the page against a stub facade. */
 function mountPanel(life: ILife): void {
   render(<LifePanel {...standard} t={t} life={life} />)
+}
+
+/** The panel's one hidden dataset picker. */
+function filePicker(): HTMLInputElement {
+  const input = document.querySelector('input[type="file"]')
+  if (!(input instanceof HTMLInputElement)) throw new Error('the panel must render one file picker')
+  return input
+}
+
+/** One snapshot whose roster carries an extra (just uploaded) file. */
+function withDataset(snapshot: LifeSnapshot, path: string, sizeBytes: number): LifeSnapshot {
+  return {
+    ...snapshot,
+    training: { ...snapshot.training, datasets: [...(snapshot.training.datasets ?? []), { path, sizeBytes }] },
+  }
 }
 
 const UNAVAILABLE: RemoteFailure = new RemoteError(
@@ -296,6 +312,53 @@ describe('LifePanel', () => {
     await waitFor(() => {
       expect(mocks.trainStart).toHaveBeenLastCalledWith({})
     })
+  })
+
+  it('uploads a picked dataset as base64, shows the runtime message, and ticks the refreshed row once', async () => {
+    const { life, mocks, emit } = stubLife(nativeSnapshot())
+    mocks.uploadDataset.mockResolvedValue({ message: '数据集 `new-set.jsonl` 已成功上传并选中！' })
+    mountPanel(life)
+
+    const file = new File(['{"text":"hello"}\n'], 'new-set.jsonl', { type: 'application/jsonl' })
+    fireEvent.change(filePicker(), { target: { files: [file] } })
+    expect(screen.getByText('Selected new-set.jsonl (17 B)')).not.toBeNull()
+    // Nothing is sent until the operator confirms the picked file.
+    expect(mocks.uploadDataset).not.toHaveBeenCalled()
+
+    fireEvent.click(screen.getByRole('button', { name: en.uploadSend }))
+    await waitFor(() => { expect(mocks.uploadDataset).toHaveBeenCalledTimes(1) })
+    const request = mocks.uploadDataset.mock.calls[0]![0]
+    expect(request.name).toBe('new-set.jsonl')
+    expect(atob(request.data)).toBe('{"text":"hello"}\n')
+    // The runtime's own words land verbatim, and the roster is read again.
+    expect(await screen.findByText('数据集 `new-set.jsonl` 已成功上传并选中！')).not.toBeNull()
+    await waitFor(() => { expect(mocks.refresh).toHaveBeenCalledTimes(1) })
+    expect(screen.queryByRole('button', { name: en.uploadSend })).toBeNull()
+
+    // The refreshed roster carries the file; the upload ticks its row once.
+    emit(withDataset(nativeSnapshot(), 'new-set.jsonl', 17))
+    const row = await screen.findByRole('checkbox', { name: /new-set\.jsonl/ })
+    await waitFor(() => { expect((row as HTMLInputElement).checked).toBe(true) })
+
+    // An operator's own untick survives later roster identities.
+    fireEvent.click(row)
+    expect((row as HTMLInputElement).checked).toBe(false)
+    emit(withDataset(nativeSnapshot(), 'new-set.jsonl', 17))
+    const unticked = screen.getByRole('checkbox', { name: /new-set\.jsonl/ })
+    await waitFor(() => { expect((unticked as HTMLInputElement).checked).toBe(false) })
+  })
+
+  it('refuses a picked file past the upload budget without reading it', () => {
+    const { life, mocks } = stubLife(nativeSnapshot())
+    mountPanel(life)
+
+    const file = new File([new Uint8Array(1)], 'huge.jsonl')
+    Object.defineProperty(file, 'size', { value: 200 * 1024 * 1024 + 1 })
+    fireEvent.change(filePicker(), { target: { files: [file] } })
+
+    expect(screen.getByRole('alert').textContent).toBe('The file exceeds 200 MB. Use a smaller dataset.')
+    expect(screen.queryByRole('button', { name: en.uploadSend })).toBeNull()
+    expect(mocks.uploadDataset).not.toHaveBeenCalled()
   })
 
   it('warns when the spec names a dataset the roster lacks', () => {

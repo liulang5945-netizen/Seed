@@ -7,6 +7,8 @@ import { resolveDshHome } from '@taiji/dsh-home-paths'
 export interface DesktopPaths {
   readonly profile: string
   readonly lock: string
+  /** Folder the local update channel serves on an install without a packaged feed. */
+  readonly updates: string
 }
 
 /**
@@ -18,5 +20,6 @@ export function resolveDesktopPaths(dshHome: string = resolveDshHome()): Desktop
   return {
     profile: join(dshHome, 'profiles', 'desktop'),
     lock: join(dshHome, 'profiles', 'desktop', 'lock'),
+    updates: join(dshHome, 'updates'),
   }
 }
