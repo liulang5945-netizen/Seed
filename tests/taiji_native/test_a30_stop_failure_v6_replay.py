@@ -83,9 +83,9 @@ def test_instrument_carries_v6_and_the_correction_note() -> None:
     source = (PROJECT_ROOT / "scripts" / "training" / "probe_taiji_a30_stop_failure.py").read_text(
         encoding="utf-8"
     )
-    assert '"format": "taiji-a30-stop-failure-v32"' in source
+    assert '"format": "taiji-a30-stop-failure-v33"' in source
     assert all(
-        f"format_note_v{v}" in source for v in range(6, 33)
+        f"format_note_v{v}" in source for v in range(6, 34)
     ), "升版只许加列，历史说明必须逐版留在件里"
     assert "format_note_v6" in source
     assert "追加二" in source and "深帧复现" in source
@@ -814,3 +814,69 @@ def test_the_lf_repeat_context_counts_newlines_inside_the_repeat_run_only() -> N
     )
     assert flipped["eaters_with_lf"] == 10, flipped
     assert flipped["discriminator_denominator_at_least_10"] is True, flipped
+
+
+def test_the_dynamic_range_flag_refuses_a_ruler_that_cannot_discriminate() -> None:
+    """§86 的教训落成拦得住的东西：一把只能取端点的尺必须被 `ruler_usable=false` 挡下。
+
+    两向都要有：① §85 那种退化形状（每组各自只有一个端点值）⇒ `usable` False、
+    `endpoint_only` True ⇒ 判据不成立；② 有真实散布时 ⇒ True。
+    没有②的话这条守卫等于"永远拒绝"，那是另一种坏。
+    """
+    from probe_taiji_a30_stop_failure import _dynamic_range, _lf_repeat_context_summary_v32
+
+    degenerate = _dynamic_range([0.0, 0.0, 1.0])
+    assert degenerate["usable"] is False and degenerate["endpoint_only"] is True, degenerate
+    assert degenerate["distinct"] == 2 and degenerate["n_values"] == 3, degenerate
+    spread = _dynamic_range([0.0, 0.5, 1.0])
+    assert spread["usable"] is True and spread["endpoint_only"] is False, spread
+    empty = _dynamic_range([None, None])
+    assert empty["usable"] is False and empty["n_values"] == 0, empty
+
+    def gen(share: float, *, ate: bool):
+        return {
+            "generation_steps": 4,
+            "last_step": 3,
+            "p_boundary_max": 0.001,
+            "ate_full_budget": ate,
+            "last_recorded_row": {"step": 3, "boundary_rank_in_legal": 30, "p_boundary": 0.001,
+                                  "legal_candidates_including_boundary": 41,
+                                  "ratio_best_over_boundary": 9.0},
+            "terminal_decision": None if ate else {
+                "step": 4, "p_boundary": 0.3, "p_boundary_before_penalty": 0.3,
+                "boundary_rank_in_legal": 1, "legal_candidates_including_boundary": 41,
+                "ratio_best_over_boundary": 1.0, "boundary_is_argmax": True,
+                "terminal_utf8_state_before": [0, 0],
+                "terminal_over_recorded_peak": 300.0},
+            "terminal_decision_absent_reason": "ate_full_budget" if ate else None,
+            "tail_identity": {"prev_step_emitted_byte": 10, "prev_step_utf8_byte_class": "ascii",
+                              "prev_step_utf8_state_before": [0, 0], "prev_step_boundary_rank": 30,
+                              "prev_step_p_boundary": 0.001},
+            "lf_trace_v29": {"lf_step_count": 2, "last_lf_step": 2, "generation_last_step": 3},
+            "lf_next_probe_v30": {"lf_count": 2, "lf_next_steps": 2,
+                                  "best_boundary_rank_after_lf": 2,
+                                  "p_boundary_at_best_rank_step": 0.02,
+                                  "min_ratio_best_over_boundary_after_lf": 1.1,
+                                  "winner_byte_at_best_rank_step": 231,
+                                  "utf8_class_at_best_rank_step": "lead3",
+                                  "winner_bytes_after_lf": [231, 231]},
+            "lf_repeat_context_v32": {"lf_steps_total": 2, "lf_steps_inside_repeat_run": int(share),
+                                      "lf_share_inside_repeat_run": share},
+        }
+
+    #: §85 真实形状：自停组全 0.0、拖写组全 0.0 ⇒ 尺子没有动态范围
+    stuck = _lf_repeat_context_summary_v32(
+        [{"endstep_probe_v22": [gen(0.0, ate=False), gen(0.0, ate=False)] + [gen(0.0, ate=True) for _ in range(11)],
+          "generations_boundary_self_stop": 2, "generations_eating_full_budget": 11}]
+    )
+    assert stuck["ruler_usable"] is False, stuck
+    assert stuck["column_dynamic_range_eaters"]["endpoint_only"] is True, stuck
+    assert stuck["discriminator_denominator_at_least_10"] is True, stuck      #: 分母够但尺子不够
+
+    #: 有散布时开关必须放行（否则这条守卫会永远拒绝，那是另一种设计错）
+    varied = _lf_repeat_context_summary_v32(
+        [{"endstep_probe_v22": [gen(0.0, ate=False), gen(0.5, ate=False)]
+          + [gen(0.5, ate=True) for _ in range(10)],
+          "generations_boundary_self_stop": 2, "generations_eating_full_budget": 10}]
+    )
+    assert varied["ruler_usable"] is True, varied

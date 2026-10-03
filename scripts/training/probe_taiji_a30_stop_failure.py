@@ -740,6 +740,29 @@ def _lf_repeat_context(group: list[dict]) -> dict[str, Any]:
     }
 
 
+def _dynamic_range(values: list[Any]) -> dict[str, Any]:
+    """**一把尺能不能用来判读**的先决检查：取值有没有动态范围。
+
+    立此条的原因是 §第八十五次停靠 那次实错：判据绑的列（LF 落在同字连写段内的占比）**按定义**
+    只能取 0.0／1.0，跑完才看出来两组同值——字面上分支能读出一个结论，效力上却是空的。
+    从此凡"两组比较型判据"都要先看这个块：`usable=False` ⇒ **判据不建立**，不许挑对自己顺眼的一支读。
+    """
+
+    nums = [float(v) for v in values if v is not None]
+    if not nums:
+        return {"n_values": 0, "distinct": 0, "endpoint_only": False, "usable": False}
+    endpoints = {0.0, 1.0}
+    return {
+        "n_values": len(nums),
+        "distinct": len(set(nums)),
+        "min": round(min(nums), 4),
+        "max": round(max(nums), 4),
+        "endpoint_only": bool(set(nums) <= endpoints),
+        #: usable：至少两个不同取值，且不是"全部挤在 0／1 两端"
+        "usable": bool(len(set(nums)) >= 2 and not set(nums) <= endpoints),
+    }
+
+
 def _lf_repeat_context_summary_v32(per_item: list[dict]) -> dict[str, Any]:
     """§85 判据要的那一列：自停组／拖写组各自"LF 落在重复段内"的占比中位。"""
 
@@ -761,6 +784,17 @@ def _lf_repeat_context_summary_v32(per_item: list[dict]) -> dict[str, Any]:
         out[f"{name}_median_share_inside_repeat_run"] = _median(shares)
         out[f"{name}_share_is_binary_count"] = sum(1 for s in shares if s in (0.0, 1.0))
     out["discriminator_denominator_at_least_10"] = bool(out["eaters_with_lf"] >= 10)
+    #: §86 的教训落进仪器：先把这一列的动态范围量出来，`usable=False` 时判据**不建立**。
+    out["column_dynamic_range_stoppers"] = _dynamic_range(
+        [g["lf_repeat_context_v32"]["lf_share_inside_repeat_run"] for g in groups["stoppers"]]
+    )
+    out["column_dynamic_range_eaters"] = _dynamic_range(
+        [g["lf_repeat_context_v32"]["lf_share_inside_repeat_run"] for g in groups["eaters"]]
+    )
+    out["ruler_usable"] = bool(
+        out["column_dynamic_range_stoppers"]["usable"]
+        or out["column_dynamic_range_eaters"]["usable"]
+    )
     return out
 
 
@@ -1243,7 +1277,8 @@ def main() -> int:
 
     substrate.observe = original_observe  # type: ignore[method-assign]
     report = {
-        "format": "taiji-a30-stop-failure-v32",
+        "format": "taiji-a30-stop-failure-v33",
+        "format_note_v33": "v33（2026-10-03）：把 §第八十五／八十六次停靠 那次预注册缺陷变成机器拦得住的东西。 缺陷内容：判据绑的列（LF 落在同字连写段内的占比）按定义只能取 0.0／1.0，两组同值时字面分支仍能读出一个方向——但那一读**没有效力**。本版新增 `_dynamic_range()`，并在 `lf_repeat_context_summary_v32` 里落三列：`column_dynamic_range_stoppers／_eaters`（n_values／distinct／min／max／endpoint_only）与总开关 `ruler_usable`；规矩是 **`ruler_usable=false` ⇒ 判据不建立**，比较型判读一律先看它。既有列与既有字段一字未动。",
         "format_note_v32": "v32（2026-10-03）：§第八十四次停靠 留下一处分不开的东西——装机底门开启后耦合掉 19.0pp，"
         "可能是『新放出来的换行本来就发在正文中间』，也可能是『同样位置的换行也不兑现了』；"
         "`far-from-end` 那一堆对拖写生成是定义性的，分不开这两条。本版按 §八十五 预注册补 "
