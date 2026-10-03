@@ -1428,3 +1428,13 @@ owner 已裁定 18 行那枚走"批准新增分类条目"（人工评审＝本�
 **因此登记一条取法纠正（比这条读数更长期）**：判"本地 lint 面不可复核"之前，正确的命令是 **`check:ci:lint:contracts-ready`**，不是 `pnpm run lint`。㊵-167／㊵-173 那两句"lint 走不到 oxlint ⇒ 基线此刻不可复核"在**取法层**就错了——不是我读的叶子不对，是**我挑的入口把叶子挡在了构建后面**，而 CI 不这么挑。这与 [[gate-runnability-not-inherited-from-aggregator]] 是同一条的**新形态**：不光"入口要 pnpm"不等于"叶子要 pnpm"，**"官方脚本里有个红前缀"也不等于"CI 用的 mode 有同一前缀"**；判不可测前要先看 gate 图里 CI 究竟调哪一支。
 
 **判据现状更新**：判据⑥ 在 HEAD 上是**由 CI 自己的入口判为红**（不是"不可测"），红的构成＝**231 条 `@stylistic(indent)`（`266289e1`，属他线）＋ 探针件 3 条 ＋ 在飞件 1 条**，type-aware 那 7 条基线已判清为 0（㊵-176）。owner 已裁"等它自己走、我只记录不干预"⇒ 我仍不代改、不跑 autofix，只把"判据⑥ 未满足"的理由从"不可测"改写成"CI 入口实测红、且三条来源全部不属本线"。
+**㊵-178（判据④ 的客户端面第一次拿到"零红"的合格读数：`60 passed (60)`／`1079 passed | 1 skipped (1080)`、rc=0——差的那一格正是 ㊵-174 拆掉的那条 EPERM 假红）**
+
+跑法与前一趟同面同命令：`corepack pnpm exec vitest run packages/client/ui-life packages/client/ui-workspace packages/client/ui-chat packages/client/ui-deliverables --config vitest.config.ts`，日志 `%TEMP%/h178-client.log`（rc 由落盘文件读）。
+汇总行原文＝**`Test Files 60 passed (60)`、`Tests 1079 passed | 1 skipped (1080)`**、rc=0，日志内 **`FAIL` 零条**。
+
+**为什么这条算"合格"而前几趟不算**：作用域内**没有任何在飞文件**——当前树上的四枚未入库件是 `apps/web/tests/clickable-links-gallery.e2e.ts`、`apps/web/tests/hmr-live.e2e.ts`、`apps/web/tests/zzz-probe-plugins.e2e.ts`、`packages/api/life-controller/tests/resource-cleanup.host.spec.ts`，**全都不在这四个包目录下** ⇒ 这一趟测的是已入库代码＋我自己那一枚已提交的测试拆分。
+
+**与上一趟（898a0963 那条登记：`Test Files 1 failed｜59 passed (60)`、`Tests 1 failed｜1078 passed (1079)`）对齐得上**：总用例数 1079→1080 ＝ ㊵-174 把一条 `it` 拆成两条的那 ＋1；1 条 failed→0，1078 passed→1079，新增的 1 skipped 正是带 EPERM 证据的那条符号链接断言。**四条 delta 全部由同一次改动解释，没有需要另立归因的残差**。
+
+**这条读数的边界（引用时必须带上）**：它证的是"客户端四个包的单元／宿主面在 HEAD 上无红"，**不**证 `deliverables` 那条"最终符号链接应 404 且不拉起外部程序"的产品语义——那条在本机是被平台挡住的 skip，只有在有符号链接权限的宿主（POSIX/CI）上才算验过（㊵-170／㊵-174 同一口径）。也**不**替代判据④ 的 `test:coverage` 那一档：覆盖率仍无合格读数（要等根 `build` 绿，而 `build` 此刻因探针件 rc=1）。
