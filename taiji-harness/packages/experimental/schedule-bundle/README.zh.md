@@ -90,6 +90,5 @@ kind: "package-bundle"
 <details>
 <summary>维护者信息 — 点击展开</summary>
 
-本包自上游 `@deepseek-ai/dsh-experimental-schedule-bundle` 0.2.0-rc.2 移植进本 fork，
-使插件管理页提供的四个官方 Bundle 与 DeepSeek Harness 安装版一致；其条目包本仓已随包交付。
+本包自上游 `@deepseek-ai/dsh-experimental-schedule-bundle` 0.2.0-rc.2 移植进本 fork，使插件管理页提供的四个官方 Bundle 与 DeepSeek Harness 安装版一致；其条目包本仓已随包交付。
 </details>

@@ -90,7 +90,5 @@ The tool schemas change the request prefix once when the bundle mounts; each app
 <details>
 <summary>Maintainer details — click to expand</summary>
 
-Ported into this fork from the upstream `@deepseek-ai/dsh-experimental-schedule-bundle`
-0.2.0-rc.2 package so the plugin manager offers the same four official bundles as a
-DeepSeek Harness installation; the row packages already shipped here.
+Ported into this fork from the upstream `@deepseek-ai/dsh-experimental-schedule-bundle` 0.2.0-rc.2 package so the plugin manager offers the same four official bundles as a DeepSeek Harness installation; the row packages already shipped here.
 </details>
