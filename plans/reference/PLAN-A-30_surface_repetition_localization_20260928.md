@@ -7952,3 +7952,40 @@ R=2.0 那一档可实现下界 **8.68 → 2.78（÷3.1）**。⇒ 挂回路做�
 也削掉一字符（`…taiji_r2_readout_retrain` → `…retrai`、`coverage.json` → `coverage.jso`）⇒ 12 项被判"不存在，跳过"而漏删。
 方向是安全的（漏删不是错删，第二趟按现存目录补删），但规矩要立住：**清理脚本里对路径行只许 `strip()` 空白，
 不许 rstrip 任何可能出现在文件名里的字符**。
+
+### 第一百二十七次停靠·§125 训练档开跑前的两条前置事实（2026-10-03 11:2x，零判读、零产品改动）
+
+**事实一（新查出来的，改的是这一档的意义而不是参数）**：装机基底 `output/a31_chunked_self/checkpoint.pt`
+（`ca262807`）自己的信封元数据写着 `answer_source=self`、`answer_chunking=per-answer`、
+`self_answers_path=output/a31_chunked_self/self_answers.jsonl`、`saved_at_utc=2026-09-30T23:10:31Z`。
+而那张表的构建件 `reports/taiji_a30_self_answers_build_20261001.json` 钉的是
+`base = output/a26_p1/checkpoint.pt`／`base_sha256 = 8b87583713a47a82…` ⇒ **基底吃过的"自答"是上一代模型写的轨迹，
+不是它自己写的**。所以 §125 不是"再训一次"，而是这条 on-policy 路上**第一次真正同底自答**：
+自答表必须由 `ca262807` 本人生成。这也说明 §125 那句"`--base` 默认值是指向旧底的坑"不只是流程坑，
+它已经真实发生过一次（10-01 那张表就是在旧底上生成的）。
+
+**事实二（接线检查，为省两小时的空转）**：训练侧的三条硬约束与写靶保护在**微档**上全部实测走通——
+`--resume output/a31_chunked_self/checkpoint.pt --answer-source self --answer-chunking per-answer
+--self-answers <表> --max-symbols 2000 --epochs 1 --checkpoint output/a31_onpolicy_wiringcheck/checkpoint.pt
+--progress …` ⇒ `rc=0`、`exit_reason=max_symbols_reached`、`reached_budget=true`、`base_ticks=273`、
+`ticks_at_exit=2490`，跑完复核基底 sha 仍是 `ca262807`（未被写）。
+一条读数口径必须钉住：**`base_ticks` 读的是情节局部计数 `model.tick`（273），不是累计 `_development_ticks`（≈4M）**——
+`train_seed_corpus.py:281-291` 的注释写明只有换读出链才记 `tick_offset`，同链续训时 `base_ticks = model.tick`。
+⇒ `--max-symbols` 的语义是"从此刻起再走这么多步"，与在 4M 还是 273 的刻度上无关；
+引用这一档的预算达成时**不许**把 273 读成"这枚件只训过 273 步"（那正是 `DEBT-G14` 那族错读的镜像）。
+
+**仪器缺陷两条已就地修掉并配守卫**（都不需训练即可机检）：
+①`build_taiji_a30_self_answers.py` 的 `--out-report` 原为可选且缺省名**硬钉在一份已入库读数件**
+（`PROJECT_ROOT / "reports" / "taiji_a30_self_answers_build_20261001.json"`）上 ⇒ 重跑不带旗标就会在跑完那一刻
+无声覆盖那一次实测；改成**必给＋目标已存在即打 `[拒绝落盘]` 返回 2**（抄 `probe_taiji_a30_writeback_gate_shipping_face.py`
+的同名修法，且拒绝发生在载模型之前）。
+②同文件报告字段用 `path.relative_to(PROJECT_ROOT)`，把输出指到仓外（scratch 落点的常规做法）会在**整轮生成跑完之后**
+抛 ValueError ⇒ 新增 `_rel()`：仓内相对、仓外绝对，不抛。守卫 `tests/taiji_native/test_a30_self_answers_report_face.py`
+**6 passed**（含正反两支：目标已存在⇒`rc=2` 且不留输出文件；目标不存在⇒必须越过拒绝闸才允许继续，
+用 `read_questions` 哨兵证明，防"恒红的门"被无声绕开）。ruff 0 条。
+
+**判读面不动**：沿用 §102 已冻三条（A＝"从不发 LF 那一群"是否被挪动，占比下降 ∧ 存在 ≥0.10 的拖写代从 0 变 ≥20；
+B＝L2 主列 `72 − generations_eating_full_budget ≥ 6`；C＝`SPEC-A-24` 的 L1 原样），必披露崩塌分层
+（`steps_in_repeat_run ≥50 / <50`，基线 115／121），新档必须过 §110 那台判读器八条前置（含
+`evidence_observer_installed=true` 与等式 `loop_calls = total_steps − generations`）才可发表。
+本轮**不新增线、不换次要指标、不因"只差一次"下调阈值**。

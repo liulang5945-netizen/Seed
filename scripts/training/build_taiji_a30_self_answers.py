@@ -15,8 +15,14 @@
 
 用法：
     python scripts/training/build_taiji_a30_self_answers.py \
-        --base output/a26_p1/checkpoint.pt --pairs 12000 \
-        --out output/a31_chunked_self/self_answers.jsonl
+        --base output/a31_chunked_self/checkpoint.pt --pairs 12000 \
+        --out output/a30_self_answers/ca262807_self.jsonl \
+        --out-report reports/taiji_a30_self_answers_ca262807_20261003.json
+
+落盘规矩（2026-10-03 加，抄 `probe_taiji_a30_writeback_gate_shipping_face.py` 的同名修法）：
+`--out-report` **必给**，且目标已存在 ⇒ 打 `[拒绝落盘]` 并返回 2。原先它是可选参数且缺省值硬钉在一份
+**已入库**的读数文件上（`reports/taiji_a30_self_answers_build_20261001.json`）⇒ 任何人重跑而不带旗标，
+就会在跑完那一刻无声覆盖那张表的唯一一次实测。重取必须换新文件名，让两件并存可比。
 """
 
 from __future__ import annotations
@@ -39,6 +45,19 @@ DEFAULT_CORPUS = PROJECT_ROOT / "data" / "simple_zh" / "dialogue_extended_clean.
 
 def _sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def _rel(path: Path) -> str:
+    """件内自述：仓内给相对 posix，仓外给绝对 posix。
+
+    原来这里直接 `path.relative_to(PROJECT_ROOT)`，所以把 `--out` 指到仓外（scratch 落点的常规做法）
+    会在**整轮生成跑完之后的报告步**抛 ValueError ⇒ 成果只在最后一步丢掉。
+    """
+
+    try:
+        return path.relative_to(PROJECT_ROOT).as_posix()
+    except ValueError:
+        return path.resolve().as_posix()
 
 
 def read_questions(path: Path, *, pairs: int) -> list[str]:
@@ -76,8 +95,19 @@ def main() -> int:
     parser.add_argument("--penalty", type=float, default=2.0)
     parser.add_argument("--out", required=True)
     parser.add_argument("--resume", action="store_true", help="已存在的输出里已有的问句跳过")
-    parser.add_argument("--out-report", default=None)
+    parser.add_argument(
+        "--out-report",
+        required=True,
+        help="读数件落点（必给；已存在即拒绝落盘，重取请换新文件名让两件并存可比）",
+    )
     args = parser.parse_args()
+
+    report_path = Path(args.out_report)
+    if not report_path.is_absolute():
+        report_path = PROJECT_ROOT / report_path
+    if report_path.exists():
+        print(f"[拒绝落盘] 报告目标已存在：{report_path}（换新文件名重取）", file=sys.stderr)
+        return 2
 
     out = Path(args.out)
     if not out.is_absolute():
@@ -142,7 +172,7 @@ def main() -> int:
 
     report = {
         "format": "taiji-a30-self-answers-v1",
-        "base": base.relative_to(PROJECT_ROOT).as_posix(),
+        "base": _rel(base),
         "base_sha256": sha_base,
         "base_sha256_unchanged": _sha256(base) == sha_base,
         "corpus": corpus.name,
@@ -152,7 +182,7 @@ def main() -> int:
         "empty_answers": empty,
         "gen_max": args.gen_max,
         "penalty": args.penalty,
-        "out": out.relative_to(PROJECT_ROOT).as_posix(),
+        "out": _rel(out),
         "out_sha256_16": hashlib.sha256(out.read_bytes()).hexdigest()[:16],
         "started_utc": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "guard": {
@@ -160,11 +190,6 @@ def main() -> int:
             "question_count_matches": len(existing) + written <= args.pairs,
         },
     }
-    report_path = (
-        Path(args.out_report)
-        if args.out_report
-        else PROJECT_ROOT / "reports" / "taiji_a30_self_answers_build_20261001.json"
-    )
     report_path.write_text(
         json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
     )
