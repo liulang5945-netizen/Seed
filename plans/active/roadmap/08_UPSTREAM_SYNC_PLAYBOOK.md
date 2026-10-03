@@ -1367,3 +1367,18 @@ owner 已裁定 18 行那枚走"批准新增分类条目"（人工评审＝本�
 因此乙现在缺的不是价格，是**开单理由**：注入位移那族红在 HEAD 上已被 refresh 对齐（㊵-153：收官面 12 红清零），但"当前面还有几条红来自注入位移"必须靠一次合格的整面读数判读，而 `rerun13` 的共同前置本条实测时仍未解除——`git status` 仍给出 `taiji-harness/apps/web/tests/zzz-probe-plugins.e2e.ts` 在树外（我的 glob 复算＝门定义 145 而非 144），三枚别人在飞的 lane 改动（`clickable-links-gallery.e2e.ts`、`hmr-live.e2e.ts`、`packages/api/life-controller/tests/resource-cleanup.host.spec.ts`）仍未入库。owner 已裁"等它自己走，我只记录不干预"⇒ 本格只记录、不动工、不发整面。
 
 **一条要长期生效的规矩**：引用"某场景已有平台双档"之前，要查的是**有没有 lane 真的按平台分支取档**，不是目录里有没有一个更高代际的同名文件；分支点只有一处时，其余"双档"都是格式迁移的遗迹。
+**㊵-173（四支门在当前 HEAD 的重取＋判据① 的"不可测"这次拿到了直接证据；顺带把一条待裁项降级为"不拦路"）**
+
+读数全部落在 `HEAD＝4f22df22`（14:16–14:18），日志在仓外 `%TEMP%/g173-*.log`，rc 由落盘文件读，不由包装命令的退出码读。
+- `corepack pnpm run duplication` ＝ **rc=0、`Found 0 clones.`** ⇒ 判据⑥ 在新 HEAD 上仍是关闭状态。
+- `corepack pnpm run hygiene` ＝ **rc=0、`18 passed, 0 failed, 0 skipped in 22.94s`**，其中 **`PASS node-next types (0.99s)`**。
+- `corepack pnpm run doc-sync` ＝ **rc=1、`42 passed, 1 failed in 91.36s`**；唯一失败叶＝`repository references`，原文仍是 `apps/web/tests/hmr-live.e2e.ts:100 commit-hash`（㊵-166 同一条，属他线未提交那一行，我不替别人改在飞源码、也不为聚合入口变绿而绕过该门）。
+- 根 `corepack pnpm run build` ＝ **rc=1、`error TS` 计数 39**（日志 2879 行）。
+
+**判据① 这次的红不是"待归因"，是按文件分堆分完了**：39 条＝`packages/test-support/session-snapshot/src/index.ts` 10、`apps/web/tests/scaffold.ts` 10、`packages/test-support/session-snapshot/src/harness.ts` 6、**`apps/web/tests/zzz-probe-plugins.e2e.ts` 3**、`normalize.ts` 2、`launcher.ts` 2、`packages/test-support/loader-smoke/src/index.ts` 2、`packages/test-support/llm-replay/src/index.ts` 2、`packages/llm/deepseek-llm-api-extensions/src/index.ts` 2（九档合计 39）；同一份日志里 `grep -cE "plans/|\.dsh-sbx2"` ＝ **0** ⇒ 无一条落在我名下。**比 ㊵-167 的机制句更硬的一点是**：那枚未入库探针件自己就产 3 条错——它不只是"把 `scaffold.ts` 吸进 `rootDir=apps/web` 的程序"（那 10＋10＋6＋2＋2＋2＋2＋2 条是这次吸入的后果），它本身已在错误列表内。⇒ **"判据① 此刻不可测"是实测结论而非推定**，且解锁条件与整面那三件是同一条：探针件离开扫描面。
+
+**口径披露（这三支扫的是工作树，不是纯 HEAD）**：树上此刻仍有别人未提交的三枚件（`clickable-links-gallery.e2e.ts`、`hmr-live.e2e.ts`、`packages/api/life-controller/tests/resource-cleanup.host.spec.ts`），最后一枚在 `duplication` 的 `packages scripts` 分析面内。对 `duplication` 我可以给一条单调性论证：克隆配对只会因为**多一个文件**而新增，不会因为多一个文件而把既有配对隐藏掉 ⇒ "带污染仍 0 枚"**蕴含**"纯 HEAD 也 0 枚"，判据⑥ 的关闭不受在飞件影响。`hygiene` 与 `doc-sync` **不给这种单调性**（多文件可能新引入红，也可能恰如此刻——那条红就长在别人未提交的一行上），所以这两支的读数只在当前树成立，不外推成"HEAD 上成立"。
+
+**一条待裁项降级（本条的净产出）**：G5 §12「仍在等 owner」里那条"缺符号链接权限时 `node-next types` 该叶算红还是算跳过"（08 ㊵-120／㊵-122，owner 选了题但没给值）**此刻不再拦路**——该叶本轮 `PASS (0.99s)`，而同一台机器上**文件**符号链接仍然 EPERM（㊵-170 的 `packages/client/ui-deliverables/tests/present-open.host.spec.ts:138`）。⇒ 这道题的真实对象已经换掉了：要裁的是**spec 侧文件符号链接断言在本机算红还是算 skip**，那属判据④ 的平台档、不属卫生面。我不替 owner 改判定，只把这条从"待裁（拦路）"降级为"待裁（不拦路）"，并按新形状重新问一次。
+
+**队首不变**：`rerun13`（判据⑦ 基线）、干净树上的合格 `test:coverage`（判据④）、乙档那 18 份重录，三件仍卡同一前置——本条实测＝门定义复算 145、探针件在树、三枚在飞件未入库；owner 已裁"等它自己走，我只记录不干预"⇒ 本格仍然只记录、不动工、不发整面。
