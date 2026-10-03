@@ -6721,3 +6721,44 @@ min_ratio, median_ratio, worst_ratio, per_step(前 6 次：步序/名次/比值/
 * **代价面另算、不混进判据**：每个阈值下被截断的生成里，"保留字节／原长度"的中位与 p10 ——
   这是表层/复述风险的**代理**，不是实测：它**不能**证明 D 维复述不受伤（那要真跑一趟带该规则的表层与 cap 档，
   属新裁定，本档不做也不许引用本档当已验证）。
+
+
+### 第九十二次停靠·把 §91 那台反事实计算器落成**仓内仪器＋守卫**（2026-10-03 04:15，零机器时间，先于任何 §91 读数）
+
+**动作**：新增 `scripts/training/counterfactual_taiji_a30_lf_stop_rule.py`（§91 的规则与四阈值网格原样实现，**只算不判**）
+＋守卫 `tests/taiji_native/test_a30_lf_stop_rule_counterfactual.py`（**8 passed**；与比较器同册 **16 passed**；`ruff` 两文件 **0 条**）。
+它存在的时间点早于 §89 两枚 96 件落盘 ⇒ 判读用的式子不是我看了数之后造的。
+
+**这条守卫抓到我自己头两行里的真错（就地改正，不掩盖）**：第一版 `run()` 写成"只要件里有逐代数据就把网格算完"，
+于是**尺子退化那档**（`usable=false`、`eaters_with_lf_next=3`）**照样打印出四个阈值上的 Δpp 与保留比例**
+——与 §91 "前置不齐 ⇒ 整档不发表"直接矛盾。改法：`grid` 也受前置门控（不齐则为空），并补上 §91 第二条前置
+（`per_step` 的步序或比值缺读数 ⇒ `per_step_has_missing_readout` ⇒ 不发表）。
+它先以 `2 failed` 的形式出现，这正是"这条前置能为 false"的实证，比我口述"会拒发"强。
+
+**取数结构按件的真实形状逐项核对过**（不靠假设，本仓在这上面白跑过几趟）：逐代住在 `per_item[*].endstep_probe_v22`，
+该字典里**没有** `id` ⇒ 由 `iter_generations` 从题面层挂 `item_id`/`generation_index`；
+`argmax_mismatch_steps` 也住在题面层（按题求和，件级无此键）；
+§91 所需三列齐备：`lf_margins_v34.per_step[].step` 与 `ratio_best_over_boundary`、逐代 `generation_steps`、
+以及 `lf_steps` 对 `len(per_step)` 的关系（＝**低报来源**，以 `truncated_generations_lf_steps_gt_6` 单独报出）。
+
+**两条路都实测过**（fail-closed 的选取只测拒绝分支会漏掉"永远拒绝"这种设计错）：
+* 真实件干跑（已知应当被拒的那一档）`output/tmp_a30_smoke/v34_margins_smoke3.json`（9 代）
+  ⇒ `published=false`、`precondition_failures=[eaters_ruler_not_usable, eaters_with_lf_next_below_20]`、`grid=[]`、**rc=2**；
+  读得到信封、不 KeyError——"能拒"这一路成立。
+* "能算"这一路在合成件上跑：`Δpp=+100`、保留比例 `0.7812`（200/256）；另有一条守卫专门钉死
+  **"已经真停的那一代在两个计数里各算一次、净增必须为 0"**——防的是这条式子最容易犯的错：
+  把本来就会停的代重复计成"规则买到的新停"。名次缺失（比值列为 `None`）不当成"≤R"，读作不明。
+
+**跑法（§89 两枚 96 件落地后一条命令）**：
+`python scripts/training/counterfactual_taiji_a30_lf_stop_rule.py --report reports/taiji_a30_stop_failure_self_v34_margins_circuitseedA_96_20261003.json --report reports/taiji_a30_stop_failure_self_v34_margins_productk128_96_20261003.json`
+
+**这一格不移动任何判读线**：甲/乙/丙仍照 §91 原文；四阈值各报一条、**不许四选一**；
+代价面（保留比例的中位／p10）是表层与复述风险的**代理**，不许被引用成"D 维没受伤"。
+
+**同一次广面基线更新（2026-10-03 04:16，`tests/taiji_native tests/seed`，1728.80s＝28 分 48 秒）**：
+汇总行 **1 failed, 1918 passed, 1 skipped, 1 xfailed**。唯一的红是
+`tests/seed/test_platform_boundary.py::test_source_face_is_the_git_face_not_the_whole_disk`
+＝已登记的 `DEBT-G11`（他线桌面打包把后端源码复制进 `taiji-harness/apps/desktop/.desktop-build/…`，
+不符合项 7,680 个 `.py`，机制是 `_is_skipped_dir` 只看 `parts[0]`）。
+⇒ **基线从历史"1804 passed／4 条同名红"换成"1918 passed／1 条红"**：其余三条既有红本轮不再出现，
+但**别把"少三条"外推成"门禁变好"**——那三条的消长属别的会话的改动面，本会话只核了自己这一条的归因。

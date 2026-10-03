@@ -475,6 +475,8 @@ DEBT-G27 的口径歧义**已被这格收窄成有方向的读数**（类集中�
 **但我在 03:13 写下的归因当时是猜的，04:06 已用守卫自己的 helper 复算并推翻**：不符合项共 **7,680** 个 `.py`，**100% 落在 `taiji-harness/apps/desktop/.desktop-build/targets/win-x64/…`**（他线桌面打包把整个后端源码复制进 build 目录），不是 `.dsh-sbx2` 沙箱树——那族已被 `SKIP_PREFIXES=(".venv", ".dsh-sbx")` 挡掉，且 `git ls-files taiji-harness/.dsh-sbx2` 为 0。
 ⇒ 归因换成**有出处的版本**：机制是同一条"两边口径不对称"，但触发面不同——`_is_skipped_dir` **只看 `parts[0]`**，所以 `taiji-harness/` 里嵌套三层的 `.desktop-build` 挡不住（`DEBT-G11` 已按复算结果补了这条复发记录）。
 **处置不变**：不是 A 支线引入、我不删别人文件也不改这条断言刷绿；一行修法（跳过判断按任一路径分段命中，或 walk 侧也跳 `.desktop-build`）归**建那棵 build 树的人**定。
+**2026-10-03 04:15 队首补两格（都是零机器时间）**：§91 的反事实计算器已落成**仓内仪器** `scripts/training/counterfactual_taiji_a30_lf_stop_rule.py`（守卫 8 passed、两文件 ruff 0 条；"前置不齐 ⇒ `grid=[]` 且 rc=2"这条已在真实小分母件上实测过），跑法一条命令写在 [PLAN-A-30 §92](../../reference/PLAN-A-30_surface_repetition_localization_20260928.md)。
+**广面基线换数（2026-10-03 04:16 实测汇总行）**：`tests/taiji_native tests/seed` 现在 **1918 passed／1 failed／1 skipped／1 xfailed**，唯一那条红＝`DEBT-G11`（他线 `.desktop-build` 那棵树）⇒ 判红之前先对齐这一条名字；**别把"少三条"读成门禁变好**，那三条既有红的消长属别的会话的改动面，本会话只核了自己这一条。
 把关的是一族非一个字节、装机面耦合变差）②要不要扩样验装机底那 −19.0pp 是否稳（96 枚 × 门开启，四趟约 20 分钟）
 ③定点干预解码路径＝新裁定 ④key／真实启动格。**我这边不再自行开档**：§71 之后连跑的五格都已按"先写判据再取数"入库，
 剩下的每一格都要新的授权形状（机器时间／动产品路径／动默认位）。**产品默认链本轮零改动、`copy_evidence_window_steps` 仍 `None`。**
