@@ -352,6 +352,10 @@ def _endstep_probe_per_generation(
                 #: v36（§第一百零六次停靠）：**边界概率最高那一步实际发的是什么**。
                 #: §101/§103 量到那一群终生没进过停止竞争区，但"最接近想停的那一格被谁占了"此前没看过——
                 #: 尤其没看过它**是不是刚发过的那个字**（同字环吃掉近停态）。判读线先于数冻在 §106。
+                #: v37（§第一百一十次停靠）：**峰值那一步是不是在同字重复段内**——字级 `in_run`，
+                #: 不是字节相邻。§106 用"峰值字节＝上一步字节"当 selector 是**计数名与计数物不符**
+                #: （三字节词的相邻字节永远不等），所以这里接出正确的量；旧列保留不删（它仍是合法的字节相邻描述）。
+                "repeat_run_at_peak_step_v37": bool(peak.get("in_run")),
                 "peak_step_row_v36": {
                     "step": int(peak["step"]),
                     "emitted_byte": int(peak["emitted_byte"]),
@@ -688,6 +692,41 @@ def _lf_margins_v34(group: list[dict], terminal: dict | None) -> dict[str, Any]:
         #: 只留前 6 次，件不膨胀；每次的步序／名次／比值／概率都在
         "per_step": pairs[:6],
     }
+
+
+def _peak_run_summary_v37(per_item: list[dict]) -> dict[str, Any]:
+    """§110 的 selector：三群各自的"峰值步落在同字重复段内"占比（分母＝该群**全部**代数）。
+
+    自带一条"计数名对不对得上计数物"的自检：某代整条生成里同字段步数为 0（`steps_in_repeat_run==0`）
+    却报"峰值步在段内"，就是列接错了 ⇒ 把违例数写进件里（`incoherent_zero_run_but_peak_in_run`），
+    非零即整格不可判。
+    """
+
+    generations = [g for row in per_item for g in row["endstep_probe_v22"]]
+    groups = {
+        "stoppers": [g for g in generations if g["terminal_decision"] is not None],
+        "eaters_with_lf": [
+            g for g in generations if g["ate_full_budget"] and g["lf_trace_v29"]["lf_step_count"] >= 1
+        ],
+        "eaters_never_lf": [
+            g for g in generations if g["ate_full_budget"] and g["lf_trace_v29"]["lf_step_count"] == 0
+        ],
+    }
+    out: dict[str, Any] = {"incoherent_zero_run_but_peak_in_run": 0}
+    for name, items in groups.items():
+        in_run = [bool(g["repeat_run_at_peak_step_v37"]) for g in items]
+        out[f"{name}_n"] = len(items)
+        out[f"{name}_peak_in_run_count"] = sum(in_run)
+        out[f"{name}_peak_in_run_share"] = round(sum(in_run) / len(in_run), 4) if in_run else None
+        out[f"{name}_generations_with_zero_repeat_run"] = sum(
+            1 for g in items if int(g["steps_in_repeat_run"]) == 0
+        )
+        out["incoherent_zero_run_but_peak_in_run"] += sum(
+            1
+            for g in items
+            if int(g["steps_in_repeat_run"]) == 0 and bool(g["repeat_run_at_peak_step_v37"])
+        )
+    return out
 
 
 def _peak_step_summary_v36(per_item: list[dict]) -> dict[str, Any]:
@@ -1429,7 +1468,14 @@ def main() -> int:
 
     substrate.observe = original_observe  # type: ignore[method-assign]
     report = {
-        "format": "taiji-a30-stop-failure-v36",
+        "format": "taiji-a30-stop-failure-v37",
+        "format_note_v37": "v37（2026-10-03）：§第一百一十次停靠 把 selector 从'峰值字节＝上一步字节'换成'峰值步落在同字重复段内'。"
+        "换的理由写在 §109：中文一个字三字节，`哥哥哥` 的字节串是 E5 93 A5 E5 93 A5，**相邻字节永远不相等**，"
+        "所以 §106 那个量读出来的是多字节文本的结构下界（装机装配实测 0.0135），不是'环与近停态无关'——那是"
+        "'计数名与计数物不符'，§106 已记为不判。v37 只把仪器**本来就算着**的字级 `in_run` 接到峰值上"
+        "（每代 `repeat_run_at_peak_step_v37` ＋ 件级 `peak_run_summary_v37`，分母＝该群全部代数，"
+        "并自带一条自检：`steps_in_repeat_run==0` 却报峰值在段内 ⇒ 违例数写进件里、非零即整格不可判）。"
+        "v36 那列**保留不删**（字节相邻本身仍是合法描述，只是不许再当 selector）。既有列一字未动。",
         "format_note_v36": "v36（2026-10-03）：§第一百零六次停靠 问‘边界概率最高那一步实际发的是什么’——"
         "§101/§103 已量到那一群终生没进过停止竞争区，但‘最接近想停的那一格被谁占了’此前没看过，"
         "尤其没看过它是不是刚发过的那个字（同字环吃掉近停态）。新增每代 `peak_step_row_v36`"
@@ -1644,6 +1690,7 @@ def main() -> int:
         "lf_repeat_context_summary_v32": _lf_repeat_context_summary_v32(per_item),
         #: v34（§89）：每一次 LF 之后那一步的边际（定耦合用）。
         "lf_margin_summary_v34": _lf_margin_summary_v34(per_item),
+        "peak_run_summary_v37": _peak_run_summary_v37(per_item),
         "peak_step_summary_v36": _peak_step_summary_v36(per_item),
         "instrument_guard": {
             "observe_calls_recorded": bool(records),

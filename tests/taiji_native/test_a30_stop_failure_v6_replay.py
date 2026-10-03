@@ -84,9 +84,9 @@ def test_instrument_carries_v6_and_the_correction_note() -> None:
     source = (PROJECT_ROOT / "scripts" / "training" / "probe_taiji_a30_stop_failure.py").read_text(
         encoding="utf-8"
     )
-    assert '"format": "taiji-a30-stop-failure-v36"' in source
+    assert '"format": "taiji-a30-stop-failure-v37"' in source
     assert all(
-        f"format_note_v{v}" in source for v in range(6, 37)
+        f"format_note_v{v}" in source for v in range(6, 38)
     ), "升版只许加列，历史说明必须逐版留在件里"
     assert "format_note_v6" in source
     assert "追加二" in source and "深帧复现" in source
@@ -1037,4 +1037,51 @@ def test_the_peak_step_row_names_what_was_emitted_where_stopping_came_closest(tm
     none_cmp = _peak_step_summary_v36([{"endstep_probe_v22": [gen(stopped=False, lf=0, peak_byte=1, prev_byte=None)]}])
     assert none_cmp["eaters_never_lf_same_byte_at_peak_share"] is None, none_cmp
     assert none_cmp["eaters_never_lf_denominator_with_previous_step"] == 0, none_cmp
+
+
+def test_the_character_level_selector_is_not_the_byte_adjacency_one(tmp_path: Path) -> None:
+    """§110 的守卫：把 §106 那个错**编码成测试**——三字节重复词的相邻字节永远不等。
+
+    所以"字级在段内"与"字节相邻相等"必须能取到相反的真值；一台只会看字节的仪器**没资格**回答
+    "崩塌环是否吃掉了近停态"。这条测试即使 v37 被改坏也只红在这一格，不影响其他读数。
+    """
+
+    from probe_taiji_a30_stop_failure import _peak_run_summary_v37
+
+    def gen(*, peak_in_run, steps_in_run, byte_eq_prev, stopped=False, lf=0):
+        return {
+            "terminal_decision": {"step": 3} if stopped else None,
+            "ate_full_budget": not stopped,
+            "lf_trace_v29": {"lf_step_count": lf},
+            "steps_in_repeat_run": steps_in_run,
+            "repeat_run_at_peak_step_v37": peak_in_run,
+            "peak_step_row_v36": {
+                "step": 3,
+                "emitted_byte": 0xA5,
+                "previous_step_emitted_byte": 0x93,
+                "same_byte_as_previous_step": byte_eq_prev,
+            },
+        }
+
+    # 哥哥哥：峰值步发 A5、上一步发 93 ⇒ 字节相邻 False，但字级在同字段内 True
+    repeated_cjk = gen(peak_in_run=True, steps_in_run=120, byte_eq_prev=False)
+    out = _peak_run_summary_v37([{"endstep_probe_v22": [repeated_cjk]}])
+    assert out["eaters_never_lf_peak_in_run_share"] == 1.0, out
+    assert out["eaters_never_lf_n"] == 1
+    assert repeated_cjk["peak_step_row_v36"]["same_byte_as_previous_step"] is False
+    assert out["incoherent_zero_run_but_peak_in_run"] == 0, out
+
+    #: 自检真能为假：整代同字段步数为 0 却报"峰值在段内" ⇒ 违例数必须记下来（列接错就红在这里）。
+    wrong = gen(peak_in_run=True, steps_in_run=0, byte_eq_prev=False)
+    out2 = _peak_run_summary_v37([{"endstep_probe_v22": [wrong]}])
+    assert out2["incoherent_zero_run_but_peak_in_run"] == 1, out2
+
+    #: 群分母用全部代数（不是"有可比前步"那种残缺分母）；空群报 None 而不是 0.0。
+    mixed = _peak_run_summary_v37(
+        [{"endstep_probe_v22": [gen(peak_in_run=False, steps_in_run=40, byte_eq_prev=False),
+                                 gen(peak_in_run=True, steps_in_run=90, byte_eq_prev=False)]}]
+    )
+    assert mixed["eaters_never_lf_n"] == 2 and mixed["eaters_never_lf_peak_in_run_count"] == 1, mixed
+    assert mixed["eaters_never_lf_peak_in_run_share"] == 0.5, mixed
+    assert mixed["stoppers_peak_in_run_share"] is None, mixed
 
