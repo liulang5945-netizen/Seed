@@ -691,6 +691,7 @@ A 支线状态不变：表层判据冻结、L1/L2 诊断可用；G8/后果语义
 | `PLAN-A-20` | `M5_R2_A2_4_PROPOSAL_20260925.md`（协议开闸提案＋chat 形态读数） |
 | `SPEC-A-21` | `SPEC-A-21_r2_surface_extension_prereg_20260925.md`（**新建即按本表编号**；§4.3a 表层子判据的扩展分母） |
 | `SPEC-A-22` | `SPEC-A-22_r2_a2_5_query_conditioned_selector_prereg_20260926.md`（**新建即按本表编号**；A2.5 开案预注册：判据与评测协议先于代码冻结） |
+| `SPEC-A-26` | `SPEC-A-26_a30_gated_copy_evidence_injection_prereg_20261003.md`（**新建即按本表编号**；复制回路注入形状改造的预注册：判据与否证分支先于代码冻结，**未获立项不动产品源码**） |
 | `PLAN-M6-01` | `PLAN-M6-01_experience-projection-producer_20260926.md`（**新建即按本表编号**；C6 经验投影的生产者／消费者／物料／**渲染器**四缺口、`WorkbenchCapabilityAdapter` 与已跑的 Z1／Z1b 前置否证门＋其读数） |
 | `PLAN-A-27` | `PLAN-A-27_three-gaps-decision-brief_20260928.md`（**新建即按本表编号**；三个暴露缺陷的决策单：零件台账／发射侧诊断（"较新那条告知发不出来"）／记忆写入口——每线给 甲/乙/丙 三档＋判据先冻结＋成本与是否动产品默认；**战线一的第一步零面普查已跑完并落读数件**） |
 | `PLAN-A-25` | `PLAN-A-25_copy-evidence-utf8-gate_20260928.md`（**新建即按本表编号**；按 UTF-8 位置状态门控复制回路的加性证据——由来是 rev18 实测"位置输入保住的合法性被电路证据打回去"，默认关、零训练可判） |
