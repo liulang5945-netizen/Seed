@@ -83,9 +83,9 @@ def test_instrument_carries_v6_and_the_correction_note() -> None:
     source = (PROJECT_ROOT / "scripts" / "training" / "probe_taiji_a30_stop_failure.py").read_text(
         encoding="utf-8"
     )
-    assert '"format": "taiji-a30-stop-failure-v33"' in source
+    assert '"format": "taiji-a30-stop-failure-v34"' in source
     assert all(
-        f"format_note_v{v}" in source for v in range(6, 34)
+        f"format_note_v{v}" in source for v in range(6, 35)
     ), "升版只许加列，历史说明必须逐版留在件里"
     assert "format_note_v6" in source
     assert "追加二" in source and "深帧复现" in source
@@ -880,3 +880,64 @@ def test_the_dynamic_range_flag_refuses_a_ruler_that_cannot_discriminate() -> No
           "generations_boundary_self_stop": 2, "generations_eating_full_budget": 10}]
     )
     assert varied["ruler_usable"] is True, varied
+
+
+def test_the_lf_margin_ruler_has_dynamic_range_and_shares_one_implementation() -> None:
+    """§89 的 v34：换的那把尺必须**自己报告有没有动态范围**，且 LF+1 的取法只许住一处。
+
+    三件事一起钉：① 每次 LF+1 的比值要能散布（不是 §86 那种端点尺）——
+       合成档里 1.2 与 9.0 并存时 `usable` 必须 True；全为空时 `usable` False；
+    ② `_rows_after_lf()` 计数＝1（v30 与 v34 共用，两处各写一份就是两把尺子）；
+    ③ 每次 LF 的明细最多留 6 条（件不许被逐字节大数组撑爆，§63 那条"只存点不存序列"的规矩）。
+    """
+    from probe_taiji_a30_stop_failure import (
+        _endstep_probe_per_generation,
+        _lf_margin_summary_v34,
+    )
+
+    source = (PROJECT_ROOT / "scripts" / "training" / "probe_taiji_a30_stop_failure.py").read_text(
+        encoding="utf-8"
+    )
+    assert source.count("def _rows_after_lf(") == 1, "LF 之后那一步的取法只许住一处"
+
+    def terminal_at(step_value: int, ratio: float = 1.0):
+        return {"step": step_value, "p_boundary": 0.3, "p_boundary_before_penalty": 0.3,
+                "boundary_rank_in_legal": 1, "legal_candidates_including_boundary": 41,
+                "ratio_best_over_boundary": ratio, "boundary_is_argmax": True,
+                "utf8_state_before": [0, 0]}
+
+    def gen(spec):
+        #: spec 是 (步序, 名次, 该步胜出者比边界强多少, 发出的字节) 的列表；
+        #: LF 的"下一步"才是要看的那一步，所以比值挂在**跟随步**上。
+        rows = []
+        for step, rank, ratio, byte in spec:
+            row = _synthetic_row(step, 0.001 + 0.0001 * step, rank, byte=byte)
+            row["ratio_best_over_boundary"] = ratio
+            rows.append(row)
+        return rows
+
+    a_rows = gen([(0, 44, 20.0, 10), (1, 5, 1.2, 0x42), (2, 44, 20.0, 10), (3, 3, 9.0, 0x43)])
+    b_rows = gen([(0, 30, 7.0, 0x41), (1, 44, 20.0, 10), (2, 2, 1.3, 0x42), (3, 40, 12.0, 0x43)])
+    probes = _endstep_probe_per_generation(a_rows + b_rows, max_length=4, terminals=[None, None])
+    margins = [p["lf_margins_v34"] for p in probes]
+    assert [m["lf_steps"] for m in margins] == [2, 1], margins
+    assert [m["lf_plus_one_observed"] for m in margins] == [2, 1], margins
+    assert margins[0]["min_ratio"] == 1.2 and margins[0]["worst_ratio"] == 9.0, margins[0]
+    assert margins[0]["best_rank"] == 3, margins[0]
+    assert len(margins[0]["per_step"]) <= 6, margins[0]
+    assert all(p["ate_full_budget"] for p in probes), probes
+    summary = _lf_margin_summary_v34(
+        [{"endstep_probe_v22": probes, "generations_boundary_self_stop": 0,
+          "generations_eating_full_budget": 2}]
+    )
+    assert summary["eaters_with_lf_next"] == 2, summary
+    assert summary["eaters_dynamic_range"]["usable"] is True, summary
+    assert summary["eaters_median_min_ratio"] in (1.2, 1.3), summary
+    assert summary["eaters_denominator_at_least_20"] is False, summary
+    #: 尺子退化的形状（全 None／全同值）必须被报成 usable=False
+    empty = _lf_margin_summary_v34(
+        [{"endstep_probe_v22": [dict(p, lf_margins_v34={**p["lf_margins_v34"], "min_ratio": 2.0})
+                                for p in probes],
+          "generations_boundary_self_stop": 0, "generations_eating_full_budget": 2}]
+    )
+    assert empty["eaters_dynamic_range"]["usable"] is False, empty

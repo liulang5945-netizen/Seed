@@ -313,6 +313,8 @@ def _endstep_probe_per_generation(
                 "lf_next_probe_v30": _lf_next_probe_v30(group, terminal),
                 #: v32（§85）：LF 落在同字重复段内还是段外。
                 "lf_repeat_context_v32": _lf_repeat_context(group),
+                #: v34（§89）：每一次 LF 之后那一步的边际（名次／比值／概率）。
+                "lf_margins_v34": _lf_margins_v34(group, terminal),
                 "tail_identity": {
                     "prev_step_emitted_byte": int(last_row["emitted_byte"]),
                     "prev_step_utf8_byte_class": str(last_row["utf8_byte_class"]),
@@ -599,11 +601,11 @@ def _lf_bucket(last_lf: int, last_step: int) -> str:
     return "far-from-end(>25%)"
 
 
-def _lf_next_probe_v30(group: list[dict], terminal: dict | None) -> dict[str, Any]:
-    """v30（§75）：LF **之后那一步**上边界离赢有多远——定点修法的杠杆量。
+def _rows_after_lf(group: list[dict], terminal: dict | None) -> tuple[list[dict], list[int]]:
+    """LF **之后那一步**的行（v30 与 v34 共用一副档——两处各写一份就是两把尺子）。
 
-    自停的代里"LF 之后的下一步"就是终止步（名次按 §七十一 恒为 1），所以终止行也参与；
-    拖写的代里它只是下一个在案步。
+    自停的代里"LF 的下一步"只存在于补出来的终止行里（`break` 在 `observe` 之前）；
+    拖写的代里它是下一个在案步。
     """
 
     by_step = {int(row["step"]): row for row in group}
@@ -615,6 +617,46 @@ def _lf_next_probe_v30(group: list[dict], terminal: dict | None) -> dict[str, An
             rows_after.append(by_step[nxt])
         elif terminal is not None and int(terminal["step"]) == nxt:
             rows_after.append(terminal)
+    return rows_after, lf_steps
+
+
+def _lf_margins_v34(group: list[dict], terminal: dict | None) -> dict[str, Any]:
+    """v34（§89）：**每一次** LF 之后那一步的边际——比"只取最好的一次"更能定耦合。
+
+    §八十六 那格之所以要重做，是因为当时的尺（`in_run`）没有动态范围；名次与比值天然有。
+    """
+
+    rows_after, lf_steps = _rows_after_lf(group, terminal)
+    pairs = [
+        {
+            "step": int(row["step"]),
+            "boundary_rank_in_legal": int(row["boundary_rank_in_legal"]),
+            "ratio_best_over_boundary": row.get("ratio_best_over_boundary"),
+            "p_boundary": round(float(row["p_boundary"]), 6),
+        }
+        for row in rows_after
+    ]
+    ratios = [float(item["ratio_best_over_boundary"]) for item in pairs if item["ratio_best_over_boundary"]]
+    return {
+        "lf_steps": len(lf_steps),
+        "lf_plus_one_observed": len(pairs),
+        "best_rank": min((item["boundary_rank_in_legal"] for item in pairs), default=None),
+        "min_ratio": round(min(ratios), 4) if ratios else None,
+        "median_ratio": round(sorted(ratios)[len(ratios) // 2], 4) if ratios else None,
+        "worst_ratio": round(max(ratios), 4) if ratios else None,
+        #: 只留前 6 次，件不膨胀；每次的步序／名次／比值／概率都在
+        "per_step": pairs[:6],
+    }
+
+
+def _lf_next_probe_v30(group: list[dict], terminal: dict | None) -> dict[str, Any]:
+    """v30（§75）：LF **之后那一步**上边界离赢有多远——定点修法的杠杆量。
+
+    自停的代里"LF 之后的下一步"就是终止步（名次按 §七十一 恒为 1），所以终止行也参与；
+    拖写的代里它只是下一个在案步。
+    """
+
+    rows_after, lf_steps = _rows_after_lf(group, terminal)
     best = (
         min(rows_after, key=lambda row: int(row["boundary_rank_in_legal"])) if rows_after else None
     )
@@ -795,6 +837,35 @@ def _lf_repeat_context_summary_v32(per_item: list[dict]) -> dict[str, Any]:
         out["column_dynamic_range_stoppers"]["usable"]
         or out["column_dynamic_range_eaters"]["usable"]
     )
+    return out
+
+
+def _lf_margin_summary_v34(per_item: list[dict]) -> dict[str, Any]:
+    """§89 判据要的三列：自停组／拖写组各自的"LF 之后最小比值"，加动态范围前置。"""
+
+    generations = [g for row in per_item for g in row["endstep_probe_v22"]]
+    groups = {
+        "stoppers": [g for g in generations if g["terminal_decision"] is not None],
+        "eaters": [g for g in generations if g["ate_full_budget"]],
+    }
+    out: dict[str, Any] = {}
+    for name, items in groups.items():
+        mins = [g["lf_margins_v34"]["min_ratio"] for g in items if g["lf_margins_v34"]["min_ratio"]]
+        best_ranks = [
+            g["lf_margins_v34"]["best_rank"] for g in items if g["lf_margins_v34"]["best_rank"] is not None
+        ]
+        nums = sorted(mins)
+        out[f"{name}_n"] = len(items)
+        out[f"{name}_with_lf_next"] = len(mins)
+        out[f"{name}_median_min_ratio"] = (
+            round(nums[len(nums) // 2], 4) if nums else None
+        )
+        out[f"{name}_min_ratio_range"] = [round(nums[0], 4), round(nums[-1], 4)] if nums else None
+        out[f"{name}_median_best_rank"] = (
+            sorted(best_ranks)[len(best_ranks) // 2] if best_ranks else None
+        )
+        out[f"{name}_dynamic_range"] = _dynamic_range(mins)
+    out["eaters_denominator_at_least_20"] = bool(out["eaters_with_lf_next"] >= 20)
     return out
 
 
@@ -1277,7 +1348,8 @@ def main() -> int:
 
     substrate.observe = original_observe  # type: ignore[method-assign]
     report = {
-        "format": "taiji-a30-stop-failure-v33",
+        "format": "taiji-a30-stop-failure-v34",
+        "format_note_v34": "v34（2026-10-03）：§八十六 那格用的尺（LF 是否落在同字连写段内）按定义没有动态范围，所以换一把天然有散布的尺：**每一次 LF 之后那一步**的 `ratio_best_over_boundary` 与边界名次。新增每代 `lf_margins_v34`（步序／名次／比值／概率，最多留前 6 次）与件级 `lf_margin_summary_v34`（自停组与拖写组各自的中位最小比值、比值区间、中位最好名次，外加 §87 定的 `column_dynamic_range` 前置）。`_rows_after_lf()` 同时被 v30 与 v34 复用——一副档只住一处。既有列一字未动。",
         "format_note_v33": "v33（2026-10-03）：把 §第八十五／八十六次停靠 那次预注册缺陷变成机器拦得住的东西。 缺陷内容：判据绑的列（LF 落在同字连写段内的占比）按定义只能取 0.0／1.0，两组同值时字面分支仍能读出一个方向——但那一读**没有效力**。本版新增 `_dynamic_range()`，并在 `lf_repeat_context_summary_v32` 里落三列：`column_dynamic_range_stoppers／_eaters`（n_values／distinct／min／max／endpoint_only）与总开关 `ruler_usable`；规矩是 **`ruler_usable=false` ⇒ 判据不建立**，比较型判读一律先看它。既有列与既有字段一字未动。",
         "format_note_v32": "v32（2026-10-03）：§第八十四次停靠 留下一处分不开的东西——装机底门开启后耦合掉 19.0pp，"
         "可能是『新放出来的换行本来就发在正文中间』，也可能是『同样位置的换行也不兑现了』；"
@@ -1474,6 +1546,8 @@ def main() -> int:
         "lf_competitor_summary_v31": _lf_competitor_summary_v31(per_item),
         #: v32（§85）：LF 落在同字重复段内还是段外——分开"位置错"与"耦合被改动"。
         "lf_repeat_context_summary_v32": _lf_repeat_context_summary_v32(per_item),
+        #: v34（§89）：每一次 LF 之后那一步的边际（定耦合用）。
+        "lf_margin_summary_v34": _lf_margin_summary_v34(per_item),
         "instrument_guard": {
             "observe_calls_recorded": bool(records),
             # v7 自述守卫：这条面必须**报出**回写门槛状态（ None／缺键都算仪器没走到，红）。
