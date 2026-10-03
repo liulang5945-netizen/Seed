@@ -22,6 +22,7 @@ dialogue_extended_clean），以 raw-byte 流喂入 ``Seed.observe``；
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import sys
 import time
@@ -209,6 +210,14 @@ def exit_record_path(progress_path: Path | str) -> Path:
     return progress_path.with_name(f"{progress_path.stem}_exit.json")
 
 
+def _file_sha256(path: Path) -> str | None:
+    """DEBT-G39：退出记账要能自述"我写下的是哪些字节"，而不只是"我往哪个路径写过"。"""
+
+    if not path.is_file():
+        return None
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
 def run_training(
     *,
     corpus_paths: Sequence[Path | str],
@@ -351,11 +360,14 @@ def run_training(
         with progress_path.open("a", encoding="utf-8") as handle:
             handle.write(json.dumps(entry, ensure_ascii=False) + "\n")
         if exit_reason is not None:
-            #: 同一份字典写两处（进度行＋独立件），所以两者不可能互相矛盾；
-            #: `checkpoint_path`/`corpus_fingerprint` 让这件能独立回答"哪枚档、吃没吃满"。
+            #: 计量键与进度收尾那一行**同源同值**（同一份 `entry`），所以两者不可能互相矛盾；
+            #: 独立件另外多带 `checkpoint_path`／`checkpoint_sha256`／`corpus_fingerprint` 三条**只属于文件**的自述，
+            #: 它们不进进度行（`test_periodic_lines_keep_their_old_shape` 钉着那一行的键集）。
+            #: `checkpoint_sha256` 之所以能等于终件字节，靠的是三处退出点都先 `_persist()` 再 `_flush(final=True)`。
             exit_record_path(progress_path).write_text(
                 json.dumps(
                     {**entry, "checkpoint_path": str(checkpoint_path),
+                     "checkpoint_sha256": _file_sha256(checkpoint_path),
                      "corpus_fingerprint": fingerprint},
                     ensure_ascii=False,
                     indent=2,
@@ -421,8 +433,9 @@ def run_training(
                     _persist()
                     last_checkpoint = ticks
                 if max_symbols is not None and ticks >= base_ticks + max_symbols:
-                    _flush(final=True, exit_reason="max_symbols_reached")
+                    #: DEBT-G39：先落盘再写退出记账，否则记账自述的是**上一次**保存的字节。
                     _persist()
+                    _flush(final=True, exit_reason="max_symbols_reached")
                     return _summary(model, ticks)
             continue
         for symbol in iter_corpus_symbols(
@@ -442,11 +455,11 @@ def run_training(
             if ticks % checkpoint_every == 0:
                 _persist()
             if max_symbols is not None and ticks >= base_ticks + max_symbols:
+                _persist()  # DEBT-G39：先落盘，退出记账才自述得成终件字节
                 _flush(final=True, exit_reason="max_symbols_reached")
-                _persist()
                 return _summary(model, ticks)
+    _persist()  # DEBT-G39：同上，耗尽支也先落盘
     _flush(final=True, exit_reason="corpus_exhausted")
-    _persist()
     return _summary(model, ticks)
 
 

@@ -16,6 +16,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 import sys
 from pathlib import Path
@@ -104,6 +105,37 @@ def test_budget_exit_records_why_it_stopped(tmp_path: Path) -> None:
     assert {k: record[k] for k in final} == final, (record, final)
     assert record["corpus_fingerprint"] and record["checkpoint_path"].endswith("seed.pt")
     assert record["ticks"] == summary["ticks"]
+
+
+def test_exit_record_names_the_bytes_it_wrote(tmp_path: Path) -> None:
+    """DEBT-G39：退出记账必须自述**它写下的是哪些字节**，且那个哈希等于落盘件的当前哈希。
+
+    来历：`--keep-checkpoints on` 下 `checkpoint.pt` 每几千 tick 重写一次，所以"件存在"不表示"跑完了"，
+    而记账里没有哈希时，下游只能靠"跨 90 秒两次取样相同"这种间接办法绑字节（2026-10-03 一枚中途件
+    因此被当成训后读数跑了一遍，靠探针自己的 `base_sha256_unchanged=false` 才被抓住）。
+    这条守卫同时也是顺序守卫：三处退出点若还是"先 `_flush` 再 `_persist`"，记的就是**上一次**保存的字节。
+    """
+
+    corpus = _write_corpus(tmp_path / "sha.jsonl", 40)
+    progress = tmp_path / "sha_progress.jsonl"
+    checkpoint = tmp_path / "sha.pt"
+    run_training(
+        corpus_paths=[corpus],
+        config=_config(),
+        epochs=1,
+        checkpoint_path=checkpoint,
+        progress_path=progress,
+        checkpoint_every=100_000,
+        progress_every=20,
+        max_symbols=60,
+    )
+    record = json.loads(exit_record_path(progress).read_text(encoding="utf-8"))
+    assert checkpoint.is_file(), "先落盘再写记账：退出时终件必须在场"
+    on_disk = hashlib.sha256(checkpoint.read_bytes()).hexdigest()
+    assert record["checkpoint_sha256"] == on_disk, record.get("checkpoint_sha256")
+    assert len(record["checkpoint_sha256"]) == 64
+    # 这条自述只属于独立件，不许漂进进度行（下一支测试钉的是进度行的键集）
+    assert "checkpoint_sha256" not in _entries(progress)[-1]
 
 
 def test_corpus_exhaustion_is_not_reported_as_budget(tmp_path: Path) -> None:
