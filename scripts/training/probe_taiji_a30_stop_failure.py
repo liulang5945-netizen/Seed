@@ -221,6 +221,22 @@ def char_membership_of_run(text: str) -> list[bool]:
 _FIXED_STEPS = (8, 16, 32, 64, 128)
 
 
+def _utf8_byte_class(byte: int) -> str:
+    """字节在 UTF-8 编码里的**位置类**——§72 判据要的那把尺（ASCII／首字节／续字节）。"""
+
+    if byte < 0x80:
+        return "ascii"
+    if byte < 0xC0:
+        return "continuation"
+    if byte < 0xE0:
+        return "lead2"
+    if byte < 0xF0:
+        return "lead3"
+    if byte < 0xF8:
+        return "lead4"
+    return "invalid"
+
+
 def _group_rows_by_generation(rows: list[dict]) -> list[list[dict]]:
     """把 item 内串接的逐步行按**每次生成**切开。
 
@@ -264,11 +280,27 @@ def _endstep_probe_per_generation(
         last_step = max(row["step"] for row in group)
         by_step = {int(row["step"]): row for row in group}
         last_row = by_step[last_step]
+        if "emitted_byte" not in last_row:
+            raise RuntimeError(
+                "v28 要求每行自带 `emitted_byte`／`utf8_byte_class`（§72 的末步字面身份要用）"
+                "⇒ 缺键说明仪器没走到写该键的那一步，读数不发表"
+            )
         out.append(
             {
                 "generation_steps": len(group),
                 "steps_in_repeat_run": sum(1 for row in group if row.get("in_run")),
                 "last_step": int(last_step),
+                #: v28（§72 判读先于数）：**停之前那一步发的是哪个字节、当时在字的哪一段**。
+                "tail_identity": {
+                    "prev_step_emitted_byte": int(last_row["emitted_byte"]),
+                    "prev_step_utf8_byte_class": str(last_row["utf8_byte_class"]),
+                    "prev_step_utf8_state_before": [
+                        int(last_row["utf8_state_before"][0]),
+                        int(last_row["utf8_state_before"][1]),
+                    ],
+                    "prev_step_boundary_rank": int(last_row["boundary_rank_in_legal"]),
+                    "prev_step_p_boundary": round(float(last_row["p_boundary"]), 6),
+                },
                 "p_boundary_max": round(float(peak["p_boundary"]), 6),
                 "p_boundary_argmax_step": int(peak["step"]),
                 "boundary_rank_at_peak_step": int(peak["boundary_rank_in_legal"]),
@@ -299,6 +331,10 @@ def _endstep_probe_per_generation(
                         ),
                         "ratio_best_over_boundary": terminal["ratio_best_over_boundary"],
                         "boundary_is_argmax": bool(terminal["boundary_is_argmax"]),
+                        "terminal_utf8_state_before": [
+                            int(terminal["utf8_state_before"][0]),
+                            int(terminal["utf8_state_before"][1]),
+                        ],
                         "terminal_over_recorded_peak": (
                             round(float(terminal["p_boundary"]) / float(peak["p_boundary"]), 4)
                             if peak["p_boundary"] > 0
@@ -417,6 +453,65 @@ def _terminal_summary_v27(per_item: list[dict]) -> dict[str, Any]:
         "pairing_ok": bool(
             len(with_terminal) == expected_stop and len(without_terminal) == expected_eat
         ),
+    }
+
+
+def _tail_identity_summary_v28(per_item: list[dict]) -> dict[str, Any]:
+    """§72 判据要的四张分布表：自停组／吃满组各自的"末步字节"与"末步字节位置类"分布。
+
+    分母各自算（两底、两组都不同数）；`cls_share` 指**该组内最高频位置类的占比**。
+    """
+
+    generations = [g for row in per_item for g in row["endstep_probe_v22"]]
+    stoppers = [g for g in generations if g["terminal_decision"] is not None]
+    eaters = [g for g in generations if g["ate_full_budget"]]
+    #: 两组的定义式在真件里互斥（有终止行 ⇒ 环没吃满预算），但**这要靠读数成立，不靠约定**：
+    #: 合成数据或未来的定义改动都会让两堆重叠／漏人，所以把两种异常都数出来。
+    overlap = [g for g in generations if g["terminal_decision"] is not None and g["ate_full_budget"]]
+    neither = [g for g in generations if g["terminal_decision"] is None and not g["ate_full_budget"]]
+
+    def _dist(items: list[dict], picker) -> dict[str, Any]:
+        total = len(items)
+        if not total:
+            return {"n": 0, "top": [], "distinct": 0, "top1_share": None}
+        counts: dict[Any, int] = {}
+        for item in items:
+            key = picker(item)
+            counts[key] = counts.get(key, 0) + 1
+        ranked = sorted(counts.items(), key=lambda kv: (-kv[1], str(kv[0])))
+        return {
+            "n": total,
+            "top": [
+                {"key": key, "count": count, "share": round(count / total, 4)}
+                for key, count in ranked[:5]
+            ],
+            "distinct": len(counts),
+            "top1_share": round(ranked[0][1] / total, 4),
+        }
+
+    byte_of = lambda g: g["tail_identity"]["prev_step_emitted_byte"]  # noqa: E731
+    class_of = lambda g: g["tail_identity"]["prev_step_utf8_byte_class"]  # noqa: E731
+    return {
+        "stoppers_prev_step_bytes": _dist(stoppers, byte_of),
+        "eaters_prev_step_bytes": _dist(eaters, byte_of),
+        "stoppers_prev_step_byte_classes": _dist(stoppers, class_of),
+        "eaters_prev_step_byte_classes": _dist(eaters, class_of),
+        "stoppers_top1_class_share": _dist(stoppers, class_of)["top1_share"],
+        "eaters_top1_class_share": _dist(eaters, class_of)["top1_share"],
+        "class_share_stoppers_minus_eaters": (
+            round(
+                _dist(stoppers, class_of)["top1_share"] - _dist(eaters, class_of)["top1_share"],
+                4,
+            )
+            if stoppers and eaters
+            else None
+        ),
+        "tail_identity_present_for_all_generations": all(
+            g.get("tail_identity") for g in generations
+        ),
+        #: 分组健康度两条（真件里都必须为 0）
+        "stoppers_that_also_ate_full_budget": len(overlap),
+        "generations_neither_stop_nor_eater": len(neither),
     }
 
 
@@ -783,6 +878,10 @@ def main() -> int:
                     args.penalty_window,
                 )
                 row["step"] = position
+                #: v28（§72）：末步**字面身份**要能回答"停之前发的是哪个字节、当时在字的哪一段"。
+                row["emitted_byte"] = byte
+                row["utf8_state_before"] = [state[0], state[1]]
+                row["utf8_byte_class"] = _utf8_byte_class(byte)
                 row["in_run"] = bool(position < len(run_membership) and run_membership[position])
                 if not row["emitted_is_argmax"]:
                     failure_examples.append({"id": item["id"], **row})
@@ -806,6 +905,7 @@ def main() -> int:
                         args.penalty_window,
                     ),
                     "step": len(loop_records),
+                    "utf8_state_before": [state[0], state[1]],
                 }
             )
             worst_run = max(worst_run, _longest_same_char_run(answer))
@@ -894,7 +994,14 @@ def main() -> int:
 
     substrate.observe = original_observe  # type: ignore[method-assign]
     report = {
-        "format": "taiji-a30-stop-failure-v27",
+        "format": "taiji-a30-stop-failure-v28",
+        "format_note_v28": "v28（2026-10-03）：按 §第七十二次停靠 的预注册加**末步字面身份**——逐步行补 "
+        "`emitted_byte`／`utf8_byte_class`／`utf8_state_before` 三个键，每代补 `tail_identity`"
+        "（停之前那一步发的是哪个字节、当时在字的哪一段、该步的边界名次与概率），件级补 "
+        "`tail_identity_summary_v28`（自停组 vs 吃满组各自的字节分布与位置类分布，分母各自算）；"
+        "终止行另带 `terminal_utf8_state_before`。理由：§71 把问题移到了『那一跳为什么不发生』，"
+        "而现有件里只有 24 字符的 `answer_head`、**没有字节尾串**，所以字面身份必须重放补记；"
+        "缺 `emitted_byte` 直接抛错（不静默交空）。既有列一字未动 ⇒ 与 v27 各件同格可比。",
         "format_note_v19": "v19 加性多一条检索侧 **oracle** 档：`--oracle-selector` 把 `store.best_match` 换成『内容含本题 `expected_contains` 的第一条事件』，找不到则透传原实现，用来把『选对了还拖不拖写』从『内容身份』与『发射时刻』里单独摘出来验。缺标签时响亮停下而非静默透传（那会伪装成生效）；自述 `oracle_calls`／`oracle_found`／`oracle_fell_through`。默认关 ⇒ 与 v18 逐位可比。",
         "format_note_v18": "v18 **加性**多一条**检索侧**资格档：`--store-scope-conversation` 在每题开头把装载信封带来的陈旧事件请出候选集，只留本次对话被告知的内容可被 `best_match` 取到（只用公开接口 `events()/clear()/record()`；代价是 `event_id` 重新编号，已在件里披露）。它与窗口档正交：一个动候选集、一个动发射时刻。默认关 ⇒ 与 v17 逐位可比。",
         "format_note_v27": "v27（2026-10-03）：DEBT-G26——产品环体在 `argmax()==boundary` 时**先 break 再 observe**"
@@ -1052,6 +1159,8 @@ def main() -> int:
         ),
         #: v27（DEBT-G26）：把"停下那一步"补成可见行后的件级判读列（新高型 vs 竞争型）。
         "terminal_decision_summary_v27": _terminal_summary_v27(per_item),
+        #: v28（§72）：末步字面身份的四张分布表（自停组 vs 吃满组，各自分母）。
+        "tail_identity_summary_v28": _tail_identity_summary_v28(per_item),
         "instrument_guard": {
             "observe_calls_recorded": bool(records),
             # v7 自述守卫：这条面必须**报出**回写门槛状态（ None／缺键都算仪器没走到，红）。

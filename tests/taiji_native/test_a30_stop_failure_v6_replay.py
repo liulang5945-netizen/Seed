@@ -83,9 +83,9 @@ def test_instrument_carries_v6_and_the_correction_note() -> None:
     source = (PROJECT_ROOT / "scripts" / "training" / "probe_taiji_a30_stop_failure.py").read_text(
         encoding="utf-8"
     )
-    assert '"format": "taiji-a30-stop-failure-v27"' in source
+    assert '"format": "taiji-a30-stop-failure-v28"' in source
     assert all(
-        f"format_note_v{v}" in source for v in range(6, 28)
+        f"format_note_v{v}" in source for v in range(6, 29)
     ), "升版只许加列，历史说明必须逐版留在件里"
     assert "format_note_v6" in source
     assert "追加二" in source and "深帧复现" in source
@@ -318,10 +318,11 @@ def test_the_endstep_probe_groups_by_generation_not_by_item() -> None:
     """
     from probe_taiji_a30_stop_failure import _endstep_probe_per_generation, _group_rows_by_generation
 
-    def row(step, p, rank, in_run=True):
+    def row(step, p, rank, in_run=True, byte=65):
         return {"step": step, "p_boundary": p, "boundary_rank_in_legal": rank,
                 "legal_candidates": 40, "legal_candidates_including_boundary": 41,
-                "ratio_best_over_boundary": 3.0, "in_run": in_run}
+                "ratio_best_over_boundary": 3.0, "in_run": in_run,
+                "emitted_byte": byte, "utf8_byte_class": "ascii", "utf8_state_before": [0, 0]}
 
     rows = [row(0, 0.1, 9), row(1, 0.4, 3), row(2, 0.2, 7), row(0, 0.9, 1), row(1, 0.5, 2), row(3, 0.7, 5, in_run=False)]
     groups = _group_rows_by_generation(rows)
@@ -359,7 +360,8 @@ def test_the_fixed_step_probe_records_only_reached_steps() -> None:
     def row(step, p, rank, legal=40):
         return {"step": step, "p_boundary": p, "boundary_rank_in_legal": rank,
                 "legal_candidates": legal, "legal_candidates_including_boundary": legal + 1,
-                "ratio_best_over_boundary": 4.0, "in_run": True}
+                "ratio_best_over_boundary": 4.0, "in_run": True,
+                "emitted_byte": 97, "utf8_byte_class": "ascii", "utf8_state_before": [0, 0]}
 
     short = _endstep_probe_per_generation(
         [row(s, 0.01, 9) for s in range(10)], max_length=256, terminals=[None]
@@ -412,7 +414,7 @@ def test_window_stats_report_cumulative_and_last_turn_separately() -> None:
     assert "_total = 0" not in reset_body          # 累计量绝不在复位里被清零
 
 
-def _synthetic_row(step: int, p: float, rank: int, legal: int = 40) -> dict:
+def _synthetic_row(step: int, p: float, rank: int, legal: int = 40, byte: int = 0x80) -> dict:
     return {
         "step": step,
         "p_boundary": p,
@@ -422,7 +424,22 @@ def _synthetic_row(step: int, p: float, rank: int, legal: int = 40) -> dict:
         "ratio_best_over_boundary": 5.0,
         "in_run": False,
         "boundary_is_argmax": rank == 1,
+        "emitted_byte": byte,
+        "utf8_byte_class": _class_of(byte),
+        "utf8_state_before": [0, 0],
     }
+
+
+def _class_of(byte: int) -> str:
+    if byte < 0x80:
+        return "ascii"
+    if byte < 0xC0:
+        return "continuation"
+    if byte < 0xE0:
+        return "lead2"
+    if byte < 0xF0:
+        return "lead3"
+    return "lead4"
 
 
 def test_the_terminal_row_is_the_one_step_the_generation_loop_hides() -> None:
@@ -440,7 +457,8 @@ def test_the_terminal_row_is_the_one_step_the_generation_loop_hides() -> None:
     eat_rows = [_synthetic_row(0, 0.0005, 60), _synthetic_row(1, 0.0006, 61)]
     terminal = {"step": 2, "p_boundary": 0.02, "p_boundary_before_penalty": 0.02,
                 "boundary_rank_in_legal": 1, "legal_candidates_including_boundary": 41,
-                "ratio_best_over_boundary": 1.0, "boundary_is_argmax": True}
+                "ratio_best_over_boundary": 1.0, "boundary_is_argmax": True,
+                "utf8_state_before": [0, 0]}
     rows = stop_rows + eat_rows
     probe = _endstep_probe_per_generation(rows, max_length=2, terminals=[terminal, None])
     assert probe[0]["terminal_decision"] is not None, probe[0]
@@ -530,3 +548,70 @@ def test_the_stop_step_is_argmax_by_construction_so_rank_one_is_a_check_not_an_a
     runtime_src = (PROJECT_ROOT / "api" / "seed_runtime.py").read_text(encoding="utf-8")
     assert "stop_at_boundary=True" in runtime_src
     assert "utf8_strict=True" in runtime_src
+
+
+def test_the_tail_identity_records_what_was_emitted_right_before_the_stop() -> None:
+    """§72 的 v28：每代必须带"停之前那一步发了哪个字节、当时在字的哪一段"，且分布按组各算分母。
+
+    含两向：① 缺 `emitted_byte` 的旧形状行必须**抛错**（不静默交空 ⇒ §72 资格前置②的来路）；
+    ② 位置类占比与"自停减吃满"的差都能为负（这里就故意排成负数，防止有人把方向写反）。
+    """
+    from probe_taiji_a30_stop_failure import (
+        _endstep_probe_per_generation,
+        _tail_identity_summary_v28,
+    )
+
+    def terminal(step_value: int):
+        return {"step": step_value, "p_boundary": 0.03, "p_boundary_before_penalty": 0.03,
+                "boundary_rank_in_legal": 1, "legal_candidates_including_boundary": 41,
+                "ratio_best_over_boundary": 1.0, "boundary_is_argmax": True,
+                "utf8_state_before": [0, 0]}
+
+    rows, terminals = [], []
+    for byte in (0xE4, 0xE4, 0x41):                            # 自停三代：两个 lead3、一个 ascii
+        rows.extend([_synthetic_row(0, 0.001, 9, byte=byte), _synthetic_row(1, 0.002, 7, byte=byte)])
+        terminals.append(terminal(2))
+    for byte in (0x80, 0x80, 0x80):                            # 吃满三代：全是续字节
+        rows.extend(
+            [_synthetic_row(0, 0.001, 30, byte=byte), _synthetic_row(1, 0.002, 31, byte=byte),
+             _synthetic_row(2, 0.003, 32, byte=byte)]
+        )
+        terminals.append(None)
+    #: 预算取 3：自停的代只有 2 行（没吃满），吃满的代有 3 行——**上一版我在这里写错**
+    #: （预算 2 让"自停"代同时满足 `ate_full_budget` ⇒ 两组重叠、`top1_share` 被算成 0.5），
+    #: 所以那两条健康度计数就是用来当场抓住这种重叠的。
+    probes = _endstep_probe_per_generation(rows, max_length=3, terminals=terminals)
+    assert [p["tail_identity"]["prev_step_utf8_byte_class"] for p in probes] == (
+        ["lead3", "lead3", "ascii"] + ["continuation"] * 3
+    ), [p["tail_identity"] for p in probes]
+    assert probes[0]["tail_identity"]["prev_step_emitted_byte"] == 0xE4, probes[0]
+    assert [p["ate_full_budget"] for p in probes] == [False] * 3 + [True] * 3, probes
+
+    per_item = [{"endstep_probe_v22": probes, "generations_boundary_self_stop": 3,
+                 "generations_eating_full_budget": 3}]
+    summary = _tail_identity_summary_v28(per_item)
+    assert summary["tail_identity_present_for_all_generations"] is True, summary
+    assert summary["stoppers_that_also_ate_full_budget"] == 0, summary
+    assert summary["generations_neither_stop_nor_eater"] == 0, summary
+    assert summary["stoppers_prev_step_byte_classes"]["top1_share"] == 0.6667, summary
+    assert summary["eaters_prev_step_byte_classes"]["top1_share"] == 1.0, summary
+    #: 差为负 ⇒ 方向没写反（自停组更分散时它就该是负的）
+    assert summary["class_share_stoppers_minus_eaters"] == -0.3333, summary
+    assert summary["stoppers_prev_step_bytes"]["distinct"] == 2, summary
+    assert summary["eaters_prev_step_bytes"]["n"] == 3, summary
+
+    stale = dict(_synthetic_row(0, 0.001, 9))
+    stale.pop("emitted_byte")
+    with pytest.raises(RuntimeError, match="emitted_byte"):
+        _endstep_probe_per_generation([stale], max_length=256, terminals=[None])
+
+
+def test_the_v28_tail_identity_is_pinned_at_the_row_and_in_the_envelope() -> None:
+    """字面身份要在**写行的那一处**落地，件里必须有对应的汇总键（否则只是我又写了个故事）。"""
+    source = (PROJECT_ROOT / "scripts" / "training" / "probe_taiji_a30_stop_failure.py").read_text(
+        encoding="utf-8"
+    )
+    assert 'row["emitted_byte"] = byte' in source
+    assert 'row["utf8_byte_class"] = _utf8_byte_class(byte)' in source
+    assert '"tail_identity_summary_v28": _tail_identity_summary_v28(per_item)' in source
+    assert source.count("def _utf8_byte_class(") == 1
