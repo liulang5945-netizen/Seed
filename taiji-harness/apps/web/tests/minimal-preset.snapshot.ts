@@ -36,7 +36,6 @@ const SHELL_TOOL = process.platform === 'win32' ? 'pwsh' : 'bash'
 const SCRIPTED_COMMAND = SHELL_TOOL === 'pwsh'
   ? "Write-Output 'MINIMAL_BASH_CARD_OK'"
   : "printf 'MINIMAL_BASH_CARD_OK\\n'"
-const SCRIPTED_ARGUMENTS = JSON.stringify({ command: SCRIPTED_COMMAND })
 const PROMPT = `Use the ${SHELL_TOOL} tool to run exactly: ${SCRIPTED_COMMAND}. Then reply exactly MINIMAL_PRESET_REQUEST_OK and stop.`
 
 /** Rendered text of the system prompt surface node, or undefined when the surface carries none. */
@@ -161,11 +160,12 @@ describe('minimal agent preset', () => {
     // row — the treeitem without aria-expanded (the ㊵-146 family recipe).
     const groupRow = page.locator('[role="treeitem"]').first()
     await groupRow.waitFor({ timeout: 15_000 })
+    const view = page
     await expect.poll(async () => {
-      for (const group of await page.locator('[role="treeitem"][aria-expanded="false"]').all()) {
+      for (const group of await view.locator('[role="treeitem"][aria-expanded="false"]').all()) {
         await group.click()
       }
-      return page.locator('[role="treeitem"]:not([aria-expanded])').count()
+      return view.locator('[role="treeitem"]:not([aria-expanded])').count()
     }, { timeout: 15_000 }).toBe(1)
     await page.locator('[role="treeitem"]:not([aria-expanded])').first().click()
     await page.getByText('MINIMAL_PRESET_REQUEST_OK', { exact: true }).waitFor({ timeout: 15_000 })
