@@ -112,6 +112,50 @@ def test_a_report_without_lf_columns_fails_loudly_instead_of_reading_zero(tmp_pa
     assert lf_count({'generation_steps': 10}) == 0 and best_margin({'generation_steps': 10}) is None
 
 
+def test_a_v29_style_report_reports_unknown_instead_of_a_fake_zero(tmp_path: Path) -> None:
+    """只有 LF 计数、没有比值列的件（v29 那批）：上界照算，四阈值下界必须报 `None` 而不是 `0.0`。
+
+    实测踩过：同一装配三次独立取数（v29／v30／v31）里 v29 那行的下界全是 0.0，
+    而它的意思只是"这台仪器在这一档没有比值列"——被读成"这条规则买不到任何停"就是假事实。
+    """
+
+    v29 = tmp_path / 'v29.json'
+    v29.write_text(
+        json.dumps(
+            {
+                'format': 'v29',
+                'per_item': [
+                    {
+                        'id': 'V1',
+                        'endstep_probe_v22': [
+                            {
+                                'generation_steps': 10,
+                                'ate_full_budget': True,
+                                'lf_trace_v29': {'lf_step_count': 2},
+                            },
+                            {
+                                'generation_steps': 10,
+                                'ate_full_budget': True,
+                                'lf_trace_v29': {'lf_step_count': 0},
+                            },
+                        ],
+                    }
+                ],
+            }
+        ),
+        encoding='utf-8',
+    )
+    payload = summarize(json.loads(v29.read_text(encoding='utf-8')))
+    assert payload['lower_bound_available'] is False, payload
+    assert payload['margin_column_used'] is None, payload
+    assert payload['eaters_with_lf'] == 1 and payload['delta_pp_upper_bound'] == 50.0, payload
+    assert all(row['fired_eaters'] is None for row in payload['per_threshold']), payload
+    assert all(row['delta_pp_lower_bound'] is None for row in payload['per_threshold']), payload
+    assert main(['--report', str(v29)]) == 2, '缺比值列也要 rc=2'
+    #: 反向：有列时这条旗标必须为真——否则它自己就是一条恒假的守卫。
+    assert summarize(_report([_gen(lf=1, margin=1.4)]))['lower_bound_available'] is True
+
+
 def test_the_grid_is_the_frozen_one() -> None:
     assert R_GRID == (1.05, 1.20, 1.50, 2.00)
 

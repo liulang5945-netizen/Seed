@@ -71,8 +71,17 @@ def summarize(report: dict[str, Any]) -> dict[str, Any]:
     eaters = [g for g in generations if g.get('ate_full_budget')]
     with_lf = [g for g in eaters if lf_count(g) >= 1]
     observed = [g for g in with_lf if best_margin(g) is not None]
+    #: 比值列**结构上不存在**（v29 及更早的件）与"有列但这些代都没开火"是两件不同的事：
+    #: 前者只能报"不可知"，报成 0.0 会被读成"这条规则买不到任何停"（实测踩过：同一台仪器
+    #: 对 v29/v30/v31 三枚同配置件跑出的下界，v29 那行是假的 0）。
+    margin_column = next(
+        (found for found in (_pick(g, MARGIN_COLUMNS)[1] for g in generations) if found), None
+    )
     rows = []
     for threshold in R_GRID:
+        if margin_column is None:
+            rows.append({'R': threshold, 'fired_eaters': None, 'delta_pp_lower_bound': None})
+            continue
         fired = [g for g in observed if best_margin(g) <= threshold]
         rows.append(
             {
@@ -84,6 +93,7 @@ def summarize(report: dict[str, Any]) -> dict[str, Any]:
     return {
         'report': None,
         'format': report.get('format'),
+        'lower_bound_available': margin_column is not None,
         'checkpoint_sha256': report.get('checkpoint_sha256'),
         'circuit': 'seed-A' if report.get('circuit') else None,
         'circuit_sha256': (report.get('circuit_sha256') or '')[:16] or None,
@@ -100,7 +110,7 @@ def summarize(report: dict[str, Any]) -> dict[str, Any]:
         'eaters_with_lf_but_no_next_row': len(with_lf) - len(observed),
         'lf_total_emissions': sum(lf_count(g) for g in generations),
         'per_threshold': rows,
-        'margin_column_used': _pick(generations[0], MARGIN_COLUMNS)[1] if generations else None,
+        'margin_column_used': margin_column,
     }
 
 

@@ -1172,6 +1172,30 @@ class Taiji:
             raise TypeError("copy-evidence gate override must be a bool or None")
         self._copy_evidence_utf8_gate_override = enabled
 
+    def _copy_evidence_utf8_gate_effective(self) -> bool:
+        """这条式子**只住一处**：`override` 为空跟随 config，否则按显式覆写（DEBT-G30）。
+
+        此前生成路径内联写一份、产品外部的探针与测试又各自重抄一份——
+        抄出去的那几份会随产品改动过期（本仓已经因"同一判定两处各写"错过一次静默错判）。
+        """
+
+        override = self._copy_evidence_utf8_gate_override
+        return bool(self.config.copy_evidence_utf8_gate) if override is None else bool(override)
+
+    def copy_evidence_utf8_gate_state(self) -> dict[str, bool | None]:
+        """证据门的三态读数 `config／override／effective`（与 `copy_evidence_window_stats()` 同族）。
+
+        为什么要有它：**"默认关闭 ⇒ 逐位不变"这条验收得能从产品外面证**，
+        而此前外面只能扒私有字段 `_copy_evidence_utf8_gate_override` 自己重推有效值。
+        纯读——不改状态、不进任何 payload。
+        """
+
+        return {
+            "config": bool(self.config.copy_evidence_utf8_gate),
+            "override": self._copy_evidence_utf8_gate_override,
+            "effective": self._copy_evidence_utf8_gate_effective(),
+        }
+
     @torch.no_grad()
     def migrate_f1_to_developmental_synapses(self) -> dict[str, Any]:
         """Mount an exact, read-only fast/slow view over the current F1 state.
@@ -2007,11 +2031,9 @@ class Taiji:
         #: 预测下一字节该用的那一列（DFA 余量只按 (余量, 字节) 推进，与 `utf8_state` 同一份）。
         #: 关闭该特性时两者恒为 None ⇒ 逐位不变。
         position_input_enabled = bool(self.config.readout_utf8_position_input)
-        copy_gate_enabled = (
-            self.config.copy_evidence_utf8_gate
-            if self._copy_evidence_utf8_gate_override is None
-            else bool(self._copy_evidence_utf8_gate_override)
-        )
+        #: DEBT-G30：有效状态改为调用那"唯一一处"式子（语义与原先的内联三元逐值相同，
+        #: 守卫 `test_a30_gate_state_readout.py` 钉的是 override×config 六种组合全等）。
+        copy_gate_enabled = self._copy_evidence_utf8_gate_effective()
         utf8_tracking = bool(position_input_enabled or copy_gate_enabled)
         # Declared up front so the tracking branch can narrow them to `int` at the
         # `advance_utf8` call.  Previously each was a `... if utf8_tracking else None`
