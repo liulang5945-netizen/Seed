@@ -97,7 +97,10 @@ it('hot-reloads a real client-plugin source edit without refreshing the page', a
   const oldText = 'State at Its Utmost'
   const sourceNeedle = "'hero.headline': 'State at Its Utmost'"
   const newText = `HMR UPDATED ${'x'.repeat(80)}`
-  const updatedSource = originalSource.toString().replace(sourceNeedle, `'hero.headline': '${newText}'`)
+  // The owner-ruled brand closure made the hero headline English in
+  // BOTH locale entries, so the needle appears twice; replacing only the first
+  // would edit the zh entry while the en page renders the untouched one.
+  const updatedSource = originalSource.toString().replaceAll(sourceNeedle, `'hero.headline': '${newText}'`)
   if (updatedSource === originalSource.toString()) throw new Error(`HMR source lacks ${JSON.stringify(sourceNeedle)}`)
 
   const subprocessCtx = new Context()
