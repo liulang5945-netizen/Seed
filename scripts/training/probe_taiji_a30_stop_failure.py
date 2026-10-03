@@ -309,6 +309,8 @@ def _endstep_probe_per_generation(
                 #: v28（§72 判读先于数）：**停之前那一步发的是哪个字节、当时在字的哪一段**。
                 #: v29（§73 末段冻线）：这条生成里 LF 发过几次、最后一次在哪儿。
                 "lf_trace_v29": _lf_trace(group),
+                #: v30（§75）：LF 之后那一步的边界名次——定点修法的杠杆量。
+                "lf_next_probe_v30": _lf_next_probe_v30(group, terminal),
                 "tail_identity": {
                     "prev_step_emitted_byte": int(last_row["emitted_byte"]),
                     "prev_step_utf8_byte_class": str(last_row["utf8_byte_class"]),
@@ -593,6 +595,73 @@ def _lf_bucket(last_lf: int, last_step: int) -> str:
     if ratio <= 0.25:
         return "near-end(<=25%)"
     return "far-from-end(>25%)"
+
+
+def _lf_next_probe_v30(group: list[dict], terminal: dict | None) -> dict[str, Any]:
+    """v30（§75）：LF **之后那一步**上边界离赢有多远——定点修法的杠杆量。
+
+    自停的代里"LF 之后的下一步"就是终止步（名次按 §七十一 恒为 1），所以终止行也参与；
+    拖写的代里它只是下一个在案步。
+    """
+
+    by_step = {int(row["step"]): row for row in group}
+    lf_steps = [int(row["step"]) for row in group if int(row["emitted_byte"]) == _LF_BYTE]
+    rows_after: list[dict] = []
+    for step_at in lf_steps:
+        nxt = step_at + 1
+        if nxt in by_step:
+            rows_after.append(by_step[nxt])
+        elif terminal is not None and int(terminal["step"]) == nxt:
+            rows_after.append(terminal)
+    best = (
+        min(rows_after, key=lambda row: int(row["boundary_rank_in_legal"])) if rows_after else None
+    )
+    ratios = [
+        float(row["ratio_best_over_boundary"])
+        for row in rows_after
+        if row.get("ratio_best_over_boundary")
+    ]
+    return {
+        "lf_count": len(lf_steps),
+        "lf_next_steps": len(rows_after),
+        "best_boundary_rank_after_lf": int(best["boundary_rank_in_legal"]) if best else None,
+        "p_boundary_at_best_rank_step": round(float(best["p_boundary"]), 6) if best else None,
+        "min_ratio_best_over_boundary_after_lf": round(min(ratios), 4) if ratios else None,
+    }
+
+
+def _lf_next_summary_v30(per_item: list[dict]) -> dict[str, Any]:
+    """§75 判读线要的三列：自停侧名次恒 1 的一致性、拖写侧 ≤3 与 ≥10 的占比、分母是否够判。"""
+
+    generations = [g for row in per_item for g in row["endstep_probe_v22"]]
+    stoppers = [g for g in generations if g["terminal_decision"] is not None]
+    eater_ranks = [
+        g["lf_next_probe_v30"]["best_boundary_rank_after_lf"]
+        for g in generations
+        if g["ate_full_budget"] and g["lf_next_probe_v30"]["lf_count"] >= 1
+        and g["lf_next_probe_v30"]["best_boundary_rank_after_lf"] is not None
+    ]
+    stopper_ranks = [g["lf_next_probe_v30"]["best_boundary_rank_after_lf"] for g in stoppers]
+    total = len(eater_ranks)
+    return {
+        "stoppers_rank_values_seen": sorted({r for r in stopper_ranks if r is not None}),
+        "stoppers_all_rank_one": bool(stopper_ranks) and all(r == 1 for r in stopper_ranks),
+        "eaters_with_lf_and_next_step": total,
+        #: 分母 <5 ⇒ 只报数不判（§75 写死；(c) 底拖写只有 1 枚发过 LF，按这条它本轮不可判）。
+        "denominator_at_least_5": bool(total >= 5),
+        "eaters_rank_hist": {
+            str(rank): sum(1 for r in eater_ranks if r == rank) for rank in sorted(set(eater_ranks))
+        },
+        "eaters_share_rank_le_3": (
+            round(sum(1 for r in eater_ranks if r <= 3) / total, 4) if total else None
+        ),
+        "eaters_share_rank_ge_10": (
+            round(sum(1 for r in eater_ranks if r >= 10) / total, 4) if total else None
+        ),
+        "eaters_median_best_rank_after_lf": (
+            sorted(eater_ranks)[total // 2] if total else None
+        ),
+    }
 
 
 def _position_histogram(positions: list[int]) -> dict[str, int]:
@@ -1074,7 +1143,14 @@ def main() -> int:
 
     substrate.observe = original_observe  # type: ignore[method-assign]
     report = {
-        "format": "taiji-a30-stop-failure-v29",
+        "format": "taiji-a30-stop-failure-v30",
+        "format_note_v30": "v30（2026-10-03）：§第七十四次停靠 的丙是**分母**造成的（装机底拖写 20 枚里 9 枚发过 LF、"
+        "(c) 底只有 1 枚），于是换问法：不再问『拖写里有多少发过 LF』，改问『LF 之后那一步，边界离赢多远』。"
+        "每代补 `lf_next_probe_v30`（`lf_count`／`lf_next_steps`／`best_boundary_rank_after_lf`／"
+        "`p_boundary_at_best_rank_step`／`min_ratio_best_over_boundary_after_lf`），件级补 `lf_next_summary_v30`"
+        "（自停侧名次一致性、拖写侧 ≤3 与 ≥10 的占比、以及『分母是否 ≥5 才允许判』的开关）。"
+        "自停的代里『LF 的下一步』就是终止步，所以终止行也参与这一步的取数（§75 资格前置③钉住它必须为 1）。"
+        "既有列一字未动 ⇒ 与 v27–v29 各件同格可比。",
         "format_note_v29": "v29（2026-10-03）：§第七十三次停靠 读出"
         "『两底 118/118 次自停的前一步都是字节 10（LF）』之后，那一跳的**修法方向**取决于一个还没量过的量："
         "拖写的生成是**根本没发 LF**，还是**发了没接住**。本版按 §73 末段冻线补 `lf_trace_v29`"
@@ -1247,8 +1323,10 @@ def main() -> int:
         "terminal_decision_summary_v27": _terminal_summary_v27(per_item),
         #: v28（§72）：末步字面身份的四张分布表（自停组 vs 吃满组，各自分母）。
         "tail_identity_summary_v28": _tail_identity_summary_v28(per_item),
-        #: v29（§73 末段冻线）：拖写的生成是"没发 LF"还是"发了没接住"。
+        #: v29（§73 末段冻线）：拖写的生成是『没发 LF』还是『发了没接住』。
         "lf_followthrough_summary_v29": _lf_followthrough_summary_v29(per_item),
+        #: v30（§75）：拖写的生成在 LF 之后那一步，边界离赢有多远。
+        "lf_next_summary_v30": _lf_next_summary_v30(per_item),
         "instrument_guard": {
             "observe_calls_recorded": bool(records),
             # v7 自述守卫：这条面必须**报出**回写门槛状态（ None／缺键都算仪器没走到，红）。

@@ -83,9 +83,9 @@ def test_instrument_carries_v6_and_the_correction_note() -> None:
     source = (PROJECT_ROOT / "scripts" / "training" / "probe_taiji_a30_stop_failure.py").read_text(
         encoding="utf-8"
     )
-    assert '"format": "taiji-a30-stop-failure-v29"' in source
+    assert '"format": "taiji-a30-stop-failure-v30"' in source
     assert all(
-        f"format_note_v{v}" in source for v in range(6, 30)
+        f"format_note_v{v}" in source for v in range(6, 31)
     ), "升版只许加列，历史说明必须逐版留在件里"
     assert "format_note_v6" in source
     assert "追加二" in source and "深帧复现" in source
@@ -657,3 +657,56 @@ def test_the_lf_followthrough_summary_separates_no_lf_from_lf_not_captured() -> 
     assert summary["eaters"]["n"] == 2 and summary["eaters"]["with_lf"] == 1, summary
     assert summary["eaters"]["with_lf_share"] == 0.5, summary
     assert summary["eaters_last_lf_position_buckets"] == {"far-from-end(>25%)": 1}, summary
+
+
+def test_the_lf_next_probe_measures_leverage_and_refuses_small_denominators() -> None:
+    """§75 的 v30：LF 之后那一步的边界名次——自停侧必须恒 1，拖写侧才算杠杆；分母 <5 不许判。
+
+    两向：① 自停的代里『LF 的下一步』是**终止行**（不是下一个在案步），取错就恒假不了；
+    ② `denominator_at_least_5` 必须随分母翻转（2 枚 ⇒ False、5 枚 ⇒ True），
+       这条开关是 §74 那个丙的成因（分母太小）被写进仪器里的形状。
+    """
+    from probe_taiji_a30_stop_failure import (
+        _endstep_probe_per_generation,
+        _lf_next_summary_v30,
+    )
+
+    def terminal_at(step_value: int, rank: int = 1):
+        return {"step": step_value, "p_boundary": 0.3, "p_boundary_before_penalty": 0.3,
+                "boundary_rank_in_legal": rank, "legal_candidates_including_boundary": 41,
+                "ratio_best_over_boundary": 1.0, "boundary_is_argmax": rank == 1,
+                "utf8_state_before": [0, 0]}
+
+    stopper = [_synthetic_row(0, 0.001, 40, byte=0x41), _synthetic_row(1, 0.002, 39, byte=0x42),
+               _synthetic_row(2, 0.003, 38, byte=10)]
+    deep_eater = [_synthetic_row(s, 0.001, 20 if s == 1 else 44, byte=(10 if s == 0 else 0x42))
+                  for s in range(4)]
+    near_eater = [_synthetic_row(s, 0.001, 2 if s == 1 else 44, byte=(10 if s == 0 else 0x42))
+                  for s in range(4)]
+    probes = _endstep_probe_per_generation(
+        stopper + deep_eater + near_eater,
+        max_length=4,
+        terminals=[terminal_at(3), None, None],
+    )
+    assert probes[0]["lf_next_probe_v30"]["best_boundary_rank_after_lf"] == 1, probes[0]
+    assert probes[1]["lf_next_probe_v30"]["best_boundary_rank_after_lf"] == 20, probes[1]
+    assert probes[2]["lf_next_probe_v30"]["best_boundary_rank_after_lf"] == 2, probes[2]
+    summary = _lf_next_summary_v30(
+        [{"endstep_probe_v22": probes, "generations_boundary_self_stop": 1,
+          "generations_eating_full_budget": 2}]
+    )
+    assert summary["stoppers_all_rank_one"] is True, summary
+    assert summary["stoppers_rank_values_seen"] == [1], summary
+    assert summary["eaters_with_lf_and_next_step"] == 2, summary
+    assert summary["denominator_at_least_5"] is False, summary
+    assert summary["eaters_share_rank_le_3"] == 0.5, summary
+    assert summary["eaters_share_rank_ge_10"] == 0.5, summary
+
+    five = probes[1:] + probes[1:2] * 3
+    flipped = _lf_next_summary_v30(
+        [{"endstep_probe_v22": five, "generations_boundary_self_stop": 0,
+          "generations_eating_full_budget": 5}]
+    )
+    assert flipped["eaters_with_lf_and_next_step"] == 5, flipped
+    assert flipped["denominator_at_least_5"] is True, flipped
+    assert flipped["stoppers_all_rank_one"] is False, flipped
