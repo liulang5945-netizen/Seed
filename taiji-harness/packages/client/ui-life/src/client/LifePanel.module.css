@@ -90,11 +90,25 @@
 }
 
 .organTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   margin: 0;
   color: var(--dsw-alias-label-secondary, #61666b);
   font-size: 13px;
   font-weight: 600;
   line-height: 20px;
+}
+
+/* A group title sits one level below the section title, so it gets a
+   narrower, grey tick against the section's 3px green one. */
+.organTitle::before {
+  content: "";
+  width: 2px;
+  height: 12px;
+  flex: 0 0 2px;
+  border-radius: 999px;
+  background: var(--dsw-alias-label-tertiary, #8b8f94);
 }
 
 .organ {
@@ -103,9 +117,13 @@
   gap: 10px;
 }
 
+/* Sub-group boundary. A section card draws a 0.5px hairline, but a group
+   inside it needs a heavier rule: four training groups in a row of controls
+   read as one wall otherwise, and the owner could not tell where the
+   run-control buttons end and the checkpoint roster begins. */
 .organ + .organ {
-  padding-top: 16px;
-  border-top: 0.5px solid var(--dsw-alias-border-l2, rgba(0, 0, 0, 0.1));
+  padding-top: 20px;
+  border-top: 1px solid var(--dsw-alias-border-l3, rgba(0, 0, 0, 0.16));
 }
 
 .facts {
@@ -291,12 +309,12 @@
 .datasetList {
   display: flex;
   margin: 0;
-  padding: 4px 10px 6px 30px;
+  padding: 6px 10px 8px 30px;
   flex-direction: column;
-  gap: 0;
+  gap: 2px;
   color: var(--dsw-alias-label-primary, #0f1115);
-  font-size: 12px;
-  line-height: 18px;
+  font-size: 13px;
+  line-height: 20px;
   list-style: none;
 }
 
@@ -307,11 +325,11 @@
 .datasetRow {
   display: grid;
   min-width: 0;
-  min-height: 32px;
+  min-height: 36px;
   grid-template-columns: minmax(0, 1fr) auto auto;
   align-items: center;
   gap: 8px;
-  padding: 6px 0;
+  padding: 8px 0;
   border-bottom: 0.5px solid var(--dsw-alias-border-l2, rgba(0, 0, 0, 0.1));
 }
 

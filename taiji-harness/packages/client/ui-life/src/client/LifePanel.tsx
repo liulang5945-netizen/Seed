@@ -759,7 +759,7 @@ function TrainingSection({ t, snapshot, pending, confirming, run, life }: Sectio
               accept={DATASET_ACCEPT}
               onChange={pickFile}
             />
-            <Button disabled={busy || active} aria-busy={pending === 'uploadDataset'} onClick={() => { fileInput.current?.click() }}>{t('uploadPick')}</Button>
+            <Button variant="primary" disabled={busy || active} aria-busy={pending === 'uploadDataset'} onClick={() => { fileInput.current?.click() }}>{t('uploadPick')}</Button>
             {picked !== null && <Button disabled={busy || active} aria-busy={pending === 'uploadDataset'} onClick={uploadFile}>{t('uploadSend')}</Button>}
             {picked !== null && (
               <Button disabled={busy || active} onClick={() => { setPicked(null) }}>{t('uploadCancel')}</Button>
@@ -778,8 +778,9 @@ function TrainingSection({ t, snapshot, pending, confirming, run, life }: Sectio
           : datasets.length === 0
             ? <p className={css.muted}>{t('datasetsEmpty')}</p>
             : (
-              <>
-                {groupDatasets(datasets).map(group => (
+                  <>
+                    <p className={css.muted}>{t('datasetsGroupHint')}</p>
+                    {groupDatasets(datasets).map(group => (
                   <div key={group.dir} className={css.datasetGroup}>
                     <button
                       type="button"
@@ -789,7 +790,7 @@ function TrainingSection({ t, snapshot, pending, confirming, run, life }: Sectio
                     >
                       <span className={css.groupChevron}>{foldedGroups.has(group.dir) ? '▸' : '▾'}</span>
                       <span className={css.datasetPath}>{group.dir === '' ? t('datasetRootGroup') : group.dir}</span>
-                      <span className={css.datasetSize}>{group.entries.length}</span>
+                      <span className={css.datasetSize}>{t('fileCount', { count: String(group.entries.length) })}</span>
                     </button>
                     {!foldedGroups.has(group.dir) && (
                       <ul className={css.datasetList}>
@@ -1051,7 +1052,7 @@ function KnowledgeSection({ t, snapshot, pending, confirming, run, life }: Secti
                   accept={KNOWLEDGE_ACCEPT}
                   onChange={pickFile}
                 />
-                <Button disabled={busy} aria-busy={pending === 'uploadKnowledge'} onClick={() => { fileInput.current?.click() }}>{t('knowledgeUpload')}</Button>
+                <Button variant="primary" disabled={busy} aria-busy={pending === 'uploadKnowledge'} onClick={() => { fileInput.current?.click() }}>{t('knowledgeUpload')}</Button>
                 {picked !== null && <Button disabled={busy} aria-busy={pending === 'uploadKnowledge'} onClick={uploadFile}>{t('uploadSend')}</Button>}
                 {picked !== null && (
                   <Button disabled={busy} onClick={() => { setPicked(null) }}>{t('uploadCancel')}</Button>
