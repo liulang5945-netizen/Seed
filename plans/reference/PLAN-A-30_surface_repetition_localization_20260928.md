@@ -7991,3 +7991,32 @@ B＝L2 主列 `72 − generations_eating_full_budget ≥ 6`；C＝`SPEC-A-24` �
 （`steps_in_repeat_run ≥50 / <50`，基线 115／121），新档必须过 §110 那台判读器八条前置（含
 `evidence_observer_installed=true` 与等式 `loop_calls = total_steps − generations`）才可发表。
 本轮**不新增线、不换次要指标、不因"只差一次"下调阈值**。
+
+### 第一百二十八次停靠·`DEBT-G35` 的机器侧防口落地：训练器不再允许覆写"不是本次 resume 源"的已存在检查点（2026-10-03 11:4x）
+
+**为什么这一格值得动**（不是清洁洁癖）：`G35` 的成因不是"路径写错"（那是 `G34`），而是**路径正确、字节被换**——
+`output/a31_ding3_boundary/checkpoint.pt` 被第二次跑档原地覆写，于是 10 份已入库读数记的
+`checkpoint_sha256_before=79b1a99cedf3…` 在盘上再也找不到对应字节，而那批结论永远无法复算。
+`git ls-files` 与 markdown 链接检查都查不出这种损失，因为它动的是**盘**。约定挡不住，只能在解析写靶那一刻拒绝。
+
+**改的是 `scripts/training/train_seed_corpus.py` 两处**：①新增旗标 `--allow-overwrite-checkpoint`（逃生口）；
+②`checkpoint_path` 解析之后立刻检查——目标已存在、且不等于本次 `--resume` 源、又没给逃生口 ⇒ `parser.error`
+（rc=2，消息点名路径并说明"旧读数的源件字节会永久消失"）。**原地续训**（`--resume X` 且 `--checkpoint X`）是合法用法，
+不在拒绝之列；检查点位置刻意放在 `torch.load(args.resume)` **之前**，守卫里用源码顺序钉住这一点。
+
+**守卫 `tests/taiji_native/test_g35_checkpoint_overwrite_guard.py` 五支，两支是正例**：
+拒绝路（rc=2 ＋ stderr 点名 ＋ **目标文件字节未被改动**）；反向"不许误拒原地续训"（越过后撞在 `torch.load`
+的假信封上，用异常类型证明闸门放行）；逃生口**被走到**（`--smoke` 真跑 5000 ticks，`elapsed_seconds=23.5`、
+`exit_reason=max_symbols_reached`、`base_ticks=0`、`reached_budget=true`，终点是那枚 `old-bytes` 确实被覆写）；
+旗标在参数面里存在；扫描面本身受版本控制。
+同批把**所有会调训练器的测试**一起跑：`test_a4_mainline_flags`／`test_a30_answer_chunking_recipe`／
+`test_a30_ding3_boundary_recipe`／`test_train_seed_corpus_checkpoint_history`／`test_g14_trainer_exit_accounting`／
+`test_p3b_campaign_contract` ＝ **82 passed／123.50 s**，ruff 0 条 ⇒ 新闸门没有把任何既有调用方挡红。
+
+**两条我自己的测试面缺陷（都当场修，不靠放宽断言蒙过去）**：`--smoke` 那支我先写 `assert main() == 0`，
+而该仪器成功时返回 `None` ⇒ 改成 `in (0, None)` 并把**真正要证的**留在"旧字节被覆写"上；
+原地续训那支我在 `except Exception` 分支忘了登记结果，导致"越过了闸门"被读成"测试面不成立"。
+
+**`DEBT-G35` 的处置面收窄**：①历史件已在 §126 标注"源件字节已丢、不可复跑"；②本次落地（覆写需换名或显式旗标）；
+③"遍历 `reports/*.json` 的 sha 字段、路径在场而 sha 不符就输出 `artifact_sha_drift` 清单"**仍未做**——
+它是可见性而不是防口，需要 owner 认"要不要为历史件补这条机检"。

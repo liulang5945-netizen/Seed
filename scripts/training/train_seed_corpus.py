@@ -543,6 +543,12 @@ def _build_parser() -> argparse.ArgumentParser:
         help="显式接受「正式跑缺省写靶＝产品件」这一行为（2026-09-28 加固旗标；日常应改用 --checkpoint）。",
     )
     parser.add_argument(
+        "--allow-overwrite-checkpoint",
+        action="store_true",
+        help="显式接受「覆写一枚已存在且不是本次 --resume 源的检查点」（2026-10-03 加固旗标，"
+        "`DEBT-G35`：原地覆写会让旧读数的源件字节永久消失；日常应改用新的 --checkpoint 路径）。",
+    )
+    parser.add_argument(
         "--progress",
         default=None,
         help="进度流路径；缺省随 `--smoke` 一起改走 `reports/seed_corpus_smoke_progress.jsonl`",
@@ -692,6 +698,24 @@ def main() -> None:
         )
     checkpoint_path = Path(args.checkpoint) if args.checkpoint else default_checkpoint
     progress_path = Path(args.progress) if args.progress else default_progress
+
+    #: DEBT-G35 的机器侧防口（2026-10-03）：`--checkpoint` 落在一枚**已存在**的件上、而它又**不是**本次的
+    #: `--resume` 源 ⇒ 响亮拒绝。为什么不能只靠约定：`output/a31_ding3_boundary/checkpoint.pt` 被第二次跑档
+    #: 原地覆写过，于是 10 份已入库读数记的 `checkpoint_sha256_before=79b1a99c…` 在盘上再也找不到对应字节，
+    #: 那批结论（§2ai–§2an）永远无法复算——按 `git ls-files` 或链接检查都查不出来，因为**路径是对的**。
+    #: 原地续训（`--resume X` 且 `--checkpoint X`）是合法用法，不在拒绝之列；其余覆写要么换名，
+    #: 要么显式给 `--allow-overwrite-checkpoint`。
+    resume_source = Path(args.resume).resolve() if args.resume else None
+    if (
+        checkpoint_path.exists()
+        and checkpoint_path.resolve() != resume_source
+        and not args.allow_overwrite_checkpoint
+    ):
+        parser.error(
+            f"refusing to overwrite existing checkpoint {checkpoint_path}: it is not this run's "
+            "--resume source, so earlier readings that anchor on it would become unreproducible. "
+            "Point --checkpoint at a new path, or pass --allow-overwrite-checkpoint deliberately."
+        )
 
     if args.smoke:
         config = SeedConfig()
