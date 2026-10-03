@@ -167,12 +167,15 @@
   white-space: nowrap;
 }
 
+/* A run report lists its weaknesses and notes as plain sentences. They were
+   12px with no space between rows, so a long list read as one dense block
+   right above the "run one pass" button. */
 .groupLabel {
-  margin: 0;
+  margin: 4px 0 0;
   color: var(--dsw-alias-label-secondary, #61666b);
-  font-size: 12px;
-  font-weight: 500;
-  line-height: 18px;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 20px;
 }
 
 .meters {
@@ -274,9 +277,9 @@
   background: var(--dsw-alias-bg-layer-1, #ffffff);
   color: var(--dsw-alias-label-primary, #0f1115);
   font: inherit;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
-  line-height: 18px;
+  line-height: 20px;
   cursor: pointer;
   text-align: left;
 }
@@ -379,8 +382,14 @@
   margin: 0;
   padding-left: 18px;
   color: var(--dsw-alias-label-secondary, #61666b);
-  font-size: 12px;
-  line-height: 18px;
+  font-size: 13px;
+  line-height: 20px;
+}
+
+/* Row spacing without turning the list into a flex container: a flex parent
+   blockifies its list items and their markers disappear. */
+.unavailableList li + li {
+  margin-top: 4px;
 }
 
 .trainingBadges {
@@ -665,8 +674,8 @@
   border-radius: 8px;
   background: var(--dsw-alias-state-warn-tertiary, #fef5e7);
   color: var(--dsw-alias-label-primary, #0f1115);
-  font-size: 12px;
-  line-height: 18px;
+  font-size: 13px;
+  line-height: 20px;
 }
 
 .unavailableNote .muted {
@@ -679,9 +688,9 @@
   padding-left: 16px;
   max-height: 88px;
   overflow-y: auto;
-  font-size: 12px;
+  font-size: 13px;
   font-family: var(--ds-font-family-code, Consolas, "Microsoft YaHei", sans-serif);
-  line-height: 18px;
+  line-height: 20px;
   list-style: disc;
 }
 
