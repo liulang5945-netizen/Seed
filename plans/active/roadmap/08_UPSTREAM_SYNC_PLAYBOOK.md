@@ -1438,3 +1438,39 @@ owner 已裁定 18 行那枚走"批准新增分类条目"（人工评审＝本�
 **与上一趟（898a0963 那条登记：`Test Files 1 failed｜59 passed (60)`、`Tests 1 failed｜1078 passed (1079)`）对齐得上**：总用例数 1079→1080 ＝ ㊵-174 把一条 `it` 拆成两条的那 ＋1；1 条 failed→0，1078 passed→1079，新增的 1 skipped 正是带 EPERM 证据的那条符号链接断言。**四条 delta 全部由同一次改动解释，没有需要另立归因的残差**。
 
 **这条读数的边界（引用时必须带上）**：它证的是"客户端四个包的单元／宿主面在 HEAD 上无红"，**不**证 `deliverables` 那条"最终符号链接应 404 且不拉起外部程序"的产品语义——那条在本机是被平台挡住的 skip，只有在有符号链接权限的宿主（POSIX/CI）上才算验过（㊵-170／㊵-174 同一口径）。也**不**替代判据④ 的 `test:coverage` 那一档：覆盖率仍无合格读数（要等根 `build` 绿，而 `build` 此刻因探针件 rc=1）。
+
+**㊵-179（owner 四项裁定当场落地：一次性探针件删除⇒门定义回到 144、根构建重取到 rc=0、他线 231 条缩进由本线代修、另两枚在飞件按裁定保持未提交）**
+
+**先记前提为什么变了**（上一轮裁的是"等它自己走、我只记录不干预"，本轮不是推翻那句，是它所依赖的前提被取证否证）：`apps/web/tests/zzz-probe-plugins.e2e.ts` 文件头自述 **`THROWAWAY probe (deleted after the run)`**；它要服务的那笔"官方包卡计数从 2 对齐到 4"**已随 `e4ba1680` 入库**，探针 dump 的读数已是那笔提交说明里的存证⇒没有任何"还没跑完的活"在它身后；本机按 `Name` 过滤的进程读数＝node 2 个（最晚一个启动于 13:08）、python 75 个全属 A 支线训练⇒**没有任何 M6 会话在持有它**。据此重新问 owner，裁定＝**直接删掉**。已删。
+
+**删后的门定义复算（这是 ㊵-161 那条硬前置的正解）**：按 `vitest.web.config.ts` 三条 include 逐条 glob＝`apps/web/tests/**/*.e2e.ts` **140** ＋ `apps/web/tests/**/*.snapshot.ts` **3** ＋ `packages/experimental/inspector/tests/client-browser.e2e.ts` **1** ＝ **144**，与四份批文件（46／49／48／1）**集合相等**（`gate_minus_batches` 为空）。记一处仪器自纠：我第一版核对脚本的正则只收了含 `**` 的 glob，于是第三条具名 include 被漏掉、算出"批文件多 1 枚"的假差集⇒**集合比较前先确认分子取自定义面全部条目**（同 [[aggregate-column-two-questions-before-use]] 的"分子分母同一集合"）。
+
+**判据① 重取**：`corepack pnpm run build` **rc=0**、日志内 `error TS` 计数 **0**⇒㊵-173 那份"rc=1／39 条／当前不可测"随探针删除解除，本行此后引新读数。
+
+**判据⑥ 的 231 条按 owner 裁"本线代修"**：`check:ci:lint:contracts-ready`（㊵-177 定下的权威入口）此刻 lint 叶 **232 errors**，按规则与文件分堆＝**231 条 `@stylistic(indent)` 全在 `packages/client/ui-life/src/client/LifePanel.tsx`**（他线提交 `266289e1` 带入；机制见㊵-177：这仓没有独立格式化门，缩进只由 oxlint 守）＋**1 条 `@stylistic(eol-last)` 在 `packages/api/life-controller/tests/resource-cleanup.host.spec.ts`**＝正是 owner 裁"保持未提交、只登记"的那枚去掉文件末尾换行的改动⇒**那 1 条我不修**，并登记为"树上带他线未提交件时 lint 叶常驻 1 条"的口径限制。修法用仓库自己的入口 `tsx scripts/run-oxlint.ts <该文件> --fix`，净结果 **223 insertions／223 deletions**，**`git diff --ignore-all-space` 为空**＝纯空白、零语义变化；行为面读数＝`vitest run packages/client/ui-life` **`Tests 24 passed (24)`、rc=0、FAIL 零条**；两枚改动文件 `oxlint` **0/0**。修后权威入口＝**`run-gates: 1 passed, 1 failed in 41.83s`**（`PASS duplication`＋lint 叶 **`Found 0 warnings and 1 error.`**）⇒判据⑥ 的构成从"231＋3＋1"收到**只剩那 1 条 eol-last，且它不属已入库面**。
+
+**hmr-live 那条 1 红按 `㊵-154 续二` 的交接走完，见 ㊵-180。**
+
+**㊵-180（hmr-live 的真回归修复照交接判绿入库；"真回归 vs 并行争用"由一次新鲜构建＋安静窗口单跑结清）**
+
+顺序照 `㊵-154 续二` 第④步执行，一步没跳：删探针⇒根 `corepack pnpm run build` rc=0（产物与 `.dsh-build/client-build-environment.json` 记录重同步，解开那条 digest 失配）⇒`DSH_SNAPSHOT=replay` **单跑**该 lane＝**`Test Files 1 passed (1)`、`Tests 1 passed (1)`、19.54s、rc=0**，日志内 **FAIL 零条**。
+
+**机制**（这条红不是争用）：`String.replace` 只替第一处，而品牌收口把 `hero.headline` 的**中英两份词条都改成同一英文串**⇒needle 出现两次，编辑落到 zh 词条、en 页面渲染的是没动过的那份⇒热更新文本永不变化。改 `replaceAll` 后绿。**修法本体在 `apps/web/tests/hmr-live.e2e.ts`，提交 `3bee7576`。**
+
+**顺带结掉 doc-sync 那条挂了一个多日的唯一红**：注释原文里带的裸 commit 哈希会让 `verify-repository-references` 响亮红（㊵-159／㊵-173 逐条登记过"唯一残留红属他线未提交的那一行"，就是这里），本轮改成不含哈希的措辞后单跑该叶 **rc=0**，原文 **`verify-repository-references: maintained files contain no repository commit identifiers or disallowed organization URLs.`**。**但我不在这里声称 `doc-sync` 整面通过**——整面 43 叶要等整面跑完后重取（㊵-179 期间禁 build、禁并行跑面）。
+
+**这条读数的边界（引用必须带）**：它证的是"该 lane 在本机新鲜构建＋安静窗口下绿"。**整面 144 口径的新基线由 `rerun13` 给**（本条写下时正在跑）；树上另有两枚 owner 裁"保持未提交"的件，其中 `apps/web/tests/clickable-links-gallery.e2e.ts`（一处期望色值 `rgb(63,143,69)`→`rgb(86,158,88)`）**在面内**，它会影响那条 lane 的红绿⇒`rerun13` 的数严格说不是"干净检出"的数，引用时要点名这一枚未入库件。
+
+**㊵-181（rerun13 整面收口：面基线更新）**：4 批汇总行原文——批 00 `1 failed | 45 passed (46)`／`140 passed | 1 skipped (141)`；批 01 `48 passed | 1 skipped (49)`／`169 passed | 5 skipped (174)`；批 02 `45 passed | 3 skipped (48)`／`159 passed | 26 skipped (185)`；批 03 `1 passed (1)`／`1 passed (1)`。红文件并集 **1**（batch 00 1／batch 01 0／batch 02 0／batch 03 0；并集不等于相加）。驱动逐批产物审计原文：`batch 00 exit=1 wall=460s dist 639e76f1f3ba44f9..639e76f1f3ba44f9 client 10180acbd940730e..10180acbd940730e STABLE touched dist=0 client=0 files=120/145`；`batch 01 exit=0 wall=379s dist 639e76f1f3ba44f9..639e76f1f3ba44f9 client 10180acbd940730e..10180acbd940730e STABLE touched dist=0 client=0 files=120/145`；`batch 02 exit=0 wall=408s dist 639e76f1f3ba44f9..639e76f1f3ba44f9 client 10180acbd940730e..10180acbd940730e STABLE touched dist=0 client=0 files=120/145`；`batch 03 exit=0 wall=22s dist 639e76f1f3ba44f9..639e76f1f3ba44f9 client 10180acbd940730e..10180acbd940730e STABLE touched dist=120 client=145 files=120/145`。rerun12 的批日志与红文件清单都不在盘上，本条只报并集、不给集合差。判据⑦ 的面基线自此引 **1**。本条数字全部由 .dsh-sbx2/emit-close.py 从 4 份批日志解析（对照来源：absent），未经手抄。
+
+**㊵-182（`rerun13` 收口＝面基线 1 红／144；两处"仪器无法表示 0 红"的同形缺陷，其中一处是我自己刚写的；一条管道 rc 的犯规如实入账；批 00 那枚红定因到关闭期语料自校验而不是超时）**
+
+**读数（全部由日志解析，未手抄）**：四批汇总行原文＝批 00 `1 failed｜45 passed (46)`、批 01 `48 passed｜1 skipped (49)`、批 02 `45 passed｜3 skipped (48)`、批 03 `1 passed (1)`⇒**文件级合计 1 红／144**（用例级 469 passed｜32 skipped (501)，由四批 `Tests` 行相加）。逐批"汇总 failed 数＝解析 FAIL 文件头数"闭合（1＝1、0＝0、0＝0、0＝0）；驱动审计：三批 `STABLE`、`touched dist=0 client=0`，起跑与收尾 `dist-sha=639e76f1f3ba44f9（120 文件）`、`client-sha=10180acbd940730e（145 文件）`两平面各自前后相同。运行窗口 23:43:49→00:04:59。**对 `rerun12` 给不出名字级集合差**（那轮的批日志与清单都不在盘上，㊵-167 跑前注册过这条限制）⇒本条只报并集；`rerun13-redfiles.txt` 已随收口发布（1 条），下一轮可比性恢复。**hmr-live 本轮在面内为绿**（批 03 `1 passed (1)`），㊵-154 那"唯余一红"结清；唯一红换成 `approval-composer`。
+
+**批 00 那枚红的归因（不靠猜，读失败块原文）**：两条用例都是 ✓（`caps the long command… 49884ms`、`keeps the fixture inventory closed 12ms`），文件级红落在 **`afterAll` 的 `scaffold.close()`（`approval-composer.e2e.ts:55`）**→`scaffold.ts:1378` 的 **`assertReplaySession`／`persisted replay` 自校验**，比对对象 `snapshots/web/approval-composer/session.v4.jsonl`（win32/pwsh 那一档），差异落在 `@@ -16,11 +16,11 @@` 一处、收到侧含 `toolName:"pwsh"` 与 `sandbox_permissions:"workspace-write"` 的 `approval/asked` 串。⇒**性质＝语料代际／注入族（关闭期自校验），不是超时、不是争用**；处置属 refresh 一面，按长期规矩**我不擅自刷金样**，字段级差异要在安静窗口单跑取完整 diff 后再谈（下一格）。**同时不许把它算成我这轮的改动造成**：本轮改动只有 `hmr-live`（面内独立批）、`LifePanel.tsx`（纯空白）与文档。
+
+**两处同形仪器缺陷（都是"无法表示零"）**：① `.dsh-sbx2/emit-close.py` 的 `failed_count()` 原先只在汇总串里找 `(\d+)\s+failed`，**全绿批次的 vitest 汇总行根本没有 `failed` 这个词**（`45 passed｜3 skipped (48)`），于是把三批绿判成"summary names no failed count"并拒绝整轮收口——**结果是"比基线更好"被仪器判成不可读**（好在它 fail-closed，没落坏数）。已改成：无 `failed` 但含 `passed` ⇒ 计 0；两者都无 ⇒ 仍返回 `None` 拒绝。三条分支都在进程内测过（绿串→0、红串→1、`Duration…`→None）。② 我本轮新写的 `patch_face.py` 抄了同一段逻辑，**同一枚缺陷在我手里复现了一次**，也是跑到才暴露。⇒ 长期规矩：**"从汇总行取一个计数"的读法必须显式回答"零长什么样"**；复用别人的取数函数不等于继承它的修复，两处都要各自改过各自测过。
+
+**我自己又犯同一条管道错（如实入账；此前这条在台账已有多处自纠，其中一处是 08:1076 那条链条口径）**：跑 `patch_face.py | tail -5 && patch_after.py` 时 `&&` 看到的是 `tail` 的 rc＝0，于是 **patch_face 的 REFUSE 没有拦住后一步**——`patch_after.py` 照常写了 03 与 G5 的 H2 行（这两处写本身是独立、内容正确的，已核 `03_mark=1 crlf=0`、`g5_r7=1`）。同一条错误此前已在台账入账多处（本文件里按 `吞 rc|被后一条命令覆盖` 模式命中 5 行，其中一行是 08:1076 那条链条口径）；本轮是新增的一处。⇒ 规矩加硬：**结论性 rc 只能用 `> file 2>&1; echo RC=$?` 取，任何"门＋下一步"的链都不许带管道**；本轮改完就是这样跑的（`RC_PATCH_FACE=0` 由落盘读取）。
+
+**判据现状**：① rc=0；②③ 引用门单叶 rc=0、43 叶整面读数随后重取；④ 客户端四包零红不变、`test:coverage` 走 CI 自己的入口 `check:ci:coverage`（＝`[build:native-system, vitest run --coverage, coverage-exempt-heavy]`，㊵-168 那句"官方门第一步被我跳掉"自此有了正确入口）；⑥ 已入库面零 lint 红；**⑦ ＝1 红／144**。 **判据②③ 补读数（同段）**：`corepack pnpm run doc-sync` ＝ **`43 passed, 0 failed, 0 skipped in 105.23s`**、rc=0⇒判据②③ 整支成立。（两次跑同结果：首跑 `43 passed, 0 failed in 105.23s`＝上述四句更正之前，最终态复核 `43 passed, 0 failed in 146.07s`＝之后）
