@@ -7596,3 +7596,32 @@ X=167 ≥ 84（甲线）且 Y=0 ⇒ 落**甲**；而且 X **正好等于 §103 �
 
 **机时账**：本轮三档全部零训练、只读取数——v38 默认 96 枚（约 12 分钟）、α=0 96 枚（约 7 分钟）、三条 n=1 冒烟（各约 50 秒）。
 **产品侧零改动**：`taiji/config.py:241` `copy_evidence_window_steps=None`、解码路径没碰、装机那份自停仍是 13/72（在案记录，本轮未重测）。
+
+
+### 第一百一十六次停靠·判读先于数（2026-10-03 08:20，08:23 就地更正一次）：把"乘零值多少钱"从**推论**变成**直接测量**
+
+**先记我自己一处差点发生的错**（值得留在案上）：我以为复述／表层这两台仪器都没有剂量旋钮，
+于是动手给**表层那台**（`score_taiji_r2_copy_surface_extension.py`）加 `--copy-evidence-alpha`——四处编辑做完、编译与 ruff 都过，
+准备跑之前去核**上一枚同底件到底是谁产的**，才发现这个旋钮在 **cap 那台上早就有**（`score_taiji_r2_copy_circuit_chat_cap.py:568`，
+连同 `--limit`／`--max-bytes`），而 `reports/taiji_a30_cap_dual_arm_a31self_budget256_20261002.json` 的 format 正是
+`taiji-r2-copy-circuit-chat-cap-v1`＝cap 那台产的。⇒ **已 `git checkout` 全量撤销那 25 行**（该文件复验为干净），
+没留下第二把乘数实现——这正是本仓"一副档只住一处"要拦的形状。**教训**：加旋钮前先按**产物的 format 串**反查是哪台仪器产的，
+别按"我印象里哪台管这个指标"动手；这台那台只差一个词（cap／extension），错了就是造重复轮子。
+
+**这一格真正欠的东西**：§115 证明 α=0 在**停止面**与"不挂回路"逐位相同，但"关掉这条通道要交回多少复述"目前
+**只是推论**（推论链：逐位等价 ⇒ 答复字节相同 ⇒ 命中相同）。
+现有 cap 件（装机底、24 题面、`max_bytes=256`，本轮直读）：
+control 不挂回路 `correct=0／formed_full_texts=17／well_formed_rate=1.0`；
+treated 挂回路全剂量 `correct=7／formed=6／rate=0.375`。
+
+**跑法（现成旋钮，零改码、零训练）**：
+`python scripts/training/score_taiji_r2_copy_circuit_chat_cap.py --checkpoint output/a31_chunked_self/checkpoint.pt --circuit output/taiji_r2_copy_circuit_chat/judge/circuit-final.pt --limit 24 --max-bytes 256 --copy-evidence-alpha 0.0 --out-report reports/taiji_a30_cap_dual_arm_a31self_alpha0_20261003.json`
+（与上面那枚同底同题面同预算，只差 α 这一个变量）。08:23 发出。
+
+**预测（写在此刻、落地前；可失败）**：α=0 的**治疗臂**（挂回路＋证据乘零）必须**逐列等于 control 臂**——
+`correct=0`、`formed_full_texts=17`、`well_formed_rate=1.0`。依据：§115 的 `per_item` 逐位等价 ＋ 乘零不改进入 logits 的那一项。
+**否证分支（这格值得跑的理由）**：若 α=0 臂 ≠ control，那么错在**我的等价链**而不是世界。
+最可能的断点＝**取答复的链不同源**（L2 那台走原始字节链；cap 这台按产品 `chat()` 协议取答复，`--surface-chain` 是又一条链）。
+届时先查仪器、按链分开报，**不许**把差值当机制写进结论。
+**不新造判据线**：只报三列与 control／treated 的差值。α=0 不是"新配置的成绩"，它是**价格**——
+价格表要交给 owner 那一格（留不留这条通道／改不改注入形状，见任务 #55）。
