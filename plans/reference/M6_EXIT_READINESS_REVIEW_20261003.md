@@ -48,6 +48,11 @@
 | 2026-09-30 | `Test Files 36 failed｜104 passed｜4 skipped (144)`；池＝注入过期 20／win32 工具名偏斜 8 | 08 ㊵-86／㊵-91（`rerun8`） |
 | 2026-09-30 | `35 failed｜105 passed｜4 skipped (144)` | 08 ㊵-95（`rerun11`，五条预注册判据逐条 PASS） |
 | **2026-10-01** | **`SPEC-M6-01` 落地并验收：12 条纯注入 lane refresh 后 8 条转绿并通过 replay 复验**；4 条仍红（`lifecycle-chrome`／`ptc-round`／`present-svg`／`question-composer`）＝另有其因，如实归因不硬凑，refresh 产物已回退不提交 | `SPEC-M6-01_replay_injection_fold_prereg_20261001.md:57-59` |
+| 2026-10-04（`rerun13`） | **`Test Files 1 failed｜139 passed｜4 skipped (144)`**／`Tests 469 passed｜32 skipped (501)`（四批 1/0/0/0，逐批“汇总 failed＝解析 FAIL 头数”闭合；dist 与 client 两平面内容哈希前后相同） | 08 ㊵-181／㊵-183／㊵-186；红文件清单 `rerun13-redfiles.txt` |
+
+**历史面数显式作废（本件 §6 要求的那一步，2026-10-04 执行）**：`35／36／42／44／46／49／50／65／69／81` 这一整串以及 `rerun12` 的 `33 failed` 全部降为**过程读数**，只用于记录收口过程，**不得再被任何收官件引用为当前状态**；当前可引用的面读数自此只有 **`1 failed｜144`**（`rerun13`）。两条限制必须与该数一起引用：①对 `rerun12` 给不出名字级集合差（那轮批日志与清单都不在盘上，08 ㊵-167 跑前注册），故本轮只报并集；②树上按 owner 裁保持未提交的两枚件之一（`clickable-links-gallery` 的期望色值）**在面内**，所以这**不是“干净检出”的数**（该改动与 HEAD 的 `--dsw-static-seed-500: rgb(86, 158, 88)` 同源，见 08 ㊵-186）。**同时更正本件 §2 的那句“当前数字必须重取一次整面才能引用”**：重取已完成，且结论比预期更好——剩余那**一枚**红的成因是录制机与本机 PowerShell 输出语言不同（08 ㊵-186），**不在注入族**，所以本件 A 档里“R-1 剩余 4 条”已结清、§2 表格所依赖的“按平台分档重录（乙档）”前提被正面否证、应撤。
+
+
 
 `SPEC-M6-01` 的处置方式（**乙「授权有原则归一化」**）已于 2026-10-01 由 owner 弹窗授权，判据冻结在 §2：
 在 `apps/web/tests/scaffold.ts` 的 `normalizeWebSessionVolatiles` 里对
