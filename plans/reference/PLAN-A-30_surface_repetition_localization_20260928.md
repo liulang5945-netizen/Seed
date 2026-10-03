@@ -8058,3 +8058,40 @@ B＝L2 主列 `72 − generations_eating_full_budget ≥ 6`；C＝`SPEC-A-24` �
 
 **`DEBT-G35` 三半全部结清**：①历史标注（§126）②覆写防口（§128）③可见性清单（本节）。
 产品侧继续零改动：默认位 `None`、装机自停 13/72 为在案记录。
+
+### 第一百三十次停靠·配对规则改词根后，收束的**真实代价**第一次有准确账目：20 枚 output/ 下的锚点件、106 条声明（2026-10-03 12:1x，零训练、零产品改动）
+
+**动的是 `audit_taiji_artifact_sha_drift.py` 的配对规则**（`DEBT-G35` 的③落地后的第一件回头事）。
+旧规则按字符串前缀（≥4）配 `saved_checkpoint` ↔ `saved_sha256_16` 这类声明——公共前缀只有 `s`，
+于是**该配上的没配上**；而 `checkpoint_sha256_before` 对一个 dict 里的 `retrain_checkpoint` 与
+`base_checkpoint` 又都前缀为零，第二版把它笛卡尔硬配，造出 31 条假 `sha_drift`。
+现在按**词根集**配对（`sha/256/16/before/after/hex/digest` 等虚词剥掉），且**一个 sha 词根若同时配得上多枚路径就判歧义、不硬配**，
+另把每条声明的 `report_file`（可打开的件名）与 JSON 路径分开记——清单要能被人按件直接查。
+
+**当代账目**（`reports/taiji_a30_artifact_sha_drift_v2_20261003.json`；v1 原位保留作历史，同本仓重基规矩）：
+扫 1547 份件得 **337 条**配对声明＝ `ok` 221、`missing_file` 112、`sha_drift` 4；
+配不出路径而**单独计数**的 sha 声明 162 条（不当零）；自喂排除 1 条（v1 那份自己的输出）。
+
+**`missing_file` 落在 `output/` 下的有 20 枚不同路径、106 条声明**，这就是 §126 那次收束对"可复算性"的真实扣减：
+
+| 锚点件 | 挂着多少条声明 |
+|---|---|
+| `output/a31_chunked_short/checkpoint.pt`（(c) 底，`ae51700e`） | 46 |
+| `output/a26_p1/checkpoint.pt`（配方前底，`8b875837`） | 16 |
+| `output/taiji_r2_copy_circuit_chat_seedB/judge/circuit-final.pt` | 11 |
+| `output/a31_ding3_boundary/checkpoint.pt`（§127 已证其字节先于此就换过） | 9 |
+| `output/taiji_r2_readout_retrain/{A,B,C}/checkpoint.pt` | 各 3 |
+| `output/tmp_a30_smoke/{formal_arms,onpolicy_arms,onpolicy_arms_q}/a30_onpolicy_*.pt` | 11 条（formal 4／q 4／arms 3） |
+| `output/a26_p0|a26_p1/checkpoint.pt.history/checkpoint_000016500000.pt` | 各 1 |
+
+`output/` 之外另有 6 条 missing（`.tmp-r2-language-run/*` 两枚、仓库根的三枚 `neuron_zh_micro_specialist_*`、
+以及 `checkpoints/seed_corpus.pt`——最后一枚是本次收束删的，只挂着 1 条声明）。
+四条 `sha_drift` 全部可解释且都不是新损失：p3b 封存副本被后续写档改过、两份 `data/ultradata/derived/*.jsonl`
+重出过、`checkpoints/seed_beta.pt` 是 09-15 标定件记的**换 16M 之前**的字节。
+
+**这条账目改变两句既有说法**：①§126 的"两枚回路都保住了"要读成"保住 a23 那枚 seed-B，丢了 chat_seedB 那枚"
+（已登记 `DEBT-G37`）；②§126 只列了三枚对照底，实际挂着声明的还包 `taiji_r2_readout_retrain` 三臂与
+on-policy 三批臂件——**引用这批读数时不许再写"复跑即可"**，准确说法以本表为准。
+
+守卫仍是同一支文件、**6 passed**（含两条硬钉锚点与"歧义不硬配"的形状），ruff 0 条。
+产品侧继续零改动：默认位 `None`、装机自停 13/72 为在案记录。

@@ -120,6 +120,7 @@ def _walk(node, where, claims, ancestors, skipped) -> None:
         claims.append(
             {
                 "report": where,
+                "report_file": where.split(".json", 1)[0] + ".json",
                 "path_key": pk,
                 "sha_key": sk,
                 "recorded_path": raw,
@@ -129,13 +130,23 @@ def _walk(node, where, claims, ancestors, skipped) -> None:
             }
         )
 
-    for pk in path_keys:
-        raw = node[pk].strip()
-        for sk in sha_keys:
-            if not unambiguous and _common_prefix(pk, sk) < 4:
-                continue
+    #: 配对靠**词根**而不是字符串前缀：`saved_checkpoint` ↔ `saved_sha256_16` 的公共前缀只有 `s`，
+    #: 前缀规则会把这条真声明漏掉（第一版就漏了 on-policy 四臂那批）。
+    #: 反过来，一个 sha 词根若同时配得上**多枚**路径（`checkpoint_sha256_before` 对
+    #: `retrain_checkpoint` 与 `base_checkpoint`），一律判歧义不硬配——那正是第一版造出
+    #: 31 条假 `sha_drift` 的形状。
+    def _pairable(sk: str) -> list[str]:
+        stems_sk = _stems(sk)
+        return [pk for pk in path_keys if _stems(pk) & stems_sk]
+
+    for sk in sha_keys:
+        matches = _pairable(sk)
+        if len(matches) == 1:
+            _record(matches[0], sk, node[matches[0]].strip())
             paired_sha.add(sk)
-            _record(pk, sk, raw)
+        elif unambiguous and len(path_keys) == 1:
+            _record(path_keys[0], sk, node[path_keys[0]].strip())
+            paired_sha.add(sk)
 
     #: 跨层的本仓约定：路径写在**外层**（`retrain_checkpoint`），sha 写在**臂块里**
     #: （`runs.retrain.checkpoint_sha256_before`）。只看同一个 dict 就会把 §2ai–§2an 那批
@@ -154,7 +165,14 @@ def _walk(node, where, claims, ancestors, skipped) -> None:
     #: **不许静默丢弃**：仍然配不出路径的 sha 声明记进 skipped，让"看不见"变成"看得见但没分类"。
     for sk in sha_keys:
         if sk not in paired_sha:
-            skipped.append({"report": where, "sha_key": sk, "recorded_sha16": str(node[sk])[:16]})
+            skipped.append(
+                {
+                    "report": where,
+                    "report_file": where.split(".json", 1)[0] + ".json",
+                    "sha_key": sk,
+                    "recorded_sha16": str(node[sk])[:16],
+                }
+            )
 
     for key, value in node.items():
         if isinstance(value, (dict, list)):
@@ -165,19 +183,13 @@ def _is_pathish(value: object) -> bool:
     return isinstance(value, str) and value.strip().lower().endswith(ARTIFACT_SUFFIXES)
 
 
-def _common_prefix(a: str, b: str) -> int:
-    """键名词根相似度：`base`↔`base_sha256`、`checkpoint`↔`checkpoint_sha256_before` 都够长。"""
+_SHA_TOKENS = ("sha", "256", "16", "before", "after", "hex", "digest", "of", "file")
 
-    count = 0
-    for x, y in zip(a.lower(), b.lower()):
-        if x != y:
-            break
-        count += 1
-    if count < 4:  # 反向也算：`circuit_sha256` 对 `circuit_path` 这类前缀相反写法
-        for shorter, longer in ((a, b), (b, a)):
-            if longer.lower().startswith(shorter.lower()[: max(4, len(shorter) - 6)]):
-                return len(shorter)
-    return count
+
+def _stems(key: str) -> set:
+    """键名词根集：`saved_sha256_16` → {saved}，`saved_checkpoint` → {saved, checkpoint}。"""
+
+    return {t for t in key.lower().replace("-", "_").split("_") if t and t not in _SHA_TOKENS}
 
 
 def audit(reports_dir: Path) -> dict:

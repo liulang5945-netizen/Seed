@@ -1,0 +1,1450 @@
+{
+  "format": "taiji-artifact-sha-drift-v1",
+  "reports_scanned": 1547,
+  "own_outputs_excluded": 1,
+  "claims_total": 337,
+  "verdict_counts": {
+    "ok": 221,
+    "missing_file": 112,
+    "sha_drift": 4
+  },
+  "sha_claims_unpaired_with_path": 162,
+  "unpaired_examples": [
+    {
+      "report": "project_consolidation_20260917.json.dataset",
+      "report_file": "project_consolidation_20260917.json",
+      "sha_key": "file_sha256",
+      "recorded_sha16": "5ceaad40532de5a1"
+    },
+    {
+      "report": "r2_d1_data_contract_20260917.json",
+      "report_file": "r2_d1_data_contract_20260917.json",
+      "sha_key": "fixture_sha256",
+      "recorded_sha16": "4a088ed3408fc444"
+    },
+    {
+      "report": "r2_d1_data_contract_v3_20260918.json",
+      "report_file": "r2_d1_data_contract_v3_20260918.json",
+      "sha_key": "fixture_sha256",
+      "recorded_sha16": "bdbaba2f64698148"
+    },
+    {
+      "report": "r2_d1_data_contract_v4_20260918.json",
+      "report_file": "r2_d1_data_contract_v4_20260918.json",
+      "sha_key": "fixture_sha256",
+      "recorded_sha16": "46aeff639870a40b"
+    },
+    {
+      "report": "r2_d5_data_contract_v2_20260918.json",
+      "report_file": "r2_d5_data_contract_v2_20260918.json",
+      "sha_key": "fixture_sha256",
+      "recorded_sha16": "772fb3a7fd1d95f3"
+    },
+    {
+      "report": "taiji_a28_product_face_circuit_v3_20260928.json.circuit_carried_envelopes[0]",
+      "report_file": "taiji_a28_product_face_circuit_v3_20260928.json",
+      "sha_key": "envelope_sha256",
+      "recorded_sha16": "63258adfaee07855"
+    },
+    {
+      "report": "taiji_a28_product_face_circuit_v3_surface_20260928.json.circuit_carried_envelopes[0]",
+      "report_file": "taiji_a28_product_face_circuit_v3_surface_20260928.json",
+      "sha_key": "envelope_sha256",
+      "recorded_sha16": "63258adfaee07855"
+    },
+    {
+      "report": "taiji_a29_post_truncation_product_face_v3_20260928.json.circuit_carried_envelopes[0]",
+      "report_file": "taiji_a29_post_truncation_product_face_v3_20260928.json",
+      "sha_key": "envelope_sha256",
+      "recorded_sha16": "f9343433d5190846"
+    },
+    {
+      "report": "taiji_a30_onpolicy_formal_48g3x6e_20260930.json.runs.corpus",
+      "report_file": "taiji_a30_onpolicy_formal_48g3x6e_20260930.json",
+      "sha_key": "base_sha",
+      "recorded_sha16": "8b87583713a47a82"
+    },
+    {
+      "report": "taiji_a30_onpolicy_formal_48g3x6e_20260930.json.runs.quarter",
+      "report_file": "taiji_a30_onpolicy_formal_48g3x6e_20260930.json",
+      "sha_key": "base_sha",
+      "recorded_sha16": "8b87583713a47a82"
+    },
+    {
+      "report": "taiji_a30_onpolicy_formal_48g3x6e_20260930.json.runs.self",
+      "report_file": "taiji_a30_onpolicy_formal_48g3x6e_20260930.json",
+      "sha_key": "base_sha",
+      "recorded_sha16": "8b87583713a47a82"
+    },
+    {
+      "report": "taiji_a30_onpolicy_formal_48g3x6e_20260930.json.runs.sized",
+      "report_file": "taiji_a30_onpolicy_formal_48g3x6e_20260930.json",
+      "sha_key": "base_sha",
+      "recorded_sha16": "8b87583713a47a82"
+    },
+    {
+      "report": "taiji_a30_onpolicy_length_ladder_8g3x3e_20260930.json.runs.corpus",
+      "report_file": "taiji_a30_onpolicy_length_ladder_8g3x3e_20260930.json",
+      "sha_key": "base_sha",
+      "recorded_sha16": "8b87583713a47a82"
+    },
+    {
+      "report": "taiji_a30_onpolicy_length_ladder_8g3x3e_20260930.json.runs.half",
+      "report_file": "taiji_a30_onpolicy_length_ladder_8g3x3e_20260930.json",
+      "sha_key": "base_sha",
+      "recorded_sha16": "8b87583713a47a82"
+    },
+    {
+      "report": "taiji_a30_onpolicy_length_ladder_8g3x3e_20260930.json.runs.quarter",
+      "report_file": "taiji_a30_onpolicy_length_ladder_8g3x3e_20260930.json",
+      "sha_key": "base_sha",
+      "recorded_sha16": "8b87583713a47a82"
+    },
+    {
+      "report": "taiji_a30_onpolicy_length_ladder_8g3x3e_20260930.json.runs.self",
+      "report_file": "taiji_a30_onpolicy_length_ladder_8g3x3e_20260930.json",
+      "sha_key": "base_sha",
+      "recorded_sha16": "8b87583713a47a82"
+    },
+    {
+      "report": "taiji_a30_onpolicy_length_ladder_8g3x3e_20260930.json.runs.sized",
+      "report_file": "taiji_a30_onpolicy_length_ladder_8g3x3e_20260930.json",
+      "sha_key": "base_sha",
+      "recorded_sha16": "8b87583713a47a82"
+    },
+    {
+      "report": "taiji_a30_onpolicy_quarter_probe_8g3x6e_20260930.json.runs.corpus",
+      "report_file": "taiji_a30_onpolicy_quarter_probe_8g3x6e_20260930.json",
+      "sha_key": "base_sha",
+      "recorded_sha16": "8b87583713a47a82"
+    },
+    {
+      "report": "taiji_a30_onpolicy_quarter_probe_8g3x6e_20260930.json.runs.quarter",
+      "report_file": "taiji_a30_onpolicy_quarter_probe_8g3x6e_20260930.json",
+      "sha_key": "base_sha",
+      "recorded_sha16": "8b87583713a47a82"
+    },
+    {
+      "report": "taiji_a30_onpolicy_quarter_probe_8g3x6e_20260930.json.runs.self",
+      "report_file": "taiji_a30_onpolicy_quarter_probe_8g3x6e_20260930.json",
+      "sha_key": "base_sha",
+      "recorded_sha16": "8b87583713a47a82"
+    },
+    {
+      "report": "taiji_a30_onpolicy_quarter_probe_8g3x6e_20260930.json.runs.sized",
+      "report_file": "taiji_a30_onpolicy_quarter_probe_8g3x6e_20260930.json",
+      "sha_key": "base_sha",
+      "recorded_sha16": "8b87583713a47a82"
+    },
+    {
+      "report": "taiji_a30_onpolicy_shape_pilot_12g3x6e_v2_20260930.json.runs.corpus",
+      "report_file": "taiji_a30_onpolicy_shape_pilot_12g3x6e_v2_20260930.json",
+      "sha_key": "base_sha",
+      "recorded_sha16": "8b87583713a47a82"
+    },
+    {
+      "report": "taiji_a30_onpolicy_shape_pilot_12g3x6e_v2_20260930.json.runs.self",
+      "report_file": "taiji_a30_onpolicy_shape_pilot_12g3x6e_v2_20260930.json",
+      "sha_key": "base_sha",
+      "recorded_sha16": "8b87583713a47a82"
+    },
+    {
+      "report": "taiji_a30_onpolicy_shape_pilot_12g3x6e_v2_20260930.json.runs.sized",
+      "report_file": "taiji_a30_onpolicy_shape_pilot_12g3x6e_v2_20260930.json",
+      "sha_key": "base_sha",
+      "recorded_sha16": "8b87583713a47a82"
+    },
+    {
+      "report": "taiji_a30_onpolicy_shape_pilot_6g3x3e_20260930.json.runs.corpus",
+      "report_file": "taiji_a30_onpolicy_shape_pilot_6g3x3e_20260930.json",
+      "sha_key": "base_sha",
+      "recorded_sha16": "8b87583713a47a82"
+    },
+    {
+      "report": "taiji_a30_onpolicy_shape_pilot_6g3x3e_20260930.json.runs.self",
+      "report_file": "taiji_a30_onpolicy_shape_pilot_6g3x3e_20260930.json",
+      "sha_key": "base_sha",
+      "recorded_sha16": "8b87583713a47a82"
+    },
+    {
+      "report": "taiji_a30_onpolicy_shape_pilot_6g3x3e_20260930.json.runs.sized",
+      "report_file": "taiji_a30_onpolicy_shape_pilot_6g3x3e_20260930.json",
+      "sha_key": "base_sha",
+      "recorded_sha16": "8b87583713a47a82"
+    },
+    {
+      "report": "taiji_a30_recipe_surface_tradeoff_104item_20260930.json.runs.base",
+      "report_file": "taiji_a30_recipe_surface_tradeoff_104item_20260930.json",
+      "sha_key": "checkpoint_sha256_before",
+      "recorded_sha16": "8b87583713a47a82"
+    },
+    {
+      "report": "taiji_a30_recipe_surface_tradeoff_104item_20260930.json.runs.retrain",
+      "report_file": "taiji_a30_recipe_surface_tradeoff_104item_20260930.json",
+      "sha_key": "checkpoint_sha256_before",
+      "recorded_sha16": "79b1a99cedf3e65b"
+    },
+    {
+      "report": "taiji_cap0_baseline_postmigration_20260918.json.identity",
+      "report_file": "taiji_cap0_baseline_postmigration_20260918.json",
+      "sha_key": "checkpoint_sha256",
+      "recorded_sha16": "ad2a06465e0ef78c"
+    },
+    {
+      "report": "taiji_cap0_baseline_postmigration_20260918.json.identity",
+      "report_file": "taiji_cap0_baseline_postmigration_20260918.json",
+      "sha_key": "eval_set_sha256",
+      "recorded_sha16": "b22114ead7ab5dd5"
+    },
+    {
+      "report": "taiji_cap0_baseline_repro_20260918.json.identity",
+      "report_file": "taiji_cap0_baseline_repro_20260918.json",
+      "sha_key": "checkpoint_sha256",
+      "recorded_sha16": "ad2a06465e0ef78c"
+    },
+    {
+      "report": "taiji_cap0_baseline_repro_20260918.json.identity",
+      "report_file": "taiji_cap0_baseline_repro_20260918.json",
+      "sha_key": "eval_set_sha256",
+      "recorded_sha16": "b22114ead7ab5dd5"
+    },
+    {
+      "report": "taiji_cap0_baseline_v1_20260917.json.identity",
+      "report_file": "taiji_cap0_baseline_v1_20260917.json",
+      "sha_key": "checkpoint_sha256",
+      "recorded_sha16": "9bda14adf714f841"
+    },
+    {
+      "report": "taiji_cap0_baseline_v1_20260917.json.identity",
+      "report_file": "taiji_cap0_baseline_v1_20260917.json",
+      "sha_key": "eval_set_sha256",
+      "recorded_sha16": "b22114ead7ab5dd5"
+    },
+    {
+      "report": "taiji_cap0_beta_default_20260920.json.identity",
+      "report_file": "taiji_cap0_beta_default_20260920.json",
+      "sha_key": "checkpoint_sha256",
+      "recorded_sha16": "ad2a06465e0ef78c"
+    },
+    {
+      "report": "taiji_cap0_beta_default_20260920.json.identity",
+      "report_file": "taiji_cap0_beta_default_20260920.json",
+      "sha_key": "eval_set_sha256",
+      "recorded_sha16": "b22114ead7ab5dd5"
+    },
+    {
+      "report": "taiji_cap0_exit_baseline_20260920.json.identity",
+      "report_file": "taiji_cap0_exit_baseline_20260920.json",
+      "sha_key": "checkpoint_sha256",
+      "recorded_sha16": "c8025db44c65f9c1"
+    },
+    {
+      "report": "taiji_cap0_exit_baseline_20260920.json.identity",
+      "report_file": "taiji_cap0_exit_baseline_20260920.json",
+      "sha_key": "eval_set_sha256",
+      "recorded_sha16": "b22114ead7ab5dd5"
+    },
+    {
+      "report": "taiji_cap0_exit_baseline_required_chain_20260920.json.identity",
+      "report_file": "taiji_cap0_exit_baseline_required_chain_20260920.json",
+      "sha_key": "checkpoint_sha256",
+      "recorded_sha16": "c8025db44c65f9c1"
+    }
+  ],
+  "distinct_non_ok_paths": [
+    "E:/Seed/.tmp-r2-language-run/h3-3b-course-300k-10e-budgeted.pt",
+    "E:/Seed/.tmp-r2-language-run/h3-3c-course-300k-10e-budgeted-rerun.pt",
+    "E:/Seed/checkpoints/seed_beta.pt",
+    "E:/Seed/checkpoints/seed_corpus.pt",
+    "E:/Seed/data/ultradata/derived/ultradata_hetero_holdout_simplezh.jsonl",
+    "E:/Seed/data/ultradata/derived/ultradata_sft_nothink_simplezh.jsonl",
+    "E:/Seed/neuron_zh_micro_specialist_current_only.pt",
+    "E:/Seed/neuron_zh_micro_specialist_current_plus_hf_10.pt",
+    "E:/Seed/neuron_zh_micro_specialist_hf_only.pt",
+    "E:/Seed/output/a26_p0/checkpoint.pt.history/checkpoint_000016500000.pt",
+    "E:/Seed/output/a26_p1/checkpoint.pt",
+    "E:/Seed/output/a26_p1/checkpoint.pt.history/checkpoint_000016500000.pt",
+    "E:/Seed/output/a31_chunked_short/checkpoint.pt",
+    "E:/Seed/output/a31_ding3_boundary/checkpoint.pt",
+    "E:/Seed/output/taiji_r2_copy_circuit_chat_seedB/judge/circuit-final.pt",
+    "E:/Seed/output/taiji_r2_readout_retrain/A/checkpoint.pt",
+    "E:/Seed/output/taiji_r2_readout_retrain/B/checkpoint.pt",
+    "E:/Seed/output/taiji_r2_readout_retrain/C/checkpoint.pt",
+    "E:/Seed/output/tmp_a30_smoke/formal_arms/a30_onpolicy_corpus.pt",
+    "E:/Seed/output/tmp_a30_smoke/formal_arms/a30_onpolicy_quarter.pt",
+    "E:/Seed/output/tmp_a30_smoke/formal_arms/a30_onpolicy_self.pt",
+    "E:/Seed/output/tmp_a30_smoke/formal_arms/a30_onpolicy_sized.pt",
+    "E:/Seed/output/tmp_a30_smoke/onpolicy_arms/a30_onpolicy_corpus.pt",
+    "E:/Seed/output/tmp_a30_smoke/onpolicy_arms/a30_onpolicy_self.pt",
+    "E:/Seed/output/tmp_a30_smoke/onpolicy_arms/a30_onpolicy_sized.pt",
+    "E:/Seed/output/tmp_a30_smoke/onpolicy_arms_q/a30_onpolicy_corpus.pt",
+    "E:/Seed/output/tmp_a30_smoke/onpolicy_arms_q/a30_onpolicy_quarter.pt",
+    "E:/Seed/output/tmp_a30_smoke/onpolicy_arms_q/a30_onpolicy_self.pt",
+    "E:/Seed/output/tmp_a30_smoke/onpolicy_arms_q/a30_onpolicy_sized.pt",
+    "E:/Seed/reports/p3b_v2_pilot_20260917/checkpoint.pt"
+  ],
+  "non_ok_claims": [
+    {
+      "report": "micro_specialist_checkpoint_reload_697m_800_20260820.json.checkpoint.files[0]",
+      "report_file": "micro_specialist_checkpoint_reload_697m_800_20260820.json",
+      "path_key": "filename",
+      "sha_key": "sha256",
+      "recorded_path": "neuron_zh_micro_specialist_current_only.pt",
+      "resolved_path": "E:/Seed/neuron_zh_micro_specialist_current_only.pt",
+      "recorded_sha16": "30b8945e937f8c2b",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "micro_specialist_checkpoint_reload_697m_800_20260820.json.checkpoint.files[1]",
+      "report_file": "micro_specialist_checkpoint_reload_697m_800_20260820.json",
+      "path_key": "filename",
+      "sha_key": "sha256",
+      "recorded_path": "neuron_zh_micro_specialist_hf_only.pt",
+      "resolved_path": "E:/Seed/neuron_zh_micro_specialist_hf_only.pt",
+      "recorded_sha16": "e1b6563991459441",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "micro_specialist_checkpoint_reload_697m_800_20260820.json.checkpoint.files[2]",
+      "report_file": "micro_specialist_checkpoint_reload_697m_800_20260820.json",
+      "path_key": "filename",
+      "sha_key": "sha256",
+      "recorded_path": "neuron_zh_micro_specialist_current_plus_hf_10.pt",
+      "resolved_path": "E:/Seed/neuron_zh_micro_specialist_current_plus_hf_10.pt",
+      "recorded_sha16": "9090d83738b7cb3c",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_a27_emission_side_earliest_seedB_20260928.json",
+      "report_file": "taiji_a27_emission_side_earliest_seedB_20260928.json",
+      "path_key": "circuit",
+      "sha_key": "circuit_sha256",
+      "recorded_path": "output/taiji_r2_copy_circuit_chat_seedB/judge/circuit-final.pt",
+      "resolved_path": "E:/Seed/output/taiji_r2_copy_circuit_chat_seedB/judge/circuit-final.pt",
+      "recorded_sha16": "d1aed7b37c656b40",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_a27_emission_side_latest_seedB_20260928.json",
+      "report_file": "taiji_a27_emission_side_latest_seedB_20260928.json",
+      "path_key": "circuit",
+      "sha_key": "circuit_sha256",
+      "recorded_path": "output/taiji_r2_copy_circuit_chat_seedB/judge/circuit-final.pt",
+      "resolved_path": "E:/Seed/output/taiji_r2_copy_circuit_chat_seedB/judge/circuit-final.pt",
+      "recorded_sha16": "d1aed7b37c656b40",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_a27_emission_side_latest_seedB_v2_20260928.json",
+      "report_file": "taiji_a27_emission_side_latest_seedB_v2_20260928.json",
+      "path_key": "circuit",
+      "sha_key": "circuit_sha256",
+      "recorded_path": "output/taiji_r2_copy_circuit_chat_seedB/judge/circuit-final.pt",
+      "resolved_path": "E:/Seed/output/taiji_r2_copy_circuit_chat_seedB/judge/circuit-final.pt",
+      "recorded_sha16": "d1aed7b37c656b40",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_a27_lock_apply_ovl_content_seedB_20260928.json",
+      "report_file": "taiji_a27_lock_apply_ovl_content_seedB_20260928.json",
+      "path_key": "circuit",
+      "sha_key": "circuit_sha256",
+      "recorded_path": "output/taiji_r2_copy_circuit_chat_seedB/judge/circuit-final.pt",
+      "resolved_path": "E:/Seed/output/taiji_r2_copy_circuit_chat_seedB/judge/circuit-final.pt",
+      "recorded_sha16": "d1aed7b37c656b40",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_a27_lock_rule_pricing_seedB_20260928.json",
+      "report_file": "taiji_a27_lock_rule_pricing_seedB_20260928.json",
+      "path_key": "circuit",
+      "sha_key": "circuit_sha256",
+      "recorded_path": "output/taiji_r2_copy_circuit_chat_seedB/judge/circuit-final.pt",
+      "resolved_path": "E:/Seed/output/taiji_r2_copy_circuit_chat_seedB/judge/circuit-final.pt",
+      "recorded_sha16": "d1aed7b37c656b40",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_a27_lock_rule_pricing_seedB_question_20260928.json",
+      "report_file": "taiji_a27_lock_rule_pricing_seedB_question_20260928.json",
+      "path_key": "circuit",
+      "sha_key": "circuit_sha256",
+      "recorded_path": "output/taiji_r2_copy_circuit_chat_seedB/judge/circuit-final.pt",
+      "resolved_path": "E:/Seed/output/taiji_r2_copy_circuit_chat_seedB/judge/circuit-final.pt",
+      "recorded_sha16": "d1aed7b37c656b40",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_a30_cap_dual_arm_chunked_short_v2_product_off_20261002.json",
+      "report_file": "taiji_a30_cap_dual_arm_chunked_short_v2_product_off_20261002.json",
+      "path_key": "checkpoint",
+      "sha_key": "checkpoint_sha256",
+      "recorded_path": "output/a31_chunked_short/checkpoint.pt",
+      "resolved_path": "E:/Seed/output/a31_chunked_short/checkpoint.pt",
+      "recorded_sha16": "ae51700e881f757a",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_a30_cap_dual_arm_chunked_short_v2_product_on64_20261002.json",
+      "report_file": "taiji_a30_cap_dual_arm_chunked_short_v2_product_on64_20261002.json",
+      "path_key": "checkpoint",
+      "sha_key": "checkpoint_sha256",
+      "recorded_path": "output/a31_chunked_short/checkpoint.pt",
+      "resolved_path": "E:/Seed/output/a31_chunked_short/checkpoint.pt",
+      "recorded_sha16": "ae51700e881f757a",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_a30_cap_dual_arm_chunked_short_v2_product_on64_selfprove_20261002.json",
+      "report_file": "taiji_a30_cap_dual_arm_chunked_short_v2_product_on64_selfprove_20261002.json",
+      "path_key": "checkpoint",
+      "sha_key": "checkpoint_sha256",
+      "recorded_path": "output/a31_chunked_short/checkpoint.pt",
+      "resolved_path": "E:/Seed/output/a31_chunked_short/checkpoint.pt",
+      "recorded_sha16": "ae51700e881f757a",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_a30_ding3_trajectory_threshold_24pos_20260929.json.runs.base",
+      "report_file": "taiji_a30_ding3_trajectory_threshold_24pos_20260929.json",
+      "path_key": "base_checkpoint",
+      "sha_key": "checkpoint_sha256_before",
+      "recorded_path": "output/a26_p1/checkpoint.pt",
+      "resolved_path": "E:/Seed/output/a26_p1/checkpoint.pt",
+      "recorded_sha16": "8b87583713a47a82",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_a30_ding3_trajectory_threshold_24pos_20260929.json.runs.retrain",
+      "report_file": "taiji_a30_ding3_trajectory_threshold_24pos_20260929.json",
+      "path_key": "retrain_checkpoint",
+      "sha_key": "checkpoint_sha256_before",
+      "recorded_path": "output/a31_ding3_boundary/checkpoint.pt",
+      "resolved_path": "E:/Seed/output/a31_ding3_boundary/checkpoint.pt",
+      "recorded_sha16": "79b1a99cedf3e65b",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_a30_ding3_trajectory_threshold_24pos_v2_20260930.json.runs.base",
+      "report_file": "taiji_a30_ding3_trajectory_threshold_24pos_v2_20260930.json",
+      "path_key": "base_checkpoint",
+      "sha_key": "checkpoint_sha256_before",
+      "recorded_path": "output/a26_p1/checkpoint.pt",
+      "resolved_path": "E:/Seed/output/a26_p1/checkpoint.pt",
+      "recorded_sha16": "8b87583713a47a82",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_a30_ding3_trajectory_threshold_24pos_v2_20260930.json.runs.retrain",
+      "report_file": "taiji_a30_ding3_trajectory_threshold_24pos_v2_20260930.json",
+      "path_key": "retrain_checkpoint",
+      "sha_key": "checkpoint_sha256_before",
+      "recorded_path": "output/a31_ding3_boundary/checkpoint.pt",
+      "resolved_path": "E:/Seed/output/a31_ding3_boundary/checkpoint.pt",
+      "recorded_sha16": "79b1a99cedf3e65b",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_a30_ding3_trajectory_threshold_24pos_v3_20260930.json.runs.base",
+      "report_file": "taiji_a30_ding3_trajectory_threshold_24pos_v3_20260930.json",
+      "path_key": "base_checkpoint",
+      "sha_key": "checkpoint_sha256_before",
+      "recorded_path": "output/a26_p1/checkpoint.pt",
+      "resolved_path": "E:/Seed/output/a26_p1/checkpoint.pt",
+      "recorded_sha16": "8b87583713a47a82",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_a30_ding3_trajectory_threshold_24pos_v3_20260930.json.runs.retrain",
+      "report_file": "taiji_a30_ding3_trajectory_threshold_24pos_v3_20260930.json",
+      "path_key": "retrain_checkpoint",
+      "sha_key": "checkpoint_sha256_before",
+      "recorded_path": "output/a31_ding3_boundary/checkpoint.pt",
+      "resolved_path": "E:/Seed/output/a31_ding3_boundary/checkpoint.pt",
+      "recorded_sha16": "79b1a99cedf3e65b",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_a30_ding3_trajectory_threshold_24pos_v8_20260930.json.runs.base",
+      "report_file": "taiji_a30_ding3_trajectory_threshold_24pos_v8_20260930.json",
+      "path_key": "base_checkpoint",
+      "sha_key": "checkpoint_sha256_before",
+      "recorded_path": "output/a26_p1/checkpoint.pt",
+      "resolved_path": "E:/Seed/output/a26_p1/checkpoint.pt",
+      "recorded_sha16": "8b87583713a47a82",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_a30_ding3_trajectory_threshold_24pos_v8_20260930.json.runs.retrain",
+      "report_file": "taiji_a30_ding3_trajectory_threshold_24pos_v8_20260930.json",
+      "path_key": "retrain_checkpoint",
+      "sha_key": "checkpoint_sha256_before",
+      "recorded_path": "output/a31_ding3_boundary/checkpoint.pt",
+      "resolved_path": "E:/Seed/output/a31_ding3_boundary/checkpoint.pt",
+      "recorded_sha16": "79b1a99cedf3e65b",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_a30_ding3_trajectory_threshold_2pos_smoke_20260929.json.runs.base",
+      "report_file": "taiji_a30_ding3_trajectory_threshold_2pos_smoke_20260929.json",
+      "path_key": "base_checkpoint",
+      "sha_key": "checkpoint_sha256_before",
+      "recorded_path": "output/a26_p1/checkpoint.pt",
+      "resolved_path": "E:/Seed/output/a26_p1/checkpoint.pt",
+      "recorded_sha16": "8b87583713a47a82",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_a30_ding3_trajectory_threshold_2pos_smoke_20260929.json.runs.retrain",
+      "report_file": "taiji_a30_ding3_trajectory_threshold_2pos_smoke_20260929.json",
+      "path_key": "retrain_checkpoint",
+      "sha_key": "checkpoint_sha256_before",
+      "recorded_path": "output/a31_ding3_boundary/checkpoint.pt",
+      "resolved_path": "E:/Seed/output/a31_ding3_boundary/checkpoint.pt",
+      "recorded_sha16": "79b1a99cedf3e65b",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_a30_ding3_transfer_120pos_20260930.json.runs.base",
+      "report_file": "taiji_a30_ding3_transfer_120pos_20260930.json",
+      "path_key": "base_checkpoint",
+      "sha_key": "checkpoint_sha256_before",
+      "recorded_path": "output/a26_p1/checkpoint.pt",
+      "resolved_path": "E:/Seed/output/a26_p1/checkpoint.pt",
+      "recorded_sha16": "8b87583713a47a82",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_a30_ding3_transfer_120pos_20260930.json.runs.retrain",
+      "report_file": "taiji_a30_ding3_transfer_120pos_20260930.json",
+      "path_key": "retrain_checkpoint",
+      "sha_key": "checkpoint_sha256_before",
+      "recorded_path": "output/a31_ding3_boundary/checkpoint.pt",
+      "resolved_path": "E:/Seed/output/a31_ding3_boundary/checkpoint.pt",
+      "recorded_sha16": "79b1a99cedf3e65b",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_a30_ding3_transfer_12pos_20260929.json.runs.base",
+      "report_file": "taiji_a30_ding3_transfer_12pos_20260929.json",
+      "path_key": "base_checkpoint",
+      "sha_key": "checkpoint_sha256_before",
+      "recorded_path": "output/a26_p1/checkpoint.pt",
+      "resolved_path": "E:/Seed/output/a26_p1/checkpoint.pt",
+      "recorded_sha16": "8b87583713a47a82",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_a30_ding3_transfer_12pos_20260929.json.runs.retrain",
+      "report_file": "taiji_a30_ding3_transfer_12pos_20260929.json",
+      "path_key": "retrain_checkpoint",
+      "sha_key": "checkpoint_sha256_before",
+      "recorded_path": "output/a31_ding3_boundary/checkpoint.pt",
+      "resolved_path": "E:/Seed/output/a31_ding3_boundary/checkpoint.pt",
+      "recorded_sha16": "79b1a99cedf3e65b",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_a30_ding3_transfer_300pos_b_20260930.json.runs.base",
+      "report_file": "taiji_a30_ding3_transfer_300pos_b_20260930.json",
+      "path_key": "base_checkpoint",
+      "sha_key": "checkpoint_sha256_before",
+      "recorded_path": "output/a26_p1/checkpoint.pt",
+      "resolved_path": "E:/Seed/output/a26_p1/checkpoint.pt",
+      "recorded_sha16": "8b87583713a47a82",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_a30_ding3_transfer_300pos_b_20260930.json.runs.retrain",
+      "report_file": "taiji_a30_ding3_transfer_300pos_b_20260930.json",
+      "path_key": "retrain_checkpoint",
+      "sha_key": "checkpoint_sha256_before",
+      "recorded_path": "output/a31_ding3_boundary/checkpoint.pt",
+      "resolved_path": "E:/Seed/output/a31_ding3_boundary/checkpoint.pt",
+      "recorded_sha16": "79b1a99cedf3e65b",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_a30_ding3_transfer_300pos_defaultload_vs_a26_20260930.json.runs.base",
+      "report_file": "taiji_a30_ding3_transfer_300pos_defaultload_vs_a26_20260930.json",
+      "path_key": "base_checkpoint",
+      "sha_key": "checkpoint_sha256_before",
+      "recorded_path": "output/a26_p1/checkpoint.pt",
+      "resolved_path": "E:/Seed/output/a26_p1/checkpoint.pt",
+      "recorded_sha16": "8b87583713a47a82",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_a30_ding3_transfer_30pos_20260929.json.runs.base",
+      "report_file": "taiji_a30_ding3_transfer_30pos_20260929.json",
+      "path_key": "base_checkpoint",
+      "sha_key": "checkpoint_sha256_before",
+      "recorded_path": "output/a26_p1/checkpoint.pt",
+      "resolved_path": "E:/Seed/output/a26_p1/checkpoint.pt",
+      "recorded_sha16": "8b87583713a47a82",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_a30_ding3_transfer_30pos_20260929.json.runs.retrain",
+      "report_file": "taiji_a30_ding3_transfer_30pos_20260929.json",
+      "path_key": "retrain_checkpoint",
+      "sha_key": "checkpoint_sha256_before",
+      "recorded_path": "output/a31_ding3_boundary/checkpoint.pt",
+      "resolved_path": "E:/Seed/output/a31_ding3_boundary/checkpoint.pt",
+      "recorded_sha16": "79b1a99cedf3e65b",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_a30_onpolicy_formal_48g3x6e_20260930.json",
+      "report_file": "taiji_a30_onpolicy_formal_48g3x6e_20260930.json",
+      "path_key": "base",
+      "sha_key": "base_sha256",
+      "recorded_path": "output/a26_p1/checkpoint.pt",
+      "resolved_path": "E:/Seed/output/a26_p1/checkpoint.pt",
+      "recorded_sha16": "8b87583713a47a82",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_a30_onpolicy_formal_48g3x6e_20260930.json.runs.corpus",
+      "report_file": "taiji_a30_onpolicy_formal_48g3x6e_20260930.json",
+      "path_key": "saved_checkpoint",
+      "sha_key": "saved_sha256_16",
+      "recorded_path": "output\\tmp_a30_smoke\\formal_arms\\a30_onpolicy_corpus.pt",
+      "resolved_path": "E:/Seed/output/tmp_a30_smoke/formal_arms/a30_onpolicy_corpus.pt",
+      "recorded_sha16": "4801db4ec40fa1f6",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_a30_onpolicy_formal_48g3x6e_20260930.json.runs.quarter",
+      "report_file": "taiji_a30_onpolicy_formal_48g3x6e_20260930.json",
+      "path_key": "saved_checkpoint",
+      "sha_key": "saved_sha256_16",
+      "recorded_path": "output\\tmp_a30_smoke\\formal_arms\\a30_onpolicy_quarter.pt",
+      "resolved_path": "E:/Seed/output/tmp_a30_smoke/formal_arms/a30_onpolicy_quarter.pt",
+      "recorded_sha16": "1ce0007d45049ab4",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_a30_onpolicy_formal_48g3x6e_20260930.json.runs.self",
+      "report_file": "taiji_a30_onpolicy_formal_48g3x6e_20260930.json",
+      "path_key": "saved_checkpoint",
+      "sha_key": "saved_sha256_16",
+      "recorded_path": "output\\tmp_a30_smoke\\formal_arms\\a30_onpolicy_self.pt",
+      "resolved_path": "E:/Seed/output/tmp_a30_smoke/formal_arms/a30_onpolicy_self.pt",
+      "recorded_sha16": "ca8726489d2c988a",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_a30_onpolicy_formal_48g3x6e_20260930.json.runs.sized",
+      "report_file": "taiji_a30_onpolicy_formal_48g3x6e_20260930.json",
+      "path_key": "saved_checkpoint",
+      "sha_key": "saved_sha256_16",
+      "recorded_path": "output\\tmp_a30_smoke\\formal_arms\\a30_onpolicy_sized.pt",
+      "resolved_path": "E:/Seed/output/tmp_a30_smoke/formal_arms/a30_onpolicy_sized.pt",
+      "recorded_sha16": "38a62539b3b13508",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_a30_onpolicy_length_ladder_8g3x3e_20260930.json",
+      "report_file": "taiji_a30_onpolicy_length_ladder_8g3x3e_20260930.json",
+      "path_key": "base",
+      "sha_key": "base_sha256",
+      "recorded_path": "output/a26_p1/checkpoint.pt",
+      "resolved_path": "E:/Seed/output/a26_p1/checkpoint.pt",
+      "recorded_sha16": "8b87583713a47a82",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_a30_onpolicy_quarter_probe_8g3x6e_20260930.json",
+      "report_file": "taiji_a30_onpolicy_quarter_probe_8g3x6e_20260930.json",
+      "path_key": "base",
+      "sha_key": "base_sha256",
+      "recorded_path": "output/a26_p1/checkpoint.pt",
+      "resolved_path": "E:/Seed/output/a26_p1/checkpoint.pt",
+      "recorded_sha16": "8b87583713a47a82",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_a30_onpolicy_quarter_probe_8g3x6e_20260930.json.runs.corpus",
+      "report_file": "taiji_a30_onpolicy_quarter_probe_8g3x6e_20260930.json",
+      "path_key": "saved_checkpoint",
+      "sha_key": "saved_sha256_16",
+      "recorded_path": "output\\tmp_a30_smoke\\onpolicy_arms_q\\a30_onpolicy_corpus.pt",
+      "resolved_path": "E:/Seed/output/tmp_a30_smoke/onpolicy_arms_q/a30_onpolicy_corpus.pt",
+      "recorded_sha16": "e5dc09218dbc2ef0",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_a30_onpolicy_quarter_probe_8g3x6e_20260930.json.runs.quarter",
+      "report_file": "taiji_a30_onpolicy_quarter_probe_8g3x6e_20260930.json",
+      "path_key": "saved_checkpoint",
+      "sha_key": "saved_sha256_16",
+      "recorded_path": "output\\tmp_a30_smoke\\onpolicy_arms_q\\a30_onpolicy_quarter.pt",
+      "resolved_path": "E:/Seed/output/tmp_a30_smoke/onpolicy_arms_q/a30_onpolicy_quarter.pt",
+      "recorded_sha16": "b2981155a9ce591b",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_a30_onpolicy_quarter_probe_8g3x6e_20260930.json.runs.self",
+      "report_file": "taiji_a30_onpolicy_quarter_probe_8g3x6e_20260930.json",
+      "path_key": "saved_checkpoint",
+      "sha_key": "saved_sha256_16",
+      "recorded_path": "output\\tmp_a30_smoke\\onpolicy_arms_q\\a30_onpolicy_self.pt",
+      "resolved_path": "E:/Seed/output/tmp_a30_smoke/onpolicy_arms_q/a30_onpolicy_self.pt",
+      "recorded_sha16": "49393561a85a9659",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_a30_onpolicy_quarter_probe_8g3x6e_20260930.json.runs.sized",
+      "report_file": "taiji_a30_onpolicy_quarter_probe_8g3x6e_20260930.json",
+      "path_key": "saved_checkpoint",
+      "sha_key": "saved_sha256_16",
+      "recorded_path": "output\\tmp_a30_smoke\\onpolicy_arms_q\\a30_onpolicy_sized.pt",
+      "resolved_path": "E:/Seed/output/tmp_a30_smoke/onpolicy_arms_q/a30_onpolicy_sized.pt",
+      "recorded_sha16": "11c61692db1b2d2a",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_a30_onpolicy_shape_pilot_12g3x6e_v2_20260930.json",
+      "report_file": "taiji_a30_onpolicy_shape_pilot_12g3x6e_v2_20260930.json",
+      "path_key": "base",
+      "sha_key": "base_sha256",
+      "recorded_path": "output/a26_p1/checkpoint.pt",
+      "resolved_path": "E:/Seed/output/a26_p1/checkpoint.pt",
+      "recorded_sha16": "8b87583713a47a82",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_a30_onpolicy_shape_pilot_12g3x6e_v2_20260930.json.runs.corpus",
+      "report_file": "taiji_a30_onpolicy_shape_pilot_12g3x6e_v2_20260930.json",
+      "path_key": "saved_checkpoint",
+      "sha_key": "saved_sha256_16",
+      "recorded_path": "output\\tmp_a30_smoke\\onpolicy_arms\\a30_onpolicy_corpus.pt",
+      "resolved_path": "E:/Seed/output/tmp_a30_smoke/onpolicy_arms/a30_onpolicy_corpus.pt",
+      "recorded_sha16": "91c750089478377b",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_a30_onpolicy_shape_pilot_12g3x6e_v2_20260930.json.runs.self",
+      "report_file": "taiji_a30_onpolicy_shape_pilot_12g3x6e_v2_20260930.json",
+      "path_key": "saved_checkpoint",
+      "sha_key": "saved_sha256_16",
+      "recorded_path": "output\\tmp_a30_smoke\\onpolicy_arms\\a30_onpolicy_self.pt",
+      "resolved_path": "E:/Seed/output/tmp_a30_smoke/onpolicy_arms/a30_onpolicy_self.pt",
+      "recorded_sha16": "c22a1d9dadc9f586",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_a30_onpolicy_shape_pilot_12g3x6e_v2_20260930.json.runs.sized",
+      "report_file": "taiji_a30_onpolicy_shape_pilot_12g3x6e_v2_20260930.json",
+      "path_key": "saved_checkpoint",
+      "sha_key": "saved_sha256_16",
+      "recorded_path": "output\\tmp_a30_smoke\\onpolicy_arms\\a30_onpolicy_sized.pt",
+      "resolved_path": "E:/Seed/output/tmp_a30_smoke/onpolicy_arms/a30_onpolicy_sized.pt",
+      "recorded_sha16": "426fa5868f42bf5d",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_a30_onpolicy_shape_pilot_6g3x3e_20260930.json",
+      "report_file": "taiji_a30_onpolicy_shape_pilot_6g3x3e_20260930.json",
+      "path_key": "base",
+      "sha_key": "base_sha256",
+      "recorded_path": "output/a26_p1/checkpoint.pt",
+      "resolved_path": "E:/Seed/output/a26_p1/checkpoint.pt",
+      "recorded_sha16": "8b87583713a47a82",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_a30_self_answers_build_20261001.json",
+      "report_file": "taiji_a30_self_answers_build_20261001.json",
+      "path_key": "base",
+      "sha_key": "base_sha256",
+      "recorded_path": "output/a26_p1/checkpoint.pt",
+      "resolved_path": "E:/Seed/output/a26_p1/checkpoint.pt",
+      "recorded_sha16": "8b87583713a47a82",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_a30_stop_failure_c48_anchor_v17_20261002.json",
+      "report_file": "taiji_a30_stop_failure_c48_anchor_v17_20261002.json",
+      "path_key": "checkpoint",
+      "sha_key": "checkpoint_sha256",
+      "recorded_path": "output/a31_chunked_short/checkpoint.pt",
+      "resolved_path": "E:/Seed/output/a31_chunked_short/checkpoint.pt",
+      "recorded_sha16": "ae51700e881f757a",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_a30_stop_failure_c48_window64_v17_20261002.json",
+      "report_file": "taiji_a30_stop_failure_c48_window64_v17_20261002.json",
+      "path_key": "checkpoint",
+      "sha_key": "checkpoint_sha256",
+      "recorded_path": "output/a31_chunked_short/checkpoint.pt",
+      "resolved_path": "E:/Seed/output/a31_chunked_short/checkpoint.pt",
+      "recorded_sha16": "ae51700e881f757a",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_a30_stop_failure_c_anchor_v13_20261002.json",
+      "report_file": "taiji_a30_stop_failure_c_anchor_v13_20261002.json",
+      "path_key": "checkpoint",
+      "sha_key": "checkpoint_sha256",
+      "recorded_path": "output/a31_chunked_short/checkpoint.pt",
+      "resolved_path": "E:/Seed/output/a31_chunked_short/checkpoint.pt",
+      "recorded_sha16": "ae51700e881f757a",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_a30_stop_failure_c_anchor_v15_20261002.json",
+      "report_file": "taiji_a30_stop_failure_c_anchor_v15_20261002.json",
+      "path_key": "checkpoint",
+      "sha_key": "checkpoint_sha256",
+      "recorded_path": "output/a31_chunked_short/checkpoint.pt",
+      "resolved_path": "E:/Seed/output/a31_chunked_short/checkpoint.pt",
+      "recorded_sha16": "ae51700e881f757a",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_a30_stop_failure_c_ceiling020_v12_20261002.json",
+      "report_file": "taiji_a30_stop_failure_c_ceiling020_v12_20261002.json",
+      "path_key": "checkpoint",
+      "sha_key": "checkpoint_sha256",
+      "recorded_path": "output/a31_chunked_short/checkpoint.pt",
+      "resolved_path": "E:/Seed/output/a31_chunked_short/checkpoint.pt",
+      "recorded_sha16": "ae51700e881f757a",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_a30_stop_failure_c_ceiling030_20261002.json",
+      "report_file": "taiji_a30_stop_failure_c_ceiling030_20261002.json",
+      "path_key": "checkpoint",
+      "sha_key": "checkpoint_sha256",
+      "recorded_path": "output/a31_chunked_short/checkpoint.pt",
+      "resolved_path": "E:/Seed/output/a31_chunked_short/checkpoint.pt",
+      "recorded_sha16": "ae51700e881f757a",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_a30_stop_failure_c_ceiling030_v12_20261002.json",
+      "report_file": "taiji_a30_stop_failure_c_ceiling030_v12_20261002.json",
+      "path_key": "checkpoint",
+      "sha_key": "checkpoint_sha256",
+      "recorded_path": "output/a31_chunked_short/checkpoint.pt",
+      "resolved_path": "E:/Seed/output/a31_chunked_short/checkpoint.pt",
+      "recorded_sha16": "ae51700e881f757a",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_a30_stop_failure_c_circuit_positions_v16_20261002.json",
+      "report_file": "taiji_a30_stop_failure_c_circuit_positions_v16_20261002.json",
+      "path_key": "checkpoint",
+      "sha_key": "checkpoint_sha256",
+      "recorded_path": "output/a31_chunked_short/checkpoint.pt",
+      "resolved_path": "E:/Seed/output/a31_chunked_short/checkpoint.pt",
+      "recorded_sha16": "ae51700e881f757a",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_a30_stop_failure_c_contentfrozen_v13_20261002.json",
+      "report_file": "taiji_a30_stop_failure_c_contentfrozen_v13_20261002.json",
+      "path_key": "checkpoint",
+      "sha_key": "checkpoint_sha256",
+      "recorded_path": "output/a31_chunked_short/checkpoint.pt",
+      "resolved_path": "E:/Seed/output/a31_chunked_short/checkpoint.pt",
+      "recorded_sha16": "ae51700e881f757a",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_a30_stop_failure_c_contentfrozen_v14_20261002.json",
+      "report_file": "taiji_a30_stop_failure_c_contentfrozen_v14_20261002.json",
+      "path_key": "checkpoint",
+      "sha_key": "checkpoint_sha256",
+      "recorded_path": "output/a31_chunked_short/checkpoint.pt",
+      "resolved_path": "E:/Seed/output/a31_chunked_short/checkpoint.pt",
+      "recorded_sha16": "ae51700e881f757a",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_a30_stop_failure_c_contentperm_v13_20261002.json",
+      "report_file": "taiji_a30_stop_failure_c_contentperm_v13_20261002.json",
+      "path_key": "checkpoint",
+      "sha_key": "checkpoint_sha256",
+      "recorded_path": "output/a31_chunked_short/checkpoint.pt",
+      "resolved_path": "E:/Seed/output/a31_chunked_short/checkpoint.pt",
+      "recorded_sha16": "ae51700e881f757a",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_a30_stop_failure_c_fulldose_v12_20261002.json",
+      "report_file": "taiji_a30_stop_failure_c_fulldose_v12_20261002.json",
+      "path_key": "checkpoint",
+      "sha_key": "checkpoint_sha256",
+      "recorded_path": "output/a31_chunked_short/checkpoint.pt",
+      "resolved_path": "E:/Seed/output/a31_chunked_short/checkpoint.pt",
+      "recorded_sha16": "ae51700e881f757a",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_a30_stop_failure_c_nocircuit_positions_v16_20261002.json",
+      "report_file": "taiji_a30_stop_failure_c_nocircuit_positions_v16_20261002.json",
+      "path_key": "checkpoint",
+      "sha_key": "checkpoint_sha256",
+      "recorded_path": "output/a31_chunked_short/checkpoint.pt",
+      "resolved_path": "E:/Seed/output/a31_chunked_short/checkpoint.pt",
+      "recorded_sha16": "ae51700e881f757a",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_a30_stop_failure_c_oracle_v19_20261002.json",
+      "report_file": "taiji_a30_stop_failure_c_oracle_v19_20261002.json",
+      "path_key": "checkpoint",
+      "sha_key": "checkpoint_sha256",
+      "recorded_path": "output/a31_chunked_short/checkpoint.pt",
+      "resolved_path": "E:/Seed/output/a31_chunked_short/checkpoint.pt",
+      "recorded_sha16": "ae51700e881f757a",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_a30_stop_failure_c_seedB_anchor_20261002.json",
+      "report_file": "taiji_a30_stop_failure_c_seedB_anchor_20261002.json",
+      "path_key": "checkpoint",
+      "sha_key": "checkpoint_sha256",
+      "recorded_path": "output/a31_chunked_short/checkpoint.pt",
+      "resolved_path": "E:/Seed/output/a31_chunked_short/checkpoint.pt",
+      "recorded_sha16": "ae51700e881f757a",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_a30_stop_failure_c_seedB_v25_product_off_20261002.json",
+      "report_file": "taiji_a30_stop_failure_c_seedB_v25_product_off_20261002.json",
+      "path_key": "checkpoint",
+      "sha_key": "checkpoint_sha256",
+      "recorded_path": "output/a31_chunked_short/checkpoint.pt",
+      "resolved_path": "E:/Seed/output/a31_chunked_short/checkpoint.pt",
+      "recorded_sha16": "ae51700e881f757a",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_a30_stop_failure_c_seedB_v25_product_on64_20261002.json",
+      "report_file": "taiji_a30_stop_failure_c_seedB_v25_product_on64_20261002.json",
+      "path_key": "checkpoint",
+      "sha_key": "checkpoint_sha256",
+      "recorded_path": "output/a31_chunked_short/checkpoint.pt",
+      "resolved_path": "E:/Seed/output/a31_chunked_short/checkpoint.pt",
+      "recorded_sha16": "ae51700e881f757a",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_a30_stop_failure_c_seedB_window64_20261002.json",
+      "report_file": "taiji_a30_stop_failure_c_seedB_window64_20261002.json",
+      "path_key": "checkpoint",
+      "sha_key": "checkpoint_sha256",
+      "recorded_path": "output/a31_chunked_short/checkpoint.pt",
+      "resolved_path": "E:/Seed/output/a31_chunked_short/checkpoint.pt",
+      "recorded_sha16": "ae51700e881f757a",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_a30_stop_failure_c_v20_product_off_20261002.json",
+      "report_file": "taiji_a30_stop_failure_c_v20_product_off_20261002.json",
+      "path_key": "checkpoint",
+      "sha_key": "checkpoint_sha256",
+      "recorded_path": "output/a31_chunked_short/checkpoint.pt",
+      "resolved_path": "E:/Seed/output/a31_chunked_short/checkpoint.pt",
+      "recorded_sha16": "ae51700e881f757a",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_a30_stop_failure_c_v20_product_off_r2_20261002.json",
+      "report_file": "taiji_a30_stop_failure_c_v20_product_off_r2_20261002.json",
+      "path_key": "checkpoint",
+      "sha_key": "checkpoint_sha256",
+      "recorded_path": "output/a31_chunked_short/checkpoint.pt",
+      "resolved_path": "E:/Seed/output/a31_chunked_short/checkpoint.pt",
+      "recorded_sha16": "ae51700e881f757a",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_a30_stop_failure_c_v20_product_on64_20261002.json",
+      "report_file": "taiji_a30_stop_failure_c_v20_product_on64_20261002.json",
+      "path_key": "checkpoint",
+      "sha_key": "checkpoint_sha256",
+      "recorded_path": "output/a31_chunked_short/checkpoint.pt",
+      "resolved_path": "E:/Seed/output/a31_chunked_short/checkpoint.pt",
+      "recorded_sha16": "ae51700e881f757a",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_a30_stop_failure_c_v20_product_on64_r2_20261002.json",
+      "report_file": "taiji_a30_stop_failure_c_v20_product_on64_r2_20261002.json",
+      "path_key": "checkpoint",
+      "sha_key": "checkpoint_sha256",
+      "recorded_path": "output/a31_chunked_short/checkpoint.pt",
+      "resolved_path": "E:/Seed/output/a31_chunked_short/checkpoint.pt",
+      "recorded_sha16": "ae51700e881f757a",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_a30_stop_failure_c_v21_product_off_r3_20261002.json",
+      "report_file": "taiji_a30_stop_failure_c_v21_product_off_r3_20261002.json",
+      "path_key": "checkpoint",
+      "sha_key": "checkpoint_sha256",
+      "recorded_path": "output/a31_chunked_short/checkpoint.pt",
+      "resolved_path": "E:/Seed/output/a31_chunked_short/checkpoint.pt",
+      "recorded_sha16": "ae51700e881f757a",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_a30_stop_failure_c_v21_product_on64_r3_20261002.json",
+      "report_file": "taiji_a30_stop_failure_c_v21_product_on64_r3_20261002.json",
+      "path_key": "checkpoint",
+      "sha_key": "checkpoint_sha256",
+      "recorded_path": "output/a31_chunked_short/checkpoint.pt",
+      "resolved_path": "E:/Seed/output/a31_chunked_short/checkpoint.pt",
+      "recorded_sha16": "ae51700e881f757a",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_a30_stop_failure_c_v22_endstep_nocircuit_20261002.json",
+      "report_file": "taiji_a30_stop_failure_c_v22_endstep_nocircuit_20261002.json",
+      "path_key": "checkpoint",
+      "sha_key": "checkpoint_sha256",
+      "recorded_path": "output/a31_chunked_short/checkpoint.pt",
+      "resolved_path": "E:/Seed/output/a31_chunked_short/checkpoint.pt",
+      "recorded_sha16": "ae51700e881f757a",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_a30_stop_failure_c_v23_endstep_nocircuit_20261002.json",
+      "report_file": "taiji_a30_stop_failure_c_v23_endstep_nocircuit_20261002.json",
+      "path_key": "checkpoint",
+      "sha_key": "checkpoint_sha256",
+      "recorded_path": "output/a31_chunked_short/checkpoint.pt",
+      "resolved_path": "E:/Seed/output/a31_chunked_short/checkpoint.pt",
+      "recorded_sha16": "ae51700e881f757a",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_a30_stop_failure_c_v24_fixedstep_nocircuit_20261002.json",
+      "report_file": "taiji_a30_stop_failure_c_v24_fixedstep_nocircuit_20261002.json",
+      "path_key": "checkpoint",
+      "sha_key": "checkpoint_sha256",
+      "recorded_path": "output/a31_chunked_short/checkpoint.pt",
+      "resolved_path": "E:/Seed/output/a31_chunked_short/checkpoint.pt",
+      "recorded_sha16": "ae51700e881f757a",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_a30_stop_failure_c_v27_terminalrow_nocircuit_20261003.json",
+      "report_file": "taiji_a30_stop_failure_c_v27_terminalrow_nocircuit_20261003.json",
+      "path_key": "checkpoint",
+      "sha_key": "checkpoint_sha256",
+      "recorded_path": "output/a31_chunked_short/checkpoint.pt",
+      "resolved_path": "E:/Seed/output/a31_chunked_short/checkpoint.pt",
+      "recorded_sha16": "ae51700e881f757a",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_a30_stop_failure_c_v28_tailidentity_nocircuit_20261003.json",
+      "report_file": "taiji_a30_stop_failure_c_v28_tailidentity_nocircuit_20261003.json",
+      "path_key": "checkpoint",
+      "sha_key": "checkpoint_sha256",
+      "recorded_path": "output/a31_chunked_short/checkpoint.pt",
+      "resolved_path": "E:/Seed/output/a31_chunked_short/checkpoint.pt",
+      "recorded_sha16": "ae51700e881f757a",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_a30_stop_failure_c_v29_lffollowthrough_nocircuit_20261003.json",
+      "report_file": "taiji_a30_stop_failure_c_v29_lffollowthrough_nocircuit_20261003.json",
+      "path_key": "checkpoint",
+      "sha_key": "checkpoint_sha256",
+      "recorded_path": "output/a31_chunked_short/checkpoint.pt",
+      "resolved_path": "E:/Seed/output/a31_chunked_short/checkpoint.pt",
+      "recorded_sha16": "ae51700e881f757a",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_a30_stop_failure_c_v30_lfnext_nocircuit_20261003.json",
+      "report_file": "taiji_a30_stop_failure_c_v30_lfnext_nocircuit_20261003.json",
+      "path_key": "checkpoint",
+      "sha_key": "checkpoint_sha256",
+      "recorded_path": "output/a31_chunked_short/checkpoint.pt",
+      "resolved_path": "E:/Seed/output/a31_chunked_short/checkpoint.pt",
+      "recorded_sha16": "ae51700e881f757a",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_a30_stop_failure_c_v31_productk64_circuitseedA_20261003.json",
+      "report_file": "taiji_a30_stop_failure_c_v31_productk64_circuitseedA_20261003.json",
+      "path_key": "checkpoint",
+      "sha_key": "checkpoint_sha256",
+      "recorded_path": "output/a31_chunked_short/checkpoint.pt",
+      "resolved_path": "E:/Seed/output/a31_chunked_short/checkpoint.pt",
+      "recorded_sha16": "ae51700e881f757a",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_a30_stop_failure_c_v31_winner_circuitseedA_20261003.json",
+      "report_file": "taiji_a30_stop_failure_c_v31_winner_circuitseedA_20261003.json",
+      "path_key": "checkpoint",
+      "sha_key": "checkpoint_sha256",
+      "recorded_path": "output/a31_chunked_short/checkpoint.pt",
+      "resolved_path": "E:/Seed/output/a31_chunked_short/checkpoint.pt",
+      "recorded_sha16": "ae51700e881f757a",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_a30_stop_failure_c_v31_winner_nocircuit96_20261003.json",
+      "report_file": "taiji_a30_stop_failure_c_v31_winner_nocircuit96_20261003.json",
+      "path_key": "checkpoint",
+      "sha_key": "checkpoint_sha256",
+      "recorded_path": "output/a31_chunked_short/checkpoint.pt",
+      "resolved_path": "E:/Seed/output/a31_chunked_short/checkpoint.pt",
+      "recorded_sha16": "ae51700e881f757a",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_a30_stop_failure_c_v31_winner_nocircuit_20261003.json",
+      "report_file": "taiji_a30_stop_failure_c_v31_winner_nocircuit_20261003.json",
+      "path_key": "checkpoint",
+      "sha_key": "checkpoint_sha256",
+      "recorded_path": "output/a31_chunked_short/checkpoint.pt",
+      "resolved_path": "E:/Seed/output/a31_chunked_short/checkpoint.pt",
+      "recorded_sha16": "ae51700e881f757a",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_a30_stop_failure_c_v37_peakrun_circuitseedA_96_20261003.json",
+      "report_file": "taiji_a30_stop_failure_c_v37_peakrun_circuitseedA_96_20261003.json",
+      "path_key": "checkpoint",
+      "sha_key": "checkpoint_sha256",
+      "recorded_path": "output/a31_chunked_short/checkpoint.pt",
+      "resolved_path": "E:/Seed/output/a31_chunked_short/checkpoint.pt",
+      "recorded_sha16": "ae51700e881f757a",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_a30_stop_failure_c_window64_v17_20261002.json",
+      "report_file": "taiji_a30_stop_failure_c_window64_v17_20261002.json",
+      "path_key": "checkpoint",
+      "sha_key": "checkpoint_sha256",
+      "recorded_path": "output/a31_chunked_short/checkpoint.pt",
+      "resolved_path": "E:/Seed/output/a31_chunked_short/checkpoint.pt",
+      "recorded_sha16": "ae51700e881f757a",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_a30_stop_failure_v12_firecount_smoke1_20261002.json",
+      "report_file": "taiji_a30_stop_failure_v12_firecount_smoke1_20261002.json",
+      "path_key": "checkpoint",
+      "sha_key": "checkpoint_sha256",
+      "recorded_path": "output/a31_chunked_short/checkpoint.pt",
+      "resolved_path": "E:/Seed/output/a31_chunked_short/checkpoint.pt",
+      "recorded_sha16": "ae51700e881f757a",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_a30_stop_failure_v17_window_smoke1_20261002.json",
+      "report_file": "taiji_a30_stop_failure_v17_window_smoke1_20261002.json",
+      "path_key": "checkpoint",
+      "sha_key": "checkpoint_sha256",
+      "recorded_path": "output/a31_chunked_short/checkpoint.pt",
+      "resolved_path": "E:/Seed/output/a31_chunked_short/checkpoint.pt",
+      "recorded_sha16": "ae51700e881f757a",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_a30_stop_failure_v19_oracle_smoke1_20261002.json",
+      "report_file": "taiji_a30_stop_failure_v19_oracle_smoke1_20261002.json",
+      "path_key": "checkpoint",
+      "sha_key": "checkpoint_sha256",
+      "recorded_path": "output/a31_chunked_short/checkpoint.pt",
+      "resolved_path": "E:/Seed/output/a31_chunked_short/checkpoint.pt",
+      "recorded_sha16": "ae51700e881f757a",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_a30_surface_tradeoff_v2_product_off_20261002.json",
+      "report_file": "taiji_a30_surface_tradeoff_v2_product_off_20261002.json",
+      "path_key": "checkpoint",
+      "sha_key": "checkpoint_sha256",
+      "recorded_path": "output/a31_chunked_short/checkpoint.pt",
+      "resolved_path": "E:/Seed/output/a31_chunked_short/checkpoint.pt",
+      "recorded_sha16": "ae51700e881f757a",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_a30_surface_tradeoff_v2_product_on64_20261002.json",
+      "report_file": "taiji_a30_surface_tradeoff_v2_product_on64_20261002.json",
+      "path_key": "checkpoint",
+      "sha_key": "checkpoint_sha256",
+      "recorded_path": "output/a31_chunked_short/checkpoint.pt",
+      "resolved_path": "E:/Seed/output/a31_chunked_short/checkpoint.pt",
+      "recorded_sha16": "ae51700e881f757a",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_a30_surface_tradeoff_v2_product_on64_selfprove2_20261002.json",
+      "report_file": "taiji_a30_surface_tradeoff_v2_product_on64_selfprove2_20261002.json",
+      "path_key": "checkpoint",
+      "sha_key": "checkpoint_sha256",
+      "recorded_path": "output/a31_chunked_short/checkpoint.pt",
+      "resolved_path": "E:/Seed/output/a31_chunked_short/checkpoint.pt",
+      "recorded_sha16": "ae51700e881f757a",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_hist_a23b_seedB_cap_20260928.json",
+      "report_file": "taiji_hist_a23b_seedB_cap_20260928.json",
+      "path_key": "circuit",
+      "sha_key": "circuit_sha256",
+      "recorded_path": "output/taiji_r2_copy_circuit_chat_seedB/judge/circuit-final.pt",
+      "resolved_path": "E:/Seed/output/taiji_r2_copy_circuit_chat_seedB/judge/circuit-final.pt",
+      "recorded_sha16": "d1aed7b37c656b40",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_m5_k_default_runtime_rollout_review_20260911.json.runtime_inventory",
+      "report_file": "taiji_m5_k_default_runtime_rollout_review_20260911.json",
+      "path_key": "default_checkpoint",
+      "sha_key": "default_checkpoint_sha256",
+      "recorded_path": "E:\\Seed\\checkpoints\\seed_corpus.pt",
+      "resolved_path": "E:/Seed/checkpoints/seed_corpus.pt",
+      "recorded_sha16": "1a67cf0110c156a0",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_r2_a25_ceiling_selector_price_v2_20260926.json.arms[1]",
+      "report_file": "taiji_r2_a25_ceiling_selector_price_v2_20260926.json",
+      "path_key": "circuit",
+      "sha_key": "circuit_sha256",
+      "recorded_path": "output/taiji_r2_copy_circuit_chat_seedB/judge/circuit-final.pt",
+      "resolved_path": "E:/Seed/output/taiji_r2_copy_circuit_chat_seedB/judge/circuit-final.pt",
+      "recorded_sha16": "d1aed7b37c656b40",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_r2_a25_ceiling_selector_price_v2_verified_20260926.json.arms[1]",
+      "report_file": "taiji_r2_a25_ceiling_selector_price_v2_verified_20260926.json",
+      "path_key": "circuit",
+      "sha_key": "circuit_sha256",
+      "recorded_path": "output/taiji_r2_copy_circuit_chat_seedB/judge/circuit-final.pt",
+      "resolved_path": "E:/Seed/output/taiji_r2_copy_circuit_chat_seedB/judge/circuit-final.pt",
+      "recorded_sha16": "d1aed7b37c656b40",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_r2_a25_overlap_selector_price_20260926.json.arms[1]",
+      "report_file": "taiji_r2_a25_overlap_selector_price_20260926.json",
+      "path_key": "circuit",
+      "sha_key": "circuit_sha256",
+      "recorded_path": "output/taiji_r2_copy_circuit_chat_seedB/judge/circuit-final.pt",
+      "resolved_path": "E:/Seed/output/taiji_r2_copy_circuit_chat_seedB/judge/circuit-final.pt",
+      "recorded_sha16": "d1aed7b37c656b40",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_r2_a25_overlap_selector_price_v2_20260926.json.arms[1]",
+      "report_file": "taiji_r2_a25_overlap_selector_price_v2_20260926.json",
+      "path_key": "circuit",
+      "sha_key": "circuit_sha256",
+      "recorded_path": "output/taiji_r2_copy_circuit_chat_seedB/judge/circuit-final.pt",
+      "resolved_path": "E:/Seed/output/taiji_r2_copy_circuit_chat_seedB/judge/circuit-final.pt",
+      "recorded_sha16": "d1aed7b37c656b40",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_r2_h3_3b_course_300k_10e_20260916.json.source_checkpoint",
+      "report_file": "taiji_r2_h3_3b_course_300k_10e_20260916.json",
+      "path_key": "path",
+      "sha_key": "sha256",
+      "recorded_path": ".tmp-r2-language-run/h3-3b-course-300k-10e-budgeted.pt",
+      "resolved_path": "E:/Seed/.tmp-r2-language-run/h3-3b-course-300k-10e-budgeted.pt",
+      "recorded_sha16": "4c073ea561783ca6",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_r2_h3_3c_course_300k_10e_20260916.json.source_checkpoint",
+      "report_file": "taiji_r2_h3_3c_course_300k_10e_20260916.json",
+      "path_key": "path",
+      "sha_key": "sha256",
+      "recorded_path": ".tmp-r2-language-run/h3-3c-course-300k-10e-budgeted-rerun.pt",
+      "resolved_path": "E:/Seed/.tmp-r2-language-run/h3-3c-course-300k-10e-budgeted-rerun.pt",
+      "recorded_sha16": "75c535120edae496",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_r2_h3_4_conditional_credit_20260916.json.checkpoints.h3_3b_response_start",
+      "report_file": "taiji_r2_h3_4_conditional_credit_20260916.json",
+      "path_key": "path",
+      "sha_key": "sha256",
+      "recorded_path": ".tmp-r2-language-run/h3-3b-course-300k-10e-budgeted.pt",
+      "resolved_path": "E:/Seed/.tmp-r2-language-run/h3-3b-course-300k-10e-budgeted.pt",
+      "recorded_sha16": "4c073ea561783ca6",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_r2_h3_4_conditional_credit_20260916.json.checkpoints.h3_3c_response_phase",
+      "report_file": "taiji_r2_h3_4_conditional_credit_20260916.json",
+      "path_key": "path",
+      "sha_key": "sha256",
+      "recorded_path": ".tmp-r2-language-run/h3-3c-course-300k-10e-budgeted-rerun.pt",
+      "resolved_path": "E:/Seed/.tmp-r2-language-run/h3-3c-course-300k-10e-budgeted-rerun.pt",
+      "recorded_sha16": "75c535120edae496",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_r2_readout_retrain_verdict_20260920.json.arm_pairing.A",
+      "report_file": "taiji_r2_readout_retrain_verdict_20260920.json",
+      "path_key": "path",
+      "sha_key": "base_checkpoint_sha256",
+      "recorded_path": "E:\\Seed\\output\\taiji_r2_readout_retrain\\A\\checkpoint.pt",
+      "resolved_path": "E:/Seed/output/taiji_r2_readout_retrain/A/checkpoint.pt",
+      "recorded_sha16": "ad2a06465e0ef78c",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_r2_readout_retrain_verdict_20260920.json.arm_pairing.B",
+      "report_file": "taiji_r2_readout_retrain_verdict_20260920.json",
+      "path_key": "path",
+      "sha_key": "base_checkpoint_sha256",
+      "recorded_path": "E:\\Seed\\output\\taiji_r2_readout_retrain\\B\\checkpoint.pt",
+      "resolved_path": "E:/Seed/output/taiji_r2_readout_retrain/B/checkpoint.pt",
+      "recorded_sha16": "ad2a06465e0ef78c",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_r2_readout_retrain_verdict_20260920.json.arm_pairing.C",
+      "report_file": "taiji_r2_readout_retrain_verdict_20260920.json",
+      "path_key": "path",
+      "sha_key": "base_checkpoint_sha256",
+      "recorded_path": "E:\\Seed\\output\\taiji_r2_readout_retrain\\C\\checkpoint.pt",
+      "resolved_path": "E:/Seed/output/taiji_r2_readout_retrain/C/checkpoint.pt",
+      "recorded_sha16": "ad2a06465e0ef78c",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_r2_readout_retrain_verdict_replication_20260923.json.arm_pairing.A",
+      "report_file": "taiji_r2_readout_retrain_verdict_replication_20260923.json",
+      "path_key": "path",
+      "sha_key": "base_checkpoint_sha256",
+      "recorded_path": "E:\\Seed\\output\\taiji_r2_readout_retrain\\A\\checkpoint.pt",
+      "resolved_path": "E:/Seed/output/taiji_r2_readout_retrain/A/checkpoint.pt",
+      "recorded_sha16": "ad2a06465e0ef78c",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_r2_readout_retrain_verdict_replication_20260923.json.arm_pairing.B",
+      "report_file": "taiji_r2_readout_retrain_verdict_replication_20260923.json",
+      "path_key": "path",
+      "sha_key": "base_checkpoint_sha256",
+      "recorded_path": "E:\\Seed\\output\\taiji_r2_readout_retrain\\B\\checkpoint.pt",
+      "resolved_path": "E:/Seed/output/taiji_r2_readout_retrain/B/checkpoint.pt",
+      "recorded_sha16": "ad2a06465e0ef78c",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_r2_readout_retrain_verdict_replication_20260923.json.arm_pairing.C",
+      "report_file": "taiji_r2_readout_retrain_verdict_replication_20260923.json",
+      "path_key": "path",
+      "sha_key": "base_checkpoint_sha256",
+      "recorded_path": "E:\\Seed\\output\\taiji_r2_readout_retrain\\C\\checkpoint.pt",
+      "resolved_path": "E:/Seed/output/taiji_r2_readout_retrain/C/checkpoint.pt",
+      "recorded_sha16": "ad2a06465e0ef78c",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_r2_readout_retrain_verdict_v3_20260923.json.arm_pairing.A",
+      "report_file": "taiji_r2_readout_retrain_verdict_v3_20260923.json",
+      "path_key": "path",
+      "sha_key": "base_checkpoint_sha256",
+      "recorded_path": "E:\\Seed\\output\\taiji_r2_readout_retrain\\A\\checkpoint.pt",
+      "resolved_path": "E:/Seed/output/taiji_r2_readout_retrain/A/checkpoint.pt",
+      "recorded_sha16": "ad2a06465e0ef78c",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_r2_readout_retrain_verdict_v3_20260923.json.arm_pairing.B",
+      "report_file": "taiji_r2_readout_retrain_verdict_v3_20260923.json",
+      "path_key": "path",
+      "sha_key": "base_checkpoint_sha256",
+      "recorded_path": "E:\\Seed\\output\\taiji_r2_readout_retrain\\B\\checkpoint.pt",
+      "resolved_path": "E:/Seed/output/taiji_r2_readout_retrain/B/checkpoint.pt",
+      "recorded_sha16": "ad2a06465e0ef78c",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_r2_readout_retrain_verdict_v3_20260923.json.arm_pairing.C",
+      "report_file": "taiji_r2_readout_retrain_verdict_v3_20260923.json",
+      "path_key": "path",
+      "sha_key": "base_checkpoint_sha256",
+      "recorded_path": "E:\\Seed\\output\\taiji_r2_readout_retrain\\C\\checkpoint.pt",
+      "resolved_path": "E:/Seed/output/taiji_r2_readout_retrain/C/checkpoint.pt",
+      "recorded_sha16": "ad2a06465e0ef78c",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_zero_face_census_a26_p0_16500000_20260928.json.checkpoint",
+      "report_file": "taiji_zero_face_census_a26_p0_16500000_20260928.json",
+      "path_key": "path",
+      "sha_key": "sha256",
+      "recorded_path": "output\\a26_p0\\checkpoint.pt.history\\checkpoint_000016500000.pt",
+      "resolved_path": "E:/Seed/output/a26_p0/checkpoint.pt.history/checkpoint_000016500000.pt",
+      "recorded_sha16": "cfda43762133c1ab",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "taiji_zero_face_census_a26_p1_16500000_20260928.json.checkpoint",
+      "report_file": "taiji_zero_face_census_a26_p1_16500000_20260928.json",
+      "path_key": "path",
+      "sha_key": "sha256",
+      "recorded_path": "output\\a26_p1\\checkpoint.pt.history\\checkpoint_000016500000.pt",
+      "resolved_path": "E:/Seed/output/a26_p1/checkpoint.pt.history/checkpoint_000016500000.pt",
+      "recorded_sha16": "903b3c8dbd9649f2",
+      "verdict": "missing_file"
+    },
+    {
+      "report": "project_consolidation_20260917.json.preserved_checkpoint",
+      "report_file": "project_consolidation_20260917.json",
+      "path_key": "path",
+      "sha_key": "file_sha256",
+      "recorded_path": "reports/p3b_v2_pilot_20260917/checkpoint.pt",
+      "resolved_path": "E:/Seed/reports/p3b_v2_pilot_20260917/checkpoint.pt",
+      "recorded_sha16": "b14ae9b0048172b5",
+      "verdict": "sha_drift"
+    },
+    {
+      "report": "taiji_m4r12_ultradata_conversion_manifest_20260909.json",
+      "report_file": "taiji_m4r12_ultradata_conversion_manifest_20260909.json",
+      "path_key": "output",
+      "sha_key": "output_sha256",
+      "recorded_path": "E:/Seed/data/ultradata/derived/ultradata_sft_nothink_simplezh.jsonl",
+      "resolved_path": "E:/Seed/data/ultradata/derived/ultradata_sft_nothink_simplezh.jsonl",
+      "recorded_sha16": "66d67d5c1ce66ce9",
+      "verdict": "sha_drift"
+    },
+    {
+      "report": "taiji_m5_s4_hetero_holdout_manifest_20260909.json",
+      "report_file": "taiji_m5_s4_hetero_holdout_manifest_20260909.json",
+      "path_key": "output",
+      "sha_key": "output_sha256",
+      "recorded_path": "E:/Seed/data/ultradata/derived/ultradata_hetero_holdout_simplezh.jsonl",
+      "resolved_path": "E:/Seed/data/ultradata/derived/ultradata_hetero_holdout_simplezh.jsonl",
+      "recorded_sha16": "79c58330fff9d27b",
+      "verdict": "sha_drift"
+    },
+    {
+      "report": "taiji_p3b_throughput_calibration_20260915.json",
+      "report_file": "taiji_p3b_throughput_calibration_20260915.json",
+      "path_key": "checkpoint",
+      "sha_key": "subset_sha256",
+      "recorded_path": "checkpoints\\seed_beta.pt",
+      "resolved_path": "E:/Seed/checkpoints/seed_beta.pt",
+      "recorded_sha16": "2abf6f03c8b38d9b",
+      "verdict": "sha_drift"
+    }
+  ],
+  "generated_utc": "2026-10-03T12:13:04Z",
+  "note": "本件不判红不判绿：sha_drift 可能是合法的续训覆写，也可能是 G35 那种不可逆损失——分类由人做，可见性由本件保证。`sha_claims_unpaired_with_path` 数是「配不出来」的量，它必须被看见而不是被当成零。"
+}
