@@ -141,3 +141,11 @@
 把新数回填到本件 §2 的三行时序表（G5 §11 判据⑦ 行、08 §5、PLAN_INDEX 13 续三），
 并**显式作废 35／36／44／65／69 这一串历史数**——它们的唯一价值是记录收口过程，
 引用面一律只引新数。
+## 7 · 第 3 项与第 4 项的读数改写（2026-10-04，M6 线第二十六段追加）
+
+本节只追加，不改写上面任何一行的原文。两格的证据底座在 `08_UPSTREAM_SYNC_PLAYBOOK.md` ㊵-184 与 ㊵-185，其中承重的几条我回读过原文（`crash-recovery.e2e.ts:91` 是 `describe.skipIf(process.platform === 'win32')`；`server-restart.e2e.ts:187-198` 是同端口重启后 `graphs` 深相等、停机为 SIGTERM；`llm-retry/tests/retry.spec.ts:460` 断言 `no adapter registered for provider`；`packages/bundle/base/cordis.patch.yml:526-527`／`:535-536` 默认同挂 deepseek 与 taiji）。
+
+- **第 3 项（持久化/恢复）**：从“部分达成＋无验收记录”改写为**实现与验收件都在、本机平台档不可执行**——恢复分支在 `agent-loop/src/index.ts:807` 一路到 `:856`，选份逻辑在 `session-persistence-jsonl/src/index.ts:1525/:1538`，真写盘读回的测试有六处（见 ㊵-184），但唯一的 SIGKILL 验收 `crash-recovery.e2e.ts` 在 win32 被跳过，且它读回走手工 `open(...,'read')` 而**不经产品 `resume()`**；`server-restart` 只作干净重启。⇒ 仍判**部分达成**；要收这一格缺一条跨平台、真 kill -9、经 `ctx.agents.resume()` 读回的验收。
+- **第 4 项（provider 隔离与故障降级）**：隔离面成立且更强（两张表＋无 adapter 即抛，代码与测试都在）；**“降级”查到的结论是“harness 里没有跨 provider 改道实现”，不是“有实现没测”**。归档件那条 watchdog 今天仍活着但在 **Python 运行时平面**（`seed/language_provider.py:742/:866` 等），与 harness 路由不相交，不能充当本项执行记录。⇒ 仍判**部分达成**，且**必须先裁口径**：要么改为“故障⇒撤路由＋给用户一句错误”（可即刻测，但用户可见那句话现在也确实没有），要么先补改道实现。
+
+本节的追加方式说明（避免下轮误改）：本文件在盘上是 core.autocrlf 的 CRLF 检出态，所以追加按文件自带的行尾写回，**没有整档重写行尾**；上面各行的字节未动。
