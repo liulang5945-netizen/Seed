@@ -8020,3 +8020,41 @@ B＝L2 主列 `72 − generations_eating_full_budget ≥ 6`；C＝`SPEC-A-24` �
 **`DEBT-G35` 的处置面收窄**：①历史件已在 §126 标注"源件字节已丢、不可复跑"；②本次落地（覆写需换名或显式旗标）；
 ③"遍历 `reports/*.json` 的 sha 字段、路径在场而 sha 不符就输出 `artifact_sha_drift` 清单"**仍未做**——
 它是可见性而不是防口，需要 owner 认"要不要为历史件补这条机检"。
+
+### 第一百二十九次停靠·`DEBT-G35` 的③落地：一份"路径在场而字节已换"的可见性清单，顺带把我自己这次收束的代价量出来（2026-10-03 11:5x，零训练、零产品改动）
+
+**为什么要做它**：`G35` 那种损失（路径对、sha 变）按 `git ls-files` 与 markdown 链接审计都查不出来，
+只有把件里记的 sha 与盘上重算的再比一遍才看得见。新件 `scripts/training/audit_taiji_artifact_sha_drift.py`
+做的就是这件事，且**不是门**：不 skip、不 raise，只把每条形如"路径＋sha"的声明归成
+`ok` / `sha_drift` / `missing_file` / `unresolvable_path`，并把**配不出路径的 sha 声明单独计数**
+（`sha_claims_unpaired_with_path`）——"看不见"必须变成"看得见但没分类"，否则工具本身会造出一个假零。
+
+**当代读数**（`reports/taiji_a30_artifact_sha_drift_20261003.json`）：扫 1547 份件，得 336 条配对声明
+＝ `ok` 220、`missing_file` 112、`sha_drift` 4；另有 **163 条 sha 声明配不出路径**（记在件里，不当零）；
+非 `ok` 落在 **30 枚不同路径**上。四条 `sha_drift` 都是可解释的合法漂移，不是新损失：
+`reports/p3b_v2_pilot_20260917/checkpoint.pt`（封存副本被后续写档改过）、两份 `data/ultradata/derived/*.jsonl`
+语料件（转换产物重出过）、`checkpoints/seed_beta.pt`（09-15 那枚标定件记的是**换 16M 之前**的字节）。
+
+**它第一次运行就把我上一刀的代价量了出来**（这是最该记的一条）：`missing_file` 里有
+**11 条**指向 `output/taiji_r2_copy_circuit_chat_seedB/judge/circuit-final.pt`——那枚 seed-B 电路在 §126 的
+删除清单里（我复核过清单原文），而我当时留下的 seed-B 是**另一条路径**上的
+`output/taiji_r2_a23_ding2_seedB/judge/circuit-final.pt`。也就是说：**"两枚回路都保住了"这句话在 §126 里说得太粗**，
+准确说法是"保住了 a23 那枚 seed-B，丢了 chat_seedB 那枚，后者身上挂着 11 份已入库读数"。
+同清单里 `output/a31_chunked_short/checkpoint.pt`（46 条）、`output/a26_p1/checkpoint.pt`（16 条）、
+`output/a31_ding3_boundary/checkpoint.pt`（9 条）与 §126/§127 已声明的损失一致，不是新问题。
+
+**第一版仪器的三个自身缺陷（都当场抓到、当场修，靠的就是这两条锚点）**：
+①把同一个 dict 里每枚路径与每个 sha 做笛卡尔配对 ⇒ 装机基底 `ca262807`（实测正确）被误报成 **31 条** `sha_drift`；
+②路径键判定含 `circuit` 之类词根 ⇒ 把 sha 值本身当路径，造出 **774 条** `unresolvable_path` 噪声；
+③只认同一个 dict ⇒ 本仓"路径写外层、sha 写臂块"（`retrain_checkpoint` 对 `runs.retrain.checkpoint_sha256_before`）
+的约定被**静默丢掉**，已知-bad 锚点 `79b1a99c…` 一条都不出现。修完之后：配对保守化＋跨层按臂名配＋
+配不出来的单独计数＋**自喂防护**（本件自己的输出 `format=taiji-artifact-sha-drift-v1` 会被扫掉并计入
+`own_outputs_excluded`，否则判定会随运行次数自我膨胀）。
+
+**守卫 `tests/taiji_native/test_a30_artifact_sha_drift_audit.py` 六支全绿**（ruff 0 条）：合成四分类；
+跨层配对不为零；**两条硬钉锚点**——`79b1a99c…` 必须以非 `ok` 显形、`ca262807…` 不许出现在任何非 `ok` 里；
+自喂排除；`--out-report` 必给＋已存在即 `[拒绝落盘]` 返回 2；扫描面本身在版本控制面上。
+其中"仪器不在 git 面上"这一支在本次真抓到过一次红（我先跑测试后 `git add`）——守卫是对的，是我顺序错了。
+
+**`DEBT-G35` 三半全部结清**：①历史标注（§126）②覆写防口（§128）③可见性清单（本节）。
+产品侧继续零改动：默认位 `None`、装机自停 13/72 为在案记录。
