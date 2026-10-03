@@ -77,7 +77,8 @@ describe('ShellEnvRegistry', () => {
 
     vi.stubEnv('DSH_HOME', undefined)
     const fromDefault = new ShellEnvRegistry(new Context())
-    expect(fromDefault.collect(execution()).DSH_HOME).toBe(join(homedir(), '.dsh'))
+    // `~/.seed` keeps this fork's home separate from an official harness at `~/.dsh`, so both can run.
+    expect(fromDefault.collect(execution()).DSH_HOME).toBe(join(homedir(), '.seed'))
   })
 
   it('collects declared contributor variables and omits unavailable values', () => {
