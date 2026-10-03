@@ -442,7 +442,7 @@ def main():
         "--field_warmup_ratio",
         type=float,
         default=0.1,
-        help="T9: field_conditioning warm-up 比例 (前 N% 步关闭场注入, 0=全程启用)",
+        help="T9: field_conditioning warm-up 比例 (前 N%% 步关闭场注入, 0=全程启用)",
     )
     parser.add_argument(
         "--augment", action="store_true", help="T4: 启用数据增强（模板改写 + 多轮拼接）"

@@ -1069,7 +1069,7 @@ def main() -> int:
         action="store_true",
         help="v19 检索侧 oracle 档：把 `store.best_match` 换成'内容含本题 expected_contains 的第一条事件'，"
         "找不到则透传原实现。用来把'选对了还拖不拖写'从'内容身份/发射时刻'里单独摘出来。"
-        "X 面 104 题全部自带标签（机检 100%），故这档在停止面可构造；默认关 ⇒ 与 v18 逐位可比。",
+        "X 面 104 题全部自带标签（机检 100%%），故这档在停止面可构造；默认关 ⇒ 与 v18 逐位可比。",
     )
     parser.add_argument(
         "--store-scope-conversation",

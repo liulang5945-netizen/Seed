@@ -225,7 +225,7 @@ def main() -> int:
         type=int,
         default=0,
         help="戊 的正确形态：>0 时只保留**语料答案本身 ≤ 该字节数**的样本（自然短答，不截断正文）。"
-        '语料里 ≤32B 只占 4.8%（§2ay）⇒ 这一档量的是"合法分布内的密度提升"，与 quarter/sized 的人造截断不同',
+        '语料里 ≤32B 只占 4.8%%（§2ay）⇒ 这一档量的是"合法分布内的密度提升"，与 quarter/sized 的人造截断不同',
     )
     parser.add_argument(
         "--save-arms",

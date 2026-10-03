@@ -666,8 +666,8 @@ def _build_parser() -> argparse.ArgumentParser:
         action="store_true",
         default=True,
         help="PLAN-R2-01：给 F1 读出加一条**显式的 UTF-8 字节位置输入**（4 维 one-hot，"
-        "零初始化）。A 支线两臂实测：它把裸通道的字节合法性从 ~0 抬到 100%"
-        "（真非法率 99.0%→0%）、表层成句 0→68。**2026-09-28 owner 裁定 (a) 起为主线"
+        "零初始化）。A 支线两臂实测：它把裸通道的字节合法性从 ~0 抬到 100%%"
+        "（真非法率 99.0%%→0%%）、表层成句 0→68。**2026-09-28 owner 裁定 (a) 起为主线"
         "训练默认**；`--no-readout-position` 是显式逃生口（对照/复现旧配方用）。",
     )
     parser.add_argument(
