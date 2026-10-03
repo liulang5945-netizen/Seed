@@ -741,4 +741,21 @@ describe('LifePanel', () => {
     fireEvent.click(screen.getByRole('button', { name: en.retry }))
     await waitFor(() => { expect(failing.mocks.refresh).toHaveBeenCalledTimes(1) })
   })
+
+  it('splits the training block into controls, datasets and checkpoints', () => {
+    const { life } = stubLife(nativeSnapshot())
+    mountPanel(life)
+
+    // One wall of four lists became three sibling blocks, each with its own id
+    // so a deep link can name any of them. Asserting the ids is what pins the
+    // split: collapsing them back would keep every heading but lose the blocks.
+    const controls = screen.getByText(en.sectionTraining).closest('details')
+    const datasets = screen.getByText(en.datasetsTitle).closest('details')
+    const checkpoints = screen.getByText(en.checkpointsTitle).closest('details')
+
+    expect(controls?.id).toBe('life-training')
+    expect(datasets?.id).toBe('life-training-data')
+    expect(checkpoints?.id).toBe('life-checkpoints')
+    expect(new Set([controls, datasets, checkpoints]).size).toBe(3)
+  })
 })

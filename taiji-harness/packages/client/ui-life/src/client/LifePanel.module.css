@@ -788,13 +788,15 @@ details:not([open]) > .sectionSummary {
 }
 
 /* Insurance tier: below this the three-column meter cannot hold at all. */
-/* The training block is the only one carrying four different things — state,
-   data, controls, checkpoints — and runs far past one screen. The two short
-   groups sit side by side; the two long ones keep the full width, because the
-   checkpoint table has a 720px minimum and halving its column would only make
-   it worse. Narrow panels fall back to the single column.
-   Selectors depend on the four groups staying direct children of #life-training
-   in this order: run state, training data, run control, checkpoints. */
+/* The training block was one wall of four unrelated lists — state, data,
+   controls, checkpoints — and ran far past one screen. It is now three sibling
+   blocks (#life-training, #life-training-data, #life-checkpoints), and only the
+   two short groups inside the first one sit side by side. The roster and the
+   checkpoint table each keep a full block, because the table has a 720px
+   minimum and halving its column would only make it worse. Narrow panels fall
+   back to a single column.
+   Selectors depend on run state staying the first and run control the second
+   direct child of #life-training. */
 @container (min-width: 720px) {
   #life-training {
     display: grid;
@@ -813,25 +815,13 @@ details:not([open]) > .sectionSummary {
     grid-row: 1;
   }
 
-  /* B · training data, full width: the roster is a long list. */
-  #life-training > .organ:nth-of-type(2) {
-    grid-column: 1 / -1;
-    grid-row: 2;
-  }
-
   /* C · run control, beside run state rather than under it. Its top rule would
      otherwise cut across the empty half-row, so the gap separates instead. */
-  #life-training > .organ:nth-of-type(3) {
+  #life-training > .organ:nth-of-type(2) {
     grid-column: 2;
     grid-row: 1;
     padding-top: 0;
     border-top: 0;
-  }
-
-  /* D · checkpoints, full width. */
-  #life-training > .organ:nth-of-type(4) {
-    grid-column: 1 / -1;
-    grid-row: 3;
   }
 }
 

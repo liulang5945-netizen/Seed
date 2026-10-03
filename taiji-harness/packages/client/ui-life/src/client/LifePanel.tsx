@@ -714,6 +714,7 @@ function TrainingSection({ t, snapshot, pending, confirming, run, life }: Sectio
   }
 
   return (
+    <>
     <details className={css.section} id="life-training" aria-labelledby={headingId} open>
       <summary className={css.sectionSummary}>
         <h3 className={css.sectionTitle} id={headingId}>{t('sectionTraining')}</h3>
@@ -744,10 +745,41 @@ function TrainingSection({ t, snapshot, pending, confirming, run, life }: Sectio
           </p>
         ))}
       </div>
-      {/* B · training data — "what it is fed". The roster keeps its own heading
-          so the delete row below can point at it. */}
+      {/* C · run control — "what to do". Moved up next to run state so the
+          training block holds both short groups and the roster below it
+          becomes a block of its own. */}
+      <div className={css.organ} role="group" aria-labelledby={runControlId}>
+        <h4 className={css.organTitle} id={runControlId}>{t('runControlTitle')}</h4>
+        <div className={css.actions}>
+          <Button
+            variant="primary"
+            disabled={busy || active}
+            aria-busy={pending === 'trainStart'}
+            onClick={() => { run('trainStart', () => life.trainStart(selected.size > 0 ? { datasets: [...selected] } : {})) }}
+          >
+            {t('trainStart')}
+          </Button>
+          <Button disabled={busy || !active || training.stopRequested} aria-busy={pending === 'trainPause'} onClick={() =>{  run('trainPause', () => life.trainPause()) }}>{t('trainPause')}</Button>
+          <Button disabled={busy || !active || training.stopRequested} aria-busy={pending === 'trainResume'} onClick={() =>{  run('trainResume', () => life.trainResume()) }}>{t('trainResume')}</Button>
+          {/* The destructive pair is pushed to the far end and set off by a
+              divider, so "starts on the left, destroys on the right" becomes a
+              position memory rather than something to re-read every time. */}
+          <div className={css.actionCluster}>
+            {confirming === 'trainStop' && <span className={css.confirmLine}>{t('confirmStop')}</span>}
+            <Button className={css.dangerAction} disabled={busy || !active} aria-busy={pending === 'trainStop'} onClick={() =>{  run('trainStop', () => life.trainStop()) }}>{t('trainStop')}</Button>
+            {confirming === 'trainReset' && <span className={css.confirmLine}>{t('confirmReset')}</span>}
+            <Button className={css.dangerAction} disabled={busy || !active} aria-busy={pending === 'trainReset'} onClick={() =>{  run('trainReset', () => life.trainReset()) }}>{t('trainReset')}</Button>
+          </div>
+        </div>
+      </div>
+    </details>
+    {/* The roster is a page of its own, so it no longer shares a block with
+        the controls that act on it. */}
+    <details className={css.section} id="life-training-data" aria-labelledby={datasetsId} open>
+      <summary className={css.sectionSummary}>
+        <h3 className={css.sectionTitle} id={datasetsId}>{t('datasetsTitle')}</h3>
+      </summary>
       <div className={css.organ}>
-        <h4 className={css.organTitle} id={datasetsId}>{t('datasetsTitle')}</h4>
         <div className={css.uploadBlock}>
           {/* The upload button already says "Upload training file"; a group label
               with the same words only doubled the announcement. */}
@@ -843,37 +875,15 @@ function TrainingSection({ t, snapshot, pending, confirming, run, life }: Sectio
           </Button>
         </div>
       </div>
-      {/* C · run control — "what to do". The heading names the group, so the row
-          reads as the thing the five buttons act on. */}
-      <div className={css.organ} role="group" aria-labelledby={runControlId}>
-        <h4 className={css.organTitle} id={runControlId}>{t('runControlTitle')}</h4>
-        <div className={css.actions}>
-          <Button
-            variant="primary"
-            disabled={busy || active}
-            aria-busy={pending === 'trainStart'}
-            onClick={() => { run('trainStart', () => life.trainStart(selected.size > 0 ? { datasets: [...selected] } : {})) }}
-          >
-            {t('trainStart')}
-          </Button>
-          <Button disabled={busy || !active || training.stopRequested} aria-busy={pending === 'trainPause'} onClick={() =>{  run('trainPause', () => life.trainPause()) }}>{t('trainPause')}</Button>
-          <Button disabled={busy || !active || training.stopRequested} aria-busy={pending === 'trainResume'} onClick={() =>{  run('trainResume', () => life.trainResume()) }}>{t('trainResume')}</Button>
-          {/* The destructive pair is pushed to the far end and set off by a
-              divider, so "starts on the left, destroys on the right" becomes a
-              position memory rather than something to re-read every time. */}
-          <div className={css.actionCluster}>
-            {confirming === 'trainStop' && <span className={css.confirmLine}>{t('confirmStop')}</span>}
-            <Button className={css.dangerAction} disabled={busy || !active} aria-busy={pending === 'trainStop'} onClick={() =>{  run('trainStop', () => life.trainStop()) }}>{t('trainStop')}</Button>
-            {confirming === 'trainReset' && <span className={css.confirmLine}>{t('confirmReset')}</span>}
-            <Button className={css.dangerAction} disabled={busy || !active} aria-busy={pending === 'trainReset'} onClick={() =>{  run('trainReset', () => life.trainReset()) }}>{t('trainReset')}</Button>
-          </div>
-        </div>
-      </div>
-      {/* D · checkpoints — "where to resume from". The roster keeps its heading
-          so both the scroll container and the delete row can point at it. */}
+    </details>
+    {/* The checkpoint roster is the last of the three: it is the widest thing
+        on the page, so it keeps a full block to itself. */}
+    <details className={css.section} id="life-checkpoints" aria-labelledby={checkpointsId} open>
+      <summary className={css.sectionSummary}>
+        <h3 className={css.sectionTitle} id={checkpointsId}>{t('checkpointsTitle')}</h3>
+      </summary>
       <div className={css.organ}>
         <div className={css.subHeader}>
-          <h4 className={css.organTitle} id={checkpointsId}>{t('checkpointsTitle')}</h4>
           <Button onClick={() => { setCheckpointsFolded(current => !current) }}>
             {checkpointsFolded ? t('checkpointsUnfold', { count: String(training.checkpoints.length) }) : t('checkpointsFold')}
           </Button>
@@ -948,6 +958,7 @@ function TrainingSection({ t, snapshot, pending, confirming, run, life }: Sectio
         )}
       </div>
     </details>
+    </>
   )
 }
 
