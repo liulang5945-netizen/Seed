@@ -8166,3 +8166,49 @@ base a26_p1 不挂／挂＝**12／5**；control(+2M 无配方)＝**7／0**；a31
 **一条方法账**：本轮我自己造出的假对照，是被"两件的字节完全一样"这个巧合抓出来的，不是被设计抓出来的——
 所以修完之后靠的是仪器拒绝落件，而不是靠我下次更细心。**旗标类改动必须自带"我被走到了"的证据**，
 这一条已写进守卫而不是只写进文档。
+
+### 第一百三十三停靠·§125 训练档的命令簿（判读先于数，交接用；2026-10-03 12:4x，零执行）
+
+**本轮已跑完的一步**：第二代自答表正在 `ca262807` 上生成，落点与自述固定为
+`output/a30_self_answers/ca262807_self.jsonl` ＋ `reports/taiji_a30_self_answers_ca262807_20261003.json`
+（`base_sha256=ca2628077b21bc4c…`、`base_sha256_unchanged=true`、`pairs=12000`、`gen_max=96`、`penalty=2.0`）。
+第一步完成后**只剩这一步没做**：表好之后必须核对那份报告里的 `base_sha256` 仍是 `ca262807…`
+（§127 查明上一代表就是错在 `8b875837…`）。
+
+**第二步（训练，owner 已批机时）**：
+
+```bash
+python scripts/training/train_seed_corpus.py \
+  --resume output/a31_chunked_self/checkpoint.pt \
+  --answer-source self --answer-chunking per-answer \
+  --self-answers output/a30_self_answers/ca262807_self.jsonl \
+  --max-symbols 2000000 --epochs 1 \
+  --checkpoint output/a31_onpolicy_20261003/checkpoint.pt \
+  --progress output/a31_onpolicy_20261003/progress.jsonl \
+  --keep-checkpoints on --checkpoint-history-dir output/a31_onpolicy_20261003/checkpoint.pt.history
+```
+
+四条硬约束：①`--answer-source self` 必配 `--answer-chunking per-answer` 且必给 `--self-answers`
+（`train_seed_corpus.py:673/:678` 处 `parser.error`，不静默降级）；②正式跑必给 `--checkpoint`
+（`:688-692` 拒绝默认写产品件）；③新加的覆写闸门要求**写靶不得是已存在且非 resume 源的件**
+（`DEBT-G35` 防口）——上面用的是新目录，天然满足；④`--keep-checkpoints on` 是我这一轮新定的：
+§126 把所有 `.history` 都清掉了，新臂若不主动留中途态，以后想要"同预算中间档"这类免费对照就只能重训
+（教训见 `arm-moves-two-variables-price-the-free-middle`）。
+
+**读数义务（先于数写死，不改线）**：
+1. 训后件跑 `probe_taiji_a30_stop_failure.py`（v39）× 96 枚 × 挂 seed-A 回路，`--out-report` 用新名
+   `reports/taiji_a30_stop_failure_onpolicy_20261003.json`；发表前必过 §110 判读器八条前置
+   （含 `evidence_observer_installed=true` 与等式 `loop_calls = total_steps − generations`）。
+2. 与**已入库**的门关基线（`ca262807` 那批 v38/v39 件，13/72 自停、崩塌分层 115/121）配对，
+   比较器只认测量字段：`compare_taiji_a30_report_identity.py --subtree per_item`。
+3. 三条判据原样：**A**"从不发 LF 那一群"占比下降 ∧ 存在 ≥0.10 的拖写代从 0 变 ≥20；
+   **B** L2 主列 `72 − generations_eating_full_budget ≥ 6`；**C** `SPEC-A-24` 的 L1 原样。
+   不新增线、不换次要指标、不因"只差一次"下调阈值；每条**要 ≥2 次独立取数**才算正式判定（`SPEC-A-21`）。
+4. 表层那格沿用 §131/§132 的尺：`score_taiji_r2_copy_surface_extension.py --checkpoint <训后件>
+   --circuit output/taiji_r2_copy_circuit_chat/judge/circuit-final.pt`，与装机信封的 6/260、42 命中并排
+   （差 ≥3 条才可分辨）。
+
+**训后件的体积与默认位**：默认位是否更换属 owner 裁定面，本轮不动；若读数成立也只走到"提案"为止。
+
+
+**交接补一条（本轮实测到的操作纪律）**：广面基线 `gate3`（12:08→12:40，1986 passed／5 failed）**不能当基线用**——四条红全部断在 `audit_taiji_artifact_sha_drift.py::audit()` 里、同一个根因，而我在它跑到一半时改了那台仪器（`write_text` 非原子），测试经 importlib 读到的是写盘中间态；事后单独复跑同一支文件是 **6 passed**。⇒ 规矩：改仪器与跑广面不得同时进行，跑广面期间只读不写；真基线以重跑的 `gate4` 为准。第五条红是基线 `DEBT-G11`（`tests/seed/test_platform_boundary.py::test_source_face_is_the_git_face_not_the_whole_disk`），非本轮引入。
