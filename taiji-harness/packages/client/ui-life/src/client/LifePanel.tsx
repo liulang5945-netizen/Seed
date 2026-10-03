@@ -715,249 +715,249 @@ function TrainingSection({ t, snapshot, pending, confirming, run, life }: Sectio
 
   return (
     <>
-    <details className={css.section} id="life-training" aria-labelledby={headingId} open>
-      <summary className={css.sectionSummary}>
-        <h3 className={css.sectionTitle} id={headingId}>{t('sectionTraining')}</h3>
-      </summary>
-      {/* A · run state — the highest-frequency read: "what is it doing now".
+      <details className={css.section} id="life-training" aria-labelledby={headingId} open>
+        <summary className={css.sectionSummary}>
+          <h3 className={css.sectionTitle} id={headingId}>{t('sectionTraining')}</h3>
+        </summary>
+        {/* A · run state — the highest-frequency read: "what is it doing now".
           The heading names the group, so a screen reader reaches the badges and
           the bar as one unit instead of three unrelated widgets. */}
-      <div className={css.organ} role="group" aria-labelledby={runStateId}>
-        <h4 className={css.organTitle} id={runStateId}>{t('runStateTitle')}</h4>
-        <dl className={css.facts}>
-          <Fact label={t('streamLabel')}>
-            <StateDot state={snapshot.availability.trainingStream === 'streaming' ? 'ongoing' : snapshot.availability.trainingStream === 'closed' ? 'error' : 'idle'} />
-            {t(streamKey)}
-          </Fact>
-        </dl>
-        <p className={css.trainingBadges}>
-          <Tag tone={active ? 'solid' : 'neutral'}>{active ? t('trainingRunning') : t('trainingIdle')}</Tag>
-          {training.pauseRequested && <Tag tone="warning">{t('trainingPauseRequested')}</Tag>}
-          {training.stopRequested && <Tag tone="warning">{t('trainingStopRequested')}</Tag>}
-          {training.publishing && <Tag tone="info">{t('trainingPublishing')}</Tag>}
-        </p>
-        {training.progress !== undefined
-          ? <Progress t={t} progress={training.progress} labelId={headingId} />
-          : <p className={css.muted}>{t('noProgress')}</p>}
-        {(training.warnings ?? []).map(message => (
-          <p key={message} className={css.trainingBadges}>
-            <Tag tone="warning">{t('runWarning')}</Tag> <span className={css.badgeText}>{message}</span>
+        <div className={css.organ} role="group" aria-labelledby={runStateId}>
+          <h4 className={css.organTitle} id={runStateId}>{t('runStateTitle')}</h4>
+          <dl className={css.facts}>
+            <Fact label={t('streamLabel')}>
+              <StateDot state={snapshot.availability.trainingStream === 'streaming' ? 'ongoing' : snapshot.availability.trainingStream === 'closed' ? 'error' : 'idle'} />
+              {t(streamKey)}
+            </Fact>
+          </dl>
+          <p className={css.trainingBadges}>
+            <Tag tone={active ? 'solid' : 'neutral'}>{active ? t('trainingRunning') : t('trainingIdle')}</Tag>
+            {training.pauseRequested && <Tag tone="warning">{t('trainingPauseRequested')}</Tag>}
+            {training.stopRequested && <Tag tone="warning">{t('trainingStopRequested')}</Tag>}
+            {training.publishing && <Tag tone="info">{t('trainingPublishing')}</Tag>}
           </p>
-        ))}
-      </div>
-      {/* C · run control — "what to do". Moved up next to run state so the
+          {training.progress !== undefined
+            ? <Progress t={t} progress={training.progress} labelId={headingId} />
+            : <p className={css.muted}>{t('noProgress')}</p>}
+          {(training.warnings ?? []).map(message => (
+            <p key={message} className={css.trainingBadges}>
+              <Tag tone="warning">{t('runWarning')}</Tag> <span className={css.badgeText}>{message}</span>
+            </p>
+          ))}
+        </div>
+        {/* C · run control — "what to do". Moved up next to run state so the
           training block holds both short groups and the roster below it
           becomes a block of its own. */}
-      <div className={css.organ} role="group" aria-labelledby={runControlId}>
-        <h4 className={css.organTitle} id={runControlId}>{t('runControlTitle')}</h4>
-        <div className={css.actions}>
-          <Button
-            variant="primary"
-            disabled={busy || active}
-            aria-busy={pending === 'trainStart'}
-            onClick={() => { run('trainStart', () => life.trainStart(selected.size > 0 ? { datasets: [...selected] } : {})) }}
-          >
-            {t('trainStart')}
-          </Button>
-          <Button disabled={busy || !active || training.stopRequested} aria-busy={pending === 'trainPause'} onClick={() =>{  run('trainPause', () => life.trainPause()) }}>{t('trainPause')}</Button>
-          <Button disabled={busy || !active || training.stopRequested} aria-busy={pending === 'trainResume'} onClick={() =>{  run('trainResume', () => life.trainResume()) }}>{t('trainResume')}</Button>
-          {/* The destructive pair is pushed to the far end and set off by a
+        <div className={css.organ} role="group" aria-labelledby={runControlId}>
+          <h4 className={css.organTitle} id={runControlId}>{t('runControlTitle')}</h4>
+          <div className={css.actions}>
+            <Button
+              variant="primary"
+              disabled={busy || active}
+              aria-busy={pending === 'trainStart'}
+              onClick={() => { run('trainStart', () => life.trainStart(selected.size > 0 ? { datasets: [...selected] } : {})) }}
+            >
+              {t('trainStart')}
+            </Button>
+            <Button disabled={busy || !active || training.stopRequested} aria-busy={pending === 'trainPause'} onClick={() =>{  run('trainPause', () => life.trainPause()) }}>{t('trainPause')}</Button>
+            <Button disabled={busy || !active || training.stopRequested} aria-busy={pending === 'trainResume'} onClick={() =>{  run('trainResume', () => life.trainResume()) }}>{t('trainResume')}</Button>
+            {/* The destructive pair is pushed to the far end and set off by a
               divider, so "starts on the left, destroys on the right" becomes a
               position memory rather than something to re-read every time. */}
-          <div className={css.actionCluster}>
-            {confirming === 'trainStop' && <span className={css.confirmLine}>{t('confirmStop')}</span>}
-            <Button className={css.dangerAction} disabled={busy || !active} aria-busy={pending === 'trainStop'} onClick={() =>{  run('trainStop', () => life.trainStop()) }}>{t('trainStop')}</Button>
-            {confirming === 'trainReset' && <span className={css.confirmLine}>{t('confirmReset')}</span>}
-            <Button className={css.dangerAction} disabled={busy || !active} aria-busy={pending === 'trainReset'} onClick={() =>{  run('trainReset', () => life.trainReset()) }}>{t('trainReset')}</Button>
+            <div className={css.actionCluster}>
+              {confirming === 'trainStop' && <span className={css.confirmLine}>{t('confirmStop')}</span>}
+              <Button className={css.dangerAction} disabled={busy || !active} aria-busy={pending === 'trainStop'} onClick={() =>{  run('trainStop', () => life.trainStop()) }}>{t('trainStop')}</Button>
+              {confirming === 'trainReset' && <span className={css.confirmLine}>{t('confirmReset')}</span>}
+              <Button className={css.dangerAction} disabled={busy || !active} aria-busy={pending === 'trainReset'} onClick={() =>{  run('trainReset', () => life.trainReset()) }}>{t('trainReset')}</Button>
+            </div>
           </div>
         </div>
-      </div>
-    </details>
-    {/* The roster is a page of its own, so it no longer shares a block with
+      </details>
+      {/* The roster is a page of its own, so it no longer shares a block with
         the controls that act on it. */}
-    <details className={css.section} id="life-training-data" aria-labelledby={datasetsId} open>
-      <summary className={css.sectionSummary}>
-        <h3 className={css.sectionTitle} id={datasetsId}>{t('datasetsTitle')}</h3>
-      </summary>
-      <div className={css.organ}>
-        <div className={css.uploadBlock}>
-          {/* The upload button already says "Upload training file"; a group label
+      <details className={css.section} id="life-training-data" aria-labelledby={datasetsId} open>
+        <summary className={css.sectionSummary}>
+          <h3 className={css.sectionTitle} id={datasetsId}>{t('datasetsTitle')}</h3>
+        </summary>
+        <div className={css.organ}>
+          <div className={css.uploadBlock}>
+            {/* The upload button already says "Upload training file"; a group label
               with the same words only doubled the announcement. */}
-          <div className={css.actions}>
-            <input
-              ref={fileInput}
-              className={css.fileInput}
-              type="file"
-              accept={DATASET_ACCEPT}
-              onChange={pickFile}
-            />
-            <Button variant="primary" disabled={busy || active} aria-busy={pending === 'uploadDataset'} onClick={() => { fileInput.current?.click() }}>{t('uploadPick')}</Button>
-            {picked !== null && <Button disabled={busy || active} aria-busy={pending === 'uploadDataset'} onClick={uploadFile}>{t('uploadSend')}</Button>}
-            {picked !== null && (
-              <Button disabled={busy || active} onClick={() => { setPicked(null) }}>{t('uploadCancel')}</Button>
-            )}
+            <div className={css.actions}>
+              <input
+                ref={fileInput}
+                className={css.fileInput}
+                type="file"
+                accept={DATASET_ACCEPT}
+                onChange={pickFile}
+              />
+              <Button variant="primary" disabled={busy || active} aria-busy={pending === 'uploadDataset'} onClick={() => { fileInput.current?.click() }}>{t('uploadPick')}</Button>
+              {picked !== null && <Button disabled={busy || active} aria-busy={pending === 'uploadDataset'} onClick={uploadFile}>{t('uploadSend')}</Button>}
+              {picked !== null && (
+                <Button disabled={busy || active} onClick={() => { setPicked(null) }}>{t('uploadCancel')}</Button>
+              )}
+            </div>
+            <p className={css.muted}>{t('uploadHint', { limit: `${String(UPLOAD_MAX_BYTES / (1024 * 1024))} MB` })}</p>
           </div>
-          <p className={css.muted}>{t('uploadHint', { limit: `${String(UPLOAD_MAX_BYTES / (1024 * 1024))} MB` })}</p>
-        </div>
-        {picked !== null && (
-          <p className={css.muted}>{t('uploadReady', { name: picked.name, size: formatBytes(picked.size) })}</p>
-        )}
-        {uploadError !== null && <p className={css.errorLine} role="alert">{uploadError}</p>}
-        {uploadMessage !== null && <p className={css.successLine}>{t('actionDone', { message: uploadMessage })}</p>}
-        {datasetAck !== null && <p className={css.successLine}>{datasetAck}</p>}
-        {datasets === undefined
-          ? <p className={css.unavailableNote}>{t('datasetsUnavailable')}</p>
-          : datasets.length === 0
-            ? <p className={css.muted}>{t('datasetsEmpty')}</p>
-            : (
-                  <>
-                    <p className={css.muted}>{t('datasetsGroupHint')}</p>
-                    {groupDatasets(datasets).map(group => (
-                  <div key={group.dir} className={css.datasetGroup}>
-                    <button
-                      type="button"
-                      className={css.groupToggle}
-                      aria-expanded={!foldedGroups.has(group.dir)}
-                      onClick={() => { toggleGroup(group.dir) }}
-                    >
-                      <span className={css.groupChevron}>{foldedGroups.has(group.dir) ? '▸' : '▾'}</span>
-                      <span className={css.datasetPath}>{group.dir === '' ? t('datasetRootGroup') : group.dir}</span>
-                      <span className={css.datasetSize}>{t('fileCount', { count: String(group.entries.length) })}</span>
-                    </button>
-                    {!foldedGroups.has(group.dir) && (
-                      <ul className={css.datasetList}>
-                        {group.entries.map(dataset => (
-                          <li key={dataset.path} className={css.datasetRow}>
-                            <label>
-                              <input
-                                type="checkbox"
-                                checked={selected.has(dataset.path)}
-                                disabled={busy || active}
-                                onChange={() => { toggle(dataset.path) }}
-                              />
-                              <span className={css.datasetPath}>{dataset.path}</span>
-                            </label>
-                            <span className={css.datasetSize}>{formatBytes(dataset.sizeBytes)}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                  </div>
-                ))}
-                {specDatasets !== undefined && (
-                  <p className={css.muted}>{t('specNames', { count: String(specDatasets.length) })}</p>
-                )}
-                {specMissing.length > 0 && (
-                  <p className={css.muted}>{t('specMissing', { list: specMissing.join(', ') })}</p>
-                )}
-                {selected.size === 0 && <p className={css.muted}>{t('datasetsDefaultHint')}</p>}
-              </>
-            )}
-        {/* The count sits beside the delete it sizes: "how many I ticked" and
-            "delete them" belong in one glance. */}
-        <div className={css.actions} role="group" aria-labelledby={datasetsId}>
-          {confirming === 'deleteDataset' && (
-            <ul className={css.impactList} id={datasetImpactId}>
-              {[...selected].map(path => <li key={path}>{path}</li>)}
-            </ul>
+          {picked !== null && (
+            <p className={css.muted}>{t('uploadReady', { name: picked.name, size: formatBytes(picked.size) })}</p>
           )}
-          <span className={css.muted}>{t('datasetsSelected', { count: String(selected.size) })}</span>
-          <Button
-            className={css.dangerAction}
-            disabled={busy || active || selected.size === 0}
-            aria-busy={pending === 'deleteDataset'}
-            aria-describedby={confirming === 'deleteDataset' ? datasetImpactId : undefined}
-            onClick={() => { run('deleteDataset', deleteDatasets) }}
-          >
-            {confirming === 'deleteDataset'
-              ? t('confirmDeleteDatasets', { count: String(selected.size) })
-              : t('deletePickedDatasets')}
-          </Button>
+          {uploadError !== null && <p className={css.errorLine} role="alert">{uploadError}</p>}
+          {uploadMessage !== null && <p className={css.successLine}>{t('actionDone', { message: uploadMessage })}</p>}
+          {datasetAck !== null && <p className={css.successLine}>{datasetAck}</p>}
+          {datasets === undefined
+            ? <p className={css.unavailableNote}>{t('datasetsUnavailable')}</p>
+            : datasets.length === 0
+              ? <p className={css.muted}>{t('datasetsEmpty')}</p>
+              : (
+                <>
+                  <p className={css.muted}>{t('datasetsGroupHint')}</p>
+                  {groupDatasets(datasets).map(group => (
+                    <div key={group.dir} className={css.datasetGroup}>
+                      <button
+                        type="button"
+                        className={css.groupToggle}
+                        aria-expanded={!foldedGroups.has(group.dir)}
+                        onClick={() => { toggleGroup(group.dir) }}
+                      >
+                        <span className={css.groupChevron}>{foldedGroups.has(group.dir) ? '▸' : '▾'}</span>
+                        <span className={css.datasetPath}>{group.dir === '' ? t('datasetRootGroup') : group.dir}</span>
+                        <span className={css.datasetSize}>{t('fileCount', { count: String(group.entries.length) })}</span>
+                      </button>
+                      {!foldedGroups.has(group.dir) && (
+                        <ul className={css.datasetList}>
+                          {group.entries.map(dataset => (
+                            <li key={dataset.path} className={css.datasetRow}>
+                              <label>
+                                <input
+                                  type="checkbox"
+                                  checked={selected.has(dataset.path)}
+                                  disabled={busy || active}
+                                  onChange={() => { toggle(dataset.path) }}
+                                />
+                                <span className={css.datasetPath}>{dataset.path}</span>
+                              </label>
+                              <span className={css.datasetSize}>{formatBytes(dataset.sizeBytes)}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+                  ))}
+                  {specDatasets !== undefined && (
+                    <p className={css.muted}>{t('specNames', { count: String(specDatasets.length) })}</p>
+                  )}
+                  {specMissing.length > 0 && (
+                    <p className={css.muted}>{t('specMissing', { list: specMissing.join(', ') })}</p>
+                  )}
+                  {selected.size === 0 && <p className={css.muted}>{t('datasetsDefaultHint')}</p>}
+                </>
+              )}
+          {/* The count sits beside the delete it sizes: "how many I ticked" and
+            "delete them" belong in one glance. */}
+          <div className={css.actions} role="group" aria-labelledby={datasetsId}>
+            {confirming === 'deleteDataset' && (
+              <ul className={css.impactList} id={datasetImpactId}>
+                {[...selected].map(path => <li key={path}>{path}</li>)}
+              </ul>
+            )}
+            <span className={css.muted}>{t('datasetsSelected', { count: String(selected.size) })}</span>
+            <Button
+              className={css.dangerAction}
+              disabled={busy || active || selected.size === 0}
+              aria-busy={pending === 'deleteDataset'}
+              aria-describedby={confirming === 'deleteDataset' ? datasetImpactId : undefined}
+              onClick={() => { run('deleteDataset', deleteDatasets) }}
+            >
+              {confirming === 'deleteDataset'
+                ? t('confirmDeleteDatasets', { count: String(selected.size) })
+                : t('deletePickedDatasets')}
+            </Button>
+          </div>
         </div>
-      </div>
-    </details>
-    {/* The checkpoint roster is the last of the three: it is the widest thing
+      </details>
+      {/* The checkpoint roster is the last of the three: it is the widest thing
         on the page, so it keeps a full block to itself. */}
-    <details className={css.section} id="life-checkpoints" aria-labelledby={checkpointsId} open>
-      <summary className={css.sectionSummary}>
-        <h3 className={css.sectionTitle} id={checkpointsId}>{t('checkpointsTitle')}</h3>
-      </summary>
-      <div className={css.organ}>
-        <div className={css.subHeader}>
-          <Button onClick={() => { setCheckpointsFolded(current => !current) }}>
-            {checkpointsFolded ? t('checkpointsUnfold', { count: String(training.checkpoints.length) }) : t('checkpointsFold')}
-          </Button>
-        </div>
-        {!checkpointsFolded && (
-          <>
-            {/* Activation arms from either a row or the built-in switch, so the
+      <details className={css.section} id="life-checkpoints" aria-labelledby={checkpointsId} open>
+        <summary className={css.sectionSummary}>
+          <h3 className={css.sectionTitle} id={checkpointsId}>{t('checkpointsTitle')}</h3>
+        </summary>
+        <div className={css.organ}>
+          <div className={css.subHeader}>
+            <Button onClick={() => { setCheckpointsFolded(current => !current) }}>
+              {checkpointsFolded ? t('checkpointsUnfold', { count: String(training.checkpoints.length) }) : t('checkpointsFold')}
+            </Button>
+          </div>
+          {!checkpointsFolded && (
+            <>
+              {/* Activation arms from either a row or the built-in switch, so the
                 confirming line is rendered once for the whole roster rather than
                 once per control that could arm it. */}
-            {confirming === 'activateCheckpoint' && <p className={css.confirmLine}>{t('confirmActivate')}</p>}
-            {snapshot.artifacts === undefined
-              ? <p className={css.unavailableNote}>{t('artifactsUnavailable')}</p>
-              : (
-                <dl className={css.facts}>
-                  <Fact label={t('activeCheckpointLabel')}>
-                    {snapshot.artifacts.activeId === '' ? t('builtInModel') : snapshot.artifacts.activeId}
-                  </Fact>
-                  {snapshot.artifacts.configuredId !== snapshot.artifacts.activeId && (
-                    <Fact label={t('configuredCheckpointLabel')}>
-                      {snapshot.artifacts.configuredId === '' ? t('builtInModel') : snapshot.artifacts.configuredId}
+              {confirming === 'activateCheckpoint' && <p className={css.confirmLine}>{t('confirmActivate')}</p>}
+              {snapshot.artifacts === undefined
+                ? <p className={css.unavailableNote}>{t('artifactsUnavailable')}</p>
+                : (
+                  <dl className={css.facts}>
+                    <Fact label={t('activeCheckpointLabel')}>
+                      {snapshot.artifacts.activeId === '' ? t('builtInModel') : snapshot.artifacts.activeId}
                     </Fact>
-                  )}
-                  <div className={css.actions}>
-                    <Button
-                      disabled={busy || snapshot.artifacts.activeId === ''}
-                      aria-busy={pending === 'activateCheckpoint'}
-                      onClick={() => { run('activateCheckpoint', () => life.activateCheckpoint({ checkpointId: '' })) }}
-                    >
-                      {t('activateBuiltin')}
-                    </Button>
-                  </div>
-                </dl>
-              )}
-            <Checkpoints
-              t={t}
-              checkpoints={training.checkpoints}
-              artifacts={snapshot.artifacts}
-              busy={busy}
-              selected={checkpointSelection}
-              labelId={checkpointsId}
-              onToggleSelect={toggleCheckpoint}
-              onActivate={(filename) => { run('activateCheckpoint', () => life.activateCheckpoint({ checkpointId: filename })) }}
-              onResume={(filename) => {
-                run('trainResumeCheckpoint', () => life.trainResumeCheckpoint({
-                  checkpoint: filename,
-                  ...(selected.size > 0 ? { datasets: [...selected] } : {}),
-                }))
-              }}
-            />
-            {training.checkpoints.length > 0 && (
-              <div className={css.actions} role="group" aria-labelledby={checkpointsId}>
-                {confirming === 'deleteCheckpoint' && (
-                  <ul className={css.impactList} id={checkpointImpactId}>
-                    {[...checkpointSelection].map(filename => <li key={filename}>{filename}</li>)}
-                  </ul>
+                    {snapshot.artifacts.configuredId !== snapshot.artifacts.activeId && (
+                      <Fact label={t('configuredCheckpointLabel')}>
+                        {snapshot.artifacts.configuredId === '' ? t('builtInModel') : snapshot.artifacts.configuredId}
+                      </Fact>
+                    )}
+                    <div className={css.actions}>
+                      <Button
+                        disabled={busy || snapshot.artifacts.activeId === ''}
+                        aria-busy={pending === 'activateCheckpoint'}
+                        onClick={() => { run('activateCheckpoint', () => life.activateCheckpoint({ checkpointId: '' })) }}
+                      >
+                        {t('activateBuiltin')}
+                      </Button>
+                    </div>
+                  </dl>
                 )}
-                <Button
-                  className={css.dangerAction}
-                  disabled={busy || checkpointSelection.size === 0}
-                  aria-busy={pending === 'deleteCheckpoint'}
-                  aria-describedby={confirming === 'deleteCheckpoint' ? checkpointImpactId : undefined}
-                  onClick={() => { run('deleteCheckpoint', deleteCheckpoints) }}
-                >
-                  {confirming === 'deleteCheckpoint'
-                    ? t('confirmDeleteCheckpoints', { count: String(checkpointSelection.size) })
-                    : t('deletePickedCheckpoints')}
-                </Button>
-              </div>
-            )}
-            {checkpointAck !== null && <p className={css.successLine}>{checkpointAck}</p>}
-          </>
-        )}
-      </div>
-    </details>
+              <Checkpoints
+                t={t}
+                checkpoints={training.checkpoints}
+                artifacts={snapshot.artifacts}
+                busy={busy}
+                selected={checkpointSelection}
+                labelId={checkpointsId}
+                onToggleSelect={toggleCheckpoint}
+                onActivate={(filename) => { run('activateCheckpoint', () => life.activateCheckpoint({ checkpointId: filename })) }}
+                onResume={(filename) => {
+                  run('trainResumeCheckpoint', () => life.trainResumeCheckpoint({
+                    checkpoint: filename,
+                    ...(selected.size > 0 ? { datasets: [...selected] } : {}),
+                  }))
+                }}
+              />
+              {training.checkpoints.length > 0 && (
+                <div className={css.actions} role="group" aria-labelledby={checkpointsId}>
+                  {confirming === 'deleteCheckpoint' && (
+                    <ul className={css.impactList} id={checkpointImpactId}>
+                      {[...checkpointSelection].map(filename => <li key={filename}>{filename}</li>)}
+                    </ul>
+                  )}
+                  <Button
+                    className={css.dangerAction}
+                    disabled={busy || checkpointSelection.size === 0}
+                    aria-busy={pending === 'deleteCheckpoint'}
+                    aria-describedby={confirming === 'deleteCheckpoint' ? checkpointImpactId : undefined}
+                    onClick={() => { run('deleteCheckpoint', deleteCheckpoints) }}
+                  >
+                    {confirming === 'deleteCheckpoint'
+                      ? t('confirmDeleteCheckpoints', { count: String(checkpointSelection.size) })
+                      : t('deletePickedCheckpoints')}
+                  </Button>
+                </div>
+              )}
+              {checkpointAck !== null && <p className={css.successLine}>{checkpointAck}</p>}
+            </>
+          )}
+        </div>
+      </details>
     </>
   )
 }
