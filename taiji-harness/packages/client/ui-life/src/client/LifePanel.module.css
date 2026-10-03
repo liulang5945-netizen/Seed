@@ -788,6 +788,53 @@ details:not([open]) > .sectionSummary {
 }
 
 /* Insurance tier: below this the three-column meter cannot hold at all. */
+/* The training block is the only one carrying four different things — state,
+   data, controls, checkpoints — and runs far past one screen. The two short
+   groups sit side by side; the two long ones keep the full width, because the
+   checkpoint table has a 720px minimum and halving its column would only make
+   it worse. Narrow panels fall back to the single column.
+   Selectors depend on the four groups staying direct children of #life-training
+   in this order: run state, training data, run control, checkpoints. */
+@container (min-width: 720px) {
+  #life-training {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+    gap: 16px 24px;
+  }
+
+  #life-training > .sectionSummary {
+    grid-column: 1 / -1;
+  }
+
+  /* A · run state. */
+  #life-training > .organ:nth-of-type(1) {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  /* B · training data, full width: the roster is a long list. */
+  #life-training > .organ:nth-of-type(2) {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+
+  /* C · run control, beside run state rather than under it. Its top rule would
+     otherwise cut across the empty half-row, so the gap separates instead. */
+  #life-training > .organ:nth-of-type(3) {
+    grid-column: 2;
+    grid-row: 1;
+    padding-top: 0;
+    border-top: 0;
+  }
+
+  /* D · checkpoints, full width. */
+  #life-training > .organ:nth-of-type(4) {
+    grid-column: 1 / -1;
+    grid-row: 3;
+  }
+}
+
 @container (max-width: 240px) {
   .meter {
     grid-template-columns: 1fr;
