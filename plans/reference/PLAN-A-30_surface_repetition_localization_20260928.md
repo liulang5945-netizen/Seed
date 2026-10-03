@@ -7666,3 +7666,33 @@ evidence_calls_by_arm: {control: 0, treated: 35857}}` ⇒ 治疗臂的加性证�
 **产品侧仍零改动**：`taiji/config.py:241` `copy_evidence_window_steps=None`、解码路径没碰、装机那份自停 13/72 为在案记录。
 ⇒ **目标（模型能力提升进产品）未完成**；本格把 owner 那一格的两笔账补成了**有读数的价格表**：
 留这条通道＝拿 7/24 逐字复述，付 167/288 停止格 + 11/24 成句；关掉＝回到不挂回路。
+
+
+### 第一百一十八次停靠·`DEBT-G30` 第二步落地（探针升 v39）：这台仪器不再自己推导证据门的有效值（2026-10-03 08:41）
+
+**改了什么（纯观测面，一处读取、四处共用）**：`probe_taiji_a30_stop_failure.py` 里原本有**两处**各自复制
+`config if override is None else override` 那条式子——信封里的
+`copy_evidence_utf8_gate_effective`／`_config`／`_override` 三列，与守卫 `evidence_gate_flag_honored`。
+同一条件式在产品侧 `taiji/model.py` 已有一份、在公开出口 `copy_evidence_utf8_gate_state()`（`DEBT-G30` 第一步）又有一份
+⇒ 复制的那两份会随产品改动过期（本仓已因"两处各写一份同一判定"错过一次静默错判）。
+v39：两处都改成读**同一次** `gate_state = runtime.model.substrate.copy_evidence_utf8_gate_state()`。
+
+**逐位不变是比较器给的 rc**：同命令（`--checkpoint checkpoints/seed_a31self_with_circuit.pt --limit 1`）跑出的 v39 冒烟
+与已入库的 v38 冒烟件 `compare_taiji_a30_report_identity.py --subtree per_item` ⇒
+**`identical=true`、`behavior_diff_count=0`、`schema_diff_count=0`、`rc=0`**；
+三列取值 `effective=true／config=false／override=true` 与 v38 那枚逐值同（这正是 restore 自动挂载把门打开那一档），
+`evidence_gate_flag_honored=true`、`evidence_calls_in_generation_loop=753`、`total_steps=756` 也逐值同。
+冒烟件入库：`reports/taiji_a30_stop_failure_v39_gate_state_smoke1_envelope_20261003.json`（68,275 字节）。
+
+**新守卫两条都能为假**（`tests/taiji_native/test_a30_gate_state_readout.py::test_the_a30_probe_reads_the_public_accessor_too`）：
+①私有字段 `_copy_evidence_utf8_gate_override` 在这台仪器源码里**必须一次都不出现**（回退复制写法就红）；
+②`gate_state[` 出现次数必须**恰好是 4**（三列＋那条守卫）——如果"改成读出口"却变成在两处各读一遍，
+计数会跳到 8 而当场红，一次读取与四次快照不是同一件事。钉版范围同步扩到 `range(6, 40)`。
+
+**迁移面进度（`DEBT-G30` 就地更新）**：6 处外部复制推导 ⇒ **现在剩 4 处**
+（`audit_taiji_a30_stop_signal_presence.py:403-408`、`score_taiji_r2_copy_surface_extension.py:135-138`、
+`test_a30_copy_evidence_gate_flag.py:30`、`test_a25_gate_on_the_load_path.py:44`），
+各自下次升版顺手改，不为迁移单独升版；`test_a30_gate_state_readout.py` 里那份旧推导式**故意保留**当交叉验证。
+
+**本轮零产品改动**（动的是仪器的读法，不是产品码；`taiji/config.py:241` 的默认位仍 `None`）。
+门禁：`tests/taiji_native -k "a30 or g14"` ＝ **126 passed**（含新那两条），ruff 0 条。

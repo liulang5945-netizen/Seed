@@ -1473,8 +1473,19 @@ def main() -> int:
             )
 
     substrate.observe = original_observe  # type: ignore[method-assign]
+    #: v39（DEBT-G30）：门的状态**一次读自产品公开出口**，下面两处（信封三列与守卫 `evidence_gate_flag_honored`）
+    #: 都取这一份，不再各自复制 config-or-override 那条式子。
+    gate_state = runtime.model.substrate.copy_evidence_utf8_gate_state()
     report = {
-        "format": "taiji-a30-stop-failure-v38",
+        "format": "taiji-a30-stop-failure-v39",
+        "format_note_v39": "v39（2026-10-03）：DEBT-G30 第二步——这台仪器**不再自己推导证据门的有效值**。"
+        "v38 及以前有两处各自复制 `config if override is None else override`"
+        "（信封里 effective／config／override 三列，与守卫 `evidence_gate_flag_honored`），"
+        "而同一条式子在产品侧 `taiji/model.py` 与公开出口 `copy_evidence_utf8_gate_state()` 各已有一份"
+        "⇒ 复制的那两份会随产品改动过期（本仓已因'两处各写一份同一判定'错过一次静默错判）。"
+        "v39 两处改读同一份 `gate_state`（一次读取、四处共用）。**纯观测面**：不改判定、不改张量，"
+        "那三列与该守卫的取值口径逐字不变；同命令 1 题面冒烟与已入库 v38 冒烟件比 `--subtree per_item` "
+        "必须 `identical=true`、`rc=0`（读数写在 PLAN-A-30 §第一百一十八次停靠）。",
         "format_note_v38": "v38（2026-10-03）：DEBT-G33——**证据通道的环内调用计数不再依赖 α／上限旗标**。"
         "v12 到 v37 这只观察者只在 `--copy-evidence-alpha ≠ 1.0` 或 `--relevance-ceiling-c` 非空时才装，"
         "而计数器初始化就是 `[0, 0]` ⇒ 默认装配（α=1.0、无上限）的件里 `evidence_calls_in_generation_loop` "
@@ -1654,17 +1665,11 @@ def main() -> int:
         # 有效值不是 config 那一位：`taiji/config.py:236` 默认 False，而 restore 的自动挂载分支
         # 会 `set_copy_evidence_utf8_gate(True)`（owner 裁定 (b)，见 `taiji/model.py:3497` 那段注释）。
         # 只报 config 会把"门是开的"读成"门是关的"，故这里报**有效值**并同带两个成分。
-        "copy_evidence_utf8_gate_effective": bool(
-            runtime.model.substrate.config.copy_evidence_utf8_gate
-            if getattr(runtime.model.substrate, "_copy_evidence_utf8_gate_override", None) is None
-            else bool(runtime.model.substrate._copy_evidence_utf8_gate_override)
-        ),
-        "copy_evidence_utf8_gate_config": bool(
-            runtime.model.substrate.config.copy_evidence_utf8_gate
-        ),
-        "copy_evidence_utf8_gate_override": getattr(
-            runtime.model.substrate, "_copy_evidence_utf8_gate_override", None
-        ),
+        # v39（DEBT-G30 第二步）：三列一律取自产品公开出口 `copy_evidence_utf8_gate_state()`——
+        # v38 及以前这里自己再推一遍 config-or-override，与 `taiji/model.py` 里那条式子是两份实现。
+        "copy_evidence_utf8_gate_effective": gate_state["effective"],
+        "copy_evidence_utf8_gate_config": gate_state["config"],
+        "copy_evidence_utf8_gate_override": gate_state["override"],
         # v7：门槛①（回写放行）与上面那条"证据 UTF-8 位置门"是**两条不同的门**，一起报才不会互相顶名。
         "copy_evidence_gate_off_requested": bool(args.no_copy_evidence_gate),
         "copy_evidence_alpha": args.copy_evidence_alpha,
@@ -1777,12 +1782,9 @@ def main() -> int:
                 alpha_calls[2] if args.relevance_ceiling_c is not None else None
             ),
             # v8：旗标必须**被走到**——传了 `--no-copy-evidence-gate` 却仍报出有效值为真，就是仪器没生效。
+            # v39：有效值取上面那一份 `gate_state`（读自公开出口），与信封那三列同一个来源，不再二次推导。
             "evidence_gate_flag_honored": (not args.no_copy_evidence_gate)
-            or not bool(
-                substrate.config.copy_evidence_utf8_gate
-                if getattr(substrate, "_copy_evidence_utf8_gate_override", None) is None
-                else substrate._copy_evidence_utf8_gate_override
-            ),
+            or not gate_state["effective"],
             "observe_calls_by_caller": dict(
                 sorted(caller_totals.items(), key=lambda pair: -pair[1])[:12]
             ),

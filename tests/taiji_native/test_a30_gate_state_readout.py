@@ -103,3 +103,23 @@ def test_the_readout_is_used_inside_the_model_rather_than_duplicated() -> None:
     assert source.count('self._copy_evidence_utf8_gate_effective()') >= 2, source.count(
         'self._copy_evidence_utf8_gate_effective()'
     )
+
+
+def test_the_a30_probe_reads_the_public_accessor_too() -> None:
+    """DEBT-G30 第二步（探针升 v39）：L2 仪器那两处复制推导已改读公开出口。
+
+    钉两件事：①私有字段 `_copy_evidence_utf8_gate_override` 在这台仪器里**一次都不许再出现**
+    ——它出现就意味着有人又开始复制 `config-or-override` 那条式子（v38 及以前正是两份复制）；
+    ②三列与那条守卫必须共用**同一次读取**（`gate_state[` 恰好出现四次：effective／config／override
+    加守卫一处），免得"改成读出口"却又在多处各读一遍、把一次读取变成四次快照。
+    """
+
+    from pathlib import Path
+
+    probe_path = (
+        Path(__file__).resolve().parents[2] / "scripts" / "training" / "probe_taiji_a30_stop_failure.py"
+    )
+    probe = probe_path.read_text(encoding="utf-8")
+    assert "_copy_evidence_utf8_gate_override" not in probe
+    assert "gate_state = runtime.model.substrate.copy_evidence_utf8_gate_state()" in probe
+    assert probe.count("gate_state[") == 4, probe.count("gate_state[")
