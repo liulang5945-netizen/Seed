@@ -198,6 +198,17 @@ def patch_envelope_config_flags(envelope: dict[str, Any], flags: dict[str, bool]
     return patched
 
 
+def exit_record_path(progress_path: Path | str) -> Path:
+    """退出记账件的位置：与进度日志同目录、同词干，**按臂分开**（多台训练共用目录时不许互抢）。
+
+    单独成一个函数是因为有两个读者（`run_training` 写它、`main` 打印它）与测试——
+    路径规则只能住一处（一副档只住一处）。
+    """
+
+    progress_path = Path(progress_path)
+    return progress_path.with_name(f"{progress_path.stem}_exit.json")
+
+
 def run_training(
     *,
     corpus_paths: Sequence[Path | str],
@@ -312,7 +323,7 @@ def run_training(
     window_correct = 0
     window_surprise = 0.0
 
-    def _flush(final: bool) -> None:
+    def _flush(final: bool, exit_reason: str | None = None) -> None:
         if window_ticks <= 0 and not final:
             return
         entry = {
@@ -324,8 +335,34 @@ def run_training(
             "holdout_surprise": model.score_bytes(HOLDOUT_PROBE)["mean_surprise"],
             "elapsed_seconds": time.perf_counter() - started,
         }
+        if exit_reason is not None:
+            #: DEBT-G14：退出原因与预算达成与否**必须落盘**。此前档里只有 `progress.jsonl` 的
+            #: 一条正常记录当收尾（`train_seed_corpus` 的预算支是 `ticks >= base_ticks + max_symbols`），
+            #: 于是"这枚件吃满预算没有"只能反向推——实测代价是一枚只吃到 37.5% 预算的件
+            #: 被当成"在跑"引用了一整轮（PLAN-A-30 §2ai）。这些键**只出现在收尾那一行**，
+            #: 周期性行一字不动（守卫 `test_g14_trainer_exit_accounting` 钉这一条）。
+            entry["exit_reason"] = exit_reason
+            entry["base_ticks"] = int(base_ticks)
+            entry["budget_max_symbols"] = int(max_symbols) if max_symbols is not None else None
+            entry["ticks_at_exit"] = int(ticks)
+            entry["reached_budget"] = bool(
+                max_symbols is not None and ticks >= base_ticks + int(max_symbols)
+            )
         with progress_path.open("a", encoding="utf-8") as handle:
             handle.write(json.dumps(entry, ensure_ascii=False) + "\n")
+        if exit_reason is not None:
+            #: 同一份字典写两处（进度行＋独立件），所以两者不可能互相矛盾；
+            #: `checkpoint_path`/`corpus_fingerprint` 让这件能独立回答"哪枚档、吃没吃满"。
+            exit_record_path(progress_path).write_text(
+                json.dumps(
+                    {**entry, "checkpoint_path": str(checkpoint_path),
+                     "corpus_fingerprint": fingerprint},
+                    ensure_ascii=False,
+                    indent=2,
+                ),
+                encoding="utf-8",
+                newline="\n",
+            )
 
     #: A-4／PLAN-A-26：读出模式决定**哪条链**在学。`action`＝既有行为逐位不变；
     #: `predictive` 把下一字节误差送到 F1 专用读出（＋私有时间语境）——`observe` 明令此时
@@ -384,7 +421,7 @@ def run_training(
                     _persist()
                     last_checkpoint = ticks
                 if max_symbols is not None and ticks >= base_ticks + max_symbols:
-                    _flush(final=True)
+                    _flush(final=True, exit_reason="max_symbols_reached")
                     _persist()
                     return _summary(model, ticks)
             continue
@@ -405,10 +442,10 @@ def run_training(
             if ticks % checkpoint_every == 0:
                 _persist()
             if max_symbols is not None and ticks >= base_ticks + max_symbols:
-                _flush(final=True)
+                _flush(final=True, exit_reason="max_symbols_reached")
                 _persist()
                 return _summary(model, ticks)
-    _flush(final=True)
+    _flush(final=True, exit_reason="corpus_exhausted")
     _persist()
     return _summary(model, ticks)
 
@@ -734,6 +771,14 @@ def main() -> None:
         self_answers_path=args.self_answers_path,
     )
     print(json.dumps(summary, ensure_ascii=False))
+    #: DEBT-G14②：操作侧曾拿着一个 **0 字节的 `run.log`** 判断"这轮跑到哪了"——空文件比没有更误导。
+    #: 收尾把退出记账**打到 stdout**（谁想留档就重定向这一段），它的键与 `*_exit.json` 同源同值。
+    print(
+        json.dumps(
+            json.loads(exit_record_path(progress_path).read_text(encoding="utf-8")),
+            ensure_ascii=False,
+        )
+    )
 
 
 if __name__ == "__main__":
