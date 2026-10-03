@@ -285,6 +285,18 @@ def rule_verdict(control: dict[str, Any], treated: list[dict[str, Any]]) -> dict
     }
 
 
+def _window_flag_honored(requested, arms) -> bool:
+    """给了 `--product-window-steps` 就必须有至少一臂带上它，否则这次读数不是「门开了」的对照。
+
+    实测成因（2026-10-03）：控制臂当时不接这个旗标，而治疗臂列表在没给 `--circuit` 时为空 ⇒
+    两件的读数**逐字节相同**、全文找不到 `128`。静默空转的旗标比不给更坏，它会产出一条假对照。
+    """
+
+    if requested is None:
+        return True
+    return any(arm.get("product_window_steps") == requested for arm in arms)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--checkpoint", default="checkpoints/seed_beta.pt")
@@ -351,7 +363,9 @@ def main() -> int:
     if not manifest.is_absolute():
         manifest = PROJECT_ROOT / manifest
     items = load_items(manifest)
-    control = run_arm(items, checkpoint, None, surface=surface)
+    control = run_arm(
+        items, checkpoint, None, surface=surface, product_window_steps=args.product_window_steps
+    )
     treated = [
         run_arm(
             items,
@@ -367,6 +381,13 @@ def main() -> int:
     #: PLAN-A-28 档：同一份回路、同一个基底，只换"怎么挂上来"。
     #: `enable_copy_circuit` 与 `envelope_auto_mount` 若逐位相同 ⇒ 产品入口与探针入口等价；
     #: 门关档则是裁定 (b) 没补到产品入口时产品会读到的数（合法性代价直接可见）。
+    if not _window_flag_honored(args.product_window_steps, [control, *treated]):
+        raise SystemExit(
+            "--product-window-steps 给了 " + str(args.product_window_steps) +
+            "，但没有任何一臂带上它（控制臂不接旗标、治疗臂列表为空）⇒ 这次读数不是门开了的对照，"
+            "不落件；要么给 --circuit，要么让控制臂接旗标。"
+        )
+
     envelope_meta: list[dict[str, Any]] = []
     if args.circuit_in_envelope:
         envelope_dir = Path(args.envelope_dir)

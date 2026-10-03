@@ -1,0 +1,780 @@
+{
+  "format": "taiji-r2-copy-surface-extension-v1",
+  "prereg": "plans/reference/SPEC-A-21_r2_surface_extension_prereg_20260925.md",
+  "judge_prereg": "plans/reference/SPEC-A-22_r2_a2_5_query_conditioned_selector_prereg_20260926.md",
+  "manifest": "plans/manifests/r2_copy_surface_extension_v1.json",
+  "chain": "base_raw_bytes",
+  "manifest_sha256": "4d04d6f48e41a180131e18efaf31634fa4b6147c10aaf5acb1533745e246cf87",
+  "checkpoint": "checkpoints/seed_a31self_with_circuit.pt",
+  "checkpoint_sha256": "d6169a358eaee6d1",
+  "copy_evidence_utf8_gate": false,
+  "circuit_carried_envelopes": [],
+  "control_no_circuit": {
+    "circuit": null,
+    "chain": "base_raw_bytes",
+    "mount_entry": "envelope_auto_mount",
+    "evidence_window_steps": null,
+    "product_window_steps": 128,
+    "window_arm": {
+      "calls": 0,
+      "emitted": 0,
+      "silenced": 0
+    },
+    "gate_effective": true,
+    "items": 104,
+    "texts": 260,
+    "well_formed_texts": 6,
+    "well_formed_rate": 0.0231,
+    "utf8_decodable_rate": 0.0769,
+    "utf8_decodable_trimmed_rate": 1.0,
+    "illegal_after_tail_trim_rate": 0.0,
+    "strict_hits": 44,
+    "rows": [
+      {
+        "id": "X001",
+        "family": "given_then_ask",
+        "hit": true,
+        "answer": "轩轩轩轩轩轩轩轩。明轩轩轩轩轩轩。明轩轩轩�",
+        "well_formed": false
+      },
+      {
+        "id": "X002",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "苷苷州苷苷苷州苷苷苋苷苷苷佋苋苷苋苷苷苷州�",
+        "well_formed": false
+      },
+      {
+        "id": "X003",
+        "family": "given_then_ask",
+        "hit": true,
+        "answer": "诗欢欢欢欢欢欢欢欢欢欢欢欢欢欢欢欢的是36欢�",
+        "well_formed": false
+      },
+      {
+        "id": "X004",
+        "family": "with_distractor",
+        "hit": true,
+        "answer": "跷图目图图。图。海囮目图海囮图海图海囮囮图�",
+        "well_formed": false
+      },
+      {
+        "id": "X005",
+        "family": "given_then_ask",
+        "hit": true,
+        "answer": "賱喝乌龙䳌龙龙䳌龙䳌龙龙䳌龙龙乳时爱喝乌龙�",
+        "well_formed": false
+      },
+      {
+        "id": "X006",
+        "family": "with_distractor",
+        "hit": true,
+        "answer": "养丮鸮鸮鸮鸮鸮鸮鸮檸雪鸮鸮鸮鸮鸮雪鸮丮鸮鸮�",
+        "well_formed": false
+      },
+      {
+        "id": "X007",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "近海客读读近海客读读近海客近海客读近近海客�",
+        "well_formed": false
+      },
+      {
+        "id": "X008",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "輌包汱包包汌包汬最笼吃吃吃吃吃吃吃吃吃吃吃�",
+        "well_formed": false
+      },
+      {
+        "id": "X009",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "萐雨成吐成吐成吐我吐我吐我我成雨成雨我吐成�",
+        "well_formed": false
+      },
+      {
+        "id": "X010",
+        "family": "with_distractor",
+        "hit": true,
+        "answer": "西安西安西安西安西安西安西安西安西安西安西�",
+        "well_formed": false
+      },
+      {
+        "id": "X011",
+        "family": "given_then_ask",
+        "hit": true,
+        "answer": "诗212121212121212121212121212121欢2121212121212121212121212121",
+        "well_formed": false
+      },
+      {
+        "id": "X012",
+        "family": "with_distractor",
+        "hit": true,
+        "answer": "域星星星晨星皘晟队晨星皘晟队晙皘晟队星队星�",
+        "well_formed": false
+      },
+      {
+        "id": "X013",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "苉苉打英喝英喝英喝英喝英喝英喝英打苉打苉打�",
+        "well_formed": false
+      },
+      {
+        "id": "X014",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "踀养一养一养一养一养一养一养一养一养一养一�",
+        "well_formed": false
+      },
+      {
+        "id": "X015",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "近泯近泻读读读读读读读读近泯读近泻近泻近泻�",
+        "well_formed": false
+      },
+      {
+        "id": "X016",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "辣吃辣吃辣吃辣吃辣吃辣吃辣吃辣吃辣吃辣吃辣�",
+        "well_formed": false
+      },
+      {
+        "id": "X017",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "艿泽承承承承承承承承承承承承承承承承承承承�",
+        "well_formed": false
+      },
+      {
+        "id": "X018",
+        "family": "with_distractor",
+        "hit": true,
+        "answer": "蝒岛住岛青岛住岛青岛青岛岛青岛我住岛青岛青�",
+        "well_formed": false
+      },
+      {
+        "id": "X019",
+        "family": "given_then_ask",
+        "hit": true,
+        "answer": "诗77777777777777777777777777777777777777777777777777777777777",
+        "well_formed": false
+      },
+      {
+        "id": "X020",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "径鳳徳徳徳径鳟徟径鳟徟径鳳徟泟泳径鳟鳟泟鳟�",
+        "well_formed": false
+      },
+      {
+        "id": "X021",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "花酿喝时爱酿喝时爱酿喝时爱酿喝时爱酿喝汱酿�",
+        "well_formed": false
+      },
+      {
+        "id": "X022",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "袋袋袋一养一养一养一养一养一养一养一养一养�",
+        "well_formed": false
+      },
+      {
+        "id": "X023",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "读读读读读读读读读读读读读读读读读读读读语�",
+        "well_formed": false
+      },
+      {
+        "id": "X024",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "艍泱吃羊艍泉泉泉泉泉泡馍泡泾吃羊艍艍泉泉泉�",
+        "well_formed": false
+      },
+      {
+        "id": "X025",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "远远远远远远〝远远房远远远远〝远远濜迿远远�",
+        "well_formed": false
+      },
+      {
+        "id": "X026",
+        "family": "with_distractor",
+        "hit": true,
+        "answer": "岙长沙长沙长沙长沙长沙长沙长沙长沙长沙长沙�",
+        "well_formed": false
+      },
+      {
+        "id": "X027",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "诗99999999999999999999999999999999999999999999999999999999999",
+        "well_formed": false
+      },
+      {
+        "id": "X028",
+        "family": "with_distractor",
+        "hit": true,
+        "answer": "归云的项皺归云目归云目归云目归云目归云目归�",
+        "well_formed": false
+      },
+      {
+        "id": "X029",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "賬柠檬柠檬柠檬柠檬柠檬柠檬柠檬檬檬檬檬檬檬�",
+        "well_formed": false
+      },
+      {
+        "id": "X030",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝�",
+        "well_formed": false
+      },
+      {
+        "id": "X031",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "近毻读读读读读读读读读读读读读读读七迺读读�",
+        "well_formed": false
+      },
+      {
+        "id": "X032",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "胣汣汣汣汣汤胡胡胱吱胱吃辣汤胣汤胣汤胱吱胱�",
+        "well_formed": false
+      },
+      {
+        "id": "X033",
+        "family": "given_then_ask",
+        "hit": true,
+        "answer": "艕安安慕安慕安慕安慕安慕安慕安慕安慕安慕安�",
+        "well_formed": false
+      },
+      {
+        "id": "X034",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "蘎佘佘明明明明明明明明明厎佘明明明明佘明明�",
+        "well_formed": false
+      },
+      {
+        "id": "X035",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "诗2424。\n2424字2424242424欢242424242424242424242424242424242",
+        "well_formed": false
+      },
+      {
+        "id": "X036",
+        "family": "with_distractor",
+        "hit": true,
+        "answer": "听涛目听涛皬涛项涛涛听涛鬬涛听涛听涛听涛听�",
+        "well_formed": false
+      },
+      {
+        "id": "X037",
+        "family": "given_then_ask",
+        "hit": true,
+        "answer": "茶砖茶砖茶砖茶砖茶砖茶砖茶砖茶砖茶砖茶砖茶�",
+        "well_formed": false
+      },
+      {
+        "id": "X038",
+        "family": "with_distractor",
+        "hit": true,
+        "answer": "蜜獾一养一养一养一养一养一养一养一养一养一�",
+        "well_formed": false
+      },
+      {
+        "id": "X039",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "这近梦读读近溪迪近溪迬近溪迬近梦梦梦梦梦溪�",
+        "well_formed": false
+      },
+      {
+        "id": "X040",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "臇臇臭臭臇臭臭臇臇臭臭臇臱吱臭臭臇臇臇臱吱�",
+        "well_formed": false
+      },
+      {
+        "id": "X041",
+        "family": "given_then_ask",
+        "hit": true,
+        "answer": "蝒青青青青青青青青青砚青青青青青青青栚青青�",
+        "well_formed": false
+      },
+      {
+        "id": "X042",
+        "family": "with_distractor",
+        "hit": true,
+        "answer": "跞州州州州州州州兰兰州。州州我住州住州我住�",
+        "well_formed": false
+      },
+      {
+        "id": "X043",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "诗77777777777777777777777777777777一77欢欢欢欢欢欢欢欢",
+        "well_formed": false
+      },
+      {
+        "id": "X044",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "埳阳柳柳柳柳柳柳柳柳柳柳柳柳阘柳柳柳阘柳柳�",
+        "well_formed": false
+      },
+      {
+        "id": "X045",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "賱喝普普普普普普普普普普普普普普普普普普普�",
+        "well_formed": false
+      },
+      {
+        "id": "X046",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "踀养一养一养一养一养一养一养一养一养一养一�",
+        "well_formed": false
+      },
+      {
+        "id": "X047",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "这近毻读读读读读读读读读工迩迩读读读读读读�",
+        "well_formed": false
+      },
+      {
+        "id": "X048",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "苗苗苗苗苗苗苗苗苗苗苗苗苗苗苗苗苗苗芋苗苗�",
+        "well_formed": false
+      },
+      {
+        "id": "X049",
+        "family": "given_then_ask",
+        "hit": true,
+        "answer": "贛宁。宁。宁洛宁洛宁洛宁洛宁洛宁。宁洛宁宁�",
+        "well_formed": false
+      },
+      {
+        "id": "X050",
+        "family": "with_distractor",
+        "hit": true,
+        "answer": "賢宁波宁波宁波宁波宁波宁波宁波波波波波波波�",
+        "well_formed": false
+      },
+      {
+        "id": "X051",
+        "family": "given_then_ask",
+        "hit": true,
+        "answer": "诗88888888888888888888888888888888888888888888888888888888888",
+        "well_formed": false
+      },
+      {
+        "id": "X052",
+        "family": "with_distractor",
+        "hit": true,
+        "answer": "薏影影影疏影疏影疏影疏影疏影影鱱影影影疏影�",
+        "well_formed": false
+      },
+      {
+        "id": "X053",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "荞荞荞荞荞荞荞荞荞荞荞茶籶爱荞茶爱荞荞荞荞�",
+        "well_formed": false
+      },
+      {
+        "id": "X054",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "艉养一养一养一养一养一养一养一养一养一养一�",
+        "well_formed": false
+      },
+      {
+        "id": "X055",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "近读读读读读读读读读读读读读读读读读读读迯�",
+        "well_formed": false
+      },
+      {
+        "id": "X056",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "艱吃鸭艱吃鸭艱吃鸭艱吃鸭艱吃鸭艱吃鸭艱吃鸭�",
+        "well_formed": false
+      },
+      {
+        "id": "X057",
+        "family": "given_then_ask",
+        "hit": true,
+        "answer": "躈人予。时予。时予时予时予时予时予时予。时�",
+        "well_formed": false
+      },
+      {
+        "id": "X058",
+        "family": "with_distractor",
+        "hit": true,
+        "answer": "踩州佸州温州温州温州温州温州温州温州温州温�",
+        "well_formed": false
+      },
+      {
+        "id": "X059",
+        "family": "given_then_ask",
+        "hit": true,
+        "answer": "诗21212121212121212121212121212121212121212121212121212121212",
+        "well_formed": false
+      },
+      {
+        "id": "X060",
+        "family": "with_distractor",
+        "hit": true,
+        "answer": "厣风目厣临风掣风风风厎目厣临风掣风风风风风�",
+        "well_formed": false
+      },
+      {
+        "id": "X061",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "茶红时红时红时红时红时红时红时红时红时红时�",
+        "well_formed": false
+      },
+      {
+        "id": "X062",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "踀养一养一养一养一养一养一养一养一养一养一�",
+        "well_formed": false
+      },
+      {
+        "id": "X063",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "这近洛阳读读近洛阳读读近洛阳近洛阳近洛阳伽�",
+        "well_formed": false
+      },
+      {
+        "id": "X064",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "蟱吃蟱吃蟱吃蟱吃蟱吃蟱吃蟌包汤包汤包汤包汤�",
+        "well_formed": false
+      },
+      {
+        "id": "X065",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "蠚堚栚堚栚堚我我我倂倂倀砚堚堚我堚嚠砚堚我�",
+        "well_formed": false
+      },
+      {
+        "id": "X066",
+        "family": "with_distractor",
+        "hit": true,
+        "answer": "崛阳阳阳阳阳洛阳洛阳阳阳阳。住峳阳阳洛阳阳�",
+        "well_formed": false
+      },
+      {
+        "id": "X067",
+        "family": "given_then_ask",
+        "hit": true,
+        "answer": "诗256256256256256256欢2525252525252525252525252525256欢252525",
+        "well_formed": false
+      },
+      {
+        "id": "X068",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "宿雮宿雮宿雮宿雮宿雮宿雮宿雮宿雮宿雮宿雮宿�",
+        "well_formed": false
+      },
+      {
+        "id": "X069",
+        "family": "given_then_ask",
+        "hit": true,
+        "answer": "賱喝陈皮时爱喝陈皮水皮水陈皮时皮时皮时爱喝�",
+        "well_formed": false
+      },
+      {
+        "id": "X070",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "踀养一养一养一养一养一养一养一养一养一养一�",
+        "well_formed": false
+      },
+      {
+        "id": "X071",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "这这读读读读读读读读读读读读读读读读读一读�",
+        "well_formed": false
+      },
+      {
+        "id": "X072",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "艛艛艛艛艛艛艛艛艛艛艛艉面汱吃牉面汉面汉面�",
+        "well_formed": false
+      },
+      {
+        "id": "X073",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "苙苙苙苙苙苙苙苙苙苙苙苙晚苙苙苙苙苙苙苙苙�",
+        "well_formed": false
+      },
+      {
+        "id": "X074",
+        "family": "with_distractor",
+        "hit": true,
+        "answer": "艬州州州州州州州州扬州扬扬扬扬扬州扬州扬州�",
+        "well_formed": false
+      },
+      {
+        "id": "X075",
+        "family": "given_then_ask",
+        "hit": true,
+        "answer": "诗31313131313131313131313131313131313131313131313131313131313",
+        "well_formed": false
+      },
+      {
+        "id": "X076",
+        "family": "with_distractor",
+        "hit": true,
+        "answer": "埌舟舟舟舟舟舟舟舟舟舟舟行舟蟌舟蟌舟蟟舟舟�",
+        "well_formed": false
+      },
+      {
+        "id": "X077",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "荷饮荷饮。喝荷饮。喝荷饮。喝荷饮。喝荷饮荷�",
+        "well_formed": false
+      },
+      {
+        "id": "X078",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "踀养一养一养一养一养一养一养一养一养一养一�",
+        "well_formed": false
+      },
+      {
+        "id": "X079",
+        "family": "given_then_ask",
+        "hit": true,
+        "answer": "近梦近梦粱录近梦粱录近梦粱录近梦粱录近梦粱�",
+        "well_formed": false
+      },
+      {
+        "id": "X080",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "踱吃鱼踱吃鱼踱吃鱼踱吃鱼踱吃鱼踱吃鱼踀爱吃�",
+        "well_formed": false
+      },
+      {
+        "id": "X081",
+        "family": "given_then_ask",
+        "hit": true,
+        "answer": "舟舟舟舟舟舟舟舟。沈舟舟舟舟舟舟。沈舟舟舟�",
+        "well_formed": false
+      },
+      {
+        "id": "X082",
+        "family": "with_distractor",
+        "hit": true,
+        "answer": "艉州州州州州州州州泉州泉州泉州泉州泉州佉州�",
+        "well_formed": false
+      },
+      {
+        "id": "X083",
+        "family": "given_then_ask",
+        "hit": true,
+        "answer": "诗2020202020202020是520202020202020202020202020202020202020202",
+        "well_formed": false
+      },
+      {
+        "id": "X084",
+        "family": "with_distractor",
+        "hit": true,
+        "answer": "囮目咛舒望舒项戒舒项戒舒项曮咒舒舒舒舒舒舒�",
+        "well_formed": false
+      },
+      {
+        "id": "X085",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "襱山楱山楱山楱楱楱楱楱楱楱楱山楱山山山山山�",
+        "well_formed": false
+      },
+      {
+        "id": "X086",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "踀养一养一养一养一养一养一养一养一养一养一�",
+        "well_formed": false
+      },
+      {
+        "id": "X087",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "迿梦读读读读读读读读读读读读读读读读读读迯�",
+        "well_formed": false
+      },
+      {
+        "id": "X088",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "踴鸣水鸣水鸣水鸣水鸀爱吃吃吃吃吃吃吃吃吃吃�",
+        "well_formed": false
+      },
+      {
+        "id": "X089",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "蘭㘭〘昭阭㘭阭㘭。昭阭阭昭阭阭昭阭阭阭阭昭�",
+        "well_formed": false
+      },
+      {
+        "id": "X090",
+        "family": "with_distractor",
+        "hit": true,
+        "answer": "芜湖芜湖芜我住喖芜湖湖湖湖湖湖湖芜我住喖芜�",
+        "well_formed": false
+      },
+      {
+        "id": "X091",
+        "family": "given_then_ask",
+        "hit": true,
+        "answer": "诘欢欢欢欢欢欢欢欢欢欢欢欢欢欢欢18是61818欢18�",
+        "well_formed": false
+      },
+      {
+        "id": "X092",
+        "family": "with_distractor",
+        "hit": true,
+        "answer": "說央央央央央央央央央央央央未央央央央央央央�",
+        "well_formed": false
+      },
+      {
+        "id": "X093",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "喝茉茉茉茉茉茉茉茉茉茉茉茉茉茉茉茉茉茉茉茉�",
+        "well_formed": false
+      },
+      {
+        "id": "X094",
+        "family": "with_distractor",
+        "hit": true,
+        "answer": "蝙蝙蝙蝙蝙蝙蝙蝠。养一蝙蝙蝙蝙蝙蝠蝙蝙蝙蝙�",
+        "well_formed": false
+      },
+      {
+        "id": "X095",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "迆迆迆迆迆迆迆迆迆迆读迆迆迆读迆迆迆迆读迆�",
+        "well_formed": false
+      },
+      {
+        "id": "X096",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "萃狮吃狮吃狮吃狮吃狮子吃狮子吃拮吃吃吃狮吃�",
+        "well_formed": false
+      },
+      {
+        "id": "X097",
+        "family": "given_then_ask",
+        "hit": true,
+        "answer": "萟吟吟吟晚吟晚吟晚吟晚吟晚吟晚吟晚吟晚吟晚�",
+        "well_formed": false
+      },
+      {
+        "id": "X098",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "自自自自自自自自自自自自自自自自自自自自自�",
+        "well_formed": false
+      },
+      {
+        "id": "X099",
+        "family": "given_then_ask",
+        "hit": true,
+        "answer": "诗90909090909090909090909090909090909090909090909090909090909",
+        "well_formed": false
+      },
+      {
+        "id": "X100",
+        "family": "with_distractor",
+        "hit": true,
+        "answer": "始饥知秋饟拥项拧秋项拟拧秋项拟埥秋饟埥秋埥�",
+        "well_formed": false
+      },
+      {
+        "id": "X101",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "荷喝荷喝荷喝荷喝荷喝荷喝荷喝荷喝荷喝荷喝荷�",
+        "well_formed": false
+      },
+      {
+        "id": "X102",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "踀养一养一养一养一养一养一养一养一养一养一�",
+        "well_formed": false
+      },
+      {
+        "id": "X103",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "这近游这游这游这游迸近游迿近游迸近游迮读迸�",
+        "well_formed": false
+      },
+      {
+        "id": "X104",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "臇片吇臇片艇吇臇。\n片吇臇片臇片臇。吇臇臇片",
+        "well_formed": false
+      }
+    ],
+    "product_window_stats": {
+      "window_steps": 128,
+      "emitted_steps": 64,
+      "silenced_steps": 0,
+      "steps_seen": 64,
+      "emitted_steps_total": 50732,
+      "silenced_steps_total": 20848,
+      "steps_seen_total": 71580
+    }
+  },
+  "treated_arms": [],
+  "surface_verdict": {
+    "min_gap_texts": 3,
+    "per_circuit": [],
+    "status": "not_resolved",
+    "verdict": "not_resolved（独立取数只有 0 次，判据要求 ≥2 次）"
+  },
+  "base_sha256_unchanged": true
+}
