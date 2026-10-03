@@ -7500,3 +7500,54 @@ v38：①回路在场就装这只**只转发不改造**的包裹器；②新增 
 （`total_steps` 与 `generations` 两个数取自已入库的同装配 v37 档）。
 不成立只有两种解释：①这条"前一帧"归因规则在规模上不等于"每代少一"（那就是仪器的事，得改注释与守卫）；
 ②v38 的包裹器改变了环内步数（那就是行为变了，验收第 1 条同时会红，v38 撤回）。**没有第三种读法。**
+
+
+### 第一百一十四次停靠·判读先于数（2026-10-03 07:49）：把"通道在被问"与"通道在抬分"拆开——α=0 那一档的线与前置现在冻死
+
+**为什么这一格是下一格**：§110 判乙（近停态通常不在同字重复段内）之后留下的问题是"那一步的分从哪条通道来"；
+§113 刚把环内证据调用计数器装上（默认装配 753 而非假零），但**非零只证明"在被问"**，
+不证明"它在抬非边界字节的分"。要拆这两件事，需要**回路在载、把加性证据整体乘零**的对照档——
+而库里从来没有这一档（现有剂量档只有 α=0.25 与 c=0.20/0.30，都是 24 题面 ×(c) 底）。
+
+**跑法（零训练、96 枚，与 v38 默认档只差 `--copy-evidence-alpha` 这一个变量）**：
+`python scripts/training/probe_taiji_a30_stop_failure.py --checkpoint output/a31_chunked_self/checkpoint.pt --circuit output/taiji_r2_copy_circuit_chat/judge/circuit-final.pt --copy-evidence-alpha 0.0 --limit 96 --out-report reports/taiji_a30_stop_failure_self_v38_alpha0_circuitseedA_96_20261003.json`；
+读数用 `pair_taiji_a30_stop_cells.py --left <v38 默认档> --right <本档>`（配对器只比**格集合**，不比字段键 ⇒ 跨版可配）。
+
+**判读线（互斥穷尽；X＝`eat->stop` 格数，Y＝`stop->eat` 格数；分母基准 167＝§103 在同一装配同一题面上量到的"挂回路弄掉的自停格"）**：
+* **甲（加性通道即主犯）**：`X ≥ 84`（≥ ½×167）**且** `Y == 0` ⇒ 把证据向量乘零就买回一半以上的损失 ⇒
+  下一靶回到**解码侧**（缩放／上限／发射时机），但要注意 §95 那条上界（默认装配 +2.78pp）仍然约束"只看换行"那一族；
+* **乙（加性通道不是主犯）**：`X < 17`（< 1/10×167）**且** `Y == 0` ⇒ 乘零几乎什么都买不回来 ⇒
+  "被挂载改变的**别的东西**"（表示侧／读出权重侧）才是嫌疑，训练那一格（§102）成为唯一剩下的候选；
+* **丙**：其余一切（`17 ≤ X < 84`，**或任何 `Y > 0`**）⇒ 不判，只报分布。
+  `Y > 0` 单独说明：α=0 让一些原本会停的格反而拖写——那是**反直觉信号，第一解释是仪器坏了**，不是新机制。
+  三条分支互斥（84 > 17 使甲乙不可能同时成立），穷尽（Y>0 落丙）。
+**门槛是我先验划的（½ 与 1/10），不是从数据推出来的**——这句话必须留在数旁边，否则下一轮会被读成"测出来的分界"。
+
+**前置（任一条不成立 ⇒ 整档不发表）**：①本档 `evidence_observer_installed=true` 且
+`evidence_calls_in_generation_loop == total_steps − generations`（§113 那条等式在这里当**校验**用）；
+②`evidence_alpha_consumed=true` 且 `evidence_alpha_calls > 0`（乘零之后通道仍被调用——这就是"发而不计分"，
+若调用数为 0 那这一档测的是"关掉通道"，是另一件事）；③`items_sha256` 与 v38 默认档逐值相等；
+④配对 288 格全配上、`pairing_ok=true`、`terminal_rank_not_one_count=0`、逐题 argmax 失配步求和为 0；
+⑤**α 的语义由进程内守卫钉**（`tests/taiji_native/test_a30_evidence_alpha_zero_semantics.py`，5 passed：
+α=1.0 逐元素恒等、α=0 返回全零**且调用计数仍涨**、α=0.25 精确等于 1/4、两档差可见、以及"α=0.99 必须让恒等断言抛错"的负对照）；
+⑥本档 `circuit`／`copy_circuit_present_after_load` 必须为真——**不许把 α=0 读成"不挂回路"**，
+挂载的其它效应（读出侧参数、检索计数、门状态）仍在场，本格恰恰是要把这些与"加性向量"分开。
+**两格都不判之前**：任何"回路证据通道抬高了非边界字节"的说法仍然不许写（§113 第 5 条继续生效）。
+
+**§113 落地验收（07:53，96 枚 v38 档已到：`reports/taiji_a30_stop_failure_self_v38_evidenceobserver_circuitseedA_96_20261003.json`，1,641,049 字节）**：五条验收逐条读数——
+1. **第 1 条成立**：`compare_taiji_a30_report_identity.py --left <v37 档> --right <v38 档> --subtree per_item` ⇒ **`identical=true`、`behavior_diff_count=0`、`schema_diff_count=0`、rc=0**
+   ⇒ 那只新包裹器**没有改变任何一个逐步读数**（“加列没改数”这次是比较器给的 rc，不是我的说法）。
+2. 整档（非 `--strict`）比：`behavior_diff_count=1`、`schema_diff_count=3`、`ignored_disclosure_count=3`。
+   那**唯一一条 behavior 就是被修的这一列**：`instrument_guard.evidence_calls_in_generation_loop: 0 → 71649`；
+   三条 schema 是 `evidence_observer_installed`（只在一侧）＋两列上限静音由 `0` 改 `null`；豁免三条是 `format`／`started_utc`／`format_note_v38`。
+   ⇒ 比较器把这列算成 behavior **是它的正确行为**（两侧都有值且不同），所以判别式必须写在旁边：`per_item` 逐位相同＋
+   八个件级摘要块（v27／v28／v29／v30／v31／v32／v36／v37）**全部 equal**＋`total_steps=71937`、自停 41、吃满 247 逐值同。
+   下一轮引用“v38 行为中性”时**必须一起报这条 behavior**，否则就是拿豁免当门柱。
+3. **第 2 条成立**（冒烟 `..._observer_smoke1_nocircuit_...`：`observer=false`、环内列 `null`）；
+   **第 3 条成立**（`..._ceiling030_...`：静音 1、占比 0.001328、全链 52、α 调用 2541 ⇒ 开了上限的档三列仍是数字，没被锯掉）。
+4. **第 4 条成立，而且是那条先于数冻的等式预测逐值命中**：`evidence_calls_in_generation_loop = 71649 = 71937 − 288 = total_steps − generations`。
+   ⇒ v12 注释里“每轮第一步前一帧是 prompt ⇒ 少计一次”这句定性话，第一次有了**可在件里复算的等式形状**；
+   此后任何一档里该等式不成立，就是仪器坏（不是机制变）——已写进 §114 前置①当校验用。
+5. §110 的判读在同一装配的**第三次独立运行**（跨 v36／v37／v38 三个仪器版本）上复现：判读器 `rc=0`、八条前置全 True、
+   **`r=0.1314`、`verdict=乙`**、件内自检 0 ⇒ “乙”不再依赖单次运行的运气。
+**失败处置未触发**（第 1 条成立，v38 不撤回）。`DEBT-G33` 就此结清；#53（α=0 对照档）按 §114 冻好的线与前置发出。
