@@ -26,6 +26,8 @@ REQUIRED_FACE_COLUMNS = (
     '"copy_circuit_present_after_load"',
     '"copy_evidence_utf8_gate_effective"',
 )
+#: 有效值在 v39 之后的唯一合法来源：产品的公开状态出口（`DEBT-G30` 第一步建的）。
+PUBLIC_ACCESSOR = "copy_evidence_utf8_gate_state()"
 #: 有效值必须这样算：有 override 用 override，否则才落到 config。
 EFFECTIVE_EXPRESSION = "_copy_evidence_utf8_gate_override"
 #: 旧键名＝只报 config，会被读成"门关着"。
@@ -52,11 +54,27 @@ def test_instrument_reports_which_assembly_it_ran():
     assert missing == [], f"仪器不再自述取数面，读数又得靠命令行猜：缺 {missing}"
 
 
-def test_effective_gate_is_computed_from_the_override_not_config_only():
+def test_effective_gate_is_reported_from_the_public_accessor_not_config_only():
+    """v39 起这条守卫**换了形状**（原来钉的是"探针里有 override 推导式"，v39 把它删掉了）。
+
+    现在要求的是同一件事的**新写法**：三列必须都来自产品公开出口 `copy_evidence_utf8_gate_state()`，
+    而不是这台仪器自己复制 `config-or-override` 那条式子。两向都能为假：
+    ①回退成只报 config ⇒ 三个键里至少一个消失，第一条循环断言红；
+    ②重新引入私有字段复制推导 ⇒ 第二条断言红（v38 及以前正是那种形状，`DEBT-G30` 第二步已清除）；
+    ③又用只报 config 的旧键名 ⇒ 最后一条红（装机面会被读成"证据门关闭"）。
+    """
+
     source = _source_from_git()
+    assert PUBLIC_ACCESSOR in source, "有效值不再取自产品公开出口 ⇒ 这台仪器又开始自己复制那条式子"
     assert (
-        EFFECTIVE_EXPRESSION in source
-    ), "有效值不再读运行时 override ⇒ 会退回只报 config 的错口径"
+        EFFECTIVE_EXPRESSION not in source
+    ), "私有字段 `_copy_evidence_utf8_gate_override` 又回到这台仪器里 ⇒ 同一判定出现两份实现（DEBT-G30 的成因）"
+    for column in (
+        '"copy_evidence_utf8_gate_effective"',
+        '"copy_evidence_utf8_gate_config"',
+        '"copy_evidence_utf8_gate_override"',
+    ):
+        assert column in source, f"三列自述少了 {column}"
     assert (
         FORBIDDEN_LEGACY_KEY not in source
     ), "又出现只报 config 的旧键名（装机面会被读成证据门关闭）"
