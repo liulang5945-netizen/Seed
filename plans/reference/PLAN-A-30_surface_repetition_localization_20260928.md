@@ -8095,3 +8095,36 @@ on-policy 三批臂件——**引用这批读数时不许再写"复跑即可"**�
 
 守卫仍是同一支文件、**6 passed**（含两条硬钉锚点与"歧义不硬配"的形状），ruff 0 条。
 产品侧继续零改动：默认位 `None`、装机自停 13/72 为在案记录。
+
+### 第一百三十一停靠·装机那枚信封在 G17 成句尺上的**第一个数**：6/260，与"配方前底挂回路"的 5 同量级（2026-10-03 12:2x，零训练；产品侧零改动）
+
+**为什么这一格是缺口而不是重复**：§126 我自己写过一句"装机这枚（`ca262807`／`d6169a35`）在这把尺上从来没量过"——
+`reports/taiji_a30_recipe_surface_tradeoff_104item_20260930.json` 里 `0.1538` 那一行的治疗臂是
+`79b1a99cedf3…`（源件已失，见 `DEBT-G35`），并不是装机这枚。今天补上这一格。
+
+**仪器与可比性**：`score_taiji_r2_copy_surface_extension.py`（`format=taiji-r2-copy-surface-extension-v1`），
+与 §2bd 那批 G17 参考值**同一台、同一份 manifest**（`manifest_sha256=4d04d6f48e41a180131e18efaf31634fa4b6147c10aaf5acb1533745e246cf87`），
+链 `base_raw_bytes`，104 题 × 260 文本；调用只给 `--checkpoint checkpoints/seed_a31self_with_circuit.pt`。
+件内装配自述＝**今天的生产形态**：`mount_entry=envelope_auto_mount`（信封自带回路，不靠 `--circuit`）、
+`gate_effective=true`（UTF-8 门随信封 config 烘焙为开）、`product_window_steps=null`（发射时序门＝产品默认关）、
+`checkpoint_sha256=d6169a35`、`base_sha256_unchanged=true`、`product_window_stats` 全零（时序门确实没走）。
+
+**读数**（入库件 `reports/taiji_a30_shipped_envelope_surface_g17_20261003.json`）：
+`well_formed_texts=6`／260（`well_formed_rate=0.0231`）、`strict_hits=42`、`utf8_decodable_rate=0.0769`、
+`utf8_decodable_trimmed_rate=1.000`、`illegal_after_tail_trim_rate=0.000`。
+
+**对照（全部取自已入库件，不新造参考值）**：§2bd 在 G17 判据下重录的四格是
+base a26_p1 不挂／挂＝**12／5**；control(+2M 无配方)＝**7／0**；a31@+740k(配方)＝**0／0**。
+装机这枚量到 **6** ⇒ 落在"挂回路"那一侧的量级里，比配方前的挂回路臂（5）不差，高于不带配方的挂回路臂（0）。
+
+**因此这条数改掉一句长期流传的说法**：§2ap 那笔"成句 0.9269 → 0.1538（−77.3pp）"是**旧判据、不挂回路**那一侧的事，
+把它当成"配方把装机面打塌"是尺子与侧别都记错了。
+引用本格的标准写法：**"装机信封在 G17 尺上 6/260，与配方前挂回路的 5 同量级；绝对值仍低，判定未结。"**
+
+**必须同时留住的反面两句**：①6/260 仍是**极低**的绝对值——260 条原始字节答复里 97.7% 不过成句尺，
+逐条读下来是"轩轩轩…""212121…"这类同字／同数字拖写，与 `L2 自停 13/72`、§123"被取消的 LF"是同一件事的三个面；
+②件里 `surface_verdict` 仍是 `not_resolved`（`SPEC-A-21` 要求同一判据 ≥2 次独立取数，本轮只取一次）——
+**"第一次量到"不等于"量对了"**，重取要换新文件名并让两件并存可比。
+
+**同底同伴档在跑**（时序门 `--product-window-steps 128`，即 owner 裁定②"继续不开"的那个开关若打开）：
+落盘后按 `SPEC-A-24` 已冻的**差 ≥3 条**线判它有没有表层代价，本轮不引其数、不预判方向。
