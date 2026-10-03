@@ -1382,3 +1382,12 @@ owner 已裁定 18 行那枚走"批准新增分类条目"（人工评审＝本�
 **一条待裁项降级（本条的净产出）**：G5 §12「仍在等 owner」里那条"缺符号链接权限时 `node-next types` 该叶算红还是算跳过"（08 ㊵-120／㊵-122，owner 选了题但没给值）**此刻不再拦路**——该叶本轮 `PASS (0.99s)`，而同一台机器上**文件**符号链接仍然 EPERM（㊵-170 的 `packages/client/ui-deliverables/tests/present-open.host.spec.ts:138`）。⇒ 这道题的真实对象已经换掉了：要裁的是**spec 侧文件符号链接断言在本机算红还是算 skip**，那属判据④ 的平台档、不属卫生面。我不替 owner 改判定，只把这条从"待裁（拦路）"降级为"待裁（不拦路）"，并按新形状重新问一次。
 
 **队首不变**：`rerun13`（判据⑦ 基线）、干净树上的合格 `test:coverage`（判据④）、乙档那 18 份重录，三件仍卡同一前置——本条实测＝门定义复算 145、探针件在树、三枚在飞件未入库；owner 已裁"等它自己走，我只记录不干预"⇒ 本格仍然只记录、不动工、不发整面。
+**㊵-174（owner 这一格裁定的对象换了以后当场落地：`present-open` 那条 EPERM 红拆成两条，本机从"文件级红"变成"1 skip＋打印 EPERM 证据"）**
+
+弹窗答的是**新形状**那道题（"spec 侧文件符号链接断言在本机算红还是算 skip"），选定＝**拆成两条：符号链接那条在无权限时 skip 并打印 EPERM 证据，其余照跑**——这正与 09-29 那条旧结论对齐（"不能整条 skip，因为同一用例还验'正常打开外部文件'"）。
+落点＝`packages/client/ui-deliverables/tests/present-open.host.spec.ts`：原 `opens external regular files through absolute and relative paths but refuses final symlinks` 一条拆成 `opens external regular files through absolute and relative paths`（**不需要符号链接，任何平台都跑**）＋ `refuses final symlinks`（`try { await symlink(…) } catch` 只在**原始 code 为 EPERM** 时 `context.skip()`，其余错误一律照抛；skip 前 `console.warn` 打出 `present-open: symlink fixture unavailable on this host (EPERM)`）。
+**判据（当场实测）**：`vitest run packages/client/ui-deliverables --config vitest.config.ts` ＝ **rc=0、`Test Files 11 passed (11)`、`Tests 164 passed | 1 skipped (165)`**；单文件跑＝`30 passed | 1 skipped (31)`，stderr 里那句 EPERM 证据原文可见；对该文件单跑 `oxlint` ＝ **rc=0、`Found 0 warnings and 0 errors`**。
+
+**一条不等式要说清，别让这条被读成"覆盖率靠 skip 蒙过去了"**：改前那条用例**死在 `await symlink()` 这一步**，也就是"最终符号链接应 404 且不拉起外部程序"那段分支**在本机从来没被走到过**；改后它仍不被走到——**本机覆盖等价，不是变差**，而在有符号链接权限的宿主（POSIX/CI）这条断言照旧为真、照旧覆盖。⇒ 这条改动的净收益是把"环境限制"与"产品语义"分开记：判据④ 在本机不再挂一条假红，而 `deliverables 限制已被检验` 这句**仍只能在 POSIX/CI 读数上声称**，本机只能声称"该断言被平台挡住并留下了证据"。
+
+**没有做的两件事（如实登记）**：①**包的 100% 覆盖率门此刻没有合格读数**——我用 `--coverage.include` 对整个 `src/**` 单跑一条 spec 得到的是 `All files 10.97%／present-open.ts 53.63%`，那是**我构造的错测面**（其余 src 文件本来由别的 spec 覆盖），不能当门读数，已弃用；真正的 `test:coverage` 仍等那条共同前置（根 `build` 此刻 rc=1，产物新鲜度无法自证）。②按 owner 第二笔裁定，`rerun13` **继续等前置**，本轮不发整面。
