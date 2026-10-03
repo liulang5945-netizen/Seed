@@ -8271,6 +8271,7 @@ python scripts/training/train_seed_corpus.py \
 | **C** 代价 | 表层 G17（104 题／260 文本，`chain=base_raw_bytes`，manifest sha `4d04d6f4…`） | `well_formed_texts`（＋严格真命中一并报但不参与判定） | 装机信封 `6/260`、命中 42（§134，两次逐位一致），**差 ≥3 条才可分辨** |
 
 **为什么 B 不能在 ×96 面上读**：96 枚面上生成总数是 **288**，而冻下来的线写作 `+6/72`。把 `+6/72` 折算成 `+24/288` 就是换尺子；所以训后件与对照档**各再跑一枚 `--limit 24`**（3 代 × 24 = 72），B 只在这张面上判，A 与 C 只在它们各自的面判，发表时逐条点名出处。
+**×24 那格自带一枚可失败的锚**（写在这里先于任何 ×24 取数）：已入库两支旧件（`self_v31_winner_circuitseedA_20261003.json`／`self_v32_lfcontext_off_20261003.json`）的 `instrument_guard` 都是 `generations=72`／`generations_eating_full_budget=59`／`generations_boundary_self_stop=13` ⇒ 主列 `72 − 59 = 13`，正是台账里那句"装机 13/72"。所以本轮**控制档 ×24 必须复现 72／59／13**；复现不出就说明旗标面或底与冻的装配不同 ⇒ 先查装配，不许把对不上解释成"训练前基线变了"。判读器在这一格上必须报不可判：已实测把旧 ×24 件喂给 `judge_taiji_a30_peak_repeat_run.py` ⇒ `rc=2`、`r=null`（不是 0），失败前置含 `column_present` 与 `group_n_at_least_100` ⇒ **B 只能读原始计数**，A 的 `r` 只能读 ×96 面。
 
 **尺子同一性必须在读数之前立**：新控制档是 v39，而已入库的 ×96 基线是 v38（`self_v38_evidenceobserver_circuitseedA_96`）。§118 那次"v39≡v38 逐位不变"的验收只跑在 **`--limit 1` 冒烟面**上，拿它代答 96 枚面就是外推。所以规矩是：**先用比较器对这两枚 96 枚面本身跑一次** `compare_taiji_a30_report_identity.py --left <v38 基线> --right <v39 控制档> --subtree per_item`——`identical=true` ⇒ 跨版本配对合法、历史 ×96 基线可用；只要有行为差 ⇒ 本轮一律只与 v39 控制档配，历史基线降级为披露。
 **这一条已经立完（读数之前，结果在此写回同一节）**：上面那条命令原样跑 ⇒ `rc=0`、`identical=true`、`behavior_diff_count=0`、`schema_diff_count=0`、`ignored_disclosure_count=0`。两个后果都算数：①跨 v38／v39 配对合法，历史 ×96 基线不必降级；②这枚 v39 控制档本身就是**训练前基线的第二次独立取数**（贪心＋同底＋同题面 ⇒ 逐位相同是"可复现"不是"方差小"，措辞照 §134 那次的更正走）。
