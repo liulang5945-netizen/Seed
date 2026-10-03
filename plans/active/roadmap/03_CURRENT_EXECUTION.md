@@ -472,8 +472,9 @@ DEBT-G27 的口径歧义**已被这格收窄成有方向的读数**（类集中�
 唯一的红在 `tests/seed/test_platform_boundary.py:97`（断言"盘上有但 git 里没有的 `.py` 必须只在 `output/` 或跳过目录内"）。
 **归因（有据）**：跑 `git ls-files --others --exclude-standard`，其中 `.py` 的条数为 **0** ⇒ 本轮 A 支线没有新增任何未入库 Python 文件；
 今天 02:46 那次 1731 passed 只覆盖 `tests/taiji_native`，**不含 `tests/seed`**，所以这条红没有"今天早些时候也绿过"的对照可言。
-盘上确实存在非本作用域的深层沙箱树（`.dsh-sbx2/cold-20260928/...` 里带 `node_modules` 的嵌套，git 自己报 `Filename too long`）
-⇒ 判为**他线在盘面上的产物**，不是我的改动引入。**处置**：我不删别人的文件、不改这条断言来刷绿；**交 owner 认**（要么清沙箱树、要么给那条判据加显式豁免并写明残余风险）。
+**但我在 03:13 写下的归因当时是猜的，04:06 已用守卫自己的 helper 复算并推翻**：不符合项共 **7,680** 个 `.py`，**100% 落在 `taiji-harness/apps/desktop/.desktop-build/targets/win-x64/…`**（他线桌面打包把整个后端源码复制进 build 目录），不是 `.dsh-sbx2` 沙箱树——那族已被 `SKIP_PREFIXES=(".venv", ".dsh-sbx")` 挡掉，且 `git ls-files taiji-harness/.dsh-sbx2` 为 0。
+⇒ 归因换成**有出处的版本**：机制是同一条"两边口径不对称"，但触发面不同——`_is_skipped_dir` **只看 `parts[0]`**，所以 `taiji-harness/` 里嵌套三层的 `.desktop-build` 挡不住（`DEBT-G11` 已按复算结果补了这条复发记录）。
+**处置不变**：不是 A 支线引入、我不删别人文件也不改这条断言刷绿；一行修法（跳过判断按任一路径分段命中，或 walk 侧也跳 `.desktop-build`）归**建那棵 build 树的人**定。
 把关的是一族非一个字节、装机面耦合变差）②要不要扩样验装机底那 −19.0pp 是否稳（96 枚 × 门开启，四趟约 20 分钟）
 ③定点干预解码路径＝新裁定 ④key／真实启动格。**我这边不再自行开档**：§71 之后连跑的五格都已按"先写判据再取数"入库，
 剩下的每一格都要新的授权形状（机器时间／动产品路径／动默认位）。**产品默认链本轮零改动、`copy_evidence_window_steps` 仍 `None`。**
