@@ -1331,3 +1331,10 @@ owner 已裁定 18 行那枚走"批准新增分类条目"（人工评审＝本�
 乙档（win32 侧 18 份夹具）不在本条：它另需 build 绿＋那三枚 lane 件入库两个前置，且 key 只作进程环境变量使用（从未写盘，㊵-162 已记）。
 
 （自我更正，同轮内）上条写"文件末尾恰好一个换行收尾"又被自己的下一条追加打破：`printf %s` 的**双换行**在每次追加时都会重演，㊵-167 落盘后台账末尾再次是两个换行。现把尾部收成一个换行，并把 ㊵-166 里那句承诺的适用范围收窄——**尾形要靠写盘后的检查维持，不靠写法本身**；今后追加一律用单换行并在同一命令里复核尾部形状，不再声称"一次改好"。
+**㊵-168（覆盖率门这一趟不成立为门读数；其中一条不是环境面的线索已指到两个具名 spec；我名下的两份生成物已被排除在外）**
+跑的是 `vitest run --coverage` 全量，汇总行 `Test Files 51 failed｜1603 passed｜15 skipped (1669)`、`Tests 118 failed｜33229 passed`、rc=1。**先说为什么这不是一次可用的门读数**：官方门是 `pnpm run test:coverage`，其第一步 `build:native-system` 被我跳掉；工作树里还有三枚别人未提交的测试件；且扫描面里出现了用户级目录（`C:/Users/.../.agents/skills/multi-search-engine/SKILL.md` 相关行 ×16）。⇒ 51 这个数不可与任何基线互比，我也**不据此声称覆盖率门红或绿**，台账里 `test:coverage` 状态仍是"本会话未取到合格读数"。
+失败构成（同一份日志按串计数）：EPERM 符号链接 ×58（本机已登记的环境族）、5000ms 超时 ×26、`this.ctx.layout.beginNavigation is not a function` ×9、用户级 skill 路径缺失 ×8、`cannot resolve profile bundle extra` ×6。
+**唯一能立住的每文件证据**：早前那次作用域限三包＋`--coverage` 的读数里，新落地的 `packages/api/gateway/src/feed-waiter.ts` 四列全 **100**，且它唯一的执行者就是它自带 spec；同一次里 `feed-waiter.d.ts` 报 0（那是无源可配的过期声明产物，㊵-125／㊵-128 已记其无 git 对应物），不构成红。
+**一条真线索（不是环境面）**：`beginNavigation` 那 9 条按最近上下文归到两个文件——`packages/client/ui-workspace/tests/rename-assembly.client.spec.ts` 8 条、`.../host-home-staleness.client.spec.ts` 1 条；该符号只存在于 `packages/client/ui-layout/src/client/service.ts`（39／77 行，另有 `lib/types` 两份声明）与 `ui-layout` 自己的两个 spec 里。⇒ 形状是**消费方 spec 里那份 layout 桩件落后于 ui-layout 的契约**，属可修的仓内漂移，而不是 Windows 权限问题。
+**排除我自己这两份生成物**：我先按"错误落在别人文件里不能证明不是我造成的"去查——若是我 ㊵-159 重生成的 `slot-catalog.ts`／`api-catalog.ts` 引入，符号会出现在这两处；按全包 grep `beginNavigation` 的命中文件里**没有**这两份目录件，故排除。但注意反方向也成立过：这一族红的**成因分类**我用了整份日志计数，若哪天只有部分文件插了 ANSI 码，计数会偏——所以计数口径是"剥 ANSI 后的整份日志"，与汇总行同层。
+下一格要拿合格门读数的做法已定：先 `pnpm run build:native-system`（或按 `test:coverage:partitioned` 的分 partition 合并跑法），在**干净树**上跑，再按 `All files`／每文件表判读；本次的 51 只作为"这一格还有多少非环境失败"的量级参考。
