@@ -1391,3 +1391,16 @@ owner 已裁定 18 行那枚走"批准新增分类条目"（人工评审＝本�
 **一条不等式要说清，别让这条被读成"覆盖率靠 skip 蒙过去了"**：改前那条用例**死在 `await symlink()` 这一步**，也就是"最终符号链接应 404 且不拉起外部程序"那段分支**在本机从来没被走到过**；改后它仍不被走到——**本机覆盖等价，不是变差**，而在有符号链接权限的宿主（POSIX/CI）这条断言照旧为真、照旧覆盖。⇒ 这条改动的净收益是把"环境限制"与"产品语义"分开记：判据④ 在本机不再挂一条假红，而 `deliverables 限制已被检验` 这句**仍只能在 POSIX/CI 读数上声称**，本机只能声称"该断言被平台挡住并留下了证据"。
 
 **没有做的两件事（如实登记）**：①**包的 100% 覆盖率门此刻没有合格读数**——我用 `--coverage.include` 对整个 `src/**` 单跑一条 spec 得到的是 `All files 10.97%／present-open.ts 53.63%`，那是**我构造的错测面**（其余 src 文件本来由别的 spec 覆盖），不能当门读数，已弃用；真正的 `test:coverage` 仍等那条共同前置（根 `build` 此刻 rc=1，产物新鲜度无法自证）。②按 owner 第二笔裁定，`rerun13` **继续等前置**，本轮不发整面。
+**㊵-175（判据⑥ 的 lint 支第一次直接取到叶子读数：235 条里 231 条是别人今天已入库的 `@stylistic(indent)`；同时那 7 条 type-aware 基线"零命中"必须读成静默而不是已修）**
+
+取法＝`corepack pnpm run lint:contracts-ready`（＝`tsx scripts/run-oxlint.ts .`，正是官方 `pnpm run lint` 在 `build:lib:host` 之后要跑的**同一支叶子**——我绕开的是那个 build 前缀，不是配置），rc=1，汇总行原文 **`Found 0 warnings and 235 errors.`**。
+
+**分堆（按 `,-[file:line:1]` 头计数）**：`packages/client/ui-life/src/client/LifePanel.tsx` **231**、`apps/web/tests/zzz-probe-plugins.e2e.ts`（未入库探针件）**3**、`packages/api/life-controller/tests/resource-cleanup.host.spec.ts`（别人在飞件）**1**＝235。231 条**全部是同一族** `@stylistic(indent)`，样例原文＝`x @stylistic(indent): Expected indentation of 20 spaces but found 18.`，逐行落在 `:940`…`:960` 这一段。**归属**＝`git log -1 -- <该文件>` ＝ `266289e1 ui(life): 训练区拆成三个平级区块（控制 / 训练数据 / 检查点）`（2026-10-03，**已入库**）；我把 HEAD 的 blob 也读了（`git show HEAD:<path>` 第 938–942 行同样带着这组缩进）⇒ 不是工作树噪声，是提交里的形状。
+
+**两支结论必须分开，不许合并成一句**：
+① `@stylistic(indent)` **不依赖类型信息** ⇒ 这 231 条与 build 状态无关，是**当前 HEAD 上的真新增红**。判据⑥ 的 lint 支因此不是"不可复核"，而是"已复核、且差这一族"。
+② 但登记的 7 条 type-aware 基线（`typescript/no-base-to-string`、`typescript/no-unnecessary-condition`；配置里两条都确实是 `error`：`.oxlintrc.json:76`／`:161`，且 `:9` 是 `"typeAware": true`）在本次读数里**零命中**（两个规则名 `grep -c` 均＝0，`details.` 文件零出现）⇒ **零命中不等于已修**。同一次调用里 `no-unsafe-*`／`no-base-to-string` 一类一个都没出，而类型程序此刻正被探针件打坏（`build` rc=1、`error TS` 39 条）——最合理的解释是 **type-aware 规则整体静默**，不是债务消失。⇒ 我**不**把 `235` 当"判据⑥ 已复核为 235"，也不把"7 条不见了"当任何好消息；那条要等 build 绿再取。
+
+**这条同时更正 ㊵-167／㊵-173 的一句话**：那里写"`lint` 走不到 oxlint、7 条基线此刻不可复核"。**收窄为**：叶子能直接跑，且**非类型族立刻可判**；真正不可判的只有 **type-aware 那一族**。这是"门的不可跑要从叶子取、不许从聚合入口继承"（[[gate-runnability-not-inherited-from-aggregator]]）的又一次现形——聚合入口里任何一步被挡，不等于它后面每一步都测不了。
+
+**处置**：231 条缩进属别人今天的 UI 提交；owner 本轮已裁"等它自己走，我只记录不干预"⇒ 我不代改，也不跑 autofix（`lint:fix:contracts-ready` 的作用面只是 `packages/typert/generator/tests/fixtures/type-model` 那一小片 fixture，不是全仓）。本条只把"判据⑥ 的 lint 支新增 231 条真红＋归属 `266289e1`"交回收官面，并把 §11 判据⑥ 行的"7 条＝登记基线，判据满足"改标成两支分离的现状。
