@@ -210,6 +210,26 @@ def exit_record_path(progress_path: Path | str) -> Path:
     return progress_path.with_name(f"{progress_path.stem}_exit.json")
 
 
+def _prune_history(history_dir: Path, cap: int | None) -> int:
+    """DEBT-G40 的上限策略：超过 `cap` 就薄中间，**首尾必留**，返回删除数。
+
+    默认 `cap=None` ⇒ 一字不动（现行"每次落盘都留一份"的保号语义逐位不变）。
+    """
+
+    if cap is None:
+        return 0
+    snaps = sorted(history_dir.glob("checkpoint_*.pt"))
+    if len(snaps) <= cap:
+        return 0
+    keep = {0, len(snaps) - 1}
+    stride = (len(snaps) - 1) / (cap - 1)
+    keep.update(round(step * stride) for step in range(cap))
+    doomed = [path for index, path in enumerate(snaps) if index not in keep]
+    for path in doomed:
+        path.unlink()
+    return len(doomed)
+
+
 def _file_sha256(path: Path) -> str | None:
     """DEBT-G39：退出记账要能自述"我写下的是哪些字节"，而不只是"我往哪个路径写过"。"""
 
@@ -233,6 +253,7 @@ def run_training(
     readout: str = "action",
     device: str | torch.device = "cpu",
     keep_history: Path | str | None = None,
+    keep_history_max: int | None = None,
     end_boundary_after_newline: bool = False,
     answer_chunking: str = "stream",
     answer_max_chars: int = 0,
@@ -265,6 +286,16 @@ def run_training(
     if keep_history is not None:
         keep_history = Path(keep_history)
         keep_history.mkdir(parents=True, exist_ok=True)
+        if keep_history_max is not None and keep_history_max < 2:
+            raise ValueError(
+                "keep_history_max must be >= 2 — 上限至少留得住「首」与「尾」各一枚"
+            )
+    elif keep_history_max is not None:
+        raise ValueError(
+            "keep_history_max 需要 keep_history 同时在用——没有快照可删时设上限是个空承诺"
+        )
+    #: DEBT-G40：删了几枚快照也要生产者自己说，不能只留"目录里现在有几枚"。
+    history_pruned = 0
 
     model = Seed(config, device=resolve_device(device), episode_id="seed-corpus")
     tick_offset = 0
@@ -326,6 +357,8 @@ def run_training(
         # 主路径 `checkpoint_path` 的行为一字不变（兼容既有工具与流程）。
         if keep_history is not None:
             atomic_save(envelope, keep_history / f"checkpoint_{ticks:012d}.pt")
+            nonlocal history_pruned
+            history_pruned += _prune_history(keep_history, keep_history_max)
 
     started = time.perf_counter()
     window_ticks = 0
@@ -368,7 +401,20 @@ def run_training(
                 json.dumps(
                     {**entry, "checkpoint_path": str(checkpoint_path),
                      "checkpoint_sha256": _file_sha256(checkpoint_path),
-                     "corpus_fingerprint": fingerprint},
+                     "corpus_fingerprint": fingerprint,
+                     #: DEBT-G40：数量与字节由生产者现数（不是配置值回显）——没有这两条，
+                     #: "这轮保号存档留了多少"只能人事后 du，而无自述的量一定会被估错。
+                     "history_files": (
+                         len(list(keep_history.glob("checkpoint_*.pt")))
+                         if keep_history is not None else None
+                     ),
+                     "history_bytes": (
+                         sum(p.stat().st_size for p in keep_history.glob("checkpoint_*.pt"))
+                         if keep_history is not None else None
+                     ),
+                     "history_pruned": (
+                         history_pruned if keep_history is not None else None
+                     )},
                     ensure_ascii=False,
                     indent=2,
                 ),
@@ -583,6 +629,13 @@ def _build_parser() -> argparse.ArgumentParser:
         "--checkpoint-history-dir",
         default=None,
         help="保号存档目录；缺省为 <--checkpoint>.history/",
+    )
+    parser.add_argument(
+        "--keep-history-max",
+        type=int,
+        default=None,
+        help="保号存档上限（DEBT-G40）：超限薄中间，首尾各一枚必留；不给＝不限，"
+        "现行「每次落盘都留一份」的行为逐位不变。",
     )
     parser.add_argument(
         "--receptors-factored",
@@ -801,6 +854,7 @@ def main() -> None:
         readout=args.readout,
         device=args.device,
         keep_history=history_dir,
+        keep_history_max=args.keep_history_max,
         end_boundary_after_newline=bool(args.end_boundary_after_newline),
         answer_chunking=str(args.answer_chunking),
         answer_max_chars=int(args.answer_max_chars),
