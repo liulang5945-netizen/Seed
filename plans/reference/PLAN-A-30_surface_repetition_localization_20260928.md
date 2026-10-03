@@ -7458,3 +7458,45 @@ min_ratio, median_ratio, worst_ratio, per_step(前 6 次：步序/名次/比值/
 合起来把"为什么不停"推向**那条证据通道**，而默认装配上量它的计数器是空转的（`DEBT-G33`：`:1188` 只在 α≠1.0 或 c 非空时装观察者）。
 ⇒ 队列次序据此定：**先结 `DEBT-G33`（升 v38，零机时＋一条 n=1 冒烟＋两条守卫）**，再谈"近停态那一步的分从哪条通道来"那一档；
 在此之前**不许**把"回路证据通道抬高了非边界字节"写进任何结论。
+
+
+### 第一百一十三次停靠·判读先于数（2026-10-03 07:39）：`DEBT-G33` 落码为 v38，先冻**行为中性**的验收式
+
+**改了什么（只动观测面，一处安装点）**：`probe_taiji_a30_stop_failure.py` 里"环内证据调用"那只观察者
+以前和 α／上限旗标绑在同一个 `if` 上（v12–v37），所以默认装配（α=1.0、无上限）的件里
+`evidence_calls_in_generation_loop` 恒为 0——那既可能是"通道一次都没被调用"也可能是"没在测"，件内分不清。
+v38：①回路在场就装这只**只转发不改造**的包裹器；②新增 `evidence_observer_installed` 旗标，
+没回路时环内计数报 `null`；③`relevance_ceiling_silenced_calls`／`_share`／`_all_chains` 三列在**没开上限**的档里改报 `null`
+（同 §95 上界仪器 `lower_bound_available` 那条纪律：缺测不许写成 0）。钉版测试范围扩到 `range(6, 39)`，
+并把旧写法 `"evidence_calls_in_generation_loop": loop_silenced[0],` 反向钉死（写回去就红）。
+
+**冒烟已给的一条事实（n=1 题面 ×3 代，产品默认信封 `mount_route=envelope_auto_mount`）**：
+`evidence_observer_installed=true`、**`evidence_calls_in_generation_loop = 753`**、三列上限读数全为 `null`。
+⇒ 这只尺子过去不是"读到了零"，而是**从没被装上**；装上之后第一件事就是它读数非零。
+（753 对 3 代 ≈ 环内步数同量级，属"通道在轨迹面上每步都在被问"——但**这句不是机制结论**，见下面第 5 条。）
+
+**验收式（先于数冻，五条都要能为假）**：
+1. **逐位不变**：同装配（装机底 `ca262807` × 挂 seed-A × 96 枚 × 时序门 OFF）跑 v38 档，与已入库的
+   `reports/taiji_a30_stop_failure_self_v37_peakrun_circuitseedA_96_20261003.json` 用
+   `scripts/training/compare_taiji_a30_report_identity.py --subtree per_item` 比，**必须 `rc=0`**
+   （豁免只允许 `format`／`started_utc`／`format_note_*` 三类披露字段，且件里豁免计数要一起打印）。
+2. `evidence_observer_installed` 在挂回路档＝`true`；**不挂回路档必须＝`false` 且环内计数报 `null`**（拿库里已有的不挂回路件面读，不重跑）。
+3. 开上限的档（§第二十六次停靠那类 `c=0.30`）三列上限读数**必须仍是数字**——若这次改动把它们退化成 `null`，就是把一把好尺子锯了。
+4. 96 枚档上 `evidence_calls_in_generation_loop > 0`，并与件内环内步数（`observe_calls_by_caller` 的 `generate:*`）一起报比值（分母同源）。
+5. **这条不许写进结论**：环内调用数非零 ≠ "回路证据通道抬高了非边界字节的分"。后者要的是**带对照的档**
+   （同装配、把证据通道整体置零 vs 原样），本轮没有跑，所以 §110 的乙之后那一问**仍未归因**。
+**失败处置**：第 1 条不成立 ⇒ v38 **不算行为中性**，撤回改动、`DEBT-G33` 重开，并把差异字段逐条登记（不删旧件）。
+
+**§113 补（07:45，96 枚档仍在跑 ⇒ 以下都是**先于数**写的）**：三条 n=1 冒烟已入库（免引用悬空，照 §26 先例）——
+`taiji_a30_stop_failure_v38_observer_smoke1_envelope_20261003.json`（默认信封 `d6169a358eaee6d1`：观察者 `true`、环内 753、上限列 `null`）、
+`..._nocircuit_20261003.json`（装机底不挂回路 `ca2628077b21bc4c`：观察者 `false`、环内 `null`）、
+`..._ceiling030_20261003.json`（同底挂 seed-A＋c=0.30：环内 753、静音 1、占比 0.001328、全链 52、α 调用 2541 ⇒ **开了上限的档三列仍是数字**，验收第 3 条成立）。
+两条枚内指纹都自述 `items_sha256 = 69a41b2185f02607`（1 题面那支）。
+
+**顺手抓到一条等式，并把它冻成 96 枚档的预测**：三枚冒烟里
+`evidence_calls_in_generation_loop == total_steps − generations`（**753 = 756 − 3**，两枚挂回路档逐值成立），
+这正是 v12 注释里那条"**少计**"的定量形状——每轮第一步的前一帧是 prompt 侧，所以每一代恰好少计一次。
+⇒ **预测（写在此刻）**：正在跑的 96 枚 v38 档必须给出 `71937 − 288 = 71649`
+（`total_steps` 与 `generations` 两个数取自已入库的同装配 v37 档）。
+不成立只有两种解释：①这条"前一帧"归因规则在规模上不等于"每代少一"（那就是仪器的事，得改注释与守卫）；
+②v38 的包裹器改变了环内步数（那就是行为变了，验收第 1 条同时会红，v38 撤回）。**没有第三种读法。**

@@ -1,0 +1,1450 @@
+{
+  "format": "taiji-a30-stop-failure-v38",
+  "format_note_v38": "v38（2026-10-03）：DEBT-G33——**证据通道的环内调用计数不再依赖 α／上限旗标**。v12 到 v37 这只观察者只在 `--copy-evidence-alpha ≠ 1.0` 或 `--relevance-ceiling-c` 非空时才装，而计数器初始化就是 `[0, 0]` ⇒ 默认装配（α=1.0、无上限）的件里 `evidence_calls_in_generation_loop` 恒为 0，那个 0 **分不清**'通道一次都没被调用'与'没装观察者'（§第一百一十二次停靠之后，'近停态那一步的分从哪条通道来'正是下一问，第一只尺子不能是空的）。本版三处改动全是**观测面**：①回路在场即装这只只转发不改造的包裹器（返回值原样透出，不动张量）；②新增 `evidence_observer_installed` 旗标，未装（＝不挂回路那类档）时环内计数报 `null` 而不是 0；③`relevance_ceiling_silenced_calls`／`_share`／`_all_chains` 三列在**没开上限**的档里改报 `null`（此前报 0，与'开上限但一次没静音'同形）。同族的 `relevance_ceiling_fired`／`ceiling_fire_count_reported` 本来就带 `is None or …` 条件化，这次把剩下的那几列补齐。**逐位不变**这条不是口供：同装配同旗标跑两档，用 `compare_taiji_a30_report_identity.py` 比 `per_item` 子树（证据与读数写在 PLAN-A-30 §113）。",
+  "format_note_v37": "v37（2026-10-03）：§第一百一十次停靠 把 selector 从'峰值字节＝上一步字节'换成'峰值步落在同字重复段内'。换的理由写在 §109：中文一个字三字节，`哥哥哥` 的字节串是 E5 93 A5 E5 93 A5，**相邻字节永远不相等**，所以 §106 那个量读出来的是多字节文本的结构下界（装机装配实测 0.0135），不是'环与近停态无关'——那是'计数名与计数物不符'，§106 已记为不判。v37 只把仪器**本来就算着**的字级 `in_run` 接到峰值上（每代 `repeat_run_at_peak_step_v37` ＋ 件级 `peak_run_summary_v37`，分母＝该群全部代数，并自带一条自检：`steps_in_repeat_run==0` 却报峰值在段内 ⇒ 违例数写进件里、非零即整格不可判）。v36 那列**保留不删**（字节相邻本身仍是合法描述，只是不许再当 selector）。既有列一字未动。",
+  "format_note_v36": "v36（2026-10-03）：§第一百零六次停靠 问‘边界概率最高那一步实际发的是什么’——§101/§103 已量到那一群终生没进过停止竞争区，但‘最接近想停的那一格被谁占了’此前没看过，尤其没看过它是不是刚发过的那个字（同字环吃掉近停态）。新增每代 `peak_step_row_v36`（步序／实发字节与其 UTF-8 类／前一步字节／`same_byte_as_previous_step`／该步比值与名次）与件级`peak_step_summary_v36`（自停／拖写·发过 LF／拖写·从不发 LF 三群各自的同字占比、top-5 实发字节、峰值名次中位；**分母只算有前一步可比的代**并一起报）。既有列一字未动 ⇒ 与 v31–v35 各件同格可比。",
+  "format_note_v35": "v35（2026-10-03）：§第一百零三/零四次停靠把结论建在'两枚件读的是同一批题'上，而件里只有 `items: 96`（条数）与写死的 manifest 路径——条数相同不等于内容相同（本线已在'同一批文档并非自动成立'上栽过一次）。本版加 `items_sha256`＝所选条目 (id, turns, expected_contains) 的摘要，让配对器能在**件内**判同题面；配对器 `pair_taiji_a30_stop_cells.py` 两侧都有该键时必须相等，缺任一侧就在输出里披露 `items_fingerprint_check=\"absent_in_one_side\"`（旧件不因此失败，但也不被当成已证）。既有列一字未动 ⇒ 与 v31–v34 各件同格可比。",
+  "format_note_v34": "v34（2026-10-03）：§八十六 那格用的尺（LF 是否落在同字连写段内）按定义没有动态范围，所以换一把天然有散布的尺：**每一次 LF 之后那一步**的 `ratio_best_over_boundary` 与边界名次。新增每代 `lf_margins_v34`（步序／名次／比值／概率，最多留前 6 次）与件级 `lf_margin_summary_v34`（自停组与拖写组各自的中位最小比值、比值区间、中位最好名次，外加 §87 定的 `column_dynamic_range` 前置）。`_rows_after_lf()` 同时被 v30 与 v34 复用——一副档只住一处。既有列一字未动。",
+  "format_note_v33": "v33（2026-10-03）：把 §第八十五／八十六次停靠 那次预注册缺陷变成机器拦得住的东西。 缺陷内容：判据绑的列（LF 落在同字连写段内的占比）按定义只能取 0.0／1.0，两组同值时字面分支仍能读出一个方向——但那一读**没有效力**。本版新增 `_dynamic_range()`，并在 `lf_repeat_context_summary_v32` 里落三列：`column_dynamic_range_stoppers／_eaters`（n_values／distinct／min／max／endpoint_only）与总开关 `ruler_usable`；规矩是 **`ruler_usable=false` ⇒ 判据不建立**，比较型判读一律先看它。既有列与既有字段一字未动。",
+  "format_note_v32": "v32（2026-10-03）：§第八十四次停靠 留下一处分不开的东西——装机底门开启后耦合掉 19.0pp，可能是『新放出来的换行本来就发在正文中间』，也可能是『同样位置的换行也不兑现了』；`far-from-end` 那一堆对拖写生成是定义性的，分不开这两条。本版按 §八十五 预注册补 `lf_repeat_context_v32`（每代：LF 总步数、其中落在**同字重复段内**的步数与占比）与件级 `lf_repeat_context_summary_v32`（自停组／拖写组各自的占比中位、分母、以及『拖写组是否 ≥10 代才允许判』的开关）。只用行里已有的 `in_run` 并按其**本义**（落在同字重复段内）——v22 那次误把它当『是否在生成环内』用过，环内/环外一律按 `step` 分组判。既有列一字未动 ⇒ 与 v27–v31 各件同格可比。",
+  "format_note_v31": "v31（2026-10-03）：§七十六次停靠 读出『装机底 9/9 的拖写在 LF 之后那一步排第 2–3 名、中位只差 1.131 倍』之后，剩下的问题只有一个：那一步**是谁**压住边界的。本版纯取行内现成的 `emitted_byte`，每代补 `winner_byte_at_best_rank_step`／`utf8_class_at_best_rank_step`／`winner_bytes_after_lf`，件级补 `lf_competitor_summary_v31`（胜出字节的 top5 与位置类 top5、各自 distinct、以及分母是否 ≥5）。终止行本身没有 `emitted_byte`（它就是边界符）⇒ 一律记成 boundary，不混进字节分布。既有列一字未动 ⇒ 与 v27–v30 各件同格可比。",
+  "format_note_v30": "v30（2026-10-03）：§第七十四次停靠 的丙是**分母**造成的（装机底拖写 20 枚里 9 枚发过 LF、(c) 底只有 1 枚），于是换问法：不再问『拖写里有多少发过 LF』，改问『LF 之后那一步，边界离赢多远』。每代补 `lf_next_probe_v30`（`lf_count`／`lf_next_steps`／`best_boundary_rank_after_lf`／`p_boundary_at_best_rank_step`／`min_ratio_best_over_boundary_after_lf`），件级补 `lf_next_summary_v30`（自停侧名次一致性、拖写侧 ≤3 与 ≥10 的占比、以及『分母是否 ≥5 才允许判』的开关）。自停的代里『LF 的下一步』就是终止步，所以终止行也参与这一步的取数（§75 资格前置③钉住它必须为 1）。既有列一字未动 ⇒ 与 v27–v29 各件同格可比。",
+  "format_note_v29": "v29（2026-10-03）：§第七十三次停靠 读出『两底 118/118 次自停的前一步都是字节 10（LF）』之后，那一跳的**修法方向**取决于一个还没量过的量：拖写的生成是**根本没发 LF**，还是**发了没接住**。本版按 §73 末段冻线补 `lf_trace_v29`（每代 `lf_step_count`／`last_lf_step`／`generation_last_step`）与件级 `lf_followthrough_summary_v29`（自停组与吃满组各自的『发过 LF 的占比』、末 LF 相对该代末尾的四分堆）。既有列一字未动 ⇒ 与 v27/v28 各件同格可比。",
+  "format_note_v28": "v28（2026-10-03）：按 §第七十二次停靠 的预注册加**末步字面身份**——逐步行补 `emitted_byte`／`utf8_byte_class`／`utf8_state_before` 三个键，每代补 `tail_identity`（停之前那一步发的是哪个字节、当时在字的哪一段、该步的边界名次与概率），件级补 `tail_identity_summary_v28`（自停组 vs 吃满组各自的字节分布与位置类分布，分母各自算）；终止行另带 `terminal_utf8_state_before`。理由：§71 把问题移到了『那一跳为什么不发生』，而现有件里只有 24 字符的 `answer_head`、**没有字节尾串**，所以字面身份必须重放补记；缺 `emitted_byte` 直接抛错（不静默交空）。既有列一字未动 ⇒ 与 v27 各件同格可比。",
+  "format_note_v19": "v19 加性多一条检索侧 **oracle** 档：`--oracle-selector` 把 `store.best_match` 换成『内容含本题 `expected_contains` 的第一条事件』，找不到则透传原实现，用来把『选对了还拖不拖写』从『内容身份』与『发射时刻』里单独摘出来验。缺标签时响亮停下而非静默透传（那会伪装成生效）；自述 `oracle_calls`／`oracle_found`／`oracle_fell_through`。默认关 ⇒ 与 v18 逐位可比。",
+  "format_note_v18": "v18 **加性**多一条**检索侧**资格档：`--store-scope-conversation` 在每题开头把装载信封带来的陈旧事件请出候选集，只留本次对话被告知的内容可被 `best_match` 取到（只用公开接口 `events()/clear()/record()`；代价是 `event_id` 重新编号，已在件里披露）。它与窗口档正交：一个动候选集、一个动发射时刻。默认关 ⇒ 与 v17 逐位可比。",
+  "format_note_v27": "v27（2026-10-03）：DEBT-G26——产品环体在 `argmax()==boundary` 时**先 break 再 observe**（`taiji/model.py:3238-3240`），而逐帧记录装在 observe 包装里 ⇒ **停下那一步过去在件里根本没有行**，`peak_is_last_step` 因此是个不可能为假的量（§第六十六次停靠的第②条据此写出的『尖峰与停下脱钩』已收回，见 §六十九）。本版按生成补两样：`terminal_decision`（用该代最后一个在案 record 携带的**下一步** logits 走同一个 `replay_step`，字节＝边界符、UTF-8 状态＝答复喂完后的状态；只在边界自停的代出现）与 `last_recorded_row`（最后一个在案步）；件级新增 `terminal_decision_summary_v27`（含 `terminal_rank_not_one_count` 面违规计数与 `pairing_ok` 配对自证）。**只加字段、不塞进 `item_rows`** ⇒ 既有聚合列语义一字不动，与 v22–v26 各件同格可比。",
+  "format_note_v26": "v26（2026-10-03）：DEBT-G25——产品门的 `product_window_stats` 现在带全程累计三键（emitted_steps_total／silenced_steps_total／steps_seen_total）；旧三键语义不变（末趟），因为每趟复位使末趟在短答复生成上结构不可能静音，只看末趟会把成功的档自我否证。",
+  "format_note_v25": "v25（2026-10-03）：DEBT-G24——`legal_candidates` 不含边界符而 `boundary_rank_in_legal` 在含边界符的集合里排名，两者放在一起会让名次比分母大 1（§64 实测到）。旧列保留以便与历史件同格比较，新增 `legal_candidates_including_boundary` 作无歧义分母；守卫钉住两条不等式。",
+  "format_note_v24": "v24（2026-10-03）：按 §第六十三次停靠的预注册加 `endstep_probe_v22[*].at_steps`——固定步位 8/16/32/64/128 上各记 p_boundary 与边界名次与合法候选数（只存 5 个点，不存整条序列）。动机：§62 证明'按生成长度分组比峰值'条件在存活上（早停必然短），固定步位才把长度变成'能否走到'而非分组变量。",
+  "format_note_v23": "v23（2026-10-02）：`endstep_probe_v22` 的分组改用全部逐步行（`step` 归零即换代），并把'是否吃满预算'的定义收到 `generation_steps >= max_length`；`in_run` 降级为第二维 `steps_in_repeat_run`。v22 那两件因分组误用不发表，见 §第六十次停靠。",
+  "format_note_v22": "v22（2026-10-02）：§第五十九次停靠的四个标量按**每次生成**入案 `endstep_probe_v22`——核实过 item_rows 是把一个 item 的 3 次生成串接后再取中位数，故现成 median_* 列跨代混算、对'基底为什么不停'没有判别力。四标量不依赖外部真值：p_boundary 峰值与其步位、该步的边界名次与合法候选数、峰值是否落在该代最后一步、该代是否吃满预算。既有键不动 ⇒ 与 v17–v21 各档同格可比。",
+  "format_note_v21": "v21（2026-10-02）：产品门的计步基改成**只数答复相**——`Taiji.generate()` 在 prompt 喂完后复位计数器。v20 那一版的 K 会被 prompt 段吃光（`emitted=64／silenced=276`＝`84＋256`），读数 66/72 与不挂回路逐列同值却不是增益。产品档与替身档仍互斥；默认 None ⇒ 逐位不变。",
+  "format_note_v20": "v20（2026-10-02）：owner 裁「立项进产品」后加**产品档** `--product-window-steps`——它调的是产品侧原生生命周期门（`Taiji.set_copy_evidence_window_steps`，默认 None ⇒ 逐位不变），与本仪器 v17 那副 monkeypatch 替身互斥；件里新增 `product_window_steps`／`product_window_stats` 与两条守卫（fired／两侧都报）。加字段不动既有键 ⇒ 与 v17–v19 各档同格可比。",
+  "format_note_v17": "v17 两件事：① 加**资格档** `--evidence-window-steps`（前 K 步发、之后静音；档本身住在剂量探针里与复述面共用，刻度由本仪器声明为环内步数，守卫 `window_both_sides_seen` 要求两侧都出现过）；② 修 v16 那列结构上恒为 0 的 `run_boundary_win_positions`——边界符胜出那一步 `break` 在 `observe` 之前、不入案，正确刻度是自停生成的 `fed_bytes`（已在件里，无需重跑即可读出）。其余字段与判据一字未动。",
+  "format_note_v16": "v16 加性只多两列**停止决定的位置**信息：每题 `run_boundary_win_positions` 与件级 `boundary_win_position_hist`。用途是给『只在前 K 步发证据』这一族资格档**定价**——设计预备第 2 条要求 K 只能从链上先量到的分布里取，不许事后挑刚好过线的那个。判据、计数与生成路径一字未动，故与 v13/v15 同格可比（锚点 23/49/6 与 total_steps 就是这条可比性的检验）。",
+  "format_note_v15": "v15 **只是把 v13/v14 那副内容档搬到剂量探针里与复述面共用**（`_make_content_armed_evidence`）：轨迹面与复述面必须做**同一个**置换／冻结操作，各写一份就是两把尺子。字段、算法、默认关闭时的逐位行为一字未动 ⇒ 与 v13/v14 同格可比（锚点档的 23/49/6 就是这条可比性的检验）。",
+  "format_note_v14": "v14 **只修 `frozen` 档的冻结源**（仪器缺陷，不是新测量）：v13 取'第一次调用'，而第一次调用时 store 仍为空 ⇒ 冻结到的是**精确零向量**，那一档实际测的是'把通道永久关掉'（现场证据：自停 66/72 与不挂回路那件同值、`content_arm_max_rel_l1_diff=1.0`）。现冻结到**第一条非零**证据并披露冻结点与它的 L1。`permutation` 档与其余字段一字未动 ⇒ v13 的置换档读数继续可比。",
+  "format_note_v13": "v13 **加性**多一格 owner 裁定后要的那把分离尺：`--evidence-content-arm` （`permutation`＝把证据向量按固定种子置换，多重集与 L1/max 逐位不变，只毁掉'哪一维对应哪个符号'；`frozen`＝每次返回第一次那一条，内容不再跟着 cue 走），配自述 `evidence_content_arm`／`perm_seed` 与守卫 `content_arm_consumed`／`content_arm_magnitude_preserved`（置换档的**前提**：硬度不守恒整档作废，因为那时两个臂差的不止内容）。默认关 ⇒ 与 v12 逐位可比；其余字段与算法一字未动。加它的理由：上限档把环内静音推到 8.25% 之后真自停仍 23→25，'相似度轴'这一族在轨迹面上已经排除得差不多了 ⇒ 下一个要分开的是'听内容'还是'只要有一条非零向量在加'。",
+  "format_note_v12": "v12 **加性**只补一位被 v11 现场暴露出来的空档：`evidence_alpha_calls`／`relevance_ceiling_consumed` 数的是'包装器被走到'，不是'过滤器开过枪'——一个从未命中的 c 会给出与全剂量同值的读数却看不见自己是空的，而全链计数还把 prompt 侧（`record_told_history`）一起算了，那一边不改写自身轨迹那一列。现按**生成环内**归因，件里存 `relevance_ceiling_silenced_calls`／`_share`／`evidence_calls_in_generation_loop`，守卫 `relevance_ceiling_fired`＋`ceiling_fire_count_reported`；v11 那把松尺子 `relevance_ceiling_consumed` **退役**（它能在'一次都没命中'时报 true）。其余字段与算法一字未动 ⇒ 与 v4–v11 同格可比；包装器与 `_cosine` 仍复用剂量探针那一份，c 的定义不变。",
+  "format_note_v11": "v11 **加性**多一个旗标 `--relevance-ceiling-c`（自信度衰减：相似度高于 c 的步不发）与两条自述（`relevance_ceiling_c`／守卫 `relevance_ceiling_consumed`），其余字段与算法一字未动 ⇒ 与 v4–v10 同格可比。加它的理由：DEBT-G19 三条修法里只有上限这条还没在**自身轨迹面**上被测过，而 L2 才是晋升判据用的那一列；包装器与 `_cosine` 都复用剂量探针那一份，三半里的 c 是同一个定义。",
+  "format_note_v10": "v10 **加性**只补一条被点名过两次的缺口：件里此前只记 `circuit_sha256`、不记**检查点自身**的 sha ⇒ 与旧档（如 09-30 那枚被作废的 quarter v4 件）只能按'同路径＋mtime 早于那次跑'配对，那是**路径级**不是 sha 级。现补 `checkpoint_sha256`（跑前那一次读盘，与 `base_sha256_unchanged` 共用同一趟哈希，不多读一遍 12MB）＋守卫 `checkpoint_sha_recorded`。其余字段与算法一字未动 ⇒ 与 v4–v9 同格可比。",
+  "format_note_v9": "v9 **加性**多一个旗标 `--copy-evidence-alpha`（把回路的加性证据整体乘 α）与两条自述（`copy_evidence_alpha`／守卫 `evidence_alpha_consumed`），其余字段与算法一字未动 ⇒ 与 v4–v8 同格可比。加它的理由：DEBT-G19 查出这条通道是三条加性证据里唯一没有强度系数的那一条；剂量档要与 v8 的'门开关'档用**同一台仪器、同一个乘数来源**，否则又是一口井里的水。",
+  "format_note_v8": "v8 **加性**多一个旗标 `--no-copy-evidence-gate`（挂完回路后把那条加性证据的 UTF-8 位置门显式关掉）与两条自述（`copy_evidence_gate_off_requested`／守卫 `evidence_gate_flag_honored`），其余字段与算法一字未动 ⇒ 与 v4–v7 同格可比。加它的理由：v7 之前把'挂载回路'当成一个变量，其实它一次开两样东西（回路的 prompt／证据通道 ＋ 那条门），拆开来才允许写'是回路的通道造成'。",
+  "format_note_v7": "v7 **加性**多存两条回写门槛自述（`surface_gate_state`／`write_back_gate_last_reason`），其余字段与算法一字未动 ⇒ 与 v4–v6 同格可比。加它的理由：门槛①（回写放行）**不是**由挂载回路武装的——它按`seed/surface_gate.py:150-156` 的'工件与检查点同目录'规则在 `load()` 里解析，`enable_copy_circuit` 之后仍是 `disarmed:artifact_absent`（2026-10-02 运行时实测：候选基底挂上 seed-A 后 `last_write_back_gate=(True, 'factory_face_or_gate_disarmed')`）。不报这一位，就会把'挂上回路'误读成'同时把回写门槛也开上了'——我 2026-10-02 早上就按那个误读写过一句保守的错账（PLAN-A-30 第九次停靠·更正）。",
+  "format_note_v6": "v6 **换比较的表示层＋更正早停计数**（诊断更正，见 §2bb-追加三/追加四）：（一）v5 的逐位比较是『raw 重放 vs `chat()` 返回值』，而早停样本（边界符胜出即 break，fed 极短）的返回值是**器官占位句**（`NativeReadableTextLanguageOrgan._fallback_text`）——V019 首轮 1 字节生成对应 44 字占位句，逐位比较必然不等，L2 要测的成功被记成面违规。v6 的重放改走**完整产品面链**（`replay_surface_from_fed`：decode → marker 切割 → **同一个器官实例** emit）再与返回值比较；`replay_tiny_feed` 这一分类随之退役（深帧复现证明 prompt 的 50 字节全部在案，追加二『没复现 prompt』的误诊被纠正）。（二）`generations_eating_full_budget` 的旧定义（`generations − marker 切割数`）把**边界符自停**（fed < 预算＝生成环唯一提前出口）误标成吃满预算——v4/v5 的『早停 1/72、5/72』数的其实是marker 切割；真正的边界自停（对照件 0/72、self/quarter 各 19/72）从未被点数。v6 起 `eating_full_budget` 按 `fed ≥ max_length` 判，新增 `generations_boundary_self_stop`。`all_surfaces_are_replayed_raw` 与 `replay_suspect_generations` 的**公式不变**（后者改数 `surface_differs_from_replay`），严格性不降：真正被产品链改过的面仍然红。",
+  "format_note_v5": "v5 **加性**：每条 `surface_checks` 多一列 `mismatch_reason`（`replay_tiny_feed`＝回放侧只归到 <8 个符号，属**仪器归类缺陷**；`surface_differs_from_replay`＝真的面不一致），聚合里多一条 `replay_suspect_generations`。**严格守卫 `all_surfaces_are_replayed_raw` 一字未动**——放宽它等于挪门柱；加这一列只是为了让'仪器坏了'与'被测量不符'能被分开读（§2bb-追加二 复现 `V019` 得到的就是前者）。其余各表算法与语义未动 ⇒ 与 v4 同格可比。",
+  "format_note_v4": "v4 **加性**多存三条装配自述（`mount_route`／`copy_circuit_present_after_load`／`copy_evidence_utf8_gate`），其余字段与算法一字未动 ⇒ 与 v3 同格可比。加它的理由：`--circuit` 不给 **不等于**\"出厂无回路面\"——带回路的信封在 `SeedRuntime.load` 里会自动挂载，所以这张面是按命令行猜出来的。",
+  "prereg": "plans/reference/PLAN-A-30_surface_repetition_localization_20260928.md §2f 第 3 条",
+  "checkpoint": "checkpoints/seed_a31self_with_circuit.pt",
+  "circuit": null,
+  "circuit_sha256": null,
+  "checkpoint_sha256": "d6169a358eaee6d1",
+  "mount_route": "envelope_auto_mount",
+  "copy_circuit_present_after_load": true,
+  "copy_evidence_utf8_gate_effective": true,
+  "copy_evidence_utf8_gate_config": false,
+  "copy_evidence_utf8_gate_override": true,
+  "copy_evidence_gate_off_requested": false,
+  "copy_evidence_alpha": 1.0,
+  "relevance_ceiling_c": null,
+  "evidence_window_steps": null,
+  "product_window_steps": null,
+  "product_window_stats": {
+    "window_steps": null,
+    "emitted_steps": 0,
+    "silenced_steps": 0,
+    "steps_seen": 0,
+    "emitted_steps_total": 0,
+    "silenced_steps_total": 0,
+    "steps_seen_total": 0
+  },
+  "store_scope_conversation": false,
+  "oracle_selector": false,
+  "evidence_content_arm": null,
+  "perm_seed": null,
+  "surface_gate_state": "armed",
+  "write_back_gate_last_reason": null,
+  "repetition_penalty": 2.0,
+  "repetition_window": 8,
+  "max_length": 256,
+  "generation_loop_lines": [
+    3222,
+    3284
+  ],
+  "items": 1,
+  "items_sha256": "69a41b2185f02607",
+  "boundary_win_position_hist": {
+    "0-15": 0,
+    "16-31": 0,
+    "32-63": 0,
+    "64-127": 0,
+    "128+": 1,
+    "total": 1
+  },
+  "terminal_decision_summary_v27": {
+    "generations_total": 3,
+    "with_terminal_row": 1,
+    "without_terminal_row": 2,
+    "absent_reasons": {
+      "ate_full_budget": 2
+    },
+    "terminal_rank_not_one_count": 0,
+    "terminal_rank_values_seen": [
+      1
+    ],
+    "terminal_boundary_is_argmax_false_count": 0,
+    "median_terminal_p_boundary": 0.336076,
+    "terminal_above_recorded_peak_count": 1,
+    "terminal_above_recorded_peak_share": 1.0,
+    "median_terminal_over_recorded_peak": 132.1573,
+    "last_recorded_rank_buckets_for_stoppers": {
+      ">10": 1
+    },
+    "last_recorded_rank_buckets_for_eaters": {
+      ">10": 2
+    },
+    "last_recorded_median_rank_for_stoppers": 46,
+    "last_recorded_median_rank_for_eaters": 14,
+    "expected_self_stop_from_item_counts": 1,
+    "expected_eat_from_item_counts": 2,
+    "pairing_ok": true
+  },
+  "tail_identity_summary_v28": {
+    "stoppers_prev_step_bytes": {
+      "n": 1,
+      "top": [
+        {
+          "key": 10,
+          "count": 1,
+          "share": 1.0
+        }
+      ],
+      "distinct": 1,
+      "top1_share": 1.0
+    },
+    "eaters_prev_step_bytes": {
+      "n": 2,
+      "top": [
+        {
+          "key": 229,
+          "count": 1,
+          "share": 0.5
+        },
+        {
+          "key": 232,
+          "count": 1,
+          "share": 0.5
+        }
+      ],
+      "distinct": 2,
+      "top1_share": 0.5
+    },
+    "stoppers_prev_step_byte_classes": {
+      "n": 1,
+      "top": [
+        {
+          "key": "ascii",
+          "count": 1,
+          "share": 1.0
+        }
+      ],
+      "distinct": 1,
+      "top1_share": 1.0
+    },
+    "eaters_prev_step_byte_classes": {
+      "n": 2,
+      "top": [
+        {
+          "key": "lead3",
+          "count": 2,
+          "share": 1.0
+        }
+      ],
+      "distinct": 1,
+      "top1_share": 1.0
+    },
+    "stoppers_top1_class_share": 1.0,
+    "eaters_top1_class_share": 1.0,
+    "class_share_stoppers_minus_eaters": 0.0,
+    "tail_identity_present_for_all_generations": true,
+    "stoppers_that_also_ate_full_budget": 0,
+    "generations_neither_stop_nor_eater": 0
+  },
+  "lf_followthrough_summary_v29": {
+    "stoppers": {
+      "n": 1,
+      "with_lf": 1,
+      "with_lf_share": 1.0,
+      "lf_count_median": 1
+    },
+    "eaters": {
+      "n": 2,
+      "with_lf": 0,
+      "with_lf_share": 0.0,
+      "lf_count_median": 0
+    },
+    "stoppers_last_lf_is_last_step": 1,
+    "stoppers_last_lf_is_last_step_share": 1.0,
+    "eaters_last_lf_position_buckets": {}
+  },
+  "lf_next_summary_v30": {
+    "stoppers_rank_values_seen": [
+      1
+    ],
+    "stoppers_all_rank_one": true,
+    "eaters_with_lf_and_next_step": 0,
+    "denominator_at_least_5": false,
+    "eaters_rank_hist": {},
+    "eaters_share_rank_le_3": null,
+    "eaters_share_rank_ge_10": null,
+    "eaters_median_best_rank_after_lf": null
+  },
+  "lf_competitor_summary_v31": {
+    "n_eaters_with_post_lf_step": 0,
+    "denominator_at_least_5": false,
+    "winner_byte_at_best_rank_top": [],
+    "winner_byte_distinct": 0,
+    "winner_utf8_class_top": [],
+    "winner_utf8_class_distinct": 0,
+    "every_post_lf_winner_top": [],
+    "every_post_lf_winner_count": 0
+  },
+  "lf_repeat_context_summary_v32": {
+    "stoppers_n": 1,
+    "stoppers_with_lf": 1,
+    "stoppers_median_share_inside_repeat_run": 0.0,
+    "stoppers_share_is_binary_count": 1,
+    "eaters_n": 2,
+    "eaters_with_lf": 0,
+    "eaters_median_share_inside_repeat_run": null,
+    "eaters_share_is_binary_count": 0,
+    "discriminator_denominator_at_least_10": false,
+    "column_dynamic_range_stoppers": {
+      "n_values": 1,
+      "distinct": 1,
+      "min": 0.0,
+      "max": 0.0,
+      "endpoint_only": true,
+      "usable": false
+    },
+    "column_dynamic_range_eaters": {
+      "n_values": 0,
+      "distinct": 0,
+      "endpoint_only": false,
+      "usable": false
+    },
+    "ruler_usable": false
+  },
+  "lf_margin_summary_v34": {
+    "stoppers_n": 1,
+    "stoppers_with_lf_next": 1,
+    "stoppers_median_min_ratio": 1.0,
+    "stoppers_min_ratio_range": [
+      1.0,
+      1.0
+    ],
+    "stoppers_median_best_rank": 1,
+    "stoppers_dynamic_range": {
+      "n_values": 1,
+      "distinct": 1,
+      "min": 1.0,
+      "max": 1.0,
+      "endpoint_only": true,
+      "usable": false
+    },
+    "eaters_n": 2,
+    "eaters_with_lf_next": 0,
+    "eaters_median_min_ratio": null,
+    "eaters_min_ratio_range": null,
+    "eaters_median_best_rank": null,
+    "eaters_dynamic_range": {
+      "n_values": 0,
+      "distinct": 0,
+      "endpoint_only": false,
+      "usable": false
+    },
+    "eaters_denominator_at_least_20": false
+  },
+  "peak_run_summary_v37": {
+    "incoherent_zero_run_but_peak_in_run": 0,
+    "stoppers_n": 1,
+    "stoppers_peak_in_run_count": 0,
+    "stoppers_peak_in_run_share": 0.0,
+    "stoppers_generations_with_zero_repeat_run": 1,
+    "eaters_with_lf_n": 0,
+    "eaters_with_lf_peak_in_run_count": 0,
+    "eaters_with_lf_peak_in_run_share": null,
+    "eaters_with_lf_generations_with_zero_repeat_run": 0,
+    "eaters_never_lf_n": 2,
+    "eaters_never_lf_peak_in_run_count": 0,
+    "eaters_never_lf_peak_in_run_share": 0.0,
+    "eaters_never_lf_generations_with_zero_repeat_run": 0
+  },
+  "peak_step_summary_v36": {
+    "stoppers_n": 1,
+    "stoppers_denominator_with_previous_step": 1,
+    "stoppers_same_byte_at_peak_share": 0.0,
+    "stoppers_winner_bytes_top5": [
+      {
+        "byte": 230,
+        "count": 1
+      }
+    ],
+    "stoppers_median_boundary_rank_at_peak": 10,
+    "eaters_with_lf_n": 0,
+    "eaters_with_lf_denominator_with_previous_step": 0,
+    "eaters_with_lf_same_byte_at_peak_share": null,
+    "eaters_with_lf_winner_bytes_top5": [],
+    "eaters_with_lf_median_boundary_rank_at_peak": null,
+    "eaters_never_lf_n": 2,
+    "eaters_never_lf_denominator_with_previous_step": 2,
+    "eaters_never_lf_same_byte_at_peak_share": 0.5,
+    "eaters_never_lf_winner_bytes_top5": [
+      {
+        "byte": 165,
+        "count": 1
+      },
+      {
+        "byte": 144,
+        "count": 1
+      }
+    ],
+    "eaters_never_lf_median_boundary_rank_at_peak": 63
+  },
+  "instrument_guard": {
+    "observe_calls_recorded": true,
+    "surface_gate_state_reported": true,
+    "evidence_alpha_consumed": true,
+    "evidence_alpha_calls": 0,
+    "relevance_ceiling_fired": true,
+    "relevance_ceiling_silenced_calls": null,
+    "relevance_ceiling_silenced_share": null,
+    "evidence_observer_installed": true,
+    "evidence_calls_in_generation_loop": 753,
+    "ceiling_fire_count_reported": true,
+    "content_arm_consumed": true,
+    "window_arm_consumed": true,
+    "product_window_fired": true,
+    "product_window_emitted_and_silenced_reported": true,
+    "store_scope_consumed": true,
+    "oracle_consumed": true,
+    "oracle_calls": 0,
+    "oracle_found": 0,
+    "oracle_fell_through": 0,
+    "store_scope_stale_removed": 0,
+    "store_scope_events_min": 0,
+    "store_scope_events_max": 0,
+    "window_emitted_calls": 0,
+    "window_silenced_calls": 0,
+    "window_both_sides_seen": true,
+    "content_arm_magnitude_preserved": null,
+    "content_arm_max_rel_l1_diff": 0.0,
+    "content_arm_frozen_at_call": null,
+    "content_arm_frozen_l1": null,
+    "content_arm_calls": 0,
+    "content_arm_l1_original_sum": 0.0,
+    "content_arm_l1_replaced_sum": 0.0,
+    "relevance_ceiling_silenced_calls_all_chains": null,
+    "evidence_gate_flag_honored": true,
+    "observe_calls_by_caller": {
+      "record_told_history:112": 762,
+      "generate:3269": 756,
+      "generate:3186": 655,
+      "record_told_history:109": 78,
+      "record_told_history:99": 3,
+      "generate:3177": 3
+    },
+    "all_items_reconstructed": true,
+    "items_failing_reconstruction": [],
+    "total_argmax_mismatch_steps": 0,
+    "all_surfaces_are_replayed_raw": true,
+    "replay_suspect_generations": 0,
+    "items_whose_surface_is_not_model_bytes": [],
+    "total_steps": 756,
+    "generations": 3,
+    "generations_cut_by_turn_marker": 0,
+    "generations_boundary_self_stop": 1,
+    "generations_eating_full_budget": 2,
+    "base_sha256_unchanged": true,
+    "checkpoint_sha_recorded": true
+  },
+  "failure_examples": [],
+  "offender_count": 1,
+  "offenders": [
+    {
+      "id": "V001",
+      "answer_run": 29,
+      "steps": 756,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "generations_boundary_self_stop": 1,
+      "generations_eating_full_budget": 2,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 244,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "同何：这首诗有吂何，大家有一起大何，大何，大何，",
+          "mismatch_reason": null,
+          "replay_surface_head": "同何：这首诗有吂何，大家有一起大何，大何，大何，"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "哥哥哥哥楐萐衐衐衐衐衐衐哥哥哥衐衐衐衐衐楥襐衐衐",
+          "mismatch_reason": null,
+          "replay_surface_head": "哥哥哥哥楐萐衐衐衐衐衐衐哥哥哥衐衐衐衐衐楥襐衐衐"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "哥哥衐衐衐衐衐衐哥哥哥哥衐衐衐衐衐哥哥襐衐衐衐衐",
+          "mismatch_reason": null,
+          "replay_surface_head": "哥哥衐衐衐衐衐衐哥哥哥哥衐衐衐衐衐哥哥襐衐衐衐衐"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 64,
+      "median_ratio_best_over_boundary": 1451361611.241,
+      "run_steps": 456,
+      "endstep_probe_v22": [
+        {
+          "generation_steps": 244,
+          "steps_in_repeat_run": 0,
+          "last_step": 243,
+          "lf_trace_v29": {
+            "lf_step_count": 1,
+            "last_lf_step": 243,
+            "generation_last_step": 243
+          },
+          "lf_next_probe_v30": {
+            "lf_count": 1,
+            "lf_next_steps": 1,
+            "best_boundary_rank_after_lf": 1,
+            "p_boundary_at_best_rank_step": 0.336076,
+            "min_ratio_best_over_boundary_after_lf": 1.0,
+            "winner_byte_at_best_rank_step": "boundary",
+            "utf8_class_at_best_rank_step": "boundary",
+            "winner_bytes_after_lf": [
+              "boundary"
+            ]
+          },
+          "lf_repeat_context_v32": {
+            "lf_steps_total": 1,
+            "lf_steps_inside_repeat_run": 0,
+            "lf_share_inside_repeat_run": 0.0
+          },
+          "lf_margins_v34": {
+            "lf_steps": 1,
+            "lf_plus_one_observed": 1,
+            "best_rank": 1,
+            "min_ratio": 1.0,
+            "median_ratio": 1.0,
+            "worst_ratio": 1.0,
+            "per_step": [
+              {
+                "step": 244,
+                "boundary_rank_in_legal": 1,
+                "ratio_best_over_boundary": 1.0,
+                "p_boundary": 0.336076
+              }
+            ]
+          },
+          "tail_identity": {
+            "prev_step_emitted_byte": 10,
+            "prev_step_utf8_byte_class": "ascii",
+            "prev_step_utf8_state_before": [
+              0,
+              239
+            ],
+            "prev_step_boundary_rank": 46,
+            "prev_step_p_boundary": 5.1e-05
+          },
+          "p_boundary_max": 0.002543,
+          "p_boundary_argmax_step": 36,
+          "boundary_rank_at_peak_step": 10,
+          "legal_candidates_at_peak_step": 179,
+          "repeat_run_at_peak_step_v37": false,
+          "peak_step_row_v36": {
+            "step": 36,
+            "emitted_byte": 230,
+            "emitted_byte_class": "lead3",
+            "previous_step_emitted_byte": 182,
+            "same_byte_as_previous_step": false,
+            "ratio_best_over_boundary": 250.337,
+            "p_boundary": 0.002543,
+            "boundary_rank_in_legal": 10
+          },
+          "last_recorded_row": {
+            "step": 243,
+            "p_boundary": 5.1e-05,
+            "boundary_rank_in_legal": 46,
+            "legal_candidates_including_boundary": 180,
+            "ratio_best_over_boundary": 8260.043
+          },
+          "terminal_decision": {
+            "step": 244,
+            "p_boundary": 0.336076,
+            "p_boundary_before_penalty": 0.336076,
+            "boundary_rank_in_legal": 1,
+            "legal_candidates_including_boundary": 180,
+            "ratio_best_over_boundary": 1.0,
+            "boundary_is_argmax": true,
+            "terminal_utf8_state_before": [
+              0,
+              0
+            ],
+            "terminal_over_recorded_peak": 132.1573
+          },
+          "terminal_decision_absent_reason": null,
+          "peak_is_last_step": false,
+          "ate_full_budget": false,
+          "at_steps": [
+            {
+              "step": 8,
+              "p_boundary": 0.00017,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 16,
+              "p_boundary": 2.7e-05,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 32,
+              "p_boundary": 4e-06,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 64,
+              "p_boundary": 1.7e-05,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 128,
+              "p_boundary": 2e-06,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            }
+          ]
+        },
+        {
+          "generation_steps": 256,
+          "steps_in_repeat_run": 216,
+          "last_step": 255,
+          "lf_trace_v29": {
+            "lf_step_count": 0,
+            "last_lf_step": null,
+            "generation_last_step": 255
+          },
+          "lf_next_probe_v30": {
+            "lf_count": 0,
+            "lf_next_steps": 0,
+            "best_boundary_rank_after_lf": null,
+            "p_boundary_at_best_rank_step": null,
+            "min_ratio_best_over_boundary_after_lf": null,
+            "winner_byte_at_best_rank_step": null,
+            "utf8_class_at_best_rank_step": "boundary",
+            "winner_bytes_after_lf": []
+          },
+          "lf_repeat_context_v32": {
+            "lf_steps_total": 0,
+            "lf_steps_inside_repeat_run": 0,
+            "lf_share_inside_repeat_run": null
+          },
+          "lf_margins_v34": {
+            "lf_steps": 0,
+            "lf_plus_one_observed": 0,
+            "best_rank": null,
+            "min_ratio": null,
+            "median_ratio": null,
+            "worst_ratio": null,
+            "per_step": []
+          },
+          "tail_identity": {
+            "prev_step_emitted_byte": 229,
+            "prev_step_utf8_byte_class": "lead3",
+            "prev_step_utf8_state_before": [
+              0,
+              229
+            ],
+            "prev_step_boundary_rank": 12,
+            "prev_step_p_boundary": 0.0
+          },
+          "p_boundary_max": 7e-06,
+          "p_boundary_argmax_step": 83,
+          "boundary_rank_at_peak_step": 63,
+          "legal_candidates_at_peak_step": 64,
+          "repeat_run_at_peak_step_v37": false,
+          "peak_step_row_v36": {
+            "step": 83,
+            "emitted_byte": 165,
+            "emitted_byte_class": "continuation",
+            "previous_step_emitted_byte": 165,
+            "same_byte_as_previous_step": true,
+            "ratio_best_over_boundary": 46651.048,
+            "p_boundary": 7e-06,
+            "boundary_rank_in_legal": 63
+          },
+          "last_recorded_row": {
+            "step": 255,
+            "p_boundary": 0.0,
+            "boundary_rank_in_legal": 12,
+            "legal_candidates_including_boundary": 180,
+            "ratio_best_over_boundary": 6.791912055178828e+18
+          },
+          "terminal_decision": null,
+          "terminal_decision_absent_reason": "ate_full_budget",
+          "peak_is_last_step": false,
+          "ate_full_budget": true,
+          "at_steps": [
+            {
+              "step": 8,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 64,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 16,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 32,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 64,
+              "p_boundary": 1e-06,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 128,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 64,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            }
+          ]
+        },
+        {
+          "generation_steps": 256,
+          "steps_in_repeat_run": 240,
+          "last_step": 255,
+          "lf_trace_v29": {
+            "lf_step_count": 0,
+            "last_lf_step": null,
+            "generation_last_step": 255
+          },
+          "lf_next_probe_v30": {
+            "lf_count": 0,
+            "lf_next_steps": 0,
+            "best_boundary_rank_after_lf": null,
+            "p_boundary_at_best_rank_step": null,
+            "min_ratio_best_over_boundary_after_lf": null,
+            "winner_byte_at_best_rank_step": null,
+            "utf8_class_at_best_rank_step": "boundary",
+            "winner_bytes_after_lf": []
+          },
+          "lf_repeat_context_v32": {
+            "lf_steps_total": 0,
+            "lf_steps_inside_repeat_run": 0,
+            "lf_share_inside_repeat_run": null
+          },
+          "lf_margins_v34": {
+            "lf_steps": 0,
+            "lf_plus_one_observed": 0,
+            "best_rank": null,
+            "min_ratio": null,
+            "median_ratio": null,
+            "worst_ratio": null,
+            "per_step": []
+          },
+          "tail_identity": {
+            "prev_step_emitted_byte": 232,
+            "prev_step_utf8_byte_class": "lead3",
+            "prev_step_utf8_state_before": [
+              0,
+              232
+            ],
+            "prev_step_boundary_rank": 14,
+            "prev_step_p_boundary": 0.0
+          },
+          "p_boundary_max": 7.3e-05,
+          "p_boundary_argmax_step": 59,
+          "boundary_rank_at_peak_step": 63,
+          "legal_candidates_at_peak_step": 64,
+          "repeat_run_at_peak_step_v37": false,
+          "peak_step_row_v36": {
+            "step": 59,
+            "emitted_byte": 144,
+            "emitted_byte_class": "continuation",
+            "previous_step_emitted_byte": 165,
+            "same_byte_as_previous_step": false,
+            "ratio_best_over_boundary": 4446.476,
+            "p_boundary": 7.3e-05,
+            "boundary_rank_in_legal": 63
+          },
+          "last_recorded_row": {
+            "step": 255,
+            "p_boundary": 0.0,
+            "boundary_rank_in_legal": 14,
+            "legal_candidates_including_boundary": 180,
+            "ratio_best_over_boundary": 53888149270.751
+          },
+          "terminal_decision": null,
+          "terminal_decision_absent_reason": "ate_full_budget",
+          "peak_is_last_step": false,
+          "ate_full_budget": true,
+          "at_steps": [
+            {
+              "step": 8,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 57,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 16,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 32,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 64,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 64,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 128,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 63,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            }
+          ]
+        }
+      ],
+      "run_boundary_win_positions": [
+        244
+      ],
+      "run_legal_hist": {
+        "64": 304,
+        "179": 152
+      },
+      "run_boundary_rank_hist": {
+        "6": 3,
+        "8": 2,
+        "9": 6,
+        "10": 30,
+        "11": 16,
+        "12": 13,
+        "13": 13,
+        "14": 12,
+        "15": 20,
+        "16": 5,
+        "17": 8,
+        "18": 5,
+        "19": 4,
+        "20": 7,
+        "21": 2,
+        "22": 2,
+        "23": 2,
+        "24": 1,
+        "25": 1,
+        "49": 1,
+        "52": 1,
+        "53": 1,
+        "55": 1,
+        "56": 1,
+        "57": 1,
+        "58": 2,
+        "59": 6,
+        "60": 5,
+        "61": 5,
+        "62": 13,
+        "63": 28,
+        "64": 57,
+        "65": 182
+      },
+      "run_ratio_min": 183213.122,
+      "run_ratio_median": 2395661997259.738,
+      "run_rows_sample": [
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 1.0,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 21,
+          "legal_candidates": 179,
+          "legal_candidates_including_boundary": 180,
+          "ratio_best_over_boundary": 2.453063895293575e+28,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 0,
+          "emitted_byte": 229,
+          "utf8_state_before": [
+            0,
+            0
+          ],
+          "utf8_byte_class": "lead3",
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.999999,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 65,
+          "legal_candidates": 64,
+          "legal_candidates_including_boundary": 65,
+          "ratio_best_over_boundary": 564451462406.691,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 1,
+          "emitted_byte": 147,
+          "utf8_state_before": [
+            2,
+            229
+          ],
+          "utf8_byte_class": "continuation",
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 1.0,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 63,
+          "legal_candidates": 64,
+          "legal_candidates_including_boundary": 65,
+          "ratio_best_over_boundary": 1.5669703085165386e+18,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 2,
+          "emitted_byte": 165,
+          "utf8_state_before": [
+            1,
+            229
+          ],
+          "utf8_byte_class": "continuation",
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.333328,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 10,
+          "legal_candidates": 179,
+          "legal_candidates_including_boundary": 180,
+          "ratio_best_over_boundary": 220784290945063.72,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 3,
+          "emitted_byte": 229,
+          "utf8_state_before": [
+            0,
+            229
+          ],
+          "utf8_byte_class": "lead3",
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.333333,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 65,
+          "legal_candidates": 64,
+          "legal_candidates_including_boundary": 65,
+          "ratio_best_over_boundary": 8.89427879664064e+17,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 4,
+          "emitted_byte": 147,
+          "utf8_state_before": [
+            2,
+            229
+          ],
+          "utf8_byte_class": "continuation",
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.333333,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 62,
+          "legal_candidates": 64,
+          "legal_candidates_including_boundary": 65,
+          "ratio_best_over_boundary": 4.761895163606975e+19,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 5,
+          "emitted_byte": 165,
+          "utf8_state_before": [
+            1,
+            229
+          ],
+          "utf8_byte_class": "continuation",
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.19767,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 10,
+          "legal_candidates": 179,
+          "legal_candidates_including_boundary": 180,
+          "ratio_best_over_boundary": 589040560246.215,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 6,
+          "emitted_byte": 229,
+          "utf8_state_before": [
+            0,
+            229
+          ],
+          "utf8_byte_class": "lead3",
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.2,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 65,
+          "legal_candidates": 64,
+          "legal_candidates_including_boundary": 65,
+          "ratio_best_over_boundary": 3.069130341011778e+17,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 7,
+          "emitted_byte": 147,
+          "utf8_state_before": [
+            2,
+            229
+          ],
+          "utf8_byte_class": "continuation",
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.2,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 64,
+          "legal_candidates": 64,
+          "legal_candidates_including_boundary": 65,
+          "ratio_best_over_boundary": 4.4239016961879e+18,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 8,
+          "emitted_byte": 165,
+          "utf8_state_before": [
+            1,
+            229
+          ],
+          "utf8_byte_class": "continuation",
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.190384,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 10,
+          "legal_candidates": 179,
+          "legal_candidates_including_boundary": 180,
+          "ratio_best_over_boundary": 24978717593.644,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 9,
+          "emitted_byte": 229,
+          "utf8_state_before": [
+            0,
+            229
+          ],
+          "utf8_byte_class": "lead3",
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.2,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 65,
+          "legal_candidates": 64,
+          "legal_candidates_including_boundary": 65,
+          "ratio_best_over_boundary": 1.4648691707720288e+16,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 10,
+          "emitted_byte": 147,
+          "utf8_state_before": [
+            2,
+            229
+          ],
+          "utf8_byte_class": "continuation",
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.2,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 64,
+          "legal_candidates": 64,
+          "legal_candidates_including_boundary": 65,
+          "ratio_best_over_boundary": 2.7788911139224813e+17,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": false,
+          "step": 11,
+          "emitted_byte": 165,
+          "utf8_state_before": [
+            1,
+            229
+          ],
+          "utf8_byte_class": "continuation",
+          "in_run": true
+        }
+      ]
+    }
+  ],
+  "per_item": [
+    {
+      "id": "V001",
+      "answer_run": 29,
+      "steps": 756,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "generations_boundary_self_stop": 1,
+      "generations_eating_full_budget": 2,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 244,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "同何：这首诗有吂何，大家有一起大何，大何，大何，",
+          "mismatch_reason": null,
+          "replay_surface_head": "同何：这首诗有吂何，大家有一起大何，大何，大何，"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "哥哥哥哥楐萐衐衐衐衐衐衐哥哥哥衐衐衐衐衐楥襐衐衐",
+          "mismatch_reason": null,
+          "replay_surface_head": "哥哥哥哥楐萐衐衐衐衐衐衐哥哥哥衐衐衐衐衐楥襐衐衐"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "哥哥衐衐衐衐衐衐哥哥哥哥衐衐衐衐衐哥哥襐衐衐衐衐",
+          "mismatch_reason": null,
+          "replay_surface_head": "哥哥衐衐衐衐衐衐哥哥哥哥衐衐衐衐衐哥哥襐衐衐衐衐"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 0,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 64,
+      "median_ratio_best_over_boundary": 1451361611.241,
+      "run_steps": 456,
+      "endstep_probe_v22": [
+        {
+          "generation_steps": 244,
+          "steps_in_repeat_run": 0,
+          "last_step": 243,
+          "lf_trace_v29": {
+            "lf_step_count": 1,
+            "last_lf_step": 243,
+            "generation_last_step": 243
+          },
+          "lf_next_probe_v30": {
+            "lf_count": 1,
+            "lf_next_steps": 1,
+            "best_boundary_rank_after_lf": 1,
+            "p_boundary_at_best_rank_step": 0.336076,
+            "min_ratio_best_over_boundary_after_lf": 1.0,
+            "winner_byte_at_best_rank_step": "boundary",
+            "utf8_class_at_best_rank_step": "boundary",
+            "winner_bytes_after_lf": [
+              "boundary"
+            ]
+          },
+          "lf_repeat_context_v32": {
+            "lf_steps_total": 1,
+            "lf_steps_inside_repeat_run": 0,
+            "lf_share_inside_repeat_run": 0.0
+          },
+          "lf_margins_v34": {
+            "lf_steps": 1,
+            "lf_plus_one_observed": 1,
+            "best_rank": 1,
+            "min_ratio": 1.0,
+            "median_ratio": 1.0,
+            "worst_ratio": 1.0,
+            "per_step": [
+              {
+                "step": 244,
+                "boundary_rank_in_legal": 1,
+                "ratio_best_over_boundary": 1.0,
+                "p_boundary": 0.336076
+              }
+            ]
+          },
+          "tail_identity": {
+            "prev_step_emitted_byte": 10,
+            "prev_step_utf8_byte_class": "ascii",
+            "prev_step_utf8_state_before": [
+              0,
+              239
+            ],
+            "prev_step_boundary_rank": 46,
+            "prev_step_p_boundary": 5.1e-05
+          },
+          "p_boundary_max": 0.002543,
+          "p_boundary_argmax_step": 36,
+          "boundary_rank_at_peak_step": 10,
+          "legal_candidates_at_peak_step": 179,
+          "repeat_run_at_peak_step_v37": false,
+          "peak_step_row_v36": {
+            "step": 36,
+            "emitted_byte": 230,
+            "emitted_byte_class": "lead3",
+            "previous_step_emitted_byte": 182,
+            "same_byte_as_previous_step": false,
+            "ratio_best_over_boundary": 250.337,
+            "p_boundary": 0.002543,
+            "boundary_rank_in_legal": 10
+          },
+          "last_recorded_row": {
+            "step": 243,
+            "p_boundary": 5.1e-05,
+            "boundary_rank_in_legal": 46,
+            "legal_candidates_including_boundary": 180,
+            "ratio_best_over_boundary": 8260.043
+          },
+          "terminal_decision": {
+            "step": 244,
+            "p_boundary": 0.336076,
+            "p_boundary_before_penalty": 0.336076,
+            "boundary_rank_in_legal": 1,
+            "legal_candidates_including_boundary": 180,
+            "ratio_best_over_boundary": 1.0,
+            "boundary_is_argmax": true,
+            "terminal_utf8_state_before": [
+              0,
+              0
+            ],
+            "terminal_over_recorded_peak": 132.1573
+          },
+          "terminal_decision_absent_reason": null,
+          "peak_is_last_step": false,
+          "ate_full_budget": false,
+          "at_steps": [
+            {
+              "step": 8,
+              "p_boundary": 0.00017,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 16,
+              "p_boundary": 2.7e-05,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 32,
+              "p_boundary": 4e-06,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 64,
+              "p_boundary": 1.7e-05,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 128,
+              "p_boundary": 2e-06,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            }
+          ]
+        },
+        {
+          "generation_steps": 256,
+          "steps_in_repeat_run": 216,
+          "last_step": 255,
+          "lf_trace_v29": {
+            "lf_step_count": 0,
+            "last_lf_step": null,
+            "generation_last_step": 255
+          },
+          "lf_next_probe_v30": {
+            "lf_count": 0,
+            "lf_next_steps": 0,
+            "best_boundary_rank_after_lf": null,
+            "p_boundary_at_best_rank_step": null,
+            "min_ratio_best_over_boundary_after_lf": null,
+            "winner_byte_at_best_rank_step": null,
+            "utf8_class_at_best_rank_step": "boundary",
+            "winner_bytes_after_lf": []
+          },
+          "lf_repeat_context_v32": {
+            "lf_steps_total": 0,
+            "lf_steps_inside_repeat_run": 0,
+            "lf_share_inside_repeat_run": null
+          },
+          "lf_margins_v34": {
+            "lf_steps": 0,
+            "lf_plus_one_observed": 0,
+            "best_rank": null,
+            "min_ratio": null,
+            "median_ratio": null,
+            "worst_ratio": null,
+            "per_step": []
+          },
+          "tail_identity": {
+            "prev_step_emitted_byte": 229,
+            "prev_step_utf8_byte_class": "lead3",
+            "prev_step_utf8_state_before": [
+              0,
+              229
+            ],
+            "prev_step_boundary_rank": 12,
+            "prev_step_p_boundary": 0.0
+          },
+          "p_boundary_max": 7e-06,
+          "p_boundary_argmax_step": 83,
+          "boundary_rank_at_peak_step": 63,
+          "legal_candidates_at_peak_step": 64,
+          "repeat_run_at_peak_step_v37": false,
+          "peak_step_row_v36": {
+            "step": 83,
+            "emitted_byte": 165,
+            "emitted_byte_class": "continuation",
+            "previous_step_emitted_byte": 165,
+            "same_byte_as_previous_step": true,
+            "ratio_best_over_boundary": 46651.048,
+            "p_boundary": 7e-06,
+            "boundary_rank_in_legal": 63
+          },
+          "last_recorded_row": {
+            "step": 255,
+            "p_boundary": 0.0,
+            "boundary_rank_in_legal": 12,
+            "legal_candidates_including_boundary": 180,
+            "ratio_best_over_boundary": 6.791912055178828e+18
+          },
+          "terminal_decision": null,
+          "terminal_decision_absent_reason": "ate_full_budget",
+          "peak_is_last_step": false,
+          "ate_full_budget": true,
+          "at_steps": [
+            {
+              "step": 8,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 64,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 16,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 32,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 64,
+              "p_boundary": 1e-06,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 128,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 64,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            }
+          ]
+        },
+        {
+          "generation_steps": 256,
+          "steps_in_repeat_run": 240,
+          "last_step": 255,
+          "lf_trace_v29": {
+            "lf_step_count": 0,
+            "last_lf_step": null,
+            "generation_last_step": 255
+          },
+          "lf_next_probe_v30": {
+            "lf_count": 0,
+            "lf_next_steps": 0,
+            "best_boundary_rank_after_lf": null,
+            "p_boundary_at_best_rank_step": null,
+            "min_ratio_best_over_boundary_after_lf": null,
+            "winner_byte_at_best_rank_step": null,
+            "utf8_class_at_best_rank_step": "boundary",
+            "winner_bytes_after_lf": []
+          },
+          "lf_repeat_context_v32": {
+            "lf_steps_total": 0,
+            "lf_steps_inside_repeat_run": 0,
+            "lf_share_inside_repeat_run": null
+          },
+          "lf_margins_v34": {
+            "lf_steps": 0,
+            "lf_plus_one_observed": 0,
+            "best_rank": null,
+            "min_ratio": null,
+            "median_ratio": null,
+            "worst_ratio": null,
+            "per_step": []
+          },
+          "tail_identity": {
+            "prev_step_emitted_byte": 232,
+            "prev_step_utf8_byte_class": "lead3",
+            "prev_step_utf8_state_before": [
+              0,
+              232
+            ],
+            "prev_step_boundary_rank": 14,
+            "prev_step_p_boundary": 0.0
+          },
+          "p_boundary_max": 7.3e-05,
+          "p_boundary_argmax_step": 59,
+          "boundary_rank_at_peak_step": 63,
+          "legal_candidates_at_peak_step": 64,
+          "repeat_run_at_peak_step_v37": false,
+          "peak_step_row_v36": {
+            "step": 59,
+            "emitted_byte": 144,
+            "emitted_byte_class": "continuation",
+            "previous_step_emitted_byte": 165,
+            "same_byte_as_previous_step": false,
+            "ratio_best_over_boundary": 4446.476,
+            "p_boundary": 7.3e-05,
+            "boundary_rank_in_legal": 63
+          },
+          "last_recorded_row": {
+            "step": 255,
+            "p_boundary": 0.0,
+            "boundary_rank_in_legal": 14,
+            "legal_candidates_including_boundary": 180,
+            "ratio_best_over_boundary": 53888149270.751
+          },
+          "terminal_decision": null,
+          "terminal_decision_absent_reason": "ate_full_budget",
+          "peak_is_last_step": false,
+          "ate_full_budget": true,
+          "at_steps": [
+            {
+              "step": 8,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 57,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 16,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 32,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 64,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 64,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 128,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 63,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            }
+          ]
+        }
+      ],
+      "run_boundary_win_positions": [
+        244
+      ]
+    }
+  ],
+  "started_utc": "2026-10-03T07:38:34Z"
+}

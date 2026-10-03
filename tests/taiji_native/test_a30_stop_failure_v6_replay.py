@@ -84,9 +84,9 @@ def test_instrument_carries_v6_and_the_correction_note() -> None:
     source = (PROJECT_ROOT / "scripts" / "training" / "probe_taiji_a30_stop_failure.py").read_text(
         encoding="utf-8"
     )
-    assert '"format": "taiji-a30-stop-failure-v37"' in source
+    assert '"format": "taiji-a30-stop-failure-v38"' in source
     assert all(
-        f"format_note_v{v}" in source for v in range(6, 38)
+        f"format_note_v{v}" in source for v in range(6, 39)
     ), "升版只许加列，历史说明必须逐版留在件里"
     assert "format_note_v6" in source
     assert "追加二" in source and "深帧复现" in source
@@ -120,10 +120,21 @@ def test_instrument_carries_v6_and_the_correction_note() -> None:
         '"relevance_ceiling_fired": (args.relevance_ceiling_c is None or loop_silenced[1] > 0)'
         in source
     )
-    assert '"relevance_ceiling_silenced_calls": loop_silenced[1]' in source
+    #: v38（DEBT-G33）更正：这一列在**没开上限**的档里必须报 `null`——v37 及以前报 0，
+    #: 与"开了上限但一次都没静音"在件里同形，而这两种读数的下一步动作完全不同。
+    assert '"relevance_ceiling_silenced_calls": (' in source
+    assert "loop_silenced[1] if args.relevance_ceiling_c is not None else None" in source
     assert "scaled, loop_silenced = _observe_silencing(" in source
     #: 环内归因的判据：取调用**之前**最后一条在案帧的 `in_generation_loop`（`records` 每轮清空）。
     assert 'if prev is not None and prev["in_generation_loop"]:' in source
+    #: v38（DEBT-G33）：**环内调用计数不许再依赖 α／上限旗标**，且"没在测"必须写成 `null` 而不是 0。
+    #: 钉的是"观察者安装条件＝回路在场"＋旗标列＋缺观察者时 `null`，并反向钉住那个会自我欺骗的旧写法。
+    assert "evidence_observer_installed = substrate.copy_circuit is not None" in source
+    assert 'if evidence_observer_installed:\n        scaled, loop_silenced = _observe_silencing(' in source
+    assert '"evidence_observer_installed": evidence_observer_installed,' in source
+    assert "loop_silenced[0] if evidence_observer_installed else None" in source
+    assert '"evidence_calls_in_generation_loop": loop_silenced[0],' not in source
+    assert '"relevance_ceiling_silenced_calls_all_chains": (' in source
     #: 退役：只证明"被消费"的那一把不得留下——它是 v12 要替换掉的那把松尺子。
 
     #: v13（2026-10-02，owner 裁"不立项、先追轨迹面由什么在管"）：内容／硬度分离档必须自带**硬度守恒**这道

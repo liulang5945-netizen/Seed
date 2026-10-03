@@ -1122,7 +1122,8 @@ def main() -> int:
     #: 资格档的刻度：本条生成链已经走过的**环内步数**（1 步＝喂进 1 字节），每轮清零。
     loop_steps = [0]
     window_counters = [0, 0, 0]
-    #: v12：只在**生成环内**归因的那一对计数；没装过滤器时保持 [0, 0]。
+    #: v12：只在**生成环内**归因的那一对计数。v38 起只要回路在场就会被下面的观察者填（v37 及以前
+    #: 是条件安装 ⇒ 默认装配的件里保持 `[0, 0]`，那个 0 是"没在测"不是"没发生"，见 DEBT-G33）。
     loop_silenced = [0, 0]
     if args.copy_evidence_alpha != 1.0 or args.relevance_ceiling_c is not None:
         # v9／v11：接口级包装，复用剂量探针里那一个包装器 ⇒ 三半（接缝／复述／自停）量的是同一个乘数、
@@ -1185,7 +1186,12 @@ def main() -> int:
 
         return wrapped, counters
 
-    if args.copy_evidence_alpha != 1.0 or args.relevance_ceiling_c is not None:
+    #: v38（DEBT-G33）：**环内调用计数与 α／上限旗标解耦**——回路在场就装这只只转发不改造的观察者。
+    #: v12 起这支是条件安装的（`α≠1.0 或 c 非空`）⇒ 默认装配的件里 `evidence_calls_in_generation_loop`
+    #: 恒为 0，而这个 0 既能读成"证据通道一次都没被调用"也能读成"没在测"，件内无法区分。
+    #: 包裹器原样返回 `inner(**kwargs)`，不改张量；"装过必须能在真件里读到非零"由守卫钉。
+    evidence_observer_installed = substrate.copy_circuit is not None
+    if evidence_observer_installed:
         scaled, loop_silenced = _observe_silencing(substrate.copy_circuit.evidence)
         substrate.copy_circuit.evidence = scaled  # type: ignore[method-assign]
 
@@ -1468,7 +1474,19 @@ def main() -> int:
 
     substrate.observe = original_observe  # type: ignore[method-assign]
     report = {
-        "format": "taiji-a30-stop-failure-v37",
+        "format": "taiji-a30-stop-failure-v38",
+        "format_note_v38": "v38（2026-10-03）：DEBT-G33——**证据通道的环内调用计数不再依赖 α／上限旗标**。"
+        "v12 到 v37 这只观察者只在 `--copy-evidence-alpha ≠ 1.0` 或 `--relevance-ceiling-c` 非空时才装，"
+        "而计数器初始化就是 `[0, 0]` ⇒ 默认装配（α=1.0、无上限）的件里 `evidence_calls_in_generation_loop` "
+        "恒为 0，那个 0 **分不清**'通道一次都没被调用'与'没装观察者'（§第一百一十二次停靠之后，"
+        "'近停态那一步的分从哪条通道来'正是下一问，第一只尺子不能是空的）。"
+        "本版三处改动全是**观测面**：①回路在场即装这只只转发不改造的包裹器（返回值原样透出，不动张量）；"
+        "②新增 `evidence_observer_installed` 旗标，未装（＝不挂回路那类档）时环内计数报 `null` 而不是 0；"
+        "③`relevance_ceiling_silenced_calls`／`_share`／`_all_chains` 三列在**没开上限**的档里改报 `null`"
+        "（此前报 0，与'开上限但一次没静音'同形）。同族的 `relevance_ceiling_fired`／`ceiling_fire_count_reported` "
+        "本来就带 `is None or …` 条件化，这次把剩下的那几列补齐。"
+        "**逐位不变**这条不是口供：同装配同旗标跑两档，用 `compare_taiji_a30_report_identity.py` 比 `per_item` 子树"
+        "（证据与读数写在 PLAN-A-30 §113）。",
         "format_note_v37": "v37（2026-10-03）：§第一百一十次停靠 把 selector 从'峰值字节＝上一步字节'换成'峰值步落在同字重复段内'。"
         "换的理由写在 §109：中文一个字三字节，`哥哥哥` 的字节串是 E5 93 A5 E5 93 A5，**相邻字节永远不相等**，"
         "所以 §106 那个量读出来的是多字节文本的结构下界（装机装配实测 0.0135），不是'环与近停态无关'——那是"
@@ -1702,11 +1720,20 @@ def main() -> int:
             #: v12：退役 v11 那把松尺子（`relevance_ceiling_consumed` 只看全链调用数 ⇒ 一个从未命中
             #: 的 c 也能报 true）。换成**在生成环内**归因的一对：开过几枪、占环内调用的多少。
             "relevance_ceiling_fired": (args.relevance_ceiling_c is None or loop_silenced[1] > 0),
-            "relevance_ceiling_silenced_calls": loop_silenced[1],
-            "relevance_ceiling_silenced_share": (
-                round(loop_silenced[1] / loop_silenced[0], 6) if loop_silenced[0] else None
+            #: v38：上限观察者**没装时报 None 不报 0**（同 §95 上界仪器的 `lower_bound_available` 纪律）——
+            #: 否则"这一档一次都没静音"与"这一档没法看"在件里长同一个样。
+            "relevance_ceiling_silenced_calls": (
+                loop_silenced[1] if args.relevance_ceiling_c is not None else None
             ),
-            "evidence_calls_in_generation_loop": loop_silenced[0],
+            "relevance_ceiling_silenced_share": (
+                round(loop_silenced[1] / loop_silenced[0], 6)
+                if args.relevance_ceiling_c is not None and loop_silenced[0]
+                else None
+            ),
+            "evidence_observer_installed": evidence_observer_installed,
+            "evidence_calls_in_generation_loop": (
+                loop_silenced[0] if evidence_observer_installed else None
+            ),
             "ceiling_fire_count_reported": args.relevance_ceiling_c is None or loop_silenced[0] > 0,
             #: v13：内容档必须**被走到**；置换档的硬度守恒是这一档的**前提**——不守恒时两个臂差的
             #: 就不只是"内容"，整档作废。`frozen` 档是故意换掉内容的分布 ⇒ 守恒项对它不作判，报 `null`。
@@ -1746,7 +1773,9 @@ def main() -> int:
             "content_arm_l1_original_sum": round(content_guard[1], 6),
             "content_arm_l1_replaced_sum": round(content_guard[2], 6),
             #: 全链总量留在件里，与环内量并排——两数之比就是"prompt 侧占了多少"。
-            "relevance_ceiling_silenced_calls_all_chains": alpha_calls[2],
+            "relevance_ceiling_silenced_calls_all_chains": (
+                alpha_calls[2] if args.relevance_ceiling_c is not None else None
+            ),
             # v8：旗标必须**被走到**——传了 `--no-copy-evidence-gate` 却仍报出有效值为真，就是仪器没生效。
             "evidence_gate_flag_honored": (not args.no_copy_evidence_gate)
             or not bool(
