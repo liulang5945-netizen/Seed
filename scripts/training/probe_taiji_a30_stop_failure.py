@@ -219,6 +219,22 @@ def char_membership_of_run(text: str) -> list[bool]:
 
 
 _FIXED_STEPS = (8, 16, 32, 64, 128)
+_LF_BYTE = 10  # §73 读数：两底 118/118 次自停的"前一步"发的都是这个字节
+
+
+def _lf_trace(group: list[dict]) -> dict[str, Any]:
+    """v29（§73 末段已写死的判据）：这条生成里 LF 发过几次、最后一次在哪儿、停是不是紧跟其后。
+
+    存在的理由：§73 只证明了"**停**总在 LF 之后"，而**拖写**是不是"根本没发 LF"还是"发了没接住"
+    是两个不同的修法方向（定点 vs 训练侧），现有件里没这个量。
+    """
+
+    steps = [int(row["step"]) for row in group if int(row["emitted_byte"]) == _LF_BYTE]
+    return {
+        "lf_step_count": len(steps),
+        "last_lf_step": max(steps) if steps else None,
+        "generation_last_step": max(int(row["step"]) for row in group),
+    }
 
 
 def _utf8_byte_class(byte: int) -> str:
@@ -291,6 +307,8 @@ def _endstep_probe_per_generation(
                 "steps_in_repeat_run": sum(1 for row in group if row.get("in_run")),
                 "last_step": int(last_step),
                 #: v28（§72 判读先于数）：**停之前那一步发的是哪个字节、当时在字的哪一段**。
+                #: v29（§73 末段冻线）：这条生成里 LF 发过几次、最后一次在哪儿。
+                "lf_trace_v29": _lf_trace(group),
                 "tail_identity": {
                     "prev_step_emitted_byte": int(last_row["emitted_byte"]),
                     "prev_step_utf8_byte_class": str(last_row["utf8_byte_class"]),
@@ -513,6 +531,68 @@ def _tail_identity_summary_v28(per_item: list[dict]) -> dict[str, Any]:
         "stoppers_that_also_ate_full_budget": len(overlap),
         "generations_neither_stop_nor_eater": len(neither),
     }
+
+
+def _lf_followthrough_summary_v29(per_item: list[dict]) -> dict[str, Any]:
+    """§73 末段冻线的那把尺：**拖写的生成里有多少发过 LF**（发了没接住 vs 根本没发）。"""
+
+    generations = [g for row in per_item for g in row["endstep_probe_v22"]]
+    stoppers = [g for g in generations if g["terminal_decision"] is not None]
+    eaters = [g for g in generations if g["ate_full_budget"]]
+
+    def _pack(items: list[dict]) -> dict[str, Any]:
+        total = len(items)
+        with_lf = [g for g in items if g["lf_trace_v29"]["lf_step_count"] >= 1]
+        return {
+            "n": total,
+            "with_lf": len(with_lf),
+            "with_lf_share": round(len(with_lf) / total, 4) if total else None,
+            "lf_count_median": (
+                sorted(g["lf_trace_v29"]["lf_step_count"] for g in items)[total // 2] if total else None
+            ),
+        }
+
+    stopped_after_lf = [
+        g for g in stoppers if g["lf_trace_v29"]["last_lf_step"] == g["lf_trace_v29"]["generation_last_step"]
+    ]
+    return {
+        "stoppers": _pack(stoppers),
+        "eaters": _pack(eaters),
+        "stoppers_last_lf_is_last_step": len(stopped_after_lf),
+        "stoppers_last_lf_is_last_step_share": (
+            round(len(stopped_after_lf) / len(stoppers), 4) if stoppers else None
+        ),
+        #: 拖写组里"最后一次 LF 落在预算的哪一段"——分母小的那底要如实看到自己的分母。
+        "eaters_last_lf_position_buckets": {
+            bucket: sum(
+                1
+                for g in eaters
+                if g["lf_trace_v29"]["last_lf_step"] is not None
+                and _lf_bucket(g["lf_trace_v29"]["last_lf_step"], g["lf_trace_v29"]["generation_last_step"])
+                == bucket
+            )
+            for bucket in sorted(
+                {
+                    _lf_bucket(g["lf_trace_v29"]["last_lf_step"], g["lf_trace_v29"]["generation_last_step"])
+                    for g in eaters
+                    if g["lf_trace_v29"]["last_lf_step"] is not None
+                }
+            )
+        },
+    }
+
+
+def _lf_bucket(last_lf: int, last_step: int) -> str:
+    """最后一次 LF 相对该代末尾的位置（四分堆，刻度先写死）。"""
+
+    if last_step <= 0:
+        return "degenerate"
+    ratio = (last_step - last_lf) / last_step
+    if ratio <= 0.02:
+        return "at-the-end(<=2%)"
+    if ratio <= 0.25:
+        return "near-end(<=25%)"
+    return "far-from-end(>25%)"
 
 
 def _position_histogram(positions: list[int]) -> dict[str, int]:
@@ -994,7 +1074,13 @@ def main() -> int:
 
     substrate.observe = original_observe  # type: ignore[method-assign]
     report = {
-        "format": "taiji-a30-stop-failure-v28",
+        "format": "taiji-a30-stop-failure-v29",
+        "format_note_v29": "v29（2026-10-03）：§第七十三次停靠 读出"
+        "『两底 118/118 次自停的前一步都是字节 10（LF）』之后，那一跳的**修法方向**取决于一个还没量过的量："
+        "拖写的生成是**根本没发 LF**，还是**发了没接住**。本版按 §73 末段冻线补 `lf_trace_v29`"
+        "（每代 `lf_step_count`／`last_lf_step`／`generation_last_step`）与件级 `lf_followthrough_summary_v29`"
+        "（自停组与吃满组各自的『发过 LF 的占比』、末 LF 相对该代末尾的四分堆）。"
+        "既有列一字未动 ⇒ 与 v27/v28 各件同格可比。",
         "format_note_v28": "v28（2026-10-03）：按 §第七十二次停靠 的预注册加**末步字面身份**——逐步行补 "
         "`emitted_byte`／`utf8_byte_class`／`utf8_state_before` 三个键，每代补 `tail_identity`"
         "（停之前那一步发的是哪个字节、当时在字的哪一段、该步的边界名次与概率），件级补 "
@@ -1161,6 +1247,8 @@ def main() -> int:
         "terminal_decision_summary_v27": _terminal_summary_v27(per_item),
         #: v28（§72）：末步字面身份的四张分布表（自停组 vs 吃满组，各自分母）。
         "tail_identity_summary_v28": _tail_identity_summary_v28(per_item),
+        #: v29（§73 末段冻线）：拖写的生成是"没发 LF"还是"发了没接住"。
+        "lf_followthrough_summary_v29": _lf_followthrough_summary_v29(per_item),
         "instrument_guard": {
             "observe_calls_recorded": bool(records),
             # v7 自述守卫：这条面必须**报出**回写门槛状态（ None／缺键都算仪器没走到，红）。

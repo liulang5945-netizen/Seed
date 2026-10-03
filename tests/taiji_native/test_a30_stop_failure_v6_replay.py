@@ -83,9 +83,9 @@ def test_instrument_carries_v6_and_the_correction_note() -> None:
     source = (PROJECT_ROOT / "scripts" / "training" / "probe_taiji_a30_stop_failure.py").read_text(
         encoding="utf-8"
     )
-    assert '"format": "taiji-a30-stop-failure-v28"' in source
+    assert '"format": "taiji-a30-stop-failure-v29"' in source
     assert all(
-        f"format_note_v{v}" in source for v in range(6, 29)
+        f"format_note_v{v}" in source for v in range(6, 30)
     ), "升版只许加列，历史说明必须逐版留在件里"
     assert "format_note_v6" in source
     assert "追加二" in source and "深帧复现" in source
@@ -615,3 +615,45 @@ def test_the_v28_tail_identity_is_pinned_at_the_row_and_in_the_envelope() -> Non
     assert 'row["utf8_byte_class"] = _utf8_byte_class(byte)' in source
     assert '"tail_identity_summary_v28": _tail_identity_summary_v28(per_item)' in source
     assert source.count("def _utf8_byte_class(") == 1
+
+
+def test_the_lf_followthrough_summary_separates_no_lf_from_lf_not_captured() -> None:
+    """§73 末段冻线要的那把尺：**发了 LF 却没停** 与 **整条没发 LF** 是两种修法方向，必须分得开。
+
+    两向都测：① "停紧跟在 LF 后"的占比能小于 1（不是把 118/118 那种巧合写成恒真）；
+    ② 拖写组的 `with_lf_share` 由分母现算，且末 LF 的位置堆按"离该代末尾多远"归堆。
+    """
+    from probe_taiji_a30_stop_failure import (
+        _endstep_probe_per_generation,
+        _lf_followthrough_summary_v29,
+    )
+
+    def gen(bytes_of_generation):
+        return [
+            _synthetic_row(step, 0.001 + 0.0001 * step, 20 + step, byte=byte)
+            for step, byte in enumerate(bytes_of_generation)
+        ]
+
+    def terminal_at(step_value: int):
+        return {"step": step_value, "p_boundary": 0.03, "p_boundary_before_penalty": 0.03,
+                "boundary_rank_in_legal": 1, "legal_candidates_including_boundary": 41,
+                "ratio_best_over_boundary": 1.0, "boundary_is_argmax": True,
+                "utf8_state_before": [0, 0]}
+
+    rows = gen((0x41, 0x42, 10)) + gen((10, 0x42, 0x43)) + gen((10, 0x42, 0x43, 0x44)) + gen(
+        (0x41, 0x42, 0x43, 0x44)
+    )
+    probes = _endstep_probe_per_generation(
+        rows, max_length=4, terminals=[terminal_at(3), terminal_at(3), None, None]
+    )
+    assert [p["lf_trace_v29"]["lf_step_count"] for p in probes] == [1, 1, 1, 0], probes
+    per_item = [{"endstep_probe_v22": probes, "generations_boundary_self_stop": 2,
+                 "generations_eating_full_budget": 2}]
+    summary = _lf_followthrough_summary_v29(per_item)
+    assert summary["stoppers"]["n"] == 2 and summary["stoppers"]["with_lf_share"] == 1.0, summary
+    #: 只有一代是"停紧跟 LF"（另一代的 LF 在第 0 步）⇒ 这一支能为假，不是恒真
+    assert summary["stoppers_last_lf_is_last_step"] == 1, summary
+    assert summary["stoppers_last_lf_is_last_step_share"] == 0.5, summary
+    assert summary["eaters"]["n"] == 2 and summary["eaters"]["with_lf"] == 1, summary
+    assert summary["eaters"]["with_lf_share"] == 0.5, summary
+    assert summary["eaters_last_lf_position_buckets"] == {"far-from-end(>25%)": 1}, summary
