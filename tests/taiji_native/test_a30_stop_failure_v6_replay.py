@@ -84,9 +84,9 @@ def test_instrument_carries_v6_and_the_correction_note() -> None:
     source = (PROJECT_ROOT / "scripts" / "training" / "probe_taiji_a30_stop_failure.py").read_text(
         encoding="utf-8"
     )
-    assert '"format": "taiji-a30-stop-failure-v35"' in source
+    assert '"format": "taiji-a30-stop-failure-v36"' in source
     assert all(
-        f"format_note_v{v}" in source for v in range(6, 36)
+        f"format_note_v{v}" in source for v in range(6, 37)
     ), "升版只许加列，历史说明必须逐版留在件里"
     assert "format_note_v6" in source
     assert "追加二" in source and "深帧复现" in source
@@ -983,3 +983,58 @@ def test_the_report_carries_the_prompt_set_fingerprint_and_no_duplicate_keys() -
     #: `family` 这类**不参与题面**的列改动不该改指纹（否则同题面会因为元数据而被判成两批）。
     meta = [{"id": "V001", "turns": ["问：甲。", "答：乙"], "expected_contains": ["乙"], "family": "y"}]
     assert _items_fingerprint(sample) == _items_fingerprint(meta)
+
+
+def test_the_peak_step_row_names_what_was_emitted_where_stopping_came_closest(tmp_path: Path) -> None:
+    """§106 的守卫：峰值那一步要带**实发字节**与"是否等于前一步的字"，且**分母要一起报**。
+
+    能为假的三处：①首步没有前一步可比 ⇒ 该格必须是 `None`（不许当成"不同字"，那会把占比虚高地抬起来）；
+    ②占比只按可比代算，且 `denominator_with_previous_step` 与 `n` 同时出现在件里；
+    ③分群边界：`ate_full_budget ∧ lf_step_count==0` 才进 `eaters_never_lf`（§101 的定义），
+      发过 LF 的一律不许混进来——混进来会让 §106 的甲/乙分支读的是另一个总体。
+    """
+
+    from probe_taiji_a30_stop_failure import _peak_step_summary_v36
+
+    def gen(*, stopped, lf, peak_byte, prev_byte, step=5):
+        return {
+            "terminal_decision": {"step": step} if stopped else None,
+            "ate_full_budget": not stopped,
+            "lf_trace_v29": {"lf_step_count": lf},
+            "peak_step_row_v36": {
+                "step": step,
+                "emitted_byte": peak_byte,
+                "emitted_byte_class": "ascii",
+                "previous_step_emitted_byte": prev_byte,
+                "same_byte_as_previous_step": (None if prev_byte is None else peak_byte == prev_byte),
+                "ratio_best_over_boundary": 2.0,
+                "p_boundary": 0.004,
+                "boundary_rank_in_legal": 14,
+            },
+        }
+
+    per_item = [
+        {
+            "endstep_probe_v22": [
+                gen(stopped=True, lf=1, peak_byte=10, prev_byte=10),
+                gen(stopped=False, lf=2, peak_byte=7, prev_byte=7),
+                gen(stopped=False, lf=0, peak_byte=228, prev_byte=228),
+                gen(stopped=False, lf=0, peak_byte=229, prev_byte=None),
+                gen(stopped=False, lf=0, peak_byte=65, prev_byte=66),
+            ]
+        }
+    ]
+    out = _peak_step_summary_v36(per_item)
+    assert out["stoppers_n"] == 1 and out["eaters_with_lf_n"] == 1 and out["eaters_never_lf_n"] == 3, out
+    #: 群三：3 代里 2 代可比（一代无 prev），可比里 1 代同字 ⇒ 1/2＝0.5，**不是** 1/3。
+    assert out["eaters_never_lf_denominator_with_previous_step"] == 2, out
+    assert out["eaters_never_lf_same_byte_at_peak_share"] == 0.5, out
+    assert out["eaters_with_lf_same_byte_at_peak_share"] == 1.0, out
+    assert out["eaters_never_lf_median_boundary_rank_at_peak"] == 14, out
+    top = out["eaters_never_lf_winner_bytes_top5"]
+    assert {item["byte"] for item in top} == {228, 229, 65}, top
+    #: 全代都不可比 ⇒ 占比必须 `None`（不许写 0.0 让人读成"没有一代同字"）。
+    none_cmp = _peak_step_summary_v36([{"endstep_probe_v22": [gen(stopped=False, lf=0, peak_byte=1, prev_byte=None)]}])
+    assert none_cmp["eaters_never_lf_same_byte_at_peak_share"] is None, none_cmp
+    assert none_cmp["eaters_never_lf_denominator_with_previous_step"] == 0, none_cmp
+

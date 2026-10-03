@@ -35,6 +35,7 @@ v2 只重放了掩码 ⇒ 拿"旧口径的 argmax"去对"新口径实际发出�
 from __future__ import annotations
 
 import argparse
+import collections
 import json
 import sys
 from datetime import UTC, datetime
@@ -348,6 +349,27 @@ def _endstep_probe_per_generation(
                 "p_boundary_argmax_step": int(peak["step"]),
                 "boundary_rank_at_peak_step": int(peak["boundary_rank_in_legal"]),
                 "legal_candidates_at_peak_step": int(peak["legal_candidates"]),
+                #: v36（§第一百零六次停靠）：**边界概率最高那一步实际发的是什么**。
+                #: §101/§103 量到那一群终生没进过停止竞争区，但"最接近想停的那一格被谁占了"此前没看过——
+                #: 尤其没看过它**是不是刚发过的那个字**（同字环吃掉近停态）。判读线先于数冻在 §106。
+                "peak_step_row_v36": {
+                    "step": int(peak["step"]),
+                    "emitted_byte": int(peak["emitted_byte"]),
+                    "emitted_byte_class": str(peak["utf8_byte_class"]),
+                    "previous_step_emitted_byte": (
+                        int(by_step[peak["step"] - 1]["emitted_byte"])
+                        if (peak["step"] - 1) in by_step
+                        else None
+                    ),
+                    "same_byte_as_previous_step": (
+                        bool(by_step[peak["step"] - 1]["emitted_byte"] == peak["emitted_byte"])
+                        if (peak["step"] - 1) in by_step
+                        else None
+                    ),
+                    "ratio_best_over_boundary": peak.get("ratio_best_over_boundary"),
+                    "p_boundary": round(float(peak["p_boundary"]), 6),
+                    "boundary_rank_in_legal": int(peak["boundary_rank_in_legal"]),
+                },
                 #: v27：`last_recorded_row` 是"最后一个**在案**步"（对自停的代＝停下前一步）。
                 "last_recorded_row": {
                     "step": int(last_row["step"]),
@@ -666,6 +688,46 @@ def _lf_margins_v34(group: list[dict], terminal: dict | None) -> dict[str, Any]:
         #: 只留前 6 次，件不膨胀；每次的步序／名次／比值／概率都在
         "per_step": pairs[:6],
     }
+
+
+def _peak_step_summary_v36(per_item: list[dict]) -> dict[str, Any]:
+    """§106 的判读表：按 §101 的分群各自看"边界峰值那一步发的是什么"。
+
+    selector 是 `same_byte_as_previous_step` 的占比，**分母只算该步有前一步可比的代**（首步的 step-1 可能
+    不在本代在案行里），所以 `denominator_with_previous_step` 与 `n` 必须一起报——只报占比会藏掉分母。
+    """
+
+    generations = [g for row in per_item for g in row["endstep_probe_v22"]]
+    groups = {
+        "stoppers": [g for g in generations if g["terminal_decision"] is not None],
+        "eaters_with_lf": [
+            g for g in generations if g["ate_full_budget"] and g["lf_trace_v29"]["lf_step_count"] >= 1
+        ],
+        "eaters_never_lf": [
+            g for g in generations if g["ate_full_budget"] and g["lf_trace_v29"]["lf_step_count"] == 0
+        ],
+    }
+    out: dict[str, Any] = {}
+    for name, items in groups.items():
+        rows = [g["peak_step_row_v36"] for g in items]
+        comparable = [r for r in rows if r["same_byte_as_previous_step"] is not None]
+        ranks = [int(r["boundary_rank_in_legal"]) for r in rows]
+        byte_counts = collections.Counter(int(r["emitted_byte"]) for r in rows)
+        out[f"{name}_n"] = len(items)
+        out[f"{name}_denominator_with_previous_step"] = len(comparable)
+        out[f"{name}_same_byte_at_peak_share"] = (
+            round(sum(1 for r in comparable if r["same_byte_as_previous_step"]) / len(comparable), 4)
+            if comparable
+            else None
+        )
+        #: top-5 只按**字节值**点名，不解释含义（解释要另一格；§106 的线只看占比那一列）。
+        out[f"{name}_winner_bytes_top5"] = [
+            {"byte": byte, "count": count} for byte, count in byte_counts.most_common(5)
+        ]
+        out[f"{name}_median_boundary_rank_at_peak"] = (
+            int(sorted(ranks)[len(ranks) // 2]) if ranks else None
+        )
+    return out
 
 
 def _lf_next_probe_v30(group: list[dict], terminal: dict | None) -> dict[str, Any]:
@@ -1367,7 +1429,13 @@ def main() -> int:
 
     substrate.observe = original_observe  # type: ignore[method-assign]
     report = {
-        "format": "taiji-a30-stop-failure-v35",
+        "format": "taiji-a30-stop-failure-v36",
+        "format_note_v36": "v36（2026-10-03）：§第一百零六次停靠 问‘边界概率最高那一步实际发的是什么’——"
+        "§101/§103 已量到那一群终生没进过停止竞争区，但‘最接近想停的那一格被谁占了’此前没看过，"
+        "尤其没看过它是不是刚发过的那个字（同字环吃掉近停态）。新增每代 `peak_step_row_v36`"
+        "（步序／实发字节与其 UTF-8 类／前一步字节／`same_byte_as_previous_step`／该步比值与名次）与件级"
+        "`peak_step_summary_v36`（自停／拖写·发过 LF／拖写·从不发 LF 三群各自的同字占比、top-5 实发字节、"
+        "峰值名次中位；**分母只算有前一步可比的代**并一起报）。既有列一字未动 ⇒ 与 v31–v35 各件同格可比。",
         "format_note_v35": "v35（2026-10-03）：§第一百零三/零四次停靠把结论建在'两枚件读的是同一批题'上，"
         "而件里只有 `items: 96`（条数）与写死的 manifest 路径——条数相同不等于内容相同（本线已在'同一批文档"
         "并非自动成立'上栽过一次）。本版加 `items_sha256`＝所选条目 (id, turns, expected_contains) 的摘要，"
@@ -1576,6 +1644,7 @@ def main() -> int:
         "lf_repeat_context_summary_v32": _lf_repeat_context_summary_v32(per_item),
         #: v34（§89）：每一次 LF 之后那一步的边际（定耦合用）。
         "lf_margin_summary_v34": _lf_margin_summary_v34(per_item),
+        "peak_step_summary_v36": _peak_step_summary_v36(per_item),
         "instrument_guard": {
             "observe_calls_recorded": bool(records),
             # v7 自述守卫：这条面必须**报出**回写门槛状态（ None／缺键都算仪器没走到，红）。
