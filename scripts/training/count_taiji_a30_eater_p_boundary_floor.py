@@ -35,9 +35,32 @@ def _declared_eaters(report: dict[str, Any]) -> int | None:
     return int(value) if isinstance(value, (int, float)) else None
 
 
+def _declared_never_lf(report: dict[str, Any]) -> int | None:
+    summary = report.get("peak_run_summary_v37")
+    if not isinstance(summary, dict):
+        return None
+    value = summary.get("eaters_never_lf_n")
+    return int(value) if isinstance(value, (int, float)) else None
+
+
+def _lf_step_count(generation: dict[str, Any], item_id: str) -> int:
+    """Read this generation's own LF emission count; absence is a refusal, not a zero."""
+
+    trace = generation.get("lf_trace_v29")
+    if not isinstance(trace, dict) or "lf_step_count" not in trace:
+        raise ValueError(f"生成行缺 lf_trace_v29.lf_step_count（题 {item_id}）⇒ 无法定义「从不发 LF」，不判")
+    return int(trace["lf_step_count"])
+
+
 def count_eaters(report: dict[str, Any], *, floor: float) -> dict[str, Any]:
-    """Walk every generation row, classify eaters by the report's own budget, count those with a peak
-    boundary probability at or above `floor`."""
+    """Walk every generation row, classify eaters by the report's own budget, and count those whose
+    peak boundary probability reaches `floor`.
+
+    Two counts are reported because §102 froze A-2 on a **narrower population than "all eaters"**: the
+    group that never emits LF (its measured ceiling is 0.0478, so 0.10 is a real test there, while
+    LF-emitting eaters already reach ≥0.10 on today's shipped base). `meets_frozen_line` is the
+    never-LF one; the all-eater number is disclosed so nobody reads it as the frozen quantity.
+    """
 
     max_length = report.get("max_length")
     if not isinstance(max_length, (int, float)):
@@ -45,7 +68,9 @@ def count_eaters(report: dict[str, Any], *, floor: float) -> dict[str, Any]:
 
     rows_seen = 0
     eaters = 0
-    above_floor = 0
+    never_lf_eaters = 0
+    above_floor_all = 0
+    above_floor_never_lf = 0
     missing_column = 0
     for item in report.get("per_item", []):
         for generation in item.get("endstep_probe_v22", []):
@@ -56,21 +81,33 @@ def count_eaters(report: dict[str, Any], *, floor: float) -> dict[str, Any]:
             if steps < max_length:
                 continue
             eaters += 1
+            never_lf = _lf_step_count(generation, str(item.get("id"))) == 0
+            never_lf_eaters += int(never_lf)
             if "p_boundary_max" not in generation:
                 missing_column += 1
                 continue
-            if float(generation["p_boundary_max"]) >= floor:
-                above_floor += 1
+            reaches = float(generation["p_boundary_max"]) >= floor
+            above_floor_all += int(reaches)
+            above_floor_never_lf += int(reaches and never_lf)
 
     declared = _declared_eaters(report)
+    declared_never_lf = _declared_never_lf(report)
     return {
         "generation_rows_seen": rows_seen,
         "eaters_counted": eaters,
         "eaters_declared_by_instrument": declared,
         "coherent_with_declaration": declared is not None and declared == eaters,
+        "never_lf_eaters_counted": never_lf_eaters,
+        "never_lf_eaters_declared": declared_never_lf,
+        "coherent_with_never_lf_declaration": (
+            declared_never_lf is not None and declared_never_lf == never_lf_eaters
+        ),
         "rows_without_p_boundary_max_column": missing_column,
-        "eaters_above_floor": above_floor,
-        "share_of_eaters": round(above_floor / eaters, 6) if eaters else None,
+        "eaters_above_floor": above_floor_never_lf,
+        "eaters_above_floor_all_eaters": above_floor_all,
+        "share_of_never_lf_eaters": (
+            round(above_floor_never_lf / never_lf_eaters, 6) if never_lf_eaters else None
+        ),
     }
 
 
@@ -133,6 +170,9 @@ def main(argv: list[str] | None = None) -> int:
         # fail-closed: a moving artifact, a disagreeing tally, or a row missing the column is not a zero
         if not entry["coherent_with_declaration"]:
             entry["status"] = "incoherent_eater_count"
+            rc = 2
+        elif not entry["coherent_with_never_lf_declaration"]:
+            entry["status"] = "incoherent_never_lf_count"
             rc = 2
         elif entry["rows_without_p_boundary_max_column"]:
             entry["status"] = "column_missing_in_rows"
