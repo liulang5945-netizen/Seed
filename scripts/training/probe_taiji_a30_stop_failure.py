@@ -311,6 +311,8 @@ def _endstep_probe_per_generation(
                 "lf_trace_v29": _lf_trace(group),
                 #: v30（§75）：LF 之后那一步的边界名次——定点修法的杠杆量。
                 "lf_next_probe_v30": _lf_next_probe_v30(group, terminal),
+                #: v32（§85）：LF 落在同字重复段内还是段外。
+                "lf_repeat_context_v32": _lf_repeat_context(group),
                 "tail_identity": {
                     "prev_step_emitted_byte": int(last_row["emitted_byte"]),
                     "prev_step_utf8_byte_class": str(last_row["utf8_byte_class"]),
@@ -717,6 +719,49 @@ def _lf_competitor_summary_v31(per_item: list[dict]) -> dict[str, Any]:
         "every_post_lf_winner_top": _top(every),
         "every_post_lf_winner_count": len(every),
     }
+
+
+def _lf_repeat_context(group: list[dict]) -> dict[str, Any]:
+    """v32（§85）：LF 是发在**同字重复段内**还是段外——把"位置错"与"耦合被改动"分开。
+
+    只用行里已有的 `in_run`，且按它**自己的定义**（该步是否落在同字重复段内，
+    由 `char_membership_of_run(answer)` 得出）。v22 曾把这一列误当"是否在生成环内"用（§60 那次），
+    这里不许重犯：环内/环外的判据是 `step` 分组，不是 `in_run`。
+    """
+
+    lf_rows = [row for row in group if int(row["emitted_byte"]) == _LF_BYTE]
+    inside = sum(1 for row in lf_rows if row.get("in_run"))
+    return {
+        "lf_steps_total": len(lf_rows),
+        "lf_steps_inside_repeat_run": inside,
+        "lf_share_inside_repeat_run": (
+            round(inside / len(lf_rows), 4) if lf_rows else None
+        ),
+    }
+
+
+def _lf_repeat_context_summary_v32(per_item: list[dict]) -> dict[str, Any]:
+    """§85 判据要的那一列：自停组／拖写组各自"LF 落在重复段内"的占比中位。"""
+
+    generations = [g for row in per_item for g in row["endstep_probe_v22"]]
+    groups = {
+        "stoppers": [g for g in generations if g["terminal_decision"] is not None],
+        "eaters": [g for g in generations if g["ate_full_budget"]],
+    }
+
+    def _median(values: list[float]) -> Any:
+        return round(sorted(values)[len(values) // 2], 4) if values else None
+
+    out: dict[str, Any] = {}
+    for name, items in groups.items():
+        with_lf = [g for g in items if g["lf_repeat_context_v32"]["lf_steps_total"] >= 1]
+        shares = [g["lf_repeat_context_v32"]["lf_share_inside_repeat_run"] for g in with_lf]
+        out[f"{name}_n"] = len(items)
+        out[f"{name}_with_lf"] = len(with_lf)
+        out[f"{name}_median_share_inside_repeat_run"] = _median(shares)
+        out[f"{name}_share_is_binary_count"] = sum(1 for s in shares if s in (0.0, 1.0))
+    out["discriminator_denominator_at_least_10"] = bool(out["eaters_with_lf"] >= 10)
+    return out
 
 
 def _position_histogram(positions: list[int]) -> dict[str, int]:
@@ -1198,7 +1243,14 @@ def main() -> int:
 
     substrate.observe = original_observe  # type: ignore[method-assign]
     report = {
-        "format": "taiji-a30-stop-failure-v31",
+        "format": "taiji-a30-stop-failure-v32",
+        "format_note_v32": "v32（2026-10-03）：§第八十四次停靠 留下一处分不开的东西——装机底门开启后耦合掉 19.0pp，"
+        "可能是『新放出来的换行本来就发在正文中间』，也可能是『同样位置的换行也不兑现了』；"
+        "`far-from-end` 那一堆对拖写生成是定义性的，分不开这两条。本版按 §八十五 预注册补 "
+        "`lf_repeat_context_v32`（每代：LF 总步数、其中落在**同字重复段内**的步数与占比）与件级 "
+        "`lf_repeat_context_summary_v32`（自停组／拖写组各自的占比中位、分母、以及『拖写组是否 ≥10 代才允许判』的开关）。"
+        "只用行里已有的 `in_run` 并按其**本义**（落在同字重复段内）——v22 那次误把它当『是否在生成环内』用过，"
+        "环内/环外一律按 `step` 分组判。既有列一字未动 ⇒ 与 v27–v31 各件同格可比。",
         "format_note_v31": "v31（2026-10-03）：§七十六次停靠 读出『装机底 9/9 的拖写在 LF 之后那一步排第 2–3 名、中位只差 1.131 倍』之后，剩下的问题只有一个：那一步**是谁**压住边界的。本版纯取行内现成的 `emitted_byte`，每代补 `winner_byte_at_best_rank_step`／`utf8_class_at_best_rank_step`／`winner_bytes_after_lf`，件级补 `lf_competitor_summary_v31`（胜出字节的 top5 与位置类 top5、各自 distinct、以及分母是否 ≥5）。终止行本身没有 `emitted_byte`（它就是边界符）⇒ 一律记成 boundary，不混进字节分布。既有列一字未动 ⇒ 与 v27–v30 各件同格可比。",
         "format_note_v30": "v30（2026-10-03）：§第七十四次停靠 的丙是**分母**造成的（装机底拖写 20 枚里 9 枚发过 LF、"
         "(c) 底只有 1 枚），于是换问法：不再问『拖写里有多少发过 LF』，改问『LF 之后那一步，边界离赢多远』。"
@@ -1385,6 +1437,8 @@ def main() -> int:
         "lf_next_summary_v30": _lf_next_summary_v30(per_item),
         #: v31（§76 末段）：那一步是谁压住边界的。
         "lf_competitor_summary_v31": _lf_competitor_summary_v31(per_item),
+        #: v32（§85）：LF 落在同字重复段内还是段外——分开"位置错"与"耦合被改动"。
+        "lf_repeat_context_summary_v32": _lf_repeat_context_summary_v32(per_item),
         "instrument_guard": {
             "observe_calls_recorded": bool(records),
             # v7 自述守卫：这条面必须**报出**回写门槛状态（ None／缺键都算仪器没走到，红）。

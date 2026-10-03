@@ -83,9 +83,9 @@ def test_instrument_carries_v6_and_the_correction_note() -> None:
     source = (PROJECT_ROOT / "scripts" / "training" / "probe_taiji_a30_stop_failure.py").read_text(
         encoding="utf-8"
     )
-    assert '"format": "taiji-a30-stop-failure-v31"' in source
+    assert '"format": "taiji-a30-stop-failure-v32"' in source
     assert all(
-        f"format_note_v{v}" in source for v in range(6, 32)
+        f"format_note_v{v}" in source for v in range(6, 33)
     ), "升版只许加列，历史说明必须逐版留在件里"
     assert "format_note_v6" in source
     assert "追加二" in source and "深帧复现" in source
@@ -756,3 +756,61 @@ def test_the_lf_competitor_summary_ignores_the_terminal_row_and_counts_the_winne
     #: 所有 LF 之后步的胜出字节：拖写两代各 1 个 LF ⇒ 2 个，仍全是 65；自停代的 boundary 不在内
     assert summary["every_post_lf_winner_count"] == 2, summary
     assert summary["every_post_lf_winner_top"] == [{"key": 65, "count": 2, "share": 1.0}], summary
+
+
+def test_the_lf_repeat_context_counts_newlines_inside_the_repeat_run_only() -> None:
+    """§85 的 v32：`in_run` 的本义是"落在同字重复段内"，这里只许按本义用（v22 误用过的地方）。
+
+    两向：① 占比能取 0.0／0.5／1.0（不是恒零列也不是恒真式）；
+    ② `discriminator_denominator_at_least_10` 必须随拖写组里"发过 LF 的代数"翻转——
+       §85 的分母门槛（≥10 才允许判）写进仪器，不靠我记得。
+    """
+    from probe_taiji_a30_stop_failure import (
+        _endstep_probe_per_generation,
+        _lf_repeat_context_summary_v32,
+    )
+
+    def terminal_at(step_value: int):
+        return {"step": step_value, "p_boundary": 0.3, "p_boundary_before_penalty": 0.3,
+                "boundary_rank_in_legal": 1, "legal_candidates_including_boundary": 41,
+                "ratio_best_over_boundary": 1.0, "boundary_is_argmax": True,
+                "utf8_state_before": [0, 0]}
+
+    def group(lf_inside: tuple, *, last_byte: int = 0x41):
+        #: lf_inside 里每一项是 (该 LF 是否在同字重复段内)；末尾再补一个非 LF 步
+        rows = []
+        for index, inside in enumerate(lf_inside):
+            row = _synthetic_row(index, 0.001, 20 + index, byte=10)
+            row["in_run"] = bool(inside)
+            rows.append(row)
+        tail = _synthetic_row(len(rows), 0.002, 30, byte=last_byte)
+        rows.append(tail)
+        return rows
+
+    stopper = group((True, False))                      #: 2 个 LF，一半在重复段内（共 3 步＜预算 ⇒ 自停）
+    eater = group((False, False, False))               #: 3 个 LF，全在段外（共 4 步＝吃满预算）
+    probes = _endstep_probe_per_generation(
+        stopper + eater, max_length=4, terminals=[terminal_at(2), None]
+    )
+    assert [p["ate_full_budget"] for p in probes] == [False, True], probes
+    assert probes[0]["lf_repeat_context_v32"] == {
+        "lf_steps_total": 2, "lf_steps_inside_repeat_run": 1, "lf_share_inside_repeat_run": 0.5,
+    }, probes[0]
+    assert probes[1]["lf_repeat_context_v32"]["lf_share_inside_repeat_run"] == 0.0, probes[1]
+
+    summary = _lf_repeat_context_summary_v32(
+        [{"endstep_probe_v22": probes, "generations_boundary_self_stop": 1,
+          "generations_eating_full_budget": 1}]
+    )
+    assert summary["stoppers_median_share_inside_repeat_run"] == 0.5, summary
+    assert summary["eaters_median_share_inside_repeat_run"] == 0.0, summary
+    assert summary["discriminator_denominator_at_least_10"] is False, summary
+
+    #: 把拖写组里"发过 LF 的代"推到 10 代 ⇒ 开关必须翻成 True（§85 的门槛不是口头承诺）
+    many = probes[:1] + [probes[1] for _ in range(10)]
+    flipped = _lf_repeat_context_summary_v32(
+        [{"endstep_probe_v22": many, "generations_boundary_self_stop": 1,
+          "generations_eating_full_budget": 10}]
+    )
+    assert flipped["eaters_with_lf"] == 10, flipped
+    assert flipped["discriminator_denominator_at_least_10"] is True, flipped
