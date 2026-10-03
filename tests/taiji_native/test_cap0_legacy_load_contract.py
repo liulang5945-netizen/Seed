@@ -205,27 +205,37 @@ def test_a_fresh_probe_sample_reproduces_the_sealed_one(tmp_path) -> None:
     sealed = json.loads(RESAMPLE.read_text(encoding="utf-8"))
     old, new = leaves(sealed), leaves(fresh)
 
-    assert old.keys() == new.keys(), "仪器少产/多产了字段"
+    #: 2026-10-03 模型件收束之后新增的一条**显式例外**（不许读成"屏蔽集变宽"）：
+    #: 本仪器的 `CONTROL_CHECKPOINT`（`probe_taiji_cap0_legacy_load.py:49`）指向
+    #: `checkpoints/seed_corpus.pt`，而那枚件已按 owner 裁定删除 ⇒ 控制臂**当场不可复现**。
+    #: 这里不 skip、不删这一支，而是把"控制臂现在必须报缺件"钉成正向断言：
+    #: 哪天有人补回一枚同名基座，这一支会因"load_ok 又变 True"而红，逼他来改这条记录。
+    control_prefix = "arms.default_control_current_guard."
     shared = old.keys() & new.keys()
     volatile = {
         path
         for path in shared
         if tail(path) in VOLATILE_SAMPLE_FIELDS or path in VOLATILE_SAMPLE_PATHS
     }
-    drifted = {path for path in shared if old[path] != new[path]}
+    asymmetric = {p for p in (old.keys() | new.keys()) - (old.keys() & new.keys())
+        if not p.startswith(control_prefix)}
+    assert not asymmetric, f"字段面差异必须只落在控制臂：{sorted(asymmetric)[:6]}"
+    control = fresh["arms"]["default_control_current_guard"]
+    assert control["load_ok"] is False, "控制臂基座已删除，它不该还能载入"
+    assert "seed_corpus.pt" in str(control.get("load_error")), control
+    #: 两枚**在场**的臂仍按原口径逐叶＋逐字节比较。
+    trained = [p for p in shared if not p.startswith(control_prefix)]
+    drifted = {p for p in trained if old[p] != new[p]}
     assert drifted <= volatile, sorted(drifted - volatile)[:8]
     assert len(shared) > 60 and len(volatile) * 3 < len(shared), (len(shared), len(volatile))
 
     # 不依赖屏蔽集的正面表述：这条反事实的结论本身必须照样成立。
     #: 10-01 重基后的形状：**控制臂**仍是模板（tick=2 基线面没变），trained 两臂不再是
     #: （09-27 掩码产品化之后的形状）——逐臂读，不写死一个值；原始字节必须逐位复现。
-    for name in ("trained_current_guard", "trained_relaxed_guard", "default_control_current_guard"):
+    for name in ("trained_current_guard", "trained_relaxed_guard"):
         fresh_arm, sealed_arm = fresh["arms"][name], sealed["arms"][name]
         assert fresh_arm["load_ok"] is True, name
-        if name == "default_control_current_guard":
-            assert fresh_arm["output_summary"]["templated"] is True, name
-        else:
-            assert fresh_arm["output_summary"]["templated"] is False, name
+        assert fresh_arm["output_summary"]["templated"] is False, name
         assert [turn["raw_output"] for turn in fresh_arm["turns"]] == [
             turn["raw_output"] for turn in sealed_arm["turns"]
         ], name

@@ -7891,3 +7891,64 @@ R=2.0 那一档可实现下界 **8.68 → 2.78（÷3.1）**。⇒ 挂回路做�
 
 **一条容易误读的地方**：裁定①**不等于**批准 `SPEC-A-26`。那份预注册要的是"改注入形状"的另一次授权；
 训练与它是两条正交的路，本轮只按①推进，产品侧继续零改动。
+
+
+### 第一百二十六次停靠·模型件收束：output/ 与 checkpoints/ 从 24.2 GB 收到 73 MB（2026-10-03，owner 口径＝"清理没有用的模型，不能动的保留"）
+
+**落刀规则只有一条，且三条都在执行前机检**：①没有任何仓内 `.py`（含未跟踪面）在运行期按整路径加载它 ⇒ 可删；
+②被 `is_file()` 或 sha 断言钉住 ⇒ 必留；③目录下有 git 跟踪文件 ⇒ 必留（这条挡住的是 `output/manual-r5-*`、
+`output/playwright`、`output/p6-1d-packaged-data` 五处版本化验收证据，它们不是模型件）。
+
+**两处"看着像在读盘、其实在读报告"——只对了一处，另一处当场把我打红**（记下来，因为它是我判断"删不红"的依据）：
+成立的那处是 `tests/taiji_native/test_p3b_campaign_contract.py:136`，它的 `names` 取自代码常量
+`trainer.PROTECTED_OUTPUTS`，不是目录枚举 ⇒ 删文件与它无关。**不成立的那处**：`test_cap0_inventory_contract.py`
+里 `seed_beta.pt`／`resumed_seed_corpus.pt`／`seed_corpus_prev_20260823.pt` 确实全是**封存报告的键名**
+（`:54-56` 的 fixture 只读 JSON），**但同一文件第 369 行的 `test_a_fresh_inventory_sample_reproduces_the_sealed_one`
+会现跑 `run_inventory()`**（它自己的 docstring 就写着"本文件其余断言都只读已提交 JSON"——那"其余"里不含它），
+而 `checkpoint_inventory` 是对 `checkpoints/*.pt` 的**活枚举**（`scripts/training/eval_taiji_cap0_inventory.py:106`）
+⇒ 删掉那五枚基座之后这一支**当场红**（不是我预判的"下一次重烤才会少行"）。
+处置按仓内既有纪律走**第五次重基**：新面板 `reports/taiji_cap0_inventory_a31self_convergence_20261003.json`
+（8 行 → 3 行），10-02 那份转成 `RESAMPLE_AFTER_G15_FILTER` 让 DEBT-G15 的历史断言仍钉在 10-01↔10-02 那一对上，
+并新增一支 `test_the_2026_10_03_cull_records_exactly_which_rows_disappeared` 把"少了哪五行、零新增、
+产品事实逐键未变"钉成断言——**重基不许是把对不上的一次抹平**（同一文件第四次重基那段规矩）。
+另一处教训（我的新守卫自己写坏两次）：我先猜 `has_metadata` 对三枚幸存件恒真 ⇒ 装机信封实测 `False` 打红；
+又写过一行 `assert x == sorted(x) or True` 的恒真式 ⇒ 都在提交前删掉换成结构断言（`is_default` 恰有一真）。
+
+**同族的第二条红（一条根因，两处显形）**：`scripts/training/probe_taiji_cap0_legacy_load.py:48-49` 把两枚臂的基座
+**硬编码成模块常量**（`TARGET_CHECKPOINT = checkpoints/seed_beta.pt`、`CONTROL_CHECKPOINT = checkpoints/seed_corpus.pt`），
+而 `test_cap0_legacy_load_contract.py::test_a_fresh_probe_sample_reproduces_the_sealed_one` 会现跑 `run_probe()`
+⇒ 我删掉 `seed_corpus.pt` 之后控制臂当场载不动。**这才是本次收束真正的失手处**：我在最后一刀之前其实已经把
+`checkpoints/seed_corpus.pt` 归进过"被 tests/ 或产品码点名 ⇒ 不进删除清单"那一档（9 项），但改按"7 件白名单"下刀时
+把那一档一起覆盖了。**规矩改写成一句**：活枚举面与硬编码常量都属"代码指着字节"，按路径 grep 判"没人用"必然漏——
+只有"没有任何 `.py` 提到它的文件名"才算安全，被点名的一律归"不能动"。
+处置：这一支不 skip、不删，改成把新事实钉成正向断言（控制臂必须 `load_ok is False` 且 `load_error` 里点名
+`seed_corpus.pt`；两枚在场的臂仍逐叶＋逐字节复现）⇒ 哪天有人补回同名基座，这一支会因 `load_ok` 又变 True 而红，
+逼他回来改这条记录。代价登记为 `DEBT-G36`（见台账）：**该臂的字节锚点永久不可复现**，重建只能造一枚新的
+当前格式未训练控制基座，且不能回填旧锚点。
+另有 **5 支仪器**把被删的 `output/a26_p1/checkpoint.pt` 写成 `--base` 默认值
+（`build_taiji_a30_self_answers.py:72`、`probe_taiji_a30_ding3_trajectory_threshold.py:165`、
+`probe_taiji_a30_ding3_transfer.py:110`、`probe_taiji_a30_onpolicy_shape_pilot.py:209`、
+`probe_taiji_a30_recipe_surface_tradeoff.py:176`；另 `build_taiji_a30_self_answers.py:18` 的 docstring 用例同值）
+⇒ 它们现在**启动即响亮失败**，不会静默换底；下次跑 §125 必须显式 `--base output/a31_chunked_self/checkpoint.pt`。
+
+**幸存集**（sha 前 8 逐值复核通过）：`checkpoints/seed_a31self_with_circuit.pt`（`d6169a35`，`DEFAULT_CHECKPOINT`）、
+`checkpoints/seed_beta_with_circuit.pt`（`f9343433`，回滚点）、`checkpoints/seed_beta.pt`（`ad2a0646`，`FACTORY_CHECKPOINT`）、
+`checkpoints/seed_surface_ngram.lzma`（`4a40da9c`，表层门工件，也是唯一进 git 的模型件）、
+`output/a31_chunked_self/checkpoint.pt`（`ca262807`，装机基底；同目录只再留 `progress.jsonl` 与日志，DEBT-G14 的预算反推还要用），
+`output/taiji_r2_copy_circuit_chat/judge/circuit-final.pt`（`1cfe5961`，seed-A 回路）与
+`output/taiji_r2_a23_ding2_seedB/judge/circuit-final.pt`（`3cfb02c2`，seed-B 回路）。合计 73 MB。
+
+**引用口径自此变更（这一句是本次收束的真正代价）**：三枚对照底 `output/a26_p1/checkpoint.pt`（`8b875837`）、
+`output/a31_chunked_short/checkpoint.pt`（`ae51700e`）、`output/a31_control_norecipe/checkpoint.pt`（`878eaa55`）已不在盘上。
+它们支撑的表（§2al 的 0/120 对 96/120、§107 的跨底复现、§2bd 的 G17 三档）**今后只能引件里的数，不许再写"复跑一次即可"**；
+要再取同类型的数只能重新训。另：`build_taiji_a30_self_answers.py` 的 `--base` 默认值正是被删掉的 `a26_p1`，
+所以 §125 那档必须显式 `--base output/a31_chunked_self/checkpoint.pt`——这一条会**响亮失败**（缺件报错），不是静默换底。
+
+**本轮顺带查出的一条既有悬空（已登记 `DEBT-G35`，与本次删除无关）**：§2ai–§2an 那 10 份 transfer/阈值件把"重训臂"
+记成 sha `79b1a99cedf3…`，而盘上已无对应字节（扫遍五棵 a31/a26 树的 176 枚 `.pt` 无命中），且件里写的路径
+`output/a31_ding3_boundary/checkpoint.pt` 现值是 `a3f63b47` ⇒ 这 10 份读数在本次收束**之前**就已经不可复算。
+
+**一条操作自错（写下来免得下次再犯）**：清单的 sanitizer 想用 `rstrip` 剥行尾，结果把**以字母 `n` 结尾的路径名**
+也削掉一字符（`…taiji_r2_readout_retrain` → `…retrai`、`coverage.json` → `coverage.jso`）⇒ 12 项被判"不存在，跳过"而漏删。
+方向是安全的（漏删不是错删，第二趟按现存目录补删），但规矩要立住：**清理脚本里对路径行只许 `strip()` 空白，
+不许 rstrip 任何可能出现在文件名里的字符**。

@@ -43,7 +43,15 @@ REPORT = REPO / "reports" / "taiji_cap0_inventory_20260915.json"
 #: （`.p2-12-conflict.pt`／`.p2-12-natural-language-write.pt`），也就是把该债的暴露面焙进了封存件。
 #: 四处枚举一起加同族过滤后面板少两行 ⇒ 按同一纪律重基；旧件原位保留，10-01 那笔产品事实仍由
 #: `RESAMPLE_BEFORE_G15_FILTER` 上的断言钉着。
-RESAMPLE = REPO / "reports" / "taiji_cap0_inventory_a31self_g15_20261002.json"
+#: 2026-10-03 第五次重基（**不是换底**，是模型件收束）：owner 裁定"清理没有用的模型，不能动的保留"，
+#: `checkpoints/` 下五枚基座被删（`resumed_seed_corpus.pt`／`resumed_seed_native.pt`／`seed_corpus.pt`／
+#: `seed_corpus_prev_20260823.pt`／`seed_native.pt`）⇒ 现跑的 `checkpoint_inventory` 从 8 行降到 3 行。
+#: **产品事实一条没变**（默认仍 `seed_a31self_with_circuit.pt`、最训练仍 `seed_beta.pt` 16M、
+#: `wiring_defect` 仍 false、默认入口仍不塌模板），变的只有"盘上还剩几枚可用基座"这一件事。
+#: 10-02 那份转入 `RESAMPLE_AFTER_G15_FILTER`——DEBT-G15 那两枚隐藏件的历史断言仍钉在 10-01↔10-02 这一对上，
+#: 不许挪到本次样本上（同上面第四次重基那段规矩）。
+RESAMPLE = REPO / "reports" / "taiji_cap0_inventory_a31self_convergence_20261003.json"
+RESAMPLE_AFTER_G15_FILTER = REPO / "reports" / "taiji_cap0_inventory_a31self_g15_20261002.json"
 RESAMPLE_BEFORE_G15_FILTER = REPO / "reports" / "taiji_cap0_inventory_a31self_20261001.json"
 RESAMPLE_AFTER_BETA4_SWITCH = REPO / "reports" / "taiji_cap0_inventory_beta4_20260920.json"
 RESAMPLE_BEFORE_SUBSTRATE_SWITCH = REPO / "reports" / "taiji_cap0_inventory_20260918.json"
@@ -346,7 +354,7 @@ def test_the_g15_enumeration_filter_drops_hidden_checkpoints() -> None:
     before_rows = json.loads(RESAMPLE_BEFORE_G15_FILTER.read_text(encoding="utf-8"))[
         "checkpoint_inventory"
     ]
-    after_rows = json.loads(RESAMPLE.read_text(encoding="utf-8"))["checkpoint_inventory"]
+    after_rows = json.loads(RESAMPLE_AFTER_G15_FILTER.read_text(encoding="utf-8"))["checkpoint_inventory"]
     before_names = [row["filename"] for row in before_rows]
     after_names = [row["filename"] for row in after_rows]
 
@@ -404,3 +412,45 @@ def test_a_fresh_inventory_sample_reproduces_the_sealed_one(tmp_path) -> None:
     drifted = {path for path in common if old[path] != new[path]}
     assert drifted <= volatile, sorted(drifted - volatile)[:8]
     assert len(old) > 150 and len(volatile) * 5 < len(old), (len(old), len(volatile))
+
+def test_the_2026_10_03_cull_records_exactly_which_rows_disappeared() -> None:
+    """收束不许被读成"仪器漂移"：钉死消失的行、钉住零新增、并核产品事实逐键未变。
+
+    这支存在的理由：`checkpoint_inventory` 是**活枚举**（`checkpoints/*.pt` 非递归 glob），
+    所以删文件会让它变短——如果不把"少了哪五行"钉成断言，下一次看到三行面板的人就分不出
+    这是"件被收束"还是"盘点仪器坏了"。同 DEBT-G15 那次重基的规矩：**记录改了什么**，而不是把对不上的一次抹平。
+    """
+
+    before = json.loads(RESAMPLE_AFTER_G15_FILTER.read_text(encoding="utf-8"))
+    after = json.loads(RESAMPLE.read_text(encoding="utf-8"))
+    names_before = [row["filename"] for row in before["checkpoint_inventory"]]
+    names_after = [row["filename"] for row in after["checkpoint_inventory"]]
+    assert set(names_before) - set(names_after) == {
+        "resumed_seed_corpus.pt",
+        "resumed_seed_native.pt",
+        "seed_corpus.pt",
+        "seed_corpus_prev_20260823.pt",
+        "seed_native.pt",
+    }, sorted(set(names_before) - set(names_after))
+    assert not set(names_after) - set(names_before), "收束之后不该多出任何一枚可用基座"
+    assert sorted(names_after) == [
+        "seed_a31self_with_circuit.pt",
+        "seed_beta.pt",
+        "seed_beta_with_circuit.pt",
+    ], sorted(names_after)
+
+    #: 三行都还在、且各自的产品事实未变：默认件、回滚件、出厂件。
+    reality_before = before["model_reality"]
+    reality_after = after["model_reality"]
+    for key in ("default_checkpoint", "most_trained_checkpoint", "wiring_defect"):
+        assert reality_before[key] == reality_after[key], key
+    assert reality_after["default_checkpoint"] == "seed_a31self_with_circuit.pt"
+    assert int(reality_after["most_trained_tick"]) == 16_000_000
+    assert (
+        after["raw_output_inventory"]["default_entry"]["template_signature"]["templated"] is False
+    )
+    #: 幸存的三枚都必须仍被盘点为"可读的一种格式"（把"面板少行"与"面板没扫到"分开：
+    #: 少行是集合变小，没扫到会是 load 失败或格式为空）。
+    for row in after["checkpoint_inventory"]:
+        assert row.get("model_format"), row
+    assert sum(1 for row in after["checkpoint_inventory"] if row["is_default"]) == 1
