@@ -1,18 +1,18 @@
 - banner:
-  - navigation "Session hierarchy": Use the bash tool to
+  - navigation "Session hierarchy": Use the pwsh tool to
   - text: Minimal mode
   - button "More actions"
   - button "Open right sidebar"
   - tablist:
     - tab "Chat" [selected]
     - tab "Trajectory"
-- text: "Use the bash tool to run exactly: printf 'MINIMAL_BASH_CARD_OK\\n'. Then reply exactly MINIMAL_PRESET_REQUEST_OK and stop. {{clock}}"
+- text: "Use the pwsh tool to run exactly: Write-Output 'MINIMAL_BASH_CARD_OK'. Then reply exactly MINIMAL_PRESET_REQUEST_OK and stop. {{clock}}"
 - button "Copy"
 - status: Worked
 - button "Took {{duration}}" [expanded]
 - button "Ran commands" [expanded]
-- button "Bash printf 'MINIMAL_BASH_CARD_OK\\n'" [expanded]
-- text: "IN { \"command\": \"printf 'MINIMAL_BASH_CARD_OK\\\\n'\" } OUT MINIMAL_BASH_CARD_OK [Command finished with exit code 0]"
+- button "Pwsh Write-Output 'MINIMAL_BASH_CARD_OK'" [expanded]
+- text: "IN { \"command\": \"Write-Output 'MINIMAL_BASH_CARD_OK'\" } OUT MINIMAL_BASH_CARD_OK"
 - button "Inspect"
 - paragraph: MINIMAL_PRESET_REQUEST_OK
 - button "Copy"

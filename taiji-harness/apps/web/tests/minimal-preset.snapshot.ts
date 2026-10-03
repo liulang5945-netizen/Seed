@@ -22,10 +22,22 @@ import {
 import { newEnglishPage, saveFailureShot } from './support.ts'
 
 const SNAPSHOT_DIR = fileURLToPath(new URL('../../../snapshots/web/minimal-preset', import.meta.url))
-const FIXTURE = join(SNAPSHOT_DIR, 'session.v3.jsonl')
+// Platform-tiered corpus (owner-approved ㊵-91 乙档): the win32 tier (session.v4,
+// pwsh) and the POSIX tier (session.v3, bash) are both committed and pinned per
+// platform — a shared highest-generation pick would hand each platform the
+// other one's shell calls.
+const FIXTURE = join(SNAPSHOT_DIR, process.platform === 'win32' ? 'session.v4.jsonl' : 'session.v3.jsonl')
 const UI_EXPECTED = join(SNAPSHOT_DIR, 'ui.expected.md')
 const MODE = webSnapshotMode()
-const PROMPT = "Use the bash tool to run exactly: printf 'MINIMAL_BASH_CARD_OK\\n'. Then reply exactly MINIMAL_PRESET_REQUEST_OK and stop."
+// The scenario is platform-tiered (owner-approved ㊵-91 乙档): the authored
+// corpus's shell call and the drive prompt follow the running platform's
+// shell tool, so each platform replays a corpus that matches its facts.
+const SHELL_TOOL = process.platform === 'win32' ? 'pwsh' : 'bash'
+const SCRIPTED_COMMAND = SHELL_TOOL === 'pwsh'
+  ? "Write-Output 'MINIMAL_BASH_CARD_OK'"
+  : "printf 'MINIMAL_BASH_CARD_OK\\n'"
+const SCRIPTED_ARGUMENTS = JSON.stringify({ command: SCRIPTED_COMMAND })
+const PROMPT = `Use the ${SHELL_TOOL} tool to run exactly: ${SCRIPTED_COMMAND}. Then reply exactly MINIMAL_PRESET_REQUEST_OK and stop.`
 
 /** Rendered text of the system prompt surface node, or undefined when the surface carries none. */
 function systemPromptText(session: Session): string | undefined {
@@ -89,18 +101,25 @@ describe('minimal agent preset', () => {
     const stateDir = join(scaffold.workspaceCwd, 'persistent-state')
     await mkdir(stateDir)
     const signal = new AbortController().signal
+    const setupCommand = SHELL_TOOL === 'pwsh'
+      ? `Set-Location -LiteralPath ${JSON.stringify(stateDir)}; $env:DSH_MINIMAL_STATE = 'PERSISTED'`
+      : `cd ${JSON.stringify(stateDir)} && export DSH_MINIMAL_STATE=PERSISTED`
     await scaffold.ctx.tools.execute({
       signal,
       callId: ToolCallId('minimal-bash-state-setup'),
-      name: 'bash',
-      arguments: { command: `cd ${JSON.stringify(stateDir)} && export DSH_MINIMAL_STATE=PERSISTED` },
+      name: SHELL_TOOL,
+      arguments: { command: setupCommand },
       agent: agentHandle.agent,
     })
+    const readCommand = SHELL_TOOL === 'pwsh'
+      ? 'Write-Output "$($env:DSH_MINIMAL_STATE):$((Get-Location).Path)"'
+      : 'printf \'%s:%s\\n\' "$DSH_MINIMAL_STATE" "$PWD"'
+
     const bash = await scaffold.ctx.tools.execute({
       signal,
       callId: ToolCallId('minimal-bash-state-read'),
-      name: 'bash',
-      arguments: { command: 'printf \'%s:%s\n\' "$DSH_MINIMAL_STATE" "$PWD"' },
+      name: SHELL_TOOL,
+      arguments: { command: readCommand },
       agent: agentHandle.agent,
     })
     const text = (result: typeof bash): string => result.content
@@ -108,24 +127,23 @@ describe('minimal agent preset', () => {
       .map(block => block.text)
       .join('')
       .replaceAll(scaffold.workspaceCwd, '{{cwd}}')
+      .replaceAll('\\', '/')
       .trimEnd()
 
+    // Platform-tiered expectations: the persistent pwsh result carries no
+    // success suffix, and the tool list names the running platform's shell.
+    const persistentSuffix = SHELL_TOOL === 'pwsh' ? '' : '\n[Command finished with exit code 0]'
     expect({
       prompt: systemPrompt,
       tools: requestHeader.tools?.map(tool => tool.name),
       goalCommand: scaffold.ctx.commands.find(agentHandle.agent, 'goal') !== undefined,
-      bash: text(bash),
-    }).toMatchInlineSnapshot(`
-      {
-        "bash": "PERSISTED:{{cwd}}/persistent-state
-      [Command finished with exit code 0]",
-        "goalCommand": false,
-        "prompt": "You are a helpful software engineer assistant.",
-        "tools": [
-          "bash",
-        ],
-      }
-    `)
+      [SHELL_TOOL]: text(bash),
+    }).toEqual({
+      prompt: 'You are a helpful software engineer assistant.',
+      tools: [SHELL_TOOL],
+      goalCommand: false,
+      [SHELL_TOOL]: `PERSISTED:{{cwd}}/persistent-state${persistentSuffix}`,
+    })
     expect(requestHeader.tools?.toSorted((left, right) => left.name.localeCompare(right.name)))
       .toEqual(scaffold.ctx.tools.schemas(agentHandle.agent).toSorted((left, right) => left.name.localeCompare(right.name)))
   })
@@ -138,12 +156,18 @@ describe('minimal agent preset', () => {
     await page.goto(scaffold.authenticatedUrl, { waitUntil: 'load' })
     await page.waitForSelector('[class*="frame"]', { timeout: 30_000 })
 
+    // Sidebar groups render collapsed (boot provisions the Default workspace
+    // group first); expand every collapsed group, then open the single session
+    // row — the treeitem without aria-expanded (the ㊵-146 family recipe).
     const groupRow = page.locator('[role="treeitem"]').first()
     await groupRow.waitFor({ timeout: 15_000 })
-    await groupRow.click()
-    const sessionRow = page.locator('[role="treeitem"]').nth(1)
-    await sessionRow.waitFor({ timeout: 10_000 })
-    await sessionRow.click()
+    await expect.poll(async () => {
+      for (const group of await page.locator('[role="treeitem"][aria-expanded="false"]').all()) {
+        await group.click()
+      }
+      return page.locator('[role="treeitem"]:not([aria-expanded])').count()
+    }, { timeout: 15_000 }).toBe(1)
+    await page.locator('[role="treeitem"]:not([aria-expanded])').first().click()
     await page.getByText('MINIMAL_PRESET_REQUEST_OK', { exact: true }).waitFor({ timeout: 15_000 })
 
     const process = page.locator('[data-turn-process]')
@@ -168,8 +192,17 @@ describe('minimal agent preset', () => {
     const call = row.locator('xpath=..')
     await call.getByText('IN', { exact: true }).waitFor()
     await call.getByText('OUT', { exact: true }).waitFor()
-    await call.getByText('MINIMAL_BASH_CARD_OK\n[Command finished with exit code 0]', { exact: true }).waitFor()
-    await call.getByText(/"command": "printf 'MINIMAL_BASH_CARD_OK/).waitFor()
+    // The persistent pwsh result carries no success suffix (its exit marker is
+    // non-zero only), so the card text and the recorded command are
+    // platform-tiered alongside the corpus.
+    const cardText = SHELL_TOOL === 'pwsh'
+      ? 'MINIMAL_BASH_CARD_OK'
+      : 'MINIMAL_BASH_CARD_OK\n[Command finished with exit code 0]'
+    await call.getByText(cardText, { exact: true }).waitFor()
+    const commandNeedle = SHELL_TOOL === 'pwsh'
+      ? new RegExp('"command": "?Write-Output \'MINIMAL_BASH_CARD_OK')
+      : new RegExp('"command": "?printf \'MINIMAL_BASH_CARD_OK')
+    await call.getByText(commandNeedle).waitFor()
 
     const snapshot = await captureStableAria(page, '[class*="centerCol"]', scaffold.workspaceCwd)
     await compareOrRefreshGolden(UI_EXPECTED, snapshot, MODE)
