@@ -1,93 +1,148 @@
-/* Life panel layout: stacked sections of fact rows, meters, and action rows.
-   Colours come from the shared theme aliases only (design-platform.css):
-   label-tertiary / label-secondary for muted copy, state-business-primary for
-   the meters and progress, state-error/warn for the refusal lines, border-l4
-   for hairlines — so the panel follows light and dark like the rest of the app. */
+/* Life: a quiet runtime console. All colours resolve through verified theme
+   aliases and include fallbacks for first-paint resilience. */
+
+.page,
+.page * {
+  box-sizing: border-box;
+}
 
 .page {
-  /* The page owns the only scrollbar and it sits on the panel's right edge:
-     the outer box spans the whole column while the reading inside keeps a
-     readable measure, so the scrollbar never splits the content in half. */
-  box-sizing: border-box;
   height: 100%;
   overflow-y: auto;
-  padding: 24px 32px 48px;
+  overflow-x: hidden;
+  overscroll-behavior-y: contain;
+  scrollbar-gutter: stable;
+  /* Keep tab stops and #life-* deep links clear of the sticky header. */
+  scroll-padding-top: 96px;
+  padding: 0 32px 48px;
+  background: var(--dsw-alias-bg-base, #ffffff);
+  color: var(--dsw-alias-label-primary, #0f1115);
+  font-family: var(--dsw-font-family, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
 }
 
 .content {
   display: flex;
-  flex-direction: column;
-  gap: 24px;
-  max-width: 760px;
+  width: min(100%, 960px);
   margin: 0 auto;
+  flex-direction: column;
+  gap: 16px;
 }
 
 .header {
+  position: sticky;
+  top: 0;
+  z-index: 5;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
+  padding: 20px 4px 14px;
+  border-bottom: 0.5px solid var(--dsw-alias-border-l2, rgba(0, 0, 0, 0.1));
+  background: var(--dsw-alias-bg-base, #ffffff);
 }
 
 .title {
   margin: 0;
-  font-size: 20px;
+  color: var(--dsw-alias-label-primary, #0f1115);
+  font-size: 22px;
   font-weight: 600;
+  line-height: 30px;
 }
 
 .subtitle {
+  max-width: 68ch;
   margin: 0;
-  color: var(--dsw-alias-label-tertiary, inherit);
+  color: var(--dsw-alias-label-secondary, #61666b);
   font-size: 13px;
+  line-height: 20px;
 }
 
 .section {
+  container-type: inline-size;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px;
+  padding: 20px;
+  scroll-margin-top: 96px;
+  border: 0.5px solid var(--dsw-alias-border-l2, rgba(0, 0, 0, 0.1));
+  border-radius: 12px;
+  background: var(--dsw-alias-bg-layer-1, #ffffff);
 }
 
 .sectionTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   margin: 0;
-  font-size: 15px;
+  color: var(--dsw-alias-label-primary, #0f1115);
+  font-size: 16px;
   font-weight: 600;
+  line-height: 24px;
+}
+
+.sectionTitle::before {
+  width: 3px;
+  height: 16px;
+  flex: 0 0 3px;
+  border-radius: 999px;
+  corner-shape: round;
+  background: var(--dsw-alias-state-business-primary, #569e58);
+  content: "";
 }
 
 .organTitle {
   margin: 0;
+  color: var(--dsw-alias-label-secondary, #61666b);
   font-size: 13px;
   font-weight: 600;
-  color: var(--dsw-alias-label-secondary, inherit);
+  line-height: 20px;
 }
 
 .organ {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
+}
+
+.organ + .organ {
+  padding-top: 16px;
+  border-top: 0.5px solid var(--dsw-alias-border-l2, rgba(0, 0, 0, 0.1));
 }
 
 .facts {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 8px 24px;
+  margin: 0;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr));
+  gap: 8px;
 }
 
 .fact {
-  display: flex;
-  align-items: baseline;
-  gap: 8px;
+  display: grid;
   min-width: 0;
+  grid-template-rows: auto minmax(20px, auto);
+  align-content: start;
+  gap: 2px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: var(--dsw-alias-interactive-bg-hover, rgba(38, 49, 72, 0.06));
 }
 
 .factLabel {
-  color: var(--dsw-alias-label-tertiary, inherit);
+  min-width: 0;
+  color: var(--dsw-alias-label-secondary, #61666b);
   font-size: 12px;
-  flex-shrink: 0;
+  font-weight: 400;
+  line-height: 18px;
 }
 
 .factValue {
-  font-size: 13px;
   min-width: 0;
+  margin: 0;
   overflow-wrap: anywhere;
+  color: var(--dsw-alias-label-primary, #0f1115);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 20px;
+  font-variant-numeric: tabular-nums;
 }
 
 .badgeText {
@@ -96,246 +151,658 @@
 
 .groupLabel {
   margin: 0;
+  color: var(--dsw-alias-label-secondary, #61666b);
   font-size: 12px;
-  color: var(--dsw-alias-label-tertiary, inherit);
+  font-weight: 500;
+  line-height: 18px;
 }
 
 .meters {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
 }
 
 .meter {
   display: grid;
-  grid-template-columns: 88px 1fr 48px;
+  grid-template-columns: minmax(88px, 128px) minmax(80px, 1fr) 48px;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
+  min-width: 0;
   font-size: 12px;
+  line-height: 18px;
 }
 
 .meterLabel {
   overflow: hidden;
+  color: var(--dsw-alias-label-secondary, #61666b);
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .meterTrack {
   display: block;
-  height: 6px;
-  border-radius: 3px;
-  background: var(--dsw-alias-interactive-bg-active, rgba(127, 127, 127, 0.2));
+  height: 8px;
   overflow: hidden;
+  border-radius: 999px;
+  corner-shape: round;
+  background: var(--dsw-alias-interactive-bg-active, rgba(38, 49, 72, 0.1));
 }
 
 .meterFill {
   display: block;
   height: 100%;
-  border-radius: 3px;
-  background: var(--dsw-alias-state-business-primary, currentColor);
+  border-radius: 999px;
+  corner-shape: round;
+  background: var(--dsw-alias-state-success-primary, #22c55e);
+  transition: width var(--ds-transition-duration, 0.2s) var(--ds-ease-in-out, ease-in-out);
 }
 
 .meterValue {
+  color: var(--dsw-alias-label-primary, #0f1115);
   text-align: right;
+  font-weight: 500;
   font-variant-numeric: tabular-nums;
 }
 
 .actions {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   gap: 8px;
+}
+
+.actions button:focus-visible,
+.groupToggle:focus-visible,
+.datasetRow input:focus-visible,
+.table input:focus-visible {
+  outline: 2px solid var(--dsw-alias-state-business-primary, #569e58);
+  outline-offset: 2px;
 }
 
 .muted {
   margin: 0;
+  color: var(--dsw-alias-label-secondary, #61666b);
   font-size: 13px;
-  color: var(--dsw-alias-label-tertiary, inherit);
+  line-height: 20px;
 }
 
 .uploadBlock {
   display: flex;
   flex-direction: column;
   gap: 6px;
+  padding: 12px;
+  border-radius: 8px;
+  background: var(--dsw-alias-interactive-bg-hover, rgba(38, 49, 72, 0.06));
 }
 
 .datasetGroup {
   display: flex;
+  overflow: hidden;
   flex-direction: column;
-  gap: 6px;
+  gap: 0;
+  border: 0.5px solid var(--dsw-alias-border-l2, rgba(0, 0, 0, 0.1));
+  border-radius: 8px;
 }
 
-/* The directory row that folds its files away; the chevron carries the state. */
 .groupToggle {
   display: flex;
-  align-items: baseline;
+  width: 100%;
+  min-height: 34px;
+  align-items: center;
   gap: 8px;
-  align-self: flex-start;
-  max-width: 100%;
-  padding: 2px 0;
+  padding: 7px 10px;
   border: 0;
-  background: transparent;
-  color: inherit;
+  background: var(--dsw-alias-bg-layer-1, #ffffff);
+  color: var(--dsw-alias-label-primary, #0f1115);
   font: inherit;
   font-size: 12px;
   font-weight: 600;
+  line-height: 18px;
   cursor: pointer;
   text-align: left;
 }
 
-.groupToggle:hover .datasetPath {
-  color: var(--dsw-alias-state-business-primary, inherit);
+.groupToggle:hover {
+  background: var(--dsw-alias-interactive-bg-hover, rgba(38, 49, 72, 0.06));
 }
 
 .groupToggle .datasetSize {
+  margin-left: auto;
   font-weight: 400;
 }
 
 .groupChevron {
-  flex-shrink: 0;
   width: 12px;
+  flex: 0 0 12px;
+  color: var(--dsw-alias-label-secondary, #61666b);
 }
 
-/* The checkpoint header keeps its title and the fold control on one row. */
 .subHeader {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
+  margin-top: 4px;
+  padding-top: 16px;
+  border-top: 0.5px solid var(--dsw-alias-border-l2, rgba(0, 0, 0, 0.1));
 }
 
 .datasetList {
-  margin: 0;
-  padding: 0 0 0 18px;
   display: flex;
+  margin: 0;
+  padding: 4px 10px 6px 30px;
   flex-direction: column;
-  gap: 6px;
+  gap: 0;
+  color: var(--dsw-alias-label-primary, #0f1115);
   font-size: 12px;
-  list-style: disc;
+  line-height: 18px;
+  list-style: none;
 }
 
-/* The picker document stays out of the layout; the labeled button opens it. */
 .fileInput {
   display: none;
 }
 
 .datasetRow {
-  display: flex;
-  align-items: baseline;
-  gap: 8px;
+  display: grid;
   min-width: 0;
+  min-height: 32px;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
+  border-bottom: 0.5px solid var(--dsw-alias-border-l2, rgba(0, 0, 0, 0.1));
+}
+
+.datasetRow:last-child {
+  border-bottom: 0;
 }
 
 .datasetRow label {
   display: inline-flex;
-  align-items: baseline;
-  gap: 6px;
   min-width: 0;
+  align-items: center;
+  gap: 8px;
+}
+
+.datasetRow input,
+.table input {
+  accent-color: var(--dsw-alias-state-business-primary, #569e58);
 }
 
 .datasetPath {
+  min-width: 0;
   overflow-wrap: anywhere;
+  font-family: var(--ds-font-family-code, Consolas, "Microsoft YaHei", sans-serif);
 }
 
 .datasetSize {
   flex-shrink: 0;
+  color: var(--dsw-alias-label-secondary, #61666b);
   font-variant-numeric: tabular-nums;
-  color: var(--dsw-alias-label-tertiary, inherit);
 }
 
 .unavailable {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
+  padding: 10px 12px;
+  border: 1px solid var(--dsw-alias-state-warn-primary, #f59e0b);
+  border-radius: 8px;
+  background: var(--dsw-alias-state-warn-tertiary, #fef5e7);
+}
+
+.unavailable .muted {
+  color: var(--dsw-alias-label-primary, #0f1115);
 }
 
 .unavailableList {
   margin: 0;
   padding-left: 18px;
+  color: var(--dsw-alias-label-secondary, #61666b);
   font-size: 12px;
-  color: var(--dsw-alias-label-secondary, inherit);
+  line-height: 18px;
 }
 
 .trainingBadges {
-  margin: 0;
   display: flex;
+  margin: 0;
   flex-wrap: wrap;
+  align-items: center;
   gap: 6px;
 }
 
 .progress {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
+  padding: 12px;
+  border-radius: 8px;
+  background: var(--dsw-alias-interactive-bg-hover, rgba(38, 49, 72, 0.06));
 }
 
 .progressTrack {
   display: block;
-  height: 8px;
-  border-radius: 4px;
-  background: var(--dsw-alias-interactive-bg-active, rgba(127, 127, 127, 0.2));
+  height: 10px;
   overflow: hidden;
+  border-radius: 999px;
+  corner-shape: round;
+  background: var(--dsw-alias-interactive-bg-active, rgba(38, 49, 72, 0.1));
 }
 
 .progressFill {
   display: block;
   height: 100%;
-  border-radius: 4px;
-  background: var(--dsw-alias-state-business-primary, currentColor);
-  transition: width 0.3s ease;
+  border-radius: 999px;
+  corner-shape: round;
+  background: var(--dsw-alias-state-business-primary, #569e58);
+  transition: width var(--ds-transition-duration-slow, 0.3s) var(--ds-ease-in-out, ease-in-out);
 }
 
 .progressMetrics {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px 16px;
-  font-size: 12px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(96px, 1fr));
+  gap: 8px 16px;
 }
 
 .progressMetric {
   display: inline-flex;
-  align-items: baseline;
-  gap: 4px;
+  min-width: 0;
+  flex-direction: column;
+  gap: 1px;
+  color: var(--dsw-alias-label-primary, #0f1115);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 18px;
   font-variant-numeric: tabular-nums;
 }
 
-.errorLine {
+.errorLine,
+.confirmLine,
+.successLine {
   margin: 0;
+  padding: 10px 12px;
+  border-radius: 8px;
+  color: var(--dsw-alias-label-primary, #0f1115);
   font-size: 12px;
-  color: var(--dsw-alias-state-error-primary, #c0392b);
+  line-height: 18px;
+}
+
+.errorLine {
+  border: 1px solid var(--dsw-alias-state-error-primary, #ec1313);
+  background: var(--dsw-alias-interactive-bg-hover-danger, rgba(236, 19, 19, 0.05));
 }
 
 .confirmLine {
-  margin: 0;
-  font-size: 12px;
-  color: var(--dsw-alias-state-warn-primary, #b26a00);
+  border: 1px solid var(--dsw-alias-state-warn-primary, #f59e0b);
+  background: var(--dsw-alias-state-warn-tertiary, #fef5e7);
 }
 
 .successLine {
-  margin: 0;
-  font-size: 12px;
-  color: var(--dsw-alias-state-business-primary, inherit);
+  border: 1px solid var(--dsw-alias-state-success-primary, #22c55e);
+  background: var(--dsw-alias-state-success-tertiary, #e6faed);
+}
+
+/* Wrapper for the initial loading / stream-error branches: owns the measure
+   and the centring, so no sibling selector depends on branch DOM order. */
+.statePanel {
+  display: flex;
+  width: min(100%, 960px);
+  margin: 24px auto 0;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.statePanel .errorLine {
+  width: 100%;
+}
+
+/* The checkpoint group's head is the first child of its .organ, so it would
+   otherwise draw a second hairline 16px under the .organ + .organ one — two
+   parallel rules where one separator is meant. */
+.organ > .subHeader:first-child {
+  padding-top: 0;
+  border-top: 0;
+}
+
+/* Docked failure band: stays inside .content, never a section. */
+.content > .errorLine {
+  position: sticky;
+  bottom: 0;
+  z-index: 6;
+  width: min(100%, 960px);
+  margin: 0 auto;
+}
+
+.tableScroll {
+  width: 100%;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
 }
 
 .table {
+  display: table;
   width: 100%;
+  min-width: 720px;
   border-collapse: collapse;
+  border-spacing: 0;
+  color: var(--dsw-alias-label-primary, #0f1115);
   font-size: 12px;
+  line-height: 18px;
+  white-space: nowrap;
 }
 
 .table th,
 .table td {
+  padding: 8px 10px;
+  border-bottom: 0.5px solid var(--dsw-alias-border-l2, rgba(0, 0, 0, 0.1));
   text-align: left;
-  padding: 4px 8px;
-  border-bottom: 0.5px solid var(--dsw-alias-border-l4, rgba(127, 127, 127, 0.25));
-  font-weight: inherit;
+  font-variant-numeric: tabular-nums;
 }
 
-.table th {
-  color: var(--dsw-alias-label-tertiary, inherit);
+.table thead th {
+  border-bottom-color: var(--dsw-alias-border-l4, rgba(0, 0, 0, 0.16));
+  background: var(--dsw-alias-bg-layer-1, #ffffff);
+  color: var(--dsw-alias-label-secondary, #61666b);
   font-size: 11px;
+  font-weight: 600;
+  line-height: 16px;
+}
+
+/* Row headers (file name) must read as data, not as a second table head. */
+.table tbody th {
+  background: transparent;
+  color: var(--dsw-alias-label-primary, #0f1115);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 18px;
+}
+
+.table th:nth-child(2),
+.table td:nth-child(2) {
+  min-width: 220px;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.table th:nth-child(5),
+.table td:nth-child(5) {
+  min-width: 156px;
+}
+
+.table th:nth-child(6),
+.table td:nth-child(6) {
+  min-width: 220px;
+}
+
+.table tbody tr:hover {
+  background: var(--dsw-alias-interactive-bg-hover, rgba(38, 49, 72, 0.06));
+}
+
+.table .actions {
+  flex-wrap: nowrap;
 }
 
 .loading {
+  position: relative;
+  width: min(100%, 960px);
+  min-height: 184px;
+  margin: 24px auto 0;
+  padding: 164px 4px 0;
+  color: var(--dsw-alias-label-secondary, #61666b);
+  font-size: 13px;
+  text-align: center;
+  line-height: 20px;
+}
+
+/* Two section outlines (56 / 88) preview the cards that are about to arrive.
+   They are real (empty, aria-hidden) nodes because CSS allows one ::before and
+   one ::after per host: nested pseudo-elements (::before::before) are invalid
+   and get dropped silently, which would leave two empty frames. */
+.loadingCard,
+.loadingCardWide {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  border: 0.5px solid var(--dsw-alias-border-l2, rgba(0, 0, 0, 0.1));
+  border-radius: 12px;
+  background: var(--dsw-alias-bg-layer-1, #ffffff);
+  animation: lifeSkeletonPulse 1.2s var(--ds-ease-in-out, ease-in-out) infinite alternate;
+}
+
+.loadingCard {
+  top: 0;
+  height: 56px;
+}
+
+.loadingCardWide {
+  top: 72px;
+  height: 88px;
+}
+
+/* Placeholder bars ride the outline's opacity pulse. */
+.loadingCard::before,
+.loadingCardWide::before,
+.loadingCardWide::after {
+  position: absolute;
+  height: 10px;
+  border-radius: 999px;
+  corner-shape: round;
+  background: var(--dsw-alias-bg-skeleton, rgba(0, 0, 0, 0.04));
+  content: "";
+}
+
+.loadingCard::before {
+  top: 18px;
+  left: 20px;
+  width: min(34%, 180px);
+}
+
+.loadingCardWide::before {
+  top: 22px;
+  left: 20px;
+  width: min(62%, 360px);
+}
+
+.loadingCardWide::after {
+  top: 48px;
+  left: 20px;
+  width: min(42%, 240px);
+}
+
+/* New visual hook. Apply only to stop / force-release / delete actions. */
+.actions .dangerAction {
+  border: 1px solid var(--dsw-alias-state-error-primary, #ec1313);
+  background: var(--dsw-alias-bg-layer-1, #ffffff);
+  color: var(--dsw-alias-state-error-primary, #ec1313);
+}
+
+.actions .dangerAction:hover:not(:disabled) {
+  background: var(--dsw-alias-interactive-bg-hover-danger, rgba(236, 19, 19, 0.05));
+}
+
+.actions .dangerAction:focus-visible {
+  outline-color: var(--dsw-alias-state-error-primary, #ec1313);
+}
+
+/* Destructive cluster: pushed to the trailing edge of the action row and cut
+   off by one hairline so position, not just colour, carries the warning. */
+.actions .actionCluster {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+  padding-left: 8px;
+  border-left: 1px solid var(--dsw-alias-border-l2, rgba(0, 0, 0, 0.1));
+}
+
+/* Inline note for surfaces that did not answer: a note, not a block. */
+.unavailableNote {
   margin: 0;
-  color: var(--dsw-alias-label-tertiary, inherit);
+  padding: 6px 10px;
+  border: 1px solid var(--dsw-alias-state-warn-primary, #f59e0b);
+  border-radius: 8px;
+  background: var(--dsw-alias-state-warn-tertiary, #fef5e7);
+  color: var(--dsw-alias-label-primary, #0f1115);
+  font-size: 12px;
+  line-height: 18px;
+}
+
+.unavailableNote .muted {
+  color: var(--dsw-alias-label-primary, #0f1115);
+}
+
+/* Names of the rows a destructive verb is about to remove. */
+.impactList {
+  margin: 0;
+  padding-left: 16px;
+  max-height: 88px;
+  overflow-y: auto;
+  font-size: 12px;
+  font-family: var(--ds-font-family-code, Consolas, "Microsoft YaHei", sans-serif);
+  line-height: 18px;
+  list-style: disc;
+}
+
+/* Collapsible section head: summary carries the h3, marker is ours. */
+.sectionSummary {
+  display: flex;
+  margin: 0;
+  align-items: center;
+  gap: 8px;
+  padding: 2px 0;
+  cursor: pointer;
+  list-style: none;
+}
+
+.sectionSummary::-webkit-details-marker {
+  display: none;
+}
+
+.sectionSummary::marker {
+  content: "";
+}
+
+/* Fold chevron: shape only, so it never enters the summary's text. Zero
+   border-radius means no circular radius, so no corner-shape pairing needed. */
+.sectionSummary::after {
+  width: 0;
+  height: 0;
+  flex: 0 0 auto;
+  margin-left: auto;
+  border-top: 4px solid transparent;
+  border-bottom: 4px solid transparent;
+  border-left: 6px solid var(--dsw-alias-label-secondary, #61666b);
+  content: "";
+  transition: transform var(--ds-transition-duration-fast, 0.1s) var(--ds-ease-in-out, ease-in-out);
+}
+
+/* <summary> never exposes aria-expanded in Chromium; [open] on the parent is
+   the rule that actually fires. */
+details[open] > .sectionSummary::after {
+  transform: rotate(90deg);
+}
+
+/* A folded section loses the 16px gap to its first child, which would make the
+   title sit 4px tighter than in an open one — the rhythm must not move. */
+details:not([open]) > .sectionSummary {
+  padding-bottom: 4px;
+}
+
+.sectionSummary:hover {
+  border-radius: 8px;
+  background: var(--dsw-alias-interactive-bg-hover, rgba(38, 49, 72, 0.06));
+}
+
+.sectionSummary:focus-visible {
+  outline: 2px solid var(--dsw-alias-state-business-primary, #569e58);
+  outline-offset: 2px;
+}
+
+.sectionSummary .sectionTitle::before {
+  background: var(--dsw-alias-state-business-primary, #569e58);
+}
+
+@keyframes lifeSkeletonPulse {
+  from { opacity: 0.55; }
+  to { opacity: 1; }
+}
+
+@container (max-width: 560px) {
+  .facts {
+    grid-template-columns: 1fr;
+  }
+
+  .subHeader {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .datasetRow {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  /* Wrapped clusters start a fresh row; a leading divider reads as noise. */
+  .actions .actionCluster {
+    margin-left: 0;
+    padding-left: 0;
+    border-left: 0;
+  }
+}
+
+@container (max-width: 420px) {
+  .meter {
+    grid-template-columns: minmax(72px, 96px) minmax(72px, 1fr) 42px;
+    gap: 8px;
+  }
+}
+
+/* Insurance tier: below this the three-column meter cannot hold at all. */
+@container (max-width: 240px) {
+  .meter {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+
+  .meterLabel,
+  .meterValue {
+    display: inline-flex;
+    justify-content: space-between;
+  }
+}
+
+@media (max-width: 640px) {
+  .page {
+    padding: 0 16px 32px;
+  }
+
+  .content {
+    gap: 12px;
+  }
+
+  .header {
+    padding: 16px 2px 12px;
+  }
+
+  .section {
+    gap: 14px;
+    padding: 16px;
+    border-radius: 10px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .meterFill,
+  .progressFill,
+  .sectionSummary::after {
+    transition-duration: 0.01ms;
+  }
+
+  .loadingCard,
+  .loadingCardWide {
+    animation: none;
+  }
 }

@@ -490,13 +490,16 @@ describe('LifePanel', () => {
     }))
     mountPanel(life)
 
-    expect(screen.getByRole('button', { name: en.resumeFrom })).not.toBeNull()
+    // Every row's controls carry the filename, so six rows never read as six
+    // buttons with one name.
+    const resumeOld = `${en.resumeFrom} old_run.pt`
+    expect(screen.getByRole('button', { name: resumeOld })).not.toBeNull()
     fireEvent.click(screen.getByRole('button', { name: en.checkpointsFold }))
-    expect(screen.queryByRole('button', { name: en.resumeFrom })).toBeNull()
+    expect(screen.queryByRole('button', { name: resumeOld })).toBeNull()
     expect(screen.queryByText(en.activeCheckpointLabel)).toBeNull()
 
     fireEvent.click(screen.getByRole('button', { name: t('checkpointsUnfold', { count: '1' }) }))
-    expect(screen.getByRole('button', { name: en.resumeFrom })).not.toBeNull()
+    expect(screen.getByRole('button', { name: resumeOld })).not.toBeNull()
     expect(screen.getByText(en.activeCheckpointLabel)).not.toBeNull()
   })
 
@@ -566,7 +569,8 @@ describe('LifePanel', () => {
     expect(screen.getByText('语料已变更：检查点原指纹 abc123，本次续训 def456')).not.toBeNull()
 
     // The spec preselects its dataset; resume sends the checkpoint plus that selection.
-    fireEvent.click(screen.getByRole('button', { name: en.resumeFrom }))
+    const resumeSeed = `${en.resumeFrom} seed_beta.pt`
+    fireEvent.click(screen.getByRole('button', { name: resumeSeed }))
     await waitFor(() => {
       expect(mocks.trainResumeCheckpoint).toHaveBeenLastCalledWith({
         checkpoint: 'seed_beta.pt',
@@ -576,7 +580,7 @@ describe('LifePanel', () => {
 
     // With nothing selected the request carries only the checkpoint name.
     fireEvent.click(screen.getByRole('checkbox', { name: /consolidated\/night-1\.jsonl/ }))
-    fireEvent.click(screen.getByRole('button', { name: en.resumeFrom }))
+    fireEvent.click(screen.getByRole('button', { name: resumeSeed }))
     await waitFor(() => {
       expect(mocks.trainResumeCheckpoint).toHaveBeenLastCalledWith({ checkpoint: 'seed_beta.pt' })
     })
@@ -608,7 +612,7 @@ describe('LifePanel', () => {
     // other row offers an enabled activation. Rows follow checkpoint order.
     expect(screen.getByText(en.artifactsActiveBadge)).not.toBeNull()
     expect(screen.getByText(en.artifactsConfiguredBadge)).not.toBeNull()
-    const activateButtons = screen.getAllByRole('button', { name: en.activateRow })
+    const activateButtons = screen.getAllByRole('button', { name: new RegExp(`^${en.activateRow} `) })
     expect((activateButtons[0] as HTMLButtonElement).disabled).toBe(true)
     const otherActivate = activateButtons[1]
     if (otherActivate === undefined) throw new Error('expected an activate button for other.pt')
