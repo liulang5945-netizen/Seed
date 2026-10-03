@@ -136,9 +136,10 @@ describe('web e2e: plugin manager', () => {
     // optional bundles open the Official group, followed by the official plugins that registered their
     // configuration, and its other bundles stay off the page.
     expect(await panel.locator('[data-plugin-group="bundles"] [data-plugin-package]').count()).toBe(2)
-    expect(await panel.locator('[data-plugin-group="official"] [data-plugin-package]').count()).toBe(2)
+    expect(await panel.locator('[data-plugin-group="official"] [data-plugin-package]').count()).toBe(4)
     expect(await panel.locator('[data-plugin-group="official"] [data-plugin-item]').count()).toBe(4)
-    expect(await panel.getByText('Beta', { exact: true }).count()).toBe(2)
+    // Each experimental card wears its Beta tag.
+    expect(await panel.getByText('Beta', { exact: true }).count()).toBe(4)
     expect(await panel.getByRole('switch', { name: '启用 语音输入', exact: true }).getAttribute('aria-checked')).toBe('false')
     // A bundle that is off still shows the rows its patch declares, without switches.
     await panel.getByRole('button', { name: '查看 @fixture/bundle' }).click()

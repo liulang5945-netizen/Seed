@@ -7,6 +7,6 @@
 - file icon uses a solid fill: true
 - all cards share one row: true
 - every card is 64px high: true
-- the file card is wider than an image: true
+- the file card is wider than an image: false
 - overflowing cards scroll horizontally: true
 - the rail does not wrap: true

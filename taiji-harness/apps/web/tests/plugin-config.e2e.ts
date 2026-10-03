@@ -91,7 +91,9 @@ describe('web e2e: plugin configuration pages', () => {
     // the official bundles the installation ships switched off.
     await panel.getByRole('button', { name: '查看 网页搜索', exact: true }).waitFor({ timeout: 20_000 })
     const official = panel.locator('[data-plugin-group="official"]')
-    expect(await official.locator('[data-plugin-package]').count()).toBe(2)
+    // The four experimental bundles (agent team, auto review, schedule, voice
+    // input) each carry a configuration card in the Official group.
+    expect(await official.locator('[data-plugin-package]').count()).toBe(4)
     expect(await official.locator('[data-plugin-item]').count()).toBe(4)
     for (const title of ['终端', 'Agent 循环', 'Subagent', '网页搜索']) {
       expect(await official.getByRole('button', { name: `查看 ${title}`, exact: true }).count()).toBe(1)
