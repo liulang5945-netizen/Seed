@@ -13,6 +13,8 @@ import re
 import sys
 from pathlib import Path
 
+import pytest
+
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 for entry in (PROJECT_ROOT, PROJECT_ROOT / "scripts" / "training"):
     if str(entry) not in sys.path:
@@ -81,9 +83,9 @@ def test_instrument_carries_v6_and_the_correction_note() -> None:
     source = (PROJECT_ROOT / "scripts" / "training" / "probe_taiji_a30_stop_failure.py").read_text(
         encoding="utf-8"
     )
-    assert '"format": "taiji-a30-stop-failure-v26"' in source
+    assert '"format": "taiji-a30-stop-failure-v27"' in source
     assert all(
-        f"format_note_v{v}" in source for v in (6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26)
+        f"format_note_v{v}" in source for v in range(6, 28)
     ), "升版只许加列，历史说明必须逐版留在件里"
     assert "format_note_v6" in source
     assert "追加二" in source and "深帧复现" in source
@@ -318,13 +320,14 @@ def test_the_endstep_probe_groups_by_generation_not_by_item() -> None:
 
     def row(step, p, rank, in_run=True):
         return {"step": step, "p_boundary": p, "boundary_rank_in_legal": rank,
-                "legal_candidates": 40, "in_run": in_run}
+                "legal_candidates": 40, "legal_candidates_including_boundary": 41,
+                "ratio_best_over_boundary": 3.0, "in_run": in_run}
 
     rows = [row(0, 0.1, 9), row(1, 0.4, 3), row(2, 0.2, 7), row(0, 0.9, 1), row(1, 0.5, 2), row(3, 0.7, 5, in_run=False)]
     groups = _group_rows_by_generation(rows)
     #: v23：全部行都参与换代分组（v22 误把 `in_run` 当"在生成内"用 ⇒ 72 代只剩 12／0）。
     assert [len(g) for g in groups] == [3, 3], groups
-    probe = _endstep_probe_per_generation(rows, max_length=256)
+    probe = _endstep_probe_per_generation(rows, max_length=256, terminals=[None, None])
     assert len(probe) == 2, probe
     assert probe[0]["p_boundary_max"] == 0.4 and probe[0]["p_boundary_argmax_step"] == 1, probe[0]
     assert probe[0]["steps_in_repeat_run"] == 3 and probe[1]["steps_in_repeat_run"] == 2, probe
@@ -333,12 +336,19 @@ def test_the_endstep_probe_groups_by_generation_not_by_item() -> None:
     assert probe[1]["p_boundary_max"] == 0.9 and probe[1]["boundary_rank_at_peak_step"] == 1, probe[1]
     assert probe[1]["peak_is_last_step"] is False, probe[1]
     assert all(entry["ate_full_budget"] is False for entry in probe), probe
-    # 第三代的真值样例：峰值就落在最后一步（"看到即停下"那一型），必须被正确认出
-    last_step_peak = _endstep_probe_per_generation([row(0, .1, 9), row(1, .3, 4), row(2, .8, 1)], max_length=256)
+    #: 第三代的真值样例：峰值落在**最后一个在案步**。⚠ §六十九收回的那句话正是把这件事读成
+    #: "停在峰值上"——产品环体 `break` 在 `observe` 之前，最后一个在案步是**停下前一步**，
+    #: 真正的终止决策只在 v27 的 `terminal_decision` 里（下面那条守卫钉住）。
+    last_step_peak = _endstep_probe_per_generation(
+        [row(0, .1, 9), row(1, .3, 4), row(2, .8, 1)], max_length=256, terminals=[None]
+    )
     assert last_step_peak[0]["peak_is_last_step"] is True, last_step_peak
     assert last_step_peak[0]["boundary_rank_at_peak_step"] == 1, last_step_peak
+    assert last_step_peak[0]["terminal_decision"] is None, last_step_peak   # 没补终止行 ⇒ 这一代"停在哪儿"不可答
     # 吃满预算的判据：末步 +1 >= max_length（不依赖外部真值）
-    long_run = _endstep_probe_per_generation([row(0, .1, 9), row(1, .2, 8)], max_length=2)
+    long_run = _endstep_probe_per_generation(
+        [row(0, .1, 9), row(1, .2, 8)], max_length=2, terminals=[None]
+    )
     assert long_run[0]["ate_full_budget"] is True, long_run
 
 
@@ -349,11 +359,15 @@ def test_the_fixed_step_probe_records_only_reached_steps() -> None:
     def row(step, p, rank, legal=40):
         return {"step": step, "p_boundary": p, "boundary_rank_in_legal": rank,
                 "legal_candidates": legal, "legal_candidates_including_boundary": legal + 1,
-                "in_run": True}
+                "ratio_best_over_boundary": 4.0, "in_run": True}
 
-    short = _endstep_probe_per_generation([row(s, 0.01, 9) for s in range(10)], max_length=256)
+    short = _endstep_probe_per_generation(
+        [row(s, 0.01, 9) for s in range(10)], max_length=256, terminals=[None]
+    )
     assert [entry["step"] for entry in short[0]["at_steps"]] == [8], short[0]["at_steps"]
-    long = _endstep_probe_per_generation([row(s, 0.02, 7) for s in range(200)], max_length=256)
+    long = _endstep_probe_per_generation(
+        [row(s, 0.02, 7) for s in range(200)], max_length=256, terminals=[None]
+    )
     assert [entry["step"] for entry in long[0]["at_steps"]] == list(_FIXED_STEPS), long[0]["at_steps"]
     assert all({"p_boundary", "boundary_rank_in_legal", "legal_candidates",
                 "legal_candidates_including_boundary"} <= set(entry) for entry in long[0]["at_steps"])
@@ -396,3 +410,123 @@ def test_window_stats_report_cumulative_and_last_turn_separately() -> None:
     reset_body = model_src.split("def reset_copy_evidence_window(self) -> None:", 1)[1].split("    def ", 1)[0]
     assert "_copy_evidence_step = 0" in reset_body
     assert "_total = 0" not in reset_body          # 累计量绝不在复位里被清零
+
+
+def _synthetic_row(step: int, p: float, rank: int, legal: int = 40) -> dict:
+    return {
+        "step": step,
+        "p_boundary": p,
+        "boundary_rank_in_legal": rank,
+        "legal_candidates": legal,
+        "legal_candidates_including_boundary": legal + 1,
+        "ratio_best_over_boundary": 5.0,
+        "in_run": False,
+        "boundary_is_argmax": rank == 1,
+    }
+
+
+def test_the_terminal_row_is_the_one_step_the_generation_loop_hides() -> None:
+    """DEBT-G26：`break` 在 `observe` 之前 ⇒ 停下那一步过去**没有行**，v27 必须补出来。
+
+    进程内钉四件事（全部两向：能在成功样本为真，也能为假）：
+    ① 只有边界自停的代有 `terminal_decision`，吃满预算的代给出 `absent_reason`；
+    ② 终止步＝最后一个在案步的**下一步**（这正是过去不可见的那一格）；
+    ③ `terminal_over_recorded_peak` 按在案峰值归一；
+    ④ `terminals` 与分组数量不一致必须抛错（静默错配比抛错更难查）。
+    """
+    from probe_taiji_a30_stop_failure import _endstep_probe_per_generation
+
+    stop_rows = [_synthetic_row(0, 0.001, 20), _synthetic_row(1, 0.004, 12)]
+    eat_rows = [_synthetic_row(0, 0.0005, 60), _synthetic_row(1, 0.0006, 61)]
+    terminal = {"step": 2, "p_boundary": 0.02, "p_boundary_before_penalty": 0.02,
+                "boundary_rank_in_legal": 1, "legal_candidates_including_boundary": 41,
+                "ratio_best_over_boundary": 1.0, "boundary_is_argmax": True}
+    rows = stop_rows + eat_rows
+    probe = _endstep_probe_per_generation(rows, max_length=2, terminals=[terminal, None])
+    assert probe[0]["terminal_decision"] is not None, probe[0]
+    assert probe[0]["terminal_decision"]["step"] == probe[0]["last_recorded_row"]["step"] + 1, probe
+    assert probe[0]["terminal_decision"]["terminal_over_recorded_peak"] == 5.0, probe[0]
+    assert probe[0]["terminal_decision_absent_reason"] is None, probe[0]
+    assert probe[1]["terminal_decision"] is None, probe[1]
+    assert probe[1]["terminal_decision_absent_reason"] == "ate_full_budget", probe[1]
+    #: `last_recorded_row` 就是"最后一个在案步"——它**不是**停下那一步（§六十九收回的那条误读）。
+    assert probe[0]["last_recorded_row"]["boundary_rank_in_legal"] == 12, probe[0]
+    with pytest.raises(RuntimeError, match="终止决策行与生成分组数量不一致"):
+        _endstep_probe_per_generation(rows, max_length=2, terminals=[terminal])
+
+
+def test_the_terminal_summary_can_report_a_face_violation_and_a_bad_pairing() -> None:
+    """件级汇总的两个自检都必须**能为假**：名次非 1＝重放与产品环分岔；配不上数＝分组错。"""
+    from probe_taiji_a30_stop_failure import _terminal_summary_v27
+
+    def generation(terminal_p, rank, recorded_peak, last_rank, ate):
+        return {
+            "generation_steps": 2,
+            "last_step": 1,
+            "p_boundary_max": recorded_peak,
+            "ate_full_budget": ate,
+            "last_recorded_row": {"step": 1, "boundary_rank_in_legal": last_rank,
+                                  "p_boundary": 0.001, "legal_candidates_including_boundary": 41,
+                                  "ratio_best_over_boundary": 5.0},
+            "terminal_decision": (
+                None
+                if terminal_p is None
+                else {"step": 2, "p_boundary": terminal_p, "p_boundary_before_penalty": terminal_p,
+                      "boundary_rank_in_legal": rank, "legal_candidates_including_boundary": 41,
+                      "ratio_best_over_boundary": 1.0, "boundary_is_argmax": rank == 1,
+                      "terminal_over_recorded_peak": round(terminal_p / recorded_peak, 4)}
+            ),
+            "terminal_decision_absent_reason": None if terminal_p is not None else "ate_full_budget",
+        }
+
+    good = [generation(0.02, 1, 0.004, 12, False), generation(None, 1, 0.001, 60, True)]
+    per_item = [{"endstep_probe_v22": good, "generations_boundary_self_stop": 1,
+                 "generations_eating_full_budget": 1}]
+    summary = _terminal_summary_v27(per_item)
+    assert summary["pairing_ok"] is True, summary
+    assert summary["terminal_rank_not_one_count"] == 0, summary
+    assert summary["terminal_above_recorded_peak_count"] == 1, summary
+    assert summary["terminal_above_recorded_peak_share"] == 1.0, summary
+    assert summary["last_recorded_median_rank_for_eaters"] == 60, summary
+
+    #: 能为假①：终止名次不是 1 ⇒ 必须数出来（那说明重放口径与产品环不是一条）
+    bad_rank = [generation(0.02, 4, 0.004, 12, False)]
+    flipped = _terminal_summary_v27([{"endstep_probe_v22": bad_rank,
+                                      "generations_boundary_self_stop": 1,
+                                      "generations_eating_full_budget": 0}])
+    assert flipped["terminal_rank_not_one_count"] == 1, flipped
+    assert flipped["terminal_rank_values_seen"] == [4], flipped
+    #: 能为假②：件内点数与分组对不上 ⇒ pairing_ok 必须为假，不能默认成立
+    misaligned = _terminal_summary_v27([{"endstep_probe_v22": good,
+                                         "generations_boundary_self_stop": 3,
+                                         "generations_eating_full_budget": 0}])
+    assert misaligned["pairing_ok"] is False, misaligned
+
+
+def test_the_terminal_row_stays_out_of_the_per_step_aggregates() -> None:
+    """补行**只加字段**：终止行不许混进 `item_rows`，否则既有列（名次中位、argmax 步数）语义会漂。"""
+    source = (PROJECT_ROOT / "scripts" / "training" / "probe_taiji_a30_stop_failure.py").read_text(
+        encoding="utf-8"
+    )
+    assert source.count("item_rows.append(") == 1, "逐步聚合列只许有一个写入点"
+    assert "terminal_rows.append(" in source
+    assert 'item_rows.append(terminal' not in source
+    assert '"steps_boundary_is_argmax": sum(1 for row in item_rows if row["boundary_is_argmax"])' in source
+    assert '"terminal_decision_summary_v27": _terminal_summary_v27(per_item)' in source
+
+
+def test_the_stop_step_is_argmax_by_construction_so_rank_one_is_a_check_not_an_assumption() -> None:
+    """§六十九能成立的那半：终止那一步**按构造**是掩码后合法集的第一名 ⇒ `rank != 1` 只能是仪器分岔。
+
+    次序照 `Taiji.generate` 环体：`argmax()` → 边界即 `break` → 才 `observe`；
+    产品链两个旗标都在（`stop_at_boundary=True`／`utf8_strict=True`），否则这句话没有依据。
+    """
+    model_src = (PROJECT_ROOT / "taiji" / "model.py").read_text(encoding="utf-8")
+    body = model_src.split("def generate(", 1)[1].split("\n    @staticmethod", 1)[0]
+    argmax_at = body.index("next_symbol = int(probabilities.argmax().item())")
+    break_at = body.index("if next_symbol == self.config.boundary_symbol and stop_at_boundary:")
+    observe_at = body.index("step = self.observe(", break_at)
+    assert argmax_at < break_at < observe_at, "环体次序变了，§六十九的推理要重读"
+    runtime_src = (PROJECT_ROOT / "api" / "seed_runtime.py").read_text(encoding="utf-8")
+    assert "stop_at_boundary=True" in runtime_src
+    assert "utf8_strict=True" in runtime_src

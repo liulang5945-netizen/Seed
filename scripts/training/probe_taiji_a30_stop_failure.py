@@ -241,16 +241,29 @@ def _group_rows_by_generation(rows: list[dict]) -> list[list[dict]]:
     return groups
 
 
-def _endstep_probe_per_generation(rows: list[dict], max_length: int) -> list[dict]:
-    """四个无外部真值依赖的标量，按每次生成一条（§59 更正版；不存逐步大数组）。"""
+def _endstep_probe_per_generation(
+    rows: list[dict], max_length: int, terminals: list[dict | None]
+) -> list[dict]:
+    """四个无外部真值依赖的标量，按每次生成一条（§59 更正版；不存逐步大数组）。
 
+    v27（DEBT-G26）：产品环体在 `argmax()==boundary` 时**先 break 再 observe**，所以停下那一步
+    在 `rows` 里根本没有帧。`terminals` 是调用方在环外按同一口径补出的**终止决策行**，
+    与生成分组一一对齐；对不上就抛错，不静默错配。
+    """
+
+    groups = _group_rows_by_generation(rows)
+    if len(groups) != len(terminals):
+        raise RuntimeError(
+            f"终止决策行与生成分组数量不一致：groups={len(groups)} terminals={len(terminals)}"
+        )
     out = []
-    for group in _group_rows_by_generation(rows):
+    for group, terminal in zip(groups, terminals):
         if not group:
             continue
         peak = max(group, key=lambda row: row["p_boundary"])
         last_step = max(row["step"] for row in group)
         by_step = {int(row["step"]): row for row in group}
+        last_row = by_step[last_step]
         out.append(
             {
                 "generation_steps": len(group),
@@ -260,6 +273,44 @@ def _endstep_probe_per_generation(rows: list[dict], max_length: int) -> list[dic
                 "p_boundary_argmax_step": int(peak["step"]),
                 "boundary_rank_at_peak_step": int(peak["boundary_rank_in_legal"]),
                 "legal_candidates_at_peak_step": int(peak["legal_candidates"]),
+                #: v27：`last_recorded_row` 是"最后一个**在案**步"（对自停的代＝停下前一步）。
+                "last_recorded_row": {
+                    "step": int(last_row["step"]),
+                    "p_boundary": round(float(last_row["p_boundary"]), 6),
+                    "boundary_rank_in_legal": int(last_row["boundary_rank_in_legal"]),
+                    "legal_candidates_including_boundary": int(
+                        last_row["legal_candidates_including_boundary"]
+                    ),
+                    "ratio_best_over_boundary": last_row["ratio_best_over_boundary"],
+                },
+                #: v27（DEBT-G26）：停下那一步的决策——只在该代是**边界自停**时才有。
+                "terminal_decision": (
+                    None
+                    if terminal is None
+                    else {
+                        "step": int(terminal["step"]),
+                        "p_boundary": round(float(terminal["p_boundary"]), 6),
+                        "p_boundary_before_penalty": round(
+                            float(terminal["p_boundary_before_penalty"]), 6
+                        ),
+                        "boundary_rank_in_legal": int(terminal["boundary_rank_in_legal"]),
+                        "legal_candidates_including_boundary": int(
+                            terminal["legal_candidates_including_boundary"]
+                        ),
+                        "ratio_best_over_boundary": terminal["ratio_best_over_boundary"],
+                        "boundary_is_argmax": bool(terminal["boundary_is_argmax"]),
+                        "terminal_over_recorded_peak": (
+                            round(float(terminal["p_boundary"]) / float(peak["p_boundary"]), 4)
+                            if peak["p_boundary"] > 0
+                            else None
+                        ),
+                    }
+                ),
+                "terminal_decision_absent_reason": (
+                    None
+                    if terminal is not None
+                    else ("ate_full_budget" if len(group) >= max_length else "no_loop_records")
+                ),
                 "peak_is_last_step": bool(peak["step"] == last_step),
                 "ate_full_budget": bool(len(group) >= max_length),
                 #: §第六十三次停靠·固定步位：长度只决定"能否走到那一步"，避开 §62 的存活偏置。
@@ -279,6 +330,94 @@ def _endstep_probe_per_generation(rows: list[dict], max_length: int) -> list[dic
             }
         )
     return out
+
+
+def _rank_buckets(rank: int | None) -> str:
+    """把边界名次归到固定刻度（1／2／3／4-10／>10）——刻度先写死，避免事后挑分堆。"""
+
+    if rank is None:
+        return "none"
+    if rank <= 3:
+        return str(rank)
+    if rank <= 10:
+        return "4-10"
+    return ">10"
+
+
+def _terminal_summary_v27(per_item: list[dict]) -> dict[str, Any]:
+    """件级「终止决策」汇总（DEBT-G26／§第七十次停靠）。
+
+    存在理由：产品环体在边界胜出那一步 `break` 在 `observe` **之前**，所以那一格过去在件里
+    根本不存在（§第六十六次停靠的 `peak_is_last_step` 因此是个不可能为假的量，已收回）。
+    这里把补出的 `terminal_decision` 摊成可直接判读「新高型 vs 竞争型」的几列，
+    并自带配对自证（`pairing_ok`）——配对不成立就是仪器分岔，读数不发表。
+    """
+
+    generations = [g for row in per_item for g in row["endstep_probe_v22"]]
+    with_terminal = [g for g in generations if g["terminal_decision"] is not None]
+    without_terminal = [g for g in generations if g["terminal_decision"] is None]
+    ranks = [g["terminal_decision"]["boundary_rank_in_legal"] for g in with_terminal]
+    above = sum(
+        1
+        for g in with_terminal
+        if float(g["terminal_decision"]["p_boundary"]) > float(g["p_boundary_max"])
+    )
+    ratios = [
+        g["terminal_decision"]["terminal_over_recorded_peak"]
+        for g in with_terminal
+        if g["terminal_decision"]["terminal_over_recorded_peak"] is not None
+    ]
+    stoppers = with_terminal
+    eaters = [g for g in generations if g["ate_full_budget"]]
+
+    def _median(values: list[Any]) -> Any:
+        return sorted(values)[len(values) // 2] if values else None
+
+    expected_stop = sum(row["generations_boundary_self_stop"] for row in per_item)
+    expected_eat = sum(row["generations_eating_full_budget"] for row in per_item)
+    return {
+        "generations_total": len(generations),
+        "with_terminal_row": len(with_terminal),
+        "without_terminal_row": len(without_terminal),
+        "absent_reasons": {
+            reason: sum(1 for g in without_terminal if g["terminal_decision_absent_reason"] == reason)
+            for reason in sorted({g["terminal_decision_absent_reason"] for g in without_terminal})
+        },
+        #: 资格前置 3：边界在终止那一步必须是掩码后第 1 名，否则重放与产品环分岔（面违规）。
+        "terminal_rank_not_one_count": sum(1 for rank in ranks if rank != 1),
+        "terminal_rank_values_seen": sorted(set(ranks)),
+        "terminal_boundary_is_argmax_false_count": sum(
+            1 for g in with_terminal if not g["terminal_decision"]["boundary_is_argmax"]
+        ),
+        "median_terminal_p_boundary": _median(
+            [g["terminal_decision"]["p_boundary"] for g in with_terminal]
+        ),
+        "terminal_above_recorded_peak_count": above,
+        "terminal_above_recorded_peak_share": (
+            round(above / len(with_terminal), 4) if with_terminal else None
+        ),
+        "median_terminal_over_recorded_peak": _median(ratios),
+        #: 第二问：末在案步的名次分布，自停组 vs 吃满组分开。
+        "last_recorded_rank_buckets_for_stoppers": {
+            bucket: sum(1 for g in stoppers if _rank_buckets(g["last_recorded_row"]["boundary_rank_in_legal"]) == bucket)
+            for bucket in sorted({_rank_buckets(g["last_recorded_row"]["boundary_rank_in_legal"]) for g in stoppers})
+        },
+        "last_recorded_rank_buckets_for_eaters": {
+            bucket: sum(1 for g in eaters if _rank_buckets(g["last_recorded_row"]["boundary_rank_in_legal"]) == bucket)
+            for bucket in sorted({_rank_buckets(g["last_recorded_row"]["boundary_rank_in_legal"]) for g in eaters})
+        },
+        "last_recorded_median_rank_for_stoppers": _median(
+            [g["last_recorded_row"]["boundary_rank_in_legal"] for g in stoppers]
+        ),
+        "last_recorded_median_rank_for_eaters": _median(
+            [g["last_recorded_row"]["boundary_rank_in_legal"] for g in eaters]
+        ),
+        "expected_self_stop_from_item_counts": expected_stop,
+        "expected_eat_from_item_counts": expected_eat,
+        "pairing_ok": bool(
+            len(with_terminal) == expected_stop and len(without_terminal) == expected_eat
+        ),
+    }
 
 
 def _position_histogram(positions: list[int]) -> dict[str, int]:
@@ -555,6 +694,7 @@ def main() -> int:
         if store_reset is not None:
             store_reset()
         item_rows: list[dict[str, Any]] = []
+        terminal_rows: list[dict | None] = []
         surface_checks: list[dict[str, Any]] = []
         worst_run = 0
         for index, turn in enumerate([str(t) for t in item["turns"]]):
@@ -648,6 +788,26 @@ def main() -> int:
                     failure_examples.append({"id": item["id"], **row})
                 item_rows.append(row)
                 state = advance_utf8(state[0], state[1], byte)
+            #: v27（DEBT-G26）：环体是 `argmax()==boundary → break → observe`，所以**停下那一步不产生帧**；
+            #: 但每个 record 携带的是"喂完该字节之后"的下一步分布 ⇒ 最后一个在案 record 的概率
+            #: 恰好就是终止决策的 logits。按同一 `replay_step` 口径补一行，不塞进 `item_rows`
+            #: （既有聚合列 `steps_boundary_is_argmax` 等的语义因此一字不动，与 v22–v26 各件同格可比）。
+            terminal_rows.append(
+                None
+                if len(loop_records) >= args.max_length
+                else {
+                    **replay_step(
+                        loop_records[-1]["probabilities"],
+                        boundary,
+                        boundary,
+                        state,
+                        fed,
+                        args.penalty,
+                        args.penalty_window,
+                    ),
+                    "step": len(loop_records),
+                }
+            )
             worst_run = max(worst_run, _longest_same_char_run(answer))
             if index + 1 < len(item["turns"]):
                 history.append((turn, answer))
@@ -694,7 +854,9 @@ def main() -> int:
             #: v17：**改成从 `fed_bytes` 取**。v16 按"在案行的 `boundary_is_argmax`"数位置，
             #: 恒等于 0——边界符胜出那一步 `break` 发生在 `observe` 之前（这条就写在本文件 v6 说明里），
             #: 那一步根本不入案。自停的生成其 `fed_bytes` 就是停止发生的字节位置，是同一件事的正确刻度。
-            "endstep_probe_v22": _endstep_probe_per_generation(item_rows, args.max_length),
+            "endstep_probe_v22": _endstep_probe_per_generation(
+                item_rows, args.max_length, terminal_rows
+            ),
             "run_boundary_win_positions": [
                 int(check["fed_bytes"])
                 for check in surface_checks
@@ -732,9 +894,16 @@ def main() -> int:
 
     substrate.observe = original_observe  # type: ignore[method-assign]
     report = {
-        "format": "taiji-a30-stop-failure-v26",
+        "format": "taiji-a30-stop-failure-v27",
         "format_note_v19": "v19 加性多一条检索侧 **oracle** 档：`--oracle-selector` 把 `store.best_match` 换成『内容含本题 `expected_contains` 的第一条事件』，找不到则透传原实现，用来把『选对了还拖不拖写』从『内容身份』与『发射时刻』里单独摘出来验。缺标签时响亮停下而非静默透传（那会伪装成生效）；自述 `oracle_calls`／`oracle_found`／`oracle_fell_through`。默认关 ⇒ 与 v18 逐位可比。",
         "format_note_v18": "v18 **加性**多一条**检索侧**资格档：`--store-scope-conversation` 在每题开头把装载信封带来的陈旧事件请出候选集，只留本次对话被告知的内容可被 `best_match` 取到（只用公开接口 `events()/clear()/record()`；代价是 `event_id` 重新编号，已在件里披露）。它与窗口档正交：一个动候选集、一个动发射时刻。默认关 ⇒ 与 v17 逐位可比。",
+        "format_note_v27": "v27（2026-10-03）：DEBT-G26——产品环体在 `argmax()==boundary` 时**先 break 再 observe**"
+        "（`taiji/model.py:3238-3240`），而逐帧记录装在 observe 包装里 ⇒ **停下那一步过去在件里根本没有行**，"
+        "`peak_is_last_step` 因此是个不可能为假的量（§第六十六次停靠的第②条据此写出的『尖峰与停下脱钩』已收回，见 §六十九）。"
+        "本版按生成补两样：`terminal_decision`（用该代最后一个在案 record 携带的**下一步** logits 走同一个 `replay_step`，"
+        "字节＝边界符、UTF-8 状态＝答复喂完后的状态；只在边界自停的代出现）与 `last_recorded_row`（最后一个在案步）；"
+        "件级新增 `terminal_decision_summary_v27`（含 `terminal_rank_not_one_count` 面违规计数与 `pairing_ok` 配对自证）。"
+        "**只加字段、不塞进 `item_rows`** ⇒ 既有聚合列语义一字不动，与 v22–v26 各件同格可比。",
         "format_note_v26": "v26（2026-10-03）：DEBT-G25——产品门的 `product_window_stats` 现在带全程累计三键"
         "（emitted_steps_total／silenced_steps_total／steps_seen_total）；旧三键语义不变（末趟），"
         "因为每趟复位使末趟在短答复生成上结构不可能静音，只看末趟会把成功的档自我否证。",
@@ -881,6 +1050,8 @@ def main() -> int:
         "boundary_win_position_hist": _position_histogram(
             [pos for row in per_item for pos in row["run_boundary_win_positions"]]
         ),
+        #: v27（DEBT-G26）：把"停下那一步"补成可见行后的件级判读列（新高型 vs 竞争型）。
+        "terminal_decision_summary_v27": _terminal_summary_v27(per_item),
         "instrument_guard": {
             "observe_calls_recorded": bool(records),
             # v7 自述守卫：这条面必须**报出**回写门槛状态（ None／缺键都算仪器没走到，红）。
