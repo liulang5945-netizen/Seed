@@ -16,7 +16,24 @@ import argparse
 import json
 import sys
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any
+
+DEFAULT_IGNORE = ('format', 'started_utc')
+_IGNORE_PREFIXES = ('format_note_',)
+
+
+def _is_ignored(trail: str) -> bool:
+    """披露类字段（版本号、墙钟、逐版格式说明）**不算行为**。
+
+    为什么必须有这一步（2026-10-03 实测）：同一配置、只差一个仪器版本的两个档，
+    `behavior_diff_count` 是 **2** 且第一处就是 `format` 本身（v31 对 v32）——
+    也就是说"只加字段不改行为"这件事**在跨版本比对里永远证不出来**，
+    而 `DECISION-A30` §3 甲要的恰恰是这个证明。忽略项必须**在输出里报数**，
+    否则这条豁免就成了无声放宽门柱。
+    """
+
+    head = trail.split('.', 1)[0].split('[', 1)[0]
+    return head in DEFAULT_IGNORE or head.startswith(_IGNORE_PREFIXES)
 
 
 def _canon(value: Any) -> str:
@@ -24,13 +41,13 @@ def _canon(value: Any) -> str:
 
 
 def diff_reports(
-    left: Dict[str, Any],
-    right: Dict[str, Any],
+    left: dict[str, Any],
+    right: dict[str, Any],
     trail: str = '',
-) -> Tuple[List[Tuple[str, str, Any, Any]], List[Tuple[str, str]]]:
+) -> tuple[list[tuple[str, str, Any, Any]], list[tuple[str, str]]]:
     """Return (behavior_diffs, schema_diffs) between two nested report structures."""
-    behavior: List[Tuple[str, str, Any, Any]] = []
-    schema: List[Tuple[str, str]] = []
+    behavior: list[tuple[str, str, Any, Any]] = []
+    schema: list[tuple[str, str]] = []
 
     if isinstance(left, dict) and isinstance(right, dict):
         for key in sorted(set(left) | set(right)):
@@ -72,9 +89,10 @@ def diff_reports(
 def compare_files(
     left_path: Path,
     right_path: Path,
-    subtree: Optional[str] = None,
+    subtree: str | None = None,
     strict: bool = False,
-) -> Dict[str, Any]:
+    ignore_disclosure: bool = True,
+) -> dict[str, Any]:
     left = json.loads(left_path.read_text(encoding='utf-8'))
     right = json.loads(right_path.read_text(encoding='utf-8'))
     if subtree is not None:
@@ -88,6 +106,11 @@ def compare_files(
             }
         left, right = left[subtree], right[subtree]
     behavior, schema = diff_reports(left, right)
+    ignored: list[str] = []
+    if ignore_disclosure:
+        ignored = [str(d[0]) for d in behavior + schema if _is_ignored(str(d[0]))]
+        behavior = [d for d in behavior if not _is_ignored(str(d[0]))]
+        schema = [d for d in schema if not _is_ignored(str(d[0]))]
     decisive = behavior + (schema if strict else [])
     return {
         'identical': not decisive,
@@ -95,6 +118,10 @@ def compare_files(
         'schema_diff_count': len(schema),
         'first_behavior_diff': behavior[0] if behavior else None,
         'first_schema_diff': schema[0] if schema else None,
+        #: 被豁免掉的披露类差异必须**可见**，不许变成无声的门柱放宽。
+        'ignored_disclosure_count': len(ignored),
+        'first_ignored_disclosure': ignored[0] if ignored else None,
+        'ignore_disclosure': ignore_disclosure,
         'strict': strict,
         'left': left_path.name,
         'right': right_path.name,
@@ -102,7 +129,7 @@ def compare_files(
     }
 
 
-def main(argv: List[str]) -> int:
+def main(argv: list[str]) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument('--left', required=True, help='第一份报告件（仓内相对或绝对路径）')
     parser.add_argument('--right', required=True, help='第二份报告件')
@@ -112,9 +139,18 @@ def main(argv: List[str]) -> int:
         action='store_true',
         help='把 schema 差异也算作不逐位相同（只在同一仪器版本之间用）',
     )
+    parser.add_argument(
+        '--no-ignore-disclosure',
+        action='store_true',
+        help='连版本号／墙钟／逐版格式说明一起算（回到旧口径；用它才能证明默认那条豁免确实在起作用）',
+    )
     args = parser.parse_args(argv)
     result = compare_files(
-        Path(args.left), Path(args.right), subtree=args.subtree, strict=args.strict
+        Path(args.left),
+        Path(args.right),
+        subtree=args.subtree,
+        strict=args.strict,
+        ignore_disclosure=not args.no_ignore_disclosure,
     )
     print(json.dumps(result, ensure_ascii=False, default=str, indent=2))
     # 存在性即结论：不一致 ⇒ rc=1，让这条验收式能直接被门使用，而不是靠人读输出。

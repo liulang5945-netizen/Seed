@@ -86,3 +86,53 @@ def test_two_none_values_are_equality_not_a_schema_difference(tmp_path: Path) ->
     assert compare_files(left, right, strict=True)['identical'] is True
     #: 而"一边 None 一边有值"仍必须归进 schema（这条式子两方向都要成立）。
     assert diff_reports({'x': None}, {'x': 1})[1] == [('x', 'null_filled_other_side_has_value')]
+
+
+#: 2026-10-03 实测到的第二件事：同一配置、只差一个仪器版本的两个档，`behavior_diff_count` 是 **2**，
+#: 而第一处就是 `format` 本身（v31 对 v32）⇒ "只加字段不改行为"这句话在跨版本比对里**永远证不出来**。
+#: 下面三条把这个洞堵上：豁免要有效、要可见、而且**不能吞掉真的行为差**。
+def test_disclosure_only_differences_are_ignored_and_still_counted(tmp_path: Path) -> None:
+    old = {'format': 'taiji-a30-stop-failure-v31', 'started_utc': '2026-10-03T02:51:00',
+           'per_item': [{'steps': 756}], 'control_no_circuit': {'correct': 0}}
+    new = {'format': 'taiji-a30-stop-failure-v32', 'started_utc': '2026-10-03T03:27:00',
+           'format_note_v32': '加字段说明', 'per_item': [{'steps': 756}],
+           'control_no_circuit': {'correct': 0}}
+    left = tmp_path / 'old.json'
+    right = tmp_path / 'new.json'
+    left.write_text(json.dumps(old, ensure_ascii=False), encoding='utf-8')
+    right.write_text(json.dumps(new, ensure_ascii=False), encoding='utf-8')
+    waived = compare_files(left, right)
+    assert waived['identical'] is True, waived
+    assert waived['behavior_diff_count'] == 0, waived
+    #: 豁免必须可见——否则就是无声放宽门柱
+    assert waived['ignored_disclosure_count'] == 3, waived
+    assert waived['first_ignored_disclosure'] in ('format', 'format_note_v32', 'started_utc'), waived
+    #: 关掉豁免必须翻回"不相同"，证明这条豁免确实在起作用（不是恒真式）
+    strict_old = compare_files(left, right, ignore_disclosure=False)
+    assert strict_old['identical'] is False, strict_old
+    assert strict_old['behavior_diff_count'] == 2, strict_old
+
+
+def test_a_real_behavior_change_survives_the_disclosure_exemption(tmp_path: Path) -> None:
+    left = tmp_path / 'a.json'
+    right = tmp_path / 'b.json'
+    left.write_text(json.dumps({'format': 'v31', 'per_item': [{'steps': 756}]}), encoding='utf-8')
+    right.write_text(json.dumps({'format': 'v32', 'per_item': [{'steps': 757}]}), encoding='utf-8')
+    result = compare_files(left, right)
+    assert result['identical'] is False, result
+    assert result['behavior_diff_count'] == 1, result
+    assert 'per_item[0].steps' in str(result['first_behavior_diff']), result
+    assert main(['--left', str(left), '--right', str(right)]) == 1, 'rc 必须是结论'
+
+
+def test_cross_version_same_config_pair_reads_as_behaviourally_identical() -> None:
+    """真件证据：装机底"挂 seed-A、门关闭"这一配置在 v31 与 v32 两版仪器上跑出的两份件，
+    剥掉披露字段后**行为零差异**——这才是 `DECISION-A30` §3 甲要的那种可机检陈述。"""
+    v31 = REPORTS / 'taiji_a30_stop_failure_self_v31_winner_circuitseedA_20261003.json'
+    v32 = REPORTS / 'taiji_a30_stop_failure_self_v32_lfcontext_off_20261003.json'
+    if not (v31.exists() and v32.exists()):      #: 缺件不静默通过：让它红，我才去查
+        raise AssertionError('两份跨版本对照件必须在仓内')
+    result = compare_files(v31, v32)
+    assert result['identical'] is True, result
+    assert result['behavior_diff_count'] == 0, result
+    assert result['ignored_disclosure_count'] >= 1, result
