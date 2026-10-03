@@ -43,6 +43,23 @@ def load_cells(path: Path) -> tuple[dict[tuple[str, int], dict[str, Any]], dict[
     return cells, report
 
 
+def fingerprint_check(left_report: dict[str, Any], right_report: dict[str, Any]) -> dict[str, Any]:
+    """题面同源的判定要**从件内**做，不靠"两边都读了同一个路径"这条口供。
+
+    三种结果：`equal`（两边都有 `items_sha256` 且相等）／`different`（都有但不等 ⇒ 配对无效，响亮失败）／
+    `unknown_pre_v35`（任一边没有该键——v35 之前的件都如此，此时**不判**、只披露，
+    并说明本轮 §103／§104 是靠 manifest 的 git 史外部核过的，不是靠件内自证）。
+    """
+
+    left = left_report.get('items_sha256')
+    right = right_report.get('items_sha256')
+    if left is None or right is None:
+        return {'items_fingerprint': {'left': left, 'right': right, 'status': 'unknown_pre_v35'}}
+    if left != right:
+        raise RuntimeError(f'两枚件读的题面不同（{left} 对 {right}），配对无效——不许按 (id,轮序) 硬配两批题')
+    return {'items_fingerprint': {'left': left, 'right': right, 'status': 'equal'}}
+
+
 def pair(left_path: Path, right_path: Path) -> dict[str, Any]:
     left_cells, left_report = load_cells(left_path)
     right_cells, right_report = load_cells(right_path)
@@ -65,6 +82,7 @@ def pair(left_path: Path, right_path: Path) -> dict[str, Any]:
             lost.append(f'{key[0]}/{key[1]}')
     other = sum(count for name, count in table.items() if 'other' in name)
     return {
+        **fingerprint_check(left_report, right_report),
         'left': left_path.name,
         'right': right_path.name,
         'left_base': left_report.get('checkpoint_sha256'),
@@ -86,11 +104,15 @@ def pair(left_path: Path, right_path: Path) -> dict[str, Any]:
 def intersect_loss(left_path: Path, middle_path: Path, right_path: Path) -> dict[str, Any]:
     """三枚件连配（不挂回路／挂回路门 OFF／挂回路门 ON）：回路弄坏的格里，门救回多少。"""
 
-    base_cells, _ = load_cells(left_path)
-    off_cells, _ = load_cells(middle_path)
-    on_cells, _ = load_cells(right_path)
+    base_cells, base_report = load_cells(left_path)
+    off_cells, off_report = load_cells(middle_path)
+    on_cells, on_report = load_cells(right_path)
     if not (set(base_cells) == set(off_cells) == set(on_cells)):
         raise RuntimeError('三枚件的格集合不一致，不连配')
+    prints = [base_report.get('items_sha256'), off_report.get('items_sha256'), on_report.get('items_sha256')]
+    status = 'unknown_pre_v35' if any(p is None for p in prints) else ('equal' if len(set(prints)) == 1 else 'different')
+    if status == 'different':
+        raise RuntimeError(f'三枚件的题面指纹不一致：{prints}')
     broken = [
         key for key in base_cells
         if _shape(base_cells[key]) == 'stop' and _shape(off_cells[key]) == 'eat'
@@ -101,6 +123,8 @@ def intersect_loss(left_path: Path, middle_path: Path, right_path: Path) -> dict
         'gate_saved_of_those': len(saved),
         'salvage_rate': round(len(saved) / len(broken), 4) if broken else None,
         'still_broken': len(broken) - len(saved),
+        'items_fingerprint_status': status,
+        'items_fingerprints': prints,
     }
 
 

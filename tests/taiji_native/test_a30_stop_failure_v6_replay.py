@@ -9,6 +9,7 @@ v6 的重放走完整产品面链（decode → marker 切割 → 同一个器官
 
 from __future__ import annotations
 
+import ast
 import re
 import sys
 from pathlib import Path
@@ -83,9 +84,9 @@ def test_instrument_carries_v6_and_the_correction_note() -> None:
     source = (PROJECT_ROOT / "scripts" / "training" / "probe_taiji_a30_stop_failure.py").read_text(
         encoding="utf-8"
     )
-    assert '"format": "taiji-a30-stop-failure-v34"' in source
+    assert '"format": "taiji-a30-stop-failure-v35"' in source
     assert all(
-        f"format_note_v{v}" in source for v in range(6, 35)
+        f"format_note_v{v}" in source for v in range(6, 36)
     ), "升版只许加列，历史说明必须逐版留在件里"
     assert "format_note_v6" in source
     assert "追加二" in source and "深帧复现" in source
@@ -293,7 +294,6 @@ def test_every_a30_face_discloses_which_window_path_produced_it() -> None:
 def test_the_window_counters_are_read_after_the_run_not_before_it() -> None:
     #: 实测踩过的披露陷阱：把 `copy_evidence_window_stats()` 取在生成之前 ⇒ 件里永远是全零快照，
     #: 而全零恰好会"证明门没开过枪"——一个会把成功读数说成空档的自证。两台仪器都必须在返回时才取。
-    from pathlib import Path
     import ast as _ast
     for name, needle in (
         ("score_taiji_r2_copy_surface_extension.py", "copy_evidence_window_stats"),
@@ -316,7 +316,10 @@ def test_the_endstep_probe_groups_by_generation_not_by_item() -> None:
 
     用合成行钉两件事：① `step` 归零即换代；② `in_run` 为假的行不参与。
     """
-    from probe_taiji_a30_stop_failure import _endstep_probe_per_generation, _group_rows_by_generation
+    from probe_taiji_a30_stop_failure import (
+        _endstep_probe_per_generation,
+        _group_rows_by_generation,
+    )
 
     def row(step, p, rank, in_run=True, byte=65):
         return {"step": step, "p_boundary": p, "boundary_rank_in_legal": rank,
@@ -383,9 +386,8 @@ def test_boundary_rank_is_bounded_by_the_denominator_it_belongs_to() -> None:
 
     旧列不动（历史件同格可比），但从此任何"名次／候选数"的比值都必须用**含边界符**那一列。
     """
-    from probe_taiji_a30_stop_failure import replay_step
-
     import torch
+    from probe_taiji_a30_stop_failure import replay_step
 
     for legal_size in (2, 5, 40):
         probs = torch.zeros(257)
@@ -941,3 +943,43 @@ def test_the_lf_margin_ruler_has_dynamic_range_and_shares_one_implementation() -
           "generations_boundary_self_stop": 0, "generations_eating_full_budget": 2}]
     )
     assert empty["eaters_dynamic_range"]["usable"] is False, empty
+
+
+def test_the_report_carries_the_prompt_set_fingerprint_and_no_duplicate_keys() -> None:
+    """v35（DEBT-G31）：配对档要能**从件内**自证同题面；顺手钉一条"字典字面量不许有重复键"。
+
+    两条都是我自己写坏过的形状：①我曾以为"`items: 96` ＋ manifest 路径相同"就算同题面——不是，
+    那只证明读过同一个文件，题面内容有没有变过要另算；②升 v35 时我在同一个 report 字典里写下了
+    两次 `"format_note_v34"`，Python **静默取最后一份**、前一份成了死文本，`py_compile` 与 ruff 都不报
+    ——是 AST 扫描抓住的，于是把那个扫描本身写成守卫。
+    """
+
+    source = (PROJECT_ROOT / "scripts" / "training" / "probe_taiji_a30_stop_failure.py").read_text(
+        encoding="utf-8"
+    )
+    assert '"items_sha256": _items_fingerprint(items)' in source
+    assert '"format_note_v35"' in source and source.count('"format_note_v34"') == 1
+
+    duplicates: list[str] = []
+    for node in ast.walk(ast.parse(source)):
+        if not isinstance(node, ast.Dict):
+            continue
+        seen: set[str] = set()
+        for key in node.keys:
+            if not (isinstance(key, ast.Constant) and isinstance(key.value, str)):
+                continue
+            if key.value in seen:
+                duplicates.append(key.value)
+            seen.add(key.value)
+    assert duplicates == [], duplicates
+
+    #: 指纹只吃题面内容（id／turns／expected_contains），不吃生成结果 ⇒ 同题面必同值、改一题必变值。
+    from probe_taiji_a30_stop_failure import _items_fingerprint
+
+    sample = [{"id": "V001", "turns": ["问：甲。", "答：乙"], "expected_contains": ["乙"], "family": "x"}]
+    changed = [{"id": "V001", "turns": ["问：甲。", "答：丙"], "expected_contains": ["乙"], "family": "x"}]
+    assert _items_fingerprint(sample) == _items_fingerprint([dict(sample[0])])
+    assert _items_fingerprint(sample) != _items_fingerprint(changed)
+    #: `family` 这类**不参与题面**的列改动不该改指纹（否则同题面会因为元数据而被判成两批）。
+    meta = [{"id": "V001", "turns": ["问：甲。", "答：乙"], "expected_contains": ["乙"], "family": "y"}]
+    assert _items_fingerprint(sample) == _items_fingerprint(meta)

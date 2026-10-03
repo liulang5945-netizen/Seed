@@ -67,6 +67,25 @@ def _payload_sha(value) -> str | None:
     return _sha256(path)
 
 
+def _items_fingerprint(items) -> str:
+    """所选条目的**内容**指纹（v35／DEBT-G31）。
+
+    为什么不是"记了 manifest 路径就够了"：§103／§104 那两张逐格配对表把结论建在
+    "两枚件读的是同一批题"上，而路径相同只说明**读的是同一个文件**，不说明文件内容没变过；
+    题面由 `turns`（问句序列）与 `expected_contains`（判分词）决定，所以指纹按这两列算。
+    """
+
+    import hashlib
+
+    #: 只取**参与题面**的三列；`family`/`answer_tell_position` 这类元数据改动不该把同一批题判成两批。
+    core = [
+        [str(item.get("id")), list(item.get("turns") or []), list(item.get("expected_contains") or [])]
+        for item in items
+    ]
+    blob = json.dumps(core, ensure_ascii=False, sort_keys=True).encode("utf-8")
+    return hashlib.sha256(blob).hexdigest()[:16]
+
+
 def _longest_same_char_run(text: str) -> int:
     best = run = 1
     for a, b in zip(text, text[1:], strict=False):
@@ -1348,7 +1367,13 @@ def main() -> int:
 
     substrate.observe = original_observe  # type: ignore[method-assign]
     report = {
-        "format": "taiji-a30-stop-failure-v34",
+        "format": "taiji-a30-stop-failure-v35",
+        "format_note_v35": "v35（2026-10-03）：§第一百零三/零四次停靠把结论建在'两枚件读的是同一批题'上，"
+        "而件里只有 `items: 96`（条数）与写死的 manifest 路径——条数相同不等于内容相同（本线已在'同一批文档"
+        "并非自动成立'上栽过一次）。本版加 `items_sha256`＝所选条目 (id, turns, expected_contains) 的摘要，"
+        "让配对器能在**件内**判同题面；配对器 `pair_taiji_a30_stop_cells.py` 两侧都有该键时必须相等，缺任一侧"
+        "就在输出里披露 `items_fingerprint_check=\"absent_in_one_side\"`（旧件不因此失败，但也不被当成已证）。"
+        "既有列一字未动 ⇒ 与 v31–v34 各件同格可比。",
         "format_note_v34": "v34（2026-10-03）：§八十六 那格用的尺（LF 是否落在同字连写段内）按定义没有动态范围，所以换一把天然有散布的尺：**每一次 LF 之后那一步**的 `ratio_best_over_boundary` 与边界名次。新增每代 `lf_margins_v34`（步序／名次／比值／概率，最多留前 6 次）与件级 `lf_margin_summary_v34`（自停组与拖写组各自的中位最小比值、比值区间、中位最好名次，外加 §87 定的 `column_dynamic_range` 前置）。`_rows_after_lf()` 同时被 v30 与 v34 复用——一副档只住一处。既有列一字未动。",
         "format_note_v33": "v33（2026-10-03）：把 §第八十五／八十六次停靠 那次预注册缺陷变成机器拦得住的东西。 缺陷内容：判据绑的列（LF 落在同字连写段内的占比）按定义只能取 0.0／1.0，两组同值时字面分支仍能读出一个方向——但那一读**没有效力**。本版新增 `_dynamic_range()`，并在 `lf_repeat_context_summary_v32` 里落三列：`column_dynamic_range_stoppers／_eaters`（n_values／distinct／min／max／endpoint_only）与总开关 `ruler_usable`；规矩是 **`ruler_usable=false` ⇒ 判据不建立**，比较型判读一律先看它。既有列与既有字段一字未动。",
         "format_note_v32": "v32（2026-10-03）：§第八十四次停靠 留下一处分不开的东西——装机底门开启后耦合掉 19.0pp，"
@@ -1530,6 +1555,9 @@ def main() -> int:
         "max_length": args.max_length,
         "generation_loop_lines": [loop_first, loop_last],
         "items": len(items),
+        #: v35（DEBT-G31）：题面**内容**指纹——配对档必须能自证"两枚件读的是同一批题"，
+        #: 而不是靠"manifest 路径相同"这条口供（§103／§104 的逐格配对就建在这个前提上）。
+        "items_sha256": _items_fingerprint(items),
         #: v16 聚合：全部在案步里边界符胜出的位置分布（按 0–15／16–31／32–63／64–127／128＋ 分堆）。
         "boundary_win_position_hist": _position_histogram(
             [pos for row in per_item for pos in row["run_boundary_win_positions"]]

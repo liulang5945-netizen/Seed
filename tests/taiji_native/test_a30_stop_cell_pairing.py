@@ -27,7 +27,7 @@ OFF96 = REPORTS / 'taiji_a30_stop_failure_self_v34_margins_circuitseedA_96_20261
 ON96 = REPORTS / 'taiji_a30_stop_failure_self_v34_margins_productk128_96_20261003.json'
 
 
-def _write(tmp_path: Path, name: str, shapes, *, circuit=None, window=None, base='abc'):
+def _write(tmp_path: Path, name: str, shapes, *, circuit=None, window=None, base='abc', items_sha=None):
     items = {}
     for index, (item_id, turn, shape) in enumerate(shapes):
         item = items.setdefault(item_id, {'id': item_id, 'endstep_probe_v22': []})
@@ -42,6 +42,8 @@ def _write(tmp_path: Path, name: str, shapes, *, circuit=None, window=None, base
         'product_window_steps': window,
         'per_item': list(items.values()),
     }
+    if items_sha is not None:
+        payload['items_sha256'] = items_sha
     path = tmp_path / name
     path.write_text(json.dumps(payload), encoding='utf-8')
     return path
@@ -111,6 +113,9 @@ def test_the_three_way_salvage_count_is_its_own_cell(tmp_path: Path) -> None:
         'gate_saved_of_those': 1,
         'salvage_rate': 0.3333,
         'still_broken': 2,
+        #: 旧件（v35 之前）没有题面指纹 ⇒ 必须显式承认"不可知"，不许静当作已证同源。
+        'items_fingerprint_status': 'unknown_pre_v35',
+        'items_fingerprints': [None, None, None],
     }, result
 
 
@@ -137,3 +142,33 @@ def test_published_readings_are_reproduced_on_committed_reports() -> None:
     assert three['circuit_broken_cells'] == 167 and three['gate_saved_of_those'] == 37, three
     assert three['salvage_rate'] == 0.2216 and three['still_broken'] == 130, three
     assert main(['--left', str(NOC96), '--right', str(OFF96), '--third', str(ON96)]) == 0
+
+
+def test_the_fingerprint_check_proves_same_items_only_when_both_sides_carry_it(tmp_path: Path) -> None:
+    """DEBT-G31 的正反两支：两边都有且相等 ⇒ `equal`；不等 ⇒ 响亮拒绝配对（不许硬配两批题）。"""
+
+    shapes = [('V001', 0, 'stop'), ('V002', 0, 'eat')]
+    left = _write(tmp_path, 'fa.json', shapes, items_sha='same16value')
+    right = _write(tmp_path, 'fb.json', [('V001', 0, 'eat'), ('V002', 0, 'eat')], items_sha='same16value')
+    result = pair(left, right)
+    assert result['items_fingerprint'] == {
+        'left': 'same16value', 'right': 'same16value', 'status': 'equal'
+    }, result
+
+    other = _write(tmp_path, 'fc.json', [('V001', 0, 'eat'), ('V002', 0, 'eat')], items_sha='different16')
+    with pytest.raises(RuntimeError, match='题面不同'):
+        pair(left, other)
+
+    #: 三枚连配也走同一条判定；不一致就拒，缺键就披露不可知（上面已测）。
+    third = _write(tmp_path, 'fd.json', shapes, items_sha='same16value')
+    assert intersect_loss(left, right, third)['items_fingerprint_status'] == 'equal'
+    with pytest.raises(RuntimeError, match='题面指纹不一致'):
+        intersect_loss(left, third, other)
+
+
+def test_the_probe_itself_records_the_fingerprint() -> None:
+    """仪器必须**自己写**这一列——否则配对器永远只能报"不可知"，那条债就没还。"""
+
+    source = (PROJECT_ROOT / 'scripts' / 'training' / 'probe_taiji_a30_stop_failure.py').read_text(encoding='utf-8')
+    assert '"items_sha256": _items_fingerprint(items)' in source
+
