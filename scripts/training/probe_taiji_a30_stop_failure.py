@@ -627,7 +627,25 @@ def _lf_next_probe_v30(group: list[dict], terminal: dict | None) -> dict[str, An
         "best_boundary_rank_after_lf": int(best["boundary_rank_in_legal"]) if best else None,
         "p_boundary_at_best_rank_step": round(float(best["p_boundary"]), 6) if best else None,
         "min_ratio_best_over_boundary_after_lf": round(min(ratios), 4) if ratios else None,
+        #: v31（§76 末段）：压住边界的那个字节是谁——行里本来就有 `emitted_byte`，纯取现成列。
+        "winner_byte_at_best_rank_step": _winner_label(best),
+        "utf8_class_at_best_rank_step": (
+            _utf8_byte_class(int(best["emitted_byte"]))
+            if best is not None and "emitted_byte" in best
+            else "boundary"
+        ),
+        "winner_bytes_after_lf": [_winner_label(row) for row in rows_after],
     }
+
+
+def _winner_label(row: dict | None) -> Any:
+    """胜出字节的标签：在案步取 `emitted_byte`，终止行本身就是边界符 ⇒ 记成 `boundary`。"""
+
+    if row is None:
+        return None
+    if "emitted_byte" in row:
+        return int(row["emitted_byte"])
+    return "boundary"
 
 
 def _lf_next_summary_v30(per_item: list[dict]) -> dict[str, Any]:
@@ -661,6 +679,43 @@ def _lf_next_summary_v30(per_item: list[dict]) -> dict[str, Any]:
         "eaters_median_best_rank_after_lf": (
             sorted(eater_ranks)[total // 2] if total else None
         ),
+    }
+
+
+def _lf_competitor_summary_v31(per_item: list[dict]) -> dict[str, Any]:
+    """§76 末段那一格：**LF 之后那一步是谁压住边界的**（字节身份与位置类各报一份）。"""
+
+    generations = [g for row in per_item for g in row["endstep_probe_v22"]]
+    eaters = [
+        g
+        for g in generations
+        if g["ate_full_budget"] and g["lf_next_probe_v30"]["best_boundary_rank_after_lf"] is not None
+    ]
+    winners = [g["lf_next_probe_v30"]["winner_byte_at_best_rank_step"] for g in eaters]
+    classes = [g["lf_next_probe_v30"]["utf8_class_at_best_rank_step"] for g in eaters]
+    every = [byte for g in eaters for byte in g["lf_next_probe_v30"]["winner_bytes_after_lf"]]
+
+    def _top(items: list[Any]) -> list[dict[str, Any]]:
+        total = len(items)
+        if not total:
+            return []
+        counts: dict[Any, int] = {}
+        for item in items:
+            counts[item] = counts.get(item, 0) + 1
+        return [
+            {"key": key, "count": count, "share": round(count / total, 4)}
+            for key, count in sorted(counts.items(), key=lambda kv: (-kv[1], str(kv[0])))[:5]
+        ]
+
+    return {
+        "n_eaters_with_post_lf_step": len(eaters),
+        "denominator_at_least_5": bool(len(eaters) >= 5),
+        "winner_byte_at_best_rank_top": _top(winners),
+        "winner_byte_distinct": len({w for w in winners if w is not None}),
+        "winner_utf8_class_top": _top(classes),
+        "winner_utf8_class_distinct": len({c for c in classes if c is not None}),
+        "every_post_lf_winner_top": _top(every),
+        "every_post_lf_winner_count": len(every),
     }
 
 
@@ -1143,7 +1198,8 @@ def main() -> int:
 
     substrate.observe = original_observe  # type: ignore[method-assign]
     report = {
-        "format": "taiji-a30-stop-failure-v30",
+        "format": "taiji-a30-stop-failure-v31",
+        "format_note_v31": "v31（2026-10-03）：§七十六次停靠 读出『装机底 9/9 的拖写在 LF 之后那一步排第 2–3 名、中位只差 1.131 倍』之后，剩下的问题只有一个：那一步**是谁**压住边界的。本版纯取行内现成的 `emitted_byte`，每代补 `winner_byte_at_best_rank_step`／`utf8_class_at_best_rank_step`／`winner_bytes_after_lf`，件级补 `lf_competitor_summary_v31`（胜出字节的 top5 与位置类 top5、各自 distinct、以及分母是否 ≥5）。终止行本身没有 `emitted_byte`（它就是边界符）⇒ 一律记成 boundary，不混进字节分布。既有列一字未动 ⇒ 与 v27–v30 各件同格可比。",
         "format_note_v30": "v30（2026-10-03）：§第七十四次停靠 的丙是**分母**造成的（装机底拖写 20 枚里 9 枚发过 LF、"
         "(c) 底只有 1 枚），于是换问法：不再问『拖写里有多少发过 LF』，改问『LF 之后那一步，边界离赢多远』。"
         "每代补 `lf_next_probe_v30`（`lf_count`／`lf_next_steps`／`best_boundary_rank_after_lf`／"
@@ -1327,6 +1383,8 @@ def main() -> int:
         "lf_followthrough_summary_v29": _lf_followthrough_summary_v29(per_item),
         #: v30（§75）：拖写的生成在 LF 之后那一步，边界离赢有多远。
         "lf_next_summary_v30": _lf_next_summary_v30(per_item),
+        #: v31（§76 末段）：那一步是谁压住边界的。
+        "lf_competitor_summary_v31": _lf_competitor_summary_v31(per_item),
         "instrument_guard": {
             "observe_calls_recorded": bool(records),
             # v7 自述守卫：这条面必须**报出**回写门槛状态（ None／缺键都算仪器没走到，红）。

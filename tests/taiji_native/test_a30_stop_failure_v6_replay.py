@@ -83,9 +83,9 @@ def test_instrument_carries_v6_and_the_correction_note() -> None:
     source = (PROJECT_ROOT / "scripts" / "training" / "probe_taiji_a30_stop_failure.py").read_text(
         encoding="utf-8"
     )
-    assert '"format": "taiji-a30-stop-failure-v30"' in source
+    assert '"format": "taiji-a30-stop-failure-v31"' in source
     assert all(
-        f"format_note_v{v}" in source for v in range(6, 31)
+        f"format_note_v{v}" in source for v in range(6, 32)
     ), "升版只许加列，历史说明必须逐版留在件里"
     assert "format_note_v6" in source
     assert "追加二" in source and "深帧复现" in source
@@ -710,3 +710,49 @@ def test_the_lf_next_probe_measures_leverage_and_refuses_small_denominators() ->
     assert flipped["eaters_with_lf_and_next_step"] == 5, flipped
     assert flipped["denominator_at_least_5"] is True, flipped
     assert flipped["stoppers_all_rank_one"] is False, flipped
+
+
+def test_the_lf_competitor_summary_ignores_the_terminal_row_and_counts_the_winner() -> None:
+    """§76 末段的 v31：**LF 之后那一步是谁压住边界**——胜出字节分布只数拖写侧，终止行记 boundary 不掺进去。
+
+    两向：① 自停的代其"LF 下一步"是终止行 ⇒ 它**不进**拖写分布（否则 top1_share 会被 118 个 boundary 顶成 1.0，
+    那就是我差点写出来的那种假结论）；② 拖写侧同字节时 top1_share 必须为 1.0、distinct 为 1。
+    """
+    from probe_taiji_a30_stop_failure import (
+        _endstep_probe_per_generation,
+        _lf_competitor_summary_v31,
+        _winner_label,
+    )
+
+    assert _winner_label({"emitted_byte": 65}) == 65
+    assert _winner_label({"step": 3}) == "boundary"
+    assert _winner_label(None) is None
+
+    def terminal_at(step_value: int):
+        return {"step": step_value, "p_boundary": 0.3, "p_boundary_before_penalty": 0.3,
+                "boundary_rank_in_legal": 1, "legal_candidates_including_boundary": 41,
+                "ratio_best_over_boundary": 1.0, "boundary_is_argmax": True,
+                "utf8_state_before": [0, 0]}
+
+    stopper = [_synthetic_row(0, 0.001, 40, byte=0x41), _synthetic_row(1, 0.002, 39, byte=0x42),
+               _synthetic_row(2, 0.003, 38, byte=10)]
+    eater_a = [_synthetic_row(0, 0.001, 44, byte=10), _synthetic_row(1, 0.002, 2, byte=0x41),
+               _synthetic_row(2, 0.003, 40, byte=0x43), _synthetic_row(3, 0.004, 41, byte=0x44)]
+    eater_b = [_synthetic_row(0, 0.001, 44, byte=10), _synthetic_row(1, 0.002, 3, byte=0x41),
+               _synthetic_row(2, 0.003, 40, byte=0x43), _synthetic_row(3, 0.004, 41, byte=0x44)]
+    probes = _endstep_probe_per_generation(
+        stopper + eater_a + eater_b, max_length=4, terminals=[terminal_at(3), None, None]
+    )
+    assert probes[0]["lf_next_probe_v30"]["winner_byte_at_best_rank_step"] == "boundary", probes[0]
+    summary = _lf_competitor_summary_v31(
+        [{"endstep_probe_v22": probes, "generations_boundary_self_stop": 1,
+          "generations_eating_full_budget": 2}]
+    )
+    assert summary["n_eaters_with_post_lf_step"] == 2, summary
+    assert summary["denominator_at_least_5"] is False, summary
+    assert summary["winner_byte_distinct"] == 1, summary
+    assert summary["winner_byte_at_best_rank_top"] == [{"key": 65, "count": 2, "share": 1.0}], summary
+    assert summary["winner_utf8_class_distinct"] == 1, summary
+    #: 所有 LF 之后步的胜出字节：拖写两代各 1 个 LF ⇒ 2 个，仍全是 65；自停代的 boundary 不在内
+    assert summary["every_post_lf_winner_count"] == 2, summary
+    assert summary["every_post_lf_winner_top"] == [{"key": 65, "count": 2, "share": 1.0}], summary
