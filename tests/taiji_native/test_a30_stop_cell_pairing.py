@@ -166,6 +166,37 @@ def test_the_fingerprint_check_proves_same_items_only_when_both_sides_carry_it(t
         intersect_loss(left, third, other)
 
 
+def test_the_alpha_zero_pairings_are_pinned_too() -> None:
+    """§115 的锚点（两件都是 v38 档）：α=0 与 α=1 的逐格差＝**全额 167**；
+
+    且 α=0 与**不挂回路**那枚逐格配 ⇒ **零格跨界**（`stop→stop 208 / eat→eat 80`）——
+    这一对是"挂载动作本身在停止面贡献精确零"这句话的机器形态：以后谁把观察者/包装器
+    改出行为差，这两条锚点会当场红，而不是等 §115 的句子被引用到别处才发现。
+    第三支钉的是**披露**：左件（v31）没有 `items_sha256` ⇒ 必须如实报 `unknown_pre_v35`，
+    不许因为"另两枚有指纹"就把这一侧读成已证。
+    """
+
+    alpha1 = PROJECT_ROOT / 'reports' / 'taiji_a30_stop_failure_self_v38_evidenceobserver_circuitseedA_96_20261003.json'
+    alpha0 = PROJECT_ROOT / 'reports' / 'taiji_a30_stop_failure_self_v38_alpha0_circuitseedA_96_20261003.json'
+    for path in (alpha1, alpha0, NOC96):
+        if not path.is_file():
+            raise AssertionError(f'锚点件不在库里：{path.name}')
+
+    dose = pair(alpha1, alpha0)
+    assert dose['cells'] == 288 and dose['other_shape_count'] == 0, dose
+    assert dose['table'] == {'eat->stop': 167, 'stop->stop': 41, 'eat->eat': 80}, dose['table']
+    assert dose['rescued_eat_to_stop'] == 167 and dose['harmed_stop_to_eat'] == 0, dose
+    assert dose['items_fingerprint']['status'] == 'equal', dose['items_fingerprint']
+    assert dose['left_circuit'] is True and dose['right_circuit'] is True, dose
+    assert dose['left_window_steps'] is None and dose['right_window_steps'] is None, dose
+
+    inert = pair(NOC96, alpha0)
+    assert inert['table'] == {'stop->stop': 208, 'eat->eat': 80}, inert['table']
+    assert inert['rescued_eat_to_stop'] == 0 and inert['harmed_stop_to_eat'] == 0, inert
+    assert inert['left_circuit'] is False and inert['right_circuit'] is True, inert
+    assert inert['items_fingerprint']['status'] == 'unknown_pre_v35', inert['items_fingerprint']
+
+
 def test_the_probe_itself_records_the_fingerprint() -> None:
     """仪器必须**自己写**这一列——否则配对器永远只能报"不可知"，那条债就没还。"""
 
