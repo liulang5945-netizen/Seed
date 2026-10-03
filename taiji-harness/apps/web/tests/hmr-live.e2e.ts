@@ -146,7 +146,10 @@ it('hot-reloads a real client-plugin source edit without refreshing the page', a
     })
 
     await writeFile(sourcePath, updatedSource)
-    await page.getByText(newText, { exact: true }).waitFor({ timeout: 30_000 })
+    // The watcher rebuild runs alongside the rest of a face batch; 30s left no
+    // headroom under that load (the ㊵-153 closure face red), so the hot-update
+    // wait gets the same slow-runner treatment as the turn-tail barrier.
+    await page.getByText(newText, { exact: true }).waitFor({ timeout: 60_000 })
     expect(await page.evaluate(() => (window as Window & { __dshHmrPageIdentity?: string }).__dshHmrPageIdentity))
       .toBe(pageIdentity)
     expect(pageErrors).toEqual([])
@@ -173,4 +176,4 @@ it('hot-reloads a real client-plugin source edit without refreshing the page', a
     await rm(world, { recursive: true, force: true }).catch((error: unknown) => failures.push(error))
   }
   if (failures.length > 0) throw new AggregateError(failures, 'HMR browser test or cleanup failed')
-}, 120_000)
+}, 180_000)
