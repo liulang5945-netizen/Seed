@@ -1419,3 +1419,12 @@ owner 已裁定 18 行那枚走"批准新增分类条目"（人工评审＝本�
 **结论（可以声称的那半句）**：09-30 登记的那 **7 条 type-aware 基线（1 条 `no-unnecessary-condition`＋6 条 `no-base-to-string`，落在 `details.*` 那批文件）在当前 HEAD 上确实为零**，而且这不是"尺坏了"——**同一把尺在两分钟前的对照里对同一条规则各自报过错**。⇒ 判据⑥ 的 lint 支现在只剩一件事：**`266289e1` 带进来的 231 条 `@stylistic(indent)`**（属他线，owner 已裁"等它自己走"）。
 **同时留下的方法账**：㊵-175 那次我把"零命中"先验地读成静默——方向是保守的、但**保守不等于对**；正确的次序是**先花两秒构造一个应该为真的样例证明这把尺能为真**（同 [[guard-must-be-able-to-fail]] 的"验收式还须能为真"、[[probe-output-must-be-verified-present]]），再来判零命中的含义。已把 §11 判据⑥ 行的"type-aware 本机不可判"改标为"已判清为 0（由对照证尺）"。
 **范围限定**：这两条对照与读数只覆盖 `packages/client` 一片；全仓那 235 条里的另 4 条（探针件 3＋别人在飞件 1）仍属未入库面，不在本结论内。
+**㊵-177（判据⑥ 改按 CI 自己的入口取数：`check:ci:lint:contracts-ready` ＝ `1 passed, 1 failed in 41.33s`，duplication 叶 PASS、lint 叶 `235 errors`；顺带把"lint 不可复核"这句话的**取法错误**登记清楚）**
+
+**权威读数**：`corepack pnpm run check:ci:lint:contracts-ready`（＝`tsx scripts/run-gates.ts ci-lint-contracts-ready`，CI 采用的 mode）＝ **rc=1、`run-gates: 1 passed, 1 failed, 0 skipped in 41.33s`**，其中 **`PASS duplication (0.93s)`**、失败叶的汇总行原文 **`Found 0 warnings and 235 errors.`**——**与 ㊵-175 我剥前缀直跑叶子的读数逐字相同** ⇒ 我那次的担心"叶子直跑可能不是 CI 那张面"由这条入口读数排除；两支结论（231 条他线缩进＋type-aware 基线已清零）在权威面上成立。
+
+**机制（这才解释得通 231 条怎么入库的）**：这仓**没有独立的格式化门**——`devDependencies`／`dependencies` 里 `prettier|dprint|biome` 零命中，`package.json` 的 format-ish 脚本只有 `verify-agent-note-format`／`verify-persistence-formats`／`gen-与 verify-session-format-catalog` 这几支（都是别的东西的格式，不是缩进）。⇒ **缩进只由 oxlint 的 `@stylistic/indent` 一族守**。而本地官方入口 `pnpm run lint` ＝ `npm run build:lib:host && npm run lint:contracts-ready`：**build 红时那支 oxlint 根本走不到**（㊵-167 就是这么写的）；CI 用的却是 `ci-lint-contracts-ready` 这个 mode，它直接 `lintGate()`（`scripts/run-gates.ts:277-279`）不等构建。⇒ **"我本地看不见"与"CI 不红"从来不是同一件事**：`266289e1` 的 231 条缩进在 CI 入口上是响亮红，只是本地按官方入口取数时永远看不见。
+
+**因此登记一条取法纠正（比这条读数更长期）**：判"本地 lint 面不可复核"之前，正确的命令是 **`check:ci:lint:contracts-ready`**，不是 `pnpm run lint`。㊵-167／㊵-173 那两句"lint 走不到 oxlint ⇒ 基线此刻不可复核"在**取法层**就错了——不是我读的叶子不对，是**我挑的入口把叶子挡在了构建后面**，而 CI 不这么挑。这与 [[gate-runnability-not-inherited-from-aggregator]] 是同一条的**新形态**：不光"入口要 pnpm"不等于"叶子要 pnpm"，**"官方脚本里有个红前缀"也不等于"CI 用的 mode 有同一前缀"**；判不可测前要先看 gate 图里 CI 究竟调哪一支。
+
+**判据现状更新**：判据⑥ 在 HEAD 上是**由 CI 自己的入口判为红**（不是"不可测"），红的构成＝**231 条 `@stylistic(indent)`（`266289e1`，属他线）＋ 探针件 3 条 ＋ 在飞件 1 条**，type-aware 那 7 条基线已判清为 0（㊵-176）。owner 已裁"等它自己走、我只记录不干预"⇒ 我仍不代改、不跑 autofix，只把"判据⑥ 未满足"的理由从"不可测"改写成"CI 入口实测红、且三条来源全部不属本线"。
