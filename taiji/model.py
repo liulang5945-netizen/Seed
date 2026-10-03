@@ -165,6 +165,12 @@ class Taiji:
         self._copy_evidence_step = 0
         self._copy_evidence_window_emitted = 0
         self._copy_evidence_window_silenced = 0
+        #: DEBT-G25：每趟复位让 `emitted/silenced` 只能描述**最后一趟**答复，
+        #: 于是"门有没有开过枪"在件里不可答（一趟只有 43 步、K=128 时结构上不可能静音过）。
+        #: 下面两个是**全程累计**，不随 `reset_copy_evidence_window()` 清零。
+        self._copy_evidence_window_emitted_total = 0
+        self._copy_evidence_window_silenced_total = 0
+        self._copy_evidence_step_total = 0
         self._developmental_f1_replay: list[DevelopmentalReplayEvent] = []
         self._developmental_f1_replay_serial = 0
         self._memory_rng = torch.Generator(device="cpu")
@@ -1139,6 +1145,10 @@ class Taiji:
             "emitted_steps": self._copy_evidence_window_emitted,
             "silenced_steps": self._copy_evidence_window_silenced,
             "steps_seen": self._copy_evidence_step,
+            #: DEBT-G25：末趟与全程两组并列，使"门开过枪吗"在件内可答而不被末趟假否证。
+            "emitted_steps_total": self._copy_evidence_window_emitted_total,
+            "silenced_steps_total": self._copy_evidence_window_silenced_total,
+            "steps_seen_total": self._copy_evidence_step_total,
         }
 
     def reset_copy_evidence_window(self) -> None:
@@ -2273,10 +2283,13 @@ class Taiji:
             if window is not None:
                 within_window = self._copy_evidence_step < window
                 self._copy_evidence_step += 1
+                self._copy_evidence_step_total += 1
                 if within_window:
                     self._copy_evidence_window_emitted += 1
+                    self._copy_evidence_window_emitted_total += 1
                 else:
                     self._copy_evidence_window_silenced += 1
+                    self._copy_evidence_window_silenced_total += 1
             if within_window:
                 episodic_evidence = episodic_evidence + self._copy_circuit.evidence(
                     cue=self.fabric.cortical_context(regions),

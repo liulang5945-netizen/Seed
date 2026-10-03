@@ -732,9 +732,12 @@ def main() -> int:
 
     substrate.observe = original_observe  # type: ignore[method-assign]
     report = {
-        "format": "taiji-a30-stop-failure-v25",
+        "format": "taiji-a30-stop-failure-v26",
         "format_note_v19": "v19 加性多一条检索侧 **oracle** 档：`--oracle-selector` 把 `store.best_match` 换成『内容含本题 `expected_contains` 的第一条事件』，找不到则透传原实现，用来把『选对了还拖不拖写』从『内容身份』与『发射时刻』里单独摘出来验。缺标签时响亮停下而非静默透传（那会伪装成生效）；自述 `oracle_calls`／`oracle_found`／`oracle_fell_through`。默认关 ⇒ 与 v18 逐位可比。",
         "format_note_v18": "v18 **加性**多一条**检索侧**资格档：`--store-scope-conversation` 在每题开头把装载信封带来的陈旧事件请出候选集，只留本次对话被告知的内容可被 `best_match` 取到（只用公开接口 `events()/clear()/record()`；代价是 `event_id` 重新编号，已在件里披露）。它与窗口档正交：一个动候选集、一个动发射时刻。默认关 ⇒ 与 v17 逐位可比。",
+        "format_note_v26": "v26（2026-10-03）：DEBT-G25——产品门的 `product_window_stats` 现在带全程累计三键"
+        "（emitted_steps_total／silenced_steps_total／steps_seen_total）；旧三键语义不变（末趟），"
+        "因为每趟复位使末趟在短答复生成上结构不可能静音，只看末趟会把成功的档自我否证。",
         "format_note_v25": "v25（2026-10-03）：DEBT-G24——`legal_candidates` 不含边界符而 `boundary_rank_in_legal` 在含边界符的集合里排名，"
         "两者放在一起会让名次比分母大 1（§64 实测到）。旧列保留以便与历史件同格比较，"
         "新增 `legal_candidates_including_boundary` 作无歧义分母；守卫钉住两条不等式。",

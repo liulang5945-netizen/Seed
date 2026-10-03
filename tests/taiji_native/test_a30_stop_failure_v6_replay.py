@@ -81,9 +81,9 @@ def test_instrument_carries_v6_and_the_correction_note() -> None:
     source = (PROJECT_ROOT / "scripts" / "training" / "probe_taiji_a30_stop_failure.py").read_text(
         encoding="utf-8"
     )
-    assert '"format": "taiji-a30-stop-failure-v25"' in source
+    assert '"format": "taiji-a30-stop-failure-v26"' in source
     assert all(
-        f"format_note_v{v}" in source for v in (6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25)
+        f"format_note_v{v}" in source for v in (6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26)
     ), "升版只许加列，历史说明必须逐版留在件里"
     assert "format_note_v6" in source
     assert "追加二" in source and "深帧复现" in source
@@ -382,3 +382,17 @@ def test_boundary_rank_is_bounded_by_the_denominator_it_belongs_to() -> None:
         assert row["boundary_rank_in_legal"] <= row["legal_candidates_including_boundary"], row
         assert row["boundary_rank_in_legal"] <= row["legal_candidates"] + 1, row
         assert row["legal_candidates_including_boundary"] == row["legal_candidates"] + 1, row
+
+
+def test_window_stats_report_cumulative_and_last_turn_separately() -> None:
+    """DEBT-G25：末趟计数会把成功的档自我否证（一趟只有 43 步、K=128 时不可能静音过）。
+
+    所以件内必须**同时**有全程累计与末趟两组，且累计只增不清。这里在进程内测两件事：
+    门控在"跨两趟答复"后累计 silenced>0，而 `reset_copy_evidence_window()` 只清末趟。
+    """
+    model_src = (PROJECT_ROOT / "taiji" / "model.py").read_text(encoding="utf-8")
+    assert "_copy_evidence_window_emitted_total" in model_src
+    assert '"emitted_steps_total"' in model_src and '"silenced_steps_total"' in model_src
+    reset_body = model_src.split("def reset_copy_evidence_window(self) -> None:", 1)[1].split("    def ", 1)[0]
+    assert "_copy_evidence_step = 0" in reset_body
+    assert "_total = 0" not in reset_body          # 累计量绝不在复位里被清零
