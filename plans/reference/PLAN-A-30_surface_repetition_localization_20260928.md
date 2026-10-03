@@ -7863,3 +7863,31 @@ R=2.0 那一档可实现下界 **8.68 → 2.78（÷3.1）**。⇒ 挂回路做�
 今天在同一装配的 **v38 新档**上重算仍是 **3.82pp**、发过 LF 仍是 11、`lf_total_emissions` 仍是 75 ⇒ 跨仪器版本（v34→v38）逐值复现，`bound` 那台认列逻辑没漂移。
 
 本轮零跑动、零产品改动；两枚被读的都是已入库件，无新增引用。
+
+### 第一百二十五次停靠·owner 四笔裁定落账（2026-10-03 09:2x）：先排一次训练；默认位不开；那行入口补丁不落；真实启动只交命令
+
+**裁定**：①停止侧下一步＝**先排一次训练**（自身轨迹吃过模型自己写的答案；§102 那一格，判据早已先于数冻好）；
+②产品默认发射时机开关**继续不开**——今天新增一条反对证据：把那条注入乘零，288 格里可停的从 41 回到 208＝等于完全不挂回路，
+说明该修的是注入本身，而不是先打开一个只收回两成的开关；③那笔"只改产品入口一行"的补丁**先不落**（继续留在仓外，等方向定了一起看）；
+④需要一次真启动才能收的那格：**我把命令与两处读数位置写清楚，由 owner 自己执行**（重启类动作归 owner 排期）。
+
+**训练档执行包（旗标逐个读源码核对过，不是凭记忆写的）**：
+
+1. 先生成自答表：`python scripts/training/build_taiji_a30_self_answers.py --base output/a31_chunked_self/checkpoint.pt --pairs 12000 --gen-max 96 --penalty 2.0 --out output/a30_self_answers/outself.jsonl --out-report reports/taiji_a30_self_answers_pending.json`
+   —— ⚠ **`--base` 的默认值是 `output/a26_p1/checkpoint.pt`（配方前那枚旧底）**，不点名就会在错底上生成整张表 ⇒ 必须显式给当前底。
+2. 再训练：`python scripts/training/train_seed_corpus.py --answer-source self --self-answers output/a30_self_answers/outself.jsonl --answer-chunking per-answer --max-symbols <预算> --epochs 1`
+   —— 两条硬约束是**代码里响亮检查**的（`train_seed_corpus.py:673` 与 `:678`）：`--answer-source self` 必须同时给 `--answer-chunking per-answer` 与 `--self-answers`，缺一即 `parser.error`／`RuntimeError`（不是静默降级）。
+   退出记账（`exit_reason`／`reached_budget`／`<stem>_exit.json`，本日之前补的）会直接答"预算吃满没有"，
+   **不必再从 `progress.jsonl` 反推**（`DEBT-G14` 那笔"37.5% 被当成在跑"的成因已消）。
+3. 判据与读数：**沿用 §102 已冻三条**（A＝"从不发 LF 那一群"是否被挪动：占比下降 ∧ 存在 ≥0.10 的拖写代从 0 变 ≥20；
+   B＝L2 主列 `72 − generations_eating_full_budget ≥ 6`；C＝`SPEC-A-24` 的 L1 原样），外加必披露**崩塌分层**
+   （`steps_in_repeat_run ≥50 / <50`，基线 115／121）。**不新增线、不换次要指标、不因"只差一次"下调阈值。**
+4. 成对义务：训练前后**同底同题面同预算**两枚件（`compare_taiji_a30_report_identity.py --subtree per_item` 只看测量字段），
+   且新档必须过 §110 那台判读器的八条前置（含 `evidence_observer_installed=true` 与等式 `loop_calls = total_steps − generations`）才可发表。
+
+**两件为这一格铺好的路（本轮顺手清掉）**：①环内证据调用计数器此前在默认装配上**恒为零**（未装观察者，`DEBT-G33` 已修）——
+不修的话训练档出数后"注入还在不在被问"根本无法从件里判断；②等式 `loop_calls = total_steps − generations` 现在是可复算的自检，
+训练档拿它当仪器是否可信的第一道闸。
+
+**一条容易误读的地方**：裁定①**不等于**批准 `SPEC-A-26`。那份预注册要的是"改注入形状"的另一次授权；
+训练与它是两条正交的路，本轮只按①推进，产品侧继续零改动。
