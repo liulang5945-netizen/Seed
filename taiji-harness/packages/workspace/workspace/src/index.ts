@@ -291,8 +291,10 @@ export class WorkspaceRegistry extends Service {
    * directory picker is unavailable, no way back — so the default Workspace is
    * the recovery. Sessions that cannot join it (a different working directory,
    * or none at all) stay ungrouped. Repeated requests reuse its durable
-   * identity; deleting that registration drops the identity with it, so the
-   * next eligible preparation creates a replacement default Workspace.
+   * identity. Deleting that registration drops the identity with it and
+   * records deletion intent, so the next eligible preparation does not
+   * auto-provision a replacement; the intent clears when a new first-use
+   * default is established.
    * @param resolveDirectory - resolve the absolute directory and initial title;
    * called only for eligible creation, inside the registry mutation queue.
    * Missing directories are created recursively before registration.
@@ -304,6 +306,10 @@ export class WorkspaceRegistry extends Service {
       const state = this.requireState()
       if (state.defaultWorkspaceId !== undefined) return this.entities.get(state.defaultWorkspaceId)
       if (state.workspaceIds.length > 0) return undefined
+      // An explicitly deleted default registered its intent: the empty registry
+      // is the user's choice, not a missing first use, so no replacement is
+      // auto-provisioned. The intent clears when a new default is established.
+      if (state.defaultDeleted === true) return undefined
 
       const { path, title } = await resolveDirectory()
       if (!fullyQualifiedWorkspacePath(path)) throw new TypeError(`Workspace path is not fully qualified: '${path}'`)
@@ -343,8 +349,10 @@ export class WorkspaceRegistry extends Service {
    * session log. The durable order is updated before the table deletion; a
    * failed table write restores the prior order and keeps the entity
    * published. Deleting the Workspace the durable default identity names
-   * clears that identity in the same write, so the marker can never outlive
-   * its Workspace. Unknown ids are an idempotent no-op for domain callers.
+   * clears that identity in the same write — so the identity marker can never
+   * outlive its Workspace — and records deletion intent, so first-use
+   * preparation will not auto-provision a replacement. Unknown ids are an
+   * idempotent no-op for domain callers.
    * @param id - Workspace registration to remove.
    * @returns `true` when a record was deleted, `false` when it was unknown.
    */
@@ -687,7 +695,7 @@ export class WorkspaceRegistry extends Service {
         ...state,
         pendingMutation: undefined,
         initialized: true,
-        ...(firstUse ? { defaultWorkspaceId: id } : {}),
+        ...(firstUse ? { defaultWorkspaceId: id, defaultDeleted: false } : {}),
         workspaceIds: [id, ...state.workspaceIds],
       })
     } catch (error) {
@@ -726,7 +734,12 @@ export class WorkspaceRegistry extends Service {
     // The default identity is a relation to a row, not a free-standing flag: a
     // marker naming a deleted Workspace cannot be told apart from corrupt
     // state and would keep automatic creation pinned to a dead identity.
-    if (nextState.defaultWorkspaceId === id) delete nextState.defaultWorkspaceId
+    if (nextState.defaultWorkspaceId === id) {
+      delete nextState.defaultWorkspaceId
+      // Owner-ruled semantics (㊵-153): an explicit default deletion is intent
+      // to stay without one, recorded durably so boot does not replace it.
+      nextState.defaultDeleted = true
+    }
     await this.setState({
       ...nextState,
       pendingMutation: { operation: 'delete', workspaceId: id },

@@ -1358,24 +1358,61 @@ describe('first-use Workspace preparation', () => {
     expect(storedState(h.pool).defaultWorkspaceId).toBeUndefined()
   })
 
-  it('clears the default identity with its Workspace so first-use preparation runs again', async () => {
+  it('records deletion intent and stops re-provisioning a replacement default', async () => {
     const h = await firstUse()
-    const workspace = (await h.registry.initializeDefault(h.resolveDirectory))!
-    await workspace.setTitle('Renamed')
-    expect((await h.registry.initializeDefault(h.resolveDirectory))?.title).toBe('Renamed')
-    await h.registry.delete(workspace.id)
-    // A durable default identity must never name a Workspace that is gone:
-    // the leftover marker is indistinguishable from a corrupt state and pins
-    // automatic creation to a dead identity.
-    expect(storedState(h.pool).defaultWorkspaceId).toBeUndefined()
-    await h.ctx.fiber.dispose()
+    const created = await h.registry.initializeDefault(h.resolveDirectory)
+    expect(created).toBeDefined()
+    await expect(h.registry.delete(created!.id)).resolves.toBe(true)
+    expect(storedState(h.pool).defaultDeleted).toBe(true)
+    expect(h.resolveDirectory).toHaveBeenCalledOnce()
+    // The empty registry is the user's explicit choice, so preparation is a no-op.
+    await expect(h.registry.initializeDefault(h.resolveDirectory)).resolves.toBeUndefined()
+    expect(h.resolveDirectory).toHaveBeenCalledOnce()
+    expect(h.registry.list()).toEqual([])
+  })
 
-    const restarted = await firstUse({ pool: h.pool })
+  it('does not record deletion intent when a non-default workspace is deleted', async () => {
+    const h = await firstUse()
+    const created = await h.registry.initializeDefault(h.resolveDirectory)
+    const extraDir = join(h.directoryRoot, 'extra')
+    await mkdir(extraDir, { recursive: true })
+    const extra = await h.registry.create(extraDir)
+    await expect(h.registry.delete(extra.id)).resolves.toBe(true)
+    expect(storedState(h.pool).defaultDeleted).toBeFalsy()
+    expect(await h.registry.initializeDefault(h.resolveDirectory)).toBe(created)
+  })
+
+  it('keeps deletion intent across a registry restart', async () => {
+    const dir = await makeDir('delete-default-intent')
+    const pool = new MemoryMediaPool()
+    const first = await harness({ pool })
+    const created = await first.registry.initializeDefault(
+      vi.fn(async () => ({ path: join(dir, 'Workspace'), title: 'Workspace' })),
+    )
+    expect(created).toBeDefined()
+    await expect(first.registry.delete(created!.id)).resolves.toBe(true)
+    await first.fiber.dispose()
+
+    const restarted = await harness({ pool })
     expect(restarted.registry.list()).toEqual([])
-    const recreated = await restarted.registry.initializeDefault(restarted.resolveDirectory)
-    expect(recreated?.path).toBe(await realpath(join(h.directoryRoot, 'nested', 'Workspace')))
-    expect(recreated?.id).not.toBe(workspace.id)
-    expect(storedState(h.pool).defaultWorkspaceId).toBe(recreated?.id)
+    const resolveDirectory = vi.fn(async () => ({ path: join(dir, 'Replacement'), title: 'Workspace' }))
+    await expect(restarted.registry.initializeDefault(resolveDirectory)).resolves.toBeUndefined()
+    expect(resolveDirectory).not.toHaveBeenCalled()
+    expect(restarted.registry.list()).toEqual([])
+  })
+
+  it('clears the default identity with its Workspace and keeps first-use preparation suppressed by deletion intent', async () => {
+    const h = await firstUse()
+    const created = await h.registry.initializeDefault(h.resolveDirectory)
+    expect(created).toBeDefined()
+    // Deleting the durable default drops the identity with its row and records
+    // the owner-ruled deletion intent (㊵-153): first-use preparation must not
+    // auto-provision a replacement default afterwards.
+    await expect(h.registry.delete(created!.id)).resolves.toBe(true)
+    expect(storedState(h.pool).defaultWorkspaceId).toBeUndefined()
+    expect(storedState(h.pool).defaultDeleted).toBe(true)
+    await expect(h.registry.initializeDefault(h.resolveDirectory)).resolves.toBeUndefined()
+    expect(h.resolveDirectory).toHaveBeenCalledOnce()
   })
 
   it('heals a stored default identity whose Workspace is missing', async () => {

@@ -58,6 +58,11 @@ export const workspaceDomainState = z.object({
   initialized: z.boolean(),
   /** First-use Workspace identity, retained after its registration is deleted. */
   defaultWorkspaceId: workspaceId.optional(),
+  /** Deletion-intent marker: the durable default was explicitly deleted, so
+   * first-use preparation must not auto-provision a replacement. Cleared when
+   * a new first-use default is established. Optional so records written before
+   * the field parse unchanged. */
+  defaultDeleted: z.boolean().optional(),
   workspaceIds: z.array(workspaceId),
   archivedSessionIds: z.array(sessionId).default([]),
   pinnedSessionIds: z.array(sessionId).default([]),

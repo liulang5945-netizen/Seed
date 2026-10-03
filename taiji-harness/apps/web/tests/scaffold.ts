@@ -875,8 +875,11 @@ export async function launchWebScaffold(options: LaunchOptions = {}): Promise<We
       }])
     }
     if (options.firstUse !== true && ctx.workspaceRegistry.list().length === 0) {
-      const initial = await ctx.workspaceRegistry.initializeDefault(async () => ({ path: workspaceCwd, title: 'Workspace' }))
-      if (initial !== undefined) await ctx.workspaceRegistry.delete(initial.id)
+      // The transient placeholder must not be the durable default: deleting
+      // that would register deletion intent (㊵-153) and suppress the product's
+      // own boot provisioning in every fresh scaffold world.
+      const placeholder = await ctx.workspaceRegistry.create(workspaceCwd, 'Workspace')
+      await ctx.workspaceRegistry.delete(placeholder.id)
     }
     const boundPort = ctx.get('webServer')?.port
     if (boundPort === undefined) {

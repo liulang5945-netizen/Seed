@@ -151,6 +151,19 @@ describe.skipIf(MODE === 'record')('web e2e: default Workspace', () => {
       await page.goto(scaffold.authenticatedUrl)
       expect((await attempted).ok()).toBe(true)
       await page.getByRole('button', { name: 'Choose workspace', exact: true }).waitFor()
+      // Boot provisioned the default (asynchronously — poll, per the first
+      // test); the user now deletes it explicitly.
+      await expect.poll(() => scaffold.ctx.workspaceRegistry.list().length, { timeout: 20_000 }).toBe(1)
+      const [defaultWorkspace] = scaffold.ctx.workspaceRegistry.list()
+      expect(defaultWorkspace).toBeDefined()
+      await expect(scaffold.ctx.workspaceRegistry.delete(defaultWorkspace!.id)).resolves.toBe(true)
+      expect(scaffold.ctx.workspaceRegistry.list()).toEqual([])
+      // The reload re-runs the client boot, whose initializeDefault request must
+      // honor the recorded deletion intent instead of re-provisioning.
+      const reattempted = page.waitForResponse(response => response.url().includes('/api/workspace/initializeDefault'))
+      await page.reload({ waitUntil: 'load' })
+      expect((await reattempted).ok()).toBe(true)
+      await page.getByRole('button', { name: 'Choose workspace', exact: true }).waitFor()
       expect(await page.getByRole('alert').filter({ hasText: 'Unable to create default workspace' }).count()).toBe(0)
       expect(await page.locator('[data-composer-input][contenteditable="true"]').count()).toBe(0)
       expect(scaffold.ctx.workspaceRegistry.list()).toEqual([])
