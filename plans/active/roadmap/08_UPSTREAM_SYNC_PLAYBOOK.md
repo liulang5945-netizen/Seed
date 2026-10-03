@@ -1404,3 +1404,18 @@ owner 已裁定 18 行那枚走"批准新增分类条目"（人工评审＝本�
 **这条同时更正 ㊵-167／㊵-173 的一句话**：那里写"`lint` 走不到 oxlint、7 条基线此刻不可复核"。**收窄为**：叶子能直接跑，且**非类型族立刻可判**；真正不可判的只有 **type-aware 那一族**。这是"门的不可跑要从叶子取、不许从聚合入口继承"（[[gate-runnability-not-inherited-from-aggregator]]）的又一次现形——聚合入口里任何一步被挡，不等于它后面每一步都测不了。
 
 **处置**：231 条缩进属别人今天的 UI 提交；owner 本轮已裁"等它自己走，我只记录不干预"⇒ 我不代改，也不跑 autofix（`lint:fix:contracts-ready` 的作用面只是 `packages/typert/generator/tests/fixtures/type-model` 那一小片 fixture，不是全仓）。本条只把"判据⑥ 的 lint 支新增 231 条真红＋归属 `266289e1`"交回收官面，并把 §11 判据⑥ 行的"7 条＝登记基线，判据满足"改标成两支分离的现状。
+**㊵-176（㊵-175 那句"零命中＝类型族静默"被对照实验否证：两条基线族各由秒级插桩证明此刻**能为真**，故 7 条 type-aware 基线是真清零）**
+
+我上一条写"登记的 7 条 type-aware 基线零命中，最合理读法是类型程序被探针件打坏后的静默"。这句只对**未被证明能为真的族**才允许说，所以本条用两次秒级对照把它否证掉：
+
+- 对照一：临时件 `packages/client/ui-tool/src/zzz-typeaware-probe.ts`（`String(unknown)` 与恒真三元）→ `run-oxlint.ts <该件>` 报 **`Found 0 warnings and 5 errors`**，原文含 `typescript(no-unnecessary-condition): Unnecessary conditional, value is always falsy.` ⇒ **`no-unnecessary-condition` 此刻活着**。
+- 对照二：临时件 `zzz-basetostring-probe.ts`（`String({a:1})` 与模板里塞对象）→ **`Found 0 warnings and 3 errors`**，原文两次含 `typescript(no-base-to-string): 'record' will use Object's default stringification format ('[object Object]')…` ⇒ **`no-base-to-string` 也活着**。
+  两件都**在同一条命令里跑完即删**，事后 `test -f` ＝ no、`git status --porcelain | grep -c` ＝ **0**（未留下插桩件，也没有脏文件）。
+
+同一调用形态换到**真实面**上的读数：
+- `run-oxlint.ts packages/client/ui-tool/src` ＝ **rc=0、`Found 0 warnings and 0 errors`**；
+- `run-oxlint.ts packages/client` ＝ **rc=1、`Found 0 warnings and 231 errors`**，其中 `no-base-to-string`＝**0**、`no-unnecessary-condition`＝**0**、`@stylistic(indent)`＝**231**。
+
+**结论（可以声称的那半句）**：09-30 登记的那 **7 条 type-aware 基线（1 条 `no-unnecessary-condition`＋6 条 `no-base-to-string`，落在 `details.*` 那批文件）在当前 HEAD 上确实为零**，而且这不是"尺坏了"——**同一把尺在两分钟前的对照里对同一条规则各自报过错**。⇒ 判据⑥ 的 lint 支现在只剩一件事：**`266289e1` 带进来的 231 条 `@stylistic(indent)`**（属他线，owner 已裁"等它自己走"）。
+**同时留下的方法账**：㊵-175 那次我把"零命中"先验地读成静默——方向是保守的、但**保守不等于对**；正确的次序是**先花两秒构造一个应该为真的样例证明这把尺能为真**（同 [[guard-must-be-able-to-fail]] 的"验收式还须能为真"、[[probe-output-must-be-verified-present]]），再来判零命中的含义。已把 §11 判据⑥ 行的"type-aware 本机不可判"改标为"已判清为 0（由对照证尺）"。
+**范围限定**：这两条对照与读数只覆盖 `packages/client` 一片；全仓那 235 条里的另 4 条（探针件 3＋别人在飞件 1）仍属未入库面，不在本结论内。
