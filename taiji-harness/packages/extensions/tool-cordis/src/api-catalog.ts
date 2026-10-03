@@ -3650,7 +3650,7 @@ export const SERVICE_API: readonly ServiceApiEntry[] = [
       },
       {
         signature: 'initializeDefault(resolveDirectory: () => Promise<{ path: string; title: string }>): Promise<Workspace | undefined>',
-        description: 'Initialize the default Workspace while the registry holds no Workspace at all. Session history never vetoes creation: a registry without any Workspace leaves the product with nothing selectable and, on a host whose directory picker is unavailable, no way back — so the default Workspace is the recovery. Sessions that cannot join it (a different working directory, or none at all) stay ungrouped. Repeated requests reuse its durable identity; deleting that registration drops the identity with it, so the next eligible preparation creates a replacement default Workspace.',
+        description: 'Initialize the default Workspace while the registry holds no Workspace at all. Session history never vetoes creation: a registry without any Workspace leaves the product with nothing selectable and, on a host whose directory picker is unavailable, no way back — so the default Workspace is the recovery. Sessions that cannot join it (a different working directory, or none at all) stay ungrouped. Repeated requests reuse its durable identity. Deleting that registration drops the identity with it and records deletion intent, so the next eligible preparation does not auto-provision a replacement; the intent clears when a new first-use default is established.',
         parameters: [{ name: 'resolveDirectory', description: 'resolve the absolute directory and initial title; called only for eligible creation, inside the registry mutation queue. Missing directories are created recursively before registration. After resolution, caller cancellation does not roll back creation or registration.' }],
         returns: 'the initialized Workspace, or undefined while a Workspace already exists.',
       },
@@ -3668,7 +3668,7 @@ export const SERVICE_API: readonly ServiceApiEntry[] = [
       },
       {
         signature: 'delete(id: WorkspaceId): Promise<boolean>',
-        description: 'Delete one workspace registration while retaining its directory and every session log. The durable order is updated before the table deletion; a failed table write restores the prior order and keeps the entity published. Deleting the Workspace the durable default identity names clears that identity in the same write, so the marker can never outlive its Workspace. Unknown ids are an idempotent no-op for domain callers.',
+        description: 'Delete one workspace registration while retaining its directory and every session log. The durable order is updated before the table deletion; a failed table write restores the prior order and keeps the entity published. Deleting the Workspace the durable default identity names clears that identity in the same write — so the identity marker can never outlive its Workspace — and records deletion intent, so first-use preparation will not auto-provision a replacement. Unknown ids are an idempotent no-op for domain callers.',
         parameters: [{ name: 'id', description: 'Workspace registration to remove.' }],
         returns: '`true` when a record was deleted, `false` when it was unknown.',
       },

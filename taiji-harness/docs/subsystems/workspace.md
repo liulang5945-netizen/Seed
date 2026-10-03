@@ -508,8 +508,10 @@ async create(path: string, title?: string): Promise<Workspace>
  * directory picker is unavailable, no way back — so the default Workspace is
  * the recovery. Sessions that cannot join it (a different working directory,
  * or none at all) stay ungrouped. Repeated requests reuse its durable
- * identity; deleting that registration drops the identity with it, so the
- * next eligible preparation creates a replacement default Workspace.
+ * identity. Deleting that registration drops the identity with it and
+ * records deletion intent, so the next eligible preparation does not
+ * auto-provision a replacement; the intent clears when a new first-use
+ * default is established.
  * @param resolveDirectory - resolve the absolute directory and initial title;
  * called only for eligible creation, inside the registry mutation queue.
  * Missing directories are created recursively before registration.
@@ -538,8 +540,10 @@ list(): Workspace[]
  * session log. The durable order is updated before the table deletion; a
  * failed table write restores the prior order and keeps the entity
  * published. Deleting the Workspace the durable default identity names
- * clears that identity in the same write, so the marker can never outlive
- * its Workspace. Unknown ids are an idempotent no-op for domain callers.
+ * clears that identity in the same write — so the identity marker can never
+ * outlive its Workspace — and records deletion intent, so first-use
+ * preparation will not auto-provision a replacement. Unknown ids are an
+ * idempotent no-op for domain callers.
  * @param id - Workspace registration to remove.
  * @returns `true` when a record was deleted, `false` when it was unknown.
  */
