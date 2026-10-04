@@ -2,7 +2,7 @@
 import { existsSync } from 'node:fs'
 import { mkdir, mkdtemp, readFile, readdir, realpath, rm, symlink, unlink, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
-import { dirname, join } from 'node:path'
+import { dirname, join, relative } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { execa } from 'execa'
 import { expect, it } from 'vitest'
@@ -53,7 +53,7 @@ it('loads both tarballs through plain Node and mounts their base image and overl
     await run(invocation.command, invocation.args, source)
     const archives = (await readdir(packRoot)).filter(file => file.endsWith('.tgz'))
     expect(archives).toHaveLength(1)
-    await run('tar', ['-xzf', join(packRoot, archives[0]!), '-C', directory, '--strip-components=1'], root)
+    await run('tar', ['-xzf', archives[0]!, '-C', relative(packRoot, directory).replaceAll('\\', '/'), '--strip-components=1'], packRoot)
     expect(existsSync(join(directory, 'src'))).toBe(false)
     const manifest = JSON.parse(await readFile(join(directory, 'package.json'), 'utf8')) as {
       dependencies?: Record<string, string>

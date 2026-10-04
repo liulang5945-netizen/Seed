@@ -49,7 +49,7 @@ describe.skipIf(!built)('experimental Inspector built artifact', () => {
     await run(invocation.command, invocation.args, packageDirectory)
     const archives = (await readdir(root)).filter(name => name.endsWith('.tgz'))
     expect(archives).toHaveLength(1)
-    await run('tar', ['-xzf', join(root, archives[0]!), '-C', root], root)
+    await run('tar', ['-xzf', archives[0]!, '-C', '.'], root)
     expect(existsSync(join(consumer, 'lib/worker.js'))).toBe(true)
     await symlink(join(packageDirectory, 'node_modules'), dependencies, process.platform === 'win32' ? 'junction' : 'dir')
     linked = true
