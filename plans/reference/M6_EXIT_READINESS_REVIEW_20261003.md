@@ -326,3 +326,5 @@
 
 
 > **⚠ 一条影响本页多处表述的实测（2026-10-04 12:49Z，08 ㊵-278）**：`taiji-harness` 没有独立 `.git`（toplevel ＝ `E:/Seed`），其 20 个 workflow 文件位于**子目录** `.github/workflows/`，而 GitHub 只加载**仓根**的 workflows；仓根只有 `ci.yml` 且其中 `taiji-harness` **零命中**，`gh workflow list` 在该 remote 上只返回 "CI" 与 "Dependabot Updates"。⇒ **本仓当前没有任何 harness 门在 CI 上执行**：本页出现的"CI 会跑／CI owns the platform matrix／`test:e2e` 只在 Linux runner／`dsh-win-ci` 跑 windows-complete"等表述，都应读作**上游带过来的惰性文件**；所有 harness 门读数（build、doc-sync、hygiene、coverage、web/e2e 面）都只有**本机证据**。判据⑥ 与"绿 CI"类结论请按此重述，收官声明里不要写"CI 已验证"。是否把门真接上 CI（甲＝移出仓根或独立仓／子模块；乙＝根 `ci.yml` 加 job 进 `taiji-harness/` 跑 `check:ci:*`）＝新增给您的一项决定。
+
+> 【12:52Z 收窄，08 ㊵-279】上面这条**不新增 M6 欠账**：`02_GATES_AND_CI.md:14`／`:146` 把"端到端／正式 CI"列在**产品采用/发布与 M7 发布**行，不在 M6 六项退出条件里。它推翻的是"把本机实测写成 CI 已验证"这类**表述**（属过度声称修正，不是缺口新增）；也不许反过来拿"CI 没接线"解释 harness 门的 rc=1——那些门由我在本机跑，红了就是红了。甲／乙两条接线方案记为 **M7 前置工程**。
