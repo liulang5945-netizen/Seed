@@ -213,6 +213,10 @@
 
 **R-7 本轮新增的一枚已入库红（㊵-221）：依赖分类器的顺序 pin 与实现不一致**（`scripts/verify-package-dependencies.spec.ts:623` 要 `@taiji/dsh-lazy-require` 两条在期望数组开头，当前实现把它们放在结尾；**集合同为 12 项、完全相同**）。
 - 甲 把期望那两条挪到末尾（恢复门为绿，但把顺序固化成合同）；乙 改顺序不敏感比较（贴合该测试自写的意图「识别精确运行时导出、类型导入不算值」，**但削弱顺序判别力，需同报测不到的那半边**）；丙 先查实现为何把这两条挪后（若顺序对其他消费者有意义，问题在实现侧）——**我推荐 丙→乙**；本轮未改 spec 或实现。归属：impl 与 spec 最后修改同属 `88ad3040e`（G2 那笔 5206＋43 文件），即那笔落地时这扇门没被重跑。另有一条同 spec 的失败 `keeps generated Host schema imports…` 经三方对比（共享 2 条／隔离 1 条／单跑 1 条）判为**他线在飞件引起的争用族**，不入本裁定。**【㊵-225：丙 已由读码回答——顺序不是契约；甲 已做并验毕，本条结】**
+**R-8 沙箱受限执行到底允不允许 Windows PowerShell 5.1 回退（㊵-226；这一条把两枚「平台档」合并成一个契约问题）** 三条读到的原文彼此冲突：① `packages/shell/pwsh-local/README.md:32` 把解析顺序写成「`pwshPath` → 已知安装位置 → PATH → **Windows PowerShell 5.1 作为最后手段**」，且 `:60` 明确「即使走 5.1 回退也先钉 UTF-8 输出」⇒ **回退是文档化契约**；② `packages/shell/pwsh-sandbox/tests/sandbox.spec.ts:278` 却断言受限 argv[0] `toMatch(/pwsh(\.exe)?$/u)`（本机实得 `C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe`）⇒ 按 ① 这枚期望**在没装 pwsh 7 的机器上必红**；③ `sandbox-windows-acl/tests/runner.spec.ts:24` 的可用性探针是**功能性**的（真跑一次 `resolvePwshPath()`），于是它在缺 pwsh 7 的机器上判「可用＝真」、`skipIf` 不生效，而该族内部用**字面命令名 `pwsh`** 经 `CreateProcessAsUserW` 启动，Win32 2 当场失败（单跑 10 条红，㊵-223 已复现）。
+- **甲 受限面只认真 pwsh 7**：`sandbox.spec.ts:278` 不动；改 `pwshAvailable()` 为「解析结果必须以 pwsh 结尾」⇒ 缺 pwsh 7 时整族**显式 skip**（不再跑 10 条红），并在 README 给 pwsh-sandbox 补一句「不使用 5.1 回退」；代价＝这台机器上 Windows 沙箱 confinement **永远没有本地验证**（除非装 pwsh 7）。
+- **乙 受限面接受契约里的回退**：argv 用 `resolvePwshPath()` 的结果（acl 族不再写死 `pwsh`），`sandbox.spec.ts:278` 改成 PowerShell 族（`/(pwsh|powershell)(\.exe)?$/u`）⇒ 本机两族红一起消失，**但要说清代价**：5.1 与 7 在受限环境下的行为差异由**产品承担**，且 README 已登记的 5.1 已知缺陷（非 ASCII stdin 可能错解码）会在沙箱路径上成为受支持行为，需要一处书面确认。
+- 两条都要动的都不是测试断言本身，而是「沙箱用什么解释器」这条产品事实 ⇒ **我不自选**；上一轮我列的 丙-1／丙-2 其实是同一条，故合并为本条。
 **R-6 维持不变、仍在你手上的四件**：H1 带凭据全量重录；R7／H2 沙箱外打包复验（R7 已收窄为「打包环境」vs「那份 openpyxl 文件」两支，本机分不开——要一份明文 xlsx）；安装器／卸载器／skill 徽章字标栅格；两条 R 级（显式删除默认工作区是否尊重、pwsh 行渲染）。
 
 **引用本页时的强制边界**（不因批准而改变）：M6 **仍未收官**，六项退出条件里四项「部分达成」一件都没有被批准；范围排除批准书批准的是排除不是收官；M7 判据一条都未满足（回滚与判据③同源，本地更新通道不构成发布 workflow）。
