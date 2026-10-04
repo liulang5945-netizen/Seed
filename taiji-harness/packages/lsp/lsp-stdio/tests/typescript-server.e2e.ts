@@ -17,12 +17,8 @@ import Lsp, { type LspQueryRequest, type LspQueryResult } from '@taiji/dsh-lsp'
 import * as LspLocal from '@taiji/dsh-lsp-stdio'
 
 // The server binary is a dev dependency of this package; resolve its pnpm-hoisted .bin path.
-const serverBin = join(
-  fileURLToPath(new URL('..', import.meta.url)),
-  'node_modules',
-  '.bin',
-  'typescript-language-server',
-)
+const serverPackage = join(fileURLToPath(new URL('..', import.meta.url)), 'node_modules')
+const serverCli = join(serverPackage, 'typescript-language-server', 'lib', 'cli.mjs')
 
 let root: string
 let ws: string
@@ -60,8 +56,11 @@ beforeAll(async () => {
   await ctx.plugin(LspLocal, {
     servers: {
       typescript: {
-        command: serverBin,
-        args: ['--stdio'],
+        // The `.bin` shim is a `#!/bin/sh` script on POSIX and a batch file on
+        // Windows, and the harness spawn path execs neither on Windows, so the
+        // lane launches the entry the shim itself launches, under this Node.
+        command: process.execPath,
+        args: [serverCli, '--stdio'],
         extensionToLanguage: { '.ts': 'typescript', '.tsx': 'typescriptreact' },
       },
     },
