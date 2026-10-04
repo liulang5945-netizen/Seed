@@ -239,8 +239,8 @@ describe('spawn construction (pure, every platform)', () => {
     const { argv } = subprocess.specs[0]!
     expect(argv.slice(0, 5)).toEqual([expect.any(String), '-NoLogo', '-NoProfile', '-NonInteractive', '-Command'])
     expect(argv[5]).toBe(`${ENCODING_PREAMBLE}Write-Output 你好`)
-    expect(ENCODING_PREAMBLE).toContain('[Console]::OutputEncoding')
-    expect(ENCODING_PREAMBLE).toContain('$OutputEncoding')
+    expect(ENCODING_PREAMBLE).toContain('chcp.com 65001 > $null')
+    expect(ENCODING_PREAMBLE).toMatch(/LanguageMode -eq "FullLanguage".*::new\(/)
   })
 
   it('reports both unread stderr and an asynchronous provider rejection exactly once', async () => {
