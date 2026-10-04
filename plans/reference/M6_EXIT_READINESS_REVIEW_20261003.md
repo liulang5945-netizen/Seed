@@ -275,4 +275,16 @@
 ⇒ 所以 丁 的可执行形状＝新增一组 `symlinkCoverageExclusions`，条件写成**与那 24 枚 spec 自己创建符号链接所用同一取路**（不是 `os.platform()`，也不是另起一次 `fs.symlink` 猜测），成员是那 24 枚对应的 `src/**` 路径；并按 PWSH 那段的样式写明"CI 有特权时仍执行全量线"。**这条同时回答了那个挂在 owner 手上很久的问题**（"缺符号链接权限时该叶算红还是算跳过"）：本仓既有答案是**按宿主能力探针豁免、响亮地保留 CI 侧阈值**，而不是把断言改成 skip。
 **C. 一处要在读数落地时一起写的自我更正（预注册件 D 段）**：㊵-230 与 G5 第三十段那句"按当前 HEAD 复算＝13 枚文件、5 枚已修／9 枚待办"混了两个键——5＋9＝14 就是 ㊵-229 的测试级集合本身；「13」只能作为 ㊵-202 的**文件级历史读数**引用。正解：两趟时刻 14 枚（测试级）⇒ 当前 HEAD 5 已修／9 待办。
 
+### S-6 判据⑦／④ 的最后一格：甲（按宿主码页解码）的可执行设计与它的前置
+**为什么要它**：丁 已把两处内联 UTF-8 强制条件化（`9df0a1c75`／`33f829a2`／`d4a2edcdb`），实测效果＝受限宿主不再产生 `Cannot create type` 伪错误，**但输出仍是宿主码页**（该 lane 的 received 侧 `U+FFFD` 稳定 26 个：interim 纯 chcp 版一次（`d_lane.log`）＋入库条件式两次（`RC_LANE2`、`RC_LANE3`，后者在重构建之后））。机制已在仓内成文：`sandbox-windows-acl/README.md:181` 说明 `read-only` 档下 PowerShell 建不出 AppLocker 探针文件而**保守进入 ConstrainedLanguage**，此时 `[Console]::OutputEncoding` 的赋值被禁止——这正是唯一能改变写出字节的开关。
+
+**设计（三处，全部可选参数默认不变）**
+1. `subprocess-local`：给 `OutputCollector`（`src/output.ts:57` 构造子，两处解码点在 `:166` 与 `:207`）加一个**可选**的解码标签，并**统一走一个私有 `decode()`**——不要像现在这样在两处各写 `toString('utf8')`，否则会出现"读时正确、结算又变坏"的半修。默认无标签＝`utf8`，其余所有调用点零行为变化。
+2. `pwsh-local`：它已经知道两件事——起的是不是 5.1（`resolvePwshPath()` 的回退），以及**这一次 pin 有没有生效**（守卫条件 `LanguageMode -eq "FullLanguage"` 的**否分支就是信号**）。把信号带出来的最小办法不是猜，而是让前缀在守卫为假时**自己印一行标记**（`else { 'PIN:skipped' }` 之类，纯 ASCII、不受码页影响），executor 在**剥掉该行之后**决定用哪个标签解码。这样"pin 成功却按 cp936 解"的主动破坏不会发生（那是 ㊵-239 ③ 指出的硬冲突）。
+3. 标签值：受限宿主需要的是**控制台输出码页**，不是硬编码。Node 无 `GetOEMCP` 绑定，`chcp` 的输出是 ASCII 数字可安全解析，但**必须只解析一次并缓存**，且在无控制台／解析失败时回落 UTF-8 并**在自述里写明回落发生了**（不许静默）。**标签名已实测（本机 `v24.15.0`、`icu_small=false`）**：`new TextDecoder('cp936')` **抛 `The "cp936" encoding is not supported`**，而 `'gbk'`／`'gb2312'`／`'big5'`／`'shift_jis'`／`'windows-1252'` 均可构造并正确解出同一批字节（`d5 d2 b2 bb` → `找不`）⇒ **必须带一张 OEM 码页→WHATWG 标签的映射表**（至少 `936→gbk`、`950→big5`、`932→shift_jis`、`1252→windows-1252`、`65001→utf-8`），直接拿数字当标签会在第一步就抛；表外码页走回落并披露。
+
+**覆盖与验收（前置，不是配套）**：本仓 `test:coverage` 按**每文件 100%** 判定 ⇒ 新增的每条分支（有标签／无标签／标签不被支持／回落发生／PIN:skipped 行被剥掉）都要有测试成员，缺一支那趟覆盖率就红。收口顺序＝定向 spec → `pnpm run build` → 单跑 `approval-composer`（判据＝received 侧 `U+FFFD` 计数**降为 0**，且 `Cannot create type` 仍为无）→ `check:ci:coverage`（跑期不提交）。**还欠一步**：金样 `snapshots/web/approval-composer/session.v4.jsonl` 含 1 行旧伪错误文本 ⇒ 无论甲 是否修好乱码，这条 lane 都要一次 `DSH_SNAPSHOT=refresh` 才可能转绿——重录属 owner 动作，我不擅自刷。
+
+**要不要做的判断依据（给 owner 的一句话）**：甲 修的是"**受限档下非 ASCII 输出进入模型上下文与日志**"这一条产品缺陷；它不影响任何计数类判据的达成，但影响"模型可见内容可重建"这条仓规不变量。若你已决定给用户默认 `workspace-write`（该档为 FullLanguage，缺陷不出现），甲 的紧迫度就降为"加固"；若 `read-only` 是会被实际使用的档，甲 是缺陷修复而非优化。
+
 **引用本节的边界**：以上是方案，不是结果；本节没有任何一条已执行，因此**不构成任何判据达成的证据**。
