@@ -260,6 +260,7 @@
 
 ### S-4 两枚测试可靠性缺陷（`dsh-ci-test-reliability` 规程）
 - `packages/mcp/mcp-client/tests/negotiation-lifecycle.spec.ts:127`：单跑绿（`5 passed (5)`）、跟队红；give-up 首现 635 ms（探针实测）⇒ 甲 显式 `timeout` 把假设写进参数（不推荐，把不稳定钉成合同）／乙 让它自带时序前提或进独占 lane（推荐）。
-- `scripts/verify-package-dependencies.spec.ts` 的 `keeps generated Host schema imports…`：只在整趟共享树红，单跑与干净整趟都绿（㊵-227）；已否证「他线污染」与「读环境状态」两假设（`policy()` 纯字面量、夹具自 `mkdtemp`）。甲 用例私有 root/缓存并在 `afterEach` 释放／乙 消除被测模块内模块级可变句柄。**具体共享了哪一个状态本轮未追到，不写成结论**。
+- ~~`scripts/verify-package-dependencies.spec.ts` 的 `keeps generated Host schema imports…`~~ **㊵-228 撤出本条**：它的失败原文是 `Error: Test timed out in 5000ms`（不是断言不等），单跑该条只花 483 ms ⇒ 属**并发超时的争用族**（㊵-221 的原判方向正确），不是套件内状态共享；S-4 只剩 `negotiation-lifecycle` 一条。
+单跑与干净整趟都绿（㊵-227）；已否证「他线污染」与「读环境状态」两假设（`policy()` 纯字面量、夹具自 `mkdtemp`）。甲 用例私有 root/缓存并在 `afterEach` 释放／乙 消除被测模块内模块级可变句柄。**具体共享了哪一个状态本轮未追到，不写成结论**。
 
 **引用本节的边界**：以上是方案，不是结果；本节没有任何一条已执行，因此**不构成任何判据达成的证据**。
