@@ -123,3 +123,13 @@ def test_the_a30_probe_reads_the_public_accessor_too() -> None:
     assert "_copy_evidence_utf8_gate_override" not in probe
     assert "gate_state = runtime.model.substrate.copy_evidence_utf8_gate_state()" in probe
     assert probe.count("gate_state[") == 4, probe.count("gate_state[")
+
+    #: DEBT-G30 第三步（2026-10-04）：两支测试的本地推导副本也迁到公开出口——
+    #: 回退成扒私有字段自推就是又一份会随产品改动过期的复制。
+    #: 注意只禁"重推有效值"的两种旧形状（getattr 兜底取字段／`if override is None` 三元式），
+    #: `assert …_copy_evidence_utf8_gate_override is None` 那类白盒读覆写位按登记保留（台账 DEBT-G30）。
+    for name in ("test_a30_copy_evidence_gate_flag.py", "test_a25_gate_on_the_load_path.py"):
+        reader = (Path(__file__).resolve().parent / name).read_text(encoding="utf-8")
+        assert "copy_evidence_utf8_gate_state()" in reader, name
+        assert 'getattr(substrate, "_copy_evidence_utf8_gate_override"' not in reader, name
+        assert "if override is None" not in reader, name

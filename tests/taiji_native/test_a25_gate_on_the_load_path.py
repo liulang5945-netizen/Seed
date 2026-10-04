@@ -41,8 +41,9 @@ def _config(**overrides: Any) -> TaijiConfig:
 
 
 def _effective_gate(model: Taiji) -> bool:
-    override = model._copy_evidence_utf8_gate_override
-    return bool(model.config.copy_evidence_utf8_gate) if override is None else bool(override)
+    """读产品公开出口三键里的 effective（DEBT-G30 迁移；不再扒私有字段自推）。"""
+
+    return bool(model.copy_evidence_utf8_gate_state()["effective"])
 
 
 def _feed(model: Taiji, symbols: bytes) -> None:

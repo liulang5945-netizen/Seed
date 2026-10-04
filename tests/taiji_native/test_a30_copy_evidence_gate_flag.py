@@ -25,12 +25,9 @@ CHECKPOINT = PROJECT_ROOT / "checkpoints" / "seed_a31self_with_circuit.pt"
 
 
 def _effective_gate(substrate) -> bool:
-    """与仪器自述同一条算式：config 那一位可能被 override 顶掉，两个都要读。"""
+    """读产品公开出口三键里的 effective（DEBT-G30 迁移；`config-or-override` 那条式子只住在产品里）。"""
 
-    override = getattr(substrate, "_copy_evidence_utf8_gate_override", None)
-    if override is None:
-        return bool(substrate.config.copy_evidence_utf8_gate)
-    return bool(override)
+    return bool(substrate.copy_evidence_utf8_gate_state()["effective"])
 
 
 def test_flag_and_guard_are_declared_in_the_instrument() -> None:
