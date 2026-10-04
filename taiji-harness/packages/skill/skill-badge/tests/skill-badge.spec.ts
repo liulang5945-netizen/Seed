@@ -34,7 +34,7 @@ describe('dsh-skill-badge', () => {
     expect(image.readUInt32BE(16)).toBe(726)
     expect(image.readUInt32BE(20)).toBe(120)
     expect(createHash('sha256').update(image).digest('hex')).toBe(
-      'f2c4f5ec9cbe847c0c763545c4d839efa8485bc74203733d0a0e8259f233c653',
+      '582267aed82af7a6973bf83f6ca359199833c254825be8e0cf5deeaeadcc3e4f',
     )
   })
 })

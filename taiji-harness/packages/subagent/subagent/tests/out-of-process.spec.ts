@@ -6,7 +6,7 @@
 
 import { chmodSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
-import { join, relative, resolve } from 'node:path'
+import { isAbsolute, join, relative, resolve } from 'node:path'
 import { describe, expect, it, vi } from 'vitest'
 import { SessionId } from '@taiji/dsh-session'
 import {
@@ -77,9 +77,12 @@ describe('child cwd resolution', () => {
   it('validateConfiguredCwd: undefined passes through, empty fails, relative resolves at load', () => {
     expect(validateConfiguredCwd('p', undefined)).toBeUndefined()
     expect(() => validateConfiguredCwd('p', '')).toThrow('config cwd must not be empty')
-    const tmp = mkdtempSync(join(tmpdir(), 'oop-rel-'))
+    const tmp = mkdtempSync(join(process.cwd(), '.dsh-oop-relcwd-'))
     try {
       const relativeCwd = relative(process.cwd(), tmp)
+      // A cross-drive temp root makes relative() return an absolute path, which would
+      // silently skip the branch this case covers.
+      expect(isAbsolute(relativeCwd), relativeCwd).toBe(false)
       // Resolution is lexical against the launch directory; the probe then
       // requires the resolved path to exist and be enterable.
       expect(validateConfiguredCwd('p', relativeCwd)).toBe(resolve(relativeCwd))
