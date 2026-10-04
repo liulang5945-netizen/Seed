@@ -177,6 +177,14 @@ class Taiji:
         #: "开关被走到"计数：竞争式应用过多少步（lifetime 累计，不随答案复位）。
         #: 没有它，一个从未开过枪的档会给出与真生效完全相同的读数（v12 那把松尺子的教训）。
         self._copy_evidence_competitive_steps = 0
+        #: SPEC-A-26 形状乙（owner 2026-10-04 弹窗裁"实现形状乙非可学门控"）：按答案资格门控的加性。
+        #: K 的运行时覆写（None ⇒ 0.0＝存在性门控；阶梯 {0.0,0.2,0.4} 先于数冻在 PLAN-A-30 §147）；
+        #: `eligible` 是**本答**的资格判定（None ⇒ 未判定 ⇒ gated 模式静音——没有决定就不发射），
+        #: 每次 generate 在锁事件处重算，答内不变。
+        self._copy_evidence_structural_min_overlap: float | None = None
+        self._copy_evidence_structural_eligible: bool | None = None
+        self._copy_evidence_gated_armed_answers = 0
+        self._copy_evidence_gated_silenced_answers = 0
         self._developmental_f1_replay: list[DevelopmentalReplayEvent] = []
         self._developmental_f1_replay_serial = 0
         self._memory_rng = torch.Generator(device="cpu")
@@ -1165,32 +1173,63 @@ class Taiji:
         self._copy_evidence_window_silenced = 0
 
     def set_copy_evidence_injection_mode(self, mode: str | None) -> None:
-        """SPEC-A-26 形状甲的评测期开关（`None` ⇒ 跟随 config；不进任何 payload、不改 config）。
+        """SPEC-A-26 的评测期开关（`None` ⇒ 跟随 config；不进任何 payload、不改 config）。
 
-        `"additive"`＝现行裸加；`"competitive"`＝证据不再裸加，而是作为一路独立候选头
-        与读出预测头在同一格上竞争（同一条读出头走两路，逐格 max 后归一）。
+        `"additive"`＝现行裸加；`"competitive"`＝形状甲：证据不再裸加，而是作为一路独立候选头
+        与读出预测头在同一格上竞争（同一条读出头走两路，逐格 max 后归一）；
+        `"gated"`＝形状乙：按答案资格门控的加性（资格量与 K 见 `set_copy_evidence_structural_min_overlap`）。
         与同族两枚覆写一样：lineage 守卫拒绝 config 被事后改动的档，所以开关走运行时覆写。
         """
 
         if mode is not None:
             if not isinstance(mode, str):
                 raise TypeError("copy-evidence injection mode must be a str or None")
-            if mode not in ("additive", "competitive"):
+            if mode not in ("additive", "competitive", "gated"):
                 raise ValueError(
-                    f"copy-evidence injection mode must be 'additive' or 'competitive', got {mode!r}"
+                    f"copy-evidence injection mode must be 'additive', 'competitive' or 'gated', "
+                    f"got {mode!r}"
                 )
         self._copy_evidence_injection_mode_override = mode
 
-    def copy_evidence_injection_state(self) -> dict[str, str | int]:
-        """"形状开关有没有被走到"的自证（同 `copy_evidence_window_stats()` 的动机）：
-        一个从没应用过竞争式的档，会给出与全加性完全相同的读数却看不见自己是空的。"""
+    def set_copy_evidence_structural_min_overlap(self, value: float | None) -> None:
+        """SPEC-A-26 形状乙的门槛 K（`None` ⇒ 0.0＝存在性门控；不进任何 payload）。
 
-        mode = (
-            self.config.copy_evidence_injection_mode
-            if self._copy_evidence_injection_mode_override is None
-            else self._copy_evidence_injection_mode_override
+        K 是 picked 事件 `overlap`（字符集交比，`copy_circuit.selection()` 列 2、byte_overlap
+        锁规则的记分列）的资格线：`≥ K` ⇒ 本答通道照加性武装；`< K` ⇒ 本答整答静音。
+        阶梯 {0.0, 0.2, 0.4} 先于数冻在 PLAN-A-30 §147，不许事后挑。
+        """
+
+        if value is not None:
+            if isinstance(value, bool) or not isinstance(value, (int, float)):
+                raise TypeError("structural gate min-overlap must be a float or None")
+            if not 0.0 <= float(value) <= 1.0:
+                raise ValueError("structural gate min-overlap must lie in [0, 1]")
+        self._copy_evidence_structural_min_overlap = None if value is None else float(value)
+
+    def _copy_evidence_injection_mode_effective(self) -> str:
+        """这条解析**只住一处**（DEBT-G30 的教训当场应用在自己的开关上）：
+        `override` 为空跟随 config，否则按显式覆写。状态读数、注入点、generate 锁块三处共用。"""
+
+        override = self._copy_evidence_injection_mode_override
+        return (
+            self.config.copy_evidence_injection_mode if override is None else override
         )
-        return {"mode": mode, "competitive_steps": self._copy_evidence_competitive_steps}
+
+    def copy_evidence_injection_state(self) -> dict[str, str | int | float]:
+        """"形状开关有没有被走到"的自证（同 `copy_evidence_window_stats()` 的动机）：
+        一个从没应用过竞争式/门控的档，会给出与全加性完全相同的读数却看不见自己是空的。"""
+
+        return {
+            "mode": self._copy_evidence_injection_mode_effective(),
+            "competitive_steps": self._copy_evidence_competitive_steps,
+            "gate_min_overlap": (
+                0.0
+                if self._copy_evidence_structural_min_overlap is None
+                else self._copy_evidence_structural_min_overlap
+            ),
+            "gated_armed_answers": self._copy_evidence_gated_armed_answers,
+            "gated_silenced_answers": self._copy_evidence_gated_silenced_answers,
+        }
 
     def set_copy_evidence_utf8_gate(self, enabled: bool | None) -> None:
         """PLAN-A-25 的**评测期开关**：`True/False` 覆写，`None` 跟随 config。
@@ -2349,18 +2388,18 @@ class Taiji:
                 else:
                     self._copy_evidence_window_silenced += 1
                     self._copy_evidence_window_silenced_total += 1
-            if within_window:
+            injection_mode = self._copy_evidence_injection_mode_effective()
+            #: SPEC-A-26 形状乙：资格未过（或未判定 ⇒ None）的本答整答静音——不发证据；
+            #: armed/silenced 的决定已在锁事件处记过数，这里不重复计。additive/competitive 不受影响。
+            if injection_mode == "gated" and not self._copy_evidence_structural_eligible:
+                pass
+            elif within_window:
                 copy_evidence = self._copy_circuit.evidence(
                     cue=self.fabric.cortical_context(regions),
                     f1_context=context,
                     prev_byte=int(symbol),
                     #: PLAN-A-25：门控只在开关打开时给状态；关闭 ⇒ None ⇒ 与开案前逐位相同。
                     utf8_state=circuit_utf8_state,
-                )
-                injection_mode = (
-                    self.config.copy_evidence_injection_mode
-                    if self._copy_evidence_injection_mode_override is None
-                    else self._copy_evidence_injection_mode_override
                 )
                 if injection_mode == "competitive":
                     #: SPEC-A-26 形状甲：不裸加——证据留作独立候选头，应用点在下方
@@ -3262,6 +3301,7 @@ class Taiji:
         #: （2026-10-02 实测：`emitted=64／silenced=276`＝`84 prompt＋256 答复`，读数 66/72 只是"等于不挂回路"）。
         self.reset_copy_evidence_window()
         circuit = self._copy_circuit
+        lock_state = None
         if circuit is not None and circuit.store.count > 0:
             #: A2.5 §1.2：事件选择只算一次——就在"提问喂完"这一刻的皮质态与运动语境上，
             #: 整轮固定。逐步重挑实测让 32.2% 的答案步挑到别的告知（`SPEC-A-17` §14）。
@@ -3272,11 +3312,34 @@ class Taiji:
                 lock_query = last_question_bytes(bytes(prompt))
             else:
                 lock_query = bytes(prompt)
-            circuit.lock_selection(
+            lock_state = circuit.lock_selection(
                 cue=self.cortical_cue(),
                 f1_context=self._state.motor_context,
                 query_bytes=lock_query,
             )
+        #: SPEC-A-26 形状乙：按答案资格门控——锁事件时刻算一次资格，答内不变（§147 冻结）。
+        #: 量＝锁规则自己的 overlap 记分列，故 gated 只许配 byte_overlap（否则 scores 名不符实），
+        #: 这条检查不问回路在不在场——模式是模型级的，装上回路前就该被拦。
+        self._copy_evidence_structural_eligible = None
+        if self._copy_evidence_injection_mode_effective() == "gated":
+            if self.config.lock_selection_rule != "byte_overlap":
+                raise ValueError(
+                    "copy-evidence gated mode requires lock_selection_rule='byte_overlap' "
+                    f"(got {self.config.lock_selection_rule!r}): the gate reads the "
+                    "selection's overlap column"
+                )
+            if circuit is not None and lock_state is not None:
+                min_overlap = (
+                    0.0
+                    if self._copy_evidence_structural_min_overlap is None
+                    else self._copy_evidence_structural_min_overlap
+                )
+                eligible = float(lock_state["scores"][int(lock_state["picked"])]) >= min_overlap
+                self._copy_evidence_structural_eligible = eligible
+                if eligible:
+                    self._copy_evidence_gated_armed_answers += 1
+                else:
+                    self._copy_evidence_gated_silenced_answers += 1
         try:
             generated = bytearray()
             response_start_pending = bool(response_start)

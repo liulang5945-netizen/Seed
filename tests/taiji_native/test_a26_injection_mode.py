@@ -50,6 +50,9 @@ def test_default_mode_is_additive() -> None:
     assert Taiji(_config()).copy_evidence_injection_state() == {
         "mode": "additive",
         "competitive_steps": 0,
+        "gate_min_overlap": 0.0,
+        "gated_armed_answers": 0,
+        "gated_silenced_answers": 0,
     }
 
 
@@ -80,10 +83,9 @@ def test_untrained_circuit_competitive_matches_additive_bit_for_bit() -> None:
         answer, model = _answer_with_mode(mode)
         answers[mode] = answer
         expected_steps = 0 if mode == "additive" else len(PROMPT) + 1 + 24
-        assert model.copy_evidence_injection_state() == {
-            "mode": mode,
-            "competitive_steps": expected_steps,
-        }, model.copy_evidence_injection_state()
+        state = model.copy_evidence_injection_state()
+        assert state["mode"] == mode and state["competitive_steps"] == expected_steps, state
+        assert state["gated_armed_answers"] == 0 and state["gated_silenced_answers"] == 0, state
     assert answers["additive"] == answers["competitive"], (answers["additive"], answers["competitive"])
 
 
@@ -123,6 +125,76 @@ def test_competitive_semantics_equals_elementwise_max_of_both_branches() -> None
     assert not torch.allclose(p_comp, p_add, atol=1e-6)
 
 
+def test_gated_mode_k_setter_and_byte_overlap_requirement() -> None:
+    """形状乙的 K 设定器（验证／None 回 0.0）与"量名相符"的响亮失败约束（§147 冻结⑤）。"""
+
+    model = Taiji(_config())
+    model.set_copy_evidence_injection_mode("gated")
+    assert model.copy_evidence_injection_state()["mode"] == "gated"
+    assert model.copy_evidence_injection_state()["gate_min_overlap"] == 0.0
+    model.set_copy_evidence_structural_min_overlap(0.2)
+    assert model.copy_evidence_injection_state()["gate_min_overlap"] == 0.2
+    model.set_copy_evidence_structural_min_overlap(None)
+    assert model.copy_evidence_injection_state()["gate_min_overlap"] == 0.0
+    with pytest.raises(ValueError, match=r"\[0, 1\]"):
+        model.set_copy_evidence_structural_min_overlap(1.5)
+    with pytest.raises(TypeError):
+        model.set_copy_evidence_structural_min_overlap(True)  # type: ignore[arg-type]
+    #: gated 的量是 byte_overlap 锁规则的记分列——配 cue_only 时 scores 名不符实，当场抛错。
+    strict = Taiji(_config(lock_selection_rule="cue_only"))
+    strict.set_copy_evidence_injection_mode("gated")
+    with pytest.raises(ValueError, match="byte_overlap"):
+        strict.generate(PROMPT, 4)
+
+
+def test_gated_silences_and_arms_per_answer() -> None:
+    """按答案资格门控的端到端语义（事件与提问共享 1 字 ⇒ overlap 1/7≈0.143）：
+
+    * K=0.2 ⇒ 资格未过 ⇒ 整答静音 ⇒ 答复与"无回路"逐位相同，计数记 silenced；
+    * K=0.0 ⇒ 资格过 ⇒ 通道照加性武装 ⇒ 答复与加性档逐位相同，计数记 armed。
+    门槛是**按答**一次判定：同一答内不换（锁事件时刻定死）。
+    """
+
+    question = "我的名字是什么？".encode()
+
+    def _gated_run(k: float | None) -> tuple[bytes, dict[str, Any]]:
+        model = Taiji(_config(copy_evidence_injection_mode="gated"))
+        model.mount_copy_circuit(max_events=4)
+        model.copy_circuit.store.record(
+            "我叫阿岩，今年九岁。".encode(), torch.zeros(model.copy_circuit.store.cue_dim)
+        )
+        evidence = torch.zeros(model.config.alphabet_size)
+        evidence[0x41] = 0.35
+        model.copy_circuit.evidence = (  # type: ignore[method-assign]
+            lambda **kwargs: evidence
+        )
+        if k is not None:
+            model.set_copy_evidence_structural_min_overlap(k)
+        return model.generate(question, 24), model.copy_evidence_injection_state()
+
+    gated_strict, state_strict = _gated_run(0.2)
+    gated_loose, state_loose = _gated_run(0.0)
+
+    #: 参照臂：同 stub 的加性档与无回路档。
+    additive_model = Taiji(_config())
+    additive_model.mount_copy_circuit(max_events=4)
+    additive_model.copy_circuit.store.record(
+        "我叫阿岩，今年九岁。".encode(), torch.zeros(additive_model.copy_circuit.store.cue_dim)
+    )
+    evidence = torch.zeros(additive_model.config.alphabet_size)
+    evidence[0x41] = 0.35
+    additive_model.copy_circuit.evidence = (  # type: ignore[method-assign]
+        lambda **kwargs: evidence
+    )
+    additive_answer = additive_model.generate(question, 24)
+    nocircuit_answer = Taiji(_config()).generate(question, 24)
+
+    assert gated_strict == nocircuit_answer, (gated_strict, nocircuit_answer)
+    assert state_strict["gated_silenced_answers"] == 1 and state_strict["gated_armed_answers"] == 0
+    assert gated_loose == additive_answer, (gated_loose, additive_answer)
+    assert state_loose["gated_armed_answers"] == 1 and state_loose["gated_silenced_answers"] == 0
+
+
 def test_product_entry_forwards_injection_mode() -> None:
     """产品入口必须能把注入形状传进去（照 window_steps 那条的形状：kw-only、默认 None）。"""
 
@@ -143,6 +215,22 @@ def test_product_entry_forwards_injection_mode() -> None:
         for offset in range(1, 7)
         if index + offset < len(lines)
     ), "forward not inside the guard"
+    #: 形状乙的 K 走同一条入口（kw-only、默认 None、条件转发）。
+    parameter = inspect.signature(SeedRuntime.enable_copy_circuit).parameters["gate_min_overlap"]
+    assert parameter.default is None, parameter
+    assert parameter.kind is inspect.Parameter.KEYWORD_ONLY, parameter
+    guarded_k = [
+        index
+        for index, line in enumerate(lines)
+        if line.strip() == "if gate_min_overlap is not None:"
+    ]
+    assert guarded_k, "no conditional guard for gate_min_overlap"
+    assert any(
+        "substrate.set_copy_evidence_structural_min_overlap(gate_min_overlap)" in lines[index + offset]
+        for index in guarded_k
+        for offset in range(1, 7)
+        if index + offset < len(lines)
+    ), "K forward not inside the guard"
 
 
 def test_the_model_has_exactly_one_injection_site() -> None:
@@ -153,8 +241,10 @@ def test_the_model_has_exactly_one_injection_site() -> None:
         "self._copy_circuit.evidence("
     )
     assert source.count("self._copy_evidence_competitive_steps += 1") == 1
-    #: 模式解析（config-or-override）恰两处：状态读数与注入点——又一份复制推导就是又一颗
-    #: DEBT-G30 那样的"随产品改动过期"的种子。
-    assert source.count("if self._copy_evidence_injection_mode_override is None") == 2
+    #: 模式解析（config-or-override）只住一处（私有 helper，DEBT-G30 的教训当场应用）；
+    #: 状态读数／注入点／generate 锁块三处都必须走它，内联旧形状必须绝迹。
+    assert source.count("def _copy_evidence_injection_mode_effective") == 1
+    assert source.count("self._copy_evidence_injection_mode_effective()") >= 3
+    assert source.count("if self._copy_evidence_injection_mode_override is None") == 0
     config_source = (PROJECT_ROOT / "taiji" / "config.py").read_text(encoding="utf-8")
     assert 'copy_evidence_injection_mode: str = "additive"' in config_source

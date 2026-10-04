@@ -96,6 +96,7 @@ def run_arm(
     window_steps: int | None = None,
     product_window_steps: int | None = None,
     injection_mode: str | None = None,
+    gate_min_overlap: float | None = None,
 ) -> dict[str, Any]:
     """一臂：跑完 104 题，按产品 chat 协议取基底原始答复，统计表层三率。
 
@@ -139,6 +140,10 @@ def run_arm(
         if substrate.copy_circuit is None:
             raise SystemExit("要求注入形状档但本臂没有回路 ⇒ 竞争式没有可竞争的通道")
         substrate.set_copy_evidence_injection_mode(injection_mode)
+    if gate_min_overlap is not None:
+        if injection_mode != "gated":
+            raise SystemExit("资格线 K 只在 injection-mode gated 下有意义")
+        substrate.set_copy_evidence_structural_min_overlap(gate_min_overlap)
     #: DEBT-G30 顺手迁移（本轮加旗标即本仪器的"下次升版"场合）：有效值读产品公开出口，
     #: 不再扒私有字段重推（那条式子只住产品一处）。
     gate_effective = bool(substrate.copy_evidence_utf8_gate_state()["effective"])
@@ -367,9 +372,17 @@ def main() -> int:
         "--copy-evidence-injection-mode",
         type=str,
         default=None,
-        choices=["additive", "competitive"],
-        help="SPEC-A-26 形状甲（作用于每枚治疗臂）：证据注入形状——additive＝现行裸加，"
-        "competitive＝独立候选头同格竞争（不裸加）。调产品原生开关，不给 ⇒ 不调用 ⇒ 逐位不变。",
+        choices=["additive", "competitive", "gated"],
+        help="SPEC-A-26（作用于每枚治疗臂）：证据注入形状——additive＝现行裸加，"
+        "competitive＝形状甲独立候选头同格竞争（不裸加），gated＝形状乙按答案资格门控的加性。"
+        "调产品原生开关，不给 ⇒ 不调用 ⇒ 逐位不变。",
+    )
+    parser.add_argument(
+        "--copy-evidence-gate-min-overlap",
+        type=float,
+        default=None,
+        help="SPEC-A-26 形状乙：资格线 K（提问—事件字符集交比），只在 injection-mode gated 下有意义；"
+        "阶梯 {0.0, 0.2, 0.4} 冻在 PLAN-A-30 §147。",
     )
     args = parser.parse_args()
     surface = bool(args.surface_chain)
@@ -393,6 +406,7 @@ def main() -> int:
             window_steps=args.evidence_window_steps,
             product_window_steps=args.product_window_steps,
             injection_mode=args.copy_evidence_injection_mode,
+            gate_min_overlap=args.copy_evidence_gate_min_overlap,
         )
         for circuit in args.circuit
     ]
@@ -443,6 +457,17 @@ def main() -> int:
         #: SPEC-A-26 形状甲：请求档（作用于每枚治疗臂；控制臂不接）与"被走到"守卫——
         #: 每枚治疗臂的生效档必须等于请求，competitive 档的 competitive_steps 必须 >0。
         "copy_evidence_injection_mode": args.copy_evidence_injection_mode,
+        "copy_evidence_gate_min_overlap": args.copy_evidence_gate_min_overlap,
+        "structural_gate_decided": args.copy_evidence_injection_mode != "gated"
+        or (
+            bool(treated)
+            and all(
+                (arm.get("copy_evidence_injection_state") or {}).get("gated_armed_answers", 0)
+                + (arm.get("copy_evidence_injection_state") or {}).get("gated_silenced_answers", 0)
+                > 0
+                for arm in treated
+            )
+        ),
         "injection_mode_honored": (
             args.copy_evidence_injection_mode is None
             or (

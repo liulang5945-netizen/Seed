@@ -1096,10 +1096,18 @@ def main() -> int:
         "--copy-evidence-injection-mode",
         type=str,
         default=None,
-        choices=["additive", "competitive"],
-        help="v40（SPEC-A-26 形状甲）产品档：证据注入形状——additive＝现行裸加，"
-        "competitive＝独立候选头同格竞争（不裸加）。调产品原生开关 "
-        "`Taiji.set_copy_evidence_injection_mode`；不给 ⇒ 不调用 ⇒ 与 v39 逐位不变。",
+        choices=["additive", "competitive", "gated"],
+        help="v40/v41（SPEC-A-26）产品档：证据注入形状——additive＝现行裸加，"
+        "competitive＝形状甲独立候选头同格竞争（不裸加），gated＝形状乙按答案资格门控的加性。"
+        "调产品原生开关 `Taiji.set_copy_evidence_injection_mode`；不给 ⇒ 不调用 ⇒ 与上一版逐位不变。",
+    )
+    parser.add_argument(
+        "--copy-evidence-gate-min-overlap",
+        type=float,
+        default=None,
+        help="v41（SPEC-A-26 形状乙）：资格线 K（提问—事件字符集交比，picked 事件的 "
+        "byte_overlap 记分列），只在 --copy-evidence-injection-mode gated 下有意义。"
+        "阶梯 {0.0, 0.2, 0.4} 先于数冻在 PLAN-A-30 §147，不许事后挑。",
     )
     args = parser.parse_args()
 
@@ -1259,6 +1267,11 @@ def main() -> int:
         if substrate.copy_circuit is None:
             raise SystemExit("v40：要求注入形状档但回路不在场 ⇒ 竞争式没有可竞争的通道")
         substrate.set_copy_evidence_injection_mode(args.copy_evidence_injection_mode)
+    if args.copy_evidence_gate_min_overlap is not None:
+        #: v41（SPEC-A-26 形状乙）：资格线 K 走产品原生开关；只配 gated，给错档响亮停下。
+        if args.copy_evidence_injection_mode != "gated":
+            raise SystemExit("v41：--copy-evidence-gate-min-overlap 只在 injection-mode gated 下有意义")
+        substrate.set_copy_evidence_structural_min_overlap(args.copy_evidence_gate_min_overlap)
     if args.evidence_window_steps is not None:
         if substrate.copy_circuit is None:
             raise RuntimeError("要求资格档但回路不在场 ⇒ 没有可静音的证据通道")
@@ -1495,7 +1508,15 @@ def main() -> int:
     #: `copy_evidence_injection_state()`（含 competitive 计数），一次读取、两处共用。
     injection_state = substrate.copy_evidence_injection_state()
     report = {
-        "format": "taiji-a30-stop-failure-v40",
+        "format": "taiji-a30-stop-failure-v41",
+        "format_note_v41": "v41（2026-10-04）：SPEC-A-26 形状乙（owner 弹窗裁'实现形状乙非可学门控'）"
+        "加**产品档** `--copy-evidence-gate-min-overlap`——资格线 K，量＝锁事件 picked 事件的 "
+        "byte_overlap 记分列（字符集交比，`copy_circuit.selection()` 列 2，唯一住处），"
+        "按答案资格门控的加性：`≥ K` 本答武装、`< K` 本答整答静音。阶梯 {0.0, 0.2, 0.4} "
+        "先于数冻在 PLAN-A-30 §147。件里新增 `copy_evidence_gate_min_overlap`（请求 K）、"
+        "`copy_evidence_injection_state` 扩三键（gate_min_overlap／gated_armed_answers／"
+        "gated_silenced_answers）与守卫 `structural_gate_decided`（gated 档必须有决定可记）。"
+        "既有列一字未动 ⇒ 与 v6–v40 同格可比。",
         "format_note_v40": "v40（2026-10-04）：SPEC-A-26 形状甲立项后加**产品档** "
         "`--copy-evidence-injection-mode`——调产品原生开关 `Taiji.set_copy_evidence_injection_mode`，"
         "证据注入形状 additive（现行裸加）／competitive（独立候选头同格竞争，不裸加）。"
@@ -1704,8 +1725,9 @@ def main() -> int:
         #: v20：产品原生门的自述（None ⇒ 这条面从未被走）。
         "product_window_steps": args.product_window_steps,
         "product_window_stats": substrate.copy_evidence_window_stats(),
-        #: v40（SPEC-A-26 形状甲）：注入形状的请求档与产品自述（生效档＋competitive 计数）。
+        #: v40/v41（SPEC-A-26）：注入形状的请求档与产品自述（生效档＋competitive/gated 计数）。
         "copy_evidence_injection_mode": args.copy_evidence_injection_mode,
+        "copy_evidence_gate_min_overlap": args.copy_evidence_gate_min_overlap,
         "copy_evidence_injection_state": injection_state,
         "store_scope_conversation": bool(args.store_scope_conversation),
         "oracle_selector": bool(args.oracle_selector),
@@ -1791,9 +1813,23 @@ def main() -> int:
                     injection_state["mode"] == args.copy_evidence_injection_mode
                     and (
                         args.copy_evidence_injection_mode == "additive"
-                        or injection_state["competitive_steps"] > 0
+                        or (
+                            args.copy_evidence_injection_mode == "competitive"
+                            and injection_state["competitive_steps"] > 0
+                        )
+                        #: gated 的"被走到"由 structural_gate_decided 单独管（首答无告知历史
+                        #: 不产生决定是正常形状，competitive 计数对它恒 0，不能拿来判）。
+                        or args.copy_evidence_injection_mode == "gated"
                     )
                 )
+            ),
+            #: v41（SPEC-A-26 形状乙）：gated 档必须有决定可记（armed+silenced >0）——
+            #: 全 0 说明资格判定根本没发生（题面没进过锁事件 ⇒ 档是空的，读数无效）。
+            "structural_gate_decided": args.copy_evidence_injection_mode != "gated"
+            or (
+                injection_state["gated_armed_answers"]
+                + injection_state["gated_silenced_answers"]
+                > 0
             ),
             #: v18：检索侧档必须**被走到**（清掉的陈旧条数 > 0），并把重置后的候选集大小上下界存进件里。
             "store_scope_consumed": (not args.store_scope_conversation) or store_counters[0] > 0,
