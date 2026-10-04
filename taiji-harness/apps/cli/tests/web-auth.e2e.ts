@@ -197,7 +197,11 @@ describe('dsh web authentication through the real CLI', () => {
       expect((await describeSettings(port, secondUrl.host, cookie)).status).toBe(200)
 
       const credentialMode = (await stat(join(dshHome, '.credentials.yaml'))).mode & 0o777
-      expect(credentialMode).toBe(0o600)
+      // Windows `stat` synthesizes the mode bits, so they are not an access-control
+      // surface there (NTFS ACLs decide); 0o666 is what the platform reports for a
+      // writable file, and the Windows-side guarantee stays unverified by this lane.
+      if (process.platform === 'win32') expect(credentialMode).toBe(0o666)
+      else expect(credentialMode).toBe(0o600)
     } catch (error) {
       const evidence = [first?.output(), second?.output()].filter(value => value !== undefined).join('\n')
       throw new Error(`${error instanceof Error ? error.message : String(error)}\n${redact(evidence)}`, { cause: error })
