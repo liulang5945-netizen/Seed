@@ -153,5 +153,6 @@
 - 每次改动执行风险相称的相关检查；新回归先修，存量失败保留可复现账本。
 - 能力研究的局部检查、全量测试、远端 workflow 三套状态分账。正式发布须实际 workflow 通过，不以历史计数豁免。
 - 2026-09-16已查询远端：run34869725409，d09dcc21，总体failure（3.10腿）；3.12/Windows等通过。这不是当前HEAD的CI，不声称全绿。
+- 2026-10-04按"三套状态分账"补一条：**`taiji-harness` 的远端 workflow 一套是空集**。本轮实测：该目录无独立 `.git`（toplevel＝`E:/Seed`），其 20 个 workflow 文件位于**子目录** `taiji-harness/.github/workflows/`（`git ls-files "taiji-harness/.github/workflows/*"｜wc -l`＝20），而 GitHub 只加载**仓根** workflows；仓根只有 `.github/workflows/ci.yml`，其中 `grep -c taiji-harness`＝0。㊵-278 另记该 remote 上 `gh workflow list` 只返回 "CI" 与 "Dependabot Updates"。⇒ 本仓所有 harness 门读数（build／doc-sync／hygiene／coverage／web／e2e）**只有本机证据**，收官与评审表述里不得写"CI 已验证"；也不许反过来拿"CI 没接线"解释 harness 门的 rc=1。此条不新增 M6 欠账（本页 `:14`／`:146` 把"端到端／正式 CI"列在产品采用/发布与 M7 发布行，不在 M6 六项退出条件内）；但 M7 那两行需先决定接线方式：甲＝把 harness 的 workflows 移出子目录（独立仓或子模块），乙＝根 `ci.yml` 增加在 `taiji-harness/` 跑 `check:ci:*` 的 job。两条均未裁，记为 **M7 前置工程**。
 - R2各已结案工作包保留工程成果、负结果和final边界，详情见[结果总览](../../reference/PROJECT_RESULTS_AND_CONCLUSIONS_20260917.md)。本页不保留过时“下一步”，也不把新规则修订等同训练授权；当前状态只看03。
 - 冻结报告只追加后继指针或另存复审，不覆盖失败；证据失效时撤回对应范围，不能无依据撤销整个项目。
