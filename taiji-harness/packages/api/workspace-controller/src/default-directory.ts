@@ -56,7 +56,7 @@ export async function defaultWorkspaceDirectory(
       case 'win32':
         ({ stdout } = await run('powershell.exe', [
           '-NoLogo', '-NoProfile', '-NonInteractive', '-Command',
-          '[Console]::OutputEncoding = [System.Text.UTF8Encoding]::new($false); '
+          'if ($ExecutionContext.SessionState.LanguageMode -eq "FullLanguage") { [Console]::OutputEncoding = [System.Text.UTF8Encoding]::new($false) }; '
           + '[Environment]::GetFolderPath([Environment+SpecialFolder]::MyDocuments, '
           + '[Environment+SpecialFolderOption]::DoNotVerify)',
         ], signal))
