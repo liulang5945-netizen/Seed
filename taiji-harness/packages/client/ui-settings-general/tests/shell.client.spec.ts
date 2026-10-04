@@ -109,21 +109,17 @@ describe('ui-settings-general shell', () => {
     off()
   })
 
-  it('shows Account first in Desktop while signed in and removes it on sign-out', async ({ start }) => {
+  it('keeps the settings rail account-free while no login registrant exists', async ({ start }) => {
     vi.stubGlobal('dshDesktop', {})
     onTestFinished(() => { vi.unstubAllGlobals() })
     const c = await start()
     const { sections } = injectedOf(c).hooks
-    await c.mock.streams.opened('account/watch', 1)
+    // Regression sentinel: the login UI package was deleted, so nothing registers an `account`
+    // section and nothing opens `account/watch`. Assert the absence instead of waiting for a
+    // stream no client code reads; re-landing a login path must turn this red on purpose.
     expect(sections.getSnapshot().map(row => row.id)).toEqual(PRODUCT_SECTIONS)
-    c.mock.streams.push('account/watch', { status: 'credential-stored', attempt: null })
-    await vi.waitFor(() => {
-      expect(sections.getSnapshot().map(row => row.id)).toEqual(['account', ...PRODUCT_SECTIONS])
-    })
-    c.mock.streams.push('account/watch', { status: 'credential-stored', attempt: null })
-    await vi.waitFor(() => { expect(sections.getSnapshot().filter(row => row.id === 'account')).toHaveLength(1) })
-    c.mock.streams.push('account/watch', { status: 'signed-out', attempt: null })
-    await vi.waitFor(() => { expect(sections.getSnapshot().map(row => row.id)).toEqual(PRODUCT_SECTIONS) })
+    await Promise.resolve()
+    expect(sections.getSnapshot().map(row => row.id)).toEqual(PRODUCT_SECTIONS)
   })
 
   it('projects the roster Connection control without copying its state; reconnect opens a new $events generation', async ({ start }) => {

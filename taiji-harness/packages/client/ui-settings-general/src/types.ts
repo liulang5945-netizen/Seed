@@ -27,7 +27,7 @@ export interface DesktopUpdateBridge {
   subscribe(listener: (state: DesktopUpdatePresentation) => void): () => void
 }
 
-/** Shared carrier status for the account row and collapsed sidebar badge. */
+/** Shared carrier status for the desktop update badge in expanded and collapsed chrome. */
 export interface DesktopUpdateView {
   readonly presentation?: DesktopUpdatePresentation
   readonly failed: boolean
