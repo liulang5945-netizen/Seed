@@ -62,6 +62,7 @@ describe('release families', () => {
       '@taiji/dsh-experimental-computer-use-cua-driver-native',
       '@taiji/dsh-experimental-inspector',
       '@taiji/dsh-experimental-ptc-runtime-python',
+      '@taiji/dsh-experimental-schedule-bundle',
       '@taiji/dsh-experimental-speech-to-text-sensevoice',
       '@taiji/dsh-experimental-speech-to-text',
       '@taiji/dsh-experimental-tool-agent-team',

@@ -20,17 +20,17 @@ const profiles = {
   source: {
     count: 89,
     indexes: [0, 1, 4, 5],
-    sha256: '3e8b8455827254d6da59afb803d30f062b9fe1264b4df75ce4c8cd6e742b93dd',
+    sha256: '7733a1e1f409b1fb1332920cf468d2c2ae97f0b30ac865609eac2b5d4088e82c',
   },
   example: {
     count: 88,
     indexes: [0, 1, 2, 4, 5],
-    sha256: 'e2b944c028ef1971302d47b2eb0e95c05e740623c7cbaebb4b1312dbf73bf156',
+    sha256: '7b46005648a1d9a237ac045fff1f47105bf31bf14c9a490617566c6bb8eeed42',
   },
   test: {
     count: 84,
     indexes: [0, 3, 4, 5],
-    sha256: '7e4e1ed0cfca06ac94eeb26081195b5f753e7527775d5f5b95ccfefac9d2b137',
+    sha256: 'b704b1dd3796d7f27449f30ea331710ea0d774f66aa8b8e0292e8ce5049092d4',
   },
 } as const satisfies Record<string, Profile>
 
