@@ -158,4 +158,36 @@ describe('semantic checkpoint hard-crash recovery', () => {
     expect(closing.at(-1)).toMatchObject({ data: { reason: { kind: 'interrupted' } } })
     await ctx.fiber.dispose()
   })
+
+  it('repairs a real kill -9 inside a tool call through the product resume() path', async () => {
+    // The tool failpoint leaves an announced call with no result; only the
+    // shipped repair may write the unknown-outcome result and the closure.
+    const crashed = await crashAt('tool')
+    const ctx = new Context()
+    await mountAgentLoopTestDependencies(ctx)
+    await ctx.plugin(AgentLoop, { agents: [] })
+    await ctx.plugin(JsonlSessionPersistence, { root: crashed.root, compression: 'none' })
+    const readStored = async (): Promise<SessionEvent[]> => {
+      const reader = await ctx.sessionPersistence.open(sessionId, 'read')
+      try {
+        return (await reader.read()).events
+      } finally {
+        await reader.close()
+      }
+    }
+    expect((await readStored()).some(event => event.type === 'turn/end'), 'pre-resume log already closed').toBe(false)
+    const handle = await ctx.agents.resume({
+      resumeSessionId: sessionId,
+      agentOptions: { provider: 'crash', model: 'crash' },
+    })
+    await handle.dispose()
+    const stored = await readStored()
+    const result = stored.find(event => event.type === 'tool/result')
+    expect(result?.type === 'tool/result' && result.data.error).toEqual({
+      name: 'ToolOutcomeUnknownError', code: TOOL_OUTCOME_UNKNOWN,
+    })
+    expect(stored.filter(event => event.type === 'turn/end').at(-1))
+      .toMatchObject({ data: { reason: { kind: 'interrupted' } } })
+    await ctx.fiber.dispose()
+  })
 })
