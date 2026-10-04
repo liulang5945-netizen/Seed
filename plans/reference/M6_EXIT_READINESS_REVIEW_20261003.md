@@ -307,3 +307,17 @@
 **需要您点头的两件（属"刷/重录"类，我不擅自）**：① `packages/shell/pwsh-local/README.md` 与其孪生 `README.zh.md` 两侧同改后跑 `verify-translation-pairing -- --write` 重录配对记录（本轮我改的源码功能已入库，文档欠项在 ㊵-243）；② 若将来要动 `approval-composer` 的金样，须先做完 甲，否则会把问号文本烤进基线。
 
 **本轮我明确**不做**的两件及理由**：① 不实施 甲——它动模型可见文本与会话日志内容，且 pwsh 7 装上后这一族形状可能整体改变，您已裁"等前置拿真读数"；② 不把任何绿色 lane 改红（`out-of-process.spec.ts` 那枚"绿而无效"已按您裁加了前置守卫，若守卫变红才说明有产品缺陷——实测 `11 passed | 1 skipped` 未复现）。
+
+## §14 · 预算用尽时的续跑清单（2026-10-04 收束段；每条＝命令／复验判据／风险，可直接复制）
+
+1. **e2e 面余 6 枚未判读红**（终数 10 枚里已判 4 枚，见 08 ㊵-252／253）。命令：在 `taiji-harness/` 内 `corepack pnpm run test:e2e <完整路径>` 逐枚隔离复跑。复验判据＝单跑 rc 与同形错原文逐字对齐后再分档（同形＝一根因）。风险两条：用 `pnpm exec` 会因缺 `npm_execpath` 造 built 型 spec 的假红；隔离日志文件名必须用完整路径——本轮两枚同名 `built-lib.e2e.ts` 被我按 basename 覆盖了一份读数。
+2. **built 产物档那两枚**（`webworker-packer`／`inspector` 的 `built-lib.e2e.ts`）。命令：先 `corepack pnpm run build`，再复跑这两枚。复验判据＝`gzip: stdin: unexpected end of file`／`tar: Error is not recoverable … expected 2 to be +0` 这组同形错消失。风险＝整面跑前的产物新鲜度（`build:web` 只打旧 lib 那条已登记）。
+3. **pwsh 族 4 枚**（判据④ 余 3 枚＋`pwsh-sandbox/tests/acl.e2e.ts` 1 枚，DENIED 与 OK 两条断言同时倒、9ms 即失败）。命令（需 owner 先装 pwsh 7）：`corepack pnpm run check:ci:coverage`，**跑期不提交**。复验判据＝pwsh 契约族红消失，且阈值面 `ERROR` 行数按趟记录不互抄。
+4. **符号链接特权**：本轮现测 `{"file":"EPERM","dir":"EPERM","junction":"OK"}`。到位后同样走 `check:ci:coverage`；纯符号链接那 23 枚的归属才有意义。二者任一到位我都立刻重跑，不改本机权限、不代裁。
+5. **判据③ 缺的那条合取**：把已取到的真 SIGKILL 崩溃产物接进产品 `ctx.agents.resume()`（照 `packages/core/agent-loop/tests/resume.spec.ts:479`／`:504`／`:543` 三支的形状，`:543` 是「torn physical tail」）。复验判据＝经 `resume()` 读回的尾部含 interrupted closers 且落盘。**注意**：这条 lane 不在任何 CI 面上（`test:e2e` 只在 Linux runner，Windows 门里用 e2e config 的只有 `builtBinSmokeGate` 写死的 5 枚文件），所以本机绿不等于有门守着。回滚那条跨平台真 kill -9 验收仍空。
+6. **判据⑦ 最后 1 枚红**：有序两步不变——先 甲（按宿主 OEM 码页解码，需 `936→gbk` 等标签表；`new TextDecoder('cp936')` 本机抛不支持），再该 lane 局部折叠；**不动金样**（㊵-246 已证两侧同一条执行路径，refresh 只会把 U+FFFD 烤进基线）。按您的"等 pwsh 7 一起定"排队。
+7. **判据⑤ 装机首启**：`127.0.0.1:8000`／`localhost:8000` 两次探测均无监听，我没擅自起后端。需要您那一次真机观察，看两处（UI 缺 key 提示卡 ＋ 同刻进程侧日志原文）。
+8. **属"刷/重录"类、等您点头的两件**：`verify-translation-pairing -- --write` 重录 pwsh-local README 双语对（两侧须同改）；H1 带凭据重录 `session-snapshot` 的 replay 场景（无凭据重录会只改写半截夹具，本线已实测作废一趟）。
+9. **仍要您裁的口径两件**：退出条件第 4 项"故障⇒撤路由＋给用户一句错误"——现契约 `RequestErrorAction = { kind: 'retry' } | undefined`（`packages/core/agent/src/runtime-types.ts:122`）表达不出来，要么批准扩事件契约＋改 `agent-loop`＋同步 `docs/architecture.md`，要么把口径改写为"重试到上限＋日志"并记为有意收缩；以及 e2e 面这 6 枚未判读红要不要进 M6 还是留 M7。
+
+**M6 未收官**：`02` 里那一项签字本身仍未给；本清单不改变任何一格的"可主张／不可主张"。
