@@ -107,6 +107,12 @@ function image(value: number, mediaType: ImageMediaType = 'image/png'): SaveImag
   return { data: Uint8Array.of(value), mediaType, name: `${value}.png` }
 }
 
+describe('ImageVariantId', () => {
+  it('brands an opaque variant identifier without rewriting it', () => {
+    expect(ImageVariantId('sha256:0100')).toBe('sha256:0100')
+  })
+})
+
 describe('AttachmentStore.saveImages', () => {
   it('validates the complete batch before saving in input order', async () => {
     const store = new RecordingStore(new Context())
