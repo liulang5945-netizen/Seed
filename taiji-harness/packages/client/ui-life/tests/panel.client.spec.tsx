@@ -713,6 +713,26 @@ describe('LifePanel', () => {
     await waitFor(() => { expect(mocks.trainStop).toHaveBeenCalledTimes(1) })
   })
 
+  it('keys pause and resume off pauseRequested, the only paused reading the runtime carries', () => {
+    // There is no separate `paused` flag in the training payload (runtime-client.ts:693-698),
+    // so `pauseRequested` is what says "pausing or paused" and both verbs have to key off it.
+    const running = stubLife(nativeSnapshot({
+      training: { isTraining: true, pauseRequested: false, stopRequested: false, publishing: false, checkpoints: [] },
+    }))
+    mountPanel(running.life)
+    expect(screen.getByRole('button', { name: en.trainPause }).hasAttribute('disabled')).toBe(false)
+    expect(screen.getByRole('button', { name: en.trainResume }).hasAttribute('disabled')).toBe(true)
+    cleanup()
+
+    const pausing = stubLife(nativeSnapshot({
+      training: { isTraining: true, pauseRequested: true, stopRequested: false, publishing: false, checkpoints: [] },
+    }))
+    mountPanel(pausing.life)
+    expect(screen.getByText(en.trainingPauseRequested)).not.toBeNull()
+    expect(screen.getByRole('button', { name: en.trainPause }).hasAttribute('disabled')).toBe(true)
+    expect(screen.getByRole('button', { name: en.trainResume }).hasAttribute('disabled')).toBe(false)
+  })
+
   it('renders a control refusal as stable copy and clears it on the next success', async () => {
     const { life, mocks } = stubLife(legacySnapshot())
     mocks.lifeStop.mockRejectedValue(new LifeControlError(UNAVAILABLE))

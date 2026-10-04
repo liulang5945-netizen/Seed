@@ -759,8 +759,8 @@ function TrainingSection({ t, snapshot, pending, confirming, run, life }: Sectio
             >
               {t('trainStart')}
             </Button>
-            <Button disabled={busy || !active || training.stopRequested} aria-busy={pending === 'trainPause'} onClick={() =>{  run('trainPause', () => life.trainPause()) }}>{t('trainPause')}</Button>
-            <Button disabled={busy || !active || training.stopRequested} aria-busy={pending === 'trainResume'} onClick={() =>{  run('trainResume', () => life.trainResume()) }}>{t('trainResume')}</Button>
+            <Button disabled={busy || !active || training.stopRequested || training.pauseRequested} aria-busy={pending === 'trainPause'} onClick={() =>{  run('trainPause', () => life.trainPause()) }}>{t('trainPause')}</Button>
+            <Button disabled={busy || !active || training.stopRequested || !training.pauseRequested} aria-busy={pending === 'trainResume'} onClick={() =>{  run('trainResume', () => life.trainResume()) }}>{t('trainResume')}</Button>
             {/* The destructive pair is pushed to the far end and set off by a
               divider, so "starts on the left, destroys on the right" becomes a
               position memory rather than something to re-read every time. */}
