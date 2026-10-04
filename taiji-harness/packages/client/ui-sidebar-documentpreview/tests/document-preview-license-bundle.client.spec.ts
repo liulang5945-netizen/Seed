@@ -34,13 +34,20 @@ function run(command: string, args: string[], cwd: string, timeout: number): str
 
 function runPnpm(args: string[], cwd: string, timeout: number): string {
   const entrypoint = process.env.npm_execpath
-  if (entrypoint === undefined || entrypoint === '') {
-    if (process.platform === 'win32') throw new Error('npm_execpath is required to run pnpm on Windows')
-    return run('pnpm', args, cwd, timeout)
+  if (entrypoint !== undefined && entrypoint !== '') {
+    return /\.[cm]?js$/iu.test(entrypoint)
+      ? run(process.execPath, [entrypoint, ...args], cwd, timeout)
+      : run(entrypoint, args, cwd, timeout)
   }
-  return /\.[cm]?js$/iu.test(entrypoint)
-    ? run(process.execPath, [entrypoint, ...args], cwd, timeout)
-    : run(entrypoint, args, cwd, timeout)
+  if (process.platform !== 'win32') return run('pnpm', args, cwd, timeout)
+  // Windows has no shell-free way to reach pnpm here: the `.CMD` shim spawns as EINVAL and the extensionless
+  // corepack shim as ENOENT, and `pnpm exec vitest` leaves no `npm_execpath`. Resolve the workspace-installed
+  // pnpm CLI through Node's own resolver and run it with this process's Node — no PATH lookup, no shell shim.
+  const manifestPath = require.resolve('pnpm')
+  const manifest = JSON.parse(readFileSync(manifestPath, 'utf8')) as { bin?: string | Record<string, string> }
+  /* v8 ignore next -- pnpm always publishes a bin entry; the guard turns a broken install into a loud error */
+  const binEntry = (typeof manifest.bin === 'string' ? manifest.bin : manifest.bin?.pnpm) as string
+  return run(process.execPath, [resolve(dirname(manifestPath), binEntry), ...args], cwd, timeout)
 }
 
 describe('published document preview licenses', () => {
