@@ -4,6 +4,11 @@ import { Config, plainOptions, resolveAdapterOptions, resolveReadinessPollMs } f
 import { DEFAULT_BASE_URL, DEFAULT_MODELS, DEFAULT_READINESS_POLL_MS, MIN_READINESS_POLL_MS } from '../src/defaults.ts'
 
 describe('Taiji configuration resolution', () => {
+  it('uses the default readiness interval when the config sets none', () => {
+    // Every other caller passes an explicit interval, so the `?? DEFAULT` arm needs its own case.
+    expect(resolveReadinessPollMs({})).toBe(DEFAULT_READINESS_POLL_MS)
+  })
+
   it("defaults to the runtime's local address and its single catalog entry", () => {
     const resolved = resolveAdapterOptions({})
 
