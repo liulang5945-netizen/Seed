@@ -2,7 +2,7 @@ import type { z } from 'zod'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { mkdir, mkdtemp, realpath, rm, symlink, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
-import { basename, join, relative } from 'node:path'
+import { basename, join } from 'node:path'
 import { Context } from '@taiji/cordis'
 import Storage from '@taiji/dsh-storage'
 import type { StorageBackend } from '@taiji/dsh-storage'
@@ -1351,7 +1351,7 @@ describe('first-use Workspace preparation', () => {
   it('rejects a relative candidate before creating its directory', async () => {
     const h = await firstUse()
     const candidate = join(h.directoryRoot, 'relative')
-    h.resolveDirectory.mockResolvedValueOnce({ path: relative(process.cwd(), candidate), title: 'Workspace' })
+    h.resolveDirectory.mockResolvedValueOnce({ path: 'relative', title: 'Workspace' })
     await expect(h.registry.initializeDefault(h.resolveDirectory)).rejects.toThrow('fully qualified')
     await expect(realpath(candidate)).rejects.toMatchObject({ code: 'ENOENT' })
     expect(h.registry.list()).toEqual([])
