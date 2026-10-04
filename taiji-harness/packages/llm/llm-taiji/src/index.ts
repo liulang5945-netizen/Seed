@@ -89,15 +89,23 @@ export async function apply(ctx: Context, config: Config): Promise<void> {
   // route is re-probed on a cadence for as long as the plugin lives.
   const pollMs = resolveReadinessPollMs(plainOptions(config))
   let timer: ReturnType<typeof setTimeout> | undefined
+  let settleSleep: (() => void) | undefined
   let disposed = false
   ctx.effect(() => () => {
     disposed = true
     if (timer !== undefined) clearTimeout(timer)
     timer = undefined
+    // Clearing the timer alone would leave the awaited sleep unsettled forever,
+    // so the pending tick is ended here and the loop exits through its own check.
+    settleSleep?.()
+    settleSleep = undefined
   }, 'llm-taiji.readiness-poll')
   const poll = async (): Promise<void> => {
     while (!disposed) {
-      await new Promise<void>((resolve) => { timer = setTimeout(resolve, pollMs) })
+      await new Promise<void>((resolve) => {
+        timer = setTimeout(resolve, pollMs)
+        settleSleep = resolve
+      })
       // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- Disposal can flip while the loop awaits the next tick.
       if (disposed) return
       await scheduleRefresh()

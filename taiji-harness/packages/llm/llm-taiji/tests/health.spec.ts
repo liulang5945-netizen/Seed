@@ -25,6 +25,19 @@ async function harness(baseURL: string, readinessPollMs?: number) {
   return ctx
 }
 
+it('ends the readiness cadence on disposal, with no tick left suspended', async () => {
+  const runtime = await mockRuntime()
+  const ctx = await harness(runtime.url, 250)
+  await vi.waitFor(() => { expect(runtime.health.length).toBeGreaterThan(0) })
+
+  await ctx.fiber.dispose()
+  const probesAtDispose = runtime.health.length
+  // Two cadence intervals of silence is the contract: the armed timer is cleared
+  // and the tick it held is settled, so the poll loop returns instead of hanging.
+  await new Promise<void>((resolve) => { setTimeout(resolve, 700) })
+  expect(runtime.health.length).toBe(probesAtDispose)
+})
+
 /**
  * Mount the route and hand back the schema-resolved config, which is the object
  * a Loader volatile update rewrites in place.
