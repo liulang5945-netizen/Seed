@@ -17,6 +17,7 @@ import type { SandboxExecutionPolicy } from '@taiji/dsh-sandbox'
 import { resolvePwshPath } from '@taiji/dsh-pwsh-local'
 import { LocalSandboxProvider } from '@taiji/dsh-sandbox-local'
 import { SandboxPolicyService } from '@taiji/dsh-sandbox-policy'
+import SessionProjectionRegistry from '@taiji/dsh-session-projection'
 import LocalSubprocessRuntime from '@taiji/dsh-subprocess-local'
 import { SandboxPwshExecutor } from '../src/index.ts'
 import type { ShellExecSpec, ShellExecution, ShellRunResult } from '@taiji/dsh-shell'
@@ -54,6 +55,7 @@ describe.skipIf(!isWin32 || !pwshAvailable())('pwsh-sandbox real ACL confinement
     escapeFile = join(scratchRoot, 'escaped.txt')
 
     const ctx = new Context()
+    await ctx.plugin(SessionProjectionRegistry)
     await ctx.plugin(LocalSandboxProvider, {})
     await ctx.plugin(SandboxPolicyService, { mode: 'workspace-write', workspaceRoot: writableDir })
     await ctx.plugin(LocalSubprocessRuntime)
