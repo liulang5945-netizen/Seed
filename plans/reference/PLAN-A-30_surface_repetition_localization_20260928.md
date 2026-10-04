@@ -8444,3 +8444,23 @@ C 读数两次一致但待同面控制与参考值重录、全仓广面此刻在
 ### 第一百四十五次停靠·`DEBT-G30` 第三步：两支测试的推导副本迁完（2026-10-04，零产品改动；剩余迁移面 4→2）
 
 `test_a30_copy_evidence_gate_flag.py` 与 `test_a25_gate_on_the_load_path.py` 的本地 `_effective_gate` 推导副本改读公开出口 `copy_evidence_utf8_gate_state()` 三键——测试不设版，不属台账里"不为迁移单独升版"要避的 gratuitous 漂移；`audit_taiji_a30_stop_signal_presence.py:403-408` 与 `score_taiji_r2_copy_surface_extension.py:135-138` 两台**仪器**仍按登记规矩等各自下次升版。`test_a25_gate_on_the_load_path.py:121/131` 那两处白盒读覆写位断言（`assert …_copy_evidence_utf8_gate_override is None`）按登记**保留**——它们读的是位本身，不是重推有效值。钉子扩进 `test_a30_gate_state_readout.py`（两文件必须含公开出口调用、不得再现两种推导式形状）——**钉子第一版就把白盒断言误拦当场红了一次**（负向已证：HEAD 版本里两种旧形状各命中 1 次，回归即红），收窄后三文件 13 passed、ruff 0 条。台账 DEBT-G30 行已同批更新。
+
+### 第一百四十六次停靠·SPEC-A-26 形状甲按冻线判读：L1 不达（X=18/288＜58）、L2 达（7、重叠 6）、L3 不达（formed 持平 6）——不晋升、不提产品改动（2026-10-04 深夜）
+
+**立项与实施的授权口径（先写清，这是本格最容易被读歪的地方）**：§143 把"SPEC-A-26 立不立项"点名交 owner 裁；本轮弹窗（两问：A-26 立项与形状／§144 参考点名）**未获答复**，按 2026-09-30 第三批裁定的**"未及时决策按推荐推进"授权**执行推荐档＝立项、形状甲（竞争式）。这不是 owner 点过头，是授权在手；两问原文与推荐项已录 03 队首（19:15／19:29 两行）。若 owner 后续否决，本格读数仍有效（实施是默认关闭的加性开关），撤销成本＝config 一行。
+
+**实施（§6 六步全落，顺序照原文）**：①`TaijiConfig.copy_evidence_injection_mode`（默认 `"additive"`）；②注入点仍**唯一**（`taiji/model.py` 里 `self._copy_circuit.evidence(` 恰一处，守卫钉）；竞争式的应用点在 predictive 读出处：同一条读出头走两路（带/不带复制证据）逐格 max 后归一——"该复述时它能赢、该结束时它不去抬非边界字节的分"；③**逐位不变验收**：v40 默认档 ×1 冒烟与已入库 v39 冒烟件比 `--subtree per_item` ⇒ `identical=true／behavior 0／schema 0／rc=0`，且 **×96 整面** v40 默认档与 v39 控制档 `identical=true`（跨版本配对合法，历史基线不降级）；④"被走到"守卫：模型侧 `copy_evidence_injection_state()`（生效档＋competitive 计数，lifetime 累计），三台仪器件内 `injection_mode_honored`（请求＝生效，且 competitive 档计数 >0）；⑤产品入口 `SeedRuntime.enable_copy_circuit(injection_mode=…)` kw-only 转发、`None` ⇒ 不调用；⑥探针升 **v40**（`--copy-evidence-injection-mode`、`format_note_v40`、钉版 `range(6,41)`），cap 与表层两台记分器同批接同名旗标（表层那台顺手迁掉 DEBT-G30 的 score:135-138 ⇒ 迁移面只剩 audit 一处）。新守卫册 `tests/taiji_native/test_a26_injection_mode.py` **6 passed**——含一条分布级语义钉：竞争式分布＝`归一化(max(零证据臂, 加性臂))`（用模型自己的两条 observe 臂当分支真值，实现漂移即红）；门禁子集 `a30 or g14 or a26` **173 passed／0 failed**。
+
+**取数（全部同面同旗标，六枚件已入库 reports/）**：停止面 ×96 competitive 两枚（`..._shippedbase_v40_96_injection_competitive{,_take2}_20261004.json`，比较器 `identical=true` ⇒ 复现成立）＋v40 默认 ×96 一枚（`..._v40_96_additive_default_...`）；复述/表层 cap ×24 competitive 两枚（`..._cap_dual_arm_a31self_injection_competitive{,_take2}_20261004.json`，7/6/0.375 与命中题集逐值同 ⇒ 复现成立）。发表前置逐条核过：三枚 ×96 件 `items_sha256=0541a3f4568a9c5b`、`copy_evidence_alpha=1.0`、`mount_route=enable_copy_circuit`、`base_sha256_unchanged=true`、`injection_mode_honored=true`（competitive 计数 68,159＝环内证据调用数）。
+
+**判读（线全部先于数，SPEC-A-26 §4 原文）**：
+
+| 判据 | 冻线 | 读数（两次独立取数逐值同） | 判 |
+| --- | --- | --- | --- |
+| L1 停止面 | 配对 X=eat→stop **≥58** 且 Y=stop→eat **≤5** | 288 格配对（左＝v39 控制档）：**X=18、Y=0**；主列 41→**59**（+18＝6.25pp）；stop→stop 41／eat→eat 229／other 0 | **不达**（Y 过、X 只有线的三成） |
+| L2 复述面 | correct **≥6** 且与全剂量档 id 重叠 **≥5** | **7/24**；对 budget256 全剂量档（D01,D02,D04,D07,D08,D18,D20）重叠 **6**（+D03、−D04） | **达** |
+| L3 表层面 | formed_full **≥12** 且 wf_rate **≥0.375** | formed **6**、wf **0.375**——与全剂量现状逐值持平 | **不达**（wf 守住、formed 没起来） |
+
+**§5 否证分支的走向（照原文走完，不临场改）**：字面落入**分支 2**（L1 不达、L2 达）。原文处方两步——①先复核 α 旗标与 mount_route（已做：`1.0`／`enable_copy_circuit`，三枚件自述在案，且 competitive 两枚逐位复现 ⇒ **仪器或档位错配排除**）；②查 `enable_copy_circuit` 其它副作用（读出参数、检索计数、门状态）——但 §115/§118 已证 α=0 档与不挂回路**逐位相同** ⇒ 非证据通道的副作用在停止面贡献**精确零**，②无可查。⇒ 分支 2 预设的两个解释空间都被**已有读数**排除；诚实的结论是它们合取的反面：**伤害全部住在证据通道内，竞争式把"每格无条件抬分"改成"赢才改写"后复述完整保住（L2 7/7、Y=0 无第二伤害），但"赢"的格仍然太多——救援 +18/288 远低于 +58 立项线**。旁注一条不换算的量级巧合：6.25pp 落在 α 剂量阶梯单臂曲线（+0.69…+10.42pp，§95/§96）的量级带内；两口径不许互换，只作"竞争式救回的量与折中剂量同带"的观察。
+
+**终局与边界**：**形状甲按冻线不晋升、不提产品改动**——`copy_evidence_injection_mode` 默认仍 `"additive"`，装机装配逐位不变（×96 整面 `identical=true` 是这条的机检证据）；产品侧三行读数不动：默认位 `None`、装机 13/72、成句 6/260；**不写"能力提升进产品"**（SPEC-A-26 §7 原文）。**留给 owner 的收尾三选一**：①排形状乙（资格门控）的机时——可学资格头需要训练，本件没申请、须另立项；②按分支 3 的精神将本族结案（形状甲已按原文判死；乙的非可学形状定义模糊）——届时"从不发 LF 那一群"在本线内无可做项，能力侧收官；③对 +18/288 这个量级另立新预注册（须先冻新判据，不许就地挪线）。另：§144 那条"参考取 6 还是 9"的点名仍挂着（本轮弹窗一并问过、未获答复）；授权语义与撤销成本如本格首段。

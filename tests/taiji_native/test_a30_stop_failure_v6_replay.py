@@ -84,9 +84,9 @@ def test_instrument_carries_v6_and_the_correction_note() -> None:
     source = (PROJECT_ROOT / "scripts" / "training" / "probe_taiji_a30_stop_failure.py").read_text(
         encoding="utf-8"
     )
-    assert '"format": "taiji-a30-stop-failure-v39"' in source
+    assert '"format": "taiji-a30-stop-failure-v40"' in source
     assert all(
-        f"format_note_v{v}" in source for v in range(6, 40)
+        f"format_note_v{v}" in source for v in range(6, 41)
     ), "升版只许加列，历史说明必须逐版留在件里"
     assert "format_note_v6" in source
     assert "追加二" in source and "深帧复现" in source

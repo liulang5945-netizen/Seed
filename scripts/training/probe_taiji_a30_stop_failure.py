@@ -1092,6 +1092,15 @@ def main() -> int:
         "`Taiji.set_copy_evidence_window_steps(K)`。owner 2026-10-02 裁「立项进产品」后的验收面——"
         "这一档测的是产品代码里的门，不是本仪器 monkeypatch 出来的等价物。与 --evidence-window-steps 互斥。",
     )
+    parser.add_argument(
+        "--copy-evidence-injection-mode",
+        type=str,
+        default=None,
+        choices=["additive", "competitive"],
+        help="v40（SPEC-A-26 形状甲）产品档：证据注入形状——additive＝现行裸加，"
+        "competitive＝独立候选头同格竞争（不裸加）。调产品原生开关 "
+        "`Taiji.set_copy_evidence_injection_mode`；不给 ⇒ 不调用 ⇒ 与 v39 逐位不变。",
+    )
     args = parser.parse_args()
 
     checkpoint = PROJECT_ROOT / args.checkpoint
@@ -1244,6 +1253,12 @@ def main() -> int:
             raise SystemExit("v20：产品门的 K 必须是正整数")
         #: 走**产品原生门**（不是本仪器的替身包装器）：这是 owner 立项后的验收面。
         substrate.set_copy_evidence_window_steps(args.product_window_steps)
+    if args.copy_evidence_injection_mode is not None:
+        #: v40（SPEC-A-26 形状甲）：走**产品原生开关** `Taiji.set_copy_evidence_injection_mode`——
+        #: 不给 ⇒ 根本不调用 ⇒ 与 v39 逐位不变。回路不在场时给了 competitive 属档位错配，响亮停下。
+        if substrate.copy_circuit is None:
+            raise SystemExit("v40：要求注入形状档但回路不在场 ⇒ 竞争式没有可竞争的通道")
+        substrate.set_copy_evidence_injection_mode(args.copy_evidence_injection_mode)
     if args.evidence_window_steps is not None:
         if substrate.copy_circuit is None:
             raise RuntimeError("要求资格档但回路不在场 ⇒ 没有可静音的证据通道")
@@ -1476,8 +1491,18 @@ def main() -> int:
     #: v39（DEBT-G30）：门的状态**一次读自产品公开出口**，下面两处（信封三列与守卫 `evidence_gate_flag_honored`）
     #: 都取这一份，不再各自复制 config-or-override 那条式子。
     gate_state = runtime.model.substrate.copy_evidence_utf8_gate_state()
+    #: v40（SPEC-A-26）：注入形状的自述与"被走到"守卫——读数取自产品公开出口
+    #: `copy_evidence_injection_state()`（含 competitive 计数），一次读取、两处共用。
+    injection_state = substrate.copy_evidence_injection_state()
     report = {
-        "format": "taiji-a30-stop-failure-v39",
+        "format": "taiji-a30-stop-failure-v40",
+        "format_note_v40": "v40（2026-10-04）：SPEC-A-26 形状甲立项后加**产品档** "
+        "`--copy-evidence-injection-mode`——调产品原生开关 `Taiji.set_copy_evidence_injection_mode`，"
+        "证据注入形状 additive（现行裸加）／competitive（独立候选头同格竞争，不裸加）。"
+        "不给 ⇒ 根本不调用 ⇒ 与 v39 逐位不变（冒烟与 v39 冒烟件比 `--subtree per_item` 必须 identical=true）。"
+        "件里新增 `copy_evidence_injection_mode`（请求档）／`copy_evidence_injection_state`"
+        "（产品自述：生效档＋competitive 应用步数）／守卫 `injection_mode_honored`"
+        "（请求＝生效，且 competitive 档的计数必须 >0，空档当场可辨）。既有列一字未动 ⇒ 与 v6–v39 同格可比。",
         "format_note_v39": "v39（2026-10-03）：DEBT-G30 第二步——这台仪器**不再自己推导证据门的有效值**。"
         "v38 及以前有两处各自复制 `config if override is None else override`"
         "（信封里 effective／config／override 三列，与守卫 `evidence_gate_flag_honored`），"
@@ -1679,6 +1704,9 @@ def main() -> int:
         #: v20：产品原生门的自述（None ⇒ 这条面从未被走）。
         "product_window_steps": args.product_window_steps,
         "product_window_stats": substrate.copy_evidence_window_stats(),
+        #: v40（SPEC-A-26 形状甲）：注入形状的请求档与产品自述（生效档＋competitive 计数）。
+        "copy_evidence_injection_mode": args.copy_evidence_injection_mode,
+        "copy_evidence_injection_state": injection_state,
         "store_scope_conversation": bool(args.store_scope_conversation),
         "oracle_selector": bool(args.oracle_selector),
         "evidence_content_arm": args.evidence_content_arm,
@@ -1753,6 +1781,19 @@ def main() -> int:
             or all(
                 key in substrate.copy_evidence_window_stats()
                 for key in ("emitted_steps", "silenced_steps")
+            ),
+            #: v40（SPEC-A-26）：注入形状档必须**被走到**——请求＝生效，且 competitive 档的
+            #: competitive_steps 必须 >0（一个从未应用过竞争式的档会给出与全加性相同的读数却
+            #: 看不见自己是空的，v12 那把松尺子的同族教训）。additive 请求档也照常验请求＝生效。
+            "injection_mode_honored": (
+                args.copy_evidence_injection_mode is None
+                or (
+                    injection_state["mode"] == args.copy_evidence_injection_mode
+                    and (
+                        args.copy_evidence_injection_mode == "additive"
+                        or injection_state["competitive_steps"] > 0
+                    )
+                )
             ),
             #: v18：检索侧档必须**被走到**（清掉的陈旧条数 > 0），并把重置后的候选集大小上下界存进件里。
             "store_scope_consumed": (not args.store_scope_conversation) or store_counters[0] > 0,

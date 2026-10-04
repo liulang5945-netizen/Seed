@@ -171,6 +171,12 @@ class Taiji:
         self._copy_evidence_window_emitted_total = 0
         self._copy_evidence_window_silenced_total = 0
         self._copy_evidence_step_total = 0
+        #: SPEC-A-26 形状甲的评测期覆写（`None` ＝ 跟随 config；不进任何 payload，同族先例
+        #: `set_copy_evidence_utf8_gate`／`set_copy_evidence_window_steps`）。
+        self._copy_evidence_injection_mode_override: str | None = None
+        #: "开关被走到"计数：竞争式应用过多少步（lifetime 累计，不随答案复位）。
+        #: 没有它，一个从未开过枪的档会给出与真生效完全相同的读数（v12 那把松尺子的教训）。
+        self._copy_evidence_competitive_steps = 0
         self._developmental_f1_replay: list[DevelopmentalReplayEvent] = []
         self._developmental_f1_replay_serial = 0
         self._memory_rng = torch.Generator(device="cpu")
@@ -1157,6 +1163,34 @@ class Taiji:
         self._copy_evidence_step = 0
         self._copy_evidence_window_emitted = 0
         self._copy_evidence_window_silenced = 0
+
+    def set_copy_evidence_injection_mode(self, mode: str | None) -> None:
+        """SPEC-A-26 形状甲的评测期开关（`None` ⇒ 跟随 config；不进任何 payload、不改 config）。
+
+        `"additive"`＝现行裸加；`"competitive"`＝证据不再裸加，而是作为一路独立候选头
+        与读出预测头在同一格上竞争（同一条读出头走两路，逐格 max 后归一）。
+        与同族两枚覆写一样：lineage 守卫拒绝 config 被事后改动的档，所以开关走运行时覆写。
+        """
+
+        if mode is not None:
+            if not isinstance(mode, str):
+                raise TypeError("copy-evidence injection mode must be a str or None")
+            if mode not in ("additive", "competitive"):
+                raise ValueError(
+                    f"copy-evidence injection mode must be 'additive' or 'competitive', got {mode!r}"
+                )
+        self._copy_evidence_injection_mode_override = mode
+
+    def copy_evidence_injection_state(self) -> dict[str, str | int]:
+        """"形状开关有没有被走到"的自证（同 `copy_evidence_window_stats()` 的动机）：
+        一个从没应用过竞争式的档，会给出与全加性完全相同的读数却看不见自己是空的。"""
+
+        mode = (
+            self.config.copy_evidence_injection_mode
+            if self._copy_evidence_injection_mode_override is None
+            else self._copy_evidence_injection_mode_override
+        )
+        return {"mode": mode, "competitive_steps": self._copy_evidence_competitive_steps}
 
     def set_copy_evidence_utf8_gate(self, enabled: bool | None) -> None:
         """PLAN-A-25 的**评测期开关**：`True/False` 覆写，`None` 跟随 config。
@@ -2219,6 +2253,9 @@ class Taiji:
         identity_recall: IdentityRecall | None = None
         identity_evidence: torch.Tensor | None = None
         identity_addressing_used = False
+        #: SPEC-A-26 形状甲：竞争式档位下复制证据不进 `episodic_evidence`，
+        #: 改在这里暂存、到下方 predictive 读出处作为独立候选头应用（唯一注入点不变）。
+        competitive_copy_evidence: torch.Tensor | None = None
         if self.identity_organ is not None:
             identity_enabled = use_memory and (use_identity is None or bool(use_identity))
             identity_recall = self.identity_organ.recall(
@@ -2313,13 +2350,24 @@ class Taiji:
                     self._copy_evidence_window_silenced += 1
                     self._copy_evidence_window_silenced_total += 1
             if within_window:
-                episodic_evidence = episodic_evidence + self._copy_circuit.evidence(
+                copy_evidence = self._copy_circuit.evidence(
                     cue=self.fabric.cortical_context(regions),
                     f1_context=context,
                     prev_byte=int(symbol),
                     #: PLAN-A-25：门控只在开关打开时给状态；关闭 ⇒ None ⇒ 与开案前逐位相同。
                     utf8_state=circuit_utf8_state,
                 )
+                injection_mode = (
+                    self.config.copy_evidence_injection_mode
+                    if self._copy_evidence_injection_mode_override is None
+                    else self._copy_evidence_injection_mode_override
+                )
+                if injection_mode == "competitive":
+                    #: SPEC-A-26 形状甲：不裸加——证据留作独立候选头，应用点在下方
+                    #: predictive 读出处（同格竞争）。UTF-8 门的语义不变（门在 evidence() 内）。
+                    competitive_copy_evidence = copy_evidence
+                else:
+                    episodic_evidence = episodic_evidence + copy_evidence
         if readout == "predictive":
             probabilities = predictive_readout.probabilities(
                 context,
@@ -2331,6 +2379,23 @@ class Taiji:
                 ),
                 position_state=readout_position_class,
             )
+            if competitive_copy_evidence is not None:
+                #: SPEC-A-26 形状甲的应用点（唯一一处）：同一条读出头走两路——
+                #: 带/不带复制证据——逐格取 max 后归一。复制通道只在它真赢过的格上
+                #: 改写分布；答案结尾处边界字节不再被"每格无条件抬分"的加性证据压住。
+                copy_probabilities = predictive_readout.probabilities(
+                    context,
+                    episodic_evidence=episodic_evidence + competitive_copy_evidence,
+                    synapses_override=(
+                        self._developmental_f1_bank("predictive_readout.synapses")
+                        if developmental_f1_overlay
+                        else None
+                    ),
+                    position_state=readout_position_class,
+                )
+                probabilities = torch.maximum(probabilities, copy_probabilities)
+                probabilities = probabilities / probabilities.sum()
+                self._copy_evidence_competitive_steps += 1
             if adaptive_residual_shadow_learning:
                 assert _adaptive_residual_shadow is not None
                 _adaptive_residual_shadow.record_counterfactual_parent_probabilities(

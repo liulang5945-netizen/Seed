@@ -137,6 +137,7 @@ def run_arm(
     max_bytes: int = MAX_ANSWER_BYTES,
     limit: int | None = None,
     product_window_steps: int | None = None,
+    injection_mode: str | None = None,
 ) -> dict[str, Any]:
     """一臂：CAP 的 D+E 计分（基底原始字节）。
 
@@ -163,6 +164,12 @@ def run_arm(
         if product_window_steps <= 0:
             raise SystemExit("产品档的 K 必须是正整数")
         runtime.model.substrate.set_copy_evidence_window_steps(product_window_steps)
+    #: SPEC-A-26 形状甲（与 L2 探针 v40 同名旗标）：注入形状走产品原生开关；
+    #: `None` ⇒ 根本不调用 ⇒ 逐位不变。本臂没有回路时给了档属错配，响亮停下。
+    if injection_mode is not None:
+        if circuit_payload is None:
+            raise SystemExit("要求注入形状档但本臂没有回路 ⇒ 竞争式没有可竞争的通道")
+        runtime.model.substrate.set_copy_evidence_injection_mode(injection_mode)
     calls = [0]
     scores: list[float] = []
     if (
@@ -416,6 +423,8 @@ def run_arm(
     product_window_stats = runtime.model.substrate.copy_evidence_window_stats()
     return {
         "items": len(rows),
+        #: SPEC-A-26 形状甲自述：本臂的生效注入形状与 competitive 应用步数（"被走到"计数）。
+        "copy_evidence_injection_state": runtime.model.substrate.copy_evidence_injection_state(),
         "correct": sum(1 for row in rows if row["hit"]),
         "joint_hits": sum(1 for row in rows if row["hit"] and row["formed_full"]),
         "formed_full_texts": sum(1 for row in rows if row["formed_full"]),
@@ -569,6 +578,14 @@ def main() -> int:
         type=float,
         default=1.0,
         help="DEBT-G19 剂量档：治疗臂把回路加性证据乘 α（默认 1.0 ⇒ 与已入库两臂档逐位可比）",
+    )
+    parser.add_argument(
+        "--copy-evidence-injection-mode",
+        type=str,
+        default=None,
+        choices=["additive", "competitive"],
+        help="SPEC-A-26 形状甲（治疗臂）：证据注入形状——additive＝现行裸加，"
+        "competitive＝独立候选头同格竞争（不裸加）。调产品原生开关，不给 ⇒ 不调用 ⇒ 逐位不变。",
     )
     parser.add_argument(
         "--record-scores",
@@ -751,6 +768,7 @@ def main() -> int:
         max_bytes=args.max_bytes,
         limit=args.limit,
         product_window_steps=args.product_window_steps,
+        injection_mode=args.copy_evidence_injection_mode,
     )
     verdict = (
         "A2.4 重测通过（D+E>0 且成句率不塌于对照）"
@@ -781,6 +799,24 @@ def main() -> int:
         "evidence_content_arm": args.evidence_content_arm,
         "evidence_window_steps": args.evidence_window_steps,
         "product_window_steps": args.product_window_steps,
+        #: SPEC-A-26 形状甲：请求档（作用于治疗臂）与两臂各自的产品自述（生效档＋competitive 计数）。
+        "copy_evidence_injection_mode": args.copy_evidence_injection_mode,
+        "control_injection_state": control.get("copy_evidence_injection_state"),
+        "treated_injection_state": treated.get("copy_evidence_injection_state"),
+        "injection_mode_honored": (
+            args.copy_evidence_injection_mode is None
+            or (
+                (treated.get("copy_evidence_injection_state") or {}).get("mode")
+                == args.copy_evidence_injection_mode
+                and (
+                    args.copy_evidence_injection_mode == "additive"
+                    or (treated.get("copy_evidence_injection_state") or {}).get(
+                        "competitive_steps", 0
+                    )
+                    > 0
+                )
+            )
+        ),
         "store_scope_conversation": bool(args.store_scope_conversation),
         "oracle_selector": bool(args.oracle_selector),
         "probe_store": bool(args.probe_store),

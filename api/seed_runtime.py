@@ -370,7 +370,7 @@ class SeedRuntime:
 
     def enable_copy_circuit(
         self, payload_path: str | Path, *, max_events: int = 4, utf8_gate: bool = True,
-        window_steps: int | None = None
+        window_steps: int | None = None, injection_mode: str | None = None
     ) -> None:
         """A2.4 协议开闸（显式 opt-in）：挂载复制回路并载入训练后参数。
 
@@ -382,6 +382,8 @@ class SeedRuntime:
         门状态是运行时覆写，不进任何 payload。
         ``window_steps``（PLAN-A30，默认 ``None``）：复制回路证据只在**答复的前 K 步**发射，之后静音。
         传 `None` ⇒ 不调用运行时覆写 ⇒ 与现状逐位相同；K 必须按它要用的那条链现取，不许跨链搬。
+        ``injection_mode``（SPEC-A-26，默认 ``None``）：证据注入形状——``"additive"``＝现行裸加，
+        ``"competitive"``＝独立候选头同格竞争（判据冻在 SPEC-A-26 §4）。传 `None` ⇒ 不调用 ⇒ 逐位不变。
         """
         import torch
 
@@ -397,6 +399,10 @@ class SeedRuntime:
                 #: 否则就是"进了代码、没进产品"——只有直接调 `Taiji.set_copy_evidence_window_steps` 才够得到。
                 #: `None` ⇒ 根本不调用 ⇒ 逐位不变（这条已由出货底逐 item 机检钉住）。
                 substrate.set_copy_evidence_window_steps(window_steps)
+            if injection_mode is not None:
+                #: SPEC-A-26 形状甲（2026-10-04 按在手的"未及时决策按推荐推进"授权立项）：
+                #: 产品入口把注入形状传进去；`None` ⇒ 根本不调用 ⇒ 逐位不变。
+                substrate.set_copy_evidence_injection_mode(injection_mode)
 
     def _resolve_surface_gate_state(self) -> None:
         """门槛工件随检查点同目录解析（A30 owner 裁定 §7-1）。

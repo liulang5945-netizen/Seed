@@ -95,6 +95,7 @@ def run_arm(
     surface: bool = False,
     window_steps: int | None = None,
     product_window_steps: int | None = None,
+    injection_mode: str | None = None,
 ) -> dict[str, Any]:
     """一臂：跑完 104 题，按产品 chat 协议取基底原始答复，统计表层三率。
 
@@ -132,10 +133,15 @@ def run_arm(
         if product_window_steps <= 0:
             raise SystemExit("产品档的 K 必须是正整数")
         substrate.set_copy_evidence_window_steps(product_window_steps)
-    override = getattr(substrate, "_copy_evidence_utf8_gate_override", None)
-    gate_effective = (
-        bool(substrate.config.copy_evidence_utf8_gate) if override is None else bool(override)
-    )
+    #: SPEC-A-26 形状甲（与 L2 探针 v40、cap 仪器同名旗标）：注入形状走产品原生开关；
+    #: `None` ⇒ 根本不调用 ⇒ 逐位不变。本臂没有回路时给了档属错配，响亮停下。
+    if injection_mode is not None:
+        if substrate.copy_circuit is None:
+            raise SystemExit("要求注入形状档但本臂没有回路 ⇒ 竞争式没有可竞争的通道")
+        substrate.set_copy_evidence_injection_mode(injection_mode)
+    #: DEBT-G30 顺手迁移（本轮加旗标即本仪器的"下次升版"场合）：有效值读产品公开出口，
+    #: 不再扒私有字段重推（那条式子只住产品一处）。
+    gate_effective = bool(substrate.copy_evidence_utf8_gate_state()["effective"])
     ngram = build_ngram_model()
     #: 第四十九次停靠：**发射时序档**，与 L2／cap 两台仪器共用 `_make_window_armed_evidence`，
     #: 步刻度也用同一个 `generation_loop_span`（1 步＝喂进 1 字节），换一轮生成即清零。
@@ -220,6 +226,9 @@ def run_arm(
             "silenced": window_counters[2],
         },
         "gate_effective": gate_effective,
+        #: SPEC-A-26 形状甲自述：本臂的请求档与产品自述（生效档＋competitive 应用步数）。
+        "injection_mode": injection_mode,
+        "copy_evidence_injection_state": substrate.copy_evidence_injection_state(),
         "items": len(rows),
         "texts": len(texts),
         "well_formed_texts": formed,
@@ -354,6 +363,14 @@ def main() -> int:
         help="产品档：调产品侧原生生命周期门（`Taiji.set_copy_evidence_window_steps`），不是本仪器的替身档。"
         "默认 None ⇒ 逐位不变；与 --evidence-window-steps 互斥。",
     )
+    parser.add_argument(
+        "--copy-evidence-injection-mode",
+        type=str,
+        default=None,
+        choices=["additive", "competitive"],
+        help="SPEC-A-26 形状甲（作用于每枚治疗臂）：证据注入形状——additive＝现行裸加，"
+        "competitive＝独立候选头同格竞争（不裸加）。调产品原生开关，不给 ⇒ 不调用 ⇒ 逐位不变。",
+    )
     args = parser.parse_args()
     surface = bool(args.surface_chain)
 
@@ -375,6 +392,7 @@ def main() -> int:
             surface=surface,
             window_steps=args.evidence_window_steps,
             product_window_steps=args.product_window_steps,
+            injection_mode=args.copy_evidence_injection_mode,
         )
         for circuit in args.circuit
     ]
@@ -422,6 +440,27 @@ def main() -> int:
         "checkpoint_sha256": sha_before[:16],
         #: PLAN-A-25：门开/关必须落在件上，否则两份读数看起来像同一次实验。
         "copy_evidence_utf8_gate": bool(args.copy_evidence_utf8_gate),
+        #: SPEC-A-26 形状甲：请求档（作用于每枚治疗臂；控制臂不接）与"被走到"守卫——
+        #: 每枚治疗臂的生效档必须等于请求，competitive 档的 competitive_steps 必须 >0。
+        "copy_evidence_injection_mode": args.copy_evidence_injection_mode,
+        "injection_mode_honored": (
+            args.copy_evidence_injection_mode is None
+            or (
+                bool(treated)
+                and all(
+                    arm.get("copy_evidence_injection_state", {}).get("mode")
+                    == args.copy_evidence_injection_mode
+                    for arm in treated
+                )
+                and (
+                    args.copy_evidence_injection_mode == "additive"
+                    or all(
+                        arm.get("copy_evidence_injection_state", {}).get("competitive_steps", 0) > 0
+                        for arm in treated
+                    )
+                )
+            )
+        ),
         "circuit_carried_envelopes": envelope_meta,
         "control_no_circuit": control,
         "treated_arms": treated,
