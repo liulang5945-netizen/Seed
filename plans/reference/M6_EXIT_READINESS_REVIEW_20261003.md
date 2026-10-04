@@ -323,3 +323,6 @@
 10. **产品侧一条不对称（本轮新找到、代价已定价、未动码）**：`packages/subprocess/subprocess-local/src/index.ts:151` 的绝对路径分支不补 PATHEXT，而裸名分支 `:170-172` 补。命令：让绝对路径也走 `executableCandidates` 后复验 `corepack pnpm run test:e2e packages/lsp/lsp-stdio/tests/typescript-server.e2e.ts`。复验判据＝那 4 条 `spawn …\.bin\typescript-language-server ENOENT` 转绿（或给出 `.CMD` 解析成功的具体读数）。风险三条：本仓 `test:coverage` 按每文件 100% 判 ⇒ 每条新分支都要测试成员；这是 `shell`／`ssh`／`terminal`／`lsp` 全部绝对路径 spawn 的公共入口，须同提交改 `subprocess-local/README.md` 与 JSDoc；`check:ci:coverage` 一趟约 1176 s 且跑期不得提交。另记同形写法第二处 `packages/ptc-runtime/ptc-runtime-node/src/launch.ts:30`（本机无害，路径含空格会被百分号编码弄失真）。详见 08 ㊵-254。
 
 **M6 未收官**：`02` 里那一项签字本身仍未给；本清单不改变任何一格的"可主张／不可主张"。
+
+
+> **⚠ 一条影响本页多处表述的实测（2026-10-04 12:49Z，08 ㊵-278）**：`taiji-harness` 没有独立 `.git`（toplevel ＝ `E:/Seed`），其 20 个 workflow 文件位于**子目录** `.github/workflows/`，而 GitHub 只加载**仓根**的 workflows；仓根只有 `ci.yml` 且其中 `taiji-harness` **零命中**，`gh workflow list` 在该 remote 上只返回 "CI" 与 "Dependabot Updates"。⇒ **本仓当前没有任何 harness 门在 CI 上执行**：本页出现的"CI 会跑／CI owns the platform matrix／`test:e2e` 只在 Linux runner／`dsh-win-ci` 跑 windows-complete"等表述，都应读作**上游带过来的惰性文件**；所有 harness 门读数（build、doc-sync、hygiene、coverage、web/e2e 面）都只有**本机证据**。判据⑥ 与"绿 CI"类结论请按此重述，收官声明里不要写"CI 已验证"。是否把门真接上 CI（甲＝移出仓根或独立仓／子模块；乙＝根 `ci.yml` 加 job 进 `taiji-harness/` 跑 `check:ci:*`）＝新增给您的一项决定。
