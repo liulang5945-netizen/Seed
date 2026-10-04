@@ -1391,6 +1391,28 @@ describe('installLlmReplay (through the real LlmRuntime)', () => {
       expect(resolved.chunks[1]).toMatchObject({ argumentsDelta: '{"goal_id":"goal-42ab"}' })
     })
 
+    it('takes whichever placeholder appears first when one string mixes both substitution kinds', () => {
+      const messages = [createUserMessage({
+        content: [{ type: 'text' as const, text: 'stale {"goal":{"id":"goal-old"}} then {"goal":{"id":"goal-42ab"}} and the path is C:\\temp\\x.' }],
+        source: { kind: 'user' as const },
+      })]
+      const goalPattern = 'goal-[0-9a-z]+'
+      const pathPattern = 'path is ([^\\n]+)\\.'
+      // Both markers in one string is the only way the plain/json order comparison ever runs.
+      const mixed: readonly string[] = [
+        `{"goal_id":"{{fromRequest:${goalPattern}}}","file_path":"{{fromRequestJson:${pathPattern}}}"}`,
+        `{"file_path":"{{fromRequestJson:${pathPattern}}}","goal_id":"{{fromRequest:${goalPattern}}}"}`,
+      ]
+      for (const argumentsDelta of mixed) {
+        const resolved = resolveScriptedEntry({ kind: 'chunks', chunks: scriptedCall(argumentsDelta) }, messages)
+        if (resolved.kind !== 'chunks') throw new Error('expected chunks entry')
+        const delta = resolved.chunks[1]
+        if (delta?.type !== 'tool-call-delta') throw new Error('expected a tool-call delta')
+        // A mixed string only parses when the JSON-marked capture came back escaped.
+        expect(JSON.parse(delta.argumentsDelta)).toEqual({ goal_id: 'goal-42ab', file_path: 'C:\\temp\\x' })
+      }
+    })
+
     it('JSON-escapes the captured value with {{fromRequestJson:}} so platform-native paths stay valid JSON', () => {
       const messages = [createUserMessage({
         content: [{ type: 'text' as const, text: 'Your working directory is C:\\Users\\23747\\workspace.' }],
