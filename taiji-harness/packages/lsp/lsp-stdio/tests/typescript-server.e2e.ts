@@ -9,6 +9,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { mkdtemp, mkdir, rm, writeFile, realpath } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { Context } from '@taiji/cordis'
 import LocalSubprocessRuntime from '@taiji/dsh-subprocess-local'
 import LocalFileSystem from '@taiji/dsh-fs-local'
@@ -17,7 +18,7 @@ import * as LspLocal from '@taiji/dsh-lsp-stdio'
 
 // The server binary is a dev dependency of this package; resolve its pnpm-hoisted .bin path.
 const serverBin = join(
-  new URL('..', import.meta.url).pathname,
+  fileURLToPath(new URL('..', import.meta.url)),
   'node_modules',
   '.bin',
   'typescript-language-server',
