@@ -4,6 +4,8 @@ import { join } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { execa } from 'execa'
 import { Context } from '@taiji/cordis'
+import AgentLoop from '@taiji/dsh-agent-loop'
+import { mountAgentLoopTestDependencies } from '@taiji/dsh-agent-loop-testkit'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import SessionStore, {
   SessionId, TOOL_OUTCOME_UNKNOWN, interruptedTurnClosers,
@@ -118,5 +120,42 @@ describe('semantic checkpoint hard-crash recovery', () => {
       throw new Error('expected a text tool result')
     }
     expect(result.data.message.content[0].text).toContain('Do not retry blindly.')
+  })
+
+  it('repairs a real kill -9 tail through the product resume() path', async () => {
+    // The manual `interruptedTurnClosers` read above proves the log is readable;
+    // this member proves the shipped repair path runs against the same durable
+    // artifact: resume() must append the closers itself, not the test.
+    const crashed = await crashAt('request')
+    const ctx = new Context()
+    await mountAgentLoopTestDependencies(ctx)
+    await ctx.plugin(AgentLoop, { agents: [] })
+    await ctx.plugin(JsonlSessionPersistence, { root: crashed.root, compression: 'none' })
+    const probe = await ctx.sessionPersistence.open(sessionId, 'read')
+    let before: SessionEvent[]
+    try {
+      before = (await probe.read()).events
+    } finally {
+      await probe.close()
+    }
+    // The durability claim only means something if the crash artifact really has
+    // no closure: resume(), not the test, has to write it.
+    expect(before.some(event => event.type === 'turn/end'), 'pre-resume log already closed').toBe(false)
+    const handle = await ctx.agents.resume({
+      resumeSessionId: sessionId,
+      agentOptions: { provider: 'crash', model: 'crash' },
+    })
+    await handle.dispose()
+    const reader = await ctx.sessionPersistence.open(sessionId, 'read')
+    let stored: SessionEvent[]
+    try {
+      stored = (await reader.read()).events
+    } finally {
+      await reader.close()
+    }
+    const closing = stored.filter(event => event.type === 'turn/end')
+    expect(closing.length).toBeGreaterThan(0)
+    expect(closing.at(-1)).toMatchObject({ data: { reason: { kind: 'interrupted' } } })
+    await ctx.fiber.dispose()
   })
 })
