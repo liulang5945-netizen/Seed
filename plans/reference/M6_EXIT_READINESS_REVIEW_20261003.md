@@ -237,3 +237,29 @@
 
 **本轮被本表替换掉的旧句子（原文仍在 §1／§4，只作当日历史）**：④「本机两趟都被并行提交挡住」（超时族成立、权限族不成立）；⑥「`duplication` 剩 1 枚克隆」；⑦ 那串历史红数与 §4 A 档第 2 条「判据⑦ 待重取」；§4 A 档第 1 条（已结）。
 **仍在你手上的裁定**（本页 §10 R-1／R-4／R-6 与 G5 §12 第二十七段）：覆盖率档走 丙 还是 丁；⑦ 最后一枚红的修法；⑤③ 判据口径措辞；生成物／钉值那 4 件要不要刷、**依赖分类器的顺序 pin 走 甲／乙／丙（R-7，㊵-221）**；C10 的 2 行 UI 修法还是后端 `training.paused`；H1 带凭据重录；R7／H2 沙箱外复验（需一份明文 xlsx）；字标栅格。
+
+## §12 · 四条待裁的执行方案（本轮**不执行**；每条给了改动点、命令、实测基线与预期读数）
+本节只为把「批一条就能落地」这件事做扎实：下面每条都给出**改哪个文件的哪一行**、**跑哪条命令**、**本轮实测到的基线**、**预期读数**，以及**未验证项**。本轮**一条都没有执行**。
+
+### S-1 R-8 甲（沙箱只认真 pwsh 7）
+- 改动点：① `packages/sandbox/sandbox-windows-acl/tests/runner.spec.ts:24-26` 的 `pwshAvailable()`—现值为 `spawnSync(resolvePwshPath(), […]).status === 0`，因 `resolvePwshPath()` 允许 5.1 回退（`packages/shell/pwsh-local/README.md:32` 明写），本机**判真**；改为再核一句「解析结果必须以 `pwsh` 结尾」⇒ 缺 pwsh 7 时 `describe.skipIf`（`:35`）真正生效。② `apps/desktop/tests/upload-with-credentials.spec.ts:70` 用**裸 `pwsh`** 且守卫只有 `skipIf(process.platform !== 'win32')`（`:117`）⇒ 同一把可用性守卫补进去。③ `pwsh-sandbox` 侧不改（`:278` 的 `/pwsh(\.exe)?$/u` 正是甲的口径）。
+- 命令与基线：`corepack pnpm exec vitest run packages/sandbox/sandbox-windows-acl/tests/runner.spec.ts`（本轮实测 rc=1、`Test Files 1 failed (1)`、10 条 FAIL 头）；`corepack pnpm exec vitest run apps/desktop/tests/upload-with-credentials.spec.ts`（本轮实测 7 条 FAIL 头）。
+- 预期读数：两趟都从「红」变成 `skipped` 计数增加、FAIL 头 0；**代价**：本机对 Windows confinement 与凭据隔离**零验证**（acl 那 10 条正是删除逃逸／跨根删除／mode-downgrade 泄漏等围栏回归）。
+- 未验证：装 pwsh 7 后两族是否直接转绿（未测）。
+
+### S-2 R-8 乙（受限面接受契约内的 5.1 回退）
+- 改动点：① 受限 argv 改用 `resolvePwshPath()` 的结果而非字面 `pwsh`：`packages/sandbox/sandbox-windows-acl/tests/runner.spec.ts`（裸 `pwsh` 11 处）、`apps/desktop/tests/upload-with-credentials.spec.ts:70`（1 处）；② `packages/shell/pwsh-sandbox/tests/sandbox.spec.ts:278` 放宽到 `/(pwsh|powershell)(\.exe)?$/u`。
+- 命令与基线：同上两条单跑，另加 `corepack pnpm exec vitest run packages/shell/pwsh-sandbox`（本轮整趟里该 spec 记 1 条断言型红）。
+- 预期读数：三处红同消；**代价**：5.1 与 pwsh 7 的受限差异由产品承担，且 `pwsh-local/README.md:152` 已登记的「5.1 下非 ASCII stdin 可能错解码」成为沙箱路径上的受支持行为，需要一处书面确认。
+- 未验证：5.1 在该 confinement 路径上的真实行为（本轮未跑过任何 5.1 受限用例，因为字面 `pwsh` 先失败）。
+
+### S-3 R-4 覆盖率档三条路
+- 戊（先给符号链接特权再重跑）：本轮实测**整族 24 枚文件的 EPERM 全部来自 `symlink` 一种操作**（共享与隔离两趟各 171 条原文），且 102 处 `symlink(` 调用里 85＋1 处指向**文件**（junction 只支持目录，㊵-222／217）。⇒ 开开发者模式（或让跑门进程持有 `SeCreateSymbolicLinkPrivilege`）后：`corepack pnpm run check:ci:coverage`，基线＝隔离趟 `run-gates: 1 passed, 2 failed in 1247.10s`、51 个失败文件（`EPERM` 24／超时 7／断言 18／无错误体 2）、阈值面 47 文件 135 条 ERROR；预期＝失败文件 −24、阈值 ERROR 显著下降。**代价**：约 21 分钟机时（实测 1247.10 秒）。**未验证**：是否全消。
+- 丁（按族豁免＋记 `unverified`）：豁免清单必须是**两族分开**——`EPERM`/symlink 族 24 枚（分布 17 个区，最多 `packages/api/workspace-files` 4、`fs-sandbox` 2、`fs-local` 2、`scripts` 2），与 pwsh 契约族 3 枚（R-8）。**残余风险要同写**：前者含路径围栏/原子写/持久化，后者含 10 条 confinement 围栏回归；一句话版＝**豁免之后判据③ 与判据⑥ 的 Windows 侧在本地不可证**。
+- 丙（整档交 CI，本机不冒充）：与仓内既有先例一致（CI 拥有的信号不本地冒充），零机时代价，但判据④ 的覆盖率一格将永远只有 CI 读数。
+
+### S-4 两枚测试可靠性缺陷（`dsh-ci-test-reliability` 规程）
+- `packages/mcp/mcp-client/tests/negotiation-lifecycle.spec.ts:127`：单跑绿（`5 passed (5)`）、跟队红；give-up 首现 635 ms（探针实测）⇒ 甲 显式 `timeout` 把假设写进参数（不推荐，把不稳定钉成合同）／乙 让它自带时序前提或进独占 lane（推荐）。
+- `scripts/verify-package-dependencies.spec.ts` 的 `keeps generated Host schema imports…`：只在整趟共享树红，单跑与干净整趟都绿（㊵-227）；已否证「他线污染」与「读环境状态」两假设（`policy()` 纯字面量、夹具自 `mkdtemp`）。甲 用例私有 root/缓存并在 `afterEach` 释放／乙 消除被测模块内模块级可变句柄。**具体共享了哪一个状态本轮未追到，不写成结论**。
+
+**引用本节的边界**：以上是方案，不是结果；本节没有任何一条已执行，因此**不构成任何判据达成的证据**。
