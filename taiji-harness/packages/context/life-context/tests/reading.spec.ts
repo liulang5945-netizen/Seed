@@ -46,6 +46,88 @@ function withoutKnowledge(snapshot: LifeSnapshot): LifeSnapshot {
   return rest
 }
 
+describe('absent and legacy reading shapes', () => {
+  it('drops the mode and drive segments, and names an empty need map, while the training flags are raised', () => {
+    const reading = renderLifeState(nativeSnapshot({
+      life: { isRunning: true, native: { tick: 3, mode: '', needs: {}, drives: {} } },
+      training: { isTraining: true, pauseRequested: false, stopRequested: true, publishing: true, checkpoints: [] },
+    }), BASE + 1_000, 400)
+    if (reading.kind !== 'inject') throw new Error('expected an injectable reading')
+
+    expect(reading.text).not.toContain('mode=')
+    expect(reading.text).not.toContain('drives=')
+    expect(reading.text).toContain('needs[]')
+    expect(reading.text).toContain('stopping')
+    expect(reading.text).toContain('publishing')
+  })
+
+  it('renders the legacy scheduler measurements when no native organ answered', () => {
+    const reading = renderLifeState(nativeSnapshot({
+      source: 'legacy',
+      life: {
+        isRunning: true,
+        legacy: { isRunning: true, lifeState: 'feeding', dominantNeed: 'curiosity', needs: {}, totalHeartbeats: 3, totalEvents: 2 },
+      },
+    }), BASE + 1_000, 400)
+    if (reading.kind !== 'inject') throw new Error('expected an injectable reading')
+
+    expect(reading.text).toContain('state=feeding')
+    expect(reading.text).toContain('dominant=curiosity')
+    expect(reading.text).toContain('needs[]')
+    expect(reading.text).toContain('heartbeats=3')
+    expect(reading.text).toContain('events=2')
+  })
+
+  it('names no organ at all when the life reading carries neither native nor legacy', () => {
+    const reading = renderLifeState(nativeSnapshot({ life: { isRunning: false } }), BASE + 1_000, 400)
+    if (reading.kind !== 'inject') throw new Error('expected an injectable reading')
+
+    expect(reading.text).not.toContain('source=native')
+    expect(reading.text).not.toContain('source=legacy')
+  })
+
+  it('treats an unparseable observedAt as no age at all rather than as staleness', () => {
+    expect(renderLifeState(nativeSnapshot({ observedAt: 'not-an-instant' }), BASE, 400)).toMatchObject({ kind: 'inject' })
+  })
+
+  it('renders a legacy scheduler that has not settled a state, a need, or a count yet', () => {
+    const reading = renderLifeState(nativeSnapshot({
+      source: 'legacy',
+      life: {
+        isRunning: false,
+        legacy: { isRunning: false, lifeState: '', dominantNeed: '', needs: { curiosity: 4 }, totalHeartbeats: 0, totalEvents: 0 },
+      },
+    }), BASE + 1_000, 400)
+    if (reading.kind !== 'inject') throw new Error('expected an injectable reading')
+
+    expect(reading.text).not.toContain('state=')
+    expect(reading.text).not.toContain('dominant=')
+    expect(reading.text).not.toContain('heartbeats=')
+    expect(reading.text).not.toContain('events=')
+    expect(reading.text).toContain('needs[curiosity=4]')
+  })
+
+  it('compares need maps across organs and reads a missing key as zero', () => {
+    const native = nativeSnapshot()
+    const legacyOnly = nativeSnapshot({
+      life: {
+        isRunning: true,
+        legacy: { isRunning: true, lifeState: 'idle', dominantNeed: '', needs: { curiosity: 1 }, totalHeartbeats: 0, totalEvents: 0 },
+      },
+    })
+    const shifted = nativeSnapshot({ life: { isRunning: true, native: { tick: 1, mode: 'wake', needs: { fatigue: 60 }, drives: {} } } })
+
+    expect(significantChange(legacyOnly, native)).toBe(true)
+    expect(significantChange(withoutReadings(native), native)).toBe(true)
+    // An absent reading on the right is the third operand: every left-side need drifts from zero.
+    expect(significantChange(native, withoutReadings(legacyOnly))).toBe(true)
+    // Both sides absent is the comparator's own false control.
+    expect(significantChange(withoutReadings(native), withoutReadings(legacyOnly))).toBe(false)
+    expect(significantChange(native, legacyOnly)).toBe(true)
+    expect(significantChange(native, shifted)).toBe(true)
+  })
+})
+
 describe('renderLifeState', () => {
   it('renders a native reading with needs, drives, training, and knowledge', () => {
     const reading = renderLifeState(nativeSnapshot(), BASE + 5_000, 400)
