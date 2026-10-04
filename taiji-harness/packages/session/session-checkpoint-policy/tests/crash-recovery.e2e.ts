@@ -71,7 +71,7 @@ async function crashAt(mode: 'request' | 'tool'): Promise<{ root: string; marker
 // Read the crashed durable log and balance it the way a resuming reader does:
 // the stored events stay untouched; `interruptedTurnClosers` supplies the
 // in-memory closers for the interrupted tail turn.
-async function load(root: string): Promise<SessionEvent[]> {
+async function load(root: string): Promise<readonly SessionEvent[]> {
   const ctx = new Context()
   await ctx.plugin(SessionStore)
   await ctx.plugin(JsonlSessionPersistence, { root, compression: 'none' })
@@ -132,7 +132,7 @@ describe('semantic checkpoint hard-crash recovery', () => {
     await ctx.plugin(AgentLoop, { agents: [] })
     await ctx.plugin(JsonlSessionPersistence, { root: crashed.root, compression: 'none' })
     const probe = await ctx.sessionPersistence.open(sessionId, 'read')
-    let before: SessionEvent[]
+    let before: readonly SessionEvent[]
     try {
       before = (await probe.read()).events
     } finally {
@@ -147,7 +147,7 @@ describe('semantic checkpoint hard-crash recovery', () => {
     })
     await handle.dispose()
     const reader = await ctx.sessionPersistence.open(sessionId, 'read')
-    let stored: SessionEvent[]
+    let stored: readonly SessionEvent[]
     try {
       stored = (await reader.read()).events
     } finally {
@@ -167,7 +167,7 @@ describe('semantic checkpoint hard-crash recovery', () => {
     await mountAgentLoopTestDependencies(ctx)
     await ctx.plugin(AgentLoop, { agents: [] })
     await ctx.plugin(JsonlSessionPersistence, { root: crashed.root, compression: 'none' })
-    const readStored = async (): Promise<SessionEvent[]> => {
+    const readStored = async (): Promise<readonly SessionEvent[]> => {
       const reader = await ctx.sessionPersistence.open(sessionId, 'read')
       try {
         return (await reader.read()).events
