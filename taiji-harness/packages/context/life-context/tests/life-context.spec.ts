@@ -110,6 +110,28 @@ describe('life-context policy section', () => {
 })
 
 describe('life-context pre-step injection', () => {
+  it('warns once per omission reason however many steps ask', async () => {
+    const harness = await mount({}, withoutReadings(nativeSnapshot({
+      availability: { runtime: 'down', legacy: 'down', knowledge: 'down', trainingStream: 'idle' },
+    })))
+    const warn = vi.spyOn(harness.ctx.logger, 'warn')
+
+    await fire(harness.ctx)
+    await fire(harness.ctx)
+    await fire(harness.ctx)
+
+    expect(warn).toHaveBeenCalledTimes(1)
+  })
+
+  it('returns an aborted step untouched instead of reading the runtime for it', async () => {
+    const harness = await mount()
+    const readsBefore = harness.reads.count
+
+    expect(await fire(harness.ctx, AbortSignal.abort())).toHaveLength(1)
+    // The early return is what keeps a departed caller from paying a snapshot read.
+    expect(harness.reads.count).toBe(readsBefore)
+  })
+
   it('prepends one durable life-context message ahead of the turn', async () => {
     const { ctx } = await mount()
     const messages = await fire(ctx)
