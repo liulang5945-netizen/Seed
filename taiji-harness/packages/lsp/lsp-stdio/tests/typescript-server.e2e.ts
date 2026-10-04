@@ -67,10 +67,30 @@ beforeAll(async () => {
   })
 }, 60_000)
 
+/** Bounded cleanup retry: 40 × 50 ms ≈ 2 s, then the real error surfaces. */
+const REMOVE_RETRY_INTERVAL_MS = 50
+const REMOVE_RETRY_LIMIT = 40
+
 afterAll(async () => {
   if (ctx) await ctx.fiber.dispose()
-  if (root) await rm(root, { recursive: true, force: true })
+  if (root) await removeTreeAfterServerExit(root)
 })
+
+/**
+ * Windows keeps a just-closed server's working tree locked for a short window after the fiber disposes, and
+ * `rm`'s `force` flag does not retry `EBUSY`. Retry within a bounded budget, then rethrow the real error.
+ */
+async function removeTreeAfterServerExit(path: string): Promise<void> {
+  for (let attempt = 0; ; attempt += 1) {
+    try {
+      await rm(path, { recursive: true, force: true })
+      return
+    } catch (error) {
+      if (attempt >= REMOVE_RETRY_LIMIT) throw error
+      await new Promise((sleep) => { setTimeout(sleep, REMOVE_RETRY_INTERVAL_MS) })
+    }
+  }
+}
 
 /** One-based helper mirroring the model contract, converted to the seam's zero-based position. */
 function at(operation: LspQueryRequest['operation'], line1: number, char1: number, filePath = 'shapes.ts'): LspQueryRequest {
