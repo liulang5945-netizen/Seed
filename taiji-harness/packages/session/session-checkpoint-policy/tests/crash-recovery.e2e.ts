@@ -1,7 +1,7 @@
 import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
-import { fileURLToPath } from 'node:url'
+import { fileURLToPath, pathToFileURL } from 'node:url'
 import { execa } from 'execa'
 import { Context } from '@taiji/cordis'
 import { afterEach, describe, expect, it, vi } from 'vitest'
@@ -45,7 +45,9 @@ async function crashAt(mode: 'request' | 'tool'): Promise<{ root: string; marker
   const expectedMarker = mode === 'request' ? 'request-dispatched' : 'tool-side-effect'
   // The SIGKILL-at-failpoint choreography stays custom: the child must die
   // mid-write, so no timeout or graceful termination may reach it first.
-  const child = execa(process.execPath, ['--import', tsxLoader, childScript, mode, root, marker], {
+  // `--import` takes a module URL; a bare Windows path throws
+  // ERR_UNSUPPORTED_ESM_URL_SCHEME before the child reaches the failpoint.
+  const child = execa(process.execPath, ['--import', pathToFileURL(tsxLoader).href, childScript, mode, root, marker], {
     cwd: repoRoot,
     env: { TSX_TSCONFIG_PATH: join(repoRoot, 'tsconfig.json') },
     stdin: 'ignore',
@@ -88,7 +90,7 @@ afterEach(async () => {
   await Promise.all(roots.splice(0).map(root => rm(root, { recursive: true, force: true })))
 })
 
-describe.skipIf(process.platform === 'win32')('semantic checkpoint hard-crash recovery', () => {
+describe('semantic checkpoint hard-crash recovery', () => {
   it('persists the complete request before model dispatch', async () => {
     const crashed = await crashAt('request')
     expect(crashed.markerText).toBe('request-dispatched')
