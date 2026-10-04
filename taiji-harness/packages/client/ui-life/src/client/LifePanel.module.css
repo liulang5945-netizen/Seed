@@ -108,6 +108,7 @@
   height: 12px;
   flex: 0 0 2px;
   border-radius: 999px;
+  corner-shape: round;
   background: var(--dsw-alias-label-tertiary, #8b8f94);
 }
 
@@ -663,7 +664,7 @@
   gap: 8px;
   margin-left: auto;
   padding-left: 8px;
-  border-left: 1px solid var(--dsw-alias-border-l2, rgba(0, 0, 0, 0.1));
+  border-left: 0.5px solid var(--dsw-alias-border-l2, rgba(0, 0, 0, 0.1));
 }
 
 /* Inline note for surfaces that did not answer: a note, not a block. */

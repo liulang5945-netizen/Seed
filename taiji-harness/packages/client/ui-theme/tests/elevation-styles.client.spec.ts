@@ -214,6 +214,19 @@ describe('neutral solid borders are hairlines', () => {
    * Spinner ring tracks, keyed `<basename> <selector>`: the border is the
    * drawn graphic (a rotating ring), not an outline, so it keeps its width.
    */
+  /**
+   * Group seams in LifePanel, keyed `<basename> <selector>`: the seam above each
+   * organ group keeps 1px while the card stroke is 0.5px, because the four control
+   * groups need a heavier separation than the card outline; see the requirement
+   * recorded in LifePanel.module.css above `.organ + .organ`. Residual risk: a 1px
+   * border drawn beside an elevation stroke double-draws the outline and shifts
+   * layout by the border width; this rule carries no box-shadow, so the pairing
+   * check above still applies to it.
+   */
+  const HEAVY_GROUP_SEAMS = new Set([
+    'LifePanel.module.css .organ + .organ',
+  ])
+
   const RING_TRACKS = new Set([
     'boot-page.module.css .spinner',
   ])
@@ -232,7 +245,7 @@ describe('neutral solid borders are hairlines', () => {
     // dashed affordances and state-colored borders are out of scope.
     const wide = packageStylesheets().flatMap((file) => {
       const base = basename(file)
-      const exempt = new Set([...RING_TRACKS]
+      const exempt = new Set([...RING_TRACKS, ...HEAVY_GROUP_SEAMS]
         .filter(track => track.startsWith(`${base} `))
         .map(track => track.slice(base.length + 1)))
       return wideNeutralBorders(readFileSync(file, 'utf8'), exempt)
