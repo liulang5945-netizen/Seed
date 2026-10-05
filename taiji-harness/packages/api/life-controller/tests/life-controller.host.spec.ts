@@ -214,6 +214,30 @@ describe('LifeController follow', () => {
 })
 
 describe('LifeController training control', () => {
+  it('sends every training and life control verb and returns the runtime message', async () => {
+    const { controller, runtime } = await harness()
+    const verbs: Array<() => Promise<{ message: string }>> = [
+      () => controller.trainPause(new AbortController().signal),
+      () => controller.trainResume(new AbortController().signal),
+      () => controller.trainReset(new AbortController().signal),
+    ]
+
+    for (const call of verbs) {
+      const before = runtime.requests.length
+      const value = await call()
+      // The stand-in answers every control verb with the path it was reached on,
+      // so the reply itself names the request the verb must have sent. The
+      // control path re-reads afterwards, which is why the tail is a set here.
+      const path = value.message.endsWith(' accepted') ? value.message.slice(0, -' accepted'.length) : ''
+      expect(path).not.toBe('')
+      expect(runtime.requests.slice(before).map(entry => entry.path)).toContain(path)
+    }
+
+    // The Legacy scheduler verb is gated on this runtime: the refusal has to
+    // reach the caller as a refusal, after the request went out.
+    await expect(controller.lifeStop(new AbortController().signal)).rejects.toThrow(/Legacy life surface/u)
+  })
+
   it('starts a run and folds progress while the stream stays open', async () => {
     const { controller, runtime } = await harness()
     runtime.training = { kind: 'frames', frames: [progressFrame({ fraction: 0.5, step: 500 })], hold: true }
