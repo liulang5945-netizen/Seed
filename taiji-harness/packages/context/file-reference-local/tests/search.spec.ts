@@ -150,6 +150,34 @@ describe('WorkspaceFileSearch', () => {
     expect(await files.list('escape/outside', signal)).toEqual([])
   })
 
+  it('keeps a linked directory out of the index and out of direct completion', async () => {
+    const root = await workspace()
+    const outside = await mkdtemp(join(tmpdir(), 'dsh-file-autocomplete-linked-'))
+    roots.push(outside)
+    await writeFile(join(outside, 'linked-secret.txt'), 'secret')
+    // A linked directory is the dirent shape that is neither a directory nor a file:
+    // a Windows junction needs no privilege and reads exactly as a POSIX
+    // symlink-to-directory does, so both skip arms are exercised on every host.
+    const linkType = process.platform === 'win32' ? 'junction' : 'dir'
+    await symlink(outside, join(root, 'linked-dir'), linkType)
+    await symlink(outside, join(root, 'src', 'inner-linked'), linkType)
+    const files = search(root)
+    const signal = new AbortController().signal
+
+    // Neither the link row nor anything behind it is indexed, and the same row is
+    // skipped when a subdirectory is listed directly.
+    expect(await files.list('linked', signal)).toEqual([])
+    expect(await files.list('linked-secret', signal)).toEqual([])
+    expect(await files.list('src/inner', signal)).toEqual([])
+    // Positive control: the same listings still offer the real rows of `src`.
+    expect(await files.list('src/tui', signal)).toEqual([
+      { path: 'src/tui.spec.ts', kind: 'file' },
+    ])
+    expect(await files.list('src/terminal', signal)).toEqual([
+      { path: 'src/terminal-view.ts', kind: 'file' },
+    ])
+  })
+
   it('ranks basename and subsequence fuzzy matches across the bounded workspace index', async () => {
     const root = await workspace()
     await writeFile(join(root, 'src', 'tspc-helper.ts'), 'helper')
