@@ -7,7 +7,8 @@ import type { SessionEvent, SessionHeader } from '@taiji/dsh-session'
 import { RemoteError } from '@taiji/dsh-typert-protocol'
 import { describe, expect, it, vi } from 'vitest'
 import SessionController from '../src/index.ts'
-import type { ApiSessionAgentController } from '../src/agent.ts'
+import { ApiSessionAgentController } from '../src/agent.ts'
+import type {} from '@taiji/dsh-workspace'
 import { createSessionTestController, testSessionPersistence } from './test-remote.ts'
 
 const defaults = {
@@ -18,6 +19,22 @@ const defaults = {
 describe('SessionController facade', () => {
   it('does not require the Tools service', () => {
     expect(SessionController.inject).not.toContain('tools')
+  })
+
+  it('closes the live Agent when the Workspace registry asks before deleting its log', async () => {
+    const ctx = new Context()
+    await ctx.plugin(SessionStore)
+    await ctx.plugin(AgentRegistry)
+    ctx.provide('sessionPersistence', testSessionPersistence(ctx, { list: () => Promise.resolve([]) }) as never)
+    const closeSession = vi.spyOn(ApiSessionAgentController.prototype, 'closeSession').mockResolvedValue(true)
+    try {
+      createSessionTestController(ctx, defaults)
+      const sessionId = SessionId('close-hop')
+      await ctx.parallel('workspace/session-close', { sessionId })
+      expect(closeSession).toHaveBeenCalledWith(sessionId)
+    } finally {
+      closeSession.mockRestore()
+    }
   })
 
   it('owns Host service methods and publishes Agent lifecycle projections', async () => {
