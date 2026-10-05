@@ -8,6 +8,7 @@ import type {
 } from '@taiji/dsh-api-life-controller/client'
 import { RemoteError, type RemoteFailure } from '@taiji/dsh-typert-protocol'
 import { LifePanel, type LifePanelProps } from '../src/client/LifePanel.tsx'
+import { LifePanelIcon } from '../src/client/LifePanelIcon.tsx'
 // Pulls the `LocaleNamespaceMap` augmentation into this program, so
 // `LifePanelProps['t']` resolves to the framework-injected translate seat.
 import type {} from '../src/client/index.ts'
@@ -777,5 +778,16 @@ describe('LifePanel', () => {
     expect(datasets?.id).toBe('life-training-data')
     expect(checkpoints?.id).toBe('life-checkpoints')
     expect(new Set([controls, datasets, checkpoints]).size).toBe(3)
+  })
+})
+
+describe('LifePanelIcon', () => {
+  it('renders the sidebar glyph at the size the sidebar asks for', () => {
+    render(<LifePanelIcon size={20} />)
+    const glyph = document.querySelector('svg')
+    expect(glyph).not.toBeNull()
+    expect(glyph?.getAttribute('width')).toBe('20')
+    expect(glyph?.getAttribute('height')).toBe('20')
+    expect(glyph?.getAttribute('viewBox')).toBe('0 0 16 16')
   })
 })
