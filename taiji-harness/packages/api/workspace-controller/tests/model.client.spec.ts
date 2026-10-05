@@ -580,4 +580,50 @@ describe('ClientWorkspaceModel', () => {
     model.removeView(wid('gone'))
     expect(model.getSnapshot().items).toEqual([])
   })
+
+  it('installs the sets a Session deletion returns and ignores a stale echo', async () => {
+    const remote = new FakeWorkspaceRemote()
+    const model = modelFor(remote)
+    baseline(model, [workspace('one', [sid('first'), sid('second')])], [sid('archived')])
+
+    // The wire request carries `stopActivity` only when the caller asked the Host
+    // to stop the Session's work first, so the omitted arm is observable too.
+    remote.onDeleteSession = request => Promise.resolve(remoteOk({
+      archivedSessionIds: [request.sessionId],
+      pinnedSessionIds: [],
+    }))
+    await expect(model.deleteSession({ sessionId: sid('first') })).resolves.toMatchObject({ ok: true })
+    expect(remote.calls).toContainEqual({ method: 'deleteSession', request: { sessionId: sid('first') } })
+    expect(model.getSnapshot().archivedSessionIds).toEqual([sid('first')])
+
+    await expect(model.deleteSession({ sessionId: sid('second'), stopActivity: true }))
+      .resolves.toMatchObject({ ok: true })
+    expect(remote.calls).toContainEqual({
+      method: 'deleteSession',
+      request: { sessionId: sid('second'), stopActivity: true },
+    })
+    expect(model.getSnapshot().archivedSessionIds).toEqual([sid('second')])
+
+    // A refusal installs nothing: both sets stay where the last accepted echo left them.
+    remote.onDeleteSession = () => Promise.resolve(workspaceError(
+      new RemoteError('workspace/session-open', 'live in this Host', { sessionId: sid('first') }),
+    ))
+    await expect(model.deleteSession({ sessionId: sid('first') })).resolves.toMatchObject({ ok: false })
+    expect(model.getSnapshot().archivedSessionIds).toEqual([sid('second')])
+
+    // A stale success — an older request settling after a newer one — must not
+    // reinstall the sets it returned, or a superseded deletion would resurrect
+    // an archive/pin posture the Host never committed last.
+    let settleFirst: ((value: RemoteResult<WorkspaceDeleteSessionValue>) => void) | undefined
+    remote.onDeleteSession = request => request.sessionId === sid('first')
+      ? new Promise<RemoteResult<WorkspaceDeleteSessionValue>>((resolve) => { settleFirst = resolve })
+      : Promise.resolve(remoteOk({ archivedSessionIds: [sid('second')], pinnedSessionIds: [sid('second')] }))
+    const older = model.deleteSession({ sessionId: sid('first') })
+    await expect(model.deleteSession({ sessionId: sid('second') })).resolves.toMatchObject({ ok: true })
+    expect(model.getSnapshot().pinnedSessionIds).toEqual([sid('second')])
+    settleFirst?.(remoteOk({ archivedSessionIds: [sid('first')], pinnedSessionIds: [] }))
+    await expect(older).resolves.toMatchObject({ ok: true })
+    expect(model.getSnapshot().archivedSessionIds).toEqual([sid('second')])
+    expect(model.getSnapshot().pinnedSessionIds).toEqual([sid('second')])
+  })
 })
