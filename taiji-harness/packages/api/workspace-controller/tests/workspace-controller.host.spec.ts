@@ -60,7 +60,14 @@ async function harness(options: { systemDocuments?: boolean } = {}) {
   const storageDomain = new DomainFacility(ctx, { backend: 'memory', routes: {} })
   ctx.storage.mount('domain', storageDomain)
   ctx.provide('storageDomain', storageDomain)
-  ctx.provide('sessionPersistence', { list: () => Promise.resolve([]) } as never)
+  const removed: SessionId[] = []
+  ctx.provide('sessionPersistence', {
+    list: () => Promise.resolve([]),
+    delete: (sessionId: SessionId): Promise<void> => {
+      removed.push(sessionId)
+      return Promise.resolve()
+    },
+  } as never)
   await ctx.plugin(WorkspaceRegistry)
   const dispose = (): void => {}
   ctx.provide('typert', {
@@ -68,7 +75,7 @@ async function harness(options: { systemDocuments?: boolean } = {}) {
     contexts: { configureHost: () => dispose },
   } as never)
   const controller = new WorkspaceController(ctx, options.systemDocuments === true ? {} : { documentsDirectory: root })
-  return { controller, ctx, root, storageDomain }
+  return { controller, ctx, root, storageDomain, removed }
 }
 
 function stageDir(root: string, name: string): string {
@@ -321,6 +328,40 @@ describe('WorkspaceController commands', () => {
     })
     expect([...ctx.workspaceRegistry.pinnedSessionIds]).toEqual([doomed.id])
     expect([...ctx.workspaceRegistry.archivedSessionIds]).toEqual([kept.id])
+  })
+
+  it('deletes a Session whose owner closes it, forgetting its pin and archive entries', async () => {
+    const { controller, ctx, root, removed } = await harness()
+    const created = await controller.create({ path: stageDir(root, 'delete-closable') })
+    // prepare + enter + announce is what `create` does internally; this case
+    // holds the detach disposer that `create` hides inside its own effect,
+    // because the close provider has to release the store entry the way the
+    // Session's real owner does.
+    const closable = ctx.sessions.prepare(SessionId('closable'), {
+      meta: { cwd: created.workspace.path },
+    })
+    const detach = ctx.sessions.enter(closable)
+    ctx.sessions.announce(closable)
+    const listenClose = ctx.on('workspace/session-close', ({ sessionId }) => {
+      if (sessionId === closable.id) detach()
+    })
+    await controller.pinSession({ sessionId: closable.id })
+    await controller.archiveSession({ sessionId: closable.id })
+
+    await expect(controller.deleteSession({ sessionId: closable.id })).resolves.toEqual({
+      archivedSessionIds: [],
+      pinnedSessionIds: [],
+    })
+    expect(ctx.sessions.get(closable.id)).toBeUndefined()
+    expect(removed).toEqual([closable.id])
+    listenClose()
+  })
+
+  it('rethrows a registry failure that is not the live-Session refusal', async () => {
+    const { controller } = await harness()
+    // An id the registry does not know fails before the close step, and that
+    // error is not mapped into a RemoteError: the caller sees the registry's own.
+    await expect(controller.deleteSession({ sessionId: SessionId('never-known') })).rejects.toThrow()
   })
 })
 
