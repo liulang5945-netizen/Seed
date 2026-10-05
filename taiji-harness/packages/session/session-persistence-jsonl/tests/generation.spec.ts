@@ -1240,7 +1240,7 @@ describe('JSONL immutable generation publication', () => {
     expect(await readFile(expected, 'utf8')).toBe(line(header(SESSION_FORMAT_VERSION)) + line(event0))
   })
 
-  it.each(['different', 'malformed', 'symlink', 'directory'] as const)(
+  it.each(['different', 'malformed', 'directory'] as const)(
     'fails loud without altering a colliding %s target',
     async (kind) => {
       const root = await tempRoot()
@@ -1249,7 +1249,6 @@ describe('JSONL immutable generation publication', () => {
       await writeFile(request.sourcePath, source)
       if (kind === 'different') await writeFile(request.currentPath, line(header(SESSION_FORMAT_VERSION)) + line(event1))
       if (kind === 'malformed') await writeFile(request.currentPath, '{not-json}\n')
-      if (kind === 'symlink') await symlink(request.sourcePath, request.currentPath)
       if (kind === 'directory') await mkdir(request.currentPath)
 
       await expect(ensureJsonlGenerationCurrent(request)).rejects.toBeInstanceOf(
@@ -1260,6 +1259,37 @@ describe('JSONL immutable generation publication', () => {
       expect((await readdir(root)).every(name => !name.includes('.tmp'))).toBe(true)
     },
   )
+
+  // A colliding target that is a symbolic link to the very file being migrated is
+  // its own refusal shape, so it keeps its own case instead of riding the table.
+  // The product asks `lstat`, and a Windows junction reports the same symbolic-link
+  // kind for a file target — so the link is created here without the unprivileged
+  // platform's denial, and any remaining refusal still ends the case with its own
+  // errno on record rather than silently.
+  it('fails loud without altering a colliding symlink target', async (ctx) => {
+    const root = await tempRoot()
+    const request = options(root)
+    const source = Buffer.from(line(header(0)) + line(event0))
+    await writeFile(request.sourcePath, source)
+    try {
+      await symlink(
+        request.sourcePath,
+        request.currentPath,
+        process.platform === 'win32' ? 'junction' : 'file',
+      )
+    } catch (error: unknown) {
+      const code = (error as NodeJS.ErrnoException).code
+      if (code !== 'EPERM' && code !== 'EACCES') throw error
+      ctx.skip()
+      return
+    }
+
+    await expect(ensureJsonlGenerationCurrent(request)).rejects.toBeInstanceOf(
+      JsonlGenerationTargetConflictError,
+    )
+    expect(await readFile(request.sourcePath)).toEqual(source)
+    expect((await readdir(root)).every(name => !name.includes('.tmp'))).toBe(true)
+  })
 
   it('normalizes a non-Error rejection while reopening an existing target', async () => {
     const root = await tempRoot()
