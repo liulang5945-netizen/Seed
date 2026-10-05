@@ -26,6 +26,8 @@ interface MountOptions {
   readonly fail?: Error
   /** Hold every reopening open: a carrier loss must retry once, not forever. */
   readonly retryHolds?: boolean
+  /** Refuse every verb with this value instead of accepting it. */
+  readonly refused?: unknown
 }
 
 /**
@@ -35,7 +37,7 @@ interface MountOptions {
  * @returns the mounted context, the failure view, and how often follow opened.
  */
 async function mount(options: MountOptions = {}): Promise<{ ctx: Context; opened: number[] }> {
-  const { frames = [], fail, retryHolds = true } = options
+  const { frames = [], fail, retryHolds = true, refused } = options
   const ctx = new Context()
   contexts.add(ctx)
   const opened: number[] = []
@@ -48,26 +50,33 @@ async function mount(options: MountOptions = {}): Promise<{ ctx: Context; opened
     registerGenerationSource: () => () => {},
     start: () => ({ stop: () => {} }),
   }
+  const controlReply = () => Promise.resolve(
+    refused === undefined
+      ? { ok: true as const, value: { message: 'verb accepted' } }
+      : { ok: false as const, error: refused as never },
+  )
   const verbs = {
-    // Every control verb has the same envelope shape, and none of them is allowed
-    // to be called before the caller asks: record nothing, answer the same value.
-    snapshot: () => Promise.resolve({ ok: true as const, value: { snapshot: { tick: 99 } as never } }),
-    trainStart: () => Promise.resolve({ ok: true as const, value: { message: 'verb accepted' } }),
-    trainResumeCheckpoint: () => Promise.resolve({ ok: true as const, value: { message: 'verb accepted' } }),
-    trainPause: () => Promise.resolve({ ok: true as const, value: { message: 'verb accepted' } }),
-    trainResume: () => Promise.resolve({ ok: true as const, value: { message: 'verb accepted' } }),
-    trainStop: () => Promise.resolve({ ok: true as const, value: { message: 'verb accepted' } }),
-    trainReset: () => Promise.resolve({ ok: true as const, value: { message: 'verb accepted' } }),
-    uploadDataset: () => Promise.resolve({ ok: true as const, value: { message: 'verb accepted' } }),
-    deleteDataset: () => Promise.resolve({ ok: true as const, value: { message: 'verb accepted' } }),
-    deleteCheckpoint: () => Promise.resolve({ ok: true as const, value: { message: 'verb accepted' } }),
-    uploadKnowledge: () => Promise.resolve({ ok: true as const, value: { message: 'verb accepted' } }),
-    deleteKnowledge: () => Promise.resolve({ ok: true as const, value: { message: 'verb accepted' } }),
-    consolidate: () => Promise.resolve({ ok: true as const, value: { message: 'verb accepted' } }),
-    activateCheckpoint: () => Promise.resolve({ ok: true as const, value: { message: 'verb accepted' } }),
-    lifeStart: () => Promise.resolve({ ok: true as const, value: { message: 'verb accepted' } }),
-    lifeStop: () => Promise.resolve({ ok: true as const, value: { message: 'verb accepted' } }),
-    lifeAction: () => Promise.resolve({ ok: true as const, value: { message: 'verb accepted' } }),
+    snapshot: () => Promise.resolve(
+      refused === undefined
+        ? { ok: true as const, value: { snapshot: { tick: 99 } as never } }
+        : { ok: false as const, error: refused as never },
+    ),
+    trainStart: controlReply,
+    trainResumeCheckpoint: controlReply,
+    trainPause: controlReply,
+    trainResume: controlReply,
+    trainStop: controlReply,
+    trainReset: controlReply,
+    uploadDataset: controlReply,
+    deleteDataset: controlReply,
+    deleteCheckpoint: controlReply,
+    uploadKnowledge: controlReply,
+    deleteKnowledge: controlReply,
+    consolidate: controlReply,
+    activateCheckpoint: controlReply,
+    lifeStart: controlReply,
+    lifeStop: controlReply,
+    lifeAction: controlReply,
   }
   const life = {
     ...verbs,
@@ -206,8 +215,38 @@ describe('Life Controller Client apply', () => {
     const notified: number[] = []
     const stop = life.subscribe(() => { notified.push(notified.length) })
     expect(typeof stop).toBe('function')
+
+    // A settled reading wakes every listener that is still attached.
+    await life.refresh()
+    expect(notified).toEqual([0])
+
     stop()
     await life.refresh()
-    expect(notified).toEqual([])
+    expect(notified).toEqual([0])
+  })
+
+  it('raises the structured control failure when the Host refuses a verb', async () => {
+    const { ctx } = await mount({ frames: [], refused: { code: 'life/refused', message: 'the host refused' } })
+    const life = ctx.life
+
+    await expect(life.refresh()).rejects.toThrow('the host refused')
+    await expect(life.trainPause()).rejects.toThrow('the host refused')
+
+    // The same refusal is folded into the stored state with its code intact.
+    const state = life.getSnapshot()
+    expect(state.state).toBe('error')
+    expect(state.error?.code).toBe('life/refused')
+  })
+
+  it('normalizes a refusal that is not shaped like a failure', async () => {
+    const { ctx } = await mount({ frames: [], refused: 'bare refusal' })
+
+    // The stored state is normalized through the harness's own failure shape, so a
+    // refusal that is bare text still arrives with a readable message and a code.
+    await expect(ctx.life.refresh()).rejects.toBeInstanceOf(Error)
+    const state = ctx.life.getSnapshot()
+    expect(state.state).toBe('error')
+    expect(state.error?.message).toBe('bare refusal')
+    expect(state.error?.code).toBe('life/stream-failed')
   })
 })
