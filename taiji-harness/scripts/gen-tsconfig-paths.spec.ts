@@ -13,13 +13,14 @@ import {
 const root = resolve(import.meta.dirname, '..')
 
 describe('generated tsconfig package aliases', () => {
-  it('maps each package to its own source directory', () => {
+  it('maps each package to its own source entry file', () => {
     const aliases = collectPackageAliases()
     expect(aliases.length).toBeGreaterThan(100)
     const session = aliases.find(alias => alias.specifier === '@taiji/dsh-session')
     expect(session).toEqual({
       specifier: '@taiji/dsh-session',
       source: './packages/core/session/src',
+      entry: './packages/core/session/src/index.ts',
       hasInvariant: true,
     })
     // Sorted, so a package added anywhere lands in a stable spot in the diff.
@@ -31,15 +32,18 @@ describe('generated tsconfig package aliases', () => {
 
   it('yields to a hand-written alias and closes without a trailing comma', () => {
     const aliases = [
-      { specifier: '@taiji/dsh-a', source: './packages/g/a/src', hasInvariant: true },
-      { specifier: '@taiji/dsh-b', source: './packages/g/b/src', hasInvariant: false },
+      { specifier: '@taiji/dsh-a', source: './packages/g/a/src', entry: './packages/g/a/src/index.ts', hasInvariant: true },
+      { specifier: '@taiji/dsh-b', source: './packages/g/b/src', entry: './packages/g/b/src/index.ts', hasInvariant: false },
     ]
     const body = renderAliases(aliases, new Set(['@taiji/dsh-a']))
 
     // The hand-written bare alias is skipped; its /invariant sibling is not.
+    // The bare alias maps the entry FILE so a stale compiled `src/index.js`
+    // cannot win directory resolution and hide the source from coverage
+    // (DEBT-G45); the /invariant alias keeps its own file target.
     expect(body).toBe([
       '      "@taiji/dsh-a/invariant": ["./packages/g/a/src/invariant.ts"]',
-      '      "@taiji/dsh-b": ["./packages/g/b/src"]',
+      '      "@taiji/dsh-b": ["./packages/g/b/src/index.ts"]',
     ].join(',\n'))
     expect(body.endsWith(',')).toBe(false)
   })

@@ -37,6 +37,15 @@ interface PackageAlias {
   readonly specifier: string
   /** Repository-relative source directory, e.g. `./packages/session/session/src`. */
   readonly source: string
+  /**
+   * Repository-relative entry file the bare specifier maps to, e.g.
+   * `./packages/session/session/src/index.ts`. Mapping the FILE rather than
+   * the directory is deliberate: a stale compiled `src/index.js` (ignored by
+   * git, produced by in-place typecheck) would otherwise win Node's directory
+   * resolution, load the compiled copy, and leave the source out of coverage
+   * (DEBT-G45).
+   */
+  readonly entry: string
   /** Whether the package carries `src/invariant.ts`, which earns a second alias. */
   readonly hasInvariant: boolean
 }
@@ -112,13 +121,28 @@ export function collectPackageAliases(): PackageAlias[] {
     bySpecifier.set(name, {
       specifier: name,
       source: `./packages/${group}/${directory}/src`,
+      entry: entryFile(packageDir, `./packages/${group}/${directory}/src`),
       hasInvariant: existsSync(join(packageDir, 'src', 'invariant.ts')),
       directory: `${group}/${directory}`,
     })
   }
   return [...bySpecifier.values()]
-    .map(({ specifier, source, hasInvariant }) => ({ specifier, source, hasInvariant }))
+    .map(({ specifier, source, entry, hasInvariant }) => ({ specifier, source, entry, hasInvariant }))
     .sort((left, right) => left.specifier.localeCompare(right.specifier))
+}
+
+/**
+ * Resolve the file a bare specifier should map to: the package's `src/index.ts`
+ * (or `.tsx`). Falls back to the source directory only for a package that
+ * carries `src` without an index, preserving the previous resolution.
+ * @param packageDir - absolute package directory.
+ * @param source - repository-relative `src` directory, as emitted into `paths`.
+ * @returns Repository-relative entry file, or the directory as fallback.
+ */
+function entryFile(packageDir: string, source: string): string {
+  if (existsSync(join(packageDir, 'src', 'index.ts'))) return `${source}/index.ts`
+  if (existsSync(join(packageDir, 'src', 'index.tsx'))) return `${source}/index.tsx`
+  return source
 }
 
 /**
@@ -180,7 +204,7 @@ export function renderAliases(aliases: readonly PackageAlias[], handWritten: Rea
   const lines: string[] = []
   for (const alias of aliases) {
     if (!handWritten.has(alias.specifier)) {
-      lines.push(`      ${JSON.stringify(alias.specifier)}: [${JSON.stringify(alias.source)}]`)
+      lines.push(`      ${JSON.stringify(alias.specifier)}: [${JSON.stringify(alias.entry)}]`)
     }
     const invariant = `${alias.specifier}/invariant`
     if (alias.hasInvariant && !handWritten.has(invariant)) {

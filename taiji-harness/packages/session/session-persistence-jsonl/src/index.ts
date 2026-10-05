@@ -267,6 +267,13 @@ class JsonlSessionPersistence extends SessionPersistence {
   private readonly coldLogMemo = new Map<SessionId, StoredLog>()
   /** One joinable decode/migration operation per selected historical Session file revision. */
   private readonly migrationPreparations = new Map<SessionId, MigrationPreparation>()
+  /**
+   * The session-directory removal primitive, injectable for tests: production
+   * uses the platform `rm`; a test subclass overrides it to produce a
+   * deterministic filesystem failure, which a real concurrent remover cannot
+   * guarantee (the non-ENOENT rethrow at the removal call site).
+   */
+  protected removeDirectory: (path: string, options: { recursive: true }) => Promise<void> = rm
 
   constructor(ctx: Context, public config: Config) {
     super(ctx)
@@ -540,7 +547,7 @@ class JsonlSessionPersistence extends SessionPersistence {
     try {
       signal?.throwIfAborted()
       try {
-        await rm(dir, { recursive: true })
+        await this.removeDirectory(dir, { recursive: true })
       } catch (error: unknown) {
         // A concurrent external removal already produced the asked-for state.
         if (!isENOENT(error)) throw error

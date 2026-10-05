@@ -136,4 +136,32 @@ describe('JsonlSessionPersistence.delete', () => {
     }
     if (opened.status === 'fulfilled') await opened.value.close()
   })
+
+  it('rethrows a removal failure that is not already-gone, and releases the lease', async () => {
+    const root = await mkdtemp(join(tmpdir(), 'dsh-jsonl-delete-'))
+    roots.push(root)
+    const ctx = new Context()
+    contexts.push(ctx)
+    // The testing seam swaps the removal primitive for one that fails with a
+    // real errno class no concurrent remover produces deterministically.
+    class RefusingRemove extends JsonlSessionPersistence {
+      override removeDirectory = async (): Promise<void> => {
+        throw Object.assign(new Error('EACCES: permission denied, unlink'), { code: 'EACCES' })
+      }
+    }
+    await ctx.plugin(RefusingRemove, { root, compression: 'none' })
+    const persistence: SessionPersistence = ctx.sessionPersistence
+    const id = SessionId('refusing')
+    const handle = await stored(persistence, 'refusing')
+    await handle.close()
+
+    // A failure that is not "already gone" is not success: the error surfaces
+    // and the directory survives.
+    await expect(persistence.delete(id)).rejects.toThrow(/EACCES/)
+    expect(existsSync(sessionDir(root, '/work', id))).toBe(true)
+
+    // The second attempt reaches the removal again instead of deadlocking on
+    // the lease, which is the proof the `finally` released it.
+    await expect(persistence.delete(id)).rejects.toThrow(/EACCES/)
+  })
 })

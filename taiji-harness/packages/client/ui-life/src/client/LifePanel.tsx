@@ -70,6 +70,7 @@ async function readBase64(file: File): Promise<string> {
 
 /** Basename of one roster path or picked name, for matching an upload against the roster. */
 function basenameOf(path: string): string {
+  /* v8 ignore next -- split() always yields at least one element, so pop() cannot return undefined; the right side only satisfies the type checker */
   return path.split(/[\\/]/u).pop() ?? path
 }
 
@@ -636,6 +637,7 @@ function TrainingSection({ t, snapshot, pending, confirming, run, life }: Sectio
   /** Send the picked file, then read the roster again so its new row appears. */
   const uploadFile = (): void => {
     const file = picked
+    /* v8 ignore next -- the Send button only renders with a picked file, so file cannot be null on this path */
     if (file === null) return
     setUploadError(null)
     run('uploadDataset', async () => {
@@ -994,6 +996,7 @@ function KnowledgeSection({ t, snapshot, pending, confirming, run, life }: Secti
   /** Send the picked document, then read the file list again so its row appears. */
   const uploadFile = (): void => {
     const file = picked
+    /* v8 ignore next -- the Send button only renders with a picked file, so file cannot be null on this path */
     if (file === null) return
     setPickError(null)
     run('uploadKnowledge', async () => {

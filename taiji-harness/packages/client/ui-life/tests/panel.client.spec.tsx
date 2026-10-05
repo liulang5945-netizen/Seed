@@ -783,7 +783,7 @@ describe('LifePanel', () => {
 
 describe('LifePanelIcon', () => {
   it('renders the sidebar glyph at the size the sidebar asks for', () => {
-    render(<LifePanelIcon size={20} />)
+    render(<LifePanelIcon {...standard} size={20} active={false} />)
     const glyph = document.querySelector('svg')
     expect(glyph).not.toBeNull()
     expect(glyph?.getAttribute('width')).toBe('20')
@@ -797,11 +797,13 @@ describe('LifePanel refusals from the failure shapes the Host sends', () => {
     const { life, mocks } = stubLife(legacySnapshot())
     mocks.lifeStop
       .mockRejectedValueOnce(new LifeControlError(new RemoteError('life/runtime-error', 'boom', { status: 500, detail: 'engine exploded' })))
-      .mockRejectedValueOnce(new LifeControlError(new RemoteError('life/runtime-unreachable', 'boom', { reason: 'socket closed' })))
+      .mockRejectedValueOnce(new LifeControlError(new RemoteError('life/runtime-unreachable', 'boom', { baseURL: 'http://127.0.0.1:8000', reason: 'socket closed' })))
       .mockRejectedValueOnce(new LifeControlError(new RemoteError('life/conflict', 'boom', { reason: 'already running' })))
       .mockRejectedValueOnce(new LifeControlError(new RemoteError('life/bad-request', 'boom', { field: 'action', reason: 'unknown verb' })))
-      .mockRejectedValueOnce(new LifeControlError(new RemoteError('life/stream-failed', 'boom', {})))
-      .mockRejectedValueOnce(new LifeControlError(new RemoteError('life/from-the-future', 'boom', {})))
+      .mockRejectedValueOnce(new LifeControlError(new RemoteError('life/stream-failed', 'boom', { reason: 'stream lost' })))
+      // A code the panel has never met arrives as a plain Host-shaped failure;
+      // the structural match still routes it to the fallback copy.
+      .mockRejectedValueOnce({ rpcError: { code: 'life/from-the-future', message: 'boom', details: {} } })
     mountPanel(life)
 
     const cases: [string, string][] = [
@@ -862,7 +864,7 @@ describe('LifePanel reader edge shapes', () => {
   it('surfaces a file-read failure as the stream-failure copy and sends nothing', async () => {
     const { life, mocks } = stubLife(nativeSnapshot())
     const spy = vi.spyOn(FileReader.prototype, 'readAsDataURL').mockImplementation(function (this: FileReader) {
-      queueMicrotask(() => { this.onerror?.call(this, new ProgressEvent('error')) })
+      queueMicrotask(() => { this.onerror?.call(this, new ProgressEvent('error') as ProgressEvent<FileReader>) })
     })
     try {
       mountPanel(life)
@@ -882,7 +884,7 @@ describe('LifePanel reader edge shapes', () => {
     const spy = vi.spyOn(FileReader.prototype, 'readAsDataURL').mockImplementation(function (this: FileReader) {
       // A non-string result (jsdom leaves it null here) degrades to an empty
       // payload; it may not crash the read.
-      queueMicrotask(() => { this.onload?.call(this, new ProgressEvent('load')) })
+      queueMicrotask(() => { this.onload?.call(this, new ProgressEvent('load') as ProgressEvent<FileReader>) })
     })
     try {
       mountPanel(life)
@@ -900,7 +902,7 @@ describe('LifePanel reader edge shapes', () => {
     const spy2 = vi.spyOn(FileReader.prototype, 'readAsDataURL').mockImplementation(function (this: FileReader) {
       // A string without the data-URL comma degrades the same way.
       Object.defineProperty(this, 'result', { value: 'no-comma-here' })
-      queueMicrotask(() => { this.onload?.call(this, new ProgressEvent('load')) })
+      queueMicrotask(() => { this.onload?.call(this, new ProgressEvent('load') as ProgressEvent<FileReader>) })
     })
     try {
       mountPanel(second.life)
@@ -974,7 +976,10 @@ describe('LifePanel edge readings', () => {
   })
 
   it('says there is no life reading when the organ block is absent', () => {
-    const { life } = stubLife(nativeSnapshot({ life: undefined }))
+    const snapshot = nativeSnapshot()
+    const { life: omitted, ...rest } = snapshot
+    expect(omitted).toBeDefined()
+    const { life } = stubLife(rest)
     mountPanel(life)
     expect(screen.getByText(en.noReading)).not.toBeNull()
   })
@@ -1338,7 +1343,7 @@ describe('LifePanel edge readings', () => {
         lastCorpus: '',
         projectedDigests: 0,
         running: true,
-        spec: { reason: 'waiting for interaction', datasets: [] },
+        spec: { reason: 'waiting for interaction', datasets: [], weaknesses: [] },
         lastReport: {
           reason: 'manual',
           specReason: '',
@@ -1357,21 +1362,24 @@ describe('LifePanel edge readings', () => {
   })
 
   it('says the host projection is empty when no host surface answered', () => {
-    const { life } = stubLife(nativeSnapshot({
-      health: undefined,
-      memory: undefined,
-      workbench: undefined,
-      auth: undefined,
-    }))
+    const snapshot = nativeSnapshot()
+    const { health, memory, workbench, auth, ...rest } = snapshot
+    expect(health).toBeDefined()
+    expect(memory).toBeDefined()
+    expect(workbench).toBeDefined()
+    expect(auth).toBeDefined()
+    const { life } = stubLife(rest)
     mountPanel(life)
     expect(screen.getAllByText(en.noReading).length).toBeGreaterThanOrEqual(1)
   })
 
   it('renders a host reading without auth and with degraded health facts', () => {
-    const { life } = stubLife(nativeSnapshot({
-      auth: undefined,
+    const snapshot = nativeSnapshot({
       health: { state: 'degraded', modelLoaded: false, modelName: '', seedActive: false, startupComplete: false },
-    }))
+    })
+    const { auth, ...rest } = snapshot
+    expect(auth).toBeDefined()
+    const { life } = stubLife(rest)
     mountPanel(life)
     expect(screen.getByText(en.startupIncomplete)).not.toBeNull()
     expect(screen.getByText(en.modelNone)).not.toBeNull()
