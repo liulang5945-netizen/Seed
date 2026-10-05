@@ -178,6 +178,39 @@ describe('LifeController follow', () => {
     expect(next.value.life?.native?.tick).toBe(99)
     abort.abort()
   })
+
+  it('keeps publishing to later consumers after one closes its stream early', async () => {
+    const { controller, runtime } = await harness()
+    const first = controller.follow(new AbortController().signal)[Symbol.asyncIterator]()
+    expect((await nextFrame(first)).type).toBe('baseline')
+
+    // The consumer stops before any replacement frame arrives, so its queue is
+    // dropped on the way out and the stream reports completion.
+    await first.return?.()
+    expect((await first.next()).done).toBe(true)
+
+    runtime.runtimeStatus = {
+      ...runtime.runtimeStatus,
+      life: { status: 'seed', is_running: true, needs: { curiosity: 90, fatigue: 1, stress: 0 }, mode: 'wake', tick: 120 },
+    }
+
+    const second = controller.follow(new AbortController().signal)[Symbol.asyncIterator]()
+    expect((await nextFrame(second)).type).toBe('baseline')
+
+    runtime.runtimeStatus = {
+      ...runtime.runtimeStatus,
+      life: { status: 'seed', is_running: true, needs: { curiosity: 90, fatigue: 1, stress: 0 }, mode: 'wake', tick: 130 },
+    }
+
+    // Any frame carrying the newest tick proves the closed consumer left no
+    // residue in the poll loop's publish path.
+    await vi.waitFor(async () => {
+      const frame: LifeFollowFrame = await nextFrame(second)
+      if (frame.value.life?.native?.tick !== 130) {
+        throw new Error(`expected tick 130, received ${String(frame.value.life?.native?.tick)}`)
+      }
+    })
+  })
 })
 
 describe('LifeController training control', () => {
