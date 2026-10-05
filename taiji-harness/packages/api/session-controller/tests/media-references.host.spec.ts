@@ -164,17 +164,38 @@ describe('SessionMediaReferences /api/file', () => {
     expect((await route.call(join(root, 'frames.png'))).status).toBe(403)
   })
 
-  it('reads files and symlink targets outside the default cwd without a workspace registry', async () => {
+  it('reads files outside the default cwd without a workspace registry', async () => {
     const route = await mount()
     const outside = await mkdtemp(join(tmpdir(), 'dsh-media-outside-'))
     try {
       const path = join(outside, 'image.png')
       await writeFile(path, PNG_BYTES)
       expect(await responseBytes(await route.call(path))).toEqual(PNG_BYTES)
-      const link = join(root, 'linked.png')
-      await symlink(path, link)
+    } finally {
+      await rm(outside, { recursive: true, force: true })
+    }
+  })
+
+  // The symlink arm is its own case because an unprivileged Windows host denies
+  // the fixture itself (`EPERM` from `symlink(2)`), not the read path: the case
+  // above already proves the same `/api/file` read succeeds for an ordinary file
+  // outside the cwd, and the denial lands before any product code is reached.
+  it('reads a symlink target outside the default cwd', async (context) => {
+    const route = await mount()
+    const outside = await mkdtemp(join(tmpdir(), 'dsh-media-outside-'))
+    const link = join(root, 'linked.png')
+    try {
+      const path = join(outside, 'image.png')
+      await writeFile(path, PNG_BYTES)
+      try {
+        await symlink(path, link)
+      } catch (error: unknown) {
+        if (error instanceof Error && 'code' in error && error.code === 'EPERM') context.skip()
+        throw error
+      }
       expect(await responseBytes(await route.call(link))).toEqual(PNG_BYTES)
     } finally {
+      await rm(link, { force: true })
       await rm(outside, { recursive: true, force: true })
     }
   })
