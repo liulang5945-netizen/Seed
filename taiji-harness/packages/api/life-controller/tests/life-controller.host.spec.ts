@@ -3,6 +3,7 @@ import { Context } from '@taiji/cordis'
 import { remoteErrorOf } from '@taiji/dsh-typert-protocol'
 import type { LifeFollowFrame } from '../src/types.ts'
 import LifeController from '../src/index.ts'
+import type { LifeFeed } from '../src/feed.ts'
 import {
   closeMockRuntimes,
   completedFrame,
@@ -20,12 +21,20 @@ afterEach(async () => {
 })
 
 interface Harness {
-  readonly controller: LifeController
+  readonly controller: FeedProbe
   readonly ctx: Context
   readonly runtime: MockLifeRuntime
 }
 
 /** Boot the controller over a loopback stand-in at the schema's floor cadence. */
+/** Subclass reaching the typed injection seam the controller opens on its feed. */
+class FeedProbe extends LifeController {
+  /** The owned poll feed. */
+  get probeFeed(): LifeFeed {
+    return this.feed
+  }
+}
+
 async function harness(): Promise<Harness> {
   const runtime = await mockLifeRuntime()
   const ctx = new Context()
@@ -35,7 +44,7 @@ async function harness(): Promise<Harness> {
     lookups: { configure: () => dispose },
     contexts: { configureHost: () => dispose },
   } as never)
-  const controller = new LifeController(ctx, {
+  const controller = new FeedProbe(ctx, {
     baseURL: runtime.url,
     pollIntervalMs: 250,
     activePollIntervalMs: 250,
@@ -238,6 +247,20 @@ describe('LifeController follow', () => {
     // no-op, so nothing wakes twice and the stream simply reports completion.
     await ctx.fiber.dispose()
     await expect(iterator.return?.()).resolves.toMatchObject({ done: true })
+  })
+})
+
+describe('LifeController feed seam', () => {
+  it('refuses a second start and exposes the last observed snapshot', async () => {
+    const { controller } = await harness()
+    const feed = controller.probeFeed
+
+    // The constructor already started the loop, so a second start must be a no-op;
+    // once a read settles, the feed's last snapshot is addressable through the seam.
+    feed.start()
+    const first = await controller.snapshot(new AbortController().signal)
+    expect(first.snapshot.availability.runtime).toBe('ok')
+    expect(feed.latest?.pollIntervalMs).toBe(250)
   })
 })
 

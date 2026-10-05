@@ -83,7 +83,8 @@ export class LifeController extends TypertRemoteService {
 
   private readonly config: ResolvedConfig
   private readonly client: LifeRuntimeClient
-  private readonly feed: LifeFeed
+  /** Owned poll feed; visible to same-package probes as the typed injection seam. */
+  protected readonly feed: LifeFeed
   private active: AbortController | undefined
   private accepted = false
   private progress: LifeProgressView | undefined
