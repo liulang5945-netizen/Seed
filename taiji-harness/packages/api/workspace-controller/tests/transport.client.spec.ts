@@ -16,6 +16,7 @@ import {
   WorkspaceArchiveError,
   WorkspaceController,
   WorkspaceCreateError,
+  WorkspaceSessionDeleteError,
   type WorkspaceFollowSink,
 } from '../src/client/index.ts'
 import type { WorkspaceFollowFrame, WorkspaceId } from '../src/types.ts'
@@ -355,6 +356,38 @@ describe('WorkspaceController', () => {
     expect(mock.log.requests('workspace/pinSession')).toEqual([{ sessionId: 'session' }])
     expect(mock.log.requests('workspace/unpinSession')).toEqual([{ sessionId: 'session' }])
     expect(mock.log.requests('workspace/delete')).toEqual([{ workspaceId: 'one' }])
+  })
+
+  it('drives Session deletion through the command facade, on the wire and in refusal', async ({ mock, start }) => {
+    const { remote, client } = await gatewayClient(mock, start)
+    const controller = new WorkspaceController(client.ctx, new ClientWorkspaceModel(remote.workspace))
+    const missingSession = new RemoteError('session/not-found', 'missing session', { sessionId: sid('session') })
+
+    // Omitting the options here is the point: the facade's own default must not
+    // put a `stopActivity` key on the wire, and the Host must still resolve.
+    await expect(controller.deleteSession(sid('session'))).resolves.toBeUndefined()
+    expect(mock.log.requests('workspace/deleteSession')).toEqual([{ sessionId: 'session' }])
+
+    await expect(controller.deleteSession(sid('session'), { stopActivity: true })).resolves.toBeUndefined()
+    expect(mock.log.requests('workspace/deleteSession')).toEqual([
+      { sessionId: 'session' },
+      { sessionId: 'session', stopActivity: true },
+    ])
+
+    mock.remote.workspace.deleteSession.mockResolvedValueOnce(err(missingSession))
+    const missing = controller.deleteSession(sid('session'))
+    await expect(missing).rejects.toBeInstanceOf(WorkspaceSessionDeleteError)
+    await expect(missing).rejects.toThrow('workspace session delete failed: session/not-found: missing session')
+    // The live-Session refusal keeps its identity so a surface can tell "open
+    // in this Host" apart from a missing Session.
+    const open = new RemoteError('workspace/session-open', 'the session is live in this Host', {
+      sessionId: sid('session'),
+    })
+    mock.remote.workspace.deleteSession.mockResolvedValueOnce(err(open))
+    await expect(controller.deleteSession(sid('session'))).rejects.toMatchObject({
+      name: 'WorkspaceSessionDeleteError',
+      rpcError: { code: 'workspace/session-open', details: { sessionId: 'session' } },
+    })
   })
 
   it('maps generated business failures to the command facade errors', async ({ mock, start }) => {
