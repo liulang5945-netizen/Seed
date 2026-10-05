@@ -1,0 +1,16 @@
+{
+  "epoch": 0,
+  "ticks": 2000397,
+  "window_ticks": 5162,
+  "online_accuracy": 0.5937621077101899,
+  "mean_surprise": 1.5683779775730293,
+  "holdout_surprise": 2.7720137951025516,
+  "elapsed_seconds": 9790.2449241,
+  "exit_reason": "max_symbols_reached",
+  "base_ticks": 273,
+  "budget_max_symbols": 2000000,
+  "ticks_at_exit": 2000397,
+  "reached_budget": true,
+  "checkpoint_path": "output\\a31_onpolicy_20261003\\checkpoint.pt",
+  "corpus_fingerprint": "[{\"name\":\"dialogue_extended_clean.jsonl\",\"bytes\":108327171}]"
+}

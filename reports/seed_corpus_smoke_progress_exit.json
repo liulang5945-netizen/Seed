@@ -1,0 +1,20 @@
+{
+  "epoch": 0,
+  "ticks": 5000,
+  "window_ticks": 4999,
+  "online_accuracy": 0.2436487297459492,
+  "mean_surprise": 3.377818925081993,
+  "holdout_surprise": 3.116746113045274,
+  "elapsed_seconds": 16.82782500004396,
+  "exit_reason": "max_symbols_reached",
+  "base_ticks": 0,
+  "budget_max_symbols": 5000,
+  "ticks_at_exit": 5000,
+  "reached_budget": true,
+  "checkpoint_path": "C:\\Users\\23747\\AppData\\Local\\Temp\\pytest-of-23747\\pytest-8440\\test_envelope_metadata_records0\\smoke.pt",
+  "checkpoint_sha256": "0d56e509d3820f82f95d4c7452ab6d1ac7562ff99c6751690374c63deac81af2",
+  "corpus_fingerprint": "[{\"name\":\"dialogue_extended_clean.jsonl\",\"bytes\":108327171}]",
+  "history_files": 1,
+  "history_bytes": 6038989,
+  "history_pruned": 0
+}

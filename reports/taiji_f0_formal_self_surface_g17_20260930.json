@@ -1,0 +1,1517 @@
+{
+  "format": "taiji-r2-copy-surface-extension-v1",
+  "prereg": "plans/reference/SPEC-A-21_r2_surface_extension_prereg_20260925.md",
+  "judge_prereg": "plans/reference/SPEC-A-22_r2_a2_5_query_conditioned_selector_prereg_20260926.md",
+  "manifest": "plans/manifests/r2_copy_surface_extension_v1.json",
+  "chain": "base_raw_bytes",
+  "manifest_sha256": "4d04d6f48e41a180131e18efaf31634fa4b6147c10aaf5acb1533745e246cf87",
+  "checkpoint": "output/tmp_a30_smoke/formal_arms/a30_onpolicy_self.pt",
+  "copy_evidence_utf8_gate": false,
+  "circuit_carried_envelopes": [],
+  "control_no_circuit": {
+    "circuit": null,
+    "chain": "base_raw_bytes",
+    "mount_entry": "none",
+    "gate_effective": false,
+    "items": 104,
+    "texts": 260,
+    "well_formed_texts": 60,
+    "well_formed_rate": 0.2308,
+    "utf8_decodable_rate": 0.2808,
+    "utf8_decodable_trimmed_rate": 1.0,
+    "illegal_after_tail_trim_rate": 0.0,
+    "strict_hits": 0,
+    "rows": [
+      {
+        "id": "X001",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "同何，忙首诗有吂\n\n老师：同，何，大家有，一�",
+        "well_formed": false
+      },
+      {
+        "id": "X002",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "这首诗有吂\n\n答：同何，忙首诗有吂\n\n答：同，一",
+        "well_formed": true
+      },
+      {
+        "id": "X003",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "诗有吂",
+        "well_formed": false
+      },
+      {
+        "id": "X004",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "同何，何，心有，何，大家有：这首诗有吂\n\n老�",
+        "well_formed": false
+      },
+      {
+        "id": "X005",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "同何，心有，大家有，一赁心大何，忙首诗有吂",
+        "well_formed": true
+      },
+      {
+        "id": "X006",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "同何，何，忙首诗有吂\n\n老师：同何，大何，大�",
+        "well_formed": false
+      },
+      {
+        "id": "X007",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "同何，心有，心有一赁忈：诗一这首诗，忘有，�",
+        "well_formed": false
+      },
+      {
+        "id": "X008",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "同何，忙首诗有吂\n\n老师：同，忙首诗有吂\n\n答：",
+        "well_formed": true
+      },
+      {
+        "id": "X009",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "同何，忙首诗有吂\n\n答：同何，忙首诗有吂\n\n答：",
+        "well_formed": true
+      },
+      {
+        "id": "X010",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "这首诗有吂\n\n答：同，一起大家有，忙首诗有吂",
+        "well_formed": true
+      },
+      {
+        "id": "X011",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "同何，忙首诗有，大家有，忙首诗有吂",
+        "well_formed": true
+      },
+      {
+        "id": "X012",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "同何，忙首诗有，大家有一见忈：这首诗有，大�",
+        "well_formed": false
+      },
+      {
+        "id": "X013",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "同何，心有，大家有一见忈：这首诗有吂",
+        "well_formed": true
+      },
+      {
+        "id": "X014",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "同何，忙首诗有吂\n\n老师：同，何，大家有，一�",
+        "well_formed": false
+      },
+      {
+        "id": "X015",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "同何，心有，何，心有，何，忙首诗有吂\n\n老师�",
+        "well_formed": false
+      },
+      {
+        "id": "X016",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "同何，忙首诗有吂\n\n答：同，一起大家有，忙首�",
+        "well_formed": false
+      },
+      {
+        "id": "X017",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "诗有吂\n\n答：诗有，一起大家有一见心有，何，�",
+        "well_formed": false
+      },
+      {
+        "id": "X018",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "诗有吂\n\n答：诗有吂",
+        "well_formed": false
+      },
+      {
+        "id": "X019",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "诗有吂",
+        "well_formed": false
+      },
+      {
+        "id": "X020",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "同何，忙首诗有吂\n\n答：同，一起大家有，忙首�",
+        "well_formed": false
+      },
+      {
+        "id": "X021",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "同何，大家有：吂",
+        "well_formed": true
+      },
+      {
+        "id": "X022",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "同何，忙首诗有吂\n\n老师：同，何，大家有，忙�",
+        "well_formed": false
+      },
+      {
+        "id": "X023",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "同何，心有，何，心有，何，忙首诗有吂\n\n老师�",
+        "well_formed": false
+      },
+      {
+        "id": "X024",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "同何，忙首诗有吂\n\n老师：同何，忙首诗有吂\n\n答",
+        "well_formed": true
+      },
+      {
+        "id": "X025",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "同何，忙首诗有吂\n\n老师：同何，大家有，忙首�",
+        "well_formed": false
+      },
+      {
+        "id": "X026",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "这首诗有吂\n\n答：同：这首诗有吂\n\n答：这首诗有",
+        "well_formed": true
+      },
+      {
+        "id": "X027",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "同何，忙首诗有，大家有，一见忈：同何，大何�",
+        "well_formed": false
+      },
+      {
+        "id": "X028",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "同何，忙首诗有吂\n\n答：同，一起大家有，忙首�",
+        "well_formed": false
+      },
+      {
+        "id": "X029",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "同何，忙首诗有吂\n\n答：同，一起大家有，忙首�",
+        "well_formed": false
+      },
+      {
+        "id": "X030",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "同何，忙首诗有吂\n\n老师：同何，大家有，忙首�",
+        "well_formed": false
+      },
+      {
+        "id": "X031",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "同何，心有吂\n\n老师：这首诗有吂\n\n答：同，一起",
+        "well_formed": true
+      },
+      {
+        "id": "X032",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "同何，心有，何，忙首诗有吂\n\n老师：同，何，�",
+        "well_formed": false
+      },
+      {
+        "id": "X033",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "同何：这首诗有同，一见忈：同何，忙首诗有吂",
+        "well_formed": true
+      },
+      {
+        "id": "X034",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "这首诗有吂\n\n答：同，一起大家有，忙首诗有吂",
+        "well_formed": true
+      },
+      {
+        "id": "X035",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "同何：这首诗有吂\n\n答：同何，大家有，一赁心�",
+        "well_formed": false
+      },
+      {
+        "id": "X036",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "同何，忙首诗有吂\n\n答：同，一赁心有吂\n\n答，忙",
+        "well_formed": true
+      },
+      {
+        "id": "X037",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "同何，心有，何，心有，大何，大何，大何，大�",
+        "well_formed": false
+      },
+      {
+        "id": "X038",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "同何，何，忙首诗有吂\n\n老师：同何，大家有，�",
+        "well_formed": false
+      },
+      {
+        "id": "X039",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "同何，心有，何，心有，何，忙首诗有吂\n\n老师�",
+        "well_formed": false
+      },
+      {
+        "id": "X040",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "同何，心有，大家有，一赁心何，忙首诗有吂",
+        "well_formed": true
+      },
+      {
+        "id": "X041",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "同何，心有，大家有一见忈：诗中，心有，大何�",
+        "well_formed": false
+      },
+      {
+        "id": "X042",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "这首诗有吂\n\n答：同：这首诗有同，一起大家有�",
+        "well_formed": false
+      },
+      {
+        "id": "X043",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "同何，忙首诗有，大家有，一见忈：同何，大何�",
+        "well_formed": false
+      },
+      {
+        "id": "X044",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "同何，忙首诗有，大家有一见忈：这首诗有，大�",
+        "well_formed": false
+      },
+      {
+        "id": "X045",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "同何，忙首诗有吂\n\n老师：同何，大何，大何，�",
+        "well_formed": false
+      },
+      {
+        "id": "X046",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "同何，何，忙首诗有吂\n\n老师：同，何，大家有�",
+        "well_formed": false
+      },
+      {
+        "id": "X047",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "同何，心有，何，忙首诗有吂\n\n老师：同何，大�",
+        "well_formed": false
+      },
+      {
+        "id": "X048",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "同何，忙首诗有吂\n\n答：同，一起大家有，忙首�",
+        "well_formed": false
+      },
+      {
+        "id": "X049",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "同何，忙首诗有吂\n\n老师：同，一见心有，大何�",
+        "well_formed": false
+      },
+      {
+        "id": "X050",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "这首诗有吂\n何，心有，一赁忈：同何，忙首诗有",
+        "well_formed": true
+      },
+      {
+        "id": "X051",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "同何，忙首诗有，大家有，一见忈：同何，大何�",
+        "well_formed": false
+      },
+      {
+        "id": "X052",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "同何，忙首诗有吂\n\n老师：同何，大家有，忙首�",
+        "well_formed": false
+      },
+      {
+        "id": "X053",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "同何，忙首诗有吂\n\n老师：同何，大家有，忙首�",
+        "well_formed": false
+      },
+      {
+        "id": "X054",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "同何，忙首诗有吂\n\n答：同，一起大家有一个心�",
+        "well_formed": false
+      },
+      {
+        "id": "X055",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "同何，心有，何，心有，何，忙首诗有吂\n\n老师�",
+        "well_formed": false
+      },
+      {
+        "id": "X056",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "同何，心有，大家有，一赁心何，忙首诗有吂\n\n�",
+        "well_formed": false
+      },
+      {
+        "id": "X057",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "同何，大家有，忙首诗有吂\n\n老师：同何，大家�",
+        "well_formed": false
+      },
+      {
+        "id": "X058",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "这首诗有吂\n\n答：同何，忙首诗有吂\n\n答：同，一",
+        "well_formed": true
+      },
+      {
+        "id": "X059",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "同何：同何，忙首诗有吂\n\n老师：同，一见心有�",
+        "well_formed": false
+      },
+      {
+        "id": "X060",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "同何，忙首诗有吂\n\n老师：同，何，大家有，一�",
+        "well_formed": false
+      },
+      {
+        "id": "X061",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "同何，忙首诗有吂\n\n老师：同，何，大何，大何�",
+        "well_formed": false
+      },
+      {
+        "id": "X062",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "同何，何，忙首诗有吂\n\n答：同，一起大家有，�",
+        "well_formed": false
+      },
+      {
+        "id": "X063",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "同何，心有，何，心有，何，心有，一赁忈：同�",
+        "well_formed": false
+      },
+      {
+        "id": "X064",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "同何，忙首诗有吂\n\n老师：同，何，大家有一见�",
+        "well_formed": false
+      },
+      {
+        "id": "X065",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "同何，忙首诗有吂\n\n老师：同何，大家有，忙首�",
+        "well_formed": false
+      },
+      {
+        "id": "X066",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "诗有吂\n\n答：诗有同何，忙首诗有吂",
+        "well_formed": true
+      },
+      {
+        "id": "X067",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "好：同何，忙首诗有，大家有，一见忈：同何，�",
+        "well_formed": false
+      },
+      {
+        "id": "X068",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "同何，心有，心有，心有一赁忈：诗一这首诗，�",
+        "well_formed": false
+      },
+      {
+        "id": "X069",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "吂何，何，心有，大家有，一见心何，大何，大�",
+        "well_formed": false
+      },
+      {
+        "id": "X070",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "同何，忙首诗有吂\n\n答：同，一起大家有，忙首�",
+        "well_formed": false
+      },
+      {
+        "id": "X071",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "同何，心有，何，心有，何，大家有：这首诗有�",
+        "well_formed": false
+      },
+      {
+        "id": "X072",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "同何，心有，忙首诗有吂\n\n老师：同，何，大家�",
+        "well_formed": false
+      },
+      {
+        "id": "X073",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "同何，忙首诗有吂\n\n老师：这首诗有，大家有一�",
+        "well_formed": false
+      },
+      {
+        "id": "X074",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "这首诗有吂\n\n答：同何，大家有，一起大家有，�",
+        "well_formed": false
+      },
+      {
+        "id": "X075",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "同何，大家有，忙首诗有，大家有一见忈，何，�",
+        "well_formed": false
+      },
+      {
+        "id": "X076",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "同何，忙首诗有吂\n\n答：同，一赁心有，忙何，�",
+        "well_formed": false
+      },
+      {
+        "id": "X077",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "同何，忙首诗有吂\n\n老师：同，何，大家有一见�",
+        "well_formed": false
+      },
+      {
+        "id": "X078",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "同何，忙首诗有吂\n\n答：同，一起大家有，忙首�",
+        "well_formed": false
+      },
+      {
+        "id": "X079",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "同何，心有，心有，何，忙首诗有吂\n\n老师：同�",
+        "well_formed": false
+      },
+      {
+        "id": "X080",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "同何，心有，何，心有，一赁心何，忙首诗有吂",
+        "well_formed": true
+      },
+      {
+        "id": "X081",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "同何，忙首诗有吂\n\n老师：同何，大家有，忙首�",
+        "well_formed": false
+      },
+      {
+        "id": "X082",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "这首诗有吂\n\n答：同何，忙首诗有吂\n\n答：同何，",
+        "well_formed": true
+      },
+      {
+        "id": "X083",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "同何：同何，忙首诗有吂\n\n老师：同，一见心有�",
+        "well_formed": false
+      },
+      {
+        "id": "X084",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "同何，忙首诗有吂",
+        "well_formed": false
+      },
+      {
+        "id": "X085",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "同何，心有，大家有，一赁心何，忙首诗有吂\n\n�",
+        "well_formed": false
+      },
+      {
+        "id": "X086",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "同何，何，忙首诗有吂\n\n老师：同，何，大家有�",
+        "well_formed": false
+      },
+      {
+        "id": "X087",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "同何，心有，何，心有，何，忙首诗有吂\n\n老师�",
+        "well_formed": false
+      },
+      {
+        "id": "X088",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "同何，忙首诗有吂\n\n老师：同，忙首诗有吂\n\n答：",
+        "well_formed": true
+      },
+      {
+        "id": "X089",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "同何，忙首诗有吂\n\n老师：同，一见大家有，忙�",
+        "well_formed": false
+      },
+      {
+        "id": "X090",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "这首诗有吂",
+        "well_formed": false
+      },
+      {
+        "id": "X091",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "好：同何，忙首诗有吂\n\n答：诗有同，一起大家�",
+        "well_formed": false
+      },
+      {
+        "id": "X092",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "同何，忙首诗有吂\n\n答：同，一赁心有吂",
+        "well_formed": true
+      },
+      {
+        "id": "X093",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "同何，忙首诗有吂\n\n老师：同何，大家有，大何�",
+        "well_formed": false
+      },
+      {
+        "id": "X094",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "同何，何，忙首诗有吂\n\n老师：同何，大家有，�",
+        "well_formed": false
+      },
+      {
+        "id": "X095",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "同何，心有，何，心有，何，忙首诗有吂\n\n老师�",
+        "well_formed": false
+      },
+      {
+        "id": "X096",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "同何，忙首诗有吂\n\n老师：同何，忙首诗有吂",
+        "well_formed": true
+      },
+      {
+        "id": "X097",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "同何，心有，大家有，一赁心何，忙首诗有吂\n\n�",
+        "well_formed": false
+      },
+      {
+        "id": "X098",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "诗有吂",
+        "well_formed": false
+      },
+      {
+        "id": "X099",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "同何，大家有，忙首诗有，大家有一见忈：同何�",
+        "well_formed": false
+      },
+      {
+        "id": "X100",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "同何，忙首诗有吂\n\n老师：同，一见心有，大何�",
+        "well_formed": false
+      },
+      {
+        "id": "X101",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "同何，心有，大家有，一见忈：同，何，心有吂",
+        "well_formed": true
+      },
+      {
+        "id": "X102",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "同何，何，忙首诗有吂\n\n答：同，一起大家有，�",
+        "well_formed": false
+      },
+      {
+        "id": "X103",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "同何，心有，何，心有，何，忙首诗有吂\n\n老师�",
+        "well_formed": false
+      },
+      {
+        "id": "X104",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "同何，心有，大家有，一赁心何，忙首诗有吂",
+        "well_formed": true
+      }
+    ]
+  },
+  "treated_arms": [
+    {
+      "circuit": "output/taiji_r2_copy_circuit_chat/judge/circuit-final.pt",
+      "chain": "base_raw_bytes",
+      "mount_entry": "enable_copy_circuit",
+      "gate_effective": true,
+      "items": 104,
+      "texts": 260,
+      "well_formed_texts": 16,
+      "well_formed_rate": 0.0615,
+      "utf8_decodable_rate": 0.1038,
+      "utf8_decodable_trimmed_rate": 1.0,
+      "illegal_after_tail_trim_rate": 0.0,
+      "strict_hits": 33,
+      "rows": [
+        {
+          "id": "X001",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "轩轩轩轩轩轩轩轩。轩轩轩轩轩厩轩轩轩轩轩轩�",
+          "well_formed": false
+        },
+        {
+          "id": "X002",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "苷苷苷佋苷苷苷苷苷苷苷苷州苷苷苷苷苷苷苷苷�",
+          "well_formed": false
+        },
+        {
+          "id": "X003",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "字欢欢欢欢欢欢欢欢欢欢欢欢欢欢欢欢欢欢欢欢�",
+          "well_formed": false
+        },
+        {
+          "id": "X004",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "跷巷图图图图图图图图图图图图图囮海囮海囮海�",
+          "well_formed": false
+        },
+        {
+          "id": "X005",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "喝乌龙䳱喝乌龙乌龙乌龙龙䳱喝乌龙龙龙龙乌龙�",
+          "well_formed": false
+        },
+        {
+          "id": "X006",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "养丮渮檪雪鸮鸮檪鸮鸮檪鸮鸮檪鸮鸮檪鸮鸮檪鸮�",
+          "well_formed": false
+        },
+        {
+          "id": "X007",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "迷客近海近海客读读近海客近海近海客近海近海�",
+          "well_formed": false
+        },
+        {
+          "id": "X008",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "包挅挅欼包欼包吃包吃包吃包包包包吃包吃包吃�",
+          "well_formed": false
+        },
+        {
+          "id": "X009",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "君雨我成雨我成成成我成雨成成成成我成雨成成�",
+          "well_formed": false
+        },
+        {
+          "id": "X010",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "西安西安安安安安西安西安西安西安西安西安西�",
+          "well_formed": false
+        },
+        {
+          "id": "X011",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "212121212121喯21欢欢欢欢欢欢欢欢欢欢欢欢欢欢欢�",
+          "well_formed": false
+        },
+        {
+          "id": "X012",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "星星星晟星晨星皙队晟星晟星晨星队晟星星晨星�",
+          "well_formed": false
+        },
+        {
+          "id": "X013",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "苳打打打苉打苉打打英喝苳打打苳打打打苳打打�",
+          "well_formed": false
+        },
+        {
+          "id": "X014",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "养一养一养一养一养一养一养一养一养一养一养�",
+          "well_formed": false
+        },
+        {
+          "id": "X015",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "迻迻近泯迻近泻迳近泳迻迻近泻迳近泳迻迻迻迻�",
+          "well_formed": false
+        },
+        {
+          "id": "X016",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "子鸣吃辣吃辣吃辣吃辣吃辣吃辣吃辣吃辣吃辣吃�",
+          "well_formed": false
+        },
+        {
+          "id": "X017",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "剿承承承承承承承承承承承承承承承承承承承承�",
+          "well_formed": false
+        },
+        {
+          "id": "X018",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "岛青岛岛岛岛岛岛岛青岛青岛戲住岛青岛青岛青�",
+          "well_formed": false
+        },
+        {
+          "id": "X019",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "777777777777777欢欢欢欢欢欢欢欢欢欢欢欢欢欢欢7777",
+          "well_formed": false
+        },
+        {
+          "id": "X020",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "柳径鳾径鳾径鳾径鳾径鳾戟戟戟音项戟戟戟音径�",
+          "well_formed": false
+        },
+        {
+          "id": "X021",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "花酿喝时爱酿喝时爱酿喝时爱酿喝时爱酿喝时爱�",
+          "well_formed": false
+        },
+        {
+          "id": "X022",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "养一养一养一养一养一养一养一养一养一养一养�",
+          "well_formed": false
+        },
+        {
+          "id": "X023",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "读读读读读读读读读读语读近梦读读读读读语读�",
+          "well_formed": false
+        },
+        {
+          "id": "X024",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "艉泉泾艉泉泉泾艉泡馍泾泾泾吃泉泱吃泉泉泉泉�",
+          "well_formed": false
+        },
+        {
+          "id": "X025",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "远远远远远远远远远濿远远远远远远远远远迿远�",
+          "well_formed": false
+        },
+        {
+          "id": "X026",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "岙长沙长沙长沙长沙长沙沙长沙长沙沙长沙长沙�",
+          "well_formed": false
+        },
+        {
+          "id": "X027",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "999999999999999999999999999999999999999999999999999999999999",
+          "well_formed": false
+        },
+        {
+          "id": "X028",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "归云目归云目归云目归云目归云目归云目归云目�",
+          "well_formed": false
+        },
+        {
+          "id": "X029",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "柠檬柠檬柠檬柠檬柠檬柠檬柠檬柠檬柠檬檬檬檬�",
+          "well_formed": false
+        },
+        {
+          "id": "X030",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝舌蓝蓝蓝蓝蓝蓝蓝�",
+          "well_formed": false
+        },
+        {
+          "id": "X031",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "这近毻近毻近我濺七近我濺七迃近庯读近毻七迺�",
+          "well_formed": false
+        },
+        {
+          "id": "X032",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "汣汣汣汣汣汤胡胡胡胡胡胱吱辣汣汣汣汣汣汣汣�",
+          "well_formed": false
+        },
+        {
+          "id": "X033",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "安慕安慕安慕安慕安慕安慕安慕安慕安慕安慕安�",
+          "well_formed": false
+        },
+        {
+          "id": "X034",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "厘佘明。佘明明佘明明佘明明佘明明佘明明佘明�",
+          "well_formed": false
+        },
+        {
+          "id": "X035",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "2424024喗欢欢欢欢欢欢欢欢欢欢欢欢欢欢欢欢2424�",
+          "well_formed": false
+        },
+        {
+          "id": "X036",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "涛涛项涛涛项涛涛鬢涛涛听涛鬬涛鬮涛鬮涛鬮涛�",
+          "well_formed": false
+        },
+        {
+          "id": "X037",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "喝茶时砖茶时砖茶砖茶砖茶时砖茶砖茶砖茶砖茶�",
+          "well_formed": false
+        },
+        {
+          "id": "X038",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "养一养一养一养一养一养一养一荾一养一养一养�",
+          "well_formed": false
+        },
+        {
+          "id": "X039",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "这近溪迪近溪迦梦梦梦梦梦梦溪读近溪近溪近溪�",
+          "well_formed": false
+        },
+        {
+          "id": "X040",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "臇臇臇臭臭臇臇臱屆臇臭臭臇臇臇臱屆臇臭臇臇�",
+          "well_formed": false
+        },
+        {
+          "id": "X041",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "青青青青青青青青青青青青青青青青砚青青青青�",
+          "well_formed": false
+        },
+        {
+          "id": "X042",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "州何州兰州州州州州州州州州州州州州佷州淞淞�",
+          "well_formed": false
+        },
+        {
+          "id": "X043",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "77777欢欢欢欢欢欢欢欢欢欢欢欢欢欢欢欢欢欢7欢�",
+          "well_formed": false
+        },
+        {
+          "id": "X044",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "柳柳柳柳柳柳柳柳阘柳柳柳柳阘柳柳柳阘柳柳柳�",
+          "well_formed": false
+        },
+        {
+          "id": "X045",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "普普普普普普普普普普普普普普普普普普普普普�",
+          "well_formed": false
+        },
+        {
+          "id": "X046",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "养一养一养一养一养一养一养一养一养一养一养�",
+          "well_formed": false
+        },
+        {
+          "id": "X047",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "迷工工工工工工工有读读工工近有这读工工迉工�",
+          "well_formed": false
+        },
+        {
+          "id": "X048",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "苗苗苗苗苗苗糖苗苗苗苗苗苗苗苗苗拗苗苗苗苗�",
+          "well_formed": false
+        },
+        {
+          "id": "X049",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "宁洛宁洛宁洛宁洛宁洛宁洛宁洛宁洛宁洛宁洛宁�",
+          "well_formed": false
+        },
+        {
+          "id": "X050",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "宁波波波波波波波波波波波波波波波波波波波波�",
+          "well_formed": false
+        },
+        {
+          "id": "X051",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "喘欢欢欢欢欢欢欢欢欢欢欢欢欢欢欢欢欢欢欢欢�",
+          "well_formed": false
+        },
+        {
+          "id": "X052",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "薽影影影影影影影影影影影疖影汮汱鱱鱱鱮汮汮�",
+          "well_formed": false
+        },
+        {
+          "id": "X053",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "荞茶荞荞荞荞荞茶荞荞荞荞时綶茶荞荞荞荞茶荞�",
+          "well_formed": false
+        },
+        {
+          "id": "X054",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "养一养一养一养一养一养一养一养一养一养一养�",
+          "well_formed": false
+        },
+        {
+          "id": "X055",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "迁毻读迁毻近近近近近近近氯迯迯迯迯近迯近近�",
+          "well_formed": false
+        },
+        {
+          "id": "X056",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "色鸭色色色中艱吃鸭艉有艉艉血粉艉艉艉艉艉艉�",
+          "well_formed": false
+        },
+        {
+          "id": "X057",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "庈人予予时予时予时予时予时予时予时予时予时�",
+          "well_formed": false
+        },
+        {
+          "id": "X058",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "州温州温州温州温州温州温州温州温州温州温州�",
+          "well_formed": false
+        },
+        {
+          "id": "X059",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "212121212121212121212121212121212121212121212121212121212121",
+          "well_formed": false
+        },
+        {
+          "id": "X060",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "风风风风风风风风风风风风风风皣风风风风风风�",
+          "well_formed": false
+        },
+        {
+          "id": "X061",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "时红枣茶枣茶枣茶枣茶枣茶时红枣茶枣茶时红枣�",
+          "well_formed": false
+        },
+        {
+          "id": "X062",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "养一养一养一养一养一养一养一养一养一养一养�",
+          "well_formed": false
+        },
+        {
+          "id": "X063",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "这这读近洛阳伽近洛阳伽近洛阳伽近洛阳伽读读�",
+          "well_formed": false
+        },
+        {
+          "id": "X064",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "山吃蟹黄汤吃蟹黱吃蟹黄汤吃蟹黱吃蟹黄汤吃蟹�",
+          "well_formed": false
+        },
+        {
+          "id": "X065",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "堚栚堚栚堚栚堚栚堚栚堚栚堚栚堚栚堚我我怀砚�",
+          "well_formed": false
+        },
+        {
+          "id": "X066",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "崛阳阳阳阳洛阳洛阳阳阳阳阳佳峘洛阳阳洛阳阳�",
+          "well_formed": false
+        },
+        {
+          "id": "X067",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "256256欢欢欢欢欢欢欢欢欢欢欢欢欢欢欢256是25256�",
+          "well_formed": false
+        },
+        {
+          "id": "X068",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "宿雮宿雮宿雮宿雮宿雮宿雮宿雮宿雮宿雮宿雮宿�",
+          "well_formed": false
+        },
+        {
+          "id": "X069",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "喝陈时爱喝陈陈爱喝陈陈喝陈皮时爱喝陈皮时爱�",
+          "well_formed": false
+        },
+        {
+          "id": "X070",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "一养一养一养一养一养一养一养一养一养一养一�",
+          "well_formed": false
+        },
+        {
+          "id": "X071",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "这这读近梦读近梦近梦梦梦梦梦梦梦梦梦读近梦�",
+          "well_formed": false
+        },
+        {
+          "id": "X072",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "汉面汉面汉面汉面汉面汉面汉面汉面汉面汉面汉�",
+          "well_formed": false
+        },
+        {
+          "id": "X073",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "苙苙苙苙苙晚苙苙苙晚苙苙苙苙晚苙苙苙苙苙苙�",
+          "well_formed": false
+        },
+        {
+          "id": "X074",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "州扬州扬州扬州州扬州州扬州州扬扬扬州佉州扬�",
+          "well_formed": false
+        },
+        {
+          "id": "X075",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "1313131313131313131313\n诗欢欢欢欢欢欢欢欢欢欢欢欢�",
+          "well_formed": false
+        },
+        {
+          "id": "X076",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "挌舟舟舟舟舟舟舟舟舟舟舟舟舟舟舟舟舟舟舟舟�",
+          "well_formed": false
+        },
+        {
+          "id": "X077",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "荷饮时爱喝荷饮时爱喝荷饮时爱喝荷饮时荷饮时�",
+          "well_formed": false
+        },
+        {
+          "id": "X078",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "养一养一养一养一养一养一养一养一养一养一养�",
+          "well_formed": false
+        },
+        {
+          "id": "X079",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "近梦粱录近梦粱录近梦粱录近梦粱录近梦粱录读�",
+          "well_formed": false
+        },
+        {
+          "id": "X080",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "鱼鱼鱼酸豼汼踱吃鱼鱼鱼鱼鱼鱼鱼鱼鱼踱吃鱼鱼�",
+          "well_formed": false
+        },
+        {
+          "id": "X081",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "舟舟舟舟舟舟舟岲舟舟舟舟舟沟蟲舟舟舟舟沟蟲�",
+          "well_formed": false
+        },
+        {
+          "id": "X082",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "州泉州泉州泉州泉州泉州泉巉州泉州泉州泉州泉�",
+          "well_formed": false
+        },
+        {
+          "id": "X083",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "202020202020202020202020202020202020520欢20202020202020202020",
+          "well_formed": false
+        },
+        {
+          "id": "X084",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "戒殮戒戒戒戒戒戒戒戒舒舒舒舒舒舒舒舒舒舒舒�",
+          "well_formed": false
+        },
+        {
+          "id": "X085",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "楱楱楱楱楱楱楱楱楱楱楱楱楱楱楱楱楱楱楱楱楱�",
+          "well_formed": false
+        },
+        {
+          "id": "X086",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "养一养一养一养一养一养一养一养一养一养一养�",
+          "well_formed": false
+        },
+        {
+          "id": "X087",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "迿梦读读近梦读迿梦迯近梦迯迿近梦读迿近梦迿�",
+          "well_formed": false
+        },
+        {
+          "id": "X088",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "吃水鸀爱吃吃吃吃吃吃吃吃吃吃吃吃吃吃水鸀爱�",
+          "well_formed": false
+        },
+        {
+          "id": "X089",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "孾昭。徘昭阭阭阭阭阭阭昭龘阭阭阭阭龘孾昭阭�",
+          "well_formed": false
+        },
+        {
+          "id": "X090",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "芜湖芜我住喖湖湖湖湖湖湖湖芜湖芜湖芜湖芜湖�",
+          "well_formed": false
+        },
+        {
+          "id": "X091",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "18是618是618是618是618是61是618是618是61818是61818是61",
+          "well_formed": true
+        },
+        {
+          "id": "X092",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "說央央殮殮殮殮殮殮截央央央央央央央央央央央�",
+          "well_formed": false
+        },
+        {
+          "id": "X093",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "茉茉茉茉茉茉茉茉茉茉茉茉茉茉茉茉茉茉茉茉茉�",
+          "well_formed": false
+        },
+        {
+          "id": "X094",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "蝙蝠蝙蝙蝙蝙蝙蝙蝙蝙蝙蝙蝙蝙蝙蝠蝙蝙蝙蝙蝙�",
+          "well_formed": false
+        },
+        {
+          "id": "X095",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "迆迆迆迆迆迆迆迆迆迆迆迆迆迆迆迆读迆梦梦梦�",
+          "well_formed": false
+        },
+        {
+          "id": "X096",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "子最狮吃狮最狮戱吃狮戱吃狮最狮戱吃吃吃吃吃�",
+          "well_formed": false
+        },
+        {
+          "id": "X097",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "吟吟吟吟吟吟吟吟吟吟吟晚吟晚吟晚吟晚吟晚吟�",
+          "well_formed": false
+        },
+        {
+          "id": "X098",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "自自自自自自自自自自自自自自自自自自自自自�",
+          "well_formed": false
+        },
+        {
+          "id": "X099",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "909090909090909090909090909090909090909090909090909090909090",
+          "well_formed": false
+        },
+        {
+          "id": "X100",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "拥拥楧戟戟戟饧戟饧戟饧戟饧我秋埥秋埥楧戟拥�",
+          "well_formed": false
+        },
+        {
+          "id": "X101",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "荷喝荷喝荷喝荷喝荷喝荷喝荷喝荷喝荷喝荷喝荷�",
+          "well_formed": false
+        },
+        {
+          "id": "X102",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "养一养一养一养一养一养一养一养一养一养一养�",
+          "well_formed": false
+        },
+        {
+          "id": "X103",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "这读读近游迁迸迸迸迸迸迸迸迸迸迸迸迸迸迸迸�",
+          "well_formed": false
+        },
+        {
+          "id": "X104",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "吃妻臇妻艇妻艇妻艇。\n臇吃妻臇妻艇妻艇吃妻臇",
+          "well_formed": false
+        }
+      ]
+    }
+  ],
+  "surface_verdict": {
+    "min_gap_texts": 3,
+    "per_circuit": [
+      {
+        "circuit": "output/taiji_r2_copy_circuit_chat/judge/circuit-final.pt",
+        "gap_texts": -44,
+        "direction": "worse",
+        "meets_min_gap": true,
+        "control_rate": 0.2308,
+        "treated_rate": 0.0615
+      }
+    ],
+    "status": "not_resolved",
+    "verdict": "not_resolved（独立取数只有 1 次，判据要求 ≥2 次）"
+  },
+  "base_sha256_unchanged": true
+}

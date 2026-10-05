@@ -25,6 +25,39 @@
   `Path.unlink`/`os.remove` ⇒ 中止或长时间无进展，**极易误诊为磁盘 I/O 卡死**。
   全量 pytest ~15 min 会 SIGTERM。读仓库文件的 gate 必须显式传
   `SeedRuntime.load(..., workspace_root=PROJECT_ROOT)`。
+- **harness/taiji-harness 前端**：`pnpm` **不在 PATH**，任何脚本前须
+  `export PATH="$PWD/node_modules/.bin:$PATH"`。**仓库根 oxlint 在本机起不来**
+  （`tsgolint` spawn 报 `os error 231`＝Windows 命名管道耗尽，与代码无关）；可复现替代＝
+  `pnpm exec oxlint -c <临时cfg> <包>`，临时配置**只写** `{"categories":{"correctness":"error"}}`
+  （写 eslint 风格规则名报 `not found in plugin 'eslint'`，加 `plugins` 报 `Unknown plugin`）。
+  `tsc --noEmit` 要加 `--listFiles` 自证编译到了目标文件，否则「0 error」可能只是没编译到。
+- ⚠️ **node 同步子进程创建被系统层拦截（2026-10-03 实测）**：`execFileSync`/`spawnSync`
+  一律 `EBUSY`，**对任意目标都一样**（git / cmd.exe / node 自身 / 甚至一个 .txt），
+  且与 node 版本（22 与 24）、worker 线程、`dangerouslyDisableSandbox`、
+  清空 `NODE_OPTIONS` **全都无关**；而**异步 `spawn` 正常**。所以 pnpm、vitest
+  （threads 池）能跑，**任何需要同步 spawn 的脚本必然失败** —— 桌面打包
+  （`package:win:x64:unsigned` → `readDesktopBuildCommit` 用 `execFileSync('git')`）
+  在助手环境内**做不了**，且同步 spawn 点遍布仓库（release/process、native build、
+  primary-runtime prepare 等几十处），改代码绕不过去。**结论：打包/发布类重活交
+  自己在普通 cmd/PowerShell 里跑**（脚本模板见
+  `C:/Users/23747/Desktop/build-life-update.cmd`：PATH 补 node + node_modules/.bin、
+  `CODEBUDDY_SAFE_DELETE_ENABLED=0`、`DSH_DESKTOP_NPM_REGISTRY` 指国内镜像、
+  `DSH_DESKTOP_BUILD_VERSION`、`DSH_CLIENT_COMMIT_HASH` 钉死 HEAD）。
+  诊断口诀：先测 `node -e "execFileSync('cmd.exe',['/c','echo',''])"`，
+  EBUSY 即环境级拦截而非代码问题。
+- **桌面打包三个必踩点**（2026-10-03 实测，各踩过一次）：① **build version 只能走 CLI
+  `--build-version`，环境变量 `DSH_DESKTOP_BUILD_VERSION` 无效**（`resolveRequestedBuildVersion`
+  只读 `invocation.requestedBuildVersion`）⇒ 不传就退回 productVersion `0.1.7-alpha.1`，
+  **比已装的 `.2026MMDD.N` 更旧** ⇒ 客户端报"已是最新"；**绝不能靠改 exe 文件名冒充**，
+  那会造成"文件名新、内部版本旧 ⇒ 反复提示更新"的死循环。② **`--build-version auto`
+  在本机不可用**：`apps/desktop/.env.windows` 设了 `DSH_DESKTOP_AUTO_UPDATE_ENV=test` +
+  `DOWNLOAD_TEST_ORIGIN`，于是 `remoteVersions` 必查云端 bucket，而
+  `DOWNLOAD_TEST_COS_BUCKET` 未配 ⇒ 抛 `must be set to a non-empty value`，**走不到
+  本地扫描那条降级路径**（判据是 `=== undefined`，空串也会进去）。③ **末步
+  `smoke-packaged-runtime` 必红＝既存 R7**（LibreOffice xlsx→PDF，
+  `loadComponentFromURL returned an empty reference`，docx 过）⇒ 打包退出码 1 是常态，
+  **发布不能以退出码为门槛**，改以"产物文件名带当日 `YYYYMMDD`"为准。
+  打包实测约 11 分钟（非 30–60）。
 
 ## 3 工作流与文档纪律
 
@@ -33,6 +66,12 @@
 **必须改**；原文写错**改+注明原值**。
 
 - 归属证明用引用图检查；回归测试**双向钉住**；**守卫必须红/绿各跑一次证明能响**（否则是装饰）。
+  ⚠️ 推论：**恒真式断言不构成验证**。踩过的实例：想用 vitest 断言
+  `typeof css.organ === 'string'` 证明样式表没坏 ⇒ **注入未闭合块后仍然绿**
+  （Vite 的 CSS 处理对未闭合块宽容）⇒ 该探针是装饰、已删。**探测目标要选对：
+  "类名能解析" ≠ "CSS 语法正确"**。本机可用的 CSS 语法验证＝**postcss**
+  （`node_modules/.pnpm/postcss@<ver>/node_modules/postcss`，**未 hoist，`require('postcss')`
+  会 MODULE_NOT_FOUND**）；**lightningcss 的 Node 绑定在本机初始化失败，不可用**。
 - 测试改完读回全文（Edit 可能匹配错缩进而静默失效）；同一文件多处替换**必须串行**。探针用毕即删。
 - 链接前缀：`plans/reference/*`→`../../`；`plans/active/roadmap/*`→`../../../`；改完跑校验。
 - 正结果先问"相邻设置能否复现"；交互效应声明前做规模扫描。提交信息写 `.git/COMMIT_MSG_*` 再 `-F`。
@@ -53,6 +92,21 @@
   ≠看 ignore）；目录规则不覆盖子文件。历史重写用 `git clone --mirror` 镜像隔离、**永不**原地做；
   `filter-repo` 不重写自定义 ref 与远端 `refs/pull/*`。
 - **桌面/前端工具链与打包**：见 `docs/DESKTOP_AUTOMATION_PITFALLS.md`。
+- **UI/CSS 三条静默失效**（写对也看不出错的那类，务必查）：① **伪元素不能嵌套**，
+  `::before::before` 被解析器**直接丢弃、不报错** ⇒ 骨架/装饰必用真实空节点承载；
+  ② **Chromium 的 `<summary>` 不暴露 `aria-expanded`**，折叠态只能
+  `details[open] > .summary::after` 驱动，写 `[aria-expanded='true']` 是永不命中的死规则；
+  ③ **整体替换 CSS 必须做类名双向核对**（TSX 引用集 A / CSS 定义集 B，报 A−B 与 B−A），
+  且正则要匹配**嵌套选择器**（`.actions .dangerAction` 不在行首，按 `^\s*\.` 扫会误报缺失）。
+- **`<summary>` 内不得有直接文本子节点**：会让 `getByText(区块名)` 由单点命中变多点命中
+  直接叫红；同理 armed 确认清单**整份只渲染一次**，不要每行渲染。
+- **双产出文档互相引用、不互相复制**（CSS 归 A、DOM 归 B，附录写分工）：两份可抄的 CSS
+  迟早写歪，而交叉复核能抓到写的人不会回头自查的规范边界（本轮即靠此抓到二级伪元素）。
+- **字级分裂**：同一页面并存两套小字号时，用户说的"挤"往往不是那一块的问题，而是
+  **旁边那块已经放宽、它没跟上**。分档判据＝"这是要读的正文/一个可点的标题" vs
+  "这是一个标签/徽标/表格单元"；后者（标签/仪表/徽标/表格）就该更小更密。
+- **别把 `<ul>` 改 flex 来加行距**：flex 父容器会把 `li` blockify，**项目符号整体消失**。
+  用 `.x li + li { margin-top: 4px }` 代替。
 
 ## 5 当前状态与归档索引
 

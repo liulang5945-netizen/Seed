@@ -1,0 +1,1517 @@
+{
+  "format": "taiji-r2-copy-surface-extension-v1",
+  "prereg": "plans/reference/SPEC-A-21_r2_surface_extension_prereg_20260925.md",
+  "judge_prereg": "plans/reference/SPEC-A-22_r2_a2_5_query_conditioned_selector_prereg_20260926.md",
+  "manifest": "plans/manifests/r2_copy_surface_extension_v1.json",
+  "chain": "base_raw_bytes",
+  "manifest_sha256": "4d04d6f48e41a180131e18efaf31634fa4b6147c10aaf5acb1533745e246cf87",
+  "checkpoint": "output/tmp_a30_smoke/formal_arms/a30_onpolicy_sized.pt",
+  "copy_evidence_utf8_gate": false,
+  "circuit_carried_envelopes": [],
+  "control_no_circuit": {
+    "circuit": null,
+    "chain": "base_raw_bytes",
+    "mount_entry": "none",
+    "gate_effective": false,
+    "items": 104,
+    "texts": 260,
+    "well_formed_texts": 24,
+    "well_formed_rate": 0.0923,
+    "utf8_decodable_rate": 0.15,
+    "utf8_decodable_trimmed_rate": 1.0,
+    "illegal_after_tail_trim_rate": 0.0,
+    "strict_hits": 0,
+    "rows": [
+      {
+        "id": "X001",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "在的将和是一种是和关题：",
+        "well_formed": true
+      },
+      {
+        "id": "X002",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "在的和是以子到写它的地和的将和是一种是一种�",
+        "well_formed": false
+      },
+      {
+        "id": "X003",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "在的将关重给它的彚地生需禁偋子的出章的崟是�",
+        "well_formed": false
+      },
+      {
+        "id": "X004",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "在狻语妁星是人给的句子到叐和看类廖燍箢这星�",
+        "well_formed": false
+      },
+      {
+        "id": "X005",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "在的和是一种是一灠的在狱和生在的将在瀂\n答：",
+        "well_formed": true
+      },
+      {
+        "id": "X006",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "的它生是的将和石生地子的偫到写人给圀地和是�",
+        "well_formed": false
+      },
+      {
+        "id": "X007",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "在的子的和是一种是一灠的在的和星是一种和生�",
+        "well_formed": false
+      },
+      {
+        "id": "X008",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "在生在子的出的和是一种是一灠在的在的和星是�",
+        "well_formed": false
+      },
+      {
+        "id": "X009",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "在的将叐的出类请做是一种是的和生在的和是一�",
+        "well_formed": false
+      },
+      {
+        "id": "X010",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "的妁是一种是一种怍的在狱和竚人给它的在的将�",
+        "well_formed": false
+      },
+      {
+        "id": "X011",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "的将关题灠的的将学的将关生一眪做将的是一种�",
+        "well_formed": false
+      },
+      {
+        "id": "X012",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "在狻下瀂\n答：的将和煳生在的和是一种是一灠的",
+        "well_formed": true
+      },
+      {
+        "id": "X013",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "在的和是什的出的在的和是一种是和的将取生圬�",
+        "well_formed": false
+      },
+      {
+        "id": "X014",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "的它用的妁在灋嗴的将在的弚地用人纠瀂圀的是�",
+        "well_formed": false
+      },
+      {
+        "id": "X015",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "在的子的和是一种是一灠的在的和星是一灠子：�",
+        "well_formed": false
+      },
+      {
+        "id": "X016",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "在生在于瀂\n答：在生在的句子生面嘟的句子的出",
+        "well_formed": true
+      },
+      {
+        "id": "X017",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "在的将叐的出章章章的在的和是一种是一灚星是�",
+        "well_formed": false
+      },
+      {
+        "id": "X018",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "的它用的和是一种是和星是和取关题灔：",
+        "well_formed": true
+      },
+      {
+        "id": "X019",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "的将关题灠的的将学的做将子的墘寍的做将在的�",
+        "well_formed": false
+      },
+      {
+        "id": "X020",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "在生子的句子的和是一种是一灠的在的和星是一�",
+        "well_formed": false
+      },
+      {
+        "id": "X021",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "在的在的和是一种是一灠的在的和星是一种是和�",
+        "well_formed": false
+      },
+      {
+        "id": "X022",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "的妁在狱奋。\n答：的出章灠真的句子关题篴的和",
+        "well_formed": false
+      },
+      {
+        "id": "X023",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "在的和生面在的叐和的和句子的出的和是一种是�",
+        "well_formed": false
+      },
+      {
+        "id": "X024",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "在生子的将叐关生圬子的的出眬倂\n答：是以子到",
+        "well_formed": false
+      },
+      {
+        "id": "X025",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "在的将子的将和生是一种是的将取生题，在的将�",
+        "well_formed": false
+      },
+      {
+        "id": "X026",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "的巳重箁僽的和是一种是的将取燺类倚在狱廖竪�",
+        "well_formed": false
+      },
+      {
+        "id": "X027",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "的巳重箁僽的它生圬子的叐叐和的出给下嗶是人�",
+        "well_formed": false
+      },
+      {
+        "id": "X028",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "的是一种是一灠的在狗星瀂地妁到球用和是一种�",
+        "well_formed": false
+      },
+      {
+        "id": "X029",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "在的和是以子到子的尰写人给倂\n答：在于的出章",
+        "well_formed": true
+      },
+      {
+        "id": "X030",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "的吃生的将取燍的偫到写人给倂\n答：",
+        "well_formed": false
+      },
+      {
+        "id": "X031",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "在的子的和关题篍的和句子的出章的巳生的和是�",
+        "well_formed": false
+      },
+      {
+        "id": "X032",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "在生在的和是以子子的出的和的地在瀂\n答：的出",
+        "well_formed": true
+      },
+      {
+        "id": "X033",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "在的将叐的出章的在的和是一种是一灠的在的和�",
+        "well_formed": false
+      },
+      {
+        "id": "X034",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "的巳重简禁偫到痶一种箵的和是一瀂\n答：的将和",
+        "well_formed": false
+      },
+      {
+        "id": "X035",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "的将取生圬到生圬子的出章的出狱是以子的偫列�",
+        "well_formed": false
+      },
+      {
+        "id": "X036",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "在生在的和是一种是一灠的在的和是一灠和生在�",
+        "well_formed": false
+      },
+      {
+        "id": "X037",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "在的叐关生圬子的生在的和是以子子的出的和是�",
+        "well_formed": false
+      },
+      {
+        "id": "X038",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "的它用的将和眬尰痶的名箁地用的巳生是以子到�",
+        "well_formed": false
+      },
+      {
+        "id": "X039",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "在的在的和关题篍的和关题灠刑在的和的是一种�",
+        "well_formed": false
+      },
+      {
+        "id": "X040",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "的它生在生在的和是一种是一灠的在狱奨的将取�",
+        "well_formed": false
+      },
+      {
+        "id": "X041",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "在的将取燍给凍叐地生面嘟是什的出已的彰生圬�",
+        "well_formed": false
+      },
+      {
+        "id": "X042",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "的在狻下取关题篍的和是和星是一种是和用人给�",
+        "well_formed": false
+      },
+      {
+        "id": "X043",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "的巳重简禁子：关阎的将子的出眬的是以子子的�",
+        "well_formed": false
+      },
+      {
+        "id": "X044",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "的在狻语子，在子的出玠的出狱是以子瀂\n答：在",
+        "well_formed": false
+      },
+      {
+        "id": "X045",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "在的叐关生倚句子吚的的出章灠竀禁在纺给和是�",
+        "well_formed": false
+      },
+      {
+        "id": "X046",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "的妁是和生在的将取给它份忙和是人给倂\n答：的",
+        "well_formed": false
+      },
+      {
+        "id": "X047",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "在狻子的将句子球的地叐和竚一种的出的在的和�",
+        "well_formed": false
+      },
+      {
+        "id": "X048",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "的它生在生是一种是是和灋子：将将将人给的出�",
+        "well_formed": false
+      },
+      {
+        "id": "X049",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "在的将叐的将句子的出章灠真的巳生是以子到子�",
+        "well_formed": false
+      },
+      {
+        "id": "X050",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "的巳重箁在的和是以子到嗴的尰嗴的尰用人给倂",
+        "well_formed": false
+      },
+      {
+        "id": "X051",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "在的将关重绖请在天子的吅子的墘篍的廖地如地�",
+        "well_formed": false
+      },
+      {
+        "id": "X052",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "在生在的叐地写和地写圬倝",
+        "well_formed": true
+      },
+      {
+        "id": "X053",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "在的和关遘灠到妁和关生地的和句子吚的的出章�",
+        "well_formed": false
+      },
+      {
+        "id": "X054",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "的它用的和是一种是的将取燺类倂\n答：在的将学",
+        "well_formed": true
+      },
+      {
+        "id": "X055",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "在的子的句子叐匇章的出类话做是一种是的和星�",
+        "well_formed": false
+      },
+      {
+        "id": "X056",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "的它生是以子子的出的和生地写人瀂\n答：的巳题",
+        "well_formed": true
+      },
+      {
+        "id": "X057",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "在的将叐的出章的将取给一种是人给的是一种是�",
+        "well_formed": false
+      },
+      {
+        "id": "X058",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "的在狗下痶是人纠瀂在的在瀂在的和是一种是一�",
+        "well_formed": false
+      },
+      {
+        "id": "X059",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "的将关重箁僽的将它禁傟\n答：的出章灠的将子烳",
+        "well_formed": false
+      },
+      {
+        "id": "X060",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "的在狻下取关用的弚地生人纠瀂\n答：",
+        "well_formed": false
+      },
+      {
+        "id": "X061",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "在的将和生题篍的和是一种是和的将子的出的将�",
+        "well_formed": false
+      },
+      {
+        "id": "X062",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "在的将叐的名给凍句子的凍的和是一种是一灠的�",
+        "well_formed": false
+      },
+      {
+        "id": "X063",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "在的叐和关题灠刑一真的在的和是一种是一灠的�",
+        "well_formed": false
+      },
+      {
+        "id": "X064",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "在生到妁偫刑一禁是人给倂\n答：在的出章灠真的",
+        "well_formed": false
+      },
+      {
+        "id": "X065",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "在的将叐的出章章章竀禁的将瀂\n答：在的出章的",
+        "well_formed": false
+      },
+      {
+        "id": "X066",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "的在狱傫子的出纺纠瀂\n答：",
+        "well_formed": false
+      },
+      {
+        "id": "X067",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "的巳重的巳的将学的墘要是一种是一的文章章竫�",
+        "well_formed": false
+      },
+      {
+        "id": "X068",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "的在狻语妁是一种是一火的和星是一种是的句子�",
+        "well_formed": false
+      },
+      {
+        "id": "X069",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "在的将生是以子的偋句子的出的和是一种是一种�",
+        "well_formed": false
+      },
+      {
+        "id": "X070",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "的妁子生面嘟的和是以子子的出的是一种是一灠�",
+        "well_formed": false
+      },
+      {
+        "id": "X071",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "在的子的和是一种倚句子的出的和是一种是一灄�",
+        "well_formed": false
+      },
+      {
+        "id": "X072",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "的它生是一种是人类和生在的在的和是一种是一�",
+        "well_formed": false
+      },
+      {
+        "id": "X073",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "在的将叐的出的在的和是一种是一灠的在的和是�",
+        "well_formed": false
+      },
+      {
+        "id": "X074",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "的巳重箁僽的它禁圉的子的叐叐匇章灠生地生在�",
+        "well_formed": false
+      },
+      {
+        "id": "X075",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "的巳重的将关生一个灪巳的将取燍的将生是以子�",
+        "well_formed": false
+      },
+      {
+        "id": "X076",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "的它生在的和是一种是一灠子的将取痮题：",
+        "well_formed": true
+      },
+      {
+        "id": "X077",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "在的和是一种是和的将取生地叐到生圬子的出章�",
+        "well_formed": false
+      },
+      {
+        "id": "X078",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "的它用的和叐子的弌句子的墘篍的偫列人给圀在�",
+        "well_formed": false
+      },
+      {
+        "id": "X079",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "在的和生题灠巳生地生到人给倂\n答：的是一灪巳",
+        "well_formed": true
+      },
+      {
+        "id": "X080",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "在的和是以子子的出巳瀂\n答：",
+        "well_formed": true
+      },
+      {
+        "id": "X081",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "在狻将取痮题：在的叐关球生在的叐叐匇用的出�",
+        "well_formed": false
+      },
+      {
+        "id": "X082",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "的妁是一种是和星是和的将取关问的弚在生弚在�",
+        "well_formed": false
+      },
+      {
+        "id": "X083",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "的巳题灠的巳的将句子吚的墘和生是一种是一种�",
+        "well_formed": false
+      },
+      {
+        "id": "X084",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "的是一种是一灠灋：在狱和生在的将和关生的出�",
+        "well_formed": false
+      },
+      {
+        "id": "X085",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "在的叐关生圬子的的出眬倂\n答：在狱奋的将瀝的",
+        "well_formed": false
+      },
+      {
+        "id": "X086",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "的将关生的妁地生的妁和是以子子的墘禁做是一�",
+        "well_formed": false
+      },
+      {
+        "id": "X087",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "在的子的将和类词给它的在和的和是一种是一灠�",
+        "well_formed": false
+      },
+      {
+        "id": "X088",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "在生于瀂\n答：在生到妁地和是一种是一灄出类请",
+        "well_formed": true
+      },
+      {
+        "id": "X089",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "在的将取燍的将的地生是一种是一种是一的在和�",
+        "well_formed": false
+      },
+      {
+        "id": "X090",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "的在狻词庺纺给圀地嗴的将句子的出狱是一种是�",
+        "well_formed": false
+      },
+      {
+        "id": "X091",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "的巳重简种是一种是和生在的将和是一种是和的�",
+        "well_formed": false
+      },
+      {
+        "id": "X092",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "的它用的将取瀂\n答：的定将瘯以子子的出章灠真",
+        "well_formed": false
+      },
+      {
+        "id": "X093",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "在的和是一种是和星是和关问的到人给它到生问�",
+        "well_formed": false
+      },
+      {
+        "id": "X094",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "的它用的将叐子的凍给它这是一种是的和生问题�",
+        "well_formed": false
+      },
+      {
+        "id": "X095",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "在的子的和关题灠的的将和是一种是一种在的和�",
+        "well_formed": false
+      },
+      {
+        "id": "X096",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "在生在的和是一种是和生在的将取燠的将句子的�",
+        "well_formed": false
+      },
+      {
+        "id": "X097",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "在的将和的将将将将人给庺狱是什的是和星是一�",
+        "well_formed": false
+      },
+      {
+        "id": "X098",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "的将叐关生一种的出章灠的在玒狱奖篭如\n答：在",
+        "well_formed": false
+      },
+      {
+        "id": "X099",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "在的将句子的出玠的出章的将取地叐眬圉问的刑�",
+        "well_formed": false
+      },
+      {
+        "id": "X100",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "在生子的和是一种是句子的出的是一种是一灄和�",
+        "well_formed": false
+      },
+      {
+        "id": "X101",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "在的妁子的将和的地妁地生是以子到子的出章的�",
+        "well_formed": false
+      },
+      {
+        "id": "X102",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "的它生是的和关题灠年的将和生题禁偠的将和是�",
+        "well_formed": false
+      },
+      {
+        "id": "X103",
+        "family": "given_then_ask",
+        "hit": false,
+        "answer": "在的子的和是一种在的和关题灠并生在的巳题篍�",
+        "well_formed": false
+      },
+      {
+        "id": "X104",
+        "family": "with_distractor",
+        "hit": false,
+        "answer": "在生在的和是一种是和星是句子的偔请星是人类�",
+        "well_formed": false
+      }
+    ]
+  },
+  "treated_arms": [
+    {
+      "circuit": "output/taiji_r2_copy_circuit_chat/judge/circuit-final.pt",
+      "chain": "base_raw_bytes",
+      "mount_entry": "enable_copy_circuit",
+      "gate_effective": true,
+      "items": 104,
+      "texts": 260,
+      "well_formed_texts": 2,
+      "well_formed_rate": 0.0077,
+      "utf8_decodable_rate": 0.0308,
+      "utf8_decodable_trimmed_rate": 1.0,
+      "illegal_after_tail_trim_rate": 0.0,
+      "strict_hits": 35,
+      "rows": [
+        {
+          "id": "X001",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "厩轩轩轩轩轩。轩轩轩轩轩。轩轩轩轩明轩轩轩�",
+          "well_formed": false
+        },
+        {
+          "id": "X002",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "州苷苷苷苷佋苷拋苷苷苷苷苷苷州苷苷苷苷苷苷�",
+          "well_formed": false
+        },
+        {
+          "id": "X003",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "字欢欢欢欢欢欢欢欢欢欢欢欢欢欢欢欢欢欢欢欢�",
+          "well_formed": false
+        },
+        {
+          "id": "X004",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "图海图图图图图图图图囮海囮海囮海图海图海巷�",
+          "well_formed": false
+        },
+        {
+          "id": "X005",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "喝乌龙爱喝乳时爱喝乌龙。喝乳时爱喝乳时爱喝�",
+          "well_formed": false
+        },
+        {
+          "id": "X006",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "养一养丮檪鸮鸮溆丮鸮鸮檪鸮鸮鸮檪鸮鸮鸮檺养�",
+          "well_formed": false
+        },
+        {
+          "id": "X007",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "近海客读近海客近海客读近海近海近客近海客读�",
+          "well_formed": false
+        },
+        {
+          "id": "X008",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "包挅挅包吃包吃包吃包包包包包包吃包包欼包笼�",
+          "well_formed": false
+        },
+        {
+          "id": "X009",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "君雨成雨成雨成雨成。雨成成成雨成雨成成成成�",
+          "well_formed": false
+        },
+        {
+          "id": "X010",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "安西安西安西安西安西安西安西安西安西安西安�",
+          "well_formed": false
+        },
+        {
+          "id": "X011",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "2121212121喗欢21欢欢欢欢欢欢欢欢欢欢欢欢欢欢欢�",
+          "well_formed": false
+        },
+        {
+          "id": "X012",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "星星晟星星星星队晨星的队晟队晨星队星星星队�",
+          "well_formed": false
+        },
+        {
+          "id": "X013",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "打打打苉喝苳打打打苉打打苉打打苉打打苉打打�",
+          "well_formed": false
+        },
+        {
+          "id": "X014",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "养一养一养一养一养一养一养一养一养一养一养�",
+          "well_formed": false
+        },
+        {
+          "id": "X015",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "近泿近泻迻读迻近泳迻近泳迻近泿近泻迳近寻迿�",
+          "well_formed": false
+        },
+        {
+          "id": "X016",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "子鸣子鸣子鸣子鸣子鸣子鸣子鸣子鸣子鸣子鸣子�",
+          "well_formed": false
+        },
+        {
+          "id": "X017",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "圿承承承承承承承承承承承承承承承承承承承承�",
+          "well_formed": false
+        },
+        {
+          "id": "X018",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "岛岛岛岛岛岛岛岛青岛青岛青岛青岛青岛青岛青�",
+          "well_formed": false
+        },
+        {
+          "id": "X019",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "777777777777777777777777777777777777777777777777777777777777",
+          "well_formed": false
+        },
+        {
+          "id": "X020",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "径鳾径鳾径鳾径鳾径鳾泟泟柳径鳟鮮径鳟径鳟径�",
+          "well_formed": false
+        },
+        {
+          "id": "X021",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "山酿花酿喝时籱酿花酿花酿花酿花喝时籱酿花酿�",
+          "well_formed": false
+        },
+        {
+          "id": "X022",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "养一养一养一养一养一养一养一养一养一养一养�",
+          "well_formed": false
+        },
+        {
+          "id": "X023",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "读读读读读读读读读读读读读读读读读读读读读�",
+          "well_formed": false
+        },
+        {
+          "id": "X024",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "艉泾艾吃羊艱吃羊艾吃羊艾吃羊艾吃泱吃羊艾吃�",
+          "well_formed": false
+        },
+        {
+          "id": "X025",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "坿远远远远远远远远远远远远远远远远远远远远�",
+          "well_formed": false
+        },
+        {
+          "id": "X026",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "岙长沙长沙长沙长沙长沙长沙长沙长沙长沙长沙�",
+          "well_formed": false
+        },
+        {
+          "id": "X027",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "999999999999999999999999999999999999999999999999999999999999",
+          "well_formed": false
+        },
+        {
+          "id": "X028",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "归云目归云目归云目归云目归云目归云目归人归�",
+          "well_formed": false
+        },
+        {
+          "id": "X029",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "柠檬柠檬柠檬柠檬柠檬柠檬柠檬柠檬柠檬柠檬柠�",
+          "well_formed": false
+        },
+        {
+          "id": "X030",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝蓝�",
+          "well_formed": false
+        },
+        {
+          "id": "X031",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "近毻近欈七读近庸近欺读近庸近欺读近庸近毻近�",
+          "well_formed": false
+        },
+        {
+          "id": "X032",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "汣汣汣汣汣汤胡胃胡胣汣汣汣汣汣汣汤胡胃胃胃�",
+          "well_formed": false
+        },
+        {
+          "id": "X033",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "安慕安慕安慕安慕安慕安慕安慕安慕安慕安慕安�",
+          "well_formed": false
+        },
+        {
+          "id": "X034",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "厎佘佘明明明佘明明佘明明明明明明明明明明明�",
+          "well_formed": false
+        },
+        {
+          "id": "X035",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "2424。喗欢242424。喇242424。喇24242424喇喇2424242424242",
+          "well_formed": false
+        },
+        {
+          "id": "X036",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "涛鬢涛涛鬢涛涛鬢涛涛鬮涛鬮涛涛鬮涛鬬涛鬮涛�",
+          "well_formed": false
+        },
+        {
+          "id": "X037",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "喝茶砖茶砖茶砖茶砖茶砖茶砖茶砖茶砖茶绶砖茶�",
+          "well_formed": false
+        },
+        {
+          "id": "X038",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "养一养一养一养一养一养一养一养一养一养一养�",
+          "well_formed": false
+        },
+        {
+          "id": "X039",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "近溪迪近梦梦梦梦梦梦梦梦梦溪读近庪迪近近溪�",
+          "well_formed": false
+        },
+        {
+          "id": "X040",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "臇臇臇臭臭臇臇臱屆臇臭臇臇臇豆臇臭臇臇臇臇�",
+          "well_formed": false
+        },
+        {
+          "id": "X041",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "青青青青青青青青青青青青青青青青青青青青青�",
+          "well_formed": false
+        },
+        {
+          "id": "X042",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "州州州州州州州州州州州州州户州淞淞佷州淞淞�",
+          "well_formed": false
+        },
+        {
+          "id": "X043",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "77777777欢欢欢欢欢欢欢欢欢欢欢欢欢欢欢欢欢欢�",
+          "well_formed": false
+        },
+        {
+          "id": "X044",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "柳柳柳柳柳柳柳阘柳柳柳阘柳柳柳柳阘柳柳柳阘�",
+          "well_formed": false
+        },
+        {
+          "id": "X045",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "山喝普普普普普普普普普普普普普普普普普普普�",
+          "well_formed": false
+        },
+        {
+          "id": "X046",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "养一养一养一养一养一养一养一养一养一养一养�",
+          "well_formed": false
+        },
+        {
+          "id": "X047",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "工迩工工工工工工工工读读迩工近橩工迩工迩工�",
+          "well_formed": false
+        },
+        {
+          "id": "X048",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "苗苗苗苗苗苗苗苗苗苗苗苗苗苗苗苗苗苗苗苗苗�",
+          "well_formed": false
+        },
+        {
+          "id": "X049",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "宁洛宁洛宁洛宁宁洛宁洛宁洛宁洛宁洛宁洛宁洛�",
+          "well_formed": false
+        },
+        {
+          "id": "X050",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "宁波宁波波波波波波波波波波波波波波波波宁波�",
+          "well_formed": false
+        },
+        {
+          "id": "X051",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "字欢欢欢欢欢欢欢欢欢欢欢欢欢欢欢欢欢欢欢欢�",
+          "well_formed": false
+        },
+        {
+          "id": "X052",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "薽影影影影影影影影影影影疖影疽疏影鱱鱱鱮汱�",
+          "well_formed": false
+        },
+        {
+          "id": "X053",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "荞荞荞荞荞荞荞荞荞时茶茶茶茶茶茶爱喝茶茶籶�",
+          "well_formed": false
+        },
+        {
+          "id": "X054",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "养一养一养一养一养一养一养一养一养一养一养�",
+          "well_formed": false
+        },
+        {
+          "id": "X055",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "近近近近近近近近近近毯迁毻迁毻迁读迿近近迯�",
+          "well_formed": false
+        },
+        {
+          "id": "X056",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "汉扉扉扉艉粉艉艉吃鸭艱吃鸭艱吃鸭艱吃鸭色色�",
+          "well_formed": false
+        },
+        {
+          "id": "X057",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "庈时予时予时予时予时予时予时予时予时予时予�",
+          "well_formed": false
+        },
+        {
+          "id": "X058",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "佸州温州温州温州温州温州温州温州温州温州温�",
+          "well_formed": false
+        },
+        {
+          "id": "X059",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "212121212121212121212121212121212121212121212121212121212121",
+          "well_formed": false
+        },
+        {
+          "id": "X060",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "风风风风风风风风风风风风风风风风风风风风风�",
+          "well_formed": false
+        },
+        {
+          "id": "X061",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "喝茶红枣茶红时红枣茶红时红枣茶红枣茶红时红�",
+          "well_formed": false
+        },
+        {
+          "id": "X062",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "养一养一养一养一养一养一养一养一养一养一养�",
+          "well_formed": false
+        },
+        {
+          "id": "X063",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "还读违近洛阳伽近洛阳伽近洛阳伽读读读近洛阳�",
+          "well_formed": false
+        },
+        {
+          "id": "X064",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "山吃蟹黄汤包蟹黱包汱包蟹黄汤包蟹黄汤包蟹黄�",
+          "well_formed": false
+        },
+        {
+          "id": "X065",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "圠栚栚堚栚堚栚堚栚堚栚倀砚栚栚栚我怀砚我堚�",
+          "well_formed": false
+        },
+        {
+          "id": "X066",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "崛阳阳阳阳阳阳阳阳洛阳阳阳阳阳洛阳阳阳阳阳�",
+          "well_formed": false
+        },
+        {
+          "id": "X067",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "256字256欢欢欢欢欢欢欢欢欢欢欢欢欢欢欢欢欢256�",
+          "well_formed": false
+        },
+        {
+          "id": "X068",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "宿雮宿雮宿雮宿雮宿雮宿雮宿雮宿雮宿雮宿雮宿�",
+          "well_formed": false
+        },
+        {
+          "id": "X069",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "平水水水水水水水水水水水水水水皮时皮水水水�",
+          "well_formed": false
+        },
+        {
+          "id": "X070",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "养一养一养一养一养一养一养一养一养一养一养�",
+          "well_formed": false
+        },
+        {
+          "id": "X071",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "近梦读近梦梦梦梦梦梦梦梦梦梦梦梦梦梦梦梦梦�",
+          "well_formed": false
+        },
+        {
+          "id": "X072",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "艉面汉面扛艛艛艛艛艉面汉面汉面汉面汉面汉面�",
+          "well_formed": false
+        },
+        {
+          "id": "X073",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "噚苙苙苙晚苙晚苙晚苙苙晚苙苙晚苙苙苙晚苙苙�",
+          "well_formed": false
+        },
+        {
+          "id": "X074",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "州扬州扬州州州州州州州州州州州州佉州扬扬扬�",
+          "well_formed": false
+        },
+        {
+          "id": "X075",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "1313131313131313131313\n皘欢欢欢欢欢欢欢欢欢欢欢欢�",
+          "well_formed": false
+        },
+        {
+          "id": "X076",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "挌舟舟舟舟舟舟舟舟舟舟舟舟舟舟舟舟舟舟茌舟�",
+          "well_formed": false
+        },
+        {
+          "id": "X077",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "荷饮时爱喝荷饮时爱喝荷饮时爱喝荷饮时爱喝荷�",
+          "well_formed": false
+        },
+        {
+          "id": "X078",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "养一养一养一养一养一养一养一养一养一养一养�",
+          "well_formed": false
+        },
+        {
+          "id": "X079",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "近梦粱录近梦粱录近梦粱录读读近梦梦梦梦梦梦�",
+          "well_formed": false
+        },
+        {
+          "id": "X080",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "豼鱼鱼踱吃鱼鱼鱼鱼鱼鱼汼豼鱼踱吱鱼鱼鱼踱吃�",
+          "well_formed": false
+        },
+        {
+          "id": "X081",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "舟舟舟舟埲舟舟舟舟舟舟。舟舟舟舟沟蟲舟舟舟�",
+          "well_formed": false
+        },
+        {
+          "id": "X082",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "州泉州泉州泉州泉州泉州泉州泉州泉州泉州泉州�",
+          "well_formed": false
+        },
+        {
+          "id": "X083",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "202020202020202020202020202020欢20202020202020202020202020202",
+          "well_formed": false
+        },
+        {
+          "id": "X084",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "戒望舒目戒望舒目戒戒戒戒戒戒钮望舒舒舒舒舒�",
+          "well_formed": false
+        },
+        {
+          "id": "X085",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "山楱楱楱楱楱楱楱楱楱楱楱楱楱楱楱楱楱楱楱楱�",
+          "well_formed": false
+        },
+        {
+          "id": "X086",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "养一养一养一养一养一养一养一养一养一养一养�",
+          "well_formed": false
+        },
+        {
+          "id": "X087",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "迿梦读迿梦读迿寻迿迿近梦读迿迿近梦读迿迿读�",
+          "well_formed": false
+        },
+        {
+          "id": "X088",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "吃吃吃吃吃吃吃吃吃吃吃縸水鸣水鸣水鸣水鸣水�",
+          "well_formed": false
+        },
+        {
+          "id": "X089",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "孾昭〘昭阭阭阭阭阭阭阭阭阭阭阭阭阭阭昭阭阭�",
+          "well_formed": false
+        },
+        {
+          "id": "X090",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "芜湖芜湖芜湖芜湖芜湖芜湖芜湖芜湖芜湖湖芜湖�",
+          "well_formed": false
+        },
+        {
+          "id": "X091",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "18是618是618是618是618是618是618是618是618是618是618�",
+          "well_formed": false
+        },
+        {
+          "id": "X092",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "央央殮檪央央央央央央央央央央央央央央央未央�",
+          "well_formed": false
+        },
+        {
+          "id": "X093",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "茉茉茉茉茉茉茉茉茉茉茉茉茉茉茉茉茉茉茉茉茉�",
+          "well_formed": false
+        },
+        {
+          "id": "X094",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "蝙蝙蝙蝠蝙蝙蝙蝙蝙蝙蝙蝙蝠蝙蝙蝙蝙蝙蝙蝙蝠�",
+          "well_formed": false
+        },
+        {
+          "id": "X095",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "迆迆迆迆迆迆迆迆迆迆迆迆迆迆迆迆迆读迆迆读�",
+          "well_formed": false
+        },
+        {
+          "id": "X096",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "子最狮吃狮最狮最狮吃吃吃吃吃狮吃朐吃狮戱吃�",
+          "well_formed": false
+        },
+        {
+          "id": "X097",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "吟晚吟晚吟吟晚吟吟吟吟吟吟吟吟吟吟晚吟晚吟�",
+          "well_formed": false
+        },
+        {
+          "id": "X098",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "自自自自自自自自自自自自自自自自自自自自自�",
+          "well_formed": false
+        },
+        {
+          "id": "X099",
+          "family": "given_then_ask",
+          "hit": true,
+          "answer": "909090909090909090909090909090909090909090909090909090909090",
+          "well_formed": false
+        },
+        {
+          "id": "X100",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "拥拥拥查查戟戟戟我秋饧饧戟饟我秋埥秋埥秋埥�",
+          "well_formed": false
+        },
+        {
+          "id": "X101",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "喝荷喝荷喝荷喝荷喝荷喝荷喝荷喝荷喝荷喝荷喝�",
+          "well_formed": false
+        },
+        {
+          "id": "X102",
+          "family": "with_distractor",
+          "hit": true,
+          "answer": "养一养一养一养一松鼠一养一养一养一养一养一�",
+          "well_formed": false
+        },
+        {
+          "id": "X103",
+          "family": "given_then_ask",
+          "hit": false,
+          "answer": "迸迸迸迸近游迸迸近游迸迸近游迸迸近游迸迸迸�",
+          "well_formed": false
+        },
+        {
+          "id": "X104",
+          "family": "with_distractor",
+          "hit": false,
+          "answer": "吃妻臇片片妻艇妻艇妻艇妻艇妻艇妻艇妻艇妻艇�",
+          "well_formed": false
+        }
+      ]
+    }
+  ],
+  "surface_verdict": {
+    "min_gap_texts": 3,
+    "per_circuit": [
+      {
+        "circuit": "output/taiji_r2_copy_circuit_chat/judge/circuit-final.pt",
+        "gap_texts": -22,
+        "direction": "worse",
+        "meets_min_gap": true,
+        "control_rate": 0.0923,
+        "treated_rate": 0.0077
+      }
+    ],
+    "status": "not_resolved",
+    "verdict": "not_resolved（独立取数只有 1 次，判据要求 ≥2 次）"
+  },
+  "base_sha256_unchanged": true
+}

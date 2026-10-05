@@ -1,0 +1,5206 @@
+{
+  "format": "taiji-a30-stop-failure-v25",
+  "format_note_v19": "v19 加性多一条检索侧 **oracle** 档：`--oracle-selector` 把 `store.best_match` 换成『内容含本题 `expected_contains` 的第一条事件』，找不到则透传原实现，用来把『选对了还拖不拖写』从『内容身份』与『发射时刻』里单独摘出来验。缺标签时响亮停下而非静默透传（那会伪装成生效）；自述 `oracle_calls`／`oracle_found`／`oracle_fell_through`。默认关 ⇒ 与 v18 逐位可比。",
+  "format_note_v18": "v18 **加性**多一条**检索侧**资格档：`--store-scope-conversation` 在每题开头把装载信封带来的陈旧事件请出候选集，只留本次对话被告知的内容可被 `best_match` 取到（只用公开接口 `events()/clear()/record()`；代价是 `event_id` 重新编号，已在件里披露）。它与窗口档正交：一个动候选集、一个动发射时刻。默认关 ⇒ 与 v17 逐位可比。",
+  "format_note_v25": "v25（2026-10-03）：DEBT-G24——`legal_candidates` 不含边界符而 `boundary_rank_in_legal` 在含边界符的集合里排名，两者放在一起会让名次比分母大 1（§64 实测到）。旧列保留以便与历史件同格比较，新增 `legal_candidates_including_boundary` 作无歧义分母；守卫钉住两条不等式。",
+  "format_note_v24": "v24（2026-10-03）：按 §第六十三次停靠的预注册加 `endstep_probe_v22[*].at_steps`——固定步位 8/16/32/64/128 上各记 p_boundary 与边界名次与合法候选数（只存 5 个点，不存整条序列）。动机：§62 证明'按生成长度分组比峰值'条件在存活上（早停必然短），固定步位才把长度变成'能否走到'而非分组变量。",
+  "format_note_v23": "v23（2026-10-02）：`endstep_probe_v22` 的分组改用全部逐步行（`step` 归零即换代），并把'是否吃满预算'的定义收到 `generation_steps >= max_length`；`in_run` 降级为第二维 `steps_in_repeat_run`。v22 那两件因分组误用不发表，见 §第六十次停靠。",
+  "format_note_v22": "v22（2026-10-02）：§第五十九次停靠的四个标量按**每次生成**入案 `endstep_probe_v22`——核实过 item_rows 是把一个 item 的 3 次生成串接后再取中位数，故现成 median_* 列跨代混算、对'基底为什么不停'没有判别力。四标量不依赖外部真值：p_boundary 峰值与其步位、该步的边界名次与合法候选数、峰值是否落在该代最后一步、该代是否吃满预算。既有键不动 ⇒ 与 v17–v21 各档同格可比。",
+  "format_note_v21": "v21（2026-10-02）：产品门的计步基改成**只数答复相**——`Taiji.generate()` 在 prompt 喂完后复位计数器。v20 那一版的 K 会被 prompt 段吃光（`emitted=64／silenced=276`＝`84＋256`），读数 66/72 与不挂回路逐列同值却不是增益。产品档与替身档仍互斥；默认 None ⇒ 逐位不变。",
+  "format_note_v20": "v20（2026-10-02）：owner 裁「立项进产品」后加**产品档** `--product-window-steps`——它调的是产品侧原生生命周期门（`Taiji.set_copy_evidence_window_steps`，默认 None ⇒ 逐位不变），与本仪器 v17 那副 monkeypatch 替身互斥；件里新增 `product_window_steps`／`product_window_stats` 与两条守卫（fired／两侧都报）。加字段不动既有键 ⇒ 与 v17–v19 各档同格可比。",
+  "format_note_v17": "v17 两件事：① 加**资格档** `--evidence-window-steps`（前 K 步发、之后静音；档本身住在剂量探针里与复述面共用，刻度由本仪器声明为环内步数，守卫 `window_both_sides_seen` 要求两侧都出现过）；② 修 v16 那列结构上恒为 0 的 `run_boundary_win_positions`——边界符胜出那一步 `break` 在 `observe` 之前、不入案，正确刻度是自停生成的 `fed_bytes`（已在件里，无需重跑即可读出）。其余字段与判据一字未动。",
+  "format_note_v16": "v16 加性只多两列**停止决定的位置**信息：每题 `run_boundary_win_positions` 与件级 `boundary_win_position_hist`。用途是给『只在前 K 步发证据』这一族资格档**定价**——设计预备第 2 条要求 K 只能从链上先量到的分布里取，不许事后挑刚好过线的那个。判据、计数与生成路径一字未动，故与 v13/v15 同格可比（锚点 23/49/6 与 total_steps 就是这条可比性的检验）。",
+  "format_note_v15": "v15 **只是把 v13/v14 那副内容档搬到剂量探针里与复述面共用**（`_make_content_armed_evidence`）：轨迹面与复述面必须做**同一个**置换／冻结操作，各写一份就是两把尺子。字段、算法、默认关闭时的逐位行为一字未动 ⇒ 与 v13/v14 同格可比（锚点档的 23/49/6 就是这条可比性的检验）。",
+  "format_note_v14": "v14 **只修 `frozen` 档的冻结源**（仪器缺陷，不是新测量）：v13 取'第一次调用'，而第一次调用时 store 仍为空 ⇒ 冻结到的是**精确零向量**，那一档实际测的是'把通道永久关掉'（现场证据：自停 66/72 与不挂回路那件同值、`content_arm_max_rel_l1_diff=1.0`）。现冻结到**第一条非零**证据并披露冻结点与它的 L1。`permutation` 档与其余字段一字未动 ⇒ v13 的置换档读数继续可比。",
+  "format_note_v13": "v13 **加性**多一格 owner 裁定后要的那把分离尺：`--evidence-content-arm` （`permutation`＝把证据向量按固定种子置换，多重集与 L1/max 逐位不变，只毁掉'哪一维对应哪个符号'；`frozen`＝每次返回第一次那一条，内容不再跟着 cue 走），配自述 `evidence_content_arm`／`perm_seed` 与守卫 `content_arm_consumed`／`content_arm_magnitude_preserved`（置换档的**前提**：硬度不守恒整档作废，因为那时两个臂差的不止内容）。默认关 ⇒ 与 v12 逐位可比；其余字段与算法一字未动。加它的理由：上限档把环内静音推到 8.25% 之后真自停仍 23→25，'相似度轴'这一族在轨迹面上已经排除得差不多了 ⇒ 下一个要分开的是'听内容'还是'只要有一条非零向量在加'。",
+  "format_note_v12": "v12 **加性**只补一位被 v11 现场暴露出来的空档：`evidence_alpha_calls`／`relevance_ceiling_consumed` 数的是'包装器被走到'，不是'过滤器开过枪'——一个从未命中的 c 会给出与全剂量同值的读数却看不见自己是空的，而全链计数还把 prompt 侧（`record_told_history`）一起算了，那一边不改写自身轨迹那一列。现按**生成环内**归因，件里存 `relevance_ceiling_silenced_calls`／`_share`／`evidence_calls_in_generation_loop`，守卫 `relevance_ceiling_fired`＋`ceiling_fire_count_reported`；v11 那把松尺子 `relevance_ceiling_consumed` **退役**（它能在'一次都没命中'时报 true）。其余字段与算法一字未动 ⇒ 与 v4–v11 同格可比；包装器与 `_cosine` 仍复用剂量探针那一份，c 的定义不变。",
+  "format_note_v11": "v11 **加性**多一个旗标 `--relevance-ceiling-c`（自信度衰减：相似度高于 c 的步不发）与两条自述（`relevance_ceiling_c`／守卫 `relevance_ceiling_consumed`），其余字段与算法一字未动 ⇒ 与 v4–v10 同格可比。加它的理由：DEBT-G19 三条修法里只有上限这条还没在**自身轨迹面**上被测过，而 L2 才是晋升判据用的那一列；包装器与 `_cosine` 都复用剂量探针那一份，三半里的 c 是同一个定义。",
+  "format_note_v10": "v10 **加性**只补一条被点名过两次的缺口：件里此前只记 `circuit_sha256`、不记**检查点自身**的 sha ⇒ 与旧档（如 09-30 那枚被作废的 quarter v4 件）只能按'同路径＋mtime 早于那次跑'配对，那是**路径级**不是 sha 级。现补 `checkpoint_sha256`（跑前那一次读盘，与 `base_sha256_unchanged` 共用同一趟哈希，不多读一遍 12MB）＋守卫 `checkpoint_sha_recorded`。其余字段与算法一字未动 ⇒ 与 v4–v9 同格可比。",
+  "format_note_v9": "v9 **加性**多一个旗标 `--copy-evidence-alpha`（把回路的加性证据整体乘 α）与两条自述（`copy_evidence_alpha`／守卫 `evidence_alpha_consumed`），其余字段与算法一字未动 ⇒ 与 v4–v8 同格可比。加它的理由：DEBT-G19 查出这条通道是三条加性证据里唯一没有强度系数的那一条；剂量档要与 v8 的'门开关'档用**同一台仪器、同一个乘数来源**，否则又是一口井里的水。",
+  "format_note_v8": "v8 **加性**多一个旗标 `--no-copy-evidence-gate`（挂完回路后把那条加性证据的 UTF-8 位置门显式关掉）与两条自述（`copy_evidence_gate_off_requested`／守卫 `evidence_gate_flag_honored`），其余字段与算法一字未动 ⇒ 与 v4–v7 同格可比。加它的理由：v7 之前把'挂载回路'当成一个变量，其实它一次开两样东西（回路的 prompt／证据通道 ＋ 那条门），拆开来才允许写'是回路的通道造成'。",
+  "format_note_v7": "v7 **加性**多存两条回写门槛自述（`surface_gate_state`／`write_back_gate_last_reason`），其余字段与算法一字未动 ⇒ 与 v4–v6 同格可比。加它的理由：门槛①（回写放行）**不是**由挂载回路武装的——它按`seed/surface_gate.py:150-156` 的'工件与检查点同目录'规则在 `load()` 里解析，`enable_copy_circuit` 之后仍是 `disarmed:artifact_absent`（2026-10-02 运行时实测：候选基底挂上 seed-A 后 `last_write_back_gate=(True, 'factory_face_or_gate_disarmed')`）。不报这一位，就会把'挂上回路'误读成'同时把回写门槛也开上了'——我 2026-10-02 早上就按那个误读写过一句保守的错账（PLAN-A-30 第九次停靠·更正）。",
+  "format_note_v6": "v6 **换比较的表示层＋更正早停计数**（诊断更正，见 §2bb-追加三/追加四）：（一）v5 的逐位比较是『raw 重放 vs `chat()` 返回值』，而早停样本（边界符胜出即 break，fed 极短）的返回值是**器官占位句**（`NativeReadableTextLanguageOrgan._fallback_text`）——V019 首轮 1 字节生成对应 44 字占位句，逐位比较必然不等，L2 要测的成功被记成面违规。v6 的重放改走**完整产品面链**（`replay_surface_from_fed`：decode → marker 切割 → **同一个器官实例** emit）再与返回值比较；`replay_tiny_feed` 这一分类随之退役（深帧复现证明 prompt 的 50 字节全部在案，追加二『没复现 prompt』的误诊被纠正）。（二）`generations_eating_full_budget` 的旧定义（`generations − marker 切割数`）把**边界符自停**（fed < 预算＝生成环唯一提前出口）误标成吃满预算——v4/v5 的『早停 1/72、5/72』数的其实是marker 切割；真正的边界自停（对照件 0/72、self/quarter 各 19/72）从未被点数。v6 起 `eating_full_budget` 按 `fed ≥ max_length` 判，新增 `generations_boundary_self_stop`。`all_surfaces_are_replayed_raw` 与 `replay_suspect_generations` 的**公式不变**（后者改数 `surface_differs_from_replay`），严格性不降：真正被产品链改过的面仍然红。",
+  "format_note_v5": "v5 **加性**：每条 `surface_checks` 多一列 `mismatch_reason`（`replay_tiny_feed`＝回放侧只归到 <8 个符号，属**仪器归类缺陷**；`surface_differs_from_replay`＝真的面不一致），聚合里多一条 `replay_suspect_generations`。**严格守卫 `all_surfaces_are_replayed_raw` 一字未动**——放宽它等于挪门柱；加这一列只是为了让'仪器坏了'与'被测量不符'能被分开读（§2bb-追加二 复现 `V019` 得到的就是前者）。其余各表算法与语义未动 ⇒ 与 v4 同格可比。",
+  "format_note_v4": "v4 **加性**多存三条装配自述（`mount_route`／`copy_circuit_present_after_load`／`copy_evidence_utf8_gate`），其余字段与算法一字未动 ⇒ 与 v3 同格可比。加它的理由：`--circuit` 不给 **不等于**\"出厂无回路面\"——带回路的信封在 `SeedRuntime.load` 里会自动挂载，所以这张面是按命令行猜出来的。",
+  "prereg": "plans/reference/PLAN-A-30_surface_repetition_localization_20260928.md §2f 第 3 条",
+  "checkpoint": "output/a31_chunked_short/checkpoint.pt",
+  "circuit": "output/taiji_r2_a23_ding2_seedB/judge/circuit-final.pt",
+  "circuit_sha256": "3cfb02c2a88d2bd97b79ff87af6301b3f160386dbeed92ccceef09d7d940b135",
+  "checkpoint_sha256": "ae51700e881f757a",
+  "mount_route": "enable_copy_circuit",
+  "copy_circuit_present_after_load": true,
+  "copy_evidence_utf8_gate_effective": true,
+  "copy_evidence_utf8_gate_config": false,
+  "copy_evidence_utf8_gate_override": true,
+  "copy_evidence_gate_off_requested": false,
+  "copy_evidence_alpha": 1.0,
+  "relevance_ceiling_c": null,
+  "evidence_window_steps": null,
+  "product_window_steps": 64,
+  "product_window_stats": {
+    "window_steps": 64,
+    "emitted_steps": 64,
+    "silenced_steps": 60,
+    "steps_seen": 124
+  },
+  "store_scope_conversation": false,
+  "oracle_selector": false,
+  "evidence_content_arm": null,
+  "perm_seed": null,
+  "surface_gate_state": "disarmed:artifact_absent",
+  "write_back_gate_last_reason": null,
+  "repetition_penalty": 2.0,
+  "repetition_window": 8,
+  "max_length": 256,
+  "generation_loop_lines": [
+    3187,
+    3249
+  ],
+  "items": 24,
+  "boundary_win_position_hist": {
+    "0-15": 0,
+    "16-31": 1,
+    "32-63": 6,
+    "64-127": 37,
+    "128+": 22,
+    "total": 66
+  },
+  "instrument_guard": {
+    "observe_calls_recorded": true,
+    "surface_gate_state_reported": true,
+    "evidence_alpha_consumed": true,
+    "evidence_alpha_calls": 0,
+    "relevance_ceiling_fired": true,
+    "relevance_ceiling_silenced_calls": 0,
+    "relevance_ceiling_silenced_share": null,
+    "evidence_calls_in_generation_loop": 0,
+    "ceiling_fire_count_reported": true,
+    "content_arm_consumed": true,
+    "window_arm_consumed": true,
+    "product_window_fired": true,
+    "product_window_emitted_and_silenced_reported": true,
+    "store_scope_consumed": true,
+    "oracle_consumed": true,
+    "oracle_calls": 0,
+    "oracle_found": 0,
+    "oracle_fell_through": 0,
+    "store_scope_stale_removed": 0,
+    "store_scope_events_min": 0,
+    "store_scope_events_max": 0,
+    "window_emitted_calls": 0,
+    "window_silenced_calls": 0,
+    "window_both_sides_seen": true,
+    "content_arm_magnitude_preserved": null,
+    "content_arm_max_rel_l1_diff": 0.0,
+    "content_arm_frozen_at_call": null,
+    "content_arm_frozen_l1": null,
+    "content_arm_calls": 0,
+    "content_arm_l1_original_sum": 0.0,
+    "content_arm_l1_replaced_sum": 0.0,
+    "relevance_ceiling_silenced_calls_all_chains": 0,
+    "evidence_gate_flag_honored": true,
+    "observe_calls_by_caller": {
+      "generate:3151": 13905,
+      "generate:3234": 9333,
+      "record_told_history:112": 8716,
+      "record_told_history:109": 2424,
+      "record_told_history:99": 72,
+      "generate:3142": 72
+    },
+    "all_items_reconstructed": true,
+    "items_failing_reconstruction": [],
+    "total_argmax_mismatch_steps": 0,
+    "all_surfaces_are_replayed_raw": true,
+    "replay_suspect_generations": 0,
+    "items_whose_surface_is_not_model_bytes": [],
+    "total_steps": 9333,
+    "generations": 72,
+    "generations_cut_by_turn_marker": 4,
+    "generations_boundary_self_stop": 66,
+    "generations_eating_full_budget": 6,
+    "base_sha256_unchanged": true,
+    "checkpoint_sha_recorded": true
+  },
+  "failure_examples": [],
+  "offender_count": 2,
+  "offenders": [
+    {
+      "id": "V003",
+      "answer_run": 27,
+      "steps": 500,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "generations_boundary_self_stop": 2,
+      "generations_eating_full_budget": 1,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 79,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "家我人工晶其它语：家木语：家木要人工子，以家机要",
+          "mismatch_reason": null,
+          "replay_surface_head": "家我人工晶其它语：家木语：家木要人工子，以家机要"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "妁12112111111111111111111",
+          "mismatch_reason": null,
+          "replay_surface_head": "妁12112111111111111111111"
+        },
+        {
+          "fed_bytes": 165,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "数12121121朢111111111111数1",
+          "mismatch_reason": null,
+          "replay_surface_head": "数12121121朢111111111111数1"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 114,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 948.974,
+      "run_steps": 100,
+      "endstep_probe_v22": [
+        {
+          "generation_steps": 79,
+          "steps_in_repeat_run": 0,
+          "last_step": 78,
+          "p_boundary_max": 0.007924,
+          "p_boundary_argmax_step": 42,
+          "boundary_rank_at_peak_step": 10,
+          "legal_candidates_at_peak_step": 179,
+          "peak_is_last_step": false,
+          "ate_full_budget": false,
+          "at_steps": [
+            {
+              "step": 8,
+              "p_boundary": 6e-05,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 16,
+              "p_boundary": 0.00024,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 32,
+              "p_boundary": 0.000215,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 64,
+              "p_boundary": 5.8e-05,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            }
+          ]
+        },
+        {
+          "generation_steps": 256,
+          "steps_in_repeat_run": 55,
+          "last_step": 255,
+          "p_boundary_max": 0.152711,
+          "p_boundary_argmax_step": 156,
+          "boundary_rank_at_peak_step": 3,
+          "legal_candidates_at_peak_step": 179,
+          "peak_is_last_step": false,
+          "ate_full_budget": true,
+          "at_steps": [
+            {
+              "step": 8,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 180,
+              "legal_candidates": 179,
+              "legal_candidates_including_boundary": 180
+            },
+            {
+              "step": 16,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 180,
+              "legal_candidates": 179,
+              "legal_candidates_including_boundary": 180
+            },
+            {
+              "step": 32,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 180,
+              "legal_candidates": 179,
+              "legal_candidates_including_boundary": 180
+            },
+            {
+              "step": 64,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 180,
+              "legal_candidates": 179,
+              "legal_candidates_including_boundary": 180
+            },
+            {
+              "step": 128,
+              "p_boundary": 0.00064,
+              "boundary_rank_in_legal": 13,
+              "legal_candidates": 179,
+              "legal_candidates_including_boundary": 180
+            }
+          ]
+        },
+        {
+          "generation_steps": 165,
+          "steps_in_repeat_run": 45,
+          "last_step": 164,
+          "p_boundary_max": 0.007684,
+          "p_boundary_argmax_step": 152,
+          "boundary_rank_at_peak_step": 10,
+          "legal_candidates_at_peak_step": 179,
+          "peak_is_last_step": false,
+          "ate_full_budget": false,
+          "at_steps": [
+            {
+              "step": 8,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 180,
+              "legal_candidates": 179,
+              "legal_candidates_including_boundary": 180
+            },
+            {
+              "step": 16,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 180,
+              "legal_candidates": 179,
+              "legal_candidates_including_boundary": 180
+            },
+            {
+              "step": 32,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 180,
+              "legal_candidates": 179,
+              "legal_candidates_including_boundary": 180
+            },
+            {
+              "step": 64,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 180,
+              "legal_candidates": 179,
+              "legal_candidates_including_boundary": 180
+            },
+            {
+              "step": 128,
+              "p_boundary": 0.000801,
+              "boundary_rank_in_legal": 20,
+              "legal_candidates": 179,
+              "legal_candidates_including_boundary": 180
+            }
+          ]
+        }
+      ],
+      "run_boundary_win_positions": [
+        79,
+        165
+      ],
+      "run_legal_hist": {
+        "179": 100
+      },
+      "run_boundary_rank_hist": {
+        "23": 1,
+        "32": 1,
+        "180": 98
+      },
+      "run_ratio_min": 300800502.116,
+      "run_ratio_median": 5.489414407211845e+43,
+      "run_rows_sample": [
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.333333,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 180,
+          "legal_candidates": 179,
+          "legal_candidates_including_boundary": 180,
+          "ratio_best_over_boundary": null,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": true,
+          "step": 5,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.2,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 180,
+          "legal_candidates": 179,
+          "legal_candidates_including_boundary": 180,
+          "ratio_best_over_boundary": null,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": true,
+          "step": 6,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.142857,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 180,
+          "legal_candidates": 179,
+          "legal_candidates_including_boundary": 180,
+          "ratio_best_over_boundary": null,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": true,
+          "step": 8,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.111111,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 180,
+          "legal_candidates": 179,
+          "legal_candidates_including_boundary": 180,
+          "ratio_best_over_boundary": null,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": true,
+          "step": 9,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.090909,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 180,
+          "legal_candidates": 179,
+          "legal_candidates_including_boundary": 180,
+          "ratio_best_over_boundary": null,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": true,
+          "step": 10,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.076923,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 180,
+          "legal_candidates": 179,
+          "legal_candidates_including_boundary": 180,
+          "ratio_best_over_boundary": null,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": true,
+          "step": 11,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.076923,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 180,
+          "legal_candidates": 179,
+          "legal_candidates_including_boundary": 180,
+          "ratio_best_over_boundary": null,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": true,
+          "step": 12,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.066667,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 180,
+          "legal_candidates": 179,
+          "legal_candidates_including_boundary": 180,
+          "ratio_best_over_boundary": null,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": true,
+          "step": 13,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.066667,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 180,
+          "legal_candidates": 179,
+          "legal_candidates_including_boundary": 180,
+          "ratio_best_over_boundary": null,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": true,
+          "step": 14,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.066667,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 180,
+          "legal_candidates": 179,
+          "legal_candidates_including_boundary": 180,
+          "ratio_best_over_boundary": null,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": true,
+          "step": 15,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.058824,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 180,
+          "legal_candidates": 179,
+          "legal_candidates_including_boundary": 180,
+          "ratio_best_over_boundary": null,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": true,
+          "step": 16,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.058824,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 180,
+          "legal_candidates": 179,
+          "legal_candidates_including_boundary": 180,
+          "ratio_best_over_boundary": null,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": true,
+          "step": 17,
+          "in_run": true
+        }
+      ]
+    },
+    {
+      "id": "V011",
+      "answer_run": 54,
+      "steps": 391,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "generations_boundary_self_stop": 3,
+      "generations_eating_full_budget": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 97,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "家了最家于她有下家机下学，译家机译写于她有亻家有",
+          "mismatch_reason": null,
+          "replay_surface_head": "家了最家于她有下家机下学，译家机译写于她有亻家有"
+        },
+        {
+          "fed_bytes": 111,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "妁777777777777777777777探妁",
+          "mismatch_reason": null,
+          "replay_surface_head": "妁777777777777777777777探妁"
+        },
+        {
+          "fed_bytes": 183,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "数77777妁77777777777777777",
+          "mismatch_reason": null,
+          "replay_surface_head": "数77777妁77777777777777777"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 115,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 1080.61,
+      "run_steps": 115,
+      "endstep_probe_v22": [
+        {
+          "generation_steps": 97,
+          "steps_in_repeat_run": 0,
+          "last_step": 96,
+          "p_boundary_max": 0.006266,
+          "p_boundary_argmax_step": 3,
+          "boundary_rank_at_peak_step": 10,
+          "legal_candidates_at_peak_step": 179,
+          "peak_is_last_step": false,
+          "ate_full_budget": false,
+          "at_steps": [
+            {
+              "step": 8,
+              "p_boundary": 0.000247,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 16,
+              "p_boundary": 0.00012,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 32,
+              "p_boundary": 0.000121,
+              "boundary_rank_in_legal": 64,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 64,
+              "p_boundary": 3e-05,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            }
+          ]
+        },
+        {
+          "generation_steps": 111,
+          "steps_in_repeat_run": 56,
+          "last_step": 110,
+          "p_boundary_max": 0.010715,
+          "p_boundary_argmax_step": 27,
+          "boundary_rank_at_peak_step": 11,
+          "legal_candidates_at_peak_step": 179,
+          "peak_is_last_step": false,
+          "ate_full_budget": false,
+          "at_steps": [
+            {
+              "step": 8,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 180,
+              "legal_candidates": 179,
+              "legal_candidates_including_boundary": 180
+            },
+            {
+              "step": 16,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 180,
+              "legal_candidates": 179,
+              "legal_candidates_including_boundary": 180
+            },
+            {
+              "step": 32,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 180,
+              "legal_candidates": 179,
+              "legal_candidates_including_boundary": 180
+            },
+            {
+              "step": 64,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 180,
+              "legal_candidates": 179,
+              "legal_candidates_including_boundary": 180
+            }
+          ]
+        },
+        {
+          "generation_steps": 183,
+          "steps_in_repeat_run": 59,
+          "last_step": 182,
+          "p_boundary_max": 0.004381,
+          "p_boundary_argmax_step": 140,
+          "boundary_rank_at_peak_step": 11,
+          "legal_candidates_at_peak_step": 179,
+          "peak_is_last_step": false,
+          "ate_full_budget": false,
+          "at_steps": [
+            {
+              "step": 8,
+              "p_boundary": 0.002293,
+              "boundary_rank_in_legal": 35,
+              "legal_candidates": 179,
+              "legal_candidates_including_boundary": 180
+            },
+            {
+              "step": 16,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 180,
+              "legal_candidates": 179,
+              "legal_candidates_including_boundary": 180
+            },
+            {
+              "step": 32,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 180,
+              "legal_candidates": 179,
+              "legal_candidates_including_boundary": 180
+            },
+            {
+              "step": 64,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 180,
+              "legal_candidates": 179,
+              "legal_candidates_including_boundary": 180
+            },
+            {
+              "step": 128,
+              "p_boundary": 0.000537,
+              "boundary_rank_in_legal": 18,
+              "legal_candidates": 179,
+              "legal_candidates_including_boundary": 180
+            }
+          ]
+        }
+      ],
+      "run_boundary_win_positions": [
+        97,
+        111,
+        183
+      ],
+      "run_legal_hist": {
+        "179": 115
+      },
+      "run_boundary_rank_hist": {
+        "33": 1,
+        "180": 114
+      },
+      "run_ratio_min": 2.3156683897748988e+16,
+      "run_ratio_median": 2.3156683897748988e+16,
+      "run_rows_sample": [
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 1.0,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 180,
+          "legal_candidates": 179,
+          "legal_candidates_including_boundary": 180,
+          "ratio_best_over_boundary": null,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": true,
+          "step": 3,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.333333,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 180,
+          "legal_candidates": 179,
+          "legal_candidates_including_boundary": 180,
+          "ratio_best_over_boundary": null,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": true,
+          "step": 4,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.2,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 180,
+          "legal_candidates": 179,
+          "legal_candidates_including_boundary": 180,
+          "ratio_best_over_boundary": null,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": true,
+          "step": 5,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.142857,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 180,
+          "legal_candidates": 179,
+          "legal_candidates_including_boundary": 180,
+          "ratio_best_over_boundary": null,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": true,
+          "step": 6,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.111111,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 180,
+          "legal_candidates": 179,
+          "legal_candidates_including_boundary": 180,
+          "ratio_best_over_boundary": null,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": true,
+          "step": 7,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.090909,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 180,
+          "legal_candidates": 179,
+          "legal_candidates_including_boundary": 180,
+          "ratio_best_over_boundary": null,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": true,
+          "step": 8,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.076923,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 180,
+          "legal_candidates": 179,
+          "legal_candidates_including_boundary": 180,
+          "ratio_best_over_boundary": null,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": true,
+          "step": 9,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.066667,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 180,
+          "legal_candidates": 179,
+          "legal_candidates_including_boundary": 180,
+          "ratio_best_over_boundary": null,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": true,
+          "step": 10,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.058824,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 180,
+          "legal_candidates": 179,
+          "legal_candidates_including_boundary": 180,
+          "ratio_best_over_boundary": null,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": true,
+          "step": 11,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.058824,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 180,
+          "legal_candidates": 179,
+          "legal_candidates_including_boundary": 180,
+          "ratio_best_over_boundary": null,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": true,
+          "step": 12,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.058824,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 180,
+          "legal_candidates": 179,
+          "legal_candidates_including_boundary": 180,
+          "ratio_best_over_boundary": null,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": true,
+          "step": 13,
+          "in_run": true
+        },
+        {
+          "emitted_is_argmax": true,
+          "p_emitted": 0.058824,
+          "p_boundary": 0.0,
+          "p_boundary_before_penalty": 0.0,
+          "boundary_rank_in_legal": 180,
+          "legal_candidates": 179,
+          "legal_candidates_including_boundary": 180,
+          "ratio_best_over_boundary": null,
+          "boundary_is_argmax": false,
+          "boundary_probability_is_zero": true,
+          "step": 14,
+          "in_run": true
+        }
+      ]
+    }
+  ],
+  "per_item": [
+    {
+      "id": "V001",
+      "answer_run": 2,
+      "steps": 384,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 1,
+      "generations_boundary_self_stop": 3,
+      "generations_eating_full_budget": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 112,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "家本亻下家机个句子，译我家了关问，其最亻家最于呻",
+          "mismatch_reason": null,
+          "replay_surface_head": "家本亻下家机个句子，译我家了关问，其最亻家最于呻"
+        },
+        {
+          "fed_bytes": 118,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "吨诛讓襥襽诛衐蛥襐这襥襐迻亥耐葐躐萓襓雨耂行殶在",
+          "mismatch_reason": null,
+          "replay_surface_head": "吨诛讓襥襽诛衐蛥襐这襥襐迻亥耐葐躐萓襓雨耂行殶在"
+        },
+        {
+          "fed_bytes": 154,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 41,
+          "answer_head": "吨讨襥襥身襥襐这襥襐蛥蓥襐蛥躥襽襥轥衐蛨襺襽家戹",
+          "mismatch_reason": null,
+          "replay_surface_head": "吨讨襥襥身襥襐这襥襐蛥蓥襐蛥躥襽襥轥衐蛨襺襽家戹"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 41,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 1295.73,
+      "run_steps": 6,
+      "endstep_probe_v22": [
+        {
+          "generation_steps": 112,
+          "steps_in_repeat_run": 0,
+          "last_step": 111,
+          "p_boundary_max": 0.008588,
+          "p_boundary_argmax_step": 21,
+          "boundary_rank_at_peak_step": 9,
+          "legal_candidates_at_peak_step": 179,
+          "peak_is_last_step": false,
+          "ate_full_budget": false,
+          "at_steps": [
+            {
+              "step": 8,
+              "p_boundary": 5.7e-05,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 16,
+              "p_boundary": 0.000136,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 32,
+              "p_boundary": 9.9e-05,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 64,
+              "p_boundary": 0.000121,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            }
+          ]
+        },
+        {
+          "generation_steps": 118,
+          "steps_in_repeat_run": 0,
+          "last_step": 117,
+          "p_boundary_max": 0.005973,
+          "p_boundary_argmax_step": 78,
+          "boundary_rank_at_peak_step": 10,
+          "legal_candidates_at_peak_step": 179,
+          "peak_is_last_step": false,
+          "ate_full_budget": false,
+          "at_steps": [
+            {
+              "step": 8,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 16,
+              "p_boundary": 7.2e-05,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 32,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 64,
+              "p_boundary": 3e-06,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            }
+          ]
+        },
+        {
+          "generation_steps": 154,
+          "steps_in_repeat_run": 6,
+          "last_step": 153,
+          "p_boundary_max": 0.007366,
+          "p_boundary_argmax_step": 111,
+          "boundary_rank_at_peak_step": 9,
+          "legal_candidates_at_peak_step": 179,
+          "peak_is_last_step": false,
+          "ate_full_budget": false,
+          "at_steps": [
+            {
+              "step": 8,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 16,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 32,
+              "p_boundary": 1e-06,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 64,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 128,
+              "p_boundary": 2.5e-05,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            }
+          ]
+        }
+      ],
+      "run_boundary_win_positions": [
+        112,
+        118,
+        154
+      ]
+    },
+    {
+      "id": "V002",
+      "answer_run": 6,
+      "steps": 570,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "generations_boundary_self_stop": 2,
+      "generations_eating_full_budget": 1,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 79,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "家本亻家有人工木译，家以下家机译，家我于在我于句",
+          "mismatch_reason": null,
+          "replay_surface_head": "家本亻家有人工木译，家以下家机译，家我于在我于句"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "巷跷跷跷跷混跷跷跷跷跷跷混跷跷跷跷跷跷巷跷軥了家",
+          "mismatch_reason": null,
+          "replay_surface_head": "巷跷跷跷跷混跷跷跷跷跷跷混跷跷跷跷跷跷巷跷軥了家"
+        },
+        {
+          "fed_bytes": 235,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "巷跷跷跷跷混跷亷跷跷跷跷跷跷拷跷跷跷跷跷跷跶家亻",
+          "mismatch_reason": null,
+          "replay_surface_head": "巷跷跷跷跷混跷亷跷跷跷跷跷跷拷跷跷跷跷跷跷跶家亻"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 60,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 1080.984,
+      "run_steps": 96,
+      "endstep_probe_v22": [
+        {
+          "generation_steps": 79,
+          "steps_in_repeat_run": 0,
+          "last_step": 78,
+          "p_boundary_max": 0.004789,
+          "p_boundary_argmax_step": 33,
+          "boundary_rank_at_peak_step": 10,
+          "legal_candidates_at_peak_step": 179,
+          "peak_is_last_step": false,
+          "ate_full_budget": false,
+          "at_steps": [
+            {
+              "step": 8,
+              "p_boundary": 0.0001,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 16,
+              "p_boundary": 3.1e-05,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 32,
+              "p_boundary": 6e-05,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 64,
+              "p_boundary": 0.000156,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            }
+          ]
+        },
+        {
+          "generation_steps": 256,
+          "steps_in_repeat_run": 48,
+          "last_step": 255,
+          "p_boundary_max": 0.019017,
+          "p_boundary_argmax_step": 252,
+          "boundary_rank_at_peak_step": 9,
+          "legal_candidates_at_peak_step": 179,
+          "peak_is_last_step": false,
+          "ate_full_budget": true,
+          "at_steps": [
+            {
+              "step": 8,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 16,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 32,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 64,
+              "p_boundary": 0.000338,
+              "boundary_rank_in_legal": 64,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 128,
+              "p_boundary": 1e-05,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            }
+          ]
+        },
+        {
+          "generation_steps": 235,
+          "steps_in_repeat_run": 48,
+          "last_step": 234,
+          "p_boundary_max": 0.00741,
+          "p_boundary_argmax_step": 69,
+          "boundary_rank_at_peak_step": 10,
+          "legal_candidates_at_peak_step": 179,
+          "peak_is_last_step": false,
+          "ate_full_budget": false,
+          "at_steps": [
+            {
+              "step": 8,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 16,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 32,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 64,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 128,
+              "p_boundary": 0.000293,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            }
+          ]
+        }
+      ],
+      "run_boundary_win_positions": [
+        79,
+        235
+      ]
+    },
+    {
+      "id": "V003",
+      "answer_run": 27,
+      "steps": 500,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "generations_boundary_self_stop": 2,
+      "generations_eating_full_budget": 1,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 79,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "家我人工晶其它语：家木语：家木要人工子，以家机要",
+          "mismatch_reason": null,
+          "replay_surface_head": "家我人工晶其它语：家木语：家木要人工子，以家机要"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "妁12112111111111111111111",
+          "mismatch_reason": null,
+          "replay_surface_head": "妁12112111111111111111111"
+        },
+        {
+          "fed_bytes": 165,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "数12121121朢111111111111数1",
+          "mismatch_reason": null,
+          "replay_surface_head": "数12121121朢111111111111数1"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 114,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 948.974,
+      "run_steps": 100,
+      "endstep_probe_v22": [
+        {
+          "generation_steps": 79,
+          "steps_in_repeat_run": 0,
+          "last_step": 78,
+          "p_boundary_max": 0.007924,
+          "p_boundary_argmax_step": 42,
+          "boundary_rank_at_peak_step": 10,
+          "legal_candidates_at_peak_step": 179,
+          "peak_is_last_step": false,
+          "ate_full_budget": false,
+          "at_steps": [
+            {
+              "step": 8,
+              "p_boundary": 6e-05,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 16,
+              "p_boundary": 0.00024,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 32,
+              "p_boundary": 0.000215,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 64,
+              "p_boundary": 5.8e-05,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            }
+          ]
+        },
+        {
+          "generation_steps": 256,
+          "steps_in_repeat_run": 55,
+          "last_step": 255,
+          "p_boundary_max": 0.152711,
+          "p_boundary_argmax_step": 156,
+          "boundary_rank_at_peak_step": 3,
+          "legal_candidates_at_peak_step": 179,
+          "peak_is_last_step": false,
+          "ate_full_budget": true,
+          "at_steps": [
+            {
+              "step": 8,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 180,
+              "legal_candidates": 179,
+              "legal_candidates_including_boundary": 180
+            },
+            {
+              "step": 16,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 180,
+              "legal_candidates": 179,
+              "legal_candidates_including_boundary": 180
+            },
+            {
+              "step": 32,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 180,
+              "legal_candidates": 179,
+              "legal_candidates_including_boundary": 180
+            },
+            {
+              "step": 64,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 180,
+              "legal_candidates": 179,
+              "legal_candidates_including_boundary": 180
+            },
+            {
+              "step": 128,
+              "p_boundary": 0.00064,
+              "boundary_rank_in_legal": 13,
+              "legal_candidates": 179,
+              "legal_candidates_including_boundary": 180
+            }
+          ]
+        },
+        {
+          "generation_steps": 165,
+          "steps_in_repeat_run": 45,
+          "last_step": 164,
+          "p_boundary_max": 0.007684,
+          "p_boundary_argmax_step": 152,
+          "boundary_rank_at_peak_step": 10,
+          "legal_candidates_at_peak_step": 179,
+          "peak_is_last_step": false,
+          "ate_full_budget": false,
+          "at_steps": [
+            {
+              "step": 8,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 180,
+              "legal_candidates": 179,
+              "legal_candidates_including_boundary": 180
+            },
+            {
+              "step": 16,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 180,
+              "legal_candidates": 179,
+              "legal_candidates_including_boundary": 180
+            },
+            {
+              "step": 32,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 180,
+              "legal_candidates": 179,
+              "legal_candidates_including_boundary": 180
+            },
+            {
+              "step": 64,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 180,
+              "legal_candidates": 179,
+              "legal_candidates_including_boundary": 180
+            },
+            {
+              "step": 128,
+              "p_boundary": 0.000801,
+              "boundary_rank_in_legal": 20,
+              "legal_candidates": 179,
+              "legal_candidates_including_boundary": 180
+            }
+          ]
+        }
+      ],
+      "run_boundary_win_positions": [
+        79,
+        165
+      ]
+    },
+    {
+      "id": "V004",
+      "answer_run": 9,
+      "steps": 520,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "generations_boundary_self_stop": 2,
+      "generations_eating_full_budget": 1,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 88,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "家亻下家机亻家有亻家有于家木于学，了家有于呻请木",
+          "mismatch_reason": null,
+          "replay_surface_head": "家亻下家机亻家有亻家有于家木于学，了家有于呻请木"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "巷巷混海巷跷海巷䷷混海海巷巷巷巷巷巷巷巷巷巩人怂",
+          "mismatch_reason": null,
+          "replay_surface_head": "巷巷混海巷跷海巷䷷混海海巷巷巷巷巷巷巷巷巷巩人怂"
+        },
+        {
+          "fed_bytes": 176,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "巷巷混海巷巷海巷巷巷巷巷巷巷海海巷巷海差Ｎ的时倂",
+          "mismatch_reason": null,
+          "replay_surface_head": "巷巷混海巷巷海巷巷巷巷巷巷巷海海巷巷海差Ｎ的时倂"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 12,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 1440.215,
+      "run_steps": 84,
+      "endstep_probe_v22": [
+        {
+          "generation_steps": 88,
+          "steps_in_repeat_run": 0,
+          "last_step": 87,
+          "p_boundary_max": 0.00929,
+          "p_boundary_argmax_step": 66,
+          "boundary_rank_at_peak_step": 9,
+          "legal_candidates_at_peak_step": 179,
+          "peak_is_last_step": false,
+          "ate_full_budget": false,
+          "at_steps": [
+            {
+              "step": 8,
+              "p_boundary": 0.000115,
+              "boundary_rank_in_legal": 64,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 16,
+              "p_boundary": 5.3e-05,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 32,
+              "p_boundary": 0.000134,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 64,
+              "p_boundary": 0.000107,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            }
+          ]
+        },
+        {
+          "generation_steps": 256,
+          "steps_in_repeat_run": 39,
+          "last_step": 255,
+          "p_boundary_max": 0.118738,
+          "p_boundary_argmax_step": 116,
+          "boundary_rank_at_peak_step": 2,
+          "legal_candidates_at_peak_step": 179,
+          "peak_is_last_step": false,
+          "ate_full_budget": true,
+          "at_steps": [
+            {
+              "step": 8,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 16,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 32,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 64,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 63,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 128,
+              "p_boundary": 0.003075,
+              "boundary_rank_in_legal": 11,
+              "legal_candidates": 179,
+              "legal_candidates_including_boundary": 180
+            }
+          ]
+        },
+        {
+          "generation_steps": 176,
+          "steps_in_repeat_run": 45,
+          "last_step": 175,
+          "p_boundary_max": 0.131269,
+          "p_boundary_argmax_step": 73,
+          "boundary_rank_at_peak_step": 2,
+          "legal_candidates_at_peak_step": 179,
+          "peak_is_last_step": false,
+          "ate_full_budget": false,
+          "at_steps": [
+            {
+              "step": 8,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 16,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 32,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 64,
+              "p_boundary": 0.00044,
+              "boundary_rank_in_legal": 62,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 128,
+              "p_boundary": 0.000113,
+              "boundary_rank_in_legal": 64,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            }
+          ]
+        }
+      ],
+      "run_boundary_win_positions": [
+        88,
+        176
+      ]
+    },
+    {
+      "id": "V005",
+      "answer_run": 1,
+      "steps": 417,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "generations_boundary_self_stop": 3,
+      "generations_eating_full_budget": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 121,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "家亻下家文的家有，家了关有亻家有亻家有于学，译我",
+          "mismatch_reason": null,
+          "replay_surface_head": "家亻下家文的家有，家了关有亻家有亻家有于学，译我"
+        },
+        {
+          "fed_bytes": 199,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "宱汱制亱屻蝱汱人己朱丱汀朱鱱山屻蝱汱在汹人工晶以",
+          "mismatch_reason": null,
+          "replay_surface_head": "宱汱制亱屻蝱汱人己朱丱汀朱鱱山屻蝱汱在汹人工晶以"
+        },
+        {
+          "fed_bytes": 97,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "汱在汻丱汝汱亱龝䝾家汱山屻豱汱山句汱人己汱屻语：",
+          "mismatch_reason": null,
+          "replay_surface_head": "汱在汻丱汝汱亱龝䝾家汱山屻豱汱山句汱人己汱屻语："
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 8,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 1425.253,
+      "run_steps": 0,
+      "endstep_probe_v22": [
+        {
+          "generation_steps": 121,
+          "steps_in_repeat_run": 0,
+          "last_step": 120,
+          "p_boundary_max": 0.007503,
+          "p_boundary_argmax_step": 96,
+          "boundary_rank_at_peak_step": 9,
+          "legal_candidates_at_peak_step": 179,
+          "peak_is_last_step": false,
+          "ate_full_budget": false,
+          "at_steps": [
+            {
+              "step": 8,
+              "p_boundary": 0.000148,
+              "boundary_rank_in_legal": 64,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 16,
+              "p_boundary": 0.000146,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 32,
+              "p_boundary": 6.6e-05,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 64,
+              "p_boundary": 4.1e-05,
+              "boundary_rank_in_legal": 64,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            }
+          ]
+        },
+        {
+          "generation_steps": 199,
+          "steps_in_repeat_run": 0,
+          "last_step": 198,
+          "p_boundary_max": 0.006764,
+          "p_boundary_argmax_step": 150,
+          "boundary_rank_at_peak_step": 10,
+          "legal_candidates_at_peak_step": 179,
+          "peak_is_last_step": false,
+          "ate_full_budget": false,
+          "at_steps": [
+            {
+              "step": 8,
+              "p_boundary": 7e-05,
+              "boundary_rank_in_legal": 64,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 16,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 32,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 64,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 64,
+              "p_boundary": 0.000102,
+              "boundary_rank_in_legal": 63,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 128,
+              "p_boundary": 0.000278,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            }
+          ]
+        },
+        {
+          "generation_steps": 97,
+          "steps_in_repeat_run": 0,
+          "last_step": 96,
+          "p_boundary_max": 0.007912,
+          "p_boundary_argmax_step": 9,
+          "boundary_rank_at_peak_step": 10,
+          "legal_candidates_at_peak_step": 179,
+          "peak_is_last_step": false,
+          "ate_full_budget": false,
+          "at_steps": [
+            {
+              "step": 8,
+              "p_boundary": 0.000124,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 16,
+              "p_boundary": 4e-06,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 32,
+              "p_boundary": 0.000261,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 64,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            }
+          ]
+        }
+      ],
+      "run_boundary_win_positions": [
+        121,
+        199,
+        97
+      ]
+    },
+    {
+      "id": "V006",
+      "answer_run": 1,
+      "steps": 162,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "generations_boundary_self_stop": 3,
+      "generations_eating_full_budget": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 82,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "家了本，家于她本亻家本亻译，家以最家了关问，家最",
+          "mismatch_reason": null,
+          "replay_surface_head": "家了本，家于她本亻家本亻译，家以最家了关问，家最"
+        },
+        {
+          "fed_bytes": 40,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "朰习家语，我以子有鸮闸溆适",
+          "mismatch_reason": null,
+          "replay_surface_head": "朰习家语，我以子有鸮闸溆适"
+        },
+        {
+          "fed_bytes": 40,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "木我学恸曮题︮闸在殮题︺适",
+          "mismatch_reason": null,
+          "replay_surface_head": "木我学恸曮题︮闸在殮题︺适"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 7,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 63,
+      "median_ratio_best_over_boundary": 1620.084,
+      "run_steps": 0,
+      "endstep_probe_v22": [
+        {
+          "generation_steps": 82,
+          "steps_in_repeat_run": 0,
+          "last_step": 81,
+          "p_boundary_max": 0.003715,
+          "p_boundary_argmax_step": 60,
+          "boundary_rank_at_peak_step": 13,
+          "legal_candidates_at_peak_step": 179,
+          "peak_is_last_step": false,
+          "ate_full_budget": false,
+          "at_steps": [
+            {
+              "step": 8,
+              "p_boundary": 0.000232,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 16,
+              "p_boundary": 2.6e-05,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 32,
+              "p_boundary": 0.000175,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 64,
+              "p_boundary": 0.000112,
+              "boundary_rank_in_legal": 37,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            }
+          ]
+        },
+        {
+          "generation_steps": 40,
+          "steps_in_repeat_run": 0,
+          "last_step": 39,
+          "p_boundary_max": 0.003342,
+          "p_boundary_argmax_step": 9,
+          "boundary_rank_at_peak_step": 10,
+          "legal_candidates_at_peak_step": 179,
+          "peak_is_last_step": false,
+          "ate_full_budget": false,
+          "at_steps": [
+            {
+              "step": 8,
+              "p_boundary": 0.000382,
+              "boundary_rank_in_legal": 62,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 16,
+              "p_boundary": 9.3e-05,
+              "boundary_rank_in_legal": 60,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 32,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            }
+          ]
+        },
+        {
+          "generation_steps": 40,
+          "steps_in_repeat_run": 0,
+          "last_step": 39,
+          "p_boundary_max": 0.005209,
+          "p_boundary_argmax_step": 24,
+          "boundary_rank_at_peak_step": 12,
+          "legal_candidates_at_peak_step": 179,
+          "peak_is_last_step": false,
+          "ate_full_budget": false,
+          "at_steps": [
+            {
+              "step": 8,
+              "p_boundary": 6.3e-05,
+              "boundary_rank_in_legal": 61,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 16,
+              "p_boundary": 0.000125,
+              "boundary_rank_in_legal": 61,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 32,
+              "p_boundary": 0.001362,
+              "boundary_rank_in_legal": 51,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            }
+          ]
+        }
+      ],
+      "run_boundary_win_positions": [
+        82,
+        40,
+        40
+      ]
+    },
+    {
+      "id": "V007",
+      "answer_run": 8,
+      "steps": 399,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "generations_boundary_self_stop": 3,
+      "generations_eating_full_budget": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 79,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "家我了家有亻家木亻家木于其木讇，将亻下家我以子，",
+          "mismatch_reason": null,
+          "replay_surface_head": "家我了家有亻家木亻家木于其木讇，将亻下家我以子，"
+        },
+        {
+          "fed_bytes": 190,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "姐这迿迿迳迿迿迿迳运苐迻迿迿迿迿迿谆亿迿迿迻家了",
+          "mismatch_reason": null,
+          "replay_surface_head": "姐这迿迿迳迿迿迿迳运苐迻迿迿迿迿迿谆亿迿迿迻家了"
+        },
+        {
+          "fed_bytes": 130,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "姐拿谴谴迿迿迳迿迿迿迿迿迿迿迿谆宿迿迿迿迻过本，",
+          "mismatch_reason": null,
+          "replay_surface_head": "姐拿谴谴迿迿迳迿迿迿迿迿迿迿迿谆宿迿迿迿迻过本，"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 46,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 1443.225,
+      "run_steps": 81,
+      "endstep_probe_v22": [
+        {
+          "generation_steps": 79,
+          "steps_in_repeat_run": 0,
+          "last_step": 78,
+          "p_boundary_max": 0.007655,
+          "p_boundary_argmax_step": 3,
+          "boundary_rank_at_peak_step": 10,
+          "legal_candidates_at_peak_step": 179,
+          "peak_is_last_step": false,
+          "ate_full_budget": false,
+          "at_steps": [
+            {
+              "step": 8,
+              "p_boundary": 0.000113,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 16,
+              "p_boundary": 2.6e-05,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 32,
+              "p_boundary": 0.000237,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 64,
+              "p_boundary": 0.000253,
+              "boundary_rank_in_legal": 63,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            }
+          ]
+        },
+        {
+          "generation_steps": 190,
+          "steps_in_repeat_run": 36,
+          "last_step": 189,
+          "p_boundary_max": 0.010039,
+          "p_boundary_argmax_step": 96,
+          "boundary_rank_at_peak_step": 9,
+          "legal_candidates_at_peak_step": 179,
+          "peak_is_last_step": false,
+          "ate_full_budget": false,
+          "at_steps": [
+            {
+              "step": 8,
+              "p_boundary": 3.6e-05,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 16,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 32,
+              "p_boundary": 5e-06,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 64,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 128,
+              "p_boundary": 0.000178,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            }
+          ]
+        },
+        {
+          "generation_steps": 130,
+          "steps_in_repeat_run": 45,
+          "last_step": 129,
+          "p_boundary_max": 0.008566,
+          "p_boundary_argmax_step": 108,
+          "boundary_rank_at_peak_step": 10,
+          "legal_candidates_at_peak_step": 179,
+          "peak_is_last_step": false,
+          "ate_full_budget": false,
+          "at_steps": [
+            {
+              "step": 8,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 16,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 32,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 64,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 128,
+              "p_boundary": 0.000156,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            }
+          ]
+        }
+      ],
+      "run_boundary_win_positions": [
+        79,
+        190,
+        130
+      ]
+    },
+    {
+      "id": "V008",
+      "answer_run": 2,
+      "steps": 294,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "generations_boundary_self_stop": 3,
+      "generations_eating_full_budget": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 31,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "我亻家我亻家木于其有",
+          "mismatch_reason": null,
+          "replay_surface_head": "我亻家我亻家木于其有"
+        },
+        {
+          "fed_bytes": 82,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "山山屻亻丱汱斱在我文家的山山屻谅旱家亱斱山我人工",
+          "mismatch_reason": null,
+          "replay_surface_head": "山山屻亻丱汱斱在我文家的山山屻谅旱家亱斱山我人工"
+        },
+        {
+          "fed_bytes": 181,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "汻家亱吱汱制䰃宗汱于在汁于周汱在汱制以汱刱屻语：",
+          "mismatch_reason": null,
+          "replay_surface_head": "汻家亱吱汱制䰃宗汱于在汁于周汱在汱制以汱刱屻语："
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 14,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 64,
+      "median_ratio_best_over_boundary": 1552.326,
+      "run_steps": 12,
+      "endstep_probe_v22": [
+        {
+          "generation_steps": 31,
+          "steps_in_repeat_run": 0,
+          "last_step": 30,
+          "p_boundary_max": 0.005415,
+          "p_boundary_argmax_step": 18,
+          "boundary_rank_at_peak_step": 10,
+          "legal_candidates_at_peak_step": 179,
+          "peak_is_last_step": false,
+          "ate_full_budget": false,
+          "at_steps": [
+            {
+              "step": 8,
+              "p_boundary": 0.000132,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 16,
+              "p_boundary": 7.6e-05,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            }
+          ]
+        },
+        {
+          "generation_steps": 82,
+          "steps_in_repeat_run": 12,
+          "last_step": 81,
+          "p_boundary_max": 0.004599,
+          "p_boundary_argmax_step": 54,
+          "boundary_rank_at_peak_step": 10,
+          "legal_candidates_at_peak_step": 179,
+          "peak_is_last_step": false,
+          "ate_full_budget": false,
+          "at_steps": [
+            {
+              "step": 8,
+              "p_boundary": 0.000228,
+              "boundary_rank_in_legal": 64,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 16,
+              "p_boundary": 3e-06,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 32,
+              "p_boundary": 0.000133,
+              "boundary_rank_in_legal": 64,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 64,
+              "p_boundary": 0.000145,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            }
+          ]
+        },
+        {
+          "generation_steps": 181,
+          "steps_in_repeat_run": 0,
+          "last_step": 180,
+          "p_boundary_max": 0.010074,
+          "p_boundary_argmax_step": 39,
+          "boundary_rank_at_peak_step": 13,
+          "legal_candidates_at_peak_step": 179,
+          "peak_is_last_step": false,
+          "ate_full_budget": false,
+          "at_steps": [
+            {
+              "step": 8,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 16,
+              "p_boundary": 0.000351,
+              "boundary_rank_in_legal": 64,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 32,
+              "p_boundary": 7e-05,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 64,
+              "p_boundary": 1.3e-05,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 128,
+              "p_boundary": 0.000129,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            }
+          ]
+        }
+      ],
+      "run_boundary_win_positions": [
+        31,
+        82,
+        181
+      ]
+    },
+    {
+      "id": "V009",
+      "answer_run": 3,
+      "steps": 558,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 1,
+      "generations_boundary_self_stop": 2,
+      "generations_eating_full_budget": 1,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 79,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "家文亻下家木于她木于她木译，家以下家木译，家我了",
+          "mismatch_reason": null,
+          "replay_surface_head": "家文亻下家木于她木于她木译，家以下家木译，家我了"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "吐朐斛䐐朐斛䐐朐斛䐐朐曐雮搐朐雨搐斛吐搐曰庆，",
+          "mismatch_reason": null,
+          "replay_surface_head": "吐朐斛䐐朐斛䐐朐斛䐐朐曐雮搐朐雨搐斛吐搐曰庆，"
+        },
+        {
+          "fed_bytes": 223,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 33,
+          "answer_head": "曐朐朐曨曨曨曐朐曨曨搐朐曐摐曛吐搐搐源雨滥䐺呻语",
+          "mismatch_reason": null,
+          "replay_surface_head": "曐朐朐曨曨曨曐朐曨曨搐朐曐摐曛吐搐搐源雨滥䐺呻语"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 40,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 1392.392,
+      "run_steps": 27,
+      "endstep_probe_v22": [
+        {
+          "generation_steps": 79,
+          "steps_in_repeat_run": 0,
+          "last_step": 78,
+          "p_boundary_max": 0.004742,
+          "p_boundary_argmax_step": 21,
+          "boundary_rank_at_peak_step": 12,
+          "legal_candidates_at_peak_step": 179,
+          "peak_is_last_step": false,
+          "ate_full_budget": false,
+          "at_steps": [
+            {
+              "step": 8,
+              "p_boundary": 4.8e-05,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 16,
+              "p_boundary": 0.000174,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 32,
+              "p_boundary": 8.1e-05,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 64,
+              "p_boundary": 9.9e-05,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            }
+          ]
+        },
+        {
+          "generation_steps": 256,
+          "steps_in_repeat_run": 0,
+          "last_step": 255,
+          "p_boundary_max": 0.074933,
+          "p_boundary_argmax_step": 185,
+          "boundary_rank_at_peak_step": 4,
+          "legal_candidates_at_peak_step": 179,
+          "peak_is_last_step": false,
+          "ate_full_budget": true,
+          "at_steps": [
+            {
+              "step": 8,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 16,
+              "p_boundary": 0.000136,
+              "boundary_rank_in_legal": 63,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 32,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 64,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 128,
+              "p_boundary": 8.1e-05,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            }
+          ]
+        },
+        {
+          "generation_steps": 223,
+          "steps_in_repeat_run": 27,
+          "last_step": 222,
+          "p_boundary_max": 0.005183,
+          "p_boundary_argmax_step": 87,
+          "boundary_rank_at_peak_step": 11,
+          "legal_candidates_at_peak_step": 179,
+          "peak_is_last_step": false,
+          "ate_full_budget": false,
+          "at_steps": [
+            {
+              "step": 8,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 16,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 32,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 64,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 128,
+              "p_boundary": 3.4e-05,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            }
+          ]
+        }
+      ],
+      "run_boundary_win_positions": [
+        79,
+        223
+      ]
+    },
+    {
+      "id": "V010",
+      "answer_run": 1,
+      "steps": 276,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "generations_boundary_self_stop": 3,
+      "generations_eating_full_budget": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 109,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "家文亻家本亻家有人工木个家文的家我以家有人工有下",
+          "mismatch_reason": null,
+          "replay_surface_head": "家文亻家本亻家有人工木个家文的家我以家有人工有下"
+        },
+        {
+          "fed_bytes": 67,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "同有和以下同有和以学同以同时以同有靂以同有靂",
+          "mismatch_reason": null,
+          "replay_surface_head": "同有和以下同有和以学同以同时以同有靂以同有靂"
+        },
+        {
+          "fed_bytes": 100,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "剉西艉西艉西艉西艉西艉西艉西艉西艉西艉西襉襑掠亻",
+          "mismatch_reason": null,
+          "replay_surface_head": "剉西艉西艉西艉西艉西艉西艉西艉西艉西艉西襉襑掠亻"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 44,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 1288.125,
+      "run_steps": 0,
+      "endstep_probe_v22": [
+        {
+          "generation_steps": 109,
+          "steps_in_repeat_run": 0,
+          "last_step": 108,
+          "p_boundary_max": 0.005332,
+          "p_boundary_argmax_step": 36,
+          "boundary_rank_at_peak_step": 10,
+          "legal_candidates_at_peak_step": 179,
+          "peak_is_last_step": false,
+          "ate_full_budget": false,
+          "at_steps": [
+            {
+              "step": 8,
+              "p_boundary": 9.4e-05,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 16,
+              "p_boundary": 3e-05,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 32,
+              "p_boundary": 0.000164,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 64,
+              "p_boundary": 6.9e-05,
+              "boundary_rank_in_legal": 64,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            }
+          ]
+        },
+        {
+          "generation_steps": 67,
+          "steps_in_repeat_run": 0,
+          "last_step": 66,
+          "p_boundary_max": 0.00392,
+          "p_boundary_argmax_step": 45,
+          "boundary_rank_at_peak_step": 12,
+          "legal_candidates_at_peak_step": 179,
+          "peak_is_last_step": false,
+          "ate_full_budget": false,
+          "at_steps": [
+            {
+              "step": 8,
+              "p_boundary": 5.4e-05,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 16,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 32,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 64,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            }
+          ]
+        },
+        {
+          "generation_steps": 100,
+          "steps_in_repeat_run": 0,
+          "last_step": 99,
+          "p_boundary_max": 0.010201,
+          "p_boundary_argmax_step": 69,
+          "boundary_rank_at_peak_step": 9,
+          "legal_candidates_at_peak_step": 179,
+          "peak_is_last_step": false,
+          "ate_full_budget": false,
+          "at_steps": [
+            {
+              "step": 8,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 16,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 32,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 64,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            }
+          ]
+        }
+      ],
+      "run_boundary_win_positions": [
+        109,
+        67,
+        100
+      ]
+    },
+    {
+      "id": "V011",
+      "answer_run": 54,
+      "steps": 391,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "generations_boundary_self_stop": 3,
+      "generations_eating_full_budget": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 97,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "家了最家于她有下家机下学，译家机译写于她有亻家有",
+          "mismatch_reason": null,
+          "replay_surface_head": "家了最家于她有下家机下学，译家机译写于她有亻家有"
+        },
+        {
+          "fed_bytes": 111,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "妁777777777777777777777探妁",
+          "mismatch_reason": null,
+          "replay_surface_head": "妁777777777777777777777探妁"
+        },
+        {
+          "fed_bytes": 183,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "数77777妁77777777777777777",
+          "mismatch_reason": null,
+          "replay_surface_head": "数77777妁77777777777777777"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 115,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 1080.61,
+      "run_steps": 115,
+      "endstep_probe_v22": [
+        {
+          "generation_steps": 97,
+          "steps_in_repeat_run": 0,
+          "last_step": 96,
+          "p_boundary_max": 0.006266,
+          "p_boundary_argmax_step": 3,
+          "boundary_rank_at_peak_step": 10,
+          "legal_candidates_at_peak_step": 179,
+          "peak_is_last_step": false,
+          "ate_full_budget": false,
+          "at_steps": [
+            {
+              "step": 8,
+              "p_boundary": 0.000247,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 16,
+              "p_boundary": 0.00012,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 32,
+              "p_boundary": 0.000121,
+              "boundary_rank_in_legal": 64,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 64,
+              "p_boundary": 3e-05,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            }
+          ]
+        },
+        {
+          "generation_steps": 111,
+          "steps_in_repeat_run": 56,
+          "last_step": 110,
+          "p_boundary_max": 0.010715,
+          "p_boundary_argmax_step": 27,
+          "boundary_rank_at_peak_step": 11,
+          "legal_candidates_at_peak_step": 179,
+          "peak_is_last_step": false,
+          "ate_full_budget": false,
+          "at_steps": [
+            {
+              "step": 8,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 180,
+              "legal_candidates": 179,
+              "legal_candidates_including_boundary": 180
+            },
+            {
+              "step": 16,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 180,
+              "legal_candidates": 179,
+              "legal_candidates_including_boundary": 180
+            },
+            {
+              "step": 32,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 180,
+              "legal_candidates": 179,
+              "legal_candidates_including_boundary": 180
+            },
+            {
+              "step": 64,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 180,
+              "legal_candidates": 179,
+              "legal_candidates_including_boundary": 180
+            }
+          ]
+        },
+        {
+          "generation_steps": 183,
+          "steps_in_repeat_run": 59,
+          "last_step": 182,
+          "p_boundary_max": 0.004381,
+          "p_boundary_argmax_step": 140,
+          "boundary_rank_at_peak_step": 11,
+          "legal_candidates_at_peak_step": 179,
+          "peak_is_last_step": false,
+          "ate_full_budget": false,
+          "at_steps": [
+            {
+              "step": 8,
+              "p_boundary": 0.002293,
+              "boundary_rank_in_legal": 35,
+              "legal_candidates": 179,
+              "legal_candidates_including_boundary": 180
+            },
+            {
+              "step": 16,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 180,
+              "legal_candidates": 179,
+              "legal_candidates_including_boundary": 180
+            },
+            {
+              "step": 32,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 180,
+              "legal_candidates": 179,
+              "legal_candidates_including_boundary": 180
+            },
+            {
+              "step": 64,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 180,
+              "legal_candidates": 179,
+              "legal_candidates_including_boundary": 180
+            },
+            {
+              "step": 128,
+              "p_boundary": 0.000537,
+              "boundary_rank_in_legal": 18,
+              "legal_candidates": 179,
+              "legal_candidates_including_boundary": 180
+            }
+          ]
+        }
+      ],
+      "run_boundary_win_positions": [
+        97,
+        111,
+        183
+      ]
+    },
+    {
+      "id": "V012",
+      "answer_run": 3,
+      "steps": 318,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "generations_boundary_self_stop": 3,
+      "generations_eating_full_budget": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 106,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "家亻下家木亻家木于其木译，家本下家有人工木译，家",
+          "mismatch_reason": null,
+          "replay_surface_head": "家亻下家木亻家木于其木译，家本下家有人工木译，家"
+        },
+        {
+          "fed_bytes": 94,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "域期韟募域期矟域戟域矟域韟域䟟柟斟域矟韟埻请我",
+          "mismatch_reason": null,
+          "replay_surface_head": "域期韟募域期矟域戟域矟域韟域䟟柟斟域矟韟埻请我"
+        },
+        {
+          "fed_bytes": 118,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "晟噟䟟晟噟噟䟟晟噙䟟晟噟筙晟噟晟晟晟筙晟晟晀了它",
+          "mismatch_reason": null,
+          "replay_surface_head": "晟噟䟟晟噟噟䟟晟噙䟟晟噟筙晟噟晟晟晟筙晟晟晀了它"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 29,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 1522.603,
+      "run_steps": 21,
+      "endstep_probe_v22": [
+        {
+          "generation_steps": 106,
+          "steps_in_repeat_run": 0,
+          "last_step": 105,
+          "p_boundary_max": 0.005817,
+          "p_boundary_argmax_step": 90,
+          "boundary_rank_at_peak_step": 11,
+          "legal_candidates_at_peak_step": 179,
+          "peak_is_last_step": false,
+          "ate_full_budget": false,
+          "at_steps": [
+            {
+              "step": 8,
+              "p_boundary": 9.7e-05,
+              "boundary_rank_in_legal": 64,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 16,
+              "p_boundary": 5.4e-05,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 32,
+              "p_boundary": 0.000125,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 64,
+              "p_boundary": 2.6e-05,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            }
+          ]
+        },
+        {
+          "generation_steps": 94,
+          "steps_in_repeat_run": 0,
+          "last_step": 93,
+          "p_boundary_max": 0.006057,
+          "p_boundary_argmax_step": 69,
+          "boundary_rank_at_peak_step": 10,
+          "legal_candidates_at_peak_step": 179,
+          "peak_is_last_step": false,
+          "ate_full_budget": false,
+          "at_steps": [
+            {
+              "step": 8,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 16,
+              "p_boundary": 0.000125,
+              "boundary_rank_in_legal": 63,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 32,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 64,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            }
+          ]
+        },
+        {
+          "generation_steps": 118,
+          "steps_in_repeat_run": 21,
+          "last_step": 117,
+          "p_boundary_max": 0.011312,
+          "p_boundary_argmax_step": 36,
+          "boundary_rank_at_peak_step": 14,
+          "legal_candidates_at_peak_step": 179,
+          "peak_is_last_step": false,
+          "ate_full_budget": false,
+          "at_steps": [
+            {
+              "step": 8,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 16,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 63,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 32,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 64,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            }
+          ]
+        }
+      ],
+      "run_boundary_win_positions": [
+        106,
+        94,
+        118
+      ]
+    },
+    {
+      "id": "V013",
+      "answer_run": 7,
+      "steps": 456,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "generations_boundary_self_stop": 3,
+      "generations_eating_full_budget": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 82,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "家亻下家机中句家机中，家于关本亻家我于家我于家我",
+          "mismatch_reason": null,
+          "replay_surface_head": "家亻下家机中句家机中，家于关本亻家我于家我于家我"
+        },
+        {
+          "fed_bytes": 223,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "山译躱身译躱躻下躱耱豱豱行家豱豱豱豱豱豱豱蚄文在",
+          "mismatch_reason": null,
+          "replay_surface_head": "山译躱身译躱躻下躱耱豱豱行家豱豱豱豱豱豱豱蚄文在"
+        },
+        {
+          "fed_bytes": 151,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "山蝱蝱蝱蝱蝱汱豱艱豱艱豱豱豱豱艱豱豱豱豱Ｑ豶亻下",
+          "mismatch_reason": null,
+          "replay_surface_head": "山蝱蝱蝱蝱蝱汱豱艱豱艱豱豱豱豱艱豱豱豱豱Ｑ豶亻下"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 46,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 1454.205,
+      "run_steps": 66,
+      "endstep_probe_v22": [
+        {
+          "generation_steps": 82,
+          "steps_in_repeat_run": 0,
+          "last_step": 81,
+          "p_boundary_max": 0.004222,
+          "p_boundary_argmax_step": 3,
+          "boundary_rank_at_peak_step": 10,
+          "legal_candidates_at_peak_step": 179,
+          "peak_is_last_step": false,
+          "ate_full_budget": false,
+          "at_steps": [
+            {
+              "step": 8,
+              "p_boundary": 0.000137,
+              "boundary_rank_in_legal": 64,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 16,
+              "p_boundary": 6.9e-05,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 32,
+              "p_boundary": 1e-05,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 64,
+              "p_boundary": 2.8e-05,
+              "boundary_rank_in_legal": 64,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            }
+          ]
+        },
+        {
+          "generation_steps": 223,
+          "steps_in_repeat_run": 27,
+          "last_step": 222,
+          "p_boundary_max": 0.009123,
+          "p_boundary_argmax_step": 132,
+          "boundary_rank_at_peak_step": 9,
+          "legal_candidates_at_peak_step": 179,
+          "peak_is_last_step": false,
+          "ate_full_budget": false,
+          "at_steps": [
+            {
+              "step": 8,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 16,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 32,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 64,
+              "p_boundary": 0.000208,
+              "boundary_rank_in_legal": 64,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 128,
+              "p_boundary": 0.000181,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            }
+          ]
+        },
+        {
+          "generation_steps": 151,
+          "steps_in_repeat_run": 39,
+          "last_step": 150,
+          "p_boundary_max": 0.005597,
+          "p_boundary_argmax_step": 75,
+          "boundary_rank_at_peak_step": 10,
+          "legal_candidates_at_peak_step": 179,
+          "peak_is_last_step": false,
+          "ate_full_budget": false,
+          "at_steps": [
+            {
+              "step": 8,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 16,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 32,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 64,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 128,
+              "p_boundary": 0.000197,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            }
+          ]
+        }
+      ],
+      "run_boundary_win_positions": [
+        82,
+        223,
+        151
+      ]
+    },
+    {
+      "id": "V014",
+      "answer_run": 3,
+      "steps": 492,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "generations_boundary_self_stop": 2,
+      "generations_eating_full_budget": 1,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "家亻译家于好，家本，家本下家有人工木译，家木于名",
+          "mismatch_reason": null,
+          "replay_surface_head": "家亻译家于好，家本，家本下家有人工木译，家木于名"
+        },
+        {
+          "fed_bytes": 157,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "山袢以袢一朱袱译耱行时家亱豻袢衸戱豻语Ｑ豱被了家",
+          "mismatch_reason": null,
+          "replay_surface_head": "山袢以袢一朱袱译耱行时家亱豻袢衸戱豻语Ｑ豱被了家"
+        },
+        {
+          "fed_bytes": 79,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "在浣浣何工浣浣作宣的浣浣浣以子浣浣浣以溣有分，",
+          "mismatch_reason": null,
+          "replay_surface_head": "在浣浣何工浣浣作宣的浣浣浣以子浣浣浣以溣有分，"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 40,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 1435.473,
+      "run_steps": 30,
+      "endstep_probe_v22": [
+        {
+          "generation_steps": 256,
+          "steps_in_repeat_run": 0,
+          "last_step": 255,
+          "p_boundary_max": 0.171771,
+          "p_boundary_argmax_step": 235,
+          "boundary_rank_at_peak_step": 2,
+          "legal_candidates_at_peak_step": 179,
+          "peak_is_last_step": false,
+          "ate_full_budget": true,
+          "at_steps": [
+            {
+              "step": 8,
+              "p_boundary": 0.000232,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 16,
+              "p_boundary": 0.000131,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 32,
+              "p_boundary": 7.1e-05,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 64,
+              "p_boundary": 0.000104,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 128,
+              "p_boundary": 4.9e-05,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            }
+          ]
+        },
+        {
+          "generation_steps": 157,
+          "steps_in_repeat_run": 0,
+          "last_step": 156,
+          "p_boundary_max": 0.011606,
+          "p_boundary_argmax_step": 66,
+          "boundary_rank_at_peak_step": 11,
+          "legal_candidates_at_peak_step": 179,
+          "peak_is_last_step": false,
+          "ate_full_budget": false,
+          "at_steps": [
+            {
+              "step": 8,
+              "p_boundary": 8.5e-05,
+              "boundary_rank_in_legal": 61,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 16,
+              "p_boundary": 0.000118,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 32,
+              "p_boundary": 2e-05,
+              "boundary_rank_in_legal": 61,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 64,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 128,
+              "p_boundary": 0.000229,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            }
+          ]
+        },
+        {
+          "generation_steps": 79,
+          "steps_in_repeat_run": 30,
+          "last_step": 78,
+          "p_boundary_max": 0.002097,
+          "p_boundary_argmax_step": 18,
+          "boundary_rank_at_peak_step": 14,
+          "legal_candidates_at_peak_step": 179,
+          "peak_is_last_step": false,
+          "ate_full_budget": false,
+          "at_steps": [
+            {
+              "step": 8,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 16,
+              "p_boundary": 9.5e-05,
+              "boundary_rank_in_legal": 64,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 32,
+              "p_boundary": 3.2e-05,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 64,
+              "p_boundary": 5.6e-05,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            }
+          ]
+        }
+      ],
+      "run_boundary_win_positions": [
+        157,
+        79
+      ]
+    },
+    {
+      "id": "V015",
+      "answer_run": 7,
+      "steps": 420,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "generations_boundary_self_stop": 3,
+      "generations_eating_full_budget": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 82,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "家亻下家机中并机译，家本中妁有的家最了家有亻家最",
+          "mismatch_reason": null,
+          "replay_surface_head": "家亻下家机中并机译，家本中妁有的家最了家有亻家最"
+        },
+        {
+          "fed_bytes": 210,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "姐这迢房迢姐这迢我询姐进这译迢吿迻这迢吿迻这我将",
+          "mismatch_reason": null,
+          "replay_surface_head": "姐这迢房迢姐这迢我询姐进这译迢吿迻这迢吿迻这我将"
+        },
+        {
+          "fed_bytes": 128,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "尴这迿迿迿迳迳迿迿迿迿迿迿迿谑迿迿迿迿迿迿迹殶在",
+          "mismatch_reason": null,
+          "replay_surface_head": "尴这迿迿迿迳迳迿迿迿迿迿迿迿谑迿迿迿迿迿迿迹殶在"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 46,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 1141.687,
+      "run_steps": 54,
+      "endstep_probe_v22": [
+        {
+          "generation_steps": 82,
+          "steps_in_repeat_run": 0,
+          "last_step": 81,
+          "p_boundary_max": 0.005646,
+          "p_boundary_argmax_step": 12,
+          "boundary_rank_at_peak_step": 10,
+          "legal_candidates_at_peak_step": 179,
+          "peak_is_last_step": false,
+          "ate_full_budget": false,
+          "at_steps": [
+            {
+              "step": 8,
+              "p_boundary": 0.000172,
+              "boundary_rank_in_legal": 64,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 16,
+              "p_boundary": 7.8e-05,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 32,
+              "p_boundary": 3e-05,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 64,
+              "p_boundary": 1.3e-05,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            }
+          ]
+        },
+        {
+          "generation_steps": 210,
+          "steps_in_repeat_run": 0,
+          "last_step": 209,
+          "p_boundary_max": 0.16412,
+          "p_boundary_argmax_step": 88,
+          "boundary_rank_at_peak_step": 3,
+          "legal_candidates_at_peak_step": 179,
+          "peak_is_last_step": false,
+          "ate_full_budget": false,
+          "at_steps": [
+            {
+              "step": 8,
+              "p_boundary": 2e-06,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 16,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 32,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 64,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 128,
+              "p_boundary": 0.000232,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            }
+          ]
+        },
+        {
+          "generation_steps": 128,
+          "steps_in_repeat_run": 54,
+          "last_step": 127,
+          "p_boundary_max": 0.089057,
+          "p_boundary_argmax_step": 97,
+          "boundary_rank_at_peak_step": 2,
+          "legal_candidates_at_peak_step": 179,
+          "peak_is_last_step": false,
+          "ate_full_budget": false,
+          "at_steps": [
+            {
+              "step": 8,
+              "p_boundary": 3e-06,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 16,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 32,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 64,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            }
+          ]
+        }
+      ],
+      "run_boundary_win_positions": [
+        82,
+        210,
+        128
+      ]
+    },
+    {
+      "id": "V016",
+      "answer_run": 8,
+      "steps": 466,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "generations_boundary_self_stop": 3,
+      "generations_eating_full_budget": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 251,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "庆以下家文，家我以庆有个句子，译成以家我于好，讶",
+          "mismatch_reason": null,
+          "replay_surface_head": "庆以下家文，家我以庆有个句子，译成以家我于好，讶"
+        },
+        {
+          "fed_bytes": 52,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "屻色艱艱艱艱艱艱艱艱衱艱豱艱襱豱耂",
+          "mismatch_reason": null,
+          "replay_surface_head": "屻色艱艱艱艱艱艱艱艱衱艱豱艱襱豱耂"
+        },
+        {
+          "fed_bytes": 163,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "宱豱踱汱辣宱豱踱汱裃译踱汱豱踺辣踱辣家豱豱豽家我",
+          "mismatch_reason": null,
+          "replay_surface_head": "宱豱踱汱辣宱豱踱汱裃译踱汱豱踺辣踱辣家豱豱豽家我"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 47,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 1325.782,
+      "run_steps": 30,
+      "endstep_probe_v22": [
+        {
+          "generation_steps": 251,
+          "steps_in_repeat_run": 0,
+          "last_step": 250,
+          "p_boundary_max": 0.088451,
+          "p_boundary_argmax_step": 232,
+          "boundary_rank_at_peak_step": 3,
+          "legal_candidates_at_peak_step": 179,
+          "peak_is_last_step": false,
+          "ate_full_budget": false,
+          "at_steps": [
+            {
+              "step": 8,
+              "p_boundary": 0.000112,
+              "boundary_rank_in_legal": 64,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 16,
+              "p_boundary": 0.000294,
+              "boundary_rank_in_legal": 53,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 32,
+              "p_boundary": 0.00015,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 64,
+              "p_boundary": 0.000129,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 128,
+              "p_boundary": 0.000245,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            }
+          ]
+        },
+        {
+          "generation_steps": 52,
+          "steps_in_repeat_run": 24,
+          "last_step": 51,
+          "p_boundary_max": 0.001332,
+          "p_boundary_argmax_step": 0,
+          "boundary_rank_at_peak_step": 30,
+          "legal_candidates_at_peak_step": 179,
+          "peak_is_last_step": false,
+          "ate_full_budget": false,
+          "at_steps": [
+            {
+              "step": 8,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 16,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 32,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            }
+          ]
+        },
+        {
+          "generation_steps": 163,
+          "steps_in_repeat_run": 6,
+          "last_step": 162,
+          "p_boundary_max": 0.004891,
+          "p_boundary_argmax_step": 129,
+          "boundary_rank_at_peak_step": 10,
+          "legal_candidates_at_peak_step": 179,
+          "peak_is_last_step": false,
+          "ate_full_budget": false,
+          "at_steps": [
+            {
+              "step": 8,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 16,
+              "p_boundary": 5.9e-05,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 32,
+              "p_boundary": 8.7e-05,
+              "boundary_rank_in_legal": 63,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 64,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 128,
+              "p_boundary": 0.000296,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            }
+          ]
+        }
+      ],
+      "run_boundary_win_positions": [
+        251,
+        52,
+        163
+      ]
+    },
+    {
+      "id": "V017",
+      "answer_run": 6,
+      "steps": 309,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "generations_boundary_self_stop": 3,
+      "generations_eating_full_budget": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 52,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "家机亻家最亻家本亻家本中妁，以家有",
+          "mismatch_reason": null,
+          "replay_surface_head": "家机亻家最亻家本亻家本中妁，以家有"
+        },
+        {
+          "fed_bytes": 148,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "濙迿迿迿迿迿迿迥迿迿迿迥迻迿迿迿迻迿迿迥迻迋家了",
+          "mismatch_reason": null,
+          "replay_surface_head": "濙迿迿迿迿迿迿迥迿迿迿迥迻迿迿迿迻迿迿迥迻迋家了"
+        },
+        {
+          "fed_bytes": 109,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "哥蝿蝿蝿蝿蝿蝥违蝿蝥迫这迿迿迥迿迥迿迻俿迋迻家戰",
+          "mismatch_reason": null,
+          "replay_surface_head": "哥蝿蝿蝿蝿蝿蝥违蝿蝥迫这迿迿迥迿迥迿迻俿迋迻家戰"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 69,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 1258.544,
+      "run_steps": 63,
+      "endstep_probe_v22": [
+        {
+          "generation_steps": 52,
+          "steps_in_repeat_run": 0,
+          "last_step": 51,
+          "p_boundary_max": 0.005221,
+          "p_boundary_argmax_step": 12,
+          "boundary_rank_at_peak_step": 10,
+          "legal_candidates_at_peak_step": 179,
+          "peak_is_last_step": false,
+          "ate_full_budget": false,
+          "at_steps": [
+            {
+              "step": 8,
+              "p_boundary": 9.5e-05,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 16,
+              "p_boundary": 7.4e-05,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 32,
+              "p_boundary": 0.00021,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            }
+          ]
+        },
+        {
+          "generation_steps": 148,
+          "steps_in_repeat_run": 42,
+          "last_step": 147,
+          "p_boundary_max": 0.006474,
+          "p_boundary_argmax_step": 114,
+          "boundary_rank_at_peak_step": 10,
+          "legal_candidates_at_peak_step": 179,
+          "peak_is_last_step": false,
+          "ate_full_budget": false,
+          "at_steps": [
+            {
+              "step": 8,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 16,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 32,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 64,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 128,
+              "p_boundary": 8.6e-05,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            }
+          ]
+        },
+        {
+          "generation_steps": 109,
+          "steps_in_repeat_run": 21,
+          "last_step": 108,
+          "p_boundary_max": 0.005766,
+          "p_boundary_argmax_step": 87,
+          "boundary_rank_at_peak_step": 10,
+          "legal_candidates_at_peak_step": 179,
+          "peak_is_last_step": false,
+          "ate_full_budget": false,
+          "at_steps": [
+            {
+              "step": 8,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 16,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 32,
+              "p_boundary": 4.1e-05,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 64,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            }
+          ]
+        }
+      ],
+      "run_boundary_win_positions": [
+        52,
+        148,
+        109
+      ]
+    },
+    {
+      "id": "V018",
+      "answer_run": 1,
+      "steps": 351,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 1,
+      "generations_boundary_self_stop": 3,
+      "generations_eating_full_budget": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 34,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "家朰亻家本亻家本中并有",
+          "mismatch_reason": null,
+          "replay_surface_head": "家朰亻家本亻家本中并有"
+        },
+        {
+          "fed_bytes": 196,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "咒句朲靂咒句文给咒译ﲲ句孒青咲青句文２岲䒲文家：",
+          "mismatch_reason": null,
+          "replay_surface_head": "咒句朲靂咒句文给咒译ﲲ句孒青咲青句文２岲䒲文家："
+        },
+        {
+          "fed_bytes": 121,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 31,
+          "answer_head": "撲朒关晒在面覝木靂宒句文给咈２和朲青庆靲青句人本",
+          "mismatch_reason": null,
+          "replay_surface_head": "撲朒关晒在面覝木靂宒句文给咈２和朲青庆靲青句人本"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 7,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 64,
+      "median_ratio_best_over_boundary": 1551.606,
+      "run_steps": 0,
+      "endstep_probe_v22": [
+        {
+          "generation_steps": 34,
+          "steps_in_repeat_run": 0,
+          "last_step": 33,
+          "p_boundary_max": 0.003464,
+          "p_boundary_argmax_step": 21,
+          "boundary_rank_at_peak_step": 10,
+          "legal_candidates_at_peak_step": 179,
+          "peak_is_last_step": false,
+          "ate_full_budget": false,
+          "at_steps": [
+            {
+              "step": 8,
+              "p_boundary": 8.9e-05,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 16,
+              "p_boundary": 3.8e-05,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 32,
+              "p_boundary": 0.000173,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            }
+          ]
+        },
+        {
+          "generation_steps": 196,
+          "steps_in_repeat_run": 0,
+          "last_step": 195,
+          "p_boundary_max": 0.006156,
+          "p_boundary_argmax_step": 153,
+          "boundary_rank_at_peak_step": 12,
+          "legal_candidates_at_peak_step": 179,
+          "peak_is_last_step": false,
+          "ate_full_budget": false,
+          "at_steps": [
+            {
+              "step": 8,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 16,
+              "p_boundary": 6.6e-05,
+              "boundary_rank_in_legal": 64,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 32,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 64,
+              "p_boundary": 0.000155,
+              "boundary_rank_in_legal": 64,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 128,
+              "p_boundary": 0.000321,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            }
+          ]
+        },
+        {
+          "generation_steps": 121,
+          "steps_in_repeat_run": 0,
+          "last_step": 120,
+          "p_boundary_max": 0.005341,
+          "p_boundary_argmax_step": 93,
+          "boundary_rank_at_peak_step": 12,
+          "legal_candidates_at_peak_step": 179,
+          "peak_is_last_step": false,
+          "ate_full_budget": false,
+          "at_steps": [
+            {
+              "step": 8,
+              "p_boundary": 8.8e-05,
+              "boundary_rank_in_legal": 64,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 16,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 32,
+              "p_boundary": 5.7e-05,
+              "boundary_rank_in_legal": 64,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 64,
+              "p_boundary": 0.000251,
+              "boundary_rank_in_legal": 63,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            }
+          ]
+        }
+      ],
+      "run_boundary_win_positions": [
+        34,
+        196,
+        121
+      ]
+    },
+    {
+      "id": "V019",
+      "answer_run": 14,
+      "steps": 365,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "generations_boundary_self_stop": 3,
+      "generations_eating_full_budget": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 73,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "家我人工晶其它语，家木要人工子，家木亻她木讶刹有",
+          "mismatch_reason": null,
+          "replay_surface_head": "家我人工晶其它语，家木要人工子，家木亻她木讶刹有"
+        },
+        {
+          "fed_bytes": 142,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "妁181818181119811181811敕1",
+          "mismatch_reason": null,
+          "replay_surface_head": "妁181818181119811181811敕1"
+        },
+        {
+          "fed_bytes": 150,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "有198198119118数11998朢1118",
+          "mismatch_reason": null,
+          "replay_surface_head": "有198198119118数11998朢1118"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 90,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 1170.008,
+      "run_steps": 68,
+      "endstep_probe_v22": [
+        {
+          "generation_steps": 73,
+          "steps_in_repeat_run": 0,
+          "last_step": 72,
+          "p_boundary_max": 0.007072,
+          "p_boundary_argmax_step": 3,
+          "boundary_rank_at_peak_step": 10,
+          "legal_candidates_at_peak_step": 179,
+          "peak_is_last_step": false,
+          "ate_full_budget": false,
+          "at_steps": [
+            {
+              "step": 8,
+              "p_boundary": 6.5e-05,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 16,
+              "p_boundary": 0.000267,
+              "boundary_rank_in_legal": 64,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 32,
+              "p_boundary": 0.000152,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 64,
+              "p_boundary": 3.2e-05,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            }
+          ]
+        },
+        {
+          "generation_steps": 142,
+          "steps_in_repeat_run": 38,
+          "last_step": 141,
+          "p_boundary_max": 0.154562,
+          "p_boundary_argmax_step": 105,
+          "boundary_rank_at_peak_step": 2,
+          "legal_candidates_at_peak_step": 179,
+          "peak_is_last_step": false,
+          "ate_full_budget": false,
+          "at_steps": [
+            {
+              "step": 8,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 17,
+              "legal_candidates": 179,
+              "legal_candidates_including_boundary": 180
+            },
+            {
+              "step": 16,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 180,
+              "legal_candidates": 179,
+              "legal_candidates_including_boundary": 180
+            },
+            {
+              "step": 32,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 25,
+              "legal_candidates": 179,
+              "legal_candidates_including_boundary": 180
+            },
+            {
+              "step": 64,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 180,
+              "legal_candidates": 179,
+              "legal_candidates_including_boundary": 180
+            },
+            {
+              "step": 128,
+              "p_boundary": 0.00014,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            }
+          ]
+        },
+        {
+          "generation_steps": 150,
+          "steps_in_repeat_run": 30,
+          "last_step": 149,
+          "p_boundary_max": 0.005379,
+          "p_boundary_argmax_step": 83,
+          "boundary_rank_at_peak_step": 13,
+          "legal_candidates_at_peak_step": 179,
+          "peak_is_last_step": false,
+          "ate_full_budget": false,
+          "at_steps": [
+            {
+              "step": 8,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 180,
+              "legal_candidates": 179,
+              "legal_candidates_including_boundary": 180
+            },
+            {
+              "step": 16,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 32,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 64,
+              "p_boundary": 6e-05,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 128,
+              "p_boundary": 0.000728,
+              "boundary_rank_in_legal": 17,
+              "legal_candidates": 179,
+              "legal_candidates_including_boundary": 180
+            }
+          ]
+        }
+      ],
+      "run_boundary_win_positions": [
+        73,
+        142,
+        150
+      ]
+    },
+    {
+      "id": "V020",
+      "answer_run": 1,
+      "steps": 459,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "generations_boundary_self_stop": 2,
+      "generations_eating_full_budget": 1,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 103,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "家亻下家木于其有亻下家木于其有人工木译，家以下家",
+          "mismatch_reason": null,
+          "replay_surface_head": "家亻下家木于其有亻下家木于其有人工木译，家以下家"
+        },
+        {
+          "fed_bytes": 256,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "域柟韟埶䟟柟韟幟䟟柟埳域韟柟韟幟戟䟟域柟韟年：我",
+          "mismatch_reason": null,
+          "replay_surface_head": "域柟韟埶䟟柟韟幟䟟柟埳域韟柟韟幟戟䟟域柟韟年：我"
+        },
+        {
+          "fed_bytes": 100,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "域柟韟埶䟟柟韟埶柟䟟域矟韟域柟䟟域矟柟韟域柅亻家",
+          "mismatch_reason": null,
+          "replay_surface_head": "域柟韟埶䟟柟韟埶柟䟟域矟韟域柟䟟域矟柟韟域柅亻家"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 47,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 1100.959,
+      "run_steps": 0,
+      "endstep_probe_v22": [
+        {
+          "generation_steps": 103,
+          "steps_in_repeat_run": 0,
+          "last_step": 102,
+          "p_boundary_max": 0.008721,
+          "p_boundary_argmax_step": 39,
+          "boundary_rank_at_peak_step": 12,
+          "legal_candidates_at_peak_step": 179,
+          "peak_is_last_step": false,
+          "ate_full_budget": false,
+          "at_steps": [
+            {
+              "step": 8,
+              "p_boundary": 0.000101,
+              "boundary_rank_in_legal": 64,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 16,
+              "p_boundary": 5.7e-05,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 32,
+              "p_boundary": 0.00015,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 64,
+              "p_boundary": 0.000119,
+              "boundary_rank_in_legal": 63,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            }
+          ]
+        },
+        {
+          "generation_steps": 256,
+          "steps_in_repeat_run": 0,
+          "last_step": 255,
+          "p_boundary_max": 0.009179,
+          "p_boundary_argmax_step": 183,
+          "boundary_rank_at_peak_step": 15,
+          "legal_candidates_at_peak_step": 179,
+          "peak_is_last_step": false,
+          "ate_full_budget": true,
+          "at_steps": [
+            {
+              "step": 8,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 63,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 16,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 32,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 64,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 64,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 128,
+              "p_boundary": 0.000136,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            }
+          ]
+        },
+        {
+          "generation_steps": 100,
+          "steps_in_repeat_run": 0,
+          "last_step": 99,
+          "p_boundary_max": 0.012572,
+          "p_boundary_argmax_step": 27,
+          "boundary_rank_at_peak_step": 10,
+          "legal_candidates_at_peak_step": 179,
+          "peak_is_last_step": false,
+          "ate_full_budget": false,
+          "at_steps": [
+            {
+              "step": 8,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 16,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 32,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 64,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 64,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            }
+          ]
+        }
+      ],
+      "run_boundary_win_positions": [
+        103,
+        100
+      ]
+    },
+    {
+      "id": "V021",
+      "answer_run": 3,
+      "steps": 252,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 1,
+      "generations_boundary_self_stop": 3,
+      "generations_eating_full_budget": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 70,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "家了最家亻语，家以木家了有其于它译，家木要家有",
+          "mismatch_reason": null,
+          "replay_surface_head": "家了最家亻语，家以木家了有其于它译，家木要家有"
+        },
+        {
+          "fed_bytes": 88,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": true,
+          "cut_by_marker_bytes": 22,
+          "answer_head": "宱江江汱下山江江在溎她个柟江汻実皱䟟柟江江家",
+          "mismatch_reason": null,
+          "replay_surface_head": "宱江江汱下山江江在溎她个柟江汻実皱䟟柟江江家"
+        },
+        {
+          "fed_bytes": 94,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "宱江江江宱Ｑ中应汱江江汱亱于実江汱亱柟我期，家以",
+          "mismatch_reason": null,
+          "replay_surface_head": "宱江江江宱Ｑ中应汱江江汱亱于実江汱亱柟我期，家以"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 16,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 1789.657,
+      "run_steps": 33,
+      "endstep_probe_v22": [
+        {
+          "generation_steps": 70,
+          "steps_in_repeat_run": 0,
+          "last_step": 69,
+          "p_boundary_max": 0.005505,
+          "p_boundary_argmax_step": 45,
+          "boundary_rank_at_peak_step": 16,
+          "legal_candidates_at_peak_step": 179,
+          "peak_is_last_step": false,
+          "ate_full_budget": false,
+          "at_steps": [
+            {
+              "step": 8,
+              "p_boundary": 0.000295,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 16,
+              "p_boundary": 6.8e-05,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 32,
+              "p_boundary": 0.00022,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 64,
+              "p_boundary": 0.00017,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            }
+          ]
+        },
+        {
+          "generation_steps": 88,
+          "steps_in_repeat_run": 18,
+          "last_step": 87,
+          "p_boundary_max": 0.0057,
+          "p_boundary_argmax_step": 72,
+          "boundary_rank_at_peak_step": 15,
+          "legal_candidates_at_peak_step": 179,
+          "peak_is_last_step": false,
+          "ate_full_budget": false,
+          "at_steps": [
+            {
+              "step": 8,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 16,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 64,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 32,
+              "p_boundary": 9e-05,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 64,
+              "p_boundary": 0.000229,
+              "boundary_rank_in_legal": 64,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            }
+          ]
+        },
+        {
+          "generation_steps": 94,
+          "steps_in_repeat_run": 15,
+          "last_step": 93,
+          "p_boundary_max": 0.00553,
+          "p_boundary_argmax_step": 78,
+          "boundary_rank_at_peak_step": 10,
+          "legal_candidates_at_peak_step": 179,
+          "peak_is_last_step": false,
+          "ate_full_budget": false,
+          "at_steps": [
+            {
+              "step": 8,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 16,
+              "p_boundary": 3.6e-05,
+              "boundary_rank_in_legal": 61,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 32,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 64,
+              "p_boundary": 1.4e-05,
+              "boundary_rank_in_legal": 55,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            }
+          ]
+        }
+      ],
+      "run_boundary_win_positions": [
+        70,
+        88,
+        94
+      ]
+    },
+    {
+      "id": "V022",
+      "answer_run": 2,
+      "steps": 318,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "generations_boundary_self_stop": 3,
+      "generations_eating_full_budget": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 82,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "家于她有亻家本亻家有亻家有于学，以子，有呰了家我",
+          "mismatch_reason": null,
+          "replay_surface_head": "家于她有亻家本亻家有亻家有于学，以子，有呰了家我"
+        },
+        {
+          "fed_bytes": 115,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "山译踺腱踭汹宱踱蝱踪踭汇家豱腱踭Ｑ豱腱踭Ｑ讹木亻",
+          "mismatch_reason": null,
+          "replay_surface_head": "山译踺腱踭汹宱踱蝱踪踭汇家豱腱踭Ｑ豱腱踭Ｑ讹木亻"
+        },
+        {
+          "fed_bytes": 121,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "山译踝蝱踭汇家耱豱踭汇宱豱豱腱文Ｑ豛以踝蝓腷家我",
+          "mismatch_reason": null,
+          "replay_surface_head": "山译踝蝱踭汇家耱豱踭汇宱豱豱腱文Ｑ豛以踝蝓腷家我"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 27,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 1431.541,
+      "run_steps": 6,
+      "endstep_probe_v22": [
+        {
+          "generation_steps": 82,
+          "steps_in_repeat_run": 0,
+          "last_step": 81,
+          "p_boundary_max": 0.005414,
+          "p_boundary_argmax_step": 42,
+          "boundary_rank_at_peak_step": 15,
+          "legal_candidates_at_peak_step": 179,
+          "peak_is_last_step": false,
+          "ate_full_budget": false,
+          "at_steps": [
+            {
+              "step": 8,
+              "p_boundary": 0.000137,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 16,
+              "p_boundary": 6.5e-05,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 32,
+              "p_boundary": 0.000136,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 64,
+              "p_boundary": 1.6e-05,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            }
+          ]
+        },
+        {
+          "generation_steps": 115,
+          "steps_in_repeat_run": 0,
+          "last_step": 114,
+          "p_boundary_max": 0.005625,
+          "p_boundary_argmax_step": 48,
+          "boundary_rank_at_peak_step": 10,
+          "legal_candidates_at_peak_step": 179,
+          "peak_is_last_step": false,
+          "ate_full_budget": false,
+          "at_steps": [
+            {
+              "step": 8,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 16,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 32,
+              "p_boundary": 0.000474,
+              "boundary_rank_in_legal": 59,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 64,
+              "p_boundary": 5.4e-05,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            }
+          ]
+        },
+        {
+          "generation_steps": 121,
+          "steps_in_repeat_run": 6,
+          "last_step": 120,
+          "p_boundary_max": 0.00746,
+          "p_boundary_argmax_step": 90,
+          "boundary_rank_at_peak_step": 11,
+          "legal_candidates_at_peak_step": 179,
+          "peak_is_last_step": false,
+          "ate_full_budget": false,
+          "at_steps": [
+            {
+              "step": 8,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 16,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 32,
+              "p_boundary": 0.000111,
+              "boundary_rank_in_legal": 61,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 64,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            }
+          ]
+        }
+      ],
+      "run_boundary_win_positions": [
+        82,
+        115,
+        121
+      ]
+    },
+    {
+      "id": "V023",
+      "answer_run": 2,
+      "steps": 407,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "generations_boundary_self_stop": 3,
+      "generations_eating_full_budget": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 82,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "家亻下家机中句家机下家机中，家木于她木家我人工晇",
+          "mismatch_reason": null,
+          "replay_surface_head": "家亻下家机中句家机下家机中，家木于她木家我人工晇"
+        },
+        {
+          "fed_bytes": 219,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "妨这迢朢这讶我迢妁这迢迢文眬妁迿迢迢斢迢译庆亻",
+          "mismatch_reason": null,
+          "replay_surface_head": "妨这迢朢这讶我迢妁这迢迢文眬妁迿迢迢斢迢译庆亻"
+        },
+        {
+          "fed_bytes": 106,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "妁这袨袘￙迢戋迢妁迢袢本＿这讶迿迢亿迻迿迢迻家了",
+          "mismatch_reason": null,
+          "replay_surface_head": "妁这袨袘￙迢戋迢妁迢袢本＿这讶迿迢亿迻迿迢迻家了"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 28,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 1128.924,
+      "run_steps": 12,
+      "endstep_probe_v22": [
+        {
+          "generation_steps": 82,
+          "steps_in_repeat_run": 0,
+          "last_step": 81,
+          "p_boundary_max": 0.004843,
+          "p_boundary_argmax_step": 3,
+          "boundary_rank_at_peak_step": 10,
+          "legal_candidates_at_peak_step": 179,
+          "peak_is_last_step": false,
+          "ate_full_budget": false,
+          "at_steps": [
+            {
+              "step": 8,
+              "p_boundary": 0.000175,
+              "boundary_rank_in_legal": 64,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 16,
+              "p_boundary": 6.4e-05,
+              "boundary_rank_in_legal": 64,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 32,
+              "p_boundary": 0.000205,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 64,
+              "p_boundary": 3.7e-05,
+              "boundary_rank_in_legal": 62,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            }
+          ]
+        },
+        {
+          "generation_steps": 219,
+          "steps_in_repeat_run": 12,
+          "last_step": 218,
+          "p_boundary_max": 0.132751,
+          "p_boundary_argmax_step": 176,
+          "boundary_rank_at_peak_step": 3,
+          "legal_candidates_at_peak_step": 179,
+          "peak_is_last_step": false,
+          "ate_full_budget": false,
+          "at_steps": [
+            {
+              "step": 8,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 64,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 16,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 32,
+              "p_boundary": 0.00011,
+              "boundary_rank_in_legal": 64,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 64,
+              "p_boundary": 1e-06,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 128,
+              "p_boundary": 8.9e-05,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            }
+          ]
+        },
+        {
+          "generation_steps": 106,
+          "steps_in_repeat_run": 0,
+          "last_step": 105,
+          "p_boundary_max": 0.005909,
+          "p_boundary_argmax_step": 69,
+          "boundary_rank_at_peak_step": 10,
+          "legal_candidates_at_peak_step": 179,
+          "peak_is_last_step": false,
+          "ate_full_budget": false,
+          "at_steps": [
+            {
+              "step": 8,
+              "p_boundary": 0.000319,
+              "boundary_rank_in_legal": 62,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 16,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 64,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 32,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 64,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            }
+          ]
+        }
+      ],
+      "run_boundary_win_positions": [
+        82,
+        219,
+        106
+      ]
+    },
+    {
+      "id": "V024",
+      "answer_run": 5,
+      "steps": 249,
+      "generations": 3,
+      "generations_cut_by_turn_marker": 0,
+      "generations_boundary_self_stop": 3,
+      "generations_eating_full_budget": 0,
+      "argmax_mismatch_steps": 0,
+      "surface_matches_replayed_raw": true,
+      "surface_checks": [
+        {
+          "fed_bytes": 64,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "家亻下家机于其有亻家，了家木于呻请我亻家有",
+          "mismatch_reason": null,
+          "replay_surface_head": "家亻下家机于其有亻家，了家木于呻请我亻家有"
+        },
+        {
+          "fed_bytes": 61,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "山诉能艱艱艱艱艱豱艱豱衱艱豱衱豉豱艱豱耂",
+          "mismatch_reason": null,
+          "replay_surface_head": "山诉能艱艱艱艱艱豱艱豱衱艱豱衱豉豱艱豱耂"
+        },
+        {
+          "fed_bytes": 124,
+          "surface_is_replayed_raw": true,
+          "turn_marker_fired": false,
+          "cut_by_marker_bytes": null,
+          "answer_head": "宱豱艱艱豱艱豱艱胱迱亻山豱豱豱豱艩家亱豱豱豻家了",
+          "mismatch_reason": null,
+          "replay_surface_head": "宱豱艱艱豱艱豱艱胱迱亻山豱豱豱豱艩家亱豱豱豻家了"
+        }
+      ],
+      "steps_with_single_legal_candidate": 0,
+      "steps_with_zero_boundary_probability": 48,
+      "steps_boundary_is_argmax": 0,
+      "median_boundary_rank_in_legal": 65,
+      "median_ratio_best_over_boundary": 1697.687,
+      "run_steps": 39,
+      "endstep_probe_v22": [
+        {
+          "generation_steps": 64,
+          "steps_in_repeat_run": 0,
+          "last_step": 63,
+          "p_boundary_max": 0.007897,
+          "p_boundary_argmax_step": 45,
+          "boundary_rank_at_peak_step": 13,
+          "legal_candidates_at_peak_step": 179,
+          "peak_is_last_step": false,
+          "ate_full_budget": false,
+          "at_steps": [
+            {
+              "step": 8,
+              "p_boundary": 0.000146,
+              "boundary_rank_in_legal": 64,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 16,
+              "p_boundary": 7.2e-05,
+              "boundary_rank_in_legal": 64,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 32,
+              "p_boundary": 8e-06,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            }
+          ]
+        },
+        {
+          "generation_steps": 61,
+          "steps_in_repeat_run": 15,
+          "last_step": 60,
+          "p_boundary_max": 0.001112,
+          "p_boundary_argmax_step": 60,
+          "boundary_rank_at_peak_step": 15,
+          "legal_candidates_at_peak_step": 179,
+          "peak_is_last_step": true,
+          "ate_full_budget": false,
+          "at_steps": [
+            {
+              "step": 8,
+              "p_boundary": 5.7e-05,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 16,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 32,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            }
+          ]
+        },
+        {
+          "generation_steps": 124,
+          "steps_in_repeat_run": 24,
+          "last_step": 123,
+          "p_boundary_max": 0.007977,
+          "p_boundary_argmax_step": 111,
+          "boundary_rank_at_peak_step": 10,
+          "legal_candidates_at_peak_step": 179,
+          "peak_is_last_step": false,
+          "ate_full_budget": false,
+          "at_steps": [
+            {
+              "step": 8,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 16,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 32,
+              "p_boundary": 0.000135,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            },
+            {
+              "step": 64,
+              "p_boundary": 0.0,
+              "boundary_rank_in_legal": 65,
+              "legal_candidates": 64,
+              "legal_candidates_including_boundary": 65
+            }
+          ]
+        }
+      ],
+      "run_boundary_win_positions": [
+        64,
+        61,
+        124
+      ]
+    }
+  ],
+  "started_utc": "2026-10-02T16:29:46Z"
+}

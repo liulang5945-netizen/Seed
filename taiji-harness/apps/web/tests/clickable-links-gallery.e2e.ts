@@ -417,7 +417,7 @@ describe('web e2e: clickable links gallery', () => {
     // styles: link-green 500-weight text, no underline at rest, dotted underline
     // on hover, and a leading currentColor glyph. Light theme, so the link
     // alias resolves to seed-500.
-    const LINK_GREEN = 'rgb(63, 143, 69)'
+    const LINK_GREEN = 'rgb(86, 158, 88)'
     const styleOf = async (target: ReturnType<Page['locator']>, property: string): Promise<string> =>
       target.evaluate((el, p) => getComputedStyle(el).getPropertyValue(p), property)
     const guideLink = markdown.locator(`a[href="${GUIDE_URL}"]`).first()
