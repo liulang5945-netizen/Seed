@@ -48,7 +48,29 @@ async function mount(options: MountOptions = {}): Promise<{ ctx: Context; opened
     registerGenerationSource: () => () => {},
     start: () => ({ stop: () => {} }),
   }
+  const verbs = {
+    // Every control verb has the same envelope shape, and none of them is allowed
+    // to be called before the caller asks: record nothing, answer the same value.
+    snapshot: () => Promise.resolve({ ok: true as const, value: { snapshot: { tick: 99 } as never } }),
+    trainStart: () => Promise.resolve({ ok: true as const, value: { message: 'verb accepted' } }),
+    trainResumeCheckpoint: () => Promise.resolve({ ok: true as const, value: { message: 'verb accepted' } }),
+    trainPause: () => Promise.resolve({ ok: true as const, value: { message: 'verb accepted' } }),
+    trainResume: () => Promise.resolve({ ok: true as const, value: { message: 'verb accepted' } }),
+    trainStop: () => Promise.resolve({ ok: true as const, value: { message: 'verb accepted' } }),
+    trainReset: () => Promise.resolve({ ok: true as const, value: { message: 'verb accepted' } }),
+    uploadDataset: () => Promise.resolve({ ok: true as const, value: { message: 'verb accepted' } }),
+    deleteDataset: () => Promise.resolve({ ok: true as const, value: { message: 'verb accepted' } }),
+    deleteCheckpoint: () => Promise.resolve({ ok: true as const, value: { message: 'verb accepted' } }),
+    uploadKnowledge: () => Promise.resolve({ ok: true as const, value: { message: 'verb accepted' } }),
+    deleteKnowledge: () => Promise.resolve({ ok: true as const, value: { message: 'verb accepted' } }),
+    consolidate: () => Promise.resolve({ ok: true as const, value: { message: 'verb accepted' } }),
+    activateCheckpoint: () => Promise.resolve({ ok: true as const, value: { message: 'verb accepted' } }),
+    lifeStart: () => Promise.resolve({ ok: true as const, value: { message: 'verb accepted' } }),
+    lifeStop: () => Promise.resolve({ ok: true as const, value: { message: 'verb accepted' } }),
+    lifeAction: () => Promise.resolve({ ok: true as const, value: { message: 'verb accepted' } }),
+  }
   const life = {
+    ...verbs,
     follow: (signal: AbortSignal): AsyncGenerator<LifeFollowFrame> => {
       void signal
       const attempt = opened.push(opened.length)
@@ -152,5 +174,40 @@ describe('Life Controller Client apply', () => {
     // own contract: building without that observer must still yield a stream.
     const stream = LifeClientApi.createLifeStateStream(ctx.remote, { accept, failed: () => {} })
     expect(stream).toBeDefined()
+  })
+
+  it('routes every control verb through the Remote namespace and keeps state readable', async () => {
+    const { ctx } = await mount({ frames: [] })
+    const life = ctx.life
+
+    // `refresh` is the one verb that folds its reading back into the stored state.
+    await expect(life.refresh()).resolves.toEqual({ tick: 99 })
+
+    const calls: Array<() => Promise<unknown>> = [
+      () => life.trainStart(),
+      () => life.trainResumeCheckpoint({ filename: 'seed.pt' } as never),
+      () => life.trainPause(),
+      () => life.trainResume(),
+      () => life.trainStop(),
+      () => life.trainReset(),
+      () => life.uploadDataset({ name: 'corpus.txt', data: '' }),
+      () => life.deleteDataset({ filename: 'corpus.txt' } as never),
+      () => life.deleteCheckpoint({ filename: 'seed.pt' }),
+      () => life.uploadKnowledge({ name: 'notes.md', content: '' } as never),
+      () => life.deleteKnowledge({ name: 'notes.md' }),
+      () => life.consolidate(),
+      () => life.activateCheckpoint({ filename: 'seed.pt' } as never),
+      () => life.lifeStart(),
+      () => life.lifeStop(),
+      () => life.lifeAction({ action: 'feed', reason: 'operator' } as never),
+    ]
+    for (const call of calls) await expect(call()).resolves.toEqual({ message: 'verb accepted' })
+
+    const notified: number[] = []
+    const stop = life.subscribe(() => { notified.push(notified.length) })
+    expect(typeof stop).toBe('function')
+    stop()
+    await life.refresh()
+    expect(notified).toEqual([])
   })
 })
