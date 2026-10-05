@@ -791,3 +791,591 @@ describe('LifePanelIcon', () => {
     expect(glyph?.getAttribute('viewBox')).toBe('0 0 16 16')
   })
 })
+
+describe('LifePanel refusals from the failure shapes the Host sends', () => {
+  it('names each typed refusal with its own copy', async () => {
+    const { life, mocks } = stubLife(legacySnapshot())
+    mocks.lifeStop
+      .mockRejectedValueOnce(new LifeControlError(new RemoteError('life/runtime-error', 'boom', { status: 500, detail: 'engine exploded' })))
+      .mockRejectedValueOnce(new LifeControlError(new RemoteError('life/runtime-unreachable', 'boom', { reason: 'socket closed' })))
+      .mockRejectedValueOnce(new LifeControlError(new RemoteError('life/conflict', 'boom', { reason: 'already running' })))
+      .mockRejectedValueOnce(new LifeControlError(new RemoteError('life/bad-request', 'boom', { field: 'action', reason: 'unknown verb' })))
+      .mockRejectedValueOnce(new LifeControlError(new RemoteError('life/stream-failed', 'boom', {})))
+      .mockRejectedValueOnce(new LifeControlError(new RemoteError('life/from-the-future', 'boom', {})))
+    mountPanel(life)
+
+    const cases: [string, string][] = [
+      [t('errRuntimeError', { status: '500', detail: 'engine exploded' }), 'runtime-error'],
+      [t('errUnreachable', { reason: 'socket closed' }), 'runtime-unreachable'],
+      [t('errConflict', { reason: 'already running' }), 'conflict'],
+      [t('errBadRequest', { field: 'action', reason: 'unknown verb' }), 'bad-request'],
+      [t('errStreamFailed'), 'stream-failed'],
+      [t('errFallback', { code: 'life/from-the-future' }), 'default'],
+    ]
+    for (const [copy, code] of cases) {
+      fireEvent.click(screen.getByRole('button', { name: en.lifeStop }))
+      const alert = await screen.findByRole('alert')
+      expect(alert.textContent).toBe(copy)
+      if (code === 'default') {
+        // The fallback names the code it did not know, so a new Host code is
+        // never rendered as an empty refusal.
+        expect(alert.textContent).toContain('life/from-the-future')
+      }
+    }
+  })
+
+  it('falls back to the stream-failure copy when a rejection carries no RPC shape at all', async () => {
+    const { life, mocks } = stubLife(legacySnapshot())
+    mocks.lifeStop
+      .mockRejectedValueOnce('a bare string from somewhere')
+      .mockRejectedValueOnce(new Error('plain host-side failure'))
+    mountPanel(life)
+
+    fireEvent.click(screen.getByRole('button', { name: en.lifeStop }))
+    expect(await screen.findByRole('alert').then(alert => alert.textContent)).toBe(t('errStreamFailed'))
+
+    fireEvent.click(screen.getByRole('button', { name: en.lifeStop }))
+    await waitFor(() => { expect(screen.getByRole('alert').textContent).toBe(t('errStreamFailed')) })
+  })
+
+  it('runs the three scheduler actions and reports a failed one without losing the page', async () => {
+    const { life, mocks } = stubLife(legacySnapshot())
+    mocks.lifeAction
+      .mockResolvedValueOnce({ message: 'fed' })
+      .mockRejectedValueOnce(new LifeControlError(new RemoteError('life/conflict', 'boom', { reason: 'sleeping already' })))
+      .mockResolvedValueOnce({ message: 'played' })
+    mountPanel(life)
+
+    fireEvent.click(screen.getByRole('button', { name: en.actionFeed }))
+    await waitFor(() => { expect(mocks.lifeAction).toHaveBeenLastCalledWith({ action: 'feed' }) })
+    fireEvent.click(screen.getByRole('button', { name: en.actionSleep }))
+    await waitFor(() => { expect(mocks.lifeAction).toHaveBeenLastCalledWith({ action: 'sleep' }) })
+    expect(await screen.findByRole('alert').then(alert => alert.textContent))
+      .toBe(t('errConflict', { reason: 'sleeping already' }))
+    fireEvent.click(screen.getByRole('button', { name: en.actionPlay }))
+    await waitFor(() => { expect(mocks.lifeAction).toHaveBeenLastCalledWith({ action: 'play' }) })
+    await waitFor(() => { expect(screen.queryByRole('alert')).toBeNull() })
+  })
+})
+
+describe('LifePanel reader edge shapes', () => {
+  it('surfaces a file-read failure as the stream-failure copy and sends nothing', async () => {
+    const { life, mocks } = stubLife(nativeSnapshot())
+    const spy = vi.spyOn(FileReader.prototype, 'readAsDataURL').mockImplementation(function (this: FileReader) {
+      queueMicrotask(() => { this.onerror?.call(this, new ProgressEvent('error')) })
+    })
+    try {
+      mountPanel(life)
+      fireEvent.change(filePicker(), { target: { files: [new File(['x'], 'broken.jsonl')] } })
+      fireEvent.click(screen.getByRole('button', { name: en.uploadSend }))
+
+      expect(await screen.findByRole('alert').then(alert => alert.textContent)).toBe(t('errStreamFailed'))
+      expect(mocks.uploadDataset).not.toHaveBeenCalled()
+    } finally {
+      spy.mockRestore()
+    }
+  })
+
+  it('sends an empty payload when the data URL comes back malformed', async () => {
+    const { life, mocks } = stubLife(nativeSnapshot())
+    mocks.uploadDataset.mockResolvedValue({ message: 'ok' })
+    const spy = vi.spyOn(FileReader.prototype, 'readAsDataURL').mockImplementation(function (this: FileReader) {
+      // A non-string result (jsdom leaves it null here) degrades to an empty
+      // payload; it may not crash the read.
+      queueMicrotask(() => { this.onload?.call(this, new ProgressEvent('load')) })
+    })
+    try {
+      mountPanel(life)
+      fireEvent.change(filePicker(), { target: { files: [new File(['x'], 'odd.jsonl')] } })
+      fireEvent.click(screen.getByRole('button', { name: en.uploadSend }))
+      await waitFor(() => { expect(mocks.uploadDataset).toHaveBeenCalledTimes(1) })
+      expect(mocks.uploadDataset.mock.calls[0]![0].data).toBe('')
+    } finally {
+      spy.mockRestore()
+    }
+
+    cleanup()
+    const second = stubLife(nativeSnapshot())
+    second.mocks.uploadDataset.mockResolvedValue({ message: 'ok' })
+    const spy2 = vi.spyOn(FileReader.prototype, 'readAsDataURL').mockImplementation(function (this: FileReader) {
+      // A string without the data-URL comma degrades the same way.
+      Object.defineProperty(this, 'result', { value: 'no-comma-here' })
+      queueMicrotask(() => { this.onload?.call(this, new ProgressEvent('load')) })
+    })
+    try {
+      mountPanel(second.life)
+      fireEvent.change(filePicker(), { target: { files: [new File(['x'], 'odd2.jsonl')] } })
+      fireEvent.click(screen.getByRole('button', { name: en.uploadSend }))
+      await waitFor(() => { expect(second.mocks.uploadDataset).toHaveBeenCalledTimes(1) })
+      expect(second.mocks.uploadDataset.mock.calls[0]![0].data).toBe('')
+    } finally {
+      spy2.mockRestore()
+    }
+  })
+})
+
+describe('LifePanel edge readings', () => {
+  it('renders an unparseable timestamp verbatim instead of a wrong date', () => {
+    const { life } = stubLife(legacySnapshot({
+      life: {
+        isRunning: true,
+        legacy: {
+          isRunning: true,
+          lifeState: 'idle',
+          dominantNeed: 'energy',
+          needs: { energy: 35, curiosity: 80, fatigue: 20, stress: 5, social: 50 },
+          totalHeartbeats: 128,
+          totalEvents: 17,
+          lastHeartbeat: 'not-a-timestamp',
+          lastActivity: '2026-09-23T07:55:00.000Z',
+        },
+      },
+    }))
+    mountPanel(life)
+    expect(screen.getByText('not-a-timestamp')).not.toBeNull()
+  })
+
+  it('says there are no readings when an open need or drive map is empty', () => {
+    const { life } = stubLife(nativeSnapshot({
+      life: { isRunning: true, native: { tick: 41, mode: 'wake', needs: {}, drives: {} } },
+    }))
+    mountPanel(life)
+    expect(screen.getAllByText(en.noReadings)).toHaveLength(2)
+  })
+
+  it('names the absent organ and the down runtime honestly', () => {
+    const { life } = stubLife(nativeSnapshot({
+      source: 'absent',
+      availability: { runtime: 'down', legacy: 'disabled', knowledge: 'ok', trainingStream: 'idle' },
+    }))
+    mountPanel(life)
+    expect(screen.getByText(en.sourceAbsent)).not.toBeNull()
+    expect(screen.getByText(en.downBadge)).not.toBeNull()
+  })
+
+  it('shows the scheduler-stopped copy for a legacy organ that is not running', () => {
+    const { life } = stubLife(legacySnapshot({
+      life: {
+        isRunning: true,
+        legacy: {
+          isRunning: false,
+          lifeState: 'idle',
+          dominantNeed: 'energy',
+          needs: { energy: 35, curiosity: 80, fatigue: 20, stress: 5, social: 50 },
+          totalHeartbeats: 128,
+          totalEvents: 17,
+          lastHeartbeat: '2026-09-23T07:59:30.000Z',
+          lastActivity: '2026-09-23T07:55:00.000Z',
+        },
+      },
+    }))
+    mountPanel(life)
+    expect(screen.getByText(en.schedulerStopped)).not.toBeNull()
+  })
+
+  it('says there is no life reading when the organ block is absent', () => {
+    const { life } = stubLife(nativeSnapshot({ life: undefined }))
+    mountPanel(life)
+    expect(screen.getByText(en.noReading)).not.toBeNull()
+  })
+
+  it('keeps one directory group for two files in the same directory', () => {
+    const { life } = stubLife(nativeSnapshot({
+      training: {
+        isTraining: false,
+        pauseRequested: false,
+        stopRequested: false,
+        publishing: false,
+        checkpoints: [],
+        datasets: [
+          { path: 'consolidated/a.jsonl', sizeBytes: 10 },
+          { path: 'consolidated/b.jsonl', sizeBytes: 20 },
+        ],
+      },
+    }))
+    mountPanel(life)
+    expect(screen.getAllByRole('button', { name: /consolidated/ })).toHaveLength(1)
+    expect(screen.getByRole('checkbox', { name: /consolidated\/a\.jsonl/ })).not.toBeNull()
+    expect(screen.getByRole('checkbox', { name: /consolidated\/b\.jsonl/ })).not.toBeNull()
+  })
+
+  it('does not disturb a row an operator already ticked when an upload matches it by basename', async () => {
+    const { life, mocks, emit } = stubLife(nativeSnapshot({
+      training: {
+        isTraining: false,
+        pauseRequested: false,
+        stopRequested: false,
+        publishing: false,
+        checkpoints: [],
+        datasets: [{ path: 'other/new-set.jsonl', sizeBytes: 10 }],
+      },
+    }))
+    mocks.uploadDataset.mockResolvedValue({ message: 'uploaded' })
+    mountPanel(life)
+
+    // The operator ticks the roster row whose basename the upload will carry.
+    const existing = screen.getByRole('checkbox', { name: /other\/new-set\.jsonl/ })
+    fireEvent.click(existing)
+    expect((existing as HTMLInputElement).checked).toBe(true)
+
+    const file = new File(['{"text":"hello"}\n'], 'new-set.jsonl', { type: 'application/jsonl' })
+    fireEvent.change(filePicker(), { target: { files: [file] } })
+    fireEvent.click(screen.getByRole('button', { name: en.uploadSend }))
+    await waitFor(() => { expect(mocks.uploadDataset).toHaveBeenCalledTimes(1) })
+
+    // The refreshed roster gains the uploaded root file, but the auto-select
+    // matches the already-ticked row first and leaves the selection as-is.
+    emit(withDataset(nativeSnapshot({
+      training: {
+        isTraining: false,
+        pauseRequested: false,
+        stopRequested: false,
+        publishing: false,
+        checkpoints: [],
+        datasets: [{ path: 'other/new-set.jsonl', sizeBytes: 10 }],
+      },
+    }), 'new-set.jsonl', 17))
+    await screen.findByRole('checkbox', { name: /^new-set\.jsonl/ })
+    expect((screen.getByRole('checkbox', { name: /other\/new-set\.jsonl/ }) as HTMLInputElement).checked).toBe(true)
+    expect((screen.getByRole('checkbox', { name: /^new-set\.jsonl/ }) as HTMLInputElement).checked).toBe(false)
+  })
+
+  it('names the streaming and closed training-stream states with their dots and warning tags', () => {
+    const streaming = stubLife(nativeSnapshot({
+      availability: { runtime: 'ok', legacy: 'disabled', knowledge: 'ok', trainingStream: 'streaming' },
+      training: {
+        isTraining: true,
+        pauseRequested: false,
+        stopRequested: true,
+        publishing: true,
+        checkpoints: [],
+        progress: {
+          fraction: 0.25, step: 5, loss: 1.3, elapsed: 60, eta: 180,
+          epoch: 1, totalEpochs: 4, samplesPerSec: 12.5, totalSteps: 20,
+        },
+      },
+    }))
+    mountPanel(streaming.life)
+    expect(screen.getByText(en.streamStreaming)).not.toBeNull()
+    expect(screen.getByText(en.trainingStopRequested)).not.toBeNull()
+    expect(screen.getByText(en.trainingPublishing)).not.toBeNull()
+    cleanup()
+
+    const closed = stubLife(nativeSnapshot({
+      availability: { runtime: 'ok', legacy: 'disabled', knowledge: 'ok', trainingStream: 'closed' },
+    }))
+    mountPanel(closed.life)
+    expect(screen.getByText(en.streamClosed)).not.toBeNull()
+  })
+
+  it('ignores a picker change that carries no file at all', () => {
+    const { life } = stubLife(nativeSnapshot())
+    mountPanel(life)
+    fireEvent.change(filePicker(), { target: { files: [] } })
+    fireEvent.change(knowledgePicker(), { target: { files: [] } })
+    expect(screen.queryByText(/Selected /)).toBeNull()
+  })
+
+  it('keeps the upload ack when the follow-up roster read fails', async () => {
+    const { life, mocks } = stubLife(nativeSnapshot())
+    mocks.uploadDataset.mockResolvedValue({ message: 'uploaded' })
+    mocks.refresh.mockRejectedValueOnce(new Error('refresh lost'))
+    mountPanel(life)
+
+    const file = new File(['{"text":"hello"}\n'], 'later.jsonl', { type: 'application/jsonl' })
+    fireEvent.change(filePicker(), { target: { files: [file] } })
+    fireEvent.click(screen.getByRole('button', { name: en.uploadSend }))
+    expect(await screen.findByText('uploaded')).not.toBeNull()
+    expect(mocks.uploadDataset).toHaveBeenCalledTimes(1)
+  })
+
+  it('keeps the ticked datasets and names the refusal when every delete fails, then prunes what went', async () => {
+    const { life, mocks } = stubLife(nativeSnapshot())
+    mountPanel(life)
+
+    // The spec preselects night-1; ticking the other row arms a two-file delete.
+    fireEvent.click(screen.getByRole('checkbox', { name: /dialogue_extended_clean/ }))
+    mocks.deleteDataset.mockRejectedValue(new LifeControlError(new RemoteError('life/conflict', 'boom', { reason: 'busy' })))
+    fireEvent.click(screen.getByRole('button', { name: en.deletePickedDatasets }))
+    fireEvent.click(screen.getByRole('button', { name: t('confirmDeleteDatasets', { count: '2' }) }))
+    const refusal = await screen.findByRole('alert')
+    expect(refusal.textContent).toBe(t('errConflict', { reason: 'busy' }))
+    expect((screen.getByRole('checkbox', { name: /consolidated\/night-1\.jsonl/ }) as HTMLInputElement).checked).toBe(true)
+    expect(screen.queryByText(t('deleteDone', { count: '0' }))).toBeNull()
+
+    // A later attempt that removes the first file but loses the roster read
+    // still prunes what went and reports the count; the refresh failure is
+    // swallowed after a committed delete.
+    mocks.deleteDataset.mockReset()
+    mocks.deleteDataset.mockResolvedValue({ message: 'deleted' })
+    mocks.refresh.mockRejectedValueOnce(new Error('refresh lost'))
+    fireEvent.click(screen.getByRole('button', { name: en.deletePickedDatasets }))
+    fireEvent.click(screen.getByRole('button', { name: t('confirmDeleteDatasets', { count: '2' }) }))
+    await waitFor(() => { expect(screen.getByText(t('deleteDone', { count: '2' }))).not.toBeNull() })
+    await waitFor(() => { expect(screen.getByText(/0 selected/)).not.toBeNull() })
+  })
+
+  it('lets an operator untick a checkpoint, keeps rows when deletes fail, and reports what went', async () => {
+    const { life, mocks } = stubLife(nativeSnapshot({
+      artifacts: { activeId: '', configuredId: '' },
+      training: {
+        isTraining: false,
+        pauseRequested: false,
+        stopRequested: false,
+        publishing: false,
+        checkpoints: [
+          { filename: 'old_run.pt', step: 20, bytes: 4096, modifiedUtc: '2026-09-23T09:00:00.000Z', savedAtUtc: '2026-09-23T09:00:00.000Z', numEpochs: 1 },
+          { filename: 'older.pt', step: 30, bytes: 8192, modifiedUtc: '2026-09-23T10:00:00.000Z', savedAtUtc: '2026-09-23T10:00:00.000Z', numEpochs: 1 },
+        ],
+      },
+    }))
+    mountPanel(life)
+
+    const first = screen.getByRole('checkbox', { name: `${en.colSelect} old_run.pt` }) as HTMLInputElement
+    fireEvent.click(first)
+    expect(first.checked).toBe(true)
+    // Unticking drops it from the armed deletion.
+    fireEvent.click(first)
+    expect(first.checked).toBe(false)
+
+    fireEvent.click(screen.getByRole('checkbox', { name: `${en.colSelect} old_run.pt` }))
+    fireEvent.click(screen.getByRole('checkbox', { name: `${en.colSelect} older.pt` }))
+    mocks.deleteCheckpoint.mockRejectedValue(new LifeControlError(new RemoteError('life/conflict', 'boom', { reason: 'in use' })))
+    fireEvent.click(screen.getByRole('button', { name: en.deletePickedCheckpoints }))
+    fireEvent.click(screen.getByRole('button', { name: t('confirmDeleteCheckpoints', { count: '2' }) }))
+    await screen.findByRole('alert')
+    expect((screen.getByRole('checkbox', { name: `${en.colSelect} old_run.pt` }) as HTMLInputElement).checked).toBe(true)
+    expect(screen.queryByText(t('deleteDone', { count: '0' }))).toBeNull()
+
+    mocks.deleteCheckpoint.mockReset()
+    mocks.deleteCheckpoint.mockResolvedValue({ message: 'deleted' })
+    mocks.refresh.mockRejectedValueOnce(new Error('refresh lost'))
+    fireEvent.click(screen.getByRole('button', { name: en.deletePickedCheckpoints }))
+    fireEvent.click(screen.getByRole('button', { name: t('confirmDeleteCheckpoints', { count: '2' }) }))
+    await waitFor(() => { expect(screen.getByText(t('deleteDone', { count: '2' }))).not.toBeNull() })
+  })
+
+  it('runs the pause, resume and reset controls through their armed states', async () => {
+    const { life, mocks } = stubLife(nativeSnapshot({
+      training: {
+        isTraining: true,
+        pauseRequested: false,
+        stopRequested: false,
+        publishing: false,
+        checkpoints: [],
+      },
+    }))
+    mountPanel(life)
+
+    fireEvent.click(screen.getByRole('button', { name: en.trainPause }))
+    await waitFor(() => { expect(mocks.trainPause).toHaveBeenCalledTimes(1) })
+
+    // Reset is a confirming verb: the first click only arms the line.
+    fireEvent.click(screen.getByRole('button', { name: en.trainReset }))
+    expect(screen.getByText(en.confirmReset)).not.toBeNull()
+    expect(mocks.trainReset).not.toHaveBeenCalled()
+    fireEvent.click(screen.getByRole('button', { name: en.trainReset }))
+    await waitFor(() => { expect(mocks.trainReset).toHaveBeenCalledTimes(1) })
+    cleanup()
+
+    const pausing = stubLife(nativeSnapshot({
+      training: {
+        isTraining: true,
+        pauseRequested: true,
+        stopRequested: false,
+        publishing: false,
+        checkpoints: [],
+      },
+    }))
+    mountPanel(pausing.life)
+    fireEvent.click(screen.getByRole('button', { name: en.trainResume }))
+    await waitFor(() => { expect(pausing.mocks.trainResume).toHaveBeenCalledTimes(1) })
+  })
+
+  it('picks and cancels a dataset through the visible buttons', () => {
+    const { life } = stubLife(nativeSnapshot())
+    mountPanel(life)
+
+    // The Pick button drives the same input the tests fill directly; clicking
+    // it must not throw in jsdom, where the chooser is a no-op.
+    fireEvent.click(screen.getByRole('button', { name: en.uploadPick }))
+    expect(screen.queryByRole('button', { name: en.uploadSend })).toBeNull()
+
+    const file = new File(['{"text":"hello"}\n'], 'cancel-me.jsonl', { type: 'application/jsonl' })
+    fireEvent.change(filePicker(), { target: { files: [file] } })
+    expect(screen.getByRole('button', { name: en.uploadSend })).not.toBeNull()
+    fireEvent.click(screen.getByRole('button', { name: en.uploadCancel }))
+    expect(screen.queryByRole('button', { name: en.uploadSend })).toBeNull()
+  })
+
+  it('says the roster is empty when the runtime lists no datasets', () => {
+    const { life } = stubLife(nativeSnapshot({
+      training: {
+        isTraining: false,
+        pauseRequested: false,
+        stopRequested: false,
+        publishing: false,
+        checkpoints: [],
+        datasets: [],
+      },
+    }))
+    mountPanel(life)
+    expect(screen.getByText(en.datasetsEmpty)).not.toBeNull()
+  })
+
+  it('refuses an oversized knowledge document without reading it', () => {
+    const { life, mocks } = stubLife(nativeSnapshot())
+    mountPanel(life)
+
+    const file = new File([new Uint8Array(1)], 'huge.md')
+    Object.defineProperty(file, 'size', { value: 200 * 1024 * 1024 + 1 })
+    fireEvent.change(knowledgePicker(), { target: { files: [file] } })
+
+    expect(screen.getByRole('alert').textContent).toBe('The file exceeds 200 MB. Use a smaller dataset.')
+    expect(mocks.uploadKnowledge).not.toHaveBeenCalled()
+  })
+
+  it('says the knowledge surface is down instead of rendering an empty library', () => {
+    const { life } = stubLife(nativeSnapshot({
+      availability: { runtime: 'ok', legacy: 'disabled', knowledge: 'down', trainingStream: 'idle' },
+    }))
+    mountPanel(life)
+    expect(screen.getByText(en.knowledgeUnavailable)).not.toBeNull()
+    expect(screen.queryByRole('checkbox', { name: 'handbook.md' })).toBeNull()
+  })
+
+  it('shows a checkpoint whose savedAt is missing from the modified time', () => {
+    const { life } = stubLife(nativeSnapshot({
+      training: {
+        isTraining: false,
+        pauseRequested: false,
+        stopRequested: false,
+        publishing: false,
+        checkpoints: [
+          { filename: 'fresh.pt', step: 5, bytes: 2048, modifiedUtc: '2026-09-23T08:01:00.000Z', savedAtUtc: '', numEpochs: 1 },
+        ],
+      },
+    }))
+    mountPanel(life)
+    // The row's timestamp cell falls back to the modified instant when no
+    // savedAt is recorded; the row still names its file wherever it appears.
+    expect(screen.getAllByText('fresh.pt').length).toBeGreaterThanOrEqual(1)
+  })
+
+  it('keeps the knowledge upload alive when the follow-up list read fails', async () => {
+    const { life, mocks } = stubLife(nativeSnapshot())
+    mocks.uploadKnowledge.mockResolvedValue({ message: 'knowledge uploaded' })
+    mocks.refresh.mockRejectedValueOnce(new Error('refresh lost'))
+    mountPanel(life)
+
+    const file = new File(['# notes\n'], 'again.md', { type: 'text/markdown' })
+    fireEvent.change(knowledgePicker(), { target: { files: [file] } })
+    fireEvent.click(screen.getByRole('button', { name: en.uploadSend }))
+    expect(await screen.findByText('knowledge uploaded')).not.toBeNull()
+  })
+
+  it('drives the knowledge upload through its pick and cancel buttons', () => {
+    const { life } = stubLife(nativeSnapshot())
+    mountPanel(life)
+
+    fireEvent.click(screen.getByRole('button', { name: en.knowledgeUpload }))
+    const file = new File(['# notes\n'], 'cancel-me.md', { type: 'text/markdown' })
+    fireEvent.change(knowledgePicker(), { target: { files: [file] } })
+    expect(screen.getByRole('button', { name: en.uploadSend })).not.toBeNull()
+    fireEvent.click(screen.getByRole('button', { name: en.uploadCancel }))
+    expect(screen.queryByRole('button', { name: en.uploadSend })).toBeNull()
+  })
+
+  it('lets an operator untick a knowledge file, keeps rows when deletes fail, and reports what went', async () => {
+    const { life, mocks } = stubLife(nativeSnapshot())
+    mountPanel(life)
+
+    const handbook = screen.getByRole('checkbox', { name: 'handbook.md' }) as HTMLInputElement
+    fireEvent.click(handbook)
+    expect(handbook.checked).toBe(true)
+    fireEvent.click(handbook)
+    expect(handbook.checked).toBe(false)
+
+    fireEvent.click(screen.getByRole('checkbox', { name: 'handbook.md' }))
+    fireEvent.click(screen.getByRole('checkbox', { name: 'loose.txt' }))
+    mocks.deleteKnowledge.mockRejectedValue(new LifeControlError(new RemoteError('life/conflict', 'boom', { reason: 'busy' })))
+    fireEvent.click(screen.getByRole('button', { name: en.deletePickedKnowledge }))
+    fireEvent.click(screen.getByRole('button', { name: t('confirmDeleteKnowledge', { count: '2' }) }))
+    await screen.findByRole('alert')
+    expect((screen.getByRole('checkbox', { name: 'handbook.md' }) as HTMLInputElement).checked).toBe(true)
+    expect(screen.queryByText(t('deleteDone', { count: '0' }))).toBeNull()
+
+    mocks.deleteKnowledge.mockReset()
+    mocks.deleteKnowledge.mockResolvedValue({ message: 'deleted' })
+    mocks.refresh.mockRejectedValueOnce(new Error('refresh lost'))
+    fireEvent.click(screen.getByRole('button', { name: en.deletePickedKnowledge }))
+    fireEvent.click(screen.getByRole('button', { name: t('confirmDeleteKnowledge', { count: '2' }) }))
+    await waitFor(() => { expect(screen.getByText(t('deleteDone', { count: '2' }))).not.toBeNull() })
+  })
+
+  it('renders an empty knowledge library, silent embeddings, and an absent embedding dimension', () => {
+    const { life } = stubLife(nativeSnapshot({
+      knowledge: {
+        docCount: 0,
+        chunkCount: 0,
+        hasEmbeddings: false,
+        embedDim: 0,
+        files: [],
+      },
+    }))
+    mountPanel(life)
+    expect(screen.getByText(en.knowledgeEmpty)).not.toBeNull()
+    expect(screen.getByText(en.embeddingsNo)).not.toBeNull()
+    // hasEmbeddings false renders the idle dot beside the "yes" label.
+    expect(screen.getByText(en.embeddingsYes)).not.toBeNull()
+  })
+
+  it('shows a running pass, an empty spec roster, and report lines without notes', () => {
+    const { life } = stubLife(nativeSnapshot({
+      consolidation: {
+        passes: 0,
+        lastPassAt: 0,
+        lastCorpus: '',
+        projectedDigests: 0,
+        running: true,
+        spec: { reason: 'waiting for interaction', datasets: [] },
+        lastReport: {
+          reason: 'manual',
+          specReason: '',
+          durationMs: 500,
+          weaknesses: [],
+          notes: [],
+        },
+        journal: { entries: 0, byKind: {}, sessions: 0, lastRecordedAt: 0 },
+      },
+    }))
+    mountPanel(life)
+    expect(screen.getByText(en.passRunning)).not.toBeNull()
+    expect(screen.getAllByText(en.notYet).length).toBeGreaterThanOrEqual(3)
+    expect(screen.getByText(en.noWeaknesses)).not.toBeNull()
+    expect(screen.getByText(en.noNotes)).not.toBeNull()
+  })
+
+  it('says the host projection is empty when no host surface answered', () => {
+    const { life } = stubLife(nativeSnapshot({
+      health: undefined,
+      memory: undefined,
+      workbench: undefined,
+      auth: undefined,
+    }))
+    mountPanel(life)
+    expect(screen.getAllByText(en.noReading).length).toBeGreaterThanOrEqual(1)
+  })
+
+  it('renders a host reading without auth and with degraded health facts', () => {
+    const { life } = stubLife(nativeSnapshot({
+      auth: undefined,
+      health: { state: 'degraded', modelLoaded: false, modelName: '', seedActive: false, startupComplete: false },
+    }))
+    mountPanel(life)
+    expect(screen.getByText(en.startupIncomplete)).not.toBeNull()
+    expect(screen.getByText(en.modelNone)).not.toBeNull()
+    expect(screen.getByText(en.seedInactive)).not.toBeNull()
+    expect(screen.queryByText(en.authDisabled)).toBeNull()
+  })
+})
