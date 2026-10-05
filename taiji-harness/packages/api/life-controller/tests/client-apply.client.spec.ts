@@ -241,9 +241,9 @@ describe('Life Controller Client apply', () => {
   it('normalizes a refusal that is not shaped like a failure', async () => {
     const { ctx } = await mount({ frames: [], refused: 'bare refusal' })
 
-    // The stored state is normalized through the harness's own failure shape, so a
-    // refusal that is bare text still arrives with a readable message and a code.
-    await expect(ctx.life.refresh()).rejects.toBeInstanceOf(Error)
+    // Both faces of a bare refusal are normalized through the harness's own failure
+    // shape, so the thrown error and the stored state carry the same readable text.
+    await expect(ctx.life.refresh()).rejects.toThrow('bare refusal')
     const state = ctx.life.getSnapshot()
     expect(state.state).toBe('error')
     expect(state.error?.message).toBe('bare refusal')

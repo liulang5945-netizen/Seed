@@ -16,7 +16,7 @@ import type {
   LifeUploadDatasetRequest,
   LifeUploadKnowledgeRequest,
 } from '../types.ts'
-import type { ClientLifeModel, LifeSnapshotState } from './model.ts'
+import { failureOf, type ClientLifeModel, type LifeSnapshotState } from './model.ts'
 
 /** A Life control verb was refused by the Host or the runtime. */
 export class LifeControlError extends Error {
@@ -181,7 +181,7 @@ export class LifeClient extends Service implements ILife {
 
   async refresh(signal?: AbortSignal): Promise<LifeSnapshot> {
     const result = await this.model.read(signal)
-    if (!result.ok) throw new LifeControlError(result.error)
+    if (!result.ok) throw new LifeControlError(failureOf(result.error))
     return result.value
   }
 
@@ -252,7 +252,7 @@ export class LifeClient extends Service implements ILife {
   /** Unwrap one Host result, raising the structured control failure. */
   private async unwrap(pending: Promise<RemoteResult<LifeControlValue>>): Promise<LifeControlValue> {
     const result = await pending
-    if (!result.ok) throw new LifeControlError(result.error)
+    if (!result.ok) throw new LifeControlError(failureOf(result.error))
     return result.value
   }
 }
