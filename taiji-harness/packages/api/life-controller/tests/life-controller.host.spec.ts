@@ -255,6 +255,25 @@ describe('LifeController training control', () => {
     await runtime.closeTraining()
   })
 
+  it('settles a run whose stream ends without a terminal event', async () => {
+    const { controller, runtime } = await harness()
+    runtime.training = { kind: 'frames', frames: [progressFrame({ fraction: 0.5, step: 500 })] }
+
+    await expect(controller.trainStart({ parameterBudget: 1_000 })).resolves.toEqual({ message: 'training accepted' })
+
+    // The stream ends with no completed and no failed frame: the run has to leave
+    // its slot, drop the folded progress, and stop reporting an open stream.
+    await vi.waitFor(async () => {
+      const { snapshot } = await controller.snapshot(new AbortController().signal)
+      expect(snapshot.availability.trainingStream).not.toBe('streaming')
+      expect(snapshot.training.progress).toBeUndefined()
+    })
+
+    // Leaving the slot is what makes the settlement observable: a new run is accepted.
+    runtime.training = { kind: 'frames', frames: [progressFrame({ fraction: 0.1, step: 100 })], hold: true }
+    await expect(controller.trainStart({ parameterBudget: 2_000 })).resolves.toEqual({ message: 'training accepted' })
+  })
+
   it('settles on completion and re-reads the checkpoint roster', async () => {
     const { controller, runtime } = await harness()
     runtime.checkpoints = [{ filename: 'resumed.pt', step: 750, bytes: 10, modified_utc: '', saved_at_utc: '', num_epochs: 1 }]

@@ -391,6 +391,7 @@ export class LifeController extends TypertRemoteService {
 /** Operator-readable text for one thrown value. */
 function describe(error: unknown): string {
   if (error instanceof RemoteError) return `${error.code}: ${error.message}`
+  /* v8 ignore next -- the transport and typert layers reject with Error instances; reaching this arm needs a non-Error throw from outside them. */
   return error instanceof Error ? error.message : String(error)
 }
 
@@ -402,6 +403,7 @@ function describe(error: unknown): string {
  * @returns the usable basename.
  */
 function usableFileName(raw: string, field: string): string {
+  /* v8 ignore next -- String.split returns at least one element, so pop() is never undefined. */
   const name = raw.split(/[\\/]/u).pop() ?? ''
   if (name === '' || name === '.' || name === '..') {
     throw new RemoteError('life/bad-request', `name "${raw}" has no usable file name`, {
