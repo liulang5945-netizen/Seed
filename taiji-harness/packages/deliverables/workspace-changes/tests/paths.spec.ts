@@ -50,7 +50,7 @@ describe('canonicalPath', () => {
     const root = await scratchDir('dsh-canonical-', cleanups)
     const real = join(root, 'real')
     await mkdir(join(real, 'nested'), { recursive: true })
-    await symlink(real, join(root, 'link'))
+    await symlink(real, join(root, 'link'), process.platform === 'win32' ? 'junction' : 'dir')
     const resolvedReal = await realpath(real)
     expect(await canonicalPath(join(root, 'link', 'nested'))).toBe(join(resolvedReal, 'nested'))
     expect(await canonicalPath(join(root, 'link', 'nested', 'new.txt'))).toBe(join(resolvedReal, 'nested', 'new.txt'))
