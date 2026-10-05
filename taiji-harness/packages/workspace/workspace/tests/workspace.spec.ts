@@ -10,7 +10,7 @@ import { DomainFacility } from '@taiji/dsh-storage-domain'
 import type { DomainChanged } from '@taiji/dsh-storage-domain'
 import SessionStore, { SESSION_FORMAT_VERSION, SessionId } from '@taiji/dsh-session'
 import type { SessionHeader } from '@taiji/dsh-session'
-import { SessionPersistenceRevision } from '@taiji/dsh-session-persistence'
+import { SessionPersistenceNotFoundError, SessionPersistenceRevision } from '@taiji/dsh-session-persistence'
 import type { SessionPersistenceSnapshot } from '@taiji/dsh-session-persistence'
 import { MemoryMediaPool, MemoryStorageBackend } from '../../../storage/storage-domain/tests/helpers/memory-backend.ts'
 import WorkspaceRegistry, {
@@ -1095,6 +1095,102 @@ describe('registry-global session archive', () => {
     expect(result.remove).toHaveBeenCalledWith('gone')
     // Only the named session's log goes: the other one is untouched.
     expect(result.remove).toHaveBeenCalledTimes(1)
+  })
+
+  it('refuses to delete a session the registry never knew, before asking any provider', async () => {
+    const dir = await makeDir('delete-ghost')
+    const result = await harness({ sessions: [header('known', dir, 100)] })
+    const asked: SessionId[] = []
+    result.ctx.on('workspace/session-activity', async ({ sessionId }, next) => {
+      asked.push(sessionId)
+      return next()
+    })
+
+    await expect(result.registry.deleteSession(SessionId('ghost'))).rejects.toMatchObject({
+      name: 'WorkspaceUnknownSessionError',
+    })
+    expect(asked).toEqual([])
+    expect(result.remove).not.toHaveBeenCalled()
+    expect(storedState(result.pool).archivedSessionIds).toEqual([])
+  })
+
+  it('refuses to delete a session the activity waterfall reports as running', async () => {
+    const dir = await makeDir('delete-active')
+    const result = await harness({ sessions: [header('busy', dir, 100), header('idle', dir, 200)] })
+    result.ctx.on('workspace/session-activity', async ({ sessionId }, next) =>
+      sessionId === 'busy'
+        ? [{ kind: 'probe' }, { kind: 'probe-items', items: [{ id: 'item-1', label: 'build' }] }, ...(await next())]
+        : next())
+
+    await expect(result.registry.deleteSession(SessionId('busy'))).rejects.toMatchObject({
+      name: 'WorkspaceActiveSessionError',
+      sessionId: 'busy',
+      activity: [{ kind: 'probe' }, { kind: 'probe-items', items: [{ id: 'item-1', label: 'build' }] }],
+    })
+    expect(result.remove).not.toHaveBeenCalled()
+
+    // The other session of the same Workspace is not held, so it is removed.
+    await result.registry.deleteSession(SessionId('idle'))
+    expect(result.remove).toHaveBeenCalledTimes(1)
+  })
+
+  it('with stopActivity, stops what runs instead of asking what runs', async () => {
+    const dir = await makeDir('delete-stop')
+    const result = await harness({ sessions: [header('busy', dir, 100)] })
+    const order: string[] = []
+    result.ctx.on('workspace/session-activity', async ({ sessionId }, next) => {
+      order.push(`activity:${String(sessionId)}`)
+      return next()
+    })
+    result.ctx.on('workspace/session-stop', ({ sessionId }) => { order.push(`stop:${String(sessionId)}`) })
+
+    await result.registry.deleteSession(SessionId('busy'), { stopActivity: true })
+
+    // The caller already chose to stop the work, so no activity question is asked.
+    expect(order).toEqual(['stop:busy'])
+    expect(result.remove).toHaveBeenCalledWith('busy')
+  })
+
+  it('drops a pinned session from the pin set and leaves the other Workspace record alone', async () => {
+    const first = await makeDir('delete-pinned-first')
+    const second = await makeDir('delete-pinned-second')
+    const result = await harness({ sessions: [header('shared', first, 100), header('other', second, 200)] })
+    await result.registry.pinSession(SessionId('shared'))
+    expect(result.registry.pinnedSessionIds).toEqual(['shared'])
+
+    await result.registry.deleteSession(SessionId('shared'))
+
+    expect(result.registry.pinnedSessionIds).toEqual([])
+    expect(storedState(result.pool).pinnedSessionIds).toEqual([])
+    // Both records were visited: the one without this session is skipped, the
+    // owning one detaches it, and only this session's log is removed.
+    expect(result.remove).toHaveBeenCalledTimes(1)
+    expect(result.remove).toHaveBeenCalledWith('shared')
+  })
+
+  it('treats a session log that is already gone as a completed deletion', async () => {
+    const dir = await makeDir('delete-notfound')
+    const result = await harness({ sessions: [header('gone-log', dir, 100)] })
+    result.remove.mockRejectedValueOnce(new SessionPersistenceNotFoundError(SessionId('gone-log')))
+    const warn = vi.spyOn(result.ctx.logger, 'warn').mockImplementation(() => {})
+
+    await expect(result.registry.deleteSession(SessionId('gone-log'))).resolves.toBeUndefined()
+
+    expect(warn).toHaveBeenCalledWith(expect.stringContaining('already absent from session persistence'))
+    expect(result.registry.archivedSessionIds).toEqual([])
+  })
+
+  it('propagates a storage removal failure after the accounting write has landed', async () => {
+    const dir = await makeDir('delete-remove-fails')
+    const result = await harness({ sessions: [header('held-log', dir, 100)] })
+    result.remove.mockRejectedValueOnce(new Error('disk gone'))
+
+    await expect(result.registry.deleteSession(SessionId('held-log'))).rejects.toThrow('disk gone')
+
+    // The accounting removal is not rolled back; a retry converges.
+    expect(result.registry.archivedSessionIds).toEqual([])
+    await result.registry.deleteSession(SessionId('held-log'))
+    expect(result.remove).toHaveBeenCalledTimes(2)
   })
 
   it('restores the archive set across restarts and defaults it for pre-field media', async () => {
