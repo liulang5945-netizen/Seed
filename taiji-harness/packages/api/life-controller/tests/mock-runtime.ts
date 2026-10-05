@@ -162,6 +162,13 @@ async function handle(
   const path = new URL(request.url ?? '/', 'http://127.0.0.1').pathname
   const body = await readBody(request)
   requests.push({ method: request.method ?? 'GET', path, body })
+  // A scripted reply wins over every endpoint's default, GET included, so a caller
+  // can put any read surface into any HTTP state without a per-endpoint knob.
+  const scriptedGet = request.method === 'GET' ? runtime.controlReplies.get(path) : undefined
+  if (scriptedGet !== undefined) {
+    await json(response, scriptedGet.status, scriptedGet.body)
+    return
+  }
   if (request.method === 'GET' && path === '/api/runtime/status') {
     await json(response, 200, runtime.runtimeStatus)
     return

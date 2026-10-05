@@ -241,6 +241,35 @@ describe('LifeController follow', () => {
   })
 })
 
+describe('LifeController degraded reads', () => {
+  it('names the checkpoint roster that the runtime answers with an HTTP error', async () => {
+    const { controller, runtime } = await harness()
+    runtime.checkpoints = [{ filename: 'seed.pt', step: 10, bytes: 10, modified_utc: '', saved_at_utc: '', num_epochs: 1 }]
+    runtime.controlReplies.set('/api/train/checkpoints', { status: 500 })
+
+    const { snapshot } = await controller.snapshot(new AbortController().signal)
+
+    // The HTTP failure is reported as an unavailable surface, and no roster is invented.
+    expect(snapshot.unavailable.join(' ')).toContain('checkpoints: HTTP 500')
+    expect(snapshot.training.checkpoints).toEqual([])
+  })
+
+  it('drops a roster whose reply is well-received but carries no rows', async () => {
+    const { controller, runtime } = await harness()
+    runtime.checkpoints = [{ filename: 'seed.pt', step: 10, bytes: 10, modified_utc: '', saved_at_utc: '', num_epochs: 1 }]
+    runtime.controlReplies.set('/api/train/checkpoints', { status: 200, body: { status: 'ok' } })
+    runtime.controlReplies.set('/api/rag/files', { status: 200, body: { status: 'ok', files: 'not-rows' } })
+    runtime.controlReplies.set('/api/rag/status', { status: 200, body: { status: 'refused' } })
+
+    const { snapshot } = await controller.snapshot(new AbortController().signal)
+
+    // A 200 whose payload lacks the expected rows degrades silently: the panel loses
+    // the roster without an HTTP complaint it could not explain.
+    expect(snapshot.training.checkpoints).toEqual([])
+    expect(snapshot.unavailable.join(' ')).not.toContain('HTTP 200')
+  })
+})
+
 describe('LifeController training control', () => {
   it('sends every training and life control verb and returns the runtime message', async () => {
     const { controller, runtime } = await harness()
