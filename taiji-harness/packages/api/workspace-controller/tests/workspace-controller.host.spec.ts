@@ -299,6 +299,29 @@ describe('WorkspaceController commands', () => {
     await expect(controller.unpinSession({ sessionId: session.id }))
       .resolves.toEqual({ pinnedSessionIds: [] })
   })
+
+  it('refuses a live Session deletion through the controller and writes nothing', async () => {
+    const { controller, ctx, root } = await harness()
+    const created = await controller.create({ path: stageDir(root, 'delete-session') })
+    const doomed = ctx.sessions.create(SessionId('doomed'), {
+      meta: { cwd: created.workspace.path },
+    })
+    const kept = ctx.sessions.create(SessionId('kept'), {
+      meta: { cwd: created.workspace.path },
+    })
+    await controller.pinSession({ sessionId: doomed.id })
+    await controller.archiveSession({ sessionId: kept.id })
+
+    // A Session with a live handle in this Host refuses deletion as a stable
+    // business failure, and the refusal writes nothing: the pin and archive
+    // sets stay exactly as the two calls above left them.
+    await expect(controller.deleteSession({ sessionId: doomed.id })).rejects.toMatchObject({
+      code: 'workspace/session-open',
+      details: { sessionId: doomed.id },
+    })
+    expect([...ctx.workspaceRegistry.pinnedSessionIds]).toEqual([doomed.id])
+    expect([...ctx.workspaceRegistry.archivedSessionIds]).toEqual([kept.id])
+  })
 })
 
 describe('WorkspaceController follow', () => {
