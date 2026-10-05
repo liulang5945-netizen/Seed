@@ -865,6 +865,35 @@ describe('JsonlSessionPersistence: immutable format generations', () => {
     }
   })
 
+  it('drops an in-flight migration preparation when the session is deleted', async () => {
+    const header = meta('delete-during-preparation', '/work')
+    const sourcePath = historicalLogPath(root, header.cwd, header.id)
+    await mkdir(dirname(sourcePath), { recursive: true })
+    await writeFile(sourcePath, `${JSON.stringify(releasedV0Header(header))}\n`)
+    const pause = pausePhysicalRead(sourcePath)
+    readTally.enabled = true
+    const holder = ctx.sessionPersistence as SessionPersistence & {
+      migrationPreparations: Map<SessionId, { waiters: number }>
+    }
+    const opening = ctx.sessionPersistence.open(header.id, 'read')
+
+    try {
+      await pause.entered
+      await expect.poll(() => holder.migrationPreparations.get(header.id)?.waiters).toBe(1)
+
+      // Deleting a session whose migration is still in flight ends that preparation
+      // instead of leaving a controller nobody owns, and the log leaves the catalog.
+      await ctx.sessionPersistence.delete(header.id)
+
+      expect(holder.migrationPreparations.get(header.id)).toBeUndefined()
+      expect((await ctx.sessionPersistence.list()).map(stored => stored.header.id)).not.toContain(header.id)
+    } finally {
+      pause.release()
+      // Whatever the abandoned open settles to, it must not keep the process alive.
+      await opening.catch(() => undefined)
+    }
+  })
+
   it('lets one historical-open caller abort without cancelling another waiter', async () => {
     const header = meta('released-v0-shared-cancellation', '/work')
     const sourcePath = historicalLogPath(root, header.cwd, header.id)

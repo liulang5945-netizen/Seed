@@ -44,6 +44,34 @@ async function stored(persistence: SessionPersistence, id: string) {
 }
 
 describe('JsonlSessionPersistence.delete', () => {
+  it('treats a directory removed while the lease was held as an already-completed removal', async () => {
+    const { persistence, root } = await boot()
+    const id = SessionId('vanishing')
+    const dir = sessionDir(root, '/work', id)
+    const handle = await stored(persistence, 'vanishing')
+    await handle.close()
+
+    // The removal races an external actor that unlinks the directory between taking
+    // the session lock and unlinking it. The product documents already-gone as the
+    // asked-for state, so the ENOENT is swallowed; the race is made deterministic at
+    // the lease boundary instead of depending on a real concurrent remover.
+    const holder = persistence as SessionPersistence & {
+      acquireLease(session: SessionId, revision: unknown, directory: string): Promise<unknown>
+    }
+    const acquireLease = holder.acquireLease.bind(persistence)
+    holder.acquireLease = async (session, revision, directory) => {
+      const lease = await acquireLease(session, revision, directory)
+      await rm(directory, { recursive: true, force: true })
+      return lease
+    }
+
+    await expect(persistence.delete(id)).resolves.toBeUndefined()
+    expect(existsSync(dir)).toBe(false)
+
+    // The session is gone either way: the next removal says so.
+    await expect(persistence.delete(id)).rejects.toBeInstanceOf(SessionPersistenceNotFoundError)
+  })
+
   it('unlinks the session directory of a log no handle holds', async () => {
     const { persistence, root } = await boot()
     const id = SessionId('closed')
