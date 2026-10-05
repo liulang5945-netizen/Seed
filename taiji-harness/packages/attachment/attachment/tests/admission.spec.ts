@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import AttachmentStore, { admitEncodedFile, admitEncodedImages } from '@taiji/dsh-attachment'
+import AttachmentStore, { admitEncodedFile, admitEncodedImages } from '../src/index.ts'
 import type {
   FileAttachmentRef, ImageAttachmentRef, SaveImageAttachment,
 } from '@taiji/dsh-attachment/types'
