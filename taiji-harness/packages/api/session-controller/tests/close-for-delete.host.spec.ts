@@ -11,7 +11,7 @@ import { existsSync } from 'node:fs'
 import { mkdtemp, rm } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
-import { afterEach, describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import { Context } from '@taiji/cordis'
 import { agentPresetProjectionDefinition } from '@taiji/dsh-agent-preset-registry'
 import type { Agent } from '@taiji/dsh-agent'
@@ -128,5 +128,27 @@ describe('closing a live Session for deletion', () => {
     // No Agent and no handle for this id: closing it has nothing to tear down,
     // so the deletion is admitted instead of refused.
     expect(await b.controller.closeSession(SessionId('never-live'))).toBe(true)
+  })
+
+  it('cancels the running work before settling a Session it closes for deletion', async () => {
+    const b = await bench()
+    const id = SessionId('running-live')
+    const agent = await b.controller.ensureSession(id, b.cwd, false)
+    // The registry only reaches this path while work is still out: the close has
+    // to cancel it (as a user cancel, not a timeout) before waiting for idle.
+    // `status` is a read-only accessor on the real Agent, so the running posture
+    // is installed as an own getter (shadowing the prototype one) rather than
+    // assigned: the close has to cancel (as a user cancel, not a timeout) before
+    // waiting for idle.
+    Object.defineProperty(agent, 'status', { configurable: true, get: () => 'running' })
+    const cancel = vi.spyOn(agent, 'cancel')
+    const idle = vi.spyOn(agent, 'whenIdle').mockResolvedValue(undefined)
+    try {
+      expect(await b.controller.closeSession(id)).toBe(true)
+      expect(cancel).toHaveBeenCalledWith({ kind: 'user' })
+    } finally {
+      idle.mockRestore()
+      cancel.mockRestore()
+    }
   })
 })
