@@ -252,6 +252,10 @@ export function apply(ctx: Context, config: Config): void {
     turns.set(turn, digest)
     while (turns.size > REMEMBERED_TURNS) {
       const oldest = turns.keys().next().value
+      // The loop guard already proved this map holds more than one entry, and a
+      // non-empty Map always yields a key, so `undefined` only narrows the iterator
+      // type for the `delete` below.
+      /* v8 ignore next -- a map larger than REMEMBERED_TURNS cannot yield no key. */
       if (oldest === undefined) break
       turns.delete(oldest)
     }

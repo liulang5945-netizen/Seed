@@ -91,18 +91,27 @@ async function boot(config: SessionMemory.Config = {}): Promise<Context> {
 }
 
 /** Append one closed turn whose prompt, answer, and tool the reporter reads. */
-function appendTurn(session: Session, turn: number, options: { prompt?: string; answer?: string; tool?: string }): void {
+function appendTurn(session: Session, turn: number, options: {
+  prompt?: string
+  answer?: string
+  tool?: string
+  reasoning?: string
+  requestContext?: boolean
+}): void {
   session.append('turn/start', { turn })
   session.append('step/start', { turn, step: 1 })
-  session.append('request/context', { provider: PROVIDER, model: MODEL })
+  if (options.requestContext !== false) session.append('request/context', { provider: PROVIDER, model: MODEL })
   if (options.prompt !== undefined) {
+    const content: ContentBlock[] = [{ type: 'text', text: options.prompt }]
+    if (options.reasoning !== undefined) content.push({ type: 'reasoning', text: options.reasoning })
     session.append('user/message', createUserMessage({
-      content: [{ type: 'text', text: options.prompt }],
+      content,
       source: { kind: 'user' },
     }), { surfaceOp: 'append' })
   }
   const blocks: ContentBlock[] = []
   if (options.answer !== undefined) blocks.push({ type: 'text', text: options.answer })
+  if (options.reasoning !== undefined) blocks.push({ type: 'reasoning', text: options.reasoning })
   const callId = ToolCallId(`call-${String(turn)}`)
   if (options.tool !== undefined) blocks.push({ type: 'tool-call', id: callId, name: options.tool, arguments: '{}' })
   if (blocks.length > 0) {
@@ -123,16 +132,23 @@ function appendTurn(session: Session, turn: number, options: { prompt?: string; 
 }
 
 /** A top-level session with a working directory and one recorded turn. */
-function reportedSession(ctx: Context, id: string, options: { prompt?: string; answer?: string; tool?: string }): Session {
-  const session = ctx.sessions.create(SessionId(id), { meta: { cwd: CWD } })
+function reportedSession(ctx: Context, id: string, options: {
+  prompt?: string
+  answer?: string
+  tool?: string
+  reasoning?: string
+  requestContext?: boolean
+  cwd?: boolean
+}): Session {
+  const session = ctx.sessions.create(SessionId(id), options.cwd === false ? { meta: {} } : { meta: { cwd: CWD } })
   appendTurn(session, 1, options)
   return session
 }
 
 /** Dispatch the stop boundary the plugin observes. */
-async function stop(ctx: Context, session: Session, turn = 1): Promise<void> {
+async function stop(ctx: Context, session: Session, turn = 1, signal: AbortSignal = SIGNAL): Promise<void> {
   const agent = { session } as Agent
-  await ctx.serial('agent/turn-stopping', { agent, turn, signal: SIGNAL })
+  await ctx.serial('agent/turn-stopping', { agent, turn, signal })
 }
 
 /** Poll until `predicate` holds, failing after a bounded wait. */
@@ -181,6 +197,114 @@ describe('session-memory-taiji reporting', () => {
         aborted: false,
       },
     })
+  })
+
+  /** One reported record, parsed. */
+  function recordOf(runtime: FakeRuntime, index: number): {
+    text: string
+    turn: number
+    tags: string[]
+    importance: number
+    metadata: Record<string, unknown>
+  } {
+    const request = runtime.requests[index]
+    if (request === undefined) throw new Error(`the runtime captured fewer than ${String(index + 1)} requests`)
+    return JSON.parse(request.body) as ReturnType<typeof recordOf>
+  }
+
+  it('reports a surface whose last turn carries no user message', async () => {
+    const runtime = await startRuntime()
+    const ctx = await boot({ baseURL: runtime.baseURL })
+    const session = reportedSession(ctx, 'assistant-only', { answer: ANSWER })
+
+    await stop(ctx, session, 1)
+    await until(() => runtime.requests.length === 1, 'the answer-only report never reached the runtime')
+
+    expect(recordOf(runtime, 0).text).toBe('问：\n答：Done.')
+    expect(recordOf(runtime, 0).metadata.promptChars).toBe(0)
+    expect(recordOf(runtime, 0).importance).toBe(0.3)
+  })
+
+  it('raises the importance of a turn whose answer came back empty', async () => {
+    const runtime = await startRuntime()
+    const ctx = await boot({ baseURL: runtime.baseURL })
+    const session = reportedSession(ctx, 'empty-answer', { prompt: PROMPT })
+
+    await stop(ctx, session, 1)
+    await until(() => runtime.requests.length === 1, 'the empty-answer report never reached the runtime')
+
+    expect(recordOf(runtime, 0).text).toBe('问：Summarize the plan.\n答：')
+    expect(recordOf(runtime, 0).importance).toBe(0.5)
+  })
+
+  it('marks a turn the user stopped and reports what it reached', async () => {
+    const runtime = await startRuntime()
+    const ctx = await boot({ baseURL: runtime.baseURL })
+    const session = reportedSession(ctx, 'aborted', { prompt: PROMPT, answer: ANSWER })
+    const stopped = new AbortController()
+    stopped.abort()
+
+    await stop(ctx, session, 1, stopped.signal)
+    await until(() => runtime.requests.length === 1, 'the aborted report never reached the runtime')
+
+    expect(recordOf(runtime, 0).metadata.aborted).toBe(true)
+    expect(recordOf(runtime, 0).importance).toBe(0.55)
+  })
+
+  it('reports what it can for a session with no request context and no directory', async () => {
+    const runtime = await startRuntime()
+    const ctx = await boot({ baseURL: runtime.baseURL })
+    const session = reportedSession(ctx, 'bare', {
+      prompt: PROMPT, answer: ANSWER, requestContext: false, cwd: false,
+    })
+
+    await stop(ctx, session, 1)
+    await until(() => runtime.requests.length === 1, 'the context-free report never reached the runtime')
+
+    // Both optional groups stay absent; the tool count is what the surface has.
+    expect(recordOf(runtime, 0).tags).toEqual(['tools:0'])
+    expect(recordOf(runtime, 0).metadata).toEqual({
+      tools: [], toolCount: 0, answerChars: ANSWER.length, promptChars: PROMPT.length, aborted: false,
+    })
+  })
+
+  it('clips both sides of the record to the configured character budget', async () => {
+    const runtime = await startRuntime()
+    const ctx = await boot({ baseURL: runtime.baseURL, maxTextChars: 4 })
+    const session = reportedSession(ctx, 'clipped', { prompt: PROMPT, answer: ANSWER })
+
+    await stop(ctx, session, 1)
+    await until(() => runtime.requests.length === 1, 'the clipped report never reached the runtime')
+
+    expect(recordOf(runtime, 0).text).toBe('问：Summ\n答：Done')
+    // The budget clips what the runtime is shown, not what this plugin measured.
+    expect(recordOf(runtime, 0).metadata).toMatchObject({ promptChars: 19, answerChars: 5 })
+  })
+
+  it('keeps non-text blocks out of the recorded dialogue text', async () => {
+    const runtime = await startRuntime()
+    const ctx = await boot({ baseURL: runtime.baseURL })
+    const session = reportedSession(ctx, 'reasoning', { prompt: PROMPT, answer: ANSWER, reasoning: 'pondering' })
+
+    await stop(ctx, session, 1)
+    await until(() => runtime.requests.length === 1, 'the report never reached the runtime')
+
+    expect(recordOf(runtime, 0).text).toBe('问：Summarize the plan.\n答：Done.')
+  })
+
+  it('remembers only the most recent turns and still reports every one of them', async () => {
+    const runtime = await startRuntime()
+    const ctx = await boot({ baseURL: runtime.baseURL })
+    const session = ctx.sessions.create(SessionId('long-run'), { meta: { cwd: CWD } })
+    for (let turn = 1; turn <= 65; turn += 1) {
+      appendTurn(session, turn, { prompt: `Ask ${String(turn)}`, answer: `Answer ${String(turn)}` })
+    }
+
+    for (let turn = 1; turn <= 65; turn += 1) await stop(ctx, session, turn)
+    await until(() => runtime.requests.length === 65, 'the 65th report never reached the runtime')
+
+    const turns = runtime.requests.map(request => (JSON.parse(request.body) as { turn: number }).turn).sort((a, b) => a - b)
+    expect(turns).toEqual(Array.from({ length: 65 }, (_unused, index) => index + 1))
   })
 
   it('does not report the same turn twice', async () => {
