@@ -264,6 +264,21 @@ describe('LifeController feed seam', () => {
   })
 })
 
+describe('LifeController absent sections', () => {
+  it('reads a runtime status carrying neither a health nor a memory section', async () => {
+    const { controller, runtime } = await harness()
+    runtime.runtimeStatus = { status: 'ok', timestamp: 1_760_000_000, auth: { enabled: false } }
+
+    const { snapshot } = await controller.snapshot(new AbortController().signal)
+
+    // Absent sections stay absent: the reading reports the runtime as reachable
+    // without inventing a health or memory projection.
+    expect(snapshot.availability.runtime).toBe('ok')
+    expect(snapshot.health).toBeUndefined()
+    expect(snapshot.memory).toBeUndefined()
+  })
+})
+
 describe('LifeController HTTP refusals', () => {
   it('folds HTTP refusals into the stable control codes', async () => {
     const { controller, runtime } = await harness()
