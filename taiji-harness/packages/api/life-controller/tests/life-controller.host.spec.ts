@@ -264,6 +264,59 @@ describe('LifeController feed seam', () => {
   })
 })
 
+describe('LifeController HTTP refusals', () => {
+  it('folds HTTP refusals into the stable control codes', async () => {
+    const { controller, runtime } = await harness()
+    runtime.controlReplies.set('/api/train/pause', { status: 409, body: { detail: 'another run holds the lock' } })
+    runtime.controlReplies.set('/api/train/resume', { status: 400, body: { message: 'nothing to resume' } })
+    runtime.controlReplies.set('/api/train/reset', { status: 422, body: 'engine refused the reset' })
+    // An empty JSON object carries neither detail nor message, which is what drives
+    // the refusal text to fall back on the status itself.
+    runtime.controlReplies.set('/api/train/stop', { status: 500, body: {} })
+
+    // Each status picks its own detail source and code, and the empty 500 body falls back
+    // to the status text rather than inventing a reason the runtime never gave.
+    const paused = await controller.trainPause(new AbortController().signal).catch((error: unknown) => error)
+    const conflict = remoteErrorOf(paused)
+    expect(conflict).toMatchObject({ code: 'life/conflict' })
+    expect(conflict?.message).toContain('another run holds the lock')
+
+    const resumed = await controller.trainResume(new AbortController().signal).catch((error: unknown) => error)
+    const badRequest = remoteErrorOf(resumed)
+    expect(badRequest).toMatchObject({ code: 'life/bad-request' })
+    expect(badRequest?.message).toContain('nothing to resume')
+
+    const reset = await controller.trainReset(new AbortController().signal).catch((error: unknown) => error)
+    const refused = remoteErrorOf(reset)
+    expect(refused).toMatchObject({ code: 'life/bad-request' })
+    expect(refused?.message).toContain('engine refused the reset')
+
+    const stopped = await controller.trainStop(new AbortController().signal).catch((error: unknown) => error)
+    const exploded = remoteErrorOf(stopped)
+    expect(exploded).toMatchObject({ code: 'life/runtime-error' })
+    expect(exploded?.message).toContain('HTTP 500')
+  })
+
+  it('sends every optional training parameter the caller supplies', async () => {
+    const { controller, runtime } = await harness()
+
+    await expect(controller.trainStart({
+      parameterBudget: 1_000,
+      datasets: ['corpus.txt'],
+      seed: 7,
+      maxSymbols: 4_096,
+    })).resolves.toEqual({ message: 'training accepted' })
+    expect(runtime.requests.find(entry => entry.path === '/api/train/native')?.body).toEqual({
+      parameter_budget: 1_000,
+      datasets: ['corpus.txt'],
+      seed: 7,
+      max_symbols: 4_096,
+    })
+    await runtime.closeTraining()
+  })
+
+})
+
 describe('LifeController degraded reads', () => {
   it('names the checkpoint roster that the runtime answers with an HTTP error', async () => {
     const { controller, runtime } = await harness()
