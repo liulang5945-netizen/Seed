@@ -93,6 +93,12 @@ export async function apply(ctx: Context, config: Config): Promise<void> {
   let disposed = false
   ctx.effect(() => () => {
     disposed = true
+    // Nothing can reach this fall-through: `void poll()` is the next statement
+    // after this effect is registered, with no await between them, and the sleep's
+    // `setTimeout` runs in the promise executor itself, so `timer` is set before
+    // any disposal can be observed. The guard stays for a reorder that would make
+    // it live.
+    /* v8 ignore next -- disposal cannot land before the first tick arms the timer. */
     if (timer !== undefined) clearTimeout(timer)
     timer = undefined
     // Clearing the timer alone would leave the awaited sleep unsettled forever,

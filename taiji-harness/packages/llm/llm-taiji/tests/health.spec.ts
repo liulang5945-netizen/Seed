@@ -4,6 +4,7 @@ import { Context } from '@taiji/cordis'
 import type {} from '@taiji/cordis-plugin-loader'
 import { createVolatile, updateVolatile } from '@taiji/cosmokit'
 import LlmRuntime from '@taiji/dsh-llm'
+import type { AdapterRegistrationHandle } from '@taiji/dsh-llm'
 import * as LlmTaiji from '../src/index.ts'
 import { Config } from '../src/config.ts'
 import type { Config as PluginConfig } from '../src/config.ts'
@@ -200,4 +201,53 @@ describe('Taiji route membership', () => {
     expect(runtime.health).toHaveLength(probes)
     await ctx.fiber.dispose()
   })
+})
+
+it('logs a refresh the harness refused on a released registration and keeps the chain running', async () => {
+  const runtime = await mockRuntime()
+  const ctx = new Context()
+  await ctx.plugin(LlmRuntime)
+  // The handle is taken from the registry at registration time: the refusal below
+  // is the harness's own, not a stubbed exception on the path under test.
+  const original = ctx.llm.registerAdapter.bind(ctx.llm)
+  const handles: AdapterRegistrationHandle[] = []
+  vi.spyOn(ctx.llm, 'registerAdapter').mockImplementation((providers, adapter) => {
+    const handle = original(providers, adapter)
+    handles.push(handle)
+    return handle
+  })
+  await ctx.plugin(LlmTaiji, { baseURL: runtime.url, readinessPollMs: 60_000 })
+  const warn = vi.spyOn(ctx.logger, 'warn').mockImplementation(() => undefined)
+
+  // Something else released this plugin's route, so the next membership update is
+  // refused by the registry: the refresh fails on its own and is reported.
+  handles[0]!()
+  const probes = runtime.health.length
+  ctx.emit('loader/volatile-update', [])
+  await vi.waitFor(() => { expect(warn).toHaveBeenCalledOnce() })
+  expect((warn.mock.calls[0]![0] as Error).message).toContain('disposed adapter registration')
+
+  // One refused refresh does not end the chain: the next update probes again,
+  // is refused again on its own terms, and is reported again.
+  ctx.emit('loader/volatile-update', [])
+  await vi.waitFor(() => { expect(warn).toHaveBeenCalledTimes(2) })
+  expect(runtime.health.length).toBe(probes + 2)
+  await ctx.fiber.dispose()
+})
+
+it('arms no readiness cadence when the fiber unloads during its cold start', async () => {
+  const runtime = await mockRuntime()
+  const ctx = new Context()
+  await ctx.plugin(LlmRuntime)
+  // Unload the entry while its first readiness probe is still in flight: the route
+  // is never registered and the cadence never starts, so nothing keeps the loop.
+  const fiber = ctx.plugin(LlmTaiji, { baseURL: runtime.url, readinessPollMs: 250 })
+
+  await fiber.dispose()
+  await vi.waitFor(() => { expect(registered(ctx)).toEqual([]) })
+
+  const probes = runtime.health.length
+  await new Promise<void>((resolve) => { setTimeout(resolve, 700) })
+  expect(runtime.health.length).toBe(probes)
+  await ctx.fiber.dispose()
 })
