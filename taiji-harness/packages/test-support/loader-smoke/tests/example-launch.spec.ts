@@ -3,7 +3,7 @@ import {
   EXAMPLE_MODE_ENV,
   resolveExampleLaunch,
   resolveExampleMode,
-} from '@taiji/dsh-loader-smoke'
+} from '../src/index.ts'
 
 const SRC_BIN = '/repo/apps/cli/src/bin.ts'
 const TSCONFIG = '/repo/tsconfig.json'
