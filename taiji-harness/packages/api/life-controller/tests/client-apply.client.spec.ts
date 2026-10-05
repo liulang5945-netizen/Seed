@@ -4,6 +4,7 @@ import type { ConnectionHandle } from '@taiji/dsh-client-connection/client'
 import { RemoteStream, type RemoteStreamOptions } from '@taiji/dsh-api-gateway/client'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import * as LifeClientApi from '../src/client/index.ts'
+import type { LifeStreamSink } from '../src/client/index.ts'
 import type { LifeFollowFrame } from '../src/types.ts'
 
 const contexts = new Set<Context>()
@@ -137,5 +138,19 @@ describe('Life Controller Client apply', () => {
     await failedState(ctx)
     expect(ctx.life.getSnapshot()).not.toBe(before)
     expect(before.state).toBeOneOf(['idle', 'ready'])
+  })
+
+  it('builds a state stream with no carrier observer for callers that omit one', async () => {
+    const { ctx } = await mount({ frames: [] })
+    const accept: LifeStreamSink = {
+      replaceBaseline: () => {},
+      replaceSnapshot: () => {},
+      handleStreamFailure: () => {},
+    }
+
+    // `apply` always observes the carrier, so the carrier-free caller is the factory's
+    // own contract: building without that observer must still yield a stream.
+    const stream = LifeClientApi.createLifeStateStream(ctx.remote, { accept, failed: () => {} })
+    expect(stream).toBeDefined()
   })
 })
