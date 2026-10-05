@@ -561,6 +561,47 @@ describe('delete action', () => {
       expect(screen.queryByRole('dialog')).toBeNull()
     })
 
+    it('ignores a dismissal that arrives while the deletion is in flight', async () => {
+      const pending = Promise.withResolvers<undefined>()
+      const deleteSession = vi.fn(() => pending.promise)
+      const { settleSessionDelete, ask } = deleteDialog(deleteSession)
+      ask({ sessionId: sid('one'), displayTitle: 'Session title' })
+      fireEvent.click(screen.getByRole('button', { name: '删除' }))
+      // The footer Cancel is disabled once deleting, but the Modal's own close
+      // control is not: closing there would settle the request while the Host
+      // still owes us a result, so the dialog has to stay.
+      fireEvent.click(screen.getByRole('button', { name: /关闭|close/i }))
+      expect(settleSessionDelete).not.toHaveBeenCalled()
+      expect(screen.getByRole('dialog')).toBeTruthy()
+      await act(async () => { pending.resolve(undefined) })
+      expect(settleSessionDelete).toHaveBeenCalledOnce()
+    })
+
+    it('names a Session held by another owner in localized copy', async () => {
+      const refusal = Object.assign(
+        new Error('workspace session delete failed: workspace/session-open: live in this Host'),
+        { name: 'WorkspaceSessionDeleteError', rpcError: { code: 'workspace/session-open', details: { sessionId: sid('one') } } },
+      )
+      const deleteSession = vi.fn<SessionDeleteConfirmInjected['deleteSession']>().mockRejectedValue(refusal)
+      const { settleSessionDelete, ask } = deleteDialog(deleteSession)
+      ask({ sessionId: sid('one'), displayTitle: 'Session title' })
+      fireEvent.click(screen.getByRole('button', { name: '删除' }))
+      await act(async () => { await Promise.resolve() })
+      expect(screen.getByRole('alert').textContent).toBe(t('sessionDelete.confirm.heldOpen'))
+      expect(screen.getByRole('dialog')).toBeTruthy()
+      expect(settleSessionDelete).not.toHaveBeenCalled()
+    })
+
+    it('shows the text of a rejection that is not an Error object', async () => {
+      const deleteSession = vi.fn<SessionDeleteConfirmInjected['deleteSession']>().mockRejectedValue('backend said no')
+      const { settleSessionDelete, ask } = deleteDialog(deleteSession)
+      ask({ sessionId: sid('one'), displayTitle: 'Session title' })
+      fireEvent.click(screen.getByRole('button', { name: '删除' }))
+      await act(async () => { await Promise.resolve() })
+      expect(screen.getByRole('alert').textContent).toBe('backend said no')
+      expect(settleSessionDelete).not.toHaveBeenCalled()
+    })
+
     it('escalates a running-work refusal into the stop-and-delete confirm', async () => {
       const refusal = Object.assign(new Error('workspace session delete failed: workspace/session-active: active'), {
         name: 'WorkspaceSessionDeleteError',
