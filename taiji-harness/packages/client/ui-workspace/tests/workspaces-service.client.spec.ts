@@ -156,7 +156,8 @@ class FakeSessions implements ISessions {
   declare readonly using: ISessions['using']
   declare readonly retainInfo: ISessions['retainInfo']
   declare readonly searchResultLimit: ISessions['searchResultLimit']
-  declare readonly refresh: ISessions['refresh']
+  // The list pull the Session Controller exposes; a deletion is followed by it.
+  refresh = vi.fn<ISessions['refresh']>(() => Promise.resolve())
   declare readonly search: ISessions['search']
   declare readonly scope: ISessions['scope']
   declare readonly scopeOf: ISessions['scopeOf']
@@ -197,6 +198,8 @@ class FakeWorkspaces implements IWorkspaces {
   readonly pinCalls: SessionId[] = []
   readonly unpinCalls: SessionId[] = []
   readonly deleteCalls: SessionId[] = []
+  // What the Controller is actually asked for, including the stop-the-work flag.
+  readonly deleteRequests: { sessionId: SessionId; options: unknown }[] = []
   onDelete: IWorkspaces['deleteSession'] = async (sessionId) => {
     this.deleteCalls.push(sessionId)
     this.list.update(state => ({
@@ -227,7 +230,7 @@ class FakeWorkspaces implements IWorkspaces {
   }
 
   deleteSession(sessionId: SessionId, options?: { readonly stopActivity?: boolean }): Promise<void> {
-    void options
+    this.deleteRequests.push({ sessionId, options })
     return this.onDelete(sessionId)
   }
 
@@ -279,15 +282,27 @@ class FakeDirectoryPicker {
   }
 }
 
+/** The composer-block registry this plugin writes through `ctx.conversation`. */
+function fakeConversation() {
+  const blocks = new Map<SessionId, { readonly reason: string } | undefined>()
+  const set = vi.fn<(sessionId: SessionId, owner: string, block: { readonly reason: string } | undefined) => void>(
+    (sessionId, _owner, block) => { blocks.set(sessionId, block) },
+  )
+  return { blocks, set, service: { blocks: { set } } }
+}
+
 interface BenchOptions {
   readonly language?: string
   readonly configureWorkspaces?: (workspaces: FakeWorkspaces) => void
   readonly workspaces?: WorkspaceSnapshot
   readonly sessions?: SessionListState
   readonly configureSessions?: (sessions: FakeSessions) => void
+  /** Compose the conversation service before this plugin is constructed. */
+  readonly withConversation?: boolean
 }
 
-function bench(options: BenchOptions = {}) {
+/** Everything the navigation service consumes, before any service is built. */
+function fixture(options: BenchOptions = {}) {
   const ctx = new Context()
   contexts.push(ctx)
   const locale = new LocaleRuntime(ctx)
@@ -307,10 +322,12 @@ function bench(options: BenchOptions = {}) {
   const sessions = new FakeSessions(options.sessions ?? sessionState([], 'pending'))
   options.configureWorkspaces?.(workspaces)
   options.configureSessions?.(sessions)
+  const conversation = fakeConversation()
+  if (options.withConversation === true) ctx.provide('conversation', conversation.service)
   const view = createWorkspaceViewStore().create()
   const notify = vi.fn<(toast: RowToast) => void>()
-  const uiWorkspace = new UiWorkspaceService(
-    ctx,
+  const build = (owner: Context) => new UiWorkspaceService(
+    owner,
     directoryPicker.remote,
     workspaces,
     sessions,
@@ -318,7 +335,12 @@ function bench(options: BenchOptions = {}) {
     notify,
     () => 'archived sessions are read-only',
   )
-  return { ctx, directoryPicker, sessions, uiWorkspace, workspaces, layout, selectPanel, view, notify }
+  return { ctx, directoryPicker, sessions, workspaces, conversation, layout, selectPanel, view, notify, build }
+}
+
+function bench(options: BenchOptions = {}) {
+  const parts = fixture(options)
+  return { ...parts, uiWorkspace: parts.build(parts.ctx) }
 }
 
 describe('UiWorkspaceService', () => {
@@ -1136,6 +1158,55 @@ describe('UiWorkspaceService', () => {
     expect(b.sessions.retained[0]!.release).toHaveBeenCalledOnce()
   })
 
+  it('raises the composer block for an archived current view and clears it on the next selection', () => {
+    const b = bench({ withConversation: true })
+    b.workspaces.list.set(workspaceState([workspace('w1', [sid('archived'), sid('idle')])], [sid('archived')]))
+    b.sessions.list.set(sessionState([summary('archived'), summary('idle')]))
+
+    b.uiWorkspace.openSession(sid('archived'))
+    expect(b.conversation.blocks.get(sid('archived'))).toEqual({ reason: 'archived sessions are read-only' })
+
+    // A reconcile that changes nothing re-publishes the same block, not a second write.
+    b.sessions.list.set(sessionState([summary('archived'), summary('idle')]))
+    expect(b.conversation.set).toHaveBeenCalledTimes(1)
+
+    b.uiWorkspace.openSession(sid('idle'))
+    expect(b.conversation.set).toHaveBeenLastCalledWith(sid('archived'), 'workspace-archive', undefined)
+    expect(b.conversation.blocks.get(sid('idle'))).toBeUndefined()
+  })
+
+  it('releases the composer block it holds when its own plugin fiber unloads', async () => {
+    const f = fixture({ withConversation: true })
+    let created: UiWorkspaceService | undefined
+    const fiber = f.ctx.plugin((owner: Context) => {
+      created = f.build(owner)
+    })
+    await fiber.await()
+    const uiWorkspace = created!
+    f.workspaces.list.set(workspaceState([workspace('w1', [sid('archived')])], [sid('archived')]))
+    f.sessions.list.set(sessionState([summary('archived')]))
+    uiWorkspace.openSession(sid('archived'))
+    expect(f.conversation.blocks.get(sid('archived'))).toEqual({ reason: 'archived sessions are read-only' })
+
+    await fiber.dispose()
+
+    expect(f.conversation.set).toHaveBeenLastCalledWith(sid('archived'), 'workspace-archive', undefined)
+  })
+
+  it('raises the block for an open archived view once the conversation service arrives', () => {
+    const b = bench()
+    b.workspaces.list.set(workspaceState([workspace('w1', [sid('archived')])], [sid('archived')]))
+    b.sessions.list.set(sessionState([summary('archived')]))
+    b.uiWorkspace.openSession(sid('archived'))
+    // Nothing to write to yet, so the read-only view is open without a block.
+    expect(b.conversation.set).not.toHaveBeenCalled()
+    b.ctx.provide('conversation', b.conversation.service)
+
+    b.uiWorkspace.refreshComposerBlock()
+
+    expect(b.conversation.blocks.get(sid('archived'))).toEqual({ reason: 'archived sessions are read-only' })
+  })
+
   it('forwards archive commands and preserves failures', async () => {
     const idle = sid('idle')
     const b = bench()
@@ -1158,6 +1229,29 @@ describe('UiWorkspaceService', () => {
     b.workspaces.onUnarchive = () => Promise.reject(new Error('unarchive rejected'))
     await expect(b.uiWorkspace.unarchiveSession(idle)).rejects.toThrow('unarchive rejected')
     expect(b.workspaces.unarchiveCalls).toEqual([idle, idle])
+  })
+
+  it('deletes a Session through the Controller and pulls a fresh Session list', async () => {
+    const b = bench()
+
+    await expect(b.uiWorkspace.deleteSession(sid('gone'))).resolves.toBeUndefined()
+
+    expect(b.workspaces.deleteRequests).toEqual([{ sessionId: sid('gone'), options: {} }])
+    expect(b.sessions.refresh).toHaveBeenCalledOnce()
+  })
+
+  it('keeps a deletion the Host accepted when the Session list pull afterwards fails', async () => {
+    const warning = vi.spyOn(console, 'warn').mockImplementation(() => undefined)
+    const failure = new Error('list pull failed')
+    const b = bench({ configureSessions: (sessions) => {
+      sessions.refresh = vi.fn<ISessions['refresh']>(() => Promise.reject(failure))
+    } })
+
+    await expect(b.uiWorkspace.deleteSession(sid('busy'), { stopActivity: true })).resolves.toBeUndefined()
+    await setImmediate()
+
+    expect(b.workspaces.deleteRequests).toEqual([{ sessionId: sid('busy'), options: { stopActivity: true } }])
+    expect(warning).toHaveBeenCalledWith('session list refresh after delete failed:', failure)
   })
 
   it('passes directory operations to the Host and preserves structured browse failures', async () => {
