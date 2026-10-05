@@ -391,7 +391,7 @@ export class LifeController extends TypertRemoteService {
 /** Operator-readable text for one thrown value. */
 function describe(error: unknown): string {
   if (error instanceof RemoteError) return `${error.code}: ${error.message}`
-  /* v8 ignore next -- the transport and typert layers reject with Error instances; reaching this arm needs a non-Error throw from outside them. */
+  /* v8 ignore next -- transport and typert rejections are Errors; this arm needs a non-Error throw. */
   return error instanceof Error ? error.message : String(error)
 }
 

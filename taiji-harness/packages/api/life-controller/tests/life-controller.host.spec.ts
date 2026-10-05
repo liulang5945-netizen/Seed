@@ -210,6 +210,34 @@ describe('LifeController follow', () => {
         throw new Error(`expected tick 130, received ${String(frame.value.life?.native?.tick)}`)
       }
     })
+
+    // Reading one more change drives the queue loop past the yield it returned
+    // from: the consumer that keeps up keeps getting frames, not a closed stream.
+    runtime.runtimeStatus = {
+      ...runtime.runtimeStatus,
+      life: { status: 'seed', is_running: true, needs: { curiosity: 90, fatigue: 1, stress: 0 }, mode: 'wake', tick: 140 },
+    }
+
+    const again = await vi.waitFor(async () => {
+      const frame: LifeFollowFrame = await nextFrame(second)
+      if (frame.type !== 'snapshot' || frame.value.life?.native?.tick !== 140) {
+        throw new Error(`expected tick 140, received ${String(frame.value?.life?.native?.tick)}`)
+      }
+      return frame
+    })
+    expect(again.type).toBe('snapshot')
+  })
+
+  it('closes a queued follower on disposal and again when its consumer returns', async () => {
+    const { controller, ctx } = await harness()
+    const iterator = controller.follow(new AbortController().signal)[Symbol.asyncIterator]()
+    expect((await nextFrame(iterator)).type).toBe('baseline')
+
+    // Disposal closes every queue the feed holds. The suspended consumer's own
+    // teardown then finds that queue already closed: the second close is a
+    // no-op, so nothing wakes twice and the stream simply reports completion.
+    await ctx.fiber.dispose()
+    await expect(iterator.return?.()).resolves.toMatchObject({ done: true })
   })
 })
 

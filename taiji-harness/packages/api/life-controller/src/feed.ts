@@ -122,6 +122,7 @@ export class LifeFeed {
 
   private async cycle(): Promise<void> {
     while (!this.stopped) {
+      /* v8 ignore next -- readSnapshot folds transport failures into a down snapshot; the catch arm needs a non-transport throw. */
       await this.refresh(this.lifetime.signal).catch((error: unknown) => {
         /* v8 ignore next -- readSnapshot converts transport failures into a down snapshot. */
         this.ctx.logger.warn(`life-controller: snapshot read failed: ${String(error)}`)
@@ -170,6 +171,7 @@ class LifeFollower {
   private closed = false
 
   push(snapshot: LifeSnapshot): void {
+    /* v8 ignore next -- a closed queue leaves the publish set before the next publish, so no publish can reach it. */
     if (this.closed) return
     this.pending = snapshot
     this.waiter.wake()
