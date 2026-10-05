@@ -104,4 +104,29 @@ describe('closing a live Session for deletion', () => {
     expect(b.ctx.agents.get(id)?.id).toBe(id)
     await expect(b.ctx.sessionPersistence.delete(id)).rejects.toBeInstanceOf(SessionAlreadyOwnedError)
   })
+
+  it('refuses to hand out a Session whose deletion has begun closing it', async () => {
+    const b = await bench()
+    const id = SessionId('closing-now')
+    await b.controller.ensureSession(id, b.cwd, false)
+    // `closeSession` marks the Session as closing synchronously before its first
+    // await, so a resolve started while the close is settling must be refused
+    // rather than resume a Session whose log is about to be removed.
+    const closing = b.controller.closeSession(id)
+    const refused = await b.controller.resolveAgent(id)
+    expect(refused).toMatchObject({
+      error: {
+        code: 'session/agent-busy',
+        details: { reason: 'session deletion in progress' },
+      },
+    })
+    await closing
+  })
+
+  it('reports a Session that is not live anywhere as already closed', async () => {
+    const b = await bench()
+    // No Agent and no handle for this id: closing it has nothing to tear down,
+    // so the deletion is admitted instead of refused.
+    expect(await b.controller.closeSession(SessionId('never-live'))).toBe(true)
+  })
 })
