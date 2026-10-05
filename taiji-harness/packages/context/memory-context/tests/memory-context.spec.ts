@@ -146,6 +146,76 @@ function quiet(): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, 50))
 }
 
+describe('memory-context refusal and eviction paths', () => {
+  it('refuses malformed recall bodies with one warning and no injection', async () => {
+    const bodies: readonly string[] = [
+      'null',
+      '{"entries":123}',
+      '{"entries":[123]}',
+      '{"entries":[{"kind":"memory","text":"t","score":"0.5"}]}',
+      '{"entries":[{"kind":"memory","text":"t","score":null}]}',
+    ]
+    for (const [index, body] of bodies.entries()) {
+      const runtime = await startRuntime(answer(body))
+      const ctx = await mount({ baseURL: runtime.baseURL })
+      const warn = vi.spyOn(ctx.logger, 'warn')
+      const agent = stubAgent(Session.create(SessionId(`malformed-${String(index)}`)))
+      const question = userMessage(QUESTION)
+
+      // A body outside the documented shape is refused rather than rendered thin,
+      // and the step still proceeds with what the user sent.
+      expect(await fire(ctx, agent, [question], 1, 1)).toEqual([question])
+      expect(warn).toHaveBeenCalledTimes(1)
+    }
+  })
+
+  it('ignores blocks that carry no text when it builds the query', async () => {
+    const runtime = await startRuntime()
+    const ctx = await mount({ baseURL: runtime.baseURL })
+    const agent = stubAgent(Session.create(SessionId('image-block')))
+    const message = createUserMessage({
+      content: [{ type: 'image', attachment: {} as never }, { type: 'text', text: QUESTION }],
+      source: { kind: 'user' },
+    })
+
+    expect((await fire(ctx, agent, [message], 1, 1))[0]?.source.kind).toBe('memory-context')
+  })
+
+  it('returns an aborted step before the turn is claimed or the runtime is asked', async () => {
+    const runtime = await startRuntime()
+    const ctx = await mount({ baseURL: runtime.baseURL })
+    const agent = stubAgent(Session.create(SessionId('aborted')))
+    const question = userMessage(QUESTION)
+
+    expect(await fire(ctx, agent, [question], 1, 1, AbortSignal.abort())).toEqual([question])
+    expect(runtime.requests).toHaveLength(0)
+  })
+
+  it('skips the recall when the step holds nothing the user actually sent', async () => {
+    const runtime = await startRuntime()
+    const ctx = await mount({ baseURL: runtime.baseURL })
+    const agent = stubAgent(Session.create(SessionId('no-query')))
+    const injected = injectedContext(BLOCK)
+
+    expect(await fire(ctx, agent, [injected], 1, 1)).toEqual([injected])
+    expect(runtime.requests).toHaveLength(0)
+  })
+
+  it('serves the same turn again once the session has been disposed', async () => {
+    const runtime = await startRuntime()
+    const ctx = await mount({ baseURL: runtime.baseURL })
+    const session = Session.create(SessionId('reused'))
+    const agent = stubAgent(session)
+    const question = userMessage(QUESTION)
+
+    expect(await fire(ctx, agent, [question], 1, 1)).toHaveLength(2)
+    expect(await fire(ctx, agent, [question], 1, 2)).toEqual([question])
+
+    ctx.emit('session/disposed', session)
+    expect((await fire(ctx, agent, [question], 1, 3))[0]?.source.kind).toBe('memory-context')
+  })
+})
+
 describe('memory-context recall', () => {
   it('injects one durable message on the first step and nothing on a later step of the same turn', async () => {
     const runtime = await startRuntime()
