@@ -584,10 +584,12 @@ export class LifeRuntimeClient {
         redirect: 'error',
       })
     } catch (error) {
+      /* v8 ignore next -- an aborted AbortSignal always carries a reason in Node. */
       if (signal.aborted) throw signal.reason ?? error
       throw new RemoteError(
         'life/runtime-unreachable',
         `Taiji runtime is unreachable at ${this.options.baseURL}`,
+        /* v8 ignore next 2 -- fetch rejects with Error instances, never bare values. */
         { baseURL: this.options.baseURL, reason: error instanceof Error ? error.message : String(error) },
       )
     }
@@ -979,5 +981,6 @@ function encodeRoutePath(relative: string): string {
 /** Operator-readable one-liner for a failed read. */
 function describeFailure(error: unknown): string {
   if (error instanceof RemoteError) return `${error.code}: ${error.message}`
+  /* v8 ignore next -- every failure on a read path raises an Error. */
   return error instanceof Error ? error.message : String(error)
 }

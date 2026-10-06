@@ -390,6 +390,27 @@ describe('LifeController stream refused as HTTP', () => {
 })
 
 
+
+describe('LifeController pass report', () => {
+  it('reports a pass whose own spec block is absent and whose lists are not lists', async () => {
+    const { controller, runtime } = await harness()
+    runtime.controlReplies.set('/api/consolidation/status', {
+      status: 200,
+      body: { passes: 2, last_report: { reason: 'gate closed', duration_ms: 5, weaknesses: 'many', notes: ['ok'] } },
+    })
+
+    const { snapshot } = await controller.snapshot(new AbortController().signal)
+    const report = snapshot.consolidation?.lastReport
+
+    // A report without its own spec block reports no spec reason, and a field that is not a
+    // list yields no entries rather than a coerced single item.
+    expect(report?.reason).toBe('gate closed')
+    expect(report?.specReason).toBe('')
+    expect(report?.weaknesses).toEqual([])
+    expect(report?.notes).toEqual(['ok'])
+  })
+})
+
 describe('LifeController gated surface', () => {
   it('names a gated surface the runtime answers with an HTTP error', async () => {
     const { controller, runtime } = await harness()
