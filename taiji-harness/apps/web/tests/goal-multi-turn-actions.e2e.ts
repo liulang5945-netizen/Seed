@@ -12,7 +12,8 @@ import type { SessionEvent, SessionId } from '@taiji/dsh-session'
 import type {} from '@taiji/dsh-goal'
 import {
   assertFixtureInventory, captureExpandedTurnProcessAria, captureStableAria, compareOrRefreshGolden,
-  launchWebScaffold, recordFixture, selectedSessionFixture, watchConsole, webSnapshotMode, type WebScaffold,
+  foldPwshTableRendering, launchWebScaffold, recordFixture, selectedSessionFixture, watchConsole, webSnapshotMode,
+  type WebScaffold,
 } from './scaffold.ts'
 import { connectFreshWorkspace, newEnglishPage, saveFailureShot } from './support.ts'
 
@@ -113,7 +114,7 @@ describe('web e2e: Goal keeps one assistant action row per completed turn', () =
     sessionEvents = []
     if (MODE !== 'record') replayFixture = await selectedSessionFixture(FIXTURE, false)
     scaffold = await launchWebScaffold(
-      MODE === 'record' ? {} : { replayFixture, replayOverride: OVERRIDE },
+      MODE === 'record' ? {} : { replayFixture, replayOverride: OVERRIDE, replaySessionNormalize: foldPwshTableRendering },
     )
     await seedPackageInventory(scaffold.workspaceCwd)
     scaffold.ctx.on('session/event', (_session, event: SessionEvent) => { sessionEvents.push(event) })

@@ -338,12 +338,15 @@ export interface LaunchOptions {
   compareReplaySession?: boolean | 'read-only'
   /**
    * Lane-level normalization applied to both sides of the replayed-session
-   * compare, before the shared volatile folds. For lanes whose recorded stderr
-   * carries PowerShell error *rendering* that moved between hosts — 5.1
-   * NormalView frame blocks versus 7 ConciseView single lines, and the
-   * pre-`chcp` encoding preamble's ConstrainedLanguage failures — this folds
-   * that machine form to the shared core message. The committed fixture is
-   * never rewritten; refresh writes stay unfolded.
+   * compare, after the shared volatile folds and harness-home tokenization.
+   * For lanes whose recorded PowerShell output carries machine form that
+   * moved between hosts — 5.1 NormalView error frames versus 7 ConciseView,
+   * the pre-`chcp` preamble's ConstrainedLanguage failures, and Format-Table
+   * column padding or ellipsis truncation — this folds that form to the
+   * shared content. Running after (not before) the shared folds matters: a
+   * truncation cut must see the already-tokenized `{{cwd}}` prefix or the
+   * workspace path would no longer be foldable on the received side. The
+   * committed fixture is never rewritten; refresh writes stay unfolded.
    */
   replaySessionNormalize?: (log: string) => string
   /**
@@ -1328,6 +1331,102 @@ function stableSessionFixture(
   return stable
 }
 
+/**
+ * PowerShell renders the same stderr with different *form* per host: fixtures
+ * recorded under Windows PowerShell 5.1 in the read-only sandbox's
+ * ConstrainedLanguage mode carry the then-unconditional encoding preamble's
+ * `Cannot create type` frames and NormalView frame blocks hard-wrapped at the
+ * recording console's width; pwsh 7 prints ConciseView single lines and the
+ * current `chcp 65001` preamble no longer errors. Fold that machine form to
+ * the shared core message on both sides — the denied-path sentence, the
+ * sandbox notices, and the exit code all survive — so the committed fixture
+ * compares against the current product without rewriting it. Blocks start at
+ * bracket markers, message starts, or frame apparatus; any other line is a
+ * hard-wrap continuation of the previous block and dies with it, so wrapped
+ * frame tails cannot leak into the result.
+ */
+export function foldPwshErrorRendering(log: string): string {
+  return log.split('\n').map((line) => {
+    if (!line.includes('"type":"tool/result"')) return line
+    let record: { data?: { message?: { content?: Array<{ text?: unknown }> } } }
+    try {
+      record = JSON.parse(line)
+    } catch {
+      return line
+    }
+    const content = record.data?.message?.content
+    if (content === undefined) return line
+    let touched = false
+    for (const block of content) {
+      if (typeof block.text !== 'string' || !block.text.startsWith('[stderr]\n')) continue
+      const startsBlock = (value: string): boolean =>
+        value.startsWith('[')
+        || /^Set-Content[ :]/.test(value)
+        || /^Cannot create type\. /.test(value)
+        || /^At line:\d+ char:\d+$/.test(value)
+        || /^\s*\+/.test(value)
+      const isFrame = (value: string): boolean =>
+        /^Cannot create type\. /.test(value)
+        || /^At line:\d+ char:\d+$/.test(value)
+        || /^\s*\+/.test(value)
+      const blocks: Array<{ text: string; frame: boolean }> = []
+      for (const stderrLine of block.text.split(/\r?\n/)) {
+        if (blocks.length === 0 || startsBlock(stderrLine)) {
+          blocks.push({ text: stderrLine, frame: isFrame(stderrLine) })
+        } else {
+          (blocks[blocks.length - 1] as { text: string }).text += stderrLine
+        }
+      }
+      const folded = blocks.filter((entry) => !entry.frame)
+        .map((entry) => (entry.text.startsWith('Set-Content : ') ? `Set-Content:${entry.text.slice('Set-Content :'.length)}` : entry.text))
+        .join('\n')
+      if (folded !== block.text) {
+        block.text = folded
+        touched = true
+      }
+    }
+    return touched ? JSON.stringify(record) : line
+  }).join('\n')
+}
+
+/**
+ * PowerShell lays out Format-Table output differently per host and version:
+ * 5.1 pads cells to the recorded console's column width and ends the table
+ * with a version-dependent number of blank lines; pwsh 7 pads differently and
+ * truncates long cells with a one-character ellipsis where 5.1 used three
+ * ASCII dots, shifting the cut position. Fold that machine form on both
+ * sides: strip per-line trailing whitespace, canonicalize truncated rows to a
+ * fixed prefix width (the semantic "a longer path existed here" survives; the
+ * exact cut is version form), and drop trailing blank lines.
+ */
+export function foldPwshTableRendering(log: string): string {
+  return log.split('\n').map((line) => {
+    if (!line.includes('"type":"tool/result"')) return line
+    let record: { data?: { message?: { content?: Array<{ text?: unknown }> } } }
+    try {
+      record = JSON.parse(line)
+    } catch {
+      return line
+    }
+    const content = record.data?.message?.content
+    if (content === undefined) return line
+    let touched = false
+    for (const block of content) {
+      if (typeof block.text !== 'string') continue
+      const lines = block.text.split(/\r?\n/)
+        .map((value) => value.replace(/\s+$/u, ''))
+        .map((value) => (value.endsWith('…') || value.endsWith('...') ? `${value.slice(0, 40)}…` : value))
+      while (lines.length > 0 && lines[lines.length - 1] === '') lines.pop()
+      const folded = lines.join('\n')
+      if (folded !== block.text) {
+        block.text = folded
+        touched = true
+      }
+    }
+    return touched ? JSON.stringify(record) : line
+  }).join('\n')
+}
+
 async function assertReplaySession(
   sessions: readonly Session[],
   fixturePath: string,
@@ -1375,22 +1474,28 @@ async function assertReplaySession(
   // (SPEC-M6-01 §5 addendum). The value-level fold inside
   // normalizeWebSessionVolatiles already covers every nesting depth; these
   // row-level splits stay as belt-and-suspenders.
-  // The lane fold runs on the raw logs so it sees the recorded stderr shape;
-  // the refresh write above already happened, so refreshed fixtures stay
+  // The lane fold runs on the fully normalized snapshots, after the workspace
+  // paths are already tokenized — a truncation cut must see `{{cwd}}`, not the
+  // raw temp path, or the received side would stop being foldable. The
+  // refresh write above already happened, so refreshed fixtures stay
   // canonical (unfolded) on disk.
   const actualSnapshot = normalizeSessionSnapshots(
-    [normalizeWebSessionVolatiles(laneNormalize === undefined ? actual : laneNormalize(actual))], actualContext,
+    [normalizeWebSessionVolatiles(actual)], actualContext,
   )[0]
     ?.split(harnessHome).join('{{harnessHome}}')
     .split(harnessHome.replaceAll('\\', '\\\\')).join('{{harnessHome}}')
     .split(harnessHome.replaceAll('\\', '/')).join('{{harnessHome}}')
   const expectedSnapshot = normalizeSessionSnapshots(
-    [normalizeWebSessionVolatiles(laneNormalize === undefined ? expected : laneNormalize(expected))], expectedContext,
+    [normalizeWebSessionVolatiles(expected)], expectedContext,
   )[0]
     ?.split(harnessHome).join('{{harnessHome}}')
     .split(harnessHome.replaceAll('\\', '\\\\')).join('{{harnessHome}}')
     .split(harnessHome.replaceAll('\\', '/')).join('{{harnessHome}}')
-  expect(actualSnapshot, `${fixturePath}: persisted replay`).toBe(expectedSnapshot)
+  const foldLane = (snapshot: string | undefined): string | undefined =>
+    snapshot === undefined || laneNormalize === undefined ? snapshot : laneNormalize(snapshot)
+  const actualForCompare = foldLane(actualSnapshot)
+  const expectedForCompare = foldLane(expectedSnapshot)
+  expect(actualForCompare, `${fixturePath}: persisted replay`).toBe(expectedForCompare)
 
   if (manifest.header?.pin !== true) return
   const normalizePrompt = (value: string): string => value

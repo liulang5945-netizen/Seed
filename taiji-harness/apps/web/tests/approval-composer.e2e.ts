@@ -12,7 +12,8 @@ import type { SessionEvent } from '@taiji/dsh-session'
 import type {} from '@taiji/dsh-user-approval'
 import {
   assertFinalWorkspaceSnapshot, assertFixtureInventory, captureStableAria, compareOrRefreshGolden, fixtureUserPrompts,
-  launchWebScaffold, recordFixture, selectedSessionFixture, watchConsole, webSnapshotMode, type WebScaffold,
+  foldPwshErrorRendering, launchWebScaffold, recordFixture, selectedSessionFixture, watchConsole, webSnapshotMode,
+  type WebScaffold,
 } from './scaffold.ts'
 import { connectFreshWorkspace, newEnglishPage, saveFailureShot } from './support.ts'
 
@@ -29,64 +30,6 @@ const PROMPT = `Write a file named notes.txt in the workspace containing exactly
 
 /** Draft used to measure the composer's own text cap: enough lines to pass it. */
 const CAP_PROBE = Array.from({ length: 40 }, (_, index) => `line ${index}`).join('\n')
-
-/**
- * PowerShell renders the same stderr with different *form* per host: the
- * 10-02 fixture was recorded under Windows PowerShell 5.1 in the read-only
- * sandbox's ConstrainedLanguage mode, where the then-unconditional encoding
- * preamble failed (its `Cannot create type` frames) and 5.1 prints NormalView
- * frame blocks hard-wrapped at the recording console's width; pwsh 7 prints
- * ConciseView single lines and the current `chcp 65001` preamble no longer
- * errors. Fold that machine form to the shared core message on both sides —
- * the denied-path sentence, the sandbox notices, and the exit code all
- * survive — so the committed fixture compares against the current product
- * without rewriting it. Blocks start at bracket markers, message starts, or
- * frame apparatus; any other line is a hard-wrap continuation of the previous
- * block and dies with it, so wrapped frame tails cannot leak into the result.
- */
-function foldPwshErrorRendering(log: string): string {
-  return log.split('\n').map((line) => {
-    if (!line.includes('"type":"tool/result"')) return line
-    let record: { data?: { message?: { content?: Array<{ text?: unknown }> } } }
-    try {
-      record = JSON.parse(line)
-    } catch {
-      return line
-    }
-    const content = record.data?.message?.content
-    if (content === undefined) return line
-    let touched = false
-    for (const block of content) {
-      if (typeof block.text !== 'string' || !block.text.startsWith('[stderr]\n')) continue
-      const startsBlock = (value: string): boolean =>
-        value.startsWith('[')
-        || /^Set-Content[ :]/.test(value)
-        || /^Cannot create type\. /.test(value)
-        || /^At line:\d+ char:\d+$/.test(value)
-        || /^\s*\+/.test(value)
-      const isFrame = (value: string): boolean =>
-        /^Cannot create type\. /.test(value)
-        || /^At line:\d+ char:\d+$/.test(value)
-        || /^\s*\+/.test(value)
-      const blocks: Array<{ text: string; frame: boolean }> = []
-      for (const stderrLine of block.text.split(/\r?\n/)) {
-        if (blocks.length === 0 || startsBlock(stderrLine)) {
-          blocks.push({ text: stderrLine, frame: isFrame(stderrLine) })
-        } else {
-          (blocks[blocks.length - 1] as { text: string }).text += stderrLine
-        }
-      }
-      const folded = blocks.filter((entry) => !entry.frame)
-        .map((entry) => (entry.text.startsWith('Set-Content : ') ? `Set-Content:${entry.text.slice('Set-Content :'.length)}` : entry.text))
-        .join('\n')
-      if (folded !== block.text) {
-        block.text = folded
-        touched = true
-      }
-    }
-    return touched ? JSON.stringify(record) : line
-  }).join('\n')
-}
 
 describe('web e2e: approval takeover keeps its actions reachable', () => {
   let scaffold: WebScaffold
