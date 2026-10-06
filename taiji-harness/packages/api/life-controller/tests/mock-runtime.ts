@@ -37,6 +37,12 @@ export interface MockLifeRuntime {
   training: TrainingScript
   /** Script consumed by the next `POST /api/train/resume_checkpoint`. */
   resume: TrainingScript
+  /**
+   * Transport script per path, answered before every other reply: `status` is the response
+   * code, `length` declares a body size the reply under-fills, `chunk` is written, `sse`
+   * answers as an event stream.
+   */
+  transport: Map<string, { status?: number; chunk?: string; length?: number; sse?: boolean }>
   /** Reply one control verb gives, keyed by path; absent means `{status: 200}`. */
   controlReplies: Map<string, { status: number; body?: unknown }>
   /** Close the stream of a held training run. */
@@ -128,6 +134,7 @@ export async function mockLifeRuntime(): Promise<MockLifeRuntime> {
     get resume() { return resume },
     set resume(script: TrainingScript) { resume = script },
     controlReplies: new Map(),
+    transport: new Map(),
     async closeTraining() {
       held?.end()
       heldStreams.delete(held as ServerResponse)
@@ -162,6 +169,20 @@ async function handle(
   const path = new URL(request.url ?? '/', 'http://127.0.0.1').pathname
   const body = await readBody(request)
   requests.push({ method: request.method ?? 'GET', path, body })
+  const transport = runtime.transport.get(path)
+  if (transport !== undefined) {
+    if (transport.status === undefined) {
+      response.destroy()
+      return
+    }
+    const type = transport.sse === true ? 'text/event-stream' : 'application/json'
+    response.writeHead(transport.status ?? 200, transport.length === undefined
+      ? { 'content-type': type }
+      : { 'content-type': type, 'content-length': String(transport.length) })
+    if (transport.chunk !== undefined) response.write(transport.chunk)
+    response.end()
+    return
+  }
   // A scripted reply wins over every endpoint's default, GET included, so a caller
   // can put any read surface into any HTTP state without a per-endpoint knob.
   const scriptedGet = request.method === 'GET' ? runtime.controlReplies.get(path) : undefined

@@ -391,6 +391,37 @@ describe('LifeController stream refused as HTTP', () => {
 
 
 
+describe('LifeController cut responses', () => {
+  it('treats an artifacts body that is not JSON as no body', async () => {
+    const { controller, runtime } = await harness()
+    runtime.transport.set('/api/artifacts', { status: 200, chunk: 'not json at all' })
+
+    const { snapshot } = await controller.snapshot(new AbortController().signal)
+    expect(snapshot.artifacts).toBeUndefined()
+  })
+
+  it('treats an artifacts body that dies mid-read as no body', async () => {
+    const { controller, runtime } = await harness()
+    runtime.transport.set('/api/artifacts', { status: 200, chunk: '{"too', length: 60 })
+
+    // The declared length never arrives, so the body read fails and no roster is claimed.
+    const { snapshot } = await controller.snapshot(new AbortController().signal)
+    expect(snapshot.artifacts).toBeUndefined()
+    expect(snapshot.availability.runtime).toBe('ok')
+  })
+
+  it('reads a refusal whose body never arrives in full', async () => {
+    const { controller, runtime } = await harness()
+    runtime.transport.set('/api/train/native', { status: 500, chunk: '{"det', length: 50 })
+
+    // Half a JSON body is not a detail: the read yields nothing and the status stands in.
+    const failure = remoteErrorOf(await controller.trainStart({ parameterBudget: 1_000 }).catch((error: unknown) => error))
+    expect(failure).toMatchObject({ code: 'life/runtime-error' })
+    expect(failure?.message).toContain('HTTP 500')
+  })
+})
+
+
 describe('LifeController pass report', () => {
   it('reports a pass whose own spec block is absent and whose lists are not lists', async () => {
     const { controller, runtime } = await harness()
