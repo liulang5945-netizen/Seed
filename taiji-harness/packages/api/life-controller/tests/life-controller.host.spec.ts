@@ -369,6 +369,27 @@ describe('LifeController progress and frame parsing', () => {
   })
 })
 
+describe('LifeController stream refused as HTTP', () => {
+  it('folds an empty refusal body into the status text', async () => {
+    const { controller, runtime } = await harness()
+    runtime.training = { kind: 'http-error', status: 500, body: '' }
+
+    const failure = remoteErrorOf(await controller.trainStart({ parameterBudget: 1_000 }).catch((error: unknown) => error))
+    expect(failure).toMatchObject({ code: 'life/runtime-error' })
+    expect(failure?.message).toContain('HTTP 500')
+  })
+
+  it('folds a refusal body that is not JSON into that text as the detail', async () => {
+    const { controller, runtime } = await harness()
+    runtime.training = { kind: 'http-error', status: 502, body: 'upstream gateway exploded' }
+
+    const failure = remoteErrorOf(await controller.trainStart({ parameterBudget: 1_000 }).catch((error: unknown) => error))
+    expect(failure).toMatchObject({ code: 'life/runtime-error' })
+    expect(failure?.message).toContain('upstream gateway exploded')
+  })
+})
+
+
 describe('LifeController HTTP refusals', () => {
   it('folds HTTP refusals into the stable control codes', async () => {
     const { controller, runtime } = await harness()
