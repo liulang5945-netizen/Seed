@@ -1,0 +1,47 @@
+# M7-CI（限定范围开线，owner 2026-10-06 裁）：只挂本机已验证的两道门，
+# 发布面（发布 workflow／安装启动／回滚／安全／发行包验收）暂缓——不以本工作流的
+# 绿替代 M7 发布验收（01 §2 M7 行）。判据与范围冻结见 08 ㊵-456。
+name: m7-ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: m7-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  gates:
+    name: doc-sync + hygiene (ubuntu)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: taiji-harness
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+          cache-dependency-path: taiji-harness/pnpm-lock.yaml
+
+      - name: Install pinned pnpm
+        run: npm install -g pnpm@11.7.0
+
+      - name: Install dependencies (frozen)
+        run: pnpm install --frozen-lockfile
+
+      - name: doc-sync (43 leaves)
+        run: pnpm run doc-sync
+
+      - name: hygiene (18 leaves)
+        run: pnpm run hygiene
