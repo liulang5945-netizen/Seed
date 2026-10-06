@@ -49,7 +49,7 @@ def trace(m):
     inside = pad
     segs = {}  # corner -> list of unused outgoing edges
     ys, xs = np.where(inside)
-    for y, x in zip(ys, xs):
+    for y, x in zip(ys, xs, strict=True):
         if not inside[y - 1, x]:
             segs.setdefault((x, y), []).append((x + 1, y))
         if not inside[y, x + 1]:
@@ -70,9 +70,9 @@ def trace(m):
                     nxt = cand[0]
                 else:
 
-                    def turn(v):
-                        cross = prev_dir[0] * v[1] - prev_dir[1] * v[0]
-                        return np.arctan2(cross, prev_dir[0] * v[0] + prev_dir[1] * v[1])
+                    def turn(v, d=prev_dir):
+                        cross = d[0] * v[1] - d[1] * v[0]
+                        return np.arctan2(cross, d[0] * v[0] + d[1] * v[1])
 
                     nxt = min(cand, key=lambda e: turn((e[0] - p[0], e[1] - p[1])))
                 cand.remove(nxt)  # consume the edge
@@ -191,9 +191,13 @@ COLOR = (
     f'  <path d="{struct_d}" fill="#124A38" fill-rule="evenodd"/>\n'
     f'  <path d="{foliage_d}" fill="#AAD66A" fill-rule="evenodd"/>\n</svg>\n'
 )
-open(os.path.join(OUT, "seed-mark-mono.svg"), "w", encoding="utf-8").write(MONO)
-open(os.path.join(OUT, "seed-mark-color.svg"), "w", encoding="utf-8").write(COLOR)
-open(os.path.join(OUT, "seed-mark-mono.path.txt"), "w", encoding="utf-8").write(mono_d)
+for name, body in (
+    ("seed-mark-mono.svg", MONO),
+    ("seed-mark-color.svg", COLOR),
+    ("seed-mark-mono.path.txt", mono_d),
+):
+    with open(os.path.join(OUT, name), "w", encoding="utf-8") as handle:
+        handle.write(body)
 
 # QA raster via sharp (installed in .dsh-sbx2/icon-tools)
 qa = (
@@ -212,6 +216,7 @@ qa = (
     "  console.log('qa done');\n"
     "})();\n"
 )
-open(os.path.join(OUT, "_qa.cjs"), "w").write(qa)
+with open(os.path.join(OUT, "_qa.cjs"), "w") as handle:
+    handle.write(qa)
 os.system('node "' + os.path.join(OUT, "_qa.cjs") + '"')
 print("done ->", OUT)

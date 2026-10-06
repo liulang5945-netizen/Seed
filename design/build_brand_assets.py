@@ -17,8 +17,15 @@ MARK = r"E:/Seed/design/variants/seed-shell-final-mark.png"
 STRUCT = (18, 74, 56)
 LEAF = (170, 214, 106)
 
-mono_d = open(os.path.join(LOGO, "seed-mark-mono.path.txt"), encoding="utf-8").read().strip()
-color = open(os.path.join(LOGO, "seed-mark-color.svg"), encoding="utf-8").read()
+
+def read_text(path):
+    """Read a text file; the caller keeps it only for immediate rewriting."""
+    with open(path, encoding="utf-8") as handle:
+        return handle.read()
+
+
+mono_d = read_text(os.path.join(LOGO, "seed-mark-mono.path.txt")).strip()
+color = read_text(os.path.join(LOGO, "seed-mark-color.svg"))
 paths = re.findall(r'<path d="([^"]+)"', color)
 struct_d, foliage_d = paths[0], paths[1]
 print("path lens:", len(mono_d), len(struct_d), len(foliage_d))
@@ -26,12 +33,13 @@ print("path lens:", len(mono_d), len(struct_d), len(foliage_d))
 
 def patch(path, subs):
     """Apply regex substitutions to a text file in place."""
-    t = open(path, encoding="utf-8").read()
+    t = read_text(path)
     for pat, rep in subs:
         t, n = re.subn(pat, rep, t)
         if n == 0:
             print(f"  !! no match in {os.path.basename(path)} for {pat[:40]}")
-    open(path, "w", encoding="utf-8", newline="\n").write(t)
+    with open(path, "w", encoding="utf-8", newline="\n") as handle:
+        handle.write(t)
 
 
 # ---------- vector: swap the traced paths into the existing structures ----------

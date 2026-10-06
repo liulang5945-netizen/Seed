@@ -9,7 +9,8 @@ LOCK = r"E:/Seed/taiji-harness/scripts/primary-runtime/lock.json"
 DEST = r"E:/Seed/taiji-harness/apps/desktop/.desktop-build/downloads"
 TARGET = "win-x64"
 os.makedirs(DEST, exist_ok=True)
-lock = json.load(open(LOCK, encoding="utf-8"))
+with open(LOCK, encoding="utf-8") as handle:
+    lock = json.load(handle)
 t = lock["targets"][TARGET]
 CURL = r"C:\Windows\System32\curl.exe"
 
@@ -39,7 +40,8 @@ def fetch(urls, sha, name):
         if r.returncode != 0:
             print(f"  curl rc={r.returncode} — next mirror")
             continue
-        h = hashlib.sha256(open(dest + ".part", "rb").read()).hexdigest()
+        with open(dest + ".part", "rb") as handle:
+            h = hashlib.sha256(handle.read()).hexdigest()
         if h != sha:
             print(f"  checksum mismatch {h[:12]} — next mirror")
             continue
