@@ -9,10 +9,15 @@ from pathlib import Path, PurePosixPath
 REPO = Path(__file__).resolve().parents[2]
 
 #: 不是源码面的目录名（依赖树、构建产物、本地虚拟环境、CLI/会话临时 worktree）。
-#: 前缀族（`.venv*`、`.dsh-sbx*`）按 R1「规则按命名约定写，不按实例名写」列——
+#: 前缀族（`.venv*`、`.dsh-sbx*`、`.desktop-build*`）按 R1「规则按命名约定写，不按实例名写」列——
 #: 逐个实例名列举必然被下一个同类目录漏掉（`.gitignore:264` 的 `/.dsh-sbx*/` 是同一条约定的锚）。
+#:
+#: `.desktop-build` 是 2026-10-03 桌面出包留下的产物根（`.desktop-build/targets/win-x64/dsh/backend/`
+#: 里是 electron-builder 展开的 Python 后端拷贝，含大量 `.py`），**未入库但也未进 gitignore**，
+#: 于是它同时出现在"文件遍历面"而不在"git 面"，`test_source_face_is_the_git_face_not_the_whole_disk`
+#: 的"多出来的部分只能是本地噪音"断言因此转红。按前缀族收口，与 `.venv*` 同一约定。
 SKIP_PARTS = {".git", "node_modules", "build", "dist", "_libs", ".codex"}
-SKIP_PREFIXES = (".venv", ".dsh-sbx")
+SKIP_PREFIXES = (".venv", ".dsh-sbx", ".desktop-build")
 
 
 def _is_skipped_dir(name: str) -> bool:

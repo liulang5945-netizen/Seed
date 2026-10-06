@@ -25,23 +25,23 @@ R_GRID = (1.05, 1.20, 1.50, 2.00)
 
 #: 两代仪器里"该代 LF 之后那一步的最好一次比值"分别住在哪一列。
 MARGIN_COLUMNS = (
-    ('lf_margins_v34', 'min_ratio'),
-    ('lf_next_probe_v30', 'min_ratio_best_over_boundary_after_lf'),
+    ("lf_margins_v34", "min_ratio"),
+    ("lf_next_probe_v30", "min_ratio_best_over_boundary_after_lf"),
 )
 #: 两代仪器里"该代发过几次 LF"分别住在哪一列。
 LF_COUNT_COLUMNS = (
-    ('lf_trace_v29', 'lf_step_count'),
-    ('lf_next_probe_v30', 'lf_count'),
-    ('lf_margins_v34', 'lf_steps'),
+    ("lf_trace_v29", "lf_step_count"),
+    ("lf_next_probe_v30", "lf_count"),
+    ("lf_margins_v34", "lf_steps"),
 )
 
 
 def iter_generations(report: dict[str, Any]) -> list[dict[str, Any]]:
     out: list[dict[str, Any]] = []
-    for item in report.get('per_item', []):
-        for index, generation in enumerate(item.get('endstep_probe_v22', [])):
-            generation['item_id'] = item.get('id')
-            generation['generation_index'] = index
+    for item in report.get("per_item", []):
+        for index, generation in enumerate(item.get("endstep_probe_v22", [])):
+            generation["item_id"] = item.get("id")
+            generation["generation_index"] = index
             out.append(generation)
     return out
 
@@ -50,7 +50,7 @@ def _pick(generation: dict[str, Any], table) -> Any:
     for block, key in table:
         payload = generation.get(block)
         if isinstance(payload, dict) and key in payload:
-            return payload[key], f'{block}.{key}'
+            return payload[key], f"{block}.{key}"
     return None, None
 
 
@@ -67,8 +67,8 @@ def best_margin(generation: dict[str, Any]) -> float | None:
 def summarize(report: dict[str, Any]) -> dict[str, Any]:
     generations = iter_generations(report)
     total = len(generations)
-    stops = [g for g in generations if g.get('terminal_decision') is not None]
-    eaters = [g for g in generations if g.get('ate_full_budget')]
+    stops = [g for g in generations if g.get("terminal_decision") is not None]
+    eaters = [g for g in generations if g.get("ate_full_budget")]
     with_lf = [g for g in eaters if lf_count(g) >= 1]
     observed = [g for g in with_lf if best_margin(g) is not None]
     #: 比值列**结构上不存在**（v29 及更早的件）与"有列但这些代都没开火"是两件不同的事：
@@ -80,54 +80,54 @@ def summarize(report: dict[str, Any]) -> dict[str, Any]:
     rows = []
     for threshold in R_GRID:
         if margin_column is None:
-            rows.append({'R': threshold, 'fired_eaters': None, 'delta_pp_lower_bound': None})
+            rows.append({"R": threshold, "fired_eaters": None, "delta_pp_lower_bound": None})
             continue
         fired = [g for g in observed if best_margin(g) <= threshold]
         rows.append(
             {
-                'R': threshold,
-                'fired_eaters': len(fired),
-                'delta_pp_lower_bound': round(100.0 * len(fired) / total, 2) if total else None,
+                "R": threshold,
+                "fired_eaters": len(fired),
+                "delta_pp_lower_bound": round(100.0 * len(fired) / total, 2) if total else None,
             }
         )
     return {
-        'report': None,
-        'format': report.get('format'),
-        'lower_bound_available': margin_column is not None,
-        'checkpoint_sha256': report.get('checkpoint_sha256'),
-        'circuit': 'seed-A' if report.get('circuit') else None,
-        'circuit_sha256': (report.get('circuit_sha256') or '')[:16] or None,
-        'product_window_steps': report.get('product_window_steps'),
-        'max_length': report.get('max_length'),
-        'generations': total,
-        'self_stop_count': len(stops),
-        'self_stop_rate': round(len(stops) / total, 4) if total else None,
-        'eater_count': len(eaters),
-        'eaters_with_lf': len(with_lf),
+        "report": None,
+        "format": report.get("format"),
+        "lower_bound_available": margin_column is not None,
+        "checkpoint_sha256": report.get("checkpoint_sha256"),
+        "circuit": "seed-A" if report.get("circuit") else None,
+        "circuit_sha256": (report.get("circuit_sha256") or "")[:16] or None,
+        "product_window_steps": report.get("product_window_steps"),
+        "max_length": report.get("max_length"),
+        "generations": total,
+        "self_stop_count": len(stops),
+        "self_stop_rate": round(len(stops) / total, 4) if total else None,
+        "eater_count": len(eaters),
+        "eaters_with_lf": len(with_lf),
         #: 上界只取决于"发过 LF 的拖写代"——不看阈值，因为规则没有 LF 就没有输入。
-        'delta_pp_upper_bound': round(100.0 * len(with_lf) / total, 2) if total else None,
-        'eaters_with_observable_margin': len(observed),
-        'eaters_with_lf_but_no_next_row': len(with_lf) - len(observed),
-        'lf_total_emissions': sum(lf_count(g) for g in generations),
-        'per_threshold': rows,
-        'margin_column_used': margin_column,
+        "delta_pp_upper_bound": round(100.0 * len(with_lf) / total, 2) if total else None,
+        "eaters_with_observable_margin": len(observed),
+        "eaters_with_lf_but_no_next_row": len(with_lf) - len(observed),
+        "lf_total_emissions": sum(lf_count(g) for g in generations),
+        "per_threshold": rows,
+        "margin_column_used": margin_column,
     }
 
 
 def main(argv: list[str]) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument('--report', action='append', required=True, help='探针件路径（可重复）')
+    parser.add_argument("--report", action="append", required=True, help="探针件路径（可重复）")
     args = parser.parse_args(argv)
     rows = []
     for path in args.report:
-        payload = summarize(json.loads(Path(path).read_text(encoding='utf-8')))
-        payload['report'] = Path(path).name
+        payload = summarize(json.loads(Path(path).read_text(encoding="utf-8")))
+        payload["report"] = Path(path).name
         rows.append(payload)
     print(json.dumps(rows, ensure_ascii=False, indent=2, default=str))
     #: 结论性 rc：任何一枚件**没有 LF 列**（仪器太旧、算不出这条界）就响亮 2，
     #: 而不是默默给一个 `None` 让人当"上界为零"读。
-    return 0 if all(row['generations'] and row['margin_column_used'] for row in rows) else 2
+    return 0 if all(row["generations"] and row["margin_column_used"] for row in rows) else 2
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sys.exit(main(sys.argv[1:]))

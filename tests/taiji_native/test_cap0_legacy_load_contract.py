@@ -217,8 +217,11 @@ def test_a_fresh_probe_sample_reproduces_the_sealed_one(tmp_path) -> None:
         for path in shared
         if tail(path) in VOLATILE_SAMPLE_FIELDS or path in VOLATILE_SAMPLE_PATHS
     }
-    asymmetric = {p for p in (old.keys() | new.keys()) - (old.keys() & new.keys())
-        if not p.startswith(control_prefix)}
+    asymmetric = {
+        p
+        for p in (old.keys() | new.keys()) - (old.keys() & new.keys())
+        if not p.startswith(control_prefix)
+    }
     assert not asymmetric, f"字段面差异必须只落在控制臂：{sorted(asymmetric)[:6]}"
     control = fresh["arms"]["default_control_current_guard"]
     assert control["load_ok"] is False, "控制臂基座已删除，它不该还能载入"

@@ -1148,7 +1148,7 @@ class Taiji:
         self._copy_evidence_window_steps_override = steps
 
     def copy_evidence_window_stats(self) -> dict[str, int | None]:
-        """"门有没有开过枪"的自证：一个从未命中的档位会给出与全剂量同值的读数却看不见自己是空的。"""
+        """ "门有没有开过枪"的自证：一个从未命中的档位会给出与全剂量同值的读数却看不见自己是空的。"""
 
         return {
             "window_steps": (
@@ -1211,12 +1211,10 @@ class Taiji:
         `override` 为空跟随 config，否则按显式覆写。状态读数、注入点、generate 锁块三处共用。"""
 
         override = self._copy_evidence_injection_mode_override
-        return (
-            self.config.copy_evidence_injection_mode if override is None else override
-        )
+        return self.config.copy_evidence_injection_mode if override is None else override
 
     def copy_evidence_injection_state(self) -> dict[str, str | int | float]:
-        """"形状开关有没有被走到"的自证（同 `copy_evidence_window_stats()` 的动机）：
+        """ "形状开关有没有被走到"的自证（同 `copy_evidence_window_stats()` 的动机）：
         一个从没应用过竞争式/门控的档，会给出与全加性完全相同的读数却看不见自己是空的。"""
 
         return {

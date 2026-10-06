@@ -34,9 +34,13 @@ def _tool():
 
 
 def test_scan_face_is_the_tracked_file() -> None:
-    tracked = subprocess.run(
-        ["git", "ls-files", TOOL_REL], cwd=PROJECT_ROOT, capture_output=True, check=True
-    ).stdout.decode().strip()
+    tracked = (
+        subprocess.run(
+            ["git", "ls-files", TOOL_REL], cwd=PROJECT_ROOT, capture_output=True, check=True
+        )
+        .stdout.decode()
+        .strip()
+    )
     assert tracked == TOOL_REL, f"仪器不在版本控制面上（扫到 {tracked!r}）"
 
 
@@ -52,23 +56,35 @@ def test_four_classifications_on_synthetic_reports(tmp_path: Path) -> None:
     artifact.write_bytes(b"alpha-bytes")
     good = hashlib.sha256(artifact.read_bytes()).hexdigest()
 
-    _write_report(reports, "ok.json", {"checkpoint": artifact.as_posix(), "checkpoint_sha256": good})
-    _write_report(reports, "drift.json", {
-        "checkpoint": artifact.as_posix(), "checkpoint_sha256": "0" * 64})
-    _write_report(reports, "gone.json", {
-        "checkpoint": (tmp_path / "nope.pt").as_posix(), "checkpoint_sha256": good})
+    _write_report(
+        reports, "ok.json", {"checkpoint": artifact.as_posix(), "checkpoint_sha256": good}
+    )
+    _write_report(
+        reports, "drift.json", {"checkpoint": artifact.as_posix(), "checkpoint_sha256": "0" * 64}
+    )
+    _write_report(
+        reports,
+        "gone.json",
+        {"checkpoint": (tmp_path / "nope.pt").as_posix(), "checkpoint_sha256": good},
+    )
     _write_report(reports, "unpaired.json", {"model_reality": {"default_sha256": good}})
     #: 同 dict 里两枚路径＋一枚 sha：词根配不上时**不许**笛卡尔硬配（那正是第一版误报 31 条的形状）
     other = tmp_path / "other.pt"
     other.write_bytes(b"beta")
-    _write_report(reports, "ambiguous.json", {
-        "retrain_checkpoint": artifact.as_posix(),
-        "base_checkpoint": other.as_posix(),
-        "checkpoint_sha256_before": "0" * 64,
-    })
+    _write_report(
+        reports,
+        "ambiguous.json",
+        {
+            "retrain_checkpoint": artifact.as_posix(),
+            "base_checkpoint": other.as_posix(),
+            "checkpoint_sha256_before": "0" * 64,
+        },
+    )
 
     payload = tool.audit(reports)
-    verdicts = {c["report"].split(".")[0]: (c["verdict"], c["path_key"]) for c in payload["non_ok_claims"]}
+    verdicts = {
+        c["report"].split(".")[0]: (c["verdict"], c["path_key"]) for c in payload["non_ok_claims"]
+    }
     counts = payload["verdict_counts"]
     #: 保守配对的代价要写清：`ambiguous.json` 里两枚路径配不出一枚 sha ⇒ **宁可不配也不硬配**，
     #: 它落进 `unpaired` 计数（可见），而不是变成一条假 `sha_drift`。第一版就是把这里硬配成 31 条误报的。
@@ -87,10 +103,14 @@ def test_cross_level_arm_pairing_is_not_silently_dropped(tmp_path: Path) -> None
     artifact = tmp_path / "boundary" / "checkpoint.pt"
     artifact.parent.mkdir(parents=True, exist_ok=True)
     artifact.write_bytes(b"current-bytes")
-    _write_report(reports, "transfer.json", {
-        "retrain_checkpoint": artifact.as_posix(),
-        "runs": {"retrain": {"checkpoint_sha256_before": "f" * 64}},
-    })
+    _write_report(
+        reports,
+        "transfer.json",
+        {
+            "retrain_checkpoint": artifact.as_posix(),
+            "runs": {"retrain": {"checkpoint_sha256_before": "f" * 64}},
+        },
+    )
     payload = tool.audit(reports)
     hit = [c for c in payload["non_ok_claims"] if c["path_key"] == "retrain_checkpoint"]
     assert len(hit) == 1 and hit[0]["verdict"] == "sha_drift", payload
@@ -122,11 +142,17 @@ def test_own_output_is_not_scanned_back_in(tmp_path: Path) -> None:
     artifact = tmp_path / "ckpt.pt"
     artifact.write_bytes(b"alpha-bytes")
     good = hashlib.sha256(artifact.read_bytes()).hexdigest()
-    _write_report(reports, "real.json", {"checkpoint": artifact.as_posix(), "checkpoint_sha256": good})
-    _write_report(reports, "prev_run.json", {
-        "format": "taiji-artifact-sha-drift-v1",
-        "non_ok_claims": [{"resolved_path": artifact.as_posix(), "recorded_sha16": "0" * 16}],
-    })
+    _write_report(
+        reports, "real.json", {"checkpoint": artifact.as_posix(), "checkpoint_sha256": good}
+    )
+    _write_report(
+        reports,
+        "prev_run.json",
+        {
+            "format": "taiji-artifact-sha-drift-v1",
+            "non_ok_claims": [{"resolved_path": artifact.as_posix(), "recorded_sha16": "0" * 16}],
+        },
+    )
     payload = tool.audit(reports)
     assert payload["own_outputs_excluded"] == 1, payload
     assert payload["claims_total"] == 1, payload

@@ -65,12 +65,21 @@ def preconditions(report: dict[str, Any], expect_items_sha: str | None) -> dict[
         ),
         "share_coherent_with_count_over_n": (
             None
-            if not (isinstance(n, int) and isinstance(count, int) and isinstance(share, float) and n)
+            if not (
+                isinstance(n, int) and isinstance(count, int) and isinstance(share, float) and n
+            )
             else abs(round(count / n, 4) - share) <= 1e-9
         ),
     }
     failed = [name for name, ok in checks.items() if ok is not True]
-    return {"checks": checks, "failed": failed, "ok": not failed, "n": n, "count": count, "share": share}
+    return {
+        "checks": checks,
+        "failed": failed,
+        "ok": not failed,
+        "n": n,
+        "count": count,
+        "share": share,
+    }
 
 
 def summarize(report: dict[str, Any], expect_items_sha: str | None = None) -> dict[str, Any]:
@@ -108,7 +117,9 @@ def main(argv: list[str]) -> int:
     args = parser.parse_args(argv)
     worst = 0
     for path in args.report:
-        payload = summarize(json.loads(Path(path).read_text(encoding="utf-8")), args.expect_items_sha)
+        payload = summarize(
+            json.loads(Path(path).read_text(encoding="utf-8")), args.expect_items_sha
+        )
         payload["report"] = path
         print(json.dumps(payload, ensure_ascii=False, indent=2, sort_keys=True))
         if not payload["verdict"].startswith(("甲", "乙", "丙")):

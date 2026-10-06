@@ -35,8 +35,18 @@ ARTIFACT_SUFFIXES = (".pt", ".lzma", ".jsonl", ".bin", ".pth", ".safetensors")
 #: 只有文件名没有目录时的解析候选（`model_reality.default_checkpoint` 这类裸名就靠它）
 BARE_NAME_DIRS = ("checkpoints", "output")
 #: 明显的"非文件身份"键：题面/摘要/概率指纹，不是盘上的件
-NOT_A_FILE_MARKERS = ("items_sha256", "manifest_sha256", "docs_sha256", "prompts_sha256",
-                      "corpus_sha256", "question", "seed", "state_dict", "payload", "digest")
+NOT_A_FILE_MARKERS = (
+    "items_sha256",
+    "manifest_sha256",
+    "docs_sha256",
+    "prompts_sha256",
+    "corpus_sha256",
+    "question",
+    "seed",
+    "state_dict",
+    "payload",
+    "digest",
+)
 
 _cache: dict[str, str | None] = {}
 
@@ -249,8 +259,15 @@ def main(argv: list[str] | None = None) -> int:
     payload = audit(Path(args.reports_dir))
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    print(json.dumps({k: payload[k] for k in (
-        "format", "reports_scanned", "claims_total", "verdict_counts")}, ensure_ascii=False))
+    print(
+        json.dumps(
+            {
+                k: payload[k]
+                for k in ("format", "reports_scanned", "claims_total", "verdict_counts")
+            },
+            ensure_ascii=False,
+        )
+    )
     return 0
 
 

@@ -901,9 +901,7 @@ def _run_checks(all_records: dict[str, list[dict[str, Any]]]) -> tuple[dict[str,
 
             # length class is a property of the VALUES IN THE MATERIAL, not of
             # the response string (relation/negation answers are closed-class).
-            def _is_single(
-                group: list[dict[str, Any]], single_values: set[str] = singles
-            ) -> bool:
+            def _is_single(group: list[dict[str, Any]], single_values: set[str] = singles) -> bool:
                 words = _value_words_of_group(group) or frozenset()
                 return bool(words & single_values)
 

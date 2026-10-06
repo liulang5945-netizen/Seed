@@ -88,4 +88,3 @@ def test_the_identity_assertion_actually_discriminates_a_nonzero_dose() -> None:
     except AssertionError:
         raised = True
     assert raised, "α=0.99 也能通过恒等断言 ⇒ 那条断言量不到乘数，是恒真式"
-

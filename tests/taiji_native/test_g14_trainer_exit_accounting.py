@@ -53,7 +53,8 @@ def _write_qa_corpus(path: Path, rows: int) -> Path:
     with path.open("w", encoding="utf-8") as handle:
         for index in range(rows):
             handle.write(
-                json.dumps({"text": f"问：第{index}问是什么。\n答：第{index}答是一段中文答案。"}) + "\n"
+                json.dumps({"text": f"问：第{index}问是什么。\n答：第{index}答是一段中文答案。"})
+                + "\n"
             )
     return path
 

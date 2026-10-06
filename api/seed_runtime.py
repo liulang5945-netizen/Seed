@@ -369,9 +369,14 @@ class SeedRuntime:
         return "\n".join(parts)
 
     def enable_copy_circuit(
-        self, payload_path: str | Path, *, max_events: int = 4, utf8_gate: bool = True,
-        window_steps: int | None = None, injection_mode: str | None = None,
-        gate_min_overlap: float | None = None
+        self,
+        payload_path: str | Path,
+        *,
+        max_events: int = 4,
+        utf8_gate: bool = True,
+        window_steps: int | None = None,
+        injection_mode: str | None = None,
+        gate_min_overlap: float | None = None,
     ) -> None:
         """A2.4 协议开闸（显式 opt-in）：挂载复制回路并载入训练后参数。
 

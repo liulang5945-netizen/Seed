@@ -996,9 +996,7 @@ class LanguageAlignmentTrainer:
                     max_generation_bytes=int(max_generation_bytes),
                 )
 
-                def summarize(
-                    raw: bytes, ep: LanguageEpisode = episode
-                ) -> dict[str, Any]:
+                def summarize(raw: bytes, ep: LanguageEpisode = episode) -> dict[str, Any]:
                     text, valid_utf8, no_replacement, boundary, stop_reason = (
                         decoder._generated_text(raw)
                     )

@@ -144,7 +144,7 @@ def test_history_cap_thins_the_middle_but_never_the_ends(tmp_path: Path) -> None
     kept = sorted(p.name for p in capped.glob("checkpoint_*.pt"))
     assert len(kept) == 3, kept
     assert set(kept) <= set(every), (kept, every)
-    assert kept[0] == every[0], (kept, every)   # 首
+    assert kept[0] == every[0], (kept, every)  # 首
     assert kept[-1] == every[-1], (kept, every)  # 尾
 
     record = json.loads(record_path.read_text(encoding="utf-8"))

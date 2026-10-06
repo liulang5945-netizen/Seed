@@ -34,12 +34,16 @@ def _load():
 def test_scan_face_is_the_tracked_file() -> None:
     """零命中的另一种成因是"扫错了面"：这里把范围本身报出来。"""
 
-    tracked = subprocess.run(
-        ["git", "ls-files", INSTRUMENT_REL],
-        cwd=PROJECT_ROOT,
-        capture_output=True,
-        check=True,
-    ).stdout.decode().strip()
+    tracked = (
+        subprocess.run(
+            ["git", "ls-files", INSTRUMENT_REL],
+            cwd=PROJECT_ROOT,
+            capture_output=True,
+            check=True,
+        )
+        .stdout.decode()
+        .strip()
+    )
     assert tracked == INSTRUMENT_REL, f"仪器不在版本控制面上（扫到 {tracked!r}）"
     assert len(INSTRUMENT.read_text(encoding="utf-8").splitlines()) > 100
 
@@ -63,15 +67,24 @@ def test_report_face_no_longer_pins_a_tracked_default() -> None:
     assert "def _rel(" in source
 
 
-def test_missing_out_report_is_a_usage_error(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+def test_missing_out_report_is_a_usage_error(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
     """必给性要能为 false：不带 `--out-report` 必须走 argparse 的 2 号用法错。"""
 
     mod = _load()
     monkeypatch.setattr(
         sys,
         "argv",
-        ["build_taiji_a30_self_answers.py", "--base", BASE, "--pairs", "1",
-         "--out", str(tmp_path / "o.jsonl")],
+        [
+            "build_taiji_a30_self_answers.py",
+            "--base",
+            BASE,
+            "--pairs",
+            "1",
+            "--out",
+            str(tmp_path / "o.jsonl"),
+        ],
     )
     with pytest.raises(SystemExit) as caught:
         mod.main()
@@ -90,8 +103,17 @@ def test_existing_target_refused_before_any_generation(
     monkeypatch.setattr(
         sys,
         "argv",
-        ["build_taiji_a30_self_answers.py", "--base", BASE, "--pairs", "1",
-         "--out", str(out), "--out-report", str(report)],
+        [
+            "build_taiji_a30_self_answers.py",
+            "--base",
+            BASE,
+            "--pairs",
+            "1",
+            "--out",
+            str(out),
+            "--out-report",
+            str(report),
+        ],
     )
     assert mod.main() == 2
     assert not out.exists(), "拒绝发生在生成之前，不该留下输出"
@@ -115,8 +137,15 @@ def test_fresh_target_is_accepted(tmp_path: Path) -> None:
     mod.read_questions = _sentinel
     report = tmp_path / "fresh.json"
     monkeypatch_argv = [
-        "build_taiji_a30_self_answers.py", "--base", BASE, "--pairs", "1",
-        "--out", str(tmp_path / "o.jsonl"), "--out-report", str(report),
+        "build_taiji_a30_self_answers.py",
+        "--base",
+        BASE,
+        "--pairs",
+        "1",
+        "--out",
+        str(tmp_path / "o.jsonl"),
+        "--out-report",
+        str(report),
     ]
     original = sys.argv
     sys.argv = monkeypatch_argv

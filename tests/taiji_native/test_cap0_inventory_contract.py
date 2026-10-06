@@ -354,7 +354,9 @@ def test_the_g15_enumeration_filter_drops_hidden_checkpoints() -> None:
     before_rows = json.loads(RESAMPLE_BEFORE_G15_FILTER.read_text(encoding="utf-8"))[
         "checkpoint_inventory"
     ]
-    after_rows = json.loads(RESAMPLE_AFTER_G15_FILTER.read_text(encoding="utf-8"))["checkpoint_inventory"]
+    after_rows = json.loads(RESAMPLE_AFTER_G15_FILTER.read_text(encoding="utf-8"))[
+        "checkpoint_inventory"
+    ]
     before_names = [row["filename"] for row in before_rows]
     after_names = [row["filename"] for row in after_rows]
 
@@ -412,6 +414,7 @@ def test_a_fresh_inventory_sample_reproduces_the_sealed_one(tmp_path) -> None:
     drifted = {path for path in common if old[path] != new[path]}
     assert drifted <= volatile, sorted(drifted - volatile)[:8]
     assert len(old) > 150 and len(volatile) * 5 < len(old), (len(old), len(volatile))
+
 
 def test_the_2026_10_03_cull_records_exactly_which_rows_disappeared() -> None:
     """收束不许被读成"仪器漂移"：钉死消失的行、钉住零新增、并核产品事实逐键未变。

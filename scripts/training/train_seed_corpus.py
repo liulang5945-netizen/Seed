@@ -287,9 +287,7 @@ def run_training(
         keep_history = Path(keep_history)
         keep_history.mkdir(parents=True, exist_ok=True)
         if keep_history_max is not None and keep_history_max < 2:
-            raise ValueError(
-                "keep_history_max must be >= 2 — 上限至少留得住「首」与「尾」各一枚"
-            )
+            raise ValueError("keep_history_max must be >= 2 — 上限至少留得住「首」与「尾」各一枚")
     elif keep_history_max is not None:
         raise ValueError(
             "keep_history_max 需要 keep_history 同时在用——没有快照可删时设上限是个空承诺"
@@ -399,22 +397,25 @@ def run_training(
             #: `checkpoint_sha256` 之所以能等于终件字节，靠的是三处退出点都先 `_persist()` 再 `_flush(final=True)`。
             exit_record_path(progress_path).write_text(
                 json.dumps(
-                    {**entry, "checkpoint_path": str(checkpoint_path),
-                     "checkpoint_sha256": _file_sha256(checkpoint_path),
-                     "corpus_fingerprint": fingerprint,
-                     #: DEBT-G40：数量与字节由生产者现数（不是配置值回显）——没有这两条，
-                     #: "这轮保号存档留了多少"只能人事后 du，而无自述的量一定会被估错。
-                     "history_files": (
-                         len(list(keep_history.glob("checkpoint_*.pt")))
-                         if keep_history is not None else None
-                     ),
-                     "history_bytes": (
-                         sum(p.stat().st_size for p in keep_history.glob("checkpoint_*.pt"))
-                         if keep_history is not None else None
-                     ),
-                     "history_pruned": (
-                         history_pruned if keep_history is not None else None
-                     )},
+                    {
+                        **entry,
+                        "checkpoint_path": str(checkpoint_path),
+                        "checkpoint_sha256": _file_sha256(checkpoint_path),
+                        "corpus_fingerprint": fingerprint,
+                        #: DEBT-G40：数量与字节由生产者现数（不是配置值回显）——没有这两条，
+                        #: "这轮保号存档留了多少"只能人事后 du，而无自述的量一定会被估错。
+                        "history_files": (
+                            len(list(keep_history.glob("checkpoint_*.pt")))
+                            if keep_history is not None
+                            else None
+                        ),
+                        "history_bytes": (
+                            sum(p.stat().st_size for p in keep_history.glob("checkpoint_*.pt"))
+                            if keep_history is not None
+                            else None
+                        ),
+                        "history_pruned": (history_pruned if keep_history is not None else None),
+                    },
                     ensure_ascii=False,
                     indent=2,
                 ),

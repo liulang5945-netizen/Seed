@@ -26,9 +26,7 @@ def test_the_forward_is_conditional_so_the_default_path_is_untouched() -> None:
     source = (PROJECT_ROOT / "api" / "seed_runtime.py").read_text(encoding="utf-8")
     lines = source.splitlines()
     guarded = [
-        index
-        for index, line in enumerate(lines)
-        if line.strip() == "if window_steps is not None:"
+        index for index, line in enumerate(lines) if line.strip() == "if window_steps is not None:"
     ]
     assert guarded, "no conditional guard found"
     assert any(

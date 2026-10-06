@@ -130,7 +130,10 @@ def test_instrument_carries_v6_and_the_correction_note() -> None:
     #: v38（DEBT-G33）：**环内调用计数不许再依赖 α／上限旗标**，且"没在测"必须写成 `null` 而不是 0。
     #: 钉的是"观察者安装条件＝回路在场"＋旗标列＋缺观察者时 `null`，并反向钉住那个会自我欺骗的旧写法。
     assert "evidence_observer_installed = substrate.copy_circuit is not None" in source
-    assert 'if evidence_observer_installed:\n        scaled, loop_silenced = _observe_silencing(' in source
+    assert (
+        "if evidence_observer_installed:\n        scaled, loop_silenced = _observe_silencing("
+        in source
+    )
     assert '"evidence_observer_installed": evidence_observer_installed,' in source
     assert "loop_silenced[0] if evidence_observer_installed else None" in source
     assert '"evidence_calls_in_generation_loop": loop_silenced[0],' not in source
@@ -235,7 +238,7 @@ def test_recall_numbers_after_docking50_name_the_circuit() -> None:
     lines = plan.splitlines()
     starts = [i for i, line in enumerate(lines) if line.startswith("### 第五十")]
     assert starts, "docking 50 heading missing"
-    section = lines[min(starts):]
+    section = lines[min(starts) :]
     offenders = [
         line
         for line in section
@@ -249,7 +252,9 @@ def test_the_product_gate_arm_is_distinct_from_the_instrument_stand_in() -> None
     #: v20（owner 2026-10-02 裁「立项进产品」）：验收面必须走**产品原生门**，
     #: 不能拿本仪器 v17 那副 monkeypatch 替身当代答——替身证的是"这样修有用"，不是"产品里就是这么修的"。
     #: 三样钉住：旗标存在且调产品 setter、两档互斥、门开过枪要自证（`steps_seen=0` ⇒ 假档）。
-    source = (PROJECT_ROOT / "scripts" / "training" / "probe_taiji_a30_stop_failure.py").read_text(encoding="utf-8")
+    source = (PROJECT_ROOT / "scripts" / "training" / "probe_taiji_a30_stop_failure.py").read_text(
+        encoding="utf-8"
+    )
     assert '"--product-window-steps"' in source
     assert "substrate.set_copy_evidence_window_steps(args.product_window_steps)" in source
     assert "产品门与仪器替身档不能同开" in source
@@ -269,7 +274,9 @@ def test_the_stand_alone_loop_caller_must_reset_the_product_window() -> None:
     #: 2026-10-02 实测踩到：L2 仪器自己驱动生成环，产品门在 `generate()` 里的复位对它不生效，
     #: 于是 K=64 变成"整批只发前 64 步"，读数与不挂回路同值却被当成增益。
     #: 钉住调用方必须显式复位（且只在产品档下）。
-    source = (PROJECT_ROOT / "scripts" / "training" / "probe_taiji_a30_stop_failure.py").read_text(encoding="utf-8")
+    source = (PROJECT_ROOT / "scripts" / "training" / "probe_taiji_a30_stop_failure.py").read_text(
+        encoding="utf-8"
+    )
     assert "substrate.reset_copy_evidence_window()" in source
     assert source.count("if args.product_window_steps is not None:") >= 2
 
@@ -289,12 +296,18 @@ def test_every_a30_face_discloses_which_window_path_produced_it() -> None:
     #: 而同一个信封里 `window_arm` 在替身档未开时恒为 0 ⇒ 光看件分不开"产品门"与"替身档"。
     #: 钉三台仪器都必须自述旗标与被走到计数。
     holders = {
-        "probe_taiji_a30_stop_failure.py": ('"product_window_steps": args.product_window_steps',
-                                            '"product_window_stats"'),
-        "score_taiji_r2_copy_circuit_chat_cap.py": ('"product_window_steps": args.product_window_steps',
-                                                    '"product_window_stats": product_window_stats'),
-        "score_taiji_r2_copy_surface_extension.py": ('"product_window_steps": product_window_steps',
-                                                     '"product_window_stats": substrate.copy_evidence_window_stats()'),
+        "probe_taiji_a30_stop_failure.py": (
+            '"product_window_steps": args.product_window_steps',
+            '"product_window_stats"',
+        ),
+        "score_taiji_r2_copy_circuit_chat_cap.py": (
+            '"product_window_steps": args.product_window_steps',
+            '"product_window_stats": product_window_stats',
+        ),
+        "score_taiji_r2_copy_surface_extension.py": (
+            '"product_window_steps": product_window_steps',
+            '"product_window_stats": substrate.copy_evidence_window_stats()',
+        ),
     }
     for name, needles in holders.items():
         source = (PROJECT_ROOT / "scripts" / "training" / name).read_text(encoding="utf-8")
@@ -306,15 +319,23 @@ def test_the_window_counters_are_read_after_the_run_not_before_it() -> None:
     #: 实测踩过的披露陷阱：把 `copy_evidence_window_stats()` 取在生成之前 ⇒ 件里永远是全零快照，
     #: 而全零恰好会"证明门没开过枪"——一个会把成功读数说成空档的自证。两台仪器都必须在返回时才取。
     import ast as _ast
+
     for name, needle in (
         ("score_taiji_r2_copy_surface_extension.py", "copy_evidence_window_stats"),
         ("score_taiji_r2_copy_circuit_chat_cap.py", "copy_evidence_window_stats"),
     ):
         source = (PROJECT_ROOT / "scripts" / "training" / name).read_text(encoding="utf-8")
         tree = _ast.parse(source)
-        fn = next(n for n in _ast.walk(tree) if isinstance(n, _ast.FunctionDef) and n.name == "run_arm")
-        lines = [n.lineno for n in _ast.walk(fn) if isinstance(n, _ast.Call)
-                 and isinstance(n.func, _ast.Attribute) and n.func.attr == needle]
+        fn = next(
+            n for n in _ast.walk(tree) if isinstance(n, _ast.FunctionDef) and n.name == "run_arm"
+        )
+        lines = [
+            n.lineno
+            for n in _ast.walk(fn)
+            if isinstance(n, _ast.Call)
+            and isinstance(n.func, _ast.Attribute)
+            and n.func.attr == needle
+        ]
         assert lines, name
         starts = [x.lineno for x in _ast.walk(fn) if isinstance(x, _ast.Return)]
         assert starts, name
@@ -333,12 +354,27 @@ def test_the_endstep_probe_groups_by_generation_not_by_item() -> None:
     )
 
     def row(step, p, rank, in_run=True, byte=65):
-        return {"step": step, "p_boundary": p, "boundary_rank_in_legal": rank,
-                "legal_candidates": 40, "legal_candidates_including_boundary": 41,
-                "ratio_best_over_boundary": 3.0, "in_run": in_run,
-                "emitted_byte": byte, "utf8_byte_class": "ascii", "utf8_state_before": [0, 0]}
+        return {
+            "step": step,
+            "p_boundary": p,
+            "boundary_rank_in_legal": rank,
+            "legal_candidates": 40,
+            "legal_candidates_including_boundary": 41,
+            "ratio_best_over_boundary": 3.0,
+            "in_run": in_run,
+            "emitted_byte": byte,
+            "utf8_byte_class": "ascii",
+            "utf8_state_before": [0, 0],
+        }
 
-    rows = [row(0, 0.1, 9), row(1, 0.4, 3), row(2, 0.2, 7), row(0, 0.9, 1), row(1, 0.5, 2), row(3, 0.7, 5, in_run=False)]
+    rows = [
+        row(0, 0.1, 9),
+        row(1, 0.4, 3),
+        row(2, 0.2, 7),
+        row(0, 0.9, 1),
+        row(1, 0.5, 2),
+        row(3, 0.7, 5, in_run=False),
+    ]
     groups = _group_rows_by_generation(rows)
     #: v23：全部行都参与换代分组（v22 误把 `in_run` 当"在生成内"用 ⇒ 72 代只剩 12／0）。
     assert [len(g) for g in groups] == [3, 3], groups
@@ -347,22 +383,28 @@ def test_the_endstep_probe_groups_by_generation_not_by_item() -> None:
     assert probe[0]["p_boundary_max"] == 0.4 and probe[0]["p_boundary_argmax_step"] == 1, probe[0]
     assert probe[0]["steps_in_repeat_run"] == 3 and probe[1]["steps_in_repeat_run"] == 2, probe
     assert probe[0]["boundary_rank_at_peak_step"] == 3, probe[0]
-    assert probe[0]["peak_is_last_step"] is False, probe[0]      # 峰值在 step 1，该代最后一步是 step 2 ⇒ 看到了还在走
-    assert probe[1]["p_boundary_max"] == 0.9 and probe[1]["boundary_rank_at_peak_step"] == 1, probe[1]
+    assert probe[0]["peak_is_last_step"] is False, probe[
+        0
+    ]  # 峰值在 step 1，该代最后一步是 step 2 ⇒ 看到了还在走
+    assert probe[1]["p_boundary_max"] == 0.9 and probe[1]["boundary_rank_at_peak_step"] == 1, probe[
+        1
+    ]
     assert probe[1]["peak_is_last_step"] is False, probe[1]
     assert all(entry["ate_full_budget"] is False for entry in probe), probe
     #: 第三代的真值样例：峰值落在**最后一个在案步**。⚠ §六十九收回的那句话正是把这件事读成
     #: "停在峰值上"——产品环体 `break` 在 `observe` 之前，最后一个在案步是**停下前一步**，
     #: 真正的终止决策只在 v27 的 `terminal_decision` 里（下面那条守卫钉住）。
     last_step_peak = _endstep_probe_per_generation(
-        [row(0, .1, 9), row(1, .3, 4), row(2, .8, 1)], max_length=256, terminals=[None]
+        [row(0, 0.1, 9), row(1, 0.3, 4), row(2, 0.8, 1)], max_length=256, terminals=[None]
     )
     assert last_step_peak[0]["peak_is_last_step"] is True, last_step_peak
     assert last_step_peak[0]["boundary_rank_at_peak_step"] == 1, last_step_peak
-    assert last_step_peak[0]["terminal_decision"] is None, last_step_peak   # 没补终止行 ⇒ 这一代"停在哪儿"不可答
+    assert (
+        last_step_peak[0]["terminal_decision"] is None
+    ), last_step_peak  # 没补终止行 ⇒ 这一代"停在哪儿"不可答
     # 吃满预算的判据：末步 +1 >= max_length（不依赖外部真值）
     long_run = _endstep_probe_per_generation(
-        [row(0, .1, 9), row(1, .2, 8)], max_length=2, terminals=[None]
+        [row(0, 0.1, 9), row(1, 0.2, 8)], max_length=2, terminals=[None]
     )
     assert long_run[0]["ate_full_budget"] is True, long_run
 
@@ -372,10 +414,18 @@ def test_the_fixed_step_probe_records_only_reached_steps() -> None:
     from probe_taiji_a30_stop_failure import _FIXED_STEPS, _endstep_probe_per_generation
 
     def row(step, p, rank, legal=40):
-        return {"step": step, "p_boundary": p, "boundary_rank_in_legal": rank,
-                "legal_candidates": legal, "legal_candidates_including_boundary": legal + 1,
-                "ratio_best_over_boundary": 4.0, "in_run": True,
-                "emitted_byte": 97, "utf8_byte_class": "ascii", "utf8_state_before": [0, 0]}
+        return {
+            "step": step,
+            "p_boundary": p,
+            "boundary_rank_in_legal": rank,
+            "legal_candidates": legal,
+            "legal_candidates_including_boundary": legal + 1,
+            "ratio_best_over_boundary": 4.0,
+            "in_run": True,
+            "emitted_byte": 97,
+            "utf8_byte_class": "ascii",
+            "utf8_state_before": [0, 0],
+        }
 
     short = _endstep_probe_per_generation(
         [row(s, 0.01, 9) for s in range(10)], max_length=256, terminals=[None]
@@ -384,12 +434,24 @@ def test_the_fixed_step_probe_records_only_reached_steps() -> None:
     long = _endstep_probe_per_generation(
         [row(s, 0.02, 7) for s in range(200)], max_length=256, terminals=[None]
     )
-    assert [entry["step"] for entry in long[0]["at_steps"]] == list(_FIXED_STEPS), long[0]["at_steps"]
-    assert all({"p_boundary", "boundary_rank_in_legal", "legal_candidates",
-                "legal_candidates_including_boundary"} <= set(entry) for entry in long[0]["at_steps"])
+    assert [entry["step"] for entry in long[0]["at_steps"]] == list(_FIXED_STEPS), long[0][
+        "at_steps"
+    ]
+    assert all(
+        {
+            "p_boundary",
+            "boundary_rank_in_legal",
+            "legal_candidates",
+            "legal_candidates_including_boundary",
+        }
+        <= set(entry)
+        for entry in long[0]["at_steps"]
+    )
     #: DEBT-G24：名次必须被**含边界符**那一列界定
-    assert all(entry["boundary_rank_in_legal"] <= entry["legal_candidates_including_boundary"]
-               for entry in long[0]["at_steps"]), long[0]["at_steps"]
+    assert all(
+        entry["boundary_rank_in_legal"] <= entry["legal_candidates_including_boundary"]
+        for entry in long[0]["at_steps"]
+    ), long[0]["at_steps"]
 
 
 def test_boundary_rank_is_bounded_by_the_denominator_it_belongs_to() -> None:
@@ -422,9 +484,11 @@ def test_window_stats_report_cumulative_and_last_turn_separately() -> None:
     model_src = (PROJECT_ROOT / "taiji" / "model.py").read_text(encoding="utf-8")
     assert "_copy_evidence_window_emitted_total" in model_src
     assert '"emitted_steps_total"' in model_src and '"silenced_steps_total"' in model_src
-    reset_body = model_src.split("def reset_copy_evidence_window(self) -> None:", 1)[1].split("    def ", 1)[0]
+    reset_body = model_src.split("def reset_copy_evidence_window(self) -> None:", 1)[1].split(
+        "    def ", 1
+    )[0]
     assert "_copy_evidence_step = 0" in reset_body
-    assert "_total = 0" not in reset_body          # 累计量绝不在复位里被清零
+    assert "_total = 0" not in reset_body  # 累计量绝不在复位里被清零
 
 
 def _synthetic_row(step: int, p: float, rank: int, legal: int = 40, byte: int = 0x80) -> dict:
@@ -468,10 +532,16 @@ def test_the_terminal_row_is_the_one_step_the_generation_loop_hides() -> None:
 
     stop_rows = [_synthetic_row(0, 0.001, 20), _synthetic_row(1, 0.004, 12)]
     eat_rows = [_synthetic_row(0, 0.0005, 60), _synthetic_row(1, 0.0006, 61)]
-    terminal = {"step": 2, "p_boundary": 0.02, "p_boundary_before_penalty": 0.02,
-                "boundary_rank_in_legal": 1, "legal_candidates_including_boundary": 41,
-                "ratio_best_over_boundary": 1.0, "boundary_is_argmax": True,
-                "utf8_state_before": [0, 0]}
+    terminal = {
+        "step": 2,
+        "p_boundary": 0.02,
+        "p_boundary_before_penalty": 0.02,
+        "boundary_rank_in_legal": 1,
+        "legal_candidates_including_boundary": 41,
+        "ratio_best_over_boundary": 1.0,
+        "boundary_is_argmax": True,
+        "utf8_state_before": [0, 0],
+    }
     rows = stop_rows + eat_rows
     probe = _endstep_probe_per_generation(rows, max_length=2, terminals=[terminal, None])
     assert probe[0]["terminal_decision"] is not None, probe[0]
@@ -496,23 +566,40 @@ def test_the_terminal_summary_can_report_a_face_violation_and_a_bad_pairing() ->
             "last_step": 1,
             "p_boundary_max": recorded_peak,
             "ate_full_budget": ate,
-            "last_recorded_row": {"step": 1, "boundary_rank_in_legal": last_rank,
-                                  "p_boundary": 0.001, "legal_candidates_including_boundary": 41,
-                                  "ratio_best_over_boundary": 5.0},
+            "last_recorded_row": {
+                "step": 1,
+                "boundary_rank_in_legal": last_rank,
+                "p_boundary": 0.001,
+                "legal_candidates_including_boundary": 41,
+                "ratio_best_over_boundary": 5.0,
+            },
             "terminal_decision": (
                 None
                 if terminal_p is None
-                else {"step": 2, "p_boundary": terminal_p, "p_boundary_before_penalty": terminal_p,
-                      "boundary_rank_in_legal": rank, "legal_candidates_including_boundary": 41,
-                      "ratio_best_over_boundary": 1.0, "boundary_is_argmax": rank == 1,
-                      "terminal_over_recorded_peak": round(terminal_p / recorded_peak, 4)}
+                else {
+                    "step": 2,
+                    "p_boundary": terminal_p,
+                    "p_boundary_before_penalty": terminal_p,
+                    "boundary_rank_in_legal": rank,
+                    "legal_candidates_including_boundary": 41,
+                    "ratio_best_over_boundary": 1.0,
+                    "boundary_is_argmax": rank == 1,
+                    "terminal_over_recorded_peak": round(terminal_p / recorded_peak, 4),
+                }
             ),
-            "terminal_decision_absent_reason": None if terminal_p is not None else "ate_full_budget",
+            "terminal_decision_absent_reason": (
+                None if terminal_p is not None else "ate_full_budget"
+            ),
         }
 
     good = [generation(0.02, 1, 0.004, 12, False), generation(None, 1, 0.001, 60, True)]
-    per_item = [{"endstep_probe_v22": good, "generations_boundary_self_stop": 1,
-                 "generations_eating_full_budget": 1}]
+    per_item = [
+        {
+            "endstep_probe_v22": good,
+            "generations_boundary_self_stop": 1,
+            "generations_eating_full_budget": 1,
+        }
+    ]
     summary = _terminal_summary_v27(per_item)
     assert summary["pairing_ok"] is True, summary
     assert summary["terminal_rank_not_one_count"] == 0, summary
@@ -522,15 +609,27 @@ def test_the_terminal_summary_can_report_a_face_violation_and_a_bad_pairing() ->
 
     #: 能为假①：终止名次不是 1 ⇒ 必须数出来（那说明重放口径与产品环不是一条）
     bad_rank = [generation(0.02, 4, 0.004, 12, False)]
-    flipped = _terminal_summary_v27([{"endstep_probe_v22": bad_rank,
-                                      "generations_boundary_self_stop": 1,
-                                      "generations_eating_full_budget": 0}])
+    flipped = _terminal_summary_v27(
+        [
+            {
+                "endstep_probe_v22": bad_rank,
+                "generations_boundary_self_stop": 1,
+                "generations_eating_full_budget": 0,
+            }
+        ]
+    )
     assert flipped["terminal_rank_not_one_count"] == 1, flipped
     assert flipped["terminal_rank_values_seen"] == [4], flipped
     #: 能为假②：件内点数与分组对不上 ⇒ pairing_ok 必须为假，不能默认成立
-    misaligned = _terminal_summary_v27([{"endstep_probe_v22": good,
-                                         "generations_boundary_self_stop": 3,
-                                         "generations_eating_full_budget": 0}])
+    misaligned = _terminal_summary_v27(
+        [
+            {
+                "endstep_probe_v22": good,
+                "generations_boundary_self_stop": 3,
+                "generations_eating_full_budget": 0,
+            }
+        ]
+    )
     assert misaligned["pairing_ok"] is False, misaligned
 
 
@@ -541,8 +640,11 @@ def test_the_terminal_row_stays_out_of_the_per_step_aggregates() -> None:
     )
     assert source.count("item_rows.append(") == 1, "逐步聚合列只许有一个写入点"
     assert "terminal_rows.append(" in source
-    assert 'item_rows.append(terminal' not in source
-    assert '"steps_boundary_is_argmax": sum(1 for row in item_rows if row["boundary_is_argmax"])' in source
+    assert "item_rows.append(terminal" not in source
+    assert (
+        '"steps_boundary_is_argmax": sum(1 for row in item_rows if row["boundary_is_argmax"])'
+        in source
+    )
     assert '"terminal_decision_summary_v27": _terminal_summary_v27(per_item)' in source
 
 
@@ -575,19 +677,30 @@ def test_the_tail_identity_records_what_was_emitted_right_before_the_stop() -> N
     )
 
     def terminal(step_value: int):
-        return {"step": step_value, "p_boundary": 0.03, "p_boundary_before_penalty": 0.03,
-                "boundary_rank_in_legal": 1, "legal_candidates_including_boundary": 41,
-                "ratio_best_over_boundary": 1.0, "boundary_is_argmax": True,
-                "utf8_state_before": [0, 0]}
+        return {
+            "step": step_value,
+            "p_boundary": 0.03,
+            "p_boundary_before_penalty": 0.03,
+            "boundary_rank_in_legal": 1,
+            "legal_candidates_including_boundary": 41,
+            "ratio_best_over_boundary": 1.0,
+            "boundary_is_argmax": True,
+            "utf8_state_before": [0, 0],
+        }
 
     rows, terminals = [], []
-    for byte in (0xE4, 0xE4, 0x41):                            # 自停三代：两个 lead3、一个 ascii
-        rows.extend([_synthetic_row(0, 0.001, 9, byte=byte), _synthetic_row(1, 0.002, 7, byte=byte)])
-        terminals.append(terminal(2))
-    for byte in (0x80, 0x80, 0x80):                            # 吃满三代：全是续字节
+    for byte in (0xE4, 0xE4, 0x41):  # 自停三代：两个 lead3、一个 ascii
         rows.extend(
-            [_synthetic_row(0, 0.001, 30, byte=byte), _synthetic_row(1, 0.002, 31, byte=byte),
-             _synthetic_row(2, 0.003, 32, byte=byte)]
+            [_synthetic_row(0, 0.001, 9, byte=byte), _synthetic_row(1, 0.002, 7, byte=byte)]
+        )
+        terminals.append(terminal(2))
+    for byte in (0x80, 0x80, 0x80):  # 吃满三代：全是续字节
+        rows.extend(
+            [
+                _synthetic_row(0, 0.001, 30, byte=byte),
+                _synthetic_row(1, 0.002, 31, byte=byte),
+                _synthetic_row(2, 0.003, 32, byte=byte),
+            ]
         )
         terminals.append(None)
     #: 预算取 3：自停的代只有 2 行（没吃满），吃满的代有 3 行——**上一版我在这里写错**
@@ -600,8 +713,13 @@ def test_the_tail_identity_records_what_was_emitted_right_before_the_stop() -> N
     assert probes[0]["tail_identity"]["prev_step_emitted_byte"] == 0xE4, probes[0]
     assert [p["ate_full_budget"] for p in probes] == [False] * 3 + [True] * 3, probes
 
-    per_item = [{"endstep_probe_v22": probes, "generations_boundary_self_stop": 3,
-                 "generations_eating_full_budget": 3}]
+    per_item = [
+        {
+            "endstep_probe_v22": probes,
+            "generations_boundary_self_stop": 3,
+            "generations_eating_full_budget": 3,
+        }
+    ]
     summary = _tail_identity_summary_v28(per_item)
     assert summary["tail_identity_present_for_all_generations"] is True, summary
     assert summary["stoppers_that_also_ate_full_budget"] == 0, summary
@@ -648,20 +766,34 @@ def test_the_lf_followthrough_summary_separates_no_lf_from_lf_not_captured() -> 
         ]
 
     def terminal_at(step_value: int):
-        return {"step": step_value, "p_boundary": 0.03, "p_boundary_before_penalty": 0.03,
-                "boundary_rank_in_legal": 1, "legal_candidates_including_boundary": 41,
-                "ratio_best_over_boundary": 1.0, "boundary_is_argmax": True,
-                "utf8_state_before": [0, 0]}
+        return {
+            "step": step_value,
+            "p_boundary": 0.03,
+            "p_boundary_before_penalty": 0.03,
+            "boundary_rank_in_legal": 1,
+            "legal_candidates_including_boundary": 41,
+            "ratio_best_over_boundary": 1.0,
+            "boundary_is_argmax": True,
+            "utf8_state_before": [0, 0],
+        }
 
-    rows = gen((0x41, 0x42, 10)) + gen((10, 0x42, 0x43)) + gen((10, 0x42, 0x43, 0x44)) + gen(
-        (0x41, 0x42, 0x43, 0x44)
+    rows = (
+        gen((0x41, 0x42, 10))
+        + gen((10, 0x42, 0x43))
+        + gen((10, 0x42, 0x43, 0x44))
+        + gen((0x41, 0x42, 0x43, 0x44))
     )
     probes = _endstep_probe_per_generation(
         rows, max_length=4, terminals=[terminal_at(3), terminal_at(3), None, None]
     )
     assert [p["lf_trace_v29"]["lf_step_count"] for p in probes] == [1, 1, 1, 0], probes
-    per_item = [{"endstep_probe_v22": probes, "generations_boundary_self_stop": 2,
-                 "generations_eating_full_budget": 2}]
+    per_item = [
+        {
+            "endstep_probe_v22": probes,
+            "generations_boundary_self_stop": 2,
+            "generations_eating_full_budget": 2,
+        }
+    ]
     summary = _lf_followthrough_summary_v29(per_item)
     assert summary["stoppers"]["n"] == 2 and summary["stoppers"]["with_lf_share"] == 1.0, summary
     #: 只有一代是"停紧跟 LF"（另一代的 LF 在第 0 步）⇒ 这一支能为假，不是恒真
@@ -685,17 +817,30 @@ def test_the_lf_next_probe_measures_leverage_and_refuses_small_denominators() ->
     )
 
     def terminal_at(step_value: int, rank: int = 1):
-        return {"step": step_value, "p_boundary": 0.3, "p_boundary_before_penalty": 0.3,
-                "boundary_rank_in_legal": rank, "legal_candidates_including_boundary": 41,
-                "ratio_best_over_boundary": 1.0, "boundary_is_argmax": rank == 1,
-                "utf8_state_before": [0, 0]}
+        return {
+            "step": step_value,
+            "p_boundary": 0.3,
+            "p_boundary_before_penalty": 0.3,
+            "boundary_rank_in_legal": rank,
+            "legal_candidates_including_boundary": 41,
+            "ratio_best_over_boundary": 1.0,
+            "boundary_is_argmax": rank == 1,
+            "utf8_state_before": [0, 0],
+        }
 
-    stopper = [_synthetic_row(0, 0.001, 40, byte=0x41), _synthetic_row(1, 0.002, 39, byte=0x42),
-               _synthetic_row(2, 0.003, 38, byte=10)]
-    deep_eater = [_synthetic_row(s, 0.001, 20 if s == 1 else 44, byte=(10 if s == 0 else 0x42))
-                  for s in range(4)]
-    near_eater = [_synthetic_row(s, 0.001, 2 if s == 1 else 44, byte=(10 if s == 0 else 0x42))
-                  for s in range(4)]
+    stopper = [
+        _synthetic_row(0, 0.001, 40, byte=0x41),
+        _synthetic_row(1, 0.002, 39, byte=0x42),
+        _synthetic_row(2, 0.003, 38, byte=10),
+    ]
+    deep_eater = [
+        _synthetic_row(s, 0.001, 20 if s == 1 else 44, byte=(10 if s == 0 else 0x42))
+        for s in range(4)
+    ]
+    near_eater = [
+        _synthetic_row(s, 0.001, 2 if s == 1 else 44, byte=(10 if s == 0 else 0x42))
+        for s in range(4)
+    ]
     probes = _endstep_probe_per_generation(
         stopper + deep_eater + near_eater,
         max_length=4,
@@ -705,8 +850,13 @@ def test_the_lf_next_probe_measures_leverage_and_refuses_small_denominators() ->
     assert probes[1]["lf_next_probe_v30"]["best_boundary_rank_after_lf"] == 20, probes[1]
     assert probes[2]["lf_next_probe_v30"]["best_boundary_rank_after_lf"] == 2, probes[2]
     summary = _lf_next_summary_v30(
-        [{"endstep_probe_v22": probes, "generations_boundary_self_stop": 1,
-          "generations_eating_full_budget": 2}]
+        [
+            {
+                "endstep_probe_v22": probes,
+                "generations_boundary_self_stop": 1,
+                "generations_eating_full_budget": 2,
+            }
+        ]
     )
     assert summary["stoppers_all_rank_one"] is True, summary
     assert summary["stoppers_rank_values_seen"] == [1], summary
@@ -717,8 +867,13 @@ def test_the_lf_next_probe_measures_leverage_and_refuses_small_denominators() ->
 
     five = probes[1:] + probes[1:2] * 3
     flipped = _lf_next_summary_v30(
-        [{"endstep_probe_v22": five, "generations_boundary_self_stop": 0,
-          "generations_eating_full_budget": 5}]
+        [
+            {
+                "endstep_probe_v22": five,
+                "generations_boundary_self_stop": 0,
+                "generations_eating_full_budget": 5,
+            }
+        ]
     )
     assert flipped["eaters_with_lf_and_next_step"] == 5, flipped
     assert flipped["denominator_at_least_5"] is True, flipped
@@ -742,29 +897,53 @@ def test_the_lf_competitor_summary_ignores_the_terminal_row_and_counts_the_winne
     assert _winner_label(None) is None
 
     def terminal_at(step_value: int):
-        return {"step": step_value, "p_boundary": 0.3, "p_boundary_before_penalty": 0.3,
-                "boundary_rank_in_legal": 1, "legal_candidates_including_boundary": 41,
-                "ratio_best_over_boundary": 1.0, "boundary_is_argmax": True,
-                "utf8_state_before": [0, 0]}
+        return {
+            "step": step_value,
+            "p_boundary": 0.3,
+            "p_boundary_before_penalty": 0.3,
+            "boundary_rank_in_legal": 1,
+            "legal_candidates_including_boundary": 41,
+            "ratio_best_over_boundary": 1.0,
+            "boundary_is_argmax": True,
+            "utf8_state_before": [0, 0],
+        }
 
-    stopper = [_synthetic_row(0, 0.001, 40, byte=0x41), _synthetic_row(1, 0.002, 39, byte=0x42),
-               _synthetic_row(2, 0.003, 38, byte=10)]
-    eater_a = [_synthetic_row(0, 0.001, 44, byte=10), _synthetic_row(1, 0.002, 2, byte=0x41),
-               _synthetic_row(2, 0.003, 40, byte=0x43), _synthetic_row(3, 0.004, 41, byte=0x44)]
-    eater_b = [_synthetic_row(0, 0.001, 44, byte=10), _synthetic_row(1, 0.002, 3, byte=0x41),
-               _synthetic_row(2, 0.003, 40, byte=0x43), _synthetic_row(3, 0.004, 41, byte=0x44)]
+    stopper = [
+        _synthetic_row(0, 0.001, 40, byte=0x41),
+        _synthetic_row(1, 0.002, 39, byte=0x42),
+        _synthetic_row(2, 0.003, 38, byte=10),
+    ]
+    eater_a = [
+        _synthetic_row(0, 0.001, 44, byte=10),
+        _synthetic_row(1, 0.002, 2, byte=0x41),
+        _synthetic_row(2, 0.003, 40, byte=0x43),
+        _synthetic_row(3, 0.004, 41, byte=0x44),
+    ]
+    eater_b = [
+        _synthetic_row(0, 0.001, 44, byte=10),
+        _synthetic_row(1, 0.002, 3, byte=0x41),
+        _synthetic_row(2, 0.003, 40, byte=0x43),
+        _synthetic_row(3, 0.004, 41, byte=0x44),
+    ]
     probes = _endstep_probe_per_generation(
         stopper + eater_a + eater_b, max_length=4, terminals=[terminal_at(3), None, None]
     )
     assert probes[0]["lf_next_probe_v30"]["winner_byte_at_best_rank_step"] == "boundary", probes[0]
     summary = _lf_competitor_summary_v31(
-        [{"endstep_probe_v22": probes, "generations_boundary_self_stop": 1,
-          "generations_eating_full_budget": 2}]
+        [
+            {
+                "endstep_probe_v22": probes,
+                "generations_boundary_self_stop": 1,
+                "generations_eating_full_budget": 2,
+            }
+        ]
     )
     assert summary["n_eaters_with_post_lf_step"] == 2, summary
     assert summary["denominator_at_least_5"] is False, summary
     assert summary["winner_byte_distinct"] == 1, summary
-    assert summary["winner_byte_at_best_rank_top"] == [{"key": 65, "count": 2, "share": 1.0}], summary
+    assert summary["winner_byte_at_best_rank_top"] == [
+        {"key": 65, "count": 2, "share": 1.0}
+    ], summary
     assert summary["winner_utf8_class_distinct"] == 1, summary
     #: 所有 LF 之后步的胜出字节：拖写两代各 1 个 LF ⇒ 2 个，仍全是 65；自停代的 boundary 不在内
     assert summary["every_post_lf_winner_count"] == 2, summary
@@ -784,10 +963,16 @@ def test_the_lf_repeat_context_counts_newlines_inside_the_repeat_run_only() -> N
     )
 
     def terminal_at(step_value: int):
-        return {"step": step_value, "p_boundary": 0.3, "p_boundary_before_penalty": 0.3,
-                "boundary_rank_in_legal": 1, "legal_candidates_including_boundary": 41,
-                "ratio_best_over_boundary": 1.0, "boundary_is_argmax": True,
-                "utf8_state_before": [0, 0]}
+        return {
+            "step": step_value,
+            "p_boundary": 0.3,
+            "p_boundary_before_penalty": 0.3,
+            "boundary_rank_in_legal": 1,
+            "legal_candidates_including_boundary": 41,
+            "ratio_best_over_boundary": 1.0,
+            "boundary_is_argmax": True,
+            "utf8_state_before": [0, 0],
+        }
 
     def group(lf_inside: tuple, *, last_byte: int = 0x41):
         #: lf_inside 里每一项是 (该 LF 是否在同字重复段内)；末尾再补一个非 LF 步
@@ -800,20 +985,27 @@ def test_the_lf_repeat_context_counts_newlines_inside_the_repeat_run_only() -> N
         rows.append(tail)
         return rows
 
-    stopper = group((True, False))                      #: 2 个 LF，一半在重复段内（共 3 步＜预算 ⇒ 自停）
-    eater = group((False, False, False))               #: 3 个 LF，全在段外（共 4 步＝吃满预算）
+    stopper = group((True, False))  #: 2 个 LF，一半在重复段内（共 3 步＜预算 ⇒ 自停）
+    eater = group((False, False, False))  #: 3 个 LF，全在段外（共 4 步＝吃满预算）
     probes = _endstep_probe_per_generation(
         stopper + eater, max_length=4, terminals=[terminal_at(2), None]
     )
     assert [p["ate_full_budget"] for p in probes] == [False, True], probes
     assert probes[0]["lf_repeat_context_v32"] == {
-        "lf_steps_total": 2, "lf_steps_inside_repeat_run": 1, "lf_share_inside_repeat_run": 0.5,
+        "lf_steps_total": 2,
+        "lf_steps_inside_repeat_run": 1,
+        "lf_share_inside_repeat_run": 0.5,
     }, probes[0]
     assert probes[1]["lf_repeat_context_v32"]["lf_share_inside_repeat_run"] == 0.0, probes[1]
 
     summary = _lf_repeat_context_summary_v32(
-        [{"endstep_probe_v22": probes, "generations_boundary_self_stop": 1,
-          "generations_eating_full_budget": 1}]
+        [
+            {
+                "endstep_probe_v22": probes,
+                "generations_boundary_self_stop": 1,
+                "generations_eating_full_budget": 1,
+            }
+        ]
     )
     assert summary["stoppers_median_share_inside_repeat_run"] == 0.5, summary
     assert summary["eaters_median_share_inside_repeat_run"] == 0.0, summary
@@ -822,8 +1014,13 @@ def test_the_lf_repeat_context_counts_newlines_inside_the_repeat_run_only() -> N
     #: 把拖写组里"发过 LF 的代"推到 10 代 ⇒ 开关必须翻成 True（§85 的门槛不是口头承诺）
     many = probes[:1] + [probes[1] for _ in range(10)]
     flipped = _lf_repeat_context_summary_v32(
-        [{"endstep_probe_v22": many, "generations_boundary_self_stop": 1,
-          "generations_eating_full_budget": 10}]
+        [
+            {
+                "endstep_probe_v22": many,
+                "generations_boundary_self_stop": 1,
+                "generations_eating_full_budget": 10,
+            }
+        ]
     )
     assert flipped["eaters_with_lf"] == 10, flipped
     assert flipped["discriminator_denominator_at_least_10"] is True, flipped
@@ -852,45 +1049,79 @@ def test_the_dynamic_range_flag_refuses_a_ruler_that_cannot_discriminate() -> No
             "last_step": 3,
             "p_boundary_max": 0.001,
             "ate_full_budget": ate,
-            "last_recorded_row": {"step": 3, "boundary_rank_in_legal": 30, "p_boundary": 0.001,
-                                  "legal_candidates_including_boundary": 41,
-                                  "ratio_best_over_boundary": 9.0},
-            "terminal_decision": None if ate else {
-                "step": 4, "p_boundary": 0.3, "p_boundary_before_penalty": 0.3,
-                "boundary_rank_in_legal": 1, "legal_candidates_including_boundary": 41,
-                "ratio_best_over_boundary": 1.0, "boundary_is_argmax": True,
-                "terminal_utf8_state_before": [0, 0],
-                "terminal_over_recorded_peak": 300.0},
+            "last_recorded_row": {
+                "step": 3,
+                "boundary_rank_in_legal": 30,
+                "p_boundary": 0.001,
+                "legal_candidates_including_boundary": 41,
+                "ratio_best_over_boundary": 9.0,
+            },
+            "terminal_decision": (
+                None
+                if ate
+                else {
+                    "step": 4,
+                    "p_boundary": 0.3,
+                    "p_boundary_before_penalty": 0.3,
+                    "boundary_rank_in_legal": 1,
+                    "legal_candidates_including_boundary": 41,
+                    "ratio_best_over_boundary": 1.0,
+                    "boundary_is_argmax": True,
+                    "terminal_utf8_state_before": [0, 0],
+                    "terminal_over_recorded_peak": 300.0,
+                }
+            ),
             "terminal_decision_absent_reason": "ate_full_budget" if ate else None,
-            "tail_identity": {"prev_step_emitted_byte": 10, "prev_step_utf8_byte_class": "ascii",
-                              "prev_step_utf8_state_before": [0, 0], "prev_step_boundary_rank": 30,
-                              "prev_step_p_boundary": 0.001},
+            "tail_identity": {
+                "prev_step_emitted_byte": 10,
+                "prev_step_utf8_byte_class": "ascii",
+                "prev_step_utf8_state_before": [0, 0],
+                "prev_step_boundary_rank": 30,
+                "prev_step_p_boundary": 0.001,
+            },
             "lf_trace_v29": {"lf_step_count": 2, "last_lf_step": 2, "generation_last_step": 3},
-            "lf_next_probe_v30": {"lf_count": 2, "lf_next_steps": 2,
-                                  "best_boundary_rank_after_lf": 2,
-                                  "p_boundary_at_best_rank_step": 0.02,
-                                  "min_ratio_best_over_boundary_after_lf": 1.1,
-                                  "winner_byte_at_best_rank_step": 231,
-                                  "utf8_class_at_best_rank_step": "lead3",
-                                  "winner_bytes_after_lf": [231, 231]},
-            "lf_repeat_context_v32": {"lf_steps_total": 2, "lf_steps_inside_repeat_run": int(share),
-                                      "lf_share_inside_repeat_run": share},
+            "lf_next_probe_v30": {
+                "lf_count": 2,
+                "lf_next_steps": 2,
+                "best_boundary_rank_after_lf": 2,
+                "p_boundary_at_best_rank_step": 0.02,
+                "min_ratio_best_over_boundary_after_lf": 1.1,
+                "winner_byte_at_best_rank_step": 231,
+                "utf8_class_at_best_rank_step": "lead3",
+                "winner_bytes_after_lf": [231, 231],
+            },
+            "lf_repeat_context_v32": {
+                "lf_steps_total": 2,
+                "lf_steps_inside_repeat_run": int(share),
+                "lf_share_inside_repeat_run": share,
+            },
         }
 
     #: §85 真实形状：自停组全 0.0、拖写组全 0.0 ⇒ 尺子没有动态范围
     stuck = _lf_repeat_context_summary_v32(
-        [{"endstep_probe_v22": [gen(0.0, ate=False), gen(0.0, ate=False)] + [gen(0.0, ate=True) for _ in range(11)],
-          "generations_boundary_self_stop": 2, "generations_eating_full_budget": 11}]
+        [
+            {
+                "endstep_probe_v22": [gen(0.0, ate=False), gen(0.0, ate=False)]
+                + [gen(0.0, ate=True) for _ in range(11)],
+                "generations_boundary_self_stop": 2,
+                "generations_eating_full_budget": 11,
+            }
+        ]
     )
     assert stuck["ruler_usable"] is False, stuck
     assert stuck["column_dynamic_range_eaters"]["endpoint_only"] is True, stuck
-    assert stuck["discriminator_denominator_at_least_10"] is True, stuck      #: 分母够但尺子不够
+    assert stuck["discriminator_denominator_at_least_10"] is True, stuck  #: 分母够但尺子不够
 
     #: 有散布时开关必须放行（否则这条守卫会永远拒绝，那是另一种设计错）
     varied = _lf_repeat_context_summary_v32(
-        [{"endstep_probe_v22": [gen(0.0, ate=False), gen(0.5, ate=False)]
-          + [gen(0.5, ate=True) for _ in range(10)],
-          "generations_boundary_self_stop": 2, "generations_eating_full_budget": 10}]
+        [
+            {
+                "endstep_probe_v22": [gen(0.0, ate=False), gen(0.5, ate=False)]
+                + [gen(0.5, ate=True) for _ in range(10)],
+                "generations_boundary_self_stop": 2,
+                "generations_eating_full_budget": 10,
+            }
+        ]
     )
     assert varied["ruler_usable"] is True, varied
 
@@ -914,10 +1145,16 @@ def test_the_lf_margin_ruler_has_dynamic_range_and_shares_one_implementation() -
     assert source.count("def _rows_after_lf(") == 1, "LF 之后那一步的取法只许住一处"
 
     def terminal_at(step_value: int, ratio: float = 1.0):
-        return {"step": step_value, "p_boundary": 0.3, "p_boundary_before_penalty": 0.3,
-                "boundary_rank_in_legal": 1, "legal_candidates_including_boundary": 41,
-                "ratio_best_over_boundary": ratio, "boundary_is_argmax": True,
-                "utf8_state_before": [0, 0]}
+        return {
+            "step": step_value,
+            "p_boundary": 0.3,
+            "p_boundary_before_penalty": 0.3,
+            "boundary_rank_in_legal": 1,
+            "legal_candidates_including_boundary": 41,
+            "ratio_best_over_boundary": ratio,
+            "boundary_is_argmax": True,
+            "utf8_state_before": [0, 0],
+        }
 
     def gen(spec):
         #: spec 是 (步序, 名次, 该步胜出者比边界强多少, 发出的字节) 的列表；
@@ -940,8 +1177,13 @@ def test_the_lf_margin_ruler_has_dynamic_range_and_shares_one_implementation() -
     assert len(margins[0]["per_step"]) <= 6, margins[0]
     assert all(p["ate_full_budget"] for p in probes), probes
     summary = _lf_margin_summary_v34(
-        [{"endstep_probe_v22": probes, "generations_boundary_self_stop": 0,
-          "generations_eating_full_budget": 2}]
+        [
+            {
+                "endstep_probe_v22": probes,
+                "generations_boundary_self_stop": 0,
+                "generations_eating_full_budget": 2,
+            }
+        ]
     )
     assert summary["eaters_with_lf_next"] == 2, summary
     assert summary["eaters_dynamic_range"]["usable"] is True, summary
@@ -949,9 +1191,16 @@ def test_the_lf_margin_ruler_has_dynamic_range_and_shares_one_implementation() -
     assert summary["eaters_denominator_at_least_20"] is False, summary
     #: 尺子退化的形状（全 None／全同值）必须被报成 usable=False
     empty = _lf_margin_summary_v34(
-        [{"endstep_probe_v22": [dict(p, lf_margins_v34={**p["lf_margins_v34"], "min_ratio": 2.0})
-                                for p in probes],
-          "generations_boundary_self_stop": 0, "generations_eating_full_budget": 2}]
+        [
+            {
+                "endstep_probe_v22": [
+                    dict(p, lf_margins_v34={**p["lf_margins_v34"], "min_ratio": 2.0})
+                    for p in probes
+                ],
+                "generations_boundary_self_stop": 0,
+                "generations_eating_full_budget": 2,
+            }
+        ]
     )
     assert empty["eaters_dynamic_range"]["usable"] is False, empty
 
@@ -987,16 +1236,24 @@ def test_the_report_carries_the_prompt_set_fingerprint_and_no_duplicate_keys() -
     #: 指纹只吃题面内容（id／turns／expected_contains），不吃生成结果 ⇒ 同题面必同值、改一题必变值。
     from probe_taiji_a30_stop_failure import _items_fingerprint
 
-    sample = [{"id": "V001", "turns": ["问：甲。", "答：乙"], "expected_contains": ["乙"], "family": "x"}]
-    changed = [{"id": "V001", "turns": ["问：甲。", "答：丙"], "expected_contains": ["乙"], "family": "x"}]
+    sample = [
+        {"id": "V001", "turns": ["问：甲。", "答：乙"], "expected_contains": ["乙"], "family": "x"}
+    ]
+    changed = [
+        {"id": "V001", "turns": ["问：甲。", "答：丙"], "expected_contains": ["乙"], "family": "x"}
+    ]
     assert _items_fingerprint(sample) == _items_fingerprint([dict(sample[0])])
     assert _items_fingerprint(sample) != _items_fingerprint(changed)
     #: `family` 这类**不参与题面**的列改动不该改指纹（否则同题面会因为元数据而被判成两批）。
-    meta = [{"id": "V001", "turns": ["问：甲。", "答：乙"], "expected_contains": ["乙"], "family": "y"}]
+    meta = [
+        {"id": "V001", "turns": ["问：甲。", "答：乙"], "expected_contains": ["乙"], "family": "y"}
+    ]
     assert _items_fingerprint(sample) == _items_fingerprint(meta)
 
 
-def test_the_peak_step_row_names_what_was_emitted_where_stopping_came_closest(tmp_path: Path) -> None:
+def test_the_peak_step_row_names_what_was_emitted_where_stopping_came_closest(
+    tmp_path: Path,
+) -> None:
     """§106 的守卫：峰值那一步要带**实发字节**与"是否等于前一步的字"，且**分母要一起报**。
 
     能为假的三处：①首步没有前一步可比 ⇒ 该格必须是 `None`（不许当成"不同字"，那会把占比虚高地抬起来）；
@@ -1017,7 +1274,9 @@ def test_the_peak_step_row_names_what_was_emitted_where_stopping_came_closest(tm
                 "emitted_byte": peak_byte,
                 "emitted_byte_class": "ascii",
                 "previous_step_emitted_byte": prev_byte,
-                "same_byte_as_previous_step": (None if prev_byte is None else peak_byte == prev_byte),
+                "same_byte_as_previous_step": (
+                    None if prev_byte is None else peak_byte == prev_byte
+                ),
                 "ratio_best_over_boundary": 2.0,
                 "p_boundary": 0.004,
                 "boundary_rank_in_legal": 14,
@@ -1036,7 +1295,9 @@ def test_the_peak_step_row_names_what_was_emitted_where_stopping_came_closest(tm
         }
     ]
     out = _peak_step_summary_v36(per_item)
-    assert out["stoppers_n"] == 1 and out["eaters_with_lf_n"] == 1 and out["eaters_never_lf_n"] == 3, out
+    assert (
+        out["stoppers_n"] == 1 and out["eaters_with_lf_n"] == 1 and out["eaters_never_lf_n"] == 3
+    ), out
     #: 群三：3 代里 2 代可比（一代无 prev），可比里 1 代同字 ⇒ 1/2＝0.5，**不是** 1/3。
     assert out["eaters_never_lf_denominator_with_previous_step"] == 2, out
     assert out["eaters_never_lf_same_byte_at_peak_share"] == 0.5, out
@@ -1045,7 +1306,9 @@ def test_the_peak_step_row_names_what_was_emitted_where_stopping_came_closest(tm
     top = out["eaters_never_lf_winner_bytes_top5"]
     assert {item["byte"] for item in top} == {228, 229, 65}, top
     #: 全代都不可比 ⇒ 占比必须 `None`（不许写 0.0 让人读成"没有一代同字"）。
-    none_cmp = _peak_step_summary_v36([{"endstep_probe_v22": [gen(stopped=False, lf=0, peak_byte=1, prev_byte=None)]}])
+    none_cmp = _peak_step_summary_v36(
+        [{"endstep_probe_v22": [gen(stopped=False, lf=0, peak_byte=1, prev_byte=None)]}]
+    )
     assert none_cmp["eaters_never_lf_same_byte_at_peak_share"] is None, none_cmp
     assert none_cmp["eaters_never_lf_denominator_with_previous_step"] == 0, none_cmp
 
@@ -1089,10 +1352,17 @@ def test_the_character_level_selector_is_not_the_byte_adjacency_one(tmp_path: Pa
 
     #: 群分母用全部代数（不是"有可比前步"那种残缺分母）；空群报 None 而不是 0.0。
     mixed = _peak_run_summary_v37(
-        [{"endstep_probe_v22": [gen(peak_in_run=False, steps_in_run=40, byte_eq_prev=False),
-                                 gen(peak_in_run=True, steps_in_run=90, byte_eq_prev=False)]}]
+        [
+            {
+                "endstep_probe_v22": [
+                    gen(peak_in_run=False, steps_in_run=40, byte_eq_prev=False),
+                    gen(peak_in_run=True, steps_in_run=90, byte_eq_prev=False),
+                ]
+            }
+        ]
     )
-    assert mixed["eaters_never_lf_n"] == 2 and mixed["eaters_never_lf_peak_in_run_count"] == 1, mixed
+    assert (
+        mixed["eaters_never_lf_n"] == 2 and mixed["eaters_never_lf_peak_in_run_count"] == 1
+    ), mixed
     assert mixed["eaters_never_lf_peak_in_run_share"] == 0.5, mixed
     assert mixed["stoppers_peak_in_run_share"] is None, mixed
-

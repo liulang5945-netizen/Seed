@@ -28,9 +28,13 @@ def _instrument():
 
 
 def test_scan_face_is_the_tracked_file() -> None:
-    tracked = subprocess.run(
-        ["git", "ls-files", INSTRUMENT_REL], cwd=PROJECT_ROOT, capture_output=True, check=True
-    ).stdout.decode().strip()
+    tracked = (
+        subprocess.run(
+            ["git", "ls-files", INSTRUMENT_REL], cwd=PROJECT_ROOT, capture_output=True, check=True
+        )
+        .stdout.decode()
+        .strip()
+    )
     assert tracked == INSTRUMENT_REL, f"仪器不在版本控制面上（扫到 {tracked!r}）"
 
 
@@ -42,15 +46,19 @@ def test_three_branches_of_the_self_check() -> None:
     assert mod._window_flag_honored(128, [{"product_window_steps": None}]) is False
     assert mod._window_flag_honored(128, [{"product_window_steps": 128}]) is True
     #: 治疗臂里带上也算：只有**没有任何一臂**带上才判假
-    assert mod._window_flag_honored(128, [{"product_window_steps": None},
-                                          {"product_window_steps": 128}]) is True
+    assert (
+        mod._window_flag_honored(
+            128, [{"product_window_steps": None}, {"product_window_steps": 128}]
+        )
+        is True
+    )
 
 
 def test_control_arm_now_receives_the_flag() -> None:
     """成因级钉法：控制臂调用必须把旗标传进去，否则自证会永远走"判假"那支、门再也量不了。"""
 
     source = INSTRUMENT.read_text(encoding="utf-8")
-    control_call = source[source.index("control = run_arm("):]
+    control_call = source[source.index("control = run_arm(") :]
     control_call = control_call[: control_call.index(")\n") + 1]
     assert "product_window_steps=args.product_window_steps" in control_call, control_call
 

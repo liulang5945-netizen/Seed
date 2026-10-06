@@ -86,7 +86,10 @@ def test_untrained_circuit_competitive_matches_additive_bit_for_bit() -> None:
         state = model.copy_evidence_injection_state()
         assert state["mode"] == mode and state["competitive_steps"] == expected_steps, state
         assert state["gated_armed_answers"] == 0 and state["gated_silenced_answers"] == 0, state
-    assert answers["additive"] == answers["competitive"], (answers["additive"], answers["competitive"])
+    assert answers["additive"] == answers["competitive"], (
+        answers["additive"],
+        answers["competitive"],
+    )
 
 
 def test_competitive_semantics_equals_elementwise_max_of_both_branches() -> None:
@@ -105,9 +108,7 @@ def test_competitive_semantics_equals_elementwise_max_of_both_branches() -> None
         model.mount_copy_circuit(max_events=4)
         evidence = torch.zeros(model.config.alphabet_size)
         evidence[boost_byte] = value
-        model.copy_circuit.evidence = (  # type: ignore[method-assign]
-            lambda **kwargs: evidence
-        )
+        model.copy_circuit.evidence = lambda **kwargs: evidence  # type: ignore[method-assign]
         model.set_copy_evidence_injection_mode(mode)
         model.reset_dynamics(episode_id="a26-competitive-semantics")
         model.observe(model.config.boundary_symbol, learn=False, readout="predictive")
@@ -165,9 +166,7 @@ def test_gated_silences_and_arms_per_answer() -> None:
         )
         evidence = torch.zeros(model.config.alphabet_size)
         evidence[0x41] = 0.35
-        model.copy_circuit.evidence = (  # type: ignore[method-assign]
-            lambda **kwargs: evidence
-        )
+        model.copy_circuit.evidence = lambda **kwargs: evidence  # type: ignore[method-assign]
         if k is not None:
             model.set_copy_evidence_structural_min_overlap(k)
         return model.generate(question, 24), model.copy_evidence_injection_state()
@@ -206,7 +205,9 @@ def test_product_entry_forwards_injection_mode() -> None:
     source = (PROJECT_ROOT / "api" / "seed_runtime.py").read_text(encoding="utf-8")
     lines = source.splitlines()
     guarded = [
-        index for index, line in enumerate(lines) if line.strip() == "if injection_mode is not None:"
+        index
+        for index, line in enumerate(lines)
+        if line.strip() == "if injection_mode is not None:"
     ]
     assert guarded, "no conditional guard found"
     assert any(
@@ -226,7 +227,8 @@ def test_product_entry_forwards_injection_mode() -> None:
     ]
     assert guarded_k, "no conditional guard for gate_min_overlap"
     assert any(
-        "substrate.set_copy_evidence_structural_min_overlap(gate_min_overlap)" in lines[index + offset]
+        "substrate.set_copy_evidence_structural_min_overlap(gate_min_overlap)"
+        in lines[index + offset]
         for index in guarded_k
         for offset in range(1, 7)
         if index + offset < len(lines)

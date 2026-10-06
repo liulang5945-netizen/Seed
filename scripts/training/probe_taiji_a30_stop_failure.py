@@ -80,7 +80,11 @@ def _items_fingerprint(items) -> str:
 
     #: 只取**参与题面**的三列；`family`/`answer_tell_position` 这类元数据改动不该把同一批题判成两批。
     core = [
-        [str(item.get("id")), list(item.get("turns") or []), list(item.get("expected_contains") or [])]
+        [
+            str(item.get("id")),
+            list(item.get("turns") or []),
+            list(item.get("expected_contains") or []),
+        ]
         for item in items
     ]
     blob = json.dumps(core, ensure_ascii=False, sort_keys=True).encode("utf-8")
@@ -235,7 +239,6 @@ def char_membership_of_run(text: str) -> list[bool]:
     for index, char in enumerate(chars):
         membership.extend([repeated[index]] * len(char.encode("utf-8")))
     return membership
-
 
 
 _FIXED_STEPS = (8, 16, 32, 64, 128)
@@ -485,7 +488,9 @@ def _terminal_summary_v27(per_item: list[dict]) -> dict[str, Any]:
         "with_terminal_row": len(with_terminal),
         "without_terminal_row": len(without_terminal),
         "absent_reasons": {
-            reason: sum(1 for g in without_terminal if g["terminal_decision_absent_reason"] == reason)
+            reason: sum(
+                1 for g in without_terminal if g["terminal_decision_absent_reason"] == reason
+            )
             for reason in sorted({g["terminal_decision_absent_reason"] for g in without_terminal})
         },
         #: 资格前置 3：边界在终止那一步必须是掩码后第 1 名，否则重放与产品环分岔（面违规）。
@@ -504,12 +509,24 @@ def _terminal_summary_v27(per_item: list[dict]) -> dict[str, Any]:
         "median_terminal_over_recorded_peak": _median(ratios),
         #: 第二问：末在案步的名次分布，自停组 vs 吃满组分开。
         "last_recorded_rank_buckets_for_stoppers": {
-            bucket: sum(1 for g in stoppers if _rank_buckets(g["last_recorded_row"]["boundary_rank_in_legal"]) == bucket)
-            for bucket in sorted({_rank_buckets(g["last_recorded_row"]["boundary_rank_in_legal"]) for g in stoppers})
+            bucket: sum(
+                1
+                for g in stoppers
+                if _rank_buckets(g["last_recorded_row"]["boundary_rank_in_legal"]) == bucket
+            )
+            for bucket in sorted(
+                {_rank_buckets(g["last_recorded_row"]["boundary_rank_in_legal"]) for g in stoppers}
+            )
         },
         "last_recorded_rank_buckets_for_eaters": {
-            bucket: sum(1 for g in eaters if _rank_buckets(g["last_recorded_row"]["boundary_rank_in_legal"]) == bucket)
-            for bucket in sorted({_rank_buckets(g["last_recorded_row"]["boundary_rank_in_legal"]) for g in eaters})
+            bucket: sum(
+                1
+                for g in eaters
+                if _rank_buckets(g["last_recorded_row"]["boundary_rank_in_legal"]) == bucket
+            )
+            for bucket in sorted(
+                {_rank_buckets(g["last_recorded_row"]["boundary_rank_in_legal"]) for g in eaters}
+            )
         },
         "last_recorded_median_rank_for_stoppers": _median(
             [g["last_recorded_row"]["boundary_rank_in_legal"] for g in stoppers]
@@ -536,8 +553,12 @@ def _tail_identity_summary_v28(per_item: list[dict]) -> dict[str, Any]:
     eaters = [g for g in generations if g["ate_full_budget"]]
     #: 两组的定义式在真件里互斥（有终止行 ⇒ 环没吃满预算），但**这要靠读数成立，不靠约定**：
     #: 合成数据或未来的定义改动都会让两堆重叠／漏人，所以把两种异常都数出来。
-    overlap = [g for g in generations if g["terminal_decision"] is not None and g["ate_full_budget"]]
-    neither = [g for g in generations if g["terminal_decision"] is None and not g["ate_full_budget"]]
+    overlap = [
+        g for g in generations if g["terminal_decision"] is not None and g["ate_full_budget"]
+    ]
+    neither = [
+        g for g in generations if g["terminal_decision"] is None and not g["ate_full_budget"]
+    ]
 
     def _dist(items: list[dict], picker) -> dict[str, Any]:
         total = len(items)
@@ -599,12 +620,16 @@ def _lf_followthrough_summary_v29(per_item: list[dict]) -> dict[str, Any]:
             "with_lf": len(with_lf),
             "with_lf_share": round(len(with_lf) / total, 4) if total else None,
             "lf_count_median": (
-                sorted(g["lf_trace_v29"]["lf_step_count"] for g in items)[total // 2] if total else None
+                sorted(g["lf_trace_v29"]["lf_step_count"] for g in items)[total // 2]
+                if total
+                else None
             ),
         }
 
     stopped_after_lf = [
-        g for g in stoppers if g["lf_trace_v29"]["last_lf_step"] == g["lf_trace_v29"]["generation_last_step"]
+        g
+        for g in stoppers
+        if g["lf_trace_v29"]["last_lf_step"] == g["lf_trace_v29"]["generation_last_step"]
     ]
     return {
         "stoppers": _pack(stoppers),
@@ -619,12 +644,16 @@ def _lf_followthrough_summary_v29(per_item: list[dict]) -> dict[str, Any]:
                 1
                 for g in eaters
                 if g["lf_trace_v29"]["last_lf_step"] is not None
-                and _lf_bucket(g["lf_trace_v29"]["last_lf_step"], g["lf_trace_v29"]["generation_last_step"])
+                and _lf_bucket(
+                    g["lf_trace_v29"]["last_lf_step"], g["lf_trace_v29"]["generation_last_step"]
+                )
                 == bucket
             )
             for bucket in sorted(
                 {
-                    _lf_bucket(g["lf_trace_v29"]["last_lf_step"], g["lf_trace_v29"]["generation_last_step"])
+                    _lf_bucket(
+                        g["lf_trace_v29"]["last_lf_step"], g["lf_trace_v29"]["generation_last_step"]
+                    )
                     for g in eaters
                     if g["lf_trace_v29"]["last_lf_step"] is not None
                 }
@@ -681,7 +710,11 @@ def _lf_margins_v34(group: list[dict], terminal: dict | None) -> dict[str, Any]:
         }
         for row in rows_after
     ]
-    ratios = [float(item["ratio_best_over_boundary"]) for item in pairs if item["ratio_best_over_boundary"]]
+    ratios = [
+        float(item["ratio_best_over_boundary"])
+        for item in pairs
+        if item["ratio_best_over_boundary"]
+    ]
     return {
         "lf_steps": len(lf_steps),
         "lf_plus_one_observed": len(pairs),
@@ -706,10 +739,14 @@ def _peak_run_summary_v37(per_item: list[dict]) -> dict[str, Any]:
     groups = {
         "stoppers": [g for g in generations if g["terminal_decision"] is not None],
         "eaters_with_lf": [
-            g for g in generations if g["ate_full_budget"] and g["lf_trace_v29"]["lf_step_count"] >= 1
+            g
+            for g in generations
+            if g["ate_full_budget"] and g["lf_trace_v29"]["lf_step_count"] >= 1
         ],
         "eaters_never_lf": [
-            g for g in generations if g["ate_full_budget"] and g["lf_trace_v29"]["lf_step_count"] == 0
+            g
+            for g in generations
+            if g["ate_full_budget"] and g["lf_trace_v29"]["lf_step_count"] == 0
         ],
     }
     out: dict[str, Any] = {"incoherent_zero_run_but_peak_in_run": 0}
@@ -740,10 +777,14 @@ def _peak_step_summary_v36(per_item: list[dict]) -> dict[str, Any]:
     groups = {
         "stoppers": [g for g in generations if g["terminal_decision"] is not None],
         "eaters_with_lf": [
-            g for g in generations if g["ate_full_budget"] and g["lf_trace_v29"]["lf_step_count"] >= 1
+            g
+            for g in generations
+            if g["ate_full_budget"] and g["lf_trace_v29"]["lf_step_count"] >= 1
         ],
         "eaters_never_lf": [
-            g for g in generations if g["ate_full_budget"] and g["lf_trace_v29"]["lf_step_count"] == 0
+            g
+            for g in generations
+            if g["ate_full_budget"] and g["lf_trace_v29"]["lf_step_count"] == 0
         ],
     }
     out: dict[str, Any] = {}
@@ -755,7 +796,9 @@ def _peak_step_summary_v36(per_item: list[dict]) -> dict[str, Any]:
         out[f"{name}_n"] = len(items)
         out[f"{name}_denominator_with_previous_step"] = len(comparable)
         out[f"{name}_same_byte_at_peak_share"] = (
-            round(sum(1 for r in comparable if r["same_byte_as_previous_step"]) / len(comparable), 4)
+            round(
+                sum(1 for r in comparable if r["same_byte_as_previous_step"]) / len(comparable), 4
+            )
             if comparable
             else None
         )
@@ -820,7 +863,8 @@ def _lf_next_summary_v30(per_item: list[dict]) -> dict[str, Any]:
     eater_ranks = [
         g["lf_next_probe_v30"]["best_boundary_rank_after_lf"]
         for g in generations
-        if g["ate_full_budget"] and g["lf_next_probe_v30"]["lf_count"] >= 1
+        if g["ate_full_budget"]
+        and g["lf_next_probe_v30"]["lf_count"] >= 1
         and g["lf_next_probe_v30"]["best_boundary_rank_after_lf"] is not None
     ]
     stopper_ranks = [g["lf_next_probe_v30"]["best_boundary_rank_after_lf"] for g in stoppers]
@@ -840,9 +884,7 @@ def _lf_next_summary_v30(per_item: list[dict]) -> dict[str, Any]:
         "eaters_share_rank_ge_10": (
             round(sum(1 for r in eater_ranks if r >= 10) / total, 4) if total else None
         ),
-        "eaters_median_best_rank_after_lf": (
-            sorted(eater_ranks)[total // 2] if total else None
-        ),
+        "eaters_median_best_rank_after_lf": (sorted(eater_ranks)[total // 2] if total else None),
     }
 
 
@@ -853,7 +895,8 @@ def _lf_competitor_summary_v31(per_item: list[dict]) -> dict[str, Any]:
     eaters = [
         g
         for g in generations
-        if g["ate_full_budget"] and g["lf_next_probe_v30"]["best_boundary_rank_after_lf"] is not None
+        if g["ate_full_budget"]
+        and g["lf_next_probe_v30"]["best_boundary_rank_after_lf"] is not None
     ]
     winners = [g["lf_next_probe_v30"]["winner_byte_at_best_rank_step"] for g in eaters]
     classes = [g["lf_next_probe_v30"]["utf8_class_at_best_rank_step"] for g in eaters]
@@ -896,9 +939,7 @@ def _lf_repeat_context(group: list[dict]) -> dict[str, Any]:
     return {
         "lf_steps_total": len(lf_rows),
         "lf_steps_inside_repeat_run": inside,
-        "lf_share_inside_repeat_run": (
-            round(inside / len(lf_rows), 4) if lf_rows else None
-        ),
+        "lf_share_inside_repeat_run": (round(inside / len(lf_rows), 4) if lf_rows else None),
     }
 
 
@@ -972,14 +1013,14 @@ def _lf_margin_summary_v34(per_item: list[dict]) -> dict[str, Any]:
     for name, items in groups.items():
         mins = [g["lf_margins_v34"]["min_ratio"] for g in items if g["lf_margins_v34"]["min_ratio"]]
         best_ranks = [
-            g["lf_margins_v34"]["best_rank"] for g in items if g["lf_margins_v34"]["best_rank"] is not None
+            g["lf_margins_v34"]["best_rank"]
+            for g in items
+            if g["lf_margins_v34"]["best_rank"] is not None
         ]
         nums = sorted(mins)
         out[f"{name}_n"] = len(items)
         out[f"{name}_with_lf_next"] = len(mins)
-        out[f"{name}_median_min_ratio"] = (
-            round(nums[len(nums) // 2], 4) if nums else None
-        )
+        out[f"{name}_median_min_ratio"] = round(nums[len(nums) // 2], 4) if nums else None
         out[f"{name}_min_ratio_range"] = [round(nums[0], 4), round(nums[-1], 4)] if nums else None
         out[f"{name}_median_best_rank"] = (
             sorted(best_ranks)[len(best_ranks) // 2] if best_ranks else None
@@ -1270,7 +1311,9 @@ def main() -> int:
     if args.copy_evidence_gate_min_overlap is not None:
         #: v41（SPEC-A-26 形状乙）：资格线 K 走产品原生开关；只配 gated，给错档响亮停下。
         if args.copy_evidence_injection_mode != "gated":
-            raise SystemExit("v41：--copy-evidence-gate-min-overlap 只在 injection-mode gated 下有意义")
+            raise SystemExit(
+                "v41：--copy-evidence-gate-min-overlap 只在 injection-mode gated 下有意义"
+            )
         substrate.set_copy_evidence_structural_min_overlap(args.copy_evidence_gate_min_overlap)
     if args.evidence_window_steps is not None:
         if substrate.copy_circuit is None:
@@ -1561,7 +1604,7 @@ def main() -> int:
         "而件里只有 `items: 96`（条数）与写死的 manifest 路径——条数相同不等于内容相同（本线已在'同一批文档"
         "并非自动成立'上栽过一次）。本版加 `items_sha256`＝所选条目 (id, turns, expected_contains) 的摘要，"
         "让配对器能在**件内**判同题面；配对器 `pair_taiji_a30_stop_cells.py` 两侧都有该键时必须相等，缺任一侧"
-        "就在输出里披露 `items_fingerprint_check=\"absent_in_one_side\"`（旧件不因此失败，但也不被当成已证）。"
+        '就在输出里披露 `items_fingerprint_check="absent_in_one_side"`（旧件不因此失败，但也不被当成已证）。'
         "既有列一字未动 ⇒ 与 v31–v34 各件同格可比。",
         "format_note_v34": "v34（2026-10-03）：§八十六 那格用的尺（LF 是否落在同字连写段内）按定义没有动态范围，所以换一把天然有散布的尺：**每一次 LF 之后那一步**的 `ratio_best_over_boundary` 与边界名次。新增每代 `lf_margins_v34`（步序／名次／比值／概率，最多留前 6 次）与件级 `lf_margin_summary_v34`（自停组与拖写组各自的中位最小比值、比值区间、中位最好名次，外加 §87 定的 `column_dynamic_range` 前置）。`_rows_after_lf()` 同时被 v30 与 v34 复用——一副档只住一处。既有列一字未动。",
         "format_note_v33": "v33（2026-10-03）：把 §第八十五／八十六次停靠 那次预注册缺陷变成机器拦得住的东西。 缺陷内容：判据绑的列（LF 落在同字连写段内的占比）按定义只能取 0.0／1.0，两组同值时字面分支仍能读出一个方向——但那一读**没有效力**。本版新增 `_dynamic_range()`，并在 `lf_repeat_context_summary_v32` 里落三列：`column_dynamic_range_stoppers／_eaters`（n_values／distinct／min／max／endpoint_only）与总开关 `ruler_usable`；规矩是 **`ruler_usable=false` ⇒ 判据不建立**，比较型判读一律先看它。既有列与既有字段一字未动。",
@@ -1827,8 +1870,7 @@ def main() -> int:
             #: 全 0 说明资格判定根本没发生（题面没进过锁事件 ⇒ 档是空的，读数无效）。
             "structural_gate_decided": args.copy_evidence_injection_mode != "gated"
             or (
-                injection_state["gated_armed_answers"]
-                + injection_state["gated_silenced_answers"]
+                injection_state["gated_armed_answers"] + injection_state["gated_silenced_answers"]
                 > 0
             ),
             #: v18：检索侧档必须**被走到**（清掉的陈旧条数 > 0），并把重置后的候选集大小上下界存进件里。

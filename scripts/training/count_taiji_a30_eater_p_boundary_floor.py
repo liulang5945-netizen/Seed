@@ -48,7 +48,9 @@ def _lf_step_count(generation: dict[str, Any], item_id: str) -> int:
 
     trace = generation.get("lf_trace_v29")
     if not isinstance(trace, dict) or "lf_step_count" not in trace:
-        raise ValueError(f"生成行缺 lf_trace_v29.lf_step_count（题 {item_id}）⇒ 无法定义「从不发 LF」，不判")
+        raise ValueError(
+            f"生成行缺 lf_trace_v29.lf_step_count（题 {item_id}）⇒ 无法定义「从不发 LF」，不判"
+        )
     return int(trace["lf_step_count"])
 
 
@@ -121,12 +123,16 @@ def read_report(path: Path) -> dict[str, Any]:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("--report", action="append", required=True,
-                        help="v3x 停止面件路径（可重复；每枚各自出一份读数）")
-    parser.add_argument("--expect-items-sha", default=None,
-                        help="题面指纹：给了就必须逐枚对上，对不上按不可判处理")
-    parser.add_argument("--out-report", default=None,
-                        help="落盘路径；不给只打到 stdout")
+    parser.add_argument(
+        "--report",
+        action="append",
+        required=True,
+        help="v3x 停止面件路径（可重复；每枚各自出一份读数）",
+    )
+    parser.add_argument(
+        "--expect-items-sha", default=None, help="题面指纹：给了就必须逐枚对上，对不上按不可判处理"
+    )
+    parser.add_argument("--out-report", default=None, help="落盘路径；不给只打到 stdout")
     args = parser.parse_args(argv)
 
     results: list[dict[str, Any]] = []
@@ -135,8 +141,11 @@ def main(argv: list[str] | None = None) -> int:
         path = Path(raw)
         if not path.is_absolute():
             path = PROJECT_ROOT / path
-        entry: dict[str, Any] = {"report": path.name, "frozen_floor": FROZEN_FLOOR,
-                                 "frozen_line": FROZEN_LINE}
+        entry: dict[str, Any] = {
+            "report": path.name,
+            "frozen_floor": FROZEN_FLOOR,
+            "frozen_line": FROZEN_LINE,
+        }
         try:
             report = read_report(path)
         except (OSError, ValueError, json.JSONDecodeError) as error:
@@ -152,7 +161,7 @@ def main(argv: list[str] | None = None) -> int:
         entry["base_sha256_unchanged"] = (report.get("instrument_guard") or {}).get(
             "base_sha256_unchanged"
         )
-        if (args.expect_items_sha and report.get("items_sha256") != args.expect_items_sha):
+        if args.expect_items_sha and report.get("items_sha256") != args.expect_items_sha:
             entry["status"] = "items_sha_mismatch"
             results.append(entry)
             rc = 2

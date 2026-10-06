@@ -60,8 +60,11 @@ def test_no_bare_percent_in_any_add_argument_help() -> None:
     for path in sorted((PROJECT_ROOT / "scripts" / "training").glob("*.py")):
         tree = ast.parse(path.read_text(encoding="utf-8"))
         for node in ast.walk(tree):
-            if not (isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute)
-                    and node.func.attr == "add_argument"):
+            if not (
+                isinstance(node, ast.Call)
+                and isinstance(node.func, ast.Attribute)
+                and node.func.attr == "add_argument"
+            ):
                 continue
             for kw in node.keywords:
                 if kw.arg != "help" or not isinstance(kw.value, ast.Constant):
@@ -70,7 +73,9 @@ def test_no_bare_percent_in_any_add_argument_help() -> None:
                 if isinstance(value, str) and re.search(r"(?<!%)%(?![%s])", value):
                     flag = node.args[0].value if node.args else "?"
                     offenders.append(f"{path.name}:{node.lineno} {flag} ⇒ {value[:70]}")
-    assert not offenders, (
+    assert (
+        not offenders
+    ), (
         "帮助文字里有裸 %（argparse 会做 % 插值 ⇒ 这条旗标的说明在用法屏上永远读不到）：\n  "
         + "\n  ".join(offenders)
     )

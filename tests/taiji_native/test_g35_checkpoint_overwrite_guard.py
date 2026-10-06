@@ -31,10 +31,16 @@ def trainer():
 
 
 def test_scan_face_is_the_tracked_file() -> None:
-    tracked = subprocess.run(
-        ["git", "ls-files", TRAINER_REL], cwd=PROJECT_ROOT, capture_output=True, check=True
-    ).stdout.decode().strip()
-    assert tracked == TRAINER_REL, f"训练器不在版本控制面上（扫到 {tracked!r}），本守卫没在守任何东西"
+    tracked = (
+        subprocess.run(
+            ["git", "ls-files", TRAINER_REL], cwd=PROJECT_ROOT, capture_output=True, check=True
+        )
+        .stdout.decode()
+        .strip()
+    )
+    assert (
+        tracked == TRAINER_REL
+    ), f"训练器不在版本控制面上（扫到 {tracked!r}），本守卫没在守任何东西"
 
 
 def test_guard_is_registered_in_the_flag_surface() -> None:
@@ -52,9 +58,16 @@ def test_refuses_overwriting_a_foreign_checkpoint(
     victim = tmp_path / "checkpoint.pt"
     victim.write_bytes(b"pre-existing-bytes")
     monkeypatch.setattr(
-        sys, "argv",
-        ["train_seed_corpus.py", "--smoke", "--checkpoint", str(victim),
-         "--progress", str(tmp_path / "progress.jsonl")],
+        sys,
+        "argv",
+        [
+            "train_seed_corpus.py",
+            "--smoke",
+            "--checkpoint",
+            str(victim),
+            "--progress",
+            str(tmp_path / "progress.jsonl"),
+        ],
     )
     with pytest.raises(SystemExit) as caught:
         trainer.main()
@@ -76,9 +89,19 @@ def test_in_place_resume_is_not_refused(
     same = tmp_path / "checkpoint.pt"
     same.write_bytes(b"not-a-torch-envelope")
     monkeypatch.setattr(
-        sys, "argv",
-        ["train_seed_corpus.py", "--resume", str(same), "--checkpoint", str(same),
-         "--max-symbols", "10", "--progress", str(tmp_path / "progress.jsonl")],
+        sys,
+        "argv",
+        [
+            "train_seed_corpus.py",
+            "--resume",
+            str(same),
+            "--checkpoint",
+            str(same),
+            "--max-symbols",
+            "10",
+            "--progress",
+            str(tmp_path / "progress.jsonl"),
+        ],
     )
     outcome: list[str] = []
     try:
@@ -106,9 +129,17 @@ def test_escape_flag_reaches_the_write_path(
     victim = tmp_path / "checkpoint.pt"
     victim.write_bytes(b"old-bytes")
     monkeypatch.setattr(
-        sys, "argv",
-        ["train_seed_corpus.py", "--smoke", "--allow-overwrite-checkpoint",
-         "--checkpoint", str(victim), "--progress", str(tmp_path / "progress.jsonl")],
+        sys,
+        "argv",
+        [
+            "train_seed_corpus.py",
+            "--smoke",
+            "--allow-overwrite-checkpoint",
+            "--checkpoint",
+            str(victim),
+            "--progress",
+            str(tmp_path / "progress.jsonl"),
+        ],
     )
     result = trainer.main()
     assert result in (0, None), f"main 的返回约定变了（本支只证覆写被允许）：{result!r}"

@@ -28,7 +28,10 @@ import count_taiji_a30_eater_p_boundary_floor as counter  # noqa: E402
 MAX_LENGTH = 256
 
 #: 已入库的装机底 ×挂 seedA ×门 OFF ×96 枚基线；§102 的 A 就是按这一装配冻的。
-SEALED_BASELINE = PROJECT_ROOT / "reports/taiji_a30_stop_failure_self_v38_evidenceobserver_circuitseedA_96_20261003.json"
+SEALED_BASELINE = (
+    PROJECT_ROOT
+    / "reports/taiji_a30_stop_failure_self_v38_evidenceobserver_circuitseedA_96_20261003.json"
+)
 
 
 def _generation(steps: int, p_max: float | None, *, lf: int = 0) -> dict[str, Any]:
@@ -38,12 +41,19 @@ def _generation(steps: int, p_max: float | None, *, lf: int = 0) -> dict[str, An
     return row
 
 
-def _report(generations: list[dict[str, Any]], *, declared: int | None = None,
-            never_lf_declared: int | None = None, unchanged: bool = True) -> dict[str, Any]:
+def _report(
+    generations: list[dict[str, Any]],
+    *,
+    declared: int | None = None,
+    never_lf_declared: int | None = None,
+    unchanged: bool = True,
+) -> dict[str, Any]:
     counted = sum(1 for g in generations if g["generation_steps"] >= MAX_LENGTH)
-    never_lf = sum(1 for g in generations
-                   if g["generation_steps"] >= MAX_LENGTH
-                   and g["lf_trace_v29"]["lf_step_count"] == 0)
+    never_lf = sum(
+        1
+        for g in generations
+        if g["generation_steps"] >= MAX_LENGTH and g["lf_trace_v29"]["lf_step_count"] == 0
+    )
     return {
         "format": "taiji-a30-stop-failure-v39",
         "max_length": MAX_LENGTH,
@@ -53,14 +63,19 @@ def _report(generations: list[dict[str, Any]], *, declared: int | None = None,
             "generations_eating_full_budget": counted if declared is None else declared,
             "base_sha256_unchanged": unchanged,
         },
-        "peak_run_summary_v37": {"eaters_never_lf_n": never_lf if never_lf_declared is None
-                                 else never_lf_declared},
+        "peak_run_summary_v37": {
+            "eaters_never_lf_n": never_lf if never_lf_declared is None else never_lf_declared
+        },
         "per_item": [{"id": "V001", "endstep_probe_v22": generations}],
     }
 
 
-def _run(tmp_path: Path, report: dict[str, Any], capsys: pytest.CaptureFixture[str],
-         extra: tuple[str, ...] = ()) -> tuple[int, dict[str, Any]]:
+def _run(
+    tmp_path: Path,
+    report: dict[str, Any],
+    capsys: pytest.CaptureFixture[str],
+    extra: tuple[str, ...] = (),
+) -> tuple[int, dict[str, Any]]:
     path = tmp_path / "report.json"
     path.write_text(json.dumps(report, ensure_ascii=False), encoding="utf-8", newline="\n")
     rc = counter.main(["--report", str(path), *extra])
@@ -71,12 +86,14 @@ def _run(tmp_path: Path, report: dict[str, Any], capsys: pytest.CaptureFixture[s
 def test_floor_is_inclusive_and_population_is_the_never_lf_one() -> None:
     """≥0.10 含等号；`meets_frozen_line` 只数从不发 LF 那一群——发过 LF 的那 8 代不算数。"""
 
-    report = _report([
-        _generation(MAX_LENGTH, 0.10, lf=0),        # never-LF eater, on the line ⇒ 窄口径 +1
-        _generation(MAX_LENGTH, 0.50, lf=2),        # 发过 LF ⇒ 只进宽口径
-        _generation(MAX_LENGTH, 0.0999999, lf=0),   # 差一点点 ⇒ 两个都不进
-        _generation(8, 0.90, lf=0),                 # 没吃满预算 ⇒ 谁都不进
-    ])
+    report = _report(
+        [
+            _generation(MAX_LENGTH, 0.10, lf=0),  # never-LF eater, on the line ⇒ 窄口径 +1
+            _generation(MAX_LENGTH, 0.50, lf=2),  # 发过 LF ⇒ 只进宽口径
+            _generation(MAX_LENGTH, 0.0999999, lf=0),  # 差一点点 ⇒ 两个都不进
+            _generation(8, 0.90, lf=0),  # 没吃满预算 ⇒ 谁都不进
+        ]
+    )
     result = counter.count_eaters(report, floor=counter.FROZEN_FLOOR)
     assert result["eaters_counted"] == 3
     assert result["never_lf_eaters_counted"] == 2
@@ -87,28 +104,33 @@ def test_floor_is_inclusive_and_population_is_the_never_lf_one() -> None:
     assert result["coherent_with_never_lf_declaration"] is True
 
 
-def test_wrong_declared_total_is_incoherent_not_a_number(tmp_path: Path,
-                                                         capsys: pytest.CaptureFixture[str]) -> None:
+def test_wrong_declared_total_is_incoherent_not_a_number(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
     report = _report([_generation(MAX_LENGTH, 0.5, lf=0)], declared=99)
     rc, entry = _run(tmp_path, report, capsys)
     assert rc == 2
     assert entry["status"] == "incoherent_eater_count"
 
 
-def test_wrong_declared_never_lf_count_is_also_incoherent(tmp_path: Path,
-                                                          capsys: pytest.CaptureFixture[str]) -> None:
+def test_wrong_declared_never_lf_count_is_also_incoherent(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
     """窄口径同样要绑住仪器自述：`peak_run_summary_v37.eaters_never_lf_n` 与我数的一致才许出数。"""
 
-    report = _report([_generation(MAX_LENGTH, 0.5, lf=0), _generation(MAX_LENGTH, 0.2, lf=1)],
-                     never_lf_declared=77)
+    report = _report(
+        [_generation(MAX_LENGTH, 0.5, lf=0), _generation(MAX_LENGTH, 0.2, lf=1)],
+        never_lf_declared=77,
+    )
     rc, entry = _run(tmp_path, report, capsys)
     assert rc == 2
     assert entry["status"] == "incoherent_never_lf_count"
     assert entry["never_lf_eaters_declared"] == 77
 
 
-def test_missing_boundary_column_never_reports_a_quiet_zero(tmp_path: Path,
-                                                            capsys: pytest.CaptureFixture[str]) -> None:
+def test_missing_boundary_column_never_reports_a_quiet_zero(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
     report = _report([_generation(MAX_LENGTH, None, lf=0), _generation(MAX_LENGTH, 0.5, lf=0)])
     rc, entry = _run(tmp_path, report, capsys)
     assert rc == 2
@@ -144,8 +166,9 @@ def test_items_sha_mismatch_is_refused(tmp_path: Path, capsys: pytest.CaptureFix
     assert entry["status"] == "items_sha_mismatch"
 
 
-def test_ok_path_reports_below_line_as_a_conclusion(tmp_path: Path,
-                                                   capsys: pytest.CaptureFixture[str]) -> None:
+def test_ok_path_reports_below_line_as_a_conclusion(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
     """够不到 ≥20 那条线是**读数**，不是仪器故障：status=ok 且 meets_frozen_line=False。"""
 
     report = _report([_generation(MAX_LENGTH, 0.30, lf=0), _generation(MAX_LENGTH, 0.02, lf=0)])

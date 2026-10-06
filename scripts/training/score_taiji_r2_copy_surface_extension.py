@@ -224,7 +224,7 @@ def run_arm(
         "mount_entry": mount_entry,
         #: 窗口档自述：K 与"发出／静音"两侧计数（两侧都非零才算这档真的在窗内发过、窗外拦过）。
         "evidence_window_steps": window_steps,
-            "product_window_steps": product_window_steps,
+        "product_window_steps": product_window_steps,
         "window_arm": {
             "calls": window_counters[0],
             "emitted": window_counters[1],
@@ -243,7 +243,7 @@ def run_arm(
         "illegal_after_tail_trim_rate": round(1.0 - trimmed_clean / max(len(texts), 1), 4),
         "strict_hits": hits,
         "rows": rows,
-            "product_window_stats": substrate.copy_evidence_window_stats(),
+        "product_window_stats": substrate.copy_evidence_window_stats(),
     }
 
 
@@ -415,8 +415,9 @@ def main() -> int:
     #: 门关档则是裁定 (b) 没补到产品入口时产品会读到的数（合法性代价直接可见）。
     if not _window_flag_honored(args.product_window_steps, [control, *treated]):
         raise SystemExit(
-            "--product-window-steps 给了 " + str(args.product_window_steps) +
-            "，但没有任何一臂带上它（控制臂不接旗标、治疗臂列表为空）⇒ 这次读数不是门开了的对照，"
+            "--product-window-steps 给了 "
+            + str(args.product_window_steps)
+            + "，但没有任何一臂带上它（控制臂不接旗标、治疗臂列表为空）⇒ 这次读数不是门开了的对照，"
             "不落件；要么给 --circuit，要么让控制臂接旗标。"
         )
 

@@ -18,8 +18,8 @@ import sys
 from pathlib import Path
 from typing import Any
 
-DEFAULT_IGNORE = ('format', 'started_utc')
-_IGNORE_PREFIXES = ('format_note_',)
+DEFAULT_IGNORE = ("format", "started_utc")
+_IGNORE_PREFIXES = ("format_note_",)
 
 
 def _is_ignored(trail: str) -> bool:
@@ -32,7 +32,7 @@ def _is_ignored(trail: str) -> bool:
     否则这条豁免就成了无声放宽门柱。
     """
 
-    head = trail.split('.', 1)[0].split('[', 1)[0]
+    head = trail.split(".", 1)[0].split("[", 1)[0]
     return head in DEFAULT_IGNORE or head.startswith(_IGNORE_PREFIXES)
 
 
@@ -43,7 +43,7 @@ def _canon(value: Any) -> str:
 def diff_reports(
     left: dict[str, Any],
     right: dict[str, Any],
-    trail: str = '',
+    trail: str = "",
 ) -> tuple[list[tuple[str, str, Any, Any]], list[tuple[str, str]]]:
     """Return (behavior_diffs, schema_diffs) between two nested report structures."""
     behavior: list[tuple[str, str, Any, Any]] = []
@@ -51,9 +51,9 @@ def diff_reports(
 
     if isinstance(left, dict) and isinstance(right, dict):
         for key in sorted(set(left) | set(right)):
-            here = f'{trail}.{key}' if trail else key
+            here = f"{trail}.{key}" if trail else key
             if key not in left or key not in right:
-                schema.append((here, 'present_in_only_one_side'))
+                schema.append((here, "present_in_only_one_side"))
                 continue
             b, s = diff_reports(left[key], right[key], here)
             behavior.extend(b)
@@ -62,10 +62,10 @@ def diff_reports(
 
     if isinstance(left, list) and isinstance(right, list):
         if len(left) != len(right):
-            behavior.append((trail or '<root>', 'list_length', len(left), len(right)))
+            behavior.append((trail or "<root>", "list_length", len(left), len(right)))
             return behavior, schema
         for index, (item_l, item_r) in enumerate(zip(left, right, strict=True)):
-            b, s = diff_reports(item_l, item_r, f'{trail}[{index}]')
+            b, s = diff_reports(item_l, item_r, f"{trail}[{index}]")
             behavior.extend(b)
             schema.extend(s)
         return behavior, schema
@@ -74,15 +74,15 @@ def diff_reports(
         # 只有一边为空、另一边有值才算：这是"旧件按零补"的指纹，属信封形状而不是模型行为。
         # （两边同为 None 是相等——实测踩过：`control_no_circuit.circuit` 两枚件都是 None，
         #   旧写法把它报成 schema 差异，导致 --strict 会把两份完全相同的件判成不相同。）
-        schema.append((trail or '<root>', 'null_filled_other_side_has_value'))
+        schema.append((trail or "<root>", "null_filled_other_side_has_value"))
         return behavior, schema
 
     if type(left) is not type(right):
-        behavior.append((trail or '<root>', 'type', type(left).__name__, type(right).__name__))
+        behavior.append((trail or "<root>", "type", type(left).__name__, type(right).__name__))
         return behavior, schema
 
     if left != right:
-        behavior.append((trail or '<root>', 'value', left, right))
+        behavior.append((trail or "<root>", "value", left, right))
     return behavior, schema
 
 
@@ -93,16 +93,16 @@ def compare_files(
     strict: bool = False,
     ignore_disclosure: bool = True,
 ) -> dict[str, Any]:
-    left = json.loads(left_path.read_text(encoding='utf-8'))
-    right = json.loads(right_path.read_text(encoding='utf-8'))
+    left = json.loads(left_path.read_text(encoding="utf-8"))
+    right = json.loads(right_path.read_text(encoding="utf-8"))
     if subtree is not None:
         if subtree not in left or subtree not in right:
             return {
-                'identical': False,
-                'reason': 'subtree_missing',
-                'subtree': subtree,
-                'present_left': subtree in left,
-                'present_right': subtree in right,
+                "identical": False,
+                "reason": "subtree_missing",
+                "subtree": subtree,
+                "present_left": subtree in left,
+                "present_right": subtree in right,
             }
         left, right = left[subtree], right[subtree]
     behavior, schema = diff_reports(left, right)
@@ -113,36 +113,36 @@ def compare_files(
         schema = [d for d in schema if not _is_ignored(str(d[0]))]
     decisive = behavior + (schema if strict else [])
     return {
-        'identical': not decisive,
-        'behavior_diff_count': len(behavior),
-        'schema_diff_count': len(schema),
-        'first_behavior_diff': behavior[0] if behavior else None,
-        'first_schema_diff': schema[0] if schema else None,
+        "identical": not decisive,
+        "behavior_diff_count": len(behavior),
+        "schema_diff_count": len(schema),
+        "first_behavior_diff": behavior[0] if behavior else None,
+        "first_schema_diff": schema[0] if schema else None,
         #: 被豁免掉的披露类差异必须**可见**，不许变成无声的门柱放宽。
-        'ignored_disclosure_count': len(ignored),
-        'first_ignored_disclosure': ignored[0] if ignored else None,
-        'ignore_disclosure': ignore_disclosure,
-        'strict': strict,
-        'left': left_path.name,
-        'right': right_path.name,
-        'subtree': subtree,
+        "ignored_disclosure_count": len(ignored),
+        "first_ignored_disclosure": ignored[0] if ignored else None,
+        "ignore_disclosure": ignore_disclosure,
+        "strict": strict,
+        "left": left_path.name,
+        "right": right_path.name,
+        "subtree": subtree,
     }
 
 
 def main(argv: list[str]) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument('--left', required=True, help='第一份报告件（仓内相对或绝对路径）')
-    parser.add_argument('--right', required=True, help='第二份报告件')
-    parser.add_argument('--subtree', default=None, help='只比某个顶层键（如 control_no_circuit）')
+    parser.add_argument("--left", required=True, help="第一份报告件（仓内相对或绝对路径）")
+    parser.add_argument("--right", required=True, help="第二份报告件")
+    parser.add_argument("--subtree", default=None, help="只比某个顶层键（如 control_no_circuit）")
     parser.add_argument(
-        '--strict',
-        action='store_true',
-        help='把 schema 差异也算作不逐位相同（只在同一仪器版本之间用）',
+        "--strict",
+        action="store_true",
+        help="把 schema 差异也算作不逐位相同（只在同一仪器版本之间用）",
     )
     parser.add_argument(
-        '--no-ignore-disclosure',
-        action='store_true',
-        help='连版本号／墙钟／逐版格式说明一起算（回到旧口径；用它才能证明默认那条豁免确实在起作用）',
+        "--no-ignore-disclosure",
+        action="store_true",
+        help="连版本号／墙钟／逐版格式说明一起算（回到旧口径；用它才能证明默认那条豁免确实在起作用）",
     )
     args = parser.parse_args(argv)
     result = compare_files(
@@ -154,8 +154,8 @@ def main(argv: list[str]) -> int:
     )
     print(json.dumps(result, ensure_ascii=False, default=str, indent=2))
     # 存在性即结论：不一致 ⇒ rc=1，让这条验收式能直接被门使用，而不是靠人读输出。
-    return 0 if result['identical'] else 1
+    return 0 if result["identical"] else 1
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sys.exit(main(sys.argv[1:]))

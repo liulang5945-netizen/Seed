@@ -15,37 +15,39 @@ from pathlib import Path
 import pytest
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
-for entry in (PROJECT_ROOT, PROJECT_ROOT / 'scripts' / 'training'):
+for entry in (PROJECT_ROOT, PROJECT_ROOT / "scripts" / "training"):
     if str(entry) not in sys.path:
         sys.path.insert(0, str(entry))
 
 from pair_taiji_a30_stop_cells import intersect_loss, load_cells, main, pair  # noqa: E402
 
-REPORTS = PROJECT_ROOT / 'reports'
-NOC96 = REPORTS / 'taiji_a30_stop_failure_self_v31_winner_nocircuit96_20261003.json'
-OFF96 = REPORTS / 'taiji_a30_stop_failure_self_v34_margins_circuitseedA_96_20261003.json'
-ON96 = REPORTS / 'taiji_a30_stop_failure_self_v34_margins_productk128_96_20261003.json'
+REPORTS = PROJECT_ROOT / "reports"
+NOC96 = REPORTS / "taiji_a30_stop_failure_self_v31_winner_nocircuit96_20261003.json"
+OFF96 = REPORTS / "taiji_a30_stop_failure_self_v34_margins_circuitseedA_96_20261003.json"
+ON96 = REPORTS / "taiji_a30_stop_failure_self_v34_margins_productk128_96_20261003.json"
 
 
-def _write(tmp_path: Path, name: str, shapes, *, circuit=None, window=None, base='abc', items_sha=None):
+def _write(
+    tmp_path: Path, name: str, shapes, *, circuit=None, window=None, base="abc", items_sha=None
+):
     items = {}
     for item_id, turn, shape in shapes:
-        item = items.setdefault(item_id, {'id': item_id, 'endstep_probe_v22': []})
-        while len(item['endstep_probe_v22']) <= turn:
-            item['endstep_probe_v22'].append({})
-        generation = item['endstep_probe_v22'][turn]
-        generation['terminal_decision'] = {'step': 1} if shape == 'stop' else None
-        generation['ate_full_budget'] = shape == 'eat'
+        item = items.setdefault(item_id, {"id": item_id, "endstep_probe_v22": []})
+        while len(item["endstep_probe_v22"]) <= turn:
+            item["endstep_probe_v22"].append({})
+        generation = item["endstep_probe_v22"][turn]
+        generation["terminal_decision"] = {"step": 1} if shape == "stop" else None
+        generation["ate_full_budget"] = shape == "eat"
     payload = {
-        'checkpoint_sha256': base,
-        'circuit': circuit,
-        'product_window_steps': window,
-        'per_item': list(items.values()),
+        "checkpoint_sha256": base,
+        "circuit": circuit,
+        "product_window_steps": window,
+        "per_item": list(items.values()),
     }
     if items_sha is not None:
-        payload['items_sha256'] = items_sha
+        payload["items_sha256"] = items_sha
     path = tmp_path / name
-    path.write_text(json.dumps(payload), encoding='utf-8')
+    path.write_text(json.dumps(payload), encoding="utf-8")
     return path
 
 
@@ -54,43 +56,45 @@ def test_the_table_names_both_directions_separately(tmp_path: Path) -> None:
 
     left = _write(
         tmp_path,
-        'left.json',
-        [('V001', 0, 'stop'), ('V002', 0, 'stop'), ('V003', 0, 'eat'), ('V004', 0, 'stop')],
+        "left.json",
+        [("V001", 0, "stop"), ("V002", 0, "stop"), ("V003", 0, "eat"), ("V004", 0, "stop")],
     )
     right = _write(
         tmp_path,
-        'right.json',
-        [('V001', 0, 'eat'), ('V002', 0, 'eat'), ('V003', 0, 'stop'), ('V004', 0, 'stop')],
+        "right.json",
+        [("V001", 0, "eat"), ("V002", 0, "eat"), ("V003", 0, "stop"), ("V004", 0, "stop")],
     )
     result = pair(left, right)
-    assert result['table'] == {'stop->eat': 2, 'eat->stop': 1, 'stop->stop': 1}, result
-    assert result['harmed_stop_to_eat'] == 2 and result['rescued_eat_to_stop'] == 1, result
-    assert result['rescued_examples'] == ['V003/0'], result
-    assert result['harmed_examples'] == ['V001/0', 'V002/0'], result
-    assert result['cells'] == 4 and result['other_shape_count'] == 0, result
+    assert result["table"] == {"stop->eat": 2, "eat->stop": 1, "stop->stop": 1}, result
+    assert result["harmed_stop_to_eat"] == 2 and result["rescued_eat_to_stop"] == 1, result
+    assert result["rescued_examples"] == ["V003/0"], result
+    assert result["harmed_examples"] == ["V001/0", "V002/0"], result
+    assert result["cells"] == 4 and result["other_shape_count"] == 0, result
 
 
 def test_an_other_shape_is_disclosed_not_absorbed(tmp_path: Path) -> None:
     """既不自停也不吃满的格要单列出来（否则四格合计会悄悄不等于总格数）。"""
 
-    left = _write(tmp_path, 'l2.json', [('V001', 0, 'stop'), ('V002', 0, 'stop')])
-    right = _write(tmp_path, 'r2.json', [('V001', 0, 'other'), ('V002', 0, 'stop')])
+    left = _write(tmp_path, "l2.json", [("V001", 0, "stop"), ("V002", 0, "stop")])
+    right = _write(tmp_path, "r2.json", [("V001", 0, "other"), ("V002", 0, "stop")])
     result = pair(left, right)
-    assert result['table'] == {'stop->other': 1, 'stop->stop': 1}, result
-    assert result['other_shape_count'] == 1, result
-    assert sum(result['table'].values()) == result['cells'] == 2, result
+    assert result["table"] == {"stop->other": 1, "stop->stop": 1}, result
+    assert result["other_shape_count"] == 1, result
+    assert sum(result["table"].values()) == result["cells"] == 2, result
 
 
 def test_mismatched_cell_sets_refuse_to_pair(tmp_path: Path) -> None:
     """键集不齐 ⇒ 响亮失败。交集配表＝少一格就可能少一个反向证据。"""
 
-    left = _write(tmp_path, 'l3.json', [('V001', 0, 'stop'), ('V002', 0, 'eat')])
-    right = _write(tmp_path, 'r3.json', [('V001', 0, 'eat')])
-    with pytest.raises(RuntimeError, match='格集合不一致'):
+    left = _write(tmp_path, "l3.json", [("V001", 0, "stop"), ("V002", 0, "eat")])
+    right = _write(tmp_path, "r3.json", [("V001", 0, "eat")])
+    with pytest.raises(RuntimeError, match="格集合不一致"):
         pair(left, right)
-    empty = tmp_path / 'empty.json'
-    empty.write_text(json.dumps({'per_item': [{'id': 'V001', 'endstep_probe_v22': []}]}), encoding='utf-8')
-    with pytest.raises(RuntimeError, match='endstep_probe_v22'):
+    empty = tmp_path / "empty.json"
+    empty.write_text(
+        json.dumps({"per_item": [{"id": "V001", "endstep_probe_v22": []}]}), encoding="utf-8"
+    )
+    with pytest.raises(RuntimeError, match="endstep_probe_v22"):
         load_cells(empty)
 
 
@@ -98,24 +102,30 @@ def test_the_three_way_salvage_count_is_its_own_cell(tmp_path: Path) -> None:
     """三枚件连配：只数"被回路弄坏的那批里门救回几格"，不与全件的救回数混用。"""
 
     base = _write(
-        tmp_path, 'base.json', [('V001', 0, 'stop'), ('V002', 0, 'stop'), ('V003', 0, 'eat'), ('V004', 0, 'stop')]
+        tmp_path,
+        "base.json",
+        [("V001", 0, "stop"), ("V002", 0, "stop"), ("V003", 0, "eat"), ("V004", 0, "stop")],
     )
     off = _write(
-        tmp_path, 'off.json', [('V001', 0, 'eat'), ('V002', 0, 'eat'), ('V003', 0, 'eat'), ('V004', 0, 'eat')]
+        tmp_path,
+        "off.json",
+        [("V001", 0, "eat"), ("V002", 0, "eat"), ("V003", 0, "eat"), ("V004", 0, "eat")],
     )
     on = _write(
-        tmp_path, 'on.json', [('V001', 0, 'stop'), ('V002', 0, 'eat'), ('V003', 0, 'stop'), ('V004', 0, 'eat')]
+        tmp_path,
+        "on.json",
+        [("V001", 0, "stop"), ("V002", 0, "eat"), ("V003", 0, "stop"), ("V004", 0, "eat")],
     )
     result = intersect_loss(base, off, on)
     #: 弄坏的是 V001/V002/V004 三格；V003 本来就拖写，所以它被救回**不算** salvage。
     assert result == {
-        'circuit_broken_cells': 3,
-        'gate_saved_of_those': 1,
-        'salvage_rate': 0.3333,
-        'still_broken': 2,
+        "circuit_broken_cells": 3,
+        "gate_saved_of_those": 1,
+        "salvage_rate": 0.3333,
+        "still_broken": 2,
         #: 旧件（v35 之前）没有题面指纹 ⇒ 必须显式承认"不可知"，不许静当作已证同源。
-        'items_fingerprint_status': 'unknown_pre_v35',
-        'items_fingerprints': [None, None, None],
+        "items_fingerprint_status": "unknown_pre_v35",
+        "items_fingerprints": [None, None, None],
     }, result
 
 
@@ -124,45 +134,55 @@ def test_published_readings_are_reproduced_on_committed_reports() -> None:
 
     for path in (NOC96, OFF96, ON96):
         if not path.is_file():
-            raise AssertionError(f'锚点件不在库里：{path.name}')
+            raise AssertionError(f"锚点件不在库里：{path.name}")
     circuit = pair(NOC96, OFF96)
-    assert circuit['cells'] == 288, circuit
-    assert circuit['table'] == {'stop->eat': 167, 'stop->stop': 41, 'eat->eat': 80}, circuit['table']
-    assert circuit['harmed_stop_to_eat'] == 167 and circuit['rescued_eat_to_stop'] == 0, circuit
-    assert circuit['other_shape_count'] == 0, circuit
-    assert circuit['left_base'] == circuit['right_base'] == 'ca2628077b21bc4c', circuit
-    assert circuit['left_circuit'] is False and circuit['right_circuit'] is True, circuit
+    assert circuit["cells"] == 288, circuit
+    assert circuit["table"] == {"stop->eat": 167, "stop->stop": 41, "eat->eat": 80}, circuit[
+        "table"
+    ]
+    assert circuit["harmed_stop_to_eat"] == 167 and circuit["rescued_eat_to_stop"] == 0, circuit
+    assert circuit["other_shape_count"] == 0, circuit
+    assert circuit["left_base"] == circuit["right_base"] == "ca2628077b21bc4c", circuit
+    assert circuit["left_circuit"] is False and circuit["right_circuit"] is True, circuit
 
     gate = pair(OFF96, ON96)
-    assert gate['table'] == {'eat->eat': 206, 'stop->stop': 41, 'eat->stop': 41}, gate['table']
-    assert gate['rescued_eat_to_stop'] == 41 and gate['harmed_stop_to_eat'] == 0, gate
-    assert gate['left_window_steps'] is None and gate['right_window_steps'] == 128, gate
+    assert gate["table"] == {"eat->eat": 206, "stop->stop": 41, "eat->stop": 41}, gate["table"]
+    assert gate["rescued_eat_to_stop"] == 41 and gate["harmed_stop_to_eat"] == 0, gate
+    assert gate["left_window_steps"] is None and gate["right_window_steps"] == 128, gate
 
     three = intersect_loss(NOC96, OFF96, ON96)
-    assert three['circuit_broken_cells'] == 167 and three['gate_saved_of_those'] == 37, three
-    assert three['salvage_rate'] == 0.2216 and three['still_broken'] == 130, three
-    assert main(['--left', str(NOC96), '--right', str(OFF96), '--third', str(ON96)]) == 0
+    assert three["circuit_broken_cells"] == 167 and three["gate_saved_of_those"] == 37, three
+    assert three["salvage_rate"] == 0.2216 and three["still_broken"] == 130, three
+    assert main(["--left", str(NOC96), "--right", str(OFF96), "--third", str(ON96)]) == 0
 
 
-def test_the_fingerprint_check_proves_same_items_only_when_both_sides_carry_it(tmp_path: Path) -> None:
+def test_the_fingerprint_check_proves_same_items_only_when_both_sides_carry_it(
+    tmp_path: Path,
+) -> None:
     """DEBT-G31 的正反两支：两边都有且相等 ⇒ `equal`；不等 ⇒ 响亮拒绝配对（不许硬配两批题）。"""
 
-    shapes = [('V001', 0, 'stop'), ('V002', 0, 'eat')]
-    left = _write(tmp_path, 'fa.json', shapes, items_sha='same16value')
-    right = _write(tmp_path, 'fb.json', [('V001', 0, 'eat'), ('V002', 0, 'eat')], items_sha='same16value')
+    shapes = [("V001", 0, "stop"), ("V002", 0, "eat")]
+    left = _write(tmp_path, "fa.json", shapes, items_sha="same16value")
+    right = _write(
+        tmp_path, "fb.json", [("V001", 0, "eat"), ("V002", 0, "eat")], items_sha="same16value"
+    )
     result = pair(left, right)
-    assert result['items_fingerprint'] == {
-        'left': 'same16value', 'right': 'same16value', 'status': 'equal'
+    assert result["items_fingerprint"] == {
+        "left": "same16value",
+        "right": "same16value",
+        "status": "equal",
     }, result
 
-    other = _write(tmp_path, 'fc.json', [('V001', 0, 'eat'), ('V002', 0, 'eat')], items_sha='different16')
-    with pytest.raises(RuntimeError, match='题面不同'):
+    other = _write(
+        tmp_path, "fc.json", [("V001", 0, "eat"), ("V002", 0, "eat")], items_sha="different16"
+    )
+    with pytest.raises(RuntimeError, match="题面不同"):
         pair(left, other)
 
     #: 三枚连配也走同一条判定；不一致就拒，缺键就披露不可知（上面已测）。
-    third = _write(tmp_path, 'fd.json', shapes, items_sha='same16value')
-    assert intersect_loss(left, right, third)['items_fingerprint_status'] == 'equal'
-    with pytest.raises(RuntimeError, match='题面指纹不一致'):
+    third = _write(tmp_path, "fd.json", shapes, items_sha="same16value")
+    assert intersect_loss(left, right, third)["items_fingerprint_status"] == "equal"
+    with pytest.raises(RuntimeError, match="题面指纹不一致"):
         intersect_loss(left, third, other)
 
 
@@ -176,30 +196,39 @@ def test_the_alpha_zero_pairings_are_pinned_too() -> None:
     不许因为"另两枚有指纹"就把这一侧读成已证。
     """
 
-    alpha1 = PROJECT_ROOT / 'reports' / 'taiji_a30_stop_failure_self_v38_evidenceobserver_circuitseedA_96_20261003.json'
-    alpha0 = PROJECT_ROOT / 'reports' / 'taiji_a30_stop_failure_self_v38_alpha0_circuitseedA_96_20261003.json'
+    alpha1 = (
+        PROJECT_ROOT
+        / "reports"
+        / "taiji_a30_stop_failure_self_v38_evidenceobserver_circuitseedA_96_20261003.json"
+    )
+    alpha0 = (
+        PROJECT_ROOT
+        / "reports"
+        / "taiji_a30_stop_failure_self_v38_alpha0_circuitseedA_96_20261003.json"
+    )
     for path in (alpha1, alpha0, NOC96):
         if not path.is_file():
-            raise AssertionError(f'锚点件不在库里：{path.name}')
+            raise AssertionError(f"锚点件不在库里：{path.name}")
 
     dose = pair(alpha1, alpha0)
-    assert dose['cells'] == 288 and dose['other_shape_count'] == 0, dose
-    assert dose['table'] == {'eat->stop': 167, 'stop->stop': 41, 'eat->eat': 80}, dose['table']
-    assert dose['rescued_eat_to_stop'] == 167 and dose['harmed_stop_to_eat'] == 0, dose
-    assert dose['items_fingerprint']['status'] == 'equal', dose['items_fingerprint']
-    assert dose['left_circuit'] is True and dose['right_circuit'] is True, dose
-    assert dose['left_window_steps'] is None and dose['right_window_steps'] is None, dose
+    assert dose["cells"] == 288 and dose["other_shape_count"] == 0, dose
+    assert dose["table"] == {"eat->stop": 167, "stop->stop": 41, "eat->eat": 80}, dose["table"]
+    assert dose["rescued_eat_to_stop"] == 167 and dose["harmed_stop_to_eat"] == 0, dose
+    assert dose["items_fingerprint"]["status"] == "equal", dose["items_fingerprint"]
+    assert dose["left_circuit"] is True and dose["right_circuit"] is True, dose
+    assert dose["left_window_steps"] is None and dose["right_window_steps"] is None, dose
 
     inert = pair(NOC96, alpha0)
-    assert inert['table'] == {'stop->stop': 208, 'eat->eat': 80}, inert['table']
-    assert inert['rescued_eat_to_stop'] == 0 and inert['harmed_stop_to_eat'] == 0, inert
-    assert inert['left_circuit'] is False and inert['right_circuit'] is True, inert
-    assert inert['items_fingerprint']['status'] == 'unknown_pre_v35', inert['items_fingerprint']
+    assert inert["table"] == {"stop->stop": 208, "eat->eat": 80}, inert["table"]
+    assert inert["rescued_eat_to_stop"] == 0 and inert["harmed_stop_to_eat"] == 0, inert
+    assert inert["left_circuit"] is False and inert["right_circuit"] is True, inert
+    assert inert["items_fingerprint"]["status"] == "unknown_pre_v35", inert["items_fingerprint"]
 
 
 def test_the_probe_itself_records_the_fingerprint() -> None:
     """仪器必须**自己写**这一列——否则配对器永远只能报"不可知"，那条债就没还。"""
 
-    source = (PROJECT_ROOT / 'scripts' / 'training' / 'probe_taiji_a30_stop_failure.py').read_text(encoding='utf-8')
+    source = (PROJECT_ROOT / "scripts" / "training" / "probe_taiji_a30_stop_failure.py").read_text(
+        encoding="utf-8"
+    )
     assert '"items_sha256": _items_fingerprint(items)' in source
-
