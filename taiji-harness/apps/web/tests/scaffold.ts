@@ -337,6 +337,16 @@ export interface LaunchOptions {
   /** Compare the replayed root Session; `read-only` also forbids refresh writes to a borrowed fixture. */
   compareReplaySession?: boolean | 'read-only'
   /**
+   * Lane-level normalization applied to both sides of the replayed-session
+   * compare, before the shared volatile folds. For lanes whose recorded stderr
+   * carries PowerShell error *rendering* that moved between hosts — 5.1
+   * NormalView frame blocks versus 7 ConciseView single lines, and the
+   * pre-`chcp` encoding preamble's ConstrainedLanguage failures — this folds
+   * that machine form to the shared core message. The committed fixture is
+   * never rewritten; refresh writes stay unfolded.
+   */
+  replaySessionNormalize?: (log: string) => string
+  /**
    * Optional product overlay applied after the shipped Web surface and before
    * the scaffold's hermetic test patches, matching the launcher's `--patch`
    * ordering.
@@ -1028,6 +1038,7 @@ export async function launchWebScaffold(options: LaunchOptions = {}): Promise<We
             compareReplaySession === 'read-only' ? 'replay' : mode,
             `http://${browserHost}:${port}`,
             harnessHome,
+            options.replaySessionNormalize,
           )
         } catch (error) {
           failures.push(error)
@@ -1323,6 +1334,7 @@ async function assertReplaySession(
   mode: WebSnapshotMode,
   webUrl: string,
   harnessHome: string,
+  laneNormalize?: (log: string) => string,
 ): Promise<void> {
   let expected = await readFile(fixturePath, 'utf8')
   const fixtureDir = dirname(fixturePath)
@@ -1363,14 +1375,17 @@ async function assertReplaySession(
   // (SPEC-M6-01 §5 addendum). The value-level fold inside
   // normalizeWebSessionVolatiles already covers every nesting depth; these
   // row-level splits stay as belt-and-suspenders.
+  // The lane fold runs on the raw logs so it sees the recorded stderr shape;
+  // the refresh write above already happened, so refreshed fixtures stay
+  // canonical (unfolded) on disk.
   const actualSnapshot = normalizeSessionSnapshots(
-    [normalizeWebSessionVolatiles(actual)], actualContext,
+    [normalizeWebSessionVolatiles(laneNormalize === undefined ? actual : laneNormalize(actual))], actualContext,
   )[0]
     ?.split(harnessHome).join('{{harnessHome}}')
     .split(harnessHome.replaceAll('\\', '\\\\')).join('{{harnessHome}}')
     .split(harnessHome.replaceAll('\\', '/')).join('{{harnessHome}}')
   const expectedSnapshot = normalizeSessionSnapshots(
-    [normalizeWebSessionVolatiles(expected)], expectedContext,
+    [normalizeWebSessionVolatiles(laneNormalize === undefined ? expected : laneNormalize(expected))], expectedContext,
   )[0]
     ?.split(harnessHome).join('{{harnessHome}}')
     .split(harnessHome.replaceAll('\\', '\\\\')).join('{{harnessHome}}')
