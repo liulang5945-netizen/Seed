@@ -149,6 +149,7 @@ export class LifeFeed {
   }
 
   private dispose(): void {
+    /* v8 ignore next -- the sole call site is this class's effect cleanup, and cordis runs an effect cleanup at most once. */
     if (this.disposed) return
     this.disposed = true
     this.lifetime.abort(new Error('life-controller: feed disposed'))
