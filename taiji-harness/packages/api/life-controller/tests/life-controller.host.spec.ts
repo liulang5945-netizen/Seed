@@ -422,6 +422,34 @@ describe('LifeController cut responses', () => {
 })
 
 
+describe('LifeController gated roster cut and odd SSE block', () => {
+  it('names a knowledge roster that dies after the knowledge surface answers', async () => {
+    const { controller, runtime } = await harness()
+    // The roster is read only once the knowledge surface itself answers.
+    runtime.knowledgeReply = { status: 200, body: { status: 'ok' } }
+    runtime.transport.set('/api/rag/files', {})
+
+    await vi.waitFor(async () => {
+      const { snapshot } = await controller.snapshot(new AbortController().signal)
+      expect(snapshot.availability.knowledge).toBe('ok')
+      expect(snapshot.unavailable.join(' ')).toContain('life/runtime-unreachable')
+    })
+  })
+
+  it('skips an SSE block that carries no data line', async () => {
+    const { controller, runtime } = await harness()
+    const eol = String.fromCharCode(10, 10)
+    runtime.transport.set('/api/train/native', { status: 200, sse: true, chunk: ['event: ping', ''].join(eol) })
+
+    await controller.trainStart({ parameterBudget: 1_000 }).catch(() => undefined)
+    const { snapshot } = await controller.snapshot(new AbortController().signal)
+
+    // A block with no data line yields no frame, so nothing is reported as in flight.
+    expect(snapshot.availability.trainingStream).not.toBe('streaming')
+    expect(snapshot.training.progress).toBeUndefined()
+  })
+})
+
 describe('LifeController pass report', () => {
   it('reports a pass whose own spec block is absent and whose lists are not lists', async () => {
     const { controller, runtime } = await harness()
