@@ -45,6 +45,7 @@ roles.  Inputs over ``max_input_chars`` and free generation beyond
 
 from __future__ import annotations
 
+import contextlib
 import hashlib
 import math
 from collections import OrderedDict
@@ -1171,10 +1172,9 @@ class SequenceContentTrainer:
             code_revision=str(payload.get("code_revision", "")),
             data_digest=str(payload.get("data_digest", "")),
         )
-        try:
+        with contextlib.suppress(ValueError, KeyError):
             trainer.optimizer.load_state_dict(dict(payload["optimizer"]))
-        except (ValueError, KeyError):
-            pass  # fresh optimizer state when param identity differs
+        # a fresh optimizer state is the intended fallback when param identity differs
         trainer.global_step = int(payload.get("global_step", 0))
         trainer.copy_value_weight = float(payload.get("copy_value_weight", 1.0))
         trainer.pair_contrastive_weight = float(payload.get("pair_contrastive_weight", 0.0))

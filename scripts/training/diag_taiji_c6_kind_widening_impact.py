@@ -234,7 +234,7 @@ def _corpus_allowlist() -> tuple[str, ...]:
         CANDIDATE_KIND,
         "totally_unknown_kind",
     ):
-        rejected, _ = _raises(lambda: _artifact(kind))
+        rejected, _ = _raises(lambda k=kind: _artifact(k))
         if not rejected:
             kinds.append(kind)
     return tuple(kinds)

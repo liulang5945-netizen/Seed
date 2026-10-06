@@ -102,8 +102,10 @@ def main() -> int:
         zero_fb = torch.zeros_like(tell_fb)
 
         # ---- Exp-2：(c) 检验——强制告知反馈，看能否解码出「阿岩」----
-        def run_with_feedback(forced: torch.Tensor | None, tag: str) -> dict[str, object]:
-            runtime2 = SeedRuntime.load(path)
+        def run_with_feedback(
+            forced: torch.Tensor | None, tag: str, checkpoint=path
+        ) -> dict[str, object]:
+            runtime2 = SeedRuntime.load(checkpoint)
             substrate2 = runtime2.model.substrate
             # 告知段：learn=True 写入（与 Exp-1 同）
             substrate2.reset_dynamics(episode_id=f"t8-{tag}-learn")

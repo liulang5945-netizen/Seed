@@ -27,6 +27,7 @@ Design facts frozen by the contract:
 
 from __future__ import annotations
 
+import contextlib
 import math
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, replace
@@ -752,10 +753,9 @@ class SequenceCharTrainer:
             ),
             code_revision=str(payload.get("code_revision", "")),
         )
-        try:
+        with contextlib.suppress(ValueError, KeyError):
             trainer.optimizer.load_state_dict(dict(payload["optimizer"]))
-        except (ValueError, KeyError):
-            pass  # fresh optimizer state when param identity differs
+        # a fresh optimizer state is the intended fallback when param identity differs
         trainer.global_step = int(payload.get("global_step", 0))
         episodes = payload.get("episodes", [])
         trainer.episodes = tuple((str(item["prefix"]), str(item["response"])) for item in episodes)

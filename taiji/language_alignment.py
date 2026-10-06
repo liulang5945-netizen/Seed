@@ -996,12 +996,14 @@ class LanguageAlignmentTrainer:
                     max_generation_bytes=int(max_generation_bytes),
                 )
 
-                def summarize(raw: bytes) -> dict[str, Any]:
+                def summarize(
+                    raw: bytes, ep: LanguageEpisode = episode
+                ) -> dict[str, Any]:
                     text, valid_utf8, no_replacement, boundary, stop_reason = (
                         decoder._generated_text(raw)
                     )
                     sequence = decoder._sequence_evaluation(
-                        episode,
+                        ep,
                         text,
                         valid_utf8=valid_utf8,
                         no_replacement=no_replacement,
@@ -1016,7 +1018,7 @@ class LanguageAlignmentTrainer:
                         "no_replacement": no_replacement,
                         "response_boundary_present": boundary,
                         "generation_stop_reason": stop_reason,
-                        "exact_response": text == episode.response.strip(),
+                        "exact_response": text == ep.response.strip(),
                         "sequence_criterion_pass": sequence["sequence_criterion_pass"],
                     }
 
@@ -1615,8 +1617,8 @@ class LanguageAlignmentTrainer:
                         }
                     )
 
-                def mean(name: str) -> float:
-                    return sum(float(item[name]) for item in records) / len(records)
+                def mean(name: str, rows: list[dict[str, Any]] = records) -> float:
+                    return sum(float(item[name]) for item in rows) / len(rows)
 
                 profiles[split] = {
                     "split": split,

@@ -64,7 +64,7 @@ def diff_reports(
         if len(left) != len(right):
             behavior.append((trail or '<root>', 'list_length', len(left), len(right)))
             return behavior, schema
-        for index, (item_l, item_r) in enumerate(zip(left, right)):
+        for index, (item_l, item_r) in enumerate(zip(left, right, strict=True)):
             b, s = diff_reports(item_l, item_r, f'{trail}[{index}]')
             behavior.extend(b)
             schema.extend(s)

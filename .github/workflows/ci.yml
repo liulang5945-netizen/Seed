@@ -123,9 +123,18 @@ jobs:
       #
       # 余下 21 处 = B023 18（闭包晚绑定，唯一真 bug 类，需逐点判语义）
       #            + SIM105 3（contextlib.suppress，需逐点判语义）——刻意不做批量自动改。
-      - name: Lint with ruff bugbear/simplify rules (ratchet, baseline 21)
+      #
+      # M7 收束（2026-10-06，㊵-461）：基线 21→ **0**。
+      # 实测漂移轨迹＝21（09-30 H19b/e 清零后的历史值）→ **39**（10-01～10-03 并行会话
+      # 新增件冲破，run 37465492804 读到 `Found 39 errors.` / `violations: 39 (baseline 21)`）
+      # → **0**（那 39 条逐点判语义后实修清零；其中 15 条属design/ 本轮品牌资产工作，
+      # 24 条属 scripts/taiji/tests 在飞件，owner 2026-10-06 授权「不需要在乎是谁实施的改动」后代修）。
+      # 本次漂移方向与 H19h 那次**相反**：不是「基线低于现状让门永久红」，而是**达标后未收紧**。
+      # **两类故障的共同判据：基线必须等于实测值，且实测要 stash 后重取**，
+      # 不能读注释推断（读注释会把「历史 0」当成「当前 0」）。
+      - name: Lint with ruff bugbear/simplify rules (ratchet, baseline 0)
         env:
-          RUFF_BSIM_BASELINE: "21"
+          RUFF_BSIM_BASELINE: "0"
         run: |
           set -o pipefail
           ruff check . --select B,SIM --ignore B008 | tee ruff-bsim.log || true

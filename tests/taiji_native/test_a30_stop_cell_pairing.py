@@ -29,7 +29,7 @@ ON96 = REPORTS / 'taiji_a30_stop_failure_self_v34_margins_productk128_96_2026100
 
 def _write(tmp_path: Path, name: str, shapes, *, circuit=None, window=None, base='abc', items_sha=None):
     items = {}
-    for index, (item_id, turn, shape) in enumerate(shapes):
+    for item_id, turn, shape in shapes:
         item = items.setdefault(item_id, {'id': item_id, 'endstep_probe_v22': []})
         while len(item['endstep_probe_v22']) <= turn:
             item['endstep_probe_v22'].append({})

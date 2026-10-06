@@ -309,7 +309,7 @@ def _endstep_probe_per_generation(
             f"终止决策行与生成分组数量不一致：groups={len(groups)} terminals={len(terminals)}"
         )
     out = []
-    for group, terminal in zip(groups, terminals):
+    for group, terminal in zip(groups, terminals, strict=True):
         if not group:
             continue
         peak = max(group, key=lambda row: row["p_boundary"])

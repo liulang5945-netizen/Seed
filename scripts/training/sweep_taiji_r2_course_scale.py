@@ -221,8 +221,13 @@ def _build_corpus(scale: int) -> dict[str, tuple[tuple[bytes, bytes], ...]]:
         colors = pools[f"{split}-colors"]
         records: list[tuple[bytes, bytes]] = []
 
-        def add(template_id: str, prefix: str, answer: str) -> None:
-            records.append((prefix.encode("utf-8"), answer.encode("utf-8")))
+        def add(
+            template_id: str,
+            prefix: str,
+            answer: str,
+            sink: list[tuple[bytes, bytes]] = records,
+        ) -> None:
+            sink.append((prefix.encode("utf-8"), answer.encode("utf-8")))
 
         for obj in objects:
             for color in colors:

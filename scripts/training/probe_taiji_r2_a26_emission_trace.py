@@ -535,7 +535,13 @@ def main() -> int:
                 per_item[item_id] = {"class": "no_copyable_answer"}
                 continue
 
-            def _trace(turns=turns, tokens=tokens, told=told):
+            def _trace(
+                turns=turns,
+                tokens=tokens,
+                told=told,
+                bias=bias,
+                label=label,
+            ):
                 record = trace_item(
                     substrate,
                     substrate.copy_circuit,

@@ -29,6 +29,7 @@ case/seed 固定。两个进程同时跑套件时，A 写完还没撒手、B 就
 
 from __future__ import annotations
 
+import contextlib
 import logging
 import os
 import time
@@ -127,7 +128,6 @@ def sweep(stems: tuple[str, ...], stale_after: float = STALE_AFTER_SECONDS) -> l
 def _rmdir_if_empty(path: Path) -> None:
     """用 rmdir 而非 rmtree：非空时系统调用本身就删不动，不为本轮清理冒毁别人内容的险。"""
 
-    try:
+    # 仍非空（并发进程刚落笔）或已被别人收掉 —— 残留一个空壳不值得让 lane 红
+    with contextlib.suppress(OSError):
         path.rmdir()
-    except OSError:  # 仍非空（并发进程刚落笔）或已被别人收掉 —— 残留一个空壳不值得让 lane 红
-        pass

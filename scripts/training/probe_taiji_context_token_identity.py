@@ -130,21 +130,29 @@ def collect(checkpoint: Path) -> dict[str, Any]:
         token_axis = len(TOKENS)
         carrier_axis = len(CARRIERS)
 
-        def _same(axis: list[list[torch.Tensor]]) -> float:
+        def _same(
+            axis: list[list[torch.Tensor]],
+            n_tokens: int = token_axis,
+            n_carriers: int = carrier_axis,
+        ) -> float:
             values = [
                 _rel_l1(axis[index][left], axis[index][right])
-                for index in range(token_axis)
-                for left in range(carrier_axis)
-                for right in range(left + 1, carrier_axis)
+                for index in range(n_tokens)
+                for left in range(n_carriers)
+                for right in range(left + 1, n_carriers)
             ]
             return sum(values) / len(values)
 
-        def _diff(axis: list[list[torch.Tensor]]) -> float:
+        def _diff(
+            axis: list[list[torch.Tensor]],
+            n_tokens: int = token_axis,
+            n_carriers: int = carrier_axis,
+        ) -> float:
             values = [
                 _rel_l1(axis[left][carrier], axis[right][carrier])
-                for left in range(token_axis)
-                for right in range(left + 1, token_axis)
-                for carrier in range(carrier_axis)
+                for left in range(n_tokens)
+                for right in range(left + 1, n_tokens)
+                for carrier in range(n_carriers)
             ]
             return sum(values) / len(values)
 

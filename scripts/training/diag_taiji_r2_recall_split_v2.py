@@ -150,11 +150,17 @@ def main() -> int:
             fabric_n = substrate_n.fabric
             original_step_n = fabric_n.step
 
-            def recording_step(sensory: object, previous: object, **kwargs: object) -> object:
+            def recording_step(
+                sensory: object,
+                previous: object,
+                _norms: list[float] = native_norms,
+                _original=original_step_n,
+                **kwargs: object,
+            ) -> object:
                 fb = kwargs.get("episodic_feedback")
                 if isinstance(fb, torch.Tensor):
-                    native_norms.append(round(float(fb.norm()), 4))
-                return original_step_n(sensory, previous, **kwargs)
+                    _norms.append(round(float(fb.norm()), 4))
+                return _original(sensory, previous, **kwargs)
 
             fabric_n.step = recording_step
             native_text = substrate_n.generate(
