@@ -279,6 +279,96 @@ describe('LifeController absent sections', () => {
   })
 })
 
+describe('LifeController life section shapes', () => {
+  it('treats a life section whose status names no organ as absent', async () => {
+    const { controller, runtime } = await harness()
+    runtime.runtimeStatus = { ...runtime.runtimeStatus, life: { status: 'unknown-organ' } }
+
+    // The poll loop replaces the cached reading, so wait for a read taken after the change.
+    await vi.waitFor(async () => {
+      const { snapshot } = await controller.snapshot(new AbortController().signal)
+      expect(snapshot.availability.runtime).toBe('ok')
+      expect(snapshot.life).toBeUndefined()
+    })
+  })
+
+  it('reports a stopped native scheduler without a native projection', async () => {
+    const { controller, runtime } = await harness()
+    runtime.runtimeStatus = { ...runtime.runtimeStatus, life: { status: 'seed', is_running: false } }
+
+    await vi.waitFor(async () => {
+      const { snapshot } = await controller.snapshot(new AbortController().signal)
+      expect(snapshot.life?.isRunning).toBe(false)
+      expect(snapshot.life?.native).toBeUndefined()
+    })
+  })
+
+  it('keeps a legacy reading whose optional stamps are absent and drops non-numeric needs', async () => {
+    const { controller, runtime } = await harness()
+    runtime.runtimeStatus = {
+      ...runtime.runtimeStatus,
+      life: {
+        status: 'ok',
+        is_running: true,
+        life_state: 'sleeping',
+        dominant_need: 'fatigue',
+        total_heartbeats: 3,
+        total_events: 2,
+        needs: { curiosity: 'high', fatigue: 1 },
+      },
+    }
+
+    await vi.waitFor(async () => {
+      const { snapshot } = await controller.snapshot(new AbortController().signal)
+      const legacy = snapshot.life?.legacy
+      expect(legacy).toBeDefined()
+      // The two heartbeat stamps are omitted by the runtime, so the view omits them too.
+      expect(legacy?.lastHeartbeat).toBeUndefined()
+      expect(legacy?.lastActivity).toBeUndefined()
+      expect(legacy?.needs).toEqual({ fatigue: 1 })
+      expect(snapshot.life?.isRunning).toBe(true)
+    })
+  })
+})
+
+describe('LifeController progress and frame parsing', () => {
+  it('carries a progress sample that omits eta', async () => {
+    const { controller, runtime } = await harness()
+    runtime.training = { kind: 'frames', frames: [progressFrame({ eta: undefined })], hold: true }
+
+    await expect(controller.trainStart({ parameterBudget: 1_000 })).resolves.toEqual({ message: 'training accepted' })
+    const carried = await vi.waitFor(async () => {
+      const { snapshot } = await controller.snapshot(new AbortController().signal)
+      if (snapshot.training.progress === undefined) throw new Error('no progress sample carried yet')
+      return snapshot.training.progress
+    })
+    expect(carried.step).toBe(250)
+    expect(carried.eta).toBeUndefined()
+    await runtime.closeTraining()
+  })
+
+  it('ends the run on an in-band failure frame past frames it cannot classify', async () => {
+    const { controller, runtime } = await harness()
+    runtime.training = {
+      kind: 'frames',
+      frames: [progressFrame(), '{"type":"unknown-kind"}', '42', 'engine exploded'],
+      hold: true,
+    }
+
+    await expect(controller.trainStart({ parameterBudget: 1_000 })).resolves.toEqual({ message: 'training accepted' })
+
+    // An unrecognized event type and a non-object payload are both skipped, and a payload that
+    // is not JSON at all is the runtime's in-band failure: it settles the run with its text.
+    const settled = await vi.waitFor(async () => {
+      const { snapshot } = await controller.snapshot(new AbortController().signal)
+      expect(snapshot.availability.trainingStream).toBe('closed')
+      return snapshot
+    })
+    expect(settled.training.progress).toBeUndefined()
+    await runtime.closeTraining()
+  })
+})
+
 describe('LifeController HTTP refusals', () => {
   it('folds HTTP refusals into the stable control codes', async () => {
     const { controller, runtime } = await harness()
