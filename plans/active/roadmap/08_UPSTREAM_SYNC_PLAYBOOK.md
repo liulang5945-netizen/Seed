@@ -1936,6 +1936,53 @@ owner 已裁定 18 行那枚走"批准新增分类条目"（人工评审＝本�
 【10:05Z ㊵-454 三件定名收口：executor 两枚＝争用族（单跑复绿）；llm-taiji 5 枚阈下＝负载丢覆盖伪影（定向面 100%）；退出件 ⑦/R-8 两行按新事实改写】① **executor.spec 两枚失败定名＝争用族**：单跑 `corepack pnpm exec vitest run packages/shell/pwsh-local/tests/executor.spec.ts`（PATH 带 pwsh）⇒ `RC_EXEC=0`、`Test Files 1 passed (1)`（日志 `m6r13/exec_solo.log`）——453 面 :446/:729 两枚 5s 超时在隔离下全绿，非产品/测试缺陷，与 file-applications-windows 同族（owner 已裁 5s 不抬 ⇒ 无动作）。② **llm-taiji 5 枚阈下定名＝负载丢覆盖伪影**：定向面 `corepack pnpm exec vitest run --coverage packages/llm/llm-taiji` ⇒ 测试 **6 passed (6)**、该包表体行 `llm/llm-taiji/src | 100 | 100 | 100 | 100`（日志 `m6r13/llmtaiji_cov.log`）——**其自有测试覆盖满额**，453 合并面的 5 枚（adapter.ts listModels 等 151 条）是超时/worker 崩溃（同趟 TIMEOUTS 15＋崩 4）吃掉覆盖账的伪影，**无需补测试**；合并面"测试全绿却丢覆盖"家族再添一例，与 ㊵-444④"无稳定合格读数"的机制图谱一致。**仪器口径教训**：定向跑若不带分区/收集限定，threshold ERROR 是全仓的（本趟 142,094 条），判定必须只读目标包的表体行与阈下行，别把全仓数字当目标包读数。③ **退出件两行改写**（CRLF 保持，`git diff --numstat` 2/2 证非整档翻牌）：判据⑦ 行补 2026-10-06 戳（HEAD 级读数＋两 lane 折叠结清＋present-svg flake＋不写达成）；R-8 行补 2026-10-06 戳（pwsh 7.6.6 本机就位、三族隔离绿、pwshCoverageExclusions 自动收缩且被计量面达标、"缺 pwsh 7 必红"前提在本机解除、5.1 回退契约仍在）。④ **⑦/④ 的当前可引状态**：⑦＝HEAD 级整面 `1 failed | 138 passed | 4 skipped (144)`，实质红清零（唯一红 present-svg 单跑绿在案），不写达成；④＝维持现状（owner 裁，㊵-450），机制图谱＝wsc 5s 穿点／worker 崩溃丢账／特权开关三族随机。⑤ **下一格**：⑦ 面若要"零 failed"读数需在无争用窗口再取一趟（flake 摆动属预期）；④ 维持现状无动作；pwsh 7 的 winget 机器级安装仍挂 owner（便携版已满足一切本机面）。⑥ 不变项：M6 §1 六项判据无一可写"已达成"；owner 侧＝`02:145` 只到程序性半句、§1 第 1/2 项维持排除、(丙)、本地后端、两处配额、明文 xlsx、R7；台账行序以行首标号为准（㊵-419⑥）。
 【10:2xZ ㊵-455 **M6 收官**：owner 2026-10-06 裁"⑦ 实质红清零即选 B"（范围排除收官）＋02:145 通过声明弹窗"确认入档"】① **批准书落地**＝`plans/reference/M6_SCOPE_EXCLUSION_APPROVAL_20261006.md`：排除项四（④ 覆盖率档稳定读数——三随机族机制图谱＋重启条件三条；⑥ 残项本地后端；⑥ 残项 R7 明文 xlsx；④ 真机半＝不声明在线参数学习）；达成项五（③ 持久化/恢复 kill-9×resume 合取；④ 收缩口径"重试到上限＋日志"；⑤ 客户端面 488/488；⑦ 实质红清零解释——唯一面红 present-svg flake 单跑绿在案；①② 延续 10-03 排除）；残余风险四条随批入档（覆盖率门 rc=1 常态化／零 CI＝本机证据口径／pwsh 便携版／5.1 回退契约未变）。批准不改变未完成状态，重启条件随项保留。② **02:145 通过声明入档**（owner 弹窗确认后由会话转录，非代签）：M6 采用评审行第三格换收官声明，六项终态逐项点名。③ PLAN_INDEX M6 行加收官戳（M7 未开，开线须 owner 预注册）。④ 门 doc-sync 43/0/0、hygiene 18/0/0（提交前实跑）。⑤ **M6 自此收官**；M7（CI 与发布）未开——其判据（实际发布 workflow、安装启动/回滚/安全/发行包验收、正式 CI 不以"零新增"放行）全部未启动，接手方勿把 M7 当作已授权；owner 侧未清材料（本地后端、明文 xlsx、pwsh 机器级）按批准书重启条件随时可续。
 【10:38Z ㊵-456 **M7 限定范围开线（CI 先行）＋M8 摘除主线**（owner 2026-10-06 裁："发布还是不太现实，但是 CI 确实需要过"；"M8 先从主线摘除掉，模型能力不够，硬件条件也没有"）】① **M7 范围与判据冻结（预注册）**：本工作流只挂本机已验证的两道门＝`doc-sync`（43 叶）＋`hygiene`（18 叶），workflow＝根 `.github/workflows/m7-ci.yml`（`ubuntu-latest`＋node 24＋钉死 pnpm@11.7.0＋`pnpm install --frozen-lockfile`，push main／PR／手动触发，concurrency 取消旧跑）；**判据＝两道门在 GitHub Actions ubuntu 上绿**，失败逐叶归因（Linux 上的失败属真实跨平台发现，修或显式排除并写理由，不许静默 skip）。**明确不在范围**：发布 workflow、安装启动/回滚/安全/发行包验收（owner 裁暂缓，重启＝CI 绿后另裁）、e2e/coverage 等重面（已知约束＝win32 语料在 POSIX gate 会因 pwsh unknown tool 变红，㊵-145 移交未裁——接面时先裁这个）、"零新增"放行（M7 红线，01:31）。② **M8 摘除主线**：理由＝模型能力不够＋无硬件；挂起不入当前线序，重启条件＝owner 提供真设备且模型能力就绪后单独批准（"单列评审、不阻塞 CPU 版本"两条原样保留）。01:31/01:32 两行已加裁定戳（CRLF 保持，numstat 2/2）。③ **已知风险预登记**：`pnpm install --frozen-lockfile` 在 Linux 上的平台可选依赖解析（锁文件在 Windows 生成）是首跑最大变数；docs-site-projection 的符号链接叶在 Linux 无需特权应转绿；任一叶红都是新信息，逐叶入账。④ 不变项：M6 已收官（㊵-455）；本条是 M7 的开线条，后续 CI 读数接在 ㊵-456 之后；owner 侧未清材料不变。
+【17:2xZ ㊵-466 **12 条红的显式处置：族 A 改判据形式（红绿双向验证过）、族 B/C 显式 deselect 并写重启条件**】
+owner 裁「动手」⇒ 按授权执行。**处置原则：保住每条守卫真正要抓的东西，只改不可判定的形式。**
+
+① **族 A 之一`test_copy_circuit_contract::test_bare_arm_survives_the_extraction_untouched`**：
+原断言＝参数 sha256 逐位等于 `BARE_ARM_PINNED_DIGEST`（实测三条平台三个值：本机 `d55bf2ef…`、
+Linux CI `76e3122c…`、Windows CI `d1ac2035…`，**代码同一份**）。
+**改法**＝保留原值供追溯，断言换成 `_assert_bare_arm_shape` **结构面判定**：
+参数面集合（不多不少）、七个张量的形状与 dtype、零初始化参数恒零、
+四个可学张量的 absmax 下界 `0.05`。**它抓的是"抽取规则改了训练语义"**
+（gate 初始化变了／参数增减／训练退化成常量），这些**在任何平台上可判定**。
+**下界 0.05 的依据**＝实测本机三个随机投影 absmax 0.48–0.58、`copy_induce_bias` 0.72 量级，
+取两个数量级余量 ⇒ 不会被正常浮点漂移触发。
+**红绿双向验证（三次注入，全部能响）**：形状改 `(1,)→(2,)` ⇒ `copy_induce_bias 形状变了`；
+下界抬到 99 ⇒ `content_embed 的 absmax=0.567687 低于下界`（训练退化会红）。
+② **族 A 之二 `::test_init_seed_default_leaves_the_mount_bitwise_identical`**：
+原断言比对三份**在 Windows 实测**的挂载基线 sha（Linux CI 读 `assert 1`）。
+**改法**＝换成两条**相对判据**（跨平台稳定）：(甲) 同seed 挂载两次**逐位相同**（确定性）；
+(乙) 不传 `init_seed` 与传 `init_seed=101` **必须不同**（旋钮真接上了）。
+**关键点**：(乙) 是这条守卫变**更强**的地方——原版靠"默认值等于历史锚"**间接**证明
+"旋钮没动默认路径"，若旋钮整体失效则默认值仍等于锚、原守卫会绿；改成相对判据后**直接**证明旋钮改变了什么。
+**验证**＝注入"seeded 挂载不传 init_seed" ⇒ 红（`种子旋钮没有接上默认路径，本条守卫失去否决能力`）。
+⚠️ **我第一次注入做错了**（把两处都改成同一种子 12345，仍绿）⇒ **那次注入测不出东西**，
+改用"完全不传 init_seed"这个真失效场景才逼出红。**注入本身也要验证有效。**
+③ **族 A 之三 `tests/test_cortex_quality_extraction::test_rolling_nll_reproduces_pre_migration_golden`**：
+原断言 `delegate == expected` 逐值比对**迁移前黄金**（Windows 实测 float32；Linux CI 实测
+`zh_window8: zh_unit_a` 委托值不等）。**改法**＝新增 `_close` 逐键相对容差 `1e-6`，
+并**新增 `delegate == helper` 的纯相对断言**（抽取 helper 未改行为的直接证据）。
+`window` 三格互不相同与两条早退分支保持原样。**容差 1e-6 的依据**＝float32 累加相对误差在 1e-7 内，
+而结构差量级 O(1) 以上 ⇒ 一个数量级余量。
+**红绿双向验证**：注入"黄金整体偏移 1%" ⇒ 红；⚠️ 先试"容差收紧到 0"**仍绿**
+（本机逐值相等，此注入无效）⇒ 换O(1) 级偏移才逼出红。
+④ **族 B/C 五条（CI 上不存在的东西）在 `ci.yml` 显式 deselect**：
+`test_a30_artifact_sha_drift_audit`（读 `reports/` 产物）、
+`test_a30_self_answers_report_face`（`/home/runner/…/output/a31_chunked_self/…`）、
+`test_g35_checkpoint_overwrite_guard`（`data/simple_zh/…jsonl` 未入库）、
+`test_a30_probe_help_runs`（`--help` 退出码 1 ／`4\Lib\encodings`）、
+`test_taiji_runtime_attachment`（`D:\a\Seed\Seed\…` 工作目录形态）。
+**只 deselect 这 5 条，不整块跳过**——同面其余仍守护（Linux 面 1754 条／seed 面 178 条实测全绿）。
+**重启条件写进注释**：① `data/simple_zh/` 入库；② `output/a31_chunked_self/` 入库或 CI 现场生成；
+③ `reports/` 读数入库；④ runner `--help` 编码路径修好；**移除任一条须附本机与CI 双绿证据**。
+**判据层面**：「常红的门等于没有门」——它们在 runner 上永久红，留着只教会人忽略 CI。
+⑤ 读数：`test_copy_circuit_contract`＝**24 passed**；`test_cortex_quality_extraction`＝**5 passed**；
+`tests/seed` 带 deselect ＝ **178 passed（40.21s）**；
+`--deselect` 参数已实测有效（collect-only 178 条＝被排除者不在内）。
+⑥ 不变项：M6 已收官（㊵-455）；M8 挂起（㊵-456）；发布面移出（预注册 §5）；
+**J1 待推送后 CI 复验**（`test (3.12)` 与 `test-windows` 两腿合跑约 40–60 分钟）；
+台账行序以行首标号为准（㊵-419⑥）。
 【16:4xZ ㊵-465 **根 CI 首跑收尾：所有 lint 门在 CI 上转绿，剩下的是两类平台依赖红（本轮零新增）**】
 ① **最终读数**：`CI` run `37488985135`＝**failure（1h0m31s）**、`m7-ci` ＝ **success（7m20s）**。
 **本轮修的门全部在 CI 上转绿**（job 层面已证）：`test (3.12)` 的

@@ -99,11 +99,51 @@ def test_nll_quality_delegate_matches_helper(cortex_sp) -> None:
     assert bare._nll_quality_from_round1_logits(result, prompt, "zh") == {}
 
 
+#: M7 收束（2026-10-07，㊵-466）：黄金值的**相对容差**。
+#: 取 1e-6 的依据＝float32 累加的相对误差量级在 1e-7 以内，
+#: 而「抽 helper 改坏了行为」这类结构差的量级是 O(1) 以上⇒ 一个数量级的余量。
+ROLLING_NLL_RTOL = 1e-6
+
+
+def _close(observed: dict, expected: dict) -> bool:
+    """逐键按相对容差比���两个读数dict。
+
+    不用 `math.isclose` 的绝对容差：读数量级在不同参数格之间差很多
+    （实测 `zh_window8` 的 `-11.2…` 与早退分支的 `{}`），绝对容差要么过松要么过紧。
+    """
+    if set(observed) != set(expected):
+        return False
+    for key, want in expected.items():
+        got = observed[key]
+        if isinstance(want, dict):
+            if not isinstance(got, dict) or not _close(got, want):
+                return False
+            continue
+        if want == got:
+            continue
+        if isinstance(want, float) and isinstance(got, float):
+            if want != 0.0 and abs(got - want) <= ROLLING_NLL_RTOL * abs(want):
+                continue
+            return False
+        return False
+    return True
+
+
 def test_rolling_nll_reproduces_pre_migration_golden(cortex_sp) -> None:
-    """滚动后验：委托与 helper 都逐值复现**迁移前**黄金（8 个参数格 + 2 条早退分支）。
+    """滚动后验：委托与 helper 都复现**迁移前**黄金（8 个参数格 + 2 条早退分支）。
 
     window 三格（1/4/8）读数互不相同 ⇒ 该参数真参与取位，不是恒等式；
-    `length_bound_short_neuron` 钉 `min(lens)-1` 的长度上限；词表不符支不参与。
+    `length_bound_short_neuron`钉 `min(lens)-1` 的长度上限；词表不符支不参与。
+
+    **M7 收束（2026-10-07，㊵-466）：数值比对改为容差判定。**
+    原断言是 `delegate == expected` 的**逐值相等**，而黄金是在 Windows 开发机实测的
+    float32 读数，在 Linux CI 上必然差末位（实测 `zh_window8: zh_unit_a`
+    的委托值 `-11.2151737213134…` 与黄金不等）⇒ **跨平台不可复现**。
+    改为**相对容差 1e-6**：它抓的是「抽出的 helper 与委托不等」这个真正要抓的差异
+    （量级是 O(1) 以上的结构差，不是末位浮点差），
+    同时对 `window` 三格互不相同、早退分支这两条**结构判据**保持原样（它们本就跨平台稳定）。
+    容差取 1e-6 相对值：float32 累加的相对误差量级在 1e-7 以内，
+    比它小一个数量级的结构差异仍会被抓住。
     """
 
     cortex, _hub, _general_sp, zh_sp = cortex_sp
@@ -125,21 +165,25 @@ def test_rolling_nll_reproduces_pre_migration_golden(cortex_sp) -> None:
             case["window"],
         )
         expected = case["out"]
-        assert delegate == expected, f"{name}: 委托 {delegate} != 迁移前 {expected}"
-        assert helper == expected, f"{name}: helper {helper} != 迁移前 {expected}"
+        assert _close(delegate, expected), f"{name}: 委托 {delegate} != 迁移前 {expected}"
+        assert _close(helper, expected), f"{name}: helper {helper} != 迁移前 {expected}"
+        # 委托与 helper 必须**彼此**逐值相等——这条是纯相对断言，跨平台稳定，
+        # 且它才是「抽出的 helper 没有改变行为」的直接证据。
+        assert delegate == helper, f"{name}: 委托 {delegate} != helper {helper}"
     # 迁移前后 window 必须真的改变读数（否则上面 8 格等价是空洞的）
     reads = [golden_grid[c]["out"]["zh_unit_a"] for c in ("zh_window1", "zh_window4", "zh_window8")]
     assert len(set(reads)) == 3, f"window 未参与读数（{reads}）⇒ 该等价测试无分辨力"
     # 两条早退分支
-    assert cortex._rolling_nll_quality({"round1_logits": {}}, "阿岩。", "zh", 4) == (
-        golden_grid["empty_round1"]["out"]
+    assert _close(
+        cortex._rolling_nll_quality({"round1_logits": {}}, "阿岩。", "zh", 4),
+        golden_grid["empty_round1"]["out"],
     )
     bare = Cortex.__new__(Cortex)
     bare._tokenizer_hub = None
     bare.device = torch.device("cpu")
-    assert (
-        Cortex._rolling_nll_quality(bare, capture.synth_logits(zh_sp), "阿岩。", "zh", 4)
-        == golden_grid["hub_missing"]["out"]
+    assert _close(
+        Cortex._rolling_nll_quality(bare, capture.synth_logits(zh_sp), "阿岩。", "zh", 4),
+        golden_grid["hub_missing"]["out"],
     )
 
 
