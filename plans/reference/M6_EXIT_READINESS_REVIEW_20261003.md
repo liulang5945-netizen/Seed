@@ -91,7 +91,12 @@
 **B 档 · 阻塞收官，我方可自办**
 4. **判据⑥**：`duplication` 剩 1 枚克隆，落地步骤已由 09-30 裁定写明（`scripts/package-dependency-policy.ts` 的
    `SAFE_HOST_DEPENDENCY_EXPORTS` 加两条 → 等待器落进 `@taiji/dsh-api-gateway`＋`life-controller` 加依赖＋同提交改锁
-   → 预期 `Found 0 clones`）。**未做。**
+   → 预期 `Found 0 clones`）。**已实测结清（2026-10-06 03:08Z，台账 08 ㊵-432）**：`corepack pnpm run
+   duplication`（= `jscpd --config .jscpd.json packages scripts`，在 `taiji-harness/` 内）于 HEAD `d3eb1710`
+   实测 `rc=0`、原文输出 **`Found 0 clones.`** ⇒ 本行上方那句"未做"作废，判据⑥ 的 `duplication` 分项
+   已由本机实测结清；**注意本行只结这一分项**，判据⑥ 整句仍不写成达成（`02:145` 签字与第 1/2 项
+   行为采用批准在 owner）。本仓没有任何 CI 腿执行这些门（见记忆 `harness-gates-have-no-ci-in-this-fork`），
+   故此读数的性质是**本机证据**，不是持续门禁。
 5. **D1 后半 / R7**：`xlsx→PDF` 转换失败。**已确定是 LibreOffice 原生转换的空引用，且只卡 xlsx、docx 已过。**
    修法需要 LibreOffice 侧结论，不是重跑能解决的。
 6. **字标栅格**：安装器 `brand*`／`uninstaller-sidebar`／`skill-badge` 按新锚点重排（构图决定，待确认）。
