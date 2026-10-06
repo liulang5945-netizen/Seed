@@ -390,6 +390,19 @@ describe('LifeController stream refused as HTTP', () => {
 })
 
 
+describe('LifeController gated surface', () => {
+  it('names a gated surface the runtime answers with an HTTP error', async () => {
+    const { controller, runtime } = await harness()
+    runtime.controlReplies.set('/api/life/status', { status: 503 })
+
+    const { snapshot } = await controller.snapshot(new AbortController().signal)
+
+    // A gated surface that answers at all is not disabled but down, and it is named.
+    expect(snapshot.availability.legacy).toBe('down')
+    expect(snapshot.unavailable.join(' ')).toContain('legacy: HTTP 503')
+  })
+})
+
 describe('LifeController HTTP refusals', () => {
   it('folds HTTP refusals into the stable control codes', async () => {
     const { controller, runtime } = await harness()
