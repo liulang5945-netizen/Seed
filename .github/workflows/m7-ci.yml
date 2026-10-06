@@ -28,14 +28,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # The cache: pnpm option shells out to pnpm, so the pinned pnpm must be
+      # installed before setup-node runs.
+      - name: Install pinned pnpm
+        run: npm install -g pnpm@11.7.0
+
       - uses: actions/setup-node@v4
         with:
           node-version: 24
           cache: pnpm
           cache-dependency-path: taiji-harness/pnpm-lock.yaml
-
-      - name: Install pinned pnpm
-        run: npm install -g pnpm@11.7.0
 
       - name: Install dependencies (frozen)
         run: pnpm install --frozen-lockfile
