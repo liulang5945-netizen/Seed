@@ -1,3 +1,4 @@
+import { spawnSync } from 'node:child_process'
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { dirname, join } from 'node:path'
@@ -69,5 +70,27 @@ describe('historical package references', () => {
     const file = 'docs/current.md'
     expect(scan(file, [currentReference, 'packages/hypothetical/unpublished/src/types.ts', removedReference].join('\n')))
       .toEqual([{ file, line: 3, ref: removedReference }])
+  })
+
+  it('treats a gitignored target as generated content, not drift', () => {
+    const root = mkdtempSync(join(tmpdir(), 'dsh-package-paths-'))
+    try {
+      // A minimal repository: without `git init` the check-ignore probe is a
+      // no-op fallback, so the repo has to exist for this case to test it.
+      const generated = 'packages/session/session-persistence-jsonl/tests/fixtures/generated-v0-real-shapes.jsonl'
+      const path = join(root, 'docs/current.md')
+      mkdirSync(dirname(path), { recursive: true })
+      writeFileSync(path, `see ${generated} for the recorded shapes\n`)
+      writeFileSync(join(root, '.gitignore'), '*.jsonl\n')
+      const git = (args: string[]): void => {
+        const result = spawnSync('git', args, { cwd: root })
+        expect(result.status).toBe(0)
+      }
+      git(['init'])
+      git(['add', '.gitignore', 'docs/current.md'])
+      expect(findPackagePathViolations(root, path, new Set(['session-persistence-jsonl']))).toEqual([])
+    } finally {
+      rmSync(root, { recursive: true, force: true })
+    }
   })
 })

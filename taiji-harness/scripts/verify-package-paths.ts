@@ -6,6 +6,7 @@
  */
 
 import { existsSync, globSync } from 'node:fs'
+import { spawnSync } from 'node:child_process'
 import { resolve } from 'node:path'
 import { pathToFileURL } from 'node:url'
 import { historicalSchemaRegion } from './historical-schema-region.ts'
@@ -57,6 +58,18 @@ function realPackageNames(repoRoot: string): Set<string> {
  */
 const PKG_REF = /\bpackages\/[A-Za-z0-9._/-]+/g
 
+/**
+ * Whether the repo's ignore rules cover `ref`. Ignored targets are generated
+ * content (the `*.jsonl` session fixtures a fresh checkout regenerates), not
+ * repo-authored files, so a missing ignored target is not package drift. A
+ * missing `git` binary or a non-repository root makes this answer "no",
+ * falling back to the strict on-disk check.
+ */
+function isGitIgnored(repoRoot: string, ref: string): boolean {
+  const result = spawnSync('git', ['check-ignore', '-q', ref], { cwd: repoRoot })
+  return result.status === 0
+}
+
 function isDriftedPackageReference(repoRoot: string, packageNames: ReadonlySet<string>, ref: string): boolean {
   if (existsSync(resolve(repoRoot, ref))) return false
   // Ignore unbuilt `lib/` paths only under an existing depth-two package root:
@@ -73,7 +86,7 @@ function isDriftedPackageReference(repoRoot: string, packageNames: ReadonlySet<s
   const scanned = group !== undefined && segments.length > 1 && existsSync(resolve(repoRoot, 'packages', group))
     ? segments.slice(1)
     : segments
-  return scanned.some(segment => packageNames.has(segment))
+  return scanned.some(segment => packageNames.has(segment)) && !isGitIgnored(repoRoot, ref)
 }
 
 /**
