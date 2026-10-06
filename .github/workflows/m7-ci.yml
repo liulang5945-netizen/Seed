@@ -21,7 +21,7 @@ jobs:
   gates:
     name: doc-sync + hygiene (ubuntu)
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 45
     defaults:
       run:
         working-directory: taiji-harness
@@ -41,6 +41,12 @@ jobs:
 
       - name: Install dependencies (frozen)
         run: pnpm install --frozen-lockfile
+
+      # publint validates the manifest-declared publication view, whose files
+      # field declares built lib/ output — a fresh checkout has none, so the
+      # build is part of the gate's input, not an optimization.
+      - name: Build (lib outputs)
+        run: pnpm run build
 
       - name: doc-sync (43 leaves)
         run: pnpm run doc-sync
