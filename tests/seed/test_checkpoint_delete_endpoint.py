@@ -72,7 +72,15 @@ def test_delete_refuses_the_configured_checkpoint(tmp_path: Path, monkeypatch) -
 def test_delete_refuses_names_that_leave_the_directory(tmp_path: Path, monkeypatch) -> None:
     root = _isolate(tmp_path, monkeypatch)
 
-    for name in ("..", "../evil.pt", "sub/evil.pt", "sub\\evil.pt", "C:evil.pt", "notes.txt", ".hidden.pt"):
+    for name in (
+        "..",
+        "../evil.pt",
+        "sub/evil.pt",
+        "sub\\evil.pt",
+        "C:evil.pt",
+        "notes.txt",
+        ".hidden.pt",
+    ):
         with pytest.raises(HTTPException) as refused:
             training_checkpoints.delete_checkpoint(name)
         assert refused.value.status_code == 400, f"{name} 应被名字校验拒绝"

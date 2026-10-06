@@ -5,9 +5,10 @@ Vector files keep their existing structure; only the traced path pair
 viewBoxes, cards and gradients are untouched. Raster files are composed
 from the master mark PNG (design/variants/seed-shell-final-mark.png).
 """
+
 import os
 import re
-import numpy as np
+
 from PIL import Image, ImageDraw, ImageFont
 
 ROOT = r"E:/Seed/taiji-harness"
@@ -22,6 +23,7 @@ paths = re.findall(r'<path d="([^"]+)"', color)
 struct_d, foliage_d = paths[0], paths[1]
 print("path lens:", len(mono_d), len(struct_d), len(foliage_d))
 
+
 def patch(path, subs):
     """Apply regex substitutions to a text file in place."""
     t = open(path, encoding="utf-8").read()
@@ -31,42 +33,62 @@ def patch(path, subs):
             print(f"  !! no match in {os.path.basename(path)} for {pat[:40]}")
     open(path, "w", encoding="utf-8", newline="\n").write(t)
 
+
 # ---------- vector: swap the traced paths into the existing structures ----------
 OLD_STRUCT = r'M12\.42 17\.11[^"]+'
-OLD_MONO = r'M12\.42 17\.11[^"]+'   # same family; distinguish by fill attribute
+OLD_MONO = r'M12\.42 17\.11[^"]+'  # same family; distinguish by fill attribute
 
-patch(rf"{ROOT}/apps/web/public/favicon.svg", [
-    (r'(<path d=")' + OLD_STRUCT + r'(" fill="#124A38")', r"\g<1>" + struct_d + r"\g<2>"),
-    (r'(<path d=")M14\.44 12\.72[^"]+(" fill="#AAD66A")', r"\g<1>" + foliage_d + r"\g<2>"),
-])
-patch(rf"{ROOT}/apps/web/public/favicon-dark.svg", [
-    (r'(<path d=")' + OLD_MONO + r'(" fill="#fff")', r"\g<1>" + mono_d + r"\g<2>"),
-])
-patch(rf"{ROOT}/website/public/favicon.svg", [
-    (r'(<path d=")' + OLD_STRUCT + r'(" fill="#124A38")', r"\g<1>" + struct_d + r"\g<2>"),
-    (r'(<path d=")M14\.44 12\.72[^"]+(" fill="#AAD66A")', r"\g<1>" + foliage_d + r"\g<2>"),
-])
-patch(rf"{ROOT}/website/public/wordmark.svg", [
-    (r'(<path d=")' + OLD_MONO + r'(" fill="currentColor")', r"\g<1>" + mono_d + r"\g<2>"),
-])
-# the new mark is much wider in the 24 grid than the old one — nudge the
-# wordmark text right so the mark (scaled 0.875 ≈ 18 units wide) never overlaps
-patch(rf"{ROOT}/website/public/wordmark.svg", [
-    (r'<text x="30"', '<text x="34"'),
-])
-
-for icon in ("icon.svg", "icon-windows.svg", "icon-macos.svg"):
-    patch(rf"{ROOT}/apps/desktop/resources/{icon}", [
+patch(
+    rf"{ROOT}/apps/web/public/favicon.svg",
+    [
         (r'(<path d=")' + OLD_STRUCT + r'(" fill="#124A38")', r"\g<1>" + struct_d + r"\g<2>"),
         (r'(<path d=")M14\.44 12\.72[^"]+(" fill="#AAD66A")', r"\g<1>" + foliage_d + r"\g<2>"),
-        (r"scale\(22\.5\)", "scale(39)"),   # mark fills the card like the 0.84 tile
-    ])
+    ],
+)
+patch(
+    rf"{ROOT}/apps/web/public/favicon-dark.svg",
+    [
+        (r'(<path d=")' + OLD_MONO + r'(" fill="#fff")', r"\g<1>" + mono_d + r"\g<2>"),
+    ],
+)
+patch(
+    rf"{ROOT}/website/public/favicon.svg",
+    [
+        (r'(<path d=")' + OLD_STRUCT + r'(" fill="#124A38")', r"\g<1>" + struct_d + r"\g<2>"),
+        (r'(<path d=")M14\.44 12\.72[^"]+(" fill="#AAD66A")', r"\g<1>" + foliage_d + r"\g<2>"),
+    ],
+)
+patch(
+    rf"{ROOT}/website/public/wordmark.svg",
+    [
+        (r'(<path d=")' + OLD_MONO + r'(" fill="currentColor")', r"\g<1>" + mono_d + r"\g<2>"),
+    ],
+)
+# the new mark is much wider in the 24 grid than the old one — nudge the
+# wordmark text right so the mark (scaled 0.875 ≈ 18 units wide) never overlaps
+patch(
+    rf"{ROOT}/website/public/wordmark.svg",
+    [
+        (r'<text x="30"', '<text x="34"'),
+    ],
+)
+
+for icon in ("icon.svg", "icon-windows.svg", "icon-macos.svg"):
+    patch(
+        rf"{ROOT}/apps/desktop/resources/{icon}",
+        [
+            (r'(<path d=")' + OLD_STRUCT + r'(" fill="#124A38")', r"\g<1>" + struct_d + r"\g<2>"),
+            (r'(<path d=")M14\.44 12\.72[^"]+(" fill="#AAD66A")', r"\g<1>" + foliage_d + r"\g<2>"),
+            (r"scale\(22\.5\)", "scale(39)"),  # mark fills the card like the 0.84 tile
+        ],
+    )
 print("vector assets patched")
 
 # ---------- raster: compose from the master mark ----------
 master = Image.open(MARK).convert("RGBA")
 bbox = master.getbbox()
 mark = master.crop(bbox)
+
 
 def mono_tinted(img, rgb):
     """White/dark silhouette of the mark."""
@@ -75,8 +97,10 @@ def mono_tinted(img, rgb):
     out.putalpha(a)
     return out
 
+
 mark_white = mono_tinted(mark, (255, 255, 255))
 mark_black = mono_tinted(mark, (17, 17, 17))
+
 
 def load_font(name, size):
     for cand in name:
@@ -84,12 +108,15 @@ def load_font(name, size):
             return ImageFont.truetype(cand, size)
     return ImageFont.load_default()
 
+
 SERIF = [r"C:\Windows\Fonts\georgia.ttf", r"C:\Windows\Fonts\times.ttf"]
 SANS_B = [r"C:\Windows\Fonts\segoeuib.ttf", r"C:\Windows\Fonts\arialbd.ttf"]
+
 
 def text_w(font, s):
     b = font.getbbox(s)
     return b[2] - b[0]
+
 
 def brand_strip(w, h, mark_img, text_color, font, scale=0.86):
     """Transparent strip: mark left, wordmark text right, vertically centred."""
@@ -100,12 +127,12 @@ def brand_strip(w, h, mark_img, text_color, font, scale=0.86):
     img.alpha_composite(m, (int(w * 0.03), (h - mh) // 2))
     fs = int(h * 0.42)
     f = load_font(font, fs)
-    tw = text_w(f, "Seed")
     tx = int(w * 0.03) + mw + int(w * 0.07)
     ty = (h - fs) // 2 - int(fs * 0.12)
     d = ImageDraw.Draw(img)
     d.text((tx, ty), "Seed", font=f, fill=text_color)
     return img
+
 
 DEST_I = rf"{ROOT}/apps/desktop/installer/assets"
 DEST_B = rf"{ROOT}/packages/skill/skill-badge/assets"
@@ -113,8 +140,12 @@ os.makedirs(DEST_I, exist_ok=True)
 
 brand_strip(600, 196, mark, STRUCT, SERIF).save(os.path.join(DEST_I, "brand.png"))
 brand_strip(1200, 392, mark, STRUCT, SERIF).save(os.path.join(DEST_I, "brand-2x.png"))
-brand_strip(600, 196, mark_white, (255, 255, 255), SERIF).save(os.path.join(DEST_I, "brand-dark.png"))
-brand_strip(1200, 392, mark_white, (255, 255, 255), SERIF).save(os.path.join(DEST_I, "brand-dark-2x.png"))
+brand_strip(600, 196, mark_white, (255, 255, 255), SERIF).save(
+    os.path.join(DEST_I, "brand-dark.png")
+)
+brand_strip(1200, 392, mark_white, (255, 255, 255), SERIF).save(
+    os.path.join(DEST_I, "brand-dark-2x.png")
+)
 
 # uninstaller sidebar 164x314: colour mark on top, wordmark below
 side = Image.new("RGBA", (164, 314), (0, 0, 0, 0))
