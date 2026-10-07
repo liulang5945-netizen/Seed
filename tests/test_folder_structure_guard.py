@@ -117,13 +117,41 @@ def test_ledger_covers_every_core_module():
     )
 
 
+def _is_ignored(entry) -> bool:
+    """该目录是否已被 `.gitignore` 覆盖。
+
+    M7 收束（2026-10-07，㊵-468）：这条守卫原先只按台账与命名族判定，
+    **不问 gitignore**，于是 `.mimosa`（`.gitignore:133` 明确忽略，130 行还记着
+    「同族工具缓存改名 `.mimosa/` 漏网」的修复）与 `.venv`（本地虚拟环境）
+    这类**运行时产物**被算进「台账之外的目录」⇒ 守卫常红。
+    与 `tests/seed/test_platform_boundary.py` 是同源问题（那边是 `.desktop-build/`）：
+    **gitignore 掉的目录不是源码面的一部分**，不该进台账。
+    """
+    result = subprocess.run(
+        ["git", "check-ignore", "-q", "--", str(entry)],
+        cwd=str(REPO),
+        capture_output=True,
+    )
+    return result.returncode == 0
+
+
 def test_every_root_directory_is_listed_in_the_ledger():
-    """① 正向：磁盘上的每个根级目录都必须在台账或命名族里。"""
+    """① 正向：磁盘上的每个根级目录都必须在台账、命名族里，或已被 gitignore。
+
+    **M7 收束（㊵-468）**：原先只查台账与命名族，**漏了 gitignore 这一层**，
+    导致 `.mimosa` / `.venv` 这类运行时产物被判成「台账之外」⇒ 守卫常红。
+    **常红的门等于没有门**（它只教会人忽略 CI）。
+    排除 gitignore 的依据＝`.gitignore:133` 早就把 `.mimosa/` 记为已修复的漏网项，
+    把它同时算成「台账之外」是自相矛盾。
+    """
     ledger = _ledger_dir_names(_doc_text())
     unknown = sorted(
         entry.name
         for entry in REPO.iterdir()
-        if entry.is_dir() and entry.name != ".git" and not _is_known(entry.name, ledger)
+        if entry.is_dir()
+        and entry.name != ".git"
+        and not _is_known(entry.name, ledger)
+        and not _is_ignored(entry)
     )
     assert not unknown, (
         "仓库根出现台账之外的目录: " + ", ".join(unknown) + "。两条出路："

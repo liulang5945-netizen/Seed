@@ -33,6 +33,13 @@ env/
 ENV/
 env.bak/
 venv.bak/
+# 2026-10-07（M7 收束 ㊵-468）：`.venv`（带点的那个）此前漏网——
+# 上面四条只覆盖不带点的 `venv` / `env`，而本机装解释器用的正是 `.venv`。
+# 由 `tests/test_folder_structure_guard.py::test_every_root_directory_is_listed_in_the_ledger`
+# 当场抓出（它把 `.venv` 判成「台账之外的目录」，而此处又确实没被忽略——
+# **两条纪律互相咬住了**，说明缺的不是台账行而是这条 ignore 规则）。
+.venv/
+.venv.bak/
 
 # IDE
 .vscode/
