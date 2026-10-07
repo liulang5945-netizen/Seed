@@ -1150,6 +1150,16 @@ def main() -> int:
         "byte_overlap 记分列），只在 --copy-evidence-injection-mode gated 下有意义。"
         "阶梯 {0.0, 0.2, 0.4} 先于数冻在 PLAN-A-30 §147，不许事后挑。",
     )
+    parser.add_argument(
+        "--copy-evidence-endpoint-yield",
+        action="store_true",
+        help="v42（PLAN-N1-00，S5 终点检测器档；owner 2026-10-07 弹窗裁'批准开跑'）："
+        "置电路诊断开关 `endpoint_yield_override`——copy 轨迹走到所选事件末字节的那一步起，"
+        "内容证据让位、gate 全额质量提议给边界符（'轨迹演到终点'）。零训练、零新参数；"
+        "判据 J1（never-LF 拖写行数 236→≤118）与守卫 G1–G3 冻结在 "
+        "plans/reference/PLAN-N1-00_s5_endpoint_falsification_prereg_20261007.md。"
+        "不给 ⇒ 不置 ⇒ 与 v41 逐位不变。",
+    )
     args = parser.parse_args()
 
     checkpoint = PROJECT_ROOT / args.checkpoint
@@ -1175,6 +1185,10 @@ def main() -> int:
     if args.circuit:
         runtime.enable_copy_circuit(PROJECT_ROOT / args.circuit)
     substrate = runtime.model.substrate
+    if args.copy_evidence_endpoint_yield:
+        if substrate.copy_circuit is None:
+            raise RuntimeError("要求终点检测器档（PLAN-N1-00 S5），但回路不在场 ⇒ 没有可置开关的器官")
+        substrate.copy_circuit.endpoint_yield_override = True
     #: 三位一体来自剂量探针那一个包装器：[被走到, 被下限静音, 被上限静音]（全链，含 prompt 侧）。
     alpha_calls = [0, 0, 0]
     #: 资格档的刻度：本条生成链已经走过的**环内步数**（1 步＝喂进 1 字节），每轮清零。
@@ -1551,7 +1565,15 @@ def main() -> int:
     #: `copy_evidence_injection_state()`（含 competitive 计数），一次读取、两处共用。
     injection_state = substrate.copy_evidence_injection_state()
     report = {
-        "format": "taiji-a30-stop-failure-v41",
+        "format": "taiji-a30-stop-failure-v42",
+        "copy_evidence_endpoint_yield": bool(args.copy_evidence_endpoint_yield),
+        "format_note_v42": "v42（2026-10-07）：PLAN-N1-00（S5 终点检测器档，owner 弹窗裁'批准开跑'）"
+        "加**仪器档** `--copy-evidence-endpoint-yield`——置电路诊断开关 "
+        "`endpoint_yield_override`（copy 轨迹走到所选事件末字节 ⇒ 内容证据让位、gate 全额质量"
+        "提议给边界符；落点 `taiji/copy_circuit.evidence()` 终点分支，零训练、零新参数）。"
+        "件里新增 `copy_evidence_endpoint_yield`（请求档）。判据 J1（never-LF 拖写行数 236→≤118，"
+        "分母 288 行）与守卫 G1–G3 冻结在 plans/reference/PLAN-N1-00_s5_endpoint_falsification_prereg_20261007.md。"
+        "不给旗标 ⇒ 开关不置 ⇒ 与 v41 逐位不变。既有列一字未动 ⇒ 与 v6–v41 同格可比。",
         "format_note_v41": "v41（2026-10-04）：SPEC-A-26 形状乙（owner 弹窗裁'实现形状乙非可学门控'）"
         "加**产品档** `--copy-evidence-gate-min-overlap`——资格线 K，量＝锁事件 picked 事件的 "
         "byte_overlap 记分列（字符集交比，`copy_circuit.selection()` 列 2，唯一住处），"

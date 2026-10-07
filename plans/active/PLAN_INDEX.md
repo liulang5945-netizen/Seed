@@ -73,7 +73,7 @@
 
 | 编号 | 名称 | 状态 |
 |---|---|---|
-| PLAN-N1-00 | [S5 便宜证伪预注册](../reference/PLAN-N1-00_s5_endpoint_falsification_prereg_20261007.md)（N1 第一步，先于 PLAN-N1-01/S1） | 判据已冻 2026-10-07；**待 owner 点头**（09 §3.2 决策点 1）后开跑 |
+| PLAN-N1-00 | [S5 便宜证伪预注册](../reference/PLAN-N1-00_s5_endpoint_falsification_prereg_20261007.md)（N1 第一步，先于 PLAN-N1-01/S1）＋[判读](../reference/PLAN-N1-00_S5_ADJUDICATION_20261007.md) | 2026-10-07 owner 批准开跑并同日判读：**J1 不成立**（209＞118；守卫全绿、部分缓解 11.4%）⇒ 病在更深（轨迹走不到事件末字节），P1 降级为部分成立；PLAN-N1-01 顺延重审，重开前置＝基底归因实验另立预注册 |
 
 ## 2. 支线 A：R2 欠账修复线（语言读出/答对）
 

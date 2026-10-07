@@ -259,6 +259,10 @@ class CopyCircuit:
         #: 动机：`index_add` 把同一字节在句中**所有位置**的质量相加，于是"位置多"会被读成"更相关"
         #: ——实测首字节输家系统性地输给 E5/E6/E8（中文最常见首字节），怀疑就出在这儿。
         self.pool_override: str = "sum"
+        #: PLAN-N1-00（S5 终点检测器档，owner 2026-10-07 批准开跑）：诊断专用开关，默认关＝生产
+        #: 路径逐位不变。开着时 `evidence()` 在 copy 轨迹走到所选事件末字节的那一步起让位并提议
+        #: 边界符（见该处注释）；本属性不在参数面/payload 里，checkpoint 载入不受影响。
+        self.endpoint_yield_override: bool = False
 
     @property
     def mounted(self) -> bool:
@@ -492,9 +496,24 @@ class CopyCircuit:
             return distribution
         weights = self._position_weights(event, f1_context, prev_byte)
         codes = torch.tensor(list(event.content), device=self.device, dtype=torch.long)
-        distribution = self._pool_into(distribution, codes, weights)
-        if utf8_state is not None:
-            distribution = distribution * self.legal_suffix_mask(utf8_state)
+        if (
+            self.endpoint_yield_override
+            and prev_byte is not None
+            and codes.numel() > 0
+            and int(codes[-1]) == int(prev_byte)
+        ):
+            #: PLAN-N1-00（S5）终点分支：copy 轨迹走到所选事件末字节 ⇒ 内容证据**让位**
+            #: （内容字节质量归零），把 gate 全额质量提议给边界符——"轨迹演到终点"。
+            #: 这是预注册 §5"等价终点提议实现"的落登记形态：不动 `_successor_bonus`，
+            #: 直接换证据载体。边界符不是 UTF-8 字节，`legal_suffix_mask` 对它恒 0，
+            #: 故本分支**不乘**合法后继掩码（乘了会把终点提议整个消掉）。gate 仍按
+            #: 内容态原式计算——提议强度就是电路自己的置信度，不另设刻度。开关默认关
+            #: 时本分支不可达；α=0 时本分支输出被外层乘零 ⇒ G2 逐位恒等守卫仍成立。
+            distribution[int(self.config.boundary_symbol)] = 1.0
+        else:
+            distribution = self._pool_into(distribution, codes, weights)
+            if utf8_state is not None:
+                distribution = distribution * self.legal_suffix_mask(utf8_state)
         keys = self._parameters["content_embed"][codes] @ self._parameters["query_content"]
         pooled = weights @ keys
         gate = (
