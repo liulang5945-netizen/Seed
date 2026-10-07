@@ -1,0 +1,39 @@
+# PLAN-N3-01 · N3 乙线预注册：R4 生长协议接钩子（压强阈先在线面冻结）（2026-10-07 起草）
+
+> **来源与效力**：09 §2 N3 乙选项＋§3.2 第 3 条（owner 2026-10-07 裁"甲乙并行"，乙的压强阈**须先在线面冻结**）。本件冻结"怎么冻"与"接完钩子判什么"，**不构成长跑授权**；§1 的只读记录臂零风险、可先行。成熟度＝§13 V1（机制隔离）→ N5 的 V2。
+
+## 0. 现状核对（本会话实测）
+
+- 协议三件在库且是活的：`taiji/adaptive_residual_growth.py`（617 行）的 `AdaptiveResidualGrowthPressure`（:37-49，**五个信号**：`residual_error`/`fast_slow_conflict`/`activity_saturation`/`utility_gap`/`resource_state`，全部经 `_unit` 校验落在 [0,1]，内容寻址 digest 自证 :66-67）；`pressure` 属性＝加权和（:79-88，首项系数 0.30×`residual_error`）；决策侧有 `pressure_below_threshold` 与 `pressure_persistence_below_threshold` 两条拒绝原因（:461-463），阈值与持续性是决策入参并校验为正（:269）。影子面＝`taiji/adaptive_residual_shadow.py`（1033 行，含 `freeze_parent` 时 parent 阈值/单元的保存与恢复 :519-592）。
+- **训练器零钩子（复确认 09 §2 N5 的痛点，方式＝按词 grep）**：`scripts/training/train_seed_corpus.py`（877 行）里 `bridge`/`trigger`/`pressure`/`residual`/`growth` **命中 0 处**；其进度行字段实测只有 `epoch/ticks/window_ticks/online_accuracy/mean_surprise/holdout_surprise/elapsed_seconds/exit_reason/base_ticks/budget_max_symbols/ticks_at_exit/reached_budget`（`reports/seed_corpus_smoke_progress.jsonl` 末行，该件由 pytest 产生、非真跑）。
+- **但"信号今天取不到"的原因不是信号不存在（这条是起草时差点写错的地方）**：产品路径里**已有生产者** `Seed._record_adaptive_residual_growth_pressure`（[taiji/model.py:1069-1106](../../taiji/model.py)），其中 `residual_error = 1 − prior_probability`（:1081）**正是 09"残差阈 ≥0.4"所指的残差**，`utility_gap = residual_error × (0.5 + 0.5×activity_saturation)`（:1083），`resource_state` 由 `development_structural_budget` 对 `policy.growth_resource_cost` 判（:1085）；它在 **bridge 与 trigger 任一未挂载时直接返回 None**（:1079-1080）。挂载与放行都是显式产品 API：`enable_adaptive_residual_bridge`（:831，**默认 `gate=0.0`＝挂上但不放行**，且要求 settled state :842-843）、`set_adaptive_residual_bridge_gate`（:860）、`enable_adaptive_residual_growth`（:917）、`lesion/unlesion/disable_adaptive_residual_bridge`（:871-885），读侧有 `adaptive_residual_bridge_enabled`/`..._growth_enabled`/`..._growth_decision`（:801-903）。
+- ⇒ 所以乙第一步的正确形态＝**在一张面上显式挂载 bridge＋growth trigger、只读记录 `pressure`**（零改权重、`gate` 保持 0.0 不放行），**不是在仪器里新写一个生产者**（§"别重抄生成链"纪律），也不是"挑一个阈值"。
+- **阈值参数早已存在，只是从未按在线面论证过（本轮关键发现）**：`AdaptiveResidualGrowthPolicy`（[taiji/adaptive_residual_growth.py:185-196](../../taiji/adaptive_residual_growth.py)）的产品默认值＝`minimum_pressure=0.70`、`required_pressure_steps=3`、`growth_resource_cost=1`，另有 `minimum_residual_error`/`minimum_fast_slow_conflict`/`minimum_activity_saturation`/`minimum_utility_gap`/`minimum_resource_state` **五道分项闸**（同族字段，全部参与 `pressure_below_threshold` 那类拒绝判定）。既有 canary [eval_taiji_m4v2_r4_shadow.py](../../scripts/training/eval_taiji_m4v2_r4_shadow.py) 的 `_growth_policy()`（:128-141）把**所有 `minimum_*` 设成 0.0、`required_pressure_steps=1`**（＝刻意放行，为的是跑通 shadow 通路），并已完成一整套挂载序列：`enable_adaptive_residual_bridge(gate=1.0, residual_gain=1.0)`（:158）→ `enable_adaptive_residual_growth(policy=...)`（:163）→ `_observe_pressure(model)`（:164）→ 检查点摘要自证（:169-173），报告恒 `can_promote=false`。⇒ 乙的"接钩子"**不必从零造**：复用这条已跑通的挂载序列即可（但 canary 的放行设置**不能当作产品阈**）；09 要的"压强阈先在线面冻结"的落点＝**`minimum_pressure` 与五道分项闸的取值**，而默认 0.70 从未在任何在线面上被论证过。
+
+## 1. 步骤一（零风险，先跑）：在线面取压强分布并把阈值冻下来
+
+- **面**：`train_seed_corpus.py` 的 smoke 档（`--smoke` 落 `output/seed_corpus_smoke.pt`，不碰产品件；`--max-symbols` 与 `--seed` 随批文写死），加只读压强记录旗标——旗标只做两件事：调 `enable_adaptive_residual_bridge`（**`gate` 留默认 0.0**）＋`enable_adaptive_residual_growth`，然后把每次 `pressure` 观测原样记进行内披露字段（挂载需在 settled state，实施时按 `model.py:842-843` 的约束安排在回合边界）。**"挂载即行为中性"不预设**：canary 里 bridge 是以 `gate=1.0, residual_gain=1.0` 挂的（`eval_taiji_m4v2_r4_shadow.py:158`），`gate=0.0` 档在本仓没有既成读数 ⇒ 中性与否由 G-N3-1 的默认位对照**实测判定**，判不过就整件不判。
+- **读数（先定义再取）**：每 tick 的五信号与合成 `pressure` 的分布（中位/p75/p90/max）＋`online_accuracy` 同步序列；按 §8.7 报告纪律同时给语料可用量、实际唯一 episode、实际更新数、序列长度、独立测试覆盖。
+- **冻结规则（判据先于数）**：生长阈值 τ 取 **实测 `pressure` 的 p90 向上取整到 0.05 格**，持续性参数取"连续 3 个记录窗"。并预注册**否证对照**：若同一分布的 p90 ≤ 现行口径推得的 0.4，则沿用 0.4 并在件里登记"两者相等/更低"的事实；若 p90 无法与 `1 − online_accuracy` 对齐（差 >0.1），判"**这套信号与 accuracy 口径不同源**"，阈值不冻、回到协议侧另立假设——不许用调 τ 来凑出生长事件。**本次要冻的不止 `minimum_pressure` 一个**：`minimum_residual_error`/`minimum_fast_slow_conflict`/`minimum_activity_saturation`/`minimum_utility_gap`/`minimum_resource_state` 五道分项闸各按同一规则从各自的在线分布取（各自 p90），一次冻齐六个值＋`required_pressure_steps`；默认 0.70 与 canary 的 0.0 两者都**不作为起点沿用**，只作为对照登记。
+- **0.4 这条现行口径的出处如实登记**：09 §2 N3 写的是"accuracy 0.59 ⇒ 残差阈 ≥0.4"，即 `1 − 0.59` 的推得值；它来自**自答档全程平在 0.5934→0.5941** 的两条 2M run 读数（㊵ 系列登记，非本会话实测）⇒ 本件第一步要用在线面复算它，而不是引用它当结论。
+
+## 2. 步骤二（接钩子，需 owner 批长跑）：四层循环走通
+
+- **主判据 J-N3b（生长事件真实且可归因）**＝一次真实长跑里同时取到 09 §2 N5 的五面：出生（新单元/区域数）→ 消费（哪些 batch 走了新单元）→ 贡献（同预算下有/无新单元的读数差）→ 保持（旧任务矩阵不退）→ 资源（参数与峰值存储增量）。缺一面即判"接钩子未成立"，不以"日志里有出生事件"结项。
+- **同容量对照（§9 硬要求，随同一批文）**：fixed-large（同最终容量、不生长）与随机成长（随机出生）两条对照臂必须在同一预算、同一 seed 下并跑；**群体数量不证明协作**，故贡献面只按"同预算读数差"计。
+- **否证出口（预注册）**：若治疗臂与 fixed-large 无读数差 ⇒ 判"生长无增益"，按 09 §4 第五行处置（保留旧内核、记质量—成本曲线），并把负结果留在台账（§18.9：不在一个局部参数上无限打转）。
+
+## 3. 守卫
+
+- **G-N3-1 默认位不动**：钩子默认关；无旗标时训练器输出与今日逐位同（`compare_taiji_a30_report_identity.py` 的形状不适用于训练面，改**参数摘要＋进度行**两条对照，具体对照件名随实施登记）。
+- **G-N3-2 影子不写主参数**：shadow 阶段的主参数摘要必须在前后不变（`freeze_parent` 路径已有保存/恢复，须实证一次）。
+- **G-N3-3 训练前保存检查**：02 §2.2＋§12 快照合同七项齐备；正式跑不显式给 `--checkpoint` 会被响亮拒绝（trainer 既有纪律，2026-09-28 起）。
+- **G-N3-4 经历分源**：重放/想象与实际经历分开记（§1 全局不变量），生长事件的经验单位按 §17.2 第 5 类"巩固与保持经历"标注。
+
+## 4. 预算与 owner 待批
+
+步骤一＝1 张 smoke 面（分钟级，零改权重）＋记录器实施；**步骤二＝3 臂长跑（治疗/fixed-large/随机成长）需 owner 批算力与时长**，批文里写死 `--scale` 或 `--parameter-budget`、`--max-symbols`、`--epochs`、`--seed`、`--device`。若 owner 只批步骤一，本件按"阈值已冻、钩子未接"如实停靠，不声称 N3 乙启动。
+
+## 5. 不变项
+
+M6 收官、M8 挂起；N1（S1 待批）、N2（通电待批）、N3 甲（算力预算未批）独立推进；N4/N5 后置（N5 依赖本件步骤二的钩子面）；台账行序以行首标号为准（㊵-419⑥）。
