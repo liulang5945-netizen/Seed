@@ -257,7 +257,16 @@ taiji-harness/**/.dsh-sbx*/
 # M7-CI 时代登记（2026-10-07）：不变量探针的 mkdtemp 残留与 tsx 缓存目录变量为 undefined 时的落点
 taiji-harness/**/.dsh-built-invariant*/
 taiji-harness/undefined/
-taiji-harness/undefined/
+
+# 根目录散乱清理（2026-10-07）：会话草稿与工具缓存的复发模式
+.playwright-mcp/
+report.xml
+.seed_test_tmp/
+.m0-checkpoint-*/
+/.tmp_*
+/direct-*/
+/eval-*/
+/*.logtaiji-harness/undefined/
 
 # H19 (2026-09-30): `.zcodeignore` 是某编码工具照 `.gitignore` 复制的本地副本，
 # 与 `.gitignore` 重复且会各自漂移。工具若需要，应由 pre-commit 从 `.gitignore` 生成，
