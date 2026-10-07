@@ -21,7 +21,7 @@
 | `CONV` | 口径/约定 | metrics_conventions、FOLDER_STRUCTURE_RULES、REPO_HYGIENE_RULES |
 
 **里程碑**：`M1..M6` 不变（大阶段主线，见 §1）。
-**归属**：`R2`（M5 排除项调查，已收束）/ `A`（修复线，见 §2）/ `B`（架构债线，见 §3）/ `M6`（产品交付，见 §1）。
+**归属**：`R2`（M5 排除项调查，已收束）/ `A`（修复线，见 §2）/ `B`（架构债线，见 §3）/ `M6`（产品交付，见 §1）/ `N`（架构与模型主线，2026-10-06 起，见 [roadmap/09](roadmap/09_NEXT_MAINLINE_PLAN.md)）。
 **脚本前缀**（代码件，另有约定）：`train_/eval_/verify_/build_/probe_/diag_/audit_/score_` 说"脚本干什么"，
 与文档类别前缀**互不混用**。
 
@@ -66,6 +66,14 @@
 
 ### 已作废：M6 desktop 线未闭合五项（2026-09-21 立卡）
 ①logo 判定、②托盘退不出、⑤单实例锁**均已闭合**（所有者裁决＋根因修复＋实测）；③UI 交互其余项、④跨壳孤儿回收**随该线退役作废**（载体已删）。原活动卡见 03 §5.7「M6 desktop 交付线」（线状态＝已退役，卡为历史记录）。
+
+## 1b. 主线（现役）：N 系列——架构与模型（2026-10-06 开线）
+
+> M0–M7 已收束（§1 与 [M0_M7 收束文档](../reference/M0_M7_PROJECT_CONSOLIDATION_20261006.md)）；推进计划与排序＝[roadmap/09](roadmap/09_NEXT_MAINLINE_PLAN.md)（N1 接口修复→N2 巩固通电→N3 容量决定→N4 读取形态补全→N5 自进化唤醒，N6 工程债随实施项清）；执行日志在 [roadmap/03](roadmap/03_CURRENT_EXECUTION.md)。每项开工前预注册判据（判据文本不由 09 代替）。
+
+| 编号 | 名称 | 状态 |
+|---|---|---|
+| PLAN-N1-00 | [S5 便宜证伪预注册](../reference/PLAN-N1-00_s5_endpoint_falsification_prereg_20261007.md)（N1 第一步，先于 PLAN-N1-01/S1） | 判据已冻 2026-10-07；**待 owner 点头**（09 §3.2 决策点 1）后开跑 |
 
 ## 2. 支线 A：R2 欠账修复线（语言读出/答对）
 

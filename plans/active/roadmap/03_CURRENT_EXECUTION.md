@@ -17,4 +17,4 @@
 
 ## N 系列执行日志（自下而上追加，每项开工前预注册判据）
 
-（暂无——N1/S5 预注册待 owner 点头后开始。）
+【2026-10-07 · N1/S5 预注册落盘】[PLAN-N1-00_s5_endpoint_falsification_prereg_20261007](../../reference/PLAN-N1-00_s5_endpoint_falsification_prereg_20261007.md) 冻结：假设 H-S5（never-LF 拖写陷阱＝复制证据通路缺终点信号，`_successor_bonus` 进度链在事件末字节设计性消失）；基线＝v37 peakrun 在库件复算（288 行分母、eaters 247、never-LF 236＝95.5%、never-LF 群 p_boundary_max 中位 0.00016/最大 0.0072；checkpoint/circuit sha 实测在盘逐位对上）；唯一判据 J1＝never-LF 拖写行数 ≤118（基线 236 腰斩），守卫 G1 面冻结＋G2 α=0 逐位恒等＋G3 非末字节分支逐位不变；预算 1 配置×1 面、修复 1 次仅限仪器机械修复。成立 ⇒ P1 坐实接 PLAN-N1-01；不成立 ⇒ 病在基底转 09 §4 分流第一行。零训练、开关默认关。**状态＝待 owner 点头（09 §3.2 决策点 1）后开跑。**

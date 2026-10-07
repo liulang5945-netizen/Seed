@@ -1,4 +1,4 @@
-# plans/reference 索引（自动生成 2026-10-07，蒸馏收束后 49 件）
+# plans/reference 索引（自动生成 2026-10-07，蒸馏收束后 49 件＋N 系列预注册 1 件）
 
 留存政策（owner 2026-10-07）＝核心设计与相关内容留档参考；实验过程文档蒸馏后删除（已删 A 支线 13 件＋M5 族 158 件＋第二批 29 件，墓碑见 [M5_DISTILLATION_TOMBSTONE.md](M5_DISTILLATION_TOMBSTONE.md) 与 [DISTILLATION_TOMBSTONE_20261007.md](DISTILLATION_TOMBSTONE_20261007.md)，git 历史可回溯）。项目收束见 [M0_M7_PROJECT_CONSOLIDATION_20261006](M0_M7_PROJECT_CONSOLIDATION_20261006.md)，下一轮主线见 [../active/roadmap/09_NEXT_MAINLINE_PLAN.md](../active/roadmap/09_NEXT_MAINLINE_PLAN.md)。
 
@@ -20,6 +20,7 @@
 
 ## N 主线与项目收束
 
+- [PLAN-N1-00_s5_endpoint_falsification_prereg_20261007](PLAN-N1-00_s5_endpoint_falsification_prereg_20261007.md)（N1/S5 便宜证伪预注册，判据先冻；待 owner 点头后开跑——09 §3.2 决策点 1）
 - [DISTILLATION_TOMBSTONE_20261007](DISTILLATION_TOMBSTONE_20261007.md)
 - [M0_M7_PROJECT_CONSOLIDATION_20261006](M0_M7_PROJECT_CONSOLIDATION_20261006.md)
 
