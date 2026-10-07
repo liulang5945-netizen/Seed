@@ -1160,6 +1160,16 @@ def main() -> int:
         "plans/reference/PLAN-N1-00_s5_endpoint_falsification_prereg_20261007.md。"
         "不给 ⇒ 不置 ⇒ 与 v41 逐位不变。",
     )
+    parser.add_argument(
+        "--trajectory-following",
+        action="store_true",
+        help="v43（PLAN-N1-02 基底归因档，判据先冻）：只读轨迹跟随记录器——对每次**环内** "
+        "evidence 调用记 gate／权重最高位置及其字节／后继字节（`codes[p]==prev` 中权重最大 p 的 "
+        "`codes[p+1]`）／证据最高质量字节，并在轮循环里回填 emitted_next 与 follow/mass_hit，"
+        "逐轮挂 `surface_checks[].trajectory_follow_v43`。判别读数 F1–F5 与判别规则冻结在 "
+        "plans/reference/PLAN-N1-02_attribution_prereg_20261007.md。只读不改张量 ⇒ 无旗标时与 "
+        "v42 逐位不变；与 --copy-evidence-endpoint-yield 互斥（本档描述生产路径，不描述 S5 修饰后的路径）。",
+    )
     args = parser.parse_args()
 
     checkpoint = PROJECT_ROOT / args.checkpoint
@@ -1267,6 +1277,85 @@ def main() -> int:
         scaled, loop_silenced = _observe_silencing(substrate.copy_circuit.evidence)
         substrate.copy_circuit.evidence = scaled  # type: ignore[method-assign]
 
+    #: v43（PLAN-N1-02）：轨迹跟随记录器——只读两层：`inner` 原样透出（不改张量），
+    #: `addressing()` 是训练侧只读快照（不消费诊断覆写）。环内判定不走 v12 的
+    #: "上一条 record"启发（那会少计每轮第一步），改走**帧遍历**：调用链上存在
+    #: `generate` 且行号落在生成环跨度内即环内 ⇒ 与环内 observe 严格 1:1。
+    traj_turn: list[dict[str, Any]] = []
+    if args.trajectory_following:
+        if substrate.copy_circuit is None:
+            raise RuntimeError("要求轨迹跟随诊断（PLAN-N1-02）但回路不在场 ⇒ 无处可读")
+        if args.copy_evidence_endpoint_yield:
+            raise SystemExit(
+                "v43：--trajectory-following 与 --copy-evidence-endpoint-yield 互斥——"
+                "本档描述生产路径，混开就分不清读数是哪条路径的（PLAN-N1-02 守卫）"
+            )
+        _inner_evidence = substrate.copy_circuit.evidence
+
+        def _in_generation_loop() -> bool:
+            frame = sys._getframe(2)
+            while frame is not None:
+                if (
+                    frame.f_code.co_name == "generate"
+                    and loop_first <= frame.f_lineno <= loop_last
+                ):
+                    return True
+                frame = frame.f_back
+            return False
+
+        def traj_wrapped(**kwargs: Any) -> Any:
+            out = _inner_evidence(**kwargs)
+            if _in_generation_loop():
+                snap = substrate.copy_circuit.addressing(
+                    cue=kwargs["cue"],
+                    f1_context=kwargs["f1_context"],
+                    prev_byte=kwargs.get("prev_byte"),
+                )
+                if snap is None:
+                    traj_turn.append({"event_absent": True})
+                    return out
+                codes = snap["codes"]
+                #: addressing() 不回传 weights 本身（回传 scores）——按 `_position_weights`
+                #: 同一式子重算 softmax，输入同源 ⇒ 数值同源。
+                weights = snap["scores"].softmax(dim=0)
+                top_pos = int(weights.argmax())
+                prev = kwargs.get("prev_byte")
+                succ_byte = None
+                succ_w = None
+                succ_mult = None
+                if prev is not None:
+                    cands = [
+                        p for p in range(int(codes.numel()) - 1) if int(codes[p]) == int(prev)
+                    ]
+                    if cands:
+                        best = max(cands, key=lambda p: float(weights[p]))
+                        succ_byte = int(codes[best + 1])
+                        succ_w = round(float(weights[best + 1]), 6)
+                        #: F1c 随机基线的原料：后继字节在事件内的重数占比（PLAN-N1-02 §3）。
+                        succ_mult = round(
+                            sum(1 for b in codes.tolist() if int(b) == succ_byte)
+                            / int(codes.numel()),
+                            6,
+                        )
+                traj_turn.append(
+                    {
+                        "prev": None if prev is None else int(prev),
+                        "gate": round(float(snap["gate_value"]), 4),
+                        "top_pos": top_pos,
+                        "top_pos_byte": int(codes[top_pos]),
+                        "succ_byte": succ_byte,
+                        "succ_w": succ_w,
+                        "succ_mult": succ_mult,
+                        "last_byte": int(codes[-1]),
+                        "ev_top": int(out.argmax()),
+                        "ev_top_mass": round(float(out.max()), 4),
+                        "n": int(codes.numel()),
+                    }
+                )
+            return out
+
+        substrate.copy_circuit.evidence = traj_wrapped  # type: ignore[method-assign]
+
     #: v13（owner 2026-10-02 裁："不立项产品改动，先追轨迹面由什么在管"）：**内容档 vs 硬度档**。
     #: v15 起这副档**搬到剂量探针里共用**（`_make_content_armed_evidence`）——自身轨迹面与复述命中面
     #: 必须做同一个操作，否则两半读的不是同一件事。装在**最外层**：替换的是最终进 logits 的那个向量。
@@ -1359,6 +1448,7 @@ def main() -> int:
         worst_run = 0
         for index, turn in enumerate([str(t) for t in item["turns"]]):
             records.clear()  # 换一条答复：在案帧与资格档的步数都从 0 重数
+            traj_turn.clear()  # v43：轨迹行与在案帧同节奏清零（1:1 守卫的两侧）
             loop_steps[0] = 0
             if args.product_window_steps is not None:
                 #: v20 修：这台仪器**自己驱动生成环**（不走 `Taiji.generate()`），所以产品门的
@@ -1419,6 +1509,36 @@ def main() -> int:
                     "replay_surface_head": replay["replay_surface"][:24],
                 }
             )
+            if args.trajectory_following:
+                #: v43（PLAN-N1-02）：1:1 守卫＋回填。对齐：环内第 i 次 evidence 调用的分布
+                #: 决定第 i+1 个发射字节（observe(k) 内算的是"喂完 fed[k] 之后"的下一步分布）；
+                #: 末次调用的目标是终止决策（边界符）——它没有 observe 帧（v27），单独标 boundary。
+                if len(traj_turn) != len(loop_records):
+                    raise RuntimeError(
+                        f"{item['id']} turn {index}: 轨迹行数 {len(traj_turn)} ≠ 环内 observe 行数 "
+                        f"{len(loop_records)} ⇒ 1:1 对齐假设破了，整件不可判（PLAN-N1-02 守卫）"
+                    )
+                for i, row in enumerate(traj_turn):
+                    if i + 1 < len(fed):
+                        row["target_kind"] = "byte"
+                        row["emitted_next"] = int(fed[i + 1])
+                    else:
+                        row["target_kind"] = "boundary"
+                        row["emitted_next"] = boundary
+                    if row.get("event_absent"):
+                        #: store 空的生成步（如首轮还没有被告知内容）：电路本来就没发言，
+                        #: 判别读数对它无定义 ⇒ 置 null，不冒充 0（0 是"答了但没跟"）。
+                        row["follow"] = None
+                        row["mass_hit"] = None
+                        continue
+                    row["follow"] = (
+                        None
+                        if row.get("succ_byte") is None
+                        else bool(row["emitted_next"] == row["succ_byte"])
+                    )
+                    row["mass_hit"] = bool(row["emitted_next"] == row["ev_top"])
+                #: 挂副本——traj_turn 下一轮要 clear，别名共享会把三条 check 全指到最后一轮的行上。
+                surface_checks[-1]["trajectory_follow_v43"] = list(traj_turn)
             if not pre_records or not fed:
                 surface_checks[-1]["replay_skipped"] = (
                     "no-pre-generation-observe" if not pre_records else "no-generated-bytes"
@@ -1565,7 +1685,16 @@ def main() -> int:
     #: `copy_evidence_injection_state()`（含 competitive 计数），一次读取、两处共用。
     injection_state = substrate.copy_evidence_injection_state()
     report = {
-        "format": "taiji-a30-stop-failure-v42",
+        "format": "taiji-a30-stop-failure-v43",
+        "trajectory_following": bool(args.trajectory_following),
+        "format_note_v43": "v43（2026-10-07）：PLAN-N1-02（基底归因档，判据先冻）加**只读记录器** "
+        "`--trajectory-following`——每次环内 evidence 调用记 gate／权重最高位置及其字节／后继字节／"
+        "证据最高质量字节（帧遍历判环内，与环内 observe 严格 1:1，1:1 失配整件不可判），轮循环回填 "
+        "emitted_next 与 follow/mass_hit 后逐轮挂 `surface_checks[].trajectory_follow_v43`。"
+        "判别读数 F1–F5（轨迹跟随率/质量命中率/随机基线/末字节发射率/gate 分布）与判别规则冻结在 "
+        "plans/reference/PLAN-N1-02_attribution_prereg_20261007.md；行为同一性守卫＝本档读数必须复现 "
+        "v37 基线（eaters 247／never-LF 236／stoppers 41）。与 --copy-evidence-endpoint-yield 互斥。"
+        "不给旗标 ⇒ 记录器不装 ⇒ 与 v42 逐位不变。既有列一字未动 ⇒ 与 v6–v42 同格可比。",
         "copy_evidence_endpoint_yield": bool(args.copy_evidence_endpoint_yield),
         "format_note_v42": "v42（2026-10-07）：PLAN-N1-00（S5 终点检测器档，owner 弹窗裁'批准开跑'）"
         "加**仪器档** `--copy-evidence-endpoint-yield`——置电路诊断开关 "
