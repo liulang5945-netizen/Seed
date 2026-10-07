@@ -59,13 +59,32 @@ def _classify_generations(report: dict[str, Any]) -> list[dict[str, Any]]:
 
 
 def _group_readings(generations: list[dict[str, Any]]) -> dict[str, Any]:
-    """冻结读数（PLAN-N1-02 §3）；资格集按读数各自的定义，事件缺席行一律排除在判别集外。"""
+    """冻结读数（PLAN-N1-02 §3）；资格集按读数各自的定义，事件缺席行一律排除在判别集外。
+
+    某群整体没有可判行（实测：stopper 群的行全部 event_absent——自停代跑在空库上）⇒
+    该群读数置 null 并披露计数，这是**数据性质**不是完整性违规；完整性违规（指纹、
+    行为复现、1:1）在调用方拒判。唯一仍拒的情形＝主群（never-LF 拖写代）判别集为空。
+    """
     rows = [row for gen in generations for row in gen["rows"]]
     absent = sum(1 for row in rows if row.get("event_absent"))
     eligible = [row for row in rows if not row.get("event_absent")]
     follow_rows = [row for row in eligible if row.get("follow") is not None]
     if not follow_rows:
-        raise ValueError("判别集为空 ⇒ 不判")
+        return {
+            "prediction_steps": len(rows),
+            "event_absent_steps": absent,
+            "eligible_steps": len(eligible),
+            "readings_available": False,
+            "F1_follow_rate": None,
+            "F2_mass_hit_rate": None,
+            "F1c_chance_baseline": None,
+            "F2_minus_F1": None,
+            "F1_minus_chance": None,
+            "F3_last_byte_rate": None,
+            "F4_gate_median": None,
+            "F4_gate_p90": None,
+            "F5_succ_weight_median": None,
+        }
     follows = [bool(row["follow"]) for row in follow_rows]
     mass_hits = [bool(row["mass_hit"]) for row in follow_rows]
     chances = [float(row["succ_mult"]) for row in follow_rows if row.get("succ_mult") is not None]
@@ -160,6 +179,8 @@ def main(argv: list[str] | None = None) -> int:
         if total_rows != total_steps:
             raise ValueError(f"轨迹行 {total_rows} ≠ 环内步 {total_steps} ⇒ 1:1 破了，不判")
         readings = {name: _group_readings(gens) for name, gens in groups.items()}
+        if readings["never_lf_eaters"]["F1_follow_rate"] is None:
+            raise ValueError("主群（never-LF 拖写代）判别集为空 ⇒ H-A 不可判，不判")
         entry.update(
             {
                 "status": "ok",

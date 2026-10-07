@@ -1,0 +1,62 @@
+{
+  "format": "taiji-n1-trajectory-following-v1",
+  "results": [
+    {
+      "report": "taiji_a30_stop_failure_self_v43_trajectory_follow_96_20261007.json",
+      "status": "ok",
+      "behavior_baseline_check": {
+        "eaters": 247,
+        "never_lf": 236,
+        "stoppers": 41
+      },
+      "trajectory_rows_total": 71937,
+      "group_readings": {
+        "never_lf_eaters": {
+          "prediction_steps": 60416,
+          "event_absent_steps": 11520,
+          "eligible_steps": 48896,
+          "F1_follow_rate": 0.549141,
+          "F2_mass_hit_rate": 0.939639,
+          "F1c_chance_baseline": 0.060109,
+          "F2_minus_F1": 0.390498,
+          "F1_minus_chance": 0.489032,
+          "F3_last_byte_rate": 0.002066,
+          "F4_gate_median": 53.2277,
+          "F4_gate_p90": 72.4624,
+          "F5_succ_weight_median": 0.237197
+        },
+        "all_eaters": {
+          "prediction_steps": 63232,
+          "event_absent_steps": 14080,
+          "eligible_steps": 49152,
+          "F1_follow_rate": 0.549703,
+          "F2_mass_hit_rate": 0.939687,
+          "F1c_chance_baseline": 0.060087,
+          "F2_minus_F1": 0.389984,
+          "F1_minus_chance": 0.489616,
+          "F3_last_byte_rate": 0.002075,
+          "F4_gate_median": 53.2255,
+          "F4_gate_p90": 72.4601,
+          "F5_succ_weight_median": 0.237687
+        },
+        "stoppers": {
+          "prediction_steps": 8705,
+          "event_absent_steps": 8705,
+          "eligible_steps": 0,
+          "readings_available": false,
+          "F1_follow_rate": null,
+          "F2_mass_hit_rate": null,
+          "F1c_chance_baseline": null,
+          "F2_minus_F1": null,
+          "F1_minus_chance": null,
+          "F3_last_byte_rate": null,
+          "F4_gate_median": null,
+          "F4_gate_p90": null,
+          "F5_succ_weight_median": null
+        }
+      },
+      "HA_verdict_on_primary_group": "not_primary"
+    }
+  ],
+  "rc": 0
+}
