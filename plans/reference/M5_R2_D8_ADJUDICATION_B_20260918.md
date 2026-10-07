@@ -11,7 +11,7 @@
 
 ## §2 裁决依据（补证报告已记录）
 
-1. **预置判据落入 1/3 分支** —— [补证](M5_R2_D8_PROBE_MULTISEED_20260918.md) §2
+1. **预置判据落入 1/3 分支** —— [补证](M5_DISTILLATION_TOMBSTONE.md) §2
    在跑之前就写定"3/3 = 门与规模不匹配；1/3 = 偶然抖动"；
 2. **该门与机制层无关** —— 机制门三 seed 全过（`copy_M1`、multibyte `576/576`、copy 概率、
    misbind、`bias_end`）；
@@ -24,7 +24,7 @@
 1. **matched 报告须显式标注该门经特批按抖动处理** ⇒ 已在
    `eval_taiji_r2_d7_matched_dev.py` 的报告字段中加入
    `loss_increases_gate_note`：`"probe-stage gate: treated as single-seed jitter (1/3)
-   per user adjudication (c) -> (b); see plans/reference/M5_R2_D8_PROBE_MULTISEED_20260918.md"`；
+   per user adjudication (c) -> (b); see plans/reference/M5_DISTILLATION_TOMBSTONE.md"`；
 2. **附补证表作为依据** ⇒ 报告另含 `multibyte_full_rate_per_seed`，
    补证表见上述文档 §1。
 

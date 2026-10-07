@@ -592,7 +592,7 @@
 - 30 失败/788 用例是 aa124f52 的历史基线；28 个 SystemExit 仍待定位，**当前 HEAD 重测计数为 27**（集合见 §6，为旧 28 项的严格子集）。
 - 下文引用图论证仅能缩小直接依赖范围，不能证明间接状态、动态导入、文件和环境污染不存在；失败归属须结合可复现顺序、父提交对照与栈证据。
 - DEBT-G1/G2/G3 的数量和路径是旧快照；后续 Git 修复见[路线 A 报告](../../../reports/M5_P5_2C_TRIPLE_PRIME_REPRESENTATION_REPAIR_RESULT_20260913.md)。本轮未做 fsck 或清理；继续禁止未经确认 gc/prune、删除备份。
-- 新研究阻塞（已由 B0 审查并给出结论）：路线 B 的收益参照不一致、任务协作上界与门禁语义差异。B0 复算 32/32 一致、三种候选参照全部不可达 ⇒ 暂停正式训练，先改任务与估计目标。见[B0 设计包](../../reference/M5_B0_MEASUREMENT_AND_REACHABILITY_AUDIT_20260913.md)。
+- 新研究阻塞（已由 B0 审查并给出结论）：路线 B 的收益参照不一致、任务协作上界与门禁语义差异。B0 复算 32/32 一致、三种候选参照全部不可达 ⇒ 暂停正式训练，先改任务与估计目标。见[B0 设计包](../../reference/M5_DISTILLATION_TOMBSTONE.md)。
 - **CI 命令级基线（2026-09-13，B0 建立）**：本地 `ruff check .` 原有 1 项 `I001`
   （`tests/taiji_native/test_p5_2c_triple_prime_representation_repair_gate.py` 的导入顺序），
   即两条 Linux CI 的 Ruff 失败原因；B0 已修复，现为 **All checks passed**。
@@ -684,7 +684,7 @@ python -m pytest tests/taiji_native/ -q --no-header --tb=no -p no:cacheprovider 
 3. 27 项仍全部是 `SystemExit: 1`，仍无可读栈 ⇒ 登记册 §4 的采集障碍**未解决**，
    §8 处置入口条件第 2 条仍未满足。
 4. 采集命令与原始 XML 路径：`C:/Users/23747/AppData/Local/Temp/taiji_b0_full.xml`（临时文件，不入库）。
-   解析脚本模式见[B0 机制文档](../../reference/M5_B0_MECHANISM_AND_TASK_PRECHECK_20260913.md) §7。
+   解析脚本模式见[B0 机制文档](../../reference/M5_DISTILLATION_TOMBSTONE.md) §7。
 5. **（2026-09-14 追加）集合比对优于计数比对**：当前 HEAD 与 09-13 基线的失败集合
    **逐位相同**（0 新增、0 消失），说明 09-13 那次"消失 1 项"确实是运行间抖动，
    而本轮 +98 个新测试**没有引入任何新失败**。判定脚本见本节末。
@@ -708,7 +708,7 @@ gone = load("baseline.xml") - load("now.xml")  # 记录，用于识别抖动
 | A. 架构边界违反 | **0**（建册时 2，已结项） | 断言失败，非 `SystemExit` | ~~高~~ 已闭环 |
 | B. `SystemExit: 1` 级联 | 27（建册时 28） | 调用 gate `evaluate()` 前即退出 | 中（环境/状态污染，非逻辑错误） |
 
-> 类别 A 的结项记录见 §3 两项的【已解决】标注与 [B0 机制文档](../../reference/M5_B0_MECHANISM_AND_TASK_PRECHECK_20260913.md) §7。
+> 类别 A 的结项记录见 §3 两项的【已解决】标注与 [B0 机制文档](../../reference/M5_DISTILLATION_TOMBSTONE.md) §7。
 > §6 的 28 项清单保留为 `aa124f52` 的历史记录，**当前计数为 27**（严格子集）。
 
 ## 3. 类别 A：架构边界违反（2 项，高）
@@ -864,7 +864,7 @@ gone = load("baseline.xml") - load("now.xml")  # 记录，用于识别抖动
 **修法建议（**未实施**，需决策）**：**A（推荐）** 给 `select` 的两个比较加显式容差
 `eps = 1e-9`（语义只影响"恰好压线"，正是 gate 想表达的意思）；
 **B** 不动比较、由 multifamily gate 在阈值/预算上留余量。
-详见[诊断文档](../../reference/M5_S42_BOUNDARY_DIAGNOSIS_20260915.md) §4。
+详见[诊断文档](../../reference/M5_DISTILLATION_TOMBSTONE.md) §4。
 **铁证仍需在 3.10 腿补一次带该探针的 job**（本机无 3.10）。
 
 **✅ 边界语义已加契约测试（2026-09-15）**：
