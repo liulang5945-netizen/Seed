@@ -18,6 +18,38 @@
 - **冻结规则（判据先于数）**：生长阈值 τ 取 **实测 `pressure` 的 p90 向上取整到 0.05 格**，持续性参数取"连续 3 个记录窗"。并预注册**否证对照**：若同一分布的 p90 ≤ 现行口径推得的 0.4，则沿用 0.4 并在件里登记"两者相等/更低"的事实；若 p90 无法与 `1 − online_accuracy` 对齐（差 >0.1），判"**这套信号与 accuracy 口径不同源**"，阈值不冻、回到协议侧另立假设——不许用调 τ 来凑出生长事件。**本次要冻的不止 `minimum_pressure` 一个**：`minimum_residual_error`/`minimum_fast_slow_conflict`/`minimum_activity_saturation`/`minimum_utility_gap`/`minimum_resource_state` 五道分项闸各按同一规则从各自的在线分布取（各自 p90），一次冻齐六个值＋`required_pressure_steps`；默认 0.70 与 canary 的 0.0 两者都**不作为起点沿用**，只作为对照登记。
 - **0.4 这条现行口径的出处如实登记**：09 §2 N3 写的是"accuracy 0.59 ⇒ 残差阈 ≥0.4"，即 `1 − 0.59` 的推得值；它来自**自答档全程平在 0.5934→0.5941** 的两条 2M run 读数（㊵ 系列登记，非本会话实测）⇒ 本件第一步要用在线面复算它，而不是引用它当结论。
 
+## 1bis. 步骤一实测结果（2026-10-08 本会话；§1 的冻结规则一字未改）
+
+**仪器**：`train_seed_corpus.py --pressure-record`（新旗标，默认关；开旗标时在 `model.substrate` 上调
+`enable_adaptive_residual_bridge(gate=0.0)`＋`enable_adaptive_residual_growth()`（**产品默认 policy**，
+`minimum_pressure=0.70`/`required_pressure_steps=3`/`growth_resource_cost=1`），再把 `trigger.observe`
+套一层记录器——**生产者不重写**，五信号仍由 `taiji/model.py:1069-1106` 自己算）；
+判读器＝[count_taiji_n3_pressure_thresholds.py](../../scripts/training/count_taiji_n3_pressure_thresholds.py)。
+
+**两条链各一张面**（同命令形状，只换 `--resume` 底座；`--max-symbols 4000`、`--progress-every 200000`、seed 20260822）：
+
+| 面 | 底座 | 观测数 / 覆盖率 | pressure p50 / p90 / max | residual_error p90 | `fast_slow_conflict`、`activity_saturation` | 默认 policy 下 should_propose 占比 | 口径对照 | 判级 |
+|---|---|---|---|---|---|---|---|---|
+| `reports/taiji_n3_pressure_face_productdefault_20261008.json` | 产品默认 `DEFAULT_CHECKPOINT`＝`checkpoints/seed_a31self_with_circuit.pt` | 4000 / **1.0** | 0.423101 / 0.425 / **0.425** | **1.0** | 整场恒 **0** | **0.0** | 控制面 online_accuracy 0.172 ⇒ `1−acc` 0.828 对 residual p90 1.0 ⇒ 差 **0.172** | **not_frozen_caliber_mismatch** |
+| `reports/taiji_n3_pressure_face_trained4m_20261008.json` | 2M/4M 语料档续训底座 `output/a31_chunked_self/checkpoint.pt` | 4000 / **1.0** | 0.388628 / 0.422494 / 0.424992 | 0.994103 | 整场恒 **0** | **0.0** | 控制面 0.28725 ⇒ `1−acc` 0.71275 对 0.994103 ⇒ 差 **0.281353** | **not_frozen_caliber_mismatch** |
+
+判读件＝`reports/taiji_n3_pressure_thresholds_productdefault_20261008.json` 与 `..._trained4m_20261008.json`（均 rc=0）。
+
+**四条结论**：
+
+1. **按 §1 的冻结规则，阈值不冻**——两条链都触发预注册的否证支（`|residual_error p90 − (1 − online_accuracy)|` = 0.172 与 0.281，均 >0.10）⇒ 判"这套信号与 accuracy 口径不同源"。
+   ⇒ **09 §2 N3 里"accuracy 0.59 ⇒ 残差阈 ≥0.4"这条现行口径被否证**：trigger 的 `residual_error` 是 `1 − prior_probability`（逐符号预测概率，`model.py:1081`），不是 `1 − 窗口正确率`；两者在本面上相差 0.17–0.28，**拿 accuracy 推出来的数不能当 τ 用**。
+2. **默认阈在这张配置上算术不可达**：`fast_slow_conflict ≡ 0` 且 `activity_saturation ≡ 0` 时 `utility_gap = 0.5·residual`，于是 `pressure = 0.30r + 0.25(0.5r) = 0.425·r ≤ **0.425**`——与两条链的实测 max（0.425 / 0.424992）对上；而默认 `minimum_pressure=0.70` ⇒ **4000 步里 `should_propose` 为真的步数＝0**。这就是 09 §2 N5 记的"出厂件零进化状态"的一条机制解释：**不是没接线，是这条链上够不着阈**。
+3. **两维恒零的机制已定位**（不是神秘缺失）：`fast_slow_conflict` 来自 `_developmental_f1_fast_slow_conflict()`，bundle 只在检查点带 `developmental_f1` 键时才挂上（`model.py:1058-1067` 与 :3783-3797），**trainer 没有任何旗标能开它**（`train_seed_corpus.py` 里 `developmental` 命中 0）；`activity_saturation`＝"单元活动 ≥ 目标活动点的比例"（`taiji/adaptive_residual_bridge.py:101-107`），而 `gate=0.0` 的 bridge 从不参与读出 ⇒ 无活动可饱和 ⇒ **本面测的是"两维被装配压住"的配置**。
+4. **因此 §1 的冻结规则本身需要一条前置**（登记为下一步的假设，不在本件加码）：τ 只能定义在**四维修正都活着**的装配上；要拿到那个装配，要么 (i) 底座检查点自带 developmental F1 状态、要么 (ii) 把 bridge 以 `gate>0` 放行——**两者都改变模型行为，不是只读面**，须按 09 §3.2 回 owner。在此之前，任何 τ 都是"压住两维的配置"下的数，本件**不给数**。
+
+**守卫与负对照（仪器能为 false 的证据，全部本会话实跑）**：
+- 面收尾自述 `kind=tail`＋判读器覆盖率守卫（`观测数 / 面内 tick ≥ 0.95`）——**这条是被一次真实自伤逼出来的**：第一版用默认 `--progress-every 10000`，周期性 `_flush` 里的 holdout 探针之后压强支不再产出观测而进度行照涨，面跑到 5 万 tick 只有 9,727 条记录且**看不出来**；那次的面件已删除、未入库，判读器补了守卫后重跑两支（覆盖率 1.0）。
+- 同因还修掉一处会伪装结论的仪器缺陷：两个判读器（本件与 N1-02 的 `count_taiji_n1_trajectory_following.py`）的拒绝路径原本把带"⇒"的中文 `print` 到 GBK 控制台，会在**已经判完之后**抛 `UnicodeEncodeError`，把 rc=2 的响亮拒绝伪装成 rc=1 的崩溃 ⇒ 现改为 stdout 走 ASCII 转义、入库件保留中文。
+- 判读器**五条拒绝路径各自实跑 rc=2**（每种都造了专用件）：缺 face 行／缺 tail 行／`tail` 自述 4000 而实际 0 条（不自洽）／`tail` 自述 4005 而实际 4000 条（不自洽）／**覆盖率截断**——把 `ticks_at_close` 改成 40000 复现第一版的形状，判读器答"观测只覆盖面内 tick 的 10.1%（4000/39727）⇒ 分布被截断，不判"。两条挂载守卫也各自实跑响亮失败（`--readout action` 与 `--answer-chunking per-answer` 时拒绝开跑，且不留半成品文件）。
+- 行为对照（同参开/不开旗标各跑一支）：进度行的 `ticks`/`window_ticks`/`online_accuracy`/`mean_surprise`/`holdout_surprise`/`base_ticks`/`ticks_at_exit`/`reached_budget` **八个键逐位相同**（如 trained4m 链两支都是 `online_accuracy 0.28725`、`mean_surprise 2.7364605140439897`）⇒ **记录器不改学习行为**；差异只在 `elapsed_seconds`、终件 sha 与参数量（bridge 挂上＝+96 单元/+2304 边，`769,951 → 772,255`）——这正是"挂载即改装配"的披露，不参与任何判据。
+- 既有测试面：`tests/seed/test_seed_corpus_pipeline.py`＋`test_seed_corpus_eval.py` **8 passed**（旗标默认关）；`ruff check .` 0 error、`black --check .` 全绿。
+
 ## 2. 步骤二（接钩子，需 owner 批长跑）：四层循环走通
 
 - **主判据 J-N3b（生长事件真实且可归因）**＝一次真实长跑里同时取到 09 §2 N5 的五面：出生（新单元/区域数）→ 消费（哪些 batch 走了新单元）→ 贡献（同预算下有/无新单元的读数差）→ 保持（旧任务矩阵不退）→ 资源（参数与峰值存储增量）。缺一面即判"接钩子未成立"，不以"日志里有出生事件"结项。
@@ -33,7 +65,7 @@
 
 ## 4. 预算与 owner 待批
 
-步骤一＝1 张 smoke 面（分钟级；权重按普通训练跑更新，**不改结构**——不放行生长、不碰产品件）＋记录器实施；**步骤二＝3 臂长跑（治疗/fixed-large/随机成长）需 owner 批算力与时长**，批文里写死 `--scale` 或 `--parameter-budget`、`--max-symbols`、`--epochs`、`--seed`、`--device`。若 owner 只批步骤一，本件按"阈值已冻、钩子未接"如实停靠，不声称 N3 乙启动。
+步骤一＝**已完成**（2026-10-08，结果见 §1bis）：两条链各 1 张 4000 步面、旗标默认关、不碰产品件；**步骤二＝3 臂长跑（治疗/fixed-large/随机成长）需 owner 批算力与时长**，批文里写死 `--scale` 或 `--parameter-budget`、`--max-symbols`、`--epochs`、`--seed`、`--device`。若 owner 只批步骤一，本件按"阈值已冻、钩子未接"如实停靠，不声称 N3 乙启动。
 
 ## 5. 不变项
 

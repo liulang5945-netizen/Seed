@@ -259,6 +259,7 @@ def run_training(
     answer_max_chars: int = 0,
     answer_source: str = "corpus",
     self_answers_path: Path | str | None = None,
+    pressure_record: Path | str | None = None,
 ) -> dict[str, float]:
     """Stream the corpus through ``Seed.observe`` with periodic persistence.
 
@@ -390,6 +391,22 @@ def run_training(
             )
         with progress_path.open("a", encoding="utf-8") as handle:
             handle.write(json.dumps(entry, ensure_ascii=False) + "\n")
+        #: 压强面收尾自述：把"这张面实际写了多少观测、收尾时走到第几 tick"钉在同一件里。
+        #: 理由不是洁癖——第一版实测：周期性 `_flush` 里的 holdout 探针会让压强支在此后不再产出
+        #: 观测（进度行照涨），于是分布只覆盖最前面一小段而**看不出来**（2026-10-08）。
+        if final and pressure_record is not None:
+            with pressure_path.open("a", encoding="utf-8", newline="\n") as handle:
+                handle.write(
+                    json.dumps(
+                        {
+                            "kind": "tail",
+                            "ticks_at_close": int(ticks),
+                            "records_written": int(pressure_lines),
+                        },
+                        ensure_ascii=False,
+                    )
+                    + "\n"
+                )
         if exit_reason is not None:
             #: 计量键与进度收尾那一行**同源同值**（同一份 `entry`），所以两者不可能互相矛盾；
             #: 独立件另外多带 `checkpoint_path`／`checkpoint_sha256`／`corpus_fingerprint` 三条**只属于文件**的自述，
@@ -429,6 +446,65 @@ def run_training(
     observe_kwargs: dict[str, object] = {"learn": True, "readout": readout}
     if readout == "predictive":
         observe_kwargs["learn_motor"] = False
+
+    #: PLAN-N3-01 步骤一（乙线的只读压强面）：默认关 ⇒ 上面两支一字不动。开着时按产品自己的    #: 显式 API 挂 bridge(`gate=0.0`＝挂上但不放行)＋R4 pressure trigger，并把每次观测原样落进
+    #: JSONL——生产者**不在这里重写**（`Taiji._record_adaptive_residual_growth_pressure` 在
+    #: `taiji/model.py:1069-1106` 已经在算五信号），本处只在 `trigger.observe` 外面套一层记录。
+    #: 两条前提不满足就**响亮拒绝**而不是静默跑出零读数：压强记录的调用点在 `observe` 的
+    #: predictive 分支里（:2151-2160），而 `answer_chunking` 非 `stream` 时本函数走
+    #: `learn_bytes`（下方那支），根本不经过 `observe`。
+    if pressure_record is not None:
+        if readout != "predictive":
+            raise RuntimeError("压强读数只存在于 predictive 读出链上 ⇒ 需要 --readout predictive")
+        if str(answer_chunking) != "stream":
+            raise RuntimeError(
+                f"answer_chunking={answer_chunking!r} 走 learn_bytes 不经过 observe ⇒ 没有压强读数"
+            )
+        substrate = model.substrate
+        bridge_info = substrate.enable_adaptive_residual_bridge(gate=0.0)
+        growth_info = substrate.enable_adaptive_residual_growth()
+        trigger = substrate.adaptive_residual_growth_trigger
+        if trigger is None:
+            raise RuntimeError("growth trigger 没挂上 ⇒ 压强面无效")
+        pressure_path = Path(pressure_record)
+        pressure_path.parent.mkdir(parents=True, exist_ok=True)
+        pressure_lines = 0
+        with pressure_path.open("w", encoding="utf-8", newline="\n") as handle:
+            handle.write(
+                json.dumps(
+                    {
+                        "kind": "face",
+                        "format": "taiji-n3-pressure-face-v1",
+                        "bridge": bridge_info,
+                        "growth": growth_info,
+                        "policy": {
+                            "minimum_pressure": trigger.policy.minimum_pressure,
+                            "required_pressure_steps": trigger.policy.required_pressure_steps,
+                            "growth_resource_cost": trigger.policy.growth_resource_cost,
+                        },
+                        "readout": readout,
+                        "seed": int(config.taiji.seed),
+                    },
+                    ensure_ascii=False,
+                )
+                + "\n"
+            )
+        original_trigger_observe = trigger.observe
+
+        def _record_pressure(
+            pressure: object, **trigger_kwargs: object
+        ) -> object:  # 签名跟随 trigger.observe(pressure, *, structural_budget)
+            decision = original_trigger_observe(pressure, **trigger_kwargs)
+            line = dict(pressure.to_payload())  # type: ignore[attr-defined]
+            line["kind"] = "pressure"
+            line["decision_should_propose"] = bool(getattr(decision, "should_propose", False))
+            nonlocal pressure_lines
+            pressure_lines += 1
+            with pressure_path.open("a", encoding="utf-8", newline="\n") as handle:
+                handle.write(json.dumps(line, ensure_ascii=False) + "\n")
+            return decision
+
+        trigger.observe = _record_pressure  # type: ignore[method-assign]
 
     for epoch in range(epochs):  # noqa: B007 — epoch 被 _flush 闭包引用（进度日志）
         if answer_chunking == "per-answer":
@@ -662,6 +738,13 @@ def _build_parser() -> argparse.ArgumentParser:
         "解码器；与 2026-09-27 前行为逐位相同的显式逃生口）。",
     )
     parser.add_argument(
+        "--pressure-record",
+        type=Path,
+        default=None,
+        help="PLAN-N3-01 步骤一：把每 tick 的 R4 pressure 观测落到该 JSONL（只在 --readout "
+        "predictive 且 answer_chunking=stream 时可用；bridge 以 gate=0.0 挂上，不放行生长）",
+    )
+    parser.add_argument(
         "--readout-position",
         dest="readout_position",
         action="store_true",
@@ -861,6 +944,7 @@ def main() -> None:
         answer_max_chars=int(args.answer_max_chars),
         answer_source=str(args.answer_source),
         self_answers_path=args.self_answers_path,
+        pressure_record=args.pressure_record,
     )
     print(json.dumps(summary, ensure_ascii=False))
     #: DEBT-G14②：操作侧曾拿着一个 **0 字节的 `run.log`** 判断"这轮跑到哪了"——空文件比没有更误导。

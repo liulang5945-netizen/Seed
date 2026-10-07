@@ -1,0 +1,87 @@
+{
+  "format": "taiji-n3-pressure-thresholds-v1",
+  "face": {
+    "pressure_file": "taiji_n3_pressure_face_productdefault_20261008.json",
+    "observations": 4000,
+    "bridge_digest": "b462bf3a872a726bd12a8866b0697519307e5961c00393a898d2eba7d241d5cd",
+    "bridge_gate_at_mount": 0.0,
+    "trigger_parent_digest": "ead0e011f180d50b5b029b96ef5f0a887d7fffdfa3b5f40268ae67554df295de",
+    "policy_at_mount": {
+      "minimum_pressure": 0.7,
+      "required_pressure_steps": 3,
+      "growth_resource_cost": 1
+    },
+    "readout": "predictive",
+    "seed": 20260822,
+    "ticks_at_close": 4273,
+    "coverage_of_face_ticks": 1.0
+  },
+  "pressure_identity_max_abs_delta": 0.0,
+  "distributions": {
+    "pressure": {
+      "p50": 0.423101,
+      "p90": 0.425,
+      "p99": 0.425,
+      "max": 0.425,
+      "mean": 0.364774
+    },
+    "residual_error": {
+      "p50": 0.995531,
+      "p90": 1.0,
+      "p99": 1.0,
+      "max": 1.0,
+      "mean": 0.858292
+    },
+    "fast_slow_conflict": {
+      "p50": 0.0,
+      "p90": 0.0,
+      "p99": 0.0,
+      "max": 0.0,
+      "mean": 0.0
+    },
+    "activity_saturation": {
+      "p50": 0.0,
+      "p90": 0.0,
+      "p99": 0.0,
+      "max": 0.0,
+      "mean": 0.0
+    },
+    "utility_gap": {
+      "p50": 0.497766,
+      "p90": 0.5,
+      "p99": 0.5,
+      "max": 0.5,
+      "mean": 0.429146
+    },
+    "resource_state": {
+      "p50": 1.0,
+      "p90": 1.0,
+      "p99": 1.0,
+      "max": 1.0,
+      "mean": 1.0
+    }
+  },
+  "two_signals_zero_throughout": true,
+  "derived_pressure_ceiling_with_both_zero": 0.425,
+  "frozen_thresholds": {
+    "minimum_residual_error": 1.0,
+    "minimum_fast_slow_conflict": 0.0,
+    "minimum_activity_saturation": 0.0,
+    "minimum_utility_gap": 0.5,
+    "minimum_resource_state": 1.0,
+    "minimum_pressure": 0.45,
+    "required_pressure_steps": 3
+  },
+  "default_policy_should_propose_share": 0.0,
+  "caliber_check": {
+    "status": "measured",
+    "control_online_accuracy_last_line": 0.172,
+    "one_minus_accuracy": 0.828,
+    "residual_error_p90": 1.0,
+    "abs_delta": 0.172,
+    "tolerance": 0.1
+  },
+  "threshold_verdict": "not_frozen_caliber_mismatch",
+  "status": "ok",
+  "rc": 0
+}

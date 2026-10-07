@@ -184,7 +184,7 @@ def main(argv: list[str] | None = None) -> int:
         report = json.loads(path.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError) as error:
         entry.update({"status": "unreadable", "error": str(error)[:200]})
-        print(json.dumps({"results": [entry], "rc": 2}, ensure_ascii=False, indent=2))
+        print(json.dumps({"results": [entry], "rc": 2}, ensure_ascii=True, indent=2))
         return 2
 
     try:
@@ -237,7 +237,7 @@ def main(argv: list[str] | None = None) -> int:
         )
     except ValueError as error:
         entry.update({"status": "refused", "error": str(error)[:300]})
-        print(json.dumps({"results": [entry], "rc": 2}, ensure_ascii=False, indent=2))
+        print(json.dumps({"results": [entry], "rc": 2}, ensure_ascii=True, indent=2))
         return 2
 
     payload = {"format": "taiji-n1-trajectory-following-v1", "results": [entry], "rc": 0}
@@ -247,7 +247,9 @@ def main(argv: list[str] | None = None) -> int:
         out = out if out.is_absolute() else PROJECT_ROOT / out
         out.parent.mkdir(parents=True, exist_ok=True)
         out.write_text(text + "\n", encoding="utf-8", newline="\n")
-    print(text)
+    #: 控制台那一份走 ASCII 转义：拒绝理由里有"⇒"这类字形，GBK 终端上 `print` 会在**已经判完**之后
+    #: 抛 UnicodeEncodeError（本机 2026-10-08 在同族判读器上实测），把 rc=2 的响亮拒绝伪装成 rc=1 的崩溃。
+    print(json.dumps(payload, ensure_ascii=True, indent=2))
     return 0
 
 
