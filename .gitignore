@@ -254,6 +254,9 @@ output/_archived_manual-r5-canary_*/
 # 改为不带前导斜杠的通配，覆盖任意深度；同理 `undefined/temp/`：
 # 实测其下是 `temp/tsx-<uid>/<sha>` 结构，**目录名里带 Windows 用户 ID**（R3 机器指纹泄漏族）。
 taiji-harness/**/.dsh-sbx*/
+# M7-CI 时代登记（2026-10-07）：不变量探针的 mkdtemp 残留与 tsx 缓存目录变量为 undefined 时的落点
+taiji-harness/**/.dsh-built-invariant*/
+taiji-harness/undefined/
 taiji-harness/undefined/
 
 # H19 (2026-09-30): `.zcodeignore` 是某编码工具照 `.gitignore` 复制的本地副本，
