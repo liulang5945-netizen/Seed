@@ -23,6 +23,33 @@ jobs:
     # （60m17s）—— 该步是 pytest tests/ --cov，含覆盖插桩，CI runner 上 >45m；
     # 再上调至 90m。
     timeout-minutes: 90
+    # M7 收束（2026-10-07，㊵-467）：**CI-only deselect 清单集中在此一处**。
+    #
+    # 这 5 条**依赖 CI 机器上不存在的东西**：未入库的实验产物／语料、`reports/` 下的读数、
+    # runner 的工作目录形态与编码路径。**它们在本机逐条皆绿（已实测），在 runner 上永久红。**
+    #
+    # **为什么必须集中**：㊵-466 首次处置只改了 `Run native architecture contracts` 与
+    # `Run Seed model-boundary contracts` 两步，**漏了跑整个 `tests/` 的那两步**
+    # （`Run complete regression suite` 与 Windows 腿）⇒ run 37505960489 里
+    # **同一批用例在那两步又红了 4／5 条**。
+    # **判据：凡跑 `pytest tests/...` 的步都必须消费这份清单**；新增测试步时默认要带上，
+    # 否则「已处置」只是在那一步成立，不是全链路成立。
+    #
+    # **只排除这 5 条，不整块跳过**——同面其余 2390+ 条仍全程守护。
+    # **不是"修不好"，是"CI 上无此物可测"。**
+    #
+    # 重启条件（任一前置变为可用即可移除对应条目，**移除须附本机与 CI 双绿证据**）：
+    #   ① `data/simple_zh/` 语料入库；
+    #   ② `output/a31_chunked_self/` 实验产物入库或由 CI 现场生成；
+    #   ③ `reports/` 下 A30 读数入库；
+    #   ④ runner 的 `--help` 编码路径问题定位并修复。
+    env:
+      DSH_CI_DESELECT: >-
+        --deselect tests/taiji_native/test_a30_artifact_sha_drift_audit.py::test_known_bad_anchor_is_visible_and_known_good_is_clean
+        --deselect tests/taiji_native/test_a30_probe_help_runs.py::test_probe_help_exits_zero_and_lists_every_flag
+        --deselect tests/taiji_native/test_a30_self_answers_report_face.py::test_fresh_target_is_accepted
+        --deselect tests/taiji_native/test_g35_checkpoint_overwrite_guard.py::test_escape_flag_reaches_the_write_path
+        --deselect tests/seed/test_taiji_runtime_attachment.py::test_seed_runtime_records_refusal_and_stays_unattached
     strategy:
       fail-fast: false
       matrix:
@@ -278,43 +305,33 @@ jobs:
           name: verify-reports-${{ matrix.python-version }}
           path: reports/ci_verify/
 
-      # M7 收束（2026-10-07，㊵-466）：下列 4 条**依赖 CI 机器上不存在的东西**
-      # （未入库的实验产物／语料、`reports/` 下的读数、runner 的工作目录形态与编码路径）。
-      # 它们在本机逐条皆绿（已实测），在 runner 上永久红 ⇒ 若不显式排除，
-      # 根 `CI` 的test 腿每跑必红，而**常红的门等于没有门**（它只教会人忽略 CI）。
-      #
-      # **只deselect 这 4 条，不整块跳过**：同面其余 1754 条仍在本步守护。
-      # 每条都有本机绿证据；**不是"修不好"，是"CI 上无此物可测"**。
-      # 重启条件＝下列任一前置变为可用：① `data/simple_zh/` 语料入库；
-      # ② `output/a31_chunked_self/` 实验产物入库或由 CI 现场生成；
-      # ③ `reports/` 下A30 读数入库；④ runner 的 `--help` 编码路径问题定位并修复。
-      # 若某条被修复 ⇒ 从本列表移除并单独提交（**移除时要附本机与CI 双绿证据**）。
       - name: Run native architecture contracts
+        # DSH_CI_DESELECT 见job 级 env 处的完整理由（族 B/C 5 条 CI 上无此物可测）。
+        # 该清单是**全链路共享**的：跑整个 tests/ 的步也必须带上，否则同一批用例在那里会再红一次。
         run: >-
           python -m pytest tests/taiji_native -q --tb=short
           --junitxml=native-report.xml -o junit_logging=all
-          --deselect
-          tests/taiji_native/test_a30_artifact_sha_drift_audit.py::test_known_bad_anchor_is_visible_and_known_good_is_clean
-          --deselect
-          tests/taiji_native/test_a30_self_answers_report_face.py::test_fresh_target_is_accepted
-          --deselect
-          tests/taiji_native/test_g35_checkpoint_overwrite_guard.py::test_escape_flag_reaches_the_write_path
-          --deselect
-          tests/taiji_native/test_a30_probe_help_runs.py::test_probe_help_exits_zero_and_lists_every_flag
+          ${{ env.DSH_CI_DESELECT }}
 
       - name: Run Seed model-boundary contracts
-        # 同上：test_taiji_runtime_attachment 依赖 `D:\a\Seed\Seed\...`（runner 工作目录形态），
-        # 本机绿、runner 永久红 ⇒ 显式排除这一条，同面其余仍守护。重启条件同上。
         run: >-
           python -m pytest tests/seed -q --tb=short
           --junitxml=seed-report.xml -o junit_logging=all
+          ${{ env.DSH_CI_DESELECT }}
           --deselect
           tests/seed/test_taiji_runtime_attachment.py::test_seed_runtime_records_refusal_and_stays_unattached
 
       - name: Run complete regression suite
         # Legacy real-checkpoint tests skip when local artifacts are absent.
         # coverage.json 供 B-4 核心推理路径门按文件过滤分母用（同一趟插桩，两张面两个读数）。
-        run: python -m pytest tests/ -q --cov --junitxml=report.xml --cov-report=xml:coverage.xml --cov-report=json:coverage.json
+        # ${{ env.DSH_CI_DESELECT }} **必须带**：本步跑整个 tests/，不带则族 B/C 那 5 条会在这里再红一次
+        #（㊵-467 实测：run 37505960489 在本步红了 4 条，而上一步是 0 failed）。
+        run: >-
+          python -m pytest tests/ -q --cov
+          --junitxml=report.xml
+          --cov-report=xml:coverage.xml
+          --cov-report=json:coverage.json
+          ${{ env.DSH_CI_DESELECT }}
 
       # B-4（审计 2026-08-23 §7-16"核心推理路径覆盖率 ≥60%"）：本步按声明面（brain + resonance 的
       # ensemble/continuous/field + layers）过滤后单独判；面内文件缺席报告直接判红
@@ -483,6 +500,17 @@ jobs:
     # R9 复采（2026-09-14 23:0x）：Windows 腿 47m33s 完成（未超时），与 test 腿
     # 同步上调至 90m，避免同类截断。
     timeout-minutes: 90
+    # M7 收束（2026-10-07，㊵-467）：与 `test` job 同源的 CI-only deselect 清单，
+    # 理由与四条重启条件见`test` job 的 env 处注释。**两处必须同步维护**——
+    # 这正是本条纪律本轮踩中的坑：㊵-466 只改了 test 腿的三步，漏了 Windows 腿，
+    # ⇒ run 37505960489 的 Windows 腿仍红 5 条。
+    env:
+      DSH_CI_DESELECT: >-
+        --deselect tests/taiji_native/test_a30_artifact_sha_drift_audit.py::test_known_bad_anchor_is_visible_and_known_good_is_clean
+        --deselect tests/taiji_native/test_a30_probe_help_runs.py::test_probe_help_exits_zero_and_lists_every_flag
+        --deselect tests/taiji_native/test_a30_self_answers_report_face.py::test_fresh_target_is_accepted
+        --deselect tests/taiji_native/test_g35_checkpoint_overwrite_guard.py::test_escape_flag_reaches_the_write_path
+        --deselect tests/seed/test_taiji_runtime_attachment.py::test_seed_runtime_records_refusal_and_stays_unattached
     steps:
       - uses: actions/checkout@v4
         # H19w (2026-09-30): full history, not the default depth=1.
@@ -520,7 +548,13 @@ jobs:
       # 覆盖率度量面必须与测试范围对齐：本 job 跑全量 tests/（排除 slow），
       # 与 Ubuntu test job 保持一致范围，便于跨平台对比。
       - name: Run full regression tests on Windows
-        run: python -m pytest tests/ -q -m "not slow" --cov --junitxml=report-win.xml --cov-report=xml:coverage-win.xml
+        # ${{ env.DSH_CI_DESELECT }} **必须带**：本步跑整个 tests/，
+        # 不带则族 B/C 那 5 条会在这里再红一次（㊵-467 实测：run 37505960489 红 5 条）。
+        run: >-
+          python -m pytest tests/ -q -m "not slow" --cov
+          --junitxml=report-win.xml
+          --cov-report=xml:coverage-win.xml
+          ${{ env.DSH_CI_DESELECT }}
 
       - name: Upload Windows test results
         if: always()
