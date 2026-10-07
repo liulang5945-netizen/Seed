@@ -11,7 +11,7 @@
 | ③ 现在做 | 已做（16 条能力已折进语料） | ㊵-458 时代的 C6 P1 收官记录（`reports/taiji_c6_p1_wiring_20260927.json`，Z1 门 pass） |
 | ④ 生产者挂 project 段 | **已在库** | [sleep_pass.py:323-363](../../seed_platform/sleep_pass.py) snapshot_id×单元 digest 双闸去重、`by_source.workbench_capabilities` 计数；`run()` 从 `runtime.workbench_environment.capability_snapshot` 注入（:572-586） |
 | ⑤ 消费者同批 | **已在库** | `_spec_payload` 把投影语料折进 `spec.datasets`（:435-451），就绪门 `spec_written = ready and bool(spec["datasets"])`（:591） |
-| ⑥ P4 只读面板行 | **部分**：API 面与 harness 侧 workbench section 在场，**面板是否单列 `by_source.workbench_capabilities` 一行未证** | `api/routes_consolidation.py`（status/spec/consolidate）＋`taiji-harness/packages/api/life-controller/src/runtime-client.ts:633 workbenchView()`；**本件实施时核这条，未核前不声称 ⑥ 完成** |
+| ⑥ P4 只读面板行 | **已核＝缺这一行**（本轮核对完成，不再是"未证"） | python 侧**已经带数据**：`by_source` 进 pass 报告与 manifest（[sleep_pass.py:368/388/403/428](../../seed_platform/sleep_pass.py)）。断在**读取侧的三段**：①`_add_recommendations`（:453-475）只对 `constraints`/`interactions` 两支生成建议，**无 `workbench_capabilities` 支**；②harness 的 `LifePassReportView`（`taiji-harness/packages/api/life-controller/src/types.ts:252-263`）只有 `reason`/`specReason`/`durationMs`/`weaknesses`/`notes`，`LifeConsolidationView`（:266-283）亦无对应字段；③面板 `taiji-harness/packages/client/ui-life/src/client/LifePanel.tsx` 因而无行（`consolidation.status` 已被 `api/routes_consolidation.py` → `runtime-client.ts:50 CONSOLIDATION_PATH` 送到前端）。⇒ ⑥ 的落点＝上面三处＋`ui-life/src/client/locales.ts`（面板文案按 locale-owned 纪律走字典）＋host/client spec 两处 |
 | **N2 真正未做的一步** | `organs=True`/`learn=True` **从未在真实长跑启用** | `run()` 默认 `organs=False, learn=False`（:549-551），`sleep_organs` 只在 organs 为真时被调（:598-607）；09 §2 N2 痛点证据同此 |
 
 **状态更正（对 09 与 2026-10-07 交接文）**：两处把"按批准的材料方案扩容（①②④⑤）"列为 N2 待做步骤 2——实测该步骤**已在 2026-09-27 随 C6 P1 落地**。N2 的队首因此直接是步骤 3（通电）＋步骤 4（读数），不重做材料线。
@@ -47,6 +47,7 @@
 
 ## 4. 面、预算与前置
 
+- **⑥ 面板行＝零风险的已批实施项，可与通电并行做**（owner 2026-10-07 已批"面板行加"，不改权重、不花算力）：按 §0 的三段落点补齐，判据＝面板上出现"本 pass 折算了几条工作台能力"这一行且数字与 `by_source.workbench_capabilities` 一致（`api` 侧 `_add_recommendations` 那支若加，需同时补 `tests/seed/test_sleep_pass.py` 的断言）。
 - **面**：真实长跑＝活 runtime（默认加载源＝`DEFAULT_CHECKPOINT`＝`checkpoints/seed_a31self_with_circuit.pt`，[seed_runtime.py:47-49](../../api/seed_runtime.py)；**它不等于厂档 `FACTORY_CHECKPOINT`＝`checkpoints/seed_beta.pt`（:52）**，通电面必须点名是哪一份，不许互相代答）＋已入库的 consolidated 语料与 workbench 快照；通电参数（`max_texts`/`max_symbols`/`cycles_per_text`/`max_records`）**随批文写死**，不在跑后调。
 - **预算（owner 批后才计）**：1 支通电 pass＋1 支默认参数守卫臂＋巩固前后各 1 张 CAP-0 面＋1 张新旧材料对照面＋1 次回退演示复算；判据级不重跑，机械修复 1 次仅限仪器。
 - **前置否证（先跑，不花改权重配额）**：本件 §0 的 ⑥ 面板行核对＋"默认参数 pass 不改权重"守卫臂——两支都是零风险，可在 owner 批通电之前先做。
