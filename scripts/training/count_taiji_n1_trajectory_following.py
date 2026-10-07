@@ -11,7 +11,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import statistics
 import sys
 from pathlib import Path
 from typing import Any
@@ -58,6 +57,49 @@ def _classify_generations(report: dict[str, Any]) -> list[dict[str, Any]]:
     return generations
 
 
+def _attribution_inputs(generations: list[dict[str, Any]]) -> dict[str, Any]:
+    """判据之外的披露读数（非判别、不改判级）：把"序贯信号在不在最高质量上"与"跟随率沿步深怎么衰"分开。
+
+    资格集与 F1 同一个集合（`follow` 非 null 的行），因此这里的所有比率都与 F1 可直接对照。
+    """
+    rows = [
+        row
+        for gen in generations
+        for row in gen["rows"]
+        if not row.get("event_absent") and row.get("follow") is not None
+    ]
+    if not rows:
+        return {"steps_in_set": 0}
+    follows = [bool(row["follow"]) for row in rows]
+    hijacked = [row for row in rows if bool(row["mass_hit"]) and not bool(row["follow"])]
+    #: 后继字节本身就是证据最高质量字节：此时"没跟随"不是池化的错，是解码/其它通道压过它。
+    succ_is_top = [row for row in rows if int(row["ev_top"]) == int(row["succ_byte"])]
+    succ_is_top_not_followed = [row for row in succ_is_top if not bool(row["follow"])]
+    deep = [row for row in rows if row.get("prev") is not None]
+    first = [row for row in rows if row.get("prev") is None]
+    lengths = sorted(int(row["n"]) for row in rows)
+    return {
+        "steps_in_set": len(rows),
+        "follow_rate": round(sum(follows) / len(follows), 6),
+        "mass_hit_and_not_follow_rate": round(len(hijacked) / len(rows), 6),
+        "succ_is_ev_top_rate": round(len(succ_is_top) / len(rows), 6),
+        "succ_is_ev_top_but_not_emitted_rate": round(len(succ_is_top_not_followed) / len(rows), 6),
+        "follow_rate_first_step": (
+            None if not first else round(sum(bool(r["follow"]) for r in first) / len(first), 6)
+        ),
+        "first_step_count": len(first),
+        "follow_rate_deep_step": (
+            None if not deep else round(sum(bool(r["follow"]) for r in deep) / len(deep), 6)
+        ),
+        "deep_step_count": len(deep),
+        "event_length_median": lengths[len(lengths) // 2],
+        "event_length_p90": lengths[min(len(lengths) - 1, int(len(lengths) * 0.9))],
+        "mass_hit_and_follow_rate": round(
+            sum(1 for r in rows if bool(r["mass_hit"]) and bool(r["follow"])) / len(rows), 6
+        ),
+    }
+
+
 def _group_readings(generations: list[dict[str, Any]]) -> dict[str, Any]:
     """冻结读数（PLAN-N1-02 §3）；资格集按读数各自的定义，事件缺席行一律排除在判别集外。
 
@@ -93,9 +135,7 @@ def _group_readings(generations: list[dict[str, Any]]) -> dict[str, Any]:
     last_rows = eligible
     last_hits = [bool(row["emitted_next"] == row["last_byte"]) for row in last_rows]
     gates = sorted(float(row["gate"]) for row in follow_rows)
-    succ_ws = sorted(
-        float(row["succ_w"]) for row in follow_rows if row.get("succ_w") is not None
-    )
+    succ_ws = sorted(float(row["succ_w"]) for row in follow_rows if row.get("succ_w") is not None)
     f1 = sum(follows) / len(follows)
     f2 = sum(mass_hits) / len(mass_hits)
     f1c = sum(chances) / len(chances)
@@ -173,7 +213,9 @@ def main(argv: list[str] | None = None) -> int:
             "stoppers": sum(1 for gen in generations if gen["group"] == "stopper"),
         }
         if behavior != BASELINE:
-            raise ValueError(f"行为读数 {behavior} 不复现 v37 基线 {BASELINE} ⇒ 仪器改了行为，整件作废")
+            raise ValueError(
+                f"行为读数 {behavior} 不复现 v37 基线 {BASELINE} ⇒ 仪器改了行为，整件作废"
+            )
         total_rows = sum(len(gen["rows"]) for gen in generations)
         total_steps = sum(gen["steps"] for gen in generations)
         if total_rows != total_steps:
@@ -187,6 +229,9 @@ def main(argv: list[str] | None = None) -> int:
                 "behavior_baseline_check": behavior,
                 "trajectory_rows_total": total_rows,
                 "group_readings": readings,
+                "attribution_inputs_non_judgment": {
+                    name: _attribution_inputs(gens) for name, gens in groups.items()
+                },
                 "HA_verdict_on_primary_group": _ha_verdict(readings["never_lf_eaters"]),
             }
         )

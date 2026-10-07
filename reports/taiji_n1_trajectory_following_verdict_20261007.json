@@ -55,6 +55,39 @@
           "F5_succ_weight_median": null
         }
       },
+      "attribution_inputs_non_judgment": {
+        "never_lf_eaters": {
+          "steps_in_set": 48707,
+          "follow_rate": 0.549141,
+          "mass_hit_and_not_follow_rate": 0.40721,
+          "succ_is_ev_top_rate": 0.544213,
+          "succ_is_ev_top_but_not_emitted_rate": 0.011785,
+          "follow_rate_first_step": null,
+          "first_step_count": 0,
+          "follow_rate_deep_step": 0.549141,
+          "deep_step_count": 48707,
+          "event_length_median": 24,
+          "event_length_p90": 36,
+          "mass_hit_and_follow_rate": 0.532429
+        },
+        "all_eaters": {
+          "steps_in_set": 48961,
+          "follow_rate": 0.549703,
+          "mass_hit_and_not_follow_rate": 0.40665,
+          "succ_is_ev_top_rate": 0.54476,
+          "succ_is_ev_top_but_not_emitted_rate": 0.011724,
+          "follow_rate_first_step": null,
+          "first_step_count": 0,
+          "follow_rate_deep_step": 0.549703,
+          "deep_step_count": 48961,
+          "event_length_median": 24,
+          "event_length_p90": 36,
+          "mass_hit_and_follow_rate": 0.533036
+        },
+        "stoppers": {
+          "steps_in_set": 0
+        }
+      },
       "HA_verdict_on_primary_group": "not_primary"
     }
   ],

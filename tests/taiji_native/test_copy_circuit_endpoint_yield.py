@@ -96,9 +96,7 @@ def test_endpoint_survives_the_utf8_legal_suffix_mask() -> None:
     #: 末字节 0x82 是 UTF-8 续字节，合法后继集很小；边界符不在字面字节集合里，
     #: 掩码若被乘上来会把终点提议整个消掉——这正是终点分支必须绕开掩码的原因。
     utf8_state = (1, 0x82)
-    out = circuit.evidence(
-        cue=cue, f1_context=f1, prev_byte=int(LAST_BYTE), utf8_state=utf8_state
-    )
+    out = circuit.evidence(cue=cue, f1_context=f1, prev_byte=int(LAST_BYTE), utf8_state=utf8_state)
     assert float(out[int(circuit.config.boundary_symbol)]) == pytest.approx(GATE, abs=1e-7)
 
 

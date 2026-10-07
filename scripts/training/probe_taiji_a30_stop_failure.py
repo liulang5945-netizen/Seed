@@ -1197,7 +1197,9 @@ def main() -> int:
     substrate = runtime.model.substrate
     if args.copy_evidence_endpoint_yield:
         if substrate.copy_circuit is None:
-            raise RuntimeError("要求终点检测器档（PLAN-N1-00 S5），但回路不在场 ⇒ 没有可置开关的器官")
+            raise RuntimeError(
+                "要求终点检测器档（PLAN-N1-00 S5），但回路不在场 ⇒ 没有可置开关的器官"
+            )
         substrate.copy_circuit.endpoint_yield_override = True
     #: 三位一体来自剂量探针那一个包装器：[被走到, 被下限静音, 被上限静音]（全链，含 prompt 侧）。
     alpha_calls = [0, 0, 0]
@@ -1295,10 +1297,7 @@ def main() -> int:
         def _in_generation_loop() -> bool:
             frame = sys._getframe(2)
             while frame is not None:
-                if (
-                    frame.f_code.co_name == "generate"
-                    and loop_first <= frame.f_lineno <= loop_last
-                ):
+                if frame.f_code.co_name == "generate" and loop_first <= frame.f_lineno <= loop_last:
                     return True
                 frame = frame.f_back
             return False
@@ -1324,9 +1323,7 @@ def main() -> int:
                 succ_w = None
                 succ_mult = None
                 if prev is not None:
-                    cands = [
-                        p for p in range(int(codes.numel()) - 1) if int(codes[p]) == int(prev)
-                    ]
+                    cands = [p for p in range(int(codes.numel()) - 1) if int(codes[p]) == int(prev)]
                     if cands:
                         best = max(cands, key=lambda p: float(weights[p]))
                         succ_byte = int(codes[best + 1])
