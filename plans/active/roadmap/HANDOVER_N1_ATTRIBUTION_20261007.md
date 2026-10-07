@@ -5,8 +5,8 @@
 ## 0. 一分钟状态
 
 - **上游已收官（已提交）**：㊵-476（c52b1c0a）＝S5 预注册；owner 弹窗四裁（S5 批准开跑／C6 按推荐组合批／N3 甲乙并行／挂账不处理）；㊵-477（66554649）＝S5 实施＋三支面＋判读（**J1 不成立**：never-LF 拖写行 209＞118，P1 降级为部分成立，转 §4 基底归因）。判读报告＝`plans/reference/PLAN-N1-00_S5_ADJUDICATION_20261007.md`。
-- **本轮（PLAN-N1-02，未提交，见下）**：归因预注册已冻＋v43 仪器就绪＋判读面**待复跑**。
-- **本轮无已判读数**：判读脚本对缺陷件正确拒绝（"轨迹行 73728 ≠ 环内步 71937"），两次仪器返工都发生在任何面读数之前——按 S5 轮先例，仪器准备不消耗预注册预算（1 配置×1 面、修复 1 次）；接手者可直接复跑。
+- **本轮（PLAN-N1-02，提交 099e3699＋fb619a58）**：归因预注册已冻＋v43 仪器就绪＋判读面已跑完＋**冻结判读已出**。
+- **判读结果（verdict 件在库，行为复现基线 247/236/41＝G1′ 过、1:1 全量 71,937 行对上）**：主群（never-LF 拖写代，48,896 可判步）F1 逐步跟随率 **0.549**（随机基线 0.060）、F2 质量命中率 **0.940**、F2−F1=**0.390**、F3 末字节发射率 **0.0021**、F4 gate 中位 **53.2**、F5 后继权重中位 **0.237**。**按 §3 冻结规则判级＝H-A 非主因（not_primary，第二支 F1≥F1c+0.20）**——序贯信号在场并被跟随，非"被淹没"。**归因输入（如实登记，不改判级）**：39% 的步被质量 winners 劫走＋逐步损耗复合 ⇒ 末字节到达率仅 0.2% ⇒ 轨迹统计性死亡 ⇒ S5 终点检测器无火可点；stopper 群 8,705 步全部 event_absent（自停代跑在空库上）。S1 设计杠杆读数＝逐步位置保真（55%/步 复合到 0.2% 端到端）。
 
 ## 1. 本轮落盘物（未提交，随本文同一提交入库）
 
@@ -19,14 +19,8 @@
 
 ## 2. 接手者立即要做的事（按序）
 
-1. **复跑判读面**（约 13–15 分钟，后台跑）：
-   ```
-   python scripts/training/probe_taiji_a30_stop_failure.py --checkpoint output/a31_chunked_self/checkpoint.pt --circuit output/taiji_r2_copy_circuit_chat/judge/circuit-final.pt --limit 96 --trajectory-following --out-report reports/taiji_a30_stop_failure_self_v43_trajectory_follow_96_20261007.json
-   ```
-2. **判读**（秒级）：`python scripts/training/count_taiji_n1_trajectory_following.py --report reports/taiji_a30_stop_failure_self_v43_trajectory_follow_96_20261007.json --out-report reports/taiji_n1_trajectory_following_verdict_20261007.json`
-   - rc=0 ⇒ 看 `HA_verdict_on_primary_group`（confirmed / not_primary / middle_band，规则＝PLAN-N1-02 §3：成立 ⇔ F2−F1≥0.20 且 F1≤F1c+0.10）。
-   - rc=2 ⇒ 按 error 修（若又是仪器问题，如实登记；判据级不重跑）。
-3. **判读报告**入库（仿 `PLAN-N1-00_S5_ADJUDICATION_20261007.md` 形状，命名 `PLAN-N1-02_ATTRIBUTION_ADJUDICATION_<日期>.md`）：守卫判读（行为复现基线＝G1′）＋F 读数表＋H-A 判级＋对 PLAN-N1-01（S1）的设计约束输出。
+1. ~~复跑判读面~~ ~~判读~~ ⇒ **已完成**（面件 rc=0；verdict＝`reports/taiji_n1_trajectory_following_verdict_20261007.json`：status ok、HA_verdict_on_primary_group＝**not_primary**；判读脚本在出数后补修一处——stopper 群整体 event_absent 属数据性质，该群出 null 读数不拒判，仅主群为空才拒）。
+2. **判读报告**入库（仿 `PLAN-N1-00_S5_ADJUDICATION_20261007.md` 形状，命名 `PLAN-N1-02_ATTRIBUTION_ADJUDICATION_<日期>.md`）：守卫判读（G1′ 已过）＋F 读数表（§0 有数）＋H-A 判级＝not_primary＋归因输入（39% 步被质量劫走、逐步损耗复合 ⇒ F3=0.2%、stopper 群空库现象）＋对 PLAN-N1-01（S1）的设计约束输出（逐步位置保真为杠杆；冻结规则的字面路由＝解码/训练层归因另议——两条都如实写，判级不改）。
 4. **卫星同步**：03 执行日志一条；`plans/reference/README.md` N 系列入列；`plans/active/PLAN_INDEX.md` §1b 加 PLAN-N1-02 行；08 台账 **㊵-478**（先 grep 确认空闲；本轮"预注册＋仪器＋两次仪器返工＋复跑判读"可并入一条，或复跑后拆两条，行首标号纪律见 08 头部横幅）。
 5. **门**：`cd taiji-harness && corepack pnpm run doc-sync`（43/0/0）＋ `corepack pnpm run hygiene`（18/0/0）；提交。
 6. **H-A 判级后的路由**（预注册 §3 已冻）：confirmed ⇒ PLAN-N1-01（S1）设计约束＝位置级/序贯读取（不做字节质量池化）；not_primary ⇒ 转解码/训练层归因；middle_band ⇒ 第二判别实验另立预注册。
