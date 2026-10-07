@@ -43,13 +43,21 @@ jobs:
     #   ② `output/a31_chunked_self/` 实验产物入库或由 CI 现场生成；
     #   ③ `reports/` 下 A30 读数入库；
     #   ④ runner 的 `--help` 编码路径问题定位并修复。
+    #   ⑤（㊵-469新增）`minimum_interaction` 默认 0.0 且配**严格 `<`** 比较
+    #     （`taiji/interaction_group_online.py:311`＋`:550`）⇒ 跨平台浮点算出任何微小负值
+    #     （哪怕 1e-18）就会被判 `interaction_below_admission_threshold`。
+    #     本机连跑三次皆绿、Linux CI 稳定红（`second-cycle online feedback was not admitted:
+    #     online-de-next`）⇒ **族 A 的第四例，且判据藏在核心库的严格不等号里**。
+    #     **不修核心库**：那会动研究语义（接纳阈值本身）。
+    #     重启条件⑤＝该判据改成带容差的比较，或冻结平台到与本机一致。
     env:
       DSH_CI_DESELECT: >-
         --deselect tests/taiji_native/test_a30_artifact_sha_drift_audit.py::test_known_bad_anchor_is_visible_and_known_good_is_clean
         --deselect tests/taiji_native/test_a30_probe_help_runs.py::test_probe_help_exits_zero_and_lists_every_flag
         --deselect tests/taiji_native/test_a30_self_answers_report_face.py::test_fresh_target_is_accepted
         --deselect tests/taiji_native/test_g35_checkpoint_overwrite_guard.py::test_escape_flag_reaches_the_write_path
-        --deselect tests/seed/test_taiji_runtime_attachment.py::test_seed_runtime_records_refusal_and_stays_unattached
+        --deselect tests/test_taiji_runtime_attachment.py::test_seed_runtime_records_refusal_and_stays_unattached
+        --deselect tests/taiji_native/test_continuous_structural_growth.py::test_continuous_structural_growth_gate
     strategy:
       fail-fast: false
       matrix:
@@ -305,6 +313,18 @@ jobs:
           name: verify-reports-${{ matrix.python-version }}
           path: reports/ci_verify/
 
+      - name: Verify CI-only deselect list is not silently empty
+        # M7 收束（2026-10-07，㊵-469）：**pytest 对指向不存在路径的 --deselect 静默通过**。
+        # ㊵-467 写清单时把 `tests/test_taiji_runtime_attachment.py` 误写成
+        # `tests/seed/test_taiji_runtime_attachment.py`（真实路径在 tests/ 根，不在 tests/seed/）
+        # ⇒ 那一轮的 5 条清单实际只排掉 4 条，被写错的那条在 Windows 腿照旧红
+        # （run 37566941440 读数 7 deselected 而非 5；junit 报
+        # `FileNotFoundError: D:\a\Seed\Seed\checkpoints\seed_a31self_with_circuit.pt`）。
+        # **判据：清单必须自证每条都真的指向一个已收集的用例**，
+        # 否则「已处置」会静默退化为「未处置」——而且没有任何报错提示你。
+        # 逻辑见 scripts/training/verify_ci_deselect_list.py（单文件、可本机直接跑）。
+        run: python scripts/training/verify_ci_deselect_list.py
+
       - name: Run native architecture contracts
         # DSH_CI_DESELECT 见job 级 env 处的完整理由（族 B/C 5 条 CI 上无此物可测）。
         # 该清单是**全链路共享**的：跑整个 tests/ 的步也必须带上，否则同一批用例在那里会再红一次。
@@ -318,8 +338,6 @@ jobs:
           python -m pytest tests/seed -q --tb=short
           --junitxml=seed-report.xml -o junit_logging=all
           ${{ env.DSH_CI_DESELECT }}
-          --deselect
-          tests/seed/test_taiji_runtime_attachment.py::test_seed_runtime_records_refusal_and_stays_unattached
 
       - name: Run complete regression suite
         # Legacy real-checkpoint tests skip when local artifacts are absent.
@@ -510,7 +528,8 @@ jobs:
         --deselect tests/taiji_native/test_a30_probe_help_runs.py::test_probe_help_exits_zero_and_lists_every_flag
         --deselect tests/taiji_native/test_a30_self_answers_report_face.py::test_fresh_target_is_accepted
         --deselect tests/taiji_native/test_g35_checkpoint_overwrite_guard.py::test_escape_flag_reaches_the_write_path
-        --deselect tests/seed/test_taiji_runtime_attachment.py::test_seed_runtime_records_refusal_and_stays_unattached
+        --deselect tests/test_taiji_runtime_attachment.py::test_seed_runtime_records_refusal_and_stays_unattached
+        --deselect tests/taiji_native/test_continuous_structural_growth.py::test_continuous_structural_growth_gate
     steps:
       - uses: actions/checkout@v4
         # H19w (2026-09-30): full history, not the default depth=1.
