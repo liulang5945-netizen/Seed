@@ -80,19 +80,35 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="预注册出口句含糊用词扫描（DEBT-G46 修法③）")
     parser.add_argument("--doc", action="append", required=True, help="要扫的预注册件（可重复）")
     parser.add_argument("--out-report", default=None, help="落盘路径；不给只打到 stdout")
+    parser.add_argument(
+        "--min-criterion-lines",
+        type=int,
+        default=0,
+        help="DEBT-G54 修法③：判据行的**期望下限**，扫到的行数低于它就单独出一档 rc=3"
+        "（`criterion_surface_too_thin`）。默认 0＝不分档（向后兼容既有调用）。",
+    )
     args = parser.parse_args(argv)
 
     results: list[dict[str, Any]] = []
+    #: rc 分档：2＝这份件不可扫（缺件/无判据段/判据面隐形），1＝扫到含糊用词，
+    #: 3＝扫得到但覆盖面薄（本该扫到 200 行却只扫到 2 行那种），0＝干净。
+    #: 多份件时按"严重度秩"取最大，**不许后一份把前一份的失败洗成 0**。
+    rank = {0: 0, 1: 1, 3: 2, 2: 3}
     rc = 0
+
+    def worse(current: int, new: int) -> int:
+        return new if rank[new] > rank[current] else current
+
     for raw in args.doc:
         path = Path(raw)
         if not path.is_absolute():
             path = PROJECT_ROOT / path
         entry: dict[str, Any] = {"doc": str(path), "status": "ok"}
+        entry["criterion_lines_floor"] = int(args.min_criterion_lines)
         if not path.is_file():
             #: 缺件不是"零命中"——点名缺失并把 rc 定成响亮拒绝。
             entry["status"] = "missing_doc"
-            rc = 2
+            rc = worse(rc, 2)
             results.append(entry)
             continue
         raw_text = path.read_text(encoding="utf-8")
@@ -104,15 +120,20 @@ def main(argv: list[str] | None = None) -> int:
             entry["criterion_headings"] = len(headings)
             if not headings:
                 entry["status"] = "invisible_criterion_surface"
-                rc = 2
+                rc = worse(rc, 2)
                 results.append(entry)
                 continue
         if scan["criterion_lines"] == 0:
             entry["status"] = "no_criterion_section"
-            rc = 2
+            rc = worse(rc, 2)
         elif scan["vague_word_lines_unpinned"]:
             entry["status"] = "ambiguous_exit_wording"
-            rc = 1
+            rc = worse(rc, 1)
+        elif int(args.min_criterion_lines) > 0 and scan["criterion_lines"] < int(
+            args.min_criterion_lines
+        ):
+            entry["status"] = "criterion_surface_too_thin"
+            rc = worse(rc, 3)
         results.append(entry)
 
     payload = {
