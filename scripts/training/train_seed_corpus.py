@@ -122,6 +122,21 @@ class DocumentStreamCounters:
         }
 
 
+def _window_readouts(
+    window_correct: int, window_surprise: float, window_ticks: int
+) -> tuple[float | None, float | None]:
+    """DEBT-G63：窗口计数器的除零护栏——**零窗口的行不许出版数值**。
+
+    旧写法 `x / max(1, window_ticks)` 在收尾行（窗口刚被上一次 flush 归零）会印出
+    `online_accuracy=0.0`／`mean_surprise=0.0`，与"这一档精度为零"完全同形；
+    实测甲臂 250,000 符号那档的 `progress_exit.json` 就是这样（真数只有 holdout 两列）。
+    """
+
+    if int(window_ticks) <= 0:
+        return None, None
+    return float(window_correct) / float(window_ticks), float(window_surprise) / float(window_ticks)
+
+
 def iter_corpus_symbols(
     paths: Sequence[Path | str],
     *,
@@ -452,12 +467,16 @@ def run_training(
     def _flush(final: bool, exit_reason: str | None = None) -> None:
         if window_ticks <= 0 and not final:
             return
+        #: **DEBT-G63**：窗口为零时 `0/max(1,0)` 会把"这一行没有窗口样本"出版成
+        #: `online_accuracy=0.0`／`mean_surprise=0.0`，看起来完全像能力读数（甲臂收尾行实测如此）。
+        #: 现在窗口为零一律出版 `None`；周期性行不受影响（它们本来就只在 `window_ticks>0` 时写）。
+        accuracy, surprise = _window_readouts(window_correct, window_surprise, window_ticks)
         entry = {
             "epoch": epoch,
             "ticks": ticks,
             "window_ticks": window_ticks,
-            "online_accuracy": window_correct / max(1, window_ticks),
-            "mean_surprise": window_surprise / max(1, window_ticks),
+            "online_accuracy": accuracy,
+            "mean_surprise": surprise,
             "holdout_surprise": model.score_bytes(HOLDOUT_PROBE)["mean_surprise"],
             #: PLAN-N3-05：与训练语料零窗口重合的第二把尺（旧列取法与值一字不动，见上面的常量注释）。
             "holdout_surprise_v2": model.score_bytes(HOLDOUT_PROBE_V2)["mean_surprise"],

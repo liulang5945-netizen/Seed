@@ -167,7 +167,15 @@ def test_corpus_exhaustion_is_not_reported_as_budget(tmp_path: Path) -> None:
 
 
 def test_periodic_lines_keep_their_old_shape(tmp_path: Path) -> None:
-    """加性：新键只许出现在收尾那一行——周期行必须还是那七个旧键。"""
+    """加性：新键只许出现在收尾那一行——周期行必须还是那七个旧键。
+
+    **DEBT-G65（2026-10-08 补）**：㊵-513 往收尾那一行追加了三轴（`stream_counters.as_dict()`）
+    却没跑这一册，于是本条自 `25bb7fccb` 起就是红的——它红的是**期望集没跟着放宽**，
+    不是行为坏了（周期行 `entries[0]` 那侧一直是对的）。放宽前先让它真红一次并留下点名
+    （实测 `1 failed, 26 passed`，失败项 `Extra items in the left set: document_visits /
+    mean_revisits / unique_documents`），再按同一约定把三键加进**收尾行**的期望集；
+    断言仍是集合相等 ⇒ "冒出野键必须红"那一侧的判别力一字未减。
+    """
 
     corpus = _write_corpus(tmp_path / "c2.jsonl", 40)
     progress = tmp_path / "p2.jsonl"
@@ -185,12 +193,18 @@ def test_periodic_lines_keep_their_old_shape(tmp_path: Path) -> None:
     assert len(entries) >= 2, entries
     assert set(entries[0]) == LEGACY_KEYS, set(entries[0])
     assert "exit_reason" not in entries[0]
+    #: 三轴也只许在收尾那一行：周期行混进来就是改形。
+    for axis in ("unique_documents", "document_visits", "mean_revisits"):
+        assert axis not in entries[0], axis
     assert set(entries[-1]) == LEGACY_KEYS | {
         "exit_reason",
         "base_ticks",
         "budget_max_symbols",
         "ticks_at_exit",
         "reached_budget",
+        "unique_documents",
+        "document_visits",
+        "mean_revisits",
     }, set(entries[-1])
 
 
