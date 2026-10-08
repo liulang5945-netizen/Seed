@@ -9,6 +9,28 @@
   ],
   "results": [
     {
+      "doc": "E:\\Seed\\plans\\reference\\PLAN-N1-00_s5_endpoint_falsification_prereg_20261007.md",
+      "status": "ambiguous_exit_wording",
+      "criterion_lines": 12,
+      "vague_word_lines_unpinned": 2,
+      "hits": [
+        {
+          "line": 7,
+          "words": [
+            "显著"
+          ],
+          "excerpt": "**H-S5（P1 诊断的可证伪形态）**：never-LF 拖写陷阱由复制证据通路**缺终点信号**导致——`copy_circuit.evidence()`（[copy_circuit.py:473](../../../taiji/copy_circuit.py)）把锁定事件经位置注意力池化成 257 维分布持续加"
+        },
+        {
+          "line": 24,
+          "words": [
+            "显著"
+          ],
+          "excerpt": "- **J1（唯一判据）**：R1 ≤ **118**（基线 236 的 50%）。\"显著缓解\"的操作化＝被困群体腰斩；判据只此一条，分母与单位见 §2。"
+        }
+      ]
+    },
+    {
       "doc": "E:\\Seed\\plans\\reference\\PLAN-N1-01_s1_readout_prereg_20261007.md",
       "status": "ambiguous_exit_wording",
       "criterion_lines": 9,
@@ -24,6 +46,13 @@
       ]
     },
     {
+      "doc": "E:\\Seed\\plans\\reference\\PLAN-N1-02_attribution_prereg_20261007.md",
+      "status": "ok",
+      "criterion_lines": 3,
+      "vague_word_lines_unpinned": 0,
+      "hits": []
+    },
+    {
       "doc": "E:\\Seed\\plans\\reference\\PLAN-N2-01_consolidation_powerup_prereg_20261007.md",
       "status": "ok",
       "criterion_lines": 17,
@@ -31,9 +60,30 @@
       "hits": []
     },
     {
+      "doc": "E:\\Seed\\plans\\reference\\PLAN-N3-01_r4_hooks_prereg_20261007.md",
+      "status": "ok",
+      "criterion_lines": 4,
+      "vague_word_lines_unpinned": 0,
+      "hits": []
+    },
+    {
       "doc": "E:\\Seed\\plans\\reference\\PLAN-N3-02_scaling_probe_prereg_20261007.md",
       "status": "ok",
-      "criterion_lines": 10,
+      "criterion_lines": 12,
+      "vague_word_lines_unpinned": 0,
+      "hits": []
+    },
+    {
+      "doc": "E:\\Seed\\plans\\reference\\PLAN-N3-03_tau_definition_20261008.md",
+      "status": "ok",
+      "criterion_lines": 2,
+      "vague_word_lines_unpinned": 0,
+      "hits": []
+    },
+    {
+      "doc": "E:\\Seed\\plans\\reference\\PLAN-N3-04_developmental_assembly_prereg_20261008.md",
+      "status": "ok",
+      "criterion_lines": 8,
       "vague_word_lines_unpinned": 0,
       "hits": []
     }
