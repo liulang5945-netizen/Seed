@@ -82,6 +82,7 @@
 - **gate 取两个值都跑**＝`0.25` 与 `1.0`（`1.0` 与既有 canary `eval_taiji_m4v2_r4_shadow.py` 同档，`0.25` 是小剂量探边）；
 - 面数因此冻结为＝**2 条链 × 2 个 gate 值＝4 张在线面**（链＝`--resume checkpoints/seed_a31self_with_circuit.pt` 与 `--resume output/a31_chunked_self/checkpoint.pt`，
   与 ㊵-484 同底同 seed 20260822），另加**一支默认关守卫臂**（G-N3b-1：同参开/不开旗标的八键逐位对照，不许继承㊵-484⑥ 对 `--pressure-record` 的证明）；
+  **⇒ 这一格里"链"那一半已于同日作废**（两条在训链带着 `position_weight`，进不了这档装配；实证与替代链见 §5ter）——**判据、守卫、gate 两档与"4 张在线面＋1 支守卫臂"的面数都没变**，变的只是从哪枚档热启动，所以它要 owner 点、不自行换；
 - 每臂上限仍 `--max-symbols 4000`、`--progress-every 200000`；预算＝5 支面，按 ㊵-491 标定的量级为**分钟级/张**（与 ㊵-484 两张面同形状，其墙钟有件可查），磁盘＝面件 5 枚＋每支训练臂一档（≈12.7 MB 量级，落 `output/`）；
 - 止损照 §5；**跑完不追加改 gate 的第二次判据级重跑**（判据级不重跑），gate 的两档差只作机制定位叙述。
 
@@ -117,12 +118,34 @@ gate 两档各一遍 ⇒ 4 张在线面＋1 支默认关守卫臂；一律 `--ch
 
 ## 5ter. 实施当天（2026-10-08）落仪器时撞到的前置——判据与守卫一字未改，改的是**命令形状**
 
-- **五支面都必须带 `--no-readout-position`**。实测：按训练器现行默认（`--readout-position` 自 2026-09-28
+- **装配与位置输入互斥（产品守卫，不是我的选择）**。实测：按训练器现行默认（`--readout-position` 自 2026-09-28
   起默认开）跑第一支烟测，产品在 `Taiji.migrate_f1_to_developmental_synapses()` 的起手就响亮拒绝——
   `ValueError: readout_utf8_position_input is not wired to the developmental F1 learning path`
   （守卫本体 `taiji/model.py:1124-1135`，理由写在它自己的注释里：**两者同开会得到一个静默空转**，
-  前向喂零列、后向不更新，“看起来装了、其实等于没装”）。⇒ 本件的装配与位置输入**互斥**，
-  这是产品事实不是我的选择。
+  前向喂零列、后向不更新，“看起来装了、其实等于没装”）。
+- **本件 §4bis 冻结的链不可执行（实施当天两支 canary 都是 rc 级实证；这条更正覆盖我先前那句"五支面带上 `--no-readout-position` 就行"——它不成立）**：
+  ① `--resume checkpoints/seed_a31self_with_circuit.pt` **带** `--no-readout-position` ⇒
+  `ValueError: checkpoint carries UTF-8 position columns but readout_utf8_position_input is disabled`
+  （守卫 [taiji/organs.py:925](../../taiji/organs.py) 的 `_load_position_weight`）；
+  ② 同链**不带**该旗标 ⇒ 位置输入开着 ⇒ 撞上条上面那条互斥拒绝。
+  ⇒ **两条在训链都进不了这档装配**，原因是它们的权重里带着位置列（只读取证：两枚档的
+  `kernel.predictive_readout` 键集都是 `['bias','format','position_weight','synapses']`，两处 config 都写
+  `readout_utf8_position_input=true`），而位置输入**不许半路关掉**（关掉＝拿带位置的权重去配不吃位置的读出，产品按设计拒绝）。
+  ⇒ §4bis 里"链＝这两枚、与 ㊵-484 同底"这一格**作废**（作废的是**面的形状**；§2 判据与 §4 守卫一字未改），
+  **乙步骤二在替代链被点之前不起跑**。
+- **可执行的替代链已经 priced（零额外探测成本）**：出厂链 `checkpoints/seed_beta.pt` **不带位置列**
+  （同一取法下它的 `predictive_readout` 键集里没有 `position_weight`，config 也没这个键）⇒
+  `--resume checkpoints/seed_beta.pt --readout predictive --no-readout-position --developmental-fast-slow
+  --developmental-bridge-gate 0.25` 实测 **rc=0**（200 符号 canary、2.316 s、727,923 参数、`base_ticks=16,000,000`，
+  件在 `output/n3_04_canary_factory/`）。canary 面内 `fast_slow_conflict` 非零 198/199（max 0.500016）、
+  `activity_saturation` 非零 199/199（max 0.416667）、`pressure` max 0.679682（mean 0.604986）、
+  `learning_mode` 挂载后与收尾都读到 `fast_slow`。**只有 199 条观测**（预算 200）⇒ 判读器按 §5 的样本下限与覆盖率会拒判，
+  所以这一支**只算"链可用"的实证，不进任何判据**。外推：这条链 4,000 符号每支 ≈ **46 秒**，
+  5 支面**分钟级**、每枚档 ≈14.7 MB（canary 实测 14,651,769 B）。
+- **换链的科学代价（说不算更正）**：出厂底是**没吃过这条语料的冷基座**，它的压强分布回答的是
+  “**出厂件为什么不进化**”（09 §2 N5 那 842 条目零进化的机制那一问），**不**回答“在训链上 τ 该定在哪”。
+  §2 的判据形状（在场性＋动态范围）在两档上都适用，但 §1 那句“H-N3b **这条链**”的限定语要跟着换成点名出厂链——
+  **换的是分布而不是判据 ⇒ 需要 owner 点，我不自行改**。
 - **由此新增一条读数限定（并入 G-N3b-2 那句“不假设中性”，不新建判据）**：本件所有 accuracy／泛化／压强数
   一律定性为“**放行装配＋位置输入关闭**下的数”。它们与步骤一那两张面（位置输入默认开）**不同源**，
   跨面搬 τ 已被 [PLAN-N3-03 §4](PLAN-N3-03_tau_definition_20261008.md) 的五元组禁令挡住，这里是同一条禁令的另一例。
