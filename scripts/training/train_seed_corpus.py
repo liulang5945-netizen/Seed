@@ -42,7 +42,7 @@ from seed.persistence import (  # noqa: E402
     attach_metadata,
     corpus_fingerprint,
 )
-from taiji import CapacityPolicy, TaijiConfig  # noqa: E402
+from taiji import AdaptiveResidualGrowthPolicy, CapacityPolicy, TaijiConfig  # noqa: E402
 
 DEFAULT_CORPUS = (
     # 2026-08-23 数据整理：canonical 对话语料仅此一文件（123090 条，
@@ -327,6 +327,7 @@ def run_training(
     pressure_record: Path | str | None = None,
     developmental_fast_slow: bool = False,
     developmental_bridge_gate: float | None = None,
+    growth_minimum_pressure: float | None = None,
     max_unique_documents: int | None = None,
 ) -> dict[str, float]:
     """Stream the corpus through ``Seed.observe`` with periodic persistence.
@@ -573,10 +574,30 @@ def run_training(
                     f"bridge gate 挂载后读回 {bridge_gate_actual!r} 不等于请求值 "
                     f"{bridge_gate_at_mount!r} ⇒ 面作废（放行档的 gate 必须由实际生效值定义）"
                 )
-        growth_info = substrate.enable_adaptive_residual_growth()
+        #: owner 2026-10-08 第六次弹窗裁"τ＝按链分别给值"⇒ 落地形状＝训练器给挂载传 policy
+        #: （`taiji/model.py:917-943` 的 `enable_adaptive_residual_growth` 本来就收 `policy`），
+        #: **产品默认常量 0.70 一字不动**：缺旗标时连 `policy` 参数都不给（＝逐位不变）；给值时用
+        #: `dataclasses.replace` **只替 `minimum_pressure` 一枚**，其余五道阈与 `ema_rate` 仍取产品默认，
+        #: 挂载后必须读回复核——τ 是判据的母量，请求值不等于生效值时整张面作废而不是照请求值出版。
+        if growth_minimum_pressure is None:
+            growth_info = substrate.enable_adaptive_residual_growth()
+        else:
+            growth_info = substrate.enable_adaptive_residual_growth(
+                policy=replace(
+                    AdaptiveResidualGrowthPolicy(),
+                    minimum_pressure=float(growth_minimum_pressure),
+                )
+            )
         trigger = substrate.adaptive_residual_growth_trigger
         if trigger is None:
             raise RuntimeError("growth trigger 没挂上 ⇒ 压强面无效")
+        if growth_minimum_pressure is not None:
+            minimum_pressure_actual = float(trigger.policy.minimum_pressure)
+            if minimum_pressure_actual != float(growth_minimum_pressure):
+                raise RuntimeError(
+                    f"minimum_pressure 挂载后读回 {minimum_pressure_actual!r} 不等于请求值 "
+                    f"{float(growth_minimum_pressure)!r} ⇒ 面作废（τ 必须由实际生效值定义）"
+                )
         developmental_info: dict[str, Any] | None = None
         #: `mode_readings`＝面内自述"每次施加之后读回的 learning_mode"。该模式不入档
         #: （`Taiji.restore` 恢复即回 `read_only`），所以在场性不许由命令行反推（PLAN-N3-04 §3）。
@@ -631,6 +652,10 @@ def run_training(
                             "bundle": developmental_info,
                             "bridge_gate_requested": developmental_bridge_gate,
                             "bridge_gate_actual": bridge_gate_actual,
+                            #: τ（`minimum_pressure`）的请求值与生效值成对出版：缺旗标时 requested 为 None、
+                            #: actual 是产品默认（现读，不抄常量），给值时两者必须相等（上面已核）。
+                            "minimum_pressure_requested": growth_minimum_pressure,
+                            "minimum_pressure_actual": float(trigger.policy.minimum_pressure),
                             "mode_readings": mode_readings,
                         },
                         "readout": readout,
@@ -945,6 +970,17 @@ def _build_parser() -> argparse.ArgumentParser:
         "gate>0 会让 bridge 参与读出（＝改了行为，不是中性改动），owner 已裁 0.25 与 1.0 两档。",
     )
     parser.add_argument(
+        "--growth-min-pressure",
+        dest="growth_minimum_pressure",
+        type=float,
+        default=None,
+        help="PLAN-N4-01 之前的 N3 乙线（owner 2026-10-08 第六次弹窗裁「τ 按链分别给值」）：把生长闸的 "
+        "`minimum_pressure` 换成本值，其余五道阈与 ema_rate 仍取产品默认（只动一枚）。"
+        "缺省 None＝连 policy 参数都不给，行为与今天逐位相同；产品默认常量 0.70 不在本处改动。"
+        "挂载后用 trigger.policy 读回复核并把 requested/actual 成对写进面头。"
+        "只在 --pressure-record 的挂载分支里生效。",
+    )
+    parser.add_argument(
         "--readout-position",
         dest="readout_position",
         action="store_true",
@@ -1039,17 +1075,23 @@ def main() -> None:
     #: PLAN-N3-04 §5bis 的响亮拒绝：两个新旗标的挂载点住在 `--pressure-record` 那一支里 ⇒ 只给旗标
     #: 不给压强面就是**静默空转**（同一类雷：`--readout-position` 在 action 档空转，注释里写着）。
     if (
-        args.developmental_fast_slow or args.developmental_bridge_gate is not None
+        args.developmental_fast_slow
+        or args.developmental_bridge_gate is not None
+        or args.growth_minimum_pressure is not None
     ) and args.pressure_record is None:
         parser.error(
-            "--developmental-fast-slow / --developmental-bridge-gate 只在 --pressure-record 的挂载"
-            "分支里生效；单给旗标会静默空转 ⇒ 请同时给 --pressure-record <path>。"
+            "--developmental-fast-slow / --developmental-bridge-gate / --growth-min-pressure 只在 "
+            "--pressure-record 的挂载分支里生效；单给旗标会静默空转 ⇒ 请同时给 --pressure-record <path>。"
         )
     if (
         args.developmental_bridge_gate is not None
         and not 0.0 <= args.developmental_bridge_gate <= 1.0
     ):
         parser.error("--developmental-bridge-gate 必须落在 0.0..1.0 之间。")
+    #: τ 的取值域与 bridge gate 同一形状：越界＝响亮拒绝，而不是挂上一个全场够不到的阈
+    #: （DEBT-G53 的实证就是"0.70 在 EMA 口径上算术不可达"，那种阈不该被静默接受）。
+    if args.growth_minimum_pressure is not None and not 0.0 <= args.growth_minimum_pressure <= 1.0:
+        parser.error("--growth-min-pressure 必须落在 0.0..1.0 之间。")
 
     #: 二次事故加固（2026-09-28，同日第二撞）：缺省写靶＝产品件 `checkpoints/seed_corpus.pt`，
     #: 而缺省 readout 已改 `predictive`＋位置输入 ⇒ 任何"只传一两个旗标"的调用（含测试里
@@ -1162,6 +1204,7 @@ def main() -> None:
         pressure_record=args.pressure_record,
         developmental_fast_slow=bool(args.developmental_fast_slow),
         developmental_bridge_gate=args.developmental_bridge_gate,
+        growth_minimum_pressure=args.growth_minimum_pressure,
         max_unique_documents=args.max_unique_documents,
     )
     print(json.dumps(summary, ensure_ascii=False))
