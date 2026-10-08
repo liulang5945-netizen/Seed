@@ -166,6 +166,30 @@ gate 两档各一遍 ⇒ 4 张在线面＋1 支默认关守卫臂；一律 `--ch
   调用次数**逐键为 0**、开旗标时 bundle/gate/mode 三样都进件、位置输入与 bundle 互斥、`--help` 里两个旗标名都在、
   判读器四条拒绝支各自 rc=2、以及“判据为假而仪器不炸”那一支 rc=0＋`not_present`）。
 
+## 5quater. owner 2026-10-08 第四次弹窗裁定：**换出厂链跑**——链这一格换成下面这两枚，面数/判据/守卫/gate 一律不变
+
+- **裁定原文（弹窗选项『换出厂链跑』）**：乙步骤二改从**出厂系**热启动，因为两条现役链都带着位置列、进不了这档装配（§5ter 的两支 rc 实证）。
+- **冻结的热启动源换成两枚出厂系档**（都是"不带位置列"，同一取法逐档核过）：
+  链 A＝`checkpoints/seed_beta.pt`（4,143,542 B，`config.taiji` 里根本没有 `readout_utf8_position_input` 这个键 ⇒ 默认关，
+  且 `kernel.predictive_readout` 键集**不含** `position_weight`）；
+  链 B＝`checkpoints/seed_beta_with_circuit.pt`（12,291,435 B，`readout_utf8_position_input=false`、同样不带位置列）。
+  ⇒ **§4bis 的"2 条链 × 2 个 gate ＝ 4 张在线面 ＋ 1 支默认关守卫臂"这个面数原样保住**，只是两条链换了身份；
+  守卫臂与它配对的开旗标臂必须同链同参（G-N3b-1 的八键逐位对照才成对）。
+- **命令形状（写死，跑后不调）**：`--resume <链> --readout predictive --no-readout-position --max-symbols 4000
+  --progress-every 200000 --seed 20260822 --checkpoint output/n3_04/<臂名>/checkpoint.pt
+  --progress output/n3_04/<臂名>/progress.jsonl --pressure-record output/n3_04/<臂名>/pressure.jsonl
+  --developmental-fast-slow --developmental-bridge-gate <0.25|1.0>`；守卫臂＝同形状**去掉两个新旗标**。
+  **`--progress` 一律显式给**（DEBT-G50 那枚默认落点会覆写 `reports/` 里被文档锚定的件）。
+- **预跑的链可用实证（canary，只算"能不能挂上"，不进判据）**：链 A 上 200 符号 rc=0、2.316 s、727,923 参数、
+  `base_ticks=16,000,000`，面内 `fast_slow_conflict` 非零 198/199、`activity_saturation` 非零 199/199、
+  `pressure` max 0.679682、`learning_mode` 挂载后与收尾都读到 `fast_slow`；**观测只有 199 条 ＜ §5 的样本下限 500** ⇒ 判读器会拒判。
+- **限定语随之换掉（这句是判据的读法边界，不是新判据）**：本件读数回答的是
+  "**出厂系装配上，四维（或三维）在场的压强分布长什么样、τ 能不能冻**"，
+  **不**回答"装机/在训链上的 τ 该定在哪"；后者要先有一条"位置列可安全摘除"的仪器（owner 当时列为丙档，未选）。
+  `holdout_surprise` 那一列自 **DEBT-G49** 起一律带"该探针与训练语料窗口命中率 0.143"的限定——
+  owner 同日已裁"**要求零命中重建**"，但重建动的是 `train_seed_corpus.py` 的 `HOLDOUT_PROBE`（判据所在的链），
+  所以它**另立一件**做，且**必须等这 5 支面跑完再动**（面在跑的时候不改它 import 的代码）。
+
 ## 6. 本件不做什么
 
 不冻产品阈、不改 policy 常量、不 promote 任何候选、不动出厂面；不做 ×16.8 大档（那是 N3 甲的另一条泳道）；
