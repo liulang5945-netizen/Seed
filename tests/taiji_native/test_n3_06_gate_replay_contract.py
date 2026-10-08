@@ -172,3 +172,71 @@ def test_unknown_reason_string_refuses(tmp_path: Path, monkeypatch) -> None:
     rc, payload = _run(str(FACE), tmp_path)
     assert rc == 2
     assert "表外原因" in payload["refused"][0]["error"]
+
+
+def test_pressure_ema_identity_holds_on_real_face() -> None:
+    """钉住 PLAN-N3-07 §2 那条恒等式：`Σ wᵢ·EMAᵢ ≡ EMA(Σ wᵢ·xᵢ)`。
+
+    那条恒等式是"旧面可以重放出 EMA 口径"的唯一依据，所以它**不许只是文档里的论证**：
+    这里用产品自己的 trigger 与一支我自己维护的线性 EMA 逐步对表，任一步偏离即红。
+    """
+
+    from taiji.adaptive_residual_growth import (
+        AdaptiveResidualGrowthPressure,
+        AdaptiveResidualGrowthTrigger,
+    )
+
+    weights = {
+        "residual_error": 0.30,
+        "fast_slow_conflict": 0.25,
+        "activity_saturation": 0.20,
+        "utility_gap": 0.25,
+    }
+    #: trigger 只接受 `bridge_id` 相同的观测（:405-406 是产品自己的守卫，本测不绕开）⇒ 用面里的桥名。
+    face_bridge_id = str(next(row["bridge_id"] for row in _rows() if row.get("kind") == "pressure"))
+    trigger = AdaptiveResidualGrowthTrigger(bridge_id=face_bridge_id)
+    rate = float(trigger.policy.ema_rate)
+    mine = 0.0
+    worst = 0.0
+    for row in _rows():
+        if row.get("kind") != "pressure":
+            continue
+        observation = AdaptiveResidualGrowthPressure.create(
+            bridge_id=str(row["bridge_id"]),
+            tick=int(row["tick"]),
+            residual_error=float(row["residual_error"]),
+            fast_slow_conflict=float(row["fast_slow_conflict"]),
+            activity_saturation=float(row["activity_saturation"]),
+            utility_gap=float(row["utility_gap"]),
+            resource_state=float(row["resource_state"]),
+            evidence_id=str(row["evidence_id"]),
+            parent_checkpoint_digest=str(row.get("parent_checkpoint_digest") or ""),
+        )
+        raw_composite = sum(weight * float(row[field]) for field, weight in weights.items())
+        mine = (1.0 - rate) * mine + rate * raw_composite
+        decision = trigger.observe(observation, structural_budget=1)
+        worst = max(worst, abs(float(decision.pressure) - mine))
+    assert worst < 1e-12, worst
+    #: 反证：权重抄错一位就必须偏离（否则这条测只会恒真）。
+    wrong = 0.0
+    other = AdaptiveResidualGrowthTrigger(bridge_id=face_bridge_id)
+    for row in _rows():
+        if row.get("kind") != "pressure":
+            continue
+        raw_composite = 0.35 * float(row["residual_error"]) + 0.25 * float(
+            row["fast_slow_conflict"]
+        )
+        wrong = (1.0 - float(other.policy.ema_rate)) * wrong + 0.25 * raw_composite
+        other_observation = AdaptiveResidualGrowthPressure.create(
+            bridge_id=str(row["bridge_id"]),
+            tick=int(row["tick"]),
+            residual_error=float(row["residual_error"]),
+            fast_slow_conflict=float(row["fast_slow_conflict"]),
+            activity_saturation=float(row["activity_saturation"]),
+            utility_gap=float(row["utility_gap"]),
+            resource_state=float(row["resource_state"]),
+            evidence_id=str(row["evidence_id"]),
+            parent_checkpoint_digest=str(row.get("parent_checkpoint_digest") or ""),
+        )
+        other.observe(other_observation, structural_budget=1)
+    assert abs(float(other.pressure_ema) - wrong) > 1e-6
