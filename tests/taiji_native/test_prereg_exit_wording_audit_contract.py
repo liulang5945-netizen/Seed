@@ -41,6 +41,7 @@ CLEAN = (
     "PLAN-N3-02_scaling_probe_prereg_20261007.md",
     "PLAN-N3-03_tau_definition_20261008.md",
     "PLAN-N3-04_developmental_assembly_prereg_20261008.md",
+    "PLAN-N2-02_second_powerup_dosewindow_prereg_20261008.md",
 )
 
 

@@ -60,6 +60,13 @@
       "hits": []
     },
     {
+      "doc": "E:\\Seed\\plans\\reference\\PLAN-N2-02_second_powerup_dosewindow_prereg_20261008.md",
+      "status": "ok",
+      "criterion_lines": 14,
+      "vague_word_lines_unpinned": 0,
+      "hits": []
+    },
+    {
       "doc": "E:\\Seed\\plans\\reference\\PLAN-N3-01_r4_hooks_prereg_20261007.md",
       "status": "ok",
       "criterion_lines": 4,
@@ -83,7 +90,7 @@
     {
       "doc": "E:\\Seed\\plans\\reference\\PLAN-N3-04_developmental_assembly_prereg_20261008.md",
       "status": "ok",
-      "criterion_lines": 8,
+      "criterion_lines": 10,
       "vague_word_lines_unpinned": 0,
       "hits": []
     }
