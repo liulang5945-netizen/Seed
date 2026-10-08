@@ -115,6 +115,37 @@ def _replay_arms(report: dict[str, Any]) -> dict[str, dict[str, Any]]:
     return arms
 
 
+def _main_column_entries(payload: Any) -> dict[str, dict[str, Any]]:
+    """把计数仪读数里的每枚面摊平成 `{源路径: 主列读数}`。
+
+    只认带 `never_lf_eaters_counted` 的条目——主列的判定权属于这台仪器，不属于本判读器；
+    取不到就返回空表，由调用方记 `unverified`，**不许**从停止面件里自己数一遍（那是重抄生成链）。
+    """
+
+    found: dict[str, dict[str, Any]] = {}
+
+    def walk(node: Any) -> None:
+        if isinstance(node, dict):
+            if "never_lf_eaters_counted" in node:
+                source = str(node.get("report") or node.get("path") or node.get("name") or "")
+                found[source] = {
+                    "never_lf_eaters_counted": node.get("never_lf_eaters_counted"),
+                    "generation_rows_seen": node.get("generation_rows_seen"),
+                    "items_sha256": node.get("items_sha256"),
+                    "checkpoint_sha256": node.get("checkpoint_sha256"),
+                    "status": node.get("status"),
+                    "meets_frozen_line": node.get("meets_frozen_line"),
+                }
+            for value in node.values():
+                walk(value)
+        elif isinstance(node, list):
+            for item in node:
+                walk(item)
+
+    walk(payload)
+    return found
+
+
 def judge(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
     missing: list[str] = []
     repo = PROJECT_ROOT
@@ -126,6 +157,9 @@ def judge(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
     postcheck = _load(repo / args.postcheck, missing)
     align = _load(repo / args.align, missing)
     material = _load(repo / args.material, missing)
+    #: ×96 主列附件是**可选**输入：没跑完时判 `unverified`，跑完了就接进来——但它不参与
+    #: "缺件即不判"那支，因为 §4ter 的分档结项口径本来就允许先交已取到的档。
+    stop_main = _load(repo / args.stop_main, []) if args.stop_main else None
 
     if missing:
         return (
@@ -222,6 +256,32 @@ def judge(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
         "aligned_tensors_differing": (align.get("tensor_check") or {}).get("tensors_differing"),
         "treated_faces_read_on": "seed_n2_candidate_aligned_20261008.pt",
     }
+    stop_entries = _main_column_entries(stop_main) if stop_main else {}
+    before_mc = next((v for k, v in stop_entries.items() if "before" in k), None)
+    after_mc = next((v for k, v in stop_entries.items() if "after" in k), None)
+    stop_measured = bool(before_mc and after_mc)
+    stop_face = {
+        "status": "measured_criterion_silent" if stop_measured else "unverified",
+        "before": before_mc,
+        "after": after_mc,
+        "delta": (
+            int(after_mc["never_lf_eaters_counted"]) - int(before_mc["never_lf_eaters_counted"])
+            if stop_measured
+            else None
+        ),
+        "denominator": before_mc.get("generation_rows_seen") if stop_measured else None,
+        "items_sha_match": bool(
+            stop_measured and before_mc.get("items_sha256") == after_mc.get("items_sha256")
+        ),
+        "direction_defined": False,
+        "reason": (
+            "主列数已由现成计数仪取到，但 §2 那句\u201c无一项跌破巩固前同面读数\u201d**没有为\u201c拖写行数\u201d"
+            "这一列指定哪个方向算跌破**（越少越好是历史解释，不是冻结判据）⇒ 只报数与差，"
+            "不冒充判据判定（这是 DEBT-G46 的第三类实例）"
+            if stop_measured
+            else "×96 主列附件件不在 ⇒ 记 unverified；未取到的面不得代答成没跌破（§4ter 更正三第②条）"
+        ),
+    }
     payload = {
         "format": "taiji-n2-face-verdict-v2",
         "prereg": "plans/reference/PLAN-N2-01_consolidation_powerup_prereg_20261007.md#4ter",
@@ -242,11 +302,7 @@ def judge(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
         "replay_arms_dropped_formed": formed_dropped,
         "j_n2a_replay": j_n2a_replay,
         "persistence": persistence,
-        "stop_face": {
-            "status": "unverified",
-            "reason": "×24 停摆面的主列由配套计数仪产出，本判读器未把它接进来；"
-            "未接入的面不得代答成没跌破（§4ter 更正三第②条）",
-        },
+        "stop_face": stop_face,
         "material": {
             "night_pool_size": material.get("night_pool_size"),
             "night_k": material.get("night_k"),
@@ -296,7 +352,7 @@ def judge(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
             ("j_n2a_cap0", j_n2a_cap0),
             ("j_n2a_replay", j_n2a_replay),
             ("j_n2b", j_n2b),
-            ("stop_face_unverified", False),
+            ("stop_face_direction_defined", bool(stop_face["direction_defined"])),
         )
         if not value
     ]
@@ -314,6 +370,11 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--postcheck", default="reports/taiji_n2_postcheck_20261008.json")
     parser.add_argument("--align", default="reports/taiji_n2_align_20261008.json")
     parser.add_argument("--material", default="reports/taiji_n2_material_20261008.json")
+    parser.add_argument(
+        "--stop-main",
+        default="reports/taiji_n2_stop96_main_20261008.json",
+        help="×96 停摆面主列读数（`count_taiji_a30_eater_p_boundary_floor.py` 产出；缺件记 unverified）",
+    )
     parser.add_argument("--out", default="reports/taiji_n2_face_verdict_20261008.json")
     args = parser.parse_args(argv)
 

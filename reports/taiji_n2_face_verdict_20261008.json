@@ -215,7 +215,13 @@
   },
   "stop_face": {
     "status": "unverified",
-    "reason": "×24 停摆面的主列由配套计数仪产出，本判读器未把它接进来；未接入的面不得代答成没跌破（§4ter 更正三第②条）"
+    "before": null,
+    "after": null,
+    "delta": null,
+    "denominator": null,
+    "items_sha_match": false,
+    "direction_defined": false,
+    "reason": "×96 主列附件件不在 ⇒ 记 unverified；未取到的面不得代答成没跌破（§4ter 更正三第②条）"
   },
   "material": {
     "night_pool_size": 200,
@@ -245,7 +251,7 @@
   "blocking_terms": [
     "j_n2a_replay",
     "j_n2b",
-    "stop_face_unverified"
+    "stop_face_direction_defined"
   ],
   "verdict": "not_closed"
 }
