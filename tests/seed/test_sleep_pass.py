@@ -207,6 +207,31 @@ def test_spec_is_written_only_when_the_data_ring_is_ready(workspace: Path) -> No
     assert "constraint seed" in spec["reason"]
 
 
+def test_recommendations_name_workbench_projection_without_inventing_one() -> None:
+    """C6 ⑥：折算了几条工作台能力必须成为一条建议，零折算则一条都不许生成。"""
+
+    projected = {"datasets": ["consolidated/night.jsonl"]}
+    sleep_pass._add_recommendations(
+        projected,
+        {"by_source": {"constraints": 2, "interactions": 1, "workbench_capabilities": 16}},
+    )
+    assert [item["kind"] for item in projected["training_recommendations"]] == [
+        "internalise_constraints",
+        "rehearse_interactions",
+        "internalise_workbench_capabilities",
+    ]
+    assert (
+        "16 declared workbench capability" in projected["training_recommendations"][-1]["rationale"]
+    )
+
+    empty = {"datasets": ["consolidated/night.jsonl"]}
+    sleep_pass._add_recommendations(
+        empty,
+        {"by_source": {"constraints": 0, "interactions": 3, "workbench_capabilities": 0}},
+    )
+    assert [item["kind"] for item in empty["training_recommendations"]] == ["rehearse_interactions"]
+
+
 def test_state_rolls_forward_across_passes(workspace: Path) -> None:
     _seed_interaction("问：一\n答：一", turn=1)
     sleep_pass.run(reason="first")

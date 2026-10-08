@@ -1188,6 +1188,7 @@ function ConsolidationSection({ t, snapshot, pending, run, life }: SectionContro
                     <Fact label={t('triggerLabel')}>{view.lastReport.reason}</Fact>
                     <Fact label={t('gateReasonLabel')}>{view.lastReport.specReason !== '' ? view.lastReport.specReason : t('notYet')}</Fact>
                     <Fact label={t('durationLabel')}>{t('secondsShort', { count: (view.lastReport.durationMs / 1000).toFixed(1) })}</Fact>
+                    <Fact label={t('passCapabilitiesLabel')}>{view.lastReport.workbenchCapabilities}</Fact>
                   </dl>
                   <LineList title={t('weaknessesTitle')} lines={view.lastReport.weaknesses} empty={t('noWeaknesses')} />
                   <LineList title={t('notesTitle')} lines={view.lastReport.notes} empty={t('noNotes')} />

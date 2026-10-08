@@ -770,6 +770,7 @@ function passReportView(report: Record<string, unknown>, spec: Record<string, un
     durationMs: number(report, 'duration_ms'),
     weaknesses: stringList(report['weaknesses']),
     notes: stringList(report['notes']),
+    workbenchCapabilities: number(value(value(report, 'projection'), 'by_source'), 'workbench_capabilities'),
   }
 }
 

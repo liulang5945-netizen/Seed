@@ -1,0 +1,20 @@
+{
+  "format": "taiji-n2-dose-diagnostic-v1",
+  "kind": "diagnostic_post_hoc",
+  "note": "本臂在 J-N2b 判读**之后**加，不参与判据；只回答剂量窗内的数怎么走。",
+  "dose_symbols": 64,
+  "selected_texts": 8,
+  "treated": {
+    "items": 8.0,
+    "quality_mean": -13.60778111337486,
+    "accuracy_mean": 0.078125,
+    "mean_surprise_mean": 13.543479215160735
+  },
+  "control": {
+    "items": 8.0,
+    "quality_mean": -12.337622383470652,
+    "accuracy_mean": 0.09375,
+    "mean_surprise_mean": 12.28556581570241
+  },
+  "window_holds": false
+}

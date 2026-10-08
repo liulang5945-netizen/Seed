@@ -472,6 +472,20 @@ def _add_recommendations(spec: dict[str, Any], projection: dict[str, Any]) -> No
                 "rationale": f"{by_source['interactions']} recorded interaction(s) re-presented verbatim",
             }
         )
+    #: C6 ⑥: the workbench projection needs its own line — a capability unit the pass
+    #: folded in is neither a constraint seed nor a recorded interaction, and a panel
+    #: that cannot name it reads a real projection as nothing happening.
+    if by_source.get("workbench_capabilities"):
+        recommendations.append(
+            {
+                "kind": "internalise_workbench_capabilities",
+                "datasets": datasets,
+                "rationale": (
+                    f"{by_source['workbench_capabilities']} declared workbench capability "
+                    "unit(s) projected through the no-prose template"
+                ),
+            }
+        )
     spec["training_recommendations"] = recommendations
 
 

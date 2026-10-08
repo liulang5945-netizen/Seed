@@ -21,6 +21,12 @@ VOLATILE_KEYS = frozenset(
     {"seconds", "elapsed", "duration_ms", "started_utc", "started_at", "finished_at"}
 )
 
+#: 出处字段记的是"这张面由哪条命令在哪个提交上取哪一枚档"，不是读数。
+#: ㊵-487 实测：回退面与巩固前**只剩这三条**不同（档路径、档 sha256、git_head——两趟之间
+#: 提交了一次 530b9a37），100 项回答逐位同。⇒ 逐位同比读数，出处差**单独列出来**给人核对，
+#: 既不让它冒充"能力变了"，也不许当作不存在。
+PROVENANCE_KEYS = frozenset({"checkpoint", "identity"})
+
 DRIVEN_DIMENSIONS = ("B", "C", "D", "E", "G")
 
 
@@ -31,32 +37,47 @@ def _load(path: Path, missing: list[str]) -> dict[str, Any] | None:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
-def _strip_volatile(node: Any) -> Any:
-    """递归剥掉易变字段；返回的是可比对的那半。"""
+def _strip_volatile(node: Any, top: bool = False) -> Any:
+    """递归剥掉易变字段（顶层再剥出处字段）；返回的是可比对的那半。"""
 
     if isinstance(node, dict):
-        return {
-            key: _strip_volatile(value) for key, value in node.items() if key not in VOLATILE_KEYS
-        }
+        drop = VOLATILE_KEYS | PROVENANCE_KEYS if top else VOLATILE_KEYS
+        return {key: _strip_volatile(value) for key, value in node.items() if key not in drop}
     if isinstance(node, list):
         return [_strip_volatile(item) for item in node]
     return node
 
 
+def _provenance(report: dict[str, Any]) -> dict[str, Any]:
+    """把被排除的出处字段原样列出，供件里核对"这两张面读的是同一枚模型"。"""
+
+    return {key: report.get(key) for key in sorted(PROVENANCE_KEYS) if key in report}
+
+
 def _cap0_tally(report: dict[str, Any]) -> dict[str, Any]:
-    """CAP-0 的严格命中分子＝件内自带的 `machine_scored_correct`，逐维分账。"""
+    """CAP-0 的严格命中分子＝件内自带的 `machine_scored_correct`，逐维分账。
+
+    **必须先数装载失败**：一项 `load_ok` 不为真的项根本没被模型答过，它的 correct 恒 0，
+    拿这种件读成"能力＝0"就是将仪器缺陷报成结论（㊵-487 候选档不可 load 那次差点踩中）。
+    """
 
     dimensions = report.get("dimensions") or {}
     per_dimension: dict[str, dict[str, int]] = {}
     total_correct = 0
     total_scored = 0
     total_pending = 0
+    load_not_ok = 0
+    items_seen = 0
     for key in DRIVEN_DIMENSIONS:
         block = dimensions.get(key) or {}
         tally = block.get("tally") or {}
         correct = int(tally.get("machine_scored_correct") or 0)
         scored = int(tally.get("machine_scored_items") or 0)
         pending = int(tally.get("pending_human_review_items") or 0)
+        for item in block.get("items") or []:
+            items_seen += 1
+            if item.get("load_ok") is not True:
+                load_not_ok += 1
         per_dimension[key] = {
             "correct": correct,
             "scored": scored,
@@ -73,6 +94,8 @@ def _cap0_tally(report: dict[str, Any]) -> dict[str, Any]:
         "total_correct": total_correct,
         "total_scored": total_scored,
         "pending_human_review": total_pending,
+        "items_seen": items_seen,
+        "load_not_ok": load_not_ok,
     }
 
 
@@ -100,7 +123,9 @@ def judge(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
     cap0_rollback = _load(repo / args.cap0_rollback, missing)
     replay_before = _load(repo / args.replay_before, missing)
     replay_after = _load(repo / args.replay_after, missing)
-    powerup = _load(repo / args.powerup, missing)
+    postcheck = _load(repo / args.postcheck, missing)
+    align = _load(repo / args.align, missing)
+    material = _load(repo / args.material, missing)
 
     if missing:
         return (
@@ -113,20 +138,45 @@ def judge(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
         )
 
     assert cap0_before is not None and cap0_after is not None
-    assert cap0_rollback is not None and powerup is not None
+    assert cap0_rollback is not None
     assert replay_before is not None and replay_after is not None
+    assert postcheck is not None and align is not None and material is not None
 
     before_tally = _cap0_tally(cap0_before)
     after_tally = _cap0_tally(cap0_after)
     rollback_tally = _cap0_tally(cap0_rollback)
 
-    #: G-N2-1 的实证：回退面与巩固前逐位同（剥掉易变字段之后）。
-    comparable_before = json.dumps(_strip_volatile(cap0_before), sort_keys=True)
-    comparable_rollback = json.dumps(_strip_volatile(cap0_rollback), sort_keys=True)
+    #: 面有效性优先于判据：任何一张 CAP-0 面有项没被模型答过（load 失败），这张面就是废的，
+    #: 拿它的 0 去判"能力保持/归零"都是把仪器缺陷报成结论。
+    invalid = {
+        label: tally["load_not_ok"]
+        for label, tally in (
+            ("cap0_before", before_tally),
+            ("cap0_after", after_tally),
+            ("cap0_rollback", rollback_tally),
+        )
+        if tally["load_not_ok"]
+    }
+    if invalid:
+        return (
+            {
+                "verdict": "not_judged_face_invalid",
+                "cap0_load_failures_by_face": invalid,
+                "note": "有项未被模型作答⇒该面不可用；先修装载，再谈判据",
+                "cap0_before": before_tally,
+                "cap0_after": after_tally,
+                "cap0_rollback": rollback_tally,
+            },
+            2,
+        )
+
+    #: G-N2-1 的实证：回退面与巩固前**读数**逐位同（剥掉易变字段与出处字段之后）。
+    comparable_before = json.dumps(_strip_volatile(cap0_before, top=True), sort_keys=True)
+    comparable_rollback = json.dumps(_strip_volatile(cap0_rollback, top=True), sort_keys=True)
     g_n2_1_identical = comparable_before == comparable_rollback
 
-    #: 动态范围：巩固前后如果整张面逐位同，说明这张量不动权重变化——不是"保持住了"。
-    comparable_after = json.dumps(_strip_volatile(cap0_after), sort_keys=True)
+    #: 动态范围：巩固前后如果整张面读数逐位同，说明这把尺量不动权重变化——不是"保持住了"。
+    comparable_after = json.dumps(_strip_volatile(cap0_after, top=True), sort_keys=True)
     ruler_usable = comparable_before != comparable_after
 
     j_n2a_cap0 = after_tally["total_correct"] >= before_tally["total_correct"] - 1
@@ -154,15 +204,36 @@ def judge(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
     unpaired = sorted(set(arms_before) ^ set(arms_after))
     j_n2a_replay = bool(shared) and hits_dropped == 0 and formed_dropped == 0
 
-    night = powerup.get("night_selection") or {}
+    files = postcheck.get("files") or {}
+    tensor = postcheck.get("tensor_delta") or {}
+    mother = files.get("mother") or {}
+    candidate = files.get("candidate") or {}
+    rollback = files.get("rollback") or {}
+    #: 通电的"改了权重"与"能回退"都改由磁盘三档实测（v1 的内存摘要位随那次崩溃一起丢了）。
+    persistence = {
+        "mother_disk_load_ok": mother.get("disk_load_ok"),
+        "candidate_disk_load_ok": candidate.get("disk_load_ok"),
+        "rollback_disk_load_ok": rollback.get("disk_load_ok"),
+        "candidate_refusal": candidate.get("disk_load_error"),
+        "rollback_digest_equals_mother": rollback.get("digest") == mother.get("digest"),
+        "rollback_tensors_changed": tensor.get("rollback", {}).get("tensors_changed"),
+        "candidate_tensors_changed": tensor.get("candidate", {}).get("tensors_changed"),
+        "align_pass": align.get("align_pass"),
+        "aligned_tensors_differing": (align.get("tensor_check") or {}).get("tensors_differing"),
+        "treated_faces_read_on": "seed_n2_candidate_aligned_20261008.pt",
+    }
     payload = {
-        "format": "taiji-n2-face-verdict-v1",
+        "format": "taiji-n2-face-verdict-v2",
         "prereg": "plans/reference/PLAN-N2-01_consolidation_powerup_prereg_20261007.md#4ter",
         "cap0_before": before_tally,
         "cap0_after": after_tally,
         "cap0_rollback": rollback_tally,
         "g_n2_1_rollback_identical": g_n2_1_identical,
         "volatile_keys_stripped": sorted(VOLATILE_KEYS),
+        "provenance_keys_excluded": sorted(PROVENANCE_KEYS),
+        "provenance_before": _provenance(cap0_before),
+        "provenance_rollback": _provenance(cap0_rollback),
+        "provenance_after": _provenance(cap0_after),
         "cap0_ruler_usable": ruler_usable,
         "j_n2a_cap0": j_n2a_cap0,
         "replay_arms_compared": replay_rows,
@@ -170,44 +241,62 @@ def judge(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
         "replay_arms_dropped_hits": hits_dropped,
         "replay_arms_dropped_formed": formed_dropped,
         "j_n2a_replay": j_n2a_replay,
+        "persistence": persistence,
         "stop_face": {
             "status": "unverified",
             "reason": "×24 停摆面的主列由配套计数仪产出，本判读器未把它接进来；"
             "未接入的面不得代答成没跌破（§4ter 更正三第②条）",
         },
-        "powerup": {
-            "weight_changed": powerup.get("weight_changed_by_powerup"),
-            "restore_matches_mother": powerup.get("restore_matches_mother"),
-            "rollback_disk_matches_mother": powerup.get("rollback_disk_matches_mother"),
-            "fail_closed_pass": powerup.get("fail_closed_pass"),
-            "night_pool_size": night.get("pool_size"),
-            "night_k": night.get("k"),
-            "scheduler_agrees_with_weighted_sort": night.get("scheduler_agrees_with_weighted_sort"),
-            "material_treated": powerup.get("material_treated"),
-            "material_control": powerup.get("material_control"),
-            "j_n2b": powerup.get("j_n2b"),
+        "material": {
+            "night_pool_size": material.get("night_pool_size"),
+            "night_k": material.get("night_k"),
+            "scheduler_agrees_with_weighted_sort": material.get(
+                "scheduler_agrees_with_weighted_sort"
+            ),
+            "material_treated": material.get("material_treated"),
+            "material_control": material.get("material_control"),
+            "j_n2b": material.get("j_n2b"),
+            "treated_digest": material.get("treated_digest"),
+            "control_digest": material.get("control_digest"),
         },
     }
 
+    g_n2_1_disk = bool(
+        persistence["rollback_disk_load_ok"]
+        and persistence["rollback_digest_equals_mother"]
+        and persistence["rollback_tensors_changed"] == 0
+    )
+    weight_moved = bool(
+        (persistence["candidate_tensors_changed"] or 0) > 0
+        and persistence["align_pass"] is True
+        and persistence["aligned_tensors_differing"] == 0
+    )
+    j_n2b = bool(material.get("j_n2b") is True)
     closed = bool(
-        payload["powerup"]["fail_closed_pass"]
+        g_n2_1_disk
+        and weight_moved
         and g_n2_1_identical
         and ruler_usable
         and j_n2a_cap0
         and j_n2a_replay
-        and payload["powerup"]["j_n2b"]
+        and j_n2b
     )
+    payload["g_n2_1_disk_identity"] = g_n2_1_disk
+    payload["weight_moved_by_powerup"] = weight_moved
     payload["j_n2a"] = bool(j_n2a_cap0 and j_n2a_replay)
+    payload["j_n2b"] = j_n2b
     payload["unit_closed"] = closed
     payload["blocking_terms"] = [
         name
         for name, value in (
-            ("g_n2_1_rollback_identical", g_n2_1_identical),
+            ("g_n2_1_disk_identity", g_n2_1_disk),
+            ("weight_moved_by_powerup", weight_moved),
+            ("g_n2_1_rollback_face_identical", g_n2_1_identical),
             ("cap0_ruler_usable", ruler_usable),
             ("j_n2a_cap0", j_n2a_cap0),
             ("j_n2a_replay", j_n2a_replay),
-            ("j_n2b", bool(payload["powerup"]["j_n2b"])),
-            ("stop_face_unverified", True),
+            ("j_n2b", j_n2b),
+            ("stop_face_unverified", False),
         )
         if not value
     ]
@@ -222,7 +311,9 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--cap0-rollback", default="reports/taiji_n2_cap0_rollback_20261008.json")
     parser.add_argument("--replay-before", default="reports/taiji_n2_replay24_before_20261008.json")
     parser.add_argument("--replay-after", default="reports/taiji_n2_replay24_after_20261008.json")
-    parser.add_argument("--powerup", default="reports/taiji_n2_powerup_20261008.json")
+    parser.add_argument("--postcheck", default="reports/taiji_n2_postcheck_20261008.json")
+    parser.add_argument("--align", default="reports/taiji_n2_align_20261008.json")
+    parser.add_argument("--material", default="reports/taiji_n2_material_20261008.json")
     parser.add_argument("--out", default="reports/taiji_n2_face_verdict_20261008.json")
     args = parser.parse_args(argv)
 

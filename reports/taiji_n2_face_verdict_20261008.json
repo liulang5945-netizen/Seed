@@ -1,0 +1,251 @@
+{
+  "format": "taiji-n2-face-verdict-v2",
+  "prereg": "plans/reference/PLAN-N2-01_consolidation_powerup_prereg_20261007.md#4ter",
+  "cap0_before": {
+    "checkpoint": "checkpoints\\seed_a31self_with_circuit.pt",
+    "eval_set": "plans\\manifests\\cap0_eval_set_v2.json",
+    "per_dimension": {
+      "B": {
+        "correct": 0,
+        "scored": 0,
+        "pending_human_review": 20,
+        "item_count": 20
+      },
+      "C": {
+        "correct": 2,
+        "scored": 14,
+        "pending_human_review": 6,
+        "item_count": 20
+      },
+      "D": {
+        "correct": 6,
+        "scored": 16,
+        "pending_human_review": 4,
+        "item_count": 20
+      },
+      "E": {
+        "correct": 1,
+        "scored": 20,
+        "pending_human_review": 0,
+        "item_count": 20
+      },
+      "G": {
+        "correct": 0,
+        "scored": 0,
+        "pending_human_review": 20,
+        "item_count": 20
+      }
+    },
+    "total_correct": 9,
+    "total_scored": 50,
+    "pending_human_review": 50,
+    "items_seen": 100,
+    "load_not_ok": 0
+  },
+  "cap0_after": {
+    "checkpoint": "checkpoints\\seed_n2_candidate_aligned_20261008.pt",
+    "eval_set": "plans\\manifests\\cap0_eval_set_v2.json",
+    "per_dimension": {
+      "B": {
+        "correct": 0,
+        "scored": 0,
+        "pending_human_review": 20,
+        "item_count": 20
+      },
+      "C": {
+        "correct": 2,
+        "scored": 14,
+        "pending_human_review": 6,
+        "item_count": 20
+      },
+      "D": {
+        "correct": 9,
+        "scored": 16,
+        "pending_human_review": 4,
+        "item_count": 20
+      },
+      "E": {
+        "correct": 1,
+        "scored": 20,
+        "pending_human_review": 0,
+        "item_count": 20
+      },
+      "G": {
+        "correct": 0,
+        "scored": 0,
+        "pending_human_review": 20,
+        "item_count": 20
+      }
+    },
+    "total_correct": 12,
+    "total_scored": 50,
+    "pending_human_review": 50,
+    "items_seen": 100,
+    "load_not_ok": 0
+  },
+  "cap0_rollback": {
+    "checkpoint": "checkpoints\\seed_n2_rollback_20261008.pt",
+    "eval_set": "plans\\manifests\\cap0_eval_set_v2.json",
+    "per_dimension": {
+      "B": {
+        "correct": 0,
+        "scored": 0,
+        "pending_human_review": 20,
+        "item_count": 20
+      },
+      "C": {
+        "correct": 2,
+        "scored": 14,
+        "pending_human_review": 6,
+        "item_count": 20
+      },
+      "D": {
+        "correct": 6,
+        "scored": 16,
+        "pending_human_review": 4,
+        "item_count": 20
+      },
+      "E": {
+        "correct": 1,
+        "scored": 20,
+        "pending_human_review": 0,
+        "item_count": 20
+      },
+      "G": {
+        "correct": 0,
+        "scored": 0,
+        "pending_human_review": 20,
+        "item_count": 20
+      }
+    },
+    "total_correct": 9,
+    "total_scored": 50,
+    "pending_human_review": 50,
+    "items_seen": 100,
+    "load_not_ok": 0
+  },
+  "g_n2_1_rollback_identical": true,
+  "volatile_keys_stripped": [
+    "duration_ms",
+    "elapsed",
+    "finished_at",
+    "seconds",
+    "started_at",
+    "started_utc"
+  ],
+  "provenance_keys_excluded": [
+    "checkpoint",
+    "identity"
+  ],
+  "provenance_before": {
+    "checkpoint": "checkpoints\\seed_a31self_with_circuit.pt",
+    "identity": {
+      "git_head": "726a0a7517688d68cae37205c7277bac37e66853",
+      "checkpoint_sha256": "d6169a358eaee6d194d4795e3167a7bcbb42dfde57b92aa1199bcebbed89699b",
+      "eval_set_sha256": "538835f6627a87c3faba84dbfd1138b5d8296a5dff37870bd258fdf2a3979c27"
+    }
+  },
+  "provenance_rollback": {
+    "checkpoint": "checkpoints\\seed_n2_rollback_20261008.pt",
+    "identity": {
+      "git_head": "530b9a37e684d701f889f1617b1c48645953ba40",
+      "checkpoint_sha256": "4cb983c2a903f10359073adcee2203f42cf8023467cd7f55c73f314617a9d96f",
+      "eval_set_sha256": "538835f6627a87c3faba84dbfd1138b5d8296a5dff37870bd258fdf2a3979c27"
+    }
+  },
+  "provenance_after": {
+    "checkpoint": "checkpoints\\seed_n2_candidate_aligned_20261008.pt",
+    "identity": {
+      "git_head": "530b9a37e684d701f889f1617b1c48645953ba40",
+      "checkpoint_sha256": "1aa97ef920872b37c18ad60f0110f22005131035d3582321affa8dec53dc00c9",
+      "eval_set_sha256": "538835f6627a87c3faba84dbfd1138b5d8296a5dff37870bd258fdf2a3979c27"
+    }
+  },
+  "cap0_ruler_usable": true,
+  "j_n2a_cap0": true,
+  "replay_arms_compared": {
+    "0.0": {
+      "hits_before": 5,
+      "hits_after": 6,
+      "hits_delta": 1,
+      "formed_before": 24,
+      "formed_after": 24,
+      "formed_delta": 0
+    },
+    "0.5": {
+      "hits_before": 5,
+      "hits_after": 5,
+      "hits_delta": 0,
+      "formed_before": 24,
+      "formed_after": 24,
+      "formed_delta": 0
+    },
+    "1.0": {
+      "hits_before": 6,
+      "hits_after": 6,
+      "hits_delta": 0,
+      "formed_before": 24,
+      "formed_after": 24,
+      "formed_delta": 0
+    },
+    "2.0": {
+      "hits_before": 6,
+      "hits_after": 6,
+      "hits_delta": 0,
+      "formed_before": 25,
+      "formed_after": 23,
+      "formed_delta": -2
+    }
+  },
+  "replay_arms_unpaired": [],
+  "replay_arms_dropped_hits": 0,
+  "replay_arms_dropped_formed": 1,
+  "j_n2a_replay": false,
+  "persistence": {
+    "mother_disk_load_ok": true,
+    "candidate_disk_load_ok": false,
+    "rollback_disk_load_ok": true,
+    "candidate_refusal": "ValueError: native cognitive state is out of sync with kernel state",
+    "rollback_digest_equals_mother": true,
+    "rollback_tensors_changed": 0,
+    "candidate_tensors_changed": 68,
+    "align_pass": true,
+    "aligned_tensors_differing": 0,
+    "treated_faces_read_on": "seed_n2_candidate_aligned_20261008.pt"
+  },
+  "stop_face": {
+    "status": "unverified",
+    "reason": "×24 停摆面的主列由配套计数仪产出，本判读器未把它接进来；未接入的面不得代答成没跌破（§4ter 更正三第②条）"
+  },
+  "material": {
+    "night_pool_size": 200,
+    "night_k": 8,
+    "scheduler_agrees_with_weighted_sort": true,
+    "material_treated": {
+      "items": 8.0,
+      "quality_mean": -14.462835482895247,
+      "accuracy_mean": 0.05277053874437183,
+      "mean_surprise_mean": 14.38901548988081
+    },
+    "material_control": {
+      "items": 8.0,
+      "quality_mean": -14.279099560882358,
+      "accuracy_mean": 0.05959910885604747,
+      "mean_surprise_mean": 14.210454245313791
+    },
+    "j_n2b": false,
+    "treated_digest": "b8438d01d31ea7b92693ed59897e30a3e3862dd5b3fd8bc0f4cd119dce20974d",
+    "control_digest": "3e00bafc6298ac8462c352b4bfd31d4fbbd8c79ff3cafd3c95f867ecd7243060"
+  },
+  "g_n2_1_disk_identity": true,
+  "weight_moved_by_powerup": true,
+  "j_n2a": false,
+  "j_n2b": false,
+  "unit_closed": false,
+  "blocking_terms": [
+    "j_n2a_replay",
+    "j_n2b",
+    "stop_face_unverified"
+  ],
+  "verdict": "not_closed"
+}

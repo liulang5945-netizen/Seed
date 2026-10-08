@@ -1,0 +1,53 @@
+{
+  "format": "taiji-n2-postcheck-v1",
+  "prereg": "plans/reference/PLAN-N2-01_consolidation_powerup_prereg_20261007.md#4ter",
+  "files": {
+    "mother": {
+      "bytes": 12667823,
+      "metadata_tick": 273,
+      "cognitive_state_tick": 273,
+      "cognitive_state_episode_id": "learn-0",
+      "kernel_state_tick": 273,
+      "kernel_state_episode_id": "learn-0",
+      "disk_load_ok": true,
+      "digest": "3e00bafc6298ac8462c352b4bfd31d4fbbd8c79ff3cafd3c95f867ecd7243060"
+    },
+    "candidate": {
+      "bytes": 12443641,
+      "metadata_tick": 92,
+      "cognitive_state_tick": 66,
+      "cognitive_state_episode_id": "sleep-experience",
+      "kernel_state_tick": 92,
+      "kernel_state_episode_id": "sleep-experience",
+      "disk_load_ok": false,
+      "digest": null,
+      "disk_load_error": "ValueError: native cognitive state is out of sync with kernel state"
+    },
+    "rollback": {
+      "bytes": 12669539,
+      "metadata_tick": 273,
+      "cognitive_state_tick": 273,
+      "cognitive_state_episode_id": "learn-0",
+      "kernel_state_tick": 273,
+      "kernel_state_episode_id": "learn-0",
+      "disk_load_ok": true,
+      "digest": "3e00bafc6298ac8462c352b4bfd31d4fbbd8c79ff3cafd3c95f867ecd7243060"
+    }
+  },
+  "tensor_delta": {
+    "candidate": {
+      "tensors_compared": 202,
+      "tensors_only_in_one": 2,
+      "tensors_changed": 68,
+      "changed_ratio": 0.336634,
+      "max_abs_element_delta": 129.0
+    },
+    "rollback": {
+      "tensors_compared": 202,
+      "tensors_only_in_one": 0,
+      "tensors_changed": 0,
+      "changed_ratio": 0.0,
+      "max_abs_element_delta": 0.0
+    }
+  }
+}

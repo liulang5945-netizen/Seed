@@ -5522,7 +5522,7 @@ export const TYPE_API: readonly TypeApiEntry[] = [
   },
   {
     name: 'LifePassReportView',
-    declaration: 'export interface LifePassReportView {\n    readonly reason: string;\n    readonly specReason: string;\n    readonly durationMs: number;\n    readonly weaknesses: readonly string[];\n    readonly notes: readonly string[];\n}',
+    declaration: 'export interface LifePassReportView {\n    readonly reason: string;\n    readonly specReason: string;\n    readonly durationMs: number;\n    readonly weaknesses: readonly string[];\n    readonly notes: readonly string[];\n    readonly workbenchCapabilities: number;\n}',
   },
   {
     name: 'LifeProgressView',

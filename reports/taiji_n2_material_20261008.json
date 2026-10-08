@@ -1,0 +1,2118 @@
+{
+  "format": "taiji-n2-material-v1",
+  "prereg": "plans/reference/PLAN-N2-01_consolidation_powerup_prereg_20261007.md#4ter",
+  "pass_id": "27a34233e581",
+  "pass_reason": "n2-powerup-1",
+  "material_records": 200,
+  "night_pool_size": 200,
+  "night_k": 8,
+  "scheduler_agrees_with_weighted_sort": true,
+  "selected": [
+    {
+      "sha16": "9311298d1f0fdc84",
+      "chars": 1751,
+      "preview": "问：Current runtime context. This snapshot supersedes earlier runtime-context snapshots.\n\nCu"
+    },
+    {
+      "sha16": "8ccd5ef2e0150d3e",
+      "chars": 1610,
+      "preview": "问：Current runtime context. This snapshot supersedes earlier runtime-context snapshots.\n\nCu"
+    },
+    {
+      "sha16": "8e54f205dde831f3",
+      "chars": 1075,
+      "preview": "问：Current runtime context. This snapshot supersedes earlier runtime-context snapshots.\n\nCu"
+    },
+    {
+      "sha16": "0bff9fae839914d5",
+      "chars": 1090,
+      "preview": "问：Current runtime context. This snapshot supersedes earlier runtime-context snapshots.\n\nCu"
+    },
+    {
+      "sha16": "afe38a60ef517546",
+      "chars": 512,
+      "preview": "问：<skill_content name=\"user-invoke-demo\">\n<skill_resources>\nBase directory for this skill:"
+    },
+    {
+      "sha16": "1d61ba3c92043291",
+      "chars": 1117,
+      "preview": "问：Current runtime context. This snapshot supersedes earlier runtime-context snapshots.\n\nCu"
+    },
+    {
+      "sha16": "552a8e69def1f067",
+      "chars": 512,
+      "preview": "问：<skill_content name=\"user-invoke-demo\">\n<skill_resources>\nBase directory for this skill:"
+    },
+    {
+      "sha16": "8a51a48a7eeef018",
+      "chars": 1117,
+      "preview": "问：Current runtime context. This snapshot supersedes earlier runtime-context snapshots.\n\nCu"
+    }
+  ],
+  "surprise_modulation": {
+    "selected_before_modulation": [
+      {
+        "sha16": "9311298d1f0fdc84",
+        "chars": 1751,
+        "preview": "问：Current runtime context. This snapshot supersedes earlier runtime-context snapshots.\n\nCu"
+      },
+      {
+        "sha16": "8e54f205dde831f3",
+        "chars": 1075,
+        "preview": "问：Current runtime context. This snapshot supersedes earlier runtime-context snapshots.\n\nCu"
+      },
+      {
+        "sha16": "552a8e69def1f067",
+        "chars": 512,
+        "preview": "问：<skill_content name=\"user-invoke-demo\">\n<skill_resources>\nBase directory for this skill:"
+      },
+      {
+        "sha16": "afe38a60ef517546",
+        "chars": 512,
+        "preview": "问：<skill_content name=\"user-invoke-demo\">\n<skill_resources>\nBase directory for this skill:"
+      },
+      {
+        "sha16": "a2d2a9b40f6ff65f",
+        "chars": 2507,
+        "preview": "问：Current runtime context. This snapshot supersedes earlier runtime-context snapshots.\n\nCu"
+      },
+      {
+        "sha16": "e0519831b3afdfbe",
+        "chars": 2507,
+        "preview": "问：Current runtime context. This snapshot supersedes earlier runtime-context snapshots.\n\nCu"
+      },
+      {
+        "sha16": "8ccd5ef2e0150d3e",
+        "chars": 1610,
+        "preview": "问：Current runtime context. This snapshot supersedes earlier runtime-context snapshots.\n\nCu"
+      },
+      {
+        "sha16": "db483a97319cbc34",
+        "chars": 885,
+        "preview": "问：Current runtime context. This snapshot supersedes earlier runtime-context snapshots.\n\nCu"
+      }
+    ],
+    "quality_mean": -13.005577973039408,
+    "mean_surprise_mean": 12.945961463443615,
+    "rows": [
+      {
+        "sha16": "8f9d0302cdf9a17b",
+        "bytes": 782,
+        "quality": -12.68413809924678,
+        "quality_without_surprise": -0.05697398711410884,
+        "mean_surprise": 12.627164112132672,
+        "mean_error_norm": 0.36856091009326475,
+        "mean_confidence": 0.0,
+        "accuracy": 0.07033248081841433
+      },
+      {
+        "sha16": "3c37e7cd711c4a31",
+        "bytes": 782,
+        "quality": -12.654327364764649,
+        "quality_without_surprise": -0.05632982501621342,
+        "mean_surprise": 12.597997539748436,
+        "mean_error_norm": 0.3685418064587178,
+        "mean_confidence": 0.0,
+        "accuracy": 0.07161125319693094
+      },
+      {
+        "sha16": "13848ecea0a2f25e",
+        "bytes": 536,
+        "quality": -12.79461176105295,
+        "quality_without_surprise": -0.059612535172140824,
+        "mean_surprise": 12.73499922588081,
+        "mean_error_norm": 0.3727784988975205,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06716417910447761
+      },
+      {
+        "sha16": "8ddca75d0c6bdaea",
+        "bytes": 536,
+        "quality": -12.830065760435033,
+        "quality_without_surprise": -0.06053210046194302,
+        "mean_surprise": 12.76953365997309,
+        "mean_error_norm": 0.3727254167731476,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06529850746268656
+      },
+      {
+        "sha16": "23f3f7cae4ea687c",
+        "bytes": 782,
+        "quality": -12.689585018376727,
+        "quality_without_surprise": -0.05633214302795864,
+        "mean_surprise": 12.633252875348768,
+        "mean_error_norm": 0.3685510785056954,
+        "mean_confidence": 0.0,
+        "accuracy": 0.07161125319693094
+      },
+      {
+        "sha16": "0593304b4778945c",
+        "bytes": 782,
+        "quality": -12.594228849957034,
+        "quality_without_surprise": -0.056976963258060564,
+        "mean_surprise": 12.537251886698973,
+        "mean_error_norm": 0.36857281466906777,
+        "mean_confidence": 0.0,
+        "accuracy": 0.07033248081841433
+      },
+      {
+        "sha16": "5787aa97dc27a85c",
+        "bytes": 536,
+        "quality": -12.912977848183226,
+        "quality_without_surprise": -0.060531483370366956,
+        "mean_surprise": 12.85244636481286,
+        "mean_error_norm": 0.3727229484068438,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06529850746268656
+      },
+      {
+        "sha16": "90838da7084c6eee",
+        "bytes": 536,
+        "quality": -12.867685762075487,
+        "quality_without_surprise": -0.06054060989353971,
+        "mean_surprise": 12.807145152181947,
+        "mean_error_norm": 0.3727594544995296,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06529850746268656
+      },
+      {
+        "sha16": "308c92670f0a9ba8",
+        "bytes": 602,
+        "quality": -12.640801570899136,
+        "quality_without_surprise": -0.06073370744871376,
+        "mean_surprise": 12.580067863450422,
+        "mean_error_norm": 0.3725029361071497,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06478405315614617
+      },
+      {
+        "sha16": "f78e189f82237261",
+        "bytes": 782,
+        "quality": -12.7144530585717,
+        "quality_without_surprise": -0.05696610805775215,
+        "mean_surprise": 12.657486950513947,
+        "mean_error_norm": 0.368529393867838,
+        "mean_confidence": 0.0,
+        "accuracy": 0.07033248081841433
+      },
+      {
+        "sha16": "8382b2ee43146480",
+        "bytes": 536,
+        "quality": -12.709725405574021,
+        "quality_without_surprise": -0.05959159972251271,
+        "mean_surprise": 12.650133805851508,
+        "mean_error_norm": 0.3726947570990092,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06716417910447761
+      },
+      {
+        "sha16": "3fff49f36f4d597d",
+        "bytes": 536,
+        "quality": -12.833355739659668,
+        "quality_without_surprise": -0.05958126980123701,
+        "mean_surprise": 12.77377446985843,
+        "mean_error_norm": 0.3726534374139043,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06716417910447761
+      },
+      {
+        "sha16": "d8d43ec046c48892",
+        "bytes": 526,
+        "quality": -12.617710010883904,
+        "quality_without_surprise": -0.05983764201939401,
+        "mean_surprise": 12.55787236886451,
+        "mean_error_norm": 0.37243041598632154,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06653992395437262
+      },
+      {
+        "sha16": "151963ee3df25f6d",
+        "bytes": 589,
+        "quality": -13.320247628043186,
+        "quality_without_surprise": -0.06093489744274905,
+        "mean_surprise": 13.259312730600437,
+        "mean_error_norm": 0.37277184783551,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06451612903225806
+      },
+      {
+        "sha16": "76c82afa873ff306",
+        "bytes": 536,
+        "quality": -12.903932596800592,
+        "quality_without_surprise": -0.06051620429715676,
+        "mean_surprise": 12.843416392503435,
+        "mean_error_norm": 0.37266183211400067,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06529850746268656
+      },
+      {
+        "sha16": "9cb1503064663771",
+        "bytes": 537,
+        "quality": -12.722569335005169,
+        "quality_without_surprise": -0.06068807765657347,
+        "mean_surprise": 12.661881257348595,
+        "mean_error_norm": 0.37310612813095106,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06517690875232775
+      },
+      {
+        "sha16": "afe38a60ef517546",
+        "bytes": 520,
+        "quality": -13.929741491401398,
+        "quality_without_surprise": -0.0735409475132407,
+        "mean_surprise": 13.856200543888157,
+        "mean_error_norm": 0.37877917466834427,
+        "mean_confidence": 0.0,
+        "accuracy": 0.04230769230769231
+      },
+      {
+        "sha16": "a75f2adbc3512d11",
+        "bytes": 2069,
+        "quality": -13.014907858865397,
+        "quality_without_surprise": -0.06361099263349601,
+        "mean_surprise": 12.951296866231901,
+        "mean_error_norm": 0.3607755316746345,
+        "mean_confidence": 0.0,
+        "accuracy": 0.053165780570323826
+      },
+      {
+        "sha16": "d864d0d6abc5f2f9",
+        "bytes": 782,
+        "quality": -12.614676343407599,
+        "quality_without_surprise": -0.05696601614456753,
+        "mean_surprise": 12.557710327263031,
+        "mean_error_norm": 0.3685290262151015,
+        "mean_confidence": 0.0,
+        "accuracy": 0.07033248081841433
+      },
+      {
+        "sha16": "6c9b1c46514f0a74",
+        "bytes": 563,
+        "quality": -12.853738971510563,
+        "quality_without_surprise": -0.057493459171512384,
+        "mean_surprise": 12.79624551233905,
+        "mean_error_norm": 0.3720697514284989,
+        "mean_confidence": 0.0,
+        "accuracy": 0.07104795737122557
+      },
+      {
+        "sha16": "dbbe709ef336bbbc",
+        "bytes": 301,
+        "quality": -12.899376679377147,
+        "quality_without_surprise": -0.06120609185852821,
+        "mean_surprise": 12.838170587518619,
+        "mean_error_norm": 0.37771473288261964,
+        "mean_confidence": 0.0,
+        "accuracy": 0.0664451827242525
+      },
+      {
+        "sha16": "433c7aab51e79aef",
+        "bytes": 293,
+        "quality": -12.763092632792032,
+        "quality_without_surprise": -0.06048403087005383,
+        "mean_surprise": 12.702608601921979,
+        "mean_error_norm": 0.37845489481127353,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06825938566552901
+      },
+      {
+        "sha16": "26841291d6be7eec",
+        "bytes": 317,
+        "quality": -13.113956841107091,
+        "quality_without_surprise": -0.059607147777171576,
+        "mean_surprise": 13.05434969332992,
+        "mean_error_norm": 0.3772298529383394,
+        "mean_confidence": 0.0,
+        "accuracy": 0.0694006309148265
+      },
+      {
+        "sha16": "2c7b9e4904456909",
+        "bytes": 332,
+        "quality": -12.614508553284512,
+        "quality_without_surprise": -0.059410034238798204,
+        "mean_surprise": 12.555098519045714,
+        "mean_error_norm": 0.3761943538226612,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06927710843373494
+      },
+      {
+        "sha16": "4ad3b22993f57623",
+        "bytes": 309,
+        "quality": -12.907040163563003,
+        "quality_without_surprise": -0.06206329491980789,
+        "mean_surprise": 12.844976868643196,
+        "mean_error_norm": 0.37770301786693655,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06472491909385113
+      },
+      {
+        "sha16": "75a76f799c1cfd63",
+        "bytes": 560,
+        "quality": -12.919871174043744,
+        "quality_without_surprise": -0.06095281273095132,
+        "mean_surprise": 12.858918361312792,
+        "mean_error_norm": 0.3723826794952315,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06428571428571428
+      },
+      {
+        "sha16": "7797879eea620537",
+        "bytes": 568,
+        "quality": -12.827218612291258,
+        "quality_without_surprise": -0.05881024262235357,
+        "mean_surprise": 12.768408369668904,
+        "mean_error_norm": 0.37256491415138676,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06866197183098592
+      },
+      {
+        "sha16": "7745a26ec5fe6b2e",
+        "bytes": 782,
+        "quality": -12.678194379711734,
+        "quality_without_surprise": -0.05696363207101207,
+        "mean_surprise": 12.621230747640722,
+        "mean_error_norm": 0.36851948992087624,
+        "mean_confidence": 0.0,
+        "accuracy": 0.07033248081841433
+      },
+      {
+        "sha16": "987754b8afd97d41",
+        "bytes": 557,
+        "quality": -12.833438238253734,
+        "quality_without_surprise": -0.060920536133302505,
+        "mean_surprise": 12.772517702120432,
+        "mean_error_norm": 0.372946058357269,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06463195691202872
+      },
+      {
+        "sha16": "87bd3ddc7207367a",
+        "bytes": 557,
+        "quality": -12.937487504621101,
+        "quality_without_surprise": -0.06093423365509665,
+        "mean_surprise": 12.876553270966005,
+        "mean_error_norm": 0.373000848444442,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06463195691202872
+      },
+      {
+        "sha16": "ab296209e0201241",
+        "bytes": 557,
+        "quality": -12.911152441901972,
+        "quality_without_surprise": -0.060915330890662034,
+        "mean_surprise": 12.85023711101131,
+        "mean_error_norm": 0.37292523738670513,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06463195691202872
+      },
+      {
+        "sha16": "cf82978e1c2d5877",
+        "bytes": 557,
+        "quality": -12.971462170219784,
+        "quality_without_surprise": -0.060920501307409225,
+        "mean_surprise": 12.910541668912375,
+        "mean_error_norm": 0.37294591905369157,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06463195691202872
+      },
+      {
+        "sha16": "f3154ab4bbf4a1a9",
+        "bytes": 557,
+        "quality": -12.946425563915161,
+        "quality_without_surprise": -0.05999537662480492,
+        "mean_surprise": 12.886430187290356,
+        "mean_error_norm": 0.3728360845961646,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06642728904847396
+      },
+      {
+        "sha16": "0f12d2506d330a8e",
+        "bytes": 557,
+        "quality": -12.869401525053682,
+        "quality_without_surprise": -0.060918265808576066,
+        "mean_surprise": 12.808483259245106,
+        "mean_error_norm": 0.37293697705836265,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06463195691202872
+      },
+      {
+        "sha16": "df88a1b0a7aec115",
+        "bytes": 530,
+        "quality": -12.726694749373035,
+        "quality_without_surprise": -0.059244842975365586,
+        "mean_surprise": 12.66744990639767,
+        "mean_error_norm": 0.37282842850523473,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06792452830188679
+      },
+      {
+        "sha16": "74cfe76f88d2b657",
+        "bytes": 1704,
+        "quality": -13.851544689140434,
+        "quality_without_surprise": -0.05691762797222033,
+        "mean_surprise": 13.794627061168214,
+        "mean_error_norm": 0.4025531409968655,
+        "mean_confidence": 0.0,
+        "accuracy": 0.08744131455399061
+      },
+      {
+        "sha16": "4c2d3c1c4f02c90d",
+        "bytes": 547,
+        "quality": -12.792806594868132,
+        "quality_without_surprise": -0.060404359649322004,
+        "mean_surprise": 12.73240223521881,
+        "mean_error_norm": 0.37324449527005,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06581352833638025
+      },
+      {
+        "sha16": "e5296971f87ce371",
+        "bytes": 558,
+        "quality": -13.082402397552576,
+        "quality_without_surprise": -0.06098806615083063,
+        "mean_surprise": 13.021414331401745,
+        "mean_error_norm": 0.37298452266784143,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06451612903225806
+      },
+      {
+        "sha16": "1940b8d41f85de33",
+        "bytes": 782,
+        "quality": -12.575174889862769,
+        "quality_without_surprise": -0.05633074966220697,
+        "mean_surprise": 12.518844140200562,
+        "mean_error_norm": 0.3685455050426915,
+        "mean_confidence": 0.0,
+        "accuracy": 0.07161125319693094
+      },
+      {
+        "sha16": "d8d19a89557020df",
+        "bytes": 782,
+        "quality": -12.570457635236172,
+        "quality_without_surprise": -0.05697924615477312,
+        "mean_surprise": 12.5134783890814,
+        "mean_error_norm": 0.36858194625592267,
+        "mean_confidence": 0.0,
+        "accuracy": 0.07033248081841433
+      },
+      {
+        "sha16": "e386437c7a37bb9b",
+        "bytes": 536,
+        "quality": -12.915430951525297,
+        "quality_without_surprise": -0.0596284562877063,
+        "mean_surprise": 12.85580249523759,
+        "mean_error_norm": 0.3728421833597832,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06716417910447761
+      },
+      {
+        "sha16": "eab287db715d6063",
+        "bytes": 668,
+        "quality": -12.587646068298739,
+        "quality_without_surprise": -0.05247806958295875,
+        "mean_surprise": 12.53516799871578,
+        "mean_error_norm": 0.37158892503841995,
+        "mean_confidence": 0.0,
+        "accuracy": 0.08083832335329341
+      },
+      {
+        "sha16": "3a590b8081b44b7b",
+        "bytes": 668,
+        "quality": -12.543916024292399,
+        "quality_without_surprise": -0.052457491192257066,
+        "mean_surprise": 12.491458533100142,
+        "mean_error_norm": 0.37150661147561737,
+        "mean_confidence": 0.0,
+        "accuracy": 0.08083832335329341
+      },
+      {
+        "sha16": "2cbaaa5871c2df62",
+        "bytes": 719,
+        "quality": -12.83606214715874,
+        "quality_without_surprise": -0.060632220825354466,
+        "mean_surprise": 12.775429926333386,
+        "mean_error_norm": 0.37326601821101113,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06536856745479833
+      },
+      {
+        "sha16": "fcedb7e04ae8f678",
+        "bytes": 544,
+        "quality": -12.89718886358336,
+        "quality_without_surprise": -0.061153450365045714,
+        "mean_surprise": 12.836035413218314,
+        "mean_error_norm": 0.37329027204841786,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06433823529411764
+      },
+      {
+        "sha16": "c6070e6a3cef09da",
+        "bytes": 536,
+        "quality": -12.798459493556829,
+        "quality_without_surprise": -0.05960452519781434,
+        "mean_surprise": 12.738854968359014,
+        "mean_error_norm": 0.3727464590002133,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06716417910447761
+      },
+      {
+        "sha16": "0f6bdb2f8ef47434",
+        "bytes": 617,
+        "quality": -12.444000067439076,
+        "quality_without_surprise": -0.055206889066667486,
+        "mean_surprise": 12.388793178372408,
+        "mean_error_norm": 0.37317763730395037,
+        "mean_confidence": 0.0,
+        "accuracy": 0.07617504051863858
+      },
+      {
+        "sha16": "16704d8ef5375184",
+        "bytes": 541,
+        "quality": -12.751769947417628,
+        "quality_without_surprise": -0.06000114814497515,
+        "mean_surprise": 12.691768799272653,
+        "mean_error_norm": 0.373091468735171,
+        "mean_confidence": 0.0,
+        "accuracy": 0.066543438077634
+      },
+      {
+        "sha16": "640dcb5f153bb5f0",
+        "bytes": 568,
+        "quality": -12.828455584988145,
+        "quality_without_surprise": -0.05971893784095528,
+        "mean_surprise": 12.76873664714719,
+        "mean_error_norm": 0.372678568265233,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06690140845070422
+      },
+      {
+        "sha16": "c5848826f735c905",
+        "bytes": 568,
+        "quality": -12.844411222896431,
+        "quality_without_surprise": -0.05883884145406704,
+        "mean_surprise": 12.785572381442364,
+        "mean_error_norm": 0.3726793094782391,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06866197183098592
+      },
+      {
+        "sha16": "db483a97319cbc34",
+        "bytes": 893,
+        "quality": -12.578200138343064,
+        "quality_without_surprise": -0.0676121833725265,
+        "mean_surprise": 12.510587954970537,
+        "mean_error_norm": 0.3712326080701764,
+        "mean_confidence": 0.0,
+        "accuracy": 0.05039193729003359
+      },
+      {
+        "sha16": "1af9cd87f083c002",
+        "bytes": 536,
+        "quality": -12.827098335289353,
+        "quality_without_surprise": -0.060535819606402086,
+        "mean_surprise": 12.766562515682951,
+        "mean_error_norm": 0.37274029335098013,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06529850746268656
+      },
+      {
+        "sha16": "b4094b2968acb015",
+        "bytes": 2515,
+        "quality": -12.492764436737717,
+        "quality_without_surprise": -0.06741408550529648,
+        "mean_surprise": 12.42535035123242,
+        "mean_error_norm": 0.36587900603709234,
+        "mean_confidence": 0.0,
+        "accuracy": 0.048111332007952284
+      },
+      {
+        "sha16": "802bc06d907b8778",
+        "bytes": 2514,
+        "quality": -12.605152853270559,
+        "quality_without_surprise": -0.06682258202923208,
+        "mean_surprise": 12.538330271241326,
+        "mean_error_norm": 0.3659379017048384,
+        "mean_confidence": 0.0,
+        "accuracy": 0.049323786793953855
+      },
+      {
+        "sha16": "e0519831b3afdfbe",
+        "bytes": 2515,
+        "quality": -12.556136384403015,
+        "quality_without_surprise": -0.06881085461113301,
+        "mean_surprise": 12.487325529791882,
+        "mean_error_norm": 0.36589948206282363,
+        "mean_confidence": 0.0,
+        "accuracy": 0.04532803180914513
+      },
+      {
+        "sha16": "65c66a45643fc21b",
+        "bytes": 602,
+        "quality": -12.697971408739585,
+        "quality_without_surprise": -0.06073510694643147,
+        "mean_surprise": 12.637236301793154,
+        "mean_error_norm": 0.37250853409801926,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06478405315614617
+      },
+      {
+        "sha16": "dd76a34b2def25be",
+        "bytes": 536,
+        "quality": -12.795598269188181,
+        "quality_without_surprise": -0.059608448242920886,
+        "mean_surprise": 12.73598982094526,
+        "mean_error_norm": 0.3727621511806415,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06716417910447761
+      },
+      {
+        "sha16": "915202a0b6f7f876",
+        "bytes": 536,
+        "quality": -12.817084880205279,
+        "quality_without_surprise": -0.060544125861278886,
+        "mean_surprise": 12.756540754344,
+        "mean_error_norm": 0.37277351837048944,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06529850746268656
+      },
+      {
+        "sha16": "54cb54caaf4fa3b9",
+        "bytes": 1063,
+        "quality": -13.642073809375203,
+        "quality_without_surprise": -0.0582370413018225,
+        "mean_surprise": 13.58383676807338,
+        "mean_error_norm": 0.3985173091395582,
+        "mean_confidence": 0.0,
+        "accuracy": 0.08278457196613359
+      },
+      {
+        "sha16": "e43d2f6237c7020a",
+        "bytes": 526,
+        "quality": -12.567503568723899,
+        "quality_without_surprise": -0.058919420815774615,
+        "mean_surprise": 12.508584147908124,
+        "mean_error_norm": 0.37255981254066184,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06844106463878327
+      },
+      {
+        "sha16": "8ac1151b490cecef",
+        "bytes": 589,
+        "quality": -13.256881893017379,
+        "quality_without_surprise": -0.06179533306041307,
+        "mean_surprise": 13.195086559956966,
+        "mean_error_norm": 0.37281800456762537,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06281833616298811
+      },
+      {
+        "sha16": "e0f8113b1ef95617",
+        "bytes": 536,
+        "quality": -12.796076968018745,
+        "quality_without_surprise": -0.05960730541653092,
+        "mean_surprise": 12.736469662602214,
+        "mean_error_norm": 0.372757579875077,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06716417910447761
+      },
+      {
+        "sha16": "552a8e69def1f067",
+        "bytes": 520,
+        "quality": -13.877125665762494,
+        "quality_without_surprise": -0.07356293436747308,
+        "mean_surprise": 13.80356273139502,
+        "mean_error_norm": 0.3788671220852757,
+        "mean_confidence": 0.0,
+        "accuracy": 0.04230769230769231
+      },
+      {
+        "sha16": "7cf6e91baca11e0d",
+        "bytes": 537,
+        "quality": -12.91703596480531,
+        "quality_without_surprise": -0.06070827824895808,
+        "mean_surprise": 12.856327686556352,
+        "mean_error_norm": 0.3731869305004891,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06517690875232775
+      },
+      {
+        "sha16": "21f44a36833d7126",
+        "bytes": 782,
+        "quality": -12.675148594499182,
+        "quality_without_surprise": -0.0569782109929875,
+        "mean_surprise": 12.618170383506195,
+        "mean_error_norm": 0.3685778056087818,
+        "mean_confidence": 0.0,
+        "accuracy": 0.07033248081841433
+      },
+      {
+        "sha16": "e85b6f0f72575d8d",
+        "bytes": 2069,
+        "quality": -12.977794135546505,
+        "quality_without_surprise": -0.06314353524330762,
+        "mean_surprise": 12.914650600303197,
+        "mean_error_norm": 0.3608390032255243,
+        "mean_confidence": 0.0,
+        "accuracy": 0.0541324311261479
+      },
+      {
+        "sha16": "cd0591d2b7b29b40",
+        "bytes": 557,
+        "quality": -12.946954434681587,
+        "quality_without_surprise": -0.06090440533861674,
+        "mean_surprise": 12.88605002934297,
+        "mean_error_norm": 0.37288153517852246,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06463195691202872
+      },
+      {
+        "sha16": "87e2368eb2567d19",
+        "bytes": 557,
+        "quality": -12.865894176359747,
+        "quality_without_surprise": -0.06090892732476405,
+        "mean_surprise": 12.804985249034983,
+        "mean_error_norm": 0.37289962312311126,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06463195691202872
+      },
+      {
+        "sha16": "7ca83e849f9a4e9d",
+        "bytes": 557,
+        "quality": -12.915290253591886,
+        "quality_without_surprise": -0.060924321991921104,
+        "mean_surprise": 12.854365931599965,
+        "mean_error_norm": 0.37296120179174025,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06463195691202872
+      },
+      {
+        "sha16": "e958de814c163689",
+        "bytes": 557,
+        "quality": -12.890940966568898,
+        "quality_without_surprise": -0.060021644947253705,
+        "mean_surprise": 12.830919321621645,
+        "mean_error_norm": 0.37294115788596055,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06642728904847396
+      },
+      {
+        "sha16": "f690b60873fdc07c",
+        "bytes": 557,
+        "quality": -12.927938258957528,
+        "quality_without_surprise": -0.06001052716627164,
+        "mean_surprise": 12.867927731791257,
+        "mean_error_norm": 0.3728966867620317,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06642728904847396
+      },
+      {
+        "sha16": "dcdb93542c084fa8",
+        "bytes": 557,
+        "quality": -12.857045806287681,
+        "quality_without_surprise": -0.0599726607753972,
+        "mean_surprise": 12.797073145512284,
+        "mean_error_norm": 0.37274522119853726,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06642728904847396
+      },
+      {
+        "sha16": "ecf71a6bafa48be8",
+        "bytes": 563,
+        "quality": -12.838347542369027,
+        "quality_without_surprise": -0.056592138091200894,
+        "mean_surprise": 12.781755404277826,
+        "mean_error_norm": 0.37201686497581804,
+        "mean_confidence": 0.0,
+        "accuracy": 0.07282415630550622
+      },
+      {
+        "sha16": "dc4e7bc42b148e93",
+        "bytes": 301,
+        "quality": -12.879318986562124,
+        "quality_without_surprise": -0.05953574557839225,
+        "mean_surprise": 12.819783240983732,
+        "mean_error_norm": 0.3776778660345009,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06976744186046512
+      },
+      {
+        "sha16": "95738fd4f90565ee",
+        "bytes": 293,
+        "quality": -12.8319127864041,
+        "quality_without_surprise": -0.058741252318762704,
+        "mean_surprise": 12.773171534085337,
+        "mean_error_norm": 0.3783097191726599,
+        "mean_confidence": 0.0,
+        "accuracy": 0.07167235494880546
+      },
+      {
+        "sha16": "dff2b9df6bf6aca6",
+        "bytes": 317,
+        "quality": -13.122145558529521,
+        "quality_without_surprise": -0.058019553414670355,
+        "mean_surprise": 13.06412600511485,
+        "mean_error_norm": 0.37718862375331663,
+        "mean_confidence": 0.0,
+        "accuracy": 0.07255520504731862
+      },
+      {
+        "sha16": "fbebd924ede812a5",
+        "bytes": 332,
+        "quality": -12.62233389406037,
+        "quality_without_surprise": -0.057894168146585656,
+        "mean_surprise": 12.564439725913784,
+        "mean_error_norm": 0.37615498583935664,
+        "mean_confidence": 0.0,
+        "accuracy": 0.07228915662650602
+      },
+      {
+        "sha16": "c8be7f52d3442dca",
+        "bytes": 309,
+        "quality": -12.915447308266344,
+        "quality_without_surprise": -0.06043459744475399,
+        "mean_surprise": 12.85501271082159,
+        "mean_error_norm": 0.37766071987610134,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06796116504854369
+      },
+      {
+        "sha16": "fbed5e148ff53138",
+        "bytes": 560,
+        "quality": -12.950583830340653,
+        "quality_without_surprise": -0.06186687325196161,
+        "mean_surprise": 12.888716957088691,
+        "mean_error_norm": 0.37246749300784787,
+        "mean_confidence": 0.0,
+        "accuracy": 0.0625
+      },
+      {
+        "sha16": "a80beb25ebfd88b3",
+        "bytes": 568,
+        "quality": -12.865928286794928,
+        "quality_without_surprise": -0.05970379931764924,
+        "mean_surprise": 12.806224487477278,
+        "mean_error_norm": 0.37261801417200385,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06690140845070422
+      },
+      {
+        "sha16": "503984b561b8b33e",
+        "bytes": 782,
+        "quality": -12.605169512881105,
+        "quality_without_surprise": -0.05634589024268166,
+        "mean_surprise": 12.548823622638423,
+        "mean_error_norm": 0.3686060673645896,
+        "mean_confidence": 0.0,
+        "accuracy": 0.07161125319693094
+      },
+      {
+        "sha16": "0f11ec5a4d8df4b6",
+        "bytes": 1704,
+        "quality": -13.851856371079705,
+        "quality_without_surprise": -0.056900359899236364,
+        "mean_surprise": 13.794956011180469,
+        "mean_error_norm": 0.4024840687049276,
+        "mean_confidence": 0.0,
+        "accuracy": 0.08744131455399061
+      },
+      {
+        "sha16": "5d804ebfb4d99b61",
+        "bytes": 530,
+        "quality": -12.704153603085313,
+        "quality_without_surprise": -0.0592505404016741,
+        "mean_surprise": 12.644903062683639,
+        "mean_error_norm": 0.37285121821047185,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06792452830188679
+      },
+      {
+        "sha16": "73d295212961c3ac",
+        "bytes": 547,
+        "quality": -12.812152505970708,
+        "quality_without_surprise": -0.06129443640655907,
+        "mean_surprise": 12.75085806956415,
+        "mean_error_norm": 0.3731484951691983,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06398537477148081
+      },
+      {
+        "sha16": "7f6f8540c66178be",
+        "bytes": 558,
+        "quality": -13.076047503863625,
+        "quality_without_surprise": -0.06097970936399655,
+        "mean_surprise": 13.015067794499629,
+        "mean_error_norm": 0.3729510955205002,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06451612903225806
+      },
+      {
+        "sha16": "511646e9806c0a2a",
+        "bytes": 782,
+        "quality": -12.678288366204585,
+        "quality_without_surprise": -0.056346166794405406,
+        "mean_surprise": 12.62194219941018,
+        "mean_error_norm": 0.3686071735714864,
+        "mean_confidence": 0.0,
+        "accuracy": 0.07161125319693094
+      },
+      {
+        "sha16": "7e006c7cb1a4956d",
+        "bytes": 782,
+        "quality": -12.583754833746976,
+        "quality_without_surprise": -0.05697793265749418,
+        "mean_surprise": 12.526776901089482,
+        "mean_error_norm": 0.368576692266807,
+        "mean_confidence": 0.0,
+        "accuracy": 0.07033248081841433
+      },
+      {
+        "sha16": "511b57962615ac6a",
+        "bytes": 536,
+        "quality": -12.957334524273266,
+        "quality_without_surprise": -0.06055779467023825,
+        "mean_surprise": 12.896776729603028,
+        "mean_error_norm": 0.37282819360632447,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06529850746268656
+      },
+      {
+        "sha16": "399e65fe3b68dd28",
+        "bytes": 668,
+        "quality": -12.606328763906888,
+        "quality_without_surprise": -0.05247586471557497,
+        "mean_surprise": 12.553852899191313,
+        "mean_error_norm": 0.37158010556888754,
+        "mean_confidence": 0.0,
+        "accuracy": 0.08083832335329341
+      },
+      {
+        "sha16": "3b9d58cfb578a26b",
+        "bytes": 668,
+        "quality": -12.629112944247003,
+        "quality_without_surprise": -0.05172164767129672,
+        "mean_surprise": 12.577391296575707,
+        "mean_error_norm": 0.3715572493678184,
+        "mean_confidence": 0.0,
+        "accuracy": 0.08233532934131736
+      },
+      {
+        "sha16": "10f3a25c4896487c",
+        "bytes": 719,
+        "quality": -12.795709196435038,
+        "quality_without_surprise": -0.060620425134208844,
+        "mean_surprise": 12.735088771300829,
+        "mean_error_norm": 0.37321883544643103,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06536856745479833
+      },
+      {
+        "sha16": "cb298a0d4be657a4",
+        "bytes": 536,
+        "quality": -12.852568985454194,
+        "quality_without_surprise": -0.060532629420922746,
+        "mean_surprise": 12.792036356033272,
+        "mean_error_norm": 0.3727275326090606,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06529850746268656
+      },
+      {
+        "sha16": "f13d029b8bd2eabd",
+        "bytes": 617,
+        "quality": -12.392632523751237,
+        "quality_without_surprise": -0.05682057920179062,
+        "mean_surprise": 12.335811944549446,
+        "mean_error_norm": 0.37314941567263893,
+        "mean_confidence": 0.0,
+        "accuracy": 0.07293354943273905
+      },
+      {
+        "sha16": "7d4d6993379c6def",
+        "bytes": 544,
+        "quality": -12.771508354925068,
+        "quality_without_surprise": -0.06022875915987669,
+        "mean_surprise": 12.711279595765191,
+        "mean_error_norm": 0.3732679778159745,
+        "mean_confidence": 0.0,
+        "accuracy": 0.0661764705882353
+      },
+      {
+        "sha16": "c719c8e20da6ef51",
+        "bytes": 568,
+        "quality": -12.821586824270085,
+        "quality_without_surprise": -0.059685378154737734,
+        "mean_surprise": 12.761901446115347,
+        "mean_error_norm": 0.3725443295203627,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06690140845070422
+      },
+      {
+        "sha16": "fdef42a5622d2e12",
+        "bytes": 568,
+        "quality": -12.789674825604477,
+        "quality_without_surprise": -0.05881448660047006,
+        "mean_surprise": 12.730860339004007,
+        "mean_error_norm": 0.37258189006384973,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06866197183098592
+      },
+      {
+        "sha16": "915c6e1f9f6baea7",
+        "bytes": 893,
+        "quality": -12.577830397753724,
+        "quality_without_surprise": -0.0675977099226106,
+        "mean_surprise": 12.510232687831113,
+        "mean_error_norm": 0.37117471427051135,
+        "mean_confidence": 0.0,
+        "accuracy": 0.05039193729003359
+      },
+      {
+        "sha16": "abcffa8509237258",
+        "bytes": 541,
+        "quality": -12.815660370011292,
+        "quality_without_surprise": -0.06004344523719851,
+        "mean_surprise": 12.755616924774094,
+        "mean_error_norm": 0.3732606571040605,
+        "mean_confidence": 0.0,
+        "accuracy": 0.066543438077634
+      },
+      {
+        "sha16": "d06146cb0e1f5d06",
+        "bytes": 536,
+        "quality": -12.799937627583535,
+        "quality_without_surprise": -0.05961082063759804,
+        "mean_surprise": 12.740326806945937,
+        "mean_error_norm": 0.37277164075934716,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06716417910447761
+      },
+      {
+        "sha16": "fe29654eeb101408",
+        "bytes": 536,
+        "quality": -12.86498591302187,
+        "quality_without_surprise": -0.0605420188502066,
+        "mean_surprise": 12.804443894171664,
+        "mean_error_norm": 0.372765090326199,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06529850746268656
+      },
+      {
+        "sha16": "6a4af429470b3359",
+        "bytes": 536,
+        "quality": -12.79213742508055,
+        "quality_without_surprise": -0.059617277249271794,
+        "mean_surprise": 12.732520147831279,
+        "mean_error_norm": 0.3727974672060443,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06716417910447761
+      },
+      {
+        "sha16": "3e78ebf9d3df5b61",
+        "bytes": 2515,
+        "quality": -12.498711802776217,
+        "quality_without_surprise": -0.06741323282911083,
+        "mean_surprise": 12.431298569947106,
+        "mean_error_norm": 0.365875595332346,
+        "mean_confidence": 0.0,
+        "accuracy": 0.048111332007952284
+      },
+      {
+        "sha16": "ec4182d29fb6878e",
+        "bytes": 2514,
+        "quality": -12.618714010303282,
+        "quality_without_surprise": -0.06722534106688371,
+        "mean_surprise": 12.551488669236399,
+        "mean_error_norm": 0.3659578479588628,
+        "mean_confidence": 0.0,
+        "accuracy": 0.04852824184566428
+      },
+      {
+        "sha16": "a2d2a9b40f6ff65f",
+        "bytes": 2515,
+        "quality": -12.537505842136023,
+        "quality_without_surprise": -0.06881247721892336,
+        "mean_surprise": 12.4686933649171,
+        "mean_error_norm": 0.36590597249398193,
+        "mean_confidence": 0.0,
+        "accuracy": 0.04532803180914513
+      },
+      {
+        "sha16": "39c0112110e4b24e",
+        "bytes": 602,
+        "quality": -12.616417472074644,
+        "quality_without_surprise": -0.06071385122126394,
+        "mean_surprise": 12.55570362085338,
+        "mean_error_norm": 0.3724235111973477,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06478405315614617
+      },
+      {
+        "sha16": "21832c6e94b48e9c",
+        "bytes": 536,
+        "quality": -12.914832243098202,
+        "quality_without_surprise": -0.059607294085973095,
+        "mean_surprise": 12.855224949012229,
+        "mean_error_norm": 0.3727575345528478,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06716417910447761
+      },
+      {
+        "sha16": "19a37ccdc94750d9",
+        "bytes": 536,
+        "quality": -12.865880703377707,
+        "quality_without_surprise": -0.05960027929330991,
+        "mean_surprise": 12.806280424084397,
+        "mean_error_norm": 0.3727294753821951,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06716417910447761
+      },
+      {
+        "sha16": "92d34f59afc64deb",
+        "bytes": 1063,
+        "quality": -13.653308154530263,
+        "quality_without_surprise": -0.058231555351664355,
+        "mean_surprise": 13.595076599178599,
+        "mean_error_norm": 0.39849536533892155,
+        "mean_confidence": 0.0,
+        "accuracy": 0.08278457196613359
+      },
+      {
+        "sha16": "5b3e66f0421eba8e",
+        "bytes": 536,
+        "quality": -12.841457273798921,
+        "quality_without_surprise": -0.059611788592057735,
+        "mean_surprise": 12.781845485206864,
+        "mean_error_norm": 0.3727755125771872,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06716417910447761
+      },
+      {
+        "sha16": "d8f57bfb6691edbb",
+        "bytes": 536,
+        "quality": -12.904279762156321,
+        "quality_without_surprise": -0.059599256180403515,
+        "mean_surprise": 12.844680505975917,
+        "mean_error_norm": 0.372725382930569,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06716417910447761
+      },
+      {
+        "sha16": "8a51a48a7eeef018",
+        "bytes": 1704,
+        "quality": -13.866464112396118,
+        "quality_without_surprise": -0.057186554189092575,
+        "mean_surprise": 13.809277558207025,
+        "mean_error_norm": 0.402455136944161,
+        "mean_confidence": 0.0,
+        "accuracy": 0.08685446009389672
+      },
+      {
+        "sha16": "ac636baf7e215e2a",
+        "bytes": 558,
+        "quality": -12.934948934373452,
+        "quality_without_surprise": -0.06095963933960746,
+        "mean_surprise": 12.873989295033844,
+        "mean_error_norm": 0.3728708154229454,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06451612903225806
+      },
+      {
+        "sha16": "7d721b0e34929746",
+        "bytes": 536,
+        "quality": -12.801523620199704,
+        "quality_without_surprise": -0.06052119273620349,
+        "mean_surprise": 12.741002427463501,
+        "mean_error_norm": 0.3726817858701883,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06529850746268656
+      },
+      {
+        "sha16": "07cafa5a41369160",
+        "bytes": 719,
+        "quality": -12.782508213125832,
+        "quality_without_surprise": -0.06065496545984317,
+        "mean_surprise": 12.721853247665988,
+        "mean_error_norm": 0.37335699674896594,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06536856745479833
+      },
+      {
+        "sha16": "773654d29cc40fc3",
+        "bytes": 536,
+        "quality": -12.812271437935856,
+        "quality_without_surprise": -0.05960932333628932,
+        "mean_surprise": 12.752662114599566,
+        "mean_error_norm": 0.37276565155411245,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06716417910447761
+      },
+      {
+        "sha16": "da8777e9e963f185",
+        "bytes": 536,
+        "quality": -12.920853650389507,
+        "quality_without_surprise": -0.060544178698759055,
+        "mean_surprise": 12.860309471690748,
+        "mean_error_norm": 0.3727737297204068,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06529850746268656
+      },
+      {
+        "sha16": "ae5316de21d05f02",
+        "bytes": 558,
+        "quality": -12.98021587089554,
+        "quality_without_surprise": -0.06098291024222213,
+        "mean_surprise": 12.919232960653318,
+        "mean_error_norm": 0.3729638990334062,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06451612903225806
+      },
+      {
+        "sha16": "6434ef225d4706c2",
+        "bytes": 544,
+        "quality": -12.76078071504222,
+        "quality_without_surprise": -0.061140005647740026,
+        "mean_surprise": 12.69964070939448,
+        "mean_error_norm": 0.37323649317919505,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06433823529411764
+      },
+      {
+        "sha16": "1d61ba3c92043291",
+        "bytes": 1704,
+        "quality": -13.886565878466273,
+        "quality_without_surprise": -0.05691476092234815,
+        "mean_surprise": 13.829651117543925,
+        "mean_error_norm": 0.4025416727973739,
+        "mean_confidence": 0.0,
+        "accuracy": 0.08744131455399061
+      },
+      {
+        "sha16": "651a096607768e37",
+        "bytes": 541,
+        "quality": -12.777300055127535,
+        "quality_without_surprise": -0.060948462619249355,
+        "mean_surprise": 12.716351592508286,
+        "mean_error_norm": 0.37318386896128924,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06469500924214418
+      },
+      {
+        "sha16": "38f0f392a26d2326",
+        "bytes": 558,
+        "quality": -12.995089586344024,
+        "quality_without_surprise": -0.06098013165756022,
+        "mean_surprise": 12.934109454686464,
+        "mean_error_norm": 0.3729527846947542,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06451612903225806
+      },
+      {
+        "sha16": "05828c5cfa1f7c42",
+        "bytes": 558,
+        "quality": -13.000080879885035,
+        "quality_without_surprise": -0.06186969972531742,
+        "mean_surprise": 12.938211180159717,
+        "mean_error_norm": 0.37292682757510615,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06272401433691756
+      },
+      {
+        "sha16": "c9a58cdbf440e9eb",
+        "bytes": 558,
+        "quality": -13.012162816017641,
+        "quality_without_surprise": -0.060985679800072745,
+        "mean_surprise": 12.951177136217568,
+        "mean_error_norm": 0.3729749772648101,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06451612903225806
+      },
+      {
+        "sha16": "c8fe0f75f0aad9e7",
+        "bytes": 558,
+        "quality": -13.032911378564043,
+        "quality_without_surprise": -0.06185997347196093,
+        "mean_surprise": 12.971051405092082,
+        "mean_error_norm": 0.3728879225616821,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06272401433691756
+      },
+      {
+        "sha16": "b9848ff0b7e0e4bf",
+        "bytes": 566,
+        "quality": -13.027483048678269,
+        "quality_without_surprise": -0.06137300187025474,
+        "mean_surprise": 12.966110046808014,
+        "mean_error_norm": 0.3727004880463905,
+        "mean_confidence": 0.0,
+        "accuracy": 0.0636042402826855
+      },
+      {
+        "sha16": "bb1599556b41c3a2",
+        "bytes": 566,
+        "quality": -12.961154748161555,
+        "quality_without_surprise": -0.06224335230784028,
+        "mean_surprise": 12.898911395853714,
+        "mean_error_norm": 0.37264832089213873,
+        "mean_confidence": 0.0,
+        "accuracy": 0.061837455830388695
+      },
+      {
+        "sha16": "e64647b38b333481",
+        "bytes": 566,
+        "quality": -13.046753309981085,
+        "quality_without_surprise": -0.06223945712200418,
+        "mean_surprise": 12.98451385285908,
+        "mean_error_norm": 0.37263274014879066,
+        "mean_confidence": 0.0,
+        "accuracy": 0.061837455830388695
+      },
+      {
+        "sha16": "940b019ac35eec77",
+        "bytes": 566,
+        "quality": -12.978239302198519,
+        "quality_without_surprise": -0.06224453382419348,
+        "mean_surprise": 12.915994768374325,
+        "mean_error_norm": 0.3726530469575496,
+        "mean_confidence": 0.0,
+        "accuracy": 0.061837455830388695
+      },
+      {
+        "sha16": "23fbde27eec5cd23",
+        "bytes": 566,
+        "quality": -12.995778928874556,
+        "quality_without_surprise": -0.06136228476105998,
+        "mean_surprise": 12.934416644113496,
+        "mean_error_norm": 0.3726576196096079,
+        "mean_confidence": 0.0,
+        "accuracy": 0.0636042402826855
+      },
+      {
+        "sha16": "f691852f226f2f0b",
+        "bytes": 530,
+        "quality": -12.693534560447638,
+        "quality_without_surprise": -0.05923134050787482,
+        "mean_surprise": 12.634303219939763,
+        "mean_error_norm": 0.3727744186352704,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06792452830188679
+      },
+      {
+        "sha16": "c2f8911f990b1dd0",
+        "bytes": 544,
+        "quality": -12.830556786849973,
+        "quality_without_surprise": -0.061169595796872755,
+        "mean_surprise": 12.7693871910531,
+        "mean_error_norm": 0.37335485377572664,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06433823529411764
+      },
+      {
+        "sha16": "9b77ccd349877b6a",
+        "bytes": 541,
+        "quality": -12.894373992843109,
+        "quality_without_surprise": -0.060020664293203296,
+        "mean_surprise": 12.834353328549906,
+        "mean_error_norm": 0.3731695333280841,
+        "mean_confidence": 0.0,
+        "accuracy": 0.066543438077634
+      },
+      {
+        "sha16": "8108d84d68782e76",
+        "bytes": 1704,
+        "quality": -13.844829034469573,
+        "quality_without_surprise": -0.05721627144386687,
+        "mean_surprise": 13.787612763025706,
+        "mean_error_norm": 0.4025740059632616,
+        "mean_confidence": 0.0,
+        "accuracy": 0.08685446009389672
+      },
+      {
+        "sha16": "0958280badf630d2",
+        "bytes": 1704,
+        "quality": -13.829018096284877,
+        "quality_without_surprise": -0.05719144682693589,
+        "mean_surprise": 13.77182664945794,
+        "mean_error_norm": 0.4024747074955391,
+        "mean_confidence": 0.0,
+        "accuracy": 0.08685446009389672
+      },
+      {
+        "sha16": "e3beb303ba8abf04",
+        "bytes": 1704,
+        "quality": -13.846175988281695,
+        "quality_without_surprise": -0.05659011727277097,
+        "mean_surprise": 13.789585871008924,
+        "mean_error_norm": 0.4024168071192552,
+        "mean_confidence": 0.0,
+        "accuracy": 0.0880281690140845
+      },
+      {
+        "sha16": "ab05a7602ed49c24",
+        "bytes": 1704,
+        "quality": -13.839096813290098,
+        "quality_without_surprise": -0.05718715047153644,
+        "mean_surprise": 13.781909662818562,
+        "mean_error_norm": 0.40245752207393753,
+        "mean_confidence": 0.0,
+        "accuracy": 0.08685446009389672
+      },
+      {
+        "sha16": "6cbb70f10b264c82",
+        "bytes": 1697,
+        "quality": -13.800684635611733,
+        "quality_without_surprise": -0.05704107439980888,
+        "mean_surprise": 13.743643561211924,
+        "mean_error_norm": 0.4025897542875087,
+        "mean_confidence": 0.0,
+        "accuracy": 0.08721272834413671
+      },
+      {
+        "sha16": "6a8c8a6c70bb3f23",
+        "bytes": 1203,
+        "quality": -13.470461970853618,
+        "quality_without_surprise": -0.059197725770596676,
+        "mean_surprise": 13.411264245083022,
+        "mean_error_norm": 0.4013794317606897,
+        "mean_confidence": 0.0,
+        "accuracy": 0.08229426433915212
+      },
+      {
+        "sha16": "7c0b150ba2e451f4",
+        "bytes": 1203,
+        "quality": -13.463123794397761,
+        "quality_without_surprise": -0.05920625392800005,
+        "mean_surprise": 13.403917540469761,
+        "mean_error_norm": 0.4014135443903017,
+        "mean_confidence": 0.0,
+        "accuracy": 0.08229426433915212
+      },
+      {
+        "sha16": "ef6607f23e271371",
+        "bytes": 1203,
+        "quality": -13.516394596125503,
+        "quality_without_surprise": -0.05963437947694317,
+        "mean_surprise": 13.45676021664856,
+        "mean_error_norm": 0.40146353619538877,
+        "mean_confidence": 0.0,
+        "accuracy": 0.08146300914380715
+      },
+      {
+        "sha16": "4e9e2dcad36f468b",
+        "bytes": 1203,
+        "quality": -13.474460737215338,
+        "quality_without_surprise": -0.05961021356261398,
+        "mean_surprise": 13.414850523652724,
+        "mean_error_norm": 0.40136687253807285,
+        "mean_confidence": 0.0,
+        "accuracy": 0.08146300914380715
+      },
+      {
+        "sha16": "83982a034430b243",
+        "bytes": 1203,
+        "quality": -13.464444148373685,
+        "quality_without_surprise": -0.05961107022612566,
+        "mean_surprise": 13.40483307814756,
+        "mean_error_norm": 0.4013702991921203,
+        "mean_confidence": 0.0,
+        "accuracy": 0.08146300914380715
+      },
+      {
+        "sha16": "9aa20d6a78ee4af9",
+        "bytes": 1203,
+        "quality": -13.482363484012902,
+        "quality_without_surprise": -0.05921577681363566,
+        "mean_surprise": 13.423147707199266,
+        "mean_error_norm": 0.40145163593284655,
+        "mean_confidence": 0.0,
+        "accuracy": 0.08229426433915212
+      },
+      {
+        "sha16": "73fe761f0d4b4ebd",
+        "bytes": 1203,
+        "quality": -13.454530032377978,
+        "quality_without_surprise": -0.05961826621765276,
+        "mean_surprise": 13.394911766160325,
+        "mean_error_norm": 0.4013990831582224,
+        "mean_confidence": 0.0,
+        "accuracy": 0.08146300914380715
+      },
+      {
+        "sha16": "4f245a8bec25df1c",
+        "bytes": 1203,
+        "quality": -13.51832178392992,
+        "quality_without_surprise": -0.05921285084249206,
+        "mean_surprise": 13.459108933087428,
+        "mean_error_norm": 0.401439932048275,
+        "mean_confidence": 0.0,
+        "accuracy": 0.08229426433915212
+      },
+      {
+        "sha16": "f1c04d36ac972b37",
+        "bytes": 1203,
+        "quality": -13.501550113620157,
+        "quality_without_surprise": -0.059202202401055004,
+        "mean_surprise": 13.442347911219102,
+        "mean_error_norm": 0.4013973382825258,
+        "mean_confidence": 0.0,
+        "accuracy": 0.08229426433915212
+      },
+      {
+        "sha16": "48edde8c61e55ff2",
+        "bytes": 1203,
+        "quality": -13.503966743272686,
+        "quality_without_surprise": -0.05963817461617715,
+        "mean_surprise": 13.444328568656509,
+        "mean_error_norm": 0.4014787167523226,
+        "mean_confidence": 0.0,
+        "accuracy": 0.08146300914380715
+      },
+      {
+        "sha16": "2d00f89ec7d921f2",
+        "bytes": 1203,
+        "quality": -13.482362619646292,
+        "quality_without_surprise": -0.0591972454817391,
+        "mean_surprise": 13.423165374164553,
+        "mean_error_norm": 0.40137751060526083,
+        "mean_confidence": 0.0,
+        "accuracy": 0.08229426433915212
+      },
+      {
+        "sha16": "e07dbf641bed7cda",
+        "bytes": 1203,
+        "quality": -13.440904055783786,
+        "quality_without_surprise": -0.05961820518379035,
+        "mean_surprise": 13.381285850599996,
+        "mean_error_norm": 0.4013988390227778,
+        "mean_confidence": 0.0,
+        "accuracy": 0.08146300914380715
+      },
+      {
+        "sha16": "ade5c620c1380138",
+        "bytes": 541,
+        "quality": -12.872987711710886,
+        "quality_without_surprise": -0.05999386363925474,
+        "mean_surprise": 12.812993848071631,
+        "mean_error_norm": 0.37306233071228595,
+        "mean_confidence": 0.0,
+        "accuracy": 0.066543438077634
+      },
+      {
+        "sha16": "5bb2643712602a96",
+        "bytes": 1203,
+        "quality": -13.513471630012198,
+        "quality_without_surprise": -0.05921880702756965,
+        "mean_surprise": 13.454252822984628,
+        "mean_error_norm": 0.4014637567885849,
+        "mean_confidence": 0.0,
+        "accuracy": 0.08229426433915212
+      },
+      {
+        "sha16": "475744cdbde1c7b5",
+        "bytes": 1203,
+        "quality": -13.456677861864339,
+        "quality_without_surprise": -0.059625484518026184,
+        "mean_surprise": 13.397052377346313,
+        "mean_error_norm": 0.4014279563597177,
+        "mean_confidence": 0.0,
+        "accuracy": 0.08146300914380715
+      },
+      {
+        "sha16": "65e691bb32431f3b",
+        "bytes": 568,
+        "quality": -12.944691777640172,
+        "quality_without_surprise": -0.059702543706325883,
+        "mean_surprise": 12.884989233933846,
+        "mean_error_norm": 0.3726129917267146,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06690140845070422
+      },
+      {
+        "sha16": "f60caa94e27714ef",
+        "bytes": 568,
+        "quality": -12.912050556594872,
+        "quality_without_surprise": -0.05880420100899286,
+        "mean_surprise": 12.85324635558588,
+        "mean_error_norm": 0.3725407476979428,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06866197183098592
+      },
+      {
+        "sha16": "61a0df912710dbc6",
+        "bytes": 530,
+        "quality": -12.68719485958429,
+        "quality_without_surprise": -0.06018311406961452,
+        "mean_surprise": 12.627011745514675,
+        "mean_error_norm": 0.37280792797657175,
+        "mean_confidence": 0.0,
+        "accuracy": 0.0660377358490566
+      },
+      {
+        "sha16": "de5b18987543845b",
+        "bytes": 557,
+        "quality": -12.916193941035688,
+        "quality_without_surprise": -0.06091026996960558,
+        "mean_surprise": 12.855283671066083,
+        "mean_error_norm": 0.3729049937024795,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06463195691202872
+      },
+      {
+        "sha16": "c49adab462ee6aed",
+        "bytes": 719,
+        "quality": -12.812782428045765,
+        "quality_without_surprise": -0.059949460740906346,
+        "mean_surprise": 12.752832967304858,
+        "mean_error_norm": 0.37331661904151114,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06675938803894298
+      },
+      {
+        "sha16": "9311298d1f0fdc84",
+        "bytes": 2303,
+        "quality": -15.757085448101556,
+        "quality_without_surprise": -0.08269202235619488,
+        "mean_surprise": 15.674393425745361,
+        "mean_error_norm": 0.39763739033663037,
+        "mean_confidence": 0.0,
+        "accuracy": 0.03343465045592705
+      },
+      {
+        "sha16": "8ccd5ef2e0150d3e",
+        "bytes": 2511,
+        "quality": -14.712028287292656,
+        "quality_without_surprise": -0.06816912413909648,
+        "mean_surprise": 14.643859163153559,
+        "mean_error_norm": 0.38816833247833005,
+        "mean_confidence": 0.0,
+        "accuracy": 0.05774591796097173
+      },
+      {
+        "sha16": "ba5634cb0ee34c7a",
+        "bytes": 530,
+        "quality": -12.657188008406994,
+        "quality_without_surprise": -0.05923818783141144,
+        "mean_surprise": 12.597949820575582,
+        "mean_error_norm": 0.37280180792942186,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06792452830188679
+      },
+      {
+        "sha16": "0bff9fae839914d5",
+        "bytes": 1584,
+        "quality": -13.945803060552315,
+        "quality_without_surprise": -0.06173397076038967,
+        "mean_surprise": 13.884069089791925,
+        "mean_error_norm": 0.4060267921324669,
+        "mean_confidence": 0.0,
+        "accuracy": 0.07954545454545454
+      },
+      {
+        "sha16": "bba01c169127ad5a",
+        "bytes": 557,
+        "quality": -12.905765778211833,
+        "quality_without_surprise": -0.0599983251187588,
+        "mean_surprise": 12.845767453093075,
+        "mean_error_norm": 0.3728478785719818,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06642728904847396
+      },
+      {
+        "sha16": "6d73e8290c5c6481",
+        "bytes": 1035,
+        "quality": -13.585947159381762,
+        "quality_without_surprise": -0.045898193696153555,
+        "mean_surprise": 13.540048965685608,
+        "mean_error_norm": 0.3748971226106991,
+        "mean_confidence": 0.0,
+        "accuracy": 0.09565217391304348
+      },
+      {
+        "sha16": "c94f715abf6bd38a",
+        "bytes": 780,
+        "quality": -13.588012479563144,
+        "quality_without_surprise": -0.04977842989845804,
+        "mean_surprise": 13.538234049664686,
+        "mean_error_norm": 0.3632162836963998,
+        "mean_confidence": 0.0,
+        "accuracy": 0.08205128205128205
+      },
+      {
+        "sha16": "250e27cd1936e115",
+        "bytes": 795,
+        "quality": -13.567505415584215,
+        "quality_without_surprise": -0.03559370274889595,
+        "mean_surprise": 13.531911712835319,
+        "mean_error_norm": 0.36124273552388464,
+        "mean_confidence": 0.0,
+        "accuracy": 0.10943396226415095
+      },
+      {
+        "sha16": "ad03694f50002abf",
+        "bytes": 782,
+        "quality": -13.499648856069204,
+        "quality_without_surprise": -0.04477229665425142,
+        "mean_surprise": 13.454876559414952,
+        "mean_error_norm": 0.36323240912339844,
+        "mean_confidence": 0.0,
+        "accuracy": 0.09207161125319693
+      },
+      {
+        "sha16": "4daadaf287359869",
+        "bytes": 782,
+        "quality": -13.707020231067489,
+        "quality_without_surprise": -0.04539171565262201,
+        "mean_surprise": 13.661628515414867,
+        "mean_error_norm": 0.36315254035985106,
+        "mean_confidence": 0.0,
+        "accuracy": 0.0907928388746803
+      },
+      {
+        "sha16": "f2a9124888bc386a",
+        "bytes": 779,
+        "quality": -13.46807725698078,
+        "quality_without_surprise": -0.0414223565665619,
+        "mean_surprise": 13.426654900414219,
+        "mean_error_norm": 0.3633787715807555,
+        "mean_confidence": 0.0,
+        "accuracy": 0.09884467265725289
+      },
+      {
+        "sha16": "0d92744fb347dd6c",
+        "bytes": 781,
+        "quality": -13.711736423708956,
+        "quality_without_surprise": -0.04792891118969855,
+        "mean_surprise": 13.663807512519258,
+        "mean_error_norm": 0.3632905487280642,
+        "mean_confidence": 0.0,
+        "accuracy": 0.08578745198463508
+      },
+      {
+        "sha16": "0796a8d7562e39ac",
+        "bytes": 782,
+        "quality": -13.416340500549234,
+        "quality_without_surprise": -0.04480807507258966,
+        "mean_surprise": 13.371532425476644,
+        "mean_error_norm": 0.3633755227967552,
+        "mean_confidence": 0.0,
+        "accuracy": 0.09207161125319693
+      },
+      {
+        "sha16": "e365f0a4d03e7b82",
+        "bytes": 1203,
+        "quality": -13.49415221515062,
+        "quality_without_surprise": -0.05961708833615553,
+        "mean_surprise": 13.434535126814465,
+        "mean_error_norm": 0.40139437163223596,
+        "mean_confidence": 0.0,
+        "accuracy": 0.08146300914380715
+      },
+      {
+        "sha16": "c2c83f2f6e8ddc0c",
+        "bytes": 530,
+        "quality": -12.676389517747943,
+        "quality_without_surprise": -0.06017283144769081,
+        "mean_surprise": 12.616216686300252,
+        "mean_error_norm": 0.3727667974888745,
+        "mean_confidence": 0.0,
+        "accuracy": 0.0660377358490566
+      },
+      {
+        "sha16": "8e54f205dde831f3",
+        "bytes": 1336,
+        "quality": -14.25798254308606,
+        "quality_without_surprise": -0.07536221030071033,
+        "mean_surprise": 14.18262033278535,
+        "mean_error_norm": 0.39576021844834885,
+        "mean_confidence": 0.0,
+        "accuracy": 0.04715568862275449
+      },
+      {
+        "sha16": "39dd235d6b743661",
+        "bytes": 530,
+        "quality": -12.644658737905779,
+        "quality_without_surprise": -0.06017875668865358,
+        "mean_surprise": 12.584479981217125,
+        "mean_error_norm": 0.3727904984527251,
+        "mean_confidence": 0.0,
+        "accuracy": 0.0660377358490566
+      },
+      {
+        "sha16": "1d46f9c3e81b5768",
+        "bytes": 564,
+        "quality": -12.433859622612726,
+        "quality_without_surprise": -0.06118507843461707,
+        "mean_surprise": 12.372674544178109,
+        "mean_error_norm": 0.37239988820655423,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06382978723404255
+      },
+      {
+        "sha16": "9f77267c366745d4",
+        "bytes": 530,
+        "quality": -12.722788602574779,
+        "quality_without_surprise": -0.06014931769152909,
+        "mean_surprise": 12.66263928488325,
+        "mean_error_norm": 0.3726727424642297,
+        "mean_confidence": 0.0,
+        "accuracy": 0.0660377358490566
+      },
+      {
+        "sha16": "bdcc4c508f6b0c9c",
+        "bytes": 782,
+        "quality": -12.591326121448013,
+        "quality_without_surprise": -0.05632987834543535,
+        "mean_surprise": 12.534996243102578,
+        "mean_error_norm": 0.3685420197756029,
+        "mean_confidence": 0.0,
+        "accuracy": 0.07161125319693094
+      },
+      {
+        "sha16": "3a82353b590b116d",
+        "bytes": 557,
+        "quality": -12.923583029098253,
+        "quality_without_surprise": -0.06088478895164684,
+        "mean_surprise": 12.862698240146607,
+        "mean_error_norm": 0.3728030696306446,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06463195691202872
+      },
+      {
+        "sha16": "dbb155143df4f31b",
+        "bytes": 557,
+        "quality": -13.017345090036752,
+        "quality_without_surprise": -0.06093066623608756,
+        "mean_surprise": 12.956414423800664,
+        "mean_error_norm": 0.37298657876840785,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06463195691202872
+      },
+      {
+        "sha16": "a2d731924d9ff64f",
+        "bytes": 557,
+        "quality": -12.864938967418922,
+        "quality_without_surprise": -0.06089984852118491,
+        "mean_surprise": 12.804039118897737,
+        "mean_error_norm": 0.3728633079087939,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06463195691202872
+      },
+      {
+        "sha16": "7ccece3fc70f336d",
+        "bytes": 557,
+        "quality": -12.81502413608196,
+        "quality_without_surprise": -0.06000929565651347,
+        "mean_surprise": 12.755014840425446,
+        "mean_error_norm": 0.37289176072299995,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06642728904847396
+      },
+      {
+        "sha16": "047f572b0eeb606b",
+        "bytes": 557,
+        "quality": -12.992552517231122,
+        "quality_without_surprise": -0.06091740553889302,
+        "mean_surprise": 12.931635111692229,
+        "mean_error_norm": 0.3729335359796305,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06463195691202872
+      },
+      {
+        "sha16": "9497862c9df7a677",
+        "bytes": 557,
+        "quality": -12.877594875978623,
+        "quality_without_surprise": -0.06001710757145773,
+        "mean_surprise": 12.817577768407165,
+        "mean_error_norm": 0.37292300838278214,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06642728904847396
+      },
+      {
+        "sha16": "a18860d0521b95a8",
+        "bytes": 530,
+        "quality": -12.645343753437222,
+        "quality_without_surprise": -0.05922148502494906,
+        "mean_surprise": 12.586122268412273,
+        "mean_error_norm": 0.372734996703572,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06792452830188679
+      },
+      {
+        "sha16": "8063bf1e836c8d77",
+        "bytes": 1063,
+        "quality": -13.602465150377997,
+        "quality_without_surprise": -0.058243015575470736,
+        "mean_surprise": 13.544222134802526,
+        "mean_error_norm": 0.39854120623414796,
+        "mean_confidence": 0.0,
+        "accuracy": 0.08278457196613359
+      },
+      {
+        "sha16": "d5e3e4d16893fbf8",
+        "bytes": 1203,
+        "quality": -13.477857169921624,
+        "quality_without_surprise": -0.0596278615382797,
+        "mean_surprise": 13.418229308383344,
+        "mean_error_norm": 0.40143746444072975,
+        "mean_confidence": 0.0,
+        "accuracy": 0.08146300914380715
+      },
+      {
+        "sha16": "3859d5bba9609489",
+        "bytes": 530,
+        "quality": -12.677936224839316,
+        "quality_without_surprise": -0.060186152457905706,
+        "mean_surprise": 12.61775007238141,
+        "mean_error_norm": 0.3728200815297346,
+        "mean_confidence": 0.0,
+        "accuracy": 0.0660377358490566
+      },
+      {
+        "sha16": "32949122255e13f0",
+        "bytes": 1203,
+        "quality": -13.495631705009666,
+        "quality_without_surprise": -0.05964082341110277,
+        "mean_surprise": 13.435990881598563,
+        "mean_error_norm": 0.4014893119320284,
+        "mean_confidence": 0.0,
+        "accuracy": 0.08146300914380715
+      },
+      {
+        "sha16": "8555e5becb783825",
+        "bytes": 1203,
+        "quality": -13.470084942841401,
+        "quality_without_surprise": -0.059625374997679614,
+        "mean_surprise": 13.410459567843722,
+        "mean_error_norm": 0.4014275182783297,
+        "mean_confidence": 0.0,
+        "accuracy": 0.08146300914380715
+      },
+      {
+        "sha16": "1bf07311e015fe20",
+        "bytes": 530,
+        "quality": -12.579919773620432,
+        "quality_without_surprise": -0.06017623519131021,
+        "mean_surprise": 12.519743538429122,
+        "mean_error_norm": 0.37278041246335425,
+        "mean_confidence": 0.0,
+        "accuracy": 0.0660377358490566
+      },
+      {
+        "sha16": "63da5e8937dd7024",
+        "bytes": 530,
+        "quality": -12.742839815222379,
+        "quality_without_surprise": -0.060192023390314375,
+        "mean_surprise": 12.682647791832064,
+        "mean_error_norm": 0.3728435652593736,
+        "mean_confidence": 0.0,
+        "accuracy": 0.0660377358490566
+      },
+      {
+        "sha16": "df8ac5924f3d113e",
+        "bytes": 530,
+        "quality": -12.754081373272216,
+        "quality_without_surprise": -0.05924825758843255,
+        "mean_surprise": 12.694833115683783,
+        "mean_error_norm": 0.3728420869575053,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06792452830188679
+      },
+      {
+        "sha16": "6177587ee9718d41",
+        "bytes": 530,
+        "quality": -12.666710788588233,
+        "quality_without_surprise": -0.060185804311478464,
+        "mean_surprise": 12.606524984276755,
+        "mean_error_norm": 0.3728186889440289,
+        "mean_confidence": 0.0,
+        "accuracy": 0.0660377358490566
+      },
+      {
+        "sha16": "24710155988053ad",
+        "bytes": 1203,
+        "quality": -13.475146708808737,
+        "quality_without_surprise": -0.05962624884291756,
+        "mean_surprise": 13.415520459965819,
+        "mean_error_norm": 0.4014310136592868,
+        "mean_confidence": 0.0,
+        "accuracy": 0.08146300914380715
+      },
+      {
+        "sha16": "26f255699cc50c6b",
+        "bytes": 530,
+        "quality": -12.710752348987063,
+        "quality_without_surprise": -0.0601556735131652,
+        "mean_surprise": 12.650596675473897,
+        "mean_error_norm": 0.3726981657507768,
+        "mean_confidence": 0.0,
+        "accuracy": 0.0660377358490566
+      },
+      {
+        "sha16": "4152f58ac0c21048",
+        "bytes": 530,
+        "quality": -12.638415825189067,
+        "quality_without_surprise": -0.05924236077158973,
+        "mean_surprise": 12.579173464417478,
+        "mean_error_norm": 0.3728184996901296,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06792452830188679
+      },
+      {
+        "sha16": "8526a76e714f90ac",
+        "bytes": 544,
+        "quality": -12.87333711856923,
+        "quality_without_surprise": -0.06023669318681257,
+        "mean_surprise": 12.813100425382418,
+        "mean_error_norm": 0.3732997139237235,
+        "mean_confidence": 0.0,
+        "accuracy": 0.0661764705882353
+      },
+      {
+        "sha16": "c7e9e9e18c27a984",
+        "bytes": 537,
+        "quality": -12.789583926464195,
+        "quality_without_surprise": -0.05976625861449136,
+        "mean_surprise": 12.729817667849703,
+        "mean_error_norm": 0.37314324674846483,
+        "mean_confidence": 0.0,
+        "accuracy": 0.0670391061452514
+      },
+      {
+        "sha16": "879ef73d37a9ad8e",
+        "bytes": 536,
+        "quality": -12.830989935650283,
+        "quality_without_surprise": -0.059596737743429884,
+        "mean_surprise": 12.771393197906853,
+        "mean_error_norm": 0.3727153091826743,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06716417910447761
+      },
+      {
+        "sha16": "9672531185059515",
+        "bytes": 547,
+        "quality": -12.928055609265865,
+        "quality_without_surprise": -0.061311597431584985,
+        "mean_surprise": 12.86674401183428,
+        "mean_error_norm": 0.373217139269298,
+        "mean_confidence": 0.0,
+        "accuracy": 0.06398537477148081
+      }
+    ]
+  },
+  "material_treated": {
+    "items": 8.0,
+    "quality_mean": -14.462835482895247,
+    "accuracy_mean": 0.05277053874437183,
+    "mean_surprise_mean": 14.38901548988081
+  },
+  "material_control": {
+    "items": 8.0,
+    "quality_mean": -14.279099560882358,
+    "accuracy_mean": 0.05959910885604747,
+    "mean_surprise_mean": 14.210454245313791
+  },
+  "j_n2b_control_frozen": -14.279099560882358,
+  "j_n2b_value": -14.462835482895247,
+  "j_n2b": false,
+  "treated_digest": "b8438d01d31ea7b92693ed59897e30a3e3862dd5b3fd8bc0f4cd119dce20974d",
+  "control_digest": "3e00bafc6298ac8462c352b4bfd31d4fbbd8c79ff3cafd3c95f867ecd7243060",
+  "seconds": 1232.4
+}

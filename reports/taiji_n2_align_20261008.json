@@ -1,0 +1,23 @@
+{
+  "format": "taiji-n2-align-v1",
+  "prereg": "plans/reference/PLAN-N2-01_consolidation_powerup_prereg_20261007.md#4ter",
+  "guard_source": "taiji/adapter.py:12631-12632",
+  "cognitive_state_tick_before": 66,
+  "cognitive_state_episode_before": "sleep-experience",
+  "cognitive_state_tick_after": 92,
+  "cognitive_state_episode_after": "sleep-experience",
+  "kernel_state_tick": 92,
+  "kernel_state_episode": "sleep-experience",
+  "aligned_saved_path": "checkpoints\\seed_n2_candidate_aligned_20261008.pt",
+  "aligned_saved_bytes": 12447721,
+  "candidate_still_refuses_load": true,
+  "candidate_refusal": "ValueError: native cognitive state is out of sync with kernel state",
+  "aligned_loads": true,
+  "aligned_digest": "b8438d01d31ea7b92693ed59897e30a3e3862dd5b3fd8bc0f4cd119dce20974d",
+  "tensor_check": {
+    "tensors_compared": 204,
+    "tensors_only_in_one": 0,
+    "tensors_differing": 0
+  },
+  "align_pass": true
+}

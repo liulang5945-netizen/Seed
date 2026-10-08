@@ -57,6 +57,7 @@ const CONSOLIDATION_STATUS = {
     duration_ms: 1_500,
     weaknesses: ['recency'],
     notes: ['corpus written'],
+    projection: { by_source: { constraints: 2, interactions: 1, workbench_capabilities: 16 } },
     spec: { reason: 'interaction journal holds 3 entries' },
   },
   journal: { entries: 4, by_kind: { interaction: 3, reflection: 1 }, sessions: 2, last_recorded_at: 1_760_000_000 },
@@ -86,11 +87,27 @@ describe('LifeController consolidation read', () => {
         durationMs: 1_500,
         weaknesses: ['recency'],
         notes: ['corpus written'],
+        workbenchCapabilities: 16,
       },
       journal: { entries: 4, byKind: { interaction: 3, reflection: 1 }, sessions: 2, lastRecordedAt: 1_760_000_000 },
     })
     expect(snapshot.availability.runtime).toBe('ok')
     expect(snapshot.unavailable).toEqual([])
+  })
+
+  it('reads an absent workbench projection as zero rather than guessing one', async () => {
+    const { controller, runtime } = await harness()
+    runtime.controlReplies.set('/api/consolidation/status', {
+      status: 200,
+      body: {
+        ...CONSOLIDATION_STATUS,
+        last_report: { ...CONSOLIDATION_STATUS.last_report, projection: undefined },
+      },
+    })
+
+    const { snapshot } = await controller.snapshot(new AbortController().signal)
+
+    expect(snapshot.consolidation?.lastReport?.workbenchCapabilities).toBe(0)
   })
 
   it('records an unmounted consolidation endpoint as one unavailable line, not a failure', async () => {

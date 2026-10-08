@@ -86,6 +86,7 @@ function nativeSnapshot(overrides: Partial<LifeSnapshot> = {}): LifeSnapshot {
         durationMs: 1_500,
         weaknesses: ['recency'],
         notes: ['corpus written'],
+        workbenchCapabilities: 16,
       },
       journal: { entries: 4, byKind: { interaction: 3, reflection: 1 }, sessions: 2, lastRecordedAt: 1_760_000_000 },
     },
@@ -1350,6 +1351,7 @@ describe('LifePanel edge readings', () => {
           durationMs: 500,
           weaknesses: [],
           notes: [],
+          workbenchCapabilities: 16,
         },
         journal: { entries: 0, byKind: {}, sessions: 0, lastRecordedAt: 0 },
       },
@@ -1359,6 +1361,9 @@ describe('LifePanel edge readings', () => {
     expect(screen.getAllByText(en.notYet).length).toBeGreaterThanOrEqual(3)
     expect(screen.getByText(en.noWeaknesses)).not.toBeNull()
     expect(screen.getByText(en.noNotes)).not.toBeNull()
+    // C6 ⑥：这一行把 pass 自己折算的工作台能力数带上面板，零也照实写零。
+    expect(screen.getByText(en.passCapabilitiesLabel)).not.toBeNull()
+    expect(screen.getAllByText('16').length).toBeGreaterThanOrEqual(1)
   })
 
   it('says the host projection is empty when no host surface answered', () => {

@@ -260,6 +260,8 @@ export interface LifePassReportView {
   readonly weaknesses: readonly string[]
   /** What this pass could not measure, stated instead of guessed. */
   readonly notes: readonly string[]
+  /** Workbench capabilities this pass folded into the rehearsal corpus. */
+  readonly workbenchCapabilities: number
 }
 
 /** Native sleep consolidation and the memory journal it rehearses. */
