@@ -1,0 +1,136 @@
+{
+  "format": "taiji-n5-growth-proposal-evidence-v1",
+  "prereg": "plans/reference/PLAN-N3-09_tau_rule_upgrade_prereg_20261008.md（判据不动）；本件是 owner 第七次弹窗裁『按链分别给值』之后的**能力侧取证**",
+  "ledger": "plans/active/roadmap/08_UPSTREAM_SYNC_PLAYBOOK.md ㊵-529/㊵-533",
+  "debt": "DEBT-G53（τ 口径）/ 09 §2 N5 的『出厂件零进化』痛点",
+  "headline": "把 τ 换成按链的值并装上放行装配之后，产品自己的判决 `decision_should_propose` 第一次为真（β 链 8 次／circuit 链 6 次），而**同一批面**在 τ=0.70 下 3,999 行全为 0 次 ⇒『R4 生长永不触发』不是架构必然，是阈不可达的后果",
+  "scope_limits": "两枚新面都带 --developmental-fast-slow --developmental-bridge-gate 0.25 与 --no-readout-position ⇒ 本件只主张『提议这一层被打开了』，不主张晋升/影子那两层已被走过，也不主张产品默认装配会提议（默认 τ 仍是 0.70、默认链零挂载）",
+  "faces": {
+    "beta_chain_tau_0_65": {
+      "status": "ok",
+      "path": "output/n3_tau_beta/pressure.jsonl",
+      "sha256": "08f667af4b6bde7abd66afa8a4635e0175ba3cd7e9b1c210c20db7e32020df87",
+      "face_format": "taiji-n3-pressure-face-v2",
+      "rows": 4000,
+      "minimum_pressure_mounted": 0.65,
+      "required_pressure_steps": 3,
+      "structural_budget_reported": [
+        "32",
+        "None"
+      ],
+      "should_propose_true": 8,
+      "propose_ticks": [
+        16000238,
+        16000416,
+        16000804,
+        16001072,
+        16002360,
+        16003107,
+        16003792,
+        16003795
+      ],
+      "max_consecutive_pressure_steps": 2,
+      "reason_tallies": {
+        "pressure_persistence_below_threshold": 3991,
+        "pressure_below_threshold": 3963,
+        "persistent_native_pressure": 8
+      },
+      "developmental": {
+        "bridge_gate_actual": 0.25,
+        "minimum_pressure_requested": 0.65,
+        "mode_readings": [
+          "fast_slow"
+        ]
+      }
+    },
+    "circuit_chain_tau_0_66": {
+      "status": "ok",
+      "path": "output/n3_tau_circuit/pressure.jsonl",
+      "sha256": "ec7ef62ab150fa1103e98d9486b88f827187c4ef27b069b9aa214b6c34eb2e85",
+      "face_format": "taiji-n3-pressure-face-v2",
+      "rows": 4000,
+      "minimum_pressure_mounted": 0.66,
+      "required_pressure_steps": 3,
+      "structural_budget_reported": [
+        "32",
+        "None"
+      ],
+      "should_propose_true": 6,
+      "propose_ticks": [
+        16000238,
+        16000416,
+        16002623,
+        16002884,
+        16003791,
+        16003794
+      ],
+      "max_consecutive_pressure_steps": 2,
+      "reason_tallies": {
+        "pressure_persistence_below_threshold": 3993,
+        "pressure_below_threshold": 3966,
+        "persistent_native_pressure": 6
+      },
+      "developmental": {
+        "bridge_gate_actual": 0.25,
+        "minimum_pressure_requested": 0.66,
+        "mode_readings": [
+          "fast_slow"
+        ]
+      }
+    },
+    "beta_chain_default_tau_0_70": {
+      "status": "ok",
+      "path": "output/n3_09_v2/beta_gate025_v2/pressure.jsonl",
+      "sha256": "0eb1cd09f5fca1fead5cd3f5b2a2a83c5b5b857dca812a0dad5baf78ce7980bb",
+      "face_format": "taiji-n3-pressure-face-v2",
+      "rows": 4000,
+      "minimum_pressure_mounted": 0.7,
+      "required_pressure_steps": 3,
+      "structural_budget_reported": [
+        "32",
+        "None"
+      ],
+      "should_propose_true": 0,
+      "propose_ticks": [],
+      "max_consecutive_pressure_steps": 0,
+      "reason_tallies": {
+        "pressure_below_threshold": 3999,
+        "pressure_persistence_below_threshold": 3999
+      },
+      "developmental": {
+        "bridge_gate_actual": 0.25,
+        "minimum_pressure_requested": null,
+        "mode_readings": [
+          "fast_slow"
+        ]
+      }
+    },
+    "circuit_chain_default_tau_0_70": {
+      "status": "ok",
+      "path": "output/n3_09_v2/circuit_gate025_v2/pressure.jsonl",
+      "sha256": "0b658519399a78e9f2ea27ba79ca361427ec68a57f9692e6cfca5292db387a80",
+      "face_format": "taiji-n3-pressure-face-v2",
+      "rows": 4000,
+      "minimum_pressure_mounted": 0.7,
+      "required_pressure_steps": 3,
+      "structural_budget_reported": [
+        "32",
+        "None"
+      ],
+      "should_propose_true": 0,
+      "propose_ticks": [],
+      "max_consecutive_pressure_steps": 0,
+      "reason_tallies": {
+        "pressure_below_threshold": 3999,
+        "pressure_persistence_below_threshold": 3999
+      },
+      "developmental": {
+        "bridge_gate_actual": 0.25,
+        "minimum_pressure_requested": null,
+        "mode_readings": [
+          "fast_slow"
+        ]
+      }
+    }
+  }
+}
