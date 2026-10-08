@@ -60,6 +60,21 @@ HOLDOUT_PROBE = (
     "请解释一下牛顿第二定律和它的日常应用。"
 ).encode()
 
+#: PLAN-N3-05（DEBT-G49 修法①）：**加新列、旧常量与旧列一字不动**。
+#: 上面那枚旧探针被量出与训练语料有 5/35 个 24 字节窗口原样重合（hit_rate=0.142857，
+#: `reports/taiji_n3a_data_face_scale10calib_20261008.json`）⇒ 它的名字"holdout"名不副实；
+#: 但删掉它就没有人能复算历史上所有引用 `holdout_surprise` 的结论，所以留在原地。
+#: 这枚新候选由 `verify_taiji_n3_05_probe.py` 按冻结的验收式选出来（同机两趟 0 命中、
+#: 形状同类、字节数在 64..512 档内且是过验者里最接近旧探针的那一枚；验证件
+#: `reports/taiji_n3_05_probe_verification_20261008.json`）。**文本是为零重合而新写的，不是从任何语料摘的**。
+#: 两条列**不可跨列比大小**：新探针 271 B 对旧 163 B，长度不同⇒`mean_surprise` 的水平天然不同档，
+#: 只能各自看同列随训练的变化方向。
+HOLDOUT_PROBE_V2 = (
+    "潮汐发电站把月球引力引起的潮位差转换成电能，一年里两次大潮的水量差别最明显。"
+    "问：请把这句话缩短一点。\n答：好的：月亮拉扯海水，电站借这股力发电。"
+    "请说明为什么铜适合做导线而玻璃不适合。"
+).encode()
+
 
 def resolve_device(requested: str | torch.device) -> torch.device:
     """Resolve a requested training device without silently ignoring CUDA."""
@@ -376,6 +391,8 @@ def run_training(
             "online_accuracy": window_correct / max(1, window_ticks),
             "mean_surprise": window_surprise / max(1, window_ticks),
             "holdout_surprise": model.score_bytes(HOLDOUT_PROBE)["mean_surprise"],
+            #: PLAN-N3-05：与训练语料零窗口重合的第二把尺（旧列取法与值一字不动，见上面的常量注释）。
+            "holdout_surprise_v2": model.score_bytes(HOLDOUT_PROBE_V2)["mean_surprise"],
             "elapsed_seconds": time.perf_counter() - started,
         }
         if exit_reason is not None:

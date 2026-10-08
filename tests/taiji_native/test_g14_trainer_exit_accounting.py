@@ -29,6 +29,12 @@ sys.path.insert(0, str(RUNNER.parent))
 
 from train_seed_corpus import exit_record_path, run_training  # noqa: E402
 
+#: **故意放宽一次**（PLAN-N3-05 §2 的约定）：进度行的周期键集原本是那七个。
+#: 加 `holdout_surprise_v2`（与语料零窗口重合的第二把尺）**之前**先让这条测真红过一次——
+#: 实测 `1 failed, 6 passed`，失败项正是 `test_periodic_lines_keep_their_old_shape`，
+#: 断言里点名 `holdout_surprise_v2`（红过才知道自己动的是哪一格，也证明它能为假）。
+#: 放宽只加这一个键；断言形状仍是**集合相等** ⇒ "冒出野键必须红"那一侧的方向**没有被削弱**
+#: （守卫见本文件 `test_periodic_lines_keep_their_old_shape`，负对照另测）。
 LEGACY_KEYS = {
     "epoch",
     "ticks",
@@ -36,6 +42,7 @@ LEGACY_KEYS = {
     "online_accuracy",
     "mean_surprise",
     "holdout_surprise",
+    "holdout_surprise_v2",
     "elapsed_seconds",
 }
 

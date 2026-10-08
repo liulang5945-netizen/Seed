@@ -1,0 +1,96 @@
+{
+  "format": "taiji-n3-05-probe-verification-v1",
+  "prereg": "plans/reference/PLAN-N3-05_holdout_probe_rebuild_prereg_20261008.md#1",
+  "corpus": [
+    "data\\simple_zh\\dialogue_extended_clean.jsonl"
+  ],
+  "corpus_sha256": [
+    "c2cfd3c881b061054d68ef21ed36a62301cd0f35fa802b5293b05b61a0973c6b"
+  ],
+  "passes": 2,
+  "legacy_probe": {
+    "bytes": 163,
+    "windows": 35,
+    "windows_found_in_corpus": 5,
+    "hit_rate": 0.142857
+  },
+  "candidates": {
+    "c1_tide": {
+      "bytes": 271,
+      "windows": 62,
+      "window_bytes": 24,
+      "a1_zero_hit_per_pass": [
+        true,
+        true
+      ],
+      "a1_hits_per_pass": [
+        0,
+        0
+      ],
+      "a2_size_in_band": true,
+      "a2_distance_to_legacy": 108,
+      "a3_shape": {
+        "问：": true,
+        "\n答：": true,
+        "请": true
+      },
+      "a3_shape_ok": true,
+      "a4_corpus_sha_stable": true,
+      "pass_all": true
+    },
+    "c2_bridge": {
+      "bytes": 361,
+      "windows": 85,
+      "window_bytes": 24,
+      "a1_zero_hit_per_pass": [
+        false,
+        false
+      ],
+      "a1_hits_per_pass": [
+        1,
+        1
+      ],
+      "a2_size_in_band": true,
+      "a2_distance_to_legacy": 198,
+      "a3_shape": {
+        "问：": true,
+        "\n答：": true,
+        "请": true
+      },
+      "a3_shape_ok": true,
+      "a4_corpus_sha_stable": true,
+      "pass_all": false
+    },
+    "c3_seed": {
+      "bytes": 454,
+      "windows": 108,
+      "window_bytes": 24,
+      "a1_zero_hit_per_pass": [
+        true,
+        true
+      ],
+      "a1_hits_per_pass": [
+        0,
+        0
+      ],
+      "a2_size_in_band": true,
+      "a2_distance_to_legacy": 291,
+      "a3_shape": {
+        "问：": true,
+        "\n答：": true,
+        "请": true
+      },
+      "a3_shape_ok": true,
+      "a4_corpus_sha_stable": true,
+      "pass_all": true
+    }
+  },
+  "candidates_passing": [
+    "c1_tide",
+    "c3_seed"
+  ],
+  "chosen": "c1_tide",
+  "selection_rule": "全部过 A-1..A-4 的候选里取字节数最接近 163 B 的那一枚；无一通过则判造不出",
+  "verdict": "probe_selected",
+  "status": "ok"
+}

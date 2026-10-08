@@ -60,15 +60,22 @@ def _documents(corpus: list[Path]) -> list[bytes]:
     return [text.encode("utf-8") for text in iter_native_documents(corpus)]
 
 
-def _probe_windows() -> list[bytes]:
-    from train_seed_corpus import HOLDOUT_PROBE
+def _probe_windows(probe: bytes | str | None = None) -> list[bytes]:
+    """24 字节窗口、步长 4（**取法不动**，否则新旧两把尺不同源）。
 
-    probe = (
-        HOLDOUT_PROBE if isinstance(HOLDOUT_PROBE, bytes) else str(HOLDOUT_PROBE).encode("utf-8")
-    )
-    if len(probe) < NGRAM_BYTES:
-        return [probe]
-    return [probe[i : i + NGRAM_BYTES] for i in range(0, len(probe) - NGRAM_BYTES + 1, 4)]
+    默认仍读训练器的 `HOLDOUT_PROBE`（步骤一与 §8.7 的既有读数口径）；
+    PLAN-N3-05 的重建验证要喂**候选**探针进来，所以这里加了可选入参——
+    加参数不改默认，是为了让已入库那枚读数件还能逐位复算。
+    """
+
+    if probe is None:
+        from train_seed_corpus import HOLDOUT_PROBE
+
+        probe = HOLDOUT_PROBE
+    raw = probe if isinstance(probe, bytes) else str(probe).encode("utf-8")
+    if len(raw) < NGRAM_BYTES:
+        return [raw]
+    return [raw[i : i + NGRAM_BYTES] for i in range(0, len(raw) - NGRAM_BYTES + 1, 4)]
 
 
 def _disjointness(corpus: list[Path], windows: list[bytes]) -> dict[str, Any]:
