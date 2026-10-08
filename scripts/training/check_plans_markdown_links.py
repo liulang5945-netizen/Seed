@@ -30,6 +30,19 @@ LINK_RE = re.compile(r"\[[^\]]*\]\(([^)\s]+)(?:\s+\"[^\"]*\")?\)")
 #: 显式跳过的目标前缀（非仓库内相对链接）。
 SKIP_PREFIXES = ("http://", "https://", "mailto:", "ftp://")
 
+#: **现行层**＝承担导航职责的文档；只有这里的坏链是真问题。
+#: `plans/archive/` 是冻结历史（owner 2026-10-07 蒸馏政策的存放处，
+#: 墓碑见 `plans/reference/DISTILLATION_TOMBSTONE_20261007.md`），
+#: 它里面指向已蒸馏件的链接**是政策预期而非缺陷**——按层分档是为了
+#: **不让455 条常红淹没现行层的真坏链**（常红的门等于没有门）。
+CURRENT_LAYER_PREFIXES = ("plans/active/", "plans/README.md")
+
+
+def is_current_layer(source: Path) -> bool:
+    """该源文件是否属于现行层（承担导航职责）。"""
+    relative = source.relative_to(REPO).as_posix()
+    return any(relative.startswith(prefix) for prefix in CURRENT_LAYER_PREFIXES)
+
 
 def slugify(heading: str) -> str:
     """把标题转成 GitHub 风格的锚点 slug。
@@ -155,10 +168,13 @@ def main() -> int:
             checked += 1
             resolved = (source.parent / path_part).resolve() if path_part else source
             line_no = text[: match.start()].count("\n") + 1
+            scope = "current" if is_current_layer(source) else "archive"
             if not resolved.is_file():
                 problems.append(
                     {
                         "kind": "missing_file",
+                        "scope": scope,
+                        "policy_expected": scope == "archive",
                         "source": source.relative_to(REPO).as_posix(),
                         "line": line_no,
                         "target": target,
@@ -174,6 +190,8 @@ def main() -> int:
                     problems.append(
                         {
                             "kind": "missing_anchor",
+                            "scope": scope,
+                            "policy_expected": scope == "archive",
                             "source": source.relative_to(REPO).as_posix(),
                             "line": line_no,
                             "target": target,
@@ -194,20 +212,40 @@ def main() -> int:
             )
         )
     else:
+        current = [p for p in problems if p["scope"] == "current"]
+        archive = [p for p in problems if p["scope"] == "archive"]
         print(f"扫描 {len(files)} 个 Markdown 文件、校验 {checked} 条仓库内链接")
-        if not problems:
-            print("**无坏链**")
+        print(
+            f"**现行层**（{'/'.join(CURRENT_LAYER_PREFIXES)}）：{len(current)} 条坏链"
+            " ← 这一档是门禁口径"
+        )
+        print(f"**归档层**（plans/archive/）：{len(archive)} 条 —— **政策预期，不计门禁**")
+        if current:
+            print("\n现行层坏链明细：")
+            for item in current[:40]:
+                print(f"  [{item['kind']}] {item['source']}:{item['line']} → {item['target']}")
+            if len(current) > 40:
+                print(f"  …另有 {len(current) - 40} 条")
         else:
-            by_kind: dict[str, list[dict[str, object]]] = {}
-            for problem in problems:
-                by_kind.setdefault(str(problem["kind"]), []).append(problem)
-            for kind, items in sorted(by_kind.items()):
-                print(f"\n{kind}：{len(items)} 条")
-                for item in items[:40]:
-                    print(f"  {item['source']}:{item['line']} → {item['target']}")
-                if len(items) > 40:
-                    print(f"  …另有 {len(items) - 40} 条")
-    return 1 if problems else 0
+            print("现行层**无坏链**。")
+        if archive:
+            by_kind: dict[str, int] = {}
+            for item in archive:
+                key = str(item["kind"])
+                by_kind[key] = by_kind.get(key, 0) + 1
+            summary = "、".join(f"{k} {v} 条" for k, v in sorted(by_kind.items()))
+            print(f"\n归档层明细仅供追溯（{summary}）：")
+            for item in archive[:10]:
+                print(f"  {item['source']}:{item['line']} → {item['target']}")
+            if len(archive) > 10:
+                print(f"  …另有 {len(archive) - 10} 条（`--json` 看全量）")
+            print(
+                "  口径依据：owner 2026-10-07 蒸馏政策（墓碑见 "
+                "plans/reference/DISTILLATION_TOMBSTONE_20261007.md）——"
+                "实验过程文档蒸馏后删除，指向它们的链接是政策预期而非缺陷。"
+            )
+    # **门禁只对现行层负责**：归档层常红会让门失去分辨力（常红的门等于没有门）。
+    return 1 if any(p["scope"] == "current" for p in problems) else 0
 
 
 if __name__ == "__main__":

@@ -49,7 +49,7 @@
 | [05 技术债](active/roadmap/05_TECH_DEBT_REGISTER.md) | 隔离、仪器、恢复与CI；按证据范围及明确后继修订解释 |
 | [唯一完整VISION](reference/VISION_FUTURE_TECHNOLOGY.md) | 大方向查漏先读§23；§15–19架构/学习方案；§20多模态；§21信息治理；§22长期运行机制 |
 | [06 历史决策](active/roadmap/06_P5_2C_PRIME_NEXT_STEP_DECISION.md) | 旧C/A/B路线依据，不是当前执行授权 |
-| [仓库可清理内容评估 2026-09-27（v2）](reference/REPO_CLEANUP_ASSESSMENT_20260927.md) | 只读扫描按重建代价切三档：零重建 1.86G / CPU+网络 7.3G / GPU 机时 52G（模型检查点+实验产物统一裁决，含不可删锚点）；git 历史无需瘦身的否定结论 |
+| [仓库可清理内容评估 2026-09-27（v2）](reference/DISTILLATION_TOMBSTONE_20261007.md) | 只读扫描按重建代价切三档：零重建 1.86G / CPU+网络 7.3G / GPU | 机时 52G（模型检查点+实验产物统一裁决，含不可删锚点）；git 历史无需瘦身的否定结论 |
 | [旧执行计划快照](archive/history/EXECUTION_BEFORE_RULE_REPAIR_20260917.md) | 原逐轮台账与当时判断，保留追溯；全部旧“下一步”失效 |
 | [R2逐轮诊断快照](archive/history/R2_DIAGNOSTIC_QUEUE_BEFORE_DESIGN_OPTIONS_20260917.md) | 七次后继追加的旧队首与当时解释；当前结论由设计依据复核限定 |
 
