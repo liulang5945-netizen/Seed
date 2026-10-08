@@ -1,0 +1,29 @@
+{
+  "format": "taiji-n3a-sequence-length-recompute-v1",
+  "status": "ok",
+  "checks": {
+    "corpus_fingerprint_matches_exit": true,
+    "max_symbols_matches_exit_budget": true,
+    "replayed_visits_match_exit": true
+  },
+  "arm_exit_document_visits": 324,
+  "replayed_document_visits": 324,
+  "replayed_unique_documents": 32,
+  "symbols_taken": 250000,
+  "max_symbols": 250000,
+  "max_unique_documents": 32,
+  "end_boundary_after_newline": true,
+  "boundary_symbol": 256,
+  "corpus_fingerprint": "[{\"name\":\"dialogue_extended_clean.jsonl\",\"bytes\":108327171}]",
+  "sequence_length": {
+    "documents_counted": 324,
+    "min": 114,
+    "median": 655.0,
+    "max": 2643,
+    "mean": 771.91358
+  },
+  "caveats": [
+    "end_boundary_after_newline 不在收尾件的自述里；本件按 CLI 默认 True 复算（两臂冻过的命令串里没有该旗标），代价是每篇 ±1 符号，且篇数守卫分不出它。",
+    "计数点在进篇那一刻 ⇒ 被预算切断的最后一篇按它自身的长度计入，与 `document_visits` 同数；吃到第几符号另有 `ticks_at_exit`。"
+  ]
+}

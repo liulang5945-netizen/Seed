@@ -202,3 +202,87 @@ def test_interpretation_limit_is_published_verbatim(tmp_path: Path) -> None:
     assert payload["interpretation_limit"] == MODULE.INTERPRETATION_LIMIT
     assert "等符号暴露" in payload["interpretation_limit"]
     assert "不许" in payload["interpretation_limit"] or "不允许" in payload["interpretation_limit"]
+
+
+#: §8.7 第四项的取值面（PLAN-N3-13）：收尾件自述优先，其次只认守卫齐了的同源复算件。
+def _sidecar(path: Path, **over: Any) -> Path:
+    payload: dict[str, Any] = {
+        "format": "taiji-n3a-sequence-length-recompute-v1",
+        "status": "ok",
+        "checks": {
+            "corpus_fingerprint_matches_exit": True,
+            "max_symbols_matches_exit_budget": True,
+            "replayed_visits_match_exit": True,
+        },
+        "sequence_length": {
+            "documents_counted": 315,
+            "min": 84,
+            "median": 626.0,
+            "max": 2858,
+            "mean": 795.888889,
+        },
+    }
+    payload.update(over)
+    path.write_text(
+        json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n"
+    )
+    return path
+
+
+def test_ok_sidecar_unlocks_the_fourth_item_and_is_disclosed(tmp_path: Path) -> None:
+    args = _args(tmp_path) + [
+        "--seq-a",
+        str(_sidecar(tmp_path / "seq_a.json")),
+        "--seq-b",
+        str(_sidecar(tmp_path / "seq_b.json", sequence_length={"documents_counted": 324})),
+    ]
+    rc = MODULE.main(args)
+    payload = _payload(tmp_path)
+    assert rc == 0, payload["arms"]["arm_A"]["section_8_7_completeness"]
+    for name in ("arm_A", "arm_B"):
+        arm = payload["arms"][name]
+        assert arm["sequence_length_source"] == "recomputed_same_stream", arm
+        assert arm["measurement_complete"] is True, arm["section_8_7_completeness"]
+        assert payload["judgement"][name]["J_N3a"] != "ran_not_measured"
+
+
+def test_self_reported_column_takes_precedence_over_a_sidecar(tmp_path: Path) -> None:
+    seq = {"documents_counted": 315, "min": 84, "median": 626.0, "max": 2858, "mean": 795.9}
+    exit_a = _exit(tmp_path / "sa_exit.json", sequence_length=seq)
+    args = _args(tmp_path, exit_a=exit_a) + [
+        "--seq-a",
+        str(_sidecar(tmp_path / "sa_seq.json", status="guard_failed")),
+        "--seq-b",
+        str(_sidecar(tmp_path / "sa_seq_b.json")),
+    ]
+    rc = MODULE.main(args)
+    arm = _payload(tmp_path)["arms"]["arm_A"]
+    #: 收尾件自述在场时**不去读**复算件——守卫不齐的件不能把好件顶掉。
+    assert arm["sequence_length_source"] == "exit_record", arm
+    assert arm["sequence_length"] == seq
+    assert arm["section_8_7_completeness"]["sequence_length"] is True
+    assert rc == 0, _payload(tmp_path)["arms"]["arm_B"]["section_8_7_completeness"]
+
+
+def test_guard_failed_sidecar_does_not_count_as_present(tmp_path: Path) -> None:
+    args = _args(tmp_path) + [
+        "--seq-a",
+        str(_sidecar(tmp_path / "bad_seq.json", status="guard_failed")),
+        "--seq-b",
+        str(_sidecar(tmp_path / "bad_seq_b.json", status="stream_shorter_than_budget")),
+    ]
+    rc = MODULE.main(args)
+    payload = _payload(tmp_path)
+    assert rc == 2
+    for name in ("arm_A", "arm_B"):
+        arm = payload["arms"][name]
+        assert arm["sequence_length"] is None, arm
+        assert arm["sequence_length_source"].startswith("sidecar_guard_failed"), arm
+        assert arm["section_8_7_completeness"]["sequence_length"] is False
+        assert payload["judgement"][name]["J_N3a"] == "ran_not_measured"
+
+
+def test_missing_sidecar_path_is_a_loud_reject(tmp_path: Path) -> None:
+    args = _args(tmp_path) + ["--seq-a", str(tmp_path / "nope.json"), "--seq-b", ""]
+    assert MODULE.main(args) == 2
+    assert not (tmp_path / "out.json").is_file(), "给了路径却读不到时不许照常出件"

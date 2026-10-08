@@ -1,0 +1,147 @@
+{
+  "format": "taiji-n3a-scaling-probe-adjudication-v1",
+  "prereg": "plans/reference/PLAN-N3-02_scaling_probe_prereg_20261007.md §2/§4quater ＋ PLAN-N3-10 §2/§3（形状 B 与读数边界）",
+  "interpretation_limit": "形状 B（等符号暴露、唯一篇数封顶）只允许回答“×16.8 容量在等符号暴露下是否把斜率抬出噪声带”，不允许回答“封顶在容量还是数据”——后者需要 PLAN-N3-10 §4 的 C 形状（等数据量变参数量）。",
+  "baseline_last_segment": 0.59412,
+  "arms": {
+    "arm_A": {
+      "progress_path": "E:\\Seed\\output\\n3a_armA\\progress.jsonl",
+      "progress_lines": 26,
+      "lines_dropped_window_zero": 1,
+      "acc_segment_means": [
+        0.280905,
+        0.31394,
+        0.3183,
+        0.33464,
+        0.352
+      ],
+      "acc_slope_first_to_last": 0.071095,
+      "acc_noise_band_adjacent_max": 0.033035,
+      "acc_last_segment_mean": 0.352,
+      "mean_surprise_segment_means": [
+        2.818751,
+        2.494198,
+        2.415563,
+        2.384734,
+        2.305194
+      ],
+      "holdout_v2_first": 3.1293398170216737,
+      "holdout_v2_last": 2.6456143938810643,
+      "holdout_v2_delta": -0.483725,
+      "exit_record": {
+        "exit_reason": "max_symbols_reached",
+        "reached_budget": true,
+        "budget_max_symbols": 250000,
+        "ticks_at_exit": 250000,
+        "unique_documents": 315,
+        "document_visits": 315,
+        "mean_revisits": 1.0,
+        "sequence_length": null,
+        "elapsed_seconds": 4014.014316199813,
+        "checkpoint_sha256": "fde2f6b56670476143e66193cd59b8bad922c1fccfe9f3bc9d9e25360547631f",
+        "corpus_fingerprint": "[{\"name\":\"dialogue_extended_clean.jsonl\",\"bytes\":108327171}]"
+      },
+      "section_8_7_completeness": {
+        "corpus_available": true,
+        "unique_episodes": true,
+        "actual_updates": true,
+        "sequence_length": true,
+        "independent_test_coverage": true
+      },
+      "sequence_length": {
+        "documents_counted": 315,
+        "min": 84,
+        "median": 626.0,
+        "max": 2858,
+        "mean": 795.888889
+      },
+      "sequence_length_source": "recomputed_same_stream",
+      "measurement_complete": true
+    },
+    "arm_B": {
+      "progress_path": "E:\\Seed\\output\\n3a_armB\\progress.jsonl",
+      "progress_lines": 26,
+      "lines_dropped_window_zero": 1,
+      "acc_segment_means": [
+        0.289205,
+        0.3395,
+        0.36468,
+        0.3867,
+        0.4025
+      ],
+      "acc_slope_first_to_last": 0.113295,
+      "acc_noise_band_adjacent_max": 0.050295,
+      "acc_last_segment_mean": 0.4025,
+      "mean_surprise_segment_means": [
+        2.792474,
+        2.393703,
+        2.256471,
+        2.168085,
+        2.114846
+      ],
+      "holdout_v2_first": 3.1293398170216737,
+      "holdout_v2_last": 2.782581030044603,
+      "holdout_v2_delta": -0.346759,
+      "exit_record": {
+        "exit_reason": "max_symbols_reached",
+        "reached_budget": true,
+        "budget_max_symbols": 250000,
+        "ticks_at_exit": 250000,
+        "unique_documents": 32,
+        "document_visits": 324,
+        "mean_revisits": 10.125,
+        "sequence_length": null,
+        "elapsed_seconds": 3938.796928500058,
+        "checkpoint_sha256": "94d190eca81e04aad932e375d22fa09741754d8737489d9657191eb30766b0ef",
+        "corpus_fingerprint": "[{\"name\":\"dialogue_extended_clean.jsonl\",\"bytes\":108327171}]"
+      },
+      "section_8_7_completeness": {
+        "corpus_available": true,
+        "unique_episodes": true,
+        "actual_updates": true,
+        "sequence_length": true,
+        "independent_test_coverage": true
+      },
+      "sequence_length": {
+        "documents_counted": 324,
+        "min": 114,
+        "median": 655.0,
+        "max": 2643,
+        "mean": 771.91358
+      },
+      "sequence_length_source": "recomputed_same_stream",
+      "measurement_complete": true
+    }
+  },
+  "judgement": {
+    "arm_A": {
+      "slope_gt_own_band": true,
+      "last_mean_gt_baseline_plus_margin": false,
+      "holdout_v2_within_limit": true,
+      "measurement_complete": true,
+      "J_N3a": "not_holds"
+    },
+    "arm_B": {
+      "slope_gt_own_band": true,
+      "last_mean_gt_baseline_plus_margin": false,
+      "holdout_v2_within_limit": true,
+      "measurement_complete": true,
+      "J_N3a": "not_holds"
+    }
+  },
+  "single_variable_check": {
+    "both_arms_present": true,
+    "unique_documents_differ": true,
+    "mean_revisits_published": [
+      1.0,
+      10.125
+    ],
+    "instrument_broken_if_revisits_equal": false,
+    "ticks_equal": true,
+    "corpus_fingerprints": [
+      "[{\"name\":\"dialogue_extended_clean.jsonl\",\"bytes\":108327171}]",
+      "[{\"name\":\"dialogue_extended_clean.jsonl\",\"bytes\":108327171}]"
+    ],
+    "corpus_fingerprints_equal": true
+  }
+}

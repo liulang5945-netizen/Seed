@@ -91,7 +91,35 @@ def _band(means: list[float]) -> float | None:
     return max(abs(b - a) for a, b in zip(means[1:], means[:-1], strict=True))
 
 
-def judge_arm(progress: Path, exit_path: Path | None) -> dict[str, Any]:
+def _sequence_length(exit_record: dict[str, Any], seq_path: Path | None) -> tuple[Any, str]:
+    """§8.7 第四项的取值面：收尾件自述优先，其次只认守卫齐了的同源复算件。"""
+
+    value = exit_record.get("sequence_length")
+    if value is not None:
+        return value, "exit_record"
+    if seq_path is None:
+        return None, "absent"
+    if not seq_path.is_file():
+        return None, "missing_sidecar"
+    payload = json.loads(seq_path.read_text(encoding="utf-8"))
+    if payload.get("status") != "ok":
+        #: 三条守卫不齐的复算件**不算在场**——它证不了"走的确实是当时那条流"。
+        return None, f"sidecar_guard_failed:{payload.get('status')}"
+    sidecar_value = payload.get("sequence_length")
+    if sidecar_value is None:
+        return None, "sidecar_empty"
+    return sidecar_value, "recomputed_same_stream"
+
+
+def judge_arm(
+    progress: Path, exit_path: Path | None, seq_path: Path | None = None
+) -> dict[str, Any]:
+    """读一支臂的两张面并出 §8.7 在场性；`seq_path` 是**同源复算件**（PLAN-N3-13）。
+
+    §8.7 第四项 `sequence_length` 优先认**收尾件自述**（㊵-545 之后的跑法都有）；旧产物没有这一列
+    时，只接受 `status=="ok"` 的复算件（三条守卫：同指纹／同预算／重放篇数＝自述篇数），
+    并把取值面写进 `sequence_length_source` 如实披露——**缺件或守卫不齐都不算在场**。
+    """
     rows = _lines(progress)
     #: **DEBT-G63 的处置**：窗口为零的行不参与 acc／mean_surprise 统计。
     usable = [row for row in rows if int(row.get("window_ticks", 0)) > 0]
@@ -110,6 +138,9 @@ def judge_arm(progress: Path, exit_path: Path | None) -> dict[str, Any]:
         is not None
         for name, (source, column) in REQUIRED_REPORT_FIELDS.items()
     }
+    #: 第四项走"自述优先，其次齐守卫的复算件"这条取值面（PLAN-N3-13）。
+    sequence_value, sequence_source = _sequence_length(exit_record, seq_path)
+    completeness["sequence_length"] = sequence_value is not None
     slope = (acc_means[-1] - acc_means[0]) if len(acc_means) >= 2 else None
     band = _band(acc_means)
     return {
@@ -145,6 +176,8 @@ def judge_arm(progress: Path, exit_path: Path | None) -> dict[str, Any]:
             )
         },
         "section_8_7_completeness": completeness,
+        "sequence_length": sequence_value,
+        "sequence_length_source": sequence_source,
         "measurement_complete": all(completeness.values()),
     }
 
@@ -155,6 +188,14 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--arm-b", help="乙臂 progress.jsonl（缺 ⇒ 否证对照记 unverified）")
     parser.add_argument("--exit-a", required=True, help="甲臂 progress_exit.json")
     parser.add_argument("--exit-b", help="乙臂 progress_exit.json")
+    parser.add_argument(
+        "--seq-a",
+        help="甲臂 §8.7 第四项的同源复算件（PLAN-N3-13；收尾件已自述这一列时不必给）",
+    )
+    parser.add_argument(
+        "--seq-b",
+        help="乙臂的同源复算件（守卫不齐的件不算在场）",
+    )
     parser.add_argument(
         "--baseline-last-segment",
         type=float,
@@ -168,13 +209,26 @@ def main(argv: list[str] | None = None) -> int:
         if not _resolve(str(raw)).is_file():
             print("REJECT missing_face", str(raw).encode("ascii", "replace").decode("ascii"))
             return 2
+    #: 复算件给了就必须存在——"给了路径却读不到"不许静默降级成"这一项不在场"。
+    for raw in filter(None, (args.seq_a, args.seq_b)):
+        if not _resolve(str(raw)).is_file():
+            print("REJECT missing_sidecar", str(raw).encode("ascii", "replace").decode("ascii"))
+            return 2
 
     arms: dict[str, Any] = {
-        "arm_A": judge_arm(_resolve(args.arm_a), _resolve(args.exit_a)),
+        "arm_A": judge_arm(
+            _resolve(args.arm_a),
+            _resolve(args.exit_a),
+            _resolve(args.seq_a) if args.seq_a else None,
+        ),
     }
     rc = 0
     if args.arm_b:
-        arms["arm_B"] = judge_arm(_resolve(args.arm_b), _resolve(args.exit_b))
+        arms["arm_B"] = judge_arm(
+            _resolve(args.arm_b),
+            _resolve(args.exit_b),
+            _resolve(args.seq_b) if args.seq_b else None,
+        )
     else:
         arms["arm_B"] = {
             "status": "absent",
