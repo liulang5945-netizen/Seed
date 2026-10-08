@@ -100,11 +100,35 @@ def load_capacity_policy(path: Path | str) -> CapacityPolicy:
     return CapacityPolicy.from_dict(payload)
 
 
+class DocumentStreamCounters:
+    """PLAN-N3-10 §2 的三轴自述载体：唯一篇数 `U`、到达篇次、平均重复率 `R`。
+
+    计数器由**取数侧自己数**（不是配置值回显）——本件的全部纪律是"重复率不许当隐藏变量"，
+    照抄 `K` 就等于把要报的那一轴又变回人抄的数。
+    """
+
+    def __init__(self) -> None:
+        self.unique_documents = 0
+        self.document_visits = 0
+
+    def as_dict(self) -> dict[str, float | int]:
+        mean = (
+            round(self.document_visits / self.unique_documents, 6) if self.unique_documents else 0.0
+        )
+        return {
+            "unique_documents": int(self.unique_documents),
+            "document_visits": int(self.document_visits),
+            "mean_revisits": mean,
+        }
+
+
 def iter_corpus_symbols(
     paths: Sequence[Path | str],
     *,
     boundary: int = TaijiConfig().boundary_symbol,
     end_boundary_after_newline: bool = False,
+    max_unique_documents: int | None = None,
+    counters: DocumentStreamCounters | None = None,
 ) -> Iterator[int]:
     """Stream every corpus document as boundary-separated raw UTF-8 bytes.
 
@@ -121,11 +145,37 @@ def iter_corpus_symbols(
     逐位不变）；主线配方在 CLI 层默认开（2026-09-29 owner 条件授权，§7-3）。
     """
 
+    if max_unique_documents is None:
+        #: 默认支＝今天的形状，一字不动；只多挂了计数器（只读地数篇次）。
+        for text in iter_native_documents(paths):
+            if counters is not None:
+                counters.unique_documents += 1
+                counters.document_visits += 1
+            yield boundary
+            yield from text.encode("utf-8")
+            if end_boundary_after_newline:
+                yield 0x0A
+        return
+
+    #: 形状 B（PLAN-N3-10 §2）：只取前 K 篇成池，之后**循环重用**——这是个无界生成器，
+    #: 停手由调用方的符号预算支负责（:655/:677 那两处），所以 `document_visits` 一定 ≥ `K`。
+    pool: list[str] = []
     for text in iter_native_documents(paths):
-        yield boundary
-        yield from text.encode("utf-8")
-        if end_boundary_after_newline:
-            yield 0x0A
+        pool.append(text)
+        if len(pool) >= int(max_unique_documents):
+            break
+    if not pool:
+        raise ValueError("给了 --max-unique-documents 但一篇文档都没取到 ⇒ 语料空，响亮拒绝")
+    if counters is not None:
+        counters.unique_documents = len(pool)
+    while True:
+        for text in pool:
+            if counters is not None:
+                counters.document_visits += 1
+            yield boundary
+            yield from text.encode("utf-8")
+            if end_boundary_after_newline:
+                yield 0x0A
 
 
 def iter_answer_chunks(
@@ -277,6 +327,7 @@ def run_training(
     pressure_record: Path | str | None = None,
     developmental_fast_slow: bool = False,
     developmental_bridge_gate: float | None = None,
+    max_unique_documents: int | None = None,
 ) -> dict[str, float]:
     """Stream the corpus through ``Seed.observe`` with periodic persistence.
 
@@ -292,6 +343,22 @@ def run_training(
 
     if epochs <= 0:
         raise ValueError("epochs must be positive")
+    #: PLAN-N3-10 §2 形状 B 的两条响亮拒绝：`K<=0` 不是"不限"而是错用（不限＝不给这个参数）；
+    #: 封顶篇数会造出**无界**的循环流，所以必须同时给符号预算，否则这支生成器永不停手。
+    if max_unique_documents is not None and int(max_unique_documents) <= 0:
+        raise ValueError("max_unique_documents must be positive (omit it for an uncapped stream)")
+    if max_unique_documents is not None and max_symbols is None:
+        raise ValueError(
+            "max_unique_documents cycles a fixed pool, so it needs max_symbols "
+            "to bound the stream"
+        )
+    stream_counters = DocumentStreamCounters()
+    if max_unique_documents is not None and str(answer_chunking) != "stream":
+        #: PLAN-N3-10 §1 明写：封顶只作用于连续流那一支取篇处，`per-answer` 的 `iter_answer_chunks`
+        #: 不动 ⇒ 两轴一起给会是"以为封了顶其实没封"，只能响亮拒绝。
+        raise ValueError(
+            f"--max-unique-documents 只作用于连续流（answer_chunking={answer_chunking!r} 走另一支取数）"
+        )
     if checkpoint_every <= 0 or progress_every <= 0:
         raise ValueError("checkpoint/progress intervals must be positive")
     if readout not in {"action", "predictive"}:
@@ -408,6 +475,9 @@ def run_training(
             entry["reached_budget"] = bool(
                 max_symbols is not None and ticks >= base_ticks + int(max_symbols)
             )
+            #: PLAN-N3-10 §2：三轴自述只挂**收尾那一行与独立 exit 件**（周期性行键集一字不动，
+            #: 与 G14 那三条同形）。`mean_revisits` 由这里现数，不许由命令行反推 `K`。
+            entry.update(stream_counters.as_dict())
         with progress_path.open("a", encoding="utf-8") as handle:
             handle.write(json.dumps(entry, ensure_ascii=False) + "\n")
         #: 压强面收尾自述：把"这张面实际写了多少观测、收尾时走到第几 tick"钉在同一件里。
@@ -659,7 +729,11 @@ def run_training(
                     return _summary(model, ticks)
             continue
         for symbol in iter_corpus_symbols(
-            corpus_paths, boundary=boundary, end_boundary_after_newline=end_boundary_after_newline
+            corpus_paths,
+            boundary=boundary,
+            end_boundary_after_newline=end_boundary_after_newline,
+            max_unique_documents=max_unique_documents,
+            counters=stream_counters,
         ):
             step = model.observe(symbol, **observe_kwargs)
             ticks += 1
@@ -768,6 +842,8 @@ def _build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--seed", type=int, default=20260822)
     parser.add_argument("--epochs", type=int, default=1)
     parser.add_argument("--max-symbols", type=int, default=200_000)
+    #: PLAN-N3-10 §2 形状 B：缺省＝不限（今天的形状逐位不变），给了值＝前 K 篇成池后循环重用。
+    parser.add_argument("--max-unique-documents", type=int, default=None)
     parser.add_argument("--checkpoint-every", type=int, default=50_000)
     parser.add_argument("--progress-every", type=int, default=10_000)
     parser.add_argument(
@@ -1086,6 +1162,7 @@ def main() -> None:
         pressure_record=args.pressure_record,
         developmental_fast_slow=bool(args.developmental_fast_slow),
         developmental_bridge_gate=args.developmental_bridge_gate,
+        max_unique_documents=args.max_unique_documents,
     )
     print(json.dumps(summary, ensure_ascii=False))
     #: DEBT-G14②：操作侧曾拿着一个 **0 字节的 `run.log`** 判断"这轮跑到哪了"——空文件比没有更误导。
