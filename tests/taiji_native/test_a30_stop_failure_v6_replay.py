@@ -84,10 +84,42 @@ def test_instrument_carries_v6_and_the_correction_note() -> None:
     source = (PROJECT_ROOT / "scripts" / "training" / "probe_taiji_a30_stop_failure.py").read_text(
         encoding="utf-8"
     )
-    assert '"format": "taiji-a30-stop-failure-v41"' in source
-    assert all(
-        f"format_note_v{v}" in source for v in range(6, 42)
-    ), "升版只许加列，历史说明必须逐版留在件里"
+
+    #: **DEBT-G57 修法①：版本号同源取，不再人肉钉某一枚字面量。**
+    #: 旧写法钉着 `"…-v41"`，而探针升到 v44 时没人同步改这条测 ⇒ 一条与产品无关的常驻红
+    #: （引入点是已推送的 `726a0a75`：升版那一笔没同批改测，四道提交前的门盖不到）。
+    #: 现在把"件里自述的第几版"读出来当基准，历史注记仍逐版硬要求，且**只许一枚自述版本**。
+    def _version_and_missing_notes(text: str) -> tuple[int, list[int]]:
+        versions = re.findall(r'"format": "taiji-a30-stop-failure-v(\d+)"', text)
+        if len(versions) != 1:
+            raise AssertionError(
+                f"探针的格式自述应当**恰好一枚**，实得 {len(versions)} 枚：{versions}"
+            )
+        current = int(versions[0])
+        missing = [v for v in range(6, current + 1) if f"format_note_v{v}" not in text]
+        return current, missing
+
+    current_version, missing_notes = _version_and_missing_notes(source)
+    assert (
+        current_version >= 41
+    ), f"件里自述的格式版本 {current_version} 低于本轮已认定的最低在案版本 41"
+    assert not missing_notes, f"升版只许加列，历史说明必须逐版留在件里；缺：{missing_notes}"
+    #: 能为假的两面（同一条逻辑的负对照，不靠"看代码应该会拒"）：
+    #: ①只挪探针的自述版本、不同步注记 ⇒ 必须报缺；②自述出现两枚 ⇒ 必须响亮拒绝。
+    bumped = source.replace(
+        f'"format": "taiji-a30-stop-failure-v{current_version}"',
+        f'"format": "taiji-a30-stop-failure-v{current_version + 1}"',
+    )
+    bumped_version, bumped_missing = _version_and_missing_notes(bumped)
+    assert bumped_version == current_version + 1
+    assert bumped_missing == [current_version + 1], bumped_missing
+    try:
+        _version_and_missing_notes(bumped + source[bumped.index('"format": "taiji-a30') :])
+    except AssertionError as reject:
+        assert "恰好一枚" in str(reject), str(reject)
+    else:
+        raise AssertionError("自述出现两枚版本却没被拒 ⇒ 这条守卫是恒真的")
+
     assert "format_note_v6" in source
     assert "追加二" in source and "深帧复现" in source
     assert "all_surfaces_are_replayed_raw" in source
