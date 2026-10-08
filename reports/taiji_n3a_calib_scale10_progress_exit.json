@@ -1,0 +1,20 @@
+{
+  "epoch": 0,
+  "ticks": 4000,
+  "window_ticks": 3999,
+  "online_accuracy": 0.19304826206551637,
+  "mean_surprise": 3.738408110077702,
+  "holdout_surprise": 3.2449862596640915,
+  "elapsed_seconds": 65.5323240000289,
+  "exit_reason": "max_symbols_reached",
+  "base_ticks": 0,
+  "budget_max_symbols": 4000,
+  "ticks_at_exit": 4000,
+  "reached_budget": true,
+  "checkpoint_path": "output\\seed_n3a_calib_scale10.pt",
+  "checkpoint_sha256": "926c2611a7cb1a6d27c6d730699e8abca7997684adbdc4ea1466ae40914a636f",
+  "corpus_fingerprint": "[{\"name\":\"dialogue_extended_clean.jsonl\",\"bytes\":108327171}]",
+  "history_files": 1,
+  "history_bytes": 229181197,
+  "history_pruned": 0
+}
