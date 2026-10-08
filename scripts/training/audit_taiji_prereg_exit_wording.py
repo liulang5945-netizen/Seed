@@ -30,6 +30,24 @@ NUMERIC_PIN = re.compile(r"(?:[≥≤><]=?\s*-?\d|[-+]?\d(?:\.\d+)?\s*(?:[%％]?
 #: 判据/出口段的行首标记（行内含这些词才算判据句，别拿散文段当判据扫）。
 CRITERION_MARKERS = ("出口", "判据", "J-", "J－")
 
+#: DEBT-G54 修法②的守卫：一份 `PLAN-*` **必须**至少有一节标题含下列任一词，否则"零命中"只是因为
+#: 作者换了叫法（"约定/口径/处置"），门对整份件隐形 ⇒ 把"隐形"从静默变成 rc=2 的响亮失败。
+#: 只认**二级及以下**标题：文档大标题里顺带出现"判据"两个字不算一节判据段
+#: （写这条的测时我自己就撞过一次——件名里写着"不肯说判据"就把标记式扫描糊过去了）。
+CRITERION_HEADING_WORDS = ("判据", "出口", "验收")
+HEADING_LINE = re.compile(r"^#{2,6} \s*(.*)$")
+
+
+def criterion_headings(text: str) -> list[int]:
+    """二级及以下标题里含判据/出口/验收的行号；空表 ⇒ 这份预注册对现行扫描面不可见。"""
+
+    return [
+        number
+        for number, line in enumerate(text.splitlines(), start=1)
+        if (m := HEADING_LINE.match(line.strip()))
+        and any(word in m.group(1) for word in CRITERION_HEADING_WORDS)
+    ]
+
 
 def scan_text(text: str) -> dict[str, Any]:
     """返回逐行命中表；`criterion_lines` 为 0 时调用方必须拒判。"""
@@ -77,8 +95,18 @@ def main(argv: list[str] | None = None) -> int:
             rc = 2
             results.append(entry)
             continue
-        scan = scan_text(path.read_text(encoding="utf-8"))
+        raw_text = path.read_text(encoding="utf-8")
+        scan = scan_text(raw_text)
         entry.update(scan)
+        if path.name.startswith("PLAN-"):
+            #: 存在性检查走**标题**，不走"某行有没有写过判据这三个字"。
+            headings = criterion_headings(raw_text)
+            entry["criterion_headings"] = len(headings)
+            if not headings:
+                entry["status"] = "invisible_criterion_surface"
+                rc = 2
+                results.append(entry)
+                continue
         if scan["criterion_lines"] == 0:
             entry["status"] = "no_criterion_section"
             rc = 2
