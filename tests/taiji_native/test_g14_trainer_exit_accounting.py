@@ -193,8 +193,8 @@ def test_periodic_lines_keep_their_old_shape(tmp_path: Path) -> None:
     assert len(entries) >= 2, entries
     assert set(entries[0]) == LEGACY_KEYS, set(entries[0])
     assert "exit_reason" not in entries[0]
-    #: 三轴也只许在收尾那一行：周期行混进来就是改形。
-    for axis in ("unique_documents", "document_visits", "mean_revisits"):
+    #: 三轴与 §8.7 那一列也只许在收尾那一行：周期行混进来就是改形。
+    for axis in ("unique_documents", "document_visits", "mean_revisits", "sequence_length"):
         assert axis not in entries[0], axis
     assert set(entries[-1]) == LEGACY_KEYS | {
         "exit_reason",
@@ -205,6 +205,9 @@ def test_periodic_lines_keep_their_old_shape(tmp_path: Path) -> None:
         "unique_documents",
         "document_visits",
         "mean_revisits",
+        #: PLAN-N3-02 §8.7 的"序列长度"列（同一纪律：只挂收尾行；放宽前先红过一次，
+        #: 实测 `1 failed, 6 passed`、失败项点名 `Extra items in the left set: sequence_length`）。
+        "sequence_length",
     }, set(entries[-1])
 
 

@@ -138,6 +138,7 @@ def judge_arm(progress: Path, exit_path: Path | None) -> dict[str, Any]:
                 "unique_documents",
                 "document_visits",
                 "mean_revisits",
+                "sequence_length",
                 "elapsed_seconds",
                 "checkpoint_sha256",
                 "corpus_fingerprint",

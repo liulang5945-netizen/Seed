@@ -24,6 +24,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import statistics
 import sys
 import time
 from collections.abc import Iterator, Mapping, Sequence
@@ -110,6 +111,33 @@ class DocumentStreamCounters:
     def __init__(self) -> None:
         self.unique_documents = 0
         self.document_visits = 0
+        #: PLAN-N3-02 §4quater 的"序列长度"一列：由**发符处现数**，一篇一条（含边界符）。
+        #: 存整列而不只存 min/max，是因为中位数与均值要能对回同一批数——只报摘要就再也验不了。
+        self.document_symbol_counts: list[int] = []
+
+    def record_document(self, symbol_count: int) -> None:
+        self.document_symbol_counts.append(int(symbol_count))
+
+    def sequence_length_stats(self) -> dict[str, float | int] | None:
+        """§8.7 的"序列长度"＝**本轮进入过的每一篇**的符号数分布；一篇都没进就出版 `None`。
+
+        取法冻结在 PLAN-N3-02 §4quater 那一行："由 `iter_corpus_symbols` 在边界符处累加得到，
+        不许用 `max_symbols` 参数值冒充实测分布"。计数点在**进篇那一刻**（长度是这篇自身的
+        字节数，与消费到哪一步无关），所以被符号预算切断的最后一篇按**它自身的长度**计入
+        ⇒ `documents_counted` 与 `document_visits` 同数；"吃到第几符号"另有 `ticks_at_exit`。
+        空档不许印 0（DEBT-G63 那条同族纪律）。
+        """
+
+        counts = self.document_symbol_counts
+        if not counts:
+            return None
+        return {
+            "documents_counted": len(counts),
+            "min": min(counts),
+            "median": float(statistics.median(counts)),
+            "max": max(counts),
+            "mean": round(sum(counts) / len(counts), 6),
+        }
 
     def as_dict(self) -> dict[str, float | int]:
         mean = (
@@ -163,11 +191,15 @@ def iter_corpus_symbols(
     if max_unique_documents is None:
         #: 默认支＝今天的形状，一字不动；只多挂了计数器（只读地数篇次）。
         for text in iter_native_documents(paths):
+            encoded = text.encode("utf-8")
             if counters is not None:
                 counters.unique_documents += 1
                 counters.document_visits += 1
+                counters.record_document(
+                    1 + len(encoded) + (1 if end_boundary_after_newline else 0)
+                )
             yield boundary
-            yield from text.encode("utf-8")
+            yield from encoded
             if end_boundary_after_newline:
                 yield 0x0A
         return
@@ -185,10 +217,14 @@ def iter_corpus_symbols(
         counters.unique_documents = len(pool)
     while True:
         for text in pool:
+            encoded = text.encode("utf-8")
             if counters is not None:
                 counters.document_visits += 1
+                counters.record_document(
+                    1 + len(encoded) + (1 if end_boundary_after_newline else 0)
+                )
             yield boundary
-            yield from text.encode("utf-8")
+            yield from encoded
             if end_boundary_after_newline:
                 yield 0x0A
 
@@ -498,6 +534,10 @@ def run_training(
             #: PLAN-N3-10 §2：三轴自述只挂**收尾那一行与独立 exit 件**（周期性行键集一字不动，
             #: 与 G14 那三条同形）。`mean_revisits` 由这里现数，不许由命令行反推 `K`。
             entry.update(stream_counters.as_dict())
+            #: PLAN-N3-02 §8.7 的"序列长度"一列（同一台仪器、同一纪律：现数、只挂收尾行、
+            #: 一篇都没喂完时出版 `None` 而不是 0）。判读器 `adjudicate_taiji_n3a_scaling_probe.py:36`
+            #: 按 `("exit","sequence_length")` 取它，取不到就把整档锁在 `ran_not_measured`（㊵-543）。
+            entry["sequence_length"] = stream_counters.sequence_length_stats()
         with progress_path.open("a", encoding="utf-8") as handle:
             handle.write(json.dumps(entry, ensure_ascii=False) + "\n")
         #: 压强面收尾自述：把"这张面实际写了多少观测、收尾时走到第几 tick"钉在同一件里。
