@@ -1,0 +1,61 @@
+{
+  "format": "taiji-n2b-resetarm-v1",
+  "prereg": "plans/reference/PLAN-N2-03_reset_attribution_prereg_20261008.md#1",
+  "source": "E:\\Seed\\checkpoints\\seed_n2b_mother_20261008.pt",
+  "arm_path": "E:\\Seed\\output\\n2b_resetarm\\checkpoint.pt",
+  "started_utc": "2026-10-08T08:55:46Z",
+  "wake_episode_id": "wake-after-sleep",
+  "mother_digest": "3e00bafc6298ac8462c352b4bfd31d4fbbd8c79ff3cafd3c95f867ecd7243060",
+  "digest_after_reset": "7e3e640a49e00fca8276ae0a99eaa5eea1f6baf0205b4260b37095078ea65e0e",
+  "params_digest_before": "74ba3daef2a8e09b55865961d8c44f42839cb0766909b9d533c60cb2836d5a2f",
+  "params_digest_after": "74ba3daef2a8e09b55865961d8c44f42839cb0766909b9d533c60cb2836d5a2f",
+  "g_n6_1_parameter_family_unchanged": true,
+  "family_diff": {
+    "parameter_family": {
+      "entries_before": 1605,
+      "entries_after": 1605,
+      "changed": 0,
+      "dropped": 0,
+      "added": 0
+    },
+    "state_family": {
+      "entries_before": 7436,
+      "entries_after": 304,
+      "changed": 122,
+      "dropped": 7148,
+      "added": 16
+    }
+  },
+  "excluded_changed_paths": {
+    "substrate.identity_organ.lineage.parent_checkpoint_digest": {
+      "before": "61a431eb304ebb1836ef047df886d8f10b4d13285e3afabf1fb6b2993ba1d721",
+      "after": "1be216de20917c70c711a482955a82b7b7f8f46d5497c097c76f57f411719acf"
+    },
+    "taiji.kernel.identity_organ.lineage.parent_checkpoint_digest": {
+      "before": "61a431eb304ebb1836ef047df886d8f10b4d13285e3afabf1fb6b2993ba1d721",
+      "after": "1be216de20917c70c711a482955a82b7b7f8f46d5497c097c76f57f411719acf"
+    }
+  },
+  "exclusion_rule": {
+    "state_prefixes": [
+      "substrate.cognitive_state",
+      "taiji.cognitive_state",
+      "substrate.state",
+      "taiji.kernel.state",
+      "substrate.perception",
+      "taiji.components.perception"
+    ],
+    "lineage_suffixes": [
+      ".lineage.parent_checkpoint_digest",
+      ".lineage.checkpoint_digest"
+    ],
+    "why": "参数族只含学出来的参数；情节/活动族与信封血缘记账按 §3ter 单独报出，不混进守卫"
+  },
+  "mother_tick": 273,
+  "tick_after_reset": 0,
+  "arm_params_digest_after_load": "74ba3daef2a8e09b55865961d8c44f42839cb0766909b9d533c60cb2836d5a2f",
+  "g_n6_2_arm_loadable_and_params_identical": true,
+  "arm_saved_bytes": 12331669,
+  "duration_seconds": 2.9,
+  "fail_closed_pass": true
+}
