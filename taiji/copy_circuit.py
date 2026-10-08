@@ -263,6 +263,14 @@ class CopyCircuit:
         #: 路径逐位不变。开着时 `evidence()` 在 copy 轨迹走到所选事件末字节的那一步起让位并提议
         #: 边界符（见该处注释）；本属性不在参数面/payload 里，checkpoint 载入不受影响。
         self.endpoint_yield_override: bool = False
+        #: PLAN-N1-01（S1a 硬序贯读取档，owner 2026-10-08 弹窗批准开跑）：诊断专用开关，默认关＝生产
+        #: 路径逐位不变。开着时寻址**只允许落在"前驱＝刚发射字节"的那些位置上**（㊵-479 测出默认装配
+        #: 的逐步位置保真只有 0.549，损失就在池化把非后继位置的质量也一起加进字节那一维），
+        #: 见 `_successor_positions`。同样不进参数面/payload。
+        self.successor_restricted_addressing: bool = False
+        #: 空后继集（刚发射的字节不在这条告知里）时的回退次数——**必须为 0 以外时如实披露**，
+        #: 否则 J-S1a 这条判据有一半是"回退路径"在量（同 `selection_lock_dropped` 的纪律）。
+        self.successor_restriction_fallbacks: int = 0
 
     @property
     def mounted(self) -> bool:
@@ -305,7 +313,37 @@ class CopyCircuit:
         query = f1_context @ self._parameters["query_state"]
         scale = math.sqrt(float(self.evidence_width))
         scores = query @ keys.T / scale + self._successor_bonus(codes, prev_byte)
+        allowed = self._successor_positions(codes, prev_byte)
+        if allowed is not None:
+            scores = scores.masked_fill(~allowed, float("-inf"))
         return torch.softmax(scores, dim=0)
+
+    def _successor_positions(
+        self, codes: torch.Tensor, prev_byte: int | None
+    ) -> torch.Tensor | None:
+        """S1a 硬序贯档（PLAN-N1-01）：允许寻址落在哪些位置，返回布尔掩码；None＝不限制。
+
+        允许集与 `_successor_bonus` 用**同一个式子**（`codes[i-1] == prev_byte` 的那些 i），
+        不另写一份——否则"诱导加的那批位置"和"只允许读的那批位置"会静默分家。
+        本轮第一个发射字节（`prev_byte` 为 None）＝允许位置 0（存储事件的起点）。
+        事件里根本没有该字节的后继位置时**回退到不限制并计数**：静默回退会让 J-S1a 的一半
+        在另一条路径上被量（同 `selection_lock_dropped` 的纪律）。
+        """
+        if not self.successor_restricted_addressing:
+            return None
+        count = int(codes.numel())
+        if count == 0:
+            return None
+        mask = torch.zeros(count, dtype=torch.bool, device=codes.device)
+        if prev_byte is None:
+            mask[0] = True
+            return mask
+        positions = [i for i in range(1, count) if int(codes[i - 1]) == int(prev_byte)]
+        if not positions:
+            self.successor_restriction_fallbacks += 1
+            return None
+        mask[torch.tensor(positions, device=codes.device)] = True
+        return mask
 
     def _pool_into(
         self, distribution: torch.Tensor, codes: torch.Tensor, weights: torch.Tensor

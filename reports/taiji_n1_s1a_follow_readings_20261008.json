@@ -1,0 +1,97 @@
+{
+  "format": "taiji-n1-trajectory-following-v1",
+  "results": [
+    {
+      "report": "taiji_a30_stop_failure_self_v44_s1a_trajfollow_96_20261008.json",
+      "status": "ok",
+      "face_role": "s1a",
+      "behavior_baseline_check": {
+        "eaters": 247,
+        "never_lf": 225,
+        "stoppers": 41
+      },
+      "behavior_baseline_required": false,
+      "trajectory_rows_total": 71937,
+      "group_readings": {
+        "never_lf_eaters": {
+          "prediction_steps": 57600,
+          "event_absent_steps": 11520,
+          "eligible_steps": 46080,
+          "F1_follow_rate": 0.746699,
+          "F2_mass_hit_rate": 0.983866,
+          "F1c_chance_baseline": 0.063343,
+          "F2_minus_F1": 0.237167,
+          "F1_minus_chance": 0.683357,
+          "F3_last_byte_rate": 0.042969,
+          "F4_gate_median": 51.1799,
+          "F4_gate_p90": 70.3789,
+          "F5_succ_weight_median": 0.224083
+        },
+        "all_eaters": {
+          "prediction_steps": 63232,
+          "event_absent_steps": 14080,
+          "eligible_steps": 49152,
+          "F1_follow_rate": 0.745445,
+          "F2_mass_hit_rate": 0.981525,
+          "F1c_chance_baseline": 0.062947,
+          "F2_minus_F1": 0.236079,
+          "F1_minus_chance": 0.682498,
+          "F3_last_byte_rate": 0.046916,
+          "F4_gate_median": 51.1593,
+          "F4_gate_p90": 70.3991,
+          "F5_succ_weight_median": 0.222302
+        },
+        "stoppers": {
+          "prediction_steps": 8705,
+          "event_absent_steps": 8705,
+          "eligible_steps": 0,
+          "readings_available": false,
+          "F1_follow_rate": null,
+          "F2_mass_hit_rate": null,
+          "F1c_chance_baseline": null,
+          "F2_minus_F1": null,
+          "F1_minus_chance": null,
+          "F3_last_byte_rate": null,
+          "F4_gate_median": null,
+          "F4_gate_p90": null,
+          "F5_succ_weight_median": null
+        }
+      },
+      "attribution_inputs_non_judgment": {
+        "never_lf_eaters": {
+          "steps_in_set": 44007,
+          "follow_rate": 0.746699,
+          "mass_hit_and_not_follow_rate": 0.239825,
+          "succ_is_ev_top_rate": 0.750176,
+          "succ_is_ev_top_but_not_emitted_rate": 0.006135,
+          "follow_rate_first_step": null,
+          "first_step_count": 0,
+          "follow_rate_deep_step": 0.746699,
+          "deep_step_count": 44007,
+          "event_length_median": 24,
+          "event_length_p90": 36,
+          "mass_hit_and_follow_rate": 0.744041
+        },
+        "all_eaters": {
+          "steps_in_set": 46819,
+          "follow_rate": 0.745445,
+          "mass_hit_and_not_follow_rate": 0.238621,
+          "succ_is_ev_top_rate": 0.749162,
+          "succ_is_ev_top_but_not_emitted_rate": 0.006258,
+          "follow_rate_first_step": null,
+          "first_step_count": 0,
+          "follow_rate_deep_step": 0.745445,
+          "deep_step_count": 46819,
+          "event_length_median": 24,
+          "event_length_p90": 36,
+          "mass_hit_and_follow_rate": 0.742904
+        },
+        "stoppers": {
+          "steps_in_set": 0
+        }
+      },
+      "HA_verdict_on_primary_group": "not_primary"
+    }
+  ],
+  "rc": 0
+}

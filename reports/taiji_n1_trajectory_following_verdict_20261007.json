@@ -4,11 +4,13 @@
     {
       "report": "taiji_a30_stop_failure_self_v43_trajectory_follow_96_20261007.json",
       "status": "ok",
+      "face_role": "production",
       "behavior_baseline_check": {
         "eaters": 247,
         "never_lf": 236,
         "stoppers": 41
       },
+      "behavior_baseline_required": true,
       "trajectory_rows_total": 71937,
       "group_readings": {
         "never_lf_eaters": {

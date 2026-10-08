@@ -1170,6 +1170,17 @@ def main() -> int:
         "plans/reference/PLAN-N1-02_attribution_prereg_20261007.md。只读不改张量 ⇒ 无旗标时与 "
         "v42 逐位不变；与 --copy-evidence-endpoint-yield 互斥（本档描述生产路径，不描述 S5 修饰后的路径）。",
     )
+    parser.add_argument(
+        "--copy-successor-restricted-addressing",
+        action="store_true",
+        help="v44（PLAN-N1-01 S1a 硬序贯读取档；owner 2026-10-08 弹窗裁'批准开跑阶段0'）："
+        '置电路诊断开关 `successor_restricted_addressing`——寻址**只允许落在"前驱＝刚发射字节"的'
+        "那些位置上**（与 `_successor_bonus` 同一个式子，不另写一份；本轮第一步＝位置 0；空后继集＝"
+        "回退到不限制并被 `successor_restriction_fallbacks` 计数）。零训练、零新参数、默认关。"
+        "判据 J-S1a（never-LF 拖写行数 ≤118）与守卫 G-S1-1…G-S1-4 冻结在 "
+        "plans/reference/PLAN-N1-01_s1_readout_prereg_20261007.md；与 --copy-evidence-endpoint-yield "
+        "互斥（两条都是读取形态的改动，混开就分不清是哪条把行放走的）。",
+    )
     args = parser.parse_args()
 
     checkpoint = PROJECT_ROOT / args.checkpoint
@@ -1201,6 +1212,17 @@ def main() -> int:
                 "要求终点检测器档（PLAN-N1-00 S5），但回路不在场 ⇒ 没有可置开关的器官"
             )
         substrate.copy_circuit.endpoint_yield_override = True
+    if args.copy_successor_restricted_addressing:
+        if substrate.copy_circuit is None:
+            raise RuntimeError(
+                "要求硬序贯读取档（PLAN-N1-01 S1a），但回路不在场 ⇒ 没有可置开关的器官"
+            )
+        if args.copy_evidence_endpoint_yield:
+            raise RuntimeError(
+                "v44：--copy-successor-restricted-addressing 与 --copy-evidence-endpoint-yield 互斥"
+                "——两条都是读取形态改动，混开就分不清读数是哪条路径的（PLAN-N1-01 守卫 G-S1-3）"
+            )
+        substrate.copy_circuit.successor_restricted_addressing = True
     #: 三位一体来自剂量探针那一个包装器：[被走到, 被下限静音, 被上限静音]（全链，含 prompt 侧）。
     alpha_calls = [0, 0, 0]
     #: 资格档的刻度：本条生成链已经走过的**环内步数**（1 步＝喂进 1 字节），每轮清零。
@@ -1682,7 +1704,21 @@ def main() -> int:
     #: `copy_evidence_injection_state()`（含 competitive 计数），一次读取、两处共用。
     injection_state = substrate.copy_evidence_injection_state()
     report = {
-        "format": "taiji-a30-stop-failure-v43",
+        "format": "taiji-a30-stop-failure-v44",
+        "copy_successor_restricted_addressing": bool(args.copy_successor_restricted_addressing),
+        #: 回退计数必须落进件里（PLAN-N1-01 §3.1 要求"回退率随件披露"）。2026-10-08 补：四支 v44 面
+        #: 是在这一行之前跑的，故**那几枚件里没有本键**，其回退率由记录臂按 `eligible − steps_in_set` 派生。
+        "successor_restriction_fallbacks": (
+            int(substrate.copy_circuit.successor_restriction_fallbacks)
+            if (args.copy_successor_restricted_addressing and substrate.copy_circuit is not None)
+            else None
+        ),
+        "format_note_v44": "v44（2026-10-08）：PLAN-N1-01（S1a 硬序贯读取档）加旗标 "
+        "--copy-successor-restricted-addressing，置电路的 successor_restricted_addressing；"
+        "升版理由＝件里多了两个自述键（旗标态与本注），行为学按惯例 bump format；因此 PLAN-N1-02 那台 "
+        "v43 判读器**只接 v43 的生产路径面**，S1a 档的跟随读数要走同一台脚本的 --face-role s1a "
+        "分支（那条分支不再拿 v37 的 247/236/41 当门槛，而是如实上报本档行为数——否则改了读取"
+        "形态的档会被误判成仪器坏了）。",
         "trajectory_following": bool(args.trajectory_following),
         "format_note_v43": "v43（2026-10-07）：PLAN-N1-02（基底归因档，判据先冻）加**只读记录器** "
         "`--trajectory-following`——每次环内 evidence 调用记 gate／权重最高位置及其字节／后继字节／"

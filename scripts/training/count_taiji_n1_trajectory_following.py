@@ -174,6 +174,15 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--report", required=True, help="v43 停止面件（--trajectory-following 档）")
     parser.add_argument("--out-report", default=None)
+    parser.add_argument(
+        "--face-role",
+        choices=("production", "s1a"),
+        default="production",
+        help="production＝PLAN-N1-02 的原档：只接 v43 生产路径面，且必须复现 v37 行为基线"
+        "（不符即整件作废）。s1a＝PLAN-N1-01 阶段0 的读数档：接 v44 且必须自述"
+        "`copy_successor_restricted_addressing=true`、`copy_evidence_endpoint_yield=false`，"
+        "**不再拿基线当门槛**（读取形态一改，行为数本就该变），改为如实上报本档行为数。",
+    )
     args = parser.parse_args(argv)
 
     path = Path(args.report)
@@ -188,10 +197,25 @@ def main(argv: list[str] | None = None) -> int:
         return 2
 
     try:
-        if report.get("format") != "taiji-a30-stop-failure-v43":
-            raise ValueError(f"format={report.get('format')} 不是 v43 轨迹档 ⇒ 不判")
+        expected_format = (
+            "taiji-a30-stop-failure-v43"
+            if args.face_role == "production"
+            else "taiji-a30-stop-failure-v44"
+        )
+        if report.get("format") != expected_format:
+            raise ValueError(
+                f"format={report.get('format')} 不是 {expected_format}（role={args.face_role}）⇒ 不判"
+            )
         if report.get("trajectory_following") is not True:
             raise ValueError("件不是 --trajectory-following 档 ⇒ 不判")
+        if args.face_role == "s1a":
+            #: 阶段0 的档必须自己声明是哪条改动路径；混进 S5 终点档或漏声明都不接单。
+            if report.get("copy_successor_restricted_addressing") is not True:
+                raise ValueError(
+                    "s1a 档但件里没自述 copy_successor_restricted_addressing=true ⇒ 不判"
+                )
+            if report.get("copy_evidence_endpoint_yield") is not False:
+                raise ValueError("s1a 档不许同时开 S5 终点旗标（守卫 G-S1-3）⇒ 不判")
         if report.get("items_sha256") != "0541a3f4568a9c5b":
             raise ValueError("题面指纹不符（须与 v37 基线同面）⇒ 不判")
         generations = _classify_generations(report)
@@ -212,10 +236,16 @@ def main(argv: list[str] | None = None) -> int:
             "never_lf": sum(1 for gen in generations if gen["group"] == "never_lf_eater"),
             "stoppers": sum(1 for gen in generations if gen["group"] == "stopper"),
         }
-        if behavior != BASELINE:
-            raise ValueError(
-                f"行为读数 {behavior} 不复现 v37 基线 {BASELINE} ⇒ 仪器改了行为，整件作废"
-            )
+        if args.face_role == "production":
+            #: G1′ 的本意：只读记录器不许改行为——不改行为的档读到别的数就是仪器坏了。
+            if behavior != BASELINE:
+                raise ValueError(
+                    f"行为读数 {behavior} 不复现 v37 基线 {BASELINE} ⇒ 仪器改了行为，整件作废"
+                )
+        elif behavior == BASELINE:
+            #: 反向守卫（s1a 档专用）：读取形态一改，行为数就该跟着动；与生产基线**完全相同**
+            #: 只有一种解释——开关没落地或被吞掉。这种"看着像没效果的改动"必须响亮拒绝。
+            raise ValueError(f"s1a 档行为数与生产基线逐格相同 {behavior} ⇒ 改动疑似未生效，不判")
         total_rows = sum(len(gen["rows"]) for gen in generations)
         total_steps = sum(gen["steps"] for gen in generations)
         if total_rows != total_steps:
@@ -226,7 +256,9 @@ def main(argv: list[str] | None = None) -> int:
         entry.update(
             {
                 "status": "ok",
+                "face_role": args.face_role,
                 "behavior_baseline_check": behavior,
+                "behavior_baseline_required": args.face_role == "production",
                 "trajectory_rows_total": total_rows,
                 "group_readings": readings,
                 "attribution_inputs_non_judgment": {

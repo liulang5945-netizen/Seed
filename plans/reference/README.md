@@ -1,4 +1,4 @@
-# plans/reference 索引（自动生成 2026-10-07，蒸馏收束后 49 件＋N 系列 8 件）
+# plans/reference 索引（自动生成 2026-10-07，蒸馏收束后 49 件＋N 系列 10 件）
 
 留存政策（owner 2026-10-07）＝核心设计与相关内容留档参考；实验过程文档蒸馏后删除（已删 A 支线 13 件＋M5 族 158 件＋第二批 29 件，墓碑见 [M5_DISTILLATION_TOMBSTONE.md](M5_DISTILLATION_TOMBSTONE.md) 与 [DISTILLATION_TOMBSTONE_20261007.md](DISTILLATION_TOMBSTONE_20261007.md)，git 历史可回溯）。项目收束见 [M0_M7_PROJECT_CONSOLIDATION_20261006](M0_M7_PROJECT_CONSOLIDATION_20261006.md)，下一轮主线见 [../active/roadmap/09_NEXT_MAINLINE_PLAN.md](../active/roadmap/09_NEXT_MAINLINE_PLAN.md)。
 
@@ -25,6 +25,7 @@
 - [PLAN-N1-02_attribution_prereg_20261007](PLAN-N1-02_attribution_prereg_20261007.md)（N1 基底归因预注册：完整计算图＋参数级预读＋F1–F5 与三带判别规则先冻；无 owner 新决策点，零训练只读诊断）
 - [PLAN-N1-02_ATTRIBUTION_ADJUDICATION_20261007](PLAN-N1-02_ATTRIBUTION_ADJUDICATION_20261007.md)（归因判读：H-A 判 **not_primary**——序贯信号在场且每步 54.9% 被跟随；损失面＝逐步位置保真（45.6% 步顶质量非后继）；S1 设计约束输出，PLAN-N1-01 重开前置达成）
 - [PLAN-N1-01_s1_readout_prereg_20261007](PLAN-N1-01_s1_readout_prereg_20261007.md)（S1 实施预注册：H-S1a 硬序贯位置掩码（零训练可证伪）与 H-S1b 再激活重放（要训练）两假设分工；主判据 J-S1a＝never-LF 拖写行 ≤118 先冻、守卫四条、预算 3 支面；**不开跑，待 owner 批**）
+- [PLAN-N1-01_ADJUDICATION_20261008](PLAN-N1-01_ADJUDICATION_20261008.md)（S1a 阶段0 判读：J-S1a **不成立**（225＞118），但 F1 0.549→0.747、F3 ×20.8 ⇒ 走第三出口"读取可修、但不充分"；守卫四条＋反向守卫全过；出口文本含糊缺陷登记 DEBT-G46）
 - [PLAN-N2-01_consolidation_powerup_prereg_20261007](PLAN-N2-01_consolidation_powerup_prereg_20261007.md)（N2 巩固通电预注册：C6 六决策点现状核对（①②④⑤已在库，⑥面板行**已核＝缺**，落点三段已点名，**真未做＝organs/learn 从未在真实长跑启用**）；合取判据 J-N2a 旧能力保持 ∧ J-N2b 新收益 vs 不学对照；守卫含**回退路径必须真演示一次**；改权重半径待 owner 批）
 - [PLAN-N3-01_r4_hooks_prereg_20261007](PLAN-N3-01_r4_hooks_prereg_20261007.md)（N3 乙：R4 生长协议接钩子——**压强阈先在线面冻结**；trainer 按词 grep 命中 0 ⇒ **训练面上今天没有压强读数**，但**生产者已在产品路径**（`Seed._record_adaptive_residual_growth_pressure`，`taiji/model.py:1069-1106`；bridge/trigger 未挂载时返回 None）⇒ 第一步＝**只读挂载＋记录 pressure**（`gate` 留默认 0.0，不放行、不改权重）；J-N3b 五面齐备＋同容量对照。**2026-10-08 步骤一已跑：否证支触发 ⇒ 阈值不冻，并测出默认阈在本链算术不可达（㊵-484）**）
 - [PLAN-N3-02_scaling_probe_prereg_20261007](PLAN-N3-02_scaling_probe_prereg_20261007.md)（N3 甲：参数×10 单点——先用[在库件复算仪](../../scripts/training/audit_taiji_n3_plateau_baseline.py)把"平台"钉成锚点（**两档斜率均在自身噪声带内、holdout 反而变差**），再谈算力；×10 两臂（数据扩/不扩）判据与守卫已冻，**算力从未单独批过 ⇒ 不起跑**）
