@@ -176,6 +176,26 @@ def test_missing_face_file_is_a_loud_reject(tmp_path: Path) -> None:
     assert MODULE.main(args) == 2
 
 
+def test_different_corpus_fingerprint_between_arms_voids_the_contrast(tmp_path: Path) -> None:
+    """G-N3f-3／G-N3g-1：两臂吃的不是同一份材料 ⇒ 对照作废、两侧都不判，不许由人读命令比对。"""
+
+    other = _exit(
+        tmp_path / "b_exit_othercorpus.json",
+        unique_documents=32,
+        document_visits=315,
+        mean_revisits=9.84,
+        corpus_fingerprint='[{"name":"other_corpus.jsonl","bytes":123}]',
+    )
+    rc = MODULE.main(_args(tmp_path, exit_b=other))
+    payload = _payload(tmp_path)
+    assert rc == 2
+    check = payload["single_variable_check"]
+    assert check["corpus_fingerprints_equal"] is False
+    assert payload["verdict"] == "arms_not_same_source"
+    assert payload["judgement"]["arm_A"]["J_N3a"] == "not_judged"
+    assert payload["judgement"]["arm_B"]["J_N3a"] == "not_judged"
+
+
 def test_interpretation_limit_is_published_verbatim(tmp_path: Path) -> None:
     MODULE.main(_args(tmp_path))
     payload = _payload(tmp_path)

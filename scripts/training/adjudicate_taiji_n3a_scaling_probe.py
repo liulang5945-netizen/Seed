@@ -253,6 +253,28 @@ def main(argv: list[str] | None = None) -> int:
             == arms["arm_B"]["exit_record"]["ticks_at_exit"]
         ),
     }
+    payload["single_variable_check"]["corpus_fingerprints"] = (
+        None
+        if "exit_record" not in arms.get("arm_B", {})
+        else [
+            arms["arm_A"]["exit_record"]["corpus_fingerprint"],
+            arms["arm_B"]["exit_record"]["corpus_fingerprint"],
+        ]
+    )
+    payload["single_variable_check"]["corpus_fingerprints_equal"] = (
+        None
+        if "exit_record" not in arms.get("arm_B", {})
+        else arms["arm_A"]["exit_record"]["corpus_fingerprint"]
+        == arms["arm_B"]["exit_record"]["corpus_fingerprint"]
+    )
+    #: **G-N3f-3／G-N3g-1 的同源必检**：两臂吃的不是同一份材料，整件对照作废——
+    #: 这条不许由人读命令比对，必须由件里出版。
+    if payload["single_variable_check"]["corpus_fingerprints_equal"] is False:
+        payload["verdict"] = "arms_not_same_source"
+        for name in ("arm_A", "arm_B"):
+            if name in payload["judgement"]:
+                payload["judgement"][name]["J_N3a"] = "not_judged"
+        rc = 2
     target = _resolve(args.out)
     target.parent.mkdir(parents=True, exist_ok=True)
     target.write_text(
