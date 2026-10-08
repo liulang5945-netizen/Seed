@@ -228,19 +228,34 @@ def test_cli_refuses_position_flag_on_the_action_readout(trainer, monkeypatch) -
 
 
 def test_smoke_default_output_never_lands_on_the_product_checkpoint(trainer) -> None:
-    """冒烟缺省必须落在 `output/`，**永不**落到产品件 `checkpoints/seed_corpus.pt` 上。
+    """冒烟缺省必须**全部**落在 `output/`：既不碰产品件 `checkpoints/seed_corpus.pt`，也不碰 `reports/`。
 
     来历：2026-09-28 一次 `--smoke`（只改预算、不改输出路径）把产品件覆盖成了 5000-tick
     的冒烟模型 —— 靠 `dist/Seed/_internal/checkpoints/` 的打包副本按 sha256 `c8025db44c65…`
     才复原。正式跑的缺省（＝产品件）一字不变，只有 `--smoke` 改道。
+
+    **2026-10-08 补另一半（DEBT-G50）**：那次修法只改了 checkpoint，progress 仍留在 `reports/`，
+    而收尾的 `*_exit.json` 由 progress 派生 ⇒ 任何不带 `--progress` 的冒烟都会覆写
+    **受版本控制的** `reports/seed_corpus_smoke_progress_exit.json`（本轮两支烟测实测踩中）。
+    本测当时**正向钉着那个错形状**（`== root/"reports"/…`），所以改代码前它先真红一次：
+    `1 failed, 13 passed`，失败行正是那条 reports 断言。⇒ 现在两半都断"不落 `reports/`"，
+    下面那两行 `reports not in …parts` 才是这条门真正的牙齿（**改回 reports 就红**）。
     """
 
     root = Path("/repo")
     smoke_checkpoint, smoke_progress = trainer.default_output_paths(smoke=True, project_root=root)
     assert smoke_checkpoint == root / "output" / "seed_corpus_smoke.pt"
-    assert smoke_progress == root / "reports" / "seed_corpus_smoke_progress.jsonl"
+    assert smoke_progress == root / "output" / "seed_corpus_smoke_progress.jsonl"
     assert "checkpoints" not in smoke_checkpoint.parts, smoke_checkpoint
     assert "checkpoints" not in smoke_progress.parts, smoke_progress
+    assert "reports" not in smoke_checkpoint.parts, smoke_checkpoint
+    assert "reports" not in smoke_progress.parts, smoke_progress
+    #: 派生的退出记账件也不能跑到 `reports/`（DEBT-G50 的坑正是在这一步炸的）。
+    from scripts.training.train_seed_corpus import exit_record_path
+
+    exit_record = exit_record_path(smoke_progress)
+    assert "reports" not in exit_record.parts, exit_record
+    assert exit_record.parent == smoke_progress.parent, (exit_record, smoke_progress)
 
     checkpoint, progress = trainer.default_output_paths(smoke=False, project_root=root)
     assert checkpoint == root / "checkpoints" / "seed_corpus.pt"

@@ -679,19 +679,26 @@ def apply_experiment_flags(
 
 
 def default_output_paths(*, smoke: bool, project_root: Path = PROJECT_ROOT) -> tuple[Path, Path]:
-    """`--checkpoint`／`--progress` 的缺省值：**冒烟绝不落到产品件上**。
+    """`--checkpoint`／`--progress` 的缺省值：**冒烟既不碰产品件，也不碰 `reports/`**。
 
     来历（2026-09-28 实测事故）：`--smoke` 只改预算、不改输出路径 ⇒ 它的缺省
     `--checkpoint` 仍是 `checkpoints/seed_corpus.pt`（`PROTECTED_OUTPUTS` 之一）⇒
     一次"快速端到端"把产品件覆盖成了 5000-tick 的冒烟模型
     （靠 `dist/Seed/_internal/checkpoints/` 里的打包副本按 sha256 `c8025db44c65…` 复原）。
     正式跑缺省写法一字不变；只有 `--smoke` 改走 `output/`。
+
+    **那条修法当时只堵了一半，本句是补上的另一半（DEBT-G50，2026-10-08）**：progress 原来仍留在
+    `reports/`，而收尾那枚 `*_exit.json` 由它派生 ⇒ 任何一次不带 `--progress` 的冒烟都会覆写
+    **受版本控制的** `reports/seed_corpus_smoke_progress_exit.json`（本轮两支烟测实测踩中，
+    件内 `online_accuracy` 从 0.2436… 被改成 0.0034…，`git checkout HEAD --` 才救回）。
+    旧 docstring 写的"冒烟绝不落到产品件上"**在 progress 这一半上当时并不成立**——
+    只读到"机制存在"就把修法规格估低，是同族缺陷。⇒ 现在两个冒烟缺省都在 `output/`。
     """
 
     if smoke:
         return (
             project_root / "output" / "seed_corpus_smoke.pt",
-            project_root / "reports" / "seed_corpus_smoke_progress.jsonl",
+            project_root / "output" / "seed_corpus_smoke_progress.jsonl",
         )
     return (
         project_root / "checkpoints" / "seed_corpus.pt",
@@ -749,7 +756,8 @@ def _build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--progress",
         default=None,
-        help="进度流路径；缺省随 `--smoke` 一起改走 `reports/seed_corpus_smoke_progress.jsonl`",
+        help="进度流路径；缺省随 `--smoke` 一起走 `output/seed_corpus_smoke_progress.jsonl`"
+        "（DEBT-G50：冒烟的两个缺省都不再落 `reports/`）",
     )
     parser.add_argument(
         "--resume",
