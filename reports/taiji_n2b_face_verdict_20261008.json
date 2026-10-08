@@ -1,0 +1,372 @@
+{
+  "format": "taiji-n2b-face-verdict-v1",
+  "prereg": "plans/reference/PLAN-N2-02_second_powerup_dosewindow_prereg_20261008.md#2",
+  "powerup_report": "reports/taiji_n2b_powerup_20261008.json",
+  "verdict": "does_not_hold",
+  "conjunction_holds": false,
+  "failed_criteria": [
+    "J-N2a'",
+    "J-N2b'"
+  ],
+  "criteria": {
+    "j_persistence": true,
+    "j_n2a_prime": false,
+    "j_n2b_prime": "not_holds",
+    "j_n2b_prime_delta_quality": -1.1086209986387523,
+    "j_n2b_prime_delta_accuracy": 0.0078125,
+    "j_n2b_prime_whole_text_delta_quality_corroboration": 0.2046637506720419,
+    "j_n2b_recomputed_from_deltas": "not_holds",
+    "j_n2b_reader_agrees_with_driver": true,
+    "dose_window_equals_experience_budget": true,
+    "window_bytes": 64,
+    "organs_max_symbols": 64
+  },
+  "j_n2a_prime_columns": {
+    "cap0_per_dimension": {
+      "column_group": "cap0_per_dimension_machine_scored_correct",
+      "direction": "bigger",
+      "columns": {
+        "B": {
+          "before": 0,
+          "after": 0,
+          "delta": 0,
+          "held": true
+        },
+        "C": {
+          "before": 2,
+          "after": 2,
+          "delta": 0,
+          "held": true
+        },
+        "D": {
+          "before": 6,
+          "after": 8,
+          "delta": 2,
+          "held": true
+        },
+        "E": {
+          "before": 1,
+          "after": 0,
+          "delta": -1,
+          "held": false
+        },
+        "G": {
+          "before": 0,
+          "after": 0,
+          "delta": 0,
+          "held": true
+        }
+      },
+      "dropped": [
+        "E"
+      ],
+      "unverified": [],
+      "all_held": false
+    },
+    "replay24_strict_hits": {
+      "column_group": "replay24_strict_hits",
+      "direction": "bigger",
+      "columns": {
+        "0.0": {
+          "before": 5,
+          "after": 5,
+          "delta": 0,
+          "held": true
+        },
+        "0.5": {
+          "before": 5,
+          "after": 6,
+          "delta": 1,
+          "held": true
+        },
+        "1.0": {
+          "before": 6,
+          "after": 5,
+          "delta": -1,
+          "held": false
+        },
+        "2.0": {
+          "before": 6,
+          "after": 5,
+          "delta": -1,
+          "held": false
+        }
+      },
+      "dropped": [
+        "1.0",
+        "2.0"
+      ],
+      "unverified": [],
+      "all_held": false
+    },
+    "replay24_well_formed_texts": {
+      "column_group": "replay24_well_formed_texts",
+      "direction": "bigger",
+      "columns": {
+        "0.0": {
+          "before": 24,
+          "after": 18,
+          "delta": -6,
+          "held": false
+        },
+        "0.5": {
+          "before": 24,
+          "after": 17,
+          "delta": -7,
+          "held": false
+        },
+        "1.0": {
+          "before": 24,
+          "after": 15,
+          "delta": -9,
+          "held": false
+        },
+        "2.0": {
+          "before": 25,
+          "after": 14,
+          "delta": -11,
+          "held": false
+        }
+      },
+      "dropped": [
+        "0.0",
+        "0.5",
+        "1.0",
+        "2.0"
+      ],
+      "unverified": [],
+      "all_held": false
+    },
+    "stop24_main_column": {
+      "column_group": "stop24_main_column_never_lf_eaters_counted",
+      "direction": "smaller",
+      "columns": {
+        "never_lf_eaters_counted": {
+          "before": 56,
+          "after": 47,
+          "delta": -9,
+          "held": true
+        }
+      },
+      "dropped": [],
+      "unverified": [],
+      "all_held": true,
+      "faces": {
+        "before": "taiji_n2_stop24_before_20261008.json",
+        "after": "taiji_n2b_stop24_after_20261008.json"
+      },
+      "items_sha256_pair": [
+        "8b974e9b62d8e4ca",
+        "8b974e9b62d8e4ca"
+      ]
+    },
+    "dropped_by_group": {
+      "cap0_per_dimension_machine_scored_correct": [
+        "E"
+      ],
+      "replay24_strict_hits": [
+        "1.0",
+        "2.0"
+      ],
+      "replay24_well_formed_texts": [
+        "0.0",
+        "0.5",
+        "1.0",
+        "2.0"
+      ]
+    },
+    "unverified_by_group": {},
+    "note": "每列后−前 单值判定；主列方向＝越小越好（§2 原文），unverified 不参与 all_held"
+  },
+  "guards": {
+    "g_n2_1_rollback_digest_matches_mother": true,
+    "g_n2_1_rollback_face_identical_to_before": true,
+    "g_n2_2_default_position_untouched": true,
+    "g_n2_4_surprise_modulation_disclosed": true,
+    "g_n2_5_candidate_and_mother_roundtrip": true,
+    "g_n2_6_no_alignment_artifact": true,
+    "g_n2_6_align_files_found": []
+  },
+  "ruler": {
+    "cap0_ruler_usable": true,
+    "cap0_total_correct_before_after_rollback": [
+      9,
+      10,
+      9
+    ],
+    "note": "CAP-0 逐维分子是 1 项量级的尺；1 项翻转是否算代价由 §2 的单值式判，不由本件改口"
+  },
+  "cap0_before": {
+    "checkpoint": "checkpoints\\seed_a31self_with_circuit.pt",
+    "eval_set": "plans\\manifests\\cap0_eval_set_v2.json",
+    "per_dimension": {
+      "B": {
+        "correct": 0,
+        "scored": 0,
+        "pending_human_review": 20,
+        "item_count": 20
+      },
+      "C": {
+        "correct": 2,
+        "scored": 14,
+        "pending_human_review": 6,
+        "item_count": 20
+      },
+      "D": {
+        "correct": 6,
+        "scored": 16,
+        "pending_human_review": 4,
+        "item_count": 20
+      },
+      "E": {
+        "correct": 1,
+        "scored": 20,
+        "pending_human_review": 0,
+        "item_count": 20
+      },
+      "G": {
+        "correct": 0,
+        "scored": 0,
+        "pending_human_review": 20,
+        "item_count": 20
+      }
+    },
+    "total_correct": 9,
+    "total_scored": 50,
+    "pending_human_review": 50,
+    "items_seen": 100,
+    "load_not_ok": 0
+  },
+  "cap0_after": {
+    "checkpoint": "checkpoints\\seed_n2b_candidate_20261008.pt",
+    "eval_set": "plans\\manifests\\cap0_eval_set_v2.json",
+    "per_dimension": {
+      "B": {
+        "correct": 0,
+        "scored": 0,
+        "pending_human_review": 20,
+        "item_count": 20
+      },
+      "C": {
+        "correct": 2,
+        "scored": 14,
+        "pending_human_review": 6,
+        "item_count": 20
+      },
+      "D": {
+        "correct": 8,
+        "scored": 16,
+        "pending_human_review": 4,
+        "item_count": 20
+      },
+      "E": {
+        "correct": 0,
+        "scored": 20,
+        "pending_human_review": 0,
+        "item_count": 20
+      },
+      "G": {
+        "correct": 0,
+        "scored": 0,
+        "pending_human_review": 20,
+        "item_count": 20
+      }
+    },
+    "total_correct": 10,
+    "total_scored": 50,
+    "pending_human_review": 50,
+    "items_seen": 100,
+    "load_not_ok": 0
+  },
+  "cap0_rollback": {
+    "checkpoint": "checkpoints\\seed_n2b_rollback_20261008.pt",
+    "eval_set": "plans\\manifests\\cap0_eval_set_v2.json",
+    "per_dimension": {
+      "B": {
+        "correct": 0,
+        "scored": 0,
+        "pending_human_review": 20,
+        "item_count": 20
+      },
+      "C": {
+        "correct": 2,
+        "scored": 14,
+        "pending_human_review": 6,
+        "item_count": 20
+      },
+      "D": {
+        "correct": 6,
+        "scored": 16,
+        "pending_human_review": 4,
+        "item_count": 20
+      },
+      "E": {
+        "correct": 1,
+        "scored": 20,
+        "pending_human_review": 0,
+        "item_count": 20
+      },
+      "G": {
+        "correct": 0,
+        "scored": 0,
+        "pending_human_review": 20,
+        "item_count": 20
+      }
+    },
+    "total_correct": 9,
+    "total_scored": 50,
+    "pending_human_review": 50,
+    "items_seen": 100,
+    "load_not_ok": 0
+  },
+  "provenance_before": {
+    "checkpoint": "checkpoints\\seed_a31self_with_circuit.pt",
+    "identity": {
+      "git_head": "726a0a7517688d68cae37205c7277bac37e66853",
+      "checkpoint_sha256": "d6169a358eaee6d194d4795e3167a7bcbb42dfde57b92aa1199bcebbed89699b",
+      "eval_set_sha256": "538835f6627a87c3faba84dbfd1138b5d8296a5dff37870bd258fdf2a3979c27"
+    }
+  },
+  "provenance_after": {
+    "checkpoint": "checkpoints\\seed_n2b_candidate_20261008.pt",
+    "identity": {
+      "git_head": "9b2a580e73ac7f85f6341c6288d9aeb4465e3c03",
+      "checkpoint_sha256": "504f7c342ad0f9427adea7151b32349465dc13089ef44237193cfb080072d8e8",
+      "eval_set_sha256": "538835f6627a87c3faba84dbfd1138b5d8296a5dff37870bd258fdf2a3979c27"
+    }
+  },
+  "provenance_rollback": {
+    "checkpoint": "checkpoints\\seed_n2b_rollback_20261008.pt",
+    "identity": {
+      "git_head": "9b09548886ec0c5d37e0c36816e0271c73139c1b",
+      "checkpoint_sha256": "cc24e82c52bc2f46154b8cb9881bb38634b50a83201f3925ffdb80c6a1b3cf43",
+      "eval_set_sha256": "538835f6627a87c3faba84dbfd1138b5d8296a5dff37870bd258fdf2a3979c27"
+    }
+  },
+  "main_column": {
+    "taiji_n2_stop24_before_20261008.json": {
+      "never_lf_eaters_counted": 56,
+      "generation_rows_seen": 72,
+      "items_sha256": "8b974e9b62d8e4ca",
+      "checkpoint_sha256": "d6169a358eaee6d1",
+      "status": "ok",
+      "meets_frozen_line": false
+    },
+    "taiji_n2b_stop24_after_20261008.json": {
+      "never_lf_eaters_counted": 47,
+      "generation_rows_seen": 72,
+      "items_sha256": "8b974e9b62d8e4ca",
+      "checkpoint_sha256": "504f7c342ad0f942",
+      "status": "ok",
+      "meets_frozen_line": false
+    }
+  },
+  "digests_carried_from_powerup": {
+    "mother_digest": "3e00bafc6298ac8462c352b4bfd31d4fbbd8c79ff3cafd3c95f867ecd7243060",
+    "treated_digest": "6f29e87dbccd8c6e9f651001ef7798bed3c52ec5f3db2b8b2ab8a9a1750a4cd7",
+    "note": "原样搬运自通电件；本件不复算摘要，摘要级证据住在 G-N2-1/G-N2-5 那一层"
+  },
+  "stage_of_powerup": "done",
+  "powerup_errors": [],
+  "fail_closed_pass": true
+}

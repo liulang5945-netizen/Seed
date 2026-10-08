@@ -1,0 +1,167 @@
+{
+  "format": "taiji-n2b-powerup-v1",
+  "prereg": "plans/reference/PLAN-N2-02_second_powerup_dosewindow_prereg_20261008.md",
+  "loaded_checkpoint": "E:\\Seed\\checkpoints\\seed_a31self_with_circuit.pt",
+  "started_utc": "2026-10-08T05:14:35Z",
+  "stage": "done",
+  "errors": [],
+  "mother_digest": "3e00bafc6298ac8462c352b4bfd31d4fbbd8c79ff3cafd3c95f867ecd7243060",
+  "mother_tick": 273,
+  "mother_saved_path": "checkpoints\\seed_n2b_mother_20261008.pt",
+  "mother_anchor_digest": "3e00bafc6298ac8462c352b4bfd31d4fbbd8c79ff3cafd3c95f867ecd7243060",
+  "g_n2_5_mother_roundtrip_identical": true,
+  "pass_id": "b46178d4b110",
+  "projection_records": 200,
+  "by_source": {
+    "constraints": 0,
+    "interactions": 200,
+    "workbench_capabilities": 0
+  },
+  "organs": {
+    "ran": true,
+    "learn": true,
+    "cycles_per_text": 1,
+    "max_symbols": 64,
+    "texts": 8,
+    "wake_episode": "wake-after-sleep",
+    "wake_error": "",
+    "stats": {
+      "texts": 8.0,
+      "cycles": 8.0,
+      "accepted": 8.0,
+      "mean_priority": 0.19077447941576206,
+      "mean_confidence": 0.5729045402299646,
+      "mean_error_norm": 2.069814689492988
+    }
+  },
+  "treated_digest": "6f29e87dbccd8c6e9f651001ef7798bed3c52ec5f3db2b8b2ab8a9a1750a4cd7",
+  "weight_changed_by_powerup": true,
+  "candidate_saved_path": "checkpoints\\seed_n2b_candidate_20261008.pt",
+  "candidate_saved_bytes": 12340387,
+  "candidate_digest_after_load": "6f29e87dbccd8c6e9f651001ef7798bed3c52ec5f3db2b8b2ab8a9a1750a4cd7",
+  "j_persistence": true,
+  "window_bytes": 64,
+  "night_pool_size": 200,
+  "night_k": 8,
+  "scheduler_agrees_with_weighted_sort": true,
+  "surprise_modulation": {
+    "selected_before_modulation": [
+      {
+        "sha16": "cbbda9cce992f5a2",
+        "chars": 1075,
+        "preview": "问：Current runtime context. This snapshot supersedes earlier runtime-context snapshots.\n\nCu"
+      },
+      {
+        "sha16": "9d48145ff1122085",
+        "chars": 1075,
+        "preview": "问：Current runtime context. This snapshot supersedes earlier runtime-context snapshots.\n\nCu"
+      },
+      {
+        "sha16": "65208b618625c8cf",
+        "chars": 1075,
+        "preview": "问：Current runtime context. This snapshot supersedes earlier runtime-context snapshots.\n\nCu"
+      },
+      {
+        "sha16": "2635ef88f1bbc4b3",
+        "chars": 1075,
+        "preview": "问：Current runtime context. This snapshot supersedes earlier runtime-context snapshots.\n\nCu"
+      },
+      {
+        "sha16": "6264ef7ee1caf279",
+        "chars": 512,
+        "preview": "问：<skill_content name=\"user-invoke-demo\">\n<skill_resources>\nBase directory for this skill:"
+      },
+      {
+        "sha16": "1af09b4d26e02722",
+        "chars": 512,
+        "preview": "问：<skill_content name=\"user-invoke-demo\">\n<skill_resources>\nBase directory for this skill:"
+      },
+      {
+        "sha16": "15da9ec988c1f2e8",
+        "chars": 512,
+        "preview": "问：<skill_content name=\"user-invoke-demo\">\n<skill_resources>\nBase directory for this skill:"
+      },
+      {
+        "sha16": "b235f10f7dc164b4",
+        "chars": 512,
+        "preview": "问：<skill_content name=\"user-invoke-demo\">\n<skill_resources>\nBase directory for this skill:"
+      }
+    ],
+    "selected_after_modulation": [
+      {
+        "sha16": "cbbda9cce992f5a2",
+        "chars": 1075,
+        "preview": "问：Current runtime context. This snapshot supersedes earlier runtime-context snapshots.\n\nCu"
+      },
+      {
+        "sha16": "2635ef88f1bbc4b3",
+        "chars": 1075,
+        "preview": "问：Current runtime context. This snapshot supersedes earlier runtime-context snapshots.\n\nCu"
+      },
+      {
+        "sha16": "65208b618625c8cf",
+        "chars": 1075,
+        "preview": "问：Current runtime context. This snapshot supersedes earlier runtime-context snapshots.\n\nCu"
+      },
+      {
+        "sha16": "9d48145ff1122085",
+        "chars": 1075,
+        "preview": "问：Current runtime context. This snapshot supersedes earlier runtime-context snapshots.\n\nCu"
+      },
+      {
+        "sha16": "1af09b4d26e02722",
+        "chars": 512,
+        "preview": "问：<skill_content name=\"user-invoke-demo\">\n<skill_resources>\nBase directory for this skill:"
+      },
+      {
+        "sha16": "b235f10f7dc164b4",
+        "chars": 512,
+        "preview": "问：<skill_content name=\"user-invoke-demo\">\n<skill_resources>\nBase directory for this skill:"
+      },
+      {
+        "sha16": "6264ef7ee1caf279",
+        "chars": 512,
+        "preview": "问：<skill_content name=\"user-invoke-demo\">\n<skill_resources>\nBase directory for this skill:"
+      },
+      {
+        "sha16": "15da9ec988c1f2e8",
+        "chars": 512,
+        "preview": "问：<skill_content name=\"user-invoke-demo\">\n<skill_resources>\nBase directory for this skill:"
+      }
+    ],
+    "quality_mean": -12.871926009599447,
+    "mean_surprise_mean": 12.81152954079703
+  },
+  "material_treated_window": {
+    "items": 8.0,
+    "quality_mean": -14.173620701828504,
+    "accuracy_mean": 0.0859375,
+    "mean_surprise_mean": 14.10888404800523
+  },
+  "material_treated_whole": {
+    "items": 8.0,
+    "quality_mean": -13.868716122712035,
+    "accuracy_mean": 0.04592065868263473,
+    "mean_surprise_mean": 13.792643591076544
+  },
+  "restore_matches_mother": true,
+  "rollback_disk_matches_mother": true,
+  "material_control_window": {
+    "items": 8.0,
+    "quality_mean": -13.064999703189752,
+    "accuracy_mean": 0.078125,
+    "mean_surprise_mean": 13.004605897736266
+  },
+  "material_control_whole": {
+    "items": 8.0,
+    "quality_mean": -14.073379873384077,
+    "accuracy_mean": 0.044825253339474895,
+    "mean_surprise_mean": 13.998977311619209
+  },
+  "j_n2b_prime_delta_quality": -1.1086209986387523,
+  "j_n2b_prime_delta_accuracy": 0.0078125,
+  "j_n2b_prime": "not_holds",
+  "whole_text_delta_quality": 0.2046637506720419,
+  "fail_closed_pass": true,
+  "seconds": 1389.6
+}

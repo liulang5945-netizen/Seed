@@ -30,9 +30,19 @@ PROVENANCE_KEYS = frozenset({"checkpoint", "identity"})
 DRIVEN_DIMENSIONS = ("B", "C", "D", "E", "G")
 
 
+def _rel(path: Path) -> str:
+    """缺件点名用；仓外绝对路径调 `relative_to` 会抛 ValueError，那会把响亮拒绝伪装成崩溃
+    （㊵-484⑤ 同一类缺陷：拒绝路径本身不许再炸）。"""
+
+    try:
+        return str(path.relative_to(PROJECT_ROOT))
+    except ValueError:
+        return str(path)
+
+
 def _load(path: Path, missing: list[str]) -> dict[str, Any] | None:
     if not path.is_file():
-        missing.append(str(path.relative_to(PROJECT_ROOT)))
+        missing.append(_rel(path))
         return None
     return json.loads(path.read_text(encoding="utf-8"))
 
