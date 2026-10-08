@@ -1,0 +1,276 @@
+{
+  "format": "taiji-n3-09-tau-rule-v1",
+  "prereg": "plans/reference/PLAN-N3-09_tau_rule_upgrade_prereg_20261008.md",
+  "status": "ok",
+  "rule": {
+    "measure": "decision_pressure（＝产品的 pressure_ema，五个 EMA 的加权和 :388-395）",
+    "warmup_drop": 17,
+    "grid_new": 0.01,
+    "grid_old_reported_for_comparison": 0.05,
+    "acceptance": "候选 τ 下六道合取的最长连续段必须 ≥ required_pressure_steps，否则判不可冻"
+  },
+  "faces": [
+    {
+      "face_dir": "beta_gate025_v2",
+      "format": "taiji-n3-pressure-face-v2",
+      "observations": 3999,
+      "warmup_dropped": 17,
+      "warmup_share": 0.004251,
+      "policy_self_reported": {
+        "minimum_pressure": 0.7,
+        "minimum_residual_error": 0.55,
+        "minimum_fast_slow_conflict": 0.4,
+        "minimum_activity_saturation": 0.4,
+        "minimum_utility_gap": 0.35,
+        "minimum_resource_state": 0.4,
+        "required_pressure_steps": 3,
+        "growth_resource_cost": 1,
+        "ema_rate": 0.25
+      },
+      "ema_initial": {
+        "residual_error_ema": 0.0,
+        "fast_slow_conflict_ema": 0.0,
+        "activity_saturation_ema": 0.0,
+        "utility_gap_ema": 0.0,
+        "resource_state_ema": 1.0,
+        "consecutive_pressure_steps": 0
+      },
+      "gate_table_rows_checked": 3999,
+      "gate_table_mismatches": 0,
+      "pressure_ema_kept": {
+        "p50": 0.620503,
+        "p90": 0.649092,
+        "p99": 0.663439,
+        "max": 0.67813,
+        "mean": 0.611811
+      },
+      "tau_candidate_v2": 0.65,
+      "grid_005_comparison": 0.65,
+      "dynamic_range_at_candidate": {
+        "required_pressure_steps": 3,
+        "six_gate_true_steps": 36,
+        "six_gate_longest_run": 6,
+        "passes": true
+      },
+      "five_gate_window_composite_ceiling": 0.67813,
+      "must_be_at_most_to_be_solvable": 0.67813,
+      "proposals_in_face": 0,
+      "counterfactual_valid_up_to_first_proposal": true,
+      "verdict": "freezable"
+    },
+    {
+      "face_dir": "beta_gate100_v2",
+      "format": "taiji-n3-pressure-face-v2",
+      "observations": 3999,
+      "warmup_dropped": 17,
+      "warmup_share": 0.004251,
+      "policy_self_reported": {
+        "minimum_pressure": 0.7,
+        "minimum_residual_error": 0.55,
+        "minimum_fast_slow_conflict": 0.4,
+        "minimum_activity_saturation": 0.4,
+        "minimum_utility_gap": 0.35,
+        "minimum_resource_state": 0.4,
+        "required_pressure_steps": 3,
+        "growth_resource_cost": 1,
+        "ema_rate": 0.25
+      },
+      "ema_initial": {
+        "residual_error_ema": 0.0,
+        "fast_slow_conflict_ema": 0.0,
+        "activity_saturation_ema": 0.0,
+        "utility_gap_ema": 0.0,
+        "resource_state_ema": 1.0,
+        "consecutive_pressure_steps": 0
+      },
+      "gate_table_rows_checked": 3999,
+      "gate_table_mismatches": 0,
+      "pressure_ema_kept": {
+        "p50": 0.620799,
+        "p90": 0.648642,
+        "p99": 0.663274,
+        "max": 0.679165,
+        "mean": 0.612081
+      },
+      "tau_candidate_v2": 0.65,
+      "grid_005_comparison": 0.65,
+      "dynamic_range_at_candidate": {
+        "required_pressure_steps": 3,
+        "six_gate_true_steps": 34,
+        "six_gate_longest_run": 6,
+        "passes": true
+      },
+      "five_gate_window_composite_ceiling": 0.679165,
+      "must_be_at_most_to_be_solvable": 0.679165,
+      "proposals_in_face": 0,
+      "counterfactual_valid_up_to_first_proposal": true,
+      "verdict": "freezable"
+    },
+    {
+      "face_dir": "circuit_gate025_v2",
+      "format": "taiji-n3-pressure-face-v2",
+      "observations": 3999,
+      "warmup_dropped": 17,
+      "warmup_share": 0.004251,
+      "policy_self_reported": {
+        "minimum_pressure": 0.7,
+        "minimum_residual_error": 0.55,
+        "minimum_fast_slow_conflict": 0.4,
+        "minimum_activity_saturation": 0.4,
+        "minimum_utility_gap": 0.35,
+        "minimum_resource_state": 0.4,
+        "required_pressure_steps": 3,
+        "growth_resource_cost": 1,
+        "ema_rate": 0.25
+      },
+      "ema_initial": {
+        "residual_error_ema": 0.0,
+        "fast_slow_conflict_ema": 0.0,
+        "activity_saturation_ema": 0.0,
+        "utility_gap_ema": 0.0,
+        "resource_state_ema": 1.0,
+        "consecutive_pressure_steps": 0
+      },
+      "gate_table_rows_checked": 3999,
+      "gate_table_mismatches": 0,
+      "pressure_ema_kept": {
+        "p50": 0.630079,
+        "p90": 0.657898,
+        "p99": 0.672849,
+        "max": 0.685877,
+        "mean": 0.613185
+      },
+      "tau_candidate_v2": 0.66,
+      "grid_005_comparison": 0.7,
+      "dynamic_range_at_candidate": {
+        "required_pressure_steps": 3,
+        "six_gate_true_steps": 33,
+        "six_gate_longest_run": 7,
+        "passes": true
+      },
+      "five_gate_window_composite_ceiling": 0.685877,
+      "must_be_at_most_to_be_solvable": 0.685877,
+      "proposals_in_face": 0,
+      "counterfactual_valid_up_to_first_proposal": true,
+      "verdict": "freezable"
+    },
+    {
+      "face_dir": "circuit_gate100_v2",
+      "format": "taiji-n3-pressure-face-v2",
+      "observations": 3999,
+      "warmup_dropped": 17,
+      "warmup_share": 0.004251,
+      "policy_self_reported": {
+        "minimum_pressure": 0.7,
+        "minimum_residual_error": 0.55,
+        "minimum_fast_slow_conflict": 0.4,
+        "minimum_activity_saturation": 0.4,
+        "minimum_utility_gap": 0.35,
+        "minimum_resource_state": 0.4,
+        "required_pressure_steps": 3,
+        "growth_resource_cost": 1,
+        "ema_rate": 0.25
+      },
+      "ema_initial": {
+        "residual_error_ema": 0.0,
+        "fast_slow_conflict_ema": 0.0,
+        "activity_saturation_ema": 0.0,
+        "utility_gap_ema": 0.0,
+        "resource_state_ema": 1.0,
+        "consecutive_pressure_steps": 0
+      },
+      "gate_table_rows_checked": 3999,
+      "gate_table_mismatches": 0,
+      "pressure_ema_kept": {
+        "p50": 0.62811,
+        "p90": 0.656162,
+        "p99": 0.669057,
+        "max": 0.680911,
+        "mean": 0.611713
+      },
+      "tau_candidate_v2": 0.66,
+      "grid_005_comparison": 0.7,
+      "dynamic_range_at_candidate": {
+        "required_pressure_steps": 3,
+        "six_gate_true_steps": 16,
+        "six_gate_longest_run": 3,
+        "passes": true
+      },
+      "five_gate_window_composite_ceiling": 0.680911,
+      "must_be_at_most_to_be_solvable": 0.680911,
+      "proposals_in_face": 0,
+      "counterfactual_valid_up_to_first_proposal": true,
+      "verdict": "freezable"
+    },
+    {
+      "face_dir": "guard_off_v2",
+      "format": "taiji-n3-pressure-face-v2",
+      "observations": 3999,
+      "warmup_dropped": 17,
+      "warmup_share": 0.004251,
+      "policy_self_reported": {
+        "minimum_pressure": 0.7,
+        "minimum_residual_error": 0.55,
+        "minimum_fast_slow_conflict": 0.4,
+        "minimum_activity_saturation": 0.4,
+        "minimum_utility_gap": 0.35,
+        "minimum_resource_state": 0.4,
+        "required_pressure_steps": 3,
+        "growth_resource_cost": 1,
+        "ema_rate": 0.25
+      },
+      "ema_initial": {
+        "residual_error_ema": 0.0,
+        "fast_slow_conflict_ema": 0.0,
+        "activity_saturation_ema": 0.0,
+        "utility_gap_ema": 0.0,
+        "resource_state_ema": 1.0,
+        "consecutive_pressure_steps": 0
+      },
+      "gate_table_rows_checked": 3999,
+      "gate_table_mismatches": 0,
+      "pressure_ema_kept": {
+        "p50": 0.370423,
+        "p90": 0.400994,
+        "p99": 0.417893,
+        "max": 0.422163,
+        "mean": 0.361578
+      },
+      "tau_candidate_v2": 0.41,
+      "grid_005_comparison": 0.45,
+      "dynamic_range_at_candidate": {
+        "required_pressure_steps": 3,
+        "six_gate_true_steps": 0,
+        "six_gate_longest_run": 0,
+        "passes": false
+      },
+      "five_gate_window_composite_ceiling": null,
+      "must_be_at_most_to_be_solvable": null,
+      "proposals_in_face": 0,
+      "counterfactual_valid_up_to_first_proposal": true,
+      "verdict": "not_freezable_at_this_grid"
+    }
+  ],
+  "refused": [],
+  "faces_judged": 5,
+  "faces_refused": 0,
+  "verdict_by_face": {
+    "beta_gate025_v2": "freezable",
+    "beta_gate100_v2": "freezable",
+    "circuit_gate025_v2": "freezable",
+    "circuit_gate100_v2": "freezable",
+    "guard_off_v2": "not_freezable_at_this_grid"
+  },
+  "j_n3e_cross_chain_resolution": {
+    "gate025": {
+      "beta": 0.65,
+      "circuit": 0.66,
+      "resolvable": true
+    },
+    "gate100": {
+      "beta": 0.65,
+      "circuit": 0.66,
+      "resolvable": true
+    }
+  }
+}
