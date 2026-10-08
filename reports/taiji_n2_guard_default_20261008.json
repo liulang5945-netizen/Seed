@@ -1,0 +1,33 @@
+{
+  "format": "taiji-n2-guard-default-v1",
+  "prereg": "plans/reference/PLAN-N2-01_consolidation_powerup_prereg_20261007.md#4ter",
+  "checkpoint": "E:\\Seed\\checkpoints\\seed_a31self_with_circuit.pt",
+  "call": "sleep_pass.run(reason='n2-guard-default')  # 其余参数一律沿用 run() 默认",
+  "started_utc": "2026-10-08T02:50:54Z",
+  "seconds": 1.1,
+  "digest_before": "3e00bafc6298ac8462c352b4bfd31d4fbbd8c79ff3cafd3c95f867ecd7243060",
+  "digest_after": "3e00bafc6298ac8462c352b4bfd31d4fbbd8c79ff3cafd3c95f867ecd7243060",
+  "tick_before": 273,
+  "tick_after": 273,
+  "parameter_count": 769983,
+  "pass_id": "77fba237d69b",
+  "projection_records": 200,
+  "by_source": {
+    "constraints": 7,
+    "interactions": 193,
+    "workbench_capabilities": 0
+  },
+  "spec_written": true,
+  "organs": {
+    "ran": false,
+    "reason": "organs not requested"
+  },
+  "checks": {
+    "organs_ran_false": true,
+    "organs_reason_is_not_requested": true,
+    "weight_digest_unchanged": true,
+    "tick_unchanged": true,
+    "parameter_count_unchanged": true
+  },
+  "guard_pass": true
+}

@@ -66,6 +66,50 @@
   要求与巩固前逐位同；这一支不通过 ⇒ 整件不结项（回退路径不可用＝§8.3 候选版本隔离不成立）。
 - **不进本件的事**：新旧任务矩阵的放大档、organs/learn 进产品默认位、以及 N5 的唤醒调度——都要另立预注册。
 
+## 4ter. 前置否证的实测结果与对本件的三处更正（2026-10-08，**改权重之前**先跑，零算力风险）
+
+**实测一（回退锚点能否逐位比）＝能**：`checkpoints/seed_a31self_with_circuit.pt`（＝`DEFAULT_CHECKPOINT`，[api/seed_runtime.py:47-49](../../api/seed_runtime.py)）
+现场 load→save→load→save→load 三轮，`content_digest(model.checkpoint())` 三次同为 `3e00bafc6298ac84…`，`tick=273`，落盘 12,664,391 字节，单趟 load 2.46 秒。
+⇒ 磁盘往返对本链是摘要恒等的，G-N2-1 的"回退后复算与巩固前逐位同"在算术上可达，不是许愿。
+
+**实测二（ring 里还有没有可投影的新料）＝有**：现取 `state.projected=79`、`passes=2`、`workbench_snapshot_id` 已在档；
+候选材料＝新约束 **7** 条＋新交互 **1,534** 条（aborted 0）⇒ 本 pass 在 `max_records=200` 下投影得满，`sleep_organs` 不会走 `"no texts to sleep on"` 那支（[sleep_pass.py:513-515](../../seed_platform/sleep_pass.py)）。
+同时记一条：`workbench_snapshot_id` 与状态里那枚相同 ⇒ 本 pass 的 `by_source.workbench_capabilities` **预期为 0**，⑥ 面板行的判据"数字与 by_source 一致"要按"0 也对得上"来验，不得为了面板好看去动快照 id。
+
+**更正一（G-N2-1 的取还形状，原文不配对）**：§3 写"`Seed.snapshot()` 取、`restore()` 还"，但 `Seed.snapshot()` 返回 `TaijiState`（[seed/model.py:68-69](../../seed/model.py)），其读者是 `restore_dynamics()`（[taiji/model.py:1800](../../taiji/model.py)）；
+`Seed.restore()` 要的是 `Seed.checkpoint()` 那枚 mapping（`format`/`config`/`taiji`/`substrate`，[seed/model.py:211-227](../../seed/model.py)，校验见 :223-227）。
+⇒ 本件回退锚点冻结为：`mother = model.checkpoint()` 取、`model.restore(mother)` 还，另有 `SeedRuntime.save(母档)` 落盘为独立文件；两支都要测（还原后摘要相同 **且** 母档 load 后摘要相同）。
+
+**更正二（J-N2b 的对照取法，原文在现行 ring 算术下取不到）**：§2 把对照写成"同一材料、`learn=False` 的同链**预**读数"，
+但 `project()` 每 pass 把本轮投影/跳过的 digest 写回 `state["projected"]`（[sleep_pass.py:417-420](../../seed_platform/sleep_pass.py)，去重在 :292-317），
+故第二支 pass 必然投影**另外** 200 条；先跑一支 `learn=False` 的 pass 会把材料消耗掉，两支的材料天然不配对。
+⇒ 对照冻结为**回退面**：通电后 `restore(mother)` 的权重已由更正一证明与母逐位同，所以在回退档上对**同一枚本 pass 落盘语料**取读数＝"通电前那份状态"的读数；
+材料同一性由"同一个语料文件、同一行序"保证，强于"两支 pass 各自的语料"。**判据文本一字不改**（巩固后 > 对照 ⇒ J-N2b 成立；≤ ⇒ 不成立），改的只是对照的取时点，且在此点名。
+夜文本身份＝现场用现成仪器重算（`SeedSleepScheduler.select_for_sleep`＋`SeedJudge.score`，[seed/sleep.py:44-56](../../seed/sleep.py)），件内 `organs.texts` 与 `stats.texts` 自述 8 条作交叉核对；这条是**重算不是件内自述**，如实标注。
+
+**更正三（四对照面的动态范围与真实落点）**：第 0 点的四个数字全部出自 **A 线两台仪器**，且都绑另一条链——
+`probe_taiji_a30_stop_failure.py` 的冻结命令在库里写的是 `--checkpoint output/a31_chunked_self/checkpoint.pt --circuit output/taiji_r2_copy_circuit_chat/judge/circuit-final.pt`
+（[PLAN-N1-01_ADJUDICATION_20261008.md:54](PLAN-N1-01_ADJUDICATION_20261008.md)），13/72、41→59、X=0/9/27 同出这台（资格门控三臂＝`--copy-evidence-injection-mode gated` 配 `--copy-evidence-gate-min-overlap` 阶梯 {0.0,0.2,0.4}，:1136-1150，v40/v41），7/24 出自 `measure_taiji_a30_repetition_penalty.py`（`verdict` 按惩罚档 0.0/0.5/1.0/2.0 分列，件 `taiji_a30_repetition_penalty_20260928.json`）。
+⇒ 两条后果：① 第 0 点数字**不得**当 J-N2a 的对照基线（链不同：那条量的是 A 线 a31 件＋外接回路），只作历史参考；J-N2a 的对照＝**同一条命令**把 `--checkpoint` 换成母档 / 候选档的**前后配对**。
+② 四张面前后各一次（8 张）×停摆面 ×96 一档 ≈ 本件最大算力项，故本件**分档结项**：先跑满"通电＋回退＋CAP-0 三面＋×24 两面前后"，×96 主列与 gated 三臂留作附件；未取到的面在判据里记 `unverified`，不许拿已取到的面代答（§2 的合取式因此**不结项**，除非全部取到）。
+
+**冻结命令（通电面只认这几行，`--checkpoint` 的 `MOTHER`＝`checkpoints/seed_n2_mother_20261008.pt`、`CAND`＝`checkpoints/seed_n2_candidate_20261008.pt`）**：
+
+| 面 | 命令 | 分子取法 |
+|---|---|---|
+| CAP-0（巩固前） | `python scripts/training/eval_taiji_cap0_baseline.py --checkpoint checkpoints/seed_a31self_with_circuit.pt --report reports/taiji_n2_cap0_before_20261008.json` | `Σ dimensions[driven].tally.machine_scored_correct`，并逐维抄 `machine_scored_items`/`pending_human_review_items`（人审未结的项**不进**分子，如实分账） |
+| CAP-0（巩固后） | 同上，`--checkpoint` 换 `CAND`，`--report` 换 `taiji_n2_cap0_after_20261008.json` | 同上 |
+| CAP-0（回退复算） | 同上，`--checkpoint checkpoints/seed_n2_rollback_20261008.pt`，`--report taiji_n2_cap0_rollback_20261008.json` | G-N2-1：与"巩固前"件 `--subtree per_item` 逐位同 ⇒ `identical=true` |
+| 装机自停 ×24 | `python scripts/training/probe_taiji_a30_stop_failure.py --checkpoint <档> --limit 24 --out-report reports/taiji_n2_stop24_{before,after}_20261008.json` | 判读器从件里现取，取不到键即 rc=2 fail-closed |
+| 复述严格命中 ×24 | `python scripts/training/measure_taiji_a30_repetition_penalty.py --checkpoint <档> --limit 24 --out-report reports/taiji_n2_replay24_{before,after}_20261008.json` | 同上（`verdict` 各惩罚档的严格命中数，档名从件里读） |
+| 通电本体 | `python scripts/training/run_taiji_n2_powerup.py --phase guard` 再 `--phase powerup` | `reports/taiji_n2_guard_default_20261008.json`／`reports/taiji_n2_powerup_20261008.json` 自述 |
+
+**G-N2-3 的覆盖半径（不假装满足）**：运行时信封不是训练器的 §12 全字段合同；本件实测的是"母档落盘→独立 load→摘要逐位同"这一条，
+`优化器/RNG/课程游标/预算` 四件套在 `SeedRuntime.save` 的信封里没有对应字段 ⇒ 记 `unverified`，不得写成"快照合同已满足"。
+
+**成本预算（本轮实测外推，非猜）**：CAP-0 一张面＝100 项 / 147 轮 / 模型内 83.4–163.9 秒（三份入库件 `taiji_cap0_baseline_{v1_20260917,repro_20260918,postmigration_20260918}.json` 自述）
+＋每项一次子进程 load（2.46 秒）⇒ **约 6–10 分钟/张**，三张 ≈ 20–30 分钟；×24 两面前后四张，停摆面单张历史耗时约 10 分钟（×96 档，见 PLAN-N1-01 判读件），×24 档按其预算线性取下界；通电本体＝判定 200 条投影＋8 条夜文本，分钟级。
+
 ## 5. owner 决策点
 
 **批通电长跑**（含改权重半径与算力/时长）＝本件唯一待批项；不批则 N2 停在"材料环已通、加速点①未通电"。§4 前置否证两支不需新批，可在等待期先跑。
