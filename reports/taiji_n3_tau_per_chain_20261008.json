@@ -1,0 +1,162 @@
+{
+  "format": "taiji-n3-tau-per-chain-20261008-v1",
+  "prereg": "plans/reference/PLAN-N3-09_tau_rule_upgrade_prereg_20261008.md 的 §3 判据不动；本件是 owner 第七次弹窗裁『按链分别给值』之后的**实装验证**",
+  "debt": "DEBT-G53（τ 口径）/ DEBT-G56（臂形状）",
+  "ledger": "plans/active/roadmap/08_UPSTREAM_SYNC_PLAYBOOK.md ㊵-527/㊵-529",
+  "headline": "装上按链 τ 之后六道合取在两条链上都真的走起来（β 36 步/最长段 6；circuit 33 步/最长段 7，均 ≥ required_pressure_steps=3），而同一批面在默认 0.70 下 meets_pressure 真步数为 0；产品默认常量 0.70 未改动，两支的 requested 与 actual 在面头逐支相等且与产品默认其余五道阈同时自述",
+  "single_variable_caveat": "两支都带 --developmental-fast-slow --developmental-bridge-gate 0.25 与 --no-readout-position ⇒ 本件只主张『τ 生效且可达』，不主张跨装配的分布差异",
+  "run_head_git": "51a8eb1a2cd4835d144af743eb8015469e278366",
+  "run_start_utc_logged": "2026-10-08T14:04:25Z",
+  "arms": {
+    "beta": {
+      "chain_checkpoint": "checkpoints/seed_beta.pt",
+      "chain_checkpoint_sha256": "ad2a06465e0ef78c75aff7302a6f7a2ae11825d2f19361d9d65926006f3bf793",
+      "tau_requested_by_owner": 0.65,
+      "face_path": "output/n3_tau_beta/pressure.jsonl",
+      "face_bytes": 4930649,
+      "face_sha256": "08f667af4b6bde7abd66afa8a4635e0175ba3cd7e9b1c210c20db7e32020df87",
+      "face_format": "taiji-n3-pressure-face-v2",
+      "readout": "predictive",
+      "seed": 20260822,
+      "self_report": {
+        "minimum_pressure_requested": 0.65,
+        "minimum_pressure_actual": 0.65,
+        "policy_minimum_pressure": 0.65,
+        "bridge_gate_requested": 0.25,
+        "bridge_gate_actual": 0.25,
+        "learning_modes": [
+          "fast_slow"
+        ],
+        "ema_rate": 0.25,
+        "other_minimum_thresholds": {
+          "minimum_residual_error": 0.55,
+          "minimum_fast_slow_conflict": 0.4,
+          "minimum_activity_saturation": 0.4,
+          "minimum_utility_gap": 0.35,
+          "minimum_resource_state": 0.4
+        }
+      },
+      "judgement": {
+        "observations": 3999,
+        "warmup_dropped": 17,
+        "gate_table_rows_checked": 3999,
+        "gate_table_mismatches": 0,
+        "pressure_ema_kept": {
+          "p50": 0.620503,
+          "p90": 0.649092,
+          "p99": 0.663439,
+          "max": 0.67813,
+          "mean": 0.611811
+        },
+        "tau_candidate_v2": 0.65,
+        "verdict": "freezable",
+        "dynamic_range_at_candidate": {
+          "required_pressure_steps": 3,
+          "six_gate_true_steps": 36,
+          "six_gate_longest_run": 6,
+          "passes": true
+        },
+        "five_gate_window_composite_ceiling": 0.67813
+      },
+      "exit_record": {
+        "epoch": 0,
+        "ticks": 16004000,
+        "window_ticks": 3999,
+        "online_accuracy": 0.1690422605651413,
+        "mean_surprise": 3.729552795078888,
+        "holdout_surprise": 3.079834115409947,
+        "holdout_surprise_v2": 3.507550997540356,
+        "elapsed_seconds": 24.868254899978638,
+        "exit_reason": "max_symbols_reached",
+        "base_ticks": 16000000,
+        "budget_max_symbols": 4000,
+        "ticks_at_exit": 16004000,
+        "reached_budget": true,
+        "unique_documents": 4,
+        "document_visits": 4,
+        "mean_revisits": 1.0,
+        "checkpoint_path": "output\\n3_tau_beta\\checkpoint.pt",
+        "checkpoint_sha256": "bbd668cbaed91bf705888441e23ce2dd0127d9bc297fc732185225bd897be319",
+        "corpus_fingerprint": "[{\"name\":\"dialogue_extended_clean.jsonl\",\"bytes\":108327171}]",
+        "history_files": null,
+        "history_bytes": null,
+        "history_pruned": null
+      }
+    },
+    "circuit": {
+      "chain_checkpoint": "checkpoints/seed_beta_with_circuit.pt",
+      "chain_checkpoint_sha256": "f9343433d519084659926d0bdd689efef96c3bee02e79bc33f441fd177d8baa8",
+      "tau_requested_by_owner": 0.66,
+      "face_path": "output/n3_tau_circuit/pressure.jsonl",
+      "face_bytes": 4924471,
+      "face_sha256": "ec7ef62ab150fa1103e98d9486b88f827187c4ef27b069b9aa214b6c34eb2e85",
+      "face_format": "taiji-n3-pressure-face-v2",
+      "readout": "predictive",
+      "seed": 20260822,
+      "self_report": {
+        "minimum_pressure_requested": 0.66,
+        "minimum_pressure_actual": 0.66,
+        "policy_minimum_pressure": 0.66,
+        "bridge_gate_requested": 0.25,
+        "bridge_gate_actual": 0.25,
+        "learning_modes": [
+          "fast_slow"
+        ],
+        "ema_rate": 0.25,
+        "other_minimum_thresholds": {
+          "minimum_residual_error": 0.55,
+          "minimum_fast_slow_conflict": 0.4,
+          "minimum_activity_saturation": 0.4,
+          "minimum_utility_gap": 0.35,
+          "minimum_resource_state": 0.4
+        }
+      },
+      "judgement": {
+        "observations": 3999,
+        "warmup_dropped": 17,
+        "gate_table_rows_checked": 3999,
+        "gate_table_mismatches": 0,
+        "pressure_ema_kept": {
+          "p50": 0.630079,
+          "p90": 0.657898,
+          "p99": 0.672849,
+          "max": 0.685877,
+          "mean": 0.613185
+        },
+        "tau_candidate_v2": 0.66,
+        "verdict": "freezable",
+        "dynamic_range_at_candidate": {
+          "required_pressure_steps": 3,
+          "six_gate_true_steps": 33,
+          "six_gate_longest_run": 7,
+          "passes": true
+        },
+        "five_gate_window_composite_ceiling": 0.685877
+      },
+      "exit_record": {
+        "epoch": 0,
+        "ticks": 16004000,
+        "window_ticks": 3999,
+        "online_accuracy": 0.10777694423605902,
+        "mean_surprise": 9.808228573401216,
+        "holdout_surprise": 9.542667768663845,
+        "holdout_surprise_v2": 9.557431863269239,
+        "elapsed_seconds": 29.55804240005091,
+        "exit_reason": "max_symbols_reached",
+        "base_ticks": 16000000,
+        "budget_max_symbols": 4000,
+        "ticks_at_exit": 16004000,
+        "reached_budget": true,
+        "unique_documents": 4,
+        "document_visits": 4,
+        "mean_revisits": 1.0,
+        "checkpoint_path": "output\\n3_tau_circuit\\checkpoint.pt",
+        "checkpoint_sha256": "12550a8bf7a4f40c0577100fd3579f15ee1d0c07fd23cb72a7555e21f09cd169",
+        "corpus_fingerprint": "[{\"name\":\"dialogue_extended_clean.jsonl\",\"bytes\":108327171}]",
+        "history_files": null,
+        "history_bytes": null,
+        "history_pruned": null
+      }
+    }
+  }
+}
