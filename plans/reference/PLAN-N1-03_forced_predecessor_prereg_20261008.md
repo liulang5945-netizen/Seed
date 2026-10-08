@@ -44,6 +44,8 @@
 | A（落盘后可自办） | 探针加 `--force-true-predecessor` 档＋契约测（三档判级各造一次、三条互斥都能为假、缺母量即 rc=2） | 零训练、秒级夹具 | 仪器改动，自办 |
 | B | 两臂各跑一张面（同 checkpoint、同题集，`--limit 96` 档起步） | **只读推理**，耗时与件尺寸**本件未测**、不引外推 | 跑面 ⇒ **回 owner** |
 
+> **〔2026-10-08 同日更正（DEBT-G62，台账 08 ㊵-536）〕上表 A 档那一行"零算力、可自办"报错了。** 读码查明：`taiji/model.py:3190` 的 `generate()` 有 13 个参数（`prompt, length, *, stop_at_boundary, sample, reset, use_memory, response_start, response_phase, boundary, authorization, utf8_strict, repetition_penalty, repetition_window`），**没有一个能喂入指定字节序列**；而探针的发面来自 `probe:1477` 的 `runtime.chat(turn, history=…, learn=False, max_length=…, repetition_penalty=…)` ⇒ 探针**不拥有**发射环，`:1473` 那条 v20 注释讲的是"回路证据窗口的复位归调用方"（我在 DEBT-G60 里把它读成了"探针自己驱动发射环"，同样读宽了）。产品里唯一的 teacher-forced 机器在 `taiji/language_alignment.py:1710`／`:2189`（`_target_pass`），属**对齐/巩固那条链**，拿它代答表层读出链会破掉 §5 G-N1d-1 的单变量前提。⇒ **A 档现在有三个出路、没有一个是我原先写的"加一枚旗标"**：①给 `generate()` 加可选的逐字节喂入参数＝产品码改动 ⇒ 回 owner（默认 None 逐位不变＋"挪一格必须抛错"的守卫）；②改用不需要生成权的读数（那属 `would_have_triggered` 一类，只在首次触发前有效）；③整件作废并另立形状。**§2 测量定义、§3 判据三条、§5 守卫四条一字未改**——作废的是这一行的报价与 §0 的落点指认。在此之前，**不许**向 owner 申请 B 档跑面批文：跑出来的会是不可比的臂。
+
 ## 5. 守卫（四条，任一不符即整件不判）
 
 * **G-N1d-1 单变量**：两臂除 `prev_byte` 来源外必须逐字相同——由面内自述比对全部命令旗标（含 `--oracle-selector` 必须两侧**都不开**：选择侧 oracle 与路径侧强制混用＝两自变量）。
