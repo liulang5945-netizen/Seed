@@ -85,6 +85,36 @@
 - 每臂上限仍 `--max-symbols 4000`、`--progress-every 200000`；预算＝5 支面，按 ㊵-491 标定的量级为**分钟级/张**（与 ㊵-484 两张面同形状，其墙钟有件可查），磁盘＝面件 5 枚＋每支训练臂一档（≈12.7 MB 量级，落 `output/`）；
 - 止损照 §5；**跑完不追加改 gate 的第二次判据级重跑**（判据级不重跑），gate 的两档差只作机制定位叙述。
 
+## 5bis. 仪器形状（本件的实施规格，写在跑之前；默认关，落地不需新批）
+
+挂载点＝`scripts/training/train_seed_corpus.py` 里 `if pressure_record is not None:` 那一段（现锚 :456-…，
+㊵-484 的 `--pressure-record` 就是在这里 `enable_adaptive_residual_bridge(gate=0.0)` ＋ `enable_adaptive_residual_growth()`）。
+本件在同一段加**两个默认关旗标**，互不隐含：
+
+- `--developmental-fast-slow`（store_true）⇒ 依次 `substrate.migrate_f1_to_developmental_synapses()` →
+  `substrate.set_developmental_f1_learning_mode("fast_slow")`；
+  **必须挂在 bridge 挂载之后、任何 load/resume 之后重挂一次**（模式不入档，`taiji/model.py:1331-1332`、:3785）。
+- `--developmental-bridge-gate <float>`（0.0–1.0，默认 None＝不调）⇒ 把挂载时的 `gate=0.0` 换成该值，
+  并在挂载后 `set_adaptive_residual_bridge_gate(...)` 复核一次实际生效值。
+  owner 已裁两个值都跑：`0.25` 与 `1.0`（`1.0` 与 canary `eval_taiji_m4v2_r4_shadow.py` 的 `gate=1.0` 同档）。
+
+面件自述（`kind=face` 那行必须新增，缺键 ⇒ 读数器 rc=2）：
+
+| 键 | 取法 |
+|---|---|
+| `developmental_bundle_mounted` | 迁移返回件的 `fast_is_zero`／`effective_parameter_count`（**注意：挂载即 `fast_is_zero=true`**，见 §0） |
+| `learning_mode` | `substrate.developmental_f1_learning_mode`（每次 load 之后重报一次，进下面那个列表） |
+| `mode_reapplied_after_load` | 一个列表：每次 load/resume 之后读到的 `learning_mode`；**任一元素是 `read_only` ⇒ 整面判 violation**（G-N3b 的机检形状） |
+| `bridge_gate_requested` / `bridge_gate_actual` | 请求值与挂载后读回值，两者不等即响亮失败 |
+| `activity_saturation_nonzero_count` | 从压强记录里现算（不新写生产者）；丙臂预期为 0，这一格是"我这臂到底解了几维"的自证 |
+
+两支契约测（形状照 `tests/taiji_native/test_a4_mainline_flags.py` 的"默认关逐键等于入参"路子）：
+①**默认关逐位不变**：不开两旗标 vs 开任一旗标之外的同参两支，进度行八键逐位相同（G-N3b-1，**不许继承** ㊵-484⑥ 对 `--pressure-record` 的证明）；
+②**开旗标必须五自述键齐 + `mode_reapplied_after_load` 里出现 `read_only` 即 rc=2**（造一份缺键件与一份含 `read_only` 的件各跑一次，两条拒绝分支都要真走到——㊵-484⑤ 的教训）。
+
+跑的形状：`--max-symbols 4000 --progress-every 200000 --seed 20260822`，两条链各一次（`--resume checkpoints/seed_a31self_with_circuit.pt`、`--resume output/a31_chunked_self/checkpoint.pt`），
+gate 两档各一遍 ⇒ 4 张在线面＋1 支默认关守卫臂；一律 `--checkpoint output/` 新档（G-N3b-4）。
+
 ## 6. 本件不做什么
 
 不冻产品阈、不改 policy 常量、不 promote 任何候选、不动出厂面；不做 ×16.8 大档（那是 N3 甲的另一条泳道）；
