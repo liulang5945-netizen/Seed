@@ -1,0 +1,42 @@
+{
+  "format": "taiji-prereg-exit-wording-audit-v1",
+  "debt": "DEBT-G46 修法③",
+  "vague_words": [
+    "明显",
+    "大幅",
+    "显著",
+    "足够"
+  ],
+  "results": [
+    {
+      "doc": "E:\\Seed\\plans\\reference\\PLAN-N1-01_s1_readout_prereg_20261007.md",
+      "status": "ambiguous_exit_wording",
+      "criterion_lines": 9,
+      "vague_word_lines_unpinned": 1,
+      "hits": [
+        {
+          "line": 35,
+          "words": [
+            "大幅"
+          ],
+          "excerpt": "- **三出口都是真知识**：J-S1a 过 ⇒ 读取形态坐实，H-S1b 进 §3.2 实施附件；J-S1a 不过 ⇒ **收回\"病在读取丢序\"这条**，转 09 §4 第二行（解码/推导层）；J-S1a 不过但 F1/F3 大幅改善 ⇒ 如实登记\"读取可修、但不充分\"，S1b 降级为另立预注册。"
+        }
+      ]
+    },
+    {
+      "doc": "E:\\Seed\\plans\\reference\\PLAN-N2-01_consolidation_powerup_prereg_20261007.md",
+      "status": "ok",
+      "criterion_lines": 17,
+      "vague_word_lines_unpinned": 0,
+      "hits": []
+    },
+    {
+      "doc": "E:\\Seed\\plans\\reference\\PLAN-N3-02_scaling_probe_prereg_20261007.md",
+      "status": "ok",
+      "criterion_lines": 10,
+      "vague_word_lines_unpinned": 0,
+      "hits": []
+    }
+  ],
+  "rc": 1
+}
