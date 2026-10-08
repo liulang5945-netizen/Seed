@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import re
 import sys
 import types
 from pathlib import Path
@@ -240,3 +241,105 @@ def test_pressure_ema_identity_holds_on_real_face() -> None:
         )
         other.observe(other_observation, structural_budget=1)
     assert abs(float(other.pressure_ema) - wrong) > 1e-6
+
+
+#: 写侧源文件：PLAN-N3-08 的"零抄写"与"版本集一致"两条守卫都靠扫它，不靠运行时导入它（它会拉 torch）。
+TRAINER = REPO / "scripts/training/train_seed_corpus.py"
+#: 任何 `"minimum_*": <小数字面量>` 或 `"ema_rate": <小数字面量>` 都算抄写（值必须读自 `trigger.policy`）。
+HARDCODED_POLICY_LITERAL = re.compile(r'"(?:minimum_\w+|ema_rate)":\s*0?\.\d')
+
+
+def test_trainer_reports_face_format_the_reader_accepts() -> None:
+    """G-N3c-4：写侧输出的版本名必须落在读侧接受集里，且**只有**在读侧有对应夹具。"""
+
+    source = TRAINER.read_text(encoding="utf-8")
+    written = re.findall(r'"format":\s*"(taiji-n3-pressure-face-v\d+)"', source)
+    assert written, "写侧找不到压强面格式名——它被改名了，本测的扫描面失效"
+    assert set(written) <= set(READER.FACE_FORMATS), (written, READER.FACE_FORMATS)
+    #: 反证：表外版本名必须让读侧响亮拒绝（不是"当成 v1 猜着读"）。
+    assert "taiji-n3-pressure-face-v9" not in READER.FACE_FORMATS
+
+
+def test_trainer_pressure_section_has_no_hardcoded_thresholds(tmp_path: Path) -> None:
+    """G-N3c-3"零抄写"：面头的九个 policy 值全部来自 `trigger.policy`，源里不许出现阈值字面量。"""
+
+    source = TRAINER.read_text(encoding="utf-8")
+    offenders = [line for line in source.splitlines() if HARDCODED_POLICY_LITERAL.search(line)]
+    assert offenders == [], offenders
+    #: 反例支（守卫必须能为假）：插一个写死阈值进临时副本，同一把尺必须抓到它。
+    tampered = source.replace('"policy": {', '"policy": {"minimum_pressure": 0.70,', 1)
+    assert tampered != source, "替换没生效——写侧形状变了，本测的反例支不再覆盖"
+    assert HARDCODED_POLICY_LITERAL.search(tampered), "插入的写死值没被抓到＝守卫恒真"
+
+
+def _v2_header() -> dict[str, Any]:
+    policy = {
+        "minimum_pressure": 0.7,
+        "minimum_residual_error": 0.55,
+        "minimum_fast_slow_conflict": 0.4,
+        "minimum_activity_saturation": 0.4,
+        "minimum_utility_gap": 0.35,
+        "minimum_resource_state": 0.4,
+        "required_pressure_steps": 3,
+        "growth_resource_cost": 1,
+        "ema_rate": 0.25,
+    }
+    return {
+        "kind": "face",
+        "format": "taiji-n3-pressure-face-v2",
+        "bridge": {"gate": 0.0},
+        "growth": {"parent_checkpoint_digest": ""},
+        "policy": policy,
+        "ema_initial": {
+            "residual_error_ema": 0.0,
+            "fast_slow_conflict_ema": 0.0,
+            "activity_saturation_ema": 0.0,
+            "utility_gap_ema": 0.0,
+            "resource_state_ema": 1.0,
+            "consecutive_pressure_steps": 0,
+        },
+    }
+
+
+def test_v2_face_leaves_no_assumed_thresholds(tmp_path: Path) -> None:
+    """J-N3c-自述：六道阈全部面内自述 ⇒ `assumed_from_product_defaults` 必须空、自述为真必须 6 道。
+
+    观测行沿用真实 v1 面（同一批数），只把 face 头换成补齐版 ⇒ 这里测的是**读侧能不能停止回落默认**，
+    不是重跑一次训练。
+    """
+
+    records = _rows()
+    header = _v2_header()
+    pressures = [record for record in records if record.get("kind") == "pressure"]
+    rc, payload = _run(_write(tmp_path, [header] + pressures), tmp_path)
+    assert rc == 0, payload
+    face = payload["faces"][0]
+    assert face["assumed_from_product_defaults"] == []
+    assert len(face["per_gate"]) == 6
+    assert all(gate["threshold_self_reported_in_face"] for gate in face["per_gate"].values())
+    #: 补齐自述不许改变任何一道闸的判定——否则"补披露"就变成了"改读数"。
+    real = _run(str(FACE), tmp_path)[1]["faces"][0]
+    assert {k: v["true_steps"] for k, v in face["per_gate"].items()} == {
+        k: v["true_steps"] for k, v in real["per_gate"].items()
+    }
+
+
+def test_unknown_face_format_refuses(tmp_path: Path) -> None:
+    header = _v2_header()
+    header["format"] = "taiji-n3-pressure-face-v9"
+    records = _rows()
+    pressures = [record for record in records if record.get("kind") == "pressure"]
+    rc, payload = _run(_write(tmp_path, [header] + pressures), tmp_path)
+    assert rc == 2
+    assert "不在读侧接受集" in payload["refused"][0]["error"]
+
+
+def test_foreign_policy_field_refuses(tmp_path: Path) -> None:
+    #: 面头里出现表外 policy 字段 ⇒ 说明写/读两侧的字段集分家了，必须响亮拒绝而不是忽略。
+    header = _v2_header()
+    header["policy"]["minimum_surprise"] = 0.1
+    records = _rows()
+    pressures = [record for record in records if record.get("kind") == "pressure"]
+    rc, payload = _run(_write(tmp_path, [header] + pressures), tmp_path)
+    assert rc == 2
+    assert "表外 policy 字段" in payload["refused"][0]["error"]

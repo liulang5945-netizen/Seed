@@ -57,15 +57,24 @@ GATES = (
     ("resource_state_ema", "resource_state_ema", "minimum_resource_state", "resource_state"),
 )
 
-#: 面头缺自述、只能取产品默认的字段（如实披露，不假装面里有过）。
-ASSUMED_FIELDS = (
+#: 读侧接受的 face 版本集；写侧的字面量由契约测钉为"必须落进这个集合"（G-N3c-4）。
+FACE_FORMATS = ("taiji-n3-pressure-face-v1", "taiji-n3-pressure-face-v2")
+
+#: 闸的九个 policy 字段——面头里有几个就用几个，缺的才回落产品默认（并逐条披露）。
+POLICY_FIELDS = (
+    "minimum_pressure",
     "minimum_residual_error",
     "minimum_fast_slow_conflict",
     "minimum_activity_saturation",
     "minimum_utility_gap",
     "minimum_resource_state",
+    "required_pressure_steps",
+    "growth_resource_cost",
     "ema_rate",
 )
+
+#: 面头缺自述、只能取产品默认的字段（如实披露，不假装面里有过）——v1 面缺这六条，v2 面应为空。
+ASSUMED_FIELDS = POLICY_FIELDS[1:6] + ("ema_rate",)
 
 #: 产品在 :461-467 只会发这四条原因。出现表外原因 ⇒ 说明决策侧被动过，本件的指认不再成立 ⇒ 拒判。
 KNOWN_REASONS = (
@@ -97,6 +106,11 @@ def _load_face(path: Path) -> tuple[dict[str, Any], list[dict[str, Any]]]:
             raise ValueError(f"{path.name} 出现不认识的行 kind={kind!r} ⇒ 不判")
     if header is None:
         raise ValueError(f"{path.name} 缺 face 头 ⇒ 这张面没有自述，不判")
+    #: 版本集机检（G-N3c-4 的读侧一半）：表外版本 ⇒ 响亮拒绝，不按"大概是 v1"猜着读。
+    if str(header.get("format")) not in FACE_FORMATS:
+        raise ValueError(
+            f"{path.name} 的 format={header.get('format')!r} 不在读侧接受集 {FACE_FORMATS} ⇒ 不判"
+        )
     if len(rows) < MIN_OBSERVATIONS:
         raise ValueError(
             f"{path.name} 观测只有 {len(rows)} 条，低于样本下限 {MIN_OBSERVATIONS} ⇒ 不判"
@@ -114,16 +128,23 @@ def _load_face(path: Path) -> tuple[dict[str, Any], list[dict[str, Any]]]:
 
 
 def _policy_from_header(header: dict[str, Any]) -> tuple[Any, list[str]]:
+    """用面头自述的阈覆盖产品默认，**缺哪条回落哪条并逐条披露**。
+
+    v1 面只自述三条 ⇒ `assumed_from_product_defaults` 非空；v2 面九条齐 ⇒ 空。
+    回落不是错（旧面读不了就作废更糟），但**必须被点名**——静默回落会把"仪器没记"读成"产品默认"。
+    """
+
     recorded = header.get("policy") or {}
     if not isinstance(recorded, dict) or not recorded:
-        raise ValueError("face 头里没有 policy 段 ⇒ 连三道阈都取不到，不判")
+        raise ValueError("face 头里没有 policy 段 ⇒ 连阈都取不到，不判")
+    if "minimum_pressure" not in recorded:
+        raise ValueError("face 头缺 minimum_pressure 自述 ⇒ 合成量那道闸读不出，不判")
     policy = AdaptiveResidualGrowthPolicy()
-    for field in ("minimum_pressure", "required_pressure_steps", "growth_resource_cost"):
-        if field not in recorded:
-            raise ValueError(f"face 头缺 {field!r} 自述 ⇒ 不判")
-        policy = dataclasses.replace(policy, **{field: recorded[field]})
-    assumed = [field for field in ASSUMED_FIELDS if field not in recorded]
-    return policy, assumed
+    for field, value in recorded.items():
+        if field not in POLICY_FIELDS:
+            raise ValueError(f"face 头里出现表外 policy 字段 {field!r} ⇒ 不判")
+        policy = dataclasses.replace(policy, **{field: value})
+    return policy, [field for field in ASSUMED_FIELDS if field not in recorded]
 
 
 def _longest_true_run(flags: list[bool]) -> int:

@@ -1,0 +1,156 @@
+{
+  "format": "taiji-n3-06-gate-attribution-v1",
+  "prereg": "plans/reference/PLAN-N3-06_gate_attribution_replay_prereg_20261008.md",
+  "status": "ok",
+  "faces": [
+    {
+      "face": "pressure.jsonl",
+      "face_dir": "n3_08_smoke",
+      "observations": 4999,
+      "g_n3c_a1_rows_compared": 4999,
+      "g_n3c_a1_should_propose_mismatches": 0,
+      "g_n3c_a2_digests_compared": 4999,
+      "g_n3c_a2_digest_mismatches": 0,
+      "policy_from_face_header": {
+        "minimum_pressure": 0.7,
+        "minimum_residual_error": 0.55,
+        "minimum_fast_slow_conflict": 0.4,
+        "minimum_activity_saturation": 0.4,
+        "minimum_utility_gap": 0.35,
+        "minimum_resource_state": 0.4,
+        "required_pressure_steps": 3,
+        "growth_resource_cost": 1,
+        "ema_rate": 0.25
+      },
+      "assumed_from_product_defaults": [],
+      "structural_budget_used": 1,
+      "should_propose_replay_total": 0,
+      "should_propose_face_total": 0,
+      "meets_pressure_true_steps": 0,
+      "g_n3c_meets_pressure_crosscheck_derived_steps": 0,
+      "g_n3c_meets_pressure_crosscheck_equal": true,
+      "meets_pressure_longest_run": 0,
+      "consecutive_pressure_steps_max": 0,
+      "required_pressure_steps": 3,
+      "pressure_ema": {
+        "p50": 0.388726,
+        "p90": 0.413983,
+        "max": 0.423982,
+        "last": 0.33208,
+        "minimum_pressure_threshold": 0.7
+      },
+      "reasons_histogram": {
+        "pressure_below_threshold": 4999,
+        "pressure_persistence_below_threshold": 4999
+      },
+      "dead_gates": [
+        "pressure_ema",
+        "fast_slow_conflict_ema",
+        "activity_saturation_ema"
+      ],
+      "per_gate": {
+        "pressure_ema": {
+          "threshold": 0.7,
+          "threshold_self_reported_in_face": true,
+          "ema_last": 0.423982,
+          "ema_p90": 0.413983,
+          "ema_max": 0.423982,
+          "raw_p90": 0.423441,
+          "raw_max": 0.42488,
+          "true_steps": 0,
+          "true_share": 0.0,
+          "longest_true_run": 0,
+          "gap_to_threshold_at_p90": 0.286017
+        },
+        "residual_error_ema": {
+          "threshold": 0.55,
+          "threshold_self_reported_in_face": true,
+          "ema_last": 0.997605,
+          "ema_p90": 0.974076,
+          "ema_max": 0.997605,
+          "raw_p90": 0.996332,
+          "raw_max": 0.999718,
+          "true_steps": 4996,
+          "true_share": 0.9994,
+          "longest_true_run": 4972,
+          "gap_to_threshold_at_p90": -0.424076
+        },
+        "fast_slow_conflict_ema": {
+          "threshold": 0.4,
+          "threshold_self_reported_in_face": true,
+          "ema_last": 0.0,
+          "ema_p90": 0.0,
+          "ema_max": 0.0,
+          "raw_p90": 0.0,
+          "raw_max": 0.0,
+          "true_steps": 0,
+          "true_share": 0.0,
+          "longest_true_run": 0,
+          "gap_to_threshold_at_p90": 0.4
+        },
+        "activity_saturation_ema": {
+          "threshold": 0.4,
+          "threshold_self_reported_in_face": true,
+          "ema_last": 0.0,
+          "ema_p90": 0.0,
+          "ema_max": 0.0,
+          "raw_p90": 0.0,
+          "raw_max": 0.0,
+          "true_steps": 0,
+          "true_share": 0.0,
+          "longest_true_run": 0,
+          "gap_to_threshold_at_p90": 0.4
+        },
+        "utility_gap_ema": {
+          "threshold": 0.35,
+          "threshold_self_reported_in_face": true,
+          "ema_last": 0.498803,
+          "ema_p90": 0.487038,
+          "ema_max": 0.498803,
+          "raw_p90": 0.498166,
+          "raw_max": 0.499859,
+          "true_steps": 4897,
+          "true_share": 0.979596,
+          "longest_true_run": 1445,
+          "gap_to_threshold_at_p90": -0.137038
+        },
+        "resource_state_ema": {
+          "threshold": 0.4,
+          "threshold_self_reported_in_face": true,
+          "ema_last": 1.0,
+          "ema_p90": 1.0,
+          "ema_max": 1.0,
+          "raw_p90": 1.0,
+          "raw_max": 1.0,
+          "true_steps": 4999,
+          "true_share": 1.0,
+          "longest_true_run": 4999,
+          "gap_to_threshold_at_p90": -0.6
+        }
+      },
+      "counterfactual_not_judged": {
+        "five_gate_all_pass_steps": 0,
+        "five_gate_all_pass_share": 0.0,
+        "five_gate_longest_run": 0,
+        "required_pressure_steps": 3,
+        "tau_fire_ceiling_within_five_gate_windows": null,
+        "frozen_rule_reapplied_on_ema_caliber": {
+          "candidate_tau": 0.45,
+          "six_gate_true_steps": 0,
+          "six_gate_longest_run": 0,
+          "required_pressure_steps": 3,
+          "would_have_triggered": false
+        },
+        "note": "这条只给'下调 τ 能不能触发'的算术上界，不参与 J-N3c 判级；ceiling 为 None ⇒ 其余五道从未同时为真过，τ 调到多少都不会触发"
+      },
+      "verdict": "multiple_gates_blocking"
+    }
+  ],
+  "refused": [],
+  "faces_judged": 1,
+  "faces_refused": 0,
+  "verdict_by_face": {
+    "n3_08_smoke": "multiple_gates_blocking"
+  },
+  "verdict_all_agree": true
+}

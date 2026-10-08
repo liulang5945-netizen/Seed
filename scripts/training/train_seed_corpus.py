@@ -529,13 +529,32 @@ def run_training(
                 json.dumps(
                     {
                         "kind": "face",
-                        "format": "taiji-n3-pressure-face-v1",
+                        "format": "taiji-n3-pressure-face-v2",
                         "bridge": bridge_info,
                         "growth": growth_info,
+                        #: 六道阈＋`required_pressure_steps`／`growth_resource_cost`／`ema_rate` 全部读自
+                        #: 产品自己的 `trigger.policy`（PLAN-N3-08 §1 的"零抄写"：这一段里不许出现阈值字面量）。
                         "policy": {
                             "minimum_pressure": trigger.policy.minimum_pressure,
+                            "minimum_residual_error": trigger.policy.minimum_residual_error,
+                            "minimum_fast_slow_conflict": trigger.policy.minimum_fast_slow_conflict,
+                            "minimum_activity_saturation": (
+                                trigger.policy.minimum_activity_saturation
+                            ),
+                            "minimum_utility_gap": trigger.policy.minimum_utility_gap,
+                            "minimum_resource_state": trigger.policy.minimum_resource_state,
                             "required_pressure_steps": trigger.policy.required_pressure_steps,
                             "growth_resource_cost": trigger.policy.growth_resource_cost,
+                            "ema_rate": trigger.policy.ema_rate,
+                        },
+                        #: 面头写在这支 trigger 被 observe 之前 ⇒ 这里读到的就是它自己的初值（不是抄的）。
+                        "ema_initial": {
+                            "residual_error_ema": trigger.residual_error_ema,
+                            "fast_slow_conflict_ema": trigger.fast_slow_conflict_ema,
+                            "activity_saturation_ema": trigger.activity_saturation_ema,
+                            "utility_gap_ema": trigger.utility_gap_ema,
+                            "resource_state_ema": trigger.resource_state_ema,
+                            "consecutive_pressure_steps": trigger.consecutive_pressure_steps,
                         },
                         "developmental": {
                             "fast_slow_requested": bool(developmental_fast_slow),
@@ -560,6 +579,22 @@ def run_training(
             line = dict(pressure.to_payload())  # type: ignore[attr-defined]
             line["kind"] = "pressure"
             line["decision_should_propose"] = bool(getattr(decision, "should_propose", False))
+            #: PLAN-N3-08 §1：面行补记**产品 decision 自带**的那十个读数（全部 `getattr` 读回，零重算）。
+            #: 多加的一个 `decision_digest` 是预注册 §1 清单之外的实现期增项（逐行完整性锚点，已在 ㊵-508 自报）。
+            for _key in (
+                "pressure",
+                "residual_error_ema",
+                "fast_slow_conflict_ema",
+                "activity_saturation_ema",
+                "utility_gap_ema",
+                "resource_state_ema",
+            ):
+                line[f"decision_{_key}"] = float(getattr(decision, _key))
+            line["decision_consecutive_pressure_steps"] = int(decision.consecutive_pressure_steps)
+            line["decision_structural_budget"] = int(decision.structural_budget)
+            line["decision_resource_cost"] = int(decision.resource_cost)
+            line["decision_reasons"] = list(decision.reasons)
+            line["decision_digest"] = str(decision.decision_digest)
             nonlocal pressure_lines
             pressure_lines += 1
             with pressure_path.open("a", encoding="utf-8", newline="\n") as handle:
