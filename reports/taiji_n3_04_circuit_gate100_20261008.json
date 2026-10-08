@@ -1,0 +1,150 @@
+{
+  "format": "taiji-n3-pressure-thresholds-v2",
+  "face": {
+    "pressure_file": "pressure.jsonl",
+    "observations": 3999,
+    "bridge_digest": "a5c26c7faf39239ed6fb8b85cfb718aec601f94095ef4c1bc32c226ee09974e4",
+    "bridge_gate_at_mount": 1.0,
+    "trigger_parent_digest": "6a0e3584775a4fec56a671be40c9952412122ecb48ad98d314feb8dd7f3eb671",
+    "policy_at_mount": {
+      "minimum_pressure": 0.7,
+      "required_pressure_steps": 3,
+      "growth_resource_cost": 1
+    },
+    "readout": "predictive",
+    "seed": 20260822,
+    "ticks_at_close": 16004000,
+    "coverage_of_face_ticks": 1.0
+  },
+  "pressure_identity_max_abs_delta": 1.1102230246251565e-16,
+  "distributions": {
+    "pressure": {
+      "p50": 0.651565,
+      "p90": 0.67194,
+      "p99": 0.691393,
+      "max": 0.709126,
+      "mean": 0.611565
+    },
+    "residual_error": {
+      "p50": 0.999159,
+      "p90": 1.0,
+      "p99": 1.0,
+      "max": 1.0,
+      "mean": 0.902675
+    },
+    "fast_slow_conflict": {
+      "p50": 0.500187,
+      "p90": 0.500317,
+      "p99": 0.500348,
+      "max": 0.500352,
+      "mean": 0.499935
+    },
+    "activity_saturation": {
+      "p50": 0.333333,
+      "p90": 0.385417,
+      "p99": 0.4375,
+      "max": 0.489583,
+      "mean": 0.329129
+    },
+    "utility_gap": {
+      "p50": 0.65622,
+      "p90": 0.6875,
+      "p99": 0.717544,
+      "max": 0.744792,
+      "mean": 0.599812
+    },
+    "resource_state": {
+      "p50": 1.0,
+      "p90": 1.0,
+      "p99": 1.0,
+      "max": 1.0,
+      "mean": 1.0
+    }
+  },
+  "two_signals_zero_throughout": false,
+  "derived_pressure_ceiling_with_both_zero": null,
+  "frozen_thresholds": {
+    "minimum_residual_error": 1.0,
+    "minimum_fast_slow_conflict": 0.55,
+    "minimum_activity_saturation": 0.4,
+    "minimum_utility_gap": 0.7,
+    "minimum_resource_state": 1.0,
+    "minimum_pressure": 0.7,
+    "required_pressure_steps": 3
+  },
+  "default_policy_should_propose_share": 0.0,
+  "caliber_check": {
+    "status": "missing_control_face",
+    "verdict": "not_frozen"
+  },
+  "threshold_verdict": "not_frozen_caliber_unchecked",
+  "assembly": {
+    "prereg": "PLAN-N3-04",
+    "dims_present": {
+      "residual_error": {
+        "nonzero_count": 3906,
+        "records": 3999,
+        "zero_share": 0.023256,
+        "p50": 0.999159,
+        "p90": 1.0,
+        "max": 1.0
+      },
+      "fast_slow_conflict": {
+        "nonzero_count": 3998,
+        "records": 3999,
+        "zero_share": 0.00025,
+        "p50": 0.500187,
+        "p90": 0.500317,
+        "max": 0.500352
+      },
+      "activity_saturation": {
+        "nonzero_count": 3999,
+        "records": 3999,
+        "zero_share": 0.0,
+        "p50": 0.333333,
+        "p90": 0.385417,
+        "max": 0.489583
+      },
+      "utility_gap": {
+        "nonzero_count": 3906,
+        "records": 3999,
+        "zero_share": 0.023256,
+        "p50": 0.65622,
+        "p90": 0.6875,
+        "max": 0.744792
+      }
+    },
+    "assembly_self_report": {
+      "developmental_bundle_mounted": true,
+      "bundle_fast_is_zero": true,
+      "bundle_effective_parameter_count": 25824,
+      "learning_mode_readings": [
+        "fast_slow",
+        "fast_slow"
+      ],
+      "bridge_gate_requested": 1.0,
+      "bridge_gate_actual": 1.0,
+      "bridge_gate_at_close": 1.0,
+      "policy_minimum_pressure_at_mount": 0.7,
+      "required_pressure_steps": 3
+    },
+    "mode_reapplied_after_load": [
+      "fast_slow",
+      "fast_slow"
+    ],
+    "j_n3b_present": {
+      "fast_slow_conflict": true,
+      "activity_saturation": true
+    },
+    "j_n3b_tau": 0.7,
+    "dynamic_range": {
+      "longest_consecutive_should_propose_run": 0,
+      "should_propose_total": 0,
+      "required_pressure_steps": 3,
+      "proven": false
+    },
+    "assembly_verdict": "present_without_dynamic_range"
+  },
+  "status": "ok",
+  "rc": 0
+}

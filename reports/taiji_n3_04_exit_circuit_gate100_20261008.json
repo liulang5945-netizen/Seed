@@ -1,0 +1,20 @@
+{
+  "epoch": 0,
+  "ticks": 16004000,
+  "window_ticks": 3999,
+  "online_accuracy": 0.10677669417354338,
+  "mean_surprise": 9.880243752344843,
+  "holdout_surprise": 9.64679280337767,
+  "elapsed_seconds": 25.00396559992805,
+  "exit_reason": "max_symbols_reached",
+  "base_ticks": 16000000,
+  "budget_max_symbols": 4000,
+  "ticks_at_exit": 16004000,
+  "reached_budget": true,
+  "checkpoint_path": "output\\n3_04\\circuit_gate100\\checkpoint.pt",
+  "checkpoint_sha256": "b6539111fa9a18aa937bcd126fab355251578fcfc134f70e61c62c9e08714d41",
+  "corpus_fingerprint": "[{\"name\":\"dialogue_extended_clean.jsonl\",\"bytes\":108327171}]",
+  "history_files": 1,
+  "history_bytes": 22371173,
+  "history_pruned": 0
+}
