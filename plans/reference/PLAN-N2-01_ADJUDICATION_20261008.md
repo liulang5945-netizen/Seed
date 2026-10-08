@@ -23,7 +23,7 @@
 |---|---|---|---|
 | **J-N2a-1** CAP-0 严格命中项数 ≥ 巩固前 − 1 | **9**（C 2/14、D 6/16、E 1/20；B/G 各 20 项待人审，不进分子） | **12**（C 2/14、D 9/16、E 1/20） | **成立**（+3，且这把尺有动态范围：`cap0_ruler_usable=true`） |
 | **J-N2a-2** 复述面 ×24 各惩罚档不跌破 | 严格命中 5/5/6/6（惩罚 0.0/0.5/1.0/2.0）、成句 24/24/24/25 | 6/5/6/6、成句 24/24/24/**23** | **不成立**（命中零档下跌、一档 +1，但 2.0 档成句数 −2） |
-| **J-N2a-3** 停摆面 ×24 | 面件在库（rc=0） | 面件在库（rc=0） | **unverified**（主列由配套计数仪产出，本判读器未接入 ⇒ 不代答"没跌破"） |
+| **J-N2a-3** 停摆面 ×24／×96 主列 | ×24 面件在库（rc=0）；×96 面 `never_lf_eaters_counted` **234**／分母 `generation_rows_seen=288` | ×24 面件在库（rc=0）；×96 面主列 **190**／同分母 288（`items_sha256=0541a3f4568a9c5b` 前后一致；巩固前件 `checkpoint_sha256=d6169a358eaee6d1`＝产品默认基座，巩固后件 `1aa97ef920872b37`＝对齐候选档） | **主列已取到、判据对方向沉默**：差 **−44**。历史 236／225 那条是 **a31 链**，与本轮不同链 ⇒ 只作本链前后配对的"前"。§2 那句"无一项跌破"**从未给"拖写行数"这列指定哪个方向算跌破**（越少越好是历史解释，不是冻结判据）⇒ **只报数与差，不冒充判据判定**（DEBT-G46 第三类实例，见 §7） |
 | **J-N2b** 新材料读数 > 同材料不学对照 | 对照＝回退件（＝同一份母权重）对**同一批夜文本**的 `SeedJudge` 均值 **−14.2791**（accuracy 0.05960，surprise 14.2105） | 治疗件 **−14.4628**（accuracy 0.05277，surprise 14.3890） | **不成立**（治疗 ≤ 对照，按冻结规则即否；差 −0.1837） |
 | **合取** J-N2a ∧ J-N2b | — | — | **`not_closed`**（`reports/taiji_n2_face_verdict_20261008.json`，blocking＝`j_n2a_replay`／`j_n2b`／`stop_face_unverified`） |
 
@@ -41,7 +41,7 @@
 - **半径**：§8.3 的候选版本隔离在"离线巩固"这条路上**结构性不成立**；巩固产生的权重改动只能活在内存里，一落盘就废；N5"经验→能力"要持久化必经此门。
 - **差点被读成结论的那一步**：第一轮 CAP-0「巩固后」100 项**全部** `load_ok=false`、`machine_scored_correct` 恒 0——判读器若不先数装载失败，就会把仪器缺陷报成"能力归零"。现已硬编码：任一档有 load 失败 ⇒ 整面作废、rc=2（`not_judged_face_invalid`）。
 - **本轮的处置（不是修法）**：产出一份**只补计数器、张量一字不动**的对齐件 `checkpoints/seed_n2_candidate_aligned_20261008.pt` 来读治疗面；正反对照都在件里（未对齐候选仍拒收；对齐件 202 张量零差、`align_pass=true`）。⇒ **§2 表里所有"巩固后"的读数定性为"信封两半对齐之后的候选权重"，不是装机可用态**。
-- **待 owner 裁的两条修法**：A 睡眠回合结束时收束回醒来态（改在 `sleep_pass.sleep_organs`／`SeedSleepScheduler.night` 内部）；B `SeedRuntime.save()` 前以 kernel 半边为权威覆写 `cognitive_state`（改在持久化边界）。两条都动产品码，都要配**能为 false 的守卫**（"通电后立即 save→load 必须成功"——今天它是红的）＋一条反向（对已一致的档，修法不得改变 load 后的摘要）。**裁完之后本件的巩固后面必须在未对齐的原生候选档上重跑，才算通道打通。**
+- **修法已由 owner 2026-10-08 弹窗裁＝甲**（睡眠回合结束时收束回醒来态，改在 `sleep_pass.sleep_organs`／`SeedSleepScheduler.night` 内部；备选乙＝`SeedRuntime.save()` 前以 kernel 半边为权威，未选）。守卫形状随批文一起定：**通电后立即 save→load 必须成功**（今天这条是红的 ⇒ 它能为 false）＋一条反向（对**已一致**的档，修法不得改变 load 后的摘要，防顺手覆写有效状态）。**裁完之后本件的巩固后面必须在未对齐的原生候选档上重跑，才算通道打通**——本轮所有"巩固后"读数都还带着"读的是对齐件"这条限定。**⇒ 2026-10-08 修法甲已实施**：`seed_platform/sleep_pass.py:sleep_organs` 在 `scheduler.night(...)` 之后收束 `reset_dynamics(episode_id="wake-after-sleep")`（只清回合活动、保留已学突触；醒不过来只记 `wake_error`，不改报 `ran=false`），三支契约测入库 `tests/seed/test_sleep_pass_wake_reentry.py`（反支钉缺陷本体、正支走产品路径、反向守卫先证明选择器非空再要求 `edge_weight`/`pre_index`/`post_index` 逐位不变）。**实施为什么落在 `sleep_organs` 而不是 `night` 内部**：`night` 的活调用点还包括三支 `verify_seed_a{2,3,4,5}*.py` 与两支既有测，其中 A3 那条专门量跨夜漂移 ⇒ 按批文给的两个位置里取半径更窄的那个，并如实点名"仪器侧直接调 `night` 仍不收束"这条不对称。**本轮那枚真实候选档救不回**（信封已写坏，只能重跑），而重跑＝第二次改权重、不在 ㊵-485 批文内 ⇒ "经验→能力可持久化"这句话到今天仍记**未验证**。
 
 ## 5. 仪器侧的两处自我更正（都是我自己造的）
 
@@ -59,7 +59,8 @@ J-N2b 的读数用 `SeedJudge.score()` 打**整篇**，而这一支 pass 的经�
 
 ## 8. 未做与下一步
 
-- **×96 停摆面主列与 gated 三臂**（§4ter 的分档附件）未跑 ⇒ J-N2a 保持侧在"主列／资格门控"两面上仍是 `unverified`。
+- **×96 停摆面主列已跑并接入**（234→190，见 §2 表 J-N2a-3；判读器 `--stop-main` 读现成计数仪的读数件 `reports/taiji_n2_stop96_main_20261008.json`），但**方向在冻结判据里没定义** ⇒ 该项进 `blocking_terms` 的名义是 `stop_face_direction_defined`，不是"没测到"。
+- **gated 三臂（资格门控 X=0/9/27 那一族）仍未跑** ⇒ J-N2a 保持侧在"资格门控"这一面上还是 `unverified`；它是 copy-circuit 注入形状档，与本轮权重改动的相关性本身也待核（同一台仪器的另一条链）。
 - **⑥ P4 只读面板行＝本轮已落地**（零风险、owner 已批）：python 侧 `_add_recommendations` 加 `internalise_workbench_capabilities` 一支（零折算不生成，两条都有单测：`tests/seed/test_sleep_pass.py` **14 passed**）；harness 侧 `LifePassReportView.workbenchCapabilities`（`types.ts`）＋`runtime-client.ts` 从 `projection.by_source.workbench_capabilities` 取值（缺投影读 0，不猜）＋面板一行 `passCapabilitiesLabel`＋zh/en 两个字典键＋派生目录 `tool-cordis/src/api-catalog.ts` 同步；host＋client 两支 spec 一并更新（`consolidation.host.spec.ts` 加"缺投影读 0"一条、`panel.client.spec.tsx` 加行断言），`vitest run` 两文件 **63 passed**。
 - **下一次通电的前置**（不在本件）：DEBT-G47 修法裁定＋剂量/读数同窗＋×96 附件。
 

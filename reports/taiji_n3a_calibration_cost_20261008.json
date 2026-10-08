@@ -1,0 +1,62 @@
+{
+  "format": "taiji-n3a-calibration-cost-v1",
+  "prereg": "plans/reference/PLAN-N3-02_scaling_probe_prereg_20261007.md#4bis",
+  "machine_load_note": "两臂**依次**跑在只有它们自己的机器上（owner 裁机器空出来后各跑一支）⇒ 这里的 tick/s 可当标定用；并发取到的耗时按纪律不得当标定。",
+  "arms": {
+    "scale10": {
+      "arm": "scale10",
+      "command": "python scripts/training/train_seed_corpus.py --scale 10 --seed 20260822 --epochs 1 --max-symbols 4000 --progress-every 200000 --checkpoint output/seed_n3a_calib_scale10.pt --progress reports/taiji_n3a_calib_scale10_progress.jsonl",
+      "progress_file": "reports\\taiji_n3a_calib_scale10_progress.jsonl",
+      "checkpoint_file": "output\\seed_n3a_calib_scale10.pt",
+      "ticks": 4000,
+      "elapsed_seconds": 65.5323240000289,
+      "ticks_per_second": 61.039,
+      "parameters_reported": null,
+      "checkpoint_bytes": 229179901,
+      "online_accuracy_at_calibration": 0.19304826206551637,
+      "corpus_fingerprint": null
+    },
+    "budget770": {
+      "arm": "budget770",
+      "command": "python scripts/training/train_seed_corpus.py --parameter-budget 7699510 --seed 20260822 --epochs 1 --max-symbols 4000 --progress-every 200000 --checkpoint output/seed_n3a_calib_budget770.pt --progress reports/taiji_n3a_calib_budget770_progress.jsonl",
+      "progress_file": "reports\\taiji_n3a_calib_budget770_progress.jsonl",
+      "checkpoint_file": "output\\seed_n3a_calib_budget770.pt",
+      "ticks": 4000,
+      "elapsed_seconds": 40.83957670000382,
+      "ticks_per_second": 97.944,
+      "parameters_reported": null,
+      "checkpoint_bytes": 114138717,
+      "online_accuracy_at_calibration": 0.19754938734683672,
+      "corpus_fingerprint": null
+    }
+  },
+  "baseline_scale2_tail_ticks_per_second": 238.6,
+  "errors": [],
+  "scale10_vs_scale2": {
+    "throughput_ratio_slowdown": 3.909,
+    "note": "scale 10 相对 2M 基线那档慢约这么多倍；参数量比是 ×16.8（不是 ×10），所以吞吐不是按参数量线性缩放——这条比值就是「容量代价」的实测形状。"
+  },
+  "extrapolation_from_measured_scale10": {
+    "250000_ticks": {
+      "single_arm_wallclock_hours": 1.14,
+      "two_arms_wallclock_hours": 2.28,
+      "checkpoints_bytes_if_one_save_each": 458359802
+    },
+    "1000000_ticks": {
+      "single_arm_wallclock_hours": 4.55,
+      "two_arms_wallclock_hours": 9.1,
+      "checkpoints_bytes_if_one_save_each": 458359802
+    },
+    "4000000_ticks": {
+      "single_arm_wallclock_hours": 18.2,
+      "two_arms_wallclock_hours": 36.41,
+      "checkpoints_bytes_if_one_save_each": 458359802
+    }
+  },
+  "not_measured_here": [
+    "holdout/泛化侧随规模的走向（标定只跑 4000 符号，够不着平台判断）",
+    "checkpoint-every 触发的多次存盘与 history 保留的真实磁盘放大（这里只测了一枚档的尺寸）",
+    "断点续训（--resume）在 scale 10 上的耗时占比"
+  ],
+  "rc": 0
+}

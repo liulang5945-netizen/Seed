@@ -76,6 +76,11 @@ _MAX_RECORDS = 20000
 _MAX_PROJECTED = 5000
 _MAX_TEXT_CHARS = 4000
 
+#: DEBT-G47（owner 2026-10-08 裁修法甲）：离线重放结束时把 organism 交还给**醒来回合**用的 id。
+#: 醒来侧本来就在每个 epoch 边界上做同一件事（`taiji/model.py:3062` 的
+#: `reset_dynamics(episode_id=f"learn-{epoch}")`），所以这不是新发明一个状态，是把"醒着"写回去。
+WAKE_EPISODE_ID = "wake-after-sleep"
+
 
 def _consolidation_dir() -> str:
     """Return (and create) the directory the pass keeps its artifacts in.
@@ -543,6 +548,21 @@ def sleep_organs(
             learn=bool(learn),
             max_symbols=int(max_symbols),
         )
+        #: DEBT-G47 修法甲：睡眠回合结束时**收束回醒来态**。`night` 里每次 experience／observation
+        #: 都把 episode 换成 `sleep-*`，而 `native_checkpoint()` 的 `cognitive_state` 半边停在
+        #: 最后一次同步（tick 落后 kernel 那半边），于是这一趟之后 `SeedRuntime.save()` 写出的
+        #: 信封两半自相矛盾，`TaijiKernel.restore_native` 的守卫（taiji/adapter.py:12631-12632）
+        #: 据此把整枚候选档拒收——巩固产物当场变成死件。`reset_dynamics` 清活动、
+        #: 保留全部已学突触（docstring 自述"preserving all learned synapses"），
+        #: 与醒来侧的 epoch 边界同一式子 ⇒ 这一步只把"醒着"写回状态，不动权重。
+        wake_error = ""
+        try:
+            seed.reset_dynamics(episode_id=WAKE_EPISODE_ID)
+        except (
+            Exception
+        ) as wake_exc:  # noqa: BLE001 - 醒不过来要被看见，但不能让整支巩固改报 ran=False
+            wake_error = f"{type(wake_exc).__name__}: {wake_exc}"
+            logger.warning("【sleep_pass.sleep_organs】睡眠后未能收束回醒来态: %s", wake_error)
     except Exception as e:  # pragma: no cover - depends on a live substrate
         logger.warning("【sleep_pass.sleep_organs】睡眠期巩固失败（非致命）: %s", e)
         return {"ran": False, "reason": f"{type(e).__name__}: {e}"}
@@ -552,6 +572,8 @@ def sleep_organs(
         "cycles_per_text": int(cycles_per_text),
         "max_symbols": int(max_symbols),
         "texts": len(selected),
+        "wake_episode": WAKE_EPISODE_ID,
+        "wake_error": wake_error,
         "stats": stats,
     }
 

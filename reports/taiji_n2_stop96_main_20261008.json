@@ -1,0 +1,50 @@
+{
+  "format": "taiji-a30-eater-p-boundary-floor-v1",
+  "results": [
+    {
+      "report": "taiji_n2_stop96_before_20261008.json",
+      "frozen_floor": 0.1,
+      "frozen_line": 20,
+      "format": "taiji-a30-stop-failure-v44",
+      "checkpoint_sha256": "d6169a358eaee6d1",
+      "items_sha256": "0541a3f4568a9c5b",
+      "base_sha256_unchanged": true,
+      "generation_rows_seen": 288,
+      "eaters_counted": 247,
+      "eaters_declared_by_instrument": 247,
+      "coherent_with_declaration": true,
+      "never_lf_eaters_counted": 234,
+      "never_lf_eaters_declared": 234,
+      "coherent_with_never_lf_declaration": true,
+      "rows_without_p_boundary_max_column": 0,
+      "eaters_above_floor": 0,
+      "eaters_above_floor_all_eaters": 8,
+      "share_of_never_lf_eaters": 0.0,
+      "status": "ok",
+      "meets_frozen_line": false
+    },
+    {
+      "report": "taiji_n2_stop96_after_20261008.json",
+      "frozen_floor": 0.1,
+      "frozen_line": 20,
+      "format": "taiji-a30-stop-failure-v44",
+      "checkpoint_sha256": "1aa97ef920872b37",
+      "items_sha256": "0541a3f4568a9c5b",
+      "base_sha256_unchanged": true,
+      "generation_rows_seen": 288,
+      "eaters_counted": 227,
+      "eaters_declared_by_instrument": 227,
+      "coherent_with_declaration": true,
+      "never_lf_eaters_counted": 190,
+      "never_lf_eaters_declared": 190,
+      "coherent_with_never_lf_declaration": true,
+      "rows_without_p_boundary_max_column": 0,
+      "eaters_above_floor": 0,
+      "eaters_above_floor_all_eaters": 33,
+      "share_of_never_lf_eaters": 0.0,
+      "status": "ok",
+      "meets_frozen_line": false
+    }
+  ],
+  "rc": 0
+}

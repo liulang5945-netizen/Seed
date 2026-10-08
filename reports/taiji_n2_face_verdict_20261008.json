@@ -214,14 +214,28 @@
     "treated_faces_read_on": "seed_n2_candidate_aligned_20261008.pt"
   },
   "stop_face": {
-    "status": "unverified",
-    "before": null,
-    "after": null,
-    "delta": null,
-    "denominator": null,
-    "items_sha_match": false,
+    "status": "measured_criterion_silent",
+    "before": {
+      "never_lf_eaters_counted": 234,
+      "generation_rows_seen": 288,
+      "items_sha256": "0541a3f4568a9c5b",
+      "checkpoint_sha256": "d6169a358eaee6d1",
+      "status": "ok",
+      "meets_frozen_line": false
+    },
+    "after": {
+      "never_lf_eaters_counted": 190,
+      "generation_rows_seen": 288,
+      "items_sha256": "0541a3f4568a9c5b",
+      "checkpoint_sha256": "1aa97ef920872b37",
+      "status": "ok",
+      "meets_frozen_line": false
+    },
+    "delta": -44,
+    "denominator": 288,
+    "items_sha_match": true,
     "direction_defined": false,
-    "reason": "×96 主列附件件不在 ⇒ 记 unverified；未取到的面不得代答成没跌破（§4ter 更正三第②条）"
+    "reason": "主列数已由现成计数仪取到，但 §2 那句“无一项跌破巩固前同面读数”**没有为“拖写行数”这一列指定哪个方向算跌破**（越少越好是历史解释，不是冻结判据）⇒ 只报数与差，不冒充判据判定（这是 DEBT-G46 的第三类实例）"
   },
   "material": {
     "night_pool_size": 200,
