@@ -42,6 +42,12 @@ MIN_COVERAGE = 0.95
 #: 口径对照的容差（PLAN-N3-01 §1 冻结规则里"差 >0.1 ⇒ 不冻"的那个 0.1）。
 CALIBER_TOLERANCE = 0.10
 
+#: PLAN-N3-04 §2 的在场性线：被打开的那一维 `zero_count / records` 必须 < 0.05 且 p90 > 0。
+MAX_ZERO_SHARE = 0.05
+
+#: 动态范围证明：`should_propose` 为真的**连续段**长度至少到 policy 的 `required_pressure_steps`。
+DYNAMIC_RANGE_FIELD = "decision_should_propose"
+
 GRID = 0.05
 
 
@@ -109,7 +115,129 @@ def _online_accuracy_last(progress_path: Path) -> float:
     return float(last["online_accuracy"])
 
 
-def summarize(pressure_path: Path, control_progress_path: Path | None) -> dict[str, Any]:
+def _longest_true_run(rows: list[dict[str, Any]], field: str) -> int:
+    """`field` 为真的最长**连续**段长度（动态范围证明用；总次数不算，见 PLAN-N3-04 §2）。"""
+
+    best = 0
+    current = 0
+    for row in rows:
+        if bool(row.get(field)):
+            current += 1
+            best = max(best, current)
+        else:
+            current = 0
+    return best
+
+
+def _assembly_section(
+    header: dict[str, Any],
+    tail: dict[str, Any],
+    rows: list[dict[str, Any]],
+    distributions: dict[str, dict[str, float]],
+) -> dict[str, Any]:
+    """PLAN-N3-04 §3 的五列面内自述＋§2 的在场性/阈判定。**缺键即拒判**（rc=2）。
+
+    在场性不许由命令行反推：这里读的全是面件自己写的东西。判定写成互斥的三支，
+    不让 if/elif 的顺序替我下更重的结论。
+    """
+
+    missing = [
+        key
+        for key in (
+            "fast_slow_requested",
+            "bundle",
+            "bridge_gate_requested",
+            "bridge_gate_actual",
+            "mode_readings",
+        )
+        if key not in (header.get("developmental") or {})
+    ]
+    if missing:
+        raise ValueError(f"face 行的 developmental 自述缺键 {missing} ⇒ 装配不可证，不判")
+    if "learning_mode_at_close" not in tail:
+        raise ValueError("tail 行缺 learning_mode_at_close ⇒ 收尾那端的模式没读，不判")
+    dev = header["developmental"]
+    readings = [str(item.get("learning_mode")) for item in dev["mode_readings"]] + [
+        str(tail["learning_mode_at_close"])
+    ]
+    if not dev["fast_slow_requested"]:
+        raise ValueError("这一臂没开 --developmental-fast-slow ⇒ 不是乙步骤二的面，不判")
+    if float(dev["bridge_gate_actual"] or 0.0) <= 0.0:
+        raise ValueError(
+            f"bridge_gate_actual={dev['bridge_gate_actual']!r} ≤ 0 ⇒ "
+            "bridge 不参与读出，`activity_saturation` 结构上恒零，不是丙＋乙那一臂"
+        )
+    if any(mode == "read_only" for mode in readings):
+        raise ValueError(f"learning_mode 读数里出现 read_only（{readings}）⇒ 模式被打回，整件不判")
+
+    required_steps = int((header.get("policy") or {}).get("required_pressure_steps") or 0)
+    dims_present: dict[str, dict[str, Any]] = {}
+    for field in PRESSURE_WEIGHTS:
+        values = [float(row[field]) for row in rows]
+        zero_count = sum(1 for value in values if value == 0.0)
+        dims_present[field] = {
+            "nonzero_count": len(values) - zero_count,
+            "records": len(values),
+            "zero_share": round(zero_count / len(values), 6),
+            "p50": distributions[field]["p50"],
+            "p90": distributions[field]["p90"],
+            "max": distributions[field]["max"],
+        }
+
+    #: §2 的两支都按同一式子判：非零占比过 0.95 线 ∧ p90 > 0。丙＋乙臂要求两维同时在场。
+    def present(field: str) -> bool:
+        dim = dims_present[field]
+        return dim["zero_share"] < MAX_ZERO_SHARE and dim["p90"] > 0.0
+
+    dims_required = ["fast_slow_conflict", "activity_saturation"]
+    j_present = {field: present(field) for field in dims_required}
+    tau = _freeze(distributions["pressure"]["p90"])
+    longest_run = _longest_true_run(rows, DYNAMIC_RANGE_FIELD)
+    dynamic_range = longest_run >= required_steps and required_steps > 0
+    if not all(j_present.values()):
+        verdict = "not_present"
+    elif not dynamic_range:
+        verdict = "present_without_dynamic_range"
+    elif float(header.get("policy", {}).get("minimum_pressure") or 0.0) == tau:
+        verdict = "present_tau_equals_default"
+    else:
+        verdict = "present_tau_available"
+    return {
+        "prereg": "PLAN-N3-04",
+        "dims_present": dims_present,
+        "assembly_self_report": {
+            "developmental_bundle_mounted": dev["bundle"] is not None,
+            "bundle_fast_is_zero": (dev["bundle"] or {}).get("fast_is_zero"),
+            "bundle_effective_parameter_count": (dev["bundle"] or {}).get(
+                "effective_parameter_count"
+            ),
+            "learning_mode_readings": readings,
+            "bridge_gate_requested": dev["bridge_gate_requested"],
+            "bridge_gate_actual": dev["bridge_gate_actual"],
+            "bridge_gate_at_close": tail.get("bridge_gate_at_close"),
+            "policy_minimum_pressure_at_mount": (header.get("policy") or {}).get(
+                "minimum_pressure"
+            ),
+            "required_pressure_steps": required_steps,
+        },
+        "mode_reapplied_after_load": readings,
+        "j_n3b_present": j_present,
+        "j_n3b_tau": tau,
+        "dynamic_range": {
+            "longest_consecutive_should_propose_run": longest_run,
+            "should_propose_total": sum(1 for row in rows if row.get(DYNAMIC_RANGE_FIELD)),
+            "required_pressure_steps": required_steps,
+            "proven": dynamic_range,
+        },
+        "assembly_verdict": verdict,
+    }
+
+
+def summarize(
+    pressure_path: Path,
+    control_progress_path: Path | None,
+    prereg: str = "n3-01",
+) -> dict[str, Any]:
     header, rows, tail = _load_face(pressure_path)
 
     #: 自洽核验：记下来的 `pressure` 必须等于五信号的加权和（同 `pressure` 属性的式子）。
@@ -174,7 +302,7 @@ def summarize(pressure_path: Path, control_progress_path: Path | None) -> dict[s
         }
         verdict = "frozen" if delta <= CALIBER_TOLERANCE else "not_frozen_caliber_mismatch"
 
-    return {
+    payload: dict[str, Any] = {
         "format": "taiji-n3-pressure-thresholds-v1",
         "face": {
             "pressure_file": pressure_path.name,
@@ -199,6 +327,12 @@ def summarize(pressure_path: Path, control_progress_path: Path | None) -> dict[s
         "caliber_check": caliber,
         "threshold_verdict": verdict,
     }
+    #: `--prereg n3-01`（默认）走的就是上面这半，**一字不改**——步骤一那四枚在库读数件必须还能逐位复算。
+    #: `n3-04` 才追加装配自述与在场性判定，并把格式升一版，免得两档读数共用一个名字。
+    if prereg == "n3-04":
+        payload["format"] = "taiji-n3-pressure-thresholds-v2"
+        payload["assembly"] = _assembly_section(header, tail, rows, distributions)
+    return payload
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -210,6 +344,13 @@ def main(argv: list[str] | None = None) -> int:
         help="同参不开旗标那一臂的进度 JSONL（口径对照用；缺则阈值不冻）",
     )
     parser.add_argument("--out-report", default=None)
+    parser.add_argument(
+        "--prereg",
+        choices=("n3-01", "n3-04"),
+        default="n3-01",
+        help="n3-01（默认）＝步骤一的冻阈读数，输出逐位不变；n3-04＝乙步骤二，追加装配自述"
+        "与在场性/动态范围判定，缺自述键或模式被打回 read_only 即 rc=2",
+    )
     args = parser.parse_args(argv)
 
     try:
@@ -221,12 +362,13 @@ def main(argv: list[str] | None = None) -> int:
         if args.control_progress:
             control = Path(args.control_progress)
             control = control if control.is_absolute() else PROJECT_ROOT / control
-        payload = summarize(pressure_path, control)
+        payload = summarize(pressure_path, control, prereg=args.prereg)
         rc = 0
     except (OSError, ValueError, json.JSONDecodeError) as error:
         payload = {
             "format": "taiji-n3-pressure-thresholds-v1",
             "status": "refused",
+            "prereg": args.prereg,
             "error": str(error)[:300],
         }
         rc = 2

@@ -260,6 +260,8 @@ def run_training(
     answer_source: str = "corpus",
     self_answers_path: Path | str | None = None,
     pressure_record: Path | str | None = None,
+    developmental_fast_slow: bool = False,
+    developmental_bridge_gate: float | None = None,
 ) -> dict[str, float]:
     """Stream the corpus through ``Seed.observe`` with periodic persistence.
 
@@ -395,6 +397,8 @@ def run_training(
         #: 理由不是洁癖——第一版实测：周期性 `_flush` 里的 holdout 探针会让压强支在此后不再产出
         #: 观测（进度行照涨），于是分布只覆盖最前面一小段而**看不出来**（2026-10-08）。
         if final and pressure_record is not None:
+            #: 收尾那一次 learning_mode 读数与面首的 mode_readings **合起来**才是在场性证据：
+            #: 模式不入档、也可能被任何一次 restore 静默打回 read_only，所以两端都要现读（PLAN-N3-04 §3）。
             with pressure_path.open("a", encoding="utf-8", newline="\n") as handle:
                 handle.write(
                     json.dumps(
@@ -402,6 +406,12 @@ def run_training(
                             "kind": "tail",
                             "ticks_at_close": int(ticks),
                             "records_written": int(pressure_lines),
+                            "learning_mode_at_close": substrate.developmental_f1_learning_mode,
+                            "bridge_gate_at_close": (
+                                substrate.adaptive_residual_bridge.gate
+                                if substrate.adaptive_residual_bridge is not None
+                                else None
+                            ),
                         },
                         ensure_ascii=False,
                     )
@@ -461,11 +471,39 @@ def run_training(
                 f"answer_chunking={answer_chunking!r} 走 learn_bytes 不经过 observe ⇒ 没有压强读数"
             )
         substrate = model.substrate
-        bridge_info = substrate.enable_adaptive_residual_bridge(gate=0.0)
+        #: PLAN-N3-04 §5bis 的两个默认关旗标。`developmental_bridge_gate` 为 None 时**连 setter 都不调**——
+        #: G-N3b-1 要的是"不开旗标逐位不变"，少调一次就少一次可动的地方。
+        bridge_gate_at_mount = (
+            0.0 if developmental_bridge_gate is None else float(developmental_bridge_gate)
+        )
+        bridge_info = substrate.enable_adaptive_residual_bridge(gate=bridge_gate_at_mount)
+        if developmental_bridge_gate is None:
+            bridge_gate_actual = bridge_info["gate"]
+        else:
+            bridge_gate_actual = substrate.set_adaptive_residual_bridge_gate(bridge_gate_at_mount)
+            if float(bridge_gate_actual) != bridge_gate_at_mount:
+                raise RuntimeError(
+                    f"bridge gate 挂载后读回 {bridge_gate_actual!r} 不等于请求值 "
+                    f"{bridge_gate_at_mount!r} ⇒ 面作废（放行档的 gate 必须由实际生效值定义）"
+                )
         growth_info = substrate.enable_adaptive_residual_growth()
         trigger = substrate.adaptive_residual_growth_trigger
         if trigger is None:
             raise RuntimeError("growth trigger 没挂上 ⇒ 压强面无效")
+        developmental_info: dict[str, Any] | None = None
+        #: `mode_readings`＝面内自述"每次施加之后读回的 learning_mode"。该模式不入档
+        #: （`Taiji.restore` 恢复即回 `read_only`），所以在场性不许由命令行反推（PLAN-N3-04 §3）。
+        mode_readings: list[dict[str, Any]] = []
+        if developmental_fast_slow:
+            developmental_info = substrate.migrate_f1_to_developmental_synapses()
+            substrate.set_developmental_f1_learning_mode("fast_slow")
+        mode_readings.append(
+            {
+                "after": "mount",
+                "tick": int(ticks),
+                "learning_mode": substrate.developmental_f1_learning_mode,
+            }
+        )
         pressure_path = Path(pressure_record)
         pressure_path.parent.mkdir(parents=True, exist_ok=True)
         pressure_lines = 0
@@ -481,6 +519,13 @@ def run_training(
                             "minimum_pressure": trigger.policy.minimum_pressure,
                             "required_pressure_steps": trigger.policy.required_pressure_steps,
                             "growth_resource_cost": trigger.policy.growth_resource_cost,
+                        },
+                        "developmental": {
+                            "fast_slow_requested": bool(developmental_fast_slow),
+                            "bundle": developmental_info,
+                            "bridge_gate_requested": developmental_bridge_gate,
+                            "bridge_gate_actual": bridge_gate_actual,
+                            "mode_readings": mode_readings,
                         },
                         "readout": readout,
                         "seed": int(config.taiji.seed),
@@ -745,6 +790,25 @@ def _build_parser() -> argparse.ArgumentParser:
         "predictive 且 answer_chunking=stream 时可用；bridge 以 gate=0.0 挂上，不放行生长）",
     )
     parser.add_argument(
+        "--developmental-fast-slow",
+        dest="developmental_fast_slow",
+        action="store_true",
+        default=False,
+        help="PLAN-N3-04 §5bis（默认关＝逐位不变）：在 bridge 挂载之后把 F1 迁移到发育突触叠加层，"
+        "并把写入模式设为 fast_slow（wake 更新写进 fast_delta）。该模式**故意不入档**"
+        "（`Taiji.restore` 恢复即回 read_only，`taiji/model.py:3612/3785`），所以面内必须自述"
+        "每次施加之后读回的 learning_mode。仅与 `--pressure-record` 同用；不调 propose/promote。",
+    )
+    parser.add_argument(
+        "--developmental-bridge-gate",
+        dest="developmental_bridge_gate",
+        type=float,
+        default=None,
+        help="PLAN-N3-04 §5bis（默认 None＝沿用挂载时的 gate=0.0，行为不变）：把 bridge 挂载的"
+        "gate 换成此值，并在挂载后用 set_adaptive_residual_bridge_gate 复核实际生效值。"
+        "gate>0 会让 bridge 参与读出（＝改了行为，不是中性改动），owner 已裁 0.25 与 1.0 两档。",
+    )
+    parser.add_argument(
         "--readout-position",
         dest="readout_position",
         action="store_true",
@@ -835,6 +899,21 @@ def main() -> None:
         parser.error("--answer-source self requires --self-answers <path>.")
     if args.answer_source == "corpus" and args.self_answers_path:
         parser.error("--self-answers given without --answer-source self.")
+
+    #: PLAN-N3-04 §5bis 的响亮拒绝：两个新旗标的挂载点住在 `--pressure-record` 那一支里 ⇒ 只给旗标
+    #: 不给压强面就是**静默空转**（同一类雷：`--readout-position` 在 action 档空转，注释里写着）。
+    if (
+        args.developmental_fast_slow or args.developmental_bridge_gate is not None
+    ) and args.pressure_record is None:
+        parser.error(
+            "--developmental-fast-slow / --developmental-bridge-gate 只在 --pressure-record 的挂载"
+            "分支里生效；单给旗标会静默空转 ⇒ 请同时给 --pressure-record <path>。"
+        )
+    if (
+        args.developmental_bridge_gate is not None
+        and not 0.0 <= args.developmental_bridge_gate <= 1.0
+    ):
+        parser.error("--developmental-bridge-gate 必须落在 0.0..1.0 之间。")
 
     #: 二次事故加固（2026-09-28，同日第二撞）：缺省写靶＝产品件 `checkpoints/seed_corpus.pt`，
     #: 而缺省 readout 已改 `predictive`＋位置输入 ⇒ 任何"只传一两个旗标"的调用（含测试里
@@ -945,6 +1024,8 @@ def main() -> None:
         answer_source=str(args.answer_source),
         self_answers_path=args.self_answers_path,
         pressure_record=args.pressure_record,
+        developmental_fast_slow=bool(args.developmental_fast_slow),
+        developmental_bridge_gate=args.developmental_bridge_gate,
     )
     print(json.dumps(summary, ensure_ascii=False))
     #: DEBT-G14②：操作侧曾拿着一个 **0 字节的 `run.log`** 判断"这轮跑到哪了"——空文件比没有更误导。

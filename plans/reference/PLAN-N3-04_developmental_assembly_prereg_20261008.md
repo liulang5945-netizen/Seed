@@ -115,6 +115,34 @@
 跑的形状：`--max-symbols 4000 --progress-every 200000 --seed 20260822`，两条链各一次（`--resume checkpoints/seed_a31self_with_circuit.pt`、`--resume output/a31_chunked_self/checkpoint.pt`），
 gate 两档各一遍 ⇒ 4 张在线面＋1 支默认关守卫臂；一律 `--checkpoint output/` 新档（G-N3b-4）。
 
+## 5ter. 实施当天（2026-10-08）落仪器时撞到的前置——判据与守卫一字未改，改的是**命令形状**
+
+- **五支面都必须带 `--no-readout-position`**。实测：按训练器现行默认（`--readout-position` 自 2026-09-28
+  起默认开）跑第一支烟测，产品在 `Taiji.migrate_f1_to_developmental_synapses()` 的起手就响亮拒绝——
+  `ValueError: readout_utf8_position_input is not wired to the developmental F1 learning path`
+  （守卫本体 `taiji/model.py:1124-1135`，理由写在它自己的注释里：**两者同开会得到一个静默空转**，
+  前向喂零列、后向不更新，“看起来装了、其实等于没装”）。⇒ 本件的装配与位置输入**互斥**，
+  这是产品事实不是我的选择。
+- **由此新增一条读数限定（并入 G-N3b-2 那句“不假设中性”，不新建判据）**：本件所有 accuracy／泛化／压强数
+  一律定性为“**放行装配＋位置输入关闭**下的数”。它们与步骤一那两张面（位置输入默认开）**不同源**，
+  跨面搬 τ 已被 [PLAN-N3-03 §4](PLAN-N3-03_tau_definition_20261008.md) 的五元组禁令挡住，这里是同一条禁令的另一例。
+- **烟测只验仪器、不出版结论**（`--smoke` 档：`SeedConfig()` 默认、5000 符号、339,803 参数、随机底，
+  `--developmental-fast-slow --developmental-bridge-gate 0.25`，件在盘上但**不进任何判据**）：
+  面内自述齐（`bridge_gate_requested=0.25`＝`bridge_gate_actual=0.25`，`learning_mode` 挂载后与收尾**两次都读到 `fast_slow`**）；
+  判读器 `--prereg n3-04` rc=0、覆盖率 1.0、`pressure` 与加权和最大偏差 1.1102230246251565e-16；
+  **两维都活了**——`fast_slow_conflict` 非零 4,998/4,999（max 0.502029、mean 0.500883）、
+  `activity_saturation` 非零 4,999/4,999（max 0.5、mean 0.301206），`pressure` max **0.711851**（mean 0.646321）。
+  ⇒ ㊵-484③ 那条算术上限（`pressure = 0.425·r ≤ 0.425`）在这档装配上**不再成立**，
+  这是“乙步骤二值不值得花这五支面”的**唯一**先验证据；但它是烟测底、不是 §2 的那张面，故不据它说 τ。
+- **同一支烟测里 `decision_should_propose` 全程 0 次**（`should_propose_total=0`、最长连续段 0），
+  而 `pressure` 已越过默认 `minimum_pressure=0.70` ⇒ 说明触发**不只由 pressure 决定**：
+  `AdaptiveResidualGrowthPolicy` 的六道 `minimum_*` 分项闸里还有别的在拦。本件**不指认是哪一道**
+  （面件只自述了 `minimum_pressure`/`required_pressure_steps`/`growth_resource_cost` 三项，其余三项没进件）——
+  这条留给步骤二真实面去定位，且定位它需要的是**面内加记分项闸读数**，那是另一件预注册的事。
+- **契约测 15 件入库** `tests/taiji_native/test_n3_04_developmental_flags_contract.py`（默认关时三个装配 API
+  调用次数**逐键为 0**、开旗标时 bundle/gate/mode 三样都进件、位置输入与 bundle 互斥、`--help` 里两个旗标名都在、
+  判读器四条拒绝支各自 rc=2、以及“判据为假而仪器不炸”那一支 rc=0＋`not_present`）。
+
 ## 6. 本件不做什么
 
 不冻产品阈、不改 policy 常量、不 promote 任何候选、不动出厂面；不做 ×16.8 大档（那是 N3 甲的另一条泳道）；
