@@ -1,0 +1,34 @@
+{
+  "format": "taiji-n3a-data-face-v1",
+  "prereg": "plans/reference/PLAN-N3-02_scaling_probe_prereg_20261007.md#4quater",
+  "episode_definition": "one JSONL document == one episode (definition, not a finding)",
+  "corpus": [
+    "data\\simple_zh\\dialogue_extended_clean.jsonl"
+  ],
+  "progress": "reports\\taiji_n3a_calib_scale10_progress.jsonl",
+  "missing": [],
+  "corpus_available_bytes": 108327171,
+  "corpus_documents_total": 123090,
+  "corpus_symbols_total": 106005199,
+  "episodes_total": 123090,
+  "unique_episodes_reached": 3,
+  "weight_update_steps": 3999,
+  "updates_equals_symbols": true,
+  "updates_note": "符号流分支上每一步都 learn=True ⇒ 更新数＝消耗符号数；answer/self-answer 档走 `learn_bytes`，不经 observe ⇒ 这个等式在那条路上不成立，必须换口径（件里 `sequence_path` 记的是本次取数用的路）。",
+  "sequence_path": "symbol_stream(iter_corpus_symbols)",
+  "sequence_length_bytes": {
+    "min": 53,
+    "median": 671.0,
+    "max": 8214,
+    "mean": 861.201
+  },
+  "holdout_disjointness": {
+    "probe_windows": 35,
+    "windows_found_in_corpus": 5,
+    "hit_rate": 0.142857,
+    "window_bytes": 24
+  },
+  "progress_rows_seen": 1,
+  "run_ticks_last": 4000,
+  "complete": true
+}
