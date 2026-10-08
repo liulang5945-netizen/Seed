@@ -1,0 +1,17 @@
+{
+  "format": "taiji-n2b-guard-v1",
+  "prereg": "plans/reference/PLAN-N2-02_second_powerup_dosewindow_prereg_20261008.md",
+  "digest_before": "3e00bafc6298ac8462c352b4bfd31d4fbbd8c79ff3cafd3c95f867ecd7243060",
+  "digest_after": "3e00bafc6298ac8462c352b4bfd31d4fbbd8c79ff3cafd3c95f867ecd7243060",
+  "organs": {
+    "ran": false,
+    "reason": "organs not requested"
+  },
+  "checks": {
+    "organs_ran_false": true,
+    "weight_digest_unchanged": true
+  },
+  "guard_pass": true,
+  "pass_id": "31b054c0fffc",
+  "projection_records": 200
+}
