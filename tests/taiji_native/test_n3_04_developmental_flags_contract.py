@@ -106,7 +106,7 @@ def _train(tmp_path: Path, **kwargs: Any) -> Path:
     from seed import SeedConfig
 
     pressure = tmp_path / "pressure.jsonl"
-    run = getattr(trainer, "run_training")
+    run = trainer.run_training
     run(
         corpus_paths=[_corpus(tmp_path)],
         config=SeedConfig(),

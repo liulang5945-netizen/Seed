@@ -128,9 +128,7 @@ def _family_diff(before: dict[str, Any], after: dict[str, Any]) -> dict[str, Any
         for key in common:
             x, y = a[key], b[key]
             if torch.is_tensor(x):
-                if x.shape != y.shape:  # type: ignore[union-attr]
-                    changed += 1
-                elif x.numel() and not torch.equal(x, y):
+                if x.shape != y.shape or x.numel() and not torch.equal(x, y):  # type: ignore[union-attr]
                     changed += 1
             elif x != y:
                 changed += 1

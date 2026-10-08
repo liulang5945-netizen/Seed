@@ -31,15 +31,16 @@ QUINTILES = 5
 
 def _read_rows(path: Path) -> list[dict[str, Any]]:
     rows: list[dict[str, Any]] = []
-    for line in open(path, encoding="utf-8"):
-        line = line.strip()
-        if not line:
-            continue
-        record = json.loads(line)
-        for field in ("ticks", "online_accuracy", "holdout_surprise"):
-            if field not in record:
-                raise ValueError(f"{path.name}: 进度行缺字段 {field} ⇒ 不判")
-        rows.append(record)
+    with path.open(encoding="utf-8") as handle:
+        for line in handle:
+            line = line.strip()
+            if not line:
+                continue
+            record = json.loads(line)
+            for field in ("ticks", "online_accuracy", "holdout_surprise"):
+                if field not in record:
+                    raise ValueError(f"{path.name}: 进度行缺字段 {field} ⇒ 不判")
+            rows.append(record)
     if len(rows) < QUINTILES * 2:
         raise ValueError(f"{path.name}: 进度行 {len(rows)} 条不足以分 {QUINTILES} 段 ⇒ 不判")
     rows.sort(key=lambda record: int(record["ticks"]))
