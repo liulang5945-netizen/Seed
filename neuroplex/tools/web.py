@@ -18,7 +18,9 @@
 """
 
 import concurrent.futures
+import difflib
 import hashlib
+import html
 import json
 import logging
 import os
@@ -214,25 +216,98 @@ def _search_duckduckgo(query: str, max_results: int = 5) -> list[SearchResult]:
         return []
 
 
+# 语义化结构指纹：只保留参与"结果块"构成的标签序列，忽略属性与文本。
+# 用于页面改版后的相似度定位（借鉴 Scrapling 的自适应选择器思路，去掉了它的
+# ML 与持久化存储部分，只保留 difflib 纯标准库的内核）。
+_BING_RESULT_SHAPE = "li div div h2 a div p"
+# 0.6 由实测校准：真实结果块 0.82、改版块 0.61 通过；老式 table 布局 0.50、
+# 导航块 0.40 挡下。页脚链接块形状相似度高达 0.74（与结果块同为 li>div>a>div），
+# 单靠形状区分不开，因此再过一道正文长度门。
+_BING_ADAPTIVE_THRESHOLD = 0.6
+# 去标签后的正文下限（字符）：页脚版权块约 11 字符、导航约 4，真实结果块 38+。
+_MIN_BLOCK_TEXT = 30
+# 主选择器：class 里含 b_algo 这个 token。\b 保证 b_algo_v2 之类的新变体不命中
+# （否则主路径永远命中，改版兜底就成了永不触发的装饰）。
+_BING_BLOCK_RE = re.compile(r'<li\s+class="[^"]*\bb_algo\b[^"]*"[^>]*>(.*?)</li>', re.DOTALL)
+
+
+def _tag_shape(fragment: str) -> str:
+    """片段的标签序列指纹（忽略属性、文本与自闭合标签）。"""
+    tags = re.findall(r"<([a-z][a-z0-9]*)[\s>/]", fragment, re.I)
+    return " ".join(tag.lower() for tag in tags)
+
+
+def _block_similarity(fragment: str) -> float:
+    """片段与期望结果块结构的相似度（difflib 标准库）。"""
+    return difflib.SequenceMatcher(None, _tag_shape(fragment), _BING_RESULT_SHAPE).ratio()
+
+
+def _parse_bing_blocks(
+    blocks: list[str], max_results: int, source: str = "Bing"
+) -> list[SearchResult]:
+    """从结果块 HTML 中抽取 标题/链接/摘要。
+
+    标题取标题级标签内的首个 http 锚（h2 改版成 h1..h4 也能命中），摘要取块内
+    首个 <p> 的文本；块内没有 <p> 时摘要留空而不是编造。
+    """
+    results: list[SearchResult] = []
+    for block in blocks[:max_results]:
+        title_m = re.search(
+            r"<h[1-4][^>]*>\s*<a[^>]*href=\"(https?://[^\"]+)\"[^>]*>(.*?)</a>",
+            block,
+            re.DOTALL | re.I,
+        )
+        desc_m = re.search(r"<p[^>]*>(.*?)</p>", block, re.DOTALL | re.I)
+        if not title_m:
+            continue
+        title = html.unescape(re.sub(r"<[^>]+>", "", title_m.group(2)))
+        snippet = html.unescape(re.sub(r"<[^>]+>", "", desc_m.group(1))) if desc_m else ""
+        # 页面折行会在摘要里留下换行，模型看到的是一句连续文本更合适。
+        results.append(
+            SearchResult(
+                title=re.sub(r"\s+", " ", title).strip(),
+                url=title_m.group(1),
+                snippet=re.sub(r"\s+", " ", snippet).strip(),
+                source=source,
+            )
+        )
+    return results
+
+
+def _adaptive_bing_blocks(html: str) -> list[str]:
+    """自适应兜底：主选择器失配（页面改版）时，按结构相似度挑出仍然像搜索
+    结果的 <li> 块。要求块内有 http 链接与标题级标签，避免把导航、页脚等
+    相似度不足的块当结果。
+
+    相似度只作过闸，不参与排序——SERP 的结果顺序就是相关性顺序，打乱会让
+    最相关的条目掉出 max_results。
+    """
+    kept: list[str] = []
+    for block in re.findall(r"<li\b[^>]*>.*?</li>", html, re.DOTALL | re.I):
+        if not re.search(r"https?://", block) or not re.search(r"<h[1-4]\b", block, re.I):
+            continue
+        if _block_similarity(block) < _BING_ADAPTIVE_THRESHOLD:
+            continue
+        text = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", block)).strip()
+        if len(text) < _MIN_BLOCK_TEXT:
+            continue
+        kept.append(block)
+    return kept
+
+
 def _search_bing(query: str, max_results: int = 5) -> list[SearchResult]:
     """Bing 搜索（纯 stdlib，网页抓取 + regex 解析）"""
     try:
         url = f"https://www.bing.com/search?q={urllib.parse.quote(query)}"
         html = _http_get(url)
-        results = []
         # 解析 Bing 搜索结果：<li class="b_algo" ...><h2><a href="..." >标题</a></h2><p>摘要</p>
         # class 属性后常跟 data-id/iid 等额外属性，不能假设引号后立即闭合。
-        blocks = re.findall(r'<li\s+class="b_algo[^"]*"[^>]*>(.*?)</li>', html, re.DOTALL)
-        for block in blocks[:max_results]:
-            title_m = re.search(
-                r'<h2[^>]*>\s*<a[^>]*href="([^"]*)"[^>]*>(.*?)</a>', block, re.DOTALL
+        results = _parse_bing_blocks(_BING_BLOCK_RE.findall(html), max_results)
+        if not results:
+            # 改版兜底：class 名或标签层级变了，用结构相似度重新定位结果块。
+            results = _parse_bing_blocks(
+                _adaptive_bing_blocks(html), max_results, source="Bing(adaptive)"
             )
-            desc_m = re.search(r"<p[^>]*>(.*?)</p>", block, re.DOTALL)
-            if title_m:
-                href = title_m.group(1)
-                title = re.sub(r"<[^>]+>", "", title_m.group(2)).strip()
-                snippet = re.sub(r"<[^>]+>", "", desc_m.group(1)).strip() if desc_m else ""
-                results.append(SearchResult(title=title, url=href, snippet=snippet, source="Bing"))
         return results
     except Exception as e:
         logger.debug(f"Bing 搜索失败: {e}")
