@@ -30,11 +30,9 @@
 
 ## 3. 下一格的精确入口（可自办、零批文、零改权重）
 
-1. **给 `wall_clock_ms` 补断言**（最小单元，先做这个）：在
-   `tests/taiji_native/test_n4_01_addressing_surface_contract.py` 加一支——跑 `main` 一次，断言件里
-   `"wall_clock_ms" in payload`、`isinstance(payload["wall_clock_ms"], float)`、`>= 0`，
-   并且**面读数的键集只许多不许少**（沿用 `test_n3_02_sequence_length_column_contract.py` 里
-   `required - set(record)` 那个写法）。现状：10 passed 未回退，但**没钉这一列**（㊵-561④ 自报）。
+1. ~~给 `wall_clock_ms` 补断言~~ **已完成**（2026-10-09：断言已落在
+   `test_n4_01_addressing_surface_contract.py` 的 `test_wall_clock_column_is_published_and_face_keys_do_not_shrink`，
+   复用 `_clean_fixture`，N4 面测 11 passed——本条最初列入时为待办，同日已结清）。
 2. **N3 甲的"发表资格"回写**：PLAN-N3-13 §6 的三行前置里，第二合取项现在**有值了**（对照臂到位）——
    把该件的状态列按 `table-status-column-goes-stale` 那条纪律就地打日期戳，并核对 03 队首那句是否还新。
 3. **N5 实施格（下一格，可自办）**：按 [PLAN-N5-01](PLAN-N5-01_four_layer_loop_design_prereg_20261009.md) §1 接训练链消费钩子——`last_decision` 过阈 ⇒ `AdaptiveResidualShadow.from_parent_bridge(config, bridge_payload, candidate)` 生成影子 ⇒ 流循环内 `shadow.learn(...)`。**逐处 Edit 不再批量拼接**（573 教训：>5 处锚点必失控）；候选构造器参数与桥 payload 形状需先现读 `adaptive_residual_candidate.py`。
