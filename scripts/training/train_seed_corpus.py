@@ -530,6 +530,13 @@ def run_training(
             }
         if episodic_store is not None:
             envelope["episodic_memory"] = episodic_store.checkpoint()
+        #: DEBT-G70①：命令面随档自述。放在 `atomic_save` **之前**（与 ㊵-593 那节同一形状：
+        #: 填充在落盘之后＝键从不进磁盘，读侧再把"缺席"读成"值为 null"）。
+        #: 为什么信封也要一份：只有件没有面（或面在别处）时，检查点仍要能自证是哪条命令产的。
+        envelope["command_surface"] = {
+            "trainer": "train_seed_corpus",
+            "argv": list(sys.argv),
+        }
         atomic_save(envelope, checkpoint_path)
         if episodic_store is not None and episodic_store.count:
             base = Path(checkpoint_path)
@@ -756,6 +763,12 @@ def run_training(
                 json.dumps(
                     {
                         "kind": "face",
+                        #: DEBT-G70①：把**这一次调用的命令行原样登记进面头**。
+                        #: 立债的原因是「冻结命令」一直住在台账散文里——㊵-593 那份把带参旗标
+                        #: `--pressure-record`（`type=Path`）写成裸旗标，照抄即被 argparse 拒。
+                        #: 只登记 argv、不在这里重建参数表（重建＝另一条会腐化的生成链），
+                        #: 也不放时钟（面头要能被逐字对比，时钟会让每次复算都不同）。
+                        "argv": list(sys.argv),
                         "format": "taiji-n3-pressure-face-v2",
                         "bridge": bridge_info,
                         "growth": growth_info,
