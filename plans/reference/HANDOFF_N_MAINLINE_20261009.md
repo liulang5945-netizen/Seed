@@ -58,3 +58,13 @@
 N 主线的成功判据是**每项能力有冻结判据＋仪器化读数＋可发表/不可发表的边界声明**，不是"跑了很多档"。
 按此：N1／N2／N3 三项**已具备仪器化判读**（本文 §1），N4 卡在材料、N5／N6 **未开工**，
 因此**目标未完成**，这份件是停靠点而不是结项书。
+
+## ㊵-613 补：#8「N5 保持侧」探源结果（2026-10-09 晚，只读、零跑）
+
+- **可执行的下一步不是跑，是先升版**：`J-N5b-5` 需要同一对臂上的 before/after 四张面件，但 G/H 两臂 `base_ticks=0`（从头训练、退出才写件）⇒ 没有「before」这个可评对象。旧七列基线住在 `checkpoints/seed_a31self_with_circuit.pt`＋copy circuit 面上，与 N5 臂不同源 ⇒ 按 G-N2c-3 只能拒判。**不许**把 `--no-circuit` 档读成同一张面。
+- **已定位的取数面（供升版件引用，命令面已实测可达）**：
+  - `python scripts/training/eval_taiji_cap0_baseline.py --checkpoint <臂> --report <面> --dimensions E`
+  - `PYTHONUTF8=1 python scripts/training/measure_taiji_a30_repetition_penalty.py --checkpoint <臂> --chain raw_masked --limit 24 --penalties 0.0,0.5,1.0,2.0 --out-report <面>`（注意：这台件的 `--help` 在 GBK 控制台会 `UnicodeEncodeError`）
+  - 判读：`python scripts/training/adjudicate_taiji_n2_04_retention_pair.py --cap0-before … --cap0-after … --replay-before … --replay-after … --consolidation-corpus <巩固语料> --retention-manifest plans/manifests/cap0_eval_set_v2.json --out <裁定件>`
+- **另一处要如实登记的缺口**：两臂 `n5_shadow` 块实测 8 枚键，㊵-593 说要补的 `shadow_branch_hits`／`shadow_materialized` 读回 `None`（＝没进过块），所以「影子被喂过」目前只有结果侧读数支撑，过程侧计数器未落地。
+- **欠两笔债（列数未核对，故未硬插 05）**：① 产品档寻址尺 θ_small 落几何盲区属**扰动设计教训**；② 在场计数器承诺未兑现。
