@@ -374,6 +374,7 @@
     { "path": "./packages/compaction/compaction-tool-result-pruner" },
     { "path": "./packages/compaction/compaction-image-offload" },
     { "path": "./packages/web/web" },
+    { "path": "./packages/web/web-search-scraper" },
     { "path": "./packages/web/web-search-exa" },
     { "path": "./packages/web/web-search-perplexity" },
     { "path": "./packages/web/web-search-deepseek" },

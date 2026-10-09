@@ -537,6 +537,7 @@
       "@taiji/dsh-web-app": ["./packages/bundle/web-app/src/index.ts"],
       "@taiji/dsh-web-fetch-http": ["./packages/web/web-fetch-http/src/index.ts"],
       "@taiji/dsh-web-search-deepseek": ["./packages/web/web-search-deepseek/src/index.ts"],
+      "@taiji/dsh-web-search-scraper": ["./packages/web/web-search-scraper/src/index.ts"],
       "@taiji/dsh-web-search-exa": ["./packages/web/web-search-exa/src/index.ts"],
       "@taiji/dsh-web-search-perplexity": ["./packages/web/web-search-perplexity/src/index.ts"],
       "@taiji/dsh-webhook": ["./packages/webhook/webhook/src/index.ts"],

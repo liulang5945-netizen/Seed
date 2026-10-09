@@ -4128,6 +4128,29 @@ export interface Config {
 
 来源： [`packages/web/web-search-perplexity/src/index.ts:30`](../packages/web/web-search-perplexity/src/index.ts)
 
+<a id="taijidsh-web-search-scraper"></a>
+
+## `@taiji/dsh-web-search-scraper`
+
+需要： `web`
+
+```ts config-catalog
+/** Plugin config (all optional — `apply` fills constant defaults). */
+export interface Config {
+  /** Which engine's result page to fetch and parse. Defaults to Bing. */
+  engine: ScraperEngine
+  /** Bing endpoint base; `/search` is appended. */
+  bingBaseUrl: string
+  /** DuckDuckGo endpoint base; `/html/` is appended. */
+  duckduckgoBaseUrl: string
+}
+
+/** Engines the provider can parse. The plugin schema pins this union. */
+export type ScraperEngine = 'bing' | 'duckduckgo'
+```
+
+来源： [`packages/web/web-search-scraper/src/index.ts:35`](../packages/web/web-search-scraper/src/index.ts)
+
 <a id="taijidsh-webhook-github"></a>
 
 ## `@taiji/dsh-webhook-github`
