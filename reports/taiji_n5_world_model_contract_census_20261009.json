@@ -1,0 +1,87 @@
+{
+  "status": "ok",
+  "format": "taiji-n5-world-model-contract-census-v1",
+  "learner_file": "taiji/world_learning.py",
+  "learner_class": "WorldDynamicsLearner",
+  "public_method_count": 8,
+  "public_methods": [
+    "fit",
+    "online_update",
+    "predict",
+    "prune_schema",
+    "record_schema_feedback",
+    "register_open_set",
+    "register_schema_alias",
+    "rollback_schema"
+  ],
+  "contract": {
+    "observe": {
+      "matched_methods": [
+        "online_update"
+      ],
+      "signatures": {
+        "online_update": "self, transition: WorldTransition, *, learning_rate: float=0.005, repeats: int=1, register_parameters: bool=True"
+      },
+      "looked_for": [
+        "observe",
+        "online_update"
+      ]
+    },
+    "propose": {
+      "matched_methods": [],
+      "signatures": {},
+      "looked_for": [
+        "propose"
+      ]
+    },
+    "feedback": {
+      "matched_methods": [
+        "record_schema_feedback"
+      ],
+      "signatures": {
+        "record_schema_feedback": "self, feature_key: tuple[str, ...], observed: float, *, expected: float | None=None, tolerance: float=0.0"
+      },
+      "looked_for": [
+        "feedback",
+        "record_schema_feedback"
+      ]
+    },
+    "snapshot_restore": {
+      "matched_methods": [],
+      "signatures": {},
+      "looked_for": [
+        "snapshot",
+        "restore"
+      ]
+    }
+  },
+  "missing_verbs": [
+    "propose",
+    "snapshot_restore"
+  ],
+  "contract_verdict": "contract_incomplete",
+  "reference_sites": {
+    "taiji/__init__.py": 2,
+    "taiji/adapter.py": 6,
+    "taiji/foundation_tasks.py": 5,
+    "taiji/foundation_training.py": 12,
+    "taiji/world_evolution.py": 3,
+    "taiji/world_learning.py": 4,
+    "scripts/training/audit_taiji_n5_world_model_contract.py": 2,
+    "scripts/training/eval_taiji_p2_p3_variable_horizon.py": 3,
+    "scripts/training/eval_taiji_p3_open_set.py": 3,
+    "scripts/training/eval_taiji_p3_probability_calibration.py": 2,
+    "scripts/training/eval_taiji_p3_risk_sensitive_execution.py": 9,
+    "scripts/training/eval_taiji_p3_schema_registry.py": 3,
+    "scripts/training/eval_taiji_p3_transition_adjudication.py": 2,
+    "scripts/training/eval_taiji_p7_grounded_multistep.py": 4,
+    "scripts/training/eval_taiji_p7_imagined_execution.py": 2,
+    "scripts/training/eval_taiji_p7_rollout_recovery.py": 2,
+    "scripts/training/eval_taiji_p7_rollout_recovery_transfer.py": 5,
+    "scripts/training/eval_taiji_p7_world_model_rollout.py": 2,
+    "scripts/training/train_taiji_world_action.py": 2
+  },
+  "reference_site_total": 73,
+  "corpus_trainer_references_learner": 0,
+  "reading_limit": "method-name match only; semantic equivalence needs a signature read"
+}

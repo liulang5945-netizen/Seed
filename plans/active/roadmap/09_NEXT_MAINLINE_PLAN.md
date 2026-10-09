@@ -166,7 +166,7 @@ N 系列是 VISION 完整能力路线的**第一段（修复＋加速）**，不
 ### N5 P4 自进化四层唤醒（机器加速点③：巩固批量且无损；依赖 N3 的 R4 决定）
 
 - **目标**：R4 生长协议（压强→决策→候选→影子→晋升）**接钩子＋真跑**＝N3 乙选项的实现面（一体：N3 裁乙即启动本项）。
-- **痛点证据**（§19.13 P4）：协议完整且测试过，但 `train_seed_corpus.py` **零钩子**、出厂件 842 条目**零进化/世界状态**、WorldDynamicsLearner **零真实调用**；发育期迁移未走过；经验环材料稀薄（consolidated 三枚小文件、16 条 workbench 记录，对 68 档名册权重≈0.0008）。
+- **痛点证据**（§19.13 P4）：协议完整且测试过，但 `train_seed_corpus.py` **零钩子**、出厂件 842 条目**零进化/世界状态**、WorldDynamicsLearner **零真实调用**〔**2026-10-09 ㊵-641 范围限定**：这句只在**语料训练链**成立——`train_seed_corpus.py` 对该类引用实测 0 处；但生产/训练面合计 73 处、19 枚文件（`taiji/foundation_training.py` 12 处、`scripts/training/train_taiji_world_action.py:129` 真的构造），所以**不许**把它读成"全仓没人用它"。读数件 `reports/taiji_n5_world_model_contract_census_20261009.json`，钉子 `tests/taiji_native/test_n5_13_world_model_contract_census_contract.py`〕；发育期迁移未走过；经验环材料稀薄（consolidated 三枚小文件、16 条 workbench 记录，对 68 档名册权重≈0.0008）。
 - **推进步骤**：①训练器挂 bridge+trigger（压强阈已随 N3 冻结）；②真实长跑走完整四层循环；③世界学习器首次真实调用；④生长前后任务矩阵读数。
 - **实施设计**（VISION 内容转化为执行组件）：
   - **晋升协议（§9）**：先 shadow 学习→贡献与保持验收→准入；与同最终容量 fixed-large、随机成长对照——群体数量不证明协作；剪枝需考虑因果贡献和恢复，不因低使用率直接删除关键罕见技能。
