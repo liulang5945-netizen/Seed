@@ -23,6 +23,7 @@ from __future__ import annotations
 import json
 import re
 from pathlib import Path
+from typing import Any
 
 import pytest
 from _report_leaves import leaves, normalized  # tests/taiji_native/_report_leaves.py
@@ -278,6 +279,59 @@ VOLATILE_SAMPLE_PATHS = (
     "raw_output_inventory.most_trained_turns[*].seconds",
 )
 
+#: DEBT-G77（owner 弹窗 #17 裁"比较键改成文件名"）：`checkpoint_inventory` 是**活枚举**，
+#: 按排序后的索引取键 ⇒ 盘上多一枚基座就整体位移一格，"复现封存"那支于是常态红（实测：
+#: 封存面板 3 行 vs 盘上 13 枚）。这里把行级叶子改成**按 filename 取键**，新增档不再移动任何既有键。
+_INVENTORY_FIELD = "checkpoint_inventory"
+
+
+def _checkpoint_names(payload: dict[str, Any]) -> list[str]:
+    rows = payload[_INVENTORY_FIELD]
+    if not isinstance(rows, list):
+        raise AssertionError("checkpoint_inventory 不再是列表 ⇒ 仪器形状变了，先复核取键法再谈比较")
+    names = [str(row["filename"]) for row in rows]
+    if len(set(names)) != len(names):
+        raise AssertionError(f"面板里出现重复 filename：{names}")
+    return names
+
+
+def _flatten_by_checkpoint_name(payload: dict[str, Any]) -> dict[str, Any]:
+    """把 `checkpoint_inventory` 从列表改成以 filename 为键的字典，再展平成一叶一路径。"""
+
+    keyed = {str(row["filename"]): row for row in payload[_INVENTORY_FIELD]}
+    return leaves({**payload, _INVENTORY_FIELD: keyed})
+
+
+def _row_of(path: str, names: list[str]) -> str | None:
+    prefix = _INVENTORY_FIELD + "."
+    if not path.startswith(prefix):
+        return None
+    for name in sorted(names, key=len, reverse=True):
+        if path.startswith(prefix + name + "."):
+            return name
+    return None
+
+
+def test_checkpoint_rows_are_keyed_by_name_not_by_position() -> None:
+    """这条钉的是取键法本身：换序 ⇒ 叶子图逐键不变；而旧取法（按索引）在同一对夹具上必须给出不同键。"""
+
+    payload: dict[str, Any] = {
+        _INVENTORY_FIELD: [
+            {"filename": "b.pt", "bytes": 2, "metadata": {"tick": 3}},
+            {"filename": "a.pt", "bytes": 1, "metadata": {"tick": 7}},
+        ]
+    }
+    shuffled: dict[str, Any] = {_INVENTORY_FIELD: list(reversed(payload[_INVENTORY_FIELD]))}
+
+    assert _flatten_by_checkpoint_name(payload) == _flatten_by_checkpoint_name(shuffled)
+    #: 反面：不许有人把这条守卫写成恒真——索引取法在同样这对夹具上要**分得开**。
+    assert leaves(payload) != leaves(shuffled)
+    #: 重复与缺名都要响亮拒绝，不许静默合并成一行。
+    with pytest.raises(AssertionError, match="重复 filename"):
+        _checkpoint_names(
+            {_INVENTORY_FIELD: [{"filename": "x.pt", "bytes": 1}, {"filename": "x.pt", "bytes": 2}]}
+        )
+
 
 def test_the_instrument_refuses_to_overwrite_an_existing_report(tmp_path) -> None:
     """裸跑不许把封存件盖掉 —— 这是实测发现的风险，不是假想。
@@ -393,19 +447,38 @@ def test_a_fresh_inventory_sample_reproduces_the_sealed_one(tmp_path) -> None:
 
     fresh = run_inventory(tmp_path / "inventory.json")
     sealed = json.loads(RESAMPLE.read_text(encoding="utf-8"))
-    old, new = leaves(sealed), leaves(fresh)
+    old, new = _flatten_by_checkpoint_name(sealed), _flatten_by_checkpoint_name(fresh)
+    sealed_rows, fresh_rows = _checkpoint_names(sealed), _checkpoint_names(fresh)
+
+    #: DEBT-G77 的两半（owner 弹窗 #17 裁的形状）：**消失**要红，**新增**只披露。
+    #: 按索引取键时"盘上多一枚基座"会把整张面板推位移、于是常态红；按 filename 取键之后
+    #: 既有键一个都不动，而封存里出现过的那几枚若从盘上消失，那是对照面缺损，必须响亮失败。
+    vanished = sorted(set(sealed_rows) - set(fresh_rows))
+    assert (
+        not vanished
+    ), f"封存面板里的基座不在盘上了 ⇒ 对照面缺损（重封要另立一笔并记录改了什麼）：{vanished}"
+    appended = sorted(set(fresh_rows) - set(sealed_rows))
+
+    missing = old.keys() - new.keys()
+    added = new.keys() - old.keys()
+    #: 已封存那几行的字段面一动不许动：多产或缺产都是仪器漂移，不是盘态变化。
+    drifted_rows = {path for path in added if _row_of(path, sealed_rows)}
+    assert not drifted_rows, f"已封存的基座多产了字段：{sorted(drifted_rows)[:8]}"
+    dropped_cells = {path for path in missing if _row_of(path, sealed_rows)}
+    assert not dropped_cells, f"已封存的基座缺了字段：{sorted(dropped_cells)[:8]}"
+    strays = {path for path in added if _row_of(path, appended) is None}
+    assert not strays, f"新增字段不落在任何一枚新增基座上 ⇒ 仪器形状变了：{sorted(strays)[:8]}"
 
     #: 字段面比较原先要求两边完全同形。换底之后有一个**合法**的形状变化：默认入口服务的
     #: 就是那份最训练的 checkpoint 时，仪器不再对它单独跑第二遍探针，于是
     #: `raw_output_inventory.most_trained_turns[*]` 的逐行叶子不存在。
-    #: 批准范围钉死在这里 —— 只允许这一个前缀缺失，且必须同时满足 `probed is False`；
-    #: 多产字段、或缺的是别的路径、或 probed 为真却缺行，一律红。
-    missing = old.keys() - new.keys()
-    added = new.keys() - old.keys()
-    assert not added, f"仪器多产了字段：{sorted(added)[:8]}"
+    #: 批准范围钉死在这里 —— 只允许这一个前缀缺失，且必须同时满足 `probed is False`。
+    non_inventory_missing = sorted(path for path in missing if path not in dropped_cells)
     turns_prefix = "raw_output_inventory.most_trained_turns["
-    assert all(path.startswith(turns_prefix) for path in missing), sorted(missing)[:8]
-    if missing:
+    assert all(
+        path.startswith(turns_prefix) for path in non_inventory_missing
+    ), non_inventory_missing[:8]
+    if non_inventory_missing:
         entry = fresh["raw_output_inventory"]["most_trained_entry"]
         assert entry["probed"] is False, "只有'未单独探针'才允许缺 most_trained 逐行输出"
         assert entry["template_signature"]["templated"] is None, "未探针却给了模板判定"
