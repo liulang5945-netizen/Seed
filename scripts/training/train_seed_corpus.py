@@ -500,7 +500,9 @@ def run_training(
                 ),
             },
         )
-        atomic_save(envelope, checkpoint_path)
+        #: DEBT-G68／㊵-593：这两段原先住在 `atomic_save` **之后** ⇒ 键只改内存对象、从不落盘，
+        #: 读侧 `.get()` 又把"键不存在"读成"值为 null"（㊵-590 那句就是这么来的）。
+        #: 现在先填信封再落盘，顺序本身由测钉住。
         if adaptive_shadow is not None:
             envelope["n5_shadow"] = {
                 "candidate_id": adaptive_shadow.candidate_id,
@@ -510,6 +512,7 @@ def run_training(
             }
         if episodic_store is not None:
             envelope["episodic_memory"] = episodic_store.checkpoint()
+        atomic_save(envelope, checkpoint_path)
         if episodic_store is not None and episodic_store.count:
             base = Path(checkpoint_path)
             records = episodic_store.records
