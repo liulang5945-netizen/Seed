@@ -78,9 +78,54 @@ def _block_means(flags: list[int], blocks: int = 5) -> list[float]:
     return means
 
 
+#: PLAN-N4-03 冻结的 S4 稀疏编码：随机投影 32→256（seed 入档）＋ top-16 WTA。
+#: 投影矩阵按首次使用时的 cue_dim 现数并缓存（同进程内逐位同）；cue_dim 必须 =32
+#: （PLAN-N4-03 §1 冻结的 d_in），其他维度响亮拒绝而不是静默换尺。
+SPARSE_SEED = 20260822
+SPARSE_DIM = 256
+SPARSE_K = 16
+_SPARSE_PROJECTION: torch.Tensor | None = None
+
+
+def _sparse_projection(cue_dim: int) -> torch.Tensor:
+    global _SPARSE_PROJECTION
+    if cue_dim != 32:
+        raise ValueError(
+            f"PLAN-N4-03 冻结的 S4 编码 d_in=32，收到 cue_dim={cue_dim} ⇒ 拒绝（换尺须另批）"
+        )
+    if _SPARSE_PROJECTION is None:
+        generator = torch.Generator().manual_seed(SPARSE_SEED)
+        _SPARSE_PROJECTION = torch.randn(32, SPARSE_DIM, generator=generator)
+    return _SPARSE_PROJECTION
+
+
+def _maybe_encode(cue: torch.Tensor, encoding: str) -> torch.Tensor:
+    if encoding == "dense":
+        return cue
+    if encoding == "sparse":
+        return _sparse_encode(cue)
+    raise ValueError(f"cue_encoding must be dense or sparse, got {encoding!r}")
+
+
+def _sparse_encode(cue: torch.Tensor) -> torch.Tensor:
+    projected = cue.to(torch.float32) @ _sparse_projection(int(cue.numel()))
+    values, indices = torch.topk(projected.abs(), SPARSE_K)
+    sparse = torch.zeros_like(projected)
+    for pos, idx in enumerate(indices):
+        sparse[idx] = torch.sign(projected[idx]) * values[pos]
+    return sparse
+
+
 def measure(
-    materials: list[dict[str, Any]], queries: list[dict[str, Any]], *, capacity: int, limit: int
+    materials: list[dict[str, Any]],
+    queries: list[dict[str, Any]],
+    *,
+    capacity: int,
+    limit: int,
+    cue_encoding: str = "dense",
 ) -> dict[str, Any]:
+    if cue_encoding not in ("dense", "sparse"):
+        raise ValueError(f"cue_encoding must be dense or sparse, got {cue_encoding!r}")
     store = EpisodicMemoryStore(capacity=capacity)
     for number, row in enumerate(materials, start=1):
         memory_id = row.get("memory_id")
@@ -91,7 +136,7 @@ def measure(
                 memory_id=memory_id,
                 episode_id=str(row.get("episode_id", f"episode-{number}")),
                 tick=int(row.get("tick", number)),
-                cue=_cue(row, "materials", number),
+                cue=_maybe_encode(_cue(row, "materials", number), cue_encoding),
                 action_intent=None,
                 outcome=None,
                 world_transition=None,
@@ -116,7 +161,7 @@ def measure(
 
     for number, row in enumerate(queries, start=1):
         expected = row.get("expected_memory_id")
-        cue = _cue(row, "queries", number)
+        cue = _maybe_encode(_cue(row, "queries", number), cue_encoding)
         if store.count == 0:
             state_counts["store_empty"] += 1
             continue
@@ -154,6 +199,7 @@ def measure(
         "store_count": int(store.count),
         "capacity": int(capacity),
         "limit": int(limit),
+        "cue_encoding": cue_encoding,
         "cue_dim": None if store.cue_dim is None else int(store.cue_dim),
         "total_queries": len(queries),
         "paired_queries": paired,
@@ -189,6 +235,12 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--capacity", type=int, default=1024, help="库容量（必须为正）")
     parser.add_argument("--limit", type=int, default=3, help="每次取回条数（必须为正）")
     parser.add_argument("--out-report", required=True, help="读数件落盘路径")
+    parser.add_argument(
+        "--cue-encoding",
+        choices=("dense", "sparse"),
+        default="dense",
+        help="PLAN-N4-03：cue 编码（dense=基线逐位不变；sparse=WTA(RP(cue)) 稀疏编码）",
+    )
     args = parser.parse_args(argv)
     started = time.perf_counter()
 
@@ -216,6 +268,7 @@ def main(argv: list[str] | None = None) -> int:
             _read_rows(queries_path, "queries"),
             capacity=int(args.capacity),
             limit=int(args.limit),
+            cue_encoding=args.cue_encoding,
         )
     except ValueError as error:
         #: 包括 cue 维度不符、缺 memory_id、非空库拿到零命中（前提被改动）。
