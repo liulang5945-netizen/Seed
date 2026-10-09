@@ -892,6 +892,34 @@ class BytePredictiveReadout:
         self.position_weight.clamp_(-self.config.max_weight_norm, self.config.max_weight_norm)
         self._position_learn_steps += 1
 
+    @torch.no_grad()
+    def learn_position_column(
+        self,
+        error: torch.Tensor,
+        *,
+        learning_rate_scale: float = 1.0,
+        position_state: int | None = None,
+    ) -> None:
+        """把一条局部误差**只**写进位置列——发育 F1 通路用它（PLAN-N5-05 甲）。
+
+        普通链上 `learn()` 一步做三件事（稀疏库、bias、位置列）；发育叠加层挂载时前两件归
+        `DevelopmentalSynapseBank`，位置列仍住在本读出器上（它跟着 `to_payload` 存档，
+        所以不新增张量、不改参数量与摘要）。开启却没给位置类 ⇒ 由
+        `_require_position_one_hot` 响亮拒绝，不按零学；关闭 ⇒ `position_weight is None`
+        ⇒ 整步 no-op，既有形状逐位不变。
+        """
+
+        if error.shape != (self.config.alphabet_size,):
+            raise ValueError("predictive error dimension mismatch")
+        if not bool(torch.isfinite(error).all()):
+            raise ValueError("predictive error must be finite")
+        scale = float(learning_rate_scale)
+        if not math.isfinite(scale) or scale < 0.0:
+            raise ValueError("learning_rate_scale must be finite and non-negative")
+        if self.position_weight is None:
+            return
+        self._learn_position(error, scale, position_state)
+
     def to_payload(self) -> dict[str, Any]:
         payload = {
             "format": self.PAYLOAD_FORMAT,

@@ -18,6 +18,7 @@ import pytest
 import torch
 
 from taiji import Taiji, TaijiConfig, content_digest
+from taiji.developmental_synapse import DevelopmentalReplayEvent
 from taiji.organs import BytePredictiveReadout
 from taiji.utf8_state import UTF8_POSITION_DIM, advance_utf8, remaining_after
 
@@ -199,10 +200,41 @@ def test_position_columns_round_trip_and_refuse_cross_config_load() -> None:
     assert float(fresh.position_weight.abs().sum().item()) == 0.0
 
 
-def test_position_input_rejected_on_developmental_f1_path() -> None:
-    model = _model(_config(position=True))
-    with pytest.raises(ValueError, match="not wired to the developmental F1"):
-        model.migrate_f1_to_developmental_synapses()
+def test_position_input_is_wired_into_the_developmental_path() -> None:
+    """PLAN-N5-05（甲，2026-10-09）：R2-01 那道"位置输入 × 发育 bundle 互斥"换成"重放必须带位置类"。
+
+    迁移不再抛＝甲的第一件事（旧闸已从 `taiji/model.py` 消失，钉子与调用点清单在
+    `test_n5_11_position_wiring_call_sites_contract.py`）。守住的语义搬到这里，**两支都走**：
+    事件没带位置类 ⇒ 响亮拒绝；带上 ⇒ 放行且位置列真学一步（`position_learn_steps` 加一）。
+    这一支不是假想形状：`pre-甲` 存档里的 replay 事件按 `from_payload` 取回来就是 `None`。
+    """
+
+    config = _config(position=True)
+    model = _model(config)
+    model.migrate_f1_to_developmental_synapses()
+    assert model.developmental_f1_bundle is not None
+    model.set_developmental_f1_learning_mode("fast_slow")
+
+    def _event(position_state: int | None) -> DevelopmentalReplayEvent:
+        return DevelopmentalReplayEvent(
+            event_id="r2-plan-01-replay",
+            source="wake",
+            tick=0,
+            observed_symbol=97,
+            predicted_probability=0.5,
+            readout_error=torch.full((int(config.alphabet_size),), 0.25),
+            readout_trace=torch.ones((int(config.motor_context_dim),), dtype=torch.float32),
+            context_feedback=torch.zeros(int(config.alphabet_size)),
+            context_trace=torch.zeros(int(config.motor_context_dim)),
+            position_state=position_state,
+        )
+
+    with pytest.raises(ValueError, match="carries no utf-8 position state"):
+        model.replay_developmental_f1([_event(None)])
+
+    report = model.replay_developmental_f1([_event(2)], consolidate=False)
+    assert report["position_learn_steps_after"] - report["position_learn_steps_before"] == 1
+    assert float(model.predictive_readout.position_weight.abs().sum().item()) > 0.0
 
 
 def test_parameter_accounting_counts_position_columns_when_enabled() -> None:

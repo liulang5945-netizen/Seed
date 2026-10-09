@@ -1120,17 +1120,21 @@ class Taiji:
             return None
         return self._developmental_f1_bundle.bank(owner_id)
 
-    def _reject_position_input_without_learning_path(self) -> None:
-        """PLAN-R2-01：位置列只在普通读出学习链上接线；发育 F1 的 bank 学习链没有它。
+    def _reject_position_stateless_replay(self, event: DevelopmentalReplayEvent) -> None:
+        """PLAN-N5-05（甲）：位置列已接进发育通路 ⇒ 没带位置类的事件不许静默学。
 
-        两者同时开启会得到一个**静默空转**（前向喂零列、后向不更新 ⇒ 看起来装了、
-        其实等于没装）。本仓对这类"以为接上了"的处置是一律响亮失败，不静默降级。
+        PLAN-R2-01 那道"位置输入与发育 bundle 互斥"的响亮拒绝，守护的是"前向喂零列、
+        后向不更新 ⇒ 看起来装了、其实等于没装"。甲把后一半接上了（`learn_position_column`），
+        所以缺位换成**前一半**：一条 `DevelopmentalReplayEvent` 没记下发射时真正喂进的那一列，
+        却拿去喂带位置列的读出器 ⇒ 仍是同一个静默空转，只是换了方向。`pre-甲` 存档里的
+        replay 事件按 `from_payload` 取到 `None`，正是这一支的实到入口，不是假想形状。
         """
 
-        if self.config.readout_utf8_position_input:
+        if self.predictive_readout.position_input_enabled and event.position_state is None:
             raise ValueError(
-                "readout_utf8_position_input is not wired to the developmental F1 "
-                "learning path; use the plain predictive-readout learning chain"
+                f"developmental replay event {event.event_id} carries no utf-8 position state "
+                "while readout_utf8_position_input is enabled; refusing to learn the position "
+                "column from a zero input"
             )
 
     def set_copy_evidence_window_steps(self, steps: int | None) -> None:
@@ -1281,7 +1285,6 @@ class Taiji:
             raise RuntimeError("developmental F1 state is already mounted")
         if self._state.pending_action is not None or self._state.pending_experience is not None:
             raise RuntimeError("developmental F1 migration requires a settled state")
-        self._reject_position_input_without_learning_path()
         source_checkpoint = self.checkpoint()
         bundle = DevelopmentalSynapseBundle.from_taiji_checkpoint(source_checkpoint)
         expected_config_digest = content_digest(self.config.to_dict())
@@ -1375,6 +1378,7 @@ class Taiji:
         readout_trace: torch.Tensor,
         context_feedback: torch.Tensor,
         context_trace: torch.Tensor,
+        position_state: int | None,
     ) -> None:
         event_id = f"wake-{self._developmental_f1_replay_serial}"
         self._developmental_f1_replay_serial += 1
@@ -1388,6 +1392,7 @@ class Taiji:
             readout_trace=readout_trace,
             context_feedback=context_feedback,
             context_trace=context_trace,
+            position_state=position_state,
         )
         self._developmental_f1_replay.append(event)
         if len(self._developmental_f1_replay) > self.DEVELOPMENTAL_F1_REPLAY_MAX_EVENTS:
@@ -1451,13 +1456,21 @@ class Taiji:
         before = content_digest(self._developmental_f1_bundle.to_payload())
         context_bank = self._developmental_f1_bundle.bank("predictive_context.recurrent")
         readout_bank = self._developmental_f1_bundle.bank("predictive_readout.synapses")
+        position_steps_before = self.predictive_readout.position_learn_steps
         for event in selected:
+            #: PLAN-N5-05（甲）：位置列与稀疏库同源于这条事件，缺位置类就响亮拒绝。
+            self._reject_position_stateless_replay(event)
             if bool(event.readout_error.detach().abs().any()):
                 readout_bank.learn_fast(
                     event.readout_error,
                     event.readout_trace,
                     learning_rate=(self.config.motor_learning_rate * float(learning_rate_scale)),
                     weight_decay=self.config.synapse_decay,
+                )
+                self.predictive_readout.learn_position_column(
+                    event.readout_error,
+                    learning_rate_scale=float(learning_rate_scale),
+                    position_state=event.position_state,
                 )
             if bool(event.context_feedback.detach().abs().any()):
                 context_bank.learn_fast(
@@ -1483,6 +1496,9 @@ class Taiji:
             "consolidation": consolidation,
             "fast_is_zero": self._developmental_f1_bundle.fast_is_zero,
             "bundle_digest": after,
+            #: G-N5e-4：从抛错改成不抛的那条路径必须自带可读出证据，不许静默成功。
+            "position_learn_steps_before": position_steps_before,
+            "position_learn_steps_after": self.predictive_readout.position_learn_steps,
         }
 
     def _protected_readout_parent_digest(self) -> str:
@@ -2182,6 +2198,14 @@ class Taiji:
                             ),
                             weight_decay=self.config.synapse_decay,
                         )
+                        #: PLAN-N5-05（甲）：稀疏库归 bundle，位置列仍归读出器（它随
+                        #: `to_payload` 存档，不新增张量）⇒ 同一条误差、同一个"当时真正
+                        #: 喂进前向"的位置类，两边各学一次。关闭该特性时这一整步是 no-op。
+                        predictive_readout.learn_position_column(
+                            predictive_error,
+                            learning_rate_scale=predictive_update_scale,
+                            position_state=previous_position_class,
+                        )
                     context_feedback_for_replay = torch.zeros_like(predictive_feedback)
                     if predictive_context_learning and bool(
                         previous.predictive_context_trace.detach().abs().any()
@@ -2222,6 +2246,7 @@ class Taiji:
                             readout_trace=previous.motor_context,
                             context_feedback=context_feedback_for_replay,
                             context_trace=previous.predictive_context_trace,
+                            position_state=previous_position_class,
                         )
                 else:
                     if predictive_readout_learning:
@@ -3818,7 +3843,6 @@ class Taiji:
             bundle = DevelopmentalSynapseBundle.from_payload(developmental_payload)
             if bundle.config_digest != content_digest(self.config.to_dict()):
                 raise ValueError("developmental F1 checkpoint configuration does not match")
-            self._reject_position_input_without_learning_path()
             self._developmental_f1_bundle = bundle
         replay_payload = checkpoint.get(self.DEVELOPMENTAL_F1_REPLAY_KEY)
         if replay_payload is not None:

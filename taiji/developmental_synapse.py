@@ -17,6 +17,7 @@ from typing import Any
 import torch
 
 from .internalization import content_digest
+from .utf8_state import UTF8_POSITION_DIM
 
 DEVELOPMENTAL_SYNAPSE_FORMAT = "taiji-developmental-synapse-v1"
 DEVELOPMENTAL_SYNAPSE_VERSION = 1
@@ -431,6 +432,12 @@ class DevelopmentalReplayEvent:
     readout_trace: torch.Tensor
     context_feedback: torch.Tensor
     context_trace: torch.Tensor
+    #: PLAN-N5-05（甲）：这条经验**当时真正喂给读出的那一列位置类**。
+    #: 必须与 `readout_trace` 同源（两者都取自同一个 `previous` 快照），否则就是
+    #: "训练学的不是发射用的"那一族——本仓为它付过很多次学费。
+    #: 缺省 `None` ⇒ 关闭位置输入时的既有形状逐位不变；且 payload 里**只在有值时加键**
+    #: （`event_digest` 是密封的，无条件加键会让旧事件载不回来）。
+    position_state: int | None = None
 
     def __post_init__(self) -> None:
         _require_text(self.event_id, "event_id")
@@ -456,9 +463,17 @@ class DevelopmentalReplayEvent:
             if not bool(torch.isfinite(tensor).all()):
                 raise DevelopmentalSynapseContractError(f"replay event {name} is not finite")
             object.__setattr__(self, name, tensor.detach().cpu().to(dtype=torch.float32).clone())
+        #: 位置类的外域只有 DFA 的四类；`None` 是合法值（该特性关闭），但**越界的整数不是**。
+        if self.position_state is not None:
+            state = int(self.position_state)
+            if not 0 <= state < UTF8_POSITION_DIM:
+                raise DevelopmentalSynapseContractError(
+                    f"replay event position_state must be in 0..{UTF8_POSITION_DIM - 1}, got {state}"
+                )
+            object.__setattr__(self, "position_state", state)
 
     def _unsigned_payload(self) -> dict[str, Any]:
-        return {
+        unsigned: dict[str, Any] = {
             "format": DEVELOPMENTAL_REPLAY_EVENT_FORMAT,
             "version": DEVELOPMENTAL_REPLAY_EVENT_VERSION,
             "event_id": self.event_id,
@@ -471,6 +486,10 @@ class DevelopmentalReplayEvent:
             "context_feedback": self.context_feedback,
             "context_trace": self.context_trace,
         }
+        #: 条件加键（见 dataclass 上的注释）：旧 payload 没有这一枚 ⇒ 摘要仍与封存时一致。
+        if self.position_state is not None:
+            unsigned["position_state"] = int(self.position_state)
+        return unsigned
 
     def to_payload(self) -> dict[str, Any]:
         unsigned = self._unsigned_payload()
@@ -492,6 +511,9 @@ class DevelopmentalReplayEvent:
             readout_trace=payload["readout_trace"],
             context_feedback=payload["context_feedback"],
             context_trace=payload["context_trace"],
+            position_state=(
+                None if "position_state" not in payload else int(payload["position_state"])
+            ),
         )
 
 

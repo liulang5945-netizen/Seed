@@ -95,7 +95,7 @@ N 主线的成功判据是**每项能力有冻结判据＋仪器化读数＋可�
    这条边界声明不许被上面任何一条替换。
 5. **「欠两笔债未插 05」这句也已过期**：05 现按真实列形状（5 列）正式插了四行——
    `G70` 冻结命令是散文不是可执行物、`G71` 保持侧产品层互斥（归 owner 择一）、
-   `G72` 恒真键 `shadow_materialized`（同轮已撤换）、`G73` θ_small 扰动设计债（升版已解）。
+   `G72` 恒真键 `shadow_materialized`（同轮已撤换）、`G73` θ_small 扰动设计债（升版已解）。〔**2026-10-09 ㊵-636 再一条：`G71` 那句"保持侧产品层互斥（归 owner 择一）"已经过期**——owner 弹窗 #16 裁了甲并已落地，互斥拒绝从 `taiji/model.py` 撤除、位置输入接进发育 F1 学习通路（`J-N5e-1` 三档逐位不变／`J-N5e-2` `position_path_delta=1.9232144355773926 ∧ n_changed_units=1028`／`J-N5e-3` 默认位与参数量未动）。剩下的不是"择一"，而是 **`J-N5e-4` 续训双臂要 owner 批**（改权重），批下来 `j_n5b_5` 才有 before／after 对；另新增 `DEBT-G76`（位置列不进发育叠加层的可逆层）。〕
 6. **下一格真实入口（不依赖任何批文、零算力、属 `scripts/`＋测）**：让 N5 判读器把过程侧读数**机械出版**——
    `scripts/training/adjudicate_taiji_n5_shadow_gate.py` 目前只断言 5 枚键（`REQUIRED_KEYS`），
    对新落盘的 `shadow_forward_hits`／`shadow_learn_hits`／`shadow_branch_hits` **视而不见**。

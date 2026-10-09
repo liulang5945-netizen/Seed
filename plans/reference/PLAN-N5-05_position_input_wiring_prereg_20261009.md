@@ -77,3 +77,13 @@
   并把缺陷登记进 05（不悄悄重试）。
 - 发表资格前置：必须先有 §3 的调用点清单实测与 §2 的两支判据读数入库，才允许引用"已接通"；
   引用时带范围限定——"默认关逐位不变"与"开启后可学习"是两件事，各自要各自的证据。
+
+## §7 实施读数（2026-10-09 ㊵-636 就地追加；判据一字未改，只记实测）
+
+- **J-N5e-1（默认逐位不变）＝成立**。尺＝`git archive HEAD taiji seed` 解到仓外、同一 tiny 配置、同一 64 字节输入 `bytes(range(32,96))`、`readout="predictive"`＋`learn=True`，逐步收集概率与语境后一次 `content_digest`。三档 HEAD 与工作树**逐位相同**：普通链位置关 `9d1e06218e09b8dd3600800670a2debac2d1e881811a59f6a8dfd19a5442f547`、普通链位置开 `c0706e00ad9907621d985c585401a120d19177245aad72db34c1ff36a227d89d`、发育叠加层＋位置关（旧形状）`ae3177e00b4d937cddd571ebae9e2fc64dfca4567a2b49c42d2adb3d869ed3a0`。新形状（发育叠加层＋位置开）在 HEAD 上起不来，工作树给 `344b0e824886d4465369597e52dc64402d8fdac69ede76fe9ebbd1c55fcc2b6f`。
+- **J-N5e-2（真接通，不是消音）＝成立**。`position_path_delta=1.9232144355773926`、`n_changed_units=1028`、`position_learn_steps 10→20`；反支（`learn_predictive_readout=False`）两枚读数同为 `0`、计数 `10→10` ⇒ 这把尺有动态范围。重放侧 `delta=1.6062679290771484`、`n_changed_units=1028`、计数 `10→11`，缺位置类的那一支抛 `developmental replay event … carries no utf-8 position state …`。
+- **J-N5e-3（不越权）＝成立**，但走的是"不新增张量"那一支：位置列仍住在读出器 payload 里，`DevelopmentalSynapseBank` 没有新字段 ⇒ 参数量与存档摘要未动，三件配套事不触发。代价登记为 **DEBT-G76**（位置列不进 fast/slow 可逆层，清 `fast_delta` 不撤销位置学习）。默认位（`readout_utf8_position_input=False`、发育迁移默认关）一字未动。
+- **G-N5e-1＝成立**（先清单后动手）：调用点先钉成 `[1284, 3821]`（㊵-635），实施时按许诺**重钉成新形状**而不是删掉——`test_n5_11_position_wiring_call_sites_contract.py` 由 4 支增至 12 支。
+- **G-N5e-2＝两支都走**：该抛（事件不带位置类，含 `pre-甲` 存档经 `from_payload` 取回 `None` 这一条实到入口）⇒ 抛且位置列零变化；接通（带位置类）⇒ 不抛且 `position_learn_steps` 加一。
+- **G-N5e-4＝成立**：`replay_developmental_f1()` 同轮出版 `position_learn_steps_before`／`position_learn_steps_after`。
+- **J-N5e-4＝未跑**（改权重需 owner 再批）⇒ `j_n5b_5` 现在是"可跑而未跑"，`j_n5b_6` 依旧 `not_adjudicable`。本件只允许写"链路可用＋默认位不变"，不许写能力涨点（G-N5e-5）。

@@ -164,16 +164,28 @@ def test_flags_on_mounts_bundle_sets_mode_and_reads_back_gate(tmp_path: Path) ->
     assert float(tail["bridge_gate_at_close"]) == 0.25
 
 
-def test_position_input_and_developmental_bundle_are_mutually_exclusive() -> None:
-    """产品自己的响亮守卫（`taiji/model.py` 的 `_reject_position_input_without_learning_path`）：
-    位置输入开着就想挂发育 bundle ⇒ ValueError。这条决定了真实面必须带 `--no-readout-position`。"""
+def test_position_input_and_developmental_bundle_now_coexist() -> None:
+    """PLAN-N5-05（甲，2026-10-09）把这条换掉了：位置输入开着也能挂发育 bundle。
+
+    2026-10-08 之前本测钉的是 `pytest.raises(ValueError, match="developmental F1")`——
+    `_reject_position_input_without_learning_path` 那道互斥拒绝决定了所有发育面必须带
+    `--no-readout-position`（PLAN-N3-04 §5ter）。甲之后它换成"重放事件必须带位置类"
+    （`_reject_position_stateless_replay`，钉子与调用点清单在
+    `test_n5_11_position_wiring_call_sites_contract.py`），所以这里改钉两件事：
+    ① 位置输入在场时迁移不再抛；② 旧形状（位置关闭）照旧工作，没有被新守卫顶掉。
+    """
 
     from taiji import TaijiConfig
     from taiji.model import Taiji
 
-    substrate = Taiji(TaijiConfig(readout_utf8_position_input=True))
-    with pytest.raises(ValueError, match="developmental F1"):
-        substrate.migrate_f1_to_developmental_synapses()
+    wired = Taiji(TaijiConfig(readout_utf8_position_input=True))
+    migration = wired.migrate_f1_to_developmental_synapses()
+    assert migration["fast_is_zero"] is True
+    assert wired.predictive_readout.position_input_enabled is True
+
+    legacy = Taiji(TaijiConfig(readout_utf8_position_input=False))
+    legacy.migrate_f1_to_developmental_synapses()
+    assert legacy.predictive_readout.position_input_enabled is False
 
 
 def test_help_lists_both_new_flags() -> None:

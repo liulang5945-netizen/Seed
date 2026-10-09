@@ -133,6 +133,17 @@ gate 两档各一遍 ⇒ 4 张在线面＋1 支默认关守卫臂；一律 `--ch
   `readout_utf8_position_input=true`），而位置输入**不许半路关掉**（关掉＝拿带位置的权重去配不吃位置的读出，产品按设计拒绝）。
   ⇒ §4bis 里"链＝这两枚、与 ㊵-484 同底"这一格**作废**（作废的是**面的形状**；§2 判据与 §4 守卫一字未改），
   **乙步骤二在替代链被点之前不起跑**。
+
+> **【2026-10-09 ㊵-636 就地更正：本节"装配与位置输入互斥"那条产品前置已被甲解除】**
+> §5ter 那句（`migrate_f1_to_developmental_synapses()` 与 `readout_utf8_position_input` 互斥，
+> 守卫在 `taiji/model.py:1124-1135`）**描述的是 2026-10-08 的产品事实，仍然解释了当时为什么五支面必须带
+> `--no-readout-position`**；判据、守卫与面数一字未改。今天起那条拒绝不存在了：互斥闸撤除，换成
+> "重放事件必须带位置类"（`_reject_position_stateless_replay`，`J-N5e-1` 三档 HEAD 对表逐位不变、
+> `J-N5e-2` 出 `position_path_delta=1.9232144355773926 ∧ n_changed_units=1028`）。
+> ⇒ **本件已跑完的 4 张在线面读数不受影响**（它们仍属"放行装配＋位置输入关闭"那一档，跨档搬 τ 仍被
+> N3-03 §4 的五元组禁令挡住）；但**下一次重跑本件形状时，`--no-readout-position` 不再是必需项**，
+> 带上它就是另一张面（config 里 `readout_utf8_position_input` 不同 ⇒ 摘要与分布都不同），
+> 引用本节命令的人必须按"是否带位置输入"重新点档。预注册见 PLAN-N5-05 §7，债见 DEBT-G71／G76。
 - **可执行的替代链已经 priced（零额外探测成本）**：出厂链 `checkpoints/seed_beta.pt` **不带位置列**
   （同一取法下它的 `predictive_readout` 键集里没有 `position_weight`，config 也没这个键）⇒
   `--resume checkpoints/seed_beta.pt --readout predictive --no-readout-position --developmental-fast-slow
