@@ -346,6 +346,12 @@ def test_the_hardening_round_count_is_recorded_as_stale(n2: dict) -> None:
 
 
 def test_the_frozen_preregistration_states_the_measured_counts(n2: dict) -> None:
+    if not PREREG.is_file():
+        #: DEBT-G75（owner 2026-10-09 裁「拆用例＋skip＋打出处」）：本支整体依赖被删件文本，
+        #: 跳过时把删除提交与墓碑位置写进理由，免得长红被换成永久静默。
+        pytest.skip(
+            "预注册件 已随 M5 族蒸馏收束删除（提交 678e35fa2，owner 2026-10-07 批准；结论留存位置见 plans/reference/M5_DISTILLATION_TOMBSTONE.md）"
+        )
     text = PREREG.read_text(encoding="utf-8")
     assert "FROZEN" in text
     assert str(n2["consumer_count"]) in text, "the consumer count must match the live scan"

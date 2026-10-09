@@ -300,6 +300,25 @@ P1_DIAGNOSIS = (
 )
 P1_PROBE = PROJECT_ROOT / "scripts" / "training" / "probe_taiji_cap0_byte_output.py"
 
+# --- DEBT-G75：被删件的断言按 owner 2026-10-09 裁的形状收（拆用例＋skip＋打出处） ------
+
+TOMBSTONE = PROJECT_ROOT / "plans" / "reference" / "M5_DISTILLATION_TOMBSTONE.md"
+
+
+def _doc_or_skip(path: Path) -> str:
+    """读一份蒸馏前文档；**它已被删除时只 skip 依赖它那半段**，不牵连还能跑的部分。
+
+    出处必须写进 skip 理由：删除提交、批准人、结论留存位置——否则下一个读测试的人会以为
+    「这条测从来没生效过」，那是把长红换成永久静默，比红更糟。
+    """
+
+    if not path.is_file():
+        pytest.skip(
+            f"{path.name} 已随 M5 族蒸馏收束删除（提交 678e35fa2，owner 2026-10-07 批准；"
+            f"结论留存位置见 {TOMBSTONE.as_posix()}）"
+        )
+    return path.read_text(encoding="utf-8")
+
 
 @pytest.mark.no_local_artifacts
 def test_readable_surface_rejects_undecodable_byte_streams() -> None:
@@ -322,9 +341,8 @@ def test_readable_surface_rejects_undecodable_byte_streams() -> None:
 
 @pytest.mark.no_local_artifacts
 def test_p1_diagnosis_and_probe_are_archived() -> None:
-    assert P1_DIAGNOSIS.is_file()
     assert P1_PROBE.is_file(), "P1 探针作为诊断脚本保留，便于复现证据"
-    text = P1_DIAGNOSIS.read_text(encoding="utf-8")
+    text = _doc_or_skip(P1_DIAGNOSIS)
     for token in (
         "既不是",
         "第三种",
@@ -340,7 +358,7 @@ def test_p1_diagnosis_and_probe_are_archived() -> None:
 def test_p1_section_8_records_the_two_independent_gaps() -> None:
     """§8 的决定性补充：**训练态**（16M-tick）同样产不出合法 UTF-8，文本也不成句。"""
 
-    text = P1_DIAGNOSIS.read_text(encoding="utf-8")
+    text = _doc_or_skip(P1_DIAGNOSIS)
     for token in (
         "§8",
         "tick = 16,000,000",
@@ -361,7 +379,7 @@ def test_p1_section_8_records_the_two_independent_gaps() -> None:
 def test_p1_section_9_records_the_constrained_decoding_result() -> None:
     """§9：UTF-8 约束解码把可读判定从 0/4 修到 4/4（模型不动、不训练）。"""
 
-    text = P1_DIAGNOSIS.read_text(encoding="utf-8")
+    text = _doc_or_skip(P1_DIAGNOSIS)
     for token in ("§9", "UTF-8 约束解码", "0 / 4", "4 / 4", "P3b"):
         assert token in text, token
     probe = P1_PROBE.read_text(encoding="utf-8")
@@ -407,7 +425,7 @@ HEALTH_REPORT_V5 = (
 def test_p1_section_10_records_the_constrained_chain_baseline() -> None:
     """§10：约束解码接入 chat() 后 D/E 首次非 0，但仍远低于最低线 ⇒ P3b 必要。"""
 
-    text = P1_DIAGNOSIS.read_text(encoding="utf-8")
+    text = _doc_or_skip(P1_DIAGNOSIS)
     for token in ("§10", "0.0625", "0.15", "必要条件", "P3b", "长度截断会被误读成内容问题"):
         assert token in text, token
     # 这里原来只断言 "install_constrained_decode" 出现在探针源码里 —— 一支纯子串 grep。
@@ -533,6 +551,28 @@ def test_constrained_chain_report_discloses_its_chain_and_scores() -> None:
 
 # --- P3b 预注册（目标对齐训练，草案） ---------------------------------------
 
+
+@pytest.mark.no_local_artifacts
+def test_p1_probe_keeps_the_readonly_entries_even_without_the_report() -> None:
+    """DEBT-G75 的另一半：与"报告是否还在"无关的断言**不许跟着一起 skip**。
+
+    §8/§9/§10 三支原本把探针源码断言捆在文档断言后面，文档被删就整支静默；
+    这里把那半段单独成支，并刻意**不**用纯子串 grep 蒙混——该文件 §10 的按语早就指出
+    「在源码里找一个名字」的守卫会在链路罢工后仍绿，所以当场读文件、并核对墓碑在场。
+    """
+
+    assert P1_PROBE.is_file()
+    probe = P1_PROBE.read_text(encoding="utf-8")
+    for token in (
+        "--relax-legacy-guard",
+        "longest_valid_utf8_prefix_bytes",
+        "_utf8_allowed",
+        "--constrained",
+    ):
+        assert token in probe, token
+    assert TOMBSTONE.is_file(), "墓碑不在场则 skip 理由无处可查，等于把红换成静默"
+
+
 P3B = (
     PROJECT_ROOT
     / "plans"
@@ -545,8 +585,7 @@ P3B = (
 def test_p3b_preregistration_freezes_protocol_and_judgements() -> None:
     """P3b 必须：不改架构、链路与 P3a 一致、判据可机检、含停止条件与反假设、且未授权执行。"""
 
-    assert P3B.is_file()
-    text = P3B.read_text(encoding="utf-8")
+    text = _doc_or_skip(P3B)
     for token in (
         "本包不改架构",
         "必须与 P3a 完全一致",
@@ -568,11 +607,11 @@ def test_p3b_preregistration_freezes_protocol_and_judgements() -> None:
 def test_p3b_records_the_corpus_format_correction() -> None:
     """语料不是问答格式 —— 这条事实必须写进预注册，避免再以"问答对"为设计前提。"""
 
-    text = P3B.read_text(encoding="utf-8")
+    text = _doc_or_skip(P3B)
     assert "抽样 2000 行" in text
     assert "多角色脚本" in text
     # P1 报告同步记录了该更正
-    p1 = P1_DIAGNOSIS.read_text(encoding="utf-8")
+    p1 = _doc_or_skip(P1_DIAGNOSIS)
     assert "实测更正" in p1
     assert "仅 1 行" in p1
 
