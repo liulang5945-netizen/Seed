@@ -1,0 +1,43 @@
+{
+  "format": "taiji-n4-addressing-surface-v1",
+  "store_count": 1000,
+  "capacity": 1024,
+  "limit": 3,
+  "cue_dim": 13,
+  "total_queries": 100,
+  "paired_queries": 100,
+  "unpaired_queries": 0,
+  "state_counts": {
+    "store_empty": 0,
+    "emitted": 100,
+    "store_absent": 0
+  },
+  "state_accounting_note": "store_absent 恒 0＝本件总是自建并挂载库；产品默认链的挂载态见 mount_layer 与 product_default_mounted，两者不许互相代答",
+  "adapter_gated_state": "not_observable_here",
+  "wrong_top1_rate": 0.97,
+  "true_rank_p1_rate": 0.03,
+  "true_rank_median": 1.0,
+  "true_rank_outside_top_limit": 96,
+  "true_rank_note": "median 只在真值进入前 limit 位时取；越界条数单列，不许折进中位数",
+  "top1_score_mean": 0.9983965712785721,
+  "block_means": [
+    0.9,
+    1.0,
+    1.0,
+    1.0,
+    0.95
+  ],
+  "block_size": 20,
+  "noise_band_floor": 0.05,
+  "noise_band_adjacent_block_max": 0.09999999999999998,
+  "ruler_usable": true,
+  "mount_layer": "harness",
+  "mounted_by": "scripts/training/measure_taiji_n4_addressing_surface.py",
+  "product_default_mounted": false,
+  "debt": "DEBT-G58",
+  "materials_path": "E:\\Seed\\output\\n4_cost_quote\\materials.jsonl",
+  "materials_sha256": "238fe21db706176523823db5ad6edd0494c5ef97f2efa1d9180cfd101161ccf0",
+  "queries_path": "E:\\Seed\\output\\n4_cost_quote\\queries.jsonl",
+  "queries_sha256": "462f181d9944e0a2b99a5535f95dbe940b3369fdea0527d22bd62096db03b954",
+  "rc": 0
+}
