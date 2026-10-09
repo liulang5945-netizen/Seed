@@ -338,3 +338,52 @@ def test_mount_layer_and_gated_state_are_self_reported(tmp_path: Path) -> None:
     #: 第四态必须自述成"不可观测"，读侧拿不到它就只能显式承认自己不知道。
     assert payload["adapter_gated_state"] == module.NOT_OBSERVABLE
     assert "gated_to_empty" not in payload["state_counts"]
+
+
+def test_wall_clock_column_is_published_and_face_keys_do_not_shrink(tmp_path: Path) -> None:
+    """㊵-563：把 `wall_clock_ms` 钉住（561④ 自报"跑过一次不等于被钉住"，563 那次自造夹具
+    的维度不对被仪器响亮拒绝——这次**复用本文件自带的 `_clean_fixture`**，维度与库对齐）。
+
+    两面：①该列存在、是非负浮点；②**面读数的键集只许多不许少**（计时是加性自述，
+    谁把它当"可以顺手删掉的装饰列"，这册当场红）。
+    """
+
+    module = _load()
+    materials, queries = _clean_fixture(tmp_path)
+    report = tmp_path / "face.json"
+    rc = module.main(
+        [
+            "--materials",
+            str(materials),
+            "--queries",
+            str(queries),
+            "--capacity",
+            "16",
+            "--limit",
+            "2",
+            "--out-report",
+            str(report),
+        ]
+    )
+    payload = _read(report)
+    assert rc == 0, payload.get("rejection")
+    #: ①计时列存在且是非负浮点。
+    assert "wall_clock_ms" in payload, sorted(payload)
+    assert isinstance(payload["wall_clock_ms"], float), payload["wall_clock_ms"]
+    assert payload["wall_clock_ms"] >= 0.0
+    #: ②键集只许多不许少（面读数的既有自述一条不许漂走）。
+    required = {
+        "format",
+        "capacity",
+        "limit",
+        "paired_queries",
+        "ruler_usable",
+        "wrong_top1_rate",
+        "block_size",
+        "noise_band_floor",
+        "adapter_gated_state",
+    }
+    missing = sorted(required - set(payload))
+    assert not missing, missing
+    #: 落字节必须 LF（本机 write_text 不给 newline 会写出 CRLF 件）。
+    assert b"\r\n" not in report.read_bytes()
