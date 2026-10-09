@@ -753,6 +753,11 @@ def run_training(
                             "growth_resource_cost": trigger.policy.growth_resource_cost,
                             "ema_rate": trigger.policy.ema_rate,
                         },
+                        #: DEBT-G61 修法②：`decision_consecutive_pressure_steps` 的语义自述。
+                        #: 该列是产品 decision 在"提议后清零"之后出版的读数（提议行恒为 0，
+                        #: 可见最大值＝required_pressure_steps-1），由真 trigger 逐行复现于
+                        #: `tests/taiji_native/test_n5_02_consecutive_column_semantics_contract.py`。
+                        "consecutive_steps_column_semantics": "post_increment_reset_on_proposal",
                         #: 面头写在这支 trigger 被 observe 之前 ⇒ 这里读到的就是它自己的初值（不是抄的）。
                         "ema_initial": {
                             "residual_error_ema": trigger.residual_error_ema,
