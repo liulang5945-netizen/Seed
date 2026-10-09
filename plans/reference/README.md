@@ -56,6 +56,7 @@
 - [PLAN-N5-03_ruler_usable_formula_prereg_20261009](PLAN-N5-03_ruler_usable_formula_prereg_20261009.md)（N5 **判据升版**：给 `ruler_usable` 补机械公式，接管 PLAN-N5-02 的 J-N5b-4 那半句）
 - [PLAN-N5-04_retention_rebase_prereg_20261009](PLAN-N5-04_retention_rebase_prereg_20261009.md)（N5 **保持侧换底**：从头臂上 `before=0` 使 J-N5b-5 成恒真式 ⇒ 改成「同一基件续训、只动 `--n5-shadow-gate` 一个变量」的双臂，before 面复用 20261008 已入库件；判据/守卫/失败出口先冻）
 - [PLAN-N5-05_position_input_wiring_prereg_20261009](PLAN-N5-05_position_input_wiring_prereg_20261009.md)（N5 **甲路线实施预注册**：把 `readout_utf8_position_input` 接进发育 F1 bank 学习链；owner 弹窗 #16 三择一裁的甲。判据先冻，`J-N5e-2` 要求做功证据——只删 `raise` 判 `not_wired`）
+- [PLAN-N5-06_world_model_interface_prereg_20261009](PLAN-N5-06_world_model_interface_prereg_20261009.md)（N5 步骤③ **世界模型接口合同补齐的实施预注册**：普查现读缺 `propose(goal,state,budget)` 与公开 `snapshot/restore`；判据 J-N6a-1…6 先冻，核心是 J-N6a-3「连续 8 步」对「4 步＋存／取＋4 步」的**逐位**摘要相等；守卫含"不许改普查器别名集换绿"与"复用 `NativeWorldPredictionTrainer` 信封形状、不重抄 `rollout_episode`"。实施动 `taiji/` ⇒ owner 批）
 - [PLAN-N4-05_product_write_semantics_prereg_20261009](PLAN-N4-05_product_write_semantics_prereg_20261009.md)（N4 **产品写入路径已在、缺的是回合驱动**：五条判据先冻，含"两档 cue 不可比"与"不许拿训练侧口径冒充产品档"）
 - [PLAN-N4-06_perturbation_strength_and_ruler_prereg_20261009](PLAN-N4-06_perturbation_strength_and_ruler_prereg_20261009.md)（N4 **扰动强度与"尺可用"判据先冻**：两档角度、`ruler_usable` 公式、方向性预注册；冻在跑之前）
 - [PLAN-N4-07_angle_pair_upgrade_prereg_20261009](PLAN-N4-07_angle_pair_upgrade_prereg_20261009.md)（N4 **升版：只换角度对 (0.70,1.05)**，J-N4f-2/3 公式一字不改；旧篇与 `ruler_unusable` 旧裁定保留并标取代关系）
