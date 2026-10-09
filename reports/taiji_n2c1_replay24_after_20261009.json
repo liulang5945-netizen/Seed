@@ -1,0 +1,85 @@
+{
+  "format": "taiji-a30-repetition-penalty-v1",
+  "prereg": "plans/reference/PLAN-A-30_surface_repetition_localization_20260928.md 乙档",
+  "chain": "base_raw_bytes_with_product_mask",
+  "checkpoint": "checkpoints/seed_n2b_candidate_20261008_n2c1.pt",
+  "circuit": null,
+  "circuit_sha256": null,
+  "items": 24,
+  "item_offset": 0,
+  "first_item": "V001",
+  "base_sha256_unchanged": true,
+  "arms": [
+    {
+      "repetition_penalty": 0.0,
+      "gate_effective": true,
+      "items": 24,
+      "texts": 72,
+      "strict_hits": 5,
+      "well_formed_texts": 16,
+      "cyclic_texts": 22,
+      "cyclic_rate": 0.3056,
+      "mean_longest_run": 6.611,
+      "max_longest_run": 64
+    },
+    {
+      "repetition_penalty": 0.5,
+      "gate_effective": true,
+      "items": 24,
+      "texts": 72,
+      "strict_hits": 5,
+      "well_formed_texts": 12,
+      "cyclic_texts": 26,
+      "cyclic_rate": 0.3611,
+      "mean_longest_run": 6.278,
+      "max_longest_run": 64
+    },
+    {
+      "repetition_penalty": 1.0,
+      "gate_effective": true,
+      "items": 24,
+      "texts": 72,
+      "strict_hits": 6,
+      "well_formed_texts": 12,
+      "cyclic_texts": 24,
+      "cyclic_rate": 0.3333,
+      "mean_longest_run": 6.194,
+      "max_longest_run": 64
+    },
+    {
+      "repetition_penalty": 2.0,
+      "gate_effective": true,
+      "items": 24,
+      "texts": 72,
+      "strict_hits": 6,
+      "well_formed_texts": 8,
+      "cyclic_texts": 20,
+      "cyclic_rate": 0.2778,
+      "mean_longest_run": 5.694,
+      "max_longest_run": 64
+    }
+  ],
+  "verdict": {
+    "0.0": {
+      "cyclic_delta_vs_base": 0,
+      "hits_delta_vs_base": 0,
+      "formed_delta_vs_base": 0
+    },
+    "0.5": {
+      "cyclic_delta_vs_base": 4,
+      "hits_delta_vs_base": 0,
+      "formed_delta_vs_base": -4
+    },
+    "1.0": {
+      "cyclic_delta_vs_base": 2,
+      "hits_delta_vs_base": 1,
+      "formed_delta_vs_base": -4
+    },
+    "2.0": {
+      "cyclic_delta_vs_base": -2,
+      "hits_delta_vs_base": 1,
+      "formed_delta_vs_base": -8
+    }
+  },
+  "started_utc": "2026-10-09T04:41:54Z"
+}
