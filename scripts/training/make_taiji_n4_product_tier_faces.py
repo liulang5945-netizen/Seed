@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 import random
 import sys
 from pathlib import Path
@@ -44,6 +45,27 @@ TINY = dict(
     episodic_memory_default_mount=True,
 )
 ACTIONS = (0, 1, 2, 3)
+
+
+def _rotate_to(cue: list[float], donor: list[float], theta: float) -> tuple[list[float], float]:
+    """把 cue 朝 donor 方向旋转 `theta` 弧度，返回（新 cue，实达角度）。
+
+    扰动形状按 PLAN-N4-06 §1 冻死：在 cue 的正交补上取 donor 分量（Gram–Schmidt），
+    只依赖几何、不看寻址结果 ⇒ 不存在"调到某个值让数好看"的路径。
+    """
+    norm_cue = math.sqrt(sum(v * v for v in cue))
+    if norm_cue == 0.0:
+        raise ValueError("cue 全零，无法定义角度扰动")
+    unit = [v / norm_cue for v in cue]
+    dot = sum(d * u for d, u in zip(donor, unit))
+    perp = [d - dot * u for d, u in zip(donor, unit)]
+    norm_perp = math.sqrt(sum(v * v for v in perp))
+    if norm_perp < 1e-9:
+        raise ValueError("donor 与 cue 共线，无法构造正交方向（换 donor）")
+    perp = [v / norm_perp for v in perp]
+    rotated = [math.cos(theta) * u + math.sin(theta) * v for u, v in zip(unit, perp)]
+    achieved = math.acos(max(-1.0, min(1.0, sum(a * b for a, b in zip(unit, rotated)))))
+    return rotated, achieved
 
 
 def build(
@@ -86,16 +108,39 @@ def build(
     return materials, meta
 
 
-def pairs(materials: list[dict[str, Any]]) -> list[dict[str, Any]]:
-    #: 机械扰动与训练侧档同形：末位换成相邻条的末位（干扰项），其余位保持自己的值。
-    queries = []
+def pairs(
+    materials: list[dict[str, Any]], angle: float | None
+) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+    """`angle=None` 沿用训练侧档的末位替换（只为与历史可比）；给了角度则按 PLAN-N4-06 旋转。"""
+    queries: list[dict[str, Any]] = []
+    achieved: list[float] = []
+    if angle is None:
+        for offset, row in enumerate(materials):
+            donor = materials[(offset + 1) % len(materials)]
+            cue = list(row["cue"])
+            if cue:
+                cue[-1] = donor["cue"][-1]
+            queries.append({"expected_memory_id": row["memory_id"], "cue": cue})
+        note = {"perturbation": "last_component_swap", "angle_nominal_rad": None}
+        return queries, {**note, "achieved_angle_rad": [], "queries": len(queries)}
     for offset, row in enumerate(materials):
         donor = materials[(offset + 1) % len(materials)]
-        cue = list(row["cue"])
-        if cue:
-            cue[-1] = donor["cue"][-1]
-        queries.append({"expected_memory_id": row["memory_id"], "cue": cue})
-    return queries
+        rotated, achieved_rad = _rotate_to(list(row["cue"]), list(donor["cue"]), float(angle))
+        achieved.append(achieved_rad)
+        queries.append({"expected_memory_id": row["memory_id"], "cue": rotated})
+    note = {
+        "perturbation": "rotate_toward_donor",
+        "angle_nominal_rad": float(angle),
+        "queries": len(queries),
+        "achieved_angle_min": min(achieved),
+        "achieved_angle_max": max(achieved),
+        "achieved_angle_mean": sum(achieved) / len(achieved),
+        #: J-N4f-4 的机检点之一：实达与名义偏差 >0.02 rad ⇒ 扰动实现有缺陷，不出读数。
+        "achieved_within_0p02_of_nominal": bool(
+            all(abs(a - float(angle)) <= 0.02 for a in achieved)
+        ),
+    }
+    return queries, note
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -104,10 +149,19 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--symbols", type=int, default=20)
     parser.add_argument("--jitter-seed", type=int, default=20261009)
     parser.add_argument("--out-dir", required=True)
+    parser.add_argument(
+        "--angle",
+        type=float,
+        default=None,
+        help="查询扰动角度（弧度）。不给＝沿用训练侧档的末位替换；"
+        "PLAN-N4-06 的两档是 0.35 与 0.70，判据先冻、不许按结果回头调。",
+    )
     args = parser.parse_args(argv)
 
     if args.episodes <= 0 or args.symbols <= 0:
         parser.error("--episodes 与 --symbols 必须为正")
+    if args.angle is not None and not 0.0 < args.angle < 1.5707963267948966:
+        parser.error("--angle 必须落在 (0, pi/2) 之间")
 
     out = Path(args.out_dir)
     out.mkdir(parents=True, exist_ok=True)
@@ -121,7 +175,12 @@ def main(argv: list[str] | None = None) -> int:
         encoding="utf-8",
         newline=newline,
     )
-    queries = pairs(materials)
+    queries, perturbation = pairs(materials, args.angle)
+    (out / "perturbation_meta.json").write_text(
+        json.dumps(perturbation, ensure_ascii=False, indent=2) + newline,
+        encoding="utf-8",
+        newline=newline,
+    )
     (out / "product_queries.jsonl").write_text(
         newline.join(json.dumps(row, ensure_ascii=False) for row in queries) + newline,
         encoding="utf-8",
