@@ -383,6 +383,7 @@ def run_training(
     growth_minimum_pressure: float | None = None,
     episodic_mount: bool = False,
     n5_shadow: bool = False,
+    n5_shadow_gate: float | None = None,
     max_unique_documents: int | None = None,
 ) -> dict[str, float]:
     """Stream the corpus through ``Seed.observe`` with periodic persistence.
@@ -509,6 +510,15 @@ def run_training(
                 "bridge_id": adaptive_shadow.bridge_id,
                 "gate": adaptive_shadow.gate,
                 "unit_count": adaptive_shadow.unit_count,
+                #: DEBT-G69 修法②：通电值与三枚效用读数成对出版，缺任一按 fail-closed 判读。
+                "shadow_gate_requested": (
+                    None if n5_shadow_gate is None else float(n5_shadow_gate)
+                ),
+                "candidate_gate": float(adaptive_shadow.candidate_gate),
+                "candidate_utility": float(adaptive_shadow.candidate_utility),
+                "candidate_counterfactual_utility": float(
+                    adaptive_shadow.candidate_counterfactual_utility
+                ),
             }
         if episodic_store is not None:
             envelope["episodic_memory"] = episodic_store.checkpoint()
@@ -809,6 +819,10 @@ def run_training(
             ):
                 substrate.propose_adaptive_residual_growth_candidate()
                 adaptive_shadow = substrate.materialize_adaptive_residual_shadow()
+                #: DEBT-G69：影子默认 `_gate=0.0`，而 `forward()`（adaptive_residual_shadow.py:443）
+                #: 与 `learn()`（:506）都带 `if self._gate == 0.0: return` 早退 ⇒ 不通电就是零步学习。
+                if n5_shadow_gate is not None:
+                    adaptive_shadow.set_gate(float(n5_shadow_gate))
             #: PLAN-N3-08 §1：面行补记**产品 decision 自带**的那十个读数（全部 `getattr` 读回，零重算）。
             #: 多加的一个 `decision_digest` 是预注册 §1 清单之外的实现期增项（逐行完整性锚点，已在 ㊵-508 自报）。
             for _key in (
@@ -1029,6 +1043,12 @@ def _build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--max-unique-documents", type=int, default=None)
     parser.add_argument("--episodic-mount", action="store_true")
     parser.add_argument("--n5-shadow", action="store_true")
+    parser.add_argument(
+        "--n5-shadow-gate",
+        type=float,
+        default=None,
+        help="DEBT-G69：物化后给影子通电的 gate 值（0.0..1.0）；缺省＝不通电（影子零步学习）。",
+    )
     parser.add_argument("--checkpoint-every", type=int, default=50_000)
     parser.add_argument("--progress-every", type=int, default=10_000)
     parser.add_argument(
@@ -1250,6 +1270,12 @@ def main() -> None:
     #: `developmental_bridge_gate is None` 那支），显式给 0.0 同理 ⇒ `activity_saturation` 恒 0，
     #: 合取永不可满足、影子永不物化。那种跑会产出一张"0 提议"的面并被读成"影子无效应"，
     #: 所以在这里响亮拒绝，而不是让下一人再去对表六项。
+    #: DEBT-G69 修法①的前置：`--n5-shadow-gate` 只在 `--n5-shadow` 的分支里有消费点，
+    #: 单给旗标会静默空转 ⇒ 与 `--growth-min-pressure` 那条同一形状地响亮拒绝。
+    if args.n5_shadow_gate is not None and not args.n5_shadow:
+        parser.error("--n5-shadow-gate 只在 --n5-shadow 打开时生效；单给旗标会静默空转。")
+    if args.n5_shadow_gate is not None and not 0.0 <= args.n5_shadow_gate <= 1.0:
+        parser.error("--n5-shadow-gate 必须落在 0.0..1.0 之间。")
     if args.n5_shadow and (
         args.developmental_bridge_gate is None or float(args.developmental_bridge_gate) <= 0.0
     ):
@@ -1383,6 +1409,7 @@ def main() -> None:
         max_unique_documents=args.max_unique_documents,
         episodic_mount=args.episodic_mount,
         n5_shadow=args.n5_shadow,
+        n5_shadow_gate=args.n5_shadow_gate,
     )
     print(json.dumps(summary, ensure_ascii=False))
     #: DEBT-G14②：操作侧曾拿着一个 **0 字节的 `run.log`** 判断"这轮跑到哪了"——空文件比没有更误导。
