@@ -794,6 +794,18 @@ def run_training(
             line = dict(pressure.to_payload())  # type: ignore[attr-defined]
             line["kind"] = "pressure"
             line["decision_should_propose"] = bool(getattr(decision, "should_propose", False))
+            #: DEBT-G68 修法④：提议在**这一次观测**里就地消费，而不是等符号流上的下一轮轮询。
+            #: 旧写法住在流循环里、读 `substrate.adaptive_residual_growth_decision`，而
+            #: `should_propose` 只活到下一个观测槽之前 ⇒ 两频不对齐时永远错过
+            #: （㊵-588 实测：D 跑满 60k 出了 1 次提议，收尾信封 `n5_shadow` 仍是 null）。
+            nonlocal adaptive_shadow
+            if (
+                n5_shadow
+                and adaptive_shadow is None
+                and bool(getattr(decision, "should_propose", False))
+            ):
+                substrate.propose_adaptive_residual_growth_candidate()
+                adaptive_shadow = substrate.materialize_adaptive_residual_shadow()
             #: PLAN-N3-08 §1：面行补记**产品 decision 自带**的那十个读数（全部 `getattr` 读回，零重算）。
             #: 多加的一个 `decision_digest` 是预注册 §1 清单之外的实现期增项（逐行完整性锚点，已在 ㊵-508 自报）。
             for _key in (
@@ -905,11 +917,6 @@ def run_training(
                     doc_pending.clear()
                 elif symbol != boundary and len(doc_pending) < 32:
                     doc_pending.append(symbol)
-            if n5_shadow and adaptive_shadow is None:
-                decision = substrate.adaptive_residual_growth_decision
-                if decision is not None and decision.should_propose:
-                    substrate.propose_adaptive_residual_growth_candidate()
-                    adaptive_shadow = substrate.materialize_adaptive_residual_shadow()
             if step.prior_prediction is not None:
                 window_ticks += 1
                 window_correct += int(step.prior_prediction == symbol)
