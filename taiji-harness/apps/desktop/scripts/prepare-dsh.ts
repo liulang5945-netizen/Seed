@@ -178,7 +178,7 @@ async function main(): Promise<void> {
       // The runtime source tree itself (a wheel build over the repo hangs on the
       // data tree) — the venv runs `python -m api.main` with this as its cwd.
       const nativeRoot = resolve(APP_ROOT, '..', '..', '..')
-      for (const dir of ['api', 'seed_platform', 'taiji', 'neuroplex', 'instruments']) {
+      for (const dir of ['api', 'seed', 'seed_platform', 'taiji', 'neuroplex', 'instruments']) {
         cpSync(resolve(nativeRoot, dir), join(DSH_OUTPUT_ROOT, 'backend', 'code', dir), { recursive: true })
       }
       copyFileSync(resolve(nativeRoot, 'requirements.txt'), join(DSH_OUTPUT_ROOT, 'backend', 'code', 'requirements.txt'))
