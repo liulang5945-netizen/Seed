@@ -880,7 +880,16 @@ def run_training(
             max_unique_documents=max_unique_documents,
             counters=stream_counters,
         ):
-            step = model.observe(symbol, **observe_kwargs)
+            feed_kwargs = observe_kwargs
+            if adaptive_shadow is not None:
+                if readout != "predictive":
+                    raise RuntimeError("shadow feed-forward requires readout='predictive'")
+                feed_kwargs = {
+                    **observe_kwargs,
+                    "_adaptive_residual_shadow": adaptive_shadow,
+                    "_learn_adaptive_residual_shadow": True,
+                }
+            step = model.observe(symbol, **feed_kwargs)
             ticks += 1
             if episodic_store is not None:
                 if symbol == boundary and doc_pending:
@@ -897,10 +906,10 @@ def run_training(
                 elif symbol != boundary and len(doc_pending) < 32:
                     doc_pending.append(symbol)
             if n5_shadow and adaptive_shadow is None:
-                decision = model.adaptive_residual_growth_decision
+                decision = substrate.adaptive_residual_growth_decision
                 if decision is not None and decision.should_propose:
-                    model.propose_adaptive_residual_growth_candidate()
-                    adaptive_shadow = model.materialize_adaptive_residual_shadow()
+                    substrate.propose_adaptive_residual_growth_candidate()
+                    adaptive_shadow = substrate.materialize_adaptive_residual_shadow()
             if step.prior_prediction is not None:
                 window_ticks += 1
                 window_correct += int(step.prior_prediction == symbol)

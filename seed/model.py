@@ -80,7 +80,19 @@ class Seed:
         readout: str = "action",
         use_memory: bool = True,
         use_identity: bool | None = None,
+        _adaptive_residual_shadow: Any = None,
+        _learn_adaptive_residual_shadow: bool = False,
+        _adaptive_residual_shadow_freeze_parent: bool = True,
     ) -> TaijiStep:
+        #: 影子参数只在给了影子时才转发：缺省时下面的调用与本格改动前逐字相同。
+        #: 类型/组合校验不在这一层重做，仍由 ``Taiji.observe`` 自己响亮拒绝。
+        shadow_kwargs: dict[str, Any] = {}
+        if _adaptive_residual_shadow is not None:
+            shadow_kwargs["_adaptive_residual_shadow"] = _adaptive_residual_shadow
+            if _learn_adaptive_residual_shadow:
+                shadow_kwargs["_learn_adaptive_residual_shadow"] = True
+            if not _adaptive_residual_shadow_freeze_parent:
+                shadow_kwargs["_adaptive_residual_shadow_freeze_parent"] = False
         return self.substrate.observe(
             symbol,
             learn=learn,
@@ -88,6 +100,7 @@ class Seed:
             readout=readout,
             use_memory=use_memory,
             use_identity=use_identity,
+            **shadow_kwargs,
         )
 
     def act(
