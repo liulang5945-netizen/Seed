@@ -8104,8 +8104,19 @@ class TSKV8Adapter(Taiji):
         *,
         call: ToolCall | None = None,
         learn: bool = True,
+        feed_world_state: bool = False,
     ) -> Outcome:
-        """Execute a generated call and feed its outcome back into Taiji."""
+        """Execute a generated call and feed its outcome back into Taiji.
+
+        ``feed_world_state`` opts the environment's post-action world state into
+        Taiji's own world model — prediction, calibration and online updates —
+        instead of settling on reward and sensation alone. It is off by default
+        for two reasons: the world tick belongs to Taiji's cognitive clock (an
+        environment counts its own steps, so the state is re-stamped here), and
+        an environment's world must be representable by the mounted world
+        dynamics before learning from it means anything. Environments that model
+        worlds therefore enable it per call, knowingly.
+        """
 
         if not isinstance(environment, TaijiToolEnvironment):
             raise TypeError("environment must implement TaijiToolEnvironment")
@@ -8123,12 +8134,20 @@ class TSKV8Adapter(Taiji):
         )
         if not isinstance(result, EnvironmentOutcome):
             raise TypeError("tool environment must return an EnvironmentOutcome")
+        world_state = None
+        if feed_world_state and result.world_state is not None:
+            # settle_action requires the world's tick to advance Taiji's by
+            # exactly one; the environment's own step count is not that clock.
+            world_state = replace(
+                result.world_state, tick=self._cognitive_state.world.tick + 1
+            )
         taiji_outcome = self.settle_action(
             result.reward,
             learn=learn,
             success=result.success,
             terminal=result.terminal,
             provenance="experienced",
+            **({} if world_state is None else {"world_state": world_state}),
         )
         experienced = self._cognitive_state.outcome
         self.observe(result.sensation, learn=learn)

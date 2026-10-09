@@ -38,11 +38,17 @@ __all__ = [
     "BROWSER_TOOLS",
     "DEFAULT_USER_AGENT",
     "LOCAL_BROWSER_CANDIDATES",
+    "SENSATION_TOKEN_SPAN",
 ]
 
 # Attribution the agent's actions are accountable to. Matches the native search
 # route's convention: the agent should be identifiable in target site logs.
 DEFAULT_USER_AGENT = "TaijiBrowser/0.1 (+taiji agent)"
+
+# Size of the sensation-token space this environment draws from. Kept small on
+# purpose: Taiji's sensory alphabet bounds what a sensation symbol may be, and
+# page identity belongs in the world state rather than in this channel.
+SENSATION_TOKEN_SPAN = 256
 
 # Action kinds this environment affords, in a stable order. `available_actions`
 # carries the indices into this tuple; `action_kinds` names them.
@@ -100,9 +106,16 @@ class BrowserObservation:
 
 
 def _sensation_of(url: str, title: str, text: str) -> int:
-    """Stable non-negative token for a page observation."""
+    """A stable sensation-channel token for a page observation.
+
+    Taiji's sensory alphabet is bounded (``ByteSensor`` rejects symbols outside
+    ``alphabet_size``), so this folds the observation identity into a small
+    token rather than returning a wide hash. The token only says "this is a
+    page observation, stably identified"; who and what the page *is* lives in
+    the world state, which is where structure belongs.
+    """
     digest = hashlib.sha256(f"{url}\x00{title}\x00{text}".encode()).digest()
-    return int.from_bytes(digest[:4], "big") & 0x7FFFFFFF
+    return int.from_bytes(digest[:2], "big") % SENSATION_TOKEN_SPAN
 
 
 def _find_local_browser() -> str | None:
