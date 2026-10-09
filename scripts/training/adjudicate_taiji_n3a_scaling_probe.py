@@ -182,6 +182,68 @@ def judge_arm(
     }
 
 
+#: PLAN-N3-12 §1 第二合取项的门槛。与旧锚那条（`MIN_LAST_SEGMENT_MARGIN`）同值但**语义不同**：
+#: 这一条比的是"同语料、同 seed、同预算的 ×2 对照臂"。两个数值分名分开钉——改一个不许静默挪走
+#: 另一个（`shared-default-read-write-constant` 那条教训：同一个常量既当读默认又当写默认时测不开）。
+CONTROL_MARGIN = 0.02
+
+
+def adjudicate_prime(
+    arm_a_judged: dict[str, Any],
+    arm_a_raw: dict[str, Any],
+    control_raw: dict[str, Any] | None,
+) -> dict[str, Any]:
+    """把 J-N3a′（PLAN-N3-12 §1 三条）从"人算末段均值"变成机算——㊵-548 ⑦ 欠的那台仪器。
+
+    三条逐字照升版件：甲臂斜率 > 自身噪声带 ∧ 甲臂末段均值 **>** 对照臂末段均值 + 0.02
+    ∧ `holdout_surprise_v2` 不劣化。任何一侧 §8.7 五项不齐 ⇒ 判 `ran_not_measured`
+    （PLAN-N3-02 §2 原话"跑了不算测了"）；对照臂缺席或与甲臂不同源 ⇒ `not_judged` 并点名原因，
+    **不许**退回旧锚 `0.594120`（那条正是 DEBT-G64 点名的跨链/跨语料值）。
+    """
+
+    if control_raw is None:
+        return {
+            "J_N3a_prime": "not_judged",
+            "reason": "对照臂缺席 ⇒ PLAN-N3-12 §1 的第二合取项没有值",
+            "forbid_fallback_to_old_anchor": True,
+        }
+    arm_last = arm_a_raw.get("acc_last_segment_mean")
+    control_last = control_raw.get("acc_last_segment_mean")
+    sides_complete = bool(arm_a_raw.get("measurement_complete")) and bool(
+        control_raw.get("measurement_complete")
+    )
+    out: dict[str, Any] = {
+        "margin": CONTROL_MARGIN,
+        "arm_a_last_segment_mean": arm_last,
+        "control_last_segment_mean": control_last,
+        "required_strictly_greater_than": (
+            None if control_last is None else round(float(control_last) + CONTROL_MARGIN, 6)
+        ),
+        "slope_gt_own_band": arm_a_judged.get("slope_gt_own_band"),
+        "holdout_v2_within_limit": arm_a_judged.get("holdout_v2_within_limit"),
+        "gt_control_plus_margin": (
+            None
+            if arm_last is None or control_last is None
+            else bool(float(arm_last) > float(control_last) + CONTROL_MARGIN)
+        ),
+        "both_sides_measurement_complete": sides_complete,
+    }
+    if not sides_complete:
+        out["J_N3a_prime"] = "ran_not_measured"
+        return out
+    if out["gt_control_plus_margin"] is None:
+        out["J_N3a_prime"] = "not_judged"
+        return out
+    out["J_N3a_prime"] = (
+        "holds"
+        if out["slope_gt_own_band"]
+        and out["gt_control_plus_margin"]
+        and out["holdout_v2_within_limit"]
+        else "not_holds"
+    )
+    return out
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="N3 甲 ×10 单点探针判读（只读、零跑）")
     parser.add_argument("--arm-a", required=True, help="甲臂 progress.jsonl")
@@ -195,6 +257,18 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "--seq-b",
         help="乙臂的同源复算件（守卫不齐的件不算在场）",
+    )
+    parser.add_argument(
+        "--control-progress",
+        help="×2 同语料对照臂 progress.jsonl（PLAN-N3-12 §1 新锚的读数面）",
+    )
+    parser.add_argument(
+        "--control-exit",
+        help="对照臂 progress_exit.json（与 --control-progress 配对给）",
+    )
+    parser.add_argument(
+        "--control-seq",
+        help="对照臂的同源复算件（它已自述 sequence_length 那一列时不必给）",
     )
     parser.add_argument(
         "--baseline-last-segment",
@@ -330,6 +404,40 @@ def main(argv: list[str] | None = None) -> int:
             if name in payload["judgement"]:
                 payload["judgement"][name]["J_N3a"] = "not_judged"
         rc = 2
+    #: **J-N3a′ 的新锚**（PLAN-N3-12 §1）：对照臂给就机械判，不给就 `not_judged`——不许退回旧锚代答。
+    control_raw: dict[str, Any] | None = None
+    if args.control_progress:
+        if not args.control_exit:
+            print("REJECT control_arm_incomplete 给了 --control-progress 必须配 --control-exit")
+            return 2
+        control_path = _resolve(args.control_progress)
+        if not control_path.is_file():
+            print(
+                "REJECT missing_control_face",
+                str(control_path).encode("ascii", "replace").decode("ascii"),
+            )
+            return 2
+        control_raw = judge_arm(
+            control_path,
+            _resolve(args.control_exit),
+            _resolve(args.control_seq) if args.control_seq else None,
+        )
+        payload["control_arm"] = control_raw
+
+    prime = adjudicate_prime(judged.get("arm_A", {}), arms["arm_A"], control_raw)
+    if control_raw is not None:
+        prime["control_corpus_fingerprint_matches_arm_a"] = bool(
+            arms["arm_A"]["exit_record"].get("corpus_fingerprint")
+            == control_raw["exit_record"].get("corpus_fingerprint")
+        )
+        if prime["control_corpus_fingerprint_matches_arm_a"] is False:
+            #: G-N3g-1 的新锚版本：不同源的对照臂没有点亮 `J-N3a′` 的资格。
+            prime["J_N3a_prime"] = "not_judged"
+            prime["reason"] = "对照臂与甲臂不同源（G-N3g-1）⇒ 新锚作废"
+    if prime["J_N3a_prime"] == "ran_not_measured":
+        rc = 2
+    payload["J_N3a_prime"] = prime
+
     target = _resolve(args.out)
     target.parent.mkdir(parents=True, exist_ok=True)
     target.write_text(

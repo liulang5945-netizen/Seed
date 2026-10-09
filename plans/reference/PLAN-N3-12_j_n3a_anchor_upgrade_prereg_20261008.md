@@ -59,3 +59,13 @@
 * **对照臂批文**：`--scale 2` 同语料 250,000 符号档获批起跑；owner 同时裁**跳过 §4quater 那支 4,000 符号定价冒烟** ⇒ "×2 档墙钟未测"这句如实保留到跑完，不许事后用外推补。
 * **起跑**：`2026-10-09T01:32:59Z`，命令＝PLAN-N3-02 §4quater 的甲臂块逐字、只换 `--scale 2` 与落点 `output/n3a_control_x2/`（`--readout` 取主线默认 `predictive`）；证据与取数面自查清单见台账 08 ㊵-547③。
 * **旧读数处置**：㊵-546⑤ 那句"两臂 `J_N3a=not_holds`"在换锚生效后**降为历史读数**（旧件不删、不追改），它当时的不达完全由旧锚 `0.594120` 造成——那条已在 DEBT-G64 登记，本件就是它的修法① 落地件。
+## 落地（仪器化，2026-10-09 ㊵-549）
+
+* §1 的第二合取项现在由 [adjudicate_taiji_n3a_scaling_probe.py](../../scripts/training/adjudicate_taiji_n3a_scaling_probe.py) 的
+  `adjudicate_prime()` 机械判定：新旗标 `--control-progress/--control-exit/--control-seq`，门槛常量
+  `CONTROL_MARGIN = 0.02` 与旧锚那条 `MIN_LAST_SEGMENT_MARGIN` **分名分开钉**（同值不同义，共用会静默互移）。
+* 真件首跑 `reports/taiji_n3a_j_n3a_prime_20261009.json`：甲臂末段 `0.352` 对 对照臂末段 `0.33966 + 0.02 = 0.35966`
+  ⇒ `gt_control_plus_margin=false`、`J_N3a_prime="not_holds"`；`control_corpus_fingerprint_matches_arm_a=true`
+  ＝§3 G-N3g-1 的新锚版本（不同源即作废）。
+* ㊵-548 那次的手工对齐被本件**逐位复现**（0.352／0.33966／0.35966）⇒ 此后引用这一判据一律走仪器，不再手工算。
+* §1 那句"严格大于"也被测住了：恰好等于门槛判**假**（夹具 `_prime(0.32, 0.30)`），防止以后有人改成 `≥`。

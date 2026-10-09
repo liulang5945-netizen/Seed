@@ -286,3 +286,96 @@ def test_missing_sidecar_path_is_a_loud_reject(tmp_path: Path) -> None:
     args = _args(tmp_path) + ["--seq-a", str(tmp_path / "nope.json"), "--seq-b", ""]
     assert MODULE.main(args) == 2
     assert not (tmp_path / "out.json").is_file(), "给了路径却读不到时不许照常出件"
+
+
+def _prime(arm_last: float | None, control_last: float | None, *, complete: bool = True) -> dict:
+    judged = {"slope_gt_own_band": True, "holdout_v2_within_limit": True}
+    arm_a = {"acc_last_segment_mean": arm_last, "measurement_complete": complete}
+    control = (
+        None
+        if control_last is None
+        else {"acc_last_segment_mean": control_last, "measurement_complete": complete}
+    )
+    return MODULE.adjudicate_prime(judged, arm_a, control)
+
+
+def test_prime_without_control_arm_is_not_judged_and_names_the_fallback_ban() -> None:
+    out = _prime(0.352, None)
+    assert out["J_N3a_prime"] == "not_judged"
+    assert out["forbid_fallback_to_old_anchor"] is True
+    #: 不许把旧锚 0.594120 当默认值塞回来代答（DEBT-G64 那条跨链值）。
+    assert "0.594120" not in json.dumps(out, ensure_ascii=False)
+
+
+def test_prime_holds_only_when_the_margin_is_cleared() -> None:
+    out = _prime(0.40, 0.30)
+    assert out["gt_control_plus_margin"] is True
+    assert out["required_strictly_greater_than"] == 0.32
+    assert out["J_N3a_prime"] == "holds"
+    #: 判据写的是**严格大于** ⇒ 恰好等于门槛不算越线（先把这条钉住，防止以后有人改成 ≥）。
+    tie = _prime(0.32, 0.30)
+    assert tie["gt_control_plus_margin"] is False
+    assert tie["J_N3a_prime"] == "not_holds"
+
+
+def test_prime_not_holds_on_the_real_pairing_0352_vs_033966() -> None:
+    #: ㊵-548 的真读数：甲臂末段 0.352 对 对照臂末段 0.33966 + 0.02 = 0.35966 ⇒ 差 +0.01234 未过线。
+    out = _prime(0.352, 0.33966)
+    assert out["required_strictly_greater_than"] == 0.35966
+    assert out["gt_control_plus_margin"] is False
+    assert out["J_N3a_prime"] == "not_holds"
+
+
+def test_prime_incomplete_side_locks_ran_not_measured(tmp_path: Path) -> None:
+    assert _prime(0.352, 0.34, complete=False)["J_N3a_prime"] == "ran_not_measured"
+    #: 端到端：对照臂的 §8.7 缺列（不给复算件）⇒ 顶层 rc=2，甲臂再齐也不能判。
+    ctrl_progress = _progress(tmp_path / "c.jsonl", [0.20 + 0.005 * k for k in range(25)])
+    ctrl_exit = _exit(tmp_path / "c_exit.json", unique_documents=315, document_visits=315)
+    args = _args(tmp_path) + [
+        "--seq-a",
+        str(_sidecar(tmp_path / "p_seq.json")),
+        "--seq-b",
+        str(_sidecar(tmp_path / "p_seq_b.json")),
+        "--control-progress",
+        str(ctrl_progress),
+        "--control-exit",
+        str(ctrl_exit),
+    ]
+    rc = MODULE.main(args)
+    prime = _payload(tmp_path)["J_N3a_prime"]
+    assert rc == 2, prime
+    assert prime["J_N3a_prime"] == "ran_not_measured"
+    assert prime["both_sides_measurement_complete"] is False
+
+
+def test_prime_voided_when_control_arm_is_not_same_source(tmp_path: Path) -> None:
+    ctrl_progress = _progress(tmp_path / "c2.jsonl", [0.20 + 0.005 * k for k in range(25)])
+    ctrl_exit = _exit(
+        tmp_path / "c2_exit.json",
+        sequence_length={"documents_counted": 10},
+        corpus_fingerprint='[{"name":"other_corpus.jsonl","bytes":123}]',
+    )
+    args = _args(tmp_path) + [
+        "--seq-a",
+        str(_sidecar(tmp_path / "q_seq.json")),
+        "--seq-b",
+        str(_sidecar(tmp_path / "q_seq_b.json")),
+        "--control-progress",
+        str(ctrl_progress),
+        "--control-exit",
+        str(ctrl_exit),
+    ]
+    rc = MODULE.main(args)
+    prime = _payload(tmp_path)["J_N3a_prime"]
+    assert prime["control_corpus_fingerprint_matches_arm_a"] is False
+    assert prime["J_N3a_prime"] == "not_judged", prime
+    assert "G-N3g-1" in prime["reason"]
+    assert rc == 0, "不同源只作废新锚那条合取，不改顶层对两臂的判级"
+
+
+def test_control_flag_without_exit_is_a_loud_reject(tmp_path: Path) -> None:
+    args = _args(tmp_path) + [
+        "--control-progress",
+        str(_progress(tmp_path / "c3.jsonl", [0.3] * 6)),
+    ]
+    assert MODULE.main(args) == 2
