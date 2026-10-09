@@ -28,8 +28,12 @@ SCRIPT = REPO / "scripts/training/audit_taiji_prereg_exit_wording.py"
 PREREG_DIR = REPO / "plans/reference"
 
 #: 冻结件里已知的含糊行——行号与条数都是钉值；只有追改判据文本才会红，而本仓不追改。
+#: **〔2026-10-09 ㊵-629 重钉〕** `PLAN-N1-00` 的第 24 行**不再命中**：那一行原文是
+#: `J1（唯一判据）：R1 ≤ **118**（基线 236 的 50%）`，同行已把数值钉死，
+#: 旧 `NUMERIC_PIN` 因粗体标记卡在算符与数字之间认不出而误报——红的是门的取法瞎，不是文档没钉。
+#: 保留的第 7 行是假设陈述里的「显著」，同行确无数值 ⇒ 那是真含糊，不随本次修门而消失。
 FLAGGED = {
-    "PLAN-N1-00_s5_endpoint_falsification_prereg_20261007.md": [7, 24],
+    "PLAN-N1-00_s5_endpoint_falsification_prereg_20261007.md": [7],
     "PLAN-N1-01_s1_readout_prereg_20261007.md": [35],
 }
 

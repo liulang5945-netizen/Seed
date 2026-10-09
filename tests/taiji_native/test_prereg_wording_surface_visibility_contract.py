@@ -90,6 +90,41 @@ def _run(tmp_path: Path, name: str, text: str, *extra: str) -> tuple[int, dict]:
     return rc, json.loads(out.read_text(encoding="utf-8"))
 
 
+#: DEBT-G74② 的门侧盲区（㊵-629 修）：判据正文常把数字写成 markdown 粗体，
+#: 旧 `NUMERIC_PIN` 认不出 `≤ **118**` 这种夹着 emphasis 的钉法，于是**已钉数的判据句被报成含糊**。
+#: 两支都要为假：加了粗体的钉数句必须**不**进 hits；同一句去掉数字必须**仍**进 hits。
+PINNED_BOLD = """# PLAN-PINBOLD-01 · 判据句把数字写成粗体
+
+## 2. 判据（先冻）
+
+- J-9：J1（唯一判据）：R1 ≤ **118**（基线 236 的 50%）。"显著缓解"的操作化＝腰斩。
+"""
+
+PINNED_BARE = """# PLAN-PINBARE-01 · 同一句去掉数字
+
+## 2. 判据（先冻）
+
+- J-9：J1（唯一判据）：R1 不超过基线。"显著缓解"的操作化＝明显改善。
+"""
+
+
+def test_bold_wrapped_number_counts_as_pinned(tmp_path: Path) -> None:
+    #: 夹具只有一行判据 ⇒ 显式关掉厚薄分档，让这支只问「钉住的数认不认得出」
+    #: （否则 rc=3 `criterion_surface_too_thin` 会把结论抢走——我第一次就是这么红的）。
+    rc, payload = _run(tmp_path, "PLAN-PINBOLD-01_x.md", PINNED_BOLD, "--min-criterion-lines", "0")
+    entry = payload["results"][0]
+    assert entry["vague_word_lines_unpinned"] == 0, entry
+    assert rc == 0, entry
+
+
+def test_same_sentence_without_a_number_still_hits(tmp_path: Path) -> None:
+    #: 反向支：修 NUMERIC_PIN 不许把"真没钉数"的句子也放过去。
+    rc, payload = _run(tmp_path, "PLAN-PINBARE-01_x.md", PINNED_BARE, "--min-criterion-lines", "0")
+    entry = payload["results"][0]
+    assert entry["vague_word_lines_unpinned"] >= 1, entry
+    assert rc == 1, entry
+
+
 def test_plan_doc_without_criterion_heading_is_loudly_invisible(tmp_path: Path) -> None:
     rc, payload = _run(tmp_path, "PLAN-BLIND-01_x.md", BLIND)
     entry = payload["results"][0]
