@@ -293,6 +293,13 @@ class TSKV8Adapter(Taiji):
         self._world_dynamics: WorldDynamicsLearner | None = None
         self._workspace_router: WorkspaceRouter | None = None
         self._episodic_memory: EpisodicMemoryStore | None = None
+        #: PLAN-N4-04 §3 步骤 3：产品默认挂载。装配层次选**底座**（Taiji）而不是 Seed 包装层——
+        #: 前置探针实测 `attach_episodic_memory` 只在底座可得（`hasattr(Seed, …)` 为假），
+        #: 挂在底座才能让任何一条装配链（含 Seed）都拿到同一份默认位。
+        if self.config.episodic_memory_default_mount:
+            self.attach_episodic_memory(
+                EpisodicMemoryStore(capacity=int(self.config.episodic_memory_capacity))
+            )
         self._semantic_memory: SemanticMemoryLearner | None = None
         self._structured_semantic_learner: StructuredSemanticLearner | None = None
         self._last_structured_semantic_result: StructuredSemanticResult | None = None
@@ -7117,6 +7124,18 @@ class TSKV8Adapter(Taiji):
             raise TypeError("store must be an EpisodicMemoryStore or None")
         self._episodic_memory = store
 
+    @property
+    def episodic_memory_default_mount(self) -> bool:
+        """默认位自述：值**读自 config 本身**，不是另抄一份常量。"""
+
+        return bool(self.config.episodic_memory_default_mount)
+
+    @property
+    def episodic_memory_mounted(self) -> bool:
+        """实际挂载自述：J-N4d-1 要的就是这两枚能对上。"""
+
+        return self._episodic_memory is not None
+
     def attach_semantic_memory(self, learner: SemanticMemoryLearner | None) -> None:
         """Attach the slow semantic learner fed by Taiji episodic outcomes."""
 
@@ -8138,9 +8157,7 @@ class TSKV8Adapter(Taiji):
         if feed_world_state and result.world_state is not None:
             # settle_action requires the world's tick to advance Taiji's by
             # exactly one; the environment's own step count is not that clock.
-            world_state = replace(
-                result.world_state, tick=self._cognitive_state.world.tick + 1
-            )
+            world_state = replace(result.world_state, tick=self._cognitive_state.world.tick + 1)
         taiji_outcome = self.settle_action(
             result.reward,
             learn=learn,

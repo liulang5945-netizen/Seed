@@ -63,11 +63,14 @@ def _observation_digest(model: Seed, symbols: bytes) -> str:
     return str(content_digest({"rows": rows}))
 
 
-def test_config_still_has_no_default_mount_field_and_discovery_is_not_blind() -> None:
+def test_field_discovery_works_in_both_directions() -> None:
+    #: 这支原本是"实施前现状事实"（断言字段**不存在**）。实施提交（PLAN-N4-04 §3 步骤 3）
+    #: 把那条事实翻面了，所以这里重推成**双向可判**：已存在的读到、不存在的读不到。
+    #: 探针的价值在于"取法不是瞎的"，这句话在翻面前后都成立，断言形状因此可以换、判据不换。
     names = {field.name for field in dataclasses.fields(TaijiConfig)}
-    assert "episodic_memory_default_mount" not in names
-    #: 同一条取法必须能读到已存在的字段——否则"没有"只是因为我的眼睛不好使。
-    assert {"episodic_learning_rate", "episodic_write_repeats"} <= names
+    assert "episodic_memory_default_mount" in names
+    assert "episodic_learning_rate" in names
+    assert "episodic_memory_default_mount_not_a_real_field" not in names
 
 
 def test_observation_digest_reproduces_bit_for_bit_on_two_fresh_models() -> None:

@@ -341,6 +341,10 @@ class TaijiConfig:
     episodic_learning_rate: float = 0.60
     episodic_readout_learning_rate: float = 0.85
     episodic_write_repeats: int = 2
+    #: PLAN-N4-04 J-N4d-1：产品默认挂载位（缺省关＝装机行为逐位不变）。
+    episodic_memory_default_mount: bool = False
+    #: 挂载为真时 Taiji 自建 store 的容量；只在默认挂载位为真时被读。
+    episodic_memory_capacity: int = 1024
     cortical_readout_learning_rate: float = 0.30
     cortical_readout_repeats: int = 8
     readout_episode_saturation: float = 8.0
@@ -469,6 +473,10 @@ class TaijiConfig:
             raise ValueError("memory_iterations must be positive")
         if self.episodic_write_repeats <= 0:
             raise ValueError("episodic_write_repeats must be positive")
+        if self.episodic_memory_capacity <= 0:
+            raise ValueError("episodic_memory_capacity must be positive")
+        if not isinstance(self.episodic_memory_default_mount, bool):
+            raise TypeError("episodic_memory_default_mount must be a bool")
         if self.cortical_readout_repeats <= 0:
             raise ValueError("cortical_readout_repeats must be positive")
         if self.memory_time_dim < 2 or self.memory_time_dim % 2:
