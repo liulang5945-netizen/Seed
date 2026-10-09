@@ -6,6 +6,9 @@
   disabled: true
 
 - id: llm-deepseek
+  # The shipped composition withdraws this adapter; the fixture exercises it, so
+  # the row is opted back in here rather than carried by the product.
+  disabled: false
   config:
     baseURL: !!js process.env.DSH_SNAPSHOT_BASE_URL
     thinking: enabled

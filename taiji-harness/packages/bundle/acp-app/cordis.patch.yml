@@ -17,8 +17,8 @@
       name: '@taiji/dsh-acp'
       inject: [acpAppStartup]
       config:
-        provider: deepseek-official
-        model: deepseek-v4-flash
+        provider: taiji-local
+        model: taiji-local
 
 - id: hmr
   disabled: true

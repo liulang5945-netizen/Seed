@@ -2,12 +2,9 @@
 # adapter nor a settings-directory entry for `taiji-local`. The keyless first-run lanes
 # own a "no usable route" premise, so they must not inherit it from whatever runtime
 # happens to answer on the host.
-# The shipped default now rides the Taiji route (G5-D3, owner-approved 2026-09-27);
-# with the row withdrawn that would leave these DeepSeek-premise lanes on a route
-# nothing serves, so pin the default back onto DeepSeek for exactly this premise.
+# The shipped default rides that same Taiji route (G5-D3, owner-approved 2026-09-27),
+# so withdrawing the row reproduces the product's real down posture: a saved default
+# that names a route nothing serves. No re-pin here — the composition has no other
+# model route to point at.
 - id: llm-taiji
   disabled: true
-- id: agent-default-model
-  config:
-    provider: deepseek-official
-    model: deepseek-flash

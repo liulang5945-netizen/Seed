@@ -8,8 +8,8 @@
 // replay (default, keyless: normally disables the direct DeepSeek rows and
 // inserts dsh-llm-replay in providers mode), record (real adapter + key,
 // harvests fixtures from live session memory), refresh (keyless replay that
-// rewrites goldens). A first-run option keeps the real adapter mounted while
-// masking its credential, without making a model call.
+// rewrites goldens). A shipped-routes option adds no fixture route at all, so
+// a scenario sees exactly the routes the shipped bundles register.
 //
 // Composition divergences from `dsh web`, all deliberate, all via include
 // patches after the shipped bundle layers, over the SAME tree (never a
@@ -251,11 +251,12 @@ const RECORD_DEEPSEEK_MODELS = [
 ]
 
 /**
- * The routes a shipped composition always has, with no ability to stream.
- * A fixture-less keyless scenario issues no model calls, but its tree must
- * still answer `listProviders()` — surfaces legitimately gate on whether any
- * adapter serves a session's route, and an empty registry is a test artifact,
- * not a product state.
+ * The routes a replayed fixture answers, with no ability to stream. These are
+ * test-owned identities: the shipped composition registers its one model route
+ * from the local Taiji runtime, and a scenario that wants that posture passes
+ * `shippedRoutesOnly`. A fixture-less keyless scenario issues no model calls,
+ * but surfaces legitimately gate on whether any adapter serves a session's
+ * route, so the tree answers `listProviders()` with the fixture catalog.
  */
 class RouteOnlyAdapter extends LlmAdapter {
   constructor(private readonly providers: typeof REPLAY_PROVIDERS) {
@@ -427,11 +428,13 @@ export interface LaunchOptions {
    */
   toolsMode?: 'native' | 'ptc' | 'both'
   /**
-   * Keep the shipped DeepSeek adapter mounted while masking the process
-   * environment's DEEPSEEK_API_KEY for this scaffold lifetime. This is the
-   * keyless first-run configuration lane; the default disables the adapter.
+   * Boot the composition with no fixture route added and no default-model pin,
+   * so the tree carries exactly the routes the shipped bundles register. The
+   * product's only route is the local Taiji runtime, which registers while its
+   * own health endpoint answers; a scenario that needs an answering runtime
+   * starts one, and a scenario that needs none sees an empty registry.
    */
-  deepSeekMissingCredential?: boolean
+  shippedRoutesOnly?: boolean
   /** Leave the current welcome notice pending; ordinary scenarios pre-acknowledge it before browser boot. */
   welcomeNoticePending?: boolean
   /** Leave first-use Workspace initialization eligible; ordinary scenarios start after the default was removed. */
@@ -557,21 +560,6 @@ export async function launchWebScaffold(options: LaunchOptions = {}): Promise<We
       throw new Error('web e2e record mode needs DEEPSEEK_API_KEY (env or repo-root .env)')
     }
   }
-  if (mode === 'record' && options.deepSeekMissingCredential === true) {
-    throw new Error('deepSeekMissingCredential is a keyless replay/refresh option')
-  }
-  const maskDeepSeekCredential = mode !== 'record' && options.deepSeekMissingCredential === true
-  const originalDeepSeekCredential = process.env.DEEPSEEK_API_KEY
-  let credentialEnvironmentRestored = false
-  const restoreCredentialEnvironment = (): void => {
-    if (credentialEnvironmentRestored || !maskDeepSeekCredential) return
-    credentialEnvironmentRestored = true
-    if (originalDeepSeekCredential === undefined) {
-      Reflect.deleteProperty(process.env, 'DEEPSEEK_API_KEY')
-    } else {
-      process.env.DEEPSEEK_API_KEY = originalDeepSeekCredential
-    }
-  }
   const workspaceCwd = await realpath(await mkdtemp(join(tmpdir(), 'dsh-web-e2e-ws-')))
   // Isolated harness home: the settings/credentials rows resolve $DSH_HOME
   // paths at load, and an in-process boot must NEVER touch the developer's
@@ -615,7 +603,6 @@ export async function launchWebScaffold(options: LaunchOptions = {}): Promise<We
     if (failures.length > 1) throw new AggregateError(failures, 'web scaffold temp-root setup failed')
     throw error
   }
-  if (maskDeepSeekCredential) Reflect.deleteProperty(process.env, 'DEEPSEEK_API_KEY')
 
   // The include patch set — the same layer stack the profile boot composes
   // (bundle patches in dsh.profile.bundles order), applied over the SAME empty root (a
@@ -637,7 +624,7 @@ export async function launchWebScaffold(options: LaunchOptions = {}): Promise<We
     // Without HMR the profile applies configuration changes at its next start.
     ...options.profile?.hmr === false ? [{ id: 'hmr', disabled: true }] : [],
     { id: 'session-log-deepseek', config: { enabled: false } },
-    ...options.deepSeekMissingCredential === true
+    ...options.shippedRoutesOnly === true
       ? []
       : [{ id: 'agent-default-model', config: { provider: 'deepseek-official', model: 'deepseek-v4-flash' } }],
     ...extraOverlayPatches,
@@ -746,7 +733,7 @@ export async function launchWebScaffold(options: LaunchOptions = {}): Promise<We
       }],
     {
       id: 'llm-deepseek',
-      disabled: mode !== 'record' && !maskDeepSeekCredential,
+      disabled: mode !== 'record',
       ...mode === 'record'
         ? { config: { models: RECORD_DEEPSEEK_MODELS } }
         : {},
@@ -943,12 +930,13 @@ export async function launchWebScaffold(options: LaunchOptions = {}): Promise<We
         ...(replayChildFixtures === undefined ? {} : { childFiles: replayChildFixtures }),
         ...(options.paceMs === undefined ? {} : { paceMs: options.paceMs }),
       })
-    } else if (mode !== 'record' && options.deepSeekMissingCredential !== true) {
-      // No fixture and no shipped adapter would leave the tree with ZERO
-      // provider routes — a state no product composition has, and one the
-      // composer refuses to type into. Register the same routes
-      // a fixture would, with streaming that still fails loud: the scenario
-      // issues no model calls, and one that slipped in must not pass quietly.
+    } else if (mode !== 'record' && options.shippedRoutesOnly !== true) {
+      // Ordinary scenarios exercise model-bearing surfaces without a live
+      // runtime, so this adapter supplies the routes a fixture replays. They
+      // are test-owned identities: the shipped composition's only model route
+      // is the local Taiji runtime, and it registers while that runtime's
+      // health endpoint answers. Streaming still fails loud, because a
+      // scenario that declared no replay fixture must not answer quietly.
       ctx.effect(() => ctx.llm.registerAdapter(
         replayProviders(options.replayContextWindow).map(provider => provider.id),
         new RouteOnlyAdapter(replayProviders(options.replayContextWindow)),
@@ -984,7 +972,6 @@ export async function launchWebScaffold(options: LaunchOptions = {}): Promise<We
     if (publicProxy !== undefined) {
       await publicProxy.close().catch((closeError: unknown) => cleanupFailures.push(closeError))
     }
-    restoreCredentialEnvironment()
     restoreSkillRootEnvironment()
     if (cleanupFailures.length > 0) {
       throw new AggregateError([error, ...cleanupFailures], 'web scaffold setup failed and cleanup was incomplete')
@@ -1066,7 +1053,6 @@ export async function launchWebScaffold(options: LaunchOptions = {}): Promise<We
           }
         }
       } finally {
-        restoreCredentialEnvironment()
         restoreSkillRootEnvironment()
       }
       if (failures.length > 0) throw new AggregateError(failures, 'web scaffold teardown failed')

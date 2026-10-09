@@ -3,6 +3,8 @@
 # store and ACP bridge carry two uploaded images into one model request.
 - id: llm-deepseek
   name: '@taiji/dsh-llm-deepseek'
+  # This fixture exercises the adapter's image-offload path directly.
+  disabled: false
   config:
     apiKeyEnv: DSH_SNAPSHOT_API_KEY
     baseURL: !!js process.env.DSH_SNAPSHOT_BASE_URL

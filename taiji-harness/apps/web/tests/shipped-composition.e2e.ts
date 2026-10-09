@@ -525,9 +525,9 @@ afterEach(async () => {
 })
 
 it('assembles the shipped Web transport, catalog, guidance, and defaults', async () => {
-  scaffold = await launchWebScaffold({ deepSeekMissingCredential: true })
+  scaffold = await launchWebScaffold({ shippedRoutesOnly: true })
   const ctx = scaffold.ctx
-  expect(ctx.llm.listProviders().some(provider => provider.id === 'deepseek-messages')).toBe(false)
+  expect(ctx.llm.listProviders().map(provider => provider.id).filter(id => id.startsWith('deepseek'))).toEqual([])
   // The shipped default rides the credential-free Taiji route (G5-D3, owner-approved
   // 2026-09-27): a fresh profile's first message is servable without any API key.
   expect(ctx.agentDefaultModel.currentSelection()).toEqual({ provider: 'taiji-local', model: 'taiji-local' })
@@ -537,33 +537,12 @@ it('assembles the shipped Web transport, catalog, guidance, and defaults', async
   expect(index.headers.get('content-encoding')).toBe('gzip')
   expect(index.headers.get('vary')).toContain('Accept-Encoding')
   await index.body?.cancel()
-  expect(ctx.llm.providerRetryPolicy('deepseek-official')).toMatchInlineSnapshot(`
-    {
-      "initialDelayMs": 500,
-      "jitterRatio": 0.1,
-      "maxDelayMs": 10000,
-      "maxRetries": 5,
-      "mode": "normal",
-      "retryableCodes": [
-        "EMPTY_RESPONSE",
-        "RATE_LIMIT",
-        "SERVER",
-        "TIMEOUT",
-        "TRANSPORT",
-      ],
-    }
-  `)
-  await ctx.settings.update('llm-deepseek', {
-    retryPolicy: { mode: 'always', maxRetries: 5 },
-  })
-  expect(ctx.llm.providerRetryPolicy('deepseek-official')).toMatchInlineSnapshot(`
-    {
-      "initialDelayMs": 500,
-      "jitterRatio": 0.1,
-      "maxDelayMs": 10000,
-      "mode": "always",
-    }
-  `)
+  // The withdrawn adapter declares no configurable provider, so the Models page
+  // has no DeepSeek card to configure. `providerRetryPolicy` is not called here:
+  // it resolves through the registration table and throws for an unregistered
+  // route. The settings-write-to-retry-policy path is covered on `llm-pi-ai`
+  // below, in this same test.
+  expect(ctx.llm.listConfigurableProviders().map(entry => entry.provider)).not.toContain('deepseek-official')
   await ctx.settings.update('llm-pi-ai', {
     providers: {
       openai: {},
@@ -641,7 +620,7 @@ it('assembles the shipped Web transport, catalog, guidance, and defaults', async
   const commandHandle = await scaffold.ctx.agents.create({
     sessionId: SessionId('shipped-command-catalog'),
     meta: { cwd: scaffold.workspaceCwd },
-    agentOptions: { provider: 'deepseek-official', model: 'deepseek-v4-flash' },
+    agentOptions: { provider: 'taiji-local', model: 'taiji-local' },
   })
   try {
     expect(scaffold.ctx.commands.list(commandHandle.agent)).toContainEqual({
@@ -656,7 +635,7 @@ it('assembles the shipped Web transport, catalog, guidance, and defaults', async
 }, 120_000)
 
 it('ships PTC with run_code but without the general workflow SDK binding', async () => {
-  scaffold = await launchWebScaffold({ deepSeekMissingCredential: true })
+  scaffold = await launchWebScaffold({ shippedRoutesOnly: true })
   const ctx = scaffold.ctx
   const handle = await ctx.agents.create({
     sessionId: SessionId('shipped-ptc-composition'),

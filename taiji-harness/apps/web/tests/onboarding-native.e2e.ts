@@ -21,7 +21,7 @@ describe.skipIf(MODE === 'record').each([false, true])('web e2e: native credenti
 
   beforeAll(async () => {
     scaffold = await launchWebScaffold({
-      deepSeekMissingCredential: true,
+      shippedRoutesOnly: true,
       welcomeNoticePending: true,
       extraOverlayPath: [
         TAIJI_ROW_ABSENT_OVERLAY,
@@ -61,8 +61,11 @@ describe.skipIf(MODE === 'record').each([false, true])('web e2e: native credenti
       await openSettings(page, 'zh')
       const settings = page.getByRole('dialog', { name: '设置', exact: true })
       await settings.getByRole('button', { name: '模型', exact: true }).click()
-      await settings.getByLabel('API 密钥', { exact: true }).waitFor()
+      await settings.getByRole('button', { name: '添加模型提供商' }).waitFor()
       expect(await page.getByRole('dialog', { name: '添加一个 API Key 开始使用' }).count()).toBe(0)
+      // The row itself is withdrawn here, so even the runtime step has nothing
+      // to declare: only a route that is present and unanswered earns that card.
+      expect(await page.getByRole('dialog', { name: '启动本地 Taiji 运行时' }).count()).toBe(0)
       expect(await welcome.count()).toBe(0)
       expect(await readFile(credentialPath, 'utf8')).toBe(credentials)
       const aria = await captureStableAria(page, '[role="dialog"]', scaffold.workspaceCwd)

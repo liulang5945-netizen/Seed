@@ -111,8 +111,11 @@
     - id: authorization
       name: '@taiji/dsh-authorization'
 
+    # Withdrawn with the DeepSeek model route below: nothing serves an account
+    # lifetime, so no Platform credential is ever published to the shell.
     - id: deepseek-account
       name: '@taiji/dsh-deepseek-account-platform'
+      disabled: true
       config:
         desktopPlatform: !!js "ctx.get('profileContext')?.name === 'desktop' && ['darwin', 'win32'].includes(process.platform) ? process.platform : null"
 
@@ -520,12 +523,12 @@
     - id: fs-sandbox
       name: '@taiji/dsh-fs-sandbox'
 
-    # The native DeepSeek adapter. No key or endpoint is inlined: both resolve per
-    # request from the `llm-deepseek:` settings section over this entry, with the
-    # key coming from the credential store below. Thinking defaults are a deployment
-    # choice.
+    # The native DeepSeek adapter is withdrawn: the shipped product serves its
+    # one model route from the local Taiji runtime below, so no request resolves
+    # a key or endpoint through this entry.
     - id: llm-deepseek
       name: '@taiji/dsh-llm-deepseek'
+      disabled: true
 
     # The Taiji local-runtime adapter: this fork's own language organ mounted as
     # one more provider route beside DeepSeek. The endpoint defaults to the

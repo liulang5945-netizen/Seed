@@ -483,6 +483,7 @@ Every package below exports a Cordis plugin that a bundle patch can name in a Lo
 | `@taiji/dsh-web-search-deepseek` | yes | DeepSeek-backed search provider (native web_search via the Anthropic-compatible API) for the DeepSeek Harness web capability seam (ctx.web) |
 | `@taiji/dsh-web-search-exa` | yes | Exa-backed search provider for the DeepSeek Harness web capability seam (ctx.web) |
 | `@taiji/dsh-web-search-perplexity` | yes | Perplexity-backed search provider for the DeepSeek Harness web capability seam (ctx.web) |
+| `@taiji/dsh-web-search-scraper` | yes | Native scraper search provider (no credential; fetches and parses search-engine result pages) for the DeepSeek Harness web capability seam (ctx.web) |
 
 ## webhook
 

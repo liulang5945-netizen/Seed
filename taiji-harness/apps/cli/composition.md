@@ -174,8 +174,8 @@ flowchart LR
   cfg --> plugin_dsh_base_repeat_tool_reminder
   plugin_dsh_base_web["web<br/>@taiji/dsh-web"]
   cfg --> plugin_dsh_base_web
-  plugin_dsh_base_web_search_deepseek["web-search-deepseek<br/>@taiji/dsh-web-search-deepseek"]
-  cfg --> plugin_dsh_base_web_search_deepseek
+  plugin_dsh_base_web_search_scraper["web-search-scraper<br/>@taiji/dsh-web-search-scraper"]
+  cfg --> plugin_dsh_base_web_search_scraper
   plugin_dsh_base_web_fetch_http["web-fetch-http<br/>@taiji/dsh-web-fetch-http"]
   cfg --> plugin_dsh_base_web_fetch_http
   plugin_dsh_base_tool_web["tool-web<br/>@taiji/dsh-tool-web"]
@@ -281,7 +281,7 @@ flowchart LR
 | `tool-ralph` | `@taiji/dsh-tool-ralph` |
 | `repeat-tool-reminder` | `@taiji/dsh-repeat-tool-reminder` |
 | `web` | `@taiji/dsh-web` |
-| `web-search-deepseek` | `@taiji/dsh-web-search-deepseek` |
+| `web-search-scraper` | `@taiji/dsh-web-search-scraper` |
 | `web-fetch-http` | `@taiji/dsh-web-fetch-http` |
 | `tool-web` | `@taiji/dsh-tool-web` |
 | `mcp-resources` | `@taiji/dsh-mcp-resources` |

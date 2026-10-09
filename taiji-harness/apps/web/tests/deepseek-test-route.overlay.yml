@@ -1,0 +1,8 @@
+# The keyless transport lanes intercept a DeepSeek-shaped SSE wire and name
+# `deepseek-official` to `session/selectModel`, so the test owns that provider. The
+# shipped composition withdraws `llm-deepseek` — the product serves its one model
+# route from the local Taiji runtime — while selecting a route requires it to be
+# registered. Re-enabling it here is a fixture premise about the wire format, not a
+# claim that the shipped product mounts the adapter.
+- id: llm-deepseek
+  disabled: false

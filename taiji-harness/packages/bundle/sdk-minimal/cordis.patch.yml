@@ -25,6 +25,7 @@
 
     - id: llm-deepseek
       name: '@taiji/dsh-llm-deepseek'
+      disabled: true
       config:
         apiKeyEnv: DEEPSEEK_API_KEY
         defaultContextWindow: !!js Number(process.env.DSH_CONTEXT_WINDOW ?? 1000000)
