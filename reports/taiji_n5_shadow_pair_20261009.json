@@ -89,11 +89,17 @@
       "control": 0.006325
     },
     "delta_treated_minus_control": -0.0004000000000000002,
+    "bands": {
+      "treated": 0.00225,
+      "control": 0.00205
+    },
+    "ruler_usable": true,
     "exceeds_line": false,
-    "ruler_usable": "undefined_in_frozen_prereg_needs_version_bump",
-    "j_n5b_4": "delta_published_ruler_usable_undefined"
+    "within_noise_band": true,
+    "verdict": "not_holds",
+    "j_n5b_4": "not_holds"
   },
-  "j_n5b_4": "delta_published_ruler_usable_undefined",
+  "j_n5b_4": "not_holds",
   "j_n5b_5": "unverified_retention_lane_not_run",
   "j_n5b_6": "not_adjudicable_until_2_3_4_5_are_all_measured",
   "rc": 0

@@ -238,6 +238,8 @@ def _metric_file(
     treated_means: list[float],
     control_means: list[float],
     complete_treated: bool = True,
+    band_treated: float = 0.01,
+    band_control: float = 0.01,
 ) -> Path:
     import json as _json
 
@@ -249,10 +251,12 @@ def _metric_file(
                     "arm_A": {
                         "acc_segment_means": treated_means,
                         "measurement_complete": complete_treated,
+                        "acc_noise_band_adjacent_max": band_treated,
                     },
                     "arm_B": {
                         "acc_segment_means": control_means,
                         "measurement_complete": True,
+                        "acc_noise_band_adjacent_max": band_control,
                     },
                 }
             }
@@ -311,3 +315,34 @@ def test_missing_metric_file_keeps_the_conjunct_unverified(tmp_path: Path) -> No
     assert payload["metric_lane"]["j_n5b_4"] == "unverified_no_metric_file"
     #: 合取条件永远不许在缺任一支时给出「有贡献」。
     assert payload["j_n5b_6"] == "not_adjudicable_until_2_3_4_5_are_all_measured"
+
+
+def test_band_swallowing_the_line_voids_the_comparison(tmp_path: Path) -> None:
+    #: PLAN-N5-03 §2 第一支：过线界被噪声带吞掉 ⇒ 比较作废，既不写成立也不写不成立，
+    #: 且 rc 必须抬起（绿色判读不等于判完了）。delta 很大也一样作废。
+    metric = _metric_file(
+        tmp_path, [0.10, 0.90], [0.00, 0.10], band_treated=0.05, band_control=0.04
+    )
+    argv, out = _pair_args(tmp_path, [])
+    rc = JUDGE.main(argv + ["--n3a-pair-file", str(metric), "--line", "0.02"])
+    payload = json.loads(out.read_text(encoding="utf-8"))
+    lane = payload["metric_lane"]
+    assert lane["ruler_usable"] is False
+    assert lane["j_n5b_4"] == "ruler_unusable"
+    assert sorted(lane["swallowed_by"]) == ["control", "treated"]
+    assert "exceeds_line" not in lane
+    assert rc == 1
+
+
+def test_usable_ruler_publishes_verdict_and_resolution_note(tmp_path: Path) -> None:
+    #: 手推夹具：delta 0.001 既不过线也落在带内 ⇒ `not_holds` ＋"分辨不了这个量级"的提示。
+    #: 这条提示是**仪器分辨率陈述**，不是"影子无效应"——两者不许互换。
+    metric = _metric_file(tmp_path, [0.100, 0.102], [0.100, 0.100])
+    argv, out = _pair_args(tmp_path, [])
+    rc = JUDGE.main(argv + ["--n3a-pair-file", str(metric), "--line", "0.02"])
+    lane = json.loads(out.read_text(encoding="utf-8"))["metric_lane"]
+    assert lane["ruler_usable"] is True
+    assert lane["verdict"] == "not_holds"
+    assert lane["j_n5b_4"] == "not_holds"
+    assert lane["within_noise_band"] is True
+    assert rc == 0

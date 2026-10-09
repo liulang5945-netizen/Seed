@@ -222,11 +222,26 @@ def judge_metric_lane(
         base.setdefault("last_two_segment_mean", {})[side] = last_two
     delta = base["last_two_segment_mean"]["treated"] - base["last_two_segment_mean"]["control"]
     base["delta_treated_minus_control"] = delta
+    #: PLAN-N5-03 §1 的机械公式：`ruler_usable` **只看噪声带与过线界**，刻意不看 delta 的符号或大小
+    #: ⇒ 它不可能被用来把已经看到的 delta 救成「成立」或压成「不成立」。带取自 N3 仪器原样输出。
+    bands = {
+        "treated": float(treated.get("acc_noise_band_adjacent_max") or 0.0),
+        "control": float(control.get("acc_noise_band_adjacent_max") or 0.0),
+    }
+    base["bands"] = bands
+    band_max = max(bands["treated"], bands["control"])
+    ruler_usable = bands["treated"] > 0.0 and bands["control"] > 0.0 and line >= band_max
+    base["ruler_usable"] = bool(ruler_usable)
+    if not ruler_usable:
+        #: §2 第一支：这把尺答不了这个问题——既不写成立也不写不成立。
+        base["verdict"] = "ruler_unusable"
+        base["j_n5b_4"] = "ruler_unusable"
+        base["swallowed_by"] = [side for side, value in bands.items() if value >= line]
+        return base
     base["exceeds_line"] = bool(delta > line)
-    #: 冻结件没写 `ruler_usable` 的算法（PLAN-N5-02 §2 J-N5b-4 只说「必须先出版 ruler_usable 为真」）
-    #: ⇒ 这里不发明公式，只把可判的原始量摆出来，并把这一支标成待升版。
-    base["ruler_usable"] = "undefined_in_frozen_prereg_needs_version_bump"
-    base["j_n5b_4"] = "delta_published_ruler_usable_undefined"
+    base["within_noise_band"] = bool(abs(delta) < band_max)
+    base["verdict"] = "holds" if delta > line else "not_holds"
+    base["j_n5b_4"] = base["verdict"]
     return base
 
 
@@ -268,6 +283,13 @@ def main(argv: list[str] | None = None) -> int:
         if control_arm["j_n5b_1"] == "ran_not_measured":
             rc = max(rc, 2)
 
+    metric = judge_metric_lane(
+        Path(args.n3a_pair_file) if args.n3a_pair_file else None,
+        args.metric_role_treated,
+        args.metric_role_control,
+        float(args.line),
+    )
+
     pairing = judge_pairing(
         arms["treated"],
         control_arm,
@@ -276,13 +298,10 @@ def main(argv: list[str] | None = None) -> int:
     )
     if pairing["j_n5b_3"] == "invalid":
         rc = max(rc, 2)
-
-    metric = judge_metric_lane(
-        Path(args.n3a_pair_file) if args.n3a_pair_file else None,
-        args.metric_role_treated,
-        args.metric_role_control,
-        float(args.line),
-    )
+    #: PLAN-N5-03：尺不可用＝这次比较作废 ⇒ rc 必须抬起，
+    #: 否则一次"绿色"的判读会被读成"已经判完"。
+    if metric.get("j_n5b_4") == "ruler_unusable":
+        rc = max(rc, 1)
 
     payload = {
         "format": FORMAT,
