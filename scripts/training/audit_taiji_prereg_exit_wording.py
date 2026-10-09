@@ -34,6 +34,9 @@ CRITERION_MARKERS = ("出口", "判据", "J-", "J－")
 #: 作者换了叫法（"约定/口径/处置"），门对整份件隐形 ⇒ 把"隐形"从静默变成 rc=2 的响亮失败。
 #: 只认**二级及以下**标题：文档大标题里顺带出现"判据"两个字不算一节判据段
 #: （写这条的测时我自己就撞过一次——件名里写着"不肯说判据"就把标记式扫描糊过去了）。
+#: **〔2026-10-09 DEBT-G74① 收窄〕**：本守卫只在**标记通道也没扫够**（`criterion_lines < floor`）时
+#: 才判隐形；两条通道是并集关系（见 `scan_text()`），标题缺位而标记句已过线的件是**可见**的
+#: （出 `headingless_visible` 披露），否则会把"作者没写判据标题"误报成"这份件没有可判内容"。
 CRITERION_HEADING_WORDS = ("判据", "出口", "验收")
 HEADING_LINE = re.compile(r"^#{2,6} \s*(.*)$")
 
@@ -165,11 +168,19 @@ def main(argv: list[str] | None = None) -> int:
             #: 存在性检查走**标题**，不走"某行有没有写过判据这三个字"。
             headings = criterion_headings(raw_text)
             entry["criterion_headings"] = len(headings)
-            if not headings:
+            #: DEBT-G74①（㊵-623 冻的设计结论）：「没有判据标题」与「判据面太薄」是两件事。
+            #: 旧写法只看前者 ⇒ `criterion_lines=15/8` 这种**早已过线**的件被报成整份隐形
+            #: （全集 42 份实测 6 枚 invisible 里有 2 枚属此类）。隐形档改成**合取**：
+            #: 标题缺位**且**标记通道扫到 `< floor` 才叫隐形；标题缺位但已过线的，
+            #: 出 `headingless_visible` 披露继续走后面的正常分档（薄／含糊／干净）。
+            #: 副作用如实写明：`--min-criterion-lines 0` 会同时关掉隐形档（0＝不设限）。
+            if not headings and scan["criterion_lines"] < floor:
                 entry["status"] = "invisible_criterion_surface"
                 rc = worse(rc, 2)
                 results.append(entry)
                 continue
+            if not headings:
+                entry["headingless_visible"] = True
         if scan["criterion_lines"] == 0:
             entry["status"] = "no_criterion_section"
             rc = worse(rc, 2)

@@ -66,6 +66,21 @@ LEDGER = """# 台账一枚（不是预注册）
 【㊵-1 这条记录写着"判据"两个字，但它没有判据节。】
 """
 
+#: DEBT-G74① 的另一半夹具：**没有**判据标题，但标记通道能扫到 ≥ 下限的判据句。
+#: 旧实现把它判成 rc=2 `invisible_criterion_surface`（＝说这份件没有可判内容），
+#: 而全集 42 份里有两枚正是这种（`criterion_lines=15`／`8`、`criterion_headings=0`）。
+HEADLESS_RICH = """# PLAN-HEADLESS-01 · 标题不叫判据，可判据句写满
+
+## 1. 约定
+
+- 判据：`tau >= 0.65` 才算达成。
+- J-1：达成 ⇒ 出版候选值。
+- J-2：不达成 ⇒ 出版上界。
+- J-3：分不清 ⇒ 登记 unverified。
+- J-4：两臂同结论才算有读数。
+- J-5：任一支缺键 ⇒ fail-closed。
+"""
+
 
 def _run(tmp_path: Path, name: str, text: str, *extra: str) -> tuple[int, dict]:
     doc = tmp_path / name
@@ -95,6 +110,27 @@ def test_plan_doc_with_criterion_heading_scans_normally(tmp_path: Path) -> None:
     assert entry["criterion_headings"] == 2
     assert entry["status"] == "ok"
     assert entry["vague_word_lines_unpinned"] == 0
+
+
+def test_headingless_rich_surface_is_visible_not_invisible(tmp_path: Path) -> None:
+    #: DEBT-G74① 的"改后必须为 0"那一侧：标题缺位但判据句已过线 ⇒ 可见，并出披露键。
+    rc, payload = _run(tmp_path, "PLAN-HEADLESS-01_x.md", HEADLESS_RICH)
+    entry = payload["results"][0]
+    assert entry["criterion_headings"] == 0, entry
+    assert entry["criterion_lines"] >= entry["criterion_lines_floor"], entry
+    assert entry.get("headingless_visible") is True, entry
+    assert entry["status"] == "ok", entry
+    assert rc == 0, entry
+
+
+def test_headingless_and_thin_stays_invisible(tmp_path: Path) -> None:
+    #: "改前后都必须红"那一侧——防我把合取写成恒真：既无标题、判据句又薄 ⇒ 仍 rc=2。
+    rc, payload = _run(tmp_path, "PLAN-BLIND-02_x.md", BLIND)
+    entry = payload["results"][0]
+    assert entry["criterion_lines"] < entry["criterion_lines_floor"], entry
+    assert "headingless_visible" not in entry
+    assert entry["status"] == "invisible_criterion_surface"
+    assert rc == 2, entry
 
 
 def test_ambiguous_wording_still_hits_the_rc1_channel(tmp_path: Path) -> None:
