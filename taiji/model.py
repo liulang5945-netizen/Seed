@@ -3203,6 +3203,7 @@ class Taiji:
         utf8_strict: bool = False,
         repetition_penalty: float = 0.0,
         repetition_window: int = 8,
+        forced_feed: bytes | None = None,
     ) -> bytes:
         """Generate from the raw-byte predictive path.
 
@@ -3215,6 +3216,14 @@ class Taiji:
         收尾截掉悬空前缀 ⇒ **输出按构造可解码**。默认 False ⇒ 逐位走现状路径
         （基底/仪器/全部既有读数的口径不动）。边界符恒合法（停止是停止的权力；
         停在字符中间则由收尾截断兜底）。
+
+        ``forced_feed``（DEBT-G62 ①，默认 None ⇒ 逐位走现状路径）：**逐字节喂入指定序列**——
+        发射环前 `len(forced_feed)` 步不采样，直接把指定字节当作"已发射"的那个符号：
+        计入 `length`、照常走 `observe`（状态真的吃到这些字节）、照常进重复惩罚计数与 UTF-8 跟踪；
+        喂完后剩余步数回到正常采样。与把同样字节写进 `prompt` 的差别只在发射位置
+        （forced 走的是答复相的证据窗口计数，prompt 走的是题面段）。
+        forced 字节**绕过** `utf8_strict` 掩码与采样（调用方指哪打哪），但边界符照旧有停止权力
+        （`stop_at_boundary=True` 时喂进边界字节同样终止）。
         """
 
         if length < 0:
@@ -3229,6 +3238,16 @@ class Taiji:
             raise ValueError("repetition_window cannot be negative")
         if repetition_penalty > 0.0 and repetition_window == 0:
             raise ValueError("repetition_penalty needs a positive repetition_window")
+        if forced_feed is not None:
+            if not isinstance(forced_feed, (bytes, bytearray)):
+                raise TypeError("forced_feed must be bytes or bytearray")
+            if len(forced_feed) == 0:
+                raise ValueError(
+                    "forced_feed cannot be empty; omit the parameter to make no forced feed"
+                )
+            if any(byte < 0 or byte > 255 for byte in forced_feed):
+                raise ValueError("forced_feed bytes must be within 0..255")
+            forced_feed = bytes(forced_feed)
         if (boundary is None) != (authorization is None):
             raise ValueError("boundary and authorization must be supplied together")
         if not isinstance(response_start, bool):
@@ -3345,6 +3364,7 @@ class Taiji:
             if response_phase:
                 self.begin_response_phase()
             utf8_remaining, utf8_lead = 0, 0
+            forced_cursor = 0
             for _ in range(length):
                 probabilities = (
                     self.response_start_probabilities()
@@ -3384,6 +3404,11 @@ class Taiji:
                     )
                 else:
                     next_symbol = int(probabilities.argmax().item())
+                if forced_feed is not None and forced_cursor < len(forced_feed):
+                    #: DEBT-G62 ①：forced 步不采样——指定字节就是这一步的发射，
+                    #: 但仍走下方的 observe/计数/UTF-8 跟踪（状态真的吃到这些字节）。
+                    next_symbol = forced_feed[forced_cursor]
+                    forced_cursor += 1
                 if next_symbol == self.config.boundary_symbol and stop_at_boundary:
                     break
                 if not 0 <= next_symbol <= 255:
