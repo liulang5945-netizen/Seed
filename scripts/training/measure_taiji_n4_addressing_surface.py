@@ -226,12 +226,41 @@ def measure(
     }
 
 
+def _faces_provenance(path: str | None) -> dict[str, Any]:
+    """把随材料的来源自述原样搬进报告；缺件＝`absent`，不猜、不用仪器自己的档位代答。"""
+    if path is None:
+        return {"status": "absent", "faces_meta": None}
+    meta_path = Path(path)
+    if not meta_path.is_file():
+        return {"status": "missing_file", "faces_meta": str(meta_path)}
+    raw = json.loads(meta_path.read_text(encoding="utf-8"))
+    keep = (
+        "format",
+        "mount_layer",
+        "product_default_mounted",
+        "write_trigger",
+        "cue_source",
+        "cue_dim",
+        "episodic_writes",
+        "store_write_call_sites_this_file",
+    )
+    out: dict[str, Any] = {"status": "present", "faces_meta": str(meta_path)}
+    out.update({key: raw.get(key) for key in keep})
+    return out
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         description="N4 寻址面仪器（PLAN-N4-01：母量 wrong_top1_rate，只读零训练）"
     )
     parser.add_argument("--materials", required=True, help="名册 JSONL：memory_id + cue")
     parser.add_argument("--queries", required=True, help="查询 JSONL：cue + expected_memory_id")
+    parser.add_argument(
+        "--faces-meta",
+        default=None,
+        help="可选：随材料的来源自述件（如 `faces_meta.json`）。它的字段被**原样转述**进 "
+        "`faces_provenance`，不替换本仪器自己那把库的 mount_layer——两者不许互相代答（PLAN-N4-05 J-N4e-5）。",
+    )
     parser.add_argument("--capacity", type=int, default=1024, help="库容量（必须为正）")
     parser.add_argument("--limit", type=int, default=3, help="每次取回条数（必须为正）")
     parser.add_argument("--out-report", required=True, help="读数件落盘路径")
@@ -283,6 +312,8 @@ def main(argv: list[str] | None = None) -> int:
 
     payload.update(
         {
+            #: 材料档位是**随件 meta 转述**的，不与自己那把库的 `mount_layer` 互换（J-N4e-5）。
+            "faces_provenance": _faces_provenance(args.faces_meta),
             "mount_layer": "harness",
             "mounted_by": "scripts/training/measure_taiji_n4_addressing_surface.py",
             "product_default_mounted": False,

@@ -32,6 +32,18 @@
   "noise_band_floor": 0.041666666666666664,
   "noise_band_adjacent_block_max": 0.0,
   "ruler_usable": false,
+  "faces_provenance": {
+    "status": "present",
+    "faces_meta": "output\\n4_product_tier\\faces_meta.json",
+    "format": "taiji-n4-product-tier-faces-v1",
+    "mount_layer": "product",
+    "product_default_mounted": true,
+    "write_trigger": "settle_action",
+    "cue_source": "percept.features 优先，缺则 cognitive_state.world.latent",
+    "cue_dim": 32,
+    "episodic_writes": 120,
+    "store_write_call_sites_this_file": 0
+  },
   "mount_layer": "harness",
   "mounted_by": "scripts/training/measure_taiji_n4_addressing_surface.py",
   "product_default_mounted": false,
@@ -41,5 +53,5 @@
   "queries_path": "E:\\Seed\\output\\n4_product_tier\\product_queries.jsonl",
   "queries_sha256": "622ddbf1f041d38625b074abc0563594b7cc2b2498b69af06c453fca29573cf5",
   "rc": 0,
-  "wall_clock_ms": 151.088
+  "wall_clock_ms": 120.502
 }
