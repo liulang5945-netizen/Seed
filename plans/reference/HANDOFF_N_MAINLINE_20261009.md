@@ -103,3 +103,9 @@ N 主线的成功判据是**每项能力有冻结判据＋仪器化读数＋可�
    同步 `tests/taiji_native/test_n5_07_shadow_gate_adjudication_contract.py` 加一条
    「块内带计数器 ⇒ 读数出现在输出；不带 ⇒ 标 `unverified_missing_face`」的双向测（**两支都要走**）。
    做完它，`J-N5b-1` 才同时覆盖「结果侧五枚键」与「过程侧三枚计数」，下一轮正式跑无需人工抄数。
+   **〔㊵-621 已结〕** 五枚冻结键未扩（扩了会把已入库的 G/H 读数追认成不可判，那属升版），
+   三枚计数走 `PRESENCE_KEYS` 作披露；真件两组四臂皆对：旧臂 `absent_from_block` 且判据一字未变，
+   ㊵-618 配对臂治疗臂 `{11735,11735,23470}` 对对照臂 `{0,0,0}`（仍 `not_powered`）；
+   缺任一枚整组降级并点名（不许把「没写」读成「＝0」）。落点实际在 `judge_arm()` 之外多了一处：
+   新测另立一册 `tests/taiji_native/test_n5_09_presence_disclosure_contract.py`（4 支），
+   没有塞进本件原先指定的 `test_n5_07`——理由是那册已 16 支且钉的是判据分支，披露另册更清楚。
