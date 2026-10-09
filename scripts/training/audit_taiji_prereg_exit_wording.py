@@ -58,6 +58,34 @@ def scan_text(text: str) -> dict[str, Any]:
         for number, line in enumerate(lines, start=1)
         if any(marker in line for marker in CRITERION_MARKERS)
     ]
+    #: DEBT-G54 修法①：结构化扫描面——每条列表条目归属它上方最近的标题；
+    #: 该标题是判据/出口/验收 ⇒ 条目进扫描面（不依赖作者在行内写没写"判据/出口/J-"）。
+    #: 老通道（标记词挑行）保留，两路取并集；`structural_criterion_lines` 单独计数
+    #: （结构化面比标记词面宽是常态，落差大说明作者在判据段里用了别的叫法）。
+    structural_lines: list[tuple[int, str]] = []
+    criterion_heading_set = set(criterion_headings(text))
+    all_headings = [
+        number
+        for number, line in enumerate(text.splitlines(), start=1)
+        if HEADING_LINE.match(line.strip())
+    ]
+    for number, line in enumerate(text.splitlines(), start=1):
+        is_list_item = (
+            line.startswith("- ")
+            or line.startswith("* ")
+            or (len(line) > 2 and line[0].isdigit() and line[1:3] in (". ", ") "))
+        )
+        if not is_list_item:
+            continue
+        preceding = [h for h in all_headings if h < number]
+        if not preceding or preceding[-1] not in criterion_heading_set:
+            continue
+        structural_lines.append((number, line))
+    seen = {number for number, _ in criterion_lines}
+    for number, line in structural_lines:
+        if number not in seen:
+            criterion_lines.append((number, line))
+            seen.add(number)
     hits: list[dict[str, Any]] = []
     for number, line in criterion_lines:
         found = [word for word in VAGUE_WORDS if word in line]
@@ -71,6 +99,7 @@ def scan_text(text: str) -> dict[str, Any]:
             )
     return {
         "criterion_lines": len(criterion_lines),
+        "structural_criterion_lines": len(structural_lines),
         "vague_word_lines_unpinned": len(hits),
         "hits": hits,
     }
