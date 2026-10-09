@@ -19,6 +19,7 @@ import hashlib
 import json
 import statistics
 import sys
+import time
 from pathlib import Path
 from typing import Any
 
@@ -189,6 +190,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--limit", type=int, default=3, help="每次取回条数（必须为正）")
     parser.add_argument("--out-report", required=True, help="读数件落盘路径")
     args = parser.parse_args(argv)
+    started = time.perf_counter()
 
     def resolve(raw: str) -> Path:
         path = Path(raw)
@@ -256,6 +258,7 @@ def main(argv: list[str] | None = None) -> int:
     )
     target = resolve(args.out_report)
     target.parent.mkdir(parents=True, exist_ok=True)
+    payload["wall_clock_ms"] = round((time.perf_counter() - started) * 1000, 3)
     target.write_text(
         json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n"
     )

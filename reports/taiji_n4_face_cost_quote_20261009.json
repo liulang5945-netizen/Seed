@@ -39,5 +39,6 @@
   "materials_sha256": "238fe21db706176523823db5ad6edd0494c5ef97f2efa1d9180cfd101161ccf0",
   "queries_path": "E:\\Seed\\output\\n4_cost_quote\\queries.jsonl",
   "queries_sha256": "462f181d9944e0a2b99a5535f95dbe940b3369fdea0527d22bd62096db03b954",
-  "rc": 0
+  "rc": 0,
+  "wall_clock_ms": 798.608
 }
