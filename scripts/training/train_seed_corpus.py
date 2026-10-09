@@ -382,6 +382,7 @@ def run_training(
     developmental_bridge_gate: float | None = None,
     growth_minimum_pressure: float | None = None,
     episodic_mount: bool = False,
+    n5_shadow: bool = False,
     max_unique_documents: int | None = None,
 ) -> dict[str, float]:
     """Stream the corpus through ``Seed.observe`` with periodic persistence.
@@ -500,6 +501,13 @@ def run_training(
             },
         )
         atomic_save(envelope, checkpoint_path)
+        if adaptive_shadow is not None:
+            envelope["n5_shadow"] = {
+                "candidate_id": adaptive_shadow.candidate_id,
+                "bridge_id": adaptive_shadow.bridge_id,
+                "gate": adaptive_shadow.gate,
+                "unit_count": adaptive_shadow.unit_count,
+            }
         if episodic_store is not None:
             envelope["episodic_memory"] = episodic_store.checkpoint()
         if episodic_store is not None and episodic_store.count:
@@ -645,6 +653,7 @@ def run_training(
     observe_kwargs: dict[str, object] = {"learn": True, "readout": readout}
     episodic_store = None
     doc_pending: list[int] = []
+    adaptive_shadow = None
     if episodic_mount:
         episodic_store = EpisodicMemoryStore(capacity=1024)
         model.substrate.attach_episodic_memory(episodic_store)
@@ -882,6 +891,11 @@ def run_training(
                     doc_pending.clear()
                 elif symbol != boundary and len(doc_pending) < 32:
                     doc_pending.append(symbol)
+            if n5_shadow and adaptive_shadow is None:
+                decision = model.adaptive_residual_growth_decision
+                if decision is not None and decision.should_propose:
+                    model.propose_adaptive_residual_growth_candidate()
+                    adaptive_shadow = model.materialize_adaptive_residual_shadow()
             if step.prior_prediction is not None:
                 window_ticks += 1
                 window_correct += int(step.prior_prediction == symbol)
@@ -990,6 +1004,7 @@ def _build_parser() -> argparse.ArgumentParser:
     #: PLAN-N3-10 §2 形状 B：缺省＝不限（今天的形状逐位不变），给了值＝前 K 篇成池后循环重用。
     parser.add_argument("--max-unique-documents", type=int, default=None)
     parser.add_argument("--episodic-mount", action="store_true")
+    parser.add_argument("--n5-shadow", action="store_true")
     parser.add_argument("--checkpoint-every", type=int, default=50_000)
     parser.add_argument("--progress-every", type=int, default=10_000)
     parser.add_argument(
@@ -1328,6 +1343,7 @@ def main() -> None:
         growth_minimum_pressure=args.growth_minimum_pressure,
         max_unique_documents=args.max_unique_documents,
         episodic_mount=args.episodic_mount,
+        n5_shadow=args.n5_shadow,
     )
     print(json.dumps(summary, ensure_ascii=False))
     #: DEBT-G14②：操作侧曾拿着一个 **0 字节的 `run.log`** 判断"这轮跑到哪了"——空文件比没有更误导。
