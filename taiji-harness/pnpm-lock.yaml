@@ -2100,7 +2100,7 @@ importers:
         version: link:../../web/web-fetch-http
       '@taiji/dsh-web-search-scraper':
         specifier: workspace:^
-        version: link:../../web/web-search-deepseek
+        version: link:../../web/web-search-scraper
       '@taiji/dsh-workflow-ptc':
         specifier: workspace:^
         version: link:../../workflow/workflow-ptc
