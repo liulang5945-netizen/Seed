@@ -43,6 +43,10 @@ REQUIRED_KEYS = (
     "candidate_utility",
     "candidate_counterfactual_utility",
 )
+
+#: ㊵-621：过程侧在场计数器（㊵-618 落盘）。它们是**披露**，不是 J-N5b-1 的判据成员——
+#: 把五枚冻结键扩成八枚会把已入库的 G/H 读数追认成 `ran_not_measured`，那是改判据而不是加读数。
+PRESENCE_KEYS = ("shadow_forward_hits", "shadow_learn_hits", "shadow_branch_hits")
 #: 四元组（实际五维）逐条从**面头**取，不从命令行取：臂间差异只能来自现场，不能来自我的转述。
 QUADRUPLE = (
     ("seed", ("seed",)),
@@ -91,6 +95,14 @@ def judge_arm(name: str, checkpoint: Path) -> dict[str, Any]:
         value = block[key]
         out[key] = None if value is None else float(value)
     out["candidate_id"] = str(block.get("candidate_id", ""))
+    #: ㊵-621：在场性仍按 `'k' in block` 判、取值按现读，缺任一枚就整组标 `absent_from_block`
+    #: （不许把"没写计数器"读成"被喂了 0 次"——那是 ㊵-590 那族 `get()` 假缺席的再命中）。
+    presence = {key: block[key] for key in PRESENCE_KEYS if key in block}
+    out["presence_counters"] = {
+        "status": "present" if len(presence) == len(PRESENCE_KEYS) else "absent_from_block",
+        "missing": [key for key in PRESENCE_KEYS if key not in block],
+        "values": {key: int(presence[key]) for key in PRESENCE_KEYS if key in presence},
+    }
     powered = (out["gate"] or 0.0) > 0.0
     nonzero_utility = (out["candidate_utility"] or 0.0) != 0.0 or (
         out["candidate_counterfactual_utility"] or 0.0
