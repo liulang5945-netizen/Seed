@@ -39,6 +39,7 @@ MOTHER_PATH = PROJECT_ROOT / "checkpoints" / "seed_n2b_mother_20261008.pt"
 CANDIDATE_PATH = PROJECT_ROOT / "checkpoints" / "seed_n2b_candidate_20261008.pt"
 ROLLBACK_PATH = PROJECT_ROOT / "checkpoints" / "seed_n2b_rollback_20261008.pt"
 POWERUP2_REPORT = REPORT_DIR / "taiji_n2b_powerup_20261008.json"
+GUARD2_REPORT = REPORT_DIR / "taiji_n2b_guard_default_20261008.json"
 
 
 def _window_rows(model: Any, texts: list[str], dose: int) -> dict[str, float]:
@@ -84,7 +85,7 @@ def phase_guard2() -> int:
         "pass_id": report.get("pass_id"),
         "projection_records": (report.get("projection") or {}).get("records"),
     }
-    _write_report(REPORT_DIR / "taiji_n2b_guard_default_20261008.json", payload)
+    _write_report(GUARD2_REPORT, payload)
     print(
         f"guard_pass={payload['guard_pass']} digest_unchanged={checks['weight_digest_unchanged']}"
     )
@@ -243,10 +244,37 @@ def phase_powerup2() -> int:
     return code
 
 
+def _apply_run_tag(tag: str) -> None:
+    """把四枚落点名整体换一档（G-N2c-2：治疗档必须落**新名**，不许覆写 run-2 的证据）。
+
+    默认不给 ⇒ 名字与今天逐字相同（旧命令与既有件不受影响）；给了 tag 就在词干后追加 `_<tag>`，
+    母档／候选档／回滚档／两份报告一起换，免得只改一半造出"前后不同源"这种最难查的错。
+    """
+
+    if not tag:
+        return
+    global MOTHER_PATH, CANDIDATE_PATH, ROLLBACK_PATH, POWERUP2_REPORT, GUARD2_REPORT
+    for name in (
+        "MOTHER_PATH",
+        "CANDIDATE_PATH",
+        "ROLLBACK_PATH",
+        "POWERUP2_REPORT",
+        "GUARD2_REPORT",
+    ):
+        path = globals()[name]
+        globals()[name] = path.with_name(f"{path.stem}_{tag}{path.suffix}")
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="N2 第二次通电驱动（PLAN-N2-02）")
     parser.add_argument("--phase", choices=("guard2", "powerup2"), required=True)
+    parser.add_argument(
+        "--run-tag",
+        default="",
+        help="给落点名统一追加 _<tag> 后缀（G-N2c-2 要求治疗档落新名；默认空＝沿用今天的名字）",
+    )
     args = parser.parse_args(argv)
+    _apply_run_tag(args.run_tag)
     if args.phase == "guard2":
         return phase_guard2()
     return phase_powerup2()
