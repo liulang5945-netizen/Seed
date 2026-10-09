@@ -67,11 +67,11 @@ LEDGER = """# 台账一枚（不是预注册）
 """
 
 
-def _run(tmp_path: Path, name: str, text: str) -> tuple[int, dict]:
+def _run(tmp_path: Path, name: str, text: str, *extra: str) -> tuple[int, dict]:
     doc = tmp_path / name
     doc.write_text(text, encoding="utf-8")
     out = tmp_path / "report.json"
-    rc = GATE.main(["--doc", str(doc), "--out-report", str(out)])
+    rc = GATE.main(["--doc", str(doc), "--out-report", str(out), *extra])
     return rc, json.loads(out.read_text(encoding="utf-8"))
 
 
@@ -86,9 +86,12 @@ def test_plan_doc_without_criterion_heading_is_loudly_invisible(tmp_path: Path) 
 
 
 def test_plan_doc_with_criterion_heading_scans_normally(tmp_path: Path) -> None:
-    rc, payload = _run(tmp_path, "PLAN-SEEN-01_x.md", SEEN)
+    #: 本支的判据面只有几行，落在 DEBT-G54③ 的缺省下限之下 ⇒ 显式设 0，
+    #: 让这道测继续只问"判据面能不能被扫到"，厚薄另由 default_floor 契约测管。
+    rc, payload = _run(tmp_path, "PLAN-SEEN-01_x.md", SEEN, "--min-criterion-lines", "0")
     entry = payload["results"][0]
     assert rc == 0, entry
+    assert entry["floor_source"] == "explicit"
     assert entry["criterion_headings"] == 2
     assert entry["status"] == "ok"
     assert entry["vague_word_lines_unpinned"] == 0

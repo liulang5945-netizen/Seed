@@ -76,12 +76,16 @@ def test_thin_surface_gets_its_own_rc_tier(tmp_path: Path) -> None:
 
 
 def test_floor_off_keeps_the_old_answer(tmp_path: Path) -> None:
+    #: DEBT-G54③ 之后"关"不再是缺省态：缺省是按件定档（`PLAN-*` 有下限），
+    #: 所以这一支必须**显式**给 0 才回到旧答案；不给旗标的那一支由
+    #: `test_prereg_wording_default_floor_contract.py` 钉成 rc=3。
     doc = _write(tmp_path, "PLAN-THIN-02_x.md", PLAN_THIN)
-    rc, payload = _run(tmp_path, doc)
+    rc, payload = _run(tmp_path, doc, floor=0)
     entry = payload["results"][0]
     assert rc == 0
     assert entry["status"] == "ok"
     assert entry["criterion_lines_floor"] == 0
+    assert entry["floor_source"] == "explicit"
 
 
 def test_ambiguous_wording_is_not_washed_out_by_the_thin_tier(tmp_path: Path) -> None:
