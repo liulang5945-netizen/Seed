@@ -10,7 +10,7 @@ import { useEffect, useState } from 'react'
 import type { ReactNode } from 'react'
 import type { SnapshotStore } from '@taiji/dsh-client-store'
 import type { InjectFace, PropsRuntime, PropsRenderSlots } from '@taiji/dsh-client-ui-slots'
-import type { ModelsSettingsState, ModelsSettingsStore } from './store.ts'
+import type { ModelsSettingsState, ModelsSettingsStore, OnboardingTarget } from './store.ts'
 import { onboardingReadiness } from './store.ts'
 import type { ModelsOperations } from './operations.ts'
 import type { SettingsSchemaOperations } from './schema-operations.ts'
@@ -47,6 +47,9 @@ function assertNever(_value: never): never {
   throw new Error('unexpected DeepSeek onboarding state')
 }
 
+/** The route this step speaks for: the official DeepSeek adapter's credential. */
+const DEEPSEEK_TARGET: OnboardingTarget = { provider: 'deepseek-official', settingsNs: 'llm-deepseek' }
+
 /**
  * Prompt a first-run user for the official DeepSeek credential while no
  * provider can serve requests and that credential is writable.
@@ -57,7 +60,7 @@ export function DeepSeekOnboardingDialog(props: DeepSeekOnboardingDialogProps): 
   const { complete, controller, useModels, operations, schema, t, renderSlot, automatic, explicit = false } = props
   const [apiKey, setApiKey] = useState(explicit)
   const state = useModels(snapshot => snapshot)
-  const readiness = onboardingReadiness(state)
+  const readiness = onboardingReadiness(state, DEEPSEEK_TARGET)
 
   useEffect(() => {
     if ((automatic || explicit) && state.status === 'idle') void controller.load()
@@ -67,6 +70,7 @@ export function DeepSeekOnboardingDialog(props: DeepSeekOnboardingDialogProps): 
     if (
       (!automatic && !explicit)
       || readiness.kind === 'adapter-absent'
+      || readiness.kind === 'runtime-unreachable'
       || (!explicit && readiness.kind === 'provider-ready')
       || readiness.kind === 'unavailable'
     ) complete()
@@ -78,6 +82,8 @@ export function DeepSeekOnboardingDialog(props: DeepSeekOnboardingDialogProps): 
     case 'loading':
     case 'adapter-absent':
     case 'unavailable':
+    // The credential-free posture belongs to the runtime step, not here.
+    case 'runtime-unreachable':
       return null
     case 'provider-ready':
       if (!explicit) return null
@@ -90,10 +96,10 @@ export function DeepSeekOnboardingDialog(props: DeepSeekOnboardingDialogProps): 
   }
 
   const row = state.rows.find(candidate =>
-    candidate.entry.provider === 'deepseek-official'
-    && candidate.entry.settingsNs === 'llm-deepseek'
+    candidate.entry.provider === DEEPSEEK_TARGET.provider
+    && candidate.entry.settingsNs === DEEPSEEK_TARGET.settingsNs
     && candidate.entry.settingsPath.length === 0)
-  const namespace = state.namespaces.get('llm-deepseek')
+  const namespace = state.namespaces.get(DEEPSEEK_TARGET.settingsNs)
   /* v8 ignore next 2 -- credential-missing is derived only from this exact joined row. */
   if (row === undefined || namespace === undefined) return null
 

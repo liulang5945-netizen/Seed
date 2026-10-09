@@ -92,9 +92,6 @@
     "203f87d9e4f18ce1f00bf575fe96f724975341cbb67b8c51ea45d4cbb8e60005": 1,
     "56cede35ce34488cdae4b19aec217c9c939377eb891fe68827fbd64cd019170c": 1
   },
-  "apps/web/tests/onboarding-deepseek-config.e2e.ts": {
-    "326597b335539db945b2e3b7c86638d40849d2077c0a5670d064e45486f4e407": 2
-  },
   "apps/web/tests/scaffold.ts": {
     "3d845108a2e6928c911c093813f3d6a1cdd510ef148f3515cb852a254a7aa14d": 1
   },

@@ -274,6 +274,8 @@ export type OnboardingReadiness =
   | { kind: 'adapter-absent' }
   | { kind: 'provider-ready' }
   | { kind: 'credential-missing' }
+  /** A credential-free route is declared but nothing serves it: the local runtime is down. */
+  | { kind: 'runtime-unreachable' }
   | {
     kind: 'unavailable'
     reason:
@@ -284,17 +286,27 @@ export type OnboardingReadiness =
       | 'credential-read-only'
   }
 
+/** The route an onboarding step speaks for, matched inside the Models join. */
+export interface OnboardingTarget {
+  /** Provider route the step onboards for. */
+  provider: string
+  /** Settings namespace whose entry declares that route. */
+  settingsNs: string
+}
+
 /**
  * Project first-run readiness from the provider/settings/credential join used
  * by the Models page. The step exists to leave the user with a model to talk
- * to, so ANY usable provider ends it; only when none exists does the official
- * DeepSeek route — the one route the prompt can offer a key field for — decide
- * whether prompting can help. A missing official configurable-provider
- * declaration means the adapter is not repairable by navigating to Models.
+ * to, so ANY usable provider ends it; only when none exists does the target
+ * route decide whether prompting helps. A route that needs a credential offers
+ * the credential editor; a declared route that needs none and is simply not
+ * served — the local runtime's posture — offers the runtime guidance instead. A
+ * missing declaration means nothing this step can repair.
  * @param state - current shared Models join snapshot.
+ * @param target - route the calling onboarding step speaks for.
  * @returns the onboarding state without reading a parallel fact source.
  */
-export function onboardingReadiness(state: ModelsSettingsState): OnboardingReadiness {
+export function onboardingReadiness(state: ModelsSettingsState, target: OnboardingTarget): OnboardingReadiness {
   if ((state.status === 'idle' || state.status === 'loading') && state.rows.length === 0) {
     return { kind: 'loading' }
   }
@@ -306,15 +318,19 @@ export function onboardingReadiness(state: ModelsSettingsState): OnboardingReadi
   }
   if (state.rows.some(providerUsable)) return { kind: 'provider-ready' }
   const row = state.rows.find(candidate =>
-    candidate.entry.provider === 'deepseek-official'
-    && candidate.entry.settingsNs === 'llm-deepseek'
+    candidate.entry.provider === target.provider
+    && candidate.entry.settingsNs === target.settingsNs
     && candidate.entry.settingsPath.length === 0)
   if (row === undefined) return { kind: 'adapter-absent' }
   if (!row.entry.active) {
-    return {
-      kind: 'unavailable',
-      reason: 'provider-inactive',
-    }
+    // A credential-free route nobody serves is the runtime being down: no key
+    // this step could collect would change the answer.
+    return row.apiKeyEnv === undefined
+      ? { kind: 'runtime-unreachable' }
+      : {
+        kind: 'unavailable',
+        reason: 'provider-inactive',
+      }
   }
   // Past the usable gate an active route names a reference it has no stored
   // credential for, so the remaining questions are all about that credential.

@@ -113,6 +113,9 @@ export const en = {
   onboardingLater: 'Configure later',
   onboardingSave: 'Save and continue',
   onboardingSaving: 'Saving…',
+  runtimeOnboardingTitle: 'Start the local Taiji runtime',
+  runtimeOnboardingDescription: 'No model is answering on this machine. Start the Taiji runtime, then continue.',
+  runtimeOnboardingDismiss: 'Not now',
   keyRequired: 'Enter an API key to continue.',
 }
 
@@ -232,5 +235,8 @@ export const zh: { [Key in keyof typeof en]: string } = {
   onboardingLater: '稍后配置',
   onboardingSave: '保存并继续',
   onboardingSaving: '保存中…',
+  runtimeOnboardingTitle: '启动本地 Taiji 运行时',
+  runtimeOnboardingDescription: '这台机器上还没有应答的模型。启动 Taiji 运行时后继续。',
+  runtimeOnboardingDismiss: '稍后再说',
   keyRequired: '请输入 API 密钥后继续。',
 }

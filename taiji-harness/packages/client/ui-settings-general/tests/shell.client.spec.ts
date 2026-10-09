@@ -46,6 +46,7 @@ const PRODUCT_SECTIONS: readonly string[] = ['general', 'models', 'plugins', 'ag
 const PRODUCT_ONBOARDING: readonly { id: string; order: number }[] = [
   { id: 'welcome-notice', order: -100 },
   { id: 'deepseek-official', order: 0 },
+  { id: 'taiji-local', order: 1 },
 ]
 
 describe('ui-settings-general shell', () => {

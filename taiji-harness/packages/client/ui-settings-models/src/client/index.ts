@@ -19,6 +19,8 @@ import { ModelsSection } from './ModelsSection.tsx'
 import type { ModelsSectionInjected } from './ModelsSection.tsx'
 import { DeepSeekOnboardingDialog } from './DeepSeekOnboardingDialog.tsx'
 import type { DeepSeekOnboardingInjected } from './DeepSeekOnboardingDialog.tsx'
+import { RuntimeOnboardingDialog } from './RuntimeOnboardingDialog.tsx'
+import type { RuntimeOnboardingInjected } from './RuntimeOnboardingDialog.tsx'
 import { WelcomeNotice } from './WelcomeNotice.tsx'
 import type { WelcomeNoticeInjected } from './WelcomeNotice.tsx'
 import { WelcomeNoticeStore } from './welcome-store.ts'
@@ -104,6 +106,14 @@ export function apply(ctx: ClientContext): void {
     schema,
     t,
   })
+  // The runtime step is not credential onboarding, so it stays available in the
+  // desktop shell where the native shell owns credential entry.
+  const runtimeOnboardingInjected = (): RuntimeOnboardingInjected => ({
+    automatic: true,
+    controller,
+    hooks: { models: controller.store },
+    t,
+  })
   // The scope's own memory mode is what keeps a remote browser process-local,
   // so the store needs no isLoopback branch of its own.
   const welcomeController = new WelcomeNoticeStore(ctx.configForms.get<Record<string, unknown>>(WELCOME_NOTICE_SETTINGS_NAMESPACE))
@@ -156,4 +166,13 @@ export function apply(ctx: ClientContext): void {
     order: 0,
     inject: deepSeekOnboardingInjected,
   }, DeepSeekOnboardingDialog))
+  // The shipped composition's one model route is the local runtime, so the step
+  // that speaks for it follows the credential step: where an adapter can take a
+  // key, that is the repair; where none can, starting the runtime is.
+  ctx.slots.inject('settings.onboarding', () => ctx.slots.register({
+    name: 'settings.onboarding',
+    id: 'taiji-local',
+    order: 1,
+    inject: runtimeOnboardingInjected,
+  }, RuntimeOnboardingDialog))
 }

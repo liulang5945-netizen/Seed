@@ -1,5 +1,5 @@
 ---
-description: "dsh Web 客户端的模型设置与产品引导插件：提供商行、API 密钥管理、模型列表与 DeepSeek 首次运行弹窗。"
+description: "dsh Web 客户端的模型设置与产品引导插件：提供商行、API 密钥管理、模型列表与首次运行弹窗。"
 kind: "package-reference"
 ---
 
@@ -9,7 +9,7 @@ kind: "package-reference"
 
 ## 概述
 
-`dsh-client-ui-settings-models` 是 dsh Web 客户端的 Models 设置页面：用户可以配置 API 密钥（以只写方式存入 profile 的凭据引用之下）、编辑每个提供商的模型列表，并手工声明自定义 pi-ai 路由；页面以提供商行展示，一次只展开一张编辑卡片。该页面把提供商目录、设置文档与凭据描述合并为一个共享快照，因此行的状态在三个方面始终一致。它还会带首次运行的用户走两个有序弹窗——版本化内测声明，以及按条件显示的官方 DeepSeek 凭据步骤。
+`dsh-client-ui-settings-models` 是 dsh Web 客户端的 Models 设置页面：用户可以配置 API 密钥（以只写方式存入 profile 的凭据引用之下）、编辑每个提供商的模型列表，并手工声明自定义 pi-ai 路由；页面以提供商行展示，一次只展开一张编辑卡片。该页面把提供商目录、设置文档与凭据描述合并为一个共享快照，因此行的状态在三个方面始终一致。它还会带首次运行的用户走两个有序弹窗——版本化内测声明，以及按条件显示的凭据或本地运行时步骤。
 
 ## 目录
 
@@ -49,7 +49,7 @@ Host 配置 `credentialOnboarding` 默认为 `true`。Electron preload 标记会
 
 ### 首次运行弹窗
 
-版本化声明步骤完成后，DeepSeek 步骤从同一份合并快照投影首次运行就绪状态。用户已经能够到达的**任何**提供商都会直接结束该步骤、不做渲染；只有没有任何提供商的用户才会被询问官方 DeepSeek 密钥。「稍后配置」只完成这次协调器遍历；适配器缺失、路由不活动、合并失败、只读部署或能力不可用时，该步骤不渲染即完成——Models 仍是诊断界面。
+版本化声明步骤完成后，其余每个步骤都从同一份合并快照为其所代表的那条路由投影首次运行就绪状态。用户已经能够到达的**任何**提供商都会直接结束该步骤、不做渲染。凭据步骤面向一条声明了凭据引用的路由，并提供密钥输入框。本地运行时步骤面向无需凭据的 Taiji 路由：当无人应答它时，该步骤把运行时指为阻塞原因并提供关闭——这一步能收集的任何密钥都不会改变该答案，因此它在拥有凭据入口的外壳中仍然可用。「稍后配置」只完成这次协调器遍历；适配器缺失、合并失败、只读部署或能力不可用时，该步骤不渲染即完成——Models 仍是诊断界面。
 
 ### 扩展 slot
 
@@ -75,7 +75,7 @@ Host 配置 `credentialOnboarding` 默认为 `true`。Electron preload 标记会
 
 ### 引导协调器
 
-声明步骤在 `src/client/locales.ts` 中持有精确文案，并在 `src/onboarding-copy.ts` 中持有确认版本；回环时它通过既有 settings API 比较并写入 `ui-settings-general.welcomeNoticeVersion`，且只有显式点击「继续」才会记录当前版本。非回环浏览器无法使用这个仅限宿主的 namespace，因此确认只保留在进程内，刷新后声明会再次出现。DeepSeek 步骤面向 `llm-deepseek` 中的 `deepseek-official`，在共享引导模态框内以仅凭据模式渲染既有 `ProviderEditor`；`credentials.set` 仍是唯一的机密写入，且不改变任何提供商设置。
+声明步骤在 `src/client/locales.ts` 中持有精确文案，并在 `src/onboarding-copy.ts` 中持有确认版本；回环时它通过既有 settings API 比较并写入 `ui-settings-general.welcomeNoticeVersion`，且只有显式点击「继续」才会记录当前版本。非回环浏览器无法使用这个仅限宿主的 namespace，因此确认只保留在进程内，刷新后声明会再次出现。DeepSeek 步骤面向 `llm-deepseek` 中的 `deepseek-official`，在共享引导模态框内以仅凭据模式渲染既有 `ProviderEditor`；`credentials.set` 仍是唯一的机密写入，且不改变任何提供商设置。本地运行时步骤只读同一份合并结果，并在共享模态框内只渲染一个关闭动作；它不写入任何内容。
 
 </details>
 

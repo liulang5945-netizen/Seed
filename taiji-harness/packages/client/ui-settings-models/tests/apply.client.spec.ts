@@ -16,6 +16,7 @@ import {
 } from '../src/onboarding-copy.ts'
 import { ModelsSection } from '../src/client/ModelsSection.tsx'
 import { DeepSeekOnboardingDialog } from '../src/client/DeepSeekOnboardingDialog.tsx'
+import { RuntimeOnboardingDialog } from '../src/client/RuntimeOnboardingDialog.tsx'
 import { WelcomeNotice } from '../src/client/WelcomeNotice.tsx'
 import type { IndexInjection } from '@taiji/dsh-host-webserver'
 import * as hostPlugin from '../src/index.ts'
@@ -80,9 +81,14 @@ describe('ui-settings-models apply', () => {
       for (const row of rows) if (row.kind === 'global') vi.stubGlobal(row.name, row.value)
       const plugin = ctx.plugin({ inject: [...inject], apply })
       await plugin.await()
-      expect(slots.entries('settings.onboarding').map(entry => entry.options.id)).toEqual(['welcome-notice', 'deepseek-official'])
+      expect(slots.entries('settings.onboarding').map(entry => entry.options.id))
+        .toEqual(['welcome-notice', 'deepseek-official', 'taiji-local'])
       const onboarding = slots.entries('settings.onboarding').find(entry => entry.options.id === 'deepseek-official')!
       expect((onboarding.inject as () => { automatic: boolean })().automatic).toBe(false)
+      // The runtime step is not credential onboarding: it stays automatic where
+      // the shell owns credential entry.
+      const runtime = slots.entries('settings.onboarding').find(entry => entry.options.id === 'taiji-local')!
+      expect((runtime.inject as () => { automatic: boolean })().automatic).toBe(true)
       expect(slots.entries('settings.section').map(entry => entry.options.id)).toEqual(['models'])
       await plugin.dispose()
       expect(slots.entries('settings.onboarding')).toEqual([])
@@ -133,7 +139,7 @@ describe('ui-settings-models apply', () => {
     expect(injected.hooks.snapshot).toBe(injected.controller.store)
     expect(typeof injected.operations.writeSettings).toBe('function')
     const onboarding = before.slots.entries('settings.onboarding')
-    expect(onboarding).toHaveLength(2)
+    expect(onboarding).toHaveLength(3)
     expect(onboarding.find(entry => entry.options.id === 'welcome-notice')).toMatchObject({
       component: WelcomeNotice,
       options: { id: 'welcome-notice', order: -100 },
@@ -146,6 +152,13 @@ describe('ui-settings-models apply', () => {
     )()
     expect(deepSeekInjected.hooks.models).toBe(injected.controller.store)
     expect(typeof deepSeekInjected.operations.storeCredential).toBe('function')
+    const runtime = onboarding.find(entry => entry.options.id === 'taiji-local')!
+    expect(runtime.component).toBe(RuntimeOnboardingDialog)
+    expect(runtime.options).toMatchObject({ id: 'taiji-local', order: 1 })
+    expect(runtime.inject?.()).toMatchObject({
+      automatic: true,
+      hooks: { models: injected.controller.store },
+    })
 
     const after = await bench()
     await after.ctx.plugin({ inject: [...inject], apply }).await()
@@ -154,7 +167,7 @@ describe('ui-settings-models apply', () => {
     declare(after.slots)
     await Promise.resolve()
     expect(after.slots.entries('settings.section')[0]!.component).toBe(ModelsSection)
-    expect(after.slots.entries('settings.onboarding')).toHaveLength(2)
+    expect(after.slots.entries('settings.onboarding')).toHaveLength(3)
     // The self-inflicted ledger notifications hit the duplicate guard.
     expect(after.slots.entries('settings.section')).toHaveLength(1)
   })
@@ -193,7 +206,7 @@ describe('ui-settings-models apply', () => {
     declare(b.slots)
     await Promise.resolve()
     expect(b.slots.entries('settings.section')[0]!.component).toBe(ModelsSection)
-    expect(b.slots.entries('settings.onboarding')).toHaveLength(2)
+    expect(b.slots.entries('settings.onboarding')).toHaveLength(3)
     // The locale path also recovers through the same ledger re-check.
     b.locale.setLocale('en')
     expect(resolveSlotLabel(b.slots.entries('settings.section')[0]!.options.label)).toBe('Models')
