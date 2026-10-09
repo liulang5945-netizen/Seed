@@ -144,6 +144,28 @@ describe('ModelSelect reasoning effort', () => {
     expect(screen.queryByText('Fast catalog description')).toBeNull()
   })
 
+  it('prints an unresolved pair whose two segments match only once', () => {
+    const directory = createSnapshotStore(state({
+      current: { provider: 'taiji-local', model: 'taiji-local' },
+    }))
+    render(<ModelSelect
+      locked={false}
+      available
+      directory={directory}
+      load={vi.fn()}
+      select={vi.fn().mockResolvedValue({ ok: true, value: undefined })}
+      t={t}
+    />)
+
+    const trigger = screen.getByRole('button', { name: '选择模型，当前 taiji-local' })
+    expect(trigger.textContent).toContain('taiji-local')
+    expect(trigger.textContent).not.toContain('taiji-local/taiji-local')
+    // The root pane mirrors the trigger value, so the collapsed label has to
+    // hold for that row too.
+    fireEvent.click(trigger)
+    expect(screen.getByRole('menuitem', { name: /模型/ }).textContent).not.toContain('taiji-local/taiji-local')
+  })
+
   it('shows loading until the catalog and Session projection are both ready', async () => {
     const directory = createSnapshotStore<ModelDirectoryState>(state({
       current: null,

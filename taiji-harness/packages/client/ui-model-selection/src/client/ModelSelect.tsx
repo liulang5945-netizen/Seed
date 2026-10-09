@@ -316,10 +316,18 @@ export function ModelSelect(
   }
 
   const waiting = state.current === null && state.status === 'loading'
+  // A selection the catalog no longer carries prints its durable pair. The
+  // local runtime route names its provider and its one advisory model with the
+  // same token, so an equal pair prints once instead of reading `x/x`.
+  const current = state.current
+  const unresolvedLabel = current === null
+    ? t('trigger.fallback')
+    : current.provider === current.model
+      ? current.model
+      : `${current.provider}/${current.model}`
   const modelLabel = waiting
     ? t('trigger.loading')
-    : currentChoice?.model.name
-      ?? (state.current === null ? t('trigger.fallback') : `${state.current.provider}/${state.current.model}`)
+    : currentChoice?.model.name ?? unresolvedLabel
   const triggerLabel = effortLabel === undefined ? modelLabel : `${modelLabel} · ${effortLabel}`
   const triggerAria = waiting
     ? t('trigger.loading')
