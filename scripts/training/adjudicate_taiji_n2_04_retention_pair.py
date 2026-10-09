@@ -54,6 +54,54 @@ def _resolve(raw: str) -> Path:
     return p if p.is_absolute() else PROJECT_ROOT / p
 
 
+#: 保持集清单的两种真实形状（㊵-556 的取证）：`cap0_eval_set_v2.json` 把条目放在
+#: `dimensions[<维>]["items"]`——与出件方 `eval_taiji_cap0_baseline.py:98` 的枚举同一处；
+#: 早期件与本仓夹具用顶层 `items`（条目里是 `text`），v2 条目里是 `material`＋`turns`。
+#: 只认顶层那一种的后果是"**明明有条目的真清单被仪器判成没有 items**"——取法错，不是数据缺。
+#: 形状名必须出版（`manifest_shape`），否则下一次又靠猜。
+_ROW_TEXT_FIELDS = ("material", "text")
+
+
+def _manifest_rows(manifest: Any) -> tuple[list[Any], str]:
+    top = manifest.get("items") if isinstance(manifest, dict) else None
+    if isinstance(top, list) and top:
+        return list(top), "top_level_items"
+    rows: list[Any] = []
+    dimensions = manifest.get("dimensions") if isinstance(manifest, dict) else None
+    if isinstance(dimensions, dict):
+        for block in dimensions.values():
+            if isinstance(block, dict):
+                rows.extend(block.get("items") or ())
+    return rows, "dimensions_items"
+
+
+def _row_texts(row: Any) -> list[str]:
+    """一条目的**可观察文本**＝`material`（材料原文）＋`turns[*]`（题面），早期件退回 `text`。
+
+    `check`／`pass_when`／`expect`／`scoring` 是判分口径而不是材料，不参与字节级分离机检——
+    把它们算进窗口会让分母虚高，看起来"检查得更严"，实际是拿判分标准去比语料。
+    """
+
+    if isinstance(row, str):
+        return [row] if row else []
+    if not isinstance(row, dict):
+        return []
+    texts: list[str] = []
+    material = row.get("material")
+    if isinstance(material, str) and material:
+        texts.append(material)
+    for turn in row.get("turns") or ():
+        if isinstance(turn, str) and turn:
+            texts.append(turn)
+    if not texts:
+        for field in _ROW_TEXT_FIELDS[1:]:
+            value = row.get(field)
+            if isinstance(value, str) and value:
+                texts.append(value)
+                break
+    return texts
+
+
 def _column_table(cap0: dict[str, Any], replay: dict[str, Any]) -> dict[str, int]:
     """按七列的键名取现成计数——**取法逐字复用 N2-02 那台仪器**，本件不自己数第二遍。
 
@@ -230,13 +278,12 @@ def judge(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
             rejection = f"巩固材料缺件：{bad}"
     if rejection is None:
         manifest = _read(manifest_path)
-        items = manifest.get("items") if isinstance(manifest, dict) else None
-        if not isinstance(items, list) or not items:
-            rejection = "manifest 里没有 items 数组 ⇒ 保持侧窗口取不到"
+        rows, manifest_shape = _manifest_rows(manifest)
+        if not rows:
+            rejection = "manifest 既无顶层 items 也无 dimensions.*.items ⇒ 保持侧窗口取不到"
         else:
-            for item in items:
-                text = item.get("text") if isinstance(item, dict) else item
-                if isinstance(text, str) and text:
+            for row in rows:
+                for text in _row_texts(row):
                     windows.append(text.encode("utf-8"))
             if not windows:
                 rejection = "manifest 的 items 里没有可用文本 ⇒ 分离机检取不到数"
@@ -252,6 +299,7 @@ def judge(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
     overlap = N3A._disjointness(corpus, windows)
     guards["G_N2c_4_disjointness"] = {
         "status": "measured",
+        "manifest_shape": manifest_shape,
         "retention_windows": len(windows),
         "result": overlap,
     }
