@@ -1,0 +1,22 @@
+{
+  "format": "taiji-n5-shadow-gate-adjudication-v1",
+  "prereg": "PLAN-N5-02 §2 J-N5b-1／J-N5b-2（J-N5b-3 后半与 4/5/6 不在本器内）",
+  "arms": {
+    "treated": {
+      "arm": "treated",
+      "checkpoint": "E:\\Seed\\output\\n5_shadow_gate_on\\checkpoint.pt",
+      "j_n5b_1": "present",
+      "missing_self_report_keys": [],
+      "gate": 1.0,
+      "shadow_gate_requested": 1.0,
+      "candidate_gate": 0.2582141160964966,
+      "candidate_utility": 0.0005751861608587205,
+      "candidate_counterfactual_utility": -0.0010580363106349466,
+      "j_n5b_2": "shadow_learned"
+    }
+  },
+  "pairing": {
+    "status": "unverified_no_control_arm"
+  },
+  "rc": 0
+}
