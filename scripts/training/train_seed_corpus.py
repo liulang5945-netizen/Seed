@@ -44,6 +44,8 @@ from seed.persistence import (  # noqa: E402
     corpus_fingerprint,
 )
 from taiji import AdaptiveResidualGrowthPolicy, CapacityPolicy, TaijiConfig  # noqa: E402
+from taiji.contracts import EpisodicMemoryRecord  # noqa: E402
+from taiji.episodic_memory import EpisodicMemoryStore  # noqa: E402
 
 DEFAULT_CORPUS = (
     # 2026-08-23 数据整理：canonical 对话语料仅此一文件（123090 条，
@@ -379,6 +381,7 @@ def run_training(
     developmental_fast_slow: bool = False,
     developmental_bridge_gate: float | None = None,
     growth_minimum_pressure: float | None = None,
+    episodic_mount: bool = False,
     max_unique_documents: int | None = None,
 ) -> dict[str, float]:
     """Stream the corpus through ``Seed.observe`` with periodic persistence.
@@ -467,6 +470,17 @@ def run_training(
 
     def _persist() -> None:
         # 2026-08-23 M0：原子落盘 + 信封元数据，崩溃不产生半写文件。
+        if episodic_store is not None and doc_pending:
+            cue = (doc_pending + [0] * 32)[:32]
+            episodic_store.write(
+                EpisodicMemoryRecord(
+                    memory_id=f"doc-{episodic_store.count:06d}",
+                    episode_id=f"n4-material-{episodic_store.count:06d}",
+                    tick=ticks,
+                    cue=torch.tensor([b / 255.0 for b in cue], dtype=torch.float32),
+                )
+            )
+            doc_pending.clear()
         envelope = attach_metadata(
             model.checkpoint(),
             tick=ticks,
@@ -486,6 +500,34 @@ def run_training(
             },
         )
         atomic_save(envelope, checkpoint_path)
+        if episodic_store is not None:
+            envelope["episodic_memory"] = episodic_store.checkpoint()
+        if episodic_store is not None and episodic_store.count:
+            base = Path(checkpoint_path)
+            records = episodic_store.records
+            materials = [
+                {"memory_id": record.memory_id, "cue": record.cue.tolist()} for record in records
+            ]
+            stride = max(1, len(materials) // 100)
+            picked = materials[::stride][:100]
+            queries = []
+            for offset, row in enumerate(picked):
+                donor = materials[(offset + 1) % len(materials)]
+                cue = list(row["cue"])
+                if cue:
+                    cue[-1] = donor["cue"][-1]
+                queries.append({"expected_memory_id": row["memory_id"], "cue": cue})
+            newline = chr(10)
+            (base.parent / (base.stem + "_episodic_materials.jsonl")).write_text(
+                newline.join(json.dumps(row, ensure_ascii=False) for row in materials) + newline,
+                encoding="utf-8",
+                newline=newline,
+            )
+            (base.parent / (base.stem + "_episodic_queries.jsonl")).write_text(
+                newline.join(json.dumps(row, ensure_ascii=False) for row in queries) + newline,
+                encoding="utf-8",
+                newline=newline,
+            )
         # 2026-09-23：**保号存档**。此前 `--checkpoint-every` 反复覆盖同一个文件，
         # 于是"训练中途某个 tick 的状态"直接消失——后来才想到要量的指标（例如槽可分离性）
         # 连事后补算都做不到，只剩首尾两个端点。这里每次落盘**额外**写一份带 tick 的快照；
@@ -601,6 +643,11 @@ def run_training(
     #: `predictive` 把下一字节误差送到 F1 专用读出（＋私有时间语境）——`observe` 明令此时
     #: 不得同时训运动器，所以 `learn_motor=False`。A 支线的已证部件都在这条链上。
     observe_kwargs: dict[str, object] = {"learn": True, "readout": readout}
+    episodic_store = None
+    doc_pending: list[int] = []
+    if episodic_mount:
+        episodic_store = EpisodicMemoryStore(capacity=1024)
+        model.substrate.attach_episodic_memory(episodic_store)
     if readout == "predictive":
         observe_kwargs["learn_motor"] = False
 
@@ -821,6 +868,20 @@ def run_training(
         ):
             step = model.observe(symbol, **observe_kwargs)
             ticks += 1
+            if episodic_store is not None:
+                if symbol == boundary and doc_pending:
+                    cue = (doc_pending + [0] * 32)[:32]
+                    episodic_store.write(
+                        EpisodicMemoryRecord(
+                            memory_id=f"doc-{episodic_store.count:06d}",
+                            episode_id=f"n4-material-{episodic_store.count:06d}",
+                            tick=ticks,
+                            cue=torch.tensor([b / 255.0 for b in cue], dtype=torch.float32),
+                        )
+                    )
+                    doc_pending.clear()
+                elif symbol != boundary and len(doc_pending) < 32:
+                    doc_pending.append(symbol)
             if step.prior_prediction is not None:
                 window_ticks += 1
                 window_correct += int(step.prior_prediction == symbol)
@@ -928,6 +989,7 @@ def _build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--max-symbols", type=int, default=200_000)
     #: PLAN-N3-10 §2 形状 B：缺省＝不限（今天的形状逐位不变），给了值＝前 K 篇成池后循环重用。
     parser.add_argument("--max-unique-documents", type=int, default=None)
+    parser.add_argument("--episodic-mount", action="store_true")
     parser.add_argument("--checkpoint-every", type=int, default=50_000)
     parser.add_argument("--progress-every", type=int, default=10_000)
     parser.add_argument(
@@ -1265,6 +1327,7 @@ def main() -> None:
         developmental_bridge_gate=args.developmental_bridge_gate,
         growth_minimum_pressure=args.growth_minimum_pressure,
         max_unique_documents=args.max_unique_documents,
+        episodic_mount=args.episodic_mount,
     )
     print(json.dumps(summary, ensure_ascii=False))
     #: DEBT-G14②：操作侧曾拿着一个 **0 字节的 `run.log`** 判断"这轮跑到哪了"——空文件比没有更误导。
