@@ -338,3 +338,87 @@ def test_mount_layer_and_gated_state_are_self_reported(tmp_path: Path) -> None:
     #: 第四态必须自述成"不可观测"，读侧拿不到它就只能显式承认自己不知道。
     assert payload["adapter_gated_state"] == module.NOT_OBSERVABLE
     assert "gated_to_empty" not in payload["state_counts"]
+
+
+def test_wall_clock_column_is_published_and_face_keys_do_not_shrink(tmp_path: Path) -> None:
+    """㊵-563：把 `wall_clock_ms` 钉住（㊵-561④ 自报的那条"跑过一次不等于被钉住"）。
+
+    两面都要断言：①这一列存在、是非负浮点；②**面读数的键集只许多不许少**——
+    计时是加性自述，谁把它当成"可以顺手删掉的装饰列"，这册当场红。
+    夹具自带（不依赖别处的 helper），材料侧给带唯一尾值的数值线索 ⇒ 非空库必有取回。
+    """
+    import importlib.util
+
+    script = (
+        Path(__file__).resolve().parents[2]
+        / "scripts"
+        / "training"
+        / "measure_taiji_n4_addressing_surface.py"
+    )
+    spec = importlib.util.spec_from_file_location("n4_face_wallclock_under_test", script)
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    materials = tmp_path / "materials.jsonl"
+    queries = tmp_path / "queries.jsonl"
+    rows = []
+    for index in range(40):
+        rows.append(
+            {
+                "memory_id": f"m{index:03d}",
+                "cue": [float((index * 7 + k) % 97 + 1) for k in range(12)] + [float(index + 1)],
+            }
+        )
+    questions = []
+    for step in range(12):
+        pick = rows[(step * 3 + 1) % len(rows)]
+        questions.append({"cue": pick["cue"][:-1], "expected_memory_id": pick["memory_id"]})
+    materials.write_text(
+        "".join(json.dumps(row, ensure_ascii=False) + "\n" for row in rows),
+        encoding="utf-8",
+        newline="\n",
+    )
+    queries.write_text(
+        "".join(json.dumps(row, ensure_ascii=False) + "\n" for row in questions),
+        encoding="utf-8",
+        newline="\n",
+    )
+    report = tmp_path / "report.json"
+    rc = module.main(
+        [
+            "--materials",
+            str(materials),
+            "--queries",
+            str(queries),
+            "--capacity",
+            "64",
+            "--limit",
+            "3",
+            "--out-report",
+            str(report),
+        ]
+    )
+    payload = json.loads(report.read_text(encoding="utf-8"))
+    assert rc == 0, payload.get("rejection")
+    assert "rejection" not in payload, payload
+    #: ①计时列存在且是非负浮点。
+    assert "wall_clock_ms" in payload, sorted(payload)
+    assert isinstance(payload["wall_clock_ms"], float), payload["wall_clock_ms"]
+    assert payload["wall_clock_ms"] >= 0.0
+    #: ②键集只许多不许少（面读数的既有自述一条不许漂走）。
+    required = {
+        "format",
+        "capacity",
+        "limit",
+        "paired_queries",
+        "ruler_usable",
+        "wrong_top1_rate",
+        "block_size",
+        "noise_band_floor",
+        "adapter_gated_state",
+    }
+    missing = sorted(required - set(payload))
+    assert not missing, missing
+    #: 落字节必须 LF：这台仪器的件要入库（`write_text` 不给 newline 在本机写出过 CRLF 件）。
+    assert b"\r\n" not in report.read_bytes(), report.read_bytes()[:40]
