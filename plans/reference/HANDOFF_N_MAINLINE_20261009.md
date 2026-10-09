@@ -6,6 +6,8 @@
 
 ## 1. 已收口（有件、有门、有台账行）
 
+> **2026-10-09 补（owner 第九/十次弹窗后）**：N3 甲收口（`J-N3a′=not_holds`，判据全仪器化，㊵-548/549/570）；N2 乙档收口（**同跑配对** `cost_persists`＋同窗收益成立 ⇒ 合取不成立，㊵-566/567；跨跑拼接版降为旁证）；N4 进入有真读数状态（`wrong_top1_rate=0.06` 挂载面基线，㊵-575；`--episodic-mount` 实施＋守卫 ㊵-574）；N5 设计预注册落盘（[PLAN-N5-01](PLAN-N5-01_four_layer_loop_design_prereg_20261009.md)，owner 裁 (a)，㊵-576）——实施格（训练器消费钩子）是下一格，入口见 §3。
+
 | 项 | 终态一句话 | 证据锚点 |
 | --- | --- | --- |
 | N3 甲（×10 单点 scaling 探针） | 判据链**全仪器化**并判出 `J_N3a′=not_holds`（甲末段 0.352 对 对照臂 0.33966+0.02=0.35966，差 +0.01234） | 件 `reports/taiji_n3a_j_n3a_prime_20261009.json`；台账 08 ㊵-548／549／552；预注册 [PLAN-N3-12](PLAN-N3-12_j_n3a_anchor_upgrade_prereg_20261008.md)／[PLAN-N3-13](PLAN-N3-13_section87_sequence_length_source_prereg_20261008.md)（两件已由 owner 第八次弹窗裁"两件都签"） |
@@ -35,7 +37,8 @@
    `required - set(record)` 那个写法）。现状：10 passed 未回退，但**没钉这一列**（㊵-561④ 自报）。
 2. **N3 甲的"发表资格"回写**：PLAN-N3-13 §6 的三行前置里，第二合取项现在**有值了**（对照臂到位）——
    把该件的状态列按 `table-status-column-goes-stale` 那条纪律就地打日期戳，并核对 03 队首那句是否还新。
-3. **仓库修复档**：G57②③、G55 两级守卫、G54 默认改 3（**需同步旧夹具的判据行数**）、G48②、G61②、
+3. **N5 实施格（下一格，可自办）**：按 [PLAN-N5-01](PLAN-N5-01_four_layer_loop_design_prereg_20261009.md) §1 接训练链消费钩子——`last_decision` 过阈 ⇒ `AdaptiveResidualShadow.from_parent_bridge(config, bridge_payload, candidate)` 生成影子 ⇒ 流循环内 `shadow.learn(...)`。**逐处 Edit 不再批量拼接**（573 教训：>5 处锚点必失控）；候选构造器参数与桥 payload 形状需先现读 `adaptive_residual_candidate.py`。
+4. **仓库修复档**：G57②③、G55 两级守卫、G54 默认改 3（**需同步旧夹具的判据行数**）、G48②、G61②、
    G64③ 默认化（G67 的 (甲) 点名能力已随 ㊵-559 落地）。
 
 ## 4. 门与本机注意（下一个人会踩的）
