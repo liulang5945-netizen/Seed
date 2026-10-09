@@ -68,3 +68,38 @@ N 主线的成功判据是**每项能力有冻结判据＋仪器化读数＋可�
   - 判读：`python scripts/training/adjudicate_taiji_n2_04_retention_pair.py --cap0-before … --cap0-after … --replay-before … --replay-after … --consolidation-corpus <巩固语料> --retention-manifest plans/manifests/cap0_eval_set_v2.json --out <裁定件>`
 - **另一处要如实登记的缺口**：两臂 `n5_shadow` 块实测 8 枚键，㊵-593 说要补的 `shadow_branch_hits`／`shadow_materialized` 读回 `None`（＝没进过块），所以「影子被喂过」目前只有结果侧读数支撑，过程侧计数器未落地。
 - **欠两笔债（列数未核对，故未硬插 05）**：① 产品档寻址尺 θ_small 落几何盲区属**扰动设计教训**；② 在场计数器承诺未兑现。
+
+## ㊵-620 补：把本件里**已过期的处方**逐条点名作废（读这份件的人只看这一节就够）
+
+> 立这条节的理由＝本仓自己那条纪律：**交接清单里过期的若是处方／命令，比过期的结论更贵**——
+> 结论过期只误导认知，处方过期会让人白花机器时间。下面每条都带本件的定位，原句**不删**（历史保留），只标作废与现行。
+
+1. **§2 第 4 项「4 笔未推」＝已过期读数**。现行以 `git rev-list --count origin/main..HEAD` **现取为准**
+   （本件落笔时实测 `15`，提交后再 +1）。且推送已由 owner 裁「你自己在终端跑」⇒ 助手侧不再尝试。
+2. **§3 第 3 项「N5 实施格＝接消费钩子」＝已完成，别再当入口**。转发（`Seed.observe` 条件转发）、
+   当场消费（`_record_pressure` 内 propose＋materialize，删掉符号流轮询旧块）、
+   信封填充顺序（先填 `n5_shadow`／`episodic_memory` 再 `atomic_save`）、通电旋钮 `--n5-shadow-gate`
+   四件都已入库，并有测钉住（`test_n5_03`／`test_n5_04`／`test_n5_05`／`test_n5_08`）。
+3. **上面「㊵-613 补」里那三条命令：现在照抄必然失败，两处实测原因**——
+   ① `--pressure-record` 的真实签名是 `type=Path`（`train_seed_corpus.py:1126-1132`），**要一个 JSONL 路径**，
+   当裸旗标写在 argparse 阶段就 `parser.error`（㊵-616 实测两臂各 rc=2，零训练发生）＝**DEBT-G70**；
+   ② 保持侧被两道响亮拒绝夹死：`taiji/model.py:1284→:1131` 拒绝「位置输入＋发育 F1 迁移」共存，
+   而 `Seed.restore`（`seed/model.py:240`）又拒绝与基件 config 不符的形状，
+   `checkpoints/*.pt` 全集 13 枚**每枚**都带 `readout_utf8_position_input=true` ⇒
+   在 owner 裁甲／乙／丙之前，那四张 after 面件**取不出来**＝**DEBT-G71**。
+   ⇒ 这三条命令**保留作形状参考**（出件方与判读器都是对的），但**标「未验可跑」**，别据此排期。
+4. **§5 的「N4 卡在材料、N5／N6 未开工」＝已过期状态**。现行：N4 已有**产品档**寻址读数
+   （120 条由产品自己的 `settle_action` 写入，寻址尺经 PLAN-N4-07 升版后判 `angle_sensitive`，㊵-612）；
+   N5 已通电并有**过程侧在场读数**（㊵-618：治疗臂 `shadow_forward_hits=11735`／`shadow_learn_hits=11735`，
+   对照臂同一块内三枚全 0）；N6＝债册已随本轮 G70…G73 继续清。**但能力读数仍为零新增**——
+   这条边界声明不许被上面任何一条替换。
+5. **「欠两笔债未插 05」这句也已过期**：05 现按真实列形状（5 列）正式插了四行——
+   `G70` 冻结命令是散文不是可执行物、`G71` 保持侧产品层互斥（归 owner 择一）、
+   `G72` 恒真键 `shadow_materialized`（同轮已撤换）、`G73` θ_small 扰动设计债（升版已解）。
+6. **下一格真实入口（不依赖任何批文、零算力、属 `scripts/`＋测）**：让 N5 判读器把过程侧读数**机械出版**——
+   `scripts/training/adjudicate_taiji_n5_shadow_gate.py` 目前只断言 5 枚键（`REQUIRED_KEYS`），
+   对新落盘的 `shadow_forward_hits`／`shadow_learn_hits`／`shadow_branch_hits` **视而不见**。
+   落点＝在该件的 `judge_arm()` 里按 `'k' in block` 判在场、按 `.get()` 取值并加进输出，
+   同步 `tests/taiji_native/test_n5_07_shadow_gate_adjudication_contract.py` 加一条
+   「块内带计数器 ⇒ 读数出现在输出；不带 ⇒ 标 `unverified_missing_face`」的双向测（**两支都要走**）。
+   做完它，`J-N5b-1` 才同时覆盖「结果侧五枚键」与「过程侧三枚计数」，下一轮正式跑无需人工抄数。
