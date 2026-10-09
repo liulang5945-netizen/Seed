@@ -54,6 +54,7 @@
 - [PLAN-N4-04_product_default_mount_design_prereg_20261009](PLAN-N4-04_product_default_mount_design_prereg_20261009.md)（N4 **产品默认挂载设计预注册**：判据五条先冻、不开跑，动 `taiji/` 之前须先过反例探针）
 - [PLAN-N5-02_shadow_utility_adjudication_prereg_20261009](PLAN-N5-02_shadow_utility_adjudication_prereg_20261009.md)（N5 **影子通电后的贡献验收**：六条判据先冻、含 shadow_inert 独立否证支，写于 G 跑读数之前）
 - [PLAN-N5-03_ruler_usable_formula_prereg_20261009](PLAN-N5-03_ruler_usable_formula_prereg_20261009.md)（N5 **判据升版**：给 `ruler_usable` 补机械公式，接管 PLAN-N5-02 的 J-N5b-4 那半句）
+- [PLAN-N5-04_retention_rebase_prereg_20261009](PLAN-N5-04_retention_rebase_prereg_20261009.md)（N5 **保持侧换底**：从头臂上 `before=0` 使 J-N5b-5 成恒真式 ⇒ 改成「同一基件续训、只动 `--n5-shadow-gate` 一个变量」的双臂，before 面复用 20261008 已入库件；判据/守卫/失败出口先冻）
 - [PLAN-N4-05_product_write_semantics_prereg_20261009](PLAN-N4-05_product_write_semantics_prereg_20261009.md)（N4 **产品写入路径已在、缺的是回合驱动**：五条判据先冻，含"两档 cue 不可比"与"不许拿训练侧口径冒充产品档"）
 - [PLAN-N4-06_perturbation_strength_and_ruler_prereg_20261009](PLAN-N4-06_perturbation_strength_and_ruler_prereg_20261009.md)（N4 **扰动强度与"尺可用"判据先冻**：两档角度、`ruler_usable` 公式、方向性预注册；冻在跑之前）
 - [PLAN-N4-07_angle_pair_upgrade_prereg_20261009](PLAN-N4-07_angle_pair_upgrade_prereg_20261009.md)（N4 **升版：只换角度对 (0.70,1.05)**，J-N4f-2/3 公式一字不改；旧篇与 `ruler_unusable` 旧裁定保留并标取代关系）
