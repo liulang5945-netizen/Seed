@@ -89,16 +89,16 @@ def test_g_n4d_2_mounted_run_publishes_truth_materials(tmp_path: Path) -> None:
     assert _has_key_deep(envelope, "episodic_memory"), sorted(envelope)
     materials = [
         json.loads(line)
-        for line in (tmp_path / "ck_mounted_episodic_materials.jsonl").read_text(
-            encoding="utf-8"
-        ).splitlines()
+        for line in (tmp_path / "ck_mounted_episodic_materials.jsonl")
+        .read_text(encoding="utf-8")
+        .splitlines()
         if line.strip()
     ]
     queries = [
         json.loads(line)
-        for line in (tmp_path / "ck_mounted_episodic_queries.jsonl").read_text(
-            encoding="utf-8"
-        ).splitlines()
+        for line in (tmp_path / "ck_mounted_episodic_queries.jsonl")
+        .read_text(encoding="utf-8")
+        .splitlines()
         if line.strip()
     ]
     #: G-N4d-2：写入计数＝篇边界计数＝文档数（3 篇小语料全被边界闭合）。
