@@ -267,6 +267,8 @@ def judge(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
     #: G-N2c-4 分离机检：巩固材料 vs 保持材料的字节级交集必须为空。
     corpus = [_resolve(p) for p in (args.consolidation_corpus or [])]
     windows: list[bytes] = []
+    labelled: list[tuple[str, bytes]] = []
+    skipped_short: list[str] = []
     manifest_path = _resolve(args.retention_manifest)
     rejection: str | None = None
     if not manifest_path.is_file():
@@ -283,8 +285,16 @@ def judge(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
             rejection = "manifest 既无顶层 items 也无 dimensions.*.items ⇒ 保持侧窗口取不到"
         else:
             for row in rows:
+                row_id = str(row.get("id")) if isinstance(row, dict) and row.get("id") else "row?"
                 for text in _row_texts(row):
-                    windows.append(text.encode("utf-8"))
+                    encoded = text.encode("utf-8")
+                    if len(encoded) < N3A.NGRAM_BYTES:
+                        #: 乙-1（owner 第九次弹窗）：短于窗口尺本身长度的条目不参与包含判定，
+                        #: 单列 skipped_short_rows 披露——一条 7 字通用句撞进 108 MB 语料不算泄露。
+                        skipped_short.append(f"{row_id}:{len(encoded)}B")
+                        continue
+                    labelled.append((row_id, encoded))
+            windows = [one for _, one in labelled]
             if not windows:
                 rejection = "manifest 的 items 里没有可用文本 ⇒ 分离机检取不到数"
 
@@ -297,11 +307,23 @@ def judge(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
         return payload, 2
 
     overlap = N3A._disjointness(corpus, windows)
+    matched_rows: list[str] = []
+    if (
+        isinstance(overlap.get("windows_found_in_corpus"), int)
+        and overlap["windows_found_in_corpus"]
+    ):
+        #: (甲) 点名：只在聚合报出交集时逐窗复算，且仍走同一个 N3A._disjointness（不重抄扫描链）。
+        for label, one in labelled:
+            if N3A._disjointness(corpus, [one]).get("windows_found_in_corpus"):
+                matched_rows.append(label)
     guards["G_N2c_4_disjointness"] = {
         "status": "measured",
         "manifest_shape": manifest_shape,
         "retention_windows": len(windows),
         "result": overlap,
+        "skipped_short_rows": len(skipped_short),
+        "skipped_short_detail": skipped_short,
+        "matched_rows": matched_rows,
     }
     #: `_disjointness` 的返回里 `windows_found_in_corpus` 才是"交集"指示（它按窗口逐条数命中）。
     found = overlap.get("windows_found_in_corpus")
