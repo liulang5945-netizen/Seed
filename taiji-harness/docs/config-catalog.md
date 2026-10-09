@@ -4134,19 +4134,12 @@ Requires: `web`
 ```ts config-catalog
 /** Plugin config (all optional — `apply` fills constant defaults). */
 export interface Config {
-  /** Which engine's result page to fetch and parse. Defaults to Bing. */
-  engine: ScraperEngine
-  /** Bing endpoint base; `/search` is appended. */
-  bingBaseUrl: string
-  /** DuckDuckGo endpoint base; `/html/` is appended. */
-  duckduckgoBaseUrl: string
+  /** Taiji runtime root; `/api/tools/web_search` is appended. Defaults to the local api service. */
+  baseURL: string
 }
-
-/** Engines the provider can parse. The plugin schema pins this union. */
-export type ScraperEngine = 'bing' | 'duckduckgo'
 ```
 
-Source: [`packages/web/web-search-scraper/src/index.ts:35`](../packages/web/web-search-scraper/src/index.ts)
+Source: [`packages/web/web-search-scraper/src/index.ts:34`](../packages/web/web-search-scraper/src/index.ts)
 
 <a id="taijidsh-webhook-github"></a>
 

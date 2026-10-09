@@ -1,9 +1,9 @@
 /**
- * `ScraperSearchProvider`: a credential-free `WebSearchProvider` that fetches a
- * search engine's result page and parses it into normalized sources. It serves
- * deployments that must not depend on a paid search API: the engine is a public
- * HTML endpoint, so `available()` never involves a key and every request is a
- * plain anonymous GET.
+ * `TaijiSearchProvider`: a credential-free `WebSearchProvider` that delegates to
+ * the Taiji runtime's native scraper search (`POST /api/tools/web_search` on the
+ * local api service). The runtime runs the project's own multi-engine racing
+ * crawler (`neuroplex/tools/web.py`: DuckDuckGo / Bing / Baidu), so the model's
+ * searches never depend on a paid search API or a stored credential.
  * @module @taiji/dsh-web-search-scraper/provider
  */
 
@@ -16,303 +16,140 @@ import type {
 } from '@taiji/dsh-web'
 
 /** Stable id this provider registers under. */
-export const SCRAPER_PROVIDER_ID = 'scraper'
+export const TAIJI_SEARCH_PROVIDER_ID = 'taiji-search'
 
-/** Default engine. Bing ships first: its result page is reachable from
- * mainland-China networks without a proxy and its markup is server-rendered
- * and stable, while the DuckDuckGo HTML endpoint is blocked there. */
-export const SCRAPER_DEFAULT_ENGINE: ScraperEngine = 'bing'
+/** Default Taiji runtime root: the same local api service the chat route uses. */
+export const TAIJI_RUNTIME_DEFAULT_BASE_URL = 'http://127.0.0.1:8000'
 
-/** Default Bing endpoint base; `/search` is the operation. */
-export const BING_DEFAULT_BASE_URL = 'https://www.bing.com'
-
-/** Default DuckDuckGo endpoint base; `/html/` is the operation. */
-export const DUCKDUCKGO_DEFAULT_BASE_URL = 'https://html.duckduckgo.com'
+/** The runtime's native-scraper search operation, appended to the configured root. */
+export const TAIJI_SEARCH_PATH = '/api/tools/web_search'
 
 /** Attribution header sent on every request. Bump with the package version. */
 const USER_AGENT = 'deepseek-harness/0.0.1'
 
-/** A real browser UA is required for the HTML endpoints to serve full markup. */
-const BROWSER_USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36'
+/** One source row of the runtime's `POST /api/tools/web_search` response. */
+interface RuntimeSearchSource {
+  readonly url?: unknown
+  readonly title?: unknown
+  readonly snippet?: unknown
+  readonly engine?: unknown
+}
 
-/** Engines the provider can parse. The plugin schema pins this union. */
-export type ScraperEngine = 'bing' | 'duckduckgo'
-
-/** Bing caps `count` per request; values above it are clamped. */
-const BING_MAX_COUNT = 30
+/** The runtime's search response envelope. */
+interface RuntimeSearchResponse {
+  readonly sources?: unknown
+  readonly truncated?: unknown
+}
 
 /** Resolved provider options (the plugin's `apply` supplies constant defaults). */
-export interface ScraperSearchProviderOptions {
-  /** Which engine's result page to fetch and parse. */
-  engine: ScraperEngine
-  /** Bing endpoint base; `/search` is appended. */
-  bingBaseUrl: string
-  /** DuckDuckGo endpoint base; `/html/` is appended. */
-  duckduckgoBaseUrl: string
+export interface TaijiSearchProviderOptions {
+  /** Taiji runtime root; the search path is appended. */
+  baseURL: string
 }
 
 /**
- * Decode the HTML entities a search page actually emits: the named set seen in
- * Bing/DuckDuckGo markup plus numeric references. Unknown named entities pass
- * through unchanged rather than guessing.
+ * Normalize one runtime source row, or `undefined` when it names no usable URL.
+ * Blank optional strings drop so the seam never carries empty-string lies.
  *
- * @param text - raw text possibly containing entities.
- * @returns decoded text.
+ * @param row - one `sources[]` entry as parsed from the runtime response.
+ * @returns the normalized source, or `undefined` for an unusable row.
  */
-export function decodeHtmlEntities(text: string): string {
-  return text.replace(/&(?:#[xX]([0-9a-fA-F]+)|#([0-9]+)|([a-zA-Z][a-zA-Z0-9]*));/gu, (match, hex, dec, name) => {
-    if (hex !== undefined) return safeCodePoint(parseInt(hex, 16))
-    if (dec !== undefined) return safeCodePoint(parseInt(dec, 10))
-    const named = NAMED_ENTITIES[name]
-    return named ?? match
-  })
-}
-
-const NAMED_ENTITIES: Record<string, string> = {
-  amp: '&', lt: '<', gt: '>', quot: '"', apos: "'", nbsp: ' ',
-  ensp: '\u2002', emsp: '\u2003', hellip: '\u2026', middot: '\u00b7',
-  mdash: '\u2014', ndash: '\u2013', laquo: '\u00ab', raquo: '\u00bb',
-}
-
-/** Map a code point, rejecting surrogate-range garbage to the replacement char. */
-function safeCodePoint(code: number): string {
-  if (!Number.isFinite(code) || code < 0 || code > 0x10ffff || (code >= 0xd800 && code <= 0xdfff)) return '\ufffd'
-  return String.fromCodePoint(code)
-}
-
-/**
- * Remove tags from one markup fragment and collapse the whitespace the removed
- * tags leave behind, so nested `<strong>`/`<b>` spans inside titles and
- * snippets yield plain text.
- *
- * @param fragment - one element's inner markup.
- * @returns tag-free, whitespace-collapsed text (NOT entity-decoded).
- */
-export function stripHtmlTags(fragment: string): string {
-  return fragment.replace(/<[^>]*>/gu, ' ').replace(/\s+/gu, ' ').trim()
-}
-
-/** True for href values that cannot name a citeable destination. */
-function unusableHref(href: string): boolean {
-  return href.length === 0 || /^(?:javascript|data|about|blob):/iu.test(href)
-}
-
-/** Normalize one extracted URL, or `undefined` when it is not citeable. */
-function normalizeSourceUrl(href: string): string | undefined {
-  if (unusableHref(href)) return undefined
-  return href
-}
-
-/**
- * Resolve a DuckDuckGo redirect link to its destination. The HTML endpoint
- * wraps results in `//duckduckgo.com/l/?uddg=<encoded>&rut=...`; a direct href
- * passes through unchanged.
- *
- * @param href - the raw `result__a` href.
- * @returns the destination URL, or `undefined` when the redirect carries none.
- */
-export function resolveDuckDuckGoHref(href: string): string | undefined {
-  if (!/^(?:https?:)?\/\/[^\s]*duckduckgo\.com\/l\//iu.test(href) && !href.startsWith('/l/')) return normalizeSourceUrl(href)
-  const absolute = href.startsWith('//') ? `https:${href}` : href.startsWith('/') ? `https://duckduckgo.com${href}` : href
-  try {
-    const uddg = new URL(absolute).searchParams.get('uddg')
-    if (uddg === null || uddg.length === 0) return undefined
-    return normalizeSourceUrl(uddg)
-  } catch {
-    return undefined
-  }
-}
-
-/**
- * Parse a Bing result page into sources. One source per `li.b_algo` block: the
- * `h2` anchor names the URL and title, and a `p.b_lineclamp*` paragraph — when
- * the block carries one — becomes the snippet. Duplicate URLs collapse to
- * their first occurrence; blocks without a usable anchor are dropped.
- *
- * @param html - the fetched result-page markup.
- * @returns the sources in page order.
- */
-export function mapBingHtml(html: string): WebSearchSource[] {
-  const sources: WebSearchSource[] = []
-  const seen = new Set<string>()
-  let cursor = html.indexOf('<li class="b_algo')
-  while (cursor >= 0) {
-    const next = html.indexOf('<li class="b_algo', cursor + 1)
-    const block = html.slice(cursor, next === -1 ? undefined : next)
-    const source = mapBingBlock(block)
-    if (source !== undefined && !seen.has(source.url)) {
-      seen.add(source.url)
-      sources.push(source)
-    }
-    cursor = next
-  }
-  return sources
-}
-
-/** Parse one `li.b_algo` block, or `undefined` when it names no usable result. */
-function mapBingBlock(block: string): WebSearchSource | undefined {
-  const h2Start = block.indexOf('<h2')
-  if (h2Start === -1) return undefined
-  const h2End = block.indexOf('</h2>', h2Start)
-  if (h2End === -1) return undefined
-  const heading = block.slice(h2Start, h2End + 5)
-  const href = extractAnchorHref(heading)
-  if (href === undefined) return undefined
-  const url = normalizeSourceUrl(href)
-  if (url === undefined) return undefined
-  const title = stripHtmlTags(decodeHtmlEntities(heading.replace(/<a[\s][^>]*>/u, '').replace(/<\/a>/u, '')))
-  const snippet = extractBingSnippet(block)
+export function mapRuntimeSource(row: RuntimeSearchSource): WebSearchSource | undefined {
+  if (typeof row.url !== 'string' || row.url.length === 0) return undefined
+  const title = typeof row.title === 'string' && row.title.trim().length > 0 ? row.title.trim() : undefined
+  const snippet = typeof row.snippet === 'string' && row.snippet.trim().length > 0 ? row.snippet.trim() : undefined
   return {
-    url,
-    ...title.length > 0 ? { title } : {},
+    url: row.url,
+    ...title !== undefined ? { title } : {},
     ...snippet !== undefined ? { snippet } : {},
   }
 }
 
-/** First `href="..."` on the first `<a` inside the fragment. */
-function extractAnchorHref(fragment: string): string | undefined {
-  const anchorStart = fragment.indexOf('<a')
-  if (anchorStart === -1) return undefined
-  const tagEnd = fragment.indexOf('>', anchorStart)
-  if (tagEnd === -1) return undefined
-  const tag = fragment.slice(anchorStart, tagEnd)
-  const href = /(?:\s)href="([^"]*)"/u.exec(tag)?.[1]
-  return href === undefined ? undefined : decodeHtmlEntities(href)
-}
-
-/** The `p.b_lineclamp*` paragraph's text, or `undefined` when absent. */
-function extractBingSnippet(block: string): string | undefined {
-  const marker = '<p class="b_lineclamp'
-  const start = block.indexOf(marker)
-  if (start === -1) return undefined
-  const textStart = block.indexOf('>', start)
-  const end = block.indexOf('</p>', start)
-  if (textStart === -1 || end === -1 || end <= textStart) return undefined
-  const text = stripHtmlTags(decodeHtmlEntities(block.slice(textStart + 1, end)))
-  return text.length > 0 ? text : undefined
-}
-
 /**
- * Parse a DuckDuckGo HTML-endpoint page into sources. Results are the
- * `a.result__a` links; each pairs with the first `a.result__snippet` that
- * follows it and precedes the next result link. Redirect hrefs resolve to
- * their `uddg` destination; duplicate URLs collapse to their first occurrence.
+ * Map the runtime's response envelope to a normalized search result. The
+ * runtime's multi-engine racing crawler returns one engine's result list; an
+ * empty page is a legitimate empty result, not an error.
  *
- * @param html - the fetched result-page markup.
- * @returns the sources in page order.
+ * @param payload - the parsed response body.
+ * @returns the normalized result.
+ * @throws {@link WebError} when the envelope is not a recognizable shape.
  */
-export function mapDuckDuckGoHtml(html: string): WebSearchSource[] {
+export function mapRuntimeResponse(payload: unknown): WebSearchResult {
+  if (payload === null || typeof payload !== 'object' || !Array.isArray((payload as RuntimeSearchResponse).sources)) {
+    throw new WebError('Taiji runtime returned an unrecognizable search response', 'WEB_PROVIDER_ERROR')
+  }
   const sources: WebSearchSource[] = []
-  const seen = new Set<string>()
-  const anchors = [...html.matchAll(/<a\s[^>]*class="[^"]*result__a[^"]*"[^>]*>/gu)]
-  for (const [index, match] of anchors.entries()) {
-    const anchorStart = match.index
-    const anchorTagEnd = html.indexOf('>', anchorStart)
-    const anchorEnd = html.indexOf('</a>', anchorTagEnd)
-    if (anchorTagEnd === -1 || anchorEnd === -1) continue
-    const href = /(?:\s)href="([^"]*)"/u.exec(match[0])?.[1]
-    if (href === undefined) continue
-    const url = resolveDuckDuckGoHref(decodeHtmlEntities(href))
-    if (url === undefined || seen.has(url)) continue
-    const windowEnd = index + 1 < anchors.length ? anchors[index + 1]!.index : html.length
-    const title = stripHtmlTags(decodeHtmlEntities(html.slice(anchorTagEnd + 1, anchorEnd)))
-    const snippetStart = html.indexOf('result__snippet', anchorEnd)
-    const snippet = snippetStart >= 0 && snippetStart < windowEnd
-      ? extractDuckDuckGoSnippet(html, snippetStart)
-      : undefined
-    seen.add(url)
-    sources.push({
-      url,
-      ...title.length > 0 ? { title } : {},
-      ...snippet !== undefined ? { snippet } : {},
-    })
+  for (const row of (payload as RuntimeSearchResponse).sources as readonly unknown[]) {
+    if (row === null || typeof row !== 'object') continue
+    const source = mapRuntimeSource(row as RuntimeSearchSource)
+    if (source !== undefined) sources.push(source)
   }
-  return sources
-}
-
-/** Text of the `a.result__snippet` element starting at `markerIndex`. */
-function extractDuckDuckGoSnippet(html: string, markerIndex: number): string | undefined {
-  const tagEnd = html.indexOf('>', markerIndex)
-  const end = html.indexOf('</a>', tagEnd)
-  if (tagEnd === -1 || end === -1 || end <= tagEnd) return undefined
-  const text = stripHtmlTags(decodeHtmlEntities(html.slice(tagEnd + 1, end)))
-  return text.length > 0 ? text : undefined
-}
-
-/** Build the engine request URL for one query. */
-function endpointFor(options: ScraperSearchProviderOptions, query: string, maxResults: number | undefined): string {
-  const encoded = encodeURIComponent(query)
-  if (options.engine === 'duckduckgo') {
-    return `${options.duckduckgoBaseUrl}/html/?q=${encoded}`
-  }
-  const count = maxResults !== undefined ? `&count=${String(Math.min(maxResults, BING_MAX_COUNT))}` : ''
-  return `${options.bingBaseUrl}/search?q=${encoded}${count}`
+  return { sources, truncated: false }
 }
 
 /**
- * The scraper-backed search provider. Requests are anonymous GETs, so unlike
- * the credentialed providers they follow redirects (the packages-wide
- * reject-redirect rule protects credentials and request data, of which this
- * provider carries none into the redirect chain). Failures name the endpoint
- * and tell the model how the user can switch engines.
+ * The Taiji-runtime-backed search provider. Requests are anonymous POSTs to the
+ * local api service, so unlike the credentialed providers they follow redirects
+ * (the packages-wide reject-redirect rule protects credentials and request
+ * data, of which this provider carries none into the redirect chain). Failures
+ * tell the model the runtime may be down and name the recovery path.
  */
-export class ScraperSearchProvider implements WebSearchProvider {
-  readonly id = SCRAPER_PROVIDER_ID
+export class TaijiSearchProvider implements WebSearchProvider {
+  readonly id = TAIJI_SEARCH_PROVIDER_ID
 
-  constructor(private readonly resolveOptions: () => ScraperSearchProviderOptions) {}
+  constructor(private readonly resolveOptions: () => TaijiSearchProviderOptions) {}
 
   available(): boolean {
     const options = this.resolveOptions()
-    return URL.canParse(`${options.bingBaseUrl}/search`) && URL.canParse(`${options.duckduckgoBaseUrl}/html/`)
+    return URL.canParse(`${options.baseURL}${TAIJI_SEARCH_PATH}`)
   }
 
   async search(request: WebSearchRequest, signal?: AbortSignal): Promise<WebSearchResult> {
-    // One snapshot per operation so an engine switch landing mid-search cannot
-    // mix two engines' base URLs into one request.
+    // One snapshot per operation so a base-URL change landing mid-search cannot
+    // send one request's parts to two runtimes.
     const options = this.resolveOptions()
     throwIfSearchAborted(signal)
-    const endpoint = endpointFor(options, request.query, request.maxResults)
+    const endpoint = `${options.baseURL}${TAIJI_SEARCH_PATH}`
     let response: Response
     try {
       response = await fetch(endpoint, {
+        method: 'POST',
         headers: {
-          'user-agent': BROWSER_USER_AGENT,
-          'accept': 'text/html,application/xhtml+xml',
-          'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8',
-          // The attribution header stays beside the browser UA; some engines
-          // drop requests whose only UA names a script.
-          'x-harness-client': USER_AGENT,
+          'content-type': 'application/json',
+          'accept': 'application/json',
+          'user-agent': USER_AGENT,
         },
+        body: JSON.stringify({
+          query: request.query,
+          ...(request.maxResults !== undefined ? { max_results: request.maxResults } : {}),
+        }),
         ...signal !== undefined ? { signal } : {},
       })
     } catch (error: unknown) {
       if (signal?.aborted === true || isAbortError(error)) throw searchAborted(signal, error)
-      throw endpointError(options, `Scraper search request failed: ${String(error)}`, error)
+      throw searchEndpointError(options, `Taiji search request failed: ${String(error)}`, error)
     }
     if (!response.ok) {
-      throw endpointError(options, `Scraper search engine returned HTTP ${String(response.status)}`)
+      throw searchEndpointError(options, `Taiji runtime search returned HTTP ${String(response.status)}`)
     }
     try {
-      const html = await response.text()
-      const sources = options.engine === 'duckduckgo' ? mapDuckDuckGoHtml(html) : mapBingHtml(html)
-      // An empty page is a legitimate empty result (engine found nothing or
-      // served a layout we do not recognize), not a provider error.
-      return { sources, truncated: false }
+      return mapRuntimeResponse(await response.json())
     } catch (error: unknown) {
       if (signal?.aborted === true || isAbortError(error)) throw searchAborted(signal, error)
-      throw endpointError(options, `Scraper search could not process the result page: ${String(error)}`, error)
+      if (error instanceof WebError) throw error
+      throw searchEndpointError(options, `Taiji runtime search returned an unprocessable body: ${String(error)}`, error)
     }
   }
 }
 
-/** Add engine-recovery instructions to failures that occur around dispatch. */
-function endpointError(options: ScraperSearchProviderOptions, message: string, cause?: unknown): WebError {
+/** Add runtime-recovery instructions to failures that occur around dispatch. */
+function searchEndpointError(options: TaijiSearchProviderOptions, message: string, cause?: unknown): WebError {
   return new WebError(
-    `${message}\n\nThe web search request used the ${options.engine} result page. `
-    + 'If that engine is unreachable from this deployment (the DuckDuckGo HTML endpoint is blocked '
-    + 'in mainland-China networks; Bing is not), guide the user to Settings > Plugins > '
-    + 'Plugin configuration > Web search scraper, where they can switch Engine. Only the user '
-    + 'should choose or change the engine.',
+    `${message}\n\nThe web search request used the Taiji runtime's native scraper search at `
+    + `${JSON.stringify(options.baseURL)}${TAIJI_SEARCH_PATH}. If the Seed backend (local runtime) is not `
+    + 'running, searches cannot execute — guide the user to start the backend. If a different runtime root '
+    + 'is intended, guide the user to Settings > Plugins > Plugin configuration > Web search scraper, where '
+    + 'they can change and save Endpoint. Only the user should choose or change the endpoint.',
     'WEB_PROVIDER_ERROR',
     cause === undefined ? undefined : { cause },
   )
@@ -325,7 +162,7 @@ function throwIfSearchAborted(signal?: AbortSignal): void {
 
 /** Build the provider's stable cancellation error while retaining the caller's reason. */
 function searchAborted(signal?: AbortSignal, fallback?: unknown): WebError {
-  return new WebError('Scraper search aborted', 'WEB_ABORTED', {
+  return new WebError('Taiji search aborted', 'WEB_ABORTED', {
     cause: signal?.aborted === true ? signal.reason : fallback,
   })
 }

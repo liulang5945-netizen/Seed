@@ -1,7 +1,8 @@
 /**
- * Scraper-backed `WebSearchProvider` plugin: fetches and parses a search
- * engine's result page (no API key, no paid quota). It contributes to the
- * `ctx.web` registry without owning the service.
+ * Taiji-runtime-backed `WebSearchProvider` plugin: the model's `web_search`
+ * calls the local api service's native scraper search (the project's own
+ * multi-engine racing crawler), needing no search API credential. It
+ * contributes to the `ctx.web` registry without owning the service.
  * @module @taiji/dsh-web-search-scraper
  */
 
@@ -9,21 +10,19 @@ import type { Context } from '@taiji/cordis'
 import z from '@taiji/schemastery'
 import type {} from '@taiji/dsh-web'
 import {
-  BING_DEFAULT_BASE_URL,
-  DUCKDUCKGO_DEFAULT_BASE_URL,
-  SCRAPER_DEFAULT_ENGINE,
-  ScraperSearchProvider,
+  TAIJI_RUNTIME_DEFAULT_BASE_URL,
+  TaijiSearchProvider,
 } from './provider.ts'
-import type { ScraperEngine } from './provider.ts'
 
 export {
-  BING_DEFAULT_BASE_URL,
-  DUCKDUCKGO_DEFAULT_BASE_URL,
-  SCRAPER_DEFAULT_ENGINE,
-  SCRAPER_PROVIDER_ID,
-  ScraperSearchProvider,
+  TAIJI_RUNTIME_DEFAULT_BASE_URL,
+  TAIJI_SEARCH_PATH,
+  TAIJI_SEARCH_PROVIDER_ID,
+  TaijiSearchProvider,
+  mapRuntimeResponse,
+  mapRuntimeSource,
 } from './provider.ts'
-export type { ScraperEngine, ScraperSearchProviderOptions } from './provider.ts'
+export type { TaijiSearchProviderOptions } from './provider.ts'
 
 /** Cordis plugin name used by loader diagnostics. */
 export const name = 'web-search-scraper'
@@ -33,25 +32,17 @@ export const inject = ['web']
 
 /** Plugin config (all optional — `apply` fills constant defaults). */
 export interface Config {
-  /** Which engine's result page to fetch and parse. Defaults to Bing. */
-  engine: ScraperEngine
-  /** Bing endpoint base; `/search` is appended. */
-  bingBaseUrl: string
-  /** DuckDuckGo endpoint base; `/html/` is appended. */
-  duckduckgoBaseUrl: string
+  /** Taiji runtime root; `/api/tools/web_search` is appended. Defaults to the local api service. */
+  baseURL: string
 }
 
 export const Config: z<Config> = z.object({
-  engine: z.union(['bing', 'duckduckgo'] as const).default(SCRAPER_DEFAULT_ENGINE),
-  bingBaseUrl: z.string().default(BING_DEFAULT_BASE_URL),
-  duckduckgoBaseUrl: z.string().default(DUCKDUCKGO_DEFAULT_BASE_URL),
+  baseURL: z.string().default(TAIJI_RUNTIME_DEFAULT_BASE_URL),
 })
 
-/** Register the scraper search provider with `ctx.web`. */
+/** Register the Taiji-runtime search provider with `ctx.web`. */
 export function apply(ctx: Context, config: Config): void {
-  ctx.web.registerSearchProvider(new ScraperSearchProvider(() => ({
-    engine: config.engine,
-    bingBaseUrl: config.bingBaseUrl,
-    duckduckgoBaseUrl: config.duckduckgoBaseUrl,
+  ctx.web.registerSearchProvider(new TaijiSearchProvider(() => ({
+    baseURL: config.baseURL,
   })))
 }

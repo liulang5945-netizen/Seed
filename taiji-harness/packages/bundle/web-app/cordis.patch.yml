@@ -421,9 +421,6 @@
     - id: ui-settings-subagent
       name: '@taiji/dsh-client-ui-settings-subagent'
 
-    - id: ui-settings-web-search
-      name: '@taiji/dsh-client-ui-settings-web-search'
-
     # Plan control: the composer plan seat over the plan projection + /plan channel.
     - id: ui-plan
       name: '@taiji/dsh-client-ui-plan'

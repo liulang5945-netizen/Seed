@@ -437,15 +437,13 @@ export interface LaunchOptions {
   /** Leave first-use Workspace initialization eligible; ordinary scenarios start after the default was removed. */
   firstUse?: boolean
   /**
-   * Patch the shipped DeepSeek search row to a deterministic endpoint and
-   * credential reference. Browser search scenarios keep the real provider and
-   * credentials seam while avoiding external search traffic and ambient keys.
+   * Patch the shipped Taiji-search scraper row to a deterministic endpoint.
+   * Browser search scenarios keep the real provider seam while avoiding
+   * external search traffic and any dependence on a running runtime.
    */
-  deepSeekSearch?: {
-    /** Anthropic-compatible base URL; the provider appends `/messages`. */
+  scraperSearch?: {
+    /** Taiji runtime base URL; the provider appends `/api/tools/web_search`. */
     baseURL: string
-    /** Credential reference resolved by the shipped search provider. */
-    apiKeyEnv: string
   }
   /** Preset selection default and additional declarative definitions for this scenario. */
   agentPresets?: {
@@ -738,13 +736,12 @@ export async function launchWebScaffold(options: LaunchOptions = {}): Promise<We
       { insert: (options.agentPresets.definitions ?? []).map(config => ({ id: `preset-${config.id}`, name: '@taiji/dsh-agent-preset', config })) },
     ],
     ...options.toolsMode === undefined ? [] : [{ id: 'tools', config: { mode: options.toolsMode } }],
-    ...options.deepSeekSearch === undefined
+    ...options.scraperSearch === undefined
       ? []
       : [{
-        id: 'web-search-deepseek',
+        id: 'web-search-scraper',
         config: {
-          apiKeyEnv: options.deepSeekSearch.apiKeyEnv,
-          baseURL: options.deepSeekSearch.baseURL,
+          baseURL: options.scraperSearch.baseURL,
         },
       }],
     {
@@ -758,7 +755,7 @@ export async function launchWebScaffold(options: LaunchOptions = {}): Promise<We
 
   // Live fields use a shared deployment layer; process-specific ports and roots stay in CLI overlays.
   const formEntries = new Set(['agent-default-model', 'agent-preset-registry', 'llm-deepseek', 'llm-pi-ai',
-    'web-search-deepseek', 'agent-loop', 'subagent', 'bash-sandbox', 'pwsh-sandbox',
+    'web-search-scraper', 'agent-loop', 'subagent', 'bash-sandbox', 'pwsh-sandbox',
     'ui-theme', 'locale', 'ui-chat', 'ui-conversation', 'ui-settings', 'ui-settings-general', 'permission'])
   const formDefaults: PatchOptions[] = []
   const processOverlays = overlayPatches.map((patch) => {

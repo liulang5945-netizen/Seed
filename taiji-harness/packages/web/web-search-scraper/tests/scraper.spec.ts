@@ -1,128 +1,123 @@
 import { createServer, type Server } from 'node:http'
 import type { AddressInfo } from 'node:net'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
-import {
-  ScraperSearchProvider,
-  decodeHtmlEntities,
-  mapBingHtml,
-  mapDuckDuckGoHtml,
-  resolveDuckDuckGoHref,
-} from '../src/provider.ts'
 import { WebError } from '@taiji/dsh-web'
+import {
+  TaijiSearchProvider,
+  TAIJI_SEARCH_PROVIDER_ID,
+  mapRuntimeResponse,
+  mapRuntimeSource,
+} from '../src/provider.ts'
 
-/** A trimmed Bing result list carrying the markup shapes the parser must own. */
-const BING_FIXTURE = `<html><body><ol id="b_results">
-<li class="b_algo" data-id iid=SERP.5336><div class="b_tpcn"><a class="tilk" href="https://example.com/alpha/"><div class="tptt">example.com</div></a></div><h2 class=""><a target="_blank" href="https://example.com/alpha?a=1&amp;b=2" h="ID=SERP,5130.1">Alpha <strong>Result</strong></a></h2><div class="b_caption"><p class="b_lineclamp2" data-rslinkclamp-iid="">1 天前&ensp;&#0183;&ensp;Alpha snippet text \u2026</p></div></li>
-<li class="b_algo"><h2><a href="https://example.com/beta">Beta page</a></h2><div class="b_caption"><p class="b_lineclamp4">Beta snippet &amp; more</p></div></li>
-<li class="b_algo"><h2><a href="javascript:void(0)">Script trap</a></h2></li>
-<li class="b_algo"><h2><a href="https://example.com/beta">Beta duplicate</a></h2></li>
-<li class="b_algo"><h2><a href="https://example.com/gamma">Gamma bare</a></h2><div class="b_caption"><span>no paragraph here</span></div></li>
-</ol></body></html>`
-
-/** A trimmed DuckDuckGo HTML-endpoint result list with redirect and direct hrefs. */
-const DDG_FIXTURE = `<html><body>
-<div class="result results_links results_links_deep web-result"><div class="result__body"><a class="result__a" href="//duckduckgo.com/l/?uddg=https%3A%2F%2Fexample.com%2Fone&amp;rut=abc">One <b>Title</b></a><a class="result__snippet" href="#">One <b>snippet</b> text</a></div></div>
-<div class="result results_links results_links_deep web-result"><div class="result__body"><a class="result__a" href="https://example.com/two">Two page</a><a class="result__snippet">Two snippet</a></div></div>
-<div class="result results_links results_links_deep web-result"><div class="result__body"><a class="result__a" href="//duckduckgo.com/l/?uddg=https%3A%2F%2Fexample.com%2Ftwo&amp;rut=def">Two redirect duplicate</a></div></div>
-</body></html>`
-
-describe('decodeHtmlEntities', () => {
-  it('decodes named, decimal, and hex entities', () => {
-    expect(decodeHtmlEntities('a&amp;b &#0183; &#x2026; &ensp;')).toBe('a&b \u00b7 \u2026 \u2002')
+describe('mapRuntimeSource', () => {
+  it('keeps non-blank optionals and drops blank-string lies', () => {
+    expect(mapRuntimeSource({ url: 'https://example.com/a', title: 'A', snippet: 'text', engine: 'Bing' })).toEqual({
+      url: 'https://example.com/a',
+      title: 'A',
+      snippet: 'text',
+    })
+    expect(mapRuntimeSource({ url: 'https://example.com/b', title: '', snippet: '  ' })).toEqual({
+      url: 'https://example.com/b',
+    })
   })
-  it('leaves unknown named entities untouched', () => {
-    expect(decodeHtmlEntities('&notinmyvocabulary;')).toBe('&notinmyvocabulary;')
-  })
-  it('maps out-of-range and surrogate code points to the replacement char', () => {
-    expect(decodeHtmlEntities('&#xd800; &#999999999;')).toBe('\ufffd \ufffd')
+  it('rejects rows without a usable url', () => {
+    expect(mapRuntimeSource({})).toBeUndefined()
+    expect(mapRuntimeSource({ url: '' })).toBeUndefined()
+    expect(mapRuntimeSource({ url: 42 })).toBeUndefined()
   })
 })
 
-describe('mapBingHtml', () => {
-  it('parses anchors and line-clamp snippets from b_algo blocks', () => {
-    const sources = mapBingHtml(BING_FIXTURE)
-    expect(sources).toEqual([
-      {
-        url: 'https://example.com/alpha?a=1&b=2',
-        title: 'Alpha Result',
-        snippet: '1 天前 \u00b7 Alpha snippet text \u2026',
-      },
-      { url: 'https://example.com/beta', title: 'Beta page', snippet: 'Beta snippet & more' },
-      { url: 'https://example.com/gamma', title: 'Gamma bare' },
-    ])
+describe('mapRuntimeResponse', () => {
+  it('normalizes the runtime envelope', () => {
+    expect(mapRuntimeResponse({
+      sources: [
+        { url: 'https://example.com/a', title: 'A', snippet: 's', engine: 'Bing' },
+        { url: 'https://example.com/b' },
+        'garbage',
+        null,
+      ],
+      truncated: false,
+    })).toEqual({
+      sources: [{ url: 'https://example.com/a', title: 'A', snippet: 's' }, { url: 'https://example.com/b' }],
+      truncated: false,
+    })
   })
-  it('collapses duplicate URLs to their first occurrence', () => {
-    const urls = mapBingHtml(BING_FIXTURE).map(source => source.url)
-    expect(urls.filter(url => url === 'https://example.com/beta')).toHaveLength(1)
+  it('accepts an empty source list as a legitimate empty result', () => {
+    expect(mapRuntimeResponse({ sources: [], truncated: false })).toEqual({ sources: [], truncated: false })
   })
-  it('returns no sources for a page without result blocks', () => {
-    expect(mapBingHtml('<html><body>nothing here</body></html>')).toEqual([])
-  })
-})
-
-describe('mapDuckDuckGoHtml', () => {
-  it('resolves redirect hrefs and pairs snippets with their result link', () => {
-    expect(mapDuckDuckGoHtml(DDG_FIXTURE)).toEqual([
-      { url: 'https://example.com/one', title: 'One Title', snippet: 'One snippet text' },
-      { url: 'https://example.com/two', title: 'Two page', snippet: 'Two snippet' },
-    ])
+  it('throws a provider error for an unrecognizable envelope', () => {
+    expect(() => mapRuntimeResponse({ nope: true })).toThrowError(WebError)
+    expect(() => mapRuntimeResponse(null)).toThrowError(WebError)
+    expect(() => mapRuntimeResponse({ sources: 'not-a-list' })).toThrowError(WebError)
   })
 })
 
-describe('resolveDuckDuckGoHref', () => {
-  it('decodes the uddg destination of a protocol-relative redirect', () => {
-    expect(resolveDuckDuckGoHref('//duckduckgo.com/l/?uddg=https%3A%2F%2Fexample.com%2Fx&rut=r')).toBe('https://example.com/x')
-  })
-  it('passes direct http hrefs through', () => {
-    expect(resolveDuckDuckGoHref('https://example.com/direct')).toBe('https://example.com/direct')
-  })
-  it('rejects redirect links without a uddg destination', () => {
-    expect(resolveDuckDuckGoHref('//duckduckgo.com/l/?rut=r')).toBeUndefined()
-  })
-  it('rejects unusable schemes', () => {
-    expect(resolveDuckDuckGoHref('javascript:void(0)')).toBeUndefined()
-  })
-})
-
-describe('ScraperSearchProvider', () => {
+describe('TaijiSearchProvider', () => {
   let server: Server
   let origin: string
-  let lastQuery = ''
+  let lastPath = ''
+  let lastBody = ''
+  let lastMethod = ''
 
   beforeAll(async () => {
     server = createServer((request, response) => {
-      lastQuery = request.url ?? ''
-      if (request.url?.includes('boom')) {
-        response.writeHead(500); response.end('engine exploded')
-        return
-      }
-      response.writeHead(200, { 'content-type': 'text/html; charset=utf-8' })
-      response.end(BING_FIXTURE)
+      let body = ''
+      request.setEncoding('utf8')
+      request.on('data', (chunk: string) => { body += chunk })
+      request.on('end', () => {
+        lastPath = request.url ?? ''
+        lastBody = body
+        lastMethod = request.method ?? ''
+        if (body.includes('"query":"boom"')) {
+          response.writeHead(502); response.end('runtime exploded')
+          return
+        }
+        if (body.includes('"query":"garbage"')) {
+          response.writeHead(200, { 'content-type': 'application/json' }); response.end('not-json')
+          return
+        }
+        response.writeHead(200, { 'content-type': 'application/json' })
+        response.end(JSON.stringify({
+          sources: [
+            { url: 'https://example.com/composed', title: 'Composed', snippet: 'works end to end', engine: 'Bing' },
+          ],
+          truncated: false,
+        }))
+      })
     })
     const a = await new Promise<AddressInfo>((r) => { server.listen(0, '127.0.0.1', () => { r(server.address() as AddressInfo) }) })
     origin = `http://127.0.0.1:${String(a.port)}`
   })
   afterAll(async () => { await new Promise<void>((r) => { server.close(() => { r() }) }) })
 
-  const provider = (): ScraperSearchProvider => new ScraperSearchProvider(() => ({
-    engine: 'bing',
-    bingBaseUrl: origin,
-    duckduckgoBaseUrl: origin,
-  }))
+  const provider = (): TaijiSearchProvider => new TaijiSearchProvider(() => ({ baseURL: origin }))
 
-  it('is available without any credential', () => {
+  it('registers under the taiji-search id and is available without any credential', () => {
+    expect(TAIJI_SEARCH_PROVIDER_ID).toBe('taiji-search')
+    expect(provider().id).toBe('taiji-search')
     expect(provider().available()).toBe(true)
   })
 
-  it('parses the engine result page into sources', async () => {
-    const result = await provider().search({ query: 'probe query', maxResults: 8 })
-    expect(lastQuery.startsWith('/search?q=probe%20query&count=8')).toBe(true)
-    expect(result.sources).toHaveLength(3)
+  it('posts to the runtime search endpoint and maps the sources', async () => {
+    const result = await provider().search({ query: 'compose probe', maxResults: 8 })
+    expect(lastMethod).toBe('POST')
+    expect(lastPath).toBe('/api/tools/web_search')
+    expect(JSON.parse(lastBody)).toEqual({ query: 'compose probe', max_results: 8 })
+    expect(result.sources).toEqual([
+      { url: 'https://example.com/composed', title: 'Composed', snippet: 'works end to end' },
+    ])
     expect(result.truncated).toBe(false)
   })
 
-  it('reports engine HTTP failures as provider errors', async () => {
+  it('reports runtime failures as provider errors naming the endpoint', async () => {
     const failure = await provider().search({ query: 'boom' }).catch((error: unknown) => error)
+    expect(failure).toBeInstanceOf(WebError)
+    expect((failure as WebError).code).toBe('WEB_PROVIDER_ERROR')
+    expect((failure as WebError).message).toContain('/api/tools/web_search')
+  })
+
+  it('reports an unprocessable body as a provider error', async () => {
+    const failure = await provider().search({ query: 'garbage' }).catch((error: unknown) => error)
     expect(failure).toBeInstanceOf(WebError)
     expect((failure as WebError).code).toBe('WEB_PROVIDER_ERROR')
   })

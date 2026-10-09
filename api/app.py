@@ -236,6 +236,7 @@ def _register_routers(app: FastAPI):
     from .routes_system import router as system_router
     from .routes_terminal import router as terminal_router
     from .routes_update import router as update_router
+    from .routes_web_search import router as web_search_router
 
     workflows_router = _load_optional_router("routes_workflows")
     from .training import router as training_router
@@ -263,6 +264,7 @@ def _register_routers(app: FastAPI):
         app.include_router(rag_router)
     app.include_router(models_router)
     app.include_router(system_router)
+    app.include_router(web_search_router)
     app.include_router(settings_router)
     app.include_router(update_router)
     app.include_router(model_switch_router)

@@ -1,39 +1,48 @@
 import { describe, expect, it } from 'vitest'
-import { BING_DEFAULT_BASE_URL, DUCKDUCKGO_DEFAULT_BASE_URL, SCRAPER_DEFAULT_ENGINE, ScraperSearchProvider } from '@taiji/dsh-web-search-scraper'
+import {
+  TAIJI_RUNTIME_DEFAULT_BASE_URL,
+  TAIJI_SEARCH_PATH,
+  TAIJI_SEARCH_PROVIDER_ID,
+  TaijiSearchProvider,
+} from '@taiji/dsh-web-search-scraper'
 
 /**
- * Real-network smoke for the scraper provider. Self-skips without an explicit
- * `$DSH_WEB_SCRAPER_E2E` opt-in (CI and ordinary test runs must not depend on
- * a live search engine); the DuckDuckGo arm additionally needs network reach
- * to `html.duckduckgo.com` (blocked in mainland-China networks).
+ * Real-runtime smoke for the Taiji-search provider. Live arms self-skip unless
+ * the local runtime actually answers its readiness probe (CI and ordinary test
+ * runs must not depend on a running backend); the arm additionally requires the
+ * `$DSH_WEB_SCRAPER_E2E` opt-in so a coincidentally-running runtime never turns
+ * a test run into live search traffic.
  */
 const enabled = process.env.DSH_WEB_SCRAPER_E2E !== undefined && process.env.DSH_WEB_SCRAPER_E2E.length > 0
-const ddgEnabled = enabled && process.env.DSH_WEB_SCRAPER_E2E_DDG !== undefined && process.env.DSH_WEB_SCRAPER_E2E_DDG.length > 0
-const maybe = enabled ? describe : describe.skip
-const maybeDdg = ddgEnabled ? describe : describe.skip
 
-maybe('ScraperSearchProvider real engine (bing)', () => {
+/** True when the configured runtime root answers its readiness probe. */
+async function runtimeUp(): Promise<boolean> {
+  const root = process.env.TAIJI_RUNTIME_BASE_URL ?? TAIJI_RUNTIME_DEFAULT_BASE_URL
+  try {
+    const res = await fetch(`${root}/api/health`, { signal: AbortSignal.timeout(3_000) })
+    return res.ok
+  } catch {
+    return false
+  }
+}
+
+const runtimeReachable = enabled && await runtimeUp()
+const maybe = runtimeReachable ? describe : describe.skip
+
+maybe('TaijiSearchProvider real runtime', () => {
   it('returns sources for a live query', async () => {
-    const provider = new ScraperSearchProvider(() => ({ engine: 'bing', bingBaseUrl: BING_DEFAULT_BASE_URL, duckduckgoBaseUrl: DUCKDUCKGO_DEFAULT_BASE_URL }))
-    const result = await provider.search({ query: 'DeepSeek Harness', maxResults: 5 })
+    const root = process.env.TAIJI_RUNTIME_BASE_URL ?? TAIJI_RUNTIME_DEFAULT_BASE_URL
+    const provider = new TaijiSearchProvider(() => ({ baseURL: root }))
+    const result = await provider.search({ query: 'Python asyncio tutorial', maxResults: 5 })
     expect(result.sources.length).toBeGreaterThan(0)
     for (const source of result.sources) expect(source.url).toMatch(/^https?:\/\//u)
-  }, 30_000)
-})
-
-maybeDdg('ScraperSearchProvider real engine (duckduckgo)', () => {
-  it('returns sources for a live query', async () => {
-    const provider = new ScraperSearchProvider(() => ({ engine: 'duckduckgo', bingBaseUrl: BING_DEFAULT_BASE_URL, duckduckgoBaseUrl: DUCKDUCKGO_DEFAULT_BASE_URL }))
-    const result = await provider.search({ query: 'DeepSeek Harness', maxResults: 5 })
-    expect(result.sources.length).toBeGreaterThan(0)
-    for (const source of result.sources) expect(source.url).toMatch(/^https?:\/\//u)
-  }, 30_000)
+  }, 60_000)
 })
 
 describe('defaults', () => {
-  it('ships bing as the engine and the documented endpoints', () => {
-    expect(SCRAPER_DEFAULT_ENGINE).toBe('bing')
-    expect(BING_DEFAULT_BASE_URL).toBe('https://www.bing.com')
-    expect(DUCKDUCKGO_DEFAULT_BASE_URL).toBe('https://html.duckduckgo.com')
+  it('ships the local runtime root, the documented path, and the provider id', () => {
+    expect(TAIJI_RUNTIME_DEFAULT_BASE_URL).toBe('http://127.0.0.1:8000')
+    expect(TAIJI_SEARCH_PATH).toBe('/api/tools/web_search')
+    expect(TAIJI_SEARCH_PROVIDER_ID).toBe('taiji-search')
   })
 })

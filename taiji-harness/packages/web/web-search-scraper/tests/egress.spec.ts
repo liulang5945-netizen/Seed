@@ -9,7 +9,7 @@ let proxyUrl: string
 
 beforeAll(async () => {
   proxy = createServer((request, response) => {
-    seen.push(`REQ ${request.url ?? ''}`)
+    seen.push(`REQ ${request.method ?? ''} ${request.url ?? ''}`)
     response.writeHead(502); response.end('fake-proxy')
   })
   proxy.on('connect', (request, socket) => {
@@ -31,10 +31,10 @@ async function observe(run: () => Promise<unknown>): Promise<string[]> {
   try { await run().catch(() => undefined) } finally { await dispose() }
   return seen
 }
-import { ScraperSearchProvider } from '../src/provider.ts'
+import { TaijiSearchProvider } from '../src/provider.ts'
 describe('scraper egress', () => {
   it('goes through the proxy', async () => {
-    const p = new ScraperSearchProvider(() => ({ engine: 'bing', bingBaseUrl: 'http://bing-probe.invalid', duckduckgoBaseUrl: 'http://ddg-probe.invalid' }))
-    expect(await observe(() => p.search({ query: 'probe' }))).toEqual(['REQ http://bing-probe.invalid/search?q=probe'])
+    const p = new TaijiSearchProvider(() => ({ baseURL: 'http://runtime-probe.invalid' }))
+    expect(await observe(() => p.search({ query: 'probe' }))).toEqual(['REQ POST http://runtime-probe.invalid/api/tools/web_search'])
   })
 })

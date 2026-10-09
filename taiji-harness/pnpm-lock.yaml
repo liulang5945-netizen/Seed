@@ -2094,9 +2094,6 @@ importers:
       '@taiji/dsh-web-fetch-http':
         specifier: workspace:^
         version: link:../../web/web-fetch-http
-      '@taiji/dsh-web-search-deepseek':
-        specifier: workspace:^
-        version: link:../../web/web-search-deepseek
       '@taiji/dsh-web-search-scraper':
         specifier: workspace:^
         version: link:../../web/web-search-scraper
@@ -2440,9 +2437,6 @@ importers:
       '@taiji/dsh-client-ui-settings-subagent':
         specifier: workspace:^
         version: link:../../client/ui-settings-subagent
-      '@taiji/dsh-client-ui-settings-web-search':
-        specifier: workspace:^
-        version: link:../../client/ui-settings-web-search
       '@taiji/dsh-client-ui-sidebar':
         specifier: workspace:^
         version: link:../../client/ui-sidebar

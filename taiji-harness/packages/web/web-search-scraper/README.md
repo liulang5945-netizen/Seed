@@ -1,5 +1,5 @@
 ---
-description: "The native scraper search provider for ctx.web: credential-free web search that fetches and parses a search engine's result page."
+description: "The Taiji-runtime-backed search provider for ctx.web: the project's own multi-engine racing crawler behind the local api service, with no search API credential."
 kind: "package-reference"
 ---
 
@@ -9,7 +9,7 @@ English | [中文](README.zh.md)
 
 ## Summary
 
-With `dsh-web-search-scraper`, the harness searches the web without any search API: the provider fetches a search engine's result page over plain HTTP and parses the result blocks into citeable sources. It serves deployments that must not depend on a paid search API or a stored credential. The engine is a deployment choice — Bing by default, with the DuckDuckGo HTML endpoint as the alternative — and the provider carries no `content`, only sources. The model-facing `web_search` tool lives in `dsh-tool-web`.
+With `dsh-web-search-scraper`, the harness searches the web through the project's own native crawler: the provider POSTs to the Taiji runtime's `POST /api/tools/web_search`, and the runtime's multi-engine racing crawler (`neuroplex/tools/web.py`: DuckDuckGo / Bing / Baidu, retry with backoff, caching, readability extraction) returns the sources. No paid search API and no stored credential is involved. The provider carries no `content`, only sources. The model-facing `web_search` tool lives in `dsh-tool-web`.
 
 ## Table of Contents
 
@@ -25,68 +25,65 @@ With `dsh-web-search-scraper`, the harness searches the web without any search A
 <a id="use-this-package"></a>
 ## Use this package
 
-Mount the provider in a composition that already loads the web service; it registers as the `scraper` search provider, so `ctx.web.search()` resolves it automatically when it is the only usable search backend — or pin it with `searchProvider: scraper`.
+Mount the provider in a composition that already loads the web service; it registers as the `taiji-search` search provider, so `ctx.web.search()` resolves it automatically when it is the only usable search backend — or pin it with `searchProvider: taiji-search`.
 
 ### When to choose it
 
-Choose this backend when a deployment has no search API credential and still needs live web results. The provider needs no key at all: `available()` is true whenever the configured endpoint bases parse. The default engine (Bing) is reachable from mainland-China networks without a proxy; the DuckDuckGo HTML endpoint is not, so deployments behind such networks should keep `bing`.
+Choose this backend when the deployment runs the Taiji runtime (the Seed backend service) and wants search driven by the project's own crawler. The provider needs no key: `available()` is true whenever the configured runtime root parses. The runtime answers only when the backend process is up — a search against a down runtime fails with a provider error that names the recovery path.
 
 ### Minimal configuration
 
-Load the web service and the provider; every setting has a safe default.
+Load the web service and the provider; the runtime root defaults to the local api service.
 
 ```yaml
 - name: '@taiji/dsh-web'
   config:
-    searchProvider: scraper
+    searchProvider: taiji-search
 - name: '@taiji/dsh-web-search-scraper'
 ```
 
 | Field | Default | Meaning |
 |---|---|---|
-| `engine` | `bing` | Which result page to fetch and parse: `bing` or `duckduckgo` |
-| `bingBaseUrl` | `https://www.bing.com` | Bing endpoint base; `/search` is appended |
-| `duckduckgoBaseUrl` | `https://html.duckduckgo.com` | DuckDuckGo endpoint base; `/html/` is appended |
+| `baseURL` | `http://127.0.0.1:8000` | Taiji runtime root; `/api/tools/web_search` is appended. The same default the Taiji chat route uses |
 
 The generated [configuration catalog](../../../docs/config-catalog.md#taijidsh-web-search-scraper) is the exhaustive source for every accepted field and its JSDoc.
 
 ### What a search returns
 
-Each parsed result maps to a `WebSearchSource`: `url`, `title`, and — when the engine's block carries a snippet paragraph — `snippet`. Bing blocks contribute their `p.b_lineclamp*` paragraph; DuckDuckGo redirect links resolve to their `uddg` destination before they are returned. Duplicate URLs collapse to their first occurrence, and a block without a usable anchor is dropped, so a call can return fewer sources than requested. The provider never sets `publishedAt` (the engines' snippets may carry an age prefix such as "1 天前 ·" inline) and never sets `content`. A page without recognizable result blocks resolves as an empty result, not an error.
+The runtime's crawler races its engines and returns one engine's result list; each row maps to a `WebSearchSource` with `url`, `title`, and `snippet` (blank strings drop). No `publishedAt` is derivable from the crawler's snippets, and no `content` is generated. The provider enforces `maxResults` by passing it through as the request's `max_results`; the seam's own cap still applies. A search that finds nothing resolves as an empty result, not an error.
 
 ### Failures and recovery
 
-Transport failures (DNS, connect, HTTP status) surface as `WEB_PROVIDER_ERROR` naming the engine and pointing the user at Settings > Plugins > Plugin configuration > Web search scraper, where Engine is switchable. Cancellation surfaces as `WEB_ABORTED`. A layout change that breaks the parser degrades to zero sources ("No results found." at the tool layer) rather than a hard error — treat a sudden run of empty results as an engine-markup signal, not a query problem.
+Transport failures (runtime down, HTTP status, unprocessable body) surface as `WEB_PROVIDER_ERROR` naming the runtime endpoint and telling the model to guide the user toward starting the backend or changing the configured root under Settings > Plugins > Plugin configuration > Web search scraper. Cancellation surfaces as `WEB_ABORTED`.
 
 <a id="understand-the-implementation"></a>
 ## Understand the implementation
 
-- `provider.ts` owns the whole surface: the two parsers (`mapBingHtml`, `mapDuckDuckGoHtml`), entity decoding, redirect resolution, and the provider class. Parsing is dependency-free index slicing, so the package has no runtime dependencies beyond the schema.
-- Requests are anonymous GETs with a browser `User-Agent` (engines drop script-only UAs) plus the harness attribution header. They intentionally follow redirects: the packages-wide reject-redirect rule protects credentials and request data, of which this provider carries none into the redirect chain (Bing redirects `www.bing.com` to a regional host by geography).
-- The provider snapshots its options once per search, so an engine switch landing mid-search cannot mix two engines' base URLs into one request.
+- `provider.ts` owns the whole surface: the runtime request, envelope normalization (`mapRuntimeResponse`), and the provider class. No HTML parsing happens on this side — the crawler owns the engines and their markup.
+- Requests are anonymous POSTs and intentionally follow redirects: the packages-wide reject-redirect rule protects credentials and request data, of which this provider carries none into the redirect chain.
+- The provider snapshots its options once per search, so a base-URL change landing mid-search cannot send one request's parts to two runtimes.
 
 <a id="further-exploration"></a>
 ## Further Exploration
 
 - [`@taiji/dsh-web`](../web/README.md) — the capability seam, provider selection, and the normalized result types.
-- [`@taiji/dsh-web-search-deepseek`](../web-search-deepseek/README.md) — the credential-bearing native-search alternative.
+- `neuroplex/tools/web.py` (repository root) — the native multi-engine racing crawler this provider delegates to.
 - [`@taiji/dsh-tool-web`](../tool-web/README.md) — the model-facing `web_search` / `web_fetch` tools.
 
 <a id="model-experience"></a>
 ## Model Experience
 
-The model calls `web_search` as with any provider; nothing in the tool schema names this backend. Results render as the standard markdown source list; snippets may carry the engine's inline age prefix verbatim. On engine failure the error text names the engine and the settings page, so the model can guide the user to switch engines.
+The model calls `web_search` as with any provider; nothing in the tool schema names this backend. Results render as the standard markdown source list without dates. On failure the error text names the runtime endpoint and the settings page, so the model can guide the user to start the backend or fix the root.
 
 <a id="known-limitations-and-deferred-work"></a>
 ## Known Limitations and Deferred Work
 
-- Engine result pages are not a contract: a markup change can silently reduce results to zero. The e2e smoke (`$DSH_WEB_SCRAPER_E2E`) is the early-warning tripwire, not a guarantee.
-- Scraped snippets are shorter and noisier than API search snippets, and no `publishedAt` is derivable without guessing.
-- The DuckDuckGo HTML endpoint is unreachable from mainland-China networks without a proxy; Bing is the default for that reason.
-- Heavy automated use of a public search engine can trigger anti-bot challenges; this provider is sized for conversational search traffic, not bulk crawling.
+- Searches require the Taiji runtime (Seed backend) to be running; a down runtime makes every search fail until it is started.
+- The native crawler returns one engine's results per query (the racing winner), and its Baidu engine is routinely blocked by anti-bot challenges from server-side HTTP clients — effective coverage on mainland-China networks rests on Bing.
+- No `publishedAt`: the crawler's snippets carry no dates, and guessing would lie.
 
 <a id="dev-note"></a>
 ## Dev Note
 
-- The redirect-following choice above is deliberate and tested through the egress spec (proxy transparency), matching `web-search-exa`'s coverage shape.
-- `tests/scraper.spec.ts` pins the parser against fixtures trimmed from real engine markup, including the entity/whitespace shapes that motivated `decodeHtmlEntities` + `stripHtmlTags` ordering (decode first, then strip and collapse).
+- The redirect-following choice above is deliberate and tested through the egress spec (proxy transparency).
+- `tests/scraper.spec.ts` pins envelope normalization and the provider against a local runtime double; the live smoke (`$DSH_WEB_SCRAPER_E2E`) additionally requires the runtime's readiness probe to answer.

@@ -462,28 +462,25 @@
     # The shared base enables the stable model-facing web_search and web_fetch
     # tools. The Web app disables this host row and composes both tools per agent
     # preset; products with a stricter network policy override tool-web. Search
-    # defaults to the native scraper provider: a credential-free fetch-and-parse
-    # of a search-engine result page, so a fresh profile can search without any
-    # API key (owner decision 2026-10-09). The DeepSeek route stays registered as
-    # the paid alternative — switching back is one `searchProvider` value.
+    # is the native scraper route: it delegates to the Taiji runtime's own
+    # multi-engine racing crawler (neuroplex/tools/web.py) over the local api
+    # service, so a fresh profile can search without any API key and without any
+    # third-party search vendor (owner decision 2026-10-09: no search plugin and
+    # no vendor card — the project's native crawler is the search). The
+    # DeepSeek search plugin is deliberately not mounted anymore; its package
+    # stays in the tree for history and its tests.
     # Anonymous fetch accepts only public HTTP(S) destinations, resolves and
     # validates every destination, and pins every actual connection. Search via
-    # the DeepSeek route is a full auxiliary model request with server-side
-    # retrieval, so that route gets 60s while the provider-neutral tool default
-    # remains 30s.
+    # the crawler runs on the runtime and returns within the provider-neutral
+    # tool default budget.
     - id: web
       name: '@taiji/dsh-web'
       config:
-        searchProvider: scraper
+        searchProvider: taiji-search
         fetchProvider: http
 
     - id: web-search-scraper
       name: '@taiji/dsh-web-search-scraper'
-
-    - id: web-search-deepseek
-      name: '@taiji/dsh-web-search-deepseek'
-      config:
-        apiKeyEnv: DEEPSEEK_API_KEY
 
     - id: web-fetch-http
       name: '@taiji/dsh-web-fetch-http'

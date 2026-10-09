@@ -103,7 +103,6 @@
     "@taiji/dsh-client-ui-settings-shell": "workspace:^",
     "@taiji/dsh-client-ui-settings-agent-loop": "workspace:^",
     "@taiji/dsh-client-ui-settings-subagent": "workspace:^",
-    "@taiji/dsh-client-ui-settings-web-search": "workspace:^",
     "@taiji/dsh-client-ui-sidebar": "workspace:^",
     "@taiji/dsh-client-ui-sidebar-browser": "workspace:^",
     "@taiji/dsh-client-ui-sidebar-documentpreview": "workspace:^",

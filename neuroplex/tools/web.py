@@ -220,8 +220,9 @@ def _search_bing(query: str, max_results: int = 5) -> list[SearchResult]:
         url = f"https://www.bing.com/search?q={urllib.parse.quote(query)}"
         html = _http_get(url)
         results = []
-        # 解析 Bing 搜索结果：<li class="b_algo"><h2><a href="..." >标题</a></h2><p>摘要</p>
-        blocks = re.findall(r'<li\s+class="b_algo">(.*?)</li>', html, re.DOTALL)
+        # 解析 Bing 搜索结果：<li class="b_algo" ...><h2><a href="..." >标题</a></h2><p>摘要</p>
+        # class 属性后常跟 data-id/iid 等额外属性，不能假设引号后立即闭合。
+        blocks = re.findall(r'<li\s+class="b_algo[^"]*"[^>]*>(.*?)</li>', html, re.DOTALL)
         for block in blocks[:max_results]:
             title_m = re.search(
                 r'<h2[^>]*>\s*<a[^>]*href="([^"]*)"[^>]*>(.*?)</a>', block, re.DOTALL
@@ -325,16 +326,21 @@ def search(query: str, max_results: int = 5, engine: str = "auto") -> list[Searc
                     ("Baidu", _search_baidu),
                 ]
             }
-            for future in concurrent.futures.as_completed(futures, timeout=4.0):
-                name = futures[future]
-                try:
-                    r = future.result(timeout=0.5)
-                    if r:
-                        results = r
-                        logger.info(f"搜索引擎 {name} 返回 {len(results)} 条结果")
-                        break
-                except Exception:
-                    continue
+            try:
+                for future in concurrent.futures.as_completed(futures, timeout=4.0):
+                    name = futures[future]
+                    try:
+                        r = future.result(timeout=0.5)
+                        if r:
+                            results = r
+                            logger.info(f"搜索引擎 {name} 返回 {len(results)} 条结果")
+                            break
+                    except Exception:
+                        continue
+            except concurrent.futures.TimeoutError:
+                # 慢引擎（如被墙的 DuckDuckGo）超时不得拖垮已完成的竞速赢家：
+                # as_completed 超时抛异常，已收集的非空 results 保留使用。
+                logger.info("搜索引擎竞速超时，使用已返回的结果")
             # 取消未完成的任务
             for f in futures:
                 f.cancel()
