@@ -1,0 +1,93 @@
+{
+  "format": "taiji-n3a-scaling-probe-adjudication-v1",
+  "prereg": "plans/reference/PLAN-N3-02_scaling_probe_prereg_20261007.md §2/§4quater ＋ PLAN-N3-10 §2/§3（形状 B 与读数边界）",
+  "interpretation_limit": "形状 B（等符号暴露、唯一篇数封顶）只允许回答“×16.8 容量在等符号暴露下是否把斜率抬出噪声带”，不允许回答“封顶在容量还是数据”——后者需要 PLAN-N3-10 §4 的 C 形状（等数据量变参数量）。",
+  "baseline_last_segment": 0.59412,
+  "arms": {
+    "arm_A": {
+      "progress_path": "E:\\Seed\\output\\n3a_control_x2\\progress.jsonl",
+      "progress_lines": 26,
+      "lines_dropped_window_zero": 1,
+      "acc_segment_means": [
+        0.293825,
+        0.32192,
+        0.32212,
+        0.33136,
+        0.33966
+      ],
+      "acc_slope_first_to_last": 0.045835,
+      "acc_noise_band_adjacent_max": 0.028095,
+      "acc_last_segment_mean": 0.33966,
+      "mean_surprise_segment_means": [
+        2.732974,
+        2.477002,
+        2.438528,
+        2.434001,
+        2.393761
+      ],
+      "holdout_v2_first": 3.066869510438012,
+      "holdout_v2_last": 2.6990796303297677,
+      "holdout_v2_delta": -0.36779,
+      "exit_record": {
+        "exit_reason": "max_symbols_reached",
+        "reached_budget": true,
+        "budget_max_symbols": 250000,
+        "ticks_at_exit": 250000,
+        "unique_documents": 315,
+        "document_visits": 315,
+        "mean_revisits": 1.0,
+        "sequence_length": {
+          "documents_counted": 315,
+          "min": 84,
+          "median": 626.0,
+          "max": 2858,
+          "mean": 795.888889
+        },
+        "elapsed_seconds": 1070.093594999984,
+        "checkpoint_sha256": "119543f69eeff316f0256e8aa78f3275c4640ed4f76894873f32ca5029b3b9ec",
+        "corpus_fingerprint": "[{\"name\":\"dialogue_extended_clean.jsonl\",\"bytes\":108327171}]"
+      },
+      "section_8_7_completeness": {
+        "corpus_available": true,
+        "unique_episodes": true,
+        "actual_updates": true,
+        "sequence_length": true,
+        "independent_test_coverage": true
+      },
+      "sequence_length": {
+        "documents_counted": 315,
+        "min": 84,
+        "median": 626.0,
+        "max": 2858,
+        "mean": 795.888889
+      },
+      "sequence_length_source": "exit_record",
+      "measurement_complete": true
+    },
+    "arm_B": {
+      "status": "absent",
+      "verdict_note": "PLAN-N3-02 §2 的否证对照记 unverified"
+    }
+  },
+  "judgement": {
+    "arm_A": {
+      "slope_gt_own_band": true,
+      "last_mean_gt_baseline_plus_margin": false,
+      "holdout_v2_within_limit": true,
+      "measurement_complete": true,
+      "J_N3a": "not_holds"
+    },
+    "arm_B": {
+      "J_N3a": "not_judged"
+    }
+  },
+  "single_variable_check": {
+    "both_arms_present": false,
+    "unique_documents_differ": null,
+    "mean_revisits_published": null,
+    "instrument_broken_if_revisits_equal": null,
+    "ticks_equal": null,
+    "corpus_fingerprints": null,
+    "corpus_fingerprints_equal": null
+  }
+}
