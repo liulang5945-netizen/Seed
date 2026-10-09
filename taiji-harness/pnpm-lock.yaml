@@ -574,6 +574,10 @@ importers:
       ws:
         specifier: ^8.21.0
         version: 8.21.0
+    optionalDependencies:
+      '@taiji/dsh-experimental-schedule-bundle':
+        specifier: workspace:^
+        version: link:../../packages/experimental/schedule-bundle
     devDependencies:
       '@electron/get':
         specifier: ^5.1.0
