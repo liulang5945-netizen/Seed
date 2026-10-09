@@ -1228,10 +1228,25 @@ def main() -> None:
         args.developmental_fast_slow
         or args.developmental_bridge_gate is not None
         or args.growth_minimum_pressure is not None
+        or args.n5_shadow
     ) and args.pressure_record is None:
         parser.error(
-            "--developmental-fast-slow / --developmental-bridge-gate / --growth-min-pressure 只在 "
-            "--pressure-record 的挂载分支里生效；单给旗标会静默空转 ⇒ 请同时给 --pressure-record <path>。"
+            "--developmental-fast-slow / --developmental-bridge-gate / --growth-min-pressure / "
+            "--n5-shadow 只在 --pressure-record 的挂载分支里生效；单给旗标会静默空转 "
+            "⇒ 请同时给 --pressure-record <path>。"
+        )
+    #: DEBT-G68 修法②：影子的生效前提是"确有提议发生"，而提议要过六道 EMA 合取；
+    #: `--developmental-bridge-gate` 缺省 `None` 时落 0.0 且连 setter 都不调（挂载段见
+    #: `developmental_bridge_gate is None` 那支），显式给 0.0 同理 ⇒ `activity_saturation` 恒 0，
+    #: 合取永不可满足、影子永不物化。那种跑会产出一张"0 提议"的面并被读成"影子无效应"，
+    #: 所以在这里响亮拒绝，而不是让下一人再去对表六项。
+    if args.n5_shadow and (
+        args.developmental_bridge_gate is None or float(args.developmental_bridge_gate) <= 0.0
+    ):
+        parser.error(
+            "--n5-shadow 需要 --developmental-bridge-gate >0：gate 缺省 None 或 0.0 时 "
+            "activity_saturation 恒 0 ⇒ 六道合取永不可满足 ⇒ 提议永不发生、影子永不物化"
+            "（DEBT-G68／㊵-587 实测：开门到 1.0 后第 264 行即出首提议）。"
         )
     if (
         args.developmental_bridge_gate is not None
