@@ -1,6 +1,7 @@
 /** Materialize the complete production runtime before publishing Desktop resources. */
 
 import { packagingStep } from './packaging-step.mjs'
+import { defaultCheckpointName } from './backend-code-payload.ts'
 import { spawn } from 'node:child_process'
 import { copyFileSync, cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
@@ -182,6 +183,16 @@ async function main(): Promise<void> {
         cpSync(resolve(nativeRoot, dir), join(DSH_OUTPUT_ROOT, 'backend', 'code', dir), { recursive: true })
       }
       copyFileSync(resolve(nativeRoot, 'requirements.txt'), join(DSH_OUTPUT_ROOT, 'backend', 'code', 'requirements.txt'))
+      // A shipped runtime answers only from a base that is physically present, and the
+      // source copied just above names the one it loads when a request names none.
+      const codeRoot = join(DSH_OUTPUT_ROOT, 'backend', 'code')
+      const defaultCheckpoint = defaultCheckpointName(readFileSync(join(codeRoot, 'api', 'seed_runtime.py'), 'utf8'))
+      const checkpointSource = resolve(nativeRoot, 'checkpoints', defaultCheckpoint)
+      if (!existsSync(checkpointSource)) {
+        throw new Error(`desktop backend: the product default checkpoint is absent: ${checkpointSource}`)
+      }
+      mkdirSync(join(codeRoot, 'checkpoints'), { recursive: true })
+      copyFileSync(checkpointSource, join(codeRoot, 'checkpoints', defaultCheckpoint))
     })
     await packagingStep(process.env.DSH_DESKTOP_PACKAGING_RUN_DIR, 'runtime:write-descriptor', async () => writeDesktopRuntime(DSH_OUTPUT_ROOT, release, packageSet.packages.map(entry => entry.name), target))
     const descriptor = await packagingStep(process.env.DSH_DESKTOP_PACKAGING_RUN_DIR, 'runtime:verify-before-smoke', () => verifyDesktopRuntime(DSH_OUTPUT_ROOT, release.version, target))

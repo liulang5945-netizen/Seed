@@ -270,7 +270,7 @@ async function main(): Promise<void> {
   })
   if (isBackendShipped(backendRoot)) {
     void pythonBackendHost.start().catch((error: unknown) => {
-      console.error('[python-backend] startup failed:', error)
+      pythonBackendHost.log(`desktop backend: startup failed: ${String(error)}`)
     })
   }
   const paths = resolveDesktopPaths()

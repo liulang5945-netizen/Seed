@@ -16,6 +16,11 @@
  *    second process, no port fight.
  * 3. `stop()` — kills the child process tree on app quit.
  *
+ * Every line this host logs, plus the installer's and the runtime's own output,
+ * is appended to `<userData>/backend.log`.  The Electron main process has no
+ * console channel on Windows, so that file is the only way to tell "the
+ * installer was never reached" from "the installer ran and failed".
+ *
  * Deliberately Electron-free: everything path-shaped is injected, so the
  * lifecycle is unit-testable without an app shell.  The v1 port policy is
  * fixed-8000-with-adoption; multi-port rollover needs an `api/main.py` port
@@ -23,10 +28,11 @@
  */
 
 import { spawn, type ChildProcess } from 'node:child_process'
-import { existsSync, readFileSync, writeFileSync } from 'node:fs'
+import { appendFileSync, existsSync, openSync, readFileSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 
 export const BACKEND_MANIFEST_NAME = 'backend-manifest.json'
+export const BACKEND_LOG_NAME = 'backend.log'
 export const BACKEND_PORT = 8000
 const HEALTH_TIMEOUT_MS = 120_000
 const HEALTH_POLL_BASE_MS = 200
@@ -37,8 +43,9 @@ export interface PythonBackendHostOptions {
   backendRoot: string
   /** The primary-runtime interpreter (creates the venv and runs the installer). */
   pythonExec: string
-  /** User-owned directory for the venv, endpoint file, and receipts. */
+  /** User-owned directory for the venv, endpoint file, receipts, and `backend.log`. */
   userDataDir: string
+  /** Additional sink for each lifecycle line, beside the one written to `backend.log`. */
   log?: (line: string) => void
 }
 
@@ -58,8 +65,16 @@ export function backendManifestPath(backendRoot: string): string {
  * imported here would drag the package's source into the desktop tsc project,
  * so keep this one join in step with that helper when the layout moves.
  */
-export function primaryRuntimePython(primaryRuntimeRoot: string): string {
-  return join(primaryRuntimeRoot, 'dependencies', 'python', process.platform === 'win32' ? 'python.exe' : 'bin', 'python3')
+export function primaryRuntimePython(
+  primaryRuntimeRoot: string,
+  platform: NodeJS.Platform = process.platform,
+): string {
+  return join(
+    primaryRuntimeRoot,
+    'dependencies',
+    'python',
+    ...(platform === 'win32' ? ['python.exe'] : ['bin', 'python3']),
+  )
 }
 
 export function isBackendShipped(backendRoot: string): boolean {
@@ -80,11 +95,22 @@ async function healthOk(endpoint: string, signal: AbortSignal): Promise<boolean>
 export class DesktopPythonBackendHost {
   private child: ChildProcess | undefined
   private readonly venv: string
-  private readonly log: (line: string) => void
+  private readonly sink: (line: string) => void
+  private logHandle: number | undefined
 
   constructor(private readonly options: PythonBackendHostOptions) {
     this.venv = join(options.userDataDir, 'backend-venv')
-    this.log = options.log ?? (() => {})
+    this.sink = options.log ?? (() => {})
+  }
+
+  /** Record one lifecycle line in `backend.log` and in the injected sink. */
+  log(line: string): void {
+    this.sink(line)
+    try {
+      appendFileSync(this.logFile(), `[${new Date().toISOString()}] ${line}\n`, 'utf8')
+    } catch (error) {
+      this.sink(`desktop backend: ${line}; the log file was not written (${String(error)})`)
+    }
   }
 
   enabled(): boolean {
@@ -93,6 +119,16 @@ export class DesktopPythonBackendHost {
 
   endpointFile(): string {
     return join(this.options.userDataDir, 'backend-endpoint.json')
+  }
+
+  logFile(): string {
+    return join(this.options.userDataDir, BACKEND_LOG_NAME)
+  }
+
+  /** Append-mode descriptor shared by every child this host spawns, held for the shell's lifetime. */
+  private logDescriptor(): number {
+    this.logHandle ??= openSync(this.logFile(), 'a')
+    return this.logHandle
   }
 
   async start(): Promise<BackendEndpoint> {
@@ -109,10 +145,14 @@ export class DesktopPythonBackendHost {
 
     await this.runInstaller(manifestPath)
     const codeRoot = join(this.options.backendRoot, 'code')
+    const output = this.logDescriptor()
     this.child = spawn(this.venvPython(), ['-m', 'api.main'], {
       cwd: codeRoot,
-      stdio: ['ignore', 'ignore', 'ignore'],
+      stdio: ['ignore', output, output],
       detached: false,
+    })
+    this.child.once('error', (error) => {
+      this.log(`desktop backend: runtime spawn failed (${String(error)})`)
     })
     this.child.once('exit', (code) => {
       this.log(`desktop backend: runtime exited (${String(code)})`)
@@ -159,9 +199,10 @@ export class DesktopPythonBackendHost {
         return
       }
     }
-    this.log('desktop backend: running the offline installer')
+    this.log(`desktop backend: running the offline installer with ${this.options.pythonExec}`)
     const installer = join(this.options.backendRoot, 'install-backend.py')
     await new Promise<void>((resolvePromise, rejectPromise) => {
+      const output = this.logDescriptor()
       const child = spawn(this.options.pythonExec, [
         '-I', '-B', installer,
         '--wheelhouse', join(this.options.backendRoot, 'wheelhouse'),
@@ -169,11 +210,19 @@ export class DesktopPythonBackendHost {
         '--python', this.options.pythonExec,
         '--target', this.venv,
         '--receipt', receiptPath,
-      ], { stdio: ['ignore', 'ignore', 'inherit'] })
-      child.once('error', rejectPromise)
+      ], { stdio: ['ignore', output, output] })
+      child.once('error', (error) => {
+        this.log(`desktop backend: installer spawn failed (${String(error)})`)
+        rejectPromise(error)
+      })
       child.once('exit', (code, signal) => {
-        if (code === 0) resolvePromise()
-        else rejectPromise(new Error(`desktop backend: installer failed (${String(code ?? signal)})`))
+        if (code === 0) {
+          resolvePromise()
+          return
+        }
+        const failure = `desktop backend: installer failed (${String(code ?? signal)})`
+        this.log(failure)
+        rejectPromise(new Error(failure))
       })
     })
   }
