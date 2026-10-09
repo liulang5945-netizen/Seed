@@ -27,15 +27,27 @@ REPO = Path(__file__).resolve().parents[2]
 SCRIPT = REPO / "scripts/training/audit_taiji_prereg_exit_wording.py"
 PREREG_DIR = REPO / "plans/reference"
 
-#: 冻结件里已知的含糊行——行号与条数都是钉值；只有追改判据文本才会红，而本仓不追改。
-#: **〔2026-10-09 ㊵-629 重钉〕** `PLAN-N1-00` 的第 24 行**不再命中**：那一行原文是
-#: `J1（唯一判据）：R1 ≤ **118**（基线 236 的 50%）`，同行已把数值钉死，
-#: 旧 `NUMERIC_PIN` 因粗体标记卡在算符与数字之间认不出而误报——红的是门的取法瞎，不是文档没钉。
-#: 保留的第 7 行是假设陈述里的「显著」，同行确无数值 ⇒ 那是真含糊，不随本次修门而消失。
-FLAGGED = {
-    "PLAN-N1-00_s5_endpoint_falsification_prereg_20261007.md": [7],
-    "PLAN-N1-01_s1_readout_prereg_20261007.md": [35],
-}
+#: 〔2026-10-09 ㊵-640 重钉〕这三份原先各有一行"含糊词没被数值钉住"的出口句，owner 弹窗 #17 裁④
+#: 授权逐份带日期升版补数值 ⇒ 三份现在都干净。**真实件不再被钉成"必须红"**：那等于拿测去逼人
+#: 保持违例；扫描器的判别力改由下面那份**内存夹具**钉（它两侧都能为假）。
+#: 历史留痕：㊵-629 那次重钉是把 `[7, 24]` 缩到 `[7]`（修的是门的取法瞎），本次是补完文档侧的数值。
+NEWLY_PINNED = (
+    "PLAN-N1-00_s5_endpoint_falsification_prereg_20261007.md",
+    "PLAN-N1-01_s1_readout_prereg_20261007.md",
+    "PLAN-N3-08_face_self_report_prereg_20261008.md",
+)
+
+#: 判别力夹具：同一个判据段里一行没钉数、一行钉了数 ⇒ 只许抓到前者。
+PROBE = """## 2. 判据（先冻）
+
+1. J-1：若 F1 改善大幅 ⇒ 走定位叙述。
+2. J-2：R1 ≤ 118 才算达成。
+"""
+PROBE_PINNED = """## 2. 判据（先冻）
+
+1. J-1：若 F1 前后差值 ≥ 0.02 ⇒ 走定位叙述。
+2. J-2：R1 ≤ 118 才算达成。
+"""
 
 #: 当前零命中的冻结件——往判据句里新增任何未钉数值的含糊词都会把这支打红。
 CLEAN = (
@@ -58,15 +70,30 @@ def _load_module():
     return module
 
 
-def test_frozen_ambiguous_preregs_are_still_flagged_at_pinned_lines() -> None:
-    """反支：扫描器必须还能抓到已知那两处；行号与条数都是钉值（阉掉扫描器就红）。"""
+def test_scanner_still_bites_an_unpinned_exit_and_spares_a_pinned_one() -> None:
+    """判别力由内存夹具钉，两侧都能为假：把扫描器阉掉 ⇒ 第一支红；把数值豁免写成恒真 ⇒ 第二支红。"""
 
     module = _load_module()
-    for name, expected_lines in FLAGGED.items():
-        scan = module.scan_text((PREREG_DIR / name).read_text(encoding="utf-8"))
-        assert scan["criterion_lines"] > 0, name
-        assert [hit["line"] for hit in scan["hits"]] == expected_lines, name
-        assert scan["vague_word_lines_unpinned"] == len(expected_lines), name
+    scan = module.scan_text(PROBE)
+    #: 三行进扫描面（判据标题本身也算标记行），其中结构化面 2 行＝两条列表条目。
+    assert scan["criterion_lines"] == 3, scan
+    assert scan["structural_criterion_lines"] == 2, scan
+    assert scan["vague_word_lines_unpinned"] == 1, scan["hits"]
+    assert scan["hits"][0]["words"] == ["大幅"], scan["hits"]
+
+    pinned = module.scan_text(PROBE_PINNED)
+    assert pinned["criterion_lines"] == 3, pinned
+    assert pinned["hits"] == [], pinned["hits"]
+
+
+@pytest.mark.parametrize("name", NEWLY_PINNED)
+def test_the_three_dated_wording_bumps_left_no_unpinned_exit(name: str) -> None:
+    """三份升版后必须零命中：谁把数值指针删掉或改写回口语，这里当场红。"""
+
+    module = _load_module()
+    scan = module.scan_text((PREREG_DIR / name).read_text(encoding="utf-8"))
+    assert scan["criterion_lines"] > 0, "没有判据句时零命中不代表干净"
+    assert scan["hits"] == [], name
 
 
 @pytest.mark.parametrize("name", CLEAN)
