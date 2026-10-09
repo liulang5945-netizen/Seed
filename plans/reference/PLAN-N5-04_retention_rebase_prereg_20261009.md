@@ -95,3 +95,5 @@ before 面直接复用 F-3 的已入库件；这样 `J-N5b-5` 的分子分母同
 > 欠的两笔债仍未插 05（列形状未核对）：θ_small 落几何盲区属**扰动设计教训**；在场计数器**承诺未兑现**；
 > 本轮再加一条待登记：㊵-593 那份「冻结命令」把带参旗标写成裸旗标，是**过期处方**（同 [[table-status-column-goes-stale]] 的
 > 「交接清单里过期的是处方／命令，比过期结论更贵」）。
+
+> **【2026-10-09 ㊵-618 就地更正 G-N5d-4 的键名，理由＝其中一枚在本形状下恒为真】**原句要求 `n5_shadow` 块带 `shadow_branch_hits`／`shadow_materialized` 两枚。实施时查实：该段填充整块住在 `if adaptive_shadow is not None:` 里 ⇒ `shadow_materialized` **永远只能为真**，一条不能为 false 的读数不配当证据（[[guard-must-be-able-to-fail]]）⇒ 换成三枚可分且都能为 0 的在场读数：`shadow_forward_hits`（`forward()` 走完通电支的次数）、`shadow_learn_hits`（`learn()` 走完的次数）、`shadow_branch_hits`（两者合计）。计数增量只写在早退闸**之后**（闸关或被损时不涨，由 `tests/taiji_native/test_n5_08_shadow_presence_counter_contract.py` 的反向守卫钉住）。G-N5d-4 的**语义不变**：在场性仍按 `'k' in block` 断言、取值仍按 `.get()`。另一条实施侧教训（同件同测钉住）：新属性不许插在别人的装饰器与函数之间——`set_gate` 头上原有 `@torch.no_grad()`，锚点只取 `def` 行会把装饰器劈走，读数退化成 method，直到存盘 `int(method)` 才 `TypeError`（本轮两臂各崩一次，零权重改动）。

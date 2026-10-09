@@ -117,6 +117,10 @@ class AdaptiveResidualShadow:
         self._gate_input_dim = gate_input_dim
         self._gate = 0.0
         self._lesioned = False
+        #: ㊵-618（PLAN-N5-04 G-N5d-4）过程侧在场计数器：只在**过了通电闸**的那条支上涨，
+        #: 闸关（`gate == 0.0`）或被损（`_lesioned`）时**不涨** ⇒「影子到底被喂过没有」由读数判，不靠叙述。
+        self._forward_hits = 0
+        self._learn_hits = 0
         self._last_input = torch.zeros(self.output_dim, device=self.device)
         self._last_activity = torch.zeros(self.unit_count, device=self.device)
         self._last_gate_input = torch.zeros(gate_input_dim, device=self.device)
@@ -256,6 +260,18 @@ class AdaptiveResidualShadow:
         if not self._counterfactual_parent_ready:
             return None
         return self._last_counterfactual_parent_probabilities.detach().clone()
+
+    @property
+    def forward_hits(self) -> int:
+        """`forward()` 真正走完（没被 `gate == 0.0`／lesion 早退）的次数。"""
+
+        return self._forward_hits
+
+    @property
+    def learn_hits(self) -> int:
+        """`learn()` 真正走完的次数——「被喂过梯度」与「被读过」是两枚独立读数。"""
+
+        return self._learn_hits
 
     @torch.no_grad()
     def set_gate(self, gate: float) -> None:
@@ -444,6 +460,7 @@ class AdaptiveResidualShadow:
             self._last_parent_context.copy_(context.detach().to(self.device))
             self._counterfactual_parent_ready = False
             return context.clone()
+        self._forward_hits += 1
         input_context = context.detach().to(self.device).clone()
         activity = self.region.step(input_context)
         self._last_input.copy_(input_context)
@@ -505,6 +522,7 @@ class AdaptiveResidualShadow:
             raise TypeError("adaptive residual shadow freeze_parent must be a bool")
         if self._gate == 0.0 or self._lesioned:
             return
+        self._learn_hits += 1
         parent_unit_count = int(self.candidate.parent_unit_count)
         parent_incoming = (
             self.region.incoming.edge_weight[:parent_unit_count].detach().clone()

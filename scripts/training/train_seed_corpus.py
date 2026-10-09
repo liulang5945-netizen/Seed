@@ -519,6 +519,14 @@ def run_training(
                 "candidate_counterfactual_utility": float(
                     adaptive_shadow.candidate_counterfactual_utility
                 ),
+                #: ㊵-618 G-N5d-4：三枚在场读数成对出版，互相独立（不一致就停手）。原冻结件要求的
+                #: `shadow_materialized` 在本形状下**恒为真**（整段填充只在 `adaptive_shadow is not None`
+                #: 分支里跑）⇒ 不能为 false 的读数不配当证据，已就地更正为可分且可为 0 的三枚。
+                "shadow_forward_hits": int(adaptive_shadow.forward_hits),
+                "shadow_learn_hits": int(adaptive_shadow.learn_hits),
+                "shadow_branch_hits": int(
+                    adaptive_shadow.forward_hits + adaptive_shadow.learn_hits
+                ),
             }
         if episodic_store is not None:
             envelope["episodic_memory"] = episodic_store.checkpoint()
