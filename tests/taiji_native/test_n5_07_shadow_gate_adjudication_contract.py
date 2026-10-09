@@ -9,6 +9,7 @@ PLAN-N5-02 J-N5b-1／J-N5b-2 的每一支都必须能为假，且 fail-closed �
 from __future__ import annotations
 
 import importlib.util
+import json
 from pathlib import Path
 from typing import Any
 
@@ -120,3 +121,113 @@ def test_missing_face_file_is_rejected(tmp_path: Path) -> None:
     #: `main()` 返回码就是判据（`__main__` 才包 `raise SystemExit`），所以这里读 rc 不读异常。
     rc = JUDGE.main(["--arm-treated", str(tmp_path / "nope.pt"), "--out", str(tmp_path / "v.json")])
     assert rc == 2
+
+
+def _pressure_face(tmp_path: Path, name: str, **over: Any) -> Path:
+    import json
+
+    header = {
+        "kind": "face",
+        "format": "taiji-n3-pressure-face-v2",
+        "seed": 20260822,
+        "readout": "predictive",
+        "policy": {"minimum_pressure": 0.65, "required_pressure_steps": 3},
+        "developmental": {
+            "fast_slow_requested": True,
+            "bridge_gate_requested": 1.0,
+            "bridge_gate_actual": 1.0,
+        },
+    }
+    for key, value in over.items():
+        if key == "policy.minimum_pressure":
+            header["policy"]["minimum_pressure"] = value
+        elif key == "developmental.fast_slow_requested":
+            header["developmental"]["fast_slow_requested"] = value
+        else:
+            header[key] = value
+    path = tmp_path / name
+    lines = [json.dumps(header, ensure_ascii=False)]
+    lines.append(json.dumps({"kind": "pressure", "decision_should_propose": False}))
+    path.write_text("\n".join(lines) + "\n", encoding="utf-8", newline="\n")
+    return path
+
+
+def _pair(tmp_path: Path, treated_gate: float, control_gate: float) -> tuple[Path, Path]:
+    return (
+        _face(tmp_path, "t.pt", _full(shadow_gate_requested=treated_gate, gate=treated_gate)),
+        _face(tmp_path, "c.pt", _full(shadow_gate_requested=control_gate, gate=control_gate)),
+    )
+
+
+def test_quadruple_identical_faces_make_the_pair_valid(tmp_path: Path) -> None:
+    treated, control = _pair(tmp_path, 1.0, 0.0)
+    face_t = _pressure_face(tmp_path, "tp.jsonl")
+    face_c = _pressure_face(tmp_path, "cp.jsonl")
+    out = tmp_path / "v.json"
+    rc = JUDGE.main(
+        [
+            "--arm-treated",
+            str(treated),
+            "--arm-control",
+            str(control),
+            "--face-treated",
+            str(face_t),
+            "--face-control",
+            str(face_c),
+            "--out",
+            str(out),
+        ]
+    )
+    payload = json.loads(out.read_text(encoding="utf-8"))
+    assert payload["pairing"]["status"] == "pairing_valid_on_quadruple"
+    assert payload["pairing"]["j_n5b_3"] == "valid"
+    #: 对照臂不通电 ⇒ 它自己该被判 `not_powered`，但那是它的判据，不是配对的失败。
+    assert payload["arms"]["control"]["j_n5b_2"] == "not_powered"
+    #: 对照臂本该不通电，所以 rc 不由它抬——它验的是配对有效性。
+    assert rc == 0
+
+
+def test_a_single_differing_quadruple_dimension_invalidates_the_pair(tmp_path: Path) -> None:
+    treated, control = _pair(tmp_path, 1.0, 0.0)
+    face_t = _pressure_face(tmp_path, "tp.jsonl")
+    face_c = _pressure_face(tmp_path, "cp.jsonl", **{"policy.minimum_pressure": 0.7})
+    out = tmp_path / "v.json"
+    rc = JUDGE.main(
+        [
+            "--arm-treated",
+            str(treated),
+            "--arm-control",
+            str(control),
+            "--face-treated",
+            str(face_t),
+            "--face-control",
+            str(face_c),
+            "--out",
+            str(out),
+        ]
+    )
+    payload = json.loads(out.read_text(encoding="utf-8"))
+    assert payload["pairing"]["status"] == "pairing_invalid"
+    assert payload["pairing"]["reason"] == "quadruple_differs"
+    assert payload["pairing"]["differing"] == ["tau"]
+    assert rc == 2
+
+
+def test_faces_absent_leaves_the_quadruple_unverified_not_valid(tmp_path: Path) -> None:
+    #: 关键的一支：只给两枚检查点时，配对**不许**被读成成立（缺现场四元组＝未判）。
+    treated, control = _pair(tmp_path, 1.0, 0.0)
+    out = tmp_path / "v.json"
+    rc = JUDGE.main(
+        [
+            "--arm-treated",
+            str(treated),
+            "--arm-control",
+            str(control),
+            "--out",
+            str(out),
+        ]
+    )
+    payload = json.loads(out.read_text(encoding="utf-8"))
+    assert payload["pairing"]["status"] == "gate_differs_quadruple_unverified"
+    assert payload["pairing"]["j_n5b_3"] == "unverified"
+    assert rc == 0
