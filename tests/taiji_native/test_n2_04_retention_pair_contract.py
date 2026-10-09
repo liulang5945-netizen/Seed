@@ -215,3 +215,44 @@ def test_unreadable_column_layout_is_rejected_not_counted_as_zero(tmp_path: Path
     payload = _read_out(tmp_path)
     assert rc == 2
     assert payload["status"] == "column_layout_unreadable"
+
+
+def test_nested_identity_disclosure_is_found_and_taken_is_published() -> None:
+    """㊵-553 的那条取法错：出件方把 `eval_set_sha256` 出版在 `identity` 子字典里，
+    而本件第一版只在顶层找 ⇒ 真件带着摘要却报 `missing`。两侧都要能取到，且**取到哪一层必须出版**。
+    """
+
+    before = {"identity": {"eval_set_sha256": "a" * 64}}
+    after = {"identity": {"eval_set_sha256": "a" * 64}}
+    out = MODULE._same_source_disclosure(before, after)
+    assert out["status"] == "ok", out
+    assert out["checked"] == ["eval_set_sha256"]
+    assert out["took"] == {"eval_set_sha256": "identity->identity"}
+    assert out["cross_layer"] == []
+
+
+def test_top_level_and_nested_are_both_accepted_but_cross_layer_is_a_conflict() -> None:
+    #: 两侧同名键取到**不同层**不算"同一处自述"——不许把一份顶层值与一份 identity 值当成同源证据。
+    out = MODULE._same_source_disclosure(
+        {"eval_set_sha256": "b" * 64}, {"identity": {"eval_set_sha256": "b" * 64}}
+    )
+    assert out["status"] == "conflict", out
+    assert out["cross_layer"] == ["eval_set_sha256"]
+    assert out["took"] == {"eval_set_sha256": "top_level->identity"}
+
+
+def test_value_conflict_still_detected_after_the_lookup_widened() -> None:
+    out = MODULE._same_source_disclosure(
+        {"identity": {"eval_set_sha256": "c" * 64}}, {"identity": {"eval_set_sha256": "d" * 64}}
+    )
+    assert out["status"] == "conflict"
+    assert out["conflicts"] == ["eval_set_sha256"]
+    assert out["cross_layer"] == []
+
+
+def test_missing_means_no_disclosure_anywhere_not_a_zero_match() -> None:
+    #: 反面：不许把"两侧都没有"折叠成 `None == None` 的假绿。
+    out = MODULE._same_source_disclosure({"format": "x"}, {"identity": {"other": 1}})
+    assert out["status"] == "missing"
+    assert out["checked"] == []
+    assert out["took"] == {}

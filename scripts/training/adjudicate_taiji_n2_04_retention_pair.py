@@ -97,22 +97,49 @@ def _column_table(cap0: dict[str, Any], replay: dict[str, Any]) -> dict[str, int
     return table
 
 
+#: 题集摘要在**面件里的真实落点**（㊵-553 的取证）：`eval_taiji_cap0_baseline.py:558-568`
+#: 把 `eval_set_sha256` 出版在 `identity` 子字典里，而不是顶层。本件第一版只在顶层找 ⇒
+#: 真件明明带着摘要却报 `missing`（**取法错了，不是数据缺**）——两侧同查，并披露取到哪一层。
+_DISCLOSURE_SOURCES = ("", "identity", "source")
+
+
+def _lookup(face: dict[str, Any], key: str) -> tuple[Any, str | None]:
+    for source in _DISCLOSURE_SOURCES:
+        if source == "":
+            if key in face:
+                return face[key], source or "top_level"
+            continue
+        block = face.get(source)
+        if isinstance(block, dict) and key in block:
+            return block[key], source
+    return None, None
+
+
 def _same_source_disclosure(
     cap0_before: dict[str, Any], cap0_after: dict[str, Any]
 ) -> dict[str, Any]:
     keys = ("eval_set_sha256", "source_sha256", "manifest_sha256")
-    found = {
-        k: (cap0_before.get(k), cap0_after.get(k))
-        for k in keys
-        if k in cap0_before or k in cap0_after
-    }
+    found: dict[str, tuple[Any, Any]] = {}
+    where: dict[str, str] = {}
+    for key in keys:
+        before_value, before_source = _lookup(cap0_before, key)
+        after_value, after_source = _lookup(cap0_after, key)
+        if before_source is None and after_source is None:
+            continue
+        found[key] = (before_value, after_value)
+        #: 两侧取到同一层才算"同一处自述"；不同层要显眼出版，免得我以后再把它当同一回事。
+        where[key] = f"{before_source}->{after_source}"
     if not found:
-        return {"status": "missing", "checked": [], "conflicts": []}
+        return {"status": "missing", "checked": [], "conflicts": [], "took": {}}
     conflicts = [k for k, (a, b) in found.items() if a != b]
+    cross_layer = [k for k, path in where.items() if len(set(path.split("->"))) > 1]
+    status = "ok" if not conflicts and not cross_layer else "conflict"
     return {
-        "status": "ok" if not conflicts else "conflict",
+        "status": status,
         "checked": sorted(found),
         "conflicts": conflicts,
+        "cross_layer": cross_layer,
+        "took": where,
     }
 
 
