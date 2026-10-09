@@ -637,6 +637,21 @@ def run_training(
                                 if substrate.adaptive_residual_bridge is not None
                                 else None
                             ),
+                            #: PLAN-N5-05（甲）的实施前置：位置输入在**这张面里**有没有被走到，
+                            #: 必须现读产品自己的计数器，不许由命令行反推（与 `mode_readings` 同族）。
+                            #: 三枚都取自 `predictive_readout` ⇒ "该特性关闭"（`column_present=false`）
+                            #: 与"开着却没喂"（`column_present=true` 而两枚 steps=0）是两种分得开的读数。
+                            "position_input": {
+                                "column_present": bool(
+                                    substrate.predictive_readout.position_input_enabled
+                                ),
+                                "probability_steps": int(
+                                    substrate.predictive_readout.position_probability_steps
+                                ),
+                                "learn_steps": int(
+                                    substrate.predictive_readout.position_learn_steps
+                                ),
+                            },
                         },
                         ensure_ascii=False,
                     )

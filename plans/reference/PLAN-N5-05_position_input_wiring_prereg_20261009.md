@@ -87,3 +87,4 @@
 - **G-N5e-2＝两支都走**：该抛（事件不带位置类，含 `pre-甲` 存档经 `from_payload` 取回 `None` 这一条实到入口）⇒ 抛且位置列零变化；接通（带位置类）⇒ 不抛且 `position_learn_steps` 加一。
 - **G-N5e-4＝成立**：`replay_developmental_f1()` 同轮出版 `position_learn_steps_before`／`position_learn_steps_after`。
 - **J-N5e-4＝未跑**（改权重需 owner 再批）⇒ `j_n5b_5` 现在是"可跑而未跑"，`j_n5b_6` 依旧 `not_adjudicable`。本件只允许写"链路可用＋默认位不变"，不许写能力涨点（G-N5e-5）。
+- **G-N5e-4 的证据字段现在住在面件里（㊵-637 追加；判据与守卫一字未改，只记落地）**：`scripts/training/train_seed_corpus.py` 的压强面 `tail` 行出版 `position_input{column_present, probability_steps, learn_steps}`，三枚**全部现读**产品自己的计数器，不从命令行反推。两臂探针：位置关闭 ⇒ `{"column_present": false, "learn_steps": 0, "probability_steps": 0}`；位置开启 ⇒ `{"column_present": true, "learn_steps": 7, "probability_steps": 446}`（两臂 `learning_mode_at_close` 都是 `fast_slow`）。⇒ `J-N5e-4` 起跑后"位置列被走到没有"在件内可答，不必人工抄数；钉子＝`tests/taiji_native/test_n5_12_pressure_face_position_presence_contract.py`（3 passed，含"取数函数拒绝缺键"一支）。
