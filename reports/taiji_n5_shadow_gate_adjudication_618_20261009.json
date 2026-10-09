@@ -1,0 +1,118 @@
+{
+  "format": "taiji-n5-shadow-gate-adjudication-v1",
+  "prereg": "PLAN-N5-02 §2 J-N5b-1／J-N5b-2／J-N5b-3 前半",
+  "arms": {
+    "treated": {
+      "arm": "treated",
+      "checkpoint": "output\\n5_618_on\\checkpoint.pt",
+      "j_n5b_1": "present",
+      "missing_self_report_keys": [],
+      "gate": 1.0,
+      "shadow_gate_requested": 1.0,
+      "candidate_gate": 0.5078510642051697,
+      "candidate_utility": -0.0014964733272790909,
+      "candidate_counterfactual_utility": 0.000971112771638083,
+      "candidate_id": "r4-candidate:ad6d0c00ead6d5c9a3d2db594d8c25d65a4ee6d72645b54693fac54e7aa7483d",
+      "presence_counters": {
+        "status": "present",
+        "missing": [],
+        "values": {
+          "shadow_forward_hits": 11735,
+          "shadow_learn_hits": 11735,
+          "shadow_branch_hits": 23470
+        }
+      },
+      "j_n5b_2": "shadow_learned"
+    },
+    "control": {
+      "arm": "control",
+      "checkpoint": "output\\n5_618_off\\checkpoint.pt",
+      "j_n5b_1": "present",
+      "missing_self_report_keys": [],
+      "gate": 0.0,
+      "shadow_gate_requested": 0.0,
+      "candidate_gate": 0.5,
+      "candidate_utility": 0.0,
+      "candidate_counterfactual_utility": 0.0,
+      "candidate_id": "r4-candidate:ad6d0c00ead6d5c9a3d2db594d8c25d65a4ee6d72645b54693fac54e7aa7483d",
+      "presence_counters": {
+        "status": "present",
+        "missing": [],
+        "values": {
+          "shadow_forward_hits": 0,
+          "shadow_learn_hits": 0,
+          "shadow_branch_hits": 0
+        }
+      },
+      "j_n5b_2": "not_powered"
+    }
+  },
+  "pairing": {
+    "treated_requested": 1.0,
+    "control_requested": 0.0,
+    "quadruple": {
+      "seed": {
+        "treated": 20260822,
+        "control": 20260822
+      },
+      "tau": {
+        "treated": 0.05,
+        "control": 0.05
+      },
+      "readout": {
+        "treated": "predictive",
+        "control": "predictive"
+      },
+      "fast_slow": {
+        "treated": true,
+        "control": true
+      },
+      "bridge_gate": {
+        "treated": 1.0,
+        "control": 1.0
+      }
+    },
+    "status": "pairing_valid_on_quadruple",
+    "j_n5b_3": "valid"
+  },
+  "metric_lane": {
+    "metric_file": "reports\\taiji_n5_pair_metric_source_618_20261009.json",
+    "roles": {
+      "treated": "arm_A",
+      "control": "arm_B"
+    },
+    "line": 0.02,
+    "measurement_complete": {
+      "treated": true,
+      "control": true
+    },
+    "segment_means": {
+      "treated": [
+        0.0046,
+        0.004
+      ],
+      "control": [
+        0.0044,
+        0.004
+      ]
+    },
+    "last_two_segment_mean": {
+      "treated": 0.0043,
+      "control": 0.004200000000000001
+    },
+    "delta_treated_minus_control": 9.99999999999994e-05,
+    "bands": {
+      "treated": 0.0006,
+      "control": 0.0004
+    },
+    "ruler_usable": true,
+    "exceeds_line": false,
+    "within_noise_band": true,
+    "verdict": "not_holds",
+    "j_n5b_4": "not_holds"
+  },
+  "j_n5b_4": "not_holds",
+  "j_n5b_5": "unverified_retention_lane_not_run",
+  "j_n5b_6": "not_adjudicable_until_2_3_4_5_are_all_measured",
+  "rc": 0
+}
