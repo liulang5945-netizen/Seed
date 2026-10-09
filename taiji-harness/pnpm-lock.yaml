@@ -13141,6 +13141,25 @@ importers:
         specifier: workspace:^
         version: link:../web
 
+  packages/web/web-search-scraper:
+    dependencies:
+      '@taiji/schemastery':
+        specifier: link:../../../vendor/schemastery
+        version: link:../../../vendor/schemastery
+    devDependencies:
+      '@taiji/cordis':
+        specifier: workspace:^
+        version: link:../../../vendor/cordis
+      '@taiji/dsh-http-proxy':
+        specifier: workspace:^
+        version: link:../../util/http-proxy
+      '@taiji/dsh-launch-environment':
+        specifier: workspace:^
+        version: link:../../util/launch-environment
+      '@taiji/dsh-web':
+        specifier: workspace:^
+        version: link:../web
+
   packages/web/web-search-exa:
     dependencies:
       '@taiji/schemastery':
@@ -13199,25 +13218,6 @@ importers:
         version: link:../../../vendor/loader
       '@taiji/dsh-agent':
         specifier: workspace:^
-  packages/web/web-search-scraper:
-    dependencies:
-      '@taiji/schemastery':
-        specifier: link:../../../vendor/schemastery
-        version: link:../../../vendor/schemastery
-    devDependencies:
-      '@taiji/cordis':
-        specifier: workspace:^
-        version: link:../../../vendor/cordis
-      '@taiji/dsh-http-proxy':
-        specifier: workspace:^
-        version: link:../../util/http-proxy
-      '@taiji/dsh-launch-environment':
-        specifier: workspace:^
-        version: link:../../util/launch-environment
-      '@taiji/dsh-web':
-        specifier: workspace:^
-        version: link:../web
-
         version: link:../../core/agent
       '@taiji/dsh-agent-default-model':
         specifier: workspace:^
