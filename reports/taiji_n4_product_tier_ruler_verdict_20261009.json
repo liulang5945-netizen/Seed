@@ -1,0 +1,29 @@
+{
+  "format": "taiji-n4-product-tier-ruler-adjudication-v1",
+  "prereg": "PLAN-N4-06 §3 J-N4f-1/2/3/5",
+  "bands": {
+    "small": 0.0,
+    "large": 0.20833333333333334
+  },
+  "wrong_top1": {
+    "small": 0.0,
+    "large": 0.2916666666666667
+  },
+  "provenance": {
+    "small": {
+      "mount_layer": "product",
+      "episodic_writes": 120
+    },
+    "large": {
+      "mount_layer": "product",
+      "episodic_writes": 120
+    }
+  },
+  "delta_large_minus_small": 0.2916666666666667,
+  "line_required": 0.20833333333333334,
+  "j_n4f_5": "product_tier_verified",
+  "ruler_usable": false,
+  "j_n4f_2": "ruler_unusable",
+  "verdict": "ruler_unusable",
+  "rc": 1
+}
