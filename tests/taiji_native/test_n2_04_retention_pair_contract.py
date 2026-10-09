@@ -256,3 +256,69 @@ def test_missing_means_no_disclosure_anywhere_not_a_zero_match() -> None:
     assert out["status"] == "missing"
     assert out["checked"] == []
     assert out["took"] == {}
+
+
+def _manifest_with_ids(tmp_path: Path, rows: list[tuple[str, str]]) -> Path:
+    #: DEBT-G67 修法①（㊵-631 补测）：点名能力要求行身份在场，所以夹具必须带 `id`。
+    path = tmp_path / "manifest_ids.json"
+    path.write_text(
+        json.dumps(
+            {"items": [{"id": one, "text": text} for one, text in rows]}, ensure_ascii=False
+        ),
+        encoding="utf-8",
+        newline="\n",
+    )
+    return path
+
+
+def test_leaked_row_is_named_not_only_counted(tmp_path: Path) -> None:
+    """交集机检不许只报个数：命中哪一条必须出版（旧行为＝得由人手工复算才能定位）。"""
+
+    leaky = "这一条是被巩固材料原样喂过的长文本，用来验证仪器能不能点名到行。"
+    rows = [
+        ("D07", "保持集里一条干净的长文本，它不应该出现在巩固材料里，长度也够窗口。"),
+        ("D99", leaky),
+    ]
+    corpus = _corpus(tmp_path, "corpus_named.jsonl", "无关材料。\n" + leaky + "\n")
+    rc = MODULE.main(
+        _args(
+            tmp_path,
+            manifest=_manifest_with_ids(tmp_path, rows),
+            corpus=corpus,
+        )
+    )
+    payload = _read_out(tmp_path)
+    assert rc == 2
+    assert payload["status"] == "retention_not_disjoint"
+    guard = payload["guards"]["G_N2c_4_disjointness"]
+    #: 聚合报出交集时逐窗复算，命中的那一行必须被点名，且**只**点名它。
+    assert guard["result"]["windows_found_in_corpus"] == 1, guard["result"]
+    assert guard["matched_rows"] == ["D99"], guard["matched_rows"]
+
+
+def test_short_row_is_excluded_from_intersection_but_disclosed(tmp_path: Path) -> None:
+    """owner 第九次弹窗 (乙-1) 的口径：短于窗口尺的条目不参与包含判定，但必须单列披露。
+
+    这条测的两个方向都要为假：① 一条 7 字通用句即便**原样出现在语料里**也不得把整件判成泄露
+    （否则保持集永远被一句「今天天气不错。」卡死）；② 它仍要出现在 `skipped_short_detail` 里
+    ——不许静默剔除（那会把「我没检」说成「检了没重合」）。
+    """
+
+    short = "今天天气不错。"
+    assert len(short.encode("utf-8")) < MODULE.N3A.NGRAM_BYTES
+    rows = [
+        ("D08", short),
+        ("D11", "保持集里一条足够长的文本，它不会出现在巩固材料里，长度也够窗口用。"),
+    ]
+    corpus = _corpus(tmp_path, "corpus_short.jsonl", short + "\n")
+    rc = MODULE.main(_args(tmp_path, manifest=_manifest_with_ids(tmp_path, rows), corpus=corpus))
+    payload = _read_out(tmp_path)
+    assert rc == 0, payload["status"]
+    assert payload["verdict"] == "retention_holds"
+    guard = payload["guards"]["G_N2c_4_disjointness"]
+    assert guard["status"] == "measured"
+    assert guard["manifest_shape"] == "top_level_items"
+    assert guard["retention_windows"] == 1, guard["retention_windows"]
+    assert guard["skipped_short_rows"] == 1
+    assert guard["skipped_short_detail"] == [f"D08:{len(short.encode('utf-8'))}B"]
+    assert guard["matched_rows"] == []
