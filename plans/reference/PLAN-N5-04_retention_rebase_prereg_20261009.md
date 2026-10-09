@@ -72,3 +72,26 @@ before 面直接复用 F-3 的已入库件；这样 `J-N5b-5` 的分子分母同
 - 预期为绿的成员：G-N5d-1/G-N5d-2（同源与单变量核对）＋ J-N5b-1（在场性五枚键，现行仪器已能出 `present`）。
 - 仍红时收回的句子：「N5 保持侧有读数」「`J-N5b-6` 已判」；届时点名是哪一支守卫（G-N5d-1 或 G-N5d-4）拦的，并登记缺陷入 05。
 - 发表资格前置：四张 after 面件与两份判读件同批入库，且引用本件时必须带「续训双臂、before 复用 20261008 件」这句范围限定。
+
+> **【2026-10-09 ㊵-616 就地更正：§1/§5 的换底前提被否证，本件的「续训双臂」现在跑不了】**
+> 本节带日期追加，§2/§3 的判据与守卫**一字未改**（先冻的规则不为跑动让路）。实测三件：
+> ① `--pressure-record` **不是裸旗标**，它要一个 JSONL 路径（`train_seed_corpus.py:1126-1132`）⇒ 按 ㊵-593 那份
+> 「冻结命令」原样起跑会在 argparse 阶段就 `parser.error`（实测两臂各 `RC_ARM=2`，零训练发生）。
+> ② 带值重跑后撞两处**响亮拒绝**，合起来是设计冲突而不是命令笔误：
+> 加 `--no-readout-position` ⇒ `Seed.restore` 拒（`seed/model.py:240` `checkpoint configuration does not match Seed`，
+> 因为基件是**带位置输入**存的）；不加 ⇒ 产品在 `taiji/model.py:1284 → :1131`
+> 拒（`readout_utf8_position_input is not wired to the developmental F1 learning path`，
+> 影子链的 `--developmental-fast-slow` 走的就是那条迁移）。
+> ③ 扫 `checkpoints/*.pt` 全部 13 枚（含 `seed_a31self_with_circuit.pt`、`seed_beta_with_circuit.pt`、
+> `seed_n2_{mother,candidate,rollback}_20261008.pt`、`seed_n2b_{mother,candidate,rollback}_20261008{,_n2c1}.pt`）
+> ⇒ **每一枚** `readout_utf8_position_input=true`（自述 tick 读数含 0／92／273）⇒ **不存在**一枚「无位置输入、可 resume」的基件。
+> **结论收回与前置改判**：F-3 那两张 before 面件确实同源可复用，但它们所在的基件与影子链**互斥**，
+> 所以 §1 的「同一基件续训」在今天的仓里不可执行。三条出路都要 owner 定，本件不自行选：
+> （甲）改产品：把位置输入接进发育 F1 学习通路（`taiji/model.py:1131` 那道拒绝就是它的缺位声明，属产品码改动）；
+> （乙）先花一次训练造一枚「无位置输入、且七列底子非零」的新基件，再谈续训双臂；
+> （丙）放弃「before＝同 lineage 的更早时刻」这一形状，改用**同臂自身时间轴**（`--checkpoint-every` 的
+> `checkpoint_<tick>.pt` 保号存档就在 `*.pt.history/` 里）作 before——代价是它测的是「同一次通电内的漂移」，
+> 不是「通电前后的代价」，与 09 §2 N5 的原问不同，因此用它必须**另立判据**而不是套用 J-N5d-1。
+> 欠的两笔债仍未插 05（列形状未核对）：θ_small 落几何盲区属**扰动设计教训**；在场计数器**承诺未兑现**；
+> 本轮再加一条待登记：㊵-593 那份「冻结命令」把带参旗标写成裸旗标，是**过期处方**（同 [[table-status-column-goes-stale]] 的
+> 「交接清单里过期的是处方／命令，比过期结论更贵」）。
