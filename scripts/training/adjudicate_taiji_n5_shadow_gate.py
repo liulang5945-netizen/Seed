@@ -85,12 +85,16 @@ def judge_arm(name: str, checkpoint: Path) -> dict[str, Any]:
     out["j_n5b_1"] = "present"
     out["missing_self_report_keys"] = []
     for key in REQUIRED_KEYS:
-        out[key] = float(block[key])
+        #: 在场性（J-N5b-1）与值判断（J-N5b-2）分开： 是**在场但无请求值**——
+        #: 对照臂没给 --n5-shadow-gate 时  就是 None（真跑逼出来的形状，
+        #: 合成夹具当初全用数值，漏了这一支）。
+        value = block[key]
+        out[key] = None if value is None else float(value)
     out["candidate_id"] = str(block.get("candidate_id", ""))
-    powered = out["gate"] > 0.0
-    nonzero_utility = (
-        out["candidate_utility"] != 0.0 or out["candidate_counterfactual_utility"] != 0.0
-    )
+    powered = (out["gate"] or 0.0) > 0.0
+    nonzero_utility = (out["candidate_utility"] or 0.0) != 0.0 or (
+        out["candidate_counterfactual_utility"] or 0.0
+    ) != 0.0
     if not powered:
         out["j_n5b_2"] = "not_powered"
     elif nonzero_utility:
@@ -166,12 +170,76 @@ def judge_pairing(
     return base
 
 
+def judge_metric_lane(
+    pair_file: Path | None, role_treated: str, role_control: str, line: float
+) -> dict[str, Any]:
+    """J-N5b-4 的算术：段均值由 N3 那台仪器出，这里只做「末两段均值＋差值＋过线」三步算术。
+
+    刻意**不自己分段**：分段/噪声带/缺列丢弃（DEBT-G63 的 `window_ticks=0` 收尾行）都已在
+    `adjudicate_taiji_n3a_scaling_probe.py` 里冻结并各有测；在这里重抄就是第二条链。
+
+    也刻意**不搬** N3 的 `single_variable_check`：那一支判的是「两臂同 `mean_revisits` ⇒ 仪器坏」，
+    那是**剂量对照**的设计前提；本配对是「同剂量、只差通电」，两臂剂量相同正是要求 ⇒ 搬过来会误报。
+    """
+    if pair_file is None:
+        return {"j_n5b_4": "unverified_no_metric_file", "line": line}
+    payload = json.loads(pair_file.read_text(encoding="utf-8"))
+    arms = payload.get("arms", {})
+    missing = [role for role in (role_treated, role_control) if role not in arms]
+    if missing:
+        return {
+            "j_n5b_4": "unverified_role_absent_in_metric_file",
+            "missing_roles": missing,
+            "line": line,
+        }
+    treated, control = arms[role_treated], arms[role_control]
+    base: dict[str, Any] = {
+        "metric_file": str(pair_file),
+        "roles": {"treated": role_treated, "control": role_control},
+        "line": line,
+        "measurement_complete": {
+            "treated": bool(treated.get("measurement_complete")),
+            "control": bool(control.get("measurement_complete")),
+        },
+        "segment_means": {
+            "treated": treated.get("acc_segment_means"),
+            "control": control.get("acc_segment_means"),
+        },
+    }
+    if not (base["measurement_complete"]["treated"] and base["measurement_complete"]["control"]):
+        base["j_n5b_4"] = "unverified_metric_incomplete"
+        return base
+    for side, arm in (("treated", treated), ("control", control)):
+        means = arm.get("acc_segment_means") or []
+        if len(means) < 2:
+            base["j_n5b_4"] = "unverified_segment_count_below_two"
+            base["segment_count"] = {
+                "treated": len(base["segment_means"]["treated"] or []),
+                "control": len(base["segment_means"]["control"] or []),
+            }
+            return base
+        last_two = (float(means[-1]) + float(means[-2])) / 2.0
+        base.setdefault("last_two_segment_mean", {})[side] = last_two
+    delta = base["last_two_segment_mean"]["treated"] - base["last_two_segment_mean"]["control"]
+    base["delta_treated_minus_control"] = delta
+    base["exceeds_line"] = bool(delta > line)
+    #: 冻结件没写 `ruler_usable` 的算法（PLAN-N5-02 §2 J-N5b-4 只说「必须先出版 ruler_usable 为真」）
+    #: ⇒ 这里不发明公式，只把可判的原始量摆出来，并把这一支标成待升版。
+    base["ruler_usable"] = "undefined_in_frozen_prereg_needs_version_bump"
+    base["j_n5b_4"] = "delta_published_ruler_usable_undefined"
+    return base
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="N5 影子通电验收判读（PLAN-N5-02 J-N5b-1/2/3）")
     parser.add_argument("--arm-treated", required=True)
     parser.add_argument("--arm-control", default=None)
     parser.add_argument("--face-treated", default=None)
     parser.add_argument("--face-control", default=None)
+    parser.add_argument("--n3a-pair-file", default=None)
+    parser.add_argument("--metric-role-treated", default="arm_A")
+    parser.add_argument("--metric-role-control", default="arm_B")
+    parser.add_argument("--line", type=float, default=0.02)
     parser.add_argument("--out", required=True)
     args = parser.parse_args(argv)
 
@@ -209,13 +277,21 @@ def main(argv: list[str] | None = None) -> int:
     if pairing["j_n5b_3"] == "invalid":
         rc = max(rc, 2)
 
+    metric = judge_metric_lane(
+        Path(args.n3a_pair_file) if args.n3a_pair_file else None,
+        args.metric_role_treated,
+        args.metric_role_control,
+        float(args.line),
+    )
+
     payload = {
         "format": FORMAT,
         "prereg": "PLAN-N5-02 §2 J-N5b-1／J-N5b-2／J-N5b-3 前半",
         "arms": arms,
         "pairing": pairing,
+        "metric_lane": metric,
         #: 收益比较不在本器内实现（不重抄 N3／N4 已冻的算法链）⇒ 合取必然未判。
-        "j_n5b_4": "unverified_metric_lane_lives_in_n3_and_n4_instruments",
+        "j_n5b_4": metric["j_n5b_4"],
         "j_n5b_5": "unverified_retention_lane_not_run",
         "j_n5b_6": "not_adjudicable_until_2_3_4_5_are_all_measured",
         "rc": rc,

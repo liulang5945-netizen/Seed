@@ -1,0 +1,164 @@
+{
+  "format": "taiji-n3a-scaling-probe-adjudication-v1",
+  "prereg": "plans/reference/PLAN-N3-02_scaling_probe_prereg_20261007.md §2/§4quater ＋ PLAN-N3-10 §2/§3（形状 B 与读数边界）",
+  "interpretation_limit": "形状 B（等符号暴露、唯一篇数封顶）只允许回答“×16.8 容量在等符号暴露下是否把斜率抬出噪声带”，不允许回答“封顶在容量还是数据”——后者需要 PLAN-N3-10 §4 的 C 形状（等数据量变参数量）。",
+  "baseline_last_segment": 0.59412,
+  "arms": {
+    "arm_A": {
+      "progress_path": "E:\\Seed\\output\\n5_shadow_gate_on\\progress.jsonl",
+      "progress_lines": 7,
+      "lines_dropped_window_zero": 1,
+      "acc_segment_means": [
+        0.0046,
+        0.0051,
+        0.0052,
+        0.0048,
+        0.00705
+      ],
+      "acc_slope_first_to_last": 0.00245,
+      "acc_noise_band_adjacent_max": 0.00225,
+      "acc_last_segment_mean": 0.00705,
+      "mean_surprise_segment_means": [
+        5.572526,
+        5.581928,
+        5.566225,
+        5.557707,
+        5.537877
+      ],
+      "holdout_v2_first": 5.585428259606539,
+      "holdout_v2_last": 5.5336073022033405,
+      "holdout_v2_delta": -0.051821,
+      "exit_record": {
+        "exit_reason": "max_symbols_reached",
+        "reached_budget": true,
+        "budget_max_symbols": 60000,
+        "ticks_at_exit": 60000,
+        "unique_documents": 76,
+        "document_visits": 76,
+        "mean_revisits": 1.0,
+        "sequence_length": {
+          "documents_counted": 76,
+          "min": 106,
+          "median": 626.0,
+          "max": 2643,
+          "mean": 790.157895
+        },
+        "elapsed_seconds": 396.80334510002285,
+        "checkpoint_sha256": "24bebf0dfc90f65e088422d64f9c0fc979bdd4bfc7504c6fdad17a267231371d",
+        "corpus_fingerprint": "[{\"name\":\"dialogue_extended_clean.jsonl\",\"bytes\":108327171}]"
+      },
+      "section_8_7_completeness": {
+        "corpus_available": true,
+        "unique_episodes": true,
+        "actual_updates": true,
+        "sequence_length": true,
+        "independent_test_coverage": true
+      },
+      "sequence_length": {
+        "documents_counted": 76,
+        "min": 106,
+        "median": 626.0,
+        "max": 2643,
+        "mean": 790.157895
+      },
+      "sequence_length_source": "exit_record",
+      "measurement_complete": true
+    },
+    "arm_B": {
+      "progress_path": "E:\\Seed\\output\\n5_shadow_gate_off\\progress.jsonl",
+      "progress_lines": 7,
+      "lines_dropped_window_zero": 1,
+      "acc_segment_means": [
+        0.0044,
+        0.0049,
+        0.0046,
+        0.0053,
+        0.00735
+      ],
+      "acc_slope_first_to_last": 0.00295,
+      "acc_noise_band_adjacent_max": 0.00205,
+      "acc_last_segment_mean": 0.00735,
+      "mean_surprise_segment_means": [
+        5.571956,
+        5.580315,
+        5.564649,
+        5.55558,
+        5.536787
+      ],
+      "holdout_v2_first": 5.585259031402342,
+      "holdout_v2_last": 5.532738489658317,
+      "holdout_v2_delta": -0.052521,
+      "exit_record": {
+        "exit_reason": "max_symbols_reached",
+        "reached_budget": true,
+        "budget_max_symbols": 60000,
+        "ticks_at_exit": 60000,
+        "unique_documents": 76,
+        "document_visits": 76,
+        "mean_revisits": 1.0,
+        "sequence_length": {
+          "documents_counted": 76,
+          "min": 106,
+          "median": 626.0,
+          "max": 2643,
+          "mean": 790.157895
+        },
+        "elapsed_seconds": 334.63762799999677,
+        "checkpoint_sha256": "8213c1b86cc24af43e9c6e4f72ab962249f81cc883bc8ff254193fb3a84507d0",
+        "corpus_fingerprint": "[{\"name\":\"dialogue_extended_clean.jsonl\",\"bytes\":108327171}]"
+      },
+      "section_8_7_completeness": {
+        "corpus_available": true,
+        "unique_episodes": true,
+        "actual_updates": true,
+        "sequence_length": true,
+        "independent_test_coverage": true
+      },
+      "sequence_length": {
+        "documents_counted": 76,
+        "min": 106,
+        "median": 626.0,
+        "max": 2643,
+        "mean": 790.157895
+      },
+      "sequence_length_source": "exit_record",
+      "measurement_complete": true
+    }
+  },
+  "judgement": {
+    "arm_A": {
+      "slope_gt_own_band": true,
+      "last_mean_gt_baseline_plus_margin": false,
+      "holdout_v2_within_limit": true,
+      "measurement_complete": true,
+      "J_N3a": "not_holds"
+    },
+    "arm_B": {
+      "slope_gt_own_band": true,
+      "last_mean_gt_baseline_plus_margin": false,
+      "holdout_v2_within_limit": true,
+      "measurement_complete": true,
+      "J_N3a": "not_holds"
+    }
+  },
+  "single_variable_check": {
+    "both_arms_present": true,
+    "unique_documents_differ": false,
+    "mean_revisits_published": [
+      1.0,
+      1.0
+    ],
+    "instrument_broken_if_revisits_equal": true,
+    "ticks_equal": true,
+    "corpus_fingerprints": [
+      "[{\"name\":\"dialogue_extended_clean.jsonl\",\"bytes\":108327171}]",
+      "[{\"name\":\"dialogue_extended_clean.jsonl\",\"bytes\":108327171}]"
+    ],
+    "corpus_fingerprints_equal": true
+  },
+  "J_N3a_prime": {
+    "J_N3a_prime": "not_judged",
+    "reason": "对照臂缺席 ⇒ PLAN-N3-12 §1 的第二合取项没有值",
+    "forbid_fallback_to_old_anchor": true
+  }
+}

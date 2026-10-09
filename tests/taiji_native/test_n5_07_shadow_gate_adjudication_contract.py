@@ -231,3 +231,83 @@ def test_faces_absent_leaves_the_quadruple_unverified_not_valid(tmp_path: Path) 
     assert payload["pairing"]["status"] == "gate_differs_quadruple_unverified"
     assert payload["pairing"]["j_n5b_3"] == "unverified"
     assert rc == 0
+
+
+def _metric_file(
+    tmp_path: Path,
+    treated_means: list[float],
+    control_means: list[float],
+    complete_treated: bool = True,
+) -> Path:
+    import json as _json
+
+    path = tmp_path / "n3a.json"
+    path.write_text(
+        _json.dumps(
+            {
+                "arms": {
+                    "arm_A": {
+                        "acc_segment_means": treated_means,
+                        "measurement_complete": complete_treated,
+                    },
+                    "arm_B": {
+                        "acc_segment_means": control_means,
+                        "measurement_complete": True,
+                    },
+                }
+            }
+        )
+        + "\n",
+        encoding="utf-8",
+        newline="\n",
+    )
+    return path
+
+
+def _pair_args(tmp_path: Path, extra: list[str]) -> list[str]:
+    treated, control = _pair(tmp_path, 1.0, 0.0)
+    out = tmp_path / "v.json"
+    argv = ["--arm-treated", str(treated), "--arm-control", str(control), "--out", str(out)]
+    return argv, out
+
+
+def test_metric_lane_arithmetic_is_mechanical(tmp_path: Path) -> None:
+    #: 期望值是**事先手推的小整数**，不是抄仪器输出：0.30/0.10 ⇒ treated 末两段 0.20、
+    #: control 末两段 0.05 ⇒ delta 0.15 > 0.02 ⇒ exceeds_line 为真。
+    metric = _metric_file(tmp_path, [0.10, 0.30], [0.00, 0.10])
+    argv, out = _pair_args(tmp_path, [])
+    rc = JUDGE.main(argv + ["--n3a-pair-file", str(metric), "--line", "0.02"])
+    payload = json.loads(out.read_text(encoding="utf-8"))
+    lane = payload["metric_lane"]
+    assert lane["last_two_segment_mean"] == {"treated": 0.20, "control": 0.05}
+    assert abs(lane["delta_treated_minus_control"] - 0.15) < 1e-12
+    assert lane["exceeds_line"] is True
+    assert rc == 0
+
+
+def test_metric_lane_is_negative_when_treated_is_lower(tmp_path: Path) -> None:
+    #: 反号一支必须能为假：treated 比 control 低时 exceeds_line 必为 False，delta 为负。
+    metric = _metric_file(tmp_path, [0.10, 0.10], [0.30, 0.30])
+    argv, out = _pair_args(tmp_path, [])
+    JUDGE.main(argv + ["--n3a-pair-file", str(metric)])
+    lane = json.loads(out.read_text(encoding="utf-8"))["metric_lane"]
+    assert lane["delta_treated_minus_control"] < 0.0
+    assert lane["exceeds_line"] is False
+
+
+def test_incomplete_metric_side_is_never_read_as_a_verdict(tmp_path: Path) -> None:
+    metric = _metric_file(tmp_path, [0.10, 0.30], [0.00, 0.10], complete_treated=False)
+    argv, out = _pair_args(tmp_path, [])
+    JUDGE.main(argv + ["--n3a-pair-file", str(metric)])
+    lane = json.loads(out.read_text(encoding="utf-8"))["metric_lane"]
+    assert lane["j_n5b_4"] == "unverified_metric_incomplete"
+    assert "delta_treated_minus_control" not in lane
+
+
+def test_missing_metric_file_keeps_the_conjunct_unverified(tmp_path: Path) -> None:
+    argv, out = _pair_args(tmp_path, [])
+    JUDGE.main(argv)
+    payload = json.loads(out.read_text(encoding="utf-8"))
+    assert payload["metric_lane"]["j_n5b_4"] == "unverified_no_metric_file"
+    #: 合取条件永远不许在缺任一支时给出「有贡献」。
+    assert payload["j_n5b_6"] == "not_adjudicable_until_2_3_4_5_are_all_measured"
