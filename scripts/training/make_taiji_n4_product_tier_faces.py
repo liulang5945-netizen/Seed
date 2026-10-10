@@ -57,14 +57,18 @@ def _rotate_to(cue: list[float], donor: list[float], theta: float) -> tuple[list
     if norm_cue == 0.0:
         raise ValueError("cue 全零，无法定义角度扰动")
     unit = [v / norm_cue for v in cue]
-    dot = sum(d * u for d, u in zip(donor, unit))
-    perp = [d - dot * u for d, u in zip(donor, unit)]
+    #: `strict=True` 不是为过 lint 而加：`donor` 与 `cue` 维数不等时，静默截断会算出一条
+    #: **角度不是所请求角度**的扰动（本文件的整条判据都建立在"实现角度由这组向量决定"上）。
+    dot = sum(d * u for d, u in zip(donor, unit, strict=True))
+    perp = [d - dot * u for d, u in zip(donor, unit, strict=True)]
     norm_perp = math.sqrt(sum(v * v for v in perp))
     if norm_perp < 1e-9:
         raise ValueError("donor 与 cue 共线，无法构造正交方向（换 donor）")
     perp = [v / norm_perp for v in perp]
-    rotated = [math.cos(theta) * u + math.sin(theta) * v for u, v in zip(unit, perp)]
-    achieved = math.acos(max(-1.0, min(1.0, sum(a * b for a, b in zip(unit, rotated)))))
+    rotated = [math.cos(theta) * u + math.sin(theta) * v for u, v in zip(unit, perp, strict=True)]
+    achieved = math.acos(
+        max(-1.0, min(1.0, sum(a * b for a, b in zip(unit, rotated, strict=True))))
+    )
     return rotated, achieved
 
 

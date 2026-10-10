@@ -17,14 +17,23 @@ from __future__ import annotations
 import importlib.util
 import json
 import re
+import subprocess
 import sys
 import types
 from pathlib import Path
 from typing import Any
 
+import pytest
+
 REPO = Path(__file__).resolve().parents[2]
 SCRIPT = REPO / "scripts/training/replay_taiji_n3_06_gate_attribution.py"
 FACE = REPO / "output/n3_04/beta_gate025/pressure.jsonl"
+
+#: 12 支里 **10 支**要读这枚在盘面（CI run 37764787792 实测：本册 10 枚红，全是 `FileNotFoundError`
+#: 形状），而 `output/n3_04/` 按 `.gitignore` 不入库（09 §3.2 第 4 项把它列为"owner 排期"的挂账资产）。
+#: ⇒ 按 05 §9（H19j／H19n）既定策略在模块级声明一次，不需要的两支用 `no_local_artifacts` 豁免；
+#: 这样"缺产物"在 CI 上是**点名的 skip**，不是 23 枚红里的 10 枚噪声。
+LOCAL_ONLY_ARTIFACTS = ("output/n3_04/beta_gate025/pressure.jsonl",)
 
 
 def _load_module():
@@ -249,6 +258,7 @@ TRAINER = REPO / "scripts/training/train_seed_corpus.py"
 HARDCODED_POLICY_LITERAL = re.compile(r'"(?:minimum_\w+|ema_rate)":\s*0?\.\d')
 
 
+@pytest.mark.no_local_artifacts
 def test_trainer_reports_face_format_the_reader_accepts() -> None:
     """G-N3c-4：写侧输出的版本名必须落在读侧接受集里，且**只有**在读侧有对应夹具。"""
 
@@ -260,6 +270,7 @@ def test_trainer_reports_face_format_the_reader_accepts() -> None:
     assert "taiji-n3-pressure-face-v9" not in READER.FACE_FORMATS
 
 
+@pytest.mark.no_local_artifacts
 def test_trainer_pressure_section_has_no_hardcoded_thresholds(tmp_path: Path) -> None:
     """G-N3c-3"零抄写"：面头的九个 policy 值全部来自 `trigger.policy`，源里不许出现阈值字面量。"""
 
@@ -343,3 +354,39 @@ def test_foreign_policy_field_refuses(tmp_path: Path) -> None:
     rc, payload = _run(_write(tmp_path, [header] + pressures), tmp_path)
     assert rc == 2
     assert "表外 policy 字段" in payload["refused"][0]["error"]
+
+
+@pytest.mark.no_local_artifacts
+def test_the_local_only_declaration_covers_the_face_it_claims() -> None:
+    """**在 CI 上也要跑的一支**：它验的不是产品，是"本册的 skip 声明仍然成立"。
+
+    CI run 37764787792 上本册 10 枚红全是 `FileNotFoundError`——那枚在盘面按 `.gitignore` 不入库，
+    而本册此前没声明（05 §9 的 H19j／H19n 策略要求声明）。补声明之后，这条元测钉三件事：
+    ① 声明的路径就是 `FACE`（改名会让声明失效而 skip 不生效）；
+    ② 该路径**确实不入库**（谁把面件提交进来，这条红——那时 10 枚 skip 应当变回真跑）；
+    ③ 豁免标记的数量与位置（只许贴在两支不读面件的测上；多贴＝把该跑的悄悄关掉）。
+    """
+
+    import sys as _sys
+
+    module = _sys.modules[__name__]
+    declared = tuple(getattr(module, "LOCAL_ONLY_ARTIFACTS", ()))
+    assert declared == (FACE.relative_to(REPO).as_posix(),), declared
+    tracked = subprocess.run(
+        ["git", "-C", str(REPO), "ls-files", "--error-unmatch", declared[0]],
+        capture_output=True,
+        check=False,
+    )
+    assert tracked.returncode != 0, tracked.stdout.decode("utf-8", errors="replace")[:200]
+    source = Path(__file__).read_text(encoding="utf-8")
+    #: 按**行首**取被应用的决定器，不用子串计数——本支自己要把那串字面量写进断言里，
+    #: 子串计数会把自己抄的那两处也算进去（㊵-629/630 记过的自指形状：违禁词抄进禁令就命中自己）。
+    exempt = [
+        line for line in source.splitlines() if line.startswith("@pytest.mark.no_local_artifacts")
+    ]
+    assert len(exempt) == 3, exempt
+    for name in (
+        "def test_trainer_reports_face_format_the_reader_accepts",
+        "def test_trainer_pressure_section_has_no_hardcoded_thresholds",
+    ):
+        assert ("@pytest.mark.no_local_artifacts\n" + name) in source, name
