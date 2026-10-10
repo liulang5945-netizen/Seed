@@ -1,0 +1,30 @@
+{
+  "format": "taiji-machine-load-v1",
+  "status": "ok",
+  "sampled_at": "2026-10-10T23:18:49",
+  "sample_seconds": 0.5,
+  "logical_cpus": 24,
+  "system_cpu_percent": 16.7,
+  "python_process_count": 72,
+  "python_processes_burning_cpu": 2,
+  "top_python_by_cpu_seconds": [
+    {
+      "pid": 39300,
+      "cpu_seconds": 581397.3,
+      "cpu_percent": 96.9,
+      "created": "2026-10-04T01:59:19",
+      "cmdline_head": "C:\\Users\\23747\\AppData\\Local\\Programs\\Python\\Python312\\python.exe -",
+      "is_reader": false
+    },
+    {
+      "pid": 10112,
+      "cpu_seconds": 111626.6,
+      "cpu_percent": 96.9,
+      "created": "2026-10-09T15:16:53",
+      "cmdline_head": "C:\\Users\\23747\\AppData\\Local\\Programs\\Python\\Python312\\python.exe -c \nfrom pathlib import Path\nimport re\n# \u627e VISION \u6587\u6863\u91cc\u7684",
+      "is_reader": false
+    }
+  ],
+  "reader_counted_itself": true,
+  "disclosure": "ok"
+}
