@@ -1,0 +1,76 @@
+{
+  "status": "ok",
+  "format": "taiji-n4-write-path-census-v1",
+  "defaults": {
+    "episodic_memory_default_mount": false,
+    "episodic_memory_capacity": 1024
+  },
+  "write_sites": [
+    {
+      "file": "taiji/adapter.py",
+      "line": 11699,
+      "target": "self._episodic_memory",
+      "guarded_by": "if not self._cognitive_state.events"
+    },
+    {
+      "file": "scripts/training/eval_taiji_p3_risk_sensitive_execution.py",
+      "line": 1160,
+      "target": "group_adapter._episodic_memory",
+      "guarded_by": null
+    },
+    {
+      "file": "scripts/training/train_seed_corpus.py",
+      "line": 477,
+      "target": "episodic_store",
+      "guarded_by": "if episodic_store is not None and doc_pending:"
+    },
+    {
+      "file": "scripts/training/train_seed_corpus.py",
+      "line": 962,
+      "target": "episodic_store",
+      "guarded_by": "if symbol == boundary and doc_pending:"
+    }
+  ],
+  "write_site_count": 4,
+  "trainer_write_site_count": 2,
+  "product_write_site_count": 1,
+  "mount_sites": [
+    {
+      "file": "taiji/adapter.py",
+      "line": 300
+    },
+    {
+      "file": "scripts/training/eval_taiji_p3_risk_sensitive_execution.py",
+      "line": 646
+    },
+    {
+      "file": "scripts/training/eval_taiji_p4_procedural_runtime.py",
+      "line": 97
+    },
+    {
+      "file": "scripts/training/eval_taiji_p4_procedural_runtime.py",
+      "line": 130
+    },
+    {
+      "file": "scripts/training/eval_taiji_p6_tool_execution.py",
+      "line": 44
+    },
+    {
+      "file": "scripts/training/eval_taiji_p6_tool_failure_replan.py",
+      "line": 67
+    },
+    {
+      "file": "scripts/training/train_seed_corpus.py",
+      "line": 702
+    }
+  ],
+  "mount_site_count": 7,
+  "adapter_mount_site_count": 1,
+  "verdicts": {
+    "product_chain_has_write_call": true,
+    "trainer_chain_has_write_call": true,
+    "write_happens_at_product_default": false
+  },
+  "reading_limit": "call-site presence and the config default only; runtime reachability needs an on-face presence counter (not measured here)",
+  "files_scanned": 846
+}
