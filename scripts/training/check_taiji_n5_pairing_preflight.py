@@ -87,6 +87,33 @@ def preflight(
         cap0_out["cap0_identity"] = "verified" if actual == declared else "mismatch"
 
     replay = _read(replay_path)
+    #: 题集之外还要核**基座本身**：before 面在 `identity` 里声明了它当时吃的 checkpoint 字节摘要，
+    #: 而配对的全部意义在于"after 吃的是同一枚基座续训出来的"。基座若被覆写，配对当场失去依据，
+    #: 而这件事今天在盘上可查（不必等四张面齐）。
+    declared_ck = cap0.get("identity", {}).get("checkpoint_sha256") if isinstance(cap0.get("identity"), dict) else None
+    ck_path_raw = str(cap0.get("checkpoint", "")).replace("\\", "/")
+    ck_path = root / ck_path_raw
+    checkpoint_identity: dict[str, Any] = {
+        "declared_checkpoint_sha256": declared_ck,
+        "checkpoint_path": ck_path_raw,
+        "checkpoint_present": ck_path.is_file(),
+        "declared_git_head": (
+            cap0.get("identity", {}).get("git_head")
+            if isinstance(cap0.get("identity"), dict)
+            else None
+        ),
+    }
+    if declared_ck is None:
+        checkpoint_identity["cap0_checkpoint_identity"] = "declaration_absent"
+    elif not ck_path.is_file():
+        checkpoint_identity["cap0_checkpoint_identity"] = "checkpoint_absent"
+    else:
+        actual_ck = _sha256(ck_path)
+        checkpoint_identity["recomputed_checkpoint_sha256"] = actual_ck
+        checkpoint_identity["cap0_checkpoint_identity"] = (
+            "verified" if actual_ck == declared_ck else "mismatch"
+        )
+
     present = [key for key in REPLAY_KEYS if key in replay]
     if "items_sha256" in present:
         replay_outcome = "content_hash_available"
@@ -104,6 +131,7 @@ def preflight(
         #: 预检指向哪两张件必须随件出版——"退化"与"哈希齐"的差别就在这两张件上。
         "faces_used": {"cap0": str(cap0_path), "replay": str(replay_path)},
         "cap0": cap0_out,
+        "base_checkpoint": checkpoint_identity,
         "replay": {
             "keys_present": present,
             "keys_the_adjudicator_compares": list(REPLAY_KEYS),

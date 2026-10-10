@@ -2,6 +2,10 @@
   "status": "ok",
   "format": "taiji-n5-pairing-preflight-v1",
   "prereg": "PLAN-N5-04 §3 G-N5d-1",
+  "faces_used": {
+    "cap0": "E:\\Seed\\reports\\taiji_n2_cap0_before_20261008.json",
+    "replay": "E:\\Seed\\reports\\taiji_n2_replay24_before_20261008.json"
+  },
   "cap0": {
     "declared_eval_set_sha256": "538835f6627a87c3faba84dbfd1138b5d8296a5dff37870bd258fdf2a3979c27",
     "declared_layer": "identity",
@@ -9,6 +13,14 @@
     "manifest_present": true,
     "recomputed_manifest_sha256": "538835f6627a87c3faba84dbfd1138b5d8296a5dff37870bd258fdf2a3979c27",
     "cap0_identity": "verified"
+  },
+  "base_checkpoint": {
+    "declared_checkpoint_sha256": "d6169a358eaee6d194d4795e3167a7bcbb42dfde57b92aa1199bcebbed89699b",
+    "checkpoint_path": "checkpoints/seed_a31self_with_circuit.pt",
+    "checkpoint_present": true,
+    "declared_git_head": "726a0a7517688d68cae37205c7277bac37e66853",
+    "recomputed_checkpoint_sha256": "d6169a358eaee6d194d4795e3167a7bcbb42dfde57b92aa1199bcebbed89699b",
+    "cap0_checkpoint_identity": "verified"
   },
   "replay": {
     "keys_present": [

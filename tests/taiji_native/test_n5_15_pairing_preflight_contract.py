@@ -53,6 +53,15 @@ def _face_dir(tmp_path: Path, *, eval_sha: str | None, replay_keys: tuple[str, .
     cap0: dict[str, Any] = {"eval_set": "plans/manifests/cap0_eval_set_v2.json", "identity": {}}
     declared = actual if eval_sha is None else eval_sha
     cap0["identity"]["eval_set_sha256"] = declared
+    base = root / "checkpoints"
+    base.mkdir(parents=True, exist_ok=True)
+    base_bytes = bytes([0]) + b"base-checkpoint-bytes"
+    (base / "base.pt").write_bytes(base_bytes)
+    cap0["identity"]["checkpoint_sha256"] = hashlib.sha256(base_bytes).hexdigest()
+    cap0["identity"]["git_head"] = "726a0a7517688d68cae37205c7277bac37e66853"
+    #: 基线路径故意写成**反斜杠**——committed 的件就是这么写的（DEBT-I8 那族的拼写），
+    #: 预检必须先归一分隔符再比较，否则会把同一枚基座读成两枚。
+    cap0["checkpoint"] = "checkpoints" + chr(92) + "base.pt"
     (root / MODULE.CAP0_BEFORE).write_text(
         json.dumps(cap0, ensure_ascii=False), encoding="utf-8", newline="\n"
     )
@@ -139,6 +148,47 @@ def test_the_real_faces_read_verified_and_degraded_today() -> None:
         "seed_a31self_with_circuit.pt"
     )
     assert "pre-flight on the committed before-faces" in payload["reading_limit"]
+
+
+def test_the_base_checkpoint_identity_is_recomputed_too(tmp_path: Path) -> None:
+    """before 面声明的基座摘要必须**重算**比较：基座被覆写时配对当场没有依据，这件事得能红。"""
+
+    root = _face_dir(tmp_path, eval_sha=None, replay_keys=("item_offset", "first_item"))
+    good = MODULE.preflight(root)
+    assert good["base_checkpoint"]["cap0_checkpoint_identity"] == "verified", good[
+        "base_checkpoint"
+    ]
+    assert (
+        good["base_checkpoint"]["declared_git_head"] == "726a0a7517688d68cae37205c7277bac37e66853"
+    )
+
+    (root / "checkpoints" / "base.pt").write_bytes(bytes([0]) + b"overwritten")
+    bad = MODULE.preflight(root)
+    assert bad["base_checkpoint"]["cap0_checkpoint_identity"] == "mismatch", bad["base_checkpoint"]
+    assert (
+        bad["base_checkpoint"]["recomputed_checkpoint_sha256"]
+        != bad["base_checkpoint"]["declared_checkpoint_sha256"]
+    )
+
+
+def test_a_declaring_face_without_a_checkpoint_key_is_absent_not_equal(tmp_path: Path) -> None:
+    root = _face_dir(tmp_path, eval_sha=None, replay_keys=("item_offset", "first_item"))
+    payload = json.loads((root / MODULE.CAP0_BEFORE).read_text(encoding="utf-8"))
+    payload["identity"].pop("checkpoint_sha256")
+    (root / MODULE.CAP0_BEFORE).write_text(
+        json.dumps(payload, ensure_ascii=False), encoding="utf-8", newline=chr(10)
+    )
+    out = MODULE.preflight(root)["base_checkpoint"]
+    assert out["cap0_checkpoint_identity"] == "declaration_absent", out
+    assert "recomputed_checkpoint_sha256" not in out
+
+
+def test_the_real_base_checkpoint_still_matches_its_declaration() -> None:
+    """现读：10-08 那张 before 面声明的基座摘要与盘上字节仍然对得上（配对没被换底打断）。"""
+
+    out = MODULE.preflight(REPO)["base_checkpoint"]
+    assert out["cap0_checkpoint_identity"] == "verified", out
+    assert out["checkpoint_path"] == "checkpoints/seed_a31self_with_circuit.pt", out
 
 
 def test_a_missing_before_face_is_preflight_failed_not_verified(tmp_path: Path) -> None:
