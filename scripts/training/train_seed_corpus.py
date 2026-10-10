@@ -25,6 +25,7 @@ import argparse
 import hashlib
 import json
 import statistics
+import subprocess
 import sys
 import time
 from collections.abc import Iterator, Mapping, Sequence
@@ -356,6 +357,53 @@ def _file_sha256(path: Path) -> str | None:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+#: DEBT-G94②：这台读数器是**唯一**的负载取法所在（`taiji-machine-load-v1`）。训练器不重抄它的
+#: psutil 采样口径——本仓已经吃过"在新仪器里重抄生成链"换来一条第二链的亏（见台账纪律）。
+MACHINE_LOAD_READER = Path(__file__).resolve().with_name("read_taiji_machine_load.py")
+MACHINE_LOAD_TOP = 3
+
+
+def _machine_load_face() -> dict[str, Any]:
+    """收尾自述**同轮**机器负载（DEBT-G94②：墙钟报价旁边必须有一枚负载数）。
+
+    为什么由训练器自己起子进程而不是 import 那台仪器：它的采样窗口会阻塞调用方，
+    而"复用现成仪器"的最低要求是**同一条命令面**——子进程跑的就是人敲的那条。
+    取不到时出版 `{"status": "unavailable", …}` 而不是 `None` 或 0：
+    "没读到"与"这台机器当时很空"同形，是本仓反复登记过的那一族假读数。
+    """
+
+    reader_returncode: int | None = None
+    try:
+        proc = subprocess.run(
+            [sys.executable, str(MACHINE_LOAD_READER), "--top", str(MACHINE_LOAD_TOP)],
+            capture_output=True,
+            check=False,
+        )
+        reader_returncode = proc.returncode
+        text = (proc.stdout or b"").decode("utf-8", errors="replace")
+        payload = json.loads(text) if proc.returncode == 0 and text else {}
+    except (OSError, ValueError):
+        payload = {}
+    if payload.get("status") != "ok":
+        return {
+            "status": "unavailable",
+            "reason": "load reader did not return an ok payload",
+            "reader_returncode": reader_returncode,
+            "reader_path": str(MACHINE_LOAD_READER),
+        }
+    return {
+        "status": "ok",
+        "logical_cpus": payload["logical_cpus"],
+        "system_cpu_percent": payload["system_cpu_percent"],
+        "python_process_count": payload["python_process_count"],
+        "python_processes_burning_cpu": payload["python_processes_burning_cpu"],
+        "hottest_python_pids": [
+            {"pid": one["pid"], "cpu_seconds": one["cpu_seconds"]}
+            for one in payload["top_python_by_cpu_seconds"]
+        ],
+    }
+
+
 def run_training(
     *,
     corpus_paths: Sequence[Path | str],
@@ -679,6 +727,9 @@ def run_training(
                         "checkpoint_path": str(checkpoint_path),
                         "checkpoint_sha256": _file_sha256(checkpoint_path),
                         "corpus_fingerprint": fingerprint,
+                        #: DEBT-G94②：只进独立件、不进进度行（与上面三条同形）。
+                        #: 这一枚的存在使"这档跑了多少秒"永远自带它当时的负载档。
+                        "machine_load": _machine_load_face(),
                         #: DEBT-G40：数量与字节由生产者现数（不是配置值回显）——没有这两条，
                         #: "这轮保号存档留了多少"只能人事后 du，而无自述的量一定会被估错。
                         "history_files": (

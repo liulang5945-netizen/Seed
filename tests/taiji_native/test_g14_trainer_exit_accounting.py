@@ -21,6 +21,8 @@ import json
 import sys
 from pathlib import Path
 
+import pytest
+
 from seed import SeedConfig
 from taiji import TaijiConfig
 
@@ -257,3 +259,56 @@ def test_exit_record_name_is_per_progress_file(tmp_path: Path) -> None:
     second = exit_record_path(tmp_path / "arm_b_progress.jsonl")
     assert first != second, (first, second)
     assert first.name == "arm_a_progress_exit.json", first.name
+
+
+def test_exit_record_carries_a_same_round_load_face(tmp_path: Path) -> None:
+    """DEBT-G94②：收尾件要自带**它当时**的负载档，而不只自带秒数。
+
+    来历（㊵-668／670 实测）：本机两枚外来空转探针各钉住一枚核，而同配置的三臂墙钟是
+    370.6／314.3／418.5 秒——差 33% 而权重逐位相同。没有负载档的秒数只能并列披露，
+    不能比较；从这一格起比较之前先看 `machine_load`。
+    形状纪律：这一枚**只进独立件、不进进度行**（与 `checkpoint_sha256` 那三条同形），
+    且取法走子进程复用现成读数器，训练器里不重抄 psutil 口径。
+    """
+
+    corpus = _write_corpus(tmp_path / "load.jsonl", 40)
+    progress = tmp_path / "load_progress.jsonl"
+    run_training(
+        corpus_paths=[corpus],
+        config=_config(),
+        epochs=1,
+        checkpoint_path=tmp_path / "load.pt",
+        progress_path=progress,
+        checkpoint_every=100_000,
+        progress_every=20,
+        max_symbols=60,
+    )
+    record = json.loads(exit_record_path(progress).read_text(encoding="utf-8"))
+    load = record["machine_load"]
+    assert load["status"] == "ok", load
+    assert load["logical_cpus"] >= 2, load
+    assert load["python_process_count"] >= 1, load
+    assert 0.0 <= load["system_cpu_percent"] <= 100.0 * load["logical_cpus"], load
+    assert load["python_processes_burning_cpu"] <= load["python_process_count"], load
+    assert len(load["hottest_python_pids"]) == 3, load
+    assert all(one["pid"] > 0 for one in load["hottest_python_pids"]), load
+    #: 反向那一半：负载档不许顺着进度行漏出去（周期行的键集由上一支测试守着，这里点名本枚）。
+    assert "machine_load" not in _entries(progress)[-1], _entries(progress)[-1]
+
+
+def test_an_unreachable_load_reader_reports_unavailable_not_zero(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """拒绝分支必须**长成拒绝的样子**：读数器取不到时出版 `unavailable`，不是 0 也不是 None。
+
+    这一支不是假想——"没读到"与"这台机器当时很空"同形，是本仓反复登记过的那一族假读数
+    （`get()` 把缺席读成 null、零窗口出版成 `accuracy=0.0` 都是同一形状）。
+    """
+
+    import train_seed_corpus
+
+    monkeypatch.setattr(train_seed_corpus, "MACHINE_LOAD_READER", tmp_path / "no_such_reader.py")
+    payload = train_seed_corpus._machine_load_face()
+    assert payload["status"] == "unavailable", payload
+    assert "python_process_count" not in payload, payload
+    assert payload["reader_path"].endswith("no_such_reader.py"), payload
