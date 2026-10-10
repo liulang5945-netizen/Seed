@@ -46,7 +46,7 @@
 - 配对判定＝**`pairing_valid_on_quadruple`**、`j_n5b_3 = valid`；五维逐项相等：
   `seed 20260822`、**`tau 0.64`（两臂同，证明命令行值真生效并被面头读回）**、
   `readout predictive`、`fast_slow true`、`bridge_gate 1.0`。
-- 我另做了一次**独立**的权重比对（不依赖那台仪器）：逐张量 `DIFFERING = 20 of 220`，差异张量包含
+- 我另做了一次**独立**的权重比对（不依赖那台仪器）：逐张量 `DIFFERING = 20 of 220`〔**2026-10-10 ㊵-662 单位更正，原文不删**：`20` 是**张量槽**数，按内容去重＝**10 枚不同权重**——每枚在 `substrate.*` 与 `taiji.kernel.*` 两个根各存一份（同臂内 94/94 镜像逐位相等，本笔现读）。下面那些 Δ 因此是**槽级**读数、成对重复；差异面也不止 `developmental_f1` 与 bridge，还含 `state/motor_probabilities`／`state/motor_context`／`state/predictive_context_trace` 与 `predictive_readout.position_weight`。另外这次比对**没有仓内仪器与封存件**，㊵-662 用又一支仓外脚本才逐位重现 ⇒ 登记 **DEBT-G92**〕，差异张量包含
   `developmental_f1/banks/predictive_readout.synapses/eligibility` Δ0.9512271881103516、同库
   `fast_delta` Δ0.0005051493644714355、`predictive_context.recurrent/eligibility` Δ0.944920539855957、
   `bridge/region/incoming/edge_weight` Δ0.04000820219516754、

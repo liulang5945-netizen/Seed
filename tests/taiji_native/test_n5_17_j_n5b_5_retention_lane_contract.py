@@ -23,6 +23,7 @@ SCRIPT = REPO / "scripts" / "training" / "adjudicate_taiji_n5_shadow_gate.py"
 PAIR_FORMAT = "taiji-n2-04-retention-pair-v1"
 TREATED_PAIR = REPO / "reports" / "taiji_n5_07_treated_pair_20261010.json"
 CONTROL_PAIR = REPO / "reports" / "taiji_n5_07_control_pair_20261010.json"
+NOISE_FLOOR_PAIR = REPO / "reports" / "taiji_n5_08_determinism_pair_20261010.json"
 
 COLUMNS = (
     "cap0:E",
@@ -184,6 +185,24 @@ def test_real_pair_reports_read_as_noise_floor_missing_with_two_floor_columns(tm
     assert set(lane["not_judgable_floor"].values()) == {0}
     assert lane["drop_control_minus_treated"] == DROPS
     assert lane["judgable_columns"] == sorted(DROPS)
+    #: §7 发表资格前置③：两臂 verdict 必须一起出版。
+    assert lane["arm_verdicts"] == {"treated": "cost_persists", "control": "cost_persists"}
+    assert rc == 0
+
+
+def test_real_three_arm_read_publishes_cost_persists_at_zero_noise_floor(tmp_path: Path) -> None:
+    #: ㊵-663 的头牌锚：第三档（同码同参、不带 `--n5-shadow-gate`）出版的 `noise_floor` 现读 **0**，
+    #: ⇒ 五列全部 resolved、`j_n5b_5 = cost_persists`，且"治疗臂比对照臂在两列上更差 3 与 8"**不再**
+    #: 能被解释成浮点非确定性（那条解释由 `CONTROL_VS_DETERMINISM = 0 of 220` 逐张量读数排除）。
+    #: 期望值是本笔之前手推并已入库的那张差值表，不是从仪器输出抄回来的。
+    rc, payload = _run(tmp_path, _retention_args(TREATED_PAIR, CONTROL_PAIR, NOISE_FLOOR_PAIR))
+    lane = payload["retention_lane"]
+    assert payload["j_n5b_5"] == "cost_persists"
+    assert lane["noise_floor"] == 0
+    assert lane["resolved_columns"] == sorted(DROPS)
+    assert lane["not_resolved"] == []
+    assert lane["drop_control_minus_treated"] == DROPS
+    assert lane["noise_floor_pair"].endswith("taiji_n5_08_determinism_pair_20261010.json")
     assert rc == 0
 
 

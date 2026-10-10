@@ -335,6 +335,8 @@ def judge_retention_lane(
     out: dict[str, Any] = {
         "pair_reports": {"treated": str(treated_pair), "control": str(control_pair)},
         "baseline_faces": faces["treated"],
+        #: §7 发表资格前置③：两臂 `verdict` 必须随值一起出版，否则"保持侧有方向"这句话不完整。
+        "arm_verdicts": verdicts,
         "columns_compared": len(columns),
         "not_judgable_floor": {column: rows[column]["baseline"] for column in floor},
         "drop_control_minus_treated": {

@@ -1,0 +1,152 @@
+{
+  "format": "taiji-n5-arm-tensor-comparison-v1",
+  "status": "measured",
+  "files": [
+    {
+      "path": "output/n5_07_arms/control/checkpoint.pt",
+      "file_sha256": "1aef72504bce422c48384f4eb302ead4940ddeb1bc33d766d148787a6e4c5822",
+      "bytes": 21926549
+    },
+    {
+      "path": "output/n5_07_arms/determinism/checkpoint.pt",
+      "file_sha256": "c5d0e7de5aa83fb30ff9962d27ca88cd6e72fb52fd81b02ec2a53f1de41b1704",
+      "bytes": 21926613
+    },
+    {
+      "path": "output/n5_07_arms/treated/checkpoint.pt",
+      "file_sha256": "465aad0217cea8adcaf83dc27e28cc70bfdb4d2bd096bd622a51f825cf76f412",
+      "bytes": 21926613
+    }
+  ],
+  "tensor_slots": 220,
+  "list_tensor_count": 6,
+  "mirror_consistency": [
+    {
+      "mirrored_slots": 94,
+      "one_sided_slots": 16,
+      "agree_within_arm": 94,
+      "disagreeing": []
+    },
+    {
+      "mirrored_slots": 94,
+      "one_sided_slots": 16,
+      "agree_within_arm": 94,
+      "disagreeing": []
+    },
+    {
+      "mirrored_slots": 94,
+      "one_sided_slots": 16,
+      "agree_within_arm": 94,
+      "disagreeing": []
+    }
+  ],
+  "pairs": [
+    {
+      "label": "output/n5_07_arms/control/checkpoint.pt -> output/n5_07_arms/determinism/checkpoint.pt",
+      "same_name_set": true,
+      "only_in_left": [],
+      "only_in_right": [],
+      "compared_slots": 220,
+      "differing_slots": 0,
+      "distinct_content_pairs": 0,
+      "distinct_group_sizes": [],
+      "verdict": "identical",
+      "top_deltas": [],
+      "differing_slots_names": []
+    },
+    {
+      "label": "output/n5_07_arms/control/checkpoint.pt -> output/n5_07_arms/treated/checkpoint.pt",
+      "same_name_set": true,
+      "only_in_left": [],
+      "only_in_right": [],
+      "compared_slots": 220,
+      "differing_slots": 20,
+      "distinct_content_pairs": 10,
+      "distinct_group_sizes": [
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2
+      ],
+      "verdict": "differing",
+      "top_deltas": [
+        {
+          "slot": "substrate.developmental_f1.banks.predictive_readout.synapses.eligibility",
+          "max_abs_delta": 0.9512271881103516,
+          "shape": [
+            257,
+            96
+          ]
+        },
+        {
+          "slot": "taiji.kernel.developmental_f1.banks.predictive_readout.synapses.eligibility",
+          "max_abs_delta": 0.9512271881103516,
+          "shape": [
+            257,
+            96
+          ]
+        },
+        {
+          "slot": "substrate.developmental_f1.banks.predictive_context.recurrent.eligibility",
+          "max_abs_delta": 0.944920539855957,
+          "shape": [
+            96,
+            12
+          ]
+        },
+        {
+          "slot": "taiji.kernel.developmental_f1.banks.predictive_context.recurrent.eligibility",
+          "max_abs_delta": 0.944920539855957,
+          "shape": [
+            96,
+            12
+          ]
+        },
+        {
+          "slot": "substrate.predictive_readout.position_weight",
+          "max_abs_delta": 0.1639803946018219,
+          "shape": [
+            257,
+            4
+          ]
+        },
+        {
+          "slot": "taiji.kernel.predictive_readout.position_weight",
+          "max_abs_delta": 0.1639803946018219,
+          "shape": [
+            257,
+            4
+          ]
+        }
+      ],
+      "differing_slots_names": [
+        "substrate.adaptive_residual_bridge.region.incoming.edge_weight",
+        "substrate.adaptive_residual_bridge.region.recurrent.edge_weight",
+        "substrate.developmental_f1.banks.predictive_context.recurrent.eligibility",
+        "substrate.developmental_f1.banks.predictive_context.recurrent.fast_delta",
+        "substrate.developmental_f1.banks.predictive_readout.synapses.eligibility",
+        "substrate.developmental_f1.banks.predictive_readout.synapses.fast_delta",
+        "substrate.predictive_readout.position_weight",
+        "substrate.state.motor_context",
+        "substrate.state.motor_probabilities",
+        "substrate.state.predictive_context_trace",
+        "taiji.kernel.adaptive_residual_bridge.region.incoming.edge_weight",
+        "taiji.kernel.adaptive_residual_bridge.region.recurrent.edge_weight",
+        "taiji.kernel.developmental_f1.banks.predictive_context.recurrent.eligibility",
+        "taiji.kernel.developmental_f1.banks.predictive_context.recurrent.fast_delta",
+        "taiji.kernel.developmental_f1.banks.predictive_readout.synapses.eligibility",
+        "taiji.kernel.developmental_f1.banks.predictive_readout.synapses.fast_delta",
+        "taiji.kernel.predictive_readout.position_weight",
+        "taiji.kernel.state.motor_context",
+        "taiji.kernel.state.motor_probabilities",
+        "taiji.kernel.state.predictive_context_trace"
+      ]
+    }
+  ]
+}

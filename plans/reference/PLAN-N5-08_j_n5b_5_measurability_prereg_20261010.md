@@ -115,3 +115,23 @@
 - 本笔之后 `j_n5b_5` 距出值只差一件事＝同码同参第三档（㊵-657④ 那条命令，owner 终端）。
   `J-N5b-6` 的合取仍停在 `not_adjudicable_until_2_3_4_5_are_all_measured`：这一格里 `2`／`3`／`4` 已有读数
   （`shadow_learned`／`pairing_valid_on_quadruple`／`ruler_unusable`），`5` 现在是"前置未到位"而不是"没接上"。
+
+## §9 第三档到位后的出值（2026-10-10 ㊵-663，判据与取数式一字未动）
+
+- 第三档由 owner 按弹窗 #22② 跑完：418.55 秒、`exit_reason=max_symbols_reached`、`reached_budget=true`，
+  训练器自述 `checkpoint_sha256=c5d0e7de5aa83fb3…` 与独立计算的文件摘要逐位一致。
+- 它的配对件＝`reports/taiji_n5_08_determinism_pair_20261010.json`。**两件事必须如实记**：
+  ① 第一次产件被 `adjudicate_taiji_n2_04_retention_pair.py` 以 rc=2 拒收（`status=separation_unverified`、
+  不出版 `per_column`）——这道 fail-closed 是配对件自己的纪律，本器不绕过它；
+  ② 该臂没有属于自己的夜间产出，判读时引用的是**控制臂那份**材料，属**显式声明的替换**
+  （与 ㊵-656⑥ 的 `substituted` 同性质），不得读成"第三臂消费了这份材料"。
+- **出值**＝`reports/taiji_n5_08_jn5b5_with_noise_floor_20261010.json`：`j_n5b_5 = cost_persists`、
+  `noise_floor = 0`、`resolved` 五列、`not_resolved` 空、`rc=1`（来自 `j_n5b_4=ruler_unusable`）。
+  §7 三条发表前置随之齐：为此本件把 `arm_verdicts` 升为**仪器的必需披露键**（前置③的机械化），
+  取数式、地板列定义、`judgable ≥ 3`、rc 语义一字未改；不给三枚旗标时输出仍与 ㊵-659 封存件逐字节相同（重跑复核过）。
+- §6 的三条出口在此**只落到第三支的一半**：`noise_floor = 0` 满足"第三档与两臂逐位相同"那一句，
+  所以可说的是「**在 60,000 tick、这套装配、这条链上**保持侧的臂间差不小于测量地板（地板＝0，故逐列差全是可分辨的）」；
+  不可说的是"确定性普遍成立"（未外推到别的暴露量／装配），也不可把 `cost_persists` 读成"门让能力变差"——
+  它读的是"治疗臂相对对照臂未保持"，而收益侧（`J-N5b-4`）仍是分辨率陈述。
+- 本件的债（DEBT-G89）随此结清。**同形第二枚占位符**在 `j_n5b_6`（`:518`）上暴露出来 ⇒ 另立 **DEBT-G93**，
+  合取式须由 **PLAN-N5-09** 先冻再接（本件不替它下结论）。

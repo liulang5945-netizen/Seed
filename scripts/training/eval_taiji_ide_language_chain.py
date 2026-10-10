@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import sys
 from pathlib import Path
@@ -24,7 +25,13 @@ from taiji import ActionIntent, SemanticEvidenceProposal  # noqa: E402
 
 REPORT_FORMAT = "taiji-w7-p2-11-ide-language-chain-v1"
 TARGET_PATH = "api/app.py"
-AMBIGUOUS_PATH = "direct-workbench-r5b-20260830-b/test-37/shared.h"
+#: 〔2026-10-10 ㊵-662 改取法，判据本体未动〕原路径 `direct-workbench-r5b-20260830-b/test-37/shared.h`
+#: 住在 2026-10-07 根目录清理（`d8bb37d67`，owner 裁）里被 `git rm` 的四枚 R5b 草稿目录之一 ⇒ 门从那天起
+#: 读的是一张**不在场**的面，歧义支再没被走到过（实测退回 `workspace_target_not_found`，见 DEBT-G87）。
+#: 夹具字节按历史逐字节取回（19 B，`sha256` 由本件出版在 `policy.ambiguous_fixture`），搬进跟踪目录 owned by 本门。
+AMBIGUOUS_PATH = "tests/fixtures/ide_language_chain/shared.h"
+#: 本门消费的三枚现场件；缺一枚就**响亮拒绝**，不许让"夹具不在场"伪装成一次行为判读。
+REQUIRED_FIXTURES = (TARGET_PATH, AMBIGUOUS_PATH)
 # 本轮 gate 的 scratch 前缀，用于开跑前扫掉崩溃/被强杀的运行留下的过期残留
 SCRATCH_STEMS = (".p2-11-language-chain-", ".p2-11-language-policy", ".p2-11-ambiguous-language")
 
@@ -160,6 +167,29 @@ def _run_success(seed: int) -> dict[str, object]:
     }
 
 
+def _fixture_provenance(path: str) -> dict[str, object]:
+    resolved = PROJECT_ROOT / path
+    return {
+        "path": path,
+        "bytes": resolved.stat().st_size,
+        "sha256": hashlib.sha256(resolved.read_bytes()).hexdigest(),
+    }
+
+
+def _require_fixtures() -> None:
+    """夹具不在场＝响亮拒绝，不许退化成一次"看起来像判读"的红。
+
+    DEBT-G87 的成因正是这条：根目录清理（`d8bb37d67`）把歧义夹具所在的草稿目录 `git rm` 之后，
+    这一支改从 `workspace_target_not_found` 退出——门仍然红，但红的原因不是被测行为，
+    而现场里没有任何东西说明"夹具没了"。此后缺任一件直接抛错并点名路径。
+    """
+    missing = [path for path in REQUIRED_FIXTURES if not (PROJECT_ROOT / path).is_file()]
+    if missing:
+        raise RuntimeError(
+            "IDE 语言链门的现场件不在场 ⇒ 拒绝判读：" + "、".join(missing)
+        )
+
+
 def _run_user_override_and_ambiguity() -> dict[str, object]:
     checkpoint_path = fresh_scratch(".p2-11-language-policy")
     prompt = "请识别并同步 api/app.py 的编辑器语言"
@@ -223,10 +253,14 @@ def _run_user_override_and_ambiguity() -> dict[str, object]:
         "ambiguous_reason": ambiguous["reason_code"],
         "ambiguous_has_no_action_intents": "action_intents" not in ambiguous["planning"],
         "ambiguous_has_no_workbench_events": ambiguous_runtime.workbench_audit.events == (),
+        #: 现场自述（新键，不动任何既有 metric）：这两枚件不在场时上面那条 `_require_fixtures` 会先拒绝。
+        "ambiguous_fixture": _fixture_provenance(AMBIGUOUS_PATH),
+        "target_fixture": _fixture_provenance(TARGET_PATH),
     }
 
 
 def evaluate() -> dict[str, object]:
+    _require_fixtures()
     sweep(SCRATCH_STEMS)
     runs = [_run_success(seed) for seed in (11, 29, 47)]
     policy = _run_user_override_and_ambiguity()
@@ -319,7 +353,7 @@ def main() -> None:
     report_path = args.report if args.report.is_absolute() else PROJECT_ROOT / args.report
     report_path.parent.mkdir(parents=True, exist_ok=True)
     report_path.write_text(
-        json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+        json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n"
     )
     print(json.dumps(report, ensure_ascii=False, indent=2))
 
