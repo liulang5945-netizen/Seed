@@ -383,6 +383,18 @@ def main(argv: list[str] | None = None) -> int:
     )
     parser.add_argument("--only", choices=("cap0", "replay", "adjudicate"), default=None)
     parser.add_argument(
+        "--treated-face",
+        type=Path,
+        default=None,
+        help="治疗臂的压强面（四元组核对的输入，缺省取该臂档同目录的 pressure.jsonl）",
+    )
+    parser.add_argument(
+        "--control-face",
+        type=Path,
+        default=None,
+        help="控制臂的压强面（同上；不在场则照实出 unverified 披露，不冒充核对过）",
+    )
+    parser.add_argument(
         "--allow-substituted-consolidation-material",
         action="store_true",
         help="承认点名的夜间材料早于本臂运行窗口（替换材料），分离机检结论只算跑在替换材料上",
@@ -458,6 +470,8 @@ def main(argv: list[str] | None = None) -> int:
     preflight_argv = [
         sys.executable,
         str(PROJECT_ROOT / PREFLIGHT),
+        "--cap0-before",
+        str(args.cap0_before),
         "--replay-before",
         str(args.replay_before),
         "--out-report",
@@ -467,6 +481,9 @@ def main(argv: list[str] | None = None) -> int:
     for row in plan:
         print("plan: $ " + " ".join(row))
     #: G-N5d-4 的门：读两臂信封的 `n5_shadow` 自述块，零算力，所以排在花钱之前。
+    #: 两面也一并线进去——PLAN-N5-04 §3 G-N5d-2 原文写的是"四元组由这台仪器从面头读取并出版，
+    #: 本件不另写一份"，只给档不给面会让它按 `gate_differs_quadruple_unverified` 出 `unverified`，
+    #: 那条"核对过了"就成了我的转述（默认取该臂档同目录的 `pressure.jsonl`，不在场就不给）。
     presence_argv: list[str] = []
     if args.only in (None, "adjudicate"):
         presence_argv = [
@@ -479,6 +496,15 @@ def main(argv: list[str] | None = None) -> int:
             "--out",
             str(args.out_dir / "shadow_gate_pair.json"),
         ]
+        for flag, checkpoint, explicit in (
+            ("--face-treated", args.treated_checkpoint, args.treated_face),
+            ("--face-control", args.control_checkpoint, args.control_face),
+        ):
+            face = explicit if explicit is not None else checkpoint.parent / "pressure.jsonl"
+            if face.is_file():
+                presence_argv += [flag, str(face)]
+            else:
+                print(f"disclosure: {flag} 不在场（{face}）⇒ 该臂四元组按 unverified 出版，不冒充核对")
         print("gate: $ " + " ".join(presence_argv))
     if args.dry_run:
         print(f"DRY_RUN commands={len(plan)}")

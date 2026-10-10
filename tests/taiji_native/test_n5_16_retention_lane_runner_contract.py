@@ -512,3 +512,100 @@ def test_the_g_n5d_4_gate_names_an_existing_instrument() -> None:
 
     assert (REPO / MODULE.SHADOW_PRESENCE).is_file(), MODULE.SHADOW_PRESENCE
 
+
+def test_both_before_faces_reach_the_preflight_not_just_the_replay_one(
+    tmp_path: Path, monkeypatch, capsys
+) -> None:
+    """㊵-656 修的是我自己上一格引进的缺口：`--cap0-before` 覆盖**没**传进预检。
+
+    后果不是报错而是**静默不同源**——判读步读我点名的新基线面，预检却按默认常量去比
+    `reports/taiji_n2_cap0_before_20261008.json`（另一条链的底面），于是
+    `cap0_identity`／`cap0_checkpoint_identity` 两枚"verified"证的是**另一对面件**。
+    换基座（甲路从 `seed_beta.pt` 起）时这条必然为真，所以它必须在跑双臂之前就被钉住。
+    """
+
+    monkeypatch.setattr(MODULE, "_run", lambda *a, **k: 0)
+    treated = tmp_path / "treated.pt"
+    control = tmp_path / "control.pt"
+    treated.write_bytes(b"x")
+    control.write_bytes(b"y")
+    mine_cap0 = tmp_path / "my_base_cap0.json"
+    mine_cap0.write_text("{}\n", encoding="utf-8")
+    mine_replay = tmp_path / "my_base_replay.json"
+    mine_replay.write_text("{}\n", encoding="utf-8")
+    rc = MODULE.main(
+        [
+            "--treated-checkpoint",
+            str(treated),
+            "--control-checkpoint",
+            str(control),
+            "--out-dir",
+            str(tmp_path / "lane"),
+            "--cap0-before",
+            str(mine_cap0),
+            "--replay-before",
+            str(mine_replay),
+            *_corpus_args(tmp_path),
+            "--allow-substituted-consolidation-material",
+            "--dry-run",
+        ]
+    )
+    assert rc == 0, rc
+    out = capsys.readouterr().out
+    preflight_line = [row for row in out.splitlines() if row.startswith("preflight: $ ")]
+    assert len(preflight_line) == 1, out
+    row = preflight_line[0]
+    assert f"--cap0-before {mine_cap0}" in row, row
+    assert f"--replay-before {mine_replay}" in row, row
+    #: 反证：默认常量不许出现在被点名的面上——否则"覆盖了"这句话没有判别力。
+    #: 取**裸文件名**比对而不是整路径：win32 上 `str(Path)` 会把分隔符写成反斜杠，
+    #: 用 `as_posix()` 比会因分隔符不同而恒真（[[log-grouping-must-parse-per-block]] 的同族坑）。
+    assert MODULE.CAP0_BEFORE.name not in row, row
+    assert MODULE.REPLAY_BEFORE.name not in row, row
+
+
+def _lane_args(tmp_path: Path, treated: Path, control: Path) -> list[str]:
+    return [
+        "--treated-checkpoint",
+        str(treated),
+        "--control-checkpoint",
+        str(control),
+        "--out-dir",
+        str(tmp_path / "lane"),
+        *_corpus_args(tmp_path),
+        "--allow-substituted-consolidation-material",
+        "--dry-run",
+    ]
+
+
+def test_the_presence_gate_gets_both_pressure_faces_when_they_exist(
+    tmp_path: Path, monkeypatch, capsys
+) -> None:
+    """G-N5d-2 把四元组的核对**外包**给这台仪器（"本件不另写一份"），所以两面必须线进去。
+
+    只给档不给面时它会出 `gate_differs_quadruple_unverified`⇒"核对过了"那句是我转述的。
+    反向那一支也要走到：面不在场就出 `disclosure:`，不许静默省略。"""
+
+    monkeypatch.setattr(MODULE, "_run", lambda *a, **k: 0)
+    treated_dir = tmp_path / "treated"
+    control_dir = tmp_path / "control"
+    treated_dir.mkdir()
+    control_dir.mkdir()
+    treated = treated_dir / "checkpoint.pt"
+    control = control_dir / "checkpoint.pt"
+    treated.write_bytes(b"x")
+    control.write_bytes(b"y")
+    (treated_dir / "pressure.jsonl").write_text('{"kind":"face"}\n', encoding="utf-8")
+
+    rc = MODULE.main(_lane_args(tmp_path, treated, control))
+    assert rc == 0, rc
+    out = capsys.readouterr().out
+    gate_line = [row for row in out.splitlines() if row.startswith("gate: $ ")]
+    assert len(gate_line) == 1, out
+    assert f"--face-treated {treated_dir / 'pressure.jsonl'}" in gate_line[0], gate_line
+    #: 控制臂没有面 ⇒ 不许静默，要出披露。
+    assert "--face-control" not in gate_line[0], gate_line
+    assert any(row.startswith("disclosure: --face-control") for row in out.splitlines()), out
+
+
+
