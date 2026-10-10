@@ -19,16 +19,19 @@
 | N3 | 容量决定（甲／乙／并行）＋对应读数 | 乙：τ 已按 PLAN-N3-09 现冻（β 0.64／circuit 0.66，四张 `freezable`、守卫臂 `not_freezable_at_this_grid`）＝[PLAN-N5-07 判读](PLAN-N5-07_ADJUDICATION_20261010.md) §2 | **L3 已到位／L4 只到触发侧** | 甲的两臂（250k×2）未跑 ⇒ "容量是否封顶"这句没有读数；乙的**生长**读数（真晋升）未取 | **owner 终端**（两臂已批，时序＝第三档与整族之后，owner #22③） |
 | N4 | S3 轨迹态＋S4 模式分离的实施与 §3.3 项验收 | 前置链已铺：产品默认挂载（PLAN-N4-04 实施格）、档位自述传递、扰动强度判据、寻址尺升版（J-N4f-2 不放行＝**否证我自己的角度对**）、写路径普查（`reports/taiji_n4_write_path_census_20261009.json`，默认位 `write_happens_at_product_default=false`） | **L1＋L3（仪器与读数面），能力侧 L4 未取** | S3／S4 本体未实施；对象重命名／属性交换／干扰对象／槽占满四类验收未跑 | **owner 批文**（产品码）＋依赖 N1 的 S1 通路 |
 | N5 | ①训练器挂 bridge+trigger | `--n5-shadow`／`--n5-shadow-gate` 在 argparse 面上 12/12 旗标现读在场；信封自述 `metadata.command_surface.argv` 可读 | **L2 已证** | — | — |
-| N5 | ②真实长跑走完整四层循环 | 双臂 60,000 tick：`shadow_forward_hits 59,762`、`shadow_branch_hits 119,524`（`reports/taiji_n5_07_shadow_gate_full_20261010.json` 本表落盘前现读）、配对四元组五项相等且 `tau` 两臂同 0.64（同件 `pairing.j_n5b_3=valid`） | **L2＋L3**；**归因未定** | 台账 ㊵-656 那句"逐张量独立比出 `DIFFERING 20 of 220`"**既无封存件也无留下脚本**（`git grep DIFFERING -- reports/` 现读 0 命中）⇒ 此刻不可复算，已登记 **DEBT-G92**；20/220 的两个解释（影子写入 vs 浮点非确定性）还没分开 | 我这侧＝把逐张量比做成仪器并封存（G92）；分开解释那一半＝**owner 终端**第三档（owner #22②裁"现在跑"） |
+| N5 | ②真实长跑走完整四层循环 | 双臂 60,000 tick：`shadow_forward_hits 59,762`、`shadow_branch_hits 119,524`（`reports/taiji_n5_07_shadow_gate_full_20261010.json` 本表落盘前现读）、配对四元组五项相等且 `tau` 两臂同 0.64（同件 `pairing.j_n5b_3=valid`） | **L2＋L3，归因已定** | 〔㊵-663 更新，原句三项缺口均已完成〕第三档跑完后新仪器 `compare_taiji_n5_arm_tensors.py` 现读 **控制臂 vs 第三臂 0 of 220 逐位相同**、vs 治疗臂 **20 槽＝10 枚权重**（镜像 94/94）⇒ 两个解释里**浮点非确定性被这条读数排除**，差归给单变量 `--n5-shadow-gate 1.0`；DEBT-G92 随仪器＋封存件结清。**仍不可发表**的是"通电带来能力增益"——那是收益侧 `J-N5b-4`，今天仍是分辨率陈述 | 我这侧＝该格已结；能力那一半等收益侧的尺（PLAN-N5-08 §6 第二出口"换暴露量"另立一件，未启动） |
 | N5 | ③世界学习器首次真实调用 | `WorldDynamicsLearner` 公开 `propose`／`snapshot`／`restore`，普查器读到 `contract_complete`（`reports/taiji_n5_world_model_contract_census_20261009.json`；[08 ㊵-651](../active/roadmap/08_UPSTREAM_SYNC_PLAYBOOK.md)） | **L1＋L3** | 合同齐≠被调用：接进语料训练链那一格未动（DEBT-G78 要产品码批文） | **owner 批文** |
-| N5 | ④生长前后任务矩阵＋`J-N5b-6` 合取 | `J-N5d-1` 有读数且为负（两臂 `cost_persists`）；`J-N5d-2` 分辨率陈述（`ruler_usable=false`）；`j_n5b_5` 现在由冻结取数式出值＝`unverified_noise_floor_missing`（`reports/taiji_n5_08_jn5b5_first_read_20261010.json`） | **L3 齐／L5 差一格** | 四元合取的第 5 项要 `noise_floor` ⇒ 仍等第三档；出值后 `J-N5b-6` 才允许离开 `not_adjudicable` | **owner 终端**（同一支档） |
+| N5 | ④生长前后任务矩阵＋`J-N5b-6` 合取 | `J-N5d-1` 有读数且为负（两臂 `cost_persists`）；`J-N5d-2` 分辨率陈述（`ruler_usable=false`）；`j_n5b_5` 现在由冻结取数式出值＝`unverified_noise_floor_missing`（`reports/taiji_n5_08_jn5b5_first_read_20261010.json`） | **L3 齐／L5 差一格** | 〔㊵-663 更新，原句"仍等第三档"已过期〕第三档已跑完、`j_n5b_5` 已出值 `cost_persists`（`noise_floor = 0`，五列全 resolved）⇒ 缺的那一格换成 **`j_n5b_6` 自己是字面量**（`adjudicate_taiji_n5_shadow_gate.py:518`，**DEBT-G93**）：2／3／5 已测、4 是分辨率陈述，那句"尚未全部测得"不再反映测况 | 我这侧＝先落 PLAN-N5-09 冻合取式（零算力、零产品码）再接仪器，**不许**顺手把 `:518` 改成条件式 |
 | N6 | 工程债随实施项清 | DEBT 表至 **G92**；本轮结清 G87（夹具现场缺失）、G89 转半结；新登记 G90（`--line` 阈值字面量）、G91（五枚门只读封存件不读活跑）、G92（一条已发表的独立读数无件无脚本、不可复算） | **L3 持续改善** | G81 活队列 43 枚；G85 修法②③；G74② 已结、G76 待双臂读数；PLAN-B-03 拆分未完成（owner 签字件，只登记不代改） | 我这侧可自办：G85②、G91 读数面仪器化、G92 仪器化 |
 
 ## §2 一句话现状（不许被读成"接近完成"）
 
-- **能力层（L4）本主线今日的净新增＝零**：N5 触发侧打通发生在 ㊵-656，保持侧今日是**负结果照常出版**，收益侧是**分辨率陈述**；
-  N1／N2／N3 甲／N4 的能力读数全部尚未取得。
-- **判读可信层（L3）今日净新增三格**：`j_n5b_5` 由占位符变成有取数式＋正反例＋兼容锚的仪器格；
+- **能力层（L4）本日净新增＝零**：N5 触发侧打通发生在 ㊵-656，保持侧㊵-663 出的是**负结果照常出版**（`cost_persists`），
+  收益侧是**分辨率陈述**（`ruler_unusable`）；N1／N2／N3 甲／N4 的能力读数全部尚未取得。
+  **一句要紧的分层**：㊵-663 那条"20 槽的差归给门、不归给浮点漂移"是**归因读数**（属 L3 判读可信度），
+  它让"哪一变量造成差"这句话有了出处，但**没有让任何能力分数变动** ⇒ 不许写成"进化机制生效"。
+- **判读可信层（L3）本日净新增四格**：`j_n5b_5` 由占位符变成有取数式＋正反例＋兼容锚、并**已出方向值**的仪器格；
+  第三臂与控制臂逐位相同 ⇒ 双臂设计的噪声地板第一次有实测值（`0`）；
   p2-11 门的歧义支从"没被走到"变成"可证被走到"；查出一族"读封存件冒充现行绿"的假安心并登记为债。
 - **队首唯一性**：以 [03_CURRENT_EXECUTION](../active/roadmap/03_CURRENT_EXECUTION.md) 那一条 `## 当前唯一下一步：` 为准；本表不是队首，不据本表起跑任何东西。
 
