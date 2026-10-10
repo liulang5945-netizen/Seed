@@ -150,6 +150,7 @@ export class DesktopPythonBackendHost {
       cwd: codeRoot,
       stdio: ['ignore', output, output],
       detached: false,
+      windowsHide: true,
     })
     this.child.once('error', (error) => {
       this.log(`desktop backend: runtime spawn failed (${String(error)})`)
@@ -210,7 +211,7 @@ export class DesktopPythonBackendHost {
         '--python', this.options.pythonExec,
         '--target', this.venv,
         '--receipt', receiptPath,
-      ], { stdio: ['ignore', output, output] })
+      ], { stdio: ['ignore', output, output], windowsHide: true })
       child.once('error', (error) => {
         this.log(`desktop backend: installer spawn failed (${String(error)})`)
         rejectPromise(error)
