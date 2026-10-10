@@ -24,6 +24,7 @@ Design notes:
 
 from __future__ import annotations
 
+import contextlib
 import hashlib
 import os
 from collections.abc import Mapping, Sequence
@@ -192,10 +193,8 @@ class BrowserEnvironment:
         ):
             if closer is None:
                 continue
-            try:
+            with contextlib.suppress(Exception):
                 closer()
-            except Exception:  # pragma: no cover - teardown must not raise
-                pass
         self._page = None
         self._context = None
         self._browser = None
