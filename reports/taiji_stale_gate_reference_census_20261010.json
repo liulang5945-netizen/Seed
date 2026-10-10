@@ -1,0 +1,696 @@
+{
+  "format": "taiji-stale-gate-reference-census-v1",
+  "status": "measured",
+  "scan_roots": [
+    "scripts/training"
+  ],
+  "pattern": "Subscript(slice==\"gate\") \u2227 \u88ab\u4e0b\u6807\u5bf9\u8c61\u94fe\u542b read_text\uff0fjson.loads \u2227 \u540c\u8d4b\u503c\u5185\u6709 .json \u5b57\u9762\u91cf\u6216 \"reports\" \u5e38\u91cf",
+  "files_scanned": 671,
+  "gate_subscript_sites": 88,
+  "sealed_artifact_sites": 4,
+  "live_object_sites": 84,
+  "unparsed_file_count": 0,
+  "sealed_reads": [
+    {
+      "file": "scripts\\training\\eval_taiji_natural_language_workbench_execution_modularization.py",
+      "line": 120,
+      "bucket": "sealed_artifact",
+      "reads_file_chain": true,
+      "artifact_names": [
+        "<reports-dir-constant>",
+        "taiji_w7_p2_13_natural_language_workbench_api_20260831.json",
+        "taiji_w7_p5_1_natural_language_workbench_modularization_20260831.json",
+        "taiji_w7_p5_2_natural_language_workbench_grounding_modularization_20260831.json"
+      ]
+    },
+    {
+      "file": "scripts\\training\\eval_taiji_natural_language_workbench_grounding_modularization.py",
+      "line": 114,
+      "bucket": "sealed_artifact",
+      "reads_file_chain": true,
+      "artifact_names": [
+        "<reports-dir-constant>",
+        "taiji_w7_p2_11_ide_language_chain_20260831.json",
+        "taiji_w7_p2_12_natural_language_write_20260831.json",
+        "taiji_w7_p2_13_natural_language_workbench_api_20260831.json",
+        "taiji_w7_p5_1_natural_language_workbench_modularization_20260831.json"
+      ]
+    },
+    {
+      "file": "scripts\\training\\eval_taiji_natural_language_workbench_modularization.py",
+      "line": 72,
+      "bucket": "sealed_artifact",
+      "reads_file_chain": true,
+      "artifact_names": [
+        "<reports-dir-constant>",
+        "taiji_w7_p2_12_natural_language_write_20260831.json"
+      ]
+    },
+    {
+      "file": "scripts\\training\\eval_taiji_natural_language_workbench_modularization.py",
+      "line": 77,
+      "bucket": "sealed_artifact",
+      "reads_file_chain": true,
+      "artifact_names": [
+        "<reports-dir-constant>",
+        "taiji_w7_p2_13_natural_language_workbench_api_20260831.json"
+      ]
+    }
+  ],
+  "all_sites": [
+    {
+      "file": "scripts\\training\\adjudicate_taiji_n5_shadow_gate.py",
+      "line": 106,
+      "bucket": "live_object",
+      "reads_file_chain": false,
+      "artifact_names": []
+    },
+    {
+      "file": "scripts\\training\\audit_taiji_m5_k_p1_data_contract.py",
+      "line": 643,
+      "bucket": "live_object",
+      "reads_file_chain": false,
+      "artifact_names": []
+    },
+    {
+      "file": "scripts\\training\\count_taiji_n1_trajectory_following.py",
+      "line": 137,
+      "bucket": "live_object",
+      "reads_file_chain": false,
+      "artifact_names": []
+    },
+    {
+      "file": "scripts\\training\\eval_capability_candidate.py",
+      "line": 143,
+      "bucket": "live_object",
+      "reads_file_chain": false,
+      "artifact_names": []
+    },
+    {
+      "file": "scripts\\training\\eval_capability_registry.py",
+      "line": 142,
+      "bucket": "live_object",
+      "reads_file_chain": false,
+      "artifact_names": []
+    },
+    {
+      "file": "scripts\\training\\eval_capability_resource.py",
+      "line": 170,
+      "bucket": "live_object",
+      "reads_file_chain": false,
+      "artifact_names": []
+    },
+    {
+      "file": "scripts\\training\\eval_capability_shadow.py",
+      "line": 148,
+      "bucket": "live_object",
+      "reads_file_chain": false,
+      "artifact_names": []
+    },
+    {
+      "file": "scripts\\training\\eval_taiji_a2_episode.py",
+      "line": 153,
+      "bucket": "live_object",
+      "reads_file_chain": false,
+      "artifact_names": []
+    },
+    {
+      "file": "scripts\\training\\eval_taiji_a2_world.py",
+      "line": 240,
+      "bucket": "live_object",
+      "reads_file_chain": false,
+      "artifact_names": []
+    },
+    {
+      "file": "scripts\\training\\eval_taiji_auto_growth.py",
+      "line": 203,
+      "bucket": "live_object",
+      "reads_file_chain": false,
+      "artifact_names": []
+    },
+    {
+      "file": "scripts\\training\\eval_taiji_concept_branch_attribution.py",
+      "line": 330,
+      "bucket": "live_object",
+      "reads_file_chain": false,
+      "artifact_names": []
+    },
+    {
+      "file": "scripts\\training\\eval_taiji_connection_pruning.py",
+      "line": 319,
+      "bucket": "live_object",
+      "reads_file_chain": false,
+      "artifact_names": []
+    },
+    {
+      "file": "scripts\\training\\eval_taiji_connection_pruning.py",
+      "line": 326,
+      "bucket": "live_object",
+      "reads_file_chain": false,
+      "artifact_names": []
+    },
+    {
+      "file": "scripts\\training\\eval_taiji_continuous_structural_growth.py",
+      "line": 589,
+      "bucket": "live_object",
+      "reads_file_chain": false,
+      "artifact_names": []
+    },
+    {
+      "file": "scripts\\training\\eval_taiji_cross_domain_structural_gain.py",
+      "line": 578,
+      "bucket": "live_object",
+      "reads_file_chain": false,
+      "artifact_names": []
+    },
+    {
+      "file": "scripts\\training\\eval_taiji_cross_domain_structural_gain.py",
+      "line": 577,
+      "bucket": "live_object",
+      "reads_file_chain": false,
+      "artifact_names": []
+    },
+    {
+      "file": "scripts\\training\\eval_taiji_cross_region.py",
+      "line": 223,
+      "bucket": "live_object",
+      "reads_file_chain": false,
+      "artifact_names": []
+    },
+    {
+      "file": "scripts\\training\\eval_taiji_cross_region_learning.py",
+      "line": 248,
+      "bucket": "live_object",
+      "reads_file_chain": false,
+      "artifact_names": []
+    },
+    {
+      "file": "scripts\\training\\eval_taiji_interaction_group_learning.py",
+      "line": 243,
+      "bucket": "live_object",
+      "reads_file_chain": false,
+      "artifact_names": []
+    },
+    {
+      "file": "scripts\\training\\eval_taiji_interaction_group_multifamily.py",
+      "line": 341,
+      "bucket": "live_object",
+      "reads_file_chain": false,
+      "artifact_names": []
+    },
+    {
+      "file": "scripts\\training\\eval_taiji_interaction_group_transfer.py",
+      "line": 422,
+      "bucket": "live_object",
+      "reads_file_chain": false,
+      "artifact_names": []
+    },
+    {
+      "file": "scripts\\training\\eval_taiji_interaction_groups.py",
+      "line": 694,
+      "bucket": "live_object",
+      "reads_file_chain": false,
+      "artifact_names": []
+    },
+    {
+      "file": "scripts\\training\\eval_taiji_interaction_groups.py",
+      "line": 709,
+      "bucket": "live_object",
+      "reads_file_chain": false,
+      "artifact_names": []
+    },
+    {
+      "file": "scripts\\training\\eval_taiji_interaction_groups.py",
+      "line": 775,
+      "bucket": "live_object",
+      "reads_file_chain": false,
+      "artifact_names": []
+    },
+    {
+      "file": "scripts\\training\\eval_taiji_interaction_groups.py",
+      "line": 776,
+      "bucket": "live_object",
+      "reads_file_chain": false,
+      "artifact_names": []
+    },
+    {
+      "file": "scripts\\training\\eval_taiji_interaction_groups.py",
+      "line": 812,
+      "bucket": "live_object",
+      "reads_file_chain": false,
+      "artifact_names": []
+    },
+    {
+      "file": "scripts\\training\\eval_taiji_internalization.py",
+      "line": 138,
+      "bucket": "live_object",
+      "reads_file_chain": false,
+      "artifact_names": []
+    },
+    {
+      "file": "scripts\\training\\eval_taiji_m1_identity_candidate.py",
+      "line": 358,
+      "bucket": "live_object",
+      "reads_file_chain": false,
+      "artifact_names": []
+    },
+    {
+      "file": "scripts\\training\\eval_taiji_m2r4_joint_course.py",
+      "line": 354,
+      "bucket": "live_object",
+      "reads_file_chain": false,
+      "artifact_names": []
+    },
+    {
+      "file": "scripts\\training\\eval_taiji_m2r4_joint_course.py",
+      "line": 356,
+      "bucket": "live_object",
+      "reads_file_chain": false,
+      "artifact_names": []
+    },
+    {
+      "file": "scripts\\training\\eval_taiji_m4r1_consolidation_canary.py",
+      "line": 204,
+      "bucket": "live_object",
+      "reads_file_chain": false,
+      "artifact_names": []
+    },
+    {
+      "file": "scripts\\training\\eval_taiji_native_runtime_profile.py",
+      "line": 446,
+      "bucket": "live_object",
+      "reads_file_chain": false,
+      "artifact_names": []
+    },
+    {
+      "file": "scripts\\training\\eval_taiji_natural_language_workbench_execution_modularization.py",
+      "line": 120,
+      "bucket": "sealed_artifact",
+      "reads_file_chain": true,
+      "artifact_names": [
+        "<reports-dir-constant>",
+        "taiji_w7_p2_13_natural_language_workbench_api_20260831.json",
+        "taiji_w7_p5_1_natural_language_workbench_modularization_20260831.json",
+        "taiji_w7_p5_2_natural_language_workbench_grounding_modularization_20260831.json"
+      ]
+    },
+    {
+      "file": "scripts\\training\\eval_taiji_natural_language_workbench_grounding_modularization.py",
+      "line": 114,
+      "bucket": "sealed_artifact",
+      "reads_file_chain": true,
+      "artifact_names": [
+        "<reports-dir-constant>",
+        "taiji_w7_p2_11_ide_language_chain_20260831.json",
+        "taiji_w7_p2_12_natural_language_write_20260831.json",
+        "taiji_w7_p2_13_natural_language_workbench_api_20260831.json",
+        "taiji_w7_p5_1_natural_language_workbench_modularization_20260831.json"
+      ]
+    },
+    {
+      "file": "scripts\\training\\eval_taiji_natural_language_workbench_modularization.py",
+      "line": 72,
+      "bucket": "sealed_artifact",
+      "reads_file_chain": true,
+      "artifact_names": [
+        "<reports-dir-constant>",
+        "taiji_w7_p2_12_natural_language_write_20260831.json"
+      ]
+    },
+    {
+      "file": "scripts\\training\\eval_taiji_natural_language_workbench_modularization.py",
+      "line": 77,
+      "bucket": "sealed_artifact",
+      "reads_file_chain": true,
+      "artifact_names": [
+        "<reports-dir-constant>",
+        "taiji_w7_p2_13_natural_language_workbench_api_20260831.json"
+      ]
+    },
+    {
+      "file": "scripts\\training\\eval_taiji_neuron_growth.py",
+      "line": 209,
+      "bucket": "live_object",
+      "reads_file_chain": false,
+      "artifact_names": []
+    },
+    {
+      "file": "scripts\\training\\eval_taiji_online_interaction_structural_bridge.py",
+      "line": 422,
+      "bucket": "live_object",
+      "reads_file_chain": false,
+      "artifact_names": []
+    },
+    {
+      "file": "scripts\\training\\eval_taiji_online_interaction_writeback.py",
+      "line": 422,
+      "bucket": "live_object",
+      "reads_file_chain": false,
+      "artifact_names": []
+    },
+    {
+      "file": "scripts\\training\\eval_taiji_open_domain_interaction_gain.py",
+      "line": 442,
+      "bucket": "live_object",
+      "reads_file_chain": false,
+      "artifact_names": []
+    },
+    {
+      "file": "scripts\\training\\eval_taiji_p6_1c_provider_failure_fallback.py",
+      "line": 93,
+      "bucket": "live_object",
+      "reads_file_chain": false,
+      "artifact_names": []
+    },
+    {
+      "file": "scripts\\training\\eval_taiji_p6_1c_qwen_semantic_provider.py",
+      "line": 85,
+      "bucket": "live_object",
+      "reads_file_chain": false,
+      "artifact_names": []
+    },
+    {
+      "file": "scripts\\training\\eval_taiji_p6_1d_packaged_qwen.py",
+      "line": 324,
+      "bucket": "live_object",
+      "reads_file_chain": false,
+      "artifact_names": []
+    },
+    {
+      "file": "scripts\\training\\eval_taiji_p6_language_fallback_replan.py",
+      "line": 170,
+      "bucket": "live_object",
+      "reads_file_chain": false,
+      "artifact_names": []
+    },
+    {
+      "file": "scripts\\training\\eval_taiji_p6_provider_artifact_loader.py",
+      "line": 172,
+      "bucket": "live_object",
+      "reads_file_chain": false,
+      "artifact_names": []
+    },
+    {
+      "file": "scripts\\training\\eval_taiji_p6_provider_artifact_loader.py",
+      "line": 101,
+      "bucket": "live_object",
+      "reads_file_chain": false,
+      "artifact_names": []
+    },
+    {
+      "file": "scripts\\training\\eval_taiji_p6_qwen_lora_safety.py",
+      "line": 205,
+      "bucket": "live_object",
+      "reads_file_chain": false,
+      "artifact_names": []
+    },
+    {
+      "file": "scripts\\training\\eval_taiji_p6_qwen_provider.py",
+      "line": 290,
+      "bucket": "live_object",
+      "reads_file_chain": false,
+      "artifact_names": []
+    },
+    {
+      "file": "scripts\\training\\eval_taiji_p6_qwen_realization_guard.py",
+      "line": 179,
+      "bucket": "live_object",
+      "reads_file_chain": false,
+      "artifact_names": []
+    },
+    {
+      "file": "scripts\\training\\eval_taiji_p7_1_semantic_quality.py",
+      "line": 278,
+      "bucket": "live_object",
+      "reads_file_chain": false,
+      "artifact_names": []
+    },
+    {
+      "file": "scripts\\training\\eval_taiji_packaged_provider_lifecycle.py",
+      "line": 57,
+      "bucket": "live_object",
+      "reads_file_chain": false,
+      "artifact_names": []
+    },
+    {
+      "file": "scripts\\training\\eval_taiji_packaged_provider_lifecycle.py",
+      "line": 48,
+      "bucket": "live_object",
+      "reads_file_chain": false,
+      "artifact_names": []
+    },
+    {
+      "file": "scripts\\training\\eval_taiji_packaged_provider_lifecycle.py",
+      "line": 49,
+      "bucket": "live_object",
+      "reads_file_chain": false,
+      "artifact_names": []
+    },
+    {
+      "file": "scripts\\training\\eval_taiji_packaged_provider_lifecycle.py",
+      "line": 98,
+      "bucket": "live_object",
+      "reads_file_chain": false,
+      "artifact_names": []
+    },
+    {
+      "file": "scripts\\training\\eval_taiji_provider_watchdog.py",
+      "line": 70,
+      "bucket": "live_object",
+      "reads_file_chain": false,
+      "artifact_names": []
+    },
+    {
+      "file": "scripts\\training\\eval_taiji_provider_watchdog.py",
+      "line": 185,
+      "bucket": "live_object",
+      "reads_file_chain": false,
+      "artifact_names": []
+    },
+    {
+      "file": "scripts\\training\\eval_taiji_region_growth.py",
+      "line": 263,
+      "bucket": "live_object",
+      "reads_file_chain": false,
+      "artifact_names": []
+    },
+    {
+      "file": "scripts\\training\\eval_taiji_region_merge.py",
+      "line": 319,
+      "bucket": "live_object",
+      "reads_file_chain": false,
+      "artifact_names": []
+    },
+    {
+      "file": "scripts\\training\\eval_taiji_region_merge.py",
+      "line": 326,
+      "bucket": "live_object",
+      "reads_file_chain": false,
+      "artifact_names": []
+    },
+    {
+      "file": "scripts\\training\\eval_taiji_region_pruning.py",
+      "line": 265,
+      "bucket": "live_object",
+      "reads_file_chain": false,
+      "artifact_names": []
+    },
+    {
+      "file": "scripts\\training\\eval_taiji_region_pruning.py",
+      "line": 272,
+      "bucket": "live_object",
+      "reads_file_chain": false,
+      "artifact_names": []
+    },
+    {
+      "file": "scripts\\training\\eval_taiji_region_split.py",
+      "line": 311,
+      "bucket": "live_object",
+      "reads_file_chain": false,
+      "artifact_names": []
+    },
+    {
+      "file": "scripts\\training\\eval_taiji_region_split.py",
+      "line": 318,
+      "bucket": "live_object",
+      "reads_file_chain": false,
+      "artifact_names": []
+    },
+    {
+      "file": "scripts\\training\\eval_taiji_runtime_structure.py",
+      "line": 593,
+      "bucket": "live_object",
+      "reads_file_chain": false,
+      "artifact_names": []
+    },
+    {
+      "file": "scripts\\training\\eval_taiji_runtime_structure.py",
+      "line": 600,
+      "bucket": "live_object",
+      "reads_file_chain": false,
+      "artifact_names": []
+    },
+    {
+      "file": "scripts\\training\\eval_taiji_small_simulation_gate.py",
+      "line": 77,
+      "bucket": "live_object",
+      "reads_file_chain": false,
+      "artifact_names": []
+    },
+    {
+      "file": "scripts\\training\\eval_taiji_small_simulation_gate.py",
+      "line": 78,
+      "bucket": "live_object",
+      "reads_file_chain": false,
+      "artifact_names": []
+    },
+    {
+      "file": "scripts\\training\\eval_taiji_small_simulation_gate.py",
+      "line": 79,
+      "bucket": "live_object",
+      "reads_file_chain": false,
+      "artifact_names": []
+    },
+    {
+      "file": "scripts\\training\\eval_taiji_small_simulation_gate.py",
+      "line": 80,
+      "bucket": "live_object",
+      "reads_file_chain": false,
+      "artifact_names": []
+    },
+    {
+      "file": "scripts\\training\\eval_taiji_small_simulation_gate.py",
+      "line": 119,
+      "bucket": "live_object",
+      "reads_file_chain": false,
+      "artifact_names": []
+    },
+    {
+      "file": "scripts\\training\\eval_taiji_small_simulation_gate.py",
+      "line": 38,
+      "bucket": "live_object",
+      "reads_file_chain": false,
+      "artifact_names": []
+    },
+    {
+      "file": "scripts\\training\\eval_taiji_small_simulation_gate.py",
+      "line": 43,
+      "bucket": "live_object",
+      "reads_file_chain": false,
+      "artifact_names": []
+    },
+    {
+      "file": "scripts\\training\\eval_taiji_small_simulation_gate.py",
+      "line": 48,
+      "bucket": "live_object",
+      "reads_file_chain": false,
+      "artifact_names": []
+    },
+    {
+      "file": "scripts\\training\\eval_taiji_small_simulation_gate.py",
+      "line": 54,
+      "bucket": "live_object",
+      "reads_file_chain": false,
+      "artifact_names": []
+    },
+    {
+      "file": "scripts\\training\\eval_taiji_small_simulation_gate.py",
+      "line": 59,
+      "bucket": "live_object",
+      "reads_file_chain": false,
+      "artifact_names": []
+    },
+    {
+      "file": "scripts\\training\\eval_taiji_structural_growth.py",
+      "line": 146,
+      "bucket": "live_object",
+      "reads_file_chain": false,
+      "artifact_names": []
+    },
+    {
+      "file": "scripts\\training\\eval_taiji_structural_workspace_net_gain.py",
+      "line": 526,
+      "bucket": "live_object",
+      "reads_file_chain": false,
+      "artifact_names": []
+    },
+    {
+      "file": "scripts\\training\\eval_taiji_terminal_three_domain_governance.py",
+      "line": 679,
+      "bucket": "live_object",
+      "reads_file_chain": false,
+      "artifact_names": []
+    },
+    {
+      "file": "scripts\\training\\eval_taiji_terminal_three_domain_governance.py",
+      "line": 678,
+      "bucket": "live_object",
+      "reads_file_chain": false,
+      "artifact_names": []
+    },
+    {
+      "file": "scripts\\training\\eval_taiji_topology_proposal.py",
+      "line": 147,
+      "bucket": "live_object",
+      "reads_file_chain": false,
+      "artifact_names": []
+    },
+    {
+      "file": "scripts\\training\\eval_taiji_topology_runtime_ledger.py",
+      "line": 137,
+      "bucket": "live_object",
+      "reads_file_chain": false,
+      "artifact_names": []
+    },
+    {
+      "file": "scripts\\training\\eval_taiji_workbench_longitudinal_gain.py",
+      "line": 164,
+      "bucket": "live_object",
+      "reads_file_chain": false,
+      "artifact_names": []
+    },
+    {
+      "file": "scripts\\training\\train_seed_corpus.py",
+      "line": 727,
+      "bucket": "live_object",
+      "reads_file_chain": false,
+      "artifact_names": []
+    },
+    {
+      "file": "scripts\\training\\train_taiji_p6_qwen_lora_provider.py",
+      "line": 341,
+      "bucket": "live_object",
+      "reads_file_chain": false,
+      "artifact_names": []
+    },
+    {
+      "file": "scripts\\training\\train_taiji_p6_qwen_lora_provider.py",
+      "line": 253,
+      "bucket": "live_object",
+      "reads_file_chain": false,
+      "artifact_names": []
+    },
+    {
+      "file": "scripts\\training\\train_taiji_r2_copy_circuit.py",
+      "line": 176,
+      "bucket": "live_object",
+      "reads_file_chain": false,
+      "artifact_names": []
+    },
+    {
+      "file": "scripts\\training\\train_taiji_r2_copy_circuit.py",
+      "line": 520,
+      "bucket": "live_object",
+      "reads_file_chain": false,
+      "artifact_names": []
+    },
+    {
+      "file": "scripts\\training\\train_taiji_r2_copy_circuit.py",
+      "line": 520,
+      "bucket": "live_object",
+      "reads_file_chain": false,
+      "artifact_names": []
+    }
+  ],
+  "reading_limit": "\u672c\u5668\u53ea\u7b54\u300e\u8fd9\u6761\u7eff\u662f\u4ece\u4ef6\u91cc\u8bfb\u7684\u8fd8\u662f\u5f53\u573a\u8dd1\u7684\u300f\uff0c\u4e0d\u8bc1\u660e\u8be5\u95e8\u4eca\u5929\u771f\u8dd1\u4f1a\u7eff\uff0c\u4e5f\u4e0d\u88c1\u5224\u5224\u636e\u672c\u8eab\u5bf9\u4e0d\u5bf9\uff08\u88c1\u5224\u5728\u8bfb\u6570\u4ef6\u4e0e\u6d4b\u91cc\uff09"
+}
