@@ -1,0 +1,76 @@
+{
+  "format": "taiji-n3-09-tau-rule-v1",
+  "prereg": "plans/reference/PLAN-N3-09_tau_rule_upgrade_prereg_20261008.md",
+  "status": "ok",
+  "rule": {
+    "measure": "decision_pressure\uff08\uff1d\u4ea7\u54c1\u7684 pressure_ema\uff0c\u4e94\u4e2a EMA \u7684\u52a0\u6743\u548c :388-395\uff09",
+    "warmup_drop": 17,
+    "grid_new": 0.01,
+    "grid_old_reported_for_comparison": 0.05,
+    "acceptance": "\u5019\u9009 \u03c4 \u4e0b\u516d\u9053\u5408\u53d6\u7684\u6700\u957f\u8fde\u7eed\u6bb5\u5fc5\u987b \u2265 required_pressure_steps\uff0c\u5426\u5219\u5224\u4e0d\u53ef\u51bb"
+  },
+  "faces": [
+    {
+      "face_dir": "beta_guard_off",
+      "format": "taiji-n3-pressure-face-v2",
+      "observations": 3999,
+      "warmup_dropped": 17,
+      "warmup_share": 0.004251,
+      "policy_self_reported": {
+        "minimum_pressure": 0.7,
+        "minimum_residual_error": 0.55,
+        "minimum_fast_slow_conflict": 0.4,
+        "minimum_activity_saturation": 0.4,
+        "minimum_utility_gap": 0.35,
+        "minimum_resource_state": 0.4,
+        "required_pressure_steps": 3,
+        "growth_resource_cost": 1,
+        "ema_rate": 0.25
+      },
+      "ema_initial": {
+        "residual_error_ema": 0.0,
+        "fast_slow_conflict_ema": 0.0,
+        "activity_saturation_ema": 0.0,
+        "utility_gap_ema": 0.0,
+        "resource_state_ema": 1.0,
+        "consecutive_pressure_steps": 0
+      },
+      "gate_table_rows_checked": 3999,
+      "gate_table_mismatches": 0,
+      "pressure_ema_kept": {
+        "p50": 0.370423,
+        "p90": 0.400994,
+        "p99": 0.417893,
+        "max": 0.422163,
+        "mean": 0.361578
+      },
+      "tau_candidate_v2": 0.41,
+      "grid_005_comparison": 0.45,
+      "dynamic_range_at_candidate": {
+        "required_pressure_steps": 3,
+        "six_gate_true_steps": 0,
+        "six_gate_longest_run": 0,
+        "passes": false
+      },
+      "five_gate_window_composite_ceiling": null,
+      "must_be_at_most_to_be_solvable": null,
+      "proposals_in_face": 0,
+      "counterfactual_valid_up_to_first_proposal": true,
+      "verdict": "not_freezable_at_this_grid"
+    }
+  ],
+  "refused": [],
+  "faces_judged": 1,
+  "faces_refused": 0,
+  "verdict_by_face": {
+    "beta_guard_off": "not_freezable_at_this_grid"
+  },
+  "j_n3e_cross_chain_resolution": {
+    "gate025": {
+      "status": "unverified_missing_face"
+    },
+    "gate100": {
+      "status": "unverified_missing_face"
+    }
+  }
+}
