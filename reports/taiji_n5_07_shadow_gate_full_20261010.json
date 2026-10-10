@@ -1,0 +1,126 @@
+{
+  "format": "taiji-n5-shadow-gate-adjudication-v1",
+  "prereg": "PLAN-N5-02 §2 J-N5b-1／J-N5b-2／J-N5b-3 前半",
+  "arms": {
+    "treated": {
+      "arm": "treated",
+      "checkpoint": "output\\n5_07_arms\\treated\\checkpoint.pt",
+      "j_n5b_1": "present",
+      "missing_self_report_keys": [],
+      "gate": 1.0,
+      "shadow_gate_requested": 1.0,
+      "candidate_gate": 0.4511011242866516,
+      "candidate_utility": 0.0012093100231140852,
+      "candidate_counterfactual_utility": -0.0012516611572701564,
+      "candidate_id": "r4-candidate:4560036c50e6e7ce35df145b5df8b1a3a3577d57f14a5a1c76bbb0decfbc6990",
+      "presence_counters": {
+        "status": "present",
+        "missing": [],
+        "values": {
+          "shadow_forward_hits": 59762,
+          "shadow_learn_hits": 59762,
+          "shadow_branch_hits": 119524
+        }
+      },
+      "j_n5b_2": "shadow_learned"
+    },
+    "control": {
+      "arm": "control",
+      "checkpoint": "output\\n5_07_arms\\control\\checkpoint.pt",
+      "j_n5b_1": "present",
+      "missing_self_report_keys": [],
+      "gate": 0.0,
+      "shadow_gate_requested": null,
+      "candidate_gate": 0.5,
+      "candidate_utility": 0.0,
+      "candidate_counterfactual_utility": 0.0,
+      "candidate_id": "r4-candidate:4560036c50e6e7ce35df145b5df8b1a3a3577d57f14a5a1c76bbb0decfbc6990",
+      "presence_counters": {
+        "status": "present",
+        "missing": [],
+        "values": {
+          "shadow_forward_hits": 0,
+          "shadow_learn_hits": 0,
+          "shadow_branch_hits": 0
+        }
+      },
+      "j_n5b_2": "not_powered"
+    }
+  },
+  "pairing": {
+    "treated_requested": 1.0,
+    "control_requested": null,
+    "quadruple": {
+      "seed": {
+        "treated": 20260822,
+        "control": 20260822
+      },
+      "tau": {
+        "treated": 0.64,
+        "control": 0.64
+      },
+      "readout": {
+        "treated": "predictive",
+        "control": "predictive"
+      },
+      "fast_slow": {
+        "treated": true,
+        "control": true
+      },
+      "bridge_gate": {
+        "treated": 1.0,
+        "control": 1.0
+      }
+    },
+    "status": "pairing_valid_on_quadruple",
+    "j_n5b_3": "valid"
+  },
+  "metric_lane": {
+    "metric_file": "output\\n5_07_lane\\n3a_pair_for_n5.json",
+    "roles": {
+      "treated": "arm_A",
+      "control": "arm_B"
+    },
+    "line": 0.02,
+    "measurement_complete": {
+      "treated": true,
+      "control": true
+    },
+    "segment_means": {
+      "treated": [
+        0.213821,
+        0.2366,
+        0.2294,
+        0.2443,
+        0.24385
+      ],
+      "control": [
+        0.214421,
+        0.2353,
+        0.229,
+        0.2438,
+        0.2442
+      ]
+    },
+    "last_two_segment_mean": {
+      "treated": 0.244075,
+      "control": 0.244
+    },
+    "delta_treated_minus_control": 7.499999999999174e-05,
+    "bands": {
+      "treated": 0.022779,
+      "control": 0.020879
+    },
+    "ruler_usable": false,
+    "verdict": "ruler_unusable",
+    "j_n5b_4": "ruler_unusable",
+    "swallowed_by": [
+      "treated",
+      "control"
+    ]
+  },
+  "j_n5b_4": "ruler_unusable",
+  "j_n5b_5": "unverified_retention_lane_not_run",
+  "j_n5b_6": "not_adjudicable_until_2_3_4_5_are_all_measured",
+  "rc": 1
+}

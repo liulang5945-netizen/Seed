@@ -137,3 +137,30 @@
 - 权重差：逐张量比对（§2 那条 Δ 清单）；
 - 覆盖率：两臂 `output/n5_07_arms/<臂>/pressure.jsonl` 的 `kind=="tail"` 行；
 - 基线面：`reports/taiji_n5_07_base_beta_{cap0,replay24}_20261010.json`。
+
+
+## §7 收益侧第一次取数：分辨率陈述（2026-10-10 ㊵-659）
+
+- 母量**不重抄**：分段均值与噪声带由既有仪器 `adjudicate_taiji_n3a_scaling_probe.py` 出，
+  再交 `adjudicate_taiji_n5_shadow_gate.py --n3a-pair-file … --metric-role-treated arm_A
+  --metric-role-control arm_B` 做「末两段均值＋差值＋过线」三步算术
+  （件：`reports/taiji_n5_07_gain_pair_metric_20261010.json`、
+  `reports/taiji_n5_07_shadow_gate_full_20261010.json`）。
+- 读数：`segment_means` 治疗臂 `[0.213821, 0.2366, 0.2294, 0.2443, 0.24385]`、控制臂
+  `[0.214421, 0.2353, 0.229, 0.2438, 0.2442]`；末两段均值 0.244075 对 0.244 ⇒
+  Δ = **0.000075**；两臂噪声带 **0.022779／0.020879**；冻结线 **0.02**
+  ⇒ `ruler_usable=false`、`j_n5b_4=ruler_unusable`、`swallowed_by=["treated","control"]`。
+- 按 PLAN-N5-04 §3 的 J-N5d-2 原文（「若换底后分辨仍不如噪声带 ⇒ 结论写作**分辨率陈述**，
+  不写『影子无效应』」）：**在 60,000 tick、每臂 5 段的暴露量下，这把尺的分辨率不足以回答
+  「通电有没有收益」——既不能说有，也不能说没有。**
+- 与 §4 合起来：保持侧有读数（负）、收益侧是分辨率陈述、两侧都不是正效应 ⇒
+  `J-N5b-6` 今天没有任何可被填成方向性结论的余地。
+
+## §8 合取卡点的真实位置（一条仪器事实，不是猜测）
+
+`adjudicate_taiji_n5_shadow_gate.py:326` 把 `j_n5b_5` 写成**硬编码字面量**
+`"unverified_retention_lane_not_run"`（:9-10 注释说明是刻意的，好让合取必然读成「未判」）。
+但保持侧跑道器今天已是**第二次**产出配对件（㊵-654 与㊵-656）⇒ **那句「未跑」现在为假**。
+⇒ 合取永远停在 `not_adjudicable_until_2_3_4_5_are_all_measured` 的原因不是「没人跑过」，
+而是占位符没接上取数面。接上＝**改判据的取数法** ⇒ 须另立一件（PLAN-N5-08）先冻取数式与守卫，
+已登记 **DEBT-G89**。
