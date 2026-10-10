@@ -313,8 +313,14 @@ def test_missing_metric_file_keeps_the_conjunct_unverified(tmp_path: Path) -> No
     JUDGE.main(argv)
     payload = json.loads(out.read_text(encoding="utf-8"))
     assert payload["metric_lane"]["j_n5b_4"] == "unverified_no_metric_file"
-    #: 合取条件永远不许在缺任一支时给出「有贡献」。
-    assert payload["j_n5b_6"] == "not_adjudicable_until_2_3_4_5_are_all_measured"
+    #: 〔㊵-665 期望值随 PLAN-N5-09 更新，**不是放宽**：这一格从前只钉一句字面量
+    #: `not_adjudicable_until_2_3_4_5_are_all_measured`；接上取数式后同一输入必须出 `unverified`
+    #: **并点名**缺的是哪一支。原断言"合取不许在缺任一支时给出『有贡献』"完整保留，且新增了两条更硬的：
+    #: 值必须在 PLAN-N5-09 §3 的三形之内、`unmeasured` 数组必须含 J-N5b-4。
+    assert payload["j_n5b_6"] == "unverified"
+    assert payload["j_n5b_6"] != "established"
+    assert "J-N5b-4" in payload["conjunction"]["unmeasured"]
+    assert payload["conjunction"]["missing"] == []
 
 
 def test_band_swallowing_the_line_voids_the_comparison(tmp_path: Path) -> None:

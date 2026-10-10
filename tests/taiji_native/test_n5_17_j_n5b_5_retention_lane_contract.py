@@ -162,12 +162,20 @@ def _retention_args(treated: Path, control: Path, replicate: Path | None = None)
 def test_no_retention_flags_leaves_the_placeholder_and_publishes_no_lane_block(
     tmp_path: Path,
 ) -> None:
-    #: 兼容锚：不给三枚旗标时那一格仍是原话，且**不出** `retention_lane` 块
-    #: ⇒ ㊵-659 那份已封存读数不被改写（逐字节核对见 ㊵-661：重跑同一命令 == 封存件）。
+    #: 兼容锚（㊵-665 起按 PLAN-N5-09 G-N5h-4 的新形状钉）：不给三枚旗标时**那一格键**仍是原话、
+    #: 且不出 `retention_lane` 块 ⇒ ㊵-659 那份已封存读数不被改写。
+    #: 原句「整个 payload 逐字节相同」随 PLAN-N5-09 作废并**换成键级三条**——合取接上取数式后
+    #: `j_n5b_6` 与新增的 `conjunction` 必然出现在输出里，那正是 PLAN-N5-09 的目的；
+    #: 本锚保护的对象从来是"已入库读数不被追认"，键级断言同样保护得住（另有 sha 钉死在 n5_19）。
     rc, payload = _run(tmp_path, [])
     assert payload["j_n5b_5"] == "unverified_retention_lane_not_run"
     assert "retention_lane" not in payload
-    assert payload["j_n5b_6"] == "not_adjudicable_until_2_3_4_5_are_all_measured"
+    assert payload["j_n5b_6"] == "unverified"
+    #: 重推过的期望（不是抄仪器输出）：这一支 fixture 里 3 无面⇒未测、4 无件⇒未测、5 无旗标⇒未测，
+    #: 只有 2 成立；`missing` 必空是 G-N5h-3（未判与不成立不许同句共现）。
+    assert payload["conjunction"]["unmeasured"] == ["J-N5b-3", "J-N5b-4", "J-N5b-5"]
+    assert payload["conjunction"]["missing"] == []
+    assert payload["conjunction"]["branches"]["j_n5b_2"]["state"] == "established"
     assert rc == 0
 
 

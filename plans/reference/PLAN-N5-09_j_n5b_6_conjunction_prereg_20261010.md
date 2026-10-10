@@ -81,3 +81,26 @@ DEBT-G89 的教训正是"能算"与"可发表"是两件事（㊵-660），本件
   收回"N5 合取已有值"与"保持侧代价已发表"两句，并点名本笔实施提交；DEBT-G93 保持未修。
 - 发表资格前置：任何 `j_n5b_6` 的对外表述必须同时给出 ①四支各自原值（不翻译）、②归类后的三态、
   ③`missing`／`unmeasured` 数组原文——三条缺一即视为未判，且**不许**把 `unverified` 念成"实验失败"。
+
+## §7 实施与第一次读数（2026-10-10 ㊵-665，零算力、零产品码、零权重）
+
+- 实施＝`judge_conjunction()`／`classify_branch()`／白名单 `BRANCH_VALUE_CLASS`，`:518` 的字面量换成三形之一；
+  判级词全部取自 PLAN-N5-02 §2 :40 原文（「不成立／未判」），**未新造词**（G-N5h-1 成立）。
+- **第一次读数**＝`reports/taiji_n5_09_j_n5b_6_first_read_20261010.json`：
+  `j_n5b_6 = not_established`、`missing = [J-N5b-4, J-N5b-5]`、`unmeasured = []`、`unknown_values = []`、`rc = 1`。
+  这与本件 §3 J-N5h-2 与 §6 在**跑之前就写死**的预期成员逐字相符 ⇒ 属于验证，不是把结论搬来对齐数据。
+- 四枚成员原值（不翻译）＝`J-N5b-2 shadow_learned`／`J-N5b-3 valid`／`J-N5b-4 ruler_unusable`／`J-N5b-5 cost_persists`；
+  三态＝`established`／`established`／`not_established`／`not_established`（§6 前置①随件出版）。
+- 契约测＝`tests/taiji_native/test_n5_19_j_n5b_6_conjunction_contract.py` **14 passed**，其中三形各正反例、
+  混合态走 `unverified`（G-N5h-3 反例支）、白名单外的值不静默归类（G-N5h-5）、缺键记 `None` 不猜零、
+  旧封存件 sha 钉死（G-N5h-4b）。定向七文件合跑 **94 passed**。
+- **两处既有测的期望值随新值集重推**（`test_n5_07::test_missing_metric_file…` 与
+  `test_n5_17::test_no_retention_flags…`）：原断言"缺任一支不许给出有贡献"一字未减，
+  改成钉 `unverified` **且**要求 `unmeasured` 点名缺哪支——比字面量断言更强。
+  过程中我自己先按想象中的输出写了一次 `unmeasured`，跑出来才重推成"3 无面／4 无件／5 无旗标各自都算未测"
+  （[[feedback-recompute-dont-hand-carry]] 的又一次实例，记在这里而不是悄悄改掉）。
+- **本件的连带影响**：PLAN-N5-08 §5 那条"不给旗标时逐位相同"的兼容锚自此结构上不可能成立，
+  已在那件里带日期就地降级为键级三条（原文不删）。
+- §4 三条出口落到**第二条**：`not_established` ⇒ 按 PLAN-N5-02 §2 :38 同时发表收益与代价两半，
+  09 §2 N5 出口"重启条件在此满足**或证伪**"走证伪这一路；第一条（established）未发生，
+  第三条（unverified）今日不触发（`unmeasured` 为空）。

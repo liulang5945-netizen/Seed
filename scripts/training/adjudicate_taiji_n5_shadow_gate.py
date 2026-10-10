@@ -6,8 +6,11 @@
 
 **本器不实现 J-N5b-4 的收益比较**：母量口径（`online_accuracy` 末两段段均值、自取噪声带、
 `wrong_top1_rate`）在 N3／N4 的专门仪器里已有冻结算法，在这里重抄一份就是第二条链
-（本仓纪律：别在新仪器里重抄生成链）。本器因此把 `j_n5b_4`／`j_n5b_5`／`j_n5b_6`
-一律记成 `unverified_*`／`not_adjudicable_*`，让合取条件读起来必然是「未判」而不是「成立」。
+（本仓纪律：别在新仪器里重抄生成链）。〔原文写于㊵-597：「本器因此把 `j_n5b_4`／`j_n5b_5`／`j_n5b_6`
+一律记成 `unverified_*`／`not_adjudicable_*`，让合取条件读起来必然是「未判」而不是「成立」」——
+该句已在 **㊵-660／㊵-663／㊵-665** 三笔里逐格作废：4 的算术仍不在本器内做，只从
+`--n3a-pair-file`（N3 那台仪器出的段均值）做三步算术；5 自 ㊵-663 起按 PLAN-N5-08 §2 的取数式出值；
+6 自本笔起按 PLAN-N5-09 §3 的三形出值。**不重抄生成链**这条约束本身一字未松。〕
 
 用法：
 
@@ -419,6 +422,90 @@ def _read_pair(path: Path) -> dict[str, Any]:
     return payload
 
 
+CONJUNCTION_BRANCHES = ("j_n5b_2", "j_n5b_3", "j_n5b_4", "j_n5b_5")
+_ESTABLISHED = "established"
+_NOT_ESTABLISHED = "not_established"
+_UNMEASURED = "unmeasured"
+#: PLAN-N5-09 §2 的白名单：值 → 三态。键用判据名（发表时用的就是这串字面量），值用件里的键。
+#: `ruler_unusable` 记成 **not_established** 不是 unmeasured——依据 PLAN-N5-02 §4 :52 原文
+#: "结论只能是『这把尺答不了这个问题』"，它限制的是结论；把它升成"成立"或降级成"没测"都算发明。
+BRANCH_VALUE_CLASS: dict[str, dict[str, str]] = {
+    "j_n5b_2": {"shadow_learned": _ESTABLISHED, "shadow_inert": _NOT_ESTABLISHED, "not_powered": _NOT_ESTABLISHED},
+    "j_n5b_3": {"valid": _ESTABLISHED, "invalid": _NOT_ESTABLISHED},
+    "j_n5b_4": {"holds": _ESTABLISHED, "not_holds": _NOT_ESTABLISHED, "ruler_unusable": _NOT_ESTABLISHED},
+    "j_n5b_5": {
+        "holds": _ESTABLISHED,
+        "cost_persists": _NOT_ESTABLISHED,
+        "arm_dependent": _NOT_ESTABLISHED,
+        "not_judgable_below_min": _UNMEASURED,
+        "not_resolved_insufficient_range": _UNMEASURED,
+        "faces_not_same_source": _UNMEASURED,
+        "column_sets_differ": _UNMEASURED,
+        "baseline_differs": _UNMEASURED,
+        "column_count_mismatch": _UNMEASURED,
+        "noise_floor_columns_incomplete": _UNMEASURED,
+    },
+}
+#: 判据名 <-> 件里的键名，两处都要能查回去（§3 的 missing 数组发表时用判据名）。
+BRANCH_LABELS = {
+    "j_n5b_2": "J-N5b-2",
+    "j_n5b_3": "J-N5b-3",
+    "j_n5b_4": "J-N5b-4",
+    "j_n5b_5": "J-N5b-5",
+}
+
+
+def classify_branch(branch: str, value: Any) -> tuple[str, bool]:
+    """返回（三态，是否"未列举"）。G-N5h-5：未列举的值一律落 unmeasured，并单独点名。
+
+    `unverified_*` 是 PLAN-N5-02／N5-08 里已documented 的**家族**（不是新造的模糊词），按前缀归类；
+    除此以外的未知值既不算成立也不算不成立——它把合取推回"未判"，同时抬 rc=2 让仪器自己响。
+    """
+    table = BRANCH_VALUE_CLASS[branch]
+    if value in table:
+        return table[value], False
+    if isinstance(value, str) and value.startswith("unverified"):
+        return _UNMEASURED, False
+    return _UNMEASURED, True
+
+
+def judge_conjunction(values: dict[str, Any]) -> dict[str, Any]:
+    """PLAN-N5-09 §3 的四元合取：J-N5h-1／2／3 三形之一，配 G-N5h-2 的两个数组恒在。"""
+    branches: dict[str, Any] = {}
+    unmeasured: list[str] = []
+    missing: list[str] = []
+    unknown: list[str] = []
+    for branch in CONJUNCTION_BRANCHES:
+        value = values.get(branch)
+        state, is_unknown = classify_branch(branch, value)
+        branches[branch] = {"criterion": BRANCH_LABELS[branch], "value": value, "state": state}
+        if is_unknown:
+            unknown.append(f"{BRANCH_LABELS[branch]}={value!r}")
+        if state == _NOT_ESTABLISHED:
+            missing.append(BRANCH_LABELS[branch])
+        elif state == _UNMEASURED:
+            unmeasured.append(BRANCH_LABELS[branch])
+    #: G-N5h-3（本件最容易写错的一格）：只要有一支未测，合取就走 `unverified`，
+    #: 即使另有支已经判成不成立——把"还没测"混进"测了且否证"正是 DEBT-G89 那句假陈述的成因。
+    #: 因此 J-N5h-3 要求 `missing` 留空（两词共现＝一句话说两件互斥的事），信息不丢：
+    #: 每支的原值与三态都在 `branches` 里。
+    if unknown or unmeasured:
+        verdict = "unverified"
+        missing = []
+    elif missing:
+        verdict = "not_established"
+    else:
+        verdict = "established"
+    return {
+        "j_n5b_6": verdict,
+        "prereg": "PLAN-N5-09 §3 J-N5h-1／J-N5h-2／J-N5h-3",
+        "branches": branches,
+        "missing": missing,
+        "unmeasured": unmeasured,
+        "unknown_values": unknown,
+    }
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="N5 影子通电验收判读（PLAN-N5-02 J-N5b-1/2/3）")
     parser.add_argument("--arm-treated", required=True)
@@ -504,18 +591,34 @@ def main(argv: list[str] | None = None) -> int:
     #: `arm_dependent`／`holds`／`cost_persists` 都是**读数**，不由这里抬 rc——
     #: rc 表示仪器与前置的健康度，方向只在键里（拿 rc 表达方向会让"判出坏结果"看起来像崩）。
 
+    #: PLAN-N5-09 §3：四元合取由取数式出值（DEBT-G93）。四枚成员原值先齐在这里，
+    #: 归类表是 §2 的白名单——本器不在这行之外另加判断。
+    conjunction = judge_conjunction(
+        {
+            "j_n5b_2": arms["treated"]["j_n5b_2"],
+            "j_n5b_3": pairing["j_n5b_3"],
+            "j_n5b_4": metric["j_n5b_4"],
+            "j_n5b_5": retention["j_n5b_5"],
+        }
+    )
+    if conjunction["unknown_values"]:
+        #: G-N5h-5：白名单外的值不许有默认归类 ⇒ 合取走"未判"，同时让仪器自己响。
+        rc = max(rc, 2)
+
     payload = {
         "format": FORMAT,
         "prereg": "PLAN-N5-02 §2 J-N5b-1／J-N5b-2／J-N5b-3 前半",
         "arms": arms,
         "pairing": pairing,
         "metric_lane": metric,
-        #: 收益比较不在本器内实现（不重抄 N3／N4 已冻的算法链）⇒ 合取必然未判。
         "j_n5b_4": metric["j_n5b_4"],
         #: ㊵-660：这一格从前是硬编码字面量（DEBT-G89）。三枚旗标都不给时它仍是那句原话 ⇒
         #: 已入库读数不被追认改写；给了才按 PLAN-N5-08 §2/§3 的取数式出值。
         "j_n5b_5": retention["j_n5b_5"],
-        "j_n5b_6": "not_adjudicable_until_2_3_4_5_are_all_measured",
+        #: ㊵-665：这一格从前也是硬编码字面量（DEBT-G93，与 G89 同形）。
+        #: 值取自 PLAN-N5-09 §3 三形之一；`conjunction` 块同时出版四枚**原值不翻译**（§6 前置①）。
+        "j_n5b_6": conjunction["j_n5b_6"],
+        "conjunction": {k: v for k, v in conjunction.items() if k != "j_n5b_6"},
         "rc": rc,
     }
     if args.retention_treated or args.retention_control or args.noise_floor_arm:
