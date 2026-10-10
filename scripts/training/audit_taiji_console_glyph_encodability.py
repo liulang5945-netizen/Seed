@@ -33,6 +33,19 @@
 豁免只在 `--codec` 与真实控制台同源时才成立——本器默认 `gbk`：本机 `locale.getpreferredencoding()` 现读
 `cp936`，而 `codecs.lookup("cp936").name` 就是 `gbk`（同一枚 codec，实测），且当天那条报错原文写的是
 `'gbk' codec can't encode`。换机器要换参数，不许拿"绿"代答"这台机器的控制台"。
+
+**`live`／`archived` 分档（㊵-668，DEBT-G81 的收尾更正；形状＝追加键，旧键一字未动）**：
+标题数 `crash_face_file_count` 原先把**死码与活码混在一张面上**数，读出来是 43 枚，而按目录分组现读
+**42 枚住 `scripts/archive/`、1 枚住 `scripts/training/utils.py`（是一枚库）** ⇒ 那 42 枚永远不会在这台
+机器上被跑到，给它们灌守卫是把死码刷绿的白工；真正该排的是活的那 1 枚。分档不删读数、不相加、不改判：
+本器**不出版**"两档之和＝整面"这类键（同一批行对象分两次数，结构上不可能为 false ⇒ 不配当证据，
+见 ㊵-618 对 `shadow_materialized` 的更正），等式只由测来钉：`tests/taiji_native/
+test_n5_17_console_glyph_census_contract.py` 里按 `bucket` 字段对 `crash_face` 行重数一遍再比计数。
+两条旧判定（`no_unguarded_stdout_glyph_print`／`no_unguarded_argparse_help_glyph`）**照旧按整面判**，
+新增的 `no_unguarded_live_stdout_glyph_print` 只是把同一件事按活码面再问一遍——旧判定为 false 时
+不许拿它代答"已清"。
+`scripts/legacy/` **故意不划进归档档**：本器只能按路径名分，没有任何一枚读数证明它没被活码 import；
+把未证的目录划成"死码"就是给自己造豁免（对照 `--codec` 那段：豁免必须有出处）。
 """
 
 from __future__ import annotations
@@ -56,6 +69,13 @@ ARGPARSE_CONSTRUCTOR = "ArgumentParser"
 ADD_ARGUMENT_METHOD = "add_argument"
 DUAL_DOC_NAME = "__doc__"
 ARGPARSE_KWARGS = ("description", "epilog", "help")
+#: ㊵-668：只有这一枚前缀算"归档＝这台机器跑不到"。`scripts/legacy/` 不在列——
+#: 没有任何读数证明它没被活码 import，按名字给它豁免就是自造豁免。
+ARCHIVED_PREFIXES = ("scripts/archive/",)
+
+
+def _bucket(relative: str) -> str:
+    return "archived" if relative.startswith(ARCHIVED_PREFIXES) else "live"
 
 
 def _unencodable(text: str, codec: str) -> list[str]:
@@ -249,6 +269,7 @@ def _file_reading(path: Path, relative: str, source: str, codec: str) -> dict[st
             rows["message_pool_glyphs"].append(row)
     return {
         "file": relative,
+        "bucket": _bucket(relative),
         "prints": bool(console_calls),
         "has_argparse": any(_parser_names(one) for one in ast.walk(tree)),
         "console_guard": guarded,
@@ -290,12 +311,18 @@ def audit(root: Path, codec: str) -> dict[str, Any]:
     help_files = [one for one in unguarded if one["argparse_surface_glyphs"]]
     escape_files = [one for one in unguarded if one["stderr_print_glyphs"]]
     pool_files = [one for one in unguarded if one["message_pool_glyphs"]]
+    #: ㊵-668：同一档的 live／archived 拆分。用**同一批行对象**数，不用第二次筛选条件，
+    #: 否则"分区求和＝整面"这条自证就只是我把同一个数抄了两遍。
+    crash_live = [one for one in crash_files if one["bucket"] == "live"]
+    crash_archived = [one for one in crash_files if one["bucket"] == "archived"]
+    help_live = [one for one in help_files if one["bucket"] == "live"]
+    help_archived = [one for one in help_files if one["bucket"] == "archived"]
     total_stdout = sum(len(one["stdout_print_glyphs"]) for one in readings)
     total_stderr = sum(len(one["stderr_print_glyphs"]) for one in readings)
     total_argparse = sum(len(one["argparse_surface_glyphs"]) for one in readings)
     total_pool = sum(len(one["message_pool_glyphs"]) for one in readings)
     return {
-        "format": "taiji-console-glyph-census-v2",
+        "format": "taiji-console-glyph-census-v3",
         "codec": codec,
         "scan_dirs": list(SCAN_DIRS),
         "files_scanned": len(files),
@@ -314,9 +341,18 @@ def audit(root: Path, codec: str) -> dict[str, Any]:
         "help_face_file_count": len(help_files),
         "escape_face_file_count": len(escape_files),
         "unclassified_pool_face_file_count": len(pool_files),
+        #: ㊵-668 追加键：标题数把死码与活码混着数，这两组把同一张面按"这台机器跑不跑得到"分开。
+        "crash_face_live_file_count": len(crash_live),
+        "crash_face_archived_file_count": len(crash_archived),
+        "help_face_live_file_count": len(help_live),
+        "help_face_archived_file_count": len(help_archived),
+        "archived_prefixes": list(ARCHIVED_PREFIXES),
+        "crash_face_live": [one["file"] for one in crash_live],
+        "help_face_live": [one["file"] for one in help_live],
         "crash_face": [
             {
                 "file": one["file"],
+                "bucket": one["bucket"],
                 "stdout_lines": [row["line"] for row in one["stdout_print_glyphs"]],
                 "stderr_lines": [row["line"] for row in one["stderr_print_glyphs"]],
                 "pool_lines": [row["line"] for row in one["message_pool_glyphs"]],
@@ -338,6 +374,7 @@ def audit(root: Path, codec: str) -> dict[str, Any]:
         "help_face": [
             {
                 "file": one["file"],
+                "bucket": one["bucket"],
                 "argparse_lines": [row["line"] for row in one["argparse_surface_glyphs"]],
                 "glyphs": sorted(
                     {g for row in one["argparse_surface_glyphs"] for g in row["glyphs"]}
@@ -350,6 +387,8 @@ def audit(root: Path, codec: str) -> dict[str, Any]:
             "no_unguarded_stdout_glyph_print": not crash_files,
             "no_unguarded_argparse_help_glyph": not help_files,
             "census_covered_every_scanned_file": not unparsed,
+            #: 追加判定：整面旧判定**不因此翻绿**，不许拿这一枚代答"已清"。
+            "no_unguarded_live_stdout_glyph_print": not crash_live,
         },
         "reading_limit": (
             "static AST only. `crash_face` counts literals inside a stdout-bound print/write call "
@@ -360,7 +399,12 @@ def audit(root: Path, codec: str) -> dict[str, Any]:
             "sys.stderr.errors=backslashreplace, sys.stdout.errors=surrogateescape). message_pool "
             "is an upper bound with no data-flow analysis, so it also holds exception messages and "
             "file-only text and must not be read as a defect count. The exemption tracks a "
-            "source-level reconfigure call, not a verified console."
+            "source-level reconfigure call, not a verified console. The live/archived split (added "
+            "2026-10-10) is a path-prefix bucket over the SAME row set, so it relocates a file "
+            "between two lists without changing any face: scripts/archive is 'not reachable on this "
+            "machine', nothing else is exempted (scripts/legacy is counted live because no reading "
+            "shows it unimported), and the pre-existing whole-face verdicts stay false when the "
+            "archived files stay unguarded — the live-only verdict must not be read as 'cleared'."
         ),
     }
 
@@ -388,7 +432,7 @@ def main(argv: list[str] | None = None) -> int:
         args.out_report.write_text(
             json.dumps(
                 {
-                    "format": "taiji-console-glyph-census-v2",
+                    "format": "taiji-console-glyph-census-v3",
                     "status": "census_failed",
                     "error": str(error),
                 },
@@ -414,6 +458,10 @@ def main(argv: list[str] | None = None) -> int:
                 "files_printing": payload["files_printing"],
                 "files_with_console_guard": payload["files_with_console_guard"],
                 "crash_face_file_count": payload["crash_face_file_count"],
+                "crash_face_live_file_count": payload["crash_face_live_file_count"],
+                "crash_face_archived_file_count": payload["crash_face_archived_file_count"],
+                "help_face_live_file_count": payload["help_face_live_file_count"],
+                "help_face_archived_file_count": payload["help_face_archived_file_count"],
                 "help_face_file_count": payload["help_face_file_count"],
                 "escape_face_file_count": payload["escape_face_file_count"],
                 "unclassified_pool_face_file_count": payload["unclassified_pool_face_file_count"],

@@ -285,6 +285,97 @@ def test_a_docstring_without_argparse_is_still_not_a_message(tmp_path: Path) -> 
     assert payload["crash_face"] == [] and payload["help_face"] == []
 
 
+def _tree_rel(tmp_path: Path, files: dict[str, str]) -> Path:
+    """按**相对路径**铺树（`_tree` 只会往 `scripts/training` 铺，分不了档）。"""
+
+    root = tmp_path / "root"
+    for relative, body in files.items():
+        path = root / Path(*relative.split("/"))
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(body, encoding="utf-8", newline="\n")
+    return root
+
+
+def test_the_bucket_split_separates_unreachable_code_from_live_code(tmp_path: Path) -> None:
+    """㊵-668：标题数把 42 枚归档件与 1 枚活件混着数，分档必须把它们分开而**不删任何一行**。"""
+
+    root = _tree_rel(
+        tmp_path,
+        {"scripts/archive/dead.py": STDOUT_BARE, "scripts/training/live.py": STDOUT_BARE},
+    )
+    payload = MODULE.audit(root, "gbk")
+    assert payload["crash_face_file_count"] == 2, payload["crash_face"]
+    assert payload["crash_face_live_file_count"] == 1, payload["crash_face_live"]
+    assert payload["crash_face_archived_file_count"] == 1, payload["crash_face"]
+    assert payload["crash_face_live"] == ["scripts/training/live.py"], payload["crash_face_live"]
+    #: 等式在**这里**钉，不在仪器里钉：仪器出版的两枚计数由同一批行对象数出来，
+    #: 把等式写成键就是一件恒真读数（㊵-618 对 `shadow_materialized` 的同一课）。
+    #: 这一行按 `crash_face` 行的 `bucket` 字段重数一遍，取法与那两枚计数不同。
+    recounted = sorted(
+        one["file"] for one in payload["crash_face"] if one["bucket"] == "live"
+    )
+    assert recounted == payload["crash_face_live"], (recounted, payload["crash_face_live"])
+    #: 整面判定不因为分档而翻绿——两枚都还红着。
+    assert payload["verdicts"]["no_unguarded_stdout_glyph_print"] is False
+    assert payload["verdicts"]["no_unguarded_live_stdout_glyph_print"] is False
+
+
+def test_guarding_the_live_file_alone_flips_only_the_live_verdict(tmp_path: Path) -> None:
+    """能为 false 也能为 true：给活码加守卫 ⇒ 活码面清零，而整面照旧红（归档件还在）。
+
+    这一支是分档唯一有判别力的方向——上一支两枚判定都是 False，看不出分档有没有在做的事；
+    这一支里两枚判定**分岔**，所以"拿活码面代答已清"会被当场抓住。
+    """
+
+    root = _tree_rel(
+        tmp_path,
+        {"scripts/archive/dead.py": STDOUT_BARE, "scripts/training/live.py": STDOUT_GUARD},
+    )
+    payload = MODULE.audit(root, "gbk")
+    assert payload["crash_face_live_file_count"] == 0, payload["crash_face_live"]
+    assert payload["crash_face_archived_file_count"] == 1, payload["crash_face"]
+    assert payload["crash_face_file_count"] == 1, payload["crash_face"]
+    assert payload["verdicts"]["no_unguarded_live_stdout_glyph_print"] is True
+    assert payload["verdicts"]["no_unguarded_stdout_glyph_print"] is False
+
+
+def test_scripts_legacy_is_counted_live_because_nothing_proves_it_unimported(
+    tmp_path: Path,
+) -> None:
+    """豁免必须有出处：`scripts/legacy/` 不在归档前缀里，它的字形必须算进活码面。"""
+
+    root = _tree_rel(tmp_path, {"scripts/legacy/old.py": STDOUT_BARE})
+    payload = MODULE.audit(root, "gbk")
+    assert payload["archived_prefixes"] == ["scripts/archive/"], payload["archived_prefixes"]
+    assert payload["crash_face_live_file_count"] == 1, payload["crash_face_live"]
+    assert payload["crash_face_archived_file_count"] == 0, payload["crash_face"]
+
+
+def test_the_real_tree_live_crash_face_is_the_library_and_the_partition_is_exhaustive() -> None:
+    """真树双读数：仪器的 bucket 与按前缀手工重数必须给同一张活码面（现在＝`utils.py` 一枚）。
+
+    现读（㊵-668）：`crash_face_file_count` 43＝live 1＋archived 42；`help_face` 62 枚全在 live。
+    谁往活码目录加一支带字形的 stdout print，`crash_face_live` 立刻变长，这一支当场红。
+    """
+
+    payload = MODULE.audit(REPO, "gbk")
+    assert payload["crash_face_live"] == ["scripts/training/utils.py"], payload["crash_face_live"]
+    manual_live = sorted(
+        one["file"]
+        for one in payload["crash_face"]
+        if not one["file"].startswith(tuple(payload["archived_prefixes"]))
+    )
+    assert manual_live == payload["crash_face_live"], (manual_live, payload["crash_face_live"])
+    assert (
+        payload["crash_face_live_file_count"] + payload["crash_face_archived_file_count"]
+        == payload["crash_face_file_count"]
+    ), payload
+    #: 用法屏面一台机器上都跑得到 ⇒ 归档档必须为空；不为空就是有人把新仪器写进了 archive。
+    assert payload["help_face_archived_file_count"] == 0, payload["help_face_archived_file_count"]
+    assert payload["help_face_live_file_count"] == payload["help_face_file_count"], payload
+
+
+
 def test_the_fixed_a30_probe_is_absent_from_every_console_face() -> None:
     """真树钉：㊵-651 给 `probe_taiji_a30_stop_failure.py` 加了守卫（那支长红因此结清）。
 
