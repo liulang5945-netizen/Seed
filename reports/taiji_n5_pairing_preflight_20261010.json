@@ -1,0 +1,31 @@
+{
+  "status": "ok",
+  "format": "taiji-n5-pairing-preflight-v1",
+  "prereg": "PLAN-N5-04 §3 G-N5d-1",
+  "cap0": {
+    "declared_eval_set_sha256": "538835f6627a87c3faba84dbfd1138b5d8296a5dff37870bd258fdf2a3979c27",
+    "declared_layer": "identity",
+    "manifest_path": "plans/manifests/cap0_eval_set_v2.json",
+    "manifest_present": true,
+    "recomputed_manifest_sha256": "538835f6627a87c3faba84dbfd1138b5d8296a5dff37870bd258fdf2a3979c27",
+    "cap0_identity": "verified"
+  },
+  "replay": {
+    "keys_present": [
+      "item_offset",
+      "first_item"
+    ],
+    "keys_the_adjudicator_compares": [
+      "items_sha256",
+      "item_offset",
+      "first_item",
+      "limit"
+    ],
+    "replay_identity": "degraded_to_offset_and_first_item"
+  },
+  "checkpoint_of_before_faces": {
+    "cap0_checkpoint": "checkpoints\\seed_a31self_with_circuit.pt",
+    "replay_checkpoint": "checkpoints/seed_a31self_with_circuit.pt"
+  },
+  "reading_limit": "this is a pre-flight on the committed before-faces only; it does not measure whether the after-faces will be produced successfully"
+}
