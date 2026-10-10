@@ -8,7 +8,10 @@
 **硬前置（fail-closed，缺任何一条整道拒绝跑）**：
 ① 两枚 after 检查点都必须存在；② `check_taiji_n5_pairing_preflight` 对**将要配对的那两张 before 面**
 必须给出 `cap0_identity=verified`、`cap0_checkpoint_identity=verified`、`replay_identity=content_hash_available`
-——第三项就是 DEBT-G79 的来由：旧面只有偏移与首件，配对能跑但"题集逐字相同"这句话不能说。
+——第三项就是 DEBT-G79 的来由：旧面只有偏移与首件，配对能跑但"题集逐字相同"这句话不能说；
+③ 每一臂都要**点名自己的巩固语料**（㊵-565③ 冻的口径：分离机检用的材料＝本次通电自己的夜间落盘件，
+所以两臂各指各的，本件**不给默认值**）。这一条也是花钱前的拒绝：判读器没有语料时会在
+**最后一步**记 `G_N2c_4=unverified` 并 rc=2，那时候四张面已经付过了。
 
 `--dry-run` 只打印将要执行的计划（含预检本身），不跑任何东西；`--only` 用于单独重跑某一侧的面。
 """
@@ -54,6 +57,28 @@ def preflight_refusals(payload: dict[str, Any]) -> list[str]:
 
 
 SINGLE_VARIABLE_FLAGS = ("--n5-shadow-gate",)
+
+
+def corpus_refusals(arm_corpus: dict[str, list[Path]]) -> list[str]:
+    """G-N2c_4 分离机检的输入是否在场——缺了它判读器要到**最后一步**才 rc=2。
+
+    两臂各自点名（㊵-565③）：夜间材料由本次通电自己落盘，影子开关恰恰会改变它，
+    所以"共用一枚默认语料"会把控制臂的分离检查建立到治疗臂的材料上。
+    """
+
+    refusals: list[str] = []
+    for arm in ARMS:
+        paths = arm_corpus.get(arm) or []
+        if not paths:
+            refusals.append(
+                f"{arm}: 没点名巩固语料 ⇒ 判读器记 G_N2c_4_disjointness=unverified 并 rc=2"
+            )
+            continue
+        for path in paths:
+            resolved = path if path.is_absolute() else PROJECT_ROOT / path
+            if not resolved.is_file():
+                refusals.append(f"{arm}: 巩固语料不在场：{path}")
+    return refusals
 
 
 def _normalized(path: str) -> str:
@@ -142,6 +167,7 @@ def build_plan(
     treated: Path,
     control: Path,
     out_dir: Path,
+    consolidation_corpus: dict[str, list[str]],
     cap0_before: Path = CAP0_BEFORE,
     replay_before: Path = REPLAY_BEFORE,
     replay_limit: int,
@@ -179,24 +205,23 @@ def build_plan(
                 ]
             )
         if only in (None, "adjudicate"):
-            plan.append(
-                python
-                + [
-                    str(PROJECT_ROOT / ADJUDICATOR),
-                    "--cap0-before",
-                    str(cap0_before),
-                    "--cap0-after",
-                    str(out_dir / f"{arm}_cap0_after.json"),
-                    "--replay-before",
-                    str(replay_before),
-                    "--replay-after",
-                    str(out_dir / f"{arm}_replay_after.json"),
-                    "--retention-manifest",
-                    RETENTION_MANIFEST,
-                    "--out",
-                    str(out_dir / f"{arm}_retention_pair.json"),
-                ]
-            )
+            adjudicate = python + [
+                str(PROJECT_ROOT / ADJUDICATOR),
+                "--cap0-before",
+                str(cap0_before),
+                "--cap0-after",
+                str(out_dir / f"{arm}_cap0_after.json"),
+                "--replay-before",
+                str(replay_before),
+                "--replay-after",
+                str(out_dir / f"{arm}_replay_after.json"),
+                "--retention-manifest",
+                RETENTION_MANIFEST,
+            ]
+            for corpus_path in consolidation_corpus[arm]:
+                adjudicate += ["--consolidation-corpus", str(corpus_path)]
+            adjudicate += ["--out", str(out_dir / f"{arm}_retention_pair.json")]
+            plan.append(adjudicate)
     return plan
 
 
@@ -228,6 +253,12 @@ def _envelope_meta(path: Path) -> dict[str, Any]:
 
 
 def main(argv: list[str] | None = None) -> int:
+    #: 本件的输出**就是**给人看的拒绝清单，而 win32 控制台默认按 GBK 编码 stdout：
+    #: 清单里的 `⇒` 不可编码，实测让拒绝路径变成 `UnicodeEncodeError`＋rc=1（ traceback 取代了
+    #: 设计好的 rc=2 与逐条点名）。照 `eval_taiji_artifact_consumption_policy.py:337` 的既有写法先把
+    #: 输出钉成 UTF-8——fail-closed 的消息必须能fail-closed **地说话**。
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8")
     parser = argparse.ArgumentParser(
         description="N5 retention-lane runner (static pre-flight first)"
     )
@@ -237,6 +268,22 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--cap0-before", type=Path, default=CAP0_BEFORE)
     parser.add_argument("--replay-before", type=Path, default=REPLAY_BEFORE)
     parser.add_argument("--replay-limit", type=int, default=24)
+    parser.add_argument(
+        "--treated-consolidation-corpus",
+        type=Path,
+        action="append",
+        default=[],
+        metavar="JSONL",
+        help="治疗臂本次通电落盘的夜间语料（分离机检的输入，可重复给）",
+    )
+    parser.add_argument(
+        "--control-consolidation-corpus",
+        type=Path,
+        action="append",
+        default=[],
+        metavar="JSONL",
+        help="控制臂本次通电落盘的夜间语料（不给默认值，两臂各自点名）",
+    )
     parser.add_argument("--only", choices=("cap0", "replay", "adjudicate"), default=None)
     parser.add_argument("--dry-run", action="store_true", help="print the plan and run nothing")
     args = parser.parse_args(argv)
@@ -253,10 +300,24 @@ def main(argv: list[str] | None = None) -> int:
             print(f"REFUSE: {label} 不在场：{path}")
             return 2
 
+    arm_corpus = {
+        "treated": list(args.treated_consolidation_corpus),
+        "control": list(args.control_consolidation_corpus),
+    }
+    #: 只有真要判读的那几步才需要语料——单跑面时别把它变成假前置。
+    if args.only in (None, "adjudicate"):
+        missing_corpus = corpus_refusals(arm_corpus)
+        if missing_corpus:
+            print("REFUSE: 分离机检的巩固语料不齐（这一步在判读器里是**最后一步**才红）：")
+            for row in missing_corpus:
+                print("  - " + row)
+            return 2
+
     plan = build_plan(
         treated=args.treated_checkpoint,
         control=args.control_checkpoint,
         out_dir=args.out_dir,
+        consolidation_corpus=arm_corpus,
         cap0_before=args.cap0_before,
         replay_before=args.replay_before,
         replay_limit=args.replay_limit,

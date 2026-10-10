@@ -5,14 +5,19 @@
 
 * 计划必须六条（两臂 × cap0＋replay＋判读），且每一条形参里都**显式**给 `--report`／`--out-report`
   ／`--out` ⇒ 不许任何一步落到出件方的默认路径上（默认路径历史上会覆写已封存件）；
+* 判读步要**逐臂**带上各自的 `--consolidation-corpus`（㊵-565③：分离机检的材料＝本次通电自己的夜间件），
+  缺语料时在花钱前拒绝；单跑面时它不是前置（别造假前置）；
 * 预检读数为"退化"时必须拒绝，且点名是哪一枚键；
-* 缺检查点时 rc=2，并且**不启动任何子进程**（那是"没算"，不是"跑砸了"）。
+* 缺检查点时 rc=2，并且**不启动任何子进程**（那是"没算"，不是"跑砸了"）；
+* 拒绝清单在 **GBK 控制台**上也要以 rc=2 出得来——上一格它是 rc=1＋traceback，只有起真进程才看得见。
 """
 
 from __future__ import annotations
 
 import importlib.util
 import json
+import os
+import subprocess
 import sys
 from pathlib import Path
 from typing import Any
@@ -47,6 +52,7 @@ def test_the_plan_is_six_steps_with_explicit_output_paths(tmp_path: Path) -> Non
         treated=tmp_path / "treated.pt",
         control=tmp_path / "control.pt",
         out_dir=tmp_path / "lane",
+        consolidation_corpus=_corpus(tmp_path),
         replay_limit=24,
         only=None,
     )
@@ -60,6 +66,36 @@ def test_the_plan_is_six_steps_with_explicit_output_paths(tmp_path: Path) -> Non
     #: 判读步的 before 侧默认指向**带哈希**的新面（㊵-645 出路①），不是旧的那张退化面。
     assert all(MODULE.REPLAY_BEFORE.name in row for row in joined if "adjudicate" in row)
     assert all("treated" in row or "control" in row for row in joined)
+
+
+def _corpus(tmp_path: Path) -> dict[str, list[Path]]:
+    #: 两臂各指各的语料：同名会让下面那条"逐臂线进去了吗"的断言变成恒真。
+    return {
+        "treated": [tmp_path / "treated-night.jsonl"],
+        "control": [tmp_path / "control-night.jsonl"],
+    }
+
+
+def test_each_adjudication_step_carries_its_own_arms_corpus(tmp_path: Path) -> None:
+    """G_N2c_4_disjointness 的输入必须**逐臂**线进去——㊵-565③ 冻的口径是"本次通电自己的夜间语料"，
+    把一枚默认值同时喂两臂会让控制臂的分离检查建立到治疗臂的材料上。"""
+
+    plan = MODULE.build_plan(
+        treated=tmp_path / "treated.pt",
+        control=tmp_path / "control.pt",
+        out_dir=tmp_path / "lane",
+        consolidation_corpus=_corpus(tmp_path),
+        replay_limit=24,
+        only=None,
+    )
+    rows = {" ".join(row): row for row in plan if "adjudicate" in " ".join(row)}
+    assert len(rows) == 2, list(rows)
+    for arm in MODULE.ARMS:
+        row = next(r for text, r in rows.items() if f"{arm}_cap0_after" in text)
+        given = [row[i + 1] for i, tok in enumerate(row) if tok == "--consolidation-corpus"]
+        assert given == [str(_corpus(tmp_path)[arm][0])], (arm, given)
+        #: 语料必须排在 --out 之前，且 `--out` 仍是最后一枚（覆写目标显式在场）。
+        assert row[-2] == "--out", row[-4:]
 
 
 def test_a_degraded_preflight_is_refused_by_name(tmp_path: Path) -> None:
@@ -203,6 +239,7 @@ def test_dry_run_prints_the_plan_without_running_a_single_step(
             str(control),
             "--out-dir",
             str(tmp_path / "lane"),
+            *_corpus_args(tmp_path),
             "--dry-run",
         ]
     )
@@ -211,3 +248,120 @@ def test_dry_run_prints_the_plan_without_running_a_single_step(
     assert out.count("plan: $ ") == 6, out
     assert "DRY_RUN commands=6" in out
     assert not (tmp_path / "lane").exists()
+
+
+def _corpus_args(tmp_path: Path) -> list[str]:
+    argv: list[str] = []
+    for arm, paths in _corpus(tmp_path).items():
+        for path in paths:
+            path.write_text('{"text":"ok"}\n', encoding="utf-8")
+            argv += [f"--{arm}-consolidation-corpus", str(path)]
+    return argv
+
+
+def test_a_missing_arm_corpus_refuses_before_launching_anything(
+    tmp_path: Path, monkeypatch, capsys
+) -> None:
+    """缺语料不是"最后一步才红"的事：四张面（约 13 分钟）先付掉，判读仍拿不到分离读数。"""
+
+    def _boom(*args: object, **kwargs: object) -> int:
+        raise AssertionError("巩固语料不齐时不许启动任何子进程")
+
+    monkeypatch.setattr(MODULE, "_run", _boom)
+    treated = tmp_path / "treated.pt"
+    control = tmp_path / "control.pt"
+    treated.write_bytes(b"x")
+    control.write_bytes(b"y")
+    for only in (None, "adjudicate"):
+        argv = [
+            "--treated-checkpoint",
+            str(treated),
+            "--control-checkpoint",
+            str(control),
+            "--out-dir",
+            str(tmp_path / "lane"),
+        ]
+        if only is not None:
+            argv += ["--only", only]
+        rc = MODULE.main(argv)
+        assert rc == 2, (only, rc)
+        out = capsys.readouterr().out
+        assert "没点名巩固语料" in out, (only, out)
+        assert out.count("  - ") == 2, (only, out)
+
+
+def test_face_only_runs_do_not_invent_a_corpus_precondition(
+    tmp_path: Path, monkeypatch, capsys
+) -> None:
+    """单跑面时语料不是前置——把它变成假前置会让人在 `--only cap0` 上凑一枚错语料。"""
+
+    monkeypatch.setattr(MODULE, "_run", lambda *a, **k: 0)
+    treated = tmp_path / "treated.pt"
+    control = tmp_path / "control.pt"
+    treated.write_bytes(b"x")
+    control.write_bytes(b"y")
+    rc = MODULE.main(
+        [
+            "--treated-checkpoint",
+            str(treated),
+            "--control-checkpoint",
+            str(control),
+            "--out-dir",
+            str(tmp_path / "lane"),
+            "--only",
+            "cap0",
+            "--dry-run",
+        ]
+    )
+    assert rc == 0, rc
+    out = capsys.readouterr().out
+    assert "DRY_RUN commands=2" in out, out
+
+
+def test_the_corpus_check_can_actually_pass_and_actually_fail(tmp_path: Path) -> None:
+    """双向都测：只验拒绝分支等于没验（[[probe-output-must-be-verified-present]]）。"""
+
+    present = tmp_path / "night.jsonl"
+    present.write_text('{"text":"ok"}\n', encoding="utf-8")
+    assert MODULE.corpus_refusals({"treated": [present], "control": [present]}) == []
+    assert len(MODULE.corpus_refusals({"treated": [], "control": []})) == 2
+    refusals = MODULE.corpus_refusals({"treated": [present], "control": [tmp_path / "gone.jsonl"]})
+    assert refusals == ["control: 巩固语料不在场：%s" % (tmp_path / "gone.jsonl")], refusals
+
+
+def test_the_refusal_list_survives_a_gbk_console(tmp_path: Path) -> None:
+    """拒绝清单是 fail-closed 唯一的输出面，而 win32 控制台默认按 GBK 编码 stdout。
+
+    上一格实测：capsys 全绿的同时，真进程在打印第一条拒绝时 `UnicodeEncodeError` 退出 **rc=1**——
+    traceback 取代了设计好的 rc=2 与逐条点名。所以这一支**必须起子进程**才测得到（[[handoff-claims-must-be-executed]]）。
+    """
+
+    treated = tmp_path / "treated.pt"
+    control = tmp_path / "control.pt"
+    treated.write_bytes(b"x")
+    control.write_bytes(b"y")
+    proc = subprocess.run(
+        [
+            sys.executable,
+            str(SCRIPT),
+            "--treated-checkpoint",
+            str(treated),
+            "--control-checkpoint",
+            str(control),
+            "--out-dir",
+            str(tmp_path / "lane"),
+            "--dry-run",
+        ],
+        capture_output=True,
+        cwd=str(REPO),
+        env=dict(os.environ, PYTHONIOENCODING="gbk"),
+        check=False,
+    )
+    stdout = proc.stdout.decode("utf-8", errors="replace")
+    stderr = proc.stderr.decode("utf-8", errors="replace")
+    assert proc.returncode == 2, (proc.returncode, stdout, stderr)
+    assert "Traceback" not in stderr, stderr
+    assert "⇒" in stdout, stdout
+    assert stdout.count("  - ") == 2, stdout
+    #: 拒绝发生在任何写盘之前——出件目录不该存在。
+    assert not (tmp_path / "lane").exists(), stdout
