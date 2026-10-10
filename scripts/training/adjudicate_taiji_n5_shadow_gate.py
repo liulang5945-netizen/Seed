@@ -81,6 +81,48 @@ def _dig(row: dict[str, Any], path: tuple[str, ...]) -> Any:
     return value
 
 
+def _envelope_field(checkpoint: Path, key: str) -> Any:
+    """读信封里的一个键（与 `_shadow_block` 同一取法：`envelope` 优先、退回顶层）。"""
+    import torch
+
+    loaded = torch.load(str(checkpoint), map_location="cpu", weights_only=False)
+    env = loaded.get("envelope", loaded) if isinstance(loaded, dict) else {}
+    return env.get(key) if isinstance(env, dict) else None
+
+
+SHADOW_REQUEST_KEY = "n5_shadow_request"
+#: 四态互斥，且每一态都能为假：`not_reported` 专门用来接住"这次改动之前的旧档"，
+#: 它**不等于**"没请求"——把键缺席读成值 False 是㊵-590 那族假缺席的第三次机会。
+REQUEST_STATES = ("not_reported", "not_requested", "requested_without_gate", "requested_with_gate")
+
+
+def _classify_request(raw: Any) -> dict[str, Any]:
+    if not isinstance(raw, dict):
+        return {"state": "not_reported", "flag": None, "gate_requested": None}
+    flag = bool(raw.get("flag"))
+    gate = raw.get("gate_requested")
+    if not flag:
+        state = "not_requested"
+    elif gate is None:
+        state = "requested_without_gate"
+    else:
+        state = "requested_with_gate"
+    return {
+        "state": state,
+        "flag": flag,
+        "gate_requested": None if gate is None else float(gate),
+    }
+
+
+def _walked_state(presence: dict[str, Any]) -> dict[str, Any]:
+    #: 「在场 ≠ 被走到」那一支：计数器整组缺席时 `j_n5b_1` 仍是 present（在场性是键的事），
+    #: 但**不许**被读成"影子走过"⇒ 单独出一个状态，且它能为假。
+    if presence["status"] != "present":
+        return {"state": "counters_absent", "forward_hits": None, "walked": None}
+    hits = int(presence["values"].get("shadow_forward_hits", 0))
+    return {"state": "walked" if hits > 0 else "not_walked", "forward_hits": hits, "walked": hits > 0}
+
+
 def judge_arm(name: str, checkpoint: Path) -> dict[str, Any]:
     block, missing = _shadow_block(checkpoint)
     out: dict[str, Any] = {"arm": name, "checkpoint": str(checkpoint)}
@@ -88,6 +130,9 @@ def judge_arm(name: str, checkpoint: Path) -> dict[str, Any]:
         out["j_n5b_1"] = "ran_not_measured"
         out["missing_self_report_keys"] = missing
         out["j_n5b_2"] = "unverified_missing_face"
+        #: DEBT-G84 的另一半：块缺席时**只有**请求自述能分清"没请求"与"请求了没物化"。
+        out["shadow_request"] = _classify_request(_envelope_field(checkpoint, SHADOW_REQUEST_KEY))
+        out["walked"] = {"state": "counters_absent", "forward_hits": None, "walked": None}
         return out
     out["j_n5b_1"] = "present"
     out["missing_self_report_keys"] = []
@@ -106,6 +151,8 @@ def judge_arm(name: str, checkpoint: Path) -> dict[str, Any]:
         "missing": [key for key in PRESENCE_KEYS if key not in block],
         "values": {key: int(presence[key]) for key in PRESENCE_KEYS if key in presence},
     }
+    out["shadow_request"] = _classify_request(_envelope_field(checkpoint, SHADOW_REQUEST_KEY))
+    out["walked"] = _walked_state(out["presence_counters"])
     powered = (out["gate"] or 0.0) > 0.0
     nonzero_utility = (out["candidate_utility"] or 0.0) != 0.0 or (
         out["candidate_counterfactual_utility"] or 0.0

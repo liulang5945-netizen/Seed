@@ -107,12 +107,18 @@ def test_three_axis_keys_are_pinned() -> None:
 
 
 def test_flag_is_reachable_from_the_cli() -> None:
+    #: DEBT-G85 修法②：`text=True` 不给 `encoding` ⇒ 子进程按 cp936 写帮助、父按 `-X utf8` 解码时
+    #: reader 线程抛被吞掉的 `UnicodeDecodeError`，`proc.stdout` 成 **None** 而 `rc` 仍是 0，
+    #: 下一行成员判断就炸成 `TypeError`（看着像测坏了）。显式给编码并把 None 单独判掉 ⇒ 两种调用面同果。
     proc = subprocess.run(  # noqa: S603 - 仓内固定脚本，参数不含用户输入
         [sys.executable, str(SCRIPT), "--help"],
         capture_output=True,
         text=True,
+        encoding="utf-8",
+        errors="replace",
         check=False,
         cwd=str(REPO),
     )
     assert proc.returncode == 0, proc.stderr[-400:]
+    assert proc.stdout is not None, "子进程帮助输出解不出来 ⇒ 是调用面编码问题，不是旗标缺失"
     assert "--max-unique-documents" in proc.stdout

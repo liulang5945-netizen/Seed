@@ -533,6 +533,16 @@ def run_training(
         #: DEBT-G70①：命令面随档自述。放在 `atomic_save` **之前**（与 ㊵-593 那节同一形状：
         #: 填充在落盘之后＝键从不进磁盘，读侧再把"缺席"读成"值为 null"）。
         #: 为什么信封也要一份：只有件没有面（或面在别处）时，检查点仍要能自证是哪条命令产的。
+        #: DEBT-G84 修法（owner 弹窗 #23② 批）：旗标的"请求值"必须**无条件**自述。
+        #: 它原先只写在 `if adaptive_shadow is not None:` 里 ⇒ "请求了但没物化"与"根本没请求"
+        #: 在读侧同形（㊵-654 那次塌臂就是这条区分不开）。
+        #: 形状＝`n5_shadow` **块外新键**：块内那五枚 J-N5b-1 必需键一字不动
+        #: （㊵-621 钉死：扩必需键会把已入库的 G/H 读数追认成 `ran_not_measured`＝改判据）。
+        #: 位置必须在 `atomic_save` 之前——填充在落盘之后＝键从不进磁盘（㊵-590／㊵-593 两次的同一形状）。
+        envelope["n5_shadow_request"] = {
+            "flag": bool(n5_shadow),
+            "gate_requested": None if n5_shadow_gate is None else float(n5_shadow_gate),
+        }
         envelope["command_surface"] = {
             "trainer": "train_seed_corpus",
             "argv": list(sys.argv),
