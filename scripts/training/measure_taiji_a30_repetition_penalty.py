@@ -37,6 +37,22 @@ def _sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def _items_sha(items) -> str | None:
+    """选中那一段子集的**内容摘要**。
+
+    DEBT-G79 出路①：`item_offset` 与 `first_item` 两枚弱键证不了"两臂吃的是同一套题"
+    ——换掉整份题面而首件 id 与偏移不变，配对时不会被拦。出件必须带内容哈希，
+    判读侧才有"逐字相同"这句话的依据。
+    """
+
+    if not items:
+        return None
+    import hashlib
+
+    canonical = json.dumps(items, sort_keys=True, ensure_ascii=False).encode("utf-8")
+    return hashlib.sha256(canonical).hexdigest()
+
+
 def _payload_sha(value) -> str | None:
     """回路 payload 的摘要：件里只记路径不够（`PLAN-A-24` rev22 那条复现性债）。"""
 
@@ -172,6 +188,10 @@ def main() -> int:
         "items": len(items),
         "item_offset": args.offset,
         "first_item": items[0]["id"] if items else None,
+        #: DEBT-G79 出路①：弱键（偏移＋首件）不足以支撑"题集同源"这句话 ⇒ 出版子集内容哈希与题集路径。
+        "limit": args.limit,
+        "items_sha256": _items_sha(items),
+        "manifest_path": str(manifest.relative_to(PROJECT_ROOT)).replace("\\", "/"),
         "base_sha256_unchanged": _sha256(checkpoint) == sha_before,
         "arms": [{k: v for k, v in arm.items() if k != "per_item"} for arm in arms],
         #: 判读线（先看线再看数）：循环率要降，**且**严格命中不许掉过 ≥3 条的分辨率线；
