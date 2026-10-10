@@ -260,6 +260,23 @@ describe('LifePanel', () => {
     await waitFor(() => { expect(mocks.consolidate).toHaveBeenCalledTimes(1) })
   })
 
+  it('keeps the consolidation sub-block titles and the action row direct children of the section', () => {
+    // The sheet spaces this block with child selectors (`.section >`), so wrapping
+    // any of these in another element silently returns it to the section's uniform
+    // gap — the crowding that was reported. A later title is the case that carries
+    // the extra room, so its position among the siblings is part of the contract.
+    const { life } = stubLife(nativeSnapshot())
+    mountPanel(life)
+
+    const spec = screen.getByText(en.specTitle)
+    const section = spec.parentElement
+    expect(section?.tagName).toBe('DETAILS')
+    expect(section?.id).toBe('life-consolidation')
+    expect(spec.previousElementSibling).not.toBeNull()
+    expect(screen.getByText(en.reportTitle).parentElement).toBe(section)
+    expect(screen.getByRole('button', { name: en.runConsolidate }).parentElement?.parentElement).toBe(section)
+  })
+
   it('reports an unserved consolidation surface and an unpassed readiness gate honestly', () => {
     const { consolidation: omitted, ...unServed } = nativeSnapshot()
     expect(omitted).toBeDefined()

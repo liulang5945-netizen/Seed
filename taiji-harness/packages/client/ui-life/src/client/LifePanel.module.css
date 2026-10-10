@@ -127,12 +127,17 @@
   border-top: 1px solid var(--dsw-alias-border-l3, rgba(0, 0, 0, 0.16));
 }
 
-/* A titled sub-block that opens after other content inside one section carries
-   the section boundary's 20px, not the 10px row gap: at the row gap the title
-   sits as close to the block above it as to its own readings, so a stack of
-   them reads as one wall. Sections that open on their title are untouched. */
-.organ > .organTitle:not(:first-child) {
-  margin-top: 10px;
+/* `.section` spaces every child by the same 16px, so a sub-block title sits as
+   far from its own readings as the next title does, and a block that opens with
+   readings then stacks titles, notes and a button at one flat rhythm. Later
+   titles start a new sub-block and the action row never belongs to the readings
+   above it, so both get extra room. */
+.section > .organTitle:not(:first-child) {
+  margin-top: 16px;
+}
+
+.section > .actions {
+  margin-top: 4px;
 }
 
 .facts {
