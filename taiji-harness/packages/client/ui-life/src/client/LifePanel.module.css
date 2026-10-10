@@ -127,6 +127,14 @@
   border-top: 1px solid var(--dsw-alias-border-l3, rgba(0, 0, 0, 0.16));
 }
 
+/* A titled sub-block that opens after other content inside one section carries
+   the section boundary's 20px, not the 10px row gap: at the row gap the title
+   sits as close to the block above it as to its own readings, so a stack of
+   them reads as one wall. Sections that open on their title are untouched. */
+.organ > .organTitle:not(:first-child) {
+  margin-top: 10px;
+}
+
 .facts {
   display: grid;
   margin: 0;
