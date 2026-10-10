@@ -21,9 +21,16 @@
 
 输入＝两份 `*_retention_pair.json`（`format: taiji-n2-04-retention-pair-v1`）：治疗臂与控制臂各一份，
 且两份的 `cap0_before_path`／`replay_before_path` 必须**同一对基线件**（不同源 ⇒ 整件拒判）。
+〔2026-10-10 ㊵-661 实施时收紧：只比路径名会把「同名不同字节」的两张面读成同源 ⇒ 本器改比配对件
+自己出版的 `cap0_before_sha256`／`replay_before_sha256`，并同读两份件的 `guards.G_N2c_3_*` 结论（§4 G-N5g-1）。
+摘要比对是**加严**不是放宽：路径不同源的件在旧写法下会假过。〕
 
 - 逐列取 `per_column[列].after`，定义 `drop(col) = control.after − treated.after`（列集合＝判读器自己出版的
   `criteria.columns_compared` 那 7 枚，**不另列一份**）。
+  〔2026-10-10 ㊵-661 现读纠正：**这句的键名写错了，且写错的方式很贵**——`criteria.columns_compared` 是**整数 7**
+  （计数），列名住在 `per_column` 的键里。照原句实施第一次就在真件上抛 `TypeError: 'int' object is not iterable`。
+  现行取法＝列名集合取 `sorted(per_column)`，再与 `criteria.columns_compared` **互相印证**（不相等 ⇒
+  `column_count_mismatch`＋rc=2），所以"7 列"这句话仍是件里读的、不是我自己数的。判据本体未动。〕
 - **地板列先剔除**：`drop` 与 `保持` 的判定只允许发生在 `baseline_headroom(col) = base.after 字段所在的该列基线值 > 0`
   的列上。基线值取该列的 `per_column[col].before`（两份件里同一个数），等于 0 的列一律记
   `not_judgable_floor` 并**成对出版**，不得进入分母（㊵-659 的实测形状：`replay_strict_hits:1.0`／`:2.0`
@@ -52,6 +59,11 @@
   缺该数组或数组长度 ≠ 基线为 0 的列数 ⇒ rc=2（反例支：给一列基线 0 却不出版 ⇒ 必须红）。
 - **G-N5g-3 零假定**：本器**不得**自带任何阈值字面量。`line`（0.02）、`required_pressure_steps`、
   `noise_floor` 一律读自输入件；写侧出现阈值数字字面量 ⇒ 契约测红（沿用 `test_n3_06` 那族的 `HARDCODED_POLICY_LITERAL` 思路，不重造）。
+  〔2026-10-10 ㊵-661 实施时把范围说清（这句按字面扫全器会当场红在我自己已有的东西上）：扫描测的范围＝
+  本笔新增的 `judge_retention_lane`，允许的整数只有本件 §3 写死的两个计数（`judgable ≥ 3` 的 `3`、地板定义的 `0`，
+  外加布尔语义的 `1`／`2`），且**不许有浮点**。全器扫的话 `:372` 的 `--line` 默认值 `0.02` 是命中项——
+  它是 PLAN-N5-02／03 冻的过线界、可被旗标覆盖、不属本笔新增，**没被我搬进件里** ⇒ 另登记 **DEBT-G90**，
+  不靠缩范围把它蒙过去。扫描测同时断言同一台仪器在 `main` 上抓得到 `0.02`，否则那两条断言是空扫。〕
 - **G-N5g-4 前置未到位就是未判**：第三档不存在（或其件里 `measurement_complete` 非 true）时，
   `j_n5b_5` 只能是 `unverified_noise_floor_missing`，`j_n5b_6` 只能是 `not_adjudicable_*`；
   **不许**因为"数已经能算"就直接出 `holds`／`cost_persists`。
@@ -84,3 +96,22 @@
 - 发表资格前置：任何 `holds`／`cost_persists` 的对外表述，必须同时给出
   ①`judgable` 的列名与 `not_judgable_floor` 的列名，②`noise_floor` 的数值与它来自哪一档，
   ③两臂 `verdict` 的各自抄录——三条缺一即视为未判。
+
+## §8 实施与第一次读数（2026-10-10 ㊵-661，零算力、零产品码、零权重）
+
+- 实施面＝`scripts/training/adjudicate_taiji_n5_shadow_gate.py` 新增 `judge_retention_lane()`／`_read_pair()`／
+  `_same_source_failures()` 与三枚可选旗标；契约测＝`tests/taiji_native/test_n5_17_j_n5b_5_retention_lane_contract.py`
+  **18 passed**（与既有判读器测合跑 33 passed）。每条分支都有正反例：地板剔除、`judgable < 3`、
+  噪声档缺失／过大／不在同底／缺列、两臂 `verdict` 不一致走 `arm_dependent`、守卫非 `ok`、列数对不上（整数与列表两种）。
+- **兼容锚已证**：不给三枚旗标时按 ㊵-659 那条命令重跑，输出与已封存的
+  `reports/taiji_n5_07_shadow_gate_full_20261010.json` **逐字节相同**（`rc=1`、`j_n5b_5` 仍是那句占位原话、
+  不出 `retention_lane` 块）⇒ 已入库读数没被本笔追认或改写。
+- 第一次接上线的真件读数＝`reports/taiji_n5_08_jn5b5_first_read_20261010.json`：
+  `j_n5b_5 = unverified_noise_floor_missing`，`not_judgable_floor`＝`replay_strict_hits:1.0`／`:2.0`（两列基线 0），
+  `judgable = 5`，逐列差 `cap0:E −1`／`0.0 −4`／`0.5 +3`／`1.0 +8`／`2.0 −4`，`rc=1`。
+  **这一枚不发表任何方向**（§7 前置②缺 `noise_floor`），它证明的是取数式在真件上能走通、且符号变号那三列是仪器算出来的。
+- `holds` 那一支在测里造出来了（逐列差全 ≤ 0 ＋ 第三档逐位复现 ⇒ `noise_floor = 0`）——
+  占位符时代它永远出不来，所以这条绿灯是**新能力**不是新结论。
+- 本笔之后 `j_n5b_5` 距出值只差一件事＝同码同参第三档（㊵-657④ 那条命令，owner 终端）。
+  `J-N5b-6` 的合取仍停在 `not_adjudicable_until_2_3_4_5_are_all_measured`：这一格里 `2`／`3`／`4` 已有读数
+  （`shadow_learned`／`pairing_valid_on_quadruple`／`ruler_unusable`），`5` 现在是"前置未到位"而不是"没接上"。
