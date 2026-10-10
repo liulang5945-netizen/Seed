@@ -25,6 +25,8 @@ import hashlib
 import json
 from pathlib import Path
 
+from reference_doc_history import reference_text
+
 import pytest
 
 from api.seed_runtime import DEFAULT_CHECKPOINT as PRODUCT_DEFAULT
@@ -144,4 +146,7 @@ def test_the_switch_was_preflighted_on_the_bare_loader(manifest) -> None:
     assert preflight["answer"] == "能"
     assert "冗余" in preflight["meaning"]
     assert preflight["contract"].startswith("plans/reference/")
-    assert (REPO / preflight["contract"]).is_file()
+    #: ㊵-657：该契约件已被蒸馏删除（DEBT-G83②）。原断言要说的是「这个预注册取得到」，
+    #: 所以改成「树里优先、被删则从历史取回同一份字节」——取不到就响亮失败，不把它改成「该件已删」。
+    contract_text = reference_text(REPO / preflight["contract"])
+    assert contract_text.strip(), preflight["contract"]

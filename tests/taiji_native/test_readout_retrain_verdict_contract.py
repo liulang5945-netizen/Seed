@@ -18,6 +18,8 @@ import json
 import subprocess
 import sys
 from pathlib import Path
+
+from reference_doc_history import reference_text
 from typing import Any
 
 import pytest
@@ -328,7 +330,7 @@ def test_k2_reports_both_readings_and_they_can_disagree(verdict: Any) -> None:
 def test_k2_operationalisation_is_pre_registered_in_the_contract() -> None:
     """K2's threshold was absent from the frozen §5; it must have been written down first."""
 
-    text = CONTRACT.read_text(encoding="utf-8")
+    text = reference_text(CONTRACT)
     assert "§5.1 K2 的操作化定义" in text
     assert "执行前预注册" in text
     assert "任何一臂都尚未跑完" in text

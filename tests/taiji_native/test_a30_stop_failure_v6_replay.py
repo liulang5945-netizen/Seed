@@ -14,6 +14,8 @@ import re
 import sys
 from pathlib import Path
 
+from reference_doc_history import reference_text
+
 import pytest
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
@@ -261,12 +263,10 @@ def test_recall_numbers_after_docking50_name_the_circuit() -> None:
     #: §第五十/五十一 那两格立的规矩：**「两全」必须带枚数说**——同一个 D 读数在 seed-A 上是 6→7、
     #: 在 seed-B 上是 3→3，所以不点名回路的 `N/16` 句子会造出假事实。本文件从"第五十次停靠"起逐行扫，
     #: 任何含 `N/16` 的行必须同时出现 seed-A／seed-B／circuit／枚 之一。写这条时它先抓到了我自己两行。
-    plan = (
-        PROJECT_ROOT
-        / "plans"
-        / "reference"
+    plan = reference_text(
+        PROJECT_ROOT / "plans" / "reference"
         / "PLAN-A-30_surface_repetition_localization_20260928.md"
-    ).read_text(encoding="utf-8")
+    )
     lines = plan.splitlines()
     starts = [i for i, line in enumerate(lines) if line.startswith("### 第五十")]
     assert starts, "docking 50 heading missing"

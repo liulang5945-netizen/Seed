@@ -17,6 +17,8 @@ import inspect
 import re
 import sys
 from pathlib import Path
+
+from reference_doc_history import reference_text
 from typing import Any
 
 import pytest
@@ -160,7 +162,7 @@ def test_no_instrument_defaults_its_output_onto_sealed_evidence() -> None:
 
 def test_each_revision_0_document_labels_its_version() -> None:
     for name in VERSION_LABELLED_DOCS:
-        text = (DOCS / name).read_text(encoding="utf-8")
+        text = reference_text(DOCS / name)
         assert "rule_revision = 0" in text or "rule_revision=0" in text, name
 
 
