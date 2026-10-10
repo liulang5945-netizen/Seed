@@ -30,6 +30,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
 CAP0_BEFORE = Path("reports/taiji_n2_cap0_before_20261008.json")
 REPLAY_BEFORE = Path("reports/taiji_n2_replay24_before_20261008.json")
+#: 面可指名 ⇒ 重产出的那一张（DEBT-G79 出路①）能被预检指向，而不必先覆盖旧件路径。
 #: 判读器 `_replay_items_disclosure()` 的那四枚键（同源抄法＝按名字列出来，不 import 私有函数）。
 REPLAY_KEYS = ("items_sha256", "item_offset", "first_item", "limit")
 
@@ -53,9 +54,14 @@ def _declared_eval_sha(payload: dict[str, Any]) -> tuple[str | None, str]:
     return None, "absent"
 
 
-def preflight(root: Path) -> dict[str, Any]:
-    cap0_path = root / CAP0_BEFORE
-    replay_path = root / REPLAY_BEFORE
+def preflight(
+    root: Path,
+    *,
+    cap0_face: Path = CAP0_BEFORE,
+    replay_face: Path = REPLAY_BEFORE,
+) -> dict[str, Any]:
+    cap0_path = cap0_face if cap0_face.is_absolute() else root / cap0_face
+    replay_path = replay_face if replay_face.is_absolute() else root / replay_face
     if not cap0_path.is_file() or not replay_path.is_file():
         raise FileNotFoundError(
             f"missing before face: {cap0_path if not cap0_path.is_file() else replay_path}"
@@ -95,6 +101,8 @@ def preflight(root: Path) -> dict[str, Any]:
     return {
         "format": "taiji-n5-pairing-preflight-v1",
         "prereg": "PLAN-N5-04 §3 G-N5d-1",
+        #: 预检指向哪两张件必须随件出版——"退化"与"哈希齐"的差别就在这两张件上。
+        "faces_used": {"cap0": str(cap0_path), "replay": str(replay_path)},
         "cap0": cap0_out,
         "replay": {
             "keys_present": present,
@@ -116,11 +124,23 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="retention-pair pre-flight (static)")
     parser.add_argument("--out-report", type=Path, required=True, help="where to write the JSON")
     parser.add_argument("--root", type=Path, default=PROJECT_ROOT, help="tree holding the faces")
+    parser.add_argument(
+        "--cap0-before",
+        type=Path,
+        default=CAP0_BEFORE,
+        help="cap0 before face (relative to --root, or absolute)",
+    )
+    parser.add_argument(
+        "--replay-before",
+        type=Path,
+        default=REPLAY_BEFORE,
+        help="replay before face (relative to --root, or absolute)",
+    )
     args = parser.parse_args(argv)
 
     args.out_report.parent.mkdir(parents=True, exist_ok=True)
     try:
-        payload = preflight(args.root)
+        payload = preflight(args.root, cap0_face=args.cap0_before, replay_face=args.replay_before)
     except (FileNotFoundError, json.JSONDecodeError, ValueError) as error:
         args.out_report.write_text(
             json.dumps(

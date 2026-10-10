@@ -148,3 +148,53 @@ def test_a_missing_before_face_is_preflight_failed_not_verified(tmp_path: Path) 
     payload = json.loads(report.read_text(encoding="utf-8"))
     assert payload["status"] == "preflight_failed"
     assert "cap0" not in payload
+
+
+def test_pointing_at_a_hashed_face_is_honoured(tmp_path: Path) -> None:
+    """`--replay-before` 必须真的换得动面：DEBT-G79 出路①重产的那张件要靠它被指向。"""
+
+    root = _face_dir(tmp_path, eval_sha=None, replay_keys=("item_offset", "first_item"))
+    hashed = root / "reports" / "replay_hashed.json"
+    hashed.write_text(
+        json.dumps({"items_sha256": "abc", "item_offset": 0, "first_item": "V001", "limit": 24}),
+        encoding="utf-8",
+        newline="\n",
+    )
+    payload = MODULE.preflight(root, replay_face=hashed)
+    assert payload["replay"]["replay_identity"] == "content_hash_available", payload["replay"]
+    assert payload["faces_used"]["replay"] == str(hashed)
+    #: 不指名时仍是旧件那张 ⇒ 退化读数不会因为换了参数就自己消失。
+    assert (
+        MODULE.preflight(root)["replay"]["replay_identity"] == "degraded_to_offset_and_first_item"
+    )
+
+
+def test_a_named_face_that_is_absent_fails_loudly(tmp_path: Path) -> None:
+    report = tmp_path / "out.json"
+    rc = MODULE.main(
+        [
+            "--root",
+            str(REPO),
+            "--replay-before",
+            "reports/definitely-not-a-face.json",
+            "--out-report",
+            str(report),
+        ]
+    )
+    assert rc == 2, rc
+    payload = json.loads(report.read_text(encoding="utf-8"))
+    assert payload["status"] == "preflight_failed"
+
+
+def test_help_lists_all_four_flags(monkeypatch) -> None:
+    captured: list[str] = []
+    monkeypatch.setattr(sys.stdout, "write", lambda text: captured.append(text) or len(text))
+    try:
+        MODULE.main(["--help"])
+    except SystemExit as exit_info:
+        assert exit_info.code == 0, exit_info.code
+    else:
+        raise AssertionError("--help 没有按惯例退出 0")
+    joined = "".join(captured)
+    for flag in ("--out-report", "--root", "--cap0-before", "--replay-before"):
+        assert flag in joined, (flag, joined[:200])
