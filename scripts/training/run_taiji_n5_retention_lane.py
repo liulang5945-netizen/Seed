@@ -53,6 +53,90 @@ def preflight_refusals(payload: dict[str, Any]) -> list[str]:
     return refusals
 
 
+SINGLE_VARIABLE_FLAGS = ("--n5-shadow-gate",)
+
+
+def _normalized(path: str) -> str:
+    #: 路径比较前先归一分隔符——win32 上同一枚基座会被写成 `checkpoints\x` 或 `checkpoints/x`
+    #: （DEBT-I8 那族），不归一会造出假"不同源"。
+    return str(path).replace("\\", "/")
+
+
+def lineage_refusals(
+    arms: dict[str, dict[str, Any]],
+    *,
+    base_checkpoint: str,
+    base_sha256: str | None,
+) -> list[str]:
+    """G-N5d-2「两臂只差那一枚旗标」的机器执行（纯函数：入参是各臂信封里读出的元数据）。
+
+    缺任何一条都拒绝，并点名是哪一条——配对的有效性全押在"两臂只差一个变量"上，
+    而这件事今天只有我记得，没有读数。
+    """
+
+    refusals: list[str] = []
+    if set(arms) != set(ARMS):
+        return [f"arms={sorted(arms)}（需要两臂 {list(ARMS)}）"]
+    for arm, meta in arms.items():
+        argv = meta.get("argv")
+        if not argv:
+            refusals.append(f"{arm}: 信封里没有 command_surface.argv ⇒ 没法核对它是哪条命令产的")
+            continue
+        if "--resume" not in argv:
+            refusals.append(
+                f"{arm}: 没有 --resume ⇒ 不是从同一基件续训（从头臂会让 before 比较失效）"
+            )
+            continue
+        resume = argv[argv.index("--resume") + 1]
+        if _normalized(resume) != _normalized(base_checkpoint):
+            refusals.append(f"{arm}: --resume={resume!r} 与预期基座 {base_checkpoint!r} 不是同一枚")
+        if base_sha256 is None:
+            refusals.append("base: 拿不到基座摘要 ⇒ 无法证明 before 面与两臂同底")
+        for key in ("corpus_fingerprint", "config"):
+            if meta.get(key) is None:
+                refusals.append(f"{arm}: 缺 {key} ⇒ 单变量核对没依据")
+    treated, control = arms.get("treated", {}), arms.get("control", {})
+    for key in ("corpus_fingerprint", "config"):
+        if treated.get(key) is not None and treated.get(key) != control.get(key):
+            refusals.append(f"{key} 在两臂间不同 ⇒ 配对的差异不再只有那一枚旗标")
+    left, right = treated.get("argv"), control.get("argv")
+    if left and right:
+        #: 单变量核对做成"去掉那一枚旗标之后两条 argv 必须逐位相同"，
+        #: 而不是"允许若干差异"——后者会把 `--limit 24` 对 `--limit 25` 也放过。
+        #: 比较前逐枚归一分隔符（DEBT-I8 那族：win32 路径两种写法指同一枚件）。
+        if [_normalized(tok) for tok in _without_gate(left)] != [
+            _normalized(tok) for tok in _without_gate(right)
+        ]:
+            refusals.append(
+                "两臂 argv 去掉 --n5-shadow-gate 之后仍不同 ⇒ 单变量前提破了："
+                f"treated={_without_gate(left)[:8]} control={_without_gate(right)[:8]}"
+            )
+        if _gate_value(left) == _gate_value(right):
+            refusals.append(
+                f"两臂的 --n5-shadow-gate 请求值相同（{_gate_value(left)!r}）⇒ 这一对没有可比的两臂"
+            )
+    return refusals
+
+
+def _without_gate(argv: list[str]) -> list[str]:
+    out = list(argv)
+    for flag in SINGLE_VARIABLE_FLAGS:
+        while flag in out:
+            index = out.index(flag)
+            del out[index]
+            if index < len(out) and not str(out[index]).startswith("-"):
+                del out[index]
+    return out
+
+
+def _gate_value(argv: list[str]) -> str | None:
+    for flag in SINGLE_VARIABLE_FLAGS:
+        if flag in argv:
+            index = argv.index(flag) + 1
+            return str(argv[index]) if index < len(argv) else None
+    return None
+
+
 def build_plan(
     *,
     treated: Path,
@@ -121,6 +205,28 @@ def _run(argv: list[str]) -> int:
     return subprocess.run(argv, check=False).returncode
 
 
+def _envelope_meta(path: Path) -> dict[str, Any]:
+    """从臂的检查点信封里取"它是哪条命令产的"那三样。"""
+
+    import torch
+
+    envelope = torch.load(path, map_location="cpu", weights_only=False)
+    if not isinstance(envelope, dict):
+        return {"argv": None, "corpus_fingerprint": None, "config": None}
+    meta = envelope.get("metadata")
+    meta = meta if isinstance(meta, dict) else {}
+    surface = meta.get("command_surface")
+    if not isinstance(surface, dict):
+        surface = envelope.get("command_surface")
+    surface = surface if isinstance(surface, dict) else {}
+    argv = surface.get("argv")
+    return {
+        "argv": [str(row) for row in argv] if isinstance(argv, list) else None,
+        "corpus_fingerprint": meta.get("corpus_fingerprint"),
+        "config": envelope.get("config"),
+    }
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         description="N5 retention-lane runner (static pre-flight first)"
@@ -183,6 +289,21 @@ def main(argv: list[str] | None = None) -> int:
         for row in refusals:
             print("  - " + row)
         return 2
+    #: G-N5d-2 的机器执行：两臂必须同底（`--resume` 指到 before 面声明的那枚基座）、
+    #: 同语料指纹、同 config，且 argv 去掉 `--n5-shadow-gate` 之后逐位相同。
+    base_checkpoint = str(payload.get("base_checkpoint", {}).get("checkpoint_path", ""))
+    base_sha = payload.get("base_checkpoint", {}).get("declared_checkpoint_sha256")
+    arms = {
+        "treated": _envelope_meta(args.treated_checkpoint),
+        "control": _envelope_meta(args.control_checkpoint),
+    }
+    lineage = lineage_refusals(arms, base_checkpoint=base_checkpoint, base_sha256=base_sha)
+    if lineage:
+        print("REFUSE: 单变量／同底核对未通过：")
+        for row in lineage:
+            print("  - " + row)
+        return 2
+    print(f"lineage_ok base={base_checkpoint} arms_match_single_variable=True")
     for row in plan:
         rc = _run(row)
         if rc != 0:

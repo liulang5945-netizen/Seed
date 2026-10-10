@@ -70,6 +70,99 @@ def test_a_degraded_preflight_is_refused_by_name(tmp_path: Path) -> None:
     assert MODULE.preflight_refusals(HASHED) == []
 
 
+BASE = "checkpoints/seed_a31self_with_circuit.pt"
+BASE_SHA = "d6169a358eaee6d194d4795e3167a7bcbb42dfde57b92aa1199bcebbed89699b"
+COMMON = ["train_seed_corpus.py", "--readout", "predictive", "--max-symbols", "60000"]
+
+
+def _arms(treated_argv: list[str], control_argv: list[str]) -> dict[str, dict[str, Any]]:
+    return {
+        "treated": {
+            "argv": treated_argv,
+            "corpus_fingerprint": "fp-1",
+            "config": {"taiji": {"seed": 7}},
+        },
+        "control": {
+            "argv": control_argv,
+            "corpus_fingerprint": "fp-1",
+            "config": {"taiji": {"seed": 7}},
+        },
+    }
+
+
+def test_a_clean_single_variable_pair_is_accepted() -> None:
+    arms = _arms(
+        COMMON + ["--resume", BASE, "--n5-shadow-gate", "1.0"],
+        COMMON + ["--resume", BASE],
+    )
+    assert MODULE.lineage_refusals(arms, base_checkpoint=BASE, base_sha256=BASE_SHA) == []
+
+
+def test_a_backslash_written_base_is_the_same_base(tmp_path: Path) -> None:
+    """win32 上同一枚基座会被写成 `checkpoints\\x` 或 `checkpoints/x` ⇒ 比较前必须归一。"""
+
+    arms = _arms(
+        COMMON + ["--resume", BASE.replace("/", "\\"), "--n5-shadow-gate", "1.0"],
+        COMMON + ["--resume", BASE],
+    )
+    assert MODULE.lineage_refusals(arms, base_checkpoint=BASE, base_sha256=BASE_SHA) == []
+
+
+def test_a_second_moving_variable_is_refused_not_tolerated() -> None:
+    """这一支钉的是我第一版的启发式错误：只按"旗标之外还有没有别的差异"放行，
+    会把 `--max-symbols 60000` 对 `--max-symbols 40000` 也放过（都是数字）。"""
+
+    arms = _arms(
+        COMMON + ["--resume", BASE, "--n5-shadow-gate", "1.0", "--limit", "24"],
+        COMMON + ["--resume", BASE, "--limit", "25"],
+    )
+    refusals = MODULE.lineage_refusals(arms, base_checkpoint=BASE, base_sha256=BASE_SHA)
+    assert any("单变量前提破了" in row for row in refusals), refusals
+
+
+def test_a_forgotten_resume_or_missing_command_surface_is_refused() -> None:
+    arms = _arms(
+        COMMON + ["--n5-shadow-gate", "1.0"],
+        COMMON,
+    )
+    refusals = MODULE.lineage_refusals(arms, base_checkpoint=BASE, base_sha256=BASE_SHA)
+    assert any("--resume" in row for row in refusals), refusals
+
+    arms["treated"]["argv"] = None
+    refusals = MODULE.lineage_refusals(arms, base_checkpoint=BASE, base_sha256=BASE_SHA)
+    assert any("command_surface.argv" in row for row in refusals), refusals
+
+
+def test_a_pair_that_differs_in_nothing_has_no_two_arms() -> None:
+    """两臂旗标请求值相同 ⇒ 这一对不可比（控制臂必须**不给**那枚旗标，或给不同的值）。"""
+
+    arms = _arms(
+        COMMON + ["--resume", BASE, "--n5-shadow-gate", "1.0"],
+        COMMON + ["--resume", BASE, "--n5-shadow-gate", "1.0"],
+    )
+    refusals = MODULE.lineage_refusals(arms, base_checkpoint=BASE, base_sha256=BASE_SHA)
+    assert any("没有可比的两臂" in row for row in refusals), refusals
+
+
+def test_a_different_corpus_fingerprint_breaks_the_pair() -> None:
+    arms = _arms(
+        COMMON + ["--resume", BASE, "--n5-shadow-gate", "1.0"],
+        COMMON + ["--resume", BASE],
+    )
+    arms["control"]["corpus_fingerprint"] = "fp-OTHER"
+    refusals = MODULE.lineage_refusals(arms, base_checkpoint=BASE, base_sha256=BASE_SHA)
+    assert any("corpus_fingerprint" in row for row in refusals), refusals
+
+
+def test_a_missing_base_digest_is_refused() -> None:
+    arms = _arms(
+        COMMON + ["--resume", BASE, "--n5-shadow-gate", "1.0"],
+        COMMON + ["--resume", BASE],
+    )
+    refusals = MODULE.lineage_refusals(arms, base_checkpoint=BASE, base_sha256=None)
+    assert any("拿不到基座摘要" in row for row in refusals), refusals
+
+
 def test_a_missing_checkpoint_refuses_before_launching_anything(
     tmp_path: Path, monkeypatch, capsys
 ) -> None:
