@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { RemoteError } from '@taiji/dsh-client-test-runtime'
 import { SessionId } from '@taiji/dsh-session/types'
@@ -137,8 +137,10 @@ describe('ModelSelect reasoning effort', () => {
     const trigger = screen.getByRole('button', { name: '选择模型，当前 deepseek-official/removed-model' })
     expect(trigger.textContent).toContain('deepseek-official/removed-model')
     fireEvent.click(trigger)
+    // An unresolved selection carries no effort vocabulary, so the card opens on
+    // the model list: the root pane would hold the Model row alone.
+    expect(screen.queryByRole('menuitem', { name: /模型/ })).toBeNull()
     expect(screen.queryByRole('menuitem', { name: /推理等级/ })).toBeNull()
-    fireEvent.click(screen.getByRole('menuitem', { name: /模型/ }))
     expect(screen.queryByRole('menuitemradio', { name: 'removed-model' })).toBeNull()
     expect(screen.getByRole('menuitemradio', { name: 'DeepSeek-V4-Flash' })).toBeTruthy()
     expect(screen.queryByText('Fast catalog description')).toBeNull()
@@ -160,10 +162,69 @@ describe('ModelSelect reasoning effort', () => {
     const trigger = screen.getByRole('button', { name: '选择模型，当前 taiji-local' })
     expect(trigger.textContent).toContain('taiji-local')
     expect(trigger.textContent).not.toContain('taiji-local/taiji-local')
-    // The root pane mirrors the trigger value, so the collapsed label has to
-    // hold for that row too.
+    // The root pane used to mirror this exact value, printing the same token a
+    // second time; with no effort row the card now opens on the model list.
     fireEvent.click(trigger)
-    expect(screen.getByRole('menuitem', { name: /模型/ }).textContent).not.toContain('taiji-local/taiji-local')
+    expect(screen.queryByRole('menuitem', { name: /模型/ })).toBeNull()
+    expect(screen.queryByText('taiji-local/taiji-local')).toBeNull()
+  })
+
+  it('shows the seat as a label when the only model is already in use', () => {
+    const directory = createSnapshotStore(state({
+      current: { provider: 'deepseek-official', model: 'deepseek-v4-flash' },
+      groups: [{
+        id: 'deepseek-official',
+        name: 'DeepSeek',
+        models: [{ id: 'deepseek-v4-flash', name: 'DeepSeek-V4-Flash' }],
+      }],
+    }))
+    render(<ModelSelect
+      locked={false}
+      available
+      directory={directory}
+      load={vi.fn()}
+      select={vi.fn()}
+      t={t}
+    />)
+
+    // Nothing left to choose: no trigger, no card, just the model it is using.
+    expect(screen.queryByRole('button')).toBeNull()
+    expect(screen.getByText('DeepSeek-V4-Flash')).toBeTruthy()
+  })
+
+  it('keeps the seat a control while a choice remains, and drops the card once none does', () => {
+    const two = [
+      { id: 'deepseek-v4-flash', name: 'DeepSeek-V4-Flash' },
+      { id: 'deepseek-v4-pro', name: 'DeepSeek-V4-Pro' },
+    ]
+    const one = [{ id: 'deepseek-v4-flash', name: 'DeepSeek-V4-Flash' }]
+    const groups = (models: typeof one): ModelDirectoryState['groups'] => [{ id: 'deepseek-official', name: 'DeepSeek', models }]
+    const directory = createSnapshotStore<ModelDirectoryState>(state({
+      current: { provider: 'deepseek-official', model: 'deepseek-v4-flash' },
+      groups: groups(two),
+    }))
+    render(<ModelSelect
+      locked={false}
+      available
+      directory={directory}
+      load={vi.fn()}
+      select={vi.fn()}
+      t={t}
+    />)
+
+    const trigger = screen.getByRole('button', { name: '选择模型，当前 DeepSeek-V4-Flash' })
+    fireEvent.click(trigger)
+    // One row of its own is not a menu: the list opens directly.
+    expect(screen.queryByRole('menuitem', { name: /模型/ })).toBeNull()
+    expect(screen.getByRole('menuitemradio', { name: 'DeepSeek-V4-Pro' })).toBeTruthy()
+
+    // The directory collapsing to the model in use while the card is open leaves
+    // the card with nothing to offer, so it goes away with the trigger.
+    act(() => {
+      directory.set(state({ current: { provider: 'deepseek-official', model: 'deepseek-v4-flash' }, groups: groups(one) }))
+    })
+    expect(screen.queryByRole('menu')).toBeNull()
+    expect(screen.queryByRole('button')).toBeNull()
   })
 
   it('shows loading until the catalog and Session projection are both ready', async () => {
@@ -403,7 +464,7 @@ describe('ModelSelect keyboard walk', () => {
     // A real click focuses the trigger first; jsdom's does not.
     trigger.focus()
     fireEvent.click(trigger)
-    fireEvent.click(screen.getByRole('menuitem', { name: /^模型/ }))
+    // No effort row to choose between means the card opens on the model list.
     // No rows to hand the keyboard to: the trigger keeps it, so the card's
     // keys still reach the menu.
     expect(document.activeElement).toBe(trigger)
@@ -412,11 +473,8 @@ describe('ModelSelect keyboard walk', () => {
     retry.focus()
     // A control that is not a row keeps the browser's traversal.
     expect(fireEvent.keyDown(retry, { key: 'Tab' })).toBe(true)
-    // Escape still backs out of the pane and then closes the card.
+    // Escape closes the card: there is no intermediate pane to back out of.
     fireEvent.keyDown(retry, { key: 'Escape' })
-    // Back on the root pane, whose only cell remains (no model means no effort row).
-    const cell = screen.getAllByRole('menuitem')[0]!
-    fireEvent.keyDown(cell, { key: 'Escape' })
     expect(screen.queryByRole('menu')).toBeNull()
   })
 
@@ -451,7 +509,7 @@ describe('ModelSelect keyboard walk', () => {
     expect(document.activeElement).toBe(cells[0])
   })
 
-  it('a pane whose rows mark no current value opens on its first row', () => {
+  it('the model list a card opens on holds no checked row and enters at its first row', () => {
     // The session runs a model the catalog no longer lists: no row is checked.
     render(<ModelSelect
       locked={false}
@@ -461,10 +519,15 @@ describe('ModelSelect keyboard walk', () => {
       select={vi.fn().mockResolvedValue({ ok: true, value: undefined })}
       t={t}
     />)
-    fireEvent.click(screen.getByRole('button', { name: /选择模型/ }))
-    fireEvent.click(screen.getByRole('menuitem', { name: /^模型/ }))
+    const trigger = screen.getByRole('button', { name: /选择模型/ })
+    trigger.focus()
+    fireEvent.click(trigger)
     const rows = screen.getAllByRole('menuitemradio')
     expect(rows.every(row => row.getAttribute('aria-checked') === 'false')).toBe(true)
+    // The trigger keeps the keyboard until a step enters the list, and with
+    // nothing checked that first step lands on the first row.
+    expect(document.activeElement).toBe(trigger)
+    fireEvent.keyDown(trigger, { key: 'ArrowDown' })
     expect(document.activeElement).toBe(rows[0])
   })
 })

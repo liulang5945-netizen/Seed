@@ -1,14 +1,19 @@
 /**
  * ModelSelect: the composer's named model seat (`conversation.input.model`).
- * Two-level selection per figma 496:26454's MenuDropdown: the root menu is
- * the Model / Effort row pair (label + current value + a right chevron),
- * each drilling into its own list — the provider-grouped model list over
- * the shared directory, and the effort levels. The trigger (313:14108's
- * ToggleButton) shows both: model name + effort in the caption tone.
+ * Selection per figma 496:26454's MenuDropdown: the root menu carries a Model
+ * row and, when the model in use publishes reasoning efforts, an Effort row
+ * (label + current value + a right chevron), each drilling into its own list —
+ * the provider-grouped model list over the shared directory, and the effort
+ * levels. With no Effort row the root menu would hold a single row, so the card
+ * opens on the model list directly. The trigger (313:14108's ToggleButton) shows
+ * both: model name + effort in the caption tone. Once the directory holds exactly
+ * one selectable model with no efforts and that model is in use, the seat carries
+ * no choice and renders as the label itself.
  * While open, ↑/↓ move focus across the rows of the shown pane (wrapping; a
  * step taken while the trigger still holds focus enters at the near end), Tab
- * settles like Enter, and Escape and Shift+Tab leave a drilled pane first and
- * otherwise close back to the trigger. A drilled pane hands focus to the row
+ * settles like Enter, and Escape and Shift+Tab leave a drilled pane first where
+ * a root menu exists and otherwise close back to the trigger. A drilled pane
+ * hands focus to the row
  * of the value in use, and returning to the root pane hands it back to the
  * cell that opened it. Data and submission ride the SAME per-session
  * ModelDirectory as the /model popup; exact-model reasoning metadata and the
@@ -110,6 +115,13 @@ export function ModelSelect(
         label: effort.name,
       })),
     ], [reasoning, t])
+  // The root pane exists to choose between two rows. With no Effort row it holds
+  // the Model row alone, so the card opens on the model list instead.
+  const hasRoot = reasoning !== undefined
+  // A seat whose only possible outcome is already in effect carries no choice:
+  // exactly one selectable model, no effort vocabulary, and that model in use.
+  const sole = !locked && !hasRoot && state.status === 'ready' && state.error === null
+    && state.failures.length === 0 && choices.length === 1 && currentChoice !== undefined
   const busy = state.status === 'selecting'
 
   const reload = (): void => {
@@ -190,7 +202,7 @@ export function ModelSelect(
   if (!available) return null
 
   const show = (): void => {
-    setPane('root')
+    setPane(hasRoot ? 'root' : 'model')
     setOpen(true)
     reload()
   }
@@ -228,8 +240,9 @@ export function ModelSelect(
   const onRootKeyDown = (event: KeyboardEvent<HTMLDivElement>): void => {
     if (event.key === 'Escape' && open) {
       event.preventDefault()
-      // Escape backs out of a drilled pane first, then closes.
-      if (pane !== 'root') back(pane)
+      // Escape backs out of a drilled pane first where a root pane exists, then
+      // closes: a card that opened on the model list has nothing to back out to.
+      if (pane !== 'root' && hasRoot) back(pane)
       else close(true)
       return
     }
@@ -240,7 +253,7 @@ export function ModelSelect(
     if (event.key === 'Tab') {
       if (event.shiftKey) {
         event.preventDefault()
-        if (pane !== 'root') back(pane)
+        if (pane !== 'root' && hasRoot) back(pane)
         else close(true)
         return
       }
@@ -345,34 +358,43 @@ export function ModelSelect(
 
   return (
     <div ref={rootRef} className={css.root} onKeyDown={onRootKeyDown} onBlur={onBlur}>
-      <button
-        ref={triggerRef}
-        type="button"
-        className={css.trigger}
-        aria-label={triggerAria}
-        aria-haspopup="menu"
-        aria-expanded={open}
-        aria-controls={open ? `${id}-menu` : undefined}
-        title={triggerLabel}
-        disabled={locked}
-        onClick={() => {
-          if (open) {
-            close()
-          } else {
-            show()
-          }
-        }}
-      >
-        <IconDataOutlineRegular className={css.triggerIcon} size={16} />
-        <span className={css.triggerLabel}>{modelLabel}</span>
-        {effortLabel !== undefined && <span className={css.triggerEffort}>{effortLabel}</span>}
-        <IconChevronDownOutlineRegular className={clsx(css.chevron, open && css.chevronOpen)} />
-      </button>
+      {sole
+        ? (
+          <div className={clsx(css.trigger, css.sole)} title={triggerLabel}>
+            <IconDataOutlineRegular className={css.triggerIcon} size={16} />
+            <span className={css.triggerLabel}>{modelLabel}</span>
+          </div>
+        )
+        : (
+          <button
+            ref={triggerRef}
+            type="button"
+            className={css.trigger}
+            aria-label={triggerAria}
+            aria-haspopup="menu"
+            aria-expanded={open}
+            aria-controls={open ? `${id}-menu` : undefined}
+            title={triggerLabel}
+            disabled={locked}
+            onClick={() => {
+              if (open) {
+                close()
+              } else {
+                show()
+              }
+            }}
+          >
+            <IconDataOutlineRegular className={css.triggerIcon} size={16} />
+            <span className={css.triggerLabel}>{modelLabel}</span>
+            {effortLabel !== undefined && <span className={css.triggerEffort}>{effortLabel}</span>}
+            <IconChevronDownOutlineRegular className={clsx(css.chevron, open && css.chevronOpen)} />
+          </button>
+        )}
 
       {/* Portaled to body (Menu primitive's portal mode) so the sidebar and
           column overflow clips cannot crop the card; synthetic events still
           bubble through this React subtree, keeping onKeyDown/onBlur live. */}
-      {open && createPortal(
+      {open && !sole && createPortal(
         <div
           ref={menuRef}
           id={`${id}-menu`}

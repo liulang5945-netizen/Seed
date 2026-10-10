@@ -42,6 +42,15 @@
   cursor: default;
 }
 
+/* The same chip with no control behind it, for a seat that carries no choice:
+   it must not answer to hover. Pairing the class keeps the specificity of the
+   hover rule above, which a div cannot escape through :disabled. */
+.trigger.sole,
+.trigger.sole:hover {
+  cursor: default;
+  background: transparent;
+}
+
 .triggerLabel {
   min-width: 0;
   overflow: hidden;

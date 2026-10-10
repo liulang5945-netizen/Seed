@@ -230,7 +230,6 @@ describe('web e2e: generic file upload through the real assembly', () => {
     await input.waitFor({ timeout: 10_000 })
     const modelTrigger = page.getByRole('button', { name: /^Select model, current/ })
     await modelTrigger.click()
-    await page.getByRole('menuitem', { name: /^Model\b/ }).click()
     await page.getByRole('menuitemradio', { name: 'DeepSeek-V4-Flash-Vision-Exp' }).click()
     await expect.poll(() => modelTrigger.getAttribute('aria-label'), { timeout: 10_000 })
       .toContain('DeepSeek-V4-Flash-Vision-Exp')

@@ -53,6 +53,8 @@ describe.skipIf(MODE === 'record')('web e2e: DeepSeek Messages conversation', ()
     expect(prompts).toHaveLength(1)
     expect(scaffold.ctx.agentDefaultModel.currentSelection()).toEqual({ provider: 'deepseek-messages', model: 'deepseek-v4-flash' })
     await page.getByRole('button', { name: /^选择模型/ }).click()
+    // This fixture's model publishes reasoning efforts, so the card still opens on
+    // the Model / Effort pair rather than on the list.
     await page.getByRole('menuitem', { name: /模型/ }).click()
     await page.getByText('DeepSeek', { exact: true }).waitFor()
     await page.getByRole('button', { name: /^选择模型/ }).click()
