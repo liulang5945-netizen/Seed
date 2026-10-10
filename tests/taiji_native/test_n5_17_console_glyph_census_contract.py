@@ -210,3 +210,72 @@ def test_help_names_every_flag() -> None:
     assert proc.returncode == 0, proc.returncode
     for flag in ("--out-report", "--root", "--codec"):
         assert flag in text, (flag, text)
+
+
+HELP_DOC_ONLY = '''"""这支仪器的用法屏带着 \\u21d2 字形。"""
+
+import argparse
+
+p = argparse.ArgumentParser(description=__doc__)
+p.add_argument("--x")
+'''
+
+HELP_KWARG = """
+import argparse
+
+p = argparse.ArgumentParser()
+p.add_argument("--x", help="缺前置 \\u21d2 不跑")
+"""
+
+DOCSTRING_WITHOUT_PARSER = '''"""这里的 \\u21d2 永远不上任何屏，因为这枚文件没有 ArgumentParser。"""
+
+import sys
+
+sys.stdout.write("干净的输出")
+'''
+
+
+def test_the_help_screen_is_its_own_face_not_a_crash(tmp_path: Path) -> None:
+    """㊵-651 的实测形状：`description=__doc__` 把 docstring 送上 `--help` ⇒ 必须算，但不能算成"正常跑会崩"。
+
+    并档的代价是真数：第一版把两档合并时 `crash_face` 从 **46 枚跳到 108 枚**，
+    而用法屏只在 `--help` 那条路写 stdout（`parser.error` 的 usage 落 stderr ⇒ 转义不崩）。
+    """
+
+    root = _tree(tmp_path, {"helpdoc.py": HELP_DOC_ONLY, "helpkw.py": HELP_KWARG})
+    payload = MODULE.audit(root, "gbk")
+    assert payload["help_face_file_count"] == 2, payload["help_face"]
+    assert payload["constant_count_argparse_surface"] == 2, payload["help_face"]
+    assert payload["crash_face"] == [], payload["crash_face"]
+    assert payload["verdicts"]["no_unguarded_argparse_help_glyph"] is False
+
+
+def test_a_docstring_without_argparse_is_still_not_a_message(tmp_path: Path) -> None:
+    """反向那一支：排除 docstring 的规矩没被整条废掉——只有被喂进用法屏时它才是消息。"""
+
+    root = _tree(tmp_path, {"nodoc.py": DOCSTRING_WITHOUT_PARSER})
+    payload = MODULE.audit(root, "gbk")
+    assert payload["constant_count_argparse_surface"] == 0, payload
+    assert payload["constant_count_message_pool"] == 0, payload
+    assert payload["crash_face"] == [] and payload["help_face"] == []
+
+
+def test_the_fixed_a30_probe_is_absent_from_every_console_face() -> None:
+    """真树钉：㊵-651 给 `probe_taiji_a30_stop_failure.py` 加了守卫（那支长红因此结清）。
+
+    谁删掉守卫，或往它的 `help=`／docstring 里加回不可编码字形而不加守卫，这一支当场红。
+    """
+
+    payload = MODULE.audit(REPO, "gbk")
+    rows = [
+        one
+        for one in payload["readings"]
+        if one["file"].endswith("probe_taiji_a30_stop_failure.py")
+    ]
+    assert len(rows) == 1, rows
+    assert rows[0]["console_guard"] is True, rows[0]
+    for face in ("crash_face", "help_face"):
+        hits = [
+            one for one in payload[face] if one["file"].endswith("probe_taiji_a30_stop_failure.py")
+        ]
+        assert hits == [], (face, hits)

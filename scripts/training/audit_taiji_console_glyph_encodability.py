@@ -8,14 +8,25 @@
 理由有实测出处——当天崩的那条写作 `print("  - " + row)`，字形住在被调用函数里的 f-string 常量中，
 `grep 'print(.*⇒'` 那种取法只抓到 4 处／3 枚文件，是**下界**。本器分两档出版：
 
-* `stdout_print_glyphs`：字形字面出现在**绑向 stdout** 的输出调用子树内 ⇒ 会崩的那一面，本器的判定只看它；
+* `stdout_print_glyphs`：字形字面出现在**绑向 stdout** 的输出调用子树内 ⇒ 会崩的一面；
+* `argparse_surface_glyphs`：字形住在 `ArgumentParser(description=/epilog=)` 或 `add_argument(help=)`
+  的字符串常量里——**这一档是被一支既有守卫逼出来的**（㊵-651）：`tests/taiji_native/test_a30_probe_help_runs.py`
+  长红，红因是 `probe_taiji_a30_stop_failure.py --help` 在 GBK 上崩，而那枚 `⇒` 住在
+  `ArgumentParser(description=__doc__)`（:1056）所引的**模块 docstring** 里 ⇒ docstring 算不算消息，
+  取决于它有没有被喂进用法屏，不能一律排除；
 * `stderr_print_glyphs`：同上但落 stderr ⇒ **不崩**，只把字形印成字面量 `\\u21d2`，登记成"难看面"；
-* `message_pool_glyphs`：字形出现在同文件**其它**字符串常量里（除 docstring）——它可能经赋值／拼接流向输出，
-  本器不做数据流分析，所以这一档是**保守上界**，单独计数，不许代答前两者。
+* `message_pool_glyphs`：字形出现在同文件**其它**字符串常量里——它可能经赋值／拼接流向输出，
+  本器不做数据流分析，所以这一档是**保守上界**（里面同时装着异常消息与只进文件的消息），
+  单独计数，不许代答前三者。
+
+**两档分开判，不并成一个"崩溃面"**：`crash_face` 只看 `stdout_print_glyphs`（正常跑就会崩）；
+用法屏单列 `help_face`——它只在 `--help` 这条路写 stdout，而 `parser.error` 的 usage/help 落 **stderr**
+（⇒ 转义不崩）。㊵-651 的第一版把两档并起来，读数从 46 枚跳到 108 枚：那是一张更吓人也更错的面，
+已按实测拆开。
 
 **为什么必须分 sink**（同一支脚本两种落点的实测，2026-10-10）：`sys.stderr.errors=backslashreplace`，
 `sys.stdout.errors=surrogateescape`——后者只对孤立代理字符宽容，所以同一个 `⇒` 在 stderr 上照常出版、
-在 stdout 上直接 `UnicodeEncodeError`＋rc=1。把两档相加会得到一张**错的面**：本仓真正会崩的只有 stdout 那一面。
+在 stdout 上直接 `UnicodeEncodeError`＋rc=1。把两档相加会得到一张**错的面**：真正会崩的只有写 stdout 那两面。
 
 **豁免**：文件里存在 `sys.stdout|stderr.reconfigure(encoding="utf-8")` 的调用 ⇒ 该件不计为缺陷
 （这是 `eval_taiji_artifact_consumption_policy.py:336-338` 的既有写法，不是本器发明的口径）。
@@ -41,6 +52,10 @@ OUTPUT_SINKS = ("write", "writelines", "print")
 SINK_RECEIVER_TOKENS = ("stdout", "stderr")
 GUARD_METHOD = "reconfigure"
 GUARD_ENCODING = "utf-8"
+ARGPARSE_CONSTRUCTOR = "ArgumentParser"
+ADD_ARGUMENT_METHOD = "add_argument"
+DUAL_DOC_NAME = "__doc__"
+ARGPARSE_KWARGS = ("description", "epilog", "help")
 
 
 def _unencodable(text: str, codec: str) -> list[str]:
@@ -106,6 +121,57 @@ def _print_calls(tree: ast.AST, source: str) -> list[ast.Call]:
     return out
 
 
+def _parser_names(node: ast.AST) -> bool:
+    """`argparse.ArgumentParser(...)`／`ArgumentParser(...)` 两种写法都算构造用法屏。"""
+
+    if not isinstance(node, ast.Call):
+        return False
+    func = node.func
+    if isinstance(func, ast.Attribute):
+        return func.attr == ARGPARSE_CONSTRUCTOR
+    return isinstance(func, ast.Name) and func.id == ARGPARSE_CONSTRUCTOR
+
+
+def _argparse_constants(tree: ast.AST) -> set[int]:
+    """由 **argparse 库自己**打到 stdout 的常量：`description=`／`epilog=`／每条 `help=`。
+
+    这一档不是补装饰——㊵-651 是一支**既有守卫**抓住的形状：`probe_taiji_a30_stop_failure.py --help`
+    在 GBK 控制台上崩，而它的 `⇒` 既不在 print 子树里、也不是我原先排除的"无害 docstring"，
+    它住在 `ArgumentParser(description=__doc__)`（:1056）所引的模块 docstring 里。
+    ⇒ 结论：**docstring 是否算消息，取决于它有没有被喂进用法屏**，所以这里要把
+    `__doc__` 那一条线单独接进来，而不是把 docstring 一律排除。
+    """
+
+    found: set[int] = set()
+    module_doc: ast.Constant | None = None
+    body = getattr(tree, "body", [])
+    if body and isinstance(body[0], ast.Expr) and isinstance(body[0].value, ast.Constant):
+        if isinstance(body[0].value.value, str):
+            module_doc = body[0].value
+
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.Call):
+            continue
+        if _parser_names(node):
+            pairs = ("description", "epilog")
+        elif isinstance(node.func, ast.Attribute) and node.func.attr == ADD_ARGUMENT_METHOD:
+            pairs = ("help",)
+        else:
+            continue
+        for kw in node.keywords:
+            if kw.arg not in pairs:
+                continue
+            if isinstance(kw.value, ast.Constant) and isinstance(kw.value.value, str):
+                found.add(id(kw.value))
+            elif (
+                isinstance(kw.value, ast.Name)
+                and kw.value.id == DUAL_DOC_NAME
+                and module_doc is not None
+            ):
+                found.add(id(module_doc))
+    return found
+
+
 def _sink_of(call: ast.Call, source: str) -> str:
     """把一支输出调用归到 `stdout`／`stderr`——**只有 stdout 会崩**，这两档不能合并。
 
@@ -146,14 +212,17 @@ def _file_reading(path: Path, relative: str, source: str, codec: str) -> dict[st
         sink = _sink_of(call, source)
         bucket = stdout_ids if sink == "stdout" else stderr_ids
         bucket.update(id(one) for one in _constants_in(call))
+    argparse_ids = _argparse_constants(tree)
 
     rows: dict[str, list[dict[str, Any]]] = {
         "stdout_print_glyphs": [],
         "stderr_print_glyphs": [],
+        "argparse_surface_glyphs": [],
         "message_pool_glyphs": [],
     }
     for holder in _constants_in(tree):
-        if id(holder) in docstrings:
+        #: docstring 只有在**没被喂进用法屏**时才是"不是消息"（`description=__doc__` 那条例外）。
+        if id(holder) in docstrings and id(holder) not in argparse_ids:
             continue
         glyphs = _unencodable(str(holder.value), codec)
         if not glyphs:
@@ -166,11 +235,14 @@ def _file_reading(path: Path, relative: str, source: str, codec: str) -> dict[st
             rows["stdout_print_glyphs"].append(row)
         elif id(holder) in stderr_ids:
             rows["stderr_print_glyphs"].append(row)
+        elif id(holder) in argparse_ids:
+            rows["argparse_surface_glyphs"].append(row)
         else:
             rows["message_pool_glyphs"].append(row)
     return {
         "file": relative,
         "prints": bool(console_calls),
+        "has_argparse": any(_parser_names(one) for one in ast.walk(tree)),
         "console_guard": guarded,
         **rows,
     }
@@ -202,14 +274,20 @@ def audit(root: Path, codec: str) -> dict[str, Any]:
         except SyntaxError as error:
             unparsed.append({"file": relative, "error": str(error)})
     unguarded = [one for one in readings if not one["console_guard"]]
+    #: `crash_face` 只算 print 到 stdout（正常跑就会崩的那一面）；用法屏单列一档，
+    #: 因为它只在 `--help` 这条路写 stdout——`parser.error` 打的 usage/help 落 **stderr**，
+    #: 而 stderr 是 backslashreplace ⇒ 不崩。把两档并起来会把数从 46 抬到 108，
+    #: 那是一张"更吓人也更错"的面（㊵-651 的第一版就并错了，见本件 docstring）。
     crash_files = [one for one in unguarded if one["stdout_print_glyphs"]]
+    help_files = [one for one in unguarded if one["argparse_surface_glyphs"]]
     escape_files = [one for one in unguarded if one["stderr_print_glyphs"]]
     pool_files = [one for one in unguarded if one["message_pool_glyphs"]]
     total_stdout = sum(len(one["stdout_print_glyphs"]) for one in readings)
     total_stderr = sum(len(one["stderr_print_glyphs"]) for one in readings)
+    total_argparse = sum(len(one["argparse_surface_glyphs"]) for one in readings)
     total_pool = sum(len(one["message_pool_glyphs"]) for one in readings)
     return {
-        "format": "taiji-console-glyph-census-v1",
+        "format": "taiji-console-glyph-census-v2",
         "codec": codec,
         "scan_dirs": list(SCAN_DIRS),
         "files_scanned": len(files),
@@ -217,12 +295,15 @@ def audit(root: Path, codec: str) -> dict[str, Any]:
         "unparsed_file_count": len(unparsed),
         "unparsed_files": unparsed,
         "files_printing": sum(1 for one in readings if one["prints"]),
+        "files_with_argparse": sum(1 for one in readings if one["has_argparse"]),
         "files_with_console_guard": sum(1 for one in readings if one["console_guard"]),
         "constant_count_stdout_print": total_stdout,
         "constant_count_stderr_print": total_stderr,
+        "constant_count_argparse_surface": total_argparse,
         "constant_count_message_pool": total_pool,
-        #: 三档各自成面，**不许相加**：stdout＝会崩，stderr＝只转义，pool＝没做数据流的保守上界。
+        #: 四档各自成面，**不许相加**：stdout 与用法屏＝会崩，stderr＝只转义，pool＝保守上界。
         "crash_face_file_count": len(crash_files),
+        "help_face_file_count": len(help_files),
         "escape_face_file_count": len(escape_files),
         "unclassified_pool_face_file_count": len(pool_files),
         "crash_face": [
@@ -246,17 +327,32 @@ def audit(root: Path, codec: str) -> dict[str, Any]:
             }
             for one in crash_files
         ],
+        "help_face": [
+            {
+                "file": one["file"],
+                "argparse_lines": [row["line"] for row in one["argparse_surface_glyphs"]],
+                "glyphs": sorted(
+                    {g for row in one["argparse_surface_glyphs"] for g in row["glyphs"]}
+                ),
+            }
+            for one in help_files
+        ],
         "readings": readings,
         "verdicts": {
             "no_unguarded_stdout_glyph_print": not crash_files,
+            "no_unguarded_argparse_help_glyph": not help_files,
             "census_covered_every_scanned_file": not unparsed,
         },
         "reading_limit": (
-            "static AST only: stdout face is literal constants inside a stdout-bound print (a "
-            "message assembled at runtime is NOT counted there), pool is an upper bound with no "
-            "data-flow analysis, and the exemption tracks a source-level reconfigure call rather "
-            "than a verified console. stderr is reported separately because it escapes instead of "
-            "raising (measured: sys.stderr.errors=backslashreplace, sys.stdout.errors=surrogateescape)"
+            "static AST only. `crash_face` counts literals inside a stdout-bound print/write call "
+            "— that is the face that raises on a normal run. `help_face` counts literals argparse "
+            "itself prints (description=/epilog=/help=, plus the module docstring when passed as "
+            "__doc__): it raises only on the `--help` path, because `parser.error` writes usage to "
+            "stderr and stderr escapes rather than raising (measured: "
+            "sys.stderr.errors=backslashreplace, sys.stdout.errors=surrogateescape). message_pool "
+            "is an upper bound with no data-flow analysis, so it also holds exception messages and "
+            "file-only text and must not be read as a defect count. The exemption tracks a "
+            "source-level reconfigure call, not a verified console."
         ),
     }
 
@@ -284,7 +380,7 @@ def main(argv: list[str] | None = None) -> int:
         args.out_report.write_text(
             json.dumps(
                 {
-                    "format": "taiji-console-glyph-census-v1",
+                    "format": "taiji-console-glyph-census-v2",
                     "status": "census_failed",
                     "error": str(error),
                 },
@@ -310,9 +406,11 @@ def main(argv: list[str] | None = None) -> int:
                 "files_printing": payload["files_printing"],
                 "files_with_console_guard": payload["files_with_console_guard"],
                 "crash_face_file_count": payload["crash_face_file_count"],
+                "help_face_file_count": payload["help_face_file_count"],
                 "escape_face_file_count": payload["escape_face_file_count"],
                 "unclassified_pool_face_file_count": payload["unclassified_pool_face_file_count"],
                 "constant_count_stdout_print": payload["constant_count_stdout_print"],
+                "constant_count_argparse_surface": payload["constant_count_argparse_surface"],
                 "constant_count_message_pool": payload["constant_count_message_pool"],
             },
             ensure_ascii=True,

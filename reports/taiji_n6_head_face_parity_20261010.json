@@ -1,0 +1,37 @@
+{
+  "format": "taiji-n6-head-face-parity-v1",
+  "prereg": "PLAN-N5-06 \u00a72 J-N6a-4",
+  "head_commit": "2f3f2c54b69c97d0e918bfd9d582be8194babf58",
+  "input_bytes": 64,
+  "modes": [
+    "position_off",
+    "position_on",
+    "developmental_off_position"
+  ],
+  "head_digests": {
+    "position_off": "71afabbc9b7dc0990da6b10bfc036bee049f4a18170596c1a427b41eb696a126",
+    "position_on": "b0c090595d328307baab1264e5a3d5d289aa3931f8742a0a08c464c4a63086d4",
+    "developmental_off_position": "4d8403b5230441789f84ab040b9f42aa9459c02d85dd6364307f090b29ade749"
+  },
+  "worktree_digests": {
+    "position_off": "71afabbc9b7dc0990da6b10bfc036bee049f4a18170596c1a427b41eb696a126",
+    "position_on": "b0c090595d328307baab1264e5a3d5d289aa3931f8742a0a08c464c4a63086d4",
+    "developmental_off_position": "4d8403b5230441789f84ab040b9f42aa9459c02d85dd6364307f090b29ade749"
+  },
+  "face_errors": {
+    "head": {},
+    "worktree": {}
+  },
+  "verdicts": {
+    "position_off": "identical",
+    "position_on": "identical",
+    "developmental_off_position": "identical"
+  },
+  "worktree_position_switch_is_visible": true,
+  "status": "ok",
+  "verdict": {
+    "position_off": "identical",
+    "position_on": "identical",
+    "developmental_off_position": "identical"
+  }
+}

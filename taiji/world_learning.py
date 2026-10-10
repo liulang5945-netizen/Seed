@@ -11,6 +11,7 @@ import torch
 from torch import nn
 
 from .contracts import (
+    WorldAction,
     WorldEpisode,
     WorldEpisodeCorpus,
     WorldInterventionCase,
@@ -19,6 +20,7 @@ from .contracts import (
     WorldState,
     WorldTransition,
 )
+from .internalization import content_digest
 from .local_learning import (
     LocalAdam,
     apply_sgd_step,
@@ -32,6 +34,21 @@ from .local_learning import (
 from .world import TaijiWorldState, _world_state_equal
 
 WORLD_SCHEMA_REGISTRY_CHECKPOINT_FORMAT = "taiji-world-schema-registry-v1"
+#: PLAN-N5-06 §2 J-N6a-2 的快照信封形状。与 `NativeWorldPredictionTrainer.checkpoint()`
+#: （`taiji/world_evolution.py:235`）**同源**：同样的 `format`／`version`／`schema`／`schema_registry`／
+#: `model_state`／`counters`／`schema_snapshots` 与末尾自摘要。差异只有一处并在 `restore` 里写明——
+#: 本件是**实例方法对**，`restore` 往"已经构造好的那一个 learner"上覆写状态，
+#: 所以不带 trainer 信封里的构造参数（`seed`／`epochs`／`learning_rate`／`manifest_revision`），
+#: 也不重建对象（重建需要 `hidden_dim` 之外的画像，而 learner 本来就不存 `seed`）。
+WORLD_LEARNER_SNAPSHOT_FORMAT = "taiji-world-learner-snapshot-v1"
+WORLD_LEARNER_SNAPSHOT_VERSION = 1
+#: `propose` 的只读性靠这两枚键自证：预算内不许动参数，也不许动巩固计数。
+WORLD_LEARNER_PROPOSE_COUNT_KEYS = (
+    "online_updates",
+    "transition_acceptances",
+    "transition_rejections",
+    "schema_evolution_count",
+)
 
 
 def _numeric(value: Any, name: str) -> float:
@@ -1109,6 +1126,18 @@ class WorldEpisodeRollout:
         return self.predictions[-1].state
 
 
+@dataclass(frozen=True)
+class WorldPlanCandidate:
+    """`propose` 出版的一条候选：动作＋对该动作的预测＋离目标的距离。
+
+    三件都是**读数**，不是状态：本 dataclass 不持有任何张量参数，也不写回 learner。
+    """
+
+    action: WorldAction
+    prediction: WorldPrediction
+    goal_distance: float
+
+
 def _replace_numeric_state(
     state: WorldState, schema: WorldSchema, values: torch.Tensor
 ) -> WorldState:
@@ -1506,6 +1535,160 @@ class WorldDynamicsLearner(nn.Module):
             losses.append(loss)
         self.online_updates += 1
         return losses
+
+    def _counters_payload(self) -> dict[str, int]:
+        return {key: int(getattr(self, key)) for key in WORLD_LEARNER_PROPOSE_COUNT_KEYS}
+
+    def _apply_counters_payload(self, counters: Mapping[str, Any]) -> None:
+        #: 计数块的键集是**闭合**的：多一枚少一枚都拒绝。静默忽略未知键会让信封形状漂移
+        #: 在下一次读回时变成"看起来恢复了其实少带了一块"（J-N6a-3 的那类失败出口）。
+        if set(counters) != set(WORLD_LEARNER_PROPOSE_COUNT_KEYS):
+            raise ValueError(
+                "world learner snapshot counters must carry exactly "
+                f"{sorted(WORLD_LEARNER_PROPOSE_COUNT_KEYS)}, got {sorted(counters)}"
+            )
+        for key in WORLD_LEARNER_PROPOSE_COUNT_KEYS:
+            setattr(self, key, int(counters[key]))
+
+    def _proposal_actions(self) -> tuple[WorldAction, ...]:
+        """候选动作只取自 schema 自己的词表。
+
+        这不是保守而是必需：`WorldSchema.encode` 对词表外的 kind／actor／target 是响亮拒绝
+        （:292／:297／:303 三支 `ValueError`），造一个词表外的候选只会让 `propose` 半途抛错。
+        """
+
+        actions = []
+        for kind in self.schema.action_kinds:
+            for actor in self.schema.actor_ids:
+                for target in self.schema.target_ids:
+                    actions.append(
+                        WorldAction(
+                            action_id=f"propose:{kind}:{actor}:{target}",
+                            kind=kind,
+                            tick=0,
+                            actor_id=actor,
+                            target_id=target,
+                        )
+                    )
+        return tuple(actions)
+
+    def propose(
+        self,
+        goal: WorldState,
+        state: WorldState,
+        budget: int,
+        *,
+        bind_target: bool = True,
+    ) -> tuple[WorldPlanCandidate, ...]:
+        """Budget-bounded, read-only candidate generation toward `goal` from `state`.
+
+        三条各自有测的约束（PLAN-N5-06 §2/§3）：
+        * **预算是第 3 位显式参数**（G-N6a-1 不许靠 `**kwargs` 或实例属性传）；
+        * **`budget == 0` 时一次前向都不做**，返回空集 ⇒ 只读性不靠"做了也不改"来论证；
+        * 每条候选走 `predict(..., register_parameters=False)`：词表增长（`register_open_set`
+          会 commit 并 `_resize_for_schema`）被这一步关掉，所以参数数量与权重都不动（J-N6a-5）。
+        排序键是 `(goal_distance, action_id)`，不用浮点比较之外的自由度 ⇒ 同一信封可逐位复算。
+        """
+
+        budget = int(budget)
+        if budget < 0:
+            raise ValueError("propose budget cannot be negative")
+        if budget == 0:
+            return ()
+        if not isinstance(goal, WorldState) or not isinstance(state, WorldState):
+            raise TypeError("propose requires WorldState values for goal and state")
+        candidates = []
+        for action in self._proposal_actions():
+            prediction = self.predict(
+                state, action, bind_target=bind_target, register_parameters=False
+            )
+            candidates.append(
+                WorldPlanCandidate(
+                    action=action,
+                    prediction=prediction,
+                    goal_distance=self.schema.normalized_state_error(prediction.state, goal),
+                )
+            )
+        candidates.sort(key=lambda one: (one.goal_distance, one.action.action_id))
+        return tuple(candidates[:budget])
+
+    def snapshot(self) -> dict[str, Any]:
+        """Publish a self-digested envelope for the full learner state (weights＋registry＋counters)."""
+
+        payload: dict[str, Any] = {
+            "format": WORLD_LEARNER_SNAPSHOT_FORMAT,
+            "version": WORLD_LEARNER_SNAPSHOT_VERSION,
+            "schema": self.schema.payload(),
+            "schema_registry": self.schema_registry.checkpoint(),
+            "hidden_dim": self.hidden_dim,
+            "model_state": {
+                name: tensor.detach().cpu().clone()
+                for name, tensor in self.state_dict().items()
+            },
+            "counters": self._counters_payload(),
+            "schema_snapshots": {
+                str(version): {
+                    name: tensor.detach().cpu().clone()
+                    for name, tensor in dict(snapshot).items()
+                }
+                for version, snapshot in self._schema_snapshots.items()
+            },
+        }
+        payload["snapshot_digest"] = content_digest(payload)
+        return payload
+
+    def restore(self, payload: Mapping[str, Any]) -> dict[str, Any]:
+        """Re-apply a `snapshot()` envelope onto **this** learner and report what came back.
+
+        与 `NativeWorldPredictionTrainer.from_checkpoint()` 的差别只在"不重建对象"（见文件顶部
+        常量处的注释）；验证强度是同一套：格式、版本、自摘要、计数块键集四道全要过，
+        任何一道不过就 `ValueError`/`TypeError`/`RuntimeError` 响亮拒绝，**不静默补齐**。
+        """
+
+        if not isinstance(payload, Mapping):
+            raise TypeError("world learner restore requires a snapshot mapping")
+        if payload.get("format") != WORLD_LEARNER_SNAPSHOT_FORMAT:
+            raise ValueError(f"unsupported world learner snapshot format: {payload.get('format')!r}")
+        if int(payload.get("version", -1)) != WORLD_LEARNER_SNAPSHOT_VERSION:
+            raise ValueError(f"unsupported world learner snapshot version: {payload.get('version')!r}")
+        expected = content_digest(
+            {key: value for key, value in payload.items() if key != "snapshot_digest"}
+        )
+        if str(payload.get("snapshot_digest", "")) != expected:
+            raise ValueError("world learner snapshot digest mismatch")
+        counters = payload.get("counters")
+        if not isinstance(counters, Mapping):
+            raise ValueError("world learner snapshot needs a counters mapping")
+        model_state = payload.get("model_state")
+        if not isinstance(model_state, Mapping):
+            raise ValueError("world learner snapshot needs a model_state mapping")
+        schema_payload = payload.get("schema")
+        if not isinstance(schema_payload, Mapping):
+            raise ValueError("world learner snapshot needs a schema payload")
+        registry_payload = payload.get("schema_registry")
+        if not isinstance(registry_payload, Mapping):
+            raise ValueError("world learner snapshot needs a schema_registry checkpoint")
+        snapshots = payload.get("schema_snapshots")
+        if not isinstance(snapshots, Mapping):
+            raise ValueError("world learner snapshot needs schema_snapshots")
+
+        self.load_state_dict({name: tensor for name, tensor in model_state.items()})
+        self.hidden_dim = int(payload["hidden_dim"])
+        self.schema = WorldSchema.from_payload(dict(schema_payload))
+        self.schema_registry = WorldSchemaRegistry.from_checkpoint(registry_payload)
+        self._schema_snapshots = {
+            int(version): {
+                str(name): tensor.detach().cpu().clone()
+                for name, tensor in dict(snapshot).items()
+            }
+            for version, snapshot in snapshots.items()
+        }
+        self._apply_counters_payload(counters)
+        return {
+            "format": WORLD_LEARNER_SNAPSHOT_FORMAT,
+            "snapshot_digest": str(payload["snapshot_digest"]),
+            "counters": self._counters_payload(),
+        }
 
 
 @dataclass(frozen=True)

@@ -93,3 +93,19 @@
   并把缺陷登记进 05（不悄悄重试、不改普查器取法）。
 - 发表资格前置：必须先有 §3 的三条能红的守卫实测（预算 0/1/4 的条数差、信封外形状被拒、逐位继续），
   才允许引用"合同齐"；引用时带范围限定——"名字在场"、"语义等价"、"训练链真走到"是三件事，各自要各自的证据。
+
+> **【2026-10-10 ㊵-651 实施读数（§2／§3 一字未改，只记实测与"一把尺怎么如实重做"）】**
+> J-N6a-1／2／3／5 与 G-N6a-1／2／3 全部成立（形状、读数与踩坑见台账 08 ㊵-651）。
+> **J-N6a-4 的尺要换法登记**：本件 §2 第 4 条那三枚锚点出自 ㊵-636 的一次性 scratch 面脚本（件已不在仓里），
+> 而 `taiji/` 此后又进了多笔提交 ⇒ 锚点**不能**充当今天的对照。本轮把同一形状做成入库仪器
+> `scripts/training/check_taiji_n6_head_face_parity.py`（`git archive HEAD taiji seed` 解到仓外＋同一 tiny 配置＋
+> 同一 64 字节输入 `bytes(range(32,96))`＋`readout="predictive"`＋`learn=True`），只对表 **HEAD vs 工作树**：
+> 三档逐位相同（`71afabbc9b7dc0990da6b10bfc036bee049f4a18170596c1a427b41eb696a126`／
+> `b0c090595d328307baab1264e5a3d5d289aa3931f8742a0a08c464c4a63086d4`／
+> `4d8403b5230441789f84ab040b9f42aa9459c02d85dd6364307f090b29ade749`）。
+> **第一档与仓内已钉的那枚逐字相同**（`tests/taiji_native/test_n4_05_product_default_mount_contract.py:31` 的
+> `BASELINE_DIGEST`）⇒ 重做的尺是"复算了既有钉子"，不是我新造了一把只说自己好的尺；后两档与 ㊵-636 的历史
+> 锚点（`c0706e00…`／`ae3177e0…`）不同 ⇒ 这句只登记"历史读数不可代答当前对照"，**不回填、不重写** §2 的冻结式。
+> 一条仪器侧教训随本件入册：选中档若返回 `None`，`None == None` 会把"逐位相同"读成真绿——发育那一档差点这样假绿
+> （两枚 `RuntimeError` 串 `…read-only until R2`／`…must be mounted before selecting a write mode` 指出挂载序列缺一环），
+> 故本器把"任一档取不到摘要"判成 `parity_indeterminate`＋rc=2（[[guard-must-be-able-to-fail]]）。

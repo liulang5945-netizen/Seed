@@ -97,12 +97,21 @@ def test_a_missing_verb_is_named_not_folded_into_a_count(tmp_path: Path) -> None
     assert payload["contract"]["feedback"]["matched_methods"] == ["feedback"]
 
 
-def test_the_real_tree_reads_incomplete_and_the_zero_is_scope_bounded() -> None:
-    """现读钉值：语料训练链零引用（09 那句话成立的那一半），但生产面并非零引用（过宽的那一半要收）。"""
+def test_the_real_tree_reads_complete_and_the_zero_is_scope_bounded() -> None:
+    """现读钉值。2026-10-10 ㊵-651 重钉：PLAN-N5-06 实施格落地 ⇒ 真树由 `contract_incomplete`
+    变成 `contract_complete`、`missing_verbs` 由两枚变成空。
+
+    这条测原来钉的是"**债还在**"，修好之后不重钉就会长红（同 ㊵-645 的约定：真树钉随事实改口，
+    判别力不卸——缺席那一面仍由 `test_a_missing_verb_is_named_not_folded_into_a_count` 用夹具钉着，
+    齐的那一面由 `test_a_complete_learner_publishes_contract_complete` 钉，两侧都能为假）。
+    "零真实调用"的范围限定照旧要守：语料链 0 引用，生产面并非 0。
+    """
 
     payload = MODULE.audit(REPO)
-    assert payload["contract_verdict"] == "contract_incomplete"
-    assert payload["missing_verbs"] == ["propose", "snapshot_restore"], payload["missing_verbs"]
+    assert payload["contract_verdict"] == "contract_complete", payload["contract_verdict"]
+    assert payload["missing_verbs"] == [], payload["missing_verbs"]
+    assert payload["public_method_count"] == 11, payload["public_method_count"]
+    assert "propose" in payload["public_methods"], payload["public_methods"]
     assert payload["corpus_trainer_references_learner"] == 0
     #: 反面对照：同一个类在 `foundation_training.py` 里有引用 ⇒ "零真实调用"只能限定到语料链。
     assert payload["reference_sites"]["taiji/foundation_training.py"] > 0

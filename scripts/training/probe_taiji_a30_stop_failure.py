@@ -1053,6 +1053,12 @@ def _position_histogram(positions: list[int]) -> dict[str, int]:
 
 
 def main() -> int:
+    #: 本件的 `--help` 会把**模块 docstring** 当 description 打到 stdout（:1056），
+    #: 而 docstring 里有 `⇒` ⇒ 在 GBK 控制台上整屏用法打印抛 `UnicodeEncodeError`、rc=1
+    #: （守卫 `tests/taiji_native/test_a30_probe_help_runs.py` 因此长红，2026-10-10 ㊵-651 归位）。
+    #: 照仓内既有写法把输出钉成 UTF-8：崩溃面消除，旗标说明重新可读。
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8")
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--checkpoint", default="checkpoints/seed_beta.pt")
     parser.add_argument(
