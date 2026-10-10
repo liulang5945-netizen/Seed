@@ -608,6 +608,9 @@ def load_cross_spec_reference(ensemble, ckpt_path: str) -> int:
 
 
 def main():
+    #: 本件向 stdout 打 `⚠️/✅` 这类字形，GBK 控制台上会 `UnicodeEncodeError`（DEBT-G81 普查面）。
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8")
     parser = __import__("argparse").ArgumentParser(description="跨域协作层联合训练")
     parser.add_argument(
         "--neuron-dir",

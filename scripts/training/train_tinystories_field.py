@@ -236,6 +236,9 @@ def generate_sample(model, cfg: Config, enc, prompt="Once upon a time"):
 
 
 def main():
+    #: 本件向 stdout 打 `⚠️/✅`，GBK 控制台上会 `UnicodeEncodeError`（DEBT-G81 普查面）。
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8")
     cfg = Config()
     device = "cpu"
     enc = tiktoken.get_encoding("gpt2")

@@ -202,6 +202,31 @@ def test_the_sealed_mainline_run_set_is_absent_from_the_crash_face() -> None:
     assert payload["crash_face_file_count"] > 0, payload["crash_face_file_count"]
 
 
+def test_the_live_training_face_crash_list_is_down_to_the_library_only() -> None:
+    """㊵-652：三枚入口脚本加守卫后，`scripts/training` 的崩溃面只剩 `utils.py` 一枚——**而且它是库**。
+
+    库里不许改全局 stdout 编码（import 副作用会落到 7 枚调用方上），所以这一枚的修法只能在入口做。
+    谁往那三枚已守卫的入口里删掉守卫，或往 `scripts/training` 的别的入口加字形 print，这一支当场红。
+    """
+
+    payload = MODULE.audit(REPO, "gbk")
+    live = sorted(
+        one["file"] for one in payload["crash_face"] if one["file"].startswith("scripts/training")
+    )
+    assert live == ["scripts/training/utils.py"], live
+    guarded = {
+        one["file"]: one["console_guard"]
+        for one in payload["readings"]
+        if one["file"]
+        in {
+            "scripts/training/train_cross_domain_collab.py",
+            "scripts/training/train_tinystories.py",
+            "scripts/training/train_tinystories_field.py",
+        }
+    }
+    assert len(guarded) == 3 and all(guarded.values()), guarded
+
+
 def test_help_names_every_flag() -> None:
     import subprocess
 
