@@ -1,0 +1,47 @@
+{
+  "format": "taiji-n5-shadow-gate-adjudication-v1",
+  "prereg": "PLAN-N5-02 §2 J-N5b-1／J-N5b-2／J-N5b-3 前半",
+  "arms": {
+    "treated": {
+      "arm": "treated",
+      "checkpoint": "output\\n5d_rebase_treated\\checkpoint.pt",
+      "j_n5b_1": "ran_not_measured",
+      "missing_self_report_keys": [
+        "gate",
+        "shadow_gate_requested",
+        "candidate_gate",
+        "candidate_utility",
+        "candidate_counterfactual_utility"
+      ],
+      "j_n5b_2": "unverified_missing_face"
+    },
+    "control": {
+      "arm": "control",
+      "checkpoint": "output\\n5d_rebase_control\\checkpoint.pt",
+      "j_n5b_1": "ran_not_measured",
+      "missing_self_report_keys": [
+        "gate",
+        "shadow_gate_requested",
+        "candidate_gate",
+        "candidate_utility",
+        "candidate_counterfactual_utility"
+      ],
+      "j_n5b_2": "unverified_missing_face"
+    }
+  },
+  "pairing": {
+    "treated_requested": null,
+    "control_requested": null,
+    "status": "pairing_invalid",
+    "reason": "identical_requested_gate",
+    "j_n5b_3": "invalid"
+  },
+  "metric_lane": {
+    "j_n5b_4": "unverified_no_metric_file",
+    "line": 0.02
+  },
+  "j_n5b_4": "unverified_no_metric_file",
+  "j_n5b_5": "unverified_retention_lane_not_run",
+  "j_n5b_6": "not_adjudicable_until_2_3_4_5_are_all_measured",
+  "rc": 2
+}

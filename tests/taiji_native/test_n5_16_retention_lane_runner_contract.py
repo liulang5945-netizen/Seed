@@ -9,7 +9,10 @@
   缺语料时在花钱前拒绝；单跑面时它不是前置（别造假前置）；
 * 预检读数为"退化"时必须拒绝，且点名是哪一枚键；
 * 缺检查点时 rc=2，并且**不启动任何子进程**（那是"没算"，不是"跑砸了"）；
-* 拒绝清单在 **GBK 控制台**上也要以 rc=2 出得来——上一格它是 rc=1＋traceback，只有起真进程才看得见。
+* 拒绝清单在 **GBK 控制台**上也要以 rc=2 出得来——上一格它是 rc=1＋traceback，只有起真进程才看得见；
+* ㊵-654 加的两枚前置：点名材料若**整体早于该臂运行窗口** ⇒ 记 `substituted` 并在花钱前拒绝（要带
+  `--allow-substituted-consolidation-material` 才放行），以及 G-N5d-4 那道"旗标有没有作用对象"的门
+  必须排在四张面**之前**——它零算力，而 2×13 分钟已经不是零算力了。
 """
 
 from __future__ import annotations
@@ -19,6 +22,7 @@ import json
 import os
 import subprocess
 import sys
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -402,3 +406,109 @@ def test_the_refusal_list_survives_a_gbk_console(tmp_path: Path) -> None:
     assert stdout.count("  - ") == 2, stdout
     #: 拒绝发生在任何写盘之前——出件目录不该存在。
     assert not (tmp_path / "lane").exists(), stdout
+
+
+#: ---------------------------------------------------------------------------
+#: ㊵-654 两枚新前置：材料溯源（④）与 G-N5d-4 自述在场性的门
+
+
+def _night(tmp_path: Path, tag: str, stamp: str) -> Path:
+    """一枚**夜间形状**的件名——溯源只认件名里的 UTC 时间戳，别给假形状。"""
+
+    path = tmp_path / f"corpus-{stamp}-{tag}.jsonl"
+    path.write_text('{"text":"ok"}\n', encoding="utf-8")
+    return path
+
+
+def _arm_with_accounting(tmp_path: Path, arm: str, elapsed_seconds: float) -> Path:
+    """造一臂的落点：`checkpoint.pt` ＋训练器自己的完成记账 `progress_exit.json`。"""
+
+    checkpoint = tmp_path / arm / "checkpoint.pt"
+    checkpoint.parent.mkdir(parents=True, exist_ok=True)
+    checkpoint.write_bytes(b"x")
+    (checkpoint.parent / "progress_exit.json").write_text(
+        json.dumps({"elapsed_seconds": elapsed_seconds, "ticks": 1}), encoding="utf-8"
+    )
+    return checkpoint
+
+
+def test_material_written_inside_the_arms_own_window_is_arm_local(tmp_path: Path) -> None:
+    checkpoint = _arm_with_accounting(tmp_path, "treated", 600.0)
+    stamp = datetime.fromtimestamp(checkpoint.stat().st_mtime - 60, UTC).strftime("%Y%m%dT%H%M%SZ")
+    record = MODULE.consolidation_provenance("treated", checkpoint, [_night(tmp_path, "a1", stamp)])
+    assert record["provenance"] == "arm_local", record
+    assert "newest_material_before_run_utc" not in record, record
+
+
+def test_material_older_than_the_run_is_named_substituted(tmp_path: Path) -> None:
+    checkpoint = _arm_with_accounting(tmp_path, "control", 600.0)
+    record = MODULE.consolidation_provenance(
+        "control", checkpoint, [_night(tmp_path, "b2", "20200101T000000Z")]
+    )
+    assert record["provenance"] == "substituted", record
+    assert record["newest_material_before_run_utc"].startswith("2020-01-01"), record
+
+
+def test_uncomputable_provenance_is_unknown_not_arm_local(tmp_path: Path) -> None:
+    """双向：拿不到窗口／拿不到时间戳，都只能记 `unknown`——把它读成"材料是对的"就是假通过。"""
+
+    orphan = tmp_path / "no_accounting" / "checkpoint.pt"
+    orphan.parent.mkdir(parents=True)
+    orphan.write_bytes(b"x")
+    record = MODULE.consolidation_provenance(
+        "treated", orphan, [_night(tmp_path, "c3", "20200101T000000Z")]
+    )
+    assert record["provenance"] == "unknown", record
+    assert record["run_window_utc"] is None, record
+
+    checkpoint = _arm_with_accounting(tmp_path, "control", 600.0)
+    plain = tmp_path / "hand_collected.jsonl"
+    plain.write_text('{"text":"ok"}\n', encoding="utf-8")
+    bare = MODULE.consolidation_provenance("control", checkpoint, [plain])
+    assert bare["provenance"] == "unknown", bare
+    assert bare["night_timestamps_utc"] == {}, bare
+
+
+def test_substituted_material_refuses_unless_the_caller_signs_it(
+    tmp_path: Path, monkeypatch, capsys
+) -> None:
+    """④ 的拒绝必须在花钱前，且不写盘；显式旗标那条支也要真走一遍（否则它可能永远走不到）。"""
+
+    def _boom(*args: object, **kwargs: object) -> int:
+        raise AssertionError("材料溯源不齐时不许启动任何子进程")
+
+    monkeypatch.setattr(MODULE, "_run", _boom)
+    treated = _arm_with_accounting(tmp_path, "treated", 600.0)
+    control = _arm_with_accounting(tmp_path, "control", 600.0)
+    old = _night(tmp_path, "d4", "20200101T000000Z")
+    argv = [
+        "--treated-checkpoint",
+        str(treated),
+        "--control-checkpoint",
+        str(control),
+        "--out-dir",
+        str(tmp_path / "lane"),
+        "--treated-consolidation-corpus",
+        str(old),
+        "--control-consolidation-corpus",
+        str(old),
+    ]
+    assert MODULE.main(argv + ["--dry-run"]) == 2
+    out = capsys.readouterr().out
+    assert "早于运行窗口" in out, out
+    assert not (tmp_path / "lane").exists(), out
+
+    assert MODULE.main(argv + ["--allow-substituted-consolidation-material", "--dry-run"]) == 0
+    allowed = capsys.readouterr().out
+    assert allowed.count("provenance=substituted") == 2, allowed
+    #: 门排在四张面旁边一起出版——它零算力，所以该在花钱前就说话。
+    assert "gate: $ " in allowed, allowed
+
+
+def test_the_g_n5d_4_gate_names_an_existing_instrument() -> None:
+    """旗标"有请求"不等于"有作用对象"：㊵-654 那次两臂 `n5_shadow` 整块缺席、
+    `should_propose` 真值 0/9,727 ⇒ 两档 238/238 张量逐位相同，配对没有对象，而 2×13 分钟已付。
+    本条只钉"门指向的仪器真的在场"，读数由下一条与真跑负责。"""
+
+    assert (REPO / MODULE.SHADOW_PRESENCE).is_file(), MODULE.SHADOW_PRESENCE
+
