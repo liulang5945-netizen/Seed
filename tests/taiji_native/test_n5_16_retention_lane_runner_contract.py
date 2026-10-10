@@ -134,6 +134,43 @@ def test_a_clean_single_variable_pair_is_accepted() -> None:
     assert MODULE.lineage_refusals(arms, base_checkpoint=BASE, base_sha256=BASE_SHA) == []
 
 
+def test_per_arm_output_sinks_do_not_break_the_single_variable_pair() -> None:
+    """㊵-650 的实测形状：两臂**必须**各写各的档，所以落点不是"第二个变量"。
+
+    ㊵-647 那版把 argv 摘旗标后逐位比较 ⇒ 三枚落点差异也被当成破绽，双臂跑完之后才拦。
+    """
+
+    arms = _arms(
+        COMMON + ["--resume", BASE, "--n5-shadow-gate", "1.0"] + _sinks("treated"),
+        COMMON + ["--resume", BASE] + _sinks("control"),
+    )
+    assert MODULE.lineage_refusals(arms, base_checkpoint=BASE, base_sha256=BASE_SHA) == []
+
+
+def test_two_arms_pointing_at_one_checkpoint_are_refused() -> None:
+    """反向那一支：落点可以不同，但**不许相同**——同档会让第二臂原地覆写第一臂。"""
+
+    shared = ["--checkpoint", "output/shared/checkpoint.pt"]
+    arms = _arms(
+        COMMON + ["--resume", BASE, "--n5-shadow-gate", "1.0"] + shared,
+        COMMON + ["--resume", BASE] + shared,
+    )
+    refusals = MODULE.lineage_refusals(arms, base_checkpoint=BASE, base_sha256=BASE_SHA)
+    assert any("--checkpoint" in row and "落点相同" in row for row in refusals), refusals
+
+
+def _sinks(arm: str) -> list[str]:
+    out = f"output/n5d_rebase_{arm}"
+    return [
+        "--checkpoint",
+        f"{out}/checkpoint.pt",
+        "--progress",
+        f"{out}/progress.json",
+        "--pressure-record",
+        f"{out}/pressure.jsonl",
+    ]
+
+
 def test_a_backslash_written_base_is_the_same_base(tmp_path: Path) -> None:
     """win32 上同一枚基座会被写成 `checkpoints\\x` 或 `checkpoints/x` ⇒ 比较前必须归一。"""
 

@@ -57,6 +57,10 @@ def preflight_refusals(payload: dict[str, Any]) -> list[str]:
 
 
 SINGLE_VARIABLE_FLAGS = ("--n5-shadow-gate",)
+#: 逐臂**必然**不同的三枚落点旗标。它们不参与"单变量"比较，但反过来要查一件真事：
+#: 两臂不许指向同一枚档——那会让第二臂原地覆写第一臂，而 ㊵-647 那版比较把这种差异
+#: 也当成"第二个变量"，于是双臂跑完之后才被本门拦死（㊵-650 的实测形状）。
+ARM_LOCAL_FLAGS = ("--checkpoint", "--progress", "--pressure-record")
 
 
 def corpus_refusals(arm_corpus: dict[str, list[Path]]) -> list[str]:
@@ -126,26 +130,34 @@ def lineage_refusals(
             refusals.append(f"{key} 在两臂间不同 ⇒ 配对的差异不再只有那一枚旗标")
     left, right = treated.get("argv"), control.get("argv")
     if left and right:
-        #: 单变量核对做成"去掉那一枚旗标之后两条 argv 必须逐位相同"，
+        #: 单变量核对做成"去掉那一枚旗标与三枚逐臂落点之后两条 argv 必须逐位相同"，
         #: 而不是"允许若干差异"——后者会把 `--limit 24` 对 `--limit 25` 也放过。
         #: 比较前逐枚归一分隔符（DEBT-I8 那族：win32 路径两种写法指同一枚件）。
-        if [_normalized(tok) for tok in _without_gate(left)] != [
-            _normalized(tok) for tok in _without_gate(right)
+        stripped = SINGLE_VARIABLE_FLAGS + ARM_LOCAL_FLAGS
+        if [_normalized(tok) for tok in _without_gate(left, stripped)] != [
+            _normalized(tok) for tok in _without_gate(right, stripped)
         ]:
             refusals.append(
-                "两臂 argv 去掉 --n5-shadow-gate 之后仍不同 ⇒ 单变量前提破了："
-                f"treated={_without_gate(left)[:8]} control={_without_gate(right)[:8]}"
+                "两臂 argv 去掉旗标与逐臂落点之后仍不同 ⇒ 单变量前提破了："
+                f"treated={_without_gate(left, stripped)[:8]} "
+                f"control={_without_gate(right, stripped)[:8]}"
             )
         if _gate_value(left) == _gate_value(right):
             refusals.append(
                 f"两臂的 --n5-shadow-gate 请求值相同（{_gate_value(left)!r}）⇒ 这一对没有可比的两臂"
             )
+        for flag in ARM_LOCAL_FLAGS:
+            mine, theirs = _value_of(left, flag), _value_of(right, flag)
+            if mine is not None and theirs is not None and _normalized(mine) == _normalized(theirs):
+                refusals.append(
+                    f"{flag}：两臂落点相同（{mine}）⇒ 第二臂会原地覆写第一臂的档，配对里剩下的那一臂不是它自己"
+                )
     return refusals
 
 
-def _without_gate(argv: list[str]) -> list[str]:
+def _without_gate(argv: list[str], flags: tuple[str, ...] = SINGLE_VARIABLE_FLAGS) -> list[str]:
     out = list(argv)
-    for flag in SINGLE_VARIABLE_FLAGS:
+    for flag in flags:
         while flag in out:
             index = out.index(flag)
             del out[index]
@@ -154,11 +166,18 @@ def _without_gate(argv: list[str]) -> list[str]:
     return out
 
 
+def _value_of(argv: list[str], flag: str) -> str | None:
+    if flag in argv:
+        index = argv.index(flag) + 1
+        return str(argv[index]) if index < len(argv) else None
+    return None
+
+
 def _gate_value(argv: list[str]) -> str | None:
     for flag in SINGLE_VARIABLE_FLAGS:
-        if flag in argv:
-            index = argv.index(flag) + 1
-            return str(argv[index]) if index < len(argv) else None
+        value = _value_of(argv, flag)
+        if value is not None:
+            return value
     return None
 
 
