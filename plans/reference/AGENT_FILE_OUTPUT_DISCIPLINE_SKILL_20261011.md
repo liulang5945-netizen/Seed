@@ -50,3 +50,11 @@ WorkBuddy 会话内 Agent 在写文件/建目录/清理场景自动加载该技�
 - `agent_workspace/file-output-discipline.skill`（同内容换扩展名）
 
 存放于 `agent_workspace/`（C 类运行时区，可随时清理）；WorkBuddy 侧安装本体仍在 `~/.workbuddy/skills/file-output-discipline/`。
+
+## frontmatter YAML 修复（2026-10-11 同日三修）
+
+**根因**：description 为未加引号的 plain scalar，值内含英文冒号+空格（`Trigger on: `）——严格 YAML 解析器报 `ScannerError: mapping values are not allowed here`，第三方平台因此拒收；skill-creator 自带校验器为宽松匹配未拦截（**校验绿 ≠ 平台可解析**）。
+
+**修复**：description 改为 ASCII 双引号包裹 + `Trigger on:` 改全角冒号"触发词："（双保险）。验证链：PyYAML strict 解析 OK（keys=name/description）→ description 280 字符（<1024 平台限）→ skill-creator 校验 valid → 重打根级包 → 字节级三向一致（zip=skill=source）。
+
+**教训入库**：skill frontmatter 的 description 值必须引号包裹或杜绝 ASCII `: `；"官方校验通过"不等于"第三方平台 YAML 解析通过"，分发前须用严格解析器（PyYAML）实测。
