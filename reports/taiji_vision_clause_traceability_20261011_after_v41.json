@@ -1,0 +1,607 @@
+{
+  "format": "taiji-vision-clause-traceability-v1",
+  "status": "ok",
+  "doc": "E:\\Seed\\plans\\active\\roadmap\\09_NEXT_MAINLINE_PLAN.md",
+  "reference_dir": "E:\\Seed\\plans\\reference",
+  "clause_rows_parsed": 41,
+  "clauses_required_now": 19,
+  "clauses_with_id_citation": 1,
+  "clauses_with_section_citation": 13,
+  "clauses_unmapped_both": 6,
+  "unmapped_both_list": [
+    "V-11",
+    "V-15",
+    "V-16",
+    "V-17",
+    "V-19",
+    "V-21"
+  ],
+  "clauses_global_or_post_or_optional": 22,
+  "verdicts": {
+    "table_parsed_every_row_has_clause_id": true,
+    "every_required_clause_has_any_citation": false,
+    "every_clause_has_id_level_citation": false
+  },
+  "rows": [
+    {
+      "clause": "V-01",
+      "keywords": "\u76ee\u6807\u5f62\u6001\uff1d\u6301\u7eed\u80fd\u529b\u7cfb\u7edf\uff0c\u975e\u6a21\u5757\u96c6\u5408",
+      "vision_section": "1",
+      "attribution": "\u5168\u5c40",
+      "carrier": "09 \u00a70/\u6536\u5b98\u5b9a\u4e49",
+      "n_codes": [],
+      "required_now": false,
+      "plan_files_scanned": 0,
+      "id_citations": 0,
+      "section_citations": 0,
+      "traceability": "n/a"
+    },
+    {
+      "clause": "V-02",
+      "keywords": "\u5224\u4f18\uff1d\u6574\u6a21\u578b\u80fd\u529b\uff0b\u9002\u5e94\uff0b\u4fdd\u6301\uff0b\u6210\u672c",
+      "vision_section": "1",
+      "attribution": "\u5168\u5c40\u7eaa\u5f8b",
+      "carrier": "09 \u00a75",
+      "n_codes": [],
+      "required_now": false,
+      "plan_files_scanned": 0,
+      "id_citations": 0,
+      "section_citations": 0,
+      "traceability": "n/a"
+    },
+    {
+      "clause": "V-03",
+      "keywords": "\u4e0d\u53d8\u91cf\u56db\u6761\uff08\u8ba4\u77e5/\u6267\u884c\u6240\u6709\u6743\u3001\u5206\u6e90\u3001\u53ef\u6062\u590d\uff09",
+      "vision_section": "1",
+      "attribution": "\u5168\u5c40\u7eaa\u5f8b",
+      "carrier": "09 \u00a75",
+      "n_codes": [],
+      "required_now": false,
+      "plan_files_scanned": 0,
+      "id_citations": 0,
+      "section_citations": 0,
+      "traceability": "n/a"
+    },
+    {
+      "clause": "V-04",
+      "keywords": "\u53ef\u66ff\u6362\u9879\u6e05\u5355\uff0c\u65e7\u5185\u6838\u4f4d\u7f6e\u7531\u6bd4\u8f83\u51b3\u5b9a",
+      "vision_section": "1",
+      "attribution": "\u5168\u5c40\u7eaa\u5f8b",
+      "carrier": "09 \u00a75",
+      "n_codes": [],
+      "required_now": false,
+      "plan_files_scanned": 0,
+      "id_citations": 0,
+      "section_citations": 0,
+      "traceability": "n/a"
+    },
+    {
+      "clause": "V-05",
+      "keywords": "\u4e03\u73af\u6574\u4f53\u8ba1\u7b97\u94fe",
+      "vision_section": "2",
+      "attribution": "\u5168\u5c40\u5b9a\u4f4d",
+      "carrier": "09 \u00a71.2",
+      "n_codes": [],
+      "required_now": false,
+      "plan_files_scanned": 0,
+      "id_citations": 0,
+      "section_citations": 0,
+      "traceability": "n/a"
+    },
+    {
+      "clause": "V-06",
+      "keywords": "\u4e03\u5c42\u6240\u6709\u6743\u8868",
+      "vision_section": "2",
+      "attribution": "\u51fa\u53e3\u540e\uff08\u540c bundle \u9636\u6bb5\uff09",
+      "carrier": "\u2014",
+      "n_codes": [],
+      "required_now": false,
+      "plan_files_scanned": 0,
+      "id_citations": 0,
+      "section_citations": 0,
+      "traceability": "n/a"
+    },
+    {
+      "clause": "V-07",
+      "keywords": "bundle \u9010\u8f93\u5165\u8ffd\u8e2a\u5b9e\u9645\u52a0\u8f7d\u6a21\u5757",
+      "vision_section": "2",
+      "attribution": "\u51fa\u53e3\u540e\uff08\u00a719.8 \u4ea4\u4ed8\uff09",
+      "carrier": "\u2014",
+      "n_codes": [],
+      "required_now": false,
+      "plan_files_scanned": 0,
+      "id_citations": 0,
+      "section_citations": 0,
+      "traceability": "n/a"
+    },
+    {
+      "clause": "V-08",
+      "keywords": "\u7cbe\u786e\u5185\u5bb9\uff1d\u8fde\u7eed\u8868\u793a\uff0b\u539f\u59cb\u5f15\u7528\u53cc\u901a\u9053",
+      "vision_section": "3.1",
+      "attribution": "**N1**",
+      "carrier": "09 \u6458\u8981\uff1b\u5f85 PLAN-N1 \u5c55\u5f00",
+      "n_codes": [
+        "N1"
+      ],
+      "required_now": true,
+      "plan_files_scanned": 7,
+      "id_citations": 0,
+      "section_citations": 10,
+      "traceability": "section_only"
+    },
+    {
+      "clause": "V-09",
+      "keywords": "\u6982\u5ff5\u805a\u7c7b\u4e09\u951a\u70b9\uff08deferred\uff09",
+      "vision_section": "3.1b",
+      "attribution": "\u5907\u9009\uff08\u4e0d\u9884\u652f\uff09",
+      "carrier": "\u2014",
+      "n_codes": [],
+      "required_now": false,
+      "plan_files_scanned": 0,
+      "id_citations": 0,
+      "section_citations": 0,
+      "traceability": "n/a"
+    },
+    {
+      "clause": "V-10",
+      "keywords": "\u4e03\u79cd\u72b6\u6001\u89c4\u683c \u03b8/h/w/A/E/\u03c6/\u5143\u4fe1\u606f",
+      "vision_section": "3.2",
+      "attribution": "**N2**\uff08checkpoint \u5408\u540c\uff09",
+      "carrier": "09 \u6458\u8981\uff1b\u5f85 PLAN-N2 \u5c55\u5f00",
+      "n_codes": [
+        "N2"
+      ],
+      "required_now": true,
+      "plan_files_scanned": 7,
+      "id_citations": 0,
+      "section_citations": 4,
+      "traceability": "section_only"
+    },
+    {
+      "clause": "V-11",
+      "keywords": "\u4fe1\u606f\u901a\u8def\u4e94\u89d2\u8272 Q/E/M/W/R",
+      "vision_section": "18.2",
+      "attribution": "**N1**",
+      "carrier": "09 \u6458\u8981\uff1b\u5f85 PLAN-N1 \u5c55\u5f00",
+      "n_codes": [
+        "N1"
+      ],
+      "required_now": true,
+      "plan_files_scanned": 7,
+      "id_citations": 0,
+      "section_citations": 0,
+      "traceability": "unmapped"
+    },
+    {
+      "clause": "V-12",
+      "keywords": "\u69fd\u4e0e\u8def\u7531\uff08\u5185\u5bb9\u5bfb\u5740\uff0b\u5e72\u6270/\u5360\u6ee1\u9a8c\u6536\uff09",
+      "vision_section": "3.3",
+      "attribution": "**N4**",
+      "carrier": "09 \u6458\u8981\uff1b\u5f85 PLAN-N4 \u5c55\u5f00",
+      "n_codes": [
+        "N4"
+      ],
+      "required_now": true,
+      "plan_files_scanned": 8,
+      "id_citations": 0,
+      "section_citations": 1,
+      "traceability": "section_only"
+    },
+    {
+      "clause": "V-13",
+      "keywords": "\u4e09\u76ee\u6807\u5206\u79bb\uff08\u4fdd\u7559/\u53d6\u56de/\u4fe1\u7528\uff09",
+      "vision_section": "4",
+      "attribution": "**N1**\uff08S1 \u8bbe\u8ba1\u7ea6\u675f\uff09",
+      "carrier": "09 \u6458\u8981\uff1b\u5f85 PLAN-N1 \u5c55\u5f00",
+      "n_codes": [
+        "N1"
+      ],
+      "required_now": true,
+      "plan_files_scanned": 7,
+      "id_citations": 0,
+      "section_citations": 21,
+      "traceability": "section_only"
+    },
+    {
+      "clause": "V-14",
+      "keywords": "\u591a\u65f6\u95f4\u5c3a\u5ea6\u95e8\u63a7\u66f4\u65b0\uff0c\u56fa\u5b9a \u03c4 \u5bf9\u7167",
+      "vision_section": "4",
+      "attribution": "**N1/N4**",
+      "carrier": "\u5f85 PLAN \u5c55\u5f00",
+      "n_codes": [
+        "N1",
+        "N4"
+      ],
+      "required_now": true,
+      "plan_files_scanned": 15,
+      "id_citations": 0,
+      "section_citations": 28,
+      "traceability": "section_only"
+    },
+    {
+      "clause": "V-15",
+      "keywords": "\u4e09\u7c7b\u8bb0\u5fc6\u804c\u8d23\u5206\u5de5",
+      "vision_section": "5.1",
+      "attribution": "**N4**",
+      "carrier": "09 \u6458\u8981\uff1b\u5f85 PLAN-N4 \u5c55\u5f00",
+      "n_codes": [
+        "N4"
+      ],
+      "required_now": true,
+      "plan_files_scanned": 8,
+      "id_citations": 0,
+      "section_citations": 0,
+      "traceability": "unmapped"
+    },
+    {
+      "clause": "V-16",
+      "keywords": "\u5173\u8054\u8bb0\u5fc6\u95e8\u63a7 delta \u673a\u5236",
+      "vision_section": "5.2",
+      "attribution": "**N4**",
+      "carrier": "09 \u6458\u8981\uff1b\u5f85 PLAN-N4 \u5c55\u5f00",
+      "n_codes": [
+        "N4"
+      ],
+      "required_now": true,
+      "plan_files_scanned": 8,
+      "id_citations": 0,
+      "section_citations": 0,
+      "traceability": "unmapped"
+    },
+    {
+      "clause": "V-17",
+      "keywords": "\u5199\u5165\u4e0e\u5de9\u56fa\u5408\u540c\uff08E/A/\u03c6\uff1bE \u5220\u9664\u2260\u03b8 \u5220\u9664\uff09",
+      "vision_section": "5.3",
+      "attribution": "**N2**",
+      "carrier": "09 \u6458\u8981\uff1b\u5f85 PLAN-N2 \u5c55\u5f00",
+      "n_codes": [
+        "N2"
+      ],
+      "required_now": true,
+      "plan_files_scanned": 7,
+      "id_citations": 0,
+      "section_citations": 0,
+      "traceability": "unmapped"
+    },
+    {
+      "clause": "V-18",
+      "keywords": "\u4e16\u754c\u6a21\u578b\u56db\u63a5\u53e3\uff0b\u77ed\u7a0b\u5c55\u5f00",
+      "vision_section": "6",
+      "attribution": "**N5**",
+      "carrier": "09 \u6458\u8981\uff1b\u5f85 PLAN-N5 \u5c55\u5f00",
+      "n_codes": [
+        "N5"
+      ],
+      "required_now": true,
+      "plan_files_scanned": 12,
+      "id_citations": 0,
+      "section_citations": 19,
+      "traceability": "section_only"
+    },
+    {
+      "clause": "V-19",
+      "keywords": "\u56de\u7b54\u8ba1\u7b97\u94fe\u4e94\u73af",
+      "vision_section": "7.1",
+      "attribution": "**N1**",
+      "carrier": "09 \u6458\u8981\uff1b\u5f85 PLAN-N1 \u5c55\u5f00",
+      "n_codes": [
+        "N1"
+      ],
+      "required_now": true,
+      "plan_files_scanned": 7,
+      "id_citations": 0,
+      "section_citations": 0,
+      "traceability": "unmapped"
+    },
+    {
+      "clause": "V-20",
+      "keywords": "\u4fe1\u7528\u4e94\u539f\u5219\uff08\u00a78.6\uff09",
+      "vision_section": "8.6",
+      "attribution": "**N1**",
+      "carrier": "09 \u6458\u8981\uff1b\u5f85 PLAN-N1 \u5c55\u5f00",
+      "n_codes": [
+        "N1"
+      ],
+      "required_now": true,
+      "plan_files_scanned": 7,
+      "id_citations": 0,
+      "section_citations": 7,
+      "traceability": "section_only"
+    },
+    {
+      "clause": "V-21",
+      "keywords": "\u4e09\u5c42\u66f4\u65b0\u67b6\u6784\uff08\u72b6\u6001/\u03c6/\u03b8\uff09",
+      "vision_section": "19.6",
+      "attribution": "**N2/N5**",
+      "carrier": "09 \u6458\u8981\uff1b\u5f85 PLAN \u5c55\u5f00",
+      "n_codes": [
+        "N2",
+        "N5"
+      ],
+      "required_now": true,
+      "plan_files_scanned": 19,
+      "id_citations": 0,
+      "section_citations": 0,
+      "traceability": "unmapped"
+    },
+    {
+      "clause": "V-22",
+      "keywords": "support/query \u9002\u5e94\u8bad\u7ec3\u539f\u5219",
+      "vision_section": "8.8",
+      "attribution": "**N5**",
+      "carrier": "09 \u6458\u8981\uff1b\u5f85 PLAN-N5 \u5c55\u5f00",
+      "n_codes": [
+        "N5"
+      ],
+      "required_now": true,
+      "plan_files_scanned": 12,
+      "id_citations": 0,
+      "section_citations": 1,
+      "traceability": "section_only"
+    },
+    {
+      "clause": "V-23",
+      "keywords": "\u4e94\u7c7b\u53d1\u5c55\u7ecf\u5386",
+      "vision_section": "17.2",
+      "attribution": "**N2/N3**",
+      "carrier": "\u5f85 PLAN \u5c55\u5f00",
+      "n_codes": [
+        "N2",
+        "N3"
+      ],
+      "required_now": true,
+      "plan_files_scanned": 22,
+      "id_citations": 0,
+      "section_citations": 1,
+      "traceability": "section_only"
+    },
+    {
+      "clause": "V-24",
+      "keywords": "\u65b9\u6848 A\uff08\u9010\u4f4d\u7f6e\u8bc1\u636e\u8bb0\u5fc6\uff09",
+      "vision_section": "15.3",
+      "attribution": "**N1/N4** \u627f\u63a5",
+      "carrier": "09 \u00a71.1",
+      "n_codes": [
+        "N1",
+        "N4"
+      ],
+      "required_now": true,
+      "plan_files_scanned": 15,
+      "id_citations": 0,
+      "section_citations": 2,
+      "traceability": "section_only"
+    },
+    {
+      "clause": "V-25",
+      "keywords": "\u65b9\u6848 B\uff08\u5bf9\u8c61\u2014\u4e8b\u4ef6\u2014\u5173\u7cfb\uff09",
+      "vision_section": "15.4",
+      "attribution": "\u5907\u9009\uff08\u51fa\u53e3\u540e\u7ec4\u5408\u8bc4\u5ba1\uff09",
+      "carrier": "\u2014",
+      "n_codes": [],
+      "required_now": false,
+      "plan_files_scanned": 0,
+      "id_citations": 0,
+      "section_citations": 0,
+      "traceability": "n/a"
+    },
+    {
+      "clause": "V-26",
+      "keywords": "\u65b9\u6848 C\uff08\u9012\u5f52\u6f5c\u7a7a\u95f4\u63a8\u7406\uff09",
+      "vision_section": "15.5",
+      "attribution": "\u5907\u9009",
+      "carrier": "\u2014",
+      "n_codes": [],
+      "required_now": false,
+      "plan_files_scanned": 0,
+      "id_citations": 0,
+      "section_citations": 0,
+      "traceability": "n/a"
+    },
+    {
+      "clause": "V-27",
+      "keywords": "\u65b9\u6848 D\uff08\u884c\u52a8\u6761\u4ef6\u4e16\u754c\u6a21\u578b\uff09",
+      "vision_section": "15.6",
+      "attribution": "\u5907\u9009\uff08N5 \u540e\u82e5\u884c\u52a8\u7ebf\u5f00\u542f\u518d\u8bc4\uff09",
+      "carrier": "\u2014",
+      "n_codes": [
+        "N5"
+      ],
+      "required_now": false,
+      "plan_files_scanned": 12,
+      "id_citations": 0,
+      "section_citations": 0,
+      "traceability": "n/a"
+    },
+    {
+      "clause": "V-28",
+      "keywords": "\u65b9\u6848 E\uff08\u5143\u8bad\u7ec3\u5feb\u6162\u5b66\u4e60\uff09",
+      "vision_section": "15.7",
+      "attribution": "\u5907\u9009\uff08N5 \u4e3a\u5176\u534f\u8bae\u9762\uff09",
+      "carrier": "\u2014",
+      "n_codes": [
+        "N5"
+      ],
+      "required_now": false,
+      "plan_files_scanned": 12,
+      "id_citations": 0,
+      "section_citations": 0,
+      "traceability": "n/a"
+    },
+    {
+      "clause": "V-29",
+      "keywords": "\u7ec4\u5408\u51c6\u5165\u6700\u5c0f\u5951\u7ea6",
+      "vision_section": "15.2",
+      "attribution": "\u51fa\u53e3\u540e",
+      "carrier": "\u2014",
+      "n_codes": [],
+      "required_now": false,
+      "plan_files_scanned": 0,
+      "id_citations": 0,
+      "section_citations": 0,
+      "traceability": "n/a"
+    },
+    {
+      "clause": "V-30",
+      "keywords": "\u56db\u79cd\u81ea\u4e3b\u884c\u4e3a\u8868\uff08\u5524\u9192/\u7761\u7720/\u68a6\u5883/\u73a9\u800d\uff09",
+      "vision_section": "10",
+      "attribution": "**N5**\uff08\u9996\u8f6e\u4e24\u884c\uff09",
+      "carrier": "09 \u6458\u8981\uff1b\u5f85 PLAN-N5 \u5c55\u5f00",
+      "n_codes": [
+        "N5"
+      ],
+      "required_now": true,
+      "plan_files_scanned": 12,
+      "id_citations": 0,
+      "section_citations": 2,
+      "traceability": "section_only"
+    },
+    {
+      "clause": "V-31",
+      "keywords": "\u7ed3\u6784\u6210\u957f\u534f\u8bae\uff08shadow\u2192\u8d21\u732e\u2192\u4fdd\u6301\u2192\u51c6\u5165\uff09",
+      "vision_section": "9",
+      "attribution": "**N5**",
+      "carrier": "09 \u6458\u8981\uff1b\u5f85 PLAN-N5 \u5c55\u5f00",
+      "n_codes": [
+        "N5"
+      ],
+      "required_now": true,
+      "plan_files_scanned": 12,
+      "id_citations": 0,
+      "section_citations": 8,
+      "traceability": "section_only"
+    },
+    {
+      "clause": "V-32",
+      "keywords": "\u4e94\u7c7b\u5e76\u884c\u65b9\u5411\uff0b\u5165\u573a\u4fe1\u53f7",
+      "vision_section": "11",
+      "attribution": "\u51fa\u53e3\u540e\uff08\u673a\u5668\u52a0\u901f\u70b9\u2461\u5de5\u7a0b\u9762\uff09",
+      "carrier": "\u2014",
+      "n_codes": [],
+      "required_now": false,
+      "plan_files_scanned": 0,
+      "id_citations": 0,
+      "section_citations": 0,
+      "traceability": "n/a"
+    },
+    {
+      "clause": "V-33",
+      "keywords": "\u5feb\u7167\u5408\u540c\uff08\u96f6\u6b65\u4fdd\u5b58/\u65b0\u8fdb\u7a0b\u6062\u590d\uff09",
+      "vision_section": "12",
+      "attribution": "\u5168\u5c40\u7eaa\u5f8b",
+      "carrier": "09 \u00a75",
+      "n_codes": [],
+      "required_now": false,
+      "plan_files_scanned": 0,
+      "id_citations": 0,
+      "section_citations": 0,
+      "traceability": "n/a"
+    },
+    {
+      "clause": "V-34",
+      "keywords": "V0\u2013V3 \u539f\u578b\u6210\u719f\u5ea6\u5206\u7ea7",
+      "vision_section": "13",
+      "attribution": "\u5168\u5c40\u7eaa\u5f8b",
+      "carrier": "09 \u00a75",
+      "n_codes": [],
+      "required_now": false,
+      "plan_files_scanned": 0,
+      "id_citations": 0,
+      "section_citations": 0,
+      "traceability": "n/a"
+    },
+    {
+      "clause": "V-35",
+      "keywords": "\u5931\u8d25\u8def\u5f84\u5206\u6d41\u4e94\u6761",
+      "vision_section": "13",
+      "attribution": "\u5168\u5c40\u7eaa\u5f8b",
+      "carrier": "09 \u00a74",
+      "n_codes": [],
+      "required_now": false,
+      "plan_files_scanned": 0,
+      "id_citations": 0,
+      "section_citations": 0,
+      "traceability": "n/a"
+    },
+    {
+      "clause": "V-36",
+      "keywords": "\u5171\u540c\u6807\u5c3a\u516b\u9879\u8bc4\u6d4b\u5408\u540c",
+      "vision_section": "16.1",
+      "attribution": "\u5168\u5c40\u7eaa\u5f8b",
+      "carrier": "09 \u00a75",
+      "n_codes": [],
+      "required_now": false,
+      "plan_files_scanned": 0,
+      "id_citations": 0,
+      "section_citations": 0,
+      "traceability": "n/a"
+    },
+    {
+      "clause": "V-37",
+      "keywords": "\u4e5d\u4e2a\u53ef\u66ff\u6362\u8bbe\u8ba1\u53d8\u91cf",
+      "vision_section": "18.3",
+      "attribution": "\u5404 N \u9879\u9884\u6ce8\u518c\u7684\u8bbe\u8ba1\u7a7a\u95f4",
+      "carrier": "\u5f85\u5404 PLAN \u5c55\u5f00",
+      "n_codes": [],
+      "required_now": false,
+      "plan_files_scanned": 0,
+      "id_citations": 0,
+      "section_citations": 0,
+      "traceability": "n/a"
+    },
+    {
+      "clause": "V-38",
+      "keywords": "\u516d\u95ee\u9898\u8bbe\u8ba1\u5b8c\u6210\u5ea6",
+      "vision_section": "18.8",
+      "attribution": "\u5168\u5c40\u7eaa\u5f8b",
+      "carrier": "09 \u00a75",
+      "n_codes": [],
+      "required_now": false,
+      "plan_files_scanned": 0,
+      "id_citations": 0,
+      "section_citations": 0,
+      "traceability": "n/a"
+    },
+    {
+      "clause": "V-39",
+      "keywords": "\u4e94\u7ea7\u6f14\u8fdb\u4f9d\u8d56",
+      "vision_section": "17.3",
+      "attribution": "\u5168\u5c40\u5b9a\u4f4d",
+      "carrier": "09 \u00a71.2",
+      "n_codes": [],
+      "required_now": false,
+      "plan_files_scanned": 0,
+      "id_citations": 0,
+      "section_citations": 0,
+      "traceability": "n/a"
+    },
+    {
+      "clause": "V-40",
+      "keywords": "\u591a\u6a21\u6001\u67b6\u6784\uff08\u4e13\u7528\u7f16\u7801\uff0b\u5171\u4eab\u4fe1\u5ff5\uff09",
+      "vision_section": "20",
+      "attribution": "\u51fa\u53e3\u540e",
+      "carrier": "\u2014",
+      "n_codes": [],
+      "required_now": false,
+      "plan_files_scanned": 0,
+      "id_citations": 0,
+      "section_citations": 0,
+      "traceability": "n/a"
+    },
+    {
+      "clause": "V-41",
+      "keywords": "\u4fe1\u606f\u6cbb\u7406\uff08\u56db\u5224\u5b9a\uff0b\u5206\u5c42\u51c6\u5165\uff09",
+      "vision_section": "21",
+      "attribution": "**N5** \u89e6\u53d1\u751f\u6548\uff1b\u5168\u5c40\u7ea6\u675f",
+      "carrier": "09 \u00a75",
+      "n_codes": [
+        "N5"
+      ],
+      "required_now": true,
+      "plan_files_scanned": 12,
+      "id_citations": 3,
+      "section_citations": 3,
+      "traceability": "id"
+    }
+  ],
+  "reading_limit": "this measures TRACEABILITY, not semantic digestion: a clause may already be fully expanded in a PLAN file by an author who wrote neither the V-id nor the section anchor, and that counts as unmapped (the correct action is to register or expand, not to declare failure). Conversely a section-anchor hit does NOT prove the clause was expanded, because one VISION section can carry several clauses. Worse, the anchor string is AMBIGUOUS ACROSS DOCUMENTS: `S5.1` inside 07_MINI_MODEL_DELIVERY is that doc's own CAP-0 section, not VISION 5.1, so section_citations is an upper bound and any claim built on it must name the citing sentence (measured 2026-10-11: the seven unmapped clauses' anchors hit 1-8 other docs, several of them false). Counts are taken over the PLAN files attributed to that clause's N-code only, so a clause discussed in another line's file is not credited here."
+}
