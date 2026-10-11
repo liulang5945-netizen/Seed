@@ -1,0 +1,129 @@
+{
+  "format": "taiji-episodic-read-sharing-face-v1",
+  "debts": [
+    "DEBT-G106 修法③",
+    "DEBT-G105 修法③"
+  ],
+  "face": "tracked .py（`git ls-files -- *.py`），按 AST 接收者类型分派，不靠裸 grep",
+  "files_parsed": 1960,
+  "read_site_count": 11,
+  "read_sites": [
+    {
+      "file": "scripts/training/eval_taiji_p4_capacity_procedural.py",
+      "line": 60,
+      "method": "retrieve",
+      "function": "evaluate_capacity",
+      "episode_id_mentioning": true,
+      "source": "latest_hits = store.retrieve(latest_cue, limit=1)"
+    },
+    {
+      "file": "scripts/training/eval_taiji_p4_capacity_procedural.py",
+      "line": 124,
+      "method": "retrieve",
+      "function": "_episodic_nearest_accuracy",
+      "episode_id_mentioning": false,
+      "source": "hits = store.retrieve(cue, limit=1)"
+    },
+    {
+      "file": "scripts/training/eval_taiji_p4_semantic_consolidation.py",
+      "line": 50,
+      "method": "retrieve",
+      "function": "_nearest_episode_error",
+      "episode_id_mentioning": false,
+      "source": "hit = store.retrieve(cue, limit=1)"
+    },
+    {
+      "file": "scripts/training/eval_taiji_p4_semantic_scale.py",
+      "line": 76,
+      "method": "retrieve",
+      "function": "evaluate_scale",
+      "episode_id_mentioning": true,
+      "source": "nearest = store.retrieve(query, limit=1)"
+    },
+    {
+      "file": "scripts/training/measure_taiji_n4_addressing_surface.py",
+      "line": 168,
+      "method": "retrieve",
+      "function": "measure",
+      "episode_id_mentioning": true,
+      "source": "hits = store.retrieve(cue, limit=limit)"
+    },
+    {
+      "file": "taiji/adapter.py",
+      "line": 10991,
+      "method": "retrieve",
+      "function": "observe",
+      "episode_id_mentioning": true,
+      "source": "for hit in self._episodic_memory.retrieve(features, limit=3)"
+    },
+    {
+      "file": "tests/taiji_native/test_episodic_memory_contract.py",
+      "line": 39,
+      "method": "retrieve",
+      "function": "test_episodic_memory_retrieval_is_content_addressed_and_checkpointable",
+      "episode_id_mentioning": false,
+      "source": "hits = store.retrieve(torch.tensor([0.9, 0.1]), limit=2)"
+    },
+    {
+      "file": "tests/taiji_native/test_n2_06_episodic_write_contract.py",
+      "line": 283,
+      "method": "retrieve",
+      "function": "test_orthogonal_and_zero_cues_score_zero_and_cannot_win_a_ranking",
+      "episode_id_mentioning": true,
+      "source": "hits = store.retrieve(torch.tensor(noise), limit=4)"
+    },
+    {
+      "file": "tests/taiji_native/test_n2_06_episodic_write_contract.py",
+      "line": 41,
+      "method": "retrieve",
+      "function": "_ids",
+      "episode_id_mentioning": false,
+      "source": "hit.record.memory_id for hit in store.retrieve(torch.tensor([1.0, 0.0, 0.0, 0.0]), limit=8)"
+    },
+    {
+      "file": "tests/taiji_native/test_n2_06_episodic_write_contract.py",
+      "line": 248,
+      "method": "retrieve",
+      "function": "test_contradictory_facts_about_one_cue_stay_two_records_not_a_silent_merge",
+      "episode_id_mentioning": true,
+      "source": "for hit in store.retrieve(torch.tensor(cue), limit=4)"
+    },
+    {
+      "file": "tests/taiji_native/test_n2_06_episodic_write_contract.py",
+      "line": 305,
+      "method": "retrieve",
+      "function": "test_retrieval_ignores_episode_boundaries_documented_not_endorsed",
+      "episode_id_mentioning": true,
+      "source": "assert [hit.record.episode_id for hit in store.retrieve(torch.tensor(cue), limit=4)] == ["
+    }
+  ],
+  "reads_mentioning_episode_id": 7,
+  "reads_in_product_default_chain": 1,
+  "write_site_count": 44,
+  "synthetic_record_sites": 3,
+  "files_that_both_write_and_construct_synthetic_records": [
+    "scripts/training/eval_taiji_p4_capacity_procedural.py",
+    "scripts/training/eval_taiji_p4_episodic_recall.py",
+    "scripts/training/eval_taiji_p4_semantic_scale.py"
+  ],
+  "synthetic_record_files": [
+    "scripts/training/eval_taiji_p4_capacity_procedural.py",
+    "scripts/training/eval_taiji_p4_episodic_recall.py",
+    "scripts/training/eval_taiji_p4_semantic_scale.py"
+  ],
+  "verdicts": {
+    "someone_in_product_chain_reads_the_store": true,
+    "retrieve_signature_has_no_episode_param": true,
+    "synthetic_material_reaches_the_store": true
+  },
+  "coverage_gap": {
+    "why_this_list_is_not_exhaustive": "多数 eval 脚本把 cue 经变量绑好再传进构造式（`cue=cue.detach().clone()`／`cue=bits + torch.randn(...)`／`cue=pattern`），静态文件级标记查不到那条链",
+    "authoritative_enumeration": "DEBT-G105 本行的 12 文件／13 处是人工逐处核过的清单，本件的计数不替代它，也不许被读成「其余那些不是合成材料」"
+  },
+  "limits": [
+    "`episode_id_mentioning` 是**弱信号**：函数体提过 episode_id 不等于读取时按它过滤，所以会话闸那条结论按 retrieve 的**签名**判（`retrieve_signature_has_no_episode_param`），调用点的提及数只作分布披露",
+    "合成材料的对账是**文件级共现**（既写进 E 存储、又构造过带合成 cue 的 Record），不是调用路径证明——这些脚本里 record 常由另一个函数造好再传进来，逐点链归属超出静态读的能力，所以清单只说「这些文件里有合成材料进了 E」，不说「这条读数一定由它产出」",
+    "标签本轮一律不改（DEBT-G105 的代价是历史读数不可比，属 owner）"
+  ],
+  "started_utc": "2026-10-11T10:19:24Z"
+}
