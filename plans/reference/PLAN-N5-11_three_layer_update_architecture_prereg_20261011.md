@@ -31,7 +31,7 @@ V-17（§5.3）是**写入合同**——谁可以写什么、写错了怎么撤�
 | 4 | 候选更新 | `propose_structural_candidate_from_pressure`、`propose_region_split_from_error`、`propose_unit_add`（均只 propose） | **有承载** |
 | 5 | 行为与保持检查 | 保持侧配对件 `taiji-n2-04-retention-pair-v1`＋判读器 `scripts/training/adjudicate_taiji_n2_04_retention_pair.py`；能力侧＝`SeedJudge` 的成句与严格真命中两把尺（口径分列，不许互换） | **有承载** |
 | 6 | 接受或回退 | `TaijiConsolidation.accepted`（计数）、`can_promote`、回退＝`restore_native`／`SeedRuntime.load` | **有承载** |
-| 7 | **记录实际更新对象** | 唯一候选是那枚 `last_decision` 键，而它㊵-570 起现读至今**从未发生**（写侧存在、消费侧为零） | **未承载** ⇒ 由 J-N5k-3 判成 `update_object_ledger_absent`，这是本件预期最红的一格 |
+| 7 | **记录实际更新对象** | 唯一候选是那枚 `last_decision` 键，而它㊵-570 起现读至今**从未发生**（写侧存在、消费侧为零） | **未承载** ⇒ 由 J-N5k-3 判成 `update_object_ledger_absent`，这是本件预期最红的一格 |〔2026-10-11 ㊵-699 就地限定：本行「消费侧为零」按**全仓**读不成立、按**默认装配的训练链**读成立。现读三层＝生产者 property `taiji/adaptive_residual_growth.py:385` ⇒ 同值别名 property `taiji/model.py:903-908` ⇒ 第三层消费者（读了以后带动作）`taiji/model.py:968`，而后者接到训练链上只在 `--n5-shadow`（`train_seed_corpus.py:1144`＝`action="store_true"`，默认关）时可达 ⇒ 本格的判级依据从「没有消费者」改窄成「默认装配下没有消费者」，**`update_object_ledger_absent` 的取值不变、只有理由变窄**（已冻判据不追改）；若将来把 `--n5-shadow` 转成默认位，本格必须重算。分层与可达性两列的出处见 08 ㊵-699 与 `PLAN-N1-03` §4 的同日更正。〕
 
 **防自证学习一行（VISION §19.6 的禁令）**：`EpisodicField.PROVENANCE_KINDS` 的四枚取值是
 `("experienced", "imagined", "replayed", "external")`，**没有 `generated`** ⇒ 今天自生成答案写回时
