@@ -1,0 +1,105 @@
+{
+  "format": "taiji-contention-ratio-v1",
+  "status": "ok",
+  "probe": "E:\\Seed\\scripts\\training\\audit_taiji_console_glyph_encodability.py",
+  "probe_args": [],
+  "repeats": 3,
+  "quiet_seconds": [
+    7.09,
+    7.005,
+    7.338
+  ],
+  "plus_one_seconds": [
+    8.369,
+    8.115,
+    8.292
+  ],
+  "median_quiet_seconds": 7.09,
+  "median_plus_one_seconds": 8.292,
+  "ratio_plus_over_quiet": 1.1696,
+  "competitor_pids": [
+    9552,
+    9164,
+    8128
+  ],
+  "competitor_lifetime_seconds": 900,
+  "load_face_by_run": {
+    "quiet": [
+      {
+        "logical_cpus": 24,
+        "system_cpu_percent": 7.9,
+        "python_process_count": 2,
+        "python_processes_burning_cpu": 0
+      },
+      {
+        "logical_cpus": 24,
+        "system_cpu_percent": 4.4,
+        "python_process_count": 2,
+        "python_processes_burning_cpu": 0
+      },
+      {
+        "logical_cpus": 24,
+        "system_cpu_percent": 7.2,
+        "python_process_count": 2,
+        "python_processes_burning_cpu": 1
+      },
+      {
+        "logical_cpus": 24,
+        "system_cpu_percent": 12.1,
+        "python_process_count": 2,
+        "python_processes_burning_cpu": 1
+      },
+      {
+        "logical_cpus": 24,
+        "system_cpu_percent": 3.4,
+        "python_process_count": 2,
+        "python_processes_burning_cpu": 0
+      },
+      {
+        "logical_cpus": 24,
+        "system_cpu_percent": 2.8,
+        "python_process_count": 2,
+        "python_processes_burning_cpu": 0
+      }
+    ],
+    "plus_one": [
+      {
+        "logical_cpus": 24,
+        "system_cpu_percent": 10.3,
+        "python_process_count": 3,
+        "python_processes_burning_cpu": 1
+      },
+      {
+        "logical_cpus": 24,
+        "system_cpu_percent": 7.6,
+        "python_process_count": 3,
+        "python_processes_burning_cpu": 1
+      },
+      {
+        "logical_cpus": 24,
+        "system_cpu_percent": 11.9,
+        "python_process_count": 3,
+        "python_processes_burning_cpu": 1
+      },
+      {
+        "logical_cpus": 24,
+        "system_cpu_percent": 13.2,
+        "python_process_count": 3,
+        "python_processes_burning_cpu": 1
+      },
+      {
+        "logical_cpus": 24,
+        "system_cpu_percent": 15.8,
+        "python_process_count": 3,
+        "python_processes_burning_cpu": 1
+      },
+      {
+        "logical_cpus": 24,
+        "system_cpu_percent": 9.3,
+        "python_process_count": 3,
+        "python_processes_burning_cpu": 1
+      }
+    ]
+  },
+  "reading_limit": "the quiet face is NOT an idle machine: foreign processes were still burning cores during it (see load_face_by_run). This is the marginal effect of adding one competing core to whatever was already running, on one single-threaded AST-bound probe only. It is a sensitivity, not a calibration curve, so it must not be used to restate any wall-clock number already in the ledger."
+}

@@ -52,5 +52,7 @@ def reference_text(path: Path) -> str:
         )
     shown = _git("show", f"{deleted}^:{relpath}")
     if not shown.strip():
-        raise AssertionError(f"git show {deleted}^:{relpath} 取回空文 ⇒ 取法失效，不许当「该件无内容」")
+        raise AssertionError(
+            f"git show {deleted}^:{relpath} 取回空文 ⇒ 取法失效，不许当「该件无内容」"
+        )
     return shown

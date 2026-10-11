@@ -90,7 +90,11 @@ def preflight(
     #: 题集之外还要核**基座本身**：before 面在 `identity` 里声明了它当时吃的 checkpoint 字节摘要，
     #: 而配对的全部意义在于"after 吃的是同一枚基座续训出来的"。基座若被覆写，配对当场失去依据，
     #: 而这件事今天在盘上可查（不必等四张面齐）。
-    declared_ck = cap0.get("identity", {}).get("checkpoint_sha256") if isinstance(cap0.get("identity"), dict) else None
+    declared_ck = (
+        cap0.get("identity", {}).get("checkpoint_sha256")
+        if isinstance(cap0.get("identity"), dict)
+        else None
+    )
     ck_path_raw = str(cap0.get("checkpoint", "")).replace("\\", "/")
     ck_path = root / ck_path_raw
     checkpoint_identity: dict[str, Any] = {

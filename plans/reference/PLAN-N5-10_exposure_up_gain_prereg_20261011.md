@@ -125,3 +125,44 @@ exit 件里的 `checkpoint_sha256`／`corpus_fingerprint`。G-N5j-4／5 的执�
 M6 收官、M8 挂起；N1／N2／N3 已收口，N4 交完设计预注册，N6 随实施项清；
 **DEBT-G78（世界学习器接进语料训练链）按 owner #24 第①裁继续挂起**，本件不碰 `taiji/`；
 05 债表现至 **DEBT-G94**；台账行序以行首标号为准（㊵-419⑥）。
+
+## §11 第一次读数（2026-10-11 ㊵-673，判据与取数式一字未动）
+
+三臂全部 `reached_budget=true`、`ticks_at_exit=16,150,000`（基座 16,000,000 ＋ 150,000），
+墙钟 **932.063／775.959／775.876 秒**（治疗／控制／噪声地板），三臂 exit 件都带
+`machine_load.status=ok`。逐条对表：
+
+| 判据 | 值 | 出处（全部是仪器出版，不是手算） |
+|---|---|---|
+| G-N5j-1 单变量 | `pairing_valid_on_quadruple`／`j_n5b_3 = valid`（seed 20260822、τ 0.64、readout predictive、fast_slow、bridge_gate 1.0 对 null） | `reports/taiji_n5_10_full_adjudication_20261011.json` |
+| G-N5j-2 塌臂排除 | 控制臂 vs 第三臂 **0 of 220** 槽；治疗臂 vs 控制臂 **20 槽＝10 枚权重**；三臂内镜像各 94/94 一致 | `reports/taiji_n5_10_arm_tensor_diff_20261011.json` |
+| G-N5j-3 同底 | 三臂 `--resume` 同为 `checkpoints/seed_beta.pt`，其 sha256 与两张 before 面自述的摘要互证（新守卫 `test_the_default_before_faces_are_self_consistent_on_the_base`） | `run_taiji_n5_retention_lane.py` 的预检 |
+| G-N5j-4 完成记账 | 三臂 `reached_budget=true` | 各自 `progress_exit.json` |
+| G-N5j-5 负载自述 | 三臂 `machine_load.status=ok`，同轮都是 24 核／python 73 枚／真在烧 2 枚 | 同上 |
+| **J-N5j-1 尺可用** | **`ruler_usable = true`**，bands `0.0197`／`0.019833` < `0.02`（只过 0.000167，是"勉强可用"） | `reports/taiji_n5_10_gain_pair_metric_20261011.json` |
+| **J-N5j-2 收益侧** | **`not_holds`**：末两段均值 0.2412335 对 0.24135 ⇒ `delta = −0.0001165` | `reports/taiji_n5_10_full_adjudication_20261011.json` |
+| **J-N5j-3 保持侧** | **`j_n5b_5 = cost_persists`**，本档 `noise_floor = 0`（第三臂自己的），七列比对、5 列 resolved、`not_resolved` 空、两列 `replay_strict_hits:1.0/2.0` 结构在底上不可判；**两臂同结论**（都 `cost_persists`） | 三枚配对件 `reports/taiji_n5_10_{treated,control,noise_floor}_retention_pair_20261011.json` |
+| 四元合取 | **`j_n5b_6 = not_established`**，`missing = [J-N5b-4, J-N5b-5]`、**`unmeasured = []`** ⇒ 这是有值的判定，不是"未判" | `reports/taiji_n5_10_full_adjudication_20261011.json` |
+
+**按 §8 走的是第二条出口**：`J-N5j-1` 过 ∧ `J-N5j-2 = not_holds` ⇒ 收益侧**判不成立**。
+`J-N5b-4` 从此不再是 `ruler_unusable`，而是有值的负成员；N5 的出口因此是"证伪"，
+两句仍不许写：**不许**写"影子机制无效"（它被走到、写了权重，只是没换来母量优势），
+也**不许**写"自进化唤醒已生效"（收益侧已过线的正读数不存在）。
+
+**外推的算术错了方向，就地记下**：§2 那句 `band ∝ 1/√n` 预测 150k 处 ≈0.0144，实测 **0.0197**
+（带只从 0.022779 收到 0.0197，即 1.156 倍，而 √2.5 = 1.581 倍）⇒ 我高估了收窄 ≈37%。
+判据没被改动、也没被"救"——它仍然过了线，但**余量是 0.000167 而不是我以为的 0.0056**；
+下一次再要收窄，不能按 √n 报"必过"，得按本件这次实测的 **1.156 倍／2.5 倍剂量** 重算，
+并且这一条要写成"实测斜率"而不是又一个假设。
+
+**跑道器在这一档被自己的缺省值拦过一次**（先 `LANE_RC=2` 响亮拒绝、改显式旗标后过）：
+已开 **DEBT-G95** 并把缺省改到与现行底同面，同轮另量到 `black --check .` 在 HEAD 上有
+18 枚文件不为绿（其中 14 枚属本线仪器册，本轮已格式化并复跑对应册）。
+
+## §12 状态（2026-10-11 ㊵-673）
+
+本件的三臂已跑完、判据已出值、读数件已入库 ⇒ **PLAN-N5-10 结清**；
+N5 的出口交付（09 §2 N5 ④"四层循环有一次判定"）至此由**四元合取有值**兑现，
+判定方向为**不成立**。仍开着的不是本件，是 owner 手里的另外三格（甲＝G78、丁＝G94③ 与 G90）
+与收益侧的下一档（如果还要问"更大剂量会不会翻正"，那是另一件预注册，本件不追改）。
+

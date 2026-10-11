@@ -55,7 +55,9 @@ def _list_tensor_count(obj: Any) -> int:
             total += _list_tensor_count(value)
     elif isinstance(obj, (list, tuple)):
         total += sum(1 for item in obj if _is_tensor(item))
-        total += sum(_list_tensor_count(item) for item in obj if isinstance(item, (list, tuple, dict)))
+        total += sum(
+            _list_tensor_count(item) for item in obj if isinstance(item, (list, tuple, dict))
+        )
     return total
 
 
@@ -164,7 +166,11 @@ def main(argv: list[str] | None = None) -> int:
         return 2
     missing = [str(path) for path in args.checkpoint if not Path(path).is_file()]
     if missing:
-        print(json.dumps({"format": FORMAT, "status": "refuse_missing_checkpoint", "missing": missing}))
+        print(
+            json.dumps(
+                {"format": FORMAT, "status": "refuse_missing_checkpoint", "missing": missing}
+            )
+        )
         return 2
 
     sides = [(_load(Path(path)), str(path)) for path in args.checkpoint]
@@ -194,7 +200,9 @@ def main(argv: list[str] | None = None) -> int:
         rc = 2
     text = json.dumps(payload, ensure_ascii=True, indent=2) + "\n"
     if args.out_report is not None:
-        out_path = args.out_report if args.out_report.is_absolute() else PROJECT_ROOT / args.out_report
+        out_path = (
+            args.out_report if args.out_report.is_absolute() else PROJECT_ROOT / args.out_report
+        )
         out_path.parent.mkdir(parents=True, exist_ok=True)
         out_path.write_text(text, encoding="utf-8", newline="\n")
     print(text)

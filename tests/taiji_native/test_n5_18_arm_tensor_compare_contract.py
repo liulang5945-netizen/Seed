@@ -124,9 +124,7 @@ def test_one_checkpoint_or_a_missing_file_refuses(tmp_path: Path) -> None:
     single = _save(tmp_path, "a.pt", _mirror(1.0))
     rc = CMP.main(["--checkpoint", str(single)])
     assert rc == 2
-    rc_missing = CMP.main(
-        ["--checkpoint", str(single), "--checkpoint", str(tmp_path / "gone.pt")]
-    )
+    rc_missing = CMP.main(["--checkpoint", str(single), "--checkpoint", str(tmp_path / "gone.pt")])
     assert rc_missing == 2
 
 

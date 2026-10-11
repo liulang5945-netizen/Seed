@@ -126,9 +126,7 @@ def main(argv: list[str] | None = None) -> int:
         return 2
 
     #: 只剩一枚 python 进程 ⇒ 要么这台机器真的只有本器，要么取法坏了；两种都不许当"负载很轻"引用。
-    payload["disclosure"] = (
-        "single_process_face" if payload["python_process_count"] == 1 else "ok"
-    )
+    payload["disclosure"] = "single_process_face" if payload["python_process_count"] == 1 else "ok"
     text = json.dumps(payload, ensure_ascii=True, indent=2) + "\n"
     if args.out is not None:
         args.out.parent.mkdir(parents=True, exist_ok=True)

@@ -19,6 +19,7 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import hashlib
 import os
 import subprocess
 import sys
@@ -608,4 +609,39 @@ def test_the_presence_gate_gets_both_pressure_faces_when_they_exist(
     assert any(row.startswith("disclosure: --face-control") for row in out.splitlines()), out
 
 
+def _sha256(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
 
+
+def _faces_agree_on_base(cap0_digest: str, replay_face: dict[str, Any]) -> bool:
+    """两面是否说**同一枚底**——两条取法本来就不同源，这正是它能为假的原因。
+
+    `cap0` 面出版 `identity.checkpoint_sha256`（摘要），`replay` 面出版 `checkpoint`（路径）⇒
+    这里把路径**现算**成摘要再比。只改跑道器两个默认值里的一个，这一支就红。
+    """
+
+    target = REPO / str(replay_face.get("checkpoint") or "")
+    return bool(target.is_file()) and _sha256(target) == cap0_digest
+
+
+def test_the_default_before_faces_are_self_consistent_on_the_base() -> None:
+    """DEBT-G95（㊵-673）：不给旗标的那条路必须落在**与现行底同源**的两枚缺省面上。
+
+    来历：150k 那次没给 `--cap0-before`／`--replay-before`，缺省仍指向 `seed_a31self_with_circuit`
+    那条链的底，于是 `check_taiji_n5_pairing_preflight.py` 在花钱之前响亮拒绝（守卫有效）。
+    但"每次都得手写两枚旗标"就是 DEBT-G70 那句"冻结命令是散文不是可执行物"的本体 ⇒ 缺省改成
+    beta 出厂底那两面，并用本条钉住两面互相对得上。
+    """
+
+    cap0 = json.loads((REPO / MODULE.CAP0_BEFORE).read_text(encoding="utf-8"))
+    replay = json.loads((REPO / MODULE.REPLAY_BEFORE).read_text(encoding="utf-8"))
+    digest = str((cap0.get("identity") or {}).get("checkpoint_sha256") or "")
+    assert len(digest) == 64, (MODULE.CAP0_BEFORE, cap0.get("identity"))
+    assert _faces_agree_on_base(digest, replay) is True, (
+        str(MODULE.CAP0_BEFORE),
+        str(MODULE.REPLAY_BEFORE),
+        replay.get("checkpoint"),
+    )
+    #: 反向那一支：同一比较在"两面不同底"时必须为假——否则本条就是一枚不能为 false 的读数。
+    assert _faces_agree_on_base("0" * 64, replay) is False
+    assert _faces_agree_on_base(digest, {"checkpoint": "checkpoints/no_such_face.pt"}) is False

@@ -18,7 +18,7 @@ REPO = Path(__file__).resolve().parents[2]
 SCRIPT = REPO / "scripts" / "training" / "audit_taiji_stale_gate_reference_census.py"
 SEALED_REPORT = REPO / "reports" / "taiji_stale_gate_reference_census_20261010.json"
 
-SEALED_SNIPPET = '''
+SEALED_SNIPPET = """
 def evaluate():
     return {
         "previous_gates_remain_green": all(
@@ -26,13 +26,13 @@ def evaluate():
             for name in ("taiji_w7_p2_11_x_20260831.json", "taiji_w7_p2_12_y_20260831.json")
         ),
     }
-'''
+"""
 
-LIVE_SNIPPET = '''
+LIVE_SNIPPET = """
 def evaluate():
     report = run_chain()
     return {"gate_ok": report["gate"]["passed"]}
-'''
+"""
 
 
 def _load() -> Any:

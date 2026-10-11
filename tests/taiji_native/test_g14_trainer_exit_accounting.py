@@ -290,7 +290,12 @@ def test_exit_record_carries_a_same_round_load_face(tmp_path: Path) -> None:
     assert load["python_process_count"] >= 1, load
     assert 0.0 <= load["system_cpu_percent"] <= 100.0 * load["logical_cpus"], load
     assert load["python_processes_burning_cpu"] <= load["python_process_count"], load
-    assert len(load["hottest_python_pids"]) == 3, load
+    #: **不钉枚数**：`top_python_by_cpu_seconds` 的长度是 `min(--top, 进程枚数)`，是机器现场量。
+    #: 这一条在 2026-10-11 05:47 被实测抓到我自己的错——我原先钉的是 `== 3`，而 owner 把两枚空转
+    #: 探针杀掉之后机上只剩两枚 python 进程，那枚清单就短了一枚。同一条纪律我在 ㊵-669 的读数器
+    #: 契约册里刚写过（"本册一枚现场值都不钉"），转头就在这一册上犯了。
+    assert 1 <= len(load["hottest_python_pids"]) <= 3, load
+    assert len(load["hottest_python_pids"]) == min(3, load["python_process_count"]), load
     assert all(one["pid"] > 0 for one in load["hottest_python_pids"]), load
     #: 反向那一半：负载档不许顺着进度行漏出去（周期行的键集由上一支测试守着，这里点名本枚）。
     assert "machine_load" not in _entries(progress)[-1], _entries(progress)[-1]

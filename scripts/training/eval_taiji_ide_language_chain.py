@@ -185,9 +185,7 @@ def _require_fixtures() -> None:
     """
     missing = [path for path in REQUIRED_FIXTURES if not (PROJECT_ROOT / path).is_file()]
     if missing:
-        raise RuntimeError(
-            "IDE 语言链门的现场件不在场 ⇒ 拒绝判读：" + "、".join(missing)
-        )
+        raise RuntimeError("IDE 语言链门的现场件不在场 ⇒ 拒绝判读：" + "、".join(missing))
 
 
 def _run_user_override_and_ambiguity() -> dict[str, object]:

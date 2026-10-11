@@ -39,5 +39,7 @@ def test_the_consumed_fixture_is_the_historical_bytes() -> None:
     #: 数值钉在测里而不是"能跑就行"，因为换夹具＝换这条支的被测对象。
     provenance = chain._fixture_provenance(chain.AMBIGUOUS_PATH)
     assert provenance["bytes"] == 19
-    assert provenance["sha256"] == "d3139b187138b0a2b1fd9b889746cb293f2dfc1ec526153bb345b1617eca9ef4"
+    assert (
+        provenance["sha256"] == "d3139b187138b0a2b1fd9b889746cb293f2dfc1ec526153bb345b1617eca9ef4"
+    )
     assert provenance["path"] == chain.AMBIGUOUS_PATH

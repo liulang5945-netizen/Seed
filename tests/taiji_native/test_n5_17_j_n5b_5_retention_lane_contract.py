@@ -54,7 +54,13 @@ CONTROL = {
     "replay_strict_hits:2.0": (0, 0),
 }
 #: 逐列差 = control.after − treated.after（本笔手推，与真件那支的仪器读数互为对照）。
-DROPS = {"cap0:E": -1, "replay_well_formed:0.0": -4, "replay_well_formed:0.5": 3, "replay_well_formed:1.0": 8, "replay_well_formed:2.0": -4}
+DROPS = {
+    "cap0:E": -1,
+    "replay_well_formed:0.0": -4,
+    "replay_well_formed:0.5": 3,
+    "replay_well_formed:1.0": 8,
+    "replay_well_formed:2.0": -4,
+}
 
 
 def _load() -> Any:
@@ -146,9 +152,7 @@ def _arms(tmp_path: Path) -> tuple[str, str]:
 def _run(tmp_path: Path, extra: list[str]) -> tuple[int, dict[str, Any]]:
     treated, control = _arms(tmp_path)
     out = tmp_path / "verdict.json"
-    rc = JUDGE.main(
-        ["--arm-treated", treated, "--arm-control", control, "--out", str(out)] + extra
-    )
+    rc = JUDGE.main(["--arm-treated", treated, "--arm-control", control, "--out", str(out)] + extra)
     return rc, json.loads(out.read_text(encoding="utf-8"))
 
 
@@ -179,7 +183,9 @@ def test_no_retention_flags_leaves_the_placeholder_and_publishes_no_lane_block(
     assert rc == 0
 
 
-def test_real_pair_reports_read_as_noise_floor_missing_with_two_floor_columns(tmp_path: Path) -> None:
+def test_real_pair_reports_read_as_noise_floor_missing_with_two_floor_columns(
+    tmp_path: Path,
+) -> None:
     #: 真件那支：列名、地板列、逐列差全部由仪器算出，期望值是本笔之前手推并已入库的那张表。
     #: 这一条同时钉住取数键——列名住在 `per_column`，`criteria.columns_compared` 是计数。
     rc, payload = _run(tmp_path, _retention_args(TREATED_PAIR, CONTROL_PAIR))
@@ -263,7 +269,9 @@ def test_column_count_as_a_list_is_rejected_not_iterated(tmp_path: Path) -> None
 def test_control_arm_columns_have_to_be_the_same_set(tmp_path: Path) -> None:
     treated = _pair(tmp_path, "treated_pair.json", TREATED)
     control = _pair(
-        tmp_path, "control_pair.json", {k: v for k, v in CONTROL.items() if k != "cap0:E"},
+        tmp_path,
+        "control_pair.json",
+        {k: v for k, v in CONTROL.items() if k != "cap0:E"},
         columns_compared=6,
     )
     rc, payload = _run(tmp_path, _retention_args(treated, control))
@@ -310,7 +318,9 @@ def test_noise_floor_that_still_resolves_four_columns_publishes_the_cost(tmp_pat
     assert rc == 0
 
 
-def test_a_noise_floor_as_large_as_the_smallest_drop_leaves_no_range_to_publish(tmp_path: Path) -> None:
+def test_a_noise_floor_as_large_as_the_smallest_drop_leaves_no_range_to_publish(
+    tmp_path: Path,
+) -> None:
     #: 出值前置的第二支：被噪声吞掉之后不足 3 列 ⇒ 整枚不判，且不写「保持成立」。
     treated, control = _both(tmp_path)
     replicate = _replicate(tmp_path, {"cap0:E": 4, "replay_well_formed:0.0": -4})
@@ -352,7 +362,9 @@ def test_zero_noise_floor_and_no_upward_drop_is_the_holds_branch(tmp_path: Path)
     assert rc == 0
 
 
-def test_two_arms_with_different_verdicts_are_arm_dependent_not_the_lighter_one(tmp_path: Path) -> None:
+def test_two_arms_with_different_verdicts_are_arm_dependent_not_the_lighter_one(
+    tmp_path: Path,
+) -> None:
     #: J-N5g-3：不许取对自己有利的那一臂。
     treated = _pair(tmp_path, "treated_pair.json", TREATED, verdict="retention_holds")
     control = _pair(tmp_path, "control_pair.json", CONTROL, verdict="cost_persists")
@@ -414,13 +426,12 @@ def test_retention_lane_carries_no_threshold_literal_and_the_scanner_can_see_one
     #: G-N5g-3（零假定）：`noise_floor` 只能来自输入件，本函数不许自带阈值。
     #: 允许的整数只有预注册里写死的那两个计数（`judgable ≥ 3` 的 3、地板定义的 0）与布尔语义的 1/2。
     tree = ast.parse(SCRIPT.read_text(encoding="utf-8"))
-    functions = {
-        node.name: node for node in ast.walk(tree) if isinstance(node, ast.FunctionDef)
-    }
+    functions = {node.name: node for node in ast.walk(tree) if isinstance(node, ast.FunctionDef)}
     numbers = [
         node.value
         for node in ast.walk(functions["judge_retention_lane"])
-        if isinstance(node, ast.Constant) and isinstance(node.value, (int, float))
+        if isinstance(node, ast.Constant)
+        and isinstance(node.value, (int, float))
         and not isinstance(node.value, bool)
     ]
     assert not [n for n in numbers if isinstance(n, float)], numbers

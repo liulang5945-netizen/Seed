@@ -311,9 +311,7 @@ def test_the_bucket_split_separates_unreachable_code_from_live_code(tmp_path: Pa
     #: 等式在**这里**钉，不在仪器里钉：仪器出版的两枚计数由同一批行对象数出来，
     #: 把等式写成键就是一件恒真读数（㊵-618 对 `shadow_materialized` 的同一课）。
     #: 这一行按 `crash_face` 行的 `bucket` 字段重数一遍，取法与那两枚计数不同。
-    recounted = sorted(
-        one["file"] for one in payload["crash_face"] if one["bucket"] == "live"
-    )
+    recounted = sorted(one["file"] for one in payload["crash_face"] if one["bucket"] == "live")
     assert recounted == payload["crash_face_live"], (recounted, payload["crash_face_live"])
     #: 整面判定不因为分档而翻绿——两枚都还红着。
     assert payload["verdicts"]["no_unguarded_stdout_glyph_print"] is False
@@ -373,7 +371,6 @@ def test_the_real_tree_live_crash_face_is_the_library_and_the_partition_is_exhau
     #: 用法屏面一台机器上都跑得到 ⇒ 归档档必须为空；不为空就是有人把新仪器写进了 archive。
     assert payload["help_face_archived_file_count"] == 0, payload["help_face_archived_file_count"]
     assert payload["help_face_live_file_count"] == payload["help_face_file_count"], payload
-
 
 
 def test_the_fixed_a30_probe_is_absent_from_every_console_face() -> None:

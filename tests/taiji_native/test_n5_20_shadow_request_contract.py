@@ -48,7 +48,12 @@ FROZEN_KEYS = (
 )
 
 
-def _face(tmp_path: Path, name: str, envelope_block: dict[str, Any] | None, request: dict[str, Any] | None = None) -> Path:
+def _face(
+    tmp_path: Path,
+    name: str,
+    envelope_block: dict[str, Any] | None,
+    request: dict[str, Any] | None = None,
+) -> Path:
     path = tmp_path / name
     envelope: dict[str, Any] = {"format": "seed-native-v1"}
     if envelope_block is not None:
@@ -108,11 +113,19 @@ def test_present_block_without_counters_is_not_read_as_walked(tmp_path: Path) ->
 
 
 def test_zero_counters_say_not_walked_rather_than_absent(tmp_path: Path) -> None:
-    arm = _judge(_face(tmp_path, "a.pt", _block(shadow_forward_hits=0, shadow_learn_hits=0, shadow_branch_hits=0)))
+    arm = _judge(
+        _face(
+            tmp_path,
+            "a.pt",
+            _block(shadow_forward_hits=0, shadow_learn_hits=0, shadow_branch_hits=0),
+        )
+    )
     assert arm["walked"] == {"state": "not_walked", "forward_hits": 0, "walked": False}
 
 
-def test_requested_but_not_materialized_is_distinguishable_from_not_requested(tmp_path: Path) -> None:
+def test_requested_but_not_materialized_is_distinguishable_from_not_requested(
+    tmp_path: Path,
+) -> None:
     #: DEBT-G84 的本体：块缺席时两条状态从前同形，现在由块外新键分开。
     requested = _face(tmp_path, "r.pt", None, {"flag": True, "gate_requested": 1.0})
     untouched = _face(tmp_path, "u.pt", None, {"flag": False, "gate_requested": None})
@@ -169,7 +182,15 @@ def test_a_real_short_training_run_puts_the_request_key_on_disk(tmp_path: Path) 
         "--keep-checkpoints",
         "off",
     ]
-    proc = subprocess.run(argv, capture_output=True, text=True, encoding="utf-8", errors="replace", check=False, cwd=str(REPO))
+    proc = subprocess.run(
+        argv,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+        check=False,
+        cwd=str(REPO),
+    )
     assert proc.returncode == 0, (proc.stdout or "")[-400:] + (proc.stderr or "")[-400:]
     loaded = torch.load(str(ckpt), map_location="cpu", weights_only=False)
     #: 训练器存出的顶层**就是**信封（`_shadow_block` 也是按 `get("envelope", 自身)` 读的），别猜包装层。

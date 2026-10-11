@@ -1,0 +1,22 @@
+{
+  "format": "taiji-machine-load-v1",
+  "status": "ok",
+  "sampled_at": "2026-10-11T13:51:44",
+  "sample_seconds": 0.5,
+  "logical_cpus": 24,
+  "system_cpu_percent": 13.0,
+  "python_process_count": 1,
+  "python_processes_burning_cpu": 1,
+  "top_python_by_cpu_seconds": [
+    {
+      "pid": 21812,
+      "cpu_seconds": 0.3,
+      "cpu_percent": 3.1,
+      "created": "2026-10-11T13:51:43",
+      "cmdline_head": "C:\\Users\\23747\\AppData\\Local\\Programs\\Python\\Python312\\python.exe scripts/training/read_taiji_machine_load.py --out repo",
+      "is_reader": true
+    }
+  ],
+  "reader_counted_itself": true,
+  "disclosure": "single_process_face"
+}

@@ -120,7 +120,11 @@ def _walked_state(presence: dict[str, Any]) -> dict[str, Any]:
     if presence["status"] != "present":
         return {"state": "counters_absent", "forward_hits": None, "walked": None}
     hits = int(presence["values"].get("shadow_forward_hits", 0))
-    return {"state": "walked" if hits > 0 else "not_walked", "forward_hits": hits, "walked": hits > 0}
+    return {
+        "state": "walked" if hits > 0 else "not_walked",
+        "forward_hits": hits,
+        "walked": hits > 0,
+    }
 
 
 def judge_arm(name: str, checkpoint: Path) -> dict[str, Any]:
@@ -337,7 +341,9 @@ def judge_retention_lane(
     #: G-N5g-1：同源这件事配对件自己已经判过（`adjudicate_taiji_n2_04_retention_pair.py` 的
     #: `G_N2c_3_*`），本器只读它的结论、不重造。任一非 `ok` ⇒ rc=2 且那一格保持 `unverified_*`。
     guard_failures = [
-        failure for side, payload in loaded.items() for failure in _same_source_failures(side, payload)
+        failure
+        for side, payload in loaded.items()
+        for failure in _same_source_failures(side, payload)
     ]
     if guard_failures:
         return {"j_n5b_5": "unverified_same_source_guard_not_ok", "guard_failures": guard_failures}
@@ -390,7 +396,8 @@ def judge_retention_lane(
         "columns_compared": len(columns),
         "not_judgable_floor": {column: rows[column]["baseline"] for column in floor},
         "drop_control_minus_treated": {
-            column: rows[column]["control_after"] - rows[column]["treated_after"] for column in judgable
+            column: rows[column]["control_after"] - rows[column]["treated_after"]
+            for column in judgable
         },
     }
     if len(judgable) < 3:
@@ -411,10 +418,9 @@ def judge_retention_lane(
         out["noise_floor_pair"] = str(replicate_pair)
         return out
     #: 第三档必须量在同一张 before 面上，否则「噪声地板」量的是两张分布之差。
-    if {
-        key: replicate[key]
-        for key in ("cap0_before_sha256", "replay_before_sha256")
-    } != {key: loaded["treated"][key] for key in ("cap0_before_sha256", "replay_before_sha256")}:
+    if {key: replicate[key] for key in ("cap0_before_sha256", "replay_before_sha256")} != {
+        key: loaded["treated"][key] for key in ("cap0_before_sha256", "replay_before_sha256")
+    }:
         out["j_n5b_5"] = "faces_not_same_source"
         out["noise_floor_pair"] = str(replicate_pair)
         return out
@@ -439,7 +445,11 @@ def judge_retention_lane(
     noise_floor = max(deltas)
     out["noise_floor"] = noise_floor
     out["noise_floor_pair"] = str(replicate_pair)
-    resolved = [column for column in judgable if abs(out["drop_control_minus_treated"][column]) > noise_floor]
+    resolved = [
+        column
+        for column in judgable
+        if abs(out["drop_control_minus_treated"][column]) > noise_floor
+    ]
     out["not_resolved"] = [column for column in judgable if column not in resolved]
     if len(resolved) < 3:
         out["j_n5b_5"] = "not_resolved_insufficient_range"
@@ -477,9 +487,17 @@ _UNMEASURED = "unmeasured"
 #: `ruler_unusable` 记成 **not_established** 不是 unmeasured——依据 PLAN-N5-02 §4 :52 原文
 #: "结论只能是『这把尺答不了这个问题』"，它限制的是结论；把它升成"成立"或降级成"没测"都算发明。
 BRANCH_VALUE_CLASS: dict[str, dict[str, str]] = {
-    "j_n5b_2": {"shadow_learned": _ESTABLISHED, "shadow_inert": _NOT_ESTABLISHED, "not_powered": _NOT_ESTABLISHED},
+    "j_n5b_2": {
+        "shadow_learned": _ESTABLISHED,
+        "shadow_inert": _NOT_ESTABLISHED,
+        "not_powered": _NOT_ESTABLISHED,
+    },
     "j_n5b_3": {"valid": _ESTABLISHED, "invalid": _NOT_ESTABLISHED},
-    "j_n5b_4": {"holds": _ESTABLISHED, "not_holds": _NOT_ESTABLISHED, "ruler_unusable": _NOT_ESTABLISHED},
+    "j_n5b_4": {
+        "holds": _ESTABLISHED,
+        "not_holds": _NOT_ESTABLISHED,
+        "ruler_unusable": _NOT_ESTABLISHED,
+    },
     "j_n5b_5": {
         "holds": _ESTABLISHED,
         "cost_persists": _NOT_ESTABLISHED,

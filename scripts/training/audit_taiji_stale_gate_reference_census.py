@@ -1,4 +1,4 @@
-""""读已封存件冒充现行绿"普查仪：把判据里对 `["gate"]` 的取下标按**取路**分两档。
+""" "读已封存件冒充现行绿"普查仪：把判据里对 `["gate"]` 的取下标按**取路**分两档。
 
 来历（2026-10-10，DEBT-G91）：p2-11 那枚 IDE 语言链门红了三天（㊵-662／DEBT-G87），而仓里零道门跟着红——
 因为引用它的三条判据读的都是 `reports/*_20260831.json` 里的 `gate.passed` 字段，
@@ -138,14 +138,15 @@ def main(argv: list[str] | None = None) -> int:
     roots = [str(root) for root in (args.scan_root or ["scripts/training"])]
     missing_roots = [root for root in roots if not (PROJECT_ROOT / root).is_dir()]
     if missing_roots:
-        print(json.dumps({"format": FORMAT, "status": "refuse_missing_scan_root", "missing": missing_roots}))
+        print(
+            json.dumps(
+                {"format": FORMAT, "status": "refuse_missing_scan_root", "missing": missing_roots}
+            )
+        )
         return 2
 
     files = sorted(
-        path
-        for root in roots
-        for path in (PROJECT_ROOT / root).rglob("*.py")
-        if path.is_file()
+        path for root in roots for path in (PROJECT_ROOT / root).rglob("*.py") if path.is_file()
     )
     rows: list[dict[str, Any]] = []
     unparsed: list[str] = []
@@ -161,7 +162,7 @@ def main(argv: list[str] | None = None) -> int:
         "format": FORMAT,
         "status": "measured",
         "scan_roots": roots,
-        "pattern": 'Subscript(slice==\"gate\") ∧ 被下标对象链含 read_text／json.loads ∧ 同赋值内有 .json 字面量或 \"reports\" 常量',
+        "pattern": 'Subscript(slice=="gate") ∧ 被下标对象链含 read_text／json.loads ∧ 同赋值内有 .json 字面量或 "reports" 常量',
         "files_scanned": len(files),
         "gate_subscript_sites": len(rows),
         "sealed_artifact_sites": len(sealed),
@@ -181,7 +182,9 @@ def main(argv: list[str] | None = None) -> int:
         return 2
     text = json.dumps(payload, ensure_ascii=True, indent=2) + "\n"
     if args.out_report is not None:
-        out_path = args.out_report if args.out_report.is_absolute() else PROJECT_ROOT / args.out_report
+        out_path = (
+            args.out_report if args.out_report.is_absolute() else PROJECT_ROOT / args.out_report
+        )
         out_path.parent.mkdir(parents=True, exist_ok=True)
         out_path.write_text(text, encoding="utf-8", newline="\n")
     print(text)

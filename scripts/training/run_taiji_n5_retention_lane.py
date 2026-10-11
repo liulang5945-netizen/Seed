@@ -44,9 +44,15 @@ PREFLIGHT = "scripts/training/check_taiji_n5_pairing_preflight.py"
 #: 它只读信封、零算力，所以放在**花钱之前**当门用。
 SHADOW_PRESENCE = "scripts/training/adjudicate_taiji_n5_shadow_gate.py"
 
-CAP0_BEFORE = Path("reports/taiji_n2_cap0_before_20261008.json")
+#: DEBT-G95（2026-10-11 ㊵-673 就地改默认值）：这两枚缺省面原先指向 **a31self_with_circuit** 那条底，
+#: 而 N5 现行链自 PLAN-N5-07 起 `--resume` 的是出厂 `checkpoints/seed_beta.pt` ⇒ 不给旗标的跑法
+#: 一定会被 `check_taiji_n5_pairing_preflight.py` 响亮拒掉（实测：零评测算力被浪费，这是它该有的样子）。
+#: 但"每次都要给两枚旗标"就是 DEBT-G70 那条"冻结命令是散文不是可执行物"的本体，所以把缺省改成
+#: **与现行底同源**的那两面。同源性由测钉：cap0 面出版 `identity.checkpoint_sha256`（摘要），
+#: replay 面出版 `checkpoint`（路径），两枚必须互相对上——只改一边就会当场红。
+CAP0_BEFORE = Path("reports/taiji_n5_07_base_beta_cap0_20261010.json")
 #: 默认指向**带内容哈希**的那张新 before 面（㊵-645 出路①）；旧面仍可指名，但预检会拒绝配对。
-REPLAY_BEFORE = Path("reports/taiji_n2_replay24_before_20261010.json")
+REPLAY_BEFORE = Path("reports/taiji_n5_07_base_beta_replay24_20261010.json")
 RETENTION_MANIFEST = "plans/manifests/cap0_eval_set_v2.json"
 
 ARMS = ("treated", "control")
@@ -130,7 +136,7 @@ def _run_window(checkpoint: Path) -> tuple[float, float] | None:
 
 
 def consolidation_provenance(arm: str, checkpoint: Path, paths: list[Path]) -> dict[str, Any]:
-    """"点名材料是否可能出自本次跑"——按件名时间戳与运行窗口算，**不信调用方自报**。
+    """ "点名材料是否可能出自本次跑"——按件名时间戳与运行窗口算，**不信调用方自报**。
 
     三档互斥：`arm_local`＝至少一枚落在窗口内；`substituted`＝窗口可算但全部更早；
     `unknown`＝窗口算不出或件名不带时间戳。⇒ 只有 `arm_local` 兑现 ㊵-565③ 那句口径；
@@ -145,17 +151,21 @@ def consolidation_provenance(arm: str, checkpoint: Path, paths: list[Path]) -> d
         "arm": arm,
         "files": [str(path) for path in paths],
         "night_timestamps_utc": stamps,
-        "run_window_utc": None
-        if window is None
-        else [
-            datetime.fromtimestamp(window[0], UTC).isoformat(),
-            datetime.fromtimestamp(window[1], UTC).isoformat(),
-        ],
+        "run_window_utc": (
+            None
+            if window is None
+            else [
+                datetime.fromtimestamp(window[0], UTC).isoformat(),
+                datetime.fromtimestamp(window[1], UTC).isoformat(),
+            ]
+        ),
     }
     if window is None or len(stamps) != len(paths):
         record["provenance"] = "unknown"
         return record
-    inside = [ts for ts in parsed.values() if ts is not None and window[0] <= ts.timestamp() <= window[1]]
+    inside = [
+        ts for ts in parsed.values() if ts is not None and window[0] <= ts.timestamp() <= window[1]
+    ]
     record["provenance"] = "arm_local" if inside else "substituted"
     if not inside:
         newest = max(ts for ts in parsed.values() if ts is not None)
@@ -455,7 +465,9 @@ def main(argv: list[str] | None = None) -> int:
         for arm in ARMS:
             record = material.get(arm)
             if record is not None:
-                print(f"material[{arm}] provenance={record['provenance']} files={len(record['files'])}")
+                print(
+                    f"material[{arm}] provenance={record['provenance']} files={len(record['files'])}"
+                )
 
     plan = build_plan(
         treated=args.treated_checkpoint,
@@ -504,7 +516,9 @@ def main(argv: list[str] | None = None) -> int:
             if face.is_file():
                 presence_argv += [flag, str(face)]
             else:
-                print(f"disclosure: {flag} 不在场（{face}）⇒ 该臂四元组按 unverified 出版，不冒充核对")
+                print(
+                    f"disclosure: {flag} 不在场（{face}）⇒ 该臂四元组按 unverified 出版，不冒充核对"
+                )
         print("gate: $ " + " ".join(presence_argv))
     if args.dry_run:
         print(f"DRY_RUN commands={len(plan)}")
@@ -513,7 +527,9 @@ def main(argv: list[str] | None = None) -> int:
     args.out_dir.mkdir(parents=True, exist_ok=True)
     if material:
         (args.out_dir / "consolidation_material.json").write_text(
-            json.dumps(material, ensure_ascii=False, indent=1) + "\n", encoding="utf-8", newline="\n"
+            json.dumps(material, ensure_ascii=False, indent=1) + "\n",
+            encoding="utf-8",
+            newline="\n",
         )
     rc = _run(preflight_argv)
     if rc != 0:

@@ -63,7 +63,9 @@ def test_ruler_unusable_counts_as_not_established_not_as_unmeasured() -> None:
 def test_mixed_state_prefers_unverified_over_not_established() -> None:
     #: G-N5h-3 的反例支：一支未测＋一支已判否证 ⇒ 只能说"未判"，`missing` 必须留空。
     #: 若这里写成 not_established，就等于把"还没测"混进"测了且否证"——DEBT-G89 那句假陈述的成因。
-    out = JUDGE.judge_conjunction(_four(j_n5b_4="ruler_unusable", j_n5b_5="unverified_noise_floor_missing"))
+    out = JUDGE.judge_conjunction(
+        _four(j_n5b_4="ruler_unusable", j_n5b_5="unverified_noise_floor_missing")
+    )
     assert out["j_n5b_6"] == "unverified"
     assert out["missing"] == []
     assert out["unmeasured"] == ["J-N5b-5"]
@@ -72,9 +74,7 @@ def test_mixed_state_prefers_unverified_over_not_established() -> None:
 def test_today_two_arm_values_are_expected_not_established_naming_two_branches() -> None:
     #: §6 落笔即钉的"预期为绿成员"：今日真值（2 learned／3 valid／4 ruler_unusable／5 cost_persists）
     #: 应判 `not_established`，点名 J-N5b-4 与 J-N5b-5 两支。
-    out = JUDGE.judge_conjunction(
-        _four(j_n5b_4="ruler_unusable", j_n5b_5="cost_persists")
-    )
+    out = JUDGE.judge_conjunction(_four(j_n5b_4="ruler_unusable", j_n5b_5="cost_persists"))
     assert out["j_n5b_6"] == "not_established"
     assert out["missing"] == ["J-N5b-4", "J-N5b-5"]
 
