@@ -53,6 +53,9 @@ ENVELOPE_SIBLINGS = (
 SCAN_SUFFIXES = (".json", ".jsonl")
 MAX_SCAN_BYTES = 8_000_000
 JSON_FACES = ("reports", "output", "checkpoints")
+#: 权重面分两张：**能承载信封**的两面（报价面）与其余历史面。计数不带面名就会被读成全仓（㊵-712）。
+WEIGHT_FACE_ROOTS = ("checkpoints", "output")
+EXCLUDED_WEIGHT_FACES = ("reports", "outputs")
 CARRIER_VERDICTS = (
     "answer_source_mismatch",
     "consistent_within_carriers",
@@ -288,21 +291,30 @@ def scan_product_face(root: Path) -> dict[str, object]:
 
 
 def weight_face_price(root: Path) -> dict[str, object]:
-    """不开面，只报价：载体真正住在 `.pt` 信封里，开面要 owner 授权（本轮实测被拦）。"""
+    """只报价、不开面：**计数必须带面名**（㊵-712——本块先前出版的数被读成"全仓"，其实只是这两个根）。
+
+    全仓现取是 867 枚（`reports` 396／`outputs` 182／`output` 217／`checkpoints` 13，
+    再加运行自生物 59）；本块故意只报"训练产物"那两面，因为那才是**能承载信封**的面。
+    """
 
     points = [
         Path(dirpath) / name
-        for face in ("output", "checkpoints")
+        for face in WEIGHT_FACE_ROOTS
         for dirpath, _dirnames, filenames in os.walk(root / face)
         if (root / face).is_dir()
         for name in filenames
         if name.endswith(".pt")
     ]
     return {
+        "scan_faces": sorted(WEIGHT_FACE_ROOTS),
+        "excluded_faces": sorted(EXCLUDED_WEIGHT_FACES),
         "pt_count": len(points),
         "pt_total_mb": round(sum(p.stat().st_size for p in points) / 1e6, 1),
         "opened": False,
-        "reason": "reading envelopes needs torch.load on weights; owner authorization not granted (2026-10-11)",
+        "reason": (
+            "this instrument prices the face only; opening envelopes is a separate batched, "
+            "read-only step (owner granted read-only access 2026-10-11, 四裁④)"
+        ),
     }
 
 

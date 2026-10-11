@@ -199,21 +199,32 @@ def test_real_face_reproduces_today_reading() -> None:
     module = _load()
     report = module.build_report(PROJECT_ROOT, run_controls=False)
     carrier = report["carrier_face"]
-    assert carrier["carrier_count"] == 0, carrier
+    #: 这里**不钉 `carrier_count`**：载体数会随跟踪面与"有没有跑过一次训练器"变化——
+    #: ㊵-708 封件时是 0，㊵-712 整族回归里某支测写了退出件就变成 1（`output/seed_corpus_smoke_progress_exit.json`）。
+    #: 钉住的是**不变量**：不许出现矛盾、判级词必须在词典内、载体只能是跑道器自己的取值。
+    assert carrier["mismatches"] == [], carrier
+    assert carrier["verdict"] in module.CARRIER_VERDICTS, carrier
+    for row in carrier["carriers"]:
+        assert row["answer_source"] in module.VALID_SOURCES, row
+        if row["answer_source"] == "self":
+            assert row["self_answers_path"], row
     mentions = set(carrier["name_mental_only_files_list"])
     assert {
         "reports/taiji_default_reachability_20261011.json",
         "reports/taiji_write_only_key_face_20261011.json",
     } <= mentions, carrier
     # 「提及数」不是载体数，而且它随**跟踪面**变化：载体面取 `git ls-files -- reports`，
-    # 所以本件自己的落盘件一旦被 `git add`，下一次复算就会多算一枚提及（今天它未跟踪 ⇒ 不在面内）。
+    # 所以本仪器自己的落盘件一旦被 `git add` 就会多算一枚提及（㊵-712 整族复算实测已从 2 涨到 4，
+    # 涨的是 `taiji_answer_source_provenance` 与 `taiji_n1_03_publication_claim_gate` 两件自己）。
     # 点名列表因此是必需的披露，不是装饰——只有它能解释这个数字为什么会长。
     assert carrier["name_mental_only_files"] == len(mentions), carrier
-    assert carrier["verdict"] == "no_carrier_outside_weight_artifacts", carrier
     assert report["enforcement_face"]["guard_count"] == 3, report["enforcement_face"]
     assert report["product_face"]["product_writer_files"] == [], report["product_face"]
     weight = report["weight_artifact_face"]
-    assert weight["opened"] is False and weight["pt_count"] == 230, weight
+    assert weight["opened"] is False, weight
+    #: 计数必须带面名：这里的下界是「`output`＋`checkpoints`」这一张面，不是全仓（全仓现取 867）。
+    assert weight["scan_faces"] == ["checkpoints", "output"], weight
+    assert weight["pt_count"] > 100, weight
     assert len(report["what_this_does_not_prove"]) >= 4, report["what_this_does_not_prove"]
     assert carrier["files_scanned"] > 100, carrier["files_scanned"]
 

@@ -52,6 +52,7 @@ N1 的出口交付（09 §2 第 121 行）第三项要的正是"**生产者→�
 * **J-N1c-3 来源记录不许反写**（VISION §7.1 那句硬约束的可判形式）：任何被采纳的回答，其
   `answer_source` 必须与生成路径的自述一致；若一条回答的 `answer_source` 指向参考侧而产出路径是模型侧
   ⇒ 判 `answer_source_mismatch`，并收回"这条是模型答出来的"这句。**零算力**：只读已存在的件。〔2026-10-11 ㊵-708 执行体已落地＝新仪器 `scripts/training/audit_taiji_answer_source_provenance.py`＋契约册 `tests/taiji_native/test_n1_07_answer_source_provenance_contract.py`（13 passed），读数件 `reports/taiji_answer_source_provenance_20261011.json`。**今天既没判绿也没判红**：JSON 面 0 枚载体 ⇒ `no_carrier_outside_weight_artifacts`——"只读已存在的件"在这张面上**没有可读物**，因为跑道器把 `answer_source` 只写进 `.pt` 信封（`train_seed_corpus.py:547` 的 `attach_metadata(extra=...)`），退出件不带它（已登 DEBT-G112）。同批出版两条独立读数：①强制面＝AST 现取 3 支以 `answer_source` 为条件的 `parser.error` 守卫（1344／1349／1351 行）＋两支**真跑**的负对照各自 rc=2 且错误原文命中 ⇒ "非法组合写不出来"是有行为的；②产品面写入者 0 枚（不复用 ㊵-701 的结论，现取一遍，结果与它的 `read_only_outside_product` 一致）。**取法上最要紧的一条**：仓里有两枚审计件把 `answer_source` 当**数据**登着（`"answer_source": []` 是按键名归的桶），裸按字段名扫会把它们读成"一趟跑的自述"、于是本条白得一个绿 ⇒ 载体谓词要求跑道器的兄弟键（`trainer`／`answer_chunking`／`self_answers_path`…）同在一个对象里，那 2 枚现记为 `name_mental_only_files`。**口径限制**：三枚配方键由同一份 CLI 参数同时写出，故"内部一致"只证记录没被手改／被 patch，不证标签所指那条路真被走过；本件**不开** `.pt`（真载体在那上面，现读 230 枚／3124.4 MB，且 `torch.load` 本轮被权限拦下）。〕
+  〔2026-10-12 ㊵-712 就地更新，原文不删：**载体已经出现了**，而且不是我用探针造的——整族回归里某支测跑训练器写出的 `output/seed_corpus_smoke_progress_exit.json` 就是第一枚（㊵-709 那次改动的直接后果）。现读 `reports/taiji_answer_source_provenance_20261012.json`＝`carrier_count` 1／`consistent_within_carriers`／`mismatches` 空；失败词 `answer_source_mismatch` 仍**没被触发也没被否证**。范围照旧：三枚键由同一份参数写出，所以这一判证的是"记录内部不矛盾且真有一枚产出物在册"，**不证**标签所指那条路真被走过；`J-N1c-3` 在"被采纳的回答"那一层的复算仍待带回答级字段的载体（或 owner 只读开 `.pt` 面，四裁④已给）。〕
   〔2026-10-11 ㊵-709 就地限定，原文不删：上面那句"退出件不带它"从今天起是**历史性**的——跑道器已把 `answer_source`／`self_answers_path`／`answer_chunking` 写进独立退出件（DEBT-G112 修法①），所以 `J-N1c-3` 的载体面**从下一档真跑起就有读物**；本件不预测那一枚的值，复算仍走同一台仪器。测试面已先接上：`test_g14_trainer_exit_accounting.py` 里 producer 产出的记录会被交给本仪器的 `is_carrier`／`mismatches` 逐值核对（11 passed）。〕
 * **J-N1c-4 恢复归属可复核**：§2 "恢复归属"列里点名的每个键，必须能在**信封或退出件**里现读到；
   读不到 ⇒ 该格记 `unverifiable_recovery_claim`（"没读到"不许读成"不需要恢复"）。〔2026-10-11 ㊵-707 执行体已落地＝同一台仪器，读数判 **`recovery_claims_verifiable`**："恢复归属"列点名 3 枚键（`command_surface`／`config`／`n5_shadow_request`），三枚都能走通两条道之一：在 tracked `reports/*.json` 里现读到，或在源码里被写成字典键／构造关键字参数。**取法要点**：信封是**跑道器**落盘的，故写侧扫描面＝`taiji`／`seed`／`scripts/training` 三面，且件里自述为 `write_side_scan_faces`——只扫产品那两目录会把 `command_surface` 与 `n5_shadow_request` 误判成"未取到"（这是我第一版在这两枚键上的 scope 错，已写成契约测 `test_envelope_key_written_only_by_runner_still_verifies`）。**口径限制**：本条证的是"这个键今天在某个件或某段写代码里出现"，**不证**"恢复流程真能把它读回来"；后者要真恢复一次，按 G-N1c-3 记 `unverified`。〕
@@ -76,6 +77,7 @@ G-N1c-2 的执行体＝全仓 `grep`（读面按版本控制取，见 [[guard-sc
 
 * 四条判据全过 ⇒ **V-11 与 V-19 转为"已展开且有承载表"**，DEBT-G97 的 unmapped 再降两格，
   且 N1 出口交付第三项（§18.4 映射）第一次有在盘物；
+  〔2026-10-11 ㊵-707／2026-10-12 ㊵-712 现读：四条判据今天**都有读数**（`chain_complete`／`table_registered`／`recovery_claims_verifiable`／`consistent_within_carriers`），所以本出口机械上可达；**但本件不在此宣布**——第四枚载体只到信封层，宣布语必须把 §3 那句范围限定一起带上，那要单独一格写进正文，不混在改动同格里。〕
 * 任一判据判不成立（如某环无名、某角色 write-only）⇒ **也算"已消化"**（基准要的是展开并判），
   但必须把不成立那一格点名登债，不许静默通过；
 * 若只能停在"表填了但复算读不到" ⇒ 本件只算设计件，收回"N1 出口第三项已交付"，
@@ -91,6 +93,7 @@ G-N1c-2 的执行体＝全仓 `grep`（读面按版本控制取，见 [[guard-sc
 * **发表资格前置**：任何"N1 已把回答链与角色通路做完"的对外表述必须同时给出 ①两张表逐格非空，
   ②每个被点名键的读写两处 `grep` 命中数，③`answer_source` 的一致性复算结果；三条缺一即视为未交付。〔2026-10-11 ㊵-708：第③条今天**给不出"一致"这个结果**——不是没算，而是算出来是"无可读物"（`no_carrier_outside_weight_artifacts`，见 `reports/taiji_answer_source_provenance_20261011.json`）⇒ 这一条按**未兑现**记，本件的发表资格前置今天不成立。〕
   〔2026-10-11 ㊵-710：这三条前置**已机检**＝门 `scripts/training/audit_taiji_n1_03_publication_claim_gate.py`＋契约册 `tests/taiji_native/test_n1_08_publication_claim_gate_contract.py`（12 passed），封件读数 `reports/taiji_n1_03_publication_claim_gate_20261011.json` 今天判 `pending_not_claimed`（①②`satisfied`、③`not_established`、`violated` 0；宣称面扫 3 件 395 行、命中 0）。**门的设计口径**：三态各自独立，`not_established`（没有可读物）既不算红也不算绿；每件读数都必须带**生产它的仪器**现行 `REPORT_FORMAT`，不同源就 rc=2 拒绝（不许拿旧件判今天）；扫描面**必须由 `--doc` 显式给**——本件自己就写着那几句宣称（现读 2／1／2 处），默认全仓会让门永远红在身上。〕
+  〔2026-10-12 ㊵-712 就地换态，原文不删：第③条从「未兑现」改为**带范围成立**——现读三件读数判 `publishable_not_claimed`（3 `satisfied`／0 `not_established`／0 `violated`），用的件点名在 `artifacts_used` 里（role 20261011／write-only 20261011／provenance **20261012**）。**但这一步是门自己先坏在怀里被修出来的**：门原先把三个件名按日期写死，于是仪器现面已报 1 枚载体时它仍判"无载体"——"门读封存件就永远拦不住现行回归"那一族，我自己 ㊵-710 刚写的门正中此雷。现改成 `newest_artifact()` 取当期最新（同日按 mtime）并出版 `artifacts_used`，新鲜度由 `test_gate_reads_the_newest_readout_not_a_hardcoded_date` 钉成能为假；③判绿时又强制随行一句 `scope_note`（无载体时必须是 `None`），由 `test_scope_note_travels_with_the_green_branch` 钉。〕
 
 ## §8 不变项
 

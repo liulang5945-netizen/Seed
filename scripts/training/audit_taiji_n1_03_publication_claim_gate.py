@@ -32,13 +32,17 @@ from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 REPORT_FORMAT = "taiji-n1-03-publication-claim-gate-v1"
-ROLE_FACE = "reports/taiji_n1_03_role_table_face_20261011.json"
-WRITE_ONLY_FACE = "reports/taiji_write_only_key_face_20261011.json"
-PROVENANCE_FACE = "reports/taiji_answer_source_provenance_20261011.json"
+ROLE_PREFIX = "reports/taiji_n1_03_role_table_face_"
+WRITE_ONLY_PREFIX = "reports/taiji_write_only_key_face_"
+PROVENANCE_PREFIX = "reports/taiji_answer_source_provenance_"
+#: 兼容旧的按件名引用（契约测用件名造夹具）；判定面走 `newest_artifact()`，不钉死日期。
+ROLE_FACE = ROLE_PREFIX + "20261011.json"
+WRITE_ONLY_FACE = WRITE_ONLY_PREFIX + "20261011.json"
+PROVENANCE_FACE = PROVENANCE_PREFIX + "20261011.json"
 PRODUCER_MODULES = {
-    ROLE_FACE: "scripts/training/audit_taiji_n1_03_role_table_face.py",
-    WRITE_ONLY_FACE: "scripts/training/audit_taiji_write_only_key_face.py",
-    PROVENANCE_FACE: "scripts/training/audit_taiji_answer_source_provenance.py",
+    ROLE_PREFIX: "scripts/training/audit_taiji_n1_03_role_table_face.py",
+    WRITE_ONLY_PREFIX: "scripts/training/audit_taiji_write_only_key_face.py",
+    PROVENANCE_PREFIX: "scripts/training/audit_taiji_answer_source_provenance.py",
 }
 CLAIMS = ("已展开且有承载表", "N1 出口交付第三项已交付", "N1 已把回答链与角色通路做完")
 NEGATIONS = ("不宣布", "不许", "不得", "仍不", "未兑现", "不能宣布", "过期")
@@ -60,19 +64,32 @@ def _load_producer_format(root: Path, rel: Path) -> str:
     return str(module.REPORT_FORMAT)
 
 
-def _read_artifact(root: Path, rel: str) -> dict[str, object]:
-    path = root / rel
-    if not path.is_file():
-        raise ValueError(f"前置件缺失：{rel}（缺件不许读成「没宣称就没问题」，那是要修的仪器）")
+def newest_artifact(root: Path, prefix: str) -> Path:
+    """取**当期最新**那张读数，而不是钉死某个日期。
+
+    门读封存件就会永远拦不住现行（㊵-712 实测：仪器现面已报 1 枚载体，门还在按昨天的件报"无载体"）。
+    文件名里的日期是单调的（`_YYYYMMDD`），同一天多次复算再按 mtime 取新（共享工作树下的既有规矩）。
+    """
+
+    found = sorted(root.glob(prefix + "*.json"), key=lambda q: (q.name, q.stat().st_mtime))
+    if not found:
+        raise ValueError(
+            f"前置件缺失：没有任何 `{prefix}*.json`（缺件不许读成「没宣称就没问题」，那是要修的仪器）"
+        )
+    return found[-1]
+
+
+def _read_artifact(root: Path, prefix: str) -> tuple[Path, dict[str, object]]:
+    path = newest_artifact(root, prefix)
     artifact = json.loads(path.read_text(encoding="utf-8"))
     declared = artifact.get("format")
-    expected = _load_producer_format(root, rel)
+    expected = _load_producer_format(root, prefix)
     if declared != expected:
         raise ValueError(
-            f"{rel} 的 format={declared!r} 与生产它的仪器现行 REPORT_FORMAT={expected!r} 不同源："
+            f"{path.as_posix()} 的 format={declared!r} 与生产它的仪器现行 REPORT_FORMAT={expected!r} 不同源："
             "仪器已升版而读数未重算，本门拒绝拿旧件判今天的前置"
         )
-    return artifact
+    return path, artifact
 
 
 def judge_role(artifact: dict[str, object]) -> dict[str, object]:
@@ -125,6 +142,13 @@ def judge_provenance(artifact: dict[str, object]) -> dict[str, object]:
         "member": "§7③ answer_source 的一致性复算",
         "state": state,
         "evidence": f"{verdict}（载体 {artifact['carrier_face']['carrier_count']} 枚）",
+        #: 「绿」不许裸奔：这一枚复算证的只是**信封内部一致**，而三枚配方键由同一份 CLI 参数写出，
+        #: 所以一致近乎由构造保证——载体到没到"被采纳的回答"那一层，必须由这句话一起出版。
+        "scope_note": (
+            "内部一致由同一份参数构造保证，且载体只到信封层（不证标签所指那条路真被走过）"
+            if state == "satisfied"
+            else None
+        ),
     }
 
 
@@ -153,9 +177,9 @@ def scan_claims(root: Path, docs: list[str]) -> dict[str, object]:
 
 
 def adjudicate(root: Path, docs: list[str]) -> dict[str, object]:
-    role = _read_artifact(root, ROLE_FACE)
-    write_only = _read_artifact(root, WRITE_ONLY_FACE)
-    provenance = _read_artifact(root, PROVENANCE_FACE)
+    role_path, role = _read_artifact(root, ROLE_PREFIX)
+    write_only_path, write_only = _read_artifact(root, WRITE_ONLY_PREFIX)
+    provenance_path, provenance = _read_artifact(root, PROVENANCE_PREFIX)
     members = [judge_role(role), judge_write_only(write_only), judge_provenance(provenance)]
     for member in members:
         if member["state"] not in STATES:
@@ -183,7 +207,12 @@ def adjudicate(root: Path, docs: list[str]) -> dict[str, object]:
             state: sum(1 for member in members if member["state"] == state) for state in STATES
         },
         "claims": claims,
-        "artifacts": [ROLE_FACE, WRITE_ONLY_FACE, PROVENANCE_FACE],
+        #: 必须出版"这一判用的是哪一件"：封存件的名字一旦被硬编码，门就会永远按旧读数判今天。
+        "artifacts_used": [
+            role_path.relative_to(root).as_posix(),
+            write_only_path.relative_to(root).as_posix(),
+            provenance_path.relative_to(root).as_posix(),
+        ],
         "what_this_does_not_prove": [
             "本门只守「三件同现且词表合法」与「有没有人已宣称」，不重判任何一条判据本身——"
             "判据的判定权在各仪器自己的读数件里",

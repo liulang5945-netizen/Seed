@@ -75,7 +75,7 @@ GOOD_ROWS = [
 def test_missing_artifact_is_loud_not_silent(tmp_path: Path) -> None:
     module = _load()
     try:
-        module._read_artifact(tmp_path, module.ROLE_FACE)
+        module._read_artifact(tmp_path, module.ROLE_PREFIX)
     except ValueError as exc:
         assert "前置件缺失" in str(exc), exc
     else:
@@ -92,11 +92,41 @@ def test_stale_format_is_refused(tmp_path: Path) -> None:
     payload["format"] = "some-older-format"
     path.write_text(json.dumps(payload), encoding="utf-8", newline="\n")
     try:
-        module._read_artifact(root, module.ROLE_FACE)
+        module._read_artifact(root, module.ROLE_PREFIX)
     except ValueError as exc:
         assert "不同源" in str(exc), exc
     else:
         raise AssertionError("format 与生产者不同源必须拒绝")
+
+
+def test_gate_reads_the_newest_readout_not_a_hardcoded_date(tmp_path: Path) -> None:
+    """新鲜度必须能为假：写一枚日期更新的读数，门要改用它，而不是永远判昨天封的那件。
+
+    ㊵-712 的实测起因：仪器现面已报 1 枚载体，门却因钉死件名而继续报"无载体"——
+    那就是 [[sealed-artifact-greenness-not-live-check]] 说的"门读封存件就拦不住现行回归"。
+    """
+
+    module = _load()
+    root = _root(tmp_path, "table_registered", "no_carrier_outside_weight_artifacts", GOOD_ROWS)
+    before = module.adjudicate(root, ["state.md"])
+    assert before["artifacts_used"][2] == module.PROVENANCE_FACE, before["artifacts_used"]
+    third_before = [m for m in before["members"] if "§7③" in m["member"]][0]
+    assert third_before["state"] == "not_established", third_before
+
+    _artifact(
+        root,
+        module.PROVENANCE_PREFIX + "20991231.json",
+        {
+            "format": STUB_FORMAT,
+            "carrier_face": {"verdict": "consistent_within_carriers", "carrier_count": 1},
+        },
+    )
+    after = module.adjudicate(root, ["state.md"])
+    assert after["artifacts_used"][2].endswith("20991231.json"), after["artifacts_used"]
+    third_after = [m for m in after["members"] if "§7③" in m["member"]][0]
+    assert third_after["state"] == "satisfied", third_after
+    assert third_after["scope_note"], third_after
+    assert after["verdict"] == "publishable_not_claimed", after["verdict"]
 
 
 def test_off_dictionary_verdict_raises(tmp_path: Path) -> None:
@@ -130,6 +160,31 @@ def test_all_satisfied_and_claimed_is_publishable(tmp_path: Path) -> None:
     report = module.adjudicate(root, ["state.md"])
     assert report["verdict"] == "publishable_and_claimed", report
     assert report["claims"]["claim_hits"], report
+
+
+def test_scope_note_travels_with_the_green_branch(tmp_path: Path) -> None:
+    """③判绿时**必须**带适用范围句；判"无载体"时那句必须是 `None`——否则披露会伪装成检验。"""
+
+    module = _load()
+    satisfied_root = _root(tmp_path, "table_registered", "consistent_within_carriers", GOOD_ROWS)
+    third = [
+        m
+        for m in module.adjudicate(satisfied_root, ["state.md"])["members"]
+        if "§7③" in m["member"]
+    ][0]
+    assert third["state"] == "satisfied", third
+    assert third["scope_note"], third
+
+    pending_root = _root(
+        tmp_path.parent / "pending",
+        "table_registered",
+        "no_carrier_outside_weight_artifacts",
+        GOOD_ROWS,
+    )
+    third_pending = [
+        m for m in module.adjudicate(pending_root, ["state.md"])["members"] if "§7③" in m["member"]
+    ][0]
+    assert third_pending["scope_note"] is None, third_pending
 
 
 def test_claim_without_precondition_is_the_red_branch(tmp_path: Path) -> None:
