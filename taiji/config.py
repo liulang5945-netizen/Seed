@@ -19,16 +19,6 @@ EPISODIC_EVENT_COMPONENTS = (
     "provenance",
 )
 DEFAULT_EPISODIC_EVENT_COMPONENT_GAINS = (1.0,) * len(EPISODIC_EVENT_COMPONENTS)
-EPISODIC_PROVENANCE_KINDS = (
-    "experienced",
-    "imagined",
-    "replayed",
-    "external",
-    "generated",
-)
-# `generated` 必须留在末位：`_provenance_code` 用 `.index()` 取 one-hot，动前四位等于
-# 重新解释历史权重的语义（DEBT-G100／VISION §19.6 要求未核验的生成内容保留 generated 来源）。
-
 EPISODIC_LEARNING_TARGETS = (
     "all",
     "association",
@@ -36,12 +26,6 @@ EPISODIC_LEARNING_TARGETS = (
     "action_readout",
     "outcome_readout",
 )
-
-
-def validate_episodic_provenance(name: str, provenance: str) -> None:
-    if provenance not in EPISODIC_PROVENANCE_KINDS:
-        choices = ", ".join(EPISODIC_PROVENANCE_KINDS)
-        raise ValueError(f"{name} must be one of: {choices}")
 
 
 def validate_episodic_learning_target(name: str, target: str) -> None:

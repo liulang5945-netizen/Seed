@@ -1,0 +1,15 @@
+{
+  "format": "taiji-episodic-forgetting-claims-v1",
+  "status": "ok",
+  "files_scanned": 2077,
+  "faces": [
+    "reports",
+    "plans"
+  ],
+  "violations": [],
+  "violation_count": 0,
+  "verdicts": {
+    "no_affirmative_forgetting_claims": true
+  },
+  "reading_limit": "\u672c\u5668\u53ea\u626b\u300e\u80af\u5b9a\u5f0f\u58f0\u79f0\u5df2\u5177\u5907\u81ea\u52a8\u9057\u5fd8\u80fd\u529b\u300f\u3002\u7981\u4ee4\u672c\u4f53\uff08\u540c\u53e5\u542b\u5426\u5b9a\u6807\u8bb0\uff09\u4e0d\u8ba1\u547d\u4e2d\uff1b\u5b57\u6837\u51fa\u73b0\u5728\u4e2d\u6027\u53d9\u8ff0\u91cc\u4e5f\u4e0d\u7b97\u2014\u2014\u5224\u636e\u8981\u62e6\u7684\u662f\u65ad\u8a00\uff0c\u4e0d\u662f\u8bcd\u3002"
+}

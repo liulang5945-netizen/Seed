@@ -1,0 +1,82 @@
+{
+  "format": "taiji-n2-06-write-contract-first-values-v1",
+  "generated_at_utc": "2026-10-11T09:24:55.177699+00:00",
+  "family_baseline": {
+    "parsed": true,
+    "summary": "14 failed, 2964 passed, 23 skipped, 1 xfailed, 3 warnings in 1490.52s",
+    "pytest_rc": 1,
+    "started": "START_UTC=2026-10-11T08:50:51.478472+00:00 HEAD=6aac403b1732e9a4d4e7f311b0b975f420b25578 TRACKED_DIRTY=6 UNTRACKED=43"
+  },
+  "j_n2f_1": {
+    "record_requires_explicit_source": true,
+    "implicit_source_sites_still_defaulting": 8,
+    "sites": [
+      "seed/model.py:120",
+      "taiji/contracts.py:1334",
+      "taiji/contracts.py:1444",
+      "taiji/contracts.py:864",
+      "taiji/foundation_tasks.py:263",
+      "taiji/foundation_training.py:1629",
+      "taiji/memory_learning_example.py:51",
+      "taiji/model.py:2600"
+    ],
+    "verdict": "partially_closed"
+  },
+  "j_n2f_2": {
+    "membership_check_at_record_layer": false,
+    "store_write_still_ignores_source": true,
+    "verdict": "checks_moved_to_record_layer"
+  },
+  "j_n2f_3": {
+    "expire_exists": true,
+    "expired_ids_are_published": true,
+    "eviction_counted_separately": true,
+    "expire_removed": 1,
+    "verdict": "revocation_reaches_episodic_store"
+  },
+  "j_n2f_4": {
+    "affirmative_claim_hits": 0,
+    "hits": [],
+    "instrument_installed": true,
+    "verdict": "scanned_by_new_instrument"
+  },
+  "j_n2f_5": {
+    "categories_covered": 7,
+    "categories_total": 7,
+    "per_category": {
+      "\u8986\u76d6\u66f4\u65b0": true,
+      "\u5bb9\u91cf\u9971\u548c": true,
+      "\u77db\u76fe\u4e8b\u5b9e": true,
+      "\u91cd\u590d\u8f93\u5165": true,
+      "\u566a\u58f0": true,
+      "\u8de8\u4f1a\u8bdd\u4e0d\u6cc4\u6f0f": true,
+      "\u79fb\u9664 A/E/\u03c6 \u540e\u80fd\u529b\u53d8\u5316": true
+    },
+    "verdict": "all_seven_named"
+  },
+  "j_n5k_2": {
+    "learning_target_vocabulary": [
+      "all",
+      "association",
+      "readout",
+      "action_readout",
+      "outcome_readout"
+    ],
+    "out_of_vocabulary_target_refused": true,
+    "source_labels_are_open_vocabulary": true,
+    "source_note": "\u8bb0\u5f55\u5c42\u53ea\u8981\u6c42\u663e\u5f0f\u58f0\u660e\uff1b\u56db\u901a\u9053\u79cd\u7c7b\u6821\u9a8c\u5f52 EpisodicField\uff08taiji/model.py:2612\uff09"
+  },
+  "j_n5k_4": {
+    "field_channel_vocabulary": [
+      "experienced",
+      "imagined",
+      "replayed",
+      "external"
+    ],
+    "generated_is_an_accepted_label": true,
+    "generated_reward_ban_present": true,
+    "closed_source_vocabulary_claimed": false,
+    "note": "\u95ed\u96c6\u90a3\u4e00\u534a\u88ab\u672c\u6279 12 \u679a\u7ea2\u5426\u8bc1\uff08\u6765\u6e90\u6807\u7b7e\u662f 90 \u5904\u5f00\u653e\u8bcd\u8868\uff09\uff1bG100 \u4eca\u5929\u53ef\u5f3a\u5236\u7684\u53ea\u6709\u4e24\u4ef6\u4e8b\uff1a\u663e\u5f0f\u58f0\u660e\uff0bgenerated \u4e0d\u5f97\u5e26\u975e\u96f6\u5956\u52b1\u3002"
+  },
+  "reading_limit": "\u672c\u5668\u51fa\u7684\u662f**\u5408\u540c\u4e0e\u8bb0\u8d26**\u7684\u8fbe\u6210\u5ea6\uff0c\u4e0d\u662f\u80fd\u529b\u8bfb\u6570\uff1bJ-N2f-1 \u7684 `partially_closed` \u6309**\u7ad9\u70b9\u6570**\u5224\u5b9a\uff0c\u7ad9\u70b9\u6570\u4e0d\u4e3a\u96f6\u5c31\u4e0d\u8bb8\u5199\u6210\u300e\u5df2\u53d6\u6d88\u9690\u5f0f\u6765\u6e90\u300f\u3002"
+}

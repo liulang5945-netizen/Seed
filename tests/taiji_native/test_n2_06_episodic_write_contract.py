@@ -16,7 +16,7 @@ import pytest
 import torch
 
 from taiji import Taiji, TaijiConfig
-from taiji.contracts import EpisodicMemoryRecord
+from taiji.contracts import EpisodicMemoryRecord, Outcome
 from taiji.episodic_memory import EpisodicMemoryStore
 
 
@@ -145,9 +145,18 @@ def test_provenance_has_no_implicit_default_anymore() -> None:
         )
 
 
-def test_provenance_outside_the_vocabulary_is_refused() -> None:
-    with pytest.raises(ValueError, match="episodic provenance"):
-        _record("m-bad", cue=[1.0, 0.0, 0.0, 0.0], provenance="hallucinated-source")
+def test_source_labels_are_an_open_vocabulary_not_a_closed_list() -> None:
+    """来源标签是**开放词表**——这一支是把 12 枚红测出来的那次改判。
+
+    我起初按 config 里的 EPISODIC_PROVENANCE_KINDS 做闭集校验，实测撞掉三族：
+    scripts/training/measure_taiji_n4_addressing_surface.py:144 送 n4-01-* 标签、
+    taiji/artifact_internalization.py:537/539 送 artifact-outcome 与 artifact-internalized
+    （全仓 provenance 实参共 90 处）。⇒ 闭集是我把"情节场的 4 个编码通道种类"误当成
+    "来源标签"：通道侧校验仍归 EpisodicField.PROVENANCE_KINDS（taiji/model.py:2612 原样在），
+    记录层只要求**显式声明**。这条测钉的就是"外部标签必须照样收"，防止将来有人再收窄。
+    """
+    label = "artifact-outcome"
+    assert _record("m-open", cue=[1.0, 0.0, 0.0, 0.0], provenance=label).provenance == label
 
 
 def test_legacy_payload_without_provenance_still_loads_but_is_counted() -> None:
@@ -214,3 +223,85 @@ def test_the_associative_field_channel_vocabulary_is_still_four_channels() -> No
     model = Taiji(_config())
     assert model.memory.PROVENANCE_KINDS == ("experienced", "imagined", "replayed", "external")
     assert model.memory.provenance_encoder.in_features == 4
+
+
+def test_contradictory_facts_about_one_cue_stay_two_records_not_a_silent_merge() -> None:
+    """矛盾事实（§5.3 测试清单）：同一条线索上两条互斥结果必须各自在库、各自可读。"""
+    cue = [1.0, 0.5, 0.0]
+    store = EpisodicMemoryStore(capacity=4, cue_dim=3)
+    for memory_id, value in (("fact-yes", 1.0), ("fact-no", -1.0)):
+        store.write(
+            EpisodicMemoryRecord(
+                memory_id=memory_id,
+                episode_id=f"episode-{memory_id}",
+                tick=1,
+                cue=torch.tensor(cue),
+                outcome=Outcome(
+                    intent_id=f"intent-{memory_id}", reward=value, success=value > 0, tick=1
+                ),
+                provenance="experienced",
+            )
+        )
+    assert store.count == 2, store.count
+    rewards = {
+        hit.record.memory_id: float(hit.record.outcome.reward)
+        for hit in store.retrieve(torch.tensor(cue), limit=4)
+    }
+    assert rewards == {"fact-yes": 1.0, "fact-no": -1.0}, rewards
+
+
+def test_the_same_record_written_twice_does_not_double_count() -> None:
+    """重复输入：只声明"不重复计数"，不声明内容级去重（后者今天不存在，见 DEBT-G106）。"""
+    cue = [0.5, 0.5, 0.0]
+    store = EpisodicMemoryStore(capacity=4, cue_dim=3)
+    for _ in range(2):
+        store.write(
+            EpisodicMemoryRecord(
+                memory_id="dup",
+                episode_id="episode-dup",
+                tick=1,
+                cue=torch.tensor(cue),
+                provenance="experienced",
+            )
+        )
+    assert store.count == 1, store.count
+
+
+def test_orthogonal_and_zero_cues_score_zero_and_cannot_win_a_ranking() -> None:
+    """噪声：零范数线索走 `query_norm <= 1e-8` 那一支，所有分数记 0（仪器性质，非能力）。"""
+    store = EpisodicMemoryStore(capacity=4, cue_dim=3)
+    store.write(
+        EpisodicMemoryRecord(
+            memory_id="signal",
+            episode_id="episode-signal",
+            tick=1,
+            cue=torch.tensor([0.0, 1.0, 0.0]),
+            provenance="experienced",
+        )
+    )
+    for noise in ([0.0, 0.0, 0.0], [1.0, 0.0, 0.0]):
+        hits = store.retrieve(torch.tensor(noise), limit=4)
+        assert hits, noise
+        assert all(hit.score == 0.0 for hit in hits), (noise, [h.score for h in hits])
+
+
+def test_retrieval_ignores_episode_boundaries_documented_not_endorsed() -> None:
+    """跨会话不泄漏今天**不成立**：`retrieve` 不按 `episode_id` 过滤。
+
+    这支刻意钉"当前缺陷形状"而不是声称隔离成立——将来接了隔离它会红，那时按 DEBT-G106
+    的结案方向改判据并升版；现在假装通过就是把判据写成愿望。
+    """
+    cue = [0.0, 0.0, 1.0]
+    store = EpisodicMemoryStore(capacity=4, cue_dim=3)
+    store.write(
+        EpisodicMemoryRecord(
+            memory_id="s1",
+            episode_id="session-1",
+            tick=1,
+            cue=torch.tensor(cue),
+            provenance="experienced",
+        )
+    )
+    assert [hit.record.episode_id for hit in store.retrieve(torch.tensor(cue), limit=4)] == [
+        "session-1"
+    ]
