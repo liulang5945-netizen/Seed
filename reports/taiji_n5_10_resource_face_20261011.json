@@ -1,0 +1,95 @@
+{
+  "format": "taiji-n5-resource-face-v2",
+  "status": "ok",
+  "prereg": "plans/reference/PLAN-N5-01_four_layer_loop_design_prereg_20261009.md (\u00a71 \u884c\u2463)",
+  "base_checkpoint": "E:\\Seed\\checkpoints\\seed_beta.pt",
+  "arms": {
+    "treated": {
+      "checkpoint": "output\\n5_10_arms\\treated\\checkpoint.pt",
+      "base_tensor_entries": 93,
+      "arm_tensor_entries": 17726,
+      "shared_entries": 93,
+      "shared_numel_base": 1029828,
+      "shared_numel_arm": 1029828,
+      "shared_numel_delta": 0,
+      "only_in_arm_entries": 17633,
+      "only_in_arm_numel": 4628052,
+      "only_in_base_entries": 0,
+      "shadow_unit_count": 97,
+      "shadow_gate": 1.0,
+      "activation": {
+        "state_tensors": 8734,
+        "elements": 858688,
+        "nonzero_elements": 857662,
+        "max_abs_element": 10.920937,
+        "meaning": "final-state snapshot of runtime/activation tensors stored in the arm envelope"
+      },
+      "counters": {
+        "state_tensors": 8,
+        "elements": 103296,
+        "nonzero_elements": 103296,
+        "max_abs_element": 149999.0,
+        "meaning": "final-state snapshot of runtime/activation tensors stored in the arm envelope"
+      }
+    },
+    "control": {
+      "checkpoint": "output\\n5_10_arms\\control\\checkpoint.pt",
+      "base_tensor_entries": 93,
+      "arm_tensor_entries": 17726,
+      "shared_entries": 93,
+      "shared_numel_base": 1029828,
+      "shared_numel_arm": 1029828,
+      "shared_numel_delta": 0,
+      "only_in_arm_entries": 17633,
+      "only_in_arm_numel": 4628052,
+      "only_in_base_entries": 0,
+      "shadow_unit_count": 97,
+      "shadow_gate": 0.0,
+      "activation": {
+        "state_tensors": 8734,
+        "elements": 858688,
+        "nonzero_elements": 857662,
+        "max_abs_element": 11.059344,
+        "meaning": "final-state snapshot of runtime/activation tensors stored in the arm envelope"
+      },
+      "counters": {
+        "state_tensors": 8,
+        "elements": 103296,
+        "nonzero_elements": 103296,
+        "max_abs_element": 149999.0,
+        "meaning": "final-state snapshot of runtime/activation tensors stored in the arm envelope"
+      }
+    },
+    "noise_floor": {
+      "checkpoint": "output\\n5_10_arms\\noise_floor\\checkpoint.pt",
+      "base_tensor_entries": 93,
+      "arm_tensor_entries": 17726,
+      "shared_entries": 93,
+      "shared_numel_base": 1029828,
+      "shared_numel_arm": 1029828,
+      "shared_numel_delta": 0,
+      "only_in_arm_entries": 17633,
+      "only_in_arm_numel": 4628052,
+      "only_in_base_entries": 0,
+      "shadow_unit_count": 97,
+      "shadow_gate": 0.0,
+      "activation": {
+        "state_tensors": 8734,
+        "elements": 858688,
+        "nonzero_elements": 857662,
+        "max_abs_element": 11.059344,
+        "meaning": "final-state snapshot of runtime/activation tensors stored in the arm envelope"
+      },
+      "counters": {
+        "state_tensors": 8,
+        "elements": 103296,
+        "nonzero_elements": 103296,
+        "max_abs_element": 149999.0,
+        "meaning": "final-state snapshot of runtime/activation tensors stored in the arm envelope"
+      }
+    }
+  },
+  "arms_with_shared_parameter_growth": [],
+  "j_n5res_1": "parameters_unchanged_runtime_materialized",
+  "reading_limit": "parameter growth is compared ONLY on tensor names shared with the factory base, because the factory file stores weights while trained arms also persist runtime state; the two numbers must never be summed. The activation half is a FINAL-STATE SNAPSHOT of tensors whose names match the activation vocabulary, not a per-tick magnitude series, and call counts (shadow_forward/learn_hits) are consumption evidence that must not be substituted for it. Counter-like tensors (`usage`, `age`) are published in a SEPARATE `counters` bucket: they live under the same `predictive_context` name prefix and, measured on the 150k arms, they dominate the maximum at 149,998 - folding them into the activation snapshot would turn a step counter into an apparent activation magnitude."
+}
