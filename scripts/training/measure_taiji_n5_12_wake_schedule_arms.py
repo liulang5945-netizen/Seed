@@ -67,6 +67,37 @@ def noise_units(stream: list[tuple[float, float, float, float]]) -> tuple[float,
     return tuple(units)
 
 
+def raw_diff_scales(stream: list[tuple[float, float, float, float]]) -> set[float]:
+    """梯的真身：逐路全部**非零**相邻步差分（浮点精确相等去重，不引容差）。
+
+    集合为空 ⇒ 流恒定，`J-N5l-6` 必须先判 `stream_degenerate` 并响亮退出——
+    常值流下扰动会被每一路自己的取值范围夹死，副本＝原流，任何"通过"都是空过。
+    """
+
+    return {
+        abs(column[index] - column[index - 1])
+        for column in zip(*stream, strict=True)
+        for index in range(1, len(column))
+        if abs(column[index] - column[index - 1]) > 0.0
+    }
+
+
+def scale_ladder(stream: list[tuple[float, float, float, float]]) -> tuple[float, ...]:
+    """`S = 非零步尺集 ∪ {已冻那一档}`，升序；成员与取值全部随读数件出版。"""
+
+    return tuple(sorted(raw_diff_scales(stream) | {frozen_amplitude(stream)}))
+
+
+def worst_case_verdicts(clean_flips: int, rows: list[dict[str, float]]) -> str:
+    """J-N5l-6：只要有一档 `f(s) != f_clean` 就判不成立；全等才判通过。"""
+
+    differs = [row for row in rows if row["flips"] != clean_flips]
+    if not differs:
+        return "noise_does_not_re_wake"
+    worst = max(differs, key=lambda row: abs(row["flips"] - clean_flips))
+    return f"noise_changes_scheduling:{clean_flips}->{int(worst['flips'])}"
+
+
 def frozen_amplitude(stream: list[tuple[float, float, float, float]]) -> float:
     """已冻 J-N5l-2 原文的"幅值取该流自身的最大值"——判据只用这一档。"""
 
@@ -153,12 +184,18 @@ def measure(*, seed: int = 7) -> dict[str, object]:
     # J-N5l-4 单独判，且不被可用性挡在前面：两臂逐位相同就是「其实只有一臂」——
     # 那正是需要被抓出来的形状（守卫必须能为假）。
     j_n5l_4 = "arm_not_actually_two" if adaptive_clean == fixed_clean else "arms_separable"
+    if not raw_diff_scales(stream):
+        raise ValueError(
+            "stream_degenerate：这条流的逐路相邻步差分全为零，扰动副本＝原流，"
+            "任何『噪声不反复唤醒』的读法都是空过（PLAN-N5-13 §2）"
+        )
     ladder: list[dict[str, float]] = []
-    for scale in sorted({unit for unit in units if unit > 0.0}):
+    for scale in scale_ladder(stream):
         ladder_modes, _ = run_arm(
             controller, perturb(stream, seed=seed, amplitude=scale), arm="adaptive"
         )
-        ladder.append({"amplitude": scale, "flips": float(_count_flips(ladder_modes))})
+        ladder.append({"amplitude": scale, "flips": _count_flips(ladder_modes)})
+    j_n5l_6 = worst_case_verdicts(flips_adaptive_clean, ladder)
     return {
         "format": REPORT_FORMAT,
         "prereg": PREREG,
@@ -169,9 +206,9 @@ def measure(*, seed: int = 7) -> dict[str, object]:
             "noise_units_from_stream": list(units),
             "noise_unit_fields": ["prediction_error", "novelty", "reward", "resource_cost"],
         },
-        "supplementary_noise_ladder": {
-            "used_for_verdict": False,
-            "why": "判据只按已冻的那一档；逐路步尺的梯只作稳健性披露，不参与判定",
+        "noise_scale_ladder": {
+            "used_for_verdict": "J-N5l-6（最坏情形）；J-N5l-2 仍只取已冻那一档 frozen_amplitude",
+            "dedupe_rule": "浮点精确相等去重，不引容差——引了就是一枚新阈值（DEBT-G90 的形状）",
             "rows": ladder,
         },
         "modes": {
@@ -193,6 +230,7 @@ def measure(*, seed: int = 7) -> dict[str, object]:
         "verdicts": {
             "ruler_usable": bool(ruler_usable),
             "j_n5l_2_noise_rewake": j_n5l_2,
+            "j_n5l_6_noise_rewake_worst_case": j_n5l_6,
             "j_n5l_4_fixed_schedule_control": j_n5l_4,
         },
         "caveats": [

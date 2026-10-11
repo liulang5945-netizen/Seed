@@ -18,17 +18,29 @@
       "resource_cost"
     ]
   },
-  "supplementary_noise_ladder": {
-    "used_for_verdict": false,
-    "why": "判据只按已冻的那一档；逐路步尺的梯只作稳健性披露，不参与判定",
+  "noise_scale_ladder": {
+    "used_for_verdict": "J-N5l-6（最坏情形）；J-N5l-2 仍只取已冻那一档 frozen_amplitude",
+    "dedupe_rule": "浮点精确相等去重，不引容差——引了就是一枚新阈值（DEBT-G90 的形状）",
     "rows": [
       {
+        "amplitude": 0.04347826086956519,
+        "flips": 13
+      },
+      {
+        "amplitude": 0.043478260869565216,
+        "flips": 13
+      },
+      {
+        "amplitude": 0.043478260869565244,
+        "flips": 13
+      },
+      {
         "amplitude": 0.0434782608695653,
-        "flips": 13.0
+        "flips": 13
       },
       {
         "amplitude": 1.0,
-        "flips": 15.0
+        "flips": 15
       }
     ]
   },
@@ -148,6 +160,7 @@
   "verdicts": {
     "ruler_usable": true,
     "j_n5l_2_noise_rewake": "noise_changes_scheduling:13->15",
+    "j_n5l_6_noise_rewake_worst_case": "noise_changes_scheduling:13->15",
     "j_n5l_4_fixed_schedule_control": "arms_separable"
   },
   "caveats": [
@@ -157,5 +170,5 @@
     "取法自曝：第一版把四路展平取相邻差当噪声幅值，跨路跳变把幅值抬到 2.0（超出信号可表示范围，那已不是噪声而是饱和），当时的读数是 13->14；修回已冻原文那一档后重算为 13->13。⇒ 这条判据的结论对噪声幅度敏感，缺陷已入册（PLAN-N5-12 §9）：不改判据口径，只把两档一起披露",
     "J-N5l-1（选择是否参与真实回合）由 walked-ledger 出值＝`scheduler_not_in_loop`，不在本件重测"
   ],
-  "started_utc": "2026-10-11T10:11:21Z"
+  "started_utc": "2026-10-11T10:49:13Z"
 }

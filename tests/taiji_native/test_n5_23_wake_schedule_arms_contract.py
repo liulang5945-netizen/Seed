@@ -9,6 +9,7 @@
 
 from __future__ import annotations
 
+import ast
 import importlib.util
 import json
 import sys
@@ -51,18 +52,22 @@ def test_frozen_amplitude_equals_the_streams_own_max() -> None:
 
 
 def test_degenerate_stream_exercises_both_fail_closed_exits() -> None:
-    """一条不动的流：翻转恒 0 ⇒ J-N5l-2 记 `ruler_unusable`，
-    而两臂逐位相同 ⇒ J-N5l-4 必须报 `arm_not_actually_two`（这支不被可用性挡住，
-    否则它永远走不到＝惰性出口）。"""
+    """退化流上两臂逐位相同＝『其实只有一臂』，且 `measure()` 必须响亮拒绝出值。
+
+    已冻的单点式在这条流上会读成 `noise_does_not_re_wake`（扰动被每一路的取值范围夹死，
+    副本＝原流）——那正是"守卫不能为假"的反面，所以 `measure()` 改成先判空再出值。
+    """
 
     module = _load()
-    module.clean_stream = lambda: [(0.0, 0.0, 0.0, 0.0)] * module.STEPS
-    report = module.measure(seed=7)
-    assert report["verdicts"]["ruler_usable"] is False
-    assert report["verdicts"]["j_n5l_2_noise_rewake"] == "ruler_unusable"
-    assert report["verdicts"]["j_n5l_4_fixed_schedule_control"] == "arm_not_actually_two"
-    assert report["flips"]["adaptive_clean"] == 0
-    assert report["flips"]["fixed_wake_clean"] == 0
+    flat = [(0.0, 0.0, 0.0, 0.0)] * module.STEPS
+    controller = module.HomeostaticController()
+    adaptive, _ = module.run_arm(controller, flat, arm="adaptive")
+    fixed, _ = module.run_arm(controller, flat, arm="fixed_wake")
+    assert adaptive == fixed
+    assert module._count_flips(adaptive) == 0
+    module.clean_stream = lambda: flat
+    with pytest.raises(ValueError, match="stream_degenerate"):
+        module.measure(seed=7)
 
 
 def test_real_stream_gives_a_usable_ruler_and_separable_arms() -> None:
@@ -81,8 +86,8 @@ def test_real_stream_gives_a_usable_ruler_and_separable_arms() -> None:
 def test_the_ladder_is_disclosure_not_the_verdict() -> None:
     module = _load()
     report = module.measure(seed=7)
-    ladder = report["supplementary_noise_ladder"]
-    assert ladder["used_for_verdict"] is False
+    ladder = report["noise_scale_ladder"]
+    assert "J-N5l-6" in ladder["used_for_verdict"]
     assert ladder["rows"]
     assert report["fixture"]["frozen_amplitude_from_stream_max"] == 1.0
     for row in ladder["rows"]:
@@ -106,3 +111,64 @@ def test_existing_target_is_refused_without_overwrite(tmp_path: Path, monkeypatc
     monkeypatch.setattr(sys, "argv", ["prog", "--out-report", str(target), "--overwrite"])
     assert module.main() == 0
     assert json.loads(target.read_text(encoding="utf-8"))["format"] == module.REPORT_FORMAT
+
+
+def test_degenerate_stream_cannot_read_as_a_pass() -> None:
+    """PLAN-N5-13 G-N5m-1 的形状：常值流必须判 `stream_degenerate` 并响亮失败。
+
+    已冻的单点式在这条流上会读成 `noise_does_not_re_wake`（扰动被每一路的取值范围夹死，
+    副本＝原流）——那正是"守卫不能为假"的反面，所以本件把它做成必红。
+    """
+
+    module = _load()
+    module.clean_stream = lambda: [(0.5, 0.5, 0.5, 0.5)] * module.STEPS
+    with pytest.raises(ValueError, match="stream_degenerate"):
+        module.measure(seed=7)
+
+
+def test_worst_case_rejects_the_favourable_scale() -> None:
+    """G-N5m-1：有一档相等而另一档不等 ⇒ 必须判不成立，不许挑那一档。"""
+
+    module = _load()
+    rows = [{"amplitude": 0.25, "flips": 13.0}, {"amplitude": 1.0, "flips": 15.0}]
+    assert module.worst_case_verdicts(13, rows) == "noise_changes_scheduling:13->15"
+    all_equal = [{"amplitude": 0.25, "flips": 13.0}, {"amplitude": 1.0, "flips": 13.0}]
+    assert module.worst_case_verdicts(13, all_equal) == "noise_does_not_re_wake"
+
+
+def test_ladder_is_deterministic_and_includes_the_frozen_scale() -> None:
+    """G-N5m-2 的可核形式：梯由流唯一决定，且一定含已冻那一档；mixed 不在里面。"""
+
+    module = _load()
+    stream = module.clean_stream()
+    ladder = module.scale_ladder(stream)
+    assert ladder == tuple(sorted(ladder))
+    assert module.frozen_amplitude(stream) in ladder
+    assert len(ladder) == len(set(ladder))
+    assert all(scale > 0.0 for scale in ladder)
+    assert len(ladder) == len(module.raw_diff_scales(stream) | {module.frozen_amplitude(stream)})
+
+
+def test_verdict_expression_introduces_no_new_numeric_threshold() -> None:
+    """G-N5m-3：**比较式**的右值只许是 0 与 1（夹具参数住在 `clean_stream`，不住在判定里）。
+
+    取法收窄到 `ast.Compare` 的比较对象：第一版扫全部 `Constant` 会把 `row[0]`／`row[3]` 这种
+    **下标字面量**也算成阈值（`perturb` 当场被误报两枚），那是"守卫过宽会误伤"的又一形。
+    """
+
+    module = _load()
+    tree = ast.parse(SCRIPT.read_text(encoding="utf-8"))
+    offenders: list[str] = []
+    for name in ("worst_case_verdicts", "raw_diff_scales", "scale_ladder"):
+        fn = next(n for n in tree.body if isinstance(n, ast.FunctionDef) and n.name == name)
+        for node in ast.walk(fn):
+            if not isinstance(node, ast.Compare):
+                continue
+            for comparator in node.comparators:
+                if (
+                    isinstance(comparator, ast.Constant)
+                    and isinstance(comparator.value, (int, float))
+                    and comparator.value not in (0, 1, 0.0)
+                ):
+                    offenders.append(f"{name}:{comparator.value!r}")
+    assert offenders == [], offenders
