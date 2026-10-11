@@ -58,6 +58,7 @@ def _build_runtime_corpus(model: TSKV8Adapter, *, repeats: int = 8) -> EpisodicM
                     tick=model.tick,
                     cue=cue,
                     action_intent=intent,
+                    provenance="experienced",
                 )
             )
             index += 1

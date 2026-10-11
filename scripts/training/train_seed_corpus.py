@@ -528,6 +528,7 @@ def run_training(
                     episode_id=f"n4-material-{episodic_store.count:06d}",
                     tick=ticks,
                     cue=torch.tensor([b / 255.0 for b in cue], dtype=torch.float32),
+                    provenance="experienced",
                 )
             )
             doc_pending.clear()
@@ -1026,6 +1027,7 @@ def run_training(
                             episode_id=f"n4-material-{episodic_store.count:06d}",
                             tick=ticks,
                             cue=torch.tensor([b / 255.0 for b in cue], dtype=torch.float32),
+                            provenance="experienced",
                         )
                     )
                     doc_pending.clear()

@@ -35,6 +35,10 @@ class EpisodicMemoryStore:
         self.capacity = int(capacity)
         self.cue_dim = None if cue_dim is None else int(cue_dim)
         self._records: dict[str, EpisodicMemoryRecord] = {}
+        # ㊵-681（DEBT-G99）：显式撤销与容量淘汰是两件事，各记一列，不许合并。
+        self._expired: list[str] = []
+        self.evicted_count = 0
+        self.implicit_provenance_count = 0
 
     @property
     def records(self) -> tuple[EpisodicMemoryRecord, ...]:
@@ -43,6 +47,12 @@ class EpisodicMemoryStore:
     @property
     def count(self) -> int:
         return len(self._records)
+
+    @property
+    def expired_memory_ids(self) -> tuple[str, ...]:
+        """Explicitly revoked ids.  Empty means "nothing was revoked", not "nothing expired"."""
+
+        return tuple(self._expired)
 
     def write(self, record: EpisodicMemoryRecord) -> None:
         if not isinstance(record, EpisodicMemoryRecord):
@@ -56,6 +66,23 @@ class EpisodicMemoryStore:
         while len(self._records) > self.capacity:
             oldest_id = next(iter(self._records))
             del self._records[oldest_id]
+            self.evicted_count += 1
+
+    def expire(self, *memory_ids: str) -> int:
+        """Revoke named episodic records by source-level decision (DEBT-G99).
+
+        This deletes from the store only: it is not a claim that anything was
+        forgotten from trained weights, and it must never be described that way.
+        """
+
+        removed = 0
+        for memory_id in memory_ids:
+            if not str(memory_id):
+                raise ValueError("episodic expire requires a memory_id")
+            if self._records.pop(str(memory_id), None) is not None:
+                removed += 1
+            self._expired.append(str(memory_id))
+        return removed
 
     def retrieve(self, cue: torch.Tensor, *, limit: int = 1) -> tuple[EpisodicMemoryHit, ...]:
         if cue.ndim != 1:
@@ -94,6 +121,9 @@ class EpisodicMemoryStore:
             "capacity": self.capacity,
             "cue_dim": self.cue_dim,
             "records": [record.to_payload() for record in self._records.values()],
+            "expired_memory_ids": list(self._expired),
+            "evicted_count": self.evicted_count,
+            "implicit_provenance_count": self.implicit_provenance_count,
         }
 
     @classmethod
@@ -104,5 +134,12 @@ class EpisodicMemoryStore:
             raise ValueError("unsupported episodic memory checkpoint format")
         store = cls(capacity=int(payload["capacity"]), cue_dim=payload.get("cue_dim"))
         for item in payload.get("records", ()):
+            if "provenance" not in item:
+                store.implicit_provenance_count += 1
             store.write(EpisodicMemoryRecord.from_payload(item, device=device))
+        # Optional keys: a v1 payload written before DEBT-G99 simply has none of them.
+        store._expired = [str(item) for item in payload.get("expired_memory_ids", ())]
+        store.evicted_count = int(payload.get("evicted_count", 0))
+        # 这一列量的是"本次载入时有几条记录没声明来源"，由上面的循环现数；
+        # 不去读件里那个历史值，否则回填会把刚数出来的数覆盖成 0。
         return store

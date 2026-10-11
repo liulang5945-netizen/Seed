@@ -48,6 +48,7 @@ def _record(
         tick=tick,
         cue=torch.tensor([cue], dtype=torch.float32),
         action_intent=intent,
+        provenance="experienced",
     )
 
 

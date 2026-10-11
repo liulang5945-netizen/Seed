@@ -31,6 +31,7 @@ def _memory_record(memory_id: str, cue: torch.Tensor, *, episode_id: str) -> Epi
         episode_id=episode_id,
         tick=1,
         cue=cue,
+        provenance="experienced",
     )
 
 
@@ -101,6 +102,7 @@ def _build_skill_corpus(
                     cue=pattern
                     + torch.randn(2, generator=generator, dtype=torch.float32) * noise_scale,
                     action_intent=intent,
+                    provenance="experienced",
                 )
             )
     holdout = tuple(

@@ -99,6 +99,7 @@ def build_branch_records(
                         assembly_ids=(f"branch-assembly-{index}",),
                         object_ids=(object_id,),
                         relation_ids=(f"agent:sequence:{object_id}",),
+                        provenance="experienced",
                     )
                 )
                 index += 1

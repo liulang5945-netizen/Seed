@@ -86,6 +86,7 @@ def _records(
                     assembly_ids=(f"{prefix}-assembly-{episode_index}-{index}",),
                     object_ids=(object_id,),
                     relation_ids=(f"agent:sequence:{object_id}",),
+                    provenance="experienced",
                 )
             )
     return tuple(records)

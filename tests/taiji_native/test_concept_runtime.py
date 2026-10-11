@@ -115,6 +115,7 @@ def test_concept_registry_is_consumed_by_planning_and_lesion_removes_prior() -> 
                 outcome=Outcome(intent_id, reward=1.0, success=True, tick=1),
                 event_ids=(f"concept-event-{index}",),
                 assembly_ids=(f"concept-assembly-{index}",),
+                provenance="experienced",
             )
         )
 

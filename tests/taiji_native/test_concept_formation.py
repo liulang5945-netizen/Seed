@@ -28,6 +28,7 @@ def _record(
         assembly_ids=(f"assembly-{memory_id}",),
         object_ids=(object_id,),
         relation_ids=(f"agent:{relation}:{object_id}",),
+        provenance="experienced",
     )
 
 

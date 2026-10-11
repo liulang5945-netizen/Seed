@@ -40,6 +40,7 @@ def _record(
         assembly_ids=(f"concept-assembly-{index}",),
         object_ids=(object_id,),
         relation_ids=(f"agent:relation-{concept_index}:{object_id}",),
+        provenance="experienced",
     )
 
 

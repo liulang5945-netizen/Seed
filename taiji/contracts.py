@@ -16,6 +16,8 @@ from typing import Any
 
 import torch
 
+from .config import validate_episodic_provenance
+
 CONTRACT_VERSION = 1
 CONTRACT_FORMAT = "taiji-native-v1"
 
@@ -1950,7 +1952,7 @@ class EpisodicMemoryRecord:
     outcome: Outcome | None = None
     world_transition: WorldTransition | None = None
     prediction_error: float = 0.0
-    provenance: str = "experienced"
+    provenance: str = field(kw_only=True)
     event_ids: tuple[str, ...] = ()
     assembly_ids: tuple[str, ...] = ()
     object_ids: tuple[str, ...] = ()
@@ -1962,6 +1964,14 @@ class EpisodicMemoryRecord:
         _check_text(self.memory_id, "episodic memory_id")
         _check_text(self.episode_id, "episodic episode_id")
         _check_text(self.provenance, "episodic provenance")
+        validate_episodic_provenance("episodic provenance", self.provenance)
+        # VISION §19.6：自生成内容不进事实/奖励账；带非零奖励＝自证，构造期就拒。
+        if (
+            self.provenance == "generated"
+            and self.outcome is not None
+            and float(self.outcome.reward) != 0.0
+        ):
+            raise ValueError("generated episodic records cannot carry a non-zero reward")
         object.__setattr__(self, "event_ids", _normalize_ids(self.event_ids, "episodic event_ids"))
         object.__setattr__(
             self, "assembly_ids", _normalize_ids(self.assembly_ids, "episodic assembly_ids")

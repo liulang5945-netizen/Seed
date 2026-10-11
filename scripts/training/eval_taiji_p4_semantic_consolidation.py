@@ -38,6 +38,7 @@ def build_corpus() -> tuple[EpisodicMemoryStore, tuple[torch.Tensor, ...], tuple
                 cue=torch.tensor([left, right]),
                 action_intent=ActionIntent(intent_id, "compose", tick=0),
                 outcome=Outcome(intent_id, reward=reward, success=True, tick=1),
+                provenance="experienced",
             )
         )
     queries = (torch.tensor([1.0, 1.0]),)

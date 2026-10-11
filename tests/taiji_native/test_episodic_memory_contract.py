@@ -25,6 +25,7 @@ def _record(memory_id: str, cue: torch.Tensor, *, tick: int = 1) -> EpisodicMemo
         cue=cue,
         action_intent=intent,
         outcome=Outcome(intent.intent_id, reward=1.0, success=True, tick=tick),
+        provenance="experienced",
     )
 
 

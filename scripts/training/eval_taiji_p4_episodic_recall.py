@@ -56,6 +56,7 @@ def build_corpus(
                 success=index % 2 == 0,
                 tick=1,
             ),
+            provenance="experienced",
         )
         for index in range(cue_dim)
     )

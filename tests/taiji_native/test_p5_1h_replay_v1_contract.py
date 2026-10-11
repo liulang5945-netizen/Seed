@@ -36,6 +36,7 @@ def _record(memory_id: str, episode_id: str, tick: int, cue: torch.Tensor, kind:
         tick=tick,
         cue=cue,
         action_intent=ActionIntent(intent_id=f"intent-{memory_id}", kind=kind, tick=tick),
+        provenance="experienced",
     )
 
 

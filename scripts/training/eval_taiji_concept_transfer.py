@@ -61,6 +61,7 @@ def _record(
         assembly_ids=(f"transfer-assembly-{index}",),
         object_ids=(object_id,),
         relation_ids=(f"agent:{relation}:{object_id}",),
+        provenance="experienced",
     )
 
 

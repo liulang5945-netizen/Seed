@@ -55,6 +55,7 @@ def build_corpus(
                     cue=bits + torch.randn(factor_count, generator=generator) * noise_scale,
                     action_intent=ActionIntent(intent_id, "factor-compose", tick=0),
                     outcome=Outcome(intent_id, reward=reward, success=True, tick=1),
+                    provenance="experienced",
                 )
             )
             index += 1

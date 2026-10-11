@@ -86,6 +86,7 @@ def build_sequence_records(
                             assembly_ids=(f"sequence-assembly-{index}",),
                             object_ids=(object_id,),
                             relation_ids=(f"agent:{relation}:{object_id}",),
+                            provenance="experienced",
                         )
                     )
                     index += 1
