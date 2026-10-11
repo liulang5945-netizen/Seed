@@ -52,7 +52,7 @@
   若顶位仍指向原对象 ⇒ 判 `name_or_position_shortcut`（"记的是名字/位置不是属性"），
   与 [PLAN-N4-06](PLAN-N4-06_perturbation_strength_and_ruler_prereg_20261009.md) 那族捷径诊断同形。
 * **J-N4g-4 干扰与占满分开判**：(a) 加入 K 条干扰后的差值必须 **> 该档自取噪声带**才许出结论，
-  否则整条记 `ruler_unusable`（沿用 `adjudicate_taiji_n5_shadow_gate.py:295` 的 `ruler_usable` 式，
+  否则整条记 `ruler_unusable`（沿用 `adjudicate_taiji_n5_shadow_gate.py:295 〔2026-10-11 ㊵-685 行号更正：现行行号＝299。㊵-673 那次提交 `240b20210` 给该文件 +28/−10，把 `ruler_usable` 那行从 295 推到 299；口径未变，引用前按现行行号回查。〕` 的 `ruler_usable` 式，
   **不新造阈值**）；(b) 库满时读取端必须**响亮拒绝或记录淘汰**，不许返回空——空库与寻址失败在
   34.6% 那次读数里就是被混成一谈的（DEBT-G65 同族）。
 * **J-N4g-5 门控真的在门**：门的开与关必须造成 `fast_delta` 幅度**可分**（复用 PLAN-N5-07 的

@@ -78,7 +78,7 @@ J-N2f-1／2／3 的执行体＝本件 §1 那张表加一次构造性复算（�
 不需要开跑；J-N2f-4 的执行体＝对 `reports/` 与 `plans/` 的字样现扫（读面按版本控制取）；
 J-N2f-5 的执行体＝`tests/` 里的命名夹具（按函数名扫，不按文件数）。
 「存储量≠成长」不另造尺——沿用 `summarize_taiji_n5_resource_face.py` 的 `unit_count`／`shared_numel_delta`，
-「带内即尺不可用」沿用 `adjudicate_taiji_n5_shadow_gate.py:295` 的 `ruler_usable` 式（**引用而非复制**）。
+「带内即尺不可用」沿用 `adjudicate_taiji_n5_shadow_gate.py:295 〔2026-10-11 ㊵-685 行号更正：现行行号＝299。㊵-673 那次提交 `240b20210` 给该文件 +28/−10，把 `ruler_usable` 那行从 295 推到 299；口径未变，引用前按现行行号回查。〕` 的 `ruler_usable` 式（**引用而非复制**）。
 ⇒ 本件没有一条判据是手算的；同时**没有一条已经出值**（五条待批次 B／D 之后，J-N2f-4 除外，它今天即可扫）。
 
 ## §6 出口（三条互斥）

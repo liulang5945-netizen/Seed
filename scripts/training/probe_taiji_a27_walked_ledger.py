@@ -7,6 +7,10 @@
 `SPEC-A-22` §23 也自报过同型的盲区（点名式清单必然漏）。
 本支给每个可选零件记三件事：**装配了吗**、**挂在哪个方法上**、**在四种入口下各被走到几次**。
 
+2026-10-11（PLAN-N5-12 批次 A）改版两处：①"没装上"与"方法名点错"分成两列出版（旧版把两件混在
+`absent` 一桶，而 `PARTS` 里 26 枚有 10 枚点着该类上并不存在／从不被调的名字）；②`--out-report`
+的默认落点不再指向已封存的 20260928 件，且目标已存在时需 `--overwrite` 才许覆写。
+
 做法（**不改任何产品源文件**）
 ------------------------------
 在探针里对**实例**打方法包装（`setattr(part, method, wrapped)`，`__dict__` 里留痕、跑完删掉），
@@ -62,19 +66,20 @@ PARTS: tuple[tuple[str, tuple[str, ...], str], ...] = (
     ("adaptive_residual_bridge", ("_adaptive_residual_bridge",), "forward"),
     ("adaptive_residual_shadow", ("_adaptive_residual_shadow",), "forward"),
     ("response_plan_readout", ("_response_plan_readout",), "plan_probabilities"),
-    ("episodic_memory", ("_episodic_memory",), "recall"),
-    ("semantic_memory", ("_semantic_memory",), "recall"),
-    ("world_dynamics", ("_world_dynamics",), "forward"),
+    ("episodic_memory", ("_episodic_memory",), "retrieve"),
+    ("semantic_memory", ("_semantic_memory",), "predict"),
+    ("world_dynamics", ("_world_dynamics",), "predict"),
     ("workspace_router", ("_workspace_router",), "route"),
-    ("executive", ("_executive",), "decide"),
+    ("executive", ("_executive",), "select"),
     ("goal_planner", ("_goal_planner",), "plan"),
-    ("affordance_features", ("_affordance_features",), "observe"),
-    ("generation_controller", ("_generation_controller",), "step"),
+    ("affordance_features", ("_affordance_features",), "encode"),
+    ("generation_controller", ("_generation_controller",), "plan_content"),
     ("content_selector", ("_content_selector",), "select"),
-    ("language_organ", ("_language_organ",), "render"),
-    ("procedural_memory", ("_procedural_memory",), "recall"),
-    ("procedural_sequence_memory", ("_procedural_sequence_memory",), "recall"),
-    ("homeostatic_controller", ("_homeostatic_controller",), "step"),
+    ("language_organ", ("_language_organ",), "emit"),
+    ("procedural_memory", ("_procedural_memory",), "predict"),
+    ("procedural_sequence_memory", ("_procedural_sequence_memory",), "predict_episode"),
+    ("homeostatic_controller", ("_homeostatic_controller",), "update"),
+    ("homeostatic_select_mode", ("_homeostatic_controller",), "select_mode"),
 )
 
 
@@ -106,14 +111,25 @@ def _resolve_method(root: Any, path: tuple[str, ...], method: str) -> tuple[Any,
     return target, original
 
 
-def _install(root: Any, counter: dict[str, int], installed: list[tuple[Any, str]]) -> list[str]:
-    """逐零件打包装；返回**未装配**的零件名（它们本身就是答案的一半）。"""
+def _install(
+    root: Any, counter: dict[str, int], installed: list[tuple[Any, str]]
+) -> tuple[list[str], list[str]]:
+    """逐零件打包装；返回 **(未装配, 方法名点错)** 两列。
 
-    absent: list[str] = []
+    2026-10-11（PLAN-N5-12 批次 A）之前这两件事混在一个 `absent` 桶里，而函数文档串只声明了
+    "未装配"一种：方法名点错的零件因此永远读成"这条链没装上"，仪器对它**没有判别力**。
+    分列之后 `absent` 仍在报告里出版，取两列之并，历史列可对账。
+    """
+
+    not_attached: list[str] = []
+    method_not_found: list[str] = []
     for label, path, method in PARTS:
         found = _resolve_method(root, path, method)
         if found is None:
-            absent.append(label)
+            if _resolve(root, path) is None:
+                not_attached.append(label)
+            else:
+                method_not_found.append(label)
             continue
         target, original = found
 
@@ -125,7 +141,7 @@ def _install(root: Any, counter: dict[str, int], installed: list[tuple[Any, str]
 
         setattr(target, method, wrapped)
         installed.append((target, method))
-    return absent
+    return not_attached, method_not_found
 
 
 def _restore(installed: list[tuple[Any, str]]) -> None:
@@ -162,11 +178,32 @@ def _entry_points(substrate: Any, runtime: Any, *, byte: int) -> dict[str, Any]:
     }
 
 
+def _guard_overwrite(target: Path, *, force: bool) -> None:
+    """落盘护栏：目标已存在时默认拒绝覆写。
+
+    这台仪器的 `--out-report` 旧默认值就是已封存的 tracked 件
+    `reports/taiji_a27_walked_ledger_20260928.json`，而写入是无条件 `write_text` ⇒ 直接重跑
+    会把历史读数盖掉（PLAN-N5-12 §4 批次 A 的第三条）。
+    """
+
+    if target.exists() and not force:
+        raise SystemExit(f"refusing to overwrite an existing report: {target}")
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--checkpoint", default="checkpoints/seed_beta.pt")
     parser.add_argument("--circuit", default=None, help="可选：装上复制回路再普查")
-    parser.add_argument("--out-report", default="reports/taiji_a27_walked_ledger_20260928.json")
+    parser.add_argument(
+        "--out-report",
+        default="reports/taiji_a27_walked_ledger_20261011.json",
+        help="落点。目标已存在时需 --overwrite 才许覆写（默认响亮拒绝）",
+    )
+    parser.add_argument(
+        "--overwrite",
+        action="store_true",
+        help="显式允许覆写已存在的报告件（旧默认落点曾是已封存件）",
+    )
     args = parser.parse_args()
 
     from api.seed_runtime import SeedRuntime
@@ -185,7 +222,14 @@ def main() -> int:
 
     matrix: dict[str, dict[str, int]] = {entry: {} for entry in entries}
     coverage: dict[str, dict[str, Any]] = {
-        entry: {"calls": 0, "absent": [], "blocked": None} for entry in entries
+        entry: {
+            "calls": 0,
+            "absent": [],
+            "not_attached": [],
+            "method_not_found": [],
+            "blocked": None,
+        }
+        for entry in entries
     }
     output_under_instrumentation: dict[str, str] = {}
     for entry in entries:
@@ -195,7 +239,7 @@ def main() -> int:
         substrate = runtime.model.substrate
         counter: dict[str, int] = {label: 0 for label, _, _ in PARTS}
         installed: list[tuple[Any, str]] = []
-        absent = _install(substrate, counter, installed)
+        not_attached, method_not_found = _install(substrate, counter, installed)
         coverage[entry]["calls"] = 1
         try:
             action = _entry_points(substrate, runtime, byte=0xE4)[entry]
@@ -211,7 +255,9 @@ def main() -> int:
         finally:
             _restore(installed)
         matrix[entry] = counter
-        coverage[entry]["absent"] = absent
+        coverage[entry]["not_attached"] = not_attached
+        coverage[entry]["method_not_found"] = method_not_found
+        coverage[entry]["absent"] = sorted(set(not_attached) | set(method_not_found))
 
     walked = {
         entry: {label: count for label, count in matrix[entry].items() if count > 0}
@@ -225,13 +271,20 @@ def main() -> int:
         "entries": list(entries),
         "parts_probed": [label for label, _, _ in PARTS],
         "absent_by_entry": {entry: coverage[entry]["absent"] for entry in entries},
+        "not_attached_by_entry": {entry: coverage[entry]["not_attached"] for entry in entries},
+        "method_not_found_by_entry": {
+            entry: coverage[entry]["method_not_found"] for entry in entries
+        },
         "blocked_by_entry": {
             entry: coverage[entry]["blocked"] for entry in entries if coverage[entry]["blocked"]
         },
         "walked_by_entry": walked,
         "matrix": matrix,
         "notes": [
-            "未装配（absent）＝该零件在该 runtime 下根本没装上（多因默认关）",
+            "not_attached＝该零件在该 runtime 下根本没装上（多因默认关）",
+            "method_not_found＝零件装着，但 PARTS 点的名字在它的类上不存在（2026-10-11 前混在 absent 一桶里）",
+            "absent 仍出版＝上面两列之并，历史列可对账；出处＝PLAN-N5-12 §2 事实 2／4：26 格里 10 枚曾点错名",
+            "第三种形状：名字取得到（如经 nn.Module 的 forward 占位）却永远 0 计数——既不算 absent 也不是被走到",
             "计数为 0 且未装 ⇒ 两件不同的事：本表把二者分开列",
             "**口径陷阱（必须带这条读）**：记的是该零件**学习/写方向的代表方法**"
             "（方法名见 `methods_by_part`）⇒ 只读入口（generate／chat）上 `learn` 类计数为 0"
@@ -253,6 +306,7 @@ def main() -> int:
     out = Path(args.out_report)
     if not out.is_absolute():
         out = PROJECT_ROOT / out
+    _guard_overwrite(out, force=args.overwrite)
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
@@ -268,8 +322,10 @@ def main() -> int:
         print(label.ljust(28) + "".join(cells))
     print()
     for entry in entries:
+        cell = coverage[entry]
         print(
-            f"{entry}: 未装配 {len(coverage[entry]['absent'])} 个零件；被走到 {len(walked[entry])} 个"
+            f"{entry}: 未装配 {len(cell['not_attached'])} 个／名字点错 "
+            f"{len(cell['method_not_found'])} 个；被走到 {len(walked[entry])} 个"
         )
     print(json.dumps({"guard": report["instrument_guard"], "out": out.name}, ensure_ascii=False))
     return 0 if all(report["instrument_guard"].values()) else 2

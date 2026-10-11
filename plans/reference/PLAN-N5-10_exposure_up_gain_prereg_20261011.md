@@ -16,7 +16,7 @@ owner 弹窗 #24 第②裁＝**「开：换更高暴露量档」**（原话选�
 
 * `arm_A.acc_noise_band_adjacent_max = 0.022779`、`arm_B.acc_noise_band_adjacent_max = 0.020879`；
 * 过线界 `line = 0.02`（PLAN-N5-02／03 冻值，住在仪器默认里＝**DEBT-G90**）；
-* ⇒ 判读器 `adjudicate_taiji_n5_shadow_gate.py:295` 的 `ruler_usable`（要求两枚 band 都 > 0 **且**
+* ⇒ 判读器 `adjudicate_taiji_n5_shadow_gate.py:295 〔2026-10-11 ㊵-685 行号更正：现行行号＝299。㊵-673 那次提交 `240b20210` 给该文件 +28/−10，把 `ruler_usable` 那行从 295 推到 299；口径未变，引用前按现行行号回查。〕` 的 `ruler_usable`（要求两枚 band 都 > 0 **且**
   `line ≥ band_max`）为 **false** ⇒ `j_n5b_4 = ruler_unusable`；
 * 同件里 `arm_A / arm_B` 的五段段均值末三段是 `0.2294／0.2443／0.2439` 与 `0.2290／0.2438／0.2442`
   ⇒ 两臂末两段均值之差只有 **−0.0004**，落在被这把尺自己判定为"比线还宽"的带里。

@@ -61,7 +61,7 @@ V-17（§5.3）是**写入合同**——谁可以写什么、写错了怎么撤�
 ## §4 守卫（三条，各自能为假）
 
 * **G-N5k-1 不新增层、不新增张量参数面**：本件不得为凑三层而造新对象（新增参数面要走「参数面加新张量的三件配套事」流程）。
-* **G-N5k-2 不重造尺**：`ruler_usable`（`adjudicate_taiji_n5_shadow_gate.py:295`）、`unit_count`／`shared_numel_delta`
+* **G-N5k-2 不重造尺**：`ruler_usable`（`adjudicate_taiji_n5_shadow_gate.py:295 〔2026-10-11 ㊵-685 行号更正：现行行号＝299。㊵-673 那次提交 `240b20210` 给该文件 +28/−10，把 `ruler_usable` 那行从 295 推到 299；口径未变，引用前按现行行号回查。〕`）、`unit_count`／`shared_numel_delta`
   （`summarize_taiji_n5_resource_face.py`）、逐槽差（`compare_taiji_n5_arm_tensors.py`）三处一律**引用**，
   本件不写第二实现。
 * **G-N5k-3 不开跑、不动产品码**：任何「要跑面才能答」的问题记 `unverified`，不许为凑判据起档。
