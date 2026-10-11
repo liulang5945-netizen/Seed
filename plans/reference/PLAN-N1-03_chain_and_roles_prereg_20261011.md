@@ -60,7 +60,7 @@ N1 的出口交付（09 §2 第 121 行）第三项要的正是"**生产者→�
 * **G-N1c-1 不新增模块**：本件不得为凑五角色而造新张量／新对象（VISION 明写"不要求先建立五个新模块"）。
   复算＝本件里所有出现的 `class`／`nn.Parameter` 新增数必须为 0（本件为 0，故满足）。
 * **G-N1c-2 每个被点名的键都要有读者**：§1／§2 表里点名的每个键，`grep` 全仓必须同时命中"写"与"读"
-  两处；只写不读 ⇒ 记 `write_only`（这正是 ㊵-570 抓 `last_decision` 那次的形状，也是 DEBT-G68 的形状）。
+  两处；只写不读 ⇒ 记 `write_only`（这正是 ㊵-570 抓 `last_decision` 那次的形状，也是 DEBT-G68 的形状）。〔2026-10-11 ㊵-699 就地更正：这里的 `last_decision` **不能当 `write_only` 的样板**——它有第三层消费者（生产者 property `taiji/adaptive_residual_growth.py:385` ⇒ 同值别名 property `taiji/model.py:903-908` ⇒ `taiji/model.py:968`，后者住在 `propose_adaptive_residual_growth_candidate()` 里，按该 decision 做四道 `RuntimeError` 前置并取 `evidence_ids`／`resource_cost`）。㊵-570 在它自己那张面上当时是对的（`git show a9d5a2ce9:scripts/training/train_seed_corpus.py` 里 `adaptive_residual_growth_decision` 与 `last_decision` 两串计数都是 0），它说的是「默认训练链上无人消费」，不是「全仓只写不读」——把后者读成本条的样板，就是 ㊵-698 那条越界死讯的成因。本条真正要抓的形状＝**名义上有读者、按可达性等于没有**（DEBT-G68：消费点住在符号流轮询，而 `should_propose` 只活到下一个观测槽之前，两频不对齐时永远错过；㊵-588 实测 D 跑满 60k 出 1 次提议而收尾信封 `n5_shadow` 仍是 null）⇒ 执行体除「写与读都命中」外必须另出**两列**：①读者所在层（别名读者／读了以后带动作的消费者），②该消费者在默认位是否可达。两列缺一，`write_only` 这个词就会既误杀真有读者的键、又放过永不可达的假读者。〕
 * **G-N1c-3 本件不开跑、不动产品码**：任何"要跑面才能答"的问题都记 `unverified`，不许为凑判据去起档。
 
 ## §5 判据载体在哪（措辞门要求的一节）
