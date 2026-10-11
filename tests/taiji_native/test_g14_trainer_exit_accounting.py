@@ -317,3 +317,69 @@ def test_an_unreachable_load_reader_reports_unavailable_not_zero(
     assert payload["status"] == "unavailable", payload
     assert "python_process_count" not in payload, payload
     assert payload["reader_path"].endswith("no_such_reader.py"), payload
+
+
+def test_recipe_keys_land_in_the_exit_record_only(tmp_path: Path) -> None:
+    """DEBT-G112／PLAN-N1-03 `J-N1c-3`：来源记录要出到「不读权重就看得见」的那张面上。
+
+    纪律与 `machine_load` 同形：三枚配方键只进独立退出件，**不许进进度行**
+    （`test_periodic_lines_keep_their_old_shape` 用集合相等钉着那一行）。
+    末尾把产出的记录交给消费侧仪器做一次真核对——不在这里手写一份"期望形状"，
+    否则 producer 改了形状而 consumer 没跟上时，两边都会绿。
+    """
+
+    import importlib.util
+
+    corpus = _write_corpus(tmp_path / "recipe.jsonl", 40)
+    progress = tmp_path / "recipe_progress.jsonl"
+    run_training(
+        corpus_paths=[corpus],
+        config=_config(),
+        epochs=1,
+        checkpoint_path=tmp_path / "recipe.pt",
+        progress_path=progress,
+        checkpoint_every=100_000,
+        progress_every=15,
+        max_symbols=60,
+    )
+    record = json.loads(exit_record_path(progress).read_text(encoding="utf-8"))
+    assert record["answer_source"] == "corpus", record
+    assert record["self_answers_path"] is None, record
+    assert record["answer_chunking"] == "stream", record
+    for line in _entries(progress):
+        assert "answer_source" not in line, line
+        assert "answer_chunking" not in line, line
+
+    audit = (
+        Path(__file__).resolve().parents[2]
+        / "scripts"
+        / "training"
+        / "audit_taiji_answer_source_provenance.py"
+    )
+    spec = importlib.util.spec_from_file_location("provenance_consumer", audit)
+    assert spec is not None and spec.loader is not None
+    consumer = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(consumer)
+    assert consumer.is_carrier(record) is True, record
+    assert consumer.mismatches(record, "recipe arm") == [], record
+
+
+def test_exit_record_recipe_value_tracks_the_arg_not_a_constant(tmp_path: Path) -> None:
+    """负对照：若把 `answer_chunking` 写死成默认值，这一支就会红。"""
+
+    qa = _write_qa_corpus(tmp_path / "qa_recipe.jsonl", 40)
+    progress = tmp_path / "qa_recipe_progress.jsonl"
+    run_training(
+        corpus_paths=[qa],
+        config=_config(),
+        epochs=1,
+        checkpoint_path=tmp_path / "qa_recipe.pt",
+        progress_path=progress,
+        checkpoint_every=100_000,
+        progress_every=1,
+        max_symbols=300,
+        answer_chunking="per-answer",
+    )
+    record = json.loads(exit_record_path(progress).read_text(encoding="utf-8"))
+    assert record["answer_chunking"] == "per-answer", record
+    assert record["answer_source"] == "corpus", record

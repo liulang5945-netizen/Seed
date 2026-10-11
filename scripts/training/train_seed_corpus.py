@@ -728,6 +728,15 @@ def run_training(
                         "checkpoint_path": str(checkpoint_path),
                         "checkpoint_sha256": _file_sha256(checkpoint_path),
                         "corpus_fingerprint": fingerprint,
+                        #: DEBT-G112／PLAN-N1-03 `J-N1c-3`：来源记录原先只住在 `.pt` 信封里
+                        #: （`attach_metadata(extra=...)`，:539-551），退出件不带它 ⇒ "这一档的答是从哪来的"
+                        #: 不看权重就答不出。三枚键按 `machine_load` 那条已验证的纪律
+                        #: **只进独立退出件、不进进度行**（`test_periodic_lines_keep_their_old_shape` 钉着键集）。
+                        "answer_source": str(answer_source),
+                        "self_answers_path": (
+                            str(self_answers_path) if self_answers_path is not None else None
+                        ),
+                        "answer_chunking": str(answer_chunking),
                         #: DEBT-G94②：只进独立件、不进进度行（与上面三条同形）。
                         #: 这一枚的存在使"这档跑了多少秒"永远自带它当时的负载档。
                         "machine_load": _machine_load_face(),
