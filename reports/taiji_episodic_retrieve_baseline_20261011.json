@@ -1,0 +1,117 @@
+{
+  "format": "taiji-episodic-retrieve-baseline-v1",
+  "purpose": "DEBT-G106 修法① 的 J-N6b-1 兼容锚：实施后同一组输入的命中序列必须与本件逐位相同",
+  "captured_before_change": true,
+  "capture_head": "1ff98b850",
+  "input_face": {
+    "capacity": 8,
+    "cue_dim": 4,
+    "records": {
+      "m0": "ep-A",
+      "m1": "ep-A",
+      "m2": "ep-A",
+      "m3": "ep-B",
+      "m4": "ep-B",
+      "m5": "ep-B"
+    },
+    "queries": {
+      "q_near_m0": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "q_mid": [
+        0.7,
+        0.3,
+        0.0,
+        0.0
+      ],
+      "q_axis_z": [
+        0.0,
+        0.0,
+        1.0,
+        0.0
+      ],
+      "q_axis_y": [
+        0.0,
+        1.0,
+        0.0,
+        0.0
+      ]
+    }
+  },
+  "store_count": 6,
+  "store_episodes": [
+    "ep-A",
+    "ep-B"
+  ],
+  "retrieve_limit": 3,
+  "hits": {
+    "q_near_m0": [
+      [
+        "m3",
+        "1.0"
+      ],
+      [
+        "m0",
+        "1.0"
+      ],
+      [
+        "m1",
+        "0.9938837289810181"
+      ]
+    ],
+    "q_mid": [
+      [
+        "m1",
+        "0.957024335861206"
+      ],
+      [
+        "m5",
+        "0.9284767508506775"
+      ],
+      [
+        "m3",
+        "0.9191449880599976"
+      ]
+    ],
+    "q_axis_z": [
+      [
+        "m2",
+        "1.0"
+      ],
+      [
+        "m5",
+        "0.0"
+      ],
+      [
+        "m4",
+        "0.0"
+      ]
+    ],
+    "q_axis_y": [
+      [
+        "m4",
+        "1.0"
+      ],
+      [
+        "m5",
+        "0.7071067690849304"
+      ],
+      [
+        "m1",
+        "0.11043152958154678"
+      ]
+    ]
+  },
+  "hits_digest": "3a51afedf04af23bea315436ee71cc7a238f3bede7c87a776a96482674a9bd1d",
+  "determinism_passes_equal": true,
+  "cross_episode_hits_present_in_baseline": true,
+  "limits": [
+    "scores 用 repr(float) 出版，逐位比较按字符串比，不做四舍五入",
+    "本件只覆盖 `retrieve(cue, *, limit)` 这一个入口；`records`／`expire`／`checkpoint` 不在锚定面内",
+    "夹具是合成的（6 条记录、4 维线索），不是盘上任何一枚检查点的真实情节场；它锚的是**函数行为**，不是某一次跑的读数"
+  ],
+  "started_utc": "2026-10-11T13:49:08Z"
+}
