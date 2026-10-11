@@ -210,15 +210,47 @@ def scan(root: Path) -> dict[str, object]:
     }
 
 
-def _retrieve_lacks_episode_param(root: Path) -> bool:
-    """读取侧有没有会话闸，按 `EpisodicMemoryStore.retrieve` 的**签名**判，不按调用点文本猜。"""
+def _retrieve_session_gate_face(root: Path) -> dict[str, bool]:
+    """读取侧的会话闸按 `EpisodicMemoryStore.retrieve` 的**签名**判，不按调用点文本猜。
+
+    ㊵-713（DEBT-G106 修法①）把一枚布尔改成三枚：改前只有"签名里没有 episode 参数"，
+    实施后那句会整体翻假、把"默认仍不筛"这件事一起抹掉。拆开之后
+    "有口可筛"与"默认未筛"是两条独立读数，`J-N6b-3` 要的那句才立得住。
+    """
 
     source = (root / "taiji" / "episodic_memory.py").read_text(encoding="utf-8")
     for node in ast.walk(ast.parse(source)):
         if isinstance(node, ast.FunctionDef) and node.name == "retrieve":
-            args = [a.arg for a in node.args.args + node.args.kwonlyargs]
-            return not any("episode" in name for name in args)
+            params = {a.arg: a for a in node.args.args + node.args.kwonlyargs}
+            episode = next((a for name, a in params.items() if "episode" in name), None)
+            if episode is None:
+                return {
+                    "retrieve_signature_has_episode_param": False,
+                    "retrieve_episode_param_defaults_to_none": False,
+                    "session_gate_enforced_by_default": False,
+                }
+            default_none = _default_is_none(node, episode.arg)
+            return {
+                "retrieve_signature_has_episode_param": True,
+                "retrieve_episode_param_defaults_to_none": default_none,
+                "session_gate_enforced_by_default": not default_none,
+            }
     raise ValueError("找不到 EpisodicMemoryStore.retrieve：判据对象不在盘上")
+
+
+def _default_is_none(func: ast.FunctionDef, name: str) -> bool:
+    """该形参的默认值是不是字面 `None`（默认位＝不筛，就是 DEBT-G106 今天没结清的那件事）。"""
+
+    positional = len(func.args.args) - len(func.args.defaults)
+    defaults = {a.arg: None for a in func.args.args[:positional]}
+    defaults.update(
+        {a.arg: d for a, d in zip(func.args.args[positional:], func.args.defaults, strict=False)}
+    )
+    defaults.update(
+        {a.arg: d for a, d in zip(func.args.kwonlyargs, func.args.kw_defaults, strict=False)}
+    )
+    node = defaults.get(name)
+    return isinstance(node, ast.Constant) and node.value is None
 
 
 def build_report(root: Path) -> dict[str, object]:
@@ -251,7 +283,7 @@ def build_report(root: Path) -> dict[str, object]:
         "verdicts": {
             "someone_in_product_chain_reads_the_store": face["read_sites"]
             and any(row["file"] == "taiji/adapter.py" for row in reads),
-            "retrieve_signature_has_no_episode_param": _retrieve_lacks_episode_param(root),
+            **_retrieve_session_gate_face(root),
             "synthetic_material_reaches_the_store": bool(synthetic_files),
         },
         "coverage_gap": {
@@ -263,7 +295,7 @@ def build_report(root: Path) -> dict[str, object]:
         },
         "limits": [
             "`episode_id_mentioning` 是**弱信号**：函数体提过 episode_id 不等于读取时按它过滤，"
-            "所以会话闸那条结论按 retrieve 的**签名**判（`retrieve_signature_has_no_episode_param`），"
+            "所以会话闸那条结论按 retrieve 的**签名**判，且拆成三枚（`retrieve_signature_has_episode_param`／`retrieve_episode_param_defaults_to_none`／`session_gate_enforced_by_default`）——㊵-713 起拆开：改前只有一枚「签名里没有 episode 参数」，实施后那句整体翻假会把「默认仍然不筛」这件事一起抹掉，而 `J-N6b-3` 要钉的正是「有口可筛、默认未筛」这两件同时为真），"
             "调用点的提及数只作分布披露",
             "合成材料的对账是**文件级共现**（既写进 E 存储、又构造过带合成 cue 的 Record），不是调用路径证明——"
             "这些脚本里 record 常由另一个函数造好再传进来，逐点链归属超出静态读的能力，"

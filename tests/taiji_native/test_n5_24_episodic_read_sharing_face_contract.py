@@ -130,6 +130,56 @@ def test_real_repository_face_is_nonempty_and_gate_verdict_is_signature_derived(
     assert report["files_parsed"] > 1000
     assert report["read_site_count"] > 0
     assert report["verdicts"]["someone_in_product_chain_reads_the_store"] is True
-    assert report["verdicts"]["retrieve_signature_has_no_episode_param"] is True
+    verdicts = report["verdicts"]
+    assert verdicts["retrieve_signature_has_episode_param"] is True, verdicts
+    assert verdicts["retrieve_episode_param_defaults_to_none"] is True, verdicts
+    #: `J-N6b-3`：有口可筛**且**默认未筛 ⇒ 会话闸在默认位上仍不成立，这条不许被翻绿。
+    assert verdicts["session_gate_enforced_by_default"] is False, verdicts
     assert report["limits"]
     assert "authoritative_enumeration" in report["coverage_gap"]
+
+
+def test_signature_gate_face_needs_three_separate_readings(tmp_path: Path) -> None:
+    """三档签名要出三组不同的三元组。
+
+    改前只有一枚布尔（"签名里没有 episode 参数"），于是"加了口但默认不筛"与
+    "默认就筛"会塌成同一个 False——而 `J-N6b-3` 要钉的恰是这两件事不一样。
+    """
+
+    module = _load()
+    cases = {
+        "(self, cue, *, limit=1)": (False, False, False),
+        "(self, cue, *, limit=1, episode_id=None)": (True, True, False),
+        "(self, cue, *, limit=1, episode_id='ep-A')": (True, False, True),
+    }
+    for index, (signature, expected) in enumerate(cases.items()):
+        root = tmp_path / f"case{index}"
+        (root / "taiji").mkdir(parents=True)
+        source = (
+            "class EpisodicMemoryStore:\n" "    def retrieve" + signature + ":\n        return ()\n"
+        )
+        (root / "taiji" / "episodic_memory.py").write_text(source, encoding="utf-8", newline="\n")
+        face = module._retrieve_session_gate_face(root)
+        got = (
+            face["retrieve_signature_has_episode_param"],
+            face["retrieve_episode_param_defaults_to_none"],
+            face["session_gate_enforced_by_default"],
+        )
+        assert got == expected, (signature, got, expected)
+
+
+def test_missing_retrieve_definition_fails_closed(tmp_path: Path) -> None:
+    """判据对象不在盘上时必须响亮失败，而不是把三枚读数默认成 False（那看起来像"没有会话闸"）。"""
+
+    module = _load()
+    root = tmp_path / "empty"
+    (root / "taiji").mkdir(parents=True)
+    (root / "taiji" / "episodic_memory.py").write_text(
+        "class EpisodicMemoryStore:\n    pass\n", encoding="utf-8", newline="\n"
+    )
+    try:
+        module._retrieve_session_gate_face(root)
+    except ValueError as exc:
+        assert "判据对象不在盘上" in str(exc), exc
+    else:
+        raise AssertionError("找不到 retrieve 定义必须拒绝，不许默认出版三枚 False")

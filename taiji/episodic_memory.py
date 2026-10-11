@@ -84,16 +84,29 @@ class EpisodicMemoryStore:
             self._expired.append(str(memory_id))
         return removed
 
-    def retrieve(self, cue: torch.Tensor, *, limit: int = 1) -> tuple[EpisodicMemoryHit, ...]:
+    def retrieve(
+        self, cue: torch.Tensor, *, limit: int = 1, episode_id: str | None = None
+    ) -> tuple[EpisodicMemoryHit, ...]:
+        """Rank records by cue similarity; `episode_id` narrows the candidate set.
+
+        `episode_id=None` (the default) searches every record, which is what the
+        product's per-step caller does today — the storage layer still has no
+        session gate, and DEBT-G106 stays open until a caller asks for one.
+        """
+
         if cue.ndim != 1:
             raise ValueError("episodic retrieval cue must be a vector")
         if self.cue_dim is not None and cue.numel() != self.cue_dim:
             raise ValueError("episodic retrieval cue dimension does not match the store")
         if int(limit) <= 0:
             return ()
-        if not self._records:
+        records = tuple(
+            record
+            for record in self._records.values()
+            if episode_id is None or record.episode_id == episode_id
+        )
+        if not records:
             return ()
-        records = tuple(self._records.values())
         query = cue.detach().to(dtype=torch.float32)
         query_norm = torch.linalg.vector_norm(query)
         if float(query_norm) <= 1e-8:
@@ -110,7 +123,7 @@ class EpisodicMemoryStore:
                 )
                 for record in records
             ]
-        order = sorted(range(len(self._records)), key=lambda index: (-scores[index], -index))
+        order = sorted(range(len(records)), key=lambda index: (-scores[index], -index))
         return tuple(
             EpisodicMemoryHit(records[index], scores[index]) for index in order[: int(limit)]
         )
