@@ -41,3 +41,12 @@ WorkBuddy 会话内 Agent 在写文件/建目录/清理场景自动加载该技�
 - **§8 大文件拆分**：阈值四档（<500 正常 / 500–1000 警觉 / >1000 须拆分计划或豁免登记 / >3000 高优先债）；真正判据 = 一句话职责。六原则：先锚定后动刀（scoped 回归+黄金等价证明）、按簇拆不按行数切、算法抽离编排留壳（即 Cortex split C-4 原则）、facade 保持导入路径兼容、一刀一回滚点、拆完清场。标准组织形态 = `巨石.py → 巨石/` 包（`__init__.py` facade + core 编排 + 簇子模块 + common），包内依赖单向 core→子模块→common。五步流程：预注册合同 → 簇边界探测 → 逐簇搬运 → 等价验证 → 收尾（更新 AST 契约测试）。存量巨石（`taiji/adapter.py` 12,656 行）按债务排期、不运动式重写，新代码必须守阈值。
 
 条款与 B 分支 Cortex god-object split 的既有方法论同构（黄金等价、按簇一刀一回滚、算法/编排分离），skill 侧将其泛化为通用规则。skill 重新通过 skill-creator 校验。
+
+## 分发包（2026-10-11 同日）：根级 SKILL.md 格式
+
+第三方 Agent 平台上传要求 zip / `.skill` 内**根级直接是 SKILL.md**（skill-creator 官方打包脚本默认带一层目录前缀，故不兼容）。已重新打包并验证（namelist = `['SKILL.md']`，frontmatter name/description 完整，双包逐字节一致）：
+
+- `agent_workspace/file-output-discipline.zip`
+- `agent_workspace/file-output-discipline.skill`（同内容换扩展名）
+
+存放于 `agent_workspace/`（C 类运行时区，可随时清理）；WorkBuddy 侧安装本体仍在 `~/.workbuddy/skills/file-output-discipline/`。
