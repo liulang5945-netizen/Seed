@@ -1,0 +1,27 @@
+{
+  "format": "taiji-debt-table-column-shape-v1",
+  "debt": "DEBT-G101 修法②",
+  "table": "plans/active/roadmap/05_TECH_DEBT_REGISTER.md",
+  "header_declared_cells": 4,
+  "rows": 109,
+  "cells_per_row": {
+    "3": 1,
+    "4": 40,
+    "5": 60,
+    "6": 2,
+    "7": 3,
+    "9": 2,
+    "10": 1
+  },
+  "rows_matching_declaration": 40,
+  "rows_with_more_cells": 68,
+  "rows_with_fewer_cells": 1,
+  "rows_closed_with_pipe": 97,
+  "rows_not_closed": 12,
+  "max_debt_id": 109,
+  "distinct_ids": 109,
+  "id_duplicates": {},
+  "declared_is_the_majority_shape": false,
+  "scope": "只出版分布；列形要不要并成一型、往哪边并，归 owner（批量改他人历史行超出实施半径）",
+  "started_utc": "2026-10-11T11:19:50Z"
+}
