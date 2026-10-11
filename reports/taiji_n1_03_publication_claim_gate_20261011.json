@@ -1,0 +1,45 @@
+{
+  "format": "taiji-n1-03-publication-claim-gate-v1",
+  "prereg": "plans/reference/PLAN-N1-03_chain_and_roles_prereg_20261011.md",
+  "verdict": "pending_not_claimed",
+  "publishable": false,
+  "members": [
+    {
+      "member": "§7① 两张表逐格非空",
+      "state": "satisfied",
+      "evidence": "table_registered"
+    },
+    {
+      "member": "§7② 每个被点名键的读写命中数",
+      "state": "satisfied",
+      "evidence": "13 枚键，读写两处都有命中的 13 枚"
+    },
+    {
+      "member": "§7③ answer_source 的一致性复算",
+      "state": "not_established",
+      "evidence": "no_carrier_outside_weight_artifacts（载体 0 枚）"
+    }
+  ],
+  "state_counts": {
+    "satisfied": 2,
+    "not_established": 1,
+    "violated": 0
+  },
+  "claims": {
+    "docs_scanned": 3,
+    "lines_scanned": 395,
+    "claim_hits": [],
+    "lines_skipped_as_negated": 0
+  },
+  "artifacts": [
+    "reports/taiji_n1_03_role_table_face_20261011.json",
+    "reports/taiji_write_only_key_face_20261011.json",
+    "reports/taiji_answer_source_provenance_20261011.json"
+  ],
+  "what_this_does_not_prove": [
+    "本门只守「三件同现且词表合法」与「有没有人已宣称」，不重判任何一条判据本身——判据的判定权在各仪器自己的读数件里",
+    "`not_established` 是「没有可读物」，既不是红也不是绿；把它并进任一侧都会造出假结论",
+    "否定标记（不宣布／不许／…）只用于**同行内**的引用豁免，它不校验跨行的语气，所以 `lines_skipped_as_negated` 必须一起出版"
+  ],
+  "started_utc": "2026-10-11T15:49:18Z"
+}

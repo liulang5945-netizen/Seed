@@ -90,6 +90,7 @@ G-N1c-2 的执行体＝全仓 `grep`（读面按版本控制取，见 [[guard-sc
   按 DEBT-G68 那族的形状（提议／决策从不发生）继续查消费者；那是**接线债**，不是本件的判据失败。
 * **发表资格前置**：任何"N1 已把回答链与角色通路做完"的对外表述必须同时给出 ①两张表逐格非空，
   ②每个被点名键的读写两处 `grep` 命中数，③`answer_source` 的一致性复算结果；三条缺一即视为未交付。〔2026-10-11 ㊵-708：第③条今天**给不出"一致"这个结果**——不是没算，而是算出来是"无可读物"（`no_carrier_outside_weight_artifacts`，见 `reports/taiji_answer_source_provenance_20261011.json`）⇒ 这一条按**未兑现**记，本件的发表资格前置今天不成立。〕
+  〔2026-10-11 ㊵-710：这三条前置**已机检**＝门 `scripts/training/audit_taiji_n1_03_publication_claim_gate.py`＋契约册 `tests/taiji_native/test_n1_08_publication_claim_gate_contract.py`（12 passed），封件读数 `reports/taiji_n1_03_publication_claim_gate_20261011.json` 今天判 `pending_not_claimed`（①②`satisfied`、③`not_established`、`violated` 0；宣称面扫 3 件 395 行、命中 0）。**门的设计口径**：三态各自独立，`not_established`（没有可读物）既不算红也不算绿；每件读数都必须带**生产它的仪器**现行 `REPORT_FORMAT`，不同源就 rc=2 拒绝（不许拿旧件判今天）；扫描面**必须由 `--doc` 显式给**——本件自己就写着那几句宣称（现读 2／1／2 处），默认全仓会让门永远红在身上。〕
 
 ## §8 不变项
 
