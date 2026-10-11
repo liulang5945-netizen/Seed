@@ -1,0 +1,180 @@
+{
+  "format": "taiji-n1-03-role-table-face-v1",
+  "prereg": "plans/reference/PLAN-N1-03_chain_and_roles_prereg_20261011.md",
+  "j_n1c_1": {
+    "verdict": "chain_complete",
+    "rings": [
+      {
+        "ring": "① 问题编码",
+        "named_anchors": 9,
+        "strongly_resolved": 9,
+        "weak_only_anchors": [],
+        "satisfied": true,
+        "unresolved": [],
+        "no_anchor_at_all": false
+      },
+      {
+        "ring": "② 当前会话与可见记忆",
+        "named_anchors": 6,
+        "strongly_resolved": 5,
+        "weak_only_anchors": [],
+        "satisfied": true,
+        "unresolved": [
+          "substrate.state.*"
+        ],
+        "no_anchor_at_all": false
+      },
+      {
+        "ring": "③ 内容选择／必要检索或计算",
+        "named_anchors": 3,
+        "strongly_resolved": 3,
+        "weak_only_anchors": [],
+        "satisfied": true,
+        "unresolved": [],
+        "no_anchor_at_all": false
+      },
+      {
+        "ring": "④ 表达解码",
+        "named_anchors": 3,
+        "strongly_resolved": 1,
+        "weak_only_anchors": [
+          "taiji.kernel.state.motor_context(as_attribute)",
+          "developmental_f1_replay.events[*].readout_trace(as_attribute|as_json_path)"
+        ],
+        "satisfied": true,
+        "unresolved": [],
+        "no_anchor_at_all": false
+      },
+      {
+        "ring": "⑤ 回答与来源记录",
+        "named_anchors": 4,
+        "strongly_resolved": 4,
+        "weak_only_anchors": [],
+        "satisfied": true,
+        "unresolved": [],
+        "no_anchor_at_all": false
+      }
+    ],
+    "rings_parsed": 5,
+    "rings_without_evidence": [],
+    "anchors_that_do_not_resolve": [
+      "substrate.state.*"
+    ],
+    "anchors_with_weak_resolution_only": [
+      "developmental_f1_replay.events[*].readout_trace(as_attribute|as_json_path)",
+      "taiji.kernel.state.motor_context(as_attribute)"
+    ],
+    "ring_rule": "至少一枚**强**解析实名即算该环有承载；弱解析（模块路径不存在、只末段命中）单列成清单，不算承载也不算否证"
+  },
+  "j_n1c_2": {
+    "verdict": "table_registered",
+    "cells_expected": 20,
+    "cells_parsed": 20,
+    "roles_parsed": [
+      "Q",
+      "E",
+      "M",
+      "W",
+      "R"
+    ],
+    "roles_missing": [],
+    "empty_cells": []
+  },
+  "j_n1c_4": {
+    "verdict": "recovery_claims_verifiable",
+    "keys_named_in_recovery_column": [
+      "command_surface",
+      "config",
+      "n5_shadow_request"
+    ],
+    "write_side_scan_faces": [
+      "taiji",
+      "seed",
+      "scripts/training"
+    ],
+    "checks": [
+      {
+        "key": "command_surface",
+        "in_sealed_report": false,
+        "written_into_envelope_by": [
+          "scripts/training/run_taiji_n5_retention_lane.py",
+          "scripts/training/train_seed_corpus.py"
+        ],
+        "verifiable": true
+      },
+      {
+        "key": "config",
+        "in_sealed_report": true,
+        "written_into_envelope_by": [
+          "taiji/adapter.py",
+          "taiji/assembly_evaluation.py",
+          "taiji/developmental_synapse.py",
+          "taiji/evaluation.py",
+          "taiji/foundation_training.py",
+          "taiji/homeostasis.py",
+          "taiji/language_alignment.py",
+          "taiji/model.py",
+          "taiji/planning.py",
+          "taiji/sequence_char_workspace.py",
+          "taiji/sequence_content_workspace.py",
+          "taiji/sequence_workspace.py",
+          "taiji/world_learning.py",
+          "seed/model.py",
+          "seed/persistence.py",
+          "scripts/training/aggregate_taiji_r2_content_binding_calibration.py",
+          "scripts/training/audit_taiji_r2_h3_7_attribution.py",
+          "scripts/training/audit_taiji_r2_per_region_degradation.py",
+          "scripts/training/audit_taiji_r2_t1t2.py",
+          "scripts/training/eval_taiji_f5_full_promotion.py",
+          "scripts/training/eval_taiji_m0_checkpoint_preflight.py",
+          "scripts/training/eval_taiji_m1_32_reentry.py",
+          "scripts/training/eval_taiji_m4r2_capacity_diagnosis_canary.py",
+          "scripts/training/eval_taiji_m4r3_update_interference_canary.py",
+          "scripts/training/eval_taiji_m4r4_course_shift_audit.py",
+          "scripts/training/eval_taiji_r2_conditional_credit.py",
+          "scripts/training/eval_taiji_r2_h3_6b_dev_aggregate.py",
+          "scripts/training/eval_taiji_r2_h3_7_dev_aggregate.py",
+          "scripts/training/eval_taiji_structural_lineage_disk_checkpoint.py",
+          "scripts/training/probe_taiji_a30_stop_failure.py",
+          "scripts/training/probe_taiji_r2_factorization_at_init.py",
+          "scripts/training/probe_taiji_r2_init_seed_spread.py",
+          "scripts/training/probe_taiji_r2_region0_cue.py",
+          "scripts/training/probe_taiji_r2_separability_before_training.py",
+          "scripts/training/probe_taiji_substrate_growth_census.py",
+          "scripts/training/run_taiji_n5_retention_lane.py",
+          "scripts/training/run_taiji_r2_t1_t2_short_runs.py",
+          "scripts/training/run_taiji_unified_entry_evidence.py",
+          "scripts/training/screen_taiji_r2_factorization_splits.py",
+          "scripts/training/smoke_taiji_r2_h3_6_target_encoder.py",
+          "scripts/training/train_p3b_aligned.py",
+          "scripts/training/train_seed_corpus.py",
+          "scripts/training/train_taiji_langfloor.py",
+          "scripts/training/train_taiji_r2_aligned.py",
+          "scripts/training/train_taiji_r2_content_binding.py",
+          "scripts/training/train_tinystories.py",
+          "scripts/training/train_tinystories_field.py",
+          "scripts/training/utils.py",
+          "scripts/training/validate_taiji_r2_h3_7b_dev.py",
+          "scripts/training/validate_taiji_r2_h3_7b_repair.py"
+        ],
+        "verifiable": true
+      },
+      {
+        "key": "n5_shadow_request",
+        "in_sealed_report": false,
+        "written_into_envelope_by": [
+          "scripts/training/adjudicate_taiji_n5_shadow_gate.py",
+          "scripts/training/train_seed_corpus.py"
+        ],
+        "verifiable": true
+      }
+    ],
+    "unverifiable": []
+  },
+  "what_this_does_not_prove": [
+    "J-N1c-2 判的是「这张表存在且逐格非空」＝登记形式，不是能力证据；填得满不等于说得对",
+    "J-N1c-1 的「实名可解析」只证明那个文件／键名在仓内存在，不证明它真的承载了对应那一环",
+    "J-N1c-4 走的是「退出件里现读到」或「产品码把它写成 payload 键」两条道；两者都不成立时判 unverifiable，而不是「该键不需要恢复」"
+  ],
+  "started_utc": "2026-10-11T15:02:12Z"
+}
