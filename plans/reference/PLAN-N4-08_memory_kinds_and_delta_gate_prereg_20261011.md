@@ -20,7 +20,7 @@
 
 | 类别 | 仓内实际对象（现读存在） | 负责什么 | **不许**负责什么（缺这一列就是假展开） |
 |---|---|---|---|
-| 情节（episodic） | `EpisodicMemoryStore`（`seed`／挂载见 [PLAN-N4-02_episodic_mount](PLAN-N4-02_episodic_mount_prereg_20261009.md)），读回走 `MemoryRecall`（`taiji/state.py:369`） | 原样存"这一段发生过"：cue→payload，可回读、可逐条淘汰 | 不得被当成"能力"来源：容量有限、会淘汰，任何跨会话结论都不许只由它承担 |
+| 情节（episodic） | `EpisodicMemoryStore`（`seed`／挂载见 [PLAN-N4-09_episodic_mount](PLAN-N4-09_episodic_mount_prereg_20261009.md)），读回走 `MemoryRecall`（`taiji/state.py:369`） | 原样存"这一段发生过"：cue→payload，可回读、可逐条淘汰 | 不得被当成"能力"来源：容量有限、会淘汰，任何跨会话结论都不许只由它承担 |
 | 语义（semantic） | `SemanticMemoryLearner`（`taiji/semantic_memory.py:18`） | 跨经历的规律（权重里的可迁移部分），是"会了"的承载 | 不得声称记得**具体一次**事件；它没有逐条回读口，所以任何"我记得那次"的读数不能记在它头上 |
 | 程序（procedural） | `ProceduralMemoryLearner`（`taiji/procedural_memory.py:28`）、`NativeProceduralMemoryTrainer`（`taiji/procedural_evolution.py:89`） | 怎么做（输出侧的持久改） | 不得代替前两类参与寻址验收：寻址失败率是**读取通路**的量，不是执行能力的量 |
 
@@ -99,6 +99,6 @@ J-N4g-1／4(b) 的执行体＝批次 A／B 新落的自述键与夹具判读器�
 
 M6 收官、M8 挂起；N1／N2／N3 已收口，N5 出口已判（㊵-673＝不成立）；本件**不新增阈值字面量**
 （这正是 DEBT-G90 被点名的形状），也**不新增张量参数面**；债表现至 **DEBT-G97**；
-另记一条编号事实：`plans/reference/` 下存在两枚同编号件（`PLAN-N4-02_band_floor_20261008`
-与 `PLAN-N4-02_episodic_mount_20261009`），是历史撞号，本件不复用 02、直接取 08，
-撞号是否合并重编由 owner 裁（改号会断台账与提交的引用，我不自行动）。
+另记一条编号事实（**2026-10-11 ㊵-684 已结**）：`plans/reference/` 下曾存在两枚同编号件（`PLAN-N4-02_band_floor_20261008` 与**曾用名** `PLAN-N4-02_episodic_mount_20261009`）。
+本件当年不复用 02、直接取 08；owner #25 裁「改号解撞」之后，20261009 那枚已重编为 `PLAN-N4-09_episodic_mount_prereg_20261009`（`git mv` 保留历史，件内带曾用名注记）。
+旧号在台账与提交信息里的引用**不追改**——按件内那行注记回读。

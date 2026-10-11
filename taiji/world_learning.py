@@ -1622,14 +1622,12 @@ class WorldDynamicsLearner(nn.Module):
             "schema_registry": self.schema_registry.checkpoint(),
             "hidden_dim": self.hidden_dim,
             "model_state": {
-                name: tensor.detach().cpu().clone()
-                for name, tensor in self.state_dict().items()
+                name: tensor.detach().cpu().clone() for name, tensor in self.state_dict().items()
             },
             "counters": self._counters_payload(),
             "schema_snapshots": {
                 str(version): {
-                    name: tensor.detach().cpu().clone()
-                    for name, tensor in dict(snapshot).items()
+                    name: tensor.detach().cpu().clone() for name, tensor in dict(snapshot).items()
                 }
                 for version, snapshot in self._schema_snapshots.items()
             },
@@ -1648,9 +1646,13 @@ class WorldDynamicsLearner(nn.Module):
         if not isinstance(payload, Mapping):
             raise TypeError("world learner restore requires a snapshot mapping")
         if payload.get("format") != WORLD_LEARNER_SNAPSHOT_FORMAT:
-            raise ValueError(f"unsupported world learner snapshot format: {payload.get('format')!r}")
+            raise ValueError(
+                f"unsupported world learner snapshot format: {payload.get('format')!r}"
+            )
         if int(payload.get("version", -1)) != WORLD_LEARNER_SNAPSHOT_VERSION:
-            raise ValueError(f"unsupported world learner snapshot version: {payload.get('version')!r}")
+            raise ValueError(
+                f"unsupported world learner snapshot version: {payload.get('version')!r}"
+            )
         expected = content_digest(
             {key: value for key, value in payload.items() if key != "snapshot_digest"}
         )
@@ -1678,8 +1680,7 @@ class WorldDynamicsLearner(nn.Module):
         self.schema_registry = WorldSchemaRegistry.from_checkpoint(registry_payload)
         self._schema_snapshots = {
             int(version): {
-                str(name): tensor.detach().cpu().clone()
-                for name, tensor in dict(snapshot).items()
+                str(name): tensor.detach().cpu().clone() for name, tensor in dict(snapshot).items()
             }
             for version, snapshot in snapshots.items()
         }

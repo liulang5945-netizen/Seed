@@ -1,6 +1,6 @@
 """PLAN-N4-02 的四条守卫（G-N4d-1…4）＋真值材料现生的契约测。
 
-冻结设计（`plans/reference/PLAN-N4-02_episodic_mount_prereg_20261009.md` §1/§2/§4）：
+冻结设计（`plans/reference/PLAN-N4-09_episodic_mount_prereg_20261009.md` §1/§2/§4）：
 * `--episodic-mount`（默认关 ⇒ 信封不含 `episodic_memory` 键、行为逐位不变）；
 * 写入时机＝每篇文档边界，`memory_id=doc-<篇序>`、`cue=该篇前 32 字节 ÷ 255`（可复算）；
 * `materials`/`queries` 两枚 JSONL 由训练器在落 checkpoint 时出版（真值来自本跑写入）；

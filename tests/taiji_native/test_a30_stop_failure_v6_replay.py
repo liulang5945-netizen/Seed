@@ -264,7 +264,9 @@ def test_recall_numbers_after_docking50_name_the_circuit() -> None:
     #: 在 seed-B 上是 3→3，所以不点名回路的 `N/16` 句子会造出假事实。本文件从"第五十次停靠"起逐行扫，
     #: 任何含 `N/16` 的行必须同时出现 seed-A／seed-B／circuit／枚 之一。写这条时它先抓到了我自己两行。
     plan = reference_text(
-        PROJECT_ROOT / "plans" / "reference"
+        PROJECT_ROOT
+        / "plans"
+        / "reference"
         / "PLAN-A-30_surface_repetition_localization_20260928.md"
     )
     lines = plan.splitlines()
