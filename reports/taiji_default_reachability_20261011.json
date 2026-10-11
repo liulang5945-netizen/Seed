@@ -1,0 +1,1649 @@
+{
+  "format": "taiji-default-reachability-v1",
+  "verdict_vocabulary": [
+    "reachable_at_default",
+    "reachable_in_default_training_run",
+    "flag_gated",
+    "no_default_face_caller",
+    "reachability_indeterminate",
+    "unreachable_in_tracked_code"
+  ],
+  "scanned_files": 1969,
+  "per_key": {
+    "action_probabilities": [
+      {
+        "site": "taiji/model.py:2486@observe",
+        "caller_count": 554,
+        "default_face_callers": 78,
+        "product_ungated_callers": 77,
+        "runner_ungated_callers": 1,
+        "gated_callers": 0,
+        "gating_flags": [],
+        "verdict": "reachable_at_default",
+        "caller_faces": {
+          "instrument": 273,
+          "other": 5,
+          "product": 77,
+          "runner": 1,
+          "tests": 198
+        },
+        "evidence": [
+          "api/middleware/metrics.py:31@metrics_middleware gated=-",
+          "api/seed_runtime.py:99@record_told_history gated=-",
+          "api/seed_runtime.py:109@record_told_history gated=-",
+          "api/seed_runtime.py:112@record_told_history gated=-",
+          "api/training/resume.py:202@_train_worker gated=-",
+          "scripts/archive/diagnostics/_diag_a3_obs_only.py:30@observe_only_experience gated=-"
+        ]
+      },
+      {
+        "site": "taiji/model.py:2747@consolidate",
+        "caller_count": 177,
+        "default_face_callers": 30,
+        "product_ungated_callers": 30,
+        "runner_ungated_callers": 0,
+        "gated_callers": 0,
+        "gating_flags": [],
+        "verdict": "reachable_at_default",
+        "caller_faces": {
+          "instrument": 106,
+          "other": 3,
+          "product": 30,
+          "tests": 38
+        },
+        "evidence": [
+          "neuroplex/agent/context_manager.py:919@consolidate_for_sleep gated=-",
+          "neuroplex/life/sleep_engine.py:692@_sleep_phase_field_consolidation gated=-",
+          "neuroplex/life/sleep_engine.py:2894@_sleep_phase_knowledge_integration gated=-",
+          "scripts/archive/diagnostics/_diag_a2_cue_off.py:33@main gated=-",
+          "scripts/archive/diagnostics/_diag_a2_split.py:60@main gated=-",
+          "scripts/archive/diagnostics/_diag_a2_worst.py:51@main gated=-"
+        ]
+      }
+    ],
+    "answer_source": [],
+    "cortical_feedback": [
+      {
+        "site": "taiji/adapter.py:10976@observe",
+        "caller_count": 554,
+        "default_face_callers": 78,
+        "product_ungated_callers": 77,
+        "runner_ungated_callers": 1,
+        "gated_callers": 0,
+        "gating_flags": [],
+        "verdict": "reachable_at_default",
+        "caller_faces": {
+          "instrument": 273,
+          "other": 5,
+          "product": 77,
+          "runner": 1,
+          "tests": 198
+        },
+        "evidence": [
+          "api/middleware/metrics.py:31@metrics_middleware gated=-",
+          "api/seed_runtime.py:99@record_told_history gated=-",
+          "api/seed_runtime.py:109@record_told_history gated=-",
+          "api/seed_runtime.py:112@record_told_history gated=-",
+          "api/training/resume.py:202@_train_worker gated=-",
+          "scripts/archive/diagnostics/_diag_a3_obs_only.py:30@observe_only_experience gated=-"
+        ]
+      },
+      {
+        "site": "taiji/model.py:2312@observe",
+        "caller_count": 554,
+        "default_face_callers": 78,
+        "product_ungated_callers": 77,
+        "runner_ungated_callers": 1,
+        "gated_callers": 0,
+        "gating_flags": [],
+        "verdict": "reachable_at_default",
+        "caller_faces": {
+          "instrument": 273,
+          "other": 5,
+          "product": 77,
+          "runner": 1,
+          "tests": 198
+        },
+        "evidence": [
+          "api/middleware/metrics.py:31@metrics_middleware gated=-",
+          "api/seed_runtime.py:99@record_told_history gated=-",
+          "api/seed_runtime.py:109@record_told_history gated=-",
+          "api/seed_runtime.py:112@record_told_history gated=-",
+          "api/training/resume.py:202@_train_worker gated=-",
+          "scripts/archive/diagnostics/_diag_a3_obs_only.py:30@observe_only_experience gated=-"
+        ]
+      },
+      {
+        "site": "taiji/model.py:3948@restore",
+        "caller_count": 87,
+        "default_face_callers": 27,
+        "product_ungated_callers": 26,
+        "runner_ungated_callers": 1,
+        "gated_callers": 0,
+        "gating_flags": [],
+        "verdict": "reachable_at_default",
+        "caller_faces": {
+          "instrument": 35,
+          "other": 1,
+          "product": 26,
+          "runner": 1,
+          "tests": 24
+        },
+        "evidence": [
+          "scripts/archive/diagnostics/_diag_sleep_damage2.py:68@main gated=-",
+          "scripts/archive/diagnostics/diag_runtime_mechanism_trace.py:334@_trace_one gated=-",
+          "scripts/training/audit_taiji_r2_h3_7_attribution.py:167@_audit_treatment gated=-",
+          "scripts/training/build_taiji_m4v2_r6_k_worker_artifacts.py:91@_save_roundtrip gated=-",
+          "scripts/training/eval_p3b_heldout_surprise.py:128@load_state gated=-",
+          "scripts/training/eval_taiji_b5_readout_generation.py:62@_phase_a_context_profile gated=-"
+        ]
+      },
+      {
+        "site": "taiji/state.py:86@to_payload",
+        "caller_count": 1790,
+        "default_face_callers": 535,
+        "product_ungated_callers": 534,
+        "runner_ungated_callers": 1,
+        "gated_callers": 0,
+        "gating_flags": [
+          "preflight_only"
+        ],
+        "verdict": "reachable_at_default",
+        "caller_faces": {
+          "instrument": 708,
+          "other": 198,
+          "product": 534,
+          "runner": 1,
+          "tests": 349
+        },
+        "evidence": [
+          "api/natural_language_workbench.py:110@approve gated=-",
+          "api/routes_chat.py:80@_workbench_event gated=-",
+          "api/routes_client_extensions.py:65@client_extensions gated=-",
+          "api/routes_client_extensions.py:102@prepare_client_extensions gated=-",
+          "api/routes_client_extensions.py:119@commit_client_extensions gated=-",
+          "api/routes_client_extensions.py:134@report_client_dependency gated=-"
+        ]
+      },
+      {
+        "site": "taiji/state.py:75@clone",
+        "caller_count": 846,
+        "default_face_callers": 385,
+        "product_ungated_callers": 385,
+        "runner_ungated_callers": 0,
+        "gated_callers": 0,
+        "gating_flags": [
+          "preflight_only"
+        ],
+        "verdict": "reachable_at_default",
+        "caller_faces": {
+          "instrument": 337,
+          "other": 32,
+          "product": 385,
+          "tests": 92
+        },
+        "evidence": [
+          "neuroplex/brain/cortex.py:831@add_neuron gated=-",
+          "neuroplex/life/sleep_engine.py:55@_clone_module gated=-",
+          "neuroplex/life/sleep_engine.py:631@record_field_memory gated=-",
+          "neuroplex/multimodal/encodec.py:117@__init__ gated=-",
+          "neuroplex/multimodal/video.py:118@__init__ gated=-",
+          "neuroplex/multimodal/vqvae.py:190@__init__ gated=-"
+        ]
+      },
+      {
+        "site": "taiji/state.py:97@from_payload",
+        "caller_count": 682,
+        "default_face_callers": 322,
+        "product_ungated_callers": 322,
+        "runner_ungated_callers": 0,
+        "gated_callers": 0,
+        "gating_flags": [],
+        "verdict": "reachable_at_default",
+        "caller_faces": {
+          "instrument": 160,
+          "other": 43,
+          "product": 322,
+          "tests": 157
+        },
+        "evidence": [
+          "api/routes_client_extensions.py:88@prepare_client_extensions gated=-",
+          "api/routes_mcp_client_capabilities.py:145@propose_mcp_client_capability gated=-",
+          "api/routes_mcp_client_capabilities.py:146@propose_mcp_client_capability gated=-",
+          "api/routes_mcp_client_capabilities.py:164@record_mcp_client_capability_shadow gated=-",
+          "api/seed_runtime.py:801@admit_semantic_provider_evidence gated=-",
+          "api/seed_runtime.py:1065@_execute_natural_language_workbench_task_impl gated=-"
+        ]
+      }
+    ],
+    "episode_code": [
+      {
+        "site": "taiji/memory.py:482@write",
+        "caller_count": 321,
+        "default_face_callers": 9,
+        "product_ungated_callers": 3,
+        "runner_ungated_callers": 6,
+        "gated_callers": 0,
+        "gating_flags": [
+          "worker"
+        ],
+        "verdict": "reachable_at_default",
+        "caller_faces": {
+          "instrument": 174,
+          "other": 81,
+          "product": 3,
+          "runner": 6,
+          "tests": 57
+        },
+        "evidence": [
+          "api/routes_agent_workspace.py:208@save_workspace_file gated=-",
+          "api/run_app.py:1056@<module> gated=-",
+          "design/build_brand_assets.py:42@patch gated=-",
+          "design/make_mark_svg.py:220@<module> gated=-",
+          "design/make_mark_svg.py:200@<module> gated=-",
+          "design/trace_mark2.py:239@main gated=-"
+        ]
+      }
+    ],
+    "episodic_ids": [
+      {
+        "site": "taiji/adapter.py:9263@_archive_current_recovery_portfolio",
+        "caller_count": 2,
+        "default_face_callers": 2,
+        "product_ungated_callers": 2,
+        "runner_ungated_callers": 0,
+        "gated_callers": 0,
+        "gating_flags": [],
+        "verdict": "reachable_at_default",
+        "caller_faces": {
+          "product": 2
+        },
+        "evidence": [
+          "taiji/adapter.py:7079@begin_episode gated=-",
+          "taiji/adapter.py:9059@execute_imagined_rollout_step gated=-"
+        ]
+      },
+      {
+        "site": "taiji/contracts.py:1162@to_payload",
+        "caller_count": 1790,
+        "default_face_callers": 535,
+        "product_ungated_callers": 534,
+        "runner_ungated_callers": 1,
+        "gated_callers": 0,
+        "gating_flags": [
+          "preflight_only"
+        ],
+        "verdict": "reachable_at_default",
+        "caller_faces": {
+          "instrument": 708,
+          "other": 198,
+          "product": 534,
+          "runner": 1,
+          "tests": 349
+        },
+        "evidence": [
+          "api/natural_language_workbench.py:110@approve gated=-",
+          "api/routes_chat.py:80@_workbench_event gated=-",
+          "api/routes_client_extensions.py:65@client_extensions gated=-",
+          "api/routes_client_extensions.py:102@prepare_client_extensions gated=-",
+          "api/routes_client_extensions.py:119@commit_client_extensions gated=-",
+          "api/routes_client_extensions.py:134@report_client_dependency gated=-"
+        ]
+      },
+      {
+        "site": "taiji/contracts.py:1180@from_payload",
+        "caller_count": 682,
+        "default_face_callers": 322,
+        "product_ungated_callers": 322,
+        "runner_ungated_callers": 0,
+        "gated_callers": 0,
+        "gating_flags": [],
+        "verdict": "reachable_at_default",
+        "caller_faces": {
+          "instrument": 160,
+          "other": 43,
+          "product": 322,
+          "tests": 157
+        },
+        "evidence": [
+          "api/routes_client_extensions.py:88@prepare_client_extensions gated=-",
+          "api/routes_mcp_client_capabilities.py:145@propose_mcp_client_capability gated=-",
+          "api/routes_mcp_client_capabilities.py:146@propose_mcp_client_capability gated=-",
+          "api/routes_mcp_client_capabilities.py:164@record_mcp_client_capability_shadow gated=-",
+          "api/seed_runtime.py:801@admit_semantic_provider_evidence gated=-",
+          "api/seed_runtime.py:1065@_execute_natural_language_workbench_task_impl gated=-"
+        ]
+      }
+    ],
+    "expected_reward": [],
+    "last_decision": [
+      {
+        "site": "taiji/adaptive_residual_growth.py:594@from_checkpoint",
+        "caller_count": 1075,
+        "default_face_callers": 106,
+        "product_ungated_callers": 106,
+        "runner_ungated_callers": 0,
+        "gated_callers": 0,
+        "gating_flags": [
+          "fresh",
+          "lesion_k3"
+        ],
+        "verdict": "reachable_at_default",
+        "caller_faces": {
+          "instrument": 733,
+          "other": 14,
+          "product": 106,
+          "tests": 222
+        },
+        "evidence": [
+          "api/seed_runtime.py:319@load gated=-",
+          "api/taiji_runtime_attachment.py:191@_build_learners gated=-",
+          "api/taiji_runtime_attachment.py:194@_build_learners gated=-",
+          "api/taiji_runtime_attachment.py:197@_build_learners gated=-",
+          "api/taiji_runtime_attachment.py:232@_tamper_probes_rejected gated=-",
+          "api/taiji_runtime_attachment.py:222@_tamper_probes_rejected gated=-"
+        ]
+      },
+      {
+        "site": "taiji/adaptive_residual_growth.py:518@checkpoint",
+        "caller_count": 1278,
+        "default_face_callers": 208,
+        "product_ungated_callers": 206,
+        "runner_ungated_callers": 2,
+        "gated_callers": 0,
+        "gating_flags": [
+          "lesion_k3",
+          "preflight_only"
+        ],
+        "verdict": "reachable_at_default",
+        "caller_faces": {
+          "instrument": 727,
+          "other": 5,
+          "product": 206,
+          "runner": 2,
+          "tests": 338
+        },
+        "evidence": [
+          "api/seed_runtime.py:1511@save gated=-",
+          "api/training/resume.py:149@_persist gated=-",
+          "scripts/archive/diagnostics/_diag_m7_decode.py:32@main gated=-",
+          "scripts/archive/diagnostics/_diag_m7_motor.py:31@main gated=-",
+          "scripts/archive/diagnostics/_diag_recall_ablation.py:34@run gated=-",
+          "scripts/archive/diagnostics/_diag_recall_bisect.py:195@run gated=-"
+        ]
+      },
+      {
+        "site": "taiji/adaptive_residual_growth.py:519@checkpoint",
+        "caller_count": 1278,
+        "default_face_callers": 208,
+        "product_ungated_callers": 206,
+        "runner_ungated_callers": 2,
+        "gated_callers": 0,
+        "gating_flags": [
+          "lesion_k3",
+          "preflight_only"
+        ],
+        "verdict": "reachable_at_default",
+        "caller_faces": {
+          "instrument": 727,
+          "other": 5,
+          "product": 206,
+          "runner": 2,
+          "tests": 338
+        },
+        "evidence": [
+          "api/seed_runtime.py:1511@save gated=-",
+          "api/training/resume.py:149@_persist gated=-",
+          "scripts/archive/diagnostics/_diag_m7_decode.py:32@main gated=-",
+          "scripts/archive/diagnostics/_diag_m7_motor.py:31@main gated=-",
+          "scripts/archive/diagnostics/_diag_recall_ablation.py:34@run gated=-",
+          "scripts/archive/diagnostics/_diag_recall_bisect.py:195@run gated=-"
+        ]
+      },
+      {
+        "site": "taiji/adaptive_residual_growth.py:599@from_checkpoint",
+        "caller_count": 1075,
+        "default_face_callers": 106,
+        "product_ungated_callers": 106,
+        "runner_ungated_callers": 0,
+        "gated_callers": 0,
+        "gating_flags": [
+          "fresh",
+          "lesion_k3"
+        ],
+        "verdict": "reachable_at_default",
+        "caller_faces": {
+          "instrument": 733,
+          "other": 14,
+          "product": 106,
+          "tests": 222
+        },
+        "evidence": [
+          "api/seed_runtime.py:319@load gated=-",
+          "api/taiji_runtime_attachment.py:191@_build_learners gated=-",
+          "api/taiji_runtime_attachment.py:194@_build_learners gated=-",
+          "api/taiji_runtime_attachment.py:197@_build_learners gated=-",
+          "api/taiji_runtime_attachment.py:232@_tamper_probes_rejected gated=-",
+          "api/taiji_runtime_attachment.py:222@_tamper_probes_rejected gated=-"
+        ]
+      },
+      {
+        "site": "taiji/adaptive_residual_growth.py:603@from_checkpoint",
+        "caller_count": 1075,
+        "default_face_callers": 106,
+        "product_ungated_callers": 106,
+        "runner_ungated_callers": 0,
+        "gated_callers": 0,
+        "gating_flags": [
+          "fresh",
+          "lesion_k3"
+        ],
+        "verdict": "reachable_at_default",
+        "caller_faces": {
+          "instrument": 733,
+          "other": 14,
+          "product": 106,
+          "tests": 222
+        },
+        "evidence": [
+          "api/seed_runtime.py:319@load gated=-",
+          "api/taiji_runtime_attachment.py:191@_build_learners gated=-",
+          "api/taiji_runtime_attachment.py:194@_build_learners gated=-",
+          "api/taiji_runtime_attachment.py:197@_build_learners gated=-",
+          "api/taiji_runtime_attachment.py:232@_tamper_probes_rejected gated=-",
+          "api/taiji_runtime_attachment.py:222@_tamper_probes_rejected gated=-"
+        ]
+      },
+      {
+        "site": "taiji/model.py:968@propose_adaptive_residual_growth_candidate",
+        "caller_count": 4,
+        "default_face_callers": 1,
+        "product_ungated_callers": 0,
+        "runner_ungated_callers": 0,
+        "gated_callers": 1,
+        "gating_flags": [
+          "n5_shadow"
+        ],
+        "verdict": "flag_gated",
+        "caller_faces": {
+          "instrument": 1,
+          "runner": 1,
+          "tests": 2
+        },
+        "evidence": [
+          "scripts/training/eval_taiji_m4v2_r4_shadow.py:168@_prepared_parents gated=-",
+          "scripts/training/train_seed_corpus.py:918@_record_pressure gated=n5_shadow",
+          "tests/taiji_native/test_m4v2_r4_pressure.py:173@test_r4_live_pressure_is_emitted_by_bridge_tick_and_restores_exactly gated=-",
+          "tests/taiji_native/test_m4v2_r4_pressure.py:188@test_r4_live_pressure_is_emitted_by_bridge_tick_and_restores_exactly gated=-"
+        ]
+      }
+    ],
+    "motor_context": [
+      {
+        "site": "taiji/language_alignment.py:748@_target_pass",
+        "caller_count": 3,
+        "default_face_callers": 2,
+        "product_ungated_callers": 2,
+        "runner_ungated_callers": 0,
+        "gated_callers": 0,
+        "gating_flags": [],
+        "verdict": "reachable_at_default",
+        "caller_faces": {
+          "product": 2,
+          "tests": 1
+        },
+        "evidence": [
+          "taiji/language_alignment.py:2189@score_episode gated=-",
+          "taiji/language_alignment.py:2072@train gated=-",
+          "tests/taiji_native/test_response_plan_target.py:88@test_training_first_byte_uses_post_target_update_prior gated=-"
+        ]
+      },
+      {
+        "site": "taiji/language_alignment.py:1118@_prefix_condition_snapshot",
+        "caller_count": 3,
+        "default_face_callers": 3,
+        "product_ungated_callers": 3,
+        "runner_ungated_callers": 0,
+        "gated_callers": 0,
+        "gating_flags": [],
+        "verdict": "reachable_at_default",
+        "caller_faces": {
+          "product": 3
+        },
+        "evidence": [
+          "taiji/language_alignment.py:1148@condition_route_diagnostic gated=-",
+          "taiji/language_alignment.py:1150@condition_route_diagnostic gated=-",
+          "taiji/language_alignment.py:1194@condition_route_diagnostic gated=-"
+        ]
+      },
+      {
+        "site": "taiji/language_alignment.py:1294@run",
+        "caller_count": 367,
+        "default_face_callers": 12,
+        "product_ungated_callers": 11,
+        "runner_ungated_callers": 1,
+        "gated_callers": 0,
+        "gating_flags": [],
+        "verdict": "reachable_at_default",
+        "caller_faces": {
+          "instrument": 161,
+          "other": 81,
+          "product": 11,
+          "runner": 1,
+          "tests": 113
+        },
+        "evidence": [
+          "api/main.py:99@main gated=-",
+          "api/routes_agent_workspace.py:453@pick_folder gated=-",
+          "api/run_app.py:130@_install_missing_packages gated=-",
+          "api/run_app.py:470@start_server gated=-",
+          "api/seed_runtime.py:1247@_execute_natural_language_workbench_task_impl gated=-",
+          "api/taiji_runtime_attachment.py:294@_independent_restore gated=-"
+        ]
+      },
+      {
+        "site": "taiji/language_alignment.py:1414@run",
+        "caller_count": 367,
+        "default_face_callers": 12,
+        "product_ungated_callers": 11,
+        "runner_ungated_callers": 1,
+        "gated_callers": 0,
+        "gating_flags": [],
+        "verdict": "reachable_at_default",
+        "caller_faces": {
+          "instrument": 161,
+          "other": 81,
+          "product": 11,
+          "runner": 1,
+          "tests": 113
+        },
+        "evidence": [
+          "api/main.py:99@main gated=-",
+          "api/routes_agent_workspace.py:453@pick_folder gated=-",
+          "api/run_app.py:130@_install_missing_packages gated=-",
+          "api/run_app.py:470@start_server gated=-",
+          "api/seed_runtime.py:1247@_execute_natural_language_workbench_task_impl gated=-",
+          "api/taiji_runtime_attachment.py:294@_independent_restore gated=-"
+        ]
+      },
+      {
+        "site": "taiji/language_alignment.py:1612@run",
+        "caller_count": 367,
+        "default_face_callers": 12,
+        "product_ungated_callers": 11,
+        "runner_ungated_callers": 1,
+        "gated_callers": 0,
+        "gating_flags": [],
+        "verdict": "reachable_at_default",
+        "caller_faces": {
+          "instrument": 161,
+          "other": 81,
+          "product": 11,
+          "runner": 1,
+          "tests": 113
+        },
+        "evidence": [
+          "api/main.py:99@main gated=-",
+          "api/routes_agent_workspace.py:453@pick_folder gated=-",
+          "api/run_app.py:130@_install_missing_packages gated=-",
+          "api/run_app.py:470@start_server gated=-",
+          "api/seed_runtime.py:1247@_execute_natural_language_workbench_task_impl gated=-",
+          "api/taiji_runtime_attachment.py:294@_independent_restore gated=-"
+        ]
+      },
+      {
+        "site": "taiji/language_alignment.py:1842@run",
+        "caller_count": 367,
+        "default_face_callers": 12,
+        "product_ungated_callers": 11,
+        "runner_ungated_callers": 1,
+        "gated_callers": 0,
+        "gating_flags": [],
+        "verdict": "reachable_at_default",
+        "caller_faces": {
+          "instrument": 161,
+          "other": 81,
+          "product": 11,
+          "runner": 1,
+          "tests": 113
+        },
+        "evidence": [
+          "api/main.py:99@main gated=-",
+          "api/routes_agent_workspace.py:453@pick_folder gated=-",
+          "api/run_app.py:130@_install_missing_packages gated=-",
+          "api/run_app.py:470@start_server gated=-",
+          "api/seed_runtime.py:1247@_execute_natural_language_workbench_task_impl gated=-",
+          "api/taiji_runtime_attachment.py:294@_independent_restore gated=-"
+        ]
+      },
+      {
+        "site": "taiji/model.py:400@begin_response_plan",
+        "caller_count": 8,
+        "default_face_callers": 3,
+        "product_ungated_callers": 3,
+        "runner_ungated_callers": 0,
+        "gated_callers": 0,
+        "gating_flags": [],
+        "verdict": "reachable_at_default",
+        "caller_faces": {
+          "instrument": 2,
+          "product": 3,
+          "tests": 3
+        },
+        "evidence": [
+          "scripts/training/audit_taiji_r2_h3_7_attribution.py:78@_phase_probe gated=-",
+          "scripts/training/eval_taiji_r2_response_plan_ablation.py:94@main gated=-",
+          "taiji/language_alignment.py:2626@factorized_response_plan_preflight gated=-",
+          "taiji/language_alignment.py:761@_target_pass gated=-",
+          "taiji/language_alignment.py:828@_constrained_generate gated=-",
+          "tests/taiji_native/test_response_plan_target.py:45@test_target_update_refreshes_prior_without_advancing_phase gated=-"
+        ]
+      },
+      {
+        "site": "taiji/model.py:402@begin_response_plan",
+        "caller_count": 8,
+        "default_face_callers": 3,
+        "product_ungated_callers": 3,
+        "runner_ungated_callers": 0,
+        "gated_callers": 0,
+        "gating_flags": [],
+        "verdict": "reachable_at_default",
+        "caller_faces": {
+          "instrument": 2,
+          "product": 3,
+          "tests": 3
+        },
+        "evidence": [
+          "scripts/training/audit_taiji_r2_h3_7_attribution.py:78@_phase_probe gated=-",
+          "scripts/training/eval_taiji_r2_response_plan_ablation.py:94@main gated=-",
+          "taiji/language_alignment.py:2626@factorized_response_plan_preflight gated=-",
+          "taiji/language_alignment.py:761@_target_pass gated=-",
+          "taiji/language_alignment.py:828@_constrained_generate gated=-",
+          "tests/taiji_native/test_response_plan_target.py:45@test_target_update_refreshes_prior_without_advancing_phase gated=-"
+        ]
+      },
+      {
+        "site": "taiji/model.py:430@advance_response_plan_phase",
+        "caller_count": 5,
+        "default_face_callers": 3,
+        "product_ungated_callers": 3,
+        "runner_ungated_callers": 0,
+        "gated_callers": 0,
+        "gating_flags": [],
+        "verdict": "reachable_at_default",
+        "caller_faces": {
+          "instrument": 1,
+          "product": 3,
+          "tests": 1
+        },
+        "evidence": [
+          "scripts/training/audit_taiji_r2_h3_7_attribution.py:96@_phase_probe gated=-",
+          "taiji/language_alignment.py:2649@factorized_response_plan_preflight gated=-",
+          "taiji/language_alignment.py:778@_target_pass gated=-",
+          "taiji/language_alignment.py:861@_constrained_generate gated=-",
+          "tests/taiji_native/test_response_plan_target.py:327@test_h37_factorized_plan_preflight_and_checkpoint_round_trip gated=-"
+        ]
+      },
+      {
+        "site": "taiji/model.py:446@response_plan_probabilities",
+        "caller_count": 8,
+        "default_face_callers": 2,
+        "product_ungated_callers": 2,
+        "runner_ungated_callers": 0,
+        "gated_callers": 0,
+        "gating_flags": [],
+        "verdict": "reachable_at_default",
+        "caller_faces": {
+          "instrument": 1,
+          "product": 2,
+          "tests": 5
+        },
+        "evidence": [
+          "scripts/training/audit_taiji_r2_h3_7_attribution.py:97@_phase_probe gated=-",
+          "taiji/language_alignment.py:844@_constrained_generate gated=-",
+          "taiji/model.py:419@learn_response_plan_target gated=-",
+          "tests/taiji_native/test_language_alignment.py:375@test_response_plan_candidate_isolated_checkpointable_and_ablated gated=-",
+          "tests/taiji_native/test_language_alignment.py:376@test_response_plan_candidate_isolated_checkpointable_and_ablated gated=-",
+          "tests/taiji_native/test_response_plan_target.py:328@test_h37_factorized_plan_preflight_and_checkpoint_round_trip gated=-"
+        ]
+      },
+      {
+        "site": "taiji/model.py:595@response_phase_probabilities",
+        "caller_count": 7,
+        "default_face_callers": 7,
+        "product_ungated_callers": 7,
+        "runner_ungated_callers": 0,
+        "gated_callers": 0,
+        "gating_flags": [],
+        "verdict": "reachable_at_default",
+        "caller_faces": {
+          "product": 7
+        },
+        "evidence": [
+          "taiji/language_alignment.py:1387@run gated=-",
+          "taiji/language_alignment.py:836@_constrained_generate gated=-",
+          "taiji/language_alignment.py:1535@run gated=-",
+          "taiji/language_alignment.py:916@_beam_generate gated=-",
+          "taiji/language_alignment.py:1768@run gated=-",
+          "taiji/model.py:614@begin_response_phase gated=-"
+        ]
+      },
+      {
+        "site": "taiji/model.py:638@response_start_probabilities",
+        "caller_count": 7,
+        "default_face_callers": 7,
+        "product_ungated_callers": 7,
+        "runner_ungated_callers": 0,
+        "gated_callers": 0,
+        "gating_flags": [],
+        "verdict": "reachable_at_default",
+        "caller_faces": {
+          "product": 7
+        },
+        "evidence": [
+          "taiji/language_alignment.py:749@_target_pass gated=-",
+          "taiji/language_alignment.py:833@_constrained_generate gated=-",
+          "taiji/language_alignment.py:1267@run gated=-",
+          "taiji/language_alignment.py:913@_beam_generate gated=-",
+          "taiji/language_alignment.py:1538@run gated=-",
+          "taiji/language_alignment.py:1776@run gated=-"
+        ]
+      },
+      {
+        "site": "taiji/model.py:442@response_plan_probabilities",
+        "caller_count": 8,
+        "default_face_callers": 2,
+        "product_ungated_callers": 2,
+        "runner_ungated_callers": 0,
+        "gated_callers": 0,
+        "gating_flags": [],
+        "verdict": "reachable_at_default",
+        "caller_faces": {
+          "instrument": 1,
+          "product": 2,
+          "tests": 5
+        },
+        "evidence": [
+          "scripts/training/audit_taiji_r2_h3_7_attribution.py:97@_phase_probe gated=-",
+          "taiji/language_alignment.py:844@_constrained_generate gated=-",
+          "taiji/model.py:419@learn_response_plan_target gated=-",
+          "tests/taiji_native/test_language_alignment.py:375@test_response_plan_candidate_isolated_checkpointable_and_ablated gated=-",
+          "tests/taiji_native/test_language_alignment.py:376@test_response_plan_candidate_isolated_checkpointable_and_ablated gated=-",
+          "tests/taiji_native/test_response_plan_target.py:328@test_h37_factorized_plan_preflight_and_checkpoint_round_trip gated=-"
+        ]
+      },
+      {
+        "site": "taiji/model.py:1835@restore_dynamics",
+        "caller_count": 2,
+        "default_face_callers": 2,
+        "product_ungated_callers": 2,
+        "runner_ungated_callers": 0,
+        "gated_callers": 0,
+        "gating_flags": [],
+        "verdict": "reachable_at_default",
+        "caller_faces": {
+          "product": 2
+        },
+        "evidence": [
+          "taiji/language_alignment.py:911@_beam_generate gated=-",
+          "taiji/language_alignment.py:935@_beam_generate gated=-"
+        ]
+      },
+      {
+        "site": "taiji/model.py:2347@observe",
+        "caller_count": 554,
+        "default_face_callers": 78,
+        "product_ungated_callers": 77,
+        "runner_ungated_callers": 1,
+        "gated_callers": 0,
+        "gating_flags": [],
+        "verdict": "reachable_at_default",
+        "caller_faces": {
+          "instrument": 273,
+          "other": 5,
+          "product": 77,
+          "runner": 1,
+          "tests": 198
+        },
+        "evidence": [
+          "api/middleware/metrics.py:31@metrics_middleware gated=-",
+          "api/seed_runtime.py:99@record_told_history gated=-",
+          "api/seed_runtime.py:109@record_told_history gated=-",
+          "api/seed_runtime.py:112@record_told_history gated=-",
+          "api/training/resume.py:202@_train_worker gated=-",
+          "scripts/archive/diagnostics/_diag_a3_obs_only.py:30@observe_only_experience gated=-"
+        ]
+      },
+      {
+        "site": "taiji/model.py:3950@restore",
+        "caller_count": 87,
+        "default_face_callers": 27,
+        "product_ungated_callers": 26,
+        "runner_ungated_callers": 1,
+        "gated_callers": 0,
+        "gating_flags": [],
+        "verdict": "reachable_at_default",
+        "caller_faces": {
+          "instrument": 35,
+          "other": 1,
+          "product": 26,
+          "runner": 1,
+          "tests": 24
+        },
+        "evidence": [
+          "scripts/archive/diagnostics/_diag_sleep_damage2.py:68@main gated=-",
+          "scripts/archive/diagnostics/diag_runtime_mechanism_trace.py:334@_trace_one gated=-",
+          "scripts/training/audit_taiji_r2_h3_7_attribution.py:167@_audit_treatment gated=-",
+          "scripts/training/build_taiji_m4v2_r6_k_worker_artifacts.py:91@_save_roundtrip gated=-",
+          "scripts/training/eval_p3b_heldout_surprise.py:128@load_state gated=-",
+          "scripts/training/eval_taiji_b5_readout_generation.py:62@_phase_a_context_profile gated=-"
+        ]
+      },
+      {
+        "site": "taiji/model.py:3359@generate",
+        "caller_count": 222,
+        "default_face_callers": 7,
+        "product_ungated_callers": 7,
+        "runner_ungated_callers": 0,
+        "gated_callers": 0,
+        "gating_flags": [],
+        "verdict": "reachable_at_default",
+        "caller_faces": {
+          "instrument": 136,
+          "other": 6,
+          "product": 7,
+          "tests": 73
+        },
+        "evidence": [
+          "api/routes_neuroplex.py:526@cortex_chat gated=-",
+          "neuroplex/agent/context_manager.py:845@_compress_messages gated=-",
+          "neuroplex/body/senses.py:139@_generate_via_cortex gated=-",
+          "neuroplex/body/senses.py:118@_generate gated=-",
+          "neuroplex/brain/cortex.py:1412@generate_task_chain gated=-",
+          "neuroplex/brain/cortex.py:1438@generate_task_chain gated=-"
+        ]
+      },
+      {
+        "site": "taiji/model.py:2303@observe",
+        "caller_count": 554,
+        "default_face_callers": 78,
+        "product_ungated_callers": 77,
+        "runner_ungated_callers": 1,
+        "gated_callers": 0,
+        "gating_flags": [],
+        "verdict": "reachable_at_default",
+        "caller_faces": {
+          "instrument": 273,
+          "other": 5,
+          "product": 77,
+          "runner": 1,
+          "tests": 198
+        },
+        "evidence": [
+          "api/middleware/metrics.py:31@metrics_middleware gated=-",
+          "api/seed_runtime.py:99@record_told_history gated=-",
+          "api/seed_runtime.py:109@record_told_history gated=-",
+          "api/seed_runtime.py:112@record_told_history gated=-",
+          "api/training/resume.py:202@_train_worker gated=-",
+          "scripts/archive/diagnostics/_diag_a3_obs_only.py:30@observe_only_experience gated=-"
+        ]
+      },
+      {
+        "site": "taiji/model.py:2195@observe",
+        "caller_count": 554,
+        "default_face_callers": 78,
+        "product_ungated_callers": 77,
+        "runner_ungated_callers": 1,
+        "gated_callers": 0,
+        "gating_flags": [],
+        "verdict": "reachable_at_default",
+        "caller_faces": {
+          "instrument": 273,
+          "other": 5,
+          "product": 77,
+          "runner": 1,
+          "tests": 198
+        },
+        "evidence": [
+          "api/middleware/metrics.py:31@metrics_middleware gated=-",
+          "api/seed_runtime.py:99@record_told_history gated=-",
+          "api/seed_runtime.py:109@record_told_history gated=-",
+          "api/seed_runtime.py:112@record_told_history gated=-",
+          "api/training/resume.py:202@_train_worker gated=-",
+          "scripts/archive/diagnostics/_diag_a3_obs_only.py:30@observe_only_experience gated=-"
+        ]
+      },
+      {
+        "site": "taiji/model.py:2260@observe",
+        "caller_count": 554,
+        "default_face_callers": 78,
+        "product_ungated_callers": 77,
+        "runner_ungated_callers": 1,
+        "gated_callers": 0,
+        "gating_flags": [],
+        "verdict": "reachable_at_default",
+        "caller_faces": {
+          "instrument": 273,
+          "other": 5,
+          "product": 77,
+          "runner": 1,
+          "tests": 198
+        },
+        "evidence": [
+          "api/middleware/metrics.py:31@metrics_middleware gated=-",
+          "api/seed_runtime.py:99@record_told_history gated=-",
+          "api/seed_runtime.py:109@record_told_history gated=-",
+          "api/seed_runtime.py:112@record_told_history gated=-",
+          "api/training/resume.py:202@_train_worker gated=-",
+          "scripts/archive/diagnostics/_diag_a3_obs_only.py:30@observe_only_experience gated=-"
+        ]
+      },
+      {
+        "site": "taiji/model.py:2246@observe",
+        "caller_count": 554,
+        "default_face_callers": 78,
+        "product_ungated_callers": 77,
+        "runner_ungated_callers": 1,
+        "gated_callers": 0,
+        "gating_flags": [],
+        "verdict": "reachable_at_default",
+        "caller_faces": {
+          "instrument": 273,
+          "other": 5,
+          "product": 77,
+          "runner": 1,
+          "tests": 198
+        },
+        "evidence": [
+          "api/middleware/metrics.py:31@metrics_middleware gated=-",
+          "api/seed_runtime.py:99@record_told_history gated=-",
+          "api/seed_runtime.py:109@record_told_history gated=-",
+          "api/seed_runtime.py:112@record_told_history gated=-",
+          "api/training/resume.py:202@_train_worker gated=-",
+          "scripts/archive/diagnostics/_diag_a3_obs_only.py:30@observe_only_experience gated=-"
+        ]
+      },
+      {
+        "site": "taiji/model.py:2256@observe",
+        "caller_count": 554,
+        "default_face_callers": 78,
+        "product_ungated_callers": 77,
+        "runner_ungated_callers": 1,
+        "gated_callers": 0,
+        "gating_flags": [],
+        "verdict": "reachable_at_default",
+        "caller_faces": {
+          "instrument": 273,
+          "other": 5,
+          "product": 77,
+          "runner": 1,
+          "tests": 198
+        },
+        "evidence": [
+          "api/middleware/metrics.py:31@metrics_middleware gated=-",
+          "api/seed_runtime.py:99@record_told_history gated=-",
+          "api/seed_runtime.py:109@record_told_history gated=-",
+          "api/seed_runtime.py:112@record_told_history gated=-",
+          "api/training/resume.py:202@_train_worker gated=-",
+          "scripts/archive/diagnostics/_diag_a3_obs_only.py:30@observe_only_experience gated=-"
+        ]
+      },
+      {
+        "site": "taiji/model.py:2582@act",
+        "caller_count": 102,
+        "default_face_callers": 15,
+        "product_ungated_callers": 15,
+        "runner_ungated_callers": 0,
+        "gated_callers": 0,
+        "gating_flags": [],
+        "verdict": "reachable_at_default",
+        "caller_faces": {
+          "instrument": 53,
+          "product": 15,
+          "tests": 34
+        },
+        "evidence": [
+          "scripts/archive/diagnostics/_diag_a3_obs_only.py:35@observe_only_experience gated=-",
+          "scripts/archive/diagnostics/_diag_cortical_identity.py:93@main gated=-",
+          "scripts/archive/diagnostics/_diag_familiarity_signal.py:55@one_shot_scenario gated=-",
+          "scripts/archive/diagnostics/_diag_familiarity_signal.py:89@repeat_scenario gated=-",
+          "scripts/archive/diagnostics/_diag_m7_field.py:124@main gated=-",
+          "scripts/archive/diagnostics/_diag_m7_field_head.py:120@main gated=-"
+        ]
+      },
+      {
+        "site": "taiji/model.py:2283@observe",
+        "caller_count": 554,
+        "default_face_callers": 78,
+        "product_ungated_callers": 77,
+        "runner_ungated_callers": 1,
+        "gated_callers": 0,
+        "gating_flags": [],
+        "verdict": "reachable_at_default",
+        "caller_faces": {
+          "instrument": 273,
+          "other": 5,
+          "product": 77,
+          "runner": 1,
+          "tests": 198
+        },
+        "evidence": [
+          "api/middleware/metrics.py:31@metrics_middleware gated=-",
+          "api/seed_runtime.py:99@record_told_history gated=-",
+          "api/seed_runtime.py:109@record_told_history gated=-",
+          "api/seed_runtime.py:112@record_told_history gated=-",
+          "api/training/resume.py:202@_train_worker gated=-",
+          "scripts/archive/diagnostics/_diag_a3_obs_only.py:30@observe_only_experience gated=-"
+        ]
+      },
+      {
+        "site": "taiji/response_plan_target.py:107@_native_teacher_raw",
+        "caller_count": 4,
+        "default_face_callers": 3,
+        "product_ungated_callers": 3,
+        "runner_ungated_callers": 0,
+        "gated_callers": 0,
+        "gating_flags": [],
+        "verdict": "reachable_at_default",
+        "caller_faces": {
+          "instrument": 1,
+          "product": 3
+        },
+        "evidence": [
+          "scripts/training/audit_taiji_r2_plan_target_geometry.py:198@main gated=-",
+          "taiji/response_plan_target.py:290@encode_episode gated=-",
+          "taiji/response_plan_target.py:301@encode_corpus gated=-",
+          "taiji/response_plan_target.py:217@fit gated=-"
+        ]
+      },
+      {
+        "site": "taiji/state.py:251@clone",
+        "caller_count": 846,
+        "default_face_callers": 385,
+        "product_ungated_callers": 385,
+        "runner_ungated_callers": 0,
+        "gated_callers": 0,
+        "gating_flags": [
+          "preflight_only"
+        ],
+        "verdict": "reachable_at_default",
+        "caller_faces": {
+          "instrument": 337,
+          "other": 32,
+          "product": 385,
+          "tests": 92
+        },
+        "evidence": [
+          "neuroplex/brain/cortex.py:831@add_neuron gated=-",
+          "neuroplex/life/sleep_engine.py:55@_clone_module gated=-",
+          "neuroplex/life/sleep_engine.py:631@record_field_memory gated=-",
+          "neuroplex/multimodal/encodec.py:117@__init__ gated=-",
+          "neuroplex/multimodal/video.py:118@__init__ gated=-",
+          "neuroplex/multimodal/vqvae.py:190@__init__ gated=-"
+        ]
+      },
+      {
+        "site": "taiji/state.py:302@from_payload",
+        "caller_count": 682,
+        "default_face_callers": 322,
+        "product_ungated_callers": 322,
+        "runner_ungated_callers": 0,
+        "gated_callers": 0,
+        "gating_flags": [],
+        "verdict": "reachable_at_default",
+        "caller_faces": {
+          "instrument": 160,
+          "other": 43,
+          "product": 322,
+          "tests": 157
+        },
+        "evidence": [
+          "api/routes_client_extensions.py:88@prepare_client_extensions gated=-",
+          "api/routes_mcp_client_capabilities.py:145@propose_mcp_client_capability gated=-",
+          "api/routes_mcp_client_capabilities.py:146@propose_mcp_client_capability gated=-",
+          "api/routes_mcp_client_capabilities.py:164@record_mcp_client_capability_shadow gated=-",
+          "api/seed_runtime.py:801@admit_semantic_provider_evidence gated=-",
+          "api/seed_runtime.py:1065@_execute_natural_language_workbench_task_impl gated=-"
+        ]
+      },
+      {
+        "site": "taiji/state.py:278@to_payload",
+        "caller_count": 1790,
+        "default_face_callers": 535,
+        "product_ungated_callers": 534,
+        "runner_ungated_callers": 1,
+        "gated_callers": 0,
+        "gating_flags": [
+          "preflight_only"
+        ],
+        "verdict": "reachable_at_default",
+        "caller_faces": {
+          "instrument": 708,
+          "other": 198,
+          "product": 534,
+          "runner": 1,
+          "tests": 349
+        },
+        "evidence": [
+          "api/natural_language_workbench.py:110@approve gated=-",
+          "api/routes_chat.py:80@_workbench_event gated=-",
+          "api/routes_client_extensions.py:65@client_extensions gated=-",
+          "api/routes_client_extensions.py:102@prepare_client_extensions gated=-",
+          "api/routes_client_extensions.py:119@commit_client_extensions gated=-",
+          "api/routes_client_extensions.py:134@report_client_dependency gated=-"
+        ]
+      }
+    ],
+    "motor_probabilities": [
+      {
+        "site": "seed/sleep.py:97@experience",
+        "caller_count": 15,
+        "default_face_callers": 1,
+        "product_ungated_callers": 1,
+        "runner_ungated_callers": 0,
+        "gated_callers": 0,
+        "gating_flags": [],
+        "verdict": "reachable_at_default",
+        "caller_faces": {
+          "instrument": 13,
+          "product": 1,
+          "tests": 1
+        },
+        "evidence": [
+          "scripts/archive/diagnostics/_diag_a2_cue_off.py:31@main gated=-",
+          "scripts/archive/diagnostics/_diag_a2_decay_sweep.py:68@main gated=-",
+          "scripts/archive/diagnostics/_diag_a2_split.py:44@main gated=-",
+          "scripts/archive/diagnostics/_diag_a2_split.py:59@main gated=-",
+          "scripts/archive/diagnostics/_diag_a2_split_paths.py:53@main gated=-",
+          "scripts/archive/diagnostics/_diag_a2_worst.py:49@main gated=-"
+        ]
+      },
+      {
+        "site": "seed/sleep.py:195@_write_episodic_observations",
+        "caller_count": 1,
+        "default_face_callers": 1,
+        "product_ungated_callers": 1,
+        "runner_ungated_callers": 0,
+        "gated_callers": 0,
+        "gating_flags": [],
+        "verdict": "reachable_at_default",
+        "caller_faces": {
+          "product": 1
+        },
+        "evidence": [
+          "seed/sleep.py:152@night gated=-"
+        ]
+      },
+      {
+        "site": "taiji/language_alignment.py:1119@_prefix_condition_snapshot",
+        "caller_count": 3,
+        "default_face_callers": 3,
+        "product_ungated_callers": 3,
+        "runner_ungated_callers": 0,
+        "gated_callers": 0,
+        "gating_flags": [],
+        "verdict": "reachable_at_default",
+        "caller_faces": {
+          "product": 3
+        },
+        "evidence": [
+          "taiji/language_alignment.py:1148@condition_route_diagnostic gated=-",
+          "taiji/language_alignment.py:1150@condition_route_diagnostic gated=-",
+          "taiji/language_alignment.py:1194@condition_route_diagnostic gated=-"
+        ]
+      },
+      {
+        "site": "taiji/language_alignment.py:918@_beam_generate",
+        "caller_count": 1,
+        "default_face_callers": 1,
+        "product_ungated_callers": 1,
+        "runner_ungated_callers": 0,
+        "gated_callers": 0,
+        "gating_flags": [],
+        "verdict": "reachable_at_default",
+        "caller_faces": {
+          "product": 1
+        },
+        "evidence": [
+          "taiji/language_alignment.py:992@run gated=-"
+        ]
+      },
+      {
+        "site": "taiji/language_alignment.py:1541@run",
+        "caller_count": 367,
+        "default_face_callers": 12,
+        "product_ungated_callers": 11,
+        "runner_ungated_callers": 1,
+        "gated_callers": 0,
+        "gating_flags": [],
+        "verdict": "reachable_at_default",
+        "caller_faces": {
+          "instrument": 161,
+          "other": 81,
+          "product": 11,
+          "runner": 1,
+          "tests": 113
+        },
+        "evidence": [
+          "api/main.py:99@main gated=-",
+          "api/routes_agent_workspace.py:453@pick_folder gated=-",
+          "api/run_app.py:130@_install_missing_packages gated=-",
+          "api/run_app.py:470@start_server gated=-",
+          "api/seed_runtime.py:1247@_execute_natural_language_workbench_task_impl gated=-",
+          "api/taiji_runtime_attachment.py:294@_independent_restore gated=-"
+        ]
+      },
+      {
+        "site": "taiji/language_alignment.py:1784@run",
+        "caller_count": 367,
+        "default_face_callers": 12,
+        "product_ungated_callers": 11,
+        "runner_ungated_callers": 1,
+        "gated_callers": 0,
+        "gating_flags": [],
+        "verdict": "reachable_at_default",
+        "caller_faces": {
+          "instrument": 161,
+          "other": 81,
+          "product": 11,
+          "runner": 1,
+          "tests": 113
+        },
+        "evidence": [
+          "api/main.py:99@main gated=-",
+          "api/routes_agent_workspace.py:453@pick_folder gated=-",
+          "api/run_app.py:130@_install_missing_packages gated=-",
+          "api/run_app.py:470@start_server gated=-",
+          "api/seed_runtime.py:1247@_execute_natural_language_workbench_task_impl gated=-",
+          "api/taiji_runtime_attachment.py:294@_independent_restore gated=-"
+        ]
+      },
+      {
+        "site": "taiji/model.py:1837@restore_dynamics",
+        "caller_count": 2,
+        "default_face_callers": 2,
+        "product_ungated_callers": 2,
+        "runner_ungated_callers": 0,
+        "gated_callers": 0,
+        "gating_flags": [],
+        "verdict": "reachable_at_default",
+        "caller_faces": {
+          "product": 2
+        },
+        "evidence": [
+          "taiji/language_alignment.py:911@_beam_generate gated=-",
+          "taiji/language_alignment.py:935@_beam_generate gated=-"
+        ]
+      },
+      {
+        "site": "taiji/model.py:3965@restore",
+        "caller_count": 87,
+        "default_face_callers": 27,
+        "product_ungated_callers": 26,
+        "runner_ungated_callers": 1,
+        "gated_callers": 0,
+        "gating_flags": [],
+        "verdict": "reachable_at_default",
+        "caller_faces": {
+          "instrument": 35,
+          "other": 1,
+          "product": 26,
+          "runner": 1,
+          "tests": 24
+        },
+        "evidence": [
+          "scripts/archive/diagnostics/_diag_sleep_damage2.py:68@main gated=-",
+          "scripts/archive/diagnostics/diag_runtime_mechanism_trace.py:334@_trace_one gated=-",
+          "scripts/training/audit_taiji_r2_h3_7_attribution.py:167@_audit_treatment gated=-",
+          "scripts/training/build_taiji_m4v2_r6_k_worker_artifacts.py:91@_save_roundtrip gated=-",
+          "scripts/training/eval_p3b_heldout_surprise.py:128@load_state gated=-",
+          "scripts/training/eval_taiji_b5_readout_generation.py:62@_phase_a_context_profile gated=-"
+        ]
+      },
+      {
+        "site": "taiji/model.py:2164@observe",
+        "caller_count": 554,
+        "default_face_callers": 78,
+        "product_ungated_callers": 77,
+        "runner_ungated_callers": 1,
+        "gated_callers": 0,
+        "gating_flags": [],
+        "verdict": "reachable_at_default",
+        "caller_faces": {
+          "instrument": 273,
+          "other": 5,
+          "product": 77,
+          "runner": 1,
+          "tests": 198
+        },
+        "evidence": [
+          "api/middleware/metrics.py:31@metrics_middleware gated=-",
+          "api/seed_runtime.py:99@record_told_history gated=-",
+          "api/seed_runtime.py:109@record_told_history gated=-",
+          "api/seed_runtime.py:112@record_told_history gated=-",
+          "api/training/resume.py:202@_train_worker gated=-",
+          "scripts/archive/diagnostics/_diag_a3_obs_only.py:30@observe_only_experience gated=-"
+        ]
+      },
+      {
+        "site": "taiji/model.py:2304@observe",
+        "caller_count": 554,
+        "default_face_callers": 78,
+        "product_ungated_callers": 77,
+        "runner_ungated_callers": 1,
+        "gated_callers": 0,
+        "gating_flags": [],
+        "verdict": "reachable_at_default",
+        "caller_faces": {
+          "instrument": 273,
+          "other": 5,
+          "product": 77,
+          "runner": 1,
+          "tests": 198
+        },
+        "evidence": [
+          "api/middleware/metrics.py:31@metrics_middleware gated=-",
+          "api/seed_runtime.py:99@record_told_history gated=-",
+          "api/seed_runtime.py:109@record_told_history gated=-",
+          "api/seed_runtime.py:112@record_told_history gated=-",
+          "api/training/resume.py:202@_train_worker gated=-",
+          "scripts/archive/diagnostics/_diag_a3_obs_only.py:30@observe_only_experience gated=-"
+        ]
+      },
+      {
+        "site": "taiji/model.py:2148@observe",
+        "caller_count": 554,
+        "default_face_callers": 78,
+        "product_ungated_callers": 77,
+        "runner_ungated_callers": 1,
+        "gated_callers": 0,
+        "gating_flags": [],
+        "verdict": "reachable_at_default",
+        "caller_faces": {
+          "instrument": 273,
+          "other": 5,
+          "product": 77,
+          "runner": 1,
+          "tests": 198
+        },
+        "evidence": [
+          "api/middleware/metrics.py:31@metrics_middleware gated=-",
+          "api/seed_runtime.py:99@record_told_history gated=-",
+          "api/seed_runtime.py:109@record_told_history gated=-",
+          "api/seed_runtime.py:112@record_told_history gated=-",
+          "api/training/resume.py:202@_train_worker gated=-",
+          "scripts/archive/diagnostics/_diag_a3_obs_only.py:30@observe_only_experience gated=-"
+        ]
+      },
+      {
+        "site": "taiji/model.py:2261@observe",
+        "caller_count": 554,
+        "default_face_callers": 78,
+        "product_ungated_callers": 77,
+        "runner_ungated_callers": 1,
+        "gated_callers": 0,
+        "gating_flags": [],
+        "verdict": "reachable_at_default",
+        "caller_faces": {
+          "instrument": 273,
+          "other": 5,
+          "product": 77,
+          "runner": 1,
+          "tests": 198
+        },
+        "evidence": [
+          "api/middleware/metrics.py:31@metrics_middleware gated=-",
+          "api/seed_runtime.py:99@record_told_history gated=-",
+          "api/seed_runtime.py:109@record_told_history gated=-",
+          "api/seed_runtime.py:112@record_told_history gated=-",
+          "api/training/resume.py:202@_train_worker gated=-",
+          "scripts/archive/diagnostics/_diag_a3_obs_only.py:30@observe_only_experience gated=-"
+        ]
+      },
+      {
+        "site": "taiji/model.py:2062@observe",
+        "caller_count": 554,
+        "default_face_callers": 78,
+        "product_ungated_callers": 77,
+        "runner_ungated_callers": 1,
+        "gated_callers": 0,
+        "gating_flags": [],
+        "verdict": "reachable_at_default",
+        "caller_faces": {
+          "instrument": 273,
+          "other": 5,
+          "product": 77,
+          "runner": 1,
+          "tests": 198
+        },
+        "evidence": [
+          "api/middleware/metrics.py:31@metrics_middleware gated=-",
+          "api/seed_runtime.py:99@record_told_history gated=-",
+          "api/seed_runtime.py:109@record_told_history gated=-",
+          "api/seed_runtime.py:112@record_told_history gated=-",
+          "api/training/resume.py:202@_train_worker gated=-",
+          "scripts/archive/diagnostics/_diag_a3_obs_only.py:30@observe_only_experience gated=-"
+        ]
+      },
+      {
+        "site": "taiji/model.py:2147@observe",
+        "caller_count": 554,
+        "default_face_callers": 78,
+        "product_ungated_callers": 77,
+        "runner_ungated_callers": 1,
+        "gated_callers": 0,
+        "gating_flags": [],
+        "verdict": "reachable_at_default",
+        "caller_faces": {
+          "instrument": 273,
+          "other": 5,
+          "product": 77,
+          "runner": 1,
+          "tests": 198
+        },
+        "evidence": [
+          "api/middleware/metrics.py:31@metrics_middleware gated=-",
+          "api/seed_runtime.py:99@record_told_history gated=-",
+          "api/seed_runtime.py:109@record_told_history gated=-",
+          "api/seed_runtime.py:112@record_told_history gated=-",
+          "api/training/resume.py:202@_train_worker gated=-",
+          "scripts/archive/diagnostics/_diag_a3_obs_only.py:30@observe_only_experience gated=-"
+        ]
+      },
+      {
+        "site": "taiji/state.py:253@clone",
+        "caller_count": 846,
+        "default_face_callers": 385,
+        "product_ungated_callers": 385,
+        "runner_ungated_callers": 0,
+        "gated_callers": 0,
+        "gating_flags": [
+          "preflight_only"
+        ],
+        "verdict": "reachable_at_default",
+        "caller_faces": {
+          "instrument": 337,
+          "other": 32,
+          "product": 385,
+          "tests": 92
+        },
+        "evidence": [
+          "neuroplex/brain/cortex.py:831@add_neuron gated=-",
+          "neuroplex/life/sleep_engine.py:55@_clone_module gated=-",
+          "neuroplex/life/sleep_engine.py:631@record_field_memory gated=-",
+          "neuroplex/multimodal/encodec.py:117@__init__ gated=-",
+          "neuroplex/multimodal/video.py:118@__init__ gated=-",
+          "neuroplex/multimodal/vqvae.py:190@__init__ gated=-"
+        ]
+      },
+      {
+        "site": "taiji/state.py:280@to_payload",
+        "caller_count": 1790,
+        "default_face_callers": 535,
+        "product_ungated_callers": 534,
+        "runner_ungated_callers": 1,
+        "gated_callers": 0,
+        "gating_flags": [
+          "preflight_only"
+        ],
+        "verdict": "reachable_at_default",
+        "caller_faces": {
+          "instrument": 708,
+          "other": 198,
+          "product": 534,
+          "runner": 1,
+          "tests": 349
+        },
+        "evidence": [
+          "api/natural_language_workbench.py:110@approve gated=-",
+          "api/routes_chat.py:80@_workbench_event gated=-",
+          "api/routes_client_extensions.py:65@client_extensions gated=-",
+          "api/routes_client_extensions.py:102@prepare_client_extensions gated=-",
+          "api/routes_client_extensions.py:119@commit_client_extensions gated=-",
+          "api/routes_client_extensions.py:134@report_client_dependency gated=-"
+        ]
+      },
+      {
+        "site": "taiji/state.py:319@from_payload",
+        "caller_count": 682,
+        "default_face_callers": 322,
+        "product_ungated_callers": 322,
+        "runner_ungated_callers": 0,
+        "gated_callers": 0,
+        "gating_flags": [],
+        "verdict": "reachable_at_default",
+        "caller_faces": {
+          "instrument": 160,
+          "other": 43,
+          "product": 322,
+          "tests": 157
+        },
+        "evidence": [
+          "api/routes_client_extensions.py:88@prepare_client_extensions gated=-",
+          "api/routes_mcp_client_capabilities.py:145@propose_mcp_client_capability gated=-",
+          "api/routes_mcp_client_capabilities.py:146@propose_mcp_client_capability gated=-",
+          "api/routes_mcp_client_capabilities.py:164@record_mcp_client_capability_shadow gated=-",
+          "api/seed_runtime.py:801@admit_semantic_provider_evidence gated=-",
+          "api/seed_runtime.py:1065@_execute_natural_language_workbench_task_impl gated=-"
+        ]
+      }
+    ],
+    "outcome_probabilities": [
+      {
+        "site": "taiji/model.py:2748@consolidate",
+        "caller_count": 177,
+        "default_face_callers": 30,
+        "product_ungated_callers": 30,
+        "runner_ungated_callers": 0,
+        "gated_callers": 0,
+        "gating_flags": [],
+        "verdict": "reachable_at_default",
+        "caller_faces": {
+          "instrument": 106,
+          "other": 3,
+          "product": 30,
+          "tests": 38
+        },
+        "evidence": [
+          "neuroplex/agent/context_manager.py:919@consolidate_for_sleep gated=-",
+          "neuroplex/life/sleep_engine.py:692@_sleep_phase_field_consolidation gated=-",
+          "neuroplex/life/sleep_engine.py:2894@_sleep_phase_knowledge_integration gated=-",
+          "scripts/archive/diagnostics/_diag_a2_cue_off.py:33@main gated=-",
+          "scripts/archive/diagnostics/_diag_a2_split.py:60@main gated=-",
+          "scripts/archive/diagnostics/_diag_a2_worst.py:51@main gated=-"
+        ]
+      }
+    ],
+    "provenance_probabilities": [
+      {
+        "site": "taiji/model.py:2713@consolidate",
+        "caller_count": 177,
+        "default_face_callers": 30,
+        "product_ungated_callers": 30,
+        "runner_ungated_callers": 0,
+        "gated_callers": 0,
+        "gating_flags": [],
+        "verdict": "reachable_at_default",
+        "caller_faces": {
+          "instrument": 106,
+          "other": 3,
+          "product": 30,
+          "tests": 38
+        },
+        "evidence": [
+          "neuroplex/agent/context_manager.py:919@consolidate_for_sleep gated=-",
+          "neuroplex/life/sleep_engine.py:692@_sleep_phase_field_consolidation gated=-",
+          "neuroplex/life/sleep_engine.py:2894@_sleep_phase_knowledge_integration gated=-",
+          "scripts/archive/diagnostics/_diag_a2_cue_off.py:33@main gated=-",
+          "scripts/archive/diagnostics/_diag_a2_split.py:60@main gated=-",
+          "scripts/archive/diagnostics/_diag_a2_worst.py:51@main gated=-"
+        ]
+      }
+    ],
+    "time_code": [
+      {
+        "site": "taiji/memory.py:481@write",
+        "caller_count": 321,
+        "default_face_callers": 9,
+        "product_ungated_callers": 3,
+        "runner_ungated_callers": 6,
+        "gated_callers": 0,
+        "gating_flags": [
+          "worker"
+        ],
+        "verdict": "reachable_at_default",
+        "caller_faces": {
+          "instrument": 174,
+          "other": 81,
+          "product": 3,
+          "runner": 6,
+          "tests": 57
+        },
+        "evidence": [
+          "api/routes_agent_workspace.py:208@save_workspace_file gated=-",
+          "api/run_app.py:1056@<module> gated=-",
+          "design/build_brand_assets.py:42@patch gated=-",
+          "design/make_mark_svg.py:220@<module> gated=-",
+          "design/make_mark_svg.py:200@<module> gated=-",
+          "design/trace_mark2.py:239@main gated=-"
+        ]
+      },
+      {
+        "site": "taiji/memory.py:853@replay",
+        "caller_count": 10,
+        "default_face_callers": 1,
+        "product_ungated_callers": 1,
+        "runner_ungated_callers": 0,
+        "gated_callers": 0,
+        "gating_flags": [],
+        "verdict": "reachable_at_default",
+        "caller_faces": {
+          "instrument": 8,
+          "product": 1,
+          "tests": 1
+        },
+        "evidence": [
+          "scripts/archive/diagnostics/_diag_cortical_identity.py:201@main gated=-",
+          "scripts/archive/diagnostics/_diag_cortical_identity.py:218@main gated=-",
+          "scripts/archive/diagnostics/_diag_m7_decode.py:76@main gated=-",
+          "scripts/archive/diagnostics/_diag_m7_field.py:166@main gated=-",
+          "scripts/archive/diagnostics/_diag_m7_field_head.py:221@main gated=-",
+          "scripts/archive/diagnostics/_diag_sleep_priority.py:45@main gated=-"
+        ]
+      }
+    ],
+    "unique_documents": []
+  },
+  "tally": {
+    "reachable_at_default": 66,
+    "flag_gated": 1
+  },
+  "no_caller_sites": [],
+  "indeterminate_sites": [],
+  "limits": [
+    "调用点按**函数名**匹配：动态派发（getattr／注册表／回调）与改名后的调用看不见；判定刻意不对称——产品面有一个非门控调用者就算 reachable_at_default，全部调用者都被门控才判 flag_gated",
+    "**测试与仪器里的调用者不参与默认装配判定**：只有它们在读的点位单列成 no_default_face_caller（与 audit_taiji_write_only_key_face 的 read_only_outside_product 同族），既不读成「可达」也不读成「没人用」",
+    "旗标默认值只从**同文件**的 add_argument 取（跨文件传参的开关链不在静态面内）；混合门控与非门控调用者的点位判 reachability_indeterminate 并单列，不并成任何一边"
+  ],
+  "started_utc": "2026-10-11T14:31:41Z"
+}
