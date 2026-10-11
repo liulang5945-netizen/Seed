@@ -1,0 +1,161 @@
+{
+  "format": "taiji-n5-12-wake-schedule-arms-v1",
+  "prereg": "plans/reference/PLAN-N5-12_autonomous_wake_constraints_prereg_20261011.md §3",
+  "fixture": {
+    "steps": 24,
+    "seed": 7,
+    "frozen_amplitude_from_stream_max": 1.0,
+    "noise_units_from_stream": [
+      0.0434782608695653,
+      0.0434782608695653,
+      1.0,
+      0.0434782608695653
+    ],
+    "noise_unit_fields": [
+      "prediction_error",
+      "novelty",
+      "reward",
+      "resource_cost"
+    ]
+  },
+  "supplementary_noise_ladder": {
+    "used_for_verdict": false,
+    "why": "判据只按已冻的那一档；逐路步尺的梯只作稳健性披露，不参与判定",
+    "rows": [
+      {
+        "amplitude": 0.0434782608695653,
+        "flips": 13.0
+      },
+      {
+        "amplitude": 1.0,
+        "flips": 15.0
+      }
+    ]
+  },
+  "modes": {
+    "adaptive_clean": [
+      "wake",
+      "wake",
+      "wake",
+      "wake",
+      "wake",
+      "wake",
+      "wake",
+      "wake",
+      "wake",
+      "sleep",
+      "wake",
+      "sleep",
+      "wake",
+      "sleep",
+      "wake",
+      "sleep",
+      "wake",
+      "sleep",
+      "sleep",
+      "wake",
+      "sleep",
+      "wake",
+      "sleep",
+      "sleep"
+    ],
+    "adaptive_noisy": [
+      "wake",
+      "wake",
+      "wake",
+      "wake",
+      "wake",
+      "wake",
+      "sleep",
+      "wake",
+      "wake",
+      "sleep",
+      "wake",
+      "sleep",
+      "wake",
+      "sleep",
+      "wake",
+      "sleep",
+      "wake",
+      "sleep",
+      "sleep",
+      "wake",
+      "sleep",
+      "wake",
+      "sleep",
+      "sleep"
+    ],
+    "fixed_wake_clean": [
+      "wake",
+      "wake",
+      "wake",
+      "wake",
+      "wake",
+      "wake",
+      "wake",
+      "wake",
+      "wake",
+      "wake",
+      "wake",
+      "wake",
+      "wake",
+      "wake",
+      "wake",
+      "wake",
+      "wake",
+      "wake",
+      "wake",
+      "wake",
+      "wake",
+      "wake",
+      "wake",
+      "wake"
+    ]
+  },
+  "flips": {
+    "adaptive_clean": 13,
+    "adaptive_noisy": 15,
+    "fixed_wake_clean": 0
+  },
+  "end_state": {
+    "adaptive": {
+      "tick": 24,
+      "curiosity": 0.9216,
+      "fatigue": 0.26726038848887834,
+      "stress": 0.36,
+      "version": 1
+    },
+    "fixed_wake": {
+      "tick": 24,
+      "curiosity": 1.0,
+      "fatigue": 1.0,
+      "stress": 1.0,
+      "version": 1
+    },
+    "final_drives_adaptive": {
+      "exploration": 0.6752928259686497,
+      "replay": 0.36,
+      "rest": 0.44726038848887834,
+      "play": 0.4321874086199358
+    },
+    "final_drives_fixed_wake": {
+      "exploration": 0.0,
+      "replay": 1.0,
+      "rest": 1.0,
+      "play": 0.0
+    }
+  },
+  "verdicts": {
+    "ruler_usable": true,
+    "j_n5l_2_noise_rewake": "noise_changes_scheduling:13->15",
+    "j_n5l_4_fixed_schedule_control": "arms_separable"
+  },
+  "caveats": [
+    "两臂的差别只发生在被选中的 mode 上；产品默认链今天等价于 fixed_wake 臂（`taiji/adapter.py:10921`／`:11660` 写死 mode=\"wake\"）⇒ 过了可分性也只说明『自适应与默认不同』，不说明『调度有效』",
+    "fixed 臂的模式翻转数**按定义为 0**（它永远 wake），所以 J-N5l-4 的『序列可分』是定义性的；有信息量的那一半在两臂的驱力终态差（`end_state`）：自适应臂会走 sleep／play 的恢复支，固定臂不会",
+    "本件的流是合成夹具，不是真实回合日志；它测的是选择器的行为形状，不是能力",
+    "取法自曝：第一版把四路展平取相邻差当噪声幅值，跨路跳变把幅值抬到 2.0（超出信号可表示范围，那已不是噪声而是饱和），当时的读数是 13->14；修回已冻原文那一档后重算为 13->13。⇒ 这条判据的结论对噪声幅度敏感，缺陷已入册（PLAN-N5-12 §9）：不改判据口径，只把两档一起披露",
+    "J-N5l-1（选择是否参与真实回合）由 walked-ledger 出值＝`scheduler_not_in_loop`，不在本件重测"
+  ],
+  "started_utc": "2026-10-11T10:11:21Z"
+}
