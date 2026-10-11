@@ -1,0 +1,77 @@
+{
+  "format": "taiji-answer-source-provenance-v1",
+  "prereg": "plans/reference/PLAN-N1-03_chain_and_roles_prereg_20261011.md",
+  "criterion": "J-N1c-3",
+  "carrier_face": {
+    "files_scanned": 1935,
+    "files_skipped_over_size": 6,
+    "scan_faces": [
+      "reports",
+      "output",
+      "checkpoints"
+    ],
+    "carrier_count": 0,
+    "carriers": [],
+    "name_mental_only_files": 2,
+    "name_mental_only_files_list": [
+      "reports/taiji_default_reachability_20261011.json",
+      "reports/taiji_write_only_key_face_20261011.json"
+    ],
+    "mismatches": [],
+    "verdict": "no_carrier_outside_weight_artifacts"
+  },
+  "enforcement_face": {
+    "runner": "scripts/training/train_seed_corpus.py",
+    "guard_count": 3,
+    "guards": [
+      {
+        "line": 1344,
+        "condition": "args.answer_source == 'self' and args.answer_chunking != 'per-answer'",
+        "message": "'--answer-source self only applies to --answer-chunking per-answer; with the stream feed it is a silent no-op.'"
+      },
+      {
+        "line": 1349,
+        "condition": "args.answer_source == 'self' and (not args.self_answers_path)",
+        "message": "'--answer-source self requires --self-answers <path>.'"
+      },
+      {
+        "line": 1351,
+        "condition": "args.answer_source == 'corpus' and args.self_answers_path",
+        "message": "'--self-answers given without --answer-source self.'"
+      }
+    ]
+  },
+  "negative_controls": [
+    {
+      "combo": "answer_source=self 而不给 --self-answers",
+      "expect_fragment": "--answer-source self requires --self-answers",
+      "rc": 2,
+      "rejected": true,
+      "fragment_seen": true
+    },
+    {
+      "combo": "answer_source=corpus 而给了 --self-answers",
+      "expect_fragment": "without --answer-source self",
+      "rc": 2,
+      "rejected": true,
+      "fragment_seen": true
+    }
+  ],
+  "product_face": {
+    "tracked_product_files": 126,
+    "product_writer_files": []
+  },
+  "weight_artifact_face": {
+    "pt_count": 230,
+    "pt_total_mb": 3124.4,
+    "opened": false,
+    "reason": "reading envelopes needs torch.load on weights; owner authorization not granted (2026-10-11)"
+  },
+  "what_this_does_not_prove": [
+    "三枚配方键由同一份 CLI 参数同时写出，所以「内部一致」只证这条记录没被手改／被 patch 过，不证标签所指的那条路真的被走过",
+    "载体面 0 枚时判 no_carrier_outside_weight_artifacts：这条判据今天**既不成立也不被否证**，不许读成「来源记录已被验证」",
+    "本件不开 `.pt`（真正的载体在那上面），因此 J-N1c-3 的「实跑侧一致性」仍未复算；强制面只证非法组合写不出来，不证合法组合里的标签与事实相符",
+    "产品面写入计数为 0 不等于产品侧永远不会反写，只说今天的产品码不产生这个键"
+  ],
+  "started_utc": "2026-10-11T15:27:24Z"
+}

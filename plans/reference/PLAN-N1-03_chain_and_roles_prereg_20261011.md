@@ -51,7 +51,7 @@ N1 的出口交付（09 §2 第 121 行）第三项要的正是"**生产者→�
   对 Q/E/M/W/R 五格都不为空 ⇒ N1 出口交付第三项由"未兑现"转为**有验收式且已满足登记形式**。〔2026-10-11 ㊵-707 执行体已落地＝同一台仪器，读数判 **`table_registered`**：20/20 格非空（占位符 `—`／`-`／`TBD`／`N/A`／`待填` 一律算空，表解析不出来则响亮失败而非读成"没有缺格"）。**这条判的是登记形式**：填得满不等于说得对——内容与代码不符仍由 J-N1c-4 在复算时抓（§2 末句那句"由 J-N1c-4 抓住"是本条的下游，不是并列的另一件事）。〕
 * **J-N1c-3 来源记录不许反写**（VISION §7.1 那句硬约束的可判形式）：任何被采纳的回答，其
   `answer_source` 必须与生成路径的自述一致；若一条回答的 `answer_source` 指向参考侧而产出路径是模型侧
-  ⇒ 判 `answer_source_mismatch`，并收回"这条是模型答出来的"这句。**零算力**：只读已存在的件。
+  ⇒ 判 `answer_source_mismatch`，并收回"这条是模型答出来的"这句。**零算力**：只读已存在的件。〔2026-10-11 ㊵-708 执行体已落地＝新仪器 `scripts/training/audit_taiji_answer_source_provenance.py`＋契约册 `tests/taiji_native/test_n1_07_answer_source_provenance_contract.py`（13 passed），读数件 `reports/taiji_answer_source_provenance_20261011.json`。**今天既没判绿也没判红**：JSON 面 0 枚载体 ⇒ `no_carrier_outside_weight_artifacts`——"只读已存在的件"在这张面上**没有可读物**，因为跑道器把 `answer_source` 只写进 `.pt` 信封（`train_seed_corpus.py:547` 的 `attach_metadata(extra=...)`），退出件不带它（已登 DEBT-G112）。同批出版两条独立读数：①强制面＝AST 现取 3 支以 `answer_source` 为条件的 `parser.error` 守卫（1344／1349／1351 行）＋两支**真跑**的负对照各自 rc=2 且错误原文命中 ⇒ "非法组合写不出来"是有行为的；②产品面写入者 0 枚（不复用 ㊵-701 的结论，现取一遍，结果与它的 `read_only_outside_product` 一致）。**取法上最要紧的一条**：仓里有两枚审计件把 `answer_source` 当**数据**登着（`"answer_source": []` 是按键名归的桶），裸按字段名扫会把它们读成"一趟跑的自述"、于是本条白得一个绿 ⇒ 载体谓词要求跑道器的兄弟键（`trainer`／`answer_chunking`／`self_answers_path`…）同在一个对象里，那 2 枚现记为 `name_mental_only_files`。**口径限制**：三枚配方键由同一份 CLI 参数同时写出，故"内部一致"只证记录没被手改／被 patch，不证标签所指那条路真被走过；本件**不开** `.pt`（真载体在那上面，现读 230 枚／3124.4 MB，且 `torch.load` 本轮被权限拦下）。〕
 * **J-N1c-4 恢复归属可复核**：§2 "恢复归属"列里点名的每个键，必须能在**信封或退出件**里现读到；
   读不到 ⇒ 该格记 `unverifiable_recovery_claim`（"没读到"不许读成"不需要恢复"）。〔2026-10-11 ㊵-707 执行体已落地＝同一台仪器，读数判 **`recovery_claims_verifiable`**："恢复归属"列点名 3 枚键（`command_surface`／`config`／`n5_shadow_request`），三枚都能走通两条道之一：在 tracked `reports/*.json` 里现读到，或在源码里被写成字典键／构造关键字参数。**取法要点**：信封是**跑道器**落盘的，故写侧扫描面＝`taiji`／`seed`／`scripts/training` 三面，且件里自述为 `write_side_scan_faces`——只扫产品那两目录会把 `command_surface` 与 `n5_shadow_request` 误判成"未取到"（这是我第一版在这两枚键上的 scope 错，已写成契约测 `test_envelope_key_written_only_by_runner_still_verifies`）。**口径限制**：本条证的是"这个键今天在某个件或某段写代码里出现"，**不证**"恢复流程真能把它读回来"；后者要真恢复一次，按 G-N1c-3 记 `unverified`。〕
 
@@ -69,7 +69,7 @@ J-N1c-1／2／4 的执行体＝本件的两张表＋一条 `grep` 复算（表�
 〔2026-10-11 ㊵-707：这句里的"一条 `grep` 复算"已长成入库仪器 `audit_taiji_n1_03_role_table_face.py`＋契约册 `test_n1_06_role_table_face_contract.py`（8 passed），三条各自的判级词与口径限制见 §3 对应条的带日期括注。`J-N1c-3` 的执行体**仍未仪器化**——本件四条判据到今天只有三条有读数，§6 第一条出口（要四条全过）因此**不成立**，"V-11／V-19 转为已展开且有承载表"这句在补上 J-N1c-3 之前不许发表。〕
 J-N1c-3 的执行体＝`train_seed_corpus.py` 已出版的 `answer_source` 键与 `reports/*` 的 verdict 件；
 G-N1c-2 的执行体＝全仓 `grep`（读面按版本控制取，见 [[guard-scan-face-git-not-disk]]）。
-⇒ 本件没有一条判据是手算的；同时**没有一条需要新算力**。
+⇒ 本件没有一条判据是手算的；同时**没有一条需要新算力**。〔2026-10-11 ㊵-708 补：`J-N1c-3` 的执行体也已成仪器，但它今天出的是**"无可读物"**（`no_carrier_outside_weight_artifacts`）而不是判据成立 ⇒ 上面那句"只有三条有读数"现在要改读成"四条里三条判绿、一条无载体"；§6 第一条出口仍不成立，而且**不是因为缺仪器**——是因为来源记录只住在 `.pt` 信封里（DEBT-G112）。〕
 
 ## §6 出口（三条互斥）
 
@@ -88,7 +88,7 @@ G-N1c-2 的执行体＝全仓 `grep`（读面按版本控制取，见 [[guard-sc
 * **仍红时收回的句子并点名**：若 `G-N1c-2` 抓到 write-only ⇒ 收回"这条通路已接线"这句并点名是哪一个键，
   按 DEBT-G68 那族的形状（提议／决策从不发生）继续查消费者；那是**接线债**，不是本件的判据失败。
 * **发表资格前置**：任何"N1 已把回答链与角色通路做完"的对外表述必须同时给出 ①两张表逐格非空，
-  ②每个被点名键的读写两处 `grep` 命中数，③`answer_source` 的一致性复算结果；三条缺一即视为未交付。
+  ②每个被点名键的读写两处 `grep` 命中数，③`answer_source` 的一致性复算结果；三条缺一即视为未交付。〔2026-10-11 ㊵-708：第③条今天**给不出"一致"这个结果**——不是没算，而是算出来是"无可读物"（`no_carrier_outside_weight_artifacts`，见 `reports/taiji_answer_source_provenance_20261011.json`）⇒ 这一条按**未兑现**记，本件的发表资格前置今天不成立。〕
 
 ## §8 不变项
 
