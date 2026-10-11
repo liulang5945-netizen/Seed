@@ -1,0 +1,26 @@
+{
+  "format": "taiji-n2-05-experience-rate-v1",
+  "status": "ok",
+  "prereg": "plans/reference/PLAN-N2-05_experience_rate_prereg_20261011.md",
+  "powerup_report": "E:\\Seed\\reports\\taiji_n2b_powerup_20261008.json",
+  "numerator_delta_quality": -1.1086209986387523,
+  "numerator_recomputed": -1.1086209986387523,
+  "guards": {
+    "G_N2e_2_numerator_recomputable": true
+  },
+  "denominators": {
+    "cycles": 8.0,
+    "max_symbols": 64.0,
+    "texts": 8.0
+  },
+  "degenerate_denominators": [
+    "cycles==texts"
+  ],
+  "rates": {
+    "cycles": -0.138577625,
+    "max_symbols": -0.017322203,
+    "texts": -0.138577625
+  },
+  "j_n2e_3": "cost_not_gain",
+  "reading_limit": "the numerator is the already-adjudicated window delta of the second power-up, whose own criterion J-N2b' was judged not_holds; a rate built on a negative numerator is a COST per unit of experience, never a capability gain rate, and it does not revisit that judgement. cycles == texts in this dose because cycles_per_text=1, so those two denominators are not independent evidence. No inference happens here."
+}
