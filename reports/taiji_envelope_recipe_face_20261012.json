@@ -1,0 +1,93 @@
+{
+  "format": "taiji-envelope-recipe-face-v1",
+  "prereg": "plans/reference/PLAN-N1-03_chain_and_roles_prereg_20261011.md",
+  "criterion": "J-N1c-3",
+  "opened_read_only": true,
+  "anything_written": false,
+  "verdict": "no_recorded_recipe_in_sample",
+  "coverage": {
+    "roots_scanned": [
+      "checkpoints"
+    ],
+    "batch_mode": "budget",
+    "other_known_roots": [
+      "output"
+    ],
+    "files_in_face": 13,
+    "face_total_mb": 154.7,
+    "files_selected": 13,
+    "files_loaded": 13,
+    "selected_mb": 154.7,
+    "skipped_over_byte_budget": 0,
+    "skipped_over_file_budget": 0,
+    "face_is_partial": false,
+    "selection_order": "size_ascending",
+    "unreadable": [],
+    "with_recipe_total": 0,
+    "without_recipe_total": 13,
+    "no_recipe_reason_counts": {
+      "metadata has no answer_source": 11,
+      "no metadata dict": 2
+    },
+    "row_list_cap": 12
+  },
+  "carriers_with_recipe": [],
+  "carriers_without_recipe": [
+    {
+      "file": "checkpoints/seed_beta.pt",
+      "reason": "metadata has no answer_source"
+    },
+    {
+      "file": "checkpoints/seed_beta_with_circuit.pt",
+      "reason": "no metadata dict"
+    },
+    {
+      "file": "checkpoints/seed_n2b_candidate_20261008.pt",
+      "reason": "metadata has no answer_source"
+    },
+    {
+      "file": "checkpoints/seed_n2b_candidate_20261008_n2c1.pt",
+      "reason": "metadata has no answer_source"
+    },
+    {
+      "file": "checkpoints/seed_n2_candidate_20261008.pt",
+      "reason": "metadata has no answer_source"
+    },
+    {
+      "file": "checkpoints/seed_n2_candidate_aligned_20261008.pt",
+      "reason": "metadata has no answer_source"
+    },
+    {
+      "file": "checkpoints/seed_a31self_with_circuit.pt",
+      "reason": "no metadata dict"
+    },
+    {
+      "file": "checkpoints/seed_n2_mother_20261008.pt",
+      "reason": "metadata has no answer_source"
+    },
+    {
+      "file": "checkpoints/seed_n2b_mother_20261008.pt",
+      "reason": "metadata has no answer_source"
+    },
+    {
+      "file": "checkpoints/seed_n2_rollback_20261008.pt",
+      "reason": "metadata has no answer_source"
+    },
+    {
+      "file": "checkpoints/seed_n2b_rollback_20261008.pt",
+      "reason": "metadata has no answer_source"
+    },
+    {
+      "file": "checkpoints/seed_n2b_mother_20261008_n2c1.pt",
+      "reason": "metadata has no answer_source"
+    }
+  ],
+  "mismatches": [],
+  "what_this_does_not_prove": [
+    "「metadata 里没有 answer_source」是**无记录**，不是反写也不是合规——旧基座（如 `checkpoints/seed_beta.pt`）整档无该键，只能登记为无记录",
+    "本件证的是信封内部两两不矛盾（三枚键由同一份 CLI 参数写出，一致近乎由构造保证），**不证**标签所指那条生成路径真的被走过；那需要回答级的来源记录，今天不存在",
+    "抽样面（`coverage.files_loaded` < `files_in_face`）时判级词一律带 `partial_` 前缀；不带全量复算不许把这句话读成「全仓信封都合规」"
+  ],
+  "git_head": "f0d5f8042",
+  "started_utc": "2026-10-11T18:09:12Z"
+}
