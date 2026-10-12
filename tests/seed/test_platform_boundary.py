@@ -16,8 +16,13 @@ REPO = Path(__file__).resolve().parents[2]
 #: 里是 electron-builder 展开的 Python 后端拷贝，含大量 `.py`），**未入库但也未进 gitignore**，
 #: 于是它同时出现在"文件遍历面"而不在"git 面"，`test_source_face_is_the_git_face_not_the_whole_disk`
 #: 的"多出来的部分只能是本地噪音"断言因此转红。按前缀族收口，与 `.venv*` 同一约定。
+#:
+#: `.fork-sync`／`.workbuddy` 是 2026-10-12 ㊵-721 那条忽略裁定的**另一半**：owner 批准把这两个
+#: 非本仓产物的根目录写进 `.gitignore`（让 `test_folder_structure_guard` 不再常红）之后，它们从
+#: "git 面"里消失、却仍在"遍历面"里（`.fork-sync/replay_lockfile_edits.py` 是一枚真实 `.py`），
+#: 于是同一族红换了个守卫复发——修掉一族后总红数并不自动只减不增，两枚守卫必须同批改。
 SKIP_PARTS = {".git", "node_modules", "build", "dist", "_libs", ".codex"}
-SKIP_PREFIXES = (".venv", ".dsh-sbx", ".desktop-build")
+SKIP_PREFIXES = (".venv", ".dsh-sbx", ".desktop-build", ".fork-sync", ".workbuddy")
 
 
 def _is_skipped_dir(name: str) -> bool:
