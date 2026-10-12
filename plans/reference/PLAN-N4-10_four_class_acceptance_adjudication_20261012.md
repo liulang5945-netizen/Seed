@@ -44,6 +44,8 @@ python scripts/training/adjudicate_taiji_n4_four_class_acceptance.py --overwrite
   顶位 `slot-14`、被淘汰 id 不再可达；显式撤销仍是另外的列（`expired_memory_ids`）。
   同件自带的"没满"控制档判 `not_full_no_eviction`（`evicted_expected=0`），所以这一支能为假。
 
+〔2026-10-12 ㊵-746 就地更正，上面原句不删〕本件 §0 表里那句「`retrieve` 只对 `record.cue` 打分＋`episode_id` 收窄」与 §2 里那句 `fields_referenced_by_retrieve = ["cue", "episode_id"]`，在对象绑定通道（`PLAN-N4-11` §1，㊵-746 落地）之后**部分过期**：retrieve 现在还引用 `memory_id`，用于按对象收窄候选集。**过期的是「引用了哪几个字段」这一层，不是结论那一层**——打分仍然只看 cue（`object_ids_referenced_by_retrieve` 现读为假），`J-N4g-2` 在**本件那台 ruler 面上**仍然判 `not_applicable_no_independent_object_identity`；新增的是绑定通道面上的第二个读数 `j_n4h_4_verdict = holds`（改名前后命中序列同为 `['m-0']`、重绑 1 条、旧名响亮报错）。两句必须分开说：「重命名这件事第一次可判」为真，「§3.3 的对象重命名验收已过」仍不许说——它要的是 `J-N4g-2` 那条冻式在同一台仪器上出值，而 `PLAN-N4-11` §4 已把属性交换那一半明确留在外面。
+
 ## §3 一次样本量改判的披露（不许当成"我挑了能过的那档"）
 
 第一版判据档规则钉在「paired≥1000 且带下界≤0.01 的最小档」，那一档当场判 **`ruler_unusable`**

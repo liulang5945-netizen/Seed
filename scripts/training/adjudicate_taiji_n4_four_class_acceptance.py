@@ -163,6 +163,31 @@ def class_rename(ruler) -> dict[str, Any]:
     probe_renamed = [hit.record.memory_id for hit in renamed.retrieve(cue_one, limit=2)]
     probe_cue_swapped = [hit.record.memory_id for hit in labeled.retrieve(cue_two, limit=2)]
 
+    #: ㊵-745 起这一支改走 `PLAN-N4-11` §1 的对象绑定通道：同一对象换了名字必须拿到同一批记录，
+    #: 而旧名必须响亮报错。这才让 `J-N4g-2` 第一次有能为假的测法（J-N4h-4）。
+    binding = EpisodicMemoryStore(capacity=8)
+    third = _unit(SEED + 11, 1)[0]
+    for index, (name, cue) in enumerate((("m-0", cue_one), ("m-1", cue_two), ("m-2", third))):
+        binding.write(_row_payload(name, cue, f"OBJ-{index}"))
+    hits_before = [
+        hit.record.memory_id for hit in binding.retrieve(cue_one, limit=2, object_id="OBJ-0")
+    ]
+    moved = binding.rename_object("OBJ-0", "OBJ-0-renamed")
+    hits_after = [
+        hit.record.memory_id
+        for hit in binding.retrieve(cue_one, limit=2, object_id="OBJ-0-renamed")
+    ]
+    try:
+        binding.retrieve(cue_one, limit=2, object_id="OBJ-0")
+        old_name_still_resolves = True
+    except ValueError:
+        old_name_still_resolves = False
+    channel_verdict = (
+        "holds"
+        if hits_before == hits_after and moved == 1 and not old_name_still_resolves
+        else "not_holds"
+    )
+
     return {
         "criterion": "J-N4g-2",
         "wrong_top1_rate_before_rename": rate_a,
@@ -174,6 +199,14 @@ def class_rename(ruler) -> dict[str, Any]:
         "object_ids_carrier_in_retrieve": probe_labeled == probe_renamed,
         "cue_carrier_positive_control": probe_labeled != probe_cue_swapped,
         "verdict": "not_applicable_no_independent_object_identity",
+        "binding_channel": {
+            "hits_before_rename": hits_before,
+            "hits_after_rename": hits_after,
+            "records_rebound": moved,
+            "old_name_still_resolves": old_name_still_resolves,
+            "verdict": channel_verdict,
+        },
+        "j_n4h_4_verdict": channel_verdict,
         "why": (
             "这台面上唯一的名字就是检索真值本身：只改记录名（真值仍指旧名）会当场打掉全部配对，"
             "把名字与真值一起改则差为 0——那是重贴标签的构造后果，不是不变性被验过。"
@@ -215,8 +248,9 @@ def class_attribute_swap() -> dict[str, Any]:
     record = _row_payload("probe", _unit(SEED + 9, 1)[0], "OBJ-1")
     payload_keys = sorted(record.to_payload())
     referenced = _referenced_fields(retrieve_body, payload_keys)
-    #: 正向对照：同一把提取器在 `write` 上必须抓到 retrieve 不看的字段——否则「retrieve 只看两枚」
-    #: 可能只是提取器瞎了，而不是读路真的不碰身份字段。这里出版差集而不是布尔，让人能看见差在哪。
+    #: 正向对照（㊵-745 换形）：绑定通道落地后 retrieve 也引用 memory_id，"write 比 retrieve 多抓到东西"
+    #: 这一支因此不再成立。改成两枚各自能红的实测：提取器必须在 retrieve 里认出 cue、
+    #: 在 write 里认出 memory_id——提取器若坏成"什么都找不到"，这两枚立刻为假。
     referenced_in_write = _referenced_fields(write_body, payload_keys)
     has_attributes = hasattr(record, "attributes")
     return {
@@ -224,9 +258,9 @@ def class_attribute_swap() -> dict[str, Any]:
         "record_payload_keys": payload_keys,
         "fields_referenced_by_retrieve": referenced,
         "fields_referenced_by_write": referenced_in_write,
-        "extractor_positive_control_fields_missing_from_retrieve": sorted(
-            set(referenced_in_write) - set(referenced)
-        ),
+        "extractor_detects_cue_in_retrieve": "cue" in referenced,
+        "extractor_detects_memory_id_in_write": "memory_id" in referenced_in_write,
+        "object_ids_referenced_by_retrieve": "object_ids" in referenced,
         "record_has_attribute_field": has_attributes,
         "verdict": _swap_verdict(has_attributes),
         "why": (

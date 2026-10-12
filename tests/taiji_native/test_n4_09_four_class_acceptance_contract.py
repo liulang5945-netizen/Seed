@@ -67,13 +67,19 @@ def test_the_two_carrierless_classes_are_not_reported_as_passes(payload: dict[st
     assert rename["cue_carrier_positive_control"] is True
 
 
-def test_retrieve_face_reads_only_cue_and_episode(payload: dict[str, Any]) -> None:
+def test_retrieve_face_reads_cue_episode_and_the_binding_key(payload: dict[str, Any]) -> None:
+    """㊵-745 换载体后的重钉：retrieve 可以看 memory_id（绑定通道用它过滤），但仍不认对象字段本身。
+
+    原来这支冻的是 `["cue", "episode_id"]`。绑定通道（`PLAN-N4-11` §1）落地后 retrieve 必须引用
+    `memory_id` 才能按对象收窄候选集——所以这一支改成三条各自能红的实测，而不是放松成"看几个都行"：
+    字段集合恰好是这三枚、提取器仍能认出 cue（它没瞎）、`object_ids` 仍不被引用（打分还是只看相似度）。
+    """
+
     swap = payload["classes"]["attribute_swap"]
-    assert swap["fields_referenced_by_retrieve"] == ["cue", "episode_id"], swap
-    #: 同一把提取器在 write 上必须抓到 retrieve 不看的字段，否则「只看两枚」可能只是提取器瞎了。
-    control = swap["extractor_positive_control_fields_missing_from_retrieve"]
-    assert control and "memory_id" in control, swap
-    assert "memory_id" not in swap["fields_referenced_by_retrieve"]
+    assert swap["fields_referenced_by_retrieve"] == ["cue", "episode_id", "memory_id"], swap
+    assert swap["extractor_detects_cue_in_retrieve"] is True
+    assert swap["extractor_detects_memory_id_in_write"] is True
+    assert swap["object_ids_referenced_by_retrieve"] is False
     assert "cue" in swap["fields_referenced_by_write"]
 
 
