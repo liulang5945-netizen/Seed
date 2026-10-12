@@ -604,3 +604,56 @@ class SparseSynapses:
         expanded.edge_weight[:, :old_width] = self.edge_weight
         expanded._bound_rows()
         return expanded
+
+    def adopt_output_rows_from_payload(self, payload: Mapping[str, Any]) -> int:
+        """Adopt a payload drawn for a shorter output population, keeping extra rows blank.
+
+        Migration counterpart of :meth:`expand_presynaptic_slots` for the other axis: a
+        checkpoint written before a vocabulary grew carries one row per old entry, while this
+        instance reserves a row per new entry.  Rows below the payload's count are validated by
+        ``load_payload`` on a surrogate of exactly that shape, so no check is skipped; the rows
+        above it must still be blank here, which is what makes "adopting the old artifact" a
+        behaviour-preserving act rather than a guess about untrained weights.  Returns the
+        number of adopted rows.
+        """
+
+        rows = int(payload["out_features"])
+        if not 0 < rows < self.out_features:
+            raise ValueError("payload output rows are not a shorter prefix of this population")
+        if float(self.edge_weight[rows:].abs().max()) != 0.0:
+            raise ValueError("payload migration requires the extra output rows to be blank")
+        surrogate = self._surrogate_for_payload(payload)
+        surrogate.load_payload(payload)
+        self.pre_index[:rows] = surrogate.pre_index
+        self.edge_weight[:rows] = surrogate.edge_weight
+        self._bound_rows()
+        return rows
+
+    def migrate_presynaptic_payload(self, payload: Mapping[str, Any]) -> SparseSynapses:
+        """Return a widened instance carrying ``payload``'s edges, with new columns silent.
+
+        The payload is validated by :meth:`load_payload` against the exact shape it was drawn
+        for -- nothing is bypassed -- and only then padded, so a checkpoint from before a
+        presynaptic vocabulary grew keeps every learned edge and gains zero-weight contacts to
+        the coordinates it never had (PLAN-N5-15 §1.3).
+        """
+
+        surrogate = self._surrogate_for_payload(payload)
+        surrogate.load_payload(payload)
+        return surrogate.expand_presynaptic_slots(self.in_features)
+
+    def _surrogate_for_payload(self, payload: Mapping[str, Any]) -> SparseSynapses:
+        """Build exactly the shape ``payload`` was drawn for, so its validator can run."""
+
+        generator = torch.Generator(device="cpu")
+        generator.manual_seed(0)
+        return SparseSynapses(
+            int(payload["out_features"]),
+            int(payload["in_features"]),
+            int(payload["fan_in"]),
+            generator=generator,
+            init_scale=1.0,
+            max_weight_norm=float(payload["max_weight_norm"]),
+            device=self.device,
+            allow_self=not self.excludes_self,
+        )

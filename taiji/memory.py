@@ -1045,7 +1045,15 @@ class EpisodicField:
         self.outcome_encoder.load_payload(payload["outcome_encoder"])
         self.time_encoder.load_payload(payload["time_encoder"])
         self.episode_encoder.load_payload(payload["episode_encoder"])
-        self.provenance_encoder.load_payload(payload["provenance_encoder"])
+        # A checkpoint written before the source vocabulary grew keeps every learned edge and
+        # gains zero-weight contacts to the coordinates it never had (PLAN-N5-15 §1.3).
+        provenance_encoder_payload = payload["provenance_encoder"]
+        if int(provenance_encoder_payload["in_features"]) < self.provenance_encoder.in_features:
+            self.provenance_encoder = self.provenance_encoder.migrate_presynaptic_payload(
+                provenance_encoder_payload
+            )
+        else:
+            self.provenance_encoder.load_payload(provenance_encoder_payload)
         reward_code = payload["reward_code"].detach().to(self.device, dtype=torch.float32)
         if reward_code.shape != self.reward_code.shape:
             raise ValueError("episodic reward code does not match architecture")
@@ -1063,7 +1071,11 @@ class EpisodicField:
         self.cortical_readout.load_payload(payload["cortical_readout"])
         self.time_readout.load_payload(payload["time_readout"])
         self.episode_readout.load_payload(payload["episode_readout"])
-        self.provenance_readout.load_payload(payload["provenance_readout"])
+        provenance_readout_payload = payload["provenance_readout"]
+        if int(provenance_readout_payload["out_features"]) < (self.provenance_readout.out_features):
+            self.provenance_readout.adopt_output_rows_from_payload(provenance_readout_payload)
+        else:
+            self.provenance_readout.load_payload(provenance_readout_payload)
         self.write_count = int(payload["write_count"])
         if self.write_count < 0:
             raise ValueError("episodic write count cannot be negative")

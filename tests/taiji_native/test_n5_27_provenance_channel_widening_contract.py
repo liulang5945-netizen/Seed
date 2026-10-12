@@ -28,6 +28,10 @@ from taiji.sparse import SparseSynapses
 
 IDENTITY_SOURCE = Path(identity_module.__file__).read_text(encoding="utf-8")
 
+#: 加宽前／加宽后的来源词表；`generated` 必须加在**末尾**，否则旧坐标会整体移位。
+KINDS4 = ("experienced", "imagined", "replayed", "external")
+KINDS5 = KINDS4 + ("generated",)
+
 
 def _full_slot_synapses(out_features: int = 6, width: int = 4, seed: int = 11) -> SparseSynapses:
     generator = torch.Generator(device="cpu")
@@ -118,3 +122,116 @@ def test_expansion_is_independent_of_the_callers_random_stream() -> None:
 
     parameters = list(inspect.signature(SparseSynapses.expand_presynaptic_slots).parameters)
     assert parameters == ["self", "new_in_features"], parameters
+
+
+def _field(kinds: tuple[str, ...], monkeypatch: pytest.MonkeyPatch):
+    import taiji.config as config_module
+    from taiji.memory import EpisodicField
+
+    monkeypatch.setattr(config_module, "EPISODIC_PROVENANCE_KINDS", kinds)
+    monkeypatch.setattr(EpisodicField, "PROVENANCE_KINDS", kinds)
+    from taiji import Taiji, TaijiConfig
+
+    config = TaijiConfig(
+        region_sizes=(16, 12),
+        memory_units=24,
+        memory_fan_in=4,
+        memory_meta_dim=8,
+        memory_readout_fan_in=4,
+        seed=7,
+        identity_organ_enabled=False,
+    )
+    return Taiji(config).memory
+
+
+def test_narrower_provenance_payload_is_adopted_with_silent_new_column(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """`J-N5n-2` 的端到端接线：旧 payload 进新架构 ⇒ 旧边逐位保留、新列权重为零。"""
+
+    field4 = _field(KINDS4, monkeypatch)
+    context = torch.randn(
+        field4.provenance_readout.in_features, generator=torch.Generator().manual_seed(3)
+    )
+    baseline = field4.provenance_readout.forward(context)
+    payload = {
+        "provenance_encoder": field4.provenance_encoder.to_payload(),
+        "provenance_readout": field4.provenance_readout.to_payload(),
+    }
+
+    field5 = _field(KINDS5, monkeypatch)
+    field5.load_payload({**field5.to_payload(), **payload})
+
+    encoder = field5.provenance_encoder
+    assert encoder.in_features == 5 and encoder.row_fan_in == 5
+    assert torch.equal(
+        encoder.edge_weight[:, 4], torch.zeros(encoder.out_features, dtype=torch.float32)
+    )
+    assert torch.equal(
+        encoder.pre_index[:, 4], torch.full((encoder.out_features,), 4, dtype=torch.int32)
+    )
+    assert torch.equal(
+        field5.provenance_readout.edge_weight[4], torch.zeros(4, dtype=torch.float32)
+    )
+    assert torch.equal(field5.provenance_readout.forward(context)[:4], baseline)
+
+
+def test_adopt_refuses_a_row_that_was_already_written(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """负对照：多出来的行不空白就必须拒绝——否则"采纳旧件"会覆盖已学权重。"""
+
+    field4 = _field(KINDS4, monkeypatch)
+    field5 = _field(KINDS5, monkeypatch)
+    field5.provenance_readout.edge_weight[4] = 0.5
+    with pytest.raises(ValueError, match="extra output rows to be blank"):
+        field5.provenance_readout.adopt_output_rows_from_payload(
+            field4.provenance_readout.to_payload()
+        )
+
+
+def test_adopt_refuses_a_payload_that_is_not_a_shorter_prefix(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """等宽与更宽都不许走迁移路——那条路只在枚数真的变大时存在。"""
+
+    field4 = _field(KINDS4, monkeypatch)
+    same = _field(KINDS4, monkeypatch)
+    with pytest.raises(ValueError, match="shorter prefix"):
+        same.provenance_readout.adopt_output_rows_from_payload(
+            field4.provenance_readout.to_payload()
+        )
+    wider = _field(KINDS5, monkeypatch)
+    with pytest.raises(ValueError, match="shorter prefix"):
+        field4.provenance_readout.adopt_output_rows_from_payload(
+            wider.provenance_readout.to_payload()
+        )
+
+
+def test_migrated_readout_can_still_learn_the_new_source_row(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """`J-N5n-3` 的"活槽位"那一支：空白行经过一次真实三因子写就能变非零。
+
+    这是**原语面**的证据（直接调 `local_update`）；端到端写链上"generated 的表征真能长出来"
+    要等带回答级来源记录的那一档，本格不替它作证。
+    """
+
+    field4 = _field(KINDS4, monkeypatch)
+    field5 = _field(KINDS5, monkeypatch)
+    field5.load_payload(
+        {
+            **field5.to_payload(),
+            "provenance_encoder": field4.provenance_encoder.to_payload(),
+            "provenance_readout": field4.provenance_readout.to_payload(),
+        }
+    )
+    readout = field5.provenance_readout
+    error = torch.zeros(readout.out_features, dtype=torch.float32)
+    error[4] = 1.0
+    trace = torch.ones(readout.in_features, dtype=torch.float32)
+
+    readout.local_update(error, trace, learning_rate=0.5, weight_decay=0.0)
+
+    assert float(readout.edge_weight[4].abs().max()) > 0.0
+    assert float(readout.edge_weight[:4].abs().max()) == 0.0
