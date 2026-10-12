@@ -86,7 +86,13 @@ def main() -> int:
         print(f"refusing to overwrite an existing report: {out}", file=sys.stderr)
         return 2
     out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    # newline="\n" is not cosmetic: without it this audit writes CRLF into a tracked
+    # `reports/` artifact on Windows, and no gate in the family notices (DEBT-G115).
+    out.write_text(
+        json.dumps(report, ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
+        newline="\n",
+    )
     print(
         json.dumps(
             {
