@@ -131,7 +131,7 @@ def _entry_control(envelopes: dict[str, Any]) -> dict[str, object]:
 
     errors: dict[str, int] = {}
     attempted = 0
-    for name, envelope in list(envelopes.items())[:ENTRY_CONTROL_LIMIT]:
+    for envelope in list(envelopes.values())[:ENTRY_CONTROL_LIMIT]:
         attempted += 1
         try:
             Taiji.from_checkpoint(envelope)

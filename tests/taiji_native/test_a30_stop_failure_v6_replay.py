@@ -14,9 +14,8 @@ import re
 import sys
 from pathlib import Path
 
-from reference_doc_history import reference_text
-
 import pytest
+from reference_doc_history import reference_text
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 for entry in (PROJECT_ROOT, PROJECT_ROOT / "scripts" / "training"):

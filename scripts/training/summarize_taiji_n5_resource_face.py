@@ -21,7 +21,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import sys
 from pathlib import Path
 from typing import Any
 
@@ -80,7 +79,6 @@ def _load_pack(path: Path) -> dict[str, Any]:
 
 
 def _activation_summary(tensors: dict[str, Any], names: list[str]) -> dict[str, Any]:
-    import torch
 
     elements = 0
     nonzero = 0

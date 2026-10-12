@@ -25,9 +25,8 @@ import hashlib
 import json
 from pathlib import Path
 
-from reference_doc_history import reference_text
-
 import pytest
+from reference_doc_history import reference_text
 
 from api.seed_runtime import DEFAULT_CHECKPOINT as PRODUCT_DEFAULT
 

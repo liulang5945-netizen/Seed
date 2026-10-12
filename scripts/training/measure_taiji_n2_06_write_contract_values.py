@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """J-N2f／J-N5k 首次出值仪器（零算力、只读；写 JSON 读数件，判读件引用它而不手抄数）。
 
 为什么做成仪器而不是手写一篇判读：判据的算术一旦手算就是债——本轮已有三处手写过报
@@ -10,7 +9,7 @@ import json
 import re
 import subprocess
 import sys
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 import torch
@@ -229,7 +228,7 @@ def main() -> int:
             }
     payload = {
         "format": "taiji-n2-06-write-contract-first-values-v1",
-        "generated_at_utc": datetime.now(timezone.utc).isoformat(),
+        "generated_at_utc": datetime.now(UTC).isoformat(),
         "family_baseline": family,
         "j_n2f_1": j_n2f_1(),
         "j_n2f_2": j_n2f_2(),

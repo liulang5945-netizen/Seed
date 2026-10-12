@@ -7,8 +7,9 @@ G101 记的是：表头声明四列，而现行行里既有五列的（多出的
 目标列数由 `--expect-cells` 给（缺省 5），并加了两把尺——原始竖线数与转义敏感数（转义后的竖线是内容）。
 
 本件做四件事：①数每行的竖线与切分数（两把尺都出版）；②把它和表头声明的列数对照；
-③出版最大债号与重号，供"债表现至 DEBT-Gxx"这类句子回查；④合取失败即 rc=1，但**分级开**（㊵-748）：
-「编号唯一」「行数＝distinct 数」现在就红；「每行的转义敏感列数都是目标列」「表头声明目标列」在传 `--enforce-shape` 之后才红（债表并成一型之后再常开）。
+③出版最大债号与重号，供"债表现至 DEBT-Gxx"这类句子回查；④合取失败即 rc=1，红面**分两阶段**：
+㊵-748 时只守「编号唯一」「行数＝distinct 数」，形状那两条挂在 `--enforce-shape` 上；
+㊵-751 债表并成一型（123 行全部五列、表头声明五列）之后**四条全默认守**，`--no-enforce-shape` 才退回"只出版分布"。
 **它仍然不下"该并成几列"的结论**——那一半已由 owner 裁掉，本件只是执行裁定后的形状守门。
 """
 
@@ -96,8 +97,9 @@ def measure(path: Path, *, expected_cells: int = 5) -> dict[str, object]:
         "rows_not_expected_cells": not_expected,
         "scope": (
             "七裁⑶ 已裁「统一所有历史行到同一列形」，本件因此从「只出版分布」升成「守一型」——"
-            "但红是**分级开**的：编号唯一性与行数＝distinct 现在就守；形状与表头那两条要等债表真的"
-            "并成一型（㊵-748 实测仍有 41 行旧四列形与 3 行需人工归列）才用 --enforce-shape 打开。"
+            "㊵-748 那一阵红面是分级的（形状/表头那两条要显式传 --enforce-shape 才红），因为当时债表还有 "
+            "41 行旧四列形与 3 行需人工归列；㊵-751 并形落地后这四条**全默认守**，"
+            "只有传 --no-enforce-shape 才退回只出版分布。"
             "转义敏感列数才是判据面：格子里带被转义的竖线是内容，不是违例。"
         ),
         "started_utc": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
@@ -105,6 +107,10 @@ def measure(path: Path, *, expected_cells: int = 5) -> dict[str, object]:
 
 
 def main(argv: list[str] | None = None) -> int:
+    #: DEBT-G81 修法①：本件的 `description=__doc__` 把带 ㊵（U+32B5）的正文送上用法屏，
+    #: 而那枚字形在 win32 GBK 控制台不可编码 ⇒ `--help` 直接抛 UnicodeEncodeError（rc=1，掩盖设计值）。
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8")
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--table", default=DEBT)
     parser.add_argument(
@@ -120,8 +126,10 @@ def main(argv: list[str] | None = None) -> int:
     )
     parser.add_argument(
         "--enforce-shape",
-        action="store_true",
-        help="把「每行都是目标列」与「表头声明目标列」也变成失败条件（债表并成一型之后才该开）",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="「每行都是目标列」与「表头声明目标列」是否算失败条件；"
+        "债表已在 2026-10-12 ㊵-751 并成一型，故缺省为真（用 --no-enforce-shape 只出版分布）",
     )
     args = parser.parse_args(argv)
     if int(args.expect_cells) <= 0:

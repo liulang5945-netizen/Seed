@@ -177,7 +177,7 @@ def main(argv: list[str] | None = None) -> int:
     out, stats, problems = transform(lines)
     collateral = [
         i + 1
-        for i, (before, after) in enumerate(zip(lines, out))
+        for i, (before, after) in enumerate(zip(lines, out, strict=False))
         if not ROW_RE.match(before) and before != after
     ]
     payload = {

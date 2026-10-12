@@ -45,7 +45,7 @@ def scan(path: Path) -> dict[str, object]:
     counts = collections.Counter(number for _, number in numbered)
     duplicates = {str(n): c for n, c in sorted(counts.items()) if c > 1}
     numbers = [number for _, number in numbered]
-    nonmonotonic = sum(1 for a, b in zip(numbers, numbers[1:]) if b < a)
+    nonmonotonic = sum(1 for a, b in zip(numbers, numbers[1:], strict=False) if b < a)
     return {
         "format": REPORT_FORMAT,
         "playbook": PLAYBOOK,

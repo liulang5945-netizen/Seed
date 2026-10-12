@@ -156,7 +156,8 @@ def test_verdict_expression_introduces_no_new_numeric_threshold() -> None:
     **下标字面量**也算成阈值（`perturb` 当场被误报两枚），那是"守卫过宽会误伤"的又一形。
     """
 
-    module = _load()
+    #: 本支是纯源码面（`ast.parse` 读文件），原先那句 `module = _load()` 绑定后一次没用过——
+    #: 载入这件模块的烟囱由本册其他支覆盖，所以这里删绑定而不是删断言。
     tree = ast.parse(SCRIPT.read_text(encoding="utf-8"))
     offenders: list[str] = []
     for name in ("worst_case_verdicts", "raw_diff_scales", "scale_ladder"):

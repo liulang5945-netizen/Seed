@@ -1,0 +1,16 @@
+{
+  "table": "plans/active/roadmap/05_TECH_DEBT_REGISTER.md",
+  "target_cells": 5,
+  "stats": {
+    "rows": 123,
+    "kept_five": 87,
+    "escaped": 4,
+    "appended_status": 36,
+    "appended_two": 0,
+    "closed_missing_tail": 9,
+    "merged_trailing_note": 2
+  },
+  "problems": [],
+  "collateral_non_row_lines_changed": [],
+  "writable": true
+}

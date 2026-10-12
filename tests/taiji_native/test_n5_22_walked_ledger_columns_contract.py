@@ -11,7 +11,6 @@
 
 from __future__ import annotations
 
-import argparse
 import importlib.util
 import subprocess
 import sys
@@ -194,9 +193,8 @@ def test_every_probed_method_exists_on_the_class_that_fills_its_slot() -> None:
 
 
 def test_default_output_target_is_not_the_sealed_artifact() -> None:
-    probe = _load_probe()
-    parser = argparse.ArgumentParser()
-    # 复用仪器自己的旗标定义：直接把 main() 里的 parser 造出来太重，这里按源码取默认值。
+    #: 本支读的是**源码文本**而不是造出来的 parser，属弱面（与 DEBT-G121 同族）；
+    #: 原先那两枚 `probe`／`parser` 绑定从头到尾没人用过——ruff 的 F841 就是这么报的。
     src = SCRIPT.read_text(encoding="utf-8")
     assert (
         f'default="{SEALED}"' not in src

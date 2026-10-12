@@ -70,7 +70,7 @@ def test_plan_value_follows_the_vocabulary_by_exactly_one_readout_row() -> None:
     assert Taiji(config).parameter_count() == PLAN_AT_FIVE_KINDS
     # 两档历史读数之间的差必须能被"一枚读出行的宽度"解释——这是恒等式，不是新的魔法数。
     readout_width = min(config.memory_readout_fan_in, config.memory_meta_dim)
-    assert PLAN_AT_FIVE_KINDS - FOUR_KIND_PLAN == readout_width, (
+    assert readout_width == PLAN_AT_FIVE_KINDS - FOUR_KIND_PLAN, (
         PLAN_AT_FIVE_KINDS,
         FOUR_KIND_PLAN,
         readout_width,

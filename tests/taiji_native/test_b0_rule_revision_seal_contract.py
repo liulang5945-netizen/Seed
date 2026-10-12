@@ -17,11 +17,10 @@ import inspect
 import re
 import sys
 from pathlib import Path
-
-from reference_doc_history import reference_text
 from typing import Any
 
 import pytest
+from reference_doc_history import reference_text
 
 REPO = Path(__file__).resolve().parents[2]
 REPORTS = REPO / "reports"

@@ -1,9 +1,11 @@
 """`audit_taiji_debt_table_column_shape.py` 的契约册：分布要能为真也能为假。
 
-四支要紧的：
+五支要紧的：
 * 混合列形必须被**分开数**（一行 5 列、一行 4 列时两者都要出现，不许平均成一个数）；
-* 表头声明**不是多数形状**时那个布尔必须为假（现状就是假：表头四列、多数是五列）；
+* 表头声明**是不是多数形状**都要能为假也能为真——㊵-748 之前真面是假（表头四列、多数五列），
+  ㊵-751 并形之后真面是真；两种都由同一枚布尔如实出版；
 * 行内含额外竖线（把一列切成两列）要能被抓出来，且**行首竖线不足**的行不能冒充合法行；
+* 形状红面默认开着：坏形状不传任何旗标就必须 rc=1，而 `--no-enforce-shape` 必须 rc=0 **且照样出读数**；
 * 零行必须响亮失败——"普查仪报了 0 行"与"债表已规范化"是两件事。
 """
 
@@ -11,6 +13,8 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import os
+import subprocess
 import sys
 from pathlib import Path
 
@@ -129,15 +133,21 @@ def test_main_greens_on_a_uniform_five_cell_table(tmp_path: Path) -> None:
 
 
 def test_main_reds_when_one_row_breaks_the_shape(tmp_path: Path) -> None:
-    """DEBT-G119 的红支：以前这台仪器第 108 行恒 `return 0`，红不出来。"""
+    """DEBT-G119 的红支：以前这台仪器第 108 行恒 `return 0`，红不出来。
+
+    ㊵-751 之后形状那条是**默认红**（债表已并成一型）；要只出版分布得显式传 `--no-enforce-shape`。
+    两支都跑：默认必须红、关掉必须绿——反过来写就是钉住一个不存在的旧形状。
+    """
 
     module = _load()
     broken = UNIFORM_TABLE.replace("| DEBT-G2 | e | f | g | h |\n", "| DEBT-G2 | e | f | g |\n")
     table = _write(tmp_path, "broken.md", broken)
     report = tmp_path / "broken.json"
-    #: 形状那条是**分级红**：不开 `--enforce-shape` 时它只出版读数，不开红。
-    assert module.main(["--table", str(table), "--out-report", str(report)]) == 0
-    assert json.loads(report.read_text(encoding="utf-8"))["rows_not_expected_cells"] == 1
+    assert module.main(["--table", str(table), "--out-report", str(report)]) == 1
+    payload = json.loads(report.read_text(encoding="utf-8"))
+    #: 红了也照样出版读数——不许"红就不留证据"。
+    assert payload["verdicts"]["all_rows_are_the_expected_shape"] is False
+    assert payload["rows_not_expected_cells"] == 1
     report2 = tmp_path / "broken2.json"
     assert (
         module.main(
@@ -148,15 +158,15 @@ def test_main_reds_when_one_row_breaks_the_shape(tmp_path: Path) -> None:
                 str(report2),
                 "--expect-cells",
                 "5",
-                "--enforce-shape",
+                "--no-enforce-shape",
             ]
         )
-        == 1
+        == 0
     )
-    payload = json.loads(report.read_text(encoding="utf-8"))
-    #: 红了也照样出版读数——不许"红就不留证据"。
-    assert payload["verdicts"]["all_rows_are_the_expected_shape"] is False
-    assert payload["rows_not_expected_cells"] == 1
+    quiet = json.loads(report2.read_text(encoding="utf-8"))
+    #: 关掉红面不等于关掉读数：分布那条照样如实出版。
+    assert quiet["rows_not_expected_cells"] == 1
+    assert quiet["verdicts"]["all_rows_are_the_expected_shape"] is False
 
 
 def test_main_reds_on_a_duplicated_debt_id(tmp_path: Path) -> None:
@@ -180,19 +190,56 @@ def test_main_refuses_a_nonpositive_target_shape(tmp_path: Path) -> None:
     )
 
 
-def test_real_register_still_needs_the_shape_ruling_executed() -> None:
-    """债表今天还没并成一型——这台仪器必须把这件事**报出来**而不是放过。
+def test_real_register_is_one_shape_and_greens_under_default_enforcement(tmp_path: Path) -> None:
+    """七裁⑶ 的执行结果由这条守：债表只有一型，且默认红面下必须为绿。
 
-    ㊵-748 的实测：122 行里转义敏感列数为 5 的只有 81 行，其余仍是旧四列形；
-    重排器 `unify_taiji_debt_table_columns.py` 能机械解决其中绝大多数，
-    但 G41／G42／G43 三行的格子里有裸竖线，需要人工决定归哪一列（登 DEBT-G123）。
-    所以这条测的是"分布被如实出版"，不是"已经统一"。
+    ㊵-748 时这条测的是反面（`rows_not_expected_cells > 0`、形状判定为假），因为当时 122 行里
+    还有 41 行旧四列形与 3 行需人工归列（DEBT-G123）。2026-10-12 ㊵-751 并形落地＋三行手工归列之后
+    真面变成 123 行全五列，断言按新状态**重推**而不是在旧值上打补丁。
+    本条走 `main()`（不是只调 `measure()`），所以 CI 的 pytest 腿就是这道门的执行点：
+    谁往格子里写裸竖线、或把表头改回四列，这条就红。
     """
 
     module = _load()
-    report = module.measure(PROJECT_ROOT / "plans/active/roadmap/05_TECH_DEBT_REGISTER.md")
+    table = PROJECT_ROOT / "plans/active/roadmap/05_TECH_DEBT_REGISTER.md"
+    report = module.measure(table)
     assert report["rows"] >= 100
     assert report["distinct_ids"] == report["rows"], report["id_duplicates"]
-    assert report["rows_not_expected_cells"] > 0, report["cells_per_row_escape_aware"]
-    assert report["verdicts"]["all_rows_are_the_expected_shape"] is False
-    assert report["cells_per_row_escape_aware"].keys() >= {"4", "5"}
+    #: 一型的定义就是这一行：转义敏感列数只有 5 这一个键，其计数等于行数。
+    assert report["cells_per_row_escape_aware"] == {"5": report["rows"]}
+    assert report["header_declared_cells"] == 5
+    assert report["rows_not_expected_cells"] == 0
+    assert all(value is True for value in report["verdicts"].values()), report["verdicts"]
+    #: 并形器把每一行都收成了闭合行；"收尾竖线漏写"这一族从此不许再出现。
+    assert report["rows_not_closed"] == 0
+    assert report["rows_closed_with_pipe"] == report["rows"]
+
+    out = tmp_path / "register.json"
+    assert module.main(["--out-report", str(out)]) == 0
+    payload = json.loads(out.read_text(encoding="utf-8"))
+    assert payload["verdicts"] == report["verdicts"]
+
+
+def test_the_help_screen_survives_a_gbk_console() -> None:
+    """DEBT-G81 修法①：`description=__doc__` 会把带 ㊵（U+32B5）的正文送上用法屏，GBK 下抛 `UnicodeEncodeError`。
+
+    2026-10-12 实测：加守卫之前本件的 `--help` 在这台机器上 rc=1（崩溃掩盖了设计值），加守卫之后 rc=0。
+    必须起**真进程**——capsys 恒绿看不见这一支（同一课已落在 `test_a30_probe_help_runs.py`）。
+    """
+
+    env = dict(os.environ, PYTHONIOENCODING="gbk")
+    env.pop("PYTHONUTF8", None)
+    proc = subprocess.run(
+        [sys.executable, str(SCRIPT), "--help"],
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+        env=env,
+        cwd=str(PROJECT_ROOT),
+    )
+    assert proc.returncode == 0, proc.stderr[-400:]
+    #: DEBT-G85 那一族的坏形状：rc=0 而 stdout 是 None，会被读成"帮助里没有这条旗标"。
+    assert proc.stdout is not None
+    assert "usage" in proc.stdout.lower()
+    assert "--no-enforce-shape" in proc.stdout
