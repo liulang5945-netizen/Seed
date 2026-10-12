@@ -2644,6 +2644,26 @@ class Taiji:
             learning_error_norm=error_norm,
         )
 
+    def record_generated_answer(
+        self,
+        *,
+        learn: bool = True,
+        learn_memory: bool | None = None,
+    ) -> TaijiOutcome:
+        """Settle the pending action as a *self-generated* answer: source ``generated``, reward ``0.0``.
+
+        VISION §19.6 forbids self-generated content from scoring itself, so the reward is fixed at
+        zero here rather than accepted as an argument.  Nothing calls this automatically -- the
+        source stays ``experienced`` everywhere else, including the tool-outcome path.
+        """
+
+        return self.settle_action(
+            0.0,
+            learn=learn,
+            learn_memory=True if learn_memory is None else learn_memory,
+            provenance="generated",
+        )
+
     @torch.no_grad()
     def consolidate(
         self,

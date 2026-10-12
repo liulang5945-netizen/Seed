@@ -195,6 +195,8 @@ class EpisodicField:
         self.episode_readout = self._blank_readout(config.memory_episode_dim, generator)
         self.provenance_readout = self._blank_readout(len(self.PROVENANCE_KINDS), generator)
         self.write_count = 0
+        #: 运行时披露：以来源 `generated` 写入的次数。不进 payload（PLAN-N5-19 §2 J-N5q-4 的理由）。
+        self.generated_write_count = 0
         #: 载入时发现受体图与本机所抽不同即为 True（迁移或续训的凭据，走披露不走判据）。
         self.receptors_inherited = False
         self._last_event: torch.Tensor | None = None
@@ -810,6 +812,8 @@ class EpisodicField:
                 weight_decay=self.config.synapse_decay,
             )
         self.write_count += 1
+        if provenance == "generated":
+            self.generated_write_count += 1
         return EpisodicWrite(
             strength=float(strength),
             novelty=float(novelty),
