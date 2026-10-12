@@ -76,6 +76,8 @@ J-N4g-1／4(b) 的执行体＝批次 A／B 新落的自述键与夹具判读器�
 尚不可判"，不得声明通过。J-N4g-5 的执行体＝`check_taiji_n5_pairing_preflight.py` 同族的幅度现读。
 ⇒ 本件没有一条判据是手算的；同时**没有一条已经出值**（四条待批次 B 之后）。
 
+〔2026-10-12 ㊵-744 就地换态，上面原句不删〕本节最后那句「**没有一条已经出值**」自本注起过期：批次 B 的执行体已落（`scripts/training/adjudicate_taiji_n4_four_class_acceptance.py`＋契约册`tests/taiji_native/test_n4_09_four_class_acceptance_contract.py`），四类第一次各有一个值——`J-N4g-4(a)=holds`、`J-N4g-4(b)=holds_recorded_eviction` 两支按冻形出值；`J-N4g-2`／`J-N4g-3` 两支判为**不可判**（现行读路没有对象身份与属性载体，证据与逐值见 `PLAN-N4-10` §0／§2，缺口登 DEBT-G122）。另披露一次样本量改判：判据档从 paired≥1000（当场判 `ruler_unusable`）改为取最大档，三档全部出版、阈值一枚未动。**§4 批次 B 那行「我可自办」的边界也被这次实测收窄**：夹具与判读器确实在 `scripts/`＋`tests/` 内做完，但四类里有两类的补齐必须动 `taiji/`，不在我自办范围内。
+
 ## §6 出口（三条互斥）
 
 * 全部四条寻址类判据（J-N4g-2/3/4 + 5）出值且过 ⇒ V-15／V-16 转为"已展开且已验收"，

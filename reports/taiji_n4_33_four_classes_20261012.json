@@ -1,0 +1,169 @@
+{
+  "format": "taiji-n4-33-four-class-acceptance-v1",
+  "started_utc": "2026-10-12T12:20:37Z",
+  "prereg": "plans/reference/PLAN-N4-08_memory_kinds_and_delta_gate_prereg_20261011.md §3",
+  "face": {
+    "mount_layer": "harness",
+    "product_default_mounted": false,
+    "episodic_memory_default_mount": false,
+    "note": "本件自建 EpisodicMemoryStore 并直接寻址，与 `measure_taiji_n4_addressing_surface.py` 同层；产品默认链的挂载态由 `taiji/config.py:348 episodic_memory_default_mount=False` 决定，两者不许互相代答。"
+  },
+  "fixture_shape": {
+    "seed": 20261012,
+    "cue_dim": 32,
+    "targets": 40,
+    "queries_per_target": 5,
+    "paired_queries": 200,
+    "distractors": 20,
+    "capacity": 50,
+    "overflow_writes": 12
+  },
+  "cited_formula_pins": {
+    "ruler_usable = bands[\"treated\"] > 0.0 and bands[\"control\"] > 0.0 and line >= band_max": true,
+    "base[\"verdict\"] = \"ruler_unusable\"": true,
+    "base[\"exceeds_line\"] = bool(delta > line)": true
+  },
+  "classes": {
+    "rename": {
+      "criterion": "J-N4g-2",
+      "wrong_top1_rate_before_rename": 0.315,
+      "wrong_top1_rate_after_consistent_rename": 0.315,
+      "absolute_difference": 0.0,
+      "paired_queries_after_consistent_rename": 200,
+      "paired_queries_after_record_only_rename": 0,
+      "unpaired_queries_after_record_only_rename": 200,
+      "object_ids_carrier_in_retrieve": true,
+      "cue_carrier_positive_control": true,
+      "verdict": "not_applicable_no_independent_object_identity",
+      "why": "这台面上唯一的名字就是检索真值本身：只改记录名（真值仍指旧名）会当场打掉全部配对，把名字与真值一起改则差为 0——那是重贴标签的构造后果，不是不变性被验过。而真正该被「重命名」的对象字段 `object_ids` 从不进 retrieve（载体探针：换 object_ids 顶位不变、换 cue 顶位必变）。按冻结形状判「成立」＝把「这个字段没人读」说成「身份换了这个表征不变」。",
+      "frozen_shape_would_read_green": true
+    },
+    "attribute_swap": {
+      "criterion": "J-N4g-3",
+      "record_payload_keys": [
+        "action_intent",
+        "assembly_ids",
+        "cue",
+        "episode_id",
+        "event_ids",
+        "memory_id",
+        "object_ids",
+        "outcome",
+        "prediction_error",
+        "provenance",
+        "relation_ids",
+        "tick",
+        "version",
+        "world_transition"
+      ],
+      "fields_referenced_by_retrieve": [
+        "cue",
+        "episode_id"
+      ],
+      "fields_referenced_by_write": [
+        "cue",
+        "memory_id"
+      ],
+      "extractor_positive_control_fields_missing_from_retrieve": [
+        "memory_id"
+      ],
+      "record_has_attribute_field": false,
+      "verdict": "no_field_to_swap",
+      "why": "情节记录里没有属性位；属性只活在世界层 `WorldObject.attributes`（`taiji/contracts.py:813-819`），而那条面不接情节寻址。所以「交换后跟着互换」这条判据的**被交换对象**在现行读取面上不存在。"
+    },
+    "distractor": {
+      "criterion": "J-N4g-4(a)",
+      "lane_selection_rule": "判据档取最大样本档；三档全部出版（小档不许被隐去）",
+      "lanes": [
+        {
+          "queries_per_target": 5,
+          "paired_queries": 200,
+          "noise_band_floor": 0.025,
+          "base_wrong_top1_rate": 0.315,
+          "treated_wrong_top1_rate": 0.42,
+          "delta_treated_minus_base": 0.10499999999999998,
+          "noise_band_base": 0.175,
+          "noise_band_treated": 0.125,
+          "noise_band_max": 0.175,
+          "both_bands_nonzero": true,
+          "line_is_self_taken_band": true,
+          "verdict": "ruler_unusable"
+        },
+        {
+          "queries_per_target": 25,
+          "paired_queries": 1000,
+          "noise_band_floor": 0.005,
+          "base_wrong_top1_rate": 0.308,
+          "treated_wrong_top1_rate": 0.375,
+          "delta_treated_minus_base": 0.067,
+          "noise_band_base": 0.11499999999999999,
+          "noise_band_treated": 0.11499999999999999,
+          "noise_band_max": 0.11499999999999999,
+          "both_bands_nonzero": true,
+          "line_is_self_taken_band": true,
+          "verdict": "ruler_unusable"
+        },
+        {
+          "queries_per_target": 125,
+          "paired_queries": 5000,
+          "noise_band_floor": 0.001,
+          "base_wrong_top1_rate": 0.308,
+          "treated_wrong_top1_rate": 0.3736,
+          "delta_treated_minus_base": 0.06559999999999999,
+          "noise_band_base": 0.03500000000000003,
+          "noise_band_treated": 0.038000000000000034,
+          "noise_band_max": 0.038000000000000034,
+          "both_bands_nonzero": true,
+          "line_is_self_taken_band": true,
+          "verdict": "holds"
+        }
+      ],
+      "judged_lane_queries_per_target": 125,
+      "delta": 0.06559999999999999,
+      "noise_band_max": 0.038000000000000034,
+      "verdict": "holds"
+    },
+    "slot_full": {
+      "criterion": "J-N4g-4(b)",
+      "lane": {
+        "capacity": 50,
+        "writes": 62,
+        "evicted_expected": 12,
+        "store_count_after": 50,
+        "evicted_count_runtime": 12,
+        "evicted_count_in_checkpoint": 12,
+        "probe_cue_was_the_oldest_evicted_record": true,
+        "hits_returned": 3,
+        "top1_after_writes": "slot-14",
+        "evicted_record_still_reachable": false,
+        "explicit_revocation_separate_column": true,
+        "verdict": "holds_recorded_eviction"
+      },
+      "control_lane": {
+        "capacity": 50,
+        "writes": 50,
+        "evicted_expected": 0,
+        "store_count_after": 50,
+        "evicted_count_runtime": 0,
+        "evicted_count_in_checkpoint": 0,
+        "probe_cue_was_the_oldest_evicted_record": false,
+        "hits_returned": 3,
+        "top1_after_writes": "slot-0",
+        "evicted_record_still_reachable": false,
+        "explicit_revocation_separate_column": true,
+        "verdict": "not_full_no_eviction"
+      },
+      "control_must_not_report_eviction": true,
+      "verdict": "holds_recorded_eviction"
+    }
+  },
+  "verdicts": {
+    "rename": "not_applicable_no_independent_object_identity",
+    "attribute_swap": "no_field_to_swap",
+    "distractor": "holds",
+    "slot_full": "holds_recorded_eviction"
+  },
+  "every_class_has_a_value": true,
+  "all_pinned": true,
+  "wall_clock_ms": 5286.144
+}
