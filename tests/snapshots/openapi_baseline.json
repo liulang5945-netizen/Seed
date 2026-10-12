@@ -1784,6 +1784,106 @@
         "title": "ValidationError",
         "type": "object"
       },
+      "WebSearchRequest": {
+        "description": "一次网页搜索请求。",
+        "properties": {
+          "max_results": {
+            "anyOf": [
+              {
+                "maximum": 20.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": 8,
+            "description": "返回结果数上限",
+            "title": "Max Results"
+          },
+          "query": {
+            "description": "搜索关键词",
+            "minLength": 1,
+            "title": "Query",
+            "type": "string"
+          }
+        },
+        "required": [
+          "query"
+        ],
+        "title": "WebSearchRequest",
+        "type": "object"
+      },
+      "WebSearchResponse": {
+        "description": "搜索结果：来源列表 + 截断标记（与 harness WebSearchResult 对齐）。",
+        "properties": {
+          "sources": {
+            "items": {
+              "$ref": "#/components/schemas/WebSearchSource"
+            },
+            "title": "Sources",
+            "type": "array"
+          },
+          "truncated": {
+            "default": false,
+            "title": "Truncated",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "sources"
+        ],
+        "title": "WebSearchResponse",
+        "type": "object"
+      },
+      "WebSearchSource": {
+        "description": "一条可引用的搜索来源。",
+        "properties": {
+          "engine": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Engine"
+          },
+          "snippet": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Snippet"
+          },
+          "title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title"
+          },
+          "url": {
+            "title": "Url",
+            "type": "string"
+          }
+        },
+        "required": [
+          "url"
+        ],
+        "title": "WebSearchSource",
+        "type": "object"
+      },
       "WorkbenchIntentRequest": {
         "description": "A Taiji-owned action intent submitted to the native workbench bridge.",
         "properties": {
@@ -4925,6 +5025,45 @@
           }
         },
         "summary": "Get System Version"
+      }
+    },
+    "/api/tools/web_search": {
+      "post": {
+        "description": "用原生爬虫搜索网页（多引擎竞速，无需任何搜索 API 凭证）。",
+        "operationId": "web_search_api_tools_web_search_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WebSearchRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WebSearchResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Web Search"
       }
     },
     "/api/train/checkpoint/{filename}": {
