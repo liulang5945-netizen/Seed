@@ -315,3 +315,12 @@ focused-before.xml
 # 上面第 140 行的 *.jsonl 是为 Seed 训练/运行数据写的，故此处只放行 fork 的快照目录，
 # 不放行 output/、reports/、data/ 等训练数据路径。
 !taiji-harness/snapshots/**/*.jsonl
+
+# ㊵-721（2026-10-12 owner 裁定「批准加 .gitignore 条目」）：仓库根这两个目录不是本仓产物，
+# 也不是我起的——`.fork-sync/` 是外部同步工具的落点（mtime 2026-10-09），`.workbuddy/` 是
+# 助手侧记忆目录（内含 memory/*.md）。`tests/test_folder_structure_guard.py` 第三条出路就是
+# "已被 gitignore 的运行时目录不进台账"（见该文件 ㊵-468 的 M7 收束注释：`.mimosa`／`.venv` 同族），
+# 而它两此前 `git check-ignore` 报 NOT_IGNORED ⇒ 那条守卫长期红，"常红的门等于没有门"。
+# 只放行忽略规则，不动目录内容，也不删任何人的落点（删除属不可逆动作，归 owner 自己排期）。
+/.fork-sync/
+/.workbuddy/
