@@ -559,3 +559,48 @@ class SparseSynapses:
         self.pre_index = pre_index.clone()
         self.edge_weight = edge_weight.clone()
         self._bound_rows()
+
+    def expand_presynaptic_slots(self, new_in_features: int) -> SparseSynapses:
+        """Widen the presynaptic population without rewriting any learned edge.
+
+        Used by two migrations that share the same shape problem: the identity organ growing
+        its slot count, and the episodic source vocabulary growing one provenance kind
+        (PLAN-N5-15 §1).  Each row must already touch every presynaptic coordinate
+        (``fan_in == row_fan_in == in_features``), so the appended columns can be named
+        exactly: the coordinates the old population did not have.  Their weights start at
+        zero, which is what makes ``forward`` bit-identical across the widening -- the added
+        term is a literal 0.0, and no width constant is needed here because the old width is
+        read off ``self``.
+        """
+
+        old_width = int(self.in_features)
+        target = int(new_in_features)
+        if target <= old_width:
+            raise ValueError("presynaptic expansion must increase width")
+        if self.row_fan_in != old_width or self.fan_in != old_width:
+            raise ValueError("presynaptic expansion requires full slot fan-in")
+        # Constructor randomness is only needed to satisfy the topology contract; a local
+        # generator keeps expansion independent of the model's learned RNG stream.
+        generator = torch.Generator(device="cpu")
+        generator.manual_seed(0)
+        expanded = SparseSynapses(
+            self.out_features,
+            target,
+            target,
+            generator=generator,
+            init_scale=1.0,
+            max_weight_norm=self.max_weight_norm,
+            device=self.device,
+            allow_self=not self.excludes_self,
+        )
+        expanded.pre_index[:, :old_width] = self.pre_index
+        expanded.pre_index[:, old_width:] = torch.arange(
+            old_width,
+            target,
+            device=self.device,
+            dtype=torch.int32,
+        ).unsqueeze(0)
+        expanded.edge_weight.zero_()
+        expanded.edge_weight[:, :old_width] = self.edge_weight
+        expanded._bound_rows()
+        return expanded

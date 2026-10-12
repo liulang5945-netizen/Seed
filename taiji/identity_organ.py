@@ -164,38 +164,7 @@ class CueIdentityOrgan:
     def _expand_slot_synapses(source: SparseSynapses, new_capacity: int) -> SparseSynapses:
         """Create a larger full-slot projection without rewriting old edges."""
 
-        old_capacity = int(source.in_features)
-        target = int(new_capacity)
-        if target <= old_capacity:
-            raise ValueError("identity synapse expansion must increase capacity")
-        if source.row_fan_in != old_capacity or source.fan_in != old_capacity:
-            raise ValueError("identity synapse expansion requires full slot fan-in")
-        # New contacts are initialized to zero below, so constructor randomness
-        # is only needed to satisfy SparseSynapses' topology contract. A local
-        # generator keeps expansion independent of the model's learned RNG.
-        generator = torch.Generator(device="cpu")
-        generator.manual_seed(0)
-        expanded = SparseSynapses(
-            source.out_features,
-            target,
-            target,
-            generator=generator,
-            init_scale=1.0,
-            max_weight_norm=source.max_weight_norm,
-            device=source.device,
-            allow_self=not source.excludes_self,
-        )
-        expanded.pre_index[:, :old_capacity] = source.pre_index
-        expanded.pre_index[:, old_capacity:] = torch.arange(
-            old_capacity,
-            target,
-            device=source.device,
-            dtype=torch.int32,
-        ).unsqueeze(0)
-        expanded.edge_weight.zero_()
-        expanded.edge_weight[:, :old_capacity] = source.edge_weight
-        expanded._bound_rows()
-        return expanded
+        return source.expand_presynaptic_slots(new_capacity)
 
     @torch.no_grad()
     def expand_capacity(self, config: TaijiConfig) -> dict[str, int]:
