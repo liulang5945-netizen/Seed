@@ -1,0 +1,288 @@
+{
+  "format": "taiji-disk-load-face-two-arms-v1",
+  "debt": "DEBT-G104",
+  "ledger_origin": "㊵-727",
+  "git_head": "7aea326e7",
+  "face": {
+    "roots_scanned": [
+      "checkpoints"
+    ],
+    "disk_pt_total": 13,
+    "tracked_pt_in_git": 0,
+    "selected": 13,
+    "skipped_by_size": 0,
+    "skipped_by_count": 0,
+    "selection_order": "size_ascending",
+    "batch_mode": "budget"
+  },
+  "verdict": "full_face_two_arm_pair",
+  "arms": {
+    "treated": {
+      "kinds": [
+        "experienced",
+        "imagined",
+        "replayed",
+        "external",
+        "generated"
+      ],
+      "attempted": 13,
+      "loaded": 12,
+      "refused": 1,
+      "receptors_inherited_count": 12,
+      "refusal_reason_counts": {
+        "ValueError|native cognitive state is out of sync with kernel state": 1
+      },
+      "refusing_files": [
+        "checkpoints/seed_n2_candidate_20261008.pt"
+      ],
+      "rows": [
+        {
+          "file": "checkpoints/seed_beta.pt",
+          "loaded": true,
+          "encoder_width": 5,
+          "readout_rows": 5,
+          "vocabulary": 5,
+          "receptors_inherited": true
+        },
+        {
+          "file": "checkpoints/seed_beta_with_circuit.pt",
+          "loaded": true,
+          "encoder_width": 5,
+          "readout_rows": 5,
+          "vocabulary": 5,
+          "receptors_inherited": true
+        },
+        {
+          "file": "checkpoints/seed_n2b_candidate_20261008.pt",
+          "loaded": true,
+          "encoder_width": 5,
+          "readout_rows": 5,
+          "vocabulary": 5,
+          "receptors_inherited": true
+        },
+        {
+          "file": "checkpoints/seed_n2b_candidate_20261008_n2c1.pt",
+          "loaded": true,
+          "encoder_width": 5,
+          "readout_rows": 5,
+          "vocabulary": 5,
+          "receptors_inherited": true
+        },
+        {
+          "file": "checkpoints/seed_n2_candidate_20261008.pt",
+          "loaded": false,
+          "reason": "ValueError|native cognitive state is out of sync with kernel state"
+        },
+        {
+          "file": "checkpoints/seed_n2_candidate_aligned_20261008.pt",
+          "loaded": true,
+          "encoder_width": 5,
+          "readout_rows": 5,
+          "vocabulary": 5,
+          "receptors_inherited": true
+        },
+        {
+          "file": "checkpoints/seed_a31self_with_circuit.pt",
+          "loaded": true,
+          "encoder_width": 5,
+          "readout_rows": 5,
+          "vocabulary": 5,
+          "receptors_inherited": true
+        },
+        {
+          "file": "checkpoints/seed_n2_mother_20261008.pt",
+          "loaded": true,
+          "encoder_width": 5,
+          "readout_rows": 5,
+          "vocabulary": 5,
+          "receptors_inherited": true
+        },
+        {
+          "file": "checkpoints/seed_n2b_mother_20261008.pt",
+          "loaded": true,
+          "encoder_width": 5,
+          "readout_rows": 5,
+          "vocabulary": 5,
+          "receptors_inherited": true
+        },
+        {
+          "file": "checkpoints/seed_n2_rollback_20261008.pt",
+          "loaded": true,
+          "encoder_width": 5,
+          "readout_rows": 5,
+          "vocabulary": 5,
+          "receptors_inherited": true
+        },
+        {
+          "file": "checkpoints/seed_n2b_rollback_20261008.pt",
+          "loaded": true,
+          "encoder_width": 5,
+          "readout_rows": 5,
+          "vocabulary": 5,
+          "receptors_inherited": true
+        },
+        {
+          "file": "checkpoints/seed_n2b_mother_20261008_n2c1.pt",
+          "loaded": true,
+          "encoder_width": 5,
+          "readout_rows": 5,
+          "vocabulary": 5,
+          "receptors_inherited": true
+        },
+        {
+          "file": "checkpoints/seed_n2b_rollback_20261008_n2c1.pt",
+          "loaded": true,
+          "encoder_width": 5,
+          "readout_rows": 5,
+          "vocabulary": 5,
+          "receptors_inherited": true
+        }
+      ],
+      "rows_total": 13,
+      "rows_listed": 12
+    },
+    "control": {
+      "kinds": [
+        "experienced",
+        "imagined",
+        "replayed",
+        "external"
+      ],
+      "attempted": 13,
+      "loaded": 12,
+      "refused": 1,
+      "receptors_inherited_count": 0,
+      "refusal_reason_counts": {
+        "ValueError|native cognitive state is out of sync with kernel state": 1
+      },
+      "refusing_files": [
+        "checkpoints/seed_n2_candidate_20261008.pt"
+      ],
+      "rows": [
+        {
+          "file": "checkpoints/seed_beta.pt",
+          "loaded": true,
+          "encoder_width": 4,
+          "readout_rows": 4,
+          "vocabulary": 4,
+          "receptors_inherited": false
+        },
+        {
+          "file": "checkpoints/seed_beta_with_circuit.pt",
+          "loaded": true,
+          "encoder_width": 4,
+          "readout_rows": 4,
+          "vocabulary": 4,
+          "receptors_inherited": false
+        },
+        {
+          "file": "checkpoints/seed_n2b_candidate_20261008.pt",
+          "loaded": true,
+          "encoder_width": 4,
+          "readout_rows": 4,
+          "vocabulary": 4,
+          "receptors_inherited": false
+        },
+        {
+          "file": "checkpoints/seed_n2b_candidate_20261008_n2c1.pt",
+          "loaded": true,
+          "encoder_width": 4,
+          "readout_rows": 4,
+          "vocabulary": 4,
+          "receptors_inherited": false
+        },
+        {
+          "file": "checkpoints/seed_n2_candidate_20261008.pt",
+          "loaded": false,
+          "reason": "ValueError|native cognitive state is out of sync with kernel state"
+        },
+        {
+          "file": "checkpoints/seed_n2_candidate_aligned_20261008.pt",
+          "loaded": true,
+          "encoder_width": 4,
+          "readout_rows": 4,
+          "vocabulary": 4,
+          "receptors_inherited": false
+        },
+        {
+          "file": "checkpoints/seed_a31self_with_circuit.pt",
+          "loaded": true,
+          "encoder_width": 4,
+          "readout_rows": 4,
+          "vocabulary": 4,
+          "receptors_inherited": false
+        },
+        {
+          "file": "checkpoints/seed_n2_mother_20261008.pt",
+          "loaded": true,
+          "encoder_width": 4,
+          "readout_rows": 4,
+          "vocabulary": 4,
+          "receptors_inherited": false
+        },
+        {
+          "file": "checkpoints/seed_n2b_mother_20261008.pt",
+          "loaded": true,
+          "encoder_width": 4,
+          "readout_rows": 4,
+          "vocabulary": 4,
+          "receptors_inherited": false
+        },
+        {
+          "file": "checkpoints/seed_n2_rollback_20261008.pt",
+          "loaded": true,
+          "encoder_width": 4,
+          "readout_rows": 4,
+          "vocabulary": 4,
+          "receptors_inherited": false
+        },
+        {
+          "file": "checkpoints/seed_n2b_rollback_20261008.pt",
+          "loaded": true,
+          "encoder_width": 4,
+          "readout_rows": 4,
+          "vocabulary": 4,
+          "receptors_inherited": false
+        },
+        {
+          "file": "checkpoints/seed_n2b_mother_20261008_n2c1.pt",
+          "loaded": true,
+          "encoder_width": 4,
+          "readout_rows": 4,
+          "vocabulary": 4,
+          "receptors_inherited": false
+        },
+        {
+          "file": "checkpoints/seed_n2b_rollback_20261008_n2c1.pt",
+          "loaded": true,
+          "encoder_width": 4,
+          "readout_rows": 4,
+          "vocabulary": 4,
+          "receptors_inherited": false
+        }
+      ],
+      "rows_total": 13,
+      "rows_listed": 12
+    }
+  },
+  "pairing": {
+    "refused_on_both_arms": [
+      "checkpoints/seed_n2_candidate_20261008.pt"
+    ],
+    "refused_only_on_treated_arm": [],
+    "load_counts_equal": true
+  },
+  "entry_point_control": {
+    "attempted": 4,
+    "error_counts": {
+      "KeyError": 4
+    },
+    "meaning": "反例臂：入口点错时的整片拒绝不是装机面的读数（㊵-727 ②）"
+  },
+  "detail_row_cap": 12,
+  "what_this_does_not_prove": [
+    "本件只证『能装／不能装』与两臂是否同形，不证载入后的权重逐位中性（那由 J-N5o-4 的进程内件证过）",
+    "对照臂是进程内把枚举退回一枚，不是『用改版前的代码跑』——基板抽样与运行链都相同",
+    "面上件多为未入库的盘上产物：tracked_pt_in_git 这一枚计数必须与 disk_pt_total 一起读，少了它就把『盘上有 13 枚』误当成『装机面有 13 枚在册』"
+  ]
+}
