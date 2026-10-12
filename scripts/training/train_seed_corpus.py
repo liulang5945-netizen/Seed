@@ -1390,7 +1390,7 @@ def main() -> None:
         parser.error(
             "--n5-shadow 需要 --developmental-bridge-gate >0：gate 缺省 None 或 0.0 时 "
             "activity_saturation 恒 0 ⇒ 六道合取永不可满足 ⇒ 提议永不发生、影子永不物化"
-            "（DEBT-G68／㊵-587 实测：开门到 1.0 后第 264 行即出首提议）。"
+            "（DEBT-G68／㊵-748（原 ㊵-587） 实测：开门到 1.0 后第 264 行即出首提议）。"
         )
     if (
         args.developmental_bridge_gate is not None

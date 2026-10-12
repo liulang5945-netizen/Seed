@@ -1,6 +1,6 @@
 """DEBT-G68 修法② 的契约测：`--n5-shadow` 的两条静默空转必须变成响亮拒绝。
 
-事实基座（全部实测，见台账 08 ㊵-587）：`--developmental-bridge-gate` 缺省 `None` 时挂载段落 `0.0`
+事实基座（全部实测，见台账 08 ㊵-748（原 ㊵-587））：`--developmental-bridge-gate` 缺省 `None` 时挂载段落 `0.0`
 且**连 setter 都不调**，`activity_saturation`（"活动绝对值 ≥ `dynamics.target_activity` 的单元占比"，
 `taiji/adaptive_residual_bridge.py:101-106`）因此恒 0；`should_propose` 是六道 EMA 合取
 （`taiji/adaptive_residual_growth.py:437-444`，`minimum_activity_saturation=0.40`）⇒ 60k 符号跑满
