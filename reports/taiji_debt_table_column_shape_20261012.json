@@ -1,27 +1,44 @@
 {
   "format": "taiji-debt-table-column-shape-v1",
-  "debt": "DEBT-G101 修法②",
+  "debt": "DEBT-G101 修法②／DEBT-G119 修法①",
   "table": "plans/active/roadmap/05_TECH_DEBT_REGISTER.md",
   "header_declared_cells": 4,
-  "rows": 122,
+  "expected_cells": 5,
+  "rows": 123,
   "cells_per_row": {
     "3": 1,
     "4": 40,
     "5": 73,
-    "6": 2,
+    "6": 3,
     "7": 3,
     "9": 2,
     "10": 1
   },
+  "cells_per_row_escape_aware": {
+    "4": 36,
+    "5": 78,
+    "6": 4,
+    "7": 2,
+    "10": 2,
+    "11": 1
+  },
+  "rows_with_escaped_pipes_in_cells": 2,
   "rows_matching_declaration": 40,
-  "rows_with_more_cells": 81,
+  "rows_with_more_cells": 82,
   "rows_with_fewer_cells": 1,
-  "rows_closed_with_pipe": 110,
+  "rows_closed_with_pipe": 111,
   "rows_not_closed": 12,
-  "max_debt_id": 122,
-  "distinct_ids": 122,
+  "max_debt_id": 123,
+  "distinct_ids": 123,
   "id_duplicates": {},
   "declared_is_the_majority_shape": false,
-  "scope": "只出版分布；列形要不要并成一型、往哪边并，归 owner（批量改他人历史行超出实施半径）",
-  "started_utc": "2026-10-12T13:12:47Z"
+  "verdicts": {
+    "ids_unique": true,
+    "row_count_matches_distinct_ids": true,
+    "all_rows_are_the_expected_shape": false,
+    "header_declares_the_expected_shape": false
+  },
+  "rows_not_expected_cells": 45,
+  "scope": "七裁⑶ 已裁「统一所有历史行到同一列形」，本件因此从「只出版分布」升成「守一型」——但红是**分级开**的：编号唯一性与行数＝distinct 现在就守；形状与表头那两条要等债表真的并成一型（㊵-748 实测仍有 41 行旧四列形与 3 行需人工归列）才用 --enforce-shape 打开。转义敏感列数才是判据面：格子里带被转义的竖线是内容，不是违例。",
+  "started_utc": "2026-10-12T14:33:29Z"
 }

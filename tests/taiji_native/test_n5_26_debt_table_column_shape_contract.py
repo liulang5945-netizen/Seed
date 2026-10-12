@@ -10,6 +10,7 @@
 from __future__ import annotations
 
 import importlib.util
+import json
 import sys
 from pathlib import Path
 
@@ -104,12 +105,94 @@ def test_missing_header_is_refused(tmp_path: Path) -> None:
         raise AssertionError("没有表头就无法对照声明列数，必须拒绝出值")
 
 
-def test_real_register_reports_a_shape_that_differs_from_the_header() -> None:
+UNIFORM_TABLE = (
+    "| 编号 | 缺陷或事项 | 影响 | 修法或处置约束 | 状态 |\n"
+    "|---|---|---|---|---|\n"
+    "| DEBT-G1 | a | b | c | d |\n"
+    "| DEBT-G2 | e | f | g | h |\n"
+)
+
+
+def _write(tmp_path, name: str, text: str) -> Path:
+    path = tmp_path / name
+    path.write_text(text, encoding="utf-8", newline="\n")
+    return path
+
+
+def test_main_greens_on_a_uniform_five_cell_table(tmp_path: Path) -> None:
+    module = _load()
+    table = _write(tmp_path, "uniform.md", UNIFORM_TABLE)
+    report = tmp_path / "uniform.json"
+    assert module.main(["--table", str(table), "--out-report", str(report)]) == 0
+    payload = json.loads(report.read_text(encoding="utf-8"))
+    assert all(value is True for value in payload["verdicts"].values()), payload["verdicts"]
+
+
+def test_main_reds_when_one_row_breaks_the_shape(tmp_path: Path) -> None:
+    """DEBT-G119 的红支：以前这台仪器第 108 行恒 `return 0`，红不出来。"""
+
+    module = _load()
+    broken = UNIFORM_TABLE.replace("| DEBT-G2 | e | f | g | h |\n", "| DEBT-G2 | e | f | g |\n")
+    table = _write(tmp_path, "broken.md", broken)
+    report = tmp_path / "broken.json"
+    #: 形状那条是**分级红**：不开 `--enforce-shape` 时它只出版读数，不开红。
+    assert module.main(["--table", str(table), "--out-report", str(report)]) == 0
+    assert json.loads(report.read_text(encoding="utf-8"))["rows_not_expected_cells"] == 1
+    report2 = tmp_path / "broken2.json"
+    assert (
+        module.main(
+            [
+                "--table",
+                str(table),
+                "--out-report",
+                str(report2),
+                "--expect-cells",
+                "5",
+                "--enforce-shape",
+            ]
+        )
+        == 1
+    )
+    payload = json.loads(report.read_text(encoding="utf-8"))
+    #: 红了也照样出版读数——不许"红就不留证据"。
+    assert payload["verdicts"]["all_rows_are_the_expected_shape"] is False
+    assert payload["rows_not_expected_cells"] == 1
+
+
+def test_main_reds_on_a_duplicated_debt_id(tmp_path: Path) -> None:
+    module = _load()
+    dup = UNIFORM_TABLE.replace("DEBT-G2", "DEBT-G1")
+    table = _write(tmp_path, "dup.md", dup)
+    report = tmp_path / "dup.json"
+    assert module.main(["--table", str(table), "--out-report", str(report)]) == 1
+    payload = json.loads(report.read_text(encoding="utf-8"))
+    assert payload["verdicts"]["ids_unique"] is False
+    assert payload["id_duplicates"] == {"1": 2}
+
+
+def test_main_refuses_a_nonpositive_target_shape(tmp_path: Path) -> None:
+    module = _load()
+    table = _write(tmp_path, "flat.md", UNIFORM_TABLE)
+    report = tmp_path / "flat.json"
+    assert (
+        module.main(["--table", str(table), "--out-report", str(report), "--expect-cells", "0"])
+        == 2
+    )
+
+
+def test_real_register_still_needs_the_shape_ruling_executed() -> None:
+    """债表今天还没并成一型——这台仪器必须把这件事**报出来**而不是放过。
+
+    ㊵-748 的实测：122 行里转义敏感列数为 5 的只有 81 行，其余仍是旧四列形；
+    重排器 `unify_taiji_debt_table_columns.py` 能机械解决其中绝大多数，
+    但 G41／G42／G43 三行的格子里有裸竖线，需要人工决定归哪一列（登 DEBT-G123）。
+    所以这条测的是"分布被如实出版"，不是"已经统一"。
+    """
+
     module = _load()
     report = module.measure(PROJECT_ROOT / "plans/active/roadmap/05_TECH_DEBT_REGISTER.md")
-    assert report["rows"] > 50
-    assert report["max_debt_id"] >= 109
+    assert report["rows"] >= 100
     assert report["distinct_ids"] == report["rows"], report["id_duplicates"]
-    assert report["cells_per_row"].keys() >= {"4", "5"}
-    # 这条现在为假是真实现状（表头四列、多数行五列）；将来若 owner 并成一型，它会翻真。
-    assert isinstance(report["declared_is_the_majority_shape"], bool)
+    assert report["rows_not_expected_cells"] > 0, report["cells_per_row_escape_aware"]
+    assert report["verdicts"]["all_rows_are_the_expected_shape"] is False
+    assert report["cells_per_row_escape_aware"].keys() >= {"4", "5"}
