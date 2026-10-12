@@ -24,10 +24,8 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 REPORT_FORMAT = "taiji-g104-capability-seed-floor-v1"
 TEST_MODULE = PROJECT_ROOT / "tests" / "taiji_native" / "test_episodic_field.py"
-DEFAULT_SEEDS = (23, 0, 1, 2, 3, 7, 11, 42)
-#: 那支测现在钉的两个阈值，读数按它们各自算达标数，便于看出"哪一个才是性质"。
-ABSOLUTE_FLOOR = 0.875
-MARGIN_FLOOR = 0.375
+#: 种子表与两个旧阈值、噪声地板全部住在测册（`PLAN-N5-17` G-N5p-1），本仪器按那条 `importlib` 链现取，
+#: 这样换种子或换阈值只会改一处，读数与判据不可能各自漂移。
 
 
 def _load_test_helpers():
@@ -39,12 +37,17 @@ def _load_test_helpers():
     return module
 
 
-def _sweep(seeds: list[int]) -> dict[str, object]:
+def _sweep(seeds: list[int] | None) -> dict[str, object]:
     from taiji import Taiji, TaijiConfig
     from taiji.config import EPISODIC_PROVENANCE_KINDS
     from taiji.memory import EpisodicField
 
     helpers = _load_test_helpers()
+    if not seeds:
+        seeds = list(helpers.CAPABILITY_SEEDS)
+    absolute_floor = helpers.LEGACY_ABSOLUTE_THRESHOLD
+    margin_floor = helpers.LEGACY_MARGIN_THRESHOLD
+    noise_floor = helpers.CAPABILITY_MARGIN_FLOOR
     arms = {
         "default_vocabulary": EPISODIC_PROVENANCE_KINDS,
         "one_narrower_vocabulary": EPISODIC_PROVENANCE_KINDS[:-1],
@@ -66,8 +69,8 @@ def _sweep(seeds: list[int]) -> dict[str, object]:
                     "recalled": round(recalled, 6),
                     "trace_only": round(trace_only, 6),
                     "margin": round(recalled - trace_only, 6),
-                    "meets_absolute_floor": recalled >= ABSOLUTE_FLOOR,
-                    "meets_margin_floor": recalled - trace_only >= MARGIN_FLOOR,
+                    "meets_absolute_floor": recalled >= absolute_floor,
+                    "meets_margin_floor": recalled - trace_only >= margin_floor,
                 }
             )
         per_arm[name] = {
@@ -79,15 +82,18 @@ def _sweep(seeds: list[int]) -> dict[str, object]:
             "absolute_floor_passes": sum(row["meets_absolute_floor"] for row in rows),
             "margin_floor_passes": sum(row["meets_margin_floor"] for row in rows),
             "margin_min": min(row["margin"] for row in rows),
+            "margin_median": statistics.median([row["margin"] for row in rows]),
+            "margin_below_noise_floor": sum(row["margin"] < noise_floor for row in rows),
         }
     EpisodicField.PROVENANCE_KINDS = EPISODIC_PROVENANCE_KINDS
     return {
         "format": REPORT_FORMAT,
-        "prereg": "plans/reference/PLAN-N5-16_provenance_normalization_mask_prereg_20261012.md",
+        "prereg": "plans/reference/PLAN-N5-17_capability_seed_distribution_prereg_20261012.md",
         "debt": "DEBT-G104",
         "seeds": seeds,
-        "absolute_floor": ABSOLUTE_FLOOR,
-        "margin_floor": MARGIN_FLOOR,
+        "absolute_floor": absolute_floor,
+        "margin_floor": margin_floor,
+        "noise_floor": noise_floor,
         "arms": per_arm,
         "what_this_does_not_prove": [
             "这不证明加宽提高了能力，也不证明它降低了能力——两臂都是同一套随机抽样下的分布读数",
@@ -107,7 +113,7 @@ def main() -> int:
     parser.add_argument("--seeds", action="append", type=int, default=[])
     parser.add_argument("--overwrite", action="store_true")
     args = parser.parse_args()
-    report = _sweep(args.seeds or list(DEFAULT_SEEDS))
+    report = _sweep(args.seeds)
     out = Path(args.out_report)
     if not out.is_absolute():
         out = PROJECT_ROOT / out
@@ -128,6 +134,8 @@ def main() -> int:
                         "margin_floor_passes": arm["margin_floor_passes"],
                         "recalled_min": arm["recalled_min"],
                         "margin_min": arm["margin_min"],
+                        "margin_median": arm["margin_median"],
+                        "margin_below_noise_floor": arm["margin_below_noise_floor"],
                     }
                     for name, arm in report["arms"].items()
                 },

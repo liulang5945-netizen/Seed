@@ -1,6 +1,6 @@
 {
   "format": "taiji-g104-capability-seed-floor-v1",
-  "prereg": "plans/reference/PLAN-N5-16_provenance_normalization_mask_prereg_20261012.md",
+  "prereg": "plans/reference/PLAN-N5-17_capability_seed_distribution_prereg_20261012.md",
   "debt": "DEBT-G104",
   "seeds": [
     23,
@@ -14,6 +14,7 @@
   ],
   "absolute_floor": 0.875,
   "margin_floor": 0.375,
+  "noise_floor": -0.375,
   "arms": {
     "default_vocabulary": {
       "kinds": [
@@ -94,7 +95,9 @@
       "recalled_max": 1.0,
       "absolute_floor_passes": 1,
       "margin_floor_passes": 4,
-      "margin_min": -0.375
+      "margin_min": -0.375,
+      "margin_median": 0.1875,
+      "margin_below_noise_floor": 0
     },
     "one_narrower_vocabulary": {
       "kinds": [
@@ -174,7 +177,9 @@
       "recalled_max": 0.875,
       "absolute_floor_passes": 3,
       "margin_floor_passes": 3,
-      "margin_min": -0.375
+      "margin_min": -0.375,
+      "margin_median": 0.125,
+      "margin_below_noise_floor": 0
     }
   },
   "what_this_does_not_prove": [
