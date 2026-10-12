@@ -214,15 +214,24 @@ def test_generated_record_cannot_book_a_nonzero_reward() -> None:
     assert allowed.provenance == "generated"
 
 
-def test_the_associative_field_channel_vocabulary_is_still_four_channels() -> None:
-    """把"张量层没跟着加宽"这件事钉成断言，防止有人日后偷偷改通道数。
+def test_the_associative_field_channel_vocabulary_matches_the_enumeration() -> None:
+    """张量层宽度必须**等于枚数本身**——㊵-725 起 `generated` 已进编码通路（DEBT-G104 结清）。
 
-    `generated` 今天只活在记录层：情节场的编码通路仍是 4 通道，接它需要一次受体通道重映射
-    迁移（会作废盘上 230 枚检查点与槽位钉子）⇒ 那是要另批的结构变更，记 DEBT-G104。
+    这一支原来钉的是"仍是 4 通道、`generated` 只活在记录层"，那是 DEBT-G104 的现状凭据。
+    批次 B′ 落地把现状反转了，所以钉子按 `G-N5n-2` **随枚举重钉**：这里比的是 `len(枚数)`
+    而不是任何常数——偷改通道数仍然会红（它必须跟着枚举走），而加宽本身不再需要改测。
     """
     model = Taiji(_config())
-    assert model.memory.PROVENANCE_KINDS == ("experienced", "imagined", "replayed", "external")
-    assert model.memory.provenance_encoder.in_features == 4
+    kinds = model.memory.PROVENANCE_KINDS
+    assert "generated" in kinds
+    assert model.memory.provenance_encoder.in_features == len(kinds)
+    assert model.memory.provenance_readout.out_features == len(kinds)
+    generated = model.memory._provenance_code("generated")
+    external = model.memory._provenance_code("external")
+    assert not torch.equal(generated, external)
+    assert float(generated.sum()) == 1.0 and int(generated.argmax()) == kinds.index("generated")
+    with pytest.raises(ValueError, match="unsupported episodic provenance"):
+        model.memory._provenance_code("hallucinated-source")
 
 
 def test_contradictory_facts_about_one_cue_stay_two_records_not_a_silent_merge() -> None:

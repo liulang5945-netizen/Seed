@@ -195,6 +195,8 @@ class EpisodicField:
         self.episode_readout = self._blank_readout(config.memory_episode_dim, generator)
         self.provenance_readout = self._blank_readout(len(self.PROVENANCE_KINDS), generator)
         self.write_count = 0
+        #: 载入时发现受体图与本机所抽不同即为 True（迁移或续训的凭据，走披露不走判据）。
+        self.receptors_inherited = False
         self._last_event: torch.Tensor | None = None
         self._last_event_episode: str | None = None
         self._episode_write_id: str | None = None
@@ -1068,7 +1070,10 @@ class EpisodicField:
         # A checkpoint written before the source vocabulary grew keeps every learned edge and
         # gains zero-weight contacts to the coordinates it never had (PLAN-N5-15 §1.3).
         provenance_encoder_payload = payload["provenance_encoder"]
-        if int(provenance_encoder_payload["in_features"]) < self.provenance_encoder.in_features:
+        widened_sources = (
+            int(provenance_encoder_payload["in_features"]) < self.provenance_encoder.in_features
+        )
+        if widened_sources:
             self.provenance_encoder = self.provenance_encoder.migrate_presynaptic_payload(
                 provenance_encoder_payload
             )
@@ -1079,7 +1084,17 @@ class EpisodicField:
             raise ValueError("episodic reward code does not match architecture")
         self.reward_code = reward_code.clone()
         self.association.load_payload(payload["association"])
-        self.readout_receptors.load_payload(payload["readout_receptors"])
+        # The receptor map is **state, not architecture**: `_payload_tensors` already validates
+        # shape, index range, binary polarity and that no context channel is left unconnected.
+        # Demanding equality with what this instance drew would refuse a checkpoint whose map was
+        # itself inherited (the resume-after-migration case), which is exactly the failure the
+        # retrain runner hit.  So adopt the validated map and disclose that it differed.
+        before = (self.readout_receptors.channel, self.readout_receptors.polarity)
+        self.readout_receptors.transplant_payload(payload["readout_receptors"])
+        self.receptors_inherited = bool(
+            not torch.equal(before[0], self.readout_receptors.channel)
+            or not torch.equal(before[1], self.readout_receptors.polarity)
+        )
         self.action_readout.load_payload(payload["action_readout"])
         if "local_action_readout" in payload:
             self.local_action_readout.load_payload(payload["local_action_readout"])

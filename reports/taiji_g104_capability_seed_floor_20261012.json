@@ -1,0 +1,185 @@
+{
+  "format": "taiji-g104-capability-seed-floor-v1",
+  "prereg": "plans/reference/PLAN-N5-16_provenance_normalization_mask_prereg_20261012.md",
+  "debt": "DEBT-G104",
+  "seeds": [
+    23,
+    0,
+    1,
+    2,
+    3,
+    7,
+    11,
+    42
+  ],
+  "absolute_floor": 0.875,
+  "margin_floor": 0.375,
+  "arms": {
+    "default_vocabulary": {
+      "kinds": [
+        "experienced",
+        "imagined",
+        "replayed",
+        "external",
+        "generated"
+      ],
+      "rows": [
+        {
+          "seed": 23,
+          "recalled": 0.625,
+          "trace_only": 0.25,
+          "margin": 0.375,
+          "meets_absolute_floor": false,
+          "meets_margin_floor": true
+        },
+        {
+          "seed": 0,
+          "recalled": 0.5,
+          "trace_only": 0.875,
+          "margin": -0.375,
+          "meets_absolute_floor": false,
+          "meets_margin_floor": false
+        },
+        {
+          "seed": 1,
+          "recalled": 0.5,
+          "trace_only": 0.625,
+          "margin": -0.125,
+          "meets_absolute_floor": false,
+          "meets_margin_floor": false
+        },
+        {
+          "seed": 2,
+          "recalled": 0.75,
+          "trace_only": 0.375,
+          "margin": 0.375,
+          "meets_absolute_floor": false,
+          "meets_margin_floor": true
+        },
+        {
+          "seed": 3,
+          "recalled": 1.0,
+          "trace_only": 0.5,
+          "margin": 0.5,
+          "meets_absolute_floor": true,
+          "meets_margin_floor": true
+        },
+        {
+          "seed": 7,
+          "recalled": 0.75,
+          "trace_only": 0.375,
+          "margin": 0.375,
+          "meets_absolute_floor": false,
+          "meets_margin_floor": true
+        },
+        {
+          "seed": 11,
+          "recalled": 0.5,
+          "trace_only": 0.75,
+          "margin": -0.25,
+          "meets_absolute_floor": false,
+          "meets_margin_floor": false
+        },
+        {
+          "seed": 42,
+          "recalled": 0.5,
+          "trace_only": 0.5,
+          "margin": 0.0,
+          "meets_absolute_floor": false,
+          "meets_margin_floor": false
+        }
+      ],
+      "recalled_min": 0.5,
+      "recalled_median": 0.5625,
+      "recalled_max": 1.0,
+      "absolute_floor_passes": 1,
+      "margin_floor_passes": 4,
+      "margin_min": -0.375
+    },
+    "one_narrower_vocabulary": {
+      "kinds": [
+        "experienced",
+        "imagined",
+        "replayed",
+        "external"
+      ],
+      "rows": [
+        {
+          "seed": 23,
+          "recalled": 0.875,
+          "trace_only": 0.25,
+          "margin": 0.625,
+          "meets_absolute_floor": true,
+          "meets_margin_floor": true
+        },
+        {
+          "seed": 0,
+          "recalled": 0.5,
+          "trace_only": 0.875,
+          "margin": -0.375,
+          "meets_absolute_floor": false,
+          "meets_margin_floor": false
+        },
+        {
+          "seed": 1,
+          "recalled": 0.5,
+          "trace_only": 0.625,
+          "margin": -0.125,
+          "meets_absolute_floor": false,
+          "meets_margin_floor": false
+        },
+        {
+          "seed": 2,
+          "recalled": 0.625,
+          "trace_only": 0.375,
+          "margin": 0.25,
+          "meets_absolute_floor": false,
+          "meets_margin_floor": false
+        },
+        {
+          "seed": 3,
+          "recalled": 0.875,
+          "trace_only": 0.5,
+          "margin": 0.375,
+          "meets_absolute_floor": true,
+          "meets_margin_floor": true
+        },
+        {
+          "seed": 7,
+          "recalled": 0.875,
+          "trace_only": 0.375,
+          "margin": 0.5,
+          "meets_absolute_floor": true,
+          "meets_margin_floor": true
+        },
+        {
+          "seed": 11,
+          "recalled": 0.625,
+          "trace_only": 0.75,
+          "margin": -0.125,
+          "meets_absolute_floor": false,
+          "meets_margin_floor": false
+        },
+        {
+          "seed": 42,
+          "recalled": 0.5,
+          "trace_only": 0.5,
+          "margin": 0.0,
+          "meets_absolute_floor": false,
+          "meets_margin_floor": false
+        }
+      ],
+      "recalled_min": 0.5,
+      "recalled_median": 0.625,
+      "recalled_max": 0.875,
+      "absolute_floor_passes": 3,
+      "margin_floor_passes": 3,
+      "margin_min": -0.375
+    }
+  },
+  "what_this_does_not_prove": [
+    "这不证明加宽提高了能力，也不证明它降低了能力——两臂都是同一套随机抽样下的分布读数",
+    "这不证明 `recalled` 的绝对值是机制性质：达标数本身就是这条读数的产出",
+    "种子数只有 len(seeds) 个，地板的下沿可能更低"
+  ]
+}

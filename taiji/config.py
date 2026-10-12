@@ -21,7 +21,7 @@ EPISODIC_EVENT_COMPONENTS = (
 DEFAULT_EPISODIC_EVENT_COMPONENT_GAINS = (1.0,) * len(EPISODIC_EVENT_COMPONENTS)
 #: Canonical episodic source vocabulary.  ``planned_active_parameter_count`` below reserves one
 #: readout row per entry, so widening the vocabulary must not require editing a literal width.
-EPISODIC_PROVENANCE_KINDS = ("experienced", "imagined", "replayed", "external")
+EPISODIC_PROVENANCE_KINDS = ("experienced", "imagined", "replayed", "external", "generated")
 EPISODIC_LEARNING_TARGETS = (
     "all",
     "association",

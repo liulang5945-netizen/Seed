@@ -25,8 +25,11 @@ from taiji.memory import EpisodicField
 
 CONFIG_SOURCE = Path(config_module.__file__).read_text(encoding="utf-8")
 PLAN_FUNCTION = "planned_active_parameter_count"
-#: ㊵-715 双臂预检实测的 4 枚档规划数／实参（同一份 config），本笔必须一字不动地复现它。
-PLAN_AT_FOUR_KINDS = 99122
+#: ㊵-716 立这条钉子时枚数仍是 4，规划数与实参都＝99122；㊵-725 把来源词表加到 5 枚之后
+#: 按同一把尺现取＝**99154**，差值 32 恰＝一枚读出行的宽度（㊵-715 实测过的同一个恒等式）。
+#: 这一格是"随枚举重钉"（`G-N5n-2`），不是放宽成区间——旧值留着当出处。
+PLAN_AT_FIVE_KINDS = 99154
+FOUR_KIND_PLAN = 99122
 
 BASE_KWARGS = {
     "region_sizes": (64, 48),
@@ -61,21 +64,35 @@ def _literal_width_hits(source: str) -> list[int]:
     raise AssertionError(f"找不到 {PLAN_FUNCTION} 的定义，扫描面不能静默为空")
 
 
-def test_plan_value_is_untouched_by_the_derivation() -> None:
+def test_plan_value_follows_the_vocabulary_by_exactly_one_readout_row() -> None:
     config = TaijiConfig(**BASE_KWARGS)
-    assert config.planned_active_parameter_count == PLAN_AT_FOUR_KINDS
-    assert Taiji(config).parameter_count() == PLAN_AT_FOUR_KINDS
+    assert config.planned_active_parameter_count == PLAN_AT_FIVE_KINDS
+    assert Taiji(config).parameter_count() == PLAN_AT_FIVE_KINDS
+    # 两档历史读数之间的差必须能被"一枚读出行的宽度"解释——这是恒等式，不是新的魔法数。
+    readout_width = min(config.memory_readout_fan_in, config.memory_meta_dim)
+    assert PLAN_AT_FIVE_KINDS - FOUR_KIND_PLAN == readout_width, (
+        PLAN_AT_FIVE_KINDS,
+        FOUR_KIND_PLAN,
+        readout_width,
+    )
 
 
 def test_plan_follows_the_vocabulary_and_still_equals_the_allocation(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
+    """再加一枚（合成词表）⇒ 规划数涨幅恰＝一枚读出行宽度，且规划数与实参仍相等。
+
+    这一支刻意**不写死枚数**：它取当前默认词表再加一个探针用的假来源，
+    所以无论词表以后是 5 枚还是 6 枚，它测的都是"公式跟着枚数走"这件事本身。
+    """
+
     config = TaijiConfig(**BASE_KWARGS)
     readout_width = min(config.memory_readout_fan_in, config.memory_meta_dim)
     before = config.planned_active_parameter_count
+    wider = (*config_module.EPISODIC_PROVENANCE_KINDS, "probe_one_more_source")
 
-    monkeypatch.setattr(config_module, "EPISODIC_PROVENANCE_KINDS", KINDS5)
-    monkeypatch.setattr(EpisodicField, "PROVENANCE_KINDS", KINDS5)
+    monkeypatch.setattr(config_module, "EPISODIC_PROVENANCE_KINDS", wider)
+    monkeypatch.setattr(EpisodicField, "PROVENANCE_KINDS", wider)
 
     widened_config = TaijiConfig(**BASE_KWARGS)
     assert widened_config.planned_active_parameter_count - before == readout_width, (
