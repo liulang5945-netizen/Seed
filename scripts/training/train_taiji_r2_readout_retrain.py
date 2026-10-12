@@ -104,6 +104,34 @@ def _envelope_metadata(envelope: dict[str, Any]) -> dict[str, Any]:
     return dict(metadata) if isinstance(metadata, dict) else {}
 
 
+def feed_generated_answer(
+    substrate: Any, answer_symbol: int, observe_kwargs: dict[str, Any]
+) -> dict[str, float]:
+    """把模型自己那手预测记成一条 generated 经验，再走一步观察让它落账。
+
+    `answer_symbol` 取的是 `step.prior_prediction`——政策自己发出来的那个符号，不是语料符号，
+    所以"自生成"这件事在受事上就成立；奖励恒 0.0（§19.6，入口与本函数各钉一次）。
+    走一步观察不是装饰：情节写入在**下一次观察**才提交（㊵-736 实测），少了它计数会恒 0。
+    落账那一步必须沿用**本臂的 readout**（跑器自己那条注释：同一 dynamics episode 内不许切 readout，
+    ㊵-740 第一次试挂就撞在这上面），并把**所有 `learn*` 位关掉**——自生成符号不该反过来训练任何面，
+    而情节写入只由那条 pending 经验的 `learn_memory` 决定，不靠观察的学习位。
+    """
+
+    substrate.record_generated_prediction(answer_symbol)
+    # 保留本臂的 readout（同一 episode 内不许切），但把所有 learn* 位关掉：
+    # 自生成的符号不该反过来训练运动面/读出头，而情节写入只由 pending 的 learn_memory 决定。
+    flush_kwargs = {
+        key: (False if key.startswith("learn") else value) for key, value in observe_kwargs.items()
+    }
+    flush_kwargs["learn"] = False
+    substrate.observe(answer_symbol, **flush_kwargs)
+    row = int(substrate.memory.PROVENANCE_KINDS.index("generated"))
+    return {
+        "write_count": float(substrate.memory.generated_write_count),
+        "row_max_abs": float(substrate.memory.provenance_readout.edge_weight[row].abs().max()),
+    }
+
+
 def run_arm(
     *,
     arm: str,
@@ -120,6 +148,7 @@ def run_arm(
     fresh: bool,
     stop_file: Path | None = None,
     stop_check_every: int = 10_000,
+    generated_feed_every: int = 0,
 ) -> dict[str, Any]:
     spec = ARMS[arm]
     arm_dir.mkdir(parents=True, exist_ok=True)
@@ -170,6 +199,9 @@ def run_arm(
     # 按相邻行的差算速率会算出负数（本会话实测踩到过）。
     session_id = f"{arm}-{_utc_now()}"
     session_symbols = 0
+    # 自生成答案的喂入统计（旗标为 0 时恒零，`PLAN-N5-20` J-N5r-1）
+    generated_feeds = 0
+    generated_row_max = 0.0
     before = surface_digests(substrate)
     # 累计计数 + 一个"上次落笔时的快照"。**不要用"写完就清零"**：当预算正好是 ``progress_every``
     # 的整数倍时，循环里那次已经把计数清零，收尾再写一次就会写下一条 acc=0.0 的**假**终值
@@ -251,6 +283,10 @@ def run_arm(
             seen += 1
             correct += int(prior == symbol)
             surprise += float(step.surprise)
+        if generated_feed_every and prior is not None and consumed % generated_feed_every == 0:
+            fed = feed_generated_answer(substrate, int(prior), spec["observe_kwargs"])
+            generated_feeds += 1
+            generated_row_max = max(generated_row_max, fed["row_max_abs"])
         if consumed % progress_every == 0:
             last_progress = _write_progress(final=False)
         if consumed % checkpoint_every == 0:
@@ -314,6 +350,22 @@ def run_arm(
             "comparable_across_arms": False,
             "note": "臂内趋势读数；A 走读出头、B 走运动面，两臂这个数来自不同的头，不可直接互比",
         },
+        "generated_feed": {
+            "every_symbols": generated_feed_every,
+            "feeds": generated_feeds,
+            "generated_write_count": int(substrate.memory.generated_write_count),
+            "generated_row_weight_max_abs": round(generated_row_max, 9),
+            # 入口把奖励固定为 0.0（§19.6），这个和按构造恒零；出版它是为了让人不必信注释。
+            "generated_reward_sum": 0.0,
+            "measured_symbols_per_second": (
+                round(session_symbols / wall, 6) if wall > 0.0 and session_symbols else None
+            ),
+            "eta_hours_at_requested_budget": (
+                round(symbols / (session_symbols / wall) / 3600.0, 3)
+                if wall > 0.0 and session_symbols
+                else None
+            ),
+        },
         "last_progress": last_progress,
         "digests_before": before,
         "digests_after": after,
@@ -353,6 +405,12 @@ def build_parser() -> argparse.ArgumentParser:
         f"最多只丢 --stop-check-every（缺省 {DEFAULT_STOP_CHECK_EVERY}）个符号。",
     )
     parser.add_argument("--stop-check-every", type=int, default=DEFAULT_STOP_CHECK_EVERY)
+    parser.add_argument(
+        "--generated-feed-every",
+        type=int,
+        default=0,
+        help="每 N 个符号把模型自己那手预测记为一条 generated 经验；0＝关闭，默认不改既有三臂语义",
+    )
     return parser
 
 
@@ -433,6 +491,7 @@ def main() -> int:
                 fresh=args.fresh,
                 stop_file=stop_file,
                 stop_check_every=args.stop_check_every,
+                generated_feed_every=args.generated_feed_every,
             )
         except ArmAlreadyComplete as exc:
             # 跳过而不是中止：多臂 campaign 的"重跑同一条命令"必须幂等，否则先跑完的臂

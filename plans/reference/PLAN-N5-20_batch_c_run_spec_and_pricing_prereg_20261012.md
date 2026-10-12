@@ -72,3 +72,33 @@
   若 `J-N5r-5` 红 ⇒ 收回"长跑件可复算"，批次 B 先修载入形状。
 * **发表资格前置**：本件全绿之前，「`generated` 已长出权重」不许说；全绿之后，短程读数只授权**方向**；
   任何**幅度**主张必须来自批次 C 的真长跑，且写清是哪两臂、哪张面、什么预算。
+
+
+## §7 挂接落地与两条形状更正（2026-10-12 ㊵-740；§1–§6 原文一字不动）
+
+* **§1 第 2 句按字面走不通**：冻的入口 `record_generated_answer(...)` 骑在 `settle_action` 上，而 A 臂（读出头）
+  整段循环从不 `act()`，于是"喂完之后照现有节奏走一步"之前先缺那枚 pending 动作——㊵-739 因此退回半截跑器并
+  登记 DEBT-G117。六裁⑴ 选甲＝新增**无动作**入口 `record_generated_prediction(...)`，挂接改调它。
+  这不是放松：§1 第 2 句的两条硬约束（只调产品入口、不许在跑器里自己拼情节 payload 或直调 `EpisodicField.write(`）
+  照旧成立，`G-N5r-1` 现读仍为 0。
+* **挂接撞到的三处产品约束**（全是响亮错，没有一处静默）：①`act()` 要求先有一次动作读出的观察（A 臂没有）；
+  ②同一段活动动力学回合内不许切换读出 ⇒ 喂入后的那一步必须沿用**该臂自己的** `readout`；
+  ③`learn_predictive_readout` 要求 `learn=True` ⇒ 落账那一步把全部 `learn*` 键置假、只保留 `readout`，
+  也就是"喂入自己不动学习面"。契约册
+  `test_the_flush_keeps_the_arms_readout_and_turns_every_learn_off` 钉的就是②③两支。
+* **第一次双臂出数**（本次实测；同一 base `checkpoints/seed_a31self_with_circuit.pt`、
+  摘要 `d6169a358eaee6d194d4795e3167a7bcbb42dfde57b92aa1199bcebbed89699b`、同臂 A、`--symbols 400`、
+  `--skip-symbols 11199800`，两跑只差 `--generated-feed-every` 0 对 50）：
+  对照臂 `feeds=0`、`generated_write_count=0`、`generated_row_weight_max_abs=0.0`、245.075859 符号/秒；
+  治疗臂 `every_symbols=50`、`feeds=8`、`generated_write_count=8`、`generated_row_weight_max_abs=0.276523322`、
+  `generated_reward_sum=0.0`、206.739309 符号/秒。⇒ **`J-N5r-1` 真、`J-N5r-2` 两半都真（被走到＋那一行长出了权重）、
+  `J-N5r-4` 成立**；`J-N5r-5` 未测（它要的是真长跑落件，临时件不入册，所以本件现状＝四支有值＋一支未测）。
+* **`J-N5r-3` 冻错了一枚键名**（新登 DEBT-G118）：件里要 `measured_ticks_per_second`，跑器原生出版的是
+  `measured_symbols_per_second`（该跑器的预算旋钮是 `--symbols`）。本次两臂在同一窗口里 `symbols_consumed` 与
+  `absolute_tick` 同为 400，数值口径不因此改变，但"该键存在"这一半按字面为假，不许蒙过去。
+* **定价只认治疗臂**：19 h ≈ 206.739309 × 68 400 ≈ **1.41×10⁷ 符号**；12 h ≈ **8.93×10⁶ 符号**。
+  ㊵-739 那枚 248.552647 与本次对照臂 245.075859 相差 1.4%，只有两个样本，所以两臂速率之差（−15.6%）
+  **不许**被说成"喂入的代价"；它在这里只被当作定价的保守除数。§6 那句"任何幅度主张必须来自批次 C 的真长跑"
+  仍然有效——以上是速率，不是能力。
+* **§1 第 1 句的"只有一个新旗标"仍然成立**：`ARMS` 未增未改、续跑守护判定未改，新键只进 `run_report.json`
+  的 `generated_feed` 自述块（`G-N5r-2` 现读：`progress.jsonl` 每行仍带 `session_id`，既有必需键一枚没被挤掉）。

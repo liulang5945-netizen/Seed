@@ -204,23 +204,54 @@ def test_the_entry_reuses_the_existing_settle_chain() -> None:
     assert "write" in negative and "settle_action" not in negative
 
 
-def test_the_generated_label_has_exactly_one_write_side_home() -> None:
-    """G-N5q-1：`provenance=generated` 作为实参在产品码里只能出现一次（就是这条入口）。"""
+def _generated_calls_inside_entries(source: str) -> tuple[int, int]:
+    """返回（全文里把 provenance 写成 generated 实参的次数，其中住在 record_generated_* 体内的次数）。"""
 
-    total = 0
-    homes = []
+    tree = ast.parse(source)
+    total = _generated_keyword_calls(source)
+    inside = 0
+    for node in ast.walk(tree):
+        if isinstance(node, ast.FunctionDef) and node.name.startswith("record_generated_"):
+            inside += _generated_calls_inside(node)
+    return total, inside
+
+
+def _generated_calls_inside(node: ast.AST) -> int:
+    hits = 0
+    for child in ast.walk(node):
+        if not isinstance(child, ast.Call):
+            continue
+        for keyword in child.keywords:
+            if keyword.arg == "provenance" and getattr(keyword.value, "value", None) in {
+                GENERATED_LITERAL
+            }:
+                hits += 1
+    return hits
+
+
+def test_the_generated_label_lives_only_inside_the_producer_entries() -> None:
+    """G-N5q-1（㊵-740 按六裁⑴ 改形的版本）：赋值处从「恰好一处」改成「每一处都必须在入口体内」。
+
+    原冻形是 `total == 1`；六裁⑴ 选了甲——再加一条**无动作**入口，于是合法赋值变成两处。
+    这里不放松成「≤2」或「数一下就行」，而是换成更强的形状判据：全文命中数必须**等于**
+    位于 `record_generated_*` 函数体内的命中数。任何把该标签写到别处的改动都会让它不相等。
+    """
+
+    pairs = []
     for name in _tracked_product_sources():
         source = (PROJECT_ROOT / name).read_text(encoding="utf-8", errors="replace")
-        hits = _generated_keyword_calls(source)
-        if hits:
-            homes.append(name)
-        total += hits
-    assert total == 1, homes
+        total, inside = _generated_calls_inside_entries(source)
+        if total:
+            pairs.append((name, total, inside))
+    assert pairs, "扫描面里一个赋值都没有，producer 就没人调用"
+    assert all(total == inside for _, total, inside in pairs), pairs
+    assert sum(total for _, total, _ in pairs) == 2, pairs
 
     fabricated = (
-        "def a():\n"
-        '    settle(0.0, provenance="generated")\n'
-        "def b():\n"
-        '    settle(0.0, provenance="generated")\n'
+        "def record_generated_answer(self):\n"
+        '    return settle(0.0, provenance="generated")\n'
+        "def somewhere_else(model):\n"
+        '    return model.settle_action(1.0, provenance="generated")\n'
     )
-    assert _generated_keyword_calls(fabricated) == 2
+    total, inside = _generated_calls_inside_entries(fabricated)
+    assert (total, inside) == (2, 1), (total, inside)

@@ -2664,6 +2664,36 @@ class Taiji:
             provenance="generated",
         )
 
+    def record_generated_prediction(
+        self,
+        answer_symbol: int,
+        *,
+        memory_learning_scale: float = 1.0,
+        memory_learning_targets: str = "all",
+    ) -> None:
+        """Queue a *no-action* self-generated experience: the symbol this model emitted, reward ``0.0``.
+
+        ``record_generated_answer`` has to ride ``settle_action`` and therefore needs a pending
+        action -- which the readout-retrain arms never create (㊵-739).  This entry puts the same
+        ``PendingExperience`` on the state instead; the episodic write still happens at the single
+        existing call site inside ``observe``, so there is deliberately no second write path.
+        """
+
+        if self._state.pending_action is not None or self._state.pending_experience is not None:
+            raise RuntimeError("a generated prediction needs a quiet pending state")
+        validate_episodic_learning_target("memory_learning_targets", memory_learning_targets)
+        self._state.pending_experience = PendingExperience(
+            tick=int(self._state.tick),
+            action_symbol=int(answer_symbol),
+            reward=0.0,
+            cortical_context=self.fabric.cortical_context(self._state.regions).detach().clone(),
+            episode_id=self._state.episode_id,
+            provenance="generated",
+            learn_memory=True,
+            memory_learning_scale=float(memory_learning_scale),
+            memory_learning_targets=memory_learning_targets,
+        )
+
     @torch.no_grad()
     def consolidate(
         self,
