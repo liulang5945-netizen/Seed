@@ -60,6 +60,10 @@ class EpisodicReplay:
     accepted: bool
 
 
+#: 来源归一时给"还没被写过的行"准备的对数值：`exp(-inf)=0`，所以它拿不到任何概率质量。
+BLANK_PROVENANCE_LOGIT = float("-inf")
+
+
 class EpisodicField:
     """Sparse autoassociative population with local three-factor writes."""
 
@@ -285,6 +289,22 @@ class EpisodicField:
         code[index] = 1.0
         return code
 
+    def _normalized_provenance(self, logits: torch.Tensor) -> torch.Tensor:
+        """Normalize over the sources that exist yet: a blank row must not take probability mass.
+
+        A provenance row whose weights are all zero has never been written (``_blank_readout``
+        starts every row blank, and widening pads new rows with zeros), so leaving it in the
+        softmax denominator would hand a never-used source a share of the belief -- and would
+        make widening the source vocabulary change the behavior of already-trained checkpoints.
+        When nothing has been written at all, the mask would be empty, so that case falls back
+        to the plain softmax instead of dividing by zero.
+        """
+
+        live = self.provenance_readout.edge_weight.abs().amax(dim=1) > 0.0
+        if not bool(live.any()):
+            return torch.softmax(logits, dim=0)
+        return torch.softmax(torch.where(live, logits, BLANK_PROVENANCE_LOGIT), dim=0)
+
     def _activate(
         self,
         drive: torch.Tensor,
@@ -418,10 +438,8 @@ class EpisodicField:
             cortical_feedback = torch.zeros(self.config.cortical_context_dim, device=self.device)
             time_code = torch.zeros(self.config.memory_time_dim, device=self.device)
             episode_code = torch.zeros(self.config.memory_episode_dim, device=self.device)
-            provenance_probabilities = torch.full(
-                (len(self.PROVENANCE_KINDS),),
-                1.0 / len(self.PROVENANCE_KINDS),
-                device=self.device,
+            provenance_probabilities = self._normalized_provenance(
+                torch.zeros(len(self.PROVENANCE_KINDS), device=self.device)
             )
             expected_reward = 0.0
             confidence = 0.0
@@ -780,8 +798,8 @@ class EpisodicField:
                 learning_rate=identity_rate,
                 weight_decay=self.config.synapse_decay,
             )
-            provenance_error = provenance_code - torch.softmax(
-                self.provenance_readout.forward(context), dim=0
+            provenance_error = provenance_code - self._normalized_provenance(
+                self.provenance_readout.forward(context)
             )
             self.provenance_readout.local_update(
                 provenance_error,
@@ -919,7 +937,9 @@ class EpisodicField:
         )
         action_probabilities = torch.softmax(self.action_readout.forward(context), dim=0)
         outcome_probabilities = torch.softmax(self.outcome_readout.forward(context), dim=0)
-        provenance_probabilities = torch.softmax(self.provenance_readout.forward(context), dim=0)
+        provenance_probabilities = self._normalized_provenance(
+            self.provenance_readout.forward(context)
+        )
 
         clock_norm = self_clock.norm().clamp_min(1e-8)
         recalled_norm = time_code.norm().clamp_min(1e-8)
