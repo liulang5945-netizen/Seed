@@ -18,6 +18,7 @@ import torch
 
 from .config import (
     EPISODIC_EVENT_COMPONENTS,
+    EPISODIC_PROVENANCE_KINDS,
     TaijiConfig,
     validate_episodic_learning_target,
 )
@@ -62,7 +63,7 @@ class EpisodicReplay:
 class EpisodicField:
     """Sparse autoassociative population with local three-factor writes."""
 
-    PROVENANCE_KINDS = ("experienced", "imagined", "replayed", "external")
+    PROVENANCE_KINDS = EPISODIC_PROVENANCE_KINDS
 
     def __init__(
         self,

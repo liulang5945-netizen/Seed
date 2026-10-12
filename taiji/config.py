@@ -19,6 +19,9 @@ EPISODIC_EVENT_COMPONENTS = (
     "provenance",
 )
 DEFAULT_EPISODIC_EVENT_COMPONENT_GAINS = (1.0,) * len(EPISODIC_EVENT_COMPONENTS)
+#: Canonical episodic source vocabulary.  ``planned_active_parameter_count`` below reserves one
+#: readout row per entry, so widening the vocabulary must not require editing a literal width.
+EPISODIC_PROVENANCE_KINDS = ("experienced", "imagined", "replayed", "external")
 EPISODIC_LEARNING_TARGETS = (
     "all",
     "association",
@@ -877,7 +880,7 @@ class TaijiConfig:
             + self.cortical_context_dim
             + self.memory_time_dim
             + self.memory_episode_dim
-            + 4
+            + len(EPISODIC_PROVENANCE_KINDS)
         )
         memory = self.memory_units * min(self.memory_fan_in, self.memory_units - 1)
         memory += readout_outputs * readout_width
