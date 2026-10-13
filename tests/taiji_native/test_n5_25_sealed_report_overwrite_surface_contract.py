@@ -176,6 +176,44 @@ def test_this_instrument_follows_its_own_rule(tmp_path: Path, monkeypatch) -> No
     assert module.main() == 0
 
 
+def test_a_write_through_the_shared_writer_still_counts_as_a_write_target() -> None:
+    """㊵-790 的成对两支：统一落盘助手（`report_io.write_text_report(target, …)`）**必须**被认成
+    "把 target 当写靶用过"——否则 DEBT-G115 修法③ 每迁一台仪器就从本件的识别面上抹掉一个写靶，
+    等于我自己把这道暴露门弄瞎。反面对照同册：只绑字面路径、走 `read_text` 的不算（那是读数件常量）。
+    """
+
+    module = _load()
+    via_helper = (
+        "import _taiji_report_io as report_io\n"
+        'target = "reports/sealed.json"\n'
+        "def run(text):\n"
+        "    report_io.write_text_report(target, text)\n"
+    )
+    assert "target" in module._written_names(ast.parse(via_helper))
+    category, _ = module.classify(ast.parse(via_helper), via_helper)
+    assert category == "no_refusal_found", category
+    #: 本件"看得见落点"的形式是**字面字符串**（或 argparse 的 default）。
+    #: 拼串那一形（`PROJECT_ROOT / "reports" / "x.json"`）今天看不见——这是**先于统一助手就存在**的盲点，
+    #: ㊵-790 把它钉在下面这条断言里：谁哪天扩了识别面，这一支会红并提醒他把 37 这个下界改口。
+    assert module._literal_target_names(ast.parse(via_helper)) == {
+        "target": ["reports/sealed.json"]
+    }
+    joined = (
+        "from pathlib import Path\nimport _taiji_report_io as report_io\n"
+        'PROJECT_ROOT = Path(".")\n'
+        'target = PROJECT_ROOT / "reports" / "sealed.json"\n'
+        "def run(text):\n    report_io.write_text_report(target, text)\n"
+    )
+    assert "target" in module._written_names(ast.parse(joined))
+    assert module._literal_target_names(ast.parse(joined)) == {}
+
+    read_only = via_helper.replace(
+        "    report_io.write_text_report(target, text)\n",
+        '    return (target.read_text(encoding="utf-8"), "reports/sealed.json")\n',
+    )
+    assert "target" not in module._written_names(ast.parse(read_only))
+
+
 def test_the_errors_keyword_is_not_a_refusal() -> None:
     #: 2026-10-13 现查的假护栏：v1 用"渲染后找子串"，`errors='replace'` 里的 `errors=` 命中了 `error`，
     #: 于是 `measure_taiji_n2_06_write_contract_values.py` 被读成"写前拒绝"，而它其实会直接覆写在册件。

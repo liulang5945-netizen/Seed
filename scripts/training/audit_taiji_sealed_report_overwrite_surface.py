@@ -39,7 +39,8 @@ from datetime import UTC, datetime
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
-REPORT_FORMAT = "taiji-sealed-report-overwrite-surface-v2"
+#: ㊵-790：写靶识别面**变宽**（统一落盘助手的两个入口也算写入）⇒ 按"识别边界变了就升版"的规矩走 v3。
+REPORT_FORMAT = "taiji-sealed-report-overwrite-surface-v3"
 WRITE_TARGET_FLAGS = {"out", "report", "arm-report", "out-report"}
 #: 字面路径里出现这个前缀才算"落盘到读数件面"（第二张面的判据之一）。
 REPORT_MARKER = "reports/"
@@ -47,6 +48,11 @@ OVERRIDE_FLAGS = ("--overwrite", "--force")
 CATEGORY_REFUSE_ONLY = "refusal_without_override_flag"
 CATEGORY_REFUSE_WITH_FLAG = "refusal_with_override_flag"
 CATEGORY_NONE = "no_refusal_found"
+
+
+#: 统一落盘助手的两个写入口（`scripts/training/_taiji_report_io.py`）。它们与 `write_text` 等价地
+#: "把一个变量当写靶用过"——不认它们，修法③ 每迁一台仪器就从本件面上少一个写靶。
+SHARED_WRITER_CALLS = ("write_text_report", "write_json_report")
 
 
 def _tracked(root: Path) -> list[str]:
@@ -197,13 +203,25 @@ def _literal_target_names(tree: ast.Module) -> dict[str, list[str]]:
 
 
 def _written_names(tree: ast.Module) -> set[str]:
-    """被**当写靶用过**的变量名。只绑过字面路径而没往里写的不算（那是读数件常量或读检查）。"""
+    """被**当写靶用过**的变量名。只绑过字面路径而没往里写的不算（那是读数件常量或读检查）。
+
+    ㊵-790：统一落盘助手（DEBT-G115 修法③，`_taiji_report_io.py`）把写入从 `x.write_text(...)`
+    收进 `report_io.write_text_report(x, ...)`——**如果这里只认 `write_text`，迁移一台仪器就从本件的
+    识别面上抹掉一个写靶**，暴露面会被自己主导的收口动作悄悄缩小。故助手那两个名字同样算写入。
+    """
 
     names: set[str] = set()
     for node in ast.walk(tree):
         if not isinstance(node, ast.Call):
             continue
         func = node.func
+        called = getattr(func, "attr", None) or (func.id if isinstance(func, ast.Name) else "")
+        if called in SHARED_WRITER_CALLS and node.args:
+            #: 助手的第一个参数就是写靶；`report_io` 这个接收者本身不是靶。
+            name = _base_name(node.args[0])
+            if name:
+                names.add(name)
+            continue
         if isinstance(func, ast.Attribute) and func.attr in ("write_text", "write_bytes"):
             name = _base_name(func.value)
             if name:
