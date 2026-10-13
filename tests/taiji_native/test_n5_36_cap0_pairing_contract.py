@@ -85,6 +85,7 @@ def _report(
     git_head: str = "h" * 40,
     chain: dict | None = None,
     trained: bool = False,
+    discipline: list | None = None,
 ) -> Path:
     payload = {
         "format": "taiji-cap0-baseline-v1",
@@ -101,7 +102,7 @@ def _report(
             if chain is not None
             else {"relax_legacy_guard": False, "constrained_decode": False}
         ),
-        "scoring_discipline": list(DISCIPLINE),
+        "scoring_discipline": list(discipline) if discipline is not None else list(DISCIPLINE),
         "dimensions": dimensions,
         "min_lines": {"C": 0.7},
     }
@@ -117,6 +118,8 @@ def _arm_pair(
     control_eval_sha: str = "e" * 64,
     control_chain: dict | None = None,
     control_git_head: str = "h" * 40,
+    control_discipline: list | None = None,
+    control_trained: bool = False,
     stem: str = "pair",
 ) -> tuple[Path, Path]:
     treated = _report(tmp_path / f"{stem}-t.json", dimensions=treated_dims, checkpoint_sha="a" * 64)
@@ -127,6 +130,8 @@ def _arm_pair(
         eval_set_sha=control_eval_sha,
         chain=control_chain,
         git_head=control_git_head,
+        discipline=control_discipline,
+        trained=control_trained,
     )
     return treated, control
 
@@ -286,6 +291,74 @@ def test_a_commit_between_the_two_cap_runs_kills_the_pairing(tmp_path: Path) -> 
     assert payload["direction"] == "pairing_invalid"
     assert payload["failing_verdicts"] == ["git_head_equal"]
     assert payload["pairing"]["git_head_equal"] is False
+
+
+def test_a_scoring_discipline_difference_is_a_pairing_failure(tmp_path: Path) -> None:
+    #: ㊵-799 枚举：这台仪器的资格面有七枚键，但契约册原先只钉得住四枚。
+    #: 评分口径不同＝两臂根本没在同一把尺上，方向词不许出版。
+    treated, control = _arm_pair(
+        tmp_path,
+        {"C": _dimension(_scores("C", TREATED_C))},
+        {"C": _dimension(_scores("C", CONTROL_C))},
+        control_discipline=list(DISCIPLINE) + ["another-discipline"],
+        stem="disc",
+    )
+    rc, payload = _run(tmp_path, treated, control, "disc.json")
+    assert rc == 1
+    assert payload["verdict"] == "rejected"
+    assert payload["direction"] == "pairing_invalid"
+    assert payload["failing_verdicts"] == ["scoring_discipline_equal"]
+
+
+def test_an_arm_that_trained_during_eval_cannot_be_paired(tmp_path: Path) -> None:
+    #: 评测中途又训了的臂，它的读数不再来自那枚检查点——两臂里任意一枚中招都作废。
+    treated, control = _arm_pair(
+        tmp_path,
+        {"C": _dimension(_scores("C", TREATED_C))},
+        {"C": _dimension(_scores("C", CONTROL_C))},
+        control_trained=True,
+        stem="trained",
+    )
+    rc, payload = _run(tmp_path, treated, control, "trained.json")
+    assert rc == 1
+    assert payload["failing_verdicts"] == ["neither_arm_trained_during_eval"]
+    assert payload["pairing"]["neither_arm_trained_during_eval"] is False
+
+
+def test_a_dimension_carried_by_only_one_arm_breaks_the_pairing_set(tmp_path: Path) -> None:
+    #: 维度集合不齐＝那一维根本没有对照。仪器把差集出版出来（`only_in_one_arm`），
+    #: 但判据方向不许继续算。
+    extra = _dimension(_scores("D", [1, 1, 0, 0, 0, 0, 0, 0]), name="简单指令与推理")
+    treated, control = _arm_pair(
+        tmp_path,
+        {"C": _dimension(_scores("C", TREATED_C)), "D": extra},
+        {"C": _dimension(_scores("C", CONTROL_C))},
+        stem="dimset",
+    )
+    rc, payload = _run(tmp_path, treated, control, "dimset.json")
+    assert rc == 1
+    assert payload["failing_verdicts"] == ["dimension_sets_equal"]
+    assert payload["only_in_one_arm"] == {"treated": ["D"], "control": []}
+
+
+def test_a_dimension_error_is_a_pairing_failure_not_a_quiet_skip(tmp_path: Path) -> None:
+    #: 一维带 `error` 时不许"少比一维"混过去。这里不断言 `failing_verdicts` 的**精确**集合：
+    #: 出错那维同时会掉出可判维度，多一枚 `at_least_one_eligible_dimension` 是合法形状——
+    #: 断言精确集会替仪器下更严的结论（㊵-799 实测只保证点名键必在）。
+    bad = _dimension(_scores("C", TREATED_C))
+    bad["error"] = "loader blew up"
+    treated, control = _arm_pair(
+        tmp_path,
+        {"C": bad},
+        {"C": _dimension(_scores("C", CONTROL_C))},
+        stem="dimerr",
+    )
+    rc, payload = _run(tmp_path, treated, control, "dimerr.json")
+    assert rc == 1
+    assert payload["verdict"] == "rejected"
+    assert payload["direction"] == "pairing_invalid"
+    assert "no_dimension_errors" in payload["failing_verdicts"]
+    assert payload["pairing"]["no_dimension_errors"] is False
 
 
 def test_a_chain_flag_difference_is_a_pairing_failure(tmp_path: Path) -> None:
