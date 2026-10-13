@@ -23,17 +23,21 @@ import json
 import re
 import subprocess
 import sys
+from collections.abc import Callable
 from pathlib import Path
 from typing import Any
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
-REPORT_FORMAT = "taiji-ledger-cited-reports-tracked-v3"
+REPORT_FORMAT = "taiji-ledger-cited-reports-tracked-v4"
 #: 带核验的更名登记表（DEBT-G134 的最后一格）：文档里的**旧件名**指向的现行件必须在索引面里，
 #: 否则那条映射不作数——映射不是消音器，它自己也要被复核。
 DEFAULT_SUPERSEDE_MAP = "plans/manifests/rename_superseded_reports.json"
 #: 扩展名边界必须钉住：`…\.json` 不加负向预查会把 `reports/x.jsonl` 截断成一枚"叫 x.json 的缺件"。
 #: 第一版就因此报了 5 枚"盘上也没有"，其中 4 枚是 `.jsonl`（`㊵-575` 当年正是把两枚 JSONL 逐字节复制进 `reports/`）。
 CITE_RE = re.compile(r"reports/[A-Za-z0-9_.\-]+\.json(?![A-Za-z0-9])")
+#: 文档里用来**指定写靶**的旗标（㊵-792 v4）。`--out-report` 之外，`--report` 在评测器里既是写靶
+#: 也是读源——所以这条只把"今天还不在仓里的件"判成计划中的输出，见 `_classify` 的 docstring。
+OUTPUT_FLAG_MARKERS = ("--out-report", "--report", "--adjudication-report", "--health-report")
 READING_LIMIT = (
     "本件只回答一个问题：文档里点名的读数件，仓里到底有没有。它不判读数的对错，"
     "也不判引用是否恰当——一枚在册但已被更正作废的件照样算『在册』。"
@@ -74,12 +78,20 @@ def _citations(rel_paths: list[str]) -> dict[str, list[str]]:
     return found
 
 
-def _classify(cited: dict[str, list[str]], texts: dict[str, str]) -> dict[str, list[str]]:
+def _classify(
+    cited: dict[str, list[str]], texts: dict[str, str], known: Callable[[str], bool]
+) -> dict[str, list[str]]:
     """点名的件分三桶——不拆开就会把"还没跑的输出"当成"丢了的证据"。
 
     * `malformed`＝写作 `reports/...json` 这种省略形，它不是件名，是**引用写法不合规**（该修文档）。
     * `planned_output`＝上文里出现 `--out-report`，即文档在说"将来落到这个件"，今天不存在是正常的。
     * `cited_as_reading`＝其余，＝被当作**已有读数**引用；这一桶才归本件判。
+
+    v4（2026-10-13 ㊵-792）把"输出旗标"从只认 `--out-report` 扩到本仓实际用来**指定写靶**的那几个旗标
+    （`--report`／`--adjudication-report`／`--health-report`），但**加了一条合取**：只有当这枚件
+    今天既不在索引也不在盘上时才落 `planned_output`。理由＝交接文档会逐字写出将来要落的输出件，
+    不认这些旗标就会把"还没跑的输出"报成丢证据；而 `--report` 同一枚旗标也被用来**读**已有件
+    （工作表/复算模式），所以"件已在册"时必须照旧判——否则这条放宽就成了让普查仪闭嘴的后门。
     """
 
     buckets: dict[str, list[str]] = {"malformed": [], "planned_output": [], "cited_as_reading": []}
@@ -98,11 +110,19 @@ def _classify(cited: dict[str, list[str]], texts: dict[str, str]) -> dict[str, l
                     break
                 contexts.append(text_[max(0, at - 90) : at])
                 start = at + 1
-        if contexts and all("--out-report" in item for item in contexts):
-            buckets["planned_output"].append(name)
+        if contexts and all(_has_output_flag(item) for item in contexts):
+            #: 只有"今天还不在仓里"的输出旗标提及才算计划中的输出；已在册的照旧判，见上方 v4 说明。
+            if known(name):
+                buckets["cited_as_reading"].append(name)
+            else:
+                buckets["planned_output"].append(name)
         else:
             buckets["cited_as_reading"].append(name)
     return buckets
+
+
+def _has_output_flag(context: str) -> bool:
+    return any(flag in context for flag in OUTPUT_FLAG_MARKERS)
 
 
 def _supersede_map(
@@ -148,7 +168,9 @@ def build(supersede_map: str = DEFAULT_SUPERSEDE_MAP) -> dict[str, Any]:
         if path.is_file():
             texts[rel] = path.read_text(encoding="utf-8", errors="replace")
     cited = _citations(rel_paths)
-    buckets = _classify(cited, texts)
+    buckets = _classify(
+        cited, texts, lambda name: name in tracked or (PROJECT_ROOT / name).is_file()
+    )
     mapping, unverified = _supersede_map(tracked, supersede_map)
     all_readings = buckets["cited_as_reading"]
     buckets["superseded_citation"] = [n for n in all_readings if n in mapping]

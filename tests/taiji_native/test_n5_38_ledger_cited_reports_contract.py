@@ -40,7 +40,7 @@ def test_the_three_kinds_of_absence_are_split_into_three_buckets() -> None:
             "下一步落盘 `--out-report reports/future.json`。"
         )
     }
-    buckets = CENSUS._classify(cited, texts)
+    buckets = CENSUS._classify(cited, texts, lambda name: False)
     assert buckets["malformed"] == ["reports/...json"]
     assert buckets["planned_output"] == ["reports/future.json"]
     assert buckets["cited_as_reading"] == ["reports/gone.json"]
@@ -52,10 +52,29 @@ def test_a_name_appearing_both_as_reading_and_as_output_stays_a_reading(tmp_path
         "a.md": "读数见 `reports/x.json`",
         "b.md": "--out-report reports/x.json",
     }
-    buckets = CENSUS._classify(cited, texts)
+    buckets = CENSUS._classify(cited, texts, lambda name: False)
     #: 只要有任何一处是"当作已有读数"引用，就不许被"将来会落盘"那一桶赦免。
     assert buckets["cited_as_reading"] == ["reports/x.json"]
     assert buckets["planned_output"] == []
+
+
+def test_the_report_flag_defers_only_a_file_that_is_not_there_yet() -> None:
+    """㊵-792 v4 的两个方向都要钉住。
+
+    交接文档会逐字写出**将来**要落的输出件（评测器用 `--report` 指写靶），只认 `--out-report`
+    就会把"还没跑的输出"报成丢证据；但同一枚 `--report` 旗标也被用来**读**已有件——
+    所以"件已在册"时必须照旧判，否则这条放宽就成了让普查仪闭嘴的后门。
+    """
+
+    cited = {"reports/soon.json": ["plan.md"]}
+    texts = {"plan.md": "`python eval_x.py --report reports/soon.json` 之后再配对"}
+    absent = CENSUS._classify(cited, texts, lambda name: False)
+    assert absent["planned_output"] == ["reports/soon.json"]
+    assert absent["cited_as_reading"] == []
+
+    present = CENSUS._classify(cited, texts, lambda name: True)
+    assert present["cited_as_reading"] == ["reports/soon.json"]
+    assert present["planned_output"] == []
 
 
 def test_citations_are_taken_from_the_named_text_and_not_from_a_reimplemented_scan(
@@ -135,4 +154,4 @@ def test_refuses_to_overwrite_and_writes_lf(tmp_path: Path) -> None:
     assert CENSUS.main(["--out-report", str(out)]) == 2
     assert CENSUS.main(["--out-report", str(out), "--overwrite"]) == 0
     payload: dict[str, Any] = json.loads(out.read_text(encoding="utf-8"))
-    assert payload["format"] == "taiji-ledger-cited-reports-tracked-v3"
+    assert payload["format"] == "taiji-ledger-cited-reports-tracked-v4"

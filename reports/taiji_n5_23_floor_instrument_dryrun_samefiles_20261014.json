@@ -1,0 +1,100 @@
+{
+  "arms": {
+    "batchc_treated": {
+      "status": "completed",
+      "base_checkpoint_sha256": "d6169a358eaee6d194d4795e3167a7bcbb42dfde57b92aa1199bcebbed89699b",
+      "symbols_budget": 8900000,
+      "skip_symbols": 11199800,
+      "fresh": true,
+      "symbols_consumed": 8900000,
+      "feed_every_symbols": 50
+    },
+    "batchc_control": {
+      "status": "completed",
+      "base_checkpoint_sha256": "d6169a358eaee6d194d4795e3167a7bcbb42dfde57b92aa1199bcebbed89699b",
+      "symbols_budget": 8900000,
+      "skip_symbols": 11199800,
+      "fresh": true,
+      "symbols_consumed": 8900000,
+      "feed_every_symbols": 0
+    },
+    "repeat_treated": {
+      "status": "completed",
+      "base_checkpoint_sha256": "d6169a358eaee6d194d4795e3167a7bcbb42dfde57b92aa1199bcebbed89699b",
+      "symbols_budget": 8900000,
+      "skip_symbols": 11199800,
+      "fresh": true,
+      "symbols_consumed": 8900000,
+      "feed_every_symbols": 50
+    },
+    "repeat_control": {
+      "status": "completed",
+      "base_checkpoint_sha256": "d6169a358eaee6d194d4795e3167a7bcbb42dfde57b92aa1199bcebbed89699b",
+      "symbols_budget": 8900000,
+      "skip_symbols": 11199800,
+      "fresh": true,
+      "symbols_consumed": 8900000,
+      "feed_every_symbols": 0
+    }
+  },
+  "floors": {
+    "cumulative_mean_surprise": {
+      "values": {
+        "batchc_treated": 7.292338228651582,
+        "batchc_control": 6.338022402771622,
+        "repeat_treated": 7.292338228651582,
+        "repeat_control": 6.338022402771622
+      },
+      "spread_treated_role": 0.0,
+      "spread_control_role": 0.0,
+      "floor": 0.0,
+      "observed_difference_batchc": 0.9543158258799602,
+      "verdict": "no_spread_unjudged",
+      "unit": "件里那一列的原值；地板＝同角色两两差绝对值取大"
+    },
+    "cumulative_online_accuracy": {
+      "values": {
+        "batchc_treated": 0.2577822761553119,
+        "batchc_control": 0.26236070363603414,
+        "repeat_treated": 0.2577822761553119,
+        "repeat_control": 0.26236070363603414
+      },
+      "spread_treated_role": 0.0,
+      "spread_control_role": 0.0,
+      "floor": 0.0,
+      "observed_difference_batchc": 0.004578427480722236,
+      "verdict": "no_spread_unjudged",
+      "unit": "件里那一列的原值；地板＝同角色两两差绝对值取大"
+    }
+  },
+  "cap": null,
+  "verdicts": {
+    "all_four_arms_at_budget": true,
+    "same_configuration_within_role": true,
+    "floors_formed": true,
+    "any_metric_leaves_its_floor": false
+  },
+  "format": "taiji-n5-23-repeat-arm-noise-floor-v1",
+  "prereg": "plans/reference/PLAN-N5-23_repeat_arm_noise_floor_prereg_20261013.md §2",
+  "reading_limit": "本件只说「同配置再实现一次的散布有多大」与「批次 C 那枚观察差能不能离开那个散布」。它不给能力分数、不给机制、不给因果：幅度句被支持时也只到「离开/未离开散布」，要把差写成主张还得点名是哪两枚件、哪张面、什么预算。",
+  "inputs_as_given": [
+    "output\\n5_20_batchC_treated\\A\\run_report.json",
+    "output\\n5_20_batchC_control\\A\\run_report.json",
+    "output\\n5_20_batchC_treated\\A\\run_report.json",
+    "output\\n5_20_batchC_control\\A\\run_report.json",
+    null,
+    null
+  ],
+  "failing_verdicts": [],
+  "verdict": "holds",
+  "kind": "instrument_dry_run_same_files_doubled",
+  "what_this_proves": [
+    "the four input paths and the run_report loader work end to end on real batch C bytes",
+    "with no independent repeat pair the floor is 0.0, so an observed gap of 0.954 mean_surprise still yields no_spread_unjudged",
+    "the magnitude sentence stays blocked even when the number looks tempting"
+  ],
+  "what_this_is_not": [
+    "not a noise-floor reading: repeat_treated and repeat_control ARE the batch C files, so spread_treated_role and spread_control_role are 0.0 by construction",
+    "do not quote any number from this file as a measurement of arm-to-arm scatter"
+  ]
+}
