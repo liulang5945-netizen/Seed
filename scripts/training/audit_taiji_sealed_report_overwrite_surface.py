@@ -39,6 +39,14 @@ from datetime import UTC, datetime
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
+#: 契约册（`test_n5_25`）按文件路径加载本件、也被起成真子进程，脚本自己那层目录先上 `sys.path`，
+#: 统一落盘助手才解析得到（同㊵-790／802 那条例外约定）。
+SCRIPT_DIR = Path(__file__).resolve().parent
+if str(SCRIPT_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPT_DIR))
+
+import _taiji_report_io as report_io  # noqa: E402
+
 #: ㊵-790：写靶识别面**变宽**（统一落盘助手的两个入口也算写入）⇒ 按"识别边界变了就升版"的规矩走 v3。
 REPORT_FORMAT = "taiji-sealed-report-overwrite-surface-v3"
 WRITE_TARGET_FLAGS = {"out", "report", "arm-report", "out-report"}
@@ -357,10 +365,7 @@ def main() -> int:
     if out.exists() and not args.overwrite:
         print(f"refusing to overwrite an existing report: {out}", file=sys.stderr)
         return 2
-    out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(
-        json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n"
-    )
+    report_io.write_json_report(out, report, newline="\n", overwrite=args.overwrite)
     print(
         json.dumps(
             {
