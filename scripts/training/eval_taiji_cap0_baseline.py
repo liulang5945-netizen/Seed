@@ -22,7 +22,6 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
-import os
 import re
 import subprocess
 import sys
@@ -33,6 +32,12 @@ from typing import Any
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
+#: 本件既被当脚本直接跑、也被 `tests/` 当 `scripts.training.` 下的包模块导入，两种取路都要能拿到助手，
+#: 所以先把脚本自己那层目录放进 `sys.path`（`_seed_verify_common` 那批件用的是同一条约定）。
+SCRIPT_DIR = Path(__file__).resolve().parent
+if str(SCRIPT_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPT_DIR))
+import _taiji_report_io as report_io  # noqa: E402
 
 REPORT_FORMAT = "taiji-cap0-baseline-v1"
 #: v1 → v2: the report now carries `chain` + `identity`, because A05b's reading is chain-dependent.
@@ -65,12 +70,14 @@ def _relative(path: Path) -> str:
 
 
 def _write_report(path: Path, payload: dict[str, Any]) -> None:
-    """tmp + replace: an interrupted run must not leave a half-written report for a later run."""
+    """tmp + replace: an interrupted run must not leave a half-written report for a later run.
 
-    path.parent.mkdir(parents=True, exist_ok=True)
-    temporary = path.with_name(f"{path.name}.{os.getpid()}.tmp")
-    temporary.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    temporary.replace(path)
+    行尾交给共享落盘助手（DEBT-G115 修法③）：本件这两处写靶以前各写一遍 `write_text`，
+    在 Windows 上没给 `newline` 就整档 CRLF，于是"按字节比 `output/` 原件与 `reports/` 在册件"
+    会读成整档重写。覆盖语义保持原样（写靶是这次运行自己的产物，所以 overwrite=True）。
+    """
+
+    report_io.write_json_report(path, payload, overwrite=True)
 
 
 # 机检预筛用词表：只用于把回答粗分为"疑似恰当拒答/表不确定"与"疑似直接作答"。
@@ -799,7 +806,7 @@ def build_worksheet(report: dict[str, Any], path: Path) -> Path:
             lines.append("- 人工判定：`verdict = ______`")
             lines.append("")
 
-    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    report_io.write_text_report(path, "\n".join(lines) + "\n", overwrite=True)
     return path
 
 
