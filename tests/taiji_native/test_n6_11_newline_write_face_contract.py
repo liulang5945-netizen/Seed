@@ -63,7 +63,30 @@ def test_a_site_that_passes_newline_is_not_counted(instrument) -> None:
     """同一把尺必须能数出"没带"，也必须放过"带了"——否则这是一支恒红或恒绿的尺。"""
 
     clean = 'def run(ROOT, data):\n    (ROOT / "reports/x.json").write_text(data, newline="\\n")\n'
-    assert instrument.classify_source(clean) == {"a": [], "b": [], "c": []}
+    assert instrument.classify_source(clean) == {"a": [], "b": [], "c": [], "helper": []}
+
+
+def test_a_write_through_the_shared_helper_lands_only_in_the_helper_bucket(instrument) -> None:
+    """㊵-789 的 E 桶：走统一落盘助手（DEBT-G115 修法③）的写入**天生带行尾参数**，
+    所以它不许进 A／B／C 任何一桶——否则"助手已被采用"会被读成"这里还缺 `newline=`"。
+    反面对照同样必须为假：把方法名抄错（`write_text_repot`）就不算采用，
+    这一支的存在理由就是它能拦住"检测器匹配一切"那种假象。
+    """
+
+    adopted = (
+        "import _taiji_report_io as report_io\n"
+        "def run(p, text):\n"
+        "    report_io.write_text_report(p, text)\n"
+        '    report_io.write_json_report(p, {"a": 1})\n'
+    )
+    buckets = instrument.classify_source(adopted)
+    assert buckets["helper"] == [3, 4], buckets
+    assert buckets["a"] == [] and buckets["b"] == [] and buckets["c"] == []
+
+    typo = "def run(p, text):\n    report_io.write_text_repot(p, text)\n"
+    wrong = instrument.classify_source(typo)
+    assert wrong["helper"] == [], wrong
+    assert wrong["a"] == [] and wrong["b"] == [] and wrong["c"] == []
 
 
 def test_binary_and_read_modes_are_not_text_write_targets(instrument) -> None:
@@ -77,6 +100,7 @@ def test_binary_and_read_modes_are_not_text_write_targets(instrument) -> None:
         "a": [],
         "b": [],
         "c": [],
+        "helper": [],
     }
 
     assert instrument.classify_source(
@@ -85,6 +109,7 @@ def test_binary_and_read_modes_are_not_text_write_targets(instrument) -> None:
         "a": [],
         "b": [],
         "c": [],
+        "helper": [],
     }
     assert instrument.classify_source(
         'def run(p):\n    with open(p, "r") as fh:\n        return fh.read()\n'
@@ -92,6 +117,7 @@ def test_binary_and_read_modes_are_not_text_write_targets(instrument) -> None:
         "a": [],
         "b": [],
         "c": [],
+        "helper": [],
     }
 
 

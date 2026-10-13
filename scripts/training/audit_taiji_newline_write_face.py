@@ -34,7 +34,11 @@ from typing import Any
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 #: ㊵-765：读出面加了 `d_face`（待办收窄那一桶）⇒ 按"面变了就升版"的规矩走 v2；
 #: 同名件的 v1 那份不删，它的历史在 git 里，引用时要点名是哪一版。
-REPORT_FORMAT = "taiji-newline-write-face-v2"
+#: ㊵-789：读出面再加 `helper_face`（DEBT-G115 修法③ 的统一落盘助手被采用了几处）⇒ 同样是面变宽，走 v3。
+#: 助手侧的写入口天生带行尾参数，所以它不参与"缺 `newline=`"这一判定，只出版被采用的次数——
+#: 队列的可度量性靠这一个数，不靠我的叙述。
+HELPER_WRITE_NAMES = ("write_text_report", "write_json_report")
+REPORT_FORMAT = "taiji-newline-write-face-v3"
 DEBT = "DEBT-G115"
 TARGET_MARKER = "reports/"
 TEXT_WRITE_METHODS = ("write_text", "writelines")
@@ -119,11 +123,15 @@ def has_reports_default(tree: ast.AST) -> bool:
 
 def classify_source(source: str) -> dict[str, list[int]]:
     tree = ast.parse(source)
-    buckets: dict[str, list[int]] = {"a": [], "b": [], "c": []}
+    buckets: dict[str, list[int]] = {"a": [], "b": [], "c": [], "helper": []}
     for node in ast.walk(tree):
         if not isinstance(node, ast.Call):
             continue
         called = getattr(node.func, "attr", None) or getattr(node.func, "id", None) or ""
+        if called in HELPER_WRITE_NAMES:
+            #: 走助手的写入：行尾由助手负责，这里只数"被采用了几处"。
+            buckets["helper"].append(node.lineno)
+            continue
         if called in TEXT_WRITE_METHODS:
             pass
         elif called == "open":
@@ -164,6 +172,7 @@ def scan(root: Path, face: str) -> dict[str, Any]:
     a: dict[str, list[int]] = {}
     b: dict[str, list[int]] = {}
     d: dict[str, list[int]] = {}
+    helper: dict[str, list[int]] = {}
     c_sites = 0
     unparsed: list[str] = []
     for name in paths:
@@ -181,6 +190,8 @@ def scan(root: Path, face: str) -> dict[str, Any]:
             if has_reports_default(tree):
                 d[name] = buckets["b"]
         c_sites += len(buckets["c"])
+        if buckets["helper"]:
+            helper[name] = buckets["helper"]
     a_total = sum(len(lines) for lines in a.values())
     verdicts = {
         "face_is_not_empty": bool(paths),
@@ -213,6 +224,16 @@ def scan(root: Path, face: str) -> dict[str, Any]:
         "c_face": {
             "sites": c_sites,
             "note": "写靶认得出但不含 reports/（临时件、output/、他人目录）",
+        },
+        "helper_face": {
+            "sites": sum(len(lines) for lines in helper.values()),
+            "files": {name: helper[name] for name in sorted(helper)},
+            "module": "scripts/training/_taiji_report_io.py",
+            "note": (
+                "经统一落盘助手（DEBT-G115 修法③）写出去的调用。与 D 同理**不入 verdict**："
+                "它数的是「已经被收口到一处」的次数，把它算红等于宣称其余写靶都已收口，"
+                "而 B 桶的逐枚现读正是没做的事。"
+            ),
         },
         "verdicts": verdicts,
         "verdict": "holds" if all(verdicts.values()) else "not_holds",
