@@ -1,0 +1,255 @@
+{
+  "format": "taiji-n5-22-cap0-pairing-v1",
+  "prereg": "plans/reference/PLAN-N5-22_batch_c_capability_pairing_prereg_20261013.md §2",
+  "started_utc": "2026-10-13T10:37:04Z",
+  "inputs_as_given": [
+    "reports/taiji_n5_22_cap0_batch_c_treated_20261013.json",
+    "reports/taiji_n5_22_cap0_batch_c_control_20261013.json"
+  ],
+  "reading_limit": "本件只说「这两份读数能不能配对」与「逐题翻转的方向」；它不说幅度（幅度需同配置重复臂）、不说机制（机制需 DEBT-G131 那台集合差仪）、也不动 B／G 的人工复核面。方向句的引用单位不可拆：必须与 J-N5r-4（配置面单变量）与 J-N5t-1（两臂同流）一起引。",
+  "identity": {
+    "treated_checkpoint_sha256": "1c839f012d6df383ea42b9787d4508d9ebfb4c22bbb23906fba72e3ae378e03f",
+    "control_checkpoint_sha256": "b64fbcd2c1bccb583861adb7da954712df1eaeda3b29da599c3c18523cffa35b",
+    "eval_set_sha256": "538835f6627a87c3faba84dbfd1138b5d8296a5dff37870bd258fdf2a3979c27",
+    "git_head": "639117d6a94ae97237bc1e92cb1e3295a4c223e5"
+  },
+  "pairing": {
+    "eval_set_sha256_equal": true,
+    "git_head_equal": true,
+    "chain_equal": true,
+    "scoring_discipline_equal": true,
+    "neither_arm_trained_during_eval": true,
+    "dimension_sets_equal": true,
+    "no_dimension_errors": true
+  },
+  "pairing_valid": true,
+  "direction": "not_resolved",
+  "direction_margin": 3,
+  "dimensions": [
+    {
+      "dimension": "B",
+      "machine_scored_items": {
+        "treated": 0,
+        "control": 0
+      },
+      "denominators_equal": true,
+      "error_present": {
+        "treated": null,
+        "control": null
+      },
+      "items_in_both_arms": 20,
+      "eligible_items": 0,
+      "excluded_ids": {
+        "not_in_both_arms": [],
+        "load_failed": [],
+        "pending_human_review": [
+          "B01",
+          "B02",
+          "B03",
+          "B04",
+          "B05",
+          "B06",
+          "B07",
+          "B08",
+          "B09",
+          "B10",
+          "B11",
+          "B12"
+        ],
+        "score_missing": []
+      },
+      "excluded_counts": {
+        "not_in_both_arms": 0,
+        "load_failed": 0,
+        "pending_human_review": 20,
+        "score_missing": 0
+      },
+      "flips_treated_only": 0,
+      "flips_treated_only_ids": [],
+      "flips_control_only": 0,
+      "flips_control_only_ids": [],
+      "delta": 0,
+      "enters_verdict": false
+    },
+    {
+      "dimension": "C",
+      "machine_scored_items": {
+        "treated": 14,
+        "control": 14
+      },
+      "denominators_equal": true,
+      "error_present": {
+        "treated": null,
+        "control": null
+      },
+      "items_in_both_arms": 20,
+      "eligible_items": 14,
+      "excluded_ids": {
+        "not_in_both_arms": [],
+        "load_failed": [],
+        "pending_human_review": [
+          "C06",
+          "C16",
+          "C17",
+          "C18",
+          "C19",
+          "C20"
+        ],
+        "score_missing": []
+      },
+      "excluded_counts": {
+        "not_in_both_arms": 0,
+        "load_failed": 0,
+        "pending_human_review": 6,
+        "score_missing": 0
+      },
+      "flips_treated_only": 0,
+      "flips_treated_only_ids": [],
+      "flips_control_only": 0,
+      "flips_control_only_ids": [],
+      "delta": 0,
+      "enters_verdict": true
+    },
+    {
+      "dimension": "D",
+      "machine_scored_items": {
+        "treated": 16,
+        "control": 16
+      },
+      "denominators_equal": true,
+      "error_present": {
+        "treated": null,
+        "control": null
+      },
+      "items_in_both_arms": 20,
+      "eligible_items": 16,
+      "excluded_ids": {
+        "not_in_both_arms": [],
+        "load_failed": [],
+        "pending_human_review": [
+          "D14",
+          "D15",
+          "D16",
+          "D17"
+        ],
+        "score_missing": []
+      },
+      "excluded_counts": {
+        "not_in_both_arms": 0,
+        "load_failed": 0,
+        "pending_human_review": 4,
+        "score_missing": 0
+      },
+      "flips_treated_only": 1,
+      "flips_treated_only_ids": [
+        "D04"
+      ],
+      "flips_control_only": 2,
+      "flips_control_only_ids": [
+        "D02",
+        "D07"
+      ],
+      "delta": -1,
+      "enters_verdict": true
+    },
+    {
+      "dimension": "E",
+      "machine_scored_items": {
+        "treated": 20,
+        "control": 20
+      },
+      "denominators_equal": true,
+      "error_present": {
+        "treated": null,
+        "control": null
+      },
+      "items_in_both_arms": 20,
+      "eligible_items": 20,
+      "excluded_ids": {
+        "not_in_both_arms": [],
+        "load_failed": [],
+        "pending_human_review": [],
+        "score_missing": []
+      },
+      "excluded_counts": {
+        "not_in_both_arms": 0,
+        "load_failed": 0,
+        "pending_human_review": 0,
+        "score_missing": 0
+      },
+      "flips_treated_only": 0,
+      "flips_treated_only_ids": [],
+      "flips_control_only": 0,
+      "flips_control_only_ids": [],
+      "delta": 0,
+      "enters_verdict": true
+    },
+    {
+      "dimension": "G",
+      "machine_scored_items": {
+        "treated": 0,
+        "control": 0
+      },
+      "denominators_equal": true,
+      "error_present": {
+        "treated": null,
+        "control": null
+      },
+      "items_in_both_arms": 20,
+      "eligible_items": 0,
+      "excluded_ids": {
+        "not_in_both_arms": [],
+        "load_failed": [],
+        "pending_human_review": [
+          "G01",
+          "G02",
+          "G03",
+          "G04",
+          "G05",
+          "G06",
+          "G07",
+          "G08",
+          "G09",
+          "G10",
+          "G11",
+          "G12"
+        ],
+        "score_missing": []
+      },
+      "excluded_counts": {
+        "not_in_both_arms": 0,
+        "load_failed": 0,
+        "pending_human_review": 20,
+        "score_missing": 0
+      },
+      "flips_treated_only": 0,
+      "flips_treated_only_ids": [],
+      "flips_control_only": 0,
+      "flips_control_only_ids": [],
+      "delta": 0,
+      "enters_verdict": false
+    }
+  ],
+  "not_compared_dimensions": [
+    "A",
+    "F",
+    "H"
+  ],
+  "only_in_one_arm": {
+    "treated": [],
+    "control": []
+  },
+  "verdicts": {
+    "eval_set_sha256_equal": true,
+    "git_head_equal": true,
+    "chain_equal": true,
+    "scoring_discipline_equal": true,
+    "neither_arm_trained_during_eval": true,
+    "dimension_sets_equal": true,
+    "no_dimension_errors": true,
+    "at_least_one_eligible_dimension": true
+  },
+  "failing_verdicts": [],
+  "verdict": "holds",
+  "wall_clock_ms": 1.565
+}

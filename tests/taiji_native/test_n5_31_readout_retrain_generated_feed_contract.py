@@ -12,6 +12,7 @@ import ast
 import importlib.util
 import inspect
 import json
+import math
 import sys
 from pathlib import Path
 
@@ -121,13 +122,14 @@ def _tiny_seed_envelope(tmp_path: Path) -> Path:
     return path
 
 
-def _tiny_corpus(tmp_path: Path) -> Path:
-    #: 尺寸是被量出来的：小模型实跑约 225 符号/秒，语料必须够跑 600 符号，
-    #: 否则跑器会响亮拒绝（`corpus exhausted ... the budget does not fit the stream`），
-    #: 而 ETA 在 3 位小数上会退化成 0.0——那等于把尺的子范围当全范围。
+def _tiny_corpus(tmp_path: Path, rows: int = 40) -> Path:
+    #: 尺寸是被量出来的：语料必须够跑预算，否则跑器会响亮拒绝
+    #: （`corpus exhausted ... the budget does not fit the stream`）。2026-10-13 起行数由
+    #: 调用处按「本次实测速率」换算——ETA 只留 3 位小数，预算太小会让那条断言变成
+    #: 「机器一快就必然为假」（见定价那一支的说明）。
     row = json.dumps({"text": "abracadabra cadabra abracadabra cadabra"}, ensure_ascii=False)
     path = tmp_path / "corpus.jsonl"
-    path.write_text((row + "\n") * 40, encoding="utf-8", newline="\n")
+    path.write_text((row + "\n") * rows, encoding="utf-8", newline="\n")
     return path
 
 
@@ -216,15 +218,18 @@ def test_the_entry_refuses_to_overwrite_an_in_flight_experience() -> None:
         model2.record_generated_prediction(67)
 
 
-def _run_tiny_arm(tmp_path: Path, *, generated_feed_every: int) -> dict:
+def _run_tiny_arm(
+    tmp_path: Path, *, generated_feed_every: int, symbols: int = 600, corpus_rows: int = 40
+) -> dict:
     """小信封＋小语料真跑一臂，返回 `run_arm` 的产出 dict（摘要助手全部复用跑器自己的函数）。"""
 
+    tmp_path.mkdir(parents=True, exist_ok=True)
     runner = _runner()
     base = _tiny_seed_envelope(tmp_path)
-    corpus = _tiny_corpus(tmp_path)
+    corpus = _tiny_corpus(tmp_path, corpus_rows)
     return runner.run_arm(
         arm="A",
-        symbols=600,
+        symbols=symbols,
         checkpoint_every=300,
         progress_every=300,
         arm_dir=tmp_path / "arm",
@@ -247,7 +252,19 @@ def test_pricing_keys_are_published_by_the_runner(tmp_path: Path) -> None:
     现在断的是**产出 dict**：键在场，且速率／ETA／喂入次数／写计数都是现跑出来的正数。
     """
 
-    report = _run_tiny_arm(tmp_path, generated_feed_every=4)
+    #: 预算不能是随手挑的常数：ETA 只保留 3 位小数，预算太小会让 `eta_hours > 0.0` 变成
+    #: 「机器一快就必然为假」的断言（2026-10-13 这台机器 388.40 符号/秒时就这样红了：
+    #: 整族 `1 failed, 3275 passed`，隔离复跑同值 ⇒ 不是争用）。先探一次本次实测速率，
+    #: 再把预算定成约 6 秒的符号数 ⇒ eta ≈ 0.0017 h 可表示，那条关系式才真的能被否证。
+    probe = _run_tiny_arm(tmp_path / "probe", generated_feed_every=4)
+    measured_rate = float(probe["generated_feed"]["measured_symbols_per_second"])
+    budget = max(600, math.ceil(measured_rate * 6.0))
+    report = _run_tiny_arm(
+        tmp_path / "main",
+        generated_feed_every=4,
+        symbols=budget,
+        corpus_rows=budget // 30 + 20,
+    )
     block = report["generated_feed"]
     for key in (
         "every_symbols",
@@ -262,10 +279,9 @@ def test_pricing_keys_are_published_by_the_runner(tmp_path: Path) -> None:
     assert block["measured_symbols_per_second"] > 0, block
     assert block["feeds"] > 0, block
     assert block["generated_write_count"] > 0, block
-    #: 夹具尺寸是被量出来的，不是随手挑的：小模型实跑约 225 符号/秒，16 符号的预算会把
-    #: `eta_hours_at_requested_budget` 在 3 位小数上舍成 0.0，那条关系式就成了**不可假**的断言。
-    #: 600 符号 ⇒ eta ≈ 0.001，于是"必须为正"与"由本次实测速率推出"两条都能为假。
-    #: J-N5r-3 真正要钉的就是这条关系：ETA 只能由本次实测推，不接受引用来的数。
+    #: J-N5r-3 真正要钉的就是这条关系：ETA 只能由本次实测速率推，不接受引用来的数。
+    #: 预算来自上面的 probe ⇒ 无论这台机器这次跑到 225 还是 388 符号/秒，"必须为正"与
+    #: "由实测推出"两条都仍能为假（把跑器里的 `symbols / session_symbols` 换成任何引用值都会红）。
     session_symbols = int(report["session"]["symbols"])
     assert block["eta_hours_at_requested_budget"] > 0.0, block
     expected_eta = round(

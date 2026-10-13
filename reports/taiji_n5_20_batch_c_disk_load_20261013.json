@@ -1,0 +1,108 @@
+{
+  "format": "taiji-disk-load-face-two-arms-v1",
+  "debt": "DEBT-G104",
+  "ledger_origin": "㊵-727",
+  "git_head": "639117d6a",
+  "face": {
+    "roots_scanned": [
+      "output/n5_20_batchC_treated",
+      "output/n5_20_batchC_control"
+    ],
+    "disk_pt_total": 2,
+    "tracked_pt_in_git": 0,
+    "selected": 2,
+    "skipped_by_size": 0,
+    "skipped_by_count": 0,
+    "selection_order": "size_ascending",
+    "batch_mode": "budget"
+  },
+  "verdict": "full_face_two_arm_pair",
+  "arms": {
+    "treated": {
+      "kinds": [
+        "experienced",
+        "imagined",
+        "replayed",
+        "external",
+        "generated"
+      ],
+      "attempted": 2,
+      "loaded": 2,
+      "refused": 0,
+      "receptors_inherited_count": 2,
+      "refusal_reason_counts": {},
+      "refusing_files": [],
+      "rows": [
+        {
+          "file": "output/n5_20_batchC_control/A/checkpoint.pt",
+          "loaded": true,
+          "encoder_width": 5,
+          "readout_rows": 5,
+          "vocabulary": 5,
+          "receptors_inherited": true
+        },
+        {
+          "file": "output/n5_20_batchC_treated/A/checkpoint.pt",
+          "loaded": true,
+          "encoder_width": 5,
+          "readout_rows": 5,
+          "vocabulary": 5,
+          "receptors_inherited": true
+        }
+      ],
+      "rows_total": 2,
+      "rows_listed": 2
+    },
+    "control": {
+      "kinds": [
+        "experienced",
+        "imagined",
+        "replayed",
+        "external"
+      ],
+      "attempted": 2,
+      "loaded": 0,
+      "refused": 2,
+      "receptors_inherited_count": 0,
+      "refusal_reason_counts": {
+        "ValueError|synapse payload shape does not match architecture": 2
+      },
+      "refusing_files": [
+        "output/n5_20_batchC_control/A/checkpoint.pt",
+        "output/n5_20_batchC_treated/A/checkpoint.pt"
+      ],
+      "rows": [
+        {
+          "file": "output/n5_20_batchC_control/A/checkpoint.pt",
+          "loaded": false,
+          "reason": "ValueError|synapse payload shape does not match architecture"
+        },
+        {
+          "file": "output/n5_20_batchC_treated/A/checkpoint.pt",
+          "loaded": false,
+          "reason": "ValueError|synapse payload shape does not match architecture"
+        }
+      ],
+      "rows_total": 2,
+      "rows_listed": 2
+    }
+  },
+  "pairing": {
+    "refused_on_both_arms": [],
+    "refused_only_on_treated_arm": [],
+    "load_counts_equal": false
+  },
+  "entry_point_control": {
+    "attempted": 2,
+    "error_counts": {
+      "KeyError": 2
+    },
+    "meaning": "反例臂：入口点错时的整片拒绝不是装机面的读数（㊵-727 ②）"
+  },
+  "detail_row_cap": 12,
+  "what_this_does_not_prove": [
+    "本件只证『能装／不能装』与两臂是否同形，不证载入后的权重逐位中性（那由 J-N5o-4 的进程内件证过）",
+    "对照臂是进程内把枚举退回一枚，不是『用改版前的代码跑』——基板抽样与运行链都相同",
+    "面上件多为未入库的盘上产物：tracked_pt_in_git 这一枚计数必须与 disk_pt_total 一起读，少了它就把『盘上有 13 枚』误当成『装机面有 13 枚在册』"
+  ]
+}
