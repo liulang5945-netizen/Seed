@@ -140,3 +140,37 @@ DEBT-G78、G94③ 与 G90、G101（债表列形漂移，登记不改）、**G102
   `m7-ci` 的 hygiene 面余枚、G121／G98 余 8 处／G102／G94③／G90 照旧。
   **不许从本节读出的三句**：不许读成"`m7-ci` 全绿"（hygiene 仍 16/2，且本轮那枚修复未经 CI 确认）；不许读成"重复臂出了地板"
   （治疗臂现取末行 3,000,000／8,900,000、`written_at_utc=2026-10-13T16:04:25Z`，对照臂目录尚未出现）；不许读成"CAP 的 B／G 已裁定"（现在是"量表已改对、载体已重发、等人回填"）。
+
+## 4. 会话末交接（2026-10-14，㊵-792／793／794 三格，HEAD 2db8f9c10）
+
+1. **两臂在飞时不许再下臂命令**。串接链 `run_repeat_arms_776.sh` 会在治疗臂 `rc=0` 之后自动起对照臂，
+   失败即停的守卫是 `ARM1_RC≠0 ⇒ 写 ABORT_ARM2_RC1 并 exit`。判"跑完没有"只认三样（㊵-792 ④）：
+   该臂目录下的 `A/run_report.json`、`arms776/state.txt` 里的 `ARM1_RC=`／`ARM2_RC=`／`CHAIN_DONE_UTC=`、
+   以及件里的 `status`／`reached_budget`。**目录名逐字核对**：本次重复臂是 `output/n5_20_batchC2_treated`
+   与 `output/n5_20_batchC2_control`，与**已完成的批次 C**（`output/n5_20_batchC_treated`／`_control`）
+   只差一个 `2`——读错目录会拿"已完成"的旧件当新臂的收口证据（㊵-792 ⑤ 已踩过一次）。
+2. 取地板照 03 头部①那条逐字命令（四个旗标名与两枚 batch C 路径的可跑性已在 ㊵-791 用真实件干跑验过）。
+   预注册那一支不许绕开：**地板为 0 ⇒ 两支逐指标都落 `no_spread_unjudged`、不发表幅度句**，也不许换指标救它。
+3. CAP 两趟必须**同 `git_head`、两趟之间不许提交**（`J-N5u-1`），命令**不传 `--dimensions`**
+   （`eval_taiji_cap0_baseline.py:59` 的 `DRIVEN_DIMENSIONS` 才是与批次 C 同面；`:60` 的
+   `NOT_EXECUTED_DIMENSIONS` 同件出版 ⇒ 读数件里 8 个维度键不等于 8 个跑过的维度）。
+   两枚输出件（`taiji_n5_23_cap0_repeat_treated_20261014.json` 与
+   `taiji_n5_23_cap0_repeat_control_20261014.json`，落点由 03 头部②那条 `--report` 指定）
+   **今天仍不存在** ⇒ 引用在册普查把它们记成
+   `planned_output`（㊵-793 那格就是被这台面的自指咬到的：在台账里逐字写出缺席件的完整路径，
+   普查仪会把"报告过一次缺席"读成"引用了一份读数"）。
+4. 窗口内可自办三件（03 头部⑤）：DEBT-G137 的**普查面扩到 `tests/`**（会把 37／36／22／21 那组**下界**
+   往上推 ⇒ 属改判据，要先冻再动）、DEBT-G115 修法③ 的迁移队列（进度只认 E 桶的"真收口"计数，
+   要现值请跑 `audit_taiji_newline_write_face.py`，别抄台账里的历史数）、DEBT-G130 跑器披露键
+   （**动跑器 ⇒ 必须排在两臂结清之后**）。
+5. 待 owner 的四件：DEBT-G136 的甲／乙／丙、CAP 40 题在 V3 载体（
+   `plans/reference/CAP_B_G_HUMAN_REVIEW_V3_TREATED_20261014.md` 与同目录 `_CONTROL_` 那份）上逐题回填、
+   N1 阶段 1 的裁（一页纸 `plans/reference/N1_S1_PHASE1_AUTHORIZATION_OPTION_SHEET_20261014.md` 已出）、
+   G104 批次 B（十一裁 ③ 已排在重复臂结清之后）。
+6. 门的形状本批改过一条，复述以免下个会话误判：`test_n6_06` 的两支测现在都只写 `tmp_path`，
+   **跑套件不再改写仓内那枚 episodic-forgetting 封存读数**（㊵-794），所以跑完测
+   `git status -- reports/` 应当只剩那 6 枚 autocrlf／stat 幻影件；若又多出一枚**内容真变**的件，
+   归因顺序是"谁写过它"（查本轮跑过的每支测／门的落点），不是"谁改过它"。
+7. 本批入库三笔且都已推送：`cb5295bf0`（㊵-792／793：臂链存活实证＋自指命中改回件名形，
+   点名更正 `ee931faf3` 那次"带着红测入库"）、`8e5ee71ad`（docs(reports)：把扫描面读数 2151→2162 刷进库）、
+   `2db8f9c10`（㊵-794：跑测不再刷写在库件＋DEBT-G137 补记普查面盲区）。
