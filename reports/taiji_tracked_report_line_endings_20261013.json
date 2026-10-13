@@ -1,0 +1,57 @@
+{
+  "format": "taiji-tracked-report-line-endings-v1",
+  "debt": "DEBT-G115",
+  "face": "reports/",
+  "started_utc": "2026-10-13T04:41:10Z",
+  "tracked_total": 1782,
+  "scanned_bytes_index_face": 225006842,
+  "buckets_index_face": {
+    "crlf_pairs": 0,
+    "lone_cr": 546,
+    "cr_lf_pairs_after_cr": 0
+  },
+  "cr_bearing_tracked_files": [
+    {
+      "path": "reports/_gate_clip_repair.log",
+      "crlf_pairs": 0,
+      "lone_cr": 16,
+      "cr_lf_pairs_after_cr": 0,
+      "bytes": 1532
+    },
+    {
+      "path": "reports/_m7_check.json",
+      "crlf_pairs": 0,
+      "lone_cr": 530,
+      "cr_lf_pairs_after_cr": 0,
+      "bytes": 34586
+    }
+  ],
+  "cr_bearing_names": [
+    "reports/_gate_clip_repair.log",
+    "reports/_m7_check.json"
+  ],
+  "grandfathered": [
+    "reports/_gate_clip_repair.log",
+    "reports/_m7_check.json"
+  ],
+  "equals_current_baseline": true,
+  "working_tree_cr_files_total": 138,
+  "working_tree_cr_sample": [
+    "reports/M5_P5_2C_ENTRY_AUDIT_P5_2B_DEFECT_20260913.md",
+    "reports/_gate_clip_repair.log",
+    "reports/_gate_full_20260823.log",
+    "reports/_m7_check.json",
+    "reports/cap0_bg_review_worksheet_20260915.md",
+    "reports/m4_frontend_review_20260823.md",
+    "reports/p3b_review_worksheet_20260916.md",
+    "reports/p3b_stages/_plumbing_smoke/cap0_tick_16002000.json"
+  ],
+  "verdicts": {
+    "face_is_not_empty": true,
+    "no_new_cr_bearing_tracked_file": true
+  },
+  "verdict": "holds",
+  "failing_verdicts": [],
+  "reading_limit": "判定只走**索引字节面**（`git show :<路径>`）。工作树那一面在同一份件上现读为 138 枚带 CR，那是本机 `core.autocrlf` 的检出态、不是数据缺陷，所以它只出版不判。`cr_bearing_files_are_the_grandfathered_two` 是**现状陈述**（今天恰好还是那两枚），真正挡新增的是 `no_new_cr_bearing_tracked_file` 那枚子集判据。",
+  "wall_clock_ms": 1085.422
+}
