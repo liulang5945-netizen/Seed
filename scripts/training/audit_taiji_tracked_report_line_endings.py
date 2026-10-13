@@ -32,6 +32,15 @@ from pathlib import Path
 from typing import Any
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
+#: 修法② 的门与修法③ 的助手在这枚文件里碰头：本仪器判的就是"在库件的行尾"，
+#: 它自己出版读数时也不该再留一条"忘了写 `newline=`"的路径可错（脚本目录先上 `sys.path`，
+#: 两种入口——契约册按路径加载／起成真子进程——都解析得到助手）。
+SCRIPT_DIR = Path(__file__).resolve().parent
+if str(SCRIPT_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPT_DIR))
+
+import _taiji_report_io as report_io  # noqa: E402
+
 REPORT_FORMAT = "taiji-tracked-report-line-endings-v1"
 DEBT = "DEBT-G115"
 DEFAULT_FACE = "reports/"
@@ -214,12 +223,7 @@ def main(argv: list[str] | None = None) -> int:
     if out.exists() and not args.overwrite:
         print(f"refusing to overwrite an existing report: {out}", file=sys.stderr)
         return 2
-    out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(
-        json.dumps(report, ensure_ascii=False, indent=2) + "\n",
-        encoding="utf-8",
-        newline="\n",
-    )
+    report_io.write_json_report(out, report, newline="\n", overwrite=args.overwrite)
     summary = {
         "verdict": report["verdict"],
         "failing": report["failing_verdicts"],
