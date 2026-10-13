@@ -32,6 +32,14 @@ from pathlib import Path
 from typing import Any
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
+#: 本仪器自己也要遵守它量出来的规矩（㊵-803）：落盘走统一助手，脚本目录先上 `sys.path`，
+#: 两种入口（契约册按路径加载／起成真子进程）才都解析得到。注释只点已存在的号。
+SCRIPT_DIR = Path(__file__).resolve().parent
+if str(SCRIPT_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPT_DIR))
+
+import _taiji_report_io as report_io  # noqa: E402
+
 #: ㊵-765：读出面加了 `d_face`（待办收窄那一桶）⇒ 按"面变了就升版"的规矩走 v2；
 #: 同名件的 v1 那份不删，它的历史在 git 里，引用时要点名是哪一版。
 #: ㊵-789：读出面再加 `helper_face`（DEBT-G115 修法③ 的统一落盘助手被采用了几处）⇒ 同样是面变宽，走 v3。
@@ -278,10 +286,7 @@ def main(argv: list[str] | None = None) -> int:
     if out.exists() and not args.overwrite:
         print(f"refusing to overwrite an existing report: {out}", file=sys.stderr)
         return 2
-    out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(
-        json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n"
-    )
+    report_io.write_json_report(out, report, newline="\n", overwrite=args.overwrite)
     summary = {
         "verdict": report["verdict"],
         "failing": report["failing_verdicts"],
