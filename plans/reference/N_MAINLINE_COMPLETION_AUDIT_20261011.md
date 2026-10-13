@@ -114,3 +114,29 @@ DEBT-G78、G94③ 与 G90、G101（债表列形漂移，登记不改）、**G102
 
 **仍守的三条**：不批量改已冻预注册里的落笔时点陈述（G110 ①的裁定，本件自己也照此办理——旧句只标过期、不删）；
   不把 §1.3 的锚级命中说成 id 级覆盖；不在 owner 未批前动 `taiji/`、跑新权重或开新算力。
+
+- **本件自身的现态**（㊵-787）：结论**仍未变——目标未达成**，本轮有四处移动，其中两处是我自己的错被纠正。
+  ①**`m7-ci` 的 doc-sync 半面第一次在 CI 上确认转绿**（run **38431031552**，HEAD `435d7877e`，step 表 `✓ doc-sync (43 leaves)`）＝十一裁 ①② 那两件签字落地；
+  但同一 job 的 `hygiene (18 leaves)` 第一次被执行就露出**两枚旧红**（上一趟 38420482505 的 step 表里它显示 `-`＝被顺序遮挡，所以是 newly visible 不是 newly caused）。
+  一枚（`package invariants`）已按十二裁 ① 修掉并做第三次 `--write`；另一枚（`default product isolation`）**没修**，
+  取证后登记 **DEBT-G136** 并出第二份一页纸＝`plans/reference/HARNESS_DEFAULT_PRODUCT_ISOLATION_OPTION_SHEET_20261014.md`——
+  门声明的唯一豁免路 `OPTIONAL_BUNDLES`（`packages/boot/app-boot/src/profile.ts:188-193`）其实已经点名那枚 bundle，
+  而遍历腿不查名单、`spec:133` 又用 `it.each` 把三个 section 全算"默认产品包含"，两条主张互相矛盾，所以这是排序与语义裁定，不是我能自办的缺陷。
+  ②**CAP 的 40 题载体原本发错了我自己写的量表**：我给 owner 的表写"每题 0／1"，而已冻约定是 B 维 0／1／2 三档、G 维五类判定
+  且"硬安全失败必须为 0"（`scripts/training/eval_taiji_cap0_baseline.py:769-776`）。旧件就地打作废横幅（原句不删），
+  现行载体改由评测器自己的 `--worksheet` 生成（`plans/reference/CAP_B_G_HUMAN_REVIEW_V3_{TREATED,CONTROL}_20261014.md`）。
+  同时按 `--adjudicate` 现读两臂都是 `B scored 0/20`、G 三个计数全 0——**这三个 0 只读作"规则层对这些输出判不了"，不许读作"没有服从越权"**。
+  ③**十一裁 ⑷ 的件已出**＝`plans/reference/N1_S1_PHASE1_AUTHORIZATION_OPTION_SHEET_20261014.md`：三条可批形状里要特别记住
+  丙（补 N1 判定面）**不能报成零算力**——`DEBT-G62` 已否证那句（`taiji/model.py:3190` 的 `generate(...)` 13 个参数里没有任何"喂入指定字节序列"的口子）。
+  ④**本件的姊妹件 03 头部今天被我自己更正一处**：上一版写过"这两臂的速率就是地板的量，负载会把它压平"，
+  现读 `audit_taiji_n5_23_repeat_arm_noise_floor.py:31` 表明地板两把尺是 `cumulative_mean_surprise`／`cumulative_online_accuracy`，都不叫速率；
+  不在臂在飞时跑整族的真实理由是**争用会造超时红**。这条更正不改任何判据，只是把"我为了解释而编的因果"撤回。
+
+  **下一格（照抄 03 头部，两臂齐之后）**：①地板 `audit_taiji_n5_23_repeat_arm_noise_floor.py`（四枚 `run_report.json` 齐备才出版，资格不齐 ⇒ `rejected`）；
+  ②两臂各一趟 CAP（同 `git_head`＝中间不许提交，`J-N5u-1`）＋配对器＋地板仪 `--cap-pairing-*`；③地板成形后才动幅度句（阈值 3 与 `J-N5t-4` 一字不动）；
+  ④整族回归＋`test_openapi_snapshot` 面复跑。**我这侧剩余可自办**：DEBT-G115 修法③（统一落盘助手——本轮 `_write_report` 又新写出两枚带 CRLF 的入库件，正是它的活证据）、
+  DEBT-G130 跑器披露键（动跑器 ⇒ 排臂后）、DEBT-G132 的 22 处暴露面（半径在别行，只登记）。
+  **owner 侧**：CAP 40 题在新载体上逐题回填、DEBT-G136 的甲／乙／丙、N1 阶段 1 的裁（十一裁 ⑷ 件已出）、G104 批次 B（十一裁 ③＝排在重复臂结清之后）、
+  `m7-ci` 的 hygiene 面余枚、G121／G98 余 8 处／G102／G94③／G90 照旧。
+  **不许从本节读出的三句**：不许读成"`m7-ci` 全绿"（hygiene 仍 16/2，且本轮那枚修复未经 CI 确认）；不许读成"重复臂出了地板"
+  （治疗臂现取末行 3,000,000／8,900,000、`written_at_utc=2026-10-13T16:04:25Z`，对照臂目录尚未出现）；不许读成"CAP 的 B／G 已裁定"（现在是"量表已改对、载体已重发、等人回填"）。
