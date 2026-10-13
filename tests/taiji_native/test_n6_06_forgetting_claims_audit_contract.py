@@ -16,6 +16,8 @@ from typing import Any
 
 REPO = Path(__file__).resolve().parents[2]
 SCRIPT = REPO / "scripts" / "training" / "audit_taiji_episodic_forgetting_claims.py"
+#: 仓内那枚**已入库**的扫描面读数：本册两支测都只读它、不许写它（写它是显式运维动作）。
+SEALED = REPO / "reports" / "taiji_episodic_forgetting_claims_20261011.json"
 
 
 def _run(args: list[str]) -> subprocess.CompletedProcess[str]:
@@ -71,10 +73,36 @@ def test_empty_face_is_refused_not_read_as_green(tmp_path: Path) -> None:
     assert not out.exists(), "refusal must not leave a half-written report"
 
 
-def test_real_tree_has_no_affirmative_claim() -> None:
-    out = REPO / "reports/taiji_episodic_forgetting_claims_20261011.json"
+def test_real_tree_has_no_affirmative_claim(tmp_path: Path) -> None:
+    """真树扫描的落点在 tmp——跑一次测不许把仓内封存读数刷新掉。
+
+    ㊵-794 之前这一支直接把 `--out-report` 指到 `reports/…`，于是每跑一次测就重写一次那枚在库件
+    （2026-10-14 实测：跑七册那一步把 `files_scanned` 由 2151 改成 2162，与我是否想刷新无关）。
+    刷扫描面读数是**显式运维动作**（㊵-793 ⑨），不是测试的副作用；末行那条字节等同断言就是
+    拦这件事的守卫——谁把落点指回仓内，它会红。
+    """
+    before = SEALED.read_bytes()
+    out = tmp_path / "fresh.json"
     proc = _run(["--out-report", str(out)])
     assert proc.returncode == 0, proc.stdout + proc.stderr
     payload = json.loads(out.read_text(encoding="utf-8"))
     assert payload["files_scanned"] > 100, payload["files_scanned"]
     assert payload["violation_count"] == 0, payload["violations"]
+    after = SEALED.read_bytes()
+    assert after == before, "real-tree scan must not rewrite the tracked artifact"
+
+
+def test_the_instrument_rewrites_whatever_it_is_pointed_at(tmp_path: Path) -> None:
+    """另一支也要走：仪器**没有**覆写拒绝 ⇒ 危险住在调用方，不能说"它有护栏"。
+
+    靶用仓内那枚件的**副本**，先投一枚哨兵内容，跑完必须看见哨兵被覆盖——这才证得
+    "指到哪写哪"，也正是上一支为什么必须把落点移出仓面的理由。
+    """
+    copy = tmp_path / "copy.json"
+    copy.write_text('{"sentinel": "not-a-reading"}', encoding="utf-8", newline="\n")
+    assert SEALED.is_file(), "the tracked artifact this guard talks about must exist"
+    proc = _run(["--out-report", str(copy)])
+    assert proc.returncode == 0, proc.stdout + proc.stderr
+    rewritten = copy.read_text(encoding="utf-8")
+    assert "sentinel" not in rewritten, "the target must actually be replaced"
+    assert json.loads(rewritten)["violation_count"] == 0, rewritten[:200]
