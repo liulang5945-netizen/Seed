@@ -116,6 +116,7 @@ def _arm_pair(
     *,
     control_eval_sha: str = "e" * 64,
     control_chain: dict | None = None,
+    control_git_head: str = "h" * 40,
     stem: str = "pair",
 ) -> tuple[Path, Path]:
     treated = _report(tmp_path / f"{stem}-t.json", dimensions=treated_dims, checkpoint_sha="a" * 64)
@@ -125,6 +126,7 @@ def _arm_pair(
         checkpoint_sha="b" * 64,
         eval_set_sha=control_eval_sha,
         chain=control_chain,
+        git_head=control_git_head,
     )
     return treated, control
 
@@ -265,6 +267,25 @@ def test_a_missing_eval_set_sha_kills_the_direction(tmp_path: Path) -> None:
     assert payload["verdict"] == "rejected"
     assert payload["direction"] == "pairing_invalid"
     assert payload["failing_verdicts"] == ["eval_set_sha256_equal"]
+
+
+def test_a_commit_between_the_two_cap_runs_kills_the_pairing(tmp_path: Path) -> None:
+    #: `J-N5u-1` 的「两趟之间不许提交」原先只有仪器在算、契约册没钉——㊵-798 现测该册整册
+    #: 出现 `git_head_equal` 串 0 次，所以这条资格一旦被重构掉不会有任何测拦它。
+    #: 差一枚 HEAD 就**作废判定**（不给方向），不是把方向判成"没涨"。
+    treated, control = _arm_pair(
+        tmp_path,
+        {"C": _dimension(_scores("C", TREATED_C))},
+        {"C": _dimension(_scores("C", CONTROL_C))},
+        control_git_head="g" * 40,
+        stem="head",
+    )
+    rc, payload = _run(tmp_path, treated, control, "head.json")
+    assert rc == 1
+    assert payload["verdict"] == "rejected"
+    assert payload["direction"] == "pairing_invalid"
+    assert payload["failing_verdicts"] == ["git_head_equal"]
+    assert payload["pairing"]["git_head_equal"] is False
 
 
 def test_a_chain_flag_difference_is_a_pairing_failure(tmp_path: Path) -> None:
