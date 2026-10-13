@@ -30,6 +30,14 @@ from pathlib import Path
 from typing import Any
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
+#: 与 `eval_taiji_cap0_baseline.py`／两台普查仪同一条落盘约定（㊵-790／795／796）：
+#: 这台仪器的契约册现在是真子进程面（㊵-800），脚本目录先上 `sys.path`，助手才解析得到。
+SCRIPT_DIR = Path(__file__).resolve().parent
+if str(SCRIPT_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPT_DIR))
+
+import _taiji_report_io as report_io  # noqa: E402
+
 REPORT_FORMAT = "taiji-n5-22-cap0-pairing-v1"
 PREREG = "plans/reference/PLAN-N5-22_batch_c_capability_pairing_prereg_20261013.md \u00a72"
 DIRECTION_MARGIN = 3
@@ -233,12 +241,7 @@ def main(argv: list[str] | None = None) -> int:
     if out.exists() and not args.overwrite:
         print(f"refusing to overwrite an existing report: {out}", file=sys.stderr)
         return 2
-    out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(
-        json.dumps(report, ensure_ascii=False, indent=2) + "\n",
-        encoding="utf-8",
-        newline="\n",
-    )
+    report_io.write_json_report(out, report, newline="\n", overwrite=args.overwrite)
 
     summary = {
         "verdict": report["verdict"],
