@@ -28,6 +28,14 @@ from pathlib import Path
 from typing import Any
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
+#: 被契约册按文件路径加载、或被起成真子进程时，脚本自己那层目录要先上 `sys.path`，
+#: `_taiji_report_io` 才解析得到（与 `eval_taiji_cap0_baseline.py` 同一条约定，㊵-790）。
+SCRIPT_DIR = Path(__file__).resolve().parent
+if str(SCRIPT_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPT_DIR))
+
+import _taiji_report_io as report_io  # noqa: E402
+
 REPORT_FORMAT = "taiji-ledger-cited-reports-tracked-v4"
 #: 带核验的更名登记表（DEBT-G134 的最后一格）：文档里的**旧件名**指向的现行件必须在索引面里，
 #: 否则那条映射不作数——映射不是消音器，它自己也要被复核。
@@ -235,8 +243,7 @@ def main(argv: list[str] | None = None) -> int:
         print(json.dumps({"format": REPORT_FORMAT, "status": "refuse_scan", "detail": str(error)}))
         return 2
     text = json.dumps(payload, ensure_ascii=True, indent=2) + "\n"
-    out_path.parent.mkdir(parents=True, exist_ok=True)
-    out_path.write_text(text, encoding="utf-8", newline="\n")
+    report_io.write_text_report(out_path, text, newline="\n", overwrite=args.overwrite)
     print(text)
     return 0 if payload["verdict"] == "holds" else 1
 
