@@ -59,7 +59,7 @@ def test_a_name_appearing_both_as_reading_and_as_output_stays_a_reading(tmp_path
 
 
 def test_the_report_flag_defers_only_a_file_that_is_not_there_yet() -> None:
-    """㊵-792 v4 的两个方向都要钉住。
+    """㊵-791 v4 的两个方向都要钉住。
 
     交接文档会逐字写出**将来**要落的输出件（评测器用 `--report` 指写靶），只认 `--out-report`
     就会把"还没跑的输出"报成丢证据；但同一枚 `--report` 旗标也被用来**读**已有件——

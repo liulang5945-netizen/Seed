@@ -35,7 +35,7 @@ DEFAULT_SUPERSEDE_MAP = "plans/manifests/rename_superseded_reports.json"
 #: 扩展名边界必须钉住：`…\.json` 不加负向预查会把 `reports/x.jsonl` 截断成一枚"叫 x.json 的缺件"。
 #: 第一版就因此报了 5 枚"盘上也没有"，其中 4 枚是 `.jsonl`（`㊵-575` 当年正是把两枚 JSONL 逐字节复制进 `reports/`）。
 CITE_RE = re.compile(r"reports/[A-Za-z0-9_.\-]+\.json(?![A-Za-z0-9])")
-#: 文档里用来**指定写靶**的旗标（㊵-792 v4）。`--out-report` 之外，`--report` 在评测器里既是写靶
+#: 文档里用来**指定写靶**的旗标（㊵-791 v4）。`--out-report` 之外，`--report` 在评测器里既是写靶
 #: 也是读源——所以这条只把"今天还不在仓里的件"判成计划中的输出，见 `_classify` 的 docstring。
 OUTPUT_FLAG_MARKERS = ("--out-report", "--report", "--adjudication-report", "--health-report")
 READING_LIMIT = (
@@ -87,7 +87,7 @@ def _classify(
     * `planned_output`＝上文里出现 `--out-report`，即文档在说"将来落到这个件"，今天不存在是正常的。
     * `cited_as_reading`＝其余，＝被当作**已有读数**引用；这一桶才归本件判。
 
-    v4（2026-10-13 ㊵-792）把"输出旗标"从只认 `--out-report` 扩到本仓实际用来**指定写靶**的那几个旗标
+    v4（2026-10-13 ㊵-791）把"输出旗标"从只认 `--out-report` 扩到本仓实际用来**指定写靶**的那几个旗标
     （`--report`／`--adjudication-report`／`--health-report`），但**加了一条合取**：只有当这枚件
     今天既不在索引也不在盘上时才落 `planned_output`。理由＝交接文档会逐字写出将来要落的输出件，
     不认这些旗标就会把"还没跑的输出"报成丢证据；而 `--report` 同一枚旗标也被用来**读**已有件
