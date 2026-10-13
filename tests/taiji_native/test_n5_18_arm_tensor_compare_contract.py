@@ -1,7 +1,9 @@
 """DEBT-G92 的修法：逐张量比较器（`compare_taiji_n5_arm_tensors.py`）的契约测。
 
 这条仪器存在的理由就是"㊵-656 那个数是仓外跑的"，所以测里必须**双向**钉住它能为真也能为假：
-自比为 0、扰动一枚必须被点名、名集不齐与镜像分叉都要响亮拒绝。
+自比为 0、扰动一枚必须被点名、镜像分叉要响亮拒绝。名集不齐自 ㊵-777（DEBT-G133 修法①）分两支：
+住在 spec 声明面（`readout_retrain_spec.SURFACES`）上的缺席仍然拒绝，只住在未声明面的缺席按交集比
+并且 `same_name_set` 照旧为假——两支各自的负对照都在本册里。
 另两支是当日现场锚：三臂封存件里的 0／20／10，以及"list 里的张量不许进名表"。
 2026-10-13 再加两支（DEBT-G129）：形状不齐的两枚必须点名出版而不是崩，且 delta 表与形状名表
 必须是差异槽的一个**划分**（不重不漏）——否则 `top_deltas` 会被读成覆盖了全部差异。
@@ -109,17 +111,74 @@ def test_a_mirror_that_diverges_within_one_arm_is_a_loud_refusal(tmp_path: Path)
     assert payload["mirror_consistency"][0]["disagreeing"]
 
 
-def test_differing_name_sets_are_refused_not_padded(tmp_path: Path) -> None:
+def test_absence_in_a_declared_face_is_still_a_loud_refusal(tmp_path: Path) -> None:
+    """DEBT-G133 修法① 的第一支负对照：**声明过的那一面**少一枚槽 ⇒ 仍然 rc=2。
+
+    窄判据不能退化成"名集不齐一律放行"，否则拒绝面就等于没有。`SURFACES` 里点名过的面
+    （`motor`／`predictive_readout`）在 spec 里被说成存在，缺槽就是结构缺失。
+    """
+
+    base = _save(tmp_path, "a.pt", _mirror(1.0))
+    grown_env = _mirror(1.0)
+    grown_env["substrate"]["motor"] = {"bias": torch.zeros(1)}
+    grown_env["taiji"]["kernel"]["motor"] = {"bias": torch.zeros(1)}
+    grown = _save(tmp_path, "b.pt", grown_env)
+    out = tmp_path / "r.json"
+    rc = CMP.main(["--checkpoint", str(base), "--checkpoint", str(grown), "--out-report", str(out)])
+    payload = json.loads(out.read_text(encoding="utf-8"))
+    row = payload["pairs"][0]
+    assert rc == 2
+    assert payload["status"] == "refuse_name_sets_differ"
+    assert row["same_name_set"] is False
+    assert row["comparable_on_intersection_only"] is False
+    assert row["name_set_difference"]["declared_surface_absences"] == [
+        "substrate.motor.bias",
+        "taiji.kernel.motor.bias",
+    ]
+    #: 分流依据必须自己承认来源是 spec，而不是仪器里手抄的一份名单。
+    assert payload["declared_surfaces_source"] == "readout_retrain_spec.SURFACES"
+    assert set(payload["declared_surfaces"]) == {"motor", "predictive_readout"}
+
+
+def test_absence_only_in_undeclared_faces_compares_on_the_intersection(tmp_path: Path) -> None:
+    """DEBT-G133 修法① 的正面：缺席只住在未声明面 ⇒ 按**共有槽交集**出读数，rc=0。
+
+    批次 C 的真形状就是这个——治疗臂的信封多出两枚 `memory.last_event`（对照臂与基座都从未写过
+    那一格），而 `memory` 不在跑器面账本里＝DEBT-G130 记的同一处失明。
+    关键约束：`same_name_set` **照旧为假**，`J-N5t-3` 的「名集齐」不许被工具的宽容悄悄满足。
+    """
+
     left = _save(tmp_path, "a.pt", _mirror(1.0))
     right_env = _mirror(1.0)
     right_env["substrate"]["extra"] = torch.ones(2)
+    right_env["taiji"]["kernel"]["extra"] = torch.ones(2)
     right = _save(tmp_path, "b.pt", right_env)
     out = tmp_path / "r.json"
     rc = CMP.main(["--checkpoint", str(left), "--checkpoint", str(right), "--out-report", str(out)])
     payload = json.loads(out.read_text(encoding="utf-8"))
-    assert rc == 2
-    assert payload["status"] == "refuse_name_sets_differ"
-    assert payload["pairs"][0]["only_in_right"] == ["substrate.extra"]
+    row = payload["pairs"][0]
+    assert rc == 0
+    assert payload["status"] == "measured"
+    assert row["same_name_set"] is False
+    assert row["comparable_on_intersection_only"] is True
+    assert row["name_set_difference"]["only_in_right_count"] == 2
+    assert row["name_set_difference"]["declared_surface_absences"] == []
+    assert row["name_set_difference"]["undeclared_absence_faces"] == {"extra": 2}
+    #: "按交集比"必须是**真的比了**：共有槽数就是被比较的槽数（这里镜像一对＝2 枚源侧槽）。
+    assert row["compared_slots"] == 2
+    assert row["differing_slots"] == 0
+    assert payload["intersection_note"]
+
+
+def test_a_matching_name_set_leaves_the_narrow_flag_false(tmp_path: Path) -> None:
+    """窄判据不许对"名集全同"的那趟也说长——它没有东西可以窄，旗标必须为假。"""
+
+    single = _save(tmp_path, "a.pt", _mirror(1.0))
+    out = tmp_path / "r.json"
+    CMP.main(["--checkpoint", str(single), "--checkpoint", str(single), "--out-report", str(out)])
+    row = json.loads(out.read_text(encoding="utf-8"))["pairs"][0]
+    assert row["same_name_set"] is True
+    assert row["comparable_on_intersection_only"] is False
 
 
 def test_one_checkpoint_or_a_missing_file_refuses(tmp_path: Path) -> None:

@@ -39,9 +39,10 @@ def _report(
     names: list[str],
     reference_sha: str = SHA_A,
     status: str = "measured",
+    report_format: str = "taiji-n5-arm-tensor-comparison-v3",
 ) -> Path:
     payload = {
-        "format": "taiji-n5-arm-tensor-comparison-v2",
+        "format": report_format,
         "status": status,
         "files": [{"path": "base.pt", "file_sha256": reference_sha, "bytes": 1}],
         "pairs": [{"label": "base.pt -> arm.pt", "differing_slots_names": sorted(names)}],
@@ -77,7 +78,7 @@ def test_a_face_moved_only_in_the_treated_arm_is_named(tmp_path: Path) -> None:
     control = _report(tmp_path / "c.json", names=["substrate.predictive_readout.weights"])
     rc, payload = _run(tmp_path, treated, control)
     assert rc == 0
-    assert payload["format"] == "taiji-batch-c-moved-face-sets-v1"
+    assert payload["format"] == "taiji-batch-c-moved-face-sets-v2"
     assert payload["verdict"] == "holds"
     #: 镜像两根并成一枚：这里只有 `memory.association.edge_weight` 算治疗臂独有。
     assert payload["sets"]["only_in_treated"] == 1
@@ -107,6 +108,30 @@ def test_a_different_reference_face_must_go_red(tmp_path: Path) -> None:
     assert rc == 1
     assert payload["failing_verdicts"] == ["reference_is_the_same_bytes"]
     assert payload["sets"]["only_in_treated"] == 1
+
+
+def test_two_instrument_versions_are_not_one_face(tmp_path: Path) -> None:
+    """两趟输入必须出自**同一版比较器**，否则集合差是在比两台面。
+
+    v3（DEBT-G133 修法①）起"名集不齐的未声明缺席"按交集出版差异名集，而 v2 那种情形整趟拒绝、
+    名集根本不出——把 v3 的交集面与 v2 的拒绝面相减，得到的"只在治疗臂"是一句关于仪器版本的话，
+    不是关于权重的话。这一支**能为假**（同版本时它为真），所以它不是仪式。
+    """
+
+    treated = _report(
+        tmp_path / "t.json",
+        names=["substrate.memory.last_event", "substrate.memory.association.edge_weight"],
+    )
+    control = _report(
+        tmp_path / "c.json",
+        names=["substrate.memory.last_event"],
+        report_format="taiji-n5-arm-tensor-comparison-v2",
+    )
+    rc, payload = _run(tmp_path, treated, control, "ver.json")
+    assert rc == 1
+    assert payload["failing_verdicts"] == ["same_instrument_version"]
+    assert payload["inputs"]["treated_report_format"].endswith("-v3")
+    assert payload["inputs"]["control_report_format"].endswith("-v2")
 
 
 def test_a_refused_input_report_is_not_a_reading(tmp_path: Path) -> None:

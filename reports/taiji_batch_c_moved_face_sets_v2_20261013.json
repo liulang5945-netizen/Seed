@@ -1,0 +1,90 @@
+{
+  "format": "taiji-batch-c-moved-face-sets-v2",
+  "prereg": "plans/reference/PLAN-N5-21_batch_c_attribution_prereg_20261013.md §6.1 第 3 条",
+  "started_utc": "2026-10-13T13:17:17Z",
+  "inputs_as_given": [
+    "reports/taiji_n5_arm_tensor_base_vs_batch_c_treated_v3_20261013.json",
+    "reports/taiji_n5_arm_tensor_base_vs_batch_c_control_v3_20261013.json"
+  ],
+  "reading_limit": "本件的输入是两趟比较器读数里的**差异名集**，不是权重本身：它说得出「哪些名字只相对于基座在治疗臂里动过」，说不出幅度、也说不出因果。名字集合差里出现的每一项都仍可能是普通观察的副产物（喂入那一步多走一次 observe），所以定位句之后还要一次单变量复核；而差集为空的正确出口是 `no_localization_signal`，不是「喂入无效」。参照系那枚 sha 只证两趟用同一份基座字节，不证跑器版本（版本归并排仪）。",
+  "inputs": {
+    "treated_reference_sha256": "d6169a358eaee6d194d4795e3167a7bcbb42dfde57b92aa1199bcebbed89699b",
+    "control_reference_sha256": "d6169a358eaee6d194d4795e3167a7bcbb42dfde57b92aa1199bcebbed89699b",
+    "treated_pair_label": "checkpoints/seed_a31self_with_circuit.pt -> output/n5_20_batchC_treated/A/checkpoint.pt",
+    "control_pair_label": "checkpoints/seed_a31self_with_circuit.pt -> output/n5_20_batchC_control/A/checkpoint.pt",
+    "treated_report_format": "taiji-n5-arm-tensor-comparison-v3",
+    "control_report_format": "taiji-n5-arm-tensor-comparison-v3"
+  },
+  "differing_slots": {
+    "treated": 62,
+    "control": 44
+  },
+  "sets": {
+    "only_in_treated": 9,
+    "only_in_control": 0,
+    "in_both": 25
+  },
+  "only_in_treated_names": [
+    "identity_organ.bank.occupied",
+    "identity_organ.bank.prototypes",
+    "identity_organ.bank.visits",
+    "memory.association.edge_weight",
+    "memory.cortical_readout.edge_weight",
+    "memory.episode_readout.edge_weight",
+    "memory.familiarity_readout.edge_weight",
+    "memory.outcome_readout.edge_weight",
+    "memory.time_readout.edge_weight"
+  ],
+  "only_in_treated_names_raw": [
+    "substrate.identity_organ.bank.occupied",
+    "substrate.identity_organ.bank.prototypes",
+    "substrate.identity_organ.bank.visits",
+    "substrate.memory.association.edge_weight",
+    "substrate.memory.cortical_readout.edge_weight",
+    "substrate.memory.episode_readout.edge_weight",
+    "substrate.memory.familiarity_readout.edge_weight",
+    "substrate.memory.outcome_readout.edge_weight",
+    "substrate.memory.time_readout.edge_weight",
+    "taiji.kernel.identity_organ.bank.occupied",
+    "taiji.kernel.identity_organ.bank.prototypes",
+    "taiji.kernel.identity_organ.bank.visits",
+    "taiji.kernel.memory.association.edge_weight",
+    "taiji.kernel.memory.cortical_readout.edge_weight",
+    "taiji.kernel.memory.episode_readout.edge_weight",
+    "taiji.kernel.memory.familiarity_readout.edge_weight",
+    "taiji.kernel.memory.outcome_readout.edge_weight",
+    "taiji.kernel.memory.time_readout.edge_weight"
+  ],
+  "faces": {
+    "treated": {
+      "cognitive_state": 3,
+      "identity_organ": 6,
+      "memory": 20,
+      "perception": 12,
+      "predictive_readout": 6,
+      "state": 12,
+      "taiji": 3
+    },
+    "control": {
+      "cognitive_state": 3,
+      "memory": 8,
+      "perception": 12,
+      "predictive_readout": 6,
+      "state": 12,
+      "taiji": 3
+    },
+    "only_in_treated": {
+      "identity_organ": 6,
+      "memory": 12
+    }
+  },
+  "verdicts": {
+    "reference_is_the_same_bytes": true,
+    "both_reports_measured": true,
+    "same_instrument_version": true,
+    "localization_signal_present": true
+  },
+  "failing_verdicts": [],
+  "verdict": "holds",
+  "wall_clock_ms": 0.776
+}

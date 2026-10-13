@@ -159,3 +159,9 @@
    新仪器只做两趟件之间的**集合差**，不重抄比较链（[[dont-reimplement-the-chain]]）。
    在它出数之前，`J-N5t-4` 的幅度前置继续挡着。
 4. §2 原文与 §6 第 1 条一字不动，都在原地可查；改在任何臂↔臂读数之前。
+
+## §7 ㊵-777 追加（仪器拒绝面变更；§2／§6／§6.1 原文一字不动）
+
+* 载体升版：`compare_taiji_n5_arm_tensors.py` → `taiji-n5-arm-tensor-comparison-v3`（名集差按 `readout_retrain_spec.SURFACES` **现读**分流，缺席只住未声明面时按共有槽交集出读数并出版 `comparable_on_intersection_only`）；`audit_taiji_batch_c_moved_face_sets.py` → `-v2`，新增资格判据 `same_instrument_version`。**v2 的拒绝面与 v3 的交集面不许相减**：拿它们做集合差得到的是"关于仪器版本的话"，不是"关于权重的话"。
+* 冻结判据未动，且**不许因放行而升格**：`J-N5t-2` 的臂↔臂那一半在 v3 下仍未判——§6.1 第 1 条那句排除条件按"名集不齐"（`same_name_set` 为假）读，不按 rc 读。要把排除条件改成"看窄旗标"只能开在下一档，并写明改的是条件本身（同 §6／§6.1 的先例：改在任何读数之前，不改在读数之后）。
+* 本轮第一次有件的定位读数＝`reports/taiji_batch_c_moved_face_sets_v2_20261013.json`：`verdict=holds`，四条资格全真（参照系同 sha、两趟皆 `measured`、同版本 `-v3`、差集非空），"只在治疗臂相对基座动过"的名字 **9 组**（原始 18 枚），归类只有 `identity_organ`（6）与 `memory`（12）两面，`only_in_control=0`、`in_both=25`。效力边界照 §6.1 第 2 条：只说名字，不说幅度（`J-N5t-4`），不说因果（还要一次单变量复核）；对照臂相对基座也动了 `memory` 的 8 枚，引用时必须同引。

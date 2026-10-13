@@ -30,7 +30,7 @@ from pathlib import Path
 from typing import Any
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
-REPORT_FORMAT = "taiji-batch-c-moved-face-sets-v1"
+REPORT_FORMAT = "taiji-batch-c-moved-face-sets-v2"
 PREREG = (
     "plans/reference/PLAN-N5-21_batch_c_attribution_prereg_20261013.md \u00a76.1 \u7b2c 3 \u6761"
 )
@@ -98,6 +98,9 @@ def compare(treated: dict[str, Any], control: dict[str, Any]) -> dict[str, Any]:
         == control["files"][0]["file_sha256"],
         "both_reports_measured": treated["status"] == "measured"
         and control["status"] == "measured",
+        #: 两趟必须是**同一版比较器**产出的：v3 起"名集不齐按交集比"，拿 v2 的拒绝面与 v3 的
+        #: 交集面做集合差＝比两台面（v2 那份根本没出未声明面的缺席）。
+        "same_instrument_version": treated.get("format") == control.get("format"),
         "localization_signal_present": bool(distinct_only_treated),
     }
     return {
@@ -106,6 +109,8 @@ def compare(treated: dict[str, Any], control: dict[str, Any]) -> dict[str, Any]:
             "control_reference_sha256": control["files"][0]["file_sha256"],
             "treated_pair_label": treated["pairs"][0]["label"],
             "control_pair_label": control["pairs"][0]["label"],
+            "treated_report_format": treated.get("format"),
+            "control_report_format": control.get("format"),
         },
         "differing_slots": {"treated": len(treated_names), "control": len(control_names)},
         "sets": {
