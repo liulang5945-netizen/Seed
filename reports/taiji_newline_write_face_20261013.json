@@ -1,0 +1,39 @@
+{
+  "format": "taiji-newline-write-face-v1",
+  "debt": "DEBT-G115",
+  "face": ".",
+  "started_utc": "2026-10-13T04:57:19Z",
+  "tracked_python_total": 2002,
+  "unparsed_files": [
+    "scripts/archive/legacy_convert_dense_model_format.py",
+    "scripts/archive/legacy_expand_lifeform_data.py",
+    "scripts/archive/legacy_fill_general_corpus.py"
+  ],
+  "parse_baseline": [
+    "scripts/archive/legacy_convert_dense_model_format.py",
+    "scripts/archive/legacy_expand_lifeform_data.py",
+    "scripts/archive/legacy_fill_general_corpus.py"
+  ],
+  "a_face": {
+    "sites": 0,
+    "files": {}
+  },
+  "b_face": {
+    "sites": 1210,
+    "files": 813,
+    "note": "写靶是变量/表达式，静态读不出落点——这一桶不判，是修法① 的真实待办面"
+  },
+  "c_face": {
+    "sites": 161,
+    "note": "写靶认得出但不含 reports/（临时件、output/、他人目录）"
+  },
+  "verdicts": {
+    "face_is_not_empty": true,
+    "no_unparseable_file_beyond_the_known_three": true,
+    "a_face_at_or_below_baseline": true
+  },
+  "verdict": "holds",
+  "failing_verdicts": [],
+  "reading_limit": "A 桶＝能证明写靶是 reports/ 字面路径且缺 newline= 的调用，现读 0 处；这**不等于**全仓写靶都带上了 newline=。B 桶是写靶为变量／表达式、静态读不出落点的那批，把它们说成已处理需要逐枚现读——修法① 的真实待办面就是 B 桶的规模。债表粗筛那句「82 枚文件」与本件不是同一把尺：它数的是提过 reports/ 的文件，本件数的是这一处写入落到哪。另有三枚 `scripts/archive/legacy_*` parse 不动（在 `parse_baseline` 里点名），所以 A 桶那句是「扫得到的面上 0 处」，不是「全仓 0 处」。",
+  "wall_clock_ms": 4115.841
+}
