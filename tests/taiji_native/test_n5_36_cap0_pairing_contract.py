@@ -15,12 +15,10 @@
 
 from __future__ import annotations
 
-import importlib.util
 import json
+import subprocess
+import sys
 from pathlib import Path
-from typing import Any
-
-import pytest
 
 REPO = Path(__file__).resolve().parents[2]
 SCRIPT = REPO / "scripts" / "training" / "audit_taiji_n5_22_cap0_pairing.py"
@@ -33,15 +31,22 @@ DISCIPLINE = [
 ]
 
 
-def _load() -> Any:
-    spec = importlib.util.spec_from_file_location("n5_22_pairing", SCRIPT)
-    assert spec is not None and spec.loader is not None
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    return module
+def _cli(args: list[str]) -> subprocess.CompletedProcess[str]:
+    """起真子进程跑这台仪器——㊵-800 之前全册走 `CMP.main([...])` 进程内调用。
 
-
-CMP = _load()
+    差别不是风格：仪器把汇总行写成 `sys.stdout.buffer.write(...)`（`…:253`），
+    那条路**只有在真进程里才存在**；进程内调用时 pytest 的捕获对象替掉了 `sys.stdout`，
+    旗标是否真被走到、`rc` 是否真按 CLI 语义落地，全册一次都没证到过
+    （同 [[probe-output-must-be-verified-present]] 里"旗标要冒烟证明被走到"那条）。
+    """
+    return subprocess.run(
+        [sys.executable, str(SCRIPT), *args],
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+        cwd=REPO,
+    )
 
 
 def _item(identifier: str, score: int, *, load_ok: bool = True, review: bool = False) -> dict:
@@ -138,7 +143,7 @@ def _arm_pair(
 
 def _run(tmp_path: Path, treated: Path, control: Path, name: str) -> tuple[int, dict]:
     out = tmp_path / name
-    rc = CMP.main(
+    proc = _cli(
         [
             "--treated-report",
             str(treated),
@@ -148,7 +153,8 @@ def _run(tmp_path: Path, treated: Path, control: Path, name: str) -> tuple[int, 
             str(out),
         ]
     )
-    return rc, json.loads(out.read_text(encoding="utf-8"))
+    assert proc.returncode in (0, 1), proc.stdout + proc.stderr
+    return proc.returncode, json.loads(out.read_text(encoding="utf-8"))
 
 
 #: 治疗臂对 C01–C04，对照臂只对 C05 ⇒ 正向翻转 4 枚、反向 1 枚、delta 恰为判据的 +3 那一格。
@@ -418,7 +424,7 @@ def test_missing_or_foreign_json_refuses_and_existing_file_is_protected(tmp_path
         {"C": _dimension(_scores("C", CONTROL_C))},
         stem="guard",
     )
-    rc = CMP.main(
+    proc_missing = _cli(
         [
             "--treated-report",
             str(treated),
@@ -428,10 +434,12 @@ def test_missing_or_foreign_json_refuses_and_existing_file_is_protected(tmp_path
             str(tmp_path / "x.json"),
         ]
     )
-    assert rc == 2
+    assert proc_missing.returncode == 2, proc_missing.stdout + proc_missing.stderr
+    assert "REJECT" in proc_missing.stderr, proc_missing.stderr[:200]
+    assert not (tmp_path / "x.json").exists(), "refusal must not leave an artifact"
     foreign = tmp_path / "foreign.json"
     foreign.write_text('{"format": "other"}', encoding="utf-8", newline="\n")
-    rc_foreign = CMP.main(
+    proc_foreign = _cli(
         [
             "--treated-report",
             str(treated),
@@ -441,10 +449,12 @@ def test_missing_or_foreign_json_refuses_and_existing_file_is_protected(tmp_path
             str(tmp_path / "y.json"),
         ]
     )
-    assert rc_foreign == 2
+    assert proc_foreign.returncode == 2, proc_foreign.stdout + proc_foreign.stderr
+    assert "REJECT" in proc_foreign.stderr, proc_foreign.stderr[:200]
+    assert not (tmp_path / "y.json").exists(), "refusal must not leave an artifact"
     out = tmp_path / "first.json"
     _run(tmp_path, treated, control, "first.json")
-    rc_overwrite = CMP.main(
+    proc_overwrite = _cli(
         [
             "--treated-report",
             str(treated),
@@ -454,11 +464,36 @@ def test_missing_or_foreign_json_refuses_and_existing_file_is_protected(tmp_path
             str(out),
         ]
     )
-    assert rc_overwrite == 2
+    assert proc_overwrite.returncode == 2, proc_overwrite.stdout + proc_overwrite.stderr
+    assert "refusing to overwrite" in proc_overwrite.stderr, proc_overwrite.stderr[:200]
     assert json.loads(out.read_text(encoding="utf-8"))["direction"] == "capability_gain"
 
 
-def test_help_walks(tmp_path: Path) -> None:
-    with pytest.raises(SystemExit) as exit_info:
-        CMP.main(["--help"])
-    assert exit_info.value.code == 0
+def test_help_and_summary_walk_in_a_real_process(tmp_path: Path) -> None:
+    #: 进程内调用看不见 CLI 面：`--help` 在真进程里是 rc=0 ＋ usage 文本，
+    #: 而成功那趟的汇总行是 `sys.stdout.buffer.write(...)`——只有真进程才有那条路。
+    help_proc = _cli(["--help"])
+    assert help_proc.returncode == 0, help_proc.stdout + help_proc.stderr
+    assert "--treated-report" in help_proc.stdout, help_proc.stdout[:200]
+    treated, control = _arm_pair(
+        tmp_path,
+        {"C": _dimension(_scores("C", TREATED_C))},
+        {"C": _dimension(_scores("C", CONTROL_C))},
+        stem="cli",
+    )
+    out = tmp_path / "summary.json"
+    proc = _cli(
+        [
+            "--treated-report",
+            str(treated),
+            "--control-report",
+            str(control),
+            "--out-report",
+            str(out),
+        ]
+    )
+    summary = json.loads(proc.stdout)
+    assert proc.returncode == 0, proc.stdout + proc.stderr
+    assert summary["verdict"] == "holds", summary
+    assert summary["direction"] == "capability_gain", summary
+    assert sorted(summary["entering_dimensions"]) == ["C"], summary
