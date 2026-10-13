@@ -5,6 +5,7 @@
 本器把每条的**取值方式**写死在代码里，任何一条读不出来就出 `unreadable` 而不是猜。
 """
 
+import argparse
 import json
 import re
 import subprocess
@@ -210,8 +211,24 @@ def _generated_label_constructs() -> bool:
     return True
 
 
-def main() -> int:
-    fam = Path("C:/Users/23747/AppData/Local/Temp/fullfamily_682.log")
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(
+        description="PLAN-N2-06 写入合同的出值面（零算力：只读源码与记账）"
+    )
+    parser.add_argument(
+        "--out-report",
+        required=True,
+        help="落盘路径（件已存在则拒覆盖 rc=2，除非 --overwrite）",
+    )
+    parser.add_argument("--overwrite", action="store_true")
+    parser.add_argument(
+        "--family-log",
+        default="C:/Users/23747/AppData/Local/Temp/fullfamily_682.log",
+        help="整族回归日志；缺文件就出版 parsed=false，不猜数",
+    )
+    args = parser.parse_args(argv)
+
+    fam = Path(args.family_log)
     family = {"parsed": False}
     if fam.exists():
         text = fam.read_text(encoding="utf-8", errors="replace")
@@ -242,7 +259,15 @@ def main() -> int:
             "J-N2f-1 的 `partially_closed` 按**站点数**判定，站点数不为零就不许写成『已取消隐式来源』。"
         ),
     }
-    out = R / "reports/taiji_n2_06_write_contract_first_values_20261011.json"
+    out = Path(args.out_report)
+    if not out.is_absolute():
+        out = R / out
+    if out.exists() and not args.overwrite:
+        #: 这台仪器以前把落盘靶**硬编成一枚已入库读数件**（`reports/…_20261011.json`），
+        #: 一跑就覆盖掉那份历史读数——DEBT-G132 的现场。现在：靶必给、已存在就拒。
+        print(f"refusing to overwrite an existing report: {out}", file=sys.stderr)
+        return 2
+    out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(
         json.dumps(payload, ensure_ascii=True, indent=2) + "\n", encoding="utf-8", newline="\n"
     )

@@ -174,3 +174,102 @@ def test_this_instrument_follows_its_own_rule(tmp_path: Path, monkeypatch) -> No
         ["prog", "--root", str(PROJECT_ROOT), "--out-report", str(target), "--overwrite"],
     )
     assert module.main() == 0
+
+
+def test_the_errors_keyword_is_not_a_refusal() -> None:
+    #: 2026-10-13 现查的假护栏：v1 用"渲染后找子串"，`errors='replace'` 里的 `errors=` 命中了 `error`，
+    #: 于是 `measure_taiji_n2_06_write_contract_values.py` 被读成"写前拒绝"，而它其实会直接覆写在册件。
+    module = _load()
+    source = """import argparse
+parser = argparse.ArgumentParser()
+parser.add_argument("--out-report", default="reports/sealed.json")
+from pathlib import Path
+target = Path("reports/other.json")
+if target.exists():
+    text = target.read_text(encoding="utf-8", errors="replace")
+"""
+    category, evidence = module.classify(ast.parse(source), source)
+    assert category == module.CATEGORY_NONE
+    assert evidence == []
+
+
+def test_a_plain_string_return_is_not_a_refusal() -> None:
+    #: 第二种假护栏：`return 'bypass_confirmed（…）'` 命中子串 `return` ⇒ 判成拒绝。
+    #: 拒绝只认 `return <整数>`（我那三枚仪器的形状）／`raise`／`x.error(...)`／`exit(...)`。
+    module = _load()
+    source = """import argparse
+parser = argparse.ArgumentParser()
+parser.add_argument("--out-report", default="reports/sealed.json")
+from pathlib import Path
+target = Path(args.out_report)
+def verdict():
+    if target.exists():
+        return "bypass_confirmed（有答复带 U+FFFD）"
+"""
+    category, evidence = module.classify(ast.parse(source), source)
+    assert category == module.CATEGORY_NONE
+    assert evidence == []
+
+
+def _literal_repo(tmp_path: Path) -> Path:
+    (tmp_path / "scripts").mkdir(parents=True)
+    (tmp_path / "reports").mkdir(parents=True)
+    (tmp_path / "reports" / "sealed.json").write_text('{"old": 1}\n', encoding="utf-8")
+    (tmp_path / "reports" / "other.json").write_text('{"old": 2}\n', encoding="utf-8")
+    subprocess.run(["git", "init", str(tmp_path)], capture_output=True, check=True)
+    subprocess.run(
+        ["git", "-C", str(tmp_path), "add", "reports/sealed.json", "reports/other.json"],
+        capture_output=True,
+        check=True,
+    )
+    return tmp_path
+
+
+def test_a_hardcoded_write_target_is_found_on_the_second_face(tmp_path: Path) -> None:
+    #: v2 新增的那张面：写靶不走 argparse，而是 `out = R / "reports/sealed.json"` 这种硬编形。
+    #: v1 整面看不见它——而"看不见"在这里不是中性，是把"会覆写在册件"读成"没有暴露"。
+    module = _load()
+    repo = _literal_repo(tmp_path)
+    (repo / "scripts" / "literal.py").write_text(
+        """from pathlib import Path
+
+R = Path(".")
+out = R / "reports/sealed.json"
+out.write_text("{}")
+""",
+        encoding="utf-8",
+    )
+    subprocess.run(
+        ["git", "-C", str(repo), "add", "scripts/literal.py"], capture_output=True, check=True
+    )
+    report = module.build_report(repo)
+    rows = [row for row in report["rows"] if row["face"] == "literal_assignment"]
+    assert [(row["file"], row["default_target"], row["category"]) for row in rows] == [
+        ("scripts/literal.py", "reports/sealed.json", module.CATEGORY_NONE)
+    ]
+    assert report["face_counts"]["literal_assignment"] == 1
+    assert report["exposure_targets"] == 1
+
+
+def test_a_reports_constant_that_is_only_read_is_not_a_hit(tmp_path: Path) -> None:
+    #: 反向控制：绑过 `reports/` 字面路径但**只读**它的不算写靶；
+    #: 同一文件里真正被 write_text 的那枚（另一枚在册件）才该出现。
+    module = _load()
+    repo = _literal_repo(tmp_path)
+    (repo / "scripts" / "mixed.py").write_text(
+        """from pathlib import Path
+
+R = Path(".")
+SOURCE_REPORT = R / "reports/sealed.json"
+data = SOURCE_REPORT.read_text(encoding="utf-8")
+out = R / "reports/other.json"
+out.write_text(data)
+""",
+        encoding="utf-8",
+    )
+    subprocess.run(
+        ["git", "-C", str(repo), "add", "scripts/mixed.py"], capture_output=True, check=True
+    )
+    report = module.build_report(repo)
+    targets = sorted(row["default_target"] for row in report["rows"])
+    assert targets == ["reports/other.json"]

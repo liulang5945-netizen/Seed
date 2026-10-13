@@ -21,6 +21,11 @@ G50 又写着「与 DEBT-G35 的拒绝面需一起设计以免互相覆盖」—
 * `no_refusal_found`：既没拒绝也没旗标 ⇒ 才算**暴露面**。
 
 `exists()` 单独出现不算护栏：`verify_core_reasoning_coverage.py:153`／`:167` 的 `exists()` 是**读**检查。
+
+2026-10-13（DEBT-G132／㊵-774）升版 v2：加**第二张面** `literal_assignment`＝源码里硬编的字面落盘路径
+（`out = R / "reports/x.json"` 且 `out` 被当写靶用过）。v1 只认 argparse 的 `default`，于是
+`measure_taiji_n2_06_write_contract_values.py` 那种"把落盘靶硬编成一枚已入库读数件"的仪器**整面看不见**——
+它既不报命中也不报暴露，而我差点就照着"暴露面里没有它"去跑它、覆盖掉那份 20261011 的在册件。
 """
 
 from __future__ import annotations
@@ -34,10 +39,11 @@ from datetime import UTC, datetime
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
-REPORT_FORMAT = "taiji-sealed-report-overwrite-surface-v1"
+REPORT_FORMAT = "taiji-sealed-report-overwrite-surface-v2"
 WRITE_TARGET_FLAGS = {"out", "report", "arm-report", "out-report"}
+#: 字面路径里出现这个前缀才算"落盘到读数件面"（第二张面的判据之一）。
+REPORT_MARKER = "reports/"
 OVERRIDE_FLAGS = ("--overwrite", "--force")
-REFUSAL_CALLS = ("error", "SystemExit", "exit", "_exit", "raise", "return")
 CATEGORY_REFUSE_ONLY = "refusal_without_override_flag"
 CATEGORY_REFUSE_WITH_FLAG = "refusal_with_override_flag"
 CATEGORY_NONE = "no_refusal_found"
@@ -96,8 +102,35 @@ def _negated_positions(test_node: ast.expr) -> list[ast.expr]:
     return negated
 
 
+def _body_has_refusal(body: list[ast.stmt]) -> bool:
+    """拒绝出口只认**节点形状**：`x.error(...)`／`raise`／`sys.exit`／`return <整数>`。
+
+    v1 用的是"渲染成文本后找子串"，于是两处假护栏把暴露面算少了（2026-10-13 现查，DEBT-G132）：
+    `fam.read_text(encoding='utf-8', errors='replace')` 里的 `errors=` 命中了 `error`，
+    而函数中途的 `return 'bypass_confirmed（…）'` 命中了 `return`。安全面宁可多报暴露，
+    不能把"其实会覆写"读成"有护栏"（[[guard-must-be-able-to-fail]]）。
+    """
+
+    for node in ast.walk(ast.Module(body=body, type_ignores=[])):
+        if isinstance(node, ast.Raise):
+            return True
+        if isinstance(node, ast.Call):
+            func = node.func
+            if isinstance(func, ast.Attribute) and func.attr in ("error", "exit", "_exit"):
+                return True
+        if (
+            isinstance(node, ast.Return)
+            and isinstance(node.value, ast.Constant)
+            and isinstance(node.value.value, int)
+            #: `isinstance(True, int)` 为真，但 `return True` 不是拒绝出口。
+            and not isinstance(node.value.value, bool)
+        ):
+            return True
+    return False
+
+
 def _exists_guard_bodies(tree: ast.Module) -> list[str]:
-    """找 `if <...>.exists():` 且体内调用拒绝出口（parser.error／SystemExit／…）的那些体原文。"""
+    """找 `if <...>.exists():` 且体内有拒绝出口（`parser.error`／`raise`／`exit`／`return <int>`）的那些体原文。"""
 
     bodies: list[str] = []
     for node in ast.walk(tree):
@@ -120,10 +153,73 @@ def _exists_guard_bodies(tree: ast.Module) -> list[str]:
         if exists_calls and len(negated) == len(exists_calls):
             #: 全部 exists() 都是被 `not` 作用的读侧检查 ⇒ 不构成"写前拒绝覆写"的护栏。
             continue
-        rendered = "\n".join(ast.unparse(child) for child in node.body)
-        if any(token in rendered for token in REFUSAL_CALLS):
-            bodies.append(rendered)
+        if _body_has_refusal(node.body):
+            bodies.append("\n".join(ast.unparse(child) for child in node.body))
     return bodies
+
+
+def _base_name(expr: ast.expr) -> str | None:
+    """`target.write_text(...)`／`Path(target).write_text(...)`／`open(target, "w")` 里的宿主变量名。"""
+
+    if isinstance(expr, ast.Name):
+        return expr.id
+    if isinstance(expr, ast.Call) and isinstance(expr.func, ast.Name) and expr.args:
+        inner = expr.args[0]
+        return inner.id if isinstance(inner, ast.Name) else None
+    return None
+
+
+def _literal_target_names(tree: ast.Module) -> dict[str, list[str]]:
+    """变量名 → 它绑定的 `reports/` **字面**路径（含 `R / "reports/x.json"` 这种拼接形）。
+
+    这是第二张面：写靶不走 argparse 默认值，而是硬编在源码里。2026-10-13 发现本器整面漏着它
+    （`measure_taiji_n2_06_write_contract_values.py` 就是把落盘路径硬编成**一枚已入库读数件**，
+    所以它既不在命中里也不在暴露面里 ⇒ DEBT-G132）。
+    """
+
+    bound: dict[str, list[str]] = {}
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.Assign) or len(node.targets) != 1:
+            continue
+        target = node.targets[0]
+        if not isinstance(target, ast.Name):
+            continue
+        literals = [
+            sub.value
+            for sub in ast.walk(node.value)
+            if isinstance(sub, ast.Constant)
+            and isinstance(sub.value, str)
+            and REPORT_MARKER in sub.value
+        ]
+        if literals:
+            bound.setdefault(target.id, []).extend(literals)
+    return bound
+
+
+def _written_names(tree: ast.Module) -> set[str]:
+    """被**当写靶用过**的变量名。只绑过字面路径而没往里写的不算（那是读数件常量或读检查）。"""
+
+    names: set[str] = set()
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.Call):
+            continue
+        func = node.func
+        if isinstance(func, ast.Attribute) and func.attr in ("write_text", "write_bytes"):
+            name = _base_name(func.value)
+            if name:
+                names.add(name)
+        elif isinstance(func, ast.Name) and func.id == "open" and node.args:
+            mode = node.args[1] if len(node.args) > 1 else None
+            writing = (
+                isinstance(mode, ast.Constant)
+                and isinstance(mode.value, str)
+                and any(char in mode.value for char in "wax+")
+            )
+            if writing:
+                name = _base_name(node.args[0])
+                if name:
+                    names.add(name)
+    return names
 
 
 def classify(tree: ast.Module, source: str) -> tuple[str, list[str]]:
@@ -152,12 +248,30 @@ def scan(root: Path, tracked_set: set[str]) -> list[dict[str, object]]:
                 rows.append(
                     {
                         "file": rel,
+                        "face": "argparse_default",
                         "flags": names,
                         "default_target": default,
                         "category": category,
                         "refusal_evidence": evidence,
                     }
                 )
+        written = _written_names(tree)
+        for name, literals in sorted(_literal_target_names(tree).items()):
+            if name not in written:
+                #: 只绑过字面路径、没往里写过 ⇒ 那是读数件常量或读侧检查，不是落盘靶。
+                continue
+            for literal in sorted(set(literals)):
+                if literal in tracked_set:
+                    rows.append(
+                        {
+                            "file": rel,
+                            "face": "literal_assignment",
+                            "flags": [name],
+                            "default_target": literal,
+                            "category": category,
+                            "refusal_evidence": evidence,
+                        }
+                    )
     return rows
 
 
@@ -173,14 +287,23 @@ def build_report(root: Path) -> dict[str, object]:
         category: sum(1 for row in rows if row["category"] == category)
         for category in (CATEGORY_REFUSE_ONLY, CATEGORY_REFUSE_WITH_FLAG, CATEGORY_NONE)
     }
+    face_counts = {
+        face: sum(1 for row in rows if row["face"] == face)
+        for face in ("argparse_default", "literal_assignment")
+    }
     return {
         "format": REPORT_FORMAT,
-        "debts": ["DEBT-G35", "DEBT-G50"],
-        "face": "tracked 的 scripts/**/*.py；写靶只认 argparse 第一个参数名在名单里的 default 字符串",
+        "debts": ["DEBT-G35", "DEBT-G50", "DEBT-G132"],
+        "face": (
+            "tracked 的 scripts/**/*.py；两张面并立——`argparse_default`＝写靶旗标的默认值，"
+            "`literal_assignment`＝源码里硬编的字面路径且该变量被当写靶用过"
+            "（v2 新增这一面：v1 只认 argparse 默认值，把硬编靶整面漏掉）"
+        ),
         "script_files_scanned": len(
             [p for p in tracked if p.startswith("scripts/") and p.endswith(".py")]
         ),
         "default_targets_on_tracked_files": len(rows),
+        "face_counts": face_counts,
         "distinct_files": len({row["file"] for row in rows}),
         "category_counts": counts,
         "exposure_targets": counts[CATEGORY_NONE],
@@ -226,6 +349,7 @@ def main() -> int:
                 "script_files_scanned": report["script_files_scanned"],
                 "default_targets_on_tracked_files": report["default_targets_on_tracked_files"],
                 "distinct_files": report["distinct_files"],
+                "face_counts": report["face_counts"],
                 "category_counts": report["category_counts"],
                 "exposure_targets": report["exposure_targets"],
                 "exposure_files": report["exposure_files"],
