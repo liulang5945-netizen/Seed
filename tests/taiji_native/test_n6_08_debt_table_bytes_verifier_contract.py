@@ -225,7 +225,7 @@ def test_the_report_lands_only_where_it_is_told(tmp_path: Path) -> None:
     )
     assert rc == 0
     payload = json.loads(out.read_text(encoding="utf-8"))
-    assert payload["format"] == "taiji-debt-table-bytes-verification-v1"
+    assert payload["format"] == "taiji-debt-table-bytes-verification-v2"
     assert b"\r" not in out.read_bytes()
     assert (
         module.main(
@@ -285,3 +285,28 @@ def os_environ_for_gbk() -> dict:
     values = dict(os.environ, PYTHONIOENCODING="gbk")
     values.pop("PYTHONUTF8", None)
     return values
+
+
+def test_a_cleaned_file_tail_is_not_mistaken_for_deleted_prose() -> None:
+    """DEBT-G135 修法②：尾随空行不是作者的字，但**清理与累积要分方向看**。
+
+    v1 把末尾空行当 prose 行比较，于是"把写盘工具累积的空行清掉"这种纯尾形改动会被判成
+    "吞了别人的字"（㊵-776 实测 rc=1、problem＝prose line missing in the new face）。
+    v2 先按同量剥掉尾随空行再比 prose，同时把剥掉的枚数出版，并加一条只在**变多**方向为假的判据：
+    清理＝另一笔提交，不算违规；累积＝幂等缺失的指纹，必须红。
+    """
+
+    verify = _load()
+    #: 不用反斜杠转义——外层传输会把换行落成真字符，把字面量劈成语法错（本仓记过的坑，这次又踩）。
+    nl = chr(10)
+    base = HEADER + ROW_FIVE + "一句作者写的说明。" + nl
+    payload = verify.compare(base + nl + nl, base, table="t.md")
+    assert payload["verdicts"]["non_row_lines_untouched"] is True
+    assert payload["verdicts"]["file_tail_not_grown"] is True
+    assert payload["trailing_blank_lines"]["old"] > payload["trailing_blank_lines"]["new"]
+    grown = verify.compare(base, base + nl + nl + nl + nl, table="t.md")
+    assert grown["verdicts"]["file_tail_not_grown"] is False
+    #: 反面对照（这一支最重要）：**真删**一条作者写的说明行时 prose 判据必须仍然为假——
+    #: 少了它，"剥尾随空行"就变成一条让删正文也能蒙过去的宽松化。
+    deleted = verify.compare(base, HEADER + ROW_FIVE, table="t.md")
+    assert deleted["verdicts"]["non_row_lines_untouched"] is False

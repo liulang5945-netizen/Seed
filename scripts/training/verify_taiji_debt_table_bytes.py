@@ -35,7 +35,7 @@ ROW_RE = re.compile("^[|]" + B + "s*DEBT-G([0-9]+)" + B + "s*[|]")
 STATUS_MARKER = "状态未登记（原文按四列登记，㊵-748 统一列形时留空不代填）"
 FIX_MARKER = "修法未登记（原文只有三列，㊵-748 统一列形时留空不代填）"
 MARKERS = (FIX_MARKER, STATUS_MARKER)
-FORMAT = "taiji-debt-table-bytes-verification-v1"
+FORMAT = "taiji-debt-table-bytes-verification-v2"
 
 
 def show(text: str) -> str:
@@ -152,9 +152,24 @@ def compare(old_text: str, new_text: str, *, table: str, strict: bool = False) -
             closed += 1
         else:
             escaped_only += 1
+
     #: 非表格行：允许"插入"（新加一段说明），不允许"删除或改写"（那是别人的字被吞）。
-    old_prose = [line for line in old_lines if ROW_RE.match(line) is None]
-    new_prose = [line for line in new_lines if ROW_RE.match(line) is None]
+    #: v2（DEBT-G135 修法②）：比较前先各自剥掉**尾随空行**——那是写盘工具的产物不是作者的字，
+    #: 但剥掉的枚数照样出版，并用一条**只朝累积方向为假**的判据看着它（清理是另一笔提交，不算违规）。
+    def _tail_blanks(seq):
+        count = 0
+        while count < len(seq) and seq[len(seq) - 1 - count].strip() == "":
+            count += 1
+        return count
+
+    old_blanks = _tail_blanks(old_lines)
+    new_blanks = _tail_blanks(new_lines)
+    old_prose = [
+        line for line in old_lines[: len(old_lines) - old_blanks] if ROW_RE.match(line) is None
+    ]
+    new_prose = [
+        line for line in new_lines[: len(new_lines) - new_blanks] if ROW_RE.match(line) is None
+    ]
     cursor = 0
     for line in old_prose:
         while cursor < len(new_prose) and new_prose[cursor] != line:
@@ -189,12 +204,15 @@ def compare(old_text: str, new_text: str, *, table: str, strict: bool = False) -
             "escape_only": escaped_only,
         },
         "allowed_markers": list(MARKERS),
+        "trailing_blank_lines": {"old": old_blanks, "new": new_blanks},
         "problems": byte_problems + tail_problems + collateral_problems,
         "verdicts": {
             "no_rows_lost": not lost_ids,
             "all_row_bytes_preserved_in_order": not byte_problems,
             "tails_are_only_registered_markers": not tail_problems,
             "non_row_lines_untouched": not collateral_problems,
+            #: 尾随空行**变多**才红（那是写盘幂等缺失的指纹）；变少＝清理，属另一笔提交。
+            "file_tail_not_grown": new_blanks <= old_blanks,
         },
     }
 
