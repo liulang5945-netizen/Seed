@@ -48,7 +48,9 @@ if str(SCRIPT_DIR) not in sys.path:
 import _taiji_report_io as report_io  # noqa: E402
 
 #: ㊵-790：写靶识别面**变宽**（统一落盘助手的两个入口也算写入）⇒ 按"识别边界变了就升版"的规矩走 v3。
-REPORT_FORMAT = "taiji-sealed-report-overwrite-surface-v3"
+#: ㊵-821：读出面**变宽**（新增 `shared_writer_sensitivity` 一枚披露块）⇒ 按"读出面变了就升版"走 v4。
+#: 既有七枚出版值与 `rows` 的字段集一字未动，故 v3 的在册件在新面上仍逐值可比（比较要带 `format`）。
+REPORT_FORMAT = "taiji-sealed-report-overwrite-surface-v4"
 WRITE_TARGET_FLAGS = {"out", "report", "arm-report", "out-report"}
 #: 字面路径里出现这个前缀才算"落盘到读数件面"（第二张面的判据之一）。
 REPORT_MARKER = "reports/"
@@ -210,12 +212,17 @@ def _literal_target_names(tree: ast.Module) -> dict[str, list[str]]:
     return bound
 
 
-def _written_names(tree: ast.Module) -> set[str]:
+def _written_names(tree: ast.Module, *, include_shared: bool = True) -> set[str]:
     """被**当写靶用过**的变量名。只绑过字面路径而没往里写的不算（那是读数件常量或读检查）。
 
     ㊵-790：统一落盘助手（DEBT-G115 修法③，`_taiji_report_io.py`）把写入从 `x.write_text(...)`
     收进 `report_io.write_text_report(x, ...)`——**如果这里只认 `write_text`，迁移一台仪器就从本件的
     识别面上抹掉一个写靶**，暴露面会被自己主导的收口动作悄悄缩小。故助手那两个名字同样算写入。
+
+    ㊵-821（DEBT-G139 修法①）：`include_shared=False` 给本件一个**自测口子**——同一棵树上跑两遍，
+    差出来的那批字面靶就是"只有靠助手识别才看得见"的行。这条差是**出版读数**，不是调试输出：
+    现行树上它今天为 0（㊵-820 的摘除对照实测七个出版值一枚不动），所以"门认得助手写入"这句
+    在没有这枚键之前**不可观测**；今后哪台仪器的字面靶只剩助手这一条识别路，它会当场非零。
     """
 
     names: set[str] = set()
@@ -224,7 +231,7 @@ def _written_names(tree: ast.Module) -> set[str]:
             continue
         func = node.func
         called = getattr(func, "attr", None) or (func.id if isinstance(func, ast.Name) else "")
-        if called in SHARED_WRITER_CALLS and node.args:
+        if include_shared and called in SHARED_WRITER_CALLS and node.args:
             #: 助手的第一个参数就是写靶；`report_io` 这个接收者本身不是靶。
             name = _base_name(node.args[0])
             if name:
@@ -258,7 +265,11 @@ def classify(tree: ast.Module, source: str) -> tuple[str, list[str]]:
     return CATEGORY_REFUSE_ONLY, evidence
 
 
-def scan(root: Path, tracked_set: set[str]) -> list[dict[str, object]]:
+def scan(
+    root: Path, tracked_set: set[str], *, dependent: list[str] | None = None
+) -> list[dict[str, object]]:
+    """`dependent`（㊵-821）就地收下"这一行的识别**只**来自统一落盘助手那条分支"的文件名。"""
+
     rows: list[dict[str, object]] = []
     for rel in sorted(
         p for p in sorted(tracked_set) if p.startswith("scripts/") and p.endswith(".py")
@@ -282,10 +293,15 @@ def scan(root: Path, tracked_set: set[str]) -> list[dict[str, object]]:
                     }
                 )
         written = _written_names(tree)
+        written_no_shared = _written_names(tree, include_shared=False)
         for name, literals in sorted(_literal_target_names(tree).items()):
             if name not in written:
                 #: 只绑过字面路径、没往里写过 ⇒ 那是读数件常量或读侧检查，不是落盘靶。
                 continue
+            if dependent is not None and name not in written_no_shared:
+                #: 摘掉助手那条分支就看不见这个靶 ⇒ 本行的识别**依赖**助手识别。
+                if rel not in dependent:
+                    dependent.append(rel)
             for literal in sorted(set(literals)):
                 if literal in tracked_set:
                     rows.append(
@@ -303,7 +319,8 @@ def scan(root: Path, tracked_set: set[str]) -> list[dict[str, object]]:
 
 def build_report(root: Path) -> dict[str, object]:
     tracked = set(_tracked(root))
-    rows = scan(root, tracked)
+    helper_dependent: list[str] = []
+    rows = scan(root, tracked, dependent=helper_dependent)
     if not rows:
         raise ValueError(
             "零命中：没有一枚仪器的默认写靶落在已入库件上。先确认扫描面（tracked 的 scripts/**/*.py），"
@@ -334,6 +351,19 @@ def build_report(root: Path) -> dict[str, object]:
         "category_counts": counts,
         "exposure_targets": counts[CATEGORY_NONE],
         "exposure_files": len({row["file"] for row in rows if row["category"] == CATEGORY_NONE}),
+        #: ㊵-821＝DEBT-G139 修法①：这条识别分支**有没有真实载体**今天是可出版的读数了。
+        #: `count 0` 不是"分支没用"，而是"现行树上还没有哪一行**只**靠它才看得见"——
+        #: ㊵-820 的摘除对照当时只能证"聚合数不动"，证不了"哪天瞎"；这一枚把那个盲区变成非零即报警。
+        "shared_writer_sensitivity": {
+            "rows_total": len(rows),
+            "count": len(helper_dependent),
+            "files_recognized_only_via_shared_writer": sorted(helper_dependent),
+            "definition": (
+                "同一棵树上跑两遍 `_written_names`（第二遍 `include_shared=False`）；"
+                "`literal_assignment` 那一面里，某枚字面靶的宿主变量**只在第一遍**被认成写靶 ⇒ 该文件入列。"
+                "只加键，不改 `37／36／22／21` 那组口径。"
+            ),
+        },
         "rows": rows,
         "categories": {
             CATEGORY_REFUSE_ONLY: "写前拒绝覆写、但不给覆写口（最严；`calibrate_taiji_r2` 那一形）",

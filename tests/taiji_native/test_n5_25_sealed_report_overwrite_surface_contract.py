@@ -212,6 +212,59 @@ def test_a_write_through_the_shared_writer_still_counts_as_a_write_target() -> N
         '    return (target.read_text(encoding="utf-8"), "reports/sealed.json")\n',
     )
     assert "target" not in module._written_names(ast.parse(read_only))
+    #: ㊵-821（DEBT-G139）：把助手那条分支关掉，同一个靶就必须**看不见**——
+    #: 这正是"敏感性"的定义，也是本册里这枚新键唯一能被称为证据的形式。
+    assert "target" not in module._written_names(ast.parse(via_helper), include_shared=False)
+
+
+def test_the_sensitivity_key_names_only_rows_that_only_the_helper_branch_can_see(
+    tmp_path: Path,
+) -> None:
+    """DEBT-G139 修法②：`shared_writer_sensitivity` 要能为真也要能为假。
+
+    三枚夹具都往同一枚已入库字面靶 `reports/sealed.json` 上写，区别只在**靠哪条分支被认出来**：
+    只走助手的 ⇒ 入列；助手＋普通写法都有的 ⇒ 不入列（关掉助手仍看得见，所以不依赖它）；
+    只有普通写法的 ⇒ 也不入列。三枚合计 ⇒ `count == 1` 且 `rows_total` 等于命中总数。
+    """
+
+    module = _load()
+    (tmp_path / "scripts").mkdir(parents=True)
+    (tmp_path / "reports").mkdir(parents=True)
+    (tmp_path / "reports" / "sealed.json").write_text('{"old": 1}\n', encoding="utf-8")
+    subprocess.run(["git", "init", str(tmp_path)], capture_output=True, check=True)
+    helper_only = (
+        "import _taiji_report_io as report_io\n"
+        'target = "reports/sealed.json"\n'
+        "def emit(text):\n"
+        "    report_io.write_json_report(target, text)\n"
+    )
+    helper_and_plain = (
+        "import _taiji_report_io as report_io\n"
+        'target = "reports/sealed.json"\n'
+        "def emit(text):\n"
+        "    report_io.write_json_report(target, text)\n"
+        "def emit_again(text):\n"
+        '    open(target, "w", encoding="utf-8").write(text)\n'
+    )
+    plain_only = (
+        'target = "reports/sealed.json"\n'
+        "def emit(text):\n"
+        '    target.write_text(text, encoding="utf-8")\n'
+    )
+    for name, source in {
+        "helper_only.py": helper_only,
+        "helper_and_plain.py": helper_and_plain,
+        "plain_only.py": plain_only,
+    }.items():
+        (tmp_path / "scripts" / name).write_text(source, encoding="utf-8")
+    subprocess.run(["git", "-C", str(tmp_path), "add", "."], capture_output=True, check=True)
+
+    report = module.build_report(tmp_path)
+    block = report["shared_writer_sensitivity"]
+    assert report["default_targets_on_tracked_files"] == 3, report["rows"]
+    assert block["rows_total"] == 3
+    assert block["count"] == 1, block
+    assert block["files_recognized_only_via_shared_writer"] == ["scripts/helper_only.py"], block
 
 
 def test_the_errors_keyword_is_not_a_refusal() -> None:
