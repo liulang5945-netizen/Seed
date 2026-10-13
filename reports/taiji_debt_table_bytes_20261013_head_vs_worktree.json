@@ -1,0 +1,29 @@
+{
+  "format": "taiji-debt-table-bytes-verification-v1",
+  "table": "plans/active/roadmap/05_TECH_DEBT_REGISTER.md",
+  "profile": "no_deletion",
+  "rows": 125,
+  "rows_added": 1,
+  "rows_lost": 0,
+  "lost_debt_ids": [],
+  "rows_rewritten": 1,
+  "rows_unchanged": 124,
+  "lines_old": 1409,
+  "lines_new": 1410,
+  "rewrite_kinds": {
+    "appended_marker": 0,
+    "closed_tail": 0,
+    "escape_only": 0
+  },
+  "allowed_markers": [
+    "修法未登记（原文只有三列，㊵-748 统一列形时留空不代填）",
+    "状态未登记（原文按四列登记，㊵-748 统一列形时留空不代填）"
+  ],
+  "problems": [],
+  "verdicts": {
+    "no_rows_lost": true,
+    "all_row_bytes_preserved_in_order": true,
+    "tails_are_only_registered_markers": true,
+    "non_row_lines_untouched": true
+  }
+}
