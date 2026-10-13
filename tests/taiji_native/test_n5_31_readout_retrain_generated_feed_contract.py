@@ -10,10 +10,13 @@ from __future__ import annotations
 
 import ast
 import importlib.util
+import inspect
+import json
 import sys
 from pathlib import Path
 
 import pytest
+import torch
 
 from taiji import Taiji, TaijiConfig
 
@@ -74,23 +77,81 @@ def _tiny_model() -> Taiji:
     return model
 
 
-def test_the_flag_defaults_to_off_and_the_runner_keeps_one_write_path() -> None:
-    """J-N5r-1 的形状面＋G-N5r-1：默认 0；跑器里不许出现第二条写链。"""
+def _episodic_write_calls(source: str) -> int:
+    """G-N5r-1 的真尺：数「方法名是 `write` 且接收者点分链尾是 `memory`」的调用。
 
+    DEBT-G121 ③ 的修法就在这句上：**越界样本与真码走同一个函数**。原来那条「负对照」是对
+    自己刚拼出来的字符串再断言一次子串存在，永远为真、零判别力。
+    """
+
+    count = 0
+    for node in ast.walk(ast.parse(source)):
+        if not isinstance(node, ast.Call) or not isinstance(node.func, ast.Attribute):
+            continue
+        if node.func.attr != "write":
+            continue
+        receiver = ast.unparse(node.func.value)
+        if receiver == "memory" or receiver.endswith(".memory"):
+            count += 1
+    return count
+
+
+def _tiny_seed_envelope(tmp_path: Path) -> Path:
+    """现造一枚极小 Seed 信封当基座：本册要读的是 `run_arm` 的**产出 dict**，不是它的源码。"""
+
+    from seed import Seed
+    from seed.config import SeedConfig
+
+    config = SeedConfig(
+        taiji=TaijiConfig(
+            region_sizes=(16, 12),
+            synapse_fan_in=4,
+            motor_fan_in=8,
+            memory_units=24,
+            memory_fan_in=4,
+            memory_meta_dim=8,
+            memory_readout_fan_in=8,
+            memory_iterations=2,
+            seed=5,
+            identity_organ_enabled=False,
+        )
+    )
+    path = tmp_path / "base.pt"
+    torch.save(Seed(config).checkpoint(), path)
+    return path
+
+
+def _tiny_corpus(tmp_path: Path) -> Path:
+    #: 尺寸是被量出来的：小模型实跑约 225 符号/秒，语料必须够跑 600 符号，
+    #: 否则跑器会响亮拒绝（`corpus exhausted ... the budget does not fit the stream`），
+    #: 而 ETA 在 3 位小数上会退化成 0.0——那等于把尺的子范围当全范围。
+    row = json.dumps({"text": "abracadabra cadabra abracadabra cadabra"}, ensure_ascii=False)
+    path = tmp_path / "corpus.jsonl"
+    path.write_text((row + "\n") * 40, encoding="utf-8", newline="\n")
+    return path
+
+
+def test_the_flag_defaults_to_off_and_the_runner_keeps_one_write_path() -> None:
+    """J-N5r-1 的形状面＋G-N5r-1：默认关死（读**运行时签名**），跑器里不许第二条写链。
+
+    DEBT-G121 ③ 的两处升级：①默认值不再靠 `source.count("default=0")` 这种文本匹配——
+    那枚字符串在别处出现也算数；改读 `inspect.signature(run_arm)` 的参数的默认值。
+    ②「负对照」必须走**同一把尺**：合成源码喂进 `_episodic_write_calls` 要数出 1，
+    而一枚同名但接收者不是情节场的落盘调用要数出 0（尺过宽会误伤，那是另一族教训）。
+    """
+
+    runner = _runner()
     source = RUNNER.read_text(encoding="utf-8")
-    tree = ast.parse(source)
-    defaults = {}
-    for node in ast.walk(tree):
-        if isinstance(node, ast.keyword) and node.arg == "generated_feed_every":
-            defaults["run_arm_param"] = getattr(node.value, "value", None)
     assert "--generated-feed-every" in source
-    assert source.count("default=0") >= 1
-    assert "memory.write(" not in source
+    signature = inspect.signature(runner.run_arm)
+    assert signature.parameters["generated_feed_every"].default == 0, signature
+    assert _episodic_write_calls(source) == 0, "跑器里出现了挂在情节场上的第二条写链"
     assert source.count("record_generated_prediction(") == 1
 
-    # 负对照：同一把尺必须能数出越界样本。
-    fabricated = "def f(model):\n    return model.memory.write(ctx)\n"
-    assert "memory.write(" in fabricated
+    fabricated = "def f(model, ctx):\n    return model.memory.write(ctx)\n"
+    assert _episodic_write_calls(fabricated) == 1, "这把尺数不出越界样本＝它根本没有动态范围"
+    lookalike = "def g(handle, text):\n    handle.write(text)\n    return path.write_text(text)\n"
+    assert _episodic_write_calls(lookalike) == 0, "把落盘 write 也计进来＝尺过宽，会误伤"
 
 
 def test_the_flush_keeps_the_arms_readout_and_turns_every_learn_off() -> None:
@@ -155,15 +216,77 @@ def test_the_entry_refuses_to_overwrite_an_in_flight_experience() -> None:
         model2.record_generated_prediction(67)
 
 
-def test_pricing_keys_are_published_by_the_runner() -> None:
-    """J-N5r-3：跑器自述必须带本次实测速率与由它推的 ETA，不接受引用来的定价。"""
+def _run_tiny_arm(tmp_path: Path, *, generated_feed_every: int) -> dict:
+    """小信封＋小语料真跑一臂，返回 `run_arm` 的产出 dict（摘要助手全部复用跑器自己的函数）。"""
 
-    source = RUNNER.read_text(encoding="utf-8")
+    runner = _runner()
+    base = _tiny_seed_envelope(tmp_path)
+    corpus = _tiny_corpus(tmp_path)
+    return runner.run_arm(
+        arm="A",
+        symbols=600,
+        checkpoint_every=300,
+        progress_every=300,
+        arm_dir=tmp_path / "arm",
+        base_checkpoint=base,
+        base_sha256=runner.sha256_of(base),
+        corpus_paths=[corpus],
+        corpus_digest=runner.corpus_fingerprint([corpus]),
+        skip_symbols=0,
+        device="cpu",
+        fresh=True,
+        generated_feed_every=generated_feed_every,
+    )
+
+
+def test_pricing_keys_are_published_by_the_runner(tmp_path: Path) -> None:
+    """J-N5r-3 从「读源码」升成「读产出」（DEBT-G121 ②）：小信封＋小语料直调 `run_arm`。
+
+    原来这支只对跑器源码做子串匹配（五枚键名 in source），既不证明这些键真被产出，也不证明
+    值是被测出来的——`generated_reward_sum` 那枚恒零字面量就是反例（字面量也能过）。
+    现在断的是**产出 dict**：键在场，且速率／ETA／喂入次数／写计数都是现跑出来的正数。
+    """
+
+    report = _run_tiny_arm(tmp_path, generated_feed_every=4)
+    block = report["generated_feed"]
     for key in (
-        "measured_symbols_per_second",
-        "eta_hours_at_requested_budget",
+        "every_symbols",
+        "feeds",
         "generated_write_count",
         "generated_row_weight_max_abs",
         "generated_reward_sum",
+        "measured_symbols_per_second",
+        "eta_hours_at_requested_budget",
     ):
-        assert key in source, key
+        assert key in block, key
+    assert block["measured_symbols_per_second"] > 0, block
+    assert block["feeds"] > 0, block
+    assert block["generated_write_count"] > 0, block
+    #: 夹具尺寸是被量出来的，不是随手挑的：小模型实跑约 225 符号/秒，16 符号的预算会把
+    #: `eta_hours_at_requested_budget` 在 3 位小数上舍成 0.0，那条关系式就成了**不可假**的断言。
+    #: 600 符号 ⇒ eta ≈ 0.001，于是"必须为正"与"由本次实测速率推出"两条都能为假。
+    #: J-N5r-3 真正要钉的就是这条关系：ETA 只能由本次实测推，不接受引用来的数。
+    session_symbols = int(report["session"]["symbols"])
+    assert block["eta_hours_at_requested_budget"] > 0.0, block
+    expected_eta = round(
+        session_symbols / block["measured_symbols_per_second"] / 3600.0,
+        3,
+    )
+    assert block["eta_hours_at_requested_budget"] == pytest.approx(expected_eta, abs=1e-9), (
+        block,
+        session_symbols,
+    )
+    # 这一枚**仍是跑器按构造写出的 0.0**：把它改成从存储面按 provenance 回读的那一半要动跑器，
+    # 而跑器现在被批次 C 占着（两臂必须同源，㊵-754）。所以这里只钉"产出里有这枚键、值为 0.0"，
+    # 不许把它读成"零奖励已被实测证实"。
+    assert block["generated_reward_sum"] == 0.0, block
+
+
+def test_the_feed_is_off_by_default_on_the_produced_face(tmp_path: Path) -> None:
+    """J-N5r-1 的产出面（原来只有源码面）：旗标取 0 时写计数与那一行权重必须都停在 0。"""
+
+    block = _run_tiny_arm(tmp_path, generated_feed_every=0)["generated_feed"]
+    assert block["every_symbols"] == 0, block
+    assert block["feeds"] == 0, block
+    assert block["generated_write_count"] == 0, block
+    assert block["generated_row_weight_max_abs"] == 0.0, block
