@@ -244,10 +244,37 @@ def test_missing_input_wrong_kind_and_overwrite_guard(tmp_path: Path) -> None:
         str(tmp_path / "never.json"),
     ]
     assert FLOOR.main(base) == 0
+    written = (tmp_path / "never.json").read_bytes()
     assert FLOOR.main(base) == 2
+    assert (
+        tmp_path / "never.json"
+    ).read_bytes() == written, "refusal must leave the existing bytes untouched"
     missing = list(base)
     missing[1] = str(tmp_path / "gone.json")
     assert FLOOR.main(missing) == 2
     wrong_kind = list(base)
     wrong_kind[1] = str(not_run)
     assert FLOOR.main(wrong_kind) == 2
+
+
+def test_published_reading_limit_carries_the_pairing_refusal(tmp_path: Path) -> None:
+    """件里的自述必须与模块常量同源，并且**真的写着**"拒收不合格配对件"这件事。
+
+    ㊵-797 给仪器加了拒绝分支，自述句子却没跟上——只读件的人会以为 CAP 维地板在配对不合格时
+    也能出数。这条测把"那半句在场"钉住（删掉即红），并用截回迁移前长度的一支证明守卫能为假。
+    """
+    four = [
+        _run_report(7.0, 0.25),
+        _run_report(6.0, 0.26),
+        _run_report(6.9, 0.255),
+        _run_report(6.05, 0.261),
+    ]
+    assert FLOOR.main(_args(tmp_path, four, "limit.json")) == 0
+    payload = json.loads((tmp_path / "limit.json").read_text(encoding="utf-8"))
+    clause = payload["reading_limit"]
+    assert clause == FLOOR.READING_LIMIT
+    for token in ("pairing_valid", "holds", "rc=2"):
+        assert token in clause, token
+    assert not all(
+        token in clause[:108] for token in ("pairing_valid", "holds", "rc=2")
+    ), "the refusal clause must be the part that arrived, not already-present wording"

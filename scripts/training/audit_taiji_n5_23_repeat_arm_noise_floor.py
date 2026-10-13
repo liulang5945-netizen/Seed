@@ -26,6 +26,14 @@ from pathlib import Path
 from typing import Any
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
+#: 契约册按文件路径加载本件、也被起成真子进程，脚本自己那层目录先上 `sys.path`，
+#: 统一落盘助手才解析得到（同㊵-790／802 那条例外约定）。
+SCRIPT_DIR = Path(__file__).resolve().parent
+if str(SCRIPT_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPT_DIR))
+
+import _taiji_report_io as report_io  # noqa: E402
+
 REPORT_FORMAT = "taiji-n5-23-repeat-arm-noise-floor-v1"
 #: 进判据的训练面指标（单位＝件里那一列的原值，不做二次归一）。
 METRICS = ("cumulative_mean_surprise", "cumulative_online_accuracy")
@@ -33,6 +41,8 @@ READING_LIMIT = (
     "本件只说「同配置再实现一次的散布有多大」与「批次 C 那枚观察差能不能离开那个散布」。"
     "它不给能力分数、不给机制、不给因果：幅度句被支持时也只到「离开/未离开散布」，"
     "要把差写成主张还得点名是哪两枚件、哪张面、什么预算。"
+    "`--cap-pairing-*` 指到的配对件若 `verdict` 非 `holds` 或 `pairing_valid` 非真，本件在算地板之前"
+    "就拒收（rc=2、不落半件）⇒ 件里的 CAP 维地板只在两趟 CAP 配对资格齐时才存在。"
 )
 
 
@@ -254,8 +264,7 @@ def main(argv: list[str] | None = None) -> int:
     qualified = not payload["failing_verdicts"]
     payload["verdict"] = "holds" if qualified else "rejected"
     text = json.dumps(payload, ensure_ascii=True, indent=2) + "\n"
-    out_path.parent.mkdir(parents=True, exist_ok=True)
-    out_path.write_text(text, encoding="utf-8", newline="\n")
+    report_io.write_text_report(out_path, text, newline="\n", overwrite=args.overwrite)
     print(text)
     return 0 if qualified else 1
 
