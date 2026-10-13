@@ -62,6 +62,7 @@ Transport failures (runtime down, HTTP status, unprocessable body) surface as `W
 - `provider.ts` owns the whole surface: the runtime request, envelope normalization (`mapRuntimeResponse`), and the provider class. No HTML parsing happens on this side — the crawler owns the engines and their markup.
 - Requests are anonymous POSTs and intentionally follow redirects: the packages-wide reject-redirect rule protects credentials and request data, of which this provider carries none into the redirect chain.
 - The provider snapshots its options once per search, so a base-URL change landing mid-search cannot send one request's parts to two runtimes.
+- No runtime invariant companion is published; this provider registers one search backend into the `dsh-web` seam that owns provider selection, and `dsh-tool-web` owns the model-visible rendering, so no independent event sequence or mutable data relation is owned here beyond contracts enforced at that seam.
 
 <a id="further-exploration"></a>
 ## Further Exploration
