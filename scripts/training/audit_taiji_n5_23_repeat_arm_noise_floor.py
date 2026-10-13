@@ -70,6 +70,16 @@ def _cap_deltas(path: Path | None) -> dict[str, int] | None:
     payload = json.loads(path.read_text(encoding="utf-8"))
     if "dimensions" not in payload:
         raise ValueError(f"not a CAP pairing report (no `dimensions`): {path}")
+    #: 件里那句「两趟各自须 `pairing_valid=true`」原先只是文字——㊵-797 实测一枚
+    #: `verdict=rejected`／`pairing_valid=false` 的配对件会被照读进来并出版 CAP 地板。
+    #: 现在把它做成前置校验：不合格的配对不作数，而不是让 `cap` 带着无效配对成形。
+    if payload.get("verdict") != "holds" or payload.get("pairing_valid") is not True:
+        verdict = payload.get("verdict")
+        valid = payload.get("pairing_valid")
+        raise ValueError(
+            f"CAP pairing report not qualified (verdict={verdict!r}, "
+            f"pairing_valid={valid!r}): {path}"
+        )
     return {
         str(row["dimension"]): int(row["delta"])
         for row in payload["dimensions"]

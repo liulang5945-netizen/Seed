@@ -163,17 +163,21 @@ def test_a_missing_metric_column_means_no_floor_not_zero(tmp_path: Path) -> None
 
 def test_cap_dimensions_get_their_own_floor(tmp_path: Path) -> None:
     batch = {
+        "verdict": "holds",
+        "pairing_valid": True,
         "dimensions": [
             {"dimension": "D", "delta": -1, "enters_verdict": True},
             {"dimension": "C", "delta": 0, "enters_verdict": True},
             {"dimension": "B", "delta": 5, "enters_verdict": False},
-        ]
+        ],
     }
     repeat = {
+        "verdict": "holds",
+        "pairing_valid": True,
         "dimensions": [
             {"dimension": "D", "delta": 2, "enters_verdict": True},
             {"dimension": "C", "delta": 0, "enters_verdict": True},
-        ]
+        ],
     }
     paths = [_write(tmp_path / "capb.json", batch), _write(tmp_path / "capr.json", repeat)]
     four = [
@@ -191,6 +195,37 @@ def test_cap_dimensions_get_their_own_floor(tmp_path: Path) -> None:
     assert payload["cap"]["dimensions"] == ["C", "D"]
     assert payload["cap"]["per_dimension"]["D"]["floor"] == 3
     assert payload["cap"]["per_dimension"]["C"]["floor"] == 0
+
+
+def test_an_unqualified_cap_pairing_is_refused_not_priced(tmp_path: Path) -> None:
+    """配对不合格的 CAP 件不许进来定价——那条要求原先**只是件里的一句文字**。
+
+    ㊵-797 实测：一枚 `verdict=rejected`／`pairing_valid=false` 的配对件会被原样读进来，
+    地板仪照样出版 `cap`、总判据照样 `holds`。两支都要走：合格件出数（上一支测），
+    不合格件响亮拒绝且不落半件（这一支）。缺键按不合格处理——不假定"键不在就是旧格式没问题"。
+    """
+    row = {"dimension": "D", "delta": 1, "enters_verdict": True}
+    good = {"verdict": "holds", "pairing_valid": True, "dimensions": [row]}
+    rejected = {"verdict": "rejected", "pairing_valid": False, "dimensions": [row]}
+    missing_keys = {"dimensions": [row]}
+    four = [
+        _run_report(7.0, 0.25),
+        _run_report(6.0, 0.26),
+        _run_report(6.9, 0.255),
+        _run_report(6.05, 0.261),
+    ]
+    p_good = _write(tmp_path / "capg.json", good)
+    offenders = (
+        (_write(tmp_path / "caprej.json", rejected), "floor_rej.json"),
+        (_write(tmp_path / "capmiss.json", missing_keys), "floor_miss.json"),
+    )
+    for offender, out_name in offenders:
+        rc = FLOOR.main(
+            _args(tmp_path, four, out_name)
+            + ["--cap-pairing-batchc", str(p_good), "--cap-pairing-repeat", str(offender)]
+        )
+        assert rc == 2, (out_name, rc)
+        assert not (tmp_path / out_name).exists(), f"refusal must leave no artifact: {out_name}"
 
 
 def test_missing_input_wrong_kind_and_overwrite_guard(tmp_path: Path) -> None:
