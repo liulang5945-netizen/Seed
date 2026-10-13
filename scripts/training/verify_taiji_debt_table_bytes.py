@@ -27,6 +27,14 @@ import sys
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
+#: 债表的字节核验器也走统一落盘助手（DEBT-G115 修法③）：脚本目录先上 `sys.path`，
+#: 契约册按路径加载与起成真子进程两种入口才都解析得到助手。
+SCRIPT_DIR = Path(__file__).resolve().parent
+if str(SCRIPT_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPT_DIR))
+
+import _taiji_report_io as report_io  # noqa: E402
+
 DEFAULT_TABLE = "plans/active/roadmap/05_TECH_DEBT_REGISTER.md"
 #: 本文件的源码里刻意不手写反斜杠字面量：分隔符正则错一枚就会让整份分析说谎（㊵-748 撞过）。
 B = chr(92)
@@ -281,12 +289,7 @@ def main(argv: list[str] | None = None) -> int:
         if out.exists() and not args.overwrite:
             print(f"refusing to overwrite an existing report: {out}", file=sys.stderr)
             return 2
-        out.parent.mkdir(parents=True, exist_ok=True)
-        out.write_text(
-            json.dumps(report, ensure_ascii=False, indent=2) + "\n",
-            encoding="utf-8",
-            newline="\n",
-        )
+        report_io.write_json_report(out, report, newline="\n", overwrite=args.overwrite)
 
     failing = sorted(name for name, ok in report["verdicts"].items() if ok is not True)
     print(
