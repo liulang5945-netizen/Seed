@@ -127,3 +127,80 @@ def test_help_lists_both_flags() -> None:
     assert proc.returncode == 0, proc.stderr[-400:]
     assert proc.stdout is not None
     assert "--scan-root" in proc.stdout and "--out-report" in proc.stdout
+
+
+#: ── v2（㊵-785）：合取只认 `.json` 时，读 `progress.jsonl` 的门会被**静默分进 live_object**，
+#: 那是本器唯一往"绿是当场跑的"方向低报的形态。两条负对照各钉一个方向。
+JSONL_SNIPPET = """
+def evaluate():
+    return {
+        "previous_runs_remain_green": all(
+            json.loads((ROOT / "output" / name).read_text(encoding="utf-8"))["gate"]["passed"]
+            for name in ("arm_a_progress.jsonl", "arm_b_progress.jsonl")
+        ),
+    }
+"""
+
+UNNAMED_SNIPPET = """
+def evaluate(progress_path):
+    return {"gate_ok": json.loads(progress_path.read_text(encoding="utf-8"))["gate"]["passed"]}
+"""
+
+
+def test_a_jsonl_gate_read_is_bucketed_as_sealed(tmp_path: Path) -> None:
+    #: 这里刻意用 `"output"` 而不是 `"reports"` 常量——v1 只靠 `.json` 字面量那一支，
+    #: 于是这一处会读成 live；v2 必须把它读成 sealed。
+    _write(tmp_path, "runs.py", JSONL_SNIPPET)
+    rows = CENSUS.scan_file(tmp_path / "runs.py")
+    assert len(rows) == 1, rows
+    assert rows[0]["bucket"] == "sealed_artifact"
+    assert rows[0]["reads_file_chain"] is True
+    assert rows[0]["artifact_names"] == ["arm_a_progress.jsonl", "arm_b_progress.jsonl"]
+
+
+def test_an_unnamed_file_read_stays_live_but_is_published(tmp_path: Path) -> None:
+    #: 反方向：件名住在参数里（点不出名）时**不许**被扩扩展名顺手升成 sealed——
+    #: 它留在 live_object，但必须由 `chain_true_unnamed_sites` 单独出版，免得抬高"当场跑"那格。
+    _write(tmp_path, "unnamed.py", UNNAMED_SNIPPET)
+    rc = CENSUS.main(["--scan-root", str(tmp_path), "--out-report", str(tmp_path / "r.json")])
+    payload = json.loads((tmp_path / "r.json").read_text(encoding="utf-8"))
+    assert rc == 0
+    assert payload["format"] == "taiji-stale-gate-reference-census-v2"
+    assert payload["artifact_suffixes"] == [".json", ".jsonl"]
+    assert payload["sealed_artifact_sites"] == 0
+    assert payload["live_object_sites"] == 1
+    assert payload["chain_true_unnamed_sites"] == 1
+    row = payload["chain_true_unnamed_reads"][0]
+    assert row["reads_file_chain"] is True
+    assert row["artifact_names"] == []
+
+
+#: 第三类取路（v2 支②）：读文件链不在下标这一侧，而在**同一文件里那个名字的赋值**上。
+BOUND_SNIPPET = """
+def evaluate():
+    payload = json.loads(
+        (ROOT / "reports" / "taiji_w7_p2_11_ide_language_chain_20260831.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    return {"previous_gate_still_green": payload["gate"]["passed"]}
+"""
+
+
+def test_a_name_bound_file_read_is_bucketed_as_sealed(tmp_path: Path) -> None:
+    #: 两支成对：`payload = json.loads(…read_text())` 必须读成 sealed；
+    #: 而 LIVE_SNIPPET（`report = run_chain()`，同名形状、不读文件）必须仍是 live——
+    #: 少了这一支，"名字有读文件赋值"就成了一台只会亮的机器。
+    _write(tmp_path, "bound.py", BOUND_SNIPPET)
+    rows = CENSUS.scan_file(tmp_path / "bound.py")
+    assert len(rows) == 1, rows
+    assert rows[0]["bucket"] == "sealed_artifact"
+    assert rows[0]["reads_file_chain"] is True
+    assert rows[0]["artifact_names"] == [
+        "<reports-dir-constant>",
+        "taiji_w7_p2_11_ide_language_chain_20260831.json",
+    ]
+    _write(tmp_path, "live.py", LIVE_SNIPPET)
+    live_rows = CENSUS.scan_file(tmp_path / "live.py")
+    assert [row["bucket"] for row in live_rows] == ["live_object"]
+    assert live_rows[0]["reads_file_chain"] is False

@@ -8,8 +8,18 @@
 
 两档定义（按取路，不按名字猜）：
 * `sealed_artifact` —— 该赋值里对 `["gate"]` 的取下标，其被下标对象链上出现 `read_text`／`json.loads`，
-  **且**同一赋值里能找出 `.json` 字面量或 `"reports"` 字面量；
+  **且**同一赋值里能找出 `.json`／`.jsonl` 字面量或 `"reports"` 字面量；
 * `live_object` —— 有 `["gate"]` 下标但取路不是读文件（典型是判读函数当场返回的 dict）。
+
+v2（2026-10-13，㊵-785）补掉两处**只会往"绿是当场跑的"方向低报**的取路盲区——那是本器唯一
+反对我自己的失败形态：
+① 合取的扩展名从只认 `.json` 扩成 `.json`／`.jsonl`（只认 `.json` 时，读 `progress.jsonl` 的门静默落 live）；
+② 两行形 `NAME = json.loads(…)` 之后再取 `NAME["gate"]`——读文件链住在绑定那侧，v1 的 `_reads_a_file`
+看不见它，连"无名件"那一格都不计；现在认"**同一文件内**该名字有任一读文件赋值"（未按作用域/流路收窄，
+所以这一支只会把站点往 `sealed_artifact` 一侧多算＝保守侧，不会漏报）。
+`chain_true_unnamed_sites` 出版剩下的"读了文件但点不出件名"那一格，它仍住在 `live_object` 计数里
+（两种成因同桶，但按行有 `reads_file_chain` 可分），免得"当场跑"被这些站点抬高。
+现行面扩口径前后四个计数不变（现测见封存件），两处新支当前各命中 0 处——新增分支由合成样例负对照作证。
 
 读数面必须能证自己扫到了东西：`files_scanned == 0` 或 glob 根不存在 ⇒ rc=2（零命中要连范围一起报）。
 输出只出 ASCII（`ensure_ascii=True`），win32 GBK 控制台上中文与 `⇒` 会把一次正常普查砸成 `UnicodeEncodeError`。
@@ -25,9 +35,11 @@ from pathlib import Path
 from typing import Any
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
-FORMAT = "taiji-stale-gate-reference-census-v1"
+FORMAT = "taiji-stale-gate-reference-census-v2"
 GATE_KEY = "gate"
 READ_CALLS = ("read_text", "loads")
+#: 合取认的扩展名：漏掉 `.jsonl` 会把"读已封存件"低报成"当场跑"，方向不可接受。
+ARTIFACT_SUFFIXES = (".json", ".jsonl")
 
 
 def _display(path: Path) -> str:
@@ -58,18 +70,38 @@ def _reads_a_file(subscript: ast.Subscript) -> bool:
     return any(call in chain for call in READ_CALLS)
 
 
-def _json_literals(container: ast.AST) -> list[str]:
+def _artifact_literals(container: ast.AST) -> list[str]:
     names = [
         node.value
         for node in ast.walk(container)
         if isinstance(node, ast.Constant)
         and isinstance(node.value, str)
-        and node.value.endswith(".json")
+        and node.value.endswith(ARTIFACT_SUFFIXES)
     ]
     reports_flag = any(
         isinstance(node, ast.Constant) and node.value == "reports" for node in ast.walk(container)
     )
     return sorted(set(names)) + (["<reports-dir-constant>"] if reports_flag else [])
+
+
+def _file_reading_bindings(tree: ast.AST) -> dict[str, ast.AST]:
+    """`NAME = json.loads(...)`／`NAME = (…).read_text()` 这第二类取路。
+
+    不接这一步，`NAME["gate"]` 的被下标对象只是一个 Name，`_reads_a_file` 看不见读文件链，
+    "读已封存件"就静默落进 `live_object`＝冒充"当场跑的"。
+    """
+
+    bound: dict[str, ast.AST] = {}
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.Assign):
+            continue
+        dump = ast.dump(node.value)
+        if not any(call in dump for call in READ_CALLS):
+            continue
+        for target in node.targets:
+            if isinstance(target, ast.Name):
+                bound[target.id] = node.value
+    return bound
 
 
 def _parent_map(tree: ast.AST) -> dict[ast.AST, ast.AST]:
@@ -103,12 +135,18 @@ def scan_file(path: Path) -> list[dict[str, Any]]:
     except SyntaxError:
         return [{"file": str(path), "status": "unparsed"}]
     parents = _parent_map(tree)
+    bindings = _file_reading_bindings(tree)
     rows: list[dict[str, Any]] = []
     for subscript in _gate_subscripts(tree):
         reads_file = _reads_a_file(subscript)
         scopes: list[ast.AST] = [subscript.value] if reads_file else []
         scopes += _comprehension_iter(subscript, parents) if reads_file else []
-        literals = sorted({name for scope in scopes for name in _json_literals(scope)})
+        value = subscript.value
+        if not reads_file and isinstance(value, ast.Name) and value.id in bindings:
+            #: 两行形：`NAME = json.loads(...)` 之后再取下标——读文件链住在绑定那侧，不在下标这一侧。
+            reads_file = True
+            scopes.append(bindings[value.id])
+        literals = sorted({name for scope in scopes for name in _artifact_literals(scope)})
         rows.append(
             {
                 "file": _display(path),
@@ -158,15 +196,24 @@ def main(argv: list[str] | None = None) -> int:
                 rows.append(row)
 
     sealed = [row for row in rows if row["bucket"] == "sealed_artifact"]
+    #: 读了文件却点不出件名的下标：它住在 `live_object` 计数里，但那一格同装两种成因
+    #: （真的当场跑／件名住在变量里）。单独出版，免得"当场跑"被这些站点抬高。
+    chain_true_unnamed = [
+        row for row in rows if row["reads_file_chain"] and not row["artifact_names"]
+    ]
     payload: dict[str, Any] = {
         "format": FORMAT,
         "status": "measured",
         "scan_roots": roots,
-        "pattern": 'Subscript(slice=="gate") ∧ 被下标对象链含 read_text／json.loads ∧ 同赋值内有 .json 字面量或 "reports" 常量',
+        "pattern": 'Subscript(slice=="gate") ∧ 取路含读文件（下标自身链／推导式 iter／同文件内该名字的 '
+        'json.loads·read_text 赋值）∧ 同一取路里有 .json／.jsonl 字面量或 "reports" 常量',
+        "artifact_suffixes": list(ARTIFACT_SUFFIXES),
         "files_scanned": len(files),
         "gate_subscript_sites": len(rows),
         "sealed_artifact_sites": len(sealed),
         "live_object_sites": len(rows) - len(sealed),
+        "chain_true_unnamed_sites": len(chain_true_unnamed),
+        "chain_true_unnamed_reads": chain_true_unnamed,
         "unparsed_file_count": len(unparsed),
         "sealed_reads": sealed,
         "all_sites": rows,
