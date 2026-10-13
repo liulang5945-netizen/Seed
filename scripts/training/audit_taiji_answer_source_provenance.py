@@ -39,6 +39,14 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 RUNNER = "scripts/training/train_seed_corpus.py"
 REPORT_FORMAT = "taiji-answer-source-provenance-v1"
+#: 契约册（`test_n1_07`／`test_g14`／`test_n1_09`）按文件路径加载本件、也被起成真子进程，
+#: 脚本自己那层目录先上 `sys.path`，统一落盘助手才解析得到（同㊵-790／802 那条例外约定）。
+SCRIPT_DIR = Path(__file__).resolve().parent
+if str(SCRIPT_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPT_DIR))
+
+import _taiji_report_io as report_io  # noqa: E402
+
 RECIPE_KEY = "answer_source"
 VALID_SOURCES = ("corpus", "self")
 #: 跑道器 `attach_metadata(extra=...)` 与 `answer_source` **同源同批**写出的兄弟键（:539-551）。
@@ -368,10 +376,7 @@ def main() -> int:
     if out.exists() and not args.overwrite:
         print(f"refusing to overwrite an existing report: {out}", file=sys.stderr)
         return 2
-    out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(
-        json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n"
-    )
+    report_io.write_json_report(out, report, newline="\n", overwrite=args.overwrite)
     carrier = report["carrier_face"]
     print(
         json.dumps(
