@@ -73,10 +73,15 @@ kind: "package-reference"
 <a id="model-experience"></a>
 ## Model Experience
 
-模型像使用任何提供方一样调用 `web_search`；工具 schema 中不会出现这个后端的名字。结果以标准的 markdown 来源列表渲染，不带日期。失败时错误文本指名运行时端点与设置页，模型因此可以引导用户启动后端或修正基址。
+间接经由 `dsh-tool-web` 消费方的渲染步骤：本提供方返回的标题、URL 与摘要被渲染成模型可见的工具结果文本；工具 schema 中不会出现这个后端的名字，渲染出的来源也不带日期。
+
+#### KV Cache effect
+
+本提供方不贡献任何请求前缀内容。每次搜索把渲染后的来源追加进对话，因此一次新查询会从该工具调用起改变请求后缀；搜索失败时追加的是指名运行时端点与设置页的错误文本。
+
+## Known Limitations and Deferred Work
 
 <a id="known-limitations-and-deferred-work"></a>
-## Known Limitations and Deferred Work
 
 - 搜索要求 Taiji 运行时（Seed 后端）在运行；运行时下线时所有搜索都会失败，直至重新启动。
 - 原生爬虫每次查询只返回一个引擎的结果（竞速赢家），其百度引擎在服务端 HTTP 客户端下常被反爬拦截——大陆网络下的有效覆盖依赖 Bing。

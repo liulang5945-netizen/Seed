@@ -73,10 +73,15 @@ Transport failures (runtime down, HTTP status, unprocessable body) surface as `W
 <a id="model-experience"></a>
 ## Model Experience
 
-The model calls `web_search` as with any provider; nothing in the tool schema names this backend. Results render as the standard markdown source list without dates. On failure the error text names the runtime endpoint and the settings page, so the model can guide the user to start the backend or fix the root.
+Indirectly, through the `dsh-tool-web` consumer's render step, which turns this provider's titles, URLs, and snippets into model-visible tool-result text; no tool schema names this backend, and the rendered sources carry no dates.
+
+#### KV Cache effect
+
+The provider contributes no request-prefix content. Each search appends its rendered sources to the conversation, so a new query changes the request suffix from that tool call onward; a failed search appends error text naming the runtime endpoint and the settings page instead.
+
+## Known Limitations and Deferred Work
 
 <a id="known-limitations-and-deferred-work"></a>
-## Known Limitations and Deferred Work
 
 - Searches require the Taiji runtime (Seed backend) to be running; a down runtime makes every search fail until it is started.
 - The native crawler returns one engine's results per query (the racing winner), and its Baidu engine is routinely blocked by anti-bot challenges from server-side HTTP clients — effective coverage on mainland-China networks rests on Bing.
