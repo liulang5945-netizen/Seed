@@ -46,7 +46,7 @@
 
 **未达成项里，需要 owner 的**（我不会自己动）：N1 阶段1（训练机时＋产品码）与其 §18.4 实施规格、
 N3 的 C 形状（新判据＋新算力）、N4 的 S3/§3.3 验收（产品码）、N5 的准入门（产品码）、
-DEBT-G78、G94③ 与 G90、G101（债表列形漂移，登记不改）、**G102（`.fork-sync/` 既未登记进目录台账也未进 ignore——同一根因让 folder-structure 门红，且是 `black --check .` 的唯一残差；它的归属不是我自证得了的）**、**G103（OpenAPI 金样缺新路由 `/api/tools/web_search`，刷公共金样属他人半径，我不代刷）**。〔㊵-681 更新〕G97 修法③ 已按 owner #25 乙裁落地成门，不再是待裁项；G98／G99／G100 三笔的实施形状已批（丙＝三笔一起批），改产品码由我这侧执行，见 03 队首。
+DEBT-G78、G94③ 与 G90、G101（债表列形漂移，登记不改）、**G102（`.fork-sync/` 既未登记进目录台账也未进 ignore——同一根因让 folder-structure 门红，且是 `black --check .` 的唯一残差；它的归属不是我自证得了的）**、**G103（OpenAPI 金样缺新路由 `/api/tools/web_search`，刷公共金样属他人半径，我不代刷）**。〔㊵-681 更新〕G97 修法③ 已按 owner #25 乙裁落地成门，不再是待裁项；G98／G99／G100 三笔的实施形状已批（丙＝三笔一起批），改产品码由我这侧执行，见 03 队首。〔2026-10-13 ㊵-768 更新〕**G101**（㊵-751 债表并形真正落盘）与 **G103**（㊵-753 按 owner 八裁⑶ 甲重录 OpenAPI 金样）已结清，不再属于本栏；本栏现在加两枚有名有姓的签字件＝**DEBT-G128 余下两件**：①`packages/web/web-search-scraper` 的 Model Experience 主张要由包主写进 `taiji-harness/scripts/verify-package-readme-model-experience.ts` 的 `SENTENCE_MODEL_EXPERIENCE`／`NO_MODEL_EXPERIENCE_SECTION` 审计登记表（或按完整 model-context 条目形重写那一节），②`docs/config-catalog.md`／`.zh.md` 那对内容漂移要么把中英正文一起带齐、要么由造成漂移那次改动的负责人重记——我不靠加白名单让门变绿，也不代签自己没核过的语义一致性。
 
 **我这侧仍可自办的**（按对计划的实际推进度排序，2026-10-11 ㊵-679 之后）：
 1. ~~G97 修法② 的余下 2 条~~ **已做完（㊵-680）**＝[PLAN-N2-06](PLAN-N2-06_write_consolidation_contract_prereg_20261011.md)（V-17）
@@ -76,10 +76,10 @@ DEBT-G78、G94③ 与 G90、G101（债表列形漂移，登记不改）、**G102
   **G121**（真累加需要 `taiji/memory.py` 第四处产品码）。
 - **我这侧剩下的（按对计划的实际推进度排序，㊵-761 现取）**：
   ①**批次 C 正式读数**＝对照臂跑完后跑 `python scripts/training/audit_taiji_batch_c_arm_parity.py --out-report reports/taiji_batch_c_arm_parity_20261013.json`，
-  配置面必须只余旗标一项，之后才谈那枚 surprise 差（对照臂现取 04:40:00Z 处 `2,250,000/8,900,000`、325.2 符号/秒、剩约 5.7 小时）；
-  ②**J-N5r-5**＝两臂新落 `.pt` 过在册双臂普查器 `measure_taiji_disk_load_face_two_arms.py`；
+  配置面必须只余旗标一项，之后才谈那枚 surprise 差（对照臂现取 04:40:00Z 处 `2,250,000/8,900,000`、325.2 符号/秒；〔㊵-768 现取〕05:44:59Z 处 `3,500,000/8,900,000`、`elapsed_seconds 10818.8`、按它自取速率 323.5 符号/秒 ⇒ 剩约 4.6 小时、约 10:25Z 收尾；进程面原文＝PID 25584 起于 02:44:39Z、命令行 `train_taiji_r2_readout_retrain.py --arms A --symbols 8900000 --generated-feed-every 0 --fresh --out-dir output/n5_20_batchC_control`）；
+  ②**J-N5r-5**＝两臂新落 `.pt` 过在册双臂普查器 `measure_taiji_disk_load_face_two_arms.py`；〔2026-10-13 ㊵-768 · **前置取证已做，发表读数仍等对照臂**〕`--only` 点名治疗臂那枚 13,090,253 字节的 `checkpoint.pt` 单跑一趟（写靶在仓外，不入库）：治疗档 `loaded=true`／`encoder_width=5`／`readout_rows=5`／`vocabulary=5`／`receptors_inherited=true`，对照档（退回一枚来源枚举）refused `ValueError|synapse payload shape does not match architecture`——这一对分岔正是双臂普查器该有的形状，所以「新件拒载＝批次 B 的迁移支没覆盖长跑器写出的形状」那一支在**文件层**已被否证。仪器自给 `verdict=partial_selected_lt_face`（selected 1 < 面上 13 枚、`batch_mode=only_named`）⇒ 正式那一趟要把**两枚**都点名进来才谈覆盖，本格不是发表读数；对照臂那枚 `.pt` 现在不读，因为它每约 250k 符号重写一次，读到半写信封只会造出一枚假 refusal。
   ③**整族回归**＋`test_openapi_snapshot` 面复跑补基线（对照臂在飞期间不跑——争用会把计时类断言污染成不可比）；
   ④**DEBT-G115 修法①**＝其余仪器写靶逐枚现读确认再补 `newline=`（粗筛上界 82 枚；索引面今天 1783 枚里只剩 2 枚豁免件，
-  修法② 那道门已建＝㊵-760）；⑤**DEBT-G127 结清**（①②③做完才结，仪器本身已入库）。
+  修法② 那道门已建＝㊵-760）〔2026-10-13 ㊵-767／768 · **这一条已分两半，粗筛那句「82 枚」不再是工作面**：㊵-762 把粗筛换成按调用点分桶的普查仪 → ㊵-765 收窄出 D 桶（仪器默认落点指向 `reports/` 的那一撮）＝20 处／18 枚 → ㊵-767 把这 20 处逐枚补上 `newline="\n"`，D 桶现读 **0 处／0 枚**。**残余**＝B 桶 1040 处／766 枚静态不可判的写靶（要逐枚现读才知道有几枚真写入库面）＋修法③ 的统一落盘助手未做；索引面棘轮现读 1784 枚、豁免仍是那两枚同名件〕；⑤**DEBT-G127 结清**（①②③做完才结，仪器本身已入库）。
 - **仍守的三条**：不批量改已冻预注册里的落笔时点陈述（G110 ①的裁定，本件自己也照此办理——旧句只标过期、不删）；
   不把 §1.3 的锚级命中说成 id 级覆盖；不在 owner 未批前动 `taiji/`、跑新权重或开新算力。
