@@ -178,7 +178,9 @@ def main(argv: list[str] | None = None) -> int:
 
     target = PROJECT_ROOT / args.report
     target.parent.mkdir(parents=True, exist_ok=True)
-    target.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    target.write_text(
+        json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n"
+    )
     print(f"wide  dev exact per-seed {rates}  mean {mean_rate:.4f}")
     print(f"reference (standard geometry) mean dev exact: {reference_mean:.4f}")
     print(f"verdict: {verdict}")

@@ -2,7 +2,7 @@
   "format": "taiji-newline-write-face-v2",
   "debt": "DEBT-G115",
   "face": ".",
-  "started_utc": "2026-10-13T05:34:04Z",
+  "started_utc": "2026-10-13T05:45:42Z",
   "tracked_python_total": 2004,
   "unparsed_files": [
     "scripts/archive/legacy_convert_dense_model_format.py",
@@ -19,70 +19,13 @@
     "files": {}
   },
   "b_face": {
-    "sites": 1060,
-    "files": 784,
+    "sites": 1040,
+    "files": 766,
     "note": "写靶是变量/表达式，静态读不出落点——这一桶不判，是修法① 的真实待办面"
   },
   "d_face": {
-    "sites": 20,
-    "files": {
-      "scripts/training/aggregate_taiji_m4r5_update_scale.py": [
-        101
-      ],
-      "scripts/training/analyze_taiji_r2_h3_7b_learnability.py": [
-        138
-      ],
-      "scripts/training/audit_taiji_episodic_read_sharing_face.py": [
-        330
-      ],
-      "scripts/training/audit_taiji_sealed_report_overwrite_surface.py": [
-        220
-      ],
-      "scripts/training/calibrate_taiji_r2_readout_retrain.py": [
-        300
-      ],
-      "scripts/training/diagnose_taiji_r2_d2_lr_stability.py": [
-        154
-      ],
-      "scripts/training/eval_taiji_concept_branch_attribution.py": [
-        323,
-        327
-      ],
-      "scripts/training/eval_taiji_m4r4_course_shift_audit.py": [
-        370
-      ],
-      "scripts/training/eval_taiji_r2_capacity_discrimination.py": [
-        181
-      ],
-      "scripts/training/eval_taiji_r2_hfbw_matched_dev.py": [
-        248
-      ],
-      "scripts/training/eval_taiji_r2_hgen_matched_dev.py": [
-        255
-      ],
-      "scripts/training/eval_taiji_r2_hobj_matched_dev.py": [
-        273
-      ],
-      "scripts/training/eval_taiji_structural_growth.py": [
-        138,
-        142
-      ],
-      "scripts/training/measure_taiji_n5_12_wake_schedule_arms.py": [
-        269
-      ],
-      "scripts/training/probe_taiji_a27_walked_ledger.py": [
-        311
-      ],
-      "scripts/training/sweep_taiji_r2_course_scale.py": [
-        439
-      ],
-      "scripts/training/validate_taiji_r2_d2_implementation_gates.py": [
-        264
-      ],
-      "scripts/training/validate_taiji_r2_h3_8_implementation_gates.py": [
-        142
-      ]
-    },
+    "sites": 0,
+    "files": {},
     "note": "D ⊆ B：写靶静态读不出，但这一枚文件的 argparse 默认落点自己就指向 reports/——修法① 那句「先逐枚现读确认它真写 reports/」的待办面是这一撮，不是整个 B 桶。D 不入 verdict：它要人（或下一批）逐枚把接收者对齐到那枚默认值。"
   },
   "c_face": {
@@ -97,5 +40,5 @@
   "verdict": "holds",
   "failing_verdicts": [],
   "reading_limit": "A 桶＝能证明写靶是 reports/ 字面路径且缺 newline= 的调用，现读 0 处；这**不等于**全仓写靶都带上了 newline=。B 桶是写靶为变量／表达式、静态读不出落点的那批，把它们说成已处理需要逐枚现读——修法① 的真实待办面就是 B 桶的规模。债表粗筛那句「82 枚文件」与本件不是同一把尺：它数的是提过 reports/ 的文件，本件数的是这一处写入落到哪。另有三枚 `scripts/archive/legacy_*` parse 不动（在 `parse_baseline` 里点名），所以 A 桶那句是「扫得到的面上 0 处」，不是「全仓 0 处」。",
-  "wall_clock_ms": 7228.41
+  "wall_clock_ms": 7411.725
 }

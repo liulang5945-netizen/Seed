@@ -266,7 +266,9 @@ def main() -> int:
         print(f"refusing to overwrite an existing report: {out}", file=sys.stderr)
         return 2
     out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    out.write_text(
+        json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n"
+    )
     print(
         json.dumps({"verdicts": report["verdicts"], "flips": report["flips"]}, ensure_ascii=False)
     )

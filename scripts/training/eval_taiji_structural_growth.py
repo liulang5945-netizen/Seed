@@ -136,11 +136,13 @@ def main() -> int:
     report = evaluate()
     args.report.parent.mkdir(parents=True, exist_ok=True)
     args.report.write_text(
-        json.dumps(report, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
+        json.dumps(report, indent=2, ensure_ascii=False) + "\n", encoding="utf-8", newline="\n"
     )
     args.manifest.parent.mkdir(parents=True, exist_ok=True)
     args.manifest.write_text(
-        json.dumps(build_manifest(), indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
+        json.dumps(build_manifest(), indent=2, ensure_ascii=False) + "\n",
+        encoding="utf-8",
+        newline="\n",
     )
     print(json.dumps(report, indent=2, ensure_ascii=False))
     return 0 if report["gate"]["passed"] else 1

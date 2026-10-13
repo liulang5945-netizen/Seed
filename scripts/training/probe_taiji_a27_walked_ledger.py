@@ -308,7 +308,9 @@ def main() -> int:
         out = PROJECT_ROOT / out
     _guard_overwrite(out, force=args.overwrite)
     out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    out.write_text(
+        json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n"
+    )
 
     print("零件".ljust(28) + "".join(entry.ljust(20) for entry in entries))
     for label, _, _ in PARTS:

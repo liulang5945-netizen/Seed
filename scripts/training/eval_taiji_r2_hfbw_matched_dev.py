@@ -245,7 +245,9 @@ def main(argv: list[str] | None = None) -> int:
 
     target = PROJECT_ROOT / args.report
     target.parent.mkdir(parents=True, exist_ok=True)
-    target.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    target.write_text(
+        json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n"
+    )
 
     print(f"control   dev exact per-seed {control_rates}  mean {control_exact:.4f}")
     print(f"treatment dev exact per-seed {treatment_rates}  mean {treatment_exact:.4f}")

@@ -298,7 +298,7 @@ def main() -> int:
 
     report_path.parent.mkdir(parents=True, exist_ok=True)
     report_path.write_text(
-        json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+        json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n"
     )
     print(json.dumps({name: entry["seconds_per_tick"] for name, entry in arms_report.items()}))
     print(f"report: {report_path}")
