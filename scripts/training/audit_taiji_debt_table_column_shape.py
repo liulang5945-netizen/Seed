@@ -24,6 +24,14 @@ from datetime import UTC, datetime
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
+#: 本仪器也守它自己量出来的那条规矩（DEBT-G115 修法③）：脚本目录先上 `sys.path`，
+#: 统一落盘助手在"被契约册按路径加载"与"起成真子进程"两种入口下都解析得到。
+SCRIPT_DIR = Path(__file__).resolve().parent
+if str(SCRIPT_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPT_DIR))
+
+import _taiji_report_io as report_io  # noqa: E402
+
 REPORT_FORMAT = "taiji-debt-table-column-shape-v1"
 DEBT = "plans/active/roadmap/05_TECH_DEBT_REGISTER.md"
 ROW_RE = re.compile(r"^\|\s*DEBT-G(\d+)\s*\|")
@@ -146,14 +154,10 @@ def main(argv: list[str] | None = None) -> int:
     if out.exists() and not args.overwrite:
         print(f"refusing to overwrite an existing report: {out}", file=sys.stderr)
         return 2
-    out.parent.mkdir(parents=True, exist_ok=True)
     # newline="\n" is not cosmetic: without it this audit writes CRLF into a tracked
     # `reports/` artifact on Windows, and no gate in the family notices (DEBT-G115).
-    out.write_text(
-        json.dumps(report, ensure_ascii=False, indent=2) + "\n",
-        encoding="utf-8",
-        newline="\n",
-    )
+    #: 同一条规矩现在由统一落盘助手的必备参数兜住；本仪器改走助手后，`newline=` 只有一处可写错。
+    report_io.write_json_report(out, report, newline="\n", overwrite=args.overwrite)
     #: DEBT-G119 的红支：这台仪器以前第 108 行是无条件 `return 0`，
     #: 于是"我加行时造出的重复编号"只躺在读数里。现在三条合取任一为假就 rc=1，
     #: 而**读数件照样先落盘**——红也要留证据，不许红了就什么都不出版。
