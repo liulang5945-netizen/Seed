@@ -132,6 +132,21 @@ def feed_generated_answer(
     }
 
 
+def _entry_has_reward_parameter(substrate: Any) -> bool:
+    """零奖励的真正保证住在入口签名里（DEBT-G121 ①在免批文半径内的替代支）。
+
+    `record_generated_prediction` 压根没有 reward 参数 ⇒ 调用方喂不进非零奖励；这枚读数
+    一旦翻真，就说明"入口不收奖励"这件事实没了——那时才轮到 DEBT-G121 的真测量那一支。
+    """
+
+    import inspect
+
+    entry = getattr(substrate, "record_generated_prediction", None)
+    if entry is None:
+        return True
+    return "reward" in inspect.signature(entry).parameters
+
+
 def run_arm(
     *,
     arm: str,
@@ -254,7 +269,7 @@ def run_arm(
             "elapsed_seconds": round(time.perf_counter() - session_started, 3),
             "final": final,
         }
-        with progress_path.open("a", encoding="utf-8") as handle:
+        with progress_path.open("a", encoding="utf-8", newline="\n") as handle:
             handle.write(json.dumps(entry, ensure_ascii=False) + "\n")
         mark = (seen, correct, surprise)
         return entry
@@ -355,8 +370,14 @@ def run_arm(
             "feeds": generated_feeds,
             "generated_write_count": int(substrate.memory.generated_write_count),
             "generated_row_weight_max_abs": round(generated_row_max, 9),
-            # 入口把奖励固定为 0.0（§19.6），这个和按构造恒零；出版它是为了让人不必信注释。
+            # DEBT-G121 ①：这条链上**没有可读的回数面**——A 侧 `EpisodicField.write(...)` 收下 reward
+            # 却不留任何累加器，而本跑器根本没挂 E 侧存储（`taiji/adapter.py:301` 那个
+            # 【episodic store】不在这条路上），所以"从被测面累加"要动产品码＝
+            # 第四处改动、等 owner。做不到测量就不许印成测量：这里把三件事一次说清——
+            # 值是构造性的 0.0、依据写进自述、真正的保证住在入口签名（下面那枚现读键）。
             "generated_reward_sum": 0.0,
+            "generated_reward_sum_basis": "literal_by_construction; not a measurement",
+            "entry_has_reward_parameter": _entry_has_reward_parameter(substrate),
             "measured_symbols_per_second": (
                 round(session_symbols / wall, 6) if wall > 0.0 and session_symbols else None
             ),
@@ -374,7 +395,9 @@ def run_arm(
         "report_path": str(report_path),
     }
     report_path.write_text(
-        json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+        json.dumps(report, ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
+        newline="\n",
     )
     return report
 
@@ -415,6 +438,10 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def main() -> int:
+    #: DEBT-G126／G81 修法①：`description=__doc__` 把带 `⇒` 的正文送上用法屏，而那枚字形在
+    #: win32 GBK 控制台不可编码 ⇒ `--help` 原本抛 UnicodeEncodeError（实测改前 rc=1、改后 rc=0）。
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8")
     parser = build_parser()
     args = parser.parse_args()
 
@@ -548,7 +575,9 @@ def main() -> int:
         "status": "completed" if (not failed and base_unchanged) else "failed",
     }
     (out_dir / "campaign_report.json").write_text(
-        json.dumps(summary, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+        json.dumps(summary, ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
+        newline="\n",
     )
     print(json.dumps(summary, ensure_ascii=False), flush=True)
     return 0 if summary["status"] == "completed" else 1

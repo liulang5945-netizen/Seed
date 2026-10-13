@@ -281,6 +281,14 @@ def test_pricing_keys_are_published_by_the_runner(tmp_path: Path) -> None:
     # 不许把它读成"零奖励已被实测证实"。
     assert block["generated_reward_sum"] == 0.0, block
 
+    #: 自述必须**自己承认**这枚键的身份：它是构造性的 0.0，不是测量。
+    #: 真测量需要 `taiji/memory.py` 里的 generated 奖励累加器＝第四处产品码，仍等 owner；
+    #: 而"零奖励"这件事实的真正保证住在入口签名里，所以下面那枚键才是可假的读数。
+    assert (
+        block["generated_reward_sum_basis"] == "literal_by_construction; not a measurement"
+    ), block
+    assert block["entry_has_reward_parameter"] is False, block
+
 
 def test_the_feed_is_off_by_default_on_the_produced_face(tmp_path: Path) -> None:
     """J-N5r-1 的产出面（原来只有源码面）：旗标取 0 时写计数与那一行权重必须都停在 0。"""
@@ -290,3 +298,68 @@ def test_the_feed_is_off_by_default_on_the_produced_face(tmp_path: Path) -> None
     assert block["feeds"] == 0, block
     assert block["generated_write_count"] == 0, block
     assert block["generated_row_weight_max_abs"] == 0.0, block
+
+
+def test_the_runners_help_screen_survives_a_gbk_console() -> None:
+    """DEBT-G126 修法②：跑器的 `--help` 在这台机器上实测**改前 rc=1**（`⇒` 在 GBK 不可编码）。
+
+    必须起真进程——capsys 恒绿看不见这一支；且按 DEBT-G85 的教训显式给 `encoding` 并断言
+    `stdout is not None`，否则"rc=0 而 stdout 是 None"会被读成"旗标不在帮助里"。
+    """
+
+    import os
+    import subprocess
+
+    env = dict(os.environ, PYTHONIOENCODING="gbk")
+    env.pop("PYTHONUTF8", None)
+    proc = subprocess.run(
+        [sys.executable, str(RUNNER), "--help"],
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+        env=env,
+        cwd=str(PROJECT_ROOT),
+    )
+    assert proc.returncode == 0, proc.stderr[-400:]
+    assert proc.stdout is not None
+    assert "usage" in proc.stdout.lower()
+    assert "--generated-feed-every" in proc.stdout
+
+
+def test_the_reward_fact_flips_if_the_entry_grows_a_reward_parameter(tmp_path: Path) -> None:
+    """`entry_has_reward_parameter` 必须能为真——否则它又是一枚恒假键。
+
+    不动产品码的证法：拿一枚**带** reward 参数的假入口喂给同一个函数，它必须报真。
+    """
+
+    runner = _runner()
+
+    class _Entry:
+        def record_generated_prediction(self, symbol: int, *, reward: float = 0.0) -> None:
+            pass
+
+    assert runner._entry_has_reward_parameter(_Entry()) is True
+    assert runner._entry_has_reward_parameter(_tiny_model()) is False
+    assert (
+        runner._entry_has_reward_parameter(object()) is True
+    ), "入口不在场要保守报真，不许静默为假"
+
+
+def test_the_runner_writes_lf_only_artifacts(tmp_path: Path) -> None:
+    """DEBT-G115 的钉子（跑器那一枚实锤）：`run_report.json` 与 `progress.jsonl` 必须是纯 LF。
+
+    实测形状：治疗臂那份 3,328 字节的 `run_report.json` 里有 92 枚 CR——autocrlf 会把入库那份
+    归一成 LF，于是"仓库里看着没问题、原件与入库件按字节比就假红"。缺 `newline` 参数的
+    `write_text` 在 Windows 上走 locale 行尾，这就是成因。这里用 bytes([13]) 数 CR，避免在测里
+    写反斜杠字面量（这一层的传输会把两个反斜杠收成一个，㊵-748 撞过一次）。
+    """
+
+    report = _run_tiny_arm(tmp_path, generated_feed_every=4)
+    arm_dir = Path(report["report_path"]).parent
+    for name in ("run_report.json", "progress.jsonl"):
+        raw = (arm_dir / name).read_bytes()
+        assert raw, name
+        assert raw.count(bytes([13])) == 0, (name, raw.count(bytes([13])))
+    checkpoint = Path(report["checkpoint_path"])
+    assert checkpoint.is_file()
