@@ -83,7 +83,7 @@ The model calls `web_search` as with any provider; nothing in the tool schema na
 - No `publishedAt`: the crawler's snippets carry no dates, and guessing would lie.
 
 <a id="dev-note"></a>
-## Dev Note
+### Dev Note
 
 - The redirect-following choice above is deliberate and tested through the egress spec (proxy transparency).
 - `tests/scraper.spec.ts` pins envelope normalization and the provider against a local runtime double; the live smoke (`$DSH_WEB_SCRAPER_E2E`) additionally requires the runtime's readiness probe to answer.

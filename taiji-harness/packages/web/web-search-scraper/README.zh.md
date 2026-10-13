@@ -7,11 +7,11 @@ kind: "package-reference"
 
 [English](README.md) | 中文
 
-## Summary
+## 概述
 
 有了 `dsh-web-search-scraper`，harness 通过项目自带的原生爬虫搜索网页：提供方向 Taiji 运行时的 `POST /api/tools/web_search` 发起请求，由运行时的多引擎竞速爬虫（`neuroplex/tools/web.py`：DuckDuckGo / Bing / Baidu，重试退避、缓存、正文提取）返回来源。全程不涉及付费搜索 API，也不需要存储任何凭证。结果不带 `content`，只有来源。模型侧的 `web_search` 工具在 `dsh-tool-web`。
 
-## Table of Contents
+## 目录
 
 - [Use this package](#use-this-package)
 - [Understand the implementation](#understand-the-implementation)
@@ -46,7 +46,7 @@ kind: "package-reference"
 |---|---|---|
 | `baseURL` | `http://127.0.0.1:8000` | Taiji 运行时基址；追加 `/api/tools/web_search`。与 Taiji 聊天路由使用同一默认值 |
 
-生成的[配置目录](../../../docs/config-catalog.md#taijidsh-web-search-scraper)是所有字段及其 JSDoc 的穷尽来源。
+生成的[配置目录](../../../docs/config-catalog.zh.md#taijidsh-web-search-scraper)是所有字段及其 JSDoc 的穷尽来源。
 
 ### What a search returns
 
@@ -66,9 +66,9 @@ kind: "package-reference"
 <a id="further-exploration"></a>
 ## Further Exploration
 
-- [`@taiji/dsh-web`](../web/README.md) — 能力缝隙、提供方选择与规范化结果类型。
+- [`@taiji/dsh-web`](../web/README.zh.md) — 能力缝隙、提供方选择与规范化结果类型。
 - `neuroplex/tools/web.py`（仓库根）— 本提供方委托的原生多引擎竞速爬虫。
-- [`@taiji/dsh-tool-web`](../tool-web/README.md) — 模型侧的 `web_search` / `web_fetch` 工具。
+- [`@taiji/dsh-tool-web`](../tool-web/README.zh.md) — 模型侧的 `web_search` / `web_fetch` 工具。
 
 <a id="model-experience"></a>
 ## Model Experience
@@ -83,7 +83,7 @@ kind: "package-reference"
 - 无 `publishedAt`：爬虫摘要不携带日期，猜测即撒谎。
 
 <a id="dev-note"></a>
-## Dev Note
+### 开发备注
 
 - 上面的跟随重定向选择是有意为之，并通过 egress spec（代理透明性）测试。
 - `tests/scraper.spec.ts` 用本地运行时替身钉住包络规范化与提供方；真实 smoke（`$DSH_WEB_SCRAPER_E2E`）还要求运行时就绪探针应答。
