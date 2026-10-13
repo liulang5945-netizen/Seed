@@ -3,6 +3,8 @@
 这条仪器存在的理由就是"㊵-656 那个数是仓外跑的"，所以测里必须**双向**钉住它能为真也能为假：
 自比为 0、扰动一枚必须被点名、名集不齐与镜像分叉都要响亮拒绝。
 另两支是当日现场锚：三臂封存件里的 0／20／10，以及"list 里的张量不许进名表"。
+2026-10-13 再加两支（DEBT-G129）：形状不齐的两枚必须点名出版而不是崩，且 delta 表与形状名表
+必须是差异槽的一个**划分**（不重不漏）——否则 `top_deltas` 会被读成覆盖了全部差异。
 """
 
 from __future__ import annotations
@@ -141,3 +143,48 @@ def test_real_three_arm_seal_publishes_zero_then_twenty_slots_ten_weights() -> N
     assert set(rows["treated"]["distinct_group_sizes"]) == {2}
     for side in payload["mirror_consistency"]:
         assert side["agree_within_arm"] == side["mirrored_slots"] == 94
+
+
+def test_differently_shaped_tensors_are_named_not_subtracted(tmp_path: Path) -> None:
+    #: DEBT-G129 的现场：基座（批次 B 之前，那一面宽 4）对治疗臂（宽 5）时，减法在 broadcast 上抛
+    #: `RuntimeError`——整台仪器 rc=1、件根本没落。形状不齐必须**点名出版**，既不崩也不静默成"没差"。
+    base = {
+        "substrate": {"edge": torch.zeros(4, 2)},
+        "taiji": {"kernel": {"edge": torch.zeros(4, 2)}},
+    }
+    arm = {
+        "substrate": {"edge": torch.zeros(5, 2)},
+        "taiji": {"kernel": {"edge": torch.zeros(5, 2)}},
+    }
+    left = _save(tmp_path, "base.pt", base)
+    right = _save(tmp_path, "arm.pt", arm)
+    out = tmp_path / "r.json"
+    rc = CMP.main(["--checkpoint", str(left), "--checkpoint", str(right), "--out-report", str(out)])
+    payload = json.loads(out.read_text(encoding="utf-8"))
+    row = payload["pairs"][0]
+    assert rc == 0
+    assert payload["status"] == "measured"
+    assert row["differing_slots"] == 2
+    assert row["shape_mismatch_slots"] == 2
+    assert row["delta_comparable_slots"] == 0
+    assert row["top_deltas"] == []
+    assert row["shape_pairs"] == ["[4, 2] vs [5, 2]"]
+    assert row["shape_mismatch_names"] == ["substrate.edge", "taiji.kernel.edge"]
+    assert row["verdict"] == "differing"
+
+
+def test_the_delta_table_and_the_shape_set_partition_the_differences(tmp_path: Path) -> None:
+    #: 两半必须**不重不漏**：可比的那批进 delta 表，形状不齐的那批进名表，相加＝总差异槽。
+    #: 少了这条，`top_deltas` 会被读成"覆盖了所有差异"，而它其实只覆盖可比的一半。
+    base = {"substrate": {"a": torch.zeros(3), "b": torch.zeros(3)}}
+    arm = {"substrate": {"a": torch.zeros(4), "b": torch.ones(3)}}
+    left = _save(tmp_path, "base.pt", base)
+    right = _save(tmp_path, "arm.pt", arm)
+    out = tmp_path / "r.json"
+    rc = CMP.main(["--checkpoint", str(left), "--checkpoint", str(right), "--out-report", str(out)])
+    row = json.loads(out.read_text(encoding="utf-8"))["pairs"][0]
+    assert rc == 0
+    assert row["differing_slots"] == 2
+    assert row["delta_comparable_slots"] + row["shape_mismatch_slots"] == row["differing_slots"]
+    assert [entry["slot"] for entry in row["top_deltas"]] == ["substrate.b"]
+    assert row["shape_mismatch_names"] == ["substrate.a"]

@@ -10,6 +10,11 @@
 
 判定权全部在读数里：`--out-report` 落 JSON，stdout 只出 ASCII（`ensure_ascii=True`），
 因为 win32 控制台默认按 GBK 解码、`⇒` 与中文会把一次正常判读砸成 `UnicodeEncodeError`。
+
+2026-10-13（DEBT-G129／㊵-769）升版 v2：形状不齐的两枚此前会在算 delta 的路上抛 `RuntimeError`
+（拿批次 B 之前的基座比治疗臂当场崩，rc=1 且件没落）。现在形状不齐的那批**点名出版**
+（`shape_mismatch_slots`／`shape_mismatch_names`／`shape_pairs`），delta 表只覆盖
+`delta_comparable_slots` 那一半，两边相加＝`differing_slots`。旧封存件是 v1，引用要点名哪一版。
 """
 
 from __future__ import annotations
@@ -22,7 +27,7 @@ from pathlib import Path
 from typing import Any
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
-FORMAT = "taiji-n5-arm-tensor-comparison-v1"
+FORMAT = "taiji-n5-arm-tensor-comparison-v2"
 #: 同一枚权重的两个存放根；镜像核对只走这一对，不猜别的形状。
 MIRROR_PREFIXES = ("substrate.", "taiji.kernel.")
 TOP_DELTA_COUNT = 6
@@ -112,6 +117,15 @@ def compare_pairs(left: dict[str, Any], right: dict[str, Any], label: str) -> di
     only_right = sorted(set(b) - set(a))
     common = sorted(set(a) & set(b))
     differing = [name for name in common if not torch.equal(a[name], b[name])]
+    #: 形状不同的两枚**做不了减法**：`(4,N) - (5,N)` 抛 `RuntimeError`，而它抛在算 delta 的路上——
+    #: 2026-10-13 用"批次 B 之前的基座"比治疗臂时整台仪器 rc=1 崩掉（DEBT-G129）。
+    #: 所以先把形状不一致的那批挑出来点名出版，剩下的才进 delta 表：既不混成 0，也不让整台仪器崩。
+    shape_mismatch = sorted(name for name in differing if a[name].shape != b[name].shape)
+    uncomparable = set(shape_mismatch)
+    comparable = [name for name in differing if name not in uncomparable]
+    shape_pairs = sorted(
+        {f"{list(a[name].shape)} vs {list(b[name].shape)}" for name in shape_mismatch}
+    )
     groups: dict[tuple[str, str, tuple[int, ...]], list[str]] = {}
     for name in differing:
         key = (
@@ -127,7 +141,7 @@ def compare_pairs(left: dict[str, Any], right: dict[str, Any], label: str) -> di
                 "max_abs_delta": float((a[name].float() - b[name].float()).abs().max()),
                 "shape": list(a[name].shape),
             }
-            for name in differing
+            for name in comparable
         ),
         key=lambda row: -row["max_abs_delta"],
     )
@@ -138,6 +152,11 @@ def compare_pairs(left: dict[str, Any], right: dict[str, Any], label: str) -> di
         "only_in_right": only_right[:8],
         "compared_slots": len(common),
         "differing_slots": len(differing),
+        #: `top_deltas` 只覆盖 `delta_comparable_slots`；剩下那批以形状对出版。
+        "delta_comparable_slots": len(comparable),
+        "shape_mismatch_slots": len(shape_mismatch),
+        "shape_mismatch_names": shape_mismatch[:8],
+        "shape_pairs": shape_pairs[:8],
         "distinct_content_pairs": len(groups),
         #: 每组的槽数（例：10 组各 2 槽 ⇒ [2,2,…]）。用列表而不是字典，避免同尺寸组互相覆盖计数。
         "distinct_group_sizes": sorted((len(names) for names in groups.values()), reverse=True),

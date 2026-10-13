@@ -1,0 +1,203 @@
+{
+  "format": "taiji-n5-arm-tensor-comparison-v2",
+  "status": "refuse_name_sets_differ",
+  "files": [
+    {
+      "path": "checkpoints/seed_a31self_with_circuit.pt",
+      "file_sha256": "d6169a358eaee6d194d4795e3167a7bcbb42dfde57b92aa1199bcebbed89699b",
+      "bytes": 12627371
+    },
+    {
+      "path": "output/n5_20_batchC_treated/A/checkpoint.pt",
+      "file_sha256": "1c839f012d6df383ea42b9787d4508d9ebfb4c22bbb23906fba72e3ae378e03f",
+      "bytes": 13090253
+    }
+  ],
+  "tensor_slots": 186,
+  "list_tensor_count": 6,
+  "mirror_consistency": [
+    {
+      "mirrored_slots": 77,
+      "one_sided_slots": 16,
+      "agree_within_arm": 77,
+      "disagreeing": []
+    },
+    {
+      "mirrored_slots": 78,
+      "one_sided_slots": 16,
+      "agree_within_arm": 78,
+      "disagreeing": []
+    }
+  ],
+  "pairs": [
+    {
+      "label": "checkpoints/seed_a31self_with_circuit.pt -> output/n5_20_batchC_treated/A/checkpoint.pt",
+      "same_name_set": false,
+      "only_in_left": [],
+      "only_in_right": [
+        "substrate.memory.last_event",
+        "taiji.kernel.memory.last_event"
+      ],
+      "compared_slots": 186,
+      "differing_slots": 62,
+      "delta_comparable_slots": 54,
+      "shape_mismatch_slots": 8,
+      "shape_mismatch_names": [
+        "substrate.memory.provenance_encoder.edge_weight",
+        "substrate.memory.provenance_encoder.pre_index",
+        "substrate.memory.provenance_readout.edge_weight",
+        "substrate.memory.provenance_readout.pre_index",
+        "taiji.kernel.memory.provenance_encoder.edge_weight",
+        "taiji.kernel.memory.provenance_encoder.pre_index",
+        "taiji.kernel.memory.provenance_readout.edge_weight",
+        "taiji.kernel.memory.provenance_readout.pre_index"
+      ],
+      "shape_pairs": [
+        "[384, 4] vs [384, 5]",
+        "[4, 96] vs [5, 96]"
+      ],
+      "distinct_content_pairs": 28,
+      "distinct_group_sizes": [
+        6,
+        4,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2
+      ],
+      "verdict": "differing",
+      "top_deltas": [
+        {
+          "slot": "substrate.perception.dynamic.symbol_exposure",
+          "max_abs_delta": 729998.0,
+          "shape": [
+            257
+          ]
+        },
+        {
+          "slot": "taiji.components.perception.dynamic.symbol_exposure",
+          "max_abs_delta": 729998.0,
+          "shape": [
+            257
+          ]
+        },
+        {
+          "slot": "substrate.identity_organ.bank.visits",
+          "max_abs_delta": 177995.0,
+          "shape": [
+            128
+          ]
+        },
+        {
+          "slot": "taiji.kernel.identity_organ.bank.visits",
+          "max_abs_delta": 177995.0,
+          "shape": [
+            128
+          ]
+        },
+        {
+          "slot": "substrate.predictive_readout.position_weight",
+          "max_abs_delta": 4.994553565979004,
+          "shape": [
+            257,
+            4
+          ]
+        },
+        {
+          "slot": "taiji.kernel.predictive_readout.position_weight",
+          "max_abs_delta": 4.994553565979004,
+          "shape": [
+            257,
+            4
+          ]
+        }
+      ],
+      "differing_slots_names": [
+        "substrate.cognitive_state.percept.features",
+        "substrate.cognitive_state.workspace.broadcast",
+        "substrate.cognitive_state.world.latent",
+        "substrate.identity_organ.bank.occupied",
+        "substrate.identity_organ.bank.prototypes",
+        "substrate.identity_organ.bank.visits",
+        "substrate.memory.association.edge_weight",
+        "substrate.memory.cortical_readout.edge_weight",
+        "substrate.memory.episode_readout.edge_weight",
+        "substrate.memory.familiarity_readout.edge_weight",
+        "substrate.memory.outcome_readout.edge_weight",
+        "substrate.memory.provenance_encoder.edge_weight",
+        "substrate.memory.provenance_encoder.pre_index",
+        "substrate.memory.provenance_readout.edge_weight",
+        "substrate.memory.provenance_readout.pre_index",
+        "substrate.memory.time_readout.edge_weight",
+        "substrate.perception.dynamic.assembly_sum",
+        "substrate.perception.dynamic.previous_feature",
+        "substrate.perception.dynamic.recurrent_state",
+        "substrate.perception.dynamic.symbol_exposure",
+        "substrate.perception.state_dict.embedding.weight",
+        "substrate.perception.state_dict.transition.weight",
+        "substrate.predictive_readout.bias",
+        "substrate.predictive_readout.position_weight",
+        "substrate.predictive_readout.synapses.edge_weight",
+        "substrate.state.memory.activity",
+        "substrate.state.memory.threshold",
+        "substrate.state.memory.trace",
+        "substrate.state.motor_context",
+        "substrate.state.motor_probabilities",
+        "substrate.state.predictive_context_trace",
+        "taiji.cognitive_state.percept.features",
+        "taiji.cognitive_state.workspace.broadcast",
+        "taiji.cognitive_state.world.latent",
+        "taiji.components.perception.dynamic.assembly_sum",
+        "taiji.components.perception.dynamic.previous_feature",
+        "taiji.components.perception.dynamic.recurrent_state",
+        "taiji.components.perception.dynamic.symbol_exposure",
+        "taiji.components.perception.state_dict.embedding.weight",
+        "taiji.components.perception.state_dict.transition.weight",
+        "taiji.kernel.identity_organ.bank.occupied",
+        "taiji.kernel.identity_organ.bank.prototypes",
+        "taiji.kernel.identity_organ.bank.visits",
+        "taiji.kernel.memory.association.edge_weight",
+        "taiji.kernel.memory.cortical_readout.edge_weight",
+        "taiji.kernel.memory.episode_readout.edge_weight",
+        "taiji.kernel.memory.familiarity_readout.edge_weight",
+        "taiji.kernel.memory.outcome_readout.edge_weight",
+        "taiji.kernel.memory.provenance_encoder.edge_weight",
+        "taiji.kernel.memory.provenance_encoder.pre_index",
+        "taiji.kernel.memory.provenance_readout.edge_weight",
+        "taiji.kernel.memory.provenance_readout.pre_index",
+        "taiji.kernel.memory.time_readout.edge_weight",
+        "taiji.kernel.predictive_readout.bias",
+        "taiji.kernel.predictive_readout.position_weight",
+        "taiji.kernel.predictive_readout.synapses.edge_weight",
+        "taiji.kernel.state.memory.activity",
+        "taiji.kernel.state.memory.threshold",
+        "taiji.kernel.state.memory.trace",
+        "taiji.kernel.state.motor_context",
+        "taiji.kernel.state.motor_probabilities",
+        "taiji.kernel.state.predictive_context_trace"
+      ]
+    }
+  ]
+}
