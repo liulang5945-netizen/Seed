@@ -32,7 +32,9 @@ from pathlib import Path
 from typing import Any
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
-REPORT_FORMAT = "taiji-newline-write-face-v1"
+#: ㊵-765：读出面加了 `d_face`（待办收窄那一桶）⇒ 按"面变了就升版"的规矩走 v2；
+#: 同名件的 v1 那份不删，它的历史在 git 里，引用时要点名是哪一版。
+REPORT_FORMAT = "taiji-newline-write-face-v2"
 DEBT = "DEBT-G115"
 TARGET_MARKER = "reports/"
 TEXT_WRITE_METHODS = ("write_text", "writelines")
@@ -76,7 +78,9 @@ def _open_is_text_write(node: ast.Call) -> bool:
         if kw.arg == "mode" and isinstance(kw.value, ast.Constant):
             mode = kw.value.value
     if mode is None:
-        return True  # `open(p)` 默认 r——不算写靶，保守起见交给下面 mode 判据
+        # `open(p)` 的默认档是 "r"＝只读，**不是**写入。第一版这里返回 True，
+        # 于是把一堆读件的地方算成"缺 newline= 的写靶"（虚高），而注释写的恰恰是另一件。
+        return False
     return isinstance(mode, str) and any(token in mode for token in ("w", "a", "+"))
 
 
@@ -95,6 +99,22 @@ def target_fragments(node: ast.Call) -> tuple[list[str], bool]:
         fragments = _string_fragments(node.args[0] if node.args else None)
         return fragments, not fragments
     return [], True
+
+
+def has_reports_default(tree: ast.AST) -> bool:
+    """这一枚文件里有没有"argparse 的 `default=` 字符串含 `reports/`"。
+
+    这是 D 桶的前提：写靶是变量时静态读不出落点，但**如果这台仪器的 `--out-report` 默认值就落在
+    `reports/`，那它的写靶变量极可能就是那枚件**。D 桶不判、不结清任何东西，它只把债表里
+    "先逐枚现读确认它真写 reports/"这句话的**待办面从 1210 处收窄到可数的一小撮文件**。
+    """
+
+    for node in ast.walk(tree):
+        if isinstance(node, ast.keyword) and node.arg == "default":
+            for text in _string_fragments(node.value):
+                if TARGET_MARKER in text:
+                    return True
+    return False
 
 
 def classify_source(source: str) -> dict[str, list[int]]:
@@ -143,18 +163,23 @@ def scan(root: Path, face: str) -> dict[str, Any]:
         raise ValueError(f"零个已跟踪 .py 落在 {face!r}：先确认 --face/--root 指的是哪一面")
     a: dict[str, list[int]] = {}
     b: dict[str, list[int]] = {}
+    d: dict[str, list[int]] = {}
     c_sites = 0
     unparsed: list[str] = []
     for name in paths:
         try:
-            buckets = classify_source((root / name).read_text(encoding="utf-8"))
+            source = (root / name).read_text(encoding="utf-8")
+            tree = ast.parse(source)
         except (SyntaxError, UnicodeDecodeError):
             unparsed.append(name)
             continue
+        buckets = classify_source(source)
         if buckets["a"]:
             a[name] = buckets["a"]
         if buckets["b"]:
             b[name] = buckets["b"]
+            if has_reports_default(tree):
+                d[name] = buckets["b"]
         c_sites += len(buckets["c"])
     a_total = sum(len(lines) for lines in a.values())
     verdicts = {
@@ -175,6 +200,15 @@ def scan(root: Path, face: str) -> dict[str, Any]:
             "sites": sum(len(lines) for lines in b.values()),
             "files": len(b),
             "note": "写靶是变量/表达式，静态读不出落点——这一桶不判，是修法① 的真实待办面",
+        },
+        "d_face": {
+            "sites": sum(len(lines) for lines in d.values()),
+            "files": {name: d[name] for name in sorted(d)},
+            "note": (
+                "D ⊆ B：写靶静态读不出，但这一枚文件的 argparse 默认落点自己就指向 reports/——"
+                "修法① 那句「先逐枚现读确认它真写 reports/」的待办面是这一撮，不是整个 B 桶。"
+                "D 不入 verdict：它要人（或下一批）逐枚把接收者对齐到那枚默认值。"
+            ),
         },
         "c_face": {
             "sites": c_sites,
@@ -234,6 +268,8 @@ def main(argv: list[str] | None = None) -> int:
         "a_sites": report["a_face"]["sites"],
         "a_files": len(report["a_face"]["files"]),
         "b_sites": report["b_face"]["sites"],
+        "d_sites": report["d_face"]["sites"],
+        "d_files": len(report["d_face"]["files"]),
         "c_sites": report["c_face"]["sites"],
         "out": out.as_posix(),
     }

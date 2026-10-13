@@ -69,6 +69,16 @@ def test_a_site_that_passes_newline_is_not_counted(instrument) -> None:
 def test_binary_and_read_modes_are_not_text_write_targets(instrument) -> None:
     """`open(p,"wb")` 不该被算成文本写靶；`open(p,"r")` 更不是写入。"""
 
+    #: 裸 `open(p)` 的默认档是只读。第一版把"没写 mode"当成写入，于是读件的地方被虚算成待办——
+    #: 那里的注释写对了、代码写反了，这一支就是钉住那一条（虚高的数会让下一批去修不存在的问题）。
+    assert instrument.classify_source(
+        "def run(p):\n    with open(p) as fh:\n        return fh.read()\n"
+    ) == {
+        "a": [],
+        "b": [],
+        "c": [],
+    }
+
     assert instrument.classify_source(
         'def run(p):\n    with open(p, "wb") as fh:\n        fh.write(b"x")\n'
     ) == {
@@ -97,6 +107,68 @@ def test_a_variable_write_target_lands_in_b_not_a(instrument) -> None:
     buckets = instrument.classify_source(source)
     assert buckets["a"] == []
     assert len(buckets["b"]) == 1, buckets
+
+
+def test_the_d_bucket_narrows_the_fix_face_without_inventing_a_verdict(
+    instrument, tmp_path
+) -> None:
+    """D 桶＝"这台仪器的 argparse 默认落点自己就写着 `reports/`"：它是**待办收窄**，不是新判决。
+
+    两支都能为假：默认值不含 `reports/` 的文件不许进 D；含的必须进 D，且 D 的行号必须也在 B 里
+    （D ⊆ B——写靶仍是静态读不出的，D 只回答"该先现读哪几枚文件"）。D 不入 `verdicts`：
+    把它算成红就等于宣称"这些文件已经确认在写 reports/"，而那正是还没做的逐枚现读。
+    """
+
+    import ast
+
+    with_default = (
+        "import argparse\n"
+        "p = argparse.ArgumentParser()\n"
+        'p.add_argument("--out-report", default="reports/x.json")\n'
+    )
+    without_default = (
+        "import argparse\n"
+        "p = argparse.ArgumentParser()\n"
+        'p.add_argument("--face", default="output/")\n'
+    )
+    assert instrument.has_reports_default(ast.parse(with_default)) is True
+    assert instrument.has_reports_default(ast.parse(without_default)) is False
+
+    root = tmp_path / "repo"
+    root.mkdir()
+    subprocess.run(["git", "init", "-q", str(root)], check=True, capture_output=True)
+    (root / "writer_with.py").write_text(
+        "import argparse\n"
+        "p = argparse.ArgumentParser()\n"
+        'p.add_argument("--out-report", default="reports/x.json")\n'
+        "def run(args, text):\n"
+        "    path = args.out_report\n"
+        '    with open(path, "w", encoding="utf-8") as fh:\n'
+        "        fh.write(text)\n",
+        encoding="utf-8",
+        newline="\n",
+    )
+    (root / "writer_without.py").write_text(
+        "import argparse\n"
+        "p = argparse.ArgumentParser()\n"
+        'p.add_argument("--out-dir", default="output/")\n'
+        "def run(args, text):\n"
+        "    path = args.out_dir\n"
+        '    open(path, "w").write(text)\n',
+        encoding="utf-8",
+        newline="\n",
+    )
+    subprocess.run(["git", "-C", str(root), "add", "-A"], check=True, capture_output=True)
+    report = instrument.scan(root, ".")
+    assert sorted(report["d_face"]["files"]) == ["writer_with.py"], report["d_face"]["files"]
+    b_names = [
+        name
+        for name in ("writer_with.py", "writer_without.py")
+        if instrument.classify_source((root / name).read_text(encoding="utf-8"))["b"]
+    ]
+    assert set(report["d_face"]["files"]) <= set(b_names)
+    assert report["verdict"] == "holds", report["failing_verdicts"]
+    assert "d_face_at_or_below_baseline" not in report["verdicts"]
 
 
 def test_the_real_face_reads_zero_on_a_and_keeps_b_published(instrument, tmp_path) -> None:
