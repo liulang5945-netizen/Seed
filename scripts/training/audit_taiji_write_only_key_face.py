@@ -37,6 +37,13 @@ from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 REPORT_FORMAT = "taiji-write-only-key-face-v1"
+#: 契约册（`test_n1_04`／`test_n1_05`）按文件路径加载本件，也被起成真子进程；脚本自己那层目录先上
+#: `sys.path`，统一落盘助手才解析得到（同㊵-790／802 那一条例外约定）。
+SCRIPT_DIR = Path(__file__).resolve().parent
+if str(SCRIPT_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPT_DIR))
+
+import _taiji_report_io as report_io  # noqa: E402
 
 # 每一枚键的**名字出处**（㊵-699 立下的规矩：名字一律从定义处取，不许从缺口反推）。
 # 我早先在任务描述里把这 13 枚写成「PLAN-N1-03 §1／§2 点名」——现读否证：那件里只出现 5 枚，
@@ -572,12 +579,7 @@ def main() -> int:
     if out.exists() and not args.overwrite:
         print(f"refusing to overwrite an existing report: {out}", file=sys.stderr)
         return 2
-    out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(
-        json.dumps(report, ensure_ascii=False, indent=2) + "\n",
-        encoding="utf-8",
-        newline="\n",
-    )
+    report_io.write_json_report(out, report, newline="\n", overwrite=args.overwrite)
     print(
         json.dumps(
             {
