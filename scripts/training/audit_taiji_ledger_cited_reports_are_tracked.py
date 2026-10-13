@@ -27,8 +27,10 @@ from pathlib import Path
 from typing import Any
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
-REPORT_FORMAT = "taiji-ledger-cited-reports-tracked-v1"
-CITE_RE = re.compile(r"reports/[A-Za-z0-9_.\-]+\.json")
+REPORT_FORMAT = "taiji-ledger-cited-reports-tracked-v2"
+#: 扩展名边界必须钉住：`…\.json` 不加负向预查会把 `reports/x.jsonl` 截断成一枚"叫 x.json 的缺件"。
+#: 第一版就因此报了 5 枚"盘上也没有"，其中 4 枚是 `.jsonl`（`㊵-575` 当年正是把两枚 JSONL 逐字节复制进 `reports/`）。
+CITE_RE = re.compile(r"reports/[A-Za-z0-9_.\-]+\.json(?![A-Za-z0-9])")
 READING_LIMIT = (
     "本件只回答一个问题：文档里点名的读数件，仓里到底有没有。它不判读数的对错，"
     "也不判引用是否恰当——一枚在册但已被更正作废的件照样算『在册』。"

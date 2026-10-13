@@ -64,7 +64,8 @@ def test_citations_are_taken_from_the_named_text_and_not_from_a_reimplemented_sc
     doc = tmp_path / "plans" / "active" / "roadmap"
     doc.mkdir(parents=True)
     (doc / "ledger.md").write_text(
-        "见 reports/alpha_2026.json 与 reports/beta.json，还有 reports/skip.md 不算。\n",
+        "见 reports/alpha_2026.json 与 reports/beta.json，"
+        "还有 reports/skip.md 与 reports/truth.jsonl 都不算。\n",
         encoding="utf-8",
         newline="\n",
     )
@@ -73,6 +74,9 @@ def test_citations_are_taken_from_the_named_text_and_not_from_a_reimplemented_sc
         monkey.setattr(CENSUS, "PROJECT_ROOT", tmp_path)
         found = CENSUS._citations(["plans/active/roadmap/ledger.md"])
     assert sorted(found) == ["reports/alpha_2026.json", "reports/beta.json"]
+    #: 扩展名边界要钉住：把 `.jsonl` 截断成 `.json`，一台「缺件」仪器就会报出根本不存在的缺席——
+    #: v1 的真面正是这么错的（4 枚「盘上也没有」其实是 `.jsonl`，其中两枚 ㊵-575 当年逐字节复制进过 `reports/`）。
+    assert not any(name.endswith("truth.json") for name in found)
 
 
 def test_an_unreadable_face_is_a_red_not_an_empty_citation_set(tmp_path: Path) -> None:
@@ -85,12 +89,15 @@ def test_an_unreadable_face_is_a_red_not_an_empty_citation_set(tmp_path: Path) -
     assert "citation_face_scanned" in payload["failing_verdicts"]
 
 
-def test_real_face_names_the_known_never_committed_reading(tmp_path: Path) -> None:
-    #: 本行现读的债面（㊵-781）：台账 ㊵-565／567 引用的那枚 N2 乙档读数件从未入库、但仍在盘上。
-    #: 这一支钉的是"仪器真的能看见这件事实"；修好之后要改成断言它**不在**名单里（那时它才会红一次）。
+def test_real_face_points_at_the_remaining_stale_citation_not_a_phantom(tmp_path: Path) -> None:
+    #: ㊵-782 之前这一支钉的是「n2b 那枚从未入库」；那笔债已按修法① 补入库 ⇒ 断言随之换成
+    #: **"补进去的必须不再报缺，剩下的那一枚陈旧名必须仍报缺"**——两支方向相反，所以它不是仪式。
     payload = CENSUS.build()
-    assert "reports/taiji_n2b_powerup_20261008_n2c1.json" in payload["not_tracked"]
-    assert "reports/taiji_n2b_powerup_20261008_n2c1.json" not in payload["missing_on_disk"]
+    gone = "reports/taiji_n2b_powerup_20261008_n2c1.json"
+    stale = "reports/taiji_n2_powerup_20261008.json"
+    assert gone not in payload["not_tracked"]
+    assert stale in payload["not_tracked"]
+    assert stale in payload["missing_on_disk"]
     assert payload["verdict"] == "violated"
 
 
@@ -101,4 +108,4 @@ def test_refuses_to_overwrite_and_writes_lf(tmp_path: Path) -> None:
     assert CENSUS.main(["--out-report", str(out)]) == 2
     assert CENSUS.main(["--out-report", str(out), "--overwrite"]) == 1
     payload: dict[str, Any] = json.loads(out.read_text(encoding="utf-8"))
-    assert payload["format"] == "taiji-ledger-cited-reports-tracked-v1"
+    assert payload["format"] == "taiji-ledger-cited-reports-tracked-v2"
