@@ -30,6 +30,14 @@ from pathlib import Path
 from typing import Any
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
+#: 与 `eval_taiji_cap0_baseline.py` 及三台普查仪同一条落盘约定（㊵-790／795／796／801）：
+#: 脚本自己那层目录先上 `sys.path`，统一助手才在"被契约册按路径加载"和"起成真子进程"两种入口下都解析得到。
+SCRIPT_DIR = Path(__file__).resolve().parent
+if str(SCRIPT_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPT_DIR))
+
+import _taiji_report_io as report_io  # noqa: E402
+
 REPORT_FORMAT = "taiji-batch-c-arm-parity-v1"
 PREREG = "plans/reference/PLAN-N5-20_batch_c_run_spec_and_pricing_prereg_20261012.md §2"
 DEBT = "DEBT-G127"
@@ -322,12 +330,7 @@ def main(argv: list[str] | None = None) -> int:
     if out.exists() and not args.overwrite:
         print(f"refusing to overwrite an existing report: {out}", file=sys.stderr)
         return 2
-    out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(
-        json.dumps(report, ensure_ascii=False, indent=2) + "\n",
-        encoding="utf-8",
-        newline="\n",
-    )
+    report_io.write_json_report(out, report, newline="\n", overwrite=args.overwrite)
 
     summary = {
         "verdict": report["verdict"],
