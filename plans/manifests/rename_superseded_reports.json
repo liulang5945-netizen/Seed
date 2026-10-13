@@ -1,0 +1,15 @@
+{
+  "format": "taiji-superseded-report-names-v1",
+  "purpose": "普查仪 `audit_taiji_ledger_cited_reports_are_tracked.py` 的第四桶：文档里点过的**旧件名**已被哪一枚**现行件名**取代。",
+  "why_needed": "台账与预注册是冻结件：旧名不许改写。可普查仪按字节数提及面，旧名会永远算一次『未在册』。本表把『陈旧引用』与『证据丢失』分开，且带核验——映射目标必须自己就在索引面里，否则该条不作数。",
+  "verification_rule": "每条 must 有 `successor` 且该路径在 `git ls-files reports` 中在场；不在场 ⇒ 仪器把旧名仍算进 `not_tracked` 并出版一条 unverified 问题行。",
+  "entries": [
+    {
+      "superseded": "reports/taiji_n2_powerup_20261008.json",
+      "successor": "reports/taiji_n2b_powerup_20261008_n2c1.json",
+      "reason": "N2-C1 那次复跑换了文件名（带 `_n2c1` 代次后缀）；预注册载体格里写的是预测名。",
+      "source": "plans/reference/PLAN-N2-01_consolidation_powerup_prereg_20261007.md §追加（2026-10-13 ㊵-782）",
+      "recorded_on": "2026-10-13"
+    }
+  ]
+}

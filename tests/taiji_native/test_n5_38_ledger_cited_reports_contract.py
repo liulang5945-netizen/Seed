@@ -89,23 +89,50 @@ def test_an_unreadable_face_is_a_red_not_an_empty_citation_set(tmp_path: Path) -
     assert "citation_face_scanned" in payload["failing_verdicts"]
 
 
-def test_real_face_points_at_the_remaining_stale_citation_not_a_phantom(tmp_path: Path) -> None:
-    #: ㊵-782 之前这一支钉的是「n2b 那枚从未入库」；那笔债已按修法① 补入库 ⇒ 断言随之换成
-    #: **"补进去的必须不再报缺，剩下的那一枚陈旧名必须仍报缺"**——两支方向相反，所以它不是仪式。
-    payload = CENSUS.build()
-    gone = "reports/taiji_n2b_powerup_20261008_n2c1.json"
+def test_a_verified_rename_moves_the_stale_name_out_of_the_red(tmp_path: Path) -> None:
+    """v3（DEBT-G134 最后一格）：带核验的更名登记表把"陈旧名"与"证据丢失"分开。
+
+    登记表本身不是消音器——它自己受 `supersede_map_fully_verified` 与"映射目标必须在索引面里"约束，
+    所以下面那一支**不给表**的对照必须仍然红；两支方向相反，这一格不是仪式。
+    """
+
     stale = "reports/taiji_n2_powerup_20261008.json"
-    assert gone not in payload["not_tracked"]
-    assert stale in payload["not_tracked"]
-    assert stale in payload["missing_on_disk"]
-    assert payload["verdict"] == "violated"
+    successor = "reports/taiji_n2b_powerup_20261008_n2c1.json"
+    payload = CENSUS.build()
+    assert payload["superseded_citations"].get(stale) == successor
+    assert stale not in payload["not_tracked"]
+    assert stale not in payload["missing_on_disk"]
+    assert payload["verdicts"]["supersede_map_fully_verified"] is True
+    assert payload["verdict"] == "holds"
+    #: 反面对照：没有登记表（或表里没有这条）时，同一枚陈旧名必须回到 `not_tracked` 并让整件红。
+    without = CENSUS.build("plans/manifests/this-map-does-not-exist.json")
+    assert stale in without["not_tracked"]
+    assert without["verdict"] == "violated"
+
+
+def test_a_rename_pointing_at_an_untracked_successor_is_not_verified(tmp_path: Path) -> None:
+    mapping, unverified = CENSUS._supersede_map({"reports/real.json"}, path="m.json")
+    assert mapping == {} and unverified == []
+    written = tmp_path / "m.json"
+    body = {
+        "entries": [
+            {"superseded": "reports/old_a.json", "successor": "reports/real.json"},
+            {"superseded": "reports/old_b.json", "successor": "reports/phantom.json"},
+        ]
+    }
+    written.write_text(json.dumps(body), encoding="utf-8", newline="\n")
+    with pytest.MonkeyPatch.context() as monkey:
+        monkey.setattr(CENSUS, "PROJECT_ROOT", tmp_path)
+        mapping, unverified = CENSUS._supersede_map({"reports/real.json"}, path="m.json")
+    assert mapping == {"reports/old_a.json": "reports/real.json"}
+    assert unverified == ["reports/old_b.json"]
 
 
 def test_refuses_to_overwrite_and_writes_lf(tmp_path: Path) -> None:
     out = tmp_path / "census.json"
-    assert CENSUS.main(["--out-report", str(out)]) == 1
+    assert CENSUS.main(["--out-report", str(out)]) == 0
     assert out.read_bytes().count(b"\r") == 0
     assert CENSUS.main(["--out-report", str(out)]) == 2
-    assert CENSUS.main(["--out-report", str(out), "--overwrite"]) == 1
+    assert CENSUS.main(["--out-report", str(out), "--overwrite"]) == 0
     payload: dict[str, Any] = json.loads(out.read_text(encoding="utf-8"))
-    assert payload["format"] == "taiji-ledger-cited-reports-tracked-v2"
+    assert payload["format"] == "taiji-ledger-cited-reports-tracked-v3"

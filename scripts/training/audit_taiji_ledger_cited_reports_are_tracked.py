@@ -27,7 +27,10 @@ from pathlib import Path
 from typing import Any
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
-REPORT_FORMAT = "taiji-ledger-cited-reports-tracked-v2"
+REPORT_FORMAT = "taiji-ledger-cited-reports-tracked-v3"
+#: 带核验的更名登记表（DEBT-G134 的最后一格）：文档里的**旧件名**指向的现行件必须在索引面里，
+#: 否则那条映射不作数——映射不是消音器，它自己也要被复核。
+DEFAULT_SUPERSEDE_MAP = "plans/manifests/rename_superseded_reports.json"
 #: 扩展名边界必须钉住：`…\.json` 不加负向预查会把 `reports/x.jsonl` 截断成一枚"叫 x.json 的缺件"。
 #: 第一版就因此报了 5 枚"盘上也没有"，其中 4 枚是 `.jsonl`（`㊵-575` 当年正是把两枚 JSONL 逐字节复制进 `reports/`）。
 CITE_RE = re.compile(r"reports/[A-Za-z0-9_.\-]+\.json(?![A-Za-z0-9])")
@@ -102,7 +105,33 @@ def _classify(cited: dict[str, list[str]], texts: dict[str, str]) -> dict[str, l
     return buckets
 
 
-def build() -> dict[str, Any]:
+def _supersede_map(
+    tracked: set[str], path: str = DEFAULT_SUPERSEDE_MAP
+) -> tuple[dict[str, str], list[str]]:
+    """读更名登记表；**只有映射目标自己就在索引面里**的那条才算数。
+
+    一条指向"也不在册的名字"的映射必须不作数——否则这张表就成了让普查仪闭嘴的后门。
+    """
+
+    file_path = PROJECT_ROOT / path
+    if not file_path.is_file():
+        return {}, []
+    payload = json.loads(file_path.read_text(encoding="utf-8"))
+    mapping: dict[str, str] = {}
+    unverified: list[str] = []
+    for entry in payload.get("entries", []):
+        old = str(entry.get("superseded", "")).strip()
+        new = str(entry.get("successor", "")).strip()
+        if not old or not new:
+            continue
+        if new in tracked:
+            mapping[old] = new
+        else:
+            unverified.append(old)
+    return mapping, unverified
+
+
+def build(supersede_map: str = DEFAULT_SUPERSEDE_MAP) -> dict[str, Any]:
     tracked = _tracked_files()
     faces = [
         "plans/active/roadmap/08_UPSTREAM_SYNC_PLAYBOOK.md",
@@ -120,7 +149,10 @@ def build() -> dict[str, Any]:
             texts[rel] = path.read_text(encoding="utf-8", errors="replace")
     cited = _citations(rel_paths)
     buckets = _classify(cited, texts)
-    readings = buckets["cited_as_reading"]
+    mapping, unverified = _supersede_map(tracked, supersede_map)
+    all_readings = buckets["cited_as_reading"]
+    buckets["superseded_citation"] = [n for n in all_readings if n in mapping]
+    readings = [n for n in all_readings if n not in mapping]
     untracked = [name for name in readings if name not in tracked]
     missing_on_disk = [name for name in readings if not (PROJECT_ROOT / name).is_file()]
     flagged = sorted(set(untracked) | set(missing_on_disk))
@@ -134,14 +166,20 @@ def build() -> dict[str, Any]:
         "cited_reports_total": len(cited),
         "buckets": {key: len(value) for key, value in buckets.items()},
         "cited_as_reading": readings,
+        "superseded_citations": {
+            name: mapping[name] for name in buckets["superseded_citation"] if name in mapping
+        },
+        "supersede_map_unverified": unverified,
         "planned_outputs": buckets["planned_output"],
+        #: 提及面里的省略形**只出版、不判**（㊵-782 ⑤：本件数的是提及面，把"提到一个模式"当违规＝自指命中）。
         "malformed_citations": buckets["malformed"],
         "not_tracked": untracked,
         "missing_on_disk": missing_on_disk,
         "citations_per_report": {name: sorted(set(cited[name]))[:4] for name in flagged},
         "verdicts": {
             "citation_face_scanned": all(value > 0 for value in sizes.values()),
-            "no_malformed_citation": not buckets["malformed"],
+            #: 更名登记表自己也要被看着：映射目标不在索引面里 ⇒ 这条判据为假，旧名照旧算未在册。
+            "supersede_map_fully_verified": not unverified,
             "every_cited_report_is_tracked": not untracked,
             "every_cited_report_exists_on_disk": not missing_on_disk,
         },
@@ -157,6 +195,7 @@ def main(argv: list[str] | None = None) -> int:
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(encoding="utf-8")
     parser = argparse.ArgumentParser(description="台账／预注册点名的读数件是否在册（DEBT-G134）")
+    parser.add_argument("--supersede-map", default=DEFAULT_SUPERSEDE_MAP)
     parser.add_argument("--out-report", type=Path, required=True)
     parser.add_argument("--overwrite", action="store_true")
     args = parser.parse_args(argv)
@@ -169,7 +208,7 @@ def main(argv: list[str] | None = None) -> int:
         )
         return 2
     try:
-        payload = build()
+        payload = build(args.supersede_map)
     except (RuntimeError, OSError) as error:
         print(json.dumps({"format": REPORT_FORMAT, "status": "refuse_scan", "detail": str(error)}))
         return 2
