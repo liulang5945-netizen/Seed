@@ -188,3 +188,40 @@ def test_the_delta_table_and_the_shape_set_partition_the_differences(tmp_path: P
     assert row["delta_comparable_slots"] + row["shape_mismatch_slots"] == row["differing_slots"]
     assert [entry["slot"] for entry in row["top_deltas"]] == ["substrate.b"]
     assert row["shape_mismatch_names"] == ["substrate.a"]
+
+
+def test_the_three_buckets_partition_the_differing_slots(tmp_path: Path) -> None:
+    #: PLAN-N5-21 §6（㊵-770）：计量面按构造必然不等（喂入那一步多走一次 observe），
+    #: 所以"第四类"的判定单位只能是权重面＋拓扑面。这一支钉三件事：
+    #: 分档正确、三档相加＝总差异槽、计量面被单独点名而不是混进判决面。
+    base = {
+        "substrate": {
+            "readout": {"w": torch.zeros(2)},
+            "perception": {"dynamic": {"symbol_exposure": torch.zeros(3)}},
+            "memory": {"provenance_readout": {"pre_index": torch.zeros(2, dtype=torch.long)}},
+        }
+    }
+    moved = {
+        "substrate": {
+            "readout": {"w": torch.ones(2)},
+            "perception": {"dynamic": {"symbol_exposure": torch.full((3,), 4.0)}},
+            "memory": {"provenance_readout": {"pre_index": torch.ones(2, dtype=torch.long)}},
+        }
+    }
+    left = _save(tmp_path, "base.pt", base)
+    right = _save(tmp_path, "arm.pt", moved)
+    out = tmp_path / "r.json"
+    rc = CMP.main(["--checkpoint", str(left), "--checkpoint", str(right), "--out-report", str(out)])
+    row = json.loads(out.read_text(encoding="utf-8"))["pairs"][0]
+    assert rc == 0
+    assert row["differing_slots"] == 3
+    assert row["differing_by_bucket"] == {"weight": 1, "topology": 1, "meter": 1}
+    assert sum(row["differing_by_bucket"].values()) == row["differing_slots"]
+    assert row["differing_bucket_names"]["meter"] == [
+        "substrate.perception.dynamic.symbol_exposure"
+    ]
+    assert row["differing_bucket_names"]["topology"] == [
+        "substrate.memory.provenance_readout.pre_index"
+    ]
+    assert row["differing_bucket_names"]["weight"] == ["substrate.readout.w"]
+    assert "计量面" in row["meter_face_note"]

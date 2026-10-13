@@ -31,6 +31,20 @@ FORMAT = "taiji-n5-arm-tensor-comparison-v2"
 #: 同一枚权重的两个存放根；镜像核对只走这一对，不猜别的形状。
 MIRROR_PREFIXES = ("substrate.", "taiji.kernel.")
 TOP_DELTA_COUNT = 6
+#: `PLAN-N5-21` §6（㊵-770）要的三档分列：按**名字后缀**机械分档，不靠人读。
+#: 计量面按构造必然随观察次数增长（喂入那一步多走一次 observe），所以它只出版、不参与"第四类"判定。
+METER_SUFFIXES = (".symbol_exposure", ".visits")
+TOPOLOGY_SUFFIXES = (".pre_index",)
+#: 每档点名到枚的上限；真面一次比对可能有几十枚同名后缀，全部列出会把件撑爆而读数没多信息。
+BUCKET_NAME_CAP = 6
+
+
+def _slot_bucket(name: str) -> str:
+    if name.endswith(METER_SUFFIXES):
+        return "meter"
+    if name.endswith(TOPOLOGY_SUFFIXES):
+        return "topology"
+    return "weight"
 
 
 def _file_digest(path: Path) -> str:
@@ -126,6 +140,9 @@ def compare_pairs(left: dict[str, Any], right: dict[str, Any], label: str) -> di
     shape_pairs = sorted(
         {f"{list(a[name].shape)} vs {list(b[name].shape)}" for name in shape_mismatch}
     )
+    buckets: dict[str, list[str]] = {"weight": [], "topology": [], "meter": []}
+    for name in differing:
+        buckets[_slot_bucket(name)].append(name)
     groups: dict[tuple[str, str, tuple[int, ...]], list[str]] = {}
     for name in differing:
         key = (
@@ -157,6 +174,15 @@ def compare_pairs(left: dict[str, Any], right: dict[str, Any], label: str) -> di
         "shape_mismatch_slots": len(shape_mismatch),
         "shape_mismatch_names": shape_mismatch[:8],
         "shape_pairs": shape_pairs[:8],
+        #: 三档分列（`PLAN-N5-21` §6）：`J-N5t-2` 的"第四类"只看 weight＋topology，meter 只出版。
+        "differing_by_bucket": {key: len(names) for key, names in buckets.items()},
+        "differing_bucket_names": {
+            key: sorted(names)[:BUCKET_NAME_CAP] for key, names in buckets.items()
+        },
+        "meter_face_note": (
+            "计量面（symbol_exposure／visits）按构造随观察次数增长：治疗臂比对照臂多"
+            " `generated_feed.feeds` 次 observe，所以这一档两臂不等**不是**混杂未对齐。"
+        ),
         "distinct_content_pairs": len(groups),
         #: 每组的槽数（例：10 组各 2 槽 ⇒ [2,2,…]）。用列表而不是字典，避免同尺寸组互相覆盖计数。
         "distinct_group_sizes": sorted((len(names) for names in groups.values()), reverse=True),
