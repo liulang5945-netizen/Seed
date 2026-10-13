@@ -25,18 +25,24 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 SEALED_READING = PROJECT_ROOT / "reports/taiji_n4_33_four_classes_20261012.json"
 INSTRUMENT = PROJECT_ROOT / "scripts" / "training" / "adjudicate_taiji_n4_four_class_acceptance.py"
 
+#: ㊵-757（PLAN-N4-12）升版：属性位的披露计数进 `checkpoint()`（可选键，格式串仍 v1）。
+#: 旧清单（7 枚、无 `implicit_attribute_count`）自本注起作废；派生索引仍不许进这一面，
+#: 那条判据住在 `test_n4_11::test_checkpoint_face_keeps_the_derived_indexes_out`。
 CHECKPOINT_KEYS = {
     "capacity",
     "cue_dim",
     "expired_memory_ids",
     "evicted_count",
     "format",
+    "implicit_attribute_count",
     "implicit_provenance_count",
     "records",
 }
+#: ㊵-757 同轮重钉：记录载荷多一枚 `attribute_ids`（第二可寻址维），旧 14 枚清单自本注起作废。
 RECORD_PAYLOAD_KEYS = {
     "action_intent",
     "assembly_ids",
+    "attribute_ids",
     "cue",
     "episode_id",
     "event_ids",
@@ -89,7 +95,13 @@ def _digest(store: EpisodicMemoryStore) -> str:
 
 
 def test_default_retrieve_reproduces_the_sealed_reading(tmp_path) -> None:
-    """J-N4h-1：改动后的默认码路必须复刻**改动前**那份已入库读数（逐值，不是"看着差不多"）。"""
+    """J-N4h-1：改动后的默认码路必须复刻**改动前**那份已入库读数（逐值，不是"看着差不多"）。
+
+    ㊵-757 就地收窄这支的口径（原文不删）：`attribute_swap` 那一块**本来就是要变的**——属性位落地
+    之前它是 `no_field_to_swap`，之后它第一次出真值，所以"逐位中性"这句对那一格不成立，也不该成立
+    （PLAN-N4-12 §2 的 J-N4g-3b 参照件指的是读取面，不是那一格的 verdict）。
+    其余三类与 distractor 的每一条 lane 仍按逐值比，一条都不许松。
+    """
 
     sealed = json.loads(SEALED_READING.read_text(encoding="utf-8"))
     spec = importlib.util.spec_from_file_location("n4_10_instrument", INSTRUMENT)
@@ -100,8 +112,11 @@ def test_default_retrieve_reproduces_the_sealed_reading(tmp_path) -> None:
     out = tmp_path / "rerun.json"
     assert module.main(["--out-report", str(out)]) == 0
     fresh = json.loads(out.read_text(encoding="utf-8"))
-    for name in ("rename", "attribute_swap", "distractor", "slot_full"):
+    for name in ("rename", "distractor", "slot_full"):
         assert fresh["classes"][name]["verdict"] == sealed["classes"][name]["verdict"], name
+    #: 变了的那一格也必须**点名它变成了什么**，不许悄悄消失在册外。
+    assert fresh["classes"]["attribute_swap"]["verdict"] != "no_field_to_swap"
+    assert fresh["classes"]["attribute_swap"]["record_has_attribute_field"] is True
     sealed_lanes = sealed["classes"]["distractor"]["lanes"]
     fresh_lanes = fresh["classes"]["distractor"]["lanes"]
     for index, lane in enumerate(fresh_lanes):
@@ -177,12 +192,21 @@ def test_eviction_and_revocation_both_drop_bindings() -> None:
     assert "OBJ-1" not in store.object_identifiers()
 
 
-def test_attribute_slot_is_still_absent() -> None:
-    """J-N4h-5：本件不兑现属性交换，所以"属性位不存在"必须被机检住，不许被读成已过。"""
+def test_attribute_slot_is_now_present_and_pinned_by_its_real_name() -> None:
+    """J-N4h-5 就地重钉（㊵-757）：这一支原来钉的是「属性位不存在」，现在属性位来了。
+
+    原来那两行读的是 `hasattr(record, "attributes")` 与 `"attributes" not in RECORD_PAYLOAD_KEYS`——
+    真加的字段叫 **`attribute_ids`**，所以那两行在属性位落地之后**仍然全绿**（它们量的名字从来不是
+    那一枚）。这就是"钉子按错名＝零判别力"的现场（[[instrument-name-must-resolve-on-the-holder-class]]
+    同族）：旧断言自本注起作废，改成按真名钉"在场"，判据载体搬到
+    `test_n4_11_attribute_binding_channel_contract.py`。
+    """
 
     record = _record("m-1", [1, 0, 0, 0], ("OBJ-1",))
+    assert record.attribute_ids == ()
+    assert "attribute_ids" in RECORD_PAYLOAD_KEYS
+    assert "attribute_ids" in record.to_payload()
     assert hasattr(record, "attributes") is False
-    assert "attributes" not in RECORD_PAYLOAD_KEYS
 
 
 def test_j_n4h_4_gives_the_rename_acceptance_a_carrier(tmp_path) -> None:

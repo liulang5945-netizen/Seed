@@ -43,6 +43,11 @@ class EpisodicMemoryStore:
         # 从每条记录的 object_ids 现建，刻意不进 checkpoint()/to_payload()——加持久键会扩迁移面。
         self._object_of: dict[str, tuple[str, ...]] = {}
         self._objects: dict[str, list[str]] = {}
+        # ㊵-757（PLAN-N4-12 §1.3／DEBT-G122 八裁⑴ 甲）：属性位是**第二**可寻址维，形状与对象通道同构，
+        # 同样是派生索引（不进 checkpoint()）；它不进打分——retrieve 只用它收窄候选集。
+        self._attribute_of: dict[str, tuple[str, ...]] = {}
+        self._attributes: dict[str, list[str]] = {}
+        self.implicit_attribute_count = 0
 
     @property
     def records(self) -> tuple[EpisodicMemoryRecord, ...]:
@@ -58,20 +63,38 @@ class EpisodicMemoryStore:
 
         return tuple(self._expired)
 
-    def _unbind(self, memory_id: str) -> None:
-        for object_id in self._object_of.pop(memory_id, ()):
-            bucket = self._objects.get(object_id)
+    @staticmethod
+    def _detach(
+        of: dict[str, tuple[str, ...]], buckets: dict[str, list[str]], memory_id: str
+    ) -> None:
+        for key in of.pop(memory_id, ()):
+            bucket = buckets.get(key)
             if bucket is None:
                 continue
             bucket[:] = [held for held in bucket if held != memory_id]
             if not bucket:
-                del self._objects[object_id]
+                del buckets[key]
+
+    @classmethod
+    def _attach(
+        cls,
+        of: dict[str, tuple[str, ...]],
+        buckets: dict[str, list[str]],
+        memory_id: str,
+        keys: tuple[str, ...],
+    ) -> None:
+        cls._detach(of, buckets, memory_id)
+        of[memory_id] = tuple(keys)
+        for key in keys:
+            buckets.setdefault(key, []).append(memory_id)
+
+    def _unbind(self, memory_id: str) -> None:
+        self._detach(self._object_of, self._objects, memory_id)
+        self._detach(self._attribute_of, self._attributes, memory_id)
 
     def _bind(self, record: EpisodicMemoryRecord) -> None:
-        self._unbind(record.memory_id)
-        self._object_of[record.memory_id] = tuple(record.object_ids)
-        for object_id in record.object_ids:
-            self._objects.setdefault(object_id, []).append(record.memory_id)
+        self._attach(self._object_of, self._objects, record.memory_id, record.object_ids)
+        self._attach(self._attribute_of, self._attributes, record.memory_id, record.attribute_ids)
 
     def write(self, record: EpisodicMemoryRecord) -> None:
         if not isinstance(record, EpisodicMemoryRecord):
@@ -116,23 +139,48 @@ class EpisodicMemoryStore:
             raise ValueError(f"no episodic records are bound to object {object_id!r}")
         return tuple(self._objects[str(object_id)])
 
+    def _rename_binding(
+        self,
+        of: dict[str, tuple[str, ...]],
+        buckets: dict[str, list[str]],
+        old: str,
+        new: str,
+        kind: str,
+    ) -> int:
+        if not old or not new:
+            raise ValueError(f"episodic {kind} rename requires both identifiers")
+        bucket = buckets.pop(old, None)
+        if bucket is None:
+            raise ValueError(f"no episodic records are bound to {kind} {old!r}")
+        if new in buckets:
+            raise ValueError(f"{kind} {new!r} is already bound; rename would merge two {kind}s")
+        buckets[new] = bucket
+        for memory_id in bucket:
+            of[memory_id] = tuple(new if held == old else held for held in of[memory_id])
+        return len(bucket)
+
     def rename_object(self, old_object_id: str, new_object_id: str) -> int:
         """只换绑定名，不碰记录本身——这样「同一对象换了名字」才是一件能被测的事。"""
 
-        old, new = str(old_object_id), str(new_object_id)
-        if not old or not new:
-            raise ValueError("episodic object rename requires both identifiers")
-        bucket = self._objects.pop(old, None)
-        if bucket is None:
-            raise ValueError(f"no episodic records are bound to object {old!r}")
-        if new in self._objects:
-            raise ValueError(f"object {new!r} is already bound; rename would merge two objects")
-        self._objects[new] = bucket
-        for memory_id in bucket:
-            self._object_of[memory_id] = tuple(
-                new if held == old else held for held in self._object_of[memory_id]
-            )
-        return len(bucket)
+        return self._rename_binding(
+            self._object_of, self._objects, str(old_object_id), str(new_object_id), "object"
+        )
+
+    def rename_attribute(self, old_attribute_id: str, new_attribute_id: str) -> int:
+        """属性维的改名与对象维同形：动索引不动记录，且拒绝把两枚属性并成一枚（PLAN-N4-12 §1.5）。"""
+
+        return self._rename_binding(
+            self._attribute_of,
+            self._attributes,
+            str(old_attribute_id),
+            str(new_attribute_id),
+            "attribute",
+        )
+
+    def attribute_identifiers(self) -> tuple[str, ...]:
+        """当前有绑定的属性标识；空元组＝没人绑，不代表库里没有记录（DEBT-G58 同族）。"""
+
+        return tuple(self._attributes)
 
     def retrieve(
         self,
@@ -141,8 +189,9 @@ class EpisodicMemoryStore:
         limit: int = 1,
         episode_id: str | None = None,
         object_id: str | None = None,
+        attribute: str | None = None,
     ) -> tuple[EpisodicMemoryHit, ...]:
-        """Rank records by cue similarity; `episode_id` and `object_id` narrow the candidate set.
+        """Rank records by cue similarity; `episode_id`, `object_id` and `attribute` only narrow it.
 
         `episode_id=None` (the default) searches every record, which is what the
         product's per-step caller does today — the storage layer still has no
@@ -153,6 +202,11 @@ class EpisodicMemoryStore:
         bound to it; naming an object with no binding raises instead of returning
         `()`, because "zero hits" and "this key does not exist" must not collapse
         into one answer (DEBT-G58, DEBT-G122).
+
+        `attribute=None` (the default) is neutral the same way, and the attribute
+        channel is a **third conjunct**, never a reweighting: scores are computed
+        from `cue` only (PLAN-N4-12 G-N4s-1), so swapping two records'
+        `attribute_ids` moves the candidate set without moving any score.
         """
 
         if cue.ndim != 1:
@@ -166,11 +220,17 @@ class EpisodicMemoryStore:
             if str(object_id) not in self._objects:
                 raise ValueError(f"no episodic records are bound to object {object_id!r}")
             bound = set(self._objects[str(object_id)])
+        attributed: set[str] | None = None
+        if attribute is not None:
+            if str(attribute) not in self._attributes:
+                raise ValueError(f"no episodic records are bound to attribute {attribute!r}")
+            attributed = set(self._attributes[str(attribute)])
         records = tuple(
             record
             for record in self._records.values()
             if (episode_id is None or record.episode_id == episode_id)
             and (bound is None or record.memory_id in bound)
+            and (attributed is None or record.memory_id in attributed)
         )
         if not records:
             return ()
@@ -204,6 +264,7 @@ class EpisodicMemoryStore:
             "expired_memory_ids": list(self._expired),
             "evicted_count": self.evicted_count,
             "implicit_provenance_count": self.implicit_provenance_count,
+            "implicit_attribute_count": self.implicit_attribute_count,
         }
 
     @classmethod
@@ -216,10 +277,13 @@ class EpisodicMemoryStore:
         for item in payload.get("records", ()):
             if "provenance" not in item:
                 store.implicit_provenance_count += 1
+            # ㊵-757（PLAN-N4-12 §1.2）：属性键在存量件里缺席是**正常**的，所以只出版计数，不响亮拒绝。
+            if "attribute_ids" not in item:
+                store.implicit_attribute_count += 1
             store.write(EpisodicMemoryRecord.from_payload(item, device=device))
         # Optional keys: a v1 payload written before DEBT-G99 simply has none of them.
         store._expired = [str(item) for item in payload.get("expired_memory_ids", ())]
         store.evicted_count = int(payload.get("evicted_count", 0))
-        # 这一列量的是"本次载入时有几条记录没声明来源"，由上面的循环现数；
+        # 这两列 implicit_* 量的是"本次载入时有几条记录没声明来源／属性位"，由上面的循环现数；
         # 不去读件里那个历史值，否则回填会把刚数出来的数覆盖成 0。
         return store

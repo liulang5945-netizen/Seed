@@ -54,12 +54,23 @@ def test_every_class_publishes_exactly_one_verdict(payload: dict[str, Any]) -> N
 
 
 def test_the_two_carrierless_classes_are_not_reported_as_passes(payload: dict[str, Any]) -> None:
-    """重命名与属性交换今天不可判——本册钉的是「它不许被写成 holds」。"""
+    """重命名今天仍不可判——本册钉的是「它不许被写成 holds」；属性那一格㊵-757 起换了口径。
+
+    原来这支冻的是 `swap["verdict"] == "no_field_to_swap"`。属性位（PLAN-N4-12）落地后这一格**第一次
+    出真值**，"不许是 holds"这句在它身上变成了"要 holds 就必须把两枚探针一起出版"——
+    所以改成下面三条各自能红的实测：它必须离开 no_field_to_swap；holds 只能带着
+    「换 cue 顶位变」与「不带属性那张面不动」两枚探针出现；缺探针时的 holds 一律算伪绿。
+    """
 
     rename = payload["classes"]["rename"]
     swap = payload["classes"]["attribute_swap"]
     assert rename["verdict"] != "holds"
-    assert swap["verdict"] == "no_field_to_swap"
+    assert swap["verdict"] != "no_field_to_swap"
+    #: 两枚探针必须**无条件在场**（冻件 §2 要求同时出版）；缺任何一枚就不许出 verdict。
+    assert {"cue_probe_moves_top1", "cue_only_face_unchanged_after_swap"} <= set(swap["probe"])
+    if swap["verdict"] == "holds":
+        assert swap["probe"]["cue_probe_moves_top1"] is True
+        assert swap["probe"]["cue_only_face_unchanged_after_swap"] is True
     #: 伪绿的证据链必须自己在件里，不是靠我口头说。
     assert rename["frozen_shape_would_read_green"] is True
     assert rename["paired_queries_after_record_only_rename"] == 0
@@ -92,9 +103,17 @@ def test_interference_formula_covers_the_exact_band_branch(instrument) -> None:
     assert instrument._interference_verdict(0.0, 0.0, 0.9) == "ruler_unusable"
 
 
-def test_swap_formula_has_two_live_branches(instrument) -> None:
-    assert instrument._swap_verdict(False) == "no_field_to_swap"
-    assert instrument._swap_verdict(True) == "swap_branch_missing"
+def test_swap_formula_covers_every_branch_and_the_absent_field_one_still_fires(instrument) -> None:
+    """㊵-757 换签名的重钉：原判据式只有两支，属性位落地后变成四出口。
+
+    原来这本册冻的是 `_swap_verdict(False) == "no_field_to_swap"` 与 `(True) == "swap_branch_missing"`。
+    `swap_branch_missing` 那一支已被真互换判定取代（冻件 PLAN-N4-12 §2 的 J-N4g-3c），全分支表住在
+    `test_n4_11::test_swap_verdict_can_fire_every_branch`；这里只保留本册自己该守的那一条——
+    **字段不在时仍然必须落在 no_field_to_swap**，不许哪天字段被删掉却出版一个更轻的出口。
+    """
+
+    assert instrument._swap_verdict(False, True, True, False) == "no_field_to_swap"
+    assert instrument._swap_verdict(True, True, True, False) == "holds"
 
 
 def test_slot_verdict_can_fire_every_branch(instrument) -> None:

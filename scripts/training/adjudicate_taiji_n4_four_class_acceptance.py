@@ -11,11 +11,17 @@
 * J-N4g-4(a) 的"带内即尺不可用"式引用 `adjudicate_taiji_n5_shadow_gate.py` 的 `judge_metric_lane`
   （该式住在函数体内、不是可独立调用的 helper），所以这里用**源码钉**：把被引用的那几枚比较 token
   现读并出版，函数体一旦被改，本件的钉会红，而不是我悄悄换了一把尺。
+〔2026-10-13 ㊵-757 就地更正，原文不删〕上面那句「打分只读 cue，object_ids／attributes 一类从不进检索」
+已被两次落地改写：绑定通道（PLAN-N4-11）与属性位（PLAN-N4-12）让 object_ids／attribute_ids 成为
+**收窄候选集**的键，但打分表达式仍然只读 record.cue。所以 J-N4g-2 的 verdict 保留（那一支量的是寻址尺
+上的对象身份，不是通道存在性），而 J-N4g-3 从「没有可换的字段」换成真出值；G-N4s-1 就是钉这条
+「能收窄但不进打分」的界线。行号锚 :87-129 早已漂到别处，引用一律按函数名，不按行号。
 """
 
 from __future__ import annotations
 
 import argparse
+import ast
 import importlib.util
 import json
 import re
@@ -34,7 +40,10 @@ if str(PROJECT_ROOT) not in sys.path:
 from taiji.contracts import EpisodicMemoryRecord  # noqa: E402
 from taiji.episodic_memory import EpisodicMemoryStore  # noqa: E402
 
-REPORT_FORMAT = "taiji-n4-33-four-class-acceptance-v1"
+#: ㊵-757（PLAN-N4-12）：`attribute_swap` 那一块从"没有可换的字段"变成真出值，读出面加了几枚键
+#: ⇒ 按冻件 §6"结论被自家仪器改写就升版"的规矩走 v2；两份 v1 封存件不删，它们仍是 J-N4g-3b
+#: "默认面逐位中性"的**改动前**参照（比对只取 verdict 与 distractor lanes，不取 format 串）。
+REPORT_FORMAT = "taiji-n4-33-four-class-acceptance-v2"
 RULER = "scripts/training/measure_taiji_n4_addressing_surface.py"
 SHADOW_GATE = "scripts/training/adjudicate_taiji_n5_shadow_gate.py"
 CUE_DIM = 32
@@ -44,6 +53,12 @@ QUERIES_PER_TARGET = 5
 DISTRACTORS = 20
 CAPACITY = 50
 OVERFLOW = 12
+
+#: G-N4s-1 的尺要认的两样东西：属性名子串，和"相似度/距离"类调用的函数名末段。
+ATTRIBUTE_TOKEN = "attribute"
+SIMILARITY_CALLS = frozenset(
+    {"dot", "matmul", "mm", "bmm", "einsum", "cosine_similarity", "vector_norm", "norm"}
+)
 
 #: 被引用的 `ruler_usable` 式里必须出现的比较 token（源码钉的钉面，不是阈值）。
 PINNED_TOKENS = (
@@ -113,10 +128,185 @@ def _interference_verdict(band_base: float, band_treated: float, delta: float) -
     return "holds" if delta > line else "ruler_unusable"
 
 
-def _swap_verdict(record_has_attribute_field: bool) -> str:
-    """J-N4g-3 的两支：没字段可换＝不可判；哪天有了字段却没写互换判定＝本件的洞，响亮承认。"""
+def _mentions_attribute_token(node: ast.AST) -> bool:
+    """子树里是否出现属性名（`attribute`／`attribute_ids`／`_attributes` 都算，宁滥勿缺）。"""
 
-    return "no_field_to_swap" if not record_has_attribute_field else "swap_branch_missing"
+    for child in ast.walk(node):
+        if isinstance(child, ast.Name) and ATTRIBUTE_TOKEN in child.id:
+            return True
+        if isinstance(child, ast.Attribute) and ATTRIBUTE_TOKEN in child.attr:
+            return True
+    return False
+
+
+def _attribute_scoring_face(source: str) -> dict[str, int]:
+    """G-N4s-1 的尺：`retrieve` 函数体里"以属性为操作数的算术/相似度"必须为 0。
+
+    两枚计数一起出版才有判别力：`attribute_operands` 是违规数，`similarity_calls` 是这台尺在
+    同一段里看到的相似度/算术调用总数——后者为 0 就说明它什么都没扫到，那时"违规 0"是假绿
+    （DEBT-G58 的"零命中要连范围一起报"同族）。判定走 AST 而不是文本正则：本文件另一处
+    的 `_referenced_fields` 用的是"点号＋键名"那种文本正则，那种扫法把 docstring 里提一句键名也算成引用。
+    """
+
+    bodies = [
+        node
+        for node in ast.walk(ast.parse(source))
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and node.name == "retrieve"
+    ]
+    if not bodies:
+        raise ValueError("零个 retrieve 函数体：这把尺没扫到任何面，不许出版 0")
+    attribute_operands = 0
+    similarity_calls = 0
+    for body in bodies:
+        for node in ast.walk(body):
+            if isinstance(node, ast.BinOp):
+                if _mentions_attribute_token(node):
+                    attribute_operands += 1
+                continue
+            if not isinstance(node, ast.Call):
+                continue
+            called = getattr(node.func, "attr", None) or getattr(node.func, "id", None) or ""
+            if called not in SIMILARITY_CALLS:
+                continue
+            similarity_calls += 1
+            if any(_mentions_attribute_token(argument) for argument in node.args):
+                attribute_operands += 1
+    return {"attribute_operands": attribute_operands, "similarity_calls": similarity_calls}
+
+
+def _swap_verdict(
+    has_field: bool, swapped_follows: bool, cue_probe_moves: bool, scoring_moved: bool
+) -> str:
+    """J-N4g-3 的判级式，四支都能为假（㊵-757 起属性位存在，`no_field_to_swap` 只剩历史意义）。
+
+    冻件 §2 点名两种"为假"：①互换后顶位不变＝`no_consumer`；②探针都动但按 cue 的面也动了＝
+    属性被塞进打分＝`contaminated_scoring`。第三种组合（顶位换了、正向对照却不换）在这台尺上
+    意味着读数本身失效，用本件既有词汇 `ruler_unusable`（同 `_interference_verdict` 的带零支），
+    **不新造判级词**也不写 `holds`。
+    """
+
+    if not has_field:
+        return "no_field_to_swap"
+    if scoring_moved:
+        return "contaminated_scoring"
+    if not swapped_follows:
+        return "no_consumer"
+    return "holds" if cue_probe_moves else "ruler_unusable"
+
+
+def _attribute_payload(
+    memory_id: str, cue: torch.Tensor, attribute_ids: tuple[str, ...]
+) -> EpisodicMemoryRecord:
+    return EpisodicMemoryRecord(
+        memory_id=memory_id,
+        episode_id="episode-shared",
+        tick=1,
+        cue=cue,
+        action_intent=None,
+        outcome=None,
+        world_transition=None,
+        prediction_error=0.0,
+        provenance="n4-33-attribute-probe",
+        event_ids=(),
+        assembly_ids=(),
+        object_ids=("OBJ-SAME",),
+        relation_ids=(),
+        attribute_ids=attribute_ids,
+    )
+
+
+def _attribute_swap_probe() -> dict[str, Any]:
+    """两条记录对象／cue／episode 全不动，只互换 `attribute_ids`，看按属性检索的顶位跟不跟（J-N4g-3c）。
+
+    夹具带**两枚**属性：`task=same` 两行共享（所以按它检索时候选集仍是两条，顶位由 cue 决定——
+    这一支就是正向对照），`color=red`/`color=blue` 各绑一条（互换只动这一枚）。
+    """
+
+    cue_one = _unit(SEED + 21, 1)[0]
+    cue_two = _unit(SEED + 22, 1)[0]
+    red, blue, shared = "color=red", "color=blue", "task=same"
+
+    def build(first: tuple[str, ...], second: tuple[str, ...]) -> EpisodicMemoryStore:
+        store = EpisodicMemoryStore(capacity=8)
+        store.write(_attribute_payload("m-a", cue_one, first))
+        store.write(_attribute_payload("m-b", cue_two, second))
+        return store
+
+    labeled = build((red, shared), (blue, shared))
+    swapped = build((blue, shared), (red, shared))
+
+    top_labeled = labeled.retrieve(cue_one, limit=1, attribute=red)[0].record.memory_id
+    top_swapped = swapped.retrieve(cue_one, limit=1, attribute=red)[0].record.memory_id
+    #: 正向对照：共享属性下候选集是两条，顶位必须由 cue 说话——换 cue 顶位就得不一样。
+    cue_top_one = labeled.retrieve(cue_one, limit=1, attribute=shared)[0].record.memory_id
+    cue_top_two = labeled.retrieve(cue_two, limit=1, attribute=shared)[0].record.memory_id
+    #: 污染探针：不带属性时的那张面，在互换属性前后必须逐位相同（含分数）。
+    face_labeled = [(hit.record.memory_id, hit.score) for hit in labeled.retrieve(cue_one, limit=2)]
+    face_swapped = [(hit.record.memory_id, hit.score) for hit in swapped.retrieve(cue_one, limit=2)]
+    try:
+        labeled.retrieve(cue_one, limit=1, attribute="color=green")
+        unbound_raises = False
+    except ValueError:
+        unbound_raises = True
+    return {
+        "attribute_top1_labeled": top_labeled,
+        "attribute_top1_after_swap": top_swapped,
+        "attribute_swap_moves_top1": top_labeled != top_swapped,
+        "cue_probe_top1_by_first_cue": cue_top_one,
+        "cue_probe_top1_by_second_cue": cue_top_two,
+        "cue_probe_moves_top1": cue_top_one != cue_top_two,
+        "cue_only_face_unchanged_after_swap": face_labeled == face_swapped,
+        "cue_only_face_labeled": face_labeled,
+        "cue_only_face_after_swap": face_swapped,
+        "unbound_attribute_raises": unbound_raises,
+    }
+
+
+def class_attribute_swap() -> dict[str, Any]:
+    """J-N4g-3：两条记忆的可读属性互换后，寻址结果是否跟着互换。"""
+
+    source = Path(EpisodicMemoryStore.retrieve.__code__.co_filename).read_text(encoding="utf-8")
+    retrieve_body = source[source.index("def retrieve(") : source.index("def checkpoint(")]
+    write_body = source[source.index("def write(") : source.index("def retrieve(")]
+    record = _row_payload("probe", _unit(SEED + 9, 1)[0], "OBJ-1")
+    payload_keys = sorted(record.to_payload())
+    referenced = _referenced_fields(retrieve_body, payload_keys)
+    #: 正向对照（㊵-745 换形）：绑定通道落地后 retrieve 也引用 memory_id，"write 比 retrieve 多抓到东西"
+    #: 这一支因此不再成立。改成两枚各自能红的实测：提取器必须在 retrieve 里认出 cue、
+    #: 在 write 里认出 memory_id——提取器若坏成"什么都找不到"，这两枚立刻为假。
+    referenced_in_write = _referenced_fields(write_body, payload_keys)
+    has_attributes = hasattr(record, "attribute_ids")
+    probe = _attribute_swap_probe()
+    scoring_face = _attribute_scoring_face(source)
+    return {
+        "criterion": "J-N4g-3",
+        "record_payload_keys": payload_keys,
+        "fields_referenced_by_retrieve": referenced,
+        "fields_referenced_by_write": referenced_in_write,
+        "extractor_detects_cue_in_retrieve": "cue" in referenced,
+        "extractor_detects_memory_id_in_write": "memory_id" in referenced_in_write,
+        "object_ids_referenced_by_retrieve": "object_ids" in referenced,
+        "attribute_ids_referenced_by_retrieve": "attribute_ids" in referenced,
+        "record_has_attribute_field": has_attributes,
+        #: G-N4s-1 的读数面：属性在 retrieve 的算术/相似度里出现的次数必须为 0，
+        #: 而 `similarity_calls_seen` 必须 >0——否则这把尺可能只是什么都没扫到（假绿）。
+        "attribute_operands_in_scoring": scoring_face["attribute_operands"],
+        "similarity_calls_seen": scoring_face["similarity_calls"],
+        "probe": probe,
+        "verdict": _swap_verdict(
+            has_attributes,
+            probe["attribute_swap_moves_top1"],
+            probe["cue_probe_moves_top1"],
+            not probe["cue_only_face_unchanged_after_swap"],
+        ),
+        "why": (
+            "㊵-757（PLAN-N4-12）之前这一块的 why 写的是"
+            "「情节记录里没有属性位；属性只活在世界层 `WorldObject.attributes`"
+            "（`taiji/contracts.py:813-819`），那条面不接情节寻址」——那句自本注起作废："
+            "情节记录现在有 `attribute_ids`，且 retrieve 用它收窄候选集（不进打分）。"
+            "本件只授权「属性交换可判」这一层可判性，不主张任何能力涨点。"
+        ),
+    }
 
 
 def _cited_formula_pins(shadow_source: str) -> dict[str, bool]:
@@ -237,38 +427,6 @@ def _row_payload(memory_id: str, cue: torch.Tensor, object_id: str) -> EpisodicM
 
 def _referenced_fields(body: str, payload_keys: list[str]) -> list[str]:
     return sorted(key for key in payload_keys if re.search(rf"\.{key}\b", body))
-
-
-def class_attribute_swap() -> dict[str, Any]:
-    """J-N4g-3：两条记忆的可读属性互换后，寻址结果是否跟着互换。"""
-
-    source = Path(EpisodicMemoryStore.retrieve.__code__.co_filename).read_text(encoding="utf-8")
-    retrieve_body = source[source.index("def retrieve(") : source.index("def checkpoint(")]
-    write_body = source[source.index("def write(") : source.index("def retrieve(")]
-    record = _row_payload("probe", _unit(SEED + 9, 1)[0], "OBJ-1")
-    payload_keys = sorted(record.to_payload())
-    referenced = _referenced_fields(retrieve_body, payload_keys)
-    #: 正向对照（㊵-745 换形）：绑定通道落地后 retrieve 也引用 memory_id，"write 比 retrieve 多抓到东西"
-    #: 这一支因此不再成立。改成两枚各自能红的实测：提取器必须在 retrieve 里认出 cue、
-    #: 在 write 里认出 memory_id——提取器若坏成"什么都找不到"，这两枚立刻为假。
-    referenced_in_write = _referenced_fields(write_body, payload_keys)
-    has_attributes = hasattr(record, "attributes")
-    return {
-        "criterion": "J-N4g-3",
-        "record_payload_keys": payload_keys,
-        "fields_referenced_by_retrieve": referenced,
-        "fields_referenced_by_write": referenced_in_write,
-        "extractor_detects_cue_in_retrieve": "cue" in referenced,
-        "extractor_detects_memory_id_in_write": "memory_id" in referenced_in_write,
-        "object_ids_referenced_by_retrieve": "object_ids" in referenced,
-        "record_has_attribute_field": has_attributes,
-        "verdict": _swap_verdict(has_attributes),
-        "why": (
-            "情节记录里没有属性位；属性只活在世界层 `WorldObject.attributes`"
-            "（`taiji/contracts.py:813-819`），而那条面不接情节寻址。"
-            "所以「交换后跟着互换」这条判据的**被交换对象**在现行读取面上不存在。"
-        ),
-    }
 
 
 def _distractor_lane(ruler, per_target: int) -> dict[str, Any]:

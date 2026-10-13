@@ -1955,6 +1955,9 @@ class EpisodicMemoryRecord:
     assembly_ids: tuple[str, ...] = ()
     object_ids: tuple[str, ...] = ()
     relation_ids: tuple[str, ...] = ()
+    # ㊵-757（PLAN-N4-12 §1.1／DEBT-G122 八裁⑴ 甲）：第二可寻址维，条目写作 "color=red" 这种名=值串。
+    # 刻意不做 Mapping：frozen dataclass 的不可变语义要保住，且 `_normalize_ids` 已是这一族的先例。
+    attribute_ids: tuple[str, ...] = ()
     version: int = CONTRACT_VERSION
 
     def __post_init__(self) -> None:
@@ -1978,6 +1981,9 @@ class EpisodicMemoryRecord:
         )
         object.__setattr__(
             self, "relation_ids", _normalize_ids(self.relation_ids, "episodic relation_ids")
+        )
+        object.__setattr__(
+            self, "attribute_ids", _normalize_ids(self.attribute_ids, "episodic attribute_ids")
         )
         if int(self.tick) < 0:
             raise ValueError("episodic memory tick cannot be negative")
@@ -2015,6 +2021,7 @@ class EpisodicMemoryRecord:
             "assembly_ids": list(self.assembly_ids),
             "object_ids": list(self.object_ids),
             "relation_ids": list(self.relation_ids),
+            "attribute_ids": list(self.attribute_ids),
         }
 
     @classmethod
@@ -2047,6 +2054,8 @@ class EpisodicMemoryRecord:
             assembly_ids=tuple(str(item) for item in payload.get("assembly_ids", ())),
             object_ids=tuple(str(item) for item in payload.get("object_ids", ())),
             relation_ids=tuple(str(item) for item in payload.get("relation_ids", ())),
+            # 载荷键必须**可选**（PLAN-N4-12 §1.2）：历史 `.pt`／JSON 件不带它，写成必需项=当场把存量件判坏。
+            attribute_ids=tuple(str(item) for item in payload.get("attribute_ids", ())),
         )
 
 
