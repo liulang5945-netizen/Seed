@@ -30,8 +30,12 @@ from pathlib import Path
 import torch
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
-if str(PROJECT_ROOT) not in sys.path:
-    sys.path.insert(0, str(PROJECT_ROOT))
+for entry in (PROJECT_ROOT, PROJECT_ROOT / "scripts" / "training"):
+    if str(entry) not in sys.path:
+        sys.path.insert(0, str(entry))
+
+#: DEBT-G115 修法③：落盘走统一落盘助手（`newline=` 由助手必备参数兜住；拒覆写由本件前置守卫承担）。
+import _taiji_report_io as report_io  # noqa: E402
 
 from taiji.contracts import EpisodicMemoryRecord  # noqa: E402
 from taiji.episodic_memory import EpisodicMemoryStore  # noqa: E402
@@ -163,23 +167,38 @@ def main() -> int:
     )
     parser.add_argument("--overwrite", action="store_true")
     args = parser.parse_args()
-    try:
-        baseline = build_baseline()
-    except ValueError as exc:
-        print(str(exc), file=sys.stderr)
-        return 2
+
     out = Path(args.out_report)
     if not out.is_absolute():
         out = PROJECT_ROOT / out
+    #: DEBT-G115 修法③＋#81 出口标准：守卫**前置**到取数与任何写入之前；**拒绝出口统一为
+    #: `stdout JSON ＋ 退出码 2`**（旧的 stderr 散文在 PowerShell 下会被 CLIXML 包成"假崩溃"——
+    #: ㊵-837／㊵-862 已在案）。落点求解保留字面量在写靶变量自己的绑定里（㊵-854②）。
     if out.exists() and not args.overwrite:
-        print(f"refusing to overwrite an existing baseline: {out}", file=sys.stderr)
+        print(
+            json.dumps(
+                {
+                    "format": BASELINE_FORMAT,
+                    "status": "refuse_overwrite",
+                    "path": str(out),
+                },
+                ensure_ascii=True,
+            )
+        )
         return 2
-    out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(
-        json.dumps(baseline, ensure_ascii=False, indent=2) + "\n",
-        encoding="utf-8",
-        newline="\n",
-    )
+
+    try:
+        baseline = build_baseline()
+    except ValueError as exc:
+        #: 同一组输入两遍不同 ⇒ 这把尺不能用于逐位比较（不是"覆写"拒绝，但**同一出口形状**）。
+        print(
+            json.dumps(
+                {"status": "baseline_not_deterministic", "error": str(exc)},
+                ensure_ascii=True,
+            )
+        )
+        return 2
+    report_io.write_json_report(out, baseline, newline="\n", overwrite=True)
     print(
         json.dumps(
             {
