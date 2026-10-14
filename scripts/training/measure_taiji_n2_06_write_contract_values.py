@@ -17,9 +17,14 @@ import torch
 
 sys.stdout.reconfigure(encoding="utf-8")
 R = Path(__file__).resolve().parents[2]
-if str(R) not in sys.path:
-    # 脚本目录不是仓根；没有这一段 `import taiji` 会直接 ModuleNotFoundError。
-    sys.path.insert(0, str(R))
+SCRIPT_DIR = Path(__file__).resolve().parent
+for _entry in (str(R), str(SCRIPT_DIR)):
+    if _entry not in sys.path:
+        # 脚本目录不是仓根；没有这一段 `import taiji` 会直接 ModuleNotFoundError，
+        # 而 `_taiji_report_io` 住在脚本目录里（DEBT-G115 修法③ 的统一落盘助手）。
+        sys.path.insert(0, _entry)
+
+import _taiji_report_io as report_io  # noqa: E402
 
 from taiji.contracts import EpisodicMemoryRecord
 from taiji.episodic_memory import EpisodicMemoryStore
@@ -267,9 +272,10 @@ def main(argv: list[str] | None = None) -> int:
         #: 一跑就覆盖掉那份历史读数——DEBT-G132 的现场。现在：靶必给、已存在就拒。
         print(f"refusing to overwrite an existing report: {out}", file=sys.stderr)
         return 2
-    out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(
-        json.dumps(payload, ensure_ascii=True, indent=2) + "\n", encoding="utf-8", newline="\n"
+    #: DEBT-G115 修法③：落盘走统一助手（tmp＋replace 的原子形保留在原调用点里），行尾按必需参数显式给。
+    #: 上面的 refusing-to-overwrite 预检原样保留——它先判、助手只在被允许时才写。
+    report_io.write_json_report(
+        out, payload, newline="\n", overwrite=args.overwrite, ensure_ascii=True
     )
     print(
         json.dumps(
