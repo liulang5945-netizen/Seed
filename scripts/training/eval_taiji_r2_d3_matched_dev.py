@@ -9,6 +9,7 @@ M1-M5 per run, the G1-G6 gate adjudication and per-seed/worst-seed stats.
 
 from __future__ import annotations
 
+import argparse
 import json
 import sys
 import time
@@ -16,8 +17,12 @@ from pathlib import Path
 from typing import Any
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
-sys.path.insert(0, str(PROJECT_ROOT))
+for entry in (PROJECT_ROOT, PROJECT_ROOT / "scripts" / "training"):
+    if str(entry) not in sys.path:
+        sys.path.insert(0, str(entry))
 
+#: DEBT-G115 修法③：落盘走统一落盘助手（`newline=` 由助手必备参数兜住；拒覆写由本件前置守卫承担）。
+import _taiji_report_io as report_io  # noqa: E402
 import torch  # noqa: E402
 
 from scripts.training.build_taiji_r2_d1_measurement_fixture import (  # noqa: E402
@@ -35,7 +40,9 @@ from taiji.sequence_workspace import (  # noqa: E402
 
 FIXTURE = Path("tests/fixtures/r2_d1_measurement_v1.jsonl")
 CORPUS_DIGEST = "53ac9f88695f135d0bb04b4d25d98ab686c82175c45ca8d4d53e64639efbeecb"
-OUT_REPORT = Path("reports/r2_d3_matched_dev_20260918.json")
+#: 旧件是 **CWD 相对** `Path("reports/…")`——换目录跑会写歪；钉到 `PROJECT_ROOT`，且**字面量留在
+#: 写靶变量自己的绑定里**（㊵-854②：迁移不许把普查仪的识别面弄瞎）。
+OUT_REPORT = PROJECT_ROOT / "reports/r2_d3_matched_dev_20260918.json"
 CHECKPOINT_ROOT = Path("reports/r2_d3_checkpoints/matched")
 SEEDS = (20260917, 20260918, 20260919)
 EPOCHS = 30
@@ -205,6 +212,30 @@ def _train(
 
 
 def main() -> int:
+    #: DEBT-G115 修法③：本件**无 CLI**，为守卫新装一个只含 `--overwrite` 的 argparse；
+    #: 拒覆检查放在**任何训练／写 checkpoint 之前** ⇒ 落点已存在且无旗标 ⇒ 立刻 rc=2，
+    #: 不白烧 3 臂 × 3 种子 × 30 轮，也不在 `reports/` 下悄悄增殖 checkpoint 目录。
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--overwrite",
+        action="store_true",
+        help="目标读数件已存在时允许替换（DEBT-G115 修法③ 家族标准守卫；缺省拒覆写——"
+        "默认落点是在库读数件，重跑取数须显式带此旗标）",
+    )
+    args = parser.parse_args()
+    if OUT_REPORT.exists() and not args.overwrite:
+        print(
+            json.dumps(
+                {
+                    "format": "taiji-r2-d3-matched-dev-v1",
+                    "status": "refuse_overwrite",
+                    "path": str(OUT_REPORT),
+                },
+                ensure_ascii=True,
+            )
+        )
+        return 2
+
     raw = [
         json.loads(line)
         for line in (PROJECT_ROOT / FIXTURE).read_text(encoding="utf-8").splitlines()
@@ -310,8 +341,7 @@ def main() -> int:
         "growth_admitted": False,
         "can_promote": False,
     }
-    OUT_REPORT.parent.mkdir(parents=True, exist_ok=True)
-    OUT_REPORT.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    report_io.write_json_report(OUT_REPORT, report, newline="\n", overwrite=True)
     print(
         json.dumps(
             {
