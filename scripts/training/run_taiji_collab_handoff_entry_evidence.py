@@ -8,6 +8,7 @@ handoff and the terminal stop reasons, with ``rule_revision`` on every event.
 
 from __future__ import annotations
 
+import argparse
 import json
 import sys
 from pathlib import Path
@@ -15,6 +16,14 @@ from typing import Any
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(PROJECT_ROOT))
+
+#: DEBT-G115 修法③：落盘走统一落盘助手（`newline=` 由助手必备参数兜住；拒覆写由本件前置守卫承担）。
+#: 本件被直起 ⇒ 脚本目录先上 `sys.path`，助手才可解析。
+SCRIPT_DIR = Path(__file__).resolve().parent
+if str(SCRIPT_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPT_DIR))
+
+import _taiji_report_io as report_io  # noqa: E402
 
 from taiji.collab_handoff import (  # noqa: E402
     STOP_ALL_MEMBERS_BLOCKED,
@@ -25,7 +34,10 @@ from taiji.collab_handoff import (  # noqa: E402
 )
 
 REPORT_FORMAT = "taiji-collab-handoff-entry-evidence-v1"
-REPORT = Path("reports/taiji_collab_handoff_entry_evidence_20260919.json")
+#: 落点锚在 `PROJECT_ROOT`（旧版是 CWD 相对路径 ⇒ 换目录跑会写到别处）。
+#: ⚠️ 字符串常量必须留在这个绑定里：普查仪的 `literal_assignment` 面正是靠"变量绑到含 `reports/` 的字面量
+#: 且该变量被当写靶用过"来识别本行——把它挪进中转变量会让普查仪看不见这个写靶（DEBT-G132 那一课）。
+REPORT = PROJECT_ROOT / "reports/taiji_collab_handoff_entry_evidence_20260919.json"
 
 
 def _scenario_handoff(state: dict[str, Any]):
@@ -75,6 +87,29 @@ def _scenario_exhausted(state: dict[str, Any]):
 
 
 def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--overwrite",
+        action="store_true",
+        help="目标读数件已存在时允许替换（DEBT-G115 修法③ 家族标准守卫；缺省拒覆写——"
+        "默认落点是在库读数件，重跑取数须显式带此旗标）",
+    )
+    args = parser.parse_args()
+
+    #: 拒覆检查**前置**（放在跑三个 episode 之前）：默认落点是在库读数件，重跑前先响亮拒绝，不白跑。
+    if REPORT.exists() and not args.overwrite:
+        print(
+            json.dumps(
+                {
+                    "format": REPORT_FORMAT,
+                    "status": "refuse_overwrite",
+                    "path": str(REPORT),
+                },
+                ensure_ascii=True,
+            )
+        )
+        return 2
+
     members = ("m0", "m1", "m2")
     policy = FailureHandoffPolicy(members, rule_revision=1)
     episodes = []
@@ -129,8 +164,7 @@ def main() -> int:
     }
     checks = evidence["checks"]
     evidence["outcome"] = "passed" if all(checks.values()) else "failed"
-    REPORT.parent.mkdir(parents=True, exist_ok=True)
-    REPORT.write_text(json.dumps(evidence, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    report_io.write_json_report(REPORT, evidence, newline="\n", overwrite=True)
     print(json.dumps({"outcome": evidence["outcome"], "checks": checks}, ensure_ascii=False))
     return 0 if evidence["outcome"] == "passed" else 1
 
