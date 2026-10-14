@@ -77,7 +77,9 @@ def scan(path: Path) -> dict[str, object]:
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="08 册台账圈号唯一性普查（DEBT-G120 修法①）")
+    parser = argparse.ArgumentParser(
+        description="08 册台账圈号唯一性普查（DEBT-G120 修法①）"
+    )
     parser.add_argument("--playbook", default=PLAYBOOK)
     parser.add_argument("--out-report", required=True)
     parser.add_argument("--overwrite", action="store_true")
@@ -88,16 +90,32 @@ def main(argv: list[str] | None = None) -> int:
     try:
         report = scan(path)
     except ValueError as exc:
-        print(str(exc), file=sys.stderr)
+        print(
+            json.dumps(
+                {"format": REPORT_FORMAT, "status": "refuse_scan", "detail": str(exc)}
+            )
+        )
         return 2
     out = Path(args.out_report)
     if not out.is_absolute():
         out = PROJECT_ROOT / out
     if out.exists() and not args.overwrite:
-        print(f"refusing to overwrite an existing report: {out}", file=sys.stderr)
+        print(
+            json.dumps(
+                {
+                    "format": REPORT_FORMAT,
+                    "status": "refuse_overwrite",
+                    "path": str(out),
+                }
+            )
+        )
         return 2
     report_io.write_json_report(out, report, newline="\n", overwrite=args.overwrite)
-    print(json.dumps({k: report[k] for k in ("rows_counted", "duplicates", "nonmonotonic_runs")}))
+    print(
+        json.dumps(
+            {k: report[k] for k in ("rows_counted", "duplicates", "nonmonotonic_runs")}
+        )
+    )
     return 1 if report["duplicates"] else 0
 
 

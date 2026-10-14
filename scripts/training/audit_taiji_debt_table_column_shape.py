@@ -85,11 +85,15 @@ def measure(path: Path, *, expected_cells: int = 5) -> dict[str, object]:
         "expected_cells": int(expected_cells),
         "rows": len(rows),
         "cells_per_row": {str(k): v for k, v in sorted(split_counts.items())},
-        "cells_per_row_escape_aware": {str(k): v for k, v in sorted(aware_counts.items())},
+        "cells_per_row_escape_aware": {
+            str(k): v for k, v in sorted(aware_counts.items())
+        },
         "rows_with_escaped_pipes_in_cells": escaped_cells,
         "rows_matching_declaration": split_counts.get(declared, 0),
         "rows_with_more_cells": sum(v for k, v in split_counts.items() if k > declared),
-        "rows_with_fewer_cells": sum(v for k, v in split_counts.items() if k < declared),
+        "rows_with_fewer_cells": sum(
+            v for k, v in split_counts.items() if k < declared
+        ),
         "rows_closed_with_pipe": closed,
         "rows_not_closed": len(rows) - closed,
         "max_debt_id": ids[-1],
@@ -141,18 +145,40 @@ def main(argv: list[str] | None = None) -> int:
     )
     args = parser.parse_args(argv)
     if int(args.expect_cells) <= 0:
-        print("REJECT expect_cells must be positive", file=sys.stderr)
+        print(
+            json.dumps(
+                {
+                    "format": REPORT_FORMAT,
+                    "status": "refuse_args",
+                    "detail": "expect_cells must be positive",
+                }
+            )
+        )
         return 2
     try:
-        report = measure(PROJECT_ROOT / args.table, expected_cells=int(args.expect_cells))
+        report = measure(
+            PROJECT_ROOT / args.table, expected_cells=int(args.expect_cells)
+        )
     except ValueError as exc:
-        print(str(exc), file=sys.stderr)
+        print(
+            json.dumps(
+                {"format": REPORT_FORMAT, "status": "refuse_scan", "detail": str(exc)}
+            )
+        )
         return 2
     out = Path(args.out_report)
     if not out.is_absolute():
         out = PROJECT_ROOT / out
     if out.exists() and not args.overwrite:
-        print(f"refusing to overwrite an existing report: {out}", file=sys.stderr)
+        print(
+            json.dumps(
+                {
+                    "format": REPORT_FORMAT,
+                    "status": "refuse_overwrite",
+                    "path": str(out),
+                }
+            )
+        )
         return 2
     # newline="\n" is not cosmetic: without it this audit writes CRLF into a tracked
     # `reports/` artifact on Windows, and no gate in the family notices (DEBT-G115).
@@ -166,9 +192,14 @@ def main(argv: list[str] | None = None) -> int:
     #: 3 行的格子里有裸竖线需要人工归列），否则这道门会把每一批提交都堵死。
     enforced = {"ids_unique", "row_count_matches_distinct_ids"}
     if args.enforce_shape:
-        enforced |= {"all_rows_are_the_expected_shape", "header_declares_the_expected_shape"}
+        enforced |= {
+            "all_rows_are_the_expected_shape",
+            "header_declares_the_expected_shape",
+        }
     failing = sorted(
-        name for name, ok in report["verdicts"].items() if ok is not True and name in enforced
+        name
+        for name, ok in report["verdicts"].items()
+        if ok is not True and name in enforced
     )
     print(
         json.dumps(
@@ -178,9 +209,13 @@ def main(argv: list[str] | None = None) -> int:
                 "cells_per_row": report["cells_per_row"],
                 "cells_per_row_escape_aware": report["cells_per_row_escape_aware"],
                 "rows_not_expected_cells": report["rows_not_expected_cells"],
-                "rows_with_escaped_pipes_in_cells": report["rows_with_escaped_pipes_in_cells"],
+                "rows_with_escaped_pipes_in_cells": report[
+                    "rows_with_escaped_pipes_in_cells"
+                ],
                 "max_debt_id": report["max_debt_id"],
-                "declared_is_the_majority_shape": report["declared_is_the_majority_shape"],
+                "declared_is_the_majority_shape": report[
+                    "declared_is_the_majority_shape"
+                ],
                 "failing_verdicts": failing,
             },
             ensure_ascii=True,
