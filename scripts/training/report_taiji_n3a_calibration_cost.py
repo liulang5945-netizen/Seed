@@ -15,10 +15,19 @@ from __future__ import annotations
 
 import argparse
 import json
+import sys
 from pathlib import Path
 from typing import Any
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
+
+#: DEBT-G115 修法③：本仪器既被契约册加载也被起成真子进程，脚本目录先上 `sys.path`，
+#: 统一落盘助手才解析得到（㊵-790／795／796 同一条约定）。
+SCRIPT_DIR = Path(__file__).resolve().parent
+if str(SCRIPT_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPT_DIR))
+
+import _taiji_report_io as report_io  # noqa: E402  (sys.path 先行)
 
 #: 标定跑的冻结命令（跑在**无并发**的机器上；owner 2026-10-08 裁"机器空出来后各跑一支"）。
 CALIBRATION_COMMANDS = {
@@ -47,7 +56,11 @@ CANDIDATE_BUDGET_TICKS = (250_000, 1_000_000, 4_000_000)
 def _read_last_row(path: Path) -> dict[str, Any] | None:
     if not path.is_file():
         return None
-    rows = [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line]
+    rows = [
+        json.loads(line)
+        for line in path.read_text(encoding="utf-8").splitlines()
+        if line
+    ]
     return rows[-1] if rows else None
 
 
@@ -59,7 +72,9 @@ def _arm(arm: str, progress: Path, checkpoint: Path) -> dict[str, Any]:
     ticks = int(row["ticks"])
     reached = bool(row.get("reached_budget"))
     if not reached or elapsed <= 0:
-        raise RuntimeError(f"标定臂 {arm} 自述未达预算或耗时非正：reached_budget={reached}")
+        raise RuntimeError(
+            f"标定臂 {arm} 自述未达预算或耗时非正：reached_budget={reached}"
+        )
     return {
         "arm": arm,
         "command": CALIBRATION_COMMANDS[arm],
@@ -76,8 +91,18 @@ def _arm(arm: str, progress: Path, checkpoint: Path) -> dict[str, Any]:
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="N3 甲标定读数器（零训练、只读标定产物）")
-    parser.add_argument("--out-report", default="reports/taiji_n3a_calibration_cost_20261008.json")
+    parser = argparse.ArgumentParser(
+        description="N3 甲标定读数器（零训练、只读标定产物）"
+    )
+    parser.add_argument(
+        "--out-report", default="reports/taiji_n3a_calibration_cost_20261008.json"
+    )
+    parser.add_argument(
+        "--overwrite",
+        action="store_true",
+        help="目标读数件已存在时允许替换（DEBT-G115 修法③ 家族标准守卫；缺省拒覆写——"
+        "默认落点是在库读数件，重跑取数须显式带此旗标）",
+    )
     args = parser.parse_args(argv)
 
     arms: dict[str, Any] = {}
@@ -114,7 +139,8 @@ def main(argv: list[str] | None = None) -> int:
             per_arm[f"{ticks}_ticks"] = {
                 "single_arm_wallclock_hours": round(hours, 2),
                 "two_arms_wallclock_hours": round(2 * hours, 2),
-                "checkpoints_bytes_if_one_save_each": 2 * int(scale10["checkpoint_bytes"] or 0),
+                "checkpoints_bytes_if_one_save_each": 2
+                * int(scale10["checkpoint_bytes"] or 0),
             }
         payload["extrapolation_from_measured_scale10"] = per_arm
     payload["not_measured_here"] = [
@@ -126,12 +152,20 @@ def main(argv: list[str] | None = None) -> int:
     rc = 2 if errors or not arms else 0
     payload["rc"] = rc
     out = PROJECT_ROOT / args.out_report
-    out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(
-        json.dumps(payload, ensure_ascii=False, indent=2) + "\n",
-        encoding="utf-8",
-        newline="\n",
-    )
+    if out.exists() and not args.overwrite:
+        print(
+            json.dumps(
+                {
+                    "format": "taiji-n3a-calibration-cost-v1",
+                    "status": "refuse_overwrite",
+                    "path": str(out),
+                }
+            )
+            .encode("unicode_escape")
+            .decode("ascii")
+        )
+        return 2
+    report_io.write_json_report(out, payload, newline="\n", overwrite=True)
     summary = {
         "rc": rc,
         "arms": {
