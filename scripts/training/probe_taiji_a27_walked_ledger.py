@@ -49,6 +49,9 @@ for entry in (PROJECT_ROOT, PROJECT_ROOT / "scripts" / "training"):
     if str(entry) not in sys.path:
         sys.path.insert(0, str(entry))
 
+#: DEBT-G115 修法③：落盘走统一落盘助手（`newline=` 由助手必备参数兜住；拒覆写由本件 `_guard_overwrite` 承担）。
+import _taiji_report_io as report_io  # noqa: E402
+
 #: 零件 → (属性路径, 记账方法)。属性以 `_` 开头的都是"可选装配"件（默认 None＝未装配）。
 #: 记账方法取该零件**最有代表性的入口**（学习／发射／取回），只记这一个是刻意的：
 #: 记更多名字会让"被走到"失去单一含义，而这里要的就是"这条链有没有被走到"。
@@ -184,10 +187,26 @@ def _guard_overwrite(target: Path, *, force: bool) -> None:
     这台仪器的 `--out-report` 旧默认值就是已封存的 tracked 件
     `reports/taiji_a27_walked_ledger_20260928.json`，而写入是无条件 `write_text` ⇒ 直接重跑
     会把历史读数盖掉（PLAN-N5-12 §4 批次 A 的第三条）。
+
+    **出口形状已统一**（#81／㊵-837）：现在是 **stdout JSON ＋ 退出码 2**；旧形是
+    `raise SystemExit(f"refusing…: {target}")`＝**rc=1 ＋ stderr 散文**——既非标准拒绝码，
+    又会被 PowerShell 的 CLIXML 包成"假崩溃"（㊵-864…866 同族）。契约册
+    `test_n5_22_walked_ledger_columns_contract.py` 只钉 `pytest.raises(SystemExit)`，
+    标准形（`SystemExit(2)`＋stdout JSON）与旧形都满足它。
     """
 
     if target.exists() and not force:
-        raise SystemExit(f"refusing to overwrite an existing report: {target}")
+        print(
+            json.dumps(
+                {
+                    "format": "taiji-a27-walked-ledger-v1",
+                    "status": "refuse_overwrite",
+                    "path": str(target),
+                },
+                ensure_ascii=True,
+            )
+        )
+        raise SystemExit(2)
 
 
 def main() -> int:
@@ -205,6 +224,13 @@ def main() -> int:
         help="显式允许覆写已存在的报告件（旧默认落点曾是已封存件）",
     )
     args = parser.parse_args()
+
+    #: DEBT-G115 修法③：守卫**前置**到载模型与五入口插桩跑之前 ⇒ 落点已存在且无旗标时立刻
+    #: rc=2，不白烧一次 `SeedRuntime.load` 与整轮插桩。落点求解保留字面量在写靶变量的绑定里（㊵-854②）。
+    out = Path(args.out_report)
+    if not out.is_absolute():
+        out = PROJECT_ROOT / out
+    _guard_overwrite(out, force=args.overwrite)
 
     from api.seed_runtime import SeedRuntime
 
@@ -303,14 +329,7 @@ def main() -> int:
         ),
         "every_entry_has_denominator": all(coverage[entry]["calls"] > 0 for entry in entries),
     }
-    out = Path(args.out_report)
-    if not out.is_absolute():
-        out = PROJECT_ROOT / out
-    _guard_overwrite(out, force=args.overwrite)
-    out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(
-        json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n"
-    )
+    report_io.write_json_report(out, report, newline="\n", overwrite=True)
 
     print("零件".ljust(28) + "".join(entry.ljust(20) for entry in entries))
     for label, _, _ in PARTS:
