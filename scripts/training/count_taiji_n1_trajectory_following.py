@@ -17,6 +17,14 @@ from typing import Any
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
+#: DEBT-G115 修法③：本仪器既被契约册按文件路径加载、也被起成真子进程，脚本目录
+#: 先上 `sys.path`，统一落盘助手才解析得到（㊵-790／795／796 同一条约定）。
+SCRIPT_DIR = Path(__file__).resolve().parent
+if str(SCRIPT_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPT_DIR))
+
+import _taiji_report_io as report_io  # noqa: E402  (sys.path 先行)
+
 #: v37 基线在库件的行为读数（PLAN-N1-02 §4 G1′ 行为同一性守卫）。
 BASELINE = {"eaters": 247, "never_lf": 236, "stoppers": 41}
 
@@ -37,7 +45,9 @@ def _classify_generations(report: dict[str, Any]) -> list[dict[str, Any]]:
                 raise ValueError(f"{item.get('id')}: fed_bytes≠generation_steps ⇒ 不判")
             rows = check.get("trajectory_follow_v43")
             if not isinstance(rows, list):
-                raise ValueError(f"{item.get('id')}: 轮内缺 trajectory_follow_v43 ⇒ 不判")
+                raise ValueError(
+                    f"{item.get('id')}: 轮内缺 trajectory_follow_v43 ⇒ 不判"
+                )
             eater = bool(endstep["generation_steps"] >= max_length)
             lf_count = endstep.get("lf_trace_v29", {}).get("lf_step_count")
             if lf_count is None:
@@ -71,7 +81,9 @@ def _attribution_inputs(generations: list[dict[str, Any]]) -> dict[str, Any]:
     if not rows:
         return {"steps_in_set": 0}
     follows = [bool(row["follow"]) for row in rows]
-    hijacked = [row for row in rows if bool(row["mass_hit"]) and not bool(row["follow"])]
+    hijacked = [
+        row for row in rows if bool(row["mass_hit"]) and not bool(row["follow"])
+    ]
     #: 后继字节本身就是证据最高质量字节：此时"没跟随"不是池化的错，是解码/其它通道压过它。
     succ_is_top = [row for row in rows if int(row["ev_top"]) == int(row["succ_byte"])]
     succ_is_top_not_followed = [row for row in succ_is_top if not bool(row["follow"])]
@@ -83,19 +95,27 @@ def _attribution_inputs(generations: list[dict[str, Any]]) -> dict[str, Any]:
         "follow_rate": round(sum(follows) / len(follows), 6),
         "mass_hit_and_not_follow_rate": round(len(hijacked) / len(rows), 6),
         "succ_is_ev_top_rate": round(len(succ_is_top) / len(rows), 6),
-        "succ_is_ev_top_but_not_emitted_rate": round(len(succ_is_top_not_followed) / len(rows), 6),
+        "succ_is_ev_top_but_not_emitted_rate": round(
+            len(succ_is_top_not_followed) / len(rows), 6
+        ),
         "follow_rate_first_step": (
-            None if not first else round(sum(bool(r["follow"]) for r in first) / len(first), 6)
+            None
+            if not first
+            else round(sum(bool(r["follow"]) for r in first) / len(first), 6)
         ),
         "first_step_count": len(first),
         "follow_rate_deep_step": (
-            None if not deep else round(sum(bool(r["follow"]) for r in deep) / len(deep), 6)
+            None
+            if not deep
+            else round(sum(bool(r["follow"]) for r in deep) / len(deep), 6)
         ),
         "deep_step_count": len(deep),
         "event_length_median": lengths[len(lengths) // 2],
         "event_length_p90": lengths[min(len(lengths) - 1, int(len(lengths) * 0.9))],
         "mass_hit_and_follow_rate": round(
-            sum(1 for r in rows if bool(r["mass_hit"]) and bool(r["follow"])) / len(rows), 6
+            sum(1 for r in rows if bool(r["mass_hit"]) and bool(r["follow"]))
+            / len(rows),
+            6,
         ),
     }
 
@@ -129,13 +149,19 @@ def _group_readings(generations: list[dict[str, Any]]) -> dict[str, Any]:
         }
     follows = [bool(row["follow"]) for row in follow_rows]
     mass_hits = [bool(row["mass_hit"]) for row in follow_rows]
-    chances = [float(row["succ_mult"]) for row in follow_rows if row.get("succ_mult") is not None]
+    chances = [
+        float(row["succ_mult"])
+        for row in follow_rows
+        if row.get("succ_mult") is not None
+    ]
     if len(chances) != len(follow_rows):
         raise ValueError("succ_mult 缺行 ⇒ F1c 资格集与 F1 不一致，不判")
     last_rows = eligible
     last_hits = [bool(row["emitted_next"] == row["last_byte"]) for row in last_rows]
     gates = sorted(float(row["gate"]) for row in follow_rows)
-    succ_ws = sorted(float(row["succ_w"]) for row in follow_rows if row.get("succ_w") is not None)
+    succ_ws = sorted(
+        float(row["succ_w"]) for row in follow_rows if row.get("succ_w") is not None
+    )
     f1 = sum(follows) / len(follows)
     f2 = sum(mass_hits) / len(mass_hits)
     f1c = sum(chances) / len(chances)
@@ -172,8 +198,15 @@ def _ha_verdict(group: dict[str, Any]) -> str:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("--report", required=True, help="v43 停止面件（--trajectory-following 档）")
+    parser.add_argument(
+        "--report", required=True, help="v43 停止面件（--trajectory-following 档）"
+    )
     parser.add_argument("--out-report", default=None)
+    parser.add_argument(
+        "--overwrite",
+        action="store_true",
+        help="目标读数件已存在时允许替换（DEBT-G115 修法③ 家族标准守卫；缺省拒覆写）",
+    )
     parser.add_argument(
         "--face-role",
         choices=("production", "s1a"),
@@ -233,7 +266,9 @@ def main(argv: list[str] | None = None) -> int:
                 groups["stoppers"].append(gen)
         behavior = {
             "eaters": sum(1 for gen in generations if gen["group"] != "stopper"),
-            "never_lf": sum(1 for gen in generations if gen["group"] == "never_lf_eater"),
+            "never_lf": sum(
+                1 for gen in generations if gen["group"] == "never_lf_eater"
+            ),
             "stoppers": sum(1 for gen in generations if gen["group"] == "stopper"),
         }
         if args.face_role == "production":
@@ -245,11 +280,15 @@ def main(argv: list[str] | None = None) -> int:
         elif behavior == BASELINE:
             #: 反向守卫（s1a 档专用）：读取形态一改，行为数就该跟着动；与生产基线**完全相同**
             #: 只有一种解释——开关没落地或被吞掉。这种"看着像没效果的改动"必须响亮拒绝。
-            raise ValueError(f"s1a 档行为数与生产基线逐格相同 {behavior} ⇒ 改动疑似未生效，不判")
+            raise ValueError(
+                f"s1a 档行为数与生产基线逐格相同 {behavior} ⇒ 改动疑似未生效，不判"
+            )
         total_rows = sum(len(gen["rows"]) for gen in generations)
         total_steps = sum(gen["steps"] for gen in generations)
         if total_rows != total_steps:
-            raise ValueError(f"轨迹行 {total_rows} ≠ 环内步 {total_steps} ⇒ 1:1 破了，不判")
+            raise ValueError(
+                f"轨迹行 {total_rows} ≠ 环内步 {total_steps} ⇒ 1:1 破了，不判"
+            )
         readings = {name: _group_readings(gens) for name, gens in groups.items()}
         if readings["never_lf_eaters"]["F1_follow_rate"] is None:
             raise ValueError("主群（never-LF 拖写代）判别集为空 ⇒ H-A 不可判，不判")
@@ -272,13 +311,27 @@ def main(argv: list[str] | None = None) -> int:
         print(json.dumps({"results": [entry], "rc": 2}, ensure_ascii=True, indent=2))
         return 2
 
-    payload = {"format": "taiji-n1-trajectory-following-v1", "results": [entry], "rc": 0}
-    text = json.dumps(payload, ensure_ascii=False, indent=2)
+    payload = {
+        "format": "taiji-n1-trajectory-following-v1",
+        "results": [entry],
+        "rc": 0,
+    }
     if args.out_report:
         out = Path(args.out_report)
         out = out if out.is_absolute() else PROJECT_ROOT / out
-        out.parent.mkdir(parents=True, exist_ok=True)
-        out.write_text(text + "\n", encoding="utf-8", newline="\n")
+        if out.exists() and not args.overwrite:
+            print(
+                json.dumps(
+                    {
+                        "format": "taiji-n1-trajectory-following-v1",
+                        "status": "refuse_overwrite",
+                        "path": str(out),
+                    },
+                    ensure_ascii=True,
+                )
+            )
+            return 2
+        report_io.write_json_report(out, payload, newline="\n", overwrite=True)
     #: 控制台那一份走 ASCII 转义：拒绝理由里有"⇒"这类字形，GBK 终端上 `print` 会在**已经判完**之后
     #: 抛 UnicodeEncodeError（本机 2026-10-08 在同族判读器上实测），把 rc=2 的响亮拒绝伪装成 rc=1 的崩溃。
     print(json.dumps(payload, ensure_ascii=True, indent=2))
