@@ -20,6 +20,7 @@
 
 from __future__ import annotations
 
+import argparse
 import hashlib
 import json
 import sys
@@ -30,6 +31,9 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 for entry in (PROJECT_ROOT, PROJECT_ROOT / "scripts" / "training"):
     if str(entry) not in sys.path:
         sys.path.insert(0, str(entry))
+
+#: DEBT-G115 修法③：落盘走统一落盘助手（`newline=` 由助手必备参数兜住；拒覆写由本件前置守卫承担）。
+import _taiji_report_io as report_io  # noqa: E402
 
 from seed import surface_gate  # noqa: E402
 
@@ -85,6 +89,30 @@ def main() -> int:
     if hasattr(sys.stdout, "reconfigure"):  # GBK 控制台会在这里崩，而崩之前件已写盘
         sys.stdout.reconfigure(encoding="utf-8")
 
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--overwrite",
+        action="store_true",
+        help="目标读数件已存在时允许替换（DEBT-G115 修法③ 家族标准守卫；缺省拒覆写——"
+        "默认落点是在库读数件，重跑取数须显式带此旗标）",
+    )
+    args = parser.parse_args()
+
+    out = PROJECT_ROOT / "reports/taiji_a30_surface_gate_fffd_bypass_20260930.json"
+    #: 拒覆检查**前置**（放在读两张件／同面重算之前）：缺省落点是在库读数件，重跑前先响亮拒绝，不去白读件。
+    if out.exists() and not args.overwrite:
+        print(
+            json.dumps(
+                {
+                    "format": "taiji-a30-surface-gate-fffd-bypass-v2",
+                    "status": "refuse_overwrite",
+                    "path": str(out),
+                },
+                ensure_ascii=True,
+            )
+        )
+        return 2
+
     # ① 类型层：三条探针，任一条抛就记 type_vacuous=false
     probes = ["中中中中中中\ufffd", "\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd", "你好"]
     try:
@@ -125,8 +153,7 @@ def main() -> int:
         "verdict": decide(type_vacuous, bypass_rows),
         "scope_note": "预览按 answer[:60] 存；③ 对预览重算 ⇒ 比原串更保守。U+FFFD 不可能由 str 切片造出。",
     }
-    out = PROJECT_ROOT / "reports/taiji_a30_surface_gate_fffd_bypass_20260930.json"
-    out.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8", newline="\n")
+    report_io.write_json_report(out, report, newline="\n", overwrite=True)
     print(json.dumps(report, ensure_ascii=False, sort_keys=True)[:900])
     return 0
 
