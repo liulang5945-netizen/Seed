@@ -10,6 +10,7 @@
 | 理解长期目标 | [核心需求](../plans/active/TAIJI_CORE_REQUIREMENTS.md) |
 | 理解认知架构 | [原生架构](../plans/active/TAIJI_NATIVE_ARCHITECTURE_V1.md)、[代码 Wiki](../TAIJI_CODE_WIKI.md) |
 | 查看当前主线与下一步 | [当前执行](../plans/active/roadmap/03_CURRENT_EXECUTION.md)、[N 主线规划](../plans/active/roadmap/09_NEXT_MAINLINE_PLAN.md) |
+| 查看本轮开发计划修订 | [完整修订方案](../plans/reference/PLAN-N-01_development_revision_20261014.md)、[N1 实施附件](../plans/reference/PLAN-N1-06_carrier_consumer_alignment_20261014.md) |
 | 查实验规格、裁决和评估 | [参考件索引](../plans/reference/README.md)、[研究完成度](../plans/reference/N_MAINLINE_COMPLETION_AUDIT_20261011.md)（含后继追加） |
 | 查产品收官范围及遗留 | [阶段收束](../plans/reference/M0_M7_PROJECT_CONSOLIDATION_20261006.md)、[M6 批准书](../plans/reference/M6_SCOPE_EXCLUSION_APPROVAL_20261006.md) |
 | 查连续工程记录 | [08 台账](../plans/active/roadmap/08_UPSTREAM_SYNC_PLAYBOOK.md) |
