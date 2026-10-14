@@ -1,7 +1,11 @@
 /**
  * Keep experimental packages outside default installations, runtime imports, and shipped compositions.
- * The one declared exception is a bundle the launcher names in `OPTIONAL_BUNDLES`: shipped for the person to
- * switch on, selected by no shipped template, its own dependency graph outside the default product's.
+ * Two edges are exempt, and both are the launcher's own list (`OPTIONAL_BUNDLES` in
+ * `packages/boot/app-boot/src/profile.ts`): the runtime dependency the installation carries in
+ * `apps/cli`'s `dependencies`, and an application package's `optionalDependencies` entry that ships the
+ * same listed bundle to a desktop installation. Anything else that names a listed experimental bundle is
+ * still a violation — a listed bundle is exempt only on those two edges, and only in `optionalDependencies`
+ * for `apps/**`, never for `packages/**`, `vendor/**`, or `python/**`.
  */
 
 import { existsSync, globSync, readFileSync, statSync } from 'node:fs'
@@ -287,9 +291,11 @@ export function verifyDefaultProductIsolation(root: string): ProductIsolationRes
 
   for (const pkg of queue) {
     const { manifest } = pkg
+    const isApplication = display(pkg.directory).startsWith('apps/')
     for (const section of RUNTIME_SECTIONS) {
       for (const [name, range] of Object.entries(manifest[section] ?? {})) {
-        if (pkg === cli && section === 'dependencies' && optionalBundles.has(name)) continue
+        if (optionalBundles.has(name) && ((section === 'dependencies' && pkg === cli)
+          || (section === 'optionalDependencies' && isApplication))) continue
         dependency(name, range, pkg, `${manifest.name} ${section}`)
       }
     }

@@ -114,6 +114,37 @@ describe('default product isolation', () => {
     expect(verifyDefaultProductIsolation(root).failures.join('\n')).toContain(`optional bundle ${layer} must not be a default bundle`)
   })
 
+  it('exempts a listed bundle on the two launcher edges and on no other shape', () => {
+    const root = fixture()
+    const layer = '@taiji/dsh-experimental-layer'
+    write(root, 'packages/experimental/layer/package.json', {
+      name: layer, dsh: { bundle: { patch: './cordis.patch.yml' } },
+    })
+    write(root, 'packages/experimental/layer/cordis.patch.yml', [{ insert: [{ name: core }] }])
+    manifest(root, 'apps/cli/package.json', { dependencies: { [core]: 'workspace:^', [layer]: 'workspace:^' } })
+    write(root, profile, `export const PROFILE_TEMPLATES = { web: { bundles: ['${base}'] } }\n`
+      + `export const DEFAULT_PROFILE_BUNDLES = ['${base}']\n`
+      + `export const OPTIONAL_BUNDLES = ['${layer}']\n`)
+
+    // The shipped face: an application installs the listed bundle as an optional dependency.
+    write(root, 'apps/desktop/package.json', { name: '@fixture/desktop', private: true,
+      optionalDependencies: { [layer]: 'workspace:^' } })
+    expect(verifyDefaultProductIsolation(root).failures).toEqual([])
+
+    // Right section, wrong owner: packages/** is not an application, so the exemption must not reach it.
+    rmSync(join(root, 'apps/desktop/package.json'), { force: true })
+    manifest(root, 'packages/core/core/package.json', { optionalDependencies: { [layer]: 'workspace:^' } })
+    expect(verifyDefaultProductIsolation(root).failures.join('\n'))
+      .toContain(`${core} optionalDependencies -> ${layer}`)
+
+    // Right owner, wrong name: a bundle the launcher list does not name stays a violation.
+    manifest(root, 'packages/core/core/package.json', { optionalDependencies: {} })
+    write(root, 'apps/desktop/package.json', { name: '@fixture/desktop', private: true,
+      optionalDependencies: { [experimental]: 'workspace:^' } })
+    expect(verifyDefaultProductIsolation(root).failures.join('\n'))
+      .toContain(`@fixture/desktop optionalDependencies -> ${experimental}`)
+  })
+
   it('requires each optional bundle to be a runtime dependency that declares a bundle patch', () => {
     const root = fixture()
     write(root, profile, `export const PROFILE_TEMPLATES = { web: { bundles: ['${base}'] } }\n`
