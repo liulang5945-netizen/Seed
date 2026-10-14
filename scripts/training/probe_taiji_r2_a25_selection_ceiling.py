@@ -23,7 +23,6 @@ import argparse
 import hashlib
 import json
 import sys
-from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -31,6 +30,9 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 for entry in (PROJECT_ROOT, PROJECT_ROOT / "scripts" / "training"):
     if str(entry) not in sys.path:
         sys.path.insert(0, str(entry))
+
+#: DEBT-G115 修法③：落盘走统一落盘助手（`newline=` 由助手必备参数兜住；拒覆写由本件前置守卫承担）。
+import _taiji_report_io as report_io  # noqa: E402
 
 MIN_GAP_ITEMS = 3
 
@@ -99,7 +101,38 @@ def main() -> int:
         "--circuit", default="output/taiji_r2_copy_circuit_chat/judge/circuit-final.pt"
     )
     parser.add_argument("--out-report", default=None)
+    parser.add_argument(
+        "--overwrite",
+        action="store_true",
+        help="目标读数件已存在时允许替换（DEBT-G115 修法③ 家族标准守卫；缺省拒覆写——"
+        "默认落点是在库读数件，重跑取数须显式带此旗标）",
+    )
     args = parser.parse_args()
+
+    out = (
+        Path(args.out_report)
+        if args.out_report
+        else PROJECT_ROOT / "reports/taiji_r2_a25_selection_ceiling_20260925.json"
+    )
+    if not out.is_absolute():
+        out = PROJECT_ROOT / out
+    #: 拒覆检查**前置**：本件要加载 checkpoint、每臂独立起 runtime、跑三臂，是重型取数；守卫放在
+    #: 重活之前 ⇒ 落点已存在时**立刻**响亮拒绝，不白烧机时。旧行为是「已存在就静默改写成
+    #: `stem-HHMMSS.json`」——既不拒绝也不点名，还**悄悄增殖**一堆带时间戳的件（普查仪正因
+    #: 「无写前拒绝出口」把它记进暴露面）。改成家族标准形：缺省响亮拒绝，要重跑就显式
+    #: `--overwrite`；想留历史版本仍可 `--out-report` 另给名字。
+    if out.exists() and not args.overwrite:
+        print(
+            json.dumps(
+                {
+                    "format": "taiji-r2-a25-selection-ceiling-v1",
+                    "status": "refuse_overwrite",
+                    "path": str(out),
+                },
+                ensure_ascii=True,
+            )
+        )
+        return 2
 
     from score_taiji_r2_copy_strict_cap import copyable_tokens, load_items
 
@@ -149,17 +182,7 @@ def main() -> int:
     )
     report["base_sha256_unchanged"] = _sha256(checkpoint) == sha_before
 
-    out = (
-        Path(args.out_report)
-        if args.out_report
-        else PROJECT_ROOT / "reports/taiji_r2_a25_selection_ceiling_20260925.json"
-    )
-    if not out.is_absolute():
-        out = PROJECT_ROOT / out
-    if out.exists():
-        out = out.with_name(f"{out.stem}-{datetime.now(UTC).strftime('%H%M%S')}.json")
-    out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    report_io.write_json_report(out, report, newline="\n", overwrite=True)
     print(
         json.dumps(
             {
