@@ -1,0 +1,127 @@
+{
+  "format": "taiji-newline-write-face-v3",
+  "debt": "DEBT-G115",
+  "face": ".",
+  "started_utc": "2026-10-14T07:51:26Z",
+  "tracked_python_total": 2019,
+  "unparsed_files": [
+    "scripts/archive/legacy_convert_dense_model_format.py",
+    "scripts/archive/legacy_expand_lifeform_data.py",
+    "scripts/archive/legacy_fill_general_corpus.py"
+  ],
+  "parse_baseline": [
+    "scripts/archive/legacy_convert_dense_model_format.py",
+    "scripts/archive/legacy_expand_lifeform_data.py",
+    "scripts/archive/legacy_fill_general_corpus.py"
+  ],
+  "a_face": {
+    "sites": 0,
+    "files": {}
+  },
+  "b_face": {
+    "sites": 1041,
+    "files": 767,
+    "note": "写靶是变量/表达式，静态读不出落点——这一桶不判，是修法① 的真实待办面"
+  },
+  "d_face": {
+    "sites": 0,
+    "files": {},
+    "note": "D ⊆ B：写靶静态读不出，但这一枚文件的 argparse 默认落点自己就指向 reports/——修法① 那句「先逐枚现读确认它真写 reports/」的待办面是这一撮，不是整个 B 桶。D 不入 verdict：它要人（或下一批）逐枚把接收者对齐到那枚默认值。"
+  },
+  "c_face": {
+    "sites": 84,
+    "note": "写靶认得出但不含 reports/（临时件、output/、他人目录）"
+  },
+  "helper_face": {
+    "sites": 30,
+    "files": {
+      "scripts/training/_taiji_report_io.py": [
+        49
+      ],
+      "scripts/training/audit_taiji_answer_source_provenance.py": [
+        379
+      ],
+      "scripts/training/audit_taiji_batch_c_arm_parity.py": [
+        333
+      ],
+      "scripts/training/audit_taiji_batch_c_moved_face_sets.py": [
+        183
+      ],
+      "scripts/training/audit_taiji_batch_c_stream_parity.py": [
+        206
+      ],
+      "scripts/training/audit_taiji_debt_table_column_shape.py": [
+        186
+      ],
+      "scripts/training/audit_taiji_default_reachability.py": [
+        351
+      ],
+      "scripts/training/audit_taiji_episodic_read_sharing_face.py": [
+        337
+      ],
+      "scripts/training/audit_taiji_ledger_cited_reports_are_tracked.py": [
+        246
+      ],
+      "scripts/training/audit_taiji_ledger_marker_uniqueness.py": [
+        113
+      ],
+      "scripts/training/audit_taiji_n1_03_publication_claim_gate.py": [
+        263
+      ],
+      "scripts/training/audit_taiji_n1_03_role_table_face.py": [
+        316
+      ],
+      "scripts/training/audit_taiji_n5_22_cap0_pairing.py": [
+        244
+      ],
+      "scripts/training/audit_taiji_n5_23_repeat_arm_noise_floor.py": [
+        311
+      ],
+      "scripts/training/audit_taiji_newline_write_face.py": [
+        289
+      ],
+      "scripts/training/audit_taiji_sealed_report_overwrite_surface.py": [
+        398
+      ],
+      "scripts/training/audit_taiji_test_write_target_discriminator.py": [
+        454
+      ],
+      "scripts/training/audit_taiji_tracked_report_line_endings.py": [
+        226
+      ],
+      "scripts/training/audit_taiji_write_only_key_face.py": [
+        582
+      ],
+      "scripts/training/eval_taiji_cap0_baseline.py": [
+        80,
+        809
+      ],
+      "scripts/training/measure_taiji_n2_06_write_contract_values.py": [
+        277
+      ],
+      "scripts/training/verify_taiji_debt_table_bytes.py": [
+        292
+      ],
+      "tests/taiji_native/test_n6_12_shared_report_writer_contract.py": [
+        33,
+        52,
+        60,
+        75,
+        76,
+        84,
+        63
+      ]
+    },
+    "module": "scripts/training/_taiji_report_io.py",
+    "note": "经统一落盘助手（DEBT-G115 修法③）写出去的调用。与 D 同理**不入 verdict**：它数的是「已经被收口到一处」的次数，把它算红等于宣称其余写靶都已收口，而 B 桶的逐枚现读正是没做的事。"
+  },
+  "verdicts": {
+    "face_is_not_empty": true,
+    "no_unparseable_file_beyond_the_known_three": true,
+    "a_face_at_or_below_baseline": true
+  },
+  "verdict": "holds",
+  "failing_verdicts": [],
+  "reading_limit": "A 桶＝能证明写靶是 reports/ 字面路径且缺 newline= 的调用，现读 0 处；这**不等于**全仓写靶都带上了 newline=。B 桶是写靶为变量／表达式、静态读不出落点的那批，把它们说成已处理需要逐枚现读——修法① 的真实待办面就是 B 桶的规模。债表粗筛那句「82 枚文件」与本件不是同一把尺：它数的是提过 reports/ 的文件，本件数的是这一处写入落到哪。另有三枚 `scripts/archive/legacy_*` parse 不动（在 `parse_baseline` 里点名），所以 A 桶那句是「扫得到的面上 0 处」，不是「全仓 0 处」。",
+  "wall_clock_ms": 9158.06
+}

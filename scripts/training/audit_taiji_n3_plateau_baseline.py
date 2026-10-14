@@ -18,6 +18,14 @@ import sys
 from pathlib import Path
 from typing import Any
 
+#: 本仪器既被契约册按文件路径加载、也被起成真子进程；脚本目录先上 `sys.path`，
+#: 统一落盘助手才解析得到（㊵-790／795／796 同一条约定）。
+SCRIPT_DIR = Path(__file__).resolve().parent
+if str(SCRIPT_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPT_DIR))
+
+import _taiji_report_io as report_io  # noqa: E402  (sys.path 先行)
+
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
 #: 在库两条 run 的进度件（路径写死，避免"面不唯一"；文件缺失即响亮失败）。
@@ -42,7 +50,9 @@ def _read_rows(path: Path) -> list[dict[str, Any]]:
                     raise ValueError(f"{path.name}: 进度行缺字段 {field} ⇒ 不判")
             rows.append(record)
     if len(rows) < QUINTILES * 2:
-        raise ValueError(f"{path.name}: 进度行 {len(rows)} 条不足以分 {QUINTILES} 段 ⇒ 不判")
+        raise ValueError(
+            f"{path.name}: 进度行 {len(rows)} 条不足以分 {QUINTILES} 段 ⇒ 不判"
+        )
     rows.sort(key=lambda record: int(record["ticks"]))
     return rows
 
@@ -99,7 +109,14 @@ def summarize(name: str, path: Path) -> dict[str, Any]:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("--out-report", default=None, help="可选：把 JSON 读数写到该路径")
+    parser.add_argument(
+        "--out-report", default=None, help="可选：把 JSON 读数写到该路径"
+    )
+    parser.add_argument(
+        "--overwrite",
+        action="store_true",
+        help="目标读数件已存在时允许替换（DEBT-G115 修法③ 家族标准守卫；缺省拒覆写）",
+    )
     args = parser.parse_args(argv)
 
     results: list[dict[str, Any]] = []
@@ -109,21 +126,31 @@ def main(argv: list[str] | None = None) -> int:
         try:
             results.append(summarize(name, path))
         except (OSError, ValueError, json.JSONDecodeError) as error:
-            results.append({"run": name, "status": "refused", "error": str(error)[:300]})
+            results.append(
+                {"run": name, "status": "refused", "error": str(error)[:300]}
+            )
             rc = 2
     payload: dict[str, Any] = {
         "format": "taiji-n3-plateau-baseline-v1",
         "results": results,
         "rc": rc,
     }
-    text = json.dumps(payload, ensure_ascii=False, indent=2)
     if args.out_report:
         out = Path(args.out_report)
         out = out if out.is_absolute() else PROJECT_ROOT / out
-        out.parent.mkdir(parents=True, exist_ok=True)
-        with open(out, "w", encoding="utf-8", newline="\n") as handle:
-            handle.write(text + "\n")
-    print(text)
+        if out.exists() and not args.overwrite:
+            print(
+                json.dumps(
+                    {
+                        "format": "taiji-n3-plateau-baseline-v1",
+                        "status": "refuse_overwrite",
+                        "path": str(out),
+                    }
+                )
+            )
+            return 2
+        report_io.write_json_report(out, payload, newline="\n", overwrite=True)
+    print(json.dumps(payload, ensure_ascii=False, indent=2))
     return rc
 
 

@@ -1,0 +1,70 @@
+{
+  "format": "taiji-n3-plateau-baseline-v1",
+  "results": [
+    {
+      "run": "corpus_a31_chunked_self",
+      "progress_file": "E:\\Seed\\output\\a31_chunked_self\\progress.jsonl",
+      "rows": 198,
+      "ticks_first": 2010316,
+      "ticks_last": 4000101,
+      "line_first_online_accuracy": 0.494986,
+      "line_last_online_accuracy": 0.533012,
+      "line_first_holdout_surprise": 2.602679,
+      "line_last_holdout_surprise": 2.612885,
+      "acc_quintile_means": [
+        0.525677,
+        0.531651,
+        0.535085,
+        0.529031,
+        0.531753
+      ],
+      "holdout_quintile_means": [
+        2.623508,
+        2.637033,
+        2.650708,
+        2.648494,
+        2.664211
+      ],
+      "acc_slope_last_minus_first": 0.006076,
+      "acc_slope_last_minus_prev": 0.002723,
+      "holdout_slope_last_minus_first": 0.040703,
+      "max_adjacent_quintile_acc_jump": 0.006054,
+      "exit_reason": null,
+      "reached_budget": null,
+      "budget_max_symbols": null
+    },
+    {
+      "run": "onpolicy_a31_onpolicy_20261003",
+      "progress_file": "E:\\Seed\\output\\a31_onpolicy_20261003\\progress.jsonl",
+      "rows": 198,
+      "ticks_first": 10350,
+      "ticks_last": 2000397,
+      "line_first_online_accuracy": 0.611604,
+      "line_last_online_accuracy": 0.593762,
+      "line_first_holdout_surprise": 2.643195,
+      "line_last_holdout_surprise": 2.772014,
+      "acc_quintile_means": [
+        0.593887,
+        0.594601,
+        0.598412,
+        0.593346,
+        0.59412
+      ],
+      "holdout_quintile_means": [
+        2.632791,
+        2.606451,
+        2.635343,
+        2.675655,
+        2.698561
+      ],
+      "acc_slope_last_minus_first": 0.000233,
+      "acc_slope_last_minus_prev": 0.000774,
+      "holdout_slope_last_minus_first": 0.065769,
+      "max_adjacent_quintile_acc_jump": 0.005066,
+      "exit_reason": "max_symbols_reached",
+      "reached_budget": true,
+      "budget_max_symbols": 2000000
+    }
+  ],
+  "rc": 0
+}
