@@ -15,6 +15,7 @@
 | 查连续工程记录 | [08 台账](../plans/active/roadmap/08_UPSTREAM_SYNC_PLAYBOOK.md) |
 | 查失效路线与旧阶段 | [归档索引](../plans/archive/README.md) |
 | 查收纳结果和本地产物 | [本轮整理记录](../plans/reference/PROJECT_ORGANIZATION_20261014.md) |
+| 恢复已冷归档的实验 | [本地产物与恢复说明](../outputs/README.md) |
 
 ## 目录归属
 

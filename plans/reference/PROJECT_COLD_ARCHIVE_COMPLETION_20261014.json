@@ -1,0 +1,268 @@
+{
+  "generated_utc": "2026-10-14T12:48:18.183623+00:00",
+  "authorization": "user: 下一步，你持续推进就行",
+  "archive_manifest": "PROJECT_COLD_ARCHIVE_MANIFEST_20261014.json",
+  "removed": [
+    {
+      "source": "output/epi_smoke",
+      "restore_from": "outputs/cold_archive_20261014/epi_smoke.zip",
+      "verified_file_count": 7,
+      "original_removed": true,
+      "bytes_removed": 29435931
+    },
+    {
+      "source": "output/n3_10_smoke_off",
+      "restore_from": "outputs/cold_archive_20261014/n3_10_smoke_off.zip",
+      "verified_file_count": 4,
+      "original_removed": true,
+      "bytes_removed": 12062371
+    },
+    {
+      "source": "output/n5_shadow_feed2",
+      "restore_from": "outputs/cold_archive_20261014/n5_shadow_feed2.zip",
+      "verified_file_count": 8,
+      "original_removed": true,
+      "bytes_removed": 85591498
+    },
+    {
+      "source": "output/ds-bot-0.1.2.tgz",
+      "restore_from": "outputs/cold_archive_20261014/ds-bot-0.1.2.tgz.zip",
+      "verified_file_count": 1,
+      "original_removed": true,
+      "bytes_removed": 336512
+    }
+  ],
+  "total_original_bytes_removed": 127426312,
+  "archive_bytes_retained": 42047015,
+  "remaining": [
+    {
+      "path": "output/family_baseline_20261014_n105",
+      "runtime_or_test_references": [],
+      "disposition": "retain_evidence_pending_individual_adjudication"
+    },
+    {
+      "path": "output/family_baseline_20261014_n107",
+      "runtime_or_test_references": [],
+      "disposition": "retain_evidence_pending_individual_adjudication"
+    },
+    {
+      "path": "output/n3_04",
+      "runtime_or_test_references": [
+        "tests/taiji_native/test_n3_06_gate_replay_contract.py",
+        "tests/taiji_native/test_n3_09_tau_rule_contract.py",
+        "tests/taiji_native/test_n5_11_position_wiring_call_sites_contract.py"
+      ],
+      "disposition": "retain_referenced"
+    },
+    {
+      "path": "output/n3_04_canary_factory",
+      "runtime_or_test_references": [],
+      "disposition": "retain_evidence_pending_individual_adjudication"
+    },
+    {
+      "path": "output/n3_09_v2",
+      "runtime_or_test_references": [],
+      "disposition": "retain_evidence_pending_individual_adjudication"
+    },
+    {
+      "path": "output/n3_10_smoke",
+      "runtime_or_test_references": [],
+      "disposition": "retain_evidence_pending_individual_adjudication"
+    },
+    {
+      "path": "output/n3_tau_beta",
+      "runtime_or_test_references": [],
+      "disposition": "retain_evidence_pending_individual_adjudication"
+    },
+    {
+      "path": "output/n3_tau_circuit",
+      "runtime_or_test_references": [],
+      "disposition": "retain_evidence_pending_individual_adjudication"
+    },
+    {
+      "path": "output/n3a_armA",
+      "runtime_or_test_references": [
+        "tests/taiji_native/test_g63_window_readout_contract.py"
+      ],
+      "disposition": "retain_referenced"
+    },
+    {
+      "path": "output/n3a_armB",
+      "runtime_or_test_references": [],
+      "disposition": "retain_evidence_pending_individual_adjudication"
+    },
+    {
+      "path": "output/n3a_control_x2",
+      "runtime_or_test_references": [
+        "tests/taiji_native/test_g63_history_none_vs_zero_contract.py"
+      ],
+      "disposition": "retain_referenced"
+    },
+    {
+      "path": "output/n4_materials",
+      "runtime_or_test_references": [],
+      "disposition": "retain_evidence_pending_individual_adjudication"
+    },
+    {
+      "path": "output/n4_product_tier",
+      "runtime_or_test_references": [
+        "scripts/training/adjudicate_taiji_n4_product_tier_ruler.py",
+        "scripts/training/audit_taiji_n4_write_path_census.py",
+        "tests/taiji_native/test_n4_05_write_path_census_contract.py",
+        "tests/taiji_native/test_n4_08_product_tier_ruler_adjudication_contract.py"
+      ],
+      "disposition": "retain_referenced"
+    },
+    {
+      "path": "output/n4_product_tier_a035",
+      "runtime_or_test_references": [],
+      "disposition": "retain_evidence_pending_individual_adjudication"
+    },
+    {
+      "path": "output/n4_product_tier_a070",
+      "runtime_or_test_references": [],
+      "disposition": "retain_evidence_pending_individual_adjudication"
+    },
+    {
+      "path": "output/n4_product_tier_a105",
+      "runtime_or_test_references": [],
+      "disposition": "retain_evidence_pending_individual_adjudication"
+    },
+    {
+      "path": "output/n5_07",
+      "runtime_or_test_references": [
+        "scripts/training/audit_taiji_n5_22_cap0_pairing.py",
+        "scripts/training/run_taiji_n5_retention_lane.py",
+        "tests/taiji_native/test_n5_17_j_n5b_5_retention_lane_contract.py",
+        "tests/taiji_native/test_n5_36_cap0_pairing_contract.py"
+      ],
+      "disposition": "retain_referenced"
+    },
+    {
+      "path": "output/n5_07_arms",
+      "runtime_or_test_references": [],
+      "disposition": "retain_evidence_pending_individual_adjudication"
+    },
+    {
+      "path": "output/n5_07_lane",
+      "runtime_or_test_references": [],
+      "disposition": "retain_evidence_pending_individual_adjudication"
+    },
+    {
+      "path": "output/n5_10_arms",
+      "runtime_or_test_references": [
+        "scripts/training/read_taiji_envelope_recipe_face.py"
+      ],
+      "disposition": "retain_referenced"
+    },
+    {
+      "path": "output/n5_10_lane",
+      "runtime_or_test_references": [],
+      "disposition": "retain_evidence_pending_individual_adjudication"
+    },
+    {
+      "path": "output/n5_20_batchC2_control",
+      "runtime_or_test_references": [],
+      "disposition": "retain_evidence_pending_individual_adjudication"
+    },
+    {
+      "path": "output/n5_20_batchC2_treated",
+      "runtime_or_test_references": [],
+      "disposition": "retain_evidence_pending_individual_adjudication"
+    },
+    {
+      "path": "output/n5_20_batchC_control",
+      "runtime_or_test_references": [
+        "scripts/training/audit_taiji_batch_c_arm_parity.py"
+      ],
+      "disposition": "retain_referenced"
+    },
+    {
+      "path": "output/n5_20_batchC_treated",
+      "runtime_or_test_references": [
+        "scripts/training/audit_taiji_batch_c_arm_parity.py",
+        "tests/taiji_native/test_n5_33_batch_c_arm_parity_contract.py"
+      ],
+      "disposition": "retain_referenced"
+    },
+    {
+      "path": "output/n5_618_off",
+      "runtime_or_test_references": [],
+      "disposition": "retain_evidence_pending_individual_adjudication"
+    },
+    {
+      "path": "output/n5_618_on",
+      "runtime_or_test_references": [],
+      "disposition": "retain_evidence_pending_individual_adjudication"
+    },
+    {
+      "path": "output/n5_shadow_feed",
+      "runtime_or_test_references": [],
+      "disposition": "retain_evidence_pending_individual_adjudication"
+    },
+    {
+      "path": "output/n5_shadow_feed3",
+      "runtime_or_test_references": [],
+      "disposition": "retain_evidence_pending_individual_adjudication"
+    },
+    {
+      "path": "output/n5_shadow_feed4",
+      "runtime_or_test_references": [],
+      "disposition": "retain_evidence_pending_individual_adjudication"
+    },
+    {
+      "path": "output/n5_shadow_feed5",
+      "runtime_or_test_references": [],
+      "disposition": "retain_evidence_pending_individual_adjudication"
+    },
+    {
+      "path": "output/n5_shadow_gate_off",
+      "runtime_or_test_references": [],
+      "disposition": "retain_evidence_pending_individual_adjudication"
+    },
+    {
+      "path": "output/n5_shadow_gate_on",
+      "runtime_or_test_references": [],
+      "disposition": "retain_evidence_pending_individual_adjudication"
+    },
+    {
+      "path": "output/n5d_lane",
+      "runtime_or_test_references": [],
+      "disposition": "retain_evidence_pending_individual_adjudication"
+    },
+    {
+      "path": "output/n5d_rebase_control",
+      "runtime_or_test_references": [
+        "tests/taiji_native/test_n5_18_arm_command_recipe_contract.py"
+      ],
+      "disposition": "retain_referenced"
+    },
+    {
+      "path": "output/n5d_rebase_treated",
+      "runtime_or_test_references": [
+        "tests/taiji_native/test_n5_18_arm_command_recipe_contract.py"
+      ],
+      "disposition": "retain_referenced"
+    },
+    {
+      "path": "output/seed_corpus_smoke_progress_exit.json",
+      "runtime_or_test_references": [
+        "scripts/training/read_taiji_envelope_recipe_face.py",
+        "scripts/training/train_seed_corpus.py",
+        "tests/taiji_native/test_a4_mainline_flags.py",
+        "tests/taiji_native/test_n1_07_answer_source_provenance_contract.py"
+      ],
+      "disposition": "retain_referenced"
+    },
+    {
+      "path": "output/tau_smoke_off",
+      "runtime_or_test_references": [],
+      "disposition": "retain_evidence_pending_individual_adjudication"
+    },
+    {
+      "path": "output/tau_smoke_on",
+      "runtime_or_test_references": [],
+      "disposition": "retain_evidence_pending_individual_adjudication"
+    }
+  ]
+}
