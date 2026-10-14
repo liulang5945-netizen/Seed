@@ -11,10 +11,19 @@ from __future__ import annotations
 
 import argparse
 import json
+import sys
 from pathlib import Path
 from typing import Any
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
+
+#: DEBT-G115 修法③：本仪器既被契约册按文件路径加载、也被起成真子进程，脚本目录
+#: 先上 `sys.path`，统一落盘助手才解析得到（㊵-790／795／796 同一条约定）。
+SCRIPT_DIR = Path(__file__).resolve().parent
+if str(SCRIPT_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPT_DIR))
+
+import _taiji_report_io as report_io  # noqa: E402  (sys.path 先行)
 
 #: 易变字段：比对逐位同之前一律剥掉，件里自述剥了哪些键名。
 VOLATILE_KEYS = frozenset(
@@ -52,7 +61,11 @@ def _strip_volatile(node: Any, top: bool = False) -> Any:
 
     if isinstance(node, dict):
         drop = VOLATILE_KEYS | PROVENANCE_KEYS if top else VOLATILE_KEYS
-        return {key: _strip_volatile(value) for key, value in node.items() if key not in drop}
+        return {
+            key: _strip_volatile(value)
+            for key, value in node.items()
+            if key not in drop
+        }
     if isinstance(node, list):
         return [_strip_volatile(item) for item in node]
     return node
@@ -137,7 +150,9 @@ def _main_column_entries(payload: Any) -> dict[str, dict[str, Any]]:
     def walk(node: Any) -> None:
         if isinstance(node, dict):
             if "never_lf_eaters_counted" in node:
-                source = str(node.get("report") or node.get("path") or node.get("name") or "")
+                source = str(
+                    node.get("report") or node.get("path") or node.get("name") or ""
+                )
                 found[source] = {
                     "never_lf_eaters_counted": node.get("never_lf_eaters_counted"),
                     "generation_rows_seen": node.get("generation_rows_seen"),
@@ -215,8 +230,12 @@ def judge(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
         )
 
     #: G-N2-1 的实证：回退面与巩固前**读数**逐位同（剥掉易变字段与出处字段之后）。
-    comparable_before = json.dumps(_strip_volatile(cap0_before, top=True), sort_keys=True)
-    comparable_rollback = json.dumps(_strip_volatile(cap0_rollback, top=True), sort_keys=True)
+    comparable_before = json.dumps(
+        _strip_volatile(cap0_before, top=True), sort_keys=True
+    )
+    comparable_rollback = json.dumps(
+        _strip_volatile(cap0_rollback, top=True), sort_keys=True
+    )
     g_n2_1_identical = comparable_before == comparable_rollback
 
     #: 动态范围：巩固前后如果整张面读数逐位同，说明这把尺量不动权重变化——不是"保持住了"。
@@ -234,7 +253,9 @@ def judge(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
     for key in shared:
         b, a = arms_before[key], arms_after[key]
         hits_delta = int(a["strict_hits"] or 0) - int(b["strict_hits"] or 0)
-        formed_delta = int(a["well_formed_texts"] or 0) - int(b["well_formed_texts"] or 0)
+        formed_delta = int(a["well_formed_texts"] or 0) - int(
+            b["well_formed_texts"] or 0
+        )
         hits_dropped += int(hits_delta < 0)
         formed_dropped += int(formed_delta < 0)
         replay_rows[key] = {
@@ -263,7 +284,9 @@ def judge(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
         "rollback_tensors_changed": tensor.get("rollback", {}).get("tensors_changed"),
         "candidate_tensors_changed": tensor.get("candidate", {}).get("tensors_changed"),
         "align_pass": align.get("align_pass"),
-        "aligned_tensors_differing": (align.get("tensor_check") or {}).get("tensors_differing"),
+        "aligned_tensors_differing": (align.get("tensor_check") or {}).get(
+            "tensors_differing"
+        ),
         "treated_faces_read_on": "seed_n2_candidate_aligned_20261008.pt",
     }
     stop_entries = _main_column_entries(stop_main) if stop_main else {}
@@ -275,13 +298,15 @@ def judge(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
         "before": before_mc,
         "after": after_mc,
         "delta": (
-            int(after_mc["never_lf_eaters_counted"]) - int(before_mc["never_lf_eaters_counted"])
+            int(after_mc["never_lf_eaters_counted"])
+            - int(before_mc["never_lf_eaters_counted"])
             if stop_measured
             else None
         ),
         "denominator": before_mc.get("generation_rows_seen") if stop_measured else None,
         "items_sha_match": bool(
-            stop_measured and before_mc.get("items_sha256") == after_mc.get("items_sha256")
+            stop_measured
+            and before_mc.get("items_sha256") == after_mc.get("items_sha256")
         ),
         "direction_defined": False,
         "reason": (
@@ -372,12 +397,24 @@ def judge(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="N2 通电面判读器")
-    parser.add_argument("--cap0-before", default="reports/taiji_n2_cap0_before_20261008.json")
-    parser.add_argument("--cap0-after", default="reports/taiji_n2_cap0_after_20261008.json")
-    parser.add_argument("--cap0-rollback", default="reports/taiji_n2_cap0_rollback_20261008.json")
-    parser.add_argument("--replay-before", default="reports/taiji_n2_replay24_before_20261008.json")
-    parser.add_argument("--replay-after", default="reports/taiji_n2_replay24_after_20261008.json")
-    parser.add_argument("--postcheck", default="reports/taiji_n2_postcheck_20261008.json")
+    parser.add_argument(
+        "--cap0-before", default="reports/taiji_n2_cap0_before_20261008.json"
+    )
+    parser.add_argument(
+        "--cap0-after", default="reports/taiji_n2_cap0_after_20261008.json"
+    )
+    parser.add_argument(
+        "--cap0-rollback", default="reports/taiji_n2_cap0_rollback_20261008.json"
+    )
+    parser.add_argument(
+        "--replay-before", default="reports/taiji_n2_replay24_before_20261008.json"
+    )
+    parser.add_argument(
+        "--replay-after", default="reports/taiji_n2_replay24_after_20261008.json"
+    )
+    parser.add_argument(
+        "--postcheck", default="reports/taiji_n2_postcheck_20261008.json"
+    )
     parser.add_argument("--align", default="reports/taiji_n2_align_20261008.json")
     parser.add_argument("--material", default="reports/taiji_n2_material_20261008.json")
     parser.add_argument(
@@ -386,21 +423,39 @@ def main(argv: list[str] | None = None) -> int:
         help="×96 停摆面主列读数（`count_taiji_a30_eater_p_boundary_floor.py` 产出；缺件记 unverified）",
     )
     parser.add_argument("--out", default="reports/taiji_n2_face_verdict_20261008.json")
+    parser.add_argument(
+        "--overwrite",
+        action="store_true",
+        help="目标读数件已存在时允许替换（DEBT-G115 修法③ 家族标准守卫；缺省拒覆写——"
+        "默认落点是在库读数件，重跑取数须显式带此旗标）",
+    )
     args = parser.parse_args(argv)
 
     payload, rc = judge(args)
     out = PROJECT_ROOT / args.out
-    out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(
-        json.dumps(payload, ensure_ascii=False, indent=2) + "\n",
-        encoding="utf-8",
-        newline="\n",
-    )
+    if out.exists() and not args.overwrite:
+        print(
+            json.dumps(
+                {
+                    "format": "taiji-n2-face-verdict-v2",
+                    "status": "refuse_overwrite",
+                    "path": str(out),
+                },
+                ensure_ascii=True,
+            )
+        )
+        return 2
+    report_io.write_json_report(out, payload, newline="\n", overwrite=True)
     #: Windows 控制台是 GBK，判读正文含中文 ⇒ 只印 ASCII 行，中文留给件里。
     print(
-        json.dumps({k: payload[k] for k in ("verdict", "j_n2a") if k in payload}, ensure_ascii=True)
+        json.dumps(
+            {k: payload[k] for k in ("verdict", "j_n2a") if k in payload},
+            ensure_ascii=True,
+        )
     )
-    print("blocking=" + json.dumps(payload.get("blocking_terms", []), ensure_ascii=True))
+    print(
+        "blocking=" + json.dumps(payload.get("blocking_terms", []), ensure_ascii=True)
+    )
     print(f"out -> {out}")
     return rc
 
