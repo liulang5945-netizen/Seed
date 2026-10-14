@@ -22,7 +22,6 @@ import argparse
 import json
 import sys
 import unicodedata
-from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -30,6 +29,9 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 for entry in (PROJECT_ROOT, PROJECT_ROOT / "scripts" / "training"):
     if str(entry) not in sys.path:
         sys.path.insert(0, str(entry))
+
+#: DEBT-G115 修法③：落盘走统一落盘助手（`newline=` 由助手必备参数兜住；拒覆写由本件前置守卫承担）。
+import _taiji_report_io as report_io  # noqa: E402
 
 #: 有机器分数的"不劣化"判定维（立项 §4.3 列 A/B/C；A 是布尔检查，另走 `--*-health`）。
 JUDGED_DIMENSIONS = ("B", "C")
@@ -191,7 +193,36 @@ def main() -> int:
     parser.add_argument("--control-health", default=None, help="A 维（真实性检查）对照那份")
     parser.add_argument("--treated-health", default=None, help="A 维治疗那份（同链路＋挂电路）")
     parser.add_argument("--out-report", default=None)
+    parser.add_argument(
+        "--overwrite",
+        action="store_true",
+        help="目标读数件已存在时允许替换（DEBT-G115 修法③ 家族标准守卫；缺省拒覆写——"
+        "默认落点是在库读数件，重跑取数须显式带此旗标）",
+    )
     args = parser.parse_args()
+
+    out = (
+        Path(args.out_report)
+        if args.out_report
+        else PROJECT_ROOT / "reports/taiji_r2_copy_circuit_regression_gate_20260925.json"
+    )
+    if not out.is_absolute():
+        out = PROJECT_ROOT / out
+    #: 旧行为是「已存在就静默改写成 `stem-HHMMSS.json`」——既不拒绝也不点名，每次重跑都会在 `reports/`
+    #: **悄悄增殖**时间戳件，使「哪份是定版」不可判。改成家族标准形：缺省响亮拒绝，要重跑就显式
+    #: `--overwrite`；想留历史版本仍可 `--out-report` 另给名字。守卫放在两份报告读入之前，不白读。
+    if out.exists() and not args.overwrite:
+        print(
+            json.dumps(
+                {
+                    "format": "taiji-r2-copy-circuit-regression-gate-v1",
+                    "status": "refuse_overwrite",
+                    "path": str(out),
+                },
+                ensure_ascii=True,
+            )
+        )
+        return 2
 
     control, treated = _load(Path(args.control)), _load(Path(args.treated))
     gate = comparability(control, treated)
@@ -272,17 +303,7 @@ def main() -> int:
             else "§4.3 回归门未通过/不可判（如实记录，不解释成通过）"
         ),
     }
-    out = (
-        Path(args.out_report)
-        if args.out_report
-        else PROJECT_ROOT / "reports/taiji_r2_copy_circuit_regression_gate_20260925.json"
-    )
-    if not out.is_absolute():
-        out = PROJECT_ROOT / out
-    if out.exists():
-        out = out.with_name(f"{out.stem}-{datetime.now(UTC).strftime('%H%M%S')}.json")
-    out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    report_io.write_json_report(out, report, newline="\n", overwrite=True)
     #: 报告写在仓库外（自检/回归跑）时也要能打印路径，不能让 relative_to 把整条门跑崩。
     shown = (
         out.relative_to(PROJECT_ROOT).as_posix() if out.is_relative_to(PROJECT_ROOT) else str(out)
