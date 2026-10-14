@@ -1,0 +1,16 @@
+{
+  "format": "taiji-ledger-marker-uniqueness-v1",
+  "playbook": "plans/active/roadmap/08_UPSTREAM_SYNC_PLAYBOOK.md",
+  "bracket_rows": 471,
+  "rows_counted": 471,
+  "distinct_markers": 471,
+  "max_marker": 846,
+  "duplicates": {},
+  "duplicate_lines": {},
+  "nonmonotonic_runs": 15,
+  "verdicts": {
+    "ledger_markers_unique": true
+  },
+  "reading_limit": "只认每行**第一枚**圈号；行内引用别处历史号（正文里的 ㊵-123）不计入，所以这台仪器量的是「这一条登记在哪个号下」，不是「这条提到了谁」。",
+  "started_utc": "2026-10-14T09:47:17Z"
+}

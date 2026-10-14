@@ -37,6 +37,14 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
+#: DEBT-G115 修法③：落盘走统一落盘助手（newline 由助手必备参数兜住）；
+#: 本仪器既被契约册按文件路径加载、也被起成真子进程，脚本目录先上 `sys.path`。
+SCRIPT_DIR = Path(__file__).resolve().parent
+if str(SCRIPT_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPT_DIR))
+
+import _taiji_report_io as report_io  # noqa: E402
+
 from taiji.contracts import EpisodicMemoryRecord  # noqa: E402
 from taiji.episodic_memory import EpisodicMemoryStore  # noqa: E402
 
@@ -89,13 +97,17 @@ def _noised(base: torch.Tensor, seed: int, scale: float) -> torch.Tensor:
     return out / torch.linalg.vector_norm(out, dim=1, keepdim=True)
 
 
-def _tiled_queries(targets: torch.Tensor, per: int, seed: int, scale: float) -> torch.Tensor:
+def _tiled_queries(
+    targets: torch.Tensor, per: int, seed: int, scale: float
+) -> torch.Tensor:
     """每个目标各出 `per` 条带噪查询：行 i 的真值恒为 `targets[i % len(targets)]`。"""
 
     return _noised(targets.repeat(per, 1), seed, scale)
 
 
-def _row(memory_id: str, cue: torch.Tensor, provenance: str = "n4-33-fixture") -> dict[str, Any]:
+def _row(
+    memory_id: str, cue: torch.Tensor, provenance: str = "n4-33-fixture"
+) -> dict[str, Any]:
     return {
         "memory_id": memory_id,
         "cue": [float(v) for v in cue.tolist()],
@@ -151,7 +163,8 @@ def _attribute_scoring_face(source: str) -> dict[str, int]:
     bodies = [
         node
         for node in ast.walk(ast.parse(source))
-        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and node.name == "retrieve"
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+        and node.name == "retrieve"
     ]
     if not bodies:
         raise ValueError("零个 retrieve 函数体：这把尺没扫到任何面，不许出版 0")
@@ -165,13 +178,18 @@ def _attribute_scoring_face(source: str) -> dict[str, int]:
                 continue
             if not isinstance(node, ast.Call):
                 continue
-            called = getattr(node.func, "attr", None) or getattr(node.func, "id", None) or ""
+            called = (
+                getattr(node.func, "attr", None) or getattr(node.func, "id", None) or ""
+            )
             if called not in SIMILARITY_CALLS:
                 continue
             similarity_calls += 1
             if any(_mentions_attribute_token(argument) for argument in node.args):
                 attribute_operands += 1
-    return {"attribute_operands": attribute_operands, "similarity_calls": similarity_calls}
+    return {
+        "attribute_operands": attribute_operands,
+        "similarity_calls": similarity_calls,
+    }
 
 
 def _swap_verdict(
@@ -238,11 +256,19 @@ def _attribute_swap_probe() -> dict[str, Any]:
     top_labeled = labeled.retrieve(cue_one, limit=1, attribute=red)[0].record.memory_id
     top_swapped = swapped.retrieve(cue_one, limit=1, attribute=red)[0].record.memory_id
     #: 正向对照：共享属性下候选集是两条，顶位必须由 cue 说话——换 cue 顶位就得不一样。
-    cue_top_one = labeled.retrieve(cue_one, limit=1, attribute=shared)[0].record.memory_id
-    cue_top_two = labeled.retrieve(cue_two, limit=1, attribute=shared)[0].record.memory_id
+    cue_top_one = labeled.retrieve(cue_one, limit=1, attribute=shared)[
+        0
+    ].record.memory_id
+    cue_top_two = labeled.retrieve(cue_two, limit=1, attribute=shared)[
+        0
+    ].record.memory_id
     #: 污染探针：不带属性时的那张面，在互换属性前后必须逐位相同（含分数）。
-    face_labeled = [(hit.record.memory_id, hit.score) for hit in labeled.retrieve(cue_one, limit=2)]
-    face_swapped = [(hit.record.memory_id, hit.score) for hit in swapped.retrieve(cue_one, limit=2)]
+    face_labeled = [
+        (hit.record.memory_id, hit.score) for hit in labeled.retrieve(cue_one, limit=2)
+    ]
+    face_swapped = [
+        (hit.record.memory_id, hit.score) for hit in swapped.retrieve(cue_one, limit=2)
+    ]
     try:
         labeled.retrieve(cue_one, limit=1, attribute="color=green")
         unbound_raises = False
@@ -265,8 +291,12 @@ def _attribute_swap_probe() -> dict[str, Any]:
 def class_attribute_swap() -> dict[str, Any]:
     """J-N4g-3：两条记忆的可读属性互换后，寻址结果是否跟着互换。"""
 
-    source = Path(EpisodicMemoryStore.retrieve.__code__.co_filename).read_text(encoding="utf-8")
-    retrieve_body = source[source.index("def retrieve(") : source.index("def checkpoint(")]
+    source = Path(EpisodicMemoryStore.retrieve.__code__.co_filename).read_text(
+        encoding="utf-8"
+    )
+    retrieve_body = source[
+        source.index("def retrieve(") : source.index("def checkpoint(")
+    ]
     write_body = source[source.index("def write(") : source.index("def retrieve(")]
     record = _row_payload("probe", _unit(SEED + 9, 1)[0], "OBJ-1")
     payload_keys = sorted(record.to_payload())
@@ -322,7 +352,9 @@ def class_rename(ruler) -> dict[str, Any]:
     queries = _tiled_queries(targets, QUERIES_PER_TARGET, SEED + 1, 0.35)
     ids = [f"target-{index}" for index in range(TARGETS)]
     materials_a = [_row(name, targets[index]) for index, name in enumerate(ids)]
-    materials_b = [_row(f"renamed-{name}", targets[index]) for index, name in enumerate(ids)]
+    materials_b = [
+        _row(f"renamed-{name}", targets[index]) for index, name in enumerate(ids)
+    ]
     query_rows = [
         _query(queries[index], ids[index % TARGETS])
         for index in range(TARGETS * QUERIES_PER_TARGET)
@@ -351,16 +383,21 @@ def class_rename(ruler) -> dict[str, Any]:
     renamed.write(_row_payload("b", cue_two, "OBJ-other"))
     probe_labeled = [hit.record.memory_id for hit in labeled.retrieve(cue_one, limit=2)]
     probe_renamed = [hit.record.memory_id for hit in renamed.retrieve(cue_one, limit=2)]
-    probe_cue_swapped = [hit.record.memory_id for hit in labeled.retrieve(cue_two, limit=2)]
+    probe_cue_swapped = [
+        hit.record.memory_id for hit in labeled.retrieve(cue_two, limit=2)
+    ]
 
     #: ㊵-745 起这一支改走 `PLAN-N4-11` §1 的对象绑定通道：同一对象换了名字必须拿到同一批记录，
     #: 而旧名必须响亮报错。这才让 `J-N4g-2` 第一次有能为假的测法（J-N4h-4）。
     binding = EpisodicMemoryStore(capacity=8)
     third = _unit(SEED + 11, 1)[0]
-    for index, (name, cue) in enumerate((("m-0", cue_one), ("m-1", cue_two), ("m-2", third))):
+    for index, (name, cue) in enumerate(
+        (("m-0", cue_one), ("m-1", cue_two), ("m-2", third))
+    ):
         binding.write(_row_payload(name, cue, f"OBJ-{index}"))
     hits_before = [
-        hit.record.memory_id for hit in binding.retrieve(cue_one, limit=2, object_id="OBJ-0")
+        hit.record.memory_id
+        for hit in binding.retrieve(cue_one, limit=2, object_id="OBJ-0")
     ]
     moved = binding.rename_object("OBJ-0", "OBJ-0-renamed")
     hits_after = [
@@ -385,7 +422,9 @@ def class_rename(ruler) -> dict[str, Any]:
         "absolute_difference": abs(rate_a - rate_b),
         "paired_queries_after_consistent_rename": payload_b.get("paired_queries"),
         "paired_queries_after_record_only_rename": payload_broken.get("paired_queries"),
-        "unpaired_queries_after_record_only_rename": payload_broken.get("unpaired_queries"),
+        "unpaired_queries_after_record_only_rename": payload_broken.get(
+            "unpaired_queries"
+        ),
         "object_ids_carrier_in_retrieve": probe_labeled == probe_renamed,
         "cue_carrier_positive_control": probe_labeled != probe_cue_swapped,
         "verdict": "not_applicable_no_independent_object_identity",
@@ -407,7 +446,9 @@ def class_rename(ruler) -> dict[str, Any]:
     }
 
 
-def _row_payload(memory_id: str, cue: torch.Tensor, object_id: str) -> EpisodicMemoryRecord:
+def _row_payload(
+    memory_id: str, cue: torch.Tensor, object_id: str
+) -> EpisodicMemoryRecord:
     return EpisodicMemoryRecord(
         memory_id=memory_id,
         episode_id=f"episode-{memory_id}",
@@ -437,7 +478,8 @@ def _distractor_lane(ruler, per_target: int) -> dict[str, Any]:
     queries = _tiled_queries(targets, per_target, SEED + 1, 0.35)
     ids = [f"target-{index}" for index in range(TARGETS)]
     query_rows = [
-        _query(queries[index], ids[index % TARGETS]) for index in range(TARGETS * per_target)
+        _query(queries[index], ids[index % TARGETS])
+        for index in range(TARGETS * per_target)
     ]
     base_materials = [_row(name, targets[index]) for index, name in enumerate(ids)]
     treated_materials = base_materials + [
@@ -544,7 +586,8 @@ def class_slot_full() -> dict[str, Any]:
         "criterion": "J-N4g-4(b)",
         "lane": judged,
         "control_lane": control,
-        "control_must_not_report_eviction": control["verdict"] == "not_full_no_eviction",
+        "control_must_not_report_eviction": control["verdict"]
+        == "not_full_no_eviction",
         "verdict": judged["verdict"],
     }
 
@@ -566,7 +609,16 @@ def main(argv: list[str] | None = None) -> int:
     if not out.is_absolute():
         out = PROJECT_ROOT / out
     if out.exists() and not args.overwrite:
-        print(f"refusing to overwrite an existing report: {out}", file=sys.stderr)
+        print(
+            json.dumps(
+                {
+                    "format": REPORT_FORMAT,
+                    "status": "refuse_overwrite",
+                    "path": str(out),
+                },
+                ensure_ascii=True,
+            )
+        )
         return 2
 
     ruler = _load_ruler()
@@ -614,15 +666,12 @@ def main(argv: list[str] | None = None) -> int:
         print("REJECT cited_formula_pin_missing", file=sys.stderr)
         return 2
 
-    out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(
-        json.dumps(payload, ensure_ascii=False, indent=2) + "\n",
-        encoding="utf-8",
-        newline="\n",
-    )
+    report_io.write_json_report(out, payload, newline="\n", overwrite=True)
     print(
         "VERDICTS",
-        json.dumps(verdicts, ensure_ascii=False).encode("ascii", "backslashreplace").decode(),
+        json.dumps(verdicts, ensure_ascii=False)
+        .encode("ascii", "backslashreplace")
+        .decode(),
         "REPORT",
         out.as_posix(),
     )
