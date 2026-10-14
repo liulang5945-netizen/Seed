@@ -41,6 +41,13 @@ from datetime import UTC, datetime
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
+for entry in (PROJECT_ROOT, PROJECT_ROOT / "scripts" / "training"):
+    if str(entry) not in sys.path:
+        sys.path.insert(0, str(entry))
+
+#: DEBT-G115 修法③：落盘走统一落盘助手（`newline=` 由助手必备参数兜住；拒覆写由本件前置守卫承担）。
+import _taiji_report_io as report_io  # noqa: E402
+
 REPORT_FORMAT = "taiji-envelope-recipe-face-v1"
 RECIPE_KEY = "answer_source"
 WEIGHT_FACE_ROOTS = ("checkpoints", "output")
@@ -266,23 +273,44 @@ def main() -> int:
     parser.add_argument("--overwrite", action="store_true")
     args = parser.parse_args()
     root = Path(args.root)
+
+    #: DEBT-G115 修法③＋#81 出口标准：落点求解与守卫**前置到 `read_face()` 之前**（那一步要
+    #: `torch.load` 最多 `--max-mb` 兆的信封）⇒ 落点已存在且无旗标时立刻 rc=2，不白读整面。
+    #: 拒绝出口统一为 `stdout JSON ＋ 退出码 2`（旧态是 stderr 散文——CLIXML 假崩溃，㊵-864…867 在案）。
+    #: 落点形保留「`root / out`」并把 `reports/…` 字面量留在 `--out-report` 默认值里（㊵-854②）。
+    out = Path(args.out_report)
+    if not out.is_absolute():
+        out = root / out
+    if out.exists() and not args.overwrite:
+        print(
+            json.dumps(
+                {
+                    "format": REPORT_FORMAT,
+                    "status": "refuse_overwrite",
+                    "path": str(out),
+                },
+                ensure_ascii=True,
+            )
+        )
+        return 2
+
     try:
         report = read_face(
             root, args.max_files, args.max_mb, args.only, args.roots or list(DEFAULT_ROOTS)
         )
     except ValueError as exc:
-        print(str(exc).encode("ascii", "backslashreplace").decode("ascii"), file=sys.stderr)
+        #: 零样本／点名打空等 ⇒ 响亮拒绝（**同一出口形状**：stdout JSON＋rc=2）。
+        print(
+            json.dumps(
+                {
+                    "status": "refuse_publish",
+                    "error": str(exc).encode("ascii", "backslashreplace").decode("ascii"),
+                },
+                ensure_ascii=True,
+            )
+        )
         return 2
-    out = Path(args.out_report)
-    if not out.is_absolute():
-        out = root / out
-    if out.exists() and not args.overwrite:
-        print(f"refusing to overwrite an existing report: {out}", file=sys.stderr)
-        return 2
-    out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(
-        json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n"
-    )
+    report_io.write_json_report(out, report, newline="\n", overwrite=True)
     print(
         json.dumps(
             {
