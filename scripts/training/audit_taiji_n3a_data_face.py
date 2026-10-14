@@ -31,6 +31,9 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
+#: DEBT-G115 修法③：落盘走统一助手（newline 与拒覆写由助手与前置检查承担）。
+import _taiji_report_io as report_io
+
 #:  disjointness 的窗口长度（字节）。取 24：短于此就可能在真实语料里偶然命中，长于此则扫不动。
 NGRAM_BYTES = 24
 
@@ -117,7 +120,9 @@ def build_face(corpus: list[Path], progress: Path) -> tuple[dict[str, Any], int]
     rows: list[dict[str, Any]] = []
     if progress.is_file():
         rows = [
-            json.loads(line) for line in progress.read_text(encoding="utf-8").splitlines() if line
+            json.loads(line)
+            for line in progress.read_text(encoding="utf-8").splitlines()
+            if line
         ]
     if not rows:
         face["missing"].append("progress_rows")
@@ -183,15 +188,31 @@ def build_face(corpus: list[Path], progress: Path) -> tuple[dict[str, Any], int]
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="N3 甲 §8.7 五项取数面（只读、不动训练器）")
-    parser.add_argument("--corpus", action="append", required=True, help="语料 jsonl（可重复）")
+    parser = argparse.ArgumentParser(
+        description="N3 甲 §8.7 五项取数面（只读、不动训练器）"
+    )
+    parser.add_argument(
+        "--corpus", action="append", required=True, help="语料 jsonl（可重复）"
+    )
     parser.add_argument("--progress", required=True, help="该次训练的 progress.jsonl")
-    parser.add_argument("--out-report", default=None, help="落盘路径；不给只打到 stdout")
+    parser.add_argument(
+        "--out-report", default=None, help="落盘路径；不给只打到 stdout"
+    )
+    parser.add_argument(
+        "--overwrite",
+        action="store_true",
+        help="目标读数件已存在时允许替换（DEBT-G115 修法③ 家族标准守卫；缺省拒覆写）",
+    )
     args = parser.parse_args(argv)
 
-    corpus = [Path(raw) if Path(raw).is_absolute() else PROJECT_ROOT / raw for raw in args.corpus]
+    corpus = [
+        Path(raw) if Path(raw).is_absolute() else PROJECT_ROOT / raw
+        for raw in args.corpus
+    ]
     progress = (
-        Path(args.progress) if Path(args.progress).is_absolute() else PROJECT_ROOT / args.progress
+        Path(args.progress)
+        if Path(args.progress).is_absolute()
+        else PROJECT_ROOT / args.progress
     )
     face, rc = build_face(corpus, progress)
 
@@ -200,8 +221,20 @@ def main(argv: list[str] | None = None) -> int:
         target = Path(args.out_report)
         if not target.is_absolute():
             target = PROJECT_ROOT / target
-        target.parent.mkdir(parents=True, exist_ok=True)
-        target.write_text(text + "\n", encoding="utf-8", newline="\n")
+        if target.exists() and not args.overwrite:
+            print(
+                json.dumps(
+                    {
+                        "format": "taiji-n3a-data-face-v1",
+                        "status": "refuse_overwrite",
+                        "path": str(target),
+                    }
+                )
+                .encode("unicode_escape")
+                .decode("ascii")
+            )
+            return 2
+        report_io.write_json_report(target, face, newline="\n", overwrite=True)
     #: 控制台是 GBK，正文含中文 ⇒ 只打 ASCII 转义（否则 rc 会被编码崩溃伪装成崩溃）。
     print(text.encode("unicode_escape").decode("ascii"))
     return rc
