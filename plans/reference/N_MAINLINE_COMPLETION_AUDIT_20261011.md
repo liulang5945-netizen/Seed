@@ -202,3 +202,6 @@ DEBT-G78、G94③ 与 G90、G101（债表列形漂移，登记不改）、**G102
    `git status --porcelain -- reports/`。第一段若以任一路径中止（臂 rc 非 0／地板拒收／CAP 失败／
    HEAD 移动／配对拒收／等待超时），第二段直接跳过整族并留 `exit 3` 痕迹。同样**只取证不判读**：
    日志里的 rc 与汇总行要由读到它的那一格自己判，"跑完了"不等于"绿了"。
+
+6. ㊵-824～826 三轮的落点（2026-10-14T02:43Z 现取，HEAD 本地 `dfda464e6`）：**地板这条线已经收口**——`PLAN-N5-26` §2 探针实测换 seed 连基座都装不上（`ValueError: receptor channel map does not match architecture`，机制在 `taiji/organs.py:99-104`／`:162-165`），owner 十四裁 ⑴ 因此择丙＝承认可测不到⇒ `PLAN-N5-23` §5 已把「等第二个档」这句假设关掉，批次 C 的幅度句是「无地板可依」不是「差被地板挡住」，两种说法不许混写；那 ≈15.2 小时**不再花**。DEBT-G136 择乙并已落盘（豁免＝两条具名边，本机门 rc=0、该册 76 passed、负对照 `1 failed | 75 passed`），**但结清要的是 CI 面 `hygiene (18 leaves)`＝`18 passed, 0 failed` 加 run 号与时刻**。
+7. **本轮 `git push` 两次都失败**（02:42:51Z 与 02:43:02Z，`Could not resolve host: github.com`）⇒ 现状＝`main...origin/main [ahead 1]`，`dfda464e6` 只在本地。下一格的第一件就是：先 `git push origin main`并确认 rc=0，再去读那一条 CI（推不动就先登记「未推」，不要改成「已推」）。臂侧读数仍由两个仓外驱动取证（`chain812/log.txt` 现读不存在＝它还没等到 `CHAIN_DONE_UTC`；对照臂 `state.txt` 末行现读到 `ARM2_START_UTC=2026-10-13T22:03:29Z`）⇒ 先读日志再决定要不要自己起命令。
