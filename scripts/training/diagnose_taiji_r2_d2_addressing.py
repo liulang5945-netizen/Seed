@@ -9,6 +9,7 @@ initialization gives the contrast.  Diagnostic only; not a gate run.
 
 from __future__ import annotations
 
+import argparse
 import json
 import math
 import sys
@@ -16,8 +17,12 @@ from pathlib import Path
 from typing import Any
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
-sys.path.insert(0, str(PROJECT_ROOT))
+for entry in (PROJECT_ROOT, PROJECT_ROOT / "scripts" / "training"):
+    if str(entry) not in sys.path:
+        sys.path.insert(0, str(entry))
 
+#: DEBT-G115 修法③：落盘走统一落盘助手（`newline=` 由助手必备参数兜住；拒覆写由本件前置守卫承担）。
+import _taiji_report_io as report_io  # noqa: E402
 import torch  # noqa: E402
 
 from scripts.training.build_taiji_r2_d1_measurement_fixture import MATERIAL_CLAUSE  # noqa: E402
@@ -74,6 +79,34 @@ def _measure(prototype: SequenceWorkspacePrototype, row: dict[str, Any]) -> dict
 
 
 def main() -> int:
+    #: DEBT-G115 修法③：本件**无 CLI**，为守卫新装一个只含 `--overwrite` 的 argparse；
+    #: 拒覆检查放在**任何训练之前** ⇒ 落点已存在且无旗标 ⇒ 立刻 rc=2，不白烧 30 轮。
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--overwrite",
+        action="store_true",
+        help="目标读数件已存在时允许替换（DEBT-G115 修法③ 家族标准守卫；缺省拒覆写——"
+        "默认落点是在库读数件，重跑取数须显式带此旗标）",
+    )
+    args = parser.parse_args()
+
+    #: 旧行为是「CWD 相对、无条件静默覆写」——换目录跑会写歪，且既不拒绝也不点名。
+    #: 改成家族标准形：落点钉到 `PROJECT_ROOT`（**字面量仍留在写靶变量自己的绑定里**，见 ㊵-854②），
+    #: 缺省响亮拒绝、要重跑须显式 `--overwrite`。
+    out = PROJECT_ROOT / "reports/r2_d2_addressing_diagnostic_20260918.json"
+    if out.exists() and not args.overwrite:
+        print(
+            json.dumps(
+                {
+                    "format": "taiji-r2-d2-addressing-diagnostic-v1",
+                    "status": "refuse_overwrite",
+                    "path": str(out),
+                },
+                ensure_ascii=True,
+            )
+        )
+        return 2
+
     rows = _load_train()
     episodes = tuple(
         (row["prefix"].encode("utf-8"), row["response"].encode("utf-8")) for row in rows
@@ -100,8 +133,7 @@ def main() -> int:
         "growth_admitted": False,
         "can_promote": False,
     }
-    out = Path("reports/r2_d2_addressing_diagnostic_20260918.json")
-    out.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    report_io.write_json_report(out, payload, newline="\n", overwrite=True)
     for label, group in (("init", before), ("trained", after)):
         print(
             label,
