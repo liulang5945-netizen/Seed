@@ -32,6 +32,9 @@ for entry in (PROJECT_ROOT, PROJECT_ROOT / "scripts" / "training"):
     if str(entry) not in sys.path:
         sys.path.insert(0, str(entry))
 
+#: DEBT-G115 修法③：落盘走统一落盘助手（`newline=` 由助手必备参数兜住；拒覆写由本件前置守卫承担）。
+import _taiji_report_io as report_io  # noqa: E402
+
 from taiji.homeostasis import HomeostaticController, HomeostaticState  # noqa: E402
 
 REPORT_FORMAT = "taiji-n5-12-wake-schedule-arms-v1"
@@ -258,17 +261,28 @@ def main() -> int:
     )
     parser.add_argument("--overwrite", action="store_true", help="显式允许覆写已存在的报告件")
     args = parser.parse_args()
-    report = measure(seed=args.seed)
+
     out = Path(args.out_report)
     if not out.is_absolute():
         out = PROJECT_ROOT / out
+    #: DEBT-G115 修法③＋#81 出口标准：守卫**前置**到 `measure()` 之前；拒绝出口统一为
+    #: `stdout JSON ＋ 退出码 2`（旧态 stderr 散文在 PowerShell 下会被 CLIXML 包成"假崩溃"——
+    #: ㊵-837／㊵-864／㊵-865 已在案）。落点求解保留字面量在写靶变量的绑定里（㊵-854②）。
     if out.exists() and not args.overwrite:
-        print(f"refusing to overwrite an existing report: {out}", file=sys.stderr)
+        print(
+            json.dumps(
+                {
+                    "format": REPORT_FORMAT,
+                    "status": "refuse_overwrite",
+                    "path": str(out),
+                },
+                ensure_ascii=True,
+            )
+        )
         return 2
-    out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(
-        json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n"
-    )
+
+    report = measure(seed=args.seed)
+    report_io.write_json_report(out, report, newline="\n", overwrite=True)
     print(
         json.dumps({"verdicts": report["verdicts"], "flips": report["flips"]}, ensure_ascii=False)
     )
