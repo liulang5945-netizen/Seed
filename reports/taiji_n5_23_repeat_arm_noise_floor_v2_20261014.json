@@ -1,0 +1,129 @@
+{
+  "arms": {
+    "batchc_treated": {
+      "status": "completed",
+      "base_checkpoint_sha256": "d6169a358eaee6d194d4795e3167a7bcbb42dfde57b92aa1199bcebbed89699b",
+      "symbols_budget": 8900000,
+      "skip_symbols": 11199800,
+      "fresh": true,
+      "symbols_consumed": 8900000,
+      "feed_every_symbols": 50
+    },
+    "batchc_control": {
+      "status": "completed",
+      "base_checkpoint_sha256": "d6169a358eaee6d194d4795e3167a7bcbb42dfde57b92aa1199bcebbed89699b",
+      "symbols_budget": 8900000,
+      "skip_symbols": 11199800,
+      "fresh": true,
+      "symbols_consumed": 8900000,
+      "feed_every_symbols": 0
+    },
+    "repeat_treated": {
+      "status": "completed",
+      "base_checkpoint_sha256": "d6169a358eaee6d194d4795e3167a7bcbb42dfde57b92aa1199bcebbed89699b",
+      "symbols_budget": 8900000,
+      "skip_symbols": 11199800,
+      "fresh": true,
+      "symbols_consumed": 8900000,
+      "feed_every_symbols": 50
+    },
+    "repeat_control": {
+      "status": "completed",
+      "base_checkpoint_sha256": "d6169a358eaee6d194d4795e3167a7bcbb42dfde57b92aa1199bcebbed89699b",
+      "symbols_budget": 8900000,
+      "skip_symbols": 11199800,
+      "fresh": true,
+      "symbols_consumed": 8900000,
+      "feed_every_symbols": 0
+    }
+  },
+  "floors": {
+    "cumulative_mean_surprise": {
+      "values": {
+        "batchc_treated": 7.292338228651582,
+        "batchc_control": 6.338022402771622,
+        "repeat_treated": 7.292338228651582,
+        "repeat_control": 6.338022402771622
+      },
+      "spread_treated_role": 0.0,
+      "spread_control_role": 0.0,
+      "floor": 0.0,
+      "observed_difference_batchc": 0.9543158258799602,
+      "verdict": "no_spread_unjudged",
+      "unit": "\u4ef6\u91cc\u90a3\u4e00\u5217\u7684\u539f\u503c\uff1b\u5730\u677f\uff1d\u540c\u89d2\u8272\u4e24\u4e24\u5dee\u7edd\u5bf9\u503c\u53d6\u5927"
+    },
+    "cumulative_online_accuracy": {
+      "values": {
+        "batchc_treated": 0.2577822761553119,
+        "batchc_control": 0.26236070363603414,
+        "repeat_treated": 0.2577822761553119,
+        "repeat_control": 0.26236070363603414
+      },
+      "spread_treated_role": 0.0,
+      "spread_control_role": 0.0,
+      "floor": 0.0,
+      "observed_difference_batchc": 0.004578427480722236,
+      "verdict": "no_spread_unjudged",
+      "unit": "\u4ef6\u91cc\u90a3\u4e00\u5217\u7684\u539f\u503c\uff1b\u5730\u677f\uff1d\u540c\u89d2\u8272\u4e24\u4e24\u5dee\u7edd\u5bf9\u503c\u53d6\u5927"
+    }
+  },
+  "cap": {
+    "dimensions": [
+      "C",
+      "D",
+      "E"
+    ],
+    "per_dimension": {
+      "C": {
+        "batchc_delta": 0,
+        "repeat_delta": 0,
+        "floor": 0
+      },
+      "D": {
+        "batchc_delta": -1,
+        "repeat_delta": -1,
+        "floor": 0
+      },
+      "E": {
+        "batchc_delta": 0,
+        "repeat_delta": 0,
+        "floor": 0
+      }
+    },
+    "note": "CAP \u7684\u5730\u677f\uff1d\u540c\u4e00\u7ef4\u5ea6\u4e24\u6b21 `delta` \u4e4b\u5dee\u7684\u7edd\u5bf9\u503c\uff1b\u4e24\u8d9f\u5404\u81ea\u987b `pairing_valid=true`\u3002"
+  },
+  "verdicts": {
+    "all_four_arms_at_budget": true,
+    "same_configuration_within_role": true,
+    "floors_formed": true,
+    "runner_commit_equal_across_campaigns": false,
+    "any_metric_leaves_its_floor": false
+  },
+  "format": "taiji-n5-23-repeat-arm-noise-floor-v2",
+  "prereg": "plans/reference/PLAN-N5-23_repeat_arm_noise_floor_prereg_20261013.md \u00a72",
+  "reading_limit": "\u672c\u4ef6\u53ea\u8bf4\u300c\u540c\u914d\u7f6e\u518d\u5b9e\u73b0\u4e00\u6b21\u7684\u6563\u5e03\u6709\u591a\u5927\u300d\u4e0e\u300c\u6279\u6b21 C \u90a3\u679a\u89c2\u5bdf\u5dee\u80fd\u4e0d\u80fd\u79bb\u5f00\u90a3\u4e2a\u6563\u5e03\u300d\u3002\u5b83\u4e0d\u7ed9\u80fd\u529b\u5206\u6570\u3001\u4e0d\u7ed9\u673a\u5236\u3001\u4e0d\u7ed9\u56e0\u679c\uff1a\u5e45\u5ea6\u53e5\u88ab\u652f\u6301\u65f6\u4e5f\u53ea\u5230\u300c\u79bb\u5f00/\u672a\u79bb\u5f00\u6563\u5e03\u300d\uff0c\u8981\u628a\u5dee\u5199\u6210\u4e3b\u5f20\u8fd8\u5f97\u70b9\u540d\u662f\u54ea\u4e24\u679a\u4ef6\u3001\u54ea\u5f20\u9762\u3001\u4ec0\u4e48\u9884\u7b97\u3002`--cap-pairing-*` \u6307\u5230\u7684\u914d\u5bf9\u4ef6\u82e5 `verdict` \u975e `holds` \u6216 `pairing_valid` \u975e\u771f\uff0c\u672c\u4ef6\u5728\u7b97\u5730\u677f\u4e4b\u524d\u5c31\u62d2\u6536\uff08rc=2\u3001\u4e0d\u843d\u534a\u4ef6\uff09\u21d2 \u4ef6\u91cc\u7684 CAP \u7ef4\u5730\u677f\u53ea\u5728\u4e24\u8d9f CAP \u914d\u5bf9\u8d44\u683c\u9f50\u65f6\u624d\u5b58\u5728\u3002",
+  "runner_commits": {
+    "batchc": {
+      "treated": "9299352d439b7e651e2c1ff63d13178511ae2b84",
+      "control": "9299352d439b7e651e2c1ff63d13178511ae2b84"
+    },
+    "repeat": {
+      "treated": "fe39dfadef6e67103e647e00a8f6eb0bb5b04274",
+      "control": "fe39dfadef6e67103e647e00a8f6eb0bb5b04274"
+    }
+  },
+  "inputs_as_given": [
+    "output\\n5_20_batchC_treated\\A\\run_report.json",
+    "output\\n5_20_batchC_control\\A\\run_report.json",
+    "output\\n5_20_batchC2_treated\\A\\run_report.json",
+    "output\\n5_20_batchC2_control\\A\\run_report.json",
+    "reports\\taiji_batch_c_arm_parity_20261013.json",
+    "reports\\taiji_batch_c2_arm_parity_20261014.json",
+    "reports\\taiji_n5_22_cap0_batch_c_pairing_20261013.json",
+    "reports\\taiji_n5_23_cap0_repeat_pairing_20261014.json"
+  ],
+  "failing_verdicts": [
+    "runner_commit_equal_across_campaigns"
+  ],
+  "verdict": "rejected"
+}

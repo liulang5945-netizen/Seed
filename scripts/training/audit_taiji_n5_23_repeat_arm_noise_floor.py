@@ -12,6 +12,10 @@
 * `same_configuration_within_role`——同角色的两枚件必须同基座 sha、同预算、同 `skip_symbols`、
   同 `fresh`、同 `generated_feed.every_symbols`；否则那是第四臂，不是重复。
 * `floors_formed`——每个进判据的指标都真的算出了地板。
+* `runner_commit_equal_across_campaigns`——`--parity-batchc`／`--parity-repeat` 两枚并排件现读的
+  `runner_commit_per_arm` 必须逐角色相等。缺这一条会把 `J-N5v-1` 的红漏成 `holds`：㊵-833 实测两臂跑器
+  同为 `fe39dfadef6e…`、批次 C 那枚是 `9299352d439b…`，而仪器照样给了资格齐——跑器版差正是 §2 里
+  「任一项不同就不是重复」的那一项。
 
 地板为 `0.0` 的出口是 `no_spread_unjudged` 而**不是**「散布很小」：两次逐位相同更常见的含义是
 某处根本没被走到（恒等式读数不是观察）。
@@ -34,7 +38,10 @@ if str(SCRIPT_DIR) not in sys.path:
 
 import _taiji_report_io as report_io  # noqa: E402
 
-REPORT_FORMAT = "taiji-n5-23-repeat-arm-noise-floor-v1"
+#: v2 的原因：资格面多了 `runner_commit` 一条，件里多出 `runner_commits` 与那枚判据键。
+#: v1 那枚已入库读数（`reports/taiji_n5_23_repeat_arm_noise_floor_20261014.json`）**不覆写**——
+#: 按 `PLAN-N5-23` §6 的规矩，它只能连着并排仪的 `runner_commit_per_arm` 一起引。
+REPORT_FORMAT = "taiji-n5-23-repeat-arm-noise-floor-v2"
 #: 进判据的训练面指标（单位＝件里那一列的原值，不做二次归一）。
 METRICS = ("cumulative_mean_surprise", "cumulative_online_accuracy")
 READING_LIMIT = (
@@ -139,6 +146,30 @@ def _floors(
     return out
 
 
+def _runner_pair(batchc: Path, repeat: Path) -> dict[str, dict[str, str]]:
+    """Take the per-arm runner commits from two arm-parity reports.
+
+    A parity report whose own verdict is not ``holds`` is refused before any floor is priced:
+    a failed parity means the two arms are not one comparison at all.
+    """
+
+    out: dict[str, dict[str, str]] = {}
+    for label, path in (("batchc", batchc), ("repeat", repeat)):
+        resolved = path if path.is_absolute() else PROJECT_ROOT / path
+        if not resolved.is_file():
+            raise FileNotFoundError(f"parity report missing: {resolved}")
+        payload = json.loads(resolved.read_text(encoding="utf-8"))
+        if payload.get("verdict") != "holds":
+            raise ValueError(f"parity report {resolved.name} verdict is not holds")
+        commits = payload.get("runner_commit_per_arm")
+        if not isinstance(commits, dict) or not {"treated", "control"} <= set(commits):
+            raise ValueError(f"parity report {resolved.name} lacks runner_commit_per_arm")
+        if any(str(value).startswith("UNRESOLVED") for value in commits.values()):
+            raise ValueError(f"parity report {resolved.name} runner commit unresolved")
+        out[label] = {key: str(value) for key, value in commits.items()}
+    return out
+
+
 def build(
     treated_c: dict[str, Any],
     control_c: dict[str, Any],
@@ -146,6 +177,7 @@ def build(
     control_r: dict[str, Any],
     cap_batchc: dict[str, int] | None,
     cap_repeat: dict[str, int] | None,
+    runner: dict[str, dict[str, str]],
 ) -> dict[str, Any]:
     arms = {
         "batchc_treated": _config(treated_c),
@@ -196,6 +228,10 @@ def build(
             "all_four_arms_at_budget": at_budget,
             "same_configuration_within_role": same_config,
             "floors_formed": formed,
+            "runner_commit_equal_across_campaigns": (
+                runner["batchc"]["treated"] == runner["repeat"]["treated"]
+                and runner["batchc"]["control"] == runner["repeat"]["control"]
+            ),
             "any_metric_leaves_its_floor": formed
             and any(row.get("verdict") == "magnitude_supported" for row in floors.values()),
         },
@@ -212,6 +248,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--batchc-control", type=Path, required=True)
     parser.add_argument("--repeat-treated", type=Path, required=True)
     parser.add_argument("--repeat-control", type=Path, required=True)
+    parser.add_argument("--parity-batchc", type=Path, required=True)
+    parser.add_argument("--parity-repeat", type=Path, required=True)
     parser.add_argument("--cap-pairing-batchc", type=Path, default=None)
     parser.add_argument("--cap-pairing-repeat", type=Path, default=None)
     parser.add_argument("--out-report", type=Path, required=True)
@@ -228,6 +266,7 @@ def main(argv: list[str] | None = None) -> int:
         return 2
 
     try:
+        runner = _runner_pair(args.parity_batchc, args.parity_repeat)
         payload = build(
             _load_run(args.batchc_treated),
             _load_run(args.batchc_control),
@@ -235,6 +274,7 @@ def main(argv: list[str] | None = None) -> int:
             _load_run(args.repeat_control),
             _cap_deltas(args.cap_pairing_batchc),
             _cap_deltas(args.cap_pairing_repeat),
+            runner,
         )
     except (FileNotFoundError, ValueError) as error:
         print(json.dumps({"format": REPORT_FORMAT, "status": "refuse_input", "detail": str(error)}))
@@ -243,11 +283,14 @@ def main(argv: list[str] | None = None) -> int:
     payload["format"] = REPORT_FORMAT
     payload["prereg"] = "plans/reference/PLAN-N5-23_repeat_arm_noise_floor_prereg_20261013.md §2"
     payload["reading_limit"] = READING_LIMIT
+    payload["runner_commits"] = runner
     payload["inputs_as_given"] = [
         str(args.batchc_treated),
         str(args.batchc_control),
         str(args.repeat_treated),
         str(args.repeat_control),
+        str(args.parity_batchc),
+        str(args.parity_repeat),
         str(args.cap_pairing_batchc) if args.cap_pairing_batchc else None,
         str(args.cap_pairing_repeat) if args.cap_pairing_repeat else None,
     ]
@@ -257,6 +300,7 @@ def main(argv: list[str] | None = None) -> int:
         "all_four_arms_at_budget",
         "same_configuration_within_role",
         "floors_formed",
+        "runner_commit_equal_across_campaigns",
     )
     payload["failing_verdicts"] = [
         key for key in qualification_keys if not payload["verdicts"][key]

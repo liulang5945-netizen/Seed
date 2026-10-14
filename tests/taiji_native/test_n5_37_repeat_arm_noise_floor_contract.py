@@ -57,8 +57,21 @@ def _write(path: Path, payload: dict[str, Any]) -> Path:
     return path
 
 
+def _parity(tmp_path: Path, name: str, treated: str, control: str) -> Path:
+    """Synthesise the two-armed parity report the floor instrument now requires as input."""
+
+    return _write(
+        tmp_path / name,
+        {"verdict": "holds", "runner_commit_per_arm": {"treated": treated, "control": control}},
+    )
+
+
 def _args(tmp_path: Path, four: list[dict[str, Any]], out_name: str) -> list[str]:
     paths = [_write(tmp_path / f"arm{index}.json", payload) for index, payload in enumerate(four)]
+    parity = [
+        _parity(tmp_path, "parity_batchc.json", "commit-A", "commit-A"),
+        _parity(tmp_path, "parity_repeat.json", "commit-A", "commit-A"),
+    ]
     return [
         "--batchc-treated",
         str(paths[0]),
@@ -68,6 +81,10 @@ def _args(tmp_path: Path, four: list[dict[str, Any]], out_name: str) -> list[str
         str(paths[2]),
         "--repeat-control",
         str(paths[3]),
+        "--parity-batchc",
+        str(parity[0]),
+        "--parity-repeat",
+        str(parity[1]),
         "--out-report",
         str(tmp_path / out_name),
     ]
@@ -231,6 +248,10 @@ def test_an_unqualified_cap_pairing_is_refused_not_priced(tmp_path: Path) -> Non
 def test_missing_input_wrong_kind_and_overwrite_guard(tmp_path: Path) -> None:
     good = _write(tmp_path / "good.json", _run_report(7.0, 0.25))
     not_run = _write(tmp_path / "not_run.json", {"format": "something-else"})
+    parity = [
+        _parity(tmp_path, "p_batchc.json", "commit-A", "commit-A"),
+        _parity(tmp_path, "p_repeat.json", "commit-A", "commit-A"),
+    ]
     base = [
         "--batchc-treated",
         str(good),
@@ -240,6 +261,10 @@ def test_missing_input_wrong_kind_and_overwrite_guard(tmp_path: Path) -> None:
         str(good),
         "--repeat-control",
         str(good),
+        "--parity-batchc",
+        str(parity[0]),
+        "--parity-repeat",
+        str(parity[1]),
         "--out-report",
         str(tmp_path / "never.json"),
     ]
@@ -278,3 +303,74 @@ def test_published_reading_limit_carries_the_pairing_refusal(tmp_path: Path) -> 
     assert not all(
         token in clause[:108] for token in ("pairing_valid", "holds", "rc=2")
     ), "the refusal clause must be the part that arrived, not already-present wording"
+
+
+def test_a_runner_version_difference_is_not_a_repeat(tmp_path: Path) -> None:
+    """跑器版差必须把地板仪拦下来——㊵-833 实测这一支原先**没人守**。
+
+    两臂 `runner_commit` 同为 `fe39dfadef6e…`、批次 C 那枚是 `9299352d439b…` 时，仪器当时照样给
+    `verdict=holds` 与 `same_configuration_within_role=true`，而 `J-N5v-1` 按 §2 原文已判红。
+    两支都走：同版出数（上面那批测）、异版必须 rc=1，且**点名的失败只有新加的那一条**——
+    连带把原有三条资格一起打翻的话，这条红就说不清是谁的错。
+    """
+
+    four = [
+        _run_report(7.0, 0.25),
+        _run_report(6.0, 0.26),
+        _run_report(7.0, 0.25),
+        _run_report(6.0, 0.26),
+    ]
+    other = _parity(tmp_path, "p_other.json", "commit-B", "commit-B")
+    rc = FLOOR.main(_args(tmp_path, four, "verdiff.json") + ["--parity-repeat", str(other)])
+    payload = json.loads((tmp_path / "verdiff.json").read_text(encoding="utf-8"))
+    assert rc == 1, rc
+    assert payload["verdict"] == "rejected"
+    assert payload["failing_verdicts"] == ["runner_commit_equal_across_campaigns"]
+    assert payload["runner_commits"]["batchc"]["treated"] == "commit-A"
+    assert payload["runner_commits"]["repeat"]["treated"] == "commit-B"
+    assert payload["verdicts"]["same_configuration_within_role"] is True
+
+
+def test_a_parity_report_that_is_not_holds_is_refused(tmp_path: Path) -> None:
+    """并排件自己不合格 ⇒ rc=2 且不落半件：资格面不许建立在一次失败的并排取证上。"""
+
+    four = [
+        _run_report(7.0, 0.25),
+        _run_report(6.0, 0.26),
+        _run_report(7.0, 0.25),
+        _run_report(6.0, 0.26),
+    ]
+    bad = _write(
+        tmp_path / "p_bad.json",
+        {"verdict": "rejected", "runner_commit_per_arm": {"treated": "x", "control": "x"}},
+    )
+    rc = FLOOR.main(_args(tmp_path, four, "parity_refused.json") + ["--parity-batchc", str(bad)])
+    assert rc == 2, rc
+    assert not (tmp_path / "parity_refused.json").exists(), "refusal must leave no artifact"
+    # 缺键同样按不合格处理：不许把"键不在"当成"旧格式没问题"。
+    shapeless = _write(tmp_path / "p_shape.json", {"verdict": "holds"})
+    assert (
+        FLOOR.main(
+            _args(tmp_path, four, "shape_refused.json") + ["--parity-batchc", str(shapeless)]
+        )
+        == 2
+    )
+    assert not (tmp_path / "shape_refused.json").exists()
+
+
+def test_parity_inputs_are_required_on_the_command_face(tmp_path: Path) -> None:
+    """两枚并排入参必须是**必需**的：可选就等于允许没人传，那条资格会静默失效。"""
+
+    four = [
+        _run_report(7.0, 0.25),
+        _run_report(6.0, 0.26),
+        _run_report(7.0, 0.25),
+        _run_report(6.0, 0.26),
+    ]
+    without = _args(tmp_path, four, "no_parity.json")
+    cut = without.index("--parity-batchc")
+    del without[cut : cut + 4]
+    with pytest.raises(SystemExit) as stop:
+        FLOOR.main(without)
+    assert stop.value.code == 2
+    assert not (tmp_path / "no_parity.json").exists()
