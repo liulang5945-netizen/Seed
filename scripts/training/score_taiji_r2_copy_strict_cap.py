@@ -15,7 +15,8 @@
 * `--report <判决件> [--report ...]`：**零训练复算**已落地报告（只读，产新报告）；
 * `--checkpoint/--circuit` 跑臂是 A2.3b 判读件的事，本件只负责口径与复算，不重跑模型。
 
-纪律：不覆写既有判决件；输出文件已存在则加时间戳。
+纪律：不覆写既有判决件；输出文件已存在则**响亮拒绝**（要重跑须显式 `--overwrite`；
+想留历史版本用 `--out-report` 另给名字，不再自动加时间戳）。
 """
 
 from __future__ import annotations
@@ -23,13 +24,20 @@ from __future__ import annotations
 import argparse
 import json
 import sys
-from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
+
+#: DEBT-G115 修法③：落盘走统一落盘助手（`newline=` 由助手必备参数兜住；拒覆写由本件前置守卫承担）。
+#: 本件既被别枚仪器 `from … import copyable_tokens`／`load_items` 取数、也被直起 ⇒ 脚本目录先上 `sys.path`。
+SCRIPT_DIR = Path(__file__).resolve().parent
+if str(SCRIPT_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPT_DIR))
+
+import _taiji_report_io as report_io  # noqa: E402
 
 MANIFEST = PROJECT_ROOT / "plans/manifests/cap0_eval_set_v2.json"
 #: 判决件行内答案字段的候选名（不同批次命名不同，按存在取用）。
@@ -146,7 +154,36 @@ def main() -> int:
         help="要复算的判决件（可多次给出）；默认复算 A2.3/A2.4 两份已落地报告",
     )
     parser.add_argument("--out-report", default=None)
+    parser.add_argument(
+        "--overwrite",
+        action="store_true",
+        help="目标读数件已存在时允许替换（DEBT-G115 修法③ 家族标准守卫；缺省拒覆写——"
+        "默认落点是在库读数件，重跑取数须显式带此旗标）",
+    )
     args = parser.parse_args()
+
+    out = (
+        Path(args.out_report)
+        if args.out_report
+        else (PROJECT_ROOT / "reports/taiji_r2_copy_strict_cap_recompute_20260925.json")
+    )
+    if not out.is_absolute():
+        out = PROJECT_ROOT / out
+    #: 旧行为是「已存在就静默改写成 `stem-HHMMSS.json`」（本件 docstring 原文即「输出文件已存在则加时间戳」）
+    #: ——既不拒绝也不点名，每次重跑都会在 `reports/` **悄悄增殖**时间戳件，使「哪份是定版」不可判。
+    #: 改成家族标准形：缺省响亮拒绝，要重跑就显式 `--overwrite`；想留历史版本仍可 `--out-report` 另给名字。
+    if out.exists() and not args.overwrite:
+        print(
+            json.dumps(
+                {
+                    "format": "taiji-r2-copy-strict-cap-recompute-v1",
+                    "status": "refuse_overwrite",
+                    "path": str(out),
+                },
+                ensure_ascii=True,
+            )
+        )
+        return 2
 
     items = load_items()
     defaults = [
@@ -171,15 +208,7 @@ def main() -> int:
         },
         "reports": [recompute(path, items) for path in paths],
     }
-    out = (
-        Path(args.out_report)
-        if args.out_report
-        else (PROJECT_ROOT / "reports/taiji_r2_copy_strict_cap_recompute_20260925.json")
-    )
-    if out.exists():
-        out = out.with_name(f"{out.stem}-{datetime.now(UTC).strftime('%H%M%S')}.json")
-    out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    report_io.write_json_report(out, report, newline="\n", overwrite=True)
     summary = {
         "strict_eligible_by_dimension": report["strict_eligible_by_dimension"],
         "arms": {
