@@ -1,0 +1,27 @@
+{
+  "format": "taiji-family-baseline-adjudication-v1",
+  "head_at_launch": "5173dc447d9271a744ef78cbcf080956cc602fcf",
+  "head_subject": "docs(n1): \u3265-835 PLAN-N1-05 起草落盘＝DEBT-G142 修法① 结——「逐步再激活的持久载体」预注册（判据先冻不开跑）",
+  "command": "python -m pytest tests/ -q",
+  "summary_line": "1 failed, 3336 passed, 23 skipped, 1 xfailed, 3 warnings in 2337.82s (0:38:57)",
+  "concurrency_disclosure": "非零并发窗：起跑后前段与并行会话的 train_seed_corpus.py --smoke 两枚（先后 PID 2332/27604）交叠，并发停止后余程为干净窗；判读只认汇总行，本面不作零并发窗出版物",
+  "failed_tests": [
+    {
+      "test": "tests/taiji_native/test_n5_26_debt_table_column_shape_contract.py::test_real_register_is_one_shape_and_greens_under_default_enforcement",
+      "root_cause": "5173dc447 自引：DEBT-G142 状态列更新时把『待 owner』写成独立表格列，该行 5 列变 6 列（escape_aware {'5': 142, '6': 1} 应为 {'5': 143}）",
+      "fix": "合并回 5 列（『顺延不变 | 由』→『顺延不变。出处＝由』）；复跑 audit_taiji_debt_table_column_shape.py rc=0 escape_aware {'5': 143}（reports/taiji_debt_table_column_shape_20261014_n105_fix.json）；test_n5_26＋test_project_identity 合跑 15 passed",
+      "fix_committed_in": "本读数件所属提交（㊵-836）"
+    }
+  ],
+  "comparison_to_previous": {
+    "previous": "74a084e22 树：2 failed, 3332 passed, 23 skipped, 1 xfailed（2244.38s，㊵-833 ⑧ 登记；两枚红已由 ㊵-833 结清）",
+    "delta": "passed +4、红 2→1→0（本次 1 红为自引并已修复）"
+  },
+  "post_fix_reruns": {
+    "debt_table_column_shape": "rc=0，rows=143，escape_aware {'5': 143}，rows_not_expected_cells 0",
+    "contract_suite": "test_n5_26＋test_project_identity 15 passed"
+  },
+  "log_path": "output/family_baseline_20261014_n105/family.log",
+  "started_utc_note": "起跑于 2026-10-14 会话（HEAD 写入 output/family_baseline_20261014_n105/head.txt）",
+  "lesson": "改 05 债表必须提交前复跑形状门——编辑中途的门读数与提交时点之间隔着其他编辑，时序交错会骗人（㊵-828 ⑦ 教训的变体：这次不是没跑，是跑了但读数时点与最终提交内容不一致）"
+}
