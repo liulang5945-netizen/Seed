@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import argparse
 import ast
+import json
 import re
 import subprocess
 import sys
@@ -268,7 +269,35 @@ def loose_only_literals(tree: ast.Module) -> set[str]:
     return hits
 
 
-def build_report(root: Path) -> dict[str, Any]:
+def legacy_heuristic_candidates(root: Path, tests: list[str]) -> list[dict[str, str]]:
+    """㊵-807 那批"同一调用里同时出现写靶旗标与 `reports/` 路径"的启发式候选——加回键就是为了它能被复算。
+
+    这是**旧口径**（按旗标名猜角色），保留它只为两件事：让当时那个"6 枚"可复现，
+    以及给 J-G138-2 的经验复核提供逐枚实跑的名单。分类一律不采用它。
+    """
+
+    write_flagish = re.compile(r"^--(out|output|report|dest|path)", re.I)
+    out: list[dict[str, str]] = []
+    for rel in tests:
+        tree = parse(rel, root)
+        if tree is None:
+            continue
+        constants = module_string_constants(tree)
+        for node in ast.walk(tree):
+            if not isinstance(node, (ast.List, ast.Tuple)):
+                continue
+            strings = [
+                s for element in node.elts if (s := string_or_bound(element, constants)) is not None
+            ]
+            paths = [s for s in strings if "reports" in s and s.endswith(".json")]
+            flags = [s for s in strings if write_flagish.match(s)]
+            if paths and flags:
+                out.append({"test": rel, "report_path": paths[0], "flag": flags[0]})
+                break
+    return out
+
+
+def build_report(root: Path, observed_writes: set[str] | None = None) -> dict[str, Any]:
     tracked = tracked_python(root)
     tests = [rel for rel in tracked if rel.startswith("tests/")]
     tools = [rel for rel in tracked if rel.startswith("scripts/")]
@@ -290,6 +319,7 @@ def build_report(root: Path) -> dict[str, Any]:
         by_basename.setdefault(Path(rel).name, []).append(rel)
 
     pairs: dict[tuple[str, str, str], str] = {}
+    downgraded: list[dict[str, Any]] = []
     unresolved_named: list[dict[str, Any]] = []
     unmatched: list[dict[str, str]] = []
     unresolvable_tool_strings: list[dict[str, str]] = []
@@ -316,6 +346,13 @@ def build_report(root: Path) -> dict[str, Any]:
                 )
                 continue
             role, evidence = dest_role(tool_trees[tool_rel], table[flag])
+            label = f"{rel} :: {tool_rel} {flag}"
+            if observed_writes and label in observed_writes and role != "write":
+                # J-G138-2：观测是仲裁者。分类说它不写，实跑却改到了 reports/ ⇒ 降级并点名。
+                downgraded.append(
+                    {"pair": label, "role_by_ast": role, "role_after_observation": "unresolved"}
+                )
+                role, evidence = "unresolved", [*evidence, "observed_write_on_reports_face"]
             pairs[(rel, tool_rel, flag)] = role
             if role in {"unresolved", "both"}:
                 unresolved_named.append(
@@ -354,6 +391,10 @@ def build_report(root: Path) -> dict[str, Any]:
         "tracked_tools_with_add_argument": len(tool_tables),
         "pairs_seen_in_call_sites": seen,
         "tool_strings_not_in_face_named": unresolvable_tool_strings[:40],
+        "legacy_heuristic_candidates": legacy_heuristic_candidates(root, tests),
+        "legacy_heuristic_candidate_total": len(legacy_heuristic_candidates(root, tests)),
+        "observation_downgraded_pairs": downgraded,
+        "observation_downgraded_total": len(downgraded),
         "tool_strings_not_in_face_total": len(unresolvable_tool_strings),
         "domain_pairs": len(pairs),
         "test_side_role_tally": tally,
@@ -387,16 +428,29 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--root", default=str(PROJECT_ROOT), help="git 仓根（契约测指向临时仓）")
     parser.add_argument("--out-report", required=True, type=Path)
     parser.add_argument("--overwrite", action="store_true", help="允许覆盖自己名下的读数件")
+    parser.add_argument(
+        "--observed-writes",
+        type=Path,
+        default=None,
+        help="J-G138-2 的观测清单：实跑确证改到 reports/ 的（测 :: 工具 旗标）对，逐条降级为 unresolved",
+    )
     args = parser.parse_args(argv)
 
     root = Path(args.root)
+    observed: set[str] = set()
+    if args.observed_writes is not None:
+        observed_path = args.observed_writes
+        if not observed_path.is_absolute():
+            observed_path = root / observed_path
+        observed = {str(line) for line in json.loads(observed_path.read_text(encoding="utf-8"))}
+
     out = args.out_report
     if not out.is_absolute():
         out = root / out
     if out.exists() and not args.overwrite:
         print(f"refusing to overwrite an existing report: {out}", file=sys.stderr)
         return 2
-    report = build_report(root)
+    report = build_report(root, observed)
     report_io.write_json_report(out, report, newline="\n", overwrite=args.overwrite)
     verdicts = report["verdicts"]
     if not all(verdicts.values()):

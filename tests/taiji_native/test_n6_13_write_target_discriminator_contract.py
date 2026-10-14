@@ -9,6 +9,7 @@ from __future__ import annotations
 import ast
 import importlib.util
 import json
+import subprocess
 from pathlib import Path
 
 import pytest
@@ -152,6 +153,53 @@ def test_the_new_buckets_never_piggyback_on_the_sealed_report_face(report: dict)
     assert legacy.isdisjoint(set(report))
     assert "test_side_write_pairs" in report
     assert not any("exposure" in key or "default_targets" in key for key in report)
+
+
+def test_observation_can_overrule_the_ast_classification(tmp_path: Path) -> None:
+    """J-G138-2 的仲裁必须真的接在仪器上：观测说它写，分类为 read 的那对就要降级并点名。"""
+
+    (tmp_path / "scripts").mkdir(parents=True, exist_ok=True)
+    (tmp_path / "tests").mkdir(parents=True, exist_ok=True)
+    tool = tmp_path / "scripts/tool.py"
+    tool.write_text(
+        "import argparse\n"
+        "def main():\n"
+        "    p = argparse.ArgumentParser()\n"
+        "    p.add_argument('--report')\n"
+        "    args = p.parse_args()\n"
+        "    src = Path(args.report)\n"
+        "    return json.loads(src.read_text())\n",
+        encoding="utf-8",
+    )
+    test = tmp_path / "tests/test_call.py"
+    test.write_text(
+        'def t():\n    run(["scripts/tool.py", "--report", "x.json"])\n', encoding="utf-8"
+    )
+    # The scan face comes from version control, so the fixture has to be a repo too.
+    for step in (
+        ["init", "-q"],
+        ["add", "."],
+        ["-c", "user.email=t@t", "-c", "user.name=t", "commit", "-qm", "f"],
+    ):
+        subprocess.run(["git", *step], cwd=tmp_path, capture_output=True, text=True, check=True)
+    label = "tests/test_call.py :: scripts/tool.py --report"
+    ast_only = module.build_report(tmp_path)
+    assert ast_only["test_side_role_tally"]["read"] == 1
+    assert ast_only["observation_downgraded_total"] == 0
+    with_observation = module.build_report(tmp_path, {label})
+    assert with_observation["observation_downgraded_total"] == 1
+    assert with_observation["observation_downgraded_pairs"][0]["pair"] == label
+    assert with_observation["test_side_role_tally"]["read"] == 0
+    assert with_observation["test_side_role_tally"]["unresolved"] == 1
+
+
+def test_legacy_heuristic_candidate_key_is_publishable(report: dict) -> None:
+    """㊵-807 那批启发式候选要能被复算出名单（哪怕口径是旧的），否则经验复核无处下手。"""
+
+    assert "legacy_heuristic_candidates" in report
+    assert report["legacy_heuristic_candidate_total"] == len(report["legacy_heuristic_candidates"])
+    for item in report["legacy_heuristic_candidates"]:
+        assert {"test", "report_path", "flag"} <= set(item)
 
 
 def test_the_instrument_writes_through_the_shared_helper(tmp_path: Path) -> None:
